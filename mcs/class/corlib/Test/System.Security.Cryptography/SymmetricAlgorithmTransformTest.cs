@@ -102,7 +102,7 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 
 		[Test]
-		public void DontDecryptLastBlock_CFB_PKCS7 ()
+		public virtual void DontDecryptLastBlock_CFB_PKCS7 ()
 		{
 			DontDecryptLastBlock (CipherMode.CFB, PaddingMode.PKCS7);
 		}
@@ -222,19 +222,19 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 #endif
 		[Test]
-		public void DontDecryptLastBlock_Final_CFB_None ()
+		public virtual void DontDecryptLastBlock_Final_CFB_None ()
 		{
 			DontDecryptLastBlock_Final (CipherMode.CFB, PaddingMode.None);
 		}
 
 		[Test]
-		public void DontDecryptLastBlock_Final_CFB_PKCS7 ()
+		public virtual void DontDecryptLastBlock_Final_CFB_PKCS7 ()
 		{
 			DontDecryptLastBlock_Final (CipherMode.CFB, PaddingMode.PKCS7);
 		}
 
 		[Test]
-		public void DontDecryptLastBlock_Final_CFB_Zeros ()
+		public virtual void DontDecryptLastBlock_Final_CFB_Zeros ()
 		{
 			DontDecryptLastBlock_Final (CipherMode.CFB, PaddingMode.Zeros);
 		}
@@ -307,8 +307,12 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 
 		[Test]
+#if NET_2_0
 		[ExpectedException (typeof (CryptographicException))]
-		public void DontDecryptMultipleBlock_CBC_PKCS7 ()
+#else
+		[ExpectedException (typeof (IndexOutOfRangeException))]
+#endif
+		public virtual void DontDecryptMultipleBlock_CBC_PKCS7 ()
 		{
 			DontDecryptMultipleBlock (CipherMode.CBC, PaddingMode.PKCS7);
 		}
@@ -336,14 +340,18 @@ namespace MonoTests.System.Security.Cryptography {
 #endif
 		[Test]
 		[ExpectedException (typeof (CryptographicException))]
-		public void DontDecryptMultipleBlock_CFB_None ()
+		public virtual void DontDecryptMultipleBlock_CFB_None ()
 		{
 			DontDecryptMultipleBlock (CipherMode.CFB, PaddingMode.None);
 		}
 
 		[Test]
+#if NET_2_0
 		[ExpectedException (typeof (CryptographicException))]
-		public void DontDecryptMultipleBlock_CFB_PKCS7 ()
+#else
+		[ExpectedException (typeof (IndexOutOfRangeException))]
+#endif
+		public virtual void DontDecryptMultipleBlock_CFB_PKCS7 ()
 		{
 			DontDecryptMultipleBlock (CipherMode.CFB, PaddingMode.PKCS7);
 		}
@@ -377,8 +385,12 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 
 		[Test]
+#if NET_2_0
 		[ExpectedException (typeof (CryptographicException))]
-		public void DontDecryptMultipleBlock_ECB_PKCS7 ()
+#else
+		[ExpectedException (typeof (IndexOutOfRangeException))]
+#endif
+		public virtual void DontDecryptMultipleBlock_ECB_PKCS7 ()
 		{
 			DontDecryptMultipleBlock (CipherMode.ECB, PaddingMode.PKCS7);
 		}
@@ -436,8 +448,12 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 
 		[Test]
+#if NET_2_0
 		[ExpectedException (typeof (CryptographicException))]
-		public void DontDecryptMultipleBlock_Final_CBC_PKCS7 ()
+#else
+		[ExpectedException (typeof (IndexOutOfRangeException))]
+#endif
+		public virtual void DontDecryptMultipleBlock_Final_CBC_PKCS7 ()
 		{
 			DontDecryptMultipleBlock_Final (CipherMode.CBC, PaddingMode.PKCS7);
 		}
@@ -465,14 +481,18 @@ namespace MonoTests.System.Security.Cryptography {
 #endif
 		[Test]
 		[ExpectedException (typeof (CryptographicException))]
-		public void DontDecryptMultipleBlock_Final_CFB_None ()
+		public virtual void DontDecryptMultipleBlock_Final_CFB_None ()
 		{
 			DontDecryptMultipleBlock_Final (CipherMode.CFB, PaddingMode.None);
 		}
 
 		[Test]
+#if NET_2_0
 		[ExpectedException (typeof (CryptographicException))]
-		public void DontDecryptMultipleBlock_Final_CFB_PKCS7 ()
+#else
+		[ExpectedException (typeof (IndexOutOfRangeException))]
+#endif
+		public virtual void DontDecryptMultipleBlock_Final_CFB_PKCS7 ()
 		{
 			DontDecryptMultipleBlock_Final (CipherMode.CFB, PaddingMode.PKCS7);
 		}
@@ -506,8 +526,12 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 
 		[Test]
+#if NET_2_0
 		[ExpectedException (typeof (CryptographicException))]
-		public void DontDecryptMultipleBlock_Final_ECB_PKCS7 ()
+#else
+		[ExpectedException (typeof (IndexOutOfRangeException))]
+#endif
+		public virtual void DontDecryptMultipleBlock_Final_ECB_PKCS7 ()
 		{
 			DontDecryptMultipleBlock_Final (CipherMode.ECB, PaddingMode.PKCS7);
 		}
@@ -534,103 +558,210 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 #endif
 
-		private void TransformBlock_One (string msg, ICryptoTransform ct, int expected)
+		private void TransformBlock_One (ICryptoTransform ct, int expected)
 		{
 			byte[] data = new byte[ct.InputBlockSize];
-			Assert.AreEqual (expected, ct.TransformBlock (data, 0, ct.InputBlockSize, data, 0), msg);
+			Assert.AreEqual (expected, ct.TransformBlock (data, 0, ct.InputBlockSize, data, 0));
+		}
+
+		public void Encryptor_TransformBlock_One (PaddingMode padding, CipherMode mode, int expected)
+		{
+			SymmetricAlgorithm sa = Algorithm;
+			sa.Padding = padding;
+			sa.Mode = mode;
+			TransformBlock_One (sa.CreateEncryptor (), expected);
 		}
 
 		[Test]
-		public void CreateEncryptor_TransformBlock_One ()
+		public void CreateEncryptor_TransformBlock_One_PKCS7_ECB ()
 		{
-			SymmetricAlgorithm sa = Algorithm;
-			sa.Padding = PaddingMode.PKCS7;
-			sa.Mode = CipherMode.ECB;
-			TransformBlock_One ("PKCS7-ECB", sa.CreateEncryptor (), BlockSize);
-			sa.Mode = CipherMode.CBC;
-			TransformBlock_One ("PKCS7-CBC", sa.CreateEncryptor (), BlockSize);
-			sa.Mode = CipherMode.CFB;
-			TransformBlock_One ("PKCS7-CFB", sa.CreateEncryptor (), BlockSize);
-
-			sa.Padding = PaddingMode.Zeros;
-			sa.Mode = CipherMode.ECB;
-			TransformBlock_One ("Zeros-ECB", sa.CreateEncryptor (), BlockSize);
-			sa.Mode = CipherMode.CBC;
-			TransformBlock_One ("Zeros-CBC", sa.CreateEncryptor (), BlockSize);
-			sa.Mode = CipherMode.CFB;
-			TransformBlock_One ("Zeros-CFB", sa.CreateEncryptor (), BlockSize);
-
-			sa.Padding = PaddingMode.None;
-			sa.Mode = CipherMode.ECB;
-			TransformBlock_One ("None-ECB", sa.CreateEncryptor (), BlockSize);
-			sa.Mode = CipherMode.CBC;
-			TransformBlock_One ("None-CBC", sa.CreateEncryptor (), BlockSize);
-			sa.Mode = CipherMode.CFB;
-			TransformBlock_One ("None-CFB", sa.CreateEncryptor (), BlockSize);
-#if NET_2_0
-			sa.Padding = PaddingMode.ANSIX923;
-			sa.Mode = CipherMode.ECB;
-			TransformBlock_One ("ANSIX923-ECB", sa.CreateEncryptor (), BlockSize);
-			sa.Mode = CipherMode.CBC;
-			TransformBlock_One ("ANSIX923-CBC", sa.CreateEncryptor (), BlockSize);
-			sa.Mode = CipherMode.CFB;
-			TransformBlock_One ("ANSIX923-CFB", sa.CreateEncryptor (), BlockSize);
-
-			sa.Padding = PaddingMode.ISO10126;
-			sa.Mode = CipherMode.ECB;
-			TransformBlock_One ("ISO10126-ECB", sa.CreateEncryptor (), BlockSize);
-			sa.Mode = CipherMode.CBC;
-			TransformBlock_One ("ISO10126-CBC", sa.CreateEncryptor (), BlockSize);
-			sa.Mode = CipherMode.CFB;
-			TransformBlock_One ("ISO10126-CFB", sa.CreateEncryptor (), BlockSize);
-#endif
+			Encryptor_TransformBlock_One (PaddingMode.PKCS7, CipherMode.ECB, BlockSize);
 		}
 
 		[Test]
-		public void CreateDecryptor_TransformBlock_One ()
+		public void CreateEncryptor_TransformBlock_One_PKCS7_CBC ()
+		{
+			Encryptor_TransformBlock_One (PaddingMode.PKCS7, CipherMode.CBC, BlockSize);
+		}
+
+		[Test]
+		public virtual void CreateEncryptor_TransformBlock_One_PKCS7_CFB ()
+		{
+			Encryptor_TransformBlock_One (PaddingMode.PKCS7, CipherMode.CFB, BlockSize);
+		}
+
+		[Test]
+		public void CreateEncryptor_TransformBlock_One_Zeros_ECB ()
+		{
+			Encryptor_TransformBlock_One (PaddingMode.Zeros, CipherMode.ECB, BlockSize);
+		}
+
+		[Test]
+		public void CreateEncryptor_TransformBlock_One_Zeros_CBC ()
+		{
+			Encryptor_TransformBlock_One (PaddingMode.Zeros, CipherMode.CBC, BlockSize);
+		}
+
+		[Test]
+		public virtual void CreateEncryptor_TransformBlock_One_Zeros_CFB ()
+		{
+			Encryptor_TransformBlock_One (PaddingMode.Zeros, CipherMode.CFB, BlockSize);
+		}
+
+		[Test]
+		public void CreateEncryptor_TransformBlock_One_None_ECB ()
+		{
+			Encryptor_TransformBlock_One (PaddingMode.None, CipherMode.ECB, BlockSize);
+		}
+
+		[Test]
+		public void CreateEncryptor_TransformBlock_One_None_CBC ()
+		{
+			Encryptor_TransformBlock_One (PaddingMode.None, CipherMode.CBC, BlockSize);
+		}
+
+		[Test]
+		public virtual void CreateEncryptor_TransformBlock_One_None_CFB ()
+		{
+			Encryptor_TransformBlock_One (PaddingMode.None, CipherMode.CFB, BlockSize);
+		}
+
+#if NET_2_0
+		[Test]
+		public void CreateEncryptor_TransformBlock_One_ANSIX923_ECB ()
+		{
+			Encryptor_TransformBlock_One (PaddingMode.ANSIX923, CipherMode.ECB, BlockSize);
+		}
+
+		[Test]
+		public void CreateEncryptor_TransformBlock_One_ANSIX923_CBC ()
+		{
+			Encryptor_TransformBlock_One (PaddingMode.ANSIX923, CipherMode.CBC, BlockSize);
+		}
+
+		[Test]
+		public void CreateEncryptor_TransformBlock_One_ANSIX923_CFB ()
+		{
+			Encryptor_TransformBlock_One (PaddingMode.ANSIX923, CipherMode.CFB, BlockSize);
+		}
+
+		[Test]
+		public void CreateEncryptor_TransformBlock_One_ISO10126_ECB ()
+		{
+			Encryptor_TransformBlock_One (PaddingMode.ISO10126, CipherMode.ECB, BlockSize);
+		}
+
+		[Test]
+		public void CreateEncryptor_TransformBlock_One_ISO10126_CBC ()
+		{
+			Encryptor_TransformBlock_One (PaddingMode.ISO10126, CipherMode.CBC, BlockSize);
+		}
+
+		[Test]
+		public void CreateEncryptor_TransformBlock_One_ISO10126_CFB ()
+		{
+			Encryptor_TransformBlock_One (PaddingMode.ISO10126, CipherMode.CFB, BlockSize);
+		}
+#endif
+
+		public void Decryptor_TransformBlock_One (PaddingMode padding, CipherMode mode, int expected)
 		{
 			SymmetricAlgorithm sa = Algorithm;
-			sa.Padding = PaddingMode.PKCS7;
-			sa.Mode = CipherMode.ECB;
-			TransformBlock_One ("PKCS7-ECB", sa.CreateDecryptor (), 0);
-			sa.Mode = CipherMode.CBC;
-			TransformBlock_One ("PKCS7-CBC", sa.CreateDecryptor (), 0);
-			sa.Mode = CipherMode.CFB;
-			TransformBlock_One ("PKCS7-CFB", sa.CreateDecryptor (), 0);
-
-			sa.Padding = PaddingMode.Zeros;
-			sa.Mode = CipherMode.ECB;
-			TransformBlock_One ("Zeros-ECB", sa.CreateDecryptor (), BlockSize);
-			sa.Mode = CipherMode.CBC;
-			TransformBlock_One ("Zeros-CBC", sa.CreateDecryptor (), BlockSize);
-			sa.Mode = CipherMode.CFB;
-			TransformBlock_One ("Zeros-CFB", sa.CreateDecryptor (), BlockSize);
-
-			sa.Padding = PaddingMode.None;
-			sa.Mode = CipherMode.ECB;
-			TransformBlock_One ("None-ECB", sa.CreateDecryptor (), BlockSize);
-			sa.Mode = CipherMode.CBC;
-			TransformBlock_One ("None-CBC", sa.CreateDecryptor (), BlockSize);
-			sa.Mode = CipherMode.CFB;
-			TransformBlock_One ("None-CFB", sa.CreateDecryptor (), BlockSize);
-#if NET_2_0
-			sa.Padding = PaddingMode.ANSIX923;
-			sa.Mode = CipherMode.ECB;
-			TransformBlock_One ("ANSIX923-ECB", sa.CreateDecryptor (), 0);
-			sa.Mode = CipherMode.CBC;
-			TransformBlock_One ("ANSIX923-CBC", sa.CreateDecryptor (), 0);
-			sa.Mode = CipherMode.CFB;
-			TransformBlock_One ("ANSIX923-CFB", sa.CreateDecryptor (), 0);
-
-			sa.Padding = PaddingMode.ISO10126;
-			sa.Mode = CipherMode.ECB;
-			TransformBlock_One ("ISO10126-ECB", sa.CreateDecryptor (), 0);
-			sa.Mode = CipherMode.CBC;
-			TransformBlock_One ("ISO10126-CBC", sa.CreateDecryptor (), 0);
-			sa.Mode = CipherMode.CFB;
-			TransformBlock_One ("ISO10126-CFB", sa.CreateDecryptor (), 0);
-#endif
+			sa.Padding = padding;
+			sa.Mode = mode;
+			TransformBlock_One (sa.CreateDecryptor (), expected);
 		}
+
+		[Test]
+		public void CreateDecryptor_TransformBlock_One_PKCS7_ECB ()
+		{
+			Decryptor_TransformBlock_One (PaddingMode.PKCS7, CipherMode.ECB, 0);
+		}
+
+		[Test]
+		public void CreateDecryptor_TransformBlock_One_PKCS7_CBC ()
+		{
+			Decryptor_TransformBlock_One (PaddingMode.PKCS7, CipherMode.CBC, 0);
+		}
+
+		[Test]
+		public virtual void CreateDecryptor_TransformBlock_One_PKCS7_CFB ()
+		{
+			Decryptor_TransformBlock_One (PaddingMode.PKCS7, CipherMode.CFB, 0);
+		}
+
+		[Test]
+		public void CreateDecryptor_TransformBlock_One_Zeros_ECB ()
+		{
+			Decryptor_TransformBlock_One (PaddingMode.Zeros, CipherMode.ECB, BlockSize);
+		}
+
+		[Test]
+		public void CreateDecryptor_TransformBlock_One_Zeros_CBC ()
+		{
+			Decryptor_TransformBlock_One (PaddingMode.Zeros, CipherMode.CBC, BlockSize);
+		}
+
+		[Test]
+		public virtual void CreateDecryptor_TransformBlock_One_Zeros_CFB ()
+		{
+			Decryptor_TransformBlock_One (PaddingMode.Zeros, CipherMode.CFB, BlockSize);
+		}
+
+		[Test]
+		public void CreateDecryptor_TransformBlock_One_None_ECB ()
+		{
+			Decryptor_TransformBlock_One (PaddingMode.None, CipherMode.ECB, BlockSize);
+		}
+
+		[Test]
+		public void CreateDecryptor_TransformBlock_One_None_CBC ()
+		{
+			Decryptor_TransformBlock_One (PaddingMode.None, CipherMode.CBC, BlockSize);
+		}
+
+		[Test]
+		public virtual void CreateDecryptor_TransformBlock_One_None_CFB ()
+		{
+			Decryptor_TransformBlock_One (PaddingMode.None, CipherMode.CFB, BlockSize);
+		}
+#if NET_2_0
+		[Test]
+		public void CreateDecryptor_TransformBlock_One_ANSIX923_ECB ()
+		{
+			Decryptor_TransformBlock_One (PaddingMode.ANSIX923, CipherMode.ECB, 0);
+		}
+
+		[Test]
+		public void CreateDecryptor_TransformBlock_One_ANSIX923_CBC ()
+		{
+			Decryptor_TransformBlock_One (PaddingMode.ANSIX923, CipherMode.CBC, 0);
+		}
+
+		[Test]
+		public void CreateDecryptor_TransformBlock_One_ANSIX923_CFB ()
+		{
+			Decryptor_TransformBlock_One (PaddingMode.ANSIX923, CipherMode.CFB, 0);
+		}
+
+		[Test]
+		public void CreateDecryptor_TransformBlock_One_ISO10126_ECB ()
+		{
+			Decryptor_TransformBlock_One (PaddingMode.ISO10126, CipherMode.ECB, 0);
+		}
+
+		[Test]
+		public void CreateDecryptor_TransformBlock_One_ISO10126_CBC ()
+		{
+			Decryptor_TransformBlock_One (PaddingMode.ISO10126, CipherMode.CBC, 0);
+		}
+
+		[Test]
+		public void CreateDecryptor_TransformBlock_One_ISO10126_CFB ()
+		{
+			Decryptor_TransformBlock_One (PaddingMode.ISO10126, CipherMode.CFB, 0);
+		}
+#endif
 	}
 
 	[TestFixture]
@@ -728,8 +859,154 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 	}
 
+	public abstract class RijndaelTransformTest: SymmetricAlgorithmTransformTest {
+
+		// Rijndael is the only managed crypto transform implementation and, before Fx 2.0, 
+		// suffers from different issues than CSP-based CryptoAPITransform. In contrast 
+		// Mono has a single (managed) implementation for all crypto transforms.
+#if ONLY_1_1
+		// The first case is that MS reports that OFB (output feedback) mode isn't 
+		// supported even if this isn't the requested mode (CFB). We ignore those cases
+		// to (a) don't mess with existing Mono-only code and (b) it's the 2.0 behavior
+		// anyway.
+
+		[Test]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (CryptographicException))]
+		public override void DontDecryptLastBlock_CFB_PKCS7 ()
+		{
+			DontDecryptLastBlock (CipherMode.CFB, PaddingMode.PKCS7);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (CryptographicException))]
+		public override void DontDecryptLastBlock_Final_CFB_PKCS7 ()
+		{
+			DontDecryptLastBlock_Final (CipherMode.CFB, PaddingMode.PKCS7);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (CryptographicException))]
+		public override void DontDecryptLastBlock_Final_CFB_None ()
+		{
+			DontDecryptLastBlock_Final (CipherMode.CFB, PaddingMode.None);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (CryptographicException))]
+		public override void DontDecryptLastBlock_Final_CFB_Zeros ()
+		{
+			DontDecryptLastBlock_Final (CipherMode.CFB, PaddingMode.Zeros);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (CryptographicException))]
+		public override void CreateEncryptor_TransformBlock_One_PKCS7_CFB ()
+		{
+			Encryptor_TransformBlock_One (PaddingMode.PKCS7, CipherMode.CFB, BlockSize);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (CryptographicException))]
+		public override void CreateEncryptor_TransformBlock_One_Zeros_CFB ()
+		{
+			Encryptor_TransformBlock_One (PaddingMode.Zeros, CipherMode.CFB, BlockSize);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (CryptographicException))]
+		public override void CreateEncryptor_TransformBlock_One_None_CFB ()
+		{
+			Encryptor_TransformBlock_One (PaddingMode.None, CipherMode.CFB, BlockSize);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (CryptographicException))]
+		public override void CreateDecryptor_TransformBlock_One_PKCS7_CFB ()
+		{
+			Decryptor_TransformBlock_One (PaddingMode.PKCS7, CipherMode.CFB, BlockSize);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (CryptographicException))]
+		public override void CreateDecryptor_TransformBlock_One_Zeros_CFB ()
+		{
+			Decryptor_TransformBlock_One (PaddingMode.Zeros, CipherMode.CFB, BlockSize);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (CryptographicException))]
+		public override void CreateDecryptor_TransformBlock_One_None_CFB ()
+		{
+			Decryptor_TransformBlock_One (PaddingMode.None, CipherMode.CFB, BlockSize);
+		}
+
+		// The second case is that the MS managed transform (Rijndael) throws a CryptographicException
+		// (like 2.0) where the unmanaged one (CryptoAPITransform) throws an IndexOutOfRangeException. 
+		// Since Mono has a single implementation we're ignoring this "special" case (wrong exception) 
+		// in favor of the most "used" one. Note that it doesn't much affect existing code.
+
+		[Test]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (CryptographicException))]
+		public override void DontDecryptMultipleBlock_CBC_PKCS7 ()
+		{
+			DontDecryptMultipleBlock (CipherMode.CBC, PaddingMode.PKCS7);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (CryptographicException))]
+		public override void DontDecryptMultipleBlock_CFB_PKCS7 ()
+		{
+			DontDecryptMultipleBlock (CipherMode.CFB, PaddingMode.PKCS7);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (CryptographicException))]
+		public override void DontDecryptMultipleBlock_ECB_PKCS7 ()
+		{
+			DontDecryptMultipleBlock (CipherMode.ECB, PaddingMode.PKCS7);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (CryptographicException))]
+		public override void DontDecryptMultipleBlock_Final_CBC_PKCS7 ()
+		{
+			DontDecryptMultipleBlock_Final (CipherMode.CBC, PaddingMode.PKCS7);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (CryptographicException))]
+		public override void DontDecryptMultipleBlock_Final_CFB_PKCS7 ()
+		{
+			DontDecryptMultipleBlock_Final (CipherMode.CFB, PaddingMode.PKCS7);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (CryptographicException))]
+		public override void DontDecryptMultipleBlock_Final_ECB_PKCS7 ()
+		{
+			DontDecryptMultipleBlock_Final (CipherMode.ECB, PaddingMode.PKCS7);
+		}
+#endif
+	}
+
 	[TestFixture]
-	public class Rijndael128TransformTest: SymmetricAlgorithmTransformTest {
+	public class Rijndael128TransformTest: RijndaelTransformTest {
 
 		public override SymmetricAlgorithm Algorithm {
 			get { return Rijndael.Create (); }
@@ -741,7 +1018,7 @@ namespace MonoTests.System.Security.Cryptography {
 	}
 
 	[TestFixture]
-	public class Rijndael192TransformTest: SymmetricAlgorithmTransformTest {
+	public class Rijndael192TransformTest: RijndaelTransformTest {
 
 		public override SymmetricAlgorithm Algorithm {
 			get { 
@@ -758,7 +1035,7 @@ namespace MonoTests.System.Security.Cryptography {
 	}
 
 	[TestFixture]
-	public class Rijndael256TransformTest: SymmetricAlgorithmTransformTest {
+	public class Rijndael256TransformTest: RijndaelTransformTest {
 
 		public override SymmetricAlgorithm Algorithm {
 			get { 

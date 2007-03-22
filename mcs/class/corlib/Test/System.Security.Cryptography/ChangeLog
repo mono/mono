@@ -1,4 +1,4 @@
-2007-03-22  Sebastien Pouliot  <sebastien@ximian.com>
+2007-03-22  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* CryptoConfigTest.cs: Fix upper/lower/mixed cases tests as they work 
 	only for 2.0.
@@ -6,6 +6,10 @@
 	fx 2.0.
 	* DSACryptoServiceProviderTest.cs: Normalize line endings.
 	* RSACryptoServiceProviderTest.cs: Normalize line endings.
+	* SymmetricAlgorithmTransformTest.cs: Change/split test cases so that
+	they work properly under both MS 1.1 and 2.0. In some cases tests are
+	marked as NotWorking because Mono implements the, more consistent, 2.0
+	behavior for all transforms.
 
 2007-03-15 Roei Erez <roeie@mainsoft.com>
 
