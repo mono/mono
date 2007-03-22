@@ -5,7 +5,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -172,24 +172,40 @@ public class CryptoConfigTest {
 	public void CreateFromName_UpperCase () 
 	{
 		CreateFromName ("SHA", "System.Security.Cryptography.SHA1CryptoServiceProvider");
+#if NET_2_0
 		CreateFromName ("SYSTEM.SECURITY.CRYPTOGRAPHY.TRIPLEDES", "System.Security.Cryptography.TripleDESCryptoServiceProvider");  
 		CreateFromName ("HTTP://WWW.W3.ORG/2000/09/XMLDSIG#DSA-SHA1", "System.Security.Cryptography.DSASignatureDescription");
+#else
+		CreateFromName ("SYSTEM.SECURITY.CRYPTOGRAPHY.TRIPLEDES", null);  
+		CreateFromName ("HTTP://WWW.W3.ORG/2000/09/XMLDSIG#DSA-SHA1", null);
+#endif
 	}
 
 	[Test]
 	public void CreateFromName_LowerCase () 
 	{
+#if NET_2_0
 		CreateFromName ("sha", "System.Security.Cryptography.SHA1CryptoServiceProvider");
 		CreateFromName ("system.security.cryptography.tripledes", "System.Security.Cryptography.TripleDESCryptoServiceProvider");  
+#else
+		CreateFromName ("sha", null);
+		CreateFromName ("system.security.cryptography.tripledes", null);  
+#endif
 		CreateFromName ("http://www.w3.org/2000/09/xmldsig#dsa-sha1", "System.Security.Cryptography.DSASignatureDescription");
 	}
 
 	[Test]
 	public void CreateFromName_MixedCase () 
 	{
+#if NET_2_0
 		CreateFromName ("ShA", "System.Security.Cryptography.SHA1CryptoServiceProvider");
 		CreateFromName ("SyStEm.SeCuRiTy.CrYpToGrApHy.TrIpLeDeS", "System.Security.Cryptography.TripleDESCryptoServiceProvider");  
 		CreateFromName ("hTtP://wWw.W3.oRg/2000/09/xMlDsIg#dSa-sHa1", "System.Security.Cryptography.DSASignatureDescription");
+#else
+		CreateFromName ("ShA", null);
+		CreateFromName ("SyStEm.SeCuRiTy.CrYpToGrApHy.TrIpLeDeS", null);  
+		CreateFromName ("hTtP://wWw.W3.oRg/2000/09/xMlDsIg#dSa-sHa1", null);
+#endif
 	}
 
 	// Tests created using "A Layer Man Guide to ASN.1" from RSA, page 19-20
@@ -382,21 +398,35 @@ public class CryptoConfigTest {
 	public void MapNameToOID_UpperCase () 
 	{
 		MapNameToOID ("SHA1", "1.3.14.3.2.26");
+#if NET_2_0
 		MapNameToOID ("SYSTEM.SECURITY.CRYPTOGRAPHY.MD5CRYPTOSERVICEPROVIDER", "1.2.840.113549.2.5");
+#else
+		MapNameToOID ("SYSTEM.SECURITY.CRYPTOGRAPHY.MD5CRYPTOSERVICEPROVIDER", null);
+#endif
 	}
 
 	[Test]
 	public void MapNameToOID_LowerCase () 
 	{
+#if NET_2_0
 		MapNameToOID ("sha1", "1.3.14.3.2.26");
 		MapNameToOID ("system.security.cryptography.md5cryptoserviceprovider", "1.2.840.113549.2.5");
+#else
+		MapNameToOID ("sha1", null);
+		MapNameToOID ("system.security.cryptography.md5cryptoserviceprovider", null);
+#endif
 	}
 
 	[Test]
 	public void MapNameToOID_MixedCase () 
 	{
+#if NET_2_0
 		MapNameToOID ("sHa1", "1.3.14.3.2.26");
 		MapNameToOID ("SySteM.SeCuRiTy.CrYpToGrApHy.Md5cRyPtOsErViCePrOvIdEr", "1.2.840.113549.2.5");
+#else
+		MapNameToOID ("sHa1", null);
+		MapNameToOID ("SySteM.SeCuRiTy.CrYpToGrApHy.Md5cRyPtOsErViCePrOvIdEr", null);
+#endif
 	}
 
 	[Test]

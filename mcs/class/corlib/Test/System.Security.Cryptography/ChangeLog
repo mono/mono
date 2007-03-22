@@ -1,3 +1,8 @@
+2007-03-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CryptoConfigTest.cs: Fix upper/lower/mixed cases tests as they work 
+	only for 2.0.
+
 2007-03-15 Roei Erez <roeie@mainsoft.com>
 
 	* Adding some TARGET_JVM tags.
