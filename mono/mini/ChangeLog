@@ -1,3 +1,10 @@
+2007-03-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* cfold.c (FOLD_BINOP): Cast the result to gint32 to prevent overflow problems
+	on 64 bit machines. Fixes part of #80738.
+
+	* basic.cs: Add regression test.
+
 2007-03-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* inssel.brg basic.cs: Revert previous change to fix build.
