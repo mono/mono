@@ -1,3 +1,8 @@
+2007-03-22  Chris Toshok  <toshok@ximian.com>
+
+	* XplatUIX11.cs: ignore the BadPicture errors cairo+render
+	generates.
+
 2007-03-22  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* XplatUIX11.cs: Implement default locations for forms.
