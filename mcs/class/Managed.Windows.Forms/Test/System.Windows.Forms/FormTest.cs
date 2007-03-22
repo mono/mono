@@ -1091,7 +1091,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test] // bug #80052
-		[Category ("NotWorking")]
 		public void Location ()
 		{
 			// 

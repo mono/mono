@@ -1,3 +1,7 @@
+2007-03-22  Chris Toshok  <toshok@ximian.com>
+
+	* FormTest.cs: enable Location test for #80052.
+
 2007-03-22  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* MdiFormTest.cs: Added a StartLocationTest, and commented out all old
