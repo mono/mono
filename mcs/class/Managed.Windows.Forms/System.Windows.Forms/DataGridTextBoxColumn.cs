@@ -194,16 +194,20 @@ namespace System.Windows.Forms
 			return FontHeight + 3;
 		}
 
-		[MonoTODO]
 		protected internal override int GetPreferredHeight (Graphics g, object value)
 		{
-			throw new NotImplementedException ();
+			string text = GetFormattedValue (value);
+			System.Text.RegularExpressions.Regex r = new System.Text.RegularExpressions.Regex("/\r\n/");
+			int lines = r.Matches (text).Count;
+			return this.DataGridTableStyle.DataGrid.Font.Height * (lines+1) + 1;
 		}
 
-		[MonoTODO]
 		protected internal override Size GetPreferredSize (Graphics g, object value)
 		{
-			throw new NotImplementedException ();
+			string text = GetFormattedValue (value);
+			Size s = Size.Ceiling (g.MeasureString (text, this.DataGridTableStyle.DataGrid.Font));
+			s.Width += 4;
+			return s;
 		}
 
 		[MonoTODO]
@@ -314,7 +318,11 @@ namespace System.Windows.Forms
 		private string GetFormattedValue (CurrencyManager source, int rowNum)
 		{
 			object obj = GetColumnValueAtRow (source, rowNum);
+			return GetFormattedValue (obj);
+		}
 
+		private string GetFormattedValue (object obj)
+		{
 			if (DBNull.Value.Equals(obj) || obj == null)
 				return NullText;
 			

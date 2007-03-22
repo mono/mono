@@ -1519,7 +1519,8 @@ namespace System.Windows.Forms
 
 			case HitTestType.ColumnResize:
 				if (e.Clicks == 2) {
-					// double click column resize goes here
+					EndEdit ();
+					ColumnResize (testinfo.Column);
 				}
 				else {
 					resize_column = testinfo.Column;
@@ -1533,7 +1534,8 @@ namespace System.Windows.Forms
 
 			case HitTestType.RowResize:
 				if (e.Clicks == 2) {
-					// double click row resize goes here
+					EndEdit ();
+					RowResize (testinfo.Row);
 				}
 				else {
 					resize_row = testinfo.Row;
@@ -2596,6 +2598,51 @@ namespace System.Windows.Forms
 				Edit ();
 		}
 
+
+		private void ColumnResize (int column) 
+		{
+			CurrencyManager source = this.ListManager;
+			DataGridColumnStyle style = CurrentTableStyle.GridColumnStyles[column];
+			string headerText = style.HeaderText;
+			Graphics g = base.CreateGraphics ();
+			try {
+				int rows = source.Count;
+				int width = (int)g.MeasureString (headerText, CurrentTableStyle.HeaderFont).Width + 4;
+
+				for (int i = 0; i < rows; i++) {
+					int rowColWidth = (int)style.GetPreferredSize (g, style.GetColumnValueAtRow (source, i)).Width;
+					if (rowColWidth > width)
+						width = rowColWidth;
+				}
+				if (style.Width != width)
+					style.Width = width;
+			} 
+			finally {
+				g.Dispose ();
+			}
+
+		}
+
+		private void RowResize (int row)
+		{
+			CurrencyManager source = this.ListManager;			
+			Graphics g = base.CreateGraphics ();
+			GridColumnStylesCollection columns = CurrentTableStyle.GridColumnStyles;
+			try {
+				int colCount = columns.Count;
+				int rowCount = source.Count;
+				int height = 0;
+				for (int i = 0; i < colCount; i++) {
+					object val = columns[i].GetColumnValueAtRow (source, row);
+					height = Math.Max (columns[i].GetPreferredHeight (g, val), height);
+				}
+				if (this.DataGridRows[row].Height != height)
+					this.DataGridRows[row].Height = height;
+			} 
+			finally {
+				g.Dispose();
+			}
+		}
 		#endregion Private Instance Methods
 
 

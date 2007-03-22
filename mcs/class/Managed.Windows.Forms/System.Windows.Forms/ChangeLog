@@ -1,3 +1,9 @@
+2007-03-22  Andreia Gaita  <avidigal@novell.com>
+
+	* DataGrid.cs: Implement Column and Row auto sizing when double-clicking on
+	row or col separator.
+	* DataGridTextBoxColumn.cs: Implement GetPreferredHeight and GetPreferredSize
+
 2007-03-22  Everaldo Canuto  <everaldo@simios.org>
 
 	* MenuAPI.cs: Remove unneeded check for grab_control in UpdateCursor.
