@@ -1,3 +1,9 @@
+2007-03-22  Everaldo Canuto  <everaldo@simios.org>
+
+	* MenuAPI.cs: UpdateCursor method added, it is calling in OnMotion to update
+	cursor for child controls. In ShowWindow and HideWindow now call SetCursor 
+	every time. Fixes #81410.
+
 2007-03-22  Chris Toshok  <toshok@ximian.com>
 
 	* BindingSource.cs (AddNew): partially implement.

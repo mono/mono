@@ -79,6 +79,18 @@ namespace System.Windows.Forms {
 			return new Point (x, y);
 		}	
 
+		private void UpdateCursor (int x, int y)
+		{
+			if (grab_control == null)
+				return;
+			
+			Point pt = grab_control.PointToClient (new Point (x, y));
+			
+			Control child_control = grab_control.GetChildAtPoint (pt);
+			if (child_control != null)
+				XplatUI.SetCursor(child_control.Handle, Cursors.Default.handle);
+		}
+
 		void Deactivate ()
 		{
 			active = false;
@@ -153,6 +165,8 @@ namespace System.Windows.Forms {
 		public void OnMotion (MouseEventArgs args)
 		{
 			MenuItem item = GetItemAtXY (args.X, args.Y);
+
+			UpdateCursor (args.X, args.Y);
 
 			if (CurrentMenu.SelectedItem == item)
 				return;
@@ -750,10 +764,7 @@ namespace System.Windows.Forms {
 
 		public void ShowWindow ()
 		{
-			// Set cursor to Default, needed when you popup menu over a window with cursor
-			// diferent than default.
-			if (form.Cursor != Cursors.Default)
-				XplatUI.SetCursor(form.Handle, Cursors.Default.handle);
+			XplatUI.SetCursor(form.Handle, Cursors.Default.handle);
 			RefreshItems ();
 			Show ();
 		}
@@ -765,9 +776,7 @@ namespace System.Windows.Forms {
 		
 		public void HideWindow ()
 		{
-			// Back cursor to normal when needed
-			if (form.Cursor != Cursors.Default)
-				XplatUI.SetCursor (form.Handle, form.Cursor.handle);
+			XplatUI.SetCursor (form.Handle, form.Cursor.handle);
 			MenuTracker.HideSubPopups (menu);
     		Hide ();
 		}
