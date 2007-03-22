@@ -349,12 +349,15 @@ namespace Mainsoft.Web.Hosting {
 			if (contextPath.Length != appVirtualPathIndex ||
 				string.Compare (contextPath, 0, virtualPath, 0, appVirtualPathIndex, StringComparison.InvariantCultureIgnoreCase) != 0) {
 
+				string crossContextPath = virtualPath;
 				if (virtualPath.Length > appVirtualPathIndex)
-					virtualPath = virtualPath.Remove (appVirtualPathIndex);
+					crossContextPath = virtualPath.Remove (appVirtualPathIndex);
 				ServletContext context = config.getServletContext ().getContext (virtualPath);
 				string retVal;
 				if (context == null || ((retVal = context.getRealPath (appVirtualPath)) == null))
-					throw new HttpException ("MapPath: Mapping across applications not allowed");
+					throw new HttpException (
+						String.Format ("MapPath: Mapping across applications is not allowed. ApplicationPath is '{0}', VirtualPath is '{1}'.",
+						contextPath, virtualPath));
 
 				return retVal;
 			}
