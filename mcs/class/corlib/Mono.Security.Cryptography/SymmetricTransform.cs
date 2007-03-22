@@ -247,8 +247,13 @@ namespace Mono.Security.Cryptography {
 			if (!encrypt && (0 > len) && ((algo.Padding == PaddingMode.None) || (algo.Padding == PaddingMode.Zeros))) {
 				throw new CryptographicException ("outputBuffer", Locale.GetText ("Overflow"));
 			} else 	if (KeepLastBlock) {
-				if (0 > len + BlockSizeByte)
+				if (0 > len + BlockSizeByte) {
+#if NET_2_0
 					throw new CryptographicException ("outputBuffer", Locale.GetText ("Overflow"));
+#else
+					throw new IndexOutOfRangeException (Locale.GetText ("Overflow"));
+#endif
+				}
 			} else {
 				if (0 > len) {
 					// there's a special case if this is the end of the decryption process

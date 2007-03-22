@@ -1,3 +1,8 @@
+2007-03-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SymmetricTransform.cs: Before 2.0 an IndexOutOfRangeException was 
+	thrown (for all unmanaged transforms) in case of an overflow.
+
 2007-03-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SymmetricTransform.cs: Fix KeepLastBlock to be true for decryption 
