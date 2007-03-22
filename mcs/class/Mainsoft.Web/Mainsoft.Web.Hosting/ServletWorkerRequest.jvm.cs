@@ -103,8 +103,17 @@ namespace Mainsoft.Web.Hosting {
 			_OutputStream = outputStream;
 
 			string contextPath = req.getContextPath();
-			string requestURI = contextPath + req.getServletPath();	
-
+			string servletPath = req.getServletPath ();
+			string requestURI = req.getRequestURI ();
+			// servletPath - Returns the part of this request's URL that calls the servlet.
+			//		so it contains default page.
+			// requestURI - Returns the part of this request's URL from the protocol name up to the query string in the first line of the HTTP request.
+			//		so it contains what the user passed.
+			//
+			// the one containing more information wins.
+			if (contextPath.Length + servletPath.Length > requestURI.Length)
+				requestURI = contextPath + servletPath;
+			
 			_requestUri = Uri.UnescapeDataString(requestURI);
 			const int dotInvokeLength = 7; //".invoke".Length
 			if (_requestUri.Length > dotInvokeLength &&
