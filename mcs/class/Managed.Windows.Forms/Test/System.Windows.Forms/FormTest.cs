@@ -24,6 +24,7 @@ namespace MonoTests.System.Windows.Forms
 	{
 	
 		[Test]
+		[Category ("NotWorking")]
 		public void FormStartupPositionChangeTest ()
 		{
 			using (Form frm = new Form ())

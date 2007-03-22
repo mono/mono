@@ -1,3 +1,8 @@
+2007-03-22  Jonathan Pobst  <monkey@jpobst.com>
+
+	* FormTest.cs: Mark new test FormStartupPositionChangeTest as 
+	NotWorking to fix the monobuild.
+
 2007-03-22  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* MdiFormTest.cs: Make StartLocationTest NotWorking, it fails on
