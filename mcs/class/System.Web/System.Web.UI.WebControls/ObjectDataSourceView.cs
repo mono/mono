@@ -325,7 +325,6 @@ namespace System.Web.UI.WebControls
 			get {
 				if (deleteParameters == null) {
 					deleteParameters = new ParameterCollection ();
-					deleteParameters.ParametersChanged += new EventHandler (OnParametersChanged); 
 				}
 				return deleteParameters;
 			}
@@ -374,7 +373,6 @@ namespace System.Web.UI.WebControls
 			get {
 				if (insertParameters == null) {
 					insertParameters = new ParameterCollection ();
-					insertParameters.ParametersChanged += new EventHandler (OnParametersChanged); 
 				}
 				return insertParameters;
 			}
@@ -469,7 +467,6 @@ namespace System.Web.UI.WebControls
 			get {
 				if (updateParameters == null) {
 					updateParameters = new ParameterCollection ();
-					updateParameters.ParametersChanged += new EventHandler (OnParametersChanged); 
 				}
 				return updateParameters;
 			}

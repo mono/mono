@@ -583,7 +583,7 @@ namespace System.Web.UI.WebControls {
 		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
 		[EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public ParameterCollection DeleteParameters {
-			get { return GetParameterCollection (ref deleteParameters, false); }
+			get { return GetParameterCollection (ref deleteParameters, false, false); }
 		}
 
 		// LAME SPEC: MSDN says value should be saved in ViewState but tests show otherwise.
@@ -597,7 +597,7 @@ namespace System.Web.UI.WebControls {
 		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
 		[DefaultValueAttribute (null)]
 		public ParameterCollection FilterParameters {
-			get { return GetParameterCollection (ref filterParameters, true); }
+			get { return GetParameterCollection (ref filterParameters, true, true); }
 		}
 
 		// LAME SPEC: MSDN says value should be saved in ViewState but tests show otherwise.
@@ -618,7 +618,7 @@ namespace System.Web.UI.WebControls {
 		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
 		[DefaultValueAttribute (null)]
 		public ParameterCollection InsertParameters {
-			get { return GetParameterCollection (ref insertParameters, false); }
+			get { return GetParameterCollection (ref insertParameters, false, false); }
 		}
 
 		protected bool IsTrackingViewState {
@@ -648,7 +648,7 @@ namespace System.Web.UI.WebControls {
 		}
 		
 		public ParameterCollection SelectParameters {
-			get { return GetParameterCollection (ref selectParameters, true); }
+			get { return GetParameterCollection (ref selectParameters, true, true); }
 		}
 
 		// LAME SPEC: MSDN says value should be saved in ViewState but tests show otherwise.
@@ -676,7 +676,7 @@ namespace System.Web.UI.WebControls {
 		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
 		[DefaultValueAttribute (null)]
 		public ParameterCollection UpdateParameters {
-			get { return GetParameterCollection (ref updateParameters, false); }
+			get { return GetParameterCollection (ref updateParameters, false, false); }
 		}
 		
 		void ParametersChanged (object source, EventArgs args)
@@ -684,13 +684,14 @@ namespace System.Web.UI.WebControls {
 			OnDataSourceViewChanged (EventArgs.Empty);
 		}
 		
-		ParameterCollection GetParameterCollection (ref ParameterCollection output, bool propagateTrackViewState)
+		ParameterCollection GetParameterCollection (ref ParameterCollection output, bool propagateTrackViewState, bool subscribeChanged)
 		{
 			if (output != null)
 				return output;
 			
 			output = new ParameterCollection ();
-			output.ParametersChanged += new EventHandler (ParametersChanged);
+			if(subscribeChanged)
+				output.ParametersChanged += new EventHandler (ParametersChanged);
 			
 			if (IsTrackingViewState && propagateTrackViewState)
 				((IStateManager) output).TrackViewState ();

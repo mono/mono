@@ -140,11 +140,8 @@ namespace System.Web.UI.WebControls {
 
 		void OnPageLoadComplete (object sender, EventArgs e)
 		{
-			DeleteParameters.UpdateValues (Context, this);
 			FilterParameters.UpdateValues (Context, this);
-			InsertParameters.UpdateValues (Context, this);
 			SelectParameters.UpdateValues (Context, this);
-			UpdateParameters.UpdateValues (Context, this);
 		}
 
 		protected override void LoadViewState (object savedState)

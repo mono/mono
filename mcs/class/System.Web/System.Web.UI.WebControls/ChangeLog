@@ -1,3 +1,12 @@
+2007-03-22 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* ObjectDataSource.cs:
+	* ObjectDataSourceView.cs:
+	* SqlDataSource.cs:
+	* SqlDataSourceView.cs:
+	fixed flow: changes in Insert/Update/DeleteParameters does not 
+	cause DataSourceViewChanged event.				
+
 2007-03-20 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* BaseDataBoundControl.cs: fix as per MSDN - the property is set
