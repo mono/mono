@@ -276,7 +276,9 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 
 		[Test]
+#if ONLY_1_1
 		[ExpectedException (typeof (NotSupportedException))]
+#endif
 		public void FlushFinalBlockReadStream () 
 		{
 			cs = new CryptoStream (readStream, encryptor, CryptoStreamMode.Read);
@@ -299,7 +301,11 @@ namespace MonoTests.System.Security.Cryptography {
 
 		[Test]
 		// LAMESPEC or MS BUG [ExpectedException (typeof (ObjectDisposedException))]
+#if NET_2_0
+		[ExpectedException (typeof (NotSupportedException))]
+#else
 		[ExpectedException (typeof (ArgumentNullException))]
+#endif
 		public void FlushFinalBlock_Disposed () 
 		{
 			// do no corrupt writeStream in further tests
@@ -312,7 +318,9 @@ namespace MonoTests.System.Security.Cryptography {
 
 		[Test]
 		// LAMESPEC or MS BUG [ExpectedException (typeof (ObjectDisposedException))]
+#if ONLY_1_1
 		[ExpectedException (typeof (ArgumentNullException))]
+#endif
 		public void Read_Disposed () 
 		{
 			// do no corrupt readStream in further tests
@@ -320,7 +328,7 @@ namespace MonoTests.System.Security.Cryptography {
 				byte[] buffer = new byte [8];
 				cs = new CryptoStream (s, encryptor, CryptoStreamMode.Read);
 				cs.Clear ();
-				cs.Read (buffer, 0, 8);
+				AssertEquals ("Read from disposed", 0, cs.Read (buffer, 0, 8));
 			}
 		}
 
