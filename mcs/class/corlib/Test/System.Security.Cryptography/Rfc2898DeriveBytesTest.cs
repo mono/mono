@@ -249,6 +249,18 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 
 		[Test]
+		public void GetBytes_Endian ()
+		{
+			string expected = "0B-40-39-04-B9-2B-F1-B9-C0-A0-64-E6-03-0A-5E-42-4B-88-1E-5E-94-8F-77-87-16-A6-C4-9E-E6-C7-6D-38";
+			Rfc2898DeriveBytes pkcs5 = new Rfc2898DeriveBytes ("password", salt, 5);
+			// this will overflow F on multiple bytes (where endianess comes to play)
+			byte[] key = pkcs5.GetBytes (32768);
+			// just check the last 32 bytes
+			string actual = BitConverter.ToString (key, key.Length - 32);
+			AssertEquals ("Endian", expected, actual);
+		}
+
+		[Test]
 		public void RFC3211_TC1 () 
 		{
 			byte[] expected = { 0xd1, 0xda, 0xa7, 0x86, 0x15, 0xf2, 0x87, 0xe6 };
