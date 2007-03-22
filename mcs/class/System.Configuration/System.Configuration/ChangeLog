@@ -1,3 +1,7 @@
+2007-03-22  Konstantin Triger <kostat@mainsoft.com>
+
+	* ConfigInfo.cs: should be able instantiate types with private ctors.
+
 2007-03-19  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* ConfigurationSectionCollection.cs,

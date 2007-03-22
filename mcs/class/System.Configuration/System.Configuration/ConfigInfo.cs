@@ -48,7 +48,7 @@ namespace System.Configuration {
 		public virtual object CreateInstance ()
 		{
 			if (Type == null) Type = ConfigHost.GetConfigType (TypeName, true);
-			return Activator.CreateInstance (Type);
+			return Activator.CreateInstance (Type, true);
 		}
 		
 		public string XPath {
