@@ -7,7 +7,7 @@
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 // Copyright (C) Tim Coleman, 2004
-// Copyright (C) 2004-2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -232,7 +232,11 @@ public class CryptoConfig {
 
 	private static void Initialize () 
 	{
+#if NET_2_0
 		Hashtable algorithms = new Hashtable (new CaseInsensitiveHashCodeProvider (), new CaseInsensitiveComparer ());
+#else
+		Hashtable algorithms = new Hashtable ();
+#endif
 		// see list @ http://msdn.microsoft.com/library/en-us/cpref/html/
 		// frlrfSystemSecurityCryptographyCryptoConfigClassTopic.asp
 		algorithms.Add (nameSHA1a, defaultSHA1);
@@ -336,9 +340,12 @@ public class CryptoConfig {
 		algorithms.Add (oidX509EnhancedKeyUsage, nameX509EnhancedKeyUsage);
 		// note: the default X.509Chain can also be created this way
 		algorithms.Add (nameX509Chain, defaultX509Chain);
-#endif
 
 		Hashtable oid = new Hashtable (new CaseInsensitiveHashCodeProvider (), new CaseInsensitiveComparer ());
+#else
+		Hashtable oid = new Hashtable ();
+#endif
+
 		// comments here are to match with MS implementation (but not with doc)
 		// LAMESPEC: only HashAlgorithm seems to have their OID included
 		oid.Add (defaultSHA1, oidSHA1);
