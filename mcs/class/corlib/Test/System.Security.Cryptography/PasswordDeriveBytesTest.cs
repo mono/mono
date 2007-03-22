@@ -5,7 +5,7 @@
 //	Sebastien Pouliot (sebastien@ximian.com)
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004,2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -662,8 +662,15 @@ public class PasswordDeriveBytesTest {
 		catch (Exception e) {
 			Assert.Fail ("PKCS#5 can't set IterationCount after GetBytes - expected CryptographicException but got " + e.ToString ());
 		}
-		// same thing after Reset
+
 		pd.Reset ();
+#if NET_2_0
+		// finally a useful reset :)
+		pd.HashName = "SHA256";
+		pd.Salt = expectedKey;
+		pd.IterationCount = 10;
+#else
+		// same thing after Reset
 		try {
 			pd.HashName = "SHA256";
 			Assert.Fail ("PKCS#5 can't set HashName after Reset - expected CryptographicException but got none");
@@ -694,6 +701,7 @@ public class PasswordDeriveBytesTest {
 		catch (Exception e) {
 			Assert.Fail ("PKCS#5 can't set IterationCount after Reset - expected CryptographicException but got " + e.ToString ());
 		}
+#endif
 	}
 
 	// FIXME: should we treat this as a bug or as a feature ?

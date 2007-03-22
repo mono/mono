@@ -1,10 +1,12 @@
-2007-03-22  Sebastien Pouliot  <sebastien@ximian.com> 
+2007-03-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CryptoConfigTest.cs: Fix upper/lower/mixed cases tests as they work 
 	only for 2.0.
 	* CryptoStreamTest.cs: Fixed some test cases to work properly on MS
 	fx 2.0.
 	* DSACryptoServiceProviderTest.cs: Normalize line endings.
+	* PasswordDeriveBytesTest.cs: Fix test case that used Reset (as the 
+	method was fixed to reset the state in fx 2.0).
 	* RSACryptoServiceProviderTest.cs: Normalize line endings.
 	* SymmetricAlgorithmTransformTest.cs: Change/split test cases so that
 	they work properly under both MS 1.1 and 2.0. In some cases tests are
