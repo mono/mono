@@ -27,7 +27,7 @@ System.Linq.Expressions/FuncletExpression.cs
 System.Linq.Expressions/InvocationExpression.cs
 System.Linq.Expressions/IStrongBox.cs
 System.Linq.Expressions/LambdaExpression.cs
-System.Linq.Expressions/ListInExpression.cs
+System.Linq.Expressions/ListInitExpression.cs
 System.Linq.Expressions/MemberAssignment.cs
 System.Linq.Expressions/MemberBinding.cs
 System.Linq.Expressions/MemberBindingType.cs
