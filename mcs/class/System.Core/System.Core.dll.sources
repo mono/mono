@@ -20,6 +20,7 @@ System.Linq.Expressions/ConstantExpression.cs
 System.Linq.Expressions/ExecutionScope.cs
 System.Linq.Expressions/Expression.cs
 System.Linq.Expressions/Expression_T.cs
+System.Linq.Expressions/ExpressionCompiler.cs
 System.Linq.Expressions/ExpressionType.cs
 System.Linq.Expressions/ExpressionUtil.cs
 System.Linq.Expressions/Funclet.cs
