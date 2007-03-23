@@ -61,7 +61,7 @@ namespace System.Linq.Expressions
             if (en == null)
                 return new ReadOnlyCollection<MemberBinding>(new MemberBinding[0]);
             
-            List<MemberBindings> list = new List<MemberBindings>(en);
+            List<MemberBinding> list = new List<MemberBinding>(en);
             return new ReadOnlyCollection<MemberBinding>(list);
         }
 
@@ -70,7 +70,7 @@ namespace System.Linq.Expressions
             if (en == null)
                 return new ReadOnlyCollection<Expression>(new Expression[0]);
             
-            List<MemberBindings> list = new List<MemberBindings>(en);
+            List<Expression> list = new List<Expression>(en);
             return new ReadOnlyCollection<Expression>(list);
         }
     }
