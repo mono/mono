@@ -1,3 +1,9 @@
+2007-03-27  Marek Safar  <marek.safar@gmail.com>
+
+	* InvocationExpression.cs,
+	* ExpressionType.cs,
+	* ParameterExpression.cs: Updated to match with the latest version.
+
 2007-03-27  Antonello Provenzano  <antonello@deveel.com>
 
 	* ConstantExpression.cs: New file
