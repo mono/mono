@@ -1,3 +1,32 @@
+2007-03-27  Antonello Provenzano  <antonello@deveel.com>
+
+	* ConstantExpression.cs: New file
+	* ConditionalExpression.cs: New file
+	* BinaryExpression.cs: New file
+	* ExecutionScope.cs: New file
+	* Expression.cs: New file
+	* Expression_T.cs: modified to support LambdaExpression .ctor
+	* ExpressionCompiler.cs: New file
+	* ExpressionType.cs: New file
+	* ExpressionUtil.cs: New file
+	* Funclet.cs: New file
+	* FuncletExpression.cs: New file
+	* InvocationExpression.cs: New file
+	* IStrongBox.cs: New file
+	* LambdaExpression.cs: implemented constructor and fields
+	* MemberAssignment.cs: New file
+	* MemberBinding.cs: New file
+	* MemberBindingType.cs: New file
+	* MemberListBinding.cs: New file
+	* MemberMemberBinding.cs: New file
+	* MethodCallExpression.cs: New file
+	* NewArrayExpression.cs: New file
+	* NewExpression.cs: New file
+	* ParameterExpression.cs: extended implementation
+	* StrongBox_T.cs: New file
+	* UnaryExpression.cs: New file
+	* TypeBinaryExpression.cs: New file
+	
 2007-02-16  Marek Safar  <marek.safar@gmail.com>
 
 	* Expression_T.cs: Derives from lambda.

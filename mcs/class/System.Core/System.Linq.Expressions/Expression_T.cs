@@ -18,22 +18,28 @@
 //
 // Authors:
 //        Marek Safar (marek.safar@gmail.com)
+//        Antonello Provenzano  <antonello@deveel.com>
 //
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace System.Linq.Expressions
 {
-        public sealed class Expression<TDelegate> : LambdaExpression
+    public sealed class Expression<TDelegate> : LambdaExpression
+    {
+        #region .ctor
+        internal Expression(Expression body, ReadOnlyCollection<ParameterExpression> parameters)
+            : base(body, typeof(TDelegate), parameters)
         {
-                private Expression ()
-                {
-                }
-                
-                public new TDelegate Compile ()
-                {
-                        throw new NotImplementedException ();
-                }
         }
+        #endregion
+
+
+        public new TDelegate Compile()
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

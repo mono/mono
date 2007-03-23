@@ -1,4 +1,4 @@
-// Permission is hereby granted, free of charge, to any person obtaining
+﻿// Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
 // without limitation the rights to use, copy, modify, merge, publish,
@@ -17,72 +17,43 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 //
 // Authors:
-//        Atsushi Enomoto  <atsushi@ximian.com>
 //        Antonello Provenzano  <antonello@deveel.com>
 //
 
-using System;
-using System.Collections.ObjectModel;
-
 namespace System.Linq.Expressions
 {
-    public class LambdaExpression : Expression
+    public sealed class TypeBinaryExpression : Expression
     {
         #region .ctor
-        internal LambdaExpression(Expression body, Type type, ReadOnlyCollection<ParameterExpression> parameters)
-            : base(ExpressionType.Lambda, type)
+        internal TypeBinaryExpression(ExpressionType nt, Expression expression, Type typeop, Type resultType)
+            : base(nt, resultType)
         {
-            this.body = body;
-            this.parameters = parameters;
+            this.expression = expression;
+            this.typeop = typeop;
         }
         #endregion
 
         #region Fields
-        private Expression body;
-        private ReadOnlyCollection<ParameterExpression> parameters;
+        private Expression expression;
+        private Type typeop;
         #endregion
 
         #region Properties
-        public Expression Body
+        public Expression Expression
         {
-            get { return body; }
+            get { return expression; }
         }
 
-        public ReadOnlyCollection<ParameterExpression> Parameters
+        public Type TypeOperand
         {
-            get { return parameters; }
+            get { return typeop; }
         }
         #endregion
 
         #region Internal Methods
         internal override void BuildString(System.Text.StringBuilder builder)
         {
-            int parc = parameters.Count;
-
-            if (parc > 1)
-                builder.Append("(");
-
-            for (int i = 0; i < parc; i++)
-            {
-                parameters[i].BuildString(builder);
-
-                if (i < parc - 1)
-                    builder.Append(", ");
-            }
-
-            if (parc > 1)
-                builder.Append(")");
-
-            builder.Append(" => ");
-            body.BuildString(builder);
-        }
-        #endregion
-
-        #region Public Methods
-        public Delegate Compile()
-        {
-            //TODO: maybe we should call the ExpressionCompiler here...
-            throw new NotImplementedException();
+            //TODO:
         }
         #endregion
     }

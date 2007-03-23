@@ -1,4 +1,4 @@
-// Permission is hereby granted, free of charge, to any person obtaining
+﻿// Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
 // without limitation the rights to use, copy, modify, merge, publish,
@@ -17,72 +17,60 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 //
 // Authors:
-//        Atsushi Enomoto  <atsushi@ximian.com>
 //        Antonello Provenzano  <antonello@deveel.com>
 //
 
-using System;
 using System.Collections.ObjectModel;
+using System.Text;
 
 namespace System.Linq.Expressions
 {
-    public class LambdaExpression : Expression
+    public sealed class ListInitExpression : Expression
     {
         #region .ctor
-        internal LambdaExpression(Expression body, Type type, ReadOnlyCollection<ParameterExpression> parameters)
-            : base(ExpressionType.Lambda, type)
+        internal ListInitExpression(NewExpression newExpression, ReadOnlyCollection<Expression> expressions)
+            : base(ExpressionType.ListInit, newExpression.Type)
         {
-            this.body = body;
-            this.parameters = parameters;
+            this.newExpression = newExpression;
+            this.expressions = expressions;
         }
         #endregion
 
         #region Fields
-        private Expression body;
-        private ReadOnlyCollection<ParameterExpression> parameters;
+        private ReadOnlyCollection<Expression> expressions;
+        private NewExpression newExpression;
         #endregion
 
         #region Properties
-        public Expression Body
+        public ReadOnlyCollection<Expression> Expressions
         {
-            get { return body; }
+            get { return expressions; }
         }
 
-        public ReadOnlyCollection<ParameterExpression> Parameters
+        public NewExpression NewExpression
         {
-            get { return parameters; }
+            get { return newExpression; }
         }
         #endregion
 
         #region Internal Methods
-        internal override void BuildString(System.Text.StringBuilder builder)
+        internal override void BuildString(StringBuilder builder)
         {
-            int parc = parameters.Count;
+            // we need to build the "new" expression before...
+            newExpression.BuildString(builder);
 
-            if (parc > 1)
-                builder.Append("(");
+            //... and the elements of the list ...
+            builder.Append("{");
 
-            for (int i = 0; i < parc; i++)
+            int exprc = expressions.Count;
+            for (int i = 0; i < exprc; i++)
             {
-                parameters[i].BuildString(builder);
-
-                if (i < parc - 1)
+                expressions[i].BuildString(builder);
+                if (i < expressions.Count - 1)
                     builder.Append(", ");
             }
 
-            if (parc > 1)
-                builder.Append(")");
-
-            builder.Append(" => ");
-            body.BuildString(builder);
-        }
-        #endregion
-
-        #region Public Methods
-        public Delegate Compile()
-        {
-            //TODO: maybe we should call the ExpressionCompiler here...
-            throw new NotImplementedException();
+            builder.Append("}");
         }
         #endregion
     }

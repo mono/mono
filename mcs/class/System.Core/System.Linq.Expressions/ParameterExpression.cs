@@ -18,14 +18,42 @@
 //
 // Authors:
 //        Marek Safar (marek.safar@seznam.cz)
+//        Antonello Provenzano  <antonello@deveel.com>
 //
 
 using System;
-using System.Collections.Generic;
+using System.Text;
 
 namespace System.Linq.Expressions
 {
-        public class ParameterExpression
-        {
+    public class ParameterExpression : Expression
+    {
+        #region .ctor
+        internal ParameterExpression(Type type, string name)
+            : base(ExpressionType.Parameter, type) {
+            this.name = name;
         }
+        #endregion
+
+        #region Fields
+        private string name;
+        #endregion
+
+        #region Properties
+        public string Name
+        {
+            get { return name; }
+        }
+        #endregion
+
+        #region Internal Methods
+        internal override void BuildString(StringBuilder builder)
+        {
+            string param = name;
+            if (param == null)
+                param = "<param>";
+            builder.Append(param);
+        }
+        #endregion
+    }
 }
