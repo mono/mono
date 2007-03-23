@@ -1364,6 +1364,7 @@ namespace System.Windows.Forms
 
 			item_control.Visible = true;
 			item_control.Location = new Point (0, header_control.Height);
+			item_control.Width = ClientRectangle.Width;
 
 			int item_height = GetDetailsItemHeight ();
 			ItemSize = new Size (0, item_height); // We only cache Height for details view

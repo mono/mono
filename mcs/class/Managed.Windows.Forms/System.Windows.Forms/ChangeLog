@@ -1,3 +1,15 @@
+2007-03-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListView.cs: Always set item_control.Width in LayoutDetails
+	if View is Details. Setting it later in CalculateScrollBars
+	in a not-so-corner scenario (the sum of columns width is
+	not bigger than the ListView width when handle is created, and then
+	that sum gets bigger by increasing the width of the columns)
+	causes a very weird recursion path (which shouldn't be happening,
+	since header_control sets it in CalculateScrollBars too). This bug
+	appeared after Chris' fixes for handle created issues, so probably
+	it's related to some handle-creation time.
+
 2007-03-23  Chris Toshok  <toshok@ximian.com>
 
 	* DataGrid.cs (GetVisibleRowCount): increase the row count in the
