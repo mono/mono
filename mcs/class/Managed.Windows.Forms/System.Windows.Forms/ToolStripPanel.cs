@@ -209,6 +209,26 @@ namespace System.Windows.Forms
 		public void EndInit ()
 		{
 		}
+
+		[MonoTODO("Not implemented")]
+		public void Join (ToolStrip toolStripToDrag)
+		{
+		}
+
+		[MonoTODO("Not implemented")]
+		public void Join (ToolStrip toolStripToDrag, int row)
+		{
+		}
+
+		[MonoTODO("Not implemented")]
+		public void Join (ToolStrip toolStripToDrag, Point location)
+		{
+		}
+
+		[MonoTODO("Not implemented")]
+		public void Join (ToolStrip toolStripToDrag, int x, int y)
+		{
+		}
 		
 		public ToolStripPanelRow PointToRow (Point clientLocation)
 		{

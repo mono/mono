@@ -147,6 +147,7 @@ namespace System.Windows.Forms
 		Size minimum_size;
 		Padding margin;
 		private ContextMenuStrip context_menu_strip;
+		Point auto_scroll_offset;
 #endif
 
 		#endregion	// Local Variables
@@ -2002,6 +2003,17 @@ namespace System.Windows.Forms
 		}
 
 #if NET_2_0
+
+		public virtual Point AutoScrollOffset {
+			get {
+				return auto_scroll_offset;
+			}
+
+			set {
+				this.auto_scroll_offset = value;
+			}
+		}
+			
 		// XXX: Implement me!
 		bool auto_size;
 		

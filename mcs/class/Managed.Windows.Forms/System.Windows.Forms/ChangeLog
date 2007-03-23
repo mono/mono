@@ -1,5 +1,9 @@
 2007-03-22  Miguel de Icaza  <miguel@novell.com>
 
+	* ToolStripPanel.cs (Join): added stubs to build PDN3
+
+	* Control.cs (AutoScrollOffset): Add.
+
 	* SystemInformation.cs (MouseWheelScrollDelta): Expose this
 	property, its only implemented for Win32, on X11 it defaults to
 	some hardcoded value.
