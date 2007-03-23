@@ -1,4 +1,8 @@
 
+Fri Mar 23 15:54:23 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: immediate shifted or fix (mono_metadata_user_string assert).
+
 Fri Mar 23 12:53:28 CET 2007 Paolo Molaro <lupus@ximian.com>
 
 	* mini-ppc.c, mini-ppc.h: struct passing ABI fix (bug #77968).
