@@ -465,6 +465,7 @@ namespace System.Linq.Expressions
             throw new NotImplementedException();
         }
 
+/*
         public static LiftExpression Lift(Expression expression, IEnumerable<ParameterExpression> parameters, IEnumerable<Expression> arguments)
         {
             throw new NotImplementedException();
@@ -504,7 +505,7 @@ namespace System.Linq.Expressions
         {
             throw new NotImplementedException();
         }
-
+*/
         public static MemberListBinding ListBind(MemberInfo member, params Expression[] initializers)
         {
             throw new NotImplementedException();
