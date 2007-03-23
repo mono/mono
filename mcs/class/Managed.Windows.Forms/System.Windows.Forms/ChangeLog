@@ -1,3 +1,9 @@
+2007-03-23  Andreia Gaita  <avidigal@novell.com>
+
+	* NumericUpDown.cs: Fix logic so Text and Value properties are not
+	messed with in every method call, but only from DownButton, 
+	UpButton, UpdateEditText() and ValidateText. Fixes #80346
+
 2007-03-23  Chris Toshok  <toshok@ximian.com>
 
 	* DataGridTextBoxColumn.cs (GetFormattedValue): don't try to

@@ -251,7 +251,7 @@ namespace System.Windows.Forms {
 		public decimal Value {
 			get {
 				if (UserEdit)
-					ParseEditText();
+					dvalue = ParseEditText (Text);
 				return dvalue;
 			}
 
@@ -264,7 +264,7 @@ namespace System.Windows.Forms {
 				if (value != dvalue) {
 					dvalue = value;
 					OnValueChanged(EventArgs.Empty);
-					UpdateEditText();
+					Text = UpdateEditText (dvalue);
 				}
 			}
 		}
@@ -273,14 +273,6 @@ namespace System.Windows.Forms {
 		#region Public Instance Methods
 		public void BeginInit() {
 			suppress_validation++;
-		}
-
-		public override void DownButton() {
-			if (UserEdit) {
-				ParseEditText();
-			}
-
-			Value = Math.Max(minimum, unchecked(dvalue - increment));
 		}
 
 		public void EndInit() {
@@ -293,11 +285,21 @@ namespace System.Windows.Forms {
 			return string.Format("{0}, Minimum = {1}, Maximum = {2}", base.ToString(), minimum, maximum);
 		}
 
-		public override void UpButton() {
-			if (UserEdit)
-				ParseEditText();
+		public override void DownButton() {
+			decimal val = dvalue;
+			if (UserEdit) {
+				val = ParseEditText (Text);
+			}
 
-			Value = Math.Min(maximum, unchecked(dvalue + increment));
+			Value = Math.Max(minimum, unchecked(val - increment));
+		}
+
+		public override void UpButton() {
+			decimal val = dvalue;
+			if (UserEdit)
+				val = ParseEditText (Text);
+
+			Value = Math.Min(maximum, unchecked(val + increment));
 		}
 		#endregion	// Public Instance Methods
 
@@ -338,41 +340,48 @@ namespace System.Windows.Forms {
 				eh (this, e);
 		}
 
-		protected void ParseEditText() {
+		protected decimal ParseEditText (string text) {
 			UserEdit = false;
+			decimal ret = dvalue;
 
 			try {
-				string user_edit_text = Text;
+				string user_edit_text = text;
 
 				if (!hexadecimal) {
-					dvalue = decimal.Parse(user_edit_text, CultureInfo.CurrentCulture);
+					ret = decimal.Parse(user_edit_text, CultureInfo.CurrentCulture);
 				} else {
 #if !NET_2_0
-					dvalue = Convert.ToDecimal (Convert.ToInt32 (user_edit_text, 16));
+					ret = Convert.ToDecimal (Convert.ToInt32 (user_edit_text, 16));
 #else
-					dvalue = Convert.ToDecimal (Convert.ToInt32 (user_edit_text, 10));
+					ret = Convert.ToDecimal (Convert.ToInt32 (user_edit_text, 10));
 #endif
 				}
 
-				if (dvalue < minimum) {
-					dvalue = minimum;
+				if (ret < minimum) {
+					ret = minimum;
 				}
 
-				if (dvalue > maximum) {
-					dvalue = maximum;
+				if (ret > maximum) {
+					ret = maximum;
 				}
-
-				OnValueChanged(EventArgs.Empty);
 			}
 			catch {}
+			return ret;
 		}
 
 		protected override void UpdateEditText() {
+			Text = UpdateEditText (ParseEditText (Text));
+		}
+
+		private string UpdateEditText (decimal val) {
 			if (suppress_validation > 0)
-				return;
+				return Text;
+
+			decimal ret = val;
+			string text = Text;
 
 			if (UserEdit)
-				ParseEditText(); // validate user input
+				ret = ParseEditText (text); // parse user input
 
 			if (!hexadecimal) {
 				// "N" and "F" differ only in that "N" includes commas
@@ -390,14 +399,14 @@ namespace System.Windows.Forms {
 				format_string += decimal_places;
 
 				ChangingText = true;
-				Text = dvalue.ToString(format_string, CultureInfo.CurrentCulture);
+				text = ret.ToString(format_string, CultureInfo.CurrentCulture);
 			}
 			else {
 				// Decimal.ToString doesn't know the "X" formatter, and
 				// converting it to an int is narrowing, so do it
 				// manually...
 
-				int[] bits = decimal.GetBits(dvalue);
+				int[] bits = decimal.GetBits(ret);
 
 				bool negative = (bits[3] < 0);
 
@@ -420,12 +429,12 @@ namespace System.Windows.Forms {
 				}
 
 				if (num_chars == 0) {
-					ChangingText = true;
-					Text = "0";
-					return;
+//					ChangingText = true;
+					text = "0";
+					return text;
 				}
 
-				StringBuilder chars = new StringBuilder();
+				StringBuilder chars = new StringBuilder ();
 
 				if (negative)
 					chars.Append('-');
@@ -447,14 +456,14 @@ namespace System.Windows.Forms {
 					}
 				}
 
-				ChangingText = true;
-				Text = chars.ToString();
+//				ChangingText = true;
+				text = chars.ToString();
 			}
+			return text;
 		}
 
 		protected override void ValidateEditText() {
-			ParseEditText();
-			UpdateEditText();
+			Value = ParseEditText (Text);
 		}
 
 #if NET_2_0
