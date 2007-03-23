@@ -326,9 +326,8 @@ namespace System.Windows.Forms
 			if (DBNull.Value.Equals(obj) || obj == null)
 				return NullText;
 			
-			if (format != null && obj as IFormattable != null) {
+			if (format != null && format != String.Empty && obj as IFormattable != null)
 				return ((IFormattable)obj).ToString (format, format_provider);
-			}
 
 			return obj.ToString ();
 

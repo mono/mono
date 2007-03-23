@@ -1,3 +1,8 @@
+2007-03-23  Chris Toshok  <toshok@ximian.com>
+
+	* DataGridTextBoxColumn.cs (GetFormattedValue): don't try to
+	format objects if the format spec is "".  Fixes bug #80889.
+
 2007-03-22  Miguel de Icaza  <miguel@novell.com>
 
 	* ToolStripPanel.cs (Join): added stubs to build PDN3
