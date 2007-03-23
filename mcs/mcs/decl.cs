@@ -144,7 +144,7 @@ namespace Mono.CSharp {
 				if (TypeArguments != null)
 					return new SimpleName (Basename, TypeArguments, Location);
 				else
-				return new SimpleName (Name, Location);
+					return new SimpleName (Name, Location);
 			}
 
 			if (is_double_colon) {
@@ -1732,6 +1732,24 @@ namespace Mono.CSharp {
 			AddMembers (mt, BindingFlags.Instance | BindingFlags.NonPublic, container);
 		}
 
+		void AddMember (MemberTypes mt, BindingFlags bf, IMemberContainer container,
+				string name, MemberInfo member)
+		{
+			// We use a name-based hash table of ArrayList's.
+			ArrayList list = (ArrayList) member_hash [name];
+			if (list == null) {
+				list = new ArrayList ();
+				member_hash.Add (name, list);
+			}
+
+			// When this method is called for the current class, the list will
+			// already contain all inherited members from our base classes.
+			// We cannot add new members in front of the list since this'd be an
+			// expensive operation, that's why the list is sorted in reverse order
+			// (ie. members from the current class are coming last).
+			list.Add (new CacheEntry (container, member, mt, bf));
+		}
+
 		/// <summary>
 		///   Add all members from class `container' with the requested MemberTypes and
 		///   BindingFlags to the cache.  This method is called multiple times with different
@@ -1744,23 +1762,13 @@ namespace Mono.CSharp {
 			foreach (MemberInfo member in members) {
 				string name = member.Name;
 
-				int pos = name.IndexOf ('<');
-				if (pos > 0)
-					name = name.Substring (0, pos);
+				AddMember (mt, bf, container, name, member);
 
-				// We use a name-based hash table of ArrayList's.
-				ArrayList list = (ArrayList) member_hash [name];
-				if (list == null) {
-					list = new ArrayList ();
-					member_hash.Add (name, list);
+				if (member is MethodInfo) {
+					string gname = TypeManager.GetMethodName ((MethodInfo) member);
+					if (gname != name)
+						AddMember (mt, bf, container, gname, member);
 				}
-
-				// When this method is called for the current class, the list will
-				// already contain all inherited members from our base classes.
-				// We cannot add new members in front of the list since this'd be an
-				// expensive operation, that's why the list is sorted in reverse order
-				// (ie. members from the current class are coming last).
-				list.Add (new CacheEntry (container, member, mt, bf));
 			}
 		}
 

@@ -1,3 +1,12 @@
+2007-03-23  Martin Baulig  <martin@ximian.com>
+
+	Fix #81158.
+
+	* decl.cs (MemberCache.AddMembers): Add generic methods both as
+	"Method" and "Method`1".  Normally, a cache lookup is done on the
+	"Method" form (ie. without the generic arity), but this one makes
+	lookups on the full form work as well.
+
 2007-03-22  Raja R Harinath  <rharinath@novell.com>
 
 	* flowanalysis.cs (Reachability): Reorganize slightly, and remove
