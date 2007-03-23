@@ -2428,13 +2428,23 @@ instr			: INSTR_NONE
                           }
 			| INSTR_R bytes_list
                           {
+				byte[] fpdata;
                                 switch ((MiscInstr) $1) {
                                         case MiscInstr.ldc_r4:
-                                                float s = BitConverter.ToSingle ((byte []) $2, 0);
+						fpdata = (byte []) $2;
+						if (!BitConverter.IsLittleEndian) {
+							System.Array.Reverse (fpdata, 0, 4);
+						}
+                                                float s = BitConverter.ToSingle (fpdata, 0);
                                                 codegen.CurrentMethodDef.AddInstr (new LdcInstr ((MiscInstr) $1, s, tokenizer.Location));
                                                 break;
                                         case MiscInstr.ldc_r8:
-                                                double d = BitConverter.ToDouble ((byte []) $2, 0);
+						fpdata = (byte []) $2;
+						if (!BitConverter.IsLittleEndian) {
+							// FIXME: handle the stupid ARM FPA format
+							System.Array.Reverse (fpdata, 0, 8);
+						}
+                                                double d = BitConverter.ToDouble (fpdata, 0);
                                                 codegen.CurrentMethodDef.AddInstr (new LdcInstr ((MiscInstr) $1, d, tokenizer.Location));
                                                 break;
                                 }

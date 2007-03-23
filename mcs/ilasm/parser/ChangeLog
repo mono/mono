@@ -1,3 +1,10 @@
+
+Fri Mar 23 16:52:06 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* ILParser.jay: fix BitConverter use on big endian archs
+	(this was likely the cause of Zoltan's change in r72237
+	which has been reverted in r74485).
+
 2007-01-10  Ankit Jain  <jankit@novell.com>
 
 	* ILParser.jay (GetTypeRef): Use BaseTypeRef.Clone
