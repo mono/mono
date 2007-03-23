@@ -1,4 +1,9 @@
 
+Fri Mar 23 20:25:31 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-codegen.c: make sure the right spill amount is
+	used for fp or integer registers (fixes the float_sub_spill() on ppc).
+
 Fri Mar 23 19:43:35 CET 2007 Paolo Molaro <lupus@ximian.com>
 
 	* mini-ppc.c: fixes for the fp_branch_nan test.
