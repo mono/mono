@@ -17,6 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 //
 // Authors:
+//        Marek Safar (marek.safar@seznam.cz)
 //        Antonello Provenzano  <antonello@deveel.com>
 //
 
