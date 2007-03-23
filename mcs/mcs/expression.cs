@@ -5777,6 +5777,8 @@ namespace Mono.CSharp {
 							
 						for (int j = 0; j < factor; ++j)
 							data [idx + j] = element [j];
+						if (!BitConverter.IsLittleEndian)
+							System.Array.Reverse (data, idx, 4);
 					}
 				} else if (underlying_type == TypeManager.double_type) {
 					if (!(v is Expression)){
@@ -5784,6 +5786,10 @@ namespace Mono.CSharp {
 
 						for (int j = 0; j < factor; ++j)
 							data [idx + j] = element [j];
+
+						// FIXME: Handle the ARM float format.
+						if (!BitConverter.IsLittleEndian)
+							System.Array.Reverse (data, idx, 8);
 					}
 				} else if (underlying_type == TypeManager.char_type){
 					if (!(v is Expression)){
