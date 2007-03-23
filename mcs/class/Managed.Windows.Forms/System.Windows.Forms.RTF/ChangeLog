@@ -1,3 +1,7 @@
+2007-03-21  Jackson Harper  <jackson@ximian.com>
+
+	* RTF.cs: Make sure the image token gets set.
+
 2007-03-18  Jackson Harper  <jackson@ximian.com>
 
 	* RTF.cs:  Added support for metafiles and use the new picture
