@@ -1,14 +1,16 @@
+
+Fri Mar 23 19:43:35 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c: fixes for the fp_branch_nan test.
+
 2007-03-23  Zoltan Varga  <vargaz@gmail.com>
 
-<<<<<<< .mine
 	* basic.cs: Comment out new test which still fails on ia64.
 
-=======
 Fri Mar 23 15:54:23 CET 2007 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c: immediate shifted or fix (mono_metadata_user_string assert).
 
->>>>>>> .r74880
 Fri Mar 23 12:53:28 CET 2007 Paolo Molaro <lupus@ximian.com>
 
 	* mini-ppc.c, mini-ppc.h: struct passing ABI fix (bug #77968).
@@ -9976,6 +9978,7 @@ Mon Apr 7 16:31:34 CEST 2003 Paolo Molaro <lupus@ximian.com>
 	belongs.
 
 	* mini.pc.in: Call this package `mini' for the moment.
+
 
 
 
