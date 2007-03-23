@@ -60,14 +60,18 @@ namespace System.Linq.Expressions
         {
             if (en == null)
                 return new ReadOnlyCollection<MemberBinding>(new MemberBinding[0]);
-            return new ReadOnlyCollection<MemberBinding>(en.ToArray<MemberBinding>());
+            
+            List<MemberBindings> list = new List<MemberBindings>(en);
+            return new ReadOnlyCollection<MemberBinding>(list);
         }
 
         public static ReadOnlyCollection<Expression> GetReadOnlyCollection(IEnumerable<Expression> en)
         {
             if (en == null)
                 return new ReadOnlyCollection<Expression>(new Expression[0]);
-            return new ReadOnlyCollection<Expression>(en.ToArray<Expression>());
+            
+            List<MemberBindings> list = new List<MemberBindings>(en);
+            return new ReadOnlyCollection<Expression>(list);
         }
     }
 }
