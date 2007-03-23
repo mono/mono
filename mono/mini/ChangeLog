@@ -1,3 +1,8 @@
+
+Fri Mar 23 12:53:28 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c, mini-ppc.h: struct passing ABI fix (bug #77968).
+
 2007-03-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* cfold.c (FOLD_BINOP): Cast the result to gint32 to prevent overflow problems
