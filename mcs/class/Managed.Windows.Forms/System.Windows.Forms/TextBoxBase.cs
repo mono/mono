@@ -339,8 +339,8 @@ namespace System.Windows.Forms {
 
 					do {
 						line = document.GetLine (i++);
-						lt.Append (line.text.ToString ());
-					} while (line.soft_break && i <= count);
+						lt.Append (line.TextWithoutEnding ());
+					} while (line.ending == LineEnding.Wrap && i <= count);
 
 					lines.Add (lt.ToString ());	
 				}
@@ -362,21 +362,15 @@ namespace System.Windows.Forms {
 				for (i = 0; i < l; i++) {
 
 					// Don't add the last line if it is just an empty line feed
-					// the line feed is reflected in the previous line's soft_break = false
+					// the line feed is reflected in the previous line's ending 
 					if (i == l - 1 && value [i].Length == 0)
 						break;
 
-					bool carriage_return = false;
-					if (value [i].EndsWith ("\r")) {
-						value [i] = value [i].Substring (0, value [i].Length - 1);
-						carriage_return = true;
-					}
+					LineEnding ending = LineEnding.Rich;
+					if (value [i].EndsWith ("\r"))
+						ending = LineEnding.Hard;
 
-					document.Add(i+1, CaseAdjust(value[i]), alignment, Font, brush);
-					if (carriage_return) {
-						Line line = document.GetLine (i + 1);
-						line.ending = "\r\n";
-					}
+					document.Add (i + 1, CaseAdjust (value [i]), alignment, Font, brush, ending);
 				}
 
 				document.ResumeRecalc (true);
@@ -587,10 +581,8 @@ namespace System.Windows.Forms {
 
 				Line line = null;
 				for (int i = 1; i <= document.Lines; i++) {
-					if (line != null)
-						sb.Append (line.ending);
 					line = document.GetLine (i);
-					sb.Append(line.text.ToString());
+					sb.Append(line.text.ToString ());
 				}
 
 				return sb.ToString();
@@ -1113,8 +1105,8 @@ namespace System.Windows.Forms {
 
 						line = document.CaretLine;
 
-						document.Split (document.CaretLine, document.CaretTag, document.CaretPosition, line.soft_break);
-						line.soft_break = false;
+						document.Split (document.CaretLine, document.CaretTag, document.CaretPosition);
+						line.ending = LineEnding.Rich;
 						OnTextChanged(EventArgs.Empty);
 						document.UpdateView(line, 2, 0);
 

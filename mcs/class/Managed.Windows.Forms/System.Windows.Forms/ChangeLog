@@ -1,3 +1,10 @@
+2007-03-23  Jackson Harper  <jackson@ximian.com>
+
+	* TextControl.cs:
+	* TextBoxBase.cs:
+	* RichTextBox.cs: Preserve line endings in the lines text buffer,
+	also added an enum that represents the line ending type. 
+
 2007-03-23  Andreia Gaita  <avidigal@novell.com>
 
 	* NumericUpDown.cs: Fix logic so Text and Value properties are not

@@ -103,6 +103,14 @@ namespace System.Windows.Forms {
 		CharBackNoWrap      // Move a char backward, but don't wrap onto the previous line
 	}
 
+	internal enum LineEnding {
+		Wrap,    // line wraps to the next line
+		Limp,    // \r
+		Hard,    // \r\n
+		Soft,    // \r\r\n
+		Rich,    // \n
+	}
+	
 	// Being cloneable should allow for nice line and document copies...
 	internal class Line : ICloneable, IComparable {
 		#region	Local Variables
@@ -120,11 +128,10 @@ namespace System.Windows.Forms {
 		internal int			ascent;			// Ascent of the line (ascent of the tallest tag)
 		internal HorizontalAlignment	alignment;		// Alignment of the line
 		internal int			align_shift;		// Pixel shift caused by the alignment
-		internal bool			soft_break;		// Tag is 'broken soft' and continuation from previous line
 		internal int			indent;			// Left indent for the first line
 		internal int			hanging_indent;		// Hanging indent (left indent for all but the first line)
 		internal int			right_indent;		// Right indent for all lines
-		internal string ending;  // The ending of a line, can be "\r\n", "\r", "\n\r", "\n", or empty.  "\n" is default
+		internal LineEnding ending;
 
 
 		// Stuff that's important for the tree
@@ -140,7 +147,7 @@ namespace System.Windows.Forms {
 		#endregion	// Local Variables
 
 		#region Constructors
-		internal Line (Document document)
+		internal Line (Document document, LineEnding ending)
 		{
 			this.document = document; 
 			color = LineColor.Red;
@@ -149,41 +156,50 @@ namespace System.Windows.Forms {
 			parent = null;
 			text = null;
 			recalc = true;
-			soft_break = false;
 			alignment = document.alignment;
 
-			ending = "\n";
+			ending = ending;
 		}
 
-		internal Line(Document document, int LineNo, string Text, Font font, SolidBrush color) : this (document) {
+		internal Line(Document document, int LineNo, string Text, Font font, SolidBrush color, LineEnding ending) : this (document, ending)
+		{
 			space = Text.Length > DEFAULT_TEXT_LEN ? Text.Length+1 : DEFAULT_TEXT_LEN;
 
 			text = new StringBuilder(Text, space);
 			line_no = LineNo;
+			this.ending = ending;
 
 			widths = new float[space + 1];
+
+			
 			tags = new LineTag(this, 1);
 			tags.font = font;
-			tags.color = color;
+			tags.color = color;				
 		}
 
-		internal Line(Document document, int LineNo, string Text, HorizontalAlignment align, Font font, SolidBrush color) : this(document) {
+		internal Line(Document document, int LineNo, string Text, HorizontalAlignment align, Font font, SolidBrush color, LineEnding ending) : this(document, ending)
+		{
 			space = Text.Length > DEFAULT_TEXT_LEN ? Text.Length+1 : DEFAULT_TEXT_LEN;
 
 			text = new StringBuilder(Text, space);
 			line_no = LineNo;
+			this.ending = ending;
 			alignment = align;
 
 			widths = new float[space + 1];
+
+			
 			tags = new LineTag(this, 1);
 			tags.font = font;
 			tags.color = color;
 		}
 
-		internal Line(Document document, int LineNo, string Text, LineTag tag) : this(document) {
+		internal Line(Document document, int LineNo, string Text, LineTag tag, LineEnding ending) : this(document, ending)
+		{
 			space = Text.Length > DEFAULT_TEXT_LEN ? Text.Length+1 : DEFAULT_TEXT_LEN;
 
 			text = new StringBuilder(Text, space);
+			this.ending = ending;
 			line_no = LineNo;
 
 			widths = new float[space + 1];
@@ -311,6 +327,13 @@ namespace System.Windows.Forms {
 		#endregion	// Internal Properties
 
 		#region Internal Methods
+
+		// This doesn't do exactly what you would think, it just pulls of the \n part of the ending
+		internal string TextWithoutEnding ()
+		{
+			return text.ToString (0, text.Length - document.LineEndingLength (ending));
+		}
+
 		// Make sure we always have enoughs space in text and widths
 		internal void Grow(int minimum) {
 			int	length;
@@ -332,12 +355,6 @@ namespace System.Windows.Forms {
 
 				widths = new_widths;
 			}
-		}
-
-		internal void MakeSoft ()
-		{
-			soft_break = true;
-			ending = String.Empty;
 		}
 
 		internal void Streamline(int lines) {
@@ -477,7 +494,7 @@ namespace System.Windows.Forms {
 			this.ascent = 0;		// Reset the ascent for the line
 			tag.shift = 0;
 
-			if (this.soft_break) {
+			if (ending == LineEnding.Wrap) {
 				widths[0] = left_margin + hanging_indent;
 			} else {
 				widths[0] = left_margin + indent;
@@ -511,8 +528,8 @@ namespace System.Windows.Forms {
 
 						pos = wrap_pos;
 						len = text.Length;
-						doc.Split(this, tag, pos, this.soft_break);
-						MakeSoft ();
+						doc.Split(this, tag, pos);
+						ending = LineEnding.Wrap;
 						len = this.text.Length;
 						
 						retval = true;
@@ -523,15 +540,15 @@ namespace System.Windows.Forms {
 						// Make sure to set the last width of the line before wrapping
 						widths [pos + 1] = widths [pos] + w;
 
-						doc.Split(this, tag, pos, this.soft_break);
-						MakeSoft ();
+						doc.Split(this, tag, pos);
+						ending = LineEnding.Wrap;
 						len = this.text.Length;
 						retval = true;
 						wrapped = true;
 					}
 				}
 
-				// Contract all soft lines that follow back into our line
+				// Contract all wrapped lines that follow back into our line
 				if (!wrapped) {
 					pos++;
 
@@ -539,7 +556,7 @@ namespace System.Windows.Forms {
 
 					if (pos == len) {
 						line = doc.GetLine(this.line_no + 1);
-						if ((line != null) && soft_break) {
+						if ((line != null) && ending == LineEnding.Wrap) {
 							// Pull the two lines together
 							doc.Combine(this.line_no, this.line_no + 1);
 							len = this.text.Length;
@@ -621,7 +638,7 @@ namespace System.Windows.Forms {
 		public object Clone() {
 			Line	clone;
 
-			clone = new Line (document);
+			clone = new Line (document, ending);
 
 			clone.text = text;
 
@@ -639,7 +656,7 @@ namespace System.Windows.Forms {
 		internal object CloneLine() {
 			Line	clone;
 
-			clone = new Line (document);
+			clone = new Line (document, ending);
 
 			clone.text = text;
 
@@ -811,7 +828,8 @@ namespace System.Windows.Forms {
 		#endregion	// Local Variables
 
 		#region Constructors
-		internal Document(TextBoxBase owner) {
+		internal Document (TextBoxBase owner)
+		{
 			lines = 0;
 
 			this.owner = owner;
@@ -822,7 +840,7 @@ namespace System.Windows.Forms {
 			recalc_pending = false;
 
 			// Tree related stuff
-			sentinel = new Line (this);
+			sentinel = new Line (this, LineEnding.Wrap);
 			sentinel.color = LineColor.Black;
 
 			document = sentinel;
@@ -831,9 +849,7 @@ namespace System.Windows.Forms {
 			owner.HandleCreated += new EventHandler(owner_HandleCreated);
 			owner.VisibleChanged += new EventHandler(owner_VisibleChanged);
 
-			Add(1, "", owner.Font, ThemeEngine.Current.ResPool.GetSolidBrush(owner.ForeColor));
-			Line l = GetLine (1);
-			l.MakeSoft ();
+			Add (1, String.Empty, owner.Font, ThemeEngine.Current.ResPool.GetSolidBrush (owner.ForeColor), LineEnding.Wrap);
 
 			undo = new UndoManager (this);
 
@@ -1075,8 +1091,8 @@ namespace System.Windows.Forms {
 
 			total = 1;
 
-			Console.Write("Line {0} [# {1}], Y: {2}, soft: {3},  Text: '{4}'",
-					line.line_no, line.GetHashCode(), line.Y, line.soft_break,
+			Console.Write("Line {0} [# {1}], Y: {2}, ending style: {3},  Text: '{4}'",
+					line.line_no, line.GetHashCode(), line.Y, line.ending,
 					line.text != null ? line.text.ToString() : "undefined");
 
 			if (line.left == sentinel) {
@@ -1444,9 +1460,7 @@ namespace System.Windows.Forms {
 			lines = 0;
 
 			// We always have a blank line
-			Add(1, "", owner.Font, ThemeEngine.Current.ResPool.GetSolidBrush(owner.ForeColor));
-			Line l = GetLine (1);
-			l.MakeSoft ();
+			Add (1, String.Empty, owner.Font, ThemeEngine.Current.ResPool.GetSolidBrush (owner.ForeColor), LineEnding.Wrap);
 			
 			this.RecalculateDocument(owner.CreateGraphicsInternal());
 			PositionCaret(0, 0);
@@ -1886,8 +1900,8 @@ namespace System.Windows.Forms {
 
 		internal void DumpDoc ()
 		{
-			Console.WriteLine ("<doc>");
-			for (int i = 1; i < lines; i++) {
+			Console.WriteLine ("<doc lines='{0}'>", lines);
+			for (int i = 1; i <= lines ; i++) {
 				Line line = GetLine (i);
 				Console.WriteLine ("<line no='{0}'>", line.line_no);
 
@@ -2067,46 +2081,87 @@ namespace System.Windows.Forms {
 					}
 					tag = tag.next;
 				}
+
 				line_no++;
 			}
 		}
 
-		// these are the patterns I am allowing:  "\r\r\n", "\r\n", "\n", "\r"
-		internal int GetLineEnding (string line, int start, out string ending)
+		internal int GetLineEnding (string line, int start, out LineEnding ending)
 		{
 			int res;
 
 			res = line.IndexOf ('\r', start);
 			if (res != -1) {
 				if (res + 2 < line.Length && line [res + 1] == '\r' && line [res + 2] == '\n') {
-					ending = "\r\r\n";
+					ending = LineEnding.Soft;
 					return res;
 				}
 				if (res + 1 < line.Length && line [res + 1] == '\n') {
-					ending = "\r\n";
+					ending = LineEnding.Hard;
 					return res;
 				}
-				ending = "\r";
+				ending = LineEnding.Limp;
 				return res;
 			}
 
 			res = line.IndexOf ('\n', start);
 			if (res != -1) {
-				ending = "\n";
+				ending = LineEnding.Rich;
 				return res;
 			}
 
-			ending = String.Empty;
+			ending = LineEnding.Wrap;
 			return line.Length;
 		}
 
+		internal int LineEndingLength (LineEnding ending)
+		{
+			int res = 0;
+
+			switch (ending) {
+			case LineEnding.Limp:
+			case LineEnding.Rich:
+				res = 1;
+				break;
+			case LineEnding.Hard:
+				res = 2;
+				break;
+			case LineEnding.Soft:
+				res = 3;
+				break;
+			}
+
+			return res;
+		}
+
+		internal string LineEndingToString (LineEnding ending)
+		{
+			string res = String.Empty;
+			switch (ending) {
+			case LineEnding.Limp:
+				res = "\r";
+				break;
+			case LineEnding.Hard:
+				res = "\r\n";
+				break;
+			case LineEnding.Soft:
+				res = "\r\r\n";
+				break;
+			case LineEnding.Rich:
+				res = "\n";
+				break;
+			}
+			return res;
+		}
+
+		
 		// Insert multi-line text at the given position; use formatting at insertion point for inserted text
 		internal void Insert(Line line, int pos, bool update_caret, string s) {
 			int break_index;
 			int base_line;
 			int old_line_count;
 			int count = 1;
-			string ending;
+			LineEnding ending;
 			LineTag tag = LineTag.FindTag (line, pos);
 			
 			SuspendRecalc ();
@@ -2119,29 +2174,25 @@ namespace System.Windows.Forms {
 			// Bump the text at insertion point a line down if we're inserting more than one line
 			if (break_index != s.Length) {
 				Split (line, pos);
-				line.soft_break = false;
 				line.ending = ending;
 				// Remainder of start line is now in base_line + 1
 			}
 
-			InsertString (line, pos, s.Substring (0, break_index));
+			InsertString (line, pos, s.Substring (0, break_index + LineEndingLength (ending)));
 
-			break_index += ending.Length;
+			break_index += LineEndingLength (ending);
 			while (break_index < s.Length) {
-				bool soft = false;
 				int next_break = GetLineEnding (s, break_index, out ending);
-				string line_text = s.Substring (break_index, next_break - break_index);
+				string line_text = s.Substring (break_index, next_break - break_index +
+						LineEndingLength (ending));
 
-				Add (base_line + count, line_text, line.alignment, tag.font, tag.color);
+				Add (base_line + count, line_text, line.alignment, tag.font, tag.color, ending);
 
 				Line last = GetLine (base_line + count);
 				last.ending = ending;
 
-				if (soft)
-					last.MakeSoft ();
-
 				count++;
-				break_index = next_break + ending.Length;
+				break_index = next_break + LineEndingLength (ending);
 			}
 
 			ResumeRecalc (true);
@@ -2503,7 +2554,6 @@ namespace System.Windows.Forms {
 			last = first.tags;
 
 			// Maintain the line ending style
-			first.soft_break = second.soft_break;
 			first.ending = second.ending;
 
 			while (last.next != null) {
@@ -2579,20 +2629,19 @@ namespace System.Windows.Forms {
 
 			line = GetLine(LineNo);
 			tag = LineTag.FindTag(line, pos);
-			Split(line, tag, pos, false);
+			Split(line, tag, pos);
 		}
 
 		internal void Split(Line line, int pos) {
 			LineTag	tag;
 
 			tag = LineTag.FindTag(line, pos);
-			Split(line, tag, pos, false);
+			Split(line, tag, pos);
 		}
 
 		///<summary>Split line at given tag and position into two lines</summary>
-		///<param name="soft">True if the split should be marked as 'soft', indicating that it can be contracted 
 		///if more space becomes available on previous line</param>
-		internal void Split(Line line, LineTag tag, int pos, bool soft) {
+		internal void Split(Line line, LineTag tag, int pos) {
 			LineTag	new_tag;
 			Line	new_line;
 			bool	move_caret;
@@ -2617,13 +2666,9 @@ namespace System.Windows.Forms {
 
 			// cover the easy case first
 			if (pos == line.text.Length) {
-				Add(line.line_no + 1, "", line.alignment, tag.font, tag.color);
+				Add (line.line_no + 1, String.Empty, line.alignment, tag.font, tag.color, line.ending);
 
-				new_line = GetLine(line.line_no + 1);
-
-				new_line.ending = line.ending;
-				if (soft)
-					new_line.MakeSoft ();
+				new_line = GetLine (line.line_no + 1);
 				
 				if (move_caret) {
 					caret.line = new_line;
@@ -2646,15 +2691,10 @@ namespace System.Windows.Forms {
 			}
 
 			// We need to move the rest of the text into the new line
-			Add (line.line_no + 1, line.text.ToString (pos, line.text.Length - pos), line.alignment, tag.font, tag.color);
+			Add (line.line_no + 1, line.text.ToString (pos, line.text.Length - pos), line.alignment, tag.font, tag.color, line.ending);
 
 			// Now transfer our tags from this line to the next
 			new_line = GetLine(line.line_no + 1);
-
-			new_line.ending = line.ending;
-			new_line.soft_break = soft;
-			if (soft)
-				new_line.MakeSoft ();
 
 			line.recalc = true;
 			new_line.recalc = true;
@@ -2731,11 +2771,13 @@ namespace System.Windows.Forms {
 
 		// Adds a line of text, with given font.
 		// Bumps any line at that line number that already exists down
-		internal void Add(int LineNo, string Text, Font font, SolidBrush color) {
-			Add(LineNo, Text, alignment, font, color);
+		internal void Add (int LineNo, string Text, Font font, SolidBrush color, LineEnding ending)
+		{
+			Add (LineNo, Text, alignment, font, color, ending);
 		}
 
-		internal void Add(int LineNo, string Text, HorizontalAlignment align, Font font, SolidBrush color) {
+		internal void Add (int LineNo, string Text, HorizontalAlignment align, Font font, SolidBrush color, LineEnding ending)
+		{
 			Line	add;
 			Line	line;
 			int	line_no;
@@ -2750,7 +2792,7 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			add = new Line (this, LineNo, Text, align, font, color);
+			add = new Line (this, LineNo, Text, align, font, color, ending);
 
 			line = document;
 			while (line != sentinel) {
@@ -2877,7 +2919,7 @@ namespace System.Windows.Forms {
 				line1.line_no = line3.line_no;
 				line1.recalc = line3.recalc;
 				line1.right_indent = line3.right_indent;
-				line1.soft_break = line3.soft_break;
+				line1.ending = line3.ending;
 				line1.space = line3.space;
 				line1.tags = line3.tags;
 				line1.text = line3.text;
@@ -3494,7 +3536,7 @@ namespace System.Windows.Forms {
 				line = GetLine(i);
 
 				start = chars;
-				chars += line.text.Length + (line.soft_break ? 0 : crlf_size);
+				chars += line.text.Length + LineEndingLength (line.ending);
 
 				if (index <= chars) {
 					// we found the line
@@ -3548,7 +3590,7 @@ namespace System.Windows.Forms {
 			// Count the lines in the middle
 
 			for (i = 1; i < line.line_no; i++) {
-				length += GetLine(i).text.Length + (line.soft_break ? 0 : crlf_size);
+				length += GetLine(i).text.Length + LineEndingLength (line.ending);
 			}
 
 			length += pos;
@@ -3579,7 +3621,7 @@ namespace System.Windows.Forms {
 				if (start < end) {
 					for (i = start; i < end; i++) {
 						Line line = GetLine (i);
-						length += line.text.Length + (line.soft_break ? 0 : crlf_size);
+						length += line.text.Length + LineEndingLength (line.ending);
 					}
 				}
 
@@ -3652,7 +3694,7 @@ namespace System.Windows.Forms {
 		}
 
 		internal Line ParagraphStart(Line line) {
-			while (line.soft_break) {
+			while (line.ending == LineEnding.Wrap) {
 				line = GetLine(line.line_no - 1);
 			}
 			return line;
@@ -3661,9 +3703,9 @@ namespace System.Windows.Forms {
 		internal Line ParagraphEnd(Line line) {
 			Line    l;
    
-			while (line.soft_break) {
+			while (line.ending == LineEnding.Wrap) {
 				l = GetLine(line.line_no + 1);
-				if ((l == null) || (!l.soft_break)) {
+				if ((l == null) || (l.ending != LineEnding.Wrap)) {
 					break;
 				}
 				line = l;
@@ -3968,7 +4010,7 @@ namespace System.Windows.Forms {
 				if (multiline)
 					offset += line.height;
 				else
-					offset += (int) line.widths [line.text.Length] + 2;
+					offset += (int) line.widths [line.text.Length];
 
 				if (line_no > lines) {
 					break;
@@ -4147,7 +4189,7 @@ namespace System.Windows.Forms {
 						Line	prev_line;
 
 						prev_line = GetLine(line_no - 1);
-						if (prev_line.soft_break) {
+						if (prev_line.ending == LineEnding.Wrap) {
 							if (IsWordSeparator(prev_line.text[prev_line.text.Length - 1])) {
 								word = true;
 							} else {
@@ -4231,7 +4273,7 @@ namespace System.Windows.Forms {
 
 				if (word_option) {
 					// Mark that we just saw a word boundary
-					if (!line.soft_break) {
+					if (line.ending != LineEnding.Wrap) {
 						word = true;
 					}
 
@@ -4377,6 +4419,26 @@ namespace System.Windows.Forms {
 		}
 	}
 
+	internal class EndTag : LineTag {
+
+		private LineEnding ending;
+
+		internal EndTag (Line line, int start, LineEnding ending) : base (line, start)
+		{
+			this.ending = ending;
+		}
+
+		internal virtual SizeF SizeOfPosition (Graphics dc, int pos)
+		{
+			return dc.MeasureString ("A", font, 10000, Document.string_format);
+		}
+
+		internal virtual void Draw (Graphics dc, Brush brush, float x, float y, int start, int end, string text)
+		{
+			dc.DrawString (line.document.LineEndingToString (ending), font, brush, x, y, StringFormat.GenericTypographic);
+		}
+	}
+
 	internal class LineTag {
 		#region	Local Variables;
 		// Payload; formatting
@@ -4465,6 +4527,7 @@ namespace System.Windows.Forms {
 
 		internal virtual void Draw (Graphics dc, Brush brush, float x, float y, int start, int end, string text)
 		{
+			Console.WriteLine ("DRAWING:  {0}  {1}  {2}", text, start, end);
 			dc.DrawString (text.Substring (start, end), font, brush, x, y, StringFormat.GenericTypographic);
 		}
 
@@ -5098,7 +5161,7 @@ namespace System.Windows.Forms {
 			int	end;
 			int	tag_start;
 
-			line = new Line (start_line.document);
+			line = new Line (start_line.document, start_line.ending);
 			ret = line;
 
 			for (int i = start_line.line_no; i <= end_line.line_no; i++) {
@@ -5153,10 +5216,10 @@ namespace System.Windows.Forms {
 				}
 
 				if ((i + 1) <= end_line.line_no) {
-					line.soft_break = current.soft_break;
+					line.ending = current.ending;
 
 					// Chain them (we use right/left as next/previous)
-					line.right = new Line (start_line.document);
+					line.right = new Line (start_line.document, start_line.ending);
 					line.right.left = line;
 					line = line.right;
 				}

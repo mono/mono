@@ -1501,7 +1501,7 @@ namespace System.Windows.Forms {
 			rtf_chars += rtf_line.Length;
 
 			if (rtf_cursor_x == 0) {
-				document.Add(rtf_cursor_y, rtf_line.ToString(), rtf_rtfalign, font, rtf_color);
+				document.Add(rtf_cursor_y, rtf_line.ToString(), rtf_rtfalign, font, rtf_color, LineEnding.Wrap);
 				if (rtf_par_line_left_indent != 0) {
 					Line line = document.GetLine (rtf_cursor_y);
 					line.indent = rtf_par_line_left_indent;
@@ -1826,7 +1826,7 @@ namespace System.Windows.Forms {
 					tag = tag.next;
 				}
 				if (pos >= line.text.Length) {
-					if (!line.soft_break) {
+					if (line.ending != LineEnding.Wrap) {
 						sb.Append("\\par\n");
 					}
 				}
