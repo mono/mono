@@ -4527,7 +4527,6 @@ namespace System.Windows.Forms {
 
 		internal virtual void Draw (Graphics dc, Brush brush, float x, float y, int start, int end, string text)
 		{
-			Console.WriteLine ("DRAWING:  {0}  {1}  {2}", text, start, end);
 			dc.DrawString (text.Substring (start, end), font, brush, x, y, StringFormat.GenericTypographic);
 		}
 
