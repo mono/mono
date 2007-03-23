@@ -1,3 +1,10 @@
+2007-03-23  Chris Toshok  <toshok@ximian.com>
+
+	* DataGrid.cs (GetVisibleRowCount): increase the row count in the
+	case where there's an add row, just so we don't end up in a case
+	where it's not displayed (this happens when the row is partially
+	obscured).  Fixes bug #79574.
+
 2007-03-23  Jackson Harper  <jackson@ximian.com>
 
 	* TextControl.cs:

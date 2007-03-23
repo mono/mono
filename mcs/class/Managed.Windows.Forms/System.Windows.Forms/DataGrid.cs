@@ -3083,7 +3083,7 @@ namespace System.Windows.Forms
 				rows_height += rows[r].Height;
 			}
 
-			if (r < rows.Length - 1)
+			if (r <= rows.Length - 1)
 				r ++;
 
 			return r - FirstVisibleRow;
