@@ -63,25 +63,23 @@ namespace System.Net {
 
 		private static int SwapInt (int number)
 		{
-			byte b0 = (byte) ((number >> 24) & 0xFF);
-			byte b1 = (byte) ((number >> 16) & 0xFF);
-			byte b2 = (byte) ((number >> 8) & 0xFF);
-			byte b3 = (byte) (number & 0xFF);
-			return b0 + (b1 << 8) + (b2 << 16) + (b3 << 24);
+			return ((number >> 24) & 0xFF)
+				+ (((number >> 16) & 0xFF) << 8)
+				+ (((number >> 8) & 0xFF) << 16)
+				+ ((number & 0xFF) << 24);
 		}
 
-		private static long SwapLong (long number)
-		{
-			byte b0 = (byte) ((number >> 56) & 0xFF);
-			byte b1 = (byte) ((number >> 48) & 0xFF);
-			byte b2 = (byte) ((number >> 40) & 0xFF);
-			byte b3 = (byte) ((number >> 32) & 0xFF);
-			byte b4 = (byte) ((number >> 24) & 0xFF);
-			byte b5 = (byte) ((number >> 16) & 0xFF);
-			byte b6 = (byte) ((number >> 8) & 0xFF);
-			byte b7 = (byte) (number & 0xFF);
-			return (long) b0 + ((long) b1 << 8) + ((long) b2 << 16) + ((long) b3 << 24) + ((long) b4 << 32) + ((long) b5 << 40) + ((long) b6 << 48) + ((long) b7 << 56);
-		}
+        private static long SwapLong(long number)
+        {
+            return (((number >> 56) & 0xFF)
+                + (((number >> 48) & 0xFF) << 8)
+                + (((number >> 40) & 0xFF) << 16)
+                + (((number >> 32) & 0xFF) << 24)
+                + (((number >> 24) & 0xFF) << 32)
+                + (((number >> 16) & 0xFF) << 40)
+                + (((number >> 8) & 0xFF) << 48)
+                + ((number & 0xFF) << 56));
+        }
 
 		public static short HostToNetworkOrder(short host) {
 			if (!BitConverter.IsLittleEndian)
