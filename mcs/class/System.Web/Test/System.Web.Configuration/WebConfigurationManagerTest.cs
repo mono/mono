@@ -53,6 +53,7 @@ namespace MonoTests.System.Web.Configuration {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void OpenMachineConfiguration_1 ()
 		{
 			_Configuration c1 = WebConfigurationManager.OpenMachineConfiguration ();
@@ -62,6 +63,7 @@ namespace MonoTests.System.Web.Configuration {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void OpenMachineConfiguration_2 ()
 		{
 			_Configuration c1 = WebConfigurationManager.OpenMachineConfiguration ("configTest");
@@ -71,6 +73,7 @@ namespace MonoTests.System.Web.Configuration {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void OpenMachineConfiguration_serverNull ()
 		{
 			_Configuration c1 = WebConfigurationManager.OpenMachineConfiguration ("configTest", null);
@@ -80,7 +83,7 @@ namespace MonoTests.System.Web.Configuration {
 		}
 
 		[Test]
-        [Category ("NotWorking")]
+		[Category ("NotWorking")]
 		public void OpenWebConfiguration_null ()
 		{
 			_Configuration web = WebConfigurationManager.OpenWebConfiguration (null);
@@ -91,7 +94,7 @@ namespace MonoTests.System.Web.Configuration {
 		}
 
 		[Test]
-        [Category ("NotWorking")]
+		[Category ("NotWorking")]
 		public void OpenWebConfiguration_empty ()
 		{
 			_Configuration web1 = WebConfigurationManager.OpenWebConfiguration (null);
@@ -103,7 +106,7 @@ namespace MonoTests.System.Web.Configuration {
 		}
 
 		[Test]
-        [Category ("NotWorking")]
+		[Category ("NotWorking")]
 		public void OpenWebConfiguration_siteNull ()
 		{
 			_Configuration web = WebConfigurationManager.OpenWebConfiguration ("", null);
@@ -114,7 +117,7 @@ namespace MonoTests.System.Web.Configuration {
 		}
 
 		[Test]
-        [Category ("NotWorking")]
+		[Category ("NotWorking")]
 		[ExpectedException (typeof (ConfigurationErrorsException))]
 		public void OpenWebConfiguration_siteNull2_absolutePath ()
 		{
@@ -122,7 +125,7 @@ namespace MonoTests.System.Web.Configuration {
 		}
 
 		[Test]
-        [Category ("NotWorking")]
+		[Category ("NotWorking")]
 		public void OpenWebConfiguration_siteNull2 ()
 		{
 			_Configuration web = WebConfigurationManager.OpenWebConfiguration ("", null, "clientTest");
@@ -133,14 +136,14 @@ namespace MonoTests.System.Web.Configuration {
 		}
 
 		[Test]
-        [Category ("NotWorking")]
+		[Category ("NotWorking")]
 		public void GetWebApplicationSection_1 ()
 		{
 			Assert.IsNotNull (WebConfigurationManager.GetWebApplicationSection ("system.web/clientTarget"), "A1");
 		}
 
 		[Test]
-        [Category ("NotWorking")]
+		[Category ("NotWorking")]
 		public void GetSection_1 ()
 		{
 			object sect1 = WebConfigurationManager.GetSection ("system.web/clientTarget");
@@ -158,7 +161,7 @@ namespace MonoTests.System.Web.Configuration {
 		}
 
 		[Test]
-        [Category ("NotWorking")]
+		[Category ("NotWorking")]
 		[ExpectedException (typeof (InvalidOperationException))]
 		// InvalidOperationException (WebConfigurationManager.GetSection(sectionName,path) can only be called from within a web application.)
 		// thrown from WebConfigurationManager.GetSection
@@ -182,7 +185,7 @@ namespace MonoTests.System.Web.Configuration {
 		}
 
 		[Test]
-        [Category ("NotWorking")]
+		[Category ("NotWorking")]
 		public void OpenMappedMachineConfiguration ()
 		{
 			ConfigurationFileMap map = new ConfigurationFileMap ();
@@ -194,7 +197,7 @@ namespace MonoTests.System.Web.Configuration {
 		}
 
 		[Test]
-        [Category ("NotWorking")]
+		[Category ("NotWorking")]
 		[ExpectedException (typeof (ConfigurationErrorsException))]
 		// same stack trace for OpenWebConfiguration_siteNull2_absolutePath.
 		public void OpenMappedMachineConfiguration_absolute ()

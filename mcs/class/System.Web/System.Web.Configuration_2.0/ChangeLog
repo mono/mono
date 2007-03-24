@@ -1,3 +1,8 @@
+2007-03-24  Marek Habersack  <mhabersack@novell.com>
+
+	* WebConfigurationHost.cs: allow MachineToApplication definition
+	for config paths that equal the domain virtual app directory.
+
 2007-03-22  Adar Wesley <adarw@mainsoft.com>
 
 	* HttpCapabilitiesBase.cs: implemented all capabilities.  Capabilities

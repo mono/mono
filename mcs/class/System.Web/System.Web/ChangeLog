@@ -1,3 +1,11 @@
+2007-03-24  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpRuntime.cs: use ICalls.GetMachineConfigPath instead of
+	opening the machine.config file and getting its path.
+
+	* CapabilitiesLoader.cs: use HttpRuntime.MachineConfigurationDirectory 
+	instead of opening the machine config file and getting its path.
+
 2007-03-23  Konstantin Triger <kostat@mainsoft.com>
 
 	* HttpApplication.cs: complete the pipeline in case of exception during

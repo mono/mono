@@ -40,6 +40,7 @@ using System.Security.Permissions;
 using System.Web.Caching;
 using System.Web.Configuration;
 using System.Web.UI;
+using System.Web.Util;
 using System.Threading;
 
 #if NET_2_0 && !TARGET_JVM
@@ -230,11 +231,7 @@ namespace System.Web {
 
 		public static string MachineConfigurationDirectory {
 			get {
-#if NET_2_0
-				string dirname = Path.GetDirectoryName (WebConfigurationManager.OpenMachineConfiguration().FilePath);
-#else
-				string dirname = Path.GetDirectoryName (WebConfigurationSettings.MachineConfigPath);
-#endif
+				string dirname = Path.GetDirectoryName (ICalls.GetMachineConfigPath ());
 				if ((dirname != null) && (dirname.Length > 0) && SecurityManager.SecurityEnabled) {
 					new FileIOPermission (FileIOPermissionAccess.PathDiscovery, dirname).Demand ();
 				}
@@ -242,6 +239,7 @@ namespace System.Web {
 			}
 		}
 
+		
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		public static void Close ()
 		{

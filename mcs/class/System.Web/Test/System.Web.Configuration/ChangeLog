@@ -1,3 +1,9 @@
+2007-03-24  Marek Habersack  <mhabersack@novell.com>
+
+	* WebConfigurationManagerTest.cs: the tests don't work because of
+	the way the test suite is set up. In a normal application, the
+	three test would work just fine.
+
 2006-06-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* NullableStringValidatorTest.cs : new aggregated tests for

@@ -68,7 +68,8 @@ namespace System.Web.Configuration
 			throw new NotImplementedException ();
 		}
 		
-		public virtual string DecryptSection (string encryptedXml, ProtectedConfigurationProvider protectionProvider, ProtectedConfigurationSection protectedSection)
+		public virtual string DecryptSection (string encryptedXml, ProtectedConfigurationProvider protectionProvider,
+						      ProtectedConfigurationSection protectedSection)
 		{
 			throw new NotImplementedException ();
 		}
@@ -78,7 +79,8 @@ namespace System.Web.Configuration
 			File.Delete (streamName);
 		}
 		
-		public virtual string EncryptSection (string encryptedXml, ProtectedConfigurationProvider protectionProvider, ProtectedConfigurationSection protectedSection)
+		public virtual string EncryptSection (string encryptedXml, ProtectedConfigurationProvider protectionProvider,
+						      ProtectedConfigurationSection protectedSection)
 		{
 			throw new NotImplementedException ();
 		}
@@ -136,7 +138,8 @@ namespace System.Web.Configuration
 			return t.AssemblyQualifiedName;
 		}
 		
-		public virtual void GetRestrictedPermissions (IInternalConfigRecord configRecord, out PermissionSet permissionSet, out bool isHostReady)
+		public virtual void GetRestrictedPermissions (IInternalConfigRecord configRecord, out PermissionSet permissionSet,
+							      out bool isHostReady)
 		{
 			throw new NotImplementedException ();
 		}
@@ -186,24 +189,22 @@ namespace System.Web.Configuration
 		{
 		}
 		
-		public virtual void InitForConfiguration (ref string locationSubPath, out string configPath, out string locationConfigPath, IInternalConfigRoot root, params object[] hostInitConfigurationParams)
+		public virtual void InitForConfiguration (ref string locationSubPath, out string configPath,
+							  out string locationConfigPath, IInternalConfigRoot root,
+							  params object[] hostInitConfigurationParams)
 		{
 			string fullPath = (string) hostInitConfigurationParams [1];
-			
 			map = (WebConfigurationFileMap) hostInitConfigurationParams [0];
-			
+
 			if (locationSubPath == MachineWebPath) {
 				locationSubPath = MachinePath;
 				configPath = MachineWebPath;
 				locationConfigPath = null;
-			}
-			else if (locationSubPath == MachinePath) {
+			} else if (locationSubPath == MachinePath) {
 				locationSubPath = null;
 				configPath = MachinePath;
 				locationConfigPath = null;
-			}
-			else {
-				
+			} else {
 				int i;
 				if (locationSubPath == null)
 					configPath = fullPath;
@@ -215,7 +216,7 @@ namespace System.Web.Configuration
 					i = -1;
 				else
 					i = configPath.LastIndexOf ("/");
-				
+
 				if (i != -1) {
 					locationConfigPath = configPath.Substring (i+1);
 					
@@ -237,10 +238,12 @@ namespace System.Web.Configuration
 			else if (HttpContext.Current != null
 				 && HttpContext.Current.Request != null)
 				return HttpContext.Current.Request.MapPath (virtualPath);
-			else if (HttpRuntime.AppDomainAppVirtualPath != null && virtualPath.StartsWith (HttpRuntime.AppDomainAppVirtualPath)) {
+			else if (HttpRuntime.AppDomainAppVirtualPath != null &&
+				 virtualPath.StartsWith (HttpRuntime.AppDomainAppVirtualPath)) {
 				if (virtualPath == HttpRuntime.AppDomainAppVirtualPath)
 					return HttpRuntime.AppDomainAppPath;
-				return UrlUtils.Combine (HttpRuntime.AppDomainAppPath, virtualPath.Substring (HttpRuntime.AppDomainAppVirtualPath.Length));
+				return UrlUtils.Combine (HttpRuntime.AppDomainAppPath,
+							 virtualPath.Substring (HttpRuntime.AppDomainAppVirtualPath.Length));
 			}
 			else
 				return virtualPath;
@@ -313,14 +316,16 @@ namespace System.Web.Configuration
 			throw new NotImplementedException ();
 		}
 		
-		public virtual bool IsDefinitionAllowed (string configPath, ConfigurationAllowDefinition allowDefinition, ConfigurationAllowExeDefinition allowExeDefinition)
+		public virtual bool IsDefinitionAllowed (string configPath, ConfigurationAllowDefinition allowDefinition,
+							 ConfigurationAllowExeDefinition allowExeDefinition)
 		{
 			switch (allowDefinition) {
 				case ConfigurationAllowDefinition.MachineOnly:
 					return configPath == MachinePath || configPath == MachineWebPath;
 				case ConfigurationAllowDefinition.MachineToWebRoot:
 				case ConfigurationAllowDefinition.MachineToApplication:
-					return configPath == MachinePath || configPath == MachineWebPath || configPath == "/";
+					return configPath == MachinePath || configPath == MachineWebPath || configPath == "/" ||
+						configPath == HttpRuntime.AppDomainAppVirtualPath;
 				default:
 					return true;
 			}
@@ -340,7 +345,8 @@ namespace System.Web.Configuration
 		{
 			if (!File.Exists (streamName)) {
 #if TARGET_J2EE
-				if (streamName != null && (streamName.EndsWith ("machine.config") || streamName.EndsWith ("web.config"))) {
+				if (streamName != null && (streamName.EndsWith ("machine.config") ||
+							   streamName.EndsWith ("web.config"))) {
 					if (streamName.StartsWith ("/"))
 						streamName = streamName.Substring (1);
 					java.lang.ClassLoader cl = (java.lang.ClassLoader) AppDomain.CurrentDomain.GetData ("GH_ContextClassLoader");
@@ -368,7 +374,8 @@ namespace System.Web.Configuration
 		}
 
 		[MonoTODO ("Not implemented")]
-		public virtual Stream OpenStreamForWrite (string streamName, string templateStreamName, ref object writeContext, bool assertPermissions)
+		public virtual Stream OpenStreamForWrite (string streamName, string templateStreamName, ref object writeContext,
+							  bool assertPermissions)
 		{
 			throw new NotImplementedException ();
 		}
@@ -399,7 +406,9 @@ namespace System.Web.Configuration
 			throw new NotImplementedException ();
 		}
 		
-		public virtual void VerifyDefinitionAllowed (string configPath, ConfigurationAllowDefinition allowDefinition, ConfigurationAllowExeDefinition allowExeDefinition, IConfigErrorInfo errorInfo)
+		public virtual void VerifyDefinitionAllowed (string configPath, ConfigurationAllowDefinition allowDefinition,
+							     ConfigurationAllowExeDefinition allowExeDefinition,
+							     IConfigErrorInfo errorInfo)
 		{
 			if (!IsDefinitionAllowed (configPath, allowDefinition, allowExeDefinition))
 				throw new ConfigurationErrorsException ("The section can't be defined in this file (the allowed definition context is '" + allowDefinition + "').", errorInfo.Filename, errorInfo.LineNumber);
