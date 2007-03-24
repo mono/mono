@@ -1,3 +1,7 @@
+2007-03-24 Alan McGovern <alan.mcgovern@gmail.com>
+
+	* IPAddress.cs : Optimised the SwapInt and SwapLong methods.
+
 2007-03-09  Miguel de Icaza  <miguel@novell.com>
 
 	* FtpDataStream.cs: Close must be called on the stream before we
