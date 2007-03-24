@@ -58,36 +58,36 @@ namespace System.Windows.Forms.Layout
 					break;
 
 				case DockStyle.Left:
-					child.SetImplicitBounds (space.Left, space.Y, child.Width, space.Height);
+					child.SetBounds (space.Left, space.Y, child.Width, space.Height, BoundsSpecified.None);
 					space.X += child.Width;
 					space.Width -= child.Width;
 					break;
 
 				case DockStyle.Top:
-					child.SetImplicitBounds (space.Left, space.Y, space.Width, child.Height);
+					child.SetBounds (space.Left, space.Y, space.Width, child.Height, BoundsSpecified.None);
 					space.Y += child.Height;
 					space.Height -= child.Height;
 					break;
 
 				case DockStyle.Right:
-					child.SetImplicitBounds (space.Right - child.Width, space.Y, child.Width, space.Height);
+					child.SetBounds (space.Right - child.Width, space.Y, child.Width, space.Height, BoundsSpecified.None);
 					space.Width -= child.Width;
 					break;
 
 				case DockStyle.Bottom:
-					child.SetImplicitBounds (space.Left, space.Bottom - child.Height, space.Width, child.Height);
+					child.SetBounds (space.Left, space.Bottom - child.Height, space.Width, child.Height, BoundsSpecified.None);
 					space.Height -= child.Height;
 					break;
 					
 				case DockStyle.Fill:
-					child.SetImplicitBounds (space.Left, space.Top, space.Width, space.Height);
+					child.SetBounds (space.Left, space.Top, space.Width, space.Height, BoundsSpecified.None);
 					break;
 				}
 			}
 
 			// MdiClient gets whatever space is left
 			if (mdi != null)
-				mdi.SetImplicitBounds (space.Left, space.Top, space.Width, space.Height);
+				mdi.SetBounds (space.Left, space.Top, space.Width, space.Height, BoundsSpecified.None);
 		}
 
 		void LayoutAnchoredChildren (Control parent, Control[] controls)
@@ -151,7 +151,7 @@ namespace System.Windows.Forms.Layout
 				if (height < 0)
 					height = 0;
 
-				child.SetBounds (left, top, width, height);
+				child.SetBounds (left, top, width, height, BoundsSpecified.None);
 			}
 		}
 

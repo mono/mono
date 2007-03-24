@@ -2455,10 +2455,7 @@ namespace System.Windows.Forms
 				anchor_style = AnchorStyles.Top | AnchorStyles.Left;
 
 				if (dock_style == DockStyle.None) {
-					if (explicit_bounds == Rectangle.Empty)
-						Bounds = new Rectangle (new Point (0, 0), DefaultSize);
-					else
-						Bounds = explicit_bounds;
+					Bounds = explicit_bounds;
 				}
 
 				if (parent != null) {
@@ -3538,12 +3535,6 @@ namespace System.Windows.Forms
 			PerformLayout(null, null);
 		}
 
-		internal void SetImplicitBounds (int x, int y, int width, int height) {
-			Rectangle saved_bounds = explicit_bounds;
-			SetBounds (x, y, width, height);
-			explicit_bounds = saved_bounds;
-		}
-
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public void PerformLayout(Control affectedControl, string affectedProperty) {
 			LayoutEventArgs levent = new LayoutEventArgs(affectedControl, affectedProperty);
@@ -3770,23 +3761,8 @@ namespace System.Windows.Forms
 		}
 
 		public void SetBounds(int x, int y, int width, int height, BoundsSpecified specified) {
-			if ((specified & BoundsSpecified.X) != BoundsSpecified.X) {
-				x = Left;
-			}
-
-			if ((specified & BoundsSpecified.Y) != BoundsSpecified.Y) {
-				y = Top;
-			}
-
-			if ((specified & BoundsSpecified.Width) != BoundsSpecified.Width) {
-				width = Width;
-			}
-
-			if ((specified & BoundsSpecified.Height) != BoundsSpecified.Height) {
-				height = Height;
-			}
-
 			SetBoundsCore(x, y, width, height, specified);
+			
 			if (parent != null)
 				parent.PerformLayout(this, "Bounds");
 		}
@@ -4233,6 +4209,9 @@ namespace System.Windows.Forms
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified) {
+			Rectangle old_explicit = explicit_bounds;
+			Rectangle new_bounds = new Rectangle (x, y, width, height);
+
 			// SetBoundsCore updates the Win32 control itself. UpdateBounds updates the controls variables and fires events, I'm guessing - pdb
 			if (IsHandleCreated) {
 				XplatUI.SetWindowPos(Handle, x, y, width, height);
@@ -4248,6 +4227,28 @@ namespace System.Windows.Forms
 			}
 
 			UpdateBounds(x, y, width, height);
+			
+			// BoundsSpecified tells us which variables were programatic (user-set).
+			// We need to store those in the explicit bounds
+			if ((specified & BoundsSpecified.X) == BoundsSpecified.X)
+				explicit_bounds.X = new_bounds.X;
+			else
+				explicit_bounds.X = old_explicit.X;
+
+			if ((specified & BoundsSpecified.Y) == BoundsSpecified.Y)
+				explicit_bounds.Y = new_bounds.Y;
+			else
+				explicit_bounds.Y = old_explicit.Y;
+
+			if ((specified & BoundsSpecified.Width) == BoundsSpecified.Width)
+				explicit_bounds.Width = new_bounds.Width;
+			else
+				explicit_bounds.Width = old_explicit.Width;
+
+			if ((specified & BoundsSpecified.Height) == BoundsSpecified.Height)
+				explicit_bounds.Height = new_bounds.Height;
+			else
+				explicit_bounds.Height = old_explicit.Height;
 
 			UpdateDistances();
 		}
@@ -4367,7 +4368,8 @@ namespace System.Windows.Forms
 			bounds.Width=width;
 			bounds.Height=height;
 
-			// Assume explicit bounds set. SetImplicitBounds will restore old bounds
+			// Assume explicit bounds set. SetBoundsCore will restore old bounds
+			// if needed.
 			explicit_bounds = bounds;
 
 			client_size.Width=clientWidth;

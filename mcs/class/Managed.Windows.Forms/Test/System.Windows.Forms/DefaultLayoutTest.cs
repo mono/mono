@@ -616,7 +616,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestUndockDefaultSize ()
 		{
 			Size sz = panel.Size;
@@ -635,7 +634,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestUndockExplicitSize ()
 		{
 			panel.Size = new Size (50, 50);
@@ -665,7 +663,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestUndockExplicitSizeVisible ()
 		{
 			form.Show ();

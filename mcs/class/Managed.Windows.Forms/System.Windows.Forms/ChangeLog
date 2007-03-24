@@ -1,5 +1,11 @@
 2007-03-24  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Control.cs: Make SetBoundsCore match MS better.  The BoundsSpecified
+	parameter indicates which aspects were explicit/user-set.
+	* ComboBox.cs, ListBox.cs: Call SetBoundsCore correctly. (no 0 parameters).
+
+2007-03-24  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ProgressBar.cs: Throw AOORE instead of AE for property Value (2.0).
 	* ScrollBar.cs: Throw AOORE instead of AE for properties LargeChange,
 	SmallChange, and Value (2.0).

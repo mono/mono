@@ -1637,7 +1637,7 @@ namespace System.Windows.Forms
 
 			// Save the requested height since set bounds can destroy it
 			int save_height = requested_height;
-			SetBounds (0, 0, 0, requested_height, BoundsSpecified.Height);
+			SetBounds (bounds.X, bounds.Y, bounds.Width, requested_height, BoundsSpecified.Height);
 			requested_height = save_height;
 		}
 

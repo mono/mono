@@ -441,7 +441,7 @@ namespace System.Windows.Forms.Layout
 						else	// (center control)
 							new_y = ((current_pos.Y + column_height - c.Margin.Top - c.Margin.Bottom) / 2) + c.Margin.Top - (new_height / 2);
 
-						c.Bounds = new Rectangle(new_x, new_y, new_width, new_height);
+						c.SetBounds (new_x, new_y, new_width, new_height, BoundsSpecified.None);
 					}
 
 					current_pos.Offset (panel.column_widths[x], 0);
