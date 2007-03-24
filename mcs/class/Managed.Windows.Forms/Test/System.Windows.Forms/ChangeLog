@@ -1,3 +1,8 @@
+2007-03-24  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ProgressBarTest.cs, ScrollBarTest.cs, TimerTest.cs: Update
+	tests to pass on .Net 2.0.
+
 2007-03-22  Jonathan Pobst  <monkey@jpobst.com>
 
 	* FormTest.cs: Mark new test FormStartupPositionChangeTest as 

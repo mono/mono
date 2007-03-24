@@ -325,8 +325,12 @@ public class MyScrollBar : HScrollBar
 	       }
 
 	    [Test]
-	      [ExpectedException (typeof (ArgumentException))]
-	    public void ExceptionValueTest ()
+#if NET_2_0
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+#else
+	   [ExpectedException (typeof (ArgumentException))]
+#endif
+	   public void ExceptionValueTest ()
 	       {
 		       MyScrollBar myscrlbar = new MyScrollBar ();
 		       myscrlbar.Minimum = 10;
@@ -336,16 +340,24 @@ public class MyScrollBar : HScrollBar
 	       }
 
 	    [Test]
-	      [ExpectedException (typeof (ArgumentException))]
-	    public void ExceptionSmallChangeTest ()
+#if NET_2_0
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+#else
+	   [ExpectedException (typeof (ArgumentException))]
+#endif
+	   public void ExceptionSmallChangeTest ()
 	       {
 		       MyScrollBar myscrlbar = new MyScrollBar ();
 		       myscrlbar.SmallChange = -1;
 	       }
 
 	    [Test]
-	      [ExpectedException (typeof (ArgumentException))]
-	    public void ExceptionLargeChangeTest ()
+#if NET_2_0
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+#else
+	   [ExpectedException (typeof (ArgumentException))]
+#endif
+	   public void ExceptionLargeChangeTest ()
 	       {
 		       MyScrollBar myscrlbar = new MyScrollBar ();
 		       myscrlbar.LargeChange = -1;

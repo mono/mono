@@ -82,7 +82,11 @@ namespace System.Windows.Forms {
 			}
 			set {
 				if (value <= 0)
+#if NET_2_0
+					throw new ArgumentOutOfRangeException ("Interval", string.Format ("'{0}' is not a valid value for Interval. Interval must be greater than 0.", value));
+#else				
 					throw new ArgumentException (string.Format("'{0}' is not a valid value for Interval. Interval must be greater than 0.", value));
+#endif					
 
 				if (interval == value) {
 					return;

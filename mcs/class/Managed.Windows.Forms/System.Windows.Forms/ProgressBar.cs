@@ -385,9 +385,11 @@ namespace System.Windows.Forms
 			}
 			set {
 				if (value < Minimum || value > Maximum)
-					throw new ArgumentException(
-						string.Format("'{0}' is not a valid value for 'Value'. 'Value' should be between 'Minimum' and 'Maximum'", value));
-
+#if NET_2_0
+					throw new ArgumentOutOfRangeException ("Value", string.Format("'{0}' is not a valid value for 'Value'. 'Value' should be between 'Minimum' and 'Maximum'", value));
+#else
+					throw new ArgumentException(string.Format("'{0}' is not a valid value for 'Value'. 'Value' should be between 'Minimum' and 'Maximum'", value));
+#endif
 				val = value;
 				Refresh ();
 			}

@@ -334,7 +334,11 @@ namespace System.Windows.Forms
 			}
 			set {
 				if (value < 0)
+#if NET_2_0
+					throw new ArgumentOutOfRangeException ("LargeChange", string.Format ("Value '{0}' must be greater than or equal to 0.", value));
+#else
 					throw new ArgumentException( string.Format("Value '{0}' must be greater than or equal to 0.", value));
+#endif
 
 				if (large_change != value) {
 					large_change = value;
@@ -439,7 +443,11 @@ namespace System.Windows.Forms
 			get { return small_change; }
 			set {
 				if ( value < 0 )
+#if NET_2_0
+					throw new ArgumentOutOfRangeException ("SmallChange", string.Format ("Value '{0}' must be greater than or equal to 0.", value));
+#else
 					throw new ArgumentException( string.Format("Value '{0}' must be greater than or equal to 0.", value));
+#endif
 
 				if (small_change != value) {
 					small_change = value;
@@ -471,8 +479,11 @@ namespace System.Windows.Forms
 			get { return position; }
 			set {
 				if ( value < minimum || value > maximum )
-					throw new ArgumentException(
-						string.Format("'{0}' is not a valid value for 'Value'. 'Value' should be between 'Minimum' and 'Maximum'", value));
+#if NET_2_0
+					throw new ArgumentOutOfRangeException ("Value", string.Format ("'{0}' is not a valid value for 'Value'. 'Value' should be between 'Minimum' and 'Maximum'", value));
+#else
+					throw new ArgumentException (string.Format("'{0}' is not a valid value for 'Value'. 'Value' should be between 'Minimum' and 'Maximum'", value));
+#endif					
 
 				if (position != value){
 					position = value;

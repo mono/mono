@@ -58,7 +58,11 @@ namespace MonoTests.System.Windows.Forms
 		}
 		
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]		
+#if NET_2_0
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+#else
+		[ExpectedException (typeof (ArgumentException))]
+#endif
 		public void ValueTest ()
 		{
 			ProgressBar myProgressBar = new ProgressBar ();

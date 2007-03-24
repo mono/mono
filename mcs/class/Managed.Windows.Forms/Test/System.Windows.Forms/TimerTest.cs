@@ -21,7 +21,11 @@ namespace MonoTests.System.Windows.Forms
 		bool Ticked;
 		
 		[Test ()]
+#if NET_2_0
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+#else
 		[ExpectedException (typeof (ArgumentException))]
+#endif
 		public void IntervalException1 ()
 		{
 			Timer timer = new Timer ();
@@ -29,7 +33,11 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test ()]
+#if NET_2_0
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+#else
 		[ExpectedException (typeof (ArgumentException), "'-1' is not a valid value for Interval. Interval must be greater than 0.")]
+#endif
 		public void IntervalException2 ()
 		{
 			Timer timer = new Timer ();
@@ -44,7 +52,11 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test ()]
+#if NET_2_0
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+#else
 		[ExpectedException (typeof (ArgumentException), "'-2147483648' is not a valid value for Interval. Interval must be greater than 0.")]
+#endif
 		public void IntervalException4 ()
 		{
 			Timer timer = new Timer ();
