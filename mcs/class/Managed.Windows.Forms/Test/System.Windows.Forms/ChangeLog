@@ -1,5 +1,9 @@
 2007-03-25  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ToolStripTest.cs: Mark WM decoration dependent test as NotWorking.
+
+2007-03-25  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ButtonTest.cs: Add test demonstrating the behavior of ImageList.
 	* MenuStripTest.cs: General test suite.
 	* ToolStripComboBoxTest.cs: Enable tests for FlatStyle.

@@ -554,8 +554,10 @@ namespace MonoTests.System.Windows.Forms
 		//}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void BehaviorDisplayRectangleAndOverflow ()
 		{
+			// WM decoration size dependent
 			Form f = new Form ();
 			f.ShowInTaskbar = false;
 			ToolStrip ts = new ToolStrip ();
