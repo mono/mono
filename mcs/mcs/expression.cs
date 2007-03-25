@@ -7309,11 +7309,7 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Ldobj, type);
 #if GMCS_SOURCE
 			} else if (type.IsGenericParameter) {
-#if MS_COMPATIBLE
 				ig.Emit (OpCodes.Ldelem, type);
-#else
-				ig.Emit (OpCodes.Ldelem_Any, type);
-#endif
 #endif
 			} else if (type.IsPointer)
 				ig.Emit (OpCodes.Ldelem_I);
@@ -7357,11 +7353,7 @@ namespace Mono.CSharp {
 #if GMCS_SOURCE
 			} else if (t.IsGenericParameter) {
 				has_type_arg = true;
-#if MS_COMPATIBLE
 				return OpCodes.Stelem;
-#else
-				return OpCodes.Stelem_Any;
-#endif
 #endif
 
 			} else if (t.IsPointer)
