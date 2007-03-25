@@ -102,8 +102,6 @@ public class HijriCalendar : Calendar {
 	}
 #endif
 
-	int twoDigitYearMax = 1451;
-	
 	// FIXME: [MonoTODO ("Add call into operating system")]
 	public override int TwoDigitYearMax 
 	{

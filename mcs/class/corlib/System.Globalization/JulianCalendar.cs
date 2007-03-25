@@ -69,8 +69,6 @@ public class JulianCalendar : Calendar {
 		}
 	}
 
-	int twoDigitYearMax = 2029;
-	
 	public override int TwoDigitYearMax 
 	{
 		get {

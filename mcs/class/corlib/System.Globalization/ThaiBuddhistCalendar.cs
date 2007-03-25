@@ -82,8 +82,6 @@ public class ThaiBuddhistCalendar : Calendar {
 		}
 	}
 
-	int twoDigitYearMax = 2572;
-	
 	public override int TwoDigitYearMax 
 	{
 		get {

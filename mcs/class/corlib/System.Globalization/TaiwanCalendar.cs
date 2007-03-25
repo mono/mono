@@ -80,8 +80,6 @@ public class TaiwanCalendar : Calendar {
 		}
 	}
 
-	int twoDigitYearMax = 99;
-	
 	public override int TwoDigitYearMax 
 	{
 		get {

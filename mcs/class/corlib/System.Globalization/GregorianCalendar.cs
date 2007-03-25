@@ -60,9 +60,6 @@ public class GregorianCalendar : Calendar {
 		}
 	}
 
-	[NonSerialized]
-	int twoDigitYearMax = 2029;
-
 	public override int TwoDigitYearMax 
 	{
 		get {

@@ -82,8 +82,6 @@ public class KoreanCalendar : Calendar {
 		}
 	}
 
-	int twoDigitYearMax = 4362;
-
 	public override int TwoDigitYearMax 
 	{
 		get {

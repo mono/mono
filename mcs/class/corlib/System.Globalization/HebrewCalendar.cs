@@ -93,8 +93,6 @@ public class HebrewCalendar : Calendar {
 		}
 	}
 
-	int twoDigitYearMax = 5790;
-	
 	public override int TwoDigitYearMax 
 	{
 		get {
