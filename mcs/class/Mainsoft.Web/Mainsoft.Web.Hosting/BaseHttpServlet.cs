@@ -49,7 +49,6 @@ namespace Mainsoft.Web.Hosting
 		static readonly LocalDataStoreSlot _servletResponseSlot = Thread.GetNamedDataSlot(J2EEConsts.SERVLET_RESPONSE);
 		static readonly LocalDataStoreSlot _servletSlot = Thread.GetNamedDataSlot(J2EEConsts.CURRENT_SERVLET);
 
-		string _ping = "0"; //used for logical pinging by IDE. Can be "0" or "1".
 		bool _appVirDirInited = false;
 		Field _derbyContextService;
 		java.lang.ThreadLocal _derbyLocal;
@@ -159,12 +158,15 @@ namespace Mainsoft.Web.Hosting
 					string requestURI = req.getRequestURI ();
 					bool getp = requestURI.EndsWith (getping, StringComparison.Ordinal);
 					if (!getp && requestURI.EndsWith (setping, StringComparison.Ordinal)) {
-						_ping = "1";
+						getServletContext ().setAttribute (getping, "1");
 						getp = true;
 					}
 
 					if (getp) {
-						resp.getOutputStream ().print (_ping);
+						string ping = (string) getServletContext ().getAttribute (getping);
+						if (ping == null)
+							ping = "0";
+						resp.getOutputStream ().print (ping);
 						return;
 					}
 				}
