@@ -3,7 +3,7 @@
 
 public class C
 {
-	public delegate int Func<T> (T t);
+	public delegate T Func<T> (T t);
 	
 	public static void Test<T, U> (Func<T> f, U u)
 	{
