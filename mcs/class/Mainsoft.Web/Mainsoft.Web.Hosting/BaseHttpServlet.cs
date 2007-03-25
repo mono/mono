@@ -49,7 +49,6 @@ namespace Mainsoft.Web.Hosting
 		static readonly LocalDataStoreSlot _servletResponseSlot = Thread.GetNamedDataSlot(J2EEConsts.SERVLET_RESPONSE);
 		static readonly LocalDataStoreSlot _servletSlot = Thread.GetNamedDataSlot(J2EEConsts.CURRENT_SERVLET);
 
-		bool _performedInit = false;
 		bool _appVirDirInited = false;
 		Field _derbyContextService;
 		java.lang.ThreadLocal _derbyLocal;
@@ -138,8 +137,6 @@ namespace Mainsoft.Web.Hosting
 				InitDerby ();
 				config.getServletContext().setAttribute(J2EEConsts.APP_DOMAIN, servletDomain);
 				config.getServletContext ().setAttribute (J2EEConsts.CURRENT_SERVLET, this);
-				
-				_performedInit = true;
 			}
 			finally 
 			{
@@ -196,12 +193,12 @@ namespace Mainsoft.Web.Hosting
 		override public void destroy()
 		{
 			base.destroy();
-			if (!_performedInit)
+			AppDomain servletDomain = (AppDomain) getServletContext ().getAttribute (J2EEConsts.APP_DOMAIN);
+			if (servletDomain == null)
 				return;
 
 			try 
 			{
-				AppDomain servletDomain = (AppDomain)this.getServletContext().getAttribute(J2EEConsts.APP_DOMAIN);
 				vmw.@internal.EnvironmentUtils.setAppDomain(servletDomain);
 #if DEBUG
 				Console.WriteLine("Destroy of GhHttpServlet");
@@ -223,9 +220,19 @@ namespace Mainsoft.Web.Hosting
 				vmw.@internal.EnvironmentUtils.clearAppDomain();
 				CleanupDerby ();
 				if (_derbyContextService != null) {
-					URL u = vmw.common.TypeUtils.ToClass (this).getClassLoader ().getResource ("org/apache/derby/iapi/services/context/ContextService.class");
-					if (u != null)
-						((JarURLConnection) u.openConnection ()).getJarFile ().close ();
+					try {
+						URL u = vmw.common.TypeUtils.ToClass (this).getClassLoader ().getResource ("org/apache/derby/iapi/services/context/ContextService.class");
+						if (u != null) {
+							URLConnection con = u.openConnection ();
+							if (con is JarURLConnection)
+								((JarURLConnection) con).getJarFile ().close ();
+						}
+					}
+					catch (Exception ex) {
+#if DEBUG
+						Console.WriteLine (ex.ToString ());
+#endif
+					}
 				}
 			}
 		}
