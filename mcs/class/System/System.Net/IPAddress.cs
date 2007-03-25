@@ -58,28 +58,28 @@ namespace System.Net {
 
 		private static short SwapShort (short number)
 		{
-			return (short) ( ((number >> 8) & 0xFF) + ((number << 8) & 0xFF00) );
+			return (short) ( ((number >> 8) & 0xFF) | ((number << 8) & 0xFF00) );
 		}
 
 		private static int SwapInt (int number)
 		{
-			return ((number >> 24) & 0xFF)
-				+ (((number >> 16) & 0xFF) << 8)
-				+ (((number >> 8) & 0xFF) << 16)
-				+ ((number & 0xFF) << 24);
+			return (((number >> 24) & 0xFF)
+				  | ((number >> 08) & 0xFF00)
+				  | ((number << 08) & 0xFF0000)
+				  | ((number << 24)));
 		}
 
-        private static long SwapLong(long number)
-        {
-            return (((number >> 56) & 0xFF)
-                + (((number >> 48) & 0xFF) << 8)
-                + (((number >> 40) & 0xFF) << 16)
-                + (((number >> 32) & 0xFF) << 24)
-                + (((number >> 24) & 0xFF) << 32)
-                + (((number >> 16) & 0xFF) << 40)
-                + (((number >> 8) & 0xFF) << 48)
-                + ((number & 0xFF) << 56));
-        }
+		private static long SwapLong(long number)
+		{
+			return (((number >> 56) & 0xFF)
+				  | ((number >> 40) & 0xFF00)
+				  | ((number >> 24) & 0xFF0000)
+				  | ((number >> 08) & 0xFF000000)
+				  | ((number << 08) & 0xFF00000000)
+				  | ((number << 24) & 0xFF0000000000)
+				  | ((number << 40) & 0xFF000000000000)
+				  | ((number << 56)));
+		}
 
 		public static short HostToNetworkOrder(short host) {
 			if (!BitConverter.IsLittleEndian)

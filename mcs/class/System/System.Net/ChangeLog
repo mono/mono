@@ -1,3 +1,7 @@
+2007-03-25 Alan McGovern <alan.mcgovern@gmail.com>
+
+	* IPAddress.cs : Further optimisation for the Swap*** methods.
+
 2007-03-24 Alan McGovern <alan.mcgovern@gmail.com>
 
 	* IPAddress.cs : Optimised the SwapInt and SwapLong methods.
