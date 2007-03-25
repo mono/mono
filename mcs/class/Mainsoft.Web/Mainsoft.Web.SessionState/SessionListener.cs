@@ -44,6 +44,8 @@ namespace Mainsoft.Web.SessionState
 			bool setDomain = vmw.@internal.EnvironmentUtils.getAppDomain () == null;
 			if (setDomain) {
 				AppDomain servletDomain = (AppDomain) se.getSession ().getServletContext ().getAttribute (J2EEConsts.APP_DOMAIN);
+				if (servletDomain == null)
+					return;
 				vmw.@internal.EnvironmentUtils.setAppDomain (servletDomain);
 			}
 			try {
