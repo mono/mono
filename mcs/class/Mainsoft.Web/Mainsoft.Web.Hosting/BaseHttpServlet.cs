@@ -49,6 +49,7 @@ namespace Mainsoft.Web.Hosting
 		static readonly LocalDataStoreSlot _servletResponseSlot = Thread.GetNamedDataSlot(J2EEConsts.SERVLET_RESPONSE);
 		static readonly LocalDataStoreSlot _servletSlot = Thread.GetNamedDataSlot(J2EEConsts.CURRENT_SERVLET);
 
+		string _ping = "0"; //used for logical pinging by IDE. Can be "0" or "1".
 		bool _appVirDirInited = false;
 		Field _derbyContextService;
 		java.lang.ThreadLocal _derbyLocal;
@@ -147,6 +148,27 @@ namespace Mainsoft.Web.Hosting
 
 		protected override void service (HttpServletRequest req, HttpServletResponse resp)
 		{
+			const string assemblies = "/assemblies";
+			const string getping = "getping";
+			const string setping = "setping";
+			string servletPath = req.getServletPath ();
+
+			if (String.CompareOrdinal (assemblies, 0, servletPath, 0, assemblies.Length) == 0) {
+				if (servletPath.Length == assemblies.Length ||
+					servletPath [assemblies.Length] == '/') {
+					string requestURI = req.getRequestURI ();
+					bool getp = requestURI.EndsWith (getping, StringComparison.Ordinal);
+					if (!getp && requestURI.EndsWith (setping, StringComparison.Ordinal)) {
+						_ping = "1";
+						getp = true;
+					}
+
+					if (getp) {
+						resp.getOutputStream ().print (_ping);
+						return;
+					}
+				}
+			}
 			resp.setContentType("text/html");
 			service(req, resp, resp.getOutputStream());
 		}
