@@ -40,9 +40,96 @@ namespace MonoTests.System.Windows.Forms
 	public class MenuStripTest
 	{
 		[Test]
+		public void Constructor ()
+		{
+			MenuStrip ms = new MenuStrip ();
+
+			Assert.AreEqual (false, ms.CanOverflow, "A1");
+			Assert.AreEqual (ToolStripGripStyle.Hidden, ms.GripStyle, "A2");
+			Assert.AreEqual (null, ms.MdiWindowListItem, "A3");
+			Assert.AreEqual (false, ms.ShowItemToolTips, "A4");
+			Assert.AreEqual (true, ms.Stretch, "A5");
+			Assert.AreEqual (ToolStripLayoutStyle.HorizontalStackWithOverflow, ms.LayoutStyle, "A6");
+		}
+
+		[Test]
+		public void ControlStyle ()
+		{
+			ExposeProtectedProperties epp = new ExposeProtectedProperties ();
+
+			ControlStyles cs = ControlStyles.ContainerControl;
+			cs |= ControlStyles.UserPaint;
+			cs |= ControlStyles.StandardClick;
+			cs |= ControlStyles.SupportsTransparentBackColor;
+			cs |= ControlStyles.StandardDoubleClick;
+			cs |= ControlStyles.AllPaintingInWmPaint;
+			cs |= ControlStyles.OptimizedDoubleBuffer;
+			cs |= ControlStyles.UseTextForAccessibility;
+
+			Assert.AreEqual (cs, epp.GetControlStyles (), "Styles");
+		}
+		
+		[Test]
+		public void ProtectedProperties ()
+		{
+			ExposeProtectedProperties epp = new ExposeProtectedProperties ();
+
+			Assert.AreEqual (new Padding (2, 2, 0, 2), epp.DefaultGripMargin, "C1");
+			Assert.AreEqual (new Padding (6, 2, 0, 2), epp.DefaultPadding, "C2");
+			Assert.AreEqual (false, epp.DefaultShowItemToolTips, "C3");
+			Assert.AreEqual (new Size (200, 24), epp.DefaultSize, "C4");
+		}
+
+		[Test]
+		public void PropertyCanOverflow ()
+		{
+			StatusStrip ts = new StatusStrip ();
+
+			ts.CanOverflow = true;
+			Assert.AreEqual (true, ts.CanOverflow, "B1");
+		}
+
+		[Test]
+		public void PropertyGripStyle ()
+		{
+			StatusStrip ts = new StatusStrip ();
+
+			ts.GripStyle = ToolStripGripStyle.Visible;
+			Assert.AreEqual (ToolStripGripStyle.Visible, ts.GripStyle, "B1");
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidEnumArgumentException))]
+		public void PropertyGripStyleIEAE ()
+		{
+			StatusStrip ts = new StatusStrip ();
+
+			ts.GripStyle = (ToolStripGripStyle)42;
+		}
+
+		[Test]
+		public void PropertyShowItemToolTips ()
+		{
+			StatusStrip ts = new StatusStrip ();
+
+			ts.ShowItemToolTips = true;
+			Assert.AreEqual (true, ts.ShowItemToolTips, "B1");
+		}
+		
+		[Test]
+		public void PropertyStretch ()
+		{
+			StatusStrip ts = new StatusStrip ();
+
+			ts.Stretch = false;
+			Assert.AreEqual (false, ts.Stretch, "B1");
+		}
+
+		[Test]
 		public void BehaviorMdiWindowMenuItem ()
 		{
 			Form f = new Form ();
+			f.ShowInTaskbar = false;
 			f.IsMdiContainer = true;
 			Form c1 = new Form ();
 			c1.MdiParent = f;
@@ -91,6 +178,25 @@ namespace MonoTests.System.Windows.Forms
 			c3.Show ();
 			Assert.AreEqual (5, tsmi.DropDownItems.Count, "Q14");
 			Assert.AreEqual (true, (tsmi.DropDownItems[4] as ToolStripMenuItem).Checked, "Q15");
+		}
+
+		private class ExposeProtectedProperties : MenuStrip
+		{
+			public new Padding DefaultGripMargin { get { return base.DefaultGripMargin; } }
+			public new Padding DefaultPadding { get { return base.DefaultPadding; } }
+			public new bool DefaultShowItemToolTips { get { return base.DefaultShowItemToolTips; } }
+			public new Size DefaultSize { get { return base.DefaultSize; } }
+
+			public ControlStyles GetControlStyles ()
+			{
+				ControlStyles retval = (ControlStyles)0;
+
+				foreach (ControlStyles cs in Enum.GetValues (typeof (ControlStyles)))
+					if (this.GetStyle (cs) == true)
+						retval |= cs;
+
+				return retval;
+			}
 		}
 	}
 }

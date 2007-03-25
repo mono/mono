@@ -51,7 +51,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (ComboBoxStyle.DropDown, tsi.DropDownStyle, "A6");
 			Assert.AreEqual (121, tsi.DropDownWidth, "A7");
 			Assert.AreEqual (false, tsi.DroppedDown, "A8");
-			//Assert.AreEqual (FlatStyle.Popup, tsi.FlatStyle, "A9");
+			Assert.AreEqual (FlatStyle.Popup, tsi.FlatStyle, "A9");
 			Assert.AreEqual (true, tsi.IntegralHeight, "A10");
 			Assert.AreEqual ("System.Windows.Forms.ComboBox+ObjectCollection", tsi.Items.ToString (), "A11");
 			Assert.AreEqual (8, tsi.MaxDropDownItems, "A12");
@@ -163,20 +163,20 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (string.Empty, ew.ToString (), "B3");
 		}
 
-		//[Test]
-		//public void PropertyFlatStyle ()
-		//{
-		//        ToolStripComboBox tsi = new ToolStripComboBox ();
-		//        EventWatcher ew = new EventWatcher (tsi);
+		[Test]
+		public void PropertyFlatStyle ()
+		{
+			ToolStripComboBox tsi = new ToolStripComboBox ();
+			EventWatcher ew = new EventWatcher (tsi);
 
-		//        tsi.FlatStyle = FlatStyle.System;
-		//        Assert.AreEqual (FlatStyle.System, tsi.FlatStyle, "B1");
-		//        Assert.AreEqual (string.Empty, ew.ToString (), "B2");
+			tsi.FlatStyle = FlatStyle.System;
+			Assert.AreEqual (FlatStyle.System, tsi.FlatStyle, "B1");
+			Assert.AreEqual (string.Empty, ew.ToString (), "B2");
 
-		//        ew.Clear ();
-		//        tsi.FlatStyle = FlatStyle.System;
-		//        Assert.AreEqual (string.Empty, ew.ToString (), "B3");
-		//}
+			ew.Clear ();
+			tsi.FlatStyle = FlatStyle.System;
+			Assert.AreEqual (string.Empty, ew.ToString (), "B3");
+		}
 
 		[Test]
 		public void PropertyIntegralHeight ()

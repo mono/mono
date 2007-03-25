@@ -56,6 +56,58 @@ namespace MonoTests.System.Windows.Forms
 
 			flatApp.BorderSize = -1;
 		}
+
+		[Test]
+		[Ignore ("Needs a bugfix in libgdiplus, #80842")]
+		public void BehaviorImageList ()
+		{
+			// Basically, this shows that whichever of [Image|ImageIndex|ImageKey]
+			// is set last resets the others to their default state
+			Button b = new Button ();
+
+			Bitmap i1 = new Bitmap (16, 4);
+			i1.SetPixel (0, 0, Color.Blue);
+			Bitmap i2 = new Bitmap (16, 5);
+			i2.SetPixel (0, 0, Color.Red);
+			Bitmap i3 = new Bitmap (16, 6);
+			i3.SetPixel (0, 0, Color.Green);
+
+			Assert.AreEqual (null, b.Image, "D1");
+			Assert.AreEqual (-1, b.ImageIndex, "D2");
+			Assert.AreEqual (string.Empty, b.ImageKey, "D3");
+
+			ImageList il = new ImageList ();
+			il.Images.Add ("i2", i2);
+			il.Images.Add ("i3", i3);
+
+			b.ImageList = il;
+
+			b.ImageKey = "i3";
+			Assert.AreEqual (-1, b.ImageIndex, "D4");
+			Assert.AreEqual ("i3", b.ImageKey, "D5");
+			Assert.AreEqual (i3.GetPixel (0, 0), (b.Image as Bitmap).GetPixel (0, 0), "D6");
+
+			b.ImageIndex = 0;
+			Assert.AreEqual (0, b.ImageIndex, "D7");
+			Assert.AreEqual (string.Empty, b.ImageKey, "D8");
+			Assert.AreEqual (i2.GetPixel (0, 0), (b.Image as Bitmap).GetPixel (0, 0), "D9");
+			
+			// Also, Image is not cached, changing the underlying ImageList image is reflected
+			il.Images[0] = i1;
+			Assert.AreEqual (i1.GetPixel (0, 0), (b.Image as Bitmap).GetPixel (0, 0), "D16");
+
+			// Note: setting Image resets ImageList to null
+			b.Image = i1;
+			Assert.AreEqual (-1, b.ImageIndex, "D10");
+			Assert.AreEqual (string.Empty, b.ImageKey, "D11");
+			Assert.AreEqual (i1.GetPixel (0, 0), (b.Image as Bitmap).GetPixel (0, 0), "D12");
+			Assert.AreEqual (null, b.ImageList, "D12-2");
+
+			b.Image = null;
+			Assert.AreEqual (null, b.Image, "D13");
+			Assert.AreEqual (-1, b.ImageIndex, "D14");
+			Assert.AreEqual (string.Empty, b.ImageKey, "D15");
+		}
 #endif
 		[Test]
 		public void ImageTest ()

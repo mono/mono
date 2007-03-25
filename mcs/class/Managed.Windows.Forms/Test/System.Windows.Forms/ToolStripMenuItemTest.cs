@@ -40,9 +40,86 @@ namespace MonoTests.System.Windows.Forms
 	public class ToolStripMenuItemTest
 	{
 		[Test]
+		public void Constructor ()
+		{
+			ToolStripMenuItem tsi = new ToolStripMenuItem ();
+
+			Assert.AreEqual (false, tsi.Checked, "A1");
+			Assert.AreEqual (false, tsi.CheckOnClick, "A2");
+			Assert.AreEqual (CheckState.Unchecked, tsi.CheckState, "A3");
+			Assert.AreEqual (true, tsi.Enabled, "A4");
+			Assert.AreEqual (false, tsi.IsMdiWindowListEntry, "A5");
+			Assert.AreEqual (ToolStripItemOverflow.Never, tsi.Overflow, "A6");
+			Assert.AreEqual (null, tsi.ShortcutKeyDisplayString, "A7");
+			Assert.AreEqual (Keys.None, tsi.ShortcutKeys, "A8");
+			Assert.AreEqual (true, tsi.ShowShortcutKeys, "A9");
+
+
+			int count = 0;
+			EventHandler oc = new EventHandler (delegate (object sender, EventArgs e) { count++; });
+			Image i = new Bitmap (1, 1);
+
+			tsi = new ToolStripMenuItem (i);
+			tsi.PerformClick ();
+			Assert.AreEqual (null, tsi.Text, "A10-1");
+			Assert.AreSame (i, tsi.Image, "A10-2");
+			Assert.AreEqual (0, count, "A10-3");
+			Assert.AreEqual (string.Empty, tsi.Name, "A10-4");
+
+			tsi = new ToolStripMenuItem ("Text");
+			tsi.PerformClick ();
+			Assert.AreEqual ("Text", tsi.Text, "A10-5");
+			Assert.AreSame (null, tsi.Image, "A11");
+			Assert.AreEqual (0, count, "A12");
+			Assert.AreEqual (string.Empty, tsi.Name, "A13");
+
+			tsi = new ToolStripMenuItem ("Text", i);
+			tsi.PerformClick ();
+			Assert.AreEqual ("Text", tsi.Text, "A14");
+			Assert.AreSame (i, tsi.Image, "A15");
+			Assert.AreEqual (0, count, "A16");
+			Assert.AreEqual (string.Empty, tsi.Name, "A17");
+
+			tsi = new ToolStripMenuItem ("Text", i, oc);
+			tsi.PerformClick ();
+			Assert.AreEqual ("Text", tsi.Text, "A18");
+			Assert.AreSame (i, tsi.Image, "A19");
+			Assert.AreEqual (1, count, "A20");
+			Assert.AreEqual (string.Empty, tsi.Name, "A21");
+
+			tsi = new ToolStripMenuItem ("Text", i, oc, "Name");
+			tsi.PerformClick ();
+			Assert.AreEqual ("Text", tsi.Text, "A22");
+			Assert.AreSame (i, tsi.Image, "A23");
+			Assert.AreEqual (2, count, "A24");
+			Assert.AreEqual ("Name", tsi.Name, "A25");
+		}
+		
+		[Test]
+		public void BehaviorKeyboardShortcuts ()
+		{
+			ExposeProtectedMethods tsmi = new ExposeProtectedMethods ();
+			tsmi.ShortcutKeys = Keys.Control | Keys.D;
+
+			Message m = new Message ();
+			Assert.AreEqual (false, tsmi.PublicProcessCmdKey (ref m, Keys.D), "A1");
+			Assert.AreEqual (false, tsmi.PublicProcessCmdKey (ref m, Keys.Control), "A2");
+			Assert.AreEqual (true, tsmi.PublicProcessCmdKey (ref m, Keys.Control | Keys.D), "A3");
+			Assert.AreEqual (false, tsmi.PublicProcessCmdKey (ref m, Keys.A), "A4");
+			Assert.AreEqual (false, tsmi.PublicProcessCmdKey (ref m, Keys.Control | Keys.A), "A5");
+			
+			tsmi.ShowShortcutKeys = false;
+			Assert.AreEqual (true, tsmi.PublicProcessCmdKey (ref m, Keys.Control | Keys.D), "A6");
+			
+			tsmi.ShortcutKeyDisplayString = "Moose";
+			Assert.AreEqual (true, tsmi.PublicProcessCmdKey (ref m, Keys.Control | Keys.D), "A7");
+		}
+		
+		[Test]
 		public void BehaviorMdiWindowMenuItem ()
 		{
 			Form f = new Form ();
+			f.ShowInTaskbar = false;
 			f.IsMdiContainer = true;
 			Form c1 = new Form ();
 			c1.MdiParent = f;
@@ -59,6 +136,36 @@ namespace MonoTests.System.Windows.Forms
 			c1.Show ();
 			f.Show ();
 			Assert.AreEqual (true, (tsmi.DropDownItems[0] as ToolStripMenuItem).IsMdiWindowListEntry, "R1");
+		}
+		
+		[Test]
+		public void BehaviorShortcutText ()
+		{
+			ToolStripMenuItem tsmi = new ToolStripMenuItem ();
+			
+			tsmi.ShortcutKeys = Keys.Control | Keys.O;
+			
+			Assert.AreEqual (null, tsmi.ShortcutKeyDisplayString, "A1");
+			
+			tsmi.ShortcutKeyDisplayString = "Test String";
+			Assert.AreEqual ("Test String", tsmi.ShortcutKeyDisplayString, "A2");
+
+			tsmi.ShortcutKeys = Keys.Control | Keys.P;
+			Assert.AreEqual ("Test String", tsmi.ShortcutKeyDisplayString, "A3");
+
+			tsmi.ShortcutKeyDisplayString = string.Empty;
+			Assert.AreEqual (string.Empty, tsmi.ShortcutKeyDisplayString, "A4");
+
+			tsmi.ShortcutKeyDisplayString = null;
+			Assert.AreEqual (null, tsmi.ShortcutKeyDisplayString, "A5");
+		}
+		
+		private class ExposeProtectedMethods : ToolStripMenuItem
+		{
+			public bool PublicProcessCmdKey (ref Message m, Keys keys)
+			{
+				return this.ProcessCmdKey (ref m, keys);
+			}
 		}
 	}
 }

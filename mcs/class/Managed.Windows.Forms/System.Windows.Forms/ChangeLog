@@ -1,3 +1,7 @@
+2007-03-25  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStripComboBox.cs: Default the ComboBox's FlatStyle to Popup.
+
 2007-03-24  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Control.cs: Make SetBoundsCore match MS better.  The BoundsSpecified

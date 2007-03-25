@@ -424,6 +424,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (new Size (100, 50), tsi.Size, "H8");
 			
 			Form f = new Form ();
+			f.ShowInTaskbar = false;
 			f.Controls.Add (ts);
 			ts.Items.Add (tsi);
 			f.Show ();

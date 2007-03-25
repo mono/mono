@@ -112,7 +112,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (2, count, "A55");
 			Assert.AreEqual ("MyName", tsi.Name, "A56");
 		}
-
+		
 		[Test]
 		public void ProtectedProperties ()
 		{
@@ -744,6 +744,20 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (string.Empty, ew.ToString (), "B3");
 		}
 
+		[Test]
+		public void MethodDispose ()
+		{
+			ToolStrip ts = new ToolStrip ();
+			NullToolStripItem tsi = new NullToolStripItem ();
+			
+			ts.Items.Add (tsi);
+			
+			Assert.AreEqual (false, tsi.IsDisposed, "A1");
+			
+			tsi.Dispose ();
+			Assert.AreEqual (true, tsi.IsDisposed, "A2");
+		}
+		
 		//[Test]
 		//public void PropertyAnchorAndDocking ()
 		//{

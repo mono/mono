@@ -554,6 +554,85 @@ namespace MonoTests.System.Windows.Forms
 		//}
 
 		[Test]
+		public void BehaviorDisplayRectangleAndOverflow ()
+		{
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+			ToolStrip ts = new ToolStrip ();
+			f.Controls.Add (ts);
+			f.Show ();
+
+			Assert.AreEqual (false, ts.OverflowButton.Visible, "D1");
+			Assert.AreEqual (new Rectangle (7, 0, 284, 25), ts.DisplayRectangle, "D2");
+
+			ts.Items.Add (new ToolStripButton ("hello11111111111"));
+			ts.Items.Add (new ToolStripButton ("hello11111111111"));
+			ts.Items.Add (new ToolStripButton ("hello11111111111"));
+			ts.Items.Add (new ToolStripButton ("hello11111111111"));
+			ts.Items.Add (new ToolStripButton ("hello11111111111"));
+			ts.Items.Add (new ToolStripButton ("hello11111111111"));
+			
+			Assert.AreEqual (true, ts.OverflowButton.Visible, "D3");
+			Assert.AreEqual (new Rectangle (7, 0, 284, 25), ts.DisplayRectangle, "D4");
+			f.Dispose ();
+		}
+	
+		[Test]
+		public void BehaviorGripAndOverflowWithFlowLayout ()
+		{
+			ToolStrip ts = new ToolStrip ();
+			ts.LayoutStyle = ToolStripLayoutStyle.Flow;
+			
+			Assert.AreEqual (ToolStripGripStyle.Visible, ts.GripStyle, "A1");
+			Assert.AreEqual (false, ts.OverflowButton.Visible, "A2");
+			Assert.AreEqual ("System.Windows.Forms.Layout.FlowLayout", ts.LayoutEngine.ToString (), "A3");			
+		}
+	
+		[Test]
+		public void BehaviorDockAndOrientation ()
+		{
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+			
+			ToolStrip ts = new ToolStrip ();
+			ts.Dock = DockStyle.Left;
+			
+			f.Controls.Add (ts);
+			f.Show ();
+			
+			Assert.AreEqual (ToolStripLayoutStyle.VerticalStackWithOverflow, ts.LayoutStyle, "A1");
+			Assert.AreEqual (Orientation.Vertical, ts.Orientation, "A2");
+
+			ts.LayoutStyle = ToolStripLayoutStyle.StackWithOverflow;
+			Assert.AreEqual (ToolStripLayoutStyle.VerticalStackWithOverflow, ts.LayoutStyle, "A3");
+			Assert.AreEqual (Orientation.Vertical, ts.Orientation, "A4");
+
+			ts.LayoutStyle = ToolStripLayoutStyle.HorizontalStackWithOverflow;
+			Assert.AreEqual (ToolStripLayoutStyle.HorizontalStackWithOverflow, ts.LayoutStyle, "A5");
+			Assert.AreEqual (Orientation.Horizontal, ts.Orientation, "A6");
+			
+			ts.LayoutStyle = ToolStripLayoutStyle.Flow;
+			Assert.AreEqual (ToolStripLayoutStyle.Flow, ts.LayoutStyle, "A7");
+			Assert.AreEqual (Orientation.Horizontal, ts.Orientation, "A8");
+
+			ts.LayoutStyle = ToolStripLayoutStyle.StackWithOverflow;
+			Assert.AreEqual (ToolStripLayoutStyle.VerticalStackWithOverflow, ts.LayoutStyle, "A9");
+			Assert.AreEqual (Orientation.Vertical, ts.Orientation, "A10");
+		}
+		
+		[Test]
+		public void MethodCreateLayoutSettings ()
+		{
+			ExposeProtectedProperties ts = new ExposeProtectedProperties ();
+
+			Assert.AreEqual ("System.Windows.Forms.FlowLayoutSettings", ts.PublicCreateLayoutSettings (ToolStripLayoutStyle.Flow).ToString (), "A1");
+			Assert.AreEqual (null, ts.PublicCreateLayoutSettings (ToolStripLayoutStyle.HorizontalStackWithOverflow), "A2");
+			Assert.AreEqual (null, ts.PublicCreateLayoutSettings (ToolStripLayoutStyle.StackWithOverflow), "A3");
+			//Assert.AreEqual ("System.Windows.Forms.TableLayoutSettings", ts.PublicCreateLayoutSettings (ToolStripLayoutStyle.Table).ToString (), "A4");
+			Assert.AreEqual (null, ts.PublicCreateLayoutSettings (ToolStripLayoutStyle.VerticalStackWithOverflow), "A5");
+		}
+		
+		[Test]
 		public void TestToolStrip ()
 		{
 			ToolStrip ts = new ToolStrip ();
@@ -676,6 +755,8 @@ namespace MonoTests.System.Windows.Forms
 						
 				return retval;
 			}
+			
+			public LayoutSettings PublicCreateLayoutSettings (ToolStripLayoutStyle layoutStyle) { return base.CreateLayoutSettings (layoutStyle); }
 		}
 	}
 }

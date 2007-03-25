@@ -1,3 +1,15 @@
+2007-03-25  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ButtonTest.cs: Add test demonstrating the behavior of ImageList.
+	* MenuStripTest.cs: General test suite.
+	* ToolStripComboBoxTest.cs: Enable tests for FlatStyle.
+	* ToolStripControlHostTest.cs: Form.ShowInTaskbar = false.
+	* ToolStripItemTest.cs: Test for method Dispose.
+	* ToolStripMenuItemTest.cs: Add tests for constructor and keyboard shortcuts.
+	* ToolStripProgressBarTest.cs: Enable previously NotWorking test.
+	* ToolStripTest.cs: Add tests for Overflow, Dock/Orientation, and 
+	CreateLayoutSettings.
+
 2007-03-24  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DefaultLayoutTest.cs: Enable some NotWorking tests that now

@@ -191,7 +191,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Ignore ("ProgressBar throws AE, not AOORE")]
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void PropertyValueAOORE ()
 		{

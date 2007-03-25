@@ -382,6 +382,7 @@ namespace System.Windows.Forms
 			public ToolStripComboBoxControl () : base ()
 			{
 				this.border_style = BorderStyle.None;
+				this.FlatStyle = FlatStyle.Popup;
 			}
 		}
 	}
