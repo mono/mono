@@ -105,7 +105,7 @@ namespace Mainsoft.Web.Security
                 }
                 catch (Exception e)
                 {
-                    throw new ApplicationException("Cannot initialized servlet PUMA Home from JNDI", e);
+                    throw new ApplicationException("Cannot initialize servlet PUMA Home from JNDI", e);
                 }
             }
             return phw;

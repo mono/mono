@@ -1,3 +1,7 @@
+03-25-2007      Ilya Kharmatsky    <ilyak -at- mainsoft.com>
+
+	* PumaServicesProvider.cs: spell error in exception msg fixed.
+
 03-22-2007      Ilya Kharmatsky    <ilyak -at- mainsoft.com>
 	
 	* WPAuthenticationModule.cs, WPGroupsRoleProvider.cs,
