@@ -74,6 +74,14 @@ namespace Mono.CSharp {
 		public object Value {
 			get { return value.GetValue (); }
 		}
+
+		public override bool Define ()
+		{
+			const FieldAttributes attr = FieldAttributes.Public | FieldAttributes.Static | FieldAttributes.Literal;
+			FieldBuilder = Parent.TypeBuilder.DefineField (Name, MemberType, attr);
+			TypeManager.RegisterConstant (FieldBuilder, this);
+			return true;
+		}
 	
 		protected override Constant DoResolveValue (EmitContext ec)
 		{
