@@ -73,7 +73,15 @@ namespace System.Web {
 		int timeout_possible;
 		DateTime time_stamp = DateTime.UtcNow;
 #if NET_2_0
+#if TARGET_JVM
+		const string app_global_res_key = "HttpContext.app_global_res_key";
+		internal static Assembly AppGlobalResourcesAssembly {
+			get { return (Assembly) AppDomain.CurrentDomain.GetData (app_global_res_key); }
+			set { AppDomain.CurrentDomain.SetData (app_global_res_key, value); }
+		}
+#else
 		internal static Assembly AppGlobalResourcesAssembly;
+#endif
 		ProfileBase profile = null;
 		LinkedList<IHttpHandler> handlers;
 #endif
