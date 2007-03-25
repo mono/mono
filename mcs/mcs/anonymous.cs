@@ -1211,9 +1211,6 @@ namespace Mono.CSharp {
 					return false;
 				}
 				
-				if (TypeManager.IsGenericParameter (invoke_pd.ParameterType (i)))
-					continue;
-				
 				if (invoke_pd.ParameterType (i) != Parameters.ParameterType (i)) {
 					Report.Error (1678, loc, "Parameter `{0}' is declared as type `{1}' but should be `{2}'",
 						      (i+1).ToString (),
@@ -1277,7 +1274,7 @@ namespace Mono.CSharp {
 			} else {
 				if (!VerifyExplicitParameterCompatibility (delegate_type, invoke_pd))
 					return null;
-					
+
 				parameters = Parameters;
 			}
 
@@ -1509,7 +1506,7 @@ namespace Mono.CSharp {
 
 	public class AnonymousMethod : AnonymousContainer
 	{
-		public Type DelegateType;
+		public readonly Type DelegateType;
 
 		//
 		// The value return by the Compatible call, this ensure that

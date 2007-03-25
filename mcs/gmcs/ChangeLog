@@ -1,3 +1,8 @@
+2007-03-25  Marek Safar  <marek.safar@gmail.com>
+
+	* generic.cs (InferTypeArguments): Infer arguments before they are used
+	for compatibility check.
+
 2007-03-15  Marek Safar  <marek.safar@gmail.com>
 
 	* generic.cs (InflatedConstraints): Fixed the check order.

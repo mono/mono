@@ -1,5 +1,13 @@
 2007-03-25  Marek Safar  <marek.safar@gmail.com>
 
+	* anonymous.cs: Restored checks disabled for uninflated anonymous methods.
+
+2007-03-25  Marek Safar  <marek.safar@gmail.com>
+
+	* expression.cs: Stop using obsolete 2.0 opcodes.
+
+2007-03-25  Marek Safar  <marek.safar@gmail.com>
+
 	* enum.cs (EnumMember.Define): Fixed regression and slowdown caused by
 	one of the latests Martin's fixes.
 

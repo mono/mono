@@ -2582,19 +2582,20 @@ namespace Mono.CSharp {
 						continue;
 
 					AnonymousMethodExpression am = (AnonymousMethodExpression)a.Expr;
-					if (am.Compatible (ec, dtype) != null) {
-						if (!InferTypeArguments (dtype.GetGenericArguments (), am.Parameters.Types, inferred_types))
-							return false;
+					if (!InferTypeArguments (dtype.GetGenericArguments (), am.Parameters.Types, inferred_types))
+						return false;
 
-						Type[] inferred_delegate = new Type[am.Parameters.Types.Length];
-						int index = 0;
-						foreach (Type t in dtype.GetGenericArguments ()) {
-							inferred_delegate[index++] = inferred_types[t.GenericParameterPosition];
-						}
-						am.AnonymousMethod.DelegateType = dtype.GetGenericTypeDefinition().MakeGenericType (inferred_delegate);
-						am.AnonymousMethod.AnonymousDelegate.Type = am.AnonymousMethod.DelegateType;
-						continue;
+					Type[] inferred_delegate = new Type[am.Parameters.Types.Length];
+					int index = 0;
+					foreach (Type t in dtype.GetGenericArguments ()) {
+						inferred_delegate[index++] = inferred_types[t.GenericParameterPosition];
 					}
+					Type infered_type = dtype.GetGenericTypeDefinition ().MakeGenericType (inferred_delegate);
+
+					if (am.Compatible (ec, infered_type) == null)
+						return false;
+
+					continue;
 				}
 
 				if (a.Expr is LambdaExpression)
