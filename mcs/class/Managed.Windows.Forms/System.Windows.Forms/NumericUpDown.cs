@@ -340,7 +340,12 @@ namespace System.Windows.Forms {
 				eh (this, e);
 		}
 
-		protected decimal ParseEditText (string text) {
+		protected void ParseEditText () {
+			Value = ParseEditText (Text);
+			UserEdit = false;
+		}
+
+		private decimal ParseEditText (string text) {
 			UserEdit = false;
 			decimal ret = dvalue;
 

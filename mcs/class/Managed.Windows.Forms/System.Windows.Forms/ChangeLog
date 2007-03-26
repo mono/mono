@@ -1,3 +1,7 @@
+2007-03-26  Andreia Gaita  <avidigal@novell.com>
+
+	* NumericUpDown.cs: Fix broken 1.1 api for ParseEditText
+
 2007-03-26  Jackson Harper  <jackson@ximian.com>
 
 	* RichTextBox.cs: The selection_start and selection_end don't
