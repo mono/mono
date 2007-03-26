@@ -1,3 +1,9 @@
+2007-03-26  Raja R Harinath  <rharinath@novell.com>
+
+	* flowanalysis.cs (FlowBranching.Reachability): Prepare to be
+	replaced by a boolean.  Add boolean 'is_unreachable' field, check
+	and maintain invariants.
+
 2007-03-25  Marek Safar  <marek.safar@gmail.com>
 
 	* anonymous.cs: Restored checks disabled for uninflated anonymous methods.

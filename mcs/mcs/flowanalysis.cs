@@ -76,11 +76,19 @@ namespace Mono.CSharp
 				Always
 			}
 
+			bool is_unreachable;
 			TriState barrier;
 
 			Reachability (TriState barrier)
 			{
 				this.barrier = barrier;
+				this.is_unreachable = barrier == TriState.Always;
+			}
+
+			void Check ()
+			{
+				if (is_unreachable != (barrier == TriState.Always))
+					throw new InternalErrorException (is_unreachable + " vs. " + barrier);
 			}
 
 			public Reachability Clone ()
@@ -105,11 +113,15 @@ namespace Mono.CSharp
 			public void Meet (Reachability b)
 			{
 				barrier = TriState_Meet (barrier, b.barrier);
+				is_unreachable &= b.is_unreachable;
+				Check ();
 			}
 
 			public void Or (Reachability b)
 			{
 				barrier = TriState_Max (barrier, b.barrier);
+				is_unreachable |= b.is_unreachable;
+				Check ();
 			}
 
 			public static Reachability Always ()
@@ -118,12 +130,13 @@ namespace Mono.CSharp
 			}
 
 			public bool IsUnreachable {
-				get { return barrier == TriState.Always; }
+				get { Check (); return is_unreachable; }
 			}
 
 			public void SetBarrier ()
 			{
 				barrier = TriState.Always;
+				is_unreachable = true;
 			}
 
 			static string ShortName (TriState t)
