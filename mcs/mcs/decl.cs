@@ -1053,19 +1053,33 @@ namespace Mono.CSharp {
 			for (Type current_type = TypeBuilder;
 			     current_type != null && current_type != TypeManager.object_type;
 			     current_type = current_type.BaseType) {
-				current_type = TypeManager.DropGenericTypeArguments (current_type);
-				if (current_type is TypeBuilder) {
-					TypeContainer tc = current_type == TypeBuilder
-						? PartialContainer
-						: TypeManager.LookupTypeContainer (current_type);
+
+				Type ct = TypeManager.DropGenericTypeArguments (current_type);
+				if (ct is TypeBuilder) {
+					TypeContainer tc = ct == TypeBuilder
+						? PartialContainer : TypeManager.LookupTypeContainer (ct);
 					if (tc != null)
 						t = tc.FindNestedType (name);
 				} else {
-					t = TypeManager.GetNestedType (current_type, name);
+					t = TypeManager.GetNestedType (ct, name);
 				}
 
-				if (t != null && CheckAccessLevel (t))
+				if ((t == null) || !CheckAccessLevel (t))
+					continue;
+
+#if GMCS_SOURCE
+				if (!TypeManager.IsGenericType (current_type))
 					return t;
+
+				Type[] args = TypeManager.GetTypeArguments (current_type);
+				Type[] targs = TypeManager.GetTypeArguments (t);
+				for (int i = 0; i < args.Length; i++)
+					targs [i] = args [i];
+
+				t = t.MakeGenericType (targs);
+#endif
+
+				return t;
 			}
 
 			return null;

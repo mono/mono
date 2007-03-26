@@ -2067,7 +2067,7 @@ namespace Mono.CSharp {
 
 		FullNamedExpression ResolveNested (IResolveContext ec, Type t)
 		{
-			if (!TypeManager.IsGenericTypeDefinition (t))
+			if (!TypeManager.IsGenericTypeDefinition (t) && !TypeManager.IsGenericType (t))
 				return null;
 
 			DeclSpace ds = ec.DeclContainer;
