@@ -2092,6 +2092,13 @@ namespace System.Windows.Forms {
  			return;
   		}
   
+  #if NET_2_0
+		internal override void ShowBalloonTip(int timeout, string tipTitle, string tipText, ToolTipIcon tipIcon)
+		{
+			// TODO:
+		}
+#endif
+
 		internal override void SendAsyncMethod (AsyncMethodData method)
 		{
 			Win32PostMessage(FosterParent, Msg.WM_ASYNC_MESSAGE, IntPtr.Zero, (IntPtr)GCHandle.Alloc (method));

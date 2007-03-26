@@ -654,6 +654,15 @@ namespace System.Windows.Forms {
 			driver.MenuToScreen(handle, ref x, ref y);
 		}
 
+#if NET_2_0
+		internal static void ShowBalloonTip(int timeout, string tipTitle, string tipText, ToolTipIcon tipIcon) {
+			#if DriverDebug
+				Console.WriteLine("ShowBalloonTip ({0}, {1}, {2}, {3}): Called", timeout, tipTitle, tipText, tipIcon);
+			#endif
+			driver.ShowBalloonTip(timeout, tipTitle, tipText, tipIcon);
+		}
+#endif
+
 		internal static void OverrideCursor(IntPtr cursor) {
 			#if DriverDebug
 				Console.WriteLine("OverrideCursor({0:X}): Called", cursor.ToInt32());

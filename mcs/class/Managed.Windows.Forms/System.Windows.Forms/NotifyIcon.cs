@@ -49,6 +49,9 @@ namespace System.Windows.Forms {
 		private bool			systray_active;
 		private ToolTip			tooltip;
 #if NET_2_0
+		private string balloon_text;
+		private string balloon_title;
+		private ToolTipIcon balloon_icon;
 		private ContextMenuStrip	context_menu_strip;
 		private object			tag;
 #endif
@@ -221,12 +224,31 @@ namespace System.Windows.Forms {
 		public NotifyIcon() {
 			window = new NotifyIconWindow(this);
 			systray_active = false;
+
+#if NET_2_0			
+			balloon_title = "";
+			balloon_text = "";
+#endif
 		}
 
 		public NotifyIcon(System.ComponentModel.IContainer container) : this() {
 		}
 		#endregion	// Public Constructors
 
+		#region Public Methods
+#if NET_2_0
+		public void ShowBalloonTip (int timeout)
+		{
+			ShowBalloonTip(timeout, balloon_title, balloon_text, balloon_icon);
+		}
+
+		public void ShowBalloonTip(int timeout, string tipTitle, string tipText, ToolTipIcon tipIcon)
+		{
+			// TODO: Call ShowBalloonTip in XplatUI.
+		}
+#endif
+		#endregion Public Methods
+		
 		#region Private Methods
 		private void OnClick (EventArgs e)
 		{
@@ -316,6 +338,40 @@ namespace System.Windows.Forms {
 		#endregion	// Private Methods
 
 		#region Public Instance Properties
+#if NET_2_0
+		public ToolTipIcon BalloonTipIcon {
+			get { return this.balloon_icon; }
+			set {
+				if (value == this.balloon_icon)
+					return;
+        	
+            	this.balloon_icon = value;
+			}
+		}
+
+		[Localizable(true)]
+		public string BalloonTipText {
+			get { return this.balloon_text; }
+			set {
+				if (value == this.balloon_text)
+					return;
+				
+				this.balloon_text = value;
+			}
+		}
+ 		
+		[Localizable(true)]
+		public string BalloonTipTitle {
+			get { return this.balloon_title; }
+			set {
+				if (value == this.balloon_title)
+					return;
+	
+				this.balloon_title = value;
+			}
+		}
+#endif
+		
 		[DefaultValue(null)]
 #if NET_2_0
 		[Browsable (false)]

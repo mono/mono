@@ -265,6 +265,10 @@ namespace System.Windows.Forms {
 		internal abstract void MenuToScreen(IntPtr hwnd, ref int x, ref int y);
 		internal abstract void ScreenToMenu(IntPtr hwnd, ref int x, ref int y);
 
+#if NET_2_0		
+		internal abstract void ShowBalloonTip(int timeout, string tipTitle, string tipText, ToolTipIcon tipIcon);
+#endif
+
 		internal abstract void SetIcon(IntPtr handle, Icon icon);
 
 		internal abstract void ClipboardClose(IntPtr handle);

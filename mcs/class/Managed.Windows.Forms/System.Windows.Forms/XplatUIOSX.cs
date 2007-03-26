@@ -1341,6 +1341,14 @@ namespace System.Windows.Forms {
 			y = (int)(pt.y+wBounds.top);
 		}
 
+#if NET_2_0
+		[MonoTODO]
+		internal override void ShowBalloonTip(int timeout, string tipTitle, string tipText, ToolTipIcon tipIcon)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+
 		[MonoTODO]
 		internal override void OverrideCursor(IntPtr cursor) {
 			throw new NotImplementedException ();

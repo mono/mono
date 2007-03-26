@@ -1,3 +1,10 @@
+2007-03-26  Everaldo Canuto  <everaldo@simios.org>
+
+	* NotifyIcon.cs: Balloon properties and methods created.
+
+	* XplatUI.cs, XplatUIDriver.cs, XplatUIX11.cs, XplatUIWin32.cs,	
+	XplatUIOSX.cs, XplatUIX11-new.cs: Implement ShowBalloonTip method.
+
 2007-03-25  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStripComboBox.cs: Default the ComboBox's FlatStyle to Popup.

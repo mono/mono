@@ -673,6 +673,13 @@ namespace System.Windows.Forms.X11Internal {
 				hwnd.MenuToScreen (ref x, ref y);
 		}
 
+#if NET_2_0
+		internal override void ShowBalloonTip(int timeout, string tipTitle, string tipText, ToolTipIcon tipIcon)
+		{
+			// TODO:
+		}
+#endif
+
 		internal override void OverrideCursor (IntPtr cursor)
 		{
 			display.OverrideCursor = cursor;
