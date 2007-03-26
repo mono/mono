@@ -1,3 +1,9 @@
+2007-03-26  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateControlCompiler.cs: refactor assining properties from
+	resources a bit to support pages and user controls. Fixes bug
+	#81204.
+
 2007-03-21  Marek Habersack  <mhabersack@novell.com>
 
 	* BaseCompiler.cs: cast 'this' to CodeFileBaseClass in

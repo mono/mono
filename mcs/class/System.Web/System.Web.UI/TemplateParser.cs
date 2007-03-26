@@ -80,6 +80,7 @@ namespace System.Web.UI {
 		string src;
 		string partialClassName;
 		string codeFileBaseClass;
+		string metaResourceKey;
 		Type codeFileBaseClassType;
 		List <UnknownAttributeDescriptor> unknownMainAttributes;
 #endif
@@ -598,6 +599,9 @@ namespace System.Web.UI {
 				ThrowParseException (String.Format ("'{0}' is not valid for 'className'", className));
 
 #if NET_2_0
+			if (this is TemplateControlParser)
+				metaResourceKey = GetString (atts, "meta:resourcekey", null);
+			
 			if (inherits != null && (this is PageParser || this is UserControlParser) && atts.Count > 0) {
 				if (unknownMainAttributes == null)
 					unknownMainAttributes = new List <UnknownAttributeDescriptor> ();
@@ -745,21 +749,22 @@ namespace System.Web.UI {
 		}
 
 #if NET_2_0
-		internal bool IsPartial
-		{
+		internal bool IsPartial {
 			get { return src != null; }
 		}
 
-		internal string PartialClassName
-		{
+		internal string PartialClassName {
 			get { return partialClassName; }
 		}
 
-		internal string CodeFileBaseClass
-		{
+		internal string CodeFileBaseClass {
 			get { return codeFileBaseClass; }
 		}
 
+		internal string MetaResourceKey {
+			get { return metaResourceKey; }
+		}
+		
 		internal Type CodeFileBaseClassType
 		{
 			get { return codeFileBaseClassType; }

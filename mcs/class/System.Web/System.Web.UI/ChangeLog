@@ -1,3 +1,8 @@
+2007-03-26  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateParser.cs: support the meta:resourcekey attribute in
+	Page and Control directives. Fixes bug #81204.
+
 2007-03-21  Marek Habersack  <mhabersack@novell.com>
 
 	* UnknownAttributeDescriptor.cs: an internal helper class for

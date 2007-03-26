@@ -348,7 +348,7 @@ namespace System.Web.Compilation
 				}
 #endif
 			}
-
+			
 			mainClass.Members.Add (method);
 		}
 
@@ -787,18 +787,9 @@ namespace System.Web.Compilation
 // 			ccs.TrueStatements.Add (assign);
 			method.Statements.Add (assign);
 		}
-		
-		void AssignPropertiesFromResources (ControlBuilder builder, string attvalue)
-		{
-			if (attvalue == null || attvalue.Length == 0)
-				return;
-			
-			Type controlType = builder.ControlType;
-			if (controlType == null)
-				return;
 
-			// object obj = null;
-			
+		void AssignPropertiesFromResources (CodeMemberMethod method, Type controlType, string attvalue)
+		{
 			// Process all public fields and properties of the control. We don't use GetMembers to make the code
 			// faster
 			FieldInfo [] fields = controlType.GetFields (
@@ -813,13 +804,25 @@ namespace System.Web.Compilation
 					typeof (object),
 					"localResourceObject",
 					new CodePrimitiveExpression (null));
-				builder.method.Statements.Add (cvds);
+				method.Statements.Add (cvds);
 			}
 			
 			foreach (FieldInfo fi in fields)
-				AssignPropertyFromResources (builder.method, fi, attvalue, "localResourceObject");
+				AssignPropertyFromResources (method, fi, attvalue, "localResourceObject");
 			foreach (PropertyInfo pi in properties)
-				AssignPropertyFromResources (builder.method, pi, attvalue, "localResourceObject");
+				AssignPropertyFromResources (method, pi, attvalue, "localResourceObject");
+		}
+		
+		void AssignPropertiesFromResources (ControlBuilder builder, string attvalue)
+		{
+			if (attvalue == null || attvalue.Length == 0)
+				return;
+			
+			Type controlType = builder.ControlType;
+			if (controlType == null)
+				return;
+
+			AssignPropertiesFromResources (builder.method, controlType, attvalue);
 		}
 #endif
 		
@@ -839,7 +842,7 @@ namespace System.Web.Compilation
 		{
 			EventInfo [] ev_info = null;
 			Type type = builder.ControlType;
-
+			
 			string attvalue = builder.attribs [id] as string;
 			if (id.Length > 2 && id.Substring (0, 2).ToUpper () == "ON"){
 				if (ev_info == null)
@@ -1385,6 +1388,12 @@ namespace System.Web.Compilation
 			
 			if (!childrenAsProperties && typeof (Control).IsAssignableFrom (builder.ControlType))
 				builder.method.Statements.Add (new CodeMethodReturnStatement (ctrlVar));
+
+#if NET_2_0
+			if (builder is RootBuilder)
+				if (!String.IsNullOrEmpty (parser.MetaResourceKey))
+					AssignPropertiesFromResources (builder.method, parser.BaseType, parser.MetaResourceKey);
+#endif
 		}
 		
 		protected internal override void CreateMethods ()
