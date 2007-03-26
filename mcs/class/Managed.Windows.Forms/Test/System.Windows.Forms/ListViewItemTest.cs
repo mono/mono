@@ -54,6 +54,30 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (fnt, item2.SubItems[0].Font, "Constructor#7");
 			Assert.AreEqual ("Element1", item2.SubItems[0].Text, "Constructor#8");
 			Assert.AreEqual ("Element2", item2.SubItems[1].Text, "Constructor#12");
+
+			ListViewItem item3 = new ListViewItem ((string)null);
+			Assert.AreEqual (String.Empty, item3.Text, "Constructor#13");
+
+			ListViewItem item4 = new ListViewItem ((string)null, -99);
+			Assert.AreEqual (String.Empty, item4.Text, "Constructor#14");
+			Assert.AreEqual (-99, item4.ImageIndex, "Constructor#15");
+
+			ListViewItem item5 = new ListViewItem (new string [2]);
+			Assert.AreEqual (2, item5.SubItems.Count, "Constructor#16");
+			Assert.IsNotNull (item5.SubItems [0], "Constructor#17");
+			Assert.IsNotNull (item5.SubItems [1], "Constructor#18");
+
+			ListViewItem item6 = new ListViewItem (new string [2], -1, Color.Blue, Color.Red,
+				fnt);
+			Assert.AreEqual (2, item6.SubItems.Count, "Constructor#19");
+			Assert.IsNotNull (item6.SubItems [0], "Constructor#20");
+			Assert.IsNotNull (item6.SubItems [1], "Constructor#21");
+			Assert.AreEqual (Color.Blue, item6.ForeColor, "Constructor#22");
+			Assert.AreEqual (Color.Blue, item6.SubItems [0].ForeColor, "Constructor#23");
+			Assert.AreEqual (Color.Red, item6.BackColor, "Constructor#24");
+			Assert.AreEqual (Color.Red, item6.SubItems [0].BackColor, "Constructor#25");
+			Assert.AreEqual (fnt, item6.Font, "Constructor#26");
+			Assert.AreEqual (fnt, item6.SubItems [0].Font, "Constructor#27");
 		}
 
 		[Test]
@@ -184,6 +208,24 @@ namespace MonoTests.System.Windows.Forms
 	[TestFixture]
 	public class ListViewSubItemTest
 	{
+		[Test]
+		public void ListViewSubItemConstructorTest ()
+		{
+			ListViewItem.ListViewSubItem subItem = new ListViewItem.ListViewSubItem (null, null);
+			Assert.AreEqual (String.Empty, subItem.Text, "#A1");
+
+			ListViewItem.ListViewSubItem subItem2 = new ListViewItem.ListViewSubItem (null, "SubItem2");
+			Assert.AreEqual ("SubItem2", subItem2.Text, "#A2");
+
+			Font fnt = new Font ("Arial", 12);
+			ListViewItem.ListViewSubItem subItem3 = new ListViewItem.ListViewSubItem (null, "SubItem3", 
+				Color.Blue, Color.Green, fnt);
+			Assert.AreEqual ("SubItem3", subItem3.Text, "#A3");
+			Assert.AreEqual (Color.Green, subItem3.BackColor, "#A4");
+			Assert.AreEqual (Color.Blue, subItem3.ForeColor, "#A5");
+			Assert.AreEqual (fnt, subItem3.Font, "#A6");
+		}
+
 		[Test]
 		public void ListViewSubItemPropertiesTest ()
 		{
@@ -339,6 +381,19 @@ namespace MonoTests.System.Windows.Forms
 				Assert.AreEqual ("items", ex.ParamName, "#5");
 				Assert.IsNull (ex.InnerException, "#6");
 			}
+		}
+
+		[Test]
+		public void AddRange4 ()
+		{
+			ListViewItem item = new ListViewItem ();
+			Assert.AreEqual (1, item.SubItems.Count, "#1");
+
+			item.SubItems.AddRange (new string [3]);
+			Assert.AreEqual (1, item.SubItems.Count, "#2");
+
+			item.SubItems.AddRange (new ListViewItem.ListViewSubItem [3]);
+			Assert.AreEqual (1, item.SubItems.Count, "#3");
 		}
 	}
 }

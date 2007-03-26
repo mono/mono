@@ -1,3 +1,10 @@
+2007-03-26  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListViewItemTest.cs: Add tests for constructors taking
+	an array of strings, for the ListViewSubItem constructors,
+	and for the ListViewSubItemCollection.AddRange method receiving
+	and array of null strings.
+
 2007-03-25  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStripTest.cs: Fix ambiguous Category attribute.
