@@ -705,7 +705,7 @@ namespace System.Web.Compilation
 			method.Statements.Add (assign);
 		}
 
-		void AssignPropertyFromResources (CodeMemberMethod method, MemberInfo mi, string attvalue, string varname)
+		void AssignPropertyFromResources (CodeMemberMethod method, MemberInfo mi, string attvalue)
 		{
 			string resname = String.Format ("{0}.{1}", attvalue, mi.Name);
 			bool isProperty = mi.MemberType == MemberTypes.Property;
@@ -749,42 +749,8 @@ namespace System.Web.Compilation
 				new CodeTypeReferenceExpression (typeof(System.Convert)),
 				"ToString");
 			convert.Parameters.Add (getlro);
-			assign.Right = convert;
-			
-// 			assign.Left = new CodeVariableReferenceExpression (varname);
-// 			assign.Right = new CodeMethodInvokeExpression (
-// 				new CodeThisReferenceExpression (),
-// 				"GetLocalResourceObject",
-// 				new CodeExpression [] { new CodePrimitiveExpression (resname) });
-// 			method.Statements.Add (assign);
+			assign.Right = convert;			
 
-// 			// if (localResourceObject != null && localResourceObject.GetType() == typeof(member_type))
-// 			CodeConditionStatement ccs = new CodeConditionStatement ();
-// 			CodeBinaryOperatorExpression exp1 = new CodeBinaryOperatorExpression (
-// 				new CodeVariableReferenceExpression (varname),
-// 				CodeBinaryOperatorType.IdentityInequality,
-// 				new CodePrimitiveExpression (null));
-			
-// 			CodeBinaryOperatorExpression exp2 = new CodeBinaryOperatorExpression (
-// 				new CodeMethodInvokeExpression (
-// 					new CodeVariableReferenceExpression (varname),
-// 					"GetType",
-// 					new CodeExpression [] {}),
-// 				CodeBinaryOperatorType.IdentityEquality,
-// 				new CodeTypeOfExpression (
-// 					new CodeTypeReference (member_type.ToString ())));
-// 			ccs.Condition = new CodeBinaryOperatorExpression (
-// 				exp1,
-// 				CodeBinaryOperatorType.BooleanAnd,
-// 				exp2);
-			
-// 			//   ctrlVar.Property = (member_type)obj;
-// 			assign = new CodeAssignStatement ();
-// 			assign.Left = new CodePropertyReferenceExpression (ctrlVar, mi.Name);
-// 			assign.Right = new CodeCastExpression (
-// 				member_type.ToString (),
-// 				new CodeVariableReferenceExpression (varname));
-// 			ccs.TrueStatements.Add (assign);
 			method.Statements.Add (assign);
 		}
 
@@ -799,18 +765,10 @@ namespace System.Web.Compilation
 				BindingFlags.Instance | BindingFlags.Static |
 				BindingFlags.Public | BindingFlags.FlattenHierarchy);
 
-			if (fields.Length > 0 || properties.Length > 0) {
-				CodeVariableDeclarationStatement cvds = new CodeVariableDeclarationStatement (
-					typeof (object),
-					"localResourceObject",
-					new CodePrimitiveExpression (null));
-				method.Statements.Add (cvds);
-			}
-			
 			foreach (FieldInfo fi in fields)
-				AssignPropertyFromResources (method, fi, attvalue, "localResourceObject");
+				AssignPropertyFromResources (method, fi, attvalue);
 			foreach (PropertyInfo pi in properties)
-				AssignPropertyFromResources (method, pi, attvalue, "localResourceObject");
+				AssignPropertyFromResources (method, pi, attvalue);
 		}
 		
 		void AssignPropertiesFromResources (ControlBuilder builder, string attvalue)
@@ -908,11 +866,14 @@ namespace System.Web.Compilation
 
 		protected void CreateAssignStatementsFromAttributes (ControlBuilder builder)
 		{
+#if NET_2_0
+			bool haveMetaKey = false;
+#endif
 			this.dataBoundAtts = 0;
 			IDictionary atts = builder.attribs;
 			if (atts == null || atts.Count == 0)
 				return;
-
+			
 			foreach (string id in atts.Keys) {
 				if (InvariantCompareNoCase (id, "runat"))
 					continue;
@@ -921,9 +882,18 @@ namespace System.Web.Compilation
 				/* we skip SkinID here as it's assigned in BuildControlTree */
 				if (InvariantCompareNoCase (id, "skinid"))
 					continue;
+				if (InvariantCompareNoCase (id, "meta:resourcekey")) {
+					haveMetaKey = true;
+					continue;
+				}
 #endif
 				CreateAssignStatementFromAttribute (builder, id);
 			}
+			
+#if NET_2_0
+			if (haveMetaKey)
+				CreateAssignStatementFromAttribute (builder, "meta:resourcekey");
+#endif
 		}
 
 		void CreateDBAttributeMethod (ControlBuilder builder, string attr, string code)
