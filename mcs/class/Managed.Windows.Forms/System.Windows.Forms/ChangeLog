@@ -1,3 +1,11 @@
+2007-03-26  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListViewItem.cs: In the constructors that take
+	an array of strings, don't use ListViewSubItemCollection.AddRange
+	method to add items, since we need to have a different behaviour (in
+	the constructors we add an item for each null string, opposed to
+	the behaviour of AddRange, which adds nothing).
+
 2007-03-26  Andreia Gaita  <avidigal@novell.com>
 
 	* NumericUpDown.cs: Fix broken 1.1 api for ParseEditText

@@ -98,7 +98,8 @@ namespace System.Windows.Forms
 		public ListViewItem (string [] items, int imageIndex)
 		{
 			this.sub_items = new ListViewSubItemCollection (this);
-			this.sub_items.AddRange (items);
+			foreach (string item in items) // Don't use AddRange, since we need to add null strings
+				sub_items.Add (item);
 			this.image_index = imageIndex;
 		}
 
@@ -106,7 +107,8 @@ namespace System.Windows.Forms
 				     Color backColor, Font font)
 		{
 			this.sub_items = new ListViewSubItemCollection (this);
-			this.sub_items.AddRange (items);
+			foreach (string item in items)
+				sub_items.Add (item);
 			this.image_index = imageIndex;
 			ForeColor = foreColor;
 			BackColor = backColor;
@@ -134,7 +136,8 @@ namespace System.Windows.Forms
 					Color backColor, Font font) : this()
 		{
 			this.sub_items = new ListViewSubItemCollection(this);
-			this.sub_items.AddRange(items);
+			foreach (string item in items)
+				sub_items.Add (item);
 			ForeColor = foreColor;
 			BackColor = backColor;
 			this.font = font;
