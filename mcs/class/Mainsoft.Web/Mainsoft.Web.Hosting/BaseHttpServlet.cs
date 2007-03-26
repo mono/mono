@@ -39,6 +39,7 @@ using java.util;
 using vmw.@internal;
 using java.lang.reflect;
 using java.net;
+using System.Globalization;
 
 namespace Mainsoft.Web.Hosting
 {
@@ -201,6 +202,10 @@ namespace Mainsoft.Web.Hosting
 				resp.setHeader("X-AspNet-Version", "1.1.4322");
 
 				HttpWorkerRequest gwr = new ServletWorkerRequest(this, req, resp, output);
+				CultureInfo culture = (CultureInfo) vmw.@internal.EnvironmentUtils.getCultureInfoFromLocale (req.getLocale ());
+				Thread currentTread = Thread.CurrentThread;
+				currentTread.CurrentCulture = culture;
+				currentTread.CurrentUICulture = culture;
 				HttpRuntime.ProcessRequest(gwr);
 			}
 			finally 
