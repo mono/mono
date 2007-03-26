@@ -298,5 +298,18 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsFalse (rtb.ReadOnly, "#I1");
 			Assert.AreEqual (Color.Blue, rtb.BackColor, "#I2");
 		}
+
+		[Test]
+		public void SelectionFontTest ()
+		{
+			RichTextBox t = new RichTextBox();
+			t.Text = "123";
+			t.SelectionStart = 1;
+			t.SelectionLength = 1;
+			Font f = new Font(FontFamily.GenericMonospace, 120);
+			t.SelectionFont = f;
+
+			Assert.AreEqual (t.SelectionFont.Size, f.Size, "A1");
+		}
 	}
 }
