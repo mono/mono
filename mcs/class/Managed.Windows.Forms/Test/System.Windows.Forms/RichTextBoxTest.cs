@@ -140,7 +140,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")] // Find21 is failing with -1 instead of 72
 		public void FindTest() {
 			RichTextBox t = new RichTextBox();
 
