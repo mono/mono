@@ -1,5 +1,8 @@
 2007-03-26  Marek Habersack  <mhabersack@novell.com>
 
+	* TemplateControl.cs: make local resources work with master
+	pages - use the AppRelativeVirtualPath for resource resolution.
+
 	* TemplateParser.cs: support the meta:resourcekey attribute in
 	Page and Control directives. Fixes bug #81204.
 

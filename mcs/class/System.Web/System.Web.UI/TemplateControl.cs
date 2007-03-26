@@ -288,7 +288,8 @@ namespace System.Web.UI {
 
 		protected object GetLocalResourceObject (string resourceKey)
 		{
-			return HttpContext.GetLocalResourceObject (Context.Request.CurrentExecutionFilePath, resourceKey);
+			return HttpContext.GetLocalResourceObject (VirtualPathUtility.ToAbsolute (this.AppRelativeVirtualPath),
+								   resourceKey);
 		}
 		
 		protected object GetLocalResourceObject (string resourceKey, Type objType, string propName)
