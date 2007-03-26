@@ -1,5 +1,9 @@
 2007-03-25  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ToolStripTest.cs: Fix ambiguous Category attribute.
+
+2007-03-25  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ToolStripTest.cs: Mark WM decoration dependent test as NotWorking.
 
 2007-03-25  Jonathan Pobst  <monkey@jpobst.com>

@@ -554,7 +554,7 @@ namespace MonoTests.System.Windows.Forms
 		//}
 
 		[Test]
-		[Category ("NotWorking")]
+		[NUnit.Framework.Category ("NotWorking")]
 		public void BehaviorDisplayRectangleAndOverflow ()
 		{
 			// WM decoration size dependent
