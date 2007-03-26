@@ -3561,29 +3561,70 @@ namespace System.Windows.Forms
 		#region ProgressBar
 		public override void DrawProgressBar (Graphics dc, Rectangle clip_rect, ProgressBar ctrl) 
 		{
-			Rectangle	block_rect;
-			Rectangle	client_area = ctrl.client_area;
-			int		space_betweenblocks	= 2;			
-			int		block_width;
-			int		increment;
-			int		barpos_pixels;
+			Rectangle client_area = ctrl.client_area;
 			
-			block_width = (client_area.Height * 2 ) / 3;
-			barpos_pixels = ((ctrl.Value - ctrl.Minimum) * client_area.Width) / (ctrl.Maximum - ctrl.Minimum);
-			increment = block_width + space_betweenblocks;
-
 			/* Draw border */
 			CPDrawBorder3D (dc, ctrl.ClientRectangle, Border3DStyle.SunkenOuter, Border3DSide.Left | Border3DSide.Right | Border3DSide.Top | Border3DSide.Bottom & ~Border3DSide.Middle, ColorControl);
 			
 			/* Draw Blocks */
-			block_rect = new Rectangle (client_area.X, client_area.Y, block_width, client_area.Height);
-			while ((block_rect.X - client_area.X) < barpos_pixels) {
+			int draw_mode = 0;
+			int max_blocks = int.MaxValue;
+			int start_pixel = client_area.X;
+#if NET_2_0
+			draw_mode = (int) ctrl.Style;
+#endif
+			switch (draw_mode) {
+#if NET_2_0
+			case 1: { // Continuous
+				int pixels_to_draw;
+				pixels_to_draw = (int)(client_area.Width * ((double)(ctrl.Value - ctrl.Minimum) / (double)(ctrl.Maximum - ctrl.Minimum)));
+				dc.FillRectangle (ResPool.GetSolidBrush (progressbarblock_color), new Rectangle (client_area.X, client_area.Y, pixels_to_draw, client_area.Height));
+				break;
+			}
+			case 2: // Marquee
+				if (XplatUI.ThemesEnabled) {
+					int ms_diff = (int) (DateTime.Now - ctrl.start).TotalMilliseconds;
+					double percent_done = (double) ms_diff % (double)ctrl.MarqueeAnimationSpeed / (double)ctrl.MarqueeAnimationSpeed;
+					max_blocks = 5;
+					start_pixel = client_area.X + (int) (client_area.Width * percent_done);
+				}
 				
-				if (clip_rect.IntersectsWith (block_rect) == true) {				
-					dc.FillRectangle (ResPool.GetSolidBrush (progressbarblock_color), block_rect);
-				}				
+				goto case 0;
+#endif
+			case 0:
+			default:  // Blocks
+				Rectangle block_rect;
+				int space_betweenblocks = 2;
+				int block_width;
+				int increment;
+				int barpos_pixels;
+				int block_count = 0;
 				
-				block_rect.X  += increment;
+				block_width = (client_area.Height * 2) / 3;
+				barpos_pixels = ((ctrl.Value - ctrl.Minimum) * client_area.Width) / (ctrl.Maximum - ctrl.Minimum);
+				increment = block_width + space_betweenblocks;
+				
+				block_rect = new Rectangle (start_pixel, client_area.Y, block_width, client_area.Height);
+				while (true) {
+					if (max_blocks != int.MaxValue) {
+						if (block_count >= max_blocks)
+							break;
+						if (block_rect.X > client_area.Width)
+							block_rect.X -= client_area.Width;
+					} else {
+						if ((block_rect.X - client_area.X) >= barpos_pixels)
+							break;
+					}
+					
+					if (clip_rect.IntersectsWith (block_rect) == true) {				
+						dc.FillRectangle (ResPool.GetSolidBrush (progressbarblock_color), block_rect);
+					}				
+					
+					block_rect.X  += increment;
+					block_count++;
+				}
+				break;
+			
 			}
 		}
 		

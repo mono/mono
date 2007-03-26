@@ -51,9 +51,11 @@ namespace System.Windows.Forms
 		private int minimum;
 		internal int step;
 		internal int val;
+		internal DateTime start = DateTime.Now;
 		internal Rectangle client_area = new Rectangle ();
 #if NET_2_0
 		internal ProgressBarStyle style;
+		Timer marquee_timer;
 #endif		
 		#endregion	// Local Variables
 
@@ -327,11 +329,6 @@ namespace System.Windows.Forms
 		}
 
 #if NET_2_0
-		[MonoTODO("Currently only implements the 1.1 behavior")]
-		//
-		// This means that we must implement Blocks, Continuous and Marquee
-		// rendering modes
-		//
 		[Browsable (true)]
 		[DefaultValue (ProgressBarStyle.Blocks)]
 		[EditorBrowsable (EditorBrowsableState.Always)]
@@ -342,11 +339,28 @@ namespace System.Windows.Forms
 
 			set {
 				style = value;
+				
+				if (style == ProgressBarStyle.Marquee) {
+					if (marquee_timer == null) {
+						marquee_timer = new Timer ();
+						marquee_timer.Interval = 10;
+						marquee_timer.Tick += new EventHandler (marquee_timer_Tick);
+					}
+					marquee_timer.Start ();
+				} else {
+					if (marquee_timer != null) {
+						marquee_timer.Stop ();
+					}
+				}
 			}
+		}
+
+		void marquee_timer_Tick (object sender, EventArgs e)
+		{
+			Invalidate ();
 		}
 		
 		int marquee_animation_speed = 350;
-		[MonoTODO("Currently does nothing")]
 		[DefaultValue (100)]
 		public int MarqueeAnimationSpeed {
 			get {

@@ -1,3 +1,8 @@
+2007-03-26  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* ProgressBar.cs, ThemeWin32Classic.cs: Implemented drawing of Marquee
+	  and Continuous styles. Fixes #79469.
+
 2007-03-26  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStrip.cs: Implement Tooltips.
