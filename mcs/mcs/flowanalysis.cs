@@ -69,91 +69,45 @@ namespace Mono.CSharp
 
 		public sealed class Reachability
 		{
-			public enum TriState : byte {
-				// Never < Sometimes < Always
-				Never,
-				Sometimes,
-				Always
-			}
-
 			bool is_unreachable;
-			TriState barrier;
 
-			Reachability (TriState barrier)
+			Reachability (bool is_unreachable)
 			{
-				this.barrier = barrier;
-				this.is_unreachable = barrier == TriState.Always;
-			}
-
-			void Check ()
-			{
-				if (is_unreachable != (barrier == TriState.Always))
-					throw new InternalErrorException (is_unreachable + " vs. " + barrier);
+				this.is_unreachable = is_unreachable;
 			}
 
 			public Reachability Clone ()
 			{
-				return new Reachability (barrier);
-			}
-
-			static TriState TriState_Meet (TriState a, TriState b)
-			{
-				// (1) if both are Never, return Never
-				// (2) if both are Always, return Always
-				// (3) otherwise, return Sometimes
-				// note that (3) => (3') if both are Sometimes, return Sometimes
-				return a == b ? a : TriState.Sometimes;
-			}
-
-			static TriState TriState_Max (TriState a, TriState b)
-			{
-				return ((byte) a > (byte) b) ? a : b;
+				return new Reachability (is_unreachable);
 			}
 
 			public void Meet (Reachability b)
 			{
-				barrier = TriState_Meet (barrier, b.barrier);
 				is_unreachable &= b.is_unreachable;
-				Check ();
 			}
 
 			public void Or (Reachability b)
 			{
-				barrier = TriState_Max (barrier, b.barrier);
 				is_unreachable |= b.is_unreachable;
-				Check ();
 			}
 
 			public static Reachability Always ()
 			{
-				return new Reachability (TriState.Never);
+				return new Reachability (false);
 			}
 
 			public bool IsUnreachable {
-				get { Check (); return is_unreachable; }
+				get { return is_unreachable; }
 			}
 
 			public void SetBarrier ()
 			{
-				barrier = TriState.Always;
 				is_unreachable = true;
-			}
-
-			static string ShortName (TriState t)
-			{
-				switch (t) {
-				case TriState.Never:
-					return "N";
-				case TriState.Sometimes:
-					return "S";
-				default:
-					return "A";
-				}
 			}
 
 			public override string ToString ()
 			{
-				return String.Format ("[{0}]", ShortName (barrier));
+				return is_unreachable ? "#" : "-";
 			}
 		}
 

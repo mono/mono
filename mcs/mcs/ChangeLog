@@ -1,5 +1,8 @@
 2007-03-26  Raja R Harinath  <rharinath@novell.com>
 
+	* flowanalysis.cs (FlowBranching.Reachability): Use a boolean
+	instead of TriState.  Remove all mention of TriState.
+
 	* flowanalysis.cs (FlowBranching.Reachability): Prepare to be
 	replaced by a boolean.  Add boolean 'is_unreachable' field, check
 	and maintain invariants.
