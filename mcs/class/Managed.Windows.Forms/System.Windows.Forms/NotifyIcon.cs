@@ -483,6 +483,9 @@ namespace System.Windows.Forms {
 
 		#region Protected Instance Methods
 		protected override void Dispose(bool disposing) {
+			if (visible)
+				HideSystray();
+
 			if (icon_bitmap != null) {
 				icon_bitmap.Dispose();
 			}

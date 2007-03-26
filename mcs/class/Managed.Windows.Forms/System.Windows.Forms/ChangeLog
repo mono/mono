@@ -1,5 +1,11 @@
 2007-03-26  Everaldo Canuto  <everaldo@simios.org>
 
+	* NotifyIcon.cs: On disposing verify if icon is visible and hide it,
+	it prevents a problem thak keeps icon visible after application 
+	closes on win32.
+
+2007-03-26  Everaldo Canuto  <everaldo@simios.org>
+
 	* NotifyIcon.cs: Balloon properties and methods created.
 
 	* XplatUI.cs, XplatUIDriver.cs, XplatUIX11.cs, XplatUIWin32.cs,	
