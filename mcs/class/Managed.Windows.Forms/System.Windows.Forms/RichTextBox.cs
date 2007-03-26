@@ -448,25 +448,17 @@ namespace System.Windows.Forms {
 				LineTag	end;
 				LineTag	tag;
 
-				start = document.selection_start.tag;
-				end = document.selection_end.tag;
-				color = ((SolidBrush)document.selection_start.tag.color).Color;
+				start = document.selection_start.line.FindTag (document.selection_start.pos);
+				end = document.selection_start.line.FindTag (document.selection_end.pos);
+				color = start.color.Color;
 
 				tag = start;
-				while (true) {
-					if (!color.Equals(((SolidBrush)tag.color).Color)) {
+				while (tag != null && tag != end) {
+
+					if (!color.Equals (tag.color.Color))
 						return Color.Empty;
-					}
 
-					if (tag == end) {
-						break;
-					}
-
-					tag = document.NextTag(tag);
-
-					if (tag == null) {
-						break;
-					}
+					tag = document.NextTag (tag);
 				}
 
 				return color;
@@ -502,27 +494,18 @@ namespace System.Windows.Forms {
 				LineTag	end;
 				LineTag	tag;
 
-				start = document.selection_start.tag;
-				end = document.selection_end.tag;
-				font = document.selection_start.tag.font;
+				start = document.selection_start.line.FindTag (document.selection_start.pos);
+				end = document.selection_start.line.FindTag (document.selection_end.pos);
+				font = start.font;
 
 				if (selection_length > 1) {
 					tag = start;
-					while (true) {
+					while (tag != null && tag != end) {
 
-						if (!font.Equals(tag.font)) {
+						if (!font.Equals(tag.font))
 							return null;
-						}
 
-						if (tag == end) {
-							break;
-						}
-
-						tag = document.NextTag(tag);
-
-						if (tag == null) {
-							break;
-						}
+						tag = document.NextTag (tag);
 					}
 				}
 

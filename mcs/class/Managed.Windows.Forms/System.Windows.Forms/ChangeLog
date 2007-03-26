@@ -1,3 +1,9 @@
+2007-03-26  Jackson Harper  <jackson@ximian.com>
+
+	* RichTextBox.cs: The selection_start and selection_end don't
+	really track the correct tags for the selection. So we'll manually
+	compute the correct tag here.
+
 2007-03-26  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* ProgressBar.cs, ThemeWin32Classic.cs: Implemented drawing of Marquee
