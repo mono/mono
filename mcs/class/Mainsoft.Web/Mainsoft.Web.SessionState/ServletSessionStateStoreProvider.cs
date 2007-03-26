@@ -42,8 +42,10 @@ namespace Mainsoft.Web.SessionState
 
 		public override SessionStateStoreData CreateNewStoreData (HttpContext context, int timeout) {
 
+			// we ignore this timeout and use web.xml settings.
 			//must set now as this can be a last chance for ro item
-			GetSession (context, false).setMaxInactiveInterval (timeout * 60);
+			//GetSession (context, false).setMaxInactiveInterval (timeout * 60);
+			timeout = GetSession (context, false).getMaxInactiveInterval () / 60;
 			ServletSessionStateItemCollection sessionState = new ServletSessionStateItemCollection (context);
 			return new SessionStateStoreData (
 				sessionState,
@@ -95,7 +97,13 @@ namespace Mainsoft.Web.SessionState
 		}
 
 		public override void ResetItemTimeout (HttpContext context, string id) {
-			//Java does this for us
+			if (context == null)
+				throw new ArgumentNullException ("context");
+			HttpSession session = GetSession (context, false);
+			int current = session.getMaxInactiveInterval ();
+			int requested = context.Session.Timeout * 60;
+			if (current != requested)
+				session.setMaxInactiveInterval (requested);
 		}
 
 		public override void SetAndReleaseItemExclusive (HttpContext context, string id, SessionStateStoreData item, object lockId, bool newItem) {
