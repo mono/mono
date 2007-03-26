@@ -59,11 +59,14 @@ namespace System.Windows.Forms
 		private ToolStripOverflowButton overflow_button;
 		private ToolStripRenderer renderer;
 		private ToolStripRenderMode render_mode;
+		private Timer tooltip_timer;
+		private ToolTip.ToolTipWindow tooltip_window;
 		private bool show_item_tool_tips;
 		private bool stretch;
 
 		private ToolStripItem mouse_currently_over;
 		private bool menu_selected;
+		private ToolStripItem tooltip_currently_showing;
 		#endregion
 
 		#region Public Constructors
@@ -660,6 +663,7 @@ namespace System.Windows.Forms
 		protected override void OnMouseLeave (EventArgs e)
 		{
 			if (mouse_currently_over != null) {
+				MouseLeftItem (mouse_currently_over);
 				mouse_currently_over.FireEvent (e, ToolStripItemEventType.MouseLeave);
 				mouse_currently_over = null;
 			}
@@ -682,14 +686,17 @@ namespace System.Windows.Forms
 					tsi.FireEvent (mea, ToolStripItemEventType.MouseMove);
 				else {
 					// If we were over a different item, fire a mouse leave on it
-					if (mouse_currently_over != null)
+					if (mouse_currently_over != null) {
+						MouseLeftItem (tsi);
 						mouse_currently_over.FireEvent (mea, ToolStripItemEventType.MouseLeave);
+					}
 					
 					// Set the new item we are currently over
 					mouse_currently_over = tsi;
 					
 					// Fire mouse enter and mouse move
 					tsi.FireEvent (mea, ToolStripItemEventType.MouseEnter);
+					MouseEnteredItem (tsi);
 					tsi.FireEvent (mea, ToolStripItemEventType.MouseMove);
 
 					// If we're over something with a drop down, show it
@@ -699,6 +706,7 @@ namespace System.Windows.Forms
 			} else {
 				// We're not over anything now, just fire the mouse leave on what we used to be over
 				if (mouse_currently_over != null) {
+					MouseLeftItem (tsi);
 					mouse_currently_over.FireEvent (mea, ToolStripItemEventType.MouseLeave);
 					mouse_currently_over = null;
 				}
@@ -872,19 +880,6 @@ namespace System.Windows.Forms
 		}
 		#endregion
 
-		#region To Be Removed
-		// These are things I overrode to get the behavior I needed, but MS's API
-		// says they aren't overridden.  So I need to hide them (?) or implement
-		// them some other way...
-		protected override void OnMouseHover (EventArgs e)
-		{
-			base.OnMouseHover (e);
-
-			if (mouse_currently_over != null)
-				mouse_currently_over.FireEvent (e, ToolStripItemEventType.MouseHover);
-		}
-		#endregion
-
 		#region Public Events
 		static object ItemAddedEvent = new object ();
 		static object ItemClickedEvent = new object ();
@@ -1019,6 +1014,53 @@ namespace System.Windows.Forms
 			
 				this.OverflowButton.HideDropDown ();
 			}
+		}
+		
+		private void MouseEnteredItem (ToolStripItem item)
+		{
+			tooltip_currently_showing = item;
+			ToolTipTimer.Start ();
+		}
+		
+		private void MouseLeftItem (ToolStripItem item)
+		{
+			ToolTipTimer.Stop ();
+			ToolTipWindow.Hide ();
+			tooltip_currently_showing = null;
+		}
+		
+		private Timer ToolTipTimer {
+			get {
+				if (tooltip_timer == null) {
+					tooltip_timer = new Timer ();
+					tooltip_timer.Enabled = false;
+					tooltip_timer.Interval = 500;
+					tooltip_timer.Tick += new EventHandler (ToolTipTimer_Tick);
+				}
+				
+				return tooltip_timer;
+			}
+		}
+		
+		private ToolTip.ToolTipWindow ToolTipWindow {
+			get {
+				if (tooltip_window == null)
+					tooltip_window = new ToolTip.ToolTipWindow ();
+					
+				return tooltip_window;
+			}
+		}
+		
+		private void ToolTipTimer_Tick (object o, EventArgs args)
+		{
+			string tooltip = tooltip_currently_showing.GetToolTip ();
+			
+			if (!string.IsNullOrEmpty (tooltip))
+				ToolTipWindow.Present (this, tooltip);
+
+			tooltip_currently_showing.FireEvent (EventArgs.Empty, ToolStripItemEventType.MouseHover);
+
+			ToolTipTimer.Stop ();
 		}
 		#endregion
 	}

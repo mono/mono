@@ -1413,6 +1413,15 @@ namespace System.Windows.Forms
 				
 			return this.Parent.ImageScalingSize;
 		}
+		
+		internal string GetToolTip ()
+		{
+			if (this.auto_tool_tip && string.IsNullOrEmpty (this.tool_tip_text))
+				return this.text;
+				
+			return this.tool_tip_text;
+		}
+		
 		internal void FireEvent (EventArgs e, ToolStripItemEventType met)
 		{
 			switch (met) {
