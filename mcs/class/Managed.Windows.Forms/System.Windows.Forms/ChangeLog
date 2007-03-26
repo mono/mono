@@ -4,6 +4,13 @@
 
 2007-03-26  Jackson Harper  <jackson@ximian.com>
 
+	* TextControl.cs: Draw and measure line endings when in non
+	multiline mode.
+	- When searching the text, count the end of the last line as a
+	word boundary.
+
+2007-03-26  Jackson Harper  <jackson@ximian.com>
+
 	* RichTextBox.cs: The selection_start and selection_end don't
 	really track the correct tags for the selection. So we'll manually
 	compute the correct tag here.
