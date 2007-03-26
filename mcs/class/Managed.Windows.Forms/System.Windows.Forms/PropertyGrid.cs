@@ -815,7 +815,9 @@ namespace System.Windows.Forms {
 			return base.ProcessDialogKey (keyData);
 		}
 
+#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Never)]
+#endif
 		protected override void ScaleCore (float dx, float dy) {
 			base.ScaleCore (dx, dy);
 		}

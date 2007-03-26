@@ -1,3 +1,7 @@
+2007-03-26  Jonathan Pobst  <monkey@jpobst.com>
+
+	* PropertyGrid.cs: Hide a EditorBrowsable attribute from 1.1 API.
+
 2007-03-26  Everaldo Canuto  <everaldo@simios.org>
 
 	* NotifyIcon.cs: On disposing verify if icon is visible and hide it,
