@@ -1,3 +1,7 @@
+2007-03-26  Konstantin Triger <kostat@mainsoft.com>
+
+	* HttpRequest.cs: correctly handle null and empty virtual pathes in MapPath.
+
 2007-03-25  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* HttpContext.cs: AppGlobalResourcesAssembly static member stored in

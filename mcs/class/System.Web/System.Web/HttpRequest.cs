@@ -1113,10 +1113,13 @@ namespace System.Web {
 			if (worker_request == null)
 				throw new HttpException ("No HttpWorkerRequest");
 
-			if (virtualPath == null || virtualPath == "")
-				virtualPath = "";
-			else
+			if (virtualPath == null)
+				virtualPath = "~";
+			else {
 				virtualPath = virtualPath.Trim ();
+				if (virtualPath.Length == 0)
+					virtualPath = "~";
+			}
 
 			if (virtualPath.IndexOf (':') != -1)
 				throw new ArgumentNullException (
