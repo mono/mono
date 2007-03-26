@@ -109,6 +109,8 @@ namespace System.Windows.Forms {
 		Hard,    // \r\n
 		Soft,    // \r\r\n
 		Rich,    // \n
+
+		None
 	}
 	
 	// Being cloneable should allow for nice line and document copies...
@@ -334,6 +336,23 @@ namespace System.Windows.Forms {
 			return text.ToString (0, text.Length - document.LineEndingLength (ending));
 		}
 
+		internal int TextLengthWithoutEnding ()
+		{
+			return text.Length - document.LineEndingLength (ending);
+		}
+
+		internal void DrawEnding (Graphics dc, float y)
+		{
+			if (document.multiline)
+				return;
+			LineTag last = tags;
+			while (last.next != null)
+				last = last.next;
+			dc.DrawString ("\u0000\u0000", last.font, last.color, X + widths [TextLengthWithoutEnding ()],
+					y, Document.string_format);
+		}
+
+		
 		// Make sure we always have enoughs space in text and widths
 		internal void Grow(int minimum) {
 			int	length;
@@ -556,7 +575,7 @@ namespace System.Windows.Forms {
 
 					if (pos == len) {
 						line = doc.GetLine(this.line_no + 1);
-						if ((line != null) && ending == LineEnding.Wrap) {
+						if ((line != null) && (ending == LineEnding.Wrap || ending == LineEnding.None)) {
 							// Pull the two lines together
 							doc.Combine(this.line_no, this.line_no + 1);
 							len = this.text.Length;
@@ -840,7 +859,7 @@ namespace System.Windows.Forms {
 			recalc_pending = false;
 
 			// Tree related stuff
-			sentinel = new Line (this, LineEnding.Wrap);
+			sentinel = new Line (this, LineEnding.None);
 			sentinel.color = LineColor.Black;
 
 			document = sentinel;
@@ -849,7 +868,7 @@ namespace System.Windows.Forms {
 			owner.HandleCreated += new EventHandler(owner_HandleCreated);
 			owner.VisibleChanged += new EventHandler(owner_VisibleChanged);
 
-			Add (1, String.Empty, owner.Font, ThemeEngine.Current.ResPool.GetSolidBrush (owner.ForeColor), LineEnding.Wrap);
+			Add (1, String.Empty, owner.Font, ThemeEngine.Current.ResPool.GetSolidBrush (owner.ForeColor), LineEnding.None);
 
 			undo = new UndoManager (this);
 
@@ -877,7 +896,7 @@ namespace System.Windows.Forms {
 			document_id = random.Next();
 
 			string_format.Trimming = StringTrimming.None;
-			string_format.FormatFlags = StringFormatFlags.MeasureTrailingSpaces;
+			string_format.FormatFlags = StringFormatFlags.MeasureTrailingSpaces | StringFormatFlags.DisplayFormatControl;
 		}
 		#endregion
 
@@ -1460,7 +1479,7 @@ namespace System.Windows.Forms {
 			lines = 0;
 
 			// We always have a blank line
-			Add (1, String.Empty, owner.Font, ThemeEngine.Current.ResPool.GetSolidBrush (owner.ForeColor), LineEnding.Wrap);
+			Add (1, String.Empty, owner.Font, ThemeEngine.Current.ResPool.GetSolidBrush (owner.ForeColor), LineEnding.None);
 			
 			this.RecalculateDocument(owner.CreateGraphicsInternal());
 			PositionCaret(0, 0);
@@ -1903,7 +1922,7 @@ namespace System.Windows.Forms {
 			Console.WriteLine ("<doc lines='{0}'>", lines);
 			for (int i = 1; i <= lines ; i++) {
 				Line line = GetLine (i);
-				Console.WriteLine ("<line no='{0}'>", line.line_no);
+				Console.WriteLine ("<line no='{0}' ending='{1}'>", line.line_no, line.ending);
 
 				LineTag tag = line.tags;
 				while (tag != null) {
@@ -2082,6 +2101,7 @@ namespace System.Windows.Forms {
 					tag = tag.next;
 				}
 
+				line.DrawEnding (g, line_y);
 				line_no++;
 			}
 		}
@@ -4053,20 +4073,21 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		internal static bool IsWordSeparator(char ch) {
-			switch(ch) {
-				case ' ':
-				case '\t':
-				case '(':
-				case ')': {
-					return true;
-				}
-
-				default: {
-					return false;
-				}
+		internal static bool IsWordSeparator (char ch)
+		{
+			switch (ch) {
+			case ' ':
+			case '\t':
+			case '(':
+			case ')':
+			case '\r':
+			case '\n':
+				return true;
+			default:
+				return false;
 			}
 		}
+
 		internal int FindWordSeparator(Line line, int pos, bool forward) {
 			int len;
 
@@ -4219,6 +4240,7 @@ namespace System.Windows.Forms {
 				}
 
 				while (pos < line_len) {
+
 					if (word_option && (current == search_string.Length)) {
 						if (IsWordSeparator(line.text[pos])) {
 							if (!reverse) {
@@ -4239,6 +4261,7 @@ namespace System.Windows.Forms {
 					}
 
 					if (c == search_string[current]) {
+						
 						if (current == 0) {
 							result.line = line;
 							result.pos = pos;
@@ -4273,7 +4296,7 @@ namespace System.Windows.Forms {
 
 				if (word_option) {
 					// Mark that we just saw a word boundary
-					if (line.ending != LineEnding.Wrap) {
+					if (line.ending != LineEnding.Wrap || line.line_no == lines - 1) {
 						word = true;
 					}
 
@@ -4419,26 +4442,6 @@ namespace System.Windows.Forms {
 		}
 	}
 
-	internal class EndTag : LineTag {
-
-		private LineEnding ending;
-
-		internal EndTag (Line line, int start, LineEnding ending) : base (line, start)
-		{
-			this.ending = ending;
-		}
-
-		internal virtual SizeF SizeOfPosition (Graphics dc, int pos)
-		{
-			return dc.MeasureString ("A", font, 10000, Document.string_format);
-		}
-
-		internal virtual void Draw (Graphics dc, Brush brush, float x, float y, int start, int end, string text)
-		{
-			dc.DrawString (line.document.LineEndingToString (ending), font, brush, x, y, StringFormat.GenericTypographic);
-		}
-	}
-
 	internal class LineTag {
 		#region	Local Variables;
 		// Payload; formatting
@@ -4512,6 +4515,11 @@ namespace System.Windows.Forms {
 
 		internal virtual SizeF SizeOfPosition (Graphics dc, int pos)
 		{
+			if (pos > line.TextLengthWithoutEnding ()) {
+				if (line.document.multiline)
+					return SizeF.Empty;
+				return dc.MeasureString ("\u0000", font, 10000, Document.string_format);
+			}
 			return dc.MeasureString (line.text.ToString (pos, 1), font, 10000, Document.string_format);
 		}
 
