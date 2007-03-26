@@ -6,6 +6,8 @@
 	Process meta:resourcekey after all the field/attribute assignments
 	are done. Fixes bug #80809.
 	Clean the code up a bit.
+	Use GetExpressionFromString to generate a correct expression for
+	custom page/control attributes. Fixes bug #81132.
 
 2007-03-21  Marek Habersack  <mhabersack@novell.com>
 

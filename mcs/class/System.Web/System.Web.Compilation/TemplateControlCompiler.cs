@@ -359,7 +359,7 @@ namespace System.Web.Compilation
 			assign.Left = new CodePropertyReferenceExpression (
 				new CodeArgumentReferenceExpression("__ctrl"),
 				uad.Info.Name);
-			assign.Right = new CodePrimitiveExpression (uad.Value);
+			assign.Right = GetExpressionFromString (uad.Value.GetType (), uad.Value.ToString (), uad.Info);
 			
 			method.Statements.Add (assign);
 		}
