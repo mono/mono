@@ -2275,7 +2275,7 @@ namespace System.Windows.Forms
 				
 			// border is drawn directly in the Paint method
 			if (details && control.HeaderStyle != ColumnHeaderStyle.None) {				
-				dc.FillRectangle (GetControlBackBrush (control.BackColor),
+				dc.FillRectangle (SystemBrushes.Control,
 						  0, 0, control.TotalWidth, control.Font.Height + 5);
 				if (control.Columns.Count > 0) {
 					foreach (ColumnHeader col in control.Columns) {

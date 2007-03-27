@@ -1347,20 +1347,19 @@ namespace System.Windows.Forms
 				header_control.Size = Size.Empty;
 			} else {
 				header_control.Width = x;
-				header_control.Height = columns [0].Ht;
+				header_control.Height = columns.Count > 0 ? columns [0].Ht : Font.Height + 5;
 				header_control.Visible = true;
 			}
 		}
 
 		void LayoutDetails ()
 		{
+			LayoutHeader ();
+
 			if (columns.Count == 0) {
-				header_control.Visible = false;
 				item_control.Visible = false;
 				return;
 			}
-
-			LayoutHeader ();
 
 			item_control.Visible = true;
 			item_control.Location = new Point (0, header_control.Height);

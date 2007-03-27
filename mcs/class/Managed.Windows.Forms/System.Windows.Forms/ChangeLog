@@ -1,3 +1,9 @@
+2007-03-27  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListView.cs: Display HeaderControl even when columns.Count == 0.
+	* ThemeWin32Classic.cs: Use SystemBrushes.Control to draw the
+	ListView header (HeaderControl), instead of Control.BackColor.
+
 2007-03-27  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Control.cs: Call OnVisibleChanged in SetVisibleCore for non-forms.
