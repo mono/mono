@@ -1,3 +1,7 @@
+2007-03-27  Alan McGovern <alan.mcgovern@gmail.com>
+
+	* QueueTest.cs: Fixed compilation and cosmetic changes
+
 2007-02-08  Ilya Kharmatsky <ilyak -at- mainsoft.com>
 
 	* SortedDictionaryTest.cs: Added 'Ignore' attribute under

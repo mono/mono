@@ -72,15 +72,14 @@ namespace MonoTests.System.Collections.Generic {
 			
 			AssertEquals (s.Count, 0);
 
-			IEnumerator enumerator = queue.GetEnumerator();
-			queue.Clear();
-			try
-			{
+			IEnumerator enumerator = s.GetEnumerator();
+			s.Clear();
+
+			try {
 				enumerator.Reset();
-				Assert.Fail("Version should've been incremented");
+				NUnit.Framework.Assert.Fail("Version should've been incremented");
 			}
-			catch(InvalidOperationException)
-			{
+			catch(InvalidOperationException) {
 			}
 		}
 		
