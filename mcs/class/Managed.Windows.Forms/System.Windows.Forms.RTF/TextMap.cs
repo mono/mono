@@ -223,6 +223,9 @@ namespace System.Windows.Forms.RTF {
 			table[(int)StandardCharCode.trademark] = "(TM)";
 			table[(int)StandardCharCode.trademarksans] = "(TM)";
 
+			table[(int)StandardCharCode.aacute] = "\xE0";
+			table[(int)StandardCharCode.questiondown] = "\xBF";
+
 			table[(int)StandardCharCode.udieresis] = "\xFC";
 			table[(int)StandardCharCode.Udieresis] = "\xDC";
 			table[(int)StandardCharCode.odieresis] = "\xF6";

@@ -1,3 +1,8 @@
+2007-03-27  Jackson Harper  <jackson@ximian.com>
+
+	* TextMap.cs: Implement some more characters.  I need to go
+	through and do all of these. There are a lot missing.
+
 2007-03-21  Jackson Harper  <jackson@ximian.com>
 
 	* RTF.cs: Make sure the image token gets set.
