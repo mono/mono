@@ -444,8 +444,7 @@ namespace System.Windows.Forms
 				else if (SelectionMode == SelectionMode.One)
 					UnSelectItem (selected_index, true);
 
-    				if (value < top_index)
-    				{
+    				if (value != -1 && value < top_index) {
     					top_index = value;
     					UpdateTopItem ();
     				} else {

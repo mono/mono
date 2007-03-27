@@ -1,3 +1,8 @@
+2007-03-27  Mike Kestner  <mkestner@novell.com>
+
+	* ListBox.cs : don't adjust top item when SelectedIndex is set to -1.
+	[Fixes #80428]
+
 2007-03-26  Everaldo Canuto  <everaldo@simios.org>
 
 	* XplatUIWin32.cs: Complete NOTIFYICONDATA structure, additional fields 

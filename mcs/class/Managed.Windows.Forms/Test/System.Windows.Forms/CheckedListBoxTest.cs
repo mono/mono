@@ -378,7 +378,6 @@ namespace MonoTests.System.Windows.Forms
 #endif
 
 		[Test]
-		[NUnit.Framework.Category ("NotWorking")]
 		public void Text_SelectionMode_One ()
 		{
 			MockItem itemA = new MockItem ("A1", 1);
