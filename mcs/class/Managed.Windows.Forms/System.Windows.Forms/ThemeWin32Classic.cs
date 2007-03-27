@@ -2387,11 +2387,9 @@ namespace System.Windows.Forms
 				}
 				else {
 					if (item.Checked && control.StateImageList.Images.Count > 1)
-						control.StateImageList.Draw (dc,
-									     rect_checkrect.Location, 1);
-					else if (! item.Checked && control.StateImageList.Images.Count > 0)
-						control.StateImageList.Draw (dc,
-									     rect_checkrect.Location, 0);
+						control.StateImageList.Draw (dc, rect_checkrect.Location, 1);
+					else if (control.StateImageList.Images.Count > 0)
+						control.StateImageList.Draw (dc, rect_checkrect.Location, 0);
 				}
 			}
 
