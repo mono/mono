@@ -1013,7 +1013,7 @@ namespace System.Windows.Forms
 		{
 			Rectangle client_area = ClientRectangle;
 			
-			if (!this.scrollable || this.items.Count <= 0) {
+			if (!scrollable) {
 				h_scroll.Visible = false;
 				v_scroll.Visible = false;
 				item_control.Location = new Point (0, header_control.Height);
@@ -1358,6 +1358,8 @@ namespace System.Windows.Forms
 
 			if (columns.Count == 0) {
 				item_control.Visible = false;
+				layout_wd = ClientRectangle.Width;
+				layout_ht = ClientRectangle.Height;
 				return;
 			}
 

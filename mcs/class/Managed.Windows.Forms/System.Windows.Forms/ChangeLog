@@ -1,3 +1,11 @@
+2007-03-27  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListView.cs: Show scrollbars even when items.Count == 0
+	but the columns Width is bigger than the ListView.Width.
+	Also, when columns.Count == 0 set layout_wd and layout_ht
+	to the ClientRectangle values, so we don't show any scrollbar
+	in that case.
+
 2007-03-27  Everaldo Canuto  <everaldo@simios.org>
 
 	* XplatUIStructs.cs: Balloon (NIN_BALLOON*) constants added.
