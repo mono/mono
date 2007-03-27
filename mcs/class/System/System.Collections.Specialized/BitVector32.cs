@@ -62,7 +62,7 @@ namespace System.Collections.Specialized {
 
 			public static bool operator != (Section v1, Section v2)
 			{
-				return v1.mask != v2.mask &&
+				return v1.mask != v2.mask ||
 				       v1.offset != v2.offset;
 			}
 

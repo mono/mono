@@ -1,3 +1,7 @@
+2007-03-27  Alan McGovern  <alan.mcgovern@gmail.com>
+
+	* BitVector32.cs: Bugfix for op_inequality.
+
 2007-01-18  Konstantin Triger  <kostat@mainsoft.com>
 
 	* OrderedDictionary.cs: use IEqualityComparer for key comparison.
