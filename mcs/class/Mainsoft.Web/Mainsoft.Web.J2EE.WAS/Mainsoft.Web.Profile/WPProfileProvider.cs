@@ -48,7 +48,6 @@ namespace Mainsoft.Web.Profile
     public class WPProfileProvider : ProfileProvider
     {
         internal static readonly string DESCRIPTION = "WebSphere Portal Profile Provider";
-        internal static readonly string NAME = "WPProfileProvider";
 
         private static readonly string BIN_SERIALIZATION_PREFIX = "VMW_BIN_PREFIX:";
         private static readonly string BIN_SERIALIZATION_NULL = "#_NULL_#";
@@ -70,14 +69,6 @@ namespace Mainsoft.Web.Profile
             get
             {
                 return DESCRIPTION;
-            }
-        }
-
-        public override string Name
-        {
-            get
-            {
-                return NAME;
             }
         }
 

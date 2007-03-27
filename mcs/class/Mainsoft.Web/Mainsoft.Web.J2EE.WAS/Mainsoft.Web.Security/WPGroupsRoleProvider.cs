@@ -49,7 +49,6 @@ namespace Mainsoft.Web.Security
     {
         public static readonly string GROUP_NAMESPACE_ATTRIBUTE = "WPGroupsRoleNamespace";
         
-        private static readonly string PROVIDER_NAME = "WPGroupsRoleProvider";
         private static readonly string DESCRIPTION = "WebSphere Groups Role provider";
 
         private static readonly string VMW_STORED_IN_SESSION_ROLES = "VMW_CURR_USER_ROLES_";
@@ -64,14 +63,6 @@ namespace Mainsoft.Web.Security
             base.Initialize(name, config);
 
             applicationName = config["applicationName"];
-        }
-
-        public override string Name
-        {
-            get
-            {
-                return PROVIDER_NAME;
-            }
         }
 
         public override string Description

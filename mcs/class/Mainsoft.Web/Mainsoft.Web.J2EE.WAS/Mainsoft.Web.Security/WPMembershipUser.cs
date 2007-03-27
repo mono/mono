@@ -42,21 +42,23 @@ namespace Mainsoft.Web.Security
     {
         private User _wpsUser;
         private string _userName;
+        private MembershipProvider _provider;
 
         private object _providerKey;
 
-        internal WPMembershipUser(User user)
+        internal WPMembershipUser(User user, MembershipProvider provider)
             : base()
         {
             if (user == null)
                 throw new ArgumentNullException("user");
 
+            _provider = provider;
             _wpsUser = user;
             InitAspNetProperties();
         }
 
-        internal WPMembershipUser(User user, object providerKye)
-            : this(user)
+        internal WPMembershipUser(User user, object providerKye, MembershipProvider provider)
+            : this(user, provider)
         {
             _providerKey = providerKye;
         }
@@ -87,7 +89,10 @@ namespace Mainsoft.Web.Security
         {
             get
             {
-                return WPMembershipProvider.PROVIDER_NAME;
+                if (_provider != null)
+                    return _provider.Name;
+                
+                return null;
             }
         }
 

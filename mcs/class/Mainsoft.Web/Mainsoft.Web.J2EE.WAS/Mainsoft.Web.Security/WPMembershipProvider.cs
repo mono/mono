@@ -46,7 +46,6 @@ namespace Mainsoft.Web.Security
     public class WPMembershipProvider : MembershipProvider
     {
         private static readonly string PROVIDER_DESCRIPTION = "WebSphere Portal Membership Provider";
-        internal static readonly string PROVIDER_NAME = "WPMembershipProvider";
 
         private string applicationName;
 
@@ -102,11 +101,6 @@ namespace Mainsoft.Web.Security
         public override int MinRequiredPasswordLength
         {
             get { throw new NotImplementedException(); }
-        }
-
-        public override string Name
-        {
-            get { return PROVIDER_NAME; }
         }
 
         [MonoTODO]
@@ -254,7 +248,7 @@ namespace Mainsoft.Web.Security
             java.util.List principles =  provider.PumaLocator.findUsersByAttribute("uid", username);
             MembershipUser result = null;
             if (principles.size() > 0)
-                result = new WPMembershipUser((com.ibm.portal.um.User)principles.get(0));
+                result = new WPMembershipUser((com.ibm.portal.um.User)principles.get(0), this);
 
             return result;
 
@@ -298,7 +292,7 @@ namespace Mainsoft.Web.Security
          
             java.util.ArrayList sortedList = new java.util.ArrayList(principles.size());
             for (java.util.Iterator iter = principles.iterator(); iter.hasNext(); )
-                sortedList.add(new WPMembershipUser((User)iter.next()));
+                sortedList.add(new WPMembershipUser((User)iter.next(), this));
             
             java.util.Collections.sort(sortedList, WPMembershipUser.UserNameComparator);
 

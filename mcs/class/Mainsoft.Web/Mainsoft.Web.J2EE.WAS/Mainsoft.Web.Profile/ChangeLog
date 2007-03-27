@@ -1,3 +1,8 @@
+03-27-2007    Ilya Kharmatsky    <ilyak -at- mainsoft.com>
+
+	* WPProfileProvider.cs: removed hardcoded property 'Name', fixed by 
+	Konstantin Triger (kostat -at- mainsoft.com)
+
 03-06-2007    Ilya Kharmatsky    <ilyak -at- mainsoft.com>
 	
 	* WPUserProfile.cs: added support for PortalPreferences (defined in
