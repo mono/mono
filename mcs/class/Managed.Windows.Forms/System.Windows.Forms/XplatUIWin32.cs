@@ -1359,7 +1359,8 @@ namespace System.Windows.Forms {
 			Win32SetWindowLong(handle, WindowLong.GWL_STYLE, (uint)cp.Style);
 			Win32SetWindowLong(handle, WindowLong.GWL_EXSTYLE, (uint)cp.ExStyle);
 
-			if ((cp.ExStyle & (int) WindowExStyles.WS_EX_TOOLWINDOW) > 0)
+			if ((cp.ExStyle & (int) WindowExStyles.WS_EX_TOOLWINDOW) > 0 || 
+				((cp.WindowStyle & (WindowStyles.WS_CAPTION)) != WindowStyles.WS_CAPTION && cp.control is Form))
 				XplatUI.RequestNCRecalc (handle);
 		}
 

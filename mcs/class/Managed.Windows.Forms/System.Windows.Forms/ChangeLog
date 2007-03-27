@@ -1,3 +1,18 @@
+2007-03-27  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* XplatUIX11.cs: Windows without WS_CAPTION can still get decorations
+	  (at least borders). Fixes #79386 on Linux (with a small difference
+	  in behaviour: when trying to resize a caption-less window metacity
+	  shows the sysmenu. Resizing is still possible though).
+	* XplatUIWin32.cs: When setting window styles send request an extra
+	  WM_NCCALCSIZE when it's a form without title (due to no text and no
+	  caption), since Win32 seems to calculate it wrong the first time we
+	  get the message, though the second time things work as they should.
+	* Form.cs: Reorder a few statements in ChangingParent, otherwise the
+	  newly reparented window might show up unparented. Update
+	  CreateParams to exclude WS_DLGFRAME if ControlBox is false and
+	  there's no title text. Fixes #79386.
+
 2007-03-27  Mike Kestner  <mkestner@novell.com>
 
 	* ListBox.cs : don't perform invalidations if the handle hasn't been

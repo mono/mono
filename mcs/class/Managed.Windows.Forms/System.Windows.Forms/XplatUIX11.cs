@@ -869,12 +869,9 @@ namespace System.Windows.Forms {
 			mwmHints.functions = (IntPtr)0;
 			mwmHints.decorations = (IntPtr)0;
 
-			if (ExStyleSet (cp.ExStyle, WindowExStyles.WS_EX_TOOLWINDOW)
-			    || !StyleSet (cp.Style, WindowStyles.WS_CAPTION | WindowStyles.WS_BORDER | WindowStyles.WS_DLGFRAME)) {
+			if (ExStyleSet (cp.ExStyle, WindowExStyles.WS_EX_TOOLWINDOW)) {
 				/* tool windows get no window manager
-				   decorations, and neither do windows
-				   which lack CAPTION/BORDER/DLGFRAME
-				   styles.
+				   decorations.
 				*/
 
 				/* just because the window doesn't get any decorations doesn't
