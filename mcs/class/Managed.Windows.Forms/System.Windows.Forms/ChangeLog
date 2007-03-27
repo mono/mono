@@ -1,3 +1,9 @@
+2007-03-27  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Control.cs: Call OnVisibleChanged in SetVisibleCore for non-forms.
+	Fixes tab control issues where controls would not show up because they
+	never received their OnVisibleChanged call.
+
 2007-03-27  Everaldo Canuto  <everaldo@simios.org>
 
 	* NotifyIcon.cs: Balloon events added (BalloonTipClicked, BalloonTipClosed,

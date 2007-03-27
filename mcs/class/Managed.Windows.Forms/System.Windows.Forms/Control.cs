@@ -4308,6 +4308,9 @@ namespace System.Windows.Forms
 							// apparently moving unmapped toplevel windows doesn't work
 							XplatUI.SetWindowPos(window.Handle, bounds.X, bounds.Y, bounds.Width, bounds.Height);	
 					}
+					
+					if (!(this is Form))
+						OnVisibleChanged (EventArgs.Empty);
 				}
 				else {
 					OnVisibleChanged(EventArgs.Empty);
