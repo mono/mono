@@ -1,3 +1,9 @@
+2007-03-27  Dick Porter  <dick@ximian.com>
+
+	* socket-io.c (ipaddress_to_struct_in_addr): IPAddress is stored
+	in little-endian order, not network endian, so must be converted
+	to host endian here.  Fixes bug 80593.
+
 2007-03-22  Jb Evain  <jbevain@gmail.com>
 
 	* class.c (mono_type_get_name_recurse): Fix the creation of assembly
