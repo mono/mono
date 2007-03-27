@@ -248,7 +248,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test] // bug #80696
-		[NUnit.Framework.Category ("NotWorking")]
 		public void SelectedIndex_Created ()
 		{
 			Form form = new Form ();
@@ -268,7 +267,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test] // bug #80753
-		[NUnit.Framework.Category ("NotWorking")]
 		public void SelectedIndex_NotCreated ()
 		{
 			ListBox listBox = new ListBox ();

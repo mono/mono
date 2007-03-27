@@ -1479,6 +1479,8 @@ namespace System.Windows.Forms
 
 		internal void InvalidateItem (int index)
 		{
+			if (!IsHandleCreated)
+				return;
 			Rectangle bounds = GetItemDisplayRectangle (index, top_index);
     			if (ClientRectangle.IntersectsWith (bounds))
     				Invalidate (bounds);

@@ -1,5 +1,10 @@
 2007-03-27  Mike Kestner  <mkestner@novell.com>
 
+	* ListBox.cs : don't perform invalidations if the handle hasn't been
+	created.  [Fixes #80753]
+
+2007-03-27  Mike Kestner  <mkestner@novell.com>
+
 	* ListBox.cs : don't adjust top item when SelectedIndex is set to -1.
 	[Fixes #80428]
 
