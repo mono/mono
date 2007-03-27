@@ -1,5 +1,10 @@
 2007-03-27  Jackson Harper  <jackson@ximian.com>
 
+	* TextMap.cs: New textmap.  This should cover all the special
+	chars.
+
+2007-03-27  Jackson Harper  <jackson@ximian.com>
+
 	* TextMap.cs: Implement some more characters.  I need to go
 	through and do all of these. There are a lot missing.
 
