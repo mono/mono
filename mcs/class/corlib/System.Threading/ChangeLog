@@ -1,3 +1,7 @@
+2007-03-27  Dick Porter  <dick@ximian.com>
+
+	* Mutex.cs: Throw ApplicationException if ReleaseMutex() fails.
+	Fixes bug 79358.
 
 Tue Jan 23 17:43:50 CET 2007 Paolo Molaro <lupus@ximian.com>
 

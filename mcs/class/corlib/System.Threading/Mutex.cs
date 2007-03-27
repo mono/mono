@@ -48,7 +48,7 @@ namespace System.Threading
 							 out bool created);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private static extern void ReleaseMutex_internal(IntPtr handle);
+		private static extern bool ReleaseMutex_internal(IntPtr handle);
 
 #if NET_2_0
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -144,7 +144,10 @@ namespace System.Threading
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
 #endif	
 		public void ReleaseMutex() {
-			ReleaseMutex_internal(Handle);
+			bool success = ReleaseMutex_internal(Handle);
+			if (!success) {
+				throw new ApplicationException ("Mutex is not owned");
+			}
 		}
 	}
 }
