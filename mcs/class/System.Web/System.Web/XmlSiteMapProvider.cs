@@ -285,11 +285,11 @@ namespace System.Web
 
 			if (file == null && file.Length == 0)
 				throw new ArgumentException ("you must provide a file");
-			
-			if (UrlUtils.IsRelativeUrl (file))
-				file = Path.Combine(HttpRuntime.AppDomainAppPath, file);
+
+			if (HttpContext.Current != null)
+				file = HttpContext.Current.Request.MapPath (file, HttpRuntime.AppDomainAppVirtualPath, false);
 			else
-				file = UrlUtils.ResolvePhysicalPathFromAppAbsolute (file);
+				throw new InvalidOperationException ("HttpContext is missing");
 
 			if (File.Exists (file)) {
 				watcher = new FileSystemWatcher ();

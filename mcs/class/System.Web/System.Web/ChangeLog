@@ -1,5 +1,10 @@
 2007-03-27 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* XmlSiteMapProvider.cs: fixed:
+	resolve app-relative path from config such siteMapFile="~/Web.sitemap".
+
+2007-03-27 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* SiteMapNode.cs:
 	* XmlSiteMapProvider.cs: fixed: Localize Site-Map Data.
 
