@@ -1,3 +1,8 @@
+2007-03-27 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* SiteMapNode.cs:
+	* XmlSiteMapProvider.cs: fixed: Localize Site-Map Data.
+
 2007-03-26  Konstantin Triger <kostat@mainsoft.com>
 
 	* HttpRequest.cs: correctly handle null and empty virtual pathes in MapPath.
