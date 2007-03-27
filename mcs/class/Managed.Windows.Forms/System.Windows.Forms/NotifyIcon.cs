@@ -250,6 +250,28 @@ namespace System.Windows.Forms {
 		#endregion Public Methods
 		
 		#region Private Methods
+#if NET_2_0
+		private void OnBalloonTipClicked (EventArgs e)
+		{
+			EventHandler eh = (EventHandler)(Events [BalloonTipClickedEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
+
+		private void OnBalloonTipClosed (EventArgs e)
+		{
+			EventHandler eh = (EventHandler)(Events [BalloonTipClosedEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
+
+		private void OnBalloonTipShown (EventArgs e)
+		{
+			EventHandler eh = (EventHandler)(Events [BalloonTipShownEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
+#endif
 		private void OnClick (EventArgs e)
 		{
 			EventHandler eh = (EventHandler)(Events [ClickEvent]);
@@ -504,6 +526,30 @@ namespace System.Windows.Forms {
 		static object MouseDownEvent = new object ();
 		static object MouseMoveEvent = new object ();
 		static object MouseUpEvent = new object ();
+
+#if NET_2_0
+		static object BalloonTipClickedEvent = new object ();
+		static object BalloonTipClosedEvent = new object ();
+		static object BalloonTipShownEvent = new object ();
+
+		[MWFCategory("Action")]
+		public event EventHandler BalloonTipClicked {
+			add { Events.AddHandler (BalloonTipClickedEvent, value); }
+			remove { Events.RemoveHandler (BalloonTipClickedEvent, value); }
+		}
+
+		[MWFCategory("Action")]
+		public event EventHandler BalloonTipClosed {
+			add { Events.AddHandler (BalloonTipClosedEvent, value); }
+			remove { Events.RemoveHandler (BalloonTipClosedEvent, value); }
+		}
+
+		[MWFCategory("Action")]
+		public event EventHandler BalloonTipShown {
+			add { Events.AddHandler (BalloonTipShownEvent, value); }
+			remove { Events.RemoveHandler (BalloonTipShownEvent, value); }
+		}
+#endif
 
 #if NET_2_0
 		[MWFCategory("Action")]

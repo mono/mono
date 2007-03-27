@@ -1,3 +1,8 @@
+2007-03-27  Everaldo Canuto  <everaldo@simios.org>
+
+	* NotifyIcon.cs: Balloon events added (BalloonTipClicked, BalloonTipClosed,
+	BalloonTipShown).
+
 2007-03-27  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Control.cs: We won't get a WM_SHOWWINDOW when we create a window that
