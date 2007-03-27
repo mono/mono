@@ -35,6 +35,7 @@ using System.Text;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.ComponentModel;
+using System.Resources;
 
 namespace System.Web {
 	public class SiteMapNode : IHierarchyData, INavigateUIData, ICloneable {
@@ -206,13 +207,14 @@ namespace System.Web {
 						object o = HttpContext.GetGlobalResourceObject (values [0], values [1]);
 						if (o is string)
 							return (string) o;
-					} catch (Exception) {
 					}
+					catch (MissingManifestResourceException) {
+					}
+
+					if (throwIfNotFound && defaultValue == null)
+						throw new InvalidOperationException (String.Format ("The resource object with classname '{0}' and key '{1}' was not found.", values [0], values [1]));
 				}
 			}
-
-			if (throwIfNotFound && defaultValue == null)
-				throw new InvalidOperationException ();
 
 			return defaultValue;
 		}
@@ -235,7 +237,8 @@ namespace System.Web {
 				object o = HttpContext.GetGlobalResourceObject ("Web.sitemap", reskey);
 				if (o is string)
 					return (string) o;
-			} catch (Exception) {
+			}
+			catch (MissingManifestResourceException) {
 			}
 			
 			return null;

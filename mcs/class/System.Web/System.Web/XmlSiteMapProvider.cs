@@ -128,7 +128,8 @@ namespace System.Web
 			if (String.IsNullOrEmpty (value))
 				return false;
 			string val = value.TrimStart (new char[] {' ', '\t'});
-			if (String.IsNullOrEmpty (value) || !val.ToLower (CultureInfo.InvariantCulture).StartsWith ("$resources:"))
+			if (val.Length < 11 ||
+				String.Compare (val, 0, "$resources:", 0, 11, StringComparison.InvariantCultureIgnoreCase) != 0)
 				return false;
 
 			val = val.Substring (11);
@@ -137,8 +138,8 @@ namespace System.Web
 			string[] parts = val.Split (',');
 			if (parts.Length < 2)
 				return false;
-			resClass = parts [0];
-			resKey = parts [1];
+			resClass = parts [0].Trim ();
+			resKey = parts [1].Trim ();
 			if (parts.Length == 3)
 				resDefault = parts [2];
 			else if (parts.Length > 3)
@@ -157,21 +158,19 @@ namespace System.Web
 
 			if (GetAttributeLocalization (title, out resClass, out resKey, out resDefault)) {
 				PutInCollection ("title", resClass, resKey, ref explicitResourceKeys);
-				if (resDefault != null)
-					title = resDefault;
+				title = resDefault;
 			}
 			
 			if (GetAttributeLocalization (description, out resClass, out resKey, out resDefault)) {
 				PutInCollection ("description", resClass, resKey, ref explicitResourceKeys);
-				if (resDefault != null)
-					description = resDefault;
+				description = resDefault;
 			}
 
 			string value;
 			foreach (XmlNode att in xmlNode.Attributes) {
 				if (GetAttributeLocalization (att.Value, out resClass, out resKey, out resDefault)) {
 					PutInCollection (att.Name, resClass, resKey, ref explicitResourceKeys);
-					value = resDefault != null ? resDefault : String.Empty;
+					value = resDefault;
 				} else
 					value = att.Value;
 				PutInCollection (att.Name, value, ref attributes);
