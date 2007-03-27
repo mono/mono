@@ -1308,8 +1308,11 @@ namespace System.Windows.Forms {
 
 		private void MapWindow(Hwnd hwnd, WindowType windows) {
 			if (!hwnd.mapped) {
-				if (Control.FromHandle(hwnd.Handle) is Form)
-					SendMessage(hwnd.Handle, Msg.WM_SHOWWINDOW, (IntPtr)1, IntPtr.Zero);
+				if (Control.FromHandle(hwnd.Handle) is Form) {
+					Form f = Control.FromHandle(hwnd.Handle) as Form;
+					if (f.WindowState == FormWindowState.Normal)
+						SendMessage(hwnd.Handle, Msg.WM_SHOWWINDOW, (IntPtr)1, IntPtr.Zero);
+				}
 
 				// it's possible that our Hwnd is no
 				// longer valid after making that
@@ -1337,8 +1340,11 @@ namespace System.Windows.Forms {
 
 		private void UnmapWindow(Hwnd hwnd, WindowType windows) {
 			if (hwnd.mapped) {
-				if (Control.FromHandle(hwnd.Handle) is Form)
+				if (Control.FromHandle(hwnd.Handle) is Form) {
+					Form f = Control.FromHandle(hwnd.Handle) as Form;
+					if (f.WindowState == FormWindowState.Normal)
 					SendMessage(hwnd.Handle, Msg.WM_SHOWWINDOW, IntPtr.Zero, IntPtr.Zero);
+				}
 
 				// it's possible that our Hwnd is no
 				// longer valid after making that

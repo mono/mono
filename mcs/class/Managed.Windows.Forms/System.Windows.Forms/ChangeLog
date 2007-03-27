@@ -1,3 +1,15 @@
+2007-03-27  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Control.cs: We won't get a WM_SHOWWINDOW when we create a window that
+	is maximized or minimized, so move CreateControl to Control.OnVisibleChanged.
+	* Form.cs: After we set the form visible, send a fake WM_SHOWWINDOW if we
+	are max or min.  Remove WS_VISIBLE from CreateParams unless we are recreating
+	the handle.  Fix WindowState by using the internal variable until we are 
+	sure that we've been shown.
+	* XplatUIX11.cs: Do not generate a WM_SHOWWINDOW message if new form is
+	max or min.
+	[Fixes bug #81198]
+
 2007-03-27  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* XplatUIX11.cs: Windows without WS_CAPTION can still get decorations

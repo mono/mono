@@ -87,11 +87,11 @@ namespace System.Windows.Forms {
 		private bool			is_loaded;
 		internal bool			is_changing_visible_state;
 		internal bool			has_been_visible;
+		private bool			shown_raised;  // The shown event is only raised once
 
 #if NET_2_0
 		private MenuStrip		main_menu_strip;
 		private bool			show_icon = true;
-		private bool			shown_raised;  // The shown event is only raised once
 #endif
 		#endregion	// Local Variables
 
@@ -1076,7 +1076,8 @@ namespace System.Windows.Forms {
 		[MWFCategory("Layout")]
 		public FormWindowState WindowState {
 			get {
-				if (IsHandleCreated) {
+				// Don't actually rely on the WM until we've been shown
+				if (IsHandleCreated && shown_raised) {
 
 					if (window_manager != null)
 						return window_manager.GetWindowState ();
@@ -1092,7 +1093,7 @@ namespace System.Windows.Forms {
 			set {
 				FormWindowState old_state = window_state;
 				window_state = value;
-				if (IsHandleCreated) {
+				if (IsHandleCreated && shown_raised) {
 
 					if (window_manager != null) {
 						window_manager.SetWindowState (old_state, value);
@@ -1261,8 +1262,8 @@ namespace System.Windows.Forms {
 				if (HelpButton && !MaximizeBox && !MinimizeBox) {
 					cp.ExStyle |= (int)WindowExStyles.WS_EX_CONTEXTHELP;
 				}
-				
-				if (VisibleInternal)
+
+				if (VisibleInternal && this.IsRecreating)
 					cp.Style |= (int)WindowStyles.WS_VISIBLE;
 
 				if (opacity < 1.0 || TransparencyKey != Color.Empty) {
@@ -2063,6 +2064,10 @@ namespace System.Windows.Forms {
 				is_changing_visible_state = true;
 				has_been_visible = value || has_been_visible;
 				base.SetVisibleCore (value);
+				
+				if (value && WindowState != FormWindowState.Normal)
+					XplatUI.SendMessage (Handle, Msg.WM_SHOWWINDOW, (IntPtr)1, IntPtr.Zero);
+					
 				is_changing_visible_state = false;
 			}
 			
@@ -2082,13 +2087,14 @@ namespace System.Windows.Forms {
 				PerformLayout ();
 				ThemeEngine.Current.ManagedWindowSetButtonLocations (window_manager);
 			}
-#if NET_2_0
+			
 			// Shown event is only called once, the first time the form is made visible
 			if (value && !shown_raised) {
+#if NET_2_0
 				this.OnShown (EventArgs.Empty);
+#endif
 				shown_raised = true;
 			}
-#endif
 		}
 
 		protected override void UpdateDefaultButton() {

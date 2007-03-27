@@ -4295,11 +4295,18 @@ namespace System.Windows.Forms
 				}
 
 				if (IsHandleCreated) {
-					XplatUI.SetVisible(Handle, is_visible, true);
-					// Explicitly move Toplevel windows to where we want them;
-					// apparently moving unmapped toplevel windows doesn't work
-					if (is_visible && (this is Form)) {
-						XplatUI.SetWindowPos(window.Handle, bounds.X, bounds.Y, bounds.Width, bounds.Height);
+					XplatUI.SetVisible (Handle, is_visible, true);
+					
+					if (is_visible && this is Form) {
+						// If we are Min or Max, we won't get a WM_SHOWWINDOW from SetWindowState,
+						// so we need to manually create our children, and set them visible
+						// (This normally happens in WmShowWindow.)
+						if ((this as Form).WindowState != FormWindowState.Normal)
+							OnVisibleChanged (EventArgs.Empty);
+						else
+							// Explicitly move Toplevel windows to where we want them;
+							// apparently moving unmapped toplevel windows doesn't work
+							XplatUI.SetWindowPos(window.Handle, bounds.X, bounds.Y, bounds.Width, bounds.Height);	
 					}
 				}
 				else {
@@ -4915,13 +4922,14 @@ namespace System.Windows.Forms
 
 		private void WmShowWindow (ref Message m) {
 			if (m.WParam.ToInt32() != 0) {
-				CreateControl ();
-				/* if we're being shown, make sure our child controls all have their handles created */
-				Control [] controls = child_controls.GetAllControls ();
-				for (int i=0; i<controls.Length; i++) {
-					if (controls [i].is_visible) {
-						controls [i].CreateControl ();
-						XplatUI.SetParent(controls[i].Handle, window.Handle); 
+				if (m.LParam.ToInt32 () == 0) {
+					CreateControl ();
+				
+					// Make sure all our children are properly parented to us
+					Control [] controls = child_controls.GetAllControls ();
+					for (int i=0; i<controls.Length; i++) {
+						if (controls [i].is_visible && controls[i].IsHandleCreated)						
+							XplatUI.SetParent(controls[i].Handle, window.Handle); 
 					}
 				}
 			}
@@ -4937,7 +4945,13 @@ namespace System.Windows.Forms
 				}
 			}
 
-			if (is_toplevel || (this is Form && ((Form) this).IsMdiChild)) /* XXX make sure this works for mdi forms */
+			// If the form is Max/Min, it got its OnVisibleChanged in SetVisibleCore
+			if (this is Form) {
+				Form f = (Form)this;
+				
+				if (f.IsMdiChild || f.WindowState == FormWindowState.Normal) /* XXX make sure this works for mdi forms */
+					OnVisibleChanged(EventArgs.Empty);
+			} else if (is_toplevel)
 				OnVisibleChanged(EventArgs.Empty);
 		}
 
@@ -5633,6 +5647,9 @@ namespace System.Windows.Forms
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnVisibleChanged(EventArgs e) {
+			if (Visible)
+				CreateControl ();
+				
 			EventHandler eh = (EventHandler)(Events [VisibleChangedEvent]);
 			if (eh != null)
 				eh (this, e);
