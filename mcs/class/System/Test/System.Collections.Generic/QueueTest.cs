@@ -71,6 +71,17 @@ namespace MonoTests.System.Collections.Generic {
 			s.Clear ();
 			
 			AssertEquals (s.Count, 0);
+
+			IEnumerator enumerator = queue.GetEnumerator();
+			queue.Clear();
+			try
+			{
+				enumerator.Reset();
+				Assert.Fail("Version should've been incremented");
+			}
+			catch(InvalidOperationException)
+			{
+			}
 		}
 		
 		[Test]

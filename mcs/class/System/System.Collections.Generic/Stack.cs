@@ -108,8 +108,6 @@ namespace System.Collections.Generic
 			if (size == 0)
 				throw new InvalidOperationException ();
 			
-			ver ++;
-			
 			return data [size - 1];
 		}
 		

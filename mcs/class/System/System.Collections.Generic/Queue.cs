@@ -80,6 +80,7 @@ namespace System.Collections.Generic
 				Array.Clear (data, 0, data.Length);
 			
 			head = tail = size = 0;
+			version++;
 		}
 		
 		public bool Contains (T item)

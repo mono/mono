@@ -1,3 +1,8 @@
+2007-03-27  Alan McGovern <alan.mcgovern@gmail.com>
+
+	* Queue.cs: Removed wrong call to version++
+	* Stack.cs: Removed wrong call to version++
+
 2006-09-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* SortedList.cs: Count property, indexer and Clear method should not 
