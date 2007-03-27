@@ -1,4 +1,8 @@
-2007-03-26  Everaldo Canuto  <everaldo@simios.org>
+2007-03-27  Everaldo Canuto  <everaldo@simios.org>
+
+	* XplatUIX11.cs: Fix the time which tooltip is opened for NotifyIcon. 
+
+2007-03-27  Everaldo Canuto  <everaldo@simios.org>
 
 	* NotifyIcon.cs: 
 	- Balloon message handling added.

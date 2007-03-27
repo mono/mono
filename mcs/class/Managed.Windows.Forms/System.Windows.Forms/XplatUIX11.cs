@@ -5344,7 +5344,7 @@ namespace System.Windows.Forms {
 
 				// Need to pick some reasonable defaults
 				tt = new ToolTip();
-				tt.AutomaticDelay = 100;
+				tt.AutomaticDelay = 350;
 				tt.InitialDelay = 250;
 				tt.ReshowDelay = 250;
 				tt.ShowAlways = true;
