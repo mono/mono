@@ -1439,6 +1439,7 @@ namespace System.Windows.Forms {
 				return;
 			}
 
+			/*
 			if ((RTF.StandardCharCode)rtf.Minor != RTF.StandardCharCode.nothing) {
 				rtf_line.Append(rtf_text_map[(RTF.StandardCharCode)rtf.Minor]);
 			} else {
@@ -1449,6 +1450,8 @@ namespace System.Windows.Forms {
 					Console.Write("[Literal:0x{0:X2}]", (int)rtf.Major);
 				}
 			}
+			*/
+			rtf_line.Append (rtf.EncodedText);
 		}
 
 		private void FlushText(RTF.RTF rtf, bool newline) {

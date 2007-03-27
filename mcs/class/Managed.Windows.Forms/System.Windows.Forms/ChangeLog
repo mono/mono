@@ -1,3 +1,8 @@
+2007-03-27  Jackson Harper  <jackson@ximian.com>
+
+	* RichTextBox.cs: The RTF library decodes the text properly for us
+	now.
+
 2007-03-27  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: Display HeaderControl even when columns.Count == 0.

@@ -42,6 +42,9 @@ namespace System.Windows.Forms.RTF {
 		private Major		major;
 		private Minor		minor;
 		private int		param;
+		private string encoded_text;
+		private Encoding encoding;
+		private int encoding_code_page = 1252;
 		private StringBuilder	text_buffer;
 		private Picture picture;
 		private int		line_num;
@@ -168,6 +171,10 @@ namespace System.Windows.Forms.RTF {
 			}
 		}
 
+		public string EncodedText {
+			get { return encoded_text; }
+		}
+
 		public Picture Picture {
 			get { return picture; }
 			set { picture = value; }
@@ -290,12 +297,14 @@ SkipCRLF:
 		/// <summary>Parse the RTF stream</summary>
 		public void Read() {
 			while (GetToken() != TokenClass.EOF) {
+
 				RouteToken();
 			}
 		}
 
 		/// <summary>Route a token</summary>
 		public void RouteToken() {
+
 			if (CheckCM(TokenClass.Control, Major.Destination)) {
 				DestinationDelegate d;
 
@@ -350,10 +359,18 @@ SkipCRLF:
 
 			if (this.rtf_class == TokenClass.Text) {
 				this.minor = (Minor)this.cur_charset[(int)this.major];
+				if (encoding == null) {
+					encoding = Encoding.GetEncoding (encoding_code_page);
+				}
+				encoded_text = new String (encoding.GetChars (new byte [] { (byte) this.major }));
 			}
 
 			if (this.cur_charset.Flags == CharsetFlags.None) {
 				return this.rtf_class;
+			}
+
+			if (CheckCMM (TokenClass.Control, Major.Unicode, Minor.UnicodeAnsiCodepage)) {
+				encoding_code_page = param;
 			}
 
 			if (((this.cur_charset.Flags & CharsetFlags.Read) != 0) && CheckCM(TokenClass.Control, Major.CharSet)) {
