@@ -44,19 +44,6 @@ namespace System.Web.J2EE
 		private static readonly object LOCK_GETASSEMBLIESCACHEDDOCUMENT = new object();
 		private static readonly object LOCK_GETFROMMAPPATHCACHE = new object();
 
-		static PageMapper ()
-		{
-			AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler (CurrentDomain_AssemblyResolve);
-			try
-			{
-				//Try to load the  global resources
-				HttpContext.AppGlobalResourcesAssembly = GetCachedAssembly ("app_globalresources");
-			}
-			catch
-			{
-			}
-		}
-
 
 		static Assembly CurrentDomain_AssemblyResolve (object sender, ResolveEventArgs args)
 		{
@@ -91,6 +78,15 @@ namespace System.Web.J2EE
 					}
 					AppDomain.CurrentDomain.SetData(J2EEConsts.MAP_PATH_CACHE,answer);
 
+					AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler (CurrentDomain_AssemblyResolve);
+					try
+					{
+						//Try to load the  global resources
+						HttpContext.AppGlobalResourcesAssembly = GetCachedAssembly ("app_globalresources");
+					}
+					catch
+					{
+					}
 				}
 			}
 			return (string)answer[key];
