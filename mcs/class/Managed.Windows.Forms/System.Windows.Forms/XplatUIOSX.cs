@@ -1341,14 +1341,6 @@ namespace System.Windows.Forms {
 			y = (int)(pt.y+wBounds.top);
 		}
 
-#if NET_2_0
-		[MonoTODO]
-		internal override void ShowBalloonTip(int timeout, string tipTitle, string tipText, ToolTipIcon tipIcon)
-		{
-			throw new NotImplementedException ();
-		}
-#endif
-
 		[MonoTODO]
 		internal override void OverrideCursor(IntPtr cursor) {
 			throw new NotImplementedException ();
@@ -1777,6 +1769,14 @@ namespace System.Windows.Forms {
 		internal override void SystrayRemove(IntPtr hwnd, ref ToolTip tt) {
 			throw new NotImplementedException();
 		}
+
+#if NET_2_0
+		[MonoTODO]
+		internal override void SystrayBalloon(IntPtr hwnd, int timeout, string title, string text, ToolTipIcon icon)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 		
 		internal override bool Text(IntPtr handle, string text) {
 			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);

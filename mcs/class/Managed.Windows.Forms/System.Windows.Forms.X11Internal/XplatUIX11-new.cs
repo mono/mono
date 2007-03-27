@@ -673,13 +673,6 @@ namespace System.Windows.Forms.X11Internal {
 				hwnd.MenuToScreen (ref x, ref y);
 		}
 
-#if NET_2_0
-		internal override void ShowBalloonTip(int timeout, string tipTitle, string tipText, ToolTipIcon tipIcon)
-		{
-			// TODO:
-		}
-#endif
-
 		internal override void OverrideCursor (IntPtr cursor)
 		{
 			display.OverrideCursor = cursor;
@@ -1018,6 +1011,13 @@ namespace System.Windows.Forms.X11Internal {
 		{
 			display.SystrayRemove (handle, ref tt);
 		}
+
+#if NET_2_0
+		internal override void SystrayBalloon(IntPtr handle, int timeout, string title, string text, ToolTipIcon icon)
+		{
+			// TODO:
+		}
+#endif
 
 		internal override bool Text (IntPtr handle, string text)
 		{

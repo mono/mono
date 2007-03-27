@@ -4312,13 +4312,6 @@ namespace System.Windows.Forms {
 			y = dest_y_return;
 		}
 
-#if NET_2_0
-		internal override void ShowBalloonTip(int timeout, string tipTitle, string tipText, ToolTipIcon tipIcon)
-		{
-			// TODO:
-		}
-#endif
-
 		internal override void OverrideCursor(IntPtr cursor)
 		{
 			if (Grab.Hwnd != IntPtr.Zero) {
@@ -5416,6 +5409,13 @@ namespace System.Windows.Forms {
 				tt = null;
 			}
 		}
+
+#if NET_2_0
+		internal override void SystrayBalloon(IntPtr handle, int timeout, string title, string text, ToolTipIcon icon)
+		{
+			// TODO:
+		}
+#endif
 
 		internal override bool Text(IntPtr handle, string text) {
 			Hwnd	hwnd;

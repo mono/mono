@@ -2103,13 +2103,6 @@ namespace System.Windows.Forms {
  			y += rect.top + SystemInformation.FrameBorderSize.Height + ThemeEngine.Current.CaptionHeight;
  			return;
   		}
-  
-  #if NET_2_0
-		internal override void ShowBalloonTip(int timeout, string tipTitle, string tipText, ToolTipIcon tipIcon)
-		{
-			// TODO:
-		}
-#endif
 
 		internal override void SendAsyncMethod (AsyncMethodData method)
 		{
@@ -2295,6 +2288,12 @@ namespace System.Windows.Forms {
 			Win32Shell_NotifyIcon(NotifyIconMessage.NIM_DELETE, ref nid);
 		}
 
+#if NET_2_0
+		internal override void SystrayBalloon(IntPtr hwnd, int timeout, string title, string text, ToolTipIcon icon)
+		{
+			// TODO:
+		}
+#endif
 
 		internal override void SetBorderStyle(IntPtr handle, FormBorderStyle border_style) {
 			// Nothing to do on Win32

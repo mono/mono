@@ -654,15 +654,6 @@ namespace System.Windows.Forms {
 			driver.MenuToScreen(handle, ref x, ref y);
 		}
 
-#if NET_2_0
-		internal static void ShowBalloonTip(int timeout, string tipTitle, string tipText, ToolTipIcon tipIcon) {
-			#if DriverDebug
-				Console.WriteLine("ShowBalloonTip ({0}, {1}, {2}, {3}): Called", timeout, tipTitle, tipText, tipIcon);
-			#endif
-			driver.ShowBalloonTip(timeout, tipTitle, tipText, tipIcon);
-		}
-#endif
-
 		internal static void OverrideCursor(IntPtr cursor) {
 			#if DriverDebug
 				Console.WriteLine("OverrideCursor({0:X}): Called", cursor.ToInt32());
@@ -993,6 +984,15 @@ namespace System.Windows.Forms {
 			#endif
 			driver.SystrayRemove(handle, ref tt);
 		}
+
+#if NET_2_0
+		internal static void SystrayBalloon(IntPtr handle, int timeout, string title, string text, ToolTipIcon icon) {
+			#if DriverDebug
+				Console.WriteLine("SystrayBalloon ({0}, {1}, {2}, {3}, {4}): Called", Window(handle), timeout, title, text, icon);
+			#endif
+			driver.SystrayBalloon(handle, timeout, title, text, icon);
+		}
+#endif
 
 		internal static bool Text(IntPtr handle, string text) {
 			#if DriverDebug

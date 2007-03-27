@@ -148,6 +148,23 @@ namespace System.Windows.Forms {
 								owner.OnDoubleClick (EventArgs.Empty);
 								return;
 							}
+#if NET_2_0							
+							case Msg.NIN_BALLOONUSERCLICK: {
+								owner.OnBalloonTipClicked (EventArgs.Empty);
+								return;
+							}
+
+							case Msg.NIN_BALLOONSHOW: {
+								owner.OnBalloonTipShown (EventArgs.Empty);
+								return;
+							}
+
+							case Msg.NIN_BALLOONHIDE:
+							case Msg.NIN_BALLOONTIMEOUT: {
+								owner.OnBalloonTipClosed (EventArgs.Empty);
+								return;
+							}
+#endif
 						}
 						return;
 					}
@@ -242,9 +259,9 @@ namespace System.Windows.Forms {
 			ShowBalloonTip(timeout, balloon_title, balloon_text, balloon_icon);
 		}
 
-		public void ShowBalloonTip(int timeout, string tipTitle, string tipText, ToolTipIcon tipIcon)
+		public void ShowBalloonTip(int timeout, string title, string text, ToolTipIcon icon)
 		{
-			// TODO: Call ShowBalloonTip in XplatUI.
+			XplatUI.SystrayBalloon(window.Handle, timeout, title, text, icon);
 		}
 #endif
 		#endregion Public Methods

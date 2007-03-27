@@ -260,14 +260,13 @@ namespace System.Windows.Forms {
 		internal abstract bool SystrayAdd(IntPtr hwnd, string tip, Icon icon, out ToolTip tt);
 		internal abstract bool SystrayChange(IntPtr hwnd, string tip, Icon icon, ref ToolTip tt);
 		internal abstract void SystrayRemove(IntPtr hwnd, ref ToolTip tt);
+#if NET_2_0		
+		internal abstract void SystrayBalloon(IntPtr hwnd, int timeout, string title, string text, ToolTipIcon icon);
+#endif
 
 		internal abstract Point GetMenuOrigin(IntPtr hwnd);
 		internal abstract void MenuToScreen(IntPtr hwnd, ref int x, ref int y);
 		internal abstract void ScreenToMenu(IntPtr hwnd, ref int x, ref int y);
-
-#if NET_2_0		
-		internal abstract void ShowBalloonTip(int timeout, string tipTitle, string tipText, ToolTipIcon tipIcon);
-#endif
 
 		internal abstract void SetIcon(IntPtr handle, Icon icon);
 
