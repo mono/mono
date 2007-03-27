@@ -111,7 +111,7 @@ namespace MonoTests.System.Collections.Generic {
 			AssertEquals (s.Peek (), 1);
 			AssertEquals (s.Count, 1);
 
-		    enumerator = s.GetEnumerator();
+			IEnumerator enumerator = s.GetEnumerator();
 			s.Peek();
 			enumerator.Reset();
 		}
