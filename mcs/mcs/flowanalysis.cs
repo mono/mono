@@ -67,7 +67,7 @@ namespace Mono.CSharp
 			Finally
 		}
 
-		public sealed class Reachability
+		private sealed class Reachability
 		{
 			bool is_unreachable;
 
@@ -236,7 +236,7 @@ namespace Mono.CSharp
 					? MyBitVector.Empty
 					: new MyBitVector (parent == null ? MyBitVector.Empty : parent.parameters, num_params);
 
-				reachability = parent == null ? Reachability.Always () : parent.Reachability.Clone ();
+				reachability = parent == null ? Reachability.Always () : parent.reachability.Clone ();
 
 				id = ++next_id;
 			}
@@ -245,7 +245,7 @@ namespace Mono.CSharp
 				: this (type, parent, block, loc, parent.CountParameters, parent.CountLocals)
 			{ }
 
-			public UsageVector (MyBitVector parameters, MyBitVector locals, Reachability reachability, Block block, Location loc)
+			private UsageVector (MyBitVector parameters, MyBitVector locals, Reachability reachability, Block block, Location loc)
 			{
 				this.Type = SiblingType.Block;
 				this.Location = loc;
@@ -274,7 +274,7 @@ namespace Mono.CSharp
 
 			public bool IsAssigned (VariableInfo var, bool ignoreReachability)
 			{
-				if (!ignoreReachability && !var.IsParameter && Reachability.IsUnreachable)
+				if (!ignoreReachability && !var.IsParameter && IsUnreachable)
 					return true;
 
 				return var.IsAssigned (var.IsParameter ? parameters : locals);
@@ -282,7 +282,7 @@ namespace Mono.CSharp
 
 			public void SetAssigned (VariableInfo var)
 			{
-				if (!var.IsParameter && Reachability.IsUnreachable)
+				if (!var.IsParameter && IsUnreachable)
 					return;
 
 				var.SetAssigned (var.IsParameter ? parameters : locals);
@@ -290,7 +290,7 @@ namespace Mono.CSharp
 
 			public bool IsFieldAssigned (VariableInfo var, string name)
 			{
-				if (!var.IsParameter && Reachability.IsUnreachable)
+				if (!var.IsParameter && IsUnreachable)
 					return true;
 
 				return var.IsFieldAssigned (var.IsParameter ? parameters : locals, name);
@@ -298,14 +298,19 @@ namespace Mono.CSharp
 
 			public void SetFieldAssigned (VariableInfo var, string name)
 			{
-				if (!var.IsParameter && Reachability.IsUnreachable)
+				if (!var.IsParameter && IsUnreachable)
 					return;
 
 				var.SetFieldAssigned (var.IsParameter ? parameters : locals, name);
 			}
 
-			public Reachability Reachability {
-				get { return reachability; }
+			public bool IsUnreachable {
+				get { return reachability.IsUnreachable; }
+			}
+
+			public void ResetBarrier ()
+			{
+				reachability.Meet (Reachability.Always ());
 			}
 
 			public void Goto ()
@@ -321,17 +326,17 @@ namespace Mono.CSharp
 
 				MyBitVector locals = null;
 				MyBitVector parameters = null;
-				Reachability reachability = sibling_list.Reachability.Clone ();
+				Reachability reachability = sibling_list.reachability.Clone ();
 
-				if (!sibling_list.Reachability.IsUnreachable) {
+				if (!sibling_list.IsUnreachable) {
 					locals &= sibling_list.locals;
 					parameters &= sibling_list.parameters;
 				}
 
 				for (UsageVector child = sibling_list.Next; child != null; child = child.Next) {
-					reachability.Meet (child.Reachability);
+					reachability.Meet (child.reachability);
 
-					if (!child.Reachability.IsUnreachable) {
+					if (!child.IsUnreachable) {
 						locals &= child.locals;
 						parameters &= child.parameters;
 					}
@@ -347,7 +352,7 @@ namespace Mono.CSharp
 			{
 				Report.Debug (2, "    MERGING CHILD EFFECTS", this, child, reachability, Type);
 
-				Reachability new_r = child.Reachability;
+				Reachability new_r = child.reachability;
 
 				//
 				// We've now either reached the point after the branching or we will
@@ -392,11 +397,11 @@ namespace Mono.CSharp
 
 				for (UsageVector vector = o_vectors; vector != null; vector = vector.Next) {
 					Report.Debug (1, "    MERGING BREAK ORIGIN", vector);
-					if (vector.Reachability.IsUnreachable)
+					if (vector.IsUnreachable)
 						continue;
 					locals &= vector.locals;
 					parameters &= vector.parameters;
-					reachability.Meet (vector.Reachability);
+					reachability.Meet (vector.reachability);
 				}
 
 				Report.Debug (1, "  MERGING BREAK ORIGINS DONE", this);
@@ -667,7 +672,7 @@ namespace Mono.CSharp
 			actual = CurrentUsageVector.Clone ();
 
 			// stand-in for backward jumps
-			CurrentUsageVector.Reachability.Meet (Reachability.Always ());
+			CurrentUsageVector.ResetBarrier ();
 		}
 
 		public override bool AddGotoOrigin (UsageVector vector, Goto goto_stmt)
@@ -686,7 +691,7 @@ namespace Mono.CSharp
 		{
 			UsageVector vector = base.Merge ();
 
-			if (actual.Reachability.IsUnreachable)
+			if (actual.IsUnreachable)
 				Report.Warning (162, 2, stmt.loc, "Unreachable code detected");
 
 			actual.MergeChild (vector, false);
@@ -708,7 +713,7 @@ namespace Mono.CSharp
 		// </summary>
 		void CheckOutParameters (UsageVector vector, Location loc)
 		{
-			if (vector.Reachability.IsUnreachable)
+			if (vector.IsUnreachable)
 				return;
 			for (int i = 0; i < param_map.Count; i++) {
 				VariableInfo var = param_map [i];
@@ -785,9 +790,9 @@ namespace Mono.CSharp
 			return vector;
 		}
 
-		public Reachability End ()
+		public bool End ()
 		{
-			return Merge ().Reachability;
+			return Merge ().IsUnreachable;
 		}
 	}
 

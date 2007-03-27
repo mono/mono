@@ -603,11 +603,11 @@ namespace Mono.CSharp {
 		//   Ends a code branching.  Merges the state of locals and parameters
 		//   from all the children of the ending branching.
 		// </summary>
-		public FlowBranching.Reachability EndFlowBranching ()
+		public bool EndFlowBranching ()
 		{
 			FlowBranching.UsageVector vector = DoEndFlowBranching ();
 
-			return vector.Reachability;
+			return vector.IsUnreachable;
 		}
 
 		// <summary>
@@ -696,8 +696,8 @@ namespace Mono.CSharp {
 					if (!ok)
 						return false;
 
-					FlowBranching.Reachability reachability = top_level.End ();
-					if (reachability.IsUnreachable)
+					bool flow_unreachable = top_level.End ();
+					if (flow_unreachable)
 						unreachable = true;
 				}
 #if PRODUCTION

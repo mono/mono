@@ -1,3 +1,13 @@
+2007-03-27  Raja R Harinath  <harinath@gmail.com>
+
+	Prepare to kill 'Reachability'
+	* flowanalysis.cs (FlowBranching.Reachability): Make class private.
+	(FlowBranching.UsageVector.Reachability): Remove property.
+	(FlowBranching.UsageVector.IsUnreachable): New property.
+	(FlowBranching.UsageVector.ResetBarrier): New.
+	(FlowBranching.UsageVector, FlowBranchingLabeled): Update to changes.
+	* codegen.cs, statement.cs: Update to changes.
+
 2007-03-27  Martin Baulig  <martin@ximian.com>
 
 	Fix #81209.
