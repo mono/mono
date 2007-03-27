@@ -1,3 +1,8 @@
+2007-03-26  Everaldo Canuto  <everaldo@simios.org>
+
+	* XplatUIWin32.cs: Complete NOTIFYICONDATA structure, additional fields 
+	needed to implement Balloon.
+
 2007-03-26  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListViewItem.cs: In the constructors that take

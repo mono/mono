@@ -590,14 +590,25 @@ namespace System.Windows.Forms {
 
 		[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Unicode)]
 		internal struct NOTIFYICONDATA {
-			internal uint			cbSize;
-			internal IntPtr			hWnd;
-			internal uint			uID;
+			internal uint				cbSize;
+			internal IntPtr				hWnd;
+			internal uint				uID;
 			internal NotifyIconFlags	uFlags;
-			internal uint			uCallbackMessage;
-			internal IntPtr			hIcon;
+			internal uint				uCallbackMessage;
+			internal IntPtr				hIcon;
 			[MarshalAs(UnmanagedType.ByValTStr, SizeConst=64)]
-			internal string			szTip;
+			internal string				szTip;
+			internal int				dwState;
+			internal int				dwStateMask;
+			[MarshalAs(UnmanagedType.ByValTStr, SizeConst=256)]
+			internal string				szInfo;
+			internal int				uTimeoutOrVersion;
+			[MarshalAs(UnmanagedType.ByValTStr, SizeConst=64)]
+			internal string				szInfoTitle;
+			internal int				dwInfoFlags;
+			// Win Vista only
+			//internal IntPtr guidItem;      
+			//internal IntPtr hBalloonIcon;
 		}
 
 		[Flags]
