@@ -1,3 +1,7 @@
+2007-03-27  Alan McGovern <alan.mcgovern@gmail.com>
+
+	* List.cs: Optimized several methods to increase performance
+
 2007-03-21  Juraj Skripsky <js@hotfeet.ch>
 
 	* List.cs (FindAllStackBits): Small optimization to the new code.

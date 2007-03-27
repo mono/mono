@@ -82,7 +82,10 @@ namespace System.Collections.Generic {
 		}
 		public void Add (T item)
 		{
-			GrowIfNeeded (1);
+			// If we check to see if we need to grow before trying to grow
+			// we can speed things up by 25%
+			if (_size == _items.Length)
+				GrowIfNeeded (1);
 			_items [_size ++] = item;
 			_version++;
 		}
@@ -163,11 +166,7 @@ namespace System.Collections.Generic {
 		
 		public bool Contains (T item)
 		{
-			EqualityComparer<T> equalityComparer = EqualityComparer<T>.Default;
-			for (int i = 0; i < _size; i++)
-				if (equalityComparer.Equals (_items[i], item))
-					return true;
-			return false;
+			return Array.IndexOf<T>(_items, item) != -1;
 		}
 		
 		public List <TOutput> ConvertAll <TOutput> (Converter <T, TOutput> converter)
@@ -175,8 +174,10 @@ namespace System.Collections.Generic {
 			if (converter == null)
 				throw new ArgumentNullException ("converter");
 			List <TOutput> u = new List <TOutput> (_size);
-			foreach (T t in this)
-				u.Add (converter (t));
+			for (int i = 0; i < _size; i++)
+				u._items[i] = converter(_items[i]);
+
+			u._size = _size;
 			return u;
 		}
 		
@@ -198,12 +199,14 @@ namespace System.Collections.Generic {
 
 		public bool Exists (Predicate <T> match)
 		{
-			return FindIndex (match) != -1;
+			CheckMatch(match);
+			return GetIndex(0, _size, match) != -1;
 		}
 		
 		public T Find (Predicate <T> match)
 		{
-			int i = FindIndex (match);
+			CheckMatch(match);
+			int i = GetIndex(0, _size, match);
 			return (i != -1) ? _items [i] : default (T);
 		}
 		void CheckMatch (Predicate <T> match)
@@ -297,7 +300,8 @@ namespace System.Collections.Generic {
 		}
 		int GetIndex (int startIndex, int count, Predicate <T> match)
 		{
-			for (int i = startIndex; i < startIndex + count; i ++)
+			int end = startIndex + count;
+			for (int i = startIndex; i < end; i ++)
 				if (match (_items [i]))
 					return i;
 				
@@ -345,8 +349,8 @@ namespace System.Collections.Generic {
 		{
 			if (action == null)
 				throw new ArgumentNullException ("action");
-			foreach (T t in this)
-				action (t);
+			for(int i=0; i < _size; i++)
+				action(_items[i]);
 		}
 		
 		public Enumerator GetEnumerator ()
@@ -392,7 +396,8 @@ namespace System.Collections.Generic {
 			if (delta < 0)
 				start -= delta;
 			
-			Array.Copy (_items, start, _items, start + delta, _size - start);
+			if (start < _size)
+				Array.Copy (_items, start, _items, start + delta, _size - start);
 			
 			_size += delta;
 		}
@@ -406,9 +411,10 @@ namespace System.Collections.Generic {
 		public void Insert (int index, T item)
 		{
 			CheckIndex (index);			
-			GrowIfNeeded (1);
+			if (_size == _items.Length)
+				GrowIfNeeded (1);
 			Shift (index, 1);
-			this [index] = item;
+			_items[index] = item;
 			_version++;
 		}
 
@@ -486,27 +492,38 @@ namespace System.Collections.Generic {
 			return loc != -1;
 		}
 		
-		// FIXME: this could probably be made faster.
 		public int RemoveAll (Predicate <T> match)
 		{
-			CheckMatch (match);
+			CheckMatch(match);
+			int i = 0;
+			int j = 0;
 
-			int index = 0;
-			int c = 0;
-			while ((index = GetIndex (index, _size - index, match)) != -1) {
-				RemoveAt (index);
-				c ++;
+			// Find the first item to remove
+			for (i = 0; i < _size; i++)
+				if (match(_items[i]))
+					break;
+
+			if (i == _size)
+				return 0;
+
+			_version++;
+
+			// Remove any additional items
+			for (j = i + 1; j < _size; j++)
+			{
+				if (!match(_items[j]))
+					_items[i++] = _items[j];
 			}
-			
-			Array.Clear (_items, _size, c);
-			return c;
+
+			_size = i;
+			return (j - i);
 		}
 		
 		public void RemoveAt (int index)
 		{
-			CheckIndex (index);
+			if (index < 0 || (uint)index >= (uint)_size)
+				throw new ArgumentOutOfRangeException("index");
 			Shift (index, -1);
-			Array.Clear (_items, _size, 0);
 			_version++;
 		}
 		
@@ -573,8 +590,8 @@ namespace System.Collections.Generic {
 		{
 			CheckMatch (match);
 
-			foreach (T t in this)
-				if (!match (t))
+			for (int i = 0; i < _size; i++)
+				if (!match(_items[i]))
 					return false;
 				
 			return true;
