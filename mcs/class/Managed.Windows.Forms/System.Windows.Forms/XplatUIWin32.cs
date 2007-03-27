@@ -586,6 +586,8 @@ namespace System.Windows.Forms {
 			NIF_MESSAGE			= 0x00000001,
 			NIF_ICON			= 0x00000002,
 			NIF_TIP				= 0x00000004,
+			NIF_STATE			= 0x00000008,
+			NIF_INFO			= 0x00000010			
 		}
 
 		[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Unicode)]
@@ -596,7 +598,7 @@ namespace System.Windows.Forms {
 			internal NotifyIconFlags	uFlags;
 			internal uint				uCallbackMessage;
 			internal IntPtr				hIcon;
-			[MarshalAs(UnmanagedType.ByValTStr, SizeConst=64)]
+			[MarshalAs(UnmanagedType.ByValTStr, SizeConst=128)]
 			internal string				szTip;
 			internal int				dwState;
 			internal int				dwStateMask;
@@ -605,10 +607,7 @@ namespace System.Windows.Forms {
 			internal int				uTimeoutOrVersion;
 			[MarshalAs(UnmanagedType.ByValTStr, SizeConst=64)]
 			internal string				szInfoTitle;
-			internal int				dwInfoFlags;
-			// Win Vista only
-			//internal IntPtr guidItem;      
-			//internal IntPtr hBalloonIcon;
+			internal ToolTipIcon		dwInfoFlags;
 		}
 
 		[Flags]
@@ -2291,7 +2290,20 @@ namespace System.Windows.Forms {
 #if NET_2_0
 		internal override void SystrayBalloon(IntPtr hwnd, int timeout, string title, string text, ToolTipIcon icon)
 		{
-			// TODO:
+			NOTIFYICONDATA	nid;
+
+			nid = new NOTIFYICONDATA();
+
+			nid.cbSize = (uint)Marshal.SizeOf(nid);
+			nid.hWnd = hwnd;
+			nid.uID = 1;
+			nid.uFlags = NotifyIconFlags.NIF_INFO;
+			nid.uTimeoutOrVersion = timeout;
+			nid.szInfoTitle = title;
+			nid.szInfo = text;
+			nid.dwInfoFlags = icon;
+			
+			Win32Shell_NotifyIcon(NotifyIconMessage.NIM_MODIFY, ref nid);
 		}
 #endif
 

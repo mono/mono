@@ -1,3 +1,11 @@
+2007-03-27  Everaldo Canuto  <everaldo@simios.org>
+
+	* XplatUIWin32.cs:
+	- NIF_STATE and NIF_INFO added to NotifyIconFlags.
+	- NOTIFYICONDATA properties sizes fixed, szTip is 128, not 64.
+	- SystrayBalloon method implemented.
+	[Add support for notifyicon balloon on win32, #79149]
+
 2007-03-27  Mike Kestner  <mkestner@novell.com>
 
 	* ThemeWin32Classic.cs : update StateImageList selection to mirror
