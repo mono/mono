@@ -1,3 +1,8 @@
+2007-03-27  Jackson Harper  <jackson@ximian.com>
+
+	* TextControl.cs: Improvements to non multiline line ending
+	drawing/measuing.
+
 2007-03-27  Everaldo Canuto  <everaldo@simios.org>
 
 	* XplatUIX11.cs: Fix the time which tooltip is opened for NotifyIcon. 

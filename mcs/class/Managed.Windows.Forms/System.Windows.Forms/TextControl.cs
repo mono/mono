@@ -348,7 +348,22 @@ namespace System.Windows.Forms {
 			LineTag last = tags;
 			while (last.next != null)
 				last = last.next;
-			dc.DrawString ("\u0000\u0000", last.font, last.color, X + widths [TextLengthWithoutEnding ()],
+
+			string end_str = null;
+			switch (document.LineEndingLength (ending)) {
+			case 0:
+				return;
+			case 1:
+				end_str = "\u0013";
+				break;
+			case 2:
+				end_str = "\u0013\u0013";
+				break;
+			case 3:
+				end_str = "\u0013\u0013\u0013";
+				break;
+			}
+			dc.DrawString (end_str, last.font, last.color,  X + widths [TextLengthWithoutEnding ()] - document.viewport_x,
 					y, Document.string_format);
 		}
 
@@ -896,7 +911,7 @@ namespace System.Windows.Forms {
 			document_id = random.Next();
 
 			string_format.Trimming = StringTrimming.None;
-			string_format.FormatFlags = StringFormatFlags.MeasureTrailingSpaces | StringFormatFlags.DisplayFormatControl;
+			string_format.FormatFlags = StringFormatFlags.DisplayFormatControl;
 		}
 		#endregion
 
@@ -4515,12 +4530,18 @@ namespace System.Windows.Forms {
 
 		internal virtual SizeF SizeOfPosition (Graphics dc, int pos)
 		{
-			if (pos > line.TextLengthWithoutEnding ()) {
-				if (line.document.multiline)
-					return SizeF.Empty;
-				return dc.MeasureString ("\u0000", font, 10000, Document.string_format);
+			
+			if (pos >= line.TextLengthWithoutEnding () && line.document.multiline)
+				return SizeF.Empty;
+
+			string text = line.text.ToString (pos, 1);
+			switch ((int) text [0]) {
+			case 10:
+			case 13:
+				return dc.MeasureString ("\u0013", font, 10000, Document.string_format);
 			}
-			return dc.MeasureString (line.text.ToString (pos, 1), font, 10000, Document.string_format);
+			
+			return dc.MeasureString (text, font, 10000, Document.string_format);
 		}
 
 		internal virtual int MaxHeight ()
