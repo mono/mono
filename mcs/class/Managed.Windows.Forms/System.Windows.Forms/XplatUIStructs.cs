@@ -341,7 +341,13 @@ namespace System.Windows.Forms {
 		WM_MOUSE_ENTER            = 0x0401,
 		WM_ASYNC_MESSAGE          = 0x0403,
 		WM_REFLECT                = WM_USER + 0x1c00,
-		WM_CLOSE_INTERNAL	  = WM_USER + 0x1c01
+		WM_CLOSE_INTERNAL         = WM_USER + 0x1c01,
+
+		// NotifyIcon (Systray) Balloon messages 
+		NIN_BALLOONSHOW           = WM_USER + 0x0002,
+		NIN_BALLOONHIDE           = WM_USER + 0x0003,
+		NIN_BALLOONTIMEOUT        = WM_USER + 0x0004,
+		NIN_BALLOONUSERCLICK      = WM_USER + 0x0005 
 	}
 
 	internal enum MsgButtons {
