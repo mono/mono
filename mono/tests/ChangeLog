@@ -1,6 +1,7 @@
 2007-03-27  Raja R Harinath  <harinath@gmail.com>
 
 	* Makefile.am (JITTEST_PROG_RUN): Set MONO_CFG_DIR too.
+	(test-bug-80307): Use helper 'mcs' and 'gmcs' from build tree.
 
 2007-03-23  Jonathan Chambers  <joncham@gmail.com>
 
