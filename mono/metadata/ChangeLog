@@ -1,3 +1,8 @@
+2007-03-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* environment.c: Fix return value check on uname so we can get the 
+	executing version on Solaris operating systems.
+
 2007-03-28  Jb Evain  <jbevain@gmail.com>
 
 	* class.c (mono_type_get_name_recurse): Complete the
