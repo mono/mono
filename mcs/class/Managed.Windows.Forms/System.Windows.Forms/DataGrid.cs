@@ -1809,6 +1809,7 @@ namespace System.Windows.Forms
 			}
 			else {
 				ResetSelection ();
+				selection_start = CurrentRow;
 			}
 		}
 

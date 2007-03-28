@@ -1,3 +1,11 @@
+2007-03-28  Chris Toshok  <toshok@ximian.com>
+
+	* XplatUIX11.cs (UnmapWindow): reindent this block.
+
+	* DataGrid.cs (UpdateSelectionAfterCursorMove): we need to update
+	the selection_start if we're moving the selection (that is, not
+	extending it). Fixes bug #80461.
+
 2007-03-28  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ProgressBar.cs: Make the default MarqueeAnimationSpeed = 100.

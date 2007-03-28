@@ -1343,7 +1343,7 @@ namespace System.Windows.Forms {
 				if (Control.FromHandle(hwnd.Handle) is Form) {
 					Form f = Control.FromHandle(hwnd.Handle) as Form;
 					if (f.WindowState == FormWindowState.Normal)
-					SendMessage(hwnd.Handle, Msg.WM_SHOWWINDOW, IntPtr.Zero, IntPtr.Zero);
+						SendMessage(hwnd.Handle, Msg.WM_SHOWWINDOW, IntPtr.Zero, IntPtr.Zero);
 				}
 
 				// it's possible that our Hwnd is no
