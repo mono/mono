@@ -54,6 +54,7 @@ namespace System.Windows.Forms
 			this.locked = false;
 			this.renderer = null;
 			this.render_mode = ToolStripRenderMode.ManagerRenderMode;
+			this.row_margin = new Padding (3, 0, 0, 0);
 			this.rows = new ToolStripPanelRowCollection (this);
 		}
 
@@ -133,7 +134,13 @@ namespace System.Windows.Forms
 
 				return this.renderer;
 			}
-			set { this.renderer = value; }
+			set {
+				if (this.renderer != value) {
+					this.renderer = value;
+					this.render_mode = ToolStripRenderMode.Custom;
+					this.OnRendererChanged (EventArgs.Empty);
+				}
+			}
 		}
 
 		public ToolStripRenderMode RenderMode {
@@ -145,7 +152,7 @@ namespace System.Windows.Forms
 				if (value == ToolStripRenderMode.Custom && this.renderer == null)
 					throw new NotSupportedException ("Must set Renderer property before setting RenderMode to Custom");
 				if (value == ToolStripRenderMode.Professional || value == ToolStripRenderMode.System)
-					this.renderer = new ToolStripProfessionalRenderer ();
+					this.Renderer = new ToolStripProfessionalRenderer ();
 
 				this.render_mode = value;
 			}
@@ -241,6 +248,11 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Protected Methods
+		protected override ControlCollection CreateControlsInstance ()
+		{
+			return new ToolStripPanelControlCollection (this);
+		}
+		
 		protected override void Dispose (bool disposing)
 		{
 			base.Dispose (disposing);
@@ -490,6 +502,13 @@ namespace System.Windows.Forms
 				base.RemoveAt (index);
 			}
 			#endregion
+		}
+		
+		private class ToolStripPanelControlCollection : ControlCollection
+		{
+			public ToolStripPanelControlCollection (Control owner) : base (owner)
+			{
+			}
 		}
 		#endregion
 	}

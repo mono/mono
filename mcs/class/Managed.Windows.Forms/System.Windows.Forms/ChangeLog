@@ -1,5 +1,11 @@
 2007-03-28  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ProgressBar.cs: Make the default MarqueeAnimationSpeed = 100.
+	* ToolStripPanel.cs: Fix RowMargin, Renderer, RenderMode, and
+	create private ControlCollection.
+
+2007-03-28  Jonathan Pobst  <monkey@jpobst.com>
+
 	* Control.cs: We need to call OnVisibleChanged for our implicit
 	children as well as our normal children.  Fixes scrollbars in
 	comboboxes not showing up.

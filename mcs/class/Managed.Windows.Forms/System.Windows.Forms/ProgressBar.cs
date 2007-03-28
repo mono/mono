@@ -360,7 +360,7 @@ namespace System.Windows.Forms
 			Invalidate ();
 		}
 		
-		int marquee_animation_speed = 350;
+		int marquee_animation_speed = 100;
 		[DefaultValue (100)]
 		public int MarqueeAnimationSpeed {
 			get {
