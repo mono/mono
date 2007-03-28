@@ -607,7 +607,11 @@ namespace System.Windows.Forms {
 			internal int				uTimeoutOrVersion;
 			[MarshalAs(UnmanagedType.ByValTStr, SizeConst=64)]
 			internal string				szInfoTitle;
+#if NET_2_0
 			internal ToolTipIcon		dwInfoFlags;
+#else
+			internal int				dwInfoFlags;
+#endif
 		}
 
 		[Flags]
