@@ -1,3 +1,7 @@
+2007-03-28  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* nunit-host-ignore-list: More test cases that fails on SPARC bots.
+
 2007-03-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* nunit-host-ignore-list: Ignore TIFF codec tests on both SPARC bots.

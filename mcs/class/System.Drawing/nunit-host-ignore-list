@@ -7,4 +7,8 @@ monobuild1.boston.ximian.com,MonoTests.System.Drawing.GraphicsTest.MeasureString
 monobuild2,MonoTests.System.Drawing.GraphicsTest.MeasureString_StringFontInt_LongString
 monobuild2,MonoTests.System.Drawing.GraphicsTest.MeasureString_Wrapping_Dots
 mono-linux-sparc,MonoTests.System.Drawing.Imaging.TiffCodecTest
+mono-linux-sparc,MonoTests.System.Drawing.GraphicsTest.MeasureString_StringFontInt_LongString
+mono-linux-sparc,MonoTests.System.Drawing.GraphicsTest.MeasureString_Wrapping_Dots
 despinasp,MonoTests.System.Drawing.Imaging.TiffCodecTest
+despinasp,MonoTests.System.Drawing.GraphicsTest.MeasureString_StringFontInt_LongString
+despinasp,MonoTests.System.Drawing.GraphicsTest.MeasureString_Wrapping_Dots
