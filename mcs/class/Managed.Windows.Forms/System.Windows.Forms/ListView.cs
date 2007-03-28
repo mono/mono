@@ -441,7 +441,12 @@ namespace System.Windows.Forms
 		[DefaultValue (false)]
 		public bool FullRowSelect {
 			get { return full_row_select; }
-			set { full_row_select = value; }
+			set { 
+				if (full_row_select != value) {
+					full_row_select = value;
+					InvalidateSelection ();
+				}
+			}
 		}
 
 		[DefaultValue (false)]
@@ -484,7 +489,7 @@ namespace System.Windows.Forms
 			set {
 				if (hide_selection != value) {
 					hide_selection = value;
-					this.Redraw (false);
+					InvalidateSelection ();
 				}
 			}
 		}
@@ -865,6 +870,12 @@ namespace System.Windows.Forms
 				CalculateListView (this.alignment);
 
 			Refresh ();
+		}
+
+		void InvalidateSelection ()
+		{
+			foreach (int selected_index in SelectedIndices)
+				items [selected_index].Invalidate ();
 		}
 
 		const int text_padding = 15;
