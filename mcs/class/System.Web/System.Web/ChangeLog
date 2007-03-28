@@ -1,3 +1,8 @@
+2007-03-28 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* StaticSiteMapProvider.cs:
+	GetChildNodes does not return null but SiteMapNodeCollection.EmptyCollection.
+
 2007-03-28  Konstantin Triger <kostat@mainsoft.com>
 
 	* BrowserCapabilities.cs: 

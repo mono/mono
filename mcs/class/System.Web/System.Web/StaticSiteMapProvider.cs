@@ -170,14 +170,14 @@ namespace System.Web
 				} else if (ret != null)
 					ret.Add (col[n]);
 			}
-			
-			if (ret != null) {
-				if (ret.Count > 0)
-					return SiteMapNodeCollection.ReadOnly (ret);
-			} else
+
+			if (ret == null)
 				return SiteMapNodeCollection.ReadOnly (col);
+			else if (ret.Count > 0)
+				return SiteMapNodeCollection.ReadOnly (ret);
+			else
+				return SiteMapNodeCollection.EmptyCollection;
 			
-			return null;
 		}
 		
 		public override SiteMapNode GetParentNode (SiteMapNode node)
