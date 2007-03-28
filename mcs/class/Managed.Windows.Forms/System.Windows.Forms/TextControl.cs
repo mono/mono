@@ -2446,7 +2446,7 @@ namespace System.Windows.Forms {
 			}
 
 			if (tag == null) {
-				return;
+				goto Cleanup;
 			}
 
 			// Check if we're crossing tag boundaries
@@ -2503,7 +2503,8 @@ namespace System.Windows.Forms {
 				line.Streamline(lines);
 			}
 
-			if (pos > line.TextLengthWithoutEnding ())
+		Cleanup:
+			if (pos >= line.TextLengthWithoutEnding ())
 				GetLineEnding (line.text.ToString (), 0, out line.ending);
 			UpdateView(line, pos);
 		}
@@ -2531,7 +2532,7 @@ namespace System.Windows.Forms {
 				}
 
 				if (tag == null) {
-					return;
+					goto Cleanup;
 				}
 
 				//	tag.length--;
@@ -2575,7 +2576,8 @@ namespace System.Windows.Forms {
 				line.Streamline(lines);
 			}
 
-			if (pos > line.TextLengthWithoutEnding ())
+		Cleanup:
+			if (pos >= line.TextLengthWithoutEnding ())
 				GetLineEnding (line.text.ToString (), 0, out line.ending);
 			UpdateView(line, pos);
 		}
