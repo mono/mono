@@ -1,3 +1,7 @@
+2007-03-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* nunit-host-ignore-list: Ignore TIFF codec tests on both SPARC bots.
+
 2007-03-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* System.Drawing_test.dll.sources: Add EmfPlusRecordType unit tests to
