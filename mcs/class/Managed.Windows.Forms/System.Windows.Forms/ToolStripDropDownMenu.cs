@@ -94,9 +94,19 @@ namespace System.Windows.Forms
 			base.OnFontChanged (e);
 		}
 
+		protected override void OnLayout (LayoutEventArgs e)
+		{
+			base.OnLayout (e);
+		}
+		
 		protected override void OnPaintBackground (PaintEventArgs pevent)
 		{
 			base.OnPaintBackground (pevent);
+		}
+
+		protected override void SetDisplayedItems ()
+		{
+			base.SetDisplayedItems ();
 		}
 		#endregion
 	}

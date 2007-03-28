@@ -31,6 +31,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
 using System.Drawing;
+using System.Windows.Forms.Layout;
 
 namespace System.Windows.Forms
 {
@@ -38,6 +39,8 @@ namespace System.Windows.Forms
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
 	public class ToolStripOverflow : ToolStripDropDown, IComponent, IDisposable
 	{
+		private LayoutEngine layout_engine;
+		
 		#region Public Constructors
 		public ToolStripOverflow (ToolStripItem parentItem)
 		{
@@ -46,6 +49,14 @@ namespace System.Windows.Forms
 		#endregion
 		
 		#region Public Properties
+		public override System.Windows.Forms.Layout.LayoutEngine LayoutEngine {
+			get {
+				if (this.layout_engine == null)
+					this.layout_engine = new FlowLayout ();
+					
+				return base.LayoutEngine;
+			}
+		}
 		#endregion
 
 		#region Protected Properties

@@ -159,9 +159,12 @@ namespace System.Windows.Forms
 
 				return this.renderer;
 			}
-			set { 
-				this.renderer = value;
-				this.OnRendererChanged (EventArgs.Empty);
+			set {
+				if (this.renderer != value) {
+					this.renderer = value;
+					this.render_mode = ToolStripRenderMode.Custom;
+					this.OnRendererChanged (EventArgs.Empty);
+				}
 			}
 		}
 

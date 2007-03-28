@@ -63,6 +63,12 @@ namespace System.Windows.Forms
 		}
 		
 		[DefaultValue (100)]
+		public int MarqueeAnimationSpeed {
+			get { return this.ProgressBar.MarqueeAnimationSpeed; }
+			set { this.ProgressBar.MarqueeAnimationSpeed = value; }
+		}
+		
+		[DefaultValue (100)]
 		[RefreshProperties (RefreshProperties.Repaint)]
 		public int Maximum {
 			get { return this.ProgressBar.Maximum; }

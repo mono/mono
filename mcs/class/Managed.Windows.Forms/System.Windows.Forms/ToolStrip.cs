@@ -409,7 +409,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-		[MonoTODO ("Need 2.0 ToolTip to implement tool tips.")]
 		[DefaultValue (true)]
 		public bool ShowItemToolTips {
 			get { return this.show_item_tool_tips; }
@@ -1018,8 +1017,10 @@ namespace System.Windows.Forms
 		
 		private void MouseEnteredItem (ToolStripItem item)
 		{
-			tooltip_currently_showing = item;
-			ToolTipTimer.Start ();
+			if (this.show_item_tool_tips) {
+				tooltip_currently_showing = item;
+				ToolTipTimer.Start ();
+			}
 		}
 		
 		private void MouseLeftItem (ToolStripItem item)

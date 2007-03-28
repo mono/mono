@@ -225,7 +225,7 @@ namespace System.Windows.Forms
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected override ControlCollection CreateControlsInstance ()
 		{
-			return base.CreateControlsInstance ();
+			return new ToolStripContainerTypedControlCollection (this);
 		}
 
 		protected override void OnSizeChanged (EventArgs e)
@@ -287,6 +287,15 @@ namespace System.Windows.Forms
 		public new event EventHandler ForeColorChanged {
 			add { base.ForeColorChanged += value; }
 			remove { base.ForeColorChanged -= value; }
+		}
+		#endregion
+
+		#region Private Class : ToolStripContainerTypedControlCollection
+		private class ToolStripContainerTypedControlCollection : ControlCollection
+		{
+			public ToolStripContainerTypedControlCollection (Control owner) : base (owner)
+			{
+			}
 		}
 		#endregion
 	}

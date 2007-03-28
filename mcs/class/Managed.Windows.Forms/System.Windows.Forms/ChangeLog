@@ -1,3 +1,17 @@
+2007-03-28  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStrip.cs: Remove MonoTODO for tooltips.
+	* ToolStripComboBox.cs: Fix MonoTODO for DropDownHeight and events.
+	* ToolStripContainer.cs: Add custom ControlCollection class.
+	* ToolStripContentPanel.cs: Fix Renderer setting to match MS behavior.
+	* ToolStripDropDown.cs: Add some missing properties/methods.
+	* ToolStripDropDownMenu.cs: Override OnLayout and SetDisplayedItems.
+	* ToolStripItem.cs: Remove MonoTODO for tooltips.
+	* ToolStripManager.cs: Add IsShortcutDefined.
+	* ToolStripOverflow.cs: Override LayoutEngine.
+	* ToolStripProgressBar.cs: Add MarqueeAnimationSpeed.
+	* ToolStripSeparator.cs: Add ImageKey.
+
 2007-03-28  Jackson Harper  <jackson@ximian.com>
 
 	* TextControl.cs: If a char delete removes a line ending, we need

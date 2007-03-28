@@ -127,6 +127,14 @@ namespace System.Windows.Forms
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public new string ImageKey {
+			get { return base.ImageKey; }
+			set { base.ImageKey = value; }
+		}
+		
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public new ToolStripItemImageScaling ImageScaling {
 			get { return base.ImageScaling; }
 			set { base.ImageScaling = value; }

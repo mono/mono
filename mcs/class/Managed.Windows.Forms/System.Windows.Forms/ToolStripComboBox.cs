@@ -92,13 +92,12 @@ namespace System.Windows.Forms
 			get { return (ComboBox)base.Control; }
 		}
 
-		[MonoTODO ("Stub, will not actually affect anything.")]
 		[Browsable (true)]
 		[DefaultValue (106)]
 		[EditorBrowsable (EditorBrowsableState.Always)]
 		public int DropDownHeight {
-			get { return 106; }
-			set { }
+			get { return this.ComboBox.DropDownHeight; }
+			set { this.ComboBox.DropDownHeight = value; }
 		}
 		
 		[DefaultValue (ComboBoxStyle.DropDown)]
@@ -297,14 +296,15 @@ namespace System.Windows.Forms
 		{
 		}
 
-		[MonoTODO ("Needs to hook into DropDownClosed and TextUpdate when ComboBox 2.0 has them.")]
 		protected override void OnSubscribeControlEvents (Control control)
 		{
 			base.OnSubscribeControlEvents (control);
 
 			this.ComboBox.DropDown += new EventHandler (HandleDropDown);
+			this.ComboBox.DropDownClosed += new EventHandler(HandleDropDownClosed);
 			this.ComboBox.DropDownStyleChanged += new EventHandler (HandleDropDownStyleChanged);
 			this.ComboBox.SelectedIndexChanged += new EventHandler (HandleSelectedIndexChanged);
+			this.ComboBox.TextUpdate += new EventHandler(HandleTextUpdate);
 		}
 
 		protected virtual void OnTextUpdate (EventArgs e)
@@ -366,6 +366,11 @@ namespace System.Windows.Forms
 			OnDropDown (e);
 		}
 
+		private void HandleDropDownClosed (object sender, EventArgs e)
+		{
+			OnDropDownClosed (e);
+		}
+		
 		private void HandleDropDownStyleChanged (object sender, EventArgs e)
 		{
 			OnDropDownStyleChanged (e);
@@ -374,6 +379,11 @@ namespace System.Windows.Forms
 		private void HandleSelectedIndexChanged (object sender, EventArgs e)
 		{
 			OnSelectedIndexChanged (e);
+		}
+		
+		private void HandleTextUpdate (object sender, EventArgs e)
+		{
+			OnTextUpdate (e);
 		}
 		#endregion
 

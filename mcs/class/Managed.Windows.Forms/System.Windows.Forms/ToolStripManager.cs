@@ -117,6 +117,16 @@ namespace System.Windows.Forms
 			return null;
 		}
 		
+		public static bool IsShortcutDefined (Keys shortcut)
+		{
+			lock (menu_items)
+				foreach (ToolStripMenuItem tsmi in menu_items)
+					if (tsmi.ShortcutKeys == shortcut)
+						return true;
+
+			return false;
+		}
+		
 		public static bool IsValidShortcut (Keys shortcut)
 		{
 			// Anything with an F1 - F12 is a shortcut

@@ -223,8 +223,7 @@ namespace System.Windows.Forms
 		[Browsable (false)]
 		[DefaultValue (AnchorStyles.Top | AnchorStyles.Left)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public AnchorStyles Anchor
-		{
+		public AnchorStyles Anchor {
 			get { return this.anchor; }
 			set { this.anchor = value; }
 		}
@@ -241,7 +240,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-		[MonoTODO ("Need 2.0 ToolTip to implement tool tips.")]
 		[DefaultValue (false)]
 		public bool AutoToolTip {
 			get { return this.auto_tool_tip; }
