@@ -109,7 +109,7 @@ namespace System.Security.Cryptography {
 		protected override byte[] HashFinal() {
 			CompressFinal(_Length);
 			byte[] hash = new byte[20];
-			if (BitConverter.IsLittleEndian) {
+			if (!BitConverter.IsLittleEndian) {
 				for (int i = 0; i < 5; i++) {
 					for (int j = 0; j < 4; j++) {
 						hash [i*4+j] = (byte)(_HashValue [i] >> j*8);
@@ -134,7 +134,7 @@ namespace System.Security.Cryptography {
 		/// <param name="offset">The offset in the buffer.</param>
 		private void ProcessBlock (byte[] buffer, int offset)
 		{
-			if (BitConverter.IsLittleEndian) {
+			if (!BitConverter.IsLittleEndian) {
 				for (int i=0; i < _X.Length; i++) {
 					_X [i] = (uint)(buffer [offset])
 						| (((uint)(buffer [offset+1])) <<  8)
