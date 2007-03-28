@@ -687,7 +687,7 @@ namespace System.Windows.Forms
 		}
 #endif
 
-		private void Invalidate ()
+		internal void Invalidate ()
 		{
 			if (owner == null || owner.item_control == null)
 				return;

@@ -1,5 +1,9 @@
 2007-03-28  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ListViewItem.cs: Forgot to make Invalidate internal.
+
+2007-03-28  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* ListView.cs: Add a InvalidateSelection method to
 	invalidate methods which are currently selected, and call
 	it when setting FullRowSelect and HideSelection, instead of
