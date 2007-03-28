@@ -211,7 +211,8 @@ namespace System.Windows.Forms {
 		{
 			if (IsMdiChild) {
 				// MS always creates handles when Focus () is called for mdi clients.
-				CreateHandle ();
+				if (!IsHandleCreated)
+					CreateHandle ();
 			} 
 			return base.FocusInternal (skip_check);
 		}
@@ -1584,7 +1585,8 @@ namespace System.Windows.Forms {
 
 			// MS creates the handle here.
 			if (TopLevel) {
-				CreateHandle ();
+				if (!IsHandleCreated)
+					CreateHandle ();
 			}
 			
 			if (Width > 0) {
@@ -1618,7 +1620,8 @@ namespace System.Windows.Forms {
 
 			// MS creates the handle here.
 			if (TopLevel) {
-				CreateHandle ();
+				if (!IsHandleCreated)
+					CreateHandle ();
 			}
 			
 			if (Width > 0) {
@@ -2006,7 +2009,8 @@ namespace System.Windows.Forms {
 
 			// MS causes the handle to be created here.
 			if (!IsHandleCreated)
-				CreateHandle ();
+				if (!IsHandleCreated)
+					CreateHandle ();
 			
 			if (directed) {
 				base.SelectNextControl(null, forward, true, true, true);

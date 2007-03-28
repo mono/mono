@@ -3396,7 +3396,8 @@ namespace System.Windows.Forms
 		public Control GetChildAtPoint(Point pt) {
 			// MS's version causes the handle to be created.  The stack trace shows that get_Handle is called here, but
 			// we'll just call CreateHandle instead.
-			CreateHandle ();
+			if (!IsHandleCreated)
+				CreateHandle ();
 			
 			// Microsoft's version of this function doesn't seem to work, so I can't check
 			// if we only consider children or also grandchildren, etc.
@@ -3913,7 +3914,8 @@ namespace System.Windows.Forms
 
 		protected virtual bool IsInputChar (char charCode) {
 			// XXX on MS.NET this method causes the handle to be created..
-			CreateHandle ();
+			if (!IsHandleCreated)
+				CreateHandle ();
 
 			return true;
 		}
@@ -4281,7 +4283,8 @@ namespace System.Windows.Forms
 				}
 			} else {
 				// XXX MS.NET causes handle to be created here
-				CreateHandle ();
+				if (!IsHandleCreated)
+					CreateHandle ();
 			}
 			is_toplevel = value;
 		}
