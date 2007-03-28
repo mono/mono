@@ -40,9 +40,9 @@ namespace System.Web.J2EE
 	/// </summary>
 	public class PageMapper
 	{
-		private static readonly string _fileListName = "/filelist.xml";
+		//private static readonly string _fileListName = "/filelist.xml";
 		private static readonly object LOCK_GETASSEMBLIESCACHEDDOCUMENT = new object();
-		private static readonly object LOCK_GETFROMMAPPATHCACHE = new object();
+		//private static readonly object LOCK_GETFROMMAPPATHCACHE = new object();
 
 
 		static Assembly CurrentDomain_AssemblyResolve (object sender, ResolveEventArgs args)
@@ -52,13 +52,19 @@ namespace System.Web.J2EE
 			{
 				resolvedAssembly = GetCachedAssembly (args.Name);
 			}
-			catch
+			catch (Exception ex)
 			{
+#if DEBUG
+				Console.WriteLine (ex.ToString ());
+#endif
 				resolvedAssembly = null;
 			}
 
 			return resolvedAssembly;
 		}
+
+#if UNUSED
+
 		public static string GetFromMapPathCache(string key)
 		{
 			Hashtable answer = null;
@@ -77,22 +83,11 @@ namespace System.Web.J2EE
 						answer[currentFile]= IAppDomainConfig.WAR_ROOT_SYMBOL + currentFile;
 					}
 					AppDomain.CurrentDomain.SetData(J2EEConsts.MAP_PATH_CACHE,answer);
-
-					AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler (CurrentDomain_AssemblyResolve);
-					try
-					{
-						//Try to load the  global resources
-						HttpContext.AppGlobalResourcesAssembly = GetCachedAssembly ("app_globalresources");
-					}
-					catch
-					{
-					}
 				}
 			}
 			return (string)answer[key];
 		}
 
-#if UNUSED
 		// UNUSED METHOD
 		//The method was used by runtime to force file names casesensitivity
 		// problem. The filelist.xml file should contain correct file names,
@@ -139,18 +134,32 @@ namespace System.Web.J2EE
 #endif
 		private static ICachedXmlDoc GetAssembliesCachedDocument()
 		{
-			lock(LOCK_GETASSEMBLIESCACHEDDOCUMENT)
-			{
-				ICachedXmlDoc doc = (ICachedXmlDoc) AppDomain.CurrentDomain.GetData(J2EEConsts.ASSEMBLIES_FILE);
-				if (doc == null)
-				{
-					doc = CreateDocument();
-					if (doc != null)
-						AppDomain.CurrentDomain.SetData(J2EEConsts.ASSEMBLIES_FILE, doc);
-				}
+			ICachedXmlDoc doc = (ICachedXmlDoc) AppDomain.CurrentDomain.GetData (J2EEConsts.ASSEMBLIES_FILE);
 
-				return doc;
+			if (doc == null) {
+				lock (LOCK_GETASSEMBLIESCACHEDDOCUMENT) {
+					doc = (ICachedXmlDoc) AppDomain.CurrentDomain.GetData (J2EEConsts.ASSEMBLIES_FILE);
+					if (doc == null) {
+						doc = CreateDocument ();
+						if (doc != null) {
+							AppDomain.CurrentDomain.SetData (J2EEConsts.ASSEMBLIES_FILE, doc);
+
+							AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler (CurrentDomain_AssemblyResolve);
+							try {
+								//Try to load the  global resources
+								HttpContext.AppGlobalResourcesAssembly = GetCachedAssembly ("app_globalresources");
+							}
+							catch (Exception ex) {
+#if DEBUG
+								Console.WriteLine (ex.ToString ());
+#endif
+							}
+						}
+					}
+				}
 			}
+
+			return doc;
 		}
 
 		private static String NormalizeName(string url)
