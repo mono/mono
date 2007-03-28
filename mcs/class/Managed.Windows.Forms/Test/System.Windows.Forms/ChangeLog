@@ -1,5 +1,10 @@
 2007-03-28  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ToolStripOverflowButtonTest.cs, ToolStripOverflowTest.cs: Disable
+	some tests I didn't mean to commit yet.
+
+2007-03-28  Jonathan Pobst  <monkey@jpobst.com>
+
 	* StatusStripTest.cs: Added.
 	* ToolStripContainerTest.cs: Added.
 	* ToolStripContentPanelTest.cs: Added.

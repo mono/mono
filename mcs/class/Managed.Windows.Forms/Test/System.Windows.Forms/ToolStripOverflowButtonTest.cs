@@ -32,7 +32,6 @@ using System.Text;
 using NUnit.Framework;
 using System.Drawing;
 using System.Windows.Forms;
-using System.ComponentModel;
 
 namespace MonoTests.System.Windows.Forms
 {
@@ -53,6 +52,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void Size2 ()
 		{
 			Form f = new Form ();
@@ -74,6 +74,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void MethodGetPreferredSize ()
 		{
 			Form f = new Form ();
@@ -97,6 +98,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 		
 		[Test]
+		[Category ("NotWorking")]
 		public void BehaviorItemsOnOverflow ()
 		{
 			Form f = new Form ();
