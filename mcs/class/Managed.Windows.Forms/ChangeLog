@@ -1,3 +1,11 @@
+2007-03-28  Jonathan Pobst  <monkey@jpobst.com>
+
+	* System.Windows.Forms_test.dll.sources: Add StatusStripTest.cs,
+	ToolStripContainerTest.cs, ToolStripContentPanelTest.cs,
+	ToolStripDropDownTest.cs, ToolStripManagerTest.cs, 
+	ToolStripOverflowButtonTest.cs, ToolStripOverflowTest.cs
+	ToolStripPanelTest.cs, ToolStripStatusLabelTest.cs.
+
 2007-03-13  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* System.Windows.Forms_test.dll.sources: Added ErrorProviderTest.cs.

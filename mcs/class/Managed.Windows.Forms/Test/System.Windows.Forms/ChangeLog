@@ -1,3 +1,16 @@
+2007-03-28  Jonathan Pobst  <monkey@jpobst.com>
+
+	* StatusStripTest.cs: Added.
+	* ToolStripContainerTest.cs: Added.
+	* ToolStripContentPanelTest.cs: Added.
+	* ToolStripDropDownTest.cs: Added.
+	* ToolStripManagerTest.cs: Added.
+	* ToolStripOverflowButtonTest.cs: Added.
+	* ToolStripOverflowTest.cs: Added.
+	* ToolStripPanelTest.cs: Added.
+	* ToolStripProgressBarTest.cs: Enable tests about MarqueeAnimationSpeed.
+	* ToolStripStatusLabelTest.cs: Added.
+
 2007-03-26  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListViewItemTest.cs: Add tests for constructors taking

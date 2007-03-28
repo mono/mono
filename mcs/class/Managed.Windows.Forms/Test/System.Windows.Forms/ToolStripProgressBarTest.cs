@@ -44,7 +44,7 @@ namespace MonoTests.System.Windows.Forms
 		{
 			ToolStripProgressBar tsi = new ToolStripProgressBar ();
 
-			//Assert.AreEqual (100, tsi.MarqueeAnimationSpeed, "A1");
+			Assert.AreEqual (100, tsi.MarqueeAnimationSpeed, "A1");
 			Assert.AreEqual (100, tsi.Maximum, "A2");
 			Assert.AreEqual (0, tsi.Minimum, "A3");
 			Assert.AreEqual ("System.Windows.Forms.ProgressBar", tsi.ProgressBar.GetType ().ToString (), "A4");
@@ -68,20 +68,20 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (new Size (100, 15), epp.DefaultSize, "C2");
 		}
 
-		//[Test]
-		//public void PropertyMarqueeAnimationSpeed ()
-		//{
-		//        ToolStripProgressBar tsi = new ToolStripProgressBar ();
-		//        EventWatcher ew = new EventWatcher (tsi);
+		[Test]
+		public void PropertyMarqueeAnimationSpeed ()
+		{
+			ToolStripProgressBar tsi = new ToolStripProgressBar ();
+			EventWatcher ew = new EventWatcher (tsi);
 
-		//        tsi.MarqueeAnimationSpeed = 200;
-		//        Assert.AreEqual (200, tsi.MarqueeAnimationSpeed, "B1");
-		//        Assert.AreEqual (string.Empty, ew.ToString (), "B2");
+			tsi.MarqueeAnimationSpeed = 200;
+			Assert.AreEqual (200, tsi.MarqueeAnimationSpeed, "B1");
+			Assert.AreEqual (string.Empty, ew.ToString (), "B2");
 
-		//        ew.Clear ();
-		//        tsi.MarqueeAnimationSpeed = 200;
-		//        Assert.AreEqual (string.Empty, ew.ToString (), "B3");
-		//}
+			ew.Clear ();
+			tsi.MarqueeAnimationSpeed = 200;
+			Assert.AreEqual (string.Empty, ew.ToString (), "B3");
+		}
 
 		[Test]
 		public void PropertyMaximum ()
