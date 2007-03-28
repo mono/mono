@@ -1,10 +1,16 @@
+2007-03-27  Antonello Provenzano  <antonello@deveel.com>
+
+	* ExpressionUtil.cs: methods 'GetReadOnlyCollection' removed
+	to use internal extension 'ToReadOnlyCollection'.
+	* Expression: Removed unimplemented stubs.
+
 2007-03-27  Marek Safar  <marek.safar@gmail.com>
 
 	* InvocationExpression.cs,
 	* ExpressionType.cs,
 	* ParameterExpression.cs: Updated to match with the latest version.
-
-2007-03-27  Antonello Provenzano  <antonello@deveel.com>
+	
+2007-03-25  Antonello Provenzano  <antonello@deveel.com>
 
 	* ConstantExpression.cs: New file
 	* ConditionalExpression.cs: New file

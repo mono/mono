@@ -26,7 +26,7 @@ using System.Text;
 
 namespace System.Linq.Expressions
 {
-    public sealed class ParameterExpression : Expression
+    public class ParameterExpression : Expression
     {
         #region .ctor
         internal ParameterExpression(Type type, string name)
