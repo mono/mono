@@ -1,3 +1,8 @@
+2007-03-28  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* MetaHeader.cs: Workaround bug #81254 where the SPARC architecture 
+	can't use the misaligned integer in the structure (with Pack=2).
+
 2007-03-14  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* MetafileHeader.cs: WmfHeader is available on non-placeable WMF too.

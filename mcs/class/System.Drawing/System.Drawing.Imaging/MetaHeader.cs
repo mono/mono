@@ -8,7 +8,7 @@
 //   Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002 Ximian, Inc.  http://www.ximian.com
-// Copyright (C) 2004, 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004, 2006-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -41,7 +41,10 @@ namespace System.Drawing.Imaging {
 		public short file_type;
 		public short header_size;
 		public short version;
-		public int file_size;
+		// this is unaligned and fails on the SPARC architecture - http://bugzilla.ximian.com/show_bug.cgi?id=81254
+		// public int file_size;
+		public ushort file_size_low;
+		public short file_size_high;
 		public short num_of_objects;
 		public int max_record_size;
 		public short num_of_params;
@@ -61,7 +64,8 @@ namespace System.Drawing.Imaging {
 			wmf.file_type = header.file_type;
 			wmf.header_size = header.header_size;
 			wmf.version = header.version;
-			wmf.file_size = header.file_size;
+			wmf.file_size_low = header.file_size_low;
+			wmf.file_size_high = header.file_size_high;
 			wmf.num_of_objects = header.num_of_objects;
 			wmf.max_record_size = header.max_record_size;
 			wmf.num_of_params = header.num_of_params;
@@ -89,8 +93,11 @@ namespace System.Drawing.Imaging {
 		}
 		
 		public int Size {
-			get { return wmf.file_size; }
-			set { wmf.file_size = value; }
+			get { return (wmf.file_size_high << 16) | wmf.file_size_low; }
+			set {
+				wmf.file_size_high = (short)(value >> 16);
+				wmf.file_size_low = (ushort)value;
+			}
 		}
 
 		public short Type {
