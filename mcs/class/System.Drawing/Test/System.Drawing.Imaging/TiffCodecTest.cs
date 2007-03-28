@@ -44,8 +44,7 @@ namespace MonoTests.System.Drawing.Imaging {
 		[TestFixtureSetUp]
 		public void SetUp ()
 		{
-			if (!BitConverter.IsLittleEndian && (Environment.OSVersion.Version.ToString () == "0.0.0.0"))
-				Assert.Ignore ("TIFF support broken on Solaris8");
+			HostIgnoreList.CheckTest ("MonoTests.System.Drawing.Imaging.TiffCodecTest");
 		}
 
 		/* Get suffix to add to the filename */
