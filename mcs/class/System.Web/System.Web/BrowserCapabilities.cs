@@ -595,7 +595,8 @@ namespace System.Web {
 		}
 #endif
 		Exception CreateCapabilityNotFoundException (string key) {
-			return new ArgumentNullException (String.Format ("browscaps.ini does not contain a definition for capability {0} for userAgent {1}", key, this ["browser"]));
+			string userAgent = key == "browser" ? null : this ["browser"];
+			return new ArgumentNullException (String.Format ("browscaps.ini does not contain a definition for capability {0} for userAgent {1}", key, userAgent));
 		}
 
 		bool Get (int idx)
