@@ -1,3 +1,9 @@
+2007-03-28  Jb Evain  <jbevain@gmail.com>
+
+	* class.c (mono_type_get_name_recurse): Complete the
+	fix for the creation of assembly qualified names for
+	pointer types. Fixes #81208.
+
 2007-03-27  Dick Porter  <dick@ximian.com>
 
 	* appdomain.c (MONO_CORLIB_VERSION): Increment, as the signature
