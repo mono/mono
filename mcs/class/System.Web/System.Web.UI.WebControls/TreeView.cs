@@ -979,7 +979,10 @@ namespace System.Web.UI.WebControls
 			FillBoundChildrenRecursive (e, Nodes);
 		}
 		
-		private void FillBoundChildrenRecursive (IHierarchicalEnumerable hEnumerable, TreeNodeCollection nodeCollection) {
+		private void FillBoundChildrenRecursive (IHierarchicalEnumerable hEnumerable, TreeNodeCollection nodeCollection)
+		{
+			if (hEnumerable == null)
+				return;
 			foreach (object obj in hEnumerable) {
 				IHierarchyData hdata = hEnumerable.GetHierarchyData (obj);
 				TreeNode child = new TreeNode ();

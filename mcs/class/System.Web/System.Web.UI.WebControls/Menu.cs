@@ -856,7 +856,10 @@ namespace System.Web.UI.WebControls
 			EnsureChildControlsDataBound ();
 		}
 
-		private void FillBoundChildrenRecursive (IHierarchicalEnumerable hEnumerable, MenuItemCollection itemCollection) {
+		private void FillBoundChildrenRecursive (IHierarchicalEnumerable hEnumerable, MenuItemCollection itemCollection)
+		{
+			if (hEnumerable == null)
+				return;
 			foreach (object obj in hEnumerable) {
 				IHierarchyData hdata = hEnumerable.GetHierarchyData (obj);
 				MenuItem item = new MenuItem ();

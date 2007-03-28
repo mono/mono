@@ -1,3 +1,9 @@
+2007-03-28 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* Menu.cs:
+	* TreeView:
+	avoid Exception if HierarchicalDataSourceView.Select() returns null.
+
 2007-03-22 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* ObjectDataSource.cs:
