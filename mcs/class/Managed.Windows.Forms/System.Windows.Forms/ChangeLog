@@ -1,3 +1,9 @@
+2007-03-28  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* XplatUIX11.cs: CreateWindow: Remove old default form location code,
+	  it was making the new code not work. Fixed a typo in the new code
+	  as well. Fixes #79826.
+
 2007-03-27  Everaldo Canuto  <everaldo@simios.org>
 
 	* XplatUIWin32.cs:

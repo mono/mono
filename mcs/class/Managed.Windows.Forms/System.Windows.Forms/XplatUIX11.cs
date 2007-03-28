@@ -2450,12 +2450,7 @@ namespace System.Windows.Forms {
 				if (StyleSet (cp.Style, WindowStyles.WS_CHILD)) {
 					// We need to use our foster parent window until this poor child gets it's parent assigned
 					ParentHandle=FosterParent;
-				} else if (StyleSet (cp.Style, WindowStyles.WS_POPUP)) {
-					ParentHandle=RootWindow;
 				} else {
-					// Default position on screen, if window manager doesn't place us somewhere else
-					if (X<0) X = 50;
-					if (Y<0) Y = 50;
 					ParentHandle=RootWindow;
 				}
 			}
@@ -2472,7 +2467,7 @@ namespace System.Windows.Forms {
 					within = System.Windows.Forms.Screen.PrimaryScreen.WorkingArea;
 				}
 				
-				if (previous.X == int.MinValue || previous.Y == int.MaxValue) {
+				if (previous.X == int.MinValue || previous.Y == int.MinValue) {
 					next = Point.Empty;
 				} else {
 					next = new Point (previous.X + 22, previous.Y + 22);
