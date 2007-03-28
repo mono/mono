@@ -5660,12 +5660,10 @@ namespace System.Windows.Forms
 			if (eh != null)
 				eh (this, e);
 
-			// We need to tell our kids
-			for (int i=0; i<child_controls.Count; i++) {
-				if (child_controls[i].Visible) {
-					child_controls[i].OnParentVisibleChanged(e);
-				}
-			}
+			// We need to tell our kids (including implicit ones)
+			foreach (Control c in Controls.GetAllControls ())
+				if (c.Visible)
+					c.OnParentVisibleChanged (e);
 		}
 		#endregion	// OnXXX methods
 

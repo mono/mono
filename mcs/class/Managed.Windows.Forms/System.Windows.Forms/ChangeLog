@@ -1,5 +1,11 @@
 2007-03-28  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Control.cs: We need to call OnVisibleChanged for our implicit
+	children as well as our normal children.  Fixes scrollbars in
+	comboboxes not showing up.
+
+2007-03-28  Jonathan Pobst  <monkey@jpobst.com>
+
 	* Control.cs, Form.cs: Anywhere we call CreateHandle, we need to do
 	the check for IsHandleCreated first.  The check in CreateHandle is not
 	good enough because CreateHandle can be overriden, and the override 
