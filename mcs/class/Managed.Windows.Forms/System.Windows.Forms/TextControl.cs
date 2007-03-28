@@ -2503,6 +2503,8 @@ namespace System.Windows.Forms {
 				line.Streamline(lines);
 			}
 
+			if (pos > line.TextLengthWithoutEnding ())
+				GetLineEnding (line.text.ToString (), 0, out line.ending);
 			UpdateView(line, pos);
 		}
 
@@ -2573,6 +2575,8 @@ namespace System.Windows.Forms {
 				line.Streamline(lines);
 			}
 
+			if (pos > line.TextLengthWithoutEnding ())
+				GetLineEnding (line.text.ToString (), 0, out line.ending);
 			UpdateView(line, pos);
 		}
 

@@ -1,3 +1,8 @@
+2007-03-28  Jackson Harper  <jackson@ximian.com>
+
+	* TextControl.cs: If a char delete removes a line ending, we need
+	to update the ending style.
+
 2007-03-28  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* XplatUIX11.cs: CreateWindow: Remove old default form location code,
