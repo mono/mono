@@ -524,7 +524,7 @@ namespace System.Web {
 		{
 			string v = this [key];
 			if (v == null) {
-				throw new ArgumentNullException (String.Format ("browscaps.ini does not contain a definition for capability {0} for userAgent {1}", key, this.Browser));
+				throw CreateCapabilityNotFoundException (key);
 			}
 
 			return (String.Compare (v, "True", true, CultureInfo.InvariantCulture) == 0);
@@ -534,13 +534,13 @@ namespace System.Web {
 		{
 			string v = this [key];
 			if (v == null) {
-				throw new ArgumentNullException (String.Format ("browscaps.ini does not contain a definition for capability {0} for userAgent {1}", key, this.Browser));
+				throw CreateCapabilityNotFoundException (key);
 			}
 
 			try {
 				return Int32.Parse (v);
 			} catch {
-				throw new ArgumentNullException (String.Format ("browscaps.ini contains an invalid definition for capability {0} for userAgent {1}", key, this.Browser));
+				throw CreateCapabilityNotFoundException (key);
 			}
 		}
 
@@ -548,13 +548,13 @@ namespace System.Web {
 		{
 			string v = this [key];
 			if (v == null) {
-				throw new ArgumentNullException (String.Format ("browscaps.ini does not contain a definition for capability {0} for userAgent {1}", key, this.Browser));
+				throw CreateCapabilityNotFoundException (key);
 			}
 
 			try {
 				return Double.Parse (v);
 			} catch {
-				throw new ArgumentNullException (String.Format ("browscaps.ini contains an invalid definition for capability {0} for userAgent {1}", key, this.Browser));
+				throw CreateCapabilityNotFoundException (key);
 			}
 		}
 
@@ -562,7 +562,7 @@ namespace System.Web {
 		{
 			string v = this [key];
 			if (v == null) {
-				throw new ArgumentNullException (String.Format ("browscaps.ini does not contain a definition for capability {0} for userAgent {1}", key, this.Browser));
+				throw CreateCapabilityNotFoundException (key);
 			}
 
 			return v;
@@ -572,14 +572,14 @@ namespace System.Web {
 		{
 			string v = this [key];
 			if (v == null) {
-				throw new ArgumentNullException (String.Format ("browscaps.ini does not contain a definition for capability {0} for userAgent {1}", key, this.Browser));
+				throw CreateCapabilityNotFoundException (key);
 			}
 
 			try {
 				return new Version (v);
 			}
 			catch {
-				throw new ArgumentNullException (String.Format ("browscaps.ini contains an invalid definition for capability {0} for userAgent {1}", key, this.Browser));
+				throw CreateCapabilityNotFoundException (key);
 			}
 		}
 
@@ -588,12 +588,15 @@ namespace System.Web {
 		{
 			ArrayList v = (ArrayList)this.capabilities [key];
 			if (v == null) {
-				throw new ArgumentNullException (String.Format ("browscaps.ini does not contain a definition for capability {0} for userAgent {1}", key, this.Browser));
+				throw CreateCapabilityNotFoundException (key);
 			}
 
 			return v;
 		}
 #endif
+		Exception CreateCapabilityNotFoundException (string key) {
+			return new ArgumentNullException (String.Format ("browscaps.ini does not contain a definition for capability {0} for userAgent {1}", key, this ["browser"]));
+		}
 
 		bool Get (int idx)
 		{

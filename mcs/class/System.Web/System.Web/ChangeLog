@@ -1,3 +1,9 @@
+2007-03-28  Konstantin Triger <kostat@mainsoft.com>
+
+	* BrowserCapabilities.cs: 
+		1. refactoring.
+		2. Break recoursion in case 'browser' capability is not found.
+
 2007-03-28 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* SiteMapNode.cs: fixed GetAllNodes method.
