@@ -41,10 +41,10 @@ namespace System.Drawing.Imaging {
 		public short file_type;
 		public short header_size;
 		public short version;
-		// this is unaligned and fails on the SPARC architecture - http://bugzilla.ximian.com/show_bug.cgi?id=81254
+		// this is unaligned and fails on the SPARC architecture (see bug #81254 for details)
 		// public int file_size;
 		public ushort file_size_low;
-		public short file_size_high;
+		public ushort file_size_high;
 		public short num_of_objects;
 		public int max_record_size;
 		public short num_of_params;
@@ -93,10 +93,20 @@ namespace System.Drawing.Imaging {
 		}
 		
 		public int Size {
-			get { return (wmf.file_size_high << 16) | wmf.file_size_low; }
+			get {
+				if (BitConverter.IsLittleEndian)
+					return (wmf.file_size_high << 16) | wmf.file_size_low;
+				else
+					return (wmf.file_size_low << 16) | wmf.file_size_high;
+			}
 			set {
-				wmf.file_size_high = (short)(value >> 16);
-				wmf.file_size_low = (ushort)value;
+				if (BitConverter.IsLittleEndian) {
+					wmf.file_size_high = (ushort)(value >> 16);
+					wmf.file_size_low = (ushort)value;
+				} else {
+					wmf.file_size_high = (ushort)value;
+					wmf.file_size_low = (ushort)(value >> 16);
+				}
 			}
 		}
 

@@ -1,3 +1,8 @@
+2007-03-28  Sebastien Pouliot  <sebastien@ximian.com>  
+
+	* MetaHeader.cs: Make workaround (#81254) permanent and return correct
+	values on big endian architectures.
+
 2007-03-28  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* MetaHeader.cs: Workaround bug #81254 where the SPARC architecture 
