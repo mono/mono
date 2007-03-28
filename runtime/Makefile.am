@@ -27,7 +27,7 @@ endif
 if BUILD_MCS
 
 # The write check is to foil 'make distcheck'
-all-local: $(SUPPORT_FILES)
+all-local: $(SUPPORT_FILES) $(TEST_SUPPORT_FILES)
 	if test -w $(mcs_topdir); then :; else chmod -R +w $(mcs_topdir); fi
 	cd $(mcs_topdir) && $(MAKE) PROFILES='$(build_profiles)' CC='$(CC)' all-profiles
 
@@ -35,7 +35,7 @@ all-local: $(SUPPORT_FILES)
 install: install-exec install-data
 
 # override automake
-install-exec: $(SUPPORT_FILES)
+install-exec: $(SUPPORT_FILES) $(TEST_SUPPORT_FILES)
 	cd $(mcs_topdir) && $(MAKE) PROFILES='$(build_profiles)' RUNTIME_HAS_CONSISTENT_GACDIR=yes prefix=$(prefix) install-profiles
 
 # override automake
@@ -54,11 +54,7 @@ clean-local:
 
 endif BUILD_MCS
 
-if INSTALL_2_0
-TEST_SUPPORT_FILES = $(tmpinst)/bin/mono $(tmpinst)/bin/mcs $(tmpinst)/bin/mbas $(tmpinst)/bin/ilasm $(tmpinst)/bin/gmcs
-else
-TEST_SUPPORT_FILES = $(tmpinst)/bin/mono $(tmpinst)/bin/mcs $(tmpinst)/bin/mbas $(tmpinst)/bin/ilasm
-endif
+TEST_SUPPORT_FILES = $(tmpinst)/bin/mono $(tmpinst)/bin/mcs $(tmpinst)/bin/ilasm $(tmpinst)/bin/gmcs
 
 # now a misnomer, but it'll go away soon enough.
 if ENABLE_NUNIT_TESTS
@@ -71,7 +67,6 @@ mcs-do-test-profiles:
 	cd $(mcs_topdir) && $(MAKE) PROFILES='$(build_profiles)' test-profiles
 
 mcs-do-run-test-profiles: test-support-files
-	d=`cd $(tmpinst) && pwd`; PATH=$$d/bin:$$PATH ; export PATH ; \
 	cd $(mcs_topdir) && $(MAKE) PROFILES='$(build_profiles)' run-test-profiles
 
 if PLATFORM_WIN32
@@ -110,13 +105,11 @@ etc/mono/config: ../data/config Makefile $(symlinks)
 	mv -f $@t $@
 
 $(tmpinst)/bin/mono: mono-wrapper etc/mono/config
+	$(mkinstalldirs) $(tmpinst)/bin
 	cp mono-wrapper $@
 
 $(tmpinst)/bin/mcs:
 	$(MAKE) test-support-file target=$@ file=class/lib/default/mcs.exe
-
-$(tmpinst)/bin/mbas:
-	$(MAKE) test-support-file target=$@ file=mbas/mbas.exe
 
 $(tmpinst)/bin/gmcs:
 	$(MAKE) test-support-file target=$@ file=gmcs/gmcs.exe
@@ -124,19 +117,14 @@ $(tmpinst)/bin/gmcs:
 $(tmpinst)/bin/ilasm:
 	$(MAKE) test-support-file target=$@ file=ilasm/ilasm.exe
 
-test-support-files:
-	$(mkinstalldirs) $(tmpinst)/bin
-	$(MAKE) $(TEST_SUPPORT_FILES)
+test-support-files: $(TEST_SUPPORT_FILES)
+	@:
 
-test-support-file:
+test-support-file: $(tmpinst)/bin/mono
+	test -n '$(target)$(file)'
 	echo '#! /bin/sh' > $(target)
-	r=`pwd`; m=`cd $(mcs_topdir) && pwd`; echo 'exec "'"$$r/mono-wrapper"'" "'"$$m/$(file)"'" "$$@"' >> $(target)
+	r=`pwd`; m=`cd $(mcs_topdir) && pwd`; echo 'exec "'"$$r/$(tmpinst)/bin/mono"'" "'"$$m/$(file)"'" "$$@"' >> $(target)
 	chmod +x $(target)
-
-$(tmpinst)/bin/pedump: $(srcdir)/Makefile.am
-	$(mkdir_p) $(@D)
-	(b=`pwd`; echo '#! /bin/sh'; echo 'exec "'"$$b/libtool"'" --mode=execute "'"$$b/mono/metadata/pedump"'" "$$@"') > $@
-	chmod +x $@
 
 # the 'cygnus' option also disables the default 'distdir:' target, which we _do_ want
 MYDISTFILES = $(DIST_COMMON)

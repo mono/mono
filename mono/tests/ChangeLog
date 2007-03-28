@@ -1,3 +1,7 @@
+2007-03-28  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile.am (test-bug-80307): Don't set PATH.
+
 2007-03-27  Raja R Harinath  <harinath@gmail.com>
 
 	* Makefile.am (JITTEST_PROG_RUN): Set MONO_CFG_DIR too.
