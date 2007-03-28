@@ -107,9 +107,9 @@ namespace System.Web {
 		void GetAllNodesRecursive(SiteMapNodeCollection c)
 		{
 			SiteMapNodeCollection childNodes = this.ChildNodes;
-			
-			if (childNodes.Count > 0) {
-				childNodes.AddRange (childNodes);
+
+			if (childNodes != null && childNodes.Count > 0) {
+				c.AddRange (childNodes);
 				foreach (SiteMapNode n in childNodes)
 					n.GetAllNodesRecursive (c);
 			}

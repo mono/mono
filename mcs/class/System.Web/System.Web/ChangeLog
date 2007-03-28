@@ -1,3 +1,7 @@
+2007-03-28 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* SiteMapNode.cs: fixed GetAllNodes method.
+
 2007-03-27 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* XmlSiteMapProvider.cs: fixed:
