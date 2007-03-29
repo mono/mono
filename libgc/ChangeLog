@@ -1,3 +1,10 @@
+2007-03-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* autogen.sh: Applied patch from Priit Laes <amd@store20.com>. Fix the running
+	of libtoolize.
+
+	* ltmain.sh config.sub config.guess: Removed, libtoolize creates them now.
+
 2007-03-13  Jonathan Chambers  <joncham@gmail.com>
 
 	* include/gc.h: Fix _WIN64 typedefs.
