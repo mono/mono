@@ -145,6 +145,10 @@ namespace System.Windows.Forms {
 			}
 			#endregion	// ToolTipWindow Class Protected Instance Methods
 
+			#region Internal Properties
+			internal override bool ActivateOnShow { get { return false; } }
+			#endregion
+			
 			public void Present (Control control, string text)
 			{
 				if (IsDisposed)

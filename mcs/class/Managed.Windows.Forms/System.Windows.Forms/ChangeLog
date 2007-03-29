@@ -1,3 +1,8 @@
+2007-03-29  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolTip.cs: Override the ToolTipWindow's ActivateOnShow property
+	to prevent tooltips from stealing focus from the active form on Windows.
+
 2007-03-29  Everaldo Canuto  <everaldo@simios.org>
 
 	* ThemeWin32Classic.cs: Small stetic fixes in notifyicon balloon. 
