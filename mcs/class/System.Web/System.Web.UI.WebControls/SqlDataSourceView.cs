@@ -99,7 +99,7 @@ namespace System.Web.UI.WebControls {
 			else
 				oldDataValues = keys;
 			
-			InitializeParameters (command, DeleteParameters, null, oldDataValues, false);
+			InitializeParameters (command, DeleteParameters, null, oldDataValues, true);
 
 			SqlDataSourceCommandEventArgs args = new SqlDataSourceCommandEventArgs (command);
 			OnDeleting (args);
@@ -153,7 +153,7 @@ namespace System.Web.UI.WebControls {
 			else
 				command.CommandType = CommandType.StoredProcedure;
 
-			InitializeParameters (command, InsertParameters, values, null, true);
+			InitializeParameters (command, InsertParameters, values, null, false);
 
 			SqlDataSourceCommandEventArgs args = new SqlDataSourceCommandEventArgs (command);
 			OnInserting (args);
@@ -217,7 +217,7 @@ namespace System.Web.UI.WebControls {
 			}
 
 			if (SelectParameters.Count > 0)
-				InitializeParameters (command, SelectParameters, null, null, true);
+				InitializeParameters (command, SelectParameters, null, null, false);
 
 			Exception exception = null;
 			if (owner.DataSourceMode == SqlDataSourceMode.DataSet) {
@@ -344,7 +344,7 @@ namespace System.Web.UI.WebControls {
 
 			IDictionary dataValues = values;
 
-			InitializeParameters (command, UpdateParameters, dataValues, oldDataValues, ConflictDetection == ConflictOptions.CompareAllValues);
+			InitializeParameters (command, UpdateParameters, dataValues, oldDataValues, ConflictDetection == ConflictOptions.OverwriteChanges);
 
 			SqlDataSourceCommandEventArgs args = new SqlDataSourceCommandEventArgs (command);
 			OnUpdating (args);
@@ -387,35 +387,44 @@ namespace System.Web.UI.WebControls {
 				return name;
 		}
 
-		object FindValueByName (Parameter p, IDictionary values, bool format)
+		object FindValueByName (string parameterName, IDictionary values, bool format)
 		{
 			if (values == null)
 				return null;
 
 			foreach (DictionaryEntry de in values) {
 				string valueName = format == true ? FormatOldParameter (de.Key.ToString ()) : de.Key.ToString ();
-				if (p.Name == valueName)
+				if (parameterName == valueName)
 					return values [de.Key];
 			}
 			foreach (DictionaryEntry de in values) {
 				string valueName = format == true ? FormatOldParameter (de.Key.ToString ()) : de.Key.ToString ();
 				valueName = valueName.ToLower ();
-				if (p.Name.ToLower () == valueName)
+				if (parameterName.ToLower () == valueName)
 					return values [de.Key];
 			}
 			return null;
 		}
 
-		void InitializeParameters (DbCommand command, ParameterCollection parameters, IDictionary values, IDictionary oldValues, bool alwaysAddParameters)
+		void InitializeParameters (DbCommand command, ParameterCollection parameters, IDictionary values, IDictionary oldValues, bool parametersMayMatchOldValues)
 		{
-			foreach (Parameter p in parameters) {
-				object value = FindValueByName (p, values, false);
-				string valueName = p.Name;
+			IOrderedDictionary parameterValues = parameters.GetValues (context, owner);
+
+			foreach (string parameterName in parameterValues.Keys) {
+				Parameter p = parameters [parameterName];
+				object value = FindValueByName (parameterName, values, false);
+				string valueName = parameterName;
 				if (value == null)
-					value = FindValueByName (p, oldValues, true);
-				if (value == null && !alwaysAddParameters) {
-					value = FindValueByName (p, oldValues, false);
-					valueName = FormatOldParameter (p.Name);
+					value = FindValueByName (parameterName, oldValues, true);
+
+				if (value == null && parametersMayMatchOldValues) {
+					value = FindValueByName (parameterName, oldValues, false);
+					valueName = FormatOldParameter (parameterName);
+				}
+
+				if (value == null) {
+					value = parameterValues [parameterName];
+					valueName = parameterName;
 				}
 
 				if (value != null) {
@@ -424,10 +433,6 @@ namespace System.Web.UI.WebControls {
 					if (!command.Parameters.Contains (newParameter.ParameterName)) {
 						command.Parameters.Add (newParameter);
 					}
-				}
-				else {
-					object dbValue = p.GetValue (context, owner);
-					command.Parameters.Add (CreateDbParameter (p.Name, dbValue, p.Direction, p.Size));
 				}
 			}
 
@@ -859,4 +864,5 @@ namespace System.Web.UI.WebControls {
 	
 }
 #endif
+
 

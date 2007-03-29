@@ -61,7 +61,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			TrackViewState ();
 		}
 
-		public bool IsTrackingViewState ()
+		public bool GetIsTrackingViewState ()
 		{
 			return base.IsTrackingViewState;
 		}
@@ -153,6 +153,12 @@ namespace MonoTests.System.Web.UI.WebControls
 			WebTest.Unload ();
 		}
 
+		[SetUp()]
+		public void Setup () 
+		{
+			eventsCalled = null;
+		}
+
 		[Test]
 		public void Defaults ()
 		{
@@ -189,7 +195,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual ("startRowIndex", sql.StartRowIndexParameterName, "StartRowIndexParameterName");
 			Assert.AreEqual ("", sql.TypeName, "TypeName");
 			Assert.AreEqual ("", sql.UpdateMethod, "UpdateMethod");
-			Assert.AreEqual (true, sql.IsTrackingViewState (), "IsTrackingViewState");
+			Assert.AreEqual (true, sql.GetIsTrackingViewState (), "IsTrackingViewState");
 			Assert.IsTrue (sql.CanRetrieveTotalRowCount, "CanRetrieveTotalRowCount");
 		}
 
@@ -388,7 +394,8 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		public void CanRetrieveTotalRowCount () {
+		public void CanRetrieveTotalRowCount () 
+		{
 			ObjectDataSource ds = new ObjectDataSource ();
 			ObjectDataSourceView view = new ObjectDataSourceView (ds, "DefaultView", null);
 
@@ -807,6 +814,414 @@ namespace MonoTests.System.Web.UI.WebControls
 			Eventassert ("ObjectDisposing");
 		}
 
+		enum InitViewType
+		{
+			MatchParamsToValues,
+			MatchParamsToOldValues,
+			DontMatchParams,
+		}
+
+		public class DummyDataSourceObject
+		{
+			public static IEnumerable Select (string filter) 
+			{
+				if (eventsCalled == null) {
+					eventsCalled = new ArrayList ();
+				}
+				eventsCalled.Add (String.Format ("Select(filter = {0})", filter));
+				return new string [] { "one", "two", "three" };
+			}
+
+			public static int Update (string ID) 
+			{
+				if (eventsCalled == null) {
+					eventsCalled = new ArrayList ();
+				}
+				eventsCalled.Add (String.Format ("Update(ID = {0})", ID));
+				return 1;
+			}
+
+			public static int Update (string ID, string oldvalue_ID) 
+			{
+				if (eventsCalled == null) {
+					eventsCalled = new ArrayList ();
+				}
+				eventsCalled.Add (String.Format ("Update(ID = {0}, oldvalue_ID = {1})", ID, oldvalue_ID));
+				return 1;
+			}
+
+			public static int UpdateOther (string ID, string OtherValue, string oldvalue_ID) 
+			{
+				if (eventsCalled == null) {
+					eventsCalled = new ArrayList ();
+				}
+				eventsCalled.Add (String.Format ("UpdateOther(ID = {0}, OtherValue = {1}, oldvalue_ID = {2})", ID, OtherValue, oldvalue_ID));
+				return 1;
+			}
+
+			public static int Insert (string ID) 
+			{
+				if (eventsCalled == null) {
+					eventsCalled = new ArrayList ();
+				}
+				eventsCalled.Add (String.Format ("Insert(ID = {0})", ID));
+				return 1;
+			}
+
+			public static int Insert (string ID, string oldvalue_ID) 
+			{
+				if (eventsCalled == null) {
+					eventsCalled = new ArrayList ();
+				}
+				eventsCalled.Add (String.Format ("Insert(ID = {0}, oldvalue_ID = {1})", ID, oldvalue_ID));
+				return 1;
+			}
+
+			public static int InsertOther (string ID, string OtherValue) 
+			{
+				if (eventsCalled == null) {
+					eventsCalled = new ArrayList ();
+				}
+				eventsCalled.Add (String.Format ("InsertOther(ID = {0}, OtherValue = {1})", ID, OtherValue));
+				return 1;
+			}
+
+			public static int Delete (string ID, string oldvalue_ID) 
+			{
+				if (eventsCalled == null) {
+					eventsCalled = new ArrayList ();
+				}
+				eventsCalled.Add (String.Format ("Delete(ID = {0}, oldvalue_ID = {1})", ID, oldvalue_ID));
+				return 1;
+			}
+
+			public static int Delete (string oldvalue_ID) 
+			{
+				if (eventsCalled == null) {
+					eventsCalled = new ArrayList ();
+				}
+				eventsCalled.Add (String.Format ("Delete(oldvalue_ID = {0})", oldvalue_ID));
+				return 1;
+			}
+
+			public static int DeleteOther (string oldvalue_ID, string OtherValue) 
+			{
+				if (eventsCalled == null) {
+					eventsCalled = new ArrayList ();
+				}
+				eventsCalled.Add (String.Format ("DeleteOther(oldvalue_ID = {0}, OtherValue = {1})", oldvalue_ID, OtherValue));
+				return 1;
+			}
+		}
+
+		public class AlwaysChangingParameter : Parameter
+		{
+			int evaluateCount;
+
+			public AlwaysChangingParameter (string name, TypeCode type, string defaultValue)
+				: base (name, type, defaultValue) 
+			{
+				evaluateCount = 0;
+			}
+
+			protected override object Evaluate (HttpContext context, Control control) 
+			{
+				evaluateCount++;
+				return String.Format ("{0}{1}", DefaultValue, evaluateCount);
+			}
+		}
+
+		private static void InitializeView (ObjectViewPoker view, InitViewType initType, out Hashtable keys, out Hashtable old_value, out Hashtable new_value) 
+		{
+			view.TypeName = typeof (DummyDataSourceObject).AssemblyQualifiedName;
+			view.OldValuesParameterFormatString = "oldvalue_{0}";
+			view.SelectMethod = "Select";
+			if (initType == InitViewType.DontMatchParams) {
+				view.UpdateMethod = "UpdateOther";
+				view.InsertMethod = "InsertOther";
+				view.DeleteMethod = "DeleteOther";
+			}
+			else {
+				view.UpdateMethod = "Update";
+				view.InsertMethod = "Insert";
+				view.DeleteMethod = "Delete";
+			}
+
+			Parameter selectParameter = null;
+			Parameter insertParameter = null;
+			Parameter updateParameter = null;
+			Parameter deleteParameter = null;
+
+			selectParameter = new AlwaysChangingParameter ("filter", TypeCode.String, "p_ValueSelect");
+			view.SelectParameters.Add (selectParameter);
+
+			switch (initType) {
+			case InitViewType.MatchParamsToOldValues:
+				insertParameter = new AlwaysChangingParameter ("oldvalue_ID", TypeCode.String, "p_OldValueInsert");
+				view.InsertParameters.Add (insertParameter);
+				updateParameter = new AlwaysChangingParameter ("oldvalue_ID", TypeCode.String, "p_OldValueUpdate");
+				view.UpdateParameters.Add (updateParameter);
+				deleteParameter = new AlwaysChangingParameter ("oldvalue_ID", TypeCode.String, "p_OldValueDelete");
+				view.DeleteParameters.Add (deleteParameter);
+				break;
+
+			case InitViewType.MatchParamsToValues:
+				insertParameter = new AlwaysChangingParameter ("ID", TypeCode.String, "p_ValueInsert");
+				view.InsertParameters.Add (insertParameter);
+				updateParameter = new AlwaysChangingParameter ("ID", TypeCode.String, "p_ValueUpdate");
+				view.UpdateParameters.Add (updateParameter);
+				deleteParameter = new AlwaysChangingParameter ("ID", TypeCode.String, "p_ValueDelete");
+				view.DeleteParameters.Add (deleteParameter);
+				break;
+
+			case InitViewType.DontMatchParams:
+				insertParameter = new AlwaysChangingParameter ("OtherValue", TypeCode.String, "p_OtherValueInsert");
+				view.InsertParameters.Add (insertParameter);
+				updateParameter = new AlwaysChangingParameter ("OtherValue", TypeCode.String, "p_OtherValueUpdate");
+				view.UpdateParameters.Add (updateParameter);
+				deleteParameter = new AlwaysChangingParameter ("OtherValue", TypeCode.String, "p_OtherValueDelete");
+				view.DeleteParameters.Add (deleteParameter);
+				break;
+			}
+
+			view.SelectParameters.ParametersChanged += new EventHandler (SelectParameters_ParametersChanged);
+			view.InsertParameters.ParametersChanged += new EventHandler (InsertParameters_ParametersChanged);
+			view.UpdateParameters.ParametersChanged += new EventHandler (UpdateParameters_ParametersChanged);
+			view.DeleteParameters.ParametersChanged += new EventHandler (DeleteParameters_ParametersChanged);
+
+			keys = new Hashtable ();
+			keys.Add ("ID", "k_1001");
+
+			old_value = new Hashtable ();
+			old_value.Add ("ID", "ov_1001");
+
+			new_value = new Hashtable ();
+			new_value.Add ("ID", "n_1001");
+
+			view.DataSourceViewChanged += new EventHandler (view_DataSourceViewChanged);
+		}
+
+		private static IList eventsCalled;
+
+		static void view_DataSourceViewChanged (object sender, EventArgs e) 
+		{
+			if (eventsCalled == null) {
+				eventsCalled = new ArrayList ();
+			}
+			eventsCalled.Add ("view_DataSourceViewChanged");
+		}
+
+		static void SelectParameters_ParametersChanged (object sender, EventArgs e) 
+		{
+			if (eventsCalled == null) {
+				eventsCalled = new ArrayList ();
+			}
+			eventsCalled.Add ("SelectParameters_ParametersChanged");
+		}
+
+		static void InsertParameters_ParametersChanged (object sender, EventArgs e) 
+		{
+			if (eventsCalled == null) {
+				eventsCalled = new ArrayList ();
+			}
+			eventsCalled.Add ("InsertParameters_ParametersChanged");
+		}
+
+		static void UpdateParameters_ParametersChanged (object sender, EventArgs e) 
+		{
+			if (eventsCalled == null) {
+				eventsCalled = new ArrayList ();
+			}
+			eventsCalled.Add ("UpdateParameters_ParametersChanged");
+		}
+
+		static void DeleteParameters_ParametersChanged (object sender, EventArgs e) 
+		{
+			if (eventsCalled == null) {
+				eventsCalled = new ArrayList ();
+			}
+			eventsCalled.Add ("DeleteParameters_ParametersChanged");
+		}
+
+		[Test]
+		public void ParametersAndViewChangedEvent_Select () 
+		{
+			ObjectViewPoker view = new ObjectViewPoker (new ObjectDataSource (), "", null);
+			Hashtable keys = null;
+			Hashtable old_values = null;
+			Hashtable new_values = null;
+			InitializeView (view, InitViewType.MatchParamsToValues, out keys, out old_values, out new_values);
+
+			view.Select (DataSourceSelectArguments.Empty);
+
+			Assert.IsNotNull (eventsCalled, "Events not raized");
+			Assert.AreEqual (3, eventsCalled.Count, "Events Count");
+			Assert.AreEqual ("view_DataSourceViewChanged", eventsCalled [0], "view_DataSourceViewChanged");
+			Assert.AreEqual ("SelectParameters_ParametersChanged", eventsCalled [1], "SelectParameters_ParametersChanged");
+			Assert.AreEqual ("Select(filter = p_ValueSelect1)", eventsCalled [2], "DataSource Method params");
+		}
+
+		[Test]
+		public void ParametersAndViewChangedEvent_MatchInsert () 
+		{
+			ObjectViewPoker view = new ObjectViewPoker (new ObjectDataSource (), "", null);
+			Hashtable keys = null;
+			Hashtable old_values = null;
+			Hashtable new_values = null;
+			InitializeView (view, InitViewType.MatchParamsToValues, out keys, out old_values, out new_values);
+
+			view.Insert (new_values);
+
+			Assert.IsNotNull (eventsCalled, "Events not raized");
+			Assert.AreEqual (3, eventsCalled.Count, "Events Count");
+			Assert.AreEqual ("InsertParameters_ParametersChanged", eventsCalled [0], "InsertParameters_ParametersChanged");
+			Assert.AreEqual ("Insert(ID = n_1001)", eventsCalled [1], "DataSource Method params");
+			Assert.AreEqual ("view_DataSourceViewChanged", eventsCalled [2], "view_DataSourceViewChanged");
+		}
+
+		[Test]
+		public void ParametersAndViewChangedEvent_MatchOldInsert () 
+		{
+			ObjectViewPoker view = new ObjectViewPoker (new ObjectDataSource (), "", null);
+			Hashtable keys = null;
+			Hashtable old_values = null;
+			Hashtable new_values = null;
+			InitializeView (view, InitViewType.MatchParamsToOldValues, out keys, out old_values, out new_values);
+
+			view.Insert (new_values);
+
+			Assert.IsNotNull (eventsCalled, "Events not raized");
+			Assert.AreEqual (3, eventsCalled.Count, "Events Count");
+			Assert.AreEqual ("InsertParameters_ParametersChanged", eventsCalled [0], "InsertParameters_ParametersChanged");
+			Assert.AreEqual ("Insert(ID = n_1001, oldvalue_ID = p_OldValueInsert1)", eventsCalled [1], "DataSource Method params");
+			Assert.AreEqual ("view_DataSourceViewChanged", eventsCalled [2], "view_DataSourceViewChanged");
+		}
+
+		[Test]
+		public void ParametersAndViewChangedEvent_DontMatchInsert () 
+		{
+			ObjectViewPoker view = new ObjectViewPoker (new ObjectDataSource (), "", null);
+			Hashtable keys = null;
+			Hashtable old_values = null;
+			Hashtable new_values = null;
+			InitializeView (view, InitViewType.DontMatchParams, out keys, out old_values, out new_values);
+
+			view.Insert (new_values);
+
+			Assert.IsNotNull (eventsCalled, "Events not raized");
+			Assert.AreEqual (3, eventsCalled.Count, "Events Count");
+			Assert.AreEqual ("InsertParameters_ParametersChanged", eventsCalled [0], "InsertParameters_ParametersChanged");
+			Assert.AreEqual ("InsertOther(ID = n_1001, OtherValue = p_OtherValueInsert1)", eventsCalled [1], "DataSource Method params");
+			Assert.AreEqual ("view_DataSourceViewChanged", eventsCalled [2], "view_DataSourceViewChanged");
+		}
+
+		[Test]
+		public void ParametersAndViewChangedEvent_MatchUpdate () 
+		{
+			ObjectViewPoker view = new ObjectViewPoker (new ObjectDataSource (), "", null);
+			Hashtable keys = null;
+			Hashtable old_values = null;
+			Hashtable new_values = null;
+			InitializeView (view, InitViewType.MatchParamsToValues, out keys, out old_values, out new_values);
+
+			view.Update (keys, new_values, old_values);
+
+			Assert.IsNotNull (eventsCalled, "Events not raized");
+			Assert.AreEqual (3, eventsCalled.Count, "Events Count");
+			Assert.AreEqual ("UpdateParameters_ParametersChanged", eventsCalled [0], "UpdateParameters_ParametersChanged");
+			Assert.AreEqual ("Update(ID = n_1001, oldvalue_ID = k_1001)", eventsCalled [1], "DataSource Method params");
+			Assert.AreEqual ("view_DataSourceViewChanged", eventsCalled [2], "view_DataSourceViewChanged");
+		}
+
+		[Test]
+		public void ParametersAndViewChangedEvent_MatchOldUpdate () 
+		{
+			ObjectViewPoker view = new ObjectViewPoker (new ObjectDataSource (), "", null);
+			Hashtable keys = null;
+			Hashtable old_values = null;
+			Hashtable new_values = null;
+			InitializeView (view, InitViewType.MatchParamsToOldValues, out keys, out old_values, out new_values);
+
+			view.Update (keys, new_values, old_values);
+
+			Assert.IsNotNull (eventsCalled, "Events not raized");
+			Assert.AreEqual (3, eventsCalled.Count, "Events Count");
+			Assert.AreEqual ("UpdateParameters_ParametersChanged", eventsCalled [0], "UpdateParameters_ParametersChanged");
+			Assert.AreEqual ("Update(ID = n_1001, oldvalue_ID = k_1001)", eventsCalled [1], "DataSource Method params");
+			Assert.AreEqual ("view_DataSourceViewChanged", eventsCalled [2], "view_DataSourceViewChanged");
+		}
+
+		[Test]
+		public void ParametersAndViewChangedEvent_DontMatchUpdate () 
+		{
+			ObjectViewPoker view = new ObjectViewPoker (new ObjectDataSource (), "", null);
+			Hashtable keys = null;
+			Hashtable old_values = null;
+			Hashtable new_values = null;
+			InitializeView (view, InitViewType.DontMatchParams, out keys, out old_values, out new_values);
+
+			view.Update (keys, new_values, old_values);
+
+			Assert.IsNotNull (eventsCalled, "Events not raized");
+			Assert.AreEqual (3, eventsCalled.Count, "Events Count");
+			Assert.AreEqual ("UpdateParameters_ParametersChanged", eventsCalled [0], "UpdateParameters_ParametersChanged");
+			Assert.AreEqual ("UpdateOther(ID = n_1001, OtherValue = p_OtherValueUpdate1, oldvalue_ID = k_1001)", eventsCalled [1], "DataSource Method params");
+			Assert.AreEqual ("view_DataSourceViewChanged", eventsCalled [2], "view_DataSourceViewChanged");
+		}
+
+		[Test]
+		public void ParametersAndViewChangedEvent_MatchDelete () 
+		{
+			ObjectViewPoker view = new ObjectViewPoker (new ObjectDataSource (), "", null);
+			Hashtable keys = null;
+			Hashtable old_values = null;
+			Hashtable new_values = null;
+			InitializeView (view, InitViewType.MatchParamsToValues, out keys, out old_values, out new_values);
+
+			view.Delete (keys, old_values);
+
+			Assert.IsNotNull (eventsCalled, "Events not raized");
+			Assert.AreEqual (3, eventsCalled.Count, "Events Count");
+			Assert.AreEqual ("DeleteParameters_ParametersChanged", eventsCalled [0], "DeleteParameters_ParametersChanged");
+			Assert.AreEqual ("Delete(ID = p_ValueDelete1, oldvalue_ID = k_1001)", eventsCalled [1], "DataSource Method params");
+			Assert.AreEqual ("view_DataSourceViewChanged", eventsCalled [2], "view_DataSourceViewChanged");
+		}
+
+		[Test]
+		public void ParametersAndViewChangedEvent_MatchOldDelete () 
+		{
+			ObjectViewPoker view = new ObjectViewPoker (new ObjectDataSource (), "", null);
+			Hashtable keys = null;
+			Hashtable old_values = null;
+			Hashtable new_values = null;
+			InitializeView (view, InitViewType.MatchParamsToOldValues, out keys, out old_values, out new_values);
+
+			view.Delete (keys, old_values);
+
+			Assert.IsNotNull (eventsCalled, "Events not raized");
+			Assert.AreEqual (3, eventsCalled.Count, "Events Count");
+			Assert.AreEqual ("DeleteParameters_ParametersChanged", eventsCalled [0], "DeleteParameters_ParametersChanged");
+			Assert.AreEqual ("Delete(oldvalue_ID = k_1001)", eventsCalled [1], "DataSource Method params");
+			Assert.AreEqual ("view_DataSourceViewChanged", eventsCalled [2], "view_DataSourceViewChanged");
+		}
+
+		[Test]
+		public void ParametersAndViewChangedEvent_DontMatchDelete () 
+		{
+			ObjectViewPoker view = new ObjectViewPoker (new ObjectDataSource (), "", null);
+			Hashtable keys = null;
+			Hashtable old_values = null;
+			Hashtable new_values = null;
+			InitializeView (view, InitViewType.DontMatchParams, out keys, out old_values, out new_values);
+
+			view.Delete (keys, old_values);
+
+			Assert.IsNotNull (eventsCalled, "Events not raized");
+			Assert.AreEqual (3, eventsCalled.Count, "Events Count");
+			Assert.AreEqual ("DeleteParameters_ParametersChanged", eventsCalled [0], "DeleteParameters_ParametersChanged");
+			Assert.AreEqual ("DeleteOther(oldvalue_ID = k_1001, OtherValue = p_OtherValueDelete1)", eventsCalled [1], "DataSource Method params");
+			Assert.AreEqual ("view_DataSourceViewChanged", eventsCalled [2], "view_DataSourceViewChanged");
+		}
 
 		/// <summary>
 		/// Helper methods

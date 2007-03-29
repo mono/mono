@@ -1,3 +1,10 @@
+2007-03-29 Adar Wesley <adarw@mainsoft.com>
+
+	* ObjectDataSourceView.cs: fixed events so they are raized at the
+	right times.  Added many tests to verify the correct time.
+	* SqlDataSourceView.cs: fixed events so they are raized at the right
+	times.  Added many tests to verify the correct time.
+
 2007-03-28 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* Menu.cs:

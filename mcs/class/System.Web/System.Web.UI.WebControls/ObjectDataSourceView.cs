@@ -568,7 +568,7 @@ namespace System.Web.UI.WebControls
 			MethodInfo method;
 			
 			if (DataObjectTypeName.Length == 0) {
-				paramValues = MergeParameterValues (InsertParameters, values, null, true);
+				paramValues = MergeParameterValues (InsertParameters, values, null);
 				method = GetObjectMethod (InsertMethod, paramValues, DataObjectMethodType.Insert);
 			} else {
 				method = ResolveDataObjectMethod (InsertMethod, values, null, out paramValues);
@@ -608,7 +608,7 @@ namespace System.Web.UI.WebControls
 			MethodInfo method;
 			
 			if (DataObjectTypeName.Length == 0) {
-				paramValues = MergeParameterValues (DeleteParameters, null, oldDataValues, true);
+				paramValues = MergeParameterValues (DeleteParameters, null, oldDataValues);
 				method = GetObjectMethod (DeleteMethod, paramValues, DataObjectMethodType.Delete);
 			} else {
 				method = ResolveDataObjectMethod (DeleteMethod, oldDataValues, null, out paramValues);
@@ -646,7 +646,7 @@ namespace System.Web.UI.WebControls
 			{
 				IDictionary dataValues;
 				dataValues = values;
-				paramValues = MergeParameterValues (UpdateParameters, dataValues, oldDataValues, false);
+				paramValues = MergeParameterValues (UpdateParameters, dataValues, oldDataValues);
 				method = GetObjectMethod (UpdateMethod, paramValues, DataObjectMethodType.Update);
 			}
 			else
@@ -715,7 +715,7 @@ namespace System.Web.UI.WebControls
 		{
 			arguments.RaiseUnsupportedCapabilitiesError (this);
 
-			IOrderedDictionary paramValues = MergeParameterValues (SelectParameters, null, null, true);
+			IOrderedDictionary paramValues = MergeParameterValues (SelectParameters, null, null);
 			ObjectDataSourceSelectingEventArgs args = new ObjectDataSourceSelectingEventArgs (paramValues, arguments, false);
 
 			object result = null;
@@ -1026,32 +1026,26 @@ namespace System.Web.UI.WebControls
 		/// <param name="allwaysAddNewValues">true for insert, as current item is
 		/// irrelevant for insert</param>
 		/// <returns>merged values</returns>
-		IOrderedDictionary MergeParameterValues (ParameterCollection viewParams, IDictionary values, IDictionary oldValues, bool allwaysAddNewValues)
+		IOrderedDictionary MergeParameterValues (ParameterCollection viewParams, IDictionary values, IDictionary oldValues)
 		{
+			IOrderedDictionary parametersValues = viewParams.GetValues (context, owner);
 			OrderedDictionary mergedValues = new OrderedDictionary (StringComparer.InvariantCultureIgnoreCase);
-			foreach (Parameter p in viewParams) {
-				bool oldAdded = false;
+			foreach (string parameterName in parametersValues.Keys) {
+				mergedValues [parameterName] = parametersValues [parameterName];
 				if (oldValues != null) {
-					object value = FindValueByName (p.Name, oldValues, true);
+					object value = FindValueByName (parameterName, oldValues, true);
 					if (value != null) {
-						object dataValue = p.ConvertValue (value);
-						mergedValues [p.Name] = dataValue;
-						oldAdded = true;
+						object dataValue = viewParams [parameterName].ConvertValue (value);
+						mergedValues [parameterName] = dataValue;
 					}
 				}
 
-				bool newAdded = false;
 				if (values != null) {
-					object value = FindValueByName (p.Name, values, false);
+					object value = FindValueByName (parameterName, values, false);
 					if (value != null) {
-						object dataValue = p.ConvertValue (value);
-						mergedValues [p.Name] = dataValue;
-						newAdded = true;
+						object dataValue = viewParams [parameterName].ConvertValue (value);
+						mergedValues [parameterName] = dataValue;
 					}
-				}
-				if ((!newAdded && !oldAdded) || allwaysAddNewValues) {
-					object val = p.GetValue (context, owner);
-					mergedValues [p.Name] = val;
 				}
 			}
 
@@ -1062,9 +1056,11 @@ namespace System.Web.UI.WebControls
 			}
 
 			if (oldValues != null) {
-				foreach (DictionaryEntry de in oldValues)
-					if (FindValueByName ((string) de.Key, mergedValues, true) == null)
-						mergedValues [FormatOldParameter ((string) de.Key)] = de.Value;
+				foreach (DictionaryEntry de in oldValues) {
+					string oldValueKey = FormatOldParameter ((string) de.Key);
+					if (FindValueByName (oldValueKey, mergedValues, false) == null)
+						mergedValues [oldValueKey] = de.Value;
+				}
 			}
 
 			return mergedValues;
@@ -1190,6 +1186,7 @@ namespace System.Web.UI.WebControls
 	}
 }
 #endif
+
 
 
 

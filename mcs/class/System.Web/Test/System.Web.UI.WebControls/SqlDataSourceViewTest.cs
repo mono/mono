@@ -39,6 +39,9 @@ using System.Globalization;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Collections;
+using System.Data.SqlClient;
+using System.Text;
 
 namespace MonoTests.System.Web.UI.WebControls
 {
@@ -63,6 +66,12 @@ namespace MonoTests.System.Web.UI.WebControls
 	[TestFixture]
 	public class SqlDataSourceViewTest 
 	{
+		[SetUp]
+		public void Setup () 
+		{
+			eventsCalled = null;
+		}
+
 		[Test]
 		public void Defaults ()
 		{
@@ -342,6 +351,596 @@ namespace MonoTests.System.Web.UI.WebControls
 			sql.CancelSelectOnNullParameter = false;
 			ds.CancelSelectOnNullParameter = true;
 			Assert.IsFalse (sql.CancelSelectOnNullParameter, "A3");
+		}
+
+		public class AlwaysChangingParameter : Parameter
+		{
+			int evaluateCount;
+
+			public AlwaysChangingParameter (string name, TypeCode type, string defaultValue)
+				: base (name, type, defaultValue) {
+				evaluateCount = 0;
+			}
+
+			protected override object Evaluate (HttpContext context, Control control) {
+				evaluateCount++;
+				return String.Format ("{0}{1}", DefaultValue, evaluateCount);
+			}
+		}
+
+		enum InitViewType
+		{
+			MatchParamsToValues,
+			MatchParamsToOldValues,
+			DontMatchParams,
+		}
+
+		private static SqlViewPoker InitializeView (InitViewType initType, ConflictOptions conflictDetection, out Hashtable keys, out Hashtable old_value, out Hashtable new_value) 
+		{
+			SqlDataSource ds = new SqlDataSource ();
+			ds.ConnectionString = "Data Source=fake\\SQLEXPRESS;Initial Catalog=Northwind;User ID=sa";
+			ds.ProviderName = "System.Data.SqlClient";
+			SqlViewPoker view = new SqlViewPoker (ds, "DefaultView", null);
+
+			view.ConflictDetection = conflictDetection;
+			view.OldValuesParameterFormatString = "oldvalue_{0}";
+			view.SelectCommandType = SqlDataSourceCommandType.Text;
+			view.InsertCommandType = SqlDataSourceCommandType.Text;
+			view.UpdateCommandType = SqlDataSourceCommandType.Text;
+			view.DeleteCommandType = SqlDataSourceCommandType.Text;
+
+			view.SelectCommand = "SELECT * FROM Customers WHERE ID = @ID";
+			view.InsertCommand = "INSERT INTO Customers (ID) VALUES (@ID)";
+			view.UpdateCommand = "UPDATE Customers SET ID = @ID WHERE ID = @oldvalue_ID";
+			view.DeleteCommand = "DELETE * FROM Customers WHERE ID = @ID";
+
+			Parameter selectParameter = null;
+			Parameter insertParameter = null;
+			Parameter updateParameter = null;
+			Parameter deleteParameter = null;
+
+			selectParameter = new AlwaysChangingParameter ("ID", TypeCode.String, "p_ValueSelect");
+			view.SelectParameters.Add (selectParameter);
+
+			switch (initType) {
+			case InitViewType.MatchParamsToOldValues:
+				insertParameter = new AlwaysChangingParameter ("oldvalue_ID", TypeCode.String, "p_OldValueInsert");
+				view.InsertParameters.Add (insertParameter);
+				updateParameter = new AlwaysChangingParameter ("oldvalue_ID", TypeCode.String, "p_OldValueUpdate");
+				view.UpdateParameters.Add (updateParameter);
+				deleteParameter = new AlwaysChangingParameter ("oldvalue_ID", TypeCode.String, "p_OldValueDelete");
+				view.DeleteParameters.Add (deleteParameter);
+				break;
+
+			case InitViewType.MatchParamsToValues:
+				insertParameter = new AlwaysChangingParameter ("ID", TypeCode.String, "p_ValueInsert");
+				view.InsertParameters.Add (insertParameter);
+				updateParameter = new AlwaysChangingParameter ("ID", TypeCode.String, "p_ValueUpdate");
+				view.UpdateParameters.Add (updateParameter);
+				deleteParameter = new AlwaysChangingParameter ("ID", TypeCode.String, "p_ValueDelete");
+				view.DeleteParameters.Add (deleteParameter);
+				break;
+
+			case InitViewType.DontMatchParams:
+				insertParameter = new AlwaysChangingParameter ("OtherValue", TypeCode.String, "p_OtherValueInsert");
+				view.InsertParameters.Add (insertParameter);
+				updateParameter = new AlwaysChangingParameter ("OtherValue", TypeCode.String, "p_OtherValueUpdate");
+				view.UpdateParameters.Add (updateParameter);
+				deleteParameter = new AlwaysChangingParameter ("OtherValue", TypeCode.String, "p_OtherValueDelete");
+				view.DeleteParameters.Add (deleteParameter);
+				break;
+			}
+
+			view.SelectParameters.ParametersChanged += new EventHandler (SelectParameters_ParametersChanged);
+			view.InsertParameters.ParametersChanged += new EventHandler (InsertParameters_ParametersChanged);
+			view.UpdateParameters.ParametersChanged += new EventHandler (UpdateParameters_ParametersChanged);
+			view.DeleteParameters.ParametersChanged += new EventHandler (DeleteParameters_ParametersChanged);
+
+			keys = new Hashtable ();
+			keys.Add ("ID", "k_1001");
+
+			old_value = new Hashtable ();
+			old_value.Add ("ID", "ov_1001");
+
+			new_value = new Hashtable ();
+			new_value.Add ("ID", "n_1001");
+
+			view.DataSourceViewChanged += new EventHandler (view_DataSourceViewChanged);
+
+			view.Selecting += new SqlDataSourceSelectingEventHandler (view_Selecting);
+			view.Inserting += new SqlDataSourceCommandEventHandler (view_Inserting);
+			view.Updating += new SqlDataSourceCommandEventHandler (view_Updating);
+			view.Deleting += new SqlDataSourceCommandEventHandler (view_Deleting);
+			return view;
+		}
+
+		static void view_Selecting (object source, SqlDataSourceSelectingEventArgs e) 
+		{
+			if (eventsCalled == null) {
+				eventsCalled = new ArrayList ();
+			}
+			eventsCalled.Add (e.Arguments.ToString ());
+			eventsCalled.Add ("view_Selecting");
+			eventsCalled.Add (FormatParameters ((SqlParameterCollection)e.Command.Parameters));
+			e.Cancel = true;
+		}
+
+		static void view_Inserting (object source, SqlDataSourceCommandEventArgs e) 
+		{
+			if (eventsCalled == null) {
+				eventsCalled = new ArrayList ();
+			}
+			eventsCalled.Add ("view_Inserting");
+			eventsCalled.Add (FormatParameters ((SqlParameterCollection) e.Command.Parameters));
+			e.Cancel = true;
+		}
+
+		static void view_Updating (object source, SqlDataSourceCommandEventArgs e) 
+		{
+			if (eventsCalled == null) {
+				eventsCalled = new ArrayList ();
+			}
+			eventsCalled.Add ("view_Updating");
+			eventsCalled.Add (FormatParameters ((SqlParameterCollection) e.Command.Parameters));
+			e.Cancel = true;
+		}
+
+		static void view_Deleting (object source, SqlDataSourceCommandEventArgs e) 
+		{
+			if (eventsCalled == null) {
+				eventsCalled = new ArrayList ();
+			}
+			eventsCalled.Add ("view_Deleting");
+			eventsCalled.Add (FormatParameters ((SqlParameterCollection) e.Command.Parameters));
+			e.Cancel = true;
+		}
+
+		private static string FormatParameters (SqlParameterCollection sqlParameterCollection) 
+		{
+			StringBuilder sb = new StringBuilder ();
+			foreach (SqlParameter p in sqlParameterCollection) {
+				if (sb.Length > 0) {
+					sb.Append (", ");
+				}
+				sb.AppendFormat ("{0}:{1}={2}", p.DbType, p.ParameterName, p.Value);
+			}
+			return sb.ToString ();
+		}
+
+		private static IList eventsCalled;
+
+		static void view_DataSourceViewChanged (object sender, EventArgs e) 
+		{
+			if (eventsCalled == null) {
+				eventsCalled = new ArrayList ();
+			}
+			eventsCalled.Add ("view_DataSourceViewChanged");
+		}
+
+		static void SelectParameters_ParametersChanged (object sender, EventArgs e) 
+		{
+			if (eventsCalled == null) {
+				eventsCalled = new ArrayList ();
+			}
+			eventsCalled.Add ("SelectParameters_ParametersChanged");
+		}
+
+		static void InsertParameters_ParametersChanged (object sender, EventArgs e) 
+		{
+			if (eventsCalled == null) {
+				eventsCalled = new ArrayList ();
+			}
+			eventsCalled.Add ("InsertParameters_ParametersChanged");
+		}
+
+		static void UpdateParameters_ParametersChanged (object sender, EventArgs e) 
+		{
+			if (eventsCalled == null) {
+				eventsCalled = new ArrayList ();
+			}
+			eventsCalled.Add ("UpdateParameters_ParametersChanged");
+		}
+
+		static void DeleteParameters_ParametersChanged (object sender, EventArgs e) 
+		{
+			if (eventsCalled == null) {
+				eventsCalled = new ArrayList ();
+			}
+			eventsCalled.Add ("DeleteParameters_ParametersChanged");
+		}
+
+		[Test]
+		public void ParametersAndViewChangedEvent_Select () 
+		{
+			Hashtable keys = null;
+			Hashtable old_values = null;
+			Hashtable new_values = null;
+			SqlViewPoker view = InitializeView (InitViewType.MatchParamsToValues, ConflictOptions.OverwriteChanges, out keys, out old_values, out new_values);
+
+			view.Select (DataSourceSelectArguments.Empty);
+
+			Assert.IsNotNull (eventsCalled, "Events not raized");
+			Assert.AreEqual (5, eventsCalled.Count, "Events Count");
+			Assert.AreEqual ("view_DataSourceViewChanged", eventsCalled [0], "view_DataSourceViewChanged");
+			Assert.AreEqual ("SelectParameters_ParametersChanged", eventsCalled [1], "SelectParameters_ParametersChanged");
+			Assert.AreEqual ("System.Web.UI.DataSourceSelectArguments", eventsCalled [2], "DataSourceSelectArguments");
+			Assert.AreEqual ("view_Selecting", eventsCalled [3], "view_Selecting");
+			string [] expectedParams = new string []
+						{ 
+							"String:@ID=p_ValueSelect1"
+						};
+			string [] actualValues = ((string)eventsCalled [4]).Split (new string [] { ", " }, StringSplitOptions.RemoveEmptyEntries);
+			Assert.AreEqual (expectedParams.Length, actualValues.Length, "ParametersAndViewChangedEvent_Select Params count");
+			ValidatePassedParams (expectedParams, actualValues, "ParametersAndViewChangedEvent_Select expecte '{0}'");
+		}
+
+		[Test]
+		public void ParametersAndViewChangedEvent_MatchInsert () 
+		{
+			Hashtable keys = null;
+			Hashtable old_values = null;
+			Hashtable new_values = null;
+			SqlViewPoker view = InitializeView (InitViewType.MatchParamsToValues, ConflictOptions.OverwriteChanges, out keys, out old_values, out new_values);
+
+			view.Insert (new_values);
+
+			Assert.IsNotNull (eventsCalled, "Events not raized");
+			Assert.AreEqual (3, eventsCalled.Count, "Events Count");
+			Assert.AreEqual ("InsertParameters_ParametersChanged", eventsCalled [0], "InsertParameters_ParametersChanged");
+			Assert.AreEqual ("view_Inserting", eventsCalled [1], "view_Inserting");
+			string [] expectedParams = new string []
+						{ 
+							"String:@ID=n_1001"
+						};
+			string [] actualValues = ((string) eventsCalled [2]).Split (new string [] { ", " }, StringSplitOptions.RemoveEmptyEntries);
+			Assert.AreEqual (expectedParams.Length, actualValues.Length, "ParametersAndViewChangedEvent_MatchInsert Params count");
+			ValidatePassedParams (expectedParams, actualValues, "ParametersAndViewChangedEvent_MatchInsert expecte '{0}'");
+		}
+
+		[Test]
+		public void ParametersAndViewChangedEvent_MatchInsertAllValues () 
+		{
+			Hashtable keys = null;
+			Hashtable old_values = null;
+			Hashtable new_values = null;
+			SqlViewPoker view = InitializeView (InitViewType.MatchParamsToValues, ConflictOptions.CompareAllValues, out keys, out old_values, out new_values);
+
+			view.Insert (new_values);
+
+			Assert.IsNotNull (eventsCalled, "Events not raized");
+			Assert.AreEqual (3, eventsCalled.Count, "Events Count");
+			Assert.AreEqual ("InsertParameters_ParametersChanged", eventsCalled [0], "InsertParameters_ParametersChanged");
+			Assert.AreEqual ("view_Inserting", eventsCalled [1], "view_Inserting");
+			string [] expectedParams = new string []
+						{ 
+							"String:@ID=n_1001"
+						};
+			string [] actualValues = ((string) eventsCalled [2]).Split (new string [] { ", " }, StringSplitOptions.RemoveEmptyEntries);
+			Assert.AreEqual (expectedParams.Length, actualValues.Length, "ParametersAndViewChangedEvent_MatchInsert Params count");
+			ValidatePassedParams (expectedParams, actualValues, "ParametersAndViewChangedEvent_MatchInsert expecte '{0}'");
+		}
+
+		[Test]
+		public void ParametersAndViewChangedEvent_MatchOldInsert () 
+		{
+			Hashtable keys = null;
+			Hashtable old_values = null;
+			Hashtable new_values = null;
+			SqlViewPoker view = InitializeView (InitViewType.MatchParamsToOldValues, ConflictOptions.OverwriteChanges, out keys, out old_values, out new_values);
+
+			view.Insert (new_values);
+
+			Assert.IsNotNull (eventsCalled, "Events not raized");
+			Assert.AreEqual (3, eventsCalled.Count, "Events Count");
+			Assert.AreEqual ("InsertParameters_ParametersChanged", eventsCalled [0], "InsertParameters_ParametersChanged");
+			Assert.AreEqual ("view_Inserting", eventsCalled [1], "view_Inserting");
+			string [] expectedParams = new string []
+						{ 
+							"String:@oldvalue_ID=p_OldValueInsert1", 
+							"String:@ID=n_1001"
+						};
+			string [] actualValues = ((string) eventsCalled [2]).Split (new string [] { ", " }, StringSplitOptions.RemoveEmptyEntries);
+			Assert.AreEqual (expectedParams.Length, actualValues.Length, "ParametersAndViewChangedEvent_MatchOldInsert Params count");
+			ValidatePassedParams (expectedParams, actualValues, "ParametersAndViewChangedEvent_MatchOldInsert expecte '{0}'");
+		}
+
+		[Test]
+		public void ParametersAndViewChangedEvent_MatchOldInsertAllValues () 
+		{
+			Hashtable keys = null;
+			Hashtable old_values = null;
+			Hashtable new_values = null;
+			SqlViewPoker view = InitializeView (InitViewType.MatchParamsToOldValues, ConflictOptions.CompareAllValues, out keys, out old_values, out new_values);
+
+			view.Insert (new_values);
+			
+			Assert.IsNotNull (eventsCalled, "Events not raized");
+			Assert.AreEqual (3, eventsCalled.Count, "Events Count");
+			Assert.AreEqual ("InsertParameters_ParametersChanged", eventsCalled [0], "InsertParameters_ParametersChanged");
+			Assert.AreEqual ("view_Inserting", eventsCalled [1], "view_Inserting");
+			string [] expectedParams = new string []
+						{ 
+							"String:@oldvalue_ID=p_OldValueInsert1", 
+							"String:@ID=n_1001"
+						};
+			string [] actualValues = ((string) eventsCalled [2]).Split (new string [] { ", " }, StringSplitOptions.RemoveEmptyEntries);
+			Assert.AreEqual (expectedParams.Length, actualValues.Length, "ParametersAndViewChangedEvent_MatchOldInsert Params count");
+			ValidatePassedParams (expectedParams, actualValues, "ParametersAndViewChangedEvent_MatchOldInsert expecte '{0}'");
+		}
+
+		[Test]
+		public void ParametersAndViewChangedEvent_DontMatchInsert () 
+		{
+			Hashtable keys = null;
+			Hashtable old_values = null;
+			Hashtable new_values = null;
+			SqlViewPoker view = InitializeView (InitViewType.DontMatchParams, ConflictOptions.OverwriteChanges, out keys, out old_values, out new_values);
+
+			view.Insert (new_values);
+
+			Assert.IsNotNull (eventsCalled, "Events not raized");
+			Assert.AreEqual (3, eventsCalled.Count, "Events Count");
+			Assert.AreEqual ("InsertParameters_ParametersChanged", eventsCalled [0], "InsertParameters_ParametersChanged");
+			Assert.AreEqual ("view_Inserting", eventsCalled [1], "view_Inserting");
+			string [] expectedParams = new string []
+						{ 
+							"String:@OtherValue=p_OtherValueInsert1", 
+							"String:@ID=n_1001"
+						};
+			string [] actualValues = ((string) eventsCalled [2]).Split (new string [] { ", " }, StringSplitOptions.RemoveEmptyEntries);
+			Assert.AreEqual (expectedParams.Length, actualValues.Length, "ParametersAndViewChangedEvent_DontMatchInsert Params count");
+			ValidatePassedParams (expectedParams, actualValues, "ParametersAndViewChangedEvent_DontMatchInsert expecte '{0}'");
+		}
+
+		[Test]
+		public void ParametersAndViewChangedEvent_MatchUpdate () 
+		{
+			Hashtable keys = null;
+			Hashtable old_values = null;
+			Hashtable new_values = null;
+			SqlViewPoker view = InitializeView (InitViewType.MatchParamsToValues, ConflictOptions.OverwriteChanges, out keys, out old_values, out new_values);
+
+			view.Update (keys, new_values, old_values);
+
+			Assert.IsNotNull (eventsCalled, "Events not raized");
+			Assert.AreEqual (3, eventsCalled.Count, "Events Count");
+			Assert.AreEqual ("UpdateParameters_ParametersChanged", eventsCalled [0], "UpdateParameters_ParametersChanged");
+			Assert.AreEqual ("view_Updating", eventsCalled [1], "view_Updating");
+			string [] expectedParams = new string []
+						{ 
+							"String:@oldvalue_ID=k_1001", 
+							"String:@ID=n_1001"
+						};
+			string [] actualValues = ((string) eventsCalled [2]).Split (new string [] { ", " }, StringSplitOptions.RemoveEmptyEntries);
+			Assert.AreEqual (expectedParams.Length, actualValues.Length, "ParametersAndViewChangedEvent_MatchUpdate Params count");
+			ValidatePassedParams (expectedParams, actualValues, "ParametersAndViewChangedEvent_MatchUpdate expecte '{0}'");
+		}
+
+		[Test]
+		public void ParametersAndViewChangedEvent_MatchUpdateAllValues () 
+		{
+			Hashtable keys = null;
+			Hashtable old_values = null;
+			Hashtable new_values = null;
+			SqlViewPoker view = InitializeView (InitViewType.MatchParamsToValues, ConflictOptions.CompareAllValues, out keys, out old_values, out new_values);
+
+			view.Update (keys, new_values, old_values);
+
+			Assert.IsNotNull (eventsCalled, "Events not raized");
+			Assert.AreEqual (3, eventsCalled.Count, "Events Count");
+			Assert.AreEqual ("UpdateParameters_ParametersChanged", eventsCalled [0], "UpdateParameters_ParametersChanged");
+			Assert.AreEqual ("view_Updating", eventsCalled [1], "view_Updating");
+			string [] expectedParams = new string []
+						{ 
+							"String:@oldvalue_ID=ov_1001", 
+							"String:@ID=n_1001"
+						};
+			string [] actualValues = ((string) eventsCalled [2]).Split (new string [] { ", " }, StringSplitOptions.RemoveEmptyEntries);
+			Assert.AreEqual (expectedParams.Length, actualValues.Length, "ParametersAndViewChangedEvent_MatchUpdate Params count");
+			ValidatePassedParams (expectedParams, actualValues, "ParametersAndViewChangedEvent_MatchUpdate expecte '{0}'");
+		}
+
+		[Test]
+		public void ParametersAndViewChangedEvent_MatchOldUpdate () 
+		{
+			Hashtable keys = null;
+			Hashtable old_values = null;
+			Hashtable new_values = null;
+			SqlViewPoker view = InitializeView (InitViewType.MatchParamsToOldValues, ConflictOptions.OverwriteChanges, out keys, out old_values, out new_values);
+
+			view.Update (keys, new_values, old_values);
+
+			Assert.IsNotNull (eventsCalled, "Events not raized");
+			Assert.AreEqual (3, eventsCalled.Count, "Events Count");
+			Assert.AreEqual ("UpdateParameters_ParametersChanged", eventsCalled [0], "UpdateParameters_ParametersChanged");
+			Assert.AreEqual ("view_Updating", eventsCalled [1], "view_Updating");
+			string [] expectedParams = new string []
+						{ 
+							"String:@oldvalue_ID=k_1001", 
+							"String:@ID=n_1001"
+						};
+			string [] actualValues = ((string) eventsCalled [2]).Split (new string [] { ", " }, StringSplitOptions.RemoveEmptyEntries);
+			Assert.AreEqual (expectedParams.Length, actualValues.Length, "ParametersAndViewChangedEvent_MatchUpdate Params count");
+			ValidatePassedParams (expectedParams, actualValues, "ParametersAndViewChangedEvent_MatchUpdate expecte '{0}'");
+		}
+
+		[Test]
+		public void ParametersAndViewChangedEvent_MatchOldUpdateAllValues () 
+		{
+			Hashtable keys = null;
+			Hashtable old_values = null;
+			Hashtable new_values = null;
+			SqlViewPoker view = InitializeView (InitViewType.MatchParamsToOldValues, ConflictOptions.CompareAllValues, out keys, out old_values, out new_values);
+
+			view.Update (keys, new_values, old_values);
+
+			Assert.IsNotNull (eventsCalled, "Events not raized");
+			Assert.AreEqual (3, eventsCalled.Count, "Events Count");
+			Assert.AreEqual ("UpdateParameters_ParametersChanged", eventsCalled [0], "UpdateParameters_ParametersChanged");
+			Assert.AreEqual ("view_Updating", eventsCalled [1], "view_Updating");
+			string [] expectedParams = new string []
+						{ 
+							"String:@oldvalue_ID=ov_1001", 
+							"String:@ID=n_1001"
+						};
+			string [] actualValues = ((string) eventsCalled [2]).Split (new string [] { ", " }, StringSplitOptions.RemoveEmptyEntries);
+			Assert.AreEqual (expectedParams.Length, actualValues.Length, "ParametersAndViewChangedEvent_MatchUpdate Params count");
+			ValidatePassedParams (expectedParams, actualValues, "ParametersAndViewChangedEvent_MatchUpdate expecte '{0}'");
+		}
+
+		[Test]
+		public void ParametersAndViewChangedEvent_DontMatchUpdate () 
+		{
+			Hashtable keys = null;
+			Hashtable old_values = null;
+			Hashtable new_values = null;
+			SqlViewPoker view = InitializeView (InitViewType.DontMatchParams, ConflictOptions.OverwriteChanges, out keys, out old_values, out new_values);
+
+			view.Update (keys, new_values, old_values);
+
+			Assert.IsNotNull (eventsCalled, "Events not raized");
+			Assert.AreEqual (3, eventsCalled.Count, "Events Count");
+			Assert.AreEqual ("UpdateParameters_ParametersChanged", eventsCalled [0], "UpdateParameters_ParametersChanged");
+			Assert.AreEqual ("view_Updating", eventsCalled [1], "view_Updating");
+			string [] expectedParams = new string []
+						{ 
+							"String:@oldvalue_ID=k_1001", 
+							"String:@ID=n_1001",
+							"String:@OtherValue=p_OtherValueUpdate1"
+						};
+			string [] actualValues = ((string) eventsCalled [2]).Split (new string [] { ", " }, StringSplitOptions.RemoveEmptyEntries);
+			Assert.AreEqual (expectedParams.Length, actualValues.Length, "ParametersAndViewChangedEvent_DontMatchUpdate Params count");
+			ValidatePassedParams (expectedParams, actualValues, "ParametersAndViewChangedEvent_DontMatchUpdate expecte '{0}'");
+		}
+
+		[Test]
+		public void ParametersAndViewChangedEvent_MatchDelete () 
+		{
+			Hashtable keys = null;
+			Hashtable old_values = null;
+			Hashtable new_values = null;
+			SqlViewPoker view = InitializeView (InitViewType.MatchParamsToValues, ConflictOptions.OverwriteChanges, out keys, out old_values, out new_values);
+
+			view.Delete (keys, old_values);
+
+			Assert.IsNotNull (eventsCalled, "Events not raized");
+			Assert.AreEqual (3, eventsCalled.Count, "Events Count");
+			Assert.AreEqual ("DeleteParameters_ParametersChanged", eventsCalled [0], "DeleteParameters_ParametersChanged");
+			Assert.AreEqual ("view_Deleting", eventsCalled [1], "view_Deleting");
+			string [] expectedParams = new string []
+						{ 
+							"String:@oldvalue_ID=k_1001", 
+						};
+			string [] actualValues = ((string) eventsCalled [2]).Split (new string [] { ", " }, StringSplitOptions.RemoveEmptyEntries);
+			Assert.AreEqual (expectedParams.Length, actualValues.Length, "ParametersAndViewChangedEvent_MatchDelete Params count");
+			ValidatePassedParams (expectedParams, actualValues, "ParametersAndViewChangedEvent_MatchDelete expecte '{0}'");
+		}
+
+		[Test]
+		public void ParametersAndViewChangedEvent_MatchDeleteAllValues () 
+		{
+			Hashtable keys = null;
+			Hashtable old_values = null;
+			Hashtable new_values = null;
+			SqlViewPoker view = InitializeView (InitViewType.MatchParamsToValues, ConflictOptions.CompareAllValues, out keys, out old_values, out new_values);
+
+			view.Delete (keys, old_values);
+
+			Assert.IsNotNull (eventsCalled, "Events not raized");
+			Assert.AreEqual (3, eventsCalled.Count, "Events Count");
+			Assert.AreEqual ("DeleteParameters_ParametersChanged", eventsCalled [0], "DeleteParameters_ParametersChanged");
+			Assert.AreEqual ("view_Deleting", eventsCalled [1], "view_Deleting");
+			string [] expectedParams = new string []
+						{ 
+							"String:@oldvalue_ID=ov_1001", 
+						};
+			string [] actualValues = ((string) eventsCalled [2]).Split (new string [] { ", " }, StringSplitOptions.RemoveEmptyEntries);
+			Assert.AreEqual (expectedParams.Length, actualValues.Length, "ParametersAndViewChangedEvent_MatchDelete Params count");
+			ValidatePassedParams (expectedParams, actualValues, "ParametersAndViewChangedEvent_MatchDelete expecte '{0}'");
+		}
+
+		[Test]
+		public void ParametersAndViewChangedEvent_MatchOldDelete () 
+		{
+			Hashtable keys = null;
+			Hashtable old_values = null;
+			Hashtable new_values = null;
+			SqlViewPoker view = InitializeView (InitViewType.MatchParamsToOldValues, ConflictOptions.OverwriteChanges, out keys, out old_values, out new_values);
+
+			view.Delete (keys, old_values);
+
+			Assert.IsNotNull (eventsCalled, "Events not raized");
+			Assert.AreEqual (3, eventsCalled.Count, "Events Count");
+			Assert.AreEqual ("DeleteParameters_ParametersChanged", eventsCalled [0], "DeleteParameters_ParametersChanged");
+			Assert.AreEqual ("view_Deleting", eventsCalled [1], "view_Deleting");
+			string [] expectedParams = new string []
+						{ 
+							"String:@oldvalue_ID=k_1001", 
+						};
+			string [] actualValues = ((string) eventsCalled [2]).Split (new string [] { ", " }, StringSplitOptions.RemoveEmptyEntries);
+			Assert.AreEqual (expectedParams.Length, actualValues.Length, "ParametersAndViewChangedEvent_MatchOldDelete Params count");
+			ValidatePassedParams (expectedParams, actualValues, "ParametersAndViewChangedEvent_MatchOldDelete expecte '{0}'");
+		}
+
+		[Test]
+		public void ParametersAndViewChangedEvent_MatchOldDeleteAllValues () 
+		{
+			Hashtable keys = null;
+			Hashtable old_values = null;
+			Hashtable new_values = null;
+			SqlViewPoker view = InitializeView (InitViewType.MatchParamsToOldValues, ConflictOptions.CompareAllValues, out keys, out old_values, out new_values);
+
+			view.Delete (keys, old_values);
+
+			Assert.IsNotNull (eventsCalled, "Events not raized");
+			Assert.AreEqual (3, eventsCalled.Count, "Events Count");
+			Assert.AreEqual ("DeleteParameters_ParametersChanged", eventsCalled [0], "DeleteParameters_ParametersChanged");
+			Assert.AreEqual ("view_Deleting", eventsCalled [1], "view_Deleting");
+			string [] expectedParams = new string []
+						{ 
+							"String:@oldvalue_ID=ov_1001", 
+						};
+			string [] actualValues = ((string) eventsCalled [2]).Split (new string [] { ", " }, StringSplitOptions.RemoveEmptyEntries);
+			Assert.AreEqual (expectedParams.Length, actualValues.Length, "ParametersAndViewChangedEvent_MatchOldDelete Params count");
+			ValidatePassedParams (expectedParams, actualValues, "ParametersAndViewChangedEvent_MatchOldDelete expecte '{0}'");
+		}
+
+		[Test]
+		public void ParametersAndViewChangedEvent_DontMatchDelete () 
+		{
+			Hashtable keys = null;
+			Hashtable old_values = null;
+			Hashtable new_values = null;
+			SqlViewPoker view = InitializeView (InitViewType.DontMatchParams, ConflictOptions.OverwriteChanges, out keys, out old_values, out new_values);
+
+			view.Delete (keys, old_values);
+
+			Assert.IsNotNull (eventsCalled, "Events not raized");
+			Assert.AreEqual (3, eventsCalled.Count, "Events Count");
+			Assert.AreEqual ("DeleteParameters_ParametersChanged", eventsCalled [0], "DeleteParameters_ParametersChanged");
+			Assert.AreEqual ("view_Deleting", eventsCalled [1], "view_Deleting");
+			string [] expectedParams = new string []
+						{ 
+							"String:@oldvalue_ID=k_1001", 
+							"String:@OtherValue=p_OtherValueDelete1"
+						};
+			string [] actualValues = ((string) eventsCalled [2]).Split (new string [] { ", " }, StringSplitOptions.RemoveEmptyEntries);
+			Assert.AreEqual (expectedParams.Length, actualValues.Length, "ParametersAndViewChangedEvent_MatchOldDelete Params count");
+			ValidatePassedParams (expectedParams, actualValues, "ParametersAndViewChangedEvent_MatchOldDelete expecte '{0}'");
+		}
+
+		private static void ValidatePassedParams (string [] expectedParams, string [] actualValues, string errorMessageFormat) 
+		{
+			foreach (string eps in expectedParams) {
+				bool found = false;
+				foreach (string aps in actualValues) {
+					if (eps == aps) {
+						found = true;
+						break;
+					}
+				}
+				Assert.IsTrue (found, String.Format (errorMessageFormat, eps));
+			}
 		}
 	}
 
