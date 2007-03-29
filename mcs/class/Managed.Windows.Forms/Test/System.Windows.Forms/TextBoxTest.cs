@@ -331,12 +331,59 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void FocusSelectsAllTest ()
 		{
-			textBox.Text = "This is a sample test.";
-			textBox.CreateControl ();
-			textBox.Focus ();
-			Assert.AreEqual ("This is a sample test.", textBox.SelectedText, "#34");
+			Form form = new Form ();
+			form.ShowInTaskbar = false;
+
+			TextBox textBoxA = new TextBox ();
+			textBoxA.Text = "This is a sample testA.";
+			textBoxA.TabIndex = 0;
+			form.Controls.Add (textBoxA);
+
+			TextBox textBoxB = new TextBox ();
+			textBoxB.Text = "This is a sample testB.";
+			textBoxB.TabIndex = 1;
+			form.Controls.Add (textBoxB);
+
+#if NET_2_0
+			Assert.AreEqual (String.Empty, textBoxA.SelectedText, "#A1 (2.0)");
+			Assert.AreEqual (String.Empty, textBoxB.SelectedText, "#A2 (2.0)");
+#else
+			Assert.IsNull (textBoxA.SelectedText, "#A1");
+			Assert.IsNull (textBoxB.SelectedText, "#A2");
+#endif
+
+			form.Show ();
+
+			textBoxA.Focus ();
+
+			Assert.AreEqual ("This is a sample testA.", textBoxA.SelectedText, "#B1");
+			Assert.AreEqual (string.Empty, textBoxB.SelectedText, "#B2");
+
+			textBoxB.Focus ();
+
+			Assert.AreEqual ("This is a sample testA.", textBoxA.SelectedText, "#C1");
+			Assert.AreEqual ("This is a sample testB.", textBoxB.SelectedText, "#C2");
+
+			textBoxA.Text = "another testA.";
+			textBoxB.Text = "another testB.";
+
+			Assert.AreEqual (string.Empty, textBoxA.SelectedText, "#D1");
+			Assert.AreEqual (string.Empty, textBoxB.SelectedText, "#D2");
+
+			textBoxA.Focus ();
+
+			Assert.AreEqual ("another testA.", textBoxA.SelectedText, "#E1");
+			Assert.AreEqual (string.Empty, textBoxB.SelectedText, "#E2");
+
+			textBoxB.Focus ();
+
+			Assert.AreEqual ("another testA.", textBoxA.SelectedText, "#F1");
+			Assert.AreEqual ("another testB.", textBoxB.SelectedText, "#F2");
+
+			form.Dispose ();
 		}
 
 		[Test]
