@@ -661,11 +661,26 @@ namespace System.Windows.Forms
 			}
 		}
 
+		private void OnImageListChanged (object sender, EventArgs args)
+		{
+			item_control.Invalidate ();
+		}
+
 		[DefaultValue (null)]
 		public ImageList StateImageList {
 			get { return state_image_list; }
 			set {
+				if (state_image_list == value)
+					return;
+
+				if (state_image_list != null)
+					state_image_list.Images.Changed -= new EventHandler (OnImageListChanged);
+
 				state_image_list = value;
+
+				if (state_image_list != null)
+					state_image_list.Images.Changed += new EventHandler (OnImageListChanged);
+
 				this.Redraw (true);
 			}
 		}

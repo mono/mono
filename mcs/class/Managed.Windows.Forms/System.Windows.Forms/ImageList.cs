@@ -468,8 +468,13 @@ namespace System.Windows.Forms
 				return itemIndex;
 			}
 
+			internal event EventHandler Changed;
+
 			private int AddItemInternal(ImageListItem item)
 			{
+				if (Changed != null)
+					Changed (this, EventArgs.Empty);
+
 				if (item.Image is Icon) {
 					int imageWidth;
 					int imageHeight;
@@ -851,6 +856,8 @@ namespace System.Windows.Forms
 #if NET_2_0
 				keys.RemoveAt(index);
 #endif
+				if (Changed != null)
+					Changed (this, EventArgs.Empty);
 			}
 
 #if NET_2_0

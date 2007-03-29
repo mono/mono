@@ -1,3 +1,9 @@
+2007-03-29  Mike Kestner  <mkestner@novell.com>
+
+	* ImageList.cs : add internal Changed event.
+	* ListView.cs : hook up to StateImageList.Changed to perform
+	invalidations when the the state icon list changes. [Fixes #81191]
+
 2007-03-29  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolTip.cs: Override the ToolTipWindow's ActivateOnShow property
