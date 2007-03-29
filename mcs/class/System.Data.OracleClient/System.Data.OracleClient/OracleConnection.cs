@@ -338,6 +338,9 @@ namespace System.Data.OracleClient
 
 		public void Open () 
 		{
+			if (State == ConnectionState.Open)
+				return;
+
 			PersistSecurityInfo ();
 
 			if (!pooling) {	
