@@ -147,7 +147,7 @@ namespace System.Web.J2EE
 							AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler (CurrentDomain_AssemblyResolve);
 							try {
 								//Try to load the  global resources
-								HttpContext.AppGlobalResourcesAssembly = GetCachedAssembly (context, "app_globalresources");
+								HttpContext.AppGlobalResourcesAssembly = GetCachedAssembly (context,  context.Request.ApplicationPath + "/app_globalresources");
 							}
 							catch (Exception ex) {
 #if DEBUG
@@ -393,7 +393,7 @@ namespace System.Web.J2EE
 		}
 		private bool InternalCompile()
 		{
-			string fileName = Path.GetFileName(_url);
+			string fileName = VirtualPathUtility.GetFileName (_url);
 
 			string fullFileName = (fileName.ToLower () == "global.asax") ? _url : _context.Request.MapPath (_url);
 #if DEBUG
@@ -541,7 +541,7 @@ namespace System.Web.J2EE
 
 		private string GetDescFromUrl()
 		{
-			string fileName = Path.GetFileName(_url);
+			string fileName = VirtualPathUtility.GetFileName (_url);
 			
 			if (fileName.ToLower() == "global.asax")
 				return "global.asax.xml";
@@ -553,11 +553,11 @@ namespace System.Web.J2EE
 
 		private string GetIdFromUrl(string path)
 		{
-			path = path.Trim('/');
-			string fileName = Path.GetFileName(path);
+			string fileName = VirtualPathUtility.GetFileName(path);
 			string id = string.Empty;
 
-			path = path.Substring (path.IndexOf ("/") + 1);
+			if (VirtualPathUtility.IsAbsolute (path))
+				path = path.Substring (_context.Request.ApplicationPath.Length + 1);
 
 			if (path.Length > fileName.Length)
 				id = "." + path.Substring(0,path.Length - fileName.Length).Replace('/','_');
