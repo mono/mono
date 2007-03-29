@@ -1,5 +1,9 @@
 2007-03-28  Everaldo Canuto  <everaldo@simios.org>
 
+	* NotifyIcon.cs: Prevent Balloon to show in task bar.
+
+2007-03-28  Everaldo Canuto  <everaldo@simios.org>
+
 	* XplatUIX11.cs: Prevent system to open more than one balloon.
 
 	* NotifyIcon.cs: Prevent system to open more than one balloon and remove

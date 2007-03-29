@@ -255,7 +255,6 @@ namespace System.Windows.Forms {
 				
 				StartPosition = FormStartPosition.Manual;
 				FormBorderStyle = FormBorderStyle.None;
-				TopMost = true;
 
 				MouseDown += new MouseEventHandler (HandleMouseDown);
 				
@@ -273,6 +272,20 @@ namespace System.Windows.Forms {
 				base.Dispose (disposing);
 			}
 
+			protected override CreateParams CreateParams {
+				get {
+					CreateParams cp;
+
+					cp = base.CreateParams;
+
+					cp.Style = (int)WindowStyles.WS_POPUP;
+					cp.Style |= (int)WindowStyles.WS_CLIPSIBLINGS;
+
+					cp.ExStyle = (int)(WindowExStyles.WS_EX_TOOLWINDOW | WindowExStyles.WS_EX_TOPMOST);
+
+					return cp;
+				}
+			}
 
 			public new void Close () {
 				base.Close ();
