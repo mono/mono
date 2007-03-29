@@ -2517,7 +2517,7 @@ namespace System.Linq
         }
 
         #endregion
-        #region Take
+        #region Take
 
         public static IEnumerable<T> Take<T>(this IEnumerable<T> source, int count)
         {
