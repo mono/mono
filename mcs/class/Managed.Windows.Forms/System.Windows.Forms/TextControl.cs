@@ -514,7 +514,7 @@ namespace System.Windows.Forms {
 			int	len;
 			SizeF	size;
 			float	w;
-			int	prev_height;
+			int	prev_offset;
 			bool	retval;
 			bool	wrapped;
 			Line	line;
@@ -523,7 +523,7 @@ namespace System.Windows.Forms {
 			pos = 0;
 			len = this.text.Length;
 			tag = this.tags;
-			prev_height = this.height;	// For drawing optimization calculations
+			prev_offset = this.offset;	// For drawing optimization calculations
 			this.height = 0;		// Reset line height
 			this.ascent = 0;		// Reset the ascent for the line
 			tag.shift = 0;
@@ -643,7 +643,7 @@ namespace System.Windows.Forms {
 				tag.height = this.height;
 			}
 
-			if (prev_height != this.height) {
+			if (prev_offset != offset) {
 				retval = true;
 			}
 			return retval;
@@ -2504,9 +2504,24 @@ namespace System.Windows.Forms {
 			}
 
 		Cleanup:
-			if (pos >= line.TextLengthWithoutEnding ())
-				GetLineEnding (line.text.ToString (), 0, out line.ending);
-			UpdateView(line, pos);
+			if (pos >= line.TextLengthWithoutEnding ()) {
+				LineEnding ending = line.ending;
+				GetLineEnding (line.text.ToString (), 0, out ending);
+				if (ending != line.ending) {
+					line.ending = ending;
+
+					if (!multiline) {
+						UpdateView (line, lines, pos);
+						owner.Invalidate ();
+						return;
+					}
+				}
+			}
+			if (!multiline) {
+				UpdateView (line, lines, pos);
+				owner.Invalidate ();
+			} else 
+				UpdateView(line, pos);
 		}
 
 		// Deletes a character at or after the given position (depending on forward); it will not delete past line limits
@@ -2577,9 +2592,24 @@ namespace System.Windows.Forms {
 			}
 
 		Cleanup:
-			if (pos >= line.TextLengthWithoutEnding ())
-				GetLineEnding (line.text.ToString (), 0, out line.ending);
-			UpdateView(line, pos);
+			if (pos >= line.TextLengthWithoutEnding ()) {
+				LineEnding ending = line.ending;
+				GetLineEnding (line.text.ToString (), 0, out ending);
+				if (ending != line.ending) {
+					line.ending = ending;
+
+					if (!multiline) {
+						UpdateView (line, lines, pos);
+						owner.Invalidate ();
+						return;
+					}
+				}
+			}
+			if (!multiline) {
+				UpdateView (line, lines, pos);
+				owner.Invalidate ();
+			} else 
+				UpdateView(line, pos);
 		}
 
 		// Combine two lines

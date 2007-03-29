@@ -1,3 +1,9 @@
+2007-03-29  Jackson Harper  <jackson@ximian.com>
+
+	* TextControl.cs: When deleting text from non multiline textboxes,
+	we need to update the entire document, because line offsets will
+	be shifting.
+
 2007-03-29  Everaldo Canuto  <everaldo@simios.org>
 
 	* XplatUIX11.cs, ThemeWin32Classic.cs, Theme.cs: ShowBalloonWindow method
