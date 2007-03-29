@@ -1,3 +1,10 @@
+2007-03-29  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ComboBox.cs: Override the ComboListBox's ActivateOnShow property and
+	remove WS_VISIBLE from CreateParams to prevent combobox dropdowns from
+	stealing focus from the active form on Windows.  (Control will be made
+	visible in ShowWindow.)
+
 2007-03-29  Mike Kestner  <mkestner@novell.com>
 
 	* ImageList.cs : add internal Changed event.

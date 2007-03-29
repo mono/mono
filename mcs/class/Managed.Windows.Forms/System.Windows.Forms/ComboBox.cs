@@ -1902,6 +1902,8 @@ namespace System.Windows.Forms
 					return owner.Focused;
 				}
 			}
+			
+			internal override bool ActivateOnShow { get { return false; } }
 		}
 
 		internal class ComboListBox : Control
@@ -1995,8 +1997,9 @@ namespace System.Windows.Forms
 					if (owner == null || owner.DropDownStyle == ComboBoxStyle.Simple)
 						return cp;
 
-					cp.Style ^= (int) WindowStyles.WS_CHILD;
-					cp.Style |= (int) WindowStyles.WS_POPUP;
+					cp.Style ^= (int)WindowStyles.WS_CHILD;
+					cp.Style ^= (int)WindowStyles.WS_VISIBLE;
+					cp.Style |= (int)WindowStyles.WS_POPUP;
 					cp.ExStyle |= (int) WindowExStyles.WS_EX_TOOLWINDOW | (int) WindowExStyles.WS_EX_TOPMOST;
 					return cp;
 				}
