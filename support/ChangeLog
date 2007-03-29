@@ -1,3 +1,8 @@
+2007-03-28  Wade Berrier  <miguel@novell.com>
+
+	* supportw.c (SendMessageA/GetWindowLongA): Return values to fix some 
+	warnings, even though these aren't called (Patch from suse rpms)
+
 2007-01-23  Miguel de Icaza  <miguel@novell.com>
 
 	* serial.c (poll_serial): Fix for #79073, based on the patch by

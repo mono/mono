@@ -169,9 +169,11 @@ int
 SendMessageA (gpointer hwnd, uint msg, gpointer wparam, gpointer lparam)
 {
 	fprintf (stderr, "SendMessage (%d, 0x%x, 0x%x, 0x%x)\n", hwnd, msg, wparam, lparam);
+	return 0;
 }
 
 int
 GetWindowLongA (gpointer hwnd, int a)
 {
+	return 0;
 }
