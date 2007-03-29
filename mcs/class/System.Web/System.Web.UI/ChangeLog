@@ -1,3 +1,8 @@
+2007-03-29  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* TemplateControl.jvm.cs: performance improvement, added cache for
+	methods and events in user code
+
 2007-03-26  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateControl.cs: make local resources work with master

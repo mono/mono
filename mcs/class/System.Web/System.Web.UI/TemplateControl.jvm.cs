@@ -157,36 +157,53 @@ namespace System.Web.UI {
 			return new LiteralControl (str);
 		}
 
+		sealed class EventMethodMap
+		{
+			public EventMethodMap (EventInfo Event, MethodInfo Method, bool NoParameters)
+			{
+				this.Event = Event;
+				this.Method = Method;
+				this.NoParameters = NoParameters;
+			}
+
+			public readonly EventInfo Event;
+			public readonly MethodInfo Method;
+			public readonly bool NoParameters;
+		}
+
+		// This hashtable cashes methods and events found in user code
+		const string eventMethodCacheKey = "eventMethodCacheKey";
+		static Hashtable EventMethodCache
+		{
+			get { return (Hashtable) AppDomain.CurrentDomain.GetData (eventMethodCacheKey); }
+			set { AppDomain.CurrentDomain.SetData (eventMethodCacheKey, value); }
+		}
+
 		internal void WireupAutomaticEvents ()
 		{
-			if (!SupportAutoEvents || !AutoEventWireup)
-				return;
+			Type cacheKey = this.GetType ();
+			Hashtable eventMethodCache = EventMethodCache;
+			ArrayList eventMethodList = eventMethodCache == null ? null : (ArrayList) eventMethodCache [cacheKey];
 
-			Type thisType = typeof(TemplateControl);
-			Type voidType = typeof (void);
-			Type [] DefaultParams = new Type [] {
+			if (eventMethodList == null) {
+				eventMethodList = new ArrayList ();
+
+				if (!SupportAutoEvents || !AutoEventWireup)
+					return;
+
+				Type thisType = typeof (TemplateControl);
+				Type voidType = typeof (void);
+				Type [] DefaultParams = new Type [] {
 				typeof (object),
 				typeof (EventArgs) };
 
-			foreach (string methodName in methodNames) {
-				MethodInfo method;
-				bool noParams = false;
-				Type type = GetType ();
-				do {
-					method = type.GetMethod (methodName, bflags, null, DefaultParams, null);
-					if (method != null)
-						break;
-
-					type = type.BaseType;
-				}
-				while (type != thisType);
-
-				if (method == null) {
-					type = GetType ();
+				foreach (string methodName in methodNames) {
+					MethodInfo method;
+					bool noParams = false;
+					Type type = GetType ();
 					do {
-						method = type.GetMethod (methodName, bflags, null, NoParams, null);
+						method = type.GetMethod (methodName, bflags, null, DefaultParams, null);
 						if (method != null) {
-							noParams = true;
 							break;
 						}
 
@@ -194,10 +211,34 @@ namespace System.Web.UI {
 					}
 					while (type != thisType);
 
-					if (method == null)
-						continue;
-				}
+					if (method == null) {
+						type = GetType ();
+						do {
+							method = type.GetMethod (methodName, bflags, null, NoParams, null);
+							if (method != null) {
+								noParams = true;
+								break;
+							}
 
+							type = type.BaseType;
+						}
+						while (type != thisType);
+
+						if (method == null)
+							continue;
+					}
+					if (method.ReturnType != voidType)
+						continue;
+
+					int pos = methodName.IndexOf ("_");
+					string eventName = methodName.Substring (pos + 1);
+					EventInfo evt = GetType ().GetEvent (eventName);
+					if (evt == null) {
+						/* This should never happen */
+						continue;
+					}
+
+					eventMethodList.Add (new EventMethodMap (evt, method, noParams));
 #if ONLY_1_1
 				if (method.DeclaringType != type) {
 					if (!method.IsPublic && !method.IsFamilyOrAssembly &&
@@ -205,25 +246,21 @@ namespace System.Web.UI {
 						continue;
 				}
 #endif
-
-				if (method.ReturnType != voidType)
-					continue;
-
-				int pos = methodName.IndexOf ("_");
-				string eventName = methodName.Substring (pos + 1);
-				EventInfo evt = GetType ().GetEvent (eventName);
-				if (evt == null) {
-					/* This should never happen */
-					continue;
 				}
+				// We copy to not lock
 
-				if (noParams) {
-					NoParamsInvoker npi = new NoParamsInvoker (this, method);
-					evt.AddEventHandler (this, npi.FakeDelegate);
+				Hashtable newEventMethodCache = eventMethodCache == null ? new Hashtable () : (Hashtable) eventMethodCache.Clone ();
+				newEventMethodCache [cacheKey] = eventMethodList;
+				EventMethodCache = newEventMethodCache;
+			}
+
+			foreach (EventMethodMap eventMethod in eventMethodList) {
+				if (eventMethod.NoParameters) {
+					NoParamsInvoker npi = new NoParamsInvoker (this, eventMethod.Method);
+					eventMethod.Event.AddEventHandler (this, npi.FakeDelegate);
 				}
 				else {
-					evt.AddEventHandler (this, Delegate.CreateDelegate (
-							typeof (EventHandler), this, method));
+					eventMethod.Event.AddEventHandler (this, Delegate.CreateDelegate (typeof (EventHandler), this, eventMethod.Method));
 				}
 			}
 		}
