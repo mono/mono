@@ -5406,26 +5406,9 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
-		NotifyIcon.BalloonWindow balloon_window;
-
 		internal override void SystrayBalloon(IntPtr handle, int timeout, string title, string text, ToolTipIcon icon)
 		{
-			Control control = Control.FromHandle(handle);
-			
-			if (control == null)
-				return;
-
-			if (balloon_window != null) {
-				balloon_window.Close ();
-				balloon_window.Dispose ();
-			}
-
-			balloon_window = new NotifyIcon.BalloonWindow (handle);
-			balloon_window.Title = title;
-			balloon_window.Text = text;
-			balloon_window.Timeout = timeout;
-			balloon_window.Show ();
-			
+			ThemeEngine.Current.ShowBalloonWindow (handle, timeout, title, text, icon);
 			SendMessage(handle, Msg.WM_USER, IntPtr.Zero, (IntPtr) Msg.NIN_BALLOONSHOW);	
 		}
 #endif

@@ -4859,6 +4859,27 @@ namespace System.Windows.Forms
 
 		#region BalloonWindow
 #if NET_2_0
+		NotifyIcon.BalloonWindow balloon_window;
+		
+		public override void ShowBalloonWindow (IntPtr handle, int timeout, string title, string text, ToolTipIcon icon)
+		{
+			Control control = Control.FromHandle(handle);
+			
+			if (control == null)
+				return;
+
+			if (balloon_window != null) {
+				balloon_window.Close ();
+				balloon_window.Dispose ();
+			}
+
+			balloon_window = new NotifyIcon.BalloonWindow (handle);
+			balloon_window.Title = title;
+			balloon_window.Text = text;
+			balloon_window.Timeout = timeout;
+			balloon_window.Show ();
+		}
+
 		public override void DrawBalloonWindow (Graphics dc, Rectangle clip, NotifyIcon.BalloonWindow control) 
 		{
 			Brush solidbrush = ResPool.GetSolidBrush(this.ColorInfoText);

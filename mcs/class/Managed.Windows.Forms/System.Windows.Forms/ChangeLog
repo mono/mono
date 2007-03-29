@@ -1,3 +1,9 @@
+2007-03-29  Everaldo Canuto  <everaldo@simios.org>
+
+	* XplatUIX11.cs, ThemeWin32Classic.cs, Theme.cs: ShowBalloonWindow method
+	added to theme, now we can create themes that uses diferent notify engines
+	like notification-daemon from galago project or growl for Mac OS.
+
 2007-03-28  Everaldo Canuto  <everaldo@simios.org>
 
 	* NotifyIcon.cs: Prevent Balloon to show in task bar.
