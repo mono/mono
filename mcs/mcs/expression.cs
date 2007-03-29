@@ -5298,11 +5298,16 @@ namespace Mono.CSharp {
 		
 		public override void EmitStatement (EmitContext ec)
 		{
-			if (is_type_parameter)
-				throw new InvalidOperationException ();
+			bool value_on_stack;
 
-			if (DoEmit (ec, false))
+			if (is_type_parameter)
+				value_on_stack = DoEmitTypeParameter (ec);
+			else
+				value_on_stack = DoEmit (ec, false);
+
+			if (value_on_stack)
 				ec.ig.Emit (OpCodes.Pop);
+
 		}
 
 		public void AddressOf (EmitContext ec, AddressOp Mode)

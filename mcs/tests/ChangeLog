@@ -1,3 +1,7 @@
+2007-03-29  Raja R Harinath  <rharinath@novell.com>
+
+	* gtest-325.cs: New test from #81121.
+
 2007-01-28  Raja R Harinath  <rharinath@novell.com>
 
 	* gtest-309.cs: Renamed from errors/gcs0411-3.cs.
