@@ -2366,7 +2366,14 @@ namespace System.Windows.Forms {
 
 						args = new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
 							mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 0);
-						active_tracker.OnMouseDown(new MouseEventArgs (args.Button, args.Clicks, Control.MousePosition.X, Control.MousePosition.Y, args.Delta));
+
+						if (!active_tracker.OnMouseDown (new MouseEventArgs (args.Button, args.Clicks, Control.MousePosition.X, Control.MousePosition.Y, args.Delta))) {
+							Point pt = new Point (args.X, args.Y);
+							Control child_control = this.GetChildAtPoint (pt);
+							if (child_control != null)
+								XplatUI.SendMessage(child_control.Handle, (Msg) m.Msg, m.WParam, m.LParam);
+						}
+						
 						return;
 					}
 #if NET_2_0

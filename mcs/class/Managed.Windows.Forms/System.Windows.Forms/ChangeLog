@@ -1,3 +1,11 @@
+2007-03-29  Everaldo Canuto  <everaldo@simios.org>
+
+	* MenuAPI.cs: Make OnMouseDown returns a boolean to identify if event is
+	processed.
+
+	* Form.cs: When active tracker mouse down is not processed, send event 
+	back to control inside mouse position. [Fixes #81227]
+
 2007-03-29  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ComboBox.cs: Override the ComboListBox's ActivateOnShow property and

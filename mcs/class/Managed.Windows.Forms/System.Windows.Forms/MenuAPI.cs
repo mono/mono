@@ -131,20 +131,20 @@ namespace System.Windows.Forms {
 			return item;
 		}
 
-		public void OnMouseDown (MouseEventArgs args)
+		public bool OnMouseDown (MouseEventArgs args)
 		{
 			MenuItem item = GetItemAtXY (args.X, args.Y);
 
 			if (item == null) {
 				Deactivate ();
-				return;
+				return false;
 			}
 
 			if ((args.Button & MouseButtons.Left) == 0)
-				return;
+				return true;
 
 			if (!item.Enabled)
-				return;
+				return true;
 			
 			popdown_menu = active && item.VisibleItems;
 			
@@ -157,6 +157,7 @@ namespace System.Windows.Forms {
 				SelectItem (item.Parent, item, item.IsPopup);
 			
 			grab_control.ActiveTracker = this;
+			return true;
 		}
 
 		public void OnMotion (MouseEventArgs args)
