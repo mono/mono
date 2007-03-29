@@ -2013,14 +2013,18 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public ScopeInfo ScopeInfo;
+		protected ScopeInfo scope_info;
+
+		public ScopeInfo ScopeInfo {
+			get { return scope_info; }
+		}
 
 		public ScopeInfo CreateScopeInfo ()
 		{
-			if (ScopeInfo == null)
-				ScopeInfo = ScopeInfo.CreateScope (this);
+			if (scope_info == null)
+				scope_info = ScopeInfo.CreateScope (this);
 
-			return ScopeInfo;
+			return scope_info;
 		}
 
 		public ArrayList AnonymousChildren {
@@ -2620,7 +2624,10 @@ namespace Mono.CSharp {
 				root_scope = new RootScopeInfo (
 					this, host, generic, StartLocation);
 
-			ScopeInfo = root_scope;
+			if (scope_info != null)
+				throw new InternalErrorException ();
+
+			scope_info = root_scope;
 			return root_scope;
 		}
 
@@ -2632,7 +2639,7 @@ namespace Mono.CSharp {
 			if ((container != null) || (root_scope != null))
 				throw new InternalErrorException ();
 
-			ScopeInfo = root_scope = root;
+			scope_info = root_scope = root;
 		}
 
 		public RootScopeInfo RootScope {

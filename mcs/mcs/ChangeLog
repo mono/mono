@@ -1,3 +1,16 @@
+2007-03-29  Martin Baulig  <martin@ximian.com>
+
+	Fix #79148.
+
+	* anonymous.cs
+	(ScopeInfo.ctor): Use `Modifiers.PUBLIC' if we're a nested
+	CompilerGeneratedClass.
+	(ScopeInfo.EmitScopeInstance): Make this protected.
+	(CapturedVariable.EmitInstance): Use `Ldarg_0' if
+	`ec.CurrentAnonymousMethod.Scope == Scope'.
+
+	* statement.cs (Block.ScopeInfo): Make this a property.
+
 2007-03-27  Raja R Harinath  <harinath@gmail.com>
 
 	Prepare to kill 'Reachability'

@@ -222,8 +222,13 @@ namespace Mono.CSharp {
 			return new_scope;
 		}
 
+		private static int default_modflags (DeclSpace parent)
+		{
+			return parent is CompilerGeneratedClass ? Modifiers.PUBLIC : Modifiers.PRIVATE;
+		}
+
 		protected ScopeInfo (Block block, DeclSpace parent, GenericMethod generic)
-			: base (parent, generic, 0, block.StartLocation)
+			: base (parent, generic, default_modflags (parent), block.StartLocation)
 		{
 			Parent = parent;
 			RootScope = block.Toplevel.RootScope;
@@ -237,7 +242,7 @@ namespace Mono.CSharp {
 
 		protected ScopeInfo (ToplevelBlock toplevel, DeclSpace parent,
 				     GenericMethod generic, Location loc)
-			: base (parent, generic, 0, loc)
+			: base (parent, generic, default_modflags (parent), loc)
 		{
 			Parent = parent;
 			RootScope = (RootScopeInfo) this;
@@ -265,7 +270,7 @@ namespace Mono.CSharp {
 			return (CapturedVariable) captured_scopes [scope];
 		}
 
-		public void EmitScopeInstance (EmitContext ec)
+		protected void EmitScopeInstance (EmitContext ec)
 		{
 			if (scope_initializer == null) {
 				//
@@ -465,6 +470,12 @@ namespace Mono.CSharp {
 
 			public override void EmitInstance (EmitContext ec)
 			{
+				if ((ec.CurrentAnonymousMethod != null) &&
+				    (ec.CurrentAnonymousMethod.Scope == Scope)) {
+					ec.ig.Emit (OpCodes.Ldarg_0);
+					return;
+				}
+
 				Scope.EmitScopeInstance (ec);
 			}
 
