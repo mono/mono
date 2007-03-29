@@ -17,7 +17,7 @@ namespace System.Linq.Expressions
         #endregion
 
         #region Properties
-        public Funclet Funclet
+        public new Funclet Funclet
         {
             get { return funclet; }
         }

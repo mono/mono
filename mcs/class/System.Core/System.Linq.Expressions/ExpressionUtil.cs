@@ -55,23 +55,5 @@ namespace System.Linq.Expressions
 
             return method;
         }
-
-        public static ReadOnlyCollection<MemberBinding> GetReadOnlyCollection(IEnumerable<MemberBinding> en)
-        {
-            if (en == null)
-                return new ReadOnlyCollection<MemberBinding>(new MemberBinding[0]);
-            
-            List<MemberBinding> list = new List<MemberBinding>(en);
-            return new ReadOnlyCollection<MemberBinding>(list);
-        }
-
-        public static ReadOnlyCollection<Expression> GetReadOnlyCollection(IEnumerable<Expression> en)
-        {
-            if (en == null)
-                return new ReadOnlyCollection<Expression>(new Expression[0]);
-            
-            List<Expression> list = new List<Expression>(en);
-            return new ReadOnlyCollection<Expression>(list);
-        }
     }
 }

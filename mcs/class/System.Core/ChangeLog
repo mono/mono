@@ -1,3 +1,8 @@
+2007-03-29  Miguel de Icaza  <miguel@novell.com>
+
+	* Reapply the patch from Antonello, and rework the code to not use
+	extension methods on Enumerable. 
+
 2007-02-04  Marek Safar  <marek.safar@gmail.com>
 
 	* System.Core.dll.sources: Added common constants.

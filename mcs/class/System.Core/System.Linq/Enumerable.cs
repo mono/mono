@@ -2835,7 +2835,7 @@ namespace System.Linq
         #endregion
 
         #region ToReadOnlyCollection
-        internal static ReadOnlyCollection<TSource> ToReadOnlyCollection<TSource>(this IEnumerable<TSource> source)
+        internal static ReadOnlyCollection<TSource> ToReadOnlyCollection<TSource>(IEnumerable<TSource> source)
         {
             if (source == null)
                 return new ReadOnlyCollection<TSource>(new List<TSource>());

@@ -139,138 +139,6 @@ namespace System.Linq.Expressions
             return Add(left, right, null);
         }
 
-        public static BinaryExpression AddChecked(Expression left, Expression right, MethodInfo method)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static BinaryExpression AddChecked(Expression left, Expression right)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static BinaryExpression And(Expression left, Expression right, MethodInfo method)
-        {
-            CheckLeftRight(left, right);
-
-            throw new NotImplementedException();
-        }
-
-        public static BinaryExpression And(Expression left, Expression right)
-        {
-            return And(left, right, null);
-        }
-
-        public static BinaryExpression AndAlso(Expression left, Expression right, MethodInfo method)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static BinaryExpression AndAlso(Expression left, Expression right)
-        {
-            return AndAlso(left, right, null);
-        }
-
-        public static MethodCallExpression ArrayIndex(Expression array, IEnumerable<Expression> indexes)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static BinaryExpression ArrayIndex(Expression array, Expression index)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static MethodCallExpression ArrayIndex(Expression array, params Expression[] indexes)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static UnaryExpression ArrayLength(Expression array)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static MemberAssignment Bind(MemberInfo member, Expression expression)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static MemberAssignment Bind(MethodInfo propertyAccessor, Expression expression)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static MethodCallExpression Call(Expression instance, MethodInfo method)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static MethodCallExpression Call(MethodInfo method, params Expression[] arguments)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static MethodCallExpression Call(Expression instance, MethodInfo method, params Expression[] arguments)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static MethodCallExpression Call(Expression instance, MethodInfo method, IEnumerable<Expression> arguments)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static MethodCallExpression Call(Expression instance, string methodName, Type[] typeArguments, params Expression[] arguments)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static MethodCallExpression Call(Type type, string methodName, Type[] typeArguments, params Expression[] arguments)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static MethodCallExpression CallVirtual(Expression instance, MethodInfo method)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static MethodCallExpression CallVirtual(Expression instance, MethodInfo method, params Expression[] arguments)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static MethodCallExpression CallVirtual(Expression instance, MethodInfo method, IEnumerable<Expression> arguments)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static UnaryExpression Cast(Expression expression, Type type)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static UnaryExpression Cast(Expression expression, Type type, MethodInfo method)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static BinaryExpression Coalesce(Expression left, Expression right)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static BinaryExpression Coalesce(Expression left, Expression right, MethodInfo conversion)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static ConditionalExpression Condition(Expression test, Expression ifTrue, Expression ifFalse)
-        {
-            throw new NotImplementedException();
-        }
-
         public static ConstantExpression Constant(object value)
         {
             Type valueType = null;
@@ -287,58 +155,6 @@ namespace System.Linq.Expressions
                 throw new ArgumentException();
 
             return new ConstantExpression(value, type);
-        }
-
-        public static UnaryExpression Convert(Expression expression, Type type)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static UnaryExpression Convert(Expression expression, Type type, MethodInfo method)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static UnaryExpression ConvertChecked(Expression expression, Type type)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static UnaryExpression ConvertChecked(Expression expression, Type type, MethodInfo method)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static BinaryExpression Divide(Expression left, Expression right)
-        {
-            return Divide(left, right);
-        }
-
-        public static BinaryExpression Divide(Expression left, Expression right, MethodInfo method)
-        {
-            CheckLeftRight(left, right);
-
-            throw new NotImplementedException();
-        }
-
-        public static BinaryExpression Equal(Expression left, Expression right)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static BinaryExpression Equal(Expression left, Expression right, bool liftToNull, MethodInfo method)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static BinaryExpression ExclusiveOr(Expression left, Expression right)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static BinaryExpression ExclusiveOr(Expression left, Expression right, MethodInfo method)
-        {
-            throw new NotImplementedException();
         }
 
         public static MemberExpression Field(Expression expression, FieldInfo field)
@@ -381,145 +197,15 @@ namespace System.Linq.Expressions
             return typeof(Func<,,,,>).MakeGenericType(typeArgs);
         }
 
-        public static BinaryExpression GreaterThan(Expression left, Expression right)
+        internal static ReadOnlyCollection<TSource> ToReadOnlyCollection<TSource>(IEnumerable<TSource> source)
         {
-            throw new NotImplementedException();
-        }
+            if (source == null)
+                return new ReadOnlyCollection<TSource>(new List<TSource>());
 
-        public static BinaryExpression GreaterThan(Expression left, Expression right, bool liftToNull, MethodInfo method)
-        {
-            throw new NotImplementedException();
-        }
+            if (typeof(ReadOnlyCollection<TSource>).IsInstanceOfType(source))
+                return source as ReadOnlyCollection<TSource>;
 
-        public static BinaryExpression GreaterThanOrEqual(Expression left, Expression right)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static BinaryExpression GreaterThanOrEqual(Expression left, Expression right, bool liftToNull, MethodInfo method)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static InvocationExpression Invoke(Expression expression, IEnumerable<Expression> arguments)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static InvocationExpression Invoke(Expression expression, params Expression[] arguments)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static Expression<TDelegate> Lambda<TDelegate>(Expression body, params ParameterExpression[] parameters)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static Expression<TDelegate> Lambda<TDelegate>(Expression body, IEnumerable<ParameterExpression> parameters)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static LambdaExpression Lambda(Expression body, params ParameterExpression[] parameters)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static LambdaExpression Lambda(Type delegateType, Expression body, params ParameterExpression[] parameters)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static LambdaExpression Lambda(Type delegateType, Expression body, IEnumerable<ParameterExpression> parameters)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static BinaryExpression LeftShift(Expression left, Expression right)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static BinaryExpression LeftShift(Expression left, Expression right, MethodInfo method)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static BinaryExpression LessThan(Expression left, Expression right)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static BinaryExpression LessThan(Expression left, Expression right, bool liftToNull, MethodInfo method)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static BinaryExpression LessThanOrEqual(Expression left, Expression right)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static BinaryExpression LessThanOrEqual(Expression left, Expression right, bool liftToNull, MethodInfo method)
-        {
-            throw new NotImplementedException();
-        }
-
-/*
-        public static LiftExpression Lift(Expression expression, IEnumerable<ParameterExpression> parameters, IEnumerable<Expression> arguments)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static LiftExpression Lift(Expression expression, ParameterExpression parameter, Expression argument)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static LiftExpression LiftEqual(Expression expression, IEnumerable<ParameterExpression> parameters, IEnumerable<Expression> arguments)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static LiftExpression LiftFalse(Expression expression, IEnumerable<ParameterExpression> parameters, IEnumerable<Expression> arguments)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static LiftExpression LiftFalse(Expression expression, ParameterExpression parameter, Expression argument)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static LiftExpression LiftNotEqual(Expression expression, IEnumerable<ParameterExpression> parameters, IEnumerable<Expression> arguments)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static LiftExpression LiftTrue(Expression expression, IEnumerable<ParameterExpression> parameters, IEnumerable<Expression> arguments)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static LiftExpression LiftTrue(Expression expression, ParameterExpression parameter, Expression argument)
-        {
-            throw new NotImplementedException();
-        }
-*/
-        public static MemberListBinding ListBind(MemberInfo member, params Expression[] initializers)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static MemberListBinding ListBind(MemberInfo member, IEnumerable<Expression> initializers)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static MemberListBinding ListBind(MethodInfo propertyAccessor, IEnumerable<Expression> initializers)
-        {
-            throw new NotImplementedException();
+            return new ReadOnlyCollection<TSource>(System.Linq.Enumerable.ToArray<TSource>(source));
         }
 
         public static ListInitExpression ListInit(NewExpression newExpression, params Expression[] initializers)
@@ -527,7 +213,7 @@ namespace System.Linq.Expressions
             if (initializers == null)
                 throw new ArgumentNullException("inizializers");
 
-            return ListInit(newExpression, ExpressionUtil.GetReadOnlyCollection (initializers));
+            return ListInit(newExpression, ToReadOnlyCollection<Expression>(initializers));
         }
 
         public static ListInitExpression ListInit(NewExpression newExpression, IEnumerable<Expression> initializers)
@@ -537,7 +223,7 @@ namespace System.Linq.Expressions
             if (initializers == null)
                 throw new ArgumentNullException("inizializers");
 
-            return new ListInitExpression(newExpression, ExpressionUtil.GetReadOnlyCollection(initializers));
+            return new ListInitExpression(newExpression, ToReadOnlyCollection<Expression>(initializers));
         }
 
         public static MemberInitExpression MemberInit(NewExpression newExpression, IEnumerable<MemberBinding> bindings)
@@ -548,7 +234,7 @@ namespace System.Linq.Expressions
             if (bindings == null)
                 throw new ArgumentNullException("bindings");
 
-            return new MemberInitExpression(newExpression, ExpressionUtil.GetReadOnlyCollection(bindings));
+            return new MemberInitExpression(newExpression, ToReadOnlyCollection<MemberBinding>(bindings));
         }
 
         public static MemberExpression Property(Expression expression, PropertyInfo property)
