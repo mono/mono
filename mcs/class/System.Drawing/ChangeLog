@@ -1,3 +1,8 @@
+2007-03-29  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* nunit-host-ignore-list: Re-enable TIFF test cases on SPARC bots and
+	remove some test cases on the ARM bot.
+
 2007-03-28  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* nunit-host-ignore-list: More test cases that fails on SPARC bots.
