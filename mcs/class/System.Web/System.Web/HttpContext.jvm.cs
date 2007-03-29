@@ -74,5 +74,24 @@ namespace System.Web {
 				return _httpRuntime;
 			}
 		}
+
+		// Timeout is not supported in GH
+		internal bool CheckIfTimeout (DateTime t)
+		{
+			return false;
+		}
+
+		internal bool TimeoutPossible
+		{
+			get { return false; }
+		}
+
+		internal void BeginTimeoutPossible ()
+		{
+		}
+
+		internal void EndTimeoutPossible ()
+		{
+		}
 	}
 }

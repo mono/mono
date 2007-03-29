@@ -579,6 +579,7 @@ namespace System.Web {
 			}
 		}
 
+#if !TARGET_J2EE
 		internal bool CheckIfTimeout (DateTime t)
 		{
 			if (Interlocked.CompareExchange (ref timeout_possible, 0, 0) == 0)
@@ -601,6 +602,7 @@ namespace System.Web {
 		{
 			Interlocked.CompareExchange (ref timeout_possible, 0, 1);
 		}
+#endif
 #endregion
 
 #if NET_2_0

@@ -1,3 +1,8 @@
+2007-03-29  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* HttpContext.cs: timeout methods removed from TARGET_J2EE compilation
+	* HttpContext.jvm.cs: added stubs for timeout methods
+
 2007-03-28 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* StaticSiteMapProvider.cs:
