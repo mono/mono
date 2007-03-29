@@ -284,6 +284,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms.RTF\Picture.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms.RTF\RTF.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -4409,7 +4414,15 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "resources\16_dialog-error.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "resources\dialog-information.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\16_dialog-information.png"
                     BuildAction = "EmbeddedResource"
                 />
                 <File
@@ -4418,6 +4431,10 @@
                 />
                 <File
                     RelPath = "resources\dialog-warning.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\16_dialog-warning.png"
                     BuildAction = "EmbeddedResource"
                 />
                 <File

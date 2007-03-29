@@ -171,6 +171,7 @@
     <Compile Include="System.Windows.Forms.RTF\KeysInit.cs" />
     <Compile Include="System.Windows.Forms.RTF\Major.cs" />
     <Compile Include="System.Windows.Forms.RTF\Minor.cs" />
+    <Compile Include="System.Windows.Forms.RTF\Picture.cs" />
     <Compile Include="System.Windows.Forms.RTF\RTF.cs" />
     <Compile Include="System.Windows.Forms.RTF\RTFException.cs" />
     <Compile Include="System.Windows.Forms.RTF\StandardCharCode.cs" />
@@ -1088,14 +1089,23 @@
     <EmbeddedResource Include="resources\dialog-error.png">
       <LogicalName>dialog-error.png</LogicalName>
     </EmbeddedResource>
+    <EmbeddedResource Include="resources\16_dialog-error.png">
+      <LogicalName>16_dialog-error.png</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="resources\dialog-information.png">
       <LogicalName>dialog-information.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\16_dialog-information.png">
+      <LogicalName>16_dialog-information.png</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources\dialog-question.png">
       <LogicalName>dialog-question.png</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources\dialog-warning.png">
       <LogicalName>dialog-warning.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\16_dialog-warning.png">
+      <LogicalName>16_dialog-warning.png</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources\1-up.png">
       <LogicalName>1-up.png</LogicalName>
