@@ -263,7 +263,22 @@ namespace System.Windows.Forms {
 				timer.Enabled = false;
 				timer.Tick += new EventHandler (HandleTimer);
 			}
+			
+			protected override void Dispose (bool disposing)
+			{
+				if (disposing) {
+					timer.Stop();
+					timer.Dispose();
+				}
+				base.Dispose (disposing);
+			}
 
+
+			public new void Close () {
+				base.Close ();
+				XplatUI.SendMessage (owner, Msg.WM_USER, IntPtr.Zero, (IntPtr) Msg.NIN_BALLOONHIDE);
+			}
+			
 			protected override void OnShown (EventArgs e)
 			{
 				base.OnShown (e);
@@ -289,21 +304,20 @@ namespace System.Windows.Forms {
 			// To be used when we have a "close button" inside balloon.
 			//private void HandleClick (object sender, EventArgs e)
 			//{
-			//	XplatUI.SendMessage (owner, Msg.WM_USER, IntPtr.Zero, (IntPtr) Msg.NIN_BALLOONHIDE);
 			//	Close ();
 			//}
 
 			private void HandleMouseDown (object sender, MouseEventArgs e)
 			{
 				XplatUI.SendMessage (owner, Msg.WM_USER, IntPtr.Zero, (IntPtr) Msg.NIN_BALLOONUSERCLICK);
-				Close ();
+				base.Close ();
 			}
 
 			private void HandleTimer (object sender, EventArgs e)
 			{
 				timer.Stop ();
 				XplatUI.SendMessage (owner, Msg.WM_USER, IntPtr.Zero, (IntPtr) Msg.NIN_BALLOONTIMEOUT);
-				Close ();
+				base.Close ();
 			}
 			
 			internal StringFormat Format {
@@ -327,7 +341,7 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			public string Text {
+			public override string Text {
 				get { return this.text; }
 				set { 
 					if (value == this.text)
