@@ -46,7 +46,7 @@ namespace System.Web.UI
 								    string inputFile, 
 								    HttpContext context)
 		{
-			Type tmpType = PageMapper.GetObjectType(virtualPath);
+			Type tmpType = PageMapper.GetObjectType(context, virtualPath);
 			if (tmpType == null)
 				throw new InvalidOperationException ("Documentation page '" + virtualPath + "' not found");
 			Object obj = Activator.CreateInstance(tmpType);

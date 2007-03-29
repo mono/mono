@@ -46,7 +46,7 @@ namespace System.Web.UI
 		{
 			virtualPath = "~/App_Themes/" + virtualPath + "/";
 			string resolvedUrl = System.Web.Util.UrlUtils.ResolveVirtualPathFromAppAbsolute (virtualPath).TrimEnd('/');
-			Type tmpType = PageMapper.GetObjectType (resolvedUrl);
+			Type tmpType = PageMapper.GetObjectType (context, resolvedUrl);
             if (tmpType == null)
                 throw new InvalidOperationException("ThemeDirectoryCompiler '" + virtualPath + "' not found");
 

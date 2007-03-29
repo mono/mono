@@ -40,7 +40,7 @@ namespace System.Web.UI {
 	{
 		public static Type GetCompiledType (string filePath, HttpContext context)
 		{
-			return PageMapper.GetObjectType(context.Request.FilePath);
+			return PageMapper.GetObjectType (context, context.Request.FilePath);
 		}
 	}
 }

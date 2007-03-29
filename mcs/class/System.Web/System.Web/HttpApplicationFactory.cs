@@ -382,14 +382,14 @@ namespace System.Web {
 
 					if (app_file != null) {
 #if TARGET_J2EE
-						app_type = System.Web.J2EE.PageMapper.GetObjectType(app_file);
+						app_type = System.Web.J2EE.PageMapper.GetObjectType(context, app_file);
 #else
 						app_type = ApplicationFileParser.GetCompiledApplicationType (app_file, context);
+#endif
 						if (app_type == null) {
 							string msg = String.Format ("Error compiling application file ({0}).", app_file);
 							throw new ApplicationException (msg);
 						}
-#endif
 					} else {
 						app_type = typeof (System.Web.HttpApplication);
 						app_state = new HttpApplicationState ();

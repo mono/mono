@@ -50,7 +50,7 @@ namespace System.Web.J2EE
 			Assembly resolvedAssembly = null;
 			try
 			{
-				resolvedAssembly = GetCachedAssembly (args.Name);
+				resolvedAssembly = GetCachedAssembly (HttpContext.Current, args.Name);
 			}
 			catch (Exception ex)
 			{
@@ -132,7 +132,7 @@ namespace System.Web.J2EE
 
 		}
 #endif
-		private static ICachedXmlDoc GetAssembliesCachedDocument()
+		private static ICachedXmlDoc GetAssembliesCachedDocument(HttpContext context)
 		{
 			ICachedXmlDoc doc = (ICachedXmlDoc) AppDomain.CurrentDomain.GetData (J2EEConsts.ASSEMBLIES_FILE);
 
@@ -147,7 +147,7 @@ namespace System.Web.J2EE
 							AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler (CurrentDomain_AssemblyResolve);
 							try {
 								//Try to load the  global resources
-								HttpContext.AppGlobalResourcesAssembly = GetCachedAssembly ("app_globalresources");
+								HttpContext.AppGlobalResourcesAssembly = GetCachedAssembly (context, "app_globalresources");
 							}
 							catch (Exception ex) {
 #if DEBUG
@@ -176,44 +176,40 @@ namespace System.Web.J2EE
 			return new CachedDocumentTypeStorage();
 		}
 
-		public static Type GetObjectType(string url)
+		public static Type GetObjectType (HttpContext context, string url)
 		{
-			return GetCachedType(NormalizeName(url), true);
+			return GetCachedType(context, NormalizeName(url), true);
 		}
 
-		public static Type GetObjectType (string url, bool throwException) {
-			return GetCachedType (NormalizeName (url), throwException);
+		public static Type GetObjectType (HttpContext context, string url, bool throwException) {
+			return GetCachedType (context, NormalizeName (url), throwException);
 		}
 
-		public static Assembly GetObjectAssembly(string url)
+		public static Assembly GetObjectAssembly (HttpContext context, string url)
 		{
-			return GetCachedAssembly(NormalizeName(url));
+			return GetCachedAssembly (context, NormalizeName (url));
 		}
-		public static string GetAssemblyResource(string url)
+		public static string GetAssemblyResource (HttpContext context, string url)
 		{
-			return GetCachedResource(NormalizeName(url));
+			return GetCachedResource (context, NormalizeName (url));
 		}
-		private static string GetCachedResource(string url)
+		private static string GetCachedResource (HttpContext context, string url)
 		{
-			ICachedXmlDoc doc = PageMapper.GetAssembliesCachedDocument();
-			return doc.GetAssemblyResourceName(url);
+			ICachedXmlDoc doc = PageMapper.GetAssembliesCachedDocument(context);
+			return doc.GetAssemblyResourceName (context, url);
 		}
-		private static Assembly GetCachedAssembly(string url)
+		private static Assembly GetCachedAssembly (HttpContext context, string url)
 		{
-			ICachedXmlDoc doc = PageMapper.GetAssembliesCachedDocument();
-			Assembly t = doc.GetAssembly(url);
-			if (t == null)
-				throw new HttpException(404, "The requested resource (" + url + ") is not available.");
-
-			return t;
+			ICachedXmlDoc doc = PageMapper.GetAssembliesCachedDocument(context);
+			return doc.GetAssembly (context, url);
 		}
-		private static Type GetCachedType (string url) {
-			return GetCachedType (url, true);
+		private static Type GetCachedType (HttpContext context, string url) {
+			return GetCachedType (context, url, true);
 		}
-		private static Type GetCachedType (string url, bool throwException)
+		private static Type GetCachedType (HttpContext context, string url, bool throwException)
 		{
-			ICachedXmlDoc doc = PageMapper.GetAssembliesCachedDocument();						
-			Type t = doc.GetType(url);
+			ICachedXmlDoc doc = PageMapper.GetAssembliesCachedDocument(context);						
+			Type t = doc.GetType(context, url);
 			if (t == null && throwException)
 				throw new HttpException(404,"The requested resource (" + url + ") is not available.");
 
@@ -223,9 +219,9 @@ namespace System.Web.J2EE
 		#region ICachedXmlDoc interface
 		interface ICachedXmlDoc
 		{
-			Type GetType(string key);
-			Assembly GetAssembly(string key);
-			string GetAssemblyResourceName(string key);
+			Type GetType (HttpContext context, string key);
+			Assembly GetAssembly (HttpContext context, string key);
+			string GetAssemblyResourceName (HttpContext context, string key);
 		}
 		#endregion
 
@@ -249,17 +245,17 @@ namespace System.Web.J2EE
 				this(DEFAULT_PAGES_NUMBER)
 			{}
 
-			string ICachedXmlDoc.GetAssemblyResourceName(string o)
+			string ICachedXmlDoc.GetAssemblyResourceName (HttpContext context, string o)
 			{
-				return GetMetaByURL(o).Resource;
+				return GetMetaByURL(context, o).Resource;
 			}
-			Type ICachedXmlDoc.GetType(string o)
+			Type ICachedXmlDoc.GetType (HttpContext context, string o)
 			{
-				return GetMetaByURL(o).Type;
+				return GetMetaByURL(context, o).Type;
 			}
-			Assembly ICachedXmlDoc.GetAssembly(string o)
+			Assembly ICachedXmlDoc.GetAssembly (HttpContext context, string o)
 			{
-				return GetMetaByURL(o).Assembly;
+				return GetMetaByURL(context, o).Assembly;
 			}
 
 			internal IDictionaryEnumerator GetEnumerator()
@@ -272,17 +268,17 @@ namespace System.Web.J2EE
 			//but only will became important in production mode when dynamyc compilation will be enabled
 			//Anyway, locking whole table and compiling under lock looks odd
 			//spivak.December 07 2006
-			public MetaProvider GetMetaByURL(string url)
+			public MetaProvider GetMetaByURL(HttpContext context, string url)
 			{
 
 #if !NO_GLOBAL_LOCK_ON_COMPILE
-				string lwUrl = url.ToLower();
+				string lwUrl = url.ToLowerInvariant();
 				lock (_table)
 				{
 					object retVal = _table[lwUrl];
 					if (retVal == null)
 					{
-						retVal = PageCompiler.GetCompiler(url);
+						retVal = PageCompiler.GetCompiler(context, url);
 						_table[lwUrl] = retVal;
 					}
 				
@@ -338,7 +334,6 @@ namespace System.Web.J2EE
 		private static readonly string ASSEM_ATTRIB_NAME = "assem";
 		private static readonly string TYPE_ATTRIB_NAME = "type";
 		private static string _parser = null;
-		private static PageCompiler _errorProvider = new PageCompiler();
 
 		private Type _type = null;
 		private string _typeName = null;
@@ -347,34 +342,20 @@ namespace System.Web.J2EE
 		private string _xmlDescriptor = null;
 		private string _url = null;
 		private string _session = null;
+		readonly private HttpContext _context;
 
-		PageCompiler(string url)
+		PageCompiler(HttpContext context, string url)
 		{
 			_url = url;
+			_context = context;
 			_xmlDescriptor = GetDescFromUrl();
 			_session = DateTime.Now.Ticks.ToString();
 			LoadTypeAndAssem();
 		}
-		PageCompiler()
-		{
-		}
 
-		public static PageCompiler Error
+		public static PageCompiler GetCompiler(HttpContext context, string url)
 		{
-			get 
-			{
-				return _errorProvider; 
-			}
-		}
-		public static PageCompiler GetCompiler(string url)
-		{
-			try{
-				return new PageCompiler(url);
-			}
-			catch(Exception e)
-			{
-				return Error;
-			}
+			return new PageCompiler(context, url);
 		}
 
 		Type MetaProvider.Type
@@ -410,11 +391,11 @@ namespace System.Web.J2EE
 				}
 			}
 		}
-		private void InternalCompile()
+		private bool InternalCompile()
 		{
 			string fileName = Path.GetFileName(_url);
 
-			string fullFileName = (fileName.ToLower() == "global.asax") ? _url : HttpContext.Current.Request.MapPath(_url);
+			string fullFileName = (fileName.ToLower () == "global.asax") ? _url : _context.Request.MapPath (_url);
 #if DEBUG
 			Console.WriteLine("fullFileName=" + fullFileName);
 #endif
@@ -424,11 +405,14 @@ namespace System.Web.J2EE
 				string[] command = GetParserCmd(fileName.ToLower() == "global.asax");
 				if (J2EEUtils.RunProc(command) != 0)
 					throw GetCompilerError();
+
+				return true;
 			}
 			else
 			{
-				string message = "The requested resource (" + _url + ") is not available.";
-				throw new HttpException(404, message);
+				return false;
+				//string message = "The requested resource (" + _url + ") is not available.";
+				//throw new HttpException(404, message);
 			}
 		}
 		private string GetDescriptorPath()
@@ -439,7 +423,7 @@ namespace System.Web.J2EE
 		{
 			try
 			{
-				using (StreamReader sr = new StreamReader(HttpContext.Current.Request.MapPath("/" + GetDescriptorPath())))
+				using (StreamReader sr = new StreamReader(_context.Request.MapPath("~/" + GetDescriptorPath())))
 				{
 					return GetTypeFromDescStream(sr.BaseStream);
 				}
@@ -484,8 +468,8 @@ namespace System.Web.J2EE
 			if (typeName == null)
 			{
 				//spawn dynamic compilation and lookup typename from created folder
-				InternalCompile();
-				typeName = GetTypeNameFromAppFolder();
+				if (InternalCompile())
+					typeName = GetTypeNameFromAppFolder();
 			}
 			return typeName;
 		}
@@ -547,7 +531,7 @@ namespace System.Web.J2EE
 			if (_parser == null)
 			{
 				StreamReader sr =
-					File.OpenText(HttpContext.Current.Request.MapPath("/AspxParser.params"));
+					File.OpenText (_context.Request.MapPath ("~/AspxParser.params"));
 				_parser = sr.ReadLine();
 				sr.Close();
 			}
@@ -582,7 +566,7 @@ namespace System.Web.J2EE
 
 		private Exception GetCompilerError()
 		{
-			string _errFile = HttpContext.Current.Request.MapPath("/" + _session + ".vmwerr");
+			string _errFile = _context.Request.MapPath ("~/" + _session + ".vmwerr");
 			
 			if (!File.Exists(_errFile))
 				throw new FileNotFoundException("Internal Error",_errFile);

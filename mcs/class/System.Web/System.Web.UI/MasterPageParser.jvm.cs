@@ -49,7 +49,7 @@ namespace System.Web.UI
 		public static MasterPage GetCompiledMasterInstance (string virtualPath, string inputFile, HttpContext context)
 		{
 			string resolvedUrl = System.Web.Util.UrlUtils.ResolveVirtualPathFromAppAbsolute (virtualPath);
-			Type tmpType = PageMapper.GetObjectType (resolvedUrl);
+			Type tmpType = PageMapper.GetObjectType (context, resolvedUrl);
 			if (tmpType == null)
 				throw new InvalidOperationException ("Master page '" + virtualPath + "' not found");
 

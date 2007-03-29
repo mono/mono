@@ -276,7 +276,7 @@ namespace System.Web.UI {
 				throw new ArgumentNullException ("virtualPath");
 
 			string vpath = UrlUtils.Combine (TemplateSourceDirectory, virtualPath);
-			return PageMapper.GetObjectType (vpath);
+			return PageMapper.GetObjectType (Context, vpath);
 		}
 
 		public Control LoadControl (string virtualPath)
@@ -352,7 +352,9 @@ namespace System.Web.UI {
 			java.lang.ClassLoader contextClassLoader = c.getClassLoader ();
 
 			//TODO:move this code to page mapper
-			string assemblyName = PageMapper.GetAssemblyResource (this.AppRelativeVirtualPath);
+			string assemblyName = PageMapper.GetAssemblyResource (HttpContext.Current, this.AppRelativeVirtualPath);
+			if (assemblyName == null)
+				throw new HttpException (404, "The requested resource (" + this.AppRelativeVirtualPath + ") is not available.");
 
 			java.io.InputStream inputStream = contextClassLoader.getResourceAsStream (assemblyName);
 
