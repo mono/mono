@@ -1,5 +1,10 @@
 2007-03-29  Raja R Harinath  <rharinath@novell.com>
 
+	Prepare to kill 'Reachability'
+	* flowanalysis.cs (UsageVector.is_unreachable): New.
+	(UsageVector): Update to maintain 'is_unreachable' in parallel to
+	'reachability', and verify they're consistent.
+
 	Fix #81121
 	* expression.cs (New.EmitStatement): Handle type parameters here too.
 
