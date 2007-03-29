@@ -4857,6 +4857,48 @@ namespace System.Windows.Forms
 		}
 		#endregion	// ToolTip
 
+		#region BalloonWindow
+#if NET_2_0
+		public override void DrawBalloonWindow (Graphics dc, Rectangle clip, NotifyIcon.BalloonWindow control) 
+		{
+			Brush solidbrush = ResPool.GetSolidBrush(this.ColorInfoText);
+			Rectangle rect = control.ClientRectangle;
+			
+			// Rectangle borders and background.
+			dc.FillRectangle (SystemBrushes.Info, control.ClientRectangle);
+			dc.DrawRectangle (SystemPens.WindowFrame, 0, 0, control.Width-1, control.Height-1);
+			
+			// Title
+			Rectangle titlerect = new Rectangle (rect.X + 5, rect.Y + 5, rect.Width - 10, rect.Height - 10);
+			Font titlefont = new Font (control.Font.FontFamily, control.Font.Size, control.Font.Style | FontStyle.Bold, control.Font.Unit);
+			dc.DrawString (control.Title, titlefont, solidbrush, titlerect, control.Format);
+			
+			// Text
+			Rectangle textrect = new Rectangle (rect.X + 5, rect.Y + 5, rect.Width - 10, rect.Height - 10);
+			StringFormat textformat = control.Format;
+			textformat.LineAlignment = StringAlignment.Far;
+			dc.DrawString (control.Text, control.Font, solidbrush, textrect, textformat);
+		}
+
+		public override Rectangle BalloonWindowRect (NotifyIcon.BalloonWindow control)
+		{
+			Rectangle deskrect = Screen.GetWorkingArea (control);
+			SizeF maxsize = new SizeF (250, 200);
+
+			SizeF titlesize = control.DeviceContext.MeasureString (control.Title, control.Font, maxsize, control.Format);
+			SizeF textsize = control.DeviceContext.MeasureString (control.Text, control.Font, maxsize, control.Format);
+			
+			Rectangle rect = new Rectangle ();
+			rect.Height = (int) (titlesize.Height + textsize.Height + 15);
+			rect.Width = (int) ((titlesize.Width > textsize.Width) ? titlesize.Width : textsize.Width) + 10;
+			rect.X = deskrect.Width - rect.Width - 2;
+			rect.Y = deskrect.Height - rect.Height - 2;
+			
+			return rect;
+		}
+#endif
+		#endregion	// BalloonWindow
+
 		#region	TrackBar
 		public override int TrackBarValueFromMousePosition (int x, int y, TrackBar tb)
 		{

@@ -28,6 +28,7 @@ using System;
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Drawing;
+using System.Drawing.Text;
 
 namespace System.Windows.Forms {
 	[DefaultProperty("Text")]
@@ -236,6 +237,122 @@ namespace System.Windows.Forms {
 			}
 		}
 		#endregion	// NotifyIconWindow Class
+		
+		#region NotifyIconBalloonWindow Class
+#if NET_2_0
+		internal class BalloonWindow : Form 
+		{
+			private IntPtr owner;
+			private Timer timer;
+			
+			private string title;
+			private string text;
+			private ToolTipIcon icon;
+
+			public BalloonWindow (IntPtr owner)
+			{
+				this.owner = owner;
+				
+				StartPosition = FormStartPosition.Manual;
+				FormBorderStyle = FormBorderStyle.None;
+				TopMost = true;
+
+				MouseDown += new MouseEventHandler (HandleMouseDown);
+				
+				timer = new Timer ();
+				timer.Enabled = false;
+				timer.Tick += new EventHandler (HandleTimer);
+			}
+
+			protected override void OnShown (EventArgs e)
+			{
+				base.OnShown (e);
+				timer.Start ();
+			}
+			
+			protected override void OnPaint (PaintEventArgs e) 
+			{
+				ThemeEngine.Current.DrawBalloonWindow (e.Graphics, ClientRectangle, this);
+				base.OnPaint (e);
+			}
+
+			private void Recalculate () 
+			{
+				Rectangle rect = ThemeEngine.Current.BalloonWindowRect (this);
+				
+				Left = rect.Left;
+				Top = rect.Top;
+				Width = rect.Width;
+				Height = rect.Height;
+			}
+
+			// To be used when we have a "close button" inside balloon.
+			//private void HandleClick (object sender, EventArgs e)
+			//{
+			//	XplatUI.SendMessage (owner, Msg.WM_USER, IntPtr.Zero, (IntPtr) Msg.NIN_BALLOONHIDE);
+			//	Close ();
+			//}
+
+			private void HandleMouseDown (object sender, MouseEventArgs e)
+			{
+				XplatUI.SendMessage (owner, Msg.WM_USER, IntPtr.Zero, (IntPtr) Msg.NIN_BALLOONUSERCLICK);
+				Close ();
+			}
+
+			private void HandleTimer (object sender, EventArgs e)
+			{
+				timer.Stop ();
+				XplatUI.SendMessage (owner, Msg.WM_USER, IntPtr.Zero, (IntPtr) Msg.NIN_BALLOONTIMEOUT);
+				Close ();
+			}
+			
+			internal StringFormat Format {
+				get {
+					StringFormat format = new StringFormat ();
+					format.Alignment = StringAlignment.Near;
+					format.HotkeyPrefix = HotkeyPrefix.Hide;
+
+					return format;
+				}
+			}
+
+			public string Title {
+				get { return this.title; }
+				set { 
+					if (value == this.title)
+						return;
+
+					this.title = value;
+					Recalculate ();
+				}
+			}
+
+			public string Text {
+				get { return this.text; }
+				set { 
+					if (value == this.text)
+						return;
+
+					this.text = value;
+					Recalculate ();
+				}
+			}
+			
+			public int Timeout {
+				get { return timer.Interval; }
+				set {
+					// Some systems theres a limitiation in timeout, WinXP is between 10k and 30k.
+					if (value < 10000)
+						timer.Interval = 10000;
+					else if (value > 30000)
+						timer.Interval = 30000;
+					else
+						timer.Interval = value;
+				}
+			}
+		}
+#endif
+		#endregion  // NotifyIconBalloonWindow Class
 
 		#region Public Constructors
 		public NotifyIcon() {

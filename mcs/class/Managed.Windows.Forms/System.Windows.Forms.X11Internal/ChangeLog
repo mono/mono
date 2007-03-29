@@ -1,3 +1,7 @@
+2007-03-29  Everaldo Canuto  <everaldo@simios.org>
+
+	* XplatUIX11-new.cs: Implement SystrayBalloon for X11 systems. 
+
 2007-03-20  Everaldo Canuto  <everaldo@simios.org>
 
 	* XplatUIX11-new.cs: Remove unneeded parameter owner in SetTopmost. 

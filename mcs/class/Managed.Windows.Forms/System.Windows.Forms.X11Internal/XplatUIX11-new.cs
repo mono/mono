@@ -1015,7 +1015,18 @@ namespace System.Windows.Forms.X11Internal {
 #if NET_2_0
 		internal override void SystrayBalloon(IntPtr handle, int timeout, string title, string text, ToolTipIcon icon)
 		{
-			// TODO:
+			Control control = Control.FromHandle(handle);
+			
+			if (control == null)
+				return;
+
+			NotifyIcon.BalloonWindow form = new NotifyIcon.BalloonWindow (handle);
+			form.Title = title;
+			form.Text = text;
+			form.Timeout = timeout;
+			form.Show ();
+			
+			SendMessage(handle, Msg.WM_USER, IntPtr.Zero, (IntPtr) Msg.NIN_BALLOONSHOW);	
 		}
 #endif
 

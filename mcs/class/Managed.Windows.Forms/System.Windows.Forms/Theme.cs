@@ -912,6 +912,12 @@ namespace System.Windows.Forms
 		public abstract Size ToolTipSize(ToolTip.ToolTipWindow tt, string text);
 		#endregion	// ToolTip
 		
+		#region BalloonWindow
+#if NET_2_0
+		public abstract void DrawBalloonWindow (Graphics dc, Rectangle clip, NotifyIcon.BalloonWindow control);
+		public abstract Rectangle BalloonWindowRect (NotifyIcon.BalloonWindow control);
+#endif
+		#endregion	// BalloonWindow
 
 		#region TrackBar
 		// Drawing

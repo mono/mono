@@ -1,3 +1,15 @@
+2007-03-28  Everaldo Canuto  <everaldo@simios.org>
+
+	[Fixes #79149]
+
+	* XplatUIX11.cs: Implement SystrayBalloon for X11 systems.
+
+	* ThemeWin32Classic.cs, Theme.cs: DrawBalloonWindow and BalloonWindowRect 
+	implemented, this methods is used by NotifyIcon.BalloonWindow class.
+
+	* NotifyIcon.cs: BalloonWindow class added to support Balloon in X11 
+	systems.
+
 2007-03-28  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListViewItem.cs: Forgot to make Invalidate internal.
