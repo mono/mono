@@ -1,3 +1,8 @@
+2007-03-29  Everaldo Canuto  <everaldo@simios.org>
+
+	* NotifyIcon.cs, ThemeWin32Classic.cs: Icon support added to notifyicon
+	balloons.
+
 2007-03-29  Jackson Harper  <jackson@ximian.com>
 
 	* TextControl.cs: When deleting text from non multiline textboxes,

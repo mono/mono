@@ -343,6 +343,17 @@ namespace System.Windows.Forms {
 				}
 			}
 
+			public new ToolTipIcon Icon {
+				get { return this.icon; }
+				set { 
+					if (value == this.icon)
+						return;
+
+					this.icon = value;
+					Recalculate ();
+				}
+			}
+
 			public string Title {
 				get { return this.title; }
 				set { 
