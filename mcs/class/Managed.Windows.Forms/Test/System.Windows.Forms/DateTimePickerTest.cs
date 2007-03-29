@@ -3196,7 +3196,7 @@ namespace MonoTests.System.Windows.Forms {
 			log.Clear ();
 			dt.Text = null;
 			Assert.AreEqual (DateTime.Today.ToLongDateString (), dt.Text, "#4");
-			Assert.IsTrue (log.ContainsEventsOrdered ("ValueChanged", "TextChanged"), "#4.1");
+			Assert.IsTrue (log.ContainsEventsOrdered ("ValueChanged", "TextChanged"), "#4.1, expected ValueChanged+TextChanged, got: " + log.EventsJoined ());
 
 			log.Clear (); 
 			dt.CustomFormat = "yyyy-MM-dd HH-mm-ss";
