@@ -159,6 +159,13 @@ namespace System.Windows.Forms {
 			}
 		}
 		
+		public override Color ColorInfo {
+			get { return Color.FromArgb (255, 255, 191); }
+		}
+		
+		static readonly Color info_border_color = Color.FromArgb (218, 178, 85);
+		static readonly Color info_second_color = Color.FromArgb (220, 220, 160);
+		
 		public override Image Images(UIIcon index, int size) {
 			switch (index) {
 			case UIIcon.PlacesRecentDocuments:
@@ -3286,6 +3293,123 @@ namespace System.Windows.Forms {
 				dc.FillPie (buttonBrush, rectangle.X + lineWidth + lineWidth / 2, rectangle.Y + lineWidth + lineWidth / 2, (rectangle.Width - lineWidth * 2) / 3, (rectangle.Height - lineWidth * 2) / 3, 0, 359);
 			}
 		}
+
+		#region ToolTip
+		public override void DrawToolTip (Graphics dc, Rectangle clip_rectangle, ToolTip.ToolTipWindow control)
+		{
+			dc.FillRectangle(ResPool.GetSolidBrush (ColorInfo), control.ClientRectangle);
+			dc.DrawRectangle(ResPool.GetPen (info_border_color), 0, 0, control.Width-1, control.Height-1);
+			dc.DrawString(control.Text, control.Font, ResPool.GetSolidBrush(this.ColorInfoText), control.ClientRectangle, control.string_format);
+		}
+		#endregion	// ToolTip
+
+		#region BalloonWindow
+#if NET_2_0
+		NotifyIcon.BalloonWindow balloon_window;
+		
+		public override void ShowBalloonWindow (IntPtr handle, int timeout, string title, string text, ToolTipIcon icon)
+		{
+			Control control = Control.FromHandle(handle);
+			
+			if (control == null)
+				return;
+
+			if (balloon_window != null) {
+				balloon_window.Close ();
+				balloon_window.Dispose ();
+			}
+
+			balloon_window = new NotifyIcon.BalloonWindow (handle);
+			balloon_window.Title = title;
+			balloon_window.Text = text;
+			balloon_window.Icon = icon;
+			balloon_window.Timeout = timeout;
+			balloon_window.Show ();
+		}
+
+		private const int balloon_iconsize = 48;
+		private const int balloon_bordersize = 8; 
+		
+		public override void DrawBalloonWindow (Graphics dc, Rectangle clip, NotifyIcon.BalloonWindow control) 
+		{
+			Brush solidbrush = ResPool.GetSolidBrush(this.ColorInfoText);
+			Rectangle rect = control.ClientRectangle;
+			int iconsize = (control.Icon == ToolTipIcon.None) ? 0 : balloon_iconsize;
+			
+			// Rectangle borders and background.
+			dc.FillRectangle (ResPool.GetSolidBrush (ColorInfo), rect);
+			dc.FillRectangle (ResPool.GetSolidBrush (info_second_color), new Rectangle (rect.X, rect.Y, (balloon_iconsize/2)+balloon_bordersize, rect.Height));
+			dc.DrawRectangle (ResPool.GetPen (info_border_color), 0, 0, rect.Width - 1, rect.Height - 1);
+
+			// Icon
+			Image image;
+			switch (control.Icon) {
+				case ToolTipIcon.Info: {
+					image = ThemeEngine.Current.Images(UIIcon.MessageBoxInfo, balloon_iconsize);
+					break;
+				}
+
+				case ToolTipIcon.Warning: {
+					image = ThemeEngine.Current.Images(UIIcon.MessageBoxError, balloon_iconsize);
+					break;
+				}
+
+				case ToolTipIcon.Error: {
+					image = ThemeEngine.Current.Images(UIIcon.MessageBoxWarning, balloon_iconsize);
+					break;
+				}
+				
+				default: {
+					image = null;
+					break;
+				}
+			}
+
+			if (control.Icon != ToolTipIcon.None)
+				dc.DrawImage (image, new Rectangle (balloon_bordersize, (2*balloon_bordersize)+7, iconsize, iconsize));
+			
+			// Title
+			Rectangle titlerect = new Rectangle (rect.X + balloon_bordersize + (balloon_iconsize/2) + balloon_bordersize, 
+												rect.Y + balloon_bordersize, 
+												rect.Width - ((3 * balloon_bordersize) + (balloon_iconsize/2)), 
+												rect.Height - (2 * balloon_bordersize));
+			
+			Font titlefont = new Font (control.Font.FontFamily, control.Font.Size, control.Font.Style | FontStyle.Bold, control.Font.Unit);
+			dc.DrawString (control.Title, titlefont, solidbrush, titlerect, control.Format);
+			
+			// Text
+			Rectangle textrect = new Rectangle (rect.X + (2 * balloon_bordersize) + balloon_iconsize, 
+												rect.Y + balloon_bordersize, 
+												rect.Width - ((2 * balloon_bordersize) + balloon_iconsize), 
+												rect.Height - (2 * balloon_bordersize));
+
+			StringFormat textformat = control.Format;
+			textformat.LineAlignment = StringAlignment.Far;
+			dc.DrawString (control.Text, control.Font, solidbrush, textrect, textformat);
+		}
+
+		public override Rectangle BalloonWindowRect (NotifyIcon.BalloonWindow control)
+		{
+			Rectangle deskrect = Screen.GetWorkingArea (control);
+			SizeF maxsize = new SizeF (250, 200);
+
+			SizeF titlesize = control.DeviceContext.MeasureString (control.Title, control.Font, maxsize, control.Format);
+			SizeF textsize = control.DeviceContext.MeasureString (control.Text, control.Font, maxsize, control.Format);
+			
+			if (textsize.Height < balloon_iconsize)
+				textsize.Height = balloon_iconsize;
+			
+			Rectangle rect = new Rectangle ();
+			rect.Height = (int) (titlesize.Height + textsize.Height + (3 * balloon_bordersize));
+			rect.Width = (int) ((titlesize.Width > textsize.Width) ? titlesize.Width : textsize.Width) + (3 * balloon_bordersize) + balloon_iconsize;
+			rect.X = deskrect.Width - rect.Width - 2;
+			rect.Y = deskrect.Height - rect.Height - 2;
+			
+			return rect;
+		}
+#endif
+		#endregion	// BalloonWindow
+		
 	} //class
 }
 

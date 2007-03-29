@@ -4886,13 +4886,13 @@ namespace System.Windows.Forms
 		
 		public override void DrawBalloonWindow (Graphics dc, Rectangle clip, NotifyIcon.BalloonWindow control) 
 		{
-			Brush solidbrush = ResPool.GetSolidBrush(this.ColorInfoText);
+			Brush solidbrush = ResPool.GetSolidBrush (this.ColorInfoText);
 			Rectangle rect = control.ClientRectangle;
 			int iconsize = (control.Icon == ToolTipIcon.None) ? 0 : balloon_iconsize;
 			
 			// Rectangle borders and background.
-			dc.FillRectangle (SystemBrushes.Info, control.ClientRectangle);
-			dc.DrawRectangle (SystemPens.WindowFrame, 0, 0, control.Width - 1, control.Height - 1);
+			dc.FillRectangle (ResPool.GetSolidBrush (ColorInfo), rect);
+			dc.DrawRectangle (ResPool.GetPen (ColorWindowFrame), 0, 0, rect.Width - 1, rect.Height - 1);
 
 			// Icon
 			Image image;

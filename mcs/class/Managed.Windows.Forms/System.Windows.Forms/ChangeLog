@@ -1,5 +1,11 @@
 2007-03-29  Everaldo Canuto  <everaldo@simios.org>
 
+	* ThemeWin32Classic.cs: Small stetic fixes in notifyicon balloon. 
+
+	* ThemeClearlooks.cs: Implement notifyicon balloon for clearlooks theme.
+
+2007-03-29  Everaldo Canuto  <everaldo@simios.org>
+
 	* NotifyIcon.cs, ThemeWin32Classic.cs: Icon support added to notifyicon
 	balloons.
 
