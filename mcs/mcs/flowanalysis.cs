@@ -67,50 +67,6 @@ namespace Mono.CSharp
 			Finally
 		}
 
-		private sealed class Reachability
-		{
-			bool is_unreachable;
-
-			Reachability (bool is_unreachable)
-			{
-				this.is_unreachable = is_unreachable;
-			}
-
-			public Reachability Clone ()
-			{
-				return new Reachability (is_unreachable);
-			}
-
-			public void Meet (Reachability b)
-			{
-				is_unreachable &= b.is_unreachable;
-			}
-
-			public void Or (Reachability b)
-			{
-				is_unreachable |= b.is_unreachable;
-			}
-
-			public static Reachability Always ()
-			{
-				return new Reachability (false);
-			}
-
-			public bool IsUnreachable {
-				get { return is_unreachable; }
-			}
-
-			public void SetBarrier ()
-			{
-				is_unreachable = true;
-			}
-
-			public override string ToString ()
-			{
-				return is_unreachable ? "#" : "-";
-			}
-		}
-
 		public static FlowBranching CreateBranching (FlowBranching parent, BranchingType type, Block block, Location loc)
 		{
 			switch (type) {
@@ -211,7 +167,6 @@ namespace Mono.CSharp
 			// Private.
 			//
 			MyBitVector locals, parameters;
-			Reachability reachability;
 			bool is_unreachable;
 
 			static int next_id = 0;
@@ -237,13 +192,11 @@ namespace Mono.CSharp
 					? MyBitVector.Empty
 					: new MyBitVector (parent == null ? MyBitVector.Empty : parent.parameters, num_params);
 
-				reachability = parent == null ? Reachability.Always () : parent.reachability.Clone ();
 				if (parent != null)
 					is_unreachable = parent.is_unreachable;
 
 				id = ++next_id;
 
-				Check ();
 			}
 
 			public UsageVector (SiblingType type, UsageVector parent, Block block, Location loc)
@@ -257,16 +210,12 @@ namespace Mono.CSharp
 				this.Block = block;
 
 				this.is_unreachable = is_unreachable;
-				this.reachability = Reachability.Always ();
-				if (is_unreachable)
-					this.reachability.SetBarrier ();
 
 				this.parameters = parameters;
 				this.locals = locals;
 
 				id = ++next_id;
 
-				Check ();
 			}
 
 			// <summary>
@@ -278,10 +227,7 @@ namespace Mono.CSharp
 
 				retval.locals = locals.Clone ();
 				retval.parameters = parameters.Clone ();
-				retval.reachability = reachability.Clone ();
 				retval.is_unreachable = is_unreachable;
-
-				retval.Check ();
 
 				return retval;
 			}
@@ -318,29 +264,18 @@ namespace Mono.CSharp
 				var.SetFieldAssigned (var.IsParameter ? parameters : locals, name);
 			}
 
-			void Check ()
-			{
-				if (is_unreachable != reachability.IsUnreachable)
-					throw new InternalErrorException (is_unreachable + " vs. " + reachability.IsUnreachable);
-			}
-
 			public bool IsUnreachable {
-				get { Check (); return is_unreachable; }
+				get { return is_unreachable; }
 			}
 
 			public void ResetBarrier ()
 			{
-				reachability.Meet (Reachability.Always ());
 				is_unreachable = false;
-				Check ();
 			}
 
 			public void Goto ()
 			{
-				if (!reachability.IsUnreachable)
-					reachability.SetBarrier ();
 				is_unreachable = true;
-				Check ();
 			}
 
 			public static UsageVector MergeSiblings (UsageVector sibling_list, Location loc)
@@ -350,7 +285,6 @@ namespace Mono.CSharp
 
 				MyBitVector locals = null;
 				MyBitVector parameters = null;
-				Reachability reachability = sibling_list.reachability.Clone ();
 				bool is_unreachable = sibling_list.is_unreachable;
 
 				if (!sibling_list.IsUnreachable) {
@@ -359,10 +293,7 @@ namespace Mono.CSharp
 				}
 
 				for (UsageVector child = sibling_list.Next; child != null; child = child.Next) {
-					reachability.Meet (child.reachability);
 					is_unreachable &= child.is_unreachable;
-					if (is_unreachable != reachability.IsUnreachable)
-						throw new InternalErrorException ("MergeSiblings: " + is_unreachable + " vs. " + reachability.IsUnreachable);
 
 					if (!child.IsUnreachable) {
 						locals &= child.locals;
@@ -378,9 +309,8 @@ namespace Mono.CSharp
 			// </summary>
 			public UsageVector MergeChild (UsageVector child, bool overwrite)
 			{
-				Report.Debug (2, "    MERGING CHILD EFFECTS", this, child, reachability, Type);
+				Report.Debug (2, "    MERGING CHILD EFFECTS", this, child, Type);
 
-				Reachability new_r = child.reachability;
 				bool new_isunr = child.is_unreachable;
 
 				//
@@ -392,7 +322,7 @@ namespace Mono.CSharp
 				// we need to look at (see above).
 				//
 
-				if ((Type == SiblingType.SwitchSection) && !new_r.IsUnreachable) {
+				if ((Type == SiblingType.SwitchSection) && !new_isunr) {
 					Report.Error (163, Location,
 						      "Control cannot fall through from one " +
 						      "case label to another");
@@ -402,14 +332,10 @@ namespace Mono.CSharp
 				locals |= child.locals;
 				parameters |= child.parameters;
 
-				if (overwrite) {
-					reachability = new_r.Clone ();
+				if (overwrite)
 					is_unreachable = new_isunr;
-				} else {
-					reachability.Or (new_r);
+				else
 					is_unreachable |= new_isunr;
-				}
-				Check ();
 
 				return child;
 			}
@@ -421,7 +347,7 @@ namespace Mono.CSharp
 				if (o_vectors == null)
 					return;
 
-				if (reachability.IsUnreachable) {
+				if (IsUnreachable) {
 					if (locals != null)
 						locals.SetAll (true);
 					if (parameters != null)
@@ -434,9 +360,7 @@ namespace Mono.CSharp
 						continue;
 					locals &= vector.locals;
 					parameters &= vector.parameters;
-					reachability.Meet (vector.reachability);
 					is_unreachable &= vector.is_unreachable;
-					Check ();
 				}
 
 				Report.Debug (1, "  MERGING BREAK ORIGINS DONE", this);
@@ -448,7 +372,7 @@ namespace Mono.CSharp
 
 			public override string ToString ()
 			{
-				return String.Format ("Vector ({0},{1},{2}-{3}-{4})", Type, id, reachability, parameters, locals);
+				return String.Format ("Vector ({0},{1},{2}-{3}-{4})", Type, id, is_unreachable, parameters, locals);
 			}
 		}
 

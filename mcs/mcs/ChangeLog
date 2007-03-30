@@ -1,5 +1,8 @@
 2007-03-30  Raja R Harinath  <rharinath@novell.com>
 
+	* flowanalysis.cs (FlowBranching.Reachability): Remove.
+	(FlowBranching.UsageVector): Update to changes.
+
 	Prepare to kill 'Reachability'
 	* flowanalysis.cs (UsageVector): Remove 'Reachability' from
 	argument of constructor.
