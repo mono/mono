@@ -126,7 +126,6 @@ namespace System.Web
 
 			builder.AppendFormat ("<h2><font color=\"maroon\"><i>{0}</i></font></h2>\r\n",
 					      HtmlEncode (Message));
-
 			builder.AppendFormat ("<b>Description: </b>{0}\r\n<p>\r\n", Description);
 			builder.Append ("<b>Error Message: </b>");
 			if (http_code != 0)
@@ -145,7 +144,7 @@ namespace System.Web
 				builder.Append ("</td></tr>\r\n</table>\r\n<p>\r\n");
 			}
 
-			builder.Append ("<hr>\r\n</body>\r\n</html>\r\n");
+			builder.AppendFormat ("<hr>\r\n{0}</body>\r\n</html>\r\n", DateTime.UtcNow);
 			builder.AppendFormat ("<!--\r\n{0}\r\n-->\r\n", HttpUtility.HtmlEncode (this.ToString ()));
 #if TARGET_J2EE //Required, because toString of Java doesn't print stackTrace
 			builder.AppendFormat ("<!--\r\n{0}\r\n-->\r\n", HttpUtility.HtmlEncode (this.StackTrace));
