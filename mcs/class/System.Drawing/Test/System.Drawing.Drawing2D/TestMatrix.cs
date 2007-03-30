@@ -344,12 +344,12 @@ namespace MonoTests.System.Drawing.Drawing2D
 			Matrix matrix = new Matrix (10, 20, 30, 40, 50, 60);
 			matrix.RotateAt (180, new PointF (10, 10));
 
-			AssertEquals ("I#1", -10, matrix.Elements[0]);
-			AssertEquals ("I#2", -20, matrix.Elements[1]);
-			AssertEquals ("I#3", -30, matrix.Elements[2]);
-			AssertEquals ("I#4", -40, matrix.Elements[3]);
-			AssertEquals ("I#5", 850, matrix.Elements[4]);
-			AssertEquals ("I#6", 1260, matrix.Elements[5]);
+			AssertEquals ("I#1", -10, matrix.Elements[0], 0.01);
+			AssertEquals ("I#2", -20, matrix.Elements[1], 0.01);
+			AssertEquals ("I#3", -30, matrix.Elements[2], 0.01);
+			AssertEquals ("I#4", -40, matrix.Elements[3], 0.01);
+			AssertEquals ("I#5", 850, matrix.Elements[4], 0.01);
+			AssertEquals ("I#6", 1260, matrix.Elements[5], 0.01);
 		}
 
 		[Test]

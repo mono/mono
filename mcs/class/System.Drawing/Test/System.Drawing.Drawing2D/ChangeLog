@@ -1,3 +1,8 @@
+2007-03-30  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* TestMatrix.cs: Allow a small delta when comparing floats. This 
+	allows the ARM to work properly (e.g. -9.999995 versus -10).
+
 2006-09-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* GraphicsPathTest.cs: Added test case for Reverse (and found out that
