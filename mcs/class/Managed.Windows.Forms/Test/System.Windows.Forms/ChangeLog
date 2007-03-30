@@ -1,3 +1,7 @@
+2007-03-30  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* MdiFormTest.cs: Added test for #79964.
+
 2007-03-28  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStripOverflowButtonTest.cs, ToolStripOverflowTest.cs: Disable

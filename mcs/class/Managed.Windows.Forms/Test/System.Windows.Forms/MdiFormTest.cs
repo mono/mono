@@ -231,6 +231,27 @@ namespace MonoTests.System.Windows.Forms
 			TearDown ();
 		}
 		
+		[Test]
+		public void StartLocationTest2 ()
+		{
+			SetUp (false, false);
+
+			child1.MdiParent = main;
+			child2.MdiParent = main;
+
+			child1.Visible = true;
+			child2.Visible = true;
+			child2.StartPosition = FormStartPosition.Manual;
+			child2.Location = new Point(23, 34);
+
+			main.Show ();
+
+			Assert.AreEqual ("{X=0,Y=0}", child1.Location.ToString (), "#1");
+			Assert.AreEqual ("{X=23,Y=34}",child2.Location.ToString (), "#2");
+
+			TearDown ();
+		}
+		
 		/* These tests are all failing on WinXP with XP Theme. 
 		 * offset seems to be 22,22 normally, and 22,29 with XP theme.
 		 * Find a way to test this reliably.
