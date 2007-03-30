@@ -31,6 +31,7 @@ using System;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
+using System.Data.SqlTypes;
 
 using NUnit.Framework;
 
@@ -87,5 +88,38 @@ namespace MonoTests.System.Data.SqlClient
 			param2.Value = 1;
 			Assert.AreEqual (SqlDbType.NVarChar, param2.SqlDbType, "#8");
 		}
+
+#if NET_2_0
+		[Test]
+		public void CompareInfoTest ()
+		{
+			SqlParameter parameter = new SqlParameter ();
+			Assert.AreEqual (SqlCompareOptions.None, parameter.CompareInfo, "#1 Default value should be System.Data.SqlTypes.SqlCompareOptions.None");
+
+			parameter.CompareInfo = SqlCompareOptions.IgnoreNonSpace;
+			Assert.AreEqual (SqlCompareOptions.IgnoreNonSpace, parameter.CompareInfo, "#2 It should return CompareOptions.IgnoreSpace after setting this value for the property");
+		}
+	
+		[Test]
+		public void LocaleIdTest ()
+		{
+			SqlParameter parameter = new SqlParameter ();
+			Assert.AreEqual (0, parameter.LocaleId, "#1 Default value for the property should be 0");
+
+			parameter.LocaleId = 15;
+			Assert.AreEqual(15, parameter.LocaleId, "#2");
+		}
+
+		[Test]
+		public void SqlValue ()
+		{
+			SqlParameter parameter = new SqlParameter ();
+			Assert.AreEqual (null, parameter.SqlValue, "#1 Default value for the property should be Null");
+
+			parameter.SqlValue = SqlDbType.Char.ToString ();
+			Assert.AreEqual ("Char", parameter.SqlValue, "#1 The value for the property should be Char after setting SqlDbType to Char");
+		}
+#endif
+
 	}
 }

@@ -1,3 +1,56 @@
+2007-03-23  Nidhi Rawal <rawalnidhi_rawal@yahoo.com>
+
+	* SqlCommandTest.cs (BeginExecuteXmlReaderTest): Written test case for the method
+	BeginExecuteXmlReader.
+	(BeginExecuteXmlReaderExceptionTest): Written test case for the method BeginExecuteXmlReader
+	to check for InvalidOperationException.
+	(CloneObjTest): Written test case for the method Clone.
+	
+	* SqlConnectionTest.cs (ChangePasswordNullConnStringTest): Written test case for the method
+	ChangePassword to check for null connection string.
+	(ChangePasswordNullPasswordTest): Written test case for the method ChangePassword to check for
+	null new password.
+	(ChangePasswordEmptyPasswordTest): Written test case for the method ChangePassword to check for
+	password as empty string.
+	(ChangePasswordExceedPasswordTest): Written test case for the method ChangePassword to check
+	if the password exceeds its permitted size.
+	
+	* SqlClientFactory.cs: Created the class.
+	(CreatePermissionTest): Added a test case for the method CreatePermission.
+
+2007-03-20  Nidhi Rawal <rawalnidhi_rawal@yahoo.com>
+
+	* SqlConnectionStringBuilderTest.cs: Fixed the bug by including the 
+	category sqlserver, in the absence of which none of the test-cases
+	were executing.
+	(TrustServerCertificateTest): Written test-case for the property TrustServerCertificate.
+	(TypeSystemVersionTest): Written test-case for the property TypeSystemVersion.
+	(UserInstanceTest): Written test-case for the property UserInstance.
+	(SettingUserInstanceTest): Written test-case for checking the connection string after
+	assigning the value for keyword User Instance.
+	(ContextConnectionTest): Written test-case for the property ContextConnection.
+	(SettingContextConnectionTest): Written test-case for checking the connection string after
+	assigning the value for keyword Context Connection.
+
+	* SqlCommandTest.cs (NotificationTest): Written test-case for property Notification.
+	(NotificationAutoEnlistTest): Written the test-case for property NotificationAutoEnlist.
+
+	* SqlConnectionTest.cs (FireInfoMessageEventOnUserErrorsTest): Written
+	test-case for the property FireInfoMessageEventOnUserErrors.
+	(StatisticsEnabledTest): Written test-case for the property StatisticsEnabled.
+
+	* SqlDataAdapterTest.cs (UpdateBatchSizeTest): Written test-case for the
+	property UpdateBatchSize.
+	(UpdateBatchSizeArgumentOutOfRangeTest): Written test-case for the ArgumentOutOfRange
+	exception for UpdateBatchSize property.
+
+2007-03-19  Nidhi Rawal <rawalnidhi_rawal@yahoo.com>
+
+	* SqlParameterTest.cs (CompareInfoTest): Written the test case
+	for property CompareInfo.
+	(LocaleIdTest): Written the test case for property LocaleId.
+	(SqlValueTest): Written test case for property SqlValue.
+
 2007-03-16  Andreia Gaita  <avidigal@novell.com>
 
 	* SqlCommandTest.cs: Add OutputParamSizeTest1-4 to test size/value

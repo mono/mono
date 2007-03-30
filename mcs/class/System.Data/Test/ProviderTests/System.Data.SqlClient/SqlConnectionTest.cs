@@ -570,6 +570,69 @@ namespace MonoTests.System.Data
 		{
 			disposedEventCount++; 
 		}
+		
+#if NET_2_0
+		[Test]
+		public void FireInfoMessageEventOnUserErrorsTest ()
+		{
+			conn = new SqlConnection (); 
+			Assert.AreEqual(false, conn.FireInfoMessageEventOnUserErrors, "#1 The default value should be false");
+			conn.FireInfoMessageEventOnUserErrors = true;
+			Assert.AreEqual(true, conn.FireInfoMessageEventOnUserErrors, "#1 The value should be true after setting the property to true");
+		}
+
+		[Test]
+		public void StatisticsEnabledTest ()
+		{
+			conn = new SqlConnection (); 
+			Assert.AreEqual(false, conn.StatisticsEnabled, "#1 The default value should be false");
+			conn.StatisticsEnabled = true;
+			Assert.AreEqual(true, conn.StatisticsEnabled, "#1 The value should be true after setting the property to true");
+		}
+
+		[Test]
+		public void ChangePasswordTest ()
+		{
+			string tmpPassword = "modifiedbymonosqlclient";
+			SqlConnection.ChangePassword (connectionString, tmpPassword);
+			SqlConnectionStringBuilder connBuilder = new SqlConnectionStringBuilder (connectionString);
+			string oldPassword = connBuilder.Password;
+			connBuilder.Password = tmpPassword;
+			SqlConnection.ChangePassword (connBuilder.ConnectionString, oldPassword); // Modify to the original password
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void ChangePasswordNullConnStringTest ()
+		{
+			conn = new SqlConnection (connectionString);
+			SqlConnection.ChangePassword (null, "mono");
+		}
+		
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void ChangePasswordNullPasswordTest ()
+		{
+			conn = new SqlConnection (connectionString);
+			SqlConnection.ChangePassword (connectionString, null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void ChangePasswordEmptyPasswordTest ()
+		{
+			conn = new SqlConnection (connectionString);
+			SqlConnection.ChangePassword (connectionString, "");
+		}
+		
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ChangePasswordExceedPasswordTest ()
+		{
+			conn = new SqlConnection (connectionString);
+			SqlConnection.ChangePassword (connectionString,"ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd");
+		}
+#endif		
 	}
 #if NET_2_0
 	[TestFixture]

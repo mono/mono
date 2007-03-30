@@ -879,6 +879,25 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.AreEqual (2, table2.Rows.Count, "#2");
 			}
 		}
+
+#if NET_2_0
+		[Test]
+		public void UpdateBatchSizeTest ()
+		{
+			adapter = new SqlDataAdapter();
+			Assert.AreEqual (1, adapter.UpdateBatchSize, "#1 The default value should be 1");
+			adapter.UpdateBatchSize = 3;
+			Assert.AreEqual (3, adapter.UpdateBatchSize, "#2 The value should be 3 after setting the property UpdateBatchSize to 3");
+		}
+		
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void UpdateBatchSizeArgumentOutOfRangeTest ()
+		{
+			adapter = new SqlDataAdapter();
+			adapter.UpdateBatchSize = -2;	
+		}
+#endif
 	}
 
 #if NET_2_0

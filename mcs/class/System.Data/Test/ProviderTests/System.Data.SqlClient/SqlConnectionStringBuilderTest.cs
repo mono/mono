@@ -45,9 +45,10 @@ using NUnit.Framework;
 namespace MonoTests.System.Data.Common
 {
 
-        [TestFixture]
-        public class SqlConnectionStringBuilderTest
-        {
+	[TestFixture]
+	[Category ("sqlserver")]
+	public class SqlConnectionStringBuilderTest
+	{
 		private SqlConnectionStringBuilder builder = null;
 		
 		[Test]
@@ -122,7 +123,62 @@ namespace MonoTests.System.Data.Common
 			Assert.AreEqual ("Data Source=localhost", builder.ConnectionString,
 					 "#RT3 should have removed the key");
 		}
+
+		[Test]
+		public void TrustServerCertificateTest ()
+		{
+			builder = new SqlConnectionStringBuilder ();
+			Assert.AreEqual (false, builder.TrustServerCertificate, "#1 The default value should be false");
+			builder.TrustServerCertificate = true;
+			Assert.AreEqual (true, builder.TrustServerCertificate, "#2 The value returned should be true after setting the value of TrustServerCertificate to true");
+			Assert.AreEqual ("Trust Server Certificate=True", builder.ConnectionString, "#3 The value of the key TrustServerCertificate should be added to the connection string");
+		}
 		
+		[Test]
+		public void TypeSystemVersionTest ()
+		{
+			builder = new SqlConnectionStringBuilder ();
+			Assert.AreEqual ("Latest", builder.TypeSystemVersion, "#1 The default value for the property should be Latest");
+			builder.TypeSystemVersion = "SQL Server 2005";
+			Assert.AreEqual ("SQL Server 2005", builder.TypeSystemVersion, "#2 The value for the property should be SQL Server 2005 after setting this value");
+			Assert.AreEqual ("Type System Version=SQL Server 2005", builder.ConnectionString, "#3 The value of the key Type System Version should be added to the connection string");
+		}
+
+		[Test]
+		public void UserInstanceTest ()
+		{
+			builder = new SqlConnectionStringBuilder ();
+			Assert.AreEqual (false, builder.UserInstance, "#1 The default value for the property should be false");
+			builder.UserInstance = true;
+			Assert.AreEqual (true, builder.UserInstance, "#2 The value for the property should be true after setting its value to true");
+			Assert.AreEqual ("User Instance=True", builder.ConnectionString, "#3 The value of the key User Instance should be added to the connection string");
+		}
+
+		[Test]
+		public void SettingUserInstanceTest ()
+		{
+			builder = new SqlConnectionStringBuilder ();
+			builder["User Instance"] = true;
+			Assert.AreEqual ("User Instance=True", builder.ConnectionString, "#1 The value of the key User Instance should be added to the connection string");			
+		}
+
+		[Test]
+		public void ContextConnectionTest ()
+		{
+			builder = new SqlConnectionStringBuilder ();
+			Assert.AreEqual (false, builder.ContextConnection, "#1 The default value for the property should be false");
+			builder.ContextConnection = true;
+			Assert.AreEqual (true, builder.ContextConnection, "#2 The value for the property should be true after setting its value to true");			
+			Assert.AreEqual ("Context Connection=True", builder.ConnectionString, "#3 The value of the key Context Connection should be added to the connection string");
+		}
+
+		[Test]
+		public void SettingContextConnectionTest ()
+		{
+			builder = new SqlConnectionStringBuilder ();
+			builder["Context Connection"] = true;
+			Assert.AreEqual ("Context Connection=True", builder.ConnectionString, "#1 The value of the key Context Connection should be added to the connection string");			
+		}
 	}
 }
 

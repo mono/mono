@@ -33,6 +33,10 @@ using System;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
+#if NET_2_0
+using System.Data.Sql;
+using System.Xml;
+#endif
 
 using NUnit.Framework;
 
@@ -1006,6 +1010,96 @@ namespace MonoTests.System.Data.SqlClient
 			cmd.Parameters.Add (p1);
 			cmd.ExecuteNonQuery ();
 		}
+
+#if NET_2_0 
+		[Test]
+		public void NotificationTest () 
+		{
+			cmd = new SqlCommand ();
+			SqlNotificationRequest notification = new SqlNotificationRequest("MyNotification","MyService",15);
+			Assert.AreEqual (null, cmd.Notification, "#1 The default value for this property should be null");
+			cmd.Notification = notification;
+			Assert.AreEqual ("MyService", cmd.Notification.Options, "#2 The value should be MyService as the constructor is initiated with this value");
+			Assert.AreEqual (15, cmd.Notification.Timeout, "#2 The value should be 15 as the constructor is initiated with this value");
+		}
+
+		[Test]
+		public void NotificationAutoEnlistTest () 
+		{
+			cmd = new SqlCommand ();
+			Assert.AreEqual (true, cmd.NotificationAutoEnlist, "#1 Default value of the property should be true");
+			cmd.NotificationAutoEnlist = false;
+			Assert.AreEqual (false, cmd.NotificationAutoEnlist, "#2 The value of the property should be false after setting it to false");
+		}
+
+		[Test]		
+		public void BeginExecuteXmlReaderTest ()
+		{
+			cmd = new SqlCommand ();
+			string connectionString1 = null;
+			connectionString1 = ConnectionManager.Singleton.ConnectionString + "Asynchronous Processing=true";
+			try {
+				SqlConnection conn1 = new SqlConnection (connectionString1); 
+				conn1.Open ();
+				cmd.CommandText = "Select lname from employee where id<2 FOR XML AUTO, XMLDATA" ;
+				cmd.Connection = conn1;
+			
+				IAsyncResult result = cmd.BeginExecuteXmlReader ();
+				XmlReader reader = cmd.EndExecuteXmlReader (result);
+				while (reader.Read ())
+				{
+					if (reader.LocalName.ToString () == "employee")
+    					{
+    						Assert.AreEqual ("kumar", reader["lname"], "#1 ");
+    					}
+				}
+			} finally {
+				ConnectionManager.Singleton.CloseConnection ();
+			}
+		}
+		
+		[Test]
+		public void BeginExecuteXmlReaderExceptionTest ()
+		{
+			cmd = new SqlCommand ();
+			try {
+				SqlConnection conn = new SqlConnection (connectionString); 
+				conn.Open ();
+				cmd.CommandText = "Select lname from employee where id<2 FOR XML AUTO, XMLDATA" ;
+				cmd.Connection = conn;
+				
+				try {
+					IAsyncResult result = cmd.BeginExecuteXmlReader ();
+				} catch (InvalidOperationException) {
+					Assert.AreEqual (ConnectionManager.Singleton.ConnectionString, connectionString, "#1 Connection string has changed");
+					return;
+				}
+				Assert.Fail ("Expected Exception InvalidOperationException not thrown");
+			} finally {
+				ConnectionManager.Singleton.CloseConnection ();
+			}		
+		}
+		
+		[Test]
+		public void CloneObjTest ()
+		{
+			SqlCommand cmd = new SqlCommand();
+			cmd.CommandText = "sp_insert";
+			cmd.CommandType = CommandType.StoredProcedure;
+			Object TestPar = DBNull.Value;
+			cmd.Parameters.Add ("@TestPar1", SqlDbType.Int);
+			cmd.Parameters ["@TestPar1"].Value = TestPar;
+			cmd.Parameters.Add ("@BirthDate", DateTime.Now);
+			cmd.DesignTimeVisible = true;
+			cmd.CommandTimeout = 100;
+			SqlCommand cmd1 = cmd.Clone ();
+			Assert.AreEqual (2, cmd1.Parameters.Count);
+			Assert.AreEqual (100, cmd1.CommandTimeout);
+			cmd1.Parameters.Add ("@test", DateTime.Now);
+			Assert.AreEqual (3, cmd1.Parameters.Count);
+			Assert.AreEqual (2, cmd.Parameters.Count);
+		}
+#endif
 
 		private enum Status { 
 			OK = 0,
