@@ -69,8 +69,8 @@ namespace MonoTests.System.Drawing {
 
 			Assert.AreEqual (true, f.IsSystemFont, "#3");
 			Assert.IsFalse (f.Italic, "#4");
-			Assert.AreEqual (8.25, f.Size, "#6");
-			Assert.AreEqual (8.25, f.SizeInPoints, "#7");
+			Assert.AreEqual (8.25, f.Size, 0.01, "#6");
+			Assert.AreEqual (8.25, f.SizeInPoints, 0.01, "#7");
 			Assert.IsFalse (f.Strikeout, "#8");
 			Assert.IsFalse (f.Underline, "#9");
 			Assert.AreEqual (GraphicsUnit.Point, f.Unit, "#10");
