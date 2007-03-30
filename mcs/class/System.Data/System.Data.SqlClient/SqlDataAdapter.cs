@@ -51,7 +51,9 @@ namespace System.Data.SqlClient {
 		SqlCommand insertCommand;
 		SqlCommand selectCommand;
 		SqlCommand updateCommand;
-
+#if NET_2_0
+		int updateBatchSize;
+#endif
 		#endregion
 
 		#region Constructors
@@ -67,6 +69,9 @@ namespace System.Data.SqlClient {
 			InsertCommand = null;
 			SelectCommand = selectCommand;
 			UpdateCommand = null;
+#if NET_2_0
+			UpdateBatchSize = 1;
+#endif
 		}
 
 		public SqlDataAdapter (string selectCommandText, SqlConnection selectConnection) 
@@ -167,6 +172,18 @@ namespace System.Data.SqlClient {
 		ITableMappingCollection IDataAdapter.TableMappings {
 			get { return TableMappings; }
 		}
+
+#if NET_2_0
+		[DefaultValue (1)]
+		public override int UpdateBatchSize { 
+			get { return updateBatchSize; }
+			set { 
+				if (value < 0)
+					throw new ArgumentOutOfRangeException ();				
+				updateBatchSize = value; 
+			}
+		}
+#endif
 
 		#endregion // Properties
 

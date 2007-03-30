@@ -1,3 +1,43 @@
+2007-03-20  Nidhi Rawal  <rawalnidhi_rawal@yahoo.com>
+
+	* SqlClientFactory.cs: Added two using directives.
+	(CreateConnectionStringBuilder): Implemented the method.
+	(CreatePermission): Implemented the property.
+	
+	* SqlCommand.cs: Added one using directive.
+	(Clone): Implemented the method.
+	(Dispose): Implemented the method.
+	(BeginExecuteXmlReader): Implemented the method.
+	
+	* SqlCommandBuilder.cs (QuoteIdentifier): Implemented the method.
+	(UnquoteIdentifier): Implemented the method.
+	
+	* SqlConnection.cs (ChangePassword): Implemented the method.
+
+2007-03-19  Nidhi Rawal  <rawalnidhi_rawal@yahoo.com>
+
+	* SqlClientFactory.cs (CanCreateDataSourceEnumerator): Implemented
+	the property.
+
+	* SqlCommand.cs (Notification): Implemented the property.
+	(NotificationAutoEnlist): Implemented the property.
+
+	* SqlDataReader.cs (VisibleFieldCount): Implemented the property.
+
+	* SqlConnectionStringBuilder.cs (TrustServerCertificate): Implemented
+	the property.
+	(TypeSystemVersion): Implemented the property.
+	(UserInstance): Implemented the property.
+	(ContextConnection): Implemented the property.
+
+	* SqlConnection.cs (FireInfoMessageEventOnUserErrors): Implemented
+	the property.
+	(StatisticsEnabled): Implemented the property.
+	
+	* SqlDataAdapter.cs (UpdateBatchSize): Implemented the property.
+
+	* SqlParameter.cs: Implemented one attribute.
+
 2007-03-16  Andreia Gaita  <avidigal@novell.com>
 	
 	* SqlParameter.cs: Move isVariableSizeType flag to TdsMetaParameter
@@ -41,6 +81,8 @@
 
 	* SqlParameter.cs (CompareInfo): Implemented the property
 	CompareInfo.
+	(LocaleId): Written the property LocaleId.
+	(SqlValue): Written the propert SqlValue.
 
 2007-02-15  Nidhi Rawal  <rawalnidhi_rawal@yahoo.com>
 

@@ -65,6 +65,9 @@ namespace System.Data.SqlClient {
 		bool haveRead;
 		bool readResult;
 		bool readResultUsed;
+#if NET_2_0
+		int visibleFieldCount;
+#endif
 
 		#endregion // Fields
 
@@ -81,6 +84,9 @@ namespace System.Data.SqlClient {
 			fieldCount = 0;
 			isClosed = false;
 			command.Tds.RecordsAffected = -1;
+#if NET_2_0
+			visibleFieldCount = 0;
+#endif
 			NextResult ();
 		}
 
@@ -152,6 +158,11 @@ namespace System.Data.SqlClient {
 				return readResult;						
 			}
 		}
+#if NET_2_0
+		public override int VisibleFieldCount { 
+			get { return visibleFieldCount; }
+		}
+#endif
 
 		#endregion // Properties
 
@@ -738,6 +749,10 @@ namespace System.Data.SqlClient {
 						row ["IsLong"] = false;
 						break;
 				}
+#if NET_2_0
+				if ((bool)row ["IsHidden"] == false)
+					visibleFieldCount += 1;
+#endif
 
 				schemaTable.Rows.Add (row);
 

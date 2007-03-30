@@ -77,7 +77,7 @@ namespace System.Data.SqlClient {
 
 		// Connection parameters
 		
-		TdsConnectionParameters parms = new TdsConnectionParameters ();
+		internal TdsConnectionParameters parms = new TdsConnectionParameters ();
 		NameValueCollection connStringParameters = null;
 		bool connectionReset;
 		bool pooling;
@@ -87,6 +87,8 @@ namespace System.Data.SqlClient {
 		int maxPoolSize;
 		int packetSize;
 		int port = 1433;
+		bool fireInfoMessageEventOnUserErrors;
+		bool statisticsEnabled;
 
 		// The current state
 		ConnectionState state = ConnectionState.Closed;
@@ -258,6 +260,17 @@ namespace System.Data.SqlClient {
 			set { xmlReader = value; }
 		}
 
+#if NET_2_0
+		public bool FireInfoMessageEventOnUserErrors { 
+			get { return fireInfoMessageEventOnUserErrors; } 
+			set { fireInfoMessageEventOnUserErrors = value; }
+		}
+		
+		public bool StatisticsEnabled { 
+			get { return statisticsEnabled; } 
+			set { statisticsEnabled = value; }
+		}
+#endif
 		#endregion // Properties
 
 		#region Events
@@ -1521,7 +1534,7 @@ namespace System.Data.SqlClient {
 							  "as public_key, is_fixed_length, max_length, Create_Date, " +
 							  "Permission_set_desc from sys.assemblies as assemblies join " +
 							  "sys.assembly_types as types on assemblies.assembly_id = types.assembly_id" +
-							  " where (assemblies.name = @AssemblyName or (@AssemblyName is null)) and " +
+							  " where (assportemblies.name = @AssemblyName or (@AssemblyName is null)) and " +
 							  "(types.assembly_class = @UDTName or (@UDTName is null))",
 							  this);
 				command.Parameters.Add ("@AssemblyName", SqlDbType.NVarChar, 4000);
@@ -1544,6 +1557,21 @@ namespace System.Data.SqlClient {
 			dataAdapter.SelectCommand = command;
 			dataAdapter.Fill (dataTable);
 			return dataTable;
+		}
+		
+		public static void ChangePassword (string connectionString, string newPassword)
+		{
+			if (connectionString == null || newPassword == null || newPassword == String.Empty)
+				throw new ArgumentNullException ();
+			if (newPassword.Length > 128)
+				throw new ArgumentException ("The value of newPassword exceeds its permittable length which is 128");
+			SqlConnection conn = new SqlConnection (connectionString);
+			using (conn) {
+				conn.Open ();
+				conn.tds.Execute (String.Format ("sp_password '{0}', '{1}', '{2}'",
+								 conn.parms.Password, newPassword, conn.parms.User));
+				conn.Close ();
+			}
 		}
 #endif // NET_2_0
 

@@ -575,6 +575,17 @@ namespace System.Data.SqlClient {
 				return CreateInsertCommand (option);
 			return insertCommand;
 		}
+		
+		public override string QuoteIdentifier (string unquotedIdentifier)
+		{
+			return base.QuoteIdentifier (unquotedIdentifier);
+		}
+		
+		public override string UnquoteIdentifier (string quotedIdentifier)
+		{
+			return base.UnquoteIdentifier (quotedIdentifier);
+		}
+		
 #endif // NET_2_0
 
 		private bool IncludedInInsert (DataRow schemaRow)

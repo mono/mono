@@ -67,6 +67,9 @@ namespace System.Data.SqlClient {
 		string sourceColumn;
 		DataRowVersion sourceVersion;
 		SqlCompareOptions compareInfo;
+		int localId;
+		Object sqlValue;
+		string udtTypeName;
 
 		#endregion // Fields
 
@@ -380,15 +383,22 @@ namespace System.Data.SqlClient {
 		}
 
 #if NET_2_0
-		public SqlCompareOptions CompareInfo {
+		[Browsable (false)]
+		public SqlCompareOptions CompareInfo{
 		 	get{ return compareInfo; } 
-			set{
-				compareInfo = value;
-			}
+			set{ compareInfo = value; }
 		}
-#endif
 
-#if NET_2_0
+		public int LocaleId { 
+			get { return localId; }
+			set { localId = value; }
+		}
+
+		public Object SqlValue { 
+			get { return sqlValue; }
+			set { sqlValue = value; }
+		}
+	
 		public override bool SourceColumnNullMapping {
 			get { return false ; }
 			set { }

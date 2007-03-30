@@ -32,6 +32,8 @@ namespace System.Data.SqlClient
 {
         using System.Data;
         using System.Data.Common;
+	using System.Security;
+	using System.Security.Permissions;
         
         public sealed class SqlClientFactory : DbProviderFactory
         {
@@ -47,10 +49,11 @@ namespace System.Data.SqlClient
                 }
                 #endregion //Constructors
 
-		[MonoTODO]
+		#region Properties
 		public override bool CanCreateDataSourceEnumerator {
-			get { throw new NotImplementedException ();}
+			get { return true; }
 		}               
+		#endregion //Properties
  
                 #region public overrides
                 public override DbCommand CreateCommand ()
@@ -67,6 +70,11 @@ namespace System.Data.SqlClient
                 {
                         return (DbConnection) new SqlConnection ();
                 }
+		
+		public override DbConnectionStringBuilder CreateConnectionStringBuilder ()
+		{
+			return (DbConnectionStringBuilder) new SqlConnectionStringBuilder ();
+		}
                 
                 public override DbDataAdapter CreateDataAdapter ()
                 {
@@ -82,7 +90,11 @@ namespace System.Data.SqlClient
                 {
                         return (DbParameter) new SqlParameter ();
                 }
-                
+		
+		public override CodeAccessPermission CreatePermission (PermissionState state)
+		{
+			return (CodeAccessPermission) new SqlClientPermission(state);
+		}
                 #endregion // public overrides
         }
 }

@@ -67,6 +67,10 @@ namespace System.Data.SqlClient
 		private const bool 	DEF_REPLICATION 		= false;
 		private const string 	DEF_USERID 			= "";
 		private const string 	DEF_WORKSTATIONID 		= "";
+		private const string 	DEF_TYPESYSTEMVERSION 		= "Latest";
+		private const bool	DEF_TRUSTSERVERCERTIFICATE	= false;
+		private const bool	DEF_USERINSTANCE		= false;  
+		private const bool	DEF_CONTEXTCONNECTION		= false;	
 
 
 		#region // Fields
@@ -94,6 +98,10 @@ namespace System.Data.SqlClient
 		private bool 	_replication;
 		private string 	_userID;
 		private string 	_workstationID;
+		private bool	_trustServerCertificate;
+		private string	_typeSystemVersion;
+		private bool	_userInstance;
+		private bool	_contextConnection;
 
 		private static Dictionary <string, string> _keywords; // for mapping duplicate keywords
 		#endregion // Fields
@@ -152,8 +160,9 @@ namespace System.Data.SqlClient
 			_keywords ["USER"] 			= "User Id";
 			_keywords ["USER ID"] 			= "User Id";
 			_keywords ["WSID"] 			= "Workstation Id";
-			_keywords ["WORKSTATION ID"] 		= "Workstation Id";
-
+			_keywords ["WORKSTATION ID"]		= "Workstation Id";
+			_keywords ["USER INSTANCE"]		= "User Instance";
+			_keywords ["CONTEXT CONNECTION"]	= "Context Connection";
 		}
 		#endregion // Constructors
 
@@ -418,6 +427,38 @@ namespace System.Data.SqlClient
 				_workstationID = value; 
 			}
 		}
+
+		public bool TrustServerCertificate { 
+			get { return _trustServerCertificate; } 
+			set {
+				base ["Trust Server Certificate"] = value;
+				 _trustServerCertificate = value;
+			}
+		}
+
+		public string TypeSystemVersion { 
+			get { return _typeSystemVersion; } 
+			set {
+				base ["Type System Version"] = value;				
+				_typeSystemVersion = value; 
+			}
+		}
+
+		public bool UserInstance { 
+			get { return _userInstance; }
+			set { 
+				base ["User Instance"] = value;
+				_userInstance = value;
+			}
+		}
+
+		public bool ContextConnection { 
+			get { return _contextConnection; }
+			set { 
+				base ["Context Connection"] = value;
+				_contextConnection = value;
+			}
+		}
 		#endregion // Properties
 
 		#region Methods
@@ -447,6 +488,10 @@ namespace System.Data.SqlClient
 			_replication		= DEF_REPLICATION;
 			_userID			= DEF_USERID;
 			_workstationID		= DEF_WORKSTATIONID;
+			_trustServerCertificate	= DEF_TRUSTSERVERCERTIFICATE;
+			_typeSystemVersion	= DEF_TYPESYSTEMVERSION;
+			_userInstance		= DEF_USERINSTANCE;
+			_contextConnection	= DEF_CONTEXTCONNECTION;
 		}
 
 		public override void Clear ()
@@ -542,6 +587,13 @@ namespace System.Data.SqlClient
 					base.Remove (mappedKey);
 				} else 
 					this.CurrentLanguage = value.ToString ();
+				break;
+			case "CONTEXT CONNECTION" :
+				if (value == null) {
+					_contextConnection = DEF_CONTEXTCONNECTION;
+					base.Remove (mappedKey);
+				} else
+					this.ContextConnection = DbConnectionStringBuilderHelper.ConvertToBoolean (value);
 				break;
 			case "DATA SOURCE" :
 				if (value == null) {
@@ -655,6 +707,13 @@ namespace System.Data.SqlClient
 					base.Remove (mappedKey);
 				} else 
 					this.UserID = value.ToString ();
+				break;
+			case "USER INSTANCE" :
+				if (value == null) {
+					_userInstance = DEF_USERINSTANCE;
+					base.Remove (mappedKey);
+				} else
+					this.UserInstance = DbConnectionStringBuilderHelper.ConvertToBoolean (value);
 				break;
 			case "WORKSTATION ID" :
 				if (value == null) {

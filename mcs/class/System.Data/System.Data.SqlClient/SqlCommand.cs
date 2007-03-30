@@ -43,6 +43,9 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
+#if NET_2_0
+using System.Data.Sql;
+#endif
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Xml;
@@ -59,7 +62,7 @@ namespace System.Data.SqlClient {
 	{
 		#region Fields
 
-		//bool disposed = false;
+		bool disposed = false;
 		int commandTimeout;
 		bool designTimeVisible;
 		string commandText;
@@ -70,6 +73,10 @@ namespace System.Data.SqlClient {
 		CommandBehavior behavior = CommandBehavior.Default;
 		SqlParameterCollection parameters;
 		string preparedStatement = null;
+#if NET_2_0
+		SqlNotificationRequest notification;
+#endif
+		bool notificationAutoEnlist;
 
 		#endregion // Fields
 
@@ -100,6 +107,7 @@ namespace System.Data.SqlClient {
 
 			this.designTimeVisible = false;
 			this.commandTimeout = 30;
+			notificationAutoEnlist = true;
 			parameters = new SqlParameterCollection (this);
 		}
 
@@ -298,6 +306,18 @@ namespace System.Data.SqlClient {
 			}
 		}
 
+#if NET_2_0
+		public SqlNotificationRequest Notification { 
+			get { return notification; } 
+			set { notification = value; }
+		}
+
+		[DefaultValue (true)]
+		public bool NotificationAutoEnlist { 
+			get { return notificationAutoEnlist; } 
+			set { notificationAutoEnlist = value; }	
+		}
+#endif
 		#endregion // Fields
 
 		#region Methods
@@ -312,6 +332,13 @@ namespace System.Data.SqlClient {
 				return;
 			Connection.Tds.Cancel ();
 		}
+
+#if NET_2_0
+		public SqlCommand Clone ()
+		{
+			return new SqlCommand (commandText, connection, transaction, commandType, updatedRowSource, designTimeVisible, commandTimeout,  parameters);
+		}		
+#endif // NET_2_0
 
 		internal void CloseDataReader (bool moreResults)
 		{
@@ -547,6 +574,21 @@ namespace System.Data.SqlClient {
 		IDataReader IDbCommand.ExecuteReader (CommandBehavior behavior)
 		{
 			return ExecuteReader (behavior);
+		}
+
+		protected override void Dispose (bool disposing)
+		{
+			if (!disposed) {
+				if (disposing) {
+					base.Dispose (disposing);
+					if (connection != null)
+						connection.Dispose ();
+					if (transaction != null)
+						transaction.Dispose ();
+					parameters.Clear ();
+				}
+				disposed = true;
+			}
 		}
 
 		public 
@@ -801,6 +843,12 @@ namespace System.Data.SqlClient {
                                                                        ar.BubbleCallback, state);
                         return ar;
                 }
+                
+		public IAsyncResult BeginExecuteXmlReader ()
+		{
+			return BeginExecuteXmlReader (null, null);
+		}
+		
 
                 public XmlReader EndExecuteXmlReader (IAsyncResult ar)
                 {
