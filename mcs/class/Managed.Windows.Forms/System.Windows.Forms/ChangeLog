@@ -1,3 +1,9 @@
+2007-03-30  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Form.cs: Don't layout mdi children on MdiParent creation, the initial
+	  layout of the mdi children is handled by CreateParams. Fixes
+	  #79964,
+
 2007-03-29  Everaldo Canuto  <everaldo@simios.org>
 
 	* MenuAPI.cs: Make OnMouseDown returns a boolean to identify if event is
