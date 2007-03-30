@@ -1,3 +1,7 @@
+2007-03-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* FormHandleTest.cs: Enabled test for bug #81272.
+
 2007-03-30  Jonathan Pobst  <monkey@jpobst.com>
 
 	* HScrollPropertiesTest.cs, VScrollPropertiesTest.cs: Added.

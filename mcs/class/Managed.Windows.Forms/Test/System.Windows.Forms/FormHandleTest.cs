@@ -40,7 +40,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test] // bug #81272
-		[Category ("NotWorking")]
 		public void TestMenu ()
 		{
 			Form c = new Form ();
