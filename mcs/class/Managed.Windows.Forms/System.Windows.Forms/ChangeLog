@@ -1,3 +1,8 @@
+2007-03-30  Jackson Harper  <jackson@ximian.com>
+
+	* TextBox.cs: Only select all on initial focus if the user has not
+	specified a selection area.
+
 2007-03-30  Jonathan Pobst  <monkey@jpobst.com>
 
 	* UserControl.cs: Override CreateParams.

@@ -337,7 +337,7 @@ namespace System.Windows.Forms {
 
 		protected override void OnGotFocus(EventArgs e) {
 			base.OnGotFocus (e);
-			if (!has_been_focused)
+			if (selection_length == -1 && !has_been_focused)
 				SelectAll ();
 			has_been_focused = true;
 		}
