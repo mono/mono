@@ -1,5 +1,7 @@
-2007-03-30  Sebastien Pouliot  <sebastien@ximian.com> 
+2007-03-30  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* GDIPlusTest.cs: Add pen test case to check for #81266 (note: will
+	crash libgdiplus if it's not updated to the latest svn revision).
 	* SystemFontsTest.cs: Allow a small delta when comparing floats. This
 	allows the ARM to work properly (e.g. 8.249999 versus 8.25).
 

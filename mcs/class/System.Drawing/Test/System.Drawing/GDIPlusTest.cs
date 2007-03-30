@@ -914,6 +914,47 @@ namespace MonoTests.System.Drawing {
 			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipDeletePen (IntPtr.Zero), "GdipDeletePen-null");
 		}
 
+		[Test]
+		public void PenColor_81266 ()
+		{
+			IntPtr pen;
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipCreatePen1 (0x7f0000ff, 1f, Unit.UnitPixel, out pen), "GdipCreatePen1");
+			try {
+				int color = 0;
+				IntPtr brush;
+				Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipGetPenBrushFill (IntPtr.Zero, out brush), "GdipGetPenBrushFill-null");
+				Assert.AreEqual (Status.Ok, GDIPlus.GdipGetPenBrushFill (pen, out brush), "GdipGetPenBrushFill");
+				try {
+					Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipGetSolidFillColor (IntPtr.Zero, out color), "GdipGetSolidFillColor-null");
+					Assert.AreEqual (Status.Ok, GDIPlus.GdipGetSolidFillColor (brush, out color), "GdipGetSolidFillColor-0");
+					Assert.AreEqual (0x7f0000ff, color, "color-0");
+
+					Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipSetPenColor (IntPtr.Zero, 0x7fff0000), "GdipSetPenColor-null");
+					Assert.AreEqual (Status.Ok, GDIPlus.GdipSetPenColor (pen, 0x7fff0000), "GdipSetPenColor");
+
+					Assert.AreEqual (Status.Ok, GDIPlus.GdipGetSolidFillColor (brush, out color), "GdipGetSolidFillColor-1");
+					// previous brush color didn't change
+					Assert.AreEqual (0x7f0000ff, color, "color-1");
+				}
+				finally {
+					Assert.AreEqual (Status.Ok, GDIPlus.GdipDeleteBrush (brush), "GdipDeleteBrush");
+				}
+
+				Assert.AreEqual (Status.Ok, GDIPlus.GdipGetPenBrushFill (pen, out brush), "GdipGetPenBrushFill-2");
+				try {
+					Assert.AreEqual (Status.Ok, GDIPlus.GdipGetSolidFillColor (brush, out color), "GdipGetSolidFillColor-2");
+					// new brush color is updated
+					Assert.AreEqual (0x7fff0000, color, "color-2");
+				}
+				finally {
+					Assert.AreEqual (Status.Ok, GDIPlus.GdipDeleteBrush (brush), "GdipDeleteBrush-2");
+				}
+			}
+			finally {
+				Assert.AreEqual (Status.Ok, GDIPlus.GdipDeletePen (pen), "GdipDeletePen");
+			}
+		}
+
 		// Region
 		[Test]
 		public void CreateRegionRgnData ()
