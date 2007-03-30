@@ -575,8 +575,14 @@ namespace System.Windows.Forms
 
 		internal virtual void Invalidate ()
 		{
-			if ((Parent != null) && (Parent is MainMenu) && Parent.Wnd != null)
-				XplatUI.RequestNCRecalc (Parent.Wnd.FindForm ().Handle);
+			if ((Parent == null) || !(Parent is MainMenu) || (Parent.Wnd == null))
+				return;
+				
+			Form form = Parent.Wnd.FindForm ();
+			if ((form == null) || (!form.IsHandleCreated))
+				return;
+			
+			XplatUI.RequestNCRecalc (form.Handle);
 		}
 
 		internal void PerformPopup ()

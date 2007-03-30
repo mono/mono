@@ -1,3 +1,7 @@
+2007-03-30  Everaldo Canuto  <everaldo@simios.org>
+
+	* MenuItem.cs: On invalidate prevent form to create handle. [Fixes #81272]
+
 2007-03-30  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ScollableControl.cs: Add HorizontalScroll and VerticalScroll properties.
