@@ -19,7 +19,6 @@ using CategoryAttribute = NUnit.Framework.CategoryAttribute;
 
 namespace MonoTests.System.Windows.Forms
 {
-	
 	[TestFixture]
 	public class FormHandleTest
 	{
@@ -28,6 +27,27 @@ namespace MonoTests.System.Windows.Forms
 		{
 			Form c = new Form ();
 			Assert.IsFalse (c.IsHandleCreated, "A1");
+		}
+
+		[Test]
+		public void TestContextMenu ()
+		{
+			Form c = new Form ();
+			c.ContextMenu = new ContextMenu ();
+			c.ContextMenu.MenuItems.Add (new MenuItem ());
+			c.ContextMenu.MenuItems [0].Text = "New";
+			Assert.IsFalse (c.IsHandleCreated);
+		}
+
+		[Test] // bug #81272
+		[Category ("NotWorking")]
+		public void TestMenu ()
+		{
+			Form c = new Form ();
+			c.Menu = new MainMenu ();
+			c.Menu.MenuItems.Add (new MenuItem ());
+			c.Menu.MenuItems [0].Text = "New";
+			Assert.IsFalse (c.IsHandleCreated);
 		}
 
 		[Test]
@@ -444,7 +464,7 @@ namespace MonoTests.System.Windows.Forms
 			c.RightToLeft = RightToLeft.Yes;
 			Assert.IsFalse (c.IsHandleCreated, "A60");
 
-			// P - R - Form			
+			// P - R - Form
 			o = c.ParentForm;
 			Assert.IsFalse (c.IsHandleCreated, "FP1");
 

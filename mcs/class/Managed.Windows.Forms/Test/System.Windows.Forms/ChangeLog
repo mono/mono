@@ -1,3 +1,7 @@
+2007-03-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* FormHandleTest.cs: Added test for bug #81272.
+
 2007-03-30  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* MdiFormTest.cs: Added test for #79964.
