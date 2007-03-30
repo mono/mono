@@ -1,3 +1,10 @@
+2007-03-30  Jonathan Pobst  <monkey@jpobst.com>
+
+	* System.Windows.Forms.dll.sources: Add ScrollProperties, 
+	HScrollProperties, and VScrollProperties.
+	* System.Windows.Forms_test.dll.sources: Add HScrollPropertiesTest and
+	VScrollPropertiesTest.
+
 2007-03-28  Jonathan Pobst  <monkey@jpobst.com>
 
 	* System.Windows.Forms_test.dll.sources: Add StatusStripTest.cs,

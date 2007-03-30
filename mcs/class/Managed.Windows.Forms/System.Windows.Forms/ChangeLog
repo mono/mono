@@ -1,3 +1,9 @@
+2007-03-30  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ScollableControl.cs: Add HorizontalScroll and VerticalScroll properties.
+	* ScrollProperties.cs, HScrollProperties.cs, VScrollProperties.cs: Added.
+	[Based on submitted patch from Olivier Duff.]
+
 2007-03-30  Jackson Harper  <jackson@ximian.com>
 
 	* TextBox.cs: Only select all on initial focus if the user has not

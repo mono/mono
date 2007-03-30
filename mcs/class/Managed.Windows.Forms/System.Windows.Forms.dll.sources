@@ -338,6 +338,7 @@ System.Windows.Forms/HelpEventHandler.cs
 System.Windows.Forms/HelpNavigator.cs
 System.Windows.Forms/HelpProvider.cs
 System.Windows.Forms/HorizontalAlignment.cs
+System.Windows.Forms/HScrollProperties.cs
 System.Windows.Forms/HtmlElementInsertionOrientation.cs
 System.Windows.Forms/Hwnd.cs
 System.Windows.Forms/IButtonControl.cs
@@ -546,6 +547,7 @@ System.Windows.Forms/ScrollEventArgs.cs
 System.Windows.Forms/ScrollEventHandler.cs
 System.Windows.Forms/ScrollEventType.cs
 System.Windows.Forms/ScrollOrientation.cs
+System.Windows.Forms/ScrollProperties.cs
 System.Windows.Forms/ScrollableControl.cs
 System.Windows.Forms/SearchDirectionHint.cs
 System.Windows.Forms/SearchForVirtualItemEventArgs.cs
@@ -734,6 +736,7 @@ System.Windows.Forms/UserControl.cs
 System.Windows.Forms/VScrollBar.cs
 System.Windows.Forms/ValidationConstraints.cs
 System.Windows.Forms/View.cs
+System.Windows.Forms/VScrollProperties.cs
 System.Windows.Forms/WebBrowserDocumentCompletedEventArgs.cs
 System.Windows.Forms/WebBrowserDocumentCompletedEventHandler.cs
 System.Windows.Forms/WebBrowserEncryptionLevel.cs

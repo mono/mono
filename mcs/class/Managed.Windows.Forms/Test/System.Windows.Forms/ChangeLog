@@ -1,5 +1,9 @@
 2007-03-30  Jonathan Pobst  <monkey@jpobst.com>
 
+	* HScrollPropertiesTest.cs, VScrollPropertiesTest.cs: Added.
+
+2007-03-30  Jonathan Pobst  <monkey@jpobst.com>
+
 	* UserControlTest.cs: Add test for CreateParams.
 
 2007-03-30  Gert Driesen  <drieseng@users.sourceforge.net>

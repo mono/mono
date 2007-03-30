@@ -45,11 +45,16 @@ namespace System.Windows.Forms {
 		private Point			scroll_position;
 		private DockPaddingEdges	dock_padding;
 		private SizeGrip		sizegrip;
-		private ImplicitHScrollBar	hscrollbar;
-		private ImplicitVScrollBar	vscrollbar;
+		internal ImplicitHScrollBar	hscrollbar;
+		internal ImplicitVScrollBar	vscrollbar;
 		private Size			canvas_size;
 		private Rectangle		display_rectangle;
 		private Control			old_parent;
+
+#if NET_2_0
+		private HScrollProperties	horizontalScroll;
+		private VScrollProperties	verticalScroll;
+#endif
 		#endregion	// Local Variables
 
 		[TypeConverter(typeof(ScrollableControl.DockPaddingEdgesConverter))]
@@ -232,6 +237,11 @@ namespace System.Windows.Forms {
 			HandleCreated += new EventHandler (AddScrollbars);
 
 			CreateScrollbars ();
+			
+#if NET_2_0
+			horizontalScroll = new HScrollProperties (this);
+			verticalScroll = new VScrollProperties (this);
+#endif
 		}
 
 		void LocationChangedHandler (object sender, EventArgs e)
@@ -426,6 +436,16 @@ namespace System.Windows.Forms {
 				return dock_padding;
 			}
 		}
+
+#if NET_2_0
+		public HScrollProperties HorizontalScroll {
+			get { return horizontalScroll; }
+		}
+
+		public VScrollProperties VerticalScroll {
+			get { return verticalScroll; }
+		}
+#endif
 		#endregion	// Public Instance Properties
 
 		#region Protected Instance Methods
