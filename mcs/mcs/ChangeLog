@@ -1,3 +1,9 @@
+2007-03-30  Raja R Harinath  <rharinath@novell.com>
+
+	Prepare to kill 'Reachability'
+	* flowanalysis.cs (UsageVector): Remove 'Reachability' from
+	argument of constructor.
+
 2007-03-29  Raja R Harinath  <rharinath@novell.com>
 
 	Prepare to kill 'Reachability'

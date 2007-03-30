@@ -250,14 +250,17 @@ namespace Mono.CSharp
 				: this (type, parent, block, loc, parent.CountParameters, parent.CountLocals)
 			{ }
 
-			private UsageVector (MyBitVector parameters, MyBitVector locals, Reachability reachability, Block block, Location loc)
+			private UsageVector (MyBitVector parameters, MyBitVector locals, bool is_unreachable, Block block, Location loc)
 			{
 				this.Type = SiblingType.Block;
 				this.Location = loc;
 				this.Block = block;
 
-				this.reachability = reachability;
-				this.is_unreachable = reachability.IsUnreachable;
+				this.is_unreachable = is_unreachable;
+				this.reachability = Reachability.Always ();
+				if (is_unreachable)
+					this.reachability.SetBarrier ();
+
 				this.parameters = parameters;
 				this.locals = locals;
 
@@ -367,7 +370,7 @@ namespace Mono.CSharp
 					}
 				}
 
-				return new UsageVector (parameters, locals, reachability, null, loc);
+				return new UsageVector (parameters, locals, is_unreachable, null, loc);
 			}
 
 			// <summary>
