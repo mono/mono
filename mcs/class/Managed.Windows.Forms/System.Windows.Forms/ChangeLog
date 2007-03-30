@@ -1,3 +1,7 @@
+2007-03-30  Jonathan Pobst  <monkey@jpobst.com>
+
+	* UserControl.cs: Override CreateParams.
+
 2007-03-30  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Form.cs: Don't layout mdi children on MdiParent creation, the initial

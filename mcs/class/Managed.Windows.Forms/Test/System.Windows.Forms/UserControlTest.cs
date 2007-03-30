@@ -70,6 +70,21 @@ namespace MonoTests.System.Windows.Forms
 		{
 			uc.BorderStyle = (BorderStyle) 9999;
 		}
+		
+		[Test]
+		public void MethodCreateParams ()
+		{
+			ExposeProtectedProperties uc = new ExposeProtectedProperties ();
+
+			Assert.AreEqual (WindowStyles.WS_TILED | WindowStyles.WS_MAXIMIZEBOX | WindowStyles.WS_CLIPCHILDREN | WindowStyles.WS_CLIPSIBLINGS | WindowStyles.WS_VISIBLE | WindowStyles.WS_CHILD, (WindowStyles)uc.CreateParams.Style, "D1");
+			Assert.AreEqual (WindowExStyles.WS_EX_CONTROLPARENT, (WindowExStyles)uc.CreateParams.ExStyle, "D2");
+		}
+
+		private class ExposeProtectedProperties : UserControl
+		{
+			public new CreateParams CreateParams { get { return base.CreateParams; } }
+		}
+
 #endif	
 	}
 }

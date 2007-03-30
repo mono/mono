@@ -98,6 +98,18 @@ namespace System.Windows.Forms {
 		}
 		#endregion	// Protected Instance Methods
 
+		#region Protected Properties
+#if NET_2_0
+		protected override CreateParams CreateParams {
+			get { 
+				CreateParams cp = base.CreateParams;
+				cp.Style |= (int)WindowStyles.WS_TABSTOP;
+				cp.ExStyle |= (int)WindowExStyles.WS_EX_CONTROLPARENT;
+				return cp;
+			}
+		}
+#endif
+		#endregion
 		#region Events
 		static object LoadEvent = new object ();
 
