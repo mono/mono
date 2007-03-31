@@ -25,7 +25,7 @@ namespace System.Linq.Expressions
             get { return arguments; }
         }
 
-        public new Expression Lambda
+        public Expression Expression
         {
             get { return lambda; }
         }
