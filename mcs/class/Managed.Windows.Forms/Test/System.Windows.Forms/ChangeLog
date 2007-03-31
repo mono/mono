@@ -1,3 +1,10 @@
+2007-03-31  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* RichTextBoxTest.cs: Added BackColor test. Improved ReadOnly tests.
+	Added ScrollBars tests.
+	* TextBoxTest.cs: Improve BackColor test. Added ScrollBars tests.
+	Improved ReadOnly tests.
+
 2007-03-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* FormHandleTest.cs: Enabled test for bug #81272.

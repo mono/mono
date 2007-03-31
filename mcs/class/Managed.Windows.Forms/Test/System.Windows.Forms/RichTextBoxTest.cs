@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
@@ -71,8 +72,6 @@ namespace MonoTests.System.Windows.Forms
 
 			// S
 	
-			// [MonoTODO ("Assert.AreEqual (ScrollBars.Both, rTBox.ScrollBars, "#S1");")]
-			Assert.AreEqual (RichTextBoxScrollBars.Both, rTBox.ScrollBars, "#S1");
 			Assert.AreEqual ("", rTBox.SelectedText, "#S3");
 			rTBox.Text = "sample TextBox";
 			Assert.AreEqual (HorizontalAlignment.Left, rTBox.SelectionAlignment, "#S5");
@@ -111,7 +110,18 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (true, rTextBox.CanPaste (myFormat), "#Mtd1");
 		}
 #endif
-		
+
+		[Test]
+		public void BackColor ()
+		{
+			RichTextBox rtb = new RichTextBox ();
+			Assert.AreEqual (SystemColors.Window, rtb.BackColor, "#1");
+			rtb.BackColor = Color.Red;
+			Assert.AreEqual (Color.Red, rtb.BackColor, "#2");
+			rtb.BackColor = Color.Empty;
+			Assert.AreEqual (SystemColors.Window, rtb.BackColor, "#3");
+		}
+
 		[Test]
 		public void FindCharTest ()
 		{
@@ -195,7 +205,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ReadOnly_BackColor_NotSet ()
 		{
 			RichTextBox rtb = new RichTextBox ();
@@ -219,29 +228,45 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (SystemColors.Window, rtb.BackColor, "#B2");
 #endif
 
-			rtb.ReadOnly = false;
-			Assert.IsFalse (rtb.ReadOnly, "#C1");
+			rtb.ResetBackColor ();
+			Assert.IsTrue (rtb.ReadOnly, "#C1");
+#if NET_2_0
+			Assert.AreEqual (SystemColors.Control, rtb.BackColor, "#C2");
+#else
 			Assert.AreEqual (SystemColors.Window, rtb.BackColor, "#C2");
+#endif
+
+			rtb.ReadOnly = false;
+			Assert.IsFalse (rtb.ReadOnly, "#D1");
+			Assert.AreEqual (SystemColors.Window, rtb.BackColor, "#D2");
 
 			rtb.ReadOnly = true;
-			Assert.IsTrue (rtb.ReadOnly, "#D1");
+			Assert.IsTrue (rtb.ReadOnly, "#E1");
 #if NET_2_0
-			Assert.AreEqual (SystemColors.Control, rtb.BackColor, "#D2");
+			Assert.AreEqual (SystemColors.Control, rtb.BackColor, "#E2");
 #else
-			Assert.AreEqual (SystemColors.Window, rtb.BackColor, "#D2");
+			Assert.AreEqual (SystemColors.Window, rtb.BackColor, "#E2");
 #endif
 
 			rtb.BackColor = Color.Red;
-			Assert.IsTrue (rtb.ReadOnly, "#E1");
-			Assert.AreEqual (Color.Red, rtb.BackColor, "#E2");
-
-			rtb.ReadOnly = false;
-			Assert.IsFalse (rtb.ReadOnly, "#F1");
+			Assert.IsTrue (rtb.ReadOnly, "#F1");
 			Assert.AreEqual (Color.Red, rtb.BackColor, "#F2");
 
-			rtb.ReadOnly = true;
-			Assert.IsTrue (rtb.ReadOnly, "#G1");
+			rtb.ReadOnly = false;
+			Assert.IsFalse (rtb.ReadOnly, "#G1");
 			Assert.AreEqual (Color.Red, rtb.BackColor, "#G2");
+
+			rtb.ReadOnly = true;
+			Assert.IsTrue (rtb.ReadOnly, "#H1");
+			Assert.AreEqual (Color.Red, rtb.BackColor, "#H2");
+
+			rtb.ResetBackColor ();
+			Assert.IsTrue (rtb.ReadOnly, "#I1");
+#if NET_2_0
+			Assert.AreEqual (SystemColors.Control, rtb.BackColor, "#I2");
+#else
+			Assert.AreEqual (SystemColors.Window, rtb.BackColor, "#I2");
+#endif
 		}
 
 		[Test]
@@ -277,25 +302,55 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsFalse (rtb.ReadOnly, "#F1");
 			Assert.AreEqual (Color.Red, rtb.BackColor, "#F2");
 
+			rtb.ReadOnly = true;
+			rtb.ResetBackColor ();
+			Assert.IsTrue (rtb.ReadOnly, "#G1");
+#if NET_2_0
+			Assert.AreEqual (SystemColors.Control, rtb.BackColor, "#G2");
+#else
+			Assert.AreEqual (SystemColors.Window, rtb.BackColor, "#G2");
+#endif
+
 			form.Dispose ();
 
 			rtb = new RichTextBox ();
 			rtb.ReadOnly = true;
 			rtb.BackColor = Color.Blue;
-			Assert.IsTrue (rtb.ReadOnly, "#G1");
-			Assert.AreEqual (Color.Blue, rtb.BackColor, "#G2");
+			Assert.IsTrue (rtb.ReadOnly, "#H1");
+			Assert.AreEqual (Color.Blue, rtb.BackColor, "#H2");
 
 			form = new Form ();
 			form.ShowInTaskbar = false;
 			form.Controls.Add (rtb);
 			form.Show ();
 
-			Assert.IsTrue (rtb.ReadOnly, "#H1");
-			Assert.AreEqual (Color.Blue, rtb.BackColor, "#H2");
+			Assert.IsTrue (rtb.ReadOnly, "#I1");
+			Assert.AreEqual (Color.Blue, rtb.BackColor, "#I2");
 
 			rtb.ReadOnly = false;
-			Assert.IsFalse (rtb.ReadOnly, "#I1");
-			Assert.AreEqual (Color.Blue, rtb.BackColor, "#I2");
+			Assert.IsFalse (rtb.ReadOnly, "#J1");
+			Assert.AreEqual (Color.Blue, rtb.BackColor, "#J2");
+
+			rtb.ResetBackColor ();
+			Assert.IsFalse (rtb.ReadOnly, "#K1");
+			Assert.AreEqual (SystemColors.Window, rtb.BackColor, "#K2");
+		}
+
+		[Test]
+		public void ScrollBarsTest ()
+		{
+			RichTextBox rtb = new RichTextBox ();
+			Assert.AreEqual (RichTextBoxScrollBars.Both, rtb.ScrollBars, "#1");
+			rtb.ScrollBars = RichTextBoxScrollBars.Vertical;
+			Assert.AreEqual (RichTextBoxScrollBars.Vertical, rtb.ScrollBars, "#2");
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidEnumArgumentException))]
+		public void ScrollBars_Invalid ()
+		{
+			RichTextBox rtb = new RichTextBox ();
+			rtb.ScrollBars = (RichTextBoxScrollBars) 666;
 		}
 
 		[Test]

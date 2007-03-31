@@ -1,3 +1,12 @@
+2007-03-31  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TextBox.cs: Added internal ChangeBackColor method to special-case
+	Color.Empty. Added check for invalid ScrollBars value.
+	* TextBoxBase.cs: Added internal ChangeBackColor method.
+	* RichTextBox.cs: Only set backcolor_set on 2.0 profile. Added
+	internal ChangeBackColor method to special-case Color.Empty. Added
+	check for invalid ScrollBars value.
+
 2007-03-30  Everaldo Canuto  <everaldo@simios.org>
 
 	* MenuItem.cs: On invalidate prevent form to create handle. [Fixes #81272]

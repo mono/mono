@@ -238,7 +238,7 @@ namespace System.Windows.Forms {
 			}
 			set {
 				backcolor_set = true;
-				base.BackColor = value;
+				base.BackColor = ChangeBackColor (value);
 			}
 		}
 
@@ -1965,6 +1965,9 @@ namespace System.Windows.Forms {
 
 			return true;
 		}
+
+		internal abstract Color ChangeBackColor (Color backColor);
+
 		#endregion	// Private Methods
 
 #if NET_2_0

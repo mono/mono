@@ -94,12 +94,26 @@ namespace System.Windows.Forms {
 		}
 		#endregion	// Public Constructors
 
-
 		#region Private & Internal Methods
 		private void TextBox_LostFocus(object sender, EventArgs e) {
 			if (hide_selection)
 				document.InvalidateSelectionArea ();
 		}
+
+		internal override Color ChangeBackColor (Color backColor)
+		{
+			if (backColor == Color.Empty) {
+#if NET_2_0
+				if (!ReadOnly)
+					backColor = SystemColors.Window;
+#else
+				backColor = SystemColors.Window;
+#endif
+				backcolor_set = false;
+			}
+			return backColor;
+		}
+
 #if NET_2_0
 		void OnAutoCompleteCustomSourceChanged(object sender, CollectionChangeEventArgs e) {
 			if(auto_complete_source == AutoCompleteSource.CustomSource) {
@@ -247,6 +261,10 @@ namespace System.Windows.Forms {
 			}
 
 			set {
+				if (!Enum.IsDefined (typeof (ScrollBars), value))
+					throw new InvalidEnumArgumentException ("value", (int) value,
+						typeof (ScrollBars));
+
 				if (value != (ScrollBars)scrollbars) {
 					scrollbars = (RichTextBoxScrollBars)value;
 					base.CalculateScrollBars();

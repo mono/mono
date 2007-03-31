@@ -83,7 +83,9 @@ namespace System.Windows.Forms {
 			LostFocus += new EventHandler(RichTextBox_LostFocus);
 			GotFocus += new EventHandler(RichTextBox_GotFocus);
 			BackColor = ThemeEngine.Current.ColorWindow;
+#if NET_2_0
 			backcolor_set = false;
+#endif
 			ForeColor = ThemeEngine.Current.ColorWindowText;
 
 			base.HScrolled += new EventHandler(RichTextBox_HScrolled);
@@ -96,6 +98,21 @@ namespace System.Windows.Forms {
 		#endregion	// Public Constructors
 
 		#region Private & Internal Methods
+		internal override Color ChangeBackColor (Color backColor)
+		{
+			if (backColor == Color.Empty) {
+#if NET_2_0
+				backcolor_set = false;
+				if (!ReadOnly) {
+					backColor = SystemColors.Window;
+				}
+#else
+				backColor = SystemColors.Window;
+#endif
+			}
+			return backColor;
+		}
+
 		private void RichTextBox_LostFocus(object sender, EventArgs e) {
 			Invalidate();
 		}
@@ -306,6 +323,10 @@ namespace System.Windows.Forms {
 			}
 
 			set {
+				if (!Enum.IsDefined (typeof (RichTextBoxScrollBars), value))
+					throw new InvalidEnumArgumentException ("value", (int) value,
+						typeof (RichTextBoxScrollBars));
+
 				scrollbars = value;
 			}
 		}
