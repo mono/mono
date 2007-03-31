@@ -1,3 +1,20 @@
+2007-03-29  Antonello Provenzano  <antonello@deveel.com>
+
+	* ExpressionUtil.cs: 
+		- Implemented method GetOperator for general pourposes, 
+		moving some implementations from Expression.cs specific methods
+		- IsNumber now returns 'true' for sbyte and unsigned integers
+		- Implemented method IsInteger
+	* Expression.cs: Implementation of the method:
+		- AddChecked
+		- Call
+		- Condition
+		- Divide
+		- LeftShift
+		- Quote
+	* ExpressionType.cs: Applied Obsolete attributes
+	* LiftExpression.cs: New file
+	
 2007-03-27  Antonello Provenzano  <antonello@deveel.com>
 
 	* ExpressionUtil.cs: methods 'GetReadOnlyCollection' removed

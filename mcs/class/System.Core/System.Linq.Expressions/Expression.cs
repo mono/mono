@@ -63,12 +63,13 @@ namespace System.Linq.Expressions
             if (right == null)
                 throw new ArgumentNullException("right");
         }
+
         #endregion
 
         #region Internal Methods
         internal virtual void BuildString(StringBuilder builder)
         {
-            //TODO:
+            builder.Append("[" + nodeType + "]");
         }
         #endregion
 
@@ -85,7 +86,13 @@ namespace System.Linq.Expressions
         #region Internal Static Methos
         internal static Type GetNonNullableType(Type type)
         {
-            //TODO:
+            if (IsNullableType(type))
+            {
+                //TODO: check this... should we return just the first argument?
+                Type[] argTypes = type.GetGenericArguments();
+                return argTypes[0];
+            }
+
             return type;
         }
 
@@ -93,9 +100,9 @@ namespace System.Linq.Expressions
         {
             if (type == null)
                 throw new ArgumentNullException("type");
+
             if (type.IsGenericType)
             {
-                //TODO: check this...
                 Type genType = type.GetGenericTypeDefinition();
                 return typeof(Nullable<>).IsAssignableFrom(genType);
             }
@@ -116,20 +123,11 @@ namespace System.Linq.Expressions
                 return new BinaryExpression(ExpressionType.Add, left, right, left.type);
 
             if (method == null)
-            {
-                method = ExpressionUtil.GetMethod("op_Addition", new Type[] { left.type, right.type });
-            }
+                method = ExpressionUtil.GetOperatorMethod("op_Addition", left.type, right.type);
 
-            if (method != null)
-            {
-                if (method.ReturnType == null) // it returns a void
-                    throw new ArgumentException();
-                if (!method.IsStatic)
-                    throw new ArgumentException();
-                ParameterInfo[] pars = method.GetParameters();
-                if (pars.Length != 2)
-                    throw new ArgumentException();
-            }
+            // ok if even op_Addition is not defined we need to throw an exception...
+            if (method == null)
+                throw new InvalidOperationException();
 
             return new BinaryExpression(ExpressionType.Add, left, right, method, method.ReturnType);
         }
@@ -137,6 +135,138 @@ namespace System.Linq.Expressions
         public static BinaryExpression Add(Expression left, Expression right)
         {
             return Add(left, right, null);
+        }
+
+        public static BinaryExpression AddChecked(Expression left, Expression right, MethodInfo method)
+        {
+            CheckLeftRight(left, right);
+
+            // sine both the expressions define the same numeric type we don't have
+            // to look for the "op_Addition" method...
+            if (left.type == right.type &&
+                ExpressionUtil.IsNumber(left.type))
+                return new BinaryExpression(ExpressionType.AddChecked, left, right, left.type);
+
+            if (method == null)
+            {
+                // in the case of a non-specified method we have to 'check'
+                method = ExpressionUtil.GetOperatorMethod("op_Addition", left.type, right.type);
+                if (method == null)
+                    throw new InvalidOperationException();
+
+                if (method.ReturnType.IsValueType && !IsNullableType(method.ReturnType))
+                {
+                    Type retType = method.ReturnType;
+                    if (retType != typeof(bool))
+                    {
+                        // in case the returned type is not a boolean
+                        // we want to use a nullable version of the type...
+                        if (IsNullableType(retType))
+                        {
+                            Type[] genTypes = retType.GetGenericArguments();
+                            if (genTypes.Length > 1) //TODO: should we just ignore it if is it an array greater
+                                                     //      than 1?
+                                throw new InvalidOperationException();
+                            retType = genTypes[0];
+                        }
+
+                        retType = ExpressionUtil.GetNullable(retType);
+                    }
+                    return new BinaryExpression(ExpressionType.AddChecked, left, right, method, retType);
+                }
+            }
+
+            return new BinaryExpression(ExpressionType.AddChecked, left, right, method, method.ReturnType);
+        }
+
+        public static BinaryExpression AddChecked(Expression left, Expression right)
+        {
+            return AddChecked(left, right, null);
+        }
+
+        public static BinaryExpression And(Expression left, Expression right, MethodInfo method)
+        {
+            CheckLeftRight(left, right);
+
+            // sine both the expressions define the same numeric type or is a boolean
+            // we don't have to look for the "op_BitwiseAnd" method...
+            if (left.type == right.type &&
+                (ExpressionUtil.IsInteger(left.type) || left.type == typeof(bool)))
+                return new BinaryExpression(ExpressionType.AddChecked, left, right, left.type);
+
+            if (method == null)
+                method = ExpressionUtil.GetOperatorMethod("op_BitwiseAnd", left.type, right.type);
+
+            // ok if even op_BitwiseAnd is not defined we need to throw an exception...
+            if (method == null)
+                throw new InvalidOperationException();
+
+            return new BinaryExpression(ExpressionType.And, left, right, method, method.ReturnType);
+        }
+
+        public static BinaryExpression And(Expression left, Expression right)
+        {
+            return And(left, right, null);
+        }
+
+        public static MethodCallExpression Call(Expression instance, MethodInfo method)
+        {
+            return Call(instance, method, (Expression[])null);
+        }
+
+        public static MethodCallExpression Call(MethodInfo method, params Expression[] arguments)
+        {
+            return Call(null, method, Enumerable.ToReadOnlyCollection<Expression>(arguments));
+        }
+
+        public static MethodCallExpression Call(Expression instance, MethodInfo method, params Expression[] arguments)
+        {
+            return Call(instance, method, Enumerable.ToReadOnlyCollection<Expression>(arguments));
+        }
+
+        public static MethodCallExpression Call(Expression instance, MethodInfo method, IEnumerable<Expression> arguments)
+        {
+            if (arguments == null)
+                throw new ArgumentNullException("arguments");
+            if (method == null)
+                throw new ArgumentNullException("method");
+            if (method.IsGenericMethodDefinition)
+                    throw new ArgumentException();
+            if (method.ContainsGenericParameters)
+                    throw new ArgumentException();
+            if (!method.IsStatic && instance == null)
+                throw new ArgumentNullException("instance");
+            if (instance != null && !instance.type.IsAssignableFrom(method.DeclaringType))
+                throw new ArgumentException();
+
+            ReadOnlyCollection<Expression> roArgs = Enumerable.ToReadOnlyCollection<Expression>(arguments);
+
+            ParameterInfo[] pars = method.GetParameters();
+            if (Enumerable.Count<Expression>(arguments) != pars.Length)
+                throw new ArgumentException();
+
+            if (pars.Length > 0)
+            {
+                //TODO: validate the parameters against the arguments...
+            }
+
+            return new MethodCallExpression(ExpressionType.Call, method, instance, roArgs);
+        }
+
+        public static ConditionalExpression Condition(Expression test, Expression ifTrue, Expression ifFalse)
+        {
+            if (test == null)
+                throw new ArgumentNullException("test");
+            if (ifTrue == null)
+                throw new ArgumentNullException("ifTrue");
+            if (ifFalse == null)
+                throw new ArgumentNullException("ifFalse");
+            if (test.type != typeof(bool))
+                throw new ArgumentException();
+            if (ifTrue.type != ifFalse.type)
+                throw new ArgumentException();
+
+            return new ConditionalExpression(test, ifTrue, ifFalse, ifTrue.type);
         }
 
         public static ConstantExpression Constant(object value)
@@ -155,6 +285,31 @@ namespace System.Linq.Expressions
                 throw new ArgumentException();
 
             return new ConstantExpression(value, type);
+        }
+
+        public static BinaryExpression Divide(Expression left, Expression right)
+        {
+            return Divide(left, right, null);
+        }
+
+        public static BinaryExpression Divide(Expression left, Expression right, MethodInfo method)
+        {
+            CheckLeftRight(left, right);
+
+            // sine both the expressions define the same numeric type we don't have 
+            // to look for the "op_Division" method...
+            if (left.type == right.type &&
+                ExpressionUtil.IsNumber(left.type))
+                return new BinaryExpression(ExpressionType.Divide, left, right, left.type);
+
+            if (method == null)
+                method = ExpressionUtil.GetOperatorMethod("op_Division", left.type, right.type);
+
+            // ok if even op_Division is not defined we need to throw an exception...
+            if (method == null)
+                throw new InvalidOperationException();
+
+            return new BinaryExpression(ExpressionType.Divide, left, right, method, method.ReturnType);
         }
 
         public static MemberExpression Field(Expression expression, FieldInfo field)
@@ -197,15 +352,28 @@ namespace System.Linq.Expressions
             return typeof(Func<,,,,>).MakeGenericType(typeArgs);
         }
 
-        internal static ReadOnlyCollection<TSource> ToReadOnlyCollection<TSource>(IEnumerable<TSource> source)
+        public static BinaryExpression LeftShift(Expression left, Expression right, MethodInfo method)
         {
-            if (source == null)
-                return new ReadOnlyCollection<TSource>(new List<TSource>());
+            CheckLeftRight(left, right);
 
-            if (typeof(ReadOnlyCollection<TSource>).IsInstanceOfType(source))
-                return source as ReadOnlyCollection<TSource>;
+            // since the left expression is of an integer type and the right is of
+            // an integer we don't have to look for the "op_LeftShift" method...
+            if (ExpressionUtil.IsInteger(left.type) && right.type == typeof(int))
+                return new BinaryExpression(ExpressionType.LeftShift, left, right, left.type);
 
-            return new ReadOnlyCollection<TSource>(System.Linq.Enumerable.ToArray<TSource>(source));
+            if (method == null)
+                method = ExpressionUtil.GetOperatorMethod("op_LeftShift", left.type, right.type);
+
+            // ok if even op_Division is not defined we need to throw an exception...
+            if (method == null)
+                throw new InvalidOperationException();
+
+            return new BinaryExpression(ExpressionType.LeftShift, left, right, method, method.ReturnType);
+        }
+
+        public static BinaryExpression LeftShift(Expression left, Expression right)
+        {
+            return LeftShift(left, right, null);
         }
 
         public static ListInitExpression ListInit(NewExpression newExpression, params Expression[] initializers)
@@ -213,7 +381,7 @@ namespace System.Linq.Expressions
             if (initializers == null)
                 throw new ArgumentNullException("inizializers");
 
-            return ListInit(newExpression, ToReadOnlyCollection<Expression>(initializers));
+            return ListInit(newExpression, Enumerable.ToReadOnlyCollection<Expression>(initializers));
         }
 
         public static ListInitExpression ListInit(NewExpression newExpression, IEnumerable<Expression> initializers)
@@ -223,7 +391,7 @@ namespace System.Linq.Expressions
             if (initializers == null)
                 throw new ArgumentNullException("inizializers");
 
-            return new ListInitExpression(newExpression, ToReadOnlyCollection<Expression>(initializers));
+            return new ListInitExpression(newExpression, Enumerable.ToReadOnlyCollection<Expression>(initializers));
         }
 
         public static MemberInitExpression MemberInit(NewExpression newExpression, IEnumerable<MemberBinding> bindings)
@@ -234,7 +402,7 @@ namespace System.Linq.Expressions
             if (bindings == null)
                 throw new ArgumentNullException("bindings");
 
-            return new MemberInitExpression(newExpression, ToReadOnlyCollection<MemberBinding>(bindings));
+            return new MemberInitExpression(newExpression, Enumerable.ToReadOnlyCollection<MemberBinding>(bindings));
         }
 
         public static MemberExpression Property(Expression expression, PropertyInfo property)
@@ -249,6 +417,15 @@ namespace System.Linq.Expressions
 
             return new MemberExpression(expression, property, property.PropertyType);
         }
+
+        public static UnaryExpression Quote(Expression expression)
+        {
+            if (expression == null)
+                throw new ArgumentNullException("expression");
+
+            return new UnaryExpression(ExpressionType.Quote, expression, expression.GetType());
+        }
+
 
         public static MemberExpression Property(Expression expression, string propertyName)
         {
@@ -279,15 +456,6 @@ namespace System.Linq.Expressions
             //TODO: should we return <null> here?
             // the name is not defined in the Type of the expression given...
             throw new ArgumentException();
-        }
-
-        public static UnaryExpression Quote(Expression expression)
-        {
-            if (expression == null)
-                throw new ArgumentNullException("expression");
-
-            //TODO: is this right?
-            return new UnaryExpression(ExpressionType.Quote, expression, expression.GetType());
         }
 
 

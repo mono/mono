@@ -2616,7 +2616,7 @@ namespace System.Linq
 
         #endregion
 
-        #region ToArray               
+        #region ToArray
         public static T[] ToArray<T> (this IEnumerable<T> source)
         {
             if (source == null)

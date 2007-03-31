@@ -29,7 +29,9 @@ namespace System.Linq.Expressions {
         ArrayIndex,
         ArrayLength,
         Call,
+        [Obsolete]
         CallVirtual,
+        [Obsolete]
         Cast,
         Coalesce,
         Conditional,
@@ -47,10 +49,15 @@ namespace System.Linq.Expressions {
         LeftShift,
         LessThan,
         LessThanOrEqual,
+        [Obsolete]
         Lift,
+        [Obsolete]
         LiftEqual,
+        [Obsolete]
         LiftFalse,
+        [Obsolete]
         LiftNotEqual,
+        [Obsolete]
         LiftTrue,
         ListInit,
         MemberAccess,
