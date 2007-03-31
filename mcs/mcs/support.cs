@@ -138,7 +138,7 @@ namespace Mono.CSharp {
 			if (is_varargs && pos >= pi.Length)
 				return TypeManager.runtime_argument_handle_type;
 
-			return pi [pos].ParameterType;
+			return types [pos];
 		}
 
 		public string ParameterName (int pos)
@@ -192,7 +192,7 @@ namespace Mono.CSharp {
 			if (gpd != null)
 				return gpd.ParameterModifier (pos);
 
-			Type t = pi [pos].ParameterType;
+			Type t = types [pos];
 			if (t.IsByRef){
 				if ((pi [pos].Attributes & (ParameterAttributes.Out|ParameterAttributes.In)) == ParameterAttributes.Out)
 					return Parameter.Modifier.OUT;

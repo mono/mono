@@ -289,11 +289,13 @@ namespace Mono.CSharp {
 		/// </summary>
 		public bool IsFieldInitializer;
 
+		public bool InferReturnType;
+
 		/// <summary>
 		///   The value that is allowed to be returned or NULL if there is no
 		///   return type.
 		/// </summary>
-		public readonly Type ReturnType;
+		Type returnType;
 
 		/// <summary>
 		///   Points to the Type (extracted from the TypeContainer) that
@@ -432,9 +434,6 @@ namespace Mono.CSharp {
 					flags |= Flags.InUnsafe;
 			}
 			loc = l;
-
-			if (ReturnType == TypeManager.void_type)
-				ReturnType = null;
 		}
 
 		public EmitContext (IResolveContext rc, DeclSpace ds, Location l, ILGenerator ig,
@@ -714,7 +713,7 @@ namespace Mono.CSharp {
 			}
 #endif
 
-			if (ReturnType != null && !unreachable) {
+			if (returnType != null && !unreachable) {
 				if (CurrentAnonymousMethod == null) {
 					Report.Error (161, md.Location, "`{0}': not all code paths return a value", md.GetSignatureForError ());
 					return false;
@@ -730,6 +729,16 @@ namespace Mono.CSharp {
 
 			resolved = true;
 			return true;
+		}
+
+		public Type ReturnType {
+			set {
+				returnType = value == TypeManager.void_type ?
+					null : value;
+			}
+			get {
+				return returnType;
+			}
 		}
 
 		public void EmitResolvedTopBlock (ToplevelBlock block, bool unreachable)
@@ -763,7 +772,7 @@ namespace Mono.CSharp {
 				if ((block != null) && block.IsDestructor) {
 					// Nothing to do; S.R.E automatically emits a leave.
 				} else if (HasReturnLabel || (!unreachable && !in_iterator)) {
-					if (ReturnType != null)
+					if (returnType != null)
 						ig.Emit (OpCodes.Ldloc, TemporaryReturn ());
 					ig.Emit (OpCodes.Ret);
 				}
@@ -886,7 +895,7 @@ namespace Mono.CSharp {
 		public LocalBuilder TemporaryReturn ()
 		{
 			if (return_value == null){
-				return_value = ig.DeclareLocal (ReturnType);
+				return_value = ig.DeclareLocal (returnType);
 				if (!HasReturnLabel){
 					ReturnLabel = ig.DefineLabel ();
 					HasReturnLabel = true;

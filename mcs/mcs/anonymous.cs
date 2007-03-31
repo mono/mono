@@ -1257,6 +1257,37 @@ namespace Mono.CSharp {
 			MethodInfo invoke_mb = (MethodInfo) invoke_mg.Methods [0];
 			ParameterData invoke_pd = TypeManager.GetParameterData (invoke_mb);
 
+#if GMCS_SOURCE
+			Type[] infered_arguments = null;
+			if (TypeManager.IsGenericType (delegate_type)) {
+
+				Type[] g_arguments = delegate_type.GetGenericArguments ();
+				infered_arguments = new Type[g_arguments.Length];
+				for (int i = 0; i < g_arguments.Length; ++i) {
+					infered_arguments [i] = g_arguments[i];
+				}
+
+				for (int i = 0; i < invoke_pd.Count; ++i) {
+					if (!invoke_pd.Types[i].IsGenericParameter)
+						continue;
+
+					infered_arguments [invoke_pd.Types[i].GenericParameterPosition] = Parameters.Types[i];
+					invoke_pd.Types[i] = Parameters.Types[i];
+
+					// HACK: to update both parameter type copies
+					Parameters p = invoke_pd as Parameters;
+					if (p != null)
+						p.FixedParameters[i].ParameterType = Parameters.Types[i];
+				}
+			}
+
+			int return_type_pos = -1;
+			if (TypeManager.IsGenericParameter (invoke_mb.ReturnType)) {
+				ec.InferReturnType = true;
+				return_type_pos = invoke_mb.ReturnType.GenericParameterPosition;
+			}
+#endif
+
 			Parameters parameters;
 			if (Parameters == null) {
 				//
@@ -1311,6 +1342,19 @@ namespace Mono.CSharp {
 			if (!anonymous.Resolve (ec))
 				return null;
 
+#if GMCS_SOURCE
+			if (return_type_pos != -1) {
+				if (infered_arguments == null)
+					infered_arguments = new Type [delegate_type.GetGenericArguments ().Length];
+
+				infered_arguments [return_type_pos] = anonymous.ReturnType;
+			}
+
+			if (infered_arguments != null & TypeManager.IsGenericType (delegate_type)) {
+				anonymous.AnonymousDelegate.Type = delegate_type.GetGenericTypeDefinition ().MakeGenericType (infered_arguments);
+				anonymous.DelegateType = anonymous.AnonymousDelegate.Type;
+			}
+#endif
 			return anonymous.AnonymousDelegate;
 		}
 
@@ -1447,6 +1491,7 @@ namespace Mono.CSharp {
 			aec.CurrentAnonymousMethod = this;
 			aec.IsFieldInitializer = ec.IsFieldInitializer;
 			aec.IsStatic = ec.IsStatic;
+			aec.InferReturnType = ec.InferReturnType;
 
 			Report.Debug (64, "RESOLVE ANONYMOUS METHOD #1", this, Location, ec, aec,
 				      RootScope, Parameters, Block);
@@ -1456,6 +1501,9 @@ namespace Mono.CSharp {
 				return false;
 
 			Report.Debug (64, "RESOLVE ANONYMOUS METHOD #3", this, ec, aec, Block);
+
+			if (aec.InferReturnType)
+				ReturnType = aec.ReturnType;
 
 			method = DoCreateMethodHost (ec);
 
@@ -1517,7 +1565,7 @@ namespace Mono.CSharp {
 
 	public class AnonymousMethod : AnonymousContainer
 	{
-		public readonly Type DelegateType;
+		public Type DelegateType;
 
 		//
 		// The value return by the Compatible call, this ensure that

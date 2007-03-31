@@ -1,3 +1,15 @@
+2007-03-31  Marek Safar  <marek.safar@gmail.com>
+
+	* anonymous.cs (AnonymousMethodExpression.Compatible): Handles both
+	argument and return type inferring.
+
+	* codegen.cs (InferReturnType): Flag whether return can be inferred.
+	(ReturnType): Turned to property.
+
+	* statement.cs (Return): Implemented return type inferring.
+
+	* support.cs (ReflectionParameters): Use local types if possible.
+
 2007-03-30  Raja R Harinath  <rharinath@novell.com>
 
 	* flowanalysis.cs (FlowBranching.Reachability): Remove.

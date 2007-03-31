@@ -2410,6 +2410,11 @@ namespace Mono.CSharp {
 				if (!UnifyType (param_types [i], arg_types [i], inferred_types))
 					return false;
 			}
+
+			for (int i = 0; i < inferred_types.Length; ++i)
+				if (inferred_types [i] == null)
+					return false;
+
 			return true;
 		}
 
@@ -2582,19 +2587,12 @@ namespace Mono.CSharp {
 						continue;
 
 					AnonymousMethodExpression am = (AnonymousMethodExpression)a.Expr;
-					if (!InferTypeArguments (dtype.GetGenericArguments (), am.Parameters.Types, inferred_types))
+
+					Expression e = am.Compatible (ec, dtype);
+					if (e == null)
 						return false;
 
-					Type[] inferred_delegate = new Type[am.Parameters.Types.Length];
-					int index = 0;
-					foreach (Type t in dtype.GetGenericArguments ()) {
-						inferred_delegate[index++] = inferred_types[t.GenericParameterPosition];
-					}
-					Type infered_type = dtype.GetGenericTypeDefinition ().MakeGenericType (inferred_delegate);
-
-					if (am.Compatible (ec, infered_type) == null)
-						return false;
-
+					arg_types[i] = e.Type;
 					continue;
 				}
 
@@ -2612,10 +2610,6 @@ namespace Mono.CSharp {
 				if (!LambdaInfer (ec, arguments, param_types, arg_types, inferred_types))
 					return false;
 			}
-
-			for (int i = 0; i < inferred_types.Length; ++i)
-				if (inferred_types[i] == null)
-					return false;
 
 			method = ((MethodInfo)method).MakeGenericMethod (inferred_types);
 
@@ -2656,10 +2650,6 @@ namespace Mono.CSharp {
 
 			if (!InferTypeArguments (param_types, arg_types, inferred_types))
 				return false;
-
-			foreach (Type t in inferred_types)
-				if (t == null)
-					return false;
 
 			method = ((MethodInfo)method).MakeGenericMethod (inferred_types);
 			return true;

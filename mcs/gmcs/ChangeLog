@@ -1,3 +1,8 @@
+2007-03-31  Marek Safar  <marek.safar@gmail.com>
+
+	* generic.cs (InferTypeArguments): Restored validation check.
+	(InferTypeArguments): Move all logic to Compatible method for re-usability.
+
 2007-03-25  Marek Safar  <marek.safar@gmail.com>
 
 	* generic.cs (InferTypeArguments): Infer arguments before they are used

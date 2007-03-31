@@ -720,10 +720,10 @@ namespace Mono.CSharp {
 
 			if (ec.ReturnType == null){
 				if (Expr != null){
-					if (ec.CurrentAnonymousMethod != null){
+					if (am != null){
 						Report.Error (1662, loc,
 							"Cannot convert anonymous method block to delegate type `{0}' because some of the return types in the block are not implicitly convertible to the delegate return type",
-							ec.CurrentAnonymousMethod.GetSignatureForError ());
+							am.GetSignatureForError ());
 					}
 					Error (127, "A return keyword must not be followed by any expression when method returns void");
 					return false;
@@ -741,10 +741,14 @@ namespace Mono.CSharp {
 					return false;
 
 				if (Expr.Type != ec.ReturnType) {
-					Expr = Convert.ImplicitConversionRequired (
-						ec, Expr, ec.ReturnType, loc);
-					if (Expr == null)
-						return false;
+					if (ec.InferReturnType) {
+						ec.ReturnType = Expr.Type;
+					} else {
+						Expr = Convert.ImplicitConversionRequired (
+							ec, Expr, ec.ReturnType, loc);
+						if (Expr == null)
+							return false;
+					}
 				}
 			}
 
@@ -1241,6 +1245,9 @@ namespace Mono.CSharp {
 				
 				VariableType = texpr.Type;
 			}
+
+			if (TypeManager.IsGenericParameter (VariableType))
+				return true;
 
 			if (VariableType == TypeManager.void_type) {
 				Expression.Error_VoidInvalidInTheContext (Location);
