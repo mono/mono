@@ -114,7 +114,12 @@ namespace System.Web.SessionState
 				return;
 #if TARGET_J2EE
 			default:
-				throw new NotSupportedException (String.Format ("The mode '{0}' is not supported. Only Custom mode is supported and maps to J2EE session.", config.Mode));
+				config = new SessionStateSection ();
+				config.Mode = SessionStateMode.Custom;
+				config.CustomProvider = "ServletSessionStateStore";
+				config.SessionIDManagerType = "Mainsoft.Web.SessionState.ServletSessionIDManager";
+				config.Providers.Add (new ProviderSettings ("ServletSessionStateStore", "Mainsoft.Web.SessionState.ServletSessionStateStoreProvider"));
+				goto case SessionStateMode.Custom;
 #else
 			case SessionStateMode.InProc:
 				settings = new ProviderSettings (null, typeof (SessionInProcHandler).AssemblyQualifiedName);
