@@ -73,7 +73,7 @@ namespace Mainsoft.Web.SessionState
 			HttpSession session = GetSession (context, false, false);
 			if (session == null)
 				return null;
-			ServletSessionStateItemCollection sessionState = (ServletSessionStateItemCollection) session.getAttribute (J2EEConsts.SESSION_STATE);
+			ServletSessionStateItemCollection sessionState = session.getAttribute (J2EEConsts.SESSION_STATE) as ServletSessionStateItemCollection;
 			if (sessionState == null) //was not set
 				sessionState = new ServletSessionStateItemCollection (context);
 			return new SessionStateStoreData (
