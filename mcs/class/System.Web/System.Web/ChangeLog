@@ -1,5 +1,10 @@
 2007-04-01  Konstantin Triger <kostat@mainsoft.com>
 
+	* HttpContext.cs: 
+		GetLocalResourceObject - should not prefix resources with 'Resources.'.
+
+2007-04-01  Konstantin Triger <kostat@mainsoft.com>
+
 	* BrowserCapabilities.cs: Default Browser (userAgent) property to 'Unknown'.
 
 2007-03-29  Vladimir Krasnov  <vladimirk@mainsoft.com>

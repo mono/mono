@@ -434,7 +434,7 @@ namespace System.Web {
 			}
 			
 			path = Path.GetFileName (virtualPath);
-			return GetResourceObject ("Resources." + path, resourceKey, culture, asm);
+			return GetResourceObject (path, resourceKey, culture, asm);
 		}
 
 		public object GetSection (string name)
