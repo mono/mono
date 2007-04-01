@@ -1,3 +1,11 @@
+2007-04-01  Alp Toker  <alp@atoker.com>
+
+	* build-csproj:
+	* build-csproj2k5:
+	* build-csproj2k5-tests: Use bash, not sh. These scripts do run with
+	POSIX sh but they produce incorrect output containing binary garbage.
+	Output is correct when 'bash' is used instead of 'sh'.
+
 2007-03-30  Jonathan Pobst  <monkey@jpobst.com>
 
 	* System.Windows.Forms.dll.sources: Add ScrollProperties, 

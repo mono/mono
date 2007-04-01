@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # I got tired of editing the SWF.csproj
 # This script will generate it from our System.Windows.Forms.dll.sources
