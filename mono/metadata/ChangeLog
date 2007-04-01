@@ -1,3 +1,8 @@
+2007-04-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* threads.c (abort_appdomain_thread): Avoid handle leakage if we are
+	waiting for too many threads.
+
 2007-03-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* environment.c: Fix return value check on uname so we can get the 
