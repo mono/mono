@@ -86,6 +86,7 @@
             <tr>
                 <td colspan="2">
                     (<span style="font-size: 20px; color: red">*</span>)Required field <br /><br />
+                    <asp:RequiredFieldValidator ID="required_email_validator" runat="server" ControlToValidate="email_txb" ErrorMessage="Email required" />
                     <asp:RegularExpressionValidator ID="RegularExpressionValidator1" ControlToValidate="email_txb" ValidationExpression="\S+@\S+\.\S+" runat="server" ErrorMessage="Email format is invalid"></asp:RegularExpressionValidator>
                 </td>
             </tr>
