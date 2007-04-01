@@ -1,3 +1,7 @@
+2007-04-01  Konstantin Triger <kostat@mainsoft.com>
+
+	* BrowserCapabilities.cs: Default Browser (userAgent) property to 'Unknown'.
+
 2007-03-29  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* HttpContext.cs: timeout methods removed from TARGET_J2EE compilation

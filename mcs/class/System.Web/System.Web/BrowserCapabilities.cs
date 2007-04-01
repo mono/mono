@@ -241,7 +241,9 @@ namespace System.Web {
 		public string Browser {
 			get {
 				if (!Get (HaveBrowser)) {
-					browser = ReadString("browser");
+					browser = this ["browser"];
+					if (browser == null || browser.Length == 0)
+						browser = "Unknown";
 					Set (HaveBrowser);
 				}
 
@@ -595,8 +597,7 @@ namespace System.Web {
 		}
 #endif
 		Exception CreateCapabilityNotFoundException (string key) {
-			string userAgent = key == "browser" ? null : this ["browser"];
-			return new ArgumentNullException (String.Format ("browscaps.ini does not contain a definition for capability {0} for userAgent {1}", key, userAgent));
+			return new ArgumentNullException (String.Format ("browscaps.ini does not contain a definition for capability {0} for userAgent {1}", key, Browser));
 		}
 
 		bool Get (int idx)
