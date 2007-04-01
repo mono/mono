@@ -2204,11 +2204,11 @@ namespace Mono.CSharp {
 						continue;
 					}
 
-					if (ex_type == extensionType || TypeManager.IsGenericParameter (ex_type)) {
+					//if (implicit conversion between ex_type and extensionType exist) {
 						if (candidates == null)
 							candidates = new ArrayList (2);
 						candidates.Add (mb);
-					}
+					//}
 				}
 			}
 

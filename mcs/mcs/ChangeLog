@@ -1,3 +1,10 @@
+2007-04-01  Marek Safar  <marek.safar@gmail.com>
+
+	* decl.cs (FindExtensionMethods): Consider all candidates with same name
+	at this level.
+	
+	* expression.cs (MemberAccess.DoResolve): Cache resolved expression.
+
 2007-03-31  Marek Safar  <marek.safar@gmail.com>
 
 	* anonymous.cs (AnonymousMethodExpression.Compatible): Handles both

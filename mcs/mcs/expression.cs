@@ -6722,15 +6722,15 @@ namespace Mono.CSharp {
 			//
 
 			SimpleName original = expr as SimpleName;
-			Expression new_expr = expr.Resolve (ec,
+			expr = expr.Resolve (ec,
 				ResolveFlags.VariableOrValue | ResolveFlags.Type |
 				ResolveFlags.Intermediate | ResolveFlags.DisableStructFlowAnalysis);
 
-			if (new_expr == null)
+			if (expr == null)
 				return null;
 
-			if (new_expr is Namespace) {
-				Namespace ns = (Namespace) new_expr;
+			if (expr is Namespace) {
+				Namespace ns = (Namespace) expr;
 				FullNamedExpression retval = ns.Lookup (ec.DeclContainer, LookupIdentifier, loc);
 #if GMCS_SOURCE
 				if ((retval != null) && (args != null))
@@ -6742,8 +6742,8 @@ namespace Mono.CSharp {
 				return retval;
 			}
 
-			Type expr_type = new_expr.Type;
-			if (expr_type.IsPointer || expr_type == TypeManager.void_type || new_expr is NullLiteral){
+			Type expr_type = expr.Type;
+			if (expr_type.IsPointer || expr_type == TypeManager.void_type || expr is NullLiteral){
 				Unary.Error_OperatorCannotBeApplied (loc, ".", expr_type);
 				return null;
 			}
@@ -6752,7 +6752,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			Constant c = new_expr as Constant;
+			Constant c = expr as Constant;
 			if (c != null && c.GetValue () == null) {
 				Report.Warning (1720, 1, loc, "Expression will always cause a `{0}'",
 					"System.NullReferenceException");
@@ -6779,8 +6779,8 @@ namespace Mono.CSharp {
 
 			TypeExpr texpr = member_lookup as TypeExpr;
 			if (texpr != null) {
-				if (!(new_expr is TypeExpr) && 
-				    (original == null || !original.IdenticalNameAndTypeName (ec, new_expr, loc))) {
+				if (!(expr is TypeExpr) && 
+				    (original == null || !original.IdenticalNameAndTypeName (ec, expr, loc))) {
 					Report.Error (572, loc, "`{0}': cannot reference a type through an expression; try `{1}' instead",
 						Identifier, member_lookup.GetSignatureForError ());
 					return null;
@@ -6793,7 +6793,7 @@ namespace Mono.CSharp {
 				}
 
 #if GMCS_SOURCE
-				ConstructedType ct = new_expr as ConstructedType;
+				ConstructedType ct = expr as ConstructedType;
 				if (ct != null) {
 					//
 					// When looking up a nested type in a generic instance
@@ -6812,7 +6812,7 @@ namespace Mono.CSharp {
 			}
 
 			MemberExpr me = (MemberExpr) member_lookup;
-			member_lookup = me.ResolveMemberAccess (ec, new_expr, loc, original);
+			member_lookup = me.ResolveMemberAccess (ec, expr, loc, original);
 			if (member_lookup == null)
 				return null;
 
@@ -6827,7 +6827,7 @@ namespace Mono.CSharp {
 			if (original != null && !TypeManager.IsValueType (expr_type)) {
 				me = member_lookup as MemberExpr;
 				if (me != null && me.IsInstance) {
-					LocalVariableReference var = new_expr as LocalVariableReference;
+					LocalVariableReference var = expr as LocalVariableReference;
 					if (var != null && !var.VerifyAssigned (ec))
 						return null;
 				}
