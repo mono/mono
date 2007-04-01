@@ -1222,6 +1222,8 @@
     </Compile>
     <Compile Include="System.Web.UI\WebServiceParser.jvm.cs" />
     <Compile Include="System.Web.Util\ICalls.jvm.cs" />
+    <Compile Include="System.Web\BaseParamsCollection.cs" />
+    <Compile Include="System.Web\HeadersCollection.cs" />
     <Compile Include="System.Web\HttpApplication.cs" />
     <Compile Include="System.Web\HttpStaticObjectsCollection.cs">
       <SubType>Code</SubType>

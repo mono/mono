@@ -35,7 +35,9 @@ namespace System.Web
 	{
 		bool got_id;
 		int id;
-
+#if NET_2_0
+		public WebROCollection () : base (StringComparer.OrdinalIgnoreCase) { }
+#endif
 		public bool GotID {
 			get { return got_id; }
 		}

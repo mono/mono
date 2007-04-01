@@ -1,3 +1,8 @@
+2007-04-01  Vladimir Krasnov  <vladimirk@mainsoft.com>
+	
+	* System.Web20.csproj: 
+	* System.Web.dll.sources: HeadersCollection.cs, BaseParamsCollection.cs
+
 2007-03-21  Marek Habersack  <mhabersack@novell.com>
 
 	* System.Web.dll.sources: added UnknownAttributeDescriptor.cs

@@ -487,7 +487,9 @@ namespace MonoTests.System.Web {
 
 		}
 
-		[Test][ExpectedException(typeof(NullReferenceException))]
+		[Test]
+		[Ignore ("tests undocumented behavior that depends on implementation")] 
+		[ExpectedException(typeof(NullReferenceException))]
 		public void Test_EmptyUnknownRow ()
 		{
 			HttpContext c = Cook (2);

@@ -541,34 +541,9 @@ namespace System.Web {
 
 		public NameValueCollection Headers {
 			get {
-				if (headers == null){
-					headers = new WebROCollection ();
-					if (worker_request == null) {
-						headers.Protect ();
-						return headers;
-					}
-
-					for (int i = 0; i < HttpWorkerRequest.RequestHeaderMaximum; i++){
-						string hval = worker_request.GetKnownRequestHeader (i);
-
-						if (hval == null || hval == "")
-							continue;
-						
-						headers.Add (HttpWorkerRequest.GetKnownRequestHeaderName (i), hval);
-					}
+				if (headers == null)
+					headers = new HeadersCollection (this);
 				
-					string [][] unknown = worker_request.GetUnknownRequestHeaders ();
-					if (unknown != null && unknown.GetUpperBound (0) != -1){
-						int top = unknown.GetUpperBound (0) + 1;
-						
-						for (int i = 0; i < top; i++){
-							// should check if unknown [i] is not null, but MS does not. 
-							
-							headers.Add (unknown [i][0], unknown [i][1]);
-						}
-					}
-					headers.Protect ();
-				}
 				return headers;
 			}
 		}

@@ -38,12 +38,12 @@ using System.Security.Permissions;
 
 namespace System.Web
 {
-	class ServerVariablesCollection : NameValueCollection
+	class ServerVariablesCollection : BaseParamsCollection
 	{
 		HttpRequest request;
 		bool loaded;
 
-		public ServerVariablesCollection(HttpRequest request)
+		public ServerVariablesCollection(HttpRequest request) : base(request)
 		{
 			IsReadOnly = true;
 			this.request = request;
@@ -193,123 +193,101 @@ namespace System.Web
 			loaded = true;
 		}
 
- 
-		public override string Get(int index)
+		protected override void InsertInfo ()
 		{
-			loadServerVariablesCollection();
-			return base.Get(index); 
+			loadServerVariablesCollection ();
 		}
 
-		public override string Get(string name)
+		protected override string InternalGet (string name)
 		{
-			string text1;
-			if (!loaded) {
-				text1 = GetServerVar(name);
-				if (text1 != null)				
-					return text1; 				
-				loadServerVariablesCollection(); 
-			}
-			return base.Get(name); 
-
-			
-		}
-
-		private string GetServerVar(string name)
-		{
-			if (((name == null) || (name.Length <= 8)) || (this.request == null))
+			if ((name == null) || (this._request == null))
 				return null;
-			
-			if (string.Compare(name, "AUTH_TYPE", true, CultureInfo.InvariantCulture) == 0) {
-				if (null != request.Context.User && request.Context.User.Identity.IsAuthenticated) 
-					return request.Context.User.Identity.AuthenticationType;
-				else
-					return string.Empty;
-			} else if (string.Compare(name, "AUTH_USER",true, CultureInfo.InvariantCulture) == 0) {
-				if (null != request.Context.User && request.Context.User.Identity.IsAuthenticated) 
-					return request.Context.User.Identity.Name;
-				else
-					return string.Empty;
-			} else if (string.Compare(name, "QUERY_STRING", true, CultureInfo.InvariantCulture) == 0)				
-				return this.request.QueryStringRaw; 
-			else if (string.Compare(name, "PATH_INFO", true, CultureInfo.InvariantCulture) == 0)				
-				return this.request.PathInfo; 
-			else if (string.Compare(name, "PATH_TRANSLATED", true, CultureInfo.InvariantCulture) == 0)
-				return this.request.PhysicalPath; 			
-			else if (string.Compare(name, "REQUEST_METHOD", true, CultureInfo.InvariantCulture) == 0)				
-				return this.request.HttpMethod;
-			else if (string.Compare(name, "REMOTE_ADDR", true, CultureInfo.InvariantCulture) == 0)			
-				return this.request.UserHostAddress; 			
-			else if (string.Compare(name, "REMOTE_HOST", true, CultureInfo.InvariantCulture) == 0)			
-				return this.request.UserHostName; 			
-			else if (string.Compare(name, "REMOTE_ADDRESS", true, CultureInfo.InvariantCulture) == 0)
-				return this.request.UserHostAddress; 
-			else if (string.Compare(name, "SCRIPT_NAME", true, CultureInfo.InvariantCulture) == 0)				
-				return this.request.FilePath;
-			else if (string.Compare(name, "LOCAL_ADDR", true, CultureInfo.InvariantCulture) == 0)				
-				return this.request.WorkerRequest.GetLocalAddress();
-			else if (string.Compare(name, "SERVER_PROTOCOL", true, CultureInfo.InvariantCulture) == 0)
-				return request.WorkerRequest.GetHttpVersion();
-			else if (string.Compare(name, "SERVER_SOFTWARE", true, CultureInfo.InvariantCulture) == 0)
-				return request.WorkerRequest.GetServerVariable("SERVER_SOFTWARE");
-			return null; 
-		}
- 
-		public override string GetKey(int index)
-		{
-			loadServerVariablesCollection();
-			return base.GetKey(index); 
-		}
- 
-		public override string[] GetValues(int index)
-		{
-			string text1;
-			string[] array1;
-
-			text1 = Get(index);
-			if (text1 == null) 
-				return null;
-			
-			array1 = new string[1];
-			array1[0] = text1;
-
-			return array1; 
-		}
- 
-		public override string[] GetValues(string name)
-		{
-			string text1;
-			string[] array1;
-
-			text1 = Get(name);
-			if (text1 == null)
-				return null; 
-			array1 = new string[1];
-			array1[0] = text1;
-			
-			return array1; 
-		}
- 
-		// not really useful except for not triggering Gendarme warnings
-		[SecurityPermission (SecurityAction.Demand, SerializationFormatter = true)]
-		public override void GetObjectData(SerializationInfo info, StreamingContext context)
-		{
-			throw new SerializationException(); 
-		}
-
-		public override string[] AllKeys 
-		{
-			get {
-				loadServerVariablesCollection ();
-				return base.AllKeys;
+			name = name.ToUpper (CultureInfo.InvariantCulture);
+			switch (name) {
+				case "AUTH_TYPE":
+					if (null != _request.Context.User && _request.Context.User.Identity.IsAuthenticated)
+						return _request.Context.User.Identity.AuthenticationType;
+					else
+						return string.Empty;
+				case "AUTH_USER":
+					if (null != _request.Context.User && _request.Context.User.Identity.IsAuthenticated)
+						return _request.Context.User.Identity.Name;
+					else
+						return string.Empty;
+				case "QUERY_STRING":
+					return this._request.QueryStringRaw;
+				case "PATH_INFO":
+					return this._request.PathInfo;
+				case "PATH_TRANSLATED":
+					return this._request.PhysicalPath;
+				case "REQUEST_METHOD":
+					return this._request.HttpMethod;
+				case "REMOTE_ADDR":
+					return this._request.UserHostAddress;
+				case "REMOTE_HOST":
+					return this._request.UserHostName;
+				case "REMOTE_ADDRESS":
+					return this._request.UserHostAddress;
+				case "SCRIPT_NAME":
+					return this._request.FilePath;
+				case "LOCAL_ADDR":
+					return this._request.WorkerRequest.GetLocalAddress ();
+				case "SERVER_PROTOCOL":
+					return _request.WorkerRequest.GetHttpVersion ();
+				case "CONTENT_TYPE":
+					return _request.ContentType;
+				case "REMOTE_PORT":
+					return _request.WorkerRequest.GetRemotePort ().ToString ();
+				case "SERVER_NAME":
+					return _request.WorkerRequest.GetServerName ();
+				case "SERVER_PORT":
+					return _request.WorkerRequest.GetLocalPort ().ToString ();
+				case "APPL_PHYSICAL_PATH":
+					return _request.WorkerRequest.GetAppPathTranslated ();
+				case "REMOTE_USER":
+					return (_request.Context.User != null && _request.Context.User.Identity.IsAuthenticated) ?
+						_request.Context.User.Identity.Name :
+						String.Empty;
+				case "URL":
+					return _request.FilePath;
+				case "SERVER_PORT_SECURE":
+					return (_request.WorkerRequest.IsSecure ()) ? "1" : "0";
+				case "ALL_HTTP":
+					return Fill (_request.WorkerRequest, true);
+				case "ALL_RAW":
+					return Fill (_request.WorkerRequest, false);
+				case "SERVER_SOFTWARE":
+				case "APPL_MD_PATH":
+				case "AUTH_PASSWORD":
+				case "CERT_COOKIE":
+				case "CERT_FLAGS":
+				case "CERT_ISSUER":
+				case "CERT_KEYSIZE":
+				case "CERT_SECRETKEYSIZE":
+				case "CERT_SERIALNUMBER":
+				case "CERT_SERVER_ISSUER":
+				case "CERT_SERVER_SUBJECT":
+				case "GATEWAY_INTERFACE":
+				case "HTTPS":
+				case "HTTPS_KEYSIZE":
+				case "HTTPS_SECRETKEYSIZE":
+				case "HTTPS_SERVER_ISSUER":
+				case "HTTPS_SERVER_SUBJECT":
+				case "INSTANCE_ID":
+				case "INSTANCE_META_PATH":
+				case "LOGON_USER":
+				case "HTTP_ACCEPT":
+				case "HTTP_REFERER":
+				case "HTTP_ACCEPT_LANGUAGE":
+				case "HTTP_ACCEPT_ENCODING":
+				case "HTTP_CONNECTION":
+				case "HTTP_HOST":
+				case "HTTP_USER_AGENT":
+				case "HTTP_SOAPACTION":
+					return _request.WorkerRequest.GetServerVariable (name);
+				default:
+					return null;
 			}
 		}
-
-		public override int Count 
-		{
-			get {
-				loadServerVariablesCollection ();
-				return base.Count;
-			}
-		} 
 	}
 }

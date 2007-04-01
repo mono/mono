@@ -1,3 +1,12 @@
+2007-04-01  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* HttpRequest.cs: fixed Headers property to use optimized
+	HeadersCollection
+	* WebROCollection.cs: used StringComparer.OrdinalIgnoreCase for
+	NET_2_0
+	* ServerVariablesCollection.cs: used lazy collection fill optimization
+	* added: HeadersCollection.cs, BaseParamsCollection.cs
+
 2007-04-01  Konstantin Triger <kostat@mainsoft.com>
 
 	* HttpContext.cs: 
