@@ -382,6 +382,7 @@ namespace System.Web {
 
 					if (app_file != null) {
 #if TARGET_J2EE
+						app_file = System.Web.Util.UrlUtils.ResolveVirtualPathFromAppAbsolute("~/" + Path.GetFileName(app_file));
 						app_type = System.Web.J2EE.PageMapper.GetObjectType(context, app_file);
 #else
 						app_type = ApplicationFileParser.GetCompiledApplicationType (app_file, context);
