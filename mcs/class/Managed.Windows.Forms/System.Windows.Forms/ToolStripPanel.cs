@@ -260,10 +260,10 @@ namespace System.Windows.Forms
 
 		protected override void OnControlAdded (ControlEventArgs e)
 		{
-			base.OnControlAdded (e);
-
-			if (done_first_layout)
+			if (done_first_layout && e.Control is ToolStrip)
 				this.AddControlToRows (e.Control);
+			
+			base.OnControlAdded (e);
 		}
 
 		protected override void OnControlRemoved (ControlEventArgs e)
@@ -279,42 +279,47 @@ namespace System.Windows.Forms
 		{
 			base.OnDockChanged (e);
 		}
-
+		
 		protected override void OnLayout (LayoutEventArgs levent)
 		{
-			if (this.Width == 0)
-				return;
-
-			if (!done_first_layout && (this.FindForm() == null || this.Visible == false))
+			// Don't see any reason to layout if we aren't created
+			if (!this.Created)
 				return;
 				
-			Point position = this.DisplayRectangle.Location;
+			// The first time through, we have to layout everything where it belongs.
+			// The key is that when we resize and stuff, we don't resize or move toolstrips.
+			if (!done_first_layout) {
+				ArrayList al = new ArrayList (this.Controls);
+				al.Sort (new TabIndexComparer ());
+				
+				foreach (ToolStrip ts in al)
+					this.AddControlToRows (ts);
+					
+				done_first_layout = true;			
+			}
 			
+			// Lay out all the rows
+			Point position = this.DisplayRectangle.Location;
+
 			foreach (ToolStripPanelRow row in this.rows) {
 				row.SetBounds (new Rectangle (position, new Size (this.Width, row.Bounds.Height)));
 
 				position.Y += row.Bounds.Height;
 			}
-			
-			if (!done_first_layout)
-			{
-				foreach (ToolStrip ts in this.Controls)
-					this.AddControlToRows (ts);
-			
-				done_first_layout = true;
-				this.OnLayout (levent);
-				return;
-			}
 
+			// Find how big we are so we can autosize ourself
 			int height = 0;
-
-			foreach (ToolStripPanelRow row in this.rows)
-				height += row.Bounds.Height;
-
-			if (height != this.Height)
-				this.Height = height;
-
-			this.Invalidate (FindBackgroundRegion ());
+				
+			if (this.rows.Count > 0) {
+				int last_row_bottom = this.rows[this.rows.Count - 1].Bounds.Bottom;
+			
+				if (last_row_bottom != this.Height)
+					this.SetBounds (bounds.X, bounds.Y, bounds.Width, last_row_bottom);
+			}
+			
+			this.Invalidate ();
+			
+			return;
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
@@ -509,6 +514,19 @@ namespace System.Windows.Forms
 			public ToolStripPanelControlCollection (Control owner) : base (owner)
 			{
 			}
+		}
+
+		private class TabIndexComparer : IComparer
+		{
+			#region IComparer Members
+			public int Compare (object x, object y)
+			{
+				if (!(x is Control) || !(y is Control))
+					throw new ArgumentException ();
+
+				return (x as Control).TabIndex - (y as Control).TabIndex;
+			}
+			#endregion
 		}
 		#endregion
 	}
