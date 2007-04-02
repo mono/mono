@@ -14,7 +14,11 @@
 //
 // TODO:
 //   Support for "DoubleWordsAreSwapped" for ARM devices
-// 
+//   Add PutBytes (byte [] dest, int destIdx, xx value)
+//   Make GetBytes use the above.
+//
+//   Make all the GetBtesXXX use a byte [] dest, int dest
+//
 // Copyright (C) 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -49,7 +53,7 @@ namespace Mono {
 #endif
 		static DataConverter SwapConv = new SwapConverter ();
 		static DataConverter CopyConv = new CopyConverter ();
-		
+
 		public static readonly bool IsLittleEndian = BitConverter.IsLittleEndian;
 			
 		public abstract double GetDouble (byte [] data, int index);
@@ -81,13 +85,13 @@ namespace Mono {
 		
 		static public DataConverter LittleEndian {
 			get {
-				return IsLittleEndian ? CopyConv : SwapConv;
+				return BitConverter.IsLittleEndian ? CopyConv : SwapConv;
 			}
 		}
 
 		static public DataConverter BigEndian {
 			get {
-				return IsLittleEndian ? SwapConv : CopyConv;
+				return BitConverter.IsLittleEndian ? SwapConv : CopyConv;
 			}
 		}
 
@@ -688,8 +692,9 @@ namespace Mono {
 				if (data == null)
 					throw new ArgumentNullException ("data");
 				if (data.Length - index < 8)
-					throw new ArgumentException ("data");
-
+					throw new ArgumentException ("index");
+				if (index < 0)
+					throw new ArgumentException ("index");
 				double ret;
 				byte *b = (byte *)&ret;
 
@@ -704,7 +709,9 @@ namespace Mono {
 				if (data == null)
 					throw new ArgumentNullException ("data");
 				if (data.Length - index < 8)
-					throw new ArgumentException ("data");
+					throw new ArgumentException ("index");
+				if (index < 0)
+					throw new ArgumentException ("index");
 
 				ulong ret;
 				byte *b = (byte *)&ret;
@@ -720,7 +727,9 @@ namespace Mono {
 				if (data == null)
 					throw new ArgumentNullException ("data");
 				if (data.Length - index < 8)
-					throw new ArgumentException ("data");
+					throw new ArgumentException ("index");
+				if (index < 0)
+					throw new ArgumentException ("index");
 
 				long ret;
 				byte *b = (byte *)&ret;
@@ -736,7 +745,9 @@ namespace Mono {
 				if (data == null)
 					throw new ArgumentNullException ("data");
 				if (data.Length - index < 4)
-					throw new ArgumentException ("data");
+					throw new ArgumentException ("index");
+				if (index < 0)
+					throw new ArgumentException ("index");
 
 				float ret;
 				byte *b = (byte *)&ret;
@@ -752,7 +763,9 @@ namespace Mono {
 				if (data == null)
 					throw new ArgumentNullException ("data");
 				if (data.Length - index < 4)
-					throw new ArgumentException ("data");
+					throw new ArgumentException ("index");
+				if (index < 0)
+					throw new ArgumentException ("index");
 
 				int ret;
 				byte *b = (byte *)&ret;
@@ -768,7 +781,9 @@ namespace Mono {
 				if (data == null)
 					throw new ArgumentNullException ("data");
 				if (data.Length - index < 4)
-					throw new ArgumentException ("data");
+					throw new ArgumentException ("index");
+				if (index < 0)
+					throw new ArgumentException ("index");
 
 				uint ret;
 				byte *b = (byte *)&ret;
@@ -784,7 +799,9 @@ namespace Mono {
 				if (data == null)
 					throw new ArgumentNullException ("data");
 				if (data.Length - index < 2)
-					throw new ArgumentException ("data");
+					throw new ArgumentException ("index");
+				if (index < 0)
+					throw new ArgumentException ("index");
 
 				short ret;
 				byte *b = (byte *)&ret;
@@ -800,7 +817,9 @@ namespace Mono {
 				if (data == null)
 					throw new ArgumentNullException ("data");
 				if (data.Length - index < 2)
-					throw new ArgumentException ("data");
+					throw new ArgumentException ("index");
+				if (index < 0)
+					throw new ArgumentException ("index");
 
 				ushort ret;
 				byte *b = (byte *)&ret;
@@ -914,7 +933,9 @@ namespace Mono {
 				if (data == null)
 					throw new ArgumentNullException ("data");
 				if (data.Length - index < 8)
-					throw new ArgumentException ("data");
+					throw new ArgumentException ("index");
+				if (index < 0)
+					throw new ArgumentException ("index");
 
 				double ret;
 				byte *b = (byte *)&ret;
@@ -930,7 +951,9 @@ namespace Mono {
 				if (data == null)
 					throw new ArgumentNullException ("data");
 				if (data.Length - index < 8)
-					throw new ArgumentException ("data");
+					throw new ArgumentException ("index");
+				if (index < 0)
+					throw new ArgumentException ("index");
 
 				ulong ret;
 				byte *b = (byte *)&ret;
@@ -946,7 +969,9 @@ namespace Mono {
 				if (data == null)
 					throw new ArgumentNullException ("data");
 				if (data.Length - index < 8)
-					throw new ArgumentException ("data");
+					throw new ArgumentException ("index");
+				if (index < 0)
+					throw new ArgumentException ("index");
 
 				long ret;
 				byte *b = (byte *)&ret;
@@ -962,7 +987,9 @@ namespace Mono {
 				if (data == null)
 					throw new ArgumentNullException ("data");
 				if (data.Length - index < 4)
-					throw new ArgumentException ("data");
+					throw new ArgumentException ("index");
+				if (index < 0)
+					throw new ArgumentException ("index");
 
 				float ret;
 				byte *b = (byte *)&ret;
@@ -978,7 +1005,9 @@ namespace Mono {
 				if (data == null)
 					throw new ArgumentNullException ("data");
 				if (data.Length - index < 4)
-					throw new ArgumentException ("data");
+					throw new ArgumentException ("index");
+				if (index < 0)
+					throw new ArgumentException ("index");
 
 				int ret;
 				byte *b = (byte *)&ret;
@@ -994,7 +1023,9 @@ namespace Mono {
 				if (data == null)
 					throw new ArgumentNullException ("data");
 				if (data.Length - index < 4)
-					throw new ArgumentException ("data");
+					throw new ArgumentException ("index");
+				if (index < 0)
+					throw new ArgumentException ("index");
 
 				uint ret;
 				byte *b = (byte *)&ret;
@@ -1010,7 +1041,9 @@ namespace Mono {
 				if (data == null)
 					throw new ArgumentNullException ("data");
 				if (data.Length - index < 2)
-					throw new ArgumentException ("data");
+					throw new ArgumentException ("index");
+				if (index < 0)
+					throw new ArgumentException ("index");
 
 				short ret;
 				byte *b = (byte *)&ret;
@@ -1026,7 +1059,9 @@ namespace Mono {
 				if (data == null)
 					throw new ArgumentNullException ("data");
 				if (data.Length - index < 2)
-					throw new ArgumentException ("data");
+					throw new ArgumentException ("index");
+				if (index < 0)
+					throw new ArgumentException ("index");
 
 				ushort ret;
 				byte *b = (byte *)&ret;
@@ -1177,7 +1212,7 @@ namespace Mono {
 			}
 		}
 
-		static unsafe void PutBytesMemory (byte *dest, byte *src, int count)
+		static unsafe void PutBytesNative (byte *dest, byte *src, int count)
 		{
 			int i = 0;
 			
@@ -1190,7 +1225,9 @@ namespace Mono {
 			if (data == null)
 				throw new ArgumentNullException ("data");
 			if (data.Length - index < 8)
-				throw new ArgumentException ("data");
+				throw new ArgumentException ("index");
+			if (index < 0)
+				throw new ArgumentException ("index");
 			
 			double ret;
 			fixed (byte *src = &data[index]){
@@ -1204,7 +1241,9 @@ namespace Mono {
 			if (data == null)
 				throw new ArgumentNullException ("data");
 			if (data.Length - index < 4)
-				throw new ArgumentException ("data");
+				throw new ArgumentException ("index");
+			if (index < 0)
+				throw new ArgumentException ("index");
 			
 			float ret;
 			fixed (byte *src = &data[index]){
@@ -1218,7 +1257,9 @@ namespace Mono {
 			if (data == null)
 				throw new ArgumentNullException ("data");
 			if (data.Length - index < 8)
-				throw new ArgumentException ("data");
+				throw new ArgumentException ("index");
+			if (index < 0)
+				throw new ArgumentException ("index");
 			
 			long ret;
 			fixed (byte *src = &data[index]){
@@ -1232,7 +1273,9 @@ namespace Mono {
 			if (data == null)
 				throw new ArgumentNullException ("data");
 			if (data.Length - index < 8)
-				throw new ArgumentException ("data");
+				throw new ArgumentException ("index");
+			if (index < 0)
+				throw new ArgumentException ("index");
 			
 			ulong ret;
 			fixed (byte *src = &data[index]){
@@ -1246,7 +1289,9 @@ namespace Mono {
 			if (data == null)
 				throw new ArgumentNullException ("data");
 			if (data.Length - index < 4)
-				throw new ArgumentException ("data");
+				throw new ArgumentException ("index");
+			if (index < 0)
+				throw new ArgumentException ("index");
 			
 			int ret;
 			fixed (byte *src = &data[index]){
@@ -1260,7 +1305,9 @@ namespace Mono {
 			if (data == null)
 				throw new ArgumentNullException ("data");
 			if (data.Length - index < 4)
-				throw new ArgumentException ("data");
+				throw new ArgumentException ("index");
+			if (index < 0)
+				throw new ArgumentException ("index");
 			
 			uint ret;
 			fixed (byte *src = &data[index]){
@@ -1274,7 +1321,9 @@ namespace Mono {
 			if (data == null)
 				throw new ArgumentNullException ("data");
 			if (data.Length - index < 2)
-				throw new ArgumentException ("data");
+				throw new ArgumentException ("index");
+			if (index < 0)
+				throw new ArgumentException ("index");
 
 			short ret;
 			fixed (byte *src = &data[index]){
@@ -1288,7 +1337,9 @@ namespace Mono {
 			if (data == null)
 				throw new ArgumentNullException ("data");
 			if (data.Length - index < 2)
-				throw new ArgumentException ("data");
+				throw new ArgumentException ("index");
+			if (index < 0)
+				throw new ArgumentException ("index");
 			
 			ushort ret;
 			fixed (byte *src = &data[index]){
@@ -1302,7 +1353,9 @@ namespace Mono {
 			if (data == null)
 				throw new ArgumentNullException ("data");
 			if (data.Length - index < 8)
-				throw new ArgumentException ("data");
+				throw new ArgumentException ("index");
+			if (index < 0)
+				throw new ArgumentException ("index");
 			
 			double ret;
 			fixed (byte *src = &data[index]){
@@ -1316,7 +1369,9 @@ namespace Mono {
 			if (data == null)
 				throw new ArgumentNullException ("data");
 			if (data.Length - index < 4)
-				throw new ArgumentException ("data");
+				throw new ArgumentException ("index");
+			if (index < 0)
+				throw new ArgumentException ("index");
 			
 			float ret;
 			fixed (byte *src = &data[index]){
@@ -1330,7 +1385,9 @@ namespace Mono {
 			if (data == null)
 				throw new ArgumentNullException ("data");
 			if (data.Length - index < 8)
-				throw new ArgumentException ("data");
+				throw new ArgumentException ("index");
+			if (index < 0)
+				throw new ArgumentException ("index");
 			
 			long ret;
 			fixed (byte *src = &data[index]){
@@ -1344,7 +1401,9 @@ namespace Mono {
 			if (data == null)
 				throw new ArgumentNullException ("data");
 			if (data.Length - index < 8)
-				throw new ArgumentException ("data");
+				throw new ArgumentException ("index");
+			if (index < 0)
+				throw new ArgumentException ("index");
 			
 			ulong ret;
 			fixed (byte *src = &data[index]){
@@ -1358,7 +1417,9 @@ namespace Mono {
 			if (data == null)
 				throw new ArgumentNullException ("data");
 			if (data.Length - index < 4)
-				throw new ArgumentException ("data");
+				throw new ArgumentException ("index");
+			if (index < 0)
+				throw new ArgumentException ("index");
 			
 			int ret;
 			fixed (byte *src = &data[index]){
@@ -1372,7 +1433,9 @@ namespace Mono {
 			if (data == null)
 				throw new ArgumentNullException ("data");
 			if (data.Length - index < 4)
-				throw new ArgumentException ("data");
+				throw new ArgumentException ("index");
+			if (index < 0)
+				throw new ArgumentException ("index");
 			
 			uint ret;
 			fixed (byte *src = &data[index]){
@@ -1386,7 +1449,9 @@ namespace Mono {
 			if (data == null)
 				throw new ArgumentNullException ("data");
 			if (data.Length - index < 2)
-				throw new ArgumentException ("data");
+				throw new ArgumentException ("index");
+			if (index < 0)
+				throw new ArgumentException ("index");
 
 			short ret;
 			fixed (byte *src = &data[index]){
@@ -1400,7 +1465,9 @@ namespace Mono {
 			if (data == null)
 				throw new ArgumentNullException ("data");
 			if (data.Length - index < 2)
-				throw new ArgumentException ("data");
+				throw new ArgumentException ("index");
+			if (index < 0)
+				throw new ArgumentException ("index");
 			
 			ushort ret;
 			fixed (byte *src = &data[index]){
@@ -1409,114 +1476,130 @@ namespace Mono {
 			return ret;
 		}
 
-		static public unsafe double DoubleFromMemory (byte[] data, int index)
+		static public unsafe double DoubleFromNative (byte[] data, int index)
 		{
 			if (data == null)
 				throw new ArgumentNullException ("data");
 			if (data.Length - index < 8)
-				throw new ArgumentException ("data");
+				throw new ArgumentException ("index");
+			if (index < 0)
+				throw new ArgumentException ("index");
 			
 			double ret;
 			fixed (byte *src = &data[index]){
-				PutBytesMemory ((byte *) &ret, src, 8);
+				PutBytesNative ((byte *) &ret, src, 8);
 			}
 			return ret;
 		}
 
-		static public unsafe float FloatFromMemory (byte [] data, int index)
+		static public unsafe float FloatFromNative (byte [] data, int index)
 		{
 			if (data == null)
 				throw new ArgumentNullException ("data");
 			if (data.Length - index < 4)
-				throw new ArgumentException ("data");
+				throw new ArgumentException ("index");
+			if (index < 0)
+				throw new ArgumentException ("index");
 			
 			float ret;
 			fixed (byte *src = &data[index]){
-				PutBytesMemory ((byte *) &ret, src, 4);
+				PutBytesNative ((byte *) &ret, src, 4);
 			}
 			return ret;
 		}
 
-		static public unsafe long Int64FromMemory (byte [] data, int index)
+		static public unsafe long Int64FromNative (byte [] data, int index)
 		{
 			if (data == null)
 				throw new ArgumentNullException ("data");
 			if (data.Length - index < 8)
-				throw new ArgumentException ("data");
+				throw new ArgumentException ("index");
+			if (index < 0)
+				throw new ArgumentException ("index");
 			
 			long ret;
 			fixed (byte *src = &data[index]){
-				PutBytesMemory ((byte *) &ret, src, 8);
+				PutBytesNative ((byte *) &ret, src, 8);
 			}
 			return ret;
 		}
 		
-		static public unsafe ulong UInt64FromMemory (byte [] data, int index)
+		static public unsafe ulong UInt64FromNative (byte [] data, int index)
 		{
 			if (data == null)
 				throw new ArgumentNullException ("data");
 			if (data.Length - index < 8)
-				throw new ArgumentException ("data");
+				throw new ArgumentException ("index");
+			if (index < 0)
+				throw new ArgumentException ("index");
 			
 			ulong ret;
 			fixed (byte *src = &data[index]){
-				PutBytesMemory ((byte *) &ret, src, 8);
+				PutBytesNative ((byte *) &ret, src, 8);
 			}
 			return ret;
 		}
 
-		static public unsafe int Int32FromMemory (byte [] data, int index)
+		static public unsafe int Int32FromNative (byte [] data, int index)
 		{
 			if (data == null)
 				throw new ArgumentNullException ("data");
 			if (data.Length - index < 4)
-				throw new ArgumentException ("data");
+				throw new ArgumentException ("index");
+			if (index < 0)
+				throw new ArgumentException ("index");
 			
 			int ret;
 			fixed (byte *src = &data[index]){
-				PutBytesMemory ((byte *) &ret, src, 4);
+				PutBytesNative ((byte *) &ret, src, 4);
 			}
 			return ret;
 		}
 		
-		static public unsafe uint UInt32FromMemory (byte [] data, int index)
+		static public unsafe uint UInt32FromNative (byte [] data, int index)
 		{
 			if (data == null)
 				throw new ArgumentNullException ("data");
 			if (data.Length - index < 4)
-				throw new ArgumentException ("data");
+				throw new ArgumentException ("index");
+			if (index < 0)
+				throw new ArgumentException ("index");
 			
 			uint ret;
 			fixed (byte *src = &data[index]){
-				PutBytesMemory ((byte *) &ret, src, 4);
+				PutBytesNative ((byte *) &ret, src, 4);
 			}
 			return ret;
 		}
 
-		static public unsafe short Int16FromMemory (byte [] data, int index)
+		static public unsafe short Int16FromNative (byte [] data, int index)
 		{
 			if (data == null)
 				throw new ArgumentNullException ("data");
 			if (data.Length - index < 2)
-				throw new ArgumentException ("data");
+				throw new ArgumentException ("index");
+			if (index < 0)
+				throw new ArgumentException ("index");
 
 			short ret;
 			fixed (byte *src = &data[index]){
-				PutBytesMemory ((byte *) &ret, src, 2);
+				PutBytesNative ((byte *) &ret, src, 2);
 			}
 			return ret;
 		}
 		
-		static public unsafe ushort UInt16FromMemory (byte [] data, int index)
+		static public unsafe ushort UInt16FromNative (byte [] data, int index)
 		{
 			if (data == null)
 				throw new ArgumentNullException ("data");
 			if (data.Length - index < 2)
-				throw new ArgumentException ("data");
+				throw new ArgumentException ("index");
+			if (index < 0)
+				throw new ArgumentException ("index");
 			
 			ushort ret;
 			fixed (byte *src = &data[index]){
-				PutBytesMemory ((byte *) &ret, src, 2);
+				PutBytesNative ((byte *) &ret, src, 2);
 			}
 			return ret;
 		}
@@ -1549,163 +1632,163 @@ namespace Mono {
                         return ret;
                 }
 		
-                unsafe public static byte[] GetBytesMemory (bool value)
+                unsafe public static byte[] GetBytesNative (bool value)
                 {
                         return GetBytesPtr ((byte *) &value, 1);
                 }
 
-                unsafe public static byte[] GetBytesMemory (char value)
+                unsafe public static byte[] GetBytesNative (char value)
                 {
                         return GetBytesPtr ((byte *) &value, 2);
                 }
 
-                unsafe public static byte[] GetBytesMemory (short value)
+                unsafe public static byte[] GetBytesNative (short value)
                 {
                         return GetBytesPtr ((byte *) &value, 2);
                 }
 
-                unsafe public static byte[] GetBytesMemory (int value)
+                unsafe public static byte[] GetBytesNative (int value)
                 {
                         return GetBytesPtr ((byte *) &value, 4);
                 }
 
-                unsafe public static byte[] GetBytesMemory (long value)
+                unsafe public static byte[] GetBytesNative (long value)
                 {
                         return GetBytesPtr ((byte *) &value, 8);
                 }
 
                 [CLSCompliant (false)]
-                unsafe public static byte[] GetBytesMemory (ushort value)
+                unsafe public static byte[] GetBytesNative (ushort value)
                 {
                         return GetBytesPtr ((byte *) &value, 2);
                 }
 
                 [CLSCompliant (false)]
-                unsafe public static byte[] GetBytesMemory (uint value)
+                unsafe public static byte[] GetBytesNative (uint value)
                 {
                         return GetBytesPtr ((byte *) &value, 4);
                 }
 
                 [CLSCompliant (false)]
-                unsafe public static byte[] GetBytesMemory (ulong value)
+                unsafe public static byte[] GetBytesNative (ulong value)
                 {
                         return GetBytesPtr ((byte *) &value, 8);
                 }
 
-                unsafe public static byte[] GetBytesMemory (float value)
+                unsafe public static byte[] GetBytesNative (float value)
                 {
                         return GetBytesPtr ((byte *) &value, 4);
                 }
 
-                unsafe public static byte[] GetBytesMemory (double value)
+                unsafe public static byte[] GetBytesNative (double value)
                 {
 			return GetBytesPtr ((byte *) &value, 8);
                 }
 
                 unsafe public static byte[] GetBytesLE (bool value)
                 {
-                        return GetBytesSwap (!IsLittleEndian, (byte *) &value, 1);
+                        return GetBytesSwap (!BitConverter.IsLittleEndian, (byte *) &value, 1);
                 }
 
                 unsafe public static byte[] GetBytesLE (char value)
                 {
-                        return GetBytesSwap (!IsLittleEndian, (byte *) &value, 2);
+                        return GetBytesSwap (!BitConverter.IsLittleEndian, (byte *) &value, 2);
                 }
 
                 unsafe public static byte[] GetBytesLE (short value)
                 {
-                        return GetBytesSwap (!IsLittleEndian, (byte *) &value, 2);
+                        return GetBytesSwap (!BitConverter.IsLittleEndian, (byte *) &value, 2);
                 }
 
                 unsafe public static byte[] GetBytesLE (int value)
                 {
-                        return GetBytesSwap (!IsLittleEndian, (byte *) &value, 4);
+                        return GetBytesSwap (!BitConverter.IsLittleEndian, (byte *) &value, 4);
                 }
 
                 unsafe public static byte[] GetBytesLE (long value)
                 {
-                        return GetBytesSwap (!IsLittleEndian, (byte *) &value, 8);
+                        return GetBytesSwap (!BitConverter.IsLittleEndian, (byte *) &value, 8);
                 }
 
                 [CLSCompliant (false)]
                 unsafe public static byte[] GetBytesLE (ushort value)
                 {
-                        return GetBytesSwap (!IsLittleEndian, (byte *) &value, 2);
+                        return GetBytesSwap (!BitConverter.IsLittleEndian, (byte *) &value, 2);
                 }
 
                 [CLSCompliant (false)]
                 unsafe public static byte[] GetBytesLE (uint value)
                 {
-                        return GetBytesSwap (!IsLittleEndian, (byte *) &value, 4);
+                        return GetBytesSwap (!BitConverter.IsLittleEndian, (byte *) &value, 4);
                 }
 
                 [CLSCompliant (false)]
                 unsafe public static byte[] GetBytesLE (ulong value)
                 {
-                        return GetBytesSwap (!IsLittleEndian, (byte *) &value, 8);
+                        return GetBytesSwap (!BitConverter.IsLittleEndian, (byte *) &value, 8);
                 }
 
                 unsafe public static byte[] GetBytesLE (float value)
                 {
-                        return GetBytesSwap (!IsLittleEndian, (byte *) &value, 4);
+                        return GetBytesSwap (!BitConverter.IsLittleEndian, (byte *) &value, 4);
                 }
 
                 unsafe public static byte[] GetBytesLE (double value)
                 {
-			return GetBytesSwap (!IsLittleEndian, (byte *) &value, 8);
+			return GetBytesSwap (!BitConverter.IsLittleEndian, (byte *) &value, 8);
                 }
 		
                 unsafe public static byte[] GetBytesBE (bool value)
                 {
-                        return GetBytesSwap (IsLittleEndian, (byte *) &value, 1);
+                        return GetBytesSwap (BitConverter.IsLittleEndian, (byte *) &value, 1);
                 }
 
                 unsafe public static byte[] GetBytesBE (char value)
                 {
-                        return GetBytesSwap (IsLittleEndian, (byte *) &value, 2);
+                        return GetBytesSwap (BitConverter.IsLittleEndian, (byte *) &value, 2);
                 }
 
                 unsafe public static byte[] GetBytesBE (short value)
                 {
-                        return GetBytesSwap (IsLittleEndian, (byte *) &value, 2);
+                        return GetBytesSwap (BitConverter.IsLittleEndian, (byte *) &value, 2);
                 }
 
                 unsafe public static byte[] GetBytesBE (int value)
                 {
-                        return GetBytesSwap (IsLittleEndian, (byte *) &value, 4);
+                        return GetBytesSwap (BitConverter.IsLittleEndian, (byte *) &value, 4);
                 }
 
                 unsafe public static byte[] GetBytesBE (long value)
                 {
-                        return GetBytesSwap (IsLittleEndian, (byte *) &value, 8);
+                        return GetBytesSwap (BitConverter.IsLittleEndian, (byte *) &value, 8);
                 }
 
                 [CLSCompliant (false)]
                 unsafe public static byte[] GetBytesBE (ushort value)
                 {
-                        return GetBytesSwap (IsLittleEndian, (byte *) &value, 2);
+                        return GetBytesSwap (BitConverter.IsLittleEndian, (byte *) &value, 2);
                 }
 
                 [CLSCompliant (false)]
                 unsafe public static byte[] GetBytesBE (uint value)
                 {
-                        return GetBytesSwap (IsLittleEndian, (byte *) &value, 4);
+                        return GetBytesSwap (BitConverter.IsLittleEndian, (byte *) &value, 4);
                 }
 
                 [CLSCompliant (false)]
                 unsafe public static byte[] GetBytesBE (ulong value)
                 {
-                        return GetBytesSwap (IsLittleEndian, (byte *) &value, 8);
+                        return GetBytesSwap (BitConverter.IsLittleEndian, (byte *) &value, 8);
                 }
 
                 unsafe public static byte[] GetBytesBE (float value)
                 {
-                        return GetBytesSwap (IsLittleEndian, (byte *) &value, 4);
+                        return GetBytesSwap (BitConverter.IsLittleEndian, (byte *) &value, 4);
                 }
 
                 unsafe public static byte[] GetBytesBE (double value)
                 {
-			return GetBytesSwap (IsLittleEndian, (byte *) &value, 8);
+			return GetBytesSwap (BitConverter.IsLittleEndian, (byte *) &value, 8);
                 }
 #endif
 		
