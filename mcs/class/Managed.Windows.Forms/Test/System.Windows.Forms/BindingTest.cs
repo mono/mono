@@ -127,7 +127,7 @@ namespace MonoTests.System.Windows.Forms {
 		int eventcount;
 		public void Event_Handler1 (object sender, EventArgs e)
 		{
-			Console.WriteLine (Environment.StackTrace);
+			//Console.WriteLine (Environment.StackTrace);
 			eventcount++;
 		}
 

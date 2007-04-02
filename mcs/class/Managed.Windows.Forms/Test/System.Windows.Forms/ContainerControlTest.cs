@@ -150,7 +150,18 @@ namespace MonoTests.System.Windows.Forms {
 	[TestFixture]
 	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
 	public class ContainerControlTest {
-
+		[Test]
+		public void RemoveActiveControlTest ()
+		{
+			ContainerControl cc = new ContainerControl();
+			TextBox txt = new TextBox ();
+			cc.Controls.Add (txt);
+			Assert.IsFalse (cc.ActiveControl == txt, "#01");
+			cc.ActiveControl = txt;
+			Assert.AreSame (cc.ActiveControl, txt, "#02");
+			cc.Controls.Remove (txt);
+			Assert.IsNull (cc.ActiveControl, "#03");
+		}
 		[Test]
 		public void GetContainerControl ()
 		{

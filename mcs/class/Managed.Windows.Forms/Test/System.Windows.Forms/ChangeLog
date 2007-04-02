@@ -1,3 +1,9 @@
+2007-04-02  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* ContainerControlTest.cs: Add RemoveActiveControlTest
+	* MdiFormHandleTest.cs, BindingTest.cs: Remove stacktrace from output.
+	* FormTest.cs: Add special window style cases.
+
 2007-03-31  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* RichTextBoxTest.cs: Added BackColor test. Improved ReadOnly tests.

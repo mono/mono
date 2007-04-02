@@ -1142,7 +1142,7 @@ namespace MonoTests.System.Windows.Forms
 
 		void HandleCreated_WriteStackTrace (object sender, EventArgs e)
 		{
-			Console.WriteLine (Environment.StackTrace);
+			Console.WriteLine ("Stacktrace?");//Environment.StackTrace);
 		}
 
 		public delegate void InvokeDelegate ();
