@@ -4719,7 +4719,7 @@ namespace System.Windows.Forms {
 				tag = tag.next;
 			}
 
-			if (tag.end != end) {
+			if (tag != null && tag.end != end) {
 				/// Now do the last tag
 				end_tag = FindTag (line, end);
 
