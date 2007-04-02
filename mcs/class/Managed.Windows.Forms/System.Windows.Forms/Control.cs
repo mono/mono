@@ -779,6 +779,13 @@ namespace System.Windows.Forms
 				all_controls = null;
 				list.Remove(value);
 
+				ContainerControl container = owner as ContainerControl;
+				if (container != null) { 
+					// Inform any container controls about the loss of a child control
+					// so that they can update their active control
+					container.ChildControlRemoved (value);
+				}
+
 				value.ChangeParent(null);
 
 				owner.UpdateChildrenZOrder();

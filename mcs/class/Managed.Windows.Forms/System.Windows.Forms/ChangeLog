@@ -1,3 +1,33 @@
+2007-04-02  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Control.cs: Call ContainerControl.ChildControlRemoved whenever a
+	  control is removed from a control collecftion.
+	* XplatUIX11.cs: The first location for toplevel form is (22, 22).
+	  Fixes FormPropertyTest (failed on rare occasions).
+	* XplatUIWin32.cs: Add a workaround in SetParent for strange behaviour
+	  of Win32SetParent (when changing from no parent to a parent it
+	  might add the new parent's location in screen coordinates to this
+	  window's location).
+	* Form.cs: Rework ChangingParent once again, now the handle is
+	  recreated whenever a FormWindowManager is added or removed (that is
+	  whenever a normal form is parented or abandoned). Also change
+	  CreateParams so that all non-toplevel windows always get the
+	  specified sice (StartupPosition is never considered for
+	  non-TopLevel forms).
+	* ContainerControl.cs: Add ChildControlRemoved, the container control
+	  needs to be notified when a control is removed from it's
+	  collection, in the case the removed control is the active control.
+	* Hwnd.cs: Completely reworked GetWindowRectangle and
+	  GetClientRectangle - they are now passed a CreateParams and they
+	  only use Style and ExStyle to determine the rectangles (they should
+	  now work just like Win32AdjustWindowRectEx - though quite a few
+	  special cases are probably missing). They should also be 100%
+	  complimentary (i.e. GetWindowRectangle (GetClientRectangle (rect))
+	  == rect), and all numbers (borders, menu sizes) are taken from the
+	  current theme. Added a GetBorders helper function that will return
+	  the borders for any given CreateParams (including captions and
+	  menus), and GetBorderSize that returns the given border size only.
+
 2007-04-02  Jackson Harper  <jackson@ximian.com>
 
 	* RichTextBox.cs: Use the new methods for setting the font and

@@ -191,15 +191,20 @@ namespace System.Windows.Forms {
 				return;
 			}
 			
+			bool recreate_necessary = false;
+			
 			if (new_parent == null) {
+				recreate_necessary = window_manager is FormWindowManager;
 				window_manager = null;
 			} else if (new_parent is MdiClient) {
 				window_manager = new MdiWindowManager (this, (MdiClient) new_parent);
 			} else {
-				if (IsHandleCreated) {
-					RecreateHandle ();//XplatUI.SetWindowStyle (Handle, CreateParams);
-				}
 				window_manager = new FormWindowManager (this);
+				recreate_necessary = true;
+			}
+			
+			if (recreate_necessary && IsHandleCreated) {
+				RecreateHandle ();
 			}
 		
 			if (window_manager != null) {
@@ -1123,8 +1128,8 @@ namespace System.Windows.Forms {
 				cp.menu = ActiveMenu;
 				cp.control = this;
 
-				if (Parent != null && !IsMdiChild) {
-					// Parented forms always gets the specified location, no matter what
+				if (((Parent != null || !TopLevel) && !IsMdiChild)) {
+					// Parented forms and non-toplevel forms always gets the specified location, no matter what
 					cp.X = Left;
 					cp.Y = Top;
 				} else {
@@ -1264,7 +1269,7 @@ namespace System.Windows.Forms {
 					cp.ExStyle |= (int)WindowExStyles.WS_EX_CONTEXTHELP;
 				}
 
-				if (VisibleInternal && this.IsRecreating)
+				if (VisibleInternal || this.IsRecreating)
 					cp.Style |= (int)WindowStyles.WS_VISIBLE;
 
 				if (opacity < 1.0 || TransparencyKey != Color.Empty) {

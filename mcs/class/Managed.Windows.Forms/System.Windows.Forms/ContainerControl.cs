@@ -524,6 +524,15 @@ namespace System.Windows.Forms {
 		#endregion	// Protected Instance Methods
 
 		#region Internal Methods
+		internal void ChildControlRemoved (Control control)
+		{
+			if (control == active_control) {
+				SelectNextControl (this, true, true, true, true);
+				if (control == active_control) {
+					active_control = null;
+				}
+			}
+		}
 		internal virtual void CheckAcceptButton()
 		{
 			// do nothing here, only called if it is a Form

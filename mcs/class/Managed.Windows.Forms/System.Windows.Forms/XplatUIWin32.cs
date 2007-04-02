@@ -1854,10 +1854,34 @@ namespace System.Windows.Forms {
 			else
 				SetVisible (handle, c.is_visible, true);
 				
-			if (parent == IntPtr.Zero)
-				return Win32SetParent (handle, FosterParent);
-			else
-				return Win32SetParent(handle, parent);
+			// The Win32SetParent is lame, it can very well move the window
+			// ref: http://groups.google.com/group/microsoft.public.vb.winapi/browse_thread/thread/1b82ccc54231ecee/afa82835bfc0422a%23afa82835bfc0422a
+			// Here we save the position before changing the parent, and if it has changed afterwards restore it.
+			// Another possibility would be to intercept WM_WINDOWPOSCHANGING and restore the coords there, but this would require plumbing in weird places
+			// (either inside Control or add handling to InternalWndProc)
+			// We also need to remove WS_CHILD if making the window parent-less, and add it if we're parenting it.
+			RECT rect, rect2;
+			IntPtr result;
+			WindowStyles style, new_style;
+			
+			Win32GetWindowRect (handle, out rect);
+			style = (WindowStyles) Win32GetWindowLong (handle, WindowLong.GWL_STYLE);
+			
+			if (parent == IntPtr.Zero) {
+				new_style = style & ~WindowStyles.WS_CHILD;
+				result = Win32SetParent (handle, FosterParent);
+			} else {
+				new_style = style | WindowStyles.WS_CHILD;
+				result = Win32SetParent (handle, parent);
+			}
+			if (style != new_style) {
+				Win32SetWindowLong (handle, WindowLong.GWL_STYLE, (uint) new_style);
+			}
+			Win32GetWindowRect (handle, out rect2);
+			if (rect.top != rect2.top && rect.left != rect2.left) {
+				Win32SetWindowPos (handle, IntPtr.Zero, rect.top, rect.left, rect.Width, rect.Height, SetWindowPosFlags.SWP_NOZORDER |  SetWindowPosFlags.SWP_NOREDRAW | SetWindowPosFlags.SWP_NOOWNERZORDER | SetWindowPosFlags.SWP_NOENDSCHANGING | SetWindowPosFlags.SWP_NOACTIVATE);
+			}
+			return result;
 		}
 
 		// If we ever start using this, we should probably replace FosterParent with IntPtr.Zero

@@ -2477,6 +2477,10 @@ namespace System.Windows.Forms {
 					next = Point.Empty;
 				}
 				
+				if (next == Point.Empty && cp.Parent == IntPtr.Zero) {
+					next = new Point (22, 22);
+				}
+				
 				if (parent_hwnd != null) {
 					parent_hwnd.previous_child_startup_location = next;
 				} else {
