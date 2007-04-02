@@ -40,9 +40,7 @@ namespace System.Drawing
 	{
 		internal IntPtr nativeObject;
 		internal bool isModifiable = true;
-		internal Brush brush;
-		internal bool must_dispose_brush;
-		internal Color color;
+		private Color color;
 		private CustomLineCap startCap;
 		private CustomLineCap endCap;
 
@@ -66,22 +64,13 @@ namespace System.Drawing
 
 			Status status = GDIPlus.GdipCreatePen2 (brush.nativeObject, width, Unit.UnitWorld, out nativeObject);
 			GDIPlus.CheckStatus (status);
-	
-			// the user supplied brush can be disposed anytime, don't keep a reference on it
-			this.brush = (Brush) brush.Clone ();
-			must_dispose_brush = true;
-
-			SolidBrush sb = (brush as SolidBrush);
-			if (sb != null) {
-				color = sb.Color;
-			}
+			color = Color.Empty;
 		}
 
 		public Pen (Color color, float width)
 		{
 			Status status = GDIPlus.GdipCreatePen1 (color.ToArgb (), width, Unit.UnitWorld, out nativeObject);
 			GDIPlus.CheckStatus (status);
-
 			this.color = color;
 		}
 
@@ -109,32 +98,12 @@ namespace System.Drawing
 			}
 		}
 
-		void GetSolidColorBrush ()
-		{
-			IntPtr native_pen_brush, cloned_brush;
-			
-			Status status = GDIPlus.GdipGetPenBrushFill (nativeObject, out native_pen_brush);
-			GDIPlus.CheckStatus (status);
-			status = GDIPlus.GdipCloneBrush (native_pen_brush, out cloned_brush);
-			GDIPlus.CheckStatus (status);
-			
-			//
-			// We know that the Color brushes are Solid.
-			//
-			brush = new SolidBrush (cloned_brush);
-			must_dispose_brush = true;
-		}
-
 		public Brush Brush {
 			get {
-				//
-				// Pens created with the color constructor have a brush,
-				// but we delay-load it, as few people need it.
-				//
-				if (brush == null)
-					GetSolidColorBrush ();
-				// we can't let outsiders dispose of our internal brush
-				return (Brush) brush.Clone ();
+				IntPtr brush;
+				Status status = GDIPlus.GdipGetPenBrushFill (nativeObject, out brush);
+				GDIPlus.CheckStatus (status);
+				return new SolidBrush (brush);
                         }
 
 			set {
@@ -145,53 +114,30 @@ namespace System.Drawing
 				if (!isModifiable)
 					throw new ArgumentException ("This Pen object can't be modified.");
 
-				// we keep our own cloned brush, so we must dispose it before replacing it
-				if (must_dispose_brush && (brush != null)) {
-					brush.Dispose ();
-				}
-
-				// and this brush must be a clone too (as the original can be disposed anytime)
-				brush = (Brush) value.Clone ();
-				must_dispose_brush = true;
-
-				Status status = GDIPlus.GdipSetPenBrushFill (nativeObject, brush.nativeObject);
+				Status status = GDIPlus.GdipSetPenBrushFill (nativeObject, value.nativeObject);
 				GDIPlus.CheckStatus (status);
-
-				SolidBrush sb = (value as SolidBrush);
-				if (sb != null) {
-					color = sb.Color;
-				} else {
-					// other brushes should clear the color property
-					color = Color.Empty;
-				}
-
-				status = GDIPlus.GdipSetPenColor (nativeObject, color.ToArgb ());
-				GDIPlus.CheckStatus (status);
+				color = Color.Empty;
 			}
 		}
 
 		public Color Color {
 			get {
-                                return color;
+				if (color.Equals (Color.Empty)) {
+					int c;
+					Status status = GDIPlus.GdipGetPenColor (nativeObject, out c);
+					GDIPlus.CheckStatus (status);
+	                                color = Color.FromArgb (c);
+				}
+				return color;
 			}
 
 			set {
-				if (isModifiable) {
-					color = value;
-					Status status = GDIPlus.GdipSetPenColor (nativeObject, value.ToArgb ());
-					GDIPlus.CheckStatus (status);
-
-					/* if required clear existing brush */
-					if (must_dispose_brush && (brush != null)) {
-						brush.Dispose ();
-					}
-					brush = new SolidBrush (color);
-					must_dispose_brush = true;
-
-					status = GDIPlus.GdipSetPenBrushFill (nativeObject, brush.nativeObject);
-					GDIPlus.CheckStatus (status);
-				} else
+				if (!isModifiable)
 					throw new ArgumentException ("This Pen object can't be modified.");
+
+				Status status = GDIPlus.GdipSetPenColor (nativeObject, value.ToArgb ());
+				GDIPlus.CheckStatus (status);
+				color = value;
 			}
 		}
 
@@ -487,8 +433,6 @@ namespace System.Drawing
                         Status status = GDIPlus.GdipClonePen (nativeObject, out ptr);
 			GDIPlus.CheckStatus (status);
                         Pen p = new Pen (ptr);
-			p.brush = null; // don't reference! managed brush will be re-created on demand
-			p.color = color;
 			p.startCap = startCap;
 			p.endCap = endCap;
 
@@ -503,14 +447,9 @@ namespace System.Drawing
 
 		private void Dispose (bool disposing)
 		{
-			if (disposing == true && isModifiable == false) {
+			if (disposing && !isModifiable)
 				throw new ArgumentException ("This Pen object can't be modified.");
-			}
 
-			if (must_dispose_brush && (brush != null)) {
-				brush.Dispose ();
-				brush = null;
-			}
 			if (nativeObject != IntPtr.Zero) {
 				Status status = GDIPlus.GdipDeletePen (nativeObject);
 				GDIPlus.CheckStatus (status);

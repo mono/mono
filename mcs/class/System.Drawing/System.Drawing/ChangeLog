@@ -1,3 +1,10 @@
+2007-04-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Pen.cs: Simplify. Caching the brush still involved too many 
+	unmanaged calls and was hiding libgdiplus bugs (e.g. 81266). Color is
+	still cached (a little less ;-) but needs to stay that way so we keep
+	the color names available (it's the expected behavior).
+
 2007-03-20  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Graphics.cs: Replace TODO on all EnumerateMetafile overloads.
