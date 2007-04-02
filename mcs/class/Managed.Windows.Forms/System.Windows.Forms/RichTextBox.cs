@@ -486,17 +486,15 @@ namespace System.Windows.Forms {
 			}
 
 			set {
-				FontDefinition	attributes;
-				int		sel_start;
-				int		sel_end;
-
-				attributes = new FontDefinition();
-				attributes.color = value;
+				int sel_start;
+				int sel_end;
 
 				sel_start = document.LineTagToCharIndex(document.selection_start.line, document.selection_start.pos);
 				sel_end = document.LineTagToCharIndex(document.selection_end.line, document.selection_end.pos);
 
-				document.FormatText(document.selection_start.line, document.selection_start.pos + 1, document.selection_end.line, document.selection_end.pos + 1, attributes);
+				document.FormatText (document.selection_start.line, document.selection_start.pos + 1,
+						document.selection_end.line, document.selection_end.pos + 1, null,
+						new SolidBrush (value),	null, FormatSpecified.Color);
 
 				document.CharIndexToLineTag(sel_start, out document.selection_start.line, out document.selection_start.tag, out document.selection_start.pos);
 				document.CharIndexToLineTag(sel_end, out document.selection_end.line, out document.selection_end.tag, out document.selection_end.pos);
@@ -534,17 +532,15 @@ namespace System.Windows.Forms {
 			}
 
 			set {
-				FontDefinition	attributes;
 				int		sel_start;
 				int		sel_end;
-
-				attributes = new FontDefinition();
-				attributes.font_obj = value;
 
 				sel_start = document.LineTagToCharIndex(document.selection_start.line, document.selection_start.pos);
 				sel_end = document.LineTagToCharIndex(document.selection_end.line, document.selection_end.pos);
 
-				document.FormatText(document.selection_start.line, document.selection_start.pos + 1, document.selection_end.line, document.selection_end.pos + 1, attributes);
+				document.FormatText (document.selection_start.line, document.selection_start.pos + 1,
+						document.selection_end.line, document.selection_end.pos + 1, value,
+						null, null, FormatSpecified.Font);
 
 				document.CharIndexToLineTag(sel_start, out document.selection_start.line, out document.selection_start.tag, out document.selection_start.pos);
 				document.CharIndexToLineTag(sel_end, out document.selection_end.line, out document.selection_end.tag, out document.selection_end.pos);
