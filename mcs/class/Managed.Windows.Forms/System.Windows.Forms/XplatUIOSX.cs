@@ -1193,7 +1193,10 @@ namespace System.Windows.Forms {
 
 		
 		internal override bool GetFontMetrics(Graphics g, Font font, out int ascent, out int descent) {
-			return GetFontMetrics(g.GetHdc(), font.ToHfont(), out ascent, out descent);
+			FontFamily ff = font.FontFamily;
+			ascent = ff.GetCellAscent (font.Style);
+			descent = ff.GetCellDescent (font.Style);
+			return true;
 		}
 		
 		[MonoTODO]
@@ -2136,9 +2139,6 @@ namespace System.Windows.Forms {
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal extern static void SetThemeCursor (uint inCursor);
 		#endregion
-
-		[DllImport ("gdiplus", EntryPoint="GetFontMetrics")]
-		internal extern static bool GetFontMetrics(IntPtr graphicsObject, IntPtr nativeObject, out int ascent, out int descent);
 	}
 
 }

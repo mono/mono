@@ -4503,9 +4503,6 @@ namespace System.Windows.Forms {
 		[DllImport ("libX11", EntryPoint="XDeleteProperty")]
 		internal extern static int XDeleteProperty (IntPtr display, IntPtr window, int property);
 		
-		[DllImport ("gdiplus", EntryPoint="GetFontMetrics")]
-		internal extern static bool GetFontMetrics (IntPtr graphicsObject, IntPtr nativeObject, out int ascent, out int descent);
-		
 		// Drawing
 		[DllImport ("libX11", EntryPoint="XCreateGC")]
 		internal extern static IntPtr XCreateGC (IntPtr display, IntPtr window, GCFunction valuemask, ref XGCValues values);

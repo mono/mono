@@ -3362,7 +3362,10 @@ namespace System.Windows.Forms {
 
 
 		internal override bool GetFontMetrics(Graphics g, Font font, out int ascent, out int descent) {
-			return GetFontMetrics(g.GetHdc(), font.ToHfont(), out ascent, out descent);
+			FontFamily ff = font.FontFamily;
+			ascent = ff.GetCellAscent (font.Style);
+			descent = ff.GetCellDescent (font.Style);
+			return true;
 		}
 
 		internal override Point GetMenuOrigin(IntPtr handle) {
@@ -5678,9 +5681,6 @@ namespace System.Windows.Forms {
 
 		[DllImport ("libX11", EntryPoint="XDeleteProperty")]
 		internal extern static int XDeleteProperty(IntPtr display, IntPtr window, IntPtr property);
-
-		[DllImport ("gdiplus", EntryPoint="GetFontMetrics")]
-		internal extern static bool GetFontMetrics(IntPtr graphicsObject, IntPtr nativeObject, out int ascent, out int descent);
 
 		// Drawing
 		[DllImport ("libX11", EntryPoint="XCreateGC")]

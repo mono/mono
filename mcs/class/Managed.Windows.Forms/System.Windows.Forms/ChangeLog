@@ -1,3 +1,9 @@
+2007-04-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* XplatUIOSX.cs, XplatUIX11.cs, XplatUIX11GTK.cs: Remove dependency
+	on an internal libgdiplus call when the information is already 
+	available via the public API.
+
 2007-04-02  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Control.cs: Call ContainerControl.ChildControlRemoved whenever a
