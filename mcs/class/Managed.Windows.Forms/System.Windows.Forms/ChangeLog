@@ -2,6 +2,8 @@
 
 	* TextControl.cs: Make sure the attributes get set on the last
 	tag.
+	- Still have to do the end tag if we have stepped all the ways to
+	the end.
 
 2007-04-02  Sebastien Pouliot  <sebastien@ximian.com>
 

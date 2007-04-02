@@ -4719,14 +4719,15 @@ namespace System.Windows.Forms {
 				tag = tag.next;
 			}
 
-			if (tag != null && tag.end != end) {
-				/// Now do the last tag
-				end_tag = FindTag (line, end);
+			if (tag != null && tag.end == end)
+				return retval;
 
-				if (end_tag != null) {
-					end_tag.Break (end);
-					SetFormat (end_tag, font, color, back_color, specified);
-				}
+			/// Now do the last tag
+			end_tag = FindTag (line, end);
+
+			if (end_tag != null) {
+				end_tag.Break (end);
+				SetFormat (end_tag, font, color, back_color, specified);
 			}
 
 			return retval;
