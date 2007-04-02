@@ -79,6 +79,7 @@ namespace System.Windows.Forms
 		private bool label_wrap = true;
 		private bool multiselect = true;
 		private bool scrollable = true;
+		private bool hover_pending;
 		private readonly SelectedIndexCollection selected_indices;
 		private readonly SelectedListViewItemCollection selected_items;
 		private SortOrder sort_order = SortOrder.None;
@@ -249,6 +250,7 @@ namespace System.Windows.Forms
 			GotFocus += new EventHandler (FocusChanged);
 			LostFocus += new EventHandler (FocusChanged);
 			MouseWheel += new MouseEventHandler(ListView_MouseWheel);
+			MouseEnter += new EventHandler (ListView_MouseEnter);
 
 			this.SetStyle (ControlStyles.UserPaint | ControlStyles.StandardClick
 #if NET_2_0
@@ -2000,7 +2002,10 @@ namespace System.Windows.Forms
 
 			private void ItemsMouseHover (object sender, EventArgs e)
 			{
-				owner.OnMouseHover(e);
+				if (owner.hover_pending) {
+					owner.OnMouseHover (e);
+					owner.hover_pending = false;
+				}
 
 				if (Capture || !owner.HoverSelection)
 					return;
@@ -2395,6 +2400,11 @@ namespace System.Windows.Forms
 				SetFocusedItem (Items [0]);
 
 			item_control.Invalidate (FocusedItem.Bounds);
+		}
+
+		void ListView_MouseEnter (object o, EventArgs args)
+		{
+			hover_pending = true; // Need a hover event for every Enter/Leave cycle
 		}
 
 		private void ListView_MouseWheel (object sender, MouseEventArgs me)

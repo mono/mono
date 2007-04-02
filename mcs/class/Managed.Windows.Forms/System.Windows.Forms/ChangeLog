@@ -1,3 +1,10 @@
+2007-04-02  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListView.cs: Add a hover_pending field in ListView
+	to fire just one OnMouseHover event for each MouseEnter/MouseLeave
+	cycle (we are resetting the MouseHover logic in XplatUI
+	to handle HoverSelection). Fixes #80429.
+
 2007-04-02  Jackson Harper  <jackson@ximian.com>
 
 	* TextControl.cs: Make sure the attributes get set on the last
