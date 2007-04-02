@@ -1576,10 +1576,10 @@ namespace System.Windows.Forms {
 			}
 
 			if (e.Delta < 0)
-				vscroll.Value = Math.Min (vscroll.Value + SystemInformation.MouseWheelScrollLines,
+				vscroll.Value = Math.Min (vscroll.Value + SystemInformation.MouseWheelScrollLines * 5,
 						Math.Max (0, vscroll.Maximum - document.ViewPortHeight + 1));
 			else
-				vscroll.Value = Math.Max (0, vscroll.Value - SystemInformation.MouseWheelScrollLines);
+				vscroll.Value = Math.Max (0, vscroll.Value - SystemInformation.MouseWheelScrollLines * 5);
 		}
 
 		internal virtual void SelectWord ()

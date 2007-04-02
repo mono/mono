@@ -1,3 +1,7 @@
+2007-04-02  Jackson Harper  <jackson@ximian.com>
+
+	* TextBoxBase.cs: Scroll faster!
+
 2007-04-02  Jonathan Pobst  <monkey@jpobst.com>
 
 	* StatusStrip.cs: Layout fixes for PDN.
