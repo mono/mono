@@ -1,3 +1,8 @@
+2007-04-02  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* XplatUIWin32.cs: Use the previous change in SetParent for forms only.
+	  Makes ToolStripComboBoxes show up again.
+
 2007-04-02  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: Add a hover_pending field in ListView

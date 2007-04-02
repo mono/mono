@@ -1874,11 +1874,11 @@ namespace System.Windows.Forms {
 				new_style = style | WindowStyles.WS_CHILD;
 				result = Win32SetParent (handle, parent);
 			}
-			if (style != new_style) {
+			if (style != new_style && c is Form) {
 				Win32SetWindowLong (handle, WindowLong.GWL_STYLE, (uint) new_style);
 			}
 			Win32GetWindowRect (handle, out rect2);
-			if (rect.top != rect2.top && rect.left != rect2.left) {
+			if (rect.top != rect2.top && rect.left != rect2.left && c is Form) {
 				Win32SetWindowPos (handle, IntPtr.Zero, rect.top, rect.left, rect.Width, rect.Height, SetWindowPosFlags.SWP_NOZORDER |  SetWindowPosFlags.SWP_NOREDRAW | SetWindowPosFlags.SWP_NOOWNERZORDER | SetWindowPosFlags.SWP_NOENDSCHANGING | SetWindowPosFlags.SWP_NOACTIVATE);
 			}
 			return result;
