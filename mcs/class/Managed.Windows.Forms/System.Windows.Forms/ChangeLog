@@ -17,16 +17,6 @@
 	* ContainerControl.cs: Add ChildControlRemoved, the container control
 	  needs to be notified when a control is removed from it's
 	  collection, in the case the removed control is the active control.
-	* Hwnd.cs: Completely reworked GetWindowRectangle and
-	  GetClientRectangle - they are now passed a CreateParams and they
-	  only use Style and ExStyle to determine the rectangles (they should
-	  now work just like Win32AdjustWindowRectEx - though quite a few
-	  special cases are probably missing). They should also be 100%
-	  complimentary (i.e. GetWindowRectangle (GetClientRectangle (rect))
-	  == rect), and all numbers (borders, menu sizes) are taken from the
-	  current theme. Added a GetBorders helper function that will return
-	  the borders for any given CreateParams (including captions and
-	  menus), and GetBorderSize that returns the given border size only.
 
 2007-04-02  Jackson Harper  <jackson@ximian.com>
 
