@@ -1,3 +1,14 @@
+2007-04-02  Jonathan Pobst  <monkey@jpobst.com>
+
+	* StatusStrip.cs: Layout fixes for PDN.
+	* ToolStrip.cs: Set item's available to true, and placement to main when
+	added.
+	* ToolStripItem.cs: Fix an Available issue, check that Parent is really
+	changing in setter before doing any work, add InternalVisible.
+	* ToolStripPanel.cs: Remove unused variable to fix compiler warning.
+	* ToolStripSplitStackLayout.cs: If we run out of things to hide, don't
+	infinite loop.
+
 2007-04-02  Jackson Harper  <jackson@ximian.com>
 
 	* TextBox.cs: LBUTTON does not make the textbox select all of it's

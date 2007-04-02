@@ -204,6 +204,10 @@ namespace System.Windows.Forms
 							removed_one = true;
 							break;
 						}
+					
+				// There's nothing left to remove, break or we will loop forever	
+				if (!removed_one)
+					break;
 			}
 
 			i = 0;

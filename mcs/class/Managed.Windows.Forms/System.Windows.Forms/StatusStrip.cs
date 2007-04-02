@@ -154,7 +154,8 @@ namespace System.Windows.Forms
 
 		protected virtual void OnSpringTableLayoutCore ()
 		{
-			this.SetDisplayedItems ();
+			if (!this.Created)
+				return;
 
 			ToolStripItemOverflow[] overflow = new ToolStripItemOverflow[this.Items.Count];
 			ToolStripItemPlacement[] placement = new ToolStripItemPlacement[this.Items.Count];
@@ -169,6 +170,7 @@ namespace System.Windows.Forms
 				overflow[i] = tsi.Overflow;
 				widths[i] = tsi.GetPreferredSize (proposedSize).Width + tsi.Margin.Horizontal;
 				placement[i] = tsi.Overflow == ToolStripItemOverflow.Always ? ToolStripItemPlacement.None : ToolStripItemPlacement.Main;
+				placement[i] = tsi.Available ? placement[i] : ToolStripItemPlacement.None;
 				total_width += placement[i] == ToolStripItemPlacement.Main ? widths[i] : 0;
 				if (tsi is ToolStripStatusLabel && (tsi as ToolStripStatusLabel).Spring)
 					spring_count++;
@@ -198,6 +200,10 @@ namespace System.Windows.Forms
 							removed_one = true;
 							break;
 						}
+
+				// There's nothing left to remove, break or we will loop forever	
+				if (!removed_one)
+					break;
 			}
 
 			if (spring_count > 0) {
@@ -226,7 +232,9 @@ namespace System.Windows.Forms
 				}
 
 				i++;
-			}			
+			}
+
+			this.SetDisplayedItems ();
 		}
 
 		protected override void SetDisplayedItems ()
@@ -234,8 +242,11 @@ namespace System.Windows.Forms
 			this.displayed_items.Clear ();
 
 			foreach (ToolStripItem tsi in this.Items)
-				if (tsi.Available)
+				if (tsi.Placement == ToolStripItemPlacement.Main) {
 					this.displayed_items.AddNoOwnerOrLayout (tsi);
+					tsi.InternalVisible = true;	
+				} else
+					tsi.InternalVisible = false;
 		}
 		
 		protected override void WndProc (ref Message m)

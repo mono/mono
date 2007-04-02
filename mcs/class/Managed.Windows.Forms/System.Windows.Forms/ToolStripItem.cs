@@ -45,6 +45,7 @@ namespace System.Windows.Forms
 		private bool allow_drop;
 		private ToolStripItemAlignment alignment;
 		private AnchorStyles anchor;
+		private bool available;
 		private bool auto_size;
 		private bool auto_tool_tip;
 		private Color back_color;
@@ -104,6 +105,7 @@ namespace System.Windows.Forms
 			this.anchor = AnchorStyles.Left | AnchorStyles.Top;
 			this.auto_size = true;
 			this.auto_tool_tip = this.DefaultAutoToolTip;
+			this.available = true;
 			this.back_color = Control.DefaultBackColor;
 			this.background_image_layout = ImageLayout.Tile;
 			this.can_select = true;
@@ -249,9 +251,10 @@ namespace System.Windows.Forms
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public bool Available {
-			get { return this.visible; }
+			get { return this.available; }
 			set {
-				if (this.visible != value) {
+				if (this.available != value) {
+					available = value;
 					visible = value;
 
 					if (this.parent != null)
@@ -689,6 +692,7 @@ namespace System.Windows.Forms
 			}
 			set { 
 				if (this.visible != value) {
+					this.available = value;
 					this.SetVisibleCore (value);
 				}
 			}
@@ -724,9 +728,11 @@ namespace System.Windows.Forms
 		protected internal ToolStrip Parent {
 			get { return this.parent; }
 			set { 
-				ToolStrip old_parent = this.parent;
-				this.parent = value; 
-				OnParentChanged(old_parent, this.parent);
+				if (this.parent != value) {
+					ToolStrip old_parent = this.parent;
+					this.parent = value; 
+					OnParentChanged(old_parent, this.parent);
+				}
 			}
 		}
 		protected internal virtual bool ShowKeyboardCues { get { return false; } }
@@ -1456,6 +1462,11 @@ namespace System.Windows.Forms
 			this.placement = placement;
 		}
 
+		internal bool InternalVisible {
+			get { return this.visible; }
+			set { this.visible = value; }
+		}
+		
 		internal Point Location {
 			get { return this.bounds.Location; }
 			set {

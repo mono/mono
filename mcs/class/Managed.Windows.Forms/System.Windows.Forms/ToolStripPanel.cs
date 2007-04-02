@@ -308,8 +308,6 @@ namespace System.Windows.Forms
 			}
 
 			// Find how big we are so we can autosize ourself
-			int height = 0;
-				
 			if (this.rows.Count > 0) {
 				int last_row_bottom = this.rows[this.rows.Count - 1].Bounds.Bottom;
 			
