@@ -1,3 +1,8 @@
+2007-04-02  Jackson Harper  <jackson@ximian.com>
+
+	* TextControl.cs: Make sure the attributes get set on the last
+	tag.
+
 2007-04-02  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* XplatUIOSX.cs, XplatUIX11.cs, XplatUIX11GTK.cs: Remove dependency

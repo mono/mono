@@ -1941,7 +1941,8 @@ namespace System.Windows.Forms {
 
 				LineTag tag = line.tags;
 				while (tag != null) {
-					Console.Write ("\t<tag type='{0}' span='{1}->{2}'>", tag.GetType (), tag.start, tag.length);
+					Console.Write ("\t<tag type='{0}' span='{1}->{2}' font='{3}' color='{4}'>",
+							tag.GetType (), tag.start, tag.length, tag.font, tag.color.Color);
 					Console.Write (tag.Text ());
 					Console.WriteLine ("</tag>");
 					tag = tag.next;
@@ -4711,7 +4712,6 @@ namespace System.Windows.Forms {
 			}
 
 			start_tag = FindTag (line, start);
-
 			tag = start_tag.Break (start);
 
 			while (tag != null && tag.end <= end) {
@@ -4719,7 +4719,7 @@ namespace System.Windows.Forms {
 				tag = tag.next;
 			}
 
-			if (end != line.text.Length) {
+			if (tag.end != end) {
 				/// Now do the last tag
 				end_tag = FindTag (line, end);
 
