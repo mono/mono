@@ -1,3 +1,7 @@
+2007-04-02  Nagappan A  <anagappan@novell.com>
+
+	* SqlParameter.cs: Variable name fix.
+
 2007-03-20  Nidhi Rawal  <rawalnidhi_rawal@yahoo.com>
 
 	* SqlClientFactory.cs: Added two using directives.

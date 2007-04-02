@@ -67,7 +67,7 @@ namespace System.Data.SqlClient {
 		string sourceColumn;
 		DataRowVersion sourceVersion;
 		SqlCompareOptions compareInfo;
-		int localId;
+		int localeId;
 		Object sqlValue;
 		string udtTypeName;
 
@@ -390,8 +390,8 @@ namespace System.Data.SqlClient {
 		}
 
 		public int LocaleId { 
-			get { return localId; }
-			set { localId = value; }
+			get { return localeId; }
+			set { localeId = value; }
 		}
 
 		public Object SqlValue { 
