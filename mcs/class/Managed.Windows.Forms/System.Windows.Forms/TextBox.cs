@@ -377,6 +377,9 @@ namespace System.Windows.Forms {
 		protected override void WndProc(ref Message m) {
 			switch ((Msg)m.Msg) {
 				case Msg.WM_LBUTTONDOWN:
+					// When the textbox gets focus by LBUTTON (but not by middle or right)
+					// it does not do the select all / scroll thing.
+					has_been_focused = true;
 					FocusInternal (true);
 					break;
 			}

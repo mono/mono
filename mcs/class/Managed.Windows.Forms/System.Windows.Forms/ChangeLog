@@ -1,3 +1,8 @@
+2007-04-02  Jackson Harper  <jackson@ximian.com>
+
+	* TextBox.cs: LBUTTON does not make the textbox select all of it's
+	text on focus.
+
 2007-04-02  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* XplatUIWin32.cs: Use the previous change in SetParent for forms only.
