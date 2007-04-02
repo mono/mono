@@ -542,6 +542,7 @@ namespace System.Web.UI.WebControls
 
 			INavigateUIData navigateUIData = hierarchyData as INavigateUIData;
 			if (navigateUIData != null) {
+				ToolTip = navigateUIData.Description;
 				Text = navigateUIData.ToString ();
 				NavigateUrl = navigateUIData.NavigateUrl;
 			}

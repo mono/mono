@@ -1,3 +1,8 @@
+2007-04-02 Gert Driesen <drieseng@users.sourceforge.net>
+
+	* MenuItem.cs: Use INavigateUIData.Description as ToolTip. Fixed line
+	endings.
+
 2007-03-29 Adar Wesley <adarw@mainsoft.com>
 
 	* ObjectDataSourceView.cs: fixed events so they are raized at the
