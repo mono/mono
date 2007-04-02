@@ -1,3 +1,10 @@
+2007-04-02  Chris Toshok  <toshok@ximian.com>
+
+	* DataGridBoolColumn.cs: rewrite things a bit, and fix up the
+	logic between the values we present to the user and the values
+	which are stored in the column's property.  Also, don't call
+	GetPreferredSize - it's virtual. Along the way, fix bug #80965.
+
 2007-04-02  Jackson Harper  <jackson@ximian.com>
 
 	* TextBoxBase.cs: Scroll faster!

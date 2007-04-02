@@ -17,14 +17,13 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2005 Novell, Inc. (http://www.novell.com)
+// Copyright (c) 2005-2007 Novell, Inc. (http://www.novell.com)
 //
 // Author:
 //	Jordi Mas i Hernandez <jordi@ximian.com>
+//	Chris toshok <toshok@ximian.com>
 //
 //
-
-// NOT COMPLETE
 
 using System.ComponentModel;
 using System.Drawing;
@@ -45,12 +44,14 @@ namespace System.Windows.Forms
 		}
 
 		#region	Local Variables
-		private bool allownull;
-		private object falsevalue;
-		private object nullvalue;
-		private object truevalue;
-		private Hashtable checkboxes_state;
-		CheckState oldState;
+		private bool allow_null;
+		private object false_value;
+		private object null_value;
+		private object true_value;
+		int editing_row;
+		CheckState editing_state;
+		CheckState model_state;
+		Size checkbox_size;
 
 		#endregion	// Local Variables
 
@@ -65,12 +66,12 @@ namespace System.Windows.Forms
 
 		public DataGridBoolColumn (PropertyDescriptor prop, bool isDefault)  : base (prop)
 		{
-			falsevalue = false;
-			nullvalue = null;
-			truevalue = true;
-			allownull = true;
-			checkboxes_state = new Hashtable ();			
+			false_value = false;
+			null_value = null;
+			true_value = true;
+			allow_null = true;
 			is_default = isDefault;
+			checkbox_size = new Size (ThemeEngine.Current.DataGridMinimumColumnCheckBoxWidth, ThemeEngine.Current.DataGridMinimumColumnCheckBoxHeight);
 		}
 		#endregion
 
@@ -78,11 +79,11 @@ namespace System.Windows.Forms
 		[DefaultValue(true)]
 		public bool AllowNull {
 			get {
-				return allownull;
+				return allow_null;
 			}
 			set {
-				if (value != allownull) {
-					allownull = value;
+				if (value != allow_null) {
+					allow_null = value;
 
 					EventHandler eh = (EventHandler)(Events [AllowNullChangedEvent]);
 					if (eh != null)
@@ -97,11 +98,11 @@ namespace System.Windows.Forms
 #endif
 		public object FalseValue {
 			get {
-				return falsevalue;
+				return false_value;
 			}
 			set {
-				if (value != falsevalue) {
-					falsevalue = value;
+				if (value != false_value) {
+					false_value = value;
 
 					EventHandler eh = (EventHandler)(Events [FalseValueChangedEvent]);
 					if (eh != null)
@@ -113,11 +114,11 @@ namespace System.Windows.Forms
 		[TypeConverter(typeof(System.ComponentModel.StringConverter))]
 		public object NullValue {
 			get {
-				return nullvalue;
+				return null_value;
 			}
 			set {
-				if (value != nullvalue) {
-					nullvalue = value;
+				if (value != null_value) {
+					null_value = value;
 
 					// XXX no NullValueChangedEvent?  lame.
 				}
@@ -130,11 +131,11 @@ namespace System.Windows.Forms
 #endif
 		public object TrueValue {
 			get {
-				return truevalue;
+				return true_value;
 			}
 			set {
-				if (value != truevalue) {
-					truevalue = value;
+				if (value != true_value) {
+					true_value = value;
 
 					EventHandler eh = (EventHandler)(Events [TrueValueChangedEvent]);
 					if (eh != null)
@@ -147,16 +148,27 @@ namespace System.Windows.Forms
 		#region Public Instance Methods
 		protected internal override void Abort (int rowNum)
 		{
-			SetState (rowNum, oldState & ~CheckState.Selected);			
-			grid.Invalidate (grid.GetCurrentCellBounds ());
+			if (rowNum == editing_row) {
+				// XXX 
+				// this needs to not use the current cell
+				// bounds, but the bounds of the cell for this
+				// column/rowNum.
+				grid.Invalidate (grid.GetCurrentCellBounds ());
+				editing_row = -1;
+			}
 		}
 
 		protected internal override bool Commit (CurrencyManager source, int rowNum)
 		{
-			CheckState newState = GetState (source, rowNum);
-			SetColumnValueAtRow (source, rowNum, FromStateToValue (newState));
-			SetState (rowNum, newState & ~CheckState.Selected);
-			grid.Invalidate (grid.GetCurrentCellBounds ());
+			if (rowNum == editing_row) {
+				SetColumnValueAtRow (source, rowNum, FromStateToValue (editing_state));
+				// XXX 
+				// this needs to not use the current cell
+				// bounds, but the bounds of the cell for this
+				// column/rowNum.
+				grid.Invalidate (grid.GetCurrentCellBounds ());
+				editing_row = -1;
+			}
 			return true;
 		}
 
@@ -167,8 +179,13 @@ namespace System.Windows.Forms
 
 		protected internal override void Edit (CurrencyManager source, int rowNum, Rectangle bounds, bool readOnly, string instantText,  bool cellIsVisible)
 		{
-			oldState = GetState (source, rowNum);
-			SetState (rowNum, oldState | CheckState.Selected);
+			editing_row = rowNum;
+			model_state = FromValueToState (GetColumnValueAtRow (source, rowNum));
+			editing_state = model_state | CheckState.Selected;
+			// XXX 
+			// this needs to not use the current cell
+			// bounds, but the bounds of the cell for this
+			// column/rowNum.
 			grid.Invalidate (grid.GetCurrentCellBounds ());
 		}
 
@@ -187,30 +204,28 @@ namespace System.Windows.Forms
 		{
 			object obj = base.GetColumnValueAtRow (lm, row);
 
-			if (ValueEquals (nullvalue, obj)) {
-				return Convert.DBNull;
-			}
+			if (ValueEquals (DBNull.Value, obj))
+				return null_value;
 
-			if (ValueEquals (truevalue, obj)) {
-				return true;
-			}
+			if (ValueEquals (true, obj))
+				return true_value;
 
-			return false;
+			return false_value;
 		}
 
 		protected internal override int GetMinimumHeight ()
 		{
-			return ThemeEngine.Current.DataGridMinimumColumnCheckBoxHeight;
+			return checkbox_size.Height;
 		}
 
 		protected internal override int GetPreferredHeight (Graphics g, object value)
 		{
-			return ThemeEngine.Current.DataGridMinimumColumnCheckBoxHeight;
+			return checkbox_size.Height;
 		}
 
 		protected internal override Size GetPreferredSize (Graphics g, object value)
 		{
-			return new Size (ThemeEngine.Current.DataGridMinimumColumnCheckBoxWidth, ThemeEngine.Current.DataGridMinimumColumnCheckBoxHeight);
+			return checkbox_size;
 		}
 
 		protected internal override void Paint (Graphics g, Rectangle bounds, CurrencyManager source, int rowNum)
@@ -226,18 +241,19 @@ namespace System.Windows.Forms
 
 		protected internal override void Paint (Graphics g, Rectangle bounds, CurrencyManager source, int rowNum, Brush backBrush, Brush foreBrush, bool alignToRight)
 		{
-			Size chkbox_size = GetPreferredSize (g, null);
 			Rectangle rect = new Rectangle ();			
 			ButtonState state;
-			CheckState check_state = GetState (source, rowNum);
+			CheckState check_state;
 
-			chkbox_size.Width -= 2;
-			chkbox_size.Height -= 2;
+			if (rowNum == editing_row)
+				check_state = editing_state;
+			else
+				check_state = FromValueToState (GetColumnValueAtRow (source, rowNum));
 
-			rect.X = bounds.X + ((bounds.Width - chkbox_size.Width) / 2);
-			rect.Y = bounds.Y + ((bounds.Height - chkbox_size.Height) / 2);
-			rect.Width = chkbox_size.Width;
-			rect.Height = chkbox_size.Height;			
+			rect.X = bounds.X + ((bounds.Width - checkbox_size.Width - 2) / 2);
+			rect.Y = bounds.Y + ((bounds.Height - checkbox_size.Height - 2) / 2);
+			rect.Width = checkbox_size.Width - 2;
+			rect.Height = checkbox_size.Height - 2;
 			
 			// If the cell is selected
 			if ((check_state & CheckState.Selected) == CheckState.Selected) { 
@@ -268,11 +284,11 @@ namespace System.Windows.Forms
 		{
 			object value = null;
 
-			if (ValueEquals (nullvalue, obj))
-				value = Convert.DBNull;
-			else if (ValueEquals (truevalue, obj))
+			if (ValueEquals (null_value, obj))
+				value = DBNull.Value;
+			else if (ValueEquals (true_value, obj))
 				value = true;
-			else if (ValueEquals (falsevalue, obj))
+			else if (ValueEquals (false_value, obj))
 				value = false;
 			/* else error? */
 
@@ -284,46 +300,33 @@ namespace System.Windows.Forms
 		private object FromStateToValue (CheckState state)
 		{
 			if ((state & CheckState.Checked) == CheckState.Checked)
-				return truevalue;
+				return true_value;
 			else if ((state & CheckState.Null) == CheckState.Null)
-				return nullvalue;
+				return null_value;
 			else
-				return falsevalue;
+				return false_value;
 		}
 
 		private CheckState FromValueToState (object obj)
 		{
-			if (ValueEquals (truevalue, obj))
+			if (ValueEquals (true_value, obj))
 				return CheckState.Checked;
-			else if (ValueEquals (nullvalue, obj))
+			else if (ValueEquals (null_value, obj))
 				return CheckState.Null;
 			else
 				return CheckState.UnChecked;
 		}
 
-		private CheckState GetState (CurrencyManager source, int row)
-		{
-			CheckState state;
-
-			if (checkboxes_state[row] == null) {
-				object value = GetColumnValueAtRow (source, row);
-				state =	FromValueToState (value);
-				checkboxes_state.Add (row, state);
-			} else {
-				state = (CheckState) checkboxes_state[row];
-			}
-
-			return state;
-		}
-
 		private CheckState GetNextState (CheckState state)
 		{
 			CheckState new_state;
-			bool selected = ((state & CheckState.Selected) == CheckState.Selected);
 
 			switch (state & ~CheckState.Selected) {
 			case CheckState.Checked:
-				new_state = CheckState.Null;
+				if (AllowNull)
+					new_state = CheckState.Null;
+				else
+					new_state = CheckState.UnChecked;
 				break;
 			case CheckState.Null:
 				new_state = CheckState.UnChecked;
@@ -334,9 +337,7 @@ namespace System.Windows.Forms
 				break;
 			}
 			
-			if (selected) {
-				new_state = new_state | CheckState.Selected;
-			}
+			new_state |= (state & CheckState.Selected);
 
 			return new_state;
 		}
@@ -359,14 +360,9 @@ namespace System.Windows.Forms
 		{
 			grid.ColumnStartedEditing (new Rectangle());
 
-			SetState (row, GetNextState (GetState (null, row)));
+			editing_state = GetNextState (editing_state);
 
 			grid.Invalidate (grid.GetCellBounds (row, column));
-		}
-
-		private void SetState (int row, CheckState state)
-		{
-			checkboxes_state[row] = state;
 		}
 
 		#endregion Private Instance Methods
