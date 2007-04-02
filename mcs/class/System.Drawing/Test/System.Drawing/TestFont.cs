@@ -1,13 +1,13 @@
 //
 // Test Font class testing unit
 //
-// Author:
-//
-// 	 Jordi Mas i Hernandez, jordi@ximian.com
-// 	 Peter Dennis Bartok, pbartok@novell.com
+// Authors:
+// 	Jordi Mas i Hernandez, jordi@ximian.com
+// 	Peter Dennis Bartok, pbartok@novell.com
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Ximian, Inc.  http://www.ximian.com
-// Copyright (C) 2004-2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,6 +28,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 using NUnit.Framework;
 using System;
 using System.Drawing;
@@ -576,6 +577,31 @@ namespace MonoTests.System.Drawing{
 			// Marked NotWorking because it is dependent on what fonts/styles are available
 			// on the OS.  This test is written for Windows.
 			Font f = new Font ("Monotype Corsiva", 8, FontStyle.Regular);
+		}
+
+		[Test]
+		public void GetHeight_Float ()
+		{
+			using (Font f = new Font (name, 12.5f)) {
+				Assert.AreEqual (0, f.GetHeight (0), "0");
+			}
+		}
+
+		[Test]
+		public void GetHeight_Graphics ()
+		{
+			using (Bitmap bmp = new Bitmap (10, 10)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					using (Font f = new Font (name, 12.5f)) {
+						float expected = f.GetHeight (g.DpiY);
+						Assert.AreEqual (expected, f.GetHeight (g), 0.01f, "Default");
+						g.ScaleTransform (2, 4);
+						Assert.AreEqual (expected, f.GetHeight (g), 0.01f, "ScaleTransform");
+						g.PageScale = 3;
+						Assert.AreEqual (expected, f.GetHeight (g), 0.01f, "PageScale");
+					}
+				}
+			}
 		}
 	}
 }
