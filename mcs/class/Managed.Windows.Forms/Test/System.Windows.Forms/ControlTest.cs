@@ -268,8 +268,9 @@ namespace MonoTests.System.Windows.Forms
 				overrides.Add("OnPaint");
 			}
 		}
-		
+
 		[Test]
+		[Ignore ("Can't find a reliable way to generate a paint message on Windows.")]
 		public void EventStyleTest ()
 		{
 #if NET_2_0
@@ -669,7 +670,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsTrue(c.MinimumSize.IsEmpty);
 #endif
 			Assert.AreEqual (Keys.None, Control.ModifierKeys, "M1");
-			Assert.IsFalse (Control.MousePosition.IsEmpty, "M2");
+			Assert.IsTrue (Control.MousePosition.X >= 0 && Control.MousePosition.Y >= 0, "M2");
 			Assert.AreEqual (MouseButtons.None, Control.MouseButtons, "M3");
 
 			Assert.AreEqual("", c.Name, "N1");

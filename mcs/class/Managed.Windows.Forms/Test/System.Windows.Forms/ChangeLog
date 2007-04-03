@@ -1,5 +1,11 @@
 2007-04-03  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* ControlTest.cs: Ignore EventStyleTest (can't find a reliable way to
+	  generate paint messages on Windows) and change PubPropTest to
+	  accept (0,0) as a valid mouse location.
+
+2007-04-03  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* DateTimePickerTest.cs: Added a few more cases to TextTest.
 
 2007-04-03  Rolf Bjarne Kvinge <RKvinge@novell.com> 
