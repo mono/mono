@@ -1,3 +1,11 @@
+2007-04-03  Martin Baulig  <martin@ximian.com>
+
+	Fix #81044.
+
+	* convert.cs
+	(Convert.ExplicitReferenceConversion): We need to cast when
+	converting from IList<T> to S[].
+
 2007-04-01  Marek Safar  <marek.safar@gmail.com>
 
 	* decl.cs (FindExtensionMethods): Consider all candidates with same name

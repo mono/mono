@@ -1848,8 +1848,8 @@ namespace Mono.CSharp {
 				// From System.Collecitons.Generic.IList<T> and its base interfaces to a one-dimensional
 				// array type S[], provided there is an implicit or explicit reference conversion from S to T.
 				//
-				if (IList_To_Array(source_type, target_type))
-					return new EmptyCast(source, target_type);
+				if (IList_To_Array (source_type, target_type))
+					return new ClassCast (source, target_type);
 
 				return null;
 			}
