@@ -169,7 +169,6 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test] // bug #79358
-		[Category ("NotWorking")]
 		public void DoubleRelease ()
 		{
 			Mutex mutex = new Mutex ();

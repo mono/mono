@@ -1,3 +1,7 @@
+2007-04-03  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* MutexTest.cs: Enabled test for bug #79358.
+
 2006-12-13  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* MutexTest.cs: Added test for bug #79358. Code formatting, no longer
