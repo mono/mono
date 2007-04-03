@@ -39,9 +39,14 @@ using System.Runtime.ConstrainedExecution;
 
 namespace System.Threading
 {
+#if NET_2_0
+	public static class Monitor
+	{
+#else
 	public sealed class Monitor
 	{
 		private Monitor () {}
+#endif
 
 		// Grabs the mutex on object 'obj', with a maximum
 		// wait time 'ms' but doesn't block - if it can't get

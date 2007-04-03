@@ -1,3 +1,7 @@
+2007-04-03  Alp Toker  <alp@atoker.com>
+
+	* Monitor.cs: Class is static in 2.0.
+
 2007-03-27  Dick Porter  <dick@ximian.com>
 
 	* Mutex.cs: Throw ApplicationException if ReleaseMutex() fails.
