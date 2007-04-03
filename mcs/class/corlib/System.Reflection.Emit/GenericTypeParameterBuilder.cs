@@ -60,7 +60,7 @@ namespace System.Reflection.Emit
 		}
 
 		[ComVisible (true)]
-		public void SetInterfaceConstraints (Type[] iface_constraints)
+		public void SetInterfaceConstraints (params Type[] iface_constraints)
 		{
 			this.iface_constraints = iface_constraints;
 		}

@@ -1,3 +1,9 @@
+2007-04-03  Alp Toker  <alp@atoker.com>
+
+	* GenericTypeParameterBuilder.cs: SetInterfaceConstraints(Type[]) is
+	params.
+	* MethodBuilder.cs: MakeGenericMethod(Type[]) is params.
+
 2007-03-19  Marek Safar  <marek.safar@gmail.com>
 
 	* MethodBuilder.cs: MethodImplAttribute cannot be destructive and overwrite
