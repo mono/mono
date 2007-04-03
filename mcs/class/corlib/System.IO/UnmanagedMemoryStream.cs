@@ -270,11 +270,6 @@ namespace System.IO
 			//but is included as part of the Stream base class
 		}
 		 
-		public void Dispose ()
-		{
-			Dispose(true);
-		}
-		 
 		protected override void Dispose (bool disposing)
 		{
 

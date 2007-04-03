@@ -1,5 +1,10 @@
 2007-04-03  Alp Toker  <alp@atoker.com>
 
+	* UnmanagedMemoryStream.cs: Should not have a public Dispose().
+	This behaviour is already provided by the base class.
+
+2007-04-03  Alp Toker  <alp@atoker.com>
+
 	* Stream.cs: CreateWaitHandle() obsolete in 2.0.
 
 2007-03-18  Alp Toker  <alp@atoker.com>
