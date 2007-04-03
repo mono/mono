@@ -39,14 +39,19 @@ using System.Runtime.ConstrainedExecution;
 
 namespace System
 {
+#if NET_2_0
+	public static class Math
+	{
+#else
 	public sealed class Math
 	{
-		public const double E = 2.7182818284590452354;
-		public const double PI = 3.14159265358979323846;
-
 		private Math ()
 		{
 		}
+#endif
+
+		public const double E = 2.7182818284590452354;
+		public const double PI = 3.14159265358979323846;
 
 		public static decimal Abs (decimal value)
 		{

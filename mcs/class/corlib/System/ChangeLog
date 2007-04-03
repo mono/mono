@@ -1,5 +1,10 @@
 2007-04-03  Alp Toker  <alp@atoker.com>
 
+	* Convert.cs:
+	* Math.cs: Should be static classes in 2.0.
+
+2007-04-03  Alp Toker  <alp@atoker.com>
+
 	* Delegate.cs: DynamicInvoke(object[]) is params in 2.0.
 
 2007-04-03  Alp Toker  <alp@atoker.com>

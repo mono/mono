@@ -99,16 +99,19 @@ using System.Runtime.CompilerServices;
 namespace System {
   
 //	[CLSCompliant(false)]
+#if NET_2_0
+	public static class Convert {
+#else
 	public sealed class Convert {
+		private Convert ()
+		{
+		}
+#endif
 
 		// Fields
 		public static readonly object DBNull = System.DBNull.Value;
 		static ToBase64Transform toBase64Transform = new ToBase64Transform();
 	
-		private Convert ()
-		{
-		}
-
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		extern static byte [] InternalFromBase64String (string str, bool allowWhitespaceOnly);
 
