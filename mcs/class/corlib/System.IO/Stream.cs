@@ -135,7 +135,7 @@ namespace System.IO
 		}
 
 #if NET_2_0
-[Obsolete ("CreateWaitHandle is due for removal.  Use \"new ManualResetEvent(false)\" instead.")]
+		[Obsolete ("CreateWaitHandle is due for removal.  Use \"new ManualResetEvent(false)\" instead.")]
 #endif
 		protected virtual WaitHandle CreateWaitHandle()
 		{
