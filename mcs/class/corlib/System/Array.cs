@@ -606,7 +606,7 @@ namespace System
 			return CreateInstance (elementType, lengths);
 		}
 
-		public static Array CreateInstance (Type elementType, int[] lengths)
+		public static Array CreateInstance (Type elementType, params int[] lengths)
 		{
 			if (elementType == null)
 				throw new ArgumentNullException ("elementType");

@@ -1056,7 +1056,7 @@ namespace System {
 		}
 
 		[MonoTODO ("resolve assemblyName to location")]
-		public int ExecuteAssemblyByName (string assemblyName, Evidence assemblySecurity, string[] args)
+		public int ExecuteAssemblyByName (string assemblyName, Evidence assemblySecurity, params string[] args)
 		{
 			if (assemblyName == null)
 				throw new ArgumentNullException ("assemblyName");
@@ -1066,7 +1066,7 @@ namespace System {
 		}
 
 		[MonoTODO ("assemblyName may not have a codebase")]
-		public int ExecuteAssemblyByName (AssemblyName assemblyName, Evidence assemblySecurity, string[] args)
+		public int ExecuteAssemblyByName (AssemblyName assemblyName, Evidence assemblySecurity, params string[] args)
 		{
 			if (assemblyName == null)
 				throw new ArgumentNullException ("assemblyName");

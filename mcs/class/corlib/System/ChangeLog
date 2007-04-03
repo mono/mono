@@ -1,5 +1,11 @@
 2007-04-03  Alp Toker  <alp@atoker.com>
 
+	* Array.cs: CreateInstance(Type,int[]) is params.
+	* AppDomain.cs: ExecuteAssemblyByName(string,Evidence,string[]) is
+	params.
+
+2007-04-03  Alp Toker  <alp@atoker.com>
+
 	* Convert.cs:
 	* Math.cs: Should be static classes in 2.0.
 
