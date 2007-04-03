@@ -1,3 +1,7 @@
+2007-04-03  Raja R Harinath  <rharinath@novell.com>
+
+	* Regex.cs (~Regex): Don't define in NET_2_0 profile.
+
 2007-01-02  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #79472

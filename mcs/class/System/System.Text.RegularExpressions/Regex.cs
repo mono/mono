@@ -256,7 +256,7 @@ namespace System.Text.RegularExpressions {
 		{
 		}
 
-#if NET_1_1 && !TARGET_JVM
+#if ONLY_1_1 && !TARGET_JVM
 		// fixes public API signature
 		~Regex ()
 		{
