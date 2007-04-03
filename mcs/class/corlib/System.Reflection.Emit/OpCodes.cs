@@ -657,14 +657,6 @@ namespace System.Reflection.Emit {
 			0xFF << 0 | 0xA2 << 8 | (byte) StackBehaviour.Push0 << 16 | (byte) StackBehaviour.Popref_popi_popref << 24,
 			1 << 0 | (byte) OpCodeType.Objmodel << 8 | (byte) OperandType.InlineNone << 16 | (byte) FlowControl.Next << 24);
 #if NET_2_0 || BOOTSTRAP_NET_2_0
-		public static readonly OpCode Ldelem_Any = new OpCode (
-			0xFF << 0 | 0xA3 << 8 | (byte) StackBehaviour.Push1 << 16 | (byte) StackBehaviour.Popref_popi << 24,
-			1 << 0 | (byte) OpCodeType.Objmodel << 8 | (byte) OperandType.InlineType << 16 | (byte) FlowControl.Next << 24);
-
-		public static readonly OpCode Stelem_Any = new OpCode (
-			0xFF << 0 | 0xA4 << 8 | (byte) StackBehaviour.Push0 << 16 | (byte) StackBehaviour.Popref_popi_popref << 24,
-			1 << 0 | (byte) OpCodeType.Objmodel << 8 | (byte) OperandType.InlineType << 16 | (byte) FlowControl.Next << 24);
-
 		public static readonly OpCode Ldelem = new OpCode (
 			0xFF << 0 | 0xA3 << 8 | (byte) StackBehaviour.Push1 << 16 | (byte) StackBehaviour.Popref_popi << 24,
 			1 << 0 | (byte) OpCodeType.Objmodel << 8 | (byte) OperandType.InlineType << 16 | (byte) FlowControl.Next << 24);

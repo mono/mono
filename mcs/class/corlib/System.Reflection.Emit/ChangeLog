@@ -1,3 +1,7 @@
+2007-04-03  Marek Safar  <marek.safar@gmail.com>
+
+	* OpCodes.cs: Removed obsolete opcodes.
+
 2007-04-03  Alp Toker  <alp@atoker.com>
 
 	* GenericTypeParameterBuilder.cs: SetInterfaceConstraints(Type[]) is
