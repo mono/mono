@@ -1,3 +1,8 @@
+2007-04-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlTextReader.cs : character ']' inside DTD comment caused parser
+	  error. Fixed bug #81294.
+
 2007-03-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlReader.cs : when Create() returns customized XmlTextReader, set

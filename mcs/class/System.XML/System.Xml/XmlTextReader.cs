@@ -2526,8 +2526,8 @@ namespace System.Xml
 						continueParse = false;
 						break;
 					case DtdInputState.InsideDoubleQuoted:
-						continue;
 					case DtdInputState.InsideSingleQuoted:
+					case DtdInputState.Comment:
 						continue;
 					default:
 						throw NotWFError ("unexpected end of file at DTD.");

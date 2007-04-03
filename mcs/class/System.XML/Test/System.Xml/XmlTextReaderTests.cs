@@ -1253,5 +1253,14 @@ namespace MonoTests.System.Xml
 							new string (buf, 0, c));
 			AssertEquals ("total lines", 5, n);
 		}
+
+		[Test] // bug #81294
+		public void DtdCommentContainsCloseBracket ()
+		{
+			string xml = @"<!DOCTYPE kanjidic2 [<!ELEMENT kanjidic2 EMPTY> <!-- ] --> ]><kanjidic2 />";
+			XmlTextReader xtr = new XmlTextReader (xml, XmlNodeType.Document, null);
+			while (!xtr.EOF)
+				xtr.Read ();
+		}
 	}
 }
