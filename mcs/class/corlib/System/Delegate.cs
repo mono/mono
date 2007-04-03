@@ -393,7 +393,11 @@ namespace System
 		///   Returns a new MulticastDelegate holding the
 		///   concatenated invocation lists of an Array of MulticastDelegates
 		/// </symmary>
+#if NET_2_0
+		public static Delegate Combine (params Delegate[] delegates)
+#else
 		public static Delegate Combine (Delegate[] delegates)
+#endif
 		{
 			if (delegates == null)
 				return null;
