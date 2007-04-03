@@ -1,3 +1,9 @@
+2007-04-03  Marek Habersack  <mhabersack@novell.com>
+
+	* AppResourcesCompiler.cs: global resources are put in the
+	"Resources." namespace while local ones are not. Fixes bug #81174
+	which was reopened after r75261.
+
 2007-03-26  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateControlCompiler.cs: refactor assining properties from

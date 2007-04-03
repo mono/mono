@@ -192,7 +192,7 @@ namespace System.Web.Compilation
 
 			List<AppResourceFileInfo> files = this.files.Files;
 			foreach (AppResourceFileInfo arfi in files)
-				GetResourceFile (arfi, cp);
+				GetResourceFile (arfi, cp, true);
 
 			CodeDomProvider provider;
 			provider = ci.CreateProvider ();
@@ -263,11 +263,11 @@ namespace System.Web.Compilation
                     return false;
                 }
 
-		string GetResourceFile (AppResourceFileInfo arfi, CompilerParameters cp)
+		string GetResourceFile (AppResourceFileInfo arfi, CompilerParameters cp, bool local)
 		{
 			string resfile;
 			if (arfi.Kind == AppResourceFileKind.ResX)
-				resfile = CompileResource (arfi);
+				resfile = CompileResource (arfi, local);
 			else
 				resfile = arfi.Info.FullName;
 			if (!String.IsNullOrEmpty (resfile))
@@ -321,7 +321,7 @@ namespace System.Web.Compilation
 				}
 				if (defaultFile != null) {
 					List<string> al = new List<string> ();
-					al.Add (GetResourceFile (arfi, cp));
+					al.Add (GetResourceFile (arfi, cp, false));
 					arfi.Seen = true;
 					groups.Add (al);
 					
@@ -344,7 +344,7 @@ namespace System.Web.Compilation
 						continue;
 					tmp2 = arfi.Info.Name;
 					if (tmp2.StartsWith (tmp)) {
-						al.Add (GetResourceFile (arfi, cp));
+						al.Add (GetResourceFile (arfi, cp, false));
 						arfi.Seen = true;
 					}
 				}
@@ -365,7 +365,7 @@ namespace System.Web.Compilation
 
 				// A single default file, create a group
 				List<string> al = new List<string> ();
-				al.Add (GetResourceFile (arfi, cp));
+				al.Add (GetResourceFile (arfi, cp, false));
 				groups.Add (al);
 			}
 			groups.Sort (lcList);
@@ -558,11 +558,14 @@ namespace System.Web.Compilation
 					new CodeVariableReferenceExpression ("value")));
 		}
 		
-		string CompileResource (AppResourceFileInfo arfi)
+		string CompileResource (AppResourceFileInfo arfi, bool local)
 		{
 			string path = arfi.Info.FullName;
-			string resource = Path.Combine (TempDirectory,
-							"Resources." + Path.GetFileNameWithoutExtension (path) + ".resources");
+			string rname = Path.GetFileNameWithoutExtension (path) + ".resources";
+			if (!local)
+				rname = "Resources." + rname;
+			
+			string resource = Path.Combine (TempDirectory, rname);
 			FileStream source = null, destination = null;
 			IResourceReader reader = null;
 			ResourceWriter writer = null;
