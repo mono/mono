@@ -1137,6 +1137,7 @@ namespace System.Windows.Forms {
 					} else {
 						document.MoveCaret(CaretDirection.PgUp);
 					}
+					document.DisplayCaret ();
 					return true;
 				}
 
@@ -1146,6 +1147,7 @@ namespace System.Windows.Forms {
 					} else {
 						document.MoveCaret(CaretDirection.PgDn);
 					}
+					document.DisplayCaret ();
 					return true;
 				}
 			}

@@ -2,6 +2,10 @@
 
 	* TextBoxBase.cs: We need to calculate maximums even if this is
 	not a multiline control, because the maxs are used for scrolling.
+	- Display the caret after doing a page up/down, we need to
+	manually display it because a proper CaretMoved event isn't
+	triggered (this is because of the way the math is done to
+	determine how far to scroll).
 
 2007-04-03  Jonathan Pobst  <monkey@jpobst.com>
 
