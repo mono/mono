@@ -1,3 +1,7 @@
+2007-04-03  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* XplatUIX11-new.cs: Port changes from XplatUIX11.cs
+
 2007-03-29  Everaldo Canuto  <everaldo@simios.org>
 
 	* XplatUIX11-new.cs: Prevent system to open more than one balloon.
