@@ -1,3 +1,8 @@
+2007-04-03  Jackson Harper  <jackson@ximian.com>
+
+	* TextBoxBase.cs: We need to calculate maximums even if this is
+	not a multiline control, because the maxs are used for scrolling.
+
 2007-04-03  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolBar.cs: Fix some breakage caused by the SetBoundsCore change.

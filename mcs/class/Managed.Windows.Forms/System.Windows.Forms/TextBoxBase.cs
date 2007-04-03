@@ -1643,15 +1643,13 @@ namespace System.Windows.Forms {
 		internal void CalculateScrollBars () {
 			// FIXME - need separate calculations for center and right alignment
 
-			if (!document.multiline) {
-				PositionControls ();
-				return;
-			}
+			//	
 
 			if (document.Width >= document.ViewPortWidth) {
 				hscroll.SetValues (0, Math.Max (1, document.Width), -1,
 						document.ViewPortWidth < 0 ? 0 : document.ViewPortWidth);
-				hscroll.Enabled = true;
+				if (document.multiline)
+					hscroll.Enabled = true;
 			} else {
 				hscroll.Enabled = false;
 				hscroll.Maximum = document.ViewPortWidth;
@@ -1660,12 +1658,12 @@ namespace System.Windows.Forms {
 			if (document.Height >= document.ViewPortHeight) {
 				vscroll.SetValues (0, Math.Max (1, document.Height), -1,
 						document.ViewPortHeight < 0 ? 0 : document.ViewPortHeight);
-				vscroll.Enabled = true;
+				if (document.multiline)
+					vscroll.Enabled = true;
 			} else {
 				vscroll.Enabled = false;
 				vscroll.Maximum = document.ViewPortHeight;
 			}
-
 
 			if (!WordWrap) {
 				if ((scrollbars & RichTextBoxScrollBars.Horizontal) != 0) {
