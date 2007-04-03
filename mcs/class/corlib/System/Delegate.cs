@@ -294,7 +294,11 @@ namespace System
 			return CreateDelegate (type, target, method, ignoreCase, true);
 		}
 
+#if NET_2_0
+		public object DynamicInvoke (params object[] args)
+#else
 		public object DynamicInvoke (object[] args)
+#endif
 		{
 			return DynamicInvokeImpl (args);
 		}
