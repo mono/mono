@@ -4114,10 +4114,13 @@ namespace System.Windows.Forms
 		#endregion	// ScrollBar
 
 		#region StatusBar
-		public	override void DrawStatusBar (Graphics dc, Rectangle clip, StatusBar sb) {
+		public	override void DrawStatusBar (Graphics real_dc, Rectangle clip, StatusBar sb) {
 			Rectangle area = sb.ClientRectangle;
 			int horz_border = 2;
 			int vert_border = 2;
+
+			Image backbuffer = new Bitmap (sb.ClientSize.Width, sb.ClientSize.Height, real_dc);
+			Graphics dc = Graphics.FromImage (backbuffer);
 			
 			bool is_color_control = sb.BackColor.ToArgb () == ColorControl.ToArgb ();
 
@@ -4162,6 +4165,10 @@ namespace System.Windows.Forms
 				area = new Rectangle (area.Right - 16 - 2, area.Bottom - 12 - 1, 16, 16);
 				CPDrawSizeGrip (dc, ColorControl, area);
 			}
+			
+			real_dc.DrawImage (backbuffer, 0, 0);
+			dc.Dispose ();
+			backbuffer.Dispose ();
 
 		}
 

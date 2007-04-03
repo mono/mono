@@ -1,5 +1,10 @@
 2007-04-03  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* ThemeWin32Classic.cs: Draw StatusBar using double buffering. Fixes
+	  #79335.
+
+2007-04-03  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* XplatUIX11.cs: SetWMStyles: If the control is a form with
 	  FormBorderStyle = None, don't give the window any decorations.
 	  Fixes #81276.
