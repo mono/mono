@@ -1,5 +1,13 @@
 2007-04-03  Martin Baulig  <martin@ximian.com>
 
+	Fix #80632.
+
+	* statement.cs (Foreach.CollectionForeach.TryType): Use a custom
+	version of TypeManager.IsOverride() which also works with generic
+	types.	
+
+2007-04-03  Martin Baulig  <martin@ximian.com>
+
 	Fix #81044.
 
 	* convert.cs

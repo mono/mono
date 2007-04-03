@@ -5191,6 +5191,19 @@ namespace Mono.CSharp {
 					TypeManager.CSharpName (expr.Type));
 			}
 
+			bool IsOverride (MethodInfo m)
+			{
+				m = (MethodInfo) TypeManager.DropGenericMethodArguments (m);
+
+				if (!m.IsVirtual || ((m.Attributes & MethodAttributes.NewSlot) != 0))
+					return false;
+				if (m is MethodBuilder)
+					return true;
+
+				MethodInfo base_method = m.GetBaseDefinition ();
+				return base_method != m;
+			}
+
 			bool TryType (EmitContext ec, Type t)
 			{
 				MethodGroupExpr mg = Expression.MemberLookup (
@@ -5211,7 +5224,7 @@ namespace Mono.CSharp {
 					if ((mi.Attributes & MethodAttributes.Public) != MethodAttributes.Public)
 						continue;
 
-					if (TypeManager.IsOverride (mi))
+					if (IsOverride (mi))
 						continue;
 
 					enumerator_found = true;
