@@ -398,6 +398,12 @@ namespace System.Windows.Forms
 			}
 		}
 
+		public virtual Size BorderSizableSize {
+			get {
+				return new Size (3, 3);
+			}
+		}
+
 		public virtual Size Border3DSize {
 			get {
 				return new Size(2, 2);

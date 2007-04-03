@@ -791,43 +791,8 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-		internal override bool CalculateWindowRect(ref Rectangle ClientRect, int Style, int ExStyle, Menu menu, out Rectangle WindowRect) {
-			FormBorderStyle	border_style;
-			TitleStyle	title_style;
-			bool border_static = false;
-
-			title_style = TitleStyle.None;
-			if ((Style & (int)WindowStyles.WS_CAPTION) != 0) {
-				if ((ExStyle & (int)WindowExStyles.WS_EX_TOOLWINDOW) != 0) {
-					title_style = TitleStyle.Tool;
-				} else {
-					title_style = TitleStyle.Normal;
-				}
-			}
-
-			border_style = FormBorderStyle.None;
-			if ((ExStyle & (int)WindowExStyles.WS_EX_WINDOWEDGE) != 0) {
-				if ((ExStyle & (int)WindowExStyles.WS_EX_TOOLWINDOW) != 0) {
-					if ((Style & (int)WindowStyles.WS_THICKFRAME) != 0) {
-						border_style = FormBorderStyle.SizableToolWindow;
-					} else {
-						border_style = FormBorderStyle.FixedToolWindow;
-					}
-				} else if ((ExStyle & (int)WindowExStyles.WS_EX_DLGMODALFRAME) != 0) {
-					border_style = FormBorderStyle.FixedDialog;
-				} else if ((ExStyle & (int)WindowStyles.WS_THICKFRAME) != 0) {
-					border_style = FormBorderStyle.Sizable;
-				} else {
-					border_style = FormBorderStyle.FixedSingle;
-				}
-			} else {
-				border_style = FormBorderStyle.Fixed3D;
-			}
-
-			WindowRect = Hwnd.GetWindowRectangle(border_style, border_static, menu, title_style,
-					SystemInformation.CaptionHeight,
-					SystemInformation.ToolWindowCaptionHeight, ClientRect);
-
+		internal override bool CalculateWindowRect(ref Rectangle ClientRect, CreateParams cp, Menu menu, out Rectangle WindowRect) {
+			WindowRect = Hwnd.GetWindowRectangle (cp, menu, ClientRect);
 			return true;
 		}
 		
@@ -1646,9 +1611,7 @@ namespace System.Windows.Forms {
 
 		internal override void SetWindowPos(IntPtr handle, int x, int y, int width, int height) {
 			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
-			Rectangle client_rect = Hwnd.GetClientRectangle(hwnd.border_style, hwnd.border_static, hwnd.menu,
-					hwnd.title_style, SystemInformation.CaptionHeight,
-					SystemInformation.ToolWindowCaptionHeight, width, height);
+			Rectangle client_rect = hwnd.GetClientRectangle (width, height);
 
 			// Save a server roundtrip (and prevent a feedback loop)
 			if ((hwnd.x == x) && (hwnd.y == y) && (hwnd.width == width) && (hwnd.height == height)) {

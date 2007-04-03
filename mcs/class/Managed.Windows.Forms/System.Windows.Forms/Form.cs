@@ -1284,6 +1284,15 @@ namespace System.Windows.Forms {
 					cp.WindowStyle &= ~WindowStyles.WS_DLGFRAME;
 				}
 				
+				// Fake the window styles for mdi, toolwindows and parented forms
+				if (cp.HasWindowManager) {
+					// Remove all styles but WS_VISIBLE.
+					cp.WindowStyle &= WindowStyles.WS_VISIBLE;
+					// Set styles that enables us to use the window manager.
+					cp.WindowStyle |= WindowStyles.WS_CHILD | WindowStyles.WS_CLIPCHILDREN | WindowStyles.WS_CLIPSIBLINGS;
+					cp.ExStyle = 0;
+				}
+				
 				return cp;
 			}
 		}
@@ -2050,7 +2059,7 @@ namespace System.Windows.Forms {
 
 			clientsize_set = new Size(x, y);
 
-			if (XplatUI.CalculateWindowRect(ref ClientRect, cp.Style, cp.ExStyle, cp.menu, out WindowRect)) {
+			if (XplatUI.CalculateWindowRect(ref ClientRect, cp, cp.menu, out WindowRect)) {
 				SetBounds(bounds.X, bounds.Y, WindowRect.Width, WindowRect.Height, BoundsSpecified.Size);
 			}
 		}

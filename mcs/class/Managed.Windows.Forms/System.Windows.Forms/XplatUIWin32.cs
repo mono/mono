@@ -101,8 +101,8 @@ namespace System.Windows.Forms {
 			}
 
 			#region Instance Properties
-			public int Height { get { return bottom - top + 1; } }
-			public int Width { get { return right - left + 1; } }
+			public int Height { get { return bottom - top; } }
+			public int Width { get { return right - left; } }
 			public Size Size { get { return new Size (Width, Height); } }
 			public Point Location { get { return new Point (left, top); } }
 			#endregion
@@ -1270,8 +1270,6 @@ namespace System.Windows.Forms {
 				ParentHandle = FosterParent;
 			}
 
-			FakeStyles (cp);
-
 			string class_name = RegisterWindowClass (cp.ClassStyle);
 			HwndCreating = hwnd;
 
@@ -1356,8 +1354,6 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void SetWindowStyle(IntPtr handle, CreateParams cp) {
-
-			FakeStyles (cp);
 
 			Win32SetWindowLong(handle, WindowLong.GWL_STYLE, (uint)cp.Style);
 			Win32SetWindowLong(handle, WindowLong.GWL_EXSTYLE, (uint)cp.ExStyle);
@@ -1917,7 +1913,7 @@ namespace System.Windows.Forms {
 			grab_hwnd = IntPtr.Zero;
 		}
 
-		internal override bool CalculateWindowRect(ref Rectangle ClientRect, int Style, int ExStyle, Menu menu, out Rectangle WindowRect) {
+		internal override bool CalculateWindowRect(ref Rectangle ClientRect, CreateParams cp, Menu menu, out Rectangle WindowRect) {
 			RECT	rect;
 
 			rect.left=ClientRect.Left;
@@ -1925,7 +1921,7 @@ namespace System.Windows.Forms {
 			rect.right=ClientRect.Right;
 			rect.bottom=ClientRect.Bottom;
 
-			if (!Win32AdjustWindowRectEx(ref rect, Style, menu != null, ExStyle)) {
+			if (!Win32AdjustWindowRectEx(ref rect, cp.Style, menu != null, cp.ExStyle)) {
 				WindowRect = new Rectangle(ClientRect.Left, ClientRect.Top, ClientRect.Width, ClientRect.Height);
 				return false;
 			}
@@ -2159,17 +2155,6 @@ namespace System.Windows.Forms {
 
 			lock (timer_list) {
 				timer_list.Remove(index);
-			}
-		}
-		
-		private void FakeStyles (CreateParams cp)
-		{
-			if (cp.HasWindowManager) {
-				// Remove all styles but WS_VISIBLE.
-				cp.WindowStyle &= WindowStyles.WS_VISIBLE;
-				// Set styles that enables us to use the window manager.
-				cp.WindowStyle |= WindowStyles.WS_CHILD | WindowStyles.WS_CLIPCHILDREN | WindowStyles.WS_CLIPSIBLINGS;
-				cp.ExStyle = 0;
 			}
 		}
 		

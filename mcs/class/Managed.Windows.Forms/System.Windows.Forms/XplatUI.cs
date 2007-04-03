@@ -307,11 +307,11 @@ namespace System.Windows.Forms {
 			driver.AudibleAlert();
 		}
 
-		internal static bool CalculateWindowRect(ref Rectangle ClientRect, int Style, int ExStyle, Menu menu, out Rectangle WindowRect) {
+		internal static bool CalculateWindowRect(ref Rectangle ClientRect, CreateParams cp, Menu menu, out Rectangle WindowRect) {
 			#if DriverDebug
-				Console.WriteLine("CalculateWindowRect({0}, {1}, {2}, {3}): Called", ClientRect, Style, ExStyle, menu);
+				Console.WriteLine("CalculateWindowRect({0}, {1}, {2}): Called", ClientRect, cp, menu);
 			#endif
-			return driver.CalculateWindowRect(ref ClientRect, Style, ExStyle, menu, out WindowRect);
+			return driver.CalculateWindowRect(ref ClientRect, cp, menu, out WindowRect);
 		}
 
 		internal static void CaretVisible(IntPtr handle, bool visible) {

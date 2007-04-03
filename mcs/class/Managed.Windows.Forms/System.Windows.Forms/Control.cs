@@ -1371,7 +1371,9 @@ namespace System.Windows.Forms
 			}
 
 			if (background_image == null) {
-				pevent.Graphics.FillRectangle(ThemeEngine.Current.ResPool.GetSolidBrush(BackColor), new Rectangle(pevent.ClipRectangle.X - 1, pevent.ClipRectangle.Y - 1, pevent.ClipRectangle.Width + 2, pevent.ClipRectangle.Height + 2));
+				Rectangle paintRect = new Rectangle(pevent.ClipRectangle.X, pevent.ClipRectangle.Y, pevent.ClipRectangle.Width, pevent.ClipRectangle.Height);
+				Brush pen = ThemeEngine.Current.ResPool.GetSolidBrush(BackColor);
+				pevent.Graphics.FillRectangle(pen, paintRect);
 				return;
 			}
 
@@ -1767,10 +1769,15 @@ namespace System.Windows.Forms
 			ClientRect = new Rectangle (0, 0, clientSize.Width, clientSize.Height);
 			cp = this.CreateParams;
 
-			if (XplatUI.CalculateWindowRect (ref ClientRect, cp.Style, cp.ExStyle, null, out WindowRect))
+			if (XplatUI.CalculateWindowRect (ref ClientRect, cp, null, out WindowRect))
 				return new Size (WindowRect.Width, WindowRect.Height);
 
 			return Size.Empty;
+		}
+		
+		internal CreateParams GetCreateParams ()
+		{
+			return CreateParams;
 		}
 
 		private void UpdateDistances() {
@@ -3162,6 +3169,8 @@ namespace System.Windows.Forms
 						create_params.ExStyle |= (int) WindowExStyles.WS_EX_CLIENTEDGE;
 						break;
 				}
+				
+				create_params.control = this;
 
 				return create_params;
 			}
@@ -4364,7 +4373,7 @@ namespace System.Windows.Forms
 			rect = new Rectangle(0, 0, 0, 0);
 			cp = CreateParams;
 
-			XplatUI.CalculateWindowRect(ref rect, cp.Style, cp.ExStyle, cp.menu, out rect);
+			XplatUI.CalculateWindowRect(ref rect, cp, cp.menu, out rect);
 			UpdateBounds(x, y, width, height, width - (rect.Right - rect.Left), height - (rect.Bottom - rect.Top));
 		}
 

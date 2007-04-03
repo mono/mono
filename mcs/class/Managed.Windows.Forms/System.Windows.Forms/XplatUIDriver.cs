@@ -216,7 +216,7 @@ namespace System.Windows.Forms {
 		internal abstract bool SetTopmost(IntPtr hWnd, bool Enabled);
 		internal abstract bool SetOwner(IntPtr hWnd, IntPtr hWndOwner);
 
-		internal abstract bool CalculateWindowRect(ref Rectangle ClientRect, int Style, int ExStyle, Menu menu, out Rectangle WindowRect);
+		internal abstract bool CalculateWindowRect(ref Rectangle ClientRect, CreateParams cp, Menu menu, out Rectangle WindowRect);
 
 		internal abstract Region GetClipRegion(IntPtr hwnd);
 		internal abstract void SetClipRegion(IntPtr hwnd, Region region);

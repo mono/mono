@@ -111,11 +111,11 @@ namespace System.Windows.Forms {
 
 		#region Internal Instance Methods
 		internal bool IsSet (WindowStyles Style) {
-			return (this.style & (int) Style) != 0;
+			return (this.style & (int) Style) == (int) Style;
 		}
 		
 		internal bool IsSet (WindowExStyles ExStyle) {
-			return (this.ex_style & (int)ExStyle) != 0;
+			return (this.ex_style & (int) ExStyle) == (int) ExStyle;
 		}
 		
 		internal bool HasWindowManager {

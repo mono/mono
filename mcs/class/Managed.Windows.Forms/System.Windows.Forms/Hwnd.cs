@@ -79,6 +79,7 @@ namespace System.Windows.Forms {
 		internal static Graphics bmp_g = Graphics.FromImage (bmp);
 		internal XEventQueue	queue;
 		internal WindowExStyles	initial_ex_style;
+		internal WindowStyles	initial_style;
 		internal FormWindowState cached_window_state = (FormWindowState)(-1);  /* X11 only field */
 		internal Point		previous_child_startup_location = new Point (int.MinValue, int.MinValue);
 		static internal Point	previous_main_startup_location = new Point (int.MinValue, int.MinValue);
@@ -173,80 +174,97 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public static Rectangle GetWindowRectangle(FormBorderStyle border_style, bool border_static,
-				Menu menu, TitleStyle title_style, int caption_height,
-				int tool_caption_height, Rectangle client_rect)
+		public static Size GetBorderSize (CreateParams cp)
 		{
-			Rectangle	rect;
+			Size border_size = new Size (0, 0);
 
-			rect = new Rectangle(client_rect.Location, client_rect.Size);
+			if (cp.IsSet (WindowExStyles.WS_EX_STATICEDGE)) {
+				border_size = ThemeEngine.Current.BorderStaticSize;
+			} else if (cp.IsSet (WindowExStyles.WS_EX_CLIENTEDGE)) {
+				border_size = ThemeEngine.Current.Border3DSize;
+			} else if (cp.IsSet (WindowStyles.WS_THICKFRAME)) {
+				border_size = ThemeEngine.Current.BorderSizableSize;
+			}
+
+			if (cp.IsSet (WindowStyles.WS_BORDER)) {
+				border_size += ThemeEngine.Current.BorderSize;
+			} 
+
+			return border_size;
+		}
+
+		public static Rectangle	GetWindowRectangle (CreateParams cp, Menu menu)
+		{
+			return GetWindowRectangle (cp, menu, Rectangle.Empty);
+		}
+
+		public static Rectangle GetWindowRectangle (CreateParams cp, Menu menu, Rectangle client_rect)
+		{
+			Rectangle rect;
+			Borders borders;
+
+			borders = GetBorders (cp, menu);
+
+			rect = new Rectangle (Point.Empty, client_rect.Size);
+			rect.Y -= borders.top;
+			rect.Height += borders.top + borders.bottom;
+			rect.X -= borders.left;
+			rect.Width += borders.left + borders.right;
+
+			return rect;
+		}
+		
+		public Rectangle GetClientRectangle (int width, int height)
+		{
+			CreateParams cp = new CreateParams ();
+			cp.WindowStyle = initial_style;
+			cp.WindowExStyle = initial_ex_style;
+			return GetClientRectangle (cp, menu, width, height);
+		}
+
+		public static Borders GetBorders (CreateParams cp, Menu menu)
+		{
+
+			Borders borders = new Borders ();
 
 			if (menu != null) {
 				int menu_height = menu.Rect.Height;
 				if (menu_height == 0)
-					menu_height = ThemeEngine.Current.CalcMenuBarSize(bmp_g, menu, client_rect.Width);
-
-				rect.Y -= menu_height;
-				rect.Height += menu_height;
-			}
-
-			// Adjust rect for borders
-			Size border_size = new Size (0, 0);
-			
-			if (border_static)
-				border_size = ThemeEngine.Current.BorderStaticSize;
-			else if (border_style == FormBorderStyle.FixedSingle)
-				border_size = ThemeEngine.Current.BorderSize;
-			else if (border_style == FormBorderStyle.Fixed3D)
-				border_size = ThemeEngine.Current.Border3DSize;
-			else if (border_style == (FormBorderStyle) 0xFFFF)
-				border_size = new Size(4, 4);
-			
-			if (border_size.Width != 0) {
-				rect.X -= border_size.Width;
-				rect.Width += border_size.Width * 2;
-			}
-
-			if (border_size.Height != 0) {
-				rect.Y -= border_size.Height;
-				rect.Height += border_size.Height * 2;
+					menu_height = ThemeEngine.Current.CalcMenuBarSize (bmp_g, menu, cp.Width);
+				borders.top += menu_height;
 			}
 			
-			rect.Y -= caption_height;
-			rect.Height += caption_height;
+			if (cp.IsSet (WindowStyles.WS_CAPTION)) {
+				int caption_height;
+				if (cp.IsSet (WindowExStyles.WS_EX_TOOLWINDOW)) {
+					caption_height = ThemeEngine.Current.ToolWindowCaptionHeight;
+				} else {
+					caption_height = ThemeEngine.Current.CaptionHeight;
+				}
+				borders.top += caption_height;
+			}
 
-			return rect;
+			Size border_size = GetBorderSize (cp);
+
+			borders.left += border_size.Width;
+			borders.right += border_size.Width;
+			borders.top += border_size.Height;
+			borders.bottom += border_size.Height;
+			
+			return borders;
 		}
 
-		public static Rectangle GetClientRectangle(FormBorderStyle border_style, bool border_static, Menu menu, TitleStyle title_style, int caption_height, int tool_caption_height, int width, int height) {
+		public static Rectangle GetClientRectangle(CreateParams cp, Menu menu, int width, int height) {
 			Rectangle rect;
+			Borders borders;
 
-			rect = new Rectangle(0, 0, width, height);
-
-			if (menu != null) {
-				int menu_height = menu.Rect.Height;
-				rect.Y += menu_height;
-				rect.Height -= menu_height;
-			}
-
-			Size border_size = new Size (0, 0);
+			borders = GetBorders (cp, menu); 
 			
-			if (border_static)
-				border_size = ThemeEngine.Current.BorderStaticSize;
-			else if (border_style == FormBorderStyle.FixedSingle)
-				border_size = ThemeEngine.Current.BorderSize;
-			else if (border_style == FormBorderStyle.Fixed3D)
-				border_size = ThemeEngine.Current.Border3DSize;
-
-			if (border_size.Width != 0) {
-				rect.X += border_size.Width;
-				rect.Width -= border_size.Width * 2;
-			}
-
-			if (border_size.Height != 0) {
-				rect.Y += border_size.Height;
-				rect.Height -= border_size.Height * 2;
-			}
+			rect = new Rectangle(0, 0, width, height);
+			rect.Y += borders.top;
+			rect.Height -= borders.top + borders.bottom;
+			rect.X += borders.left;
+			rect.Width -= borders.left + borders.right;
 			
 			return rect;
 		}
@@ -311,8 +329,15 @@ namespace System.Windows.Forms {
 			get {
 				// We pass a Zero for the menu handle so the menu size is
 				// not computed this is done via an WM_NCCALC
-				return GetClientRectangle (border_style, border_static, null, title_style,
-						caption_height, tool_caption_height, width, height);
+				CreateParams cp = new CreateParams ();
+				Rectangle rect;
+				
+				cp.WindowStyle = initial_style;
+				cp.WindowExStyle = initial_ex_style;
+
+				rect = GetClientRectangle (cp, null, width, height);
+
+				return rect;
 			}
 		}
 
@@ -636,9 +661,22 @@ namespace System.Windows.Forms {
 		}
 
 		public override string ToString() {
-			return String.Format("Hwnd, Mapped:{3} ClientWindow:0x{0:X}, WholeWindow:0x{1:X}, Parent:[{2:X}]", client_window.ToInt32(), whole_window.ToInt32(), parent != null ? parent.ToString() : "<null>", Mapped);
+			return String.Format("Hwnd, Mapped:{3} ClientWindow:0x{0:X}, WholeWindow:0x{1:X}, Zombie={4}, Parent:[{2:X}]", client_window.ToInt32(), whole_window.ToInt32(), parent != null ? parent.ToString() : "<null>", Mapped, zombie);
 		}
 
 		#endregion	// Methods
+		
+		internal struct Borders
+		{
+			public int top;
+			public int bottom;
+			public int left;
+			public int right;
+
+			public override string ToString ()
+			{
+				return string.Format("{{top={0}, bottom={1}, left={2}, right={3}}}", top, bottom, left, right);
+			}
+		}
 	}
 }

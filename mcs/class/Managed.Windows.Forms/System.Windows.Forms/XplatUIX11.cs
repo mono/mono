@@ -763,6 +763,76 @@ namespace System.Windows.Forms {
 			return (ex & (int)exws) == (int)exws;
 		}
 
+		internal static Rectangle TranslateClientRectangleToXClientRectangle (Hwnd hwnd)
+		{
+			/* 
+			 * If this is a form with no window manager, X is handling all the border and caption painting
+			 * so remove that from the area (since the area we set of the window here is the part of the window 
+			 * we're painting in only)
+			 */
+			Rectangle rect = hwnd.ClientRect;
+			Form form = Control.FromHandle (hwnd.Handle) as Form;
+			if (form != null && form.window_manager == null) {
+				CreateParams cp = form.GetCreateParams ();
+				Hwnd.Borders borders = Hwnd.GetBorders (cp, null);
+				Rectangle xrect = rect;
+
+				xrect.Y -= borders.top;
+				xrect.X -= borders.left;
+				xrect.Width += borders.left + borders.right;
+				xrect.Height += borders.top + borders.bottom;
+
+				rect = xrect;
+			}
+			return rect;
+		}
+
+		internal static Size TranslateWindowSizeToXWindowSize (CreateParams cp)
+		{
+			/* 
+			 * If this is a form with no window manager, X is handling all the border and caption painting
+			 * so remove that from the area (since the area we set of the window here is the part of the window 
+			 * we're painting in only)
+			 */
+			Size rect = new Size (cp.Width, cp.Height);
+			Form form = cp.control as Form;
+			if (form != null && form.window_manager == null) {
+				Hwnd.Borders borders = Hwnd.GetBorders (cp, null);
+				Size xrect = rect;
+
+				xrect.Width -= borders.left + borders.right;
+				xrect.Height -= borders.top + borders.bottom;
+
+				rect = xrect;
+			}
+			if (rect.Height == 0)
+				rect.Height = 1;
+			if (rect.Width == 0)
+				rect.Width = 1;
+			return rect;
+		}
+
+		internal static Size TranslateXWindowSizeToWindowSize (CreateParams cp, int xWidth, int xHeight)
+		{
+			/* 
+			 * If this is a form with no window manager, X is handling all the border and caption painting
+			 * so remove that from the area (since the area we set of the window here is the part of the window 
+			 * we're painting in only)
+			 */
+			Size rect = new Size (xWidth, xHeight);
+			Form form = cp.control as Form;
+			if (form != null && form.window_manager == null) {
+				Hwnd.Borders borders = Hwnd.GetBorders (cp, null);
+				Size xrect = rect;
+
+				xrect.Width += borders.left + borders.right;
+				xrect.Height += borders.top + borders.bottom;
+
+				rect = xrect;
+			}
+			return rect;
+		}
+		
 		private void DeriveStyles(int Style, int ExStyle, out FormBorderStyle border_style, out bool border_static, out TitleStyle title_style, out int caption_height, out int tool_caption_height) {
 
 			caption_height = 0;
@@ -980,6 +1050,7 @@ namespace System.Windows.Forms {
 				if ((client_rect.Width < 1) || (client_rect.Height < 1)) {
 					XMoveResizeWindow(DisplayHandle, hwnd.client_window, -5, -5, 1, 1);
 				} else {
+					client_rect = TranslateClientRectangleToXClientRectangle (hwnd);
 					XMoveResizeWindow(DisplayHandle, hwnd.client_window, client_rect.X, client_rect.Y, client_rect.Width, client_rect.Height);
 				}
 
@@ -1158,15 +1229,12 @@ namespace System.Windows.Forms {
 			hwnd = Hwnd.GetObjectFromWindow(xevent.ConfigureEvent.window);
 
 			// Don't waste time
-			if (hwnd == null) {
+			if (hwnd == null || hwnd.zombie) {
 				return;
 			}
 
 			if ((xevent.ConfigureEvent.window == hwnd.whole_window) && (xevent.ConfigureEvent.window == xevent.ConfigureEvent.xevent)) {
-				if (!hwnd.reparented) {
-					hwnd.x = xevent.ConfigureEvent.x;
-					hwnd.y = xevent.ConfigureEvent.y;
-				} else {
+				if (hwnd.parent == null) {
 					// This sucks ass, part 1
 					// Every WM does the ConfigureEvents of toplevel windows different, so there's
 					// no standard way of getting our adjustment. 
@@ -1195,8 +1263,15 @@ namespace System.Windows.Forms {
 				}
 
 				// XXX this sucks.  this isn't thread safe
-				hwnd.width = xevent.ConfigureEvent.width;
-				hwnd.height = xevent.ConfigureEvent.height;
+				Control ctrl = Control.FromHandle (hwnd.Handle);
+				Size TranslatedSize;
+				if (ctrl != null) {
+					TranslatedSize = TranslateXWindowSizeToWindowSize (ctrl.GetCreateParams (), xevent.ConfigureEvent.width, xevent.ConfigureEvent.height);
+				} else {
+					TranslatedSize = new Size (xevent.ConfigureEvent.width, xevent.ConfigureEvent.height);
+				}
+				hwnd.width = TranslatedSize.Width;
+				hwnd.height = TranslatedSize.Height;
 				hwnd.ClientRect = Rectangle.Empty;
 
 				lock (hwnd.configure_lock) {
@@ -1785,7 +1860,7 @@ namespace System.Windows.Forms {
 			IntPtr				ptr;
 			Rectangle			rect;
 
-			rect = hwnd.DefaultClientRect;
+			rect = new Rectangle (0, 0, hwnd.Width, hwnd.Height);
 
 			ncp = new XplatUIWin32.NCCALCSIZE_PARAMS();
 			ptr = Marshal.AllocHGlobal(Marshal.SizeOf(ncp));
@@ -1800,10 +1875,11 @@ namespace System.Windows.Forms {
 			ncp = (XplatUIWin32.NCCALCSIZE_PARAMS)Marshal.PtrToStructure(ptr, typeof(XplatUIWin32.NCCALCSIZE_PARAMS));
 			Marshal.FreeHGlobal(ptr);
 
-			// FIXME - debug this with Menus
 
 			rect = new Rectangle(ncp.rgrc1.left, ncp.rgrc1.top, ncp.rgrc1.right - ncp.rgrc1.left, ncp.rgrc1.bottom - ncp.rgrc1.top);
 			hwnd.ClientRect = rect;
+		
+			rect = TranslateClientRectangleToXClientRectangle (hwnd);
 
 			if (hwnd.visible) {
 				if ((rect.Width < 1) || (rect.Height < 1)) {
@@ -2258,19 +2334,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		internal override bool CalculateWindowRect(ref Rectangle ClientRect, int Style, int ExStyle, Menu menu, out Rectangle WindowRect) {
-			FormBorderStyle	border_style;
-			TitleStyle	title_style;
-			bool border_static;
-			int caption_height;
-			int tool_caption_height;
-
-			DeriveStyles(Style, ExStyle, out border_style, out border_static, out title_style,
-				out caption_height, out tool_caption_height);
-
-			WindowRect = Hwnd.GetWindowRectangle(border_style, border_static, menu, title_style,
-					caption_height, tool_caption_height,
-					ClientRect);
+		internal override bool CalculateWindowRect(ref Rectangle ClientRect, CreateParams cp, Menu menu, out Rectangle WindowRect) {
+			WindowRect = Hwnd.GetWindowRectangle (cp, menu, ClientRect);
 			return true;
 		}
 
@@ -2515,7 +2580,8 @@ namespace System.Windows.Forms {
 			hwnd.width = Width;
 			hwnd.height = Height;
 			hwnd.parent = Hwnd.ObjectFromHandle(cp.Parent);
-			hwnd.initial_ex_style = (WindowExStyles) cp.ExStyle;
+			hwnd.initial_style = cp.WindowStyle;
+			hwnd.initial_ex_style = cp.WindowExStyle;
 
 			if (StyleSet (cp.Style, WindowStyles.WS_DISABLED)) {
 				hwnd.enabled = false;
@@ -2525,7 +2591,9 @@ namespace System.Windows.Forms {
 			ClientWindow = IntPtr.Zero;
 
 			lock (XlibLock) {
-				WholeWindow = XCreateWindow(DisplayHandle, ParentHandle, X, Y, Width, Height, 0, (int)CreateWindowArgs.CopyFromParent, (int)CreateWindowArgs.InputOutput, IntPtr.Zero, new UIntPtr ((uint)ValueMask), ref Attributes);
+				Size TranslatedSize;
+				TranslatedSize = TranslateWindowSizeToXWindowSize (cp);	
+				WholeWindow = XCreateWindow(DisplayHandle, ParentHandle, X, Y, TranslatedSize.Width, TranslatedSize.Height, 0, (int)CreateWindowArgs.CopyFromParent, (int)CreateWindowArgs.InputOutput, IntPtr.Zero, new UIntPtr ((uint)ValueMask), ref Attributes);
 				if (WholeWindow != IntPtr.Zero) {
 					ValueMask &= ~(SetWindowValuemask.OverrideRedirect | SetWindowValuemask.SaveUnder);
 
@@ -2533,7 +2601,12 @@ namespace System.Windows.Forms {
 						ValueMask = SetWindowValuemask.ColorMap;
 						Attributes.colormap = CustomColormap;
 					}
-					ClientWindow = XCreateWindow(DisplayHandle, WholeWindow, ClientRect.X, ClientRect.Y, ClientRect.Width, ClientRect.Height, 0, (int)CreateWindowArgs.CopyFromParent, (int)CreateWindowArgs.InputOutput, CustomVisual, new UIntPtr ((uint)ValueMask), ref Attributes);
+					Rectangle XClientRect = ClientRect;
+					if (XClientRect.Height <= 0)
+						XClientRect.Height = 1;
+					if (XClientRect.Width <= 0)
+						XClientRect.Width = 1;
+					ClientWindow = XCreateWindow(DisplayHandle, WholeWindow, XClientRect.X, XClientRect.Y, XClientRect.Width, XClientRect.Height, 0, (int)CreateWindowArgs.CopyFromParent, (int)CreateWindowArgs.InputOutput, CustomVisual, new UIntPtr ((uint)ValueMask), ref Attributes);
 				}
 			}
 
@@ -2901,6 +2974,30 @@ namespace System.Windows.Forms {
 					hwnd = Hwnd.GetObjectFromWindow(msg.HWnd);
 					if (hwnd != null) {
 						hwnd.nc_expose_pending = false;
+					}
+
+					return IntPtr.Zero;
+				}
+
+				case Msg.WM_NCCALCSIZE: {
+					Hwnd hwnd;
+
+					if (msg.WParam == (IntPtr)1) {
+						hwnd = Hwnd.GetObjectFromWindow (msg.HWnd);
+						
+						XplatUIWin32.NCCALCSIZE_PARAMS ncp;
+						ncp = (XplatUIWin32.NCCALCSIZE_PARAMS)Marshal.PtrToStructure (msg.LParam, typeof (XplatUIWin32.NCCALCSIZE_PARAMS));
+
+						// Add all the stuff X is supposed to draw.
+						Control ctrl = Control.FromHandle (hwnd.Handle);
+						Hwnd.Borders rect = Hwnd.GetBorders (ctrl.GetCreateParams (), null);
+						
+						ncp.rgrc1.top += rect.top;
+						ncp.rgrc1.bottom -= rect.bottom;
+						ncp.rgrc1.left += rect.left;
+						ncp.rgrc1.right -= rect.right;
+						
+						Marshal.StructureToPtr (ncp, msg.LParam, true);
 					}
 
 					return IntPtr.Zero;
@@ -5134,7 +5231,9 @@ namespace System.Windows.Forms {
 				}
 
 				lock (XlibLock) {
-					XMoveResizeWindow(DisplayHandle, hwnd.whole_window, x, y, width, height);
+					Control ctrl = Control.FromHandle (handle);
+					Size TranslatedSize = TranslateWindowSizeToXWindowSize (ctrl.GetCreateParams ());
+					XMoveResizeWindow (DisplayHandle, hwnd.whole_window, x, y, TranslatedSize.Width, TranslatedSize.Height);
 					PerformNCCalc(hwnd);
 				}
 			}
