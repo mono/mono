@@ -77,7 +77,7 @@ namespace Mono.Xml.Xsl.Operations {
 			c.Input.MoveToParent ();
 			
 			if (conditions.Count == 0)
-				throw new XsltCompileException ("Choose must have 1 or ore when elements", null, c.Input);
+				throw new XsltCompileException ("Choose must have 1 or more when elements", null, c.Input);
 		}
 
 		public override void Evaluate (XslTransformProcessor p)
