@@ -439,7 +439,7 @@ function RangeValidatorEvaluateIsValid (validator)
 	var MinimumValue = Convert (validator.getAttribute ("minimumvalue"), DataType, validator);
 	var MaximumValue = Convert (validator.getAttribute ("maximumvalue"), DataType, validator);
 	var val = Convert (ctrl_value, DataType, validator);
-	if (val == null || val <= MinimumValue || val >= MaximumValue) {
+	if (val == null || val < MinimumValue || val > MaximumValue) {
 		ValidatorFailed (validator);
 		return false;
 	}

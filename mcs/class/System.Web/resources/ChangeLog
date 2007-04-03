@@ -1,3 +1,8 @@
+2007-04-03  Marek Habersack  <mhabersack@novell.com>
+
+	* WebUIValidation_2.0.js: correctly validate against min/max
+	values. Fixes bug #81280
+
 2007-02-20 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* webform.js: adjusted client script for MaintainScrollPositionOnPostBack 
