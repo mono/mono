@@ -1015,8 +1015,8 @@ namespace System.Windows.Forms
 			window_target = new ControlWindowTarget(this);
 			window = new ControlNativeWindow(this);
 			child_controls = CreateControlsInstance();
-			client_size = new Size(DefaultSize.Width, DefaultSize.Height);
-			client_rect = new Rectangle(0, 0, DefaultSize.Width, DefaultSize.Height);
+			client_size = DefaultSize;
+			client_rect = new Rectangle (Point.Empty, client_size);
 			bounds.Size = InternalSizeFromClientSize (client_size);
 			explicit_bounds = bounds;
 		}
@@ -3778,7 +3778,21 @@ namespace System.Windows.Forms
 		}
 
 		public void SetBounds(int x, int y, int width, int height, BoundsSpecified specified) {
-			SetBoundsCore(x, y, width, height, specified);
+			// SetBoundsCore is really expensive to call, so we want to avoid it if we can.
+			// We can avoid it if:
+			// - The requested dimensions are the same as our current dimensions
+			// AND
+			// - Any BoundsSpecified is the same as our current explicit_size
+			if (bounds.X != x || (explicit_bounds.X != x && (specified & BoundsSpecified.X) == BoundsSpecified.X))
+				SetBoundsCore (x, y, width, height, specified);
+			else if (bounds.Y != y || (explicit_bounds.Y != y && (specified & BoundsSpecified.Y) == BoundsSpecified.Y))
+				SetBoundsCore (x, y, width, height, specified);
+			else if (bounds.Width != width || (explicit_bounds.Width != width && (specified & BoundsSpecified.Width) == BoundsSpecified.Width))
+				SetBoundsCore (x, y, width, height, specified);
+			else if (bounds.Height != height || (explicit_bounds.Height != height && (specified & BoundsSpecified.Height) == BoundsSpecified.Height))
+				SetBoundsCore (x, y, width, height, specified);
+			else
+				return;
 			
 			if (parent != null)
 				parent.PerformLayout(this, "Bounds");
@@ -4244,8 +4258,6 @@ namespace System.Windows.Forms
 				}
 			}
 
-			UpdateBounds(x, y, width, height);
-			
 			// BoundsSpecified tells us which variables were programatic (user-set).
 			// We need to store those in the explicit bounds
 			if ((specified & BoundsSpecified.X) == BoundsSpecified.X)
@@ -4267,6 +4279,30 @@ namespace System.Windows.Forms
 				explicit_bounds.Height = new_bounds.Height;
 			else
 				explicit_bounds.Height = old_explicit.Height;
+
+			// We need to store the explicit bounds because UpdateBounds is always going
+			// to change it, and we have to fix it.  However, UpdateBounds also calls
+			// OnLocationChanged, OnSizeChanged, and OnClientSizeChanged.  The user can
+			// override those or use those events to change the size explicitly, and we 
+			// can't undo those changes.  So if the bounds after calling UpdateBounds are
+			// the same as the ones we sent it, we need to fix the explicit bounds.  If
+			// it's not the same as we sent UpdateBounds, then someone else changed it, and
+			// we better not mess it up.  Fun stuff.
+			Rectangle stored_explicit_bounds = explicit_bounds;
+			
+			UpdateBounds(x, y, width, height);
+
+			if (explicit_bounds.X == x)
+				explicit_bounds.X = stored_explicit_bounds.X;
+
+			if (explicit_bounds.Y == y)
+				explicit_bounds.Y = stored_explicit_bounds.Y;
+
+			if (explicit_bounds.Width == width)
+				explicit_bounds.Width = stored_explicit_bounds.Width;
+
+			if (explicit_bounds.Height == height)
+				explicit_bounds.Height = stored_explicit_bounds.Height;
 
 			UpdateDistances();
 		}

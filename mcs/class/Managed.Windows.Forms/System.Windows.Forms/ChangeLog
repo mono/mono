@@ -1,3 +1,11 @@
+2007-04-03  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Control.cs: Fix an issue where if a user resized a control inside
+	a sizing method like OnResize, we would overwrite their explicit
+	value.  Also, only call DefaultSize once in the constructor instead
+	of 4 times.  Also, do not call SetBoundsCore from SetBounds if 
+	nothing actually changed.
+
 2007-04-03  Jackson Harper  <jackson@ximian.com>
 
 	* TextControl.cs: Don't attempt to copy text for lines with no
