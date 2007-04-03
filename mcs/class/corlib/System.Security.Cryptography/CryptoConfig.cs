@@ -410,7 +410,11 @@ public class CryptoConfig {
 	}
 
 	[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
+#if NET_2_0
+	public static object CreateFromName (string name, params object[] args)
+#else
 	public static object CreateFromName (string name, object[] args)
+#endif
 	{
 		if (name == null)
 			throw new ArgumentNullException ("name");

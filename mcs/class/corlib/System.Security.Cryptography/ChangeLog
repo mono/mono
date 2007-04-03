@@ -1,3 +1,7 @@
+2007-04-03  Alp Toker  <alp@atoker.com>
+
+	* CryptoConfig.cs: CreateFromName(string,object[]) is params in 2.0.
+
 2007-03-28  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* RIPEMD160Managed.cs: Fix endian issue (take good code path).
