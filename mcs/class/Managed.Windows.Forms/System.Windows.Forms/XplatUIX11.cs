@@ -939,7 +939,7 @@ namespace System.Windows.Forms {
 			mwmHints.functions = (IntPtr)0;
 			mwmHints.decorations = (IntPtr)0;
 
-			if (ExStyleSet (cp.ExStyle, WindowExStyles.WS_EX_TOOLWINDOW)) {
+			if (ExStyleSet (cp.ExStyle, WindowExStyles.WS_EX_TOOLWINDOW) || (cp.control is Form && (cp.control as Form).FormBorderStyle == FormBorderStyle.None)) {
 				/* tool windows get no window manager
 				   decorations.
 				*/

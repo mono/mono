@@ -1,5 +1,11 @@
 2007-04-03  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* XplatUIX11.cs: SetWMStyles: If the control is a form with
+	  FormBorderStyle = None, don't give the window any decorations.
+	  Fixes #81276.
+
+2007-04-03  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* XplatUI.cs, XplatUIDriver.cs: Updated CalculateWindowRect parameters.
 	* CreateParams.cs: Fix IsSet, wasn't working correctly when the style
 	  to check for is a mix of several styles (such as WS_CAPTION for
