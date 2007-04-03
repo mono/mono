@@ -1,3 +1,7 @@
+2007-04-03  Andreia Gaita <avidigal@novell.com> 
+
+	* ButtonBase: Call update after invalidation, fixes #80194
+
 2007-04-03  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* ThemeWin32Classic.cs: Draw StatusBar using double buffering. Fixes
@@ -164,6 +168,49 @@
 2007-03-30  Jonathan Pobst  <monkey@jpobst.com>
 
 	* UserControl.cs: Override CreateParams.
+
+2007-03-30  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	[ Fixes #80995 ]
+
+	* XplatUI.cs, XplatUIDriver.cs: Updated CalculateWindowRect parameters.
+	* CreateParams.cs: Fix IsSet, wasn't working correctly when the style to
+	  check for is a mix of several styles (such as WS_CAPTION for instance).
+	* Control.cs: Don't paint an area bigger than the client area when painting
+	  the background colour. Add an internal GetCreateParams. Update calls to
+	  XplatUI.CalculateWindowRect due to API change.
+	* XplatUIX11.cs: In PerformNCCalc set the initial size to the whole window's
+	  size, and handle WM_NCCALCSIZE in DefWndProc to calculate the size if it
+	  hasn't been handled by any windows. When creating and moving windows, X
+	  wants the location of the entire window, but the size of the client
+	  window, so add TranslateClientRectangleToXClientRectangle,
+	  TranslateWindowSizeToXWindowSIze and TranslatedXWindowSizeToWindowSize
+	  to cope with this, and call them before every window creation and move.
+	  Update CalculateWIndowRect to use Hwnd.GetWindowRect (one step towards
+	  removing DeriveStyles). In AddConfigureNotify don't do anything if the
+	  hwnd is a zombie (fixes the BadWindow we were getting while running the
+	  tests), always calculate the offsets when it's a parentless window, not
+	  only when reparented, and translate the window size, since we're getting
+	  the client size of the whole window, excluding entire window.
+	* Theme.cs: Added BorderSizableSize.
+	* XplatUIWin32.cs: Fix RECT Height and Width. Don't fake styles here
+	  anymore. Update calls to XplatUI.CalculateWindowRect due to API change.
+	* Form.cs: Update calls to XplatUI.CalculateWindowRect due to API change.
+	  Fake the window styles here instead of in XplatUIWin32 so that all
+	  back-ends get the same window styles (and it's Form that's deciding when
+	  to use wm, not the Win32 backend anyways)
+	* Hwnd.cs: Completely reworked GetWindowRectangle and GetClientRectangle -
+	  they are now passed a CreateParams and they only use Style and ExStyle
+	  to determine the rectangles (they should now work just like
+	  Win32AdjustWindowRectEx - though quite a few special cases are probably
+	  missing). They should also be 100% complimentary (i.e. GetWindowRectangle
+	  (GetClientRectangle (rect)) == rect), and all numbers (borders, menu
+	  sizes) are taken from the current theme. Added a GetBorders helper
+	  function that will return the borders for any given CreateParams
+	  (including captions and menus), and GetBorderSize that returns the given
+	  border size only.
+	* XplatUIOSX.cs: Update calls to CalculateWindowRect and
+	  Hwnd.GetClientRectangle.
 
 2007-03-30  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
@@ -25266,4 +25313,5 @@
 	  XplatUIDriver.cs, XplatUIStructs.cs, XplatUIWin32.cs,
 	  XplatUIX11.cs, lang.cs:
 	  - Initial check-in
+
 

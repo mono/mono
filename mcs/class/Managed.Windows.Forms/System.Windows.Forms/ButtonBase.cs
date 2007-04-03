@@ -517,6 +517,7 @@ namespace System.Windows.Forms {
 				if (is_pressed) {
 					is_pressed = false;
 					Invalidate();
+					Update();
 				} else if ((this.flat_style == FlatStyle.Flat) || (this.flat_style == FlatStyle.Popup)) {
 					Invalidate();
 				}
