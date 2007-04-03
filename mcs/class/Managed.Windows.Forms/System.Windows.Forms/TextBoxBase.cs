@@ -1628,10 +1628,11 @@ namespace System.Windows.Forms {
 			document.DisplayCaret();
 		}
 
-		internal void CalculateDocument() {
+		internal void CalculateDocument()
+		{
+			CalculateScrollBars ();
+			document.RecalculateDocument (CreateGraphicsInternal ());
 
-			document.RecalculateDocument(CreateGraphicsInternal());
-			CalculateScrollBars();
 
 			 if (document.caret.line != null && document.caret.line.Y < document.ViewPortHeight) {
 				// The window has probably been resized, making the entire thing visible, so

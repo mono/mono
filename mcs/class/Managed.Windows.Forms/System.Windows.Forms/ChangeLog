@@ -1,5 +1,11 @@
 2007-04-03  Jackson Harper  <jackson@ximian.com>
 
+	* TextBoxBase.cs: Calculate the scrollbars before calculating the
+	document, because this sets some of the document size properties
+	that are needed.
+
+2007-04-03  Jackson Harper  <jackson@ximian.com>
+
 	* TextBoxBase.cs: We need to calculate maximums even if this is
 	not a multiline control, because the maxs are used for scrolling.
 	- Display the caret after doing a page up/down, we need to
