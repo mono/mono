@@ -1,5 +1,11 @@
 2007-04-03  Jackson Harper  <jackson@ximian.com>
 
+	* TextControl.cs: Don't attempt to copy text for lines with no
+	text in them (technically this shouldn't happen, but we aren't
+	always inserting line endings when we should be).
+
+2007-04-03  Jackson Harper  <jackson@ximian.com>
+
 	* TextBoxBase.cs: Calculate the scrollbars before calculating the
 	document, because this sets some of the document size properties
 	that are needed.
