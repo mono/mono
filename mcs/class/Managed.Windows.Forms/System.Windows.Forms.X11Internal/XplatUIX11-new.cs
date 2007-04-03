@@ -524,7 +524,10 @@ namespace System.Windows.Forms.X11Internal {
 		// XXX this should be shared amongst non-win32 backends
 		internal override bool GetFontMetrics (Graphics g, Font font, out int ascent, out int descent)
 		{
-			return Xlib.GetFontMetrics(g.GetHdc(), font.ToHfont(), out ascent, out descent);
+			FontFamily ff = font.FontFamily;
+			ascent = ff.GetCellAscent (font.Style);
+			descent = ff.GetCellDescent (font.Style);
+			return true;
 		}
 
 

@@ -29,7 +29,6 @@ namespace System.Windows.Forms.X11Internal {
 
 	internal class Xlib {
 		const string libX11 = "X11";
-		const string gdiplus = "gdiplus";
 
 		[DllImport (libX11)]
 		public extern static IntPtr XOpenDisplay(IntPtr display);
@@ -214,9 +213,6 @@ namespace System.Windows.Forms.X11Internal {
 
 		[DllImport (libX11)]
 		public extern static int XDeleteProperty(IntPtr display, IntPtr window, IntPtr property);
-
-		[DllImport (gdiplus)]
-		public extern static bool GetFontMetrics(IntPtr graphicsObject, IntPtr nativeObject, out int ascent, out int descent);
 
 		// Drawing
 		[DllImport (libX11)]
