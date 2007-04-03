@@ -992,9 +992,11 @@ namespace System.Windows.Forms
 				calculated_size += Vertical ? x : y;
 			
 			if (Vertical)
-				Width = AutoSize ? calculated_size : requested_size;
+				if (requested_size >= 0)
+					SetBounds (Bounds.X, Bounds.Y, AutoSize ? calculated_size : requested_size, Width, BoundsSpecified.None);
 			else
-				Height = AutoSize ? calculated_size : requested_size;
+				if (requested_size >= 0)
+					SetBounds (Bounds.X, Bounds.Y, Height, AutoSize ? calculated_size : requested_size, BoundsSpecified.None);
 			
 			return changed;
 		}

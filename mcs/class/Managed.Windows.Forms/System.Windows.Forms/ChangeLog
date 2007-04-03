@@ -1,3 +1,9 @@
+2007-04-03  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolBar.cs: Fix some breakage caused by the SetBoundsCore change.
+	(ToolBar was relying on SetBoundsCore to default the values sent 
+	base off of BoundsSpecified.)
+
 2007-04-03  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* DateTimePicker.cs: Change Text so that when a null value or empty
