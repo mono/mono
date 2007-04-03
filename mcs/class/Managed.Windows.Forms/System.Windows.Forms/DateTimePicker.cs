@@ -528,7 +528,8 @@ namespace System.Windows.Forms {
 				DateTime parsed_value;
 				
 				if (value == null || value == string.Empty) {
-					Value = DateTime.Now;
+					date_value = DateTime.Now;
+					OnValueChanged (EventArgs.Empty);
 					OnTextChanged (EventArgs.Empty);
 					return;
 				}

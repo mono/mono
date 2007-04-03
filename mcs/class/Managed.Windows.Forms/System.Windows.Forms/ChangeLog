@@ -1,3 +1,10 @@
+2007-04-03  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* DateTimePicker.cs: Change Text so that when a null value or empty
+	  string is assigned to the test we always raise ValueChanged and
+	  TextChanged (earlier implementation would only raise ValueChanged
+	  if the current date value was different from DateTime.Now).
+
 2007-04-03  Andreia Gaita <avidigal@novell.com> 
 
 	* ButtonBase: Call update after invalidation, fixes #80194
