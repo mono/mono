@@ -1334,5 +1334,18 @@ namespace MonoTests.System.Windows.Forms
 				main.Close();
 			}
 		}
+		
+		[Test] // bug 80995
+		public void ChangeClientSizeTest ()
+		{
+			SetUp (false, false, false);
+			child1.ClientSize = new Size (224, 37);
+			child1.MdiParent = main;
+			Assert.AreEqual ("{Width=224, Height=37}", child1.ClientSize.ToString (), "#01");
+			child1.Show ();
+			Assert.AreEqual ("{Width=224, Height=37}", child1.ClientSize.ToString (), "#02");
+			main.Show ();
+			Assert.AreEqual ("{Width=224, Height=37}", child1.ClientSize.ToString (), "#03");
+		}
 	}
 }
