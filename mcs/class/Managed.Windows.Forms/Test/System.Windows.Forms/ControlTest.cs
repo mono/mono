@@ -390,14 +390,17 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		[Ignore ("Can't find a reliable way to generate a paint message on Windows.")]
 		public void DoubleBufferTest ()
 		{
 			DoubleBufferedForm f = new DoubleBufferedForm ();
+			f.ShowInTaskbar = false;
 			f.Show ();
 			f.Refresh ();
 			
 			Assert.IsFalse (f.failed, "#01");
 			Assert.IsTrue (f.painted, "The control was never painted, so please check the test");
+			f.Close ();
 		}
 
 		[Test]

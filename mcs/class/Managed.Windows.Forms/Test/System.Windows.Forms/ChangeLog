@@ -4,6 +4,10 @@
 
 2007-04-03  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* DateTimePickerTest.cs: Added a few more cases to TextTest.
+
+2007-04-03  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* MdiFormTest.cs: Added ChangeClientSizeTest for bug 80995.
 
 2007-04-02  Rolf Bjarne Kvinge <RKvinge@novell.com> 
