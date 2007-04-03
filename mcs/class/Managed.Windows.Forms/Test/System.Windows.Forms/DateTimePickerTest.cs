@@ -3213,7 +3213,21 @@ namespace MonoTests.System.Windows.Forms {
 			dt.Format = DateTimePickerFormat.Short;
 			Assert.AreEqual (DateTime.Now.ToShortDateString (), dt.Text, "#7");
 			Assert.IsTrue (log.ContainsEventsOrdered ("HandleDestroyed", "HandleCreated", "FormatChanged"), "#7.1");
+
+			dt.Value = DateTime.Today;
+			log.Clear ();
+			dt.Value = DateTime.Today;
+			Assert.AreEqual (0, log.EventsRaised, "#8");
+
+			dt.Text = null;
+			log.Clear ();
+			dt.Text = null;
+			Assert.IsTrue (log.ContainsEventsOrdered ("ValueChanged", "TextChanged"), "#9, expected ValueChanged+TextChanged, got: " + log.EventsJoined ());
 			
+			dt.Text = "";
+			log.Clear ();
+			dt.Text = "";
+			Assert.IsTrue (log.ContainsEventsOrdered ("ValueChanged", "TextChanged"), "#19, expected ValueChanged+TextChanged, got: " + log.EventsJoined ());
 		}
 		
 		[Test]
