@@ -1,3 +1,9 @@
+2007-04-04 Juraj Skripsky <js@hotfeet.ch>
+
+	* FormsAuthenticationModule.cs: Move initialization of _config out
+	of Init() as app.Context is null in that method when a session is
+	about to be terminated.
+
 2007-03-21 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* AnonymousIdentificationModule.cs: optimized Config property

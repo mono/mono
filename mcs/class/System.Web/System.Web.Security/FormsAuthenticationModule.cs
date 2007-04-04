@@ -44,6 +44,20 @@ namespace System.Web.Security
 #else
 		AuthConfig _config = null;
 #endif
+		bool isConfigInitialized = false;
+		
+		private void InitConfig (HttpContext context)
+		{
+			if(isConfigInitialized)
+				return;
+#if NET_2_0
+			_config = (AuthenticationSection) WebConfigurationManager.GetSection ("system.web/authentication");
+#else
+			_config = (AuthConfig) context.GetConfig ("system.web/authentication");
+#endif
+			isConfigInitialized = true;
+		}
+
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		public FormsAuthenticationModule ()
 		{
@@ -57,11 +71,6 @@ namespace System.Web.Security
 		{
 			app.AuthenticateRequest += new EventHandler (OnAuthenticateRequest);
 			app.EndRequest += new EventHandler (OnEndRequest);
-#if NET_2_0
-			_config = (AuthenticationSection) WebConfigurationManager.GetSection ("system.web/authentication");
-#else
-			_config = (AuthConfig) app.Context.GetConfig ("system.web/authentication");
-#endif
 		}
 
 		void OnAuthenticateRequest (object sender, EventArgs args)
@@ -74,6 +83,7 @@ namespace System.Web.Security
 			string loginPage;
 			bool slidingExpiration;
 
+			InitConfig (context);
 			if (_config == null || _config.Mode != AuthenticationMode.Forms) {
 				return;
 			}
@@ -157,6 +167,7 @@ namespace System.Web.Security
 				return;
 
 			string loginPage;
+			InitConfig (context);
 #if NET_2_0
 			loginPage = _config.Forms.LoginUrl;
 #else
