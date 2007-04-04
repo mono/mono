@@ -352,7 +352,7 @@ namespace System.Web.UI {
 			java.lang.ClassLoader contextClassLoader = c.getClassLoader ();
 
 			//TODO:move this code to page mapper
-			string assemblyName = PageMapper.GetAssemblyResource (Context, Context.Request.FilePath);
+			string assemblyName = PageMapper.GetAssemblyResource (Context, VirtualPathUtility.ToAbsolute (AppRelativeVirtualPath));
 			if (assemblyName == null)
 				throw new HttpException (404, "The requested resource (" + this.AppRelativeVirtualPath + ") is not available.");
 
