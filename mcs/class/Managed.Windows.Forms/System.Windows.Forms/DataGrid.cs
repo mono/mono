@@ -1465,6 +1465,9 @@ namespace System.Windows.Forms
 					}
 				}
 
+				CancelEditing ();
+				CurrentRow = testinfo.Row;
+
 				if (!ctrl_pressed &&
 				    !shift_pressed &&
 				    !expansion_click) {
@@ -1480,8 +1483,6 @@ namespace System.Windows.Forms
 					Select (testinfo.Row);
 				}
 
-				CancelEditing ();
-				CurrentRow = testinfo.Row;
 				OnRowHeaderClick (EventArgs.Empty);
 
 				break;
@@ -2068,6 +2069,8 @@ namespace System.Windows.Forms
 
 		public void Select (int row)
 		{
+			EndEdit();
+
 			if (selected_rows.Count == 0)
 				selection_start = row;
 

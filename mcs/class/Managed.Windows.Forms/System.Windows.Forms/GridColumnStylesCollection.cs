@@ -118,6 +118,7 @@ namespace System.Windows.Forms
 			
 			column.TableStyle = owner;
 			column.SetDataGridInternal (owner.DataGrid);
+			ConnectColumnEvents (column);
 			int cnt = items.Add (column);
 			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Add, column));
 			return cnt;			
@@ -126,7 +127,7 @@ namespace System.Windows.Forms
 		public void AddRange (DataGridColumnStyle[] columns)
 		{
 			foreach (DataGridColumnStyle mi in columns)
-				Add (mi);			
+				Add (mi);
 		}
 
 		public void Clear ()
@@ -210,13 +211,15 @@ namespace System.Windows.Forms
 		public void Remove (DataGridColumnStyle column)
 		{
 			items.Remove (column);
+			DisconnectColumnEvents (column);
 			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Remove, column));
 		}
 		
 		public void RemoveAt (int index)
 		{
-			object item = items[index];
+			DataGridColumnStyle item = (DataGridColumnStyle)items[index];
 			items.RemoveAt (index);
+			DisconnectColumnEvents (item);
 			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Remove, item));
 		}		
 		
@@ -237,6 +240,72 @@ namespace System.Windows.Forms
 		#endregion Events		
 		
 		#region Private Instance Methods
+		void ConnectColumnEvents (DataGridColumnStyle col)
+		{
+			col.AlignmentChanged += new EventHandler (ColumnAlignmentChangedEvent);
+			col.FontChanged += new EventHandler (ColumnFontChangedEvent);
+			col.HeaderTextChanged += new EventHandler (ColumnHeaderTextChanged);
+			col.MappingNameChanged += new EventHandler (ColumnMappingNameChangedEvent);
+			col.NullTextChanged += new EventHandler (ColumnNullTextChangedEvent);
+			col.PropertyDescriptorChanged += new EventHandler (ColumnPropertyDescriptorChanged);
+			col.ReadOnlyChanged += new EventHandler (ColumnReadOnlyChangedEvent);
+			col.WidthChanged += new EventHandler (ColumnWidthChangedEvent);
+		}
+
+		void DisconnectColumnEvents (DataGridColumnStyle col)
+		{
+			col.AlignmentChanged -= new EventHandler (ColumnAlignmentChangedEvent);
+			col.FontChanged -= new EventHandler (ColumnFontChangedEvent);
+			col.HeaderTextChanged -= new EventHandler (ColumnHeaderTextChanged);
+			col.MappingNameChanged -= new EventHandler (ColumnMappingNameChangedEvent);
+			col.NullTextChanged -= new EventHandler (ColumnNullTextChangedEvent);
+			col.PropertyDescriptorChanged -= new EventHandler (ColumnPropertyDescriptorChanged);
+			col.ReadOnlyChanged -= new EventHandler (ColumnReadOnlyChangedEvent);
+			col.WidthChanged -= new EventHandler (ColumnWidthChangedEvent);
+		}
+
+		void ColumnAlignmentChangedEvent (object sender, EventArgs e)
+		{
+			// XXX should this do a CollectionChangedEvent (Refresh, sender)?
+		}
+
+		void ColumnFontChangedEvent (object sender, EventArgs e)
+		{
+			// XXX should this do a CollectionChangedEvent (Refresh, sender)?
+		}
+
+		void ColumnHeaderTextChanged (object sender, EventArgs e)
+		{
+			// XXX should this do a CollectionChangedEvent (Refresh, sender)?
+		}
+
+		void ColumnMappingNameChangedEvent (object sender, EventArgs e)
+		{
+			// XXX should this do a CollectionChangedEvent (Refresh, sender)?
+		}
+
+		void ColumnNullTextChangedEvent (object sender, EventArgs e)
+		{
+			// XXX should this do a CollectionChangedEvent (Refresh, sender)?
+		}
+
+		void ColumnPropertyDescriptorChanged (object sender, EventArgs e)
+		{
+			// XXX should this do a CollectionChangedEvent (Refresh, sender)?
+			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Refresh, sender));
+		}
+
+		void ColumnReadOnlyChangedEvent (object sender, EventArgs e)
+		{
+			// XXX should this do a CollectionChangedEvent (Refresh, sender)?
+		}
+
+		void ColumnWidthChangedEvent (object sender, EventArgs e)
+		{
+			// XXX should this do a CollectionChangedEvent (Refresh, sender)?
+		}
+
+
 		private int FromColumnNameToIndex (string columnName)
 		{	
 			for (int i = 0; i < items.Count; i++) {

@@ -1,3 +1,21 @@
+2007-04-04  Chris Toshok  <toshok@ximian.com>
+
+	* DataGridTextBoxColumn.cs: set the bounds of the text box to
+	(0,0,0,0) in Commit, as MS does.
+
+	* DataGrid.cs: call EndEdit() from Select() as microsoft does, and
+	make sure we set CurrentRow on a row header click *before* calling
+	Select.  This moves the current cell (and the textbox) to the new
+	row.  The call to Select then hides the textbox, giving us the
+	correct behavior.  Fixes #80362.
+
+	* CurrencyManager.cs (UpdateIsBinding): raise ItemChanged (-1).
+	(ListChangedHandler): reorder the position/current changed events,
+	and call UpdateIsBinding in the ItemAdded case.
+
+	* GridColumnStylesCollection.cs: add some columns events, one of
+	which raises the CollectionChanged event.
+
 2007-04-04  Jackson Harper  <jackson@ximian.com>
 
 	* TextControl.cs: When we delete multiple selection lines

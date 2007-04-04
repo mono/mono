@@ -292,6 +292,8 @@ namespace System.Windows.Forms {
 
 			foreach (Binding binding in Bindings)
 				binding.UpdateIsBinding ();
+
+			OnItemChanged (new ItemChangedEventArgs (-1));
 		}
 
 		private void UpdateItem ()
@@ -351,8 +353,10 @@ namespace System.Windows.Forms {
 				if (listposition == -1) {
 					/* do we need this logic up above in ItemDeleted as well? */
 					listposition = e.NewIndex == 0 ? 0 : e.NewIndex - 1;
-					OnCurrentChanged (EventArgs.Empty);
 					OnPositionChanged (EventArgs.Empty);
+					OnCurrentChanged (EventArgs.Empty);
+
+					UpdateIsBinding ();
 				}
 
 				OnItemChanged (new ItemChangedEventArgs (-1));

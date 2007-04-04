@@ -124,6 +124,8 @@ namespace System.Windows.Forms
 		
 		protected internal override bool Commit (CurrencyManager dataSource, int rowNum)
 		{
+			textbox.Bounds = Rectangle.Empty;
+
 			/* Do not write data if not editing. */
 			if (textbox.IsInEditOrNavigateMode)
 				return true;
