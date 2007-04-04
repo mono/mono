@@ -1,5 +1,10 @@
 2007-04-03  Everaldo Canuto  <everaldo@simios.org>
 
+	* Form.cs: Fix mouse position when send back mouse event after closes
+	menu.
+
+2007-04-03  Everaldo Canuto  <everaldo@simios.org>
+
 	* Form.cs: Simplify the BUTTONDOWN for active tracker.
 
 2007-04-03  Jonathan Pobst  <monkey@jpobst.com>

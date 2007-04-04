@@ -2383,10 +2383,11 @@ namespace System.Windows.Forms {
 													0);
 
 						if (!active_tracker.OnMouseDown (args)) {
-							Point pt = PointToClient (Cursor.Position);
-							Control child_control = this.GetChildAtPoint (pt);
-							if (child_control != null)
-								XplatUI.SendMessage(child_control.Handle, (Msg) m.Msg, m.WParam, m.LParam);
+							Control control = this.GetChildAtPoint (PointToClient (Cursor.Position));
+							if (control != null) {
+								Point pt = control.PointToClient (Cursor.Position);
+								XplatUI.SendMessage (control.Handle, (Msg) m.Msg, m.WParam, MakeParam (pt.X, pt.Y));
+							}
 						}
 						
 						return;
