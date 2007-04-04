@@ -1100,13 +1100,15 @@ namespace System.Windows.Forms {
 						Line	line;
 
 						if (document.selection_visible) {
-							document.ReplaceSelection("", false);
+							document.ReplaceSelection("\n", false);
 						}
 
 						line = document.CaretLine;
 
 						document.Split (document.CaretLine, document.CaretTag, document.CaretPosition);
 						line.ending = LineEnding.Rich;
+						document.InsertString (line, line.text.Length,
+								document.LineEndingToString (line.ending));
 						OnTextChanged(EventArgs.Empty);
 						document.UpdateView(line, 2, 0);
 

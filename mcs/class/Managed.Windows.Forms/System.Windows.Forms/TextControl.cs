@@ -2215,7 +2215,7 @@ namespace System.Windows.Forms {
 			}
 
 			InsertString (line, pos, s.Substring (0, break_index + LineEndingLength (ending)));
-
+			
 			break_index += LineEndingLength (ending);
 			while (break_index < s.Length) {
 				int next_break = GetLineEnding (s, break_index, out ending);
@@ -5248,10 +5248,7 @@ namespace System.Windows.Forms {
 					continue;
 
 				// Text for the tag
-				if (current.text.Length > start)
-					line.text = new StringBuilder (current.text.ToString (start, end - start));
-				else
-					line.text = new StringBuilder ();
+				line.text = new StringBuilder (current.text.ToString (start, end - start));
 				
 				// Copy tags from start to start+length onto new line
 				current_tag = current.FindTag (start);
