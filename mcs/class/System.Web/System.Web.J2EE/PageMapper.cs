@@ -50,7 +50,7 @@ namespace System.Web.J2EE
 			Assembly resolvedAssembly = null;
 			try
 			{
-				resolvedAssembly = GetCachedAssembly (HttpContext.Current, args.Name);
+				resolvedAssembly = GetCachedAssembly (HttpContext.Current, String.Concat (HttpContext.Current.Request.ApplicationPath, "/", args.Name));
 			}
 			catch (Exception ex)
 			{
