@@ -79,11 +79,15 @@ namespace System.Windows.Forms {
 			return new Point (x, y);
 		}	
 
-		private void UpdateCursor (int x, int y)
+		private void UpdateCursor ()
 		{
 			Control child_control = grab_control.GetRealChildAtPoint (Cursor.Position);
-			if (child_control != null)
-				XplatUI.SetCursor(child_control.Handle, Cursors.Default.handle);
+			if (child_control != null) {
+				if (active)
+					XplatUI.SetCursor (child_control.Handle, Cursors.Default.handle);
+				else
+					XplatUI.SetCursor (child_control.Handle, child_control.Cursor.handle);
+			}
 		}
 
 		void Deactivate ()
@@ -162,7 +166,7 @@ namespace System.Windows.Forms {
 		{
 			MenuItem item = GetItemAtXY (args.X, args.Y);
 
-			UpdateCursor (args.X, args.Y);
+			UpdateCursor ();
 
 			if (CurrentMenu.SelectedItem == item)
 				return;
@@ -217,8 +221,10 @@ namespace System.Windows.Forms {
 				return;
 			
 			/* Deactivate the menu when is topmenu and popdown and */
-			if (((CurrentMenu == TopMenu) && !(CurrentMenu is ContextMenu) && popdown_menu) || !item.IsPopup)
+			if (((CurrentMenu == TopMenu) && !(CurrentMenu is ContextMenu) && popdown_menu) || !item.IsPopup) {
 				Deactivate ();
+				UpdateCursor ();
+			}
 			
 			/* Perform click when is not a popup */
 			if (!item.IsPopup) {

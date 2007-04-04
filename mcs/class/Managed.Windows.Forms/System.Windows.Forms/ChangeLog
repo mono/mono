@@ -1,5 +1,13 @@
 2007-04-04  Everaldo Canuto  <everaldo@simios.org>
 
+	* MenuAPI.cs: 
+	- Remove unneeded parameters in UpdateCursor.
+	- Fix UpdateCursor to check if menu is active.
+	- Call UpdateCursor when menu deactivate my click.
+	[Fixes remaining issues from #80410]
+
+2007-04-04  Everaldo Canuto  <everaldo@simios.org>
+
 	* Control.cs: GetRealChildAtPoint method added, it make an
 	recursive child control search for the point. 
 
