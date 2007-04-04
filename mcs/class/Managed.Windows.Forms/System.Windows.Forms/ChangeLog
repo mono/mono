@@ -1,3 +1,7 @@
+2007-04-03  Everaldo Canuto  <everaldo@simios.org>
+
+	* Form.cs: Simplify the BUTTONDOWN for active tracker.
+
 2007-04-03  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Control.cs: Fix an issue where if a user resized a control inside

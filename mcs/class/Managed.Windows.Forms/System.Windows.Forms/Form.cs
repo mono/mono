@@ -2357,11 +2357,14 @@ namespace System.Windows.Forms {
 
 				case Msg.WM_MOUSEMOVE: {
 					if (XplatUI.IsEnabled (Handle) && active_tracker != null) {
-						MouseEventArgs args;
+						MouseEventArgs args = new MouseEventArgs (
+													FromParamToMouseButtons ((int) m.WParam.ToInt32()),
+													mouse_clicks, 
+													Control.MousePosition.X, 
+													Control.MousePosition.Y, 
+													0);
 
-						args = new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
-							mouse_clicks,  LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()),  0);
-						active_tracker.OnMotion(new MouseEventArgs (args.Button, args.Clicks, Control.MousePosition.X, Control.MousePosition.Y, args.Delta));
+						active_tracker.OnMotion (args);
 						break;
 					}
 					base.WndProc(ref m);
@@ -2372,13 +2375,15 @@ namespace System.Windows.Forms {
 				case Msg.WM_MBUTTONDOWN:
 				case Msg.WM_RBUTTONDOWN: {					
 					if (XplatUI.IsEnabled (Handle) && active_tracker != null) {
-						MouseEventArgs args;
+						MouseEventArgs args = new MouseEventArgs (
+													FromParamToMouseButtons ((int) m.WParam.ToInt32()),
+													mouse_clicks, 
+													Control.MousePosition.X, 
+													Control.MousePosition.Y, 
+													0);
 
-						args = new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
-							mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 0);
-
-						if (!active_tracker.OnMouseDown (new MouseEventArgs (args.Button, args.Clicks, Control.MousePosition.X, Control.MousePosition.Y, args.Delta))) {
-							Point pt = new Point (args.X, args.Y);
+						if (!active_tracker.OnMouseDown (args)) {
+							Point pt = PointToClient (Cursor.Position);
 							Control child_control = this.GetChildAtPoint (pt);
 							if (child_control != null)
 								XplatUI.SendMessage(child_control.Handle, (Msg) m.Msg, m.WParam, m.LParam);
@@ -2397,7 +2402,6 @@ namespace System.Windows.Forms {
 				case Msg.WM_MBUTTONUP:
 				case Msg.WM_RBUTTONUP: {
 					if (XplatUI.IsEnabled (Handle) && active_tracker != null) {
-						MouseEventArgs args;
 						MouseButtons mb = FromParamToMouseButtons ((int) m.WParam.ToInt32());
 						
 						// We add in the button that was released (not sent in WParam)
@@ -2412,9 +2416,15 @@ namespace System.Windows.Forms {
 								mb |= MouseButtons.Right;
 								break;
 						}
+
+						MouseEventArgs args = new MouseEventArgs (
+													mb,
+													mouse_clicks, 
+													Control.MousePosition.X, 
+													Control.MousePosition.Y, 
+													0);
 						
-						args = new MouseEventArgs (mb, mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 0);
-						active_tracker.OnMouseUp(new MouseEventArgs (args.Button, args.Clicks, Control.MousePosition.X, Control.MousePosition.Y, args.Delta));
+						active_tracker.OnMouseUp (args);
 						mouse_clicks = 1;
 						return;
 					}
