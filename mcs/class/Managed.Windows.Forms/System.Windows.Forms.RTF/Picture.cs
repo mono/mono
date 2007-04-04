@@ -37,7 +37,15 @@ namespace System.Windows.Forms.RTF {
 		private byte [] data;
 		private float width = -1;
 		private float height = -1;
-		
+
+		private readonly static float dpix;
+
+		static Picture ()
+		{
+			Bitmap b = new Bitmap (1, 1);
+			Graphics g = Graphics.FromImage (b);
+			dpix = g.DpiX;
+		}
 
 		public Picture ()
 		{
@@ -87,14 +95,14 @@ namespace System.Windows.Forms.RTF {
 
 		public void SetWidthFromTwips (int twips)
 		{
-			width = (twips * 144) / 254;
+			width = (int) (((float) twips / 1440.0F) * dpix + 0.5F);
 		}
 
 		public void SetHeightFromTwips (int twips)
 		{
-			height = (twips * 144) / 254;
+			height = (int) (((float) twips / 1440.0F) * dpix + 0.5F);
 		}
-		
+
 		//
 		// Makes sure that we got enough information to actually use the image
 		//
@@ -130,7 +138,6 @@ namespace System.Windows.Forms.RTF {
 
 		public Image ToImage ()
 		{
-			Console.WriteLine ("CREATING IMAGE:  {0}", data.Length);
 			return Image.FromStream (new MemoryStream (data));
 		}
 	}
