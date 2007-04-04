@@ -1,3 +1,8 @@
+2007-04-04  Martin Baulig  <martin@ximian.com>
+
+	* debug-helpers.c
+	(mono_method_desc_full_match): Add support for nested classes.
+
 2007-04-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (cominterop_get_managed_wrapper_adjusted): Fix warnings.
