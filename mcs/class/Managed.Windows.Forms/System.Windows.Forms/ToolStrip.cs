@@ -118,6 +118,34 @@ namespace System.Windows.Forms
 			set { base.Anchor = value; }
 		}
 
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public override bool AutoScroll {
+			get { return base.AutoScroll; }
+			set { base.AutoScroll = value; }
+		}
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new Size AutoScrollMargin {
+			get { return base.AutoScrollMargin; }
+			set { base.AutoScrollMargin = value; }
+		}
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new Size AutoScrollMinSize {
+			get { return base.AutoScrollMinSize; }
+			set { base.AutoScrollMinSize = value; }
+		}
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new Point AutoScrollPosition {
+			get { return base.AutoScrollPosition; }
+			set { base.AutoScrollPosition = value; }
+		}
+
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Visible)]
 		[Browsable (true)]
 		[EditorBrowsable (EditorBrowsableState.Always)]
@@ -276,6 +304,12 @@ namespace System.Windows.Forms
 		public new bool HasChildren {
 			get { return base.HasChildren; }
 		}
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new HScrollProperties HorizontalScroll {
+			get { return base.HorizontalScroll; }
+		}
 		
 		[Browsable (false)]
 		[DefaultValue (null)]
@@ -427,6 +461,12 @@ namespace System.Windows.Forms
 			get { return base.TabStop; }
 			set { base.TabStop = value; }
 		}
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new VScrollProperties VerticalScroll {
+			get { return base.VerticalScroll; }
+		}
 		#endregion
 
 		#region Protected Properties
@@ -440,7 +480,6 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Methods
-		[Browsable (false)]
 		public new Control GetChildAtPoint (Point point)
 		{
 			return base.GetChildAtPoint (point);
@@ -485,6 +524,18 @@ namespace System.Windows.Forms
 			return null;
 		}
 
+		public void ResetMinimumSize ()
+		{
+			this.MinimumSize = new Size (-1, -1);
+		}
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new void SetAutoScrollMargin (int x, int y)
+		{
+			base.SetAutoScrollMargin (x, y);
+		}
+		
 		public override string ToString ()
 		{
 			return String.Format ("{0}, Name: {1}, Items: {2}", base.ToString(), this.Name, this.items.Count.ToString ());
@@ -633,6 +684,11 @@ namespace System.Windows.Forms
 			base.OnLostFocus (e);
 		}
 
+		protected override void OnMouseCaptureChanged (EventArgs e)
+		{
+			base.OnMouseCaptureChanged (e);
+		}
+		
 		protected override void OnMouseDown (MouseEventArgs mea)
 		{
 			if (mouse_currently_over != null)
@@ -818,6 +874,11 @@ namespace System.Windows.Forms
 			base.OnRightToLeftChanged (e);
 		}
 
+		protected override void OnScroll (ScrollEventArgs se)
+		{
+			base.OnScroll (se);
+		}
+		
 		protected override void OnTabStopChanged (EventArgs e)
 		{
 			base.OnTabStopChanged (e);
@@ -903,6 +964,18 @@ namespace System.Windows.Forms
 			remove { base.CausesValidationChanged -= value; }
 		}
 
+		[Browsable (false)]
+		public new event ControlEventHandler ControlAdded {
+			add { base.ControlAdded += value; }
+			remove { base.ControlAdded -= value; }
+		}
+
+		[Browsable (false)]
+		public new event ControlEventHandler ControlRemoved {
+			add { base.ControlRemoved += value; }
+			remove { base.ControlRemoved -= value; }
+		}
+		
 		[Browsable (false)]
 		public new event EventHandler CursorChanged {
 			add { base.CursorChanged += value; }
