@@ -1,3 +1,13 @@
+2007-04-04  Everaldo Canuto  <everaldo@simios.org>
+
+	* Control.cs: GetRealChildAtPoint method added, it make an
+	recursive child control search for the point. 
+
+	* Form.cs: Makes use of GetRealChildAtPoint in mouse event after closes
+	menu.
+
+	* MenuAPI.cs: Makes use of GetRealChildAtPoint in UpdateCursor.
+
 2007-04-03  Everaldo Canuto  <everaldo@simios.org>
 
 	* Form.cs: Fix mouse position when send back mouse event after closes

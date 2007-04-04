@@ -2383,7 +2383,7 @@ namespace System.Windows.Forms {
 													0);
 
 						if (!active_tracker.OnMouseDown (args)) {
-							Control control = this.GetChildAtPoint (PointToClient (Cursor.Position));
+							Control control = GetRealChildAtPoint (Cursor.Position);
 							if (control != null) {
 								Point pt = control.PointToClient (Cursor.Position);
 								XplatUI.SendMessage (control.Handle, (Msg) m.Msg, m.WParam, MakeParam (pt.X, pt.Y));

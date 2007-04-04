@@ -81,9 +81,7 @@ namespace System.Windows.Forms {
 
 		private void UpdateCursor (int x, int y)
 		{
-			Point pt = grab_control.PointToClient (new Point (x, y));
-			
-			Control child_control = grab_control.GetChildAtPoint (pt);
+			Control child_control = grab_control.GetRealChildAtPoint (Cursor.Position);
 			if (child_control != null)
 				XplatUI.SetCursor(child_control.Handle, Cursors.Default.handle);
 		}

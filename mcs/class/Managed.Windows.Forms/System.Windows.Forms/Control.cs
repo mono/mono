@@ -3409,6 +3409,23 @@ namespace System.Windows.Forms
 			return has_focus;
 		}
 
+		internal Control GetRealChildAtPoint (Point pt) {
+			if (!IsHandleCreated)
+				CreateHandle ();
+
+			foreach (Control control in child_controls) {
+				if (control.Bounds.Contains (PointToClient (pt))) {
+					Control child = control.GetRealChildAtPoint (pt);
+					if (child == null)
+						return control;
+					else
+						return child;
+				}
+			}
+
+			return null;
+		}
+
 		public Control GetChildAtPoint(Point pt) {
 			// MS's version causes the handle to be created.  The stack trace shows that get_Handle is called here, but
 			// we'll just call CreateHandle instead.
