@@ -297,7 +297,6 @@ SkipCRLF:
 		/// <summary>Parse the RTF stream</summary>
 		public void Read() {
 			while (GetToken() != TokenClass.EOF) {
-
 				RouteToken();
 			}
 		}
@@ -958,12 +957,23 @@ SkipCRLF:
 
 					while (true) {
 
-						while (hexDigit1 == '\n' || hexDigit1 == '\r')
+						while (hexDigit1 == '\n' || hexDigit1 == '\r') {
+							hexDigit1 = (char) source.Peek ();
+							if (hexDigit1 == '}')
+								break;
 							hexDigit1 = (char) source.Read ();
-
+						}
+						
+						hexDigit2 = (char) source.Peek ();
+						if (hexDigit2 == '}')
+							break;
 						hexDigit2 = (char) source.Read ();
-						while (hexDigit2 == '\n' || hexDigit2 == '\r')
+						while (hexDigit2 == '\n' || hexDigit2 == '\r') {
+							hexDigit2 = (char) source.Peek ();
+							if (hexDigit2 == '}')
+								break;
 							hexDigit2 = (char) source.Read ();
+						}
 
 						if (Char.IsDigit (hexDigit1))
 							digitValue1 = (uint) (hexDigit1 - '0');
@@ -984,16 +994,20 @@ SkipCRLF:
 							digitValue2 = (uint) (hexDigit2 - 'A' + 10);
 						else if (hexDigit2 == '\n' || hexDigit2 == '\r')
 							continue;
-						else
+						else 
 							break;
 
 						image_data.Add ((byte) checked (digitValue1 * 16 + digitValue2));
 
 						// We get the first hex digit at the end, since in the very first
 						// iteration we use rtf.major as the first hex digit
+						hexDigit1 = (char) source.Peek ();
+						if (hexDigit1 == '}')
+							break;
 						hexDigit1 = (char) source.Read ();
 					}
 
+					
 					read_image_data = false;
 					picture.Data = (byte []) image_data.ToArray (typeof (byte));
 					break;

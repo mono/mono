@@ -1,5 +1,10 @@
 2007-04-04  Jackson Harper  <jackson@ximian.com>
 
+	* RTF.cs: look ahead for the end of the group, so we don't read
+	past the end and pull out a piece of the next token.
+
+2007-04-04  Jackson Harper  <jackson@ximian.com>
+
 	* Picture.cs: Correct twips calculation.
 
 2007-03-27  Jackson Harper  <jackson@ximian.com>
