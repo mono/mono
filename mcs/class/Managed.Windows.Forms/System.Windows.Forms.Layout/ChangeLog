@@ -1,3 +1,8 @@
+2007-04-04  Jonathan Pobst  <monkey@jpobst.com>
+
+	* FlowLayout.cs: Call SetBounds with BoundsSpecified.None instead of
+	using Control Size, Location setters.
+
 2007-03-24  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DefaultLayout.cs: Call SetBounds with BoundsSpecified.None instead
