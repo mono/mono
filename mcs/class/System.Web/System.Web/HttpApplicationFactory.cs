@@ -77,6 +77,7 @@ namespace System.Web {
 		Hashtable app_event_handlers;
 		static ArrayList watchers = new ArrayList();
 		static object watchers_lock = new object();
+		static bool app_shutdown = false;
 		Stack available = new Stack ();
 		Stack available_for_end = new Stack ();
 		
@@ -540,6 +541,10 @@ namespace System.Web {
 	        static void OnFileChanged(object sender, FileSystemEventArgs args)
 	        {
 	        	lock (watchers_lock) {
+				if(app_shutdown)
+					return;
+				app_shutdown = true;
+
 				// Disable event raising to avoid concurrent restarts
 				foreach (FileSystemWatcher watcher in watchers) {
 					watcher.EnableRaisingEvents = false;
