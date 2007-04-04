@@ -1,3 +1,9 @@
+2007-04-04  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Control.cs: When we CreateControl, we need to also create all of the
+	control's children.  The child's OnLoad must also fire before the parent's
+	OnLoad.  Fixes the toolbox size in PDN.
+
 2007-04-04  Jackson Harper  <jackson@ximian.com>
 
 	* TextBoxBase.cs: When the user presses enter, insert a line
