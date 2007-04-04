@@ -1,3 +1,7 @@
+2007-04-03  Marek Habersack  <mhabersack@novell.com>
+
+	* BaseDataBoundControl.cs: adjust for lame specs on MSDN.
+
 2007-04-02 Gert Driesen <drieseng@users.sourceforge.net>
 
 	* MenuItem.cs: Use INavigateUIData.Description as ToolTip. Fixed line
