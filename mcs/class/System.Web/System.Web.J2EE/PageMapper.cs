@@ -400,7 +400,7 @@ namespace System.Web.J2EE
 			Console.WriteLine("fullFileName=" + fullFileName);
 #endif
 			//type not found - run aspxparser
-			if (File.Exists(fullFileName) || Directory.Exists(fullFileName))
+			if (false/*File.Exists(fullFileName) || Directory.Exists(fullFileName)*/) //dynamic compilation currently is not supported
 			{
 				string[] command = GetParserCmd(fileName.ToLower() == "global.asax");
 				if (J2EEUtils.RunProc(command) != 0)
