@@ -1,3 +1,13 @@
+2007-04-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListView.cs: We don't need the MouseEnter/MouseLeave check
+	to fire just one MouseHover event when HoverSelection is true, since
+	.Net does fire more than one MouseHover event in that scenario. Also,
+	fix the selection in HoverSelection, by invoking UpdateMultiSelect
+	if MultiSelect is true, instead of only setting ListViewItem.Selected.
+	Finally, we need to reset the Hover logic in MouseMove, even when we
+	don't have a selected item.
+
 2007-04-04  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStrip.cs: Add several missing methods, properties, and events.

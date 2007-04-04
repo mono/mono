@@ -79,7 +79,6 @@ namespace System.Windows.Forms
 		private bool label_wrap = true;
 		private bool multiselect = true;
 		private bool scrollable = true;
-		private bool hover_pending;
 		private readonly SelectedIndexCollection selected_indices;
 		private readonly SelectedListViewItemCollection selected_items;
 		private SortOrder sort_order = SortOrder.None;
@@ -250,7 +249,6 @@ namespace System.Windows.Forms
 			GotFocus += new EventHandler (FocusChanged);
 			LostFocus += new EventHandler (FocusChanged);
 			MouseWheel += new MouseEventHandler(ListView_MouseWheel);
-			MouseEnter += new EventHandler (ListView_MouseEnter);
 
 			this.SetStyle (ControlStyles.UserPaint | ControlStyles.StandardClick
 #if NET_2_0
@@ -1990,7 +1988,7 @@ namespace System.Windows.Forms
 
 					Point pt = PointToClient (Control.MousePosition);
 					ListViewItem item = owner.GetItemAt (pt.X, pt.Y);
-					if (item != null && !item.Selected) {
+					if (item != null) {
 						hover_processed = false;
 						XplatUI.ResetMouseHover (Handle);
 					}
@@ -2002,10 +2000,7 @@ namespace System.Windows.Forms
 
 			private void ItemsMouseHover (object sender, EventArgs e)
 			{
-				if (owner.hover_pending) {
-					owner.OnMouseHover (e);
-					owner.hover_pending = false;
-				}
+				owner.OnMouseHover (e);
 
 				if (Capture || !owner.HoverSelection)
 					return;
@@ -2017,7 +2012,13 @@ namespace System.Windows.Forms
 				if (item == null)
 					return;
 
-				item.Selected = true;
+				if (owner.MultiSelect)
+					owner.UpdateMultiSelection (item.Index, true);
+				else
+					item.Selected = true;
+
+				owner.SetFocusedItem (item);
+				Select (); // Make sure we have the focus, since MouseHover doesn't give it to us
 			}
 
 			private void ItemsMouseUp (object sender, MouseEventArgs me)
@@ -2400,11 +2401,6 @@ namespace System.Windows.Forms
 				SetFocusedItem (Items [0]);
 
 			item_control.Invalidate (FocusedItem.Bounds);
-		}
-
-		void ListView_MouseEnter (object o, EventArgs args)
-		{
-			hover_pending = true; // Need a hover event for every Enter/Leave cycle
 		}
 
 		private void ListView_MouseWheel (object sender, MouseEventArgs me)
