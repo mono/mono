@@ -306,12 +306,13 @@ namespace System.Text.RegularExpressions {
 						goto Fail;
 
 					pc += 2;
-					for (int i = 0; i < len; ++ i) {
-						if (ignore) {
+					if (ignore) {
+						for (int i = 0; i < len; ++ i) {
 							if (Char.ToLower (text[ptr + i]) != Char.ToLower (text[str + i]))
 								goto Fail;
 						}
-						else {
+					} else {
+						for (int i = 0; i < len; ++ i) {
 							if (text[ptr + i] != text[str + i])
 								goto Fail;
 						}
