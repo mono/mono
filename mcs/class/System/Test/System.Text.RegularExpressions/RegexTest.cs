@@ -11,6 +11,10 @@
 using System;
 using System.Text.RegularExpressions;
 
+#if NET_2_0
+using System.Collections.Generic;
+#endif
+
 using NUnit.Framework;
 
 namespace MonoTests.System.Text.RegularExpressions {
@@ -194,6 +198,63 @@ namespace MonoTests.System.Text.RegularExpressions {
 		public void CacheSize_Min ()
 		{
 			Regex.CacheSize = Int32.MinValue;
+		}
+
+		static IEnumerable<uint> Primes (uint m)
+		{
+			if (m < 2)
+				yield break;
+
+			yield return 2;
+
+			Dictionary<uint, uint> w = new Dictionary<uint, uint> ();
+			uint p2, n1;
+
+			for (uint n = 3; n < m; n += 2) {
+				if (w.TryGetValue (n, out p2)) {
+					w.Remove (n);
+					n1 = n + p2;
+				} else {
+					yield return n;
+					n1 = n * n;
+					p2 = n + n;
+
+					// if there's an overflow, don't bother
+					if (n1 / n != n || n1 >= m)
+						continue;
+				}
+
+				while (w.ContainsKey (n1))
+					n1 += p2;
+				w [n1] = p2;
+			}
+		}
+
+		[Test]
+		public void PrimeRegex ()
+		{
+			// Perl regex oneliner by: abigail@fnx.com (Abigail)
+			// from: http://www.mit.edu:8008/bloom-picayune.mit.edu/perl/10138
+			// perl -wle 'print "Prime" if (1 x shift) !~ /^1?$|^(11+?)\1+$/'
+
+			// This is a backtracking torture test
+
+			Regex composite = new Regex (@"^1?$|^(11+?)\1+$");
+
+			uint i = 0;
+			string x = "";
+
+			foreach (uint p in Primes (3333)) {
+				while (i < p) {
+					Assert.IsTrue (composite.IsMatch (x));
+					++i;
+					x += "1";
+				}
+				// i == p
+				Assert.IsFalse (composite.IsMatch (x));
+				++i;
+				x += "1";
+			}
 		}
 #endif
 	}
