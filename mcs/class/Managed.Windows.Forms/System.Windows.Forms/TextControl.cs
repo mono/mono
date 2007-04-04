@@ -3539,8 +3539,11 @@ namespace System.Windows.Forms {
 
 					undo.RecordDeleteString (selection_start.line, selection_start.pos, selection_end.line, selection_end.pos);
 
+					InvalidateSelectionArea ();
+
 					// Delete first line
 					DeleteChars(selection_start.tag, selection_start.pos, selection_start.line.text.Length - selection_start.pos);
+					selection_start.line.recalc = true;
 
 					// Delete last line
 					DeleteChars(selection_end.line.tags, 0, selection_end.pos);

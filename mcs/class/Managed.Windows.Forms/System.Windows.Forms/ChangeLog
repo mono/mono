@@ -1,3 +1,9 @@
+2007-04-04  Jackson Harper  <jackson@ximian.com>
+
+	* TextControl.cs: When we delete multiple selection lines
+	invalidate the selection area, don't need to do that for single
+	lines because the final update view will handle it.
+
 2007-04-04  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Control.cs: When we CreateControl, we need to also create all of the
