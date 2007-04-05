@@ -2976,7 +2976,7 @@ namespace System.Data {
 					columns.Add (dc);
 
 					cc = match.Groups["Order"].Captures;
-					if (cc.Count == 0 || String.Compare (cc[0].Value, "ASC", true) == 0)
+					if (cc.Count == 0 || String.Compare (cc [0].Value, "ASC", true, CultureInfo.InvariantCulture) == 0)
 						sorts.Add(ListSortDirection.Ascending);
 					else
 						sorts.Add (ListSortDirection.Descending);

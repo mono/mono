@@ -325,11 +325,11 @@ namespace System.Data {
 			
 			if (changes != null)
 			{
-				if (string.Compare (changes, "modified", true) == 0) {
+				if (string.Compare (changes, "modified", true, CultureInfo.InvariantCulture) == 0) {
 					DiffGrRows.Add (id, Row); // for later use
 					state = DataRowState.Modified;
 				}
-				else if (string.Compare (changes, "inserted", true) == 0) {
+				else if (string.Compare (changes, "inserted", true, CultureInfo.InvariantCulture) == 0) {
 					state = DataRowState.Added;
 				}
 				else
@@ -339,7 +339,7 @@ namespace System.Data {
 				state = DataRowState.Unchanged;
 			
 			// If row had errors add row to hashtable for later use
-			if (error != null && string.Compare (error, "true", true) == 0)
+			if (error != null && string.Compare (error, "true", true, CultureInfo.InvariantCulture) == 0)
 				ErrorRows.Add (id, Row);
 		
 			LoadColumns (Table, Row, reader, DataRowVersion.Current);

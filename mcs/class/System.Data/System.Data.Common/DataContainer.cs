@@ -1212,7 +1212,7 @@ namespace System.Data.Common
 						return 1;
 					}
 				}
-				return String.Compare((string)this[index1], (string)this[index2], !Column.Table.CaseSensitive);
+				return String.Compare((string)this[index1], (string)this[index2], !Column.Table.CaseSensitive, Column.Table.Locale);
 			}
 
 			#endregion //Methods 
