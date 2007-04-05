@@ -19,6 +19,7 @@ namespace Mainsoft.Web.AspnetConfig {
         protected System.Web.UI.WebControls.TextBox desc_txb;
         protected System.Web.UI.WebControls.Button save_bt;
         protected Mainsoft.Web.AspnetConfig.Searcher srch;
+        protected System.Web.UI.WebControls.RequiredFieldValidator required_email_validator;
         protected System.Web.UI.WebControls.RegularExpressionValidator RegularExpressionValidator1;
         protected System.Web.UI.WebControls.View successupdate;
         protected System.Web.UI.WebControls.Label name_lbl;

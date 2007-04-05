@@ -42,17 +42,17 @@
                     </tr>
                     <tr>
                         <td>
-                            Created users : <%= User_count %>
+                            <%= User_count %>
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            <asp:HyperLink ID="HyperLink1" runat="server" NavigateUrl="CreateUser.aspx">Create user</asp:HyperLink>
+                            <asp:HyperLink ID="HyperLink1" runat="server" NavigateUrl="CreateUser.aspx" OnLoad="UsersLinks_Load">Create user</asp:HyperLink>
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            <asp:HyperLink ID="HyperLink2" runat="server" NavigateUrl="ManageUser.aspx">Manage users</asp:HyperLink>
+                            <asp:HyperLink ID="HyperLink2" runat="server" NavigateUrl="ManageUser.aspx"  OnLoad="UsersLinks_Load">Manage users</asp:HyperLink>
                         </td>
                     </tr>
                 </table> 

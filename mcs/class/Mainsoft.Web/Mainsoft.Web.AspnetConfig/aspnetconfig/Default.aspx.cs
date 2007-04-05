@@ -33,10 +33,23 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
 
+
 namespace Mainsoft.Web.AspnetConfig
 {
 	public partial class Default : System.Web.UI.Page
 	{
+		private bool IsPortalRoleProvider;
+		private bool IsPortalMembershipProvider;
+		protected override void OnInit (EventArgs e)
+		{
+			try {
+				IsPortalRoleProvider = (Roles.Provider).GetType ().ToString () == "Mainsoft.Web.Security.WPGroupsRoleProvider";
+			}
+			catch{
+			}
+			IsPortalMembershipProvider = (Membership.Provider).GetType().ToString () == "Mainsoft.Web.Security.WPMembershipProvider";
+		}
+
 		protected void Page_Load (object sender, EventArgs e)
 		{
 			Button bt = Master.FindControl ("Back") as Button;
@@ -49,8 +62,13 @@ namespace Mainsoft.Web.AspnetConfig
 		{
 			get
 			{
-				MembershipUserCollection user_collection = Membership.GetAllUsers ();
-				return user_collection.Count.ToString ();
+				if (IsPortalMembershipProvider) {
+					return "You cannot create or manage users when WPMembershipProvider is configured as the default provider.";
+				}
+				else {
+					MembershipUserCollection user_collection = Membership.GetAllUsers ();
+					return "Created users :" + user_collection.Count.ToString ();
+				}
 			}
 		}
 
@@ -58,7 +76,10 @@ namespace Mainsoft.Web.AspnetConfig
 		{
 			get
 			{
-				if (Roles.Enabled) {
+				if (IsPortalRoleProvider) {
+					return @"You cannot create or manage roles when WPGroupsRoleProvider is configured as the default provider.";
+				}
+				else if (Roles.Enabled) {
 					string[] list = Roles.GetAllRoles ();
 					return "Existing roles :" + list.Length.ToString ();
 				}
@@ -74,8 +95,15 @@ namespace Mainsoft.Web.AspnetConfig
 
 		protected void HyperLink1_Load (object sender, EventArgs e)
 		{
-			if (!Roles.Enabled)
+			if (!Roles.Enabled || IsPortalRoleProvider)
 				((HyperLink) sender).Visible = false;
+		}
+
+		protected void UsersLinks_Load (object sender, EventArgs e)
+		{
+			if (IsPortalMembershipProvider) {
+				((HyperLink) sender).Visible = false;
+			}
 		}
 	}
 }
