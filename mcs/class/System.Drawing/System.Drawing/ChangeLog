@@ -1,3 +1,8 @@
+2007-04-05  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* gdipFunctions.cs: Remove unused (and not part of GDI+) GdipGetHfont
+	method.
+
 2007-04-02  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Pen.cs: Simplify. Caching the brush still involved too many 
