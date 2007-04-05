@@ -93,8 +93,8 @@ namespace System.Web
 			if (data ["browser"] != null) { // Last one (most derived) will win.
 				tbl ["browser"] = data ["browser"];
 			}
-			else if (tbl ["browser"] == null) { // If none so far defined value set to Unknown
-				tbl ["browser"] = "Unknown";
+			else if (tbl ["browser"] == null) { // If none so far defined value set to *
+				tbl ["browser"] = "*";
 			}
 
 			if (!tbl.ContainsKey ("browsers")) {
@@ -210,10 +210,7 @@ namespace System.Web
 			defaultCaps.Add ("aol", "False");
 			defaultCaps.Add ("backgroundsounds", "False");
 			defaultCaps.Add ("beta", "False");
-			defaultCaps.Add ("browser", "Unknown");
-#if NET_2_0
-			defaultCaps.Add ("browsers", new ArrayList ());
-#endif
+			defaultCaps.Add ("browser", "*");
 			defaultCaps.Add ("cdf", "False");
 			defaultCaps.Add ("cookies", "False");
 			defaultCaps.Add ("crawler", "False");
@@ -292,7 +289,7 @@ namespace System.Web
 #endif
 				try {
 					LoadFile (filepath);
-				} catch (Exception) { }
+				} catch (Exception) {}
 
 				loaded = true;
 			}
@@ -373,10 +370,15 @@ namespace System.Web
 		static char [] eq = new char []{'='};
 		static void ReadCapabilities (TextReader input, BrowserData data)
 		{
-			string str;
+			string str, key;
+			string [] keyvalue;
+			
 			while ((str = input.ReadLine ()) != null && str.Length != 0) {
-				string [] keyvalue = str.Split (eq, 2);
-				data.Add (keyvalue [0], keyvalue [1]);
+				keyvalue = str.Split (eq, 2);
+				key = keyvalue [0].ToLower (CultureInfo.InvariantCulture).Trim ();
+				if (key.Length == 0)
+					continue;
+				data.Add (key, keyvalue [1]);
 			}
 		}
 	}
