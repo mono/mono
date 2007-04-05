@@ -32,6 +32,7 @@ using System;
 using System.Collections;
 using System.Security.Principal;
 using System.Web.UI;
+using System.Globalization;
 
 namespace System.Web.Configuration
 {
@@ -165,7 +166,7 @@ namespace System.Web.Configuration
 			public bool CheckVerb (string verb)
 			{
 				foreach (string u in Verbs) {
-					if (String.Compare (u, verb, true) == 0)
+					if (String.Compare (u, verb, true, CultureInfo.InvariantCulture) == 0)
 						return true;
 				}
 

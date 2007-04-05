@@ -186,7 +186,7 @@ namespace System.Web.UI.HtmlControls {
 				if (hr != "")
 #if TARGET_J2EE
 					// For J2EE portlets we need to genreate a render URL.
-					HRef = ResolveUrl (hr, String.Compare(target, "_blank", true) != 0);
+					HRef = ResolveUrl (hr, String.Compare (target, "_blank", StringComparison.InvariantCultureIgnoreCase) != 0);
 #else
 					HRef = ResolveUrl (hr);
 #endif

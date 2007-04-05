@@ -40,6 +40,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Collections.Specialized;
 using System.Web.Util;
+using System.Globalization;
 
 namespace System.Web.UI
 {
@@ -723,7 +724,7 @@ return true;
 				s = s.Replace ("\"", "\\\"");
 				return "\"" + s + "\"";
 			} else if (ob is bool) {
-				return ob.ToString().ToLowerInvariant();
+				return ob.ToString ().ToLower (CultureInfo.InvariantCulture);
 			} else {
 				return ob.ToString ();
 			}

@@ -1852,7 +1852,7 @@ namespace System.Web.UI.WebControls
 			else if (item.NavigateUrl != "") {
 				string target = item.Target != "" ? item.Target : Target;
 #if TARGET_J2EE
-				string navUrl = ResolveClientUrl (item.NavigateUrl, String.Compare (target, "_blank", true) != 0);
+				string navUrl = ResolveClientUrl (item.NavigateUrl, String.Compare (target, "_blank", StringComparison.InvariantCultureIgnoreCase) != 0);
 #else
 				string navUrl = ResolveClientUrl (item.NavigateUrl);
 #endif

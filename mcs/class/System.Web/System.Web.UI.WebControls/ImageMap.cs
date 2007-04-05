@@ -167,7 +167,7 @@ namespace System.Web.UI.WebControls
 							if (!String.IsNullOrEmpty (target))
 								writer.AddAttribute (HtmlTextWriterAttribute.Target, target);
 #if TARGET_J2EE
-							string navUrl = ResolveClientUrl (spot.NavigateUrl, String.Compare (target, "_blank", true) != 0);
+							string navUrl = ResolveClientUrl (spot.NavigateUrl, String.Compare (target, "_blank", StringComparison.InvariantCultureIgnoreCase) != 0);
 #else
 							string navUrl = ResolveClientUrl (spot.NavigateUrl);
 #endif

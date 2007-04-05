@@ -1652,7 +1652,7 @@ namespace System.Web.UI.WebControls
 			if (node.NavigateUrl != "") {
 				string target = node.Target.Length > 0 ? node.Target : Target;
 #if TARGET_J2EE
-				string navUrl = ResolveClientUrl (node.NavigateUrl, String.Compare (target, "_blank", true) != 0);
+				string navUrl = ResolveClientUrl (node.NavigateUrl, String.Compare (target, "_blank", StringComparison.InvariantCultureIgnoreCase) != 0);
 #else
 				string navUrl = ResolveClientUrl (node.NavigateUrl);
 #endif

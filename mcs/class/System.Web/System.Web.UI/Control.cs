@@ -43,6 +43,7 @@ using System.ComponentModel.Design.Serialization;
 using System.Security.Permissions;
 using System.Web;
 using System.Web.Util;
+using System.Globalization;
 #if NET_2_0
 using System.Web.UI.Adapters;
 using System.IO;
@@ -740,7 +741,7 @@ namespace System.Web.UI
 
 			Control result = null;
 			foreach (Control c in _controls) {
-				if (String.Compare (id, c._userId, true) == 0) {
+				if (String.Compare (id, c._userId, true, CultureInfo.InvariantCulture) == 0) {
 					if (result != null && result != c) {
 						throw new HttpException ("1 Found more than one control with ID '" + id + "'");
 					}

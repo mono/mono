@@ -30,6 +30,7 @@
 using System.Collections;
 using System.Security.Permissions;
 using System.Web.UI.WebControls;
+using System.Globalization;
 
 namespace System.Web.UI.HtmlControls
 {
@@ -48,7 +49,7 @@ namespace System.Web.UI.HtmlControls
 
 		public override Type GetChildControlType (string tagName, IDictionary attribs) 
 		{
-			if (System.String.Compare (tagName, "option", true) != 0)
+			if (System.String.Compare (tagName, "option", true, CultureInfo.InvariantCulture) != 0)
 				return null;
 
 			return typeof (ListItem);
