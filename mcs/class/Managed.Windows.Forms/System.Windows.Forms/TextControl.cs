@@ -3887,7 +3887,7 @@ namespace System.Windows.Forms {
 				if (x >= tag.X && x < (tag.X+tag.width)) {
 					int	end;
 
-					end = tag.end;
+					end = tag.TextEnd;
 
 					for (int pos = tag.start - 1; pos < end; pos++) {
 						// When clicking on a character, we position the cursor to whatever edge
@@ -3903,7 +3903,7 @@ namespace System.Windows.Forms {
 				if (tag.next != null) {
 					tag = tag.next;
 				} else {
-					index = line.text.Length;
+					index = line.TextLengthWithoutEnding ();
 					return LineTag.GetFinalTag (tag);
 				}
 			}
@@ -4544,6 +4544,10 @@ namespace System.Windows.Forms {
 			get { return start + length; }
 		}
 
+		public int TextEnd {
+			get { return start + TextLength; }
+		}
+
 		public float width {
 			get {
 				if (length == 0)
@@ -4559,6 +4563,18 @@ namespace System.Windows.Forms {
 					res = next.start - start;
 				else
 					res = line.text.Length - (start - 1);
+
+				return res > 0 ? res : 0;
+			}
+		}
+
+		public int TextLength {
+			get {
+				int res = 0;
+				if (next != null)
+					res = next.start - start;
+				else
+					res = line.TextLengthWithoutEnding () - (start - 1);
 
 				return res > 0 ? res : 0;
 			}
@@ -4779,8 +4795,8 @@ namespace System.Windows.Forms {
 			if (start_tag == null) {
 				if (length == 0) {
 					// We are 'starting' after all valid tags; create a new tag with the right attributes
-					start_tag = FindTag(line, line.text.Length - 1);
-					start_tag.next = new LineTag(line, line.text.Length + 1);
+					start_tag = FindTag(line, line.TextLengthWithoutEnding () - 1);
+					start_tag.next = new LineTag(line, line.TextLengthWithoutEnding (); + 1);
 					start_tag.next.CopyFormattingFrom (start_tag);
 					start_tag.next.previous = start_tag;
 					start_tag = start_tag.next;

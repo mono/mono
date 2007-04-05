@@ -1108,7 +1108,7 @@ namespace System.Windows.Forms {
 						document.Split (document.CaretLine, document.CaretTag, document.CaretPosition);
 						line.ending = LineEnding.Rich;
 						document.InsertString (line, line.text.Length,
-								document.LineEndingToString (line.ending));
+										document.LineEndingToString (line.ending));
 						OnTextChanged(EventArgs.Empty);
 						document.UpdateView(line, 2, 0);
 
@@ -1177,7 +1177,7 @@ namespace System.Windows.Forms {
 					int	new_caret_pos;
 
 					line = document.GetLine(document.CaretLine.LineNo - 1);
-					new_caret_pos = line.text.Length;
+					new_caret_pos = line.TextLengthWithoutEnding ();
 
 					document.Combine(line, document.CaretLine);
 					document.UpdateView(line, 1, 0);
