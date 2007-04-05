@@ -168,14 +168,18 @@
     <Compile Include="System.ComponentModel.Design.Serialization\InstanceDescriptorTest.cs" />
     <Compile Include="System.ComponentModel.Design\ServiceContainerTest.cs" />
     <Compile Include="System.ComponentModel\ArrayConverterTests.cs" />
+    <Compile Include="System.ComponentModel\AttributeProviderAttributeTest.cs" />
+    <Compile Include="System.ComponentModel\BindingListTest.cs" />
     <Compile Include="System.ComponentModel\ByteConverterTests.cs" />
     <Compile Include="System.ComponentModel\CollectionConverterTest.cs" />
+    <Compile Include="System.ComponentModel\ComplexBindingPropertiesAttributeTest.cs" />
     <Compile Include="System.ComponentModel\ContainerTest.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="System.ComponentModel\DataObjectMethodAttributeTests.cs" />
     <Compile Include="System.ComponentModel\DateTimeConverterTests.cs" />
     <Compile Include="System.ComponentModel\DecimalConverterTests.cs" />
+    <Compile Include="System.ComponentModel\DefaultBindingPropertyAttributeTest.cs" />
     <Compile Include="System.ComponentModel\DisplayNameAttributeTests.cs" />
     <Compile Include="System.ComponentModel\DoubleConverterTests.cs" />
     <Compile Include="System.ComponentModel\EventHandlerListTests.cs" />
@@ -183,6 +187,7 @@
     <Compile Include="System.ComponentModel\Int32ConverterTests.cs" />
     <Compile Include="System.ComponentModel\Int64ConverterTests.cs" />
     <Compile Include="System.ComponentModel\LicenseManagerTests.cs" />
+    <Compile Include="System.ComponentModel\MaskedTextProviderTest.cs" />
     <Compile Include="System.ComponentModel\PropertyDescriptorCollectionTests.cs" />
     <Compile Include="System.ComponentModel\PropertyDescriptorTests.cs" />
     <Compile Include="System.ComponentModel\SByteConverterTests.cs" />
