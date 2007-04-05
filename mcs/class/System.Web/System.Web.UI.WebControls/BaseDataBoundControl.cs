@@ -121,7 +121,7 @@ namespace System.Web.UI.WebControls {
 				if (value && preRendered && IsBoundUsingDataSourceID && Page != null && !Page.IsCallback) {
 					requiresDataBinding = true;
 					EnsureDataBound ();
-				| else
+				} else
 					requiresDataBinding = value;
 			}
 		}
