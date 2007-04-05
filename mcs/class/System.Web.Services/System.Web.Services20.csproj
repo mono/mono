@@ -366,7 +366,7 @@
   
 copy ..\..\..\..\..\mono\data\net_2_0\DefaultWsdlHelpGenerator.jvm.aspx .
 
-"%25VMW_HOME%25\bin\aspxparser.exe" /reference:"$(FrameworkDir)\System.dll" /reference:"$(FrameworkDir)\System.Web.dll" /reference:"System.Web.Services.dll" /reference:"$(FrameworkDir)\System.Xml.dll" /reference:"..\..\..\lib\J2EE.Helpers.dll" /novalidator /enterprise:no /appdir:$(ProjectDir)$(OutDir) /out:$(ProjectDir)\WEB-INF\lib\$(TargetName).jar /bindir:$(TargetDir)$(OutDir) /virtdir:/MonoSystemWeb /aspxfiles:DefaultWsdlHelpGenerator.jvm.aspx /precompileall /tempDir:$(ProjectDir)$(OutDir) /assembly:$(TargetPath)
+"%25VMW_HOME%25\bin\aspxparser.exe" /reference:"$(FrameworkDir)\System.dll" /reference:"$(FrameworkDir)\System.Web.dll" /reference:"System.Web.Services.dll" /reference:"$(FrameworkDir)\System.Xml.dll" /reference:"..\..\..\lib\J2EE.Helpers.dll" /novalidator /appdir:$(ProjectDir)$(OutDir) /out:$(ProjectDir)\WEB-INF\lib\$(TargetName).jar /bindir:$(TargetDir)$(OutDir) /virtdir:/MonoSystemWeb /aspxfiles:DefaultWsdlHelpGenerator.jvm.aspx /precompileall /tempDir:$(ProjectDir)$(OutDir) /assembly:$(TargetPath)
 
 del DefaultWsdlHelpGenerator.jvm.aspx
 
