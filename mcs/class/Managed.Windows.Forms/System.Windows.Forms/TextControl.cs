@@ -4796,7 +4796,7 @@ namespace System.Windows.Forms {
 				if (length == 0) {
 					// We are 'starting' after all valid tags; create a new tag with the right attributes
 					start_tag = FindTag(line, line.TextLengthWithoutEnding () - 1);
-					start_tag.next = new LineTag(line, line.TextLengthWithoutEnding (); + 1);
+					start_tag.next = new LineTag(line, line.TextLengthWithoutEnding () + 1);
 					start_tag.next.CopyFormattingFrom (start_tag);
 					start_tag.next.previous = start_tag;
 					start_tag = start_tag.next;
