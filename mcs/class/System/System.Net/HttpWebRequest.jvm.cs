@@ -91,7 +91,7 @@ namespace System.Net
 
 				string val = value;
 				if (val != null)
-					val = val.Trim ().ToLower ();
+					val = val.Trim ().ToLower (CultureInfo.InvariantCulture);
 
 				if (val == null || val.Length == 0)
 				{
@@ -176,7 +176,7 @@ namespace System.Net
 					throw new InvalidOperationException("Connection already opened");
 				string val = value;
 				if (val != null)
-					val = val.Trim ().ToLower ();
+					val = val.Trim ().ToLower (CultureInfo.InvariantCulture);
 
 				if (val == null || val.Length == 0)
 				{
@@ -350,7 +350,7 @@ namespace System.Net
 				}
 				string val = value;
 				if (val != null)
-					val = val.Trim ().ToLower ();
+					val = val.Trim ().ToLower (CultureInfo.InvariantCulture);
 
 				if (val == null || val.Length == 0)
 				{
@@ -461,7 +461,7 @@ namespace System.Net
 			string value = Headers ["Range"];
 			if (value == null || value.Length == 0)
 				value = rangeSpecifier + "=";
-			else if (value.ToLower ().StartsWith (rangeSpecifier.ToLower () + "="))
+			else if (value.StartsWith (rangeSpecifier.ToLower () + "=", StringComparison.InvariantCultureIgnoreCase))
 				value += ",";
 			else
 				throw new InvalidOperationException ("rangeSpecifier");
@@ -477,7 +477,7 @@ namespace System.Net
 			string value = Headers ["Range"];
 			if (value == null || value.Length == 0)
 				value = rangeSpecifier + "=";
-			else if (value.ToLower ().StartsWith (rangeSpecifier.ToLower () + "="))
+			else if (value.StartsWith (rangeSpecifier.ToLower () + "=", StringComparison.InvariantCultureIgnoreCase))
 				value += ",";
 			else
 				throw new InvalidOperationException ("rangeSpecifier");

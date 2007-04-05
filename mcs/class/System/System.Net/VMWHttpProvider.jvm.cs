@@ -99,7 +99,6 @@ namespace System.Net
 
 		private void SetJavaCredential(NetworkCredential nc, string type, bool proxyCredentials)
 		{
-			type = type.ToLower();
 			string host = null;
 			
 			if(!proxyCredentials)
@@ -109,7 +108,7 @@ namespace System.Net
 
 			string domain = (nc.Domain == null) ? host : nc.Domain;
 
-			if(type.Equals("any"))
+			if(String.Compare (type, "any", StringComparison.InvariantCultureIgnoreCase) == 0)
 			{
 				if(!proxyCredentials)
 				{
@@ -126,7 +125,7 @@ namespace System.Net
 						new NTCredentials(nc.UserName, nc.Password, host, domain));
 				}
 			}
-			else if(type.Equals("basic"))
+			else if(String.Compare (type, "basic", StringComparison.InvariantCultureIgnoreCase) == 0)
 			{
 				if(!proxyCredentials)
 				{
@@ -141,7 +140,7 @@ namespace System.Net
 						new UsernamePasswordCredentials(nc.UserName, nc.Password));
 				}
 			}
-			else if(type.Equals("digest"))
+			else if(String.Compare (type, "digest", StringComparison.InvariantCultureIgnoreCase) == 0)
 			{
 				if(!proxyCredentials)
 				{
@@ -156,7 +155,7 @@ namespace System.Net
 						new UsernamePasswordCredentials(nc.UserName, nc.Password));
 				}
 			}
-			else if(type.Equals("ntlm"))
+			else if(String.Compare (type, "ntlm", StringComparison.InvariantCultureIgnoreCase) == 0)
 			{
 				if(!proxyCredentials)
 				{
@@ -350,7 +349,7 @@ namespace System.Net
 			
 			foreach(string k in Headers)
 			{	
-				if(k.ToLower().Equals("connection"))
+				if(String.Compare (k, "connection", StringComparison.InvariantCultureIgnoreCase) == 0)
 					continue;
 				string val = Headers[k];
 				val = (val == null) ? "" : val;
@@ -498,8 +497,8 @@ namespace System.Net
 		private void synchHeaders()
 		{
 			foreach(string k in Headers)
-			{	
-				if(k.ToLower().Equals("connection"))
+			{
+				if (String.Compare (k, "connection", StringComparison.InvariantCultureIgnoreCase) == 0)
 					continue;
 				string val = Headers[k];
 				val = (val == null) ? "" : val;

@@ -122,12 +122,11 @@ namespace System.Net
 				string contentType = ContentType;
 				if (contentType == null)
 					return "ISO-8859-1";
-				string val = contentType.ToLower (); 					
-				int pos = val.IndexOf ("charset=");
+				int pos = contentType.IndexOf ("charset=", StringComparison.InvariantCultureIgnoreCase);
 				if (pos == -1)
 					return "ISO-8859-1";
 				pos += 8;
-				int pos2 = val.IndexOf (';', pos);
+				int pos2 = contentType.IndexOf (';', pos);
 				return (pos2 == -1)
 					? contentType.Substring (pos) 
 					: contentType.Substring (pos, pos2 - pos);
