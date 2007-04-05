@@ -382,6 +382,9 @@ namespace System.Web.J2EE
 			if (_assembly == null)
 			{
 				string typeName = GetCachedTypeName();
+#if DEBUG
+				Console.WriteLine ("Loading type:" + typeName);
+#endif
 				if (typeName != null)
 				{
 					if ((_type = Type.GetType(typeName)) != null)
@@ -548,7 +551,7 @@ namespace System.Web.J2EE
 
 			string id = GetIdFromUrl(_url);
 			string[] descName = new string[3] {fileName, id, ".xml"} ;
-			return string.Concat(descName).ToLower();
+			return string.Concat(descName).ToLowerInvariant();
 		}
 
 		private string GetIdFromUrl(string path)
