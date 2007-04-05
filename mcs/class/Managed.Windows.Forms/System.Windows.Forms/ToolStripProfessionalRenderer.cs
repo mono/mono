@@ -30,6 +30,7 @@
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 
 namespace System.Windows.Forms
 {
@@ -235,7 +236,26 @@ namespace System.Windows.Forms
 		{
 			base.OnRenderItemImage (e);
 
-			e.Graphics.DrawImage (e.Image, e.ImageRectangle);
+			bool need_dispose = false;
+			Image i = e.Image;
+			
+			if (e.Item.RightToLeft == RightToLeft.Yes && e.Item.RightToLeftAutoMirrorImage == true) {
+				i = CreateMirrorImage (i);
+				need_dispose = true;
+			}
+				
+			
+			if (e.Item.ImageTransparentColor != Color.Empty) {
+				ImageAttributes ia = new ImageAttributes ();
+				ia.SetColorKey (e.Item.ImageTransparentColor, e.Item.ImageTransparentColor);
+				e.Graphics.DrawImage (i, e.ImageRectangle, 0, 0, i.Width, i.Height, GraphicsUnit.Pixel, ia);
+				ia.Dispose ();
+			}
+			else
+				e.Graphics.DrawImage (i, e.ImageRectangle);
+			
+			if (need_dispose)
+				i.Dispose ();
 		}
 
 		protected override void OnRenderItemText (ToolStripItemTextRenderEventArgs e)

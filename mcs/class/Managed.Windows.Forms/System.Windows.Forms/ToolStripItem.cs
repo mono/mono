@@ -510,7 +510,6 @@ namespace System.Windows.Forms
 		}
 
 		[Localizable (true)]
-		[MonoTODO ("Stub, doesn't actually do anything yet.")]
 		public Color ImageTransparentColor {
 			get { return this.image_transparent_color; }
 			set { this.image_transparent_color = value; }

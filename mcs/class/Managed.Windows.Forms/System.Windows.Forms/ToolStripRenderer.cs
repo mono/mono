@@ -71,6 +71,17 @@ namespace System.Windows.Forms
 			return b;
 		}
 
+		public static Image CreateMirrorImage (Image normalImage)
+		{
+			if (normalImage == null)
+				return null;
+				
+			Bitmap b = new Bitmap (normalImage);
+			b.RotateFlip (RotateFlipType.RotateNoneFlipX);
+			
+			return b;
+		}
+		
 		public void DrawArrow (ToolStripArrowRenderEventArgs e)
 		{ this.OnRenderArrow (e); }
 		

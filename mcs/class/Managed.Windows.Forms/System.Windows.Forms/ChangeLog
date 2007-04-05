@@ -1,5 +1,12 @@
 2007-04-05  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ToolStripRenderer.cs: Add static method to mirror image.
+	* ToolStripProfessionalRenderer.cs: Support ImageTransparentColor
+	and RightToLeftAutoMirrorImage.
+	* ToolStripItem.cs: Remove MonoTODO from ImageTransparentColor.
+
+2007-04-05  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ToolStripSplitStackLayout.cs: Support Alignment property.
 	* ToolStripItem.cs: Remove MonoTODO from the Alignment property.
 
