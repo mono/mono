@@ -1,3 +1,8 @@
+2007-04-05  Dick Porter  <dick@ximian.com>
+
+	* Directory.cs: Pass combined path and pattern to
+	MonoIO.GetFileSystemEntries()
+
 2007-04-03  Alp Toker  <alp@atoker.com>
 
 	* UnmanagedMemoryStream.cs: Should not have a public Dispose().
