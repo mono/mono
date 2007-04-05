@@ -49,7 +49,7 @@ namespace System.Web.Configuration {
 
 		public override object ConvertFrom (ITypeDescriptorContext ctx, CultureInfo ci, object data)
 		{
-			return ((string)data).ToLower ();
+			return ((string)data).ToLowerInvariant ();
 		}
 
 		public override object ConvertTo (ITypeDescriptorContext ctx, CultureInfo ci, object value, Type type)
@@ -60,7 +60,7 @@ namespace System.Web.Configuration {
 			if (! (value is string))
 				throw new ArgumentException ("value");
 
-			return ((string)value).ToLower ();
+			return ((string)value).ToLowerInvariant ();
 		}
 	}
 }
