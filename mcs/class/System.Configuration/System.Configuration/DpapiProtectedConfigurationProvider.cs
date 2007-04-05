@@ -60,7 +60,7 @@ it is suggested that you use the RsaProtectedConfigurationProvider.");
 			string flag;
 
 			flag = configurationValues ["useMachineProtection"];
-			if (flag != null && flag.ToLower() == "true")
+			if (flag != null && flag.ToLowerInvariant () == "true")
 				useMachineProtection = true;
 		}
 

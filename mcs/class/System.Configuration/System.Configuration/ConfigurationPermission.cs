@@ -58,7 +58,7 @@ namespace System.Configuration {
 
                         string unrestricted = securityElement.Attribute ("Unrestricted");
                         if (unrestricted != null) {
-                                this.unrestricted = (String.Compare (unrestricted, "true", true) == 0);
+                                this.unrestricted = (String.Compare (unrestricted, "true", StringComparison.InvariantCultureIgnoreCase) == 0);
                         }
 		}
 

@@ -297,7 +297,7 @@ namespace System.Configuration
 						LockElements.SetFromList (reader.Value);
 					}
 					else if (reader.LocalName == "lockItem") {
-						LockItem = (reader.Value.ToLower() == "true");
+						LockItem = (reader.Value.ToLowerInvariant () == "true");
 					}
 					else if (reader.LocalName == "xmlns") {
 						/* ignore */
