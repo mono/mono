@@ -2622,6 +2622,9 @@ namespace System.Windows.Forms {
 			LineTag	last;
 			int	shift;
 
+			// strip the ending off of the first lines text
+			first.text.Length = first.text.Length - LineEndingLength (first.ending);
+
 			// Combine the two tag chains into one
 			last = first.tags;
 

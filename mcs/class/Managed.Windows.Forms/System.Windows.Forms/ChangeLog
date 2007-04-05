@@ -2,6 +2,7 @@
 
 	* TextControl.cs: Move around the line endings when crossing line
 	boundaries.
+	- When combining lines, strip the ending text off the first line.
 
 2007-04-05  Jackson Harper  <jackson@ximian.com>
 
