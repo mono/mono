@@ -111,7 +111,7 @@ namespace System.Web.UI
 
 		public string CreateActionUrl (string url)
 		{
-			if (url.StartsWith(RenderPageMark) || url.StartsWith(ActionPageMark))
+			if (url.StartsWith (RenderPageMark, StringComparison.Ordinal) || url.StartsWith (ActionPageMark, StringComparison.Ordinal))
 				return url;
 
 			if (RenderResponse != null)
@@ -132,7 +132,7 @@ namespace System.Web.UI
 			Uri reqUrl = Request.Url;
 			string appPath = Request.ApplicationPath;
 			string currPage = Request.CurrentExecutionFilePath;
-			if (currPage.StartsWith (appPath))
+			if (currPage.StartsWith (appPath, StringComparison.InvariantCultureIgnoreCase))
 				currPage = currPage.Substring (appPath.Length);
 			return PortletInternalUtils.mapPathIfInternal (url, reqUrl.Host, reqUrl.Port, reqUrl.Scheme, appPath, currPage);
 		}

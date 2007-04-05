@@ -725,7 +725,7 @@ public partial class Page : TemplateControl, IHttpHandler
 		if (culture == null)
 			return deflt;
 		CultureInfo ret = null;
-		if (culture.StartsWith ("auto")) {
+		if (culture.StartsWith ("auto", StringComparison.InvariantCultureIgnoreCase)) {
 			string[] languages = Request.UserLanguages;
 			try {
 				if (languages != null && languages.Length > 0)

@@ -749,7 +749,7 @@ return true;
 #if NET_2_0
 		// helper method
 		internal static string EnsureEndsWithSemicolon (string value) {
-			if (value != null && value.Length > 0 && !value.EndsWith (";"))
+			if (value != null && value.Length > 0 && value [value.Length - 1] != ';')
 				return value += ";";
 			return value;
 		}

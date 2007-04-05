@@ -1787,7 +1787,7 @@ namespace System.Web.UI.WebControls
 
 			string keyPrefix = ClientID + "_cs_";
 			foreach (string key in states) {
-				if (key.StartsWith (keyPrefix)) {
+				if (key.StartsWith (keyPrefix, StringComparison.Ordinal)) {
 					string id = key.Substring (keyPrefix.Length);
 					TreeNode node = FindNodeByPos (id);
 					if (node != null && !node.Checked)
