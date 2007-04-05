@@ -28,6 +28,7 @@
 //
 
 using System.ComponentModel.Design.Serialization;
+using System.Globalization;
 
 namespace System.Collections.Specialized {
 
@@ -67,7 +68,7 @@ namespace System.Collections.Specialized {
 			if (key == null)
 				throw new ArgumentNullException ("key");
 #endif
-				return (string) table[key.ToLower()];
+			return (string) table [key.ToLower (CultureInfo.InvariantCulture)];
 			}
 			
 			set {
@@ -75,7 +76,7 @@ namespace System.Collections.Specialized {
 			if (key == null)
 				throw new ArgumentNullException ("key");
 #endif
-				table[key.ToLower()] = value;
+				table[key.ToLower(CultureInfo.InvariantCulture)] = value;
 			}
 		}
 		
@@ -108,7 +109,7 @@ namespace System.Collections.Specialized {
 			if (key == null)
 				throw new ArgumentNullException ("key");
 #endif
-			table.Add(key.ToLower(), value);
+			table.Add (key.ToLower (CultureInfo.InvariantCulture), value);
 		}
 		
 		public virtual void Clear()
@@ -122,7 +123,7 @@ namespace System.Collections.Specialized {
 			if (key == null)
 				throw new ArgumentNullException ("key");
 #endif
-			return table.ContainsKey(key.ToLower());
+			return table.ContainsKey (key.ToLower (CultureInfo.InvariantCulture));
 		}
 		
 		public virtual bool ContainsValue(string value)
@@ -146,7 +147,7 @@ namespace System.Collections.Specialized {
 			if (key == null)
 				throw new ArgumentNullException ("key");
 #endif
-			table.Remove(key.ToLower());
+			table.Remove (key.ToLower (CultureInfo.InvariantCulture));
 		}
 	}
 }

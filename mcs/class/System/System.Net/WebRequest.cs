@@ -32,6 +32,7 @@ using System.Collections.Specialized;
 using System.Configuration;
 using System.IO;
 using System.Runtime.Serialization;
+using System.Globalization;
 #if NET_2_0
 using System.Net.Configuration;
 #endif
@@ -262,7 +263,7 @@ namespace System.Net
 				throw new ArgumentNullException("creator");			
 			
 			lock (prefixes.SyncRoot) {
-				string lowerCasePrefix = prefix.ToLower ();
+				string lowerCasePrefix = prefix.ToLower (CultureInfo.InvariantCulture);
 				if (prefixes.Contains (lowerCasePrefix))
 					return false;
 				prefixes.Add (lowerCasePrefix, creator);
@@ -275,7 +276,7 @@ namespace System.Net
 			int longestPrefix = -1;
 			IWebRequestCreate creator = null;
 
-			prefix = prefix.ToLower ();
+			prefix = prefix.ToLower (CultureInfo.InvariantCulture);
 
 			IDictionaryEnumerator e = prefixes.GetEnumerator ();
 			while (e.MoveNext ()) {

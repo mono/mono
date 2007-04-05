@@ -32,6 +32,7 @@
 using System;
 using System.Text;
 using System.Globalization;
+using System.Collections;
 
 namespace System.Net {
 
@@ -235,10 +236,10 @@ namespace System.Net {
 
 		public override int GetHashCode ()
 		{
-			return hash(name.ToLower ().GetHashCode (),
+			return hash(CaseInsensitiveHashCodeProvider.DefaultInvariant.GetHashCode(name),
 			            val.GetHashCode (),
 			            Path.GetHashCode (),
-			            domain.ToLower ().GetHashCode (),
+	                            CaseInsensitiveHashCodeProvider.DefaultInvariant.GetHashCode (domain),
 			            version);
 		}
 
