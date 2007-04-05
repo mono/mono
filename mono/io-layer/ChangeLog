@@ -1,3 +1,14 @@
+2007-04-05  Dick Porter  <dick@ximian.com>
+
+	* io.c:
+	* io-portability.c (_wapi_io_scandir): Moved from io.c, and
+	changed to use a cut-down version of glob(3) that has been
+	extended to match with case-insensitivity if needed.
+
+	* wapi_glob.h:
+	* wapi_glob.c: Cut down implementation of glob(3), based on
+	OpenBSD.
+
 2007-03-22  Dick Porter  <dick@ximian.com>
 
 	* sockets.c (_wapi_connect): Do additional checks when connect(2)
