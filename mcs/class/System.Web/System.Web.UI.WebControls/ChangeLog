@@ -1,3 +1,9 @@
+2007-04-05  Marek Habersack  <mhabersack@novell.com>
+
+	* SiteMapDataSource.cs: fix GetStartNode for situations when the
+	current URL is not defined in the sitemap file. Fixes bug
+	#81314. Patch from Mike Morano <mmorano@mikeandwan.us>.
+
 2007-04-03  Marek Habersack  <mhabersack@novell.com>
 
 	* BaseDataBoundControl.cs: adjust for lame specs on MSDN.

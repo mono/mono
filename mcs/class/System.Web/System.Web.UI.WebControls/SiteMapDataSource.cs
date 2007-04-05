@@ -182,22 +182,22 @@ namespace System.Web.UI.WebControls
 			if (viewPath != null && viewPath.Length != 0) {
 				string url = MapUrl (StartingNodeUrl);
 				return Provider.FindSiteMapNode (url);
-			}
-			else if (StartFromCurrentNode) {
+			} else if (StartFromCurrentNode) {
 				if (StartingNodeUrl.Length != 0)
 					throw new InvalidOperationException ("StartingNodeUrl can't be set if StartFromCurrentNode is set to true.");
 				starting_node = Provider.CurrentNode;
-			}
-			else if (StartingNodeUrl.Length != 0) {
+			} else if (StartingNodeUrl.Length != 0) {
 				string url = MapUrl (StartingNodeUrl);
 				SiteMapNode node = Provider.FindSiteMapNode (url);
 				if (node == null) throw new ArgumentException ("Can't find a site map node for the url: " + StartingNodeUrl);
 
 				starting_node = node;
-			}
-			else
+			} else
 				starting_node = Provider.RootNode;
 
+			if (starting_node == null)
+				return Provider.RootNode;
+			
 			int i;
 			if (StartingNodeOffset < 0) {
 				for (i = StartingNodeOffset; i < 0; i ++) {
@@ -205,8 +205,7 @@ namespace System.Web.UI.WebControls
 						break;
 					starting_node = starting_node.ParentNode;
 				}
-			}
-			else if (StartingNodeOffset > 0) {
+			} else if (StartingNodeOffset > 0) {
 				List<SiteMapNode> pathCurrentToStartingNode = new List<SiteMapNode> ();
 				SiteMapNode tmpNode = Provider.CurrentNode;
 				while (tmpNode != null && tmpNode != starting_node) {
