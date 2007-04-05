@@ -1,5 +1,10 @@
 2007-04-05  Jackson Harper  <jackson@ximian.com>
 
+	* TextControl.cs: Move around the line endings when crossing line
+	boundaries.
+
+2007-04-05  Jackson Harper  <jackson@ximian.com>
+
 	* TextControl.cs:
 	* TextBoxBase.cs: Try to never move the cursor into the line
 	ending.

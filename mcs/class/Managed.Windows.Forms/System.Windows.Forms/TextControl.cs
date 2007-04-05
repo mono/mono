@@ -1670,7 +1670,7 @@ namespace System.Windows.Forms {
 					goto case CaretDirection.CharForward;
 				case CaretDirection.CharForward: {
 					caret.pos++;
-					if (caret.pos > caret.line.text.Length) {
+					if (caret.pos > caret.line.TextLengthWithoutEnding ()) {
 						if (!nowrap) {
 							// Go into next line
 							if (caret.line.line_no < this.lines) {
@@ -1708,7 +1708,7 @@ namespace System.Windows.Forms {
 					} else {
 						if (caret.line.line_no > 1 && !nowrap) {
 							caret.line = GetLine(caret.line.line_no - 1);
-							caret.pos = caret.line.text.Length;
+							caret.pos = caret.line.TextLengthWithoutEnding ();
 							caret.tag = LineTag.FindTag(caret.line, caret.pos);
 						}
 					}
