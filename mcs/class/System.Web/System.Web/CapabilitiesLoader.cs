@@ -206,8 +206,31 @@ namespace System.Web
 		static CapabilitiesLoader ()
 		{
 			defaultCaps = new Hashtable ();
+			defaultCaps.Add ("activexcontrols", "False");
+			defaultCaps.Add ("aol", "False");
+			defaultCaps.Add ("backgroundsounds", "False");
+			defaultCaps.Add ("beta", "False");
+			defaultCaps.Add ("browser", "Unknown");
+#if NET_2_0
+			defaultCaps.Add ("browsers", new ArrayList ());
+#endif
+			defaultCaps.Add ("cdf", "False");
+			defaultCaps.Add ("cookies", "False");
+			defaultCaps.Add ("crawler", "False");
+			defaultCaps.Add ("ecmascriptversion", "0.0");
 			defaultCaps.Add ("frames", "True");
+			defaultCaps.Add ("javaapplets", "False");
+			defaultCaps.Add ("javascript", "False");
+			defaultCaps.Add ("majorver", "0");
+			defaultCaps.Add ("minorver", "0");
+			defaultCaps.Add ("msdomversion", "0.0");
+			defaultCaps.Add ("platform", "Unknown");
 			defaultCaps.Add ("tables", "True");
+			defaultCaps.Add ("vbscript", "False");
+			defaultCaps.Add ("version", "0.0");
+			defaultCaps.Add ("w3cdomversion", "0.0");
+			defaultCaps.Add ("win16", "False");
+			defaultCaps.Add ("win32", "False");
 		}
 			
 		public static Hashtable GetCapabilities (string userAgent)

@@ -1,9 +1,16 @@
+2007-04-05  Marek Habersack  <mhabersack@novell.com>
+
+	* CapabilitiesLoader.cs: add a full default set of capabilities
+	for cases when browscap.ini is broken, missing or doesn't contain
+	definition for the client's User-Agent. Makes it possible to surf
+	asp.net sites from unsupported clients.
+
 2007-04-04 Juraj Skripsky <js@hotfeet.ch>
 
-   * HttpApplicationFactory.cs: Make sure an web application is shutdown
-   only once (and Application_End in global.asax is called only once as well).
-   This is necessary because FileSystemWatcher emits multiple events when
-   e.g. global.asax is changed.
+	* HttpApplicationFactory.cs: Make sure an web application is
+	shutdown only once (and Application_End in global.asax is called
+	only once as well). This is necessary because FileSystemWatcher
+	emits multiple events when e.g. global.asax is changed.
 
 2007-04-01  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
