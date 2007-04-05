@@ -104,11 +104,6 @@ namespace System.Web.Hosting {
 				throw new ArgumentNullException ("virtualDir");
 
 			Evidence evidence = new Evidence (AppDomain.CurrentDomain.Evidence);
-
-			// 
-			// Unique Domain ID
-			//
-			string domain_id = (virtualDir + physicalDir).GetHashCode ().ToString ("x");
 			
 			//
 			// Setup
@@ -118,7 +113,6 @@ namespace System.Web.Hosting {
 			setup.ApplicationBase = physicalDir;
 
 			setup.CachePath = null;
-			setup.ApplicationName = domain_id;
 			setup.ConfigurationFile = FindWebConfig (physicalDir);
 			setup.DisallowCodeDownload = true;
 			string bin_path = GetBinPath (physicalDir);
@@ -129,6 +123,8 @@ namespace System.Web.Hosting {
 
 			string dynamic_dir = null;
 			string user = Environment.UserName;
+			int tempDirTag = 0;
+			
 			for (int i = 0; ; i++){
 				string d = Path.Combine (Path.GetTempPath (),
 					String.Format ("{0}-temp-aspnet-{1:x}", user, i));
@@ -139,11 +135,18 @@ namespace System.Web.Hosting {
 					CreateDirectory (stamp);
 					dynamic_dir = d;
 					Directory.Delete (stamp);
+					tempDirTag = i.GetHashCode ();
 					break;
 				} catch (UnauthorizedAccessException){
 					continue;
 				}
 			}
+			// 
+			// Unique Domain ID
+			//
+			string domain_id = (virtualDir.GetHashCode () ^ physicalDir.GetHashCode () ^ tempDirTag).ToString ("x");
+
+			setup.ApplicationName = domain_id;
 			setup.DynamicBase = dynamic_dir;
 			CreateDirectory (setup.DynamicBase);
 

@@ -1,3 +1,8 @@
+2007-04-05  Marek Habersack  <mhabersack@novell.com>
+
+	* ApplicationHost.cs: make ApplicationName/domain id really
+	unique.
+
 2007-02-21  Marek Habersack  <grendello@gmail.com>
 
 	* ApplicationHost.cs: support both Bin and bin directories, prefer
