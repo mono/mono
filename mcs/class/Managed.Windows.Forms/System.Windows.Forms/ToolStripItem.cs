@@ -77,6 +77,7 @@ namespace System.Windows.Forms
 		private Padding padding;
 		private ToolStripItemPlacement placement;
 		private RightToLeft right_to_left;
+		private bool right_to_left_auto_mirror_image;
 		private Object tag;
 		private string text;
 		private ContentAlignment text_align;
@@ -606,6 +607,17 @@ namespace System.Windows.Forms
 			set { this.right_to_left = value; }
 		}
 		
+		[Localizable (true)]
+		public bool RightToLeftAutoMirrorImage {
+			get { return this.right_to_left_auto_mirror_image; }
+			set { 
+				if (this.right_to_left_auto_mirror_image != value) {
+					this.right_to_left_auto_mirror_image = value;
+					this.Invalidate ();
+				}
+			}
+		}
+		
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public virtual bool Selected { get { return this.is_selected; } }
@@ -1031,6 +1043,18 @@ namespace System.Windows.Forms
 		{
 		}
 	
+		protected internal virtual void OnParentRightToLeftChanged (EventArgs e)
+		{
+			this.OnRightToLeftChanged (e);
+		}
+		
+		protected virtual void OnRightToLeftChanged (EventArgs e)
+		{
+			EventHandler eh = (EventHandler)(Events[RightToLeftChangedEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
+		
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected virtual void OnTextChanged (EventArgs e)
 		{
@@ -1084,6 +1108,7 @@ namespace System.Windows.Forms
 		static object MouseUpEvent = new object ();
 		static object OwnerChangedEvent = new object ();
 		static object PaintEvent = new object ();
+		static object RightToLeftChangedEvent = new object ();
 		static object TextChangedEvent = new object ();
 		static object VisibleChangedEvent = new object ();
 
@@ -1168,6 +1193,11 @@ namespace System.Windows.Forms
 			remove {Events.RemoveHandler (PaintEvent, value); }
 		}
 
+		public event EventHandler RightToLeftChanged {
+			add { Events.AddHandler (RightToLeftChangedEvent, value); }
+			remove { Events.RemoveHandler (RightToLeftChangedEvent, value); }
+		}
+		
 		public event EventHandler TextChanged {
 			add { Events.AddHandler (TextChangedEvent, value); }
 			remove {Events.RemoveHandler (TextChangedEvent, value); }
@@ -1428,6 +1458,10 @@ namespace System.Windows.Forms
 		
 		internal void FireEvent (EventArgs e, ToolStripItemEventType met)
 		{
+			// If we're disabled, don't fire any of these events, except Paint
+			if (!this.Enabled && met != ToolStripItemEventType.Paint)
+				return;
+				
 			switch (met) {
 				case ToolStripItemEventType.MouseUp:
 					this.OnMouseUp ((MouseEventArgs)e);

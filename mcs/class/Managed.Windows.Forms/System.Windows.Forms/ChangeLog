@@ -1,3 +1,8 @@
+2007-04-04  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStripItem.cs: Make sure we aren't firing mouse events when
+	the item is disabled.  Also add a few missing methods.
+
 2007-04-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: We don't need the MouseEnter/MouseLeave check
