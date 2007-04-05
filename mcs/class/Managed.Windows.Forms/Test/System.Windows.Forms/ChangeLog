@@ -1,3 +1,7 @@
+2007-04-05  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TreeViewTest.cs: Added NotWorking test for bug #81319.
+
 2007-04-03  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* ControlTest.cs: Ignore EventStyleTest (can't find a reliable way to

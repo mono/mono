@@ -362,6 +362,99 @@ namespace MonoTests.System.Windows.Forms
 		}
 	}
 
+	[TestFixture]
+	public class AfterSelectEvent
+	{
+		[SetUp]
+		public void SetUp ()
+		{
+			afterSelect = 0;
+		}
+
+		[Test] // bug #81319
+		[Category ("NotWorking")]
+		public void SelectedNode_Created ()
+		{
+			TreeView tv = new TreeView ();
+			tv.AfterSelect += new TreeViewEventHandler (TreeView_AfterSelect);
+			TreeNode one = new TreeNode ("one");
+			TreeNode two = new TreeNode ("two");
+
+			tv.Nodes.Add (one);
+			tv.Nodes.Add (two);
+
+			Form form = new Form ();
+			form.ShowInTaskbar = false;
+			form.Controls.Add (tv);
+			form.Show ();
+
+			Assert.IsNotNull (tv.SelectedNode, "#A1");
+			Assert.AreSame (one, tv.SelectedNode, "#A2");
+			Assert.IsTrue (one.IsSelected, "#A3");
+			Assert.IsFalse (two.IsSelected, "#A4");
+			Assert.AreEqual (1, afterSelect, "#A5");
+
+			tv.SelectedNode = null;
+			Assert.IsNull (tv.SelectedNode, "#C1");
+			Assert.IsFalse (one.IsSelected, "#C2");
+			Assert.IsFalse (two.IsSelected, "#C3");
+			Assert.AreEqual (1, afterSelect, "#C4");
+
+			tv.SelectedNode = two;
+			Assert.IsNotNull (tv.SelectedNode, "#D1");
+			Assert.AreSame (two, tv.SelectedNode, "#D2");
+			Assert.IsFalse (one.IsSelected, "#D3");
+			Assert.IsTrue (two.IsSelected, "#D4");
+			Assert.AreEqual (2, afterSelect, "#D5");
+
+			form.Dispose ();
+		}
+
+		[Test]
+		public void SelectedNode_NotCreated ()
+		{
+			TreeView tv = new TreeView ();
+			tv.AfterSelect += new TreeViewEventHandler (TreeView_AfterSelect);
+			TreeNode one = new TreeNode ("one");
+			TreeNode two = new TreeNode ("two");
+
+			tv.Nodes.Add (one);
+			tv.Nodes.Add (two);
+
+			Assert.IsNull (tv.SelectedNode, "#A1");
+			Assert.IsFalse (one.IsSelected, "#A2");
+			Assert.IsFalse (two.IsSelected, "#A3");
+			Assert.AreEqual (0, afterSelect, "#A4");
+
+			tv.SelectedNode = two;
+			Assert.IsNotNull (tv.SelectedNode, "#B1");
+			Assert.AreSame (two, tv.SelectedNode, "#B2");
+			Assert.IsFalse (one.IsSelected, "#B3");
+			Assert.IsFalse (two.IsSelected, "#B4");
+			Assert.AreEqual (0, afterSelect, "#B5");
+
+			tv.SelectedNode = null;
+			Assert.IsNull (tv.SelectedNode, "#C1");
+			Assert.IsFalse (one.IsSelected, "#C2");
+			Assert.IsFalse (two.IsSelected, "#C3");
+			Assert.AreEqual (0, afterSelect, "#C4");
+
+			tv.SelectedNode = one;
+			Assert.IsNotNull (tv.SelectedNode, "#D1");
+			Assert.AreSame (one, tv.SelectedNode, "#D2");
+			Assert.IsFalse (one.IsSelected, "#D3");
+			Assert.IsFalse (two.IsSelected, "#D4");
+			Assert.AreEqual (0, afterSelect, "#D5");
+		}
+
+		void TreeView_AfterSelect (object sender, TreeViewEventArgs e)
+		{
+			afterSelect++;
+		}
+
+		int afterSelect;
+	}
+
 #if NET_2_0
 	[TestFixture]
 	public class TreeViewNodeSorterTest {
