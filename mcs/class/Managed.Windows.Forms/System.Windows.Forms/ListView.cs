@@ -1897,10 +1897,9 @@ namespace System.Windows.Forms
 
 			private void ItemsMouseDown (object sender, MouseEventArgs me)
 			{
-				if (owner.items.Count == 0) {
-					owner.OnMouseDown (owner.TranslateMouseEventArgs (me));
+				owner.OnMouseDown (owner.TranslateMouseEventArgs (me));
+				if (owner.items.Count == 0)
 					return;
-				}
 
 				bool box_selecting = false;
 				Size item_size = owner.ItemSize;
@@ -1913,7 +1912,6 @@ namespace System.Windows.Forms
 					if (me.Clicks == 1 && owner.items [i].CheckRectReal.Contains (pt)) {
 						checking = true;
 						ToggleCheckState (owner.items [i]);
-						owner.OnMouseDown (owner.TranslateMouseEventArgs (me));
 						return;
 					}
 
@@ -1976,8 +1974,6 @@ namespace System.Windows.Forms
 					box_select_start = pt; 
 					prev_selection = owner.SelectedIndices.List;
 				}
-
-				owner.OnMouseDown (owner.TranslateMouseEventArgs (me));
 			}
 
 			private void ItemsMouseMove (object sender, MouseEventArgs me)

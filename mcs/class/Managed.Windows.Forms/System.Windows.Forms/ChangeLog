@@ -1,3 +1,8 @@
+2007-04-05  Mike Kestner  <mkestner@novell.com>
+
+	* ListView.cs : raise MouseDown before updating selection.
+	[Fixes #80373 tab 1&3]
+
 2007-04-05  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStripRenderer.cs: Add static method to mirror image.
