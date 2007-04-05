@@ -72,7 +72,7 @@ namespace System.Web.UI.WebControls
 
 		Hashtable _menuItemControls;
 		bool _requiresChildControlsDataBinding;
-
+		SiteMapNode _currSiteMapNode;
 		int registeredStylesCounter = -1;
 		List<Style> levelSelectedLinkStyles;
 		List<Style> levelMenuItemLinkStyles;
@@ -865,6 +865,15 @@ namespace System.Web.UI.WebControls
 				MenuItem item = new MenuItem ();
 				itemCollection.Add (item);
 				item.Bind (hdata);
+
+				SiteMapNode siteMapNode = hdata as SiteMapNode;
+				if (siteMapNode != null) {
+					if (_currSiteMapNode == null)
+						_currSiteMapNode = siteMapNode.Provider.CurrentNode;
+					if (siteMapNode == _currSiteMapNode)
+						item.Selected = true;
+				}
+				
 				OnMenuItemDataBound (new MenuEventArgs (item));
 
 				if (hdata == null || !hdata.HasChildren)
