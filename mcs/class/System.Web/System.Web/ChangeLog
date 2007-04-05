@@ -1,3 +1,8 @@
+2007-04-05 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* XmlSiteMapProvider.cs: 
+	custom attributes of siteMapNode are loaded properly.
+
 2007-04-05  Marek Habersack  <mhabersack@novell.com>
 
 	* CapabilitiesLoader.cs: add a full default set of capabilities

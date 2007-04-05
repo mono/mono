@@ -232,7 +232,10 @@ namespace System.Web
 				if (EnableLocalization)
 					CollectLocalizationInfo (xmlNode, ref title, ref description, ref attributes,
 								 ref explicitResourceKeys);
-				
+				else
+					foreach (XmlNode att in xmlNode.Attributes)
+						PutInCollection (att.Name, att.Value, ref attributes);
+
 				string key = Guid.NewGuid ().ToString ();
 				SiteMapNode node = new SiteMapNode (this, key, url, title, description,
 								    ArrayList.ReadOnly (rolesList),
