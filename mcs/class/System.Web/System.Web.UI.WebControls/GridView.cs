@@ -1445,6 +1445,9 @@ namespace System.Web.UI.WebControls
 			
 			for (int n=0; n<fields.Length; n++) {
 				DataControlField field = fields [n];
+				if (!field.Visible)
+					continue;
+				
 				DataControlFieldCell cell;
 				if (((field is BoundField) && ((BoundField)field).DataField == RowHeaderColumn) || accessibleHeader)
 					cell = new DataControlFieldHeaderCell (field, accessibleHeader ? TableHeaderScope.Column : TableHeaderScope.Row);
