@@ -38,6 +38,7 @@ using System.Data.ProviderBase;
 
 using java.sql;
 using java.lang;
+using System.Globalization;
 
 namespace System.Data.OleDb
 {
@@ -207,19 +208,19 @@ namespace System.Data.OleDb
 			// FIXME : is that correct?
 			if (jdbcType == Types.OTHER) {
 				string typeName = res.getString("TYPE_NAME");
-				if (String.Compare("BLOB",typeName,true) == 0) {
+				if (String.Compare ("BLOB", typeName, true, CultureInfo.InvariantCulture) == 0) {
 					jdbcType = Types.BLOB;
 				}
-				else if (String.Compare("CLOB",typeName,true) == 0) {
+				else if (String.Compare ("CLOB", typeName, true, CultureInfo.InvariantCulture) == 0) {
 					jdbcType = Types.CLOB;
 				}
-				else if(String.Compare("FLOAT",typeName,true) == 0) {
+				else if (String.Compare ("FLOAT", typeName, true, CultureInfo.InvariantCulture) == 0) {
 					jdbcType = Types.FLOAT;
 				}
-				else if(String.Compare("NVARCHAR2",typeName,true) == 0) {
+				else if (String.Compare ("NVARCHAR2", typeName, true, CultureInfo.InvariantCulture) == 0) {
 					jdbcType = Types.VARCHAR;
 				}
-				else if(String.Compare("NCHAR",typeName,true) == 0) {
+				else if (String.Compare ("NCHAR", typeName, true, CultureInfo.InvariantCulture) == 0) {
 					jdbcType = Types.VARCHAR;
 				}
 			}

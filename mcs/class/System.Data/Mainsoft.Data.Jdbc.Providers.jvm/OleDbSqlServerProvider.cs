@@ -37,6 +37,7 @@ using System.Data.ProviderBase;
 using Mainsoft.Data.Configuration;
 
 using java.net;
+using System.Globalization;
 
 namespace Mainsoft.Data.Jdbc.Providers
 {
@@ -130,7 +131,7 @@ namespace Mainsoft.Data.Jdbc.Providers
 				while (st.hasMoreTokens()) {
 					if (!instanceReached) {
 						if (prev.Trim().Equals("InstanceName")) {
-							if (String.Compare(instanceName,st.nextToken().Trim(),true) == 0) {
+							if (String.Compare(instanceName,st.nextToken().Trim(),true, CultureInfo.InvariantCulture) == 0) {
 								instanceReached = true;
 							}
 						}
@@ -377,7 +378,7 @@ namespace Mainsoft.Data.Jdbc.Providers
 			if (dataSource != null && dataSource.StartsWith ("(") && dataSource.EndsWith (")"))					
 				dataSource = dataSource.Substring (1,dataSource.Length - 2);
 
-			if (String.Empty.Equals (dataSource) || (String.Compare ("local",dataSource,true) == 0) || (String.CompareOrdinal(".", dataSource) == 0)) 
+			if (String.Empty.Equals (dataSource) || (String.Compare ("local", dataSource, true, CultureInfo.InvariantCulture) == 0) || (String.CompareOrdinal (".", dataSource) == 0)) 
 				dataSource = "localhost";
 
 			return dataSource;
