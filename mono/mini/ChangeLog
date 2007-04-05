@@ -1,3 +1,6 @@
+2007-04-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c: Fix disabling of AOT. Fixes #81316.
 
 Fri Mar 23 20:25:31 CET 2007 Paolo Molaro <lupus@ximian.com>
 
