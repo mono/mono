@@ -403,6 +403,7 @@
     <Compile Include="System.ComponentModel\BindableAttribute.cs" />
     <Compile Include="System.ComponentModel\BindableSupport.cs" />
     <Compile Include="System.ComponentModel\BindingDirection.cs" />
+    <Compile Include="System.ComponentModel\BindingList.cs" />
     <Compile Include="System.ComponentModel\BooleanConverter.cs" />
     <Compile Include="System.ComponentModel\BrowsableAttribute.cs" />
     <Compile Include="System.ComponentModel\ByteConverter.cs" />
@@ -458,6 +459,7 @@
     <Compile Include="System.ComponentModel\HandledEventHandler.cs" />
     <Compile Include="System.ComponentModel\IBindingList.cs" />
     <Compile Include="System.ComponentModel\IBindingListView.cs" />
+    <Compile Include="System.ComponentModel\ICancelAddNew.cs" />
     <Compile Include="System.ComponentModel\IChangeTracking.cs" />
     <Compile Include="System.ComponentModel\IComNativeDescriptorHandler.cs" />
     <Compile Include="System.ComponentModel\IComponent.cs" />
@@ -466,10 +468,14 @@
     <Compile Include="System.ComponentModel\IDataErrorInfo.cs" />
     <Compile Include="System.ComponentModel\IEditableObject.cs" />
     <Compile Include="System.ComponentModel\IExtenderProvider.cs" />
+    <Compile Include="System.ComponentModel\IIntellisenseBuilder.cs" />
     <Compile Include="System.ComponentModel\IListSource.cs" />
     <Compile Include="System.ComponentModel\ImmutableObjectAttribute.cs" />
+    <Compile Include="System.ComponentModel\INestedContainer.cs" />
+    <Compile Include="System.ComponentModel\INestedSite.cs" />
     <Compile Include="System.ComponentModel\InheritanceAttribute.cs" />
     <Compile Include="System.ComponentModel\InheritanceLevel.cs" />
+    <Compile Include="System.ComponentModel\InitializationEventAttribute.cs" />
     <Compile Include="System.ComponentModel\INotifyPropertyChanged.cs" />
     <Compile Include="System.ComponentModel\InstallerTypeAttribute.cs" />
     <Compile Include="System.ComponentModel\Int16Converter.cs" />
@@ -501,6 +507,7 @@
     <Compile Include="System.ComponentModel\ListSortDirection.cs" />
     <Compile Include="System.ComponentModel\LocalizableAttribute.cs" />
     <Compile Include="System.ComponentModel\MarshalByValueComponent.cs" />
+    <Compile Include="System.ComponentModel\MaskedTextProvider.cs" />
     <Compile Include="System.ComponentModel\MaskedTextResultHint.cs" />
     <Compile Include="System.ComponentModel\MemberDescriptor.cs" />
     <Compile Include="System.ComponentModel\MergablePropertyAttribute.cs" />
@@ -783,12 +790,15 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Net.Sockets\SocketFlags.cs" />
+    <Compile Include="System.Net.Sockets\SocketInformation.cs" />
+    <Compile Include="System.Net.Sockets\SocketInformationOptions.cs" />
     <Compile Include="System.Net.Sockets\SocketOptionLevel.cs" />
     <Compile Include="System.Net.Sockets\SocketOptionName.cs" />
     <Compile Include="System.Net.Sockets\SocketShutdown.cs" />
     <Compile Include="System.Net.Sockets\SocketType.cs" />
     <Compile Include="System.Net.Sockets\TcpClient.cs" />
     <Compile Include="System.Net.Sockets\TcpListener.cs" />
+    <Compile Include="System.Net.Sockets\TransmitFileOptions.cs" />
     <Compile Include="System.Net.Sockets\UdpClient.cs" />
     <Compile Include="System.Net\AuthenticationManager.cs" />
     <Compile Include="System.Net\AuthenticationSchemes.cs" />
