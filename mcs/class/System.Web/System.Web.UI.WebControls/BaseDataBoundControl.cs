@@ -107,21 +107,10 @@ namespace System.Web.UI.WebControls {
 				// to bind to, the DataBind method is called
 				// immediately. In this case, the
 				// RequiresDataBinding property is _not_ actually
-				// set to true.
-				//
-				// LAMESPEC, the docs quoted above mention that
-				// DataBind is called in the described
-				// case. This is wrong since that way we don't
-				// break recursion when the property is set from
-				// within the OnSelect handler in user's
-				// code. EnsureDataBound makes sure that no
-				// recursive binding is performed. Also the
-				// property DOES get set in this case (according
-				// to tests)
-				if (value && preRendered && IsBoundUsingDataSourceID && Page != null && !Page.IsCallback) {
-					requiresDataBinding = true;
-					EnsureDataBound ();
-				} else
+				// set to true. 
+				if (value && preRendered && IsBoundUsingDataSourceID && Page != null && !Page.IsCallback)
+					DataBind ();
+				else
 					requiresDataBinding = value;
 			}
 		}
