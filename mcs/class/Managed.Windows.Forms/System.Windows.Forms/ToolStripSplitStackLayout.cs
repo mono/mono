@@ -133,7 +133,8 @@ namespace System.Windows.Forms
 			}
 			
 			i = 0;
-			Point layout_pointer = new Point (ts.DisplayRectangle.Left, ts.DisplayRectangle.Top);
+			Point start_layout_pointer = new Point (ts.DisplayRectangle.Left, ts.DisplayRectangle.Top);
+			Point end_layout_pointer = new Point (ts.DisplayRectangle.Right, ts.DisplayRectangle.Top);
 			int button_height = ts.DisplayRectangle.Height;
 			
 			// Now we should know where everything goes, so lay everything out
@@ -141,8 +142,13 @@ namespace System.Windows.Forms
 				tsi.SetPlacement (placement[i]);
 				
 				if (placement[i] == ToolStripItemPlacement.Main) {
-					tsi.SetBounds (new Rectangle (layout_pointer.X + tsi.Margin.Left, layout_pointer.Y + tsi.Margin.Top, widths[i] - tsi.Margin.Horizontal, button_height - tsi.Margin.Vertical));
-					layout_pointer.X += widths[i];				
+					if (tsi.Alignment == ToolStripItemAlignment.Left) {
+						tsi.SetBounds (new Rectangle (start_layout_pointer.X + tsi.Margin.Left, start_layout_pointer.Y + tsi.Margin.Top, widths[i] - tsi.Margin.Horizontal, button_height - tsi.Margin.Vertical));
+						start_layout_pointer.X += widths[i];
+					} else {
+						tsi.SetBounds (new Rectangle (end_layout_pointer.X - tsi.Margin.Right - tsi.Width, end_layout_pointer.Y + tsi.Margin.Top, widths[i] - tsi.Margin.Horizontal, button_height - tsi.Margin.Vertical));
+						end_layout_pointer.X -= widths[i];
+					}			
 				}
 			
 				i++;
@@ -211,7 +217,8 @@ namespace System.Windows.Forms
 			}
 
 			i = 0;
-			Point layout_pointer = new Point (ts.DisplayRectangle.Left, ts.DisplayRectangle.Top);
+			Point start_layout_pointer = new Point (ts.DisplayRectangle.Left, ts.DisplayRectangle.Top);
+			Point end_layout_pointer = new Point (ts.DisplayRectangle.Left, ts.DisplayRectangle.Bottom);
 			int button_width = ts.DisplayRectangle.Width;
 
 			// Now we should know where everything goes, so lay everything out
@@ -219,8 +226,13 @@ namespace System.Windows.Forms
 				tsi.SetPlacement (placement[i]);
 
 				if (placement[i] == ToolStripItemPlacement.Main) {
-					tsi.SetBounds (new Rectangle (layout_pointer.X + tsi.Margin.Left, layout_pointer.Y + tsi.Margin.Top, button_width - tsi.Margin.Horizontal, heights[i] - tsi.Margin.Vertical));
-					layout_pointer.Y += heights[i];
+					if (tsi.Alignment == ToolStripItemAlignment.Left) {
+						tsi.SetBounds (new Rectangle (start_layout_pointer.X + tsi.Margin.Left, start_layout_pointer.Y + tsi.Margin.Top, button_width - tsi.Margin.Horizontal, heights[i] - tsi.Margin.Vertical));
+						start_layout_pointer.Y += heights[i];
+					} else {
+						tsi.SetBounds (new Rectangle (end_layout_pointer.X + tsi.Margin.Left, end_layout_pointer.Y - tsi.Margin.Bottom - tsi.Height, button_width - tsi.Margin.Horizontal, heights[i] - tsi.Margin.Vertical));
+						start_layout_pointer.Y += heights[i];
+					}
 				}
 
 				i++;

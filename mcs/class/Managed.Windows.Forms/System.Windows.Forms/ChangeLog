@@ -1,3 +1,8 @@
+2007-04-05  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStripSplitStackLayout.cs: Support Alignment property.
+	* ToolStripItem.cs: Remove MonoTODO from the Alignment property.
+
 2007-04-05  Jackson Harper  <jackson@ximian.com>
 
 	* TextControl.cs: Move around the line endings when crossing line

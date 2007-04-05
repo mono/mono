@@ -200,7 +200,6 @@ namespace System.Windows.Forms
 			set { this.AccessibilityObject.role = value; }
 		}
 		
-		[MonoTODO]
 		[DefaultValue (ToolStripItemAlignment.Left)]
 		public ToolStripItemAlignment Alignment {
 			get { return this.alignment; }
