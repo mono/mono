@@ -79,6 +79,7 @@ namespace System.Windows.Forms
 		private bool label_wrap = true;
 		private bool multiselect = true;
 		private bool scrollable = true;
+		private bool hover_pending;
 		private readonly SelectedIndexCollection selected_indices;
 		private readonly SelectedListViewItemCollection selected_items;
 		private SortOrder sort_order = SortOrder.None;
@@ -121,6 +122,7 @@ namespace System.Windows.Forms
 		static object SelectedIndexChangedEvent = new object ();
 #if NET_2_0
 		static object ItemCheckedEvent = new object ();
+		static object ItemMouseHoverEvent = new object ();
 		static object CacheVirtualItemsEvent = new object ();
 		static object RetrieveVirtualItemEvent = new object ();
 #endif
@@ -168,6 +170,13 @@ namespace System.Windows.Forms
 			add { Events.AddHandler (ItemDragEvent, value); }
 			remove { Events.RemoveHandler (ItemDragEvent, value); }
 		}
+
+#if NET_2_0
+		public event ListViewItemMouseHoverEventHandler ItemMouseHover {
+			add { Events.AddHandler (ItemMouseHoverEvent, value); }
+			remove { Events.RemoveHandler (ItemMouseHoverEvent, value); }
+		}
+#endif
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
@@ -249,6 +258,7 @@ namespace System.Windows.Forms
 			GotFocus += new EventHandler (FocusChanged);
 			LostFocus += new EventHandler (FocusChanged);
 			MouseWheel += new MouseEventHandler(ListView_MouseWheel);
+			MouseEnter += new EventHandler (ListView_MouseEnter);
 
 			this.SetStyle (ControlStyles.UserPaint | ControlStyles.StandardClick
 #if NET_2_0
@@ -1734,6 +1744,7 @@ namespace System.Windows.Forms
 			ListViewItem last_clicked_item;
 			bool hover_processed = false;
 			bool checking = false;
+			ListViewItem prev_hovered_item;
 			
 			ListViewLabelEditTextBox edit_text_box;
 			internal ListViewItem edit_item;
@@ -1980,11 +1991,11 @@ namespace System.Windows.Forms
 			{
 				bool done = PerformBoxSelection (new Point (me.X, me.Y));
 
-				if (!done && owner.HoverSelection && hover_processed) {
+				if (!done && hover_processed) {
 
 					Point pt = PointToClient (Control.MousePosition);
 					ListViewItem item = owner.GetItemAt (pt.X, pt.Y);
-					if (item != null) {
+					if (item != null && item != prev_hovered_item) {
 						hover_processed = false;
 						XplatUI.ResetMouseHover (Handle);
 					}
@@ -1996,25 +2007,35 @@ namespace System.Windows.Forms
 
 			private void ItemsMouseHover (object sender, EventArgs e)
 			{
-				owner.OnMouseHover (e);
+				if (owner.hover_pending) {
+					owner.OnMouseHover (e);
+					owner.hover_pending = false;
+				}
 
-				if (Capture || !owner.HoverSelection)
+				if (Capture)
 					return;
 
 				hover_processed = true;
 				Point pt = PointToClient (Control.MousePosition);
 				ListViewItem item = owner.GetItemAt (pt.X, pt.Y);
-
 				if (item == null)
 					return;
 
-				if (owner.MultiSelect)
-					owner.UpdateMultiSelection (item.Index, true);
-				else
-					item.Selected = true;
+				prev_hovered_item = item;
 
-				owner.SetFocusedItem (item);
-				Select (); // Make sure we have the focus, since MouseHover doesn't give it to us
+				if (owner.HoverSelection) {
+					if (owner.MultiSelect)
+						owner.UpdateMultiSelection (item.Index, true);
+					else
+						item.Selected = true;
+					
+					owner.SetFocusedItem (item);
+					Select (); // Make sure we have the focus, since MouseHover doesn't give it to us
+				}
+
+#if NET_2_0
+				owner.OnItemMouseHover (new ListViewItemMouseHoverEventArgs (item));
+#endif
 			}
 
 			private void ItemsMouseUp (object sender, MouseEventArgs me)
@@ -2399,6 +2420,11 @@ namespace System.Windows.Forms
 			item_control.Invalidate (FocusedItem.Bounds);
 		}
 
+		private void ListView_MouseEnter (object sender, EventArgs args)
+		{
+			hover_pending = true; // Need a hover event for every Enter/Leave cycle
+		}
+
 		private void ListView_MouseWheel (object sender, MouseEventArgs me)
 		{
 			if (Items.Count == 0)
@@ -2604,6 +2630,15 @@ namespace System.Windows.Forms
 			if (eh != null)
 				eh (this, e);
 		}
+
+#if NET_2_0
+		protected virtual void OnItemMouseHover (ListViewItemMouseHoverEventArgs args)
+		{
+			ListViewItemMouseHoverEventHandler eh = (ListViewItemMouseHoverEventHandler)(Events [ItemMouseHoverEvent]);
+			if (eh != null)
+				eh (this, args);
+		}
+#endif
 
 		protected virtual void OnSelectedIndexChanged (EventArgs e)
 		{
