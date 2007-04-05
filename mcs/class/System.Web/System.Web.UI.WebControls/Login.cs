@@ -1273,7 +1273,7 @@ namespace System.Web.UI.WebControls {
 				OnLoggedIn (EventArgs.Empty);
 
 				string url = DestinationPageUrl;
-				if (Page.Request.Path.ToLower ().StartsWith (FormsAuthentication.LoginUrl.ToLower ())) {
+				if (Page.Request.Path.StartsWith (FormsAuthentication.LoginUrl, StringComparison.InvariantCultureIgnoreCase)) {
 					if (!String.IsNullOrEmpty (FormsAuthentication.ReturnUrl))
 						Redirect (FormsAuthentication.ReturnUrl);
 					else if (!String.IsNullOrEmpty (DestinationPageUrl))

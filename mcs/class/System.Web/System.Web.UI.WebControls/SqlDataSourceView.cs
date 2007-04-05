@@ -394,13 +394,7 @@ namespace System.Web.UI.WebControls {
 
 			foreach (DictionaryEntry de in values) {
 				string valueName = format == true ? FormatOldParameter (de.Key.ToString ()) : de.Key.ToString ();
-				if (parameterName == valueName)
-					return values [de.Key];
-			}
-			foreach (DictionaryEntry de in values) {
-				string valueName = format == true ? FormatOldParameter (de.Key.ToString ()) : de.Key.ToString ();
-				valueName = valueName.ToLower ();
-				if (parameterName.ToLower () == valueName)
+				if (String.Compare(parameterName, valueName, StringComparison.InvariantCultureIgnoreCase) == 0)
 					return values [de.Key];
 			}
 			return null;

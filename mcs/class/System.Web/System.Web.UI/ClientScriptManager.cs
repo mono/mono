@@ -723,7 +723,7 @@ return true;
 				s = s.Replace ("\"", "\\\"");
 				return "\"" + s + "\"";
 			} else if (ob is bool) {
-				return ob.ToString().ToLower();
+				return ob.ToString().ToLowerInvariant();
 			} else {
 				return ob.ToString ();
 			}

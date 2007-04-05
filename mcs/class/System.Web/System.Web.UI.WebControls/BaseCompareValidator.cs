@@ -121,7 +121,7 @@ namespace System.Web.UI.WebControls {
 			bool seen_year = false;
 			bool seen_month = false;
 
-			pattern = pattern.ToLower ();
+			pattern = pattern.ToLower (CultureInfo.InvariantCulture);
 
 			for (int i = 0; i < pattern.Length; i ++) {
 				char c = pattern[ i ];

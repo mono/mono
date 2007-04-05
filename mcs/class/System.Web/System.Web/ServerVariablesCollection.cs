@@ -59,7 +59,7 @@ namespace System.Web
 			//
 			if (standard){
 				sb.Append ("HTTP_");
-				sb.Append (key.ToUpper ().Replace ("-", "_"));
+				sb.Append (key.ToUpper (CultureInfo.InvariantCulture).Replace ("-", "_"));
 				sb.Append (":");
 			} else {
 				sb.Append (key);
@@ -103,7 +103,7 @@ namespace System.Web
 				if (null != hvalue && hvalue.Length > 0) {
 					hname = HttpWorkerRequest.GetKnownRequestHeaderName (i);
 					if (null != hname && hname.Length > 0)
-						Add ("HTTP_" + hname.ToUpper ().Replace ('-', '_'), hvalue);
+						Add ("HTTP_" + hname.ToUpper (CultureInfo.InvariantCulture).Replace ('-', '_'), hvalue);
 				}
 			}
 
@@ -115,7 +115,7 @@ namespace System.Web
 					if (hname == null)
 						continue;
 					hvalue = unknown [i][1];
-					Add ("HTTP_" + hname.ToUpper ().Replace ('-', '_'), hvalue);
+					Add ("HTTP_" + hname.ToUpper (CultureInfo.InvariantCulture).Replace ('-', '_'), hvalue);
 				}
 			}
 		}
