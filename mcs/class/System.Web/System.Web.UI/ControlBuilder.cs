@@ -34,6 +34,7 @@ using System.Reflection;
 using System.Security.Permissions;
 using System.Web.Compilation;
 using System.Web.Configuration;
+using System.IO;
 
 namespace System.Web.UI {
 
@@ -70,7 +71,10 @@ namespace System.Web.UI {
 		internal bool isProperty;
 		internal ILocation location;
 		ArrayList otherTags;
-
+#if NET_2_0
+		static string privateBinPath;
+#endif
+		
 		public ControlBuilder ()
 		{
 		}
@@ -155,6 +159,20 @@ namespace System.Web.UI {
 			}
 		}
 
+#if NET_2_0
+		private static string PrivateBinPath {
+                        get {
+                                if (privateBinPath != null)
+                                        return privateBinPath;
+
+                                AppDomainSetup setup = AppDomain.CurrentDomain.SetupInformation;
+                                privateBinPath = Path.Combine (setup.ApplicationBase, setup.PrivateBinPath);
+
+                                return privateBinPath;
+                        }
+                }
+#endif
+		
 #if NET_2_0
 		public virtual
 #else
@@ -300,6 +318,39 @@ namespace System.Web.UI {
 		}
 
 #if NET_2_0
+		static Type LoadType (string typeName)
+                {
+                        Type type = Type.GetType (typeName);
+                        if (type != null)
+                                return type;
+
+                        IList tla;
+                        if ((tla = BuildManager.TopLevelAssemblies) != null) {
+                                foreach (Assembly asm in tla) {
+                                        if (asm == null)
+                                                continue;
+                                        type = asm.GetType (typeName);
+                                        if (type != null)
+                                                return type;
+                                }
+                        }
+
+                        if (!Directory.Exists (PrivateBinPath))
+                                return null;
+
+                        string [] binDlls = Directory.GetFiles (PrivateBinPath, "*.dll");
+                        foreach (string s in binDlls) {
+                                Assembly binA = Assembly.LoadFrom (s);
+                                type = binA.GetType (typeName);
+                                if (type == null)
+                                        continue;
+
+                                return type;
+                        }
+
+                        return null;
+                }
+		
 		static Type MapTagType (Type tagType)
 		{
 			if (tagType == null)
@@ -316,7 +367,7 @@ namespace System.Web.UI {
 			foreach (TagMapInfo tmi in tags)
 				if (tmi.TagType == tagTypeName) {
 					try {
-						return Type.GetType (tmi.MappedTagType, true);
+						return LoadType (tmi.MappedTagType);
 					} catch (Exception ex) {
 						throw new HttpException (String.Format ("Unable to map tag type {0}", tagTypeName),
 									 ex);
