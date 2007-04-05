@@ -934,14 +934,14 @@ SkipCRLF:
 					read_image_data = true;
 					continue;
 				case Minor.PicWid:
-					picture.SetWidthFromTwips (param);
 					continue;
 				case Minor.PicHt:
-					picture.SetHeightFromTwips (param);
 					continue;
 				case Minor.PicGoalWid:
+					picture.SetWidthFromTwips (param);
 					continue;
 				case Minor.PicGoalHt:
+					picture.SetHeightFromTwips (param);
 					continue;
 				}
 

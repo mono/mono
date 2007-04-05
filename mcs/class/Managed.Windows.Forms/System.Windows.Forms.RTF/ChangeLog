@@ -1,3 +1,7 @@
+2007-04-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* RTF.cs: Use the "goal" width and height to compute the metafile size
+
 2007-04-04  Jackson Harper  <jackson@ximian.com>
 
 	* RTF.cs: look ahead for the end of the group, so we don't read
