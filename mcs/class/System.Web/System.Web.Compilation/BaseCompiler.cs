@@ -440,9 +440,19 @@ namespace System.Web.Compilation
 			if (results.NativeCompilerReturnValue == 0)
 				return;
 
-			StringWriter writer = new StringWriter();
-			provider.CreateGenerator().GenerateCodeFromCompileUnit (unit, writer, null);
-			throw new CompilationException (parser.InputFile, results.Errors, writer.ToString ());
+			string fileText = null;
+			CompilerErrorCollection errors = results.Errors;
+			CompilerError ce = (errors != null && errors.Count > 0) ? errors [0] : null;
+			string inFile = (ce != null) ? ce.FileName : null;
+			
+			if (inFile != null && File.Exists (inFile))
+				fileText = File.ReadAllText (inFile);
+			else {
+				StringWriter writer = new StringWriter();
+				provider.CreateGenerator().GenerateCodeFromCompileUnit (unit, writer, null);
+				fileText = writer.ToString ();
+			}
+			throw new CompilationException (parser.InputFile, errors, fileText);
 		}
 
 		protected string DynamicDir ()
