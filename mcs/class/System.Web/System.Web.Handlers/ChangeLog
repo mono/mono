@@ -1,3 +1,9 @@
+2007-04-06  Marek Habersack  <mhabersack@novell.com>
+
+	* AssemblyResourceLoader.cs: use the correct query parameter
+	separator char for the current platform version. Fixes bug
+	#80633.
+
 2006-01-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TraceHandler.cs: class status fixes.

@@ -1,5 +1,9 @@
 2007-04-06  Marek Habersack  <mhabersack@novell.com>
 
+	* ClientScriptManager.cs: render the 'type' attribute in
+	WriteScript and do not render the 'language' attribute when in
+	NET_2_0+ mode.
+
 	* Page.cs: defaults for ViewStateEncrptionMode and AsyncTimeout
 	are read from the pages section, if found.
 

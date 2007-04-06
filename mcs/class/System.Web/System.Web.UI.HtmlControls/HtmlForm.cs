@@ -31,6 +31,7 @@ using System.Collections.Specialized;
 using System.Security.Permissions;
 using System.Web.Util;
 using System.Web.UI.WebControls;
+using System.Web.Configuration;
 
 namespace System.Web.UI.HtmlControls 
 {
@@ -231,10 +232,13 @@ namespace System.Web.UI.HtmlControls
 
 		protected override void RenderAttributes (HtmlTextWriter w)
 		{
-			/* Need to always render: name, method, action
-			 * and id
+			/* Need to always render: method, action and id
 			 */
-
+			/* The name attribute is rendered _only_ if we're not in
+			   2.0 mode or if the xhtml conformance mode is set to
+			   Legacy for 2.0 according to http://msdn2.microsoft.com/en-us/library/system.web.ui.htmlcontrols.htmlform.name.aspx
+			*/
+			
 			string action;
 			string file_path = Page.Request.FilePath;
 			string current_path = Page.Request.CurrentExecutionFilePath;
@@ -256,7 +260,13 @@ namespace System.Web.UI.HtmlControls
 				action = Page.RenderResponse.createActionURL(action);
 #endif
 
-			w.WriteAttribute ("name", Name);
+#if NET_2_0
+			XhtmlConformanceSection xhtml = WebConfigurationManager.GetSection ("system.web/xhtmlConformance") as
+				XhtmlConformanceSection;
+			
+			if (xhtml != null && xhtml.Mode == XhtmlConformanceMode.Legacy)
+#endif
+				w.WriteAttribute ("name", Name);
 
 			w.WriteAttribute ("method", Method);
 			w.WriteAttribute ("action", action);

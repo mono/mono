@@ -42,7 +42,11 @@ namespace System.Web {
 	// CAS - no InheritanceDemand here as the class is sealed
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class HttpUtility {
-
+#if NET_2_0
+		internal const char QueryParamSeparator = ';';
+#else
+		internal const char QueryParamSeparator = '&';
+#endif
 		#region Fields
 	
 		static Hashtable entities;
@@ -1015,7 +1019,7 @@ namespace System.Web {
 				for (int q = namePos; q < query.Length; q++) {
 					if (valuePos == -1 && query[q] == '=') {
 						valuePos = q + 1;
-					} else if (query[q] == '&') {
+					} else if (query[q] == ';' || query[q] == '&') {
 						valueEnd = q;
 						break;
 					}

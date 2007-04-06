@@ -38,19 +38,19 @@ namespace System.Web.Handlers {
 	#else
 	internal // since this is in the .config file, we need to support it, since we dont have versoned support.
 	#endif
-		class AssemblyResourceLoader : IHttpHandler {
-		
+	class AssemblyResourceLoader : IHttpHandler {		
 		internal static string GetResourceUrl (Type type, string resourceName)
 		{
 			string aname = type.Assembly == typeof(AssemblyResourceLoader).Assembly ? "s" : HttpUtility.UrlEncode (type.Assembly.GetName ().FullName);
 			string apath = type.Assembly.Location;
 			string atime = String.Empty;
 
-			if (apath != String.Empty) {
-				atime = "&t=" + File.GetLastWriteTimeUtc (apath).Ticks;
-			}
+			if (apath != String.Empty)
+				atime = String.Format ("{0}t={1}", HttpUtility.QueryParamSeparator, File.GetLastWriteTimeUtc (apath).Ticks);
 
-			string href = "WebResource.axd?a=" + aname + "&r=" + HttpUtility.UrlEncode (resourceName) + atime;
+			string href = String.Format ("WebResource.axd?a={1}{0}r={2}{3}",
+						     HttpUtility.QueryParamSeparator, aname,
+						     HttpUtility.UrlEncode (resourceName), atime);
 			
 			if (HttpContext.Current != null && HttpContext.Current.Request != null) {
 				string appPath = HttpContext.Current.Request.ApplicationPath;

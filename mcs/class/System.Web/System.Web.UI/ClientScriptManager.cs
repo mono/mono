@@ -304,8 +304,13 @@ namespace System.Web.UI
 				entry = entry.Next;
 			}
 			
-			if (addScriptTags)
-				script = "<script language=javascript>\n<!--\n" + script + "\n// -->\n</script>";
+			if (addScriptTags) {
+				script = "<script type=\"text/javascript\"" +
+#if !NET_2_0
+					"language=\"javascript\"" +
+#endif
+					">\n<!--\n" + script + "\n// -->\n</script>";
+			}
 
 			entry = new ScriptEntry (type, key, script);
 			
