@@ -1,3 +1,8 @@
+2007-04-06  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStripSplitStackLayout.cs: If we run out of things to hide, don't
+	infinite loop.  (Forgot to copy to the horizontal toolstrip case.)
+
 2007-04-06  Jackson Harper  <jackson@ximian.com>
 
 	* TextBoxBase.cs: When a delete removes a line, recalculate all

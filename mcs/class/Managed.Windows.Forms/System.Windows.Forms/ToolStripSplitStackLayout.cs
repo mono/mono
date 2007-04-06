@@ -131,7 +131,11 @@ namespace System.Windows.Forms
 							break;
 						}
 			}
-			
+
+			// There's nothing left to remove, break or we will loop forever	
+			if (!removed_one)
+				break;
+
 			i = 0;
 			Point start_layout_pointer = new Point (ts.DisplayRectangle.Left, ts.DisplayRectangle.Top);
 			Point end_layout_pointer = new Point (ts.DisplayRectangle.Right, ts.DisplayRectangle.Top);
