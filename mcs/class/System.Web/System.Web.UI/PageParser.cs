@@ -123,7 +123,7 @@ namespace System.Web.UI
 					break;
 			}
 #else
-			if (String.Compare (ps.EnableSessionState, "true") == 0)
+			if (String.Compare (ps.EnableSessionState, "true", true, CultureInfo.InvariantCulture) == 0)
 				enableSessionState = true;
 			else
 				enableSessionState = false;
