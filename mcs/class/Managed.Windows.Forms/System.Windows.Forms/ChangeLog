@@ -1,3 +1,9 @@
+2007-04-06  Jackson Harper  <jackson@ximian.com>
+
+	* TextBoxBase.cs: When a delete removes a line, recalculate all
+	lines below that line (they need to get offsets setup correctly)
+	and invalidate.
+
 2007-04-05  Jackson Harper  <jackson@ximian.com>
 
 	* TextControl.cs: We need to invalidate across the width of the

@@ -934,7 +934,8 @@ namespace System.Windows.Forms {
 
 								line = document.GetLine(document.CaretLine.LineNo + 1);
 								document.Combine(document.CaretLine, line);
-								document.UpdateView(document.CaretLine, 2, 0);
+								document.UpdateView(document.CaretLine,
+										document.Lines - document.CaretLine.LineNo, 0);
 
 							}
 						} else {
@@ -1169,7 +1170,7 @@ namespace System.Windows.Forms {
 					new_caret_pos = line.TextLengthWithoutEnding ();
 
 					document.Combine(line, document.CaretLine);
-					document.UpdateView(line, 1, 0);
+					document.UpdateView(line, document.Lines - line.LineNo, 0);
 					document.PositionCaret(line, new_caret_pos);
 					document.SetSelectionToCaret (true);
 					document.UpdateCaret();
