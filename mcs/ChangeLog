@@ -1,3 +1,8 @@
+2007-04-06  Wade Berrier  <wberrier@novell.com>
+
+	* Makefile: use bzip2 instead of gzip for 'make dist'
+	(even though it's not used here anymore)
+
 2006-08-18  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (net_2_0_bootstrap_SUBDIRS): Add 'tools'.
