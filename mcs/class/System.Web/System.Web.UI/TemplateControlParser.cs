@@ -62,9 +62,13 @@ namespace System.Web.UI {
 		
 		internal virtual void LoadPagesConfigDefaults ()
 		{
-#if NET_1_1
+#if NET_2_0
 			PagesSection ps = PagesConfig;
+#else
+			PagesConfiguration ps = PagesConfig;
+#endif
 
+#if NET_1_1
 			autoEventWireup = ps.AutoEventWireup;
 			enableViewState = ps.EnableViewState;
 #endif

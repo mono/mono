@@ -101,12 +101,17 @@ namespace System.Web.UI
 		}
 #endif
 
-		void LoadPagesConfigDefaults ()
+		internal override void LoadPagesConfigDefaults ()
 		{
 			base.LoadPagesConfigDefaults ();
+#if NET_2_0
 			PagesSection ps = PagesConfig;
+#else
+			PagesConfiguration ps = PagesConfig;
+#endif
 
 			notBuffer = !ps.Buffer;
+#if NET_2_0
 			switch (ps.EnableSessionState) {
 				case PagesEnableSessionState.True:
 				case PagesEnableSessionState.ReadOnly:
@@ -117,6 +122,12 @@ namespace System.Web.UI
 					enableSessionState = false;
 					break;
 			}
+#else
+			if (String.Compare (ps.EnableSessionState, "true") == 0)
+				enableSessionState = true;
+			else
+				enableSessionState = false;
+#endif
 			
 			enableViewStateMac = ps.EnableViewStateMac;
 			smartNavigation = ps.SmartNavigation;
