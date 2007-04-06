@@ -1,3 +1,11 @@
+2007-04-06  Miguel de Icaza  <miguel@novell.com>
+
+	* a.cs: Test this stuff.
+
+	* DataConverter.cs: Implement Paolo's suggestion: provide a
+	PutBytes interface that stores data into an existing byte array
+	and make the GetBytes operations be wrappers around PutBytes. 
+
 2005-06-05  Kornél Pál <kornelpal@hotmail.com>
 
 	* Runtime.cs: Added GetDisplayName:

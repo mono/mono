@@ -14,10 +14,6 @@
 //
 // TODO:
 //   Support for "DoubleWordsAreSwapped" for ARM devices
-//   Add PutBytes (byte [] dest, int destIdx, xx value)
-//   Make GetBytes use the above.
-//
-//   Make all the GetBtesXXX use a byte [] dest, int dest
 //
 // Copyright (C) 2006 Novell, Inc (http://www.novell.com)
 //
@@ -70,18 +66,77 @@ namespace Mono {
                 [CLSCompliant (false)]
 		public abstract ulong  GetUInt64 (byte [] data, int index);
 		
-		public abstract byte[] GetBytes (double value);
-		public abstract byte[] GetBytes (float value);
-		public abstract byte[] GetBytes (int value);
-		public abstract byte[] GetBytes (long value);
-		public abstract byte[] GetBytes (short value);
+		public abstract void PutBytes (byte [] dest, int destIdx, double value);
+		public abstract void PutBytes (byte [] dest, int destIdx, float value);
+		public abstract void PutBytes (byte [] dest, int destIdx, int value);
+		public abstract void PutBytes (byte [] dest, int destIdx, long value);
+		public abstract void PutBytes (byte [] dest, int destIdx, short value);
 
                 [CLSCompliant (false)]
-		public abstract byte[] GetBytes (ushort value);
+		public abstract void PutBytes (byte [] dest, int destIdx, ushort value);
                 [CLSCompliant (false)]
-		public abstract byte[] GetBytes (uint value);
+		public abstract void PutBytes (byte [] dest, int destIdx, uint value);
                 [CLSCompliant (false)]
-		public abstract byte[] GetBytes (ulong value);
+		public abstract void PutBytes (byte [] dest, int destIdx, ulong value);
+
+		public byte[] GetBytes (double value)
+		{
+			byte [] ret = new byte [8];
+			PutBytes (ret, 0, value);
+			return ret;
+		}
+		
+		public byte[] GetBytes (float value)
+		{
+			byte [] ret = new byte [4];
+			PutBytes (ret, 0, value);
+			return ret;
+		}
+		
+		public byte[] GetBytes (int value)
+		{
+			byte [] ret = new byte [4];
+			PutBytes (ret, 0, value);
+			return ret;
+		}
+		
+		public byte[] GetBytes (long value)
+		{
+			byte [] ret = new byte [8];
+			PutBytes (ret, 0, value);
+			return ret;
+		}
+		
+		public byte[] GetBytes (short value)
+		{
+			byte [] ret = new byte [2];
+			PutBytes (ret, 0, value);
+			return ret;
+		}
+
+                [CLSCompliant (false)]
+		public byte[] GetBytes (ushort value)
+		{
+			byte [] ret = new byte [2];
+			PutBytes (ret, 0, value);
+			return ret;
+		}
+		
+                [CLSCompliant (false)]
+		public byte[] GetBytes (uint value)
+		{
+			byte [] ret = new byte [4];
+			PutBytes (ret, 0, value);
+			return ret;
+		}
+		
+                [CLSCompliant (false)]
+		public byte[] GetBytes (ulong value)
+		{
+			byte [] ret = new byte [8];
+			PutBytes (ret, 0, value);
+			return ret;
+		}
 		
 		static public DataConverter LittleEndian {
 			get {
@@ -138,7 +193,6 @@ namespace Mono {
 						next = Align (next, group.Length);
 					else
 						next = Align (next, align);
-					Console.WriteLine ("Aligned to {0}", next);
 					align = 0;
 				}
 
@@ -225,12 +279,10 @@ namespace Mono {
 					oarg = null;
 				}
 
-				Console.WriteLine ("processing instruction {0} -> {1}", description [b.i], oarg);
 				int save = b.i;
 				
 				if (PackOne (b, oarg)){
 					argn++;
-					Console.WriteLine ("Repeat={0}", b.repeat);
 					if (b.repeat > 0){
 						if (--b.repeat > 0)
 							b.i = save;
@@ -685,6 +737,14 @@ namespace Mono {
 			}
 			return result;
 		}
+
+		internal void Check (byte [] dest, int destIdx, int size)
+		{
+			if (dest == null)
+				throw new ArgumentNullException ("dest");
+			if (destIdx < 0 || destIdx > dest.Length - size)
+				throw new ArgumentException ("destIdx");
+		}
 		
 		class CopyConverter : DataConverter {
 			public override double GetDouble (byte [] data, int index)
@@ -830,100 +890,84 @@ namespace Mono {
 				return ret;
 			}
 			
-			public override byte[] GetBytes (double value)
+			public override void PutBytes (byte [] dest, int destIdx, double value)
 			{
-				byte [] ret = new byte [8];
-				fixed (byte *target = (&ret [0])){
+				Check (dest, destIdx, 8);
+				fixed (byte *target = (&dest [destIdx])){
 					long *source = (long *) &value;
 
 					*((long *)target) = *source;
 				}
-
-				return ret;
 			}
 			
-			public override byte[] GetBytes (float value)
+			public override void PutBytes (byte [] dest, int destIdx, float value)
 			{
-				byte [] ret = new byte [4];
-				fixed (byte *target = &ret [0]){
+				Check (dest, destIdx, 4);
+				fixed (byte *target = &dest [destIdx]){
 					uint *source = (uint *) &value;
 
 					*((uint *)target) = *source;
 				}
-
-				return ret;
 			}
 			
-			public override byte[] GetBytes (int value)
+			public override void PutBytes (byte [] dest, int destIdx, int value)
 			{
-				byte [] ret = new byte [4];
-				fixed (byte *target = &ret [0]){
+				Check (dest, destIdx, 4);
+				fixed (byte *target = &dest [destIdx]){
 					uint *source = (uint *) &value;
 
 					*((uint *)target) = *source;
 				}
-
-				return ret;
 			}
 
-			public override byte[] GetBytes (uint value)
+			public override void PutBytes (byte [] dest, int destIdx, uint value)
 			{
-				byte [] ret = new byte [4];
-				fixed (byte *target = &ret [0]){
+				Check (dest, destIdx, 4);
+				fixed (byte *target = &dest [destIdx]){
 					uint *source = (uint *) &value;
 
 					*((uint *)target) = *source;
 				}
-
-				return ret;
 			}
 			
-			public override byte[] GetBytes (long value)
+			public override void PutBytes (byte [] dest, int destIdx, long value)
 			{
-				byte [] ret = new byte [8];
-				fixed (byte *target = &ret [0]){
+				Check (dest, destIdx, 8);
+				fixed (byte *target = &dest [destIdx]){
 					long *source = (long *) &value;
 
 					*((long*)target) = *source;
 				}
-
-				return ret;
 			}
 			
-			public override byte[] GetBytes (ulong value)
+			public override void PutBytes (byte [] dest, int destIdx, ulong value)
 			{
-				byte [] ret = new byte [8];
-				fixed (byte *target = &ret [0]){
+				Check (dest, destIdx, 8);
+				fixed (byte *target = &dest [destIdx]){
 					ulong *source = (ulong *) &value;
 
 					*((ulong *) target) = *source;
 				}
-
-				return ret;
 			}
 			
-			public override byte[] GetBytes (short value)
+			public override void PutBytes (byte [] dest, int destIdx, short value)
 			{
-				byte [] ret = new byte [2];
-				fixed (byte *target = &ret [0]){
+				Check (dest, destIdx, 2);
+				fixed (byte *target = &dest [destIdx]){
 					ushort *source = (ushort *) &value;
 
 					*((ushort *)target) = *source;
 				}
-
-				return ret;
 			}
 			
-			public override byte[] GetBytes (ushort value)
+			public override void PutBytes (byte [] dest, int destIdx, ushort value)
 			{
-				byte [] ret = new byte [2];
-				fixed (byte *target = &ret [0]){
+				Check (dest, destIdx, 2);
+				fixed (byte *target = &dest [destIdx]){
 					ushort *source = (ushort *) &value;
 
 					*((ushort *)target) = *source;
 				}
-
-				return ret;
 			}
 		}
 
@@ -1072,116 +1116,100 @@ namespace Mono {
 				return ret;
 			}
 
-			public override byte[] GetBytes (double value)
+			public override void PutBytes (byte [] dest, int destIdx, double value)
 			{
-				byte [] ret = new byte [8];
+				Check (dest, destIdx, 8);
 
-				fixed (byte *target = &ret [0]){
+				fixed (byte *target = &dest [destIdx]){
 					byte *source = (byte *) &value;
 
 					for (int i = 0; i < 8; i++)
 						target [i] = source [7-i];
 				}
-
-				return ret;
 			}
 			
-			public override byte[] GetBytes (float value)
+			public override void PutBytes (byte [] dest, int destIdx, float value)
 			{
-				byte [] ret = new byte [4];
+				Check (dest, destIdx, 4);
 
-				fixed (byte *target = &ret [0]){
+				fixed (byte *target = &dest [destIdx]){
 					byte *source = (byte *) &value;
 
 					for (int i = 0; i < 4; i++)
 						target [i] = source [3-i];
 				}
-
-				return ret;
 			}
 			
-			public override byte[] GetBytes (int value)
+			public override void PutBytes (byte [] dest, int destIdx, int value)
 			{
-				byte [] ret = new byte [4];
+				Check (dest, destIdx, 4);
 
-				fixed (byte *target = &ret [0]){
+				fixed (byte *target = &dest [destIdx]){
 					byte *source = (byte *) &value;
 
 					for (int i = 0; i < 4; i++)
 						target [i] = source [3-i];
 				}
-
-				return ret;
 			}
 			
-			public override byte[] GetBytes (uint value)
+			public override void PutBytes (byte [] dest, int destIdx, uint value)
 			{
-				byte [] ret = new byte [4];
+				Check (dest, destIdx, 4);
 
-				fixed (byte *target = &ret [0]){
+				fixed (byte *target = &dest [destIdx]){
 					byte *source = (byte *) &value;
 
 					for (int i = 0; i < 4; i++)
 						target [i] = source [3-i];
 				}
-
-				return ret;
 			}
 			
-			public override byte[] GetBytes (long value)
+			public override void PutBytes (byte [] dest, int destIdx, long value)
 			{
-				byte [] ret = new byte [8];
+				Check (dest, destIdx, 8);
 
-				fixed (byte *target = &ret [0]){
+				fixed (byte *target = &dest [destIdx]){
 					byte *source = (byte *) &value;
 
 					for (int i = 0; i < 8; i++)
 						target [i] = source [7-i];
 				}
-
-				return ret;
 			}
 			
-			public override byte[] GetBytes (ulong value)
+			public override void PutBytes (byte [] dest, int destIdx, ulong value)
 			{
-				byte [] ret = new byte [8];
+				Check (dest, destIdx, 8);
 
-				fixed (byte *target = &ret [0]){
+				fixed (byte *target = &dest [destIdx]){
 					byte *source = (byte *) &value;
 
 					for (int i = 0; i < 4; i++)
 						target [i] = source [7-i];
 				}
-
-				return ret;
 			}
 			
-			public override byte[] GetBytes (short value)
+			public override void PutBytes (byte [] dest, int destIdx, short value)
 			{
-				byte [] ret = new byte [2];
+				Check (dest, destIdx, 2);
 
-				fixed (byte *target = &ret [0]){
+				fixed (byte *target = &dest [destIdx]){
 					byte *source = (byte *) &value;
 
 					for (int i = 0; i < 2; i++)
 						target [i] = source [1-i];
 				}
-
-				return ret;
 			}
 			
-			public override byte[] GetBytes (ushort value)
+			public override void PutBytes (byte [] dest, int destIdx, ushort value)
 			{
-				byte [] ret = new byte [2];
+				Check (dest, destIdx, 2);
 
-				fixed (byte *target = &ret [0]){
+				fixed (byte *target = &dest [destIdx]){
 					byte *source = (byte *) &value;
 
 					for (int i = 0; i < 2; i++)
 						target [i] = source [1-i];
 				}
-
-				return ret;
 			}
 		}
 		
