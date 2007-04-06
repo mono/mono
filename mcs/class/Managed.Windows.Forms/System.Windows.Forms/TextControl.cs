@@ -1481,7 +1481,7 @@ namespace System.Windows.Forms {
 				}
 
 //blah Console.WriteLine("TextControl.cs(996) Invalidate called in UpdateView(line, line_count, pos)");
-				owner.Invalidate(new Rectangle(0 - viewport_x, line.Y - viewport_y, (int)line.widths[line.text.Length], end_line.Y + end_line.height));
+				owner.Invalidate(new Rectangle(0 - viewport_x, line.Y - viewport_y, viewport_width, end_line.Y + end_line.height));
 			}
 		}
 		#endregion	// Private Methods

@@ -1,3 +1,8 @@
+2007-04-05  Jackson Harper  <jackson@ximian.com>
+
+	* TextControl.cs: We need to invalidate across the width of the
+	document when we are invalidating multiple lines.
+
 2007-04-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: Restore the check for the MouseHover event
