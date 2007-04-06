@@ -928,7 +928,7 @@ namespace System.Windows.Forms {
 						document.ReplaceSelection("", false);
 					} else {
 						// DeleteChar only deletes on the line, doesn't do the combine
-						if (document.CaretPosition == document.CaretLine.Text.Length) {
+						if (document.CaretPosition == document.CaretLine.TextLengthWithoutEnding ()) {
 							if (document.CaretLine.LineNo < document.Lines) {
 								Line	line;
 
@@ -936,17 +936,6 @@ namespace System.Windows.Forms {
 								document.Combine(document.CaretLine, line);
 								document.UpdateView(document.CaretLine, 2, 0);
 
-								#if not_Debug
-								Line	check_first;
-								Line	check_second;
-
-								check_first = document.GetLine(document.CaretLine.LineNo);
-								check_second = document.GetLine(check_first.line_no + 1);
-
-								Console.WriteLine("Post-UpdateView: Y of first line: {0}, second line: {1}", check_first.Y, check_second.Y);
-								#endif
-
-								// Caret doesn't move
 							}
 						} else {
 							if (!control) {

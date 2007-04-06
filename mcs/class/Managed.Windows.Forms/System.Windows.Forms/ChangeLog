@@ -2,6 +2,7 @@
 
 	* TextControl.cs: We need to invalidate across the width of the
 	document when we are invalidating multiple lines.
+	* TextBoxBase.cs: Don't delete into the line ending.
 
 2007-04-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
