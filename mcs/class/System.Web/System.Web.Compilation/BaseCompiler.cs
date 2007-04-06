@@ -445,9 +445,11 @@ namespace System.Web.Compilation
 			CompilerError ce = (errors != null && errors.Count > 0) ? errors [0] : null;
 			string inFile = (ce != null) ? ce.FileName : null;
 			
-			if (inFile != null && File.Exists (inFile))
-				fileText = File.ReadAllText (inFile);
-			else {
+			if (inFile != null && File.Exists (inFile)) {
+				using (StreamReader sr = File.OpenText (inFile)) {
+					fileText = sr.ReadToEnd ();
+				}
+			} else {
 				StringWriter writer = new StringWriter();
 				provider.CreateGenerator().GenerateCodeFromCompileUnit (unit, writer, null);
 				fileText = writer.ToString ();
