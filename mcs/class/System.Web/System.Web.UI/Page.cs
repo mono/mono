@@ -171,8 +171,14 @@ public partial class Page : TemplateControl, IHttpHandler
 		Page = this;
 		ID = "__Page";
 #if NET_2_0
-		asyncTimeout = TimeSpan.FromSeconds (DefaultAsyncTimeout);
-		viewStateEncryptionMode = ViewStateEncryptionMode.Auto;
+		PagesSection ps = WebConfigurationManager.GetSection ("system.web/pages") as PagesSection;
+		if (ps != null) {
+			asyncTimeout = ps.AsyncTimeout;
+			viewStateEncryptionMode = ps.ViewStateEncryptionMode;
+		} else {
+			asyncTimeout = TimeSpan.FromSeconds (DefaultAsyncTimeout);
+			viewStateEncryptionMode = ViewStateEncryptionMode.Auto;
+		}
 #endif
 	}
 

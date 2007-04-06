@@ -1,3 +1,8 @@
+2007-04-06  Marek Habersack  <mhabersack@novell.com>
+
+	* PagesSection.cs: provide appropriate default value for the
+	asyncTimeout setting.
+
 2007-03-24  Marek Habersack  <mhabersack@novell.com>
 
 	* WebConfigurationHost.cs: allow MachineToApplication definition

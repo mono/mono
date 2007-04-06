@@ -520,7 +520,7 @@ namespace System.Web.UI {
 			AddAssembly (assembly, true);
 			return assembly;
 		}
-
+		
 		internal virtual void ProcessMainAttributes (Hashtable atts)
 		{
 			atts.Remove ("Description"); // ignored

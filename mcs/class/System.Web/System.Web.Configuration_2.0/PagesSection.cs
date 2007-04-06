@@ -66,7 +66,7 @@ namespace System.Web.Configuration
 
 		static PagesSection ()
 		{
-			asyncTimeoutProp = new ConfigurationProperty ("asyncTimeout", typeof (TimeSpan), null,
+			asyncTimeoutProp = new ConfigurationProperty ("asyncTimeout", typeof (TimeSpan), TimeSpan.FromSeconds (45.0),
 								      PropertyHelper.TimeSpanSecondsConverter,
 								      PropertyHelper.PositiveTimeSpanValidator,
 								      ConfigurationPropertyOptions.None);

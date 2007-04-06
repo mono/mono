@@ -32,6 +32,7 @@ using System.IO;
 using System.Reflection;
 using System.Security.Permissions;
 using System.Web.Compilation;
+using System.Web.Configuration;
 using System.Web.Util;
 
 namespace System.Web.UI {
@@ -50,18 +51,45 @@ namespace System.Web.UI {
 		bool autoEventWireup = true;
 		bool enableViewState = true;
 #if NET_2_0
+		CompilationMode compilationMode = CompilationMode.Always;
 		TextReader reader;
 #endif
 
 		protected TemplateControlParser ()
 		{
+			LoadPagesConfigDefaults ();
+		}
+		
+		internal virtual void LoadPagesConfigDefaults ()
+		{
+#if NET_1_1
+			PagesSection ps = PagesConfig;
+
+			autoEventWireup = ps.AutoEventWireup;
+			enableViewState = ps.EnableViewState;
+#endif
+#if NET_2_0
+			compilationMode = ps.CompilationMode;
+#endif
 		}
 		
 		internal override void ProcessMainAttributes (Hashtable atts)
 		{
-			autoEventWireup = GetBool (atts, "AutoEventWireup", PagesConfig.AutoEventWireup);
-			enableViewState = GetBool (atts, "EnableViewState", PagesConfig.EnableViewState);
-
+			autoEventWireup = GetBool (atts, "AutoEventWireup", autoEventWireup);
+			enableViewState = GetBool (atts, "EnableViewState", enableViewState);
+#if NET_2_0
+			string cmode = GetString (atts, "CompilationMode", compilationMode.ToString ());
+			if (!String.IsNullOrEmpty (cmode)) {
+				if (String.Compare (cmode, "always", StringComparison.InvariantCultureIgnoreCase) == 0)
+					compilationMode = CompilationMode.Always;
+				else if (String.Compare (cmode, "auto", StringComparison.InvariantCultureIgnoreCase) == 0)
+					compilationMode = CompilationMode.Auto;
+				else if (String.Compare (cmode, "never", StringComparison.InvariantCultureIgnoreCase) == 0)
+					compilationMode = CompilationMode.Never;
+				else
+					ThrowParseException ("Invalid value of the CompilationMode attribute");
+			}
+#endif
 			atts.Remove ("TargetSchema"); // Ignored
 
 			base.ProcessMainAttributes (atts);
@@ -171,7 +199,12 @@ namespace System.Web.UI {
 		internal bool EnableViewState {
 			get { return enableViewState; }
 		}
+		
 #if NET_2_0
+		internal CompilationMode CompilationMode {
+			get { return compilationMode; }
+		}
+		
 		internal TextReader Reader {
 			get { return reader; }
 			set { reader = value; }

@@ -44,6 +44,8 @@ namespace System.Web.UI
 	public sealed class PageParser : TemplateControlParser
 	{
 		bool enableSessionState = true;
+		bool enableViewStateMac = true;
+		bool smartNavigation = false;
 		bool haveTrace;
 		bool trace;
 		bool notBuffer;
@@ -68,10 +70,13 @@ namespace System.Web.UI
 		string styleSheetTheme;
 		bool enable_event_validation;
 		bool maintainScrollPositionOnPostBack;
+		int maxPageStateFieldLength = -1;
+		string pageParserFilter = String.Empty;
 #endif
 
 		public PageParser ()
 		{
+			LoadPagesConfigDefaults ();
 		}
 		
 		internal PageParser (string virtualPath, string inputFile, HttpContext context)
@@ -81,6 +86,7 @@ namespace System.Web.UI
 			InputFile = inputFile;
 			SetBaseType (PagesConfig.PageBaseType);
 			AddApplicationAssembly ();
+			LoadPagesConfigDefaults ();
 		}
 
 #if NET_2_0
@@ -91,9 +97,48 @@ namespace System.Web.UI
 			Reader = reader;
 			SetBaseType (PagesConfig.PageBaseType);
 			AddApplicationAssembly ();
+			LoadPagesConfigDefaults ();
 		}
 #endif
 
+		void LoadPagesConfigDefaults ()
+		{
+			base.LoadPagesConfigDefaults ();
+			PagesSection ps = PagesConfig;
+
+			notBuffer = !ps.Buffer;
+			switch (ps.EnableSessionState) {
+				case PagesEnableSessionState.True:
+				case PagesEnableSessionState.ReadOnly:
+					enableSessionState = true;
+					break;
+
+				default:
+					enableSessionState = false;
+					break;
+			}
+			
+			enableViewStateMac = ps.EnableViewStateMac;
+			smartNavigation = ps.SmartNavigation;
+			validateRequest = ps.ValidateRequest;
+#if NET_2_0
+			masterPage = ps.MasterPageFile;
+			if (masterPage.Length == 0)
+				masterPage = null;
+			
+			enable_event_validation = ps.EnableEventValidation;
+			maxPageStateFieldLength = ps.MaxPageStateFieldLength;
+			pageParserFilter = ps.PageParserFilterType;
+			theme = ps.Theme;
+			if (theme.Length == 0)
+				theme = null;
+			styleSheetTheme = ps.StyleSheetTheme;
+			if (styleSheetTheme.Length == 0)
+				styleSheetTheme = null;
+			maintainScrollPositionOnPostBack = ps.MaintainScrollPositionOnPostBack;
+#endif
+		}
+		
 		public static IHttpHandler GetCompiledPageInstance (string virtualPath,
 								    string inputFile, 
 								    HttpContext context)
@@ -108,13 +153,7 @@ namespace System.Web.UI
 			// note: the 'enableSessionState' configuration property is
 			// processed in a case-sensitive manner while the page-level
 			// attribute is processed case-insensitive
-			string enabless = GetString (atts, "EnableSessionState",
-#if NET_2_0
-						     PagesConfig.EnableSessionState.ToString()
-#else
-						     PagesConfig.EnableSessionState
-#endif
-						     );
+			string enabless = GetString (atts, "EnableSessionState", enableSessionState.ToString ());
 			if (enabless != null) {
 				readonlySessionState = (String.Compare (enabless, "readonly", true) == 0);
 				if (readonlySessionState == true || String.Compare (enabless, "true", true) == 0) {
@@ -259,7 +298,7 @@ namespace System.Web.UI
 			}
 
 			errorPage = GetString (atts, "ErrorPage", null);
-			validateRequest = GetBool (atts, "ValidateRequest", PagesConfig.ValidateRequest);
+			validateRequest = GetBool (atts, "ValidateRequest", validateRequest);
 			clientTarget = GetString (atts, "ClientTarget", null);
 			if (clientTarget != null) {
 #if NET_2_0
@@ -287,18 +326,18 @@ namespace System.Web.UI
 			notBuffer = !GetBool (atts, "Buffer", true);
 			
 #if NET_2_0
-			masterPage = GetString (atts, "MasterPageFile", null);
+			masterPage = GetString (atts, "MasterPageFile", masterPage);
 			
 			// Make sure the page exists
-			if (masterPage != null)
+			if (!String.IsNullOrEmpty (masterPage))
 				MasterPageParser.GetCompiledMasterType (masterPage, MapPath (masterPage), HttpContext.Current);
 
 			title = GetString(atts, "Title", null);
 
-			theme = GetString (atts, "Theme", null);
-			styleSheetTheme = GetString (atts, "StyleSheetTheme", null);
+			theme = GetString (atts, "Theme", theme);
+			styleSheetTheme = GetString (atts, "StyleSheetTheme", styleSheetTheme);
 			enable_event_validation = GetBool (atts, "EnableEventValidation", true);
-			maintainScrollPositionOnPostBack = GetBool (atts, "MaintainScrollPositionOnPostBack", true);
+			maintainScrollPositionOnPostBack = GetBool (atts, "MaintainScrollPositionOnPostBack", maintainScrollPositionOnPostBack);
 #endif
 			// Ignored by now
 			GetString (atts, "EnableViewStateMac", null);
@@ -348,6 +387,14 @@ namespace System.Web.UI
 
 		internal bool EnableSessionState {
 			get { return enableSessionState; }
+		}
+
+		internal bool EnableViewStateMac {
+			get { return enableViewStateMac; }
+		}
+		
+		internal bool SmartNavigation {
+			get { return smartNavigation; }
 		}
 		
 		internal bool ReadOnlySessionState {
@@ -445,6 +492,14 @@ namespace System.Web.UI
 
 		internal bool MaintainScrollPositionOnPostBack {
 			get { return maintainScrollPositionOnPostBack; }
+		}
+
+		internal int MaxPageStateFieldLength {
+			get { return maxPageStateFieldLength; }
+		}
+
+		internal string PageParserFilterType {
+			get { return pageParserFilter; }
 		}
 #endif
 	}

@@ -1,5 +1,18 @@
 2007-04-06  Marek Habersack  <mhabersack@novell.com>
 
+	* Page.cs: defaults for ViewStateEncrptionMode and AsyncTimeout
+	are read from the pages section, if found.
+
+	* TemplateControlParser.cs: added support for loading
+	pages/controls defaults from web.config even if the page/control
+	does not have its corresponding directive.
+	Added support for reading the CompilationMode attribute.
+
+	* PageParser.cs: added support for loading pages/controls defaults
+	as above. Fixes bug #80915.
+	Added support for reading the maxPageStateFieldLength setting.
+	Added support for reading the pageParserFilter setting.
+	
 	* ControlBuilder.cs: allow tag mappings from code found 
 	in bin/* or App_Code/*. Fixes bug #80811.
 
