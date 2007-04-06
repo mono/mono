@@ -1,5 +1,7 @@
 2007-04-06  Marek Habersack  <mhabersack@novell.com>
 
+	* CustomErrorsSection.cs: make the customErrors section work.
+
 	* PagesSection.cs: provide appropriate default value for the
 	asyncTimeout setting.
 

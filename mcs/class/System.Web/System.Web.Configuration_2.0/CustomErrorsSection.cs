@@ -61,17 +61,6 @@ namespace System.Web.Configuration {
 
 		}
 
-		protected override void DeserializeSection (XmlReader reader)
-		{
-			base.DeserializeSection (reader);
-
-			/* XXX more here?.. */
-		}
-
-		protected override void Reset (ConfigurationElement parentElement)
-		{
-		}
-
 		[ConfigurationProperty ("defaultRedirect")]
 		public string DefaultRedirect {
 			get { return (string) base [defaultRedirectProp];}
