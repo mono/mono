@@ -77,7 +77,7 @@ namespace System.Windows.Forms
 		
 		private void LayoutHorizontalToolStrip (ToolStrip ts, Rectangle bounds)
 		{
-			if (!ts.Visible) return;
+			//if (!ts.Visible) return;
 			
 			ToolStripItemOverflow[] overflow = new ToolStripItemOverflow[ts.Items.Count];
 			ToolStripItemPlacement[] placement = new ToolStripItemPlacement[ts.Items.Count];
@@ -130,11 +130,11 @@ namespace System.Windows.Forms
 							removed_one = true;
 							break;
 						}
-			}
 
-			// There's nothing left to remove, break or we will loop forever	
-			if (!removed_one)
-				break;
+				// There's nothing left to remove, break or we will loop forever	
+				if (!removed_one)
+					break;
+			}
 
 			i = 0;
 			Point start_layout_pointer = new Point (ts.DisplayRectangle.Left, ts.DisplayRectangle.Top);
