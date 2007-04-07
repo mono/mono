@@ -48,7 +48,8 @@ namespace System.Web
 	public class HttpException : ExternalException
 	{
 		int http_code = 500;
-
+		const string errorStyleFonts = "Verdana,DejaVu Sans,sans-serif";
+		
 		public HttpException ()
 		{
 		}
@@ -102,6 +103,9 @@ namespace System.Web
 
 		public string GetHtmlErrorMessage ()
 		{
+			if (HttpContext.Current.IsCustomErrorEnabled)
+				return GetCustomErrorDefaultMessage ();
+			
 			if (!(this.InnerException is HtmlizedException))
 				return GetDefaultErrorMessage ();
 
@@ -111,45 +115,100 @@ namespace System.Web
 		internal virtual string Description {
 			get { return "Error processing request."; }
 		}
+
+		void WriteFileTop (StringBuilder builder, string title)
+		{
+			builder.Append ("<?xml version=\"1.0\" ?>\n");
+			builder.Append ("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
+			builder.AppendFormat ("<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\"><head><title>{0}</title><style type=\"text/css\">", title);
+			builder.AppendFormat (
+				@"body {{font-family:""{0}"";font-weight:normal;font-size: .7em;color:black;background-color: white}}
+p {{font-family:""{0}"";font-weight:normal;color:black;margin-top: -5px}}
+b {{font-family:""{0}"";font-weight:bold;color:black;margin-top: -5px}}
+h1 {{ font-family:""{0}"";font-weight:normal;font-size:18pt;color:red }}
+h2 {{ font-family:""{0}"";font-weight:normal;font-size:14pt;color:maroon }}
+pre {{font-family:""{0}"";font-size: .9em}}
+div.bodyText {{font-family: ""{0}""}}
+table.sampleCode {{width: 100%; background-color: #ffffcc; font-family:""Lucida Console,DejaVu Sans Mono,Monospace""}}
+.errorText {{color: red; font-weight: bold}}
+.marker {{font-weight: bold; color: black;text-decoration: none;}}
+.version {{color: gray;}}
+.error {{margin-bottom: 10px;}}
+.expandable {{ text-decoration:underline; font-weight:bold; color:navy; cursor:hand; }}", errorStyleFonts);
+			builder.AppendFormat (
+				"</style></head><body><h1>Server Error in '{0}' Application</h1><div class=\"bodyText\"><hr style=\"color: silver\"/>",
+				HtmlEncode (HttpRuntime.AppDomainAppVirtualPath));
+		}
+
+		void WriteFileBottom (StringBuilder builder, string trace1, string trace2)
+		{
+			builder.AppendFormat ("</div><hr style=\"color: silver\"/>{0}</body></html>\r\n", DateTime.UtcNow);
+			if (trace1 != null)
+				builder.AppendFormat ("<!--\r\n{0}\r\n-->\r\n", HttpUtility.HtmlEncode (trace1));
+			if (trace2 != null)
+				builder.AppendFormat ("<!--\r\n{0}\r\n-->\r\n", HttpUtility.HtmlEncode (trace2));
+		}
+
+		string GetCustomErrorDefaultMessage ()
+		{
+			StringBuilder builder = new StringBuilder ();
+			WriteFileTop (builder, "Runtime Error");
+			builder.Append (@"<p><strong>Description:</strong> An application error occurred on the server. The current custom error settings for this application prevent the details of the application error from being viewed remotely (for security reasons). It could, however, be viewed by browsers running on the local server machine.</p>
+<p><strong>Details:</strong> To enable the details of this specific error message to be viewable on remote machines, please create a &lt;customErrors&gt; tag within a &quot;web.config&quot; configuration file located in the root directory of the current web application. This &lt;customErrors&gt; tag should then have its &quot;mode&quot; attribute set to &quot;Off&quot;.</p>
+<table class=""sampleCode""><tr><td><pre>
+
+&lt;!-- Web.Config Configuration File --&gt;
+
+&lt;configuration&gt;
+    &lt;system.web&gt;
+
+        &lt;customErrors mode=&quot;Off&quot;/&gt;
+    &lt;/system.web&gt;
+&lt;/configuration&gt;</pre>
+    </td></tr></table><br/>
+<p><strong>Notes:</strong> The current error page you are seeing can be replaced by a custom error page by modifying the &quot;defaultRedirect&quot; attribute of the application's &lt;customErrors&gt; configuration tag to point to a custom error page URL.</p>
+<table class=""sampleCode""><tr><td><pre>
+&lt;!-- Web.Config Configuration File --&gt;
+
+&lt;configuration&gt;
+    &lt;system.web&gt;
+        &lt;customErrors mode=&quot;RemoteOnly&quot; defaultRedirect=&quot;mycustompage.htm&quot;/&gt;
+
+    &lt;/system.web&gt;
+&lt;/configuration&gt;</pre></td></tr></table>");
+			WriteFileBottom (builder, null, null);
+			return builder.ToString ();
+		}
 		
 		string GetDefaultErrorMessage ()
 		{
-			StringBuilder builder = new StringBuilder ("<html>\r\n<title>");
-			builder.Append ("Error");
-			if (http_code != 0)
-				builder.Append (" " + http_code);
-
-			builder.AppendFormat ("</title><body bgcolor=\"white\">" + 
-					      "<h1><font color=\"red\">Server error in '{0}' " + 
-					      "application</font></h1><hr>\r\n",
-					      HtmlEncode (HttpRuntime.AppDomainAppVirtualPath));
-
-			builder.AppendFormat ("<h2><font color=\"maroon\"><i>{0}</i></font></h2>\r\n",
-					      HtmlEncode (Message));
-			builder.AppendFormat ("<b>Description: </b>{0}\r\n<p>\r\n", Description);
-			builder.Append ("<b>Error Message: </b>");
+			StringBuilder builder = new StringBuilder ();
+			WriteFileTop (builder, String.Format ("Error{0}", http_code != 0 ? " " + http_code : String.Empty));
+			builder.AppendFormat ("<h2><em>{0}</em></h2>\r\n", HtmlEncode (Message));
+			builder.AppendFormat ("<p><strong>Description: </strong>{0}</p>\r\n", HtmlEncode (Description));
+			builder.Append ("<p><strong>Error Message: </strong>");
 			if (http_code != 0)
 				builder.AppendFormat ("HTTP {0}. ", http_code);
-
-			builder.AppendFormat ("{0}\r\n<p>\r\n", HtmlEncode (this.Message));
+			builder.AppendFormat ("{0}\r\n</p>\r\n", HtmlEncode (this.Message));
 
 			if (InnerException != null) {
-				builder.AppendFormat ("<b>Stack Trace: </b>");
-				builder.Append ("<table summary=\"Stack Trace\" width=\"100%\" " +
-						"bgcolor=\"#ffffc\">\r\n<tr><td>");
+				builder.AppendFormat ("<p><strong>Stack Trace: </strong></p>");
+				builder.Append ("<table summary=\"Stack Trace\" class=\"sampleCode\">\r\n<tr><td>");
 				WriteTextAsCode (builder, InnerException.ToString ());
 #if TARGET_J2EE //Required, because toString of Java doesn't print stackTrace
 				WriteTextAsCode (builder, InnerException.StackTrace);
 #endif
-				builder.Append ("</td></tr>\r\n</table>\r\n<p>\r\n");
+				builder.Append ("</td></tr>\r\n</table>\r\n");
 			}
-
-			builder.AppendFormat ("<hr>\r\n{0}</body>\r\n</html>\r\n", DateTime.UtcNow);
-			builder.AppendFormat ("<!--\r\n{0}\r\n-->\r\n", HttpUtility.HtmlEncode (this.ToString ()));
-#if TARGET_J2EE //Required, because toString of Java doesn't print stackTrace
-			builder.AppendFormat ("<!--\r\n{0}\r\n-->\r\n", HttpUtility.HtmlEncode (this.StackTrace));
+			WriteFileBottom (builder,
+					 this.ToString (),
+#if TARGET_J2EE
+					 this.StackTrace
+#else
+					 null
 #endif
-
+			);
+			
 			return builder.ToString ();
 		}
 
@@ -164,80 +223,75 @@ namespace System.Web
 
 		string GetHtmlizedErrorMessage ()
 		{
-			StringBuilder builder = new StringBuilder ("<html>\r\n<title>");
+			StringBuilder builder = new StringBuilder ();
 			HtmlizedException exc = (HtmlizedException) this.InnerException;
-			builder.Append (exc.Title);
-			builder.AppendFormat ("</title><body bgcolor=\"white\">" + 
-					      "<h1><font color=\"red\">Server Error in '{0}' " + 
-					      "Application</font></h1><hr>\r\n",
-					      HttpRuntime.AppDomainAppVirtualPath);
-
-			builder.AppendFormat ("<h2><font color=\"maroon\"><i>{0}</i></font></h2>\r\n", exc.Title);
-			builder.AppendFormat ("<b>Description: </b>{0}\r\n<p>\r\n", HtmlEncode (exc.Description));
-			string errorMessage = "<br>" + HtmlEncode (exc.ErrorMessage).Replace ("\n", "<br>");
-			builder.AppendFormat ("<b>Error message: </b>{0}\r\n<p>\r\n", errorMessage);
+			WriteFileTop (builder, exc.Title);
+			builder.AppendFormat ("<h2><em>{0}</em></h2>\r\n", exc.Title);
+			builder.AppendFormat ("<p><strong>Description: </strong>{0}\r\n</p>\r\n", HtmlEncode (exc.Description));
+			string errorMessage = HtmlEncode (exc.ErrorMessage).Replace ("\n", "<br/>");
+			builder.AppendFormat ("<p><strong>Error message: </strong></p><p>{0}</p>", errorMessage);
 
 			if (exc.FileName != null)
-				builder.AppendFormat ("<b>File name: </b> {0}", HtmlEncode (exc.FileName));
+				builder.AppendFormat ("<p><strong>File name: </strong> {0}</p>", HtmlEncode (exc.FileName));
 
 			if (exc.FileText != null) {
 				if (exc.SourceFile != exc.FileName)
-					builder.AppendFormat ("<p><b>Source File: </b>{0}", exc.SourceFile);
+					builder.AppendFormat ("<p><strong>Source File: </strong>{0}</p>", exc.SourceFile);
 
 				if (exc is ParseException) {
-					builder.Append ("&nbsp;&nbsp;&nbsp;&nbsp;<b>Line: <b>");
+					builder.Append ("<p>&nbsp;&nbsp;&nbsp;&nbsp;<strong>Line: </strong>");
 					builder.Append (exc.ErrorLines [0]);
+					builder.Append ("</p>");
 				}
-
-				builder.Append ("\r\n<p>\r\n");
 
 				if (exc is ParseException) {
-					builder.Append ("<b>Source Error: </b>\r\n");
-					builder.Append ("<table summary=\"Source error\" width=\"100%\"" +
-							" bgcolor=\"#ffffc\">\r\n<tr><td>");
+					builder.Append ("<strong>Source Error: </strong>\r\n");
+					builder.Append ("<table summary=\"Source error\" class=\"sampleCode\">\r\n<tr><td>");
 					WriteSource (builder, exc);
-					builder.Append ("</td></tr>\r\n</table>\r\n<p>\r\n");
+					builder.Append ("</td></tr>\r\n</table>\r\n");
 				} else {
-					builder.Append ("<table summary=\"Source file\" width=\"100%\" " +
-							"bgcolor=\"#ffffc\">\r\n<tr><td>");
+					builder.Append ("<table summary=\"Source file\" class=\"sampleCode\">\r\n<tr><td>");
 					WriteSource (builder, exc);
-					builder.Append ("</td></tr>\r\n</table>\r\n<p>\r\n");
+					builder.Append ("</td></tr>\r\n</table>\r\n");
 				}
-			}
-			
-			builder.Append ("<hr>\r\n</body>\r\n</html>\r\n");
-			builder.AppendFormat ("<!--\r\n{0}\r\n-->\r\n", HtmlEncode (exc.ToString ()));
-#if TARGET_JVM
-			builder.AppendFormat ("<!--\r\n{0}\r\n-->\r\n", HtmlEncode (exc.StackTrace));
+			}			
+
+			WriteFileBottom (
+				builder,
+				exc.ToString (),
+#if TARGET_J2EE
+				exc.StackTrace
+#else
+				null
 #endif
+			);
+			
 			return builder.ToString ();
 		}
 
 		static void WriteTextAsCode (StringBuilder builder, string text)
 		{
-			builder.Append ("<code><pre>\r\n");
-			builder.AppendFormat ("{0}", HtmlEncode (text));
-			builder.Append ("</pre></code>\r\n");
+			builder.AppendFormat ("<pre>{0}</pre>", HtmlEncode (text));
 		}
 
 #if TARGET_J2EE
 		static void WriteSource (StringBuilder builder, HtmlizedException e)
 		{
-			builder.Append ("<code><pre>");
+			builder.Append ("<pre>");
 			WritePageSource (builder, e);
-			builder.Append ("</pre></code>\r\n");
+			builder.Append ("</pre>\r\n");
 		}
 
 #else
 		static void WriteSource (StringBuilder builder, HtmlizedException e)
 		{
-			builder.Append ("<code><pre>");
+			builder.Append ("<pre>");
 			if (e is CompilationException)
 				WriteCompilationSource (builder, e);
 			else
 				WritePageSource (builder, e);
 
-			builder.Append ("</pre></code>\r\n");
+			builder.Append ("</pre>\r\n");
 		}
 #endif
 		

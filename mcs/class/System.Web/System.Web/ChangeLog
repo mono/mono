@@ -1,3 +1,10 @@
+2007-04-07  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpException.cs: show a default custom error message if custom
+	errors are enabled.
+	Cleaned up the errors HTML, made it XHTML-compliant. Generated
+	HTML now uses inline CSS styles.
+
 2007-04-06  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpUtility.cs: added a constant that contains the default query
