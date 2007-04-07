@@ -1,3 +1,8 @@
+2007-04-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* threads.c (start_wrapper): Call push_appdomain_ref () earlier to fix races where
+	the thread is aborted early.
+
 2007-04-05  Dick Porter  <dick@ximian.com>
 
 	* file-io.c (ves_icall_System_IO_MonoIO_GetFileSystemEntries): use
