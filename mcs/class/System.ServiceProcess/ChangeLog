@@ -1,3 +1,7 @@
+2007-04-07  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Makefile: Do not output deprecated warnings.
+
 2006-09-22  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* System.ServiceProcess.dll.sources: Added ServiceNameConverter.cs.
