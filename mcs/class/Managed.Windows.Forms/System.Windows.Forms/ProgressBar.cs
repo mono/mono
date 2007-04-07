@@ -25,7 +25,6 @@
 //
 //
 
-
 using System.Drawing;
 using System.ComponentModel;
 using System.Drawing.Imaging;
@@ -56,16 +55,23 @@ namespace System.Windows.Forms
 #if NET_2_0
 		internal ProgressBarStyle style;
 		Timer marquee_timer;
-#endif		
+#endif
+
+#if NET_2_0
+		private static readonly Color defaultForeColor = SystemColors.Highlight;
+#endif
 		#endregion	// Local Variables
 
 		#region events
+
+#if ONLY_1_1
 		[Browsable (false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]		
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler BackColorChanged {
 			add { base.BackColorChanged += value; }
 			remove { base.BackColorChanged -= value; }
 		}
+#endif
 		
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
@@ -102,12 +108,14 @@ namespace System.Windows.Forms
 			remove { base.FontChanged -= value; }
 		}
 		
+#if ONLY_1_1
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler ForeColorChanged {
 			add { base.ForeColorChanged += value; }
 			remove { base.ForeColorChanged -= value; }
 		}
+#endif
 		
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
@@ -151,12 +159,14 @@ namespace System.Windows.Forms
 			remove { base.Paint -= value; }
 		}
 		
+#if ONLY_1_1
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler RightToLeftChanged {
 			add { base.RightToLeftChanged += value; }
 			remove { base.RightToLeftChanged -= value; }
 		}
+#endif
 		
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
@@ -191,6 +201,10 @@ namespace System.Windows.Forms
 				| ControlStyles.UseTextForAccessibility
 #endif
 				, false);
+
+#if NET_2_0
+			ForeColor = defaultForeColor;
+#endif
 		}
 		#endregion	// Public Constructors
 
@@ -255,10 +269,11 @@ namespace System.Windows.Forms
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override Font Font
 		{
-			get { return base.Font;	}
+			get { return base.Font; }
 			set { base.Font = value; }
 		}
 
+#if ONLY_1_1
 		// Setting this property in MS .Net 1.1 does not have any visual effect and it
 		// does not fire a FontChanged event
 		[Browsable (false)]
@@ -268,6 +283,7 @@ namespace System.Windows.Forms
 			get { return base.ForeColor; }
 			set { base.ForeColor = value; }
 		}
+#endif
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
@@ -310,6 +326,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+#if ONLY_1_1
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override RightToLeft RightToLeft
@@ -317,6 +334,7 @@ namespace System.Windows.Forms
 			get { return base.RightToLeft; }
 			set { base.RightToLeft = value; }
 		}
+#endif
 
 		[DefaultValue (10)]
 		public int Step
@@ -449,6 +467,13 @@ namespace System.Windows.Forms
 			Refresh ();	// FIXME - calculate delta and only expose that
 		}
 
+#if NET_2_0
+		public override void ResetForeColor ()
+		{
+			ForeColor = defaultForeColor;
+		}
+#endif
+
 		public override string ToString()
 		{
 			return string.Format ("{0}, Minimum: {1}, Maximum: {2}, Value: {3}",
@@ -461,6 +486,7 @@ namespace System.Windows.Forms
 		#endregion	// Public Instance Methods
 
 		#region Private Instance Methods
+
 		private void UpdateAreas ()
 		{
 			client_area.X = client_area.Y = 2;
@@ -469,18 +495,18 @@ namespace System.Windows.Forms
 		}
 
 		private void OnResizeTB (Object o, EventArgs e)
-    		{
-    			if (Width <= 0 || Height <= 0)
-    				return;
+		{
+			if (Width <= 0 || Height <= 0)
+				return;
 
 			UpdateAreas ();
 			Invalidate();	// Invalidate the full surface, blocks will not match
-    		}
+		}
 
 		internal override void OnPaintInternal (PaintEventArgs pevent)
 		{
-                        ThemeEngine.Current.DrawProgressBar (pevent.Graphics, pevent.ClipRectangle, this);
-		}		
+			ThemeEngine.Current.DrawProgressBar (pevent.Graphics, pevent.ClipRectangle, this);
+		}
 
 		#endregion
 	}

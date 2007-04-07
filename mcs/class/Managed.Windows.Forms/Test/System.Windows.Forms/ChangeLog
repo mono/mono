@@ -1,5 +1,6 @@
 2007-04-07  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* ProgressBarTest.cs: Added ForeColor and ResetForeColor tests.
 	* TextBoxTest.cs: Added NotWorking tests for bugs #80620 and #80626.
 
 2007-04-05  Gert Driesen  <drieseng@users.sourceforge.net>
