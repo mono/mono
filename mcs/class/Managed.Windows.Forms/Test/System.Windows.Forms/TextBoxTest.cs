@@ -264,6 +264,14 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (false, textBox.CanUndo, "#29c");
 		}
 
+		[Test] // bug #80620
+		[Category ("NotWorking")]
+		public void ClientRectangle ()
+		{
+			textBox.CreateControl ();
+			Assert.AreEqual (textBox.ClientRectangle, new TextBox ().ClientRectangle);
+		}
+
 		[Test] // bug #80163
 		public void ContextMenu ()
 		{
