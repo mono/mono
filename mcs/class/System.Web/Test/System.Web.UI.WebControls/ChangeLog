@@ -1,3 +1,8 @@
+2007-04-07  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* UnitTest.cs: Added test for unit value with no integral part. Code
+	formatting fixes.
+
 2007-03-20  Marek Habersack  <mhabersack@novell.com>
 
 	* LoginStatusTest.cs: add a test for CssClass set on the rendered

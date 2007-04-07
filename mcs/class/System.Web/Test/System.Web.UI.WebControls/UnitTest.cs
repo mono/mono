@@ -36,9 +36,9 @@ using System.Web.UI.WebControls;
 
 namespace MonoTests.System.Web.UI.WebControls
 {
-	[TestFixture]	
-	public class UnitTest {
-
+	[TestFixture]
+	public class UnitTest
+	{
 		[Test]
 		public void UnitConstructors ()
 		{
@@ -166,6 +166,11 @@ namespace MonoTests.System.Web.UI.WebControls
 			a3 = new Unit (1.5);
 			Assert.AreEqual (UnitType.Pixel, a3.Type, "A58");
 			Assert.AreEqual (1.0, a3.Value, "A59");
+
+			s1 = new Unit (".9em");
+			Assert.AreEqual (s1.Type, UnitType.Em, "B1");
+			Assert.AreEqual (s1.Value, 0.9, "B2");
+			Assert.AreEqual ("0.9em", s1.ToString (), "B3");
 		}
 
 		[Test]
@@ -273,7 +278,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 		    // throws because floating point values are not valid for Pixel.
 		    Unit a = new Unit("34.4px");
-	            
 		}
 
 		[Test]
@@ -392,4 +396,3 @@ namespace MonoTests.System.Web.UI.WebControls
 	}
 }
 
-		
