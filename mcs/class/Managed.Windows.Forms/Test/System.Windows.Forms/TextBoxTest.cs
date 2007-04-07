@@ -242,6 +242,16 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (0, _paint, "#B15");
 		}
 
+		[Test] // bug #80626
+		[Category ("NotWorking")]
+		public void BorderStyle_None ()
+		{
+			textBox.BorderStyle = BorderStyle.None;
+			Assert.AreEqual (20, textBox.Height, "#1");
+			textBox.CreateControl ();
+			Assert.AreEqual (13, textBox.Height, "#2");
+		}
+
 		[Test]
 		public void ClearTest ()
 		{
