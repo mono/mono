@@ -36,7 +36,7 @@ namespace System.ComponentModel {
 
 	[AttributeUsage (AttributeTargets.Property)]
 #if NET_2_0
-	//[Obsolete ("Use SettingsBindableAttribute instead of RecommendedAsConfigurableAttribute")]
+	[Obsolete ("Use SettingsBindableAttribute instead of RecommendedAsConfigurableAttribute")]
 #endif
 	public class RecommendedAsConfigurableAttribute : Attribute {
 
@@ -47,7 +47,6 @@ namespace System.ComponentModel {
 		public static readonly RecommendedAsConfigurableAttribute Default = new RecommendedAsConfigurableAttribute (false);
 		public static readonly RecommendedAsConfigurableAttribute No = new RecommendedAsConfigurableAttribute (false);
 		public static readonly RecommendedAsConfigurableAttribute Yes = new RecommendedAsConfigurableAttribute (true);
-
 
 		#endregion // Fields
 
@@ -60,7 +59,6 @@ namespace System.ComponentModel {
 
 		#endregion // Constructors
 
-
 		#region Properties
 
 		public bool RecommendedAsConfigurable {
@@ -68,7 +66,6 @@ namespace System.ComponentModel {
 		}
 
 		#endregion // Properties
-
 
 		#region Methods
 
@@ -78,7 +75,6 @@ namespace System.ComponentModel {
 				return false;
 			return ((RecommendedAsConfigurableAttribute) obj).RecommendedAsConfigurable == recommendedAsConfigurable;
 		}
-
 
 		public override int GetHashCode ()
 		{
@@ -93,4 +89,3 @@ namespace System.ComponentModel {
 		#endregion // Methods
 	}
 }
-
