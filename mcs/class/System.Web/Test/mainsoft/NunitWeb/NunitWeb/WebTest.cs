@@ -310,7 +310,7 @@ namespace MonoTests.SystemWeb.Framework
 						
 						if (equal) {
 							existing.Close ();
-							global::System.IO.File.SetLastWriteTime (targetFile, DateTime.Now);
+							File.SetLastWriteTime (targetFile, DateTime.Now);
 							return;
 						}
 						
