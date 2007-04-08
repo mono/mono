@@ -5184,13 +5184,31 @@ query_expression
 	: from_clause query_body
 	  {
 		lexer.QueryParsing = false;
-		$$ = new QueryExpression ();
+		$$ = new QueryExpression ((Expression)$1, (Expression)$2);
+		current_block = current_block.Parent;
 	  }
 	;
 	
 from_clause
 	: FROM IDENTIFIER IN expression opt_join_clauses
+	  {
+	  	current_block = new Block (current_block);
+		LocatedToken lt = (LocatedToken) $2;
+		
+		LocalInfo vi = current_block.AddVariable (TypeManager.system_object_expr, lt.Value, lt.Location);  // TODO: null is var type
+		if (vi != null) {
+			$$ = new LocalVariableReference (current_block, lt.Value, lt.Location, vi, false);
+		}
+		$$ = $4;
+	  }
 	| FROM type IDENTIFIER IN expression opt_join_clauses
+	  {
+  	  	current_block = new Block (current_block);
+		LocatedToken lt = (LocatedToken) $3;
+
+		LocalInfo vi = current_block.AddVariable ((Expression)$2, lt.Value, lt.Location);
+		$$ = $5;
+	  }
 	;
 
 opt_join_clauses
@@ -5215,7 +5233,10 @@ join_clause_body
 	;
 
 query_body
-	: opt_from_let_where_clauses opt_orderby_clause select_clause opt_query_continuation
+	: opt_from_let_where_clauses opt_orderby_clause SELECT expression opt_query_continuation
+	  {
+	    $$ = new Select (current_container, current_block, (Expression)$4, GetLocation ($3));
+	  }
 	| opt_from_let_where_clauses opt_orderby_clause group_clause opt_query_continuation
 	;
 	
@@ -5262,10 +5283,7 @@ ordering
 	| expression ASCENDING
 	| expression DESCENDING
 	;
-	
-select_clause
-	: SELECT expression
-	;
+
 	
 group_clause
 	: GROUP expression BY expression

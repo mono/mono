@@ -198,7 +198,7 @@ namespace Mono.CSharp {
 	// The attribute constructors.
 	//
 	static public ConstructorInfo object_ctor;
-	static private ConstructorInfo cons_param_array_attribute;
+	static public ConstructorInfo cons_param_array_attribute;
 	static public ConstructorInfo void_decimal_ctor_five_args;
 	static public ConstructorInfo void_decimal_ctor_int_arg;
 	static public ConstructorInfo unverifiable_code_ctor;
@@ -392,7 +392,6 @@ namespace Mono.CSharp {
 
 		// to uncover regressions
 		AllClsTopLevelTypes = null;
-		cons_param_array_attribute = null;
 	}
 
 	public static void AddUserType (DeclSpace ds)
@@ -702,10 +701,11 @@ namespace Mono.CSharp {
 		if (t.DeclaringType != null) {
 			pos = GetFullName (t.DeclaringType, sb);
 			sb.Append ('.');
-			sb.Append (RemoveGenericArity (t.Name));
-		} else {
-			sb.Append (RemoveGenericArity (t.FullName));
+		} else if (t.Namespace != null && t.Namespace.Length != 0) {
+			sb.Append (t.Namespace);
+			sb.Append ('.');
 		}
+		sb.Append (RemoveGenericArity (t.Name));
 
 		Type[] this_args = GetTypeArguments (t);
 
@@ -814,7 +814,7 @@ namespace Mono.CSharp {
 			}
 		} else {
 			if (mb.Name == ".ctor")
-				sig.Append (mb.DeclaringType.Name);
+				sig.Append (RemoveGenericArity (mb.DeclaringType.Name));
 			else {
 				sig.Append (mb.Name);
 
@@ -1314,6 +1314,7 @@ namespace Mono.CSharp {
 		//
 		unverifiable_code_ctor = GetConstructor (unverifiable_code_type, Type.EmptyTypes);
 		default_member_ctor = GetConstructor (default_member_type, string_);
+		cons_param_array_attribute = GetConstructor (param_array_type, Type.EmptyTypes);
 
 		Type[] short_arg = { short_type };
 		struct_layout_attribute_ctor = GetConstructor (struct_layout_attribute_type, short_arg);
@@ -1343,9 +1344,7 @@ namespace Mono.CSharp {
 		fixed_buffer_attr_ctor = GetConstructor (fixed_buffer_attr_type, type_int_arg);
 
 		// C# 3.0
-		if (extension_attribute_type != null)
-			extension_attribute_attr = new CustomAttributeBuilder (
-				GetConstructor (extension_attribute_type, Type.EmptyTypes), new object [0]);
+		InitSystemCore ();
 #endif
 
 		// Object
@@ -1356,13 +1355,26 @@ namespace Mono.CSharp {
 #endif
 	}
 
-	static public ConstructorInfo ConsParamArrayAttribute {
-		get {
-			if (cons_param_array_attribute == null)
-				cons_param_array_attribute = GetConstructor (param_array_type, Type.EmptyTypes);
-			return cons_param_array_attribute;
-		}
+#if GMCS_SOURCE
+	public static MethodInfo enumerable_select;
+
+	static void InitSystemCore ()
+	{
+		if (RootContext.Version != LanguageVersion.LINQ)
+			return;
+
+		if (extension_attribute_type != null)
+			extension_attribute_attr = new CustomAttributeBuilder (
+				GetConstructor (extension_attribute_type, Type.EmptyTypes), new object[0]);
+
+		Type t = CoreLookupType ("System.Linq", "Enumerable");
+		MemberList select = TypeManager.FindMembers (t, MemberTypes.Method, BindingFlags.Static | BindingFlags.Public,
+			Type.FilterName, "Select");
+
+		// TODO: implement correct selection
+		enumerable_select = ((MethodInfo)select[0]);
 	}
+#endif
 
 	const BindingFlags instance_and_static = BindingFlags.Static | BindingFlags.Instance;
 
@@ -2729,6 +2741,7 @@ namespace Mono.CSharp {
 		BindingFlags bf = BindingFlags.Public | BindingFlags.NonPublic |
 			BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly;
 
+		// TODO: use CodeGen.Module.Builder.ResolveField (fi.MetadataToken);
 		foreach (FieldInfo f in t.GetFields (bf))
 			if (f.MetadataToken == fi.MetadataToken)
 				return f;
@@ -2821,6 +2834,7 @@ namespace Mono.CSharp {
 			BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly;
 
 #if MS_COMPATIBLE
+		// TODO: use CodeGen.Module.Builder.ResolveMethod ()
 		return m;
 #endif
 

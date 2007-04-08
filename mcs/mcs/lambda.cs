@@ -31,7 +31,7 @@ namespace Mono.CSharp {
 		{
 			explicit_parameters = (parameters != null && parameters.Count > 0 && parameters [0].TypeName != null);
 			if (parameters == null)
-				Parameters = new Parameters (new Parameter [0]);
+				Parameters = Parameters.EmptyReadOnlyParameters;
 		}
 
 		public bool HasImplicitParameters {

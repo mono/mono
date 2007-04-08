@@ -1,3 +1,9 @@
+2007-04-08  Marek Safar  <marek.safar@gmail.com>
+
+	* cs-parser.jay, linq.cs: First select implementation (hacky).
+
+	* generic.cs (InferTypeArguments): Simplified.
+
 2007-03-31  Marek Safar  <marek.safar@gmail.com>
 
 	* generic.cs (InferTypeArguments): Restored validation check.

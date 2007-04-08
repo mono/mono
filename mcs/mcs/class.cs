@@ -2317,8 +2317,8 @@ namespace Mono.CSharp {
 				default_static_constructor.Emit ();
 			
 			if (methods != null){
-				foreach (Method m in methods)
-					m.Emit ();
+				for (int i = 0; i < methods.Count; ++i)
+					((Method)methods[i]).Emit ();
 			}
 
 			if (operators != null)
@@ -4407,6 +4407,7 @@ namespace Mono.CSharp {
 				}
 
 				if (MethodData.implementing != null) {
+					Report.SymbolRelatedToPreviousError (MethodData.implementing.DeclaringType);
 					Report.Error (629, Location, "Conditional member `{0}' cannot implement interface member `{1}'",
 						GetSignatureForError (), TypeManager.CSharpSignature (MethodData.implementing));
 					return;

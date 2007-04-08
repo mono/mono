@@ -39,7 +39,7 @@ namespace Mono.CSharp {
 
 		public static string MakeName (string prefix)
 		{
-			return String.Format ("<>c__{0}{1}", prefix, ++next_index);
+			return "<>c__" + prefix + next_index++;
 		}
 
 		protected CompilerGeneratedClass (DeclSpace parent, GenericMethod generic,
@@ -1221,6 +1221,10 @@ namespace Mono.CSharp {
 					Error_ParameterMismatch (delegate_type);
 					return false;
 				}
+
+				// We assume that generic parameters are always inflated
+				if (TypeManager.IsGenericParameter (invoke_pd.Types[i]))
+					continue;
 				
 				if (invoke_pd.ParameterType (i) != Parameters.ParameterType (i)) {
 					Report.Error (1678, loc, "Parameter `{0}' is declared as type `{1}' but should be `{2}'",
@@ -1272,12 +1276,6 @@ namespace Mono.CSharp {
 						continue;
 
 					infered_arguments [invoke_pd.Types[i].GenericParameterPosition] = Parameters.Types[i];
-					invoke_pd.Types[i] = Parameters.Types[i];
-
-					// HACK: to update both parameter type copies
-					Parameters p = invoke_pd as Parameters;
-					if (p != null)
-						p.FixedParameters[i].ParameterType = Parameters.Types[i];
 				}
 			}
 
@@ -1560,6 +1558,14 @@ namespace Mono.CSharp {
 				aec.MethodIsStatic = Scope == null;
 				return aec;
 			}
+
+#if GMCS_SOURCES
+			public override void Emit ()
+			{
+				MethodBuilder.SetCustomAttribute (TypeManager.compiler_generated_attr);
+				base.Emit ();
+			}
+#endif
 		}
 	}
 
@@ -1776,7 +1782,7 @@ namespace Mono.CSharp {
 				loc);
 
 			constructor_method = ((MethodGroupExpr) ml).Methods [0];
-#if GMCS_SOURCE
+#if MS_COMPATIBLE
 			if (type.IsGenericType)
 				constructor_method = TypeBuilder.GetConstructor (type, (ConstructorInfo)constructor_method);
 #endif

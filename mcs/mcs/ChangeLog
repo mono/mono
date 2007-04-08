@@ -1,3 +1,25 @@
+2007-04-08  Marek Safar  <marek.safar@gmail.com>
+
+	* anonymous.cs (MakeName): Make faster and zero-based.
+	(VerifyExplicitParameterCompatibility): Back to mode where generic
+	parameter is ignored.
+	(AnonymousMethodMethod.Emit): Decorate method as compiler generated.
+
+	* class.cs (EmitType): Method can emit another new method.
+
+	* cs-tokenizer.cs (IsLinqEnabled): Fixes static cctor race.
+
+	* driver.cs: Updated.
+
+	* lambda.cs: Reuse predefined empty parameters.
+
+	* parameter.cs: Updated
+
+	* support.cs: Implemented InflateTypes.
+
+	* typemanager.cs (GetFullName): Don't use FullName as it can be null.
+	(InitSystemCore): Introduced to isolate 3.0 dependencies.
+
 2007-04-03  Martin Baulig  <martin@ximian.com>
 
 	Fix #80632.

@@ -45,7 +45,11 @@ namespace Mono.CSharp
 		Location current_comment_location = Location.Null;
 		ArrayList escapedIdentifiers = new ArrayList ();
 
-		static bool linq;
+		static bool IsLinqEnabled {
+			get {
+				return RootContext.Version == LanguageVersion.LINQ;
+			}
+		}
 
 		//
 		// XML documentation buffer. The save point is used to divide
@@ -159,12 +163,6 @@ namespace Mono.CSharp
 
 			set {
 				handle_constraints = value;
-			}
-		}
-
-		public static bool LinqEnabled {
-			set {
-				linq = value;
 			}
 		}
 
@@ -422,23 +420,26 @@ namespace Mono.CSharp
 			AddKeyword ("partial", Token.PARTIAL);
 #if GMCS_SOURCE
 			AddKeyword ("where", Token.WHERE);
-
-			if (linq) {
-				AddKeyword ("from", Token.FROM);
-				AddKeyword ("join", Token.JOIN);
-				AddKeyword ("on", Token.ON);
-				AddKeyword ("equals", Token.EQUALS);
-				AddKeyword ("select", Token.SELECT);
-				AddKeyword ("group", Token.GROUP);
-				AddKeyword ("by", Token.BY);
-				AddKeyword ("let", Token.LET);
-				AddKeyword ("orderby", Token.ORDERBY);
-				AddKeyword ("ascending", Token.ASCENDING);
-				AddKeyword ("descending", Token.DESCENDING);
-				AddKeyword ("into", Token.INTO);
-			}
 #endif
 		}
+
+#if GMCS_SOURCE
+		public static void InitializeLinqKeywords ()
+		{
+			AddKeyword ("from", Token.FROM);
+			AddKeyword ("join", Token.JOIN);
+			AddKeyword ("on", Token.ON);
+			AddKeyword ("equals", Token.EQUALS);
+			AddKeyword ("select", Token.SELECT);
+			AddKeyword ("group", Token.GROUP);
+			AddKeyword ("by", Token.BY);
+			AddKeyword ("let", Token.LET);
+			AddKeyword ("orderby", Token.ORDERBY);
+			AddKeyword ("ascending", Token.ASCENDING);
+			AddKeyword ("descending", Token.DESCENDING);
+			AddKeyword ("into", Token.INTO);
+		}
+#endif
 
 		//
 		// Class initializer
@@ -480,7 +481,7 @@ namespace Mono.CSharp
 			if (handle_assembly == false && res == Token.ASSEMBLY)
 				return -1;
 #if GMCS_SOURCE
-			if (linq) {
+			if (IsLinqEnabled) {
 				if (res == Token.FROM &&
 					(current_token == Token.ASSIGN || current_token == Token.OPEN_BRACKET ||
 					 current_token == Token.RETURN || current_token == Token.IN)) {
@@ -844,7 +845,7 @@ namespace Mono.CSharp
 			case ']':
 				return Token.CLOSE_BRACKET;
 			case '(':
-				if (linq){
+				if (IsLinqEnabled){
 					PushPosition ();
 					bool have_lambda_parameter = parse_lambda_parameters ();
 					PopPosition ();

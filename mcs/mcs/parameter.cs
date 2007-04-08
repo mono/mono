@@ -162,16 +162,16 @@ namespace Mono.CSharp {
 			base.ApplyAttributes (mb, cb, index);
 
 			CustomAttributeBuilder a = new CustomAttributeBuilder (
-				TypeManager.ConsParamArrayAttribute, new object [0]);
+				TypeManager.cons_param_array_attribute, new object[0]);
 				
 			builder.SetCustomAttribute (a);
 		}
 	}
 
 	public class ArglistParameter : Parameter {
-		// Doesn't have proper type because it's never choosed for better conversion
+		// Doesn't have proper type because it's never chosen for better conversion
 		public ArglistParameter () :
-			base (typeof (ArglistParameter), "", Parameter.Modifier.ARGLIST, null, Location.Null)
+			base (typeof (ArglistParameter), String.Empty, Parameter.Modifier.ARGLIST, null, Location.Null)
 		{
 		}
 
@@ -626,7 +626,7 @@ namespace Mono.CSharp {
 			count = types.Length;
 		}
 		
-		public Parameters (Parameter[] parameters)
+		public Parameters (params Parameter[] parameters)
 		{
 			if (parameters == null)
 				throw new ArgumentException ("Use EmptyReadOnlyPatameters");
@@ -807,11 +807,9 @@ namespace Mono.CSharp {
 			}
 		}
 
-#if GMCS_SOURCE
-		[System.Diagnostics.Conditional ("MS_COMPATIBLE")]
+#if MS_COMPATIBLE
 		public void InflateTypes (Type[] genArguments, Type[] argTypes)
 		{
-			int pos = 0;
 			for (int i = 0; i < count; ++i) {
 				if (FixedParameters[i].IsTypeParameter) {
 					for (int ii = 0; ii < genArguments.Length; ++ii) {

@@ -29,6 +29,10 @@ namespace Mono.CSharp {
 
 		Parameter.Modifier ParameterModifier (int pos);
 		string GetSignatureForError ();
+
+#if MS_COMPATIBLE
+		void InflateTypes (Type[] genArguments, Type[] argTypes);
+#endif
 	}
 
 	public class ReflectionParameters : ParameterData {
@@ -132,6 +136,33 @@ namespace Mono.CSharp {
 			sb.Append (')');
 			return sb.ToString ();
 		}
+
+#if MS_COMPATIBLE
+		public void InflateTypes (Type[] genArguments, Type[] argTypes)
+		{
+			for (int i = 0; i < types.Length; ++i) {
+				if (types[i].IsGenericParameter) {
+					for (int ii = 0; ii < genArguments.Length; ++ii) {
+						if (types[i] != genArguments[ii])
+							continue;
+
+						types[i] = argTypes[ii];
+						break;
+					}
+					continue;
+				}
+
+				if (types[i].IsGenericType) {
+					Type[] gen_arguments = types[i].GetGenericTypeDefinition ().GetGenericArguments ();
+					for (int ii = 0; ii < gen_arguments.Length; ++ii) {
+						gen_arguments[ii] = argTypes[gen_arguments[ii].GenericParameterPosition];
+					}
+
+					types[i] = types[i].GetGenericTypeDefinition ().MakeGenericType (gen_arguments);
+				}
+			}
+		}
+#endif
 
 		public Type ParameterType (int pos)
 		{

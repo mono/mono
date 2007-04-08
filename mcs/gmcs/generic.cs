@@ -2616,9 +2616,8 @@ namespace Mono.CSharp {
 #if MS_COMPATIBLE
 			// MS implementation throws NotSupportedException for GetParameters
 			// on unbaked generic method
-			Parameters p = ((Parameters)TypeManager.GetParameterData (method)).Clone ();
+			ParameterData p = TypeManager.GetParameterData (method);
 			p.InflateTypes (param_types, inferred_types);
-			TypeManager.RegisterMethod (method, p);
 #endif
 
 			return true;

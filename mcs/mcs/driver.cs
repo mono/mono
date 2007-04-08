@@ -1420,18 +1420,19 @@ namespace Mono.CSharp
 				
 			case "/langversion":
 				switch (value.ToLower (CultureInfo.InvariantCulture)) {
-				case "iso-1":
-					RootContext.Version = LanguageVersion.ISO_1;
-					return true;
-					
-				case "default":
-					SetupV2 ();
-					return true;
-					
-				case "linq":
-					RootContext.Version = LanguageVersion.LINQ;
-					Tokenizer.LinqEnabled = true;
-					return true;
+					case "iso-1":
+						RootContext.Version = LanguageVersion.ISO_1;
+						return true;
+
+					case "default":
+						SetupV2 ();
+						return true;
+#if GMCS_SOURCE
+					case "linq":
+						RootContext.Version = LanguageVersion.LINQ;
+						Tokenizer.InitializeLinqKeywords ();
+						return true;
+#endif
 				}
 				Report.Error (1617, "Invalid option `{0}' for /langversion. It must be either `ISO-1' or `Default'", value);
 				return true;
@@ -2046,9 +2047,9 @@ namespace Mono.CSharp
 		static void Reset ()
 		{
 			Driver.Reset ();
+			RootContext.Reset ();
 			Tokenizer.Reset ();
 			Location.Reset ();
-			RootContext.Reset ();
 			Report.Reset ();
 			TypeManager.Reset ();
 			TypeHandle.Reset ();
