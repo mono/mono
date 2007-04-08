@@ -67,10 +67,8 @@ namespace System.Windows.Forms
 		#endregion Instance Variables
 
 		#region Public Constructors
-		public ListViewItem ()
+		public ListViewItem () : this (string.Empty)
 		{
-			this.sub_items = new ListViewSubItemCollection (this);
-			this.sub_items.Add ("");
 		}
 
 		public ListViewItem (string text) : this (text, -1)
@@ -84,7 +82,8 @@ namespace System.Windows.Forms
 		public ListViewItem (ListViewItem.ListViewSubItem [] subItems, int imageIndex)
 		{
 			this.sub_items = new ListViewSubItemCollection (this);
-			this.sub_items.AddRange (subItems);
+			for (int i = 0; i < subItems.Length; i++)
+				sub_items.Add (subItems [i]);
 			this.image_index = imageIndex;
 		}
 
@@ -98,18 +97,16 @@ namespace System.Windows.Forms
 		public ListViewItem (string [] items, int imageIndex)
 		{
 			this.sub_items = new ListViewSubItemCollection (this);
-			foreach (string item in items) // Don't use AddRange, since we need to add null strings
-				sub_items.Add (item);
+			if (items != null) {
+				for (int i = 0; i < items.Length; i++)
+					sub_items.Add (new ListViewSubItem (this, items [i]));
+			}
 			this.image_index = imageIndex;
 		}
 
 		public ListViewItem (string [] items, int imageIndex, Color foreColor, 
-				     Color backColor, Font font)
+				     Color backColor, Font font) : this (items, imageIndex)
 		{
-			this.sub_items = new ListViewSubItemCollection (this);
-			foreach (string item in items)
-				sub_items.Add (item);
-			this.image_index = imageIndex;
 			ForeColor = foreColor;
 			BackColor = backColor;
 			this.font = font;
@@ -126,22 +123,20 @@ namespace System.Windows.Forms
 			this.ImageKey = imageKey;
 		}
 
-		public ListViewItem(ListViewSubItem[] subItems, string imageKey) : this()
+		public ListViewItem(ListViewSubItem[] subItems, string imageKey)
 		{
-			this.sub_items.AddRange(subItems);
+			this.sub_items = new ListViewSubItemCollection (this);
+			for (int i = 0; i < subItems.Length; i++)
+				this.sub_items.Add (subItems [i]);
 			this.ImageKey = imageKey;
 		}
 
 		public ListViewItem(string[] items, string imageKey, Color foreColor,
-					Color backColor, Font font) : this()
+					Color backColor, Font font) : this(items, imageKey)
 		{
-			this.sub_items = new ListViewSubItemCollection(this);
-			foreach (string item in items)
-				sub_items.Add (item);
 			ForeColor = foreColor;
 			BackColor = backColor;
 			this.font = font;
-			this.ImageKey = imageKey;
 		}
 
 		public ListViewItem(ListViewGroup group) : this()
@@ -223,8 +218,7 @@ namespace System.Windows.Forms
 				
 				return ThemeEngine.Current.ColorWindow;
 			}
-
-			set { sub_items[0].BackColor = value; }
+			set { SubItems [0].BackColor = value; }
 		}
 
 		[Browsable (false)]
@@ -317,7 +311,7 @@ namespace System.Windows.Forms
 
 				return ThemeEngine.Current.ColorWindowText;
 			}
-			set { sub_items[0].ForeColor = value; }
+			set { SubItems [0].ForeColor = value; }
 		}
 
 		[DefaultValue (-1)]
@@ -468,7 +462,11 @@ namespace System.Windows.Forms
 			 typeof (System.Drawing.Design.UITypeEditor))]
 #endif
 		public ListViewSubItemCollection SubItems {
-			get { return sub_items; }
+			get {
+				if (sub_items.Count == 0)
+					this.sub_items.Add (string.Empty);
+				return sub_items;
+			}
 		}
 
 		[Bindable (true)]
@@ -490,7 +488,7 @@ namespace System.Windows.Forms
 					return string.Empty;
 			}
 			set { 
-				if (sub_items [0].Text == value)
+				if (SubItems [0].Text == value)
 					return;
 
 				sub_items [0].Text = value; 

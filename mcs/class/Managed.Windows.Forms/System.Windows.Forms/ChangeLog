@@ -1,3 +1,11 @@
+2007-04-08  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ListViewItem.cs: Added null checks. Avoid duplicating code in ctors.
+	Use SubItems property when we want to ensure there's at least one
+	subitem. Modified SubItems property to ensure there's always at least
+	one subitem. Avoid using ListViewSubItemCollection.AddRange to match
+	the NRE's reported by MS.
+
 2007-04-07  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ProgressBar.cs: On 2.0 profile, default forecolor is Highlight. Added

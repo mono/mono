@@ -1,3 +1,10 @@
+2007-04-08  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ListViewItemTest.cs: Added several ctor tests. Added tests to verify
+	throws exceptions. Added tests for ListViewSubItemCollection's Clear
+	and RemoteAt methods that prove that we need to ensure there's always
+	at least one subitem.
+
 2007-04-07  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ProgressBarTest.cs: Added ForeColor and ResetForeColor tests.

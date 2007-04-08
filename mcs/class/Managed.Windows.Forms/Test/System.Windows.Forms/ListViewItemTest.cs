@@ -81,6 +81,176 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		public void Constructor2_Text_Null ()
+		{
+			ListViewItem item = new ListViewItem ((string) null);
+			Assert.AreEqual (-1, item.ImageIndex, "#1");
+			Assert.AreEqual (1, item.SubItems.Count, "#2");
+			Assert.IsNotNull (item.SubItems [0].Text, "#3");
+			Assert.AreEqual (string.Empty, item.SubItems [0].Text, "#4");
+		}
+
+		[Test]
+		public void Constructor3_Items_Empty ()
+		{
+			ListViewItem item = new ListViewItem (new string [3]);
+			Assert.AreEqual (-1, item.ImageIndex, "#1");
+			Assert.AreEqual (3, item.SubItems.Count, "#2");
+			Assert.AreEqual (string.Empty, item.SubItems [0].Text, "#3");
+			Assert.AreEqual (string.Empty, item.SubItems [1].Text, "#4");
+			Assert.AreEqual (string.Empty, item.SubItems [2].Text, "#5");
+		}
+
+		[Test]
+		public void Constructor3_Items_Null ()
+		{
+			ListViewItem item = new ListViewItem ((string []) null);
+			Assert.AreEqual (-1, item.ImageIndex, "#1");
+			Assert.AreEqual (1, item.SubItems.Count, "#2");
+			Assert.IsNotNull (item.SubItems [0].Text, "#3");
+			Assert.AreEqual (string.Empty, item.SubItems [0].Text, "#4");
+		}
+
+		[Test]
+		[ExpectedException (typeof (NullReferenceException))]
+		public void Constructor4_SubItems_Empty ()
+		{
+			new ListViewItem (new ListViewItem.ListViewSubItem [2], 3);
+		}
+
+		[Test]
+		[ExpectedException (typeof (NullReferenceException))]
+		public void Constructor4_SubItems_Null ()
+		{
+			new ListViewItem ((ListViewItem.ListViewSubItem []) null, 3);
+		}
+
+		[Test]
+		public void Constructor5_Text_Null ()
+		{
+			ListViewItem item = new ListViewItem ((string) null, 2);
+			Assert.AreEqual (2, item.ImageIndex, "#1");
+			Assert.AreEqual (1, item.SubItems.Count, "#2");
+			Assert.IsNotNull (item.SubItems [0].Text, "#3");
+			Assert.AreEqual (string.Empty, item.SubItems [0].Text, "#4");
+		}
+
+		[Test]
+		public void Constructor6_Items_Empty ()
+		{
+			ListViewItem item = new ListViewItem (new string [3], 5);
+			Assert.AreEqual (5, item.ImageIndex, "#1");
+			Assert.AreEqual (3, item.SubItems.Count, "#2");
+			Assert.AreEqual (string.Empty, item.SubItems [0].Text, "#3");
+			Assert.AreEqual (string.Empty, item.SubItems [1].Text, "#4");
+			Assert.AreEqual (string.Empty, item.SubItems [2].Text, "#5");
+		}
+
+		[Test]
+		public void Constructor6_Items_Null ()
+		{
+			ListViewItem item = new ListViewItem ((string []) null, 3);
+			Assert.AreEqual (3, item.ImageIndex, "#1");
+			Assert.AreEqual (1, item.SubItems.Count, "#2");
+			Assert.IsNotNull (item.SubItems [0].Text, "#3");
+			Assert.AreEqual (string.Empty, item.SubItems [0].Text, "#4");
+		}
+
+		[Test]
+		public void Constructor7_Items_Empty ()
+		{
+			Font font = new Font (FontFamily.GenericSansSerif, 6);
+
+			ListViewItem item = new ListViewItem (new string [2], 3, Color.Red,
+				Color.Blue, font);
+			Assert.AreEqual (Color.Blue, item.BackColor, "#1");
+			Assert.AreEqual (Color.Red, item.ForeColor, "#2");
+			Assert.AreSame (font, item.Font, "#3");
+			Assert.AreEqual (3, item.ImageIndex, "#4");
+			Assert.AreEqual (2, item.SubItems.Count, "#5");
+			Assert.IsNotNull (item.SubItems [0].Text, "#6");
+			Assert.AreEqual (string.Empty, item.SubItems [0].Text, "#7");
+			Assert.IsNotNull (item.SubItems [1].Text, "#8");
+			Assert.AreEqual (string.Empty, item.SubItems [1].Text, "#9");
+		}
+
+		[Test]
+		public void Constructor7_Items_Null ()
+		{
+			Font font = new Font (FontFamily.GenericSansSerif, 6);
+
+			ListViewItem item = new ListViewItem ((string []) null, 3, Color.Red,
+				Color.Blue, font);
+			Assert.AreEqual (Color.Blue, item.BackColor, "#1");
+			Assert.AreEqual (Color.Red, item.ForeColor, "#2");
+			Assert.AreSame (font, item.Font, "#3");
+			Assert.AreEqual (3, item.ImageIndex, "#4");
+			Assert.AreEqual (1, item.SubItems.Count, "#5");
+			Assert.IsNotNull (item.SubItems [0].Text, "#6");
+			Assert.AreEqual (string.Empty, item.SubItems [0].Text, "#7");
+		}
+
+#if NET_2_0
+		[Test]
+		public void Constructor9_Text_Null ()
+		{
+			ListViewItem item = new ListViewItem ((string) null, "key");
+			Assert.AreEqual (-1, item.ImageIndex, "#1");
+			Assert.IsNotNull (item.ImageKey, "#2");
+			Assert.AreEqual ("key", item.ImageKey, "#3");
+			Assert.AreEqual (1, item.SubItems.Count, "#4");
+			Assert.IsNotNull (item.SubItems [0].Text, "#5");
+			Assert.AreEqual (string.Empty, item.SubItems [0].Text, "#6");
+		}
+
+		[Test]
+		public void Constructor9_ImageKey_Null ()
+		{
+			ListViewItem item = new ListViewItem ("name", (string) null);
+			Assert.AreEqual (-1, item.ImageIndex, "#1");
+			Assert.IsNotNull (item.ImageKey, "#2");
+			Assert.AreEqual (string.Empty, item.ImageKey, "#3");
+			Assert.AreEqual (1, item.SubItems.Count, "#4");
+			Assert.IsNotNull (item.SubItems [0].Text, "#5");
+			Assert.AreEqual ("name", item.SubItems [0].Text, "#6");
+		}
+
+		[Test]
+		[ExpectedException (typeof (NullReferenceException))]
+		public void Constructor10_SubItems_Null ()
+		{
+			new ListViewItem ((ListViewItem.ListViewSubItem []) null, "key");
+		}
+
+		[Test]
+		[ExpectedException (typeof (NullReferenceException))]
+		public void Constructor10_SubItems_Empty ()
+		{
+			new ListViewItem (new ListViewItem.ListViewSubItem [2], "key");
+		}
+
+		[Test]
+		public void Constructor10_ImageKey_Null ()
+		{
+			ListViewItem.ListViewSubItem subItemA = new ListViewItem.ListViewSubItem ();
+			subItemA.Text = "A";
+			ListViewItem.ListViewSubItem subItemB = new ListViewItem.ListViewSubItem ();
+			subItemB.Text = "B";
+
+			ListViewItem item = new ListViewItem (new ListViewItem.ListViewSubItem [] {
+				subItemA, subItemB }, (string) null);
+			Assert.AreEqual (-1, item.ImageIndex, "#1");
+			Assert.IsNotNull (item.ImageKey, "#2");
+			Assert.AreEqual (string.Empty, item.ImageKey, "#3");
+			Assert.AreEqual (2, item.SubItems.Count, "#4");
+			Assert.IsNotNull (item.SubItems [0].Text, "#5");
+			Assert.AreEqual ("A", item.SubItems [0].Text, "#6");
+			Assert.IsNotNull (item.SubItems [1].Text, "#7");
+			Assert.AreEqual ("B", item.SubItems [1].Text, "#8");
+		}
+#endif
+
+		[Test]
 		public void ListViewItemDefaultValues ()
 		{
 			ListViewItem item = new ListViewItem ();
@@ -172,12 +342,13 @@ namespace MonoTests.System.Windows.Forms
 			item1.SubItems.Add ("Element2");
 
 			ListViewItem item2 =  (ListViewItem) item1.Clone ();
-			Assert.AreEqual (item2.ForeColor, Color.Blue, "Clone#1");
-			Assert.AreEqual (item2.BackColor, Color.Red, "Clone#2");
-			Assert.AreEqual (item2.Text, "Hello", "Clone#3");
-			Assert.AreEqual (item2.Font, item1.Font, "Clone#4");
-			Assert.AreEqual (2, item2.SubItems.Count, "Clone#5");
-			Assert.AreEqual (item2.SubItems[1].Text, "Element2", "Clone#6");
+			Assert.AreEqual (Color.Blue, item2.ForeColor, "#1");
+			Assert.AreEqual (Color.Red, item2.BackColor, "#2");
+			Assert.AreEqual ("Hello", item2.Text, "#3");
+			Assert.AreEqual (item1.Font, item2.Font, "#4");
+			Assert.AreEqual (2, item2.SubItems.Count, "#5");
+			Assert.AreEqual ("Hello", item2.SubItems [0].Text, "#6");
+			Assert.AreEqual ("Element2", item2.SubItems[1].Text, "#7");
 		}
 
 #if NET_2_0
@@ -394,6 +565,51 @@ namespace MonoTests.System.Windows.Forms
 
 			item.SubItems.AddRange (new ListViewItem.ListViewSubItem [3]);
 			Assert.AreEqual (1, item.SubItems.Count, "#3");
+		}
+
+		[Test]
+		public void Clear ()
+		{
+			ListViewItem item = new ListViewItem ();
+			item.SubItems.AddRange (new string [] { "A", "B", "C" });
+			item.SubItems.Clear ();
+			Assert.AreEqual (1, item.SubItems.Count, "#1");
+			Assert.IsNotNull (item.SubItems [0].Text, "#2");
+			Assert.AreEqual (string.Empty, item.SubItems [0].Text, "#3");
+		}
+
+		[Test]
+		public void RemoveAt ()
+		{
+			ListViewItem item = new ListViewItem ();
+			item.SubItems.AddRange (new string [] { "A", "B" });
+			Assert.AreEqual (3, item.SubItems.Count, "#A1");
+			Assert.IsNotNull (item.SubItems [0].Text, "#A2");
+			Assert.AreEqual (string.Empty, item.SubItems [0].Text, "#A3");
+			Assert.IsNotNull (item.SubItems [1].Text, "#A4");
+			Assert.AreEqual ("A", item.SubItems [1].Text, "#A5");
+			Assert.IsNotNull (item.SubItems [2].Text, "#A6");
+			Assert.AreEqual ("B", item.SubItems [2].Text, "#A7");
+
+			item.SubItems.RemoveAt (1);
+
+			Assert.AreEqual (2, item.SubItems.Count, "#B1");
+			Assert.IsNotNull (item.SubItems [0].Text, "#B2");
+			Assert.AreEqual (string.Empty, item.SubItems [0].Text, "#B3");
+			Assert.IsNotNull (item.SubItems [1].Text, "#B4");
+			Assert.AreEqual ("B", item.SubItems [1].Text, "#B5");
+
+			item.SubItems.RemoveAt (0);
+
+			Assert.AreEqual (1, item.SubItems.Count, "#C1");
+			Assert.IsNotNull (item.SubItems [0].Text, "#C2");
+			Assert.AreEqual ("B", item.SubItems [0].Text, "#C3");
+
+			item.SubItems.RemoveAt (0);
+
+			Assert.AreEqual (1, item.SubItems.Count, "#D1");
+			Assert.IsNotNull (item.SubItems [0].Text, "#D2");
+			Assert.AreEqual (string.Empty, item.SubItems [0].Text, "#D3");
 		}
 	}
 }
