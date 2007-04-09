@@ -278,7 +278,7 @@ namespace System.Windows.Forms
 			}
 			set {
 				if (value != property_descriptor) {
-					property_descriptor = value;					
+					property_descriptor = value;
 
 					EventHandler eh = (EventHandler)(Events [PropertyDescriptorChangedEvent]);
 					if (eh != null)
@@ -423,7 +423,7 @@ namespace System.Windows.Forms
 		protected internal virtual void EnterNullValue () {}
 		
 		protected internal virtual object GetColumnValueAtRow (CurrencyManager source, int rowNum)
-		{			
+		{
 			CheckValidDataSource (source);
 			if (rowNum >= source.Count)
 				return DBNull.Value;

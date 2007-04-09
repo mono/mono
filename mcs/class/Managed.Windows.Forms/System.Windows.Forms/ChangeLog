@@ -1,3 +1,10 @@
+2007-04-09  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DataGridTextBoxColumn.cs: In Commit, use TypeConverter to convert
+	entered value to underlying type, and convert it back to a string to
+	apply formatting. Modified GetFormattedValue to use TypeConverter
+	if available.
+
 2007-04-08  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ListViewItem.cs: Added null checks. Avoid duplicating code in ctors.

@@ -26,6 +26,7 @@
 
 using System.ComponentModel;
 using System.Drawing;
+using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 
@@ -119,7 +120,7 @@ namespace System.Windows.Forms
 
 		protected internal override void Abort (int rowNum)
 		{
-			EndEdit ();			
+			EndEdit ();
 		}
 		
 		protected internal override bool Commit (CurrencyManager dataSource, int rowNum)
@@ -134,17 +135,30 @@ namespace System.Windows.Forms
 				string existing_text = GetFormattedValue (dataSource, rowNum);
 
 				if (existing_text != textbox.Text) {
-					if (textbox.Text == NullText)
+					if (textbox.Text == NullText) {
 						SetColumnValueAtRow (dataSource, rowNum, DBNull.Value);
-					else
-						SetColumnValueAtRow (dataSource, rowNum, textbox.Text);
+					} else {
+						object newValue = textbox.Text;
+
+						TypeConverter converter = TypeDescriptor.GetConverter (
+							PropertyDescriptor.PropertyType);
+						if (converter != null && converter.CanConvertFrom (typeof (string))) {
+							newValue = converter.ConvertFrom (null, CultureInfo.CurrentCulture,
+								textbox.Text);
+							if (converter.CanConvertTo (typeof (string)))
+								textbox.Text = (string) converter.ConvertTo (null, 
+									CultureInfo.CurrentCulture, newValue, typeof (string));
+						}
+
+						SetColumnValueAtRow (dataSource, rowNum, newValue);
+					}
 				}
 			}
 			catch {
 				return false;
 			}
 			
-			EndEdit ();			
+			EndEdit ();
 			return true;
 		}
 
@@ -294,7 +308,7 @@ namespace System.Windows.Forms
 			base.SetDataGridInColumn (value);
 
 			if (value != null) {
-				textbox.SetDataGrid (grid);			
+				textbox.SetDataGrid (grid);
 				grid.SuspendLayout ();
 				grid.Controls.Add (textbox);
 				grid.ResumeLayout (false);
@@ -327,9 +341,15 @@ namespace System.Windows.Forms
 		{
 			if (DBNull.Value.Equals(obj) || obj == null)
 				return NullText;
-			
+
 			if (format != null && format != String.Empty && obj as IFormattable != null)
 				return ((IFormattable)obj).ToString (format, format_provider);
+
+			TypeConverter converter = TypeDescriptor.GetConverter (
+				PropertyDescriptor.PropertyType);
+			if (converter != null && converter.CanConvertTo (typeof (string)))
+				return (string) converter.ConvertTo (null, CultureInfo.CurrentCulture,
+					obj, typeof (string));
 
 			return obj.ToString ();
 
