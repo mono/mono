@@ -433,20 +433,6 @@ namespace System.Reflection {
 			return MonoCustomAttrs.GetCustomAttributes (this, attributeType, inherit);
 		}
 
-#if NET_2_0 || BOOTSTRAP_NET_2_0
-		public override bool IsGenericMethodDefinition {
-			get {
-				return false;
-			}
-		}
-
-		public override bool IsGenericMethod {
-			get {
-				return false;
-			}
-		}
-#endif
-
 #if NET_2_0
 		public override MethodBody GetMethodBody () {
 			return GetMethodBody (mhandle);

@@ -198,13 +198,13 @@ namespace System.Reflection {
 
 		public virtual bool IsGenericMethodDefinition {
 			get {
-				throw new NotSupportedException ();
+				return false;
 			}
 		}
 
 		public virtual bool IsGenericMethod {
 			get {
-				throw new NotSupportedException ();
+				return false;
 			}
 		}
 #endif

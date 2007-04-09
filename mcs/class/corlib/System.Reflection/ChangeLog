@@ -1,3 +1,10 @@
+2007-04-09  Alp Toker  <alp@atoker.com>
+
+	* MethodBase.cs: IsGenericMethodDefinition() and IsGenericMethod()
+	should return false, not throw NotSupportedException. This matches MS
+	behaviour and introduces simplifications in subclasses.
+	* MonoMethod.cs: MonoCMethod: Remove redundant overrides.
+
 2007-03-05  Peter Dettman <peter.dettman@iinet.net.au>
 
 	* Binder.cs: The patch changes Binder.Default.GetBetterMethod to
