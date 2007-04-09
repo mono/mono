@@ -202,9 +202,8 @@ namespace System.Drawing
 			if (colorA.IsEmpty != colorB.IsEmpty)
 				return false;
 			if (colorA.IsNamedColor) {
-				if (!colorB.IsNamedColor)
-					return false;
-				// both are named so we need to compare them (otherwise we don't as it kills performance)
+				// then both are named (see previous check) and so we need to compare them
+				// but otherwise we don't as it kills performance (Name calls String.Format)
 				if (colorA.Name != colorB.Name)
 					return false;
 			}

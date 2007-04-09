@@ -1,3 +1,7 @@
+2007-04-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Color.cs: Remove duplicate check in == and add better comments
+
 2007-04-09  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* Color.cs: Remove hashtables and locks. All color properties are read
