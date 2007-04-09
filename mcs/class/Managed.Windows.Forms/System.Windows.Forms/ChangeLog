@@ -1,3 +1,7 @@
+2007-04-09  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* XplatUIX11.cs: Added comment that "fixes" #80021.
+
 2007-04-09  Jackson Harper  <jackson@ximian.com>
 
 	* TextControl.cs: We don't need this -1 on the line count anymore.
