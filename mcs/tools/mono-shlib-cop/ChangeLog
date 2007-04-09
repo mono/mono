@@ -1,3 +1,7 @@
+2007-04-09  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (cleanup): Use '-f' to silence 'rm'.
+
 2006-09-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile (EXTRA_DISTFILES): Add test.cs to fix test-profiles.

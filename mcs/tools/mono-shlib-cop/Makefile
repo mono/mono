@@ -17,7 +17,7 @@ test-local: $(PROGRAM) $(TEST_INPUT)
 clean-local: cleanup
 
 cleanup:
-	-rm $(TEST_INPUT)
+	-rm -f $(TEST_INPUT)
 
 run-test-local: run-mono-shlib-cop-test
 
