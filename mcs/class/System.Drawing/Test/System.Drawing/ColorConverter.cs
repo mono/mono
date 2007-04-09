@@ -245,6 +245,16 @@ namespace MonoTests.System.Drawing {
 		}
 
 		[Test]
+		public void ConvertFrom_CultureNull ()
+		{
+			Color color = (Color) colconv.ConvertFrom (null, null, "#0x23190A44");
+			Assert.AreEqual (35, color.A, "A");
+			Assert.AreEqual (25, color.R, "R");
+			Assert.AreEqual (10, color.G, "G");
+			Assert.AreEqual (68, color.B, "B");
+		}
+
+		[Test]
 		public void ConvertTo ()
 		{
 			Assert.AreEqual (colStrInvariant, colconv.ConvertTo (null, CultureInfo.InvariantCulture,

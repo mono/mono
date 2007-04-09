@@ -934,14 +934,16 @@ namespace MonoTests.System.Drawing {
 			Assert ("Empty color", color.IsEmpty);
 			Assert ("Not empty color", !Color.FromArgb (0, Color.Black).IsEmpty);
 		}
+
 		[Test]
 		public void IsKnownColor ()
 		{
 			Assert ("KnownColor", Color.FromKnownColor(KnownColor.AliceBlue).IsKnownColor);
 			Assert ("KnownColor", Color.FromName("AliceBlue").IsKnownColor);
 			AssertEquals ("Not KnownColor", false,
-				Color.FromArgb (50, 100, 150, 200).IsKnownColor);
+				Color.FromArgb (Color.AliceBlue.A, Color.AliceBlue.R, Color.AliceBlue.G, Color.AliceBlue.B).IsKnownColor);
 		}
+
 		[Test]
 		public void IsNamedColor ()
 		{
@@ -949,19 +951,23 @@ namespace MonoTests.System.Drawing {
 			Assert ("NamedColor", Color.FromKnownColor(KnownColor.AliceBlue).IsNamedColor);
 			Assert ("NamedColor", Color.FromName("AliceBlue").IsNamedColor);
 			AssertEquals ("Not NamedColor", false,
-				Color.FromArgb (50, 100, 150, 200).IsNamedColor);
+				Color.FromArgb (Color.AliceBlue.A, Color.AliceBlue.R, Color.AliceBlue.G, Color.AliceBlue.B).IsNamedColor);
 		}
+
 		[Test]
-		public void IsSystemColor () {
-			Assert ("SystemColor#1", Color.FromKnownColor(KnownColor.ActiveBorder).IsSystemColor);
+		public void IsSystemColor ()
+		{
+			Color c = Color.FromKnownColor (KnownColor.ActiveBorder);
+			Assert ("SystemColor#1", c.IsSystemColor);
 			Assert ("SystemColor#2", Color.FromName("ActiveBorder").IsSystemColor);
 			AssertEquals ("Not SystemColor#1", false,
-				Color.FromArgb (50, 100, 150, 200).IsSystemColor);
+				Color.FromArgb (c.A, c.R, c.G, c.B).IsSystemColor);
 			AssertEquals ("Not SystemColor#2", false,
 				Color.FromKnownColor(KnownColor.AliceBlue).IsSystemColor);
 			AssertEquals ("Not SystemColor#3", false,
 				Color.FromName("AliceBlue").IsSystemColor);
 		}
+
 		[Test]
 		public void Name ()
 		{

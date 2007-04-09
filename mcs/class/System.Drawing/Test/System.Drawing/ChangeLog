@@ -1,3 +1,10 @@
+2007-04-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ColorConverter.cs: Add test case with a null CultureInfo for 
+	ConvertFrom.
+	* ColorTranslator.cs: Add test cases with known values for FromHtml
+	* TestColor.cs: Made some test clearer about what they do/check.
+
 2007-04-02  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TestFont.cs: Add test cases for GetHeight(Graphics) and 

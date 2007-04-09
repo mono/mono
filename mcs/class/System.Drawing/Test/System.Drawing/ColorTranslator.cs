@@ -47,6 +47,17 @@ namespace MonoTests.System.Drawing {
 		}
 
 		[Test]
+		public void FromHtml_KnownValues ()
+		{
+			Assert.AreEqual (SystemColors.Control, ColorTranslator.FromHtml ("buttonface"), "buttonface");
+			Assert.AreEqual (SystemColors.ActiveCaptionText, ColorTranslator.FromHtml ("CAPTIONTEXT"), "captiontext");
+			Assert.AreEqual (SystemColors.ControlDarkDark, ColorTranslator.FromHtml ("threedDARKshadow"), "threeddarkshadow");
+			Assert.AreEqual (SystemColors.Desktop, ColorTranslator.FromHtml ("background"), "background");
+			Assert.AreEqual (SystemColors.ControlText, ColorTranslator.FromHtml ("ButtonText"), "buttontext");
+			Assert.AreEqual (SystemColors.Info, ColorTranslator.FromHtml ("infobackground"), "infobackground");
+		}
+
+		[Test]
 		public void FromHtml_Int ()
 		{
 			Assert.AreEqual (-1, ColorTranslator.FromHtml ("-1").ToArgb (), "-1");
