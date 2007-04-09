@@ -233,38 +233,45 @@ namespace System.Reflection {
 		}
 
 		public override string ToString () {
-			StringBuilder parms = new StringBuilder ();
-			foreach (ParameterInfo pi in GetParameters ()) {
-				if (parms.Length != 0)
-					parms.Append (", ");
-				Type pt = pi.ParameterType;
-				bool byref = pt.IsByRef;
-				if (byref)
-					pt = pt.GetElementType ();
-				if (pt.IsClass && pt.Namespace != "") {
-					parms.Append (pt.Namespace);
-					parms.Append (".");
-				}
-				parms.Append (pt.Name);
-				if (byref)
-					parms.Append (" ByRef");
+			StringBuilder sb = new StringBuilder ();
+			if (ReturnType.IsClass && ReturnType.Namespace != String.Empty) {
+				sb.Append (ReturnType.Namespace);
+				sb.Append (".");
 			}
-			if (ReturnType.IsClass && ReturnType.Namespace != "")
-				return ReturnType.Namespace + "." + ReturnType.Name + " " + Name + "(" + parms.ToString () + ")";
-			string generic = "";
+			sb.Append (ReturnType.Name);
+			sb.Append (" ");
+			sb.Append (Name);
 #if NET_2_0 || BOOTSTRAP_NET_2_0
 			if (IsGenericMethod) {
 				Type[] gen_params = GetGenericArguments ();
-				generic = "[";
+				sb.Append ("[");
 				for (int j = 0; j < gen_params.Length; j++) {
 					if (j > 0)
-						generic += ",";
-					generic += gen_params [j].Name;
+						sb.Append (",");
+					sb.Append (gen_params [j].Name);
 				}
-				generic += "]";
+				sb.Append ("]");
 			}
 #endif
-			return ReturnType.Name + " " + Name + generic + "(" + parms.ToString () + ")";
+			sb.Append ("(");
+			ParameterInfo[] p = GetParameters ();
+			for (int i = 0; i < p.Length; ++i) {
+				if (i > 0)
+					sb.Append (", ");
+				Type pt = p[i].ParameterType;
+				bool byref = pt.IsByRef;
+				if (byref)
+					pt = pt.GetElementType ();
+				if (pt.IsClass && pt.Namespace != String.Empty) {
+					sb.Append (pt.Namespace);
+					sb.Append (".");
+				}
+				sb.Append (pt.Name);
+				if (byref)
+					sb.Append (" ByRef");
+			}
+			sb.Append (")");
+			return sb.ToString ();
 		}
 
 	
@@ -441,13 +448,18 @@ namespace System.Reflection {
 #endif
 
 		public override string ToString () {
-			StringBuilder parms = new StringBuilder ();
-			foreach (ParameterInfo pi in GetParameters ()) {
-				if (parms.Length != 0)
-					parms.Append (", ");
-				parms.Append (pi.ParameterType.Name);
+			StringBuilder sb = new StringBuilder ();
+			sb.Append ("Void ");
+			sb.Append (Name);
+			sb.Append ("(");
+			ParameterInfo[] p = GetParameters ();
+			for (int i = 0; i < p.Length; ++i) {
+				if (i > 0)
+					sb.Append (", ");
+				sb.Append (p[i].ParameterType.Name);
 			}
-			return "Void " + Name + "(" + parms.ToString () + ")";
+			sb.Append (")");
+			return sb.ToString ();
 		}
 
 		// ISerializable

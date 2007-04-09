@@ -1,5 +1,10 @@
 2007-04-09  Alp Toker  <alp@atoker.com>
 
+	* MonoMethod.cs: Use StringBuilder for the entire ToString() methods
+	to reduce allocations and increase performance.
+
+2007-04-09  Alp Toker  <alp@atoker.com>
+
 	* MonoMethod.cs: Use StringBuilder for parms in ToString() methods.
 
 2007-04-09  Alp Toker  <alp@atoker.com>
