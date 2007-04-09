@@ -1,3 +1,7 @@
+2007-04-09  Alp Toker  <alp@atoker.com>
+
+	* ConstructorBuilder.cs: Remove redundant overrides.
+
 2007-04-03  Marek Safar  <marek.safar@gmail.com>
 
 	* OpCodes.cs: Removed obsolete opcodes.

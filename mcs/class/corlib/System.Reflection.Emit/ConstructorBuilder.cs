@@ -272,19 +272,6 @@ namespace System.Reflection.Emit {
 		}
 
 #if NET_2_0 || BOOTSTRAP_NET_2_0
-		public override bool IsGenericMethodDefinition {
-			get {
-				return false;
-			}
-		}
-
-		public override bool IsGenericMethod {
-			get {
-				return false;
-			}
-		}
-
-
 		public override Module Module {
 			get {
 				return base.Module;
