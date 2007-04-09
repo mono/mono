@@ -70,12 +70,7 @@ namespace System.Drawing {
 			int B = (oleColor >> 16) & 0xFF;
 
 			Color retcolor = Color.FromArgb (255, R, G, B);
-			foreach (Color c in Color.NamedColors.Values) {
-				if (c == retcolor)
-					return c;
-			}
-
-			foreach (Color c in Color.SystemColors.Values) {
+			foreach (Color c in KnownColors.Values) {
 				if (c == retcolor)
 					return c;
 			}
@@ -91,12 +86,7 @@ namespace System.Drawing {
 			int B = (win32Color >> 16) & 0xFF;
 
 			Color retcolor = Color.FromArgb (255, R, G, B);
-			foreach (Color c in Color.NamedColors.Values) {
-				if (c == retcolor)
-					return c;
-			}
-
-			foreach (Color c in Color.SystemColors.Values) {
+			foreach (Color c in KnownColors.Values) {
 				if (c == retcolor)
 					return c;
 			}

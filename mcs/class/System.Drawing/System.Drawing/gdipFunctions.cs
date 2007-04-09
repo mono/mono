@@ -1458,6 +1458,9 @@ namespace System.Drawing
 		public static extern int BitBlt(IntPtr hdcDest, int nXDest, int nYDest, 
 			int nWidth, int nHeight, IntPtr hdcSrc, int nXSrc, int nYSrc, int dwRop);
 
+		[DllImport ("user32.dll", EntryPoint = "GetSysColor", CallingConvention = CallingConvention.StdCall)]
+		public static extern uint Win32GetSysColor (GetSysColorIndex index);
+
 
 		// Some special X11 stuff
 		[DllImport("libX11", EntryPoint="XOpenDisplay")]

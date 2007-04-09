@@ -1,3 +1,20 @@
+2007-04-09  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* Color.cs: Remove hashtables and locks. All color properties are read
+	from KnownColors. Remove extra & 0xFF (typecast to byte is enough).
+	Keep track of the Name property once calculated. When possible (most
+	likely case) don't create the names (strings) in Equals, == and !=
+	* ColorTranslator.cs: Use the new KnownColors instead of the separate
+	NamedColors and SystemColors.
+	* ColorConverter.cs: Use the new KnownColors instead of the separate
+	NamedColors and SystemColors.
+	* gdipFunctions.cs: Moved GetSysColor p/invoke signature here as this
+	class is marked by [SuppressUnmanagedCodeSecurity].
+	* gdipStructs.cs: Moved Windows-specific GetSysColorIndex enum here.
+	* KnownColors.cs: New. Single source for all colors.
+	* SystemColors.cs: Vastly simplified. All color properties are read
+	from KnownColors.
+
 2007-04-05  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* gdipFunctions.cs: Remove unused (and not part of GDI+) GdipGetHfont

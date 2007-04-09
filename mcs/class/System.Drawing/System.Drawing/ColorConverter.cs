@@ -60,30 +60,32 @@ namespace System.Drawing
 			return base.CanConvertTo (context, destinationType);
 		}
 
-		public override object ConvertFrom (ITypeDescriptorContext context,
-						    CultureInfo culture,
-						    object value)
+		internal static Color StaticConvertFromString (ITypeDescriptorContext context, string s, CultureInfo culture)
 		{
-			string s = value as string;
-			if (s == null)
-				return base.ConvertFrom (context, culture, value);
+			if (culture == null)
+				culture = CultureInfo.InvariantCulture;
 
 			s = s.Trim ();
 
-			if (s.Length == 0) {
+			if (s.Length == 0)
 				return Color.Empty;
+
+			// Try to process both NamedColor and SystemColors from the KnownColor enumeration
+			if (Char.IsLetter (s [0])) {
+				KnownColor kc;
+				try {
+					kc = (KnownColor) Enum.Parse (typeof (KnownColor), s, true);
+				}
+				catch (Exception e) {
+					// whatever happens MS throws an basic Exception
+					string msg = Locale.GetText ("Invalid color name '{0}'.", s);
+					throw new Exception (msg, new FormatException (msg, e));
+				}
+				return KnownColors.FromKnownColor (kc);
 			}
 
-			object named = Color.NamedColors [s];
-			if (named != null)
-				return (Color) named;
-
-			named = Color.SystemColors [s];
-			if (named != null)
-				return (Color) named;
-
 			String numSeparator = culture.TextInfo.ListSeparator;
-			object result = null;
+			Color result = Color.Empty;
 
 			if (s.IndexOf (numSeparator) == -1) {
 				bool sharp = (s[0] == '#');
@@ -118,7 +120,7 @@ namespace System.Drawing
 				}
 			}
 
-			if (result == null) {
+			if (result.IsEmpty) {
 				Int32Converter converter = new Int32Converter ();
 				String [] components = s.Split (numSeparator.ToCharArray ());
 
@@ -147,22 +149,29 @@ namespace System.Drawing
 				}
 			} 
 
-			if (result != null) {
+			if (!result.IsEmpty) {
 				Color resultColor = (Color) result;
 
 				// Look for a named or system color with those values
-				foreach (Color c in Color.NamedColors.Values) {
-					if (c == resultColor)
-						return c;
-				}
-
-				foreach (Color c in Color.SystemColors.Values) {
+				foreach (Color c in KnownColors.Values) {
 					if (c == resultColor)
 						return c;
 				}
 			}
 
 			return result;
+		}
+
+
+		public override object ConvertFrom (ITypeDescriptorContext context,
+						    CultureInfo culture,
+						    object value)
+		{
+			string s = value as string;
+			if (s == null)
+				return base.ConvertFrom (context, culture, value);
+
+			return StaticConvertFromString (context, s, culture);
 		}
 
 		public override object ConvertTo (ITypeDescriptorContext context,
@@ -177,11 +186,7 @@ namespace System.Drawing
 					return string.Empty;
 				}
 
-				if (color.IsKnownColor) {
-					return color.Name;
-				}
-
-				if (color.IsNamedColor)
+				if (color.IsKnownColor || color.IsNamedColor)
 					return color.Name;
 
 				String numSeparator = culture.TextInfo.ListSeparator;
@@ -222,12 +227,10 @@ namespace System.Drawing
 			lock (creatingCached) {
 				if (cached != null)
 					return cached;
-			
-				ICollection named = (ICollection) Color.NamedColors.Values;
-				ICollection system = (ICollection) Color.SystemColors.Values;
-				Array colors = Array.CreateInstance (typeof (Color), named.Count + system.Count);
-				named.CopyTo (colors, 0);
-				system.CopyTo (colors, named.Count);
+
+				// copy all colors except the first empty slot
+				Array colors = Array.CreateInstance (typeof (Color), KnownColors.Values.Length - 1);
+				Array.Copy (KnownColors.Values, 1, colors, 0, colors.Length);
 				Array.Sort (colors, 0, colors.Length, new CompareColors ());
 				cached = new StandardValuesCollection (colors);
 			}
