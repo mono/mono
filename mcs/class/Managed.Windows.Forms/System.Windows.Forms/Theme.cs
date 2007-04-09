@@ -193,7 +193,7 @@ namespace System.Windows.Forms
 		protected Color defaultWindowBackColor;
 		protected Color defaultWindowForeColor;
 		internal SystemResPool ResPool = new SystemResPool ();
-		private Type system_colors = Type.GetType ("System.Drawing.SystemColors, " + Consts.AssemblySystem_Drawing);
+		private MethodInfo update;
 
 		protected Theme ()
 		{
@@ -204,18 +204,16 @@ namespace System.Windows.Forms
 #endif
 		}
 
-		private void SetSystemColors(string name, Color value) {
-			if (system_colors != null) {
-				MethodInfo update;
-
-				system_colors.GetField(name, System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic).SetValue(null, value);
-				update = system_colors.GetMethod("UpdateColors", BindingFlags.Static | BindingFlags.NonPublic);
-				if (update != null) {
-					update.Invoke(null, null);
-				}
+		private void SetSystemColors (KnownColor kc, Color value)
+		{
+			if (update == null) {
+				Type known_colors = Type.GetType ("System.Drawing.KnownColors, " + Consts.AssemblySystem_Drawing);
+				if (known_colors != null)
+					update = known_colors.GetMethod ("UpdateColor", BindingFlags.Static | BindingFlags.NonPublic);
 			}
+			if (update != null)
+				update.Invoke (null, new object [2] { (int)kc, value.ToArgb () });
 		}
-
 
 		/* OS Feature support */
 		public abstract Version Version {
@@ -224,133 +222,133 @@ namespace System.Windows.Forms
 
 		/* Default properties */
 		public virtual Color ColorScrollBar {
-			get { return SystemColors.ScrollBar;}
-			set { SetSystemColors("scroll_bar", value); }
+			get { return SystemColors.ScrollBar; }
+			set { SetSystemColors (KnownColor.ScrollBar, value); }
 		}
 
 		public virtual Color ColorDesktop {
 			get { return SystemColors.Desktop;}
-			set { SetSystemColors("desktop", value); }
+			set { SetSystemColors (KnownColor.Desktop, value); }
 		}
 
 		public virtual Color ColorActiveCaption {
 			get { return SystemColors.ActiveCaption;}
-			set { SetSystemColors("active_caption", value); }
+			set { SetSystemColors (KnownColor.ActiveCaption, value); }
 		}
 
 		public virtual Color ColorInactiveCaption {
 			get { return SystemColors.InactiveCaption;}
-			set { SetSystemColors("inactive_caption", value); }
+			set { SetSystemColors (KnownColor.InactiveCaption, value); }
 		}
 
 		public virtual Color ColorMenu {
 			get { return SystemColors.Menu;}
-			set { SetSystemColors("menu", value); }
+			set { SetSystemColors (KnownColor.Menu, value); }
 		}
 
 		public virtual Color ColorWindow {
 			get { return SystemColors.Window;}
-			set { SetSystemColors("window", value); }
+			set { SetSystemColors (KnownColor.Window, value); }
 		}
 
 		public virtual Color ColorWindowFrame {
 			get { return SystemColors.WindowFrame;}
-			set { SetSystemColors("window_frame", value); }
+			set { SetSystemColors (KnownColor.WindowFrame, value); }
 		}
 
 		public virtual Color ColorMenuText {
 			get { return SystemColors.MenuText;}
-			set { SetSystemColors("menu_text", value); }
+			set { SetSystemColors (KnownColor.MenuText, value); }
 		}
 
 		public virtual Color ColorWindowText {
 			get { return SystemColors.WindowText;}
-			set { SetSystemColors("window_text", value); }
+			set { SetSystemColors (KnownColor.WindowText, value); }
 		}
 
 		public virtual Color ColorActiveCaptionText {
 			get { return SystemColors.ActiveCaptionText;}
-			set { SetSystemColors("active_caption_text", value); }
+			set { SetSystemColors (KnownColor.ActiveCaptionText, value); }
 		}
 
 		public virtual Color ColorActiveBorder {
 			get { return SystemColors.ActiveBorder;}
-			set { SetSystemColors("active_border", value); }
+			set { SetSystemColors (KnownColor.ActiveBorder, value); }
 		}
 
 		public virtual Color ColorInactiveBorder{
 			get { return SystemColors.InactiveBorder;}
-			set { SetSystemColors("inactive_border", value); }
+			set { SetSystemColors (KnownColor.InactiveBorder, value); }
 		}
 
 		public virtual Color ColorAppWorkspace {
 			get { return SystemColors.AppWorkspace;}
-			set { SetSystemColors("app_workspace", value); }
+			set { SetSystemColors (KnownColor.AppWorkspace, value); }
 		}
 
 		public virtual Color ColorHighlight {
 			get { return SystemColors.Highlight;}
-			set { SetSystemColors("highlight", value); }
+			set { SetSystemColors (KnownColor.Highlight, value); }
 		}
 
 		public virtual Color ColorHighlightText {
 			get { return SystemColors.HighlightText;}
-			set { SetSystemColors("highlight_text", value); }
+			set { SetSystemColors (KnownColor.HighlightText, value); }
 		}
 
 		public virtual Color ColorControl {
 			get { return SystemColors.Control;}
-			set { SetSystemColors("control", value); }
+			set { SetSystemColors (KnownColor.Control, value); }
 		}
 
 		public virtual Color ColorControlDark {
 			get { return SystemColors.ControlDark;}
-			set { SetSystemColors("control_dark", value); }
+			set { SetSystemColors (KnownColor.ControlDark, value); }
 		}
 
 		public virtual Color ColorGrayText {
 			get { return SystemColors.GrayText;}
-			set { SetSystemColors("gray_text", value); }
+			set { SetSystemColors (KnownColor.GrayText, value); }
 		}
 
 		public virtual Color ColorControlText {
 			get { return SystemColors.ControlText;}
-			set { SetSystemColors("control_text", value); }
+			set { SetSystemColors (KnownColor.ControlText, value); }
 		}
 
 		public virtual Color ColorInactiveCaptionText {
 			get { return SystemColors.InactiveCaptionText;}
-			set { SetSystemColors("inactive_caption_text", value); }
+			set { SetSystemColors (KnownColor.InactiveCaptionText, value); }
 		}
 
 		public virtual Color ColorControlLight {
 			get { return SystemColors.ControlLight;}
-			set { SetSystemColors("control_light", value); }
+			set { SetSystemColors (KnownColor.ControlLight, value); }
 		}
 
 		public virtual Color ColorControlDarkDark {
 			get { return SystemColors.ControlDarkDark;}
-			set { SetSystemColors("control_dark_dark", value); }
+			set { SetSystemColors (KnownColor.ControlDarkDark, value); }
 		}
 
 		public virtual Color ColorControlLightLight {
 			get { return SystemColors.ControlLightLight;}
-			set { SetSystemColors("control_light_light", value); }
+			set { SetSystemColors (KnownColor.ControlLightLight, value); }
 		}
 
 		public virtual Color ColorInfoText {
 			get { return SystemColors.InfoText;}
-			set { SetSystemColors("info_text", value); }
+			set { SetSystemColors (KnownColor.InfoText, value); }
 		}
 
 		public virtual Color ColorInfo {
 			get { return SystemColors.Info;}
-			set { SetSystemColors("info", value); }
+			set { SetSystemColors (KnownColor.Info, value); }
 		}
 
 		public virtual Color ColorHotTrack {
 			get { return SystemColors.HotTrack;}
-			set { SetSystemColors("hot_track", value);}
+			set { SetSystemColors (KnownColor.HotTrack, value);}
 		}
 
 		public virtual Color DefaultControlBackColor {

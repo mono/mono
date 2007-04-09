@@ -1,3 +1,9 @@
+2007-04-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Theme.cs: Change "reflective-contract" between MWF and SD to 
+	minimize # of calls, avoid Color serialization and avoid updating 
+	every "known colors" each time a single one is updated.
+
 2007-04-09  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DataGridTextBoxColumn.cs: Only set IsInEditOrNavigateMode to false
