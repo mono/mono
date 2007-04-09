@@ -274,12 +274,12 @@ namespace System.Windows.Forms
 				break;
 			case HorizontalAlignment.Right:
 				string_format.Alignment = StringAlignment.Far;
-				break;			
+				break;
 			default:
 				string_format.Alignment = StringAlignment.Near;
 				break;
-			}			
-					
+			}
+			
 			g.FillRectangle (backBrush, textBounds);
 			PaintGridLine (g, textBounds);
 			
@@ -292,7 +292,7 @@ namespace System.Windows.Forms
 		}
 		
 		protected internal override void ReleaseHostedControl ()
-		{			
+		{
 			if (textbox != null) {
 				grid.SuspendLayout ();
 				grid.Controls.Remove (textbox);
