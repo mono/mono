@@ -1,5 +1,9 @@
 2007-04-09  Alp Toker  <alp@atoker.com>
 
+	* MonoMethod.cs: Use StringBuilder for parms in ToString() methods.
+
+2007-04-09  Alp Toker  <alp@atoker.com>
+
 	* MethodBase.cs: IsGenericMethodDefinition() and IsGenericMethod()
 	should return false, not throw NotSupportedException. This matches MS
 	behaviour and introduces simplifications in subclasses.

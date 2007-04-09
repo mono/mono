@@ -34,6 +34,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Reflection.Emit;
 using System.Security;
+using System.Text;
 
 namespace System.Reflection {
 	
@@ -232,24 +233,24 @@ namespace System.Reflection {
 		}
 
 		public override string ToString () {
-			string parms = "";
-			ParameterInfo[] p = GetParameters ();
-			for (int i = 0; i < p.Length; ++i) {
-				if (i > 0)
-					parms = parms + ", ";
-				Type pt = p[i].ParameterType;
+			StringBuilder parms = new StringBuilder ();
+			foreach (ParameterInfo pi in GetParameters ()) {
+				if (parms.Length != 0)
+					parms.Append (", ");
+				Type pt = pi.ParameterType;
 				bool byref = pt.IsByRef;
 				if (byref)
 					pt = pt.GetElementType ();
-				if (pt.IsClass && pt.Namespace != "")
-					parms = parms + pt.Namespace + "." + pt.Name;
-				else
-					parms = parms + pt.Name;
+				if (pt.IsClass && pt.Namespace != "") {
+					parms.Append (pt.Namespace);
+					parms.Append (".");
+				}
+				parms.Append (pt.Name);
 				if (byref)
-					parms += " ByRef";
+					parms.Append (" ByRef");
 			}
 			if (ReturnType.IsClass && ReturnType.Namespace != "")
-				return ReturnType.Namespace + "." + ReturnType.Name + " " + Name + "(" + parms + ")";
+				return ReturnType.Namespace + "." + ReturnType.Name + " " + Name + "(" + parms.ToString () + ")";
 			string generic = "";
 #if NET_2_0 || BOOTSTRAP_NET_2_0
 			if (IsGenericMethod) {
@@ -263,7 +264,7 @@ namespace System.Reflection {
 				generic += "]";
 			}
 #endif
-			return ReturnType.Name + " " + Name + generic + "(" + parms + ")";
+			return ReturnType.Name + " " + Name + generic + "(" + parms.ToString () + ")";
 		}
 
 	
@@ -440,14 +441,13 @@ namespace System.Reflection {
 #endif
 
 		public override string ToString () {
-			string parms = "";
-			ParameterInfo[] p = GetParameters ();
-			for (int i = 0; i < p.Length; ++i) {
-				if (i > 0)
-					parms = parms + ", ";
-				parms = parms + p [i].ParameterType.Name;
+			StringBuilder parms = new StringBuilder ();
+			foreach (ParameterInfo pi in GetParameters ()) {
+				if (parms.Length != 0)
+					parms.Append (", ");
+				parms.Append (pi.ParameterType.Name);
 			}
-			return "Void "+Name+"("+parms+")";
+			return "Void " + Name + "(" + parms.ToString () + ")";
 		}
 
 		// ISerializable
