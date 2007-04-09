@@ -590,17 +590,12 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (!ok) {
-				ec.KillFlowBranching ();
-				return false;
-			}
-
 			// There's no direct control flow from the end of the embedded statement to the end of the loop
 			ec.CurrentBranching.CurrentUsageVector.Goto ();
 
 			ec.EndFlowBranching ();
 
-			return true;
+			return ok;
 		}
 		
 		protected override void DoEmit (EmitContext ec)
@@ -3748,10 +3743,6 @@ namespace Mono.CSharp {
 
 			FlowBranchingException branching = ec.StartFlowBranching (this);
 			bool ok = Statement.Resolve (ec);
-			if (!ok) {
-				ec.KillFlowBranching ();
-				return false;
-			}
 
 			ResolveFinally (branching);
 
@@ -3770,7 +3761,7 @@ namespace Mono.CSharp {
 			temp = new TemporaryVariable (t, loc);
 			temp.Resolve (ec);
 			
-			return true;
+			return ok;
 		}
 		
 		protected override void DoEmit (EmitContext ec)
@@ -4148,16 +4139,11 @@ namespace Mono.CSharp {
 			}
 
 			ec.StartFlowBranching (FlowBranching.BranchingType.Conditional, loc);
-
-			if (!statement.Resolve (ec)) {
-				ec.KillFlowBranching ();
-				return false;
-			}
-
+			bool ok = statement.Resolve (ec);
 			bool flow_unreachable = ec.EndFlowBranching ();
 			has_ret = flow_unreachable;
 
-			return true;
+			return ok;
 		}
 		
 		protected override void DoEmit (EmitContext ec)
@@ -4736,11 +4722,6 @@ namespace Mono.CSharp {
 
 			bool ok = Statement.Resolve (ec);
 
-			if (!ok) {
-				ec.KillFlowBranching ();
-				return false;
-			}
-
 			ResolveFinally (branching);
 
 			ec.EndFlowBranching ();
@@ -4749,7 +4730,7 @@ namespace Mono.CSharp {
 			// So, ensure there's some IL code after the finally block.
 			ec.NeedReturnLabel ();
 
-			return true;
+			return ok;
 		}
 		
 		protected override void DoEmit (EmitContext ec)

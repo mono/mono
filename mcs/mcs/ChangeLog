@@ -1,5 +1,9 @@
 2007-04-09  Raja R Harinath  <rharinath@novell.com>
 
+	A better fix
+	* flowanalysis.cs (UsageVector.MergeChild): Handle child.Block == null.
+	* statement.cs: Use KillFlowBranching only in ResolveUnreachable.
+
 	Fix #81338
 	* statement.cs (For.Resolve): If resolution fails, use
 	KillFlowBranching.

@@ -441,7 +441,7 @@ namespace Mono.CSharp
 		public UsageVector MergeChild (FlowBranching child)
 		{
 			bool overwrite = child.Type == BranchingType.Labeled ||
-				(child.Type == BranchingType.Block && child.Block.Implicit);
+				(child.Type == BranchingType.Block && child.Block != null && child.Block.Implicit);
 			Report.Debug (2, "  MERGING CHILD", this, child);
 			UsageVector result = CurrentUsageVector.MergeChild (child.Merge (), overwrite);
 			Report.Debug (2, "  MERGING CHILD DONE", this, result);
