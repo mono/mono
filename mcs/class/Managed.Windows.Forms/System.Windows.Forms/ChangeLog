@@ -1,3 +1,12 @@
+2007-04-09  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DataGridTextBoxColumn.cs: Only set IsInEditOrNavigateMode to false
+	when not readonly and the text is explicitly set. Code style updates.
+	* DataGridTableStyle.cs: Removed extra line.
+	* DataGrid.cs: Code style updates. Removed extra whitespace.
+	* DataGridColumnStyle.cs: Code style updates. Removed extra 
+	whitespace.
+
 2007-04-09  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* XplatUIX11.cs: Added comment that "fixes" #80021.

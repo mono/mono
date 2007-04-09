@@ -1,5 +1,10 @@
 2007-04-09  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* DataGridTextBoxColumnTest.cs: Added IsInEditOrNavigateMode tests.
+	Enabled test after IsInEditOrNavigateMode fix.
+
+2007-04-09  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* DataGridTextBoxColumnTest.cs: Added tests for IFormattable and
 	TypeConverter usage in Edit and Commit.
 

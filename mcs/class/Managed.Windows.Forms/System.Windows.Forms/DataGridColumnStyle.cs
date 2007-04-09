@@ -42,7 +42,7 @@ namespace System.Windows.Forms
 		protected class DataGridColumnHeaderAccessibleObject : AccessibleObject
 		{
 			#region Local Variables
-			private new DataGridColumnStyle owner;			
+			private new DataGridColumnStyle owner;
 			#endregion
 
 			#region Constructors
@@ -110,10 +110,10 @@ namespace System.Windows.Forms
 		
 		internal enum ArrowDrawing
 		{
-			No		= 0,
-			Ascending 	= 1,
-			Descending  	= 2
-		}		
+			No = 0,
+			Ascending = 1,
+			Descending = 2
+		}
 		
 		#region	Local Variables
 		internal HorizontalAlignment alignment;
@@ -168,7 +168,7 @@ namespace System.Windows.Forms
 			get {
 				return alignment;
 			}
-			set {				
+			set {
 				if (value != alignment) {
 					alignment = value;
 					
@@ -185,7 +185,7 @@ namespace System.Windows.Forms
 
 		[Browsable(false)]
 		public virtual DataGridTableStyle DataGridTableStyle {
-			get { return table_style; }			
+			get { return table_style; }
 		}
 		
 		protected int FontHeight {
@@ -288,7 +288,7 @@ namespace System.Windows.Forms
 		}
 
 		[DefaultValue(false)]
-		public virtual bool ReadOnly  {
+		public virtual bool ReadOnly {
 			get {
 				return _readonly;
 			}
@@ -358,7 +358,6 @@ namespace System.Windows.Forms
 		[MonoTODO]
 		protected void BeginUpdate ()
 		{
-
 		}
 		
 		protected void CheckValidDataSource (CurrencyManager value)
@@ -385,7 +384,6 @@ namespace System.Windows.Forms
 		[MonoTODO]
 		protected internal virtual void ColumnStartedEditing (Control editingControl)
 		{
-
 		}
 
 		protected internal abstract bool Commit (CurrencyManager dataSource, int rowNum);
@@ -393,7 +391,6 @@ namespace System.Windows.Forms
 
 		protected internal virtual void ConcedeFocus ()
 		{
-
 		}
 		
 		protected virtual AccessibleObject CreateHeaderAccessibleObject ()
@@ -413,11 +410,9 @@ namespace System.Windows.Forms
 
 		protected internal abstract void Edit (CurrencyManager source, int rowNum, Rectangle bounds, bool readOnly,   string instantText,  bool cellIsVisible);
 
-
 		[MonoTODO]
 		protected void EndUpdate ()
 		{
-
 		}
 
 		protected internal virtual void EnterNullValue () {}
@@ -451,7 +446,7 @@ namespace System.Windows.Forms
 		protected internal abstract void Paint (Graphics g, Rectangle bounds, CurrencyManager source, int rowNum, bool alignToRight);
 		
 		protected internal virtual void Paint (Graphics g, Rectangle bounds, CurrencyManager source, int rowNum,
-   			Brush backBrush,  Brush foreBrush, bool alignToRight) {}
+			Brush backBrush,  Brush foreBrush, bool alignToRight) {}
 
 		protected internal virtual void ReleaseHostedControl () {}
 
@@ -497,8 +492,8 @@ namespace System.Windows.Forms
 
 		protected internal virtual void UpdateUI (CurrencyManager source, int rowNum, string instantText)
 		{
-
 		}
+
 		#endregion	// Public Instance Methods
 		
 		#region Private Instance Methods
@@ -511,13 +506,12 @@ namespace System.Windows.Forms
 			g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (DataGridTableStyle.CurrentHeaderBackColor), 
 				bounds);
 				
-			if (grid.FlatMode == false) {			
-			
+			if (!grid.FlatMode) {
 				// Paint Borders
-				g.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorControlLight),			
+				g.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorControlLight),
 					bounds.X, bounds.Y, bounds.X + bounds.Width, bounds.Y);
 				
-				if (colNum == 0) {	
+				if (colNum == 0) {
 					g.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorControlLight),
 						bounds.X, bounds.Y, bounds.X, bounds.Y + bounds.Height);
 				} else {
@@ -550,7 +544,7 @@ namespace System.Windows.Forms
 				
 			}
 		}
-				
+		
 		internal void PaintNewRow (Graphics g, Rectangle bounds, Brush backBrush, Brush foreBrush)
 		{
 			g.FillRectangle (backBrush, bounds);
@@ -571,7 +565,6 @@ namespace System.Windows.Forms
 		}
 		
 		#endregion Private Instance Methods
-
 
 		#region Events
 		static object AlignmentChangedEvent = new object ();

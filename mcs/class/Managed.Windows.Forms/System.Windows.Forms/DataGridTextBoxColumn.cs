@@ -153,8 +153,7 @@ namespace System.Windows.Forms
 						SetColumnValueAtRow (dataSource, rowNum, newValue);
 					}
 				}
-			}
-			catch {
+			} catch {
 				return false;
 			}
 			
@@ -180,15 +179,14 @@ namespace System.Windows.Forms
 
 			if (!ro && instantText != null) {
 				textbox.Text = instantText;
-			}
-			else {
+				textbox.IsInEditOrNavigateMode = false;
+			} else {
 				textbox.Text = GetFormattedValue (source, rowNum);
 			}
 
 			textbox.ReadOnly = ro;
 			textbox.Bounds = new Rectangle (new Point (bounds.X + offset_x, bounds.Y + offset_y),
 							new Size (bounds.Width - offset_x, bounds.Height - offset_y));
-			textbox.IsInEditOrNavigateMode = ro || instantText == null;
 			textbox.Visible = cellIsVisible;
 			textbox.Focus ();
 			textbox.SelectAll ();
@@ -229,13 +227,14 @@ namespace System.Windows.Forms
 		[MonoTODO]
 		protected void HideEditBox ()
 		{
-			if (textbox.Visible) {
-				grid.SuspendLayout ();
-				textbox.Bounds = Rectangle.Empty;
-				textbox.Visible = false;
-				textbox.IsInEditOrNavigateMode = true;
-				grid.ResumeLayout (false);
-			}
+			if (!textbox.Visible)
+				return;
+
+			grid.SuspendLayout ();
+			textbox.Bounds = Rectangle.Empty;
+			textbox.Visible = false;
+			textbox.IsInEditOrNavigateMode = true;
+			grid.ResumeLayout (false);
 		}
 
 		protected internal override void Paint (Graphics g, Rectangle bounds, CurrencyManager source, int rowNum)
@@ -293,26 +292,28 @@ namespace System.Windows.Forms
 		
 		protected internal override void ReleaseHostedControl ()
 		{
-			if (textbox != null) {
-				grid.SuspendLayout ();
-				grid.Controls.Remove (textbox);
-				grid.Invalidate (new Rectangle (textbox.Location, textbox.Size));
-				textbox.Dispose ();
-				textbox = null;
-				grid.ResumeLayout (false);
-			}
+			if (textbox == null)
+				return;
+
+			grid.SuspendLayout ();
+			grid.Controls.Remove (textbox);
+			grid.Invalidate (new Rectangle (textbox.Location, textbox.Size));
+			textbox.Dispose ();
+			textbox = null;
+			grid.ResumeLayout (false);
 		}
 
 		protected override void SetDataGridInColumn (DataGrid value)
 		{
 			base.SetDataGridInColumn (value);
 
-			if (value != null) {
-				textbox.SetDataGrid (grid);
-				grid.SuspendLayout ();
-				grid.Controls.Add (textbox);
-				grid.ResumeLayout (false);
-			}
+			if (value == null)
+				return;
+
+			textbox.SetDataGrid (grid);
+			grid.SuspendLayout ();
+			grid.Controls.Add (textbox);
+			grid.ResumeLayout (false);
 		}
 		
 		protected internal override void UpdateUI (CurrencyManager source, int rowNum, string instantText)
@@ -320,14 +321,12 @@ namespace System.Windows.Forms
 			if (textbox.Visible // I don't really like this, but it gets DataGridTextBoxColumnTest.TestUpdateUI passing
 			    && textbox.IsInEditOrNavigateMode) {
 				textbox.Text = GetFormattedValue (source, rowNum);
-			}
-			else {
+			} else {
 				textbox.Text = instantText;
 			}
 		}
 
 		#endregion	// Public Instance Methods
-
 
 		#region Private Instance Methods
 
@@ -343,7 +342,7 @@ namespace System.Windows.Forms
 				return NullText;
 
 			if (format != null && format != String.Empty && obj as IFormattable != null)
-				return ((IFormattable)obj).ToString (format, format_provider);
+				return ((IFormattable) obj).ToString (format, format_provider);
 
 			TypeConverter converter = TypeDescriptor.GetConverter (
 				PropertyDescriptor.PropertyType);

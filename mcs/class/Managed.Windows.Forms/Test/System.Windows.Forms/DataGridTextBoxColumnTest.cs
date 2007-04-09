@@ -813,31 +813,37 @@ namespace MonoTests.System.Windows.Forms
 				dg.DataSource = table;
 
 				CurrencyManager cm = (CurrencyManager) bc [view];
-				TextBox tb = amountColumnStyle.TextBox;
+				DataGridTextBox tb = (DataGridTextBox) amountColumnStyle.TextBox;
 
 				Assert.IsNotNull (tb, "#A1");
 				Assert.AreEqual (string.Empty, tb.Text, "#A2");
+				Assert.IsTrue (tb.IsInEditOrNavigateMode, "#A3");
 
 				amountColumnStyle.DoEdit (cm, 0, new Rectangle (new Point (0,0), new Size (100, 100)), false, null, true);
 				Assert.AreEqual ("£1.00", tb.Text, "#B1");
 				Assert.AreEqual (new MockNumericStringConvertable (1), table.Rows [0] ["Amount"], "#B2");
+				Assert.IsTrue (tb.IsInEditOrNavigateMode, "#B3");
 
 				amountColumnStyle.DoEdit (cm, 1, new Rectangle (new Point (0,0), new Size (100, 100)), false, null, true);
 				Assert.AreEqual ("£2.00", tb.Text, "#C1");
 				Assert.AreEqual (new MockNumericStringConvertable (2), table.Rows [1] ["Amount"], "#C2");
+				Assert.IsTrue (tb.IsInEditOrNavigateMode, "#C3");
 
 				amountColumnStyle.DoEdit (cm, 0, new Rectangle (new Point (0,0), new Size (100, 100)), false, "£3.00", true);
 				Assert.AreEqual ("£3.00", tb.Text, "#D1");
 				Assert.AreEqual (new MockNumericStringConvertable (1), table.Rows [0] ["Amount"], "#D2");
+				Assert.IsFalse (tb.IsInEditOrNavigateMode, "#D3");
 
 				Assert.IsTrue (amountColumnStyle.DoCommit (cm, cm.Position), "#E1");
 				Assert.AreEqual ("£3.00", tb.Text, "#E2");
 				Assert.AreEqual (new MockNumericStringConvertable (3), table.Rows [0] ["Amount"], "#E3");
+				Assert.IsTrue (tb.IsInEditOrNavigateMode, "#E4");
 
 				amountColumnStyle.DoEdit (cm, 0, new Rectangle (new Point (0,0), new Size (100, 100)), false, "INVALID", true);
 				Assert.IsFalse (amountColumnStyle.DoCommit (cm, cm.Position), "#F1");
 				Assert.AreEqual ("INVALID", tb.Text, "#F2");
 				Assert.AreEqual (new MockNumericStringConvertable (3), table.Rows [0] ["Amount"], "#F3");
+				Assert.IsFalse (tb.IsInEditOrNavigateMode, "#F4");
 
 				amountColumnStyle.Format = "whatever";
 				amountColumnStyle.FormatInfo = new CultureInfo ("en-US");
@@ -845,13 +851,12 @@ namespace MonoTests.System.Windows.Forms
 				amountColumnStyle.DoEdit (cm, 0, new Rectangle (new Point (0,0), new Size (100, 100)), false, null, true);
 				Assert.AreEqual ("£3.00", tb.Text, "#G1");
 				Assert.AreEqual (new MockNumericStringConvertable (3), table.Rows [0] ["Amount"], "#G2");
+				Assert.IsFalse (tb.IsInEditOrNavigateMode, "#G3");
 
-				/*
 				tb.Text = "5";
 				Assert.IsTrue (amountColumnStyle.DoCommit (cm, cm.Position), "#H1");
 				Assert.AreEqual ("£5.00", tb.Text, "#H2");
 				Assert.AreEqual (new MockNumericStringConvertable (5), table.Rows [0] ["Amount"], "#H3");
-				*/
 			} finally {
 				Thread.CurrentThread.CurrentCulture = originalCulture;
 			}
