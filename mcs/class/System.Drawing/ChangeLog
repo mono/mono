@@ -1,3 +1,7 @@
+2007-04-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* System.Drawing.dll.sources: Add internal KnownColors.
+
 2007-03-29  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* nunit-host-ignore-list: Re-enable TIFF test cases on SPARC bots and

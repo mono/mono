@@ -26,6 +26,7 @@ System.Drawing/gdipEnums.cs
 System.Drawing/gdipFunctions.cs
 System.Drawing/gdipStructs.cs
 System.Drawing/KnownColor.cs
+System.Drawing/KnownColors.cs
 System.Drawing/IconConverter.cs
 System.Drawing/Icon.cs
 System.Drawing/IDeviceContext.cs
