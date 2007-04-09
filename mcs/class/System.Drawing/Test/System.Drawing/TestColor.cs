@@ -921,9 +921,12 @@ namespace MonoTests.System.Drawing {
 		{
 			Color color = Color.Red;
 			Color color1 = Color.FromArgb (color.R, color.G, color.B);
-			Assert ("Named color not == unnamed color", !(color==color1));
+			Assert ("Named color not == unnamed color", !(color == color1));
+			Assert ("Named unnamed color == color not", !(color1 == color));
+			Assert ("Named color != unnamed color", (color != color1));
+			Assert ("Named unnamed color != color not", (color1 != color));
 			Assert ("Named color not equals unnamed color", !color.Equals (color1));
-			Assert ("Named color != unnamed color", color!=color1);
+			Assert ("Named unnamed color equals color not", !color1.Equals (color));
 			color = Color.FromArgb (0, color1);
 			Assert ("Alpha takes part in comparison", !color.Equals (color1));
 		}
