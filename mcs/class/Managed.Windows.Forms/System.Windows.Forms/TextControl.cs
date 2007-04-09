@@ -1455,32 +1455,35 @@ namespace System.Windows.Forms {
 
 			if (recalc_suspended > 0) {
 				recalc_start = Math.Min (recalc_start, line.line_no);
-				recalc_end = Math.Max (recalc_end, line.line_no + line_count - 1);
+				recalc_end = Math.Max (recalc_end, line.line_no + line_count);
 				recalc_optimize = true;
 				recalc_pending = true;
 				return;
 			}
 
-			if (RecalculateDocument(owner.CreateGraphicsInternal(), line.line_no, line.line_no + line_count - 1, true)) {
+			if (RecalculateDocument(owner.CreateGraphicsInternal(), line.line_no, line.line_no + line_count, true)) {
 				// Lineheight changed, invalidate the rest of the document
 				if ((line.Y - viewport_y) >=0 ) {
 					// We formatted something that's in view, only draw parts of the screen
-//blah Console.WriteLine("TextControl.cs(981) Invalidate called in UpdateView(line, line_count, pos)");
 					owner.Invalidate(new Rectangle(0, line.Y - viewport_y, viewport_width, owner.Height - line.Y - viewport_y));
 				} else {
 					// The tag was above the visible area, draw everything
-//blah Console.WriteLine("TextControl.cs(985) Invalidate called in UpdateView(line, line_count, pos)");
 					owner.Invalidate();
 				}
 			} else {
 				Line	end_line;
 
-				end_line = GetLine(line.line_no + line_count -1);
+				end_line = GetLine(line.line_no + line_count);
 				if (end_line == null) {
-					end_line = line;
+					// Something is wrong here
+#if DEBUG
+					Console.Error.WriteLine ("Attempting to invalidate line that does not exist. " +
+							"start: {0}  count: {1}", line.text, line_count);
+#endif
+					// Use the last line
+					end_line = GetLine (lines);
 				}
 
-//blah Console.WriteLine("TextControl.cs(996) Invalidate called in UpdateView(line, line_count, pos)");
 				owner.Invalidate(new Rectangle(0 - viewport_x, line.Y - viewport_y, viewport_width, end_line.Y + end_line.height));
 			}
 		}
