@@ -2072,6 +2072,19 @@ mini_emit_class_check (MonoCompile *cfg, int klass_reg, MonoClass *klass)
 	}
 	MONO_EMIT_NEW_COND_EXC (cfg, NE_UN, "InvalidCastException");
 }
+
+static inline void
+mini_emit_class_check_branch (MonoCompile *cfg, int klass_reg, MonoClass *klass, int branch_op, MonoBasicBlock *target)
+{
+	if (cfg->compile_aot) {
+		int const_reg = alloc_preg (cfg);
+		MONO_EMIT_NEW_CLASSCONST (cfg, const_reg, klass);
+		MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, klass_reg, const_reg);
+	} else {
+		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, klass_reg, klass);
+	}
+	MONO_EMIT_NEW_BRANCH_BLOCK (cfg, branch_op, target);
+}
 	
 static void 
 mini_emit_castclass (MonoCompile *cfg, int klass_reg, MonoClass *klass)
@@ -2873,26 +2886,11 @@ handle_castclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned ch
 			MONO_EMIT_NEW_LOAD_MEMBASE (cfg, eclass_reg, klass_reg, G_STRUCT_OFFSET (MonoClass, cast_class));
 			if (klass->cast_class == mono_defaults.object_class) {
 				int parent_reg = alloc_preg (cfg);
-				int const_reg = -1;
 				MONO_EMIT_NEW_LOAD_MEMBASE (cfg, parent_reg, eclass_reg, G_STRUCT_OFFSET (MonoClass, parent));
-				if (cfg->compile_aot) {
-					const_reg = alloc_preg (cfg);
-					MONO_EMIT_NEW_CLASSCONST (cfg, const_reg, mono_defaults.enum_class->parent);
-					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, parent_reg, const_reg);
-				} else {
-					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, parent_reg, mono_defaults.enum_class->parent);
-				}
-				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBNE_UN, is_null_bb);
+				mini_emit_class_check_branch (cfg, parent_reg, mono_defaults.enum_class->parent, OP_PBNE_UN, is_null_bb);
 				mini_emit_class_check (cfg, eclass_reg, mono_defaults.enum_class);
 			} else if (klass->cast_class == mono_defaults.enum_class->parent) {
-				int const_reg = alloc_preg (cfg);
-				if (cfg->compile_aot) {
-					MONO_EMIT_NEW_CLASSCONST (cfg, const_reg, mono_defaults.enum_class->parent);
-					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, eclass_reg, const_reg);
-				} else {
-					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, eclass_reg, mono_defaults.enum_class->parent);
-				}
-				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBEQ, is_null_bb);
+				mini_emit_class_check_branch (cfg, eclass_reg, mono_defaults.enum_class->parent, OP_PBEQ, is_null_bb);
 				mini_emit_class_check (cfg, eclass_reg, mono_defaults.enum_class);
 			} else if (klass->cast_class == mono_defaults.enum_class) {
 				mini_emit_class_check (cfg, eclass_reg, mono_defaults.enum_class);
@@ -2968,52 +2966,16 @@ handle_isinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char 
 			MONO_EMIT_NEW_LOAD_MEMBASE (cfg, eclass_reg, klass_reg, G_STRUCT_OFFSET (MonoClass, cast_class));
 			if (klass->cast_class == mono_defaults.object_class) {
 				int parent_reg = alloc_preg (cfg);
-				int const_reg = -1;
 				MONO_EMIT_NEW_LOAD_MEMBASE (cfg, parent_reg, eclass_reg, G_STRUCT_OFFSET (MonoClass, parent));
-				if (cfg->compile_aot) {
-					const_reg = alloc_preg (cfg);
-					MONO_EMIT_NEW_CLASSCONST (cfg, const_reg, mono_defaults.enum_class->parent);
-					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, parent_reg, const_reg);
-				} else {
-					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, parent_reg, mono_defaults.enum_class->parent);
-				}
-				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBNE_UN, is_null_bb);
-				if (cfg->compile_aot) {
-					MONO_EMIT_NEW_CLASSCONST (cfg, const_reg, mono_defaults.enum_class);
-					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, eclass_reg, const_reg);
-				} else {
-					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, eclass_reg, mono_defaults.enum_class);
-				}
-				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBEQ, is_null_bb);
+				mini_emit_class_check_branch (cfg, parent_reg, mono_defaults.enum_class->parent, OP_PBNE_UN, is_null_bb);
+				mini_emit_class_check_branch (cfg, eclass_reg, mono_defaults.enum_class, OP_PBEQ, is_null_bb);
 				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_BR, false_bb);
 			} else if (klass->cast_class == mono_defaults.enum_class->parent) {
-				int const_reg = -1;
-				
-				if (cfg->compile_aot) {
-					const_reg = alloc_preg (cfg);
-					MONO_EMIT_NEW_CLASSCONST (cfg, const_reg, mono_defaults.enum_class->parent);
-					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, eclass_reg, const_reg);
-				} else {
-					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, eclass_reg, mono_defaults.enum_class->parent);
-				}
-				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBEQ, is_null_bb);
-				if (cfg->compile_aot) {
-					MONO_EMIT_NEW_CLASSCONST (cfg, const_reg, mono_defaults.enum_class);
-					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, eclass_reg, const_reg);
-				} else {
-					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, eclass_reg, mono_defaults.enum_class);
-				}
-				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBEQ, is_null_bb);
+				mini_emit_class_check_branch (cfg, eclass_reg, mono_defaults.enum_class->parent, OP_PBEQ, is_null_bb);
+				mini_emit_class_check_branch (cfg, eclass_reg, mono_defaults.enum_class, OP_PBEQ, is_null_bb);				
 				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_BR, false_bb);
 			} else if (klass->cast_class == mono_defaults.enum_class) {
-				if (cfg->compile_aot) {
-					int const_reg = alloc_preg (cfg);
-					MONO_EMIT_NEW_CLASSCONST (cfg, const_reg, mono_defaults.enum_class);
-					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, eclass_reg, const_reg);
-				} else {
-					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, eclass_reg, mono_defaults.enum_class);
-				}
-				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBEQ, is_null_bb);
+				mini_emit_class_check_branch (cfg, eclass_reg, mono_defaults.enum_class, OP_PBEQ, is_null_bb);
 				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_BR, false_bb);
 			} else if (klass->cast_class->flags & TYPE_ATTRIBUTE_INTERFACE) {
 				mini_emit_iface_class_cast (cfg, eclass_reg, klass->cast_class, false_bb, is_null_bb);
@@ -3102,14 +3064,7 @@ handle_cisinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char
 		MONO_START_BB (cfg, interface_fail_bb);
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, klass_reg, tmp_reg, G_STRUCT_OFFSET (MonoVTable, klass));
 		
-		if (cfg->compile_aot) {
-			int tproxy_reg = alloc_preg (cfg);
-			MONO_EMIT_NEW_CLASSCONST (cfg, tproxy_reg, mono_defaults.transparent_proxy_class);
-			MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, klass_reg, tproxy_reg);
-		} else {
-			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, klass_reg, mono_defaults.transparent_proxy_class);
-		}
-		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBNE_UN, false_bb);
+		mini_emit_class_check_branch (cfg, klass_reg, mono_defaults.transparent_proxy_class, OP_PBNE_UN, false_bb);
 
 		tmp_reg = alloc_preg (cfg);
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, tmp_reg, obj_reg, G_STRUCT_OFFSET (MonoTransparentProxy, custom_type_info));
@@ -3120,15 +3075,8 @@ handle_cisinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char
 		tmp_reg = alloc_preg (cfg);
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, tmp_reg, obj_reg, G_STRUCT_OFFSET (MonoObject, vtable));
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, klass_reg, tmp_reg, G_STRUCT_OFFSET (MonoVTable, klass));
-		
-		if (cfg->compile_aot) {
-			int tproxy_reg = alloc_preg (cfg);
-			MONO_EMIT_NEW_CLASSCONST (cfg, tproxy_reg, mono_defaults.transparent_proxy_class);
-			MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, klass_reg, tproxy_reg);
-		} else {
-			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, klass_reg, mono_defaults.transparent_proxy_class);
-		}
-		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBNE_UN, no_proxy_bb);
+
+		mini_emit_class_check_branch (cfg, klass_reg, mono_defaults.transparent_proxy_class, OP_PBNE_UN, no_proxy_bb);		
 		tmp_reg = alloc_preg (cfg);
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, tmp_reg, obj_reg, G_STRUCT_OFFSET (MonoTransparentProxy, remote_class));
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, klass_reg, tmp_reg, G_STRUCT_OFFSET (MonoRemoteClass, proxy_class));
@@ -3218,15 +3166,7 @@ handle_ccastclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned c
 
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, tmp_reg, obj_reg, G_STRUCT_OFFSET (MonoObject, vtable));
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, klass_reg, tmp_reg, G_STRUCT_OFFSET (MonoVTable, klass));
-
-		if (cfg->compile_aot) {
-			int tproxy_reg = alloc_preg (cfg);
-			MONO_EMIT_NEW_CLASSCONST (cfg, tproxy_reg, mono_defaults.transparent_proxy_class);
-			MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, klass_reg, tproxy_reg);
-		} else {
-			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, klass_reg, mono_defaults.transparent_proxy_class);
-		}
-		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBNE_UN, no_proxy_bb);
+		mini_emit_class_check_branch (cfg, klass_reg, mono_defaults.transparent_proxy_class, OP_PBNE_UN, no_proxy_bb);		
 
 		tmp_reg = alloc_preg (cfg);
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, tmp_reg, obj_reg, G_STRUCT_OFFSET (MonoTransparentProxy, remote_class));
