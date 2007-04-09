@@ -1,3 +1,9 @@
+2007-04-09  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #81338
+	* statement.cs (For.Resolve): If resolution fails, use
+	KillFlowBranching.
+
 2007-04-08  Marek Safar  <marek.safar@gmail.com>
 
 	* anonymous.cs (MakeName): Make faster and zero-based.

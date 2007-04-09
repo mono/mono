@@ -1,3 +1,7 @@
+2007-04-09  Raja R Harinath  <rharinath@novell.com>
+
+	* cs0103-5.cs: New test based on #81338.
+
 2007-03-21  Bill Holmes  <billholmes54@gmail.com>
 	* gcs0111-2.cs:
 	With the new member ordering change in class.cs, the error message

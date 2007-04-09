@@ -590,12 +590,17 @@ namespace Mono.CSharp {
 				}
 			}
 
+			if (!ok) {
+				ec.KillFlowBranching ();
+				return false;
+			}
+
 			// There's no direct control flow from the end of the embedded statement to the end of the loop
 			ec.CurrentBranching.CurrentUsageVector.Goto ();
 
 			ec.EndFlowBranching ();
 
-			return ok;
+			return true;
 		}
 		
 		protected override void DoEmit (EmitContext ec)
