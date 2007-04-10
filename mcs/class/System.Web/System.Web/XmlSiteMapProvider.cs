@@ -296,6 +296,7 @@ namespace System.Web
 
 			if (File.Exists (file)) {
 				watcher = new FileSystemWatcher ();
+				watcher.NotifyFilter |= NotifyFilters.Size;
 				watcher.Path = Path.GetFullPath (Path.GetDirectoryName (file));
 				watcher.Filter = Path.GetFileName (file);
 				watcher.Changed += new FileSystemEventHandler (OnFileChanged);

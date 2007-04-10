@@ -299,6 +299,8 @@ namespace System.Web.Configuration
 
 #if !TARGET_JVM
 			watcher = new FileSystemWatcher (this.path, this.filename);
+			watcher.NotifyFilter |= NotifyFilters.Size;
+			
 			FileSystemEventHandler handler = new FileSystemEventHandler (SetChanged);
 			watcher.Created += handler;
 			watcher.Changed += handler;

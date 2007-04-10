@@ -1,3 +1,9 @@
+2007-04-10  Marek Habersack  <mhabersack@novell.com>
+
+	* CacheDependency.cs: add the NotifyFilters.Size to the
+	watcher flags, so that we watch for modifications to a file when
+	using Linux inotify.
+
 2006-11-29  Marek Habersack  <grendello@gmail.com>
 
 	* CachedVaryBy.cs: Make sure that the vary:* header is generated

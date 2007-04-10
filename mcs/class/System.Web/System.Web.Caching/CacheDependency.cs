@@ -108,6 +108,7 @@ namespace System.Web.Caching
 						} else
 							continue;
 					}
+					watcher.NotifyFilter |= NotifyFilters.Size;
 					watcher.Created += new FileSystemEventHandler (OnChanged);
 					watcher.Changed += new FileSystemEventHandler (OnChanged);
 					watcher.Deleted += new FileSystemEventHandler (OnChanged);

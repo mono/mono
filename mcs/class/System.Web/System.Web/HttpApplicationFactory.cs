@@ -205,7 +205,10 @@ namespace System.Web {
 
 			watcher.Path = Path.GetFullPath (Path.GetDirectoryName (file));
 			watcher.Filter = Path.GetFileName (file);
-
+			
+			// This will enable the Modify flag for Linux/inotify
+			watcher.NotifyFilter |= NotifyFilters.Size;
+			
 			watcher.Changed += hnd;
 			watcher.Created += hnd;
 			watcher.Deleted += hnd;
@@ -270,12 +273,15 @@ namespace System.Web {
 				evt.AddEventHandler (target, npi.FakeDelegate);
 			} else {
 				evt.AddEventHandler (target, Delegate.CreateDelegate (
+							     evt.EventHandlerType, app,
 #if NET_2_0
-							     evt.EventHandlerType, app, method));
+							     method
 #else
-							     evt.EventHandlerType, app, method.Name));
+							     method.Name
 #endif
+						     ));
 			}
+			
 		}
 
 		internal static void InvokeSessionEnd (object state)
@@ -444,9 +450,9 @@ namespace System.Web {
 						WatchLocationForRestart (AppDomain.CurrentDomain.SetupInformation.PrivateBinPath,
 									 "*.dll");
 #if NET_2_0
-			                        WatchLocationForRestart ("App_Code", "");
-			                        WatchLocationForRestart ("App_Browsers", "");
-			                        WatchLocationForRestart ("App_GlobalResources", "");
+			                        WatchLocationForRestart ("App_Code", "*", true);
+			                        WatchLocationForRestart ("App_Browsers", "*");
+			                        WatchLocationForRestart ("App_GlobalResources", "*");
 #endif
 			                        app = factory.FireOnAppStart (context);
 						factory.app_start_needed = false;
@@ -504,26 +510,34 @@ namespace System.Web {
 		internal static bool ContextAvailable {
 			get { return theFactory != null && !theFactory.app_start_needed; }
 		}
-		
-		internal static bool WatchLocationForRestart(string filter)
+
+
+                internal static bool WatchLocationForRestart (string filter)
 	        {
-			return WatchLocationForRestart("", filter);
+			return WatchLocationForRestart ("", filter, false);
 	        }
-        
-	        internal static bool WatchLocationForRestart(string virtualPath, string filter)
+
+		internal static bool WatchLocationForRestart (string virtualPath, string filter)
+		{
+			return WatchLocationForRestart (virtualPath, filter, false);
+		}
+		
+                internal static bool WatchLocationForRestart(string virtualPath, string filter, bool watchSubdirs)
 		{
 			// map the path to the physical one
 			string physicalPath = HttpRuntime.AppDomainAppPath;
 			physicalPath = Path.Combine(physicalPath, virtualPath);
-
-			if (Directory.Exists(physicalPath) || File.Exists(physicalPath)) {
-				physicalPath = Path.Combine(physicalPath, filter);
-
+			bool isDir = Directory.Exists(physicalPath);
+			bool isFile = isDir ? false : File.Exists(physicalPath);
+			
+			if (isDir || isFile) {
 				// create the watcher
 				FileSystemEventHandler fseh = new FileSystemEventHandler(OnFileChanged);
 				RenamedEventHandler reh = new RenamedEventHandler(OnFileRenamed);
-				FileSystemWatcher watcher = CreateWatcher(physicalPath, fseh, reh);
-	                
+				FileSystemWatcher watcher = CreateWatcher(Path.Combine(physicalPath, filter), fseh, reh);
+				if (isDir)
+					watcher.IncludeSubdirectories = watchSubdirs;
+				
 				lock (watchers_lock) {
 					watchers.Add(watcher);
 				}
@@ -532,7 +546,7 @@ namespace System.Web {
 				return false;
 			}
 	        }
-
+		
 	        static void OnFileRenamed(object sender, RenamedEventArgs args)
 		{
 			OnFileChanged(sender, args);

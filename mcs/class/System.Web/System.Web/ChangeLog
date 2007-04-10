@@ -1,3 +1,17 @@
+2007-04-10  Marek Habersack  <mhabersack@novell.com>
+
+	* XmlSiteMapProvider.cs: add the NotifyFilters.Size to the
+	watcher flags, so that we watch for modifications to a file when
+	using Linux inotify.
+
+	* HttpApplicationFactory.cs: add the NotifyFilters.Size to the
+	watcher flags, so that we watch for modifications to a file when
+	using Linux inotify.
+	App_Code, App_Browsers and App_GlobalResources watchers must watch
+	for events with the '*' mask so that they can notice events
+	related to subdirectory creation/deletion.
+	Watch for subdirectory events with the App_Code watcher.
+
 2007-04-07  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpException.cs: show a default custom error message if custom
