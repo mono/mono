@@ -37,8 +37,8 @@ namespace System.Web {
 	[Flags]
 	internal enum CookieFlags : byte {
 		Secure = 1,
-		HttpOnly = 2
-	}
+			HttpOnly = 2
+			}
 	
 	// CAS - no InheritanceDemand here as the class is sealed
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
@@ -73,7 +73,7 @@ namespace System.Web {
 		}
 
 		public HttpCookie (string name, string value)
-		  : this (name)
+		: this (name)
 		{
 			Value = value;
 		}
@@ -178,7 +178,7 @@ namespace System.Web {
 
 		public string Value {
 			get {
-                               return HttpUtility.UrlDecode(values.ToString ());
+				return HttpUtility.UrlDecode(values.ToString ());
 			}
 			set {
 				values.Clear ();
@@ -245,19 +245,19 @@ namespace System.Web {
                                        if(vals == null)
                                                vals = new string[0];
 
-					bool first_val = true;
+				       bool first_val = true;
                                        foreach (string v in vals) {
-						if (!first_val)
-							builder.Append ("&");
-
-						if (key != null) {
+					       if (!first_val)
+						       builder.Append ("&");
+					       
+					       if (key != null && key.Length > 0) {
                                                        builder.Append (HttpUtility.UrlEncode(key));
-							builder.Append ("=");
-						}
-                                               if(v != null)
+						       builder.Append ("=");
+					       }
+                                               if(v != null && v.Length > 0)
                                                        builder.Append (HttpUtility.UrlEncode(v));
-
-						first_val = false;
+					       
+					       first_val = false;
 					}
 					first_key = false;
 				}
@@ -274,12 +274,12 @@ namespace System.Web {
 				if (this.IsReadOnly)
 					throw new NotSupportedException ("Collection is read-only");
 
-                               if (name == null) {
+				if (name == null) {
 					Clear();
-                                       name = string.Empty;
-                               }
-                               if (value == null)
-                                       value = string.Empty;
+					name = string.Empty;
+				}
+				if (value == null)
+					value = string.Empty;
 
 				base.Set (name, value);
 			}
