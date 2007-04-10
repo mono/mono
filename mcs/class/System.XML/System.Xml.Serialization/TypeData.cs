@@ -32,6 +32,9 @@
 
 using System;
 using System.Collections;
+#if NET_2_0
+using System.Collections.Generic;
+#endif
 using System.Globalization;
 using System.Reflection;
 using System.Text;
@@ -266,7 +269,11 @@ namespace System.Xml.Serialization
 					throw new InvalidOperationException (Type.FullName + " is not a collection");
 				else if (type.IsArray) 
 					listItemType = type.GetElementType ();
-				else if (typeof(ICollection).IsAssignableFrom (type))
+#if NET_2_0
+				else if (typeof (ICollection).IsAssignableFrom (type) || IsGenericList (type))
+#else
+				else if (typeof (ICollection).IsAssignableFrom (type))
+#endif
 				{
 					if (typeof (IDictionary).IsAssignableFrom (type))
 						throw new NotSupportedException (string.Format (CultureInfo.InvariantCulture,
@@ -365,6 +372,16 @@ namespace System.Xml.Serialization
 				"an implementation of Add({1}) at all levels of their inheritance " +
 				"hierarchy. {2} does not implement Add({1}).", inheritFrom, 
 				argumentType.FullName, type.FullName));
+		}
+
+		private bool IsGenericList (Type type)
+		{
+			if (type.IsGenericType && type.GetGenericTypeDefinition () == typeof (ICollection<>))
+				return true;
+			foreach (Type i in type.GetInterfaces ())
+				if (IsGenericList (i))
+					return true;
+			return false;
 		}
 	}
 }

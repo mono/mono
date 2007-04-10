@@ -1,3 +1,10 @@
+2007-04-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TypeData.cs : in get_ListItemTypeData(), check generic ICollection
+	  as well as non-generic one. Fixed bug #81341. Though the type check
+	  looks like an aggregation of bugfix hacks and there should be some
+	  kind of sane refactoring, to throw best-suited errors.
+
 2007-02-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SerializationCodeGenerator.cs : fix wrong name comparison:
