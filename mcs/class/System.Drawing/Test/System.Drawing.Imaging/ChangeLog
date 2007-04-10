@@ -1,5 +1,7 @@
-2007-04-10  Sebastien Pouliot  <sebastien@ximian.com>
+2007-04-10  Sebastien Pouliot  <sebastien@ximian.com> 
 
+	* GifCodecTest.cs: Fix Save* test cases to check 8bpp indexed for all
+	GIF saved. Added comments to why we're not getting the "right" Red.
 	* TestBmpCodec.cs: Remove "NotWorking" from Bitmap32bitPixels test 
 	case. The file is a 32bpp RGB (no alpha).
 

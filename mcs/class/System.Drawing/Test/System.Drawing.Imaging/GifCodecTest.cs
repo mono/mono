@@ -210,7 +210,7 @@ namespace MonoTests.System.Drawing.Imaging {
 			}
 		}
 
-		private void Save (PixelFormat original, PixelFormat expected, bool colorCheck)
+		private void Save (PixelFormat original, PixelFormat expected, bool exactColorCheck)
 		{
 			string sOutFile = String.Format ("linerect{0}-{1}.gif", getOutSufix (), expected.ToString ());
 
@@ -224,15 +224,22 @@ namespace MonoTests.System.Drawing.Imaging {
 			}
 
 			try {
-// FIXME: we don't save a pure red (F8 instead of FF) into the file so the color-check assert will fail
 				bmp.Save (sOutFile, ImageFormat.Gif);
 
 				// Load
 				using (Bitmap bmpLoad = new Bitmap (sOutFile)) {
-					Assert.AreEqual (expected, bmp.PixelFormat, "PixelFormat");
-					if (colorCheck) {
-						Color color = bmpLoad.GetPixel (10, 10);
+					Assert.AreEqual (expected, bmpLoad.PixelFormat, "PixelFormat");
+					Color color = bmpLoad.GetPixel (10, 10);
+					if (exactColorCheck) {
 						Assert.AreEqual (Color.FromArgb (255, 255, 0, 0), color, "Red");
+					} else {
+// FIXME: we don't save a pure red (F8 instead of FF) into the file so the color-check assert will fail
+// this is due to libgif's QuantizeBuffer. An alternative would be to make our own that checks if less than 256 colors
+// are used in the bitmap (or else use QuantizeBuffer).
+						Assert.AreEqual (255, color.A, "A");
+						Assert.IsTrue (color.R >= 248, "R");
+						Assert.AreEqual (0, color.G, "G");
+						Assert.AreEqual (0, color.B, "B");
 					}
 				}
 			}
@@ -248,52 +255,48 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
-		[Category ("NotWorking")] // palette mismatch
 		public void Save_24bppRgb ()
 		{
-			Save (PixelFormat.Format24bppRgb, PixelFormat.Format24bppRgb, true);
+			Save (PixelFormat.Format24bppRgb, PixelFormat.Format8bppIndexed, false);
 		}
 
 		[Test]
-		[Category ("NotWorking")] // palette mismatch
 		public void Save_32bppRgb ()
 		{
-			Save (PixelFormat.Format32bppRgb, PixelFormat.Format32bppRgb, true);
+			Save (PixelFormat.Format32bppRgb, PixelFormat.Format8bppIndexed, false);
 		}
 
 		[Test]
-		[Category ("NotWorking")] // palette mismatch
 		public void Save_32bppArgb ()
 		{
-			Save (PixelFormat.Format32bppArgb, PixelFormat.Format32bppArgb, true);
+			Save (PixelFormat.Format32bppArgb, PixelFormat.Format8bppIndexed, false);
 		}
 
 		[Test]
-		[Category ("NotWorking")] // palette mismatch
 		public void Save_32bppPArgb ()
 		{
-			Save (PixelFormat.Format32bppPArgb, PixelFormat.Format32bppPArgb, true);
+			Save (PixelFormat.Format32bppPArgb, PixelFormat.Format8bppIndexed, false);
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		[Category ("NotWorking")] // libgdiplus/cairo can't create a bitmap with this format
 		public void Save_48bppRgb ()
 		{
-			Save (PixelFormat.Format48bppRgb, PixelFormat.Format48bppRgb, false);
+			Save (PixelFormat.Format48bppRgb, PixelFormat.Format8bppIndexed, false);
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		[Category ("NotWorking")] // libgdiplus/cairo can't create a bitmap with this format
 		public void Save_64bppArgb ()
 		{
-			Save (PixelFormat.Format64bppArgb, PixelFormat.Format64bppArgb, false);
+			Save (PixelFormat.Format64bppArgb, PixelFormat.Format8bppIndexed, false);
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		[Category ("NotWorking")] // libgdiplus/cairo can't create a bitmap with this format
 		public void Save_64bppPArgb ()
 		{
-			Save (PixelFormat.Format64bppPArgb, PixelFormat.Format64bppPArgb, false);
+			Save (PixelFormat.Format64bppPArgb, PixelFormat.Format8bppIndexed, false);
 		}
 	}
 }
