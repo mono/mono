@@ -119,8 +119,10 @@ namespace System.Web.Compilation
 
 			string resourcePath;
 			resourcePath = Path.Combine (parserDir, "App_LocalResources");
-			if (Directory.Exists (resourcePath))
+			if (Directory.Exists (resourcePath)) {
 				sourceDir = resourcePath;
+				HttpApplicationFactory.WatchLocationForRestart (sourceDir, "*");
+			}
 		}
 		
 		public void Collect ()
