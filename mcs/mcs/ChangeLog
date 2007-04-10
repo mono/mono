@@ -1,5 +1,10 @@
 2007-04-10  Martin Baulig  <martin@ximian.com>
 
+	* expression.cs (New.DoResolve): Don't call CheckComImport() on
+	generic interfaces; report the CS0144 directly.
+
+2007-04-10  Martin Baulig  <martin@ximian.com>
+
 	* ecore.cs (MemberExpr.ResolveMemberExpr): If `left' is a
 	`TypeExpr', call ResolveAsTypeTerminal() on it; fixes #81180.
 

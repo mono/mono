@@ -5162,9 +5162,11 @@ namespace Mono.CSharp {
 			}
 
 			if (type.IsInterface || type.IsAbstract){
-				RequestedType = CheckComImport (ec);
-				if (RequestedType != null)
-					return RequestedType;
+				if (!TypeManager.IsGenericType (type)) {
+					RequestedType = CheckComImport (ec);
+					if (RequestedType != null)
+						return RequestedType;
+				}
 				
 				Report.SymbolRelatedToPreviousError (type);
 				Report.Error (144, loc, "Cannot create an instance of the abstract class or interface `{0}'", TypeManager.CSharpName (type));
