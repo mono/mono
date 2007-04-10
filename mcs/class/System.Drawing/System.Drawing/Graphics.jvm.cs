@@ -283,7 +283,7 @@ namespace System.Drawing {
 				try {
 					geom.AffineTransform t = GetFinalTransform();
 					if (!oldT.isIdentity()) {
-						t = (geom.AffineTransform)t.MemberwiseClone();
+						t = (geom.AffineTransform)t.clone();
 						t.preConcatenate(oldT);
 					}
 					
@@ -352,7 +352,7 @@ namespace System.Drawing {
 				oldT = NativeObject.getTransform();
 				geom.AffineTransform t = GetFinalTransform();
 				if (!oldT.isIdentity()) {
-					t = (geom.AffineTransform) t.MemberwiseClone ();
+					t = (geom.AffineTransform) t.clone ();
 					t.preConcatenate(oldT);
 				}
 				shape = GetNormalizedShape(shape, t);
@@ -1421,7 +1421,7 @@ namespace System.Drawing {
 
 			geom.AffineTransform t = GetFinalTransform();
 			if (!t.isIdentity()) {
-				area = (geom.Area) area.MemberwiseClone ();
+				area = (geom.Area) area.clone ();
 				area.transform(t);
 			}
 
@@ -1667,7 +1667,7 @@ namespace System.Drawing {
 			
 			geom.AffineTransform t = GetFinalTransform();
 			if (!t.isIdentity()) {
-				area = (geom.Area) area.MemberwiseClone ();
+				area = (geom.Area) area.clone ();
 				area.transform(t);
 			}
 
@@ -2011,7 +2011,7 @@ namespace System.Drawing {
 			if(region == null)
 				throw new ArgumentNullException("region");
 
-			CombineClipArea ((geom.Area) region.NativeObject.MemberwiseClone (), combineMode);
+			CombineClipArea ((geom.Area) region.NativeObject.clone (), combineMode);
 		}
 		
 		public void SetClip (GraphicsPath path, CombineMode combineMode) {

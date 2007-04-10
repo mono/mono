@@ -119,7 +119,7 @@ namespace System.Drawing.Drawing2D
 
 		public Matrix Clone()
 		{
-			return new Matrix ((geom.AffineTransform) NativeObject.MemberwiseClone ());
+			return new Matrix ((geom.AffineTransform) NativeObject.clone ());
 		}
                 
         
