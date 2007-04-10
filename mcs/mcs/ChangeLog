@@ -1,5 +1,11 @@
 2007-04-10  Martin Baulig  <martin@ximian.com>
 
+	* iterators.cs (Iterator.CreateIterator): Don't crash if
+	`method.ReturnType' is null.  This happens if something went wrong
+	while resolving that typ (we already reported an error in this case).
+
+2007-04-10  Martin Baulig  <martin@ximian.com>
+
 	* expression.cs (New.DoResolve): Don't call CheckComImport() on
 	generic interfaces; report the CS0144 directly.
 

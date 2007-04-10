@@ -993,12 +993,16 @@ namespace Mono.CSharp {
 			bool is_enumerable;
 			Type iterator_type;
 
-			if (!CheckType (method.ReturnType, out iterator_type, out is_enumerable)) {
+			Type ret = method.ReturnType;
+			if (ret == null)
+				return null;
+
+			if (!CheckType (ret, out iterator_type, out is_enumerable)) {
 				Report.Error (1624, method.Location,
 					      "The body of `{0}' cannot be an iterator block " +
 					      "because `{1}' is not an iterator interface type",
 					      method.GetSignatureForError (),
-					      TypeManager.CSharpName (method.ReturnType));
+					      TypeManager.CSharpName (ret));
 				return null;
 			}
 
