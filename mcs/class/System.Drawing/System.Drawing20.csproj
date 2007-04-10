@@ -245,6 +245,7 @@
     <Compile Include="System.Drawing\ImageConverter.cs" />
     <Compile Include="System.Drawing\ImageFormatConverter.cs" />
     <Compile Include="System.Drawing\KnownColor.cs" />
+    <Compile Include="System.Drawing\KnownColors.jvm.cs" />
     <Compile Include="System.Drawing\Pen.jvm.cs" />
     <Compile Include="System.Drawing\Pens.cs" />
     <Compile Include="System.Drawing\PlainImage.jvm.cs" />
