@@ -1,5 +1,10 @@
 2007-04-10  Martin Baulig  <martin@ximian.com>
 
+	* ecore.cs (MemberExpr.ResolveMemberExpr): If `left' is a
+	`TypeExpr', call ResolveAsTypeTerminal() on it; fixes #81180.
+
+2007-04-10  Martin Baulig  <martin@ximian.com>
+
 	* expression.cs (New.DoEmitTypeParameter): Fix #81109.
 
 2007-04-09  Raja R Harinath  <rharinath@novell.com>

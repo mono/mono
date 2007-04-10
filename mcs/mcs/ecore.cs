@@ -2809,6 +2809,10 @@ namespace Mono.CSharp {
 			//
 
 			if (left is TypeExpr) {
+				left = left.ResolveAsTypeTerminal (ec, true);
+				if (left == null)
+					return null;
+
 				if (!IsStatic) {
 					SimpleName.Error_ObjectRefRequired (ec, loc, GetSignatureForError ());
 					return null;
