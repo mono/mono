@@ -557,7 +557,7 @@ namespace System.Drawing
 
 			geom.AffineTransform penT = _transform.NativeObject;
 			if (penTransform != null && !penTransform.isIdentity()) {
-				penT = (geom.AffineTransform) penT.clone();
+				penT = (geom.AffineTransform) penT.MemberwiseClone();
 				penT.concatenate(penTransform);
 			}
 
