@@ -182,7 +182,7 @@ namespace System.Windows.Forms {
 		private static IntPtr _MOTIF_WM_HINTS;
 		private static IntPtr _NET_WM_STATE_SKIP_TASKBAR;
 		private static IntPtr _NET_WM_STATE_ABOVE;
-		//private static IntPtr _NET_WM_STATE_MODAL;
+		private static IntPtr _NET_WM_STATE_MODAL;
 		private static IntPtr _NET_WM_STATE_HIDDEN;
 		private static IntPtr _NET_WM_CONTEXT_HELP;
 		private static IntPtr _NET_WM_WINDOW_OPACITY;
@@ -192,7 +192,7 @@ namespace System.Windows.Forms {
 		//private static IntPtr _NET_WM_WINDOW_TYPE_MENU;
 		private static IntPtr _NET_WM_WINDOW_TYPE_UTILITY;
 		//private static IntPtr _NET_WM_WINDOW_TYPE_SPLASH;
-		//private static IntPtr _NET_WM_WINDOW_TYPE_DIALOG;
+		private static IntPtr _NET_WM_WINDOW_TYPE_DIALOG;
 		private static IntPtr _NET_WM_WINDOW_TYPE_NORMAL;
 		private static IntPtr CLIPBOARD;
 		private static IntPtr PRIMARY;
@@ -577,7 +577,7 @@ namespace System.Windows.Forms {
 				"_MOTIF_WM_HINTS",
 				"_NET_WM_STATE_SKIP_TASKBAR",
 				"_NET_WM_STATE_ABOVE",
-				//"_NET_WM_STATE_MODAL",
+				"_NET_WM_STATE_MODAL",
 				"_NET_WM_CONTEXT_HELP",
 				"_NET_WM_WINDOW_OPACITY",
 				//"_NET_WM_WINDOW_TYPE_DESKTOP",
@@ -585,7 +585,7 @@ namespace System.Windows.Forms {
 				//"_NET_WM_WINDOW_TYPE_TOOLBAR",
 				//"_NET_WM_WINDOW_TYPE_MENU",
 				"_NET_WM_WINDOW_TYPE_UTILITY",
-				//"_NET_WM_WINDOW_TYPE_DIALOG",
+				"_NET_WM_WINDOW_TYPE_DIALOG",
 				//"_NET_WM_WINDOW_TYPE_SPLASH",
 				"_NET_WM_WINDOW_TYPE_NORMAL",
 				"CLIPBOARD",
@@ -651,7 +651,7 @@ namespace System.Windows.Forms {
 			_MOTIF_WM_HINTS = atoms [off++];
 			_NET_WM_STATE_SKIP_TASKBAR = atoms [off++];
 			_NET_WM_STATE_ABOVE = atoms [off++];
-			//_NET_WM_STATE_MODAL = atoms [off++];
+			_NET_WM_STATE_MODAL = atoms [off++];
 			_NET_WM_CONTEXT_HELP = atoms [off++];
 			_NET_WM_WINDOW_OPACITY = atoms [off++];
 			//_NET_WM_WINDOW_TYPE_DESKTOP = atoms [off++];
@@ -659,7 +659,7 @@ namespace System.Windows.Forms {
 			//_NET_WM_WINDOW_TYPE_TOOLBAR = atoms [off++];
 			//_NET_WM_WINDOW_TYPE_MENU = atoms [off++];
 			_NET_WM_WINDOW_TYPE_UTILITY = atoms [off++];
-			//_NET_WM_WINDOW_TYPE_DIALOG = atoms [off++];
+			_NET_WM_WINDOW_TYPE_DIALOG = atoms [off++];
 			//_NET_WM_WINDOW_TYPE_SPLASH = atoms [off++];
 			_NET_WM_WINDOW_TYPE_NORMAL = atoms [off++];
 			CLIPBOARD = atoms [off++];
@@ -784,6 +784,14 @@ namespace System.Windows.Forms {
 
 				rect = xrect;
 			}
+			
+			if (rect.Width < 1 || rect.Height < 1) {
+				rect.Width = 1;
+				rect.Height = 1;
+				rect.X = -5;
+				rect.Y = -5;
+			}
+			
 			return rect;
 		}
 
@@ -831,6 +839,21 @@ namespace System.Windows.Forms {
 				rect = xrect;
 			}
 			return rect;
+		}
+		
+		internal static Point GetTopLevelWindowLocation (Hwnd hwnd)
+		{
+			IntPtr dummy; 
+			int x, y;
+			Hwnd.Borders frame;
+
+			XTranslateCoordinates (DisplayHandle, hwnd.whole_window, RootWindow, 0, 0, out x, out y, out dummy);
+			frame = FrameExtents (hwnd.whole_window);
+
+			x -= frame.left;
+			y -= frame.top;
+			
+			return new Point (x, y);
 		}
 		
 		private void DeriveStyles(int Style, int ExStyle, out FormBorderStyle border_style, out bool border_static, out TitleStyle title_style, out int caption_height, out int tool_caption_height) {
@@ -924,7 +947,11 @@ namespace System.Windows.Forms {
 			int[]			atoms;
 			int			atom_count;
 			Rectangle		client_rect;
-
+			Form			form;
+			IntPtr			window_type;
+			bool			hide_from_taskbar;
+			IntPtr			transient_for_parent;
+			
 			// Windows we manage ourselves don't need WM window styles.
 			if (cp.HasWindowManager && !cp.IsSet (WindowExStyles.WS_EX_TOOLWINDOW)) {
 				return;
@@ -934,12 +961,16 @@ namespace System.Windows.Forms {
 			mwmHints = new MotifWmHints();
 			functions = 0;
 			decorations = 0;
+			window_type = _NET_WM_WINDOW_TYPE_NORMAL;
+			transient_for_parent = IntPtr.Zero;
 
 			mwmHints.flags = (IntPtr)(MotifFlags.Functions | MotifFlags.Decorations);
 			mwmHints.functions = (IntPtr)0;
 			mwmHints.decorations = (IntPtr)0;
 
-			if (ExStyleSet (cp.ExStyle, WindowExStyles.WS_EX_TOOLWINDOW) || (cp.control is Form && (cp.control as Form).FormBorderStyle == FormBorderStyle.None)) {
+			form = cp.control as Form;
+
+			if (ExStyleSet (cp.ExStyle, WindowExStyles.WS_EX_TOOLWINDOW)) {
 				/* tool windows get no window manager
 				   decorations.
 				*/
@@ -949,8 +980,9 @@ namespace System.Windows.Forms {
 				   MotifFunctions.Maximize, changing the windowstate to Maximized
 				   is ignored by metacity. */
 				functions |= MotifFunctions.Move | MotifFunctions.Resize | MotifFunctions.Minimize | MotifFunctions.Maximize;
-			}
-			else {
+			} else if (form != null && form.FormBorderStyle == FormBorderStyle.None) {
+				// No functions nor decorations whatsoever.
+			} else {
 				if (StyleSet (cp.Style, WindowStyles.WS_CAPTION)) {
 					functions |= MotifFunctions.Move;
 					decorations |= MotifDecorations.Title | MotifDecorations.Menu;
@@ -1011,50 +1043,59 @@ namespace System.Windows.Forms {
 			mwmHints.functions = (IntPtr)functions;
 			mwmHints.decorations = (IntPtr)decorations;
 
+			if (cp.IsSet (WindowExStyles.WS_EX_TOOLWINDOW)) {
+				// needed! map toolwindows to _NET_WM_WINDOW_TYPE_UTILITY to make newer metacity versions happy
+				// and get those windows in front of their parents
+				window_type = _NET_WM_WINDOW_TYPE_UTILITY;
+			} else if (form != null && form.Modal) {
+				window_type = _NET_WM_WINDOW_TYPE_DIALOG;
+			} else {
+				window_type = _NET_WM_WINDOW_TYPE_NORMAL;
+			}
+			
+			if (!cp.IsSet (WindowExStyles.WS_EX_APPWINDOW)) {
+				hide_from_taskbar = true;
+			} else if (cp.IsSet (WindowExStyles.WS_EX_TOOLWINDOW) &&  form != null && form.Parent != null && !form.ShowInTaskbar) {
+				hide_from_taskbar = true;
+			} else {
+				hide_from_taskbar = false;
+			}
+
+			if (ExStyleSet (cp.ExStyle, WindowExStyles.WS_EX_TOOLWINDOW)) {
+				if (form != null && !hwnd.reparented) {
+					if (form.Owner != null && form.Owner.Handle != IntPtr.Zero) {
+						Hwnd owner_hwnd = Hwnd.ObjectFromHandle (form.Owner.Handle);
+						if (owner_hwnd != null)
+							transient_for_parent = owner_hwnd.whole_window;
+					}
+				}
+			} 
+			if (StyleSet (cp.Style, WindowStyles.WS_POPUP) && (hwnd.parent != null) && (hwnd.parent.whole_window != IntPtr.Zero)) {
+				transient_for_parent = hwnd.parent.whole_window;
+			}
+			
 			FormWindowState current_state = GetWindowState (hwnd.Handle);
 			if (current_state == (FormWindowState)(-1))
 				current_state = FormWindowState.Normal;
 
-			client_rect = hwnd.ClientRect;
+			client_rect = TranslateClientRectangleToXClientRectangle (hwnd);
+
 			lock (XlibLock) {
 				atom_count = 0;
 
-				// needed! map toolwindows to _NET_WM_WINDOW_TYPE_UTILITY to make newer metacity versions happy
-				// and get those windows in front of their parents
-				if (ExStyleSet (cp.ExStyle, WindowExStyles.WS_EX_TOOLWINDOW)) {
-					atoms [0] = _NET_WM_WINDOW_TYPE_UTILITY.ToInt32 ();
-					XChangeProperty (DisplayHandle, hwnd.whole_window,  _NET_WM_WINDOW_TYPE,
-							 (IntPtr)Atom.XA_ATOM, 32, PropertyMode.Replace, atoms, 1);
+				atoms [0] = window_type.ToInt32 ();
+				XChangeProperty (DisplayHandle, hwnd.whole_window, _NET_WM_WINDOW_TYPE, (IntPtr)Atom.XA_ATOM, 32, PropertyMode.Replace, atoms, 1);
 
-					Form f = Control.FromHandle(hwnd.Handle) as Form;
-					if (f != null && !hwnd.reparented) {
-						if (f.Owner != null && f.Owner.Handle != IntPtr.Zero) {
-							Hwnd owner_hwnd = Hwnd.ObjectFromHandle(f.Owner.Handle);
-							if (owner_hwnd != null)
-								XSetTransientForHint(DisplayHandle, hwnd.whole_window,
-										     owner_hwnd.whole_window);
-						}
-					}
-				}
-				
 				XChangeProperty(DisplayHandle, hwnd.whole_window, _MOTIF_WM_HINTS, _MOTIF_WM_HINTS, 32, PropertyMode.Replace, ref mwmHints, 5);
-				if (StyleSet (cp.Style, WindowStyles.WS_POPUP) && (hwnd.parent != null) && (hwnd.parent.whole_window != IntPtr.Zero)) {
-					atoms[0] = _NET_WM_WINDOW_TYPE_NORMAL.ToInt32();
-					XChangeProperty(DisplayHandle, hwnd.whole_window, _NET_WM_WINDOW_TYPE, (IntPtr)Atom.XA_ATOM, 32, PropertyMode.Replace, atoms, 1);
 
-					XSetTransientForHint(DisplayHandle, hwnd.whole_window, hwnd.parent.whole_window);
-				} else if (!ExStyleSet (cp.ExStyle, WindowExStyles.WS_EX_APPWINDOW)) {
+				if (transient_for_parent != IntPtr.Zero) {
+					XSetTransientForHint (DisplayHandle, hwnd.whole_window, transient_for_parent);
+				}
+
+				XMoveResizeWindow(DisplayHandle, hwnd.client_window, client_rect.X, client_rect.Y, client_rect.Width, client_rect.Height);
+
+				if (hide_from_taskbar) {
 					/* this line keeps the window from showing up in gnome's taskbar */
-					atoms[atom_count++] = _NET_WM_STATE_SKIP_TASKBAR.ToInt32();
-				}
-				if ((client_rect.Width < 1) || (client_rect.Height < 1)) {
-					XMoveResizeWindow(DisplayHandle, hwnd.client_window, -5, -5, 1, 1);
-				} else {
-					client_rect = TranslateClientRectangleToXClientRectangle (hwnd);
-					XMoveResizeWindow(DisplayHandle, hwnd.client_window, client_rect.X, client_rect.Y, client_rect.Width, client_rect.Height);
-				}
-
-				if (ExStyleSet (cp.ExStyle, WindowExStyles.WS_EX_TOOLWINDOW)) {
 					atoms[atom_count++] = _NET_WM_STATE_SKIP_TASKBAR.ToInt32();
 				}
 				/* we need to add these atoms in the
@@ -1068,6 +1109,11 @@ namespace System.Windows.Forms {
 					atoms[atom_count++] = _NET_WM_STATE_MAXIMIZED_HORZ.ToInt32();
 					atoms[atom_count++] = _NET_WM_STATE_MAXIMIZED_VERT.ToInt32();
 				}
+				
+				if (form != null && form.Modal) {
+					atoms[atom_count++] = _NET_WM_STATE_MODAL.ToInt32 ();
+				}
+				
 				XChangeProperty(DisplayHandle, hwnd.whole_window, _NET_WM_STATE, (IntPtr)Atom.XA_ATOM, 32, PropertyMode.Replace, atoms, atom_count);
 
 				atom_count = 0;
@@ -1199,28 +1245,27 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private void FrameExtents(IntPtr window, out int left, out int top) {
-			IntPtr			actual_atom;
-			int			actual_format;
-			IntPtr			nitems;
-			IntPtr			bytes_after;
-			IntPtr			prop = IntPtr.Zero;
+		private static Hwnd.Borders FrameExtents (IntPtr window)
+		{
+			IntPtr actual_atom;
+			int actual_format;
+			IntPtr nitems;
+			IntPtr bytes_after;
+			IntPtr prop = IntPtr.Zero;
+			Hwnd.Borders rect = new Hwnd.Borders ();
 
-			XGetWindowProperty(DisplayHandle, window, _NET_FRAME_EXTENTS, IntPtr.Zero, new IntPtr (16), false, (IntPtr)Atom.XA_CARDINAL, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
-			if (((long)nitems == 4) && (prop != IntPtr.Zero)) {
-				left = Marshal.ReadIntPtr(prop, 0).ToInt32();
-				//right = Marshal.ReadIntPtr(prop, IntPtr.Size).ToInt32();
-				top = Marshal.ReadIntPtr(prop, IntPtr.Size * 2).ToInt32();
-				//bottom = Marshal.ReadIntPtr(prop, IntPtr.Size * 3).ToInt32();
-			} else {
-				left = 0;
-				top = 0;
-			}
-
+			XGetWindowProperty (DisplayHandle, window, _NET_FRAME_EXTENTS, IntPtr.Zero, new IntPtr (16), false, (IntPtr)Atom.XA_CARDINAL, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
 			if (prop != IntPtr.Zero) {
-				XFree(prop);
+				if (nitems.ToInt32 () == 4) {
+					rect.left = Marshal.ReadInt32 (prop, 0);
+					rect.right = Marshal.ReadInt32 (prop, IntPtr.Size);
+					rect.top = Marshal.ReadInt32 (prop, 2 * IntPtr.Size);
+					rect.bottom = Marshal.ReadInt32 (prop, 3 * IntPtr.Size);
+				}
+				XFree (prop);
 			}
-			return;
+			
+			return rect;
 		}
 
 		private void AddConfigureNotify (XEvent xevent) {
@@ -1232,34 +1277,13 @@ namespace System.Windows.Forms {
 			if (hwnd == null || hwnd.zombie) {
 				return;
 			}
-
-			if ((xevent.ConfigureEvent.window == hwnd.whole_window) && (xevent.ConfigureEvent.window == xevent.ConfigureEvent.xevent)) {
+			if ((xevent.ConfigureEvent.window == hwnd.whole_window)/* && (xevent.ConfigureEvent.window == xevent.ConfigureEvent.xevent)*/) {
 				if (hwnd.parent == null) {
-					// This sucks ass, part 1
-					// Every WM does the ConfigureEvents of toplevel windows different, so there's
-					// no standard way of getting our adjustment. 
-					// The code below is needed for KDE and FVWM, the 'whacky_wm' part is for metacity
-					// Several other WMs do their decorations different yet again and we fail to deal 
-					// with that, since I couldn't find any frigging commonality between them.
-					// The only sane WM seems to be KDE
-
-					if (!xevent.ConfigureEvent.send_event) {
-						IntPtr	dummy_ptr;
-
-						XTranslateCoordinates(DisplayHandle, hwnd.whole_window, RootWindow, -xevent.ConfigureEvent.x, -xevent.ConfigureEvent.y, out hwnd.x, out hwnd.y, out dummy_ptr);
-					} else {
-						// This is a synthetic event, coordinates are in root space
-						hwnd.x = xevent.ConfigureEvent.x;
-						hwnd.y = xevent.ConfigureEvent.y;
-						if (hwnd.whacky_wm) {
-							int frame_left;
-							int frame_top;
-
-							FrameExtents(hwnd.whole_window, out frame_left, out frame_top);
-							hwnd.x -= frame_left;
-							hwnd.y -= frame_top;
-						}
-					}
+					// The location given by the event is not reliable between different wm's, 
+					// so use an alternative way of getting it.
+					Point location = GetTopLevelWindowLocation (hwnd);
+					hwnd.x = location.X;
+					hwnd.y = location.Y;
 				}
 
 				// XXX this sucks.  this isn't thread safe
@@ -1274,6 +1298,9 @@ namespace System.Windows.Forms {
 				hwnd.height = TranslatedSize.Height;
 				hwnd.ClientRect = Rectangle.Empty;
 
+#if debug
+				Console.WriteLine ("AddConfigureNotify (hwnd.Handle = {1}, hwnd.rect = {0})", new Rectangle (hwnd.x, hwnd.y, hwnd.width, hwnd.height), hwnd.Handle);
+#endif			
 				lock (hwnd.configure_lock) {
 					if (!hwnd.configure_pending) {
 						hwnd.Queue.EnqueueLocked (xevent);
@@ -1525,6 +1552,9 @@ namespace System.Windows.Forms {
 				if (hwnd == null)
 					continue;
 
+#if debug
+				Console.WriteLine ("UpdateMessageQueue (), got Event: {0}", xevent.ToString ());
+#endif
 				switch (xevent.type) {
 				case XEventName.Expose:
 					AddExpose (hwnd, xevent.ExposeEvent.window == hwnd.ClientWindow, xevent.ExposeEvent.x, xevent.ExposeEvent.y, xevent.ExposeEvent.width, xevent.ExposeEvent.height);
@@ -1691,6 +1721,9 @@ namespace System.Windows.Forms {
 					break;
 
 				case XEventName.PropertyNotify:
+#if debug
+					Console.WriteLine ("UpdateMessageQueue (), got Event: {0}", xevent.ToString ());
+#endif
 					if (xevent.PropertyEvent.atom == _NET_ACTIVE_WINDOW) {
 						IntPtr	actual_atom;
 						int	actual_format;
@@ -1882,11 +1915,7 @@ namespace System.Windows.Forms {
 			rect = TranslateClientRectangleToXClientRectangle (hwnd);
 
 			if (hwnd.visible) {
-				if ((rect.Width < 1) || (rect.Height < 1)) {
-					XMoveResizeWindow(DisplayHandle, hwnd.client_window, -5, -5, 1, 1);
-				} else {
-					XMoveResizeWindow(DisplayHandle, hwnd.client_window, rect.X, rect.Y, rect.Width, rect.Height);
-				}
+				XMoveResizeWindow (DisplayHandle, hwnd.client_window, rect.X, rect.Y, rect.Width, rect.Height);
 			}
 
 			AddExpose (hwnd, false, 0, 0, hwnd.Width, hwnd.Height);
@@ -3878,27 +3907,13 @@ namespace System.Windows.Forms {
 				case XEventName.ReparentNotify: {
 					if (hwnd.parent == null) {	// Toplevel
 						if ((xevent.ReparentEvent.parent != IntPtr.Zero) && (xevent.ReparentEvent.window == hwnd.whole_window)) {
-							// We need to adjust x/y
-							// This sucks ass, part 2
-							// Every WM does the reparenting of toplevel windows different, so there's
-							// no standard way of getting our adjustment considering frames/decorations
-							// The code below is needed for metacity. KDE doesn't works just fine without this
-							int	dummy_int;
-							IntPtr	dummy_ptr;
-							int	new_x;
-							int	new_y;
-							int	frame_left;
-							int	frame_top;
-
 							hwnd.Reparented = true;
 
-							XGetGeometry(DisplayHandle, XGetParent(hwnd.whole_window), out dummy_ptr, out new_x, out new_y, out dummy_int, out dummy_int, out dummy_int, out dummy_int);
-							FrameExtents(hwnd.whole_window, out frame_left, out frame_top);
-							if ((frame_left != 0) && (frame_top != 0) && (new_x != frame_left) && (new_y != frame_top)) {
-								hwnd.x = new_x;
-								hwnd.y = new_y;
-								hwnd.whacky_wm = true;
-							}
+							// The location given by the event is not reliable between different wm's, 
+							// so use an alternative way of getting it.
+							Point location = GetTopLevelWindowLocation (hwnd);
+							hwnd.X = location.X;
+							hwnd.Y = location.Y;
 
 							if (hwnd.opacity != 0xffffffff) {
 								IntPtr opacity;
@@ -5033,6 +5048,10 @@ namespace System.Windows.Forms {
 					Activate((IntPtr)ModalWindows.Peek());
 				}
 			}
+
+			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
+			Control ctrl = Control.FromHandle (handle);
+			SetWMStyles (hwnd, ctrl.GetCreateParams ());
 		}
 
 		internal override IntPtr SetParent(IntPtr handle, IntPtr parent) {

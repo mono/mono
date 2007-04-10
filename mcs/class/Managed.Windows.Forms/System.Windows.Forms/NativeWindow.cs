@@ -165,6 +165,10 @@ namespace System.Windows.Forms
 			Message		m = new Message();
 			NativeWindow	window = null;
 
+#if debug
+			Console.WriteLine("NativeWindow.cs ({0}, {1}, {2}, {3}): result {4}", hWnd, msg, wParam, lParam, m.Result);
+#endif
+
 			try {
 				lock (window_collection) {
 					window = (NativeWindow)window_collection[hWnd];

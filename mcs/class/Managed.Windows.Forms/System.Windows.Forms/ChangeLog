@@ -1,3 +1,18 @@
+2007-04-10  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* X11Structs.cs: Add a few ToString() overrides.
+	* XplatUIX11.cs: Added GetTopLevelWindowLocation to try to calculate
+	  the window location in a window-manager independent way. Reworked
+	  FrameExtents, it now actually works. Reworked AddConfigureNotify
+	  and ReparentNotify handling to use GetTopLevelWindowLocation
+	  instead of the earlier, more hacky solution. Reworked SetWMStyles,
+	  hopefully for the better: we now set _NET_WM_WINDOW_TYPE* for all
+	  windows, DIALOG for modal windows, UTILITY for toolboxes and NORMAL
+	  for all other windows (fixes #81281 part 1), a toolwindow is hidden
+	  from the taskbar if it has a parent (fixes #81281 part 2 for kwin),
+	  and generally refactored to do as few calculations as possible
+	  inside the lock.
+
 2007-04-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Theme.cs: Change "reflective-contract" between MWF and SD to 

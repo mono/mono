@@ -551,7 +551,32 @@ namespace System.Windows.Forms {
 		//[ FieldOffset(0) ] internal int[] pad;
 		[ FieldOffset(0) ] internal XEventPad Pad;
 		public override string ToString() {
-			return type.ToString();
+			switch (type)
+			{
+				case XEventName.PropertyNotify:
+					return ToString (PropertyEvent);
+				case XEventName.ResizeRequest:
+					return ToString (ResizeRequestEvent);
+				case XEventName.ConfigureNotify:
+					return ToString (ConfigureEvent);
+				default:
+					return type.ToString ();
+			}
+		}
+		
+		public static string ToString (object ev)
+		{
+			string result = string.Empty;
+			Type type = ev.GetType ();
+			Reflection.FieldInfo [] fields = type.GetFields (System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Instance);
+			for (int i = 0; i < fields.Length; i++) {
+				if (result != string.Empty) {
+					result += ", ";
+				}
+				object value = fields [i].GetValue (ev);
+				result += fields [i].Name + "=" + (value == null ? "<null>" : value.ToString ());
+			}
+			return type.Name + " (" + result + ")";
 		}
 	}
 
@@ -599,6 +624,11 @@ namespace System.Windows.Forms {
 		internal IntPtr		do_not_propagate_mask;
 		internal bool		override_direct;
 		internal IntPtr		screen;
+
+		public override string ToString ()
+		{
+			return XEvent.ToString (this);
+		}
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
@@ -942,6 +972,11 @@ namespace System.Windows.Forms {
 		internal IntPtr	    decorations;
 		internal IntPtr		input_mode;
 		internal IntPtr		status;
+
+		public override string ToString ()
+		{
+			return string.Format("MotifWmHints <flags={0}, functions={1}, decorations={2}, input_mode={3}, status={4}", (MotifFlags) flags.ToInt32 (), (MotifFunctions) functions.ToInt32 (), (MotifDecorations) decorations.ToInt32 (), (MotifInputMode) input_mode.ToInt32 (), status.ToInt32 ());
+		}
 	}
 
 	[Flags]
