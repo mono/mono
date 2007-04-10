@@ -1,3 +1,9 @@
+2007-04-11  Marek Habersack  <mhabersack@novell.com>
+
+	* Page.cs: check whether control passed to
+	RegisterRequiresPostBack implements the IPostBackDataHandler
+	interface.
+
 2007-04-06  Marek Habersack  <mhabersack@novell.com>
 
 	* ClientScriptManager.cs: render the 'type' attribute in
