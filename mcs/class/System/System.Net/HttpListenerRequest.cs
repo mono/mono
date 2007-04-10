@@ -129,6 +129,8 @@ namespace System.Net {
 			if (query == null || query.Length == 0)
 				return;
 
+			if (query [0] == '?')
+				query = query.Substring (1);
 			string [] components = query.Split ('&');
 			foreach (string kv in components) {
 				int pos = kv.IndexOf ('=');
@@ -216,7 +218,7 @@ namespace System.Net {
 				case "accept-language":
 					user_languages = val.Split (','); // yes, only split with a ','
 					break;
-				case "accept-types":
+				case "accept":
 					accept_types = val.Split (','); // yes, only split with a ','
 					break;
 				case "content-length":

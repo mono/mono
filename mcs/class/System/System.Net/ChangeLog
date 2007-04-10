@@ -1,3 +1,11 @@
+2007-04-10  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpListenerRequest.cs: do not include the query start marker
+	('?') in the first variable name stored in the QueryString
+	collection. There is no HTTP header 'Accept-Types' in the
+	standard, there's only the 'Accept' header that specifies the
+	accepted MIME types. Fixes bug #81317
+
 2007-03-25 Alan McGovern <alan.mcgovern@gmail.com>
 
 	* IPAddress.cs : Further optimisation for the Swap*** methods.
