@@ -24,6 +24,9 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. --%>
 <%@ Page Language="C#" AutoEventWireup="true" EnableTheming="false" MasterPageFile="~/aspnetconfig/Util.Master" CodeBehind="Default.aspx.cs" Inherits="Mainsoft.Web.AspnetConfig.Default" %>
+<asp:Content ContentPlaceHolderID="SiteMapLinks" runat="server">
+<td style="color: #333333">Home</td>
+</asp:Content>
 <asp:Content runat="server" ContentPlaceHolderID="Main">
     <table>
         <tr>

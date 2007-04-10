@@ -13,7 +13,7 @@ namespace Mainsoft.Web.AspnetConfig {
     public partial class Util {
         protected System.Web.UI.HtmlControls.HtmlHead Head1;
         protected System.Web.UI.HtmlControls.HtmlForm form1;
-        protected System.Web.UI.WebControls.SiteMapPath SiteMapPath1;
+        protected System.Web.UI.WebControls.ContentPlaceHolder SiteMapLinks;
         protected System.Web.UI.WebControls.ContentPlaceHolder Main;
         protected System.Web.UI.WebControls.Button Back;
     }

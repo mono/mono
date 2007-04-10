@@ -24,6 +24,11 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. --%>
 <%@ Page Language="C#" AutoEventWireup="true" EnableTheming="false" MasterPageFile="~/aspnetconfig/Util.Master" CodeBehind="CreateUser.aspx.cs" Inherits="Mainsoft.Web.AspnetConfig.CreateUser" %>
+<asp:Content ContentPlaceHolderID="SiteMapLinks" runat="server">
+<td><a class="SiteMap" href="Default.aspx" title="Home page" runat="server">Home</a></td>
+<td> >> </td>
+<td style="color: #333333">Create user</td>
+</asp:Content>
 <asp:Content runat="server" ID="main" ContentPlaceHolderID="Main">
     <table style="border-right: thin solid; padding-right: 2px; border-top: thin solid; padding-left: 2px; padding-bottom: 2px; border-left: thin solid; padding-top: 2px; border-bottom: thin solid">
         <tr>

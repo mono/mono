@@ -27,6 +27,11 @@
 <%@ Register tagprefix="custom" namespace="Mainsoft.Web.AspnetConfig" Assembly="Mainsoft.Web.AspnetConfig"  %>
 <%@ Register TagPrefix="custom" TagName="searcher" Src="~/Controls/Searcher.ascx" %>
 
+<asp:Content ContentPlaceHolderID="SiteMapLinks" runat="server">
+<td><a class="SiteMap" href="Default.aspx" title="Home page" runat="server">Home</a></td>
+<td> >> </td>
+<td style="color: #333333">Manage user</td>
+</asp:Content>
 <asp:Content runat="server" ID="main" ContentPlaceHolderID="Main">
 <asp:MultiView ID="mv" ActiveViewIndex="0" runat="server">
 <asp:View ID="manage" runat="server" >

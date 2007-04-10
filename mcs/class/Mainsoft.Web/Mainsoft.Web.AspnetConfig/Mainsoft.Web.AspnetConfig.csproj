@@ -105,7 +105,6 @@
     <Compile Include="aspnetconfig\CreateUser.aspx.designer.cs">
       <DependentUpon>CreateUser.aspx</DependentUpon>
     </Compile>
-    <Compile Include="aspnetconfig\CustomXmlSiteMapProvider.cs" />
     <Compile Include="aspnetconfig\Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -183,7 +182,6 @@
   <ItemGroup>
     <None Include="aspnetconfig\SecurError.aspx" />
     <Content Include="aspnetconfig\Util.Master" />
-    <EmbeddedResource Include="aspnetconfig\Web.sitemap" />
     <None Include="Controls\Searcher.ascx" />
     <EmbeddedResource Include="resources\mainsoft.jpg" />
     <EmbeddedResource Include="resources\untitled.bmp" />

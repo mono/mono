@@ -25,6 +25,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. --%>
 <%@ Page Language="C#" AutoEventWireup="true" EnableTheming="false" MasterPageFile="~/aspnetconfig/Util.Master" CodeBehind="CreateRole.aspx.cs" Inherits="Mainsoft.Web.AspnetConfig.CreateRole" %>
 <%@ Register TagPrefix="custom" Assembly="Mainsoft.Web.AspnetConfig" Namespace="Mainsoft.Web.AspnetConfig" %>
+<asp:Content ID="Content1" ContentPlaceHolderID="SiteMapLinks" runat="server">
+<td><a class="SiteMap" href="Default.aspx" title="Home page" runat="server">Home</a></td>
+<td> >> </td>
+<td style="color: #333333">Create\Manage roles</td>
+</asp:Content>
 
 <asp:Content ID="Main" ContentPlaceHolderID="Main" runat="server">
     <asp:MultiView runat="server" ID="mv" ActiveViewIndex="0">

@@ -32,6 +32,9 @@
 <head id="Head1" runat="server">
     <link href="<%= Page.ClientScript.GetWebResourceUrl (typeof(Util), "Mainsoft.Web.AspnetConfig.aspnetconfig.Mainsoft.Web.AspnetConfig.css") %>" rel="stylesheet" type="text/css" />
     <title>ASP.Net Web Application Administration</title>
+    <style type="text/css">
+        A.SiteMap:visited { color: #507CD1; }
+    </style>
 </head>
 <body>
     <form id="form1" runat="server">
@@ -52,13 +55,18 @@
         <table class="bordredtable">
             <tr style="background-color:">
                 <td style="background-color: lightblue">
-                Current page : &nbsp;
-                <asp:SiteMapPath SiteMapProvider="AspNetConfigXmlSiteMapProvider" ID="SiteMapPath1" runat="server" Font-Names="Verdana" Font-Size="0.8em"  PathSeparator=" >> ">
-                    <PathSeparatorStyle Font-Bold="True" ForeColor="#507CD1" />
-                    <CurrentNodeStyle ForeColor="#333333" />
-                    <NodeStyle Font-Bold="True" ForeColor="#284E98" />
-                    <RootNodeStyle Font-Bold="True" ForeColor="#507CD1" />
-                </asp:SiteMapPath>
+                <table cellpadding="0" cellspacing="0">
+                    <tr>
+                        <td>Current page : &nbsp;</td>
+                        <td style="font-family: Verdana; font-size: 0.8em; color: #507CD1; font-weight:bold;">
+                            <table>
+                                <tr>
+                                    <asp:ContentPlaceHolder ID="SiteMapLinks" runat="server"></asp:ContentPlaceHolder>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
                 </td>
             </tr>
             <tr>
