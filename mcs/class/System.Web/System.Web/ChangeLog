@@ -1,5 +1,9 @@
 2007-04-10  Marek Habersack  <mhabersack@novell.com>
 
+	* HttpCookie.cs: format the output of HttpCookie.Values.ToString()
+	in the same way MS.NET does. Fixes bug #81333. Patch from Mike
+	Morano <mmorano@mikeandwan.us>.
+
 	* XmlSiteMapProvider.cs: add the NotifyFilters.Size to the
 	watcher flags, so that we watch for modifications to a file when
 	using Linux inotify.

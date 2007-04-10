@@ -178,7 +178,7 @@ namespace System.Web {
 
 		public string Value {
 			get {
-				return values.ToString ();
+                               return HttpUtility.UrlDecode(values.ToString ());
 			}
 			set {
 				values.Clear ();
@@ -241,16 +241,22 @@ namespace System.Web {
 					if (!first_key)
 						builder.Append ("&");
 
+                                       string[] vals = GetValues (key);
+                                       if(vals == null)
+                                               vals = new string[0];
+
 					bool first_val = true;
-					foreach (string v in GetValues (key)) {
+                                       foreach (string v in vals) {
 						if (!first_val)
 							builder.Append ("&");
 
 						if (key != null) {
-							builder.Append (key);
+                                                       builder.Append (HttpUtility.UrlEncode(key));
 							builder.Append ("=");
 						}
-						builder.Append (v);
+                                               if(v != null)
+                                                       builder.Append (HttpUtility.UrlEncode(v));
+
 						first_val = false;
 					}
 					first_key = false;
@@ -268,8 +274,12 @@ namespace System.Web {
 				if (this.IsReadOnly)
 					throw new NotSupportedException ("Collection is read-only");
 
-				if (name == null)
+                               if (name == null) {
 					Clear();
+                                       name = string.Empty;
+                               }
+                               if (value == null)
+                                       value = string.Empty;
 
 				base.Set (name, value);
 			}
