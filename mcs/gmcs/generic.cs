@@ -2094,9 +2094,8 @@ namespace Mono.CSharp {
 		static void InitGenericCodeHelpers ()
 		{
 			// Activator
-			Type [] type_arg = { type_type };
 			activator_create_instance = GetMethod (
-				activator_type, "CreateInstance", type_arg);
+				activator_type, "CreateInstance", Type.EmptyTypes);
 		}
 
 		static Type CoreLookupType (string ns, string name, int arity)

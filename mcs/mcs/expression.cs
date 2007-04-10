@@ -5216,11 +5216,41 @@ namespace Mono.CSharp {
 		{
 #if GMCS_SOURCE
 			ILGenerator ig = ec.ig;
+			IMemoryLocation ml;
 
-			ig.Emit (OpCodes.Ldtoken, type);
-			ig.Emit (OpCodes.Call, TypeManager.system_type_get_type_from_handle);
-			ig.Emit (OpCodes.Call, TypeManager.activator_create_instance);
-			ig.Emit (OpCodes.Unbox_Any, type);
+			MethodInfo ci = TypeManager.activator_create_instance.MakeGenericMethod (
+				new Type [] { type });
+
+			GenericConstraints gc = TypeManager.GetTypeParameterConstraints (type);
+			if (gc.HasReferenceTypeConstraint || gc.HasClassConstraint) {
+				ig.Emit (OpCodes.Call, ci);
+				return true;
+			}
+
+			// Allow DoEmit() to be called multiple times.
+			// We need to create a new LocalTemporary each time since
+			// you can't share LocalBuilders among ILGeneators.
+			LocalTemporary temp = new LocalTemporary (type);
+
+			Label label_activator = ig.DefineLabel ();
+			Label label_end = ig.DefineLabel ();
+
+			temp.AddressOf (ec, AddressOp.Store);
+			ig.Emit (OpCodes.Initobj, type);
+
+			temp.Emit (ec);
+			ig.Emit (OpCodes.Box, type);
+			ig.Emit (OpCodes.Brfalse, label_activator);
+
+			temp.AddressOf (ec, AddressOp.Store);
+			ig.Emit (OpCodes.Initobj, type);
+			temp.Emit (ec);
+			ig.Emit (OpCodes.Br, label_end);
+
+			ig.MarkLabel (label_activator);
+
+			ig.Emit (OpCodes.Call, ci);
+			ig.MarkLabel (label_end);
 			return true;
 #else
 			throw new InternalErrorException ();
@@ -5312,8 +5342,13 @@ namespace Mono.CSharp {
 
 		public void AddressOf (EmitContext ec, AddressOp Mode)
 		{
-			if (is_type_parameter)
-				throw new InvalidOperationException ();
+			if (is_type_parameter) {
+				LocalTemporary temp = new LocalTemporary (type);
+				DoEmitTypeParameter (ec);
+				temp.Store (ec);
+				temp.AddressOf (ec, Mode);
+				return;
+			}
 
 			if (!type.IsValueType){
 				//
@@ -5327,8 +5362,8 @@ namespace Mono.CSharp {
 
 			if (!value_target_set)
 				value_target = new LocalTemporary (type);
-					
 			IMemoryLocation ml = (IMemoryLocation) value_target;
+
 			ml.AddressOf (ec, AddressOp.Store);
 			if (method != null)
 				Invocation.EmitArguments (ec, method, Arguments, false, null);
