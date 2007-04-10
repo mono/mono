@@ -483,28 +483,28 @@ namespace Mono.CSharp {
 		/// 
 		public ArrayList LookupExtensionMethod (Type extensionType, string name, NamespaceEntry ns)
 		{
-			if (declspaces == null)
-				return null;
-
 			ArrayList found = null;
-			IEnumerator e = declspaces.Values.GetEnumerator ();
-			e.Reset ();
-			while (e.MoveNext ()) {
-				Class c = e.Current as Class;
-				if (c == null)
-					continue;
 
-				if (!c.IsStaticClass)
-					continue;
+			if (declspaces != null) {
+				IEnumerator e = declspaces.Values.GetEnumerator ();
+				e.Reset ();
+				while (e.MoveNext ()) {
+					Class c = e.Current as Class;
+					if (c == null)
+						continue;
 
-				ArrayList res = c.MemberCache.FindExtensionMethods (extensionType, name);
-				if (res == null)
-					continue;
+					if (!c.IsStaticClass)
+						continue;
 
-				if (found == null)
-					found = res;
-				else
-					found.AddRange (res);
+					ArrayList res = c.MemberCache.FindExtensionMethods (extensionType, name);
+					if (res == null)
+						continue;
+
+					if (found == null)
+						found = res;
+					else
+						found.AddRange (res);
+				}
 			}
 
 			if (external_exmethod_classes == null)
@@ -513,6 +513,9 @@ namespace Mono.CSharp {
 			foreach (Type t in external_exmethod_classes) {
 				MemberCache m = TypeHandle.GetMemberCache (t);
 				ArrayList res = m.FindExtensionMethods (extensionType, name);
+				if (res == null)
+					continue;
+
 				if (found == null)
 					found = res;
 				else

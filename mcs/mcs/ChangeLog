@@ -1,3 +1,9 @@
+2007-04-10  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #81324
+	* namespace.cs (Namespace.LookupExtensionMethod): Always inspect both
+	internal and external namespaces containers.
+
 2007-04-10  Martin Baulig  <martin@ximian.com>
 
 	* delegate.cs (DelegateCreation.ResolveMethodGroupExpr): Use
