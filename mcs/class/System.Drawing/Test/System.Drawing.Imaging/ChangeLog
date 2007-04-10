@@ -1,3 +1,8 @@
+2007-04-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TestBmpCodec.cs: Remove "NotWorking" from Bitmap32bitPixels test 
+	case. The file is a 32bpp RGB (no alpha).
+
 2007-03-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TiffCodecTest.cs: Ignore both SPARC bots by using the HostIgnoreList

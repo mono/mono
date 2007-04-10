@@ -458,11 +458,11 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Bitmap32bitPixels ()
 		{
 			string sInFile = getInFile ("bitmaps/almogaver32bits.bmp");
 			using (Bitmap bmp = new Bitmap (sInFile)) {
+				Assert.AreEqual (PixelFormat.Format32bppRgb, bmp.PixelFormat, "PixelFormat");
 #if false
 				for (int x = 0; x < bmp.Width; x += 32) {
 					for (int y = 0; y < bmp.Height; y += 32)
