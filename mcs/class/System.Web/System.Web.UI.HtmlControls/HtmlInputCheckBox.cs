@@ -105,13 +105,12 @@ namespace System.Web.UI.HtmlControls
 		{
 			base.OnPreRender (e);
 
-			if (Page != null) {
+			if (Page != null && !Disabled) {
 				Page.RegisterRequiresPostBack (this);
-			}
 #if NET_2_0
-			if (Page != null && !Disabled)
 				Page.RegisterEnabledControl (this);
 #endif
+			}
 		}
 
 		protected virtual void OnServerChange (EventArgs e)

@@ -113,15 +113,11 @@ namespace System.Web.UI.WebControls {
 		[Browsable (true)]
 		[DefaultValue (true)]
 		[Bindable (true)]
-		[MonoTODO ("Not implemented")]
 		public virtual new bool Enabled
 		{
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			// Should there be any special code below? Doesn't look so...
+			get { return base.Enabled; }
+			set { base.Enabled = value; }
 		}
 
 		[Browsable (false)]
@@ -349,7 +345,7 @@ namespace System.Web.UI.WebControls {
 #endif		
 		override void OnPreRender (EventArgs e)
 		{
-			if (Page != null)
+			if (Page != null && Enabled)
 				Page.RegisterRequiresPostBack (this);
 		}
 

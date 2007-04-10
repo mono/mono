@@ -1094,48 +1094,47 @@ public partial class Page : TemplateControl, IHttpHandler
 	private void ProcessPostData (NameValueCollection data, bool second)
 	{
 		if (data != null) {
-
-		Hashtable used = new Hashtable ();
-		foreach (string id in data.AllKeys){
-			if (id == "__VIEWSTATE" || id == postEventSourceID || id == postEventArgumentID)
-				continue;
-
-			string real_id = id;
-			int dot = real_id.IndexOf ('.');
-			if (dot >= 1)
-				real_id = real_id.Substring (0, dot);
-			
-			if (real_id == null || used.ContainsKey (real_id))
-				continue;
-
-			used.Add (real_id, real_id);
-
-			Control ctrl = FindControl (real_id);
-			if (ctrl != null){
-				IPostBackDataHandler pbdh = ctrl as IPostBackDataHandler;
-				IPostBackEventHandler pbeh = ctrl as IPostBackEventHandler;
-
-				if (pbdh == null) {
-					if (pbeh != null)
-						RegisterRequiresRaiseEvent (pbeh);
+			Hashtable used = new Hashtable ();
+			foreach (string id in data.AllKeys){
+				if (id == "__VIEWSTATE" || id == postEventSourceID || id == postEventArgumentID)
 					continue;
-				}
-		
-				if (pbdh.LoadPostData (real_id, data) == true) {
-					if (requiresPostDataChanged == null)
-						requiresPostDataChanged = new ArrayList ();
-					requiresPostDataChanged.Add (pbdh);
-				}
-				
-				if (_requiresPostBackCopy != null)
-					_requiresPostBackCopy.Remove (real_id);
 
-			} else if (!second) {
-				if (secondPostData == null)
-					secondPostData = new NameValueCollection ();
-				secondPostData.Add (real_id, data [id]);
+				string real_id = id;
+				int dot = real_id.IndexOf ('.');
+				if (dot >= 1)
+					real_id = real_id.Substring (0, dot);
+			
+				if (real_id == null || used.ContainsKey (real_id))
+					continue;
+
+				used.Add (real_id, real_id);
+
+				Control ctrl = FindControl (real_id);
+				if (ctrl != null){
+					IPostBackDataHandler pbdh = ctrl as IPostBackDataHandler;
+					IPostBackEventHandler pbeh = ctrl as IPostBackEventHandler;
+
+					if (pbdh == null) {
+						if (pbeh != null)
+							RegisterRequiresRaiseEvent (pbeh);
+						continue;
+					}
+		
+					if (pbdh.LoadPostData (real_id, data) == true) {
+						if (requiresPostDataChanged == null)
+							requiresPostDataChanged = new ArrayList ();
+						requiresPostDataChanged.Add (pbdh);
+					}
+				
+					if (_requiresPostBackCopy != null)
+						_requiresPostBackCopy.Remove (real_id);
+
+				} else if (!second) {
+					if (secondPostData == null)
+						secondPostData = new NameValueCollection ();
+					secondPostData.Add (real_id, data [id]);
+				}
 			}
-		}
 		}
 
 		ArrayList list1 = null;
@@ -1558,6 +1557,11 @@ public partial class Page : TemplateControl, IHttpHandler
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public void RegisterRequiresPostBack (Control control)
 	{
+#if NET_2_0
+		if (!(control is IPostBackDataHandler))
+			throw new HttpException ("The control to register does not implement the IPostBackDataHandler interface.");
+#endif
+		
 		if (_requiresPostBack == null)
 			_requiresPostBack = new ArrayList ();
 

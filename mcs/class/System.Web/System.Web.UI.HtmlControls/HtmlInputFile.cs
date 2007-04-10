@@ -154,10 +154,13 @@ namespace System.Web.UI.HtmlControls
 		{
 			base.OnPreRender (e);
 
-			if (Page != null) {
+			if (Page != null && !Disabled) {
 				Page.RegisterRequiresPostBack (this);
+#if NET_2_0
+				Page.RegisterEnabledControl (this);
+#endif
 			}
-
+			
 			HtmlForm form = (HtmlForm) SearchParentByType (typeof (HtmlForm));
 			if (form != null && form.Enctype == "")
 				form.Enctype = "multipart/form-data";

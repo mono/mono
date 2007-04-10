@@ -230,9 +230,12 @@ namespace System.Web.UI.HtmlControls {
 		override void OnPreRender (EventArgs e)
 		{
 			base.OnPreRender (e);
-
-			if (Page != null) {
+			
+			if (Page != null && !Disabled) {
 				Page.RegisterRequiresPostBack (this);
+#if NET_2_0
+				Page.RegisterEnabledControl (this);
+#endif
 			}
 		}
 

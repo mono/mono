@@ -1,3 +1,8 @@
+2007-04-11  Marek Habersack  <mhabersack@novell.com>
+
+	* ImageButton.cs: implement the Enable property and do not
+	register for post back if the control isn't enabled.
+
 2007-04-06  Marek Habersack  <mhabersack@novell.com>
 
 	* GridView.cs: don't render invisible fields. Fixes bug #80061.

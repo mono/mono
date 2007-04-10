@@ -1,3 +1,17 @@
+2007-04-11  Marek Habersack  <mhabersack@novell.com>
+
+	* HtmlInputHidden.cs:
+	* HtmlSelect.cs:
+	* HtmlInputText.cs:
+	* HtmlSelect.cs:
+	* HtmlInputText.cs:
+	* HtmlInputImage.cs:
+	* HtmlInputFile.cs:
+	* HtmlInputCheckBox.cs:
+	* HtmlInputRadioButton.cs:
+	* HtmlInputImage.cs: do not register the control for post back
+	processing or if it's disabled.
+
 2007-04-06  Marek Habersack  <mhabersack@novell.com>
 
 	* HtmlForm.cs: render the 'name' attribute only when in non-xhtml
