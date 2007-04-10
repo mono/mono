@@ -1,3 +1,9 @@
+2007-04-10  Marek Habersack  <mhabersack@novell.com>
+
+	* SectionGroupInfo.cs: make sure empty sections with the
+	short-circuit tag ends (<section/>) don't make the process loop
+	endlessly. Fixes bug #81321.
+
 2007-03-22  Konstantin Triger <kostat@mainsoft.com>
 
 	* ConfigInfo.cs: should be able instantiate types with private ctors.

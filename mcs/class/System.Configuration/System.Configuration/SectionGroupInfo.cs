@@ -281,7 +281,7 @@ namespace System.Configuration
 		void ReadContent (XmlTextReader reader, Configuration config, bool overrideAllowed, bool root)
 		{
 			StringBuilder spacing = new StringBuilder ();
-			while (reader.NodeType != XmlNodeType.EndElement) {
+			while (reader.NodeType != XmlNodeType.EndElement && reader.NodeType != XmlNodeType.None) {
 				if (reader.NodeType != XmlNodeType.Element) {
 					if (reader.NodeType == XmlNodeType.Whitespace)
 						spacing.Append (reader.Value);
