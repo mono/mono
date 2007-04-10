@@ -374,6 +374,7 @@ namespace System.Xml.Serialization
 				argumentType.FullName, type.FullName));
 		}
 
+#if NET_2_0
 		private bool IsGenericList (Type type)
 		{
 			if (type.IsGenericType && type.GetGenericTypeDefinition () == typeof (ICollection<>))
@@ -383,5 +384,6 @@ namespace System.Xml.Serialization
 					return true;
 			return false;
 		}
+#endif
 	}
 }

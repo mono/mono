@@ -1,5 +1,9 @@
 2007-04-10  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* TypeData.cs : forgot NET_2_0.
+
+2007-04-10  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* TypeData.cs : in get_ListItemTypeData(), check generic ICollection
 	  as well as non-generic one. Fixed bug #81341. Though the type check
 	  looks like an aggregation of bugfix hacks and there should be some
