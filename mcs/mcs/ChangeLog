@@ -1,5 +1,11 @@
 2007-04-10  Martin Baulig  <martin@ximian.com>
 
+	* delegate.cs (DelegateCreation.ResolveMethodGroupExpr): Use
+	TypeManager.DropGenericMethodArguments() so we also call
+	IMethodData.SetMemberIsUsed() for generic methods.  Fixes #80357.
+
+2007-04-10  Martin Baulig  <martin@ximian.com>
+
 	* iterators.cs (Iterator.CreateIterator): Don't crash if
 	`method.ReturnType' is null.  This happens if something went wrong
 	while resolving that typ (we already reported an error in this case).

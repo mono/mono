@@ -741,7 +741,8 @@ namespace Mono.CSharp {
 			}
 						
 			//TODO: implement caching when performance will be low
-			IMethodData md = TypeManager.GetMethod (delegate_method);
+			IMethodData md = TypeManager.GetMethod (
+				TypeManager.DropGenericMethodArguments (delegate_method));
 			if (md == null) {
 				if (System.Attribute.GetCustomAttribute (delegate_method, TypeManager.conditional_attribute_type) != null) {
 					Report.SymbolRelatedToPreviousError (delegate_method);
