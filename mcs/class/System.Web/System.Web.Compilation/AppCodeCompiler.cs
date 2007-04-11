@@ -300,7 +300,8 @@ namespace System.Web.Compilation
 		// unambiguous language assigned to them (e.g. .wsdl files), are
 		// built using the default website compiler.
 		private List<AppCodeAssembly> assemblies;
-		string _bindir;
+		string _bindir = null;
+		string providerTypeName = null;
 		
 		public AppCodeCompiler ()
 		{
@@ -368,23 +369,13 @@ namespace System.Web.Compilation
 		void GetProfileProviderAttribute (ProfileSection ps, CodeAttributeDeclarationCollection collection,
 						  string providerName)
 		{
-			string providerTypeName;
-
 			if (String.IsNullOrEmpty (providerName))
 				providerTypeName = FindProviderTypeName (ps, ps.DefaultProvider);
 			else
 				providerTypeName = FindProviderTypeName (ps, providerName);
 			if (providerTypeName == null)
-				throw new HttpException (String.Format ("Profile provider type not found: {0}",
+				throw new HttpException (String.Format ("Profile provider type not defined: {0}",
 									providerName));
-			
-			Type type = Type.GetType (providerTypeName, false);
-			if (type == null) {
-				type = GetTypeFromBin (providerTypeName);
-				if (type == null)
-					throw new HttpException (String.Format ("Profile provider type not found: {0}",
-										providerTypeName));
-			}
 			
 			collection.Add (
 				new CodeAttributeDeclaration (
@@ -620,6 +611,23 @@ namespace System.Web.Compilation
 			foreach (AppCodeAssembly aca in assemblies)
 				aca.Build (binAssemblies);
 			DefaultAppCodeAssemblyName = Path.GetFileNameWithoutExtension (defasm.OutputAssemblyName);
+			
+			if (haveCustomProfile && providerTypeName != null) {
+				if (Type.GetType (providerTypeName, false) == null) {
+					foreach (Assembly asm in BuildManager.TopLevelAssemblies) {
+						if (asm == null)
+							continue;
+						
+						if (asm.GetType (providerTypeName, false) != null)
+							return;
+					}
+				} else
+					return;
+
+				if (GetTypeFromBin (providerTypeName) == null)
+					throw new HttpException (String.Format ("Profile provider type not found: {0}",
+										providerTypeName));
+			}
 		}
 
 		private bool CollectFiles (string dir, AppCodeAssembly aca)

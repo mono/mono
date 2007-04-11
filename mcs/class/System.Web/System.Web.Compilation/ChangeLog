@@ -1,3 +1,9 @@
+2007-04-11  Marek Habersack  <mhabersack@novell.com>
+
+	* AppCodeCompiler.cs: move custom profile type check till after
+	the App_Code compilation is done. That way we can have custom
+	profile providers in there. Fixes bug #81307.
+
 2007-04-10  Marek Habersack  <mhabersack@novell.com>
 
 	* AppResourceFilesCollection.cs: watch App_LocalResources for
