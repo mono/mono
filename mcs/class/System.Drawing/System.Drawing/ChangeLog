@@ -1,3 +1,7 @@
+2007-04-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Bitmap.cs: Move LockBits validations into unmanaged code.
+
 2007-04-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Color.cs: Remove duplicate check in == and add better comments
