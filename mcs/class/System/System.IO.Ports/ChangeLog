@@ -1,3 +1,8 @@
+
+Wed Apr 11 15:40:55 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* WinSerialStream.cs: fixed logic for signal value check (bug #81342).
+
 2006-11-18  Jelle Hissink <Jelle.Hissink@C-it.nl>
 
 	* SerialPortStream.cs: Fix the parameters in Read, and also poll

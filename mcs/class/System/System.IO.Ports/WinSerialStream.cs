@@ -420,20 +420,20 @@ namespace System.IO.Ports
 
 		public void SetSignal (SerialSignal signal, bool value)
 		{
-			if (signal != SerialSignal.Rts || signal != SerialSignal.Dtr)
-				throw new Exception ("Wrong internal value");
-
 			uint flag;
-			if (signal == SerialSignal.Rts)
+			if (signal == SerialSignal.Rts) {
 				if (value)
 					flag = SetRts;
 				else
 					flag = ClearRts;
-			else 
+			} else if (signal == SerialSignal.Dtr) {
 				if (value)
 					flag = SetDtr;
 				else
 					flag = ClearDtr;
+			} else {
+				throw new Exception ("Wrong internal value");
+			}
 
 			if (!EscapeCommFunction (handle, flag))
 				ReportIOError (null);
