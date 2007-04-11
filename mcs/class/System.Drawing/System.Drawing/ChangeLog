@@ -1,6 +1,9 @@
-2007-04-11  Sebastien Pouliot  <sebastien@ximian.com> 
+2007-04-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Bitmap.cs: Move LockBits validations into unmanaged code.
+	* gdipFunctions.cs: Add mapping for Win32Error in CheckStatus. Add
+	globalization support for CheckStatus and add the GDI+ status code in
+	the error message.
 	* SolidBrush.cs: Clean up and add comments about [un]named colors.
 
 2007-04-09  Sebastien Pouliot  <sebastien@ximian.com>
