@@ -1,5 +1,7 @@
-2007-04-11  Sebastien Pouliot  <sebastien@ximian.com>
+2007-04-11  Sebastien Pouliot  <sebastien@ximian.com> 
 
+	* GDIPlusTest.cs: Add a check for locking (LockBits) a bitmap twice
+	(without unlocking it first).
 	* SolidBrushTest.cs: Add a test case to see if a cloned solid brush
 	returns a named color and a unnamed color.
 	* TestBitmap.cs: Renable four test cases depending on LockBits. Add 

@@ -161,6 +161,8 @@ namespace MonoTests.System.Drawing {
 
 			Rectangle rect = new Rectangle (2, 2, 5, 5);
 			Assert.AreEqual (Status.Ok, GDIPlus.GdipBitmapLockBits (bmp, ref rect, ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb, bd), "locked");
+			Assert.AreEqual (Status.Win32Error, GDIPlus.GdipBitmapLockBits (bmp, ref rect, ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb, bd), "second lock");
+
 			Assert.AreEqual (rect.Width, bd.Width, "Width");
 			Assert.AreEqual (rect.Height, bd.Height, "Height");
 			Assert.AreEqual (PixelFormat.Format24bppRgb, bd.PixelFormat, "PixelFormat");
