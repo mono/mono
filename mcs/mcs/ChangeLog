@@ -1,5 +1,10 @@
 2007-04-11  Martin Baulig  <martin@ximian.com>
 
+	* doc.cs (DocUtil.GetSignatureForDoc): Don't crash if
+	`type.FullName' is null; fixes #80243.
+
+2007-04-11  Martin Baulig  <martin@ximian.com>
+
 	* expression.cs (Invocation.IsApplicable): Don't modify the method
 	if type inference succeeded, but the method was not applicable.
 	Fixes #81250.
