@@ -562,8 +562,6 @@ namespace System.Windows.Forms {
 				client.Width -= SystemInformation.VerticalScrollBarWidth;
 			if (mdi_container.HorizontalScrollbarVisible)
 				client.Height -= SystemInformation.HorizontalScrollBarHeight;
-			if (!client.Contains (new Point(x + clicked_point.X, y + clicked_point.Y)))
-				return;
 
 			UpdateVP (x, y, form.Width, form.Height);
 			start = Cursor.Position;

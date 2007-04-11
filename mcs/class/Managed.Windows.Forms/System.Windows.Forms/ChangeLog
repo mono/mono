@@ -1,3 +1,9 @@
+2007-04-11  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* MdiWindowManager.cs: When moving a form, allow the form to be moved
+	  when the mouse is outside of it's parent's client rectangle. Fixes
+	  #79982 (take 3, part 2).
+
 2007-04-10  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* X11Structs.cs: Add a few ToString() overrides.
