@@ -640,7 +640,7 @@ namespace System.Windows.Forms
 
 		private void CalcAutoSize ()
 		{
-			if (IsHandleCreated == false || AutoSize == false)
+			if (!AutoSize)
 				return;
 
 		 	Width =  PreferredWidth;
