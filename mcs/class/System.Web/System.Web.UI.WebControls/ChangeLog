@@ -1,3 +1,13 @@
+2007-04-12  Marek Habersack  <mhabersack@novell.com>
+
+	* LoginView.cs: do not call CreateChildControls directly from the
+	IsAuthenticated setter since that would destroy the controls the
+	user might've configured from their Page_PreRender method.
+	Do not use IsAuthenticated in CreateChildControls since that
+	prevents the _correct_ template from being instantiated before the
+	control is transferred to the user's OnPreRender handler. Fixes
+	bug #81344.
+
 2007-04-11  Marek Habersack  <mhabersack@novell.com>
 
 	* ImageButton.cs: implement the Enable property and do not

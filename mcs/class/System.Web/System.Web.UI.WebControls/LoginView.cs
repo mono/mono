@@ -123,7 +123,7 @@ namespace System.Web.UI.WebControls {
 				isAuthenticated = value;
 
 				OnViewChanging (EventArgs.Empty);
-				CreateChildControls();
+				ChildControlsCreated = false;
 				OnViewChanged (EventArgs.Empty);
 			}
 		}
@@ -133,11 +133,13 @@ namespace System.Web.UI.WebControls {
 		{
 			Controls.Clear ();
 			Control c = new Control ();
-			if (IsAuthenticated) {
+			if (Page != null && Page.Request.IsAuthenticated) {
+				isAuthenticated = true;
 				if (LoggedInTemplate != null)
 					LoggedInTemplate.InstantiateIn (c);
 			}
 			else {
+				isAuthenticated = false;
 				if (AnonymousTemplate != null)
 					AnonymousTemplate.InstantiateIn (c);
 			}
