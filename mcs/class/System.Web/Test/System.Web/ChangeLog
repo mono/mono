@@ -1,3 +1,7 @@
+2007-04-11 Gert Driesen <drieseng@users.sourceforge.net>
+
+	* HttpCookieTest.cs: Added test for bug #81333.
+
 2007-03-18 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* VirtualPathUtilityTest.cs: new tests, removed dublicated test.
