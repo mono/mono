@@ -82,7 +82,6 @@ namespace MonoTests.System.Drawing {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void LockBits_32_24_NonIndexedWrite ()
 		{
 			using (Bitmap bmp = new Bitmap (100, 100, PixelFormat.Format32bppRgb)) {
@@ -97,7 +96,6 @@ namespace MonoTests.System.Drawing {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void LockBits_24_24_NonIndexedWrite ()
 		{
 			using (Bitmap bmp = new Bitmap (100, 100, PixelFormat.Format24bppRgb)) {
@@ -156,6 +154,41 @@ namespace MonoTests.System.Drawing {
 				Assert.AreEqual (100, data.Stride, "Stride");
 				Assert.AreEqual (100, data.Width, "Width");
 				bmp.UnlockBits (data);
+			}
+		}
+
+		[Test]
+		public void LockBits_ImageLockMode_Invalid ()
+		{
+			using (Bitmap bmp = new Bitmap (10, 10, PixelFormat.Format24bppRgb)) {
+				Rectangle r = new Rectangle (4, 4, 4, 4);
+				BitmapData data = bmp.LockBits (r, (ImageLockMode)0, PixelFormat.Format24bppRgb);
+				try {
+					Assert.AreEqual (4, data.Height, "Height");
+					Assert.AreEqual (4, data.Width, "Width");
+					Assert.IsTrue (data.Stride >= 12, "Stride");
+					Assert.AreEqual (PixelFormat.Format24bppRgb, data.PixelFormat, "PixelFormat");
+					Assert.IsFalse (IntPtr.Zero.Equals (data.Scan0), "Scan0");
+				}
+				finally {
+					bmp.UnlockBits (data);
+				}
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void LockBits_Double ()
+		{
+			using (Bitmap bmp = new Bitmap (10, 10, PixelFormat.Format24bppRgb)) {
+				Rectangle r = new Rectangle (4, 4, 4, 4);
+				BitmapData data = bmp.LockBits (r, ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
+				try {
+					bmp.LockBits (r, ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
+				}
+				finally {
+					bmp.UnlockBits (data);
+				}
 			}
 		}
 
@@ -227,8 +260,6 @@ namespace MonoTests.System.Drawing {
 		[Test]
 #if TARGET_JVM
 		[Ignore ("Bitmap.LockBits is not implemented")]
-#else
-		[Category ("NotWorking")]
 #endif
 		public void LockBits_32_24_BitmapData ()
 		{
@@ -249,8 +280,6 @@ namespace MonoTests.System.Drawing {
 		[Test]
 #if TARGET_JVM
 		[Ignore ("Bitmap.LockBits is not implemented")]
-#else
-		[Category ("NotWorking")]
 #endif
 		public void LockBits_24_24_BitmapData ()
 		{

@@ -1,3 +1,11 @@
+2007-04-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SolidBrushTest.cs: Add a test case to see if a cloned solid brush
+	returns a named color and a unnamed color.
+	* TestBitmap.cs: Renable four test cases depending on LockBits. Add 
+	two additionnal test cases for LockBits, Double locks (exception) and
+	invalid ImageLockMode (no exception).
+
 2007-04-09  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* TestColor.cs: Add a few more test cases for ==, != and Equals

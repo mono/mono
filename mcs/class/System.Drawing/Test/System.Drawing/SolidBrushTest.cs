@@ -4,7 +4,7 @@
 // Authors:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2006-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -104,6 +104,20 @@ namespace MonoTests.System.Drawing {
 				Assert.AreEqual (Color.Red.ToArgb (), bmp.GetPixel (0, 0).ToArgb (), "0,0");
 				Assert.AreEqual (Color.Red.ToArgb (), bmp.GetPixel (8, 8).ToArgb (), "8,8");
 				Assert.AreEqual (Color.Red.ToArgb (), bmp.GetPixel (9, 9).ToArgb (), "9,9"); // include end point
+			}
+		}
+
+		[Test]
+		public void Clone ()
+		{
+			using (SolidBrush sb = new SolidBrush (Color.Transparent)) {
+				// we still get a "named" color
+				Assert.AreEqual (Color.Transparent, sb.Color, "Color");
+				using (SolidBrush clone = (SolidBrush) sb.Clone ()) {
+					// but not after cloning the brush
+					Assert.IsFalse (Color.Transparent.Equals (clone.Color), "Color-Clone-Unnamed");
+					Assert.AreEqual (Color.Transparent.ToArgb (), clone.Color.ToArgb (), "Color-Clone-Argb");
+				}
 			}
 		}
 	}
