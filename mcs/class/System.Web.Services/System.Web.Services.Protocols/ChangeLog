@@ -1,3 +1,8 @@
+2007-04-11  Konstantin Triger <kostat@mainsoft.com>
+
+	* WebServiceHandlerFactory.cs: Use HttpRequest.IsLocal to determine
+		local request in 2.0 profile.
+
 2007-03-21  Konstantin Triger <kostat@mainsoft.com>
 
 	* TypeStubManager.cs, Methods.cs, ServerType.cs: add support for the 2.0

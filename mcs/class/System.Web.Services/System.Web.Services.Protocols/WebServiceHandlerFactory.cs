@@ -122,11 +122,15 @@ namespace System.Web.Services.Protocols
 #endif
 					case WSProtocol.HttpPost:
 						if (WSConfig.IsSupported (WSProtocol.HttpPostLocalhost)) {
+#if NET_2_0
+							supported = context.Request.IsLocal;
+#else
 							string localAddr = context.Request.ServerVariables ["LOCAL_ADDR"];
 
 							supported = localAddr != null &&
 								(localAddr == context.Request.ServerVariables ["REMOTE_ADDR"] ||
 								IPAddress.IsLoopback (IPAddress.Parse (localAddr)));
+#endif
 						}
 						break;
 				}
