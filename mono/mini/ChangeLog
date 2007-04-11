@@ -1,3 +1,8 @@
+2007-04-11  Martin Baulig  <martin@ximian.com>
+
+	* mini.c (can_access_member): Fix handling of generic classes;
+	fixes #81259.
+
 2007-04-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-runtime.c (mono_aot_plt_resolve): Fix disabling of AOT. Fixes #81316.
