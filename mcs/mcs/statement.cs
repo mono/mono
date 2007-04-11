@@ -5290,24 +5290,10 @@ namespace Mono.CSharp {
 				//
 				// Now try to find the method in the interfaces
 				//
-				while (t != null){
-					Type [] ifaces = t.GetInterfaces ();
-
-					foreach (Type i in ifaces){
-						if (TryType (ec, i))
-							return true;
-					}
-				
-					//
-					// Since TypeBuilder.GetInterfaces only returns the interface
-					// types for this type, we have to keep looping, but once
-					// we hit a non-TypeBuilder (ie, a Type), then we know we are
-					// done, because it returns all the types
-					//
-					if ((t is TypeBuilder))
-						t = t.BaseType;
-					else
-						break;
+				Type [] ifaces = TypeManager.GetInterfaces (t);
+				foreach (Type i in ifaces){
+					if (TryType (ec, i))
+						return true;
 				}
 
 				return false;

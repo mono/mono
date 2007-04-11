@@ -1,5 +1,11 @@
 2007-04-11  Martin Baulig  <martin@ximian.com>
 
+	* statement.cs (Foreach.CollectionForeach.ProbeCollectionType):
+	Use `TypeManager.GetInterfaces(t)' rather than `t.GetInterfaces()'
+	to make this work for generic classes; fixes #79561.
+
+2007-04-11  Martin Baulig  <martin@ximian.com>
+
 	* expression.cs (As): Add support for nullable types; fixes #79371.
 
 2007-04-11  Martin Baulig  <martin@ximian.com>
