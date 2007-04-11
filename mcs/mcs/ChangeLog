@@ -1,3 +1,9 @@
+2007-04-11  Martin Baulig  <martin@ximian.com>
+
+	* expression.cs (Invocation.IsApplicable): Don't modify the method
+	if type inference succeeded, but the method was not applicable.
+	Fixes #81250.
+
 2007-04-10  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #81324

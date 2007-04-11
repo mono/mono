@@ -4190,8 +4190,10 @@ namespace Mono.CSharp {
 
 		public static bool IsApplicable (EmitContext ec, MethodGroupExpr me,
 						 ArrayList arguments, int arg_count,
-						 ref MethodBase candidate)
+						 ref MethodBase method)
 		{
+			MethodBase candidate = method;
+
 #if GMCS_SOURCE
 			if (!me.HasTypeArguments &&
 			    !TypeManager.InferTypeArguments (ec, arguments, ref candidate))
@@ -4201,7 +4203,12 @@ namespace Mono.CSharp {
 				throw new InternalErrorException ("a generic method definition took part in overload resolution");
 #endif
 
-			return IsApplicable (ec, arguments, arg_count, candidate);
+			if (IsApplicable (ec, arguments, arg_count, candidate)) {
+				method = candidate;
+				return true;
+			}
+
+			return false;
 		}
 
 		/// <summary>
@@ -4209,7 +4216,7 @@ namespace Mono.CSharp {
 		///   to the given set of arguments
 		/// </summary>
 		public static bool IsApplicable (EmitContext ec, ArrayList arguments, int arg_count,
-			MethodBase candidate)
+						 MethodBase candidate)
 		{
 			ParameterData pd = TypeManager.GetParameterData (candidate);
 
