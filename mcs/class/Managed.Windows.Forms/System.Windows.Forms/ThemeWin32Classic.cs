@@ -2329,20 +2329,10 @@ namespace System.Windows.Forms
 
 		protected virtual void DrawListViewItem (Graphics dc, ListView control, ListViewItem item)
 		{				
-			int col_offset;
-			if (control.View == View.Details && control.Columns.Count > 0)
-				col_offset = control.Columns [0].Rect.X;
-			else
-				col_offset = 0;
-			
 			Rectangle rect_checkrect = item.CheckRectReal;
-			rect_checkrect.X += col_offset;
 			Rectangle icon_rect = item.GetBounds (ItemBoundsPortion.Icon);
-			icon_rect.X += col_offset;
 			Rectangle full_rect = item.GetBounds (ItemBoundsPortion.Entire);
-			full_rect.X += col_offset;
 			Rectangle text_rect = item.GetBounds (ItemBoundsPortion.Label);			
-			text_rect.X += col_offset;
 
 #if NET_2_0
 			// Tile view doesn't support CheckBoxes

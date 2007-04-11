@@ -702,7 +702,6 @@ namespace System.Windows.Forms
 			checkbox_rect = Rectangle.Empty;
 			if (owner.CheckBoxes)
 				checkbox_rect.Size = owner.CheckBoxSize;
-
 			switch (owner.View) {
 			case View.Details:
 				// LAMESPEC: MSDN says, "In all views except the details
@@ -711,8 +710,12 @@ namespace System.Windows.Forms
 				// returns same bounding rectangles for Item and Entire
 				// values in the case of Details view.
 
+				// Handle reordered column
+				if (owner.Columns.Count > 0)
+					checkbox_rect.X = owner.Columns[0].Rect.X;
+
 				icon_rect = label_rect = Rectangle.Empty;
-				icon_rect.X = checkbox_rect.Width + 2;
+				icon_rect.X = checkbox_rect.Right + 2;
 				item_ht = owner.ItemSize.Height;
 
 				if (owner.SmallImageList != null)
@@ -724,7 +727,7 @@ namespace System.Windows.Forms
 				label_rect.X = icon_rect.Right + 1;
 
 				if (owner.Columns.Count > 0)
-					label_rect.Width = owner.Columns [0].Wd - label_rect.X;
+					label_rect.Width = owner.Columns[0].Wd - label_rect.X + checkbox_rect.X;
 				else
 					label_rect.Width = text_size.Width;
 
@@ -736,9 +739,9 @@ namespace System.Windows.Forms
 					(Rectangle.Union (checkbox_rect, icon_rect), label_rect);
 				bounds.Size = total.Size;
 
-				// Take into account the rest of columns. First column
-				// is already taken into account above.
-				for (int i = 1; i < owner.Columns.Count; i++) {
+				item_rect.Width = 0;
+				bounds.Width = 0;
+				for (int i = 0; i < owner.Columns.Count; i++) {
 					item_rect.Width += owner.Columns [i].Wd;
 					bounds.Width += owner.Columns [i].Wd;
 				}
