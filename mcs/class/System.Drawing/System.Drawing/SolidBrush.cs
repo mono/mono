@@ -7,11 +7,7 @@
 //   Ravindra (rkumar@novell.com)
 //
 // (C) 2002 Ximian, Inc.
-// (C) 2004 Novell, Inc.
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004, 2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,13 +28,14 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-using System;
 
-namespace System.Drawing
-{
+namespace System.Drawing {
+
 	public sealed class SolidBrush : Brush {
 		
 		internal bool isModifiable = true;
+		// we keep this cached because calling GdipGetSolidFillColor 
+		// wouldn't return a "named" color like SD is expected to do
 		private Color color;
 
                 internal SolidBrush (IntPtr ptr)
@@ -68,27 +65,25 @@ namespace System.Drawing
 					GDIPlus.CheckStatus (status);
 				}
 				else
-					throw new ArgumentException ("This SolidBrush object can't be modified.");
+					throw new ArgumentException (Locale.GetText ("This SolidBrush object can't be modified."));
 			}
 		}
 		
-		public override object Clone()
+		public override object Clone ()
 		{
 			IntPtr clonePtr;
 			Status status = GDIPlus.GdipCloneBrush (nativeObject, out clonePtr);
 			GDIPlus.CheckStatus (status);
-	
+			// we loose the named color in this case (but so does MS SD)
 			return new SolidBrush (clonePtr);
 		}
 		
 		protected override void Dispose (bool disposing)
 		{
-			if (disposing == true && isModifiable == false) {
-				throw new ArgumentException ("This SolidBrush object can't be modified.");
-			}
+			if (disposing && !isModifiable)
+				throw new ArgumentException (Locale.GetText ("This SolidBrush object can't be modified."));
 
 			base.Dispose (disposing); 
 		}
 	}
 }
-
