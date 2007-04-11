@@ -148,7 +148,6 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Bitmat8bitsData ()
 		{
 			string sInFile = getInFile ("bitmaps/nature24bits.gif");

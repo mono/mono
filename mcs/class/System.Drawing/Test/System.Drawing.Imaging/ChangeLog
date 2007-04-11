@@ -1,3 +1,9 @@
+2007-04-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* GifCodecTest.cs: Reenable some NotWorking test cases.
+	* IconCodecTest.cs: Reenable some NotWorking test cases.
+	* PngCodecTest.cs: Reenable some NotWorking test cases.
+
 2007-04-10  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* GifCodecTest.cs: Fix Save* test cases to check 8bpp indexed for all

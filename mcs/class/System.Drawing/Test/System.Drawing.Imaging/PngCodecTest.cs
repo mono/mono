@@ -5,7 +5,7 @@
 // 	Jordi Mas i Hernàndez (jordi@ximian.com)
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2006, 2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -178,7 +178,6 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Bitmat1bitData ()
 		{
 			string sInFile = getInFile ("bitmaps/1bit.png");
@@ -388,7 +387,6 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Bitmat4bitData ()
 		{
 			string sInFile = getInFile ("bitmaps/4bit.png");
