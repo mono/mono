@@ -1,5 +1,9 @@
 2007-04-11  Martin Baulig  <martin@ximian.com>
 
+	* expression.cs (As): Add support for nullable types; fixes #79371.
+
+2007-04-11  Martin Baulig  <martin@ximian.com>
+
 	* doc.cs (DocUtil.GetSignatureForDoc): Don't crash if
 	`type.FullName' is null; fixes #80243.
 

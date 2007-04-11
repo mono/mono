@@ -1256,6 +1256,11 @@ namespace Mono.CSharp {
 
 			if (do_isinst)
 				ig.Emit (OpCodes.Isinst, probe_type_expr.Type);
+
+#if GMCS_SOURCE
+			if (TypeManager.IsNullableType (type))
+				ig.Emit (OpCodes.Unbox_Any, type);
+#endif
 		}
 
 		static void Error_CannotConvertType (Type source, Type target, Location loc)
@@ -1278,7 +1283,7 @@ namespace Mono.CSharp {
 			eclass = ExprClass.Value;
 			Type etype = expr.Type;
 
-			if (type.IsValueType) {
+			if (type.IsValueType && !TypeManager.IsNullableType (type)) {
 				Report.Error (77, loc, "The as operator must be used with a reference type (`" +
 					      TypeManager.CSharpName (type) + "' is a value type)");
 				return null;
@@ -1310,7 +1315,7 @@ namespace Mono.CSharp {
 				}
 			}
 #endif
-			
+
 			Expression e = Convert.ImplicitConversion (ec, expr, type, loc);
 			if (e != null){
 				expr = e;
