@@ -1,3 +1,7 @@
+2007-04-11  Konstantin Triger <kostat@mainsoft.com>
+
+	* HttpRequest.cs: IsLocal should return true for loopback addresses.
+
 2007-04-10  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpCookie.cs: format the output of HttpCookie.Values.ToString()

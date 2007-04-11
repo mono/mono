@@ -1198,10 +1198,16 @@ namespace System.Web {
 			get {
 				string address = worker_request.GetRemoteAddress ();
 
+				if (StrUtils.IsNullOrEmpty (address))
+					return false;
+
 				if (address == "127.0.0.1")
 					return true;
 
 				System.Net.IPAddress remoteAddr = System.Net.IPAddress.Parse (address);
+				if (System.Net.IPAddress.IsLoopback (remoteAddr))
+					return true;
+
 				for (int i = 0; i < host_addresses.Length; i++)
 					if (remoteAddr.Equals (host_addresses [i]))
 						return true;
