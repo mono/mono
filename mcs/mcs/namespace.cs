@@ -481,7 +481,7 @@ namespace Mono.CSharp {
 		/// 
 		/// Looks for extension method in this namespace
 		/// 
-		public ArrayList LookupExtensionMethod (Type extensionType, string name, NamespaceEntry ns)
+		public ArrayList LookupExtensionMethod (Type extensionType, ClassOrStruct currentClass, string name, NamespaceEntry ns)
 		{
 			ArrayList found = null;
 
@@ -496,7 +496,7 @@ namespace Mono.CSharp {
 					if (!c.IsStaticClass)
 						continue;
 
-					ArrayList res = c.MemberCache.FindExtensionMethods (extensionType, name);
+					ArrayList res = c.MemberCache.FindExtensionMethods (extensionType, name, c != currentClass);
 					if (res == null)
 						continue;
 
@@ -512,7 +512,7 @@ namespace Mono.CSharp {
 
 			foreach (Type t in external_exmethod_classes) {
 				MemberCache m = TypeHandle.GetMemberCache (t);
-				ArrayList res = m.FindExtensionMethods (extensionType, name);
+				ArrayList res = m.FindExtensionMethods (extensionType, name, true);
 				if (res == null)
 					continue;
 
@@ -893,17 +893,17 @@ namespace Mono.CSharp {
 		/// Does extension methods look up to find a method which matches name and extensionType.
 		/// Search starts from this namespace and continues hierarchically up to top level.
 		///
-		public ExtensionMethodGroupExpr LookupExtensionMethod (Type extensionType, bool fullLookup, string name)
+		public ExtensionMethodGroupExpr LookupExtensionMethod (Type extensionType, ClassOrStruct currentClass, string name)
 		{
 			ArrayList candidates = null;
-			if (fullLookup) {
-				candidates = ns.LookupExtensionMethod (extensionType, name, this);
+			if (currentClass != null) {
+				candidates = ns.LookupExtensionMethod (extensionType, currentClass, name, this);
 				if (candidates != null)
-					return new ExtensionMethodGroupExpr (candidates, this, false, extensionType, Location.Null);
+					return new ExtensionMethodGroupExpr (candidates, this, extensionType, Location.Null);
 			}
 
 			foreach (Namespace n in GetUsingTable ()) {
-				ArrayList a = n.LookupExtensionMethod (extensionType, name, this);
+				ArrayList a = n.LookupExtensionMethod (extensionType, null, name, this);
 				if (a == null)
 					continue;
 
@@ -914,12 +914,12 @@ namespace Mono.CSharp {
 			}
 
 			if (candidates != null)
-				return new ExtensionMethodGroupExpr (candidates, parent, true, extensionType, Location.Null);
+				return new ExtensionMethodGroupExpr (candidates, parent, extensionType, Location.Null);
 
 			if (parent == null)
 				return null;
 
-			return parent.LookupExtensionMethod (extensionType, true, name);
+			return parent.LookupExtensionMethod (extensionType, currentClass, name);
 		}
 
 		public FullNamedExpression LookupNamespaceOrType (DeclSpace ds, string name, Location loc, bool ignore_cs0104)

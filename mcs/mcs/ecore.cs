@@ -2867,14 +2867,11 @@ namespace Mono.CSharp {
 	public class ExtensionMethodGroupExpr : MethodGroupExpr
 	{
 		NamespaceEntry namespaceEntry;
-		readonly bool usingCandidates;
 
-		public ExtensionMethodGroupExpr (ArrayList list, NamespaceEntry n, bool usingCandidates,
-			Type extensionType, Location l)
+		public ExtensionMethodGroupExpr (ArrayList list, NamespaceEntry n, Type extensionType, Location l)
 			: base (list, l)
 		{
 			this.namespaceEntry = n;
-			this.usingCandidates = usingCandidates;
 			this.type = extensionType;
 		}
 
@@ -2895,8 +2892,12 @@ namespace Mono.CSharp {
 		{
 			if (arguments == null)
 				arguments = new ArrayList (1);
-		
-			Argument a = new Argument (((MemberAccess)expr).Expr);
+
+			Expression extension_argument = ((MemberAccess)expr).Expr;
+			if ((extension_argument.eclass & (ExprClass.Value | ExprClass.Variable)) == 0)
+				return null;
+
+			Argument a = new Argument (extension_argument);
 			a.Resolve (ec, loc);
 			arguments.Insert (0, a);
 
@@ -2906,11 +2907,11 @@ namespace Mono.CSharp {
 				if (method != null)
 					return method;
 
-				ExtensionMethodGroupExpr e = namespaceEntry.LookupExtensionMethod (type, usingCandidates, Name);
+				ExtensionMethodGroupExpr e = namespaceEntry.LookupExtensionMethod (type, null, Name);
 				if (e == null)
 					return mg.OverloadResolve (ec, arguments, false, loc);
 
-                mg = e;
+				mg = e;
 				namespaceEntry = e.namespaceEntry;
 			} while (true);
 		}

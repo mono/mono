@@ -2866,7 +2866,7 @@ namespace Mono.CSharp {
 
 		public override ExtensionMethodGroupExpr LookupExtensionMethod (Type extensionType, string name)
 		{
-			return NamespaceEntry.LookupExtensionMethod (extensionType, true, name);
+			return NamespaceEntry.LookupExtensionMethod (extensionType, this, name);
 		}
 
 		protected override TypeAttributes TypeAttr {

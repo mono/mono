@@ -1,3 +1,9 @@
+2007-04-11  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #81350
+	* class.cs, decl.cs, ecore.cs, namespace.cs: The optimization for private
+	extension methods.
+
 2007-04-11  Martin Baulig  <martin@ximian.com>
 
 	* statement.cs (Foreach.CollectionForeach.ProbeCollectionType):

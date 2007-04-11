@@ -1087,7 +1087,7 @@ namespace Mono.CSharp {
 
 		public virtual ExtensionMethodGroupExpr LookupExtensionMethod (Type extensionType, string name)
 		{
-			return NamespaceEntry.LookupExtensionMethod (extensionType, true, name);
+			return null;
 		}
 
 		//
@@ -2178,7 +2178,7 @@ namespace Mono.CSharp {
 		//
 		// Looks for extension methods with defined name and extension type
 		//
-		public ArrayList FindExtensionMethods (Type extensionType, string name)
+		public ArrayList FindExtensionMethods (Type extensionType, string name, bool publicOnly)
 		{
 			ArrayList entries;
 			if (method_hash != null)
@@ -2189,9 +2189,15 @@ namespace Mono.CSharp {
 			if (entries == null)
 				return null;
 
+			EntryType entry_type = EntryType.Static | EntryType.Method | EntryType.NotExtensionMethod;
+			if (publicOnly) {
+				entry_type |= EntryType.Public;
+			}
+			EntryType found_entry_type = entry_type & ~EntryType.NotExtensionMethod;
+
 			ArrayList candidates = null;
 			foreach (CacheEntry entry in entries) {
-				if ((entry.EntryType & (EntryType.Static | EntryType.Method | EntryType.NotExtensionMethod)) == (EntryType.Static | EntryType.Method)) {
+				if ((entry.EntryType & entry_type) == found_entry_type) {
 					MethodBase mb = (MethodBase)entry.Member;
 
 					IMethodData md = TypeManager.GetMethod (mb);
