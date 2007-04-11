@@ -1,3 +1,8 @@
+2007-04-11  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* webform.js: fixed WebForm_RestoreScrollPosition, old submit call
+	should be from form
+
 2007-04-03  Marek Habersack  <mhabersack@novell.com>
 
 	* WebUIValidation_2.0.js: correctly validate against min/max

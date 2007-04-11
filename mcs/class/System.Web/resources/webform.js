@@ -322,8 +322,8 @@ function WebForm_RestoreScrollPosition(currForm)
 	ScrollX = (isNaN(ScrollX)) ? pos.x : (ScrollX + pos.x);
 	ScrollY = (isNaN(ScrollY)) ? pos.y : (ScrollY + pos.y);
 	window.scrollTo(ScrollX, ScrollY);
-	if ((typeof(this.oldOnLoad) != "undefined") && (this.oldOnLoad != null)) {
-		return this.oldOnLoad();
+	if ((typeof(currForm.oldOnLoad) != "undefined") && (currForm.oldOnLoad != null)) {
+		return currForm.oldOnLoad();
 	}
 	return true;
 }
