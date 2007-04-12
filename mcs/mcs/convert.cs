@@ -224,6 +224,12 @@ namespace Mono.CSharp {
 			if (TypeManager.IsGenericParameter (expr_type))
 				return ImplicitTypeParameterConversion (expr, target_type);
 
+			// from the null type to any reference-type.
+			if (expr_type == TypeManager.null_type) {
+				NullConstant nc = (NullConstant)expr;
+				return nc.ConvertImplicitly(target_type);
+			}
+
 			//
 			// notice that it is possible to write "ValueType v = 1", the ValueType here
 			// is an abstract class, and not really a value type, so we apply the same rules.
@@ -247,8 +253,6 @@ namespace Mono.CSharp {
 			} else if (target_type == TypeManager.value_type) {
 				if (TypeManager.IsValueType (expr_type))
 					return new BoxedCast (expr, target_type);
-				if (expr_type == TypeManager.null_type)
-					return new EmptyConstantCast ((Constant)expr, target_type);
 
 				return null;
 			} else if (TypeManager.IsSubclassOf (expr_type, target_type)) {
@@ -267,12 +271,6 @@ namespace Mono.CSharp {
 			// with the small distinction that we only probe there
 			//
 			// Always ensure that the code here and there is in sync
-
-			// from the null type to any reference-type.
-			if (expr_type == TypeManager.null_type) {
-				NullConstant nc = (NullConstant)expr;
-				return nc.ConvertImplicitly(target_type);
-			}
 
 			// from any class-type S to any interface-type T.
 			if (target_type.IsInterface) {

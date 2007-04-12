@@ -1,3 +1,8 @@
+2007-04-12  Martin Baulig  <martin@ximian.com>
+
+	* convert.cs (Convert.ImplicitReferenceConversion): Move the
+	`TypeManager.null_type' checks up to the top of the method.
+
 2007-04-11  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #81350
