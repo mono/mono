@@ -1,3 +1,8 @@
+2007-04-12  Marek Habersack  <mhabersack@novell.com>
+
+	* RoleManagerModule.cs: do not try to decrypt encryption tickets
+	from cookies with empty values.
+
 2007-04-04 Juraj Skripsky <js@hotfeet.ch>
 
 	* FormsAuthenticationModule.cs: Move initialization of _config out

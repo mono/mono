@@ -91,7 +91,7 @@ namespace System.Web.Security {
 						
 				}
 
-				if (cookie == null)
+				if (cookie == null || String.IsNullOrEmpty (cookie.Value))
 					principal = new RolePrincipal (currentIdentity);
 				else
 					principal = new RolePrincipal (currentIdentity, cookie.Value);
