@@ -9,13 +9,8 @@ function Menu_OverItem (menuId, itemId, parentId) {
 	
 	if (subm.firstShown != true) {
 		var item = getMenuItem (menuId, itemId);
-		var offx; var offy;
-		if (subm.parentMenu != null) {
-			offx = parseInt (subm.parentMenu.style.left);
-			offy = parseInt (subm.parentMenu.style.top);
-		} else {
-			offx = offy = 0;
-		}
+		var offx = 0;
+		var offy = 0;
 		
 		if (menu.dho != null) offx += menu.dho;
 		if (menu.dvo != null) offy += menu.dvo;
@@ -159,15 +154,10 @@ function Menu_ShowMenu (subm)
 
 function Menu_Reposition (it, elem, offx, offy)
 {
-	var le = 0;
-	var to = 0;
-	while (it != null && it.style.position != "absolute") {
-		le += it.offsetLeft;
-		to += it.offsetTop;
-		it = it.offsetParent;
-	}
-	elem.style.left = (le + offx) + "px";
-	elem.style.top = (to + offy) + "px";
+	var itPos = WebForm_GetElementPosition(it);
+	var elemPos = WebForm_GetElementPosition(elem);
+	elem.style.left = (elem.offsetLeft - elemPos.x + itPos.x + offx) + "px";
+	elem.style.top = (elem.offsetTop - elemPos.y + itPos.y + offy) + "px";
 }
 
 function Menu_Resize (subm, menuId, itemId)

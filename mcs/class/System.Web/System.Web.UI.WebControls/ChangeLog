@@ -1,3 +1,8 @@
+2007-04-12 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* Menu.cs: popup menu is posed correctly if menu is placed within 
+	container with position=relative
+
 2007-04-12  Marek Habersack  <mhabersack@novell.com>
 
 	* LoginView.cs: do not call CreateChildControls directly from the

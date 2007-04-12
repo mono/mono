@@ -1230,7 +1230,8 @@ namespace System.Web.UI.WebControls
 				script += string.Format ("{0}.dynamicHover = {1};\n", cmenu, ClientScriptManager.GetScriptLiteral (dynamicHoverStyle.RegisteredCssClass));
 				script += string.Format ("{0}.dynamicLinkHover = {1};\n", cmenu, ClientScriptManager.GetScriptLiteral (DynamicHoverLinkStyle.RegisteredCssClass));
 			}
-			
+
+			Page.ClientScript.RegisterWebFormClientScript ();
 			Page.ClientScript.RegisterStartupScript (typeof(Menu), ClientID, script, true);
 
 		}
