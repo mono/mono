@@ -279,6 +279,7 @@ System.Web/HttpFileCollection.cs
 System.Web/HttpForbiddenHandler.cs
 System.Web/HttpMethodNotAllowedHandler.cs
 System.Web/HttpModuleCollection.cs
+System.Web/HttpParamsCollection.cs
 System.Web/HttpParseException.cs
 System.Web/HttpPostedFile.cs
 System.Web/HttpRequest.cs

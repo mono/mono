@@ -1,3 +1,8 @@
+2007-04-12  Vladimir Krasnov  <vladimirk@mainsoft.com>
+	
+	* System.Web20.csproj: 
+	* System.Web.dll.sources: added HttpParamsCollection.cs
+
 2007-04-01  Vladimir Krasnov  <vladimirk@mainsoft.com>
 	
 	* System.Web20.csproj: 

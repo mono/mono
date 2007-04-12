@@ -1225,6 +1225,7 @@
     <Compile Include="System.Web\BaseParamsCollection.cs" />
     <Compile Include="System.Web\HeadersCollection.cs" />
     <Compile Include="System.Web\HttpApplication.cs" />
+    <Compile Include="System.Web\HttpParamsCollection.cs" />
     <Compile Include="System.Web\HttpStaticObjectsCollection.cs">
       <SubType>Code</SubType>
     </Compile>

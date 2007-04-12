@@ -808,21 +808,8 @@ namespace System.Web {
 		public NameValueCollection Params {
 			[AspNetHostingPermission (SecurityAction.Demand, Level = AspNetHostingPermissionLevel.Low)]
 			get {
-				if (all_params == null) {
-					all_params = new WebROCollection ();
-
-					all_params.Add (QueryString);
-
-					/* special handling for Cookies since
-					 * it isn't a NameValueCollection. */
-					foreach (string key in Cookies.AllKeys) {
-						all_params.Add (key, Cookies[key].Value);
-					}
-
-					all_params.Add (Form);
-					all_params.Add (ServerVariables);
-					all_params.Protect ();
-				}
+				if (all_params == null)
+					all_params = new HttpParamsCollection (QueryString, Form, ServerVariables, Cookies);
 
 				return all_params;
 			}
