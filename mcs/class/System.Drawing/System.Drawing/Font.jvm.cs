@@ -329,9 +329,13 @@ namespace System.Drawing {
 			java.util.Map newAttribs;
 			if (createNew) {
 				newAttribs = new java.util.Hashtable( attribs.size() );
-				object [] keys = attribs.keySet().toArray();
-				for (int i=0; i < keys.Length; i++)
-					newAttribs.put( keys[i], attribs.get( keys[i] ) );
+				java.util.Iterator it = attribs.keySet().iterator();
+				while (it.hasNext ()) {
+					object key = it.next ();
+					object value = attribs.get (key);
+					if (value != null)
+						newAttribs.put (key, value);
+				}
 			}
 			else
 				newAttribs = attribs;
