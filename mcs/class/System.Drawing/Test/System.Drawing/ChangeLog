@@ -1,3 +1,9 @@
+2007-04-12  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* TestBitmap.cs: Split LockBitmap into several tests and do not modify
+	the data when using ImageLockMode.ReadOnly (this makes some results 
+	random when using MS GDI+).
+
 2007-04-11  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* GDIPlusTest.cs: Add a check for locking (LockBits) a bitmap twice

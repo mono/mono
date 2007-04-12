@@ -318,6 +318,96 @@ namespace MonoTests.System.Drawing {
 		}
 #endif
 
+		private void FormatTest (PixelFormat format)
+		{
+			bool alpha = Image.IsAlphaPixelFormat (format);
+			int size = Image.GetPixelFormatSize (format) / 8 * 2;
+			using (Bitmap bmp = new Bitmap (2, 1, format)) {
+				Color a = Color.FromArgb (128, 64, 32, 16);
+				Color b = Color.FromArgb (192, 96, 48, 24);
+				bmp.SetPixel (0, 0, a);
+				bmp.SetPixel (1, 0, b);
+				Color c = bmp.GetPixel (0, 0);
+				Color d = bmp.GetPixel (1, 0);
+				if (alpha) {
+					if (format == PixelFormat.Format32bppPArgb) {
+						Assert.AreEqual (a.A, c.A, "0,0-alpha-A");
+						// note sure why the -1
+						Assert.AreEqual (a.R - 1, c.R, "0,0-alpha-premultiplied-R");
+						Assert.AreEqual (a.G - 1, c.G, "0,0-alpha-premultiplied-G");
+						Assert.AreEqual (a.B - 1, c.B, "0,0-alpha-premultiplied-B");
+
+						Assert.AreEqual (b.A, d.A, "1,0-alpha-A");
+						// note sure why the -1
+						Assert.AreEqual (b.R - 1, d.R, "1,0-alpha-premultiplied-R");
+						Assert.AreEqual (b.G - 1, d.G, "1,0-alpha-premultiplied-G");
+						Assert.AreEqual (b.B - 1, d.B, "1,0-alpha-premultiplied-B");
+					} else {
+						Assert.AreEqual (a, c, "0,0-alpha");
+						Assert.AreEqual (b, d, "1,0-alpha");
+					}
+				} else {
+					Assert.AreEqual (Color.FromArgb (255, 64, 32, 16), c, "0,0-non-alpha");
+					Assert.AreEqual (Color.FromArgb (255, 96, 48, 24), d, "1,0-non-alpha");
+				}
+				BitmapData bd = bmp.LockBits (new Rectangle (0, 0, 2, 1), ImageLockMode.ReadOnly, format);
+				try {
+					byte[] data = new byte[size];
+					Marshal.Copy (bd.Scan0, data, 0, size);
+					if (format == PixelFormat.Format32bppPArgb) {
+						Assert.AreEqual (Math.Ceiling ((float)c.B * c.A / 255), data[0], "0.alpha-premultiplied-B");
+						Assert.AreEqual (Math.Ceiling ((float)c.G * c.A / 255), data[1], "0.alpha-premultiplied-R");
+						Assert.AreEqual (Math.Ceiling ((float)c.R * c.A / 255), data[2], "0.alpha-premultiplied-G");
+						Assert.AreEqual (c.A, data[3], "0.alpha-A");
+						Assert.AreEqual (Math.Ceiling ((float)d.B * d.A / 255), data[4], "1.alpha-premultiplied-B");
+						Assert.AreEqual (Math.Ceiling ((float)d.G * d.A / 255), data[5], "1.alpha-premultiplied-R");
+						Assert.AreEqual (Math.Ceiling ((float)d.R * d.A / 255), data[6], "1.alpha-premultiplied-G");
+						Assert.AreEqual (d.A, data[7], "1.alpha-A");
+					} else {
+						int n = 0;
+						Assert.AreEqual (c.B, data[n++], "0.B");
+						Assert.AreEqual (c.G, data[n++], "0.R");
+						Assert.AreEqual (c.R, data[n++], "0.G");
+						if (size % 4 == 0)
+							Assert.AreEqual (c.A, data[n++], "0.A");
+						Assert.AreEqual (d.B, data[n++], "1.B");
+						Assert.AreEqual (d.G, data[n++], "1.R");
+						Assert.AreEqual (d.R, data[n++], "1.G");
+						if (size % 4 == 0)
+							Assert.AreEqual (d.A, data[n++], "1.A");
+					}
+				}
+				finally {
+					bmp.UnlockBits (bd);
+				}
+			}
+		}
+
+		[Test]
+		public void Format32bppArgb ()
+		{
+			FormatTest (PixelFormat.Format32bppArgb);
+		}
+
+		[Test]
+		[Category ("NotWorking")] // I'm not sure we're handling this format anywhere (Cairo itself use it)
+		public void Format32bppPArgb ()
+		{
+			FormatTest (PixelFormat.Format32bppPArgb);
+		}
+
+		[Test]
+		public void Format32bppRgb ()
+		{
+			FormatTest (PixelFormat.Format32bppRgb);
+		}
+
+		[Test]
+		public void Format24bppRgb ()
+		{
+			FormatTest (PixelFormat.Format24bppRgb);
+		}
+
 		/* Get the output directory depending on the runtime and location*/
 		public static string getOutSubDir()
 		{				
@@ -589,116 +679,189 @@ namespace MonoTests.System.Drawing {
 				"B6B6245796C836923ABAABDF368B29",  // 4-bit Rotate90FlipY
 				md5s.ToString ());
 		}
-		
-		public void LockBmp (PixelFormat fmt, PixelFormat fmtlock, string output, 
-			int lwidth , int lheight, ref string hash1, ref string hash2)
-		{			
-			int width = 100, height = 100, bbps, cur, pos;
-			Bitmap	bmp = new Bitmap (width, height, fmt);										
-			Graphics gr = Graphics.FromImage (bmp);			
-			byte[] hash;
-			Color clr;
-			byte[] btv = new byte[1];   						
-			int y, x, len = width * height * 4, index = 0;			
+
+		private Bitmap CreateBitmap (int width, int height, PixelFormat fmt)
+		{
+			Bitmap bmp = new Bitmap (width, height, fmt);
+			using (Graphics gr = Graphics.FromImage (bmp)) {
+				Color c = Color.FromArgb (255, 100, 200, 250);
+				for (int x = 1; x < 80; x++) {
+					bmp.SetPixel (x, 1, c);
+					bmp.SetPixel (x, 2, c);
+					bmp.SetPixel (x, 78, c);
+					bmp.SetPixel (x, 79, c);
+				}
+				for (int y = 3; y < 78; y++) {
+					bmp.SetPixel (1, y, c);
+					bmp.SetPixel (2, y, c);
+					bmp.SetPixel (78, y, c);
+					bmp.SetPixel (79, y, c);
+				}
+			}
+			return bmp;
+		}
+
+		private byte[] HashPixels (Bitmap bmp)
+		{
+			int len = bmp.Width * bmp.Height * 4;
+			int index = 0;
 			byte[] pixels = new byte [len];
-			hash1 = hash2 ="";
-			
-			bbps = Image.GetPixelFormatSize (fmt);			
-				 
-			Pen p = new Pen (Color.FromArgb (255, 100, 200, 250), 2);				
-			gr.DrawRectangle(p, 1.0F, 1.0F, 80.0F, 80.0F);				
-			
-			BitmapData bd = bmp.LockBits (new Rectangle (0, 0, lwidth, lheight), ImageLockMode.ReadOnly,  fmtlock);
-			
-			pos = bd.Scan0.ToInt32();			
-			for (y = 0; y < bd.Height; y++) {			
-				for (x = 0; x < bd.Width; x++) {
-					
-					/* Read the pixels*/
-					for (int bt =0; bt < bbps/8; bt++, index++) {
-						cur = pos;
-						cur+= y * bd.Stride;
-						cur+= x * bbps/8;					
-						cur+= bt;					
-						Marshal.Copy ((IntPtr)cur, btv, 0, 1);
-						pixels[index] = btv[0];
-						
-						/* Make change of all the colours = 250 to 10*/						
-						if (btv[0] == 250) {
-							btv[0] = 10;
-							Marshal.Copy (btv, 0, (IntPtr)cur, 1);
+
+			for (int y = 0; y < bmp.Height; y++) {
+				for (int x = 0; x < bmp.Width; x++) {
+					Color clr = bmp.GetPixel (x, y);
+					pixels[index++] = clr.R;
+					pixels[index++] = clr.G;
+					pixels[index++] = clr.B;
+				}
+			}
+			return MD5.Create ().ComputeHash (pixels);
+		}
+
+		private byte[] HashLock (Bitmap bmp, int width, int height, PixelFormat fmt, ImageLockMode mode)
+		{
+			int len = bmp.Width * bmp.Height * 4;
+			byte[] pixels = new byte[len];
+			BitmapData bd = bmp.LockBits (new Rectangle (0, 0, width, height), mode, fmt);
+			try {
+				int index = 0;
+				int bbps = Image.GetPixelFormatSize (fmt);
+				int pos = bd.Scan0.ToInt32 ();
+				byte[] btv = new byte[1];
+				for (int y = 0; y < bd.Height; y++) {
+					for (int x = 0; x < bd.Width; x++) {
+
+						/* Read the pixels*/
+						for (int bt = 0; bt < bbps / 8; bt++, index++) {
+							int cur = pos;
+							cur += y * bd.Stride;
+							cur += x * bbps / 8;
+							cur += bt;
+							Marshal.Copy ((IntPtr) cur, btv, 0, 1);
+							pixels[index] = btv[0];
+
+							/* Make change of all the colours = 250 to 10*/
+							if (btv[0] == 250) {
+								btv[0] = 10;
+								Marshal.Copy (btv, 0, (IntPtr) cur, 1);
+							}
 						}
 					}
 				}
-			}					
-			
-			for (int i = index; i < len; i++)
-				pixels[index] = 0;
-		
-			hash = new MD5CryptoServiceProvider().ComputeHash (pixels);			
-			bmp.UnlockBits (bd);							
-						
-			hash1 = ByteArrayToString (hash);
-			
-			/* MD5 of the changed bitmap*/
-			for (y = 0, index = 0; y < height; y++) {
-				for (x = 0; x < width; x++) {				
-					clr = bmp.GetPixel (x,y);
-					pixels[index++] = clr.R; pixels[index++] = clr.G; pixels[index++]  = clr.B;	
-				}				
+
+				for (int i = index; i < len; i++)
+					pixels[index] = 0;
 			}
-			
-			hash = new MD5CryptoServiceProvider().ComputeHash (pixels);						
-			hash2 = ByteArrayToString (hash);
-			
-			/*bmp.Save (output, ImageFormat.Bmp);*/
+			finally {
+				bmp.UnlockBits (bd);
+			}
+			return MD5.Create ().ComputeHash (pixels);
 		}
+
 		/*
 			Tests the LockBitmap functions. Makes a hash of the block of pixels that it returns
 			firsts, changes them, and then using GetPixel does another check of the changes.
 			The results match the .Net framework
 		*/
+		private static byte[] DefaultBitmapHash = new byte[] { 0xD8, 0xD3, 0x68, 0x9C, 0x86, 0x7F, 0xB6, 0xA0, 0x76, 0xD6, 0x00, 0xEF, 0xFF, 0xE5, 0x8E, 0x1B };
+		private static byte[] FinalWholeBitmapHash = new byte[] { 0x5F, 0x52, 0x98, 0x37, 0xE3, 0x94, 0xE1, 0xA6, 0x06, 0x6C, 0x5B, 0xF1, 0xA9, 0xC2, 0xA9, 0x43 };
+
 		[Test]
-		[Category ("NotWorking")]
-		public void LockBitmap ()
-		{	
-			string hash = "";		
-			string hashchg = "";				
-							
-			/* Locks the whole bitmap*/			
-			LockBmp (PixelFormat.Format32bppArgb, PixelFormat.Format32bppArgb, "output32bppArgb.bmp", 100, 100, ref hash, ref hashchg);				
-			Assert.AreEqual ("AF5BFD4E98D6708FF4C9982CC9C68F", hash);			
-			Assert.AreEqual ("BBEE27DC85563CB58EE11E8951230F", hashchg);			
-			
-			LockBmp (PixelFormat.Format32bppPArgb, PixelFormat.Format32bppPArgb, "output32bppPArgb.bmp", 100, 100, ref hash, ref hashchg);			
-			Assert.AreEqual ("AF5BFD4E98D6708FF4C9982CC9C68F", hash);			
-			Assert.AreEqual ("BBEE27DC85563CB58EE11E8951230F", hashchg);			
-			
-			LockBmp (PixelFormat.Format32bppRgb, PixelFormat.Format32bppRgb, "output32bppRgb.bmp", 100, 100, ref hash, ref hashchg);
-			Assert.AreEqual ("AF5BFD4E98D6708FF4C9982CC9C68F", hash);			
-			Assert.AreEqual ("BBEE27DC85563CB58EE11E8951230F", hashchg);		
-			
-			LockBmp (PixelFormat.Format24bppRgb, PixelFormat.Format24bppRgb, "output24bppRgb.bmp", 100, 100, ref hash, ref hashchg);
-			Assert.AreEqual ("A8A071D0B3A3743905B4E193A62769", hash);			
-			Assert.AreEqual ("EEE846FA8F892339C64082DFF775CF", hashchg);					
-			
-			/* Locks a portion of the bitmap*/		
-			LockBmp (PixelFormat.Format32bppArgb, PixelFormat.Format32bppArgb, "output32bppArgb.bmp", 50, 50, ref hash, ref hashchg);				
-			Assert.AreEqual ("C361FBFD82A4F3C278605AE9EC5385", hash);			
-			Assert.AreEqual ("8C2C04B361E1D5875EE8ACF5073F4E", hashchg);			
-			
-			LockBmp (PixelFormat.Format32bppPArgb, PixelFormat.Format32bppPArgb, "output32bppPArgb.bmp", 50, 50, ref hash, ref hashchg);			
-			Assert.AreEqual ("C361FBFD82A4F3C278605AE9EC5385", hash);			
-			Assert.AreEqual ("8C2C04B361E1D5875EE8ACF5073F4E", hashchg);			
-		
-			LockBmp (PixelFormat.Format32bppRgb, PixelFormat.Format32bppRgb, "output32bppRgb.bmp", 50, 50, ref hash, ref hashchg);
-			Assert.AreEqual ("C361FBFD82A4F3C278605AE9EC5385", hash);			
-			Assert.AreEqual ("8C2C04B361E1D5875EE8ACF5073F4E", hashchg);			
-			
-			LockBmp (PixelFormat.Format24bppRgb, PixelFormat.Format24bppRgb, "output24bppRgb.bmp", 50, 50, ref hash, ref hashchg);
-			Assert.AreEqual ("FFE86628478591D1A1EB30E894C34F", hash);			
-			Assert.AreEqual ("8C2C04B361E1D5875EE8ACF5073F4E", hashchg);				
-						
+		public void LockBitmap_Format32bppArgb_Format32bppArgb_ReadWrite_Whole ()
+		{
+			using (Bitmap bmp = CreateBitmap (100, 100, PixelFormat.Format32bppArgb)) {
+				Assert.AreEqual (DefaultBitmapHash, HashPixels (bmp), "Initial");
+				byte[] expected = { 0x89, 0x6A, 0x6B, 0x35, 0x5C, 0x89, 0xD9, 0xE9, 0xF4, 0x51, 0xD5, 0x89, 0xED, 0x28, 0x68, 0x5C };
+				byte[] actual = HashLock (bmp, bmp.Width, bmp.Height, PixelFormat.Format32bppArgb, ImageLockMode.ReadWrite);
+				Assert.AreEqual (expected, actual, "Full-Format32bppArgb");
+				Assert.AreEqual (FinalWholeBitmapHash, HashPixels (bmp), "Final");
+			}
+		}
+
+		[Test]
+		public void LockBitmap_Format32bppArgb_Format32bppPArgb_ReadWrite_Whole ()
+		{
+			using (Bitmap bmp = CreateBitmap (100, 100, PixelFormat.Format32bppArgb)) {
+				Assert.AreEqual (DefaultBitmapHash, HashPixels (bmp), "Initial");
+				byte[] expected = { 0x89, 0x6A, 0x6B, 0x35, 0x5C, 0x89, 0xD9, 0xE9, 0xF4, 0x51, 0xD5, 0x89, 0xED, 0x28, 0x68, 0x5C };
+				byte[] actual = HashLock (bmp, bmp.Width, bmp.Height, PixelFormat.Format32bppPArgb, ImageLockMode.ReadWrite);
+				Assert.AreEqual (expected, actual, "Full-Format32bppPArgb");
+				Assert.AreEqual (FinalWholeBitmapHash, HashPixels (bmp), "Final");
+			}
+		}
+
+		[Test]
+		public void LockBitmap_Format32bppArgb_Format32bppRgb_ReadWrite_Whole ()
+		{
+			using (Bitmap bmp = CreateBitmap (100, 100, PixelFormat.Format32bppArgb)) {
+				Assert.AreEqual (DefaultBitmapHash, HashPixels (bmp), "Initial");
+				byte[] expected = { 0xC0, 0x28, 0xB5, 0x2E, 0x86, 0x90, 0x6F, 0x37, 0x09, 0x5F, 0x49, 0xA4, 0x91, 0xDA, 0xEE, 0xB9 };
+				byte[] actual = HashLock (bmp, bmp.Width, bmp.Height, PixelFormat.Format32bppRgb, ImageLockMode.ReadWrite);
+				Assert.AreEqual (expected, actual, "Full-Format32bppRgb");
+				Assert.AreEqual (FinalWholeBitmapHash, HashPixels (bmp), "Final");
+			}
+		}
+
+		[Test]
+		public void LockBitmap_Format32bppArgb_Format24bppRgb_ReadWrite_Whole ()
+		{
+			using (Bitmap bmp = CreateBitmap (100, 100, PixelFormat.Format32bppArgb)) {
+				Assert.AreEqual (DefaultBitmapHash, HashPixels (bmp), "Initial");
+				byte[] expected = { 0xA7, 0xB2, 0x50, 0x04, 0x11, 0x12, 0x64, 0x68, 0x6B, 0x7D, 0x2F, 0x6E, 0x69, 0x24, 0xCB, 0x14 };
+				byte[] actual = HashLock (bmp, bmp.Width, bmp.Height, PixelFormat.Format24bppRgb, ImageLockMode.ReadWrite);
+				Assert.AreEqual (expected, actual, "Full-Format24bppRgb");
+				Assert.AreEqual (FinalWholeBitmapHash, HashPixels (bmp), "Final");
+			}
+		}
+
+		private static byte[] FinalPartialBitmapHash = new byte[] { 0xED, 0xD8, 0xDC, 0x9B, 0x44, 0x00, 0x22, 0x9B, 0x07, 0x06, 0x4A, 0x21, 0x70, 0xA7, 0x31, 0x1D };
+
+		[Test]
+		public void LockBitmap_Format32bppArgb_Format32bppArgb_ReadWrite_Partial ()
+		{
+			using (Bitmap bmp = CreateBitmap (100, 100, PixelFormat.Format32bppArgb)) {
+				Assert.AreEqual (DefaultBitmapHash, HashPixels (bmp), "Initial");
+				byte[] expected = { 0x5D, 0xFF, 0x02, 0x34, 0xEB, 0x7C, 0xF7, 0x42, 0xD4, 0xB7, 0x70, 0x49, 0xB4, 0x06, 0x79, 0xBC };
+				byte[] actual = HashLock (bmp, 50, 50, PixelFormat.Format32bppArgb, ImageLockMode.ReadWrite);
+				Assert.AreEqual (expected, actual, "Partial-Format32bppArgb");
+				Assert.AreEqual (FinalPartialBitmapHash, HashPixels (bmp), "Final");
+			}
+		}
+
+		[Test]
+		public void LockBitmap_Format32bppArgb_Format32bppPArgb_ReadWrite_Partial ()
+		{
+			using (Bitmap bmp = CreateBitmap (100, 100, PixelFormat.Format32bppArgb)) {
+				Assert.AreEqual (DefaultBitmapHash, HashPixels (bmp), "Initial");
+				byte[] expected = { 0x5D, 0xFF, 0x02, 0x34, 0xEB, 0x7C, 0xF7, 0x42, 0xD4, 0xB7, 0x70, 0x49, 0xB4, 0x06, 0x79, 0xBC };
+				byte[] actual = HashLock (bmp, 50, 50, PixelFormat.Format32bppPArgb, ImageLockMode.ReadWrite);
+				Assert.AreEqual (expected, actual, "Partial-Format32bppPArgb");
+				Assert.AreEqual (FinalPartialBitmapHash, HashPixels (bmp), "Final");
+			}
+		}
+
+		[Test]
+		public void LockBitmap_Format32bppArgb_Format32bppRgb_ReadWrite_Partial ()
+		{
+			using (Bitmap bmp = CreateBitmap (100, 100, PixelFormat.Format32bppArgb)) {
+				Assert.AreEqual (DefaultBitmapHash, HashPixels (bmp), "Initial");
+				byte[] expected = { 0x72, 0x33, 0x09, 0x67, 0x53, 0x65, 0x38, 0xF9, 0xE4, 0x58, 0xE1, 0x0A, 0xAA, 0x6A, 0xCC, 0xB8 };
+				byte[] actual = HashLock (bmp, 50, 50, PixelFormat.Format32bppRgb, ImageLockMode.ReadWrite);
+				Assert.AreEqual (expected, actual, "Partial-Format32bppRgb");
+				Assert.AreEqual (FinalPartialBitmapHash, HashPixels (bmp), "Final");
+			}
+		}
+
+		[Test]
+		public void LockBitmap_Format32bppArgb_Format24bppRgb_ReadWrite_Partial ()
+		{
+			using (Bitmap bmp = CreateBitmap (100, 100, PixelFormat.Format32bppArgb)) {
+				Assert.AreEqual (DefaultBitmapHash, HashPixels (bmp), "Initial");
+				byte[] expected = { 0x4D, 0x39, 0x21, 0x88, 0xC2, 0x17, 0x14, 0x5F, 0x89, 0x9E, 0x02, 0x75, 0xF3, 0x64, 0xD8, 0xF0 };
+				byte[] actual = HashLock (bmp, 50, 50, PixelFormat.Format24bppRgb, ImageLockMode.ReadWrite);
+				Assert.AreEqual (expected, actual, "Partial-Format24bppRgb");
+				Assert.AreEqual (FinalPartialBitmapHash, HashPixels (bmp), "Final");
+			}
 		}
 
 		/*
