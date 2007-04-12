@@ -1,3 +1,10 @@
+2007-04-12  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStripMenuItem.cs: Display the ShortcutKeyDisplayString even
+	if there are no ShortcutKeys set.
+	* ToolStripProfessionalRenderer.cs: If an item has had its BackColor
+	set, use it when painting.
+
 2007-04-12  Jackson Harper  <jackson@ximian.com>
 
 	* TextControl.cs: Fix some off-by-one issues in line duplication

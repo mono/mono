@@ -120,6 +120,9 @@ namespace System.Windows.Forms
 				else if (e.Item.Selected) // && !e.Item.Pressed)
 					using (Brush b = new LinearGradientBrush (paint_here, this.ColorTable.ButtonSelectedGradientBegin, this.ColorTable.ButtonSelectedGradientEnd, LinearGradientMode.Vertical))
 						e.Graphics.FillRectangle (b, paint_here);
+				else if (e.Item.BackColor != Control.DefaultBackColor && e.Item.BackColor != Color.Empty)
+					using (Brush b = new SolidBrush (e.Item.BackColor))
+						e.Graphics.FillRectangle (b, paint_here);
 
 			paint_here.Width -= 1;
 			paint_here.Height -= 1;

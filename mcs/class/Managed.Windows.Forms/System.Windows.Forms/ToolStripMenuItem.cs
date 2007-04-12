@@ -414,14 +414,14 @@ namespace System.Windows.Forms
 		
 		internal string GetShortcutDisplayString ()
 		{
-			if (this.show_shortcut_keys == false || this.shortcut_keys == Keys.None)
+			if (this.show_shortcut_keys == false)
 				return string.Empty;
 
-			string key_string;
+			string key_string = string.Empty;
 
 			if (!string.IsNullOrEmpty (this.shortcut_display_string))
 				key_string = this.shortcut_display_string;
-			else {
+			else if (this.shortcut_keys != Keys.None) {
 				KeysConverter kc = new KeysConverter ();
 				key_string = kc.ConvertToString (this.shortcut_keys);
 			}
