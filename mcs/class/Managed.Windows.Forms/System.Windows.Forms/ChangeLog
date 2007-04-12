@@ -1,3 +1,11 @@
+2007-04-12  Jackson Harper  <jackson@ximian.com>
+
+	* TextControl.cs: Fix some off-by-one issues in line duplication
+	and insertion in the undo manager. Also, overwrite the first tag
+	of a line on insert, if it is just a zero lengthed tag. This
+	prevents us from getting an extra stranded tag at the beginning of
+	the first line.
+
 2007-04-11  Everaldo Canuto  <everaldo@simios.org>
 
 	* Label.cs: Remove check for handle created in CalcAutoSize, we need 

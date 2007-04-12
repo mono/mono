@@ -5260,7 +5260,7 @@ namespace System.Windows.Forms {
 				if (start_line.line_no == i) {
 					start = start_pos;
 				} else {
-					start = 1;
+					start = 0;
 				}
 
 				if (end_line.line_no == i) {
@@ -5274,10 +5274,10 @@ namespace System.Windows.Forms {
 
 				// Text for the tag
 				line.text = new StringBuilder (current.text.ToString (start, end - start));
-				
+
 				// Copy tags from start to start+length onto new line
 				current_tag = current.FindTag (start);
-				while ((current_tag != null) && (current_tag.start < end)) {
+				while ((current_tag != null) && (current_tag.start <= end)) {
 					if ((current_tag.start <= start) && (start < (current_tag.start + current_tag.length))) {
 						// start tag is within this tag
 						tag_start = start;
@@ -5373,13 +5373,14 @@ namespace System.Windows.Forms {
 			current = insert;
 
 			while (current != null) {
+				
 				if (current == insert) {
 					// Inserting the first line we split the line (and make space)
 					document.Split(line, pos);
 					//Insert our tags at the end of the line
 					tag = line.tags;
 
-					if (tag != null) {
+					if (tag != null || tag.length == 0) {
 						while (tag.next != null) {
 							tag = tag.next;
 						}
@@ -5400,11 +5401,13 @@ namespace System.Windows.Forms {
 					offset = 0;
 					line.tags = current.tags;
 					line.tags.previous = null;
+					line.ending = current.ending;
 					tag = line.tags;
 				}
+
 				// Adjust start locations and line pointers
 				while (tag != null) {
-					tag.start += offset;
+					tag.start += offset - 1;
 					tag.line = line;
 					tag = tag.next;
 				}
