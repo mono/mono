@@ -2360,7 +2360,7 @@ namespace System.Drawing {
 			return t;
 		}
 
-		geom.AffineTransform GetFinalTransform() {
+		internal geom.AffineTransform GetFinalTransform() {
 			return GetFinalTransform(_transform.NativeObject, PageUnit, PageScale);
 		}
 

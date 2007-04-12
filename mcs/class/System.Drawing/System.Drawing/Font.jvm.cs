@@ -18,6 +18,16 @@ namespace System.Drawing {
 		private readonly awt.Font _jFont;
 		private readonly byte _charset;
 
+		static readonly float [] _screenResolutionConverter = {
+													   1,								// World
+													   1,								// Display
+													   1,								// Pixel
+													   Graphics.DefaultScreenResolution,	// Point
+													   Graphics.DefaultScreenResolution,	// Inch
+													   Graphics.DefaultScreenResolution,	// Document
+													   Graphics.DefaultScreenResolution		// Millimeter
+												   };
+
 #if NET_2_0
 		private readonly string _systemFontName;
 #endif
@@ -199,6 +209,25 @@ namespace System.Drawing {
 			get {
 				return FontFamily.Container.getFontMetrics(NativeObject).getHeight();
 			}
+		}
+
+		public float GetHeight () {
+			return GetHeight (Graphics.DefaultScreenResolution);
+		}
+
+		public float GetHeight (float dpi) {
+			return (FontFamily.GetLineSpacing (Style) / FontFamily.GetEmHeight (Style))
+				* (SizeInPoints / _screenResolutionConverter [(int) Unit])
+				* dpi;
+		}
+
+		public float GetHeight (Graphics graphics) {
+			if (graphics == null)
+				throw new ArgumentNullException ("graphics");
+
+			awt.Font f = NativeObject.deriveFont (graphics.GetFinalTransform ());
+			return (FontFamily.GetLineSpacing (Style) / FontFamily.GetEmHeight (Style))
+				* (f.getSize2D () / _screenResolutionConverter [(int) Unit]);
 		}
 
 		public bool Italic {
