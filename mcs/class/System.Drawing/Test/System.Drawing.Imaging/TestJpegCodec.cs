@@ -6,7 +6,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2004 Ximian, Inc.  http://www.ximian.com
-// Copyright (C) 2004-2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -131,7 +131,6 @@ namespace MonoTests.System.Drawing.Imaging {
 
 #if !TARGET_JVM
 		[Test]
-		[Category ("NotWorking")]
 		public void Bitmap24bitData ()
 		{
 			string sInFile = getInFile ("bitmaps/almogaver24bits.bmp");
@@ -141,6 +140,7 @@ namespace MonoTests.System.Drawing.Imaging {
 					Assert.AreEqual (bmp.Height, data.Height, "Height");
 					Assert.AreEqual (bmp.Width, data.Width, "Width");
 					Assert.AreEqual (PixelFormat.Format24bppRgb, data.PixelFormat, "PixelFormat");
+					Assert.AreEqual (520, data.Stride, "Stride");
 					int size = data.Height * data.Stride;
 					unsafe {
 						byte* scan = (byte*) data.Scan0;

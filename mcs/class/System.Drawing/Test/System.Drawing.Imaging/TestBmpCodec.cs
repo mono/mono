@@ -310,16 +310,17 @@ namespace MonoTests.System.Drawing.Imaging {
 
 #if !TARGET_JVM
 		[Test]
-		[Category ("NotWorking")]
 		public void Bitmap24bitData ()
 		{
 			string sInFile = getInFile ("bitmaps/almogaver24bits.bmp");
 			using (Bitmap bmp = new Bitmap (sInFile)) {
+				Assert.AreEqual (-3355456, bmp.GetPixel (163, 1).ToArgb (), "163,1");
 				BitmapData data = bmp.LockBits (new Rectangle (0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
 				try {
 					Assert.AreEqual (bmp.Height, data.Height, "Height");
 					Assert.AreEqual (bmp.Width, data.Width, "Width");
 					Assert.AreEqual (PixelFormat.Format24bppRgb, data.PixelFormat, "PixelFormat");
+					Assert.AreEqual (520, data.Stride, "Stride");
 					int size = data.Height * data.Stride;
 					unsafe {
 						byte* scan = (byte*) data.Scan0;

@@ -1,3 +1,9 @@
+2007-04-12  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TestBmpCodec.cs: Reenable some NotWorking test case.
+	* TestJpegCodec.cs: Reenable some NotWorking test case.
+	* TiffCodecTest.cs: Reenable some NotWorking test case.
+
 2007-04-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* GifCodecTest.cs: Reenable some NotWorking test cases.

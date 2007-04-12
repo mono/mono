@@ -5,7 +5,7 @@
 //	Jordi Mas i Hernàndez (jordi@ximian.com)
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2006, 2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -153,7 +153,6 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Bitmat32bitsData ()
 		{
 			string sInFile = getInFile ("bitmaps/almogaver32bits.tif");
@@ -163,6 +162,7 @@ namespace MonoTests.System.Drawing.Imaging {
 					Assert.AreEqual (bmp.Height, data.Height, "Height");
 					Assert.AreEqual (bmp.Width, data.Width, "Width");
 					Assert.AreEqual (PixelFormat.Format24bppRgb, data.PixelFormat, "PixelFormat");
+					Assert.AreEqual (520, data.Stride, "Stride");
 					int size = data.Height * data.Stride;
 					unsafe {
 						byte* scan = (byte*) data.Scan0;
