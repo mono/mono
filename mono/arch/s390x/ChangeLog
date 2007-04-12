@@ -1,3 +1,7 @@
+2007-04-12	Neale Ferguson <neale@sinenomine.net>
+	
+	* tramp.c: Add MONO_TYPE_PTR case.
+
 2007-01-23	Neale Ferguson <neale@sinenomine.net>
 	
 	* s390x-codegen.h: Add packed attribute to several instruction structures.
