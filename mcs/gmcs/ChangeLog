@@ -1,3 +1,7 @@
+2007-04-12  Duncan Mak  <duncan@a-chinaman.com>
+
+	* cs-parser.jay (interface_method_declaration_body): Fixed typo.
+
 2007-04-08  Marek Safar  <marek.safar@gmail.com>
 
 	* cs-parser.jay, linq.cs: First select implementation (hacky).

@@ -1820,7 +1820,7 @@ opt_new
 	;
 
 interface_method_declaration_body
-	: open_brace
+	: OPEN_BRACE
 	  {
 		lexer.ConstraintsParsing = false;
 	  }
