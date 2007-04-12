@@ -139,7 +139,19 @@ namespace MonoTests.System.Drawing {
 		{
 			using (Bitmap bmp = new Bitmap (100, 100, PixelFormat.Format32bppRgb)) {
 				Rectangle rect = new Rectangle (0, 0, bmp.Width, bmp.Height);
+#if NET_2_0
+				BitmapData bd = new BitmapData ();
+				try {
+					bmp.LockBits (rect, ImageLockMode.ReadWrite, PixelFormat.Format8bppIndexed, bd);
+				}
+				catch (ArgumentException) {
+					// test to see if there's a leak or not in this case
+					Assert.AreEqual (IntPtr.Zero, bd.Scan0, "Scan0");
+					throw;
+				}
+#else
 				bmp.LockBits (rect, ImageLockMode.ReadWrite, PixelFormat.Format8bppIndexed);
+#endif
 			}
 		}
 
@@ -204,6 +216,7 @@ namespace MonoTests.System.Drawing {
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
+		[Category ("Valgrind")] // this test is known to leak memory (API design limitation)
 		public void UnlockBits_Disposed ()
 		{
 			Bitmap bmp = new Bitmap (100, 100, PixelFormat.Format32bppRgb);
@@ -211,6 +224,8 @@ namespace MonoTests.System.Drawing {
 			BitmapData data = bmp.LockBits (rect, ImageLockMode.ReadWrite, PixelFormat.Format32bppRgb);
 			bmp.Dispose ();
 			bmp.UnlockBits (data);
+			// and that results in something like this when executed under Valgrind 
+			// "40,000 bytes in 1 blocks are possibly lost in loss record 88 of 92"
 		}
 
 		[Test]

@@ -1,3 +1,9 @@
+2007-04-12  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TestBitmap.cs: Rework a test under 2.0 to see if GdipLockBits leaks
+	if in particular case (it doesn't). Added Categoty("Valgrind") to a 
+	test know to leak due to the API design.
+
 2007-04-12  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* TestBitmap.cs: Split LockBitmap into several tests and do not modify
