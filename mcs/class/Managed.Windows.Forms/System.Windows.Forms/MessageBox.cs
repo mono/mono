@@ -187,7 +187,7 @@ namespace System.Windows.Forms
 						tsize.Height = icon_image.Height;
 				} else {
 					tsize.Width += space_border * 2;
-					textleft_up = new Point (space_border + 12, space_border + 12);
+					textleft_up = new Point (space_border + button_space, space_border);
 					tsize.Height += space_border * 2;
 				}
 
@@ -231,9 +231,9 @@ namespace System.Windows.Forms
 
 				// Now we choose the good size for the form
 				if (tsize.ToSize ().Width > tb_width)
-					this.ClientSize = new Size(tsize.ToSize().Width + (space_border * 2), Height = tsize.ToSize ().Height + 30 + (space_border * 2));
+					this.ClientSize = new Size(tsize.ToSize().Width + (space_border * 2), Height = tsize.ToSize ().Height + (space_border * 4));
 				else
-					this.ClientSize = new Size(tb_width + (space_border * 2), Height = tsize.ToSize ().Height + 30 + (space_border * 2));
+					this.ClientSize = new Size(tb_width + (space_border * 2), Height = tsize.ToSize ().Height + (space_border * 4));
 
 				// Now we set the left of the buttons
 				button_left = (this.ClientSize.Width / 2) - (tb_width / 2) + 5;
