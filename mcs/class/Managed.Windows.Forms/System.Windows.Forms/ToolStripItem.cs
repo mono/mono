@@ -70,6 +70,8 @@ namespace System.Windows.Forms
 		internal bool is_pressed;
 		private bool is_selected;
 		private Padding margin;
+		private MergeAction merge_action;
+		private int merge_index;
 		private string name;
 		private ToolStripItemOverflow overflow;
 		private ToolStrip owner;
@@ -122,6 +124,8 @@ namespace System.Windows.Forms
 			this.image_scaling = ToolStripItemImageScaling.SizeToFit;
 			this.image_transparent_color = Color.Empty;
 			this.margin = this.DefaultMargin;
+			this.merge_action = MergeAction.Append;
+			this.merge_index = -1;
 			this.name = name;
 			this.overflow = ToolStripItemOverflow.AsNeeded;
 			this.padding = this.DefaultPadding;
@@ -536,6 +540,23 @@ namespace System.Windows.Forms
 				this.margin = value; 
 				this.CalculateAutoSize ();
 			}
+		}
+
+		[DefaultValue (MergeAction.Append)]
+		public MergeAction MergeAction {
+			get { return this.merge_action; }
+			set {
+				if (!Enum.IsDefined (typeof (MergeAction), value))
+					throw new InvalidEnumArgumentException (string.Format ("Enum argument value '{0}' is not valid for MergeAction", value));
+					
+				this.merge_action = value;
+			}
+		}
+
+		[DefaultValue (-1)]
+		public int MergeIndex {
+			get { return this.merge_index; }
+			set { this.merge_index = value; }
 		}
 
 		[DefaultValue (null)]

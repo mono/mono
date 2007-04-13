@@ -259,6 +259,22 @@ namespace System.Windows.Forms
 			int index = base.Add (value);
 			return index;
 		}
+
+		internal void InsertNoOwnerOrLayout (int index, ToolStripItem value)
+		{
+			if (value == null)
+				throw new ArgumentNullException ("value");
+
+			base.Insert (index, value);
+		}
+
+		internal void RemoveNoOwnerOrLayout (ToolStripItem value)
+		{
+			if (value == null)
+				throw new ArgumentNullException ("value");
+
+			base.Remove (value);
+		}
 		#endregion
 		
 		#region IList Members

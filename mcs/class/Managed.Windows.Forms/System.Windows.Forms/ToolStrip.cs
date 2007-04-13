@@ -32,6 +32,7 @@ using System.Runtime.InteropServices;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms.Layout;
+using System.Collections.Generic;
 
 namespace System.Windows.Forms
 {
@@ -42,21 +43,26 @@ namespace System.Windows.Forms
 	public class ToolStrip : ScrollableControl, IComponent, IDisposable
 	{
 		#region Private Variables
+		private bool allow_merge;
 		private Color back_color;
 		private bool can_overflow;
+		private ToolStrip currently_merged_with;
 		private ToolStripDropDownDirection default_drop_down_direction;
 		internal ToolStripItemCollection displayed_items;
 		private Color fore_color;
 		private Padding grip_margin;
 		private ToolStripGripStyle grip_style;
+		private List<ToolStripItem> hidden_merged_items;
 		private ImageList image_list;
 		private Size image_scaling_size;
+		private bool is_currently_merged;
 		private ToolStripItemCollection items;
 		private LayoutEngine layout_engine;
 		private LayoutSettings layout_settings;
 		private ToolStripLayoutStyle layout_style;
 		private Orientation orientation;
 		private ToolStripOverflowButton overflow_button;
+		private List<ToolStripItem> pre_merge_items;
 		private ToolStripRenderer renderer;
 		private ToolStripRenderMode render_mode;
 		private Timer tooltip_timer;
@@ -83,6 +89,7 @@ namespace System.Windows.Forms
 
 			this.SuspendLayout ();
 			this.items = new ToolStripItemCollection (this, items);
+			this.allow_merge = true;
 			base.AutoSize = true;
 			this.back_color = Control.DefaultBackColor;
 			this.can_overflow = true;
@@ -113,6 +120,11 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Properties
+		public bool AllowMerge {
+			get { return this.allow_merge; }
+			set { this.allow_merge = false; }
+		}
+		
 		public override AnchorStyles Anchor {
 			get { return base.Anchor; }
 			set { base.Anchor = value; }
@@ -926,8 +938,16 @@ namespace System.Windows.Forms
 			item.SetBounds (new Rectangle (location, item.Size));
 		}
 		
-		protected static void SetItemParent (ToolStripItem item, ToolStrip parent)
+		protected internal static void SetItemParent (ToolStripItem item, ToolStrip parent)
 		{
+			if (item.Parent != null) {
+				item.Parent.Items.RemoveNoOwnerOrLayout (item);
+				
+				if (item.Parent is ToolStripOverflow)
+					(item.Parent as ToolStripOverflow).ParentToolStrip.Items.RemoveNoOwnerOrLayout (item);
+			}
+			
+			parent.Items.AddNoOwnerOrLayout (item);
 			item.Parent = parent;
 		}
 
@@ -1137,6 +1157,81 @@ namespace System.Windows.Forms
 			tooltip_currently_showing.FireEvent (EventArgs.Empty, ToolStripItemEventType.MouseHover);
 
 			ToolTipTimer.Stop ();
+		}
+		
+		internal ToolStrip CurrentlyMergedWith {
+			get { return this.currently_merged_with; }
+			set { this.currently_merged_with = value; }
+		}
+		
+		internal List<ToolStripItem> HiddenMergedItems {
+			get {
+				if (this.hidden_merged_items == null)
+					this.hidden_merged_items = new List<ToolStripItem> ();
+					
+				return this.hidden_merged_items;
+			}
+		}
+		
+		internal bool IsCurrentlyMerged {
+			get { return this.is_currently_merged; }
+			set { 
+				this.is_currently_merged = value; 
+				
+				if (!value && this is MenuStrip) 
+					foreach (ToolStripMenuItem tsmi in this.Items)
+						tsmi.DropDown.IsCurrentlyMerged = value;
+			 }
+		}
+		
+		internal void BeginMerge ()
+		{
+			if (!IsCurrentlyMerged) {
+				IsCurrentlyMerged = true;
+				
+				if (this.pre_merge_items == null) {
+					this.pre_merge_items = new List<ToolStripItem> ();
+			
+				foreach (ToolStripItem tsi in this.Items)
+					this.pre_merge_items.Add (tsi);
+				}
+				
+				if (this is MenuStrip)
+					foreach (ToolStripMenuItem tsmi in this.Items)
+						tsmi.DropDown.BeginMerge ();
+			}
+		}
+		
+		internal void RevertMergeItem (ToolStripItem item)
+		{
+			int index = 0;
+
+			// Remove it from it's current Parent
+			if (item.Parent != null && item.Parent != this) {
+				if (item.Parent is ToolStripOverflow)
+					(item.Parent as ToolStripOverflow).ParentToolStrip.Items.RemoveNoOwnerOrLayout (item);
+				else
+					item.Parent.Items.RemoveNoOwnerOrLayout (item);
+
+				item.Parent = item.Owner;	
+			}
+			
+			// Find where the item was before the merge
+			index = item.Owner.pre_merge_items.IndexOf (item);
+
+			// Find the first pre-merge item that was after this item, that
+			// is currently in the Items collection.  Insert our item before
+			// that one.
+			for (int i = index; i < this.pre_merge_items.Count; i++) {
+				if (this.Items.Contains (this.pre_merge_items[i])) {
+					item.Owner.Items.InsertNoOwnerOrLayout (this.Items.IndexOf (this.pre_merge_items[i]), item);
+					return;
+				}
+			}
+			
+			// There aren't any items that are supposed to be after this item,
+			// so just append it to the end.
+			item.Owner.Items.AddNoOwnerOrLayout (item);
 		}
 		#endregion
 	}

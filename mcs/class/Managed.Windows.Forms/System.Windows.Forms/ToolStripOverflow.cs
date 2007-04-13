@@ -126,6 +126,12 @@ namespace System.Windows.Forms
 			this.PerformLayout ();
 		}
 		#endregion
+
+		#region Internal Methods
+		internal ToolStrip ParentToolStrip {
+			get { return (ToolStrip)this.OwnerItem.Parent; }
+		}
+		#endregion
 	}
 }
 #endif

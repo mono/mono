@@ -1,3 +1,13 @@
+2007-04-13  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStrip.cs: Add properties and internal methods to support merging.
+	* ToolStripItem.cs: Add MergeAction and MergeIndex.
+	* ToolStripItemCollection.cs: Add Insert and Remove methods that do
+	not trigger reparenting or layouts.
+	* ToolStripManager.cs: Add Merge and RevertMerge methods.
+	* ToolStripOverflow.cs: Add a convenience method to find the ToolStrip that
+	is hosting the overflow menu.
+
 2007-04-13  Jackson Harper  <jackson@ximian.com>
 
 	* TextControl.cs: Set the line ending correctly for the first
