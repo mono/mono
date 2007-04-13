@@ -623,7 +623,12 @@ namespace System.Windows.Forms
 		[Localizable (true)]
 		public virtual RightToLeft RightToLeft {
 			get { return this.right_to_left; }
-			set { this.right_to_left = value; }
+			set { 
+				if (this.right_to_left != value) {
+					this.right_to_left = value;
+					this.OnRightToLeftChanged (EventArgs.Empty);
+				}
+			}
 		}
 		
 		[Localizable (true)]

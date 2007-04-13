@@ -1,5 +1,10 @@
 2007-04-13  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ToolStripItem.cs: Call the RightToLeftChanged event when setting the
+	RightToLeft property.
+
+2007-04-13  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ToolStrip.cs: Add properties and internal methods to support merging.
 	* ToolStripItem.cs: Add MergeAction and MergeIndex.
 	* ToolStripItemCollection.cs: Add Insert and Remove methods that do
