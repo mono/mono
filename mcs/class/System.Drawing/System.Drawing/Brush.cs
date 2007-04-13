@@ -6,7 +6,7 @@
 //   Ravindra (rkumar@novell.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
-// Copyright (C) 2004,2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004,2006-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,11 +28,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace System.Drawing
-{
-	public abstract class Brush : MarshalByRefObject, ICloneable, IDisposable
-	{
+namespace System.Drawing {
+
+	public abstract class Brush : MarshalByRefObject, ICloneable, IDisposable {
+
 		internal IntPtr nativeObject;
+
 		abstract public object Clone ();
 
 		internal Brush (IntPtr ptr)
@@ -52,7 +53,6 @@ namespace System.Drawing
 #if NET_2_0
 		protected Brush ()
 		{
-
 		}		
 
 		protected internal void SetNativeBrush (IntPtr brush)
@@ -62,7 +62,6 @@ namespace System.Drawing
 #else
                 internal Brush ()
                 { 
-
 		}
 #endif
 
@@ -77,9 +76,10 @@ namespace System.Drawing
 			// NOTE: this has been known to fail in the past (cairo)
 			// but it's the only way to reclaim brush related memory
 			if (nativeObject != IntPtr.Zero) {
-				GDIPlus.GdipDeleteBrush (nativeObject);
+				Status status = GDIPlus.GdipDeleteBrush (nativeObject);
 				nativeObject = IntPtr.Zero;
-			}			
+				GDIPlus.CheckStatus (status);
+			}
 		}
 
 		~Brush ()

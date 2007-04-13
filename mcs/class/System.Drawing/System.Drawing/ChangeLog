@@ -1,3 +1,10 @@
+2007-04-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Brush.cs: Ensure we're zeroing the handle before calling 
+	CheckStatus. Some clean up.
+	* Pen.cs: Ensure we're zeroing the handle before calling CheckStatus.
+	Use Locale.GetText for exceptions.
+
 2007-04-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Bitmap.cs: Move LockBits validations into unmanaged code.
