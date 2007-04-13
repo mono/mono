@@ -5373,14 +5373,15 @@ namespace System.Windows.Forms {
 			current = insert;
 
 			while (current != null) {
-				
+
 				if (current == insert) {
 					// Inserting the first line we split the line (and make space)
-					document.Split(line, pos);
+					document.Split(line.line_no, pos);
 					//Insert our tags at the end of the line
 					tag = line.tags;
 
-					if (tag != null || tag.length == 0) {
+					
+					if (tag != null && tag.length != 0) {
 						while (tag.next != null) {
 							tag = tag.next;
 						}
@@ -5396,6 +5397,8 @@ namespace System.Windows.Forms {
 						line.tags.previous = null;
 						tag = line.tags;
 					}
+
+					line.ending = current.ending;
 				} else {
 					document.Split(line.line_no, 0);
 					offset = 0;
