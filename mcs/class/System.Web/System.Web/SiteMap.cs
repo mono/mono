@@ -60,12 +60,13 @@ namespace System.Web {
 		}
 		
 		public static SiteMapNode CurrentNode { 
-			get { return Provider.CurrentNode; }
+			get { return FindCurrentNode (); }
 		}
 
 		public static SiteMapNode RootNode { 
 			get { return Provider.RootNode; }
 		}
+
 		
 		public static SiteMapProvider Provider {
 			get {
@@ -90,6 +91,20 @@ namespace System.Web {
 				SiteMapSection section = (SiteMapSection) WebConfigurationManager.GetSection ("system.web/siteMap");
 				return section.Enabled;
 			}
+		}
+
+		static SiteMapNode FindCurrentNode ()
+		{
+			SiteMapNode node = null;
+
+			foreach(SiteMapProvider provider in SiteMap.Providers) {
+				node = provider.CurrentNode;
+
+				if(node != null)
+					return node;
+			}
+
+			return null;
 		}
 
 #if TARGET_JVM

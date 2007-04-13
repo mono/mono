@@ -1,3 +1,9 @@
+2007-04-13  Marek Habersack  <mhabersack@novell.com>
+
+	* SiteMap.cs: try to look up the current map node in providers
+	other than the current one. Patch from Mike Morano
+	<mmorano@mikeandwan.us>. Fixes bug #81366. 
+
 2007-04-12  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* HttpRequest.cs: fixed Params property to be lazy initialzation
