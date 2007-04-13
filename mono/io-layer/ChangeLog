@@ -1,3 +1,13 @@
+2007-04-13  Dick Porter  <dick@ximian.com>
+
+	* shared.h:
+	* shared.c: Complete the reimplementation of disabling of shared
+	memory, by not allocating sysv semaphores when shm disabling has
+	been requested (either at compile time or run time.)
+
+	* processes.c (CreateProcess): Don't synchronize locking across
+	processes when forking, when shared memory has been disabled.
+
 2007-04-06  Andreas Faerber  <andreas.faerber@web.de>
 
 	* wapi_glob.h:
