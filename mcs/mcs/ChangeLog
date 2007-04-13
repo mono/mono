@@ -1,3 +1,23 @@
+2007-04-13  Martin Baulig  <martin@ximian.com>
+
+	Rewrote implicit reference conversions.  We need to distinguish
+	between implicit reference conversions (13.1.4) and implicit
+	boxing conversions (13.1.5).
+
+	According to the spec, there's an an implicit conversion
+	"From a one-dimensional array-type S[] to IList<T> and base
+	interfaces of this interface, provided there is an implicit
+	reference conversion from S to T."  Note that this does not
+	include boxing conversions.
+
+	* convert.cs
+	(Convert.ImplicitTypeParameterBoxingConversion): New method.
+	(Convert.ImplicitReferenceConversion): Split into
+	ImplicitReferenceConversionCore() and
+	ImplicitBoxingConversionExist().
+	(Convert.ImplicitReferenceConversionExists): Use the new
+	ImplicitReferenceConversionCore() and ImplicitBoxingConversionExists().
+
 2007-04-12  Martin Baulig  <martin@ximian.com>
 
 	* convert.cs (Convert.ImplicitReferenceConversion): Move the
