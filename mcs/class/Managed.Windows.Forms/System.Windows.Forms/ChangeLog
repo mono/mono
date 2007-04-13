@@ -1,3 +1,10 @@
+2007-04-13  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* Control.cs: In WmRButtonUp, send the WM_CONTEXTMENU message to
+	the control after firing the OnMouseUp event, instead of sending
+	the message before the mentioned event. This is so we can match the
+	MS behaviour. Fixes part of #80385.
+
 2007-04-13  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStripItem.cs: Call the RightToLeftChanged event when setting the

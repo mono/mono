@@ -4897,8 +4897,6 @@ namespace System.Windows.Forms
 			pt = new Point(LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()));
 			pt = PointToScreen(pt);
 
-			XplatUI.SendMessage(m.HWnd, Msg.WM_CONTEXTMENU, m.HWnd, (IntPtr)(pt.X + (pt.Y << 16)));
-
 			me = new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()) | MouseButtons.Right, 
 				mouse_clicks, 
 				LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
@@ -4906,6 +4904,8 @@ namespace System.Windows.Forms
 
 			HandleClick(mouse_clicks, me);
 			OnMouseUp (me);
+
+			XplatUI.SendMessage(m.HWnd, Msg.WM_CONTEXTMENU, m.HWnd, (IntPtr)(pt.X + (pt.Y << 16)));
 
 			if (InternalCapture) {
 				InternalCapture = false;
