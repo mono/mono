@@ -1,3 +1,9 @@
+2007-04-13  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStripItemTest.cs: Enable a bunch of tests for recently 
+	implemented properties.
+	* ToolStripManager.cs: Add tests for Merge and RevertMerge.
+
 2007-04-09  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DataGridTextBoxColumnTest.cs: Added IsInEditOrNavigateMode tests.

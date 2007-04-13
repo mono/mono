@@ -45,8 +45,8 @@ namespace MonoTests.System.Windows.Forms
 			ToolStripItem tsi = new NullToolStripItem ();
 
 			Assert.AreEqual (ToolStripItemAlignment.Left, tsi.Alignment, "A1");
-			//Assert.AreEqual (false, tsi.AllowDrop, "A2");
-			//Assert.AreEqual (AnchorStyles.Top | AnchorStyles.Left, tsi.Anchor, "A3");
+			Assert.AreEqual (false, tsi.AllowDrop, "A2");
+			Assert.AreEqual (AnchorStyles.Top | AnchorStyles.Left, tsi.Anchor, "A3");
 			Assert.AreEqual (true, tsi.AutoSize, "A4");
 			Assert.AreEqual (false, tsi.AutoToolTip, "A5");
 			Assert.AreEqual (true, tsi.Available, "A6");
@@ -69,12 +69,12 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (string.Empty, tsi.ImageKey, "A22-1");
 			Assert.AreEqual (ToolStripItemImageScaling.SizeToFit, tsi.ImageScaling, "A23");
 			Assert.AreEqual (Color.Empty, tsi.ImageTransparentColor, "A24");
-			//Assert.AreEqual (false, tsi.IsDisposed, "A25");
+			Assert.AreEqual (false, tsi.IsDisposed, "A25");
 			Assert.AreEqual (false, tsi.IsOnDropDown, "A26");
 			Assert.AreEqual (false, tsi.IsOnOverflow, "A27");
 			Assert.AreEqual (new Padding(0,1,0,2), tsi.Margin, "A28");
-			//Assert.AreEqual (MergeAction.Append, tsi.MergeAction, "A29");
-			//Assert.AreEqual (-1, tsi.MergeIndex, "A30");
+			Assert.AreEqual (MergeAction.Append, tsi.MergeAction, "A29");
+			Assert.AreEqual (-1, tsi.MergeIndex, "A30");
 			Assert.AreEqual (string.Empty, tsi.Name, "A31");
 			Assert.AreEqual (ToolStripItemOverflow.AsNeeded, tsi.Overflow, "A32");
 			Assert.AreEqual (null, tsi.Owner, "A33");
@@ -82,8 +82,8 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (new Padding(0), tsi.Padding, "A35");
 			Assert.AreEqual (ToolStripItemPlacement.None, tsi.Placement, "A36");
 			Assert.AreEqual (false, tsi.Pressed, "A37");
-			//Assert.AreEqual (RightToLeft.Inherit, tsi.RightToLeft, "A38");
-			//Assert.AreEqual (false, tsi.RightToLeftAutoMirrorImage, "A39");
+			Assert.AreEqual (RightToLeft.Inherit, tsi.RightToLeft, "A38");
+			Assert.AreEqual (false, tsi.RightToLeftAutoMirrorImage, "A39");
 			Assert.AreEqual (false, tsi.Selected, "A40");
 			Assert.AreEqual (new Size (23,23), tsi.Size, "A41");
 			Assert.AreEqual (null, tsi.Tag, "A42");
@@ -151,20 +151,20 @@ namespace MonoTests.System.Windows.Forms
 			tsi.Alignment = (ToolStripItemAlignment) 42;
 		}
 
-		//[Test]
-		//public void PropertyAllowDrop ()
-		//{
-		//        ToolStripItem tsi = new NullToolStripItem ();
-		//        EventWatcher ew = new EventWatcher (tsi);
-			
-		//        tsi.AllowDrop = true;
-		//        Assert.AreEqual (true, tsi.AllowDrop, "B1");
-		//        Assert.AreEqual (string.Empty, ew.ToString (), "B2");
-			
-		//        ew.Clear ();
-		//        tsi.AllowDrop = true;
-		//        Assert.AreEqual (string.Empty, ew.ToString (), "B3");
-		//}
+		[Test]
+		public void PropertyAllowDrop ()
+		{
+			ToolStripItem tsi = new NullToolStripItem ();
+			EventWatcher ew = new EventWatcher (tsi);
+
+			tsi.AllowDrop = true;
+			Assert.AreEqual (true, tsi.AllowDrop, "B1");
+			Assert.AreEqual (string.Empty, ew.ToString (), "B2");
+
+			ew.Clear ();
+			tsi.AllowDrop = true;
+			Assert.AreEqual (string.Empty, ew.ToString (), "B3");
+		}
 
 		[Test]
 		public void PropertyAutoSize ()
@@ -419,20 +419,20 @@ namespace MonoTests.System.Windows.Forms
 			tsi.ImageIndex = -2;
 		}
 
-		//[Test]
-		//public void PropertyImageKey ()
-		//{
-		//        ToolStripItem tsi = new NullToolStripItem ();
-		//        EventWatcher ew = new EventWatcher (tsi);
+		[Test]
+		public void PropertyImageKey ()
+		{
+			ToolStripItem tsi = new NullToolStripItem ();
+			EventWatcher ew = new EventWatcher (tsi);
 
-		//        tsi.ImageKey = "open";
-		//        Assert.AreEqual ("open", tsi.ImageKey, "B1");
-		//        Assert.AreEqual (string.Empty, ew.ToString (), "B2");
+			tsi.ImageKey = "open";
+			Assert.AreEqual ("open", tsi.ImageKey, "B1");
+			Assert.AreEqual (string.Empty, ew.ToString (), "B2");
 
-		//        ew.Clear ();
-		//        tsi.ImageKey = "open";
-		//        Assert.AreEqual (string.Empty, ew.ToString (), "B3");
-		//}
+			ew.Clear ();
+			tsi.ImageKey = "open";
+			Assert.AreEqual (string.Empty, ew.ToString (), "B3");
+		}
 
 		[Test]
 		public void PropertyImageScaling ()
@@ -479,43 +479,43 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (string.Empty, ew.ToString (), "B3");
 		}
 
-		//[Test]
-		//public void PropertyMergeAction ()
-		//{
-		//        ToolStripItem tsi = new NullToolStripItem ();
-		//        EventWatcher ew = new EventWatcher (tsi);
+		[Test]
+		public void PropertyMergeAction ()
+		{
+			ToolStripItem tsi = new NullToolStripItem ();
+			EventWatcher ew = new EventWatcher (tsi);
 
-		//        tsi.MergeAction = MergeAction.Replace;
-		//        Assert.AreEqual (MergeAction.Replace, tsi.MergeAction, "B1");
-		//        Assert.AreEqual (string.Empty, ew.ToString (), "B2");
+			tsi.MergeAction = MergeAction.Replace;
+			Assert.AreEqual (MergeAction.Replace, tsi.MergeAction, "B1");
+			Assert.AreEqual (string.Empty, ew.ToString (), "B2");
 
-		//        ew.Clear ();
-		//        tsi.MergeAction = MergeAction.Replace;
-		//        Assert.AreEqual (string.Empty, ew.ToString (), "B3");
-		//}
+			ew.Clear ();
+			tsi.MergeAction = MergeAction.Replace;
+			Assert.AreEqual (string.Empty, ew.ToString (), "B3");
+		}
 
-		//[Test]
-		//[ExpectedException (typeof (System.ComponentModel.InvalidEnumArgumentException))]
-		//public void PropertyMergeActionIEAE ()
-		//{
-		//        ToolStripItem tsi = new NullToolStripItem ();
-		//        tsi.MergeAction = (MergeAction)42;
-		//}
+		[Test]
+		[ExpectedException (typeof (InvalidEnumArgumentException))]
+		public void PropertyMergeActionIEAE ()
+		{
+			ToolStripItem tsi = new NullToolStripItem ();
+			tsi.MergeAction = (MergeAction)42;
+		}
 
-		//[Test]
-		//public void PropertyMergeIndex ()
-		//{
-		//        ToolStripItem tsi = new NullToolStripItem ();
-		//        EventWatcher ew = new EventWatcher (tsi);
+		[Test]
+		public void PropertyMergeIndex ()
+		{
+			ToolStripItem tsi = new NullToolStripItem ();
+			EventWatcher ew = new EventWatcher (tsi);
 
-		//        tsi.MergeIndex = 42;
-		//        Assert.AreEqual (42, tsi.MergeIndex, "B1");
-		//        Assert.AreEqual (string.Empty, ew.ToString (), "B2");
+			tsi.MergeIndex = 42;
+			Assert.AreEqual (42, tsi.MergeIndex, "B1");
+			Assert.AreEqual (string.Empty, ew.ToString (), "B2");
 
-		//        ew.Clear ();
-		//        tsi.MergeIndex = 42;
-		//        Assert.AreEqual (string.Empty, ew.ToString (), "B3");
-		//}
+			ew.Clear ();
+			tsi.MergeIndex = 42;
+			Assert.AreEqual (string.Empty, ew.ToString (), "B3");
+		}
 
 		[Test]
 		public void PropertyName ()
@@ -586,35 +586,35 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (string.Empty, ew.ToString (), "B3");
 		}
 
-		//[Test]
-		//public void PropertyRightToLeft ()
-		//{
-		//        ToolStripItem tsi = new NullToolStripItem ();
-		//        EventWatcher ew = new EventWatcher (tsi);
+		[Test]
+		public void PropertyRightToLeft ()
+		{
+			ToolStripItem tsi = new NullToolStripItem ();
+			EventWatcher ew = new EventWatcher (tsi);
 
-		//        tsi.RightToLeft = RightToLeft.No;
-		//        Assert.AreEqual (RightToLeft.No, tsi.RightToLeft, "B1");
-		//        Assert.AreEqual ("RightToLeftChanged", ew.ToString (), "B2");
+			tsi.RightToLeft = RightToLeft.No;
+			Assert.AreEqual (RightToLeft.No, tsi.RightToLeft, "B1");
+			Assert.AreEqual ("RightToLeftChanged", ew.ToString (), "B2");
 
-		//        ew.Clear ();
-		//        tsi.RightToLeft = RightToLeft.No;
-		//        Assert.AreEqual (string.Empty, ew.ToString (), "B3");
-		//}
+			ew.Clear ();
+			tsi.RightToLeft = RightToLeft.No;
+			Assert.AreEqual (string.Empty, ew.ToString (), "B3");
+		}
 
-		//[Test]
-		//public void PropertyRightToLeftAutoMirrorImage ()
-		//{
-		//        ToolStripItem tsi = new NullToolStripItem ();
-		//        EventWatcher ew = new EventWatcher (tsi);
+		[Test]
+		public void PropertyRightToLeftAutoMirrorImage ()
+		{
+			ToolStripItem tsi = new NullToolStripItem ();
+			EventWatcher ew = new EventWatcher (tsi);
 
-		//        tsi.RightToLeftAutoMirrorImage = true;
-		//        Assert.AreEqual (true, tsi.RightToLeftAutoMirrorImage, "B1");
-		//        Assert.AreEqual (string.Empty, ew.ToString (), "B2");
+			tsi.RightToLeftAutoMirrorImage = true;
+			Assert.AreEqual (true, tsi.RightToLeftAutoMirrorImage, "B1");
+			Assert.AreEqual (string.Empty, ew.ToString (), "B2");
 
-		//        ew.Clear ();
-		//        tsi.RightToLeftAutoMirrorImage = true;
-		//        Assert.AreEqual (string.Empty, ew.ToString (), "B3");
-		//}
+			ew.Clear ();
+			tsi.RightToLeftAutoMirrorImage = true;
+			Assert.AreEqual (string.Empty, ew.ToString (), "B3");
+		}
 
 		[Test]
 		public void PropertySize ()
@@ -790,7 +790,7 @@ namespace MonoTests.System.Windows.Forms
 		//}
 		
 		[Test]
-		[Ignore ("Accessibility still needs some work")]
+		[NUnit.Framework.Category ("NotWorking")]	// Accessibility still needs some work
 		public void Accessibility ()
 		{
 			ToolStrip ts = new ToolStrip ();
@@ -1175,7 +1175,7 @@ namespace MonoTests.System.Windows.Forms
 				tsi.Paint += new PaintEventHandler (delegate (Object obj, PaintEventArgs e) { events += ("Paint;"); });
 				//tsi.QueryAccessibilityHelp += new QueryAccessibilityHelpEventHandler (delegate (Object obj, QueryAccessibilityHelpEventArgs e) { events += ("QueryAccessibilityHelp;"); });
 				//tsi.QueryContinueDrag += new QueryContinueDragEventHandler (delegate (Object obj, QueryContinueDragEventArgs e) { events += ("QueryContinueDrag;"); });
-				//tsi.RightToLeftChanged += new EventHandler (delegate (Object obj, EventArgs e) { events += ("RightToLeftChanged;"); });
+				tsi.RightToLeftChanged += new EventHandler (delegate (Object obj, EventArgs e) { events += ("RightToLeftChanged;"); });
 				tsi.TextChanged += new EventHandler (delegate (Object obj, EventArgs e) { events += ("TextChanged;"); });
 				tsi.VisibleChanged += new EventHandler (delegate (Object obj, EventArgs e) { events += ("VisibleChanged;"); });
 			}
