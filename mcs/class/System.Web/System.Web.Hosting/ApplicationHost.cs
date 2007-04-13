@@ -60,16 +60,61 @@ namespace System.Web.Hosting {
 #if NET_2_0
 		static object create_dir = new object ();
 #endif
+
+		static bool ClearDynamicBaseDirectory (string directory)
+		{
+			string[] entries = null;
+			
+			try {
+				entries = Directory.GetDirectories (directory);
+			} catch {
+				// ignore
+			}
+
+			bool dirEmpty = true;
+			if (entries != null && entries.Length > 0) {
+				foreach (string e in entries) {
+					if (ClearDynamicBaseDirectory (e)) {
+						try {
+							Directory.Delete (e);
+						} catch {
+							dirEmpty = false;
+						}
+					}
+				}
+			}
+
+			try {
+				entries = Directory.GetFiles (directory);
+			} catch {
+				entries = null;
+			}
+
+			if (entries != null && entries.Length > 0) {
+				foreach (string e in entries) {
+					try {
+						File.Delete (e);
+					} catch {
+						dirEmpty = false;
+					}
+				}
+			}
+
+			return dirEmpty;
+		}
 		
-		static void CreateDirectory (string directory)
+		static bool CreateDirectory (string directory)
 		{
 #if NET_2_0
 			lock (create_dir) {
-				if (!Directory.Exists (directory))
+#endif
+				if (!Directory.Exists (directory)) {
 					Directory.CreateDirectory (directory);
+					return false;
+				} else
+					return true;
+#if NET_2_0
 			}
-#else
-			Directory.CreateDirectory (directory);
 #endif
 		}
 
@@ -148,7 +193,10 @@ namespace System.Web.Hosting {
 
 			setup.ApplicationName = domain_id;
 			setup.DynamicBase = dynamic_dir;
-			CreateDirectory (setup.DynamicBase);
+
+			string dynamic_base = setup.DynamicBase;
+			if (CreateDirectory (dynamic_base) && (Environment.GetEnvironmentVariable ("MONO_ASPNET_NODELETE") == null))
+				ClearDynamicBaseDirectory (dynamic_base);
 
 			//
 			// Create app domain

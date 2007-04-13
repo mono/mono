@@ -1,3 +1,8 @@
+2007-04-13  Marek Habersack  <mhabersack@novell.com>
+
+	* ApplicationHost.cs: clear the dynamic base directory before
+	creating the host. Fixes bug #80635
+
 2007-04-05  Marek Habersack  <mhabersack@novell.com>
 
 	* ApplicationHost.cs: make ApplicationName/domain id really
