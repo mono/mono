@@ -1,3 +1,8 @@
+2007-04-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Theme.cs: Update GetMethod to get the new definition for 
+	KnownColors.Update (and fix theme color updates).
+
 2007-04-12  Everaldo Canuto  <everaldo@simios.org>
 
 	* MessageBox.cs: Fix some test and button position.

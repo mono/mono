@@ -209,7 +209,7 @@ namespace System.Windows.Forms
 			if (update == null) {
 				Type known_colors = Type.GetType ("System.Drawing.KnownColors, " + Consts.AssemblySystem_Drawing);
 				if (known_colors != null)
-					update = known_colors.GetMethod ("UpdateColor", BindingFlags.Static | BindingFlags.NonPublic);
+					update = known_colors.GetMethod ("Update", BindingFlags.Static | BindingFlags.Public);
 			}
 			if (update != null)
 				update.Invoke (null, new object [2] { (int)kc, value.ToArgb () });
