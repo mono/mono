@@ -1,3 +1,8 @@
+2007-04-14  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile.am (BUILT_SOURCES): Add 'version.h'.
+	(version.h): Makefile is in the build directory.
+
 2007-04-06  Andreas Faerber  <andreas.faerber@web.de>
 
 	* mini-amd64.h: fix for assertion failure on Solaris/amd64
