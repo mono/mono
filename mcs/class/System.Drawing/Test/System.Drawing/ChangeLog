@@ -1,3 +1,8 @@
+2007-04-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TestBitmap.cs: Always test buffer byte-by-byte to avoid endian 
+	issues.
+
 2007-04-12  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TestBitmap.cs: Rework a test under 2.0 to see if GdipLockBits leaks

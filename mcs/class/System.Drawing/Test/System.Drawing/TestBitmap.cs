@@ -901,15 +901,11 @@ namespace MonoTests.System.Drawing {
 
 				data = bmp.LockBits (new Rectangle (0, 0, 1, 1), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
 
-				// Marshal follows CPU endianess
-				if (BitConverter.IsLittleEndian) {
-					pixel_value = Marshal.ReadInt32 (data.Scan0);
-				} else {
-					pixel_value = Marshal.ReadByte (data.Scan0, 0);
-					pixel_value |= Marshal.ReadByte (data.Scan0, 1) << 8;
-					pixel_value |= Marshal.ReadByte (data.Scan0, 2) << 16;
-					pixel_value |= Marshal.ReadByte (data.Scan0, 3) << 24;
-				}
+				pixel_value = Marshal.ReadByte (data.Scan0, 0);
+				pixel_value |= Marshal.ReadByte (data.Scan0, 1) << 8;
+				pixel_value |= Marshal.ReadByte (data.Scan0, 2) << 16;
+				pixel_value |= Marshal.ReadByte (data.Scan0, 3) << 24;
+
 				pixel_colour = Color.FromArgb (pixel_value);
 
 				// Disregard alpha information in the test
