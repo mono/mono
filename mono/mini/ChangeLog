@@ -1,3 +1,7 @@
+2007-04-15  Neale Ferguson <neale@sinenomine.net>
+
+	* mini-s390.c: Correct checking for enum type in return value processing.
+
 2007-04-14  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile.am (BUILT_SOURCES): Add 'version.h'.
