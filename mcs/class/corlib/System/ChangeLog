@@ -1,5 +1,10 @@
 2007-04-15  Alp Toker  <alp@atoker.com>
 
+	* Activator.cs: CreateInstance(Type,object[]) was not params before
+	2.0.
+
+2007-04-15  Alp Toker  <alp@atoker.com>
+
 	* NonSerializedAttribute.cs: Inherited=false in 2.0.
 
 2007-04-05  Dick Porter  <dick@ximian.com>

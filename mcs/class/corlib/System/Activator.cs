@@ -161,7 +161,11 @@ namespace System
 			return CreateInstance (type, false);
 		}
 
+#if NET_2_0
 		public static object CreateInstance (Type type, params object [] args)
+#else
+		public static object CreateInstance (Type type, object [] args)
+#endif
 		{
 			return CreateInstance (type, args, new object [0]);
 		}
