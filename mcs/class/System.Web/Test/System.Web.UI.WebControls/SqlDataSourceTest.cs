@@ -42,6 +42,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Collections;
 using System.Text;
+using System.Data;
 
 namespace MonoTests.System.Web.UI.WebControls
 {
@@ -224,6 +225,30 @@ namespace MonoTests.System.Web.UI.WebControls
 		// Help parameter for Asserts
 		private static SqlParameterCollection CustomEventParameterCollection;
 		private static string PassedParameters;
+
+		[Test]
+		public void ReturnValueParameter ()
+		{
+			SqlPoker sql = new SqlPoker ();
+			sql.ConnectionString = "Data Source=fake\\SQLEXPRESS;Initial Catalog=Northwind;User ID=sa";
+			sql.ProviderName = "System.Data.SqlClient";
+			CustomSqlDataSourceView view = new CustomSqlDataSourceView (sql, "TestView", null);
+			view.SelectCommandType = SqlDataSourceCommandType.Text;
+			view.SelectCommand = "SELECT * FROM products WHERE ProductID = @ProductID;";
+			view.OldValuesParameterFormatString = "origin_{0}";
+
+			view.SelectParameters.Add (new Parameter ("ProductID", TypeCode.Int32, "10"));
+			Parameter myReturn = new Parameter ("myReturn", TypeCode.Int32);
+			myReturn.Direction = ParameterDirection.ReturnValue;
+			view.SelectParameters.Add (myReturn);
+			
+			view.Selecting += new SqlDataSourceSelectingEventHandler (view_Selecting);
+			view.Select (new DataSourceSelectArguments ());
+			
+			Assert.IsNotNull (CustomEventParameterCollection, "Select event not fired");
+			Assert.AreEqual (2, CustomEventParameterCollection.Count, "Parameter count");
+			Assert.IsNotNull (CustomEventParameterCollection ["@myReturn"], "Parameter name");
+		}
 		
 		[Test]
 		public void ExecuteSelect ()

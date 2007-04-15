@@ -1,5 +1,10 @@
 2007-04-12 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* SqlDataSourceView.cs: fixed: InitializeParameters:
+	restored flow, broken in r75137.
+
+2007-04-12 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* Menu.cs: popup menu is posed correctly if menu is placed within 
 	container with position=relative
 

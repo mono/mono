@@ -416,17 +416,15 @@ namespace System.Web.UI.WebControls {
 					valueName = FormatOldParameter (parameterName);
 				}
 
-				if (value == null) {
-					value = parameterValues [parameterName];
-					valueName = parameterName;
-				}
-
 				if (value != null) {
 					object dbValue = p.ConvertValue (value);
 					DbParameter newParameter = CreateDbParameter (valueName, dbValue, p.Direction, p.Size);
 					if (!command.Parameters.Contains (newParameter.ParameterName)) {
 						command.Parameters.Add (newParameter);
 					}
+				}
+				else {
+					command.Parameters.Add (CreateDbParameter (p.Name, parameterValues [parameterName], p.Direction, p.Size));
 				}
 			}
 
