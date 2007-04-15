@@ -1,5 +1,9 @@
 2007-04-15  Alp Toker  <alp@atoker.com>
 
+	* Decimal.cs: Provide 2.0 Round() overloads using System.Math.
+
+2007-04-15  Alp Toker  <alp@atoker.com>
+
 	* Activator.cs: CreateInstance(Type,object[]) was not params before
 	2.0.
 

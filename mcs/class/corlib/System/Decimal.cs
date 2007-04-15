@@ -588,6 +588,27 @@ namespace System
 		return result;
         }
 
+#if NET_2_0
+        public static Decimal Round (Decimal d)
+        {
+          return Math.Round (d);
+        }
+
+        //Remove MonoTODO when the corresponding Math method is implemented
+        [MonoTODO ("Not implemented")]
+        public static Decimal Round (Decimal d, MidpointRounding mode)
+        {
+          return Math.Round (d, mode);
+        }
+
+        //Remove MonoTODO when the corresponding Math method is implemented
+        [MonoTODO ("Not implemented")]
+        public static Decimal Round (Decimal d, int decimals, MidpointRounding mode)
+        {
+          return Math.Round (d, decimals, mode);
+        }
+#endif
+
         public static Decimal Multiply (Decimal d1, Decimal d2) 
         {
 		if (d1.IsZero () || d2.IsZero ())
