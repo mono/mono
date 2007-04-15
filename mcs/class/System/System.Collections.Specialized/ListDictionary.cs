@@ -55,19 +55,16 @@ namespace System.Collections.Specialized
 				throw new ArgumentNullException ("key", "Attempted lookup for a null key.");
 
 			DictionaryNode entry = head;
-			DictionaryNode prev = null;
 			if (comparer == null) {
 				while (entry != null) {
 					if (key.Equals (entry.key))
 						break;
-					prev = entry;
 					entry = entry.next;
 				}
 			} else {
 				while (entry != null) {
 					if (comparer.Compare (key, entry.key) == 0)
 						break;
-					prev = entry;
 					entry = entry.next;
 				}
 			}

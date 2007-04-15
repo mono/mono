@@ -1,3 +1,7 @@
+2007-04-15  Marek Safar  <marek.safar@gmail.com>
+
+	* ListDictionary: Removed not used variable.
+
 2007-03-27  Alan McGovern  <alan.mcgovern@gmail.com>
 
 	* BitVector32.cs: Bugfix for op_inequality.
