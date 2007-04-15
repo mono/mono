@@ -131,7 +131,7 @@ namespace System.Reflection.Emit {
 		public override Type DeclaringType { get {return type;}}
 		public Type ReturnType { get {return null;}}
 		public override string Name { 
-			get {return (attrs & MethodAttributes.Static) != 0 ? ".cctor" : ".ctor";}
+			get {return (attrs & MethodAttributes.Static) != 0 ? ConstructorInfo.TypeConstructorName : ConstructorInfo.ConstructorName;}
 		}
 		public string Signature {
 			get {return "constructor signature";}

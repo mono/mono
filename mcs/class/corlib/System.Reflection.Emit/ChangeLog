@@ -1,3 +1,8 @@
+2007-04-15  Alp Toker  <alp@atoker.com>
+
+	* ConstructorBuilder.cs: Make use of
+	ConstructorInfo.TypeConstructorName/ConstructorName.
+
 2007-04-09  Alp Toker  <alp@atoker.com>
 
 	* ConstructorBuilder.cs: Remove redundant overrides.
