@@ -508,11 +508,9 @@ namespace System.Web.UI {
 			return HttpContext.GetGlobalResourceObject (className, resourceKey);
 		}
 
-		[MonoTODO ("Not implemented")]
 		protected object GetGlobalResourceObject (string className, string resourceKey, Type objType, string propName)
 		{
-			// FIXME: not sure how to implement that one yet
-			throw new NotSupportedException ();
+			return ConvertResource (GetGlobalResourceObject (className, resourceKey), objType, propName);
 		}
 
 		protected Object GetLocalResourceObject (string resourceKey)
@@ -520,11 +518,26 @@ namespace System.Web.UI {
 			return HttpContext.GetLocalResourceObject (Context.Request.Path, resourceKey);
 		}
 
-		[MonoTODO ("Not implemented")]
 		protected Object GetLocalResourceObject (string resourceKey, Type objType, string propName)
 		{
-			// FIXME: not sure how to implement that one yet
-			throw new NotSupportedException ();
+			return ConvertResource (GetLocalResourceObject (resourceKey), objType, propName);
+		}
+
+		static Object ConvertResource (Object resource, Type objType, string propName) {
+			if (resource == null)
+				return resource;
+
+			PropertyDescriptor pdesc = TypeDescriptor.GetProperties (objType) [propName];
+			if (pdesc == null)
+				return resource;
+
+			TypeConverter converter = pdesc.Converter;
+			if (converter == null)
+				return resource;
+
+			return resource is string ?
+				converter.ConvertFromInvariantString ((string) resource) :
+				converter.ConvertFrom (resource);
 		}
 
 #endif
