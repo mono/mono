@@ -121,7 +121,7 @@ namespace System.Web.Compilation
 			
 			// First make sure all the files are in the same
 			// language
-			bool known;
+			bool known = false, unknown = false;
 			foreach (string f in files) {
 				known = true;
 				language = null;
@@ -206,8 +206,12 @@ namespace System.Web.Compilation
 					if (bprovider == null)
 						continue;
 					bprovider.GenerateCode (abuilder);
+					unknown = true;
 				}
 			}
+
+			if (!known && !unknown)
+				return;
 			
 			outputAssemblyName = (string)FileUtils.CreateTemporaryFile (
 				AppDomain.CurrentDomain.SetupInformation.DynamicBase,

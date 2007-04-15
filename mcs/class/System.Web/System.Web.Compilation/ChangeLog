@@ -2,6 +2,7 @@
 
 	* AppCodeCompiler.cs: properly convert physical file path to
 	virtual path for build providers.
+	Make sure there's actually anything to compile.
 
 2007-04-11  Marek Habersack  <mhabersack@novell.com>
 
