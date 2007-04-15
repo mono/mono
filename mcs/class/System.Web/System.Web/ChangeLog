@@ -1,3 +1,8 @@
+2007-04-15  Marek Habersack  <mhabersack@novell.com>
+
+	* VirtualPathUtility.cs: converted to LF line endings and set the
+	svn:eol-style property to 'native'
+
 2007-04-13  Marek Habersack  <mhabersack@novell.com>
 
 	* SiteMap.cs: try to look up the current map node in providers

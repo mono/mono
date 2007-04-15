@@ -227,6 +227,11 @@ namespace System.Web.Compilation
 			}
 		}
 
+		private string PhysicalToVirtual (string file)
+		{
+			return file.Replace (HttpRuntime.AppDomainAppPath, "/").Replace (Path.DirectorySeparatorChar, '/');
+		}
+		
 		private BuildProvider GetBuildProviderFor (string file, BuildProviderCollection buildProviders)
 		{
 			if (file == null || file.Length == 0 || buildProviders == null || buildProviders.Count == 0)
@@ -234,7 +239,7 @@ namespace System.Web.Compilation
 
 			BuildProvider ret = buildProviders.GetProviderForExtension (Path.GetExtension (file));
 			if (ret != null && IsCorrectBuilderType (ret)) {
-				ret.SetVirtualPath (VirtualPathUtility.ToAppRelative (file));
+				ret.SetVirtualPath (PhysicalToVirtual (file));
 				return ret;
 			}
 				
