@@ -1,3 +1,8 @@
+2007-04-15  Marek Habersack  <mhabersack@novell.com>
+
+	* SectionGroupInfo.cs: another incarnation of the fix for bug
+	#81321.
+
 2007-04-12  Marek Habersack  <mhabersack@novell.com>
 
 	* SectionGroupInfo.cs: a better fix for #81321

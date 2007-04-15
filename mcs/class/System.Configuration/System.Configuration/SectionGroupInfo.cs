@@ -280,13 +280,8 @@ namespace System.Configuration
 		
 		void ReadContent (XmlTextReader reader, Configuration config, bool overrideAllowed, bool root)
 		{
-			if (reader.IsEmptyElement) {
-				reader.Skip ();
-				return;
-			}
-			
 			StringBuilder spacing = new StringBuilder ();
-			while (reader.NodeType != XmlNodeType.EndElement) {
+			while (reader.NodeType != XmlNodeType.EndElement && reader.NodeType != XmlNodeType.None) {
 				if (reader.NodeType != XmlNodeType.Element) {
 					if (reader.NodeType == XmlNodeType.Whitespace)
 						spacing.Append (reader.Value);
@@ -318,10 +313,13 @@ namespace System.Configuration
 					}
 					continue;
 				}
-
 				
+				if (reader.IsEmptyElement) {
+					reader.Skip ();
+					continue;
+				}
+			
 				ConfigInfo data = GetConfigInfo (reader, this);
-
 				if (data != null)
 					data.ReadData (config, reader, overrideAllowed);
 				else
@@ -336,7 +334,7 @@ namespace System.Configuration
 				data = current.sections [reader.LocalName];
 			if (data != null)
 				return data;
-			if (current.groups != null) 
+			if (current.groups != null)
 				data = current.groups [reader.LocalName];
 			if (data != null)
 				return data;
@@ -348,6 +346,7 @@ namespace System.Configuration
 				if (data != null)
 					return data;
 			}
+			
 			// It might be in the root section group
 			return null;
 		}
