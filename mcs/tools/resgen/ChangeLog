@@ -1,3 +1,7 @@
+2007-04-15  Marek Safar  <marek.safar@gmail.com>
+
+	* monoresgen.cs: Use invariant ToLower.
+
 2007-02-16  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* monoresgen.cs: Added support for /useSourcePath option (2.0 only).

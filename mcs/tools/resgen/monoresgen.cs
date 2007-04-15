@@ -76,7 +76,7 @@ the output file name (if not set).";
 	
 	static IResourceReader GetReader (Stream stream, string name, bool useSourcePath) {
 		string format = Path.GetExtension (name);
-		switch (format.ToLower ()) {
+		switch (format.ToLower (System.Globalization.CultureInfo.InvariantCulture)) {
 		case ".po":
 			return new PoResourceReader (stream);
 		case ".txt":
