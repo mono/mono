@@ -1,3 +1,25 @@
+2007-04-15  Andreia Gaita  <avidigal@novell.com>
+
+	* TabControl.cs: Refactored sizing methods to not repeat
+	code all over the place. Tab bounds are now calculated
+	as if alignment is top and single line, and only when 
+	setting the bounds are the positions adjusted according
+	to alignment. Replaced hardcoded positions, spacings and
+	paddings by getting the values the ThemeEngine. 
+	Fixes #79619.
+	
+	* Theme.cs: Change TabControl properties and methods so
+	that all start with TabControl*. Added more properties
+	to help remove hardcoded values on tabcontrol.
+	Add CPDrawBorder3D declaration so the Theming classes
+	can access it.
+	
+	* ThemeClearlooks.cs, ThemeNice.cs: Method signature changes from Theme.
+
+	* ThemeWin32Classic.cs: Rector TabControl out to the TabControlPainter
+	on the Theming namespace, and call the appropriate methods here.
+	Change CPDrawBorder3D to public.
+
 2007-04-13  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* Control.cs: In WmRButtonUp, send the WM_CONTEXTMENU message to

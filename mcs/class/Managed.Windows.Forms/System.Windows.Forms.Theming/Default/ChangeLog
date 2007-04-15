@@ -1,0 +1,17 @@
+2007-04-15  Andreia Gaita  <avidigal@novell.com>
+
+	* ButtonPainter.cs: refactoring of the button drawing
+	that was originally located in ThemeElementsDefault
+	
+	* TabControlPainter.cs: refactoring of the tabcontrol
+	drawing code originally located in the ThemeWin32Classic.
+	Also, fixes and changes:
+		- replaced most hardcoded values with properties to 
+		make it easier to customize implementations.
+		- fixed left and right alignment drawing problems
+		- fixed flatbutton border drawing on left and
+		right alignment
+		- fixed #79619
+		- fixed paddings, spacings and positioning.
+
+	

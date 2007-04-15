@@ -20,31 +20,24 @@
 // Copyright (c) 2007 Novell, Inc.
 //
 // Authors:
-//	Jonathan Pobst (monkey@jpobst.com)
 //	Andreia Gaita (avidigal@novell.com)
 
 using System;
 
 namespace System.Windows.Forms.Theming
 {
-	internal class ThemeElementsDefault
+	internal class ThemeElementsNice: ThemeElementsDefault
 	{
-		protected Default.TabControlPainter tabControlPainter;
-		public virtual Default.TabControlPainter TabControlPainter {
+		/* If we want to add a custom-themed control, add an override here
+		 * like this: 
+		 
+		public override Default.TabControlPainter TabControlPainter	{
 			get {
 				if (tabControlPainter == null)
-					tabControlPainter = new Default.TabControlPainter ();
+					tabControlPainter = (Default.TabControlPainter) new Nice.TabControlPainter ();
 				return tabControlPainter;
 			}
 		}
-
-		protected Default.ButtonPainter buttonPainter;
-		public virtual Default.ButtonPainter ButtonPainter {
-			get {
-				if (buttonPainter == null)
-					buttonPainter = new Default.ButtonPainter ();
-				return buttonPainter;
-			}
-		}
+		*/
 	}
 }

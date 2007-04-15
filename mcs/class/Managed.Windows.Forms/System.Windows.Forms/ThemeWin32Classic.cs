@@ -4273,315 +4273,87 @@ namespace System.Windows.Forms
 		}
 		#endregion	// StatusBar
 
-		public override void DrawTabControl (Graphics dc, Rectangle area, TabControl tab)
-		{
-			Brush brush = SystemBrushes.Control;
-			dc.FillRectangle (brush, area);
-			Rectangle panel_rect = GetTabPanelRectExt (tab);
+		#region TabControl
 
-			if (tab.Appearance == TabAppearance.Normal) {
-				CPDrawBorder3D (dc, panel_rect, Border3DStyle.RaisedInner, Border3DSide.Left | Border3DSide.Top, ColorControl);
-				CPDrawBorder3D (dc, panel_rect, Border3DStyle.Raised, Border3DSide.Right | Border3DSide.Bottom, ColorControl);
-			}
-
-			if (tab.Alignment == TabAlignment.Top) {
-				for (int r = tab.TabPages.Count; r > 0; r--) {
-					for (int i = tab.SliderPos; i < tab.TabPages.Count; i++) {
-						if (i == tab.SelectedIndex)
-							continue;
-						if (r != tab.TabPages [i].Row)
-							continue;
-						Rectangle rect = tab.GetTabRect (i);
-						if (!rect.IntersectsWith (area))
-							continue;
-						DrawTab (dc, tab.TabPages [i], tab, rect, false);
-					}
-				}
-			} else {
-				for (int r = 0; r < tab.TabPages.Count; r++) {
-					for (int i = tab.SliderPos; i < tab.TabPages.Count; i++) {
-						if (i == tab.SelectedIndex)
-							continue;
-						if (r != tab.TabPages [i].Row)
-							continue;
-						Rectangle rect = tab.GetTabRect (i);
-						if (!rect.IntersectsWith (area))
-							continue;
-						DrawTab (dc, tab.TabPages [i], tab, rect, false);
-					}
-				}
-			}
-
-			if (tab.SelectedIndex != -1 && tab.SelectedIndex >= tab.SliderPos) {
-				Rectangle rect = tab.GetTabRect (tab.SelectedIndex);
-				if (rect.IntersectsWith (area))
-					DrawTab (dc, tab.TabPages [tab.SelectedIndex], tab, rect, true);
-			}
-
-			if (tab.ShowSlider) {
-				Rectangle right = GetTabControlRightScrollRect (tab);
-				Rectangle left = GetTabControlLeftScrollRect (tab);
-				CPDrawScrollButton (dc, right, ScrollButton.Right, tab.RightSliderState);
-				CPDrawScrollButton (dc, left, ScrollButton.Left, tab.LeftSliderState);
-			}
-		}
-
-		public override Rectangle GetTabControlLeftScrollRect (TabControl tab)
-		{
-			switch (tab.Alignment) {
-			case TabAlignment.Top:
-				return new Rectangle (tab.ClientRectangle.Right - 34, tab.ClientRectangle.Top + 1, 17, 17);
-			default:
-				Rectangle panel_rect = GetTabPanelRectExt (tab);
-				return new Rectangle (tab.ClientRectangle.Right - 34, panel_rect.Bottom + 2, 17, 17);
-			}
-		}
-
-		public override Rectangle GetTabControlRightScrollRect (TabControl tab)
-		{
-			switch (tab.Alignment) {
-			case TabAlignment.Top:
-				return new Rectangle (tab.ClientRectangle.Right - 17, tab.ClientRectangle.Top + 1, 17, 17);
-			default:
-				Rectangle panel_rect = GetTabPanelRectExt (tab);
-				return new Rectangle (tab.ClientRectangle.Right - 17, panel_rect.Bottom + 2, 17, 17);
-			}
-		}
+		#region TabControl settings
 
 		public override Size TabControlDefaultItemSize {
-			get { return new Size (42, 21); }
+			get { return ThemeElements.CurrentTheme.TabControlPainter.DefaultItemSize; }
 		}
 
 		public override Point TabControlDefaultPadding {
-			get { return new Point (6, 3); }
+			get { return ThemeElements.CurrentTheme.TabControlPainter.DefaultPadding; }
 		}
 
 		public override int TabControlMinimumTabWidth {
-			get { return 42; }
+			get { return ThemeElements.CurrentTheme.TabControlPainter.MinimumTabWidth; }
 		}
 
-		public override Rectangle GetTabControlDisplayRectangle (TabControl tab)
+		public override Rectangle TabControlSelectedDelta {
+			get { return ThemeElements.CurrentTheme.TabControlPainter.SelectedTabDelta; }
+		}
+
+		public override int TabControlSelectedSpacing {
+			get { return ThemeElements.CurrentTheme.TabControlPainter.SelectedSpacing; }
+		}
+		
+		public override int TabPanelOffsetX {
+			get { return ThemeElements.CurrentTheme.TabControlPainter.TabPanelOffset.X; }
+		}
+		
+		public override int TabPanelOffsetY {
+			get { return ThemeElements.CurrentTheme.TabControlPainter.TabPanelOffset.Y; }
+		}
+
+		public override int TabControlColSpacing {
+			get { return ThemeElements.CurrentTheme.TabControlPainter.ColSpacing; }
+		}
+
+		public override Point TabControlImagePadding {
+			get { return ThemeElements.CurrentTheme.TabControlPainter.ImagePadding; }
+		}
+
+		public override int TabControlScrollerWidth {
+			get {return ThemeElements.CurrentTheme.TabControlPainter.ScrollerWidth; }
+		}
+
+
+		public override Size TabControlGetSpacing (TabControl tab) 
 		{
-			Rectangle ext = GetTabPanelRectExt (tab);
-			// Account for border size
-			return new Rectangle (ext.Left + 2, ext.Top + 1, ext.Width - 6, ext.Height - 4);
+			try {
+				return ThemeElements.CurrentTheme.TabControlPainter.RowSpacing (tab);
+			} catch {
+				throw new Exception ("Invalid Appearance value: " + tab.Appearance);
+			}
 		}
+		#endregion
 
-		public override Size TabControlGetSpacing (TabControl tab) {
-			switch (tab.Appearance) {
-				case TabAppearance.Normal:
-					return new Size (1, -2);
-				case TabAppearance.Buttons:
-					return new Size (3, 3);
-				case TabAppearance.FlatButtons:
-					return new Size (9, 3);
-				default:
-					throw new Exception ("Invalid Appearance value: " + tab.Appearance);
-				}
-		}
-
-		protected virtual Rectangle GetTabPanelRectExt (TabControl tab)
+		public override void DrawTabControl (Graphics dc, Rectangle area, TabControl tab)
 		{
-			// Offset the tab from the top corner
-			Rectangle res = new Rectangle (tab.ClientRectangle.X + 2,
-					tab.ClientRectangle.Y,
-					tab.ClientRectangle.Width - 2,
-					tab.ClientRectangle.Height - 1);
-
-			if (tab.TabCount == 0)
-				return res;
-
-			int spacing = TabControlGetSpacing (tab).Height;
-			int offset = (tab.ItemSize.Height + spacing) * tab.RowCount + 3;
-
-			switch (tab.Alignment) {
-			case TabAlignment.Left:
-				res.X += offset;
-				res.Width -= offset;
-				break;
-			case TabAlignment.Right:
-				res.Width -= offset;
-				break;
-			case TabAlignment.Top:
-				res.Y += offset;
-				res.Height -= offset;
-				break;
-			case TabAlignment.Bottom:
-				res.Height -= offset;
-				break;
-			}
-
-			return res;
+			ThemeElements.CurrentTheme.TabControlPainter.Draw (dc, area, tab);
 		}
 
-		protected virtual int DrawTab (Graphics dc, TabPage page, TabControl tab, Rectangle bounds, bool is_selected)
+		public override Rectangle TabControlGetLeftScrollRect (TabControl tab)
 		{
-			int FlatButtonSpacing = 8;
-			Rectangle interior;
-			int res = bounds.Width;
-
-			
-			
-			// we can't fill the background right away because the bounds might be adjusted if the tab is selected
-
-			StringFormat string_format = new StringFormat ();
-			if (tab.Appearance == TabAppearance.Buttons || tab.Appearance == TabAppearance.FlatButtons) {
-				dc.FillRectangle (ResPool.GetSolidBrush (tab.BackColor), bounds);
-
-				// Separators
-				if (tab.Appearance == TabAppearance.FlatButtons) {
-					int width = bounds.Width;
-					bounds.Width += (FlatButtonSpacing - 2);
-					res = bounds.Width;
-					CPDrawBorder3D (dc, bounds, Border3DStyle.Etched, Border3DSide.Right);
-					bounds.Width = width;
-				}
-
-				if (is_selected) {
-					CPDrawBorder3D (dc, bounds, Border3DStyle.Sunken, Border3DSide.Left | Border3DSide.Right | Border3DSide.Top | Border3DSide.Bottom);
-				} else if (tab.Appearance != TabAppearance.FlatButtons) {
-					CPDrawBorder3D (dc, bounds, Border3DStyle.Raised, Border3DSide.Left | Border3DSide.Right | Border3DSide.Top | Border3DSide.Bottom);
-				}
-
-				interior = new Rectangle (bounds.Left + 2, bounds.Top + 2, bounds.Width - 4, bounds.Height - 4);
-
-                                
-				string_format.Alignment = StringAlignment.Center;
-				string_format.LineAlignment = StringAlignment.Center;
-				string_format.FormatFlags = StringFormatFlags.NoWrap;
-			} else {
-				CPColor cpcolor = ResPool.GetCPColor (tab.BackColor);
-				
-				Pen light = ResPool.GetPen (cpcolor.LightLight);
-
-				switch (tab.Alignment) {
-					
-				case TabAlignment.Top:
-
-					dc.FillRectangle (ResPool.GetSolidBrush (tab.BackColor), bounds);
-
-					dc.DrawLine (light, bounds.Left, bounds.Bottom, bounds.Left, bounds.Top + 3);
-					dc.DrawLine (light, bounds.Left, bounds.Top + 3, bounds.Left + 3, bounds.Top);
-					dc.DrawLine (light, bounds.Left + 3, bounds.Top, bounds.Right - 3, bounds.Top);
-
-					dc.DrawLine (SystemPens.ControlDark, bounds.Right - 1, bounds.Top + 1, bounds.Right - 1, bounds.Bottom);
-					dc.DrawLine (SystemPens.ControlDarkDark, bounds.Right - 1, bounds.Top + 2, bounds.Right, bounds.Top + 3);
-					dc.DrawLine (SystemPens.ControlDarkDark, bounds.Right, bounds.Top + 3, bounds.Right, bounds.Bottom);
-
-					interior = new Rectangle (bounds.Left + 4, bounds.Top + 4, bounds.Width - 8, bounds.Height - 8);
-
-					string_format.Alignment = StringAlignment.Center;
-					string_format.LineAlignment = StringAlignment.Center;
-					string_format.FormatFlags = StringFormatFlags.NoWrap;
-
-					break;
-
-				case TabAlignment.Bottom:
-
-					dc.FillRectangle (ResPool.GetSolidBrush (tab.BackColor), bounds);
-
-					dc.DrawLine (light, bounds.Left, bounds.Top, bounds.Left, bounds.Bottom - 3);
-					dc.DrawLine (light, bounds.Left, bounds.Bottom - 3, bounds.Left + 2, bounds.Bottom - 1);
-
-					dc.DrawLine (SystemPens.ControlDark, bounds.Left + 3, bounds.Bottom - 1, bounds.Right - 3, bounds.Bottom - 1);
-					dc.DrawLine (SystemPens.ControlDark, bounds.Right - 1, bounds.Bottom - 3, bounds.Right - 1, bounds.Top);
-
-					dc.DrawLine (SystemPens.ControlDarkDark, bounds.Left + 3, bounds.Bottom, bounds.Right - 3, bounds.Bottom);
-					dc.DrawLine (SystemPens.ControlDarkDark, bounds.Right - 3, bounds.Bottom, bounds.Right, bounds.Bottom - 3);
-					dc.DrawLine (SystemPens.ControlDarkDark, bounds.Right, bounds.Bottom - 3, bounds.Right, bounds.Top);
-
-					interior = new Rectangle (bounds.Left + 4, bounds.Top + 4, bounds.Width - 8, bounds.Height - 8);
-
-					string_format.Alignment = StringAlignment.Center;
-					string_format.LineAlignment = StringAlignment.Center;
-					string_format.FormatFlags = StringFormatFlags.NoWrap;
-
-					break;
-
-				case TabAlignment.Left:
-
-					dc.FillRectangle (ResPool.GetSolidBrush (tab.BackColor), bounds);
-
-					dc.DrawLine (light, bounds.Left, bounds.Bottom - 3, bounds.Left, bounds.Top + 3);
-					dc.DrawLine (light, bounds.Left, bounds.Top + 3, bounds.Left + 3, bounds.Top);
-					dc.DrawLine (light, bounds.Left + 3, bounds.Top, bounds.Right, bounds.Top);
-
-					dc.DrawLine (SystemPens.ControlDark, bounds.Right, bounds.Bottom - 1, bounds.Left + 2, bounds.Bottom - 1);
-
-					dc.DrawLine (SystemPens.ControlDarkDark, bounds.Right, bounds.Bottom, bounds.Left + 2, bounds.Bottom);
-					dc.DrawLine (SystemPens.ControlDarkDark, bounds.Left + 2, bounds.Bottom, bounds.Left, bounds.Bottom - 3);
-
-					interior = new Rectangle (bounds.Left + 4, bounds.Top + 4, bounds.Width - 8, bounds.Height - 8);
-
-					string_format.Alignment = StringAlignment.Center;
-					string_format.LineAlignment = StringAlignment.Center;
-					string_format.FormatFlags = StringFormatFlags.NoWrap;
-					string_format.FormatFlags = StringFormatFlags.DirectionVertical;
-
-					break;
-
-				default:
-					// TabAlignment.Right
-
-					dc.FillRectangle (ResPool.GetSolidBrush (tab.BackColor), bounds);
-
-					dc.DrawLine (light, bounds.Left, bounds.Top, bounds.Right - 3, bounds.Top);
-					dc.DrawLine (light, bounds.Right - 3, bounds.Top, bounds.Right, bounds.Top + 3);
-
-					dc.DrawLine (SystemPens.ControlDark, bounds.Right - 1, bounds.Top + 1, bounds.Right - 1, bounds.Bottom - 1);
-					dc.DrawLine (SystemPens.ControlDark, bounds.Left, bounds.Bottom - 1, bounds.Right - 2, bounds.Bottom - 1);
-
-					dc.DrawLine (SystemPens.ControlDarkDark, bounds.Right, bounds.Top + 3, bounds.Right, bounds.Bottom - 3);
-					dc.DrawLine (SystemPens.ControlDarkDark, bounds.Left, bounds.Bottom, bounds.Right - 3, bounds.Bottom);
-
-					interior = new Rectangle (bounds.Left + 4, bounds.Top + 4, bounds.Width - 8, bounds.Height - 8);
-
-					string_format.Alignment = StringAlignment.Center;
-					string_format.LineAlignment = StringAlignment.Center;
-					string_format.FormatFlags = StringFormatFlags.NoWrap;
-					string_format.FormatFlags = StringFormatFlags.DirectionVertical;
-
-					break;
-				}
-			}
-
-			if (tab.DrawMode == TabDrawMode.Normal && page.Text != null) {
-				if (tab.Alignment == TabAlignment.Left) {
-					int wo = interior.Width / 2;
-					int ho = interior.Height / 2;
-					dc.TranslateTransform (interior.X + wo, interior.Y + ho);
-					dc.RotateTransform (180);
-					dc.DrawString (page.Text, page.Font, SystemBrushes.ControlText, 0, 0, string_format);
-					dc.ResetTransform ();
-				} else {
-					Rectangle str_rect = interior;
-
-					if (tab.ImageList != null && page.ImageIndex >= 0 && page.ImageIndex < tab.ImageList.Images.Count) {
-						tab.ImageList.Draw (dc, new Point (interior.X, interior.Y), page.ImageIndex);
-						str_rect.X += tab.ImageList.ImageSize.Width + 2;
-						str_rect.Width -= tab.ImageList.ImageSize.Width + 2;
-					}
-					dc.DrawString (page.Text, page.Font,
-						       SystemBrushes.ControlText,
-							str_rect, string_format);
-				}
-			} else if (page.Text != null) {
-				DrawItemState state = DrawItemState.None;
-				if (page == tab.SelectedTab)
-					state |= DrawItemState.Selected;
-				DrawItemEventArgs e = new DrawItemEventArgs (dc,
-						tab.Font, bounds, tab.IndexForTabPage (page),
-						state, page.ForeColor, page.BackColor);
-				tab.OnDrawItemInternal (e);
-				return res;
-			}
-
-			if (page.Parent.Focused && is_selected) {
-				CPDrawFocusRectangle (dc, interior, tab.ForeColor, tab.BackColor);
-			}
-
-			return res;
+			return ThemeElements.CurrentTheme.TabControlPainter.GetLeftScrollRect (tab);
 		}
+
+		public override Rectangle TabControlGetRightScrollRect (TabControl tab)
+		{
+			return ThemeElements.CurrentTheme.TabControlPainter.GetRightScrollRect (tab);
+		}
+
+		public override Rectangle TabControlGetDisplayRectangle (TabControl tab)
+		{
+			return ThemeElements.CurrentTheme.TabControlPainter.GetDisplayRectangle (tab);
+		}
+
+		public override Rectangle TabControlGetPanelRect (TabControl tab)
+		{
+			return ThemeElements.CurrentTheme.TabControlPainter.GetTabPanelRect (tab);
+		}
+
+		#endregion
 
 		#region ToolBar
 		public  override void DrawToolBar (Graphics dc, Rectangle clip_rectangle, ToolBar control) 
@@ -5705,7 +5477,7 @@ namespace System.Windows.Forms
 			CPDrawBorder3D(graphics, rectangle, style, sides, ColorControl);
 		}
 
-		protected virtual void CPDrawBorder3D (Graphics graphics, Rectangle rectangle, Border3DStyle style, Border3DSide sides, Color control_color)
+		public override void CPDrawBorder3D (Graphics graphics, Rectangle rectangle, Border3DStyle style, Border3DSide sides, Color control_color)
 		{
 			Pen		penTopLeft;
 			Pen		penTopLeftInner;

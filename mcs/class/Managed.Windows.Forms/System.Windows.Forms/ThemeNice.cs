@@ -662,7 +662,7 @@ namespace System.Windows.Forms
 		{
 			// Do we need to fill the back color? It can't be changed...
 			dc.FillRectangle( ResPool.GetSolidBrush( NiceBackColor ), area );
-			Rectangle panel_rect = GetTabPanelRectExt( tab );
+			Rectangle panel_rect = TabControlGetPanelRect( tab );
 			
 			if ( tab.Appearance == TabAppearance.Normal )
 			{
@@ -714,14 +714,14 @@ namespace System.Windows.Forms
 			
 			if ( tab.ShowSlider )
 			{
-				Rectangle right = GetTabControlRightScrollRect( tab );
-				Rectangle left = GetTabControlLeftScrollRect( tab );
+				Rectangle right = TabControlGetRightScrollRect( tab );
+				Rectangle left = TabControlGetLeftScrollRect( tab );
 				CPDrawScrollButton( dc, right, ScrollButton.Right, tab.RightSliderState );
 				CPDrawScrollButton( dc, left, ScrollButton.Left, tab.LeftSliderState );
 			}
 		}
 		
-		protected override int DrawTab( Graphics dc, TabPage page, TabControl tab, Rectangle bounds, bool is_selected )
+		protected virtual int DrawTab( Graphics dc, TabPage page, TabControl tab, Rectangle bounds, bool is_selected )
 		{
 			int FlatButtonSpacing = 8;
 			Rectangle interior;
@@ -1090,7 +1090,7 @@ namespace System.Windows.Forms
 //			CPDrawBorder3D(graphics, rectangle, style, sides, ColorControl);
 //		}
 		
-		protected override void CPDrawBorder3D (Graphics graphics, Rectangle rectangle, Border3DStyle style, Border3DSide sides, Color control_color)
+		public override void CPDrawBorder3D (Graphics graphics, Rectangle rectangle, Border3DStyle style, Border3DSide sides, Color control_color)
 		{
 			Pen		penTopLeft;
 			Pen		penTopLeftInner;

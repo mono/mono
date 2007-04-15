@@ -766,7 +766,13 @@ System.Windows.Forms.Layout/FlowLayout.cs
 System.Windows.Forms.Layout/TableLayout.cs
 System.Windows.Forms.Layout/TableLayoutSettingsTypeConverter.cs
 System.Windows.Forms.Theming/ThemeElements.cs
+System.Windows.Forms.Theming/ThemeElementsClearlooks.cs
 System.Windows.Forms.Theming/ThemeElementsDefault.cs
+System.Windows.Forms.Theming/ThemeElementsGtk.cs
+System.Windows.Forms.Theming/ThemeElementsNice.cs
+System.Windows.Forms.Theming/Default/ButtonPainter.cs
+System.Windows.Forms.Theming/Default/TabControlPainter.cs
+System.Windows.Forms.Theming/Nice/TabControlPainter.cs
 System.Windows.Forms.VisualStyles/BackgroundType.cs
 System.Windows.Forms.VisualStyles/BooleanProperty.cs
 System.Windows.Forms.VisualStyles/BorderType.cs

@@ -886,13 +886,21 @@ namespace System.Windows.Forms
 		#endregion	// StatusBar
 
 		#region TabControl
-		public abstract Size TabControlDefaultItemSize { get; }
-		public abstract Point TabControlDefaultPadding { get; }
-		public abstract int TabControlMinimumTabWidth { get; }
+		public abstract Size TabControlDefaultItemSize {get; }
+		public abstract Point TabControlDefaultPadding {get; }
+		public abstract int TabControlMinimumTabWidth {get; }
+		public abstract Rectangle TabControlSelectedDelta { get; }
+		public abstract int TabControlSelectedSpacing { get; }
+		public abstract int TabPanelOffsetX { get; }
+		public abstract int TabPanelOffsetY { get; }
+		public abstract int TabControlColSpacing { get; }
+		public abstract Point TabControlImagePadding { get; }
+		public abstract int TabControlScrollerWidth { get; }
 
-		public abstract Rectangle GetTabControlLeftScrollRect (TabControl tab);
-		public abstract Rectangle GetTabControlRightScrollRect (TabControl tab);
-		public abstract Rectangle GetTabControlDisplayRectangle (TabControl tab);
+		public abstract Rectangle TabControlGetLeftScrollRect (TabControl tab);
+		public abstract Rectangle TabControlGetRightScrollRect (TabControl tab);
+		public abstract Rectangle TabControlGetDisplayRectangle (TabControl tab);
+		public abstract Rectangle TabControlGetPanelRect (TabControl tab);
 		public abstract Size TabControlGetSpacing (TabControl tab);
 		public abstract void DrawTabControl (Graphics dc, Rectangle area, TabControl tab);
 		#endregion
@@ -983,6 +991,7 @@ namespace System.Windows.Forms
 			int bottomWidth, ButtonBorderStyle bottomStyle);
 
 		public abstract void CPDrawBorder3D (Graphics graphics, Rectangle rectangle, Border3DStyle style, Border3DSide sides);
+		public abstract void CPDrawBorder3D (Graphics graphics, Rectangle rectangle, Border3DStyle style, Border3DSide sides, Color control_color);
 		public abstract void CPDrawButton (Graphics graphics, Rectangle rectangle, ButtonState state);
 		public abstract void CPDrawCaptionButton (Graphics graphics, Rectangle rectangle, CaptionButton button, ButtonState state);
 		public abstract void CPDrawCheckBox (Graphics graphics, Rectangle rectangle, ButtonState state);

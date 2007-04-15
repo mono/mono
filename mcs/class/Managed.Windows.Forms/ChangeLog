@@ -1,3 +1,9 @@
+2007-04-15  Andreia Gaita  <avidigal@novell.com>
+
+	* System.Windows.Forms.dll.sources: Add ThemeElementsClearlooks, 
+	ThemeElementsGtk, ThemeElementsNice, Nice/ButtonPainter, 
+	Default/TabControlPainter and Default/ButtonPainter
+
 2007-04-01  Alp Toker  <alp@atoker.com>
 
 	* build-csproj:

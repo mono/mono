@@ -114,7 +114,7 @@ namespace System.Windows.Forms {
 
 		public override Rectangle DisplayRectangle {
 			get {
-				return ThemeEngine.Current.GetTabControlDisplayRectangle (this);
+				return ThemeEngine.Current.TabControlGetDisplayRectangle (this);
 			}
 		}
 
@@ -269,13 +269,17 @@ namespace System.Windows.Forms {
 
 				if (new_index != -1) {
 					int le = TabPages[new_index].TabBounds.Right;
-					int re = ThemeEngine.Current.GetTabControlLeftScrollRect (this).Left;
+					int re = ThemeEngine.Current.TabControlGetLeftScrollRect (this).Left;
 					if (show_slider && le > re) {
 						int i = 0;
+						for (i = 0; i < new_index - 1; i++) {
+							if (TabPages [i].TabBounds.Left < 0) // tab scrolled off the visible area, ignore
+								continue;
 
-						for (i = new_index; i < TabPages.Count; i++) {
-							if (TabPages [i].TabBounds.Right > re)
+							if (TabPages [new_index].TabBounds.Right - TabPages[i].TabBounds.Right < re) {
+								i++;
 								break;
+							}
 						}
 						slider_pos = i;
 						refresh = true;
@@ -684,15 +688,29 @@ namespace System.Windows.Forms {
 		private void MouseDownHandler (object sender, MouseEventArgs e)
 		{
 			if (ShowSlider) {
-				Rectangle right = ThemeEngine.Current.GetTabControlRightScrollRect (this);
-				Rectangle left = ThemeEngine.Current.GetTabControlLeftScrollRect (this);
+				Rectangle right = ThemeEngine.Current.TabControlGetRightScrollRect (this);
+				Rectangle left = ThemeEngine.Current.TabControlGetLeftScrollRect (this);
 				if (right.Contains (e.X, e.Y)) {
 					right_slider_state = ButtonState.Pushed;
 					if (CanScrollRight) {
 						slider_pos++;
 						SizeTabs ();
 
-						Invalidate (new Rectangle (0, 0, Width, DisplayRectangle.Top));
+						switch (this.Alignment) {
+							case TabAlignment.Top:
+								Invalidate (new Rectangle (0, 0, Width, ItemSize.Height));
+								break;
+							case TabAlignment.Bottom:
+								Invalidate (new Rectangle (0, DisplayRectangle.Bottom, Width, Height - DisplayRectangle.Bottom));
+								break;
+							case TabAlignment.Left:
+								Invalidate (new Rectangle (0, 0, DisplayRectangle.Left, Height));
+								break;
+							case TabAlignment.Right:
+								Invalidate (new Rectangle (DisplayRectangle.Right, 0, Width - DisplayRectangle.Right, Height));
+								break;
+						}
+						
 					} else {
 						Invalidate (right);
 					}
@@ -703,7 +721,20 @@ namespace System.Windows.Forms {
 						slider_pos--;
 						SizeTabs ();
 
-						Invalidate (new Rectangle (0, 0, Width, DisplayRectangle.Top));
+						switch (this.Alignment) {
+							case TabAlignment.Top:
+								Invalidate (new Rectangle (0, 0, Width, ItemSize.Height));
+								break;
+							case TabAlignment.Bottom:
+								Invalidate (new Rectangle (0, DisplayRectangle.Bottom, Width, Height - DisplayRectangle.Bottom));
+								break;
+							case TabAlignment.Left:
+								Invalidate (new Rectangle (0, 0, DisplayRectangle.Left, Height));
+								break;
+							case TabAlignment.Right:
+								Invalidate (new Rectangle (DisplayRectangle.Right, 0, Width - DisplayRectangle.Right, Height));
+								break;
+						}
 					} else {
 						Invalidate (left);
 					}
@@ -725,9 +756,9 @@ namespace System.Windows.Forms {
 			if (ShowSlider && (left_slider_state == ButtonState.Pushed || right_slider_state == ButtonState.Pushed)) {
 				Rectangle invalid;
 				if (left_slider_state == ButtonState.Pushed)
-					invalid = ThemeEngine.Current.GetTabControlLeftScrollRect (this);
+					invalid = ThemeEngine.Current.TabControlGetLeftScrollRect (this);
 				else
-					invalid = ThemeEngine.Current.GetTabControlRightScrollRect (this);
+					invalid = ThemeEngine.Current.TabControlGetRightScrollRect (this);
 				left_slider_state = ButtonState.Normal;
 				right_slider_state = ButtonState.Normal;
 
@@ -791,45 +822,20 @@ namespace System.Windows.Forms {
 
 		private void CalcTabRows (int row_width)
 		{
-			int xpos = 4;
+			int xpos = 0;
+			int ypos = 0;
 			Size spacing = TabSpacing;
 
 			if (TabPages.Count > 0)
 				row_count = 1;
 			show_slider = false;
 			
+			int scrollerWidth = ThemeEngine.Current.TabControlScrollerWidth * 2;
+
 			for (int i = 0; i < TabPages.Count; i++) {
 				TabPage page = TabPages [i];
-				int width;
-
-				page.Row = 1;
-
-				if (SizeMode == TabSizeMode.Fixed) {
-					width = item_size.Width;
-				} else {
-					width = (int) DeviceContext.MeasureString (page.Text, Font).Width + (Padding.X * 2);
-					if (ImageList != null && page.ImageIndex >= 0 && page.ImageIndex < ImageList.Images.Count) {
-						width += ImageList.ImageSize.Width + 2;
-						item_size.Height = ImageList.ImageSize.Height + 3;
-					}
-				}
-
-				if (i == SelectedIndex)
-					width += 8;
-				if (width < MinimumTabWidth)
-					width = MinimumTabWidth;
-
-				if (xpos + width > row_width && multiline) {
-					xpos = 4;
-					for (int j = 0; j < i; j++) {
-						TabPages [j].Row++;
-					}
-					row_count++;
-				} else if (xpos + width > row_width) {
-					show_slider = true;
-				}
-
-				xpos += width + 1 + spacing.Width;
+				int aux = 0;
+				SizeTab (page, i, row_width - scrollerWidth, ref xpos, ref ypos, spacing, 0, ref aux, true);
 			}
 
 			if (SelectedIndex != -1 && TabPages [SelectedIndex].Row != BottomRow)
@@ -837,15 +843,7 @@ namespace System.Windows.Forms {
 		}
 
 		private int BottomRow {
-			get {
-				switch (Alignment) {
-				case TabAlignment.Right:
-				case TabAlignment.Bottom:
-					return row_count;
-				default:
-					return 1;
-				}
-			}
+			get { return 1; }
 		}
 
 		private int Direction
@@ -863,6 +861,9 @@ namespace System.Windows.Forms {
 
 		private void DropRow (int row)
 		{
+			if (Appearance != TabAppearance.Normal)
+				return;
+
 			int bottom = BottomRow;
 			int direction = Direction;
 
@@ -879,21 +880,25 @@ namespace System.Windows.Forms {
 
 		private int CalcYPos ()
 		{
-			if (Alignment == TabAlignment.Bottom) {
-				Rectangle r = ThemeEngine.Current.GetTabControlDisplayRectangle (this);
-				return r.Bottom + 3;
-			}
-			return 1;
+			if (Alignment == TabAlignment.Bottom || Alignment == TabAlignment.Left)
+				return ThemeEngine.Current.TabControlGetPanelRect (this).Bottom;
+
+			if (Appearance == TabAppearance.Normal)
+				return this.ClientRectangle.Y + ThemeEngine.Current.TabControlSelectedDelta.Y;
+
+			return this.ClientRectangle.Y;
+
 		}
 
 		private int CalcXPos ()
 		{
-			if (Alignment == TabAlignment.Right) {
-				Rectangle r = ThemeEngine.Current.GetTabControlDisplayRectangle (this);
-				return r.Right + 4;
-			}
-			return 4;
+			if (Alignment == TabAlignment.Right)
+				return ThemeEngine.Current.TabControlGetPanelRect (this).Right;
 
+			if (Appearance == TabAppearance.Normal)
+				return this.ClientRectangle.X + ThemeEngine.Current.TabControlSelectedDelta.X;
+
+			return this.ClientRectangle.X;
 		}
 
 		private void SizeTabs ()
@@ -901,78 +906,23 @@ namespace System.Windows.Forms {
 			switch (Alignment) {
 			case TabAlignment.Right:
 			case TabAlignment.Left:
-				SizeTabsV (Height);
+				SizeTabs (Height, true);
 				break;
 			default:
-				SizeTabs (Width);
+				SizeTabs (Width, false);
 				break;
 			}
 		}
-
-		private void SizeTabsV (int row_width)
+		
+		private void SizeTabs (int row_width, bool vertical)
 		{
-			int ypos = 1;
+			int ypos = 0;
+			int xpos = 0;
 			int prev_row = 1;
 			Size spacing = TabSpacing;
-			int xpos = CalcXPos ();
-			int begin_prev = 0;
-			
-			if (TabPages.Count == 0)
-				return;
-
-			prev_row = TabPages [0].Row;
-
-			for (int i = 0; i < TabPages.Count; i++) {
-				TabPage page = TabPages [i];
-				int width;
-
-				if (SizeMode == TabSizeMode.Fixed) {
-					width = item_size.Width;
-				} else {
-					width = (int) DeviceContext.MeasureString (page.Text, Font).Width + (Padding.X * 2);
-					if (ImageList != null && page.ImageIndex >= 0 && page.ImageIndex < ImageList.Images.Count) {
-						width += ImageList.ImageSize.Width + 2;
-						item_size.Height = ImageList.ImageSize.Height + 3;
-					}
-				}
-
-				if (width < MinimumTabWidth)
-					width = MinimumTabWidth;
-				if (page.Row != prev_row)
-					ypos = 1;
-
-				page.TabBounds = new Rectangle (xpos + (row_count - page.Row) * ((item_size.Height - 2) + spacing.Width),
-						ypos, item_size.Height - 2, width);
-
-				if (page.Row != prev_row) {
-					if (SizeMode == TabSizeMode.FillToRight && !ShowSlider) {
-						FillRowV (begin_prev, i - 1, ((row_width - TabPages [i - 1].TabBounds.Bottom) / (i - begin_prev)), spacing);
-					}
-					begin_prev = i;
-				}
-
-				ypos += width + spacing.Width;
-				prev_row = page.Row;
-			}
-
-			if (SizeMode == TabSizeMode.FillToRight && !ShowSlider) {
-				FillRowV (begin_prev, TabPages.Count - 1,
-						((row_width - TabPages [TabPages.Count - 1].TabBounds.Bottom) / (TabPages.Count - begin_prev)), spacing);
-			}
-
-			if (SelectedIndex != -1) {
-				ExpandSelected (TabPages [SelectedIndex], 2, row_width - 1);
-			}
-		}
-
-		private void SizeTabs (int row_width)
-		{
-			int ypos = CalcYPos ();
-			int prev_row = 1;
-			Size spacing = TabSpacing;
-			int xpos = 4;
 			int begin_prev = 0;
 
+			row_width -= ThemeEngine.Current.TabControlScrollerWidth * 2;
 			if (TabPages.Count == 0)
 				return;
 
@@ -982,44 +932,26 @@ namespace System.Windows.Forms {
 			// anymore (ie window size was increased so all tabs are visible)
 			if (!show_slider)
 				slider_pos = 0;
-
+			else {
+				// set X = -1 for marking tabs that are not visible due to scrolling
+				for (int i = 0; i < slider_pos; i++) {
+					TabPage page = TabPages[i];
+					Rectangle x = page.TabBounds;
+					x.X = -1;
+					page.TabBounds = x;
+				}
+			}
+			
 			for (int i = slider_pos; i < TabPages.Count; i++) {
-				TabPage page = TabPages [i];
-				int width;
- 
-				if (SizeMode == TabSizeMode.Fixed) {
-					width = item_size.Width;
-				} else {					
-					width = (int) DeviceContext.MeasureString (page.Text, Font).Width + (Padding.X * 2);
-					if (ImageList != null && page.ImageIndex >= 0 && page.ImageIndex < ImageList.Images.Count) {
-						width += ImageList.ImageSize.Width + 2;
-						item_size.Height = ImageList.ImageSize.Height + 3;
-					}
-				}
-
-				if (width < MinimumTabWidth)
-					width = MinimumTabWidth;
-				if (page.Row != prev_row)
-					xpos = 4;
-
-				page.TabBounds = new Rectangle (xpos,
-						ypos + (row_count - page.Row) * (item_size.Height + spacing.Height),
-						width, item_size.Height);
-				
-				if (page.Row != prev_row) {
-					if (SizeMode == TabSizeMode.FillToRight && !ShowSlider) {
-						FillRow (begin_prev, i - 1, ((row_width - TabPages [i - 1].TabBounds.Right) / (i - begin_prev)), spacing);
-					}
-					begin_prev = i;
-				}
-
-				xpos += width + 1 + spacing.Width;
-				prev_row = page.Row;				    
+				TabPage page = TabPages[i];
+				SizeTab (page, i, row_width, ref xpos, ref ypos, spacing, prev_row, ref begin_prev, false);
+				prev_row = page.Row;
 			}
 
 			if (SizeMode == TabSizeMode.FillToRight && !ShowSlider) {
 				FillRow (begin_prev, TabPages.Count - 1,
-						((row_width - TabPages [TabPages.Count - 1].TabBounds.Right) / (TabPages.Count - begin_prev)), spacing);
+						((row_width - TabPages [TabPages.Count - 1].TabBounds.Right) / (TabPages.Count - begin_prev)), 
+						spacing, vertical);
 			}
 
 			if (SelectedIndex != -1) {
@@ -1027,6 +959,125 @@ namespace System.Windows.Forms {
 			}
 		}
 		
+		private void SizeTab (TabPage page, int i, int row_width, ref int xpos, ref int ypos, 
+								Size spacing, int prev_row, ref int begin_prev, bool widthOnly) 
+		{				
+			int width, height = 0;
+
+			if (SizeMode == TabSizeMode.Fixed) {
+				width = item_size.Width;
+			} else {			
+				width = MeasureStringWidth (DeviceContext, page.Text, Font);
+				width += (Padding.X * 2) - 2; // don't know why, but tabpages on ms.net have the right padding smaller :p
+
+				if (ImageList != null && page.ImageIndex >= 0 && page.ImageIndex < ImageList.Images.Count) {
+					width += ImageList.ImageSize.Width + ThemeEngine.Current.TabControlImagePadding.X;
+					item_size.Height = ImageList.ImageSize.Height + ThemeEngine.Current.TabControlImagePadding.Y;
+				}
+			}
+
+			height = item_size.Height - ThemeEngine.Current.TabControlSelectedDelta.Height; // full height only for selected tab
+
+			if (width < MinimumTabWidth)
+				width = MinimumTabWidth;
+
+			if (i == SelectedIndex)
+				width += ThemeEngine.Current.TabControlSelectedSpacing;
+			
+			if (widthOnly) {
+				page.TabBounds = new Rectangle (xpos, 0, width, 0);
+				page.Row = row_count;
+				if (xpos + width > row_width && multiline) {
+					xpos = 0;
+					row_count++;
+				} else if (xpos + width > row_width) {
+					show_slider = true;	
+				}
+				if (i == selected_index && show_slider) {
+					for (int j = i-1; j >= 0; j--) {
+						if (TabPages [j].TabBounds.Left < xpos + width - row_width) {
+							slider_pos = j+1;
+							break;
+						}
+					}
+				}
+			} else {
+				if (page.Row != prev_row) {
+					xpos = 0;
+				}
+
+				switch (Alignment) {
+					case TabAlignment.Top:
+						page.TabBounds = new Rectangle (
+							xpos + CalcXPos (),
+							ypos + (height + spacing.Height) * (row_count - page.Row) + CalcYPos (),
+							width, 
+							height);
+						break;
+					case TabAlignment.Bottom:
+						page.TabBounds = new Rectangle (
+							xpos + CalcXPos (),
+							ypos + (height + spacing.Height) * (row_count - page.Row) + CalcYPos (),
+							width, 
+							height);
+						break;
+					case TabAlignment.Left:
+						if (Appearance == TabAppearance.Normal) {
+							// tab rows are positioned right to left
+							page.TabBounds = new Rectangle (
+								ypos + (height + spacing.Height) * (row_count - page.Row) + CalcXPos (),
+								xpos,
+								height, 
+								width);
+						} else {
+							// tab rows are positioned left to right
+							page.TabBounds = new Rectangle (
+								ypos + (height + spacing.Height) * (page.Row - 1) + CalcXPos (),
+								xpos,
+								height, 
+								width);
+						}
+
+						break;
+					case TabAlignment.Right:
+						if (Appearance == TabAppearance.Normal) {
+							// tab rows are positioned left to right
+							page.TabBounds = new Rectangle (
+								ypos + (height + spacing.Height) * (page.Row - 1) + CalcXPos (),
+								xpos,
+								height, 
+								width);
+						} else {
+							// tab rows are positioned right to left
+							page.TabBounds = new Rectangle (
+								ypos + (height + spacing.Height) * (row_count - page.Row) + CalcXPos (),
+								xpos,
+								height, 
+								width);
+						}
+
+						break;
+				}
+			
+				if (page.Row != prev_row) {
+					if (SizeMode == TabSizeMode.FillToRight && !ShowSlider) {
+						FillRow (begin_prev, i - 1, ((row_width - TabPages [i - 1].TabBounds.Right) / (i - begin_prev)), spacing);
+					}
+					begin_prev = i;
+				}	
+			}
+
+			xpos += width + spacing.Width + ThemeEngine.Current.TabControlColSpacing;
+		}
+
+		private void FillRow (int start, int end, int amount, Size spacing, bool vertical) 
+		{
+			if (vertical)
+				FillRowV (start, end, amount, spacing);
+			else
+				FillRow (start, end, amount, spacing);
+		}
+
 		private void FillRow (int start, int end, int amount, Size spacing)
 		{
 			int xpos = TabPages [start].TabBounds.Left;
@@ -1060,35 +1111,30 @@ namespace System.Windows.Forms {
 			if (Appearance != TabAppearance.Normal)
 				return;
 
-			if (Alignment == TabAlignment.Top || Alignment == TabAlignment.Bottom) {
-				int l = page.TabBounds.Left - 4;
-				int r = page.TabBounds.Right + 4;
-				int y = page.TabBounds.Y;
-				int h = page.TabBounds.Height + 3;
-
-				if (l < left_edge)
-					l = left_edge;
-				if (r > right_edge && SizeMode != TabSizeMode.Normal)
-					r = right_edge;
-				if (Alignment == TabAlignment.Top)
-					y -= 1;
-				if (Alignment == TabAlignment.Bottom)
-					y -= 2;
-
-				page.TabBounds = new Rectangle (l, y, r - l, h);
-			} else {
-				int l = page.TabBounds.Left - 3;
-				int r = page.TabBounds.Right + 3;
-				int t = page.TabBounds.Top - 3;
-				int b = page.TabBounds.Bottom + 3;
-
-				if (t < left_edge)
-					t = left_edge;
-				if (b > right_edge)
-					b = right_edge;
-
-				page.TabBounds = new Rectangle (l, t, r - l, b - t);
+			Rectangle r = page.TabBounds;
+			switch (Alignment) {
+				case TabAlignment.Top:
+				case TabAlignment.Left:
+					r.Y -= ThemeEngine.Current.TabControlSelectedDelta.Y;
+					r.X -= ThemeEngine.Current.TabControlSelectedDelta.X;
+					break;
+				case TabAlignment.Bottom:
+					r.Y -= ThemeEngine.Current.TabControlSelectedDelta.Y;
+					r.X -= ThemeEngine.Current.TabControlSelectedDelta.X;
+					break;
+				case TabAlignment.Right:
+					r.Y -= ThemeEngine.Current.TabControlSelectedDelta.Y;
+					r.X += ThemeEngine.Current.TabControlSelectedDelta.X;
+					break;
 			}
+
+			r.Width += ThemeEngine.Current.TabControlSelectedDelta.Width;
+			r.Height += ThemeEngine.Current.TabControlSelectedDelta.Height;
+			if (r.Left < left_edge)
+				r.X = left_edge;
+			if (r.Right > right_edge && SizeMode != TabSizeMode.Normal)
+				r.Width = right_edge - r.X;
+			page.TabBounds = r;
 		}
 
 		private void Draw (Graphics dc, Rectangle clip)
@@ -1114,6 +1160,24 @@ namespace System.Windows.Forms {
 
 			ResizeTabPages ();
 			Refresh ();
+		}
+
+		private int MeasureStringWidth (Graphics graphics, string text, Font font) 
+		{
+			if (text == String.Empty)
+				return 0;
+			StringFormat format = new StringFormat();
+			RectangleF rect = new RectangleF(0, 0, 1000, 1000);
+			CharacterRange[] ranges = { new CharacterRange(0, text.Length) };
+			Region[] regions = new Region[1];
+
+			format.SetMeasurableCharacterRanges(ranges);
+			format.FormatFlags = StringFormatFlags.NoClip;
+			format.FormatFlags |= StringFormatFlags.NoWrap;
+			regions = graphics.MeasureCharacterRanges(text + "I", font, rect, format);
+			rect = regions[0].GetBounds(graphics);
+
+			return (int)(rect.Width);
 		}
 
 		#endregion	// Internal & Private Methods
