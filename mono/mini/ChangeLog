@@ -1,3 +1,7 @@
+2007-04-15  Miguel de Icaza  <miguel@novell.com>
+
+	* trace.c (is_filenamechar): - is also a filename char.
+
 2007-04-15  Neale Ferguson <neale@sinenomine.net>
 
 	* mini-s390.c: Correct checking for enum type in return value processing.
