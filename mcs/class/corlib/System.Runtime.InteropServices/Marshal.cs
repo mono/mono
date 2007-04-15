@@ -149,6 +149,13 @@ namespace System.Runtime.InteropServices
 			copy_to_unmanaged (source, startIndex, destination, length);
 		}
 
+#if NET_2_0
+		public static void Copy (IntPtr[] source, int startIndex, IntPtr destination, int length)
+		{
+			copy_to_unmanaged (source, startIndex, destination, length);
+		}
+#endif
+
 		public static void Copy (IntPtr source, byte[] destination, int startIndex, int length)
 		{
 			copy_from_unmanaged (source, startIndex, destination, length);
