@@ -26,7 +26,8 @@
 
 // COMPLETE
 
-namespace System.Windows.Forms {
+namespace System.Windows.Forms.RTF {
+
 	internal enum Minor {
 		Undefined,
 

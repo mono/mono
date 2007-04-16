@@ -1231,12 +1231,12 @@ namespace System.Windows.Forms {
 			switch(rtf.Major) {
 				case RTF.Major.Unicode: {
 					switch(rtf.Minor) {
-						case Minor.UnicodeCharBytes: {
+						case RTF.Minor.UnicodeCharBytes: {
 							rtf_skip_width = rtf.Param;
 							break;
 						}
 
-						case Minor.UnicodeChar: {
+						case RTF.Minor.UnicodeChar: {
 							rtf_skip_count += rtf_skip_width;
 							rtf_line.Append((char)rtf.Param);
 							break;
@@ -1264,7 +1264,7 @@ namespace System.Windows.Forms {
 
 				case RTF.Major.CharAttr: {
 					switch(rtf.Minor) {
-						case Minor.ForeColor: {
+						case RTF.Minor.ForeColor: {
 							System.Windows.Forms.RTF.Color	color;
 
 							color = System.Windows.Forms.RTF.Color.GetColor(rtf, rtf.Param);
@@ -1281,13 +1281,13 @@ namespace System.Windows.Forms {
 							break;
 						}
 
-						case Minor.FontSize: {
+						case RTF.Minor.FontSize: {
 							FlushText(rtf, false);
 							this.rtf_rtffont_size = rtf.Param / 2;
 							break;
 						}
 
-						case Minor.FontNum: {
+						case RTF.Minor.FontNum: {
 							System.Windows.Forms.RTF.Font	font;
 
 							font = System.Windows.Forms.RTF.Font.GetFont(rtf, rtf.Param);
@@ -1298,13 +1298,13 @@ namespace System.Windows.Forms {
 							break;
 						}
 
-						case Minor.Plain: {
+						case RTF.Minor.Plain: {
 							FlushText(rtf, false);
 							rtf_rtfstyle = FontStyle.Regular;
 							break;
 						}
 
-						case Minor.Bold: {
+						case RTF.Minor.Bold: {
 							FlushText(rtf, false);
 							if (rtf.Param == RTF.RTF.NoParam) {
 								rtf_rtfstyle |= FontStyle.Bold;
@@ -1314,7 +1314,7 @@ namespace System.Windows.Forms {
 							break;
 						}
 
-						case Minor.Italic: {
+						case RTF.Minor.Italic: {
 							FlushText(rtf, false);
 							if (rtf.Param == RTF.RTF.NoParam) {
 								rtf_rtfstyle |= FontStyle.Italic;
@@ -1324,7 +1324,7 @@ namespace System.Windows.Forms {
 							break;
 						}
 
-						case Minor.StrikeThru: {
+						case RTF.Minor.StrikeThru: {
 							FlushText(rtf, false);
 							if (rtf.Param == RTF.RTF.NoParam) {
 								rtf_rtfstyle |= FontStyle.Strikeout;
@@ -1334,7 +1334,7 @@ namespace System.Windows.Forms {
 							break;
 						}
 
-						case Minor.Underline: {
+						case RTF.Minor.Underline: {
 							FlushText(rtf, false);
 							if (rtf.Param == RTF.RTF.NoParam) {
 								rtf_rtfstyle |= FontStyle.Underline;
@@ -1344,7 +1344,7 @@ namespace System.Windows.Forms {
 							break;
 						}
 
-						case Minor.NoUnderline: {
+						case RTF.Minor.NoUnderline: {
 							FlushText(rtf, false);
 							rtf_rtfstyle &= ~FontStyle.Underline;
 							break;
@@ -1355,7 +1355,7 @@ namespace System.Windows.Forms {
 
 			case RTF.Major.ParAttr: {
 				switch (rtf.Minor) {
-				case Minor.LeftIndent:
+				case RTF.Minor.LeftIndent:
 					rtf_par_line_left_indent = (int) (((float) rtf.Param / 1440.0F) * CreateGraphics ().DpiX + 0.5F);
 					break;
 				}
@@ -1372,72 +1372,72 @@ namespace System.Windows.Forms {
 
 		private void SpecialChar(RTF.RTF rtf) {
 			switch(rtf.Minor) {
-				case Minor.Page:
-				case Minor.Sect:
-				case Minor.Row:
-				case Minor.Line:
-				case Minor.Par: {
+				case RTF.Minor.Page:
+				case RTF.Minor.Sect:
+				case RTF.Minor.Row:
+				case RTF.Minor.Line:
+				case RTF.Minor.Par: {
 					FlushText(rtf, true);
 					break;
 				}
 
-				case Minor.Cell: {
+				case RTF.Minor.Cell: {
 					Console.Write(" ");
 					break;
 				}
 
-				case Minor.NoBrkSpace: {
+				case RTF.Minor.NoBrkSpace: {
 					Console.Write(" ");
 					break;
 				}
 
-				case Minor.Tab: {
+				case RTF.Minor.Tab: {
 					rtf_line.Append ("\t");
 //					FlushText (rtf, false);
 					break;
 				}
 
-				case Minor.NoReqHyphen:
-				case Minor.NoBrkHyphen: {
+				case RTF.Minor.NoReqHyphen:
+				case RTF.Minor.NoBrkHyphen: {
 					rtf_line.Append ("-");
 //					FlushText (rtf, false);
 					break;
 				}
 
-				case Minor.Bullet: {
+				case RTF.Minor.Bullet: {
 					Console.WriteLine("*");
 					break;
 				}
 
-			case Minor.WidowCtrl:
+			case RTF.Minor.WidowCtrl:
 				break;
 
-				case Minor.EmDash: {
+				case RTF.Minor.EmDash: {
 				rtf_line.Append ("\u2014");
 					break;
 				}
 
-				case Minor.EnDash: {
+				case RTF.Minor.EnDash: {
 					rtf_line.Append ("\u2013");
 					break;
 				}
 /*
-				case Minor.LQuote: {
+				case RTF.Minor.LQuote: {
 					Console.Write("\u2018");
 					break;
 				}
 
-				case Minor.RQuote: {
+				case RTF.Minor.RQuote: {
 					Console.Write("\u2019");
 					break;
 				}
 
-				case Minor.LDblQuote: {
+				case RTF.Minor.LDblQuote: {
 					Console.Write("\u201C");
 					break;
 				}
 
-				case Minor.RDblQuote: {
+				case RTF.Minor.RDblQuote: {
 					Console.Write("\u201D");
 					break;
 				}
