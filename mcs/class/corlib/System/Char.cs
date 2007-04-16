@@ -289,17 +289,7 @@ namespace System
 		public static bool IsLetter (char c)
 		{
 			unsafe {
-				UnicodeCategory Category = (UnicodeCategory)category_data [c];
-				switch (Category) {
-				case UnicodeCategory.UppercaseLetter:
-				case UnicodeCategory.LowercaseLetter:
-				case UnicodeCategory.TitlecaseLetter:
-				case UnicodeCategory.ModifierLetter:
-				case UnicodeCategory.OtherLetter:
-					return true;
-				default:
-					return false;
-				}
+				return category_data [c] <= ((byte)UnicodeCategory.OtherLetter);
 			}
 		}
 

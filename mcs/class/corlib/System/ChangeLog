@@ -1,3 +1,7 @@
+2007-04-16  Marek Safar  <marek.safar@gmail.com>
+
+	* Char.cs (IsLetter): Faster version.
+
 2007-04-15  Alp Toker  <alp@atoker.com>
 
 	* Decimal.cs: Provide 2.0 Round() overloads using System.Math.
