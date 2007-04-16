@@ -1,3 +1,8 @@
+2007-04-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Bitmap.cs: Add check in SetPixel for Format16bppGrayScale (but 
+	without requiring a second unmanaged call on each SetPixel call).
+
 2007-04-13  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Brush.cs: Ensure we're zeroing the handle before calling 
