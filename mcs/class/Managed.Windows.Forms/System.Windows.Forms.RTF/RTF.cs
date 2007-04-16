@@ -947,7 +947,8 @@ SkipCRLF:
 
 				if (read_image_data && rtf.rtf_class == TokenClass.Text) {
 
-					ArrayList image_data = new ArrayList ();
+					picture.Data.Seek (0, SeekOrigin.Begin);
+
 					char c = (char) rtf.major;
 
 					uint digitValue1;
@@ -997,7 +998,7 @@ SkipCRLF:
 						else 
 							break;
 
-						image_data.Add ((byte) checked (digitValue1 * 16 + digitValue2));
+						picture.Data.WriteByte ((byte) checked (digitValue1 * 16 + digitValue2));
 
 						// We get the first hex digit at the end, since in the very first
 						// iteration we use rtf.major as the first hex digit
@@ -1009,7 +1010,6 @@ SkipCRLF:
 
 					
 					read_image_data = false;
-					picture.Data = (byte []) image_data.ToArray (typeof (byte));
 					break;
 				}
 			}

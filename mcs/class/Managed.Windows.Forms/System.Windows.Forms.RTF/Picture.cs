@@ -34,7 +34,7 @@ namespace System.Windows.Forms.RTF {
 
 		private Minor image_type;
 		private Image image;
-		private byte [] data;
+		private MemoryStream data;
 		private float width = -1;
 		private float height = -1;
 
@@ -57,9 +57,12 @@ namespace System.Windows.Forms.RTF {
 			set { image_type = value; }
 		}
 
-		public byte [] Data {
-			get { return data; }
-			set { data = value; }
+		public MemoryStream Data {
+			get {
+				if (data == null)
+					data = new MemoryStream ();
+				return data;
+			}
 		}
 
 		public float Width {
@@ -138,7 +141,7 @@ namespace System.Windows.Forms.RTF {
 
 		public Image ToImage ()
 		{
-			return Image.FromStream (new MemoryStream (data));
+			return Image.FromStream (data);
 		}
 	}
 

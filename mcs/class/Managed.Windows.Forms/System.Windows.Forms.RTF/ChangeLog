@@ -1,3 +1,9 @@
+2007-04-16  Jackson Harper  <jackson@ximian.com>
+
+	* RTF.cs:
+	* Picture.cs: Save a step by loading the image data directly into
+	the picture's memory stream. (Aprox 15% speedup).
+
 2007-04-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* RTF.cs: Use the "goal" width and height to compute the metafile size
