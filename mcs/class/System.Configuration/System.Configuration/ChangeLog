@@ -1,3 +1,9 @@
+2007-04-16  Marek Habersack  <mhabersack@novell.com>
+
+	* SectionGroupInfo.cs: another (and final, hopefully) fix for bug
+	#81321 and several other related issues that were discovered by
+	the way. Thanks to Atsushi for help with XmlReader!
+
 2007-04-15  Marek Habersack  <mhabersack@novell.com>
 
 	* SectionGroupInfo.cs: another incarnation of the fix for bug

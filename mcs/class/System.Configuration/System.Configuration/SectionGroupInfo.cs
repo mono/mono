@@ -272,10 +272,13 @@ namespace System.Configuration
 		public override void ReadData (Configuration config, XmlTextReader reader, bool overrideAllowed)
 		{
 			reader.MoveToContent ();
-			reader.ReadStartElement ();
-			ReadContent (reader, config, overrideAllowed, false);
-			reader.MoveToContent ();
-			reader.ReadEndElement ();
+			if (!reader.IsEmptyElement) {
+				reader.ReadStartElement ();
+				ReadContent (reader, config, overrideAllowed, false);
+				reader.MoveToContent ();
+				reader.ReadEndElement ();
+			} else
+				reader.Read ();
 		}
 		
 		void ReadContent (XmlTextReader reader, Configuration config, bool overrideAllowed, bool root)
@@ -311,11 +314,6 @@ namespace System.Configuration
 					} else {
 						ReadData (config, reader, allowOverride);
 					}
-					continue;
-				}
-				
-				if (reader.IsEmptyElement) {
-					reader.Skip ();
 					continue;
 				}
 			
