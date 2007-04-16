@@ -2053,7 +2053,7 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void SetClipRegion(IntPtr hwnd, Region region) {
-			Win32SetWindowRgn(hwnd, region.GetHrgn(Graphics.FromHwnd(hwnd)), false);
+			Win32SetWindowRgn(hwnd, region.GetHrgn(Graphics.FromHwnd(hwnd)), true);
 		}
 
 		internal override void EnableWindow(IntPtr handle, bool Enable) {

@@ -1,5 +1,9 @@
 2007-04-16  Everaldo Canuto  <everaldo@simios.org>
 
+	* XplatUIWin32.cs: Back last parameter to true in SetClipRegion.
+
+2007-04-16  Everaldo Canuto  <everaldo@simios.org>
+
 	[Fixes #79447]
 	* Control.cs: Call invalidate in set_Region.
 
