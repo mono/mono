@@ -2878,6 +2878,7 @@ namespace System.Windows.Forms
 						XplatUI.SetClipRegion(Handle, value);
 
 					clip_region = value;
+					Invalidate ();
 #if NET_2_0
 					OnRegionChanged (EventArgs.Empty);
 #endif

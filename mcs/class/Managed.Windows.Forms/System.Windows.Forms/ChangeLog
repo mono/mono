@@ -1,3 +1,11 @@
+2007-04-16  Everaldo Canuto  <everaldo@simios.org>
+
+	[Fixes #79447]
+	* Control.cs: Call invalidate in set_Region.
+
+	* XplatUIX11.cs, XplatUIWin32.cs: Remove invalidate from SetClipRegion as
+	it dont	works here.
+
 2007-04-16  Jackson Harper  <jackson@ximian.com>
 
 	* TextBoxBase.cs: When enter is pressed, we need to update all
