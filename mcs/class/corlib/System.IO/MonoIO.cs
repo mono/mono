@@ -137,7 +137,7 @@ namespace System.IO
 		public extern static bool RemoveDirectory (string path, out MonoIOError error);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static string [] GetFileSystemEntries (string path, string path_with_pattern, int attrs, int mask, out MonoIOError error);
+		public extern static string [] GetFileSystemEntries (string path, string pattern, int attrs, int mask, out MonoIOError error);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static string GetCurrentDirectory (out MonoIOError error);
