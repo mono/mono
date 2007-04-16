@@ -1100,8 +1100,8 @@ namespace System.Windows.Forms {
 						document.InsertString (line, line.text.Length,
 										document.LineEndingToString (line.ending));
 						OnTextChanged(EventArgs.Empty);
-						document.UpdateView(line, 2, 0);
 
+						document.UpdateView (line, document.Lines - line.line_no, 0);
 						CaretMoved(this, null);
 						return true;
 					}
