@@ -70,7 +70,6 @@ namespace System {
 		bool controlCAsInput;
 		bool inited;
 		bool initKeys;
-		bool echo = true;
 		string origPair;
 		string origColors;
 		string cursorAddress;
@@ -163,7 +162,6 @@ namespace System {
 				throw new IOException ("Not a tty.");
 
 			inited = true;
-			ConsoleDriver.SetEcho (echo);
 			string endString = null;
 			keypadXmit = reader.Get (TermInfoStrings.KeypadXmit);
 			keypadLocal = reader.Get (TermInfoStrings.KeypadLocal);
@@ -370,13 +368,12 @@ namespace System {
 			}
 		}
 
-		// Only used once.
+		// Only used once from within Init()
 		void GetCursorPosition ()
 		{
 			int row = 0, col = 0;
 			
-			if (echo)
-				ConsoleDriver.SetEcho (false);
+			ConsoleDriver.SetEcho (false);
 			
 			try {
 				WriteConsole ("\x1b[6n");
@@ -424,8 +421,7 @@ namespace System {
 					col --;
 				}
 			} finally {
-				if (echo)
-					ConsoleDriver.SetEcho (true);
+				ConsoleDriver.SetEcho (true);
 			}
 
 			cursorLeft = col;
@@ -545,30 +541,6 @@ namespace System {
 				}
 			}
 
-		}
-
-		public bool Echo {
-			get {
-				if (!inited)
-					Init ();
-				
-				return echo;
-			}
-			set {
-				if (echo == value) {
-					if (!inited)
-						Init ();
-					return;
-				}
-				
-				echo = value;
-				
-				// Init() will call SetEcho(echo) for us
-				if (inited)
-					ConsoleDriver.SetEcho (echo);
-				else
-					Init ();
-			}
 		}
 
 		public bool KeyAvailable {
@@ -878,19 +850,26 @@ namespace System {
 
 		public ConsoleKeyInfo ReadKey (bool intercept)
 		{
-			bool prevEcho = echo;
+			if (!inited)
+				Init ();
 			
-			Echo = !intercept;
+			if (intercept)
+				ConsoleDriver.SetEcho (false);
+			
 			ConsoleKeyInfo key = ReadKeyInternal ();
-			Echo = prevEcho;
+			
+			if (intercept)
+				ConsoleDriver.SetEcho (true);
 			
 			return key;
 		}
 
 		public string ReadLine ()
  		{
-			bool prevEcho = echo;
-			Echo = false;
+			if (!inited)
+				Init ();
+			
+			ConsoleDriver.SetEcho (false);
 			
 			StringBuilder builder = new StringBuilder ();
 			bool exit = false;
@@ -912,15 +891,15 @@ namespace System {
 					}
 				}
 				
-				if (prevEcho) {
-					// echo the key back to the console
-					if (writer != null)
-						writer.WriteKey (key);
-					else
-						Console.stdout.Write (c);
-				}
+				// echo the key back to the console
+				if (writer != null)
+					writer.WriteKey (key);
+				else
+					Console.stdout.Write (c);
 			} while (!exit);
-			Echo = prevEcho;
+			
+			ConsoleDriver.SetEcho (true);
+			
 			rl_startx = -1;
 			rl_starty = -1;
 			return builder.ToString ();

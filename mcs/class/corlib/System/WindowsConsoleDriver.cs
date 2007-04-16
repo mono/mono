@@ -236,11 +236,6 @@ namespace System {
 			}
 		}
 
-		public bool Echo { // not really used on windows
-			get { return true; }
-			set {}
-		}
-
 		public ConsoleColor ForegroundColor {
 			get {
 				ConsoleScreenBufferInfo info = new ConsoleScreenBufferInfo ();

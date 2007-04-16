@@ -48,11 +48,6 @@ namespace System {
 			}
 		}
 
-		public static bool Echo {
-			get { return driver.Echo; }
-			set { driver.Echo = value; }
-		}
-
 		public static bool Initialized {
 			get { return driver.Initialized; }
 		}

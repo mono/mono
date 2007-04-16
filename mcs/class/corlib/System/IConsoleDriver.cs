@@ -37,7 +37,6 @@ namespace System {
 		int CursorSize { get; set; } 
 		int CursorTop { get; set; }
 		bool CursorVisible { get; set; }
-		bool Echo { get; set; }  // mono
 		ConsoleColor ForegroundColor { get; set; }
 		bool KeyAvailable { get; }
 		bool Initialized { get; }

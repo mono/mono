@@ -1,5 +1,23 @@
 2007-04-16  Jeffrey Stedfast  <fejj@novell.com>
 
+	* WindowsConsoleDriver.cs: Get rid of unused Echo property.
+
+	* NullConsoleDriver.cs: Get rid of Echo property.
+
+	* IConsoleDriver.cs: Get rid of Echo property.
+
+	* ConsoleDriver.cs (Echo::get/set): Removed, not needed.
+
+	* TermInfoDriver.cs (Echo::get/set): Removed, this isn't necessary
+	and is confusing.
+	(ReadKey): If we are intercepting the key, call SetEcho (false)
+	and then reset back to true after reading the key.
+	(ReadLine): Same idea here.
+	(GetCursorPosition): We no longer need to keep track of the
+	previous echo state, we no longer have it :)
+
+2007-04-16  Jeffrey Stedfast  <fejj@novell.com>
+
 	Fix for bug #80710 (and a bug I introduced in my last fix due to
 	this code assuming the underlying term echo state was always
 	false) and other buglets that I noticed.

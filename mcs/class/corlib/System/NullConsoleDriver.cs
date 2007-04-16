@@ -71,11 +71,6 @@ namespace System {
 			set {}
 		}
 
-		public bool Echo { // not really used on windows
-			get { return true; }
-			set {}
-		}
-
 		public ConsoleColor ForegroundColor {
 			get { return ConsoleColor.Black; }
 			set {}
