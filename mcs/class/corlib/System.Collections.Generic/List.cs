@@ -166,7 +166,7 @@ namespace System.Collections.Generic {
 		
 		public bool Contains (T item)
 		{
-			return Array.IndexOf<T>(_items, item) != -1;
+			return Array.IndexOf<T>(_items, item, 0, _size) != -1;
 		}
 		
 		public List <TOutput> ConvertAll <TOutput> (Converter <T, TOutput> converter)
@@ -524,6 +524,7 @@ namespace System.Collections.Generic {
 			if (index < 0 || (uint)index >= (uint)_size)
 				throw new ArgumentOutOfRangeException("index");
 			Shift (index, -1);
+			Array.Clear (_items, _size, 1);
 			_version++;
 		}
 		

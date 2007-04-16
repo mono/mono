@@ -1,3 +1,8 @@
+2006-04-16  Jonathan Chambers  <joncham@gmail.com>
+
+	* List.cs: Clear entry in RemoveAt after removing item. 
+	Fixes bug #81387.
+	
 2007-03-27  Alan McGovern <alan.mcgovern@gmail.com>
 
 	* List.cs: Optimized several methods to increase performance

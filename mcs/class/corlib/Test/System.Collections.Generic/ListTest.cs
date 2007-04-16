@@ -1157,6 +1157,18 @@ namespace MonoTests.System.Collections.Generic {
 			Assert.AreEqual (2, list.LastIndexOf (item0), "#4");
 			Assert.AreEqual (2, list.LastIndexOf (new EquatableClass (0)), "#5");
 		}
+
+		// for bug #81387 test case
+		[Test]
+		public void Test_Contains_After_Remove ()
+		{
+			List<int> list = new List<int> ();
+            list.Add (2);
+
+            list.Remove (2);
+
+			Assert.AreEqual (true, list.Contains (2), "#0");
+		}
 		
 		[Test]
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
