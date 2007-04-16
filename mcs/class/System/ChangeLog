@@ -1,3 +1,6 @@
+2007-04-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* System_test.dll.sources: Added CodeGeneratorFromBinaryOperatorTest.cs.
 2007-03-09  Chris Toshok  <toshok@ximian.com>
 
 	* System.ComponentModel.Design/DesignerTransactionCloseEventArgs.cs:

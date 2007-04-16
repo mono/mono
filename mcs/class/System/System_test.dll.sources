@@ -9,6 +9,7 @@ Microsoft.CSharp/CodeGeneratorTypeOutputTest.cs
 Microsoft.CSharp/CSharpCodeProviderTest.cs
 Microsoft.VisualBasic/CodeGeneratorTestBase.cs
 Microsoft.VisualBasic/VBCodeProviderTest.cs
+Microsoft.VisualBasic/CodeGeneratorFromBinaryOperatorTest.cs
 Microsoft.VisualBasic/CodeGeneratorFromCompileUnitTest.cs
 Microsoft.VisualBasic/CodeGeneratorFromExpressionTest.cs
 Microsoft.VisualBasic/CodeGeneratorFromNamespaceTest.cs
