@@ -776,6 +776,27 @@ namespace System.Windows.Forms {
 #if NET_2_0
 			if (form.MdiParent.MainMenuStrip != null)
 				form.MdiParent.MainMenuStrip.RefreshMdiItems ();
+
+			// Implicit menu strip merging
+			// - When child is activated
+			// - Parent form must have a MainMenuStrip
+			// - Find the first menustrip on the child
+			// - Merge
+			MenuStrip parent_menu = form.MdiParent.MainMenuStrip;
+
+			if (parent_menu != null) {
+				if (parent_menu.IsCurrentlyMerged)
+					ToolStripManager.RevertMerge (parent_menu);
+					
+				MenuStrip child_menu = null;
+
+				foreach (Control c in form.Controls)
+					if (c is MenuStrip)
+						child_menu = (MenuStrip)c;
+
+				if (child_menu != null)
+					ToolStripManager.Merge (child_menu, parent_menu);
+			}
 #endif
 
 			return maximize_this;

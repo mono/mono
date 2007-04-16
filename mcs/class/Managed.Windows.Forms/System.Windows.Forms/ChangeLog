@@ -1,3 +1,10 @@
+2007-04-16  Jonathan Pobst  <jpobst@monkey.com>
+
+	* MdiClient.cs: Implement implicit menu merging for MDI
+	children.  When a child form is active, if it has a menustrip
+	and the parent form has a MainMenuStrip, automatically merge
+	the menus.
+
 2007-04-15  Andreia Gaita  <avidigal@novell.com>
 
 	* TabControl.cs: Refactored sizing methods to not repeat
