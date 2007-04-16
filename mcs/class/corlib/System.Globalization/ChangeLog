@@ -1,3 +1,7 @@
+2007-04-16  Marek Safar  <marek.safar@gmail.com>
+
+	* PersianCalendar: Removed twoDigitYearMax field.
+
 2007-03-25  Marek Safar  <marek.safar@gmail.com>
 
 	* GregorianCalendar.cs, HebrewCalendar.cs, JapaneseCalendar.cs,

@@ -104,10 +104,6 @@ public class PersianCalendar : Calendar {
 			return new int[] { PersianEra }; 
 		}
 	}
-
-	// FIXME: the .NET documentation does not mention the default value,
-	// This is the value mentioned in the .NET documentation example result.
-	int twoDigitYearMax = 1410;
 	
 	public override int TwoDigitYearMax {
 		get {
