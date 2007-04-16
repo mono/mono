@@ -681,9 +681,9 @@ namespace System.Linq
 
         #region Except
 
-        public static IEnumerable<T> Except<T>(this IEnumerable<T> first, IEnumerable<T> second)
+        public static IEnumerable<TSource> Except<TSource>(this IEnumerable<TSource> first, IEnumerable<TSource> second)
         {
-            return Except<T>(first, second, null);
+            return Except(first, second, null);
         }
 
         public static IEnumerable<TSource> Except<TSource>(this IEnumerable<TSource> first, IEnumerable<TSource> second, IEqualityComparer<TSource> comparer)
