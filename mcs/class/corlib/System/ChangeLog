@@ -1,5 +1,21 @@
 2007-04-16  Jeffrey Stedfast  <fejj@novell.com>
 
+	Fix for bug #80710 (and a bug I introduced in my last fix due to
+	this code assuming the underlying term echo state was always
+	false) and other buglets that I noticed.
+
+	* TermInfoDriver.cs (ReadLine): Set (term) Echo to false as we do
+	our own manual echoing which prevents ^H from getting displayed on
+	the screen when the user hits backspace.
+	(ReadLine): If the user hits Backspace and builder.Length is 0, DO
+	NOT echo the backspace back to the console, ever.
+	(ReadLine): Only echo characters back to the console if echo is
+	set to true. Seems the Echo ConsoleDriver property is a Mono
+	extension, and I'm assuming this is the intended behavior? I can't
+	see what else the Echo property would be useful for...
+
+2007-04-16  Jeffrey Stedfast  <fejj@novell.com>
+
 	Fixes bug #81050
 
 	* TermInfoDriver.cs: Renamed the noEcho variable to echo, makes

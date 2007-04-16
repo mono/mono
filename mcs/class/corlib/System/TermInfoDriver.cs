@@ -890,7 +890,7 @@ namespace System {
 		public string ReadLine ()
  		{
 			bool prevEcho = echo;
-			Echo = true;
+			Echo = false;
 			
 			StringBuilder builder = new StringBuilder ();
 			bool exit = false;
@@ -906,11 +906,19 @@ namespace System {
 						builder.Append (c);
 					else if (builder.Length > 0)
 						builder.Length--;
+					else {
+						// skips over echoing the key to the console
+						continue;
+					}
 				}
-				if (writer != null)
-					writer.WriteKey (key);
-				else
-					Console.stdout.Write (c);
+				
+				if (prevEcho) {
+					// echo the key back to the console
+					if (writer != null)
+						writer.WriteKey (key);
+					else
+						Console.stdout.Write (c);
+				}
 			} while (!exit);
 			Echo = prevEcho;
 			rl_startx = -1;
