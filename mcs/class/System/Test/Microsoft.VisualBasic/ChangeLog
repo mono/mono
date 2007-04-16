@@ -1,3 +1,8 @@
+2007-04-13  Frederik Carlier  <frederik.carlier@carlier-online.be>
+
+    * CodeGeneratorFromBinaryOperatorTest.cs: Regression test for bug 81372, test
+    for code generated when comparing against null (Nothing in Visual Basic)
+
 2007-02-21  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* VBCodeProviderTest.cs: Modified tests to also cover fix for bug
