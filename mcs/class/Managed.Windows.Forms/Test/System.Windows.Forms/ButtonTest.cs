@@ -58,18 +58,17 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Ignore ("Needs a bugfix in libgdiplus, #80842")]
 		public void BehaviorImageList ()
 		{
 			// Basically, this shows that whichever of [Image|ImageIndex|ImageKey]
 			// is set last resets the others to their default state
 			Button b = new Button ();
 
-			Bitmap i1 = new Bitmap (16, 4);
+			Bitmap i1 = new Bitmap (16, 16);
 			i1.SetPixel (0, 0, Color.Blue);
-			Bitmap i2 = new Bitmap (16, 5);
+			Bitmap i2 = new Bitmap (16, 16);
 			i2.SetPixel (0, 0, Color.Red);
-			Bitmap i3 = new Bitmap (16, 6);
+			Bitmap i3 = new Bitmap (16, 16);
 			i3.SetPixel (0, 0, Color.Green);
 
 			Assert.AreEqual (null, b.Image, "D1");
