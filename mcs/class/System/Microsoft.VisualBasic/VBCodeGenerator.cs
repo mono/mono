@@ -116,11 +116,14 @@ namespace Microsoft.VisualBasic
 			// in Visual Basic the "Not (Expr) Is Nothing" construct is used
 			
 			bool null_comparison = false;
+			bool reverse = false;
 			if (e.Operator == CodeBinaryOperatorType.IdentityInequality) {
 				CodePrimitiveExpression nothing;
 				nothing = e.Left as CodePrimitiveExpression;
 				if (nothing == null) {
 					nothing = e.Right as CodePrimitiveExpression;
+				} else {
+					reverse = true;
 				}
 				null_comparison = nothing != null && nothing.Value == null;
 			}
@@ -129,9 +132,9 @@ namespace Microsoft.VisualBasic
 				TextWriter output = Output;
 
 				output.Write ("(Not (");
-				GenerateExpression (e.Left);
+				GenerateExpression (reverse ? e.Right : e.Left);
     				output.Write (") Is ");
-    				GenerateExpression (e.Right);
+    				GenerateExpression (reverse ? e.Left : e.Right);
     				output.Write (')');
 			} else {
 				base.GenerateBinaryOperatorExpression (e);
