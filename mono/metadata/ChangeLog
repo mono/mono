@@ -3,17 +3,6 @@
 	* threads.c (start_wrapper): Call push_appdomain_ref () earlier to fix races where
 	the thread is aborted early.
 
-2007-04-05  Dick Porter  <dick@ximian.com>
-
-	* file-io.c (ves_icall_System_IO_MonoIO_GetFileSystemEntries): use
-	FindFirstFile()/FindNextFile() to find entries.  This lets the
-	io-layer versions use MONO_IOMAP compatibility helpers.  Fixes bug
-	81038.
-
-	* appdomain.c (MONO_CORLIB_VERSION): Increment, as the usage of
-	the parameters of
-	ves_icall_System_IO_MonoIO_GetFileSystemEntries() has changed.
-
 2007-04-04  Martin Baulig  <martin@ximian.com>
 
 	* debug-helpers.c
