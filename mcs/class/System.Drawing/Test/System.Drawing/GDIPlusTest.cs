@@ -145,6 +145,41 @@ namespace MonoTests.System.Drawing {
 		}
 
 		[Test]
+		public void Format1bppIndexed_GetSetPixel ()
+		{
+			IntPtr bmp;
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipCreateBitmapFromScan0 (10, 10, 0, PixelFormat.Format1bppIndexed, IntPtr.Zero, out bmp), "GdipCreateBitmapFromScan0");
+			Assert.IsTrue (bmp != IntPtr.Zero, "bmp");
+			try {
+				int argb;
+				Assert.AreEqual (Status.Ok, GDIPlus.GdipBitmapGetPixel (bmp, 0, 0, out argb), "GdipBitmapGetPixel");
+				Assert.AreEqual (-16777216, argb, "argb");
+				Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipBitmapSetPixel (bmp, 0, 0, argb), "GdipBitmapSetPixel");
+			}
+			finally {
+				Assert.AreEqual (Status.Ok, GDIPlus.GdipDisposeImage (bmp), "GdipDisposeImage");
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")] // libgdiplus doesn't support this format
+		public void Format16bppGrayScale_GetSetPixel ()
+		{
+			IntPtr bmp;
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipCreateBitmapFromScan0 (10, 10, 0, PixelFormat.Format16bppGrayScale, IntPtr.Zero, out bmp), "GdipCreateBitmapFromScan0");
+			Assert.IsTrue (bmp != IntPtr.Zero, "bmp");
+			try {
+				int argb = 0;
+				// and MS GDI+ can get or set pixels on it
+				Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipBitmapGetPixel (bmp, 0, 0, out argb), "GdipBitmapGetPixel");
+				Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipBitmapSetPixel (bmp, 0, 0, argb), "GdipBitmapSetPixel");
+			}
+			finally {
+				Assert.AreEqual (Status.Ok, GDIPlus.GdipDisposeImage (bmp), "GdipDisposeImage");
+			}
+		}
+
+		[Test]
 		public void Unlock ()
 		{
 			IntPtr bmp;

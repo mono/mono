@@ -333,6 +333,62 @@ namespace MonoTests.System.Drawing {
 		}
 #endif
 
+		[Test]
+#if NET_2_0
+		[ExpectedException (typeof (InvalidOperationException))]
+#else
+		[ExpectedException (typeof (Exception))]
+#endif
+		public void Format1bppIndexed ()
+		{
+			using (Bitmap bmp = new Bitmap (1, 1, PixelFormat.Format1bppIndexed)) {
+				Color c = bmp.GetPixel (0, 0);
+				Assert.AreEqual (-16777216, c.ToArgb (), "Color");
+				bmp.SetPixel (0, 0, c);
+			}
+		}
+
+		[Test]
+#if NET_2_0
+		[ExpectedException (typeof (InvalidOperationException))]
+#else
+		[ExpectedException (typeof (Exception))]
+#endif
+		public void Format4bppIndexed ()
+		{
+			using (Bitmap bmp = new Bitmap (1, 1, PixelFormat.Format4bppIndexed)) {
+				Color c = bmp.GetPixel (0, 0);
+				Assert.AreEqual (-16777216, c.ToArgb (), "Color");
+				bmp.SetPixel (0, 0, c);
+			}
+		}
+
+		[Test]
+#if NET_2_0
+		[ExpectedException (typeof (InvalidOperationException))]
+#else
+		[ExpectedException (typeof (Exception))]
+#endif
+		public void Format8bppIndexed ()
+		{
+			using (Bitmap bmp = new Bitmap (1, 1, PixelFormat.Format8bppIndexed)) {
+				Color c = bmp.GetPixel (0, 0);
+				Assert.AreEqual (-16777216, c.ToArgb (), "Color");
+				bmp.SetPixel (0, 0, c);
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		[Category ("NotWorking")] // libgdiplus doesn't support this format
+		public void Format16bppGrayScale ()
+		{
+			using (Bitmap bmp = new Bitmap (1, 1, PixelFormat.Format16bppGrayScale)) {
+				// and MS GDI+ support seems quite limited too
+				bmp.GetPixel (0, 0);
+			}
+		}
+
 		private void FormatTest (PixelFormat format)
 		{
 			bool alpha = Image.IsAlphaPixelFormat (format);
