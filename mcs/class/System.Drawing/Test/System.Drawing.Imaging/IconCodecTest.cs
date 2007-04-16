@@ -175,7 +175,7 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
-		public void Bitmat16Data ()
+		public void Bitmap16Data ()
 		{
 			string sInFile = getInFile ("bitmaps/smiley.ico");
 			using (Bitmap bmp = new Bitmap (sInFile)) {
@@ -394,7 +394,7 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
-		public void Bitmat32Data ()
+		public void Bitmap32Data ()
 		{
 			string sInFile = getInFile ("bitmaps/VisualPng.ico");
 			using (Bitmap bmp = new Bitmap (sInFile)) {
@@ -621,7 +621,7 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
-		public void Bitmat48Data ()
+		public void Bitmap48Data ()
 		{
 			string sInFile = getInFile ("bitmaps/48x48x1.ico");
 			using (Bitmap bmp = new Bitmap (sInFile)) {
@@ -832,7 +832,7 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
-		public void Bitmat64Data ()
+		public void Bitmap64Data ()
 		{
 			string sInFile = getInFile ("bitmaps/64x64x256.ico");
 			using (Bitmap bmp = new Bitmap (sInFile)) {
@@ -1614,7 +1614,7 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
-		public void Bitmat96Data ()
+		public void Bitmap96Data ()
 		{
 			string sInFile = getInFile ("bitmaps/96x96x256.ico");
 			using (Bitmap bmp = new Bitmap (sInFile)) {

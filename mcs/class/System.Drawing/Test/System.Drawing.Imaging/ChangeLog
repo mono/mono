@@ -1,3 +1,10 @@
+2007-04-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* GifCodecTest.cs: Fix typo and add Stride check.
+	* IconCodecTest.cs: Fix typo.
+	* PngCodecTest.cs: Fix typo and add Stride check.
+	* TiffCodecTest.cs: Fix typo.
+
 2007-04-12  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TestBmpCodec.cs: Reenable some NotWorking test case.

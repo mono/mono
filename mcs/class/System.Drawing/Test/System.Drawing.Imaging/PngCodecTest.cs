@@ -178,7 +178,7 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
-		public void Bitmat1bitData ()
+		public void Bitmap1bitData ()
 		{
 			string sInFile = getInFile ("bitmaps/1bit.png");
 			using (Bitmap bmp = new Bitmap (sInFile)) {
@@ -187,6 +187,7 @@ namespace MonoTests.System.Drawing.Imaging {
 					Assert.AreEqual (bmp.Height, data.Height, "Height");
 					Assert.AreEqual (bmp.Width, data.Width, "Width");
 					Assert.AreEqual (PixelFormat.Format24bppRgb, data.PixelFormat, "PixelFormat");
+					Assert.AreEqual (864, data.Stride, "Stride");
 					int size = data.Height * data.Stride;
 					unsafe {
 						byte* scan = (byte*) data.Scan0;
@@ -387,7 +388,7 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
-		public void Bitmat4bitData ()
+		public void Bitmap4bitData ()
 		{
 			string sInFile = getInFile ("bitmaps/4bit.png");
 			using (Bitmap bmp = new Bitmap (sInFile)) {
@@ -396,6 +397,7 @@ namespace MonoTests.System.Drawing.Imaging {
 					Assert.AreEqual (bmp.Height, data.Height, "Height");
 					Assert.AreEqual (bmp.Width, data.Width, "Width");
 					Assert.AreEqual (PixelFormat.Format24bppRgb, data.PixelFormat, "PixelFormat");
+					Assert.AreEqual (864, data.Stride, "Stride");
 					int size = data.Height * data.Stride;
 					unsafe {
 						byte* scan = (byte*) data.Scan0;

@@ -153,7 +153,7 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
-		public void Bitmat32bitsData ()
+		public void Bitmap32bitsData ()
 		{
 			string sInFile = getInFile ("bitmaps/almogaver32bits.tif");
 			using (Bitmap bmp = new Bitmap (sInFile)) {

@@ -148,7 +148,7 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
-		public void Bitmat8bitsData ()
+		public void Bitmap8bitsData ()
 		{
 			string sInFile = getInFile ("bitmaps/nature24bits.gif");
 			using (Bitmap bmp = new Bitmap (sInFile)) {
@@ -157,6 +157,7 @@ namespace MonoTests.System.Drawing.Imaging {
 					Assert.AreEqual (bmp.Height, data.Height, "Height");
 					Assert.AreEqual (bmp.Width, data.Width, "Width");
 					Assert.AreEqual (PixelFormat.Format24bppRgb, data.PixelFormat, "PixelFormat");
+					Assert.AreEqual (332, data.Stride, "Stride");
 					int size = data.Height * data.Stride;
 					unsafe {
 						byte* scan = (byte*) data.Scan0;
