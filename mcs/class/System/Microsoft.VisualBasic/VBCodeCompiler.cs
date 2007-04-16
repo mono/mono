@@ -196,8 +196,10 @@ namespace Microsoft.VisualBasic
 						RegexOptions.Compiled | RegexOptions.ExplicitCapture);
 
 			Match match = reg.Match (error_string);
-			if (!match.Success)
-				return null;
+			if (!match.Success) {
+				error.ErrorText = error_string;
+				return error;
+			}
 
 			if (String.Empty != match.Result ("${file}"))
 				error.FileName = match.Result ("${file}");
@@ -270,6 +272,9 @@ namespace Microsoft.VisualBasic
 					if (!error.IsWarning)
 						loadIt = false;
 				}
+			}
+			if (results.NativeCompilerReturnValue != 0) {
+				loadIt = false;
 			}
 
 			if (loadIt) {

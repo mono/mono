@@ -5,6 +5,8 @@
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //   (partially based on CSharpCodeGenerator)
 //   Jochen Wezel (jwezel@compumaster.de)
+//   Frederik Carlier (frederik.carlier@carlier-online.be)
+//   Rolf Bjarne Kvinge (RKvinge@novell.com)
 //
 // (C) 2003 Andreas Nahr
 // (C) 2003 Jochen Wezel (http://www.compumaster.de)
@@ -16,6 +18,7 @@
 // 2003-11-12 JW: some corrections to allow correct compilation
 // 2003-11-28 JW: implementing code differences into current build of this file
 // 2003-12-10 JW: added "String." for the ChrW method because mbas doesn't support it without the String currently / TODO: remove it ASAP!
+// 2007-04-13 FC: Added support for the IdentityInequality operator when comparing against Nothing
 
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -105,6 +108,34 @@ namespace Microsoft.VisualBasic
 		{
 			Output.Write (st);
 			Output.WriteLine (" _");
+		}
+
+		protected override void GenerateBinaryOperatorExpression (CodeBinaryOperatorExpression e)
+		{
+			// We need to special case for comparisons against null;
+			// in Visual Basic the "Not (Expr) Is Nothing" construct is used
+			
+			bool null_comparison = false;
+			if (e.Operator == CodeBinaryOperatorType.IdentityInequality) {
+				CodePrimitiveExpression nothing;
+				nothing = e.Left as CodePrimitiveExpression;
+				if (nothing == null) {
+					nothing = e.Right as CodePrimitiveExpression;
+				}
+				null_comparison = nothing != null && nothing.Value == null;
+			}
+
+			if (null_comparison) {
+				TextWriter output = Output;
+
+				output.Write ("(Not (");
+				GenerateExpression (e.Left);
+    				output.Write (") Is ");
+    				GenerateExpression (e.Right);
+    				output.Write (')');
+			} else {
+				base.GenerateBinaryOperatorExpression (e);
+			}
 		}
 
 		protected override void GenerateArrayCreateExpression (CodeArrayCreateExpression expression)

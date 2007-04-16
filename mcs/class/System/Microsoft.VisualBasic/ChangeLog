@@ -1,3 +1,11 @@
+2007-04-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* VBCodeCompiler.cs: In CreateErrorFromString don't return null if the message couldn't be parsed. Temporary fix for ASP.Net to show more helpful fail messages. In CompileFromFileBatch don't try to load the assembly if the compilation returned a non-zero exit code.
+
+2007-04-13  Frederik Carlier  <frederik.carlier@carlier-online.be>
+
+	* VBCodeGenerator.cs: Added support for the IdentityInequality operator when comparing against Nothing.
+
 2007-03-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* VBCodeCompiler.cs: Reference Microsoft.VisualBasic.dll and not Microsoft.VisualBasic (patch by Frederik Carlier). 
