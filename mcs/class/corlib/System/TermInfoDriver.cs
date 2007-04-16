@@ -70,7 +70,7 @@ namespace System {
 		bool controlCAsInput;
 		bool inited;
 		bool initKeys;
-		bool noEcho;
+		bool echo = true;
 		string origPair;
 		string origColors;
 		string cursorAddress;
@@ -163,7 +163,7 @@ namespace System {
 				throw new IOException ("Not a tty.");
 
 			inited = true;
-			ConsoleDriver.SetEcho (false);
+			ConsoleDriver.SetEcho (echo);
 			string endString = null;
 			keypadXmit = reader.Get (TermInfoStrings.KeypadXmit);
 			keypadLocal = reader.Get (TermInfoStrings.KeypadLocal);
@@ -374,8 +374,10 @@ namespace System {
 		void GetCursorPosition ()
 		{
 			int row = 0, col = 0;
-			bool prevEcho = Echo;
-			Echo = false;
+			
+			if (echo)
+				ConsoleDriver.SetEcho (false);
+			
 			try {
 				WriteConsole ("\x1b[6n");
 				if (ConsoleDriver.InternalKeyAvailable (1000) <= 0) {
@@ -422,7 +424,8 @@ namespace System {
 					col --;
 				}
 			} finally {
-				Echo = prevEcho;
+				if (echo)
+					ConsoleDriver.SetEcho (true);
 			}
 
 			cursorLeft = col;
@@ -546,21 +549,25 @@ namespace System {
 
 		public bool Echo {
 			get {
-				if (!inited) {
+				if (!inited)
 					Init ();
-				}
-
-				return !noEcho;
+				
+				return echo;
 			}
 			set {
-				if (!inited) {
-					Init ();
-				}
-
-				if (value != noEcho)
+				if (echo == value) {
+					if (!inited)
+						Init ();
 					return;
-
-				noEcho = !value;
+				}
+				
+				echo = value;
+				
+				// Init() will call SetEcho(echo) for us
+				if (inited)
+					ConsoleDriver.SetEcho (echo);
+				else
+					Init ();
 			}
 		}
 
@@ -871,29 +878,20 @@ namespace System {
 
 		public ConsoleKeyInfo ReadKey (bool intercept)
 		{
-			if (!inited)
-				Init ();
-
-			bool prevEcho = Echo;
-			if (prevEcho == intercept)
-				Echo  = !intercept;
-
+			bool prevEcho = echo;
+			
+			Echo = !intercept;
 			ConsoleKeyInfo key = ReadKeyInternal ();
-			if (prevEcho == intercept)
-				Echo = prevEcho;
-
+			Echo = prevEcho;
+			
 			return key;
 		}
 
 		public string ReadLine ()
  		{
-			if (!inited)
-				Init ();
-
-			bool prevEcho = Echo;
-			if (prevEcho == false)
-				Echo  = true;
-
+			bool prevEcho = echo;
+			Echo = true;
+			
 			StringBuilder builder = new StringBuilder ();
 			bool exit = false;
 			CStreamWriter writer = Console.stdout as CStreamWriter;
@@ -914,8 +912,7 @@ namespace System {
 				else
 					Console.stdout.Write (c);
 			} while (!exit);
-			if (prevEcho == false)
-				Echo = prevEcho;
+			Echo = prevEcho;
 			rl_startx = -1;
 			rl_starty = -1;
 			return builder.ToString ();

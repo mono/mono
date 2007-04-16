@@ -1,3 +1,24 @@
+2007-04-16  Jeffrey Stedfast  <fejj@novell.com>
+
+	Fixes bug #81050
+
+	* TermInfoDriver.cs: Renamed the noEcho variable to echo, makes
+	the logic cleaner/simpler/etc. Plus it was never actually used
+	other than in the property methods which are called Echo.
+	(Init): Call ConsoleDriver.SetEcho() with the 'echo' value -
+	allows for a slight optimization if called from within the
+	Echo::set property.
+	(GetCursorPosition): Instead of calling the Echo property methods,
+	call ConsoleDriver.SetEcho() directly to toggle echo off (if echo
+	isn't already off, and then back on once we're finished getting
+	the position - assuming the echo state is on, of course) - this
+	avoids calling back into Init() which just felt dirty.
+	(Echo::set): If the Echo state differs from our current state,
+	call ConsoleDriver.SetEcho() with the new state (this is the
+	important piece of the fix for bug #81050).
+	(ReadKey): Simplified the echo logic to make it a bit clearer.
+	(ReadLine): Same.
+
 2007-04-16  Marek Safar  <marek.safar@gmail.com>
 
 	* Char.cs (IsLetter): Faster version.
