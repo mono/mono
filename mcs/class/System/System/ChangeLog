@@ -1,3 +1,9 @@
+2007-04-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Uri.cs : in Uri(baseUri,relativeUri,noEscape), relativeUri could
+	  contain a URI scheme. In such cases the relativeUri could be still
+	  relative (i.e. not always equivalent to absolute). Fixed bug #81382.
+
 2007-03-05  Peter Dettman  <peter.dettman@iinet.net.au>
 
 	* Uri.cs: This patch straightens out Equals/GetHashCode for the

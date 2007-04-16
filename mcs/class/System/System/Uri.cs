@@ -218,14 +218,28 @@ namespace System {
 				// pos2 < 0 ... e.g. mailto
 				// pos2 > pos ... to block ':' in query part
 				if (pos2 > pos || pos2 < 0) {
-					// equivalent to new Uri (relativeUri, dontEscape)
-					source = relativeUri;
+					// in some cases, it is equivanent to new Uri (relativeUri, dontEscape):
+					// 1) when the URI scheme in the 
+					// relative path is different from that
+					// of the baseUri, or
+					// 2) the URI scheme is non-standard
+					// ones (non-standard URIs are always
+					// treated as absolute here), or
+					// 3) the relative URI path is absolute.
+					if (String.CompareOrdinal (baseUri.Scheme, 0, relativeUri, 0, pos) != 0 ||
+					    !IsPredefinedScheme (baseUri.Scheme) ||
+					    relativeUri.Length > pos + 1 &&
+					    relativeUri [pos + 1] == '/') {
+						source = relativeUri;
 #if NET_2_0
-					ParseUri ();
+						ParseUri ();
 #else
-					Parse ();
+						Parse ();
 #endif
-					return;
+						return;
+					}
+					else
+						relativeUri = relativeUri.Substring (pos + 1);
 				}
 			}
 

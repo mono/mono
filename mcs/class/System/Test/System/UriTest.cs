@@ -1247,6 +1247,24 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		public void RelativeUri2 ()
+		{
+			AssertEquals ("#1", "hoge:ext", new Uri (new Uri ("hoge:foo:bar:baz"), "hoge:ext").ToString ());
+			if (isWin32) {
+				AssertEquals ("#2-w", "file:///d:/myhost/ext", new Uri (new Uri ("file:///c:/localhost/bar"), "file:///d:/myhost/ext").ToString ());
+				AssertEquals ("#3-w", "file:///c:/localhost/myhost/ext", new Uri (new Uri ("file:///c:/localhost/bar"), "file:myhost/ext").ToString ());
+				AssertEquals ("#4-w", "uuid:ext", new Uri (new Uri ("file:///c:/localhost/bar"), "uuid:ext").ToString ());
+				AssertEquals ("#5-w", "file:///c:/localhost/ext", new Uri (new Uri ("file:///c:/localhost/bar"), "file:./ext").ToString ());
+			} else {
+				AssertEquals ("#2-u", "file:///d/myhost/ext", new Uri (new Uri ("file:///c/localhost/bar"), "file:///d/myhost/ext").ToString ());
+				AssertEquals ("#3-u", "file:///c/localhost/myhost/ext", new Uri (new Uri ("file:///c/localhost/bar"), "file:myhost/ext").ToString ());
+				AssertEquals ("#4-u", "uuid:ext", new Uri (new Uri ("file:///c/localhost/bar"), "uuid:ext").ToString ());
+				AssertEquals ("#5-u", "file:///c/localhost/ext", new Uri (new Uri ("file:///c/localhost/bar"), "file:./ext").ToString ());
+			}
+			AssertEquals ("#6", "http://localhost/ext", new Uri (new Uri ("http://localhost/bar"), "http:./ext").ToString ());
+		}
+
+		[Test]
 		public void ToStringTest()
 		{			
 			Uri uri = new Uri ("dummy://xxx");
