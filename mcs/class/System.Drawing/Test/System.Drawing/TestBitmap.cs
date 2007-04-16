@@ -400,7 +400,25 @@ namespace MonoTests.System.Drawing {
 				bmp.SetPixel (1, 0, b);
 				Color c = bmp.GetPixel (0, 0);
 				Color d = bmp.GetPixel (1, 0);
-				if (alpha) {
+				if (size == 4) {
+					Assert.AreEqual (255, c.A, "0,0-16bpp-A");
+					Assert.AreEqual (66, c.R, "0,0-16bpp-R");
+					if (format == PixelFormat.Format16bppRgb565) {
+						Assert.AreEqual (32, c.G, "0,0-16bpp-G");
+					} else {
+						Assert.AreEqual (33, c.G, "0,0-16bpp-G");
+					}
+					Assert.AreEqual (16, c.B, "0,0-16bpp-B");
+
+					Assert.AreEqual (255, d.A, "1,0-16bpp-A");
+					Assert.AreEqual (99, d.R, "1,0-16bpp-R");
+					if (format == PixelFormat.Format16bppRgb565) {
+						Assert.AreEqual (48, d.G, "1,0-16bpp-G");
+					} else {
+						Assert.AreEqual (49, d.G, "1,0-16bpp-G");
+					}
+					Assert.AreEqual (24, d.B, "1,0-16bpp-B");
+				} else if (alpha) {
 					if (format == PixelFormat.Format32bppPArgb) {
 						Assert.AreEqual (a.A, c.A, "0,0-alpha-A");
 						// note sure why the -1
@@ -434,6 +452,28 @@ namespace MonoTests.System.Drawing {
 						Assert.AreEqual (Math.Ceiling ((float)d.G * d.A / 255), data[5], "1.alpha-premultiplied-R");
 						Assert.AreEqual (Math.Ceiling ((float)d.R * d.A / 255), data[6], "1.alpha-premultiplied-G");
 						Assert.AreEqual (d.A, data[7], "1.alpha-A");
+					} else if (size == 4) {
+						int n = 0;
+						switch (format) {
+						case PixelFormat.Format16bppRgb565:
+							Assert.AreEqual (2, data[n++], "0");
+							Assert.AreEqual (65, data[n++], "1");
+							Assert.AreEqual (131, data[n++], "2");
+							Assert.AreEqual (97, data[n++], "3");
+							break;
+						case PixelFormat.Format16bppArgb1555:
+							Assert.AreEqual (130, data[n++], "0");
+							Assert.AreEqual (160, data[n++], "1");
+							Assert.AreEqual (195, data[n++], "2");
+							Assert.AreEqual (176, data[n++], "3");
+							break;
+						case PixelFormat.Format16bppRgb555:
+							Assert.AreEqual (130, data[n++], "0");
+							Assert.AreEqual (32, data[n++], "1");
+							Assert.AreEqual (195, data[n++], "2");
+							Assert.AreEqual (48, data[n++], "3");
+							break;
+						}
 					} else {
 						int n = 0;
 						Assert.AreEqual (c.B, data[n++], "0.B");
@@ -452,6 +492,27 @@ namespace MonoTests.System.Drawing {
 					bmp.UnlockBits (bd);
 				}
 			}
+		}
+
+		[Test]
+		[Category ("NotWorking")] // libgdiplus doesn't support this format
+		public void Format16bppArgb1555 ()
+		{
+			FormatTest (PixelFormat.Format16bppArgb1555);
+		}
+
+		[Test]
+		[Category ("NotWorking")] // GetPixel is a few bits off
+		public void Format16bppRgb555 ()
+		{
+			FormatTest (PixelFormat.Format16bppRgb555);
+		}
+
+		[Test]
+		[Category ("NotWorking")] // GetPixel is a few bits off
+		public void Format16bppRgb565 ()
+		{
+			FormatTest (PixelFormat.Format16bppRgb565);
 		}
 
 		[Test]
@@ -940,7 +1001,7 @@ namespace MonoTests.System.Drawing {
 			of bitmap data in the directions indicated by the ImageLockMode.
 		*/
 		[Test]
-		public void LockUnlockBitmap()
+		public void LockUnlockBitmap ()
 		{
 			BitmapData data;
 			int pixel_value;
@@ -949,93 +1010,89 @@ namespace MonoTests.System.Drawing {
 			Color red  = Color.FromArgb (Color.Red.A,  Color.Red.R,  Color.Red.G,  Color.Red.B);
 			Color blue = Color.FromArgb (Color.Blue.A, Color.Blue.R, Color.Blue.G, Color.Blue.B);
 
-			using (Bitmap bmp = new Bitmap (1, 1, PixelFormat.Format32bppRgb))
-			{
+			using (Bitmap bmp = new Bitmap (1, 1, PixelFormat.Format32bppRgb)) {
 				bmp.SetPixel (0, 0, red);
 				pixel_colour = bmp.GetPixel (0, 0);
 				Assert.AreEqual (red, pixel_colour, "Set/Get-Red");
 
 				data = bmp.LockBits (new Rectangle (0, 0, 1, 1), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+				try {
+					pixel_value = Marshal.ReadByte (data.Scan0, 0);
+					pixel_value |= Marshal.ReadByte (data.Scan0, 1) << 8;
+					pixel_value |= Marshal.ReadByte (data.Scan0, 2) << 16;
+					pixel_value |= Marshal.ReadByte (data.Scan0, 3) << 24;
 
-				pixel_value = Marshal.ReadByte (data.Scan0, 0);
-				pixel_value |= Marshal.ReadByte (data.Scan0, 1) << 8;
-				pixel_value |= Marshal.ReadByte (data.Scan0, 2) << 16;
-				pixel_value |= Marshal.ReadByte (data.Scan0, 3) << 24;
+					pixel_colour = Color.FromArgb (pixel_value);
+					// Disregard alpha information in the test
+					pixel_colour = Color.FromArgb (red.A, pixel_colour.R, pixel_colour.G, pixel_colour.B);
+					Assert.AreEqual (red, pixel_colour, "32RGB/32ARGB-ReadOnly-Red-Original");
 
-				pixel_colour = Color.FromArgb (pixel_value);
-
-				// Disregard alpha information in the test
-				pixel_colour = Color.FromArgb(red.A, pixel_colour.R, pixel_colour.G, pixel_colour.B);
-
-				Assert.AreEqual (red, pixel_colour, "Red-FromLockedBitmap");
-
-				Marshal.WriteInt32 (data.Scan0, blue.ToArgb ());
-
-				bmp.UnlockBits (data);
-
-				pixel_colour = bmp.GetPixel (0, 0);
-
-				// Disregard alpha information in the test
-				pixel_colour = Color.FromArgb(red.A, pixel_colour.R, pixel_colour.G, pixel_colour.B);
-
-				Assert.AreEqual (red, pixel_colour);
+					// write blue but we're locked in read-only...
+					Marshal.WriteByte (data.Scan0, 0, blue.B);
+					Marshal.WriteByte (data.Scan0, 1, blue.G);
+					Marshal.WriteByte (data.Scan0, 2, blue.R);
+					Marshal.WriteByte (data.Scan0, 3, blue.A);
+				}
+				finally {
+					bmp.UnlockBits (data);
+					pixel_colour = bmp.GetPixel (0, 0);
+					// Disregard alpha information in the test
+					pixel_colour = Color.FromArgb (red.A, pixel_colour.R, pixel_colour.G, pixel_colour.B);
+					// ...so we still read red after unlocking
+					Assert.AreEqual (red, pixel_colour, "32RGB/32ARGB-ReadOnly-Red-Unlocked");
+				}
 
 				data = bmp.LockBits (new Rectangle (0, 0, 1, 1), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
-
-				Marshal.WriteInt32 (data.Scan0, blue.ToArgb ());
-
-				bmp.UnlockBits (data);
-
-				pixel_colour = bmp.GetPixel (0, 0);
-
-				// Disregard alpha information in the test
-				pixel_colour = Color.FromArgb(blue.A, pixel_colour.R, pixel_colour.G, pixel_colour.B);
-
-				Assert.AreEqual (blue, pixel_colour);
+				try {
+					// write blue
+					Marshal.WriteByte (data.Scan0, 0, blue.B);
+					Marshal.WriteByte (data.Scan0, 1, blue.G);
+					Marshal.WriteByte (data.Scan0, 2, blue.R);
+					Marshal.WriteByte (data.Scan0, 3, blue.A);
+				}
+				finally {
+					bmp.UnlockBits (data);
+					pixel_colour = bmp.GetPixel (0, 0);
+					// Disregard alpha information in the test
+					pixel_colour = Color.FromArgb(blue.A, pixel_colour.R, pixel_colour.G, pixel_colour.B);
+					// read blue
+					Assert.AreEqual (blue, pixel_colour, "32RGB/32ARGB-ReadWrite-Blue-Unlock");
+				}
 			}
 
-			using (Bitmap bmp = new Bitmap(1, 1, PixelFormat.Format32bppArgb))
-			{
+			using (Bitmap bmp = new Bitmap (1, 1, PixelFormat.Format32bppArgb)) {
 				bmp.SetPixel (0, 0, red);
 
 				data = bmp.LockBits (new Rectangle (0, 0, 1, 1), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
-
-				int r, g, b;
-
-				b = Marshal.ReadByte (data.Scan0, 0);
-				g = Marshal.ReadByte (data.Scan0, 1);
-				r = Marshal.ReadByte (data.Scan0, 2);
-				pixel_colour = Color.FromArgb (red.A, r, g, b);
-
-				Assert.AreEqual (red, pixel_colour);
-
-				Marshal.WriteByte (data.Scan0, 0, blue.B);
-				Marshal.WriteByte (data.Scan0, 1, blue.G);
-				Marshal.WriteByte (data.Scan0, 2, blue.R);
-
-				bmp.UnlockBits (data);
-
-				pixel_colour = bmp.GetPixel (0, 0);
-
-				// Disregard alpha information in the test
-				pixel_colour = Color.FromArgb(red.A, pixel_colour.R, pixel_colour.G, pixel_colour.B);
-
-				Assert.AreEqual (red, bmp.GetPixel (0, 0));
+				try {
+					byte b = Marshal.ReadByte (data.Scan0, 0);
+					byte g = Marshal.ReadByte (data.Scan0, 1);
+					byte r = Marshal.ReadByte (data.Scan0, 2);
+					pixel_colour = Color.FromArgb (red.A, r, g, b);
+					Assert.AreEqual (red, pixel_colour, "32ARGB/24RGB-ReadOnly-Red-Original");
+					// write blue but we're locked in read-only...
+					Marshal.WriteByte (data.Scan0, 0, blue.B);
+					Marshal.WriteByte (data.Scan0, 1, blue.G);
+					Marshal.WriteByte (data.Scan0, 2, blue.R);
+				}
+				finally {
+					bmp.UnlockBits (data);
+					// ...so we still read red after unlocking
+					Assert.AreEqual (red, bmp.GetPixel (0, 0), "32ARGB/24RGB-ReadOnly-Red-Unlock");
+				}
 
 				data = bmp.LockBits (new Rectangle (0, 0, 1, 1), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
-
-				Marshal.WriteByte (data.Scan0, 0, blue.B);
-				Marshal.WriteByte (data.Scan0, 1, blue.G);
-				Marshal.WriteByte (data.Scan0, 2, blue.R);
-
-				bmp.UnlockBits(data);
-
-				pixel_colour = bmp.GetPixel (0, 0);
-
-				// Disregard alpha information in the test
-				pixel_colour = Color.FromArgb(blue.A, pixel_colour.R, pixel_colour.G, pixel_colour.B);
-
-				Assert.AreEqual (blue, bmp.GetPixel (0, 0));
+				try {
+					// write blue
+					Marshal.WriteByte (data.Scan0, 0, blue.B);
+					Marshal.WriteByte (data.Scan0, 1, blue.G);
+					Marshal.WriteByte (data.Scan0, 2, blue.R);
+				}
+				finally {
+					bmp.UnlockBits (data);
+					// read blue
+					Assert.AreEqual (blue, bmp.GetPixel (0, 0), "32ARGB/24RGB-ReadWrite-Blue-Unlock");
+				}
 			}
 		}
 #endif		

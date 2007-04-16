@@ -1,3 +1,8 @@
+2007-04-16  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* TestBitmap.cs: Add test cases for 16bpp formats (NotWorking) and
+	reworked LockUnlockBitmap (e.g. add assert messages).
+
 2007-04-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* GDIPlusTest.cs: Add test cases for GdipBitmap[Get|Set]Pixel on an
