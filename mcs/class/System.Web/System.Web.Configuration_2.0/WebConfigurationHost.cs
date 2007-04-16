@@ -156,7 +156,7 @@ namespace System.Web.Configuration
 
 				if (map == null)
 #if TARGET_J2EE
-					return "/web.config";
+					return "/META-INF/web.config";
 #else
 					mdir = Path.GetDirectoryName (System.Runtime.InteropServices.RuntimeEnvironment.SystemConfigurationFile);
 #endif

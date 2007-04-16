@@ -1028,7 +1028,7 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\..\..\mono\data\net_2_0\machine.jvm.config">
-      <LogicalName>machine.config</LogicalName>
+      <LogicalName>META-INF\machine.config</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
