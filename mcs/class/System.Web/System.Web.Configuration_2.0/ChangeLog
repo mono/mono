@@ -1,3 +1,8 @@
+2007-04-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ProcessModelSection.cs : cpuMask default value should be int,
+	  not uint.
+
 2007-04-06  Marek Habersack  <mhabersack@novell.com>
 
 	* CustomErrorsSection.cs: make the customErrors section work.
