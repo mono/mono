@@ -1,3 +1,10 @@
+2007-04-17  Alp Toker  <alp@atoker.com>
+
+	* mono-api-diff.cs:
+	* mono-api-info.cs:
+	* MissingMethod.cs: Treat IsVirtual and IsFinal as independent
+	attributes.
+
 2007-02-22  Wade Berrier  <wberrier@novell.com>
 
 	* Makefile: Move files from EXTRA_DISTFILES to DISTFILES so they

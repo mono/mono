@@ -48,7 +48,9 @@ namespace Mono.Util.CorCompare {
 
 				AddFlagWarning (miMono.IsAbstract, miMS.IsAbstract, "abstract");
 				AddFlagWarning (miMono.IsStatic, miMS.IsStatic, "static");
-				AddFlagWarning (miMono.IsVirtual && !miMono.IsFinal, miMS.IsVirtual && !miMS.IsFinal, "virtual");
+				//AddFlagWarning (miMono.IsVirtual && !miMono.IsFinal, miMS.IsVirtual && !miMS.IsFinal, "virtual");
+				AddFlagWarning (miMono.IsVirtual, miMS.IsVirtual, "virtual");
+				AddFlagWarning (miMono.IsFinal, miMS.IsFinal, "final");
 				AddFlagWarning (miMono.IsConstructor, miMS.IsConstructor, "a constructor");
 				//AddFlagWarning (miMono.IsFinal, miMS.IsFinal, "sealed");
 			}

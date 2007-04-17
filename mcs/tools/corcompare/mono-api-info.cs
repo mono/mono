@@ -761,6 +761,8 @@ namespace Mono.AssemblyInfo
 				AddAttribute (p, "abstract", "true");
 			if (mbase.IsVirtual)
 				AddAttribute (p, "virtual", "true");
+			if (mbase.IsFinal)
+				AddAttribute (p, "final", "true");
 			if (mbase.IsStatic)
 				AddAttribute (p, "static", "true");
 

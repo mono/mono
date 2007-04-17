@@ -1619,7 +1619,8 @@ namespace Mono.AssemblyCompare
 			None = 0,
 			Abstract = 1,
 			Virtual = 2,
-			Static = 4
+			Static = 4,
+			Final = 8,
 		}
 
 		protected override void LoadExtraData (string name, XmlNode node)
@@ -1639,6 +1640,8 @@ namespace Mono.AssemblyCompare
 				flags |= SignatureFlags.Static;
 			if (((XmlElement) node).GetAttribute ("virtual") == "true")
 				flags |= SignatureFlags.Virtual;
+			if (((XmlElement) node).GetAttribute ("final") == "true")
+				flags |= SignatureFlags.Final;
 			if (flags != SignatureFlags.None) {
 				if (signatureFlags == null)
 					signatureFlags = new Hashtable ();
