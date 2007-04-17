@@ -1,3 +1,10 @@
+2007-04-17  Chris Toshok  <toshok@ximian.com>
+
+	* Control.cs (CreateControl): turns out in 2.0 we don't need this
+	OnBindingContextChanged thing here.  It's only generated from
+	ContainerControl.OnCreateControl.  Fixes a newly written unit test
+	- BindingTest.BindingContextChangedTest4.
+	
 2007-04-17  Jackson Harper  <jackson@ximian.com>
 
 	* ScrollBar.cs: When setting values, make sure the current

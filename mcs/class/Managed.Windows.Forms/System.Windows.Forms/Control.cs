@@ -3362,9 +3362,11 @@ namespace System.Windows.Forms
 					if (!c.Created)
 						c.CreateControl ();
 						
+#if ONLY_1_1
 				if (binding_context == null && parent != null) {
 					OnBindingContextChanged(EventArgs.Empty);
 				}
+#endif
 
 				OnCreateControl();
 			}
