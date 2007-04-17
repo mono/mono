@@ -1,3 +1,7 @@
+2007-04-17  Alp Toker  <alp@atoker.com>
+
+	* DateTimeFormatInfo.cs: Provide set accessor for MonthNames.
+
 2007-04-16  Marek Safar  <marek.safar@gmail.com>
 
 	* PersianCalendar: Removed twoDigitYearMax field.

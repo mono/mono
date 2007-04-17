@@ -317,6 +317,7 @@ namespace System.Globalization
 		public string[] MonthNames
 		{
 			get { return (string[]) RawMonthNames.Clone (); }
+			set { RawMonthNames = value; }
 		}
 
 		internal string[] RawMonthNames
