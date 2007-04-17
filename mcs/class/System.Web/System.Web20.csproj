@@ -1229,6 +1229,7 @@
     <Compile Include="System.Web\HttpStaticObjectsCollection.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="System.Web\UplevelHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="resources\arrow_down.gif">
@@ -1399,4 +1400,7 @@
       <UserProperties REFS-JarPath-j2se-helpers="..\lib\J2SE.Helpers.jar" REFS-JarPath-j2ee-helpers="..\lib\J2EE.Helpers.jar" REFS-JarPath-j2ee="..\lib\j2ee.jar" REFS-JarPath-rt="..\lib\rt.jar" REFS-JarPath-mscorlib="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\mscorlib.jar" REFS-JarPath-system="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\System.jar" REFS-JarPath-system-xml="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\System.Xml.jar" REFS-JarPath-system-drawing="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\System.Drawing.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\jai_imageio.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\jai_core.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\jai_codec.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\clibwrapper_jiio.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\mlibwrapper_jai.jar" REFS-JarPath-system-data="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\System.Data.jar" REFS-JarPath-system-configuration="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\System.Configuration.jar" />
     </VisualStudio>
   </ProjectExtensions>
+  <PropertyGroup>
+    <PreBuildEvent>"$(ProjectDir)..\..\class\lib\net_2_0\culevel.exe" -o "$(ProjectDir)System.Web\UplevelHelper.cs" "$(ProjectDir)UplevelHelperDefinitions.xml"</PreBuildEvent>
+  </PropertyGroup>
 </Project>
