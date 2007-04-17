@@ -1,3 +1,8 @@
+2007-04-17  Alp Toker  <alp@atoker.com>
+
+	* Array.cs: Make GetRank() icall private. Subclasses should use the
+	public Rank property.
+
 2007-04-16  Jeffrey Stedfast  <fejj@novell.com>
 
 	* WindowsConsoleDriver.cs: Get rid of unused Echo property.

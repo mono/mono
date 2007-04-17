@@ -348,7 +348,7 @@ namespace System
 
 		// InternalCall Methods
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		protected extern int GetRank ();
+		extern int GetRank ();
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern int GetLength (int dimension);
