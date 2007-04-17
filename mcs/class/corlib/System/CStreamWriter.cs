@@ -79,12 +79,14 @@ namespace System.IO {
 						
 						if (driver.IsSpecialKey (c)) {
 							// flush what we have
-							try {
-								base.Write (buf, 0, j);
-							} catch (IOException) {
-							}
+							if (j > 0) {
+								try {
+									base.Write (buf, 0, j);
+								} catch (IOException) {
+								}
 
-							j = 0;
+								j = 0;
+							}
 
 							// write the special key
 							driver.WriteSpecialKey (c);

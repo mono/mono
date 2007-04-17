@@ -1,3 +1,7 @@
+2007-04-17  Jeffrey Stedfast  <fejj@novell.com>
+
+	* CStreamWriter.cs (Write): Only flush our buffer if j > 0
+
 2007-04-17  Jeffrey Stedfast  <fejj@gnome.org>
 
 	Turns out my last patch was broken wrt handling some special keys
