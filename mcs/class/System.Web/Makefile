@@ -175,7 +175,7 @@ $(the_lib): $(WEBSERVICES_DEP_FILE)
 endif
 
 System.Web/UplevelHelper.cs: UplevelHelperDefinitions.xml
-	$(topdir)/class/lib/default/culevel.exe -o $@ $^
+	$(TEST_RUNTIME) $(topdir)/class/lib/default/culevel.exe -o $@ $^
 
 run-aaa: test
 	$(TEST_RUNTIME) $(TEST_HARNESS) $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_FLAGS) \
