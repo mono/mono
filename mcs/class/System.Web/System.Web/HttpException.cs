@@ -182,22 +182,23 @@ table.sampleCode {{width: 100%; background-color: #ffffcc; }}
 		
 		string GetDefaultErrorMessage ()
 		{
+			Exception ex = InnerException;
+			if (ex == null)
+				ex = this;
+
 			StringBuilder builder = new StringBuilder ();
 			WriteFileTop (builder, String.Format ("Error{0}", http_code != 0 ? " " + http_code : String.Empty));
-			builder.AppendFormat ("<h2><em>{0}</em></h2>\r\n", HtmlEncode (Message));
+			builder.AppendFormat ("<h2><em>{0}</em></h2>\r\n", HtmlEncode (ex.Message));
 			builder.AppendFormat ("<p><strong>Description: </strong>{0}</p>\r\n", HtmlEncode (Description));
 			builder.Append ("<p><strong>Error Message: </strong>");
 			if (http_code != 0)
 				builder.AppendFormat ("HTTP {0}. ", http_code);
-			builder.AppendFormat ("{0}\r\n</p>\r\n", HtmlEncode (this.Message));
+			builder.AppendFormat ("{0}: {1}\r\n</p>\r\n", ex.GetType ().FullName, HtmlEncode (ex.Message));
 
 			if (InnerException != null) {
 				builder.AppendFormat ("<p><strong>Stack Trace: </strong></p>");
 				builder.Append ("<table summary=\"Stack Trace\" class=\"sampleCode\">\r\n<tr><td>");
 				WriteTextAsCode (builder, InnerException.ToString ());
-#if TARGET_J2EE //Required, because toString of Java doesn't print stackTrace
-				WriteTextAsCode (builder, InnerException.StackTrace);
-#endif
 				builder.Append ("</td></tr>\r\n</table>\r\n");
 			}
 			WriteFileBottom (builder,
