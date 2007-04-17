@@ -1202,7 +1202,7 @@ namespace System.Web.UI.WebControls
 				Label AnswerLabel = new Label ();
 				AnswerLabel.ID = "AnswerLabel";
 				AnswerLabel.AssociatedControlID = "Answer";
-				AnswerLabel.Text = _owner.UserNameLabelText;
+				AnswerLabel.Text = _owner.AnswerLabelText;
 				AnswerLabel.ApplyStyle (_owner.LabelStyle);
 
 				RequiredFieldValidator AnswerRequired = new RequiredFieldValidator ();

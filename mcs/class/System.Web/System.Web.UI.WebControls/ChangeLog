@@ -1,3 +1,7 @@
+2007-04-17  Daniel Nauck  <dna@mono-project.de>
+
+	* PasswordRecovery.cs: fixed typo (AnswerLabel.Text).
+
 2007-04-17  Marek Habersack  <mhabersack@novell.com>
 
 	* BaseValidator.cs: use the new uplevel browser detection code.
