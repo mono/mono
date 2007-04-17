@@ -60,53 +60,41 @@ namespace System.IO {
 			}
 			
 			lock (this) {
-				int i = 0, j = 0;
-				char []buf;
+				int last = index + count;
+				int i = index;
+				int n = 0;
 				char c;
-				
-				// The idea here is that we want to limit our temp
-				// buffer size - I picked 1k because the underlying
-				// stream implementation seems to break writes into
-				// 1k byte chunks.
-				if (count > 1024)
-					buf = new char[1024];
-				else
-					buf = new char[count];
-				
+
 				do {
-					do {
-						c = buffer [index + i++];
-						
-						if (driver.IsSpecialKey (c)) {
-							// flush what we have
-							if (j > 0) {
-								try {
-									base.Write (buf, 0, j);
-								} catch (IOException) {
-								}
+					c = buffer [i++];
 
-								j = 0;
+					if (driver.IsSpecialKey (c)) {
+						// flush what we have
+						if (n > 0) {
+							try {
+								base.Write (buffer, index, n);
+							} catch (IOException) {
 							}
+							
+							n = 0;
+						}
 
-							// write the special key
-							driver.WriteSpecialKey (c);
-						} else {
-							buf[j++] = c;
-							break;
-						}
-					} while (i < count);
-					
-					if (j > 0 && (j == buf.Length || i == count)) {
-						// buffer is full or no more data to buffer
-						// write it out
-						try {
-							base.Write (buf, 0, j);
-						} catch (IOException) {
-						}
-						
-						j = 0;
+						// write the special key
+						driver.WriteSpecialKey (c);
+
+						index = i;
+					} else {
+						n++;
 					}
-				} while (i < count);
+				} while (i < last);
+
+				if (n > 0) {
+					// write out the remainder of the buffer
+					try {
+						base.Write (buffer, index, n);
+					} catch (IOException) {
+					}
+				}
 			}
 		}
 

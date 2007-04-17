@@ -1,5 +1,9 @@
 2007-04-17  Jeffrey Stedfast  <fejj@novell.com>
 
+	* CStreamWriter.cs (Write): Optimized this some more, we don't
+	need a temporary buffer. Just blit chunks of the src buffer
+	instead.
+
 	* CStreamReader.cs (Read): Need to increment our array index so
 	that we don't store each byte read into the same
 	position. Discovered this while testing bug #81159 (which appears
