@@ -163,7 +163,6 @@ namespace System.Windows.Forms {
 
 			text_format_flags = TextFormatFlags.HorizontalCenter;
 			text_format_flags |= TextFormatFlags.VerticalCenter;
-			text_format_flags |= TextFormatFlags.WordBreak;
 		
 			TextChanged+=new System.EventHandler(RedrawEvent);
 			SizeChanged+=new EventHandler(RedrawEvent);

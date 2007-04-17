@@ -1,5 +1,10 @@
 2007-04-17  Everaldo Canuto  <everaldo@simios.org>
 
+	* ButtonBase.cs: Remove TextFormatFlags.WordBreak to mimic same behavior 
+	from win32. Fixes #81255.
+
+2007-04-17  Everaldo Canuto  <everaldo@simios.org>
+
 	* ThemeWin32Classic.cs: Remove text offset from DrawButtonText as it is
 	already present in CalculateButtonTextAndImageLayout.
 
