@@ -3362,7 +3362,7 @@ namespace System.Windows.Forms
 					if (!c.Created)
 						c.CreateControl ();
 						
-				if (binding_context == null) {	// seem to be sent whenever it's null?
+				if (binding_context == null && parent != null) {
 					OnBindingContextChanged(EventArgs.Empty);
 				}
 
