@@ -1071,7 +1071,7 @@ namespace Mono.Tools.LocaleBuilder {
 			}
                 }
 
-                static string control_chars = "ghmsftz";
+                static string control_chars = "eghmsftz";
 
                 // HACK: We are trying to build year_month and month_day patterns from the full pattern.
                 private void ParseFullDateFormat (DateTimeFormatEntry df, string full)
@@ -1081,8 +1081,9 @@ namespace Mono.Tools.LocaleBuilder {
                         string year_month = String.Empty;
                         bool in_month_data = false;
                         bool in_year_data = false;
-                        int month_end = 0;
-                        int year_end = 0;
+			int day_start = 0, day_end = 0;
+                        int month_start = 0, month_end = 0;
+                        int year_start = 0, year_end = 0;
 			bool inquote = false;
                         
                         for (int i = 0; i < full.Length; i++) {
@@ -1092,18 +1093,24 @@ namespace Mono.Tools.LocaleBuilder {
                                         year_month += c;
                                         in_year_data = true;
                                         in_month_data = true;
-                                        month_end = month_day.Length;
+					if (month_start == 0)
+						month_start = i;
+                                        month_end = i;
                                         year_end = year_month.Length;
                                 } else if (!inquote && Char.ToLower (c) == 'd') {
                                         month_day += c;
                                         in_month_data = true;
                                         in_year_data = false;
-                                        month_end = month_day.Length;
+					if (day_start == 0)
+						day_start = i;
+                                        day_end = i;
                                 } else if (!inquote && Char.ToLower (c) == 'y') {
                                         year_month += c;
                                         in_year_data = true;
                                         in_month_data = false;
-                                        year_end = year_month.Length;
+					if (year_start == 0)
+						year_start = i;
+                                        year_end = i;
                                 } else if (!inquote && control_chars.IndexOf (Char.ToLower (c)) >= 0) {
                                         in_year_data = false;
                                         in_month_data = false;
@@ -1120,14 +1127,34 @@ namespace Mono.Tools.LocaleBuilder {
                         }
 
                         if (month_day != String.Empty) {
-                                month_day = month_day.Substring (0, month_end);
-                                df.MonthDayPattern = month_day;
+                                //month_day = month_day.Substring (0, month_end);
+                                df.MonthDayPattern = TrimPattern (month_day);
                         }
                         if (year_month != String.Empty) {
-                                year_month = year_month.Substring (0, year_end);
-                                df.YearMonthPattern = year_month;
+                                //year_month = year_month.Substring (0, year_end);
+                                df.YearMonthPattern = TrimPattern (year_month);
                         }
                 }
+
+		string TrimPattern (string p)
+		{
+			int idx = 0;
+			p = p.Trim ().TrimEnd (',');
+			idx = p.LastIndexOf ("' de '"); // spanish dates
+			if (idx > 0)
+				p = p.Substring (0, idx);
+			idx = p.LastIndexOf ("' ta '"); // finnish
+			if (idx > 0)
+				p = p.Substring (0, idx);
+			idx = p.LastIndexOf ("'ren'"); // euskara
+			if (idx > 0)
+				p = p.Substring (0, idx);
+			idx = p.LastIndexOf ("'a'"); // estonian
+			if (idx > 0)
+				p = p.Substring (0, idx);
+
+			return p.Replace ("'ta '", "'ta'"); // finnish
+		}
 
                 private class LcidComparer : IComparer {
 
