@@ -126,6 +126,8 @@ namespace System.Web
 				throw new HttpException (411, "The uploaded file is incomplete");
 							 
 			input_stream = new MemoryStream (content, 0, content.Length, false, true);
+
+			DoFilter (buffer);
 		}
 
 		internal void GetSessionCookiesForPortal (HttpCookieCollection cookies)
