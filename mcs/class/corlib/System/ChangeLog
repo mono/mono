@@ -1,5 +1,18 @@
 2007-04-17  Jeffrey Stedfast  <fejj@novell.com>
 
+	* TermInfoDriver.cs (Init): SetEcho(false), we'll be manually
+	echoing from now on (ReadLine() has already been doing this, might
+	as well make ReadKey() behave the same).
+	(GetCursorPosition): No longer need to disable/re-enable echo
+	anymore since it is now always false.
+	(ReadKey): Manually echo the key back to the console just like
+	ReadLine() has been doing (in the interest of consistancy) if
+	intercept is false.
+	(ReadLine): No longer need to disable/re-enable echo, echo is
+	always off now. Also, fixed what appears to have been a typo.
+
+2007-04-17  Jeffrey Stedfast  <fejj@novell.com>
+
 	* TermInfoDriver.cs (IsSpecialKey): Oops, Enter should not be
 	treated as a special key. Just update out cursor state here like
 	we do with normal chars.

@@ -129,7 +129,7 @@ namespace System {
 		public TermInfoDriver (string term)
 		{
 #if DEBUG
-			File.Delete ("console.log");
+			//File.Delete ("console.log");
 			logger = new StreamWriter (File.OpenWrite ("console.log"));
 #endif
 			this.term = term;
@@ -162,6 +162,9 @@ namespace System {
 				throw new IOException ("Not a tty.");
 
 			inited = true;
+
+			ConsoleDriver.SetEcho (false);
+
 			string endString = null;
 			keypadXmit = reader.Get (TermInfoStrings.KeypadXmit);
 			keypadLocal = reader.Get (TermInfoStrings.KeypadLocal);
@@ -394,57 +397,56 @@ namespace System {
 		void GetCursorPosition ()
 		{
 			int row = 0, col = 0;
-			
-			ConsoleDriver.SetEcho (false);
-			
-			try {
-				WriteConsole ("\x1b[6n");
-				if (ConsoleDriver.InternalKeyAvailable (1000) <= 0) {
-					noGetPosition = true;
-					return;
-				}
 
-				int b = stdin.ReadByte ();
-				while (b != '\x1b') {
-					AddToBuffer (b);
-					if (ConsoleDriver.InternalKeyAvailable (100) <= 0)
-						return;
-					b = stdin.ReadByte ();
-				}
-
-				b = stdin.ReadByte ();
-				if (b != '[') {
-					AddToBuffer ('\x1b');
-					AddToBuffer (b);
-					return;
-				}
-
-				b = stdin.ReadByte ();
-				if (b != ';') {
-					row = b - '0';
-					b = stdin.ReadByte ();
-					while ((b >= '0') && (b <= '9')) {
-						row = row * 10 + b - '0';
-						b = stdin.ReadByte ();
-					}
-					// Row/col is 0 based
-					row --;
-				}
-
-				b = stdin.ReadByte ();
-				if (b != 'R') {
-					col = b - '0';
-					b = stdin.ReadByte ();
-					while ((b >= '0') && (b <= '9')) {
-						col = col * 10 + b - '0';
-						b = stdin.ReadByte ();
-					}
-					// Row/col is 0 based
-					col --;
-				}
-			} finally {
-				ConsoleDriver.SetEcho (true);
+			WriteConsole ("\x1b[6n");
+			if (ConsoleDriver.InternalKeyAvailable (1000) <= 0) {
+				noGetPosition = true;
+				return;
 			}
+
+			int b = stdin.ReadByte ();
+			while (b != '\x1b') {
+				AddToBuffer (b);
+				if (ConsoleDriver.InternalKeyAvailable (100) <= 0)
+					return;
+				b = stdin.ReadByte ();
+			}
+
+			b = stdin.ReadByte ();
+			if (b != '[') {
+				AddToBuffer ('\x1b');
+				AddToBuffer (b);
+				return;
+			}
+
+			b = stdin.ReadByte ();
+			if (b != ';') {
+				row = b - '0';
+				b = stdin.ReadByte ();
+				while ((b >= '0') && (b <= '9')) {
+					row = row * 10 + b - '0';
+					b = stdin.ReadByte ();
+				}
+				// Row/col is 0 based
+				row --;
+			}
+
+			b = stdin.ReadByte ();
+			if (b != 'R') {
+				col = b - '0';
+				b = stdin.ReadByte ();
+				while ((b >= '0') && (b <= '9')) {
+					col = col * 10 + b - '0';
+					b = stdin.ReadByte ();
+				}
+				// Row/col is 0 based
+				col --;
+			}
+
+#if DEBUG
+			logger.WriteLine ("GetCursorPosition: {0}, {1}", col, row);
+			logger.Flush ();
+#endif
 
 			cursorLeft = col;
 			cursorTop = row;
@@ -875,13 +877,17 @@ namespace System {
 			if (!inited)
 				Init ();
 			
-			if (intercept)
-				ConsoleDriver.SetEcho (false);
-			
 			ConsoleKeyInfo key = ReadKeyInternal ();
 			
-			if (intercept)
-				ConsoleDriver.SetEcho (true);
+			if (!intercept) {
+				// echo the key back to the console
+				CStreamWriter writer = Console.stdout as CStreamWriter;
+
+				if (writer != null)
+					writer.WriteKey (key);
+				else
+					Console.stdout.Write (key.KeyChar);
+			}
 			
 			return key;
 		}
@@ -891,13 +897,11 @@ namespace System {
 			if (!inited)
 				Init ();
 			
-			ConsoleDriver.SetEcho (false);
-			
 			StringBuilder builder = new StringBuilder ();
 			bool exit = false;
 			CStreamWriter writer = Console.stdout as CStreamWriter;
 			rl_startx = cursorLeft;
-			rl_starty = cursorLeft;
+			rl_starty = cursorTop;
 			do {
 				ConsoleKeyInfo key = ReadKeyInternal ();
 				char c = key.KeyChar;
@@ -919,8 +923,6 @@ namespace System {
 				else
 					Console.stdout.Write (c);
 			} while (!exit);
-			
-			ConsoleDriver.SetEcho (true);
 			
 			rl_startx = -1;
 			rl_starty = -1;
