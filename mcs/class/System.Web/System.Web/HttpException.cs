@@ -48,7 +48,7 @@ namespace System.Web
 	public class HttpException : ExternalException
 	{
 		int http_code = 500;
-		const string errorStyleFonts = "Verdana,DejaVu Sans,sans-serif";
+		const string errorStyleFonts = "\"Verdana\",\"DejaVu Sans\",sans-serif";
 		
 		public HttpException ()
 		{
@@ -122,31 +122,31 @@ namespace System.Web
 			builder.Append ("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
 			builder.AppendFormat ("<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\"><head><title>{0}</title><style type=\"text/css\">", title);
 			builder.AppendFormat (
-				@"body {{font-family:""{0}"";font-weight:normal;font-size: .7em;color:black;background-color: white}}
-p {{font-family:""{0}"";font-weight:normal;color:black;margin-top: -5px}}
-b {{font-family:""{0}"";font-weight:bold;color:black;margin-top: -5px}}
-h1 {{ font-family:""{0}"";font-weight:normal;font-size:18pt;color:red }}
-h2 {{ font-family:""{0}"";font-weight:normal;font-size:14pt;color:maroon }}
-pre {{font-family:""{0}"";font-size: .9em}}
-div.bodyText {{font-family: ""{0}""}}
-table.sampleCode {{width: 100%; background-color: #ffffcc; font-family:""Lucida Console,DejaVu Sans Mono,Monospace""}}
+				@"body {{font-family:{0};font-weight:normal;font-size: .7em;color:black;background-color: white}}
+p {{font-family:{0};font-weight:normal;color:black;margin-top: -5px}}
+b {{font-family:{0};font-weight:bold;color:black;margin-top: -5px}}
+h1 {{ font-family:{0};font-weight:normal;font-size:18pt;color:red }}
+h2 {{ font-family:{0};font-weight:normal;font-size:14pt;color:maroon }}
+pre {{font-family:""Lucida Console"",""DejaVu Sans Mono"",	monospace;font-size: 1.2em}}
+div.bodyText {{font-family: {0}}}
+table.sampleCode {{width: 100%; background-color: #ffffcc; }}
 .errorText {{color: red; font-weight: bold}}
 .marker {{font-weight: bold; color: black;text-decoration: none;}}
 .version {{color: gray;}}
 .error {{margin-bottom: 10px;}}
 .expandable {{ text-decoration:underline; font-weight:bold; color:navy; cursor:hand; }}", errorStyleFonts);
 			builder.AppendFormat (
-				"</style></head><body><h1>Server Error in '{0}' Application</h1><div class=\"bodyText\"><hr style=\"color: silver\"/>",
+				"</style></head><body><h1>Server Error in '{0}' Application</h1><hr style=\"color: silver\"/>",
 				HtmlEncode (HttpRuntime.AppDomainAppVirtualPath));
 		}
 
 		void WriteFileBottom (StringBuilder builder, string trace1, string trace2)
 		{
-			builder.AppendFormat ("</div><hr style=\"color: silver\"/>{0}</body></html>\r\n", DateTime.UtcNow);
 			if (trace1 != null)
-				builder.AppendFormat ("<!--\r\n{0}\r\n-->\r\n", HttpUtility.HtmlEncode (trace1));
+				builder.AppendFormat ("<![CDATA[\r\n{0}\r\n]]>\r\n", HttpUtility.HtmlEncode (trace1));
 			if (trace2 != null)
-				builder.AppendFormat ("<!--\r\n{0}\r\n-->\r\n", HttpUtility.HtmlEncode (trace2));
+				builder.AppendFormat ("<![CDATA[\r\n{0}\r\n]]>\r\n", HttpUtility.HtmlEncode (trace2));
+			builder.AppendFormat ("<hr style=\"color: silver\"/>{0}</body></html>\r\n", DateTime.UtcNow);
 		}
 
 		string GetCustomErrorDefaultMessage ()
@@ -202,11 +202,7 @@ table.sampleCode {{width: 100%; background-color: #ffffcc; font-family:""Lucida 
 			}
 			WriteFileBottom (builder,
 					 this.ToString (),
-#if TARGET_J2EE
-					 this.StackTrace
-#else
 					 null
-#endif
 			);
 			
 			return builder.ToString ();
@@ -259,11 +255,7 @@ table.sampleCode {{width: 100%; background-color: #ffffcc; font-family:""Lucida 
 			WriteFileBottom (
 				builder,
 				exc.ToString (),
-#if TARGET_J2EE
-				exc.StackTrace
-#else
 				null
-#endif
 			);
 			
 			return builder.ToString ();

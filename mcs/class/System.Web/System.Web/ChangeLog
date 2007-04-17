@@ -1,5 +1,9 @@
 2007-04-17 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* HttpException.cs: fixed generated HTML formating.
+
+2007-04-17 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* HttpContext.cs: GetGlobalResourceObject, GetLocalResourceObject
 	use case-insensitive ResourceManager
 
