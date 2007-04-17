@@ -1702,11 +1702,40 @@ namespace System.Windows.Forms
 				SelectIndex (GetAdjustedIndex (key_data));
 				break;
 
+			case Keys.Space:
+				ToggleItemsCheckState ();
+				break;
+
 			default:
 				return false;
 			}
 
 			return true;
+		}
+
+		void ToggleItemsCheckState ()
+		{
+			if (!CheckBoxes)
+				return;
+
+			// Don't modify check state if StateImageList has less than 2 elements
+			if (StateImageList != null && StateImageList.Images.Count < 2)
+				return;
+
+			if (SelectedIndices.Count > 0) {
+				BeginUpdate ();
+				for (int i = 0; i < SelectedIndices.Count; i++) {
+					ListViewItem item = Items [SelectedIndices [i]];
+					item.Checked = !item.Checked;
+				}
+				EndUpdate ();
+				return;
+			} 
+			
+			if (FocusedItem != null) {
+				FocusedItem.Checked = !FocusedItem.Checked;
+				SelectIndex (FocusedItem.Index);
+			}
 		}
 
 		void SelectIndex (int index)
@@ -1901,11 +1930,6 @@ namespace System.Windows.Forms
 				return true;
 			}
 
-			private void ToggleCheckState (ListViewItem item)
-			{
-				item.Checked = !item.Checked;
-			}
-
 			private void ItemsMouseDown (object sender, MouseEventArgs me)
 			{
 				owner.OnMouseDown (owner.TranslateMouseEventArgs (me));
@@ -1921,8 +1945,13 @@ namespace System.Windows.Forms
 						continue;
 
 					if (me.Clicks == 1 && owner.items [i].CheckRectReal.Contains (pt)) {
+						// Don't check if StateImageList has less than two items
+						if (owner.StateImageList != null && owner.StateImageList.Images.Count < 2)
+							return;
+
 						checking = true;
-						ToggleCheckState (owner.items [i]);
+						ListViewItem item = owner.Items [i];
+						item.Checked = !item.Checked;
 						return;
 					}
 
@@ -1961,7 +1990,8 @@ namespace System.Windows.Forms
 					if (me.Clicks > 1) {
 						owner.OnDoubleClick (EventArgs.Empty);
 						if (owner.CheckBoxes)
-							ToggleCheckState (clicked_item);
+							clicked_item.Checked = !clicked_item.Checked;
+
 					} else if (me.Clicks == 1) {
 						owner.OnClick (EventArgs.Empty);
 						if (owner.LabelEdit && !changed)
