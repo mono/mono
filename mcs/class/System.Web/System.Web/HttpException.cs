@@ -182,7 +182,8 @@ table.sampleCode {{width: 100%; background-color: #ffffcc; }}
 		
 		string GetDefaultErrorMessage ()
 		{
-			Exception ex = InnerException;
+			Exception ex, baseEx;
+			ex = baseEx = GetBaseException ();
 			if (ex == null)
 				ex = this;
 
@@ -195,10 +196,10 @@ table.sampleCode {{width: 100%; background-color: #ffffcc; }}
 				builder.AppendFormat ("HTTP {0}. ", http_code);
 			builder.AppendFormat ("{0}: {1}\r\n</p>\r\n", ex.GetType ().FullName, HtmlEncode (ex.Message));
 
-			if (InnerException != null) {
+			if (baseEx != null) {
 				builder.AppendFormat ("<p><strong>Stack Trace: </strong></p>");
 				builder.Append ("<table summary=\"Stack Trace\" class=\"sampleCode\">\r\n<tr><td>");
-				WriteTextAsCode (builder, InnerException.ToString ());
+				WriteTextAsCode (builder, baseEx.ToString ());
 				builder.Append ("</td></tr>\r\n</table>\r\n");
 			}
 			WriteFileBottom (builder,

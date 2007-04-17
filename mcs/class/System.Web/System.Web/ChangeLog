@@ -1,5 +1,9 @@
 2007-04-17 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* HttpException.cs: used GetBaseException() instead InnerException.
+
+2007-04-17 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* HttpException.cs: shows message of InnerException in head of Page.
 
 2007-04-17 Igor Zelmanovich <igorz@mainsoft.com>
