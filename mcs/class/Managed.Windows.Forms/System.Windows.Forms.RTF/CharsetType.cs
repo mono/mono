@@ -27,7 +27,13 @@
 // COMPLETE
 
 namespace System.Windows.Forms.RTF {
-	internal enum CharsetType {
+
+#if RTF_LIB
+	public
+#else
+	internal
+#endif
+	enum CharsetType {
 		General		= 0,
 		Symbol		= 1,
 	}

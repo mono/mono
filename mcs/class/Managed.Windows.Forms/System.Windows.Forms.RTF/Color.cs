@@ -27,7 +27,13 @@
 // COMPLETE
 
 namespace System.Windows.Forms.RTF {
-	internal class Color {
+
+#if RTF_LIB
+	public
+#else
+	internal
+#endif
+	class Color {
 		#region	Local Variables
 		private int		red;
 		private int		green;

@@ -27,7 +27,13 @@
 // COMPLETE
 
 namespace System.Windows.Forms.RTF {
-	internal struct KeyStruct {
+
+#if RTF_LIB
+	public
+#else
+	internal
+#endif
+	struct KeyStruct {
 		public KeyStruct(Major major, Minor minor, string symbol) {
 			Major = major;
 			Minor = minor;

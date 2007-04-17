@@ -30,7 +30,13 @@
 using System.Collections;
 
 namespace System.Windows.Forms.RTF {
-	internal class TextMap {
+
+#if RTF_LIB
+	public
+#else
+	internal
+#endif
+	class TextMap {
 		#region Local Variables
 		private string[]		table;
 		#endregion	// Local Variables

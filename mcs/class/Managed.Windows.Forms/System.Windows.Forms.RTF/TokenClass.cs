@@ -27,7 +27,13 @@
 // COMPLETE
 
 namespace System.Windows.Forms.RTF {
-	internal enum TokenClass {
+
+#if RTF_LIB
+	public
+#else
+	internal
+#endif
+	enum TokenClass {
 		None		= -1,
 		Unknown		= 0,
 		Group		= 1,

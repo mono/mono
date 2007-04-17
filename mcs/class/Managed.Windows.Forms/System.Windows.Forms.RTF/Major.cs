@@ -27,7 +27,13 @@
 // COMPLETE
 
 namespace System.Windows.Forms.RTF {
-	internal enum Major {
+
+#if RTF_LIB
+	public
+#else
+	internal
+#endif
+	enum Major {
 		// Group class
 		BeginGroup,
 		EndGroup,

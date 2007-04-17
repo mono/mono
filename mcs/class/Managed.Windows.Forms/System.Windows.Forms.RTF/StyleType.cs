@@ -27,7 +27,13 @@
 // COMPLETE
 
 namespace System.Windows.Forms.RTF {
-	internal enum StyleType {
+
+#if RTF_LIB
+	public
+#else
+	internal
+#endif
+	enum StyleType {
 		Paragraph	= 0,
 		Character	= 1,
 		Section		= 2

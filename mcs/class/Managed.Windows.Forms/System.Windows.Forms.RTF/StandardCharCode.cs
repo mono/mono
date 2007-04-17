@@ -27,7 +27,13 @@
 // COMPLETE
 
 namespace System.Windows.Forms.RTF {
-	internal enum StandardCharCode {
+
+#if RTF_LIB
+	public
+#else
+	internal
+#endif
+	enum StandardCharCode {
 		nothing			= 0,
 		space			= 1,
 		exclam			= 2,

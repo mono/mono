@@ -28,7 +28,12 @@
 
 namespace System.Windows.Forms.RTF {
 	[Flags]
-	internal enum CharsetFlags {
+#if RTF_LIB
+	public
+#else
+	internal
+#endif
+	enum CharsetFlags {
 		None		= 0x00,
 		Read		= 0x01,
 		Switch		= 0x02

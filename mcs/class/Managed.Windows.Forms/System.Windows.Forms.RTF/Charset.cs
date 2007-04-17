@@ -29,7 +29,13 @@ using System;
 // COMPLETE
 
 namespace System.Windows.Forms.RTF {
-	internal class Charset {
+
+#if RTF_LIB
+	public
+#else
+	internal
+#endif
+	class Charset {
 		#region Local Variables
 		private CharsetType	id;
 		private CharsetFlags	flags;
@@ -145,11 +151,6 @@ namespace System.Windows.Forms.RTF {
 		public string StdCharName(char code) {
 			// FIXME - finish this
 			return String.Empty;
-		}
-
-		public StandardCharCode MapChar(char c) {
-			return code[c];
-			
 		}
 		#endregion	// Public Instance Methods
 	}

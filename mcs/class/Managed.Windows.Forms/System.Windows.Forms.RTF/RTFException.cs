@@ -30,7 +30,13 @@ using System;
 using System.Text;
 
 namespace System.Windows.Forms.RTF {
-	internal class RTFException : ApplicationException {
+
+#if RTF_LIB
+	public
+#else
+	internal
+#endif
+	class RTFException : ApplicationException {
 		#region Local Variables
 		private int		pos;
 		private int		line;

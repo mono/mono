@@ -27,7 +27,13 @@
 // COMPLETE
 
 namespace System.Windows.Forms.RTF {
-	internal class StandardCharName {
+
+#if RTF_LIB
+	public
+#else
+	internal
+#endif
+	class StandardCharName {
 		public static string[] Names = {
 			"nothing",
 			"space",

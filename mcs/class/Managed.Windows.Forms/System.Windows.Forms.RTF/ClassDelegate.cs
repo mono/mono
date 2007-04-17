@@ -27,9 +27,20 @@
 // COMPLETE
 
 namespace System.Windows.Forms.RTF {
-	internal delegate void ClassDelegate(RTF sender);
 
-	internal class ClassCallback {
+#if RTF_LIB
+	public
+#else
+	internal
+#endif
+	delegate void ClassDelegate(RTF sender);
+
+#if RTF_LIB
+	public
+#else
+	internal
+#endif
+	class ClassCallback {
 		ClassDelegate[]	callbacks;
 
 		public ClassCallback() {

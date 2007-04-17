@@ -27,7 +27,13 @@
 // COMPLETE
 
 namespace System.Windows.Forms.RTF {
-	internal class Style {
+
+#if RTF_LIB
+	public
+#else
+	internal
+#endif
+	class Style {
 		#region Local Variables
 		public const int	NoStyleNum = 222;
 		public const int	NormalStyleNum = 0;

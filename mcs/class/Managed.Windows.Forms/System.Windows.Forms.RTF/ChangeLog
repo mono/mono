@@ -1,3 +1,8 @@
+2007-04-17  Jackson Harper  <jackson@ximian.com>
+
+	* <everything>.cs: Make it a little easier for people to compile
+	the RTF library for standalone purposes.
+
 2007-04-16  Jackson Harper  <jackson@ximian.com>
 
 	* RTF.cs:

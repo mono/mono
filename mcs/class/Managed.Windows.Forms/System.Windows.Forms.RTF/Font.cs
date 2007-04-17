@@ -27,7 +27,13 @@
 // COMPLETE
 
 namespace System.Windows.Forms.RTF {
-	internal class Font {
+
+#if RTF_LIB
+	public
+#else
+	internal
+#endif
+	class Font {
 		#region	Local Variables
 		private string		name;
 		private string		alt_name;

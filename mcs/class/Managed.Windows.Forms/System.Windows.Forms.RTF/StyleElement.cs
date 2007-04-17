@@ -27,7 +27,13 @@
 // COMPLETE
 
 namespace System.Windows.Forms.RTF {
-	internal class StyleElement {
+
+#if RTF_LIB
+	public
+#else
+	internal
+#endif
+	class StyleElement {
 		#region Local Variables
 		private TokenClass	token_class;
 		private Major		major;
