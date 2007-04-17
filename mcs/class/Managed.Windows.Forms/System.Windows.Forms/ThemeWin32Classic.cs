@@ -197,9 +197,6 @@ namespace System.Windows.Forms
 
 		public virtual void DrawButtonText (Graphics g, Button button, Rectangle textBounds)
 		{
-			if (button.Pressed)
-				textBounds.Offset (1, 1);
-							
 			if (button.Enabled)
 				TextRenderer.DrawTextInternal (g, button.Text, button.Font, textBounds, button.ForeColor, button.TextFormatFlags, button.UseCompatibleTextRendering);
 			else

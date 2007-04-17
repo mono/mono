@@ -1,3 +1,8 @@
+2007-04-17  Everaldo Canuto  <everaldo@simios.org>
+
+	* ThemeWin32Classic.cs: Remove text offset from DrawButtonText as it is
+	already present in CalculateButtonTextAndImageLayout.
+
 2007-04-17  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* XplatUIX11.cs: When setting min/max size for a window we need to
