@@ -560,6 +560,27 @@ namespace System.Web {
 			}
 		}
 
+		void DoFilter (byte [] buffer)
+		{
+			if (input_filter == null || filter == null)
+				return;
+
+			if (buffer.Length < 1024)
+				buffer = new byte [1024];
+
+			// Replace the input with the filtered input
+			input_filter.BaseStream = input_stream;
+			MemoryStream ms = new MemoryStream ();
+			while (true) {
+				int n = filter.Read (buffer, 0, buffer.Length);
+				if (n <= 0)
+					break;
+				ms.Write (buffer, 0, n);
+			}
+			// From now on input_stream has the filtered input
+			input_stream = new MemoryStream (ms.GetBuffer (), 0, (int) ms.Length, false, true);
+		}
+
 #if !TARGET_JVM
 		const int INPUT_BUFFER_SIZE = 32*1024;
 
@@ -584,27 +605,6 @@ namespace System.Web {
 			} while (f == null);
 
 			return f;
-		}
-
-		void DoFilter (byte [] buffer)
-		{
-			if (input_filter == null || filter == null)
-				return;
-
-			if (buffer.Length < 1024)
-				buffer = new byte [1024];
-
-			// Replace the input with the filtered input
-			input_filter.BaseStream = input_stream;
-			MemoryStream ms = new MemoryStream ();
-			while (true) {
-				int n = filter.Read (buffer, 0, buffer.Length);
-				if (n <= 0)
-					break;
-				ms.Write (buffer, 0, n);
-			}
-			// From now on input_stream has the filtered input
-			input_stream = new MemoryStream (ms.GetBuffer (), 0, (int) ms.Length, false, true);
 		}
 
 		void MakeInputStream ()
