@@ -49,23 +49,50 @@ namespace System.IO {
 		{
 			if (count <= 0)
 				return;
-
-			if (driver.Initialized){
-				lock (this){
-					for (int i = 0; i < count; i++) {
-						try {
-							char val = buffer [index + i];
-							if (driver.NotifyWrite (val))
-								InternalWriteChar (val);
-						} catch (IOException){
-						}
-					}
-				}
-			} else {
+			
+			if (!driver.Initialized) {
 				try {
 					base.Write (buffer, index, count);
-				} catch (IOException){
+				} catch (IOException) {
 				}
+				
+				return;
+			}
+			
+			lock (this) {
+				int i = 0, j = 0;
+				char []buf;
+				char c;
+				
+				// The idea here is that we want to limit our temp
+				// buffer size - I picked 1k because the underlying
+				// stream implementation seems to break writes into
+				// 1k byte chunks.
+				if (count > 1024)
+					buf = new char[1024];
+				else
+					buf = new char[count];
+				
+				do {
+					do {
+						c = buffer [index + i++];
+						
+						if (driver.NotifyWrite (c)) {
+							buf[j++] = c;
+							break;
+						}
+					} while (i < count);
+					
+					if (j == buf.Length || i == count) {
+						// temp buffer is full, write it out
+						try {
+							base.Write (buf, 0, j);
+						} catch (IOException) {
+						}
+						
+						j = 0;
+					}
+				} while (i < count);
 			}
 		}
 

@@ -1,3 +1,10 @@
+2007-04-16  Jeffrey Stedfast  <fejj@gnome.org>
+
+	* CStreamWriter.cs (Write): Instead of writing 1 char at a time,
+	copy the bytes into a temporary char array (with a fixed max size)
+	so that we can minimize the number of Write() calls we make on the
+	underlying stream (and thus on the write() system call).
+
 2007-04-17  Alp Toker  <alp@atoker.com>
 
 	* Array.cs: Make GetRank() icall private. Subclasses should use the
