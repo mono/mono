@@ -1,3 +1,8 @@
+2007-04-17 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* HttpContext.cs: GetGlobalResourceObject, GetLocalResourceObject
+	use case-insensitive ResourceManager
+
 2007-04-15  Marek Habersack  <mhabersack@novell.com>
 
 	* VirtualPathUtility.cs: converted to LF line endings and set the

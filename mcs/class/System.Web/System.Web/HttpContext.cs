@@ -394,6 +394,7 @@ namespace System.Web {
 			ResourceManager rm;
 			try {
 				rm = new ResourceManager (classKey, assembly);
+				rm.IgnoreCase = true;
 				return rm.GetObject (resourceKey, culture);
 			} catch (MissingManifestResourceException) {
 				throw;
