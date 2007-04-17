@@ -1,3 +1,7 @@
+2007-04-17  Marek Habersack  <mhabersack@novell.com>
+
+	* HtmlForm.cs: use the new uplevel browser detection code.
+
 2007-04-11  Marek Habersack  <mhabersack@novell.com>
 
 	* HtmlInputHidden.cs:

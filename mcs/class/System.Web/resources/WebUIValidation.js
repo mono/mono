@@ -28,6 +28,13 @@
 
 var have_validation_summaries = false;
 
+function HaveRegexp ()
+{
+  if (window.RegExp)
+    return true;
+  return false;
+}
+
 function ValidatorOnLoad ()
 {
 	if (typeof (Page_ValidationSummaries) != 'undefined' && Page_ValidationSummaries != null)
@@ -329,6 +336,10 @@ function RegularExpressionValidatorEvaluateIsValid (validator)
 		return true;
 	}
 
+  if (!HaveRegexp ())
+    return false; // better fail than pass invalidated input to the
+                  // backend
+  
 	var r = new RegExp (ValidationExpression);
 	match = r.exec (ctrl_value);
 	if (match == null || match[0] == "") {

@@ -1,6 +1,6 @@
 thisdir := .
 
-SUBDIRS := build jay mcs class nunit20 ilasm tools tests errors docs
+SUBDIRS := build jay mcs tools/culevel class nunit20 ilasm tools tests errors docs
 DIST_ONLY_SUBDIRS := gmcs
 
 basic_SUBDIRS := build jay mcs class

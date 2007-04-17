@@ -1,3 +1,7 @@
+2007-04-17  Marek Habersack  <mhabersack@novell.com>
+
+	* BaseValidator.cs: use the new uplevel browser detection code.
+
 2007-04-12 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* SqlDataSourceView.cs: fixed: InitializeParameters:

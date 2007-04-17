@@ -154,7 +154,7 @@ LIB_MCS_FLAGS = \
 ifneq ($(CYCLIC_DEPS:%=../lib/$(PROFILE)/%), $(CYCLIC_DEP_FILES))
 NO_SIGN_ASSEMBLY = yes
 NO_INSTALL = yes
-all-local: echo-warning
+all-local: System.Web/UplevelHelper.cs echo-warning
 .PHONY: echo-warning
 
 ifeq   (, $(strip $(CYCLIC_DEP_FILES)))
@@ -173,6 +173,9 @@ ifdef WEBSERVICES_DEP_FILE
 LIB_MCS_FLAGS += -define:WEBSERVICES_DEP -r:$(WEBSERVICES_DEP)
 $(the_lib): $(WEBSERVICES_DEP_FILE)
 endif
+
+System.Web/UplevelHelper.cs: UplevelHelperDefinitions.xml
+	$(topdir)/class/lib/default/culevel.exe -o $@ $^
 
 run-aaa: test
 	$(TEST_RUNTIME) $(TEST_HARNESS) $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_FLAGS) \

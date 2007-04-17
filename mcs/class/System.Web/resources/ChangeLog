@@ -1,3 +1,14 @@
+2007-04-17  Marek Habersack  <mhabersack@novell.com>
+
+	* WebUIValidation_2.0.js: added HaveRegexp () function to detect
+	if the browser supports the RegExp class. Use GetElement ()
+	everywhere.
+
+	* WebUIValidation.js: added HaveRegexp () function to detect if
+	the browser supports the RegExp class.
+
+	* webform.js: use WebForm_GetElementById everywhere.
+
 2007-04-11  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* webform.js: fixed WebForm_RestoreScrollPosition, old submit call

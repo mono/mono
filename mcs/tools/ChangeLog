@@ -1,3 +1,13 @@
+2007-04-17  Marek Habersack  <mhabersack@novell.com>
+
+	* culevel/culevel.exe.sources: added
+
+	* culevel/Makefile (thisdir): added
+
+	* culevel/CompileUplevel.cs: added
+
+	* Makefile (thisdir): added the culevel subdirectory to the list.
+
 2007-03-09  Marek Habersack  <mhabersack@novell.com>
 
 	* Makefile: Added the installvst utility.

@@ -28,6 +28,13 @@
 
 var have_validation_summaries = false;
 
+function HaveRegexp ()
+{
+  if (window.RegExp)
+    return true;
+  return false;
+}
+
 function SetValidatorContext (currForm)
 {
 	if (currForm.Page_Validators && (Page_Validators != currForm.Page_Validators)) {
@@ -244,7 +251,7 @@ function IsValidationGroupMatch(vo, group) {
 }
 
 function ValidatorSetFocus(val) {
-    var ctrl = document.getElementById(val.getAttribute ("controltovalidate"));
+    var ctrl = GetElement(val.getAttribute ("controltovalidate"));
 	if ((typeof(ctrl) != "undefined") && (ctrl != null) &&
 		((ctrl.tagName.toLowerCase() != "input") || (ctrl.type.toLowerCase() != "hidden")) &&
 		(typeof(ctrl.disabled) == "undefined" || ctrl.disabled == null || ctrl.disabled == false) &&
@@ -303,6 +310,8 @@ function ToDouble (s, validator)
 
 function ToDate (s, validator)
 {
+    if (!HaveRegexp ())
+        return null;
     var m, day, month, year;
     var yearFirstExp = new RegExp("^\\s*((\\d{4})|(\\d{2}))([-/]|\\. ?)(\\d{1,2})\\4(\\d{1,2})\\s*$");
     m = s.match(yearFirstExp);
@@ -333,6 +342,9 @@ function ToDate (s, validator)
 
 function ToCurrency (s, validator)
 {
+  if (!HaveRegexp ())
+    return null;
+  
 	var hasDigits = (validator.digits > 0);
 	var beginGroupSize, subsequentGroupSize;
 	var groupSizeNum = parseInt(validator.groupsize, 10);
@@ -461,6 +473,9 @@ function RegularExpressionValidatorEvaluateIsValid (validator)
 		return true;
 	}
 
+  if (!HaveRegexp ())
+    return false;
+  
 	var r = new RegExp (ValidationExpression);
 	match = r.exec (ctrl_value);
 	if (match == null || match[0] == "") {

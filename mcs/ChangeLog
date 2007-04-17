@@ -1,3 +1,9 @@
+2007-04-17  Marek Habersack  <mhabersack@novell.com>
+
+	* Makefile (thisdir): added tools/culevel to the list of
+	subdirectories - it must be compiled before compiling the classes
+	since System.Web depends on it.
+
 2007-04-06  Wade Berrier  <wberrier@novell.com>
 
 	* Makefile: use bzip2 instead of gzip for 'make dist'

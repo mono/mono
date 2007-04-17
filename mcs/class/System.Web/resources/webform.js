@@ -92,7 +92,7 @@ function WebForm_ReEnableControls (currForm)
 	
 	currForm.__disabledControlArray = new Array();
 	for (var i = 0; i < __enabledControlArray.length; i++) {
-		var c = document.getElementById(__enabledControlArray[i]);
+		var c = WebForm_GetElementById (__enabledControlArray[i]);
 		if ((typeof(c) != "undefined") && (c != null) && (c.disabled == true)) {
 			c.disabled = false;
 			currForm.__disabledControlArray[currForm.__disabledControlArray.length] = c;
