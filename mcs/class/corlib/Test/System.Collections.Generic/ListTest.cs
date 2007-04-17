@@ -1167,7 +1167,7 @@ namespace MonoTests.System.Collections.Generic {
 
             list.Remove (2);
 
-			Assert.AreEqual (true, list.Contains (2), "#0");
+			Assert.AreEqual (false, list.Contains (2), "#0");
 		}
 		
 		[Test]
