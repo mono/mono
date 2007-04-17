@@ -66,7 +66,10 @@ namespace System.Web.Security
 		static MembershipProvider provider {
 			get {
 				MembershipSection section = (MembershipSection) WebConfigurationManager.GetSection ("system.web/membership");
-				return providers [section.DefaultProvider];
+				MembershipProvider p = providers [section.DefaultProvider];
+				if (p == null)
+					throw new ConfigurationErrorsException ("Default Membership Provider could not be found: Cannot instantiate provider: '" + section.DefaultProvider + "'.");
+				return p;
 			}
 		}
 		static int onlineTimeWindow {

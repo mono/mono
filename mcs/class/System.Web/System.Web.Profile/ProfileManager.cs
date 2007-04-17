@@ -31,6 +31,7 @@
 using System;
 using System.Web;
 using System.Web.Configuration;
+using System.Configuration;
 
 namespace System.Web.Profile
 {
@@ -185,7 +186,7 @@ namespace System.Web.Profile
 			get	{
 				ProfileProvider p = Providers [config.DefaultProvider];
 				if (p == null)
-					throw new HttpException ("Provider '" + config.DefaultProvider + "' was not found");
+					throw new ConfigurationErrorsException ("Provider '" + config.DefaultProvider + "' was not found");
 				return p;
 			}
 		}

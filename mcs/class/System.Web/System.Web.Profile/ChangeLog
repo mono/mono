@@ -1,3 +1,8 @@
+2007-04-17 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* ProfileManager.cs:
+	if default provider was not found ConfigurationErrorsException is thrown.
+
 2007-03-14  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* ProfileParser.jvm.cs: performance optimization

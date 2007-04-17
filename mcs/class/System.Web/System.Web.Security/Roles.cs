@@ -33,6 +33,7 @@
 
 using System.Configuration.Provider;
 using System.Web.Configuration;
+using System.Configuration;
 
 namespace System.Web.Security {
 
@@ -241,7 +242,12 @@ namespace System.Web.Security {
 		}
 		
 		public static RoleProvider Provider {
-			get { return Providers[config.DefaultProvider]; }
+			get {
+				RoleProvider p = Providers [config.DefaultProvider];
+				if (p == null)
+					throw new ConfigurationErrorsException ("Default Role Provider could not be found: Cannot instantiate provider: '" + config.DefaultProvider + "'.");
+				return p;
+			}
 		}
 		
 		public static RoleProviderCollection Providers {
