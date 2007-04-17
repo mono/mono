@@ -77,14 +77,26 @@ namespace System.IO {
 					do {
 						c = buffer [index + i++];
 						
-						if (driver.NotifyWrite (c)) {
+						if (driver.IsSpecialKey (c)) {
+							// flush what we have
+							try {
+								base.Write (buf, 0, j);
+							} catch (IOException) {
+							}
+
+							j = 0;
+
+							// write the special key
+							driver.WriteSpecialKey (c);
+						} else {
 							buf[j++] = c;
 							break;
 						}
 					} while (i < count);
 					
-					if (j == buf.Length || i == count) {
-						// temp buffer is full, write it out
+					if (j > 0 && (j == buf.Length || i == count)) {
+						// buffer is full or no more data to buffer
+						// write it out
 						try {
 							base.Write (buf, 0, j);
 						} catch (IOException) {
@@ -100,7 +112,9 @@ namespace System.IO {
 		{
 			lock (this) {
 				try {
-					if (driver.NotifyWrite (val))
+					if (driver.IsSpecialKey (val))
+						driver.WriteSpecialKey (val);
+					else
 						InternalWriteChar (val);
 				} catch (IOException) {
 				}
@@ -111,7 +125,9 @@ namespace System.IO {
 		{
 			lock (this) {
 				ConsoleKeyInfo copy = new ConsoleKeyInfo (key);
-				if (driver.NotifyWrite (copy))
+				if (driver.IsSpecialKey (copy))
+					driver.WriteSpecialKey (copy);
+				else
 					InternalWriteChar (copy.KeyChar);
 			}
 		}

@@ -1,3 +1,20 @@
+2007-04-17  Jeffrey Stedfast  <fejj@gnome.org>
+
+	Turns out my last patch was broken wrt handling some special keys
+	like Backspace and anything else that changed the cursor position
+	in some non-standard way.
+
+	* CStreamWriter.cs (Write): Instead of calling NotifyWrite(), we
+	instead need to check IsSpecialKey(), and, if so, flush whatever
+	we have saved in our temporary buffer and then call
+	WriteSpecialKey(). Otherwise go on as we did in the last patch.
+
+	* TermInfoDriver.cs (NotifyWrite): Broken up into 2 functions:
+	(IsSpecialKey): Returns true if we need to do some special voodoo
+	for this key
+	(WriteSpecialKey): Write the special key (using whatever voodoo
+	necessary)
+
 2007-04-16  Jeffrey Stedfast  <fejj@gnome.org>
 
 	* CStreamWriter.cs (Write): Instead of writing 1 char at a time,

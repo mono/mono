@@ -280,16 +280,14 @@ namespace System {
 			}
 		}
 
-		public bool NotifyWrite (ConsoleKeyInfo key)
+		// Should never get called unless inited
+		public void WriteSpecialKey (ConsoleKeyInfo key)
 		{
-			if (!inited)
-				return true;
-
 			switch (key.Key) {
 			case ConsoleKey.Backspace:
 				if (cursorLeft > 0) {
 					if (cursorLeft <= rl_startx && cursorTop == rl_starty)
-						return false;
+						break;
 					cursorLeft--;
 					SetCursorPosition (cursorLeft, cursorTop);
 					WriteConsole (" ");
@@ -299,13 +297,14 @@ namespace System {
 				logger.WriteLine ("BS left: {0} top: {1}", cursorLeft, cursorTop);
 				logger.Flush ();
 #endif
-				return false;
+				break;
 			case ConsoleKey.Tab:
 				int n = 8 - (cursorLeft % 8);
-				for (int i = 0; i < n; i++) IncrementX ();
-				return true;
+				for (int i = 0; i < n; i++)
+					IncrementX ();
+				break;
 			case ConsoleKey.Clear:
-				return false;
+				break;
 			case ConsoleKey.Enter:
 				cursorLeft = 0;
 				cursorTop++;
@@ -317,19 +316,44 @@ namespace System {
 				logger.WriteLine ("ENTER left: {0} top: {1}", cursorLeft, cursorTop);
 				logger.Flush ();
 #endif
-				return true;
+				break;
 			}
-			IncrementX ();
 #if DEBUG
 			logger.WriteLine ("left: {0} top: {1}", cursorLeft, cursorTop);
 			logger.Flush ();
 #endif
-			return true;
 		}
 
-		public bool NotifyWrite (char val)
+		// Should never get called unless inited
+		public void WriteSpecialKey (char c)
 		{
-			return NotifyWrite (CreateKeyInfoFromInt (val));
+			WriteSpecialKey (CreateKeyInfoFromInt (c));
+		}
+
+		public bool IsSpecialKey (ConsoleKeyInfo key)
+		{
+			if (!inited)
+				return false;
+
+			switch (key.Key) {
+			case ConsoleKey.Backspace:
+				return true;
+			case ConsoleKey.Tab:
+				return true;
+			case ConsoleKey.Clear:
+				return true;
+			case ConsoleKey.Enter:
+				return true;
+			default:
+				// CStreamWriter will handle writing this key
+				IncrementX ();
+				return false;
+			}
+		}
+
+		public bool IsSpecialKey (char c)
+		{
+			return IsSpecialKey (CreateKeyInfoFromInt (c));
 		}
 
 		public ConsoleColor BackgroundColor {
