@@ -1,3 +1,8 @@
+2007-04-17  Chris Toshok  <toshok@ximian.com>
+
+	* BindingTest.cs: remove the NotWorking from
+	BindingContextChangedTest2, and add a new, NotWorking test.
+
 2007-04-16  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ButtonTest.cs, ToolStripItemTest.cs: Remove image stretching

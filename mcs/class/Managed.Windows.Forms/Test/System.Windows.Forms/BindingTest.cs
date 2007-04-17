@@ -72,6 +72,45 @@ namespace MonoTests.System.Windows.Forms {
 			Assert.IsNull (b.DataSource, "ctornull2");
 		}
 
+		// XXX this belongs in a ControlBindingsCollectionTest
+		// file.
+		[Test]
+		[ExpectedException (typeof (ArgumentException))] // MS: "This would cause two bindings in the collection to bind to the same property."
+		public void DuplicateBindingAdd ()
+		{
+			Control c1 = new Control ();
+			Control c2 = new Control ();
+
+			c2.DataBindings.Add ("Text", c1, "Text");
+			c2.DataBindings.Add ("Text", c1, "Text");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void BindingManagerBaseTest ()
+		{
+			Control c1 = new Control ();
+			Control c2 = new Control ();
+			Binding binding;
+
+			c1.BindingContext = new BindingContext ();
+			c2.BindingContext = c1.BindingContext;
+
+			binding = c2.DataBindings.Add ("Text", c1, "Text");
+
+			Assert.IsNull (binding.BindingManagerBase, "1");
+
+			c1.CreateControl ();
+			c2.CreateControl ();
+
+			Assert.IsNull (binding.BindingManagerBase, "2");
+
+			c2.DataBindings.Remove (binding);
+			binding = c2.DataBindings.Add ("Text", c1, "Text");
+
+			Assert.IsTrue (binding.BindingManagerBase != null, "3");
+		}
+
 		[Test]
 		/* create control and set binding context */
 		public void BindingContextChangedTest ()
@@ -86,7 +125,6 @@ namespace MonoTests.System.Windows.Forms {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		/* create control and show control */
 		public void BindingContextChangedTest2 ()
 		{
@@ -103,7 +141,7 @@ namespace MonoTests.System.Windows.Forms {
 #else
 			Assert.AreEqual (2, eventcount, "A1");
 #endif
-            f.Dispose();
+			f.Dispose();
 		}
 
 		[Test]
