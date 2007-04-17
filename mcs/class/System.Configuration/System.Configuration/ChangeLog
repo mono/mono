@@ -1,3 +1,9 @@
+2007-04-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ConfigurationSectionCollection.cs : GetEnumerator() should return
+	  IEnumerator for the items, not keys.
+	* ConfigurationProperty.cs : more helpful type mismatch message.
+
 2007-04-16  Marek Habersack  <mhabersack@novell.com>
 
 	* SectionGroupInfo.cs: another (and final, hopefully) fix for bug

@@ -109,7 +109,8 @@ namespace System.Configuration
 		
 		public override IEnumerator GetEnumerator()
 		{
-			return group.Sections.AllKeys.GetEnumerator ();
+			foreach (string key in group.Sections.AllKeys)
+				yield return this [key];
 		}
 		
 		public string GetKey (int index)

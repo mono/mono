@@ -94,8 +94,8 @@ namespace System.Configuration
 				else
 					if (!type.IsAssignableFrom (default_value.GetType ())) {
 						if (!this.converter.CanConvertFrom (default_value.GetType ()))
-							throw new ConfigurationErrorsException (String.Format ("The default value for property '{0}' has a different type than the one of the property itself",
-													   name));
+							throw new ConfigurationErrorsException (String.Format ("The default value for property '{0}' has a different type than the one of the property itself: expected {1} but was {2}",
+													   name, type, default_value.GetType ()));
 
 						default_value = this.converter.ConvertFrom (default_value);
 					}
