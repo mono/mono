@@ -1,3 +1,13 @@
+2007-04-17  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* XplatUIX11.cs: When setting min/max size for a window we need to
+	  translate the coordinates to x coordinates. Create an overload of
+	  SetWindowMinMax that takes a CreateParams handling this, and change
+	  SetWMStyles to call this function (can't use Control.FromHandle in
+	  the SetWindowMinMax to get the control/CreateParams from the handle
+	  because the handle might not have been assigned to the control
+	  yet). Fixes #81371.
+
 2007-04-16  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: In ItemControl.ItemMouseDown, don't change check state

@@ -1035,13 +1035,18 @@ namespace System.Windows.Forms {
 
 			if ((functions & MotifFunctions.Resize) == 0) {
 				hwnd.fixed_size = true;
-				XplatUI.SetWindowMinMax(hwnd.Handle, new Rectangle(cp.X, cp.Y, cp.Width, cp.Height), new Size(cp.Width, cp.Height), new Size(cp.Width, cp.Height));
+				Rectangle fixed_rectangle = new Rectangle (cp.X, cp.Y, cp.Width, cp.Height);
+				SetWindowMinMax(hwnd.Handle, fixed_rectangle, fixed_rectangle.Size, fixed_rectangle.Size, cp);
 			} else {
 				hwnd.fixed_size = false;
 			}
 
 			mwmHints.functions = (IntPtr)functions;
 			mwmHints.decorations = (IntPtr)decorations;
+
+#if debug
+			Console.WriteLine ("SetWMStyles ({0}, {1}) functions = {2}, decorations = {3}", hwnd, cp, functions, decorations);
+#endif
 
 			if (cp.IsSet (WindowExStyles.WS_EX_TOOLWINDOW)) {
 				// needed! map toolwindows to _NET_WM_WINDOW_TYPE_UTILITY to make newer metacity versions happy
@@ -1299,7 +1304,7 @@ namespace System.Windows.Forms {
 				hwnd.ClientRect = Rectangle.Empty;
 
 #if debug
-				Console.WriteLine ("AddConfigureNotify (hwnd.Handle = {1}, hwnd.rect = {0})", new Rectangle (hwnd.x, hwnd.y, hwnd.width, hwnd.height), hwnd.Handle);
+				Console.WriteLine ("AddConfigureNotify (hwnd.Handle = {1}, final hwnd.rect = {0}, reported rect={2})", new Rectangle (hwnd.x, hwnd.y, hwnd.width, hwnd.height), hwnd.Handle, new Rectangle (xevent.ConfigureEvent.x, xevent.ConfigureEvent.y, xevent.ConfigureEvent.width, xevent.ConfigureEvent.width));
 #endif			
 				lock (hwnd.configure_lock) {
 					if (!hwnd.configure_pending) {
@@ -5161,6 +5166,12 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void SetWindowMinMax(IntPtr handle, Rectangle maximized, Size min, Size max) {
+			Control ctrl = Control.FromHandle (handle);
+			SetWindowMinMax (handle, maximized, min, max, ctrl != null ? ctrl.GetCreateParams () : null);
+		}
+
+		internal void SetWindowMinMax (IntPtr handle, Rectangle maximized, Size min, Size max, CreateParams cp)
+		{
 			Hwnd		hwnd;
 			XSizeHints	hints;
 			IntPtr		dummy;
@@ -5174,12 +5185,16 @@ namespace System.Windows.Forms {
 
 			XGetWMNormalHints(DisplayHandle, hwnd.whole_window, ref hints, out dummy);
 			if ((min != Size.Empty) && (min.Width > 0) && (min.Height > 0)) {
+				if (cp != null)
+					min = TranslateWindowSizeToXWindowSize (cp);
 				hints.flags = (IntPtr)((int)hints.flags | (int)XSizeHintsFlags.PMinSize);
 				hints.min_width = min.Width;
 				hints.min_height = min.Height;
 			}
 
 			if ((max != Size.Empty) && (max.Width > 0) && (max.Height > 0)) {
+				if (cp != null)
+					max = TranslateWindowSizeToXWindowSize (cp);
 				hints.flags = (IntPtr)((int)hints.flags | (int)XSizeHintsFlags.PMaxSize);
 				hints.max_width = max.Width;
 				hints.max_height = max.Height;
@@ -5193,6 +5208,8 @@ namespace System.Windows.Forms {
 			}
 
 			if ((maximized != Rectangle.Empty) && (maximized.Width > 0) && (maximized.Height > 0)) {
+				if (cp != null)
+					maximized.Size = TranslateWindowSizeToXWindowSize (cp);
 				hints.flags = (IntPtr)XSizeHintsFlags.PPosition;
 				hints.x = maximized.X;
 				hints.y = maximized.Y;
