@@ -306,16 +306,8 @@ namespace System {
 			case ConsoleKey.Clear:
 				break;
 			case ConsoleKey.Enter:
-				cursorLeft = 0;
-				cursorTop++;
-				if (cursorTop >= WindowHeight) {
-					cursorTop--;
-					//TODO: scroll up
-				}
-#if DEBUG
-				logger.WriteLine ("ENTER left: {0} top: {1}", cursorLeft, cursorTop);
-				logger.Flush ();
-#endif
+				break;
+			default:
 				break;
 			}
 #if DEBUG
@@ -343,7 +335,13 @@ namespace System {
 			case ConsoleKey.Clear:
 				return true;
 			case ConsoleKey.Enter:
-				return true;
+				cursorLeft = 0;
+				cursorTop++;
+				if (cursorTop >= WindowHeight) {
+					cursorTop--;
+					//TODO: scroll up
+				}
+				return false;
 			default:
 				// CStreamWriter will handle writing this key
 				IncrementX ();

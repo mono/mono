@@ -1,5 +1,11 @@
 2007-04-17  Jeffrey Stedfast  <fejj@novell.com>
 
+	* TermInfoDriver.cs (IsSpecialKey): Oops, Enter should not be
+	treated as a special key. Just update out cursor state here like
+	we do with normal chars.
+	(WriteSpecialKey): Enter is a no-op now because it is not treated
+	as a special key anymore.
+
 	* CStreamWriter.cs (Write): Only flush our buffer if j > 0
 
 2007-04-17  Jeffrey Stedfast  <fejj@gnome.org>
