@@ -61,31 +61,32 @@ namespace System.IO {
 			return(-1);
 		}
 
-		public override int Read ([In, Out] char [] dest_buffer, int index, int count)
+		public override int Read ([In, Out] char [] dest, int index, int count)
 		{
-			if (dest_buffer == null)
-				throw new ArgumentNullException ("dest_buffer");
+			if (dest == null)
+				throw new ArgumentNullException ("dest");
 			if (index < 0)
 				throw new ArgumentOutOfRangeException ("index", "< 0");
 			if (count < 0)
 				throw new ArgumentOutOfRangeException ("count", "< 0");
 			// ordered to avoid possible integer overflow
-			if (index > dest_buffer.Length - count)
-				throw new ArgumentException ("index + count > dest_buffer.Length");
+			if (index > dest.Length - count)
+				throw new ArgumentException ("index + count > dest.Length");
 
-			int chars_read = 0;
+			int nread = 0;
+			int c;
+
 			while (count > 0) {
-				int c = Read ();
-				if (c < 0)
+				if ((c = Read ()) == -1)
 					break;
-				chars_read++;
+
+				nread++;
 				count--;
 
-				dest_buffer [index] = (char) c;
-				//if (CheckEOL (dest_buffer [index++]))
-				//	return chars_read;
+				dest[index++] = (char) c;
 			}
-			return chars_read;
+
+			return nread;
 		}
 
 		public override string ReadLine ()

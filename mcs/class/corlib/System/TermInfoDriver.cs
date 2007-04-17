@@ -509,7 +509,6 @@ namespace System {
 				}
 
 				SetCursorPosition (value, CursorTop);
-				cursorLeft = value;
 			}
 		}
 
@@ -527,7 +526,6 @@ namespace System {
 				}
 
 				SetCursorPosition (CursorLeft, value);
-				cursorTop = value;
 			}
 		}
 
