@@ -31,6 +31,7 @@
 #if NET_2_0
 
 using System;
+using System.Collections;
 using System.Collections.Specialized;
 using System.Configuration;
 using System.Net.Configuration;
@@ -274,16 +275,26 @@ namespace MonoTests.System.Configuration {
 		}
 
 		[Test] // test for bug #78372.
-		[Category ("NotWorking")]
 		public void OpenMachineConfiguration ()
 		{
 			SysConfig cfg = ConfigurationManager.OpenMachineConfiguration ();
 			Assert.IsTrue (cfg.Sections.Count > 0, "#1");
 #if !TARGET_JVM
-			ConfigurationSection s = cfg.Sections ["system.net/connectionManagement"];
+			ConfigurationSection s = cfg.SectionGroups ["system.net"].Sections ["connectionManagement"];
 			Assert.IsNotNull (s, "#2");
 			Assert.IsTrue (s is ConnectionManagementSection, "#3");
 #endif
+		}
+
+		[Test]
+		public void SectionCollectionEnumerator ()
+		{
+			SysConfig c = ConfigurationManager.OpenExeConfiguration (ConfigurationUserLevel.None);
+			ConfigurationSectionCollection col =
+				c.GetSectionGroup ("system.web").Sections;
+			IEnumerator e = col.GetEnumerator ();
+			e.MoveNext ();
+			Assert.IsTrue (e.Current is ConfigurationSection);
 		}
 	}
 }

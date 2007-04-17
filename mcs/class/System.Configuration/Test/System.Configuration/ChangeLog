@@ -1,3 +1,8 @@
+2007-04-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ConfigurationManagerTest.cs : added SectionCollectionEnumerator().
+	  Fixed NotWorking test OpenMachineConfiguration().
+
 2006-09-18	Boris Kirzner <borisk@mainsoft.com>
 
 	*  TimeSpanMinutesConverterTest.cs, 
