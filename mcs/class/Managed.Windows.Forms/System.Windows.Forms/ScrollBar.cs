@@ -389,6 +389,9 @@ namespace System.Windows.Forms
 				if (minimum > this.maximum)
 					this.maximum = minimum;
 				update = true;
+
+				// change the position if it is out of range now
+				position = Math.Max (position, minimum);
 			}
 
 			if (-1 != maximum && this.maximum != maximum) {
@@ -397,6 +400,9 @@ namespace System.Windows.Forms
 				if (maximum < this.minimum)
 					this.minimum = maximum;
 				update = true;
+
+				// change the position if it is out of range now
+				position = Math.Min (position, maximum);
 			}
 
 			if (-1 != small_change && this.small_change != small_change) {

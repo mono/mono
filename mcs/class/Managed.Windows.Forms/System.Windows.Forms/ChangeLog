@@ -1,3 +1,8 @@
+2007-04-17  Jackson Harper  <jackson@ximian.com>
+
+	* ScrollBar.cs: When setting values, make sure the current
+	position stays within the new values range.
+
 2007-04-17  Chris Toshok  <toshok@ximian.com>
 
 	* Control.cs (CreateControl): talk about a bizarre corner case.
