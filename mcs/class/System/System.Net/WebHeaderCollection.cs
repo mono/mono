@@ -99,6 +99,7 @@ namespace System.Net
 			multiValue.Add ("vary", true);
 			multiValue.Add ("via", true);
 			multiValue.Add ("warning", true);
+			multiValue.Add ("www-authenticate", true);
 
 			// Extra
 			multiValue.Add ("set-cookie", true);

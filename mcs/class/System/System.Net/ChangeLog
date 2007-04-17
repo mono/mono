@@ -1,3 +1,20 @@
+2007-04-17  Joel Reed  <joelwreed@gmail.com>
+
+	* WebHeaderCollection.cs: www-authenticate should be multivalue.
+	This fixes a bug related to RFC 2608 which says in section
+	"15.2 Offering a Choice of Authentication Schemes"
+
+	An HTTP/1.1 server may return multiple challenges with a 401
+ (Authenticate) response, and each challenge may use a different
+	scheme.  The order of the challenges returned to the user agent is in
+	the order that the server would prefer they be chosen. The server
+	should order its challenges with the "most secure" authentication
+	scheme first. A user agent should choose as the challenge to be made
+	to the user the first one that the user agent understands.
+
+	Before this change, mono was choosing whatever was sent last,
+	which was the most insecure authentication option.
+	
 2007-04-10  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpListenerRequest.cs: do not include the query start marker
