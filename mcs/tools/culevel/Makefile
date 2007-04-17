@@ -8,3 +8,5 @@ PROGRAM = $(topdir)/class/lib/$(PROFILE)/culevel.exe
 CLEAN_FILES = culevel.exe culevel.exe.mdb
 
 include ../../build/executable.make
+
+dist-local: $(PROGRAM)

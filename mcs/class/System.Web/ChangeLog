@@ -1,3 +1,7 @@
+2007-04-17  Wade Berrier  <wberrier@novell.com>
+
+	* Makefile: Fix 'make dist', make sure UplevelHelper.cs is generated
+
 2007-04-17  Jonathan Chambers <joncham@gmail.com>
 
 	* Makefile: Fix build, add $(TEST_RUNTIME) before call to culevel.

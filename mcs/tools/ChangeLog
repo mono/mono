@@ -1,3 +1,8 @@
+2007-04-17  Wade Berrier  <wberrier@novell.com>
+
+	* culevel/Makefile: make sure this is built for 'make dist'
+	so that UplevelHelper.cs is generated
+
 2007-04-17  Marek Habersack  <mhabersack@novell.com>
 
 	* culevel/culevel.exe.sources: added
