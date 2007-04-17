@@ -1,3 +1,7 @@
+2007-04-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* culture-info-table.h : regenerated.
+
 2007-04-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* threads.c (start_wrapper): Call push_appdomain_ref () earlier to fix races where
