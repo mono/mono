@@ -1,5 +1,15 @@
 2007-04-17  Jeffrey Stedfast  <fejj@novell.com>
 
+	* TermInfoDriver.cs (ReadLine): Implemented a workaround for
+	IronPython going behind System.Console's back when writing text to
+	the screen (it doesn't seem to use Console.stdout, instead it
+	creates its own file stream or something which just so happens to
+	write to the same file descriptor) by querying for the cursor
+	position in ReadLine(), so we lose no real performance (since we
+	have to wait for user input anyway).
+
+2007-04-17  Jeffrey Stedfast  <fejj@novell.com>
+
 	* TermInfoDriver.cs (Init): SetEcho(false), we'll be manually
 	echoing from now on (ReadLine() has already been doing this, might
 	as well make ReadKey() behave the same).

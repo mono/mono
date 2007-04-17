@@ -393,7 +393,6 @@ namespace System {
 			}
 		}
 
-		// Only used once from within Init()
 		void GetCursorPosition ()
 		{
 			int row = 0, col = 0;
@@ -896,7 +895,12 @@ namespace System {
  		{
 			if (!inited)
 				Init ();
-			
+
+			// Hack to make Iron Python work (since it goes behind our backs
+			// when writing to the console thus preventing us from keeping
+			// cursor state normally).
+			GetCursorPosition ();
+
 			StringBuilder builder = new StringBuilder ();
 			bool exit = false;
 			CStreamWriter writer = Console.stdout as CStreamWriter;
