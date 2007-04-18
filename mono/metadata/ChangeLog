@@ -1,7 +1,9 @@
 2007-04-18  Zoltan Varga  <vargaz@gmail.com>
 
-	* threads.c (mono_thread_get_stack_bounds): Remove an assert which can be triggered.
+	* threads.c (mono_thread_get_stack_bounds): Fix windows build.
 	
+	* threads.c (mono_thread_get_stack_bounds): Remove an assert which can be triggered.
+
 	* threads.c (mono_thread_get_stack_bounds): New helper function.
 
 	* threads.c (mono_thread_attach): Applied patch from horst.reiterer@fabasoft.com.
