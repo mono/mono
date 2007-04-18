@@ -1,3 +1,11 @@
+2007-04-18  Marek Habersack  <grendello@gmail.com>
+
+	* Makefile (net_1_1_bootstrap_SUBDIRS): added culevel
+
+	* culevel/Makefile (all-local): build the binary only in the 1.1
+	bootstrap phase.
+	(LOCAL_MCS_FLAGS): removed -pkg:dotnet
+
 2007-04-17  Marek Habersack  <mhabersack@novell.com>
 
 	* culevel/culevel.exe.sources: added

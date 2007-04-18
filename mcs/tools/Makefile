@@ -5,7 +5,7 @@ SUBDIRS = \
 	resgen macpack mkbundle dtd2rng dtd2xsd mjs prj2make mono-service \
 	mono-shlib-cop compiler-tester mono-xmltool installvst
 
-net_1_1_bootstrap_SUBDIRS = gacutil security resgen
+net_1_1_bootstrap_SUBDIRS = gacutil security resgen culevel
 net_2_0_bootstrap_SUBDIRS = resgen
 
 net_2_0_SUBDIRS = al corcompare wsdl compiler-tester monop xbuild resgen mono-service mkbundle sgen security

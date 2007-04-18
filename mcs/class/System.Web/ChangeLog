@@ -1,3 +1,8 @@
+2007-04-18  Marek Habersack  <grendello@gmail.com>
+
+	* Makefile (System.Web/UplevelHelper.cs): use binary in the
+	net_1_1_bootstrap profile.
+
 2007-04-17  Wade Berrier  <wberrier@novell.com>
 
 	* Makefile: use BUILT_SOURCES for UplevelHelper.cs instead of including it in the
