@@ -147,7 +147,6 @@ the output file name (if not set).";
 			reader.Close ();
 			writer.Close ();
 			Console.WriteLine("Writing resource file...  Done.");
-			success = true;
 		} catch (Exception e) {
 			Console.WriteLine ("Error: {0}", e.Message);
 			Exception inner = e.InnerException;
