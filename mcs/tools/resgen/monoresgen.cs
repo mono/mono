@@ -125,7 +125,6 @@ the output file name (if not set).";
 		FileStream dest = null;
 		IResourceReader reader = null;
 		IResourceWriter writer = null;
-		bool success;
 
 		try {
 			source = new FileStream (sname, FileMode.Open, FileAccess.Read);
