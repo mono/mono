@@ -1015,7 +1015,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test] // bug #80773
-		[Category ("NotWorking")]
 		public void ShowDialog_Owner_Self ()
 		{
 			Form form = new Form ();
