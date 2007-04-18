@@ -165,7 +165,8 @@ endif
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -doc:$(test_lib:.dll=.xml)  -nowarn:219 -nowarn:169 $(NUNIT_RESOURCE_FILES:%=/resource:%)
 
-EXTRA_DISTFILES = $(RESOURCE_FILES_2) $(RESOURCE_FILES_1) $(TEST_RESOURCE_FILES)
+EXTRA_DISTFILES = $(RESOURCE_FILES_2) $(RESOURCE_FILES_1) $(TEST_RESOURCE_FILES) UplevelHelperDefinitions.xml
+BUILT_SOURCES = System.Web/UplevelHelper.cs
 
 include ../../build/library.make
 

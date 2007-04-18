@@ -1,3 +1,8 @@
+2007-04-17  Wade Berrier  <wberrier@novell.com>
+
+	* Makefile: use BUILT_SOURCES for UplevelHelper.cs instead of including it in the
+	.sources file.  Include UplevelHelperDefinitions.xml for 'make dist'.
+
 2007-04-17  Jonathan Chambers <joncham@gmail.com>
 
 	* Makefile: Fix build, add $(TEST_RUNTIME) before call to culevel.
