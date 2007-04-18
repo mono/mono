@@ -174,7 +174,6 @@ LIB_MCS_FLAGS += -define:WEBSERVICES_DEP -r:$(WEBSERVICES_DEP)
 $(the_lib): $(WEBSERVICES_DEP_FILE)
 endif
 
-dist-local: System.Web/UplevelHelper.cs
 System.Web/UplevelHelper.cs: UplevelHelperDefinitions.xml
 	$(TEST_RUNTIME) $(topdir)/class/lib/default/culevel.exe -o $@ $^
 
