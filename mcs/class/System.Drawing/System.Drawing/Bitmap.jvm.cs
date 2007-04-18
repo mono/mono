@@ -274,6 +274,13 @@ namespace System.Drawing
 		public BitmapData LockBits (Rectangle rect, ImageLockMode flags, PixelFormat format) {
 			throw new NotImplementedException();
 		}
+
+#if NET_2_0
+		public
+#endif
+		BitmapData LockBits (Rectangle rect, ImageLockMode flags, PixelFormat format, BitmapData bitmapData) {
+			throw new NotImplementedException();
+		}
 		#endregion
 
 		#region MakeTransparent
