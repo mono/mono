@@ -1,3 +1,9 @@
+2007-04-18  Raja R Harinath  <rharinath@novell.com>
+
+	* reflection.c (assembly_add_win32_resources): Mildly relax an
+	bounds check to let the end pointer point just past the end of the
+	allocated buffer.  (may fix #81384)
+
 2007-04-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* culture-info-table.h : regenerated.
