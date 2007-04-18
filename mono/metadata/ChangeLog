@@ -1,3 +1,9 @@
+
+Wed Apr 18 18:28:41 BST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: fix handling of doubles in custom attributes
+	for the arm-fpa format (bug #81368).
+
 2007-04-18  Raja R Harinath  <rharinath@novell.com>
 
 	* reflection.c (assembly_add_win32_resources): Mildly relax an
