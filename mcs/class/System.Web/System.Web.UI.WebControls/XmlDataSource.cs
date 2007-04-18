@@ -299,6 +299,7 @@ namespace System.Web.UI.WebControls {
 		
 		[DefaultValueAttribute ("")]
 		[EditorAttribute ("System.Web.UI.Design.XmlDataFileEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
+		[MonoLimitation ("Absolute path to the file system is not supported; use a relative URI instead.")]
 		public virtual string DataFile {
 			get { return _dataFile; }
 			set {
@@ -335,6 +336,7 @@ namespace System.Web.UI.WebControls {
 		
 		[EditorAttribute ("System.Web.UI.Design.XslTransformFileEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		[DefaultValueAttribute ("")]
+		[MonoLimitation ("Absolute path to the file system is not supported; use a relative URI instead.")]
 		public virtual string TransformFile {
 			get { return _transformFile; }
 			set {

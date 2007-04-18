@@ -136,6 +136,7 @@ namespace System.Web.UI.WebControls {
 #endif		
 		[WebSysDescription ("")]
 		[WebCategory ("Behavior")]
+		[MonoLimitation ("Absolute path to the file system is not supported; use a relative URI instead.")]
 		public string DocumentSource {
 			get {
 				if (xml_file == null)
@@ -212,6 +213,7 @@ namespace System.Web.UI.WebControls {
 #else
 		[Editor ("System.Web.UI.Design.XslUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 #endif		
+		[MonoLimitation ("Absolute path to the file system is not supported; use a relative URI instead.")]
 		public string TransformSource {
 			get {
 				if (transform_file == null)

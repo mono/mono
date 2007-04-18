@@ -1,5 +1,11 @@
 2007-04-18  Igor Zelmanovich  <igorz@mainsoft.com>
 
+	* Xml.cs:
+	* XmlDataSource.cs:
+	added MonoLimitation attributes		
+
+2007-04-18  Igor Zelmanovich  <igorz@mainsoft.com>
+
 	* BaseValidator.cs: for TARGET_J2EE: 
 	used Page.Request.Browser to determine RenderUplevel
 
