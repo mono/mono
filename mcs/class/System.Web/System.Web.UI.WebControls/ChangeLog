@@ -1,5 +1,9 @@
 2007-04-18  Marek Habersack  <mhabersack@novell.com>
 
+	* SiteMapDataSource.cs: query the site map for the current node
+	when configured to use it as the start point. Fixes bug #81376,
+	patch from Mike Morano <mmorano@mikeandwan.us>.
+
 	* Calendar.cs: change year/month format to be culture aware. Fix
 	for bug #81390. Patch submitted by Atsushi Enomoto
 	<atsushi@ximian.com>

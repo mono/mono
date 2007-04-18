@@ -185,7 +185,7 @@ namespace System.Web.UI.WebControls
 			} else if (StartFromCurrentNode) {
 				if (StartingNodeUrl.Length != 0)
 					throw new InvalidOperationException ("StartingNodeUrl can't be set if StartFromCurrentNode is set to true.");
-				starting_node = Provider.CurrentNode;
+				starting_node = SiteMap.CurrentNode;
 			} else if (StartingNodeUrl.Length != 0) {
 				string url = MapUrl (StartingNodeUrl);
 				SiteMapNode node = Provider.FindSiteMapNode (url);
