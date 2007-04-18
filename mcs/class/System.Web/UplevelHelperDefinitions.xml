@@ -94,10 +94,6 @@ definition correctly.
       <except positions="13-28" match="ActiveTouristBot"/>
     </group>
 
-    <group positions="9-11,12" match="/4.,[" javascript="true">
-      <!-- Netscape 4.x -->
-    </group>
-
     <group scanfrom="12" skip="4" match=") Gecko/" javascript="true">
       <!-- All the Gecko-based browsers -->
     </group>
@@ -120,6 +116,10 @@ definition correctly.
     
     <group positions="25-28" match="Konq" javascript="true">
       <!-- Konqueror -->
+    </group>
+
+    <group positions="9-11,12" match="/4.,[" javascript="true">
+      <!-- Netscape 4.x -->
     </group>
   </group>
 
