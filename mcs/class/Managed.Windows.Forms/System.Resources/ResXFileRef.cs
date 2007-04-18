@@ -83,10 +83,10 @@ namespace System.Resources {
 					file.Read(buffer, 0, (int) file.Length);
 				}
 
-		                if (type == typeof(System.Byte[])) 
-                			return buffer;
-
 #if NET_2_0
+				if (type == typeof(System.Byte[]))
+					return buffer;
+
 				if (type == typeof (Bitmap) && Path.GetExtension (parts [0]) == ".ico") {
 					MemoryStream ms = new MemoryStream (buffer);
 					return new Icon (ms).ToBitmap ();
