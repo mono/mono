@@ -1,3 +1,9 @@
+2007-04-18  Marek Habersack  <mhabersack@novell.com>
+
+	* Calendar.cs: change year/month format to be culture aware. Fix
+	for bug #81390. Patch submitted by Atsushi Enomoto
+	<atsushi@ximian.com>
+
 2007-04-17  Daniel Nauck  <dna@mono-project.de>
 
 	* PasswordRecovery.cs: fixed typo (AnswerLabel.Text).

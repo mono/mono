@@ -1191,10 +1191,10 @@ namespace System.Web.UI.WebControls {
 
 				cellMonth.RenderBeginTag (writer);
 
-				str = dateInfo.GetMonthName (GetGlobalCalendar ().GetMonth (DisplayDate));
-
 				if (TitleFormat == TitleFormat.MonthYear)
-					str += " " + (DisplayDate.Year.ToString ());
+					str = DisplayDate.ToString (dateInfo.YearMonthPattern, dateInfo);
+				else
+					str = dateInfo.GetMonthName (GetGlobalCalendar ().GetMonth (DisplayDate));
 
 				writer.Write (str);
 				cellMonth.RenderEndTag (writer);
