@@ -735,11 +735,11 @@ namespace Mono.Tools
 					new CodeBinaryOperatorExpression (
 						new CodeVariableReferenceExpression ("startPosition"),
 						CodeBinaryOperatorType.Add,
-						new CodePrimitiveExpression (matchLength))
+						new CodePrimitiveExpression (matchLength - 1))
 				)
 			);
 
-			// for (int ualeft = ualength; ualeft < matchlen; ualeft--) {
+			// for (int ualeft = ualength; ualeft >= matchlen; ualeft--) {
 			//   if (<condition>) {
 			//      hasJavaScript = true;
 			//      return true;
@@ -758,7 +758,7 @@ namespace Mono.Tools
 			);
 			iter.TestExpression = new CodeBinaryOperatorExpression (
 				new CodeVariableReferenceExpression ("ualeft"),
-				CodeBinaryOperatorType.LessThan,
+				CodeBinaryOperatorType.GreaterThanOrEqual,
 				new CodePrimitiveExpression (matchLength)
 			);
 

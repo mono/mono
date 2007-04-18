@@ -1,3 +1,8 @@
+2007-04-18  Marek Habersack  <mhabersack@novell.com>
+
+	* culevel/CompileUplevel.cs: fix two dumb mistakes that prevented
+	correct detection of some browsers.
+
 2007-04-18  Marek Habersack  <grendello@gmail.com>
 
 	* Makefile (net_1_1_bootstrap_SUBDIRS): added culevel
