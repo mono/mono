@@ -9,6 +9,7 @@
  */
 
 using System;
+using System.Globalization;
 using System.Text;
 using System.IO;
 using System.Collections;
@@ -401,6 +402,13 @@ class TxtResourceReader : IResourceReader {
 				case 't':
 					b.Append ('\t');
 					break;
+#if NET_2_0
+				case 'u':
+					int ch = int.Parse (value.Substring (++i, 4), NumberStyles.HexNumber);
+					b.Append (char.ConvertFromUtf32 (ch));
+					i += 3;
+					break;
+#endif
 				case '\\':
 					b.Append ('\\');
 					break;
