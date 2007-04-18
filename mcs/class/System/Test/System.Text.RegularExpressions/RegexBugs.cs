@@ -446,5 +446,19 @@ namespace MonoTests.System.Text.RegularExpressions
 			GroupNumbers_1 ("(a)|(b)", 3);
 			GroupNumbers_1 ("((a)(b))(c)", 5);
 		}
+
+		static string bug80554_s = @"(?(static)|(.*))(static)";
+		static RegexTrial[] bug80554_trials = {
+			new RegexTrial (bug80554_s, RegexOptions.None, "static", "Pass. Group[0]=(0,6) Group[1]= Group[2]=(0,6)"),
+			new RegexTrial (bug80554_s, RegexOptions.None, "hydrostatic", "Pass. Group[0]=(0,11) Group[1]=(0,5) Group[2]=(5,6)"),
+			new RegexTrial (bug80554_s, RegexOptions.None, "statics", "Pass. Group[0]=(0,6) Group[1]= Group[2]=(0,6)"),
+			new RegexTrial (bug80554_s, RegexOptions.None, "dynamic", "Fail.")
+		};
+
+		[Test] public void Bug80554_0 () { bug80554_trials [0].Execute (); }
+		[Test] public void Bug80554_1 () { bug80554_trials [1].Execute (); }
+		[Test] public void Bug80554_2 () { bug80554_trials [2].Execute (); }
+		[Test] public void Bug80554_3 () { bug80554_trials [3].Execute (); }
+
 	}
 }

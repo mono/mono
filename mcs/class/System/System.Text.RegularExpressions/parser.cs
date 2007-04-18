@@ -529,7 +529,7 @@ namespace System.Text.RegularExpressions.Syntax {
 				}
 				else {						// capture test
 					++ ptr;
-					asn = new CaptureAssertion ();
+					asn = new CaptureAssertion (new Literal (name, IsIgnoreCase (options)));
 					refs.Add (asn, name);
 				}
 
@@ -1097,6 +1097,8 @@ namespace System.Text.RegularExpressions.Syntax {
 			foreach (Expression expr in refs.Keys) {
 				string name = (string)refs[expr];
 				if (!dict.Contains (name)) {
+					if (expr is CaptureAssertion && !Char.IsDigit (name [0]))
+						continue;
 					throw NewParseException ("Reference to undefined group " +
 						(Char.IsDigit (name[0]) ? "number " : "name ") +
 						name);

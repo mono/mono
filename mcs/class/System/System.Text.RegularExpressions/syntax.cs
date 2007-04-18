@@ -490,7 +490,8 @@ namespace System.Text.RegularExpressions.Syntax {
 	}
 
 	class CaptureAssertion : Assertion {
-		public CaptureAssertion () {
+		public CaptureAssertion (Literal l) {
+			literal = l;
 		}
 
 		public CapturingGroup CapturingGroup {
@@ -499,6 +500,11 @@ namespace System.Text.RegularExpressions.Syntax {
 		}
 
 		public override void Compile (ICompiler cmp, bool reverse) {
+			if (group == null) {
+				Alternate.Compile (cmp, reverse);
+				return;
+			}
+
 			int gid = group.Number;
 			LinkRef tail = cmp.NewLink ();
 
@@ -529,6 +535,8 @@ namespace System.Text.RegularExpressions.Syntax {
 		}
 
 		public override bool IsComplex () {
+			if (group == null)
+				return Alternate.IsComplex ();
 			if (TrueExpression != null && TrueExpression.IsComplex ())
 				return true;
 			if (FalseExpression != null && FalseExpression.IsComplex ())
@@ -536,7 +544,21 @@ namespace System.Text.RegularExpressions.Syntax {
 			return GetFixedWidth () <= 0;
 		}
 
+		ExpressionAssertion Alternate {
+			get {
+				if (alternate == null) {
+					alternate = new ExpressionAssertion ();
+					alternate.TrueExpression = TrueExpression;
+					alternate.FalseExpression = FalseExpression;
+					alternate.TestExpression = literal;
+				}
+				return alternate;
+			}
+		}
+
+		private ExpressionAssertion alternate;
 		private CapturingGroup group;
+		private Literal literal;
 	}
 
 	class ExpressionAssertion : Assertion {

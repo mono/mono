@@ -1,3 +1,7 @@
+2007-04-18  Raja R Harinath  <rharinath@novell.com>
+
+	* RegexBugs.cs (bug80554_trials): New tests based on #80554.
+
 2007-04-04  Raja R Harinath  <rharinath@novell.com>
 
 	* RegexTest.cs (PrimeRegex): New backtracking torture test using
