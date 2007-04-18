@@ -1,5 +1,10 @@
 2007-04-18  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* monoresgen.cs: Clean up resources when resource file cannot be
+	compiled.
+
+2007-04-18  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* monoresgen.cs: Added support for 4 digit unicode escapes on 2.0
 	profile. Patch provided by Alex Earl. Fixes bug #81136.
 

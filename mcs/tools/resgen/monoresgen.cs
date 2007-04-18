@@ -121,9 +121,11 @@ the output file name (if not set).";
 	}
 	
 	static int CompileResourceFile (string sname, string dname, bool useSourcePath) {
-		FileStream source, dest;
-		IResourceReader reader;
-		IResourceWriter writer;
+		FileStream source = null;
+		FileStream dest = null;
+		IResourceReader reader = null;
+		IResourceWriter writer = null;
+		bool success;
 
 		try {
 			source = new FileStream (sname, FileMode.Open, FileAccess.Read);
@@ -146,6 +148,7 @@ the output file name (if not set).";
 			reader.Close ();
 			writer.Close ();
 			Console.WriteLine("Writing resource file...  Done.");
+			success = true;
 		} catch (Exception e) {
 			Console.WriteLine ("Error: {0}", e.Message);
 			Exception inner = e.InnerException;
@@ -153,6 +156,23 @@ the output file name (if not set).";
 				inner = inner.InnerException;
 			if (inner != null)
 				Console.WriteLine ("Inner exception: {0}", inner.Message);
+
+			if (reader != null)
+				reader.Dispose ();
+			if (source != null)
+				source.Close ();
+			if (writer != null)
+				writer.Dispose ();
+			if (dest != null)
+				dest.Close ();
+
+			// since we're not first reading all entries in source, we may get a
+			// read failure after we're started writing to the destination file
+			// and leave behind a broken resources file, so remove it here
+			try {
+				File.Delete (dname);
+			} catch {
+			}
 			return 1;
 		}
 		return 0;
