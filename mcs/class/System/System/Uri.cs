@@ -1745,6 +1745,7 @@ namespace System {
 			return Parser.IsBaseOf (this, uri);
 		}
 
+		[MonoNotSupported ("IsWellFormedOriginalString is not supported")]
 		public bool IsWellFormedOriginalString ()
 		{
 			return Parser.IsWellFormedOriginalString (this);
@@ -1856,6 +1857,7 @@ namespace System {
 			return sb.ToString ();
 		}
 
+		[MonoNotSupported ("IsWellFormedUriString is not supported")]
 		public static bool IsWellFormedUriString (string uriString, UriKind uriKind)
 		{
 			if (uriString == null)
