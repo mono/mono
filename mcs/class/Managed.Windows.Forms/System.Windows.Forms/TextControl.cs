@@ -1815,8 +1815,8 @@ namespace System.Windows.Forms {
 				}
 
 				case CaretDirection.End: {
-					if (caret.pos < caret.line.text.Length) {
-						caret.pos = caret.line.text.Length;
+					if (caret.pos < caret.line.TextLengthWithoutEnding ()) {
+						caret.pos = caret.line.TextLengthWithoutEnding ();
 						caret.tag = LineTag.FindTag(caret.line, caret.pos);
 						UpdateCaret();
 					}
@@ -1912,7 +1912,7 @@ namespace System.Windows.Forms {
 
 				case CaretDirection.CtrlEnd: {
 					caret.line = GetLine(lines);
-					caret.pos = caret.line.text.Length;
+					caret.pos = caret.line.TextLengthWithoutEnding ();
 					caret.tag = LineTag.FindTag(caret.line, caret.pos);
 
 					UpdateCaret();

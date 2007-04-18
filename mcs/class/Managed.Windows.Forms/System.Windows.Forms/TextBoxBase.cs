@@ -928,7 +928,7 @@ namespace System.Windows.Forms {
 						document.ReplaceSelection("", false);
 					} else {
 						// DeleteChar only deletes on the line, doesn't do the combine
-						if (document.CaretPosition == document.CaretLine.TextLengthWithoutEnding ()) {
+						if (document.CaretPosition >= document.CaretLine.TextLengthWithoutEnding ()) {
 							if (document.CaretLine.LineNo < document.Lines) {
 								Line	line;
 

@@ -1,5 +1,12 @@
 2007-04-18  Jackson Harper  <jackson@ximian.com>
 
+	* TextControl.cs: Pressing the end key shouldn't move the caret
+	past the line ending.
+	* TextBoxBase.cs: We can still delete if we are in the line
+	ending and the combine will just kill the existing line ending.
+
+2007-04-18  Jackson Harper  <jackson@ximian.com>
+
 	* TextControl.cs: We can't move lines, then invalidate their
 	bounds, we need to get the old bounds and combine that with the
 	new bounds.
