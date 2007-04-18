@@ -265,6 +265,10 @@ namespace System.Windows.Forms {
 
 			if (size_mode == PictureBoxSizeMode.CenterImage || size_mode == PictureBoxSizeMode.StretchImage)
 				Refresh ();
+#if NET_2_0
+			if (size_mode == PictureBoxSizeMode.Zoom)
+				Refresh ();
+#endif
 		}
 
 		protected override void SetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified)

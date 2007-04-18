@@ -1,3 +1,9 @@
+2007-04-18  Jonathan Pobst  <monkey@jpobst.com>
+
+	* PictureBox.cs: Refresh on resize when SizeMode = Zoom.
+	* ThemeWin32Classic.cs: Implement PictureBox.SizeMode = Zoom.
+	[Fixes bug #81391]
+
 2007-04-18  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* CreateParams.cs: Add a couple of helper methods and do a less string

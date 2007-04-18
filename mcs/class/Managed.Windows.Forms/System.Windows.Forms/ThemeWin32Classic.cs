@@ -3439,6 +3439,20 @@ namespace System.Windows.Forms
 					dc.FillRectangle(GetControlBackBrush (pb.BackColor), clip);
 					dc.DrawImage (pb.Image, (client.Width / 2) - (pb.Image.Width / 2), (client.Height / 2) - (pb.Image.Height / 2));
 					break;
+#if NET_2_0
+				case PictureBoxSizeMode.Zoom:
+					dc.FillRectangle (GetControlBackBrush (pb.BackColor), clip);
+					
+					Size image_size;
+					
+					if (((float)pb.Image.Width / (float)pb.Image.Height) >= ((float)client.Width / (float)client.Height))
+						image_size = new Size (client.Width, (pb.Image.Height * client.Width) / pb.Image.Width);
+					else
+						image_size = new Size ((pb.Image.Width * client.Height) / pb.Image.Height, client.Height);
+
+					dc.DrawImage (pb.Image, (client.Width / 2) - (image_size.Width / 2), (client.Height / 2) - (image_size.Height / 2), image_size.Width, image_size.Height);
+					break;
+#endif
 				default:
 					dc.FillRectangle(GetControlBackBrush (pb.BackColor), clip);
 					// Normal, AutoSize
