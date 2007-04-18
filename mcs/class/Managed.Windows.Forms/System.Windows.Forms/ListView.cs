@@ -1944,17 +1944,17 @@ namespace System.Windows.Forms
 					if (!item_rect.Contains (pt))
 						continue;
 
-					if (me.Clicks == 1 && owner.items [i].CheckRectReal.Contains (pt)) {
+					if (owner.items [i].CheckRectReal.Contains (pt)) {
 						// Don't check if StateImageList has less than two items
 						if (owner.StateImageList != null && owner.StateImageList.Images.Count < 2)
 							return;
 
 						checking = true;
-						ListViewItem item = owner.Items [i];
+						ListViewItem item = owner.items [i];
 						item.Checked = !item.Checked;
 						return;
 					}
-
+					
 					if (owner.View == View.Details) {
 						bool over_text = owner.items [i].TextBounds.Contains (pt);
 						if (owner.FullRowSelect) {
@@ -1968,6 +1968,7 @@ namespace System.Windows.Forms
 							owner.SetFocusedItem (owner.Items [i]);
 					} else
 						clicked_item = owner.items [i];
+
 					break;
 				}
 

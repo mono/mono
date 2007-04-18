@@ -1,3 +1,9 @@
+2007-04-18  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListView.cs: In ItemControl.ItemsMouseDown, take into
+	account the double clicks when CheckBoxes are used and
+	the pointer is inside the checkbox. Fixes part of #81191.
+
 2007-04-18  Jackson Harper  <jackson@ximian.com>
 
 	* TextControl.cs: Pressing the end key shouldn't move the caret
