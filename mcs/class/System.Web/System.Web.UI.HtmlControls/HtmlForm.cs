@@ -198,7 +198,26 @@ namespace System.Web.UI.HtmlControls
 #if NET_2_0
 		internal bool DetermineRenderUplevel ()
 		{
+#if TARGET_J2EE
+			if (HttpContext.Current == null)
+				return false;
+
+			return (
+				/* From someplace on the web: "JavaScript 1.2
+				 * and later (also known as ECMAScript) has
+				 * built-in support for regular
+				 * expressions" */
+				((Page.Request.Browser.EcmaScriptVersion.Major == 1
+				  && Page.Request.Browser.EcmaScriptVersion.Minor >= 2)
+				 || (Page.Request.Browser.EcmaScriptVersion.Major > 1))
+
+				/* document.getElementById, .getAttribute,
+				 * etc, are all DOM level 1.  I don't think we
+				 * use anything in level 2.. */
+				&& Page.Request.Browser.W3CDomVersion.Major >= 1);
+#else
 			return UplevelHelper.IsUplevel (HttpContext.Current.Request.UserAgent);
+#endif
 		}
 
 		protected internal override void OnPreRender (EventArgs e)
