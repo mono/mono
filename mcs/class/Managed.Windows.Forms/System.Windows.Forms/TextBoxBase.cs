@@ -933,9 +933,15 @@ namespace System.Windows.Forms {
 								Line	line;
 
 								line = document.GetLine(document.CaretLine.LineNo + 1);
+
+								// this line needs to be invalidated before it is combined
+								// because once it is combined, all it's coordinates will
+								// have changed
+								document.Invalidate (line, 0, line, line.text.Length);
 								document.Combine(document.CaretLine, line);
+
 								document.UpdateView(document.CaretLine,
-										document.Lines - document.CaretLine.LineNo, 0);
+										document.Lines, 0);
 
 							}
 						} else {

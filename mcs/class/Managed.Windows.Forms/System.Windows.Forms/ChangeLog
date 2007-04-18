@@ -1,3 +1,12 @@
+2007-04-18  Jackson Harper  <jackson@ximian.com>
+
+	* TextControl.cs: We can't move lines, then invalidate their
+	bounds, we need to get the old bounds and combine that with the
+	new bounds.
+	* TextBoxBase.cs: Before combining two lines for a delete, we need
+	to invalidate the area of the old line, since that will be moved
+	in the combine operation.
+
 2007-04-18  Everaldo Canuto  <everaldo@simios.org>
 
 	* LinkLabel.cs: In OnPaint invoke draw background to fix problems

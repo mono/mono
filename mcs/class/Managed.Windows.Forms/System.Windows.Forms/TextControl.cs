@@ -1461,6 +1461,18 @@ namespace System.Windows.Forms {
 				return;
 			}
 
+			int start_line_top = line.Y;			
+
+			int end_line_bottom;
+			Line end_line;
+
+			end_line = GetLine (line.line_no + line_count);
+			if (end_line == null)
+				end_line = GetLine (lines);
+
+
+			end_line_bottom = end_line.Y + end_line.height;
+			
 			if (RecalculateDocument(owner.CreateGraphicsInternal(), line.line_no, line.line_no + line_count, true)) {
 				// Lineheight changed, invalidate the rest of the document
 				if ((line.Y - viewport_y) >=0 ) {
@@ -1471,20 +1483,12 @@ namespace System.Windows.Forms {
 					owner.Invalidate();
 				}
 			} else {
-				Line	end_line;
+				int x = 0 - viewport_x;
+				int w = viewport_width;
+				int y = Math.Min (start_line_top - viewport_y, line.Y - viewport_y);
+				int h = Math.Max (end_line_bottom - y, end_line.Y + end_line.height - y);
 
-				end_line = GetLine(line.line_no + line_count);
-				if (end_line == null) {
-					// Something is wrong here
-#if DEBUG
-					Console.Error.WriteLine ("Attempting to invalidate line that does not exist. " +
-							"start: {0}  count: {1}", line.text, line_count);
-#endif
-					// Use the last line
-					end_line = GetLine (lines);
-				}
-
-				owner.Invalidate(new Rectangle(0 - viewport_x, line.Y - viewport_y, viewport_width, end_line.Y + end_line.height));
+				owner.Invalidate (new Rectangle (x, y, w, h));
 			}
 		}
 		#endregion	// Private Methods
