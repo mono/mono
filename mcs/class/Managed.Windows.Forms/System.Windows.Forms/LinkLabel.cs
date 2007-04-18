@@ -425,6 +425,10 @@ namespace System.Windows.Forms
 
 		protected override void OnPaint (PaintEventArgs pevent)
 		{
+			// We need to invoke paintbackground because control is opaque
+			// and can have transparent colors.
+			base.InvokePaintBackground (this, pevent);
+			
 			ThemeEngine.Current.DrawLinkLabel (pevent.Graphics, pevent.ClipRectangle, this);
 			DrawImage (pevent.Graphics, Image, ClientRectangle, image_align);
 			// Do not call base.OnPaint since it's the Label class 
