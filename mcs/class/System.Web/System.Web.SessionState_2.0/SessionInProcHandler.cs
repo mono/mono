@@ -49,6 +49,7 @@ namespace System.Web.SessionState
 		public ReaderWriterLock rwlock;
 		public Int32 lockId;
 		public int timeout;
+		public bool resettingTimeout;
 		
 		internal InProcSessionItem ()
 		{
@@ -60,6 +61,7 @@ namespace System.Web.SessionState
 			this.rwlock = new ReaderWriterLock ();
 			this.lockId = Int32.MinValue;
 			this.timeout = 0;
+			this.resettingTimeout = false;
 		}
 	}
 	
@@ -81,6 +83,9 @@ namespace System.Web.SessionState
 
 		void InsertSessionItem (InProcSessionItem item, int timeout, string id)
 		{
+			if (item == null || String.IsNullOrEmpty (id))
+				return;
+
 			HttpRuntime.Cache.InsertPrivate (id,
 							 item,
 							 null,
@@ -258,6 +263,7 @@ namespace System.Web.SessionState
 
 			try {
 				item.rwlock.AcquireWriterLock (lockAcquireTimeout);
+				item.resettingTimeout = true;
 				cache.Remove (CacheId);
 				InsertSessionItem (item, item.timeout, CacheId);
 			} catch {
@@ -329,6 +335,11 @@ namespace System.Web.SessionState
 					expireCallback (key, (SessionStateStoreData)value);
 				else if (value is InProcSessionItem) {
 					InProcSessionItem item = (InProcSessionItem)value;
+					if (item.resettingTimeout) {
+						item.resettingTimeout = false;
+						return;
+					}
+					
 					expireCallback (key,
 							new SessionStateStoreData (
 								item.items,

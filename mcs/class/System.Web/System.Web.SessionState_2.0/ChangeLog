@@ -1,3 +1,8 @@
+2007-04-18  Marek Habersack  <mhabersack@novell.com>
+
+	* SessionInProcHandler.cs: added protection against raising early
+	session end event when resetting item timeout. Fixes bug #81140
+
 2007-03-12  Konstantin Triger <kostat@mainsoft.com>
 
 	* SessionStateModule.cs: TARGET_J2EE: support only J2EE sessions.
