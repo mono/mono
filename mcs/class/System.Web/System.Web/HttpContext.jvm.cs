@@ -32,6 +32,7 @@ using System.Collections;
 using System.Configuration;
 using System.Threading;
 using javax.servlet.http;
+using vmw.@internal.j2ee;
 
 namespace System.Web {
 	
@@ -85,6 +86,8 @@ namespace System.Web {
 		{
 			get { return false; }
 		}
+
+		internal bool IsPortletRequest { get { return ServletRequest is IPortletRequest; } }
 
 		internal void BeginTimeoutPossible ()
 		{

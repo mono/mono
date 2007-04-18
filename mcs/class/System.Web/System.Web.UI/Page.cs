@@ -732,6 +732,10 @@ public partial class Page : TemplateControl, IHttpHandler
 			return deflt;
 		CultureInfo ret = null;
 		if (culture.StartsWith ("auto", StringComparison.InvariantCultureIgnoreCase)) {
+#if TARGET_J2EE
+			if (Context.IsPortletRequest)
+				return deflt;
+#endif
 			string[] languages = Request.UserLanguages;
 			try {
 				if (languages != null && languages.Length > 0)
