@@ -1,3 +1,9 @@
+2007-04-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* threads.c (mono_thread_get_stack_bounds): New helper function.
+
+	* threads.c (mono_thread_attach): Applied patch from horst.reiterer@fabasoft.com.
+	Correctly compute stack bounds when attaching. Fixes #81394.
 
 Wed Apr 18 18:28:41 BST 2007 Paolo Molaro <lupus@ximian.com>
 
