@@ -118,6 +118,14 @@ namespace System.Windows.Forms {
 			return (this.ex_style & (int) ExStyle) == (int) ExStyle;
 		}
 		
+		internal static bool IsSet (WindowExStyles ExStyle, WindowExStyles Option) {
+			return (Option & ExStyle) == Option;
+		}
+		
+		internal static bool IsSet (WindowStyles Style, WindowStyles Option) {
+			return (Option & Style) == Option;
+		}
+		
 		internal bool HasWindowManager {
 			get {
 				return control != null && control is Form && ((Form) control).window_manager != null;
@@ -145,15 +153,8 @@ namespace System.Windows.Forms {
 
 		#region Public Instance Methods
 		public override string ToString() {
-			return "CreateParams {'" + class_name + 
-				"', '" + caption + 
-				"', " + String.Format("0x{0:X}", class_style) +
-				", " + String.Format("0x{0:X}", ex_style) +
-				", {" + String.Format("{0}", x) +
-				", " + String.Format("{0}", y) +
-				", " + String.Format("{0}", width) +
-				", " + String.Format("{0}", height) +
-				"}}";
+			return string.Format ("CreateParams {{'{0}', '{1}', 0x{2:X}, 0x{3:X}, {{{4}, {5}, {6}, {7}}}}}", 
+					class_name, caption, class_style, ex_style, x, y, width, height);
  		}
 		#endregion	// Public Instance Methods
 

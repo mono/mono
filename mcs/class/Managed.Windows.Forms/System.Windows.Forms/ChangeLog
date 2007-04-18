@@ -1,3 +1,27 @@
+2007-04-18  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* CreateParams.cs: Add a couple of helper methods and do a less string
+	  concatenation in ToString.
+	* XplatUIX11.cs: Add an TranslateClientRectangleToXClientRectangle
+	  overload that takes a Control parameter, since this method may be
+	  called before a control is assigned to the hwnd (from
+	  CreateWindow), and update CreateWindow to use the new overload. In
+	  GetMenuOrigin subtract the title bar from the y position if the
+	  form has a window manager (since we're painting it and not X).
+	* XplatUIWin32.cs: If we can get a form in GetMenuOrigin use the form's
+	  CreateParams to calculate the origin (since border sizes may vary).
+	  In ScreenToMenu only subtract the title height if we actually have
+	  a title.
+	* MdiWindowManager.cs: Override MenuHeight to always return 0, since
+	  mdi children never have menus of themselves.
+	* InternalWindowManager.cs: Implement menu handling like form does.
+	  Added GetMenuOrigin to calculate the menu origin, can't use the
+	  CreateParams from the form like normally since it's lying.
+	* Hwnd.cs: Implement GetBorderSize better (in the sense more
+	  windows-like) and add Inflate and comparison operators to the
+	  Borders type. When calculating MenuOrigin and it's a form with a
+	  window manager, use the window manager to calculate it.
+
 2007-04-17  Chris Toshok  <toshok@ximian.com>
 
 	* Control.cs (CreateControl): turns out in 2.0 we don't need this

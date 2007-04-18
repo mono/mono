@@ -2114,8 +2114,12 @@ namespace System.Windows.Forms {
  
  			Win32GetWindowRect(handle, out rect);
  			x -= rect.left + SystemInformation.FrameBorderSize.Width;
- 			y -= rect.top + SystemInformation.FrameBorderSize.Height + ThemeEngine.Current.CaptionHeight;
- 			return;
+ 			y -= rect.top + SystemInformation.FrameBorderSize.Height;
+
+ 			WindowStyles style = (WindowStyles) Win32GetWindowLong (handle, WindowLong.GWL_STYLE);
+ 			if (CreateParams.IsSet (style, WindowStyles.WS_CAPTION)) {
+ 				y -= ThemeEngine.Current.CaptionHeight;
+ 			}
   		}
   
   		internal override void MenuToScreen(IntPtr handle, ref int x, ref int y) {			
@@ -2330,6 +2334,11 @@ namespace System.Windows.Forms {
 		}
 
 		internal override Point GetMenuOrigin(IntPtr handle) {
+			Form form = Control.FromHandle (handle) as Form;
+			if (form != null) {
+				Hwnd.Borders borders = Hwnd.GetBorders (form.GetCreateParams (), null);
+				return new Point(borders.left, borders.top);
+			}
 			return new Point(SystemInformation.FrameBorderSize.Width, SystemInformation.FrameBorderSize.Height + ThemeEngine.Current.CaptionHeight);
 		}
 

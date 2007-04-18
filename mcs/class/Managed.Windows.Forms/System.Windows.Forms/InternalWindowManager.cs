@@ -246,15 +246,25 @@ namespace System.Windows.Forms {
 			PaintEventArgs pe = XplatUI.PaintEventStart (form.Handle, false);
 
 			Rectangle clip;
-			// clip region is not correct on win32.
-			// if (m.WParam.ToInt32 () > 1) {
-			//	Region r = Region.FromHrgn (m.WParam);
-			//	RectangleF rf = r.GetBounds (pe.Graphics);
-			//	clip = new Rectangle ((int) rf.X, (int) rf.Y, (int) rf.Width, (int) rf.Height);
-			//} else {	
-			clip = new Rectangle (0, 0, form.Width, form.Height);
-			//}
+			
+			if (form.ActiveMenu != null) {
+				Point pnt;
 
+				pnt = GetMenuOrigin ();
+
+				// The entire menu has to be in the clip rectangle because the 
+				// control buttons are right-aligned and otherwise they would
+				// stay painted when the window gets resized.
+				clip = new Rectangle (pnt.X, pnt.Y, form.ClientSize.Width, 0);
+				clip = Rectangle.Union (clip, pe.ClipRectangle);
+				pe.SetClip (clip);
+				pe.Graphics.SetClip (clip);
+
+				form.ActiveMenu.Draw (pe, new Rectangle (pnt.X, pnt.Y, form.ClientSize.Width, 0));
+			}
+			// clip region is not correct on win32.
+			// use the entire form's area.
+			clip = new Rectangle (0, 0, form.Width, form.Height);
 			ThemeEngine.Current.DrawManagedWindowDecorations (pe.Graphics, clip, this);
 			XplatUI.PaintEventEnd (form.Handle, false);
 			return true;
@@ -469,6 +479,11 @@ namespace System.Windows.Forms {
 				return true;
 			}
 
+			if (form.ActiveMenu != null && XplatUI.IsEnabled (form.Handle)) {
+				MouseEventArgs mea = new MouseEventArgs (Form.FromParamToMouseButtons (m.WParam.ToInt32 ()), form.mouse_clicks, x, y, 0);
+				form.ActiveMenu.OnMouseMove (form, mea);
+			}
+
 			return true;
 			
 		}
@@ -486,6 +501,11 @@ namespace System.Windows.Forms {
 			// Need to adjust because we are in NC land
 			NCPointToClient (ref x, ref y);
 			FormPos pos = FormPosForCoords (x, y);
+			
+			if (form.ActiveMenu != null && XplatUI.IsEnabled (form.Handle)) {
+				MouseEventArgs mea = new MouseEventArgs (Form.FromParamToMouseButtons (m.WParam.ToInt32 ()), form.mouse_clicks, x, y - TitleBarHeight, 0);
+				form.ActiveMenu.OnMouseDown (form, mea);
+			}
 			
 			if (pos == FormPos.TitleBar) {
 				HandleTitleBarDown (x, y);
@@ -674,6 +694,18 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		public int BorderWidth {
+			get {
+				return ThemeEngine.Current.ManagedWindowBorderWidth (this);
+			}
+		}
+		
+		public virtual int MenuHeight {
+			get {
+				return (form.Menu != null ? ThemeEngine.Current.MenuHeight : 0);
+			}
+		}
+
 		protected void UpdateVP (Rectangle r)
 		{
 			UpdateVP (r.X, r.Y, r.Width, r.Height);
@@ -778,12 +810,18 @@ namespace System.Windows.Forms {
 
 		protected virtual void NCClientToNC (ref int x, ref int y) {
 			y += TitleBarHeight;
-			y += ThemeEngine.Current.ManagedWindowBorderWidth (this);
+			y += BorderWidth;
+			y += MenuHeight;
+		}
+		
+		internal Point GetMenuOrigin ()
+		{
+			return new Point (BorderWidth, BorderWidth + TitleBarHeight);
 		}
 		
 		protected FormPos FormPosForCoords (int x, int y)
 		{
-			int bw = ThemeEngine.Current.ManagedWindowBorderWidth (this);
+			int bw = BorderWidth;
 			if (y < TitleBarHeight + bw) {
 				//	Console.WriteLine ("A");
 				if (y > bw && x > bw &&

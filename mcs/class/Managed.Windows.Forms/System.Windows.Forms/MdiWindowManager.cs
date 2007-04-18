@@ -53,6 +53,13 @@ namespace System.Windows.Forms {
 		private TitleButtons maximized_title_buttons;
 		private bool is_visible_pending;
 
+		public override int MenuHeight {
+			get {
+				// Mdi children don't get menus on the form, they're shown on the main form.
+				return 0;
+			}
+		}
+
 		internal bool IsVisiblePending {
 			get {
 				return is_visible_pending;

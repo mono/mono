@@ -174,22 +174,71 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public static Size GetBorderSize (CreateParams cp)
+		public static Borders GetBorderWidth (CreateParams cp)
 		{
-			Size border_size = new Size (0, 0);
+			Borders border_size = new Borders ();
 
-			if (cp.IsSet (WindowExStyles.WS_EX_STATICEDGE)) {
-				border_size = ThemeEngine.Current.BorderStaticSize;
-			} else if (cp.IsSet (WindowExStyles.WS_EX_CLIENTEDGE)) {
-				border_size = ThemeEngine.Current.Border3DSize;
-			} else if (cp.IsSet (WindowStyles.WS_THICKFRAME)) {
-				border_size = ThemeEngine.Current.BorderSizableSize;
+			Size windowborder = ThemeEngine.Current.BorderSize; /*new Size (1, 1);*/ // This is the only one that can be changed from the display properties in windows.
+			Size border = ThemeEngine.Current.BorderStaticSize; /*new Size (1, 1);*/
+			Size clientedge = ThemeEngine.Current.Border3DSize; /*new Size (2, 2);*/
+			Size thickframe = new Size (2 + windowborder.Width, 2 + windowborder.Height);
+			Size dialogframe = ThemeEngine.Current.BorderSizableSize; /* new Size (3, 3);*/
+			
+			WindowStyles style = cp.WindowStyle;
+			WindowExStyles exstyle = cp.WindowExStyle;
+			
+			if (cp.IsSet (WindowStyles.WS_CAPTION)) {
+				border_size.Inflate (dialogframe);
+			} else if (cp.IsSet (WindowStyles.WS_BORDER)) {
+				if (cp.IsSet (WindowExStyles.WS_EX_DLGMODALFRAME)) {
+					if (cp.IsSet (WindowStyles.WS_THICKFRAME) && (cp.IsSet (WindowExStyles.WS_EX_STATICEDGE) || cp.IsSet (WindowExStyles.WS_EX_CLIENTEDGE))) {
+						border_size.Inflate (border);
+					}
+				} else {
+					border_size.Inflate (border);
+				}
+			} else if (cp.IsSet (WindowStyles.WS_DLGFRAME)) {
+				border_size.Inflate (dialogframe);
 			}
 
-			if (cp.IsSet (WindowStyles.WS_BORDER)) {
-				border_size += ThemeEngine.Current.BorderSize;
-			} 
+			if (cp.IsSet (WindowStyles.WS_THICKFRAME)) {
+				if (cp.IsSet (WindowStyles.WS_DLGFRAME)) {
+					border_size.Inflate (border);
+				} else {
+					border_size.Inflate (thickframe);
+				}
+			}
 
+			bool only_small_border;
+			Size small_border = Size.Empty;
+
+			only_small_border = cp.IsSet (WindowStyles.WS_THICKFRAME) || cp.IsSet (WindowStyles.WS_DLGFRAME);
+			if (only_small_border && cp.IsSet (WindowStyles.WS_THICKFRAME) && !cp.IsSet (WindowStyles.WS_BORDER) && !cp.IsSet (WindowStyles.WS_DLGFRAME)) {
+				small_border = border;
+			}
+
+			if (cp.IsSet (WindowExStyles.WS_EX_CLIENTEDGE | WindowExStyles.WS_EX_DLGMODALFRAME)) {
+				border_size.Inflate (clientedge + (only_small_border ? small_border : dialogframe));
+			} else if (cp.IsSet (WindowExStyles.WS_EX_STATICEDGE | WindowExStyles.WS_EX_DLGMODALFRAME)) {
+				border_size.Inflate (only_small_border ? small_border : dialogframe);
+			} else if (cp.IsSet (WindowExStyles.WS_EX_STATICEDGE | WindowExStyles.WS_EX_CLIENTEDGE)) {
+				border_size.Inflate (border + (only_small_border ? Size.Empty : clientedge));
+			} else {
+				if (cp.IsSet (WindowExStyles.WS_EX_CLIENTEDGE)) {
+					border_size.Inflate (clientedge);
+				}
+				if (cp.IsSet (WindowExStyles.WS_EX_DLGMODALFRAME) && !cp.IsSet (WindowStyles.WS_DLGFRAME)) {
+					border_size.Inflate (cp.IsSet (WindowStyles.WS_THICKFRAME) ? border : dialogframe);
+				}
+				if (cp.IsSet (WindowExStyles.WS_EX_STATICEDGE)) {
+					if (cp.IsSet (WindowStyles.WS_THICKFRAME) || cp.IsSet (WindowStyles.WS_DLGFRAME)) {
+						border_size.Inflate (new Size (-border.Width, -border.Height));
+					} else {
+						border_size.Inflate (border);
+					}
+				}
+			}
+			
 			return border_size;
 		}
 
@@ -211,6 +260,9 @@ namespace System.Windows.Forms {
 			rect.X -= borders.left;
 			rect.Width += borders.left + borders.right;
 
+#if debug
+			Console.WriteLine ("GetWindowRectangle ({0}, {1}, {2}): {3}", cp, menu != null, client_rect, rect);
+#endif
 			return rect;
 		}
 		
@@ -244,12 +296,12 @@ namespace System.Windows.Forms {
 				borders.top += caption_height;
 			}
 
-			Size border_size = GetBorderSize (cp);
+			Borders border_width = GetBorderWidth (cp);
 
-			borders.left += border_size.Width;
-			borders.right += border_size.Width;
-			borders.top += border_size.Height;
-			borders.bottom += border_size.Height;
+			borders.left += border_width.left;
+			borders.right += border_width.right;
+			borders.top += border_width.top;
+			borders.bottom += border_width.bottom;
 			
 			return borders;
 		}
@@ -265,6 +317,10 @@ namespace System.Windows.Forms {
 			rect.Height -= borders.top + borders.bottom;
 			rect.X += borders.left;
 			rect.Width -= borders.left + borders.right;
+			
+#if debug
+			Console.WriteLine ("GetClientRectangle ({0}, {1}, {2}, {3}): {4}", cp, menu != null, width, height, rect);
+#endif
 			
 			return rect;
 		}
@@ -436,6 +492,10 @@ namespace System.Windows.Forms {
 
 		public Point MenuOrigin {
 			get {
+				Form frm = Control.FromHandle (handle) as Form;
+				if (frm != null && frm.window_manager != null)		
+					return frm.window_manager.GetMenuOrigin ();
+
 				Point	pt;
 				Size	border_3D_size = ThemeEngine.Current.Border3DSize;
 
@@ -673,9 +733,27 @@ namespace System.Windows.Forms {
 			public int left;
 			public int right;
 
+			public void Inflate (Size size)
+			{
+				left += size.Width;
+				right += size.Width;
+				top += size.Height;
+				bottom += size.Height;
+			}
+
 			public override string ToString ()
 			{
 				return string.Format("{{top={0}, bottom={1}, left={2}, right={3}}}", top, bottom, left, right);
+			}
+			
+			public static bool operator == (Borders a, Borders b)
+			{
+				return (a.left == b.left && a.right == b.right && a.top == b.top && a.bottom == b.bottom);
+			}
+			
+			public static bool operator != (Borders a, Borders b)
+			{
+				return !(a == b);
 			}
 		}
 	}

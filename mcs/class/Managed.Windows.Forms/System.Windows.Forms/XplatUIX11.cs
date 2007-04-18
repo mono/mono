@@ -765,13 +765,18 @@ namespace System.Windows.Forms {
 
 		internal static Rectangle TranslateClientRectangleToXClientRectangle (Hwnd hwnd)
 		{
+			return TranslateClientRectangleToXClientRectangle (hwnd, Control.FromHandle (hwnd.Handle));
+		}
+		
+		internal static Rectangle TranslateClientRectangleToXClientRectangle (Hwnd hwnd, Control ctrl)
+		{
 			/* 
 			 * If this is a form with no window manager, X is handling all the border and caption painting
 			 * so remove that from the area (since the area we set of the window here is the part of the window 
 			 * we're painting in only)
 			 */
 			Rectangle rect = hwnd.ClientRect;
-			Form form = Control.FromHandle (hwnd.Handle) as Form;
+			Form form = ctrl as Form;
 			if (form != null && form.window_manager == null) {
 				CreateParams cp = form.GetCreateParams ();
 				Hwnd.Borders borders = Hwnd.GetBorders (cp, null);
@@ -2624,10 +2629,11 @@ namespace System.Windows.Forms {
 			ClientRect = hwnd.ClientRect;
 			ClientWindow = IntPtr.Zero;
 
+			Size XWindowSize = TranslateWindowSizeToXWindowSize (cp);
+			Rectangle XClientRect = TranslateClientRectangleToXClientRectangle (hwnd, cp.control);
+				
 			lock (XlibLock) {
-				Size TranslatedSize;
-				TranslatedSize = TranslateWindowSizeToXWindowSize (cp);	
-				WholeWindow = XCreateWindow(DisplayHandle, ParentHandle, X, Y, TranslatedSize.Width, TranslatedSize.Height, 0, (int)CreateWindowArgs.CopyFromParent, (int)CreateWindowArgs.InputOutput, IntPtr.Zero, new UIntPtr ((uint)ValueMask), ref Attributes);
+				WholeWindow = XCreateWindow(DisplayHandle, ParentHandle, X, Y, XWindowSize.Width, XWindowSize.Height, 0, (int)CreateWindowArgs.CopyFromParent, (int)CreateWindowArgs.InputOutput, IntPtr.Zero, new UIntPtr ((uint)ValueMask), ref Attributes);
 				if (WholeWindow != IntPtr.Zero) {
 					ValueMask &= ~(SetWindowValuemask.OverrideRedirect | SetWindowValuemask.SaveUnder);
 
@@ -2635,11 +2641,6 @@ namespace System.Windows.Forms {
 						ValueMask = SetWindowValuemask.ColorMap;
 						Attributes.colormap = CustomColormap;
 					}
-					Rectangle XClientRect = ClientRect;
-					if (XClientRect.Height <= 0)
-						XClientRect.Height = 1;
-					if (XClientRect.Width <= 0)
-						XClientRect.Width = 1;
 					ClientWindow = XCreateWindow(DisplayHandle, WholeWindow, XClientRect.X, XClientRect.Y, XClientRect.Width, XClientRect.Height, 0, (int)CreateWindowArgs.CopyFromParent, (int)CreateWindowArgs.InputOutput, CustomVisual, new UIntPtr ((uint)ValueMask), ref Attributes);
 				}
 			}
@@ -4643,6 +4644,11 @@ namespace System.Windows.Forms {
 
 			lock (XlibLock) {
 				XTranslateCoordinates (DisplayHandle, RootWindow, hwnd.whole_window, x, y, out dest_x_return, out dest_y_return, out child);
+			}
+
+			Form form = Control.FromHandle (handle) as Form;
+			if (form != null && form.window_manager != null) {
+				dest_y_return -= form.window_manager.TitleBarHeight;
 			}
 
 			x = dest_x_return;
