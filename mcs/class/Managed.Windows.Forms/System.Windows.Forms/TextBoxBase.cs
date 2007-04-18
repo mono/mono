@@ -1175,7 +1175,10 @@ namespace System.Windows.Forms {
 					line = document.GetLine(document.CaretLine.LineNo - 1);
 					new_caret_pos = line.TextLengthWithoutEnding ();
 
+					// Invalidate the old line position before we do the combine
+					document.Invalidate (line, 0, line, line.text.Length);
 					document.Combine(line, document.CaretLine);
+
 					document.UpdateView(line, document.Lines - line.LineNo, 0);
 					document.PositionCaret(line, new_caret_pos);
 					document.SetSelectionToCaret (true);
