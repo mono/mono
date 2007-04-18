@@ -23,6 +23,7 @@ EXTRA_DISTFILES = \
 	Test/XmlFiles/relaxng.rng	\
 	Test/XmlFiles/relaxng.rnc	\
 	Test/XmlFiles/atom.rnc		\
+	Test/XmlFiles/schemas-xmlsoap-or-ws-2005-05-identity.rnc	\
 	Test/XmlFiles/nvdl.nvdl		\
 	Test/XmlFiles/nvdl.rng		\
 	$(wildcard Test/standalone_tests/*.cs) \

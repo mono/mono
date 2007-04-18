@@ -1,3 +1,7 @@
+2006-04-18  Atsushi Enomoto <atsushi@ximian.com>
+
+	* RncTests.cs : added (my own) infocard rnc parsing test.
+
 2006-04-11  Atsushi Enomoto <atsushi@ximian.com>
 
 	* NvdlValidatingReaderTests.cs : new file for NVDL test.

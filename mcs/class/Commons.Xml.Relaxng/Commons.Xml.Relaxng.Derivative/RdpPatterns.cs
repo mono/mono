@@ -2125,7 +2125,7 @@ namespace Commons.Xml.Relaxng.Derivative
 			constraintsChecked = true;
 			if (attribute || list || dataExcept)
 				throw new RelaxngException ("Not allowed element occurence was specified in the pattern.");
-			this.Children.CheckConstraints (false, oneOrMore, oneOrMoreGroup, oneOrMoreInterleave, false, false);
+			this.Children.CheckConstraints (false, false, false, oneOrMoreInterleave, false, false);
 		}
 
 		internal override bool ContainsText()

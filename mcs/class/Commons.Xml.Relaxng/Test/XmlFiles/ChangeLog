@@ -1,3 +1,7 @@
+2007-04-18  Atsushi Enomoto <atsushi@ximian.com>
+
+	* schemas-xmlsoap-or-ws-2005-05-identity.rnc : new test schema.
+
 2006-04-11  Atsushi Enomoto <atsushi@ximian.com>
 
 	* nvdl.nvdl, nvdl.rng : new file for nvdl validation.

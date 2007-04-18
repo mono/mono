@@ -47,6 +47,12 @@ namespace MonoTests.Commons.Xml.Relaxng
 		}
 
 		[Test]
+		public void TestInfocardRnc ()
+		{
+			Compile ("Test/XmlFiles/schemas-xmlsoap-or-ws-2005-05-identity.rnc");
+		}
+
+		[Test]
 		// Make sure that it is not rejected by ambiguity between
 		// foreign attribute and foreign element.
 		public void Annotations ()
