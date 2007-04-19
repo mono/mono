@@ -1,3 +1,9 @@
+
+Thu Apr 19 16:47:52 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* ThreadPool.cs: patch from Robert Jordan to implement
+	ThreadPool.SetMaxThreads.
+
 2007-04-03  Alp Toker  <alp@atoker.com>
 
 	* Monitor.cs: Class is static in 2.0.
