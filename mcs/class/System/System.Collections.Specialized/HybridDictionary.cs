@@ -155,8 +155,8 @@ namespace System.Collections.Specialized {
 
 		private void Switch ()
 		{
-			IComparer comparer = caseInsensitive ? CaseInsensitiveComparer.Default : null;
-			IHashCodeProvider hcp = caseInsensitive ? CaseInsensitiveHashCodeProvider.Default : null;
+			IComparer comparer = caseInsensitive ? CaseInsensitiveComparer.DefaultInvariant : null;
+			IHashCodeProvider hcp = caseInsensitive ? CaseInsensitiveHashCodeProvider.DefaultInvariant : null;
 
 			hashtable = new Hashtable (list, hcp, comparer);
 			list.Clear ();

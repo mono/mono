@@ -56,8 +56,8 @@ namespace System.Net
 		{
 			// the list of restricted header names as defined 
 			// by the ms.net spec
-			restricted = new Hashtable (CaseInsensitiveHashCodeProvider.Default,
-						    CaseInsensitiveComparer.Default);
+			restricted = new Hashtable (CaseInsensitiveHashCodeProvider.DefaultInvariant,
+						    CaseInsensitiveComparer.DefaultInvariant);
 
 			restricted.Add ("accept", true);
 			restricted.Add ("connection", true);
@@ -74,8 +74,8 @@ namespace System.Net
 			
 			// see par 14 of RFC 2068 to see which header names
 			// accept multiple values each separated by a comma
-			multiValue = new Hashtable (CaseInsensitiveHashCodeProvider.Default,
-						    CaseInsensitiveComparer.Default);
+			multiValue = new Hashtable (CaseInsensitiveHashCodeProvider.DefaultInvariant,
+						    CaseInsensitiveComparer.DefaultInvariant);
 
 			multiValue.Add ("accept", true);
 			multiValue.Add ("accept-charset", true);

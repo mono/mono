@@ -43,8 +43,8 @@ namespace System.Net.Configuration
 		
 		public ConnectionManagementData (object parent)
 		{
-			data = new Hashtable (CaseInsensitiveHashCodeProvider.Default,
-					      CaseInsensitiveComparer.Default);
+			data = new Hashtable (CaseInsensitiveHashCodeProvider.DefaultInvariant,
+					      CaseInsensitiveComparer.DefaultInvariant);
 			if (parent != null && parent is ConnectionManagementData) {
 				ConnectionManagementData p = (ConnectionManagementData) parent;
 				foreach (string k in p.data.Keys)
