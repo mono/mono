@@ -48,7 +48,11 @@ namespace System.Web
 		BrowserData parent;
 		string text;
 		string pattern;
+#if TARGET_JVM
+		java.util.regex.Pattern regex;
+#else
 		Regex regex;
+#endif
 		ListDictionary data;
 
 		public BrowserData (string pattern)
@@ -147,10 +151,17 @@ namespace System.Web
 
 			lock (this) {
 				if (regex == null)
+#if TARGET_JVM
+					regex = java.util.regex.Pattern.compile (pattern);
+#else
 					regex = new Regex (pattern);
+#endif
 			}
-
+#if TARGET_JVM
+			return regex.matcher ((java.lang.CharSequence) (object) expression).matches ();
+#else
 			return regex.Match (expression).Success;
+#endif
 		}
 	}
 	
@@ -337,6 +348,7 @@ namespace System.Web
 			string str;
 			Hashtable allhash = new Hashtable ();
 			int aux = 0;
+			ArrayList browserData = new ArrayList ();
 			while ((str = input.ReadLine ()) != null) {
 				if (str.Length == 0 || str [0] == ';')
 					continue;
@@ -352,12 +364,15 @@ namespace System.Web
 				string key = data.GetBrowser ();
 				if (key == null || allhash.ContainsKey (key)) {
 					allhash.Add (aux++, data);
+					browserData.Add (data);
 				} else {
 					allhash.Add (key, data);
+					browserData.Add (data);
 				}
 			}
 
-			alldata = allhash.Values;
+			browserData.Reverse();
+			alldata = browserData;
 			foreach (BrowserData data in alldata) {
 				string pname = data.GetParentName ();
 				if (pname == null)
