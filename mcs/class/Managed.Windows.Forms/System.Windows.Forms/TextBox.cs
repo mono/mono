@@ -49,7 +49,6 @@ namespace System.Windows.Forms {
 		private MenuItem	delete;
 		private MenuItem	select_all;
 
-		private bool has_been_focused;
 #if NET_2_0
 		private bool use_system_password_char = false;
 		private AutoCompleteStringCollection auto_complete_custom_source = null;
@@ -356,7 +355,7 @@ namespace System.Windows.Forms {
 		protected override void OnGotFocus(EventArgs e) {
 			base.OnGotFocus (e);
 			if (selection_length == -1 && !has_been_focused)
-				SelectAll ();
+				SelectAllNoScroll ();
 			has_been_focused = true;
 		}
 

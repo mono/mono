@@ -1,5 +1,17 @@
 2007-04-19  Jackson Harper  <jackson@ximian.com>
 
+	* TextBox.cs: Move the has_been_focused into the base control, so
+	some of the text adding methods can manipulate it (probably time
+	for a better name for this flag too).
+	- Call a new version of selectall that doesn't scroll
+	* TextBoxBase.cs: When we append text, if the document is empty,
+	don't scroll.  If the document has text already, we scroll to the
+	end of the appended text.
+	- When the text is changed, we reset the has_been_focused, so the
+	next time the control gets focused, all the text is selected.
+
+2007-04-19  Jackson Harper  <jackson@ximian.com>
+
 	* TextControl.cs: Move the margins to the document, add a method
 	so the margin sizes can be updated.
 	* TextBoxBase.cs: When the border style is changed, update the

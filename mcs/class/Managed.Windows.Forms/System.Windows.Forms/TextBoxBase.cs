@@ -62,6 +62,9 @@ namespace System.Windows.Forms {
 		internal Timer			scroll_timer;
 		internal bool			richtext;
 		internal bool			show_selection;		// set to true to always show selection, even if no focus is set
+		
+		internal bool has_been_focused;
+
 		internal int			selection_length = -1;	// set to the user-specified selection length, or -1 if none
 		internal bool show_caret_w_selection;  // TextBox shows the caret when the selection is visible
 		internal int			requested_height;
@@ -591,6 +594,9 @@ namespace System.Windows.Forms {
 			}
 
 			set {
+				// reset to force a select all next time the box gets focus
+				has_been_focused = false;
+
 				if (value == Text)
 					return;
 
@@ -660,11 +666,23 @@ namespace System.Windows.Forms {
 		#endregion	// Protected Instance Properties
 
 		#region Public Instance Methods
-		public void AppendText(string text) {
-			document.MoveCaret (CaretDirection.CtrlEnd);				
+		public void AppendText(string text)
+		{
+			// Save some cycles and only check the Text if we are one line
+			bool is_empty = document.Lines == 1 && Text == String.Empty; 
+
+			document.MoveCaret (CaretDirection.CtrlEnd);
 			document.Insert (document.caret.line, document.caret.pos, false, text);
 			document.MoveCaret (CaretDirection.CtrlEnd);
 			document.SetSelectionToCaret (true);
+
+			if (!is_empty)
+				ScrollToCaret ();
+
+			//
+			// Avoid the initial focus selecting all when append text is used
+			//
+			has_been_focused = true;
 
 			OnTextChanged(EventArgs.Empty);
 		}
@@ -731,8 +749,7 @@ namespace System.Windows.Forms {
 			document.DisplayCaret ();
 		}
 
-		/// Sync with above (except the invalidation of course)
-		internal void SelectAllNoInvalidate ()
+		internal void SelectAllNoScroll ()
 		{
 			Line last;
 
@@ -741,6 +758,8 @@ namespace System.Windows.Forms {
 			document.SetSelectionEnd(last, last.text.Length, false);
 			document.PositionCaret (document.selection_end.line, document.selection_end.pos);
 			selection_length = -1;
+
+			document.DisplayCaret ();
 		}
 
 		public override string ToString() {
@@ -1839,7 +1858,7 @@ namespace System.Windows.Forms {
 			Point	pos;
 			int	height;
 
-			if (canvas_width < 1 || canvas_height < 1)
+			if (!IsHandleCreated || canvas_width < 1 || canvas_height < 1)
 				return;
 
   			document.MoveCaretToTextTag ();
