@@ -1,5 +1,19 @@
 2007-04-19  Jeffrey Stedfast  <fejj@novell.com>
 
+	Optimization for echoing keypresses back to the console when the
+	user pastes a block of text rather than manually typing text.
+
+	* TermInfoDriver.cs (Echo): A new convenience function for echoing
+	characters/keys back to the console with an optimization twist and
+	a bit of lime.
+	(EchoFlush): Flush our pending echo queue
+	(Read): Make use of Echo() both for convenience and for speed.
+	(ReadLine): Same.
+	(ReadKey): Make use of Echo()/EchoFlush() for simplicity of code,
+	but we won't get the same optimization out of it.
+
+2007-04-19  Jeffrey Stedfast  <fejj@novell.com>
+
 	Fix for bug #81373.
 
 	* TermInfoDriver.cs: Changed 'buffer' to be a char array instead

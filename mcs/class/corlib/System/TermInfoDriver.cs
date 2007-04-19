@@ -878,9 +878,51 @@ namespace System {
 			return (ConsoleKeyInfo) o;
 		}
 
+#region Input echoing optimization
+		bool InputPending ()
+		{
+			// check if we've got pending input we can read immediately
+			return readpos < writepos || stdin.Peek () != -1;
+		}
+
+		char [] echobuf = null;
+		int echon = 0;
+
+		// Queues a character to be echo'd back to the console
+		void Echo (char c)
+		{
+			if (echobuf == null)
+				echobuf = new char [1024];
+
+			echobuf[echon++] = c;
+
+			if (echon == echobuf.Length || !InputPending ()) {
+				// blit our echo buffer to the console
+				Console.Write (echobuf, 0, echon);
+				echon = 0;
+			}
+		}
+
+		// Queues a key to be echo'd back to the console
+		void Echo (ConsoleKeyInfo key)
+		{
+			Echo (key.KeyChar);
+		}
+
+		// Flush the pending echo queue
+		void EchoFlush ()
+		{
+			if (echon == 0)
+				return;
+
+			// flush our echo buffer to the console
+			Console.Write (echobuf, 0, echon);
+			echon = 0;
+		}
+#endregion
+
 		public int Read ([In, Out] char [] dest, int index, int count)
 		{
-			CStreamWriter writer = Console.stdout as CStreamWriter;
 			StringBuilder sbuf;
 			ConsoleKeyInfo key;
 			int BoL = 0;  // Beginning-of-Line marker (can't backspace beyond this)
@@ -927,14 +969,12 @@ namespace System {
 					continue;
 				}
 
-				if (fresh) {
-					// echo fresh keys back to the console
-					if (writer != null)
-						writer.WriteKey (key);
-					else
-						Console.stdout.Write (c);
-				}
+				// echo fresh keys back to the console
+				if (fresh)
+					Echo (c);
 			} while (key.Key != ConsoleKey.Enter);
+
+			EchoFlush ();
 
 			rl_startx = -1;
 			rl_starty = -1;
@@ -962,12 +1002,8 @@ namespace System {
 
 			if (!intercept && fresh) {
 				// echo the fresh key back to the console
-				CStreamWriter writer = Console.stdout as CStreamWriter;
-
-				if (writer != null)
-					writer.WriteKey (key);
-				else
-					Console.stdout.Write (key.KeyChar);
+				Echo (key.KeyChar);
+				EchoFlush ();
 			}
 
 			return key;
@@ -983,7 +1019,6 @@ namespace System {
 			// cursor state normally).
 			GetCursorPosition ();
 
-			CStreamWriter writer = Console.stdout as CStreamWriter;
 			StringBuilder builder = new StringBuilder ();
 			ConsoleKeyInfo key;
 			bool fresh;
@@ -1006,14 +1041,12 @@ namespace System {
 					}
 				}
 
-				if (fresh) {
-					// echo fresh keys back to the console
-					if (writer != null)
-						writer.WriteKey (key);
-					else
-						Console.stdout.Write (c);
-				}
+				// echo fresh keys back to the console
+				if (fresh)
+					Echo (c);
 			} while (key.Key != ConsoleKey.Enter);
+
+			EchoFlush ();
 
 			rl_startx = -1;
 			rl_starty = -1;
