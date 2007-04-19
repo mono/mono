@@ -1,3 +1,8 @@
+2007-04-19  Marek Habersack  <mhabersack@novell.com>
+
+	* DecoderReplacementFallbackTest.cs: expect the correct
+	exception.
+
 2007-02-01  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* EncodingTest.cs: Enabled test again.
