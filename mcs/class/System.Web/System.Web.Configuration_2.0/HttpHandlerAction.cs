@@ -31,8 +31,10 @@
 #if NET_2_0
 
 using System;
+using System.Collections;
 using System.ComponentModel;
 using System.Configuration;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Web.Util;
 
@@ -175,13 +177,24 @@ namespace System.Web.Configuration
 		//
 		internal static Type LoadType (string type_name)
 		{
-			Type t;
+			Type t = null;
 			
-			try {
-				t = System.Type.GetType (type_name, true);
-			} catch (Exception e) {
-				throw new HttpException (String.Format ("Failed to load httpHandler type `{0}'", type_name), e);
+			t = System.Type.GetType (type_name, false);
+			if (t == null) {
+				IList tla = System.Web.Compilation.BuildManager.TopLevelAssemblies;
+				if (tla != null && tla.Count > 0) {
+					foreach (Assembly asm in tla) {
+						if (asm == null)
+							continue;
+						t = asm.GetType (type_name, false);
+						if (t != null)
+							break;
+					}
+				}
 			}
+
+			if (t == null)
+				throw new HttpException (String.Format ("Failed to load httpHandler type `{0}'", type_name));
 
 			if (typeof (IHttpHandler).IsAssignableFrom (t) ||
 			    typeof (IHttpHandlerFactory).IsAssignableFrom (t))

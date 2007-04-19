@@ -1,3 +1,8 @@
+2007-04-19  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpHandlerAction.cs: look up types in all the toplevel
+	assemblies. Fixes bug #80897.
+
 2007-04-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ProcessModelSection.cs : cpuMask default value should be int,
