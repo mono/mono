@@ -1988,7 +1988,7 @@ namespace System.Windows.Forms {
 			/// We draw the single border ourself
 			///
 			if (owner.actual_border_style == BorderStyle.FixedSingle) {
-				ControlPaint.DrawBorder (g, owner.Bounds, Color.Black, ButtonBorderStyle.Solid);
+				ControlPaint.DrawBorder (g, owner.ClientRectangle, Color.Black, ButtonBorderStyle.Solid);
 			}
 
 			/// Make sure that we aren't drawing one more line then we need to
