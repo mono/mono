@@ -1,3 +1,18 @@
+2007-04-18  Jeffrey Stedfast  <fejj@novell.com>
+
+	Fixes bug #81159: behave the same as mscorlib
+
+	* TermInfoDriver.cs (ReadKeyInternal): Now has an 'out bool fresh'
+	argument which is used to tell our caller if the key was freshly
+	read from the console or pre-buffered.
+	(Read): New implementation of Console.In.Read(char[], int, int)
+	that behaves exactly like mscorlib's implementation.
+	(ReadKey): Updated for the ReadKeyInternal() API change - only
+	echo if the key was fresh.
+	(ReadLine): Same.
+
+	* CStreamReader.cs (Read): Call the new TermInfoDriver.Read()
+
 2007-04-17  Jeffrey Stedfast  <fejj@novell.com>
 
 	* CStreamWriter.cs (Write): Optimized this some more, we don't

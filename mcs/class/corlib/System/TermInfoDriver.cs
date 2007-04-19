@@ -843,41 +843,125 @@ namespace System {
 			return key;
 		}
 
-		ConsoleKeyInfo ReadKeyInternal ()
+		ConsoleKeyInfo ReadKeyInternal (out bool fresh)
 		{
-			if (!inited) {
+			if (!inited)
 				Init ();
-			}
 
 			InitKeys ();
-			object o = null;
-			while (o == null) {
-				o = GetKeyFromBuffer (true);
-				if (o == null) {
+
+			object o;
+
+			if ((o = GetKeyFromBuffer (true)) == null) {
+				do {
 					if (ConsoleDriver.InternalKeyAvailable (150) > 0) {
 						do {
 							AddToBuffer (stdin.ReadByte ());
 						} while (ConsoleDriver.InternalKeyAvailable (0) > 0);
 					} else {
-						o = GetKeyFromBuffer (false);
-						if (o == null)
-							AddToBuffer (stdin.ReadByte ());
+						if ((o = GetKeyFromBuffer (false)) != null)
+							break;
+						
+						AddToBuffer (stdin.ReadByte ());
 					}
-				}
+					
+					o = GetKeyFromBuffer (true);
+				} while (o == null);
+
+				// freshly read character
+				fresh = true;
+			} else {
+				// this char was pre-buffered (e.g. not fresh)
+				fresh = false;
 			}
 
 			return (ConsoleKeyInfo) o;
 		}
 
+		public int Read ([In, Out] char [] dest, int index, int count)
+		{
+			CStreamWriter writer = Console.stdout as CStreamWriter;
+			StringBuilder sbuf;
+			ConsoleKeyInfo key;
+			int BoL = 0;  // Beginning-of-Line marker (can't backspace beyond this)
+			bool fresh;
+			object o;
+			char c;
+
+			sbuf = new StringBuilder ();
+
+			// consume buffered keys first (do not echo, these have already been echo'd)
+			while (true) {
+				if ((o = GetKeyFromBuffer (true)) == null)
+					break;
+
+				key = (ConsoleKeyInfo) o;
+				c = key.KeyChar;
+
+				if (key.Key != ConsoleKey.Backspace) {
+					if (key.Key == ConsoleKey.Enter)
+						BoL = sbuf.Length;
+
+					sbuf.Append (c);
+				} else if (sbuf.Length > BoL) {
+					sbuf.Length--;
+				}
+			}
+
+			// continue reading until Enter is hit
+			rl_startx = cursorLeft;
+			rl_starty = cursorTop;
+
+			do {
+				key = ReadKeyInternal (out fresh);
+				c = key.KeyChar;
+
+				if (key.Key != ConsoleKey.Backspace) {
+					if (key.Key == ConsoleKey.Enter)
+						BoL = sbuf.Length;
+
+					sbuf.Append (c);
+				} else if (sbuf.Length > BoL) {
+					sbuf.Length--;
+				} else {
+					continue;
+				}
+
+				if (fresh) {
+					// echo fresh keys back to the console
+					if (writer != null)
+						writer.WriteKey (key);
+					else
+						Console.stdout.Write (c);
+				}
+			} while (key.Key != ConsoleKey.Enter);
+
+			rl_startx = -1;
+			rl_starty = -1;
+
+			// copy up to count chars into dest
+			int nread = 0;
+			while (count > 0 && nread < sbuf.Length) {
+				dest[index + nread] = sbuf[nread];
+				nread++;
+				count--;
+			}
+
+			// put the rest back into our key buffer
+			for (int i = nread; i < sbuf.Length; i++)
+				AddToBuffer (sbuf[i]);
+
+			return nread;
+		}
+
 		public ConsoleKeyInfo ReadKey (bool intercept)
 		{
-			if (!inited)
-				Init ();
-			
-			ConsoleKeyInfo key = ReadKeyInternal ();
-			
-			if (!intercept) {
-				// echo the key back to the console
+			bool fresh;
+
+			ConsoleKeyInfo key = ReadKeyInternal (out fresh);
+
+			if (!intercept && fresh) {
+				// echo the fresh key back to the console
 				CStreamWriter writer = Console.stdout as CStreamWriter;
 
 				if (writer != null)
@@ -885,7 +969,7 @@ namespace System {
 				else
 					Console.stdout.Write (key.KeyChar);
 			}
-			
+
 			return key;
 		}
 
@@ -899,16 +983,19 @@ namespace System {
 			// cursor state normally).
 			GetCursorPosition ();
 
-			StringBuilder builder = new StringBuilder ();
-			bool exit = false;
 			CStreamWriter writer = Console.stdout as CStreamWriter;
+			StringBuilder builder = new StringBuilder ();
+			ConsoleKeyInfo key;
+			bool fresh;
+			char c;
+
 			rl_startx = cursorLeft;
 			rl_starty = cursorTop;
+
 			do {
-				ConsoleKeyInfo key = ReadKeyInternal ();
-				char c = key.KeyChar;
-				exit = (c == '\n');
-				if (!exit) {
+				key = ReadKeyInternal (out fresh);
+				c = key.KeyChar;
+				if (key.Key != ConsoleKey.Enter) {
 					if (key.Key != ConsoleKey.Backspace)
 						builder.Append (c);
 					else if (builder.Length > 0)
@@ -918,16 +1005,19 @@ namespace System {
 						continue;
 					}
 				}
-				
-				// echo the key back to the console
-				if (writer != null)
-					writer.WriteKey (key);
-				else
-					Console.stdout.Write (c);
-			} while (!exit);
-			
+
+				if (fresh) {
+					// echo fresh keys back to the console
+					if (writer != null)
+						writer.WriteKey (key);
+					else
+						Console.stdout.Write (c);
+				}
+			} while (key.Key != ConsoleKey.Enter);
+
 			rl_startx = -1;
 			rl_starty = -1;
+
 			return builder.ToString ();
  		}
 

@@ -35,9 +35,12 @@ using System.Runtime.InteropServices;
 
 namespace System.IO {
 	class CStreamReader : StreamReader {
+		TermInfoDriver driver;
+
 		public CStreamReader(Stream stream, Encoding encoding)
 			: base (stream, encoding)
 		{
+			driver = (TermInfoDriver) ConsoleDriver.driver;
 		}
 
 		public override int Peek ()
@@ -73,26 +76,18 @@ namespace System.IO {
 			if (index > dest.Length - count)
 				throw new ArgumentException ("index + count > dest.Length");
 
-			int nread = 0;
-			int c;
-
-			while (count > 0) {
-				if ((c = Read ()) == -1)
-					break;
-
-				nread++;
-				count--;
-
-				dest[index++] = (char) c;
+			try {
+				return driver.Read (dest, index, count);
+			} catch (IOException) {
 			}
 
-			return nread;
+			return 0;
 		}
 
 		public override string ReadLine ()
 		{
 			try {
-				return ConsoleDriver.driver.ReadLine ();
+				return driver.ReadLine ();
 			} catch (IOException) {
 			}
 
