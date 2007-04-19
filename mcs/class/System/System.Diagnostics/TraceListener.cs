@@ -3,11 +3,13 @@
 //
 // Authors:
 //   Jonathan Pryor (jonpryor@vt.edu)
+//   Atsushi Enomoto (atsushi@ximian.com)
 //
 // Comments from John R. Hicks <angryjohn69@nc.rr.com> original implementation 
 // can be found at: /mcs/docs/apidocs/xml/en/System.Diagnostics
 //
 // (C) 2002 Jonathan Pryor
+// (C) 2007 Novell, Inc.
 //
 
 //
@@ -156,48 +158,50 @@ namespace System.Diagnostics {
 
 #if NET_2_0
 		[ComVisible (false)]
-		[MonoTODO]
 		public virtual void TraceData (TraceEventCache eventCache, string source,
 			TraceEventType eventType, int id, object data)
 		{
-			throw new NotImplementedException ();
+			WriteLine (String.Format ("{0} {1}: {2} : {3}", source, eventType, id, data));
+
+			// any of the eventCache content are not written.
 		}
 
 		[ComVisible (false)]
-		[MonoTODO]
 		public virtual void TraceData (TraceEventCache eventCache, string source,
 			TraceEventType eventType, int id, params object [] data)
 		{
-			throw new NotImplementedException ();
+			string s = null;
+			string [] arr = new string [data.Length];
+			for (int i = 0; i < arr.Length; i++)
+				arr [i] = data [i] != null ? data [i].ToString () : String.Empty;
+			WriteLine (String.Format ("{0} {1}: {2} : {3}", source, eventType, id, String.Join (" ", arr)));
+
+			// any of the eventCache content are not written.
 		}
 
 		[ComVisible (false)]
-		[MonoTODO]
 		public virtual void TraceEvent (TraceEventCache eventCache, string source, TraceEventType eventType, int id)
 		{
-			throw new NotImplementedException ();
+			TraceEvent (eventCache, source, eventType, id, null);
 		}
 
 		[ComVisible (false)]
-		[MonoTODO]
 		public virtual void TraceEvent (TraceEventCache eventCache, string source, TraceEventType eventType,
 			int id, string message)
 		{
-			throw new NotImplementedException ();
+			TraceData (eventCache, source, eventType, id, message);
 		}
 
 		[ComVisible (false)]
-		[MonoTODO]
 		public virtual void TraceEvent (TraceEventCache eventCache, string source, TraceEventType eventType, int id, string format, params object [] args)
 		{
-			throw new NotImplementedException ();
+			TraceEvent (eventCache, source, eventType, id, String.Format (format, args));
 		}
 
 		[ComVisible (false)]
-		[MonoTODO]
 		public virtual void TraceTransfer (TraceEventCache eventCache, string source, int id, string message, Guid relatedActivityId)
 		{
-			throw new NotImplementedException ();
+			TraceData (eventCache, source, TraceEventType.Transfer, id, String.Format ("{0}, relatedActivityId={1}", message, relatedActivityId));
 		}
 #endif
 	}

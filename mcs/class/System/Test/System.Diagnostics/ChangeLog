@@ -1,3 +1,9 @@
+2007-04-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TraceListenerTest.cs : new test.
+	* XmlWriterTraceListenerTest.cs : new test (but disabled since they
+	  are too instance dependent).
+
 2007-01-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TraceSourceTest.cs, SourceSwitchTest.cs : new tests.

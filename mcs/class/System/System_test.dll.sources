@@ -147,7 +147,9 @@ System.Diagnostics/EventLogTest.cs
 System.Diagnostics/StopwatchTest.cs
 System.Diagnostics/SourceSwitchTest.cs
 System.Diagnostics/TraceSourceTest.cs
+System.Diagnostics/TraceListenerTest.cs
 System.Diagnostics/TraceTest.cs
+System.Diagnostics/XmlWriterTraceListenerTest.cs
 System.Diagnostics/SwitchesTest.cs
 System.Diagnostics/DiagnosticsConfigurationHandlerTest.cs
 System.Diagnostics/EventInstanceTest.cs

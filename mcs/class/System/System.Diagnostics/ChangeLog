@@ -1,3 +1,8 @@
+2007-04-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlWriterTraceListener.cs : new file, implementated.
+	* TraceListener.cs : implemented 2.0 members.
+
 2007-03-04  Vladimir Krasnov  <vlaimdirk@mainsoft.com>
 
 	* DiagnosticsConfigurationHandler.cs: removed configuration init in
