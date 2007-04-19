@@ -56,7 +56,7 @@ namespace MonoTests.System.Text
 		}
 
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException))]
+		[ExpectedException (typeof (NotSupportedException))]
 		public void DontChangeReadOnlyCodePageEncoderFallback ()
 		{
 			Encoding.GetEncoding (932).EncoderFallback =
