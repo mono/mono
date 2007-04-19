@@ -297,7 +297,7 @@ namespace System.Web.Compilation
 		{
 			string retType;
 			ProfileSection ps = WebConfigurationManager.GetSection ("system.web/profile") as ProfileSection;
-			if (ps != null && ps.PropertySettings.Count > 0)
+			if (ps != null)
 				retType = "ProfileCommon";
 			else
 				retType = "System.Web.Profile.DefaultProfile";

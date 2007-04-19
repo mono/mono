@@ -553,7 +553,7 @@ namespace System.Web.Compilation
 			ns.Imports.Add (new CodeNamespaceImport ("System.Web.Profile"));
 			
 			RootProfilePropertySettingsCollection props = ps.PropertySettings;
-			if (props == null || props.Count == 0)
+			if (props == null)
 				return true;
 
 			SortedList<string, string> groupProperties = new SortedList<string, string> ();
@@ -594,7 +594,7 @@ namespace System.Web.Compilation
 			string appCode = Path.Combine (HttpRuntime.AppDomainAppPath, "App_Code");
 			ProfileSection ps = WebConfigurationManager.GetSection ("system.web/profile") as ProfileSection;
 			bool haveAppCodeDir = Directory.Exists (appCode);
-			bool haveCustomProfile = ps != null ? ps.PropertySettings.Count > 0 : false;
+			bool haveCustomProfile = ps != null;
 			
 			if (!haveAppCodeDir && !haveCustomProfile)
 				return;

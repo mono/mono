@@ -1,3 +1,12 @@
+2007-04-19  Marek Habersack  <mhabersack@novell.com>
+
+	* BaseCompiler.cs: don't look at the number of profile properties
+	when deciding if we have a custom profile. It is possible to have
+	a profile that just inherits from a base class and does not list
+	any custom properties. Fixes bug #81396.
+
+	* AppCodeCompiler.cs: as above
+
 2007-04-15  Marek Habersack  <mhabersack@novell.com>
 
 	* AppCodeCompiler.cs: properly convert physical file path to
