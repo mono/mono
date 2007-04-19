@@ -98,6 +98,12 @@ namespace Mainsoft.Web.Security {
 			CheckParam ("oldPwd", oldPwd, 128);
 			CheckParam ("newPwd", newPwd, 128);
 
+			if (!CheckPassword (newPwd))
+				throw new ArgumentException (string.Format (
+						"New Password invalid. New Password length minimum: {0}. Non-alphanumeric characters required: {1}.",
+						MinRequiredPasswordLength,
+						MinRequiredNonAlphanumericCharacters));
+
 			using (DbConnection connection = CreateConnection ()) {
 				PasswordInfo pi = ValidateUsingPassword (username, oldPwd);
 
