@@ -308,8 +308,7 @@ namespace System.Web.Compilation
 		protected void CreateProfileProperty ()
 		{
 			string retType;
-			ProfileSection ps = WebConfigurationManager.GetSection ("system.web/profile") as ProfileSection;
-			if (ps != null)
+			if (AppCodeCompiler.HaveCustomProfile (WebConfigurationManager.GetSection ("system.web/profile") as ProfileSection))
 				retType = "ProfileCommon";
 			else
 				retType = "System.Web.Profile.DefaultProfile";

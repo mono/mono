@@ -81,8 +81,8 @@ namespace System.Web.Compilation
 		}
 
 		public void RegisterFoundry (string foundryName,
-						string tagName,
-						Type type)
+					     string tagName,
+					     Type type)
 		{
 			TagNameFoundry foundry = new TagNameFoundry (tagName, type);
 			InternalRegister (foundryName, foundry);
@@ -96,9 +96,15 @@ namespace System.Web.Compilation
 			TagNameFoundry foundry = new TagNameFoundry (tagName, source);
 			InternalRegister (foundryName, foundry);
 		}
-		
-		// Look up the controls/namespaces defined in the config
-		// file(s), resolve the assemblies but do not compile the types.
+
+		public void RegisterAssemblyFoundry (string foundryName,
+						     string assemblyName,
+						     string nameSpace)
+		{
+			AssemblyFoundry foundry = new AssemblyFoundry (assemblyName, nameSpace);
+			InternalRegister (foundryName, foundry);
+		}		
+
 		void RegisterConfigControls ()
 		{
 			PagesSection pages = WebConfigurationManager.GetSection ("system.web/pages") as PagesSection;
@@ -108,8 +114,7 @@ namespace System.Web.Compilation
                         TagPrefixCollection controls = pages.Controls;
                         if (controls == null || controls.Count == 0)
                                 return;
-
-			Dictionary <string, Assembly> assemblyCache = new Dictionary <string, Assembly> ();
+			
 			IList appCode = BuildManager.CodeAssemblies;
 			bool haveCodeAssemblies = appCode != null && appCode.Count > 0;
 			Assembly asm;
@@ -126,33 +131,10 @@ namespace System.Web.Compilation
 						}
 					}
                                 } else if (!String.IsNullOrEmpty (tpi.Namespace))
-					RegisterFoundry (tpi.TagPrefix, GetAssemblyByName (assemblyCache, tpi.Assembly), tpi.Namespace);
+					RegisterAssemblyFoundry (tpi.TagPrefix,
+								 tpi.Assembly,
+								 tpi.Namespace);
                         }
-		}
-
-		Assembly GetAssemblyByName (Dictionary <string, Assembly> cache, string name)
-		{
-			if (cache.ContainsKey (name))
-				return cache [name];
-
-			Assembly assembly = null;
-			Exception error = null;
-			if (name.IndexOf (',') != -1) {
-				try {
-					assembly = Assembly.Load (name);
-				} catch (Exception e) { error = e; }
-			}
-
-			if (assembly == null) {
-				try {
-					assembly = Assembly.LoadWithPartialName (name);
-				} catch (Exception e) { error = e; }
-			}
-			
-			if (assembly == null)
-				throw new HttpException ("Assembly " + name + " not found", error);
-
-			return assembly;
 		}
 #endif
 		
@@ -258,18 +240,74 @@ namespace System.Web.Compilation
 		{
 			string nameSpace;
 			Assembly assembly;
-
+#if NET_2_0
+			string assemblyName;
+			Dictionary <string, Assembly> assemblyCache;
+#endif
+			
 			public AssemblyFoundry (Assembly assembly, string nameSpace)
 			{
 				this.assembly = assembly;
 				this.nameSpace = nameSpace;
+#if NET_2_0
+				if (assembly != null)
+					this.assemblyName = assembly.FullName;
+				else
+					this.assemblyName = null;
+#endif
 			}
 
+#if NET_2_0
+			public AssemblyFoundry (string assemblyName, string nameSpace)
+			{
+				this.assembly = null;
+				this.nameSpace = nameSpace;
+				this.assemblyName = assemblyName;
+			}
+#endif
+			
 			public override Type GetType (string componentName)
 			{
+#if NET_2_0
+				if (assembly == null && assemblyName != null)
+					assembly = GetAssemblyByName (assemblyName, true);
+#endif
 				if (assembly != null)
 					return assembly.GetType (nameSpace + "." + componentName, true, true);
+				
 				return null;
+			}
+
+			Assembly GetAssemblyByName (string name, bool throwOnMissing)
+			{
+				if (assemblyCache == null)
+					assemblyCache = new Dictionary <string, Assembly> ();
+				
+				if (assemblyCache.ContainsKey (name))
+					return assemblyCache [name];
+				
+				Assembly assembly = null;
+				Exception error = null;
+				if (name.IndexOf (',') != -1) {
+					try {
+						assembly = Assembly.Load (name);
+					} catch (Exception e) { error = e; }
+				}
+
+				if (assembly == null) {
+					try {
+						assembly = Assembly.LoadWithPartialName (name);
+					} catch (Exception e) { error = e; }
+				}
+			
+				if (assembly == null)
+					if (throwOnMissing)
+						throw new HttpException ("Assembly " + name + " not found", error);
+					else
+						return null;
+
+				assemblyCache.Add (name, assembly);
+				return assembly;
 			}
 		}
 

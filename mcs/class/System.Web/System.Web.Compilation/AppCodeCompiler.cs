@@ -584,6 +584,16 @@ namespace System.Web.Compilation
 //			if (pb != null)
 //				context.Profile = pb;
 //		}
+
+		public static bool HaveCustomProfile (ProfileSection ps)
+		{
+			if (ps == null || !ps.Enabled)
+				return false;
+			if (!String.IsNullOrEmpty (ps.Inherits) || (ps.PropertySettings != null && ps.PropertySettings.Count > 0))
+				return true;
+
+			return false;
+		}
 		
 		public void Compile ()
 		{
@@ -594,7 +604,7 @@ namespace System.Web.Compilation
 			string appCode = Path.Combine (HttpRuntime.AppDomainAppPath, "App_Code");
 			ProfileSection ps = WebConfigurationManager.GetSection ("system.web/profile") as ProfileSection;
 			bool haveAppCodeDir = Directory.Exists (appCode);
-			bool haveCustomProfile = ps != null;
+			bool haveCustomProfile = HaveCustomProfile (ps);
 			
 			if (!haveAppCodeDir && !haveCustomProfile)
 				return;

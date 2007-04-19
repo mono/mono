@@ -1,3 +1,13 @@
+2007-04-19  Marek Habersack  <mhabersack@novell.com>
+
+	* AppCodeCompiler.cs: yet another method of detecting if we have a
+	custom profile.
+
+	* BaseCompiler.cs: as above
+	
+	* AspComponentFoundry.cs: implemented delayed loading of control
+	assemblies. Fixes bug #81058.
+
 2007-04-19  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* BaseCompiler.cs: On 2.0, when ClassName attribute contains namespace
