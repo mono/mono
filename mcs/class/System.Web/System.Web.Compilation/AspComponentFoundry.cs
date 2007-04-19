@@ -51,7 +51,7 @@ namespace System.Web.Compilation
 			foundries = new Hashtable (StringComparer.InvariantCultureIgnoreCase);
 #else
 			foundries = new Hashtable (CaseInsensitiveHashCodeProvider.DefaultInvariant,
-						   CaseInsensitiveComparer.DefaultInvariant);
+				CaseInsensitiveComparer.DefaultInvariant);
 #endif
 
 			Assembly sw = typeof (AspComponentFoundry).Assembly;
@@ -73,16 +73,16 @@ namespace System.Web.Compilation
 		}
 
 		public void RegisterFoundry (string foundryName,
-					     Assembly assembly,
-					     string nameSpace)
+						Assembly assembly,
+						string nameSpace)
 		{
 			AssemblyFoundry foundry = new AssemblyFoundry (assembly, nameSpace);
 			InternalRegister (foundryName, foundry);
 		}
 
 		public void RegisterFoundry (string foundryName,
-					     string tagName,
-					     Type type)
+						string tagName,
+						Type type)
 		{
 			TagNameFoundry foundry = new TagNameFoundry (tagName, type);
 			InternalRegister (foundryName, foundry);
@@ -90,16 +90,16 @@ namespace System.Web.Compilation
 
 #if NET_2_0
 		public void RegisterFoundry (string foundryName,
-					     string tagName,
-					     string source)
+						string tagName,
+						string source)
 		{
 			TagNameFoundry foundry = new TagNameFoundry (tagName, source);
 			InternalRegister (foundryName, foundry);
 		}
 
 		public void RegisterAssemblyFoundry (string foundryName,
-						     string assemblyName,
-						     string nameSpace)
+							string assemblyName,
+							string nameSpace)
 		{
 			AssemblyFoundry foundry = new AssemblyFoundry (assemblyName, nameSpace);
 			InternalRegister (foundryName, foundry);
@@ -108,19 +108,19 @@ namespace System.Web.Compilation
 		void RegisterConfigControls ()
 		{
 			PagesSection pages = WebConfigurationManager.GetSection ("system.web/pages") as PagesSection;
-                        if (pages == null)
-                                return;
+			if (pages == null)
+				return;
 
-                        TagPrefixCollection controls = pages.Controls;
-                        if (controls == null || controls.Count == 0)
-                                return;
+			TagPrefixCollection controls = pages.Controls;
+			if (controls == null || controls.Count == 0)
+				return;
 			
 			IList appCode = BuildManager.CodeAssemblies;
 			bool haveCodeAssemblies = appCode != null && appCode.Count > 0;
 			Assembly asm;
-                        foreach (TagPrefixInfo tpi in controls) {
-                                if (!String.IsNullOrEmpty (tpi.TagName))
-                                        RegisterFoundry (tpi.TagPrefix, tpi.TagName, tpi.Source);
+			foreach (TagPrefixInfo tpi in controls) {
+				if (!String.IsNullOrEmpty (tpi.TagName))
+					RegisterFoundry (tpi.TagPrefix, tpi.TagName, tpi.Source);
 				else if (String.IsNullOrEmpty (tpi.Assembly)) {
 					if (haveCodeAssemblies) {
 						foreach (object o in appCode) {
@@ -130,11 +130,11 @@ namespace System.Web.Compilation
 							RegisterFoundry (tpi.TagPrefix, asm, tpi.Namespace);
 						}
 					}
-                                } else if (!String.IsNullOrEmpty (tpi.Namespace))
+				} else if (!String.IsNullOrEmpty (tpi.Namespace))
 					RegisterAssemblyFoundry (tpi.TagPrefix,
 								 tpi.Assembly,
 								 tpi.Namespace);
-                        }
+			}
 		}
 #endif
 		
@@ -220,7 +220,7 @@ namespace System.Web.Compilation
 					return type;
 				
 				ArrayList other_deps = new ArrayList ();
-                                type = UserControlParser.GetCompiledType (vpath, realpath, other_deps, context);
+				type = UserControlParser.GetCompiledType (vpath, realpath, other_deps, context);
 				if (type != null) {
 					AspGenerator.AddTypeToCache (other_deps, realpath, type);
 					WebConfigurationManager.ExtraAssemblies.Add (type.Assembly.Location);
@@ -278,6 +278,7 @@ namespace System.Web.Compilation
 				return null;
 			}
 
+#if NET_2_0
 			Assembly GetAssemblyByName (string name, bool throwOnMissing)
 			{
 				if (assemblyCache == null)
@@ -309,6 +310,7 @@ namespace System.Web.Compilation
 				assemblyCache.Add (name, assembly);
 				return assembly;
 			}
+#endif
 		}
 
 		class CompoundFoundry : Foundry
@@ -363,10 +365,9 @@ namespace System.Web.Compilation
 				}
 
 				string msg = String.Format ("Type {0} not registered for prefix {1}",
-							    componentName, tagPrefix);
+					componentName, tagPrefix);
 				throw new ApplicationException (msg);
 			}
 		}
 	}
 }
-

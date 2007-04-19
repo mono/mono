@@ -1,3 +1,8 @@
+2007-04-19  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* AspComponentFoundry.cs: Fixed build on 1.0 profile. Spaces to
+	tabs.
+
 2007-04-19  Marek Habersack  <mhabersack@novell.com>
 
 	* AppCodeCompiler.cs: yet another method of detecting if we have a
