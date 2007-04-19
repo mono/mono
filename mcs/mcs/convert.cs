@@ -315,7 +315,7 @@ namespace Mono.CSharp {
 
 				return false;
 			} else if (target_type == TypeManager.value_type) {
-				return false;
+				return expr_type == TypeManager.enum_type;
 			} else if (TypeManager.IsSubclassOf (expr_type, target_type)) {
 				//
 				// Special case: enumeration to System.Enum.
