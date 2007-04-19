@@ -266,6 +266,8 @@ namespace System.Windows.Forms {
 					Invalidate ();
 
 				actual_border_style = value;
+				document.UpdateMargins ();
+
 				if (value != BorderStyle.Fixed3D)
 					value = BorderStyle.None;
 

@@ -143,9 +143,6 @@ namespace System.Windows.Forms {
 		internal LineColor		color;			// We're doing a black/red tree. this is the node color
 		internal int			DEFAULT_TEXT_LEN;	// 
 		internal bool			recalc;			// Line changed
-		internal int left_margin = 2;  // A left margin for all lines
-		internal int top_margin = 2;
-		internal int right_margin = 2;
 		#endregion	// Local Variables
 
 		#region Constructors
@@ -214,10 +211,9 @@ namespace System.Windows.Forms {
 
 		internal int Y {
 			get {
-				int tm = document.owner.actual_border_style == BorderStyle.FixedSingle ? top_margin : 0;
 				if (!document.multiline)
-					return tm;
-				return tm + offset;
+					return document.top_margin;
+				return document.top_margin + offset;
 			}
 		}
 
@@ -480,7 +476,7 @@ namespace System.Windows.Forms {
 			tag.shift = 0;
 
 			this.recalc = false;
-			widths[0] = left_margin + indent;
+			widths[0] = document.left_margin + indent;
 
 			w = g.MeasureString(doc.password_char, tags.font, 10000, Document.string_format).Width;
 
@@ -529,9 +525,9 @@ namespace System.Windows.Forms {
 			tag.shift = 0;
 
 			if (ending == LineEnding.Wrap) {
-				widths[0] = left_margin + hanging_indent;
+				widths[0] = document.left_margin + hanging_indent;
 			} else {
-				widths[0] = left_margin + indent;
+				widths[0] = document.left_margin + indent;
 			}
 
 			this.recalc = false;
@@ -859,6 +855,10 @@ namespace System.Windows.Forms {
 		internal TextBoxBase	owner;			// Who's owning us?
 		static internal int	caret_width = 1;
 		static internal int	caret_shift = 1;
+
+		internal int left_margin = 2;  // A left margin for all lines
+		internal int top_margin = 2;
+		internal int right_margin = 2;
 		#endregion	// Local Variables
 
 		#region Constructors
@@ -912,6 +912,8 @@ namespace System.Windows.Forms {
 
 			string_format.Trimming = StringTrimming.None;
 			string_format.FormatFlags = StringFormatFlags.DisplayFormatControl;
+
+			UpdateMargins ();
 		}
 		#endregion
 
@@ -1086,6 +1088,19 @@ namespace System.Windows.Forms {
 		#endregion	// Internal Properties
 
 		#region Private Methods
+
+		internal void UpdateMargins ()
+		{
+			if (owner.actual_border_style == BorderStyle.FixedSingle) {
+				left_margin = 0;
+				top_margin = 0;
+				right_margin = 0;
+			} else {
+				left_margin = 2;
+				top_margin = 2;
+				right_margin = 2;
+			}
+		}
 
 		internal void SuspendRecalc ()
 		{
@@ -3995,7 +4010,7 @@ namespace System.Windows.Forms {
  						line.align_shift = (viewport_width - (int)line.widths[line.text.Length]) / 2;
 						break;
 					case HorizontalAlignment.Right:
- 						line.align_shift = viewport_width - (int)line.widths[line.text.Length] - line.right_margin;
+ 						line.align_shift = viewport_width - (int)line.widths[line.text.Length] - right_margin;
 						break;
 					}
 				}
