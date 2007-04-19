@@ -49,7 +49,7 @@ namespace System.Web
 				return;
 			IsReadOnly = false;
 
-            InsertInfo();
+			InsertInfo();
 	
 			IsReadOnly = true;
 			_loaded = true;
@@ -67,7 +67,8 @@ namespace System.Web
 		protected abstract string InternalGet(string name);
 
 		public override string Get(string name)
-		{			
+		{
+			LoadInfo ();
 			if (!_loaded)			
 				return InternalGet(name);						
 				
