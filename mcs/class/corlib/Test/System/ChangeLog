@@ -1,3 +1,7 @@
+2007-04-19  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ArrayTest.cs: Added test for Resize. Spaces to tabs.
+
 2007-03-13  Alp Toker  <alp@atoker.com>
 
 	* TypeTest.cs: Add a regression test for #63841.

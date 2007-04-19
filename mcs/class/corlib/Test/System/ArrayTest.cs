@@ -18,8 +18,6 @@ using System.Collections.Generic;
 
 namespace MonoTests.System
 {
-
-
 	//Auxiliary Things
 	enum enua  {hola,adios,mas,menos};
 
@@ -33,11 +31,11 @@ namespace MonoTests.System
 
 	class BClass : AClass
 	{
-    }
+	}
 
 	class CClass : AClass
-    {
-    }
+	{
+	}
 
 	struct AStruct
 	{
@@ -119,20 +117,16 @@ public class ArrayTest : Assertion
 
 		{
 			char[] arr = {'a', 'b', 'b', 'c', 'c', 'c', 'd', 'd'};
-			Assert("#B05", 
-			       Array.BinarySearch(arr, 'c') >= 3);
-			Assert("#B06", 
-			       Array.BinarySearch(arr, 'c') < 6);
+			Assert("#B05", Array.BinarySearch(arr, 'c') >= 3);
+			Assert("#B06", Array.BinarySearch(arr, 'c') < 6);
 		}
 		{
 			char[] arr = {'a', 'b', 'b', 'd', 'd', 'd', 'e', 'e'};
-			AssertEquals("#B07", 
-				     -4, Array.BinarySearch(arr, 'c'));
+			AssertEquals("#B07", -4, Array.BinarySearch(arr, 'c'));
 		}
 		{
 			char[] arr = {'a', 'b', 'b', 'c', 'c', 'c', 'd', 'd'};
-			AssertEquals("#B08", 
-				     -9, Array.BinarySearch(arr, 'e'));
+			AssertEquals("#B08", -9, Array.BinarySearch(arr, 'e'));
 		}
 	}
 
@@ -180,20 +174,16 @@ public class ArrayTest : Assertion
 
 		{
 			char[] arr = {'z', 'z', 'a', 'b', 'b', 'c', 'c', 'c', 'd', 'd'};
-			Assert("#B26", 
-			       Array.BinarySearch(arr, 2, 8, 'c') >= 5);
-			Assert("#B27", 
-			       Array.BinarySearch(arr, 2, 8, 'c') < 8);
+			Assert("#B26", Array.BinarySearch(arr, 2, 8, 'c') >= 5);
+			Assert("#B27", Array.BinarySearch(arr, 2, 8, 'c') < 8);
 		}
 		{
 			char[] arr = {'z', 'z', 'a', 'b', 'b', 'd', 'd', 'd', 'e', 'e'};
-			AssertEquals("#B28", 
-				     -6, Array.BinarySearch(arr, 2, 8, 'c'));
+			AssertEquals("#B28", -6, Array.BinarySearch(arr, 2, 8, 'c'));
 		}
 		{
 			char[] arr = {'z', 'z', 'a', 'b', 'b', 'c', 'c', 'c', 'd', 'd'};
-			AssertEquals("#B29", 
-				     -11, Array.BinarySearch(arr, 2, 8, 'e'));
+			AssertEquals("#B29", -11, Array.BinarySearch(arr, 2, 8, 'e'));
 		}
 	}
 
@@ -393,13 +383,11 @@ public class ArrayTest : Assertion
 		char[] copy = new Char[4];
 		Array.Copy(orig, copy, 4);
 		for (int i = 0; i < orig.Length; i++) {
-			AssertEquals("#E09(" + i + ")",
-				     orig[i], copy[i]);
+			AssertEquals("#E09(" + i + ")", orig[i], copy[i]);
 		}
 		Array.Clear(copy, 0, copy.Length);
 		for (int i = 0; i < orig.Length; i++) {
-			AssertEquals("#E10(" + i + ")",
-				     (char)0, copy[i]);
+			AssertEquals("#E10(" + i + ")", (char)0, copy[i]);
 		}
 		Array.Copy(orig, copy, 2);
 		AssertEquals("#E11", orig[0], copy[0]);
@@ -438,8 +426,7 @@ public class ArrayTest : Assertion
 		Array.Copy(orig, 1, copy, 1, 3);
 		Assert("#E33", copy[0] != orig[0]);
 		for (int i = 1; i < orig.Length; i++) {
-			AssertEquals("#E34(" + i + ")",
-				     orig[i], copy[i]);
+			AssertEquals("#E34(" + i + ")", orig[i], copy[i]);
 		}
 		Array.Clear(copy, 0, copy.Length);
 		Array.Copy(orig, 1, copy, 0, 2);
@@ -703,11 +690,11 @@ public class ArrayTest : Assertion
 	}
 	
 	[Test]
-        [ExpectedException (typeof (ArgumentNullException))]
-        public void TestCreateInstance2 ()
-        {
-                Array a = Array.CreateInstance (typeof (Int32), (int[])null);
-        }
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void TestCreateInstance2 ()
+	{
+		Array.CreateInstance (typeof (Int32), (int[])null);
+	}
 
 	[Test]
 #if NET_2_0
@@ -715,10 +702,10 @@ public class ArrayTest : Assertion
 #else
 	[ExpectedException (typeof (NullReferenceException))]
 #endif
-        public void TestCreateInstance2b ()
-        {
-                Array a = Array.CreateInstance (typeof (Int32), (long[])null);
-        }
+	public void TestCreateInstance2b ()
+	{
+		Array.CreateInstance (typeof (Int32), (long[])null);
+	}
 
 	[Test]
 	public void TestGetEnumerator() {
@@ -811,13 +798,13 @@ public class ArrayTest : Assertion
 		Array myArray=Array.CreateInstance ( typeof(String), myLengthsArray, myBoundsArray );
 		try {
 			((IList)myArray).Add ("can not");
-			Fail ("IList.Add should throw");    
+			Fail ("IList.Add should throw");
 		}
 		catch (NotSupportedException) {
 			return;
 		}
 		catch (Exception) {
-			Fail ("IList.Add threw wrong exception type");    
+			Fail ("IList.Add threw wrong exception type");
 		}
 
 		Fail("IList.Add shouldn't get this far");
@@ -832,13 +819,13 @@ public class ArrayTest : Assertion
 		Array myArray=Array.CreateInstance ( typeof(String), myLengthsArray, myBoundsArray );
 		try {
 			((IList)myArray).Insert (0, "can not");
-			Fail ("IList.Insert should throw");    
+			Fail ("IList.Insert should throw");
 		}
 		catch (NotSupportedException) {
 			return;
 		}
 		catch (Exception) {
-			Fail ("IList.Insert threw wrong exception type");    
+			Fail ("IList.Insert threw wrong exception type");
 		}
 
 		Fail("IList.Insert shouldn't get this far");
@@ -853,13 +840,13 @@ public class ArrayTest : Assertion
 		Array myArray=Array.CreateInstance ( typeof(String), myLengthsArray, myBoundsArray );
 		try {
 			((IList)myArray).Remove ("can not");
-			Fail ("IList.Remove should throw");    
+			Fail ("IList.Remove should throw");
 		}
 		catch (NotSupportedException) {
 			return;
 		}
 		catch (Exception) {
-			Fail ("IList.Remove threw wrong exception type");    
+			Fail ("IList.Remove threw wrong exception type");
 		}
 
 		Fail("IList.Remove shouldn't get this far");
@@ -874,13 +861,13 @@ public class ArrayTest : Assertion
 		Array myArray=Array.CreateInstance ( typeof(String), myLengthsArray, myBoundsArray );
 		try {
 			((IList)myArray).RemoveAt (0);
-			Fail ("IList.RemoveAt should throw");    
+			Fail ("IList.RemoveAt should throw");
 		}
 		catch (NotSupportedException) {
 			return;
 		}
 		catch (Exception) {
-			Fail ("IList.RemoveAt threw wrong exception type");    
+			Fail ("IList.RemoveAt threw wrong exception type");
 		}
 
 		Fail("IList.RemoveAt shouldn't get this far");
@@ -970,14 +957,11 @@ public class ArrayTest : Assertion
 		}
 
 		char[] c2 = new Char[5];
-		AssertEquals("#H03", 
-			     5, c2.GetLength(0));
+		AssertEquals("#H03", 5, c2.GetLength(0));
 
 		char[,] c3 = new Char[6,7];
-		AssertEquals("#H04", 
-			     6, c3.GetLength(0));
-		AssertEquals("#H05", 
-			     7, c3.GetLength(1));
+		AssertEquals("#H04", 6, c3.GetLength(0));
+		AssertEquals("#H05", 7, c3.GetLength(1));
 	}
 
 	[Test]
@@ -1004,14 +988,11 @@ public class ArrayTest : Assertion
 		}
 
 		char[] c1 = new Char[5];
-		AssertEquals("#H33", 
-			     0, c1.GetLowerBound(0));
+		AssertEquals("#H33", 0, c1.GetLowerBound(0));
 
 		char[,] c2 = new Char[4,4];
-		AssertEquals("#H34", 
-			     0, c2.GetLowerBound(0));
-		AssertEquals("#H35", 
-			     0, c2.GetLowerBound(1));
+		AssertEquals("#H34", 0, c2.GetLowerBound(0));
+		AssertEquals("#H35", 0, c2.GetLowerBound(1));
 	}
 
 	[Test]
@@ -1038,14 +1019,11 @@ public class ArrayTest : Assertion
 		}
 
 		char[] c1 = new Char[5];
-		AssertEquals("#H63", 
-			     4, c1.GetUpperBound(0));
+		AssertEquals("#H63", 4, c1.GetUpperBound(0));
 
 		char[,] c2 = new Char[4,6];
-		AssertEquals("#H64", 
-			     3, c2.GetUpperBound(0));
-		AssertEquals("#H65", 
-			     5, c2.GetUpperBound(1));
+		AssertEquals("#H64", 3, c2.GetUpperBound(0));
+		AssertEquals("#H65", 5, c2.GetUpperBound(1));
 	}
 
 	[Test]
@@ -1129,7 +1107,7 @@ public class ArrayTest : Assertion
 		for (int i = 0; i < c1.GetLength(0); i++) {
 			for (int j = 0; j < c1.GetLength(1); j++) {
 				AssertEquals("#I24(" + i + "," + j + ")",
-					     c1[i,j], c1.GetValue(i, j));
+					c1[i,j], c1.GetValue(i, j));
 			}
 		}
 	}
@@ -1179,7 +1157,7 @@ public class ArrayTest : Assertion
 			for (int j = 0; j < c1.GetLength(1); j++) {
 				for (int k = 0; k < c1.GetLength(2); k++) {
 					AssertEquals("#I44(" + i + "," + j + ")",
-						     c1[i,j,k], c1.GetValue(i,j,k));
+						c1[i,j,k], c1.GetValue(i,j,k));
 				}
 			}
 		}
@@ -1253,7 +1231,7 @@ public class ArrayTest : Assertion
 			for (int j = 0; j < c1.GetLength(1); j++) {
 				int[] coords = {i, j};
 				AssertEquals("#I65(" + i + "," + j + ")",
-					     c1[i,j], c1.GetValue(coords));
+					c1[i,j], c1.GetValue(coords));
 			}
 		}
 	}
@@ -1491,44 +1469,38 @@ public class ArrayTest : Assertion
 		}
 
 		String[] s1 = {"this", "is", "really", "a", "test"};
-		AssertEquals("#K45", 
-			     -1, Array.LastIndexOf(s1, null, 3, 3));
-		AssertEquals("#K46", 
-			     -1, Array.LastIndexOf(s1, "nothing", 3, 3));
-		AssertEquals("#K47", 
-			     -1, Array.LastIndexOf(s1, "this", 3, 3));
-		AssertEquals("#K48",
-			     1, Array.LastIndexOf(s1, "is", 3, 3));
-		AssertEquals("#K49", 
-			     -1, Array.LastIndexOf(s1, "test", 3, 3));
-		AssertEquals("#K50", 
-			     3, Array.LastIndexOf(s1, "a", 3, 3));
+		AssertEquals("#K45", -1, Array.LastIndexOf(s1, null, 3, 3));
+		AssertEquals("#K46", -1, Array.LastIndexOf(s1, "nothing", 3, 3));
+		AssertEquals("#K47", -1, Array.LastIndexOf(s1, "this", 3, 3));
+		AssertEquals("#K48", 1, Array.LastIndexOf(s1, "is", 3, 3));
+		AssertEquals("#K49", -1, Array.LastIndexOf(s1, "test", 3, 3));
+		AssertEquals("#K50", 3, Array.LastIndexOf(s1, "a", 3, 3));
 	}
 
 	[Test]
-        [ExpectedException (typeof (ArgumentOutOfRangeException))]
-        public void TestLastIndexOf4 ()
-        {
-                short [] a = new short [] { 19, 238, 317, 6, 565, 0, -52, 60, -563, 753, 238, 238};
-                Array.LastIndexOf (a, 16, -1);
-        }
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void TestLastIndexOf4 ()
+	{
+		short [] a = new short [] { 19, 238, 317, 6, 565, 0, -52, 60, -563, 753, 238, 238};
+		Array.LastIndexOf (a, 16, -1);
+	}
 
-        [Test]
-        public void TestLastIndexOf5 ()
-        {
-                char [] a = new char [] {'j', 'i', 'h', 'g', 'f', 'e', 'd', 'c', 'b', 'a', 'j', 'i', 'h'};
-                string s;
-                int retval;
-                bool error = false;
+	[Test]
+	public void TestLastIndexOf5 ()
+	{
+		char [] a = new char [] {'j', 'i', 'h', 'g', 'f', 'e', 'd', 'c', 'b', 'a', 'j', 'i', 'h'};
+		string s;
+		int retval;
+		bool error = false;
 
-                for (int i = a.Length - 1; i >= 0 ; i--) {
-                        s = i.ToString ();
-                        retval = Array.LastIndexOf(a, a [i], i, i + 1);
-                        if (retval != i)
-                                error = true;
-                }
-                Assert (!error);
-        }
+		for (int i = a.Length - 1; i >= 0 ; i--) {
+			s = i.ToString ();
+			retval = Array.LastIndexOf(a, a [i], i, i + 1);
+			if (retval != i)
+				error = true;
+		}
+		Assert (!error);
+	}
 
 	[Test]
 	[ExpectedException (typeof (ArgumentOutOfRangeException))]
@@ -1743,7 +1715,7 @@ public class ArrayTest : Assertion
 		for (int i = 0; i < c1.GetLength(0); i++) {
 			for (int j = 0; j < c1.GetLength(1); j++) {
 				AssertEquals("#M24(" + i + "," + j + ")",
-					     c1[i,j], c2[i, j]);
+					c1[i,j], c2[i, j]);
 			}
 		}
 	}
@@ -1795,7 +1767,7 @@ public class ArrayTest : Assertion
 			for (int j = 0; j < c1.GetLength(1); j++) {
 				for (int k = 0; k < c1.GetLength(2); k++) {
 					AssertEquals("#M44(" + i + "," + j + " )",
-						     c1[i,j,k], c2[i,j,k]);
+						c1[i,j,k], c2[i,j,k]);
 				}
 			}
 		}
@@ -1871,7 +1843,7 @@ public class ArrayTest : Assertion
 		for (int i = 0; i < c1.GetLength(0); i++) {
 			for (int j = 0; j < c1.GetLength(1); j++) {
 				AssertEquals("#M65(" + i + "," + j + ")",
-					     c1[i,j], c2[i,j]);
+					c1[i,j], c2[i,j]);
 			}
 		}
 	}
@@ -2016,7 +1988,7 @@ public class ArrayTest : Assertion
 					int ex_index = (i * types.Length) + j;
 
 					AssertEquals ("#M90(" + types [i] + "," + types [j] + ")",
-						      errorThrown, arg_ex [ex_index] == 1);
+						errorThrown, arg_ex [ex_index] == 1);
 				}
 			}
 
@@ -2085,7 +2057,7 @@ public class ArrayTest : Assertion
 					int ex_index = (i * types.Length) + j;
 
 					AssertEquals ("#M94(" + types [i] + "," + types [j] + ")",
-						      errorThrown, arg_ex [ex_index] == 1);
+						errorThrown, arg_ex [ex_index] == 1);
 				}
 			}
 
@@ -2515,13 +2487,13 @@ public class ArrayTest : Assertion
 		Array.Sort (arrsort, null, 0, arrsort.Length, null);
 	}
 
-        [Test]
-        [ExpectedException (typeof (InvalidOperationException))]
-        public void MoreSort10 ()
-        {
-                object [] array = {true, 'k', SByte.MinValue, Byte.MinValue, (short) 2, 634, (long) 436, (float) 1.1, 1.23, "Hello World"};
-                Array.Sort (array, (IComparer) null);
-        }
+	[Test]
+	[ExpectedException (typeof (InvalidOperationException))]
+	public void MoreSort10 ()
+	{
+		object [] array = {true, 'k', SByte.MinValue, Byte.MinValue, (short) 2, 634, (long) 436, (float) 1.1, 1.23, "Hello World"};
+		Array.Sort (array, (IComparer) null);
+	}
 
 	[Test]
 	public void ClearJaggedArray () 
@@ -2767,6 +2739,29 @@ public class ArrayTest : Assertion
 	}
 
 	[Test]
+	public void Resize ()
+	{
+		int [] arr = new int [] { 1, 3, 5 };
+		Array.Resize <int> (ref arr, 3);
+		AssertEquals ("#A1", 3, arr.Length);
+		AssertEquals ("#A2", 1, arr [0]);
+		AssertEquals ("#A3", 3, arr [1]);
+		AssertEquals ("#A4", 5, arr [2]);
+
+		Array.Resize <int> (ref arr, 2);
+		AssertEquals ("#B1", 2, arr.Length);
+		AssertEquals ("#B2", 1, arr [0]);
+		AssertEquals ("#B3", 3, arr [1]);
+
+		Array.Resize <int> (ref arr, 4);
+		AssertEquals ("#C1", 4, arr.Length);
+		AssertEquals ("#C2", 1, arr [0]);
+		AssertEquals ("#C3", 3, arr [1]);
+		AssertEquals ("#C4", 0, arr [2]);
+		AssertEquals ("#C5", 0, arr [3]);
+	}
+
+	[Test]
 	public void Resize_null ()
 	{
 		int [] arr = null;
@@ -2787,17 +2782,16 @@ public class ArrayTest : Assertion
 
 	public class EquatableClass : IEquatable<EquatableClass>
 	{
-    	int _x;
-    	public EquatableClass (int x)
-    	{
-    		_x = x;
-    	}
+		int _x;
+		public EquatableClass (int x)
+		{
+			_x = x;
+		}
 
-    	public bool Equals (EquatableClass other)
-    	{
-        	return this._x == other._x;
-    	}
-
+		public bool Equals (EquatableClass other)
+		{
+			return this._x == other._x;
+		}
 	}
 
 #if !TARGET_JVM // BugBUG: T[] is not yet ICollection<T> under TARGET_JVM
@@ -2868,5 +2862,4 @@ public class ArrayTest : Assertion
 
 	#endregion
 }
-
 }
