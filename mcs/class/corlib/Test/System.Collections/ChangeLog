@@ -1,4 +1,9 @@
-2007-02-13	Boris Kirzner <borisk@mainsoft.com>
+2007-04-19  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ArrayListTest.cs: Code formatting (indenting, spaces to tabs). Added
+	tests for bugs fixed in .NET 2.0.
+
+2007-02-13  Boris Kirzner <borisk@mainsoft.com>
 	* CaseInsensitiveHashCodeProviderTest.cs, HashtableTest.cs:
 	test ifdefs for TARGET_JVM.
 
