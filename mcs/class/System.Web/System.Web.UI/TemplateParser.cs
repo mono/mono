@@ -595,8 +595,19 @@ namespace System.Web.UI {
 				SetBaseType (inherits);
 #endif
 			className = GetString (atts, "ClassName", null);
-			if (className != null && !CodeGenerator.IsValidLanguageIndependentIdentifier (className))
-				ThrowParseException (String.Format ("'{0}' is not valid for 'className'", className));
+			if (className != null) {
+#if NET_2_0
+				string [] identifiers = className.Split ('.');
+				for (int i = 0; i < identifiers.Length; i++)
+					if (!CodeGenerator.IsValidLanguageIndependentIdentifier (identifiers [i]))
+						ThrowParseException (String.Format ("'{0}' is not a valid "
+							+ "value for attribute 'classname'.", className));
+#else
+				if (!CodeGenerator.IsValidLanguageIndependentIdentifier (className))
+					ThrowParseException (String.Format ("'{0}' is not a valid "
+						+ "value for attribute 'classname'.", className));
+#endif
+			}
 
 #if NET_2_0
 			if (this is TemplateControlParser)

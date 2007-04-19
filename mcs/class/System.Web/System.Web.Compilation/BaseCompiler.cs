@@ -75,18 +75,18 @@ namespace System.Web.Compilation
 			unit = new CodeCompileUnit ();
 #if NET_2_0
 			if (parser.IsPartial) {
-				string ns = null;
-				string classtype = parser.PartialClassName;
+				string partialns = null;
+				string partialclasstype = parser.PartialClassName;
 
-				if (classtype.Contains (".")) {
-					int dot = classtype.LastIndexOf (".");
-					ns = classtype.Substring (0, dot);
-					classtype = classtype.Substring (dot + 1);
+				int partialdot = partialclasstype.LastIndexOf ('.');
+				if (partialdot != -1) {
+					partialns = partialclasstype.Substring (0, partialdot);
+					partialclasstype = partialclasstype.Substring (partialdot + 1);
 				}
 				
-				CodeNamespace partialNS = new CodeNamespace (ns);
-				partialClass = new CodeTypeDeclaration (classtype);
-				partialClass.IsPartial = true;	
+				CodeNamespace partialNS = new CodeNamespace (partialns);
+				partialClass = new CodeTypeDeclaration (partialclasstype);
+				partialClass.IsPartial = true;
 				partialClassExpr = new CodeTypeReferenceExpression (parser.PartialClassName);
 				
 				unit.Namespaces.Add (partialNS);
@@ -94,8 +94,20 @@ namespace System.Web.Compilation
 				partialNS.Types.Add (partialClass);
 			}
 #endif
-			mainNS = new CodeNamespace ("ASP");
-			mainClass = new CodeTypeDeclaration (parser.ClassName);
+
+			string mainclasstype = parser.ClassName;
+			string mainns = "ASP";
+
+#if NET_2_0
+			int maindot = mainclasstype.LastIndexOf ('.');
+			if (maindot != -1) {
+				mainns = mainclasstype.Substring (0, maindot);
+				mainclasstype = mainclasstype.Substring (maindot + 1);
+			}
+#endif
+
+			mainNS = new CodeNamespace (mainns);
+			mainClass = new CodeTypeDeclaration (mainclasstype);
 			CodeTypeReference baseTypeRef;
 #if NET_2_0
 			if (partialClass != null) {
@@ -111,7 +123,7 @@ namespace System.Web.Compilation
 #endif
 			mainClass.BaseTypes.Add (baseTypeRef);
 
-			mainClassExpr = new CodeTypeReferenceExpression ("ASP." + parser.ClassName);
+			mainClassExpr = new CodeTypeReferenceExpression (mainns + "." + mainclasstype);
 
 			unit.Namespaces.Add (mainNS);
 			mainClass.TypeAttributes = TypeAttributes.Public;

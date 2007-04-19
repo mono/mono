@@ -1,3 +1,9 @@
+2007-04-19  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* BaseCompiler.cs: On 2.0, when ClassName attribute contains namespace
+	then use it instead of the default ASP namespace. Fixes part of bug
+	#81399.
+
 2007-04-19  Marek Habersack  <mhabersack@novell.com>
 
 	* BaseCompiler.cs: don't look at the number of profile properties
