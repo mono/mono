@@ -56,8 +56,8 @@ namespace System.Collections.Specialized {
 		{
 			this.caseInsensitive = caseInsensitive;
 
-			IComparer comparer = caseInsensitive ? CaseInsensitiveComparer.Default : null;
-			IHashCodeProvider hcp = caseInsensitive ? CaseInsensitiveHashCodeProvider.Default : null;
+			IComparer comparer = caseInsensitive ? CaseInsensitiveComparer.DefaultInvariant : null;
+			IHashCodeProvider hcp = caseInsensitive ? CaseInsensitiveHashCodeProvider.DefaultInvariant : null;
 
 			if (initialSize <= switchAfter)
 				list = new ListDictionary (comparer);
