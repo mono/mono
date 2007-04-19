@@ -994,7 +994,7 @@ namespace System.Windows.Forms
 #if NET_2_0
 			backgroundimage_layout = ImageLayout.Tile;
 			use_compatible_text_rendering = Application.use_compatible_text_rendering;
-			padding = new Padding(0);
+			padding = this.DefaultPadding;
 			maximum_size = new Size();
 			minimum_size = new Size();
 			margin = this.DefaultMargin;

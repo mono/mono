@@ -106,7 +106,6 @@ namespace System.Windows.Forms
 			this.orientation = Orientation.Horizontal;
 			if (!(this is ToolStripDropDown))
 				this.overflow_button = new ToolStripOverflowButton (this);
-			this.Padding = this.DefaultPadding;
 			this.renderer = null;
 			this.render_mode = ToolStripRenderMode.ManagerRenderMode;
 			this.show_item_tool_tips = this.DefaultShowItemToolTips;

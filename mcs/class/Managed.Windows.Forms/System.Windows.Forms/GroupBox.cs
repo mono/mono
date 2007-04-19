@@ -154,11 +154,19 @@ namespace System.Windows.Forms
 
 		public override Rectangle DisplayRectangle {
 			get {
+#if NET_2_0
+				display_rectangle.X = Padding.Left;
+				display_rectangle.Y = Font.Height + Padding.Top;
+				display_rectangle.Width = Width - Padding.Horizontal;
+				display_rectangle.Height = Height - Font.Height - Padding.Vertical;
+				return display_rectangle;
+#else
 				display_rectangle.X = 3;
 				display_rectangle.Y = Font.Height + 3;
 				display_rectangle.Width = Width - 6;
 				display_rectangle.Height = Height - Font.Height - 6;
 				return display_rectangle;
+#endif
 			}
 		}
 
@@ -246,5 +254,13 @@ namespace System.Windows.Forms
 			}
 		}
 #endif
+
+		#region Protected Properties
+#if NET_2_0
+		protected override Padding DefaultPadding {
+			get { return new Padding (3); }
+		}
+#endif
+		#endregion
 	}
 }
