@@ -1,3 +1,8 @@
+2007-04-19 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* ChangePassword.cs:
+	does not accept invalid new password.	
+
 2007-04-18  Igor Zelmanovich  <igorz@mainsoft.com>
 
 	* Xml.cs:

@@ -756,7 +756,13 @@ namespace System.Web.UI.WebControls
 			if (loginCancelEventArgs.Cancel)
 				return;
 
-			if (MembershipProviderInternal.ChangePassword (UserName, CurrentPassword, NewPassword)) {
+			bool res = false;
+			try {
+				res = MembershipProviderInternal.ChangePassword (UserName, CurrentPassword, NewPassword);
+			}
+			catch { }
+			
+			if (res) {
 
 				OnChangedPassword (args);
 				_showContinue = true;

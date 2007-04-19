@@ -1,3 +1,8 @@
+2007-04-19 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* SqlMembershipProvider.cs:
+	ChangePassword throws exception if new password has invalid format.	
+
 2007-04-17 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* Membership.cs:
