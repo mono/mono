@@ -1,3 +1,23 @@
+2007-04-19  Jeffrey Stedfast  <fejj@novell.com>
+
+	Fix for bug #81373.
+
+	* TermInfoDriver.cs: Changed 'buffer' to be a char array instead
+	of a byte array and stdin is now a StreamReader rather than a
+	Stream.
+	(Init): Setup stdin as a StreamReader using Console.InputEncoding
+	as our encoding.
+	(GetCursorPosition): Use stdin.Read() instead of the old
+	ReadByte() code.
+	(AddToBuffer): Updated to allocate the correct array type for
+	'buffer'.
+	(ReadKeyInternal): Updated to use stdin.Read() rather than
+	stdin.ReadByte(). This is the main reason we needed to use chars
+	instead of bytes. Characters entered by the user need to be
+	represented as unicode chars and not bytes like before.
+	(Match): Now takes a char[] buffer argument instad of byte[] and
+	compares the input buffer to the byte-map as chars.
+
 2007-04-18  Jeffrey Stedfast  <fejj@novell.com>
 
 	Fixes bug #81159: behave the same as mscorlib

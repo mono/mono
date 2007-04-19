@@ -51,7 +51,7 @@ namespace System {
 		string clear;
 		string bell;
 		string term;
-		Stream stdin;
+		StreamReader stdin;
 		internal byte verase;
 		byte vsusp;
 		byte intr;
@@ -63,7 +63,7 @@ namespace System {
 		int bufferHeight;
 		int bufferWidth;
 
-		byte [] buffer;
+		char [] buffer;
 		int readpos;
 		int writepos;
 		string keypadXmit, keypadLocal;
@@ -185,7 +185,7 @@ namespace System {
 			if (!ConsoleDriver.TtySetup (endString, out verase, out vsusp, out intr))
 				throw new IOException ("Error initializing terminal.");
 
-			stdin = Console.OpenStandardInput (0);
+			stdin = new StreamReader (Console.OpenStandardInput (0), Console.InputEncoding);
 			clear = reader.Get (TermInfoStrings.ClearScreen);
 			bell = reader.Get (TermInfoStrings.Bell);
 			if (clear == null) {
@@ -403,40 +403,40 @@ namespace System {
 				return;
 			}
 
-			int b = stdin.ReadByte ();
+			int b = stdin.Read ();
 			while (b != '\x1b') {
 				AddToBuffer (b);
 				if (ConsoleDriver.InternalKeyAvailable (100) <= 0)
 					return;
-				b = stdin.ReadByte ();
+				b = stdin.Read ();
 			}
 
-			b = stdin.ReadByte ();
+			b = stdin.Read ();
 			if (b != '[') {
 				AddToBuffer ('\x1b');
 				AddToBuffer (b);
 				return;
 			}
 
-			b = stdin.ReadByte ();
+			b = stdin.Read ();
 			if (b != ';') {
 				row = b - '0';
-				b = stdin.ReadByte ();
+				b = stdin.Read ();
 				while ((b >= '0') && (b <= '9')) {
 					row = row * 10 + b - '0';
-					b = stdin.ReadByte ();
+					b = stdin.Read ();
 				}
 				// Row/col is 0 based
 				row --;
 			}
 
-			b = stdin.ReadByte ();
+			b = stdin.Read ();
 			if (b != 'R') {
 				col = b - '0';
-				b = stdin.ReadByte ();
+				b = stdin.Read ();
 				while ((b >= '0') && (b <= '9')) {
 					col = col * 10 + b - '0';
-					b = stdin.ReadByte ();
+					b = stdin.Read ();
 				}
 				// Row/col is 0 based
 				col --;
@@ -765,14 +765,14 @@ namespace System {
 		void AddToBuffer (int b)
 		{
 			if (buffer == null) {
-				buffer = new byte [1024];
+				buffer = new char [1024];
 			} else if (writepos >= buffer.Length) {
-				byte [] newbuf = new byte [buffer.Length * 2];
+				char [] newbuf = new char [buffer.Length * 2];
 				Buffer.BlockCopy (buffer, 0, newbuf, 0, buffer.Length);
 				buffer = newbuf;
 			}
 
-			buffer [writepos++] = (byte) b;
+			buffer [writepos++] = (char) b;
 		}
 
 		void AdjustBuffer ()
@@ -856,13 +856,13 @@ namespace System {
 				do {
 					if (ConsoleDriver.InternalKeyAvailable (150) > 0) {
 						do {
-							AddToBuffer (stdin.ReadByte ());
+							AddToBuffer (stdin.Read ());
 						} while (ConsoleDriver.InternalKeyAvailable (0) > 0);
 					} else {
 						if ((o = GetKeyFromBuffer (false)) != null)
 							break;
-						
-						AddToBuffer (stdin.ReadByte ());
+
+						AddToBuffer (stdin.Read ());
 					}
 					
 					o = GetKeyFromBuffer (true);
@@ -1253,11 +1253,11 @@ namespace System {
 			return (starts [c] != null);
 		}
 
-		public TermInfoStrings Match (byte [] buffer, int offset, int length, out int used)
+		public TermInfoStrings Match (char [] buffer, int offset, int length, out int used)
 		{
 			foreach (byte [] bytes in map.Keys) {
 				for (int i = 0; i < bytes.Length && i < length; i++) {
-					if (bytes [i] != buffer [offset + i])
+					if ((char) bytes [i] != buffer [offset + i])
 						break;
 
 					if (bytes.Length - 1 == i) {
