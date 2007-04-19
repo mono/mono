@@ -37,97 +37,93 @@ namespace System.Web
 		protected HttpRequest _request;
 		protected bool _loaded = false;
 
-		public BaseParamsCollection(HttpRequest request)
+		public BaseParamsCollection (HttpRequest request)
 		{		
 			_request = request;
 			IsReadOnly = true;
 		}
 
-		private void LoadInfo()
+		private void LoadInfo ()
 		{
 			if (_loaded)
 				return;
 			IsReadOnly = false;
 
-			InsertInfo();
+			InsertInfo ();
 	
 			IsReadOnly = true;
 			_loaded = true;
 
 		}
 
-		protected abstract void InsertInfo();
+		protected abstract void InsertInfo ();
 
-		public override string Get(int index)
+		public override string Get (int index)
 		{
-			LoadInfo();
-			return base.Get(index); 
+			LoadInfo ();
+			return base.Get (index); 
 		}
 
-		protected abstract string InternalGet(string name);
+		protected abstract string InternalGet (string name);
 
-		public override string Get(string name)
+		public override string Get (string name)
 		{
 			LoadInfo ();
 			if (!_loaded)			
-				return InternalGet(name);						
+				return InternalGet (name);						
 				
-			return base.Get(name);		
+			return base.Get (name);		
 		}
 
-		public override string GetKey(int index)
+		public override string GetKey (int index)
 		{
-			LoadInfo();
-			return base.GetKey(index); 
+			LoadInfo ();
+			return base.GetKey (index); 
 		}
  
-		public override string[] GetValues(int index)
+		public override string[] GetValues (int index)
 		{
 			string text1;
 			string[] array1;
-			text1 = Get(index);
-			if (text1 == null)
-			{
+			text1 = Get (index);
+			if (text1 == null) 
 				return null; 
-			}
+
 			array1 = new string[1];
 			array1[0] = text1;
 			return array1; 
 		}
  
-		public override string[] GetValues(string name)
+		public override string[] GetValues (string name)
 		{
 			string text1;
 			string[] array1;
-			text1 = Get(name);
-			if (text1 == null)
-			{
+			text1 = Get (name);
+			if (text1 == null) 
 				return null; 
-			}
+
 			array1 = new string[1];
 			array1[0] = text1;
 			return array1; 
 		}
  
-		public override void GetObjectData(SerializationInfo info, StreamingContext context)
+		public override void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
-			throw new SerializationException(); 
+			throw new SerializationException (); 
 		}
 
 		public override string[] AllKeys 
 		{
-			get 
-			{
-				LoadInfo();
+			get {
+				LoadInfo ();
 				return base.AllKeys;
 			}
 		}
 
 		public override int Count 
 		{
-			get 
-			{
-				LoadInfo();
+			get {
+				LoadInfo ();
 				return base.Count;
 			}
 		}
