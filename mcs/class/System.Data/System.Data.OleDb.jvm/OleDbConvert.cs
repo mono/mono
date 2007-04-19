@@ -51,7 +51,7 @@ namespace System.Data.OleDb
 
 		static OleDbConvert()
 		{
-			_typeNamesMap = new Hashtable(30,new CaseInsensitiveHashCodeProvider(), new CaseInsensitiveComparer());
+			_typeNamesMap = new Hashtable(30,CaseInsensitiveHashCodeProvider.DefaultInvariant, CaseInsensitiveComparer.DefaultInvariant);
 			
 			// SqlServer types mapping
 //			_typeNamesMap.Add("numeric(3, 0)1","DBTYPE_I1");
