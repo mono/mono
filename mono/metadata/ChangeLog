@@ -1,3 +1,9 @@
+
+Thu Apr 19 16:45:55 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* threadpool.c, threadpool.h, icall-def.h: patch from
+	Robert Jordan to implemnt ThreadPool.SetMaxThreads.
+
 2007-04-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* threads.c (mono_thread_get_stack_bounds): Fix windows build.
