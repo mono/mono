@@ -1,3 +1,7 @@
+2007-04-19  Konstantin Triger <kostat@mainsoft.com>
+
+	* XmlSchemaExporter.cs: do not export twice simple types.
+
 2007-04-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TypeData.cs : forgot NET_2_0.

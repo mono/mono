@@ -661,6 +661,11 @@ namespace System.Xml.Serialization {
 			SetMapExported (map);
 
 			XmlSchema schema = GetSchema (map.XmlTypeNamespace);
+			for (int i = 0; i < schema.Items.Count; i++) {
+			        XmlSchemaSimpleType item = schema.Items [i] as XmlSchemaSimpleType;
+			        if (item != null && item.Name == map.ElementName)
+			                return;
+			}
 			XmlSchemaSimpleType stype = new XmlSchemaSimpleType ();
 			stype.Name = map.ElementName;
 			schema.Items.Add (stype);
