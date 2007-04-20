@@ -2532,7 +2532,6 @@ namespace System.Windows.Forms {
 			IntPtr			ParentHandle;
 			IntPtr			WholeWindow;
 			IntPtr			ClientWindow;
-			Rectangle		ClientRect;
 			SetWindowValuemask	ValueMask;
 			int[]			atoms;
 
@@ -2626,7 +2625,6 @@ namespace System.Windows.Forms {
 				hwnd.enabled = false;
 			}
 
-			ClientRect = hwnd.ClientRect;
 			ClientWindow = IntPtr.Zero;
 
 			Size XWindowSize = TranslateWindowSizeToXWindowSize (cp);

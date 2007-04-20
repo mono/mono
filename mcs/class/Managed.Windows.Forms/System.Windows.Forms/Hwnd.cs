@@ -184,9 +184,6 @@ namespace System.Windows.Forms {
 			Size thickframe = new Size (2 + windowborder.Width, 2 + windowborder.Height);
 			Size dialogframe = ThemeEngine.Current.BorderSizableSize; /* new Size (3, 3);*/
 			
-			WindowStyles style = cp.WindowStyle;
-			WindowExStyles exstyle = cp.WindowExStyle;
-			
 			if (cp.IsSet (WindowStyles.WS_CAPTION)) {
 				border_size.Inflate (dialogframe);
 			} else if (cp.IsSet (WindowStyles.WS_BORDER)) {
