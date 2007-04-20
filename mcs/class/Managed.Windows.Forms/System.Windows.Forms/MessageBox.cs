@@ -319,7 +319,6 @@ namespace System.Windows.Forms
 
 #if NET_2_0
 					if (show_help) {
-						int pos = 0;
 						for (int i = 0; i <= 3; i++) {
 							if (buttons [i] == null) {
 								AddHelpButton (i);

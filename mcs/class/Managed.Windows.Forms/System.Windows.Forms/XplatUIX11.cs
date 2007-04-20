@@ -2881,7 +2881,7 @@ namespace System.Windows.Forms {
 				XcursorImagesDestroy (images_ptr);
 				
 			} catch (DllNotFoundException ex) {
-				Console.WriteLine ("Could not load libXcursor: DllNotFoundException.");
+				Console.WriteLine ("Could not load libXcursor: " + ex.Message + " (" + ex.GetType ().Name + ")");
 				return null;
 			}
 			

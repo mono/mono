@@ -1,3 +1,7 @@
+2007-04-20  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* MessageBox.cs, XplatUIX11.cs, Hwnd.cs: Remove warnings.
+
 2007-04-20  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStripManager.cs: Fix a reported InvalidCastException when unmerging
