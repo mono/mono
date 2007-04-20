@@ -1,3 +1,8 @@
+2007-04-20  Marek Habersack  <mhabersack@novell.com>
+
+	* AppCodeCompiler.cs: fix App_Code build when the directory
+	contains both known and unknown files.
+
 2007-04-19  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* AspComponentFoundry.cs: Fixed build on 1.0 profile. Spaces to

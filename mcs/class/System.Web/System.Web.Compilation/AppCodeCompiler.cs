@@ -127,7 +127,7 @@ namespace System.Web.Compilation
 				language = null;
 				
 				extension = Path.GetExtension (f);
-				if (!CodeDomProvider.IsDefinedExtension (extension))
+				if (String.IsNullOrEmpty (extension) || !CodeDomProvider.IsDefinedExtension (extension))
 					known = false;
 				if (known) {
 					language = CodeDomProvider.GetLanguageFromExtension(extension);
@@ -210,7 +210,7 @@ namespace System.Web.Compilation
 				}
 			}
 
-			if (!known && !unknown)
+			if (knownfiles.Count == 0 && unknownfiles.Count == 0)
 				return;
 			
 			outputAssemblyName = (string)FileUtils.CreateTemporaryFile (
@@ -599,7 +599,6 @@ namespace System.Web.Compilation
 		{
 			if (_alreadyCompiled)
 				return;
-			_alreadyCompiled = false;
 			
 			string appCode = Path.Combine (HttpRuntime.AppDomainAppPath, "App_Code");
 			ProfileSection ps = WebConfigurationManager.GetSection ("system.web/profile") as ProfileSection;
@@ -629,6 +628,7 @@ namespace System.Web.Compilation
 				binAssemblies = Directory.GetFiles (bindir, "*.dll");
 			foreach (AppCodeAssembly aca in assemblies)
 				aca.Build (binAssemblies);
+			_alreadyCompiled = true;
 			DefaultAppCodeAssemblyName = Path.GetFileNameWithoutExtension (defasm.OutputAssemblyName);
 			
 			if (haveCustomProfile && providerTypeName != null) {
