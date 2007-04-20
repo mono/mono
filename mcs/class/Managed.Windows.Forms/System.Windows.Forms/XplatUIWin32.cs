@@ -147,6 +147,7 @@ namespace System.Windows.Forms {
 		internal enum SPIAction {
 			SPI_GETKEYBOARDSPEED	= 0x000A,
 			SPI_GETKEYBOARDDELAY	= 0x0016,
+			SPI_GETKEYBOARDCUES		= 0x100A,
 			SPI_GETWORKAREA		= 0x0030,
 			SPI_GETMOUSEHOVERWIDTH	= 0x0062,
 			SPI_GETMOUSEHOVERHEIGHT	= 0x0064,
@@ -1126,6 +1127,14 @@ namespace System.Windows.Forms {
 		internal override Size MaxWindowTrackSize {
 			get {
 				return new Size(Win32GetSystemMetrics(SystemMetrics.SM_CXMAXTRACK), Win32GetSystemMetrics(SystemMetrics.SM_CYMAXTRACK));
+			}
+		}
+
+		internal override bool MenuAccessKeysUnderlined {
+			get {
+				int underlined = 0;
+				Win32SystemParametersInfo (SPIAction.SPI_GETKEYBOARDCUES, 0, ref underlined, 0);
+				return (underlined != 0);
 			}
 		}
 

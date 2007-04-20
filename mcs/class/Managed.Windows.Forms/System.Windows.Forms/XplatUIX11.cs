@@ -2096,7 +2096,13 @@ namespace System.Windows.Forms {
 			get {
 				return new Size (WorkingArea.Width, WorkingArea.Height);
 			}
-		} 
+		}
+
+		internal override bool MenuAccessKeysUnderlined {
+			get {
+				return false;
+			}
+		}
 
 		internal override  Size MinimizedWindowSize {
 			get {

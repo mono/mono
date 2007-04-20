@@ -1,3 +1,8 @@
+2007-04-20  Gert Driesen  <drieseng@users.soourceforge.net>
+
+	* XplatUIX11-new.cs: Implemented MenuAccessKeysUnderlined by always
+	return false.
+
 2007-04-20  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* X11Display.cs: Remove warnings.

@@ -2610,10 +2610,6 @@ namespace System.Windows.Forms
 		
 		#region Menus
 		
-		public override bool MenuAccessKeysUnderlined {
-			get { return false;	}
-		}
-		
 		public override void CalcItemSize (Graphics dc, MenuItem item, int y, int x, bool menuBar)
 		{
 			item.X = x;

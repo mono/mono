@@ -1856,6 +1856,11 @@ namespace System.Windows.Forms {
 		internal override  Size FrameBorderSize { get{ throw new NotImplementedException(); } }
 		internal override  Size IconSize { get{ throw new NotImplementedException(); } }
 		internal override  Size MaxWindowTrackSize { get{ throw new NotImplementedException(); } }
+		internal override bool MenuAccessKeysUnderlined {
+			get {
+				return false;
+			}
+		}
 		internal override  Size MinimizedWindowSize { get{ throw new NotImplementedException(); } }
 		internal override  Size MinimizedWindowSpacingSize { get{ throw new NotImplementedException(); } }
 		internal override  Size MinimumWindowSize { get{ throw new NotImplementedException(); } }

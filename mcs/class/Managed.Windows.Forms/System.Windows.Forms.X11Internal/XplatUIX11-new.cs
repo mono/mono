@@ -184,7 +184,13 @@ namespace System.Windows.Forms.X11Internal {
 
 		internal override Size MaxWindowTrackSize {
 			get { return new Size (WorkingArea.Width, WorkingArea.Height); }
-		} 
+		}
+
+		internal override bool MenuAccessKeysUnderlined {
+			get {
+				return false;
+			}
+		}
 
 		internal override Size MinimizedWindowSize {
 			get { return new Size(1, 1); }

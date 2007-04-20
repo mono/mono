@@ -482,7 +482,7 @@ namespace System.Windows.Forms
 
 		public virtual bool MenuAccessKeysUnderlined {
 			get {
-				return true;
+				return XplatUI.MenuAccessKeysUnderlined;
 			}
 		}
 		

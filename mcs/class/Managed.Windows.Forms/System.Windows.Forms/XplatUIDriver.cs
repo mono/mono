@@ -132,6 +132,7 @@ namespace System.Windows.Forms {
 		internal abstract Size FrameBorderSize { get; }
 		internal abstract Size IconSize { get; }
 		internal abstract Size MaxWindowTrackSize { get; }
+		internal abstract bool MenuAccessKeysUnderlined { get; }
 		internal abstract Size MinimizedWindowSize { get; }
 		internal abstract Size MinimizedWindowSpacingSize { get; }
 		internal abstract Size MinimumWindowSize { get; }
@@ -146,7 +147,7 @@ namespace System.Windows.Forms {
 
 		#endregion	// XplatUI Driver Properties
 
-                internal abstract event EventHandler Idle;
+		internal abstract event EventHandler Idle;
 
 		#region XplatUI Driver Methods
 		internal abstract void AudibleAlert();

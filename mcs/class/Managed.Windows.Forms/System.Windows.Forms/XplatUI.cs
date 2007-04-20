@@ -175,6 +175,12 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		static public bool MenuAccessKeysUnderlined {
+			get {
+				return driver.MenuAccessKeysUnderlined;
+			}
+		}
+
 		static public Size MinimizedWindowSize {
 			get {
 				return driver.MinimizedWindowSize;
