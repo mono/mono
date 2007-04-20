@@ -1,3 +1,8 @@
+2007-04-20  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStripManager.cs: Fix a reported InvalidCastException when unmerging
+	MenuStrips that contain ToolStripSeparators.
+
 2007-04-20  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* XplatUI.cs, XplatUIDriver.cs, XplatUIOSX.cs: Add
