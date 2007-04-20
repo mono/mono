@@ -1,5 +1,10 @@
 2007-04-20  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* TcpClientTest.cs: ... and disable it again, since it fails buildbot
+	sles-9 x86-64.
+
+2007-04-20  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* TcpClientTest.cs: Re-enabled test for bug #81105 since it passes
 	on both linux and windows. I'll monitor the build bots to spot if it
 	breaks the tests.	

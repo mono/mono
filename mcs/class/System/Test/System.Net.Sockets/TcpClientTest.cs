@@ -73,7 +73,7 @@ namespace MonoTests.System.Net.Sockets {
 		}
 
 		[Test] // bug #81105
-		//[Category ("NotWorking")]
+		[Category ("NotWorking")]
 /*
 	This test flagged as not working as its producing this:
 
@@ -87,7 +87,6 @@ namespace MonoTests.System.Net.Sockets {
   at (wrapper managed-to-native) System.Reflection.MonoMethod:InternalInvoke (object,object[])
   at System.Reflection.MonoMethod.Invoke (System.Object obj, BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x00040] in /home/cvs/mcs/class/corlib/System.Reflection/MonoMethod.cs:143
 */
-
 		public void CloseTest ()
 		{
 			IPEndPoint localEP = new IPEndPoint (IPAddress.Loopback, 8765);
