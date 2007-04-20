@@ -889,7 +889,7 @@ namespace System {
 		int echon = 0;
 
 		// Queues a character to be echo'd back to the console
-		void Echo (char c)
+		void QueueEcho (char c)
 		{
 			if (echobuf == null)
 				echobuf = new char [1024];
@@ -898,7 +898,7 @@ namespace System {
 
 			if (echon == echobuf.Length || !InputPending ()) {
 				// blit our echo buffer to the console
-				Console.Write (echobuf, 0, echon);
+				((CStreamWriter) Console.stdout).InternalWriteChars (echobuf, echon);
 				echon = 0;
 			}
 		}
@@ -906,7 +906,15 @@ namespace System {
 		// Queues a key to be echo'd back to the console
 		void Echo (ConsoleKeyInfo key)
 		{
-			Echo (key.KeyChar);
+			if (!IsSpecialKey (key)) {
+				QueueEcho (key.KeyChar);
+				return;
+			}
+
+			// flush pending echo's
+			EchoFlush ();
+
+			WriteSpecialKey (key);
 		}
 
 		// Flush the pending echo queue
@@ -916,7 +924,7 @@ namespace System {
 				return;
 
 			// flush our echo buffer to the console
-			Console.Write (echobuf, 0, echon);
+			((CStreamWriter) Console.stdout).InternalWriteChars (echobuf, echon);
 			echon = 0;
 		}
 #endregion
@@ -971,7 +979,7 @@ namespace System {
 
 				// echo fresh keys back to the console
 				if (fresh)
-					Echo (c);
+					Echo (key);
 			} while (key.Key != ConsoleKey.Enter);
 
 			EchoFlush ();
@@ -1002,7 +1010,7 @@ namespace System {
 
 			if (!intercept && fresh) {
 				// echo the fresh key back to the console
-				Echo (key.KeyChar);
+				Echo (key);
 				EchoFlush ();
 			}
 
@@ -1031,11 +1039,11 @@ namespace System {
 				key = ReadKeyInternal (out fresh);
 				c = key.KeyChar;
 				if (key.Key != ConsoleKey.Enter) {
-					if (key.Key != ConsoleKey.Backspace)
+					if (key.Key != ConsoleKey.Backspace) {
 						builder.Append (c);
-					else if (builder.Length > 0)
+					} else if (builder.Length > 0) {
 						builder.Length--;
-					else {
+					} else {
 						// skips over echoing the key to the console
 						continue;
 					}
@@ -1043,7 +1051,7 @@ namespace System {
 
 				// echo fresh keys back to the console
 				if (fresh)
-					Echo (c);
+					Echo (key);
 			} while (key.Key != ConsoleKey.Enter);
 
 			EchoFlush ();

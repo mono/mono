@@ -1,3 +1,20 @@
+2007-04-20  Jeffrey Stedfast  <fejj@novell.com>
+
+	* TermInfoDriver.cs (QueueEcho): Renamed from Echo(char). Use
+	CStreamWriter's new InternalWriteChars().
+	(Echo): Since we can no longer go thru CStreamWriter's ::Write()
+	method that does checks for special keys, do the checks here
+	instead - if it is a special key, flush the echo buffer and then
+	write the special key.
+	(EchoFlush): Also updated to use CStreamWriter's new
+	InternalWriteChars().
+	(Read): Use the Echo(key) variety.
+	(ReadKey): Same.
+	(ReadLine): And here too.
+
+	* CStreamWriter.cs (InternalWriteChars): Write a char array
+	directly to stdout. Do not pass Go, do not collect $200.
+
 2007-04-19  Jeffrey Stedfast  <fejj@novell.com>
 
 	Optimization for echoing keypresses back to the console when the
