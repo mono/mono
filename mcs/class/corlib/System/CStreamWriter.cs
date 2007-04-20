@@ -138,6 +138,14 @@ namespace System.IO {
 			}
 		}
 
+		public void InternalWriteChars (char [] buffer, int n)
+		{
+			try {
+				base.Write (buffer, 0, n);
+			} catch (IOException) {
+			}
+		}
+
 		public override void Write (char [] val)
 		{
 			Write (val, 0, val.Length);
