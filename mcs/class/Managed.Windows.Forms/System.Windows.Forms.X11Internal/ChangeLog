@@ -1,5 +1,9 @@
 2007-04-20  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* X11Display.cs: Remove warnings.
+
+2007-04-20  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* X11Display.cs, XplatUIX11-new.cs: Add and implement
 	  DefineStdCursorBitmap.
 
