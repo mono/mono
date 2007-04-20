@@ -1849,7 +1849,7 @@ namespace System.Windows.Forms {
 		internal override int KeyboardSpeed { get{ throw new NotImplementedException(); } } 
 		internal override int KeyboardDelay { get{ throw new NotImplementedException(); } } 
 
-		internal override  int Caption { get{ throw new NotImplementedException(); } }
+		internal override  int CaptionHeight { get{ throw new NotImplementedException(); } }
 		internal override  Size CursorSize { get{ throw new NotImplementedException(); } }
 		internal override  bool DragFullWindows { get{ throw new NotImplementedException(); } }
 		internal override  Size DragSize { get{ throw new NotImplementedException(); } }

@@ -1970,7 +1970,7 @@ namespace System.Windows.Forms {
 
 		#region Public Properties
 
-		internal override int Caption {
+		internal override int CaptionHeight {
 			get {
 				return 19;
 			}
@@ -1999,7 +1999,7 @@ namespace System.Windows.Forms {
 			get {
 				return new Size(4, 4);
 			}
-		} 
+		}
 
 		internal override  Size FrameBorderSize { 
 			get {

@@ -50,6 +50,42 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal virtual Size Border3DSize {
+			get {
+				return new Size (2, 2);
+			}
+		}
+
+		internal virtual Size BorderSize {
+			get {
+				return new Size (1, 1);
+			}
+		}
+
+		internal virtual Size CaptionButtonSize {
+			get {
+				return new Size (18, 18);
+			}
+		}
+
+		internal virtual Size DoubleClickSize {
+			get {
+				return new Size (4, 4);
+			}
+		}
+
+		internal virtual int DoubleClickTime {
+			get {
+				return 500;
+			}
+		}
+
+		internal virtual Size FixedFrameBorderSize {
+			get {
+				return new Size (3, 3);
+			}
+		}
+
 		internal virtual Font Font {
 			get {
 				return ThemeEngine.Current.DefaultFont;
@@ -125,7 +161,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		internal abstract int Caption { get; }
+		internal abstract int CaptionHeight { get; }
 		internal abstract Size CursorSize { get; }
 		internal abstract bool DragFullWindows { get; }
 		internal abstract Size DragSize { get; }

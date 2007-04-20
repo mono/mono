@@ -150,7 +150,7 @@ namespace System.Windows.Forms.X11Internal {
 
 
 		#region Public Properties
-		internal override int Caption {
+		internal override int CaptionHeight {
 			get { return 19; }
 		}
 

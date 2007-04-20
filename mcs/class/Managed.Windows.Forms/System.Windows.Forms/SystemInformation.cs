@@ -63,7 +63,7 @@ namespace System.Windows.Forms
 
 		public static Size BorderSize {
 			get {
-				return ThemeEngine.Current.Border3DSize;
+				return ThemeEngine.Current.BorderSize;
 			}
 		}
 

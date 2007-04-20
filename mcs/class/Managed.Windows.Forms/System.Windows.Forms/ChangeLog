@@ -1,5 +1,23 @@
 2007-04-20  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* XplatUI.cs: Added Border3DSize, BorderSize, CaptionButtonSize,
+	DoubleClickSize, DoubleClickTime and FixedFrameBorderSize. Renamed
+	XplatUIDriver.Caption to CaptionHeight. Spaces to tabs.
+	* XplatUIDriver.cs: Added Border3DSize, BorderSize, CaptionButtonSize,
+	DoubleClickSize, DoubleClickTime and FixedFrameBorderSize. Renamed
+	Caption to CaptionHeight.
+	* XplatUIX11.cs: Renamed Caption to CaptionHeight.
+	* Theme.cs: Modified Border3DSize, BorderSize, CaptionButtonSize
+	and FixedFrameBorderSize to return value from current XplatUI driver.
+	* XplatUIWin32.cs: Implemented Border3DSize, BorderSize,
+	CaptionButtonSize, DragFullWindows, DoubleClickSize, DoubleClickTime
+	and FixedFrameBorderSize using win32 API. Renamed Caption to
+	CaptionHeight.
+	* XplatUIOSX.cs: Renamed Caption to CaptionHeight.
+	* SystemInformation.cs: Fixed typo in BorderSize.
+
+2007-04-20  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* XplatUI.cs: Added MenuAccessKeysUnderlined.
 	* XplatUIDriver.cs: Added MenuAccessKeysUnderlined.
 	* XplatUIX11.cs: Implemented MenuAccessKeysUnderlined by always

@@ -145,6 +145,7 @@ namespace System.Windows.Forms {
 		}
 
 		internal enum SPIAction {
+			SPI_GETDRAGFULLWINDOWS	= 0x0026,
 			SPI_GETKEYBOARDSPEED	= 0x000A,
 			SPI_GETKEYBOARDDELAY	= 0x0016,
 			SPI_GETKEYBOARDCUES		= 0x100A,
@@ -986,6 +987,7 @@ namespace System.Windows.Forms {
 		#endregion	// Private Support Methods
 
 		#region Static Properties
+
 		internal override Keys ModifierKeys {
 			get {
 				short	state;
@@ -1076,6 +1078,20 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal override Size Border3DSize {
+			get {
+				return new Size (Win32GetSystemMetrics (SystemMetrics.SM_CXEDGE),
+					Win32GetSystemMetrics (SystemMetrics.SM_CYEDGE));
+			}
+		}
+
+		internal override Size BorderSize {
+			get {
+				return new Size (Win32GetSystemMetrics (SystemMetrics.SM_CXBORDER),
+					Win32GetSystemMetrics (SystemMetrics.SM_CYBORDER));
+			}
+		}
+
 		internal override bool DropTarget {
 			get {
 				return false;
@@ -1088,7 +1104,14 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		internal override int Caption {
+		internal override Size CaptionButtonSize {
+			get {
+				return new Size (Win32GetSystemMetrics (SystemMetrics.SM_CXSIZE),
+					Win32GetSystemMetrics (SystemMetrics.SM_CYSIZE));
+			}
+		}
+
+		internal override int CaptionHeight {
 			get {
 				return Win32GetSystemMetrics(SystemMetrics.SM_CYCAPTION);
 			}
@@ -1102,13 +1125,35 @@ namespace System.Windows.Forms {
 
 		internal override bool DragFullWindows {
 			get {
-				return true;
+				int full = 0;
+				Win32SystemParametersInfo (SPIAction.SPI_GETDRAGFULLWINDOWS, 0, ref full, 0);
+				return (full != 0);
 			}
 		}
 
 		internal override Size DragSize {
 			get {
 				return new Size(Win32GetSystemMetrics(SystemMetrics.SM_CXDRAG), Win32GetSystemMetrics(SystemMetrics.SM_CYDRAG));
+			}
+		}
+
+		internal override Size DoubleClickSize {
+			get {
+				return new Size (Win32GetSystemMetrics (SystemMetrics.SM_CXDOUBLECLK),
+					Win32GetSystemMetrics (SystemMetrics.SM_CYDOUBLECLK));
+			}
+		}
+
+		internal override int DoubleClickTime {
+			get {
+				return Win32GetDoubleClickTime ();
+			}
+		}
+
+		internal override Size FixedFrameBorderSize {
+			get {
+				return new Size (Win32GetSystemMetrics (SystemMetrics.SM_CXFIXEDFRAME),
+					Win32GetSystemMetrics (SystemMetrics.SM_CYFIXEDFRAME));
 			}
 		}
 
@@ -3198,6 +3243,9 @@ namespace System.Windows.Forms {
 
 		[DllImport ("winmm.dll", EntryPoint="PlaySoundW", CallingConvention=CallingConvention.StdCall, CharSet=CharSet.Unicode)]
 		internal extern static IntPtr Win32PlaySound(string pszSound, IntPtr hmod, SndFlags fdwSound);
+
+		[DllImport ("user32.dll", EntryPoint="GetDoubleClickTime", CallingConvention=CallingConvention.StdCall, CharSet=CharSet.Unicode)]
+		private extern static int Win32GetDoubleClickTime ();
 
 		[DllImport ("user32.dll", EntryPoint="SetWindowRgn", CallingConvention=CallingConvention.StdCall, CharSet=CharSet.Unicode)]
 		internal extern static int Win32SetWindowRgn(IntPtr hWnd, IntPtr hRgn, bool redraw);

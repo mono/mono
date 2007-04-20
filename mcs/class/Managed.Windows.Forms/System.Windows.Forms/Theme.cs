@@ -404,7 +404,7 @@ namespace System.Windows.Forms
 
 		public virtual Size Border3DSize {
 			get {
-				return new Size(2, 2);
+				return XplatUI.Border3DSize;
 			}
 		}
 
@@ -416,13 +416,13 @@ namespace System.Windows.Forms
 
 		public virtual Size BorderSize {
 			get {
-				return new Size(1, 1);
+				return XplatUI.BorderSize;
 			}
 		}
 
 		public virtual Size CaptionButtonSize {
 			get {
-				return new Size(18, 18);
+				return XplatUI.CaptionButtonSize;
 			}
 		}
 
@@ -446,7 +446,7 @@ namespace System.Windows.Forms
 
 		public virtual Size FixedFrameBorderSize {
 			get {
-				return new Size(3, 3);
+				return XplatUI.FixedFrameBorderSize;
 			}
 		}
 

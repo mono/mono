@@ -115,15 +115,45 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		static public Size Border3DSize {
+			get {
+				return driver.Border3DSize;
+			}
+		}
+
+		static public Size BorderSize {
+			get {
+				return driver.BorderSize;
+			}
+		}
+
+		static public Size CaptionButtonSize {
+			get {
+				return driver.CaptionButtonSize;
+			}
+		}
+
 		static public int CaptionHeight {
 			get {
-				return driver.Caption;
+				return driver.CaptionHeight;
 			}
 		}
 
 		static public Size CursorSize {
 			get {
 				return driver.CursorSize;
+			}
+		}
+
+		static public Size DoubleClickSize {
+			get {
+				return driver.DoubleClickSize;
+			}
+		}
+
+		static public int DoubleClickTime {
+			get {
+				return driver.DoubleClickTime;
 			}
 		}
 
@@ -136,6 +166,12 @@ namespace System.Windows.Forms {
 		static public Size DragSize {
 			get {
 				return driver.DragSize;
+			}
+		}
+
+		static public Size FixedFrameBorderSize {
+			get {
+				return driver.FixedFrameBorderSize;
 			}
 		}
 
@@ -282,20 +318,20 @@ namespace System.Windows.Forms {
 				return XplatUI.driver.ThemesEnabled;
 			}
 		}
- 
 
 		#endregion	// Public Static Properties
 
 		#region Events
-                internal static event EventHandler Idle {
-                        add {
-                                driver.Idle += value;
-                        }
-                        remove {
-                                driver.Idle -= value;
-                        }
-                }
-                
+
+		internal static event EventHandler Idle {
+			add {
+				driver.Idle += value;
+			}
+			remove {
+				driver.Idle -= value;
+			}
+		}
+
 		#endregion	// Events
 
 		#region Public Static Methods
