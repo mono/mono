@@ -672,13 +672,7 @@ namespace System.Windows.Forms {
 			if (!found)
 				return;
 
-			// Walk all the way to the end, then walk back visible count
-			//to find the new top node
-			OpenTreeNodeEnumerator walk = new OpenTreeNodeEnumerator (root_node);
-			while (walk.MoveNext ())
-			{ }
-
-			SetTop (walk.CurrentNode);
+			vbar.Value = vbar.Maximum - VisibleCount + 1;
 		}
 
 		
@@ -1123,7 +1117,7 @@ namespace System.Windows.Forms {
 				return;
 			}
 
-			vbar.Value = Math.Min (node.visible_order, vbar.Maximum - VisibleCount);
+			vbar.Value = Math.Min (node.visible_order, vbar.Maximum - VisibleCount + 1);
 		}
 
 		internal void SetBottom (TreeNode node)
@@ -1604,7 +1598,7 @@ namespace System.Windows.Forms {
 				
 				vbar.Visible = true;
 				if (skipped_nodes > 0) {
-					int skip = Math.Min (skipped_nodes, vbar.Maximum - VisibleCount);
+					int skip = Math.Min (skipped_nodes, vbar.Maximum - VisibleCount + 1);
 					skipped_nodes = 0;
 					vbar.Value = skip;
 					skipped_nodes = skip;

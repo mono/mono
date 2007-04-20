@@ -1,3 +1,9 @@
+2007-04-20  Jackson Harper  <jackson@ximian.com>
+
+	* TreeView.cs: Simplify scrolling to the last node after expanding
+	all.
+	- Fix some off by ones with setting the bottom.
+
 2007-04-20  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Control.cs: Use DefaultSize for Size, calculate ClientSize from
