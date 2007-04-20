@@ -226,6 +226,7 @@ namespace System.Windows.Forms {
 		internal abstract void OverrideCursor(IntPtr cursor);
 		internal abstract IntPtr DefineCursor(Bitmap bitmap, Bitmap mask, Color cursor_pixel, Color mask_pixel, int xHotSpot, int yHotSpot);
 		internal abstract IntPtr DefineStdCursor(StdCursor id);
+		internal abstract Bitmap DefineStdCursorBitmap(StdCursor id);
 		internal abstract void DestroyCursor(IntPtr cursor);
 		internal abstract void GetCursorInfo(IntPtr cursor, out int width, out int height, out int hotspot_x, out int hotspot_y);
 

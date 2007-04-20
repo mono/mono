@@ -1989,6 +1989,22 @@ namespace System.Windows.Forms {
 			return cursor;
 		}
 
+		internal override Bitmap DefineStdCursorBitmap (StdCursor id)
+		{
+			// We load the cursor, create a bitmap, draw the cursor onto the bitmap and return the bitmap.
+			IntPtr cursor = DefineStdCursor (id);
+			// Windows only have one possible cursor size!
+			int width = Win32GetSystemMetrics (SystemMetrics.SM_CXCURSOR);
+			int height = Win32GetSystemMetrics (SystemMetrics.SM_CYCURSOR);
+			Bitmap bmp = new Bitmap (width, height);
+			Graphics gc = Graphics.FromImage (bmp);
+			IntPtr hdc = gc.GetHdc ();
+			Win32DrawIcon (hdc, 0, 0, cursor);
+			gc.ReleaseHdc (hdc);
+			gc.Dispose ();
+			return bmp;
+		}
+
 		[MonoTODO("Define the missing cursors")]
 		internal override IntPtr DefineStdCursor(StdCursor id) {
 			switch(id) {
@@ -2883,6 +2899,9 @@ namespace System.Windows.Forms {
 		[DllImport ("user32.dll", EntryPoint="DestroyCursor", CallingConvention=CallingConvention.StdCall)]
 		private extern static bool Win32DestroyCursor(IntPtr hCursor);
 
+		[DllImport ("user32.dll", EntryPoint = "DrawIcon", CallingConvention = CallingConvention.StdCall)]
+		private extern static bool Win32DrawIcon (IntPtr hDC, int X, int Y, IntPtr hIcon);
+		
 		[DllImport ("user32.dll", EntryPoint="DefWindowProcW", CharSet=CharSet.Unicode, CallingConvention=CallingConvention.StdCall)]
 		private extern static IntPtr Win32DefWindowProc(IntPtr hWnd, Msg Msg, IntPtr wParam, IntPtr lParam);
 

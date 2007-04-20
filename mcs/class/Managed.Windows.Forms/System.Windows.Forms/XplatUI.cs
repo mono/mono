@@ -407,6 +407,10 @@ namespace System.Windows.Forms {
 		internal static IntPtr DefineStdCursor(StdCursor id) {
 			return driver.DefineStdCursor(id);
 		}
+		
+		internal static Bitmap DefineStdCursorBitmap(StdCursor id) {
+			return driver.DefineStdCursorBitmap(id);
+		}
 
 		internal static IntPtr DefWndProc(ref Message msg) {
 			return driver.DefWndProc(ref msg);

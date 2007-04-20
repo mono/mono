@@ -98,6 +98,7 @@ namespace System.Windows.Forms {
 		private Bitmap		mask;
 		private Bitmap		cursor;
 		internal string		name;
+		private StdCursor	std_cursor = (StdCursor) (-1);
 
 #if NET_2_0
 		private object tag;
@@ -119,7 +120,11 @@ namespace System.Windows.Forms {
 				this.cursor = ToBitmap(true, true);
 			}
 		}
-
+	
+		internal Cursor (StdCursor cursor) : this (XplatUI.DefineStdCursor (cursor)) {
+			std_cursor = cursor;
+		}
+		
 		private Cursor(SerializationInfo info, StreamingContext context) {
 		}
 
@@ -316,12 +321,20 @@ namespace System.Windows.Forms {
 		}
 
 		public void Draw(Graphics g, Rectangle targetRect) {
+			if (this.cursor == null && std_cursor != (StdCursor) (-1)) {
+				this.cursor = XplatUI.DefineStdCursorBitmap (std_cursor);
+			}
 			if (this.cursor != null) {
-				g.DrawImage(this.cursor, targetRect);
+				// Size of the targetRect is not considered at all
+				g.DrawImage (this.cursor, targetRect.X, targetRect.Y);
 			}
 		}
 
-		public void DrawStretched(Graphics g, Rectangle targetRect) {
+		public void DrawStretched (Graphics g, Rectangle targetRect)
+		{
+			if (this.cursor == null && std_cursor != (StdCursor)(-1)) {
+				this.cursor = XplatUI.DefineStdCursorBitmap (std_cursor);
+			}
 			if (this.cursor != null) {
 				g.DrawImage(this.cursor, targetRect, new Rectangle(0, 0, this.cursor.Width, this.cursor.Height), GraphicsUnit.Pixel);
 			}

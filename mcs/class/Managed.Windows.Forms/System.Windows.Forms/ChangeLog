@@ -1,3 +1,17 @@
+2007-04-20  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* XplatUI.cs, XplatUIDriver.cs, XplatUIOSX.cs: Add
+	  DefineStdCursorBitmap.
+	* Cursor.cs: Add an internal constructor so that the Cursor knows if it
+	  has been created off a standard cursor. This is used to get a
+	  bitmap of the standard cursor when Draw or DrawStretched is called
+	  in order to draw the cursor.
+	* X11Structs.cs: Added XcursorImage and XcursorImages.
+	* XplatUIX11.cs, XplatUIWin32.cs: Add and implement
+	  DefineStdCursorBitmap.
+	* Cursors.cs: Update all relevant creations of Cursor to use the new
+	  internal constructor.
+
 2007-04-19  Jackson Harper  <jackson@ximian.com>
 
 	* TextBox.cs: Move the has_been_focused into the base control, so

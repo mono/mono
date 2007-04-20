@@ -2832,10 +2832,77 @@ namespace System.Windows.Forms {
 			return cursor;
 		}
 
+		internal override Bitmap DefineStdCursorBitmap (StdCursor id) {
+			CursorFontShape	shape;
+			string name;
+			IntPtr theme;
+			int size;
+			Bitmap bmp = null;
+			
+			try {
+				shape = StdCursorToFontShape (id);
+				name = shape.ToString ().Replace ("XC_", string.Empty);
+				size = XcursorGetDefaultSize (DisplayHandle);
+				theme = XcursorGetTheme (DisplayHandle);
+				IntPtr images_ptr = XcursorLibraryLoadImages (name, theme, size);
+#if debug
+				Console.WriteLine ("DefineStdCursorBitmap, id={0}, #id={1}, name{2}, size={3}, theme: {4}, images_ptr={5}", id, (int) id, name, size, Marshal.PtrToStringAnsi (theme), images_ptr);
+#endif
+
+				if (images_ptr == IntPtr.Zero) {
+					return null;
+				}
+
+				XcursorImages images = (XcursorImages) Marshal.PtrToStructure (images_ptr, typeof (XcursorImages));
+#if debug
+				Console.WriteLine ("DefineStdCursorBitmap, cursor has {0} images", images.nimage);
+#endif
+
+				if (images.nimage > 0) {			
+					// We only care about the first image.
+					XcursorImage image = (XcursorImage)Marshal.PtrToStructure (Marshal.ReadIntPtr (images.images), typeof (XcursorImage));
+					
+#if debug
+					Console.WriteLine ("DefineStdCursorBitmap, loaded image <size={0}, height={1}, width={2}, xhot={3}, yhot={4}, pixels={5}", image.size, image.height, image.width, image.xhot, image.yhot, image.pixels);
+#endif
+					// A sanity check
+					if (image.width <= short.MaxValue && image.height <= short.MaxValue) {
+						int [] pixels = new int [image.width * image.height];
+						Marshal.Copy (image.pixels, pixels, 0, pixels.Length);
+						bmp = new Bitmap (image.width, image.height);
+						for (int w = 0; w < image.width; w++) {
+							for (int h = 0; h < image.height; h++) {
+								bmp.SetPixel (w, h, Color.FromArgb (pixels [h * image.width + w]));
+							}
+						}
+					}
+				}
+				
+				XcursorImagesDestroy (images_ptr);
+				
+			} catch (DllNotFoundException ex) {
+				Console.WriteLine ("Could not load libXcursor: DllNotFoundException.");
+				return null;
+			}
+			
+			return bmp;
+		}
+
+		
 		internal override IntPtr DefineStdCursor(StdCursor id) {
 			CursorFontShape	shape;
 			IntPtr		cursor;
 
+			shape = StdCursorToFontShape (id);
+
+			lock (XlibLock) {
+				cursor = XCreateFontCursor(DisplayHandle, shape);
+			}
+			return cursor;
+		}
+
+		internal static CursorFontShape StdCursorToFontShape (StdCursor id) {
+			CursorFontShape shape;
 			// FIXME - define missing shapes
 
 			switch (id) {
@@ -2980,14 +3047,12 @@ namespace System.Windows.Forms {
 				}
 
 				default: {
-					return IntPtr.Zero;
+					shape = (CursorFontShape) 0;
+					break;
 				}
 			}
-
-			lock (XlibLock) {
-				cursor = XCreateFontCursor(DisplayHandle, shape);
-			}
-			return cursor;
+			
+			return shape;
 		}
 
 		internal override IntPtr DefWndProc(ref Message msg) {
@@ -5653,6 +5718,25 @@ namespace System.Windows.Forms {
 		internal override event EventHandler Idle;
 		#endregion	// Events
 
+#region Xcursor imports
+		[DllImport ("libXcursor", EntryPoint = "XcursorLibraryLoadCursor")]
+		internal extern static IntPtr XcursorLibraryLoadCursor (IntPtr display, [MarshalAs (UnmanagedType.LPStr)] string name);
+
+		[DllImport ("libXcursor", EntryPoint = "XcursorLibraryLoadImages")]
+		internal extern static IntPtr XcursorLibraryLoadImages ([MarshalAs (UnmanagedType.LPStr)] string file, IntPtr theme, int size);
+		
+		[DllImport ("libXcursor", EntryPoint = "XcursorImagesDestroy")]
+		internal extern static void XcursorImagesDestroy (IntPtr images);
+		
+		[DllImport ("libXcursor", EntryPoint = "XcursorGetDefaultSize")]
+		internal extern static int XcursorGetDefaultSize (IntPtr display);
+
+		[DllImport ("libXcursor", EntryPoint = "XcursorImageLoadCursor")]
+		internal extern static IntPtr XcursorImageLoadCursor (IntPtr display, IntPtr image);
+
+		[DllImport ("libXcursor", EntryPoint = "XcursorGetTheme")]
+		internal extern static IntPtr XcursorGetTheme (IntPtr display);
+#endregion
 		#region X11 Imports
 		[DllImport ("libX11", EntryPoint="XOpenDisplay")]
 		internal extern static IntPtr XOpenDisplay(IntPtr display);

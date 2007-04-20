@@ -980,6 +980,11 @@ namespace System.Windows.Forms {
 		}
 
 		[MonoTODO]
+		internal override Bitmap DefineStdCursorBitmap (StdCursor id)
+		{
+			throw new NotImplementedException ();
+		}
+		[MonoTODO]
 		internal override IntPtr DefineCursor(Bitmap bitmap, Bitmap mask, Color cursor_pixel, Color mask_pixel, int xHotSpot, int yHotSpot) {
 			throw new NotImplementedException ();
 		}

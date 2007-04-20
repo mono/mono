@@ -1576,4 +1576,24 @@ namespace System.Windows.Forms {
 		UnregisterAccelerator = 13,
 		ActivateAccelerator = 14
 	}
+
+	[StructLayout (LayoutKind.Sequential)]
+	internal struct XcursorImage
+	{
+		private int version;
+		public int size;       /* nominal size for matching */
+		public int width;      /* actual width */
+		public int height;     /* actual height */
+		public int xhot;       /* hot spot x (must be inside image) */
+		public int yhot;       /* hot spot y (must be inside image) */
+		public int delay;       /* hot spot y (must be inside image) */
+		public IntPtr pixels;    /* pointer to pixels */
+	} ;
+
+	[StructLayout (LayoutKind.Sequential)]
+	internal struct XcursorImages
+	{
+		public int nimage;     /* number of images */
+		public IntPtr images;   /* array of XcursorImage pointers */
+	}
 }
