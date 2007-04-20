@@ -853,7 +853,64 @@ namespace System.Windows.Forms.X11Internal {
 
 			return cursor;
 		}
+		
+		public Bitmap DefineStdCursorBitmap (StdCursor id)
+		{
+			CursorFontShape shape;
+			string name;
+			IntPtr theme;
+			int size;
+			Bitmap bmp = null;
 
+			try {
+				shape = XplatUIX11.StdCursorToFontShape (id);
+				name = shape.ToString ().Replace ("XC_", string.Empty);
+				size = XplatUIX11.XcursorGetDefaultSize (Handle);
+				theme = XplatUIX11.XcursorGetTheme (Handle);
+				IntPtr images_ptr = XplatUIX11.XcursorLibraryLoadImages (name, theme, size);
+#if debug
+				Console.WriteLine ("DefineStdCursorBitmap, id={0}, #id={1}, name{2}, size={3}, theme: {4}, images_ptr={5}", id, (int) id, name, size, Marshal.PtrToStringAnsi (theme), images_ptr);
+#endif
+
+				if (images_ptr == IntPtr.Zero) {
+					return null;
+				}
+
+				XcursorImages images = (XcursorImages)Marshal.PtrToStructure (images_ptr, typeof (XcursorImages));
+#if debug
+				Console.WriteLine ("DefineStdCursorBitmap, cursor has {0} images", images.nimage);
+#endif
+
+				if (images.nimage > 0) {
+					// We only care about the first image.
+					XcursorImage image = (XcursorImage)Marshal.PtrToStructure (Marshal.ReadIntPtr (images.images), typeof (XcursorImage));
+
+#if debug
+					Console.WriteLine ("DefineStdCursorBitmap, loaded image <size={0}, height={1}, width={2}, xhot={3}, yhot={4}, pixels={5}", image.size, image.height, image.width, image.xhot, image.yhot, image.pixels);
+#endif
+					// A sanity check
+					if (image.width <= short.MaxValue && image.height <= short.MaxValue) {
+						int [] pixels = new int [image.width * image.height];
+						Marshal.Copy (image.pixels, pixels, 0, pixels.Length);
+						bmp = new Bitmap (image.width, image.height);
+						for (int w = 0; w < image.width; w++) {
+							for (int h = 0; h < image.height; h++) {
+								bmp.SetPixel (w, h, Color.FromArgb (pixels [h * image.width + w]));
+							}
+						}
+					}
+				}
+
+				XplatUIX11.XcursorImagesDestroy (images_ptr);
+
+			} catch (DllNotFoundException ex) {
+				Console.WriteLine ("Could not load libXcursor: DllNotFoundException.");
+				return null;
+			}
+
+			return bmp;
+		}
+		
 		public IntPtr DefineStdCursor (StdCursor id)
 		{
 			CursorFontShape	shape;

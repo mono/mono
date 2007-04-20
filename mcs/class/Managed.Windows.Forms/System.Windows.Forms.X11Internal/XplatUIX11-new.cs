@@ -371,7 +371,10 @@ namespace System.Windows.Forms.X11Internal {
 		{
 			return display.DefineCursor (bitmap, mask, cursor_pixel, mask_pixel, xHotSpot, yHotSpot);
 		}
-
+		internal override Bitmap DefineStdCursorBitmap (StdCursor id) 
+		{
+			return display.DefineStdCursorBitmap (id);
+		}
 		internal override IntPtr DefineStdCursor (StdCursor id)
 		{
 			return display.DefineStdCursor (id);
