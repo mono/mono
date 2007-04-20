@@ -72,8 +72,8 @@ namespace MonoTests.System.Net.Sockets {
 			
 		}
 
-		[Test] // bub #81105
-		[Category ("NotWorking")]
+		[Test] // bug #81105
+		//[Category ("NotWorking")]
 /*
 	This test flagged as not working as its producing this:
 
