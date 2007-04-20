@@ -1,3 +1,10 @@
+2007-04-20  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Control.cs: Use DefaultSize for Size, calculate ClientSize from
+	that.  We were incorrectly doing it the other way around.  Also,
+	update ClientSize if we change the BorderStyle before the control
+	is created.
+
 2007-04-20  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* XplatUI.cs: Added Border3DSize, BorderSize, CaptionButtonSize,

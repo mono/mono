@@ -1015,9 +1015,10 @@ namespace System.Windows.Forms
 			window_target = new ControlWindowTarget(this);
 			window = new ControlNativeWindow(this);
 			child_controls = CreateControlsInstance();
-			client_size = DefaultSize;
+			
+			bounds.Size = DefaultSize;
+			client_size = ClientSizeFromSize (bounds.Size);
 			client_rect = new Rectangle (Point.Empty, client_size);
-			bounds.Size = InternalSizeFromClientSize (client_size);
 			explicit_bounds = bounds;
 		}
 
@@ -1140,7 +1141,8 @@ namespace System.Windows.Forms
 						XplatUI.SetBorderStyle (window.Handle, (FormBorderStyle)border_style);
 						RecreateHandle ();
 						Refresh ();
-					}
+					} else
+						client_size = ClientSizeFromSize (bounds.Size);
 				}
 			}
 		}
@@ -1773,6 +1775,18 @@ namespace System.Windows.Forms
 				return new Size (WindowRect.Width, WindowRect.Height);
 
 			return Size.Empty;
+		}
+		
+		internal Size ClientSizeFromSize (Size size)
+		{
+			// Calling this gives us the difference in Size and ClientSize.
+			// We just have to apply that difference to our given size.
+			Size client_size = this.InternalSizeFromClientSize (size);
+			
+			if (client_size == Size.Empty)
+				return Size.Empty;
+				
+			return new Size (size.Width - (client_size.Width - size.Width), size.Height - (client_size.Height - size.Height));
 		}
 		
 		internal CreateParams GetCreateParams ()
