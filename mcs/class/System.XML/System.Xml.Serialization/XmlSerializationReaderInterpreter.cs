@@ -223,7 +223,7 @@ namespace System.Xml.Serialization
 					return ReadTypedPrimitive (AnyType);
             }
 
-			object ob = Activator.CreateInstance (typeMap.TypeData.Type);
+			object ob = Activator.CreateInstance (typeMap.TypeData.Type, true);
 
 			Reader.MoveToElement();
 			bool isEmpty = Reader.IsEmptyElement;
@@ -623,7 +623,7 @@ namespace System.Xml.Serialization
 					return ReadObject (elem.MappedType, elem.IsNullable, true);
 
 				case SchemaTypes.XmlSerializable:
-					object ob = Activator.CreateInstance (elem.TypeData.Type);
+					object ob = Activator.CreateInstance (elem.TypeData.Type, true);
 					return ReadSerializable ((IXmlSerializable)ob);
 
 				default:
@@ -734,7 +734,7 @@ namespace System.Xml.Serialization
 			else	// Must be IEnumerable
 			{
 				if (list == null) {
-					if (canCreateInstance) list = Activator.CreateInstance (type);
+					if (canCreateInstance) list = Activator.CreateInstance (type, true);
 					else throw CreateReadOnlyCollectionException (type.FullName);
 				}
 
@@ -753,7 +753,7 @@ namespace System.Xml.Serialization
 			if (listType.IsArray)
 				return EnsureArrayIndex (null, 0, listType.GetElementType());
 			else
-				return Activator.CreateInstance (listType);
+				return Activator.CreateInstance (listType, true);
 		}
 		
 		object InitializeList (TypeData listType)
@@ -761,7 +761,7 @@ namespace System.Xml.Serialization
 			if (listType.Type.IsArray)
 				return null;
 			else
-				return Activator.CreateInstance (listType.Type);
+				return Activator.CreateInstance (listType.Type, true);
 		}
 
 		void FillList (object list, object items)
@@ -825,7 +825,7 @@ namespace System.Xml.Serialization
 			{
 				if (Reader.LocalName == typeMap.ElementName && Reader.NamespaceURI == typeMap.Namespace)
 				{
-					object ob = Activator.CreateInstance (typeMap.TypeData.Type);
+					object ob = Activator.CreateInstance (typeMap.TypeData.Type, true);
 					return ReadSerializable ((IXmlSerializable)ob);
 				}
 				else

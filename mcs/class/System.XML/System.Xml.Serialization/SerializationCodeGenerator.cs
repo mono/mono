@@ -1440,7 +1440,7 @@ namespace System.Xml.Serialization
 						XmlTypeMapMember mem = (XmlTypeMapMember) members [n];
 						if (!mem.IsReturnValue && mem.TypeData.IsValueType)
 							GenerateSetMemberValueFromAttr (mem, "parameters",
-								"new " + mem.TypeData.FullTypeName + "()", true);
+								String.Format ("({0}) Activator.CreateInstance(typeof({0}), true)", mem.TypeData.FullTypeName), true);
 					}
 
 					WriteLine ("while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.ReadState == ReadState.Interactive)");
@@ -1540,7 +1540,7 @@ namespace System.Xml.Serialization
 			}
 			else
 			{
-				WriteLine (typeMap.TypeData.CSharpFullName + " ob = new " + typeMap.TypeData.CSharpFullName + " ();");
+				WriteLine (typeMap.TypeData.CSharpFullName + String.Format (" ob = ({0}) Activator.CreateInstance(typeof({0}), true);", typeMap.TypeData.CSharpFullName));
 			
 				if (GenerateReadHook (HookType.type, typeMap.TypeData.Type)) {
 					WriteLine ("return ob;");
@@ -1580,7 +1580,7 @@ namespace System.Xml.Serialization
 				}
 	
 				WriteLine ("");
-				WriteLine ("ob = new " + typeMap.TypeData.CSharpFullName + " ();");
+				WriteLine (String.Format ("ob = ({0}) Activator.CreateInstance(typeof({0}), true);", typeMap.TypeData.CSharpFullName));
 			}
 			
 			WriteLine ("");
@@ -2130,7 +2130,7 @@ namespace System.Xml.Serialization
 					return GetReadObjectCall (elem.MappedType, GetLiteral(elem.IsNullable), "true");
 
 				case SchemaTypes.XmlSerializable:
-					return GetCast (elem.TypeData, "ReadSerializable (new " + elem.TypeData.CSharpFullName + " ())");
+					return GetCast (elem.TypeData, String.Format ("ReadSerializable (({0}) Activator.CreateInstance(typeof({0}), true))", elem.TypeData.CSharpFullName));
 
 				default:
 					throw new NotSupportedException ("Invalid value type");
@@ -2299,7 +2299,7 @@ namespace System.Xml.Serialization
 			{
 				WriteLine ("if (((object)" + list + ") == null)");
 				if (canCreateInstance) 
-					WriteLine ("\t" + list + " = new " + listType.CSharpFullName + "();");
+					WriteLine ("\t" + list + String.Format (" = ({0}) Activator.CreateInstance(typeof({0}), true);", listType.CSharpFullName));
 				else 
 					WriteLine ("\tthrow CreateReadOnlyCollectionException (" + GetLiteral (listType.CSharpFullName) + ");");
 				
@@ -2420,7 +2420,7 @@ namespace System.Xml.Serialization
 			WriteLine ("if (Reader.NodeType == XmlNodeType.Element)");
 			WriteLineInd ("{");
 			WriteLine ("if (Reader.LocalName == " + GetLiteral (typeMap.ElementName) + " && Reader.NamespaceURI == " + GetLiteral (typeMap.Namespace) + ")");
-			WriteLine ("\treturn ReadSerializable (new " + typeMap.TypeData.CSharpFullName + "());");
+			WriteLine (String.Format ("\treturn ReadSerializable (({0}) Activator.CreateInstance(typeof({0}), true));", typeMap.TypeData.CSharpFullName));
 			WriteLine ("else");
 			WriteLine ("\tthrow CreateUnknownNodeException ();");
 			WriteLineUni ("}");

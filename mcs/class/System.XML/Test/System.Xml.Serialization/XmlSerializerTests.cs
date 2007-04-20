@@ -2585,6 +2585,16 @@ namespace MonoTests.System.XmlSerialization
 			stream.Position = 0;
 			foo = (Bug80759) serializer.Deserialize (stream);
 		}
+
+		[Test]
+		public void SupportPrivateCtorOnly ()
+		{
+			XmlSerializer xs =
+				new XmlSerializer (typeof (PrivateCtorOnly));
+			StringWriter sw = new StringWriter ();
+			xs.Serialize (sw, PrivateCtorOnly.Instance);
+			xs.Deserialize (new StringReader (sw.ToString ()));
+		}
 #endif
 
 		#endregion //GenericsSeralizationTests
@@ -2644,6 +2654,15 @@ namespace MonoTests.System.XmlSerialization
 		{
 			[XmlAttribute (DataType = "hexBinary")]
 			public byte[] Data = new byte[] { 1, 2, 3 };
+		}
+
+		[XmlRoot ("PrivateCtorOnly")]
+		public class PrivateCtorOnly
+		{
+			public static PrivateCtorOnly Instance = new PrivateCtorOnly ();
+			private PrivateCtorOnly ()
+			{
+			}
 		}
 
 		public class CDataTextNodesType

@@ -193,7 +193,7 @@ namespace System.Xml.Serialization
 		internal XmlSerializableMapping(string elementName, string ns, TypeData typeData, string xmlType, string xmlTypeNamespace)
 			: base(elementName, ns, typeData, xmlType, xmlTypeNamespace)
 		{
-			IXmlSerializable serializable = (IXmlSerializable)Activator.CreateInstance(typeData.Type);
+			IXmlSerializable serializable = (IXmlSerializable)Activator.CreateInstance (typeData.Type, true);
 			_schema = serializable.GetSchema();
 			if (_schema != null) 
 			{
