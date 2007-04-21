@@ -82,8 +82,6 @@ namespace System.IO
 				this.canseek = true;
 			} else {
 				this.canseek = false;
-				noBuffering = true;
-				bufferSize = 0;
 			}
 
 			this.handle = handle;
