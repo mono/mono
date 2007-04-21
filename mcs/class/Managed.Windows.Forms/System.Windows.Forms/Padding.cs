@@ -33,7 +33,7 @@ using System.Drawing;
 namespace System.Windows.Forms {
 
 	[Serializable]
-	//FIXME: implement [TypeConverter(typeof(PaddingConverter))]
+	[TypeConverter(typeof(PaddingConverter))]
 	public struct Padding {
 
 		//NOTE: "_var" field name is required by serialization.

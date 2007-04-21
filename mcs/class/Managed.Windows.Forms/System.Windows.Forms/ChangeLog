@@ -1,3 +1,8 @@
+2007-04-21  Miguel de Icaza  <miguel@novell.com>
+
+	* Padding.cs: Use the converter, fixes the resgen2 issue with
+	XMLNotePad. 
+
 2007-04-21  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs: Dont try to unhighlight the selected node if there
