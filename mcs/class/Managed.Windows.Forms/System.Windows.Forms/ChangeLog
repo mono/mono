@@ -1,3 +1,13 @@
+2007-04-21  Jackson Harper  <jackson@ximian.com>
+
+	* UpDownBase.cs:
+	* TextBoxBase.cs:
+	* ListView.cs:
+	* ListBox.cs:
+	* TreeView.cs: Use the InternalBorderStyle property to set the
+	initial border style, this forces the client rectangle to be sized
+	correctly.
+
 2007-04-20  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs: Simplify scrolling to the last node after expanding
