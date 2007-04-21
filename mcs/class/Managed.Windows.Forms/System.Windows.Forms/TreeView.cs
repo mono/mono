@@ -1828,7 +1828,7 @@ namespace System.Windows.Forms {
 			if (!select_mmove)
 				return;
 
-			if (e.Button == MouseButtons.Right) {
+			if (e.Button == MouseButtons.Right && selected_node != null) {
 				Invalidate (highlighted_node.Bounds);
 				highlighted_node = selected_node;
 				Invalidate (selected_node.Bounds);

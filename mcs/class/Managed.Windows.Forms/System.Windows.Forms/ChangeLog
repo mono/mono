@@ -1,5 +1,10 @@
 2007-04-21  Jackson Harper  <jackson@ximian.com>
 
+	* TreeView.cs: Dont try to unhighlight the selected node if there
+	isn't a selected node.
+
+2007-04-21  Jackson Harper  <jackson@ximian.com>
+
 	* UpDownBase.cs:
 	* TextBoxBase.cs:
 	* ListView.cs:
