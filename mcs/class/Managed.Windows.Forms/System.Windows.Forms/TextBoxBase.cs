@@ -92,7 +92,7 @@ namespace System.Windows.Forms {
 			accepts_return = false;
 			accepts_tab = false;
 			auto_size = true;
-			border_style = BorderStyle.Fixed3D;
+			InternalBorderStyle = BorderStyle.Fixed3D;
 			actual_border_style = BorderStyle.Fixed3D;
 			character_casing = CharacterCasing.Normal;
 			hide_selection = true;

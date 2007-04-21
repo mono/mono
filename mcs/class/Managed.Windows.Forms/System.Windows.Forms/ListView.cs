@@ -228,7 +228,7 @@ namespace System.Windows.Forms
 			items_location = new Point [16];
 			items_matrix_location = new ItemMatrixLocation [16];
 
-			border_style = BorderStyle.Fixed3D;
+			InternalBorderStyle = BorderStyle.Fixed3D;
 
 			header_control = new HeaderControl (this);
 			header_control.Visible = false;

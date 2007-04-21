@@ -95,7 +95,7 @@ namespace System.Windows.Forms
 
 		public ListBox ()
 		{
-			border_style = BorderStyle.Fixed3D;			
+			InternalBorderStyle = BorderStyle.Fixed3D;			
 			BackColor = ThemeEngine.Current.ColorWindow;
 
 			items = CreateItemCollection ();

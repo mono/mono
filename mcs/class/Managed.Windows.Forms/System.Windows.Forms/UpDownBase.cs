@@ -304,7 +304,7 @@ namespace System.Windows.Forms
 		public UpDownBase()
 		{
 			_UpDownAlign = LeftRightAlignment.Right;
-			border_style = BorderStyle.Fixed3D;
+			InternalBorderStyle = BorderStyle.Fixed3D;
 
 			spnSpinner = new UpDownSpinner(this);
 

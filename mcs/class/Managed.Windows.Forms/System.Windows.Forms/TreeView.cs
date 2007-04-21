@@ -105,7 +105,7 @@ namespace System.Windows.Forms {
 		#region Public Constructors	
 		public TreeView ()
 		{
-			border_style = BorderStyle.Fixed3D;
+			InternalBorderStyle = BorderStyle.Fixed3D;
 			base.background_color = ThemeEngine.Current.ColorWindow;
 			base.foreground_color = ThemeEngine.Current.ColorWindowText;
 
