@@ -192,40 +192,55 @@ Mono Ahead Of Time Compiler
 * Performance considerations
 ----------------------------
 
-Using AOT code is a trade-off which might lead to higher or slower performance,
-depending on a lot of circumstances. Some of these are:
+	Using AOT code is a trade-off which might lead to higher or
+	slower performance, depending on a lot of circumstances. Some
+	of these are:
+	
+	- AOT code needs to be loaded from disk before being used, so
+	  cold startup of an application using AOT code MIGHT be
+	  slower than using JITed code. Warm startup (when the code is
+	  already in the machines cache) should be faster.  Also,
+	  JITing code takes time, and the JIT compiler also need to
+	  load additional metadata for the method from the disk, so
+	  startup can be faster even in the cold startup case.
 
-- AOT code needs to be loaded from disk before being used, so cold startup of
-  an application using AOT code MIGHT be slower than using JITed code. Warm
-  startup (when the code is already in the machines cache) should be faster.
-  Also, JITing code takes time, and the JIT compiler also need to load 
-  additional metadata for the method from the disk, so startup can be faster
-  even in the cold startup case.
-- AOT code is usually compiled with all optimizations turned on, while JITted
-  code is usually compiled with default optimizations, so the generated code
-  in the AOT case should be faster.
-- JITted code can directly access runtime data structures and helper functions,
-  while AOT code needs to go through an indirection (the GOT) to access them,
-  so it will be slower and somewhat bigger as well.
-- When JITting code, the JIT compiler needs to load a lot of metadata about
-  methods and types into memory.
-- JITted code has better locality, meaning that if A method calls B, then
-  the native code for A and B is usually quite close in memory, leading to
-  better cache behaviour thus improved performance. In contrast, the native
-  code of methods inside the AOT file is in a somewhat random order.
+	- AOT code is usually compiled with all optimizations turned
+	  on, while JITted code is usually compiled with default
+	  optimizations, so the generated code in the AOT case should
+	  be faster.
 
+	- JITted code can directly access runtime data structures and
+	  helper functions, while AOT code needs to go through an
+	  indirection (the GOT) to access them, so it will be slower
+	  and somewhat bigger as well.
+
+	- When JITting code, the JIT compiler needs to load a lot of
+	  metadata about methods and types into memory.
+
+	- JITted code has better locality, meaning that if A method
+	  calls B, then the native code for A and B is usually quite
+	  close in memory, leading to better cache behaviour thus
+	  improved performance. In contrast, the native code of
+	  methods inside the AOT file is in a somewhat random order.
+	
 * Future Work
 -------------
 
-- Currently, when an AOT module is loaded, all of its dependent assemblies are also
-  loaded eagerly, and these assemblies need to be exactly the same as the ones loaded 
-  when the AOT module was created ('hard binding'). Non-hard binding should be allowed.
-- On x86, the generated code uses call 0, pop REG, add GOTOFFSET, REG to 
-  materialize the GOT address. Newer versions of gcc use a separate function
-  to do this, maybe we need to do the same.
-- Currently, we get vtable addresses from the GOT. Another solution would be
-  to store the data from the vtables in the .bss section, so accessing them
-  would involve less indirection.
+	- Currently, when an AOT module is loaded, all of its
+	  dependent assemblies are also loaded eagerly, and these
+	  assemblies need to be exactly the same as the ones loaded
+	  when the AOT module was created ('hard binding'). Non-hard
+	  binding should be allowed.
 
+	- On x86, the generated code uses call 0, pop REG, add
+	  GOTOFFSET, REG to materialize the GOT address. Newer
+	  versions of gcc use a separate function to do this, maybe we
+	  need to do the same.
+
+	- Currently, we get vtable addresses from the GOT. Another
+	  solution would be to store the data from the vtables in the
+	  .bss section, so accessing them would involve less
+	  indirection.
+	
 
 
