@@ -2,6 +2,7 @@
 
 	* CookieContainerTest.cs: Removed usage of deprecated Asssertion
 	class. Added test for bug #81421.
+	* SocketResponder.cs: Thread-safety fixes.
 
 2007-03-07  Vladimir Krasnov  <vladimirk@mainsoft.com>
 

@@ -44,6 +44,10 @@ namespace MonoTests.System.Net
 		private readonly IPEndPoint _localEndPoint;
 		private Thread listenThread;
 		private SocketRequestHandler _requestHandler;
+		private bool _stopped = true;
+		private readonly object _syncRoot = new object ();
+
+		private const int SOCKET_CLOSED = 10004;
 
 		public SocketResponder (IPEndPoint localEP, SocketRequestHandler requestHandler)
 		{
@@ -61,31 +65,55 @@ namespace MonoTests.System.Net
 			Stop ();
 		}
 
+		public bool IsStopped
+		{
+			get
+			{
+				lock (_syncRoot) {
+					return _stopped;
+				}
+			}
+		}
+
 		public void Start ()
 		{
-			tcpListener = new TcpListener (LocalEndPoint);
-			tcpListener.Start ();
-			listenThread = new Thread (new ThreadStart (Listen));
-			listenThread.Start ();
+			lock (_syncRoot) {
+				if (!_stopped)
+					return;
+				_stopped = false;
+				listenThread = new Thread (new ThreadStart (Listen));
+				listenThread.Start ();
+				Thread.Sleep (20); // allow listener to start
+			}
 		}
 
 		public void Stop ()
 		{
-			if (tcpListener != null)
-				tcpListener.Stop ();
-
-			try {
-				if (listenThread != null && listenThread.ThreadState == ThreadState.Running) {
-					listenThread.Abort ();
+			lock (_syncRoot) {
+				if (_stopped)
+					return;
+				_stopped = true;
+				if (tcpListener != null) {
+					tcpListener.Stop ();
+					tcpListener = null;
 				}
-			} catch {
 			}
 		}
 
 		private void Listen ()
 		{
-			Socket socket = tcpListener.AcceptSocket ();
-			socket.Send (_requestHandler (socket));
+			tcpListener = new TcpListener (LocalEndPoint);
+			tcpListener.Start ();
+			while (!_stopped) {
+				try {
+					Socket socket = tcpListener.AcceptSocket ();
+					socket.Send (_requestHandler (socket));
+				} catch (SocketException ex) {
+					// ignore interruption of blocking call
+					if (ex.ErrorCode != SOCKET_CLOSED)
+						throw;
+				}
+			}
 		}
 	}
 }
