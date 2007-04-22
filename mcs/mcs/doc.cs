@@ -96,7 +96,7 @@ namespace Mono.CSharp {
 		}
 
 		// MemberCore
-		private static readonly string lineHead =
+		private static readonly string line_head =
 			Environment.NewLine + "            ";
 
 		private static XmlNode GetDocCommentNode (MemberCore mc,
@@ -125,8 +125,8 @@ namespace Mono.CSharp {
 					if (s.Length > 0)
 						split [j++] = s;
 				}
-				el.InnerXml = lineHead + String.Join (
-					lineHead, split, 0, j);
+				el.InnerXml = line_head + String.Join (
+					line_head, split, 0, j);
 				return el;
 			} catch (XmlException ex) {
 				Report.Warning (1570, 1, mc.Location, "XML comment on `{0}' has non-well-formed XML ({1})", name, ex.Message);
@@ -164,16 +164,16 @@ namespace Mono.CSharp {
 					}
 
 					// FIXME: it could be done with XmlReader
-					DeclSpace dsTarget = mc as DeclSpace;
-					if (dsTarget == null)
-						dsTarget = ds;
+					DeclSpace ds_target = mc as DeclSpace;
+					if (ds_target == null)
+						ds_target = ds;
 
 					foreach (XmlElement see in n.SelectNodes (".//see"))
-						HandleSee (mc, dsTarget, see);
+						HandleSee (mc, ds_target, see);
 					foreach (XmlElement seealso in n.SelectNodes (".//seealso"))
-						HandleSeeAlso (mc, dsTarget, seealso);
+						HandleSeeAlso (mc, ds_target, seealso);
 					foreach (XmlElement see in n.SelectNodes (".//exception"))
-						HandleException (mc, dsTarget, see);
+						HandleException (mc, ds_target, see);
 				}
 
 				n.WriteTo (RootContext.Documentation.XmlCommentOutput);
@@ -192,18 +192,18 @@ namespace Mono.CSharp {
 		//
 		private static bool HandleInclude (MemberCore mc, XmlElement el)
 		{
-			bool keepIncludeNode = false;
+			bool keep_include_node = false;
 			string file = el.GetAttribute ("file");
 			string path = el.GetAttribute ("path");
 			if (file == "") {
 				Report.Warning (1590, 1, mc.Location, "Invalid XML `include' element. Missing `file' attribute");
 				el.ParentNode.InsertBefore (el.OwnerDocument.CreateComment (" Include tag is invalid "), el);
-				keepIncludeNode = true;
+				keep_include_node = true;
 			}
 			else if (path.Length == 0) {
 				Report.Warning (1590, 1, mc.Location, "Invalid XML `include' element. Missing `path' attribute");
 				el.ParentNode.InsertBefore (el.OwnerDocument.CreateComment (" Include tag is invalid "), el);
-				keepIncludeNode = true;
+				keep_include_node = true;
 			}
 			else {
 				XmlDocument doc = RootContext.Documentation.StoredDocuments [file] as XmlDocument;
@@ -223,7 +223,7 @@ namespace Mono.CSharp {
 						if (nl.Count == 0) {
 							el.ParentNode.InsertBefore (el.OwnerDocument.CreateComment (" No matching elements were found for the include tag embedded here. "), el);
 					
-							keepIncludeNode = true;
+							keep_include_node = true;
 						}
 						foreach (XmlNode n in nl)
 							el.ParentNode.InsertBefore (el.OwnerDocument.ImportNode (n, true), el);
@@ -233,7 +233,7 @@ namespace Mono.CSharp {
 					}
 				}
 			}
-			return keepIncludeNode;
+			return keep_include_node;
 		}
 
 		//
@@ -272,17 +272,17 @@ namespace Mono.CSharp {
 		//
 		private static Type FindDocumentedType (MemberCore mc, string name, DeclSpace ds, string cref)
 		{
-			bool isArray = false;
+			bool is_array = false;
 			string identifier = name;
 			if (name [name.Length - 1] == ']') {
 				string tmp = name.Substring (0, name.Length - 1).Trim (wsChars);
 				if (tmp [tmp.Length - 1] == '[') {
 					identifier = tmp.Substring (0, tmp.Length - 1).Trim (wsChars);
-					isArray = true;
+					is_array = true;
 				}
 			}
 			Type t = FindDocumentedTypeNonArray (mc, identifier, ds, cref);
-			if (t != null && isArray)
+			if (t != null && is_array)
 				t = Array.CreateInstance (t, 0).GetType ();
 			return t;
 		}
@@ -347,12 +347,12 @@ namespace Mono.CSharp {
 			new MemberInfo [0];
 
 		private static MemberInfo [] FindMethodBase (Type type,
-			BindingFlags bindingFlags, MethodSignature signature)
+			BindingFlags binding_flags, MethodSignature signature)
 		{
 			MemberList ml = TypeManager.FindMembers (
 				type,
 				MemberTypes.Constructor | MemberTypes.Method | MemberTypes.Property | MemberTypes.Custom,
-				bindingFlags,
+				binding_flags,
 				MethodSignature.method_signature_filter,
 				signature);
 			if (ml == null)
@@ -431,17 +431,17 @@ namespace Mono.CSharp {
 			public readonly MemberInfo Member;
 			public readonly Type Type;
 
-			public FoundMember (bool regardlessOfThisValueItsEmpty)
+			public FoundMember (bool regardless_of_this_value_its_empty)
 			{
 				IsEmpty = true;
 				Member = null;
 				Type = null;
 			}
 
-			public FoundMember (Type foundType, MemberInfo member)
+			public FoundMember (Type found_type, MemberInfo member)
 			{
 				IsEmpty = false;
-				Type = foundType;
+				Type = found_type;
 				Member = member;
 			}
 		}
@@ -451,78 +451,78 @@ namespace Mono.CSharp {
 		// (by "see" or "seealso" elements).
 		//
 		private static FoundMember FindDocumentedMember (MemberCore mc,
-			Type type, string memberName, Type [] paramList, 
-			DeclSpace ds, out int warningType, string cref,
-			bool warn419, string nameForError)
+			Type type, string member_name, Type [] param_list, 
+			DeclSpace ds, out int warning_type, string cref,
+			bool warn419, string name_for_error)
 		{
 			for (; type != null; type = type.DeclaringType) {
 				MemberInfo mi = FindDocumentedMemberNoNest (
-					mc, type, memberName, paramList, ds,
-					out warningType, cref, warn419,
-					nameForError);
+					mc, type, member_name, param_list, ds,
+					out warning_type, cref, warn419,
+					name_for_error);
 				if (mi != null)
 					return new FoundMember (type, mi);
 			}
-			warningType = 0;
+			warning_type = 0;
 			return FoundMember.Empty;
 		}
 
 		private static MemberInfo FindDocumentedMemberNoNest (
-			MemberCore mc, Type type, string memberName,
-			Type [] paramList, DeclSpace ds, out int warningType, 
-			string cref, bool warn419, string nameForError)
+			MemberCore mc, Type type, string member_name,
+			Type [] param_list, DeclSpace ds, out int warning_type, 
+			string cref, bool warn419, string name_for_error)
 		{
-			warningType = 0;
+			warning_type = 0;
 			MemberInfo [] mis;
 
-			if (paramList == null) {
+			if (param_list == null) {
 				// search for fields/events etc.
 				mis = TypeManager.MemberLookup (type, null,
 					type, MemberTypes.All,
 					BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance,
-					memberName, null);
+					member_name, null);
 				mis = FilterOverridenMembersOut (mis);
 				if (mis == null || mis.Length == 0)
 					return null;
 				if (warn419 && IsAmbiguous (mis))
-					Report419 (mc, nameForError, mis);
+					Report419 (mc, name_for_error, mis);
 				return mis [0];
 			}
 
-			MethodSignature msig = new MethodSignature (memberName, null, paramList);
+			MethodSignature msig = new MethodSignature (member_name, null, param_list);
 			mis = FindMethodBase (type, 
 				BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance,
 				msig);
 
 			if (warn419 && mis.Length > 0) {
 				if (IsAmbiguous (mis))
-					Report419 (mc, nameForError, mis);
+					Report419 (mc, name_for_error, mis);
 				return mis [0];
 			}
 
 			// search for operators (whose parameters exactly
 			// matches with the list) and possibly report CS1581.
 			string oper = null;
-			string returnTypeName = null;
-			if (memberName.StartsWith ("implicit operator ")) {
+			string return_type_name = null;
+			if (member_name.StartsWith ("implicit operator ")) {
 				oper = "op_Implicit";
-				returnTypeName = memberName.Substring (18).Trim (wsChars);
+				return_type_name = member_name.Substring (18).Trim (wsChars);
 			}
-			else if (memberName.StartsWith ("explicit operator ")) {
+			else if (member_name.StartsWith ("explicit operator ")) {
 				oper = "op_Explicit";
-				returnTypeName = memberName.Substring (18).Trim (wsChars);
+				return_type_name = member_name.Substring (18).Trim (wsChars);
 			}
-			else if (memberName.StartsWith ("operator ")) {
-				oper = memberName.Substring (9).Trim (wsChars);
+			else if (member_name.StartsWith ("operator ")) {
+				oper = member_name.Substring (9).Trim (wsChars);
 				switch (oper) {
 				// either unary or binary
 				case "+":
-					oper = paramList.Length == 2 ?
+					oper = param_list.Length == 2 ?
 						Binary.oper_names [(int) Binary.Operator.Addition] :
 						Unary.oper_names [(int) Unary.Operator.UnaryPlus];
 					break;
 				case "-":
-					oper = paramList.Length == 2 ?
+					oper = param_list.Length == 2 ?
 						Binary.oper_names [(int) Binary.Operator.Subtraction] :
 						Unary.oper_names [(int) Unary.Operator.UnaryNegation];
 					break;
@@ -570,8 +570,8 @@ namespace Mono.CSharp {
 				case ">=":
 					oper = Binary.oper_names [(int) Binary.Operator.GreaterThanOrEqual]; break;
 				default:
-					warningType = 1584;
-					Report.Warning (1020, 1, mc.Location, "Overloadable {0} operator is expected", paramList.Length == 2 ? "binary" : "unary");
+					warning_type = 1584;
+					Report.Warning (1020, 1, mc.Location, "Overloadable {0} operator is expected", param_list.Length == 2 ? "binary" : "unary");
 					Report.Warning (1584, 1, mc.Location, "XML comment on `{0}' has syntactically incorrect cref attribute `{1}'",
 						mc.GetSignatureForError (), cref);
 					return null;
@@ -579,7 +579,7 @@ namespace Mono.CSharp {
 			}
 			// here we still don't consider return type (to
 			// detect CS1581 or CS1002+CS1584).
-			msig = new MethodSignature (oper, null, paramList);
+			msig = new MethodSignature (oper, null, param_list);
 
 			mis = FindMethodBase (type, 
 				BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance,
@@ -592,10 +592,10 @@ namespace Mono.CSharp {
 				mi is PropertyInfo ?
 				((PropertyInfo) mi).PropertyType :
 				null;
-			if (returnTypeName != null) {
-				Type returnType = FindDocumentedType (mc, returnTypeName, ds, cref);
+			if (return_type_name != null) {
+				Type returnType = FindDocumentedType (mc, return_type_name, ds, cref);
 				if (returnType == null || returnType != expected) {
-					warningType = 1581;
+					warning_type = 1581;
 					Report.Warning (1581, 1, mc.Location, "Invalid return type in XML comment cref attribute `{0}'", cref);
 					return null;
 				}
@@ -642,16 +642,16 @@ namespace Mono.CSharp {
 			else
 				signature = cref;
 
-			int parensPos = signature.IndexOf ('(');
-			int bracePos = parensPos >= 0 ? -1 :
+			int parens_pos = signature.IndexOf ('(');
+			int brace_pos = parens_pos >= 0 ? -1 :
 				signature.IndexOf ('[');
-			if (parensPos > 0 && signature [signature.Length - 1] == ')') {
-				name = signature.Substring (0, parensPos).Trim (wsChars);
-				parameters = signature.Substring (parensPos + 1, signature.Length - parensPos - 2).Trim (wsChars);
+			if (parens_pos > 0 && signature [signature.Length - 1] == ')') {
+				name = signature.Substring (0, parens_pos).Trim (wsChars);
+				parameters = signature.Substring (parens_pos + 1, signature.Length - parens_pos - 2).Trim (wsChars);
 			}
-			else if (bracePos > 0 && signature [signature.Length - 1] == ']') {
-				name = signature.Substring (0, bracePos).Trim (wsChars);
-				parameters = signature.Substring (bracePos + 1, signature.Length - bracePos - 2).Trim (wsChars);
+			else if (brace_pos > 0 && signature [signature.Length - 1] == ']') {
+				name = signature.Substring (0, brace_pos).Trim (wsChars);
+				parameters = signature.Substring (brace_pos + 1, signature.Length - brace_pos - 2).Trim (wsChars);
 			}
 			else {
 				name = signature;
@@ -664,9 +664,9 @@ namespace Mono.CSharp {
 			// Check if identifier is valid.
 			// This check is not necessary to mark as error, but
 			// csc specially reports CS1584 for wrong identifiers.
-			string [] nameElems = identifier.Split ('.');
-			for (int i = 0; i < nameElems.Length; i++) {
-				string nameElem = GetBodyIdentifierFromName (nameElems [i]);
+			string [] name_elems = identifier.Split ('.');
+			for (int i = 0; i < name_elems.Length; i++) {
+				string nameElem = GetBodyIdentifierFromName (name_elems [i]);
 				if (i > 0)
 					Normalize (mc, ref nameElem);
 				if (!Tokenizer.IsValidIdentifier (nameElem)
@@ -679,35 +679,35 @@ namespace Mono.CSharp {
 			}
 
 			// check if parameters are valid
-			Type [] parameterTypes;
+			Type [] parameter_types;
 			if (parameters == null)
-				parameterTypes = null;
+				parameter_types = null;
 			else if (parameters.Length == 0)
-				parameterTypes = Type.EmptyTypes;
+				parameter_types = Type.EmptyTypes;
 			else {
-				string [] paramList = parameters.Split (',');
+				string [] param_list = parameters.Split (',');
 				ArrayList plist = new ArrayList ();
-				for (int i = 0; i < paramList.Length; i++) {
-					string paramTypeName = paramList [i].Trim (wsChars);
-					Normalize (mc, ref paramTypeName);
-					Type paramType = FindDocumentedType (mc, paramTypeName, ds, cref);
-					if (paramType == null) {
+				for (int i = 0; i < param_list.Length; i++) {
+					string param_type_name = param_list [i].Trim (wsChars);
+					Normalize (mc, ref param_type_name);
+					Type param_type = FindDocumentedType (mc, param_type_name, ds, cref);
+					if (param_type == null) {
 						Report.Warning (1580, 1, mc.Location, "Invalid type for parameter `{0}' in XML comment cref attribute `{1}'",
 							(i + 1).ToString (), cref);
 						return;
 					}
-					plist.Add (paramType);
+					plist.Add (param_type);
 				}
-				parameterTypes = plist.ToArray (typeof (Type)) as Type [];
+				parameter_types = plist.ToArray (typeof (Type)) as Type [];
 			}
 
 			Type type = FindDocumentedType (mc, name, ds, cref);
 			if (type != null
 				// delegate must not be referenced with args
 				&& (!type.IsSubclassOf (typeof (System.Delegate))
-				|| parameterTypes == null)) {
+				|| parameter_types == null)) {
 				string result = GetSignatureForDoc (type)
-					+ (bracePos < 0 ? String.Empty : signature.Substring (bracePos));
+					+ (brace_pos < 0 ? String.Empty : signature.Substring (brace_pos));
 				xref.SetAttribute ("cref", "T:" + result);
 				return; // a type
 			}
@@ -715,13 +715,13 @@ namespace Mono.CSharp {
 			int period = name.LastIndexOf ('.');
 			if (period > 0) {
 				string typeName = name.Substring (0, period);
-				string memberName = name.Substring (period + 1);
-				Normalize (mc, ref memberName);
+				string member_name = name.Substring (period + 1);
+				Normalize (mc, ref member_name);
 				type = FindDocumentedType (mc, typeName, ds, cref);
-				int warnResult;
+				int warn_result;
 				if (type != null) {
-					FoundMember fm = FindDocumentedMember (mc, type, memberName, parameterTypes, ds, out warnResult, cref, true, name);
-					if (warnResult > 0)
+					FoundMember fm = FindDocumentedMember (mc, type, member_name, parameter_types, ds, out warn_result, cref, true, name);
+					if (warn_result > 0)
 						return;
 					if (!fm.IsEmpty) {
 						MemberInfo mi = fm.Member;
@@ -729,15 +729,15 @@ namespace Mono.CSharp {
 						// to get its name, since mi
 						// could be from DeclaringType
 						// for nested types.
-						xref.SetAttribute ("cref", GetMemberDocHead (mi.MemberType) + GetSignatureForDoc (fm.Type) + "." + memberName + GetParametersFormatted (mi));
+						xref.SetAttribute ("cref", GetMemberDocHead (mi.MemberType) + GetSignatureForDoc (fm.Type) + "." + member_name + GetParametersFormatted (mi));
 						return; // a member of a type
 					}
 				}
 			}
 			else {
-				int warnResult;
-				FoundMember fm = FindDocumentedMember (mc, ds.TypeBuilder, name, parameterTypes, ds, out warnResult, cref, true, name);
-				if (warnResult > 0)
+				int warn_result;
+				FoundMember fm = FindDocumentedMember (mc, ds.TypeBuilder, name, parameter_types, ds, out warn_result, cref, true, name);
+				if (warn_result > 0)
 					return;
 				if (!fm.IsEmpty) {
 					MemberInfo mi = fm.Member;
@@ -770,12 +770,12 @@ namespace Mono.CSharp {
 		static string GetParametersFormatted (MemberInfo mi)
 		{
 			MethodBase mb = mi as MethodBase;
-			bool isSetter = false;
+			bool is_setter = false;
 			PropertyInfo pi = mi as PropertyInfo;
 			if (pi != null) {
 				mb = pi.GetGetMethod ();
 				if (mb == null) {
-					isSetter = true;
+					is_setter = true;
 					mb = pi.GetSetMethod ();
 				}
 			}
@@ -789,7 +789,7 @@ namespace Mono.CSharp {
 			StringBuilder sb = new StringBuilder ();
 			sb.Append ('(');
 			for (int i = 0; i < parameters.Count; i++) {
-				if (isSetter && i + 1 == parameters.Count)
+				if (is_setter && i + 1 == parameters.Count)
 					break; // skip "value".
 				if (i > 0)
 					sb.Append (',');
@@ -814,11 +814,11 @@ namespace Mono.CSharp {
 			return identifier;
 		}
 
-		static void Report419 (MemberCore mc, string memberName, MemberInfo [] mis)
+		static void Report419 (MemberCore mc, string member_name, MemberInfo [] mis)
 		{
 			Report.Warning (419, 3, mc.Location, 
 				"Ambiguous reference in cref attribute `{0}'. Assuming `{1}' but other overloads including `{2}' have also matched",
-				memberName,
+				member_name,
 				TypeManager.GetFullNameSignature (mis [0]),
 				TypeManager.GetFullNameSignature (mis [1]));
 		}
