@@ -45,7 +45,7 @@ namespace System.Web.Services.Protocols
 		ReturnWriter
 	}
 	
-	internal class HttpSimpleMethodStubInfo : MethodStubInfo
+	internal abstract class HttpSimpleMethodStubInfo : MethodStubInfo
 	{
 		public MimeFormatterInfo ParameterWriterType;
 		public MimeFormatterInfo ParameterReaderType;
@@ -95,7 +95,7 @@ namespace System.Web.Services.Protocols
 		public object Initializer;
 	}
 
-	internal class HttpSimpleTypeStubInfo : TypeStubInfo
+	internal abstract class HttpSimpleTypeStubInfo : TypeStubInfo
 	{
 		public HttpSimpleTypeStubInfo (ServerType logicalTypeInfo): base (logicalTypeInfo)
 		{
@@ -142,11 +142,6 @@ namespace System.Web.Services.Protocols
 				types [type] = list;
 			}
 			list.Add (method);
-		}
-		
-		protected override MethodStubInfo CreateMethodStubInfo (TypeStubInfo typeInfo, LogicalMethodInfo methodInfo, bool isClientProxy)
-		{
-			return new HttpSimpleMethodStubInfo (typeInfo, methodInfo);
 		}
 	}
 }

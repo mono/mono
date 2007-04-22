@@ -80,7 +80,7 @@ namespace System.Web.Services.Protocols {
 	// Holds the metadata loaded from the type stub, as well as
 	// the metadata for all the methods in the type
 	//
-	internal class TypeStubInfo 
+	internal abstract class TypeStubInfo 
 	{
 		Hashtable name_to_method = new Hashtable ();
 		MethodStubInfo[] methods;
@@ -207,10 +207,7 @@ namespace System.Web.Services.Protocols {
 			methods = (MethodStubInfo[]) metStubs.ToArray (typeof (MethodStubInfo));
 		}
 		
-		protected virtual MethodStubInfo CreateMethodStubInfo (TypeStubInfo typeInfo, LogicalMethodInfo methodInfo, bool isClientProxy)
-		{
-			return new MethodStubInfo (typeInfo, methodInfo);
-		}
+		protected abstract MethodStubInfo CreateMethodStubInfo (TypeStubInfo typeInfo, LogicalMethodInfo methodInfo, bool isClientProxy);
 		
 		public MethodStubInfo GetMethod (string name)
 		{
