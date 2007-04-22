@@ -275,8 +275,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test] // bug #80620
-		[Category ("NotWorking")]
-		public void ClientRectangle ()
+		public void ClientRectangle_Borders ()
 		{
 			textBox.CreateControl ();
 			Assert.AreEqual (textBox.ClientRectangle, new TextBox ().ClientRectangle);

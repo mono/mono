@@ -119,6 +119,13 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (0, listBox.SelectedItems.Count,"#23");
 		}
 
+		[Test] // bug #80620
+		public void ClientRectangle_Borders ()
+		{
+			listBox.CreateControl ();
+			Assert.AreEqual (listBox.ClientRectangle, new ListBox ().ClientRectangle);
+		}
+
 		[Ignore ("It depends on user system settings")]
 		public void GetItemHeightTest ()
 		{

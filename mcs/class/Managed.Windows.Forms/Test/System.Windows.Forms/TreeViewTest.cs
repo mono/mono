@@ -11,6 +11,14 @@ namespace MonoTests.System.Windows.Forms
 	[TestFixture]
 	public class TreeViewTest
 	{
+		[Test] // bug #80620
+		public void ClientRectangle_Borders ()
+		{
+			TreeView tv = new TreeView ();
+			tv.CreateControl ();
+			Assert.AreEqual (tv.ClientRectangle, new TreeView ().ClientRectangle);
+		}
+
 		[Test]
 		public void DefaultCtor ()
 		{

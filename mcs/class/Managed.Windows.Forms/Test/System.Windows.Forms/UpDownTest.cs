@@ -62,7 +62,15 @@ namespace MonoTests.System.Windows.Forms
 				"System.Windows.Forms.NumericUpDown, Minimum = {0}, Maximum = {1}",
 				0.33, 100.33), n1.ToString (), "2");
 		}
-		
+
+		[Test] // bug #80620
+		public void NumericUpDownClientRectangle_Borders ()
+		{
+			NumericUpDown nud = new NumericUpDown ();
+			nud.CreateControl ();
+			Assert.AreEqual (nud.ClientRectangle, new NumericUpDown ().ClientRectangle);
+		}
+
 		[Test]
 		public void NumericUpDownStandardPropTest ()
 		{
@@ -616,6 +624,14 @@ namespace MonoTests.System.Windows.Forms
 			
 			d1.Text = "item3";
 			Assert.AreEqual (null, d1.SelectedItem, "#47");
+		}
+
+		[Test] // bug #80620
+		public void DomainUpDownClientRectangle_Borders ()
+		{
+			DomainUpDown dud = new DomainUpDown ();
+			dud.CreateControl ();
+			Assert.AreEqual (dud.ClientRectangle, new DomainUpDown ().ClientRectangle);
 		}
 
 		[Test]

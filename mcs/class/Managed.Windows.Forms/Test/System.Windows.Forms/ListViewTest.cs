@@ -157,6 +157,14 @@ namespace MonoTests.System.Windows.Forms
 			myform.Dispose ();
 		}
 
+		[Test] // bug #80620
+		public void ClientRectangle_Borders ()
+		{
+			ListView lv = new ListView ();
+			lv.CreateControl ();
+			Assert.AreEqual (lv.ClientRectangle, new ListView ().ClientRectangle);
+		}
+
 		[Test]
 		public void DisposeTest ()
 		{

@@ -122,6 +122,14 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (SystemColors.Window, rtb.BackColor, "#3");
 		}
 
+		[Test] // bug #80620
+		public void ClientRectangle_Borders ()
+		{
+			RichTextBox rtb = new RichTextBox ();
+			rtb.CreateControl ();
+			Assert.AreEqual (rtb.ClientRectangle, new RichTextBox ().ClientRectangle);
+		}
+
 		[Test]
 		public void FindCharTest ()
 		{

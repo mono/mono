@@ -1,6 +1,15 @@
+2007-04-21  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* RichTextBoxTest.cs: Added test for bug #80620.
+	* TreeViewTest.cs: Added test for bug #80620.
+	* ListViewTest.cs: Added test for bug #80620.
+	* UpDownTest.cs: Added test for bug #80620.
+	* TextBoxTest.cs: Enabled test for bug #80620.
+
 2007-04-19  Jonathan Pobst  <monkey@jpobst.com>
 
-	* GroupBoxTest.cs: Add tests for default properties and DisplayRectangle.
+	* GroupBoxTest.cs: Add tests for default properties and
+	DisplayRectangle.
 
 2007-04-18  Gert Driesen  <drieseng@users.sourceforge.net>
 
