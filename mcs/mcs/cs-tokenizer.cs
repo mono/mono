@@ -43,7 +43,7 @@ namespace Mono.CSharp
 		bool query_parsing;
 		Location current_location;
 		Location current_comment_location = Location.Null;
-		ArrayList escapedIdentifiers = new ArrayList ();
+		ArrayList escaped_identifiers = new ArrayList ();
 
 		static bool IsLinqEnabled {
 			get {
@@ -60,7 +60,7 @@ namespace Mono.CSharp
 		//
 		// See comment on XmlCommentState enumeration.
 		//
-		XmlCommentState xmlDocState = XmlCommentState.Allowed;
+		XmlCommentState xml_doc_state = XmlCommentState.Allowed;
 
 		//
 		// Whether tokens have been seen on this line
@@ -74,16 +74,16 @@ namespace Mono.CSharp
 		//
 		bool any_token_seen = false;
 
-		static Hashtable tokenValues;
+		static Hashtable token_values;
 		static readonly char[] simple_whitespaces = new char[] { ' ', '\t' };
 
 		private static Hashtable TokenValueName
 		{
 			get {
-				if (tokenValues == null)
-					tokenValues = GetTokenValueNameHash ();
+				if (token_values == null)
+					token_values = GetTokenValueNameHash ();
 
-				return tokenValues;
+				return token_values;
 			}
 		}
 
@@ -183,19 +183,19 @@ namespace Mono.CSharp
 		}
 
 		public XmlCommentState doc_state {
-			get { return xmlDocState; }
+			get { return xml_doc_state; }
 			set {
 				if (value == XmlCommentState.Allowed) {
 					check_incorrect_doc_comment ();
 					reset_doc_comment ();
 				}
-				xmlDocState = value;
+				xml_doc_state = value;
 			}
 		}
 
 		public bool IsEscapedIdentifier (Location loc)
 		{
-			foreach (LocatedToken lt in escapedIdentifiers)
+			foreach (LocatedToken lt in escaped_identifiers)
 				if (lt.Location.Equals (loc))
 					return true;
 			return false;
@@ -205,7 +205,7 @@ namespace Mono.CSharp
 		// Class variables
 		// 
 		static CharArrayHashtable[] keywords;
-		static Hashtable keywordStrings;
+		static Hashtable keyword_strings;
 		static NumberStyles styles;
 		static NumberFormatInfo csharp_format_info;
 		
@@ -322,7 +322,7 @@ namespace Mono.CSharp
 		
 		static void AddKeyword (string kw, int token)
 		{
-			keywordStrings.Add (kw, kw);
+			keyword_strings.Add (kw, kw);
 			if (keywords [kw.Length] == null) {
 				keywords [kw.Length] = new CharArrayHashtable (kw.Length);
 			}
@@ -331,7 +331,7 @@ namespace Mono.CSharp
 
 		static void InitTokens ()
 		{
-			keywordStrings = new Hashtable ();
+			keyword_strings = new Hashtable ();
 			keywords = new CharArrayHashtable [64];
 
 			AddKeyword ("__arglist", Token.ARGLIST);
@@ -552,7 +552,7 @@ namespace Mono.CSharp
 
 		public static bool IsKeyword (string s)
 		{
-			return keywordStrings [s] != null;
+			return keyword_strings [s] != null;
 		}
 
 		public static bool IsValidIdentifier (string s)
@@ -915,10 +915,10 @@ namespace Mono.CSharp
 				} else
 					parsing_generic_less_than = 0;
 
-				d = peekChar ();
+				d = peek_char ();
 				if (d == '<'){
-					getChar ();
-					d = peekChar ();
+					get_char ();
+					d = peek_char ();
 
 					if (d == '='){
 						doread = true;
@@ -936,10 +936,10 @@ namespace Mono.CSharp
 					return Token.OP_GENERICS_GT;
 				}
 
-				d = peekChar ();
+				d = peek_char ();
 				if (d == '>'){
-					getChar ();
-					d = peekChar ();
+					get_char ();
+					d = peek_char ();
 
 					if (d == '='){
 						doread = true;
@@ -953,7 +953,7 @@ namespace Mono.CSharp
 				return Token.OP_GT;
 			}
 #endif
-			d = peekChar ();
+			d = peek_char ();
 			if (c == '+'){
 				
 				if (d == '+') {
@@ -1067,8 +1067,8 @@ namespace Mono.CSharp
 #if !GMCS_SOURCE
 			if (c == '<'){
 				if (d == '<'){
-					getChar ();
-					d = peekChar ();
+					get_char ();
+					d = peek_char ();
 
 					if (d == '='){
 						doread = true;
@@ -1084,8 +1084,8 @@ namespace Mono.CSharp
 
 			if (c == '>'){
 				if (d == '>'){
-					getChar ();
-					d = peekChar ();
+					get_char ();
+					d = peek_char ();
 
 					if (d == '='){
 						doread = true;
@@ -1136,15 +1136,15 @@ namespace Mono.CSharp
 			}
 			
 			//
-			// We use peekChar2, because decimal_digits needs to do a 
+			// We use peek_char2, because decimal_digits needs to do a 
 			// 2-character look-ahead (5.ToString for example).
 			//
-			while ((d = peekChar2 ()) != -1){
+			while ((d = peek_char2 ()) != -1){
 				if (d >= '0' && d <= '9'){
 					if (number_pos == max_number_size)
 						Error_NumericConstantTooLong ();
 					number_builder [number_pos++] = (char) d;
-					getChar ();
+					get_char ();
 					seen_digits = true;
 				} else
 					break;
@@ -1191,7 +1191,7 @@ namespace Mono.CSharp
 						if (is_unsigned)
 							scanning = false;
 						is_unsigned = true;
-						getChar ();
+						get_char ();
 						break;
 
 					case 'l':
@@ -1210,21 +1210,21 @@ namespace Mono.CSharp
 						if (is_long)
 							scanning = false;
 						is_long = true;
-						getChar ();
+						get_char ();
 						break;
 
 					case 'L': 
 						if (is_long)
 							scanning = false;
 						is_long = true;
-						getChar ();
+						get_char ();
 						break;
 						
 					default:
 						scanning = false;
 						break;
 					}
-					c = peekChar ();
+					c = peek_char ();
 				} while (scanning);
 			}
 
@@ -1341,11 +1341,11 @@ namespace Mono.CSharp
 			int d;
 			ulong ul;
 			
-			getChar ();
-			while ((d = peekChar ()) != -1){
+			get_char ();
+			while ((d = peek_char ()) != -1){
 				if (is_hex (d)){
 					number_builder [number_pos++] = (char) d;
-					getChar ();
+					get_char ();
 				} else
 					break;
 			}
@@ -1368,7 +1368,7 @@ namespace Mono.CSharp
 				return Token.LITERAL_INTEGER;
 			}
 			
-			return integer_type_suffix (ul, peekChar ());
+			return integer_type_suffix (ul, peek_char ());
 		}
 
 		//
@@ -1383,13 +1383,13 @@ namespace Mono.CSharp
 
 			if (c >= '0' && c <= '9'){
 				if (c == '0'){
-					int peek = peekChar ();
+					int peek = peek_char ();
 
 					if (peek == 'x' || peek == 'X')
 						return handle_hex ();
 				}
 				decimal_digits (c);
-				c = getChar ();
+				c = get_char ();
 			}
 
 			//
@@ -1399,7 +1399,7 @@ namespace Mono.CSharp
 			if (c == '.'){
 				if (decimal_digits ('.')){
 					is_real = true;
-					c = getChar ();
+					c = get_char ();
 				} else {
 					putback ('.');
 					number_pos--;
@@ -1412,7 +1412,7 @@ namespace Mono.CSharp
 				if (number_pos == max_number_size)
 					Error_NumericConstantTooLong ();
 				number_builder [number_pos++] = 'e';
-				c = getChar ();
+				c = get_char ();
 				
 				if (c == '+'){
 					if (number_pos == max_number_size)
@@ -1431,7 +1431,7 @@ namespace Mono.CSharp
 				}
 					
 				decimal_digits (c);
-				c = getChar ();
+				c = get_char ();
 			}
 
 			type = real_type_suffix (c);
@@ -1462,10 +1462,10 @@ namespace Mono.CSharp
 			int c;
 			int top = count != -1 ? count : 4;
 			
-			getChar ();
+			get_char ();
 			error = false;
 			for (i = 0; i < top; i++){
-				c = getChar ();
+				c = get_char ();
 				
 				if (c >= '0' && c <= '9')
 					c = (int) c - (int) '0';
@@ -1480,7 +1480,7 @@ namespace Mono.CSharp
 				
 				total = (total * 16) + c;
 				if (count == -1){
-					int p = peekChar ();
+					int p = peek_char ();
 					if (p == -1)
 						break;
 					if (!is_hex ((char)p))
@@ -1496,7 +1496,7 @@ namespace Mono.CSharp
 			int d;
 			int v;
 
-			d = peekChar ();
+			d = peek_char ();
 			if (c != '\\')
 				return c;
 			
@@ -1542,11 +1542,11 @@ namespace Mono.CSharp
 				Report.Error (1009, Location, "Unrecognized escape sequence `\\{0}'", ((char)d).ToString ());
 				return d;
 			}
-			getChar ();
+			get_char ();
 			return v;
 		}
 
-		int getChar ()
+		int get_char ()
 		{
 			int x;
 			if (putback_char != -1) {
@@ -1565,7 +1565,7 @@ namespace Mono.CSharp
 			return x;
 		}
 
-		int peekChar ()
+		int peek_char ()
 		{
 			if (putback_char != -1)
 				return putback_char;
@@ -1573,7 +1573,7 @@ namespace Mono.CSharp
 			return putback_char;
 		}
 
-		int peekChar2 ()
+		int peek_char2 ()
 		{
 			if (putback_char != -1)
 				return putback_char;
@@ -1602,7 +1602,7 @@ namespace Mono.CSharp
 
 		public bool advance ()
 		{
-			return peekChar () != -1;
+			return peek_char () != -1;
 		}
 
 		public Object Value {
@@ -1698,13 +1698,13 @@ namespace Mono.CSharp
 			static_cmd_arg.Length = 0;
 
 			// skip over white space
-			while ((c = getChar ()) != -1 && (c != '\n') && ((c == '\r') || (c == ' ') || (c == '\t')))
+			while ((c = get_char ()) != -1 && (c != '\n') && ((c == '\r') || (c == ' ') || (c == '\t')))
 				;
 				
 			while ((c != -1) && (c != '\n') && (c != ' ') && (c != '\t') && (c != '\r')){
 				if (is_identifier_part_character ((char) c)){
 					static_cmd_arg.Append ((char) c);
-					c = getChar ();
+					c = get_char ();
 				} else {
 					putback (c);
 					break;
@@ -1718,7 +1718,7 @@ namespace Mono.CSharp
 			}
 
 			// skip over white space
-			while ((c = getChar ()) != -1 && (c != '\n') && ((c == '\r') || (c == ' ') || (c == '\t')))
+			while ((c = get_char ()) != -1 && (c != '\n') && ((c == '\r') || (c == ' ') || (c == '\t')))
 				;
 
 			if (c == '\n'){
@@ -1733,7 +1733,7 @@ namespace Mono.CSharp
 			static_cmd_arg.Length = 0;
 			static_cmd_arg.Append ((char) c);
 			
-			while ((c = getChar ()) != -1 && (c != '\n') && (c != '\r')){
+			while ((c = get_char ()) != -1 && (c != '\n') && (c != '\r')){
 				static_cmd_arg.Append ((char) c);
 			}
 
@@ -2295,11 +2295,11 @@ namespace Mono.CSharp
 			int c;
 			string_builder.Length = 0;
 								
-			while ((c = getChar ()) != -1){
+			while ((c = get_char ()) != -1){
 				if (c == '"'){
-					if (quoted && peekChar () == '"'){
+					if (quoted && peek_char () == '"'){
 						string_builder.Append ((char) c);
-						getChar ();
+						get_char ();
 						continue;
 					} else {
 						val = string_builder.ToString ();
@@ -2370,7 +2370,7 @@ namespace Mono.CSharp
 
 			current_location = new Location (ref_line, Col);
 
-			while ((c = getChar ()) != -1) {
+			while ((c = get_char ()) != -1) {
 			loop:
 				if (is_identifier_part_character ((char) c)){
 					if (pos == max_id_size){
@@ -2412,7 +2412,7 @@ namespace Mono.CSharp
 				if (val != null) {
 					val = new LocatedToken (Location, (string) val);
 					if (quoted)
-						escapedIdentifiers.Add (val);
+						escaped_identifiers.Add (val);
 					return Token.IDENTIFIER;
 				}
 			}
@@ -2437,7 +2437,7 @@ namespace Mono.CSharp
 
 			val = new LocatedToken (Location, (string) val);
 			if (quoted)
-				escapedIdentifiers.Add (val);
+				escaped_identifiers.Add (val);
 			return Token.IDENTIFIER;
 		}
 		
@@ -2450,7 +2450,7 @@ namespace Mono.CSharp
 			// Whether we have seen comments on the current line
 			bool comments_seen = false;
 			val = null;
-			for (;(c = getChar ()) != -1;) {
+			for (;(c = get_char ()) != -1;) {
 				if (c == '\t'){
 					col = ((col + 8) / 8) * 8;
 					continue;
@@ -2460,8 +2460,8 @@ namespace Mono.CSharp
 					continue;
 
 				if (c == '\r') {
-					if (peekChar () == '\n')
-						getChar ();
+					if (peek_char () == '\n')
+						get_char ();
 
 					any_token_seen |= tokens_seen;
 					tokens_seen = false;
@@ -2471,14 +2471,14 @@ namespace Mono.CSharp
 
 				// Handle double-slash comments.
 				if (c == '/'){
-					int d = peekChar ();
+					int d = peek_char ();
 				
 					if (d == '/'){
-						getChar ();
-						if (RootContext.Documentation != null && peekChar () == '/') {
-							getChar ();
+						get_char ();
+						if (RootContext.Documentation != null && peek_char () == '/') {
+							get_char ();
 							// Don't allow ////.
-							if ((d = peekChar ()) != '/') {
+							if ((d = peek_char ()) != '/') {
 								update_comment_location ();
 								if (doc_state == XmlCommentState.Allowed)
 									handle_one_line_xml_comment ();
@@ -2486,7 +2486,7 @@ namespace Mono.CSharp
 									warn_incorrect_doc_comment ();
 							}
 						}
-						while ((d = getChar ()) != -1 && (d != '\n') && d != '\r')
+						while ((d = get_char ()) != -1 && (d != '\n') && d != '\r')
 							if (d == '\n'){
 							}
 						any_token_seen |= tokens_seen;
@@ -2494,14 +2494,14 @@ namespace Mono.CSharp
 						comments_seen = false;
 						continue;
 					} else if (d == '*'){
-						getChar ();
+						get_char ();
 						bool docAppend = false;
-						if (RootContext.Documentation != null && peekChar () == '*') {
-							getChar ();
+						if (RootContext.Documentation != null && peek_char () == '*') {
+							get_char ();
 							update_comment_location ();
 							// But when it is /**/, just do nothing.
-							if (peekChar () == '/') {
-								getChar ();
+							if (peek_char () == '/') {
+								get_char ();
 								continue;
 							}
 							if (doc_state == XmlCommentState.Allowed)
@@ -2518,9 +2518,9 @@ namespace Mono.CSharp
 
 						Location start_location = Location;
 
-						while ((d = getChar ()) != -1){
-							if (d == '*' && peekChar () == '/'){
-								getChar ();
+						while ((d = get_char ()) != -1){
+							if (d == '*' && peek_char () == '/'){
+								get_char ();
 								comments_seen = true;
 								break;
 							}
@@ -2558,7 +2558,7 @@ namespace Mono.CSharp
 				if ((t = is_punct ((char)c, ref doread)) != Token.ERROR){
 					tokens_seen = true;
 					if (doread){
-						getChar ();
+						get_char ();
 					}
 					return t;
 				}
@@ -2578,7 +2578,7 @@ namespace Mono.CSharp
 
 				if (c == '.'){
 					tokens_seen = true;
-					int peek = peekChar ();
+					int peek = peek_char ();
 					if (peek >= '0' && peek <= '9')
 						return is_number (c);
 					return Token.DOT;
@@ -2594,7 +2594,7 @@ namespace Mono.CSharp
 						continue;
 
 					bool directive_expected = false;
-					while ((c = getChar ()) != -1) {
+					while ((c = get_char ()) != -1) {
 						if (col == 1) {
 							directive_expected = true;
 						} else if (!directive_expected) {
@@ -2628,7 +2628,7 @@ namespace Mono.CSharp
 					return consume_string (false);
 
 				if (c == '\''){
-					c = getChar ();
+					c = get_char ();
 					tokens_seen = true;
 					if (c == '\''){
 						error_details = "Empty character literal";
@@ -2644,14 +2644,14 @@ namespace Mono.CSharp
 						return Token.ERROR;
 					val = new System.Char ();
 					val = (char) c;
-					c = getChar ();
+					c = get_char ();
 
 					if (c != '\''){
 						error_details = "Too many characters in character literal";
 						Report.Error (1012, Location, error_details);
 
 						// Try to recover, read until newline or next "'"
-						while ((c = getChar ()) != -1){
+						while ((c = get_char ()) != -1){
 							if (c == '\n'){
 								break;
 							}
@@ -2664,7 +2664,7 @@ namespace Mono.CSharp
 				}
 				
 				if (c == '@') {
-					c = getChar ();
+					c = get_char ();
 					if (c == '"') {
 						tokens_seen = true;
 						return consume_string (true);
@@ -2689,10 +2689,10 @@ namespace Mono.CSharp
 		private void handle_one_line_xml_comment ()
 		{
 			int c;
-			while ((c = peekChar ()) == ' ')
-				getChar (); // skip heading whitespaces.
-			while ((c = peekChar ()) != -1 && c != '\n' && c != '\r') {
-				xml_comment_buffer.Append ((char) getChar ());
+			while ((c = peek_char ()) == ' ')
+				get_char (); // skip heading whitespaces.
+			while ((c = peek_char ()) != -1 && c != '\n' && c != '\r') {
+				xml_comment_buffer.Append ((char) get_char ());
 			}
 			if (c == '\r' || c == '\n')
 				xml_comment_buffer.Append (Environment.NewLine);

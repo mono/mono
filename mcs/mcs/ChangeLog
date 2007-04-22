@@ -1,3 +1,9 @@
+2007-04-22  Miguel de Icaza  <miguel@novell.com>
+
+	* cs-tokenizer.cs: Change various identifiers here from the
+	camelCasing to the recommended Linux-like style for instance
+	variables from the Coding Guidelines. 
+
 2007-04-22  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #81414
