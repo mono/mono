@@ -41,18 +41,16 @@ namespace System.Collections.Generic
 	[Serializable]
 	public class Queue<T> : IEnumerable <T>, ICollection, IEnumerable
 	{
-		T [] data;
-		int head;
-		int tail;
-		int size;
-		int version;
-		int defaultCapacity;
+		T [] _array;
+		int _head;
+		int _tail;
+		int _size;
+		int _version;
 
-		private readonly static int INITIAL_SIZE = 16;
+		private const int INITIAL_SIZE = 16;
 		
 		public Queue ()
 		{
-			defaultCapacity = INITIAL_SIZE;
 		}
 		
 		public Queue (int count)
@@ -60,8 +58,7 @@ namespace System.Collections.Generic
 			if (count < 0)
 				throw new ArgumentOutOfRangeException ("count");
 
-			defaultCapacity = count;
-			data = new T [count];
+			_array = new T [count];
 		}
 		
 		public Queue (IEnumerable <T> collection)
@@ -71,16 +68,15 @@ namespace System.Collections.Generic
 			
 			foreach (T t in collection)
 				Enqueue (t);
-			defaultCapacity = size;
 		}
 		
 		public void Clear ()
 		{
-			if (data != null)
-				Array.Clear (data, 0, data.Length);
+			if (_array != null)
+				Array.Clear (_array, 0, _array.Length);
 			
-			head = tail = size = 0;
-			version++;
+			_head = _tail = _size = 0;
+			_version++;
 		}
 		
 		public bool Contains (T item)
@@ -106,20 +102,20 @@ namespace System.Collections.Generic
 			if ((uint) idx > (uint) array.Length)
 				throw new ArgumentOutOfRangeException ();
 			
-			if (array.Length - idx < size)
+			if (array.Length - idx < _size)
 				throw new ArgumentOutOfRangeException ();
 			
-			if (size == 0)
+			if (_size == 0)
 				return;
 			
-			int contents_length = data.Length;
-			int length_from_head = contents_length - head;
+			int contents_length = _array.Length;
+			int length_from_head = contents_length - _head;
 			
-			Array.Copy (data, head, array, idx, Math.Min (size, length_from_head));
-			if (size > length_from_head)
-				Array.Copy (data, 0, array, 
+			Array.Copy (_array, _head, array, idx, Math.Min (_size, length_from_head));
+			if (_size > length_from_head)
+				Array.Copy (_array, 0, array, 
 					    idx  + length_from_head,
-					    size - length_from_head);
+					    _size - length_from_head);
 			
 		}
 		
@@ -131,21 +127,21 @@ namespace System.Collections.Generic
 			if ((uint) idx < (uint) array.Length)
 				throw new ArgumentOutOfRangeException ();
 			
-			if (array.Length - idx < size)
+			if (array.Length - idx < _size)
 				throw new ArgumentOutOfRangeException ();
 			
-			if (size == 0)
+			if (_size == 0)
 				return;
 			
 			try {
-				int contents_length = data.Length;
-				int length_from_head = contents_length - head;
+				int contents_length = _array.Length;
+				int length_from_head = contents_length - _head;
 				
-				Array.Copy (data, head, array, idx, Math.Min (size, length_from_head));
-				if (size > length_from_head)
-					Array.Copy (data, 0, array, 
+				Array.Copy (_array, _head, array, idx, Math.Min (_size, length_from_head));
+				if (_size > length_from_head)
+					Array.Copy (_array, 0, array, 
 						    idx  + length_from_head,
-						    size - length_from_head);
+						    _size - length_from_head);
 			} catch (ArrayTypeMismatchException) {
 				throw new ArgumentException ();
 			}
@@ -156,71 +152,71 @@ namespace System.Collections.Generic
 			T ret = Peek ();
 			
 			// clear stuff out to make the GC happy
-			data [head] = default (T);
+			_array [_head] = default (T);
 			
-			if (++head == data.Length)
-				head = 0;
-			size --;
-			version ++;
+			if (++_head == _array.Length)
+				_head = 0;
+			_size --;
+			_version ++;
 			
 			return ret;
 		}
 		
 		public T Peek ()
 		{
-			if (size == 0)
+			if (_size == 0)
 				throw new InvalidOperationException ();
 			
-			return data [head];
+			return _array [_head];
 		}
 		
 		public void Enqueue (T item)
 		{
-			if (data == null || size == data.Length)
-				SetCapacity (Math.Max (size * 2, 4));
+			if (_array == null || _size == _array.Length)
+				SetCapacity (Math.Max (_size * 2, 4));
 			
-			data [tail] = item;
+			_array [_tail] = item;
 			
-			if (++tail == data.Length)
-				tail = 0;
+			if (++_tail == _array.Length)
+				_tail = 0;
 			
-			size ++;
-			version ++;
+			_size ++;
+			_version ++;
 		}
 		
 		public T [] ToArray ()
 		{
-			T [] t = new T [size];
+			T [] t = new T [_size];
 			CopyTo (t, 0);
 			return t;
 		}
 
 		public void TrimExcess ()
 		{
-			if (data != null && (size < data.Length * 0.9))
-				Array.Resize <T> (ref data, size == 0 ? defaultCapacity : size);
+			if (_array != null && (_size < _array.Length * 0.9))
+				SetCapacity (_size);
 		}
 		
 		void SetCapacity (int new_size)
 		{
-			if (data != null && new_size == data.Length)
+			if (_array != null && new_size == _array.Length)
 				return;
 			
-			if (new_size < size)
+			if (new_size < _size)
 				throw new InvalidOperationException ("shouldnt happen");
 			
 			T [] new_data = new T [new_size];
-			if (size > 0)
+			if (_size > 0)
 				CopyTo (new_data, 0);
 			
-			data = new_data;
-			tail = size;
-			head = 0;
-			version ++;
+			_array = new_data;
+			_tail = _size;
+			_head = 0;
+			_version ++;
 		}
 		
 		public int Count {
-			get { return size; }
+			get { return _size; }
 		}
 		
 		bool ICollection.IsSynchronized {
@@ -251,7 +247,7 @@ namespace System.Collections.Generic
 			const int NOT_STARTED = -2;
 			
 			// this MUST be -1, because we depend on it in move next.
-			// we just decr the size, so, 0 - 1 == FINISHED
+			// we just decr the _size, so, 0 - 1 == FINISHED
 			const int FINISHED = -1;
 			
 			Queue <T> q;
@@ -262,7 +258,7 @@ namespace System.Collections.Generic
 			{
 				this.q = q;
 				idx = NOT_STARTED;
-				ver = q.version;
+				ver = q._version;
 			}
 			
 			// for some fucked up reason, MSFT added a useless dispose to this class
@@ -275,11 +271,11 @@ namespace System.Collections.Generic
 			
 			public bool MoveNext ()
 			{
-				if (ver != q.version)
+				if (ver != q._version)
 					throw new InvalidOperationException ();
 				
 				if (idx == NOT_STARTED)
-					idx = q.size;
+					idx = q._size;
 				
 				return idx != FINISHED && -- idx != FINISHED;
 			}
@@ -289,13 +285,13 @@ namespace System.Collections.Generic
 					if (idx < 0)
 						throw new InvalidOperationException ();
 					
-					return q.data [(q.size - 1 - idx + q.head) % q.data.Length];
+					return q._array [(q._size - 1 - idx + q._head) % q._array.Length];
 				}
 			}
 			
 			void IEnumerator.Reset ()
 			{
-				if (ver != q.version)
+				if (ver != q._version)
 					throw new InvalidOperationException ();
 				
 				idx = NOT_STARTED;

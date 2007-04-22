@@ -39,18 +39,16 @@ namespace System.Collections.Generic
 {
 	[ComVisible (false)]
 	[Serializable]
-	public class Stack <T> : IEnumerable <T>, ICollection, IEnumerable {
+	public class Stack <T> : IEnumerable <T>, ICollection, IEnumerable
+	{
+		T [] _array;
+		int _size;
+		int _version;
 		
-		T [] data;
-		int size;
-		int ver;
-		int defaultCapacity;
-		
-		private readonly static int INITIAL_SIZE = 16;
+		private const int INITIAL_SIZE = 16;
 
 		public Stack ()
 		{
-			defaultCapacity = INITIAL_SIZE;
 		}
 		
 		public Stack (int count)
@@ -58,8 +56,7 @@ namespace System.Collections.Generic
 			if (count < 0)
 				throw new ArgumentOutOfRangeException ("count");
 
-			defaultCapacity = count;			
-			data = new T [count];
+			_array = new T [count];
 		}
 		
 		public Stack (IEnumerable <T> collection)
@@ -68,84 +65,86 @@ namespace System.Collections.Generic
 				throw new ArgumentNullException ("collection");
 			
 			ICollection <T> col = collection as ICollection <T>;
-						
+			
 			if (col != null) {
-				size = col.Count;
-				data = new T [size];
-				col.CopyTo (data, 0);
+				_size = col.Count;
+				_array = new T [_size];
+				col.CopyTo (_array, 0);
 			} else {
 				foreach (T t in collection)
 					Push (t);
 			}
-			defaultCapacity = size;
 		}
 		
 		public void Clear ()
 		{
-			if (data != null)
-				Array.Clear (data, 0, data.Length);
+			if (_array != null)
+				Array.Clear (_array, 0, _array.Length);
 			
-			size = 0;
-			ver ++;
+			_size = 0;
+			_version ++;
 		}
 		
 		public bool Contains (T t)
 		{		
-			return data != null && Array.IndexOf (data, t, 0, size) != -1;
+			return _array != null && Array.IndexOf (_array, t, 0, _size) != -1;
 		}
 		
 		public void CopyTo (T [] dest, int idx)
 		{
 			// this gets copied in the order that it is poped
-			if (data != null) {
-				Array.Copy (data, 0, dest, idx, size);
-				Array.Reverse (dest, idx, size);
+			if (_array != null) {
+				Array.Copy (_array, 0, dest, idx, _size);
+				Array.Reverse (dest, idx, _size);
 			}
 		}
 		
 		public T Peek ()
 		{
-			if (size == 0)
+			if (_size == 0)
 				throw new InvalidOperationException ();
 			
-			return data [size - 1];
+			return _array [_size - 1];
 		}
 		
 		public T Pop ()
 		{
-			if (size == 0)
+			if (_size == 0)
 				throw new InvalidOperationException ();
 			
-			ver ++;
-			
-			return data [-- size];
+			_version ++;
+			T popped = _array [--_size];
+			// clear stuff out to make the GC happy
+			_array [_size] = default(T);
+			return popped;
 		}
 
 		public void Push (T t)
 		{
-			if (size == 0 || size == data.Length)
-				Array.Resize <T> (ref data, size == 0 ? INITIAL_SIZE : 2 * size);
+			if (_size == 0 || _size == _array.Length)
+				Array.Resize <T> (ref _array, _size == 0 ? INITIAL_SIZE : 2 * _size);
 			
-			ver ++;
+			_version ++;
 			
-			data [size++] = t;
+			_array [_size++] = t;
 		}
 		
 		public T [] ToArray ()
 		{
-			T [] copy = new T [size];
+			T [] copy = new T [_size];
 			CopyTo (copy, 0);
 			return copy;
 		}
 
 		public void TrimExcess ()
 		{
-			if (data != null && (size < data.Length * 0.9))
-				Array.Resize <T> (ref data, size == 0 ? defaultCapacity : size);
+			if (_array != null && (_size < _array.Length * 0.9))
+				Array.Resize <T> (ref _array, _size);
+			_version ++;
 		}
 		
 		public int Count {
-			get { return size; }
+			get { return _size; }
 		}
 		
 		bool ICollection.IsSynchronized {
@@ -159,9 +158,9 @@ namespace System.Collections.Generic
 		void ICollection.CopyTo (Array dest, int idx)
 		{
 			try {
-				if (data != null) {
-					data.CopyTo (dest, idx);
-					Array.Reverse (dest, idx, size);
+				if (_array != null) {
+					_array.CopyTo (dest, idx);
+					Array.Reverse (dest, idx, _size);
 				}
 			} catch (ArrayTypeMismatchException) {
 				throw new ArgumentException ();
@@ -188,18 +187,18 @@ namespace System.Collections.Generic
 			const int NOT_STARTED = -2;
 			
 			// this MUST be -1, because we depend on it in move next.
-			// we just decr the size, so, 0 - 1 == FINISHED
+			// we just decr the _size, so, 0 - 1 == FINISHED
 			const int FINISHED = -1;
 			
 			Stack <T> parent;
 			int idx;
-			int ver;
+			int _version;
 			
 			internal Enumerator (Stack <T> t)
 			{
 				parent = t;
 				idx = NOT_STARTED;
-				ver = t.ver;
+				_version = t._version;
 			}
 			
 			// for some fucked up reason, MSFT added a useless dispose to this class
@@ -212,11 +211,11 @@ namespace System.Collections.Generic
 			
 			public bool MoveNext ()
 			{
-				if (ver != parent.ver)
+				if (_version != parent._version)
 					throw new InvalidOperationException ();
 				
 				if (idx == -2)
-					idx = parent.size;
+					idx = parent._size;
 				
 				return idx != FINISHED && -- idx != FINISHED;
 			}
@@ -226,13 +225,13 @@ namespace System.Collections.Generic
 					if (idx < 0)
 						throw new InvalidOperationException ();
 					
-					return parent.data [idx];
+					return parent._array [idx];
 				}
 			}
 			
 			void IEnumerator.Reset ()
 			{
-				if (ver != parent.ver)
+				if (_version != parent._version)
 					throw new InvalidOperationException ();
 				
 				idx = NOT_STARTED;

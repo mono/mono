@@ -1,3 +1,10 @@
+2007-04-19  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* QueueTest.cs: Removed usage of deprecated Assertion class. Added
+	test for TrimExcess. Added tests for binary serialization.
+	* StackTest.cs: Removed usage of deprecated Assertion class. Added
+	test for TrimExcess. Added tests for binary serialization.
+
 2007-03-27  Alan McGovern <alan.mcgovern@gmail.com>
 
 	* QueueTest.cs: Fixed compilation and cosmetic changes

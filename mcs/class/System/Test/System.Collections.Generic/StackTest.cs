@@ -9,12 +9,15 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 
 using NUnit.Framework;
 
-namespace MonoTests.System.Collections.Generic {
+namespace MonoTests.System.Collections.Generic
+{
 	[TestFixture]
-	public class StackTest: Assertion
+	public class StackTest
 	{
 		[Test]
 		public void TestCtor ()
@@ -30,7 +33,7 @@ namespace MonoTests.System.Collections.Generic {
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void TestCtorEx ()
 		{
-			Stack <int> a = new Stack <int> (-1);
+			new Stack <int> (-1);
 		}
 		
 		[Test]
@@ -53,7 +56,7 @@ namespace MonoTests.System.Collections.Generic {
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void TestCtorEnumNull ()
 		{
-			Stack <int> s = new Stack <int> (null);
+			new Stack <int> (null);
 		}
 		
 		[Test]
@@ -62,16 +65,16 @@ namespace MonoTests.System.Collections.Generic {
 			Stack <int> s = new Stack <int> ();
 			s.Clear ();
 			
-			AssertEquals (s.Count, 0);
+			Assert.AreEqual (0, s.Count, "#1");
 			
 			s.Push (1);
 			s.Push (2);
 			
-			AssertEquals (s.Count, 2);
+			Assert.AreEqual (2, s.Count, "#2");
 			
 			s.Clear ();
 			
-			AssertEquals (s.Count, 0);
+			Assert.AreEqual (0, s.Count, "#3");
 		}
 		
 		[Test]
@@ -79,12 +82,12 @@ namespace MonoTests.System.Collections.Generic {
 		{
 			Stack <int> s = new Stack <int> ();
 			
-			AssertEquals (s.Contains (1), false);
+			Assert.IsFalse (s.Contains (1), "#1");
 			
 			s.Push (1);
 			
-			AssertEquals (s.Contains (1), true);
-			AssertEquals (s.Contains (0), false);
+			Assert.IsTrue  (s.Contains (1), "#2");
+			Assert.IsFalse (s.Contains (0), "#3");
 		}
 
 		[Test]
@@ -97,9 +100,9 @@ namespace MonoTests.System.Collections.Generic {
 			x [0] = 10;
 			z.CopyTo (x, 1);
 			
-			AssertEquals (x [0], 10);
-			AssertEquals (x [1], 2);
-			AssertEquals (x [2], 1);
+			Assert.AreEqual  (10, x [0], "#1");
+			Assert.AreEqual (2, x [1], "#2");
+			Assert.AreEqual (1, x [2], "#3");
 		}
 
 		[Test]
@@ -108,8 +111,8 @@ namespace MonoTests.System.Collections.Generic {
 			Stack <int> s = new Stack <int> ();
 			s.Push (1);
 			
-			AssertEquals (s.Peek (), 1);
-			AssertEquals (s.Count, 1);
+			Assert.AreEqual (1, s.Peek (), "#1");
+			Assert.AreEqual (1, s.Count, "#2");
 
 			IEnumerator enumerator = s.GetEnumerator();
 			s.Peek();
@@ -130,7 +133,7 @@ namespace MonoTests.System.Collections.Generic {
 		{
 			Stack <int> s = new Stack <int> ();
 			s.Push (1);
-			s.Pop ();			
+			s.Pop ();
 			s.Peek ();
 		}
 		
@@ -140,8 +143,8 @@ namespace MonoTests.System.Collections.Generic {
 			Stack <int> s = new Stack <int> ();
 			s.Push (1);
 			
-			AssertEquals (s.Pop (), 1);
-			AssertEquals (s.Count, 0);
+			Assert.AreEqual (1, s.Pop (), "#1");
+			Assert.AreEqual (0, s.Count, "#2");
 		}
 		
 		[Test]
@@ -158,7 +161,7 @@ namespace MonoTests.System.Collections.Generic {
 		{
 			Stack <int> s = new Stack <int> ();
 			s.Push (1);
-			s.Pop ();			
+			s.Pop ();
 			s.Pop ();
 		}
 		
@@ -167,14 +170,14 @@ namespace MonoTests.System.Collections.Generic {
 		{
 			Stack <int> s = new Stack <int> ();
 			s.Push (1);
-			AssertEquals (s.Count, 1);
+			Assert.AreEqual (1, s.Count, "#1");
 			s.Push (2);
-			AssertEquals (s.Count, 2);
+			Assert.AreEqual (2, s.Count, "#2");
 			
 			for (int i = 0; i < 100; i ++)
 				s.Push (i);
 			
-			AssertEquals (s.Count, 102);
+			Assert.AreEqual (102, s.Count, "#3");
 		}
 		
 		[Test]
@@ -184,12 +187,12 @@ namespace MonoTests.System.Collections.Generic {
 			
 			int [] x = s.ToArray ();
 			
-			AssertEquals (x.Length, 0);
+			Assert.AreEqual (0, x.Length, "#1");
 			
 			s.Push (1);
 			x = s.ToArray ();
-			AssertEquals (x.Length, 1);
-			AssertEquals (x [0], 1);
+			Assert.AreEqual (1, x.Length, "#2");
+			Assert.AreEqual (1, x [0], "#3");
 		}
 		
 		[Test]
@@ -198,15 +201,15 @@ namespace MonoTests.System.Collections.Generic {
 			Stack <int> s = new Stack <int> ();
 			
 			foreach (int x in s)
-				Fail ();
+				Assert.Fail ("#1:" + x);
 			
 			s.Push (1);
 			
 			int i = 0;
 			
 			foreach (int x in s) {
-				AssertEquals (i, 0);
-				AssertEquals (x, 1);
+				Assert.AreEqual (0, i, "#2");
+				Assert.AreEqual (1, x, "#3");
 				i ++;
 			}
 			
@@ -216,16 +219,114 @@ namespace MonoTests.System.Collections.Generic {
 			s.Push (3);
 			
 			foreach (int x in s) {
-				AssertEquals (x, 3 - i);
-				Assert (i < 3);
+				Assert.AreEqual (3 - i, x, "#4");
+				Assert.IsTrue (i < 3, "#5");
 				i ++;
 			}
 		}
-		
+
+		[Test]
+		public void TrimExcessTest ()
+		{
+			Stack <int> s = new Stack <int> ();
+			s.TrimExcess ();
+			Assert.AreEqual (0, s.Count, "#1");
+
+			s.Push (1);
+			s.Push (3);
+			Assert.AreEqual (3, s.Pop (), "#2");
+			Assert.AreEqual (1, s.Peek (), "#3");
+
+			s.TrimExcess ();
+			Assert.AreEqual (1, s.Count, "#4");
+			Assert.AreEqual (1, s.Peek (), "#5");
+
+			s.Push (2);
+			Assert.AreEqual (2, s.Pop (), "#6");
+			Assert.AreEqual (1, s.Pop (), "#7");
+
+			s.TrimExcess ();
+			Assert.AreEqual (0, s.Count, "#8");
+		}
+
+		[Test]
+		[Category ("NotWorking")] // bug #80649
+		public void SerializeTest ()
+		{
+			Stack <int> s = new Stack <int> ();
+			s.Push (1);
+			s.Push (3);
+			s.Push (2);
+			s.Pop ();
+
+#if TARGET_JVM
+			BinaryFormatter bf = (BinaryFormatter)vmw.@internal.remoting.BinaryFormatterUtils.CreateBinaryFormatter (false);
+#else
+			BinaryFormatter bf = new BinaryFormatter ();
+#endif // TARGET_JVM
+			MemoryStream ms = new MemoryStream ();
+			bf.Serialize (ms, s);
+
+			byte [] buffer = new byte [ms.Length];
+			ms.Position = 0;
+			ms.Read (buffer, 0, buffer.Length);
+
+			Assert.AreEqual (_serializedStack, buffer);
+		}
+
+		[Test]
+		[Category ("TargetJvmNotWorking")]
+		public void DeserializeTest ()
+		{
+			MemoryStream ms = new MemoryStream ();
+			ms.Write (_serializedStack, 0, _serializedStack.Length);
+			ms.Position = 0;
+
+#if TARGET_JVM
+			BinaryFormatter bf = (BinaryFormatter)vmw.@internal.remoting.BinaryFormatterUtils.CreateBinaryFormatter (false);
+#else
+			BinaryFormatter bf = new BinaryFormatter ();
+#endif // TARGET_JVM
+			Stack<int> s = (Stack<int>) bf.Deserialize (ms);
+			Assert.AreEqual (2, s.Count, "#1");
+			Assert.AreEqual (3, s.Pop (), "#2");
+			Assert.AreEqual (1, s.Pop (), "#3");
+		}
+
 		void AssertPop <T> (Stack <T> s, T t)
 		{
-			AssertEquals (s.Pop (), t);
+			Assert.AreEqual  (t, s.Pop ());
 		}
-        }
+
+		static byte [] _serializedStack = new byte [] {
+			0x00, 0x01, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0xff, 0x01, 0x00,
+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0c, 0x02, 0x00, 0x00, 0x00,
+			0x49, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x2c, 0x20, 0x56, 0x65,
+			0x72, 0x73, 0x69, 0x6f, 0x6e, 0x3d, 0x32, 0x2e, 0x30, 0x2e, 0x30,
+			0x2e, 0x30, 0x2c, 0x20, 0x43, 0x75, 0x6c, 0x74, 0x75, 0x72, 0x65,
+			0x3d, 0x6e, 0x65, 0x75, 0x74, 0x72, 0x61, 0x6c, 0x2c, 0x20, 0x50,
+			0x75, 0x62, 0x6c, 0x69, 0x63, 0x4b, 0x65, 0x79, 0x54, 0x6f, 0x6b,
+			0x65, 0x6e, 0x3d, 0x62, 0x37, 0x37, 0x61, 0x35, 0x63, 0x35, 0x36,
+			0x31, 0x39, 0x33, 0x34, 0x65, 0x30, 0x38, 0x39, 0x05, 0x01, 0x00,
+			0x00, 0x00, 0x7f, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x2e, 0x43,
+			0x6f, 0x6c, 0x6c, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x2e,
+			0x47, 0x65, 0x6e, 0x65, 0x72, 0x69, 0x63, 0x2e, 0x53, 0x74, 0x61,
+			0x63, 0x6b, 0x60, 0x31, 0x5b, 0x5b, 0x53, 0x79, 0x73, 0x74, 0x65,
+			0x6d, 0x2e, 0x49, 0x6e, 0x74, 0x33, 0x32, 0x2c, 0x20, 0x6d, 0x73,
+			0x63, 0x6f, 0x72, 0x6c, 0x69, 0x62, 0x2c, 0x20, 0x56, 0x65, 0x72,
+			0x73, 0x69, 0x6f, 0x6e, 0x3d, 0x32, 0x2e, 0x30, 0x2e, 0x30, 0x2e,
+			0x30, 0x2c, 0x20, 0x43, 0x75, 0x6c, 0x74, 0x75, 0x72, 0x65, 0x3d,
+			0x6e, 0x65, 0x75, 0x74, 0x72, 0x61, 0x6c, 0x2c, 0x20, 0x50, 0x75,
+			0x62, 0x6c, 0x69, 0x63, 0x4b, 0x65, 0x79, 0x54, 0x6f, 0x6b, 0x65,
+			0x6e, 0x3d, 0x62, 0x37, 0x37, 0x61, 0x35, 0x63, 0x35, 0x36, 0x31,
+			0x39, 0x33, 0x34, 0x65, 0x30, 0x38, 0x39, 0x5d, 0x5d, 0x03, 0x00,
+			0x00, 0x00, 0x06, 0x5f, 0x61, 0x72, 0x72, 0x61, 0x79, 0x05, 0x5f,
+			0x73, 0x69, 0x7a, 0x65, 0x08, 0x5f, 0x76, 0x65, 0x72, 0x73, 0x69,
+			0x6f, 0x6e, 0x07, 0x00, 0x00, 0x08, 0x08, 0x08, 0x02, 0x00, 0x00,
+			0x00, 0x09, 0x03, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x04,
+			0x00, 0x00, 0x00, 0x0f, 0x03, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00,
+			0x00, 0x08, 0x01, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x00,
+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0b };
+	}
 }
 #endif

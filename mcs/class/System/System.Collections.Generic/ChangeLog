@@ -1,3 +1,11 @@
+2007-04-19  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Queue.cs: Fixed binary serialization, based on patch provided by
+	Lionel Cuir. Fixes TrimExcess to use SetCapacity, before it was not 
+	updating _head which could lead to IndexOutOfRangeException.
+	* Stack.cs: Fixed binary serialization, based on patch provided by
+	Lionel Cuir. In Pop, clear entry from array to help GC.
+
 2007-03-27  Alan McGovern <alan.mcgovern@gmail.com>
 
 	* Queue.cs: Removed wrong call to version++
