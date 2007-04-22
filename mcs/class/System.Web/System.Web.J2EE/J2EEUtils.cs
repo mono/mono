@@ -30,11 +30,23 @@ using vmw.@internal.io;
 using vmw.common;
 using System.ComponentModel;
 using System.Threading;
+using javax.servlet;
 
 namespace System.Web.J2EE
 {
 	internal static class J2EEUtils
 	{
+		public static string GetInitParameterByHierarchy (ServletConfig config, string name) {
+			if (config == null)
+				throw new ArgumentNullException ("config");
+
+			string value = config.getInitParameter (name);
+			if (value != null)
+				return value;
+
+			return config.getServletContext ().getInitParameter (name);
+		}
+
 		public static int RunProc(string[] cmd)
 		{	
 			java.lang.Runtime rt = java.lang.Runtime.getRuntime();

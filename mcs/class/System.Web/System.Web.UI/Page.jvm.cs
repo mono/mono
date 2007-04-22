@@ -31,6 +31,8 @@ using javax.servlet.http;
 using System.Collections.Specialized;
 using System.Globalization;
 using System.Web.Hosting;
+using System.Web.J2EE;
+using System.ComponentModel;
 
 namespace System.Web.UI
 {
@@ -55,8 +57,11 @@ namespace System.Web.UI
 
 				if (_PortletNamespace == null) {
 					IPortletResponse portletResponse = null;
-					if (Context != null)
-						portletResponse = Context.ServletResponse as IPortletResponse;
+					if (Context != null) {
+						string usePortletNamespace = J2EEUtils.GetInitParameterByHierarchy (Context.Servlet.getServletConfig (), "mainsoft.use.portlet.namespace");
+						if (usePortletNamespace == null || Boolean.Parse(usePortletNamespace))
+							portletResponse = Context.ServletResponse as IPortletResponse;
+					}
 					if (portletResponse != null)
 						_PortletNamespace = portletResponse.getNamespace ();
 					else if (_requestValueCollection != null && _requestValueCollection [PageNamespaceKey] != null)
