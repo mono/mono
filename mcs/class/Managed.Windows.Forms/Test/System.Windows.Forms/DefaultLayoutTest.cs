@@ -500,6 +500,36 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (new Rectangle (0, 0, 200, f.ClientRectangle.Height), b2.Bounds, "B2");
 			f.Dispose ();
 		}
+		
+		[Test]  // bug #81397
+		public void TestDockingWithCustomDisplayRectangle ()
+		{
+			MyControl mc = new MyControl ();
+			mc.Size = new Size (200, 200);
+			
+			Control c = new Control ();
+			c.Dock = DockStyle.Fill;
+			
+			mc.Controls.Add (c);
+			
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+			
+			f.Controls.Add (mc);
+			f.Show ();
+			
+			Assert.AreEqual (new Point (20, 20), c.Location, "A1");
+			Assert.AreEqual (new Size (160, 160), c.Size, "A2");
+			
+			f.Dispose ();
+		}
+		
+		private class MyControl : Control
+		{
+			public override Rectangle DisplayRectangle { 
+				get { return new Rectangle (20, 20, this.Width - 40, this.Height - 40); }
+			}
+		}
 	}
 
 	[TestFixture]	

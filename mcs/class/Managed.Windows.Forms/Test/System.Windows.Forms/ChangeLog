@@ -1,3 +1,7 @@
+2007-04-21  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DefaultLayoutTest.cs: Added test for bug #81397.
+
 2007-04-21  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* RichTextBoxTest.cs: Added test for bug #80620.

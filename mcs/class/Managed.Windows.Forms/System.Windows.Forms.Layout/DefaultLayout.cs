@@ -35,7 +35,7 @@ namespace System.Windows.Forms.Layout
 	{
 		void LayoutDockedChildren (Control parent, Control[] controls)
 		{
-			Rectangle space = parent.ClientRectangle;
+			Rectangle space = parent.DisplayRectangle;
 			MdiClient mdi = null;
 			
 			// Deal with docking; go through in reverse, MS docs say that lowest Z-order is closest to edge

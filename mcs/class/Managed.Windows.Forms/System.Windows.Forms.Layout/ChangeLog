@@ -1,3 +1,8 @@
+2007-04-22  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DefaultLayout.cs: Use the parent's DisplayRectangle for laying
+	out docked children.  [Fixes bug #81397]
+
 2007-04-04  Jonathan Pobst  <monkey@jpobst.com>
 
 	* FlowLayout.cs: Call SetBounds with BoundsSpecified.None instead of
