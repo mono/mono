@@ -1,3 +1,8 @@
+2007-04-22  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #81414
+	* typemanager.cs: Earlier initialization of params attribute ctor.
+
 2007-04-19  Martin Baulig  <martin@ximian.com>
 
 	* convert.cs
