@@ -32,7 +32,11 @@ using System.Globalization;
 namespace System.ComponentModel
 {
 	[AttributeUsage(AttributeTargets.All)]
-	public sealed class DefaultValueAttribute : Attribute
+	public
+#if !NET_2_0
+	sealed
+#endif
+	class DefaultValueAttribute : Attribute
 	{
 
 		private object DefaultValue;
