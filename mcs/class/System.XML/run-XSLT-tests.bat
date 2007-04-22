@@ -95,7 +95,7 @@ IF %ERRORLEVEL% NEQ 0 GOTO BUILD_EXCEPTION
 unzip -un xslt-testsuite-03.ZIP
 IF %ERRORLEVEL% NEQ 0 GOTO BUILD_EXCEPTION
 del xslt-reference-results.tar.gz
-wget http://svn.myrealbox.com/source/trunk/release/test-ext/xslt-standalone/xslt-reference-results.tar.gz
+wget http://anonsvn.mono-project.com/source/trunk/release/test-ext/xslt-standalone/xslt-reference-results.tar.gz
 IF %ERRORLEVEL% NEQ 0 GOTO BUILD_EXCEPTION
 tar -xzf xslt-reference-results.tar.gz
 IF %ERRORLEVEL% NEQ 0 GOTO BUILD_EXCEPTION
