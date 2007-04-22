@@ -173,6 +173,7 @@ namespace System.Net.Sockets
 			{
 				java.nio.channels.SelectionKey key = (java.nio.channels.SelectionKey)it.next();
 				Socket source = (Socket)key.attachment();
+				key.cancel ();
 				try
 				{
 					if (source.Blocking)
@@ -192,6 +193,17 @@ namespace System.Net.Sockets
 					Console.WriteLine("Caught exception during CloseSelector source.Blocking - {0}: {1}\n{2}", be.GetType(), be.Message, be.StackTrace);
 #endif
 				}
+			}
+
+			try
+			{
+				selector.close();
+			}
+			catch (Exception e)
+			{
+#if DEBUG
+				Console.WriteLine("Caught exception during CloseSelector selector.close - {0}: {1}\n{2}", e.GetType(), e.Message, e.StackTrace);
+#endif
 			}
 		}
 	}
