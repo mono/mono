@@ -414,46 +414,46 @@ namespace Mono.CSharp {
 			return tc;
 		}
 
-		public virtual TypeContainer AddPartial (TypeContainer nextPart)
+		public virtual TypeContainer AddPartial (TypeContainer next_part)
 		{
-			return AddPartial (nextPart, nextPart.Basename);
+			return AddPartial (next_part, next_part.Basename);
 		}
 
-		protected TypeContainer AddPartial (TypeContainer nextPart, string name)
+		protected TypeContainer AddPartial (TypeContainer next_part, string name)
 		{
-			nextPart.ModFlags |= Modifiers.PARTIAL;
+			next_part.ModFlags |= Modifiers.PARTIAL;
 			TypeContainer tc = defined_names [name] as TypeContainer;
 
 			if (tc == null)
-				return AddTypeContainer (nextPart);
+				return AddTypeContainer (next_part);
 
 			if ((tc.ModFlags & Modifiers.PARTIAL) == 0) {
 				Report.SymbolRelatedToPreviousError (tc);
-				Error_MissingPartialModifier (nextPart);
+				Error_MissingPartialModifier (next_part);
 				return tc;
 			}
 
-			if (tc.Kind != nextPart.Kind) {
+			if (tc.Kind != next_part.Kind) {
 				Report.SymbolRelatedToPreviousError (tc);
-				Report.Error (261, nextPart.Location,
+				Report.Error (261, next_part.Location,
 					"Partial declarations of `{0}' must be all classes, all structs or all interfaces",
-					nextPart.GetSignatureForError ());
+					next_part.GetSignatureForError ());
 				return tc;
 			}
 
-			if ((tc.ModFlags & Modifiers.Accessibility) != (nextPart.ModFlags & Modifiers.Accessibility) &&
+			if ((tc.ModFlags & Modifiers.Accessibility) != (next_part.ModFlags & Modifiers.Accessibility) &&
 				((tc.ModFlags & Modifiers.DEFAULT_ACCESS_MODIFER) == 0 &&
-				 (nextPart.ModFlags & Modifiers.DEFAULT_ACCESS_MODIFER) == 0)) {
+				 (next_part.ModFlags & Modifiers.DEFAULT_ACCESS_MODIFER) == 0)) {
 				Report.SymbolRelatedToPreviousError (tc);
-				Report.Error (262, nextPart.Location,
+				Report.Error (262, next_part.Location,
 					"Partial declarations of `{0}' have conflicting accessibility modifiers",
-					nextPart.GetSignatureForError ());
+					next_part.GetSignatureForError ());
 				return tc;
 			}
 
 			if (tc.MemberName.IsGeneric) {
 				TypeParameter[] tc_names = tc.TypeParameters;
-				TypeParameterName[] part_names = nextPart.MemberName.TypeArguments.GetDeclarations ();
+				TypeParameterName[] part_names = next_part.MemberName.TypeArguments.GetDeclarations ();
 
 				for (int i = 0; i < tc_names.Length; ++i) {
 					if (tc_names[i].Name == part_names[i].Name)
@@ -469,16 +469,16 @@ namespace Mono.CSharp {
 			if (tc.partial_parts == null)
 				tc.partial_parts = new ArrayList (1);
 
-			tc.ModFlags |= nextPart.ModFlags;
-			if (nextPart.attributes != null) {
+			tc.ModFlags |= next_part.ModFlags;
+			if (next_part.attributes != null) {
 				if (tc.attributes == null)
-					tc.attributes = nextPart.attributes;
+					tc.attributes = next_part.attributes;
 				else
-					tc.attributes.AddAttributes (nextPart.attributes.Attrs);
+					tc.attributes.AddAttributes (next_part.attributes.Attrs);
 			}
 
-			nextPart.PartialContainer = tc;
-			tc.partial_parts.Add (nextPart);
+			next_part.PartialContainer = tc;
+			tc.partial_parts.Add (next_part);
 			return tc;
 		}
 
@@ -3638,7 +3638,7 @@ namespace Mono.CSharp {
 		// `name' is the user visible name for reporting errors (this is used to
 		// provide the right name regarding method names and properties)
 		//
-		bool CheckMethodAgainstBase (Type baseMethodType)
+		bool CheckMethodAgainstBase (Type base_method_type)
 		{
 			bool ok = true;
 
@@ -3669,15 +3669,15 @@ namespace Mono.CSharp {
 					ok = false;
 				}
 
-				if (!TypeManager.IsEqual (MemberType, TypeManager.TypeToCoreType (baseMethodType))) {
+				if (!TypeManager.IsEqual (MemberType, TypeManager.TypeToCoreType (base_method_type))) {
 					Report.SymbolRelatedToPreviousError (base_method);
 					if (this is PropertyBasedMember) {
 						Report.Error (1715, Location, "`{0}': type must be `{1}' to match overridden member `{2}'", 
-							GetSignatureForError (), TypeManager.CSharpName (baseMethodType), TypeManager.CSharpSignature (base_method));
+							GetSignatureForError (), TypeManager.CSharpName (base_method_type), TypeManager.CSharpSignature (base_method));
 					}
 					else {
 						Report.Error (508, Location, "`{0}': return type must be `{1}' to match overridden member `{2}'",
-							GetSignatureForError (), TypeManager.CSharpName (baseMethodType), TypeManager.CSharpSignature (base_method));
+							GetSignatureForError (), TypeManager.CSharpName (base_method_type), TypeManager.CSharpSignature (base_method));
 					}
 					ok = false;
 				}
@@ -5782,11 +5782,11 @@ namespace Mono.CSharp {
 			base.Emit ();
 		}
 
-		public static void Error_VariableOfStaticClass (Location loc, string variableName, Type staticClass)
+		public static void Error_VariableOfStaticClass (Location loc, string variable_name, Type static_class)
 		{
-			Report.SymbolRelatedToPreviousError (staticClass);
+			Report.SymbolRelatedToPreviousError (static_class);
 			Report.Error (723, loc, "`{0}': cannot declare variables of static types",
-				variableName);
+				variable_name);
 		}
 
 		public Expression Initializer {
