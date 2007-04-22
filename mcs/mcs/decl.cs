@@ -982,16 +982,16 @@ namespace Mono.CSharp {
 				return AccessLevel.Internal;
 			
 			// By now, it must be nested
-			AccessLevel parentLevel = TypeEffectiveAccessLevel (t.DeclaringType);
+			AccessLevel parent_level = TypeEffectiveAccessLevel (t.DeclaringType);
 			
 			if (t.IsNestedPublic)
-				return parentLevel;
+				return parent_level;
 			if (t.IsNestedAssembly)
-				return parentLevel & AccessLevel.Internal;
+				return parent_level & AccessLevel.Internal;
 			if (t.IsNestedFamily)
-				return parentLevel & AccessLevel.Protected;
+				return parent_level & AccessLevel.Protected;
 			if (t.IsNestedFamORAssem)
-				return parentLevel & AccessLevel.ProtectedOrInternal;
+				return parent_level & AccessLevel.ProtectedOrInternal;
 			if (t.IsNestedFamANDAssem)
 				throw new NotImplementedException ("NestedFamANDAssem not implemented, cant make this kind of type from c# anyways");
 			
@@ -2153,7 +2153,7 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		public MemberInfo FindBaseEvent (Type invocationType, string name)
+		public MemberInfo FindBaseEvent (Type invocation_type, string name)
 		{
 			ArrayList applicable = (ArrayList) member_hash [name];
 			if (applicable == null)
@@ -2222,14 +2222,14 @@ namespace Mono.CSharp {
 		}
 		
 		//
-		// This finds the method or property for us to override. invocationType is the type where
+		// This finds the method or property for us to override. invocation_type is the type where
 		// the override is going to be declared, name is the name of the method/property, and
-		// paramTypes is the parameters, if any to the method or property
+		// param_types is the parameters, if any to the method or property
 		//
 		// Because the MemberCache holds members from this class and all the base classes,
 		// we can avoid tons of reflection stuff.
 		//
-		public MemberInfo FindMemberToOverride (Type invocationType, string name, Type [] paramTypes, GenericMethod genericMethod, bool is_property)
+		public MemberInfo FindMemberToOverride (Type invocation_type, string name, Type [] param_types, GenericMethod generic_method, bool is_property)
 		{
 			ArrayList applicable;
 			if (method_hash != null && !is_property)
@@ -2251,7 +2251,7 @@ namespace Mono.CSharp {
 				PropertyInfo pi = null;
 				MethodInfo mi = null;
 				FieldInfo fi = null;
-				Type [] cmpAttrs = null;
+				Type [] cmp_attrs = null;
 				
 				if (is_property) {
 					if ((entry.EntryType & EntryType.Field) != 0) {
@@ -2259,14 +2259,14 @@ namespace Mono.CSharp {
 
 						// TODO: For this case we ignore member type
 						//fb = TypeManager.GetField (fi);
-						//cmpAttrs = new Type[] { fb.MemberType };
+						//cmp_attrs = new Type[] { fb.MemberType };
 					} else {
 						pi = (PropertyInfo) entry.Member;
-						cmpAttrs = TypeManager.GetArgumentTypes (pi);
+						cmp_attrs = TypeManager.GetArgumentTypes (pi);
 					}
 				} else {
 					mi = (MethodInfo) entry.Member;
-					cmpAttrs = TypeManager.GetParameterData (mi).Types;
+					cmp_attrs = TypeManager.GetParameterData (mi).Types;
 				}
 
 				if (fi != null) {
@@ -2280,8 +2280,8 @@ namespace Mono.CSharp {
 						// A private method is Ok if we are a nested subtype.
 						// The spec actually is not very clear about this, see bug 52458.
 						//
-						if (!invocationType.Equals (entry.Container.Type) &&
-						    !TypeManager.IsNestedChildOf (invocationType, entry.Container.Type))
+						if (!invocation_type.Equals (entry.Container.Type) &&
+						    !TypeManager.IsNestedChildOf (invocation_type, entry.Container.Type))
 							continue;
 						break;
 					case FieldAttributes.FamANDAssem:
@@ -2299,14 +2299,14 @@ namespace Mono.CSharp {
 				//
 				// Check the arguments
 				//
-				if (cmpAttrs.Length != paramTypes.Length)
+				if (cmp_attrs.Length != param_types.Length)
 					continue;
 	
 				int j;
-				for (j = 0; j < cmpAttrs.Length; ++j)
-					if (!TypeManager.IsEqual (paramTypes [j], cmpAttrs [j]))
+				for (j = 0; j < cmp_attrs.Length; ++j)
+					if (!TypeManager.IsEqual (param_types [j], cmp_attrs [j]))
 						break;
-				if (j < cmpAttrs.Length)
+				if (j < cmp_attrs.Length)
 					continue;
 
 				//
@@ -2314,9 +2314,9 @@ namespace Mono.CSharp {
 				//
 				if (mi != null) {
 					Type [] cmpGenArgs = TypeManager.GetGenericArguments (mi);
-					if (genericMethod == null && cmpGenArgs.Length != 0)
+					if (generic_method == null && cmpGenArgs.Length != 0)
 						continue;
-					if (genericMethod != null && cmpGenArgs.Length != genericMethod.TypeParameters.Length)
+					if (generic_method != null && cmpGenArgs.Length != generic_method.TypeParameters.Length)
 						continue;
 				}
 
@@ -2340,8 +2340,8 @@ namespace Mono.CSharp {
 					// A private method is Ok if we are a nested subtype.
 					// The spec actually is not very clear about this, see bug 52458.
 					//
-					if (!invocationType.Equals (entry.Container.Type) &&
-					    !TypeManager.IsNestedChildOf (invocationType, entry.Container.Type))
+					if (!invocation_type.Equals (entry.Container.Type) &&
+					    !TypeManager.IsNestedChildOf (invocation_type, entry.Container.Type))
 						continue;
 					break;
 				case MethodAttributes.FamANDAssem:
