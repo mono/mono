@@ -1,3 +1,7 @@
+2007-04-21  Andreas Faerber  <andreas.faerber@web.de>
+
+	* Makefile.am (BUILT_SOURCES): Fix for automake 1.6.x. Fixes #81417.
+
 2007-04-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* cpu-s390.md (break): Correct the length of break instruction.
