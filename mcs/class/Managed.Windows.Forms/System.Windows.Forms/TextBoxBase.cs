@@ -786,7 +786,7 @@ namespace System.Windows.Forms {
 
 			switch (keyData & Keys.KeyCode) {
 				case Keys.Enter: {
-					if (accepts_return) {
+					if (accepts_return && document.multiline) {
 						return true;
 					}
 					return false;
@@ -1113,7 +1113,7 @@ namespace System.Windows.Forms {
 
 				case Keys.Enter: {
 					// ignoring accepts_return, fixes bug #76355
-					if (!read_only && (accepts_return || (FindForm() != null && FindForm().AcceptButton == null) || ((Control.ModifierKeys & Keys.Control) != 0))) {
+					if (!read_only && document.multiline && (accepts_return || (FindForm() != null && FindForm().AcceptButton == null) || ((Control.ModifierKeys & Keys.Control) != 0))) {
 						Line	line;
 
 						if (document.selection_visible) {

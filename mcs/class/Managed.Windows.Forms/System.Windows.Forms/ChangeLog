@@ -1,3 +1,8 @@
+2007-04-23  Jackson Harper  <jackson@ximian.com>
+
+	* TextBoxBase.cs: Non multiline textboxes shouldn't take the enter
+	key. Fixes #81408.
+
 2007-04-23  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStripItem.cs: Make GetImageSize internal.
