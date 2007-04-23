@@ -1,3 +1,7 @@
+2007-04-22 Joshua Tauberer <jit@occams.info>
+
+	* HttpParamsCollection.cs: Fix IndexOutOfRangeException.
+
 2007-04-17 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* HttpException.cs: used GetBaseException() instead InnerException.

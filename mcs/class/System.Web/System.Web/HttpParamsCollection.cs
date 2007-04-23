@@ -80,7 +80,7 @@ namespace System.Web
 			if (values == null)
 				return null;
 
-			if (values [0] == ',')
+			if (values.Length > 0 && values [0] == ',')
 				return values.Substring (1);
 
 			return values;
