@@ -1,3 +1,11 @@
+2007-04-23  Jonathan Chambers  <joncham@gmail.com>
+
+	* marshal.c: Fix calling convention for CCW on non-windows
+	platforms. STDCALL on windows, CDECL everywhere else to work 
+	with XPCOM and MainWin COM.
+	
+	Code is contributed under MIT/X11 license.
+
 2007-04-23  Martin Baulig  <martin@ximian.com>
 
 	Fix #80969.
