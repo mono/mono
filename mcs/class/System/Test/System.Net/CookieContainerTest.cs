@@ -232,8 +232,7 @@ namespace MonoTests.System.Net
 			cc.SetCookies (new Uri ("http://www.contoso.com"), "");
 		}
 
-		[Test] // bug #81421
-		[Category ("NotWorking")]
+		[Test]
 		public void GetCookies ()
 		{
 			CookieContainer container = new CookieContainer ();

@@ -304,7 +304,8 @@ namespace System.Net
 
 				coll.Add (cookie);
 			}
-			
+
+			coll.SortByPath ();
 			return coll;
 		}
 

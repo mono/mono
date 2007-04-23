@@ -39,6 +39,20 @@ namespace System.Net
 	[Serializable]
 	public class CookieCollection : ICollection, IEnumerable
 	{
+		class CookieCollectionPathComparer : IComparer
+		{
+			int IComparer.Compare (object p1, object p2)
+			{
+				Cookie c1 = p1 as Cookie;
+				Cookie c2 = p2 as Cookie;
+
+				if (c1 == null || c2 == null)
+					return 0;
+				
+				return (c2.Path.Length - c1.Path.Length);
+			}
+		}
+		
 		ArrayList list = new ArrayList (4);
 
 		internal ArrayList List {
@@ -89,6 +103,14 @@ namespace System.Net
 				list [pos] = cookie;
 		}
 
+		internal void SortByPath ()
+		{
+			if (list == null || list.Count == 0)
+				return;
+
+			list.Sort (new CookieCollectionPathComparer ());
+		}
+		
 		int SearchCookie (Cookie cookie)
 		{
 			string name = cookie.Name;
