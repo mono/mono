@@ -1,3 +1,12 @@
+2007-04-22 Joshua Tauberer <jit@occams.info>
+ 
+ 	* HttpParamsCollection.cs: Fix IndexOutOfRangeException.
+
+2007-04-19  Miguel de Icaza  <miguel@novell.com>
+
+	* BaseParamsCollection.cs (Get (string)): Call LoadInfo here to
+	fix #81385
+
 2007-04-17 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* HttpException.cs: used GetBaseException() instead InnerException.

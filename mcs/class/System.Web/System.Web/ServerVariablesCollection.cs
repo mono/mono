@@ -203,6 +203,7 @@ namespace System.Web
 			if ((name == null) || (this._request == null))
 				return null;
 			name = name.ToUpper (CultureInfo.InvariantCulture);
+			Console.WriteLine ("InternalGet {0}", name);
 			switch (name) {
 				case "AUTH_TYPE":
 					if (null != _request.Context.User && _request.Context.User.Identity.IsAuthenticated)
