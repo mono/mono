@@ -321,7 +321,7 @@ namespace System.Windows.Forms {
 				if (scrollable == value)
 					return;
 				scrollable = value;
-				UpdateScrollBars ();
+				UpdateScrollBars (false);
 			}
 		}
 
@@ -616,7 +616,7 @@ namespace System.Windows.Forms {
 				update_stack = 0;
 				if (update_needed) {
 					RecalculateVisibleOrder (root_node);
-					UpdateScrollBars ();
+					UpdateScrollBars (false);
 					//	if (SelectedNode != null)
 					//		SelectedNode.EnsureVisible ();
 					Invalidate (ViewportRectangle);
@@ -643,7 +643,7 @@ namespace System.Windows.Forms {
 		{
 			Nodes.Sort (sorter);
 			RecalculateVisibleOrder (root_node);
-			UpdateScrollBars ();
+			UpdateScrollBars (false);
 			Invalidate ();
 		}
 
@@ -672,7 +672,13 @@ namespace System.Windows.Forms {
 			if (!found)
 				return;
 
-			vbar.Value = vbar.Maximum - VisibleCount + 1;
+			if (IsHandleCreated) {
+				vbar.Value = vbar.Maximum - VisibleCount + 1;
+			} else {
+				RecalculateVisibleOrder (root_node);
+				UpdateScrollBars (true);
+				vbar.Value = vbar.Maximum;
+			}
 		}
 
 		
@@ -725,7 +731,7 @@ namespace System.Windows.Forms {
 		protected override void CreateHandle () {
 			base.CreateHandle ();
 			RecalculateVisibleOrder (root_node);
-			UpdateScrollBars ();
+			UpdateScrollBars (false);
 
 			if (pre_selected_node != null)
 				SelectedNode = pre_selected_node;
@@ -1536,9 +1542,9 @@ namespace System.Windows.Forms {
 				DrawStaticNode (node, dc);
 		}
 
-		internal void UpdateScrollBars ()
+		internal void UpdateScrollBars (bool force)
 		{
-			if (IsDisposed || update_stack > 0 || !IsHandleCreated || !Visible)
+			if (!force && (IsDisposed || update_stack > 0 || !IsHandleCreated || !Visible))
 				return;
 
 			bool vert = false;
@@ -1636,7 +1642,7 @@ namespace System.Windows.Forms {
 			if (IsHandleCreated) {
 				if (max_visible_order == -1)
 					RecalculateVisibleOrder (root_node);
-				UpdateScrollBars ();
+				UpdateScrollBars (false);
 			}
 
 			if (vbar.Visible) {
@@ -1667,6 +1673,9 @@ namespace System.Windows.Forms {
 
 			int diff = skipped_nodes - pos;
 			skipped_nodes = pos;
+
+			if (!IsHandleCreated)
+				return;
 
 			int y_move = diff * ActualItemHeight;
 			XplatUI.ScrollWindow (Handle, ViewportRectangle, 0, y_move, false);
@@ -1747,7 +1756,7 @@ namespace System.Windows.Forms {
 		private void VisibleChangedHandler (object sender, EventArgs e)
 		{
 			if (Visible) {
-				UpdateScrollBars ();
+				UpdateScrollBars (false);
 			}
 		}
 

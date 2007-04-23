@@ -698,7 +698,7 @@ namespace System.Windows.Forms {
 					tree_view.OnAfterExpand (new TreeViewEventArgs (this));
 
 					tree_view.RecalculateVisibleOrder (this);
-					tree_view.UpdateScrollBars ();
+					tree_view.UpdateScrollBars (false);
 
 					if (IsVisible)
 						tree_view.ExpandBelow (this, count_to_next);
@@ -733,7 +733,7 @@ namespace System.Windows.Forms {
 					tree_view.OnAfterCollapse (new TreeViewEventArgs (this));
 
 					tree_view.RecalculateVisibleOrder (this);
-					tree_view.UpdateScrollBars ();
+					tree_view.UpdateScrollBars (false);
 
 					if (IsVisible)
 						tree_view.CollapseBelow (this, count_to_next);

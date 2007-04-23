@@ -1,5 +1,14 @@
 2007-04-23  Jackson Harper  <jackson@ximian.com>
 
+	* TreeView.cs: Do not create the treeview's handle when setting
+	the scroll position.
+	- ExpandAll needs to compute the scrollbars so it knows which
+	position to set the bar too.
+	* TreeNode.cs: 
+	* TreeNodeCollection.cs: Pass new flag to UpdateScrollBars
+
+2007-04-23  Jackson Harper  <jackson@ximian.com>
+
 	* TextBoxBase.cs: Non multiline textboxes shouldn't take the enter
 	key. Fixes #81408.
 

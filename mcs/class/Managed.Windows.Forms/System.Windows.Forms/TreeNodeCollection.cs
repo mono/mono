@@ -192,7 +192,7 @@ namespace System.Windows.Forms {
 				if (tree_view != null) {
 					tree_view.UpdateBelow (owner);
 					tree_view.RecalculateVisibleOrder (owner);
-					tree_view.UpdateScrollBars ();
+					tree_view.UpdateScrollBars (false);
 				}
 			}
 		}
@@ -309,7 +309,7 @@ namespace System.Windows.Forms {
 
 			if (update && tree_view != null && visible) {
 				tree_view.RecalculateVisibleOrder (prev);
-				tree_view.UpdateScrollBars ();
+				tree_view.UpdateScrollBars (false);
 				tree_view.UpdateBelow (parent);
 			}
 		}
@@ -340,7 +340,7 @@ namespace System.Windows.Forms {
 				if (node.IsVisible)
 					tree_view.RecalculateVisibleOrder (prev);
 				if (owner == tree_view.root_node || node.Parent.IsVisible && node.Parent.IsExpanded)
-					tree_view.UpdateScrollBars ();
+					tree_view.UpdateScrollBars (false);
 			}
 
 			if (owner != null && tree_view != null && (owner.IsExpanded || owner.IsRoot)) {
