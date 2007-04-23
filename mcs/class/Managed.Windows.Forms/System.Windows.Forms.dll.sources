@@ -73,6 +73,7 @@ System.Windows.Forms/BindingManagerBase.cs
 System.Windows.Forms/BindingManagerDataErrorEventArgs.cs
 System.Windows.Forms/BindingManagerDataErrorEventHandler.cs
 System.Windows.Forms/BindingMemberInfo.cs
+System.Windows.Forms/BindingNavigator.cs
 System.Windows.Forms/BindingSource.cs
 System.Windows.Forms/BindingsCollection.cs
 System.Windows.Forms/BootMode.cs

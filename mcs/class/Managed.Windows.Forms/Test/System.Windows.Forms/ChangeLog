@@ -1,3 +1,7 @@
+2007-04-24  Alan McGovern <alan.mcgovern@gmail.com>
+
+	* BindingNavigatorTest.cs: Initial tests
+
 2007-04-23  Chris Toshok  <toshok@ximian.com>
 
 	* TestHelper.cs: move RunningOnUnix here.

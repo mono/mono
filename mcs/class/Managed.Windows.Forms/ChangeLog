@@ -1,3 +1,9 @@
+2007-04-24  Alan McGovern  <alan.mcgovern@gmail.com>
+
+	* System.Windows.Forms.dll.sources: Added
+		BindingNavigator.cs
+		BindingNavigatorTests.cs
+				
 2007-04-23  Jonathan Pobst  <monkey@jpobst.com>
 
 	* System.Windows.Forms_test.dll.sources: Add TableLayoutTest.cs.

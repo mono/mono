@@ -6,6 +6,7 @@ System.Windows.Forms/BindingTest.cs
 System.Windows.Forms/BindingContextTest.cs
 System.Windows.Forms/BindingManagerBaseTest.cs
 System.Windows.Forms/BindingMemberInfoTest.cs
+System.Windows.Forms/BindingNavigatorTest.cs
 System.Windows.Forms/BindingSourceTest.cs
 System.Windows.Forms/ButtonTest.cs
 System.Windows.Forms/CheckBoxEventTest.cs

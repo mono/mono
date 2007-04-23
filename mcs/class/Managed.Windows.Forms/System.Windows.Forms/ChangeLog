@@ -1,3 +1,7 @@
+2007-04-24  Alan McGovern <alan.mcgovern@gmail.com>
+
+	* BindingNavigator.cs : Initial (partial) implementation
+
 2007-04-23  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs: Do not create the treeview's handle when setting
