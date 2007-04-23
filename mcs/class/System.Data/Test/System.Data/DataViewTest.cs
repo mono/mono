@@ -51,14 +51,19 @@ namespace MonoTests.System.Data
 		ListChangedEventArgs listChangedArgs;
 		TextWriter eventWriter;
 
+		DataColumn dc1;
+		DataColumn dc2;
+		DataColumn dc3;
+		DataColumn dc4;
+
 		[SetUp]
 		public void GetReady ()
 		{
 			dataTable = new DataTable ("itemTable");
-			DataColumn dc1 = new DataColumn ("itemId");
-			DataColumn dc2 = new DataColumn ("itemName");
-			DataColumn dc3 = new DataColumn ("itemPrice");
-			DataColumn dc4 = new DataColumn ("itemCategory");
+			dc1 = new DataColumn ("itemId");
+			dc2 = new DataColumn ("itemName");
+			dc3 = new DataColumn ("itemPrice");
+			dc4 = new DataColumn ("itemCategory");
 			
 			dataTable.Columns.Add (dc1);
 			dataTable.Columns.Add (dc2);
@@ -691,6 +696,27 @@ namespace MonoTests.System.Data
 			DataRowView a3 = dv.AddNew ();
 
 			AssertEquals (reference, eventWriter.ToString ());
+		}
+
+		[Test]
+		public void ColumnChangeName ()
+		{
+			string result = @"setting table...
+---- OnListChanged PropertyDescriptorChanged,0,0
+----- UpdateIndex : True
+---- OnListChanged Reset,-1,-1
+table was set.
+---- OnListChanged PropertyDescriptorChanged,0,0
+";
+
+			eventWriter = new StringWriter ();
+
+			ComplexEventSequence1View dv =
+				new ComplexEventSequence1View (dataTable, eventWriter);
+
+			dc2.ColumnName = "new_column_name";
+
+			AssertEquals (result, eventWriter.ToString ().Replace ("\r\n", "\n"));
 		}
 
 		private void ListChanged (object o, ListChangedEventArgs e)

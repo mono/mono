@@ -687,6 +687,7 @@ namespace System.Data
 			//dataTable.RowDeleting    += new DataRowChangeEventHandler(OnRowDeleting);
 			dataTable.RowDeleted     += new DataRowChangeEventHandler(OnRowDeleted);
 			dataTable.Columns.CollectionChanged += new CollectionChangeEventHandler(ColumnCollectionChanged);
+			dataTable.Columns.CollectionMetaDataChanged += new CollectionChangeEventHandler(ColumnCollectionChanged);
 			dataTable.Constraints.CollectionChanged += new CollectionChangeEventHandler(OnConstraintCollectionChanged);
 			dataTable.ChildRelations.CollectionChanged += new CollectionChangeEventHandler(OnRelationCollectionChanged);
 			dataTable.ParentRelations.CollectionChanged += new CollectionChangeEventHandler(OnRelationCollectionChanged);
@@ -711,6 +712,7 @@ namespace System.Data
 //			dataTable.RowDeleting    -= new DataRowChangeEventHandler(OnRowDeleting);
 			dataTable.RowDeleted     -= new DataRowChangeEventHandler(OnRowDeleted);
 			dataTable.Columns.CollectionChanged -= new CollectionChangeEventHandler(ColumnCollectionChanged);
+			dataTable.Columns.CollectionMetaDataChanged -= new CollectionChangeEventHandler(ColumnCollectionChanged);
 			dataTable.Constraints.CollectionChanged -= new CollectionChangeEventHandler(OnConstraintCollectionChanged);
 			dataTable.ChildRelations.CollectionChanged -= new CollectionChangeEventHandler(OnRelationCollectionChanged);
 			dataTable.ParentRelations.CollectionChanged -= new CollectionChangeEventHandler(OnRelationCollectionChanged);
@@ -783,7 +785,7 @@ namespace System.Data
 			/* PropertyDescriptor Removed */
 			if (args.Action == CollectionChangeAction.Remove)
 				OnListChanged (new ListChangedEventArgs (ListChangedType.PropertyDescriptorDeleted,0,0));
-			/* FIXME: PropertyDescriptor Changed ???*/
+			/* PropertyDescriptor Changed, comes from DataColumnCollection.CollectionMetaDataChanged */
 			if (args.Action == CollectionChangeAction.Refresh)
 				OnListChanged (new ListChangedEventArgs (ListChangedType.PropertyDescriptorChanged,0,0));
 		}

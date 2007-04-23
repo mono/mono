@@ -1,3 +1,23 @@
+2007-04-19  Chris Toshok  <toshok@ximian.com>
+
+	* DataColumnCollection.cs (Add): the Element in our
+	CollectionChangedEventArgs should be the column, not the
+	collection.  Also, add an event handler for the column's
+	PropertyChanged event so we can propagate metadata changes.
+	(Remove): Analogous change to the CollectionChangedEventArgs as in
+	Add.  Also, unhook the column's PropertyChanged event.
+	(OnCollectionmetaDataChanged): emit our new event.
+	(ColumnPropertyChanged): called when the column's ColumnName
+	property changes.  Emit the proper CollectionChangeEvent.
+
+	* DataView.cs (ColumnCollectionChanged): fix up the comment about
+	CollectionChangeAction.Refresh, and make explicit what generates
+	it.
+	(RegisterEventHandlers): hook up
+	DataColumnCollectoin.CollectionMetaDataChanged.
+	(RegisterEventHandlers): unhook
+	DataColumnCollectoin.CollectionMetaDataChanged.
+
 2007-02-23  Nagappan A  <anagappan@novell.com>
 
 	* DataRow.cs (Item): Checks whether this DataRow exist in the

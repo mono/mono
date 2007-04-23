@@ -277,7 +277,7 @@ namespace System.Data {
 			if (column.Table != null)
 				throw new ArgumentException ("Column '" + column.ColumnName + "' already belongs to this or another DataTable.");
 
-			CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Add, this);
+			CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Add, column);
 
 			column.SetTable (parentTable);
 			RegisterName(column.ColumnName, column);
@@ -309,6 +309,8 @@ namespace System.Data {
 
 			if (column.AutoIncrement)
 				autoIncrement.Add(column);
+
+			column.PropertyChanged += new PropertyChangedEventHandler (ColumnPropertyChanged);
 
 			OnCollectionChanged (e);
 		}
@@ -583,7 +585,7 @@ namespace System.Data {
 			if (dependency != String.Empty)
 				throw new ArgumentException ("Cannot remove this column, because it is part of " + dependency);
 
-			CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Remove, this);
+			CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Remove, column);
 			
 			int ordinal = column.Ordinal;
 			UnregisterName(column.ColumnName);
@@ -605,6 +607,8 @@ namespace System.Data {
 
 			if (column.AutoIncrement)
 				autoIncrement.Remove(column);
+
+			column.PropertyChanged -= new PropertyChangedEventHandler (ColumnPropertyChanged);
 
 			OnCollectionChanged(e);
 		}
@@ -705,8 +709,21 @@ namespace System.Data {
                 [ResDescriptionAttribute ("Occurs whenever this collection's membership changes.")] 
 		public event CollectionChangeEventHandler CollectionChanged;
 
+		internal event CollectionChangeEventHandler CollectionMetaDataChanged;
 		#endregion 
-		
+
+		private void OnCollectionMetaDataChanged(CollectionChangeEventArgs ccevent)
+		{
+			parentTable.ResetPropertyDescriptorsCache();
+			if (CollectionMetaDataChanged != null) 
+				CollectionMetaDataChanged(this, ccevent);
+		}
+
+		private void ColumnPropertyChanged (object sender, PropertyChangedEventArgs args)
+		{
+			OnCollectionMetaDataChanged (new CollectionChangeEventArgs(CollectionChangeAction.Refresh, sender));
+		}
+
 #if NET_2_0
 		internal void MoveColumn (int oldOrdinal, int newOrdinal)
 		{

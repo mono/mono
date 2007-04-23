@@ -261,19 +261,48 @@ namespace MonoTests.System.Data
 			Assert.AreEqual(false, dt.Columns.CanRemove(dt.Columns["col1"]), "DCC43"); //Col1 is a part of expression
 		}
 
-		[Test] public void CollectionChanged()
+		[Test] public void TestAdd_CollectionChanged()
 		{
-			counter = 0;
 			DataTable dt = DataProvider.CreateParentDataTable();
+
 			dt.Columns.CollectionChanged+=new CollectionChangeEventHandler(Columns_CollectionChanged);
-			dt.Columns.Add("tempCol");
-			dt.Columns.Remove("tempCol");
-			Assert.AreEqual(2, counter, "DCC44");
+			counter = 0;
+			DataColumn c = dt.Columns.Add("tempCol");
+
+			Assert.AreEqual(1, counter, "DCC44.1");
+			Assert.AreEqual (c, change_element, "DCC44.2");
 		}
 
+		[Test] public void TestRemove_CollectionChanged()
+		{
+			DataTable dt = DataProvider.CreateParentDataTable();
+
+			dt.Columns.CollectionChanged+=new CollectionChangeEventHandler(Columns_CollectionChanged);
+			DataColumn c = dt.Columns.Add("tempCol");
+			counter = 0;
+			dt.Columns.Remove("tempCol");
+
+			Assert.AreEqual (1, counter, "DCC44.3");
+			Assert.AreEqual (c, change_element, "DCC44.4");
+		}
+
+		[Test] public void TestSetName_CollectionChanged()
+		{
+			DataTable dt = DataProvider.CreateParentDataTable();
+
+			dt.Columns.CollectionChanged+=new CollectionChangeEventHandler(Columns_CollectionChanged);
+			dt.Columns.Add("tempCol");
+			counter = 0;
+			dt.Columns[0].ColumnName = "tempCol2";
+
+			Assert.AreEqual(0, counter, "DCC44.5");
+		}
+
+		object change_element;
 		private void Columns_CollectionChanged(object sender, CollectionChangeEventArgs e)
 		{
 			counter++;
+			change_element = e.Element;
 		}
 
 		[Test] public void TestContains_ByColumnName()
