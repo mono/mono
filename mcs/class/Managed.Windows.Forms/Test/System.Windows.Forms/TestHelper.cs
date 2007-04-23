@@ -43,6 +43,15 @@ namespace MonoTests.System.Windows.Forms
 			CreateParams cp = GetCreateParams (control);
 			return ((cp.ExStyle & (int) style) == (int) style);
 		}
+
+		public static bool RunningOnUnix {
+			get {
+				// check for Unix platforms - see FAQ for more details
+				// http://www.mono-project.com/FAQ:_Technical#How_to_detect_the_execution_platform_.3F
+				int platform = (int) Environment.OSVersion.Platform;
+				return ((platform == 4) || (platform == 128));
+			}
+		}
 	}
 	
 	[Flags]

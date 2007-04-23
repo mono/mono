@@ -99,7 +99,7 @@ namespace MonoTests.System.Windows.Forms {
 		[Test]
 		public void ControlSelectNextFlatTest ()
 		{
-			if (RunningOnUnix) {
+			if (TestHelper.RunningOnUnix) {
 				Assert.Ignore ("Relies on form.Show() synchronously generating WM_ACTIVATE");
 			}
 
@@ -827,7 +827,7 @@ namespace MonoTests.System.Windows.Forms {
 		[Test]
 		public void ActiveControl ()
 		{
-			if (RunningOnUnix) {
+			if (TestHelper.RunningOnUnix) {
 				Assert.Ignore ("Relies on form.Show() synchronously generating WM_ACTIVATE");
 			}
 
@@ -980,7 +980,7 @@ namespace MonoTests.System.Windows.Forms {
 		[Test]
 		public void EnterLeaveFocusEventTest ()
 		{
-			if (RunningOnUnix) {
+			if (TestHelper.RunningOnUnix) {
 				Assert.Ignore ("Relies on form.Show() synchronously generating WM_ACTIVATE");
 			}
 
@@ -1195,15 +1195,6 @@ OnGotFocus: ContainerControl 1 System.Windows.Forms.ContainerControl
 			Assert.IsNull (cc.ActiveControl, "#E3");
 
 			form.Dispose ();
-		}
-
-		private bool RunningOnUnix {
-			get {
-				// check for Unix platforms - see FAQ for more details
-				// http://www.mono-project.com/FAQ:_Technical#How_to_detect_the_execution_platform_.3F
-				int platform = (int) Environment.OSVersion.Platform;
-				return ((platform == 4) || (platform == 128));
-			}
 		}
 	}
 }

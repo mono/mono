@@ -1,3 +1,11 @@
+2007-04-23  Chris Toshok  <toshok@ximian.com>
+
+	* TestHelper.cs: move RunningOnUnix here.
+
+	* FocusTest.cs: use TestHelper.RunningOnUnix.
+
+	* FormTest.cs: use TestHelper.RunningOnUnix.
+
 2007-04-23  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TableLayoutTest.cs: Add a bunch of tests I thought I had lost
