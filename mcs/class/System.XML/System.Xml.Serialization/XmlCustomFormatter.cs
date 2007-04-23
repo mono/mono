@@ -284,6 +284,16 @@ namespace System.Xml.Serialization {
 
 		internal static string GenerateToXmlString (TypeData type, string value)
 		{
+			if (type.NullableOverride)
+				return "(" + value + " != null ? " + GenerateToXmlStringCore (type, value) + " : null)";
+			else
+				return GenerateToXmlStringCore (type, value);
+		}
+
+		static string GenerateToXmlStringCore (TypeData type, string value)
+		{
+			if (type.NullableOverride)
+				value = value + ".Value";
 			switch (type.XmlType)
 			{
 				case "boolean": return "(" + value + "?\"true\":\"false\")";

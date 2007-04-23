@@ -224,6 +224,11 @@ namespace System.Xml.Serialization
 			}
 		}
 
+		public bool NullableOverride
+		{
+			get { return nullableOverride; }
+		}
+
 		public bool IsNullable
 		{
 			get

@@ -2571,7 +2571,7 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test] // bug #80759
-		public void HasFieldSpecifiedButIrrelevant ()
+		public void HasNullableField ()
 		{
 			Bug80759 foo = new Bug80759 ();
 			foo.Test = "BAR";
@@ -2584,6 +2584,24 @@ namespace MonoTests.System.XmlSerialization
 			serializer.Serialize (stream, foo);
 			stream.Position = 0;
 			foo = (Bug80759) serializer.Deserialize (stream);
+		}
+
+		[Test] // bug #80759, with fieldSpecified.
+		[ExpectedException (typeof (InvalidOperationException))]
+		[Category ("NotWorking")]
+		public void HasFieldSpecifiedButIrrelevant ()
+		{
+			Bug80759_2 foo = new Bug80759_2 ();
+			foo.Test = "BAR";
+			foo.NullableInt = 10;
+
+			XmlSerializer serializer = new XmlSerializer (typeof (Bug80759_2));
+
+			MemoryStream stream = new MemoryStream ();
+
+			serializer.Serialize (stream, foo);
+			stream.Position = 0;
+			foo = (Bug80759_2) serializer.Deserialize (stream);
 		}
 
 		[Test]
@@ -2678,6 +2696,12 @@ namespace MonoTests.System.XmlSerialization
 
 #if NET_2_0
 		public class Bug80759
+		{
+			public string Test;
+			public int? NullableInt;
+		}
+
+		public class Bug80759_2
 		{
 			public string Test;
 			public int? NullableInt;
