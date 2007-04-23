@@ -220,9 +220,10 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class EmitContext : IResolveContext {
 
-		DeclSpace declSpace;
+		DeclSpace decl_space;
+		
 		public DeclSpace TypeContainer;
-		public ILGenerator   ig;
+		public ILGenerator ig;
 
 		[Flags]
 		public enum Flags : byte {
@@ -301,7 +302,7 @@ namespace Mono.CSharp {
 		///   The value that is allowed to be returned or NULL if there is no
 		///   return type.
 		/// </summary>
-		Type returnType;
+		Type return_type;
 
 		/// <summary>
 		///   Points to the Type (extracted from the TypeContainer) that
@@ -414,7 +415,7 @@ namespace Mono.CSharp {
 			this.ig = ig;
 
 			TypeContainer = parent;
-			this.declSpace = ds;
+			this.decl_space = ds;
 			if (RootContext.Checked)
 				flags |= Flags.CheckState;
 			flags |= Flags.ConstantCheckState;
@@ -455,8 +456,8 @@ namespace Mono.CSharp {
 		}
 
 		public DeclSpace DeclContainer { 
-			get { return declSpace; }
-			set { declSpace = value; }
+			get { return decl_space; }
+			set { decl_space = value; }
 		}
 
 		public DeclSpace GenericDeclContainer {
@@ -719,7 +720,7 @@ namespace Mono.CSharp {
 			}
 #endif
 
-			if (returnType != null && !unreachable) {
+			if (return_type != null && !unreachable) {
 				if (CurrentAnonymousMethod == null) {
 					Report.Error (161, md.Location, "`{0}': not all code paths return a value", md.GetSignatureForError ());
 					return false;
@@ -739,11 +740,11 @@ namespace Mono.CSharp {
 
 		public Type ReturnType {
 			set {
-				returnType = value == TypeManager.void_type ?
+				return_type = value == TypeManager.void_type ?
 					null : value;
 			}
 			get {
-				return returnType;
+				return return_type;
 			}
 		}
 
@@ -778,7 +779,7 @@ namespace Mono.CSharp {
 				if ((block != null) && block.IsDestructor) {
 					// Nothing to do; S.R.E automatically emits a leave.
 				} else if (HasReturnLabel || (!unreachable && !in_iterator)) {
-					if (returnType != null)
+					if (return_type != null)
 						ig.Emit (OpCodes.Ldloc, TemporaryReturn ());
 					ig.Emit (OpCodes.Ret);
 				}
@@ -901,7 +902,7 @@ namespace Mono.CSharp {
 		public LocalBuilder TemporaryReturn ()
 		{
 			if (return_value == null){
-				return_value = ig.DeclareLocal (returnType);
+				return_value = ig.DeclareLocal (return_type);
 				if (!HasReturnLabel){
 					ReturnLabel = ig.DefineLabel ();
 					HasReturnLabel = true;
