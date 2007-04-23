@@ -1,13 +1,13 @@
+2007-04-23  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #81414
+	* delegate.cs: Better fix, moved ApplyAttributes from Define to Emit.
+
 2007-04-22  Miguel de Icaza  <miguel@novell.com>
 
 	* cs-tokenizer.cs: Change various identifiers here from the
 	camelCasing to the recommended Linux-like style for instance
 	variables from the Coding Guidelines. 
-
-2007-04-22  Marek Safar  <marek.safar@gmail.com>
-
-	A fix for bug #81414
-	* typemanager.cs: Earlier initialization of params attribute ctor.
 
 2007-04-19  Martin Baulig  <martin@ximian.com>
 
