@@ -1,3 +1,17 @@
+2007-04-23  Jeffrey Stedfast  <fejj@novell.com>
+
+	Fixes bug #80702 (via getting rid of the casting) and more.
+
+	The following change makes it such that even if an application
+	calls Console.SetOut() with its own output stream, we can still
+	properly echo user-input from stdin to the real stdout.
+
+	* TermInfoDriver.cs (ctor): Grab a reference to the original
+	Console.stdout so we can be sure we always echo to console.
+	(QueueEcho): No need to cast Console.stdout anymore.
+	(EchoFlush): Same.
+	(WriteConsole: Here too.
+
 2007-04-20  Jeffrey Stedfast  <fejj@novell.com>
 
 	* TermInfoDriver.cs (QueueEcho): Renamed from Echo(char). Use

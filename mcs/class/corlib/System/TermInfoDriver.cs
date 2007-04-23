@@ -52,6 +52,7 @@ namespace System {
 		string bell;
 		string term;
 		StreamReader stdin;
+		CStreamWriter stdout;
 		internal byte verase;
 		byte vsusp;
 		byte intr;
@@ -113,12 +114,12 @@ namespace System {
 			return null;
 		}
 
-		static void WriteConsole (string str)
+		void WriteConsole (string str)
 		{
 			if (str == null)
 				return;
-
-			((CStreamWriter) Console.stdout).InternalWriteString (str);
+			
+			stdout.InternalWriteString (str);
 		}
 
 		public TermInfoDriver ()
@@ -146,6 +147,14 @@ namespace System {
 
 			if (reader == null)
 				reader = new TermInfoReader (term, KnownTerminals.ansi);
+
+			if (!(Console.stdout is CStreamWriter)) {
+				// Application set its own stdout, we need a reference to the real stdout
+				stdout = new CStreamWriter (Console.OpenStandardOutput (0), Console.OutputEncoding);
+				((StreamWriter) stdout).AutoFlush = true;
+			} else {
+				stdout = (CStreamWriter) Console.stdout;
+			}
 		}
 
 		public bool Initialized {
@@ -156,7 +165,7 @@ namespace System {
 		{
 			if (inited)
 				return;
-			
+
 			/* This should not happen any more, since it is checked for in Console */
 			if (!ConsoleDriver.IsConsole)
 				throw new IOException ("Not a tty.");
@@ -898,7 +907,7 @@ namespace System {
 
 			if (echon == echobuf.Length || !InputPending ()) {
 				// blit our echo buffer to the console
-				((CStreamWriter) Console.stdout).InternalWriteChars (echobuf, echon);
+				stdout.InternalWriteChars (echobuf, echon);
 				echon = 0;
 			}
 		}
@@ -924,7 +933,7 @@ namespace System {
 				return;
 
 			// flush our echo buffer to the console
-			((CStreamWriter) Console.stdout).InternalWriteChars (echobuf, echon);
+			stdout.InternalWriteChars (echobuf, echon);
 			echon = 0;
 		}
 #endregion
