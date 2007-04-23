@@ -233,7 +233,7 @@ namespace System.Web.Services.Protocols {
 		{
 			if (name == null || name.Length == 0) return (BindingInfo) bindings[0];
 			
-			for (int n=1; n<bindings.Count; n++)
+			for (int n = 0; n < bindings.Count; n++)
 				if (((BindingInfo)bindings[n]).Name == name) return (BindingInfo)bindings[n];
 			return null;
 		}
@@ -244,7 +244,7 @@ namespace System.Web.Services.Protocols {
 		public BindingInfo (WebServiceBindingAttribute at, string name, string ns)
 		{
 			if (at != null) {
-#if ONLY_1_1
+#if NET_1_1
 				Name = at.Name;
 #endif
 				Namespace = at.Namespace;

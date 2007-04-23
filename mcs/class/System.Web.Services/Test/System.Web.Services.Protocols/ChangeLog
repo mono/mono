@@ -1,3 +1,8 @@
+2007-04-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SoapServerTypeTest.cs : added new test (one is not working yet).
+	  It will be very useful when we test service type generation.
+
 2007-01-15  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* SoapHttpClientProtocolTest.cs: Added test for bug #79988.

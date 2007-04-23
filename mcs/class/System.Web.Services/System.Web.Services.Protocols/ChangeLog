@@ -1,3 +1,10 @@
+2007-04-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TypeStubManager.cs : fix binding enumeration on finding by name.
+	  fix wrong ONLY_1_1.
+	* ServerType.cs : ONLY_1_1 is evil enough to make sources confusing.
+	  Use it only when it is really needed.
+
 2007-04-11  Konstantin Triger <kostat@mainsoft.com>
 
 	* WebServiceHandlerFactory.cs: Use HttpRequest.IsLocal to determine

@@ -91,9 +91,7 @@ namespace System.Web.Services.Protocols
 			string sep = WebServiceNamespace.EndsWith ("/") ? "" : "/";
 
 			WebServiceAbstractNamespace = WebServiceNamespace + sep + "AbstractTypes";
-#if ONLY_1_1
-			MethodInfo [] type_methods = Type.GetMethods (BindingFlags.Instance | BindingFlags.Public);
-#else
+#if NET_2_0
 			MethodInfo [] type_methods;
 			if (typeof (WebClientProtocol).IsAssignableFrom (Type))
 				type_methods = Type.GetMethods (BindingFlags.Instance | BindingFlags.Public);
@@ -119,6 +117,8 @@ namespace System.Web.Services.Protocols
 				}
 				type_methods = (MethodInfo []) list.ToArray (typeof (MethodInfo));
 			}
+#else
+			MethodInfo [] type_methods = Type.GetMethods (BindingFlags.Instance | BindingFlags.Public);
 #endif
 			logicalMethods = LogicalMethodInfo.Create (type_methods, LogicalMethodTypes.Sync);
 		}
