@@ -224,6 +224,12 @@ namespace MonoTests.System.Web {
 				return_kind = re;
 			}
 			
+			public override string GetFilePath()
+			{
+				WhereAmI ();
+				return "/tmp/uri.aspx";
+			}
+
 			public override string GetUriPath()
 			{
 				WhereAmI ();
@@ -257,6 +263,8 @@ namespace MonoTests.System.Web {
 					return "PlainString";
 				case 51:
 					return "Plain&Arg=1";
+				case 52:
+					return "Empty=";
 				default:
 					return "GetQueryString";
 				}
@@ -743,6 +751,13 @@ namespace MonoTests.System.Web {
 			HttpContext c = Cook (1);
 			HttpRequest req = c.Request;
 			Assert.AreEqual (0, req.ContentLength, "#01");
+		}
+
+		[Test]
+		public void EmptyQueryValueParams ()
+		{
+			HttpContext c = Cook (52);
+			Assert.AreEqual ("", c.Request.Params["Empty"]);
 		}
 	}
 
