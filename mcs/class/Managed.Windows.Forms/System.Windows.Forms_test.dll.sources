@@ -100,6 +100,7 @@ System.Windows.Forms/StatusBarTest.cs
 System.Windows.Forms/StatusStripTest.cs
 System.Windows.Forms/SystemInformationTest.cs
 System.Windows.Forms/TabControlTest.cs
+System.Windows.Forms/TableLayoutTest.cs
 System.Windows.Forms/TestHelper.cs
 System.Windows.Forms/TestImageIndexConverter.cs
 System.Windows.Forms/TextBoxTest.cs
