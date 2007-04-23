@@ -1188,11 +1188,6 @@ namespace Mono.CSharp {
 		system_iasyncresult_expr.Type = iasyncresult_type;
 
 		//
-		// Params contructor is used in delegate ApplyAttributes before we call InitCodeHelpers
-		//
-		cons_param_array_attribute = GetConstructor (param_array_type, Type.EmptyTypes);
-
-		//
 		// These are only used for compare purposes
 		//
 		anonymous_method_type = typeof (AnonymousMethod);
@@ -1319,6 +1314,7 @@ namespace Mono.CSharp {
 		//
 		unverifiable_code_ctor = GetConstructor (unverifiable_code_type, Type.EmptyTypes);
 		default_member_ctor = GetConstructor (default_member_type, string_);
+		cons_param_array_attribute = GetConstructor (param_array_type, Type.EmptyTypes);
 
 		Type[] short_arg = { short_type };
 		struct_layout_attribute_ctor = GetConstructor (struct_layout_attribute_type, short_arg);
