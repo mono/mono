@@ -1,3 +1,9 @@
+2007-04-23  Raja R Harinath  <rharinath@novell.com>
+
+	* reflection.c (mono_reflection_bind_generic_parameters): Don't
+	create new MonoTypes for returned types.
+	* class.c (mono_generic_class_get_class): Export mono-internal.
+	* class-internals.h: Update to changes.
 
 Thu Apr 19 16:45:55 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
