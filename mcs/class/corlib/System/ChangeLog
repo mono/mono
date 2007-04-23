@@ -1,5 +1,16 @@
 2007-04-23  Jeffrey Stedfast  <fejj@novell.com>
 
+	* TermInfoDriver.cs (ReadKeyInternal): Since our input stream is
+	buffered, check if it has more buffered input in addition to our
+	timeout check. This makes it such that we will actually correctly
+	match multi-char escape sequences.
+	(Read): Changed the logic slightly wrt 'fresh' echoing. Once we
+	encounter a fresh char, all chars afterward should also be
+	considered 'fresh' even if 'fresh' is returned as false later.
+	(ReadLine): Same logic here.
+
+2007-04-23  Jeffrey Stedfast  <fejj@novell.com>
+
 	Fixes bug #80702 (via getting rid of the casting) and more.
 
 	The following change makes it such that even if an application

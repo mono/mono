@@ -28,7 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 #if NET_2_0
-//#define DEBUG
+#define DEBUG
 using System.Collections;
 using System.IO;
 using System.Text;
@@ -867,7 +867,11 @@ namespace System {
 						do {
 							AddToBuffer (stdin.Read ());
 						} while (ConsoleDriver.InternalKeyAvailable (0) > 0);
-					} else {
+					} else if (stdin.Peek () != -1) {
+						do {
+							AddToBuffer (stdin.Read ());
+						} while (stdin.Peek () != -1);
+					} else {						
 						if ((o = GetKeyFromBuffer (false)) != null)
 							break;
 
@@ -940,10 +944,10 @@ namespace System {
 
 		public int Read ([In, Out] char [] dest, int index, int count)
 		{
+			bool fresh, echo = false;
 			StringBuilder sbuf;
 			ConsoleKeyInfo key;
 			int BoL = 0;  // Beginning-of-Line marker (can't backspace beyond this)
-			bool fresh;
 			object o;
 			char c;
 
@@ -973,6 +977,7 @@ namespace System {
 
 			do {
 				key = ReadKeyInternal (out fresh);
+				echo = echo || fresh;
 				c = key.KeyChar;
 
 				if (key.Key != ConsoleKey.Backspace) {
@@ -987,7 +992,7 @@ namespace System {
 				}
 
 				// echo fresh keys back to the console
-				if (fresh)
+				if (echo)
 					Echo (key);
 			} while (key.Key != ConsoleKey.Enter);
 
@@ -1037,8 +1042,8 @@ namespace System {
 			GetCursorPosition ();
 
 			StringBuilder builder = new StringBuilder ();
+			bool fresh, echo = false;
 			ConsoleKeyInfo key;
-			bool fresh;
 			char c;
 
 			rl_startx = cursorLeft;
@@ -1046,7 +1051,9 @@ namespace System {
 
 			do {
 				key = ReadKeyInternal (out fresh);
+				echo = echo || fresh;
 				c = key.KeyChar;
+
 				if (key.Key != ConsoleKey.Enter) {
 					if (key.Key != ConsoleKey.Backspace) {
 						builder.Append (c);
@@ -1059,7 +1066,7 @@ namespace System {
 				}
 
 				// echo fresh keys back to the console
-				if (fresh)
+				if (echo)
 					Echo (key);
 			} while (key.Key != ConsoleKey.Enter);
 
