@@ -30,7 +30,7 @@ using System.Windows.Forms;
 
 using NUnit.Framework;
 
-namespace MonoTests.System.Windows.Forms {
+namespace MonoTests.System.Windows.Forms.DataBinding {
 
 	[TestFixture]
 	public class BindingTest {
@@ -162,9 +162,38 @@ namespace MonoTests.System.Windows.Forms {
 			f.Dispose ();
 		}
 
+		[Test]
+		public void BindingContextChangedTest4 ()
+		{
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+
+			ContainerControl cc = new ContainerControl ();
+
+			Control c = new Control ();
+			f.Controls.Add (cc);
+			cc.Controls.Add (c);
+
+			c.BindingContextChanged += new EventHandler (Event_Handler1);
+			cc.BindingContextChanged += new EventHandler (Event_Handler1);
+			f.BindingContextChanged += new EventHandler (Event_Handler1);
+
+			eventcount = 0;
+			Console.WriteLine (">>>");
+			f.Show ();
+			Console.WriteLine ("<<<");
+#if NET_2_0
+			Assert.AreEqual (5, eventcount, "A1");
+#else
+			Assert.AreEqual (8, eventcount, "A1");
+#endif
+			f.Dispose ();
+		}
+
 		int eventcount;
 		public void Event_Handler1 (object sender, EventArgs e)
 		{
+			//Console.WriteLine (sender.GetType());
 			//Console.WriteLine (Environment.StackTrace);
 			eventcount++;
 		}

@@ -33,7 +33,7 @@ using NUnit.Framework;
 
 using CategoryAttribute = NUnit.Framework.CategoryAttribute;
 
-namespace MonoTests.System.Windows.Forms {
+namespace MonoTests.System.Windows.Forms.DataBinding {
 
 	[TestFixture]
 	public class BindingContextTest {

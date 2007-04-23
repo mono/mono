@@ -33,7 +33,7 @@ using NUnit.Framework;
 
 using CategoryAttribute = NUnit.Framework.CategoryAttribute;
 
-namespace MonoTests.System.Windows.Forms {
+namespace MonoTests.System.Windows.Forms.DataBinding {
 
 	[TestFixture]
 	public class BindingSourceTest
@@ -54,6 +54,11 @@ namespace MonoTests.System.Windows.Forms {
 
 			source.Add ((int)32);
 			Assert.IsTrue (source.List is BindingList<int>, "1");
+
+			source = new BindingSource ();
+			source.DataSource = new ArrayList ();
+			source.Add ((int)32);
+			Assert.IsFalse (source.List is BindingList<int>, "2");
 		}
 
 		class EmptyEnumerable : IEnumerable {

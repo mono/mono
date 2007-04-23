@@ -30,6 +30,7 @@ using System.Reflection;
 using System.Windows.Forms;
 
 using NUnit.Framework;
+using CategoryAttribute = NUnit.Framework.CategoryAttribute;
 
 namespace MonoTests.System.Windows.Forms.DataBinding
 {
@@ -123,9 +124,10 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 	}
 
 	[TestFixture]
-	public class CurrencyManagerTests : DataBindingTest
+	public class CurrencyManagerTest2 : DataBindingTest
 	{
 		[Test]
+		[Category ("NotWorking")]
 		public void TestRowDelete ()
 		{
 			Control c = new Control ();
@@ -170,6 +172,7 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void TestRowAdd ()
 		{
 			Control c = new Control ();
@@ -195,10 +198,12 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 			event_log = "";
 			event_num = 0;
 
+			Console.WriteLine (">>>");
 			DataRow newrow = dataSet1.Tables[0].NewRow ();
 			dataSet1.Tables[0].Rows.Add(newrow);
 
 			Console.WriteLine (event_log);
+			Console.WriteLine ("<<<");
 
 #if NET_2_0
 			Assert.AreEqual ("0: PositionChanged (to 0)\n1: CurrentChanged\n2: CurrentItemChanged\n3: ItemChanged (index = -1)\n4: ItemChanged (index = -1)\n5: Binding.Format\n6: Binding.Format\n7: Binding.Format\n", event_log, "2");
@@ -210,6 +215,50 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 		}
 
 		[Test]
+		[Category ("NotWorking")]
+		public void TestRowAddAnother ()
+		{
+			Control c = new Control ();
+			c.CreateControl ();
+			Binding binding;
+			CurrencyManager cm;
+
+			DataSet dataSet1 = new DataSet();
+			dataSet1.Tables.Add();
+			dataSet1.Tables[0].Columns.Add();
+
+			c.BindingContext = new BindingContext ();
+			cm = (CurrencyManager) c.BindingContext[dataSet1, dataSet1.Tables[0].TableName];
+			binding = c.DataBindings.Add ("Text", dataSet1.Tables[0], dataSet1.Tables[0].Columns[0].ColumnName);
+
+			HookupCurrencyManager (cm);
+			HookupBinding (binding);
+
+			cm.Position = 0;
+
+			Assert.AreEqual (0, cm.Count, "1");
+
+			DataRow newrow = dataSet1.Tables[0].NewRow ();
+			dataSet1.Tables[0].Rows.Add(newrow);
+
+			Console.WriteLine (">>>");
+
+			event_log = "";
+			event_num = 0;
+
+			newrow = dataSet1.Tables[0].NewRow ();
+			dataSet1.Tables[0].Rows.Add(newrow);
+
+			Console.WriteLine (event_log);
+			Console.WriteLine ("<<<");
+
+			Assert.AreEqual ("0: ItemChanged (index = -1)\n1: Binding.Format\n", event_log, "2");
+
+			Assert.AreEqual (1, cm.Count, "3");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
 		public void TestColumnAdd ()
 		{
 			Control c = new Control ();
@@ -332,6 +381,9 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 
 			DataSet dataSet1 = new DataSet();
 			dataSet1.Tables.Add();
+
+			dataSet1.Tables[0].Columns.CollectionChanged += delegate (object sender, CollectionChangeEventArgs e) { Console.WriteLine ("collection changed : {0} {1}", e.Action, e.Element.GetType()); };
+
 			dataSet1.Tables[0].Columns.Add();
 
 			c.BindingContext = new BindingContext ();
@@ -349,6 +401,8 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 			event_log = "";
 			event_num = 0;
 
+			dataSet1.Tables[0].DefaultView.ListChanged += delegate (object sender, ListChangedEventArgs e) { Console.WriteLine ("list changed : {0} {1} {2}", e.ListChangedType, e.OldIndex, e.NewIndex); };
+
 			dataSet1.Tables[0].Columns[0].ColumnName = "new name";
 
 			Console.WriteLine (event_log);
@@ -361,6 +415,7 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void TestRowModify ()
 		{
 			Control c = new Control ();
@@ -455,9 +510,10 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 	}
 
 	[TestFixture]
-	public class PropertyManagerTests : DataBindingTest
+	public class PropertyManagerTest2 : DataBindingTest
 	{
 		[Test]
+		[Category ("NotWorking")]
 		public void TestPropertyChange ()
 		{
 			Control c1 = new Control ();
@@ -474,11 +530,11 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 
 			pm = (PropertyManager) c2.BindingContext[c1, "Text"];
 
-			Console.WriteLine (pm.GetType());
-
 			binding = c2.DataBindings.Add ("Text", c1, "Text");
 
+			Console.WriteLine (pm.GetType());
 			Console.WriteLine (binding.BindingManagerBase.GetType());
+			Assert.IsFalse (pm == binding.BindingManagerBase, "0");
 
 			HookupPropertyManager (pm);
 			HookupBinding (binding);

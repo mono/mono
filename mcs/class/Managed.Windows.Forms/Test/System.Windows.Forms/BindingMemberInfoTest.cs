@@ -30,7 +30,7 @@ using System.Windows.Forms;
 
 using NUnit.Framework;
 
-namespace MonoTests.System.Windows.Forms {
+namespace MonoTests.System.Windows.Forms.DataBinding {
 
 	[TestFixture]
 	public class BindingMemberInfoTest {

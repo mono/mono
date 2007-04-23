@@ -4,6 +4,7 @@ System.Windows.Forms/AutoCompleteStringCollectionTest.cs
 System.Windows.Forms/ApplicationContextTest.cs
 System.Windows.Forms/BindingTest.cs
 System.Windows.Forms/BindingContextTest.cs
+System.Windows.Forms/BindingManagerBaseTest.cs
 System.Windows.Forms/BindingMemberInfoTest.cs
 System.Windows.Forms/BindingSourceTest.cs
 System.Windows.Forms/ButtonTest.cs
@@ -31,6 +32,7 @@ System.Windows.Forms/ControlPropertyEventsTest.cs
 System.Windows.Forms/ControlStyleTest.cs
 System.Windows.Forms/CursorTest.cs
 System.Windows.Forms/CurrencyManagerTest.cs
+System.Windows.Forms/DataBindingTests.cs
 System.Windows.Forms/DataGridColumnStyleTest.cs
 System.Windows.Forms/DataGridTableStyleTest.cs
 System.Windows.Forms/DataGridTest.cs

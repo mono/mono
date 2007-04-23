@@ -31,7 +31,7 @@ using System.Windows.Forms;
 
 using NUnit.Framework;
 
-namespace MonoTests.System.Windows.Forms
+namespace MonoTests.System.Windows.Forms.DataBinding
 {
 	[TestFixture]
 	public class CurrencyManagerTest
@@ -640,12 +640,45 @@ namespace MonoTests.System.Windows.Forms
 		int current_changed;
 		int position_changed;
 		int item_changed;
+		int metadata_changed;
+		string event_log = "";
 		ItemChangedEventArgs item_changed_args;
 
-		void CurrentChanged (object sender, EventArgs args) { current_changed = ++event_num;  /*Console.WriteLine ("current_changed = {0}", current_changed); Console.WriteLine (Environment.StackTrace);*/ }
-		void PositionChanged (object sender, EventArgs args) { position_changed = ++event_num;  /*Console.WriteLine ("position_changed = {0}", position_changed); Console.WriteLine (Environment.StackTrace);*/}
-		void ItemChanged (object sender, ItemChangedEventArgs args) { item_changed = ++event_num; item_changed_args = args; /*Console.WriteLine ("item_changed = {0}, index = {1}", item_changed, args.Index); Console.WriteLine (Environment.StackTrace);*/ }
-		void ListChanged (object sender, ListChangedEventArgs args) { /*Console.WriteLine ("ListChanged ({0},{1},{2})", args.ListChangedType, args.OldIndex, args.NewIndex); Console.WriteLine (Environment.StackTrace);*/ }
+		void CurrentChanged (object sender, EventArgs args)
+		{
+			current_changed = ++event_num;
+			Console.WriteLine ("current_changed = {0}", current_changed);
+			Console.WriteLine (Environment.StackTrace);
+			event_log += String.Format ("{0}: CurrentChanged\n", current_changed);
+		}
+		void PositionChanged (object sender, EventArgs args)
+		{
+			position_changed = ++event_num;
+			Console.WriteLine ("position_changed = {0}", position_changed);
+			Console.WriteLine (Environment.StackTrace);
+			event_log += String.Format ("{0}: PositionChanged (to {1})\n", position_changed, ((CurrencyManager)sender).Position);
+		}
+		void ItemChanged (object sender, ItemChangedEventArgs args)
+		{
+			item_changed = ++event_num;
+			item_changed_args = args;
+			Console.WriteLine ("item_changed = {0}, index = {1}", item_changed, args.Index);
+			Console.WriteLine (Environment.StackTrace);
+			event_log += String.Format ("{0}: ItemChanged (index = {1})\n", item_changed, args.Index);
+		}
+		void ListChanged (object sender, ListChangedEventArgs args)
+		{
+			Console.WriteLine ("ListChanged ({0},{1},{2})", args.ListChangedType, args.OldIndex, args.NewIndex);
+			Console.WriteLine (Environment.StackTrace);
+			event_log += String.Format (" : ListChanged ({0}, {1}, {2})\n", args.ListChangedType, args.OldIndex, args.NewIndex);
+		}
+		void MetaDataChanged (object sender, EventArgs args)
+		{
+			metadata_changed = ++event_num;
+			Console.WriteLine ("metadata_changed = {0}", metadata_changed);
+			Console.WriteLine (Environment.StackTrace);
+			event_log += String.Format ("{0}: MetaDataChanged\n", metadata_changed);
+		}
 
 		[Test]
 		public void AddNew ()
@@ -988,5 +1021,100 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsFalse (typeof (DataView) == GetFinalType (cm), "A5");
 			Assert.IsTrue (typeof (DataView).IsAssignableFrom (GetFinalType (cm)), "A6");
 		}
+
+		// dataview binding
+		[Test]
+		public void Bug81022 ()
+		{
+			BindingContext bc = new BindingContext ();
+			CurrencyManager cm;
+
+			DataView dv = new DataView();
+			DataTable dt = new DataTable("Testdata");
+
+			cm = (CurrencyManager)bc [dt];
+
+			event_num = current_changed = position_changed = item_changed = metadata_changed = -1;
+			cm.CurrentChanged += new EventHandler (CurrentChanged);
+			cm.PositionChanged += new EventHandler (PositionChanged);
+			cm.ItemChanged += new ItemChangedEventHandler (ItemChanged);
+			cm.MetaDataChanged += new EventHandler (MetaDataChanged);
+			dv.ListChanged += new ListChangedEventHandler (ListChanged);
+
+			dv.Table = dt;
+
+			Assert.AreEqual (-1, current_changed, "1");
+			Assert.AreEqual (-1, position_changed, "2");
+			Assert.AreEqual (-1, item_changed, "3");
+			Assert.AreEqual (-1, metadata_changed, "4");
+
+			event_num = current_changed = position_changed = item_changed = metadata_changed = -1;
+			dt.Columns.Add("A");
+			Assert.AreEqual (-1, current_changed, "5");
+			Assert.AreEqual (-1, position_changed, "6");
+			Assert.AreEqual (-1, item_changed, "7");
+			Assert.AreEqual (0, metadata_changed, "8");
+
+			event_num = current_changed = position_changed = item_changed = metadata_changed = -1;
+			dt.Columns.Add("B");
+			Assert.AreEqual (-1, current_changed, "9");
+			Assert.AreEqual (-1, position_changed, "10");
+			Assert.AreEqual (-1, item_changed, "11");
+			Assert.AreEqual (0, metadata_changed, "12");
+
+			event_num = current_changed = position_changed = item_changed = metadata_changed = -1;
+			dt.Rows.Add(new object[]{"A1", "B1"});
+			Assert.AreEqual (1, current_changed, "13");
+			Assert.AreEqual (0, position_changed, "14");
+			Assert.AreEqual (3, item_changed, "15");
+			Assert.AreEqual (-1, metadata_changed, "16");
+
+			event_num = current_changed = position_changed = item_changed = metadata_changed = -1;
+			dt.Rows.Add(new object[]{"A2", "B2"});
+			Assert.AreEqual (-1, current_changed, "17");
+			Assert.AreEqual (-1, position_changed, "18");
+			Assert.AreEqual (0, item_changed, "19");
+			Assert.AreEqual (-1, metadata_changed, "20");
+
+			Assert.AreEqual (2, cm.Count, "21");
+		}
+
+#if NET_2_0
+		[Test]
+		[Category ("NotWorking")]
+		public void TestDeleteInEdit ()
+		{
+			BindingContext bc = new BindingContext ();
+			CurrencyManager cm;
+
+			DataSet dataSet1 = new DataSet();
+			dataSet1.Tables.Add();
+			dataSet1.Tables[0].Columns.Add();
+			dataSet1.Tables[0].Rows.Add();
+
+			cm = (CurrencyManager) bc[dataSet1, dataSet1.Tables[0].TableName];
+
+			cm.Position = 0;
+
+			Assert.AreEqual (1, cm.Count, "1");
+
+			DataRowView row = (DataRowView)cm.Current;
+
+			event_num = current_changed = position_changed = item_changed = metadata_changed = -1;
+			event_log = "";
+			cm.CurrentChanged += new EventHandler (CurrentChanged);
+			cm.PositionChanged += new EventHandler (PositionChanged);
+			cm.ItemChanged += new ItemChangedEventHandler (ItemChanged);
+			cm.MetaDataChanged += new EventHandler (MetaDataChanged);
+
+			Console.WriteLine (">>>>");
+			row.Delete ();
+			Console.WriteLine ("<<<<");
+
+			Assert.AreEqual ("0: PositionChanged (to -1)\n1: ItemChanged (index = -1)\n2: PositionChanged (to -1)\n3: CurrentChanged\n4: ItemChanged (index = -1)\n", event_log, "1");
+
+			Assert.AreEqual (0, cm.Count, "2");
+		}
+#endif
 	}
 }
