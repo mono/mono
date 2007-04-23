@@ -289,6 +289,12 @@ namespace Mono.CSharp {
 		/// </summary>
 		public bool IsFieldInitializer;
 
+		/// <summary>
+		///   If this is true, then Return and ContextualReturn statements
+		///   will set the ReturnType value based on the expression types
+		///   of each return statement instead of the method return type
+		///   (which is initially null).
+		/// </summary>
 		public bool InferReturnType;
 
 		/// <summary>
