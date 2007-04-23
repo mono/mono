@@ -189,7 +189,7 @@ namespace System.Net
 			if (uri != null && cookie.Domain == "")
 				cookie.Domain = uri.Host;
 
-			if (cookie.Path == null || cookie.Path == "") {
+			if (cookie.Version == 0 && (cookie.Path == null || cookie.Path == "")) {
 				if (uri != null) {
 					cookie.Path = uri.AbsolutePath;
 				} else {

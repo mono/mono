@@ -149,7 +149,7 @@ namespace System.Net {
 		}
 
 		public string Path {
-			get { return (path == null || path == "") ? "/" : path; }
+			get { return (path == null || path == "") ? String.Empty : path; }
 			set { path = (value == null) ? String.Empty : value; }
 		}
 

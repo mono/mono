@@ -1,3 +1,11 @@
+2007-04-23  Marek Habersack  <mhabersack@novell.com>
+
+	* Cookie.cs: do not return "/" for Path if it wasn't set
+	explicitly.
+
+	* CookieContainer.cs: set cookie path only if its version is
+	"Netscape" and is null or empty. Fixes #81420.
+
 2007-04-17  Joel Reed  <joelwreed@gmail.com>
 
 	* WebHeaderCollection.cs: www-authenticate should be multivalue.
