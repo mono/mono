@@ -1,5 +1,7 @@
 2007-04-23  Raja R Harinath  <rharinath@novell.com>
 
+	* monodiet.c (add_types_from_method): Fix "wrong type" warning.
+
 	* reflection.c (mono_reflection_bind_generic_parameters): Don't
 	create new MonoTypes for returned types.
 	* class.c (mono_generic_class_get_class): Export mono-internal.
