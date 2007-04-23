@@ -150,6 +150,8 @@ namespace System.Net {
 			}
 
 			string path = HttpUtility.UrlDecode (raw_url);
+			string path_slash = path [path.Length - 1] == '/' ? path : path + "/";
+			
 			HttpListener best_match = null;
 			int best_length = -1;
 
@@ -160,7 +162,7 @@ namespace System.Net {
 						if (ppath.Length < best_length)
 							continue;
 
-						if (p.Host == host && path.StartsWith (ppath)) {
+						if (p.Host == host && (path.StartsWith (ppath) || path_slash.StartsWith (ppath))) {
 							best_length = ppath.Length;
 							best_match = prefixes [p];
 							prefix = p;

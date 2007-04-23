@@ -1,5 +1,9 @@
 2007-04-23  Marek Habersack  <mhabersack@novell.com>
 
+	* EndPointListener.cs: relax prefix matching to succeed in cases
+	when the prefix ends with / and the request path does not. Fixes
+	bug #80091.
+
 	* CookieCollection.cs: added a SortByPath method to sort the
 	collection on demand.
 
