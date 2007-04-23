@@ -1,3 +1,13 @@
+2007-04-23  Martin Baulig  <martin@ximian.com>
+
+	Fix #80969.
+
+	* loader.c
+	(method_from_memberref): Added `gboolean *used_context' argument.
+	(mono_get_method_from_token): Likewise.
+	(mono_get_method_full): Don't insert the method in the cache when
+	`used_context' is true.
+
 2007-04-23  Raja R Harinath  <rharinath@novell.com>
 
 	* monodiet.c (add_types_from_method): Fix "wrong type" warning.
