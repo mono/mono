@@ -1,3 +1,8 @@
+2007-04-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-alpha.c cpu-alpha.md: More alpha port work from 
+	Sergey Tikhonov <tsv@solvo.ru>.
+
 2007-04-21  Andreas Faerber  <andreas.faerber@web.de>
 
 	* Makefile.am (BUILT_SOURCES): Fix for automake 1.6.x. Fixes #81417.
