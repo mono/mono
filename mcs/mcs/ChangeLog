@@ -1,3 +1,8 @@
+2007-04-23  Marek Safar  <marek.safar@gmail.com>
+ 
+	A fix for bug #81414
+	* delegate.cs: Better fix, moved ApplyAttributes from Define to Emit.
+ 
 2007-04-19  Martin Baulig  <martin@ximian.com>
 
 	* convert.cs

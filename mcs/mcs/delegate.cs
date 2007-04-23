@@ -265,7 +265,6 @@ namespace Mono.CSharp {
 				mattr, cc, TypeManager.iasyncresult_type, async_parameters.Types);
 
 			BeginInvokeBuilder.SetImplementationFlags (MethodImplAttributes.Runtime);
-			async_parameters.ApplyAttributes (BeginInvokeBuilder);
 			TypeManager.RegisterMethod (BeginInvokeBuilder, async_parameters);
 
 			//
@@ -322,6 +321,9 @@ namespace Mono.CSharp {
 		public override void Emit ()
 		{
 			Parameters.ApplyAttributes (InvokeBuilder);
+
+			Parameters p = (Parameters)TypeManager.GetParameterData (BeginInvokeBuilder);
+			p.ApplyAttributes (BeginInvokeBuilder);
 
 			if (OptAttributes != null) {
 				OptAttributes.Emit ();
