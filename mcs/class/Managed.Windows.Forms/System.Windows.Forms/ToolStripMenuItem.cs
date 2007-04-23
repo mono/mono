@@ -333,7 +333,7 @@ namespace System.Windows.Forms
 				if (this.IsOnDropDown) {
 					text_layout_rect = new Rectangle (35, text_layout_rect.Top, text_layout_rect.Width, text_layout_rect.Height);
 					if (image_layout_rect != Rectangle.Empty)
-						image_layout_rect = new Rectangle (4, 3, draw_image.Width, draw_image.Height);
+						image_layout_rect = new Rectangle (new Point (4, 3), base.GetImageSize ());
 
 					if (this.Checked)
 						this.Owner.Renderer.DrawItemCheck (new ToolStripItemImageRenderEventArgs (e.Graphics, this, new Rectangle (2, 1, 19, 19)));

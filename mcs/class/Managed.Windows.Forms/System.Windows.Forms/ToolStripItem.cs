@@ -1458,7 +1458,7 @@ namespace System.Windows.Forms
 			return HorizontalAlignment.Left;
 		}
 		
-		private Size GetImageSize ()
+		internal Size GetImageSize ()
 		{
 			if (this.Image == null)
 				return Size.Empty;

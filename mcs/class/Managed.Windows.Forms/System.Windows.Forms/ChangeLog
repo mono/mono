@@ -1,3 +1,10 @@
+2007-04-23  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStripItem.cs: Make GetImageSize internal.
+	* ToolStripMenuItem.cs: Use GetImageSize to determine the size we
+	need to draw an item.  Fixes a reported issue where images on menus
+	that were not 16x16 were drawing incorrectly.
+
 2007-04-21  Miguel de Icaza  <miguel@novell.com>
 
 	* Padding.cs: Use the converter, fixes the resgen2 issue with
