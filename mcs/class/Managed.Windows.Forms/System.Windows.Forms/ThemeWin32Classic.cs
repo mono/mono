@@ -5700,7 +5700,7 @@ namespace System.Windows.Forms
 
 		public override void CPDrawCheckBox (Graphics dc, Rectangle rectangle, ButtonState state)
 		{
-			Pen check_pen = SystemPens.ControlDarkDark;
+			Pen check_pen = Pens.Black;
 			
 			Rectangle cb_rect = new Rectangle (rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
 			
