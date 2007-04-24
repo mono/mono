@@ -685,8 +685,13 @@ namespace System.Windows.Forms {
 			}
 			active_child = (Form) Controls [0];
 			
-			if (active_child.Visible)
+			if (active_child.Visible) {
+				bool raise_activated = ParentForm.ActiveControl != active_child;
 				ParentForm.ActiveControl = active_child;
+				if (raise_activated) {
+					active_child.OnActivatedInternal ();
+				}
+			}
 		}
 
 		internal override IntPtr AfterTopMostControl ()

@@ -5,6 +5,11 @@
 
 2007-04-24  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* ThemeWin32Classic.cs: Use a black pen to draw checkboxes, fixes
+	  #81406.
+
+2007-04-24  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* MaskedTextBox.cs: Commit this so nobody else starts working on it and
 	  avoid duplicate work. Mostily skeleton code, it's not working at
 	  all yet.

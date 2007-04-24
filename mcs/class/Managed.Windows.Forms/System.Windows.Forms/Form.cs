@@ -125,6 +125,10 @@ namespace System.Windows.Forms {
 			return cea.Cancel;
 #endif
 		}
+		internal void OnActivatedInternal ()
+		{
+			OnActivated (EventArgs.Empty);
+		}
 		
 		private void SelectActiveControl ()
 		{
@@ -1158,7 +1162,10 @@ namespace System.Windows.Forms {
 				cp.Width = Width;
 				cp.Height = Height;
 
-				cp.Style = (int)(WindowStyles.WS_CLIPCHILDREN | WindowStyles.WS_CLIPSIBLINGS);
+				cp.Style = (int)(WindowStyles.WS_CLIPCHILDREN);
+				if (!Modal) {
+					cp.WindowStyle |= WindowStyles.WS_CLIPSIBLINGS;
+				}
 
 				if (Parent != null) {
 					cp.Parent = Parent.Handle;
