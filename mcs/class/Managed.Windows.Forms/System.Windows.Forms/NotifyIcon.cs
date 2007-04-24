@@ -703,6 +703,7 @@ namespace System.Windows.Forms {
 		static object BalloonTipClickedEvent = new object ();
 		static object BalloonTipClosedEvent = new object ();
 		static object BalloonTipShownEvent = new object ();
+		static object MouseClickEvent = new object ();
 
 		[MWFCategory("Action")]
 		public event EventHandler BalloonTipClicked {
@@ -720,6 +721,13 @@ namespace System.Windows.Forms {
 		public event EventHandler BalloonTipShown {
 			add { Events.AddHandler (BalloonTipShownEvent, value); }
 			remove { Events.RemoveHandler (BalloonTipShownEvent, value); }
+		}
+
+		[MWFCategory("Action")]
+		[MonoNotSupported("This is not raised anywhere.")]
+		public event MouseEventHandler MouseClick {
+			add { Events.AddHandler (MouseClickEvent, value); }
+			remove { Events.RemoveHandler (MouseClickEvent, value); }
 		}
 #endif
 

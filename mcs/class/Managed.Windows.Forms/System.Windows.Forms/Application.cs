@@ -377,6 +377,12 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[MonoNotSupported ("Empty stub.")]
+		public static void SetUnhandledExceptionMode (UnhandledExceptionMode mode)
+		{
+			//FIXME: a stub to fill
+		}
+
 		public static void Restart ()
 		{
 			//FIXME: ClickOnce stuff using the Update or UpdateAsync methods.
