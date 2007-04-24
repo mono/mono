@@ -52,6 +52,7 @@ namespace System {
 		string bell;
 		string term;
 		StreamReader stdin;
+		CStreamWriter stdout;
 		internal byte verase;
 		byte vsusp;
 		byte intr;
@@ -113,12 +114,12 @@ namespace System {
 			return null;
 		}
 
-		static void WriteConsole (string str)
+		void WriteConsole (string str)
 		{
 			if (str == null)
 				return;
-
-			((CStreamWriter) Console.stdout).InternalWriteString (str);
+			
+			stdout.InternalWriteString (str);
 		}
 
 		public TermInfoDriver ()
@@ -146,6 +147,14 @@ namespace System {
 
 			if (reader == null)
 				reader = new TermInfoReader (term, KnownTerminals.ansi);
+
+			if (!(Console.stdout is CStreamWriter)) {
+				// Application set its own stdout, we need a reference to the real stdout
+				stdout = new CStreamWriter (Console.OpenStandardOutput (0), Console.OutputEncoding);
+				((StreamWriter) stdout).AutoFlush = true;
+			} else {
+				stdout = (CStreamWriter) Console.stdout;
+			}
 		}
 
 		public bool Initialized {
@@ -156,7 +165,7 @@ namespace System {
 		{
 			if (inited)
 				return;
-			
+
 			/* This should not happen any more, since it is checked for in Console */
 			if (!ConsoleDriver.IsConsole)
 				throw new IOException ("Not a tty.");
@@ -858,7 +867,11 @@ namespace System {
 						do {
 							AddToBuffer (stdin.Read ());
 						} while (ConsoleDriver.InternalKeyAvailable (0) > 0);
-					} else {
+					} else if (stdin.Peek () != -1) {
+						do {
+							AddToBuffer (stdin.Read ());
+						} while (stdin.Peek () != -1);
+					} else {						
 						if ((o = GetKeyFromBuffer (false)) != null)
 							break;
 
@@ -898,7 +911,7 @@ namespace System {
 
 			if (echon == echobuf.Length || !InputPending ()) {
 				// blit our echo buffer to the console
-				((CStreamWriter) Console.stdout).InternalWriteChars (echobuf, echon);
+				stdout.InternalWriteChars (echobuf, echon);
 				echon = 0;
 			}
 		}
@@ -924,17 +937,17 @@ namespace System {
 				return;
 
 			// flush our echo buffer to the console
-			((CStreamWriter) Console.stdout).InternalWriteChars (echobuf, echon);
+			stdout.InternalWriteChars (echobuf, echon);
 			echon = 0;
 		}
 #endregion
 
 		public int Read ([In, Out] char [] dest, int index, int count)
 		{
+			bool fresh, echo = false;
 			StringBuilder sbuf;
 			ConsoleKeyInfo key;
 			int BoL = 0;  // Beginning-of-Line marker (can't backspace beyond this)
-			bool fresh;
 			object o;
 			char c;
 
@@ -964,6 +977,7 @@ namespace System {
 
 			do {
 				key = ReadKeyInternal (out fresh);
+				echo = echo || fresh;
 				c = key.KeyChar;
 
 				if (key.Key != ConsoleKey.Backspace) {
@@ -978,7 +992,7 @@ namespace System {
 				}
 
 				// echo fresh keys back to the console
-				if (fresh)
+				if (echo)
 					Echo (key);
 			} while (key.Key != ConsoleKey.Enter);
 
@@ -1028,8 +1042,8 @@ namespace System {
 			GetCursorPosition ();
 
 			StringBuilder builder = new StringBuilder ();
+			bool fresh, echo = false;
 			ConsoleKeyInfo key;
-			bool fresh;
 			char c;
 
 			rl_startx = cursorLeft;
@@ -1037,7 +1051,9 @@ namespace System {
 
 			do {
 				key = ReadKeyInternal (out fresh);
+				echo = echo || fresh;
 				c = key.KeyChar;
+
 				if (key.Key != ConsoleKey.Enter) {
 					if (key.Key != ConsoleKey.Backspace) {
 						builder.Append (c);
@@ -1050,7 +1066,7 @@ namespace System {
 				}
 
 				// echo fresh keys back to the console
-				if (fresh)
+				if (echo)
 					Echo (key);
 			} while (key.Key != ConsoleKey.Enter);
 
