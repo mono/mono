@@ -1,3 +1,8 @@
+2007-04-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* InternalConfigurationHost.cs : machine configuration covers all
+	  ConfigurationAllowDefinition values.
+
 2007-04-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ConfigurationSectionCollection.cs : GetEnumerator() should return
