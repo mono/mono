@@ -1,3 +1,9 @@
+2007-04-24  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStripDropDownTest.cs: Add Assert for default orientation.
+	* ToolStripTest.cs: Enable tests for CanOverflow and DefaultDropDownDirection.
+	Add test for GetNextItem.
+
 2007-04-24  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* MdiFormTest.cs: Added tests for #81409.

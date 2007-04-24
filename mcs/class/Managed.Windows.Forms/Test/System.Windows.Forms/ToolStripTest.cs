@@ -255,16 +255,16 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (string.Empty, ew.ToString (), "B2");
 		}
 
-		//[Test]
-		//public void PropertyCanOverflow ()
-		//{
-		//        ToolStrip ts = new ToolStrip ();
-		//        EventWatcher ew = new EventWatcher (ts);
+		[Test]
+		public void PropertyCanOverflow ()
+		{
+			ToolStrip ts = new ToolStrip ();
+			EventWatcher ew = new EventWatcher (ts);
 
-		//        ts.CanOverflow = false;
-		//        Assert.AreEqual (false, ts.CanOverflow, "B1");
-		//        Assert.AreEqual (string.Empty, ew.ToString (), "B2");
-		//}
+			ts.CanOverflow = false;
+			Assert.AreEqual (false, ts.CanOverflow, "B1");
+			Assert.AreEqual (string.Empty, ew.ToString (), "B2");
+		}
 
 		[Test]
 		public void PropertyCausesValidation ()
@@ -296,26 +296,26 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (string.Empty, ew.ToString (), "B3");
 		}
 
-		//[Test]
-		//public void PropertyDefaultDropDownDirection ()
-		//{
-		//        ToolStrip ts = new ToolStrip ();
-		//        EventWatcher ew = new EventWatcher (ts);
+		[Test]
+		public void PropertyDefaultDropDownDirection ()
+		{
+			ToolStrip ts = new ToolStrip ();
+			EventWatcher ew = new EventWatcher (ts);
 
-		//        ts.DefaultDropDownDirection = ToolStripDropDownDirection.AboveLeft;
-		//        Assert.AreEqual (ToolStripDropDownDirection.AboveLeft, ts.DefaultDropDownDirection, "B1");
-		//        Assert.AreEqual (string.Empty, ew.ToString (), "B2");
-		//}
+			ts.DefaultDropDownDirection = ToolStripDropDownDirection.AboveLeft;
+			Assert.AreEqual (ToolStripDropDownDirection.AboveLeft, ts.DefaultDropDownDirection, "B1");
+			Assert.AreEqual (string.Empty, ew.ToString (), "B2");
+		}
 
-		//[Test]
-		//[ExpectedException (typeof (InvalidEnumArgumentException))]
-		//public void PropertyDefaultDropDownDirectionIEAE ()
-		//{
-		//        ToolStrip ts = new ToolStrip ();
-		//        EventWatcher ew = new EventWatcher (ts);
+		[Test]
+		[ExpectedException (typeof (InvalidEnumArgumentException))]
+		public void PropertyDefaultDropDownDirectionIEAE ()
+		{
+			ToolStrip ts = new ToolStrip ();
+			EventWatcher ew = new EventWatcher (ts);
 
-		//        ts.DefaultDropDownDirection = (ToolStripDropDownDirection) 42;
-		//}
+			ts.DefaultDropDownDirection = (ToolStripDropDownDirection)42;
+		}
 
 		[Test]
 		[ExpectedException (typeof (InvalidEnumArgumentException))]
@@ -632,6 +632,39 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (null, ts.PublicCreateLayoutSettings (ToolStripLayoutStyle.StackWithOverflow), "A3");
 			//Assert.AreEqual ("System.Windows.Forms.TableLayoutSettings", ts.PublicCreateLayoutSettings (ToolStripLayoutStyle.Table).ToString (), "A4");
 			Assert.AreEqual (null, ts.PublicCreateLayoutSettings (ToolStripLayoutStyle.VerticalStackWithOverflow), "A5");
+		}
+		
+		[Test]
+		public void MethodGetNextItem ()
+		{
+			ToolStrip ts = new ToolStrip ();
+			ts.Items.Add ("Test Item 1");
+			
+
+			Assert.AreEqual (null, ts.GetNextItem (null, ArrowDirection.Right), "A1");
+			Assert.AreEqual (null, ts.GetNextItem (ts.Items[0], ArrowDirection.Right), "A2");
+
+			ts.Items.Add ("Test Item 2");
+			Assert.AreEqual (ts.Items[0], ts.GetNextItem (null, ArrowDirection.Right), "A3");
+			Assert.AreEqual (ts.Items[0], ts.GetNextItem (ts.Items[0], ArrowDirection.Right), "A4");
+
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+			f.Controls.Add (ts);
+			f.Show ();
+			
+			Assert.AreEqual (ts.Items[0], ts.GetNextItem (null, ArrowDirection.Right), "A5");
+			Assert.AreEqual (ts.Items[1], ts.GetNextItem (ts.Items[0], ArrowDirection.Right), "A6");
+			
+			f.Dispose ();
+		}
+		
+		[Test]
+		[ExpectedException (typeof (InvalidEnumArgumentException))]
+		public void MethodGetNextItemIEAE ()
+		{
+			ToolStrip ts = new ToolStrip ();
+			ts.GetNextItem (null, (ArrowDirection)42);
 		}
 		
 		[Test]

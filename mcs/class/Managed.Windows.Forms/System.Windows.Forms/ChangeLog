@@ -1,3 +1,8 @@
+2007-04-24  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStrip.cs: Fully implement GetNextItem.  Call OnParentRightToLeftChanged
+	for each ToolStripItem when the parent's RightToLeftChanged is called.
+
 2007-04-24  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* ComboBox.cs: Forward ContextMenu to the underlying textbox, if any.

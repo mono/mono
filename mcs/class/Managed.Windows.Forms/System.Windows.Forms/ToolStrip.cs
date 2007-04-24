@@ -515,24 +515,88 @@ namespace System.Windows.Forms
 			if (!Enum.IsDefined (typeof (ArrowDirection), direction))
 				throw new InvalidEnumArgumentException (string.Format ("Enum argument value '{0}' is not valid for ArrowDirection", direction));
 
-			int index = this.items.IndexOf (start);
-
+			if (this.Items.Count == 1)
+				return null;
+				
+			ToolStripItem current_best = null;
+			int current_best_point;
+			
 			switch (direction) {
-				case ArrowDirection.Left:
-				case ArrowDirection.Up:
-					if (index > 0)
-						return this.items[index - 1];
-	
-					return this.items[this.items.Count - 1];
 				case ArrowDirection.Right:
-				case ArrowDirection.Down:
-					if (index + 1 >= this.items.Count)
-						return this.items[0];
+					current_best_point = int.MaxValue;
 
-					return this.items[index + 1];
+					if (start != null)
+						foreach (ToolStripItem loop_tsi in this.DisplayedItems)
+							if (loop_tsi.Left >= start.Right && loop_tsi.Left < current_best_point && loop_tsi.Visible && loop_tsi.CanSelect) {
+								current_best = loop_tsi;
+								current_best_point = loop_tsi.Left;
+							}
+							
+					if (current_best == null)
+						foreach (ToolStripItem loop_tsi in this.DisplayedItems)
+							if (loop_tsi.Left < current_best_point && loop_tsi.Visible && loop_tsi.CanSelect) {
+								current_best = loop_tsi;
+								current_best_point = loop_tsi.Left;
+							}
+							
+					break;
+				case ArrowDirection.Up:
+					current_best_point = int.MinValue;
+
+					if (start != null)
+						foreach (ToolStripItem loop_tsi in this.DisplayedItems)
+							if (loop_tsi.Bottom <= start.Top && loop_tsi.Top > current_best_point && loop_tsi.Visible && loop_tsi.CanSelect) {
+								current_best = loop_tsi;
+								current_best_point = loop_tsi.Top;
+							}
+
+					if (current_best == null)
+						foreach (ToolStripItem loop_tsi in this.DisplayedItems)
+							if (loop_tsi.Top > current_best_point && loop_tsi.Visible && loop_tsi.CanSelect) {
+								current_best = loop_tsi;
+								current_best_point = loop_tsi.Top;
+							}
+
+					break;
+				case ArrowDirection.Left:
+					current_best_point = int.MinValue;
+
+					if (start != null)
+						foreach (ToolStripItem loop_tsi in this.DisplayedItems)
+							if (loop_tsi.Right <= start.Left && loop_tsi.Left > current_best_point && loop_tsi.Visible && loop_tsi.CanSelect) {
+								current_best = loop_tsi;
+								current_best_point = loop_tsi.Left;
+							}
+
+					if (current_best == null)
+						foreach (ToolStripItem loop_tsi in this.DisplayedItems)
+							if (loop_tsi.Left > current_best_point && loop_tsi.Visible && loop_tsi.CanSelect) {
+								current_best = loop_tsi;
+								current_best_point = loop_tsi.Left;
+							}
+
+					break;
+				case ArrowDirection.Down:
+					current_best_point = int.MaxValue;
+
+					if (start != null) 
+						foreach (ToolStripItem loop_tsi in this.DisplayedItems)
+							if (loop_tsi.Top >= start.Bottom && loop_tsi.Bottom < current_best_point && loop_tsi.Visible && loop_tsi.CanSelect) {
+								current_best = loop_tsi;
+								current_best_point = loop_tsi.Top;
+							}
+
+					if (current_best == null)
+						foreach (ToolStripItem loop_tsi in this.DisplayedItems)
+							if (loop_tsi.Top < current_best_point && loop_tsi.Visible && loop_tsi.CanSelect) {
+								current_best = loop_tsi;
+								current_best_point = loop_tsi.Top;
+							}
+
+					break;
 			}
 
-			return null;
+			return current_best;
 		}
 
 		public void ResetMinimumSize ()
@@ -883,6 +947,9 @@ namespace System.Windows.Forms
 		protected override void OnRightToLeftChanged (EventArgs e)
 		{
 			base.OnRightToLeftChanged (e);
+
+			foreach (ToolStripItem tsi in this.Items)
+				tsi.OnParentRightToLeftChanged (e);
 		}
 
 		protected override void OnScroll (ScrollEventArgs se)
