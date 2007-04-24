@@ -322,7 +322,12 @@ namespace System.Configuration
 			configPath = null;
 			locationConfigPath = null;
 		}
-	}	
+
+		public override bool IsDefinitionAllowed (string configPath, ConfigurationAllowDefinition allowDefinition, ConfigurationAllowExeDefinition allowExeDefinition)
+		{
+			return true;
+		}
+	}
 }
 
 #endif
