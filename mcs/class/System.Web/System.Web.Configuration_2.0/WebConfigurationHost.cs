@@ -29,6 +29,7 @@
 #if NET_2_0
 
 using System;
+using System.Collections;
 using System.IO;
 using System.Security;
 using System.Configuration;
@@ -109,6 +110,19 @@ namespace System.Web.Configuration
 			if (type != null)
 				return type;
 
+			IList tla = System.Web.Compilation.BuildManager.TopLevelAssemblies;
+			if (tla != null && tla.Count > 0) {
+				foreach (Assembly asm in tla) {
+					if (asm == null)
+						continue;
+					type = asm.GetType (typeName, false);
+					if (type != null)
+						break;
+				}
+			}
+			if (type != null)
+				return type;
+			
 			if (!Directory.Exists (PrivateBinPath))
 				return null;
 			

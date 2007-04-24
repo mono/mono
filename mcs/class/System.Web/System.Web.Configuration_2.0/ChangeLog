@@ -1,3 +1,8 @@
+2007-04-24  Marek Habersack  <mhabersack@novell.com>
+
+	* WebConfigurationHost.cs: look for types in the top-level
+	assemblies (App_Code and friends).
+
 2007-04-19  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpHandlerAction.cs: look up types in all the toplevel
