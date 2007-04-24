@@ -1,5 +1,16 @@
 2007-04-24  Marek Habersack  <mhabersack@novell.com>
 
+	* CapabilitiesLoader.cs: Hashtables used as property containers
+	should not be case-insensitive as we now preload the property
+	hashes with default properties, to make the code work in case
+	browscap.ini is broken or missing. Instead, the keys are
+	lower-cased and trimmed before indexing the Hashtable.
+	Added all the missing capabilities to the defaultCaps Hashtable.
+	The returned Hashtable is not reversed in GetCapabilities anymore
+	- it might make the code faster, but it also makes it mismatch
+	browsers (e.g. Firefox 2.0 is mismatched for Mozilla 1.8).
+	All of the above fixes bug #81437.
+
 	* HttpRequest.cs: MS.NET throws HttpException for invalid paths,
 	not ArgumentNullException.
 
