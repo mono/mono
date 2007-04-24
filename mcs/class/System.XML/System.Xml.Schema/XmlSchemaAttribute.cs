@@ -57,7 +57,9 @@ namespace System.Xml.Schema
 		private XmlSchemaUse use;
 		private XmlSchemaUse validatedUse;
 		//Compilation fields
-		internal bool ParentIsSchema = false;
+		internal bool ParentIsSchema {
+			get { return Parent is XmlSchema; }
+		}
 		private XmlSchemaAttribute referencedAttribute;
 		const string xmlname = "attribute";
 
@@ -284,7 +286,7 @@ namespace System.Xml.Schema
 				if(RefName == null || RefName.IsEmpty)
 				{
 					if(form == XmlSchemaForm.Qualified || (form == XmlSchemaForm.None && schema.AttributeFormDefault == XmlSchemaForm.Qualified))
-						this.targetNamespace = schema.TargetNamespace;
+						this.targetNamespace = AncestorSchema.TargetNamespace;
 					else
 						this.targetNamespace = "";
 
@@ -341,7 +343,7 @@ namespace System.Xml.Schema
 					qualifiedName = RefName;
 			}
 
-			if(schema.TargetNamespace == XmlSchema.InstanceNamespace && Name != "nil" && Name != "type" 
+			if(AncestorSchema.TargetNamespace == XmlSchema.InstanceNamespace && Name != "nil" && Name != "type" 
 				&& Name != "schemaLocation" && Name != "noNamespaceSchemaLocation") // a.15, a.16
 				error(h,"targetNamespace can't be " + XmlSchema.InstanceNamespace);
 
@@ -461,6 +463,18 @@ namespace System.Xml.Schema
 
 			ValidationId = schema.ValidationId;
 			return errorCount;
+		}
+
+		internal bool AttributeEquals (XmlSchemaAttribute other)
+		{
+			if (Id != other.Id ||
+			    QualifiedName != other.QualifiedName ||
+			    AttributeType != other.AttributeType ||
+			    ValidatedUse != other.ValidatedUse ||
+			    ValidatedDefaultValue != other.ValidatedDefaultValue ||
+			    ValidatedFixedValue != other.ValidatedFixedValue)
+				return false;
+			return true;
 		}
 
 		//<attribute

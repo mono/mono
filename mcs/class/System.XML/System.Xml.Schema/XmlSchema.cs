@@ -450,9 +450,7 @@ namespace System.Xml.Schema
 						includedSchema.TargetNamespace = TargetNamespace;
 				}
 
-				// Compile included schema.
-				// FIXME: this compilation causes bug #81360
-				includedSchema.DoCompile (handler, handledUris, col, resolver);
+				// Do not compile included schema here.
 
 				AddExternalComponentsTo (includedSchema, compilationItems);
 			}
@@ -469,7 +467,6 @@ namespace System.Xml.Schema
 					errorCount += numerr;
 				} else if (obj is XmlSchemaAttribute) {
 					XmlSchemaAttribute attr = (XmlSchemaAttribute) obj;
-					attr.ParentIsSchema = true;
 					int numerr = attr.Compile (handler, this);
 					errorCount += numerr;
 					if(numerr == 0)
@@ -488,7 +485,6 @@ namespace System.Xml.Schema
 							handler);
 				} else if (obj is XmlSchemaComplexType) {
 					XmlSchemaComplexType ctype = (XmlSchemaComplexType) obj;
-					ctype.ParentIsSchema = true;
 					int numerr = ctype.Compile (handler, this);
 					errorCount += numerr;
 					if (numerr == 0)

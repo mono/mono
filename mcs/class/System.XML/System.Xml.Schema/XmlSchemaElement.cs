@@ -453,7 +453,7 @@ namespace System.Xml.Schema
 					string targetNamespace = String.Empty;
 
 					if(form == XmlSchemaForm.Qualified || (form == XmlSchemaForm.None && schema.ElementFormDefault == XmlSchemaForm.Qualified))
-						targetNamespace = schema.TargetNamespace;
+						targetNamespace = AncestorSchema.TargetNamespace;
 
 					if(this.name == null)	//b1
 						error(h,"Required attribute name must be present");

@@ -362,5 +362,21 @@ namespace MonoTests.System.Xml
 			while (!vr.EOF)
 				vr.Read ();
 		}
+
+		[Test]
+		public void Bug81360 ()
+		{
+			string schemaFile = "Test/XmlFiles/xsd/81360.xsd";
+			XmlTextReader treader = new XmlTextReader (schemaFile);
+			XmlSchema sc = XmlSchema.Read (treader, null);
+			sc.Compile (null);
+			string xml = @"<body xmlns='" + sc.TargetNamespace + "'><div></div></body>";
+			XmlTextReader reader = new XmlTextReader (new StringReader (xml));
+			XmlValidatingReader validator = new XmlValidatingReader (reader);
+			validator.Schemas.Add (sc);
+			validator.ValidationType = ValidationType.Schema;
+			while (!validator.EOF)
+				validator.Read ();
+		}
 	}
 }

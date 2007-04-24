@@ -102,7 +102,7 @@ namespace System.Xml.Schema
 			else if(!XmlSchemaUtil.CheckNCName(this.name)) 
 				error(h,"attribute name must be NCName");
 			else {
-				this.qName = new XmlQualifiedName(Name,schema.TargetNamespace);
+				this.qName = new XmlQualifiedName(Name, AncestorSchema.TargetNamespace);
 				if (schema.NamedIdentities.Contains (qName)) {
 					XmlSchemaIdentityConstraint existing =
 						schema.NamedIdentities [qName] as XmlSchemaIdentityConstraint;

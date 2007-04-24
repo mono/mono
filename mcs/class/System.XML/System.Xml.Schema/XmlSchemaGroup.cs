@@ -101,7 +101,7 @@ namespace System.Xml.Schema
 			else if(!XmlSchemaUtil.CheckNCName(this.name)) 
 				error(h,"attribute name must be NCName");
 			else
-				qualifiedName = new XmlQualifiedName(Name,schema.TargetNamespace);
+				qualifiedName = new XmlQualifiedName(Name, AncestorSchema.TargetNamespace);
 
 			if(Particle == null)
 			{

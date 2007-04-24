@@ -137,7 +137,7 @@ namespace System.Xml.Schema
 			else if(!XmlSchemaUtil.CheckNCName(this.Name)) // b.1.2
 				error(h,"name attribute of a simpleType must be NCName");
 			else
-				this.qualifiedName = new XmlQualifiedName(this.Name, schema.TargetNamespace);
+				this.qualifiedName = new XmlQualifiedName(this.Name, AncestorSchema.TargetNamespace);
 			
 			if(this.AnyAttribute != null)
 			{

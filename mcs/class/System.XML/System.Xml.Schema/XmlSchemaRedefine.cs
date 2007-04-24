@@ -78,8 +78,11 @@ namespace System.Xml.Schema
 		internal override void SetParent (XmlSchemaObject parent)
 		{
 			base.SetParent (parent);
-			foreach (XmlSchemaObject i in Items)
+			foreach (XmlSchemaObject i in Items) {
 				i.SetParent (this);
+				i.isRedefinedComponent = true;
+				i.isRedefineChild = true;
+			}
 		}
 
 //<redefine 

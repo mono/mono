@@ -277,7 +277,7 @@ namespace System.Xml.Schema
 				else if(!XmlSchemaUtil.CheckNCName(this.Name)) // b.1.2
 					error(h,"name attribute of a simpleType must be NCName");
 				else
-					this.QNameInternal = new XmlQualifiedName(this.Name,schema.TargetNamespace);
+					this.QNameInternal = new XmlQualifiedName(this.Name, AncestorSchema.TargetNamespace);
 				
 				//NOTE: Although the FinalResolved can be Empty, it is not a valid value for Final
 				//DEVIATION: If an error occurs, the finaldefault is always consulted. This deviates

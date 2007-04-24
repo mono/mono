@@ -132,7 +132,7 @@ namespace System.Xml.Schema
 			errorCount = 0;
 
 			XmlSchemaUtil.CompileID(Id,this, schema.IDCollection,h);
-			wildcard.TargetNamespace = schema.TargetNamespace;
+			wildcard.TargetNamespace = AncestorSchema.TargetNamespace;
 			if (wildcard.TargetNamespace == null)
 				wildcard.TargetNamespace = "";
 			CompileOccurence (h, schema);

@@ -111,7 +111,7 @@ namespace System.Xml.Schema
 
 			errorCount = 0;
 
-			wildcard.TargetNamespace = schema.TargetNamespace;
+			wildcard.TargetNamespace = AncestorSchema.TargetNamespace;
 			if (wildcard.TargetNamespace == null)
 				wildcard.TargetNamespace = "";
 

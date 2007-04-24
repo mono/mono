@@ -54,7 +54,9 @@ namespace System.Xml.Schema
 		private XmlSchemaContentType resolvedContentType;
 
 		internal bool ValidatedIsAbstract;
-		internal bool ParentIsSchema = false;
+		internal bool ParentIsSchema {
+			get { return Parent is XmlSchema; }
+		}
 
 		const string xmlname = "complexType";
 

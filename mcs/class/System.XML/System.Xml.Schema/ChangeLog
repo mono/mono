@@ -1,5 +1,16 @@
 2007-04-24  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlSchema.cs XmlSchemaGroup.cs XmlSchemaAny.cs XmlSchemaElement.cs
+	  XmlSchemaNotation.cs XmlSchemaComplexType.cs
+	  XmlSchemaAttributeGroup.cs XmlSchemaSimpleType.cs
+	  XmlSchemaIdentityConstraint.cs XmlSchemaAnyAttribute.cs
+	  XmlSchemaRedefine.cs XmlSchemaAttribute.cs :
+	  avoid incorrect compilation of included schemas, fixed bug #81360.
+	  more fix for wrong targetNamespace propagation within current
+	  processing model. Replaced ParentIsSchema field with a property.
+
+2007-04-24  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlSchema.cs XmlSchemaSimpleTypeList.cs
 	  XmlSchemaComplexContentRestriction.cs XmlSchemaGroup.cs
 	  XmlSchemaComplexContentExtension.cs XmlSchemaSequence.cs
