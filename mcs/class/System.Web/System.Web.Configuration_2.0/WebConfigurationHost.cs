@@ -166,8 +166,12 @@ namespace System.Web.Configuration
 				return GetWebConfigFileName (mdir);
 			}
 			
-			string dir = MapPath (configPath);
-			return GetWebConfigFileName (dir);
+			try {
+				string dir = MapPath (configPath);
+				return GetWebConfigFileName (dir);
+			} catch (Exception ex) {
+				throw new HttpException (400, "Bad Request");
+			}
 		}
 		
 		public virtual string GetStreamNameForConfigSource (string streamName, string configSource)
@@ -235,8 +239,7 @@ namespace System.Web.Configuration
 		{
 			if (map != null)
 				return MapPathFromMapper (virtualPath);
-			else if (HttpContext.Current != null
-				 && HttpContext.Current.Request != null)
+			else if (HttpContext.Current != null && HttpContext.Current.Request != null)
 				return HttpContext.Current.Request.MapPath (virtualPath);
 			else if (HttpRuntime.AppDomainAppVirtualPath != null &&
 				 virtualPath.StartsWith (HttpRuntime.AppDomainAppVirtualPath)) {
@@ -245,8 +248,8 @@ namespace System.Web.Configuration
 				return UrlUtils.Combine (HttpRuntime.AppDomainAppPath,
 							 virtualPath.Substring (HttpRuntime.AppDomainAppVirtualPath.Length));
 			}
-			else
-				return virtualPath;
+			
+			return virtualPath;
 		}
 		
 		public string NormalizeVirtualPath (string virtualPath)

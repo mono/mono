@@ -1,3 +1,18 @@
+2007-04-24  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpRequest.cs: MS.NET throws HttpException for invalid paths,
+	not ArgumentNullException.
+
+	* HttpException.cs: wrap GetHtmlErrorMessage internals in
+	try/catch to capture possible exceptions in HttpContext.
+
+	* HttpContext.cs: IsCustomErrorEnabled is used from within
+	HttpException, make sure it gets the section in a safe way and
+	resorts to the default settings.
+	
+	* HttpResponse.cs: HeaderEncoding is used in the same context as
+	above. Take the same precautions.
+	
 2007-04-22 Joshua Tauberer <jit@occams.info>
  
  	* HttpParamsCollection.cs: Fix IndexOutOfRangeException.

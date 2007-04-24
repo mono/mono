@@ -1084,8 +1084,7 @@ namespace System.Web {
 			}
 
 			if (virtualPath.IndexOf (':') != -1)
-				throw new ArgumentNullException (
-					String.Format ("MapPath: Invalid path '{0}', only virtual paths are accepted", virtualPath));
+				throw new HttpException (String.Format ("'{0}' is not a valid virtual path.", virtualPath));
 
 			string appVirtualPath = HttpRuntime.AppDomainAppVirtualPath;
 

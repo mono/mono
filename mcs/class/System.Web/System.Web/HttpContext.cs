@@ -174,7 +174,7 @@ namespace System.Web {
 		public bool IsCustomErrorEnabled {
 			get {
 #if NET_2_0
-				CustomErrorsSection cfg = (CustomErrorsSection) WebConfigurationManager.GetSection ("system.web/customErrors");
+				CustomErrorsSection cfg = WebConfigurationManager.SafeGetSection ("system.web/customErrors", typeof (CustomErrorsSection)) as CustomErrorsSection;
 #else
 				CustomErrorsConfig cfg = null;
 				try {

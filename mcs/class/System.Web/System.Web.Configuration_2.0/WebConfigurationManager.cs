@@ -223,6 +223,28 @@ namespace System.Web.Configuration {
 			return OpenMappedMachineConfiguration (fileMap);
 		}
 
+		internal static object SafeGetSection (string sectionName, Type configSectionType)
+		{
+			try {
+				return GetSection (sectionName);
+			} catch (Exception) {
+				if (configSectionType != null)
+					return Activator.CreateInstance (configSectionType);
+				return null;
+			}
+		}
+		
+		internal static object SafeGetSection (string sectionName, string path, Type configSectionType)
+		{
+			try {
+				return GetSection (sectionName, path);
+			} catch (Exception) {
+				if (configSectionType != null)
+					return Activator.CreateInstance (configSectionType);
+				return null;
+			}
+		}
+		
 		public static object GetSection (string sectionName)
 		{
 			string path = (HttpContext.Current != null

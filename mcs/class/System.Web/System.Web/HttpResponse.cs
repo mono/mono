@@ -257,8 +257,8 @@ namespace System.Web {
 		public Encoding HeaderEncoding {
 			get {
 				if (headerEncoding == null) {
-					GlobalizationSection gs = WebConfigurationManager.GetSection ("system.web/globalization")
-						as GlobalizationSection;
+					GlobalizationSection gs = WebConfigurationManager.SafeGetSection ("system.web/globalization", typeof (GlobalizationSection)) as GlobalizationSection;
+
 					if (gs == null)
 						headerEncoding = Encoding.UTF8;
 					else {

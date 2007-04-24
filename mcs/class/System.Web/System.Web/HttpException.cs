@@ -103,13 +103,20 @@ namespace System.Web
 
 		public string GetHtmlErrorMessage ()
 		{
-			if (HttpContext.Current.IsCustomErrorEnabled)
+			try {
+				if (HttpContext.Current.IsCustomErrorEnabled)
+					return GetCustomErrorDefaultMessage ();
+				
+				if (!(this.InnerException is HtmlizedException))
+					return GetDefaultErrorMessage ();
+				
+				return GetHtmlizedErrorMessage ();
+			} catch {
+				// we need the try/catch block in case the
+				// problem was with MapPath, which will cause
+				// IsCustomErrorEnabled to throw an exception
 				return GetCustomErrorDefaultMessage ();
-			
-			if (!(this.InnerException is HtmlizedException))
-				return GetDefaultErrorMessage ();
-
-			return GetHtmlizedErrorMessage ();
+			}
 		}
 
 		internal virtual string Description {
@@ -135,6 +142,7 @@ table.sampleCode {{width: 100%; background-color: #ffffcc; }}
 .version {{color: gray;}}
 .error {{margin-bottom: 10px;}}
 .expandable {{ text-decoration:underline; font-weight:bold; color:navy; cursor:hand; }}", errorStyleFonts);
+
 			builder.AppendFormat (
 				"</style></head><body><h1>Server Error in '{0}' Application</h1><hr style=\"color: silver\"/>",
 				HtmlEncode (HttpRuntime.AppDomainAppVirtualPath));
