@@ -1774,6 +1774,7 @@ namespace System.Windows.Forms
 			bool hover_processed = false;
 			bool checking = false;
 			ListViewItem prev_hovered_item;
+			int clicks;
 			
 			ListViewLabelEditTextBox edit_text_box;
 			internal ListViewItem edit_item;
@@ -1986,15 +1987,14 @@ namespace System.Windows.Forms
 						clicked_item.Selected = true;
 					}
 
-					// Raise double click if the item was clicked. On MS the
-					// double click is only raised if you double click an item
-					if (me.Clicks > 1) {
-						owner.OnDoubleClick (EventArgs.Empty);
+					// Report clicks only if the item was clicked. On MS the
+					// clicks are only raised if you click an item
+					clicks = me.Clicks;
+					if (me.Clicks > 1)
 						if (owner.CheckBoxes)
 							clicked_item.Checked = !clicked_item.Checked;
 
-					} else if (me.Clicks == 1) {
-						owner.OnClick (EventArgs.Empty);
+					else if (me.Clicks == 1) {
 						if (owner.LabelEdit && !changed)
 							BeginEdit (clicked_item); // this is probably not the correct place to execute BeginEdit
 					}
@@ -2069,8 +2069,22 @@ namespace System.Windows.Forms
 #endif
 			}
 
+			void HandleClicks ()
+			{
+				// if the click is not on an item,
+				// clicks remains as 0
+				if (clicks > 1)
+					owner.OnDoubleClick (EventArgs.Empty);
+				else if (clicks == 1)
+					owner.OnClick (EventArgs.Empty);
+
+				clicks = 0;
+			}
+
 			private void ItemsMouseUp (object sender, MouseEventArgs me)
 			{
+				HandleClicks ();
+
 				Capture = false;
 				if (owner.Items.Count == 0) {
 					owner.OnMouseUp (owner.TranslateMouseEventArgs (me));

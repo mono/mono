@@ -1,3 +1,13 @@
+2007-04-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListView.cs: Report Click and DoubleClick events to the parent
+	from ItemsMouseUp, instead of ItemsMouseDown. This prevents us
+	from breaking the click count state when using dialog forms (Control
+	reports the clicks in a similar fashion). In the previous behaviour
+	the last WM_LBUTTONUP message in a  double click was sent to the
+	ListView's form, instead of the ListView, which was breaking the click
+	count for it. Fixes #80387.
+
 2007-04-24  Alan McGovern <alan.mcgovern@gmail.com>
 
 	* BindingNavigator.cs : fixed bugs revealed by new nunit tests
