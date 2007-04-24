@@ -846,6 +846,7 @@ namespace System.Windows.Forms {
 
 		protected override void OnHandleCreated(EventArgs e) {
 			base.OnHandleCreated (e);
+			FixupHeight ();
 		}
 
 		protected override void OnHandleDestroyed(EventArgs e) {
@@ -1243,6 +1244,7 @@ namespace System.Windows.Forms {
 
 		protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified) {
 			// Make sure we don't get sized bigger than we want to be
+
 			if (!richtext) {
 				if (!document.multiline) {
 					if (height != PreferredHeight) {
@@ -1449,10 +1451,6 @@ namespace System.Windows.Forms {
 			return Graphics.FromImage(bmp);
 		}
 
-		#if Debug
-		static int current;
-		#endif
-
 		internal override void OnPaintInternal (PaintEventArgs pevent) {
 			// Fill background
 			if (backcolor_set || (Enabled && !read_only)) {
@@ -1468,6 +1466,17 @@ namespace System.Windows.Forms {
 			// OnPaint does not get raised on MS (see bug #80639)
 			// 
 			pevent.Handled = true;
+		}
+
+		private void FixupHeight ()
+		{
+			if (!richtext) {
+				if (!document.multiline) {
+					if (actual_border_style == BorderStyle.None && PreferredHeight != ClientSize.Height) {
+						ClientSize = new Size (ClientSize.Width, PreferredHeight);
+					}
+				}
+			}
 		}
 
 		private bool IsDoubleClick (MouseEventArgs e)
