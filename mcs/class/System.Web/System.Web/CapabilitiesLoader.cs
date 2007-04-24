@@ -96,8 +96,7 @@ namespace System.Web
 
 			if (data ["browser"] != null) { // Last one (most derived) will win.
 				tbl ["browser"] = data ["browser"];
-			}
-			else if (tbl ["browser"] == null) { // If none so far defined value set to *
+			} else if (tbl ["browser"] == null) { // If none so far defined value set to *
 				tbl ["browser"] = "*";
 			}
 
@@ -108,8 +107,8 @@ namespace System.Web
 			((ArrayList) tbl ["browsers"]).Add (tbl["browser"]);
 
 			foreach (string key in data.Keys)
-				tbl [key] = data [key];
-
+				tbl [key.ToLower (CultureInfo.InvariantCulture).Trim ()] = data [key];
+			
 			return tbl;
 		}
 		
@@ -154,7 +153,7 @@ namespace System.Web
 #if TARGET_JVM
 					regex = java.util.regex.Pattern.compile (pattern);
 #else
-					regex = new Regex (pattern);
+				regex = new Regex (pattern);
 #endif
 			}
 #if TARGET_JVM
@@ -218,29 +217,45 @@ namespace System.Web
 		{
 			defaultCaps = new Hashtable ();
 			defaultCaps.Add ("activexcontrols", "False");
+			defaultCaps.Add ("alpha", "False");
 			defaultCaps.Add ("aol", "False");
+			defaultCaps.Add ("aolversion", "0");
+			defaultCaps.Add ("authenticodeupdate", "");
 			defaultCaps.Add ("backgroundsounds", "False");
 			defaultCaps.Add ("beta", "False");
 			defaultCaps.Add ("browser", "*");
+			defaultCaps.Add ("browsers", new ArrayList ());
 			defaultCaps.Add ("cdf", "False");
+			defaultCaps.Add ("clrversion", "0");
 			defaultCaps.Add ("cookies", "False");
 			defaultCaps.Add ("crawler", "False");
+			defaultCaps.Add ("css", "0");
+			defaultCaps.Add ("cssversion", "0");
 			defaultCaps.Add ("ecmascriptversion", "0.0");
-			defaultCaps.Add ("frames", "True");
+			defaultCaps.Add ("frames", "False");
+			defaultCaps.Add ("iframes", "False");
+			defaultCaps.Add ("isbanned", "False");
+			defaultCaps.Add ("ismobiledevice", "False");
+			defaultCaps.Add ("issyndicationreader", "False");
 			defaultCaps.Add ("javaapplets", "False");
 			defaultCaps.Add ("javascript", "False");
 			defaultCaps.Add ("majorver", "0");
 			defaultCaps.Add ("minorver", "0");
 			defaultCaps.Add ("msdomversion", "0.0");
-			defaultCaps.Add ("platform", "Unknown");
-			defaultCaps.Add ("tables", "True");
+			defaultCaps.Add ("netclr", "False");
+			defaultCaps.Add ("platform", "unknown");
+			defaultCaps.Add ("stripper", "False");
+			defaultCaps.Add ("supportscss", "False");
+			defaultCaps.Add ("tables", "False");
 			defaultCaps.Add ("vbscript", "False");
-			defaultCaps.Add ("version", "0.0");
+			defaultCaps.Add ("version", "0");
 			defaultCaps.Add ("w3cdomversion", "0.0");
+			defaultCaps.Add ("wap", "False");
 			defaultCaps.Add ("win16", "False");
 			defaultCaps.Add ("win32", "False");
+			defaultCaps.Add ("win64", "False");
 		}
-			
+		
 		public static Hashtable GetCapabilities (string userAgent)
 		{
 			Init ();
@@ -255,12 +270,7 @@ namespace System.Web
 				foreach (BrowserData bd in alldata) {
 					if (bd.IsMatch (userAgent)) {
 						Hashtable tbl;
-#if NET_2_0
-						tbl = new Hashtable (StringComparer.InvariantCultureIgnoreCase);
-#else
-						tbl = new Hashtable (CaseInsensitiveHashCodeProvider.DefaultInvariant,
-							CaseInsensitiveComparer.DefaultInvariant);
-#endif
+						tbl = new Hashtable (defaultCaps);
 						userBrowserCaps = bd.GetProperties (tbl);
 						break;
 					}
@@ -270,9 +280,8 @@ namespace System.Web
 					userBrowserCaps = defaultCaps;
 
 				lock (typeof (CapabilitiesLoader)) {
-					if (userAgentsCache.Count >= userAgentsCacheSize) {
+					if (userAgentsCache.Count >= userAgentsCacheSize)
 						userAgentsCache.Clear ();
-					}
 				}
 				userAgentsCache [userAgent] = userBrowserCaps;
 			}
@@ -369,9 +378,8 @@ namespace System.Web
 					allhash.Add (key, data);
 					browserData.Add (data);
 				}
-			}
+			}			
 
-			browserData.Reverse();
 			alldata = browserData;
 			foreach (BrowserData data in alldata) {
 				string pname = data.GetParentName ();
@@ -398,5 +406,3 @@ namespace System.Web
 		}
 	}
 }
-
-
