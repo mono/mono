@@ -1,3 +1,9 @@
+2007-04-24  Dick Porter  <dick@ximian.com>
+
+	* sockets.c (_wapi_recvfrom, socket_close): Force recvfrom() to
+	error if the socket is closed while the receive is blocking.
+	Fixes bug 75705.
+
 2007-04-13  Dick Porter  <dick@ximian.com>
 
 	* shared.h:
