@@ -1,3 +1,8 @@
+2007-04-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* liveness.c (optimize_initlocals): New mini-pass to optimize away dead assignments
+	created becase of initlocals.
+
 2007-04-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-alpha.c cpu-alpha.md: More alpha port work from 
