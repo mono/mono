@@ -112,7 +112,21 @@ namespace MonoTests.System.Windows.Forms
 			IntThing test = new IntThing(50);
 			BindingSource s = new BindingSource();
 			s.DataSource = test;
+
+			navigator = new BindingNavigator((BindingSource)null);
+			Assert.AreEqual(11, navigator.Items.Count, "#02");
+
+			Assert.AreEqual(50, ((ToolStripTextBox)navigator.PositionItem).TextBox.Width, "#03");
 		}
+
+		[Test]
+		public void ControlDisposedTest()
+		{
+			ToolStripItem existing = navigator.AddNewItem;
+			navigator.AddNewItem = new ToolStripButton();
+			Assert.IsFalse(existing.IsDisposed, "#1");
+		}
+
 
 		private void CheckStandardItems(BindingNavigator navigator)
 		{
@@ -139,6 +153,18 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsTrue(navigator.AddNewItem is ToolStripButton, "#9");
 			Assert.IsTrue(navigator.AddNewItem is ToolStripButton, "#10");
 			Assert.AreEqual("of {0}", navigator.CountItemFormat, "#11");
+			Assert.AreEqual(11, navigator.Items.Count, "#12");
+		}
+
+		[Test]
+		public void ManuallyReplaceItemsTest()
+		{
+			ToolStripButton newButton = new ToolStripButton();
+			ToolStripItem oldItem = navigator.AddNewItem;
+			navigator.AddNewItem = newButton;
+			Assert.AreEqual(11, navigator.Items.Count, "#1");
+			Assert.IsFalse(navigator.Items.Contains(newButton), "#2");
+			Assert.IsTrue(navigator.Items.Contains(oldItem), "#3");
 		}
 
 		[Test]
@@ -183,6 +209,7 @@ namespace MonoTests.System.Windows.Forms
 
 		}
 
+
 		private void RefreshNav()
 		{
 			navigator.BeginInit();
@@ -201,6 +228,14 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual(6, (navigator.BindingSource.Current), "#3");
 		}
 
+		[Test]
+		public void SetControlNullTest()
+		{
+			navigator.AddNewItem = null;
+			Assert.IsTrue(navigator.AddNewItem == null, "#1");
+			Assert.AreEqual(11, navigator.Items.Count, "#2");
+		}
+
 
 		private class IntThing : BindingList<int>
 		{
@@ -210,6 +245,8 @@ namespace MonoTests.System.Windows.Forms
 			{
 				for (int i = 0; i < number; i++)
 					this.Add(i);
+
+				number = 6;
 			}
 
 			protected override bool SupportsSearchingCore

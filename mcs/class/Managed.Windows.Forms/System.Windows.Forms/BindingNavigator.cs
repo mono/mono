@@ -38,62 +38,7 @@ namespace System.Windows.Forms
 	[ClassInterfaceAttribute(ClassInterfaceType.AutoDispatch)]
 	public class BindingNavigator : ToolStrip, ISupportInitialize
 	{
-		public BindingNavigator()
-			: this(false)
-		{
-		}
-
-		public BindingNavigator(BindingSource bindingSource)
-		{
-			AttachNewSource(bindingSource);
-			this.AddStandardItems();
-		}
-
-		private void AttachNewSource(BindingSource bindingSource)
-		{
-			if (this.bindingSource != null)
-			{
-				bindingSource.ListChanged -= new ListChangedEventHandler(OnListChanged);
-				bindingSource.PositionChanged -= new EventHandler(OnPositionChanged);
-				bindingSource.AddingNew -= new AddingNewEventHandler(OnAddingNew);
-			}
-
-			this.bindingSource = bindingSource;
-			bindingSource.ListChanged += new ListChangedEventHandler(OnListChanged);
-			bindingSource.PositionChanged += new EventHandler(OnPositionChanged);
-			bindingSource.AddingNew += new AddingNewEventHandler(OnAddingNew);
-		}
-
-		void OnAddingNew(object sender, AddingNewEventArgs e)
-		{
-			OnRefreshItems();
-		}
-
-		void OnPositionChanged(object sender, EventArgs e)
-		{
-			OnRefreshItems();
-		}
-
-		private void OnListChanged(object sender, ListChangedEventArgs e)
-		{
-			OnRefreshItems();
-		}
-
-		public BindingNavigator(bool addStandardItems)
-			: base()
-		{
-			this.bindingSource = null;
-			if (addStandardItems)
-				this.AddStandardItems();
-		}
-
-		public BindingNavigator(IContainer container)
-		{
-			container.Add(this);
-			bindingSource = null;
-		}
-
-		#region private fields
+		#region Private Fields
 
 		private ToolStripItem addNewItem = null;
 		private BindingSource bindingSource = null;
@@ -101,13 +46,15 @@ namespace System.Windows.Forms
 		private ToolStripItem countItem = null;
 		private string countItemFormat = Locale.GetText("of {0}");
 		private ToolStripItem deleteItem = null;
+		private bool initFlag = false;
 		private ToolStripItem moveFirstItem = null;
 		private ToolStripItem moveLastItem = null;
 		private ToolStripItem moveNextItem = null;
 		private ToolStripItem movePreviousItem = null;
 		private ToolStripItem positionItem = null;
-		private bool initFlag = false;
-		#endregion
+
+		#endregion Private Fields
+
 
 		#region Public Properties
 
@@ -117,11 +64,8 @@ namespace System.Windows.Forms
 			get { return addNewItem; }
 			set
 			{
-				if (addNewItem != null)
-					addNewItem.Click -= new EventHandler(OnAddNew);
-				value.Click += new EventHandler(OnAddNew);
-				addNewItem = value;
-				this.OnRefreshItems();
+				ReplaceItem(ref addNewItem, value, new EventHandler(OnAddNew));
+				OnRefreshItems();
 			}
 		}
 
@@ -131,8 +75,8 @@ namespace System.Windows.Forms
 			get { return bindingSource; }
 			set
 			{
-				bindingSource = value;
-				this.OnRefreshItems();
+				AttachNewSource(value);
+				OnRefreshItems();
 			}
 		}
 
@@ -143,7 +87,7 @@ namespace System.Windows.Forms
 			set
 			{
 				countItem = value;
-				this.OnRefreshItems();
+				OnRefreshItems();
 			}
 		}
 
@@ -153,7 +97,7 @@ namespace System.Windows.Forms
 			set
 			{
 				countItemFormat = value;
-				this.OnRefreshItems();
+				OnRefreshItems();
 			}
 		}
 
@@ -163,9 +107,7 @@ namespace System.Windows.Forms
 			get { return deleteItem; }
 			set
 			{
-				deleteItem.Click -= new EventHandler(OnDelete);
-				value.Click += new EventHandler(OnDelete);
-				deleteItem = value;
+				ReplaceItem(ref deleteItem, value, new EventHandler(OnDelete));
 				this.OnRefreshItems();
 			}
 		}
@@ -176,12 +118,21 @@ namespace System.Windows.Forms
 			get { return moveFirstItem; }
 			set
 			{
-				moveFirstItem.Click -= new EventHandler(OnMoveFirst);
-				value.Click += new EventHandler(OnMoveFirst);
-				moveFirstItem = value;
-				this.OnRefreshItems();
+				ReplaceItem(ref moveFirstItem, value, new EventHandler(OnMoveFirst));
+				OnRefreshItems();
 			}
 		}
+
+		private void ReplaceItem(ref ToolStripItem existingItem, ToolStripItem newItem, EventHandler clickHandler)
+		{
+			if (existingItem != null)
+				existingItem.Click -= clickHandler;
+			if (newItem != null)
+				newItem.Click += clickHandler;
+
+			existingItem = newItem;
+		}
+
 
 		[TypeConverter(typeof(ReferenceConverter))]
 		public ToolStripItem MoveLastItem
@@ -189,10 +140,8 @@ namespace System.Windows.Forms
 			get { return moveLastItem; }
 			set
 			{
-				moveLastItem.Click -= new EventHandler(OnMoveLast);
-				value.Click += new EventHandler(OnMoveLast);
-				moveLastItem = value;
-				this.OnRefreshItems();
+				ReplaceItem(ref moveLastItem, value, new EventHandler(OnMoveLast));
+				OnRefreshItems();
 			}
 		}
 
@@ -202,10 +151,8 @@ namespace System.Windows.Forms
 			get { return moveNextItem; }
 			set
 			{
-				moveNextItem.Click -= new EventHandler(OnMoveNext);
-				value.Click += new EventHandler(OnMoveNext);
-				moveNextItem = value;
-				this.OnRefreshItems();
+				ReplaceItem(ref moveNextItem, value, new EventHandler(OnMoveNext));
+				OnRefreshItems();
 			}
 		}
 
@@ -215,10 +162,8 @@ namespace System.Windows.Forms
 			get { return movePreviousItem; }
 			set
 			{
-				movePreviousItem.Click -= new EventHandler(OnMovePrevious);
-				value.Click += new EventHandler(OnMovePrevious);
-				movePreviousItem = value;
-				this.OnRefreshItems();
+				ReplaceItem(ref movePreviousItem, value, new EventHandler(OnMovePrevious));
+				OnRefreshItems();
 			}
 		}
 
@@ -229,70 +174,108 @@ namespace System.Windows.Forms
 			set
 			{
 				positionItem = value;
-				this.OnRefreshItems();
+				OnRefreshItems();
 			}
 		}
 
 		#endregion
 
-		#region public Events
+
+		#region Constructors
+
+		public BindingNavigator()
+			: this(false)
+		{
+		}
+
+		public BindingNavigator(BindingSource bindingSource)
+			:base()
+		{
+			AttachNewSource(bindingSource);
+			this.AddStandardItems();
+		}
+
+
+		public BindingNavigator(bool addStandardItems)
+			: base()
+		{
+			bindingSource = null;
+			if (addStandardItems)
+				this.AddStandardItems();
+		}
+
+		public BindingNavigator(IContainer container)
+			:base()
+		{
+			bindingSource = null;
+			container.Add(this);
+		}
+
+		#endregion Constructors
+
+
+		#region Public Events
 
 		public event EventHandler RefreshItems;
 
 		#endregion
 
-		#region public and protected Methodes
+
+		#region Public And Protected Methods
 
 		public virtual void AddStandardItems()
 		{
-			moveFirstItem = new ToolStripButton();
+			BeginInit();
+
+			MoveFirstItem = new ToolStripButton();
+			moveFirstItem.Image = ResourceImageLoader.Get("nav_first.png");
 			moveFirstItem.ToolTipText = Locale.GetText("Move first");
-			moveFirstItem.Click += new EventHandler(OnMoveFirst);
 			Items.Add(moveFirstItem);
 
-			movePreviousItem = new ToolStripButton();
+			MovePreviousItem = new ToolStripButton();
+			movePreviousItem.Image = ResourceImageLoader.Get("nav_previous.png");
 			movePreviousItem.ToolTipText = Locale.GetText("Move previous");
-			movePreviousItem.Click += new EventHandler(OnMovePrevious);
 			Items.Add(movePreviousItem);
 
 			Items.Add(new ToolStripSeparator());
 
-			positionItem = new ToolStripTextBox();
+			PositionItem = new ToolStripTextBox();
+			positionItem.Width = 50;
 			positionItem.Text = (bindingSource == null ? 0 : 1).ToString();
+			positionItem.Width = 50;
 			positionItem.ToolTipText = Locale.GetText("Current position");
-			positionItem.TextChanged += new EventHandler(OnPositionTextChanged);
 			Items.Add(positionItem);
 
-			countItem = new ToolStripLabel();
+			CountItem = new ToolStripLabel();
 			countItem.ToolTipText = Locale.GetText("Total number of items");
 			countItem.Text = Locale.GetText(countItemFormat, bindingSource == null ? 0 : bindingSource.Count);
 			Items.Add(countItem);
 
 			Items.Add(new ToolStripSeparator());
 
-			moveNextItem = new ToolStripButton();
+			MoveNextItem = new ToolStripButton();
+			moveNextItem.Image = ResourceImageLoader.Get("nav_next.png");
 			moveNextItem.ToolTipText = Locale.GetText("Move next");
-			moveNextItem.Click += new EventHandler(OnMoveNext);
 			Items.Add(moveNextItem);
 
-			moveLastItem = new ToolStripButton();
+			MoveLastItem = new ToolStripButton();
+			moveLastItem.Image = ResourceImageLoader.Get("nav_end.png");
 			moveLastItem.ToolTipText = Locale.GetText("Move last");
-			moveLastItem.Click += new EventHandler(OnMoveLast);
 			Items.Add(moveLastItem);
 
 			Items.Add(new ToolStripSeparator());
 
-			addNewItem = new ToolStripButton();
+			AddNewItem = new ToolStripButton();
+			addNewItem.Image = ResourceImageLoader.Get("nav_plus.png");
 			addNewItem.ToolTipText = Locale.GetText("Add new");
-			addNewItem.Click += new EventHandler(OnAddNew);
 			Items.Add(addNewItem);
 
-			deleteItem = new ToolStripButton();
+			DeleteItem = new ToolStripButton();
+			deleteItem.Image = ResourceImageLoader.Get("nav_delete.png");
 			deleteItem.ToolTipText = Locale.GetText("Delete");
-			deleteItem.Click += new EventHandler(OnDelete);
 			Items.Add(deleteItem);
 
-			OnRefreshItems();
+			EndInit();
 		}
 
 		public void BeginInit()
@@ -331,7 +314,7 @@ namespace System.Windows.Forms
 				changingText = true;
 
 				if (addNewItem != null)
-					addNewItem.Enabled = isNull ? addNewItem.Enabled : false;
+					addNewItem.Enabled = isNull ? addNewItem.Enabled : this.bindingSource.AllowNew;
 
 				if (moveFirstItem != null)
 					moveFirstItem.Enabled = isNull ? moveFirstItem.Enabled : bindingSource.Position != 0;
@@ -346,7 +329,7 @@ namespace System.Windows.Forms
 					movePreviousItem.Enabled = isNull ? movePreviousItem.Enabled : bindingSource.Position > 0;
 
 				if (deleteItem != null)
-					deleteItem.Enabled = isNull ? deleteItem.Enabled : bindingSource.Count != 0;
+					deleteItem.Enabled = isNull ? deleteItem.Enabled : (bindingSource.Count != 0 && bindingSource.AllowRemove);
 
 				if (countItem != null)
 					countItem.Text = string.Format(countItemFormat, isNull ? 0 : bindingSource.Count);
@@ -369,7 +352,27 @@ namespace System.Windows.Forms
 
 		#endregion
 
-		#region private methode
+
+		#region Private Methode
+
+		private void AttachNewSource(BindingSource source)
+		{
+			if (bindingSource != null)
+			{
+				bindingSource.ListChanged -= new ListChangedEventHandler(OnListChanged);
+				bindingSource.PositionChanged -= new EventHandler(OnPositionChanged);
+				bindingSource.AddingNew -= new AddingNewEventHandler(OnAddingNew);
+			}
+
+			bindingSource = source;
+
+			if (bindingSource != null)
+			{
+				bindingSource.ListChanged += new ListChangedEventHandler(OnListChanged);
+				bindingSource.PositionChanged += new EventHandler(OnPositionChanged);
+				bindingSource.AddingNew += new AddingNewEventHandler(OnAddingNew);
+			}
+		}
 
 		private void OnAddNew(object sender, EventArgs e)
 		{
@@ -379,11 +382,21 @@ namespace System.Windows.Forms
 			OnRefreshItems();
 		}
 
+		private void OnAddingNew(object sender, AddingNewEventArgs e)
+		{
+			OnRefreshItems();
+		}
+
 		private void OnDelete(object sender, EventArgs e)
 		{
 			if (bindingSource != null)
 				bindingSource.RemoveCurrent();
 
+			OnRefreshItems();
+		}
+
+		private void OnListChanged(object sender, ListChangedEventArgs e)
+		{
 			OnRefreshItems();
 		}
 
@@ -419,10 +432,16 @@ namespace System.Windows.Forms
 			OnRefreshItems();
 		}
 
+		private void OnPositionChanged(object sender, EventArgs e)
+		{
+			OnRefreshItems();
+		}
+
 		private void OnPositionTextChanged(object sender, EventArgs e)
 		{
 			if (changingText)
 				return;
+
 			try
 			{
 				changingText = true;

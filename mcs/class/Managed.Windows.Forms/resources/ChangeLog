@@ -1,3 +1,13 @@
+2007-04-27  Alan McGovern
+	
+	* Added nav_delete.png
+			nav_end.png
+			nav_first.png
+			nav_next.png
+			nav_plus.png
+			nav_previous.png
+
+
 2006-12-26  Rolf Bjarne Kvinge
 	
 	* System.Windows.Forms.resx:

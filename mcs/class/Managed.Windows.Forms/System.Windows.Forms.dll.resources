@@ -47,3 +47,10 @@
 -resource:resources/3-up.png
 -resource:resources/4-up.png
 -resource:resources/6-up.png
+-resource:resources/nav_delete.png
+-resource:resources/nav_end.png
+-resource:resources/nav_first.png
+-resource:resources/nav_next.png
+-resource:resources/nav_plus.png
+-resource:resources/nav_previous.png
+

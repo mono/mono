@@ -1,3 +1,7 @@
+2007-04-24  Alan McGovern <alan.mcgovern@gmail.com>
+
+	* System.Windows.Forms.dll.resources - Added files for the BindingNavigator
+
 2007-04-24  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* SWF.csproj, SWF2k5.csproj, SWF2k5-tests.csproj: Update.
