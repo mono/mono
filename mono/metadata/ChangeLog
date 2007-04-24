@@ -1,5 +1,8 @@
 2007-04-24  Zoltan Varga  <vargaz@gmail.com>
 
+	* reflection.c (mono_image_load_module_dynamic): Fix crash introduced by previous
+	patch.
+
 	* image.c (mono_image_load_module): New API function to load a module reference.
 
 	* image.c (load_modules): Load modules lazily. Fixes #80812.
