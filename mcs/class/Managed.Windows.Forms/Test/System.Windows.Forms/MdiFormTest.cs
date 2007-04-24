@@ -80,6 +80,51 @@ namespace MonoTests.System.Windows.Forms
 				child3.MdiParent = main;
 			}
 		}
+
+		[Test]
+		public void ActivatedEventTest ()
+		{
+			using (Form f = new Form ()) {
+				Form c1 = new Form ();
+				Form c2 = new Form ();
+				EventLogger log1 = new EventLogger (c1);
+				EventLogger log2 = new EventLogger (c2);
+
+				f.IsMdiContainer = true;
+				f.ShowInTaskbar = false;
+				c2.MdiParent = c1.MdiParent = f;
+
+				c1.Show ();
+				c2.Show ();
+				Assert.AreEqual (0, log1.CountEvents ("Activated"), "#A1");
+				Assert.AreEqual (0, log2.CountEvents ("Activated"), "#A2");
+				
+				f.Show ();
+				Assert.AreEqual (1, log1.CountEvents ("Activated"), "#B1");
+				Assert.AreEqual (1, log2.CountEvents ("Activated"), "#B2");
+				
+				c1.Show ();
+				c2.Show ();
+				Assert.AreEqual (1, log1.CountEvents ("Activated"), "#C1");
+				Assert.AreEqual (1, log2.CountEvents ("Activated"), "#C2");
+
+				c1.Activate ();
+				Assert.AreEqual (2, log1.CountEvents ("Activated"), "#D1");
+				Assert.AreEqual (1, log2.CountEvents ("Activated"), "#D2");
+
+				c1.Activate ();
+				Assert.AreEqual (2, log1.CountEvents ("Activated"), "#E1");
+				Assert.AreEqual (1, log2.CountEvents ("Activated"), "#E2");
+
+				c2.Activate ();
+				Assert.AreEqual (2, log1.CountEvents ("Activated"), "#F1");
+				Assert.AreEqual (2, log2.CountEvents ("Activated"), "#F2");
+
+				c1.Activate ();
+				Assert.AreEqual (3, log1.CountEvents ("Activated"), "#G1");
+				Assert.AreEqual (2, log2.CountEvents ("Activated"), "#G2");
+			}
+		}
 		
 		[Test]
 		public void ActiveControlTest ()
