@@ -398,12 +398,16 @@ namespace System.Windows.Forms {
 
 		#region Private Methods
 
-		internal override ContextMenu GetContextMenuInternal ()
-		{
-			ContextMenu  res = base.GetContextMenuInternal ();
-			if (res == menu)
-				return null;
-			return res;
+		internal override ContextMenu ContextMenuInternal {
+			get {
+				ContextMenu res = base.ContextMenuInternal;
+				if (res == menu)
+					return null;
+				return res;
+			}
+			set {
+				base.ContextMenuInternal = value;
+			}
 		}
 
 		private void menu_Popup(object sender, EventArgs e) {

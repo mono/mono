@@ -418,6 +418,7 @@ namespace System.Windows.Forms
 					textbox_ctrl.BorderStyle = BorderStyle.None;
 					textbox_ctrl.TextChanged += new EventHandler (OnTextChangedEdit);
 					textbox_ctrl.Click += new EventHandler (OnTextBoxClick);
+					textbox_ctrl.ContextMenu = ContextMenu;
 
 					if (IsHandleCreated == true)
 						Controls.AddImplicit (textbox_ctrl);
@@ -1498,6 +1499,18 @@ namespace System.Windows.Forms
 			}
 
 			return -1;
+		}
+
+		internal override ContextMenu ContextMenuInternal {
+			get {
+				return base.ContextMenuInternal;
+			}
+			set {
+				base.ContextMenuInternal = value;
+				if (textbox_ctrl != null) {
+					textbox_ctrl.ContextMenu = value;
+				}
+			}
 		}
 
 		private void OnKeyDownCB(object sender, KeyEventArgs e)

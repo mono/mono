@@ -2355,19 +2355,24 @@ namespace System.Windows.Forms
 		[MWFCategory("Behavior")]
 		public virtual ContextMenu ContextMenu {
 			get {
-				return GetContextMenuInternal ();
+				return ContextMenuInternal;
 			}
 
 			set {
-				if (context_menu != value) {
-					context_menu = value;
-					OnContextMenuChanged(EventArgs.Empty);
-				}
+				ContextMenuInternal = value;
 			}
 		}
 
-		internal virtual ContextMenu GetContextMenuInternal () {
-			return context_menu;
+		internal virtual ContextMenu ContextMenuInternal {
+			get {
+				return context_menu;
+			}
+			set {
+				if (context_menu != value) {
+					context_menu = value;
+					OnContextMenuChanged (EventArgs.Empty);
+				}
+			}
 		}
 
 #if NET_2_0

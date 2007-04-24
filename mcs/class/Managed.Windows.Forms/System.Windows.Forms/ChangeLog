@@ -1,5 +1,14 @@
 2007-04-24  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* ComboBox.cs: Forward ContextMenu to the underlying textbox, if any.
+	  Fixes #80163.
+	* Control.cs: Replace GetContextMenuInternal() with ContextMenuInternal
+	  property, so that the setter can be overriden too.
+	* TextBox.cs: Change GetContextMenuInternal() to use
+	  ContextMenuInternal.
+
+2007-04-24  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* ThemeWin32Classic.cs: Use a black pen to draw checkboxes, fixes
 	  #81406.
 
