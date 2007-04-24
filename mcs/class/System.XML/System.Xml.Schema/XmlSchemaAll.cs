@@ -59,6 +59,13 @@ namespace System.Xml.Schema
 			get { return emptiable; }
 		}
 
+		internal override void SetParent (XmlSchemaObject parent)
+		{
+			base.SetParent (parent);
+
+			foreach (XmlSchemaObject obj in Items)
+				obj.SetParent (this);
+		}
 
 		/// <remarks>
 		/// 1. MaxOccurs must be one. (default is also one)
@@ -82,9 +89,6 @@ namespace System.Xml.Schema
 
 			foreach(XmlSchemaObject obj in Items)
 			{
-#if NET_2_0
-				obj.Parent = this;
-#endif
 
 				XmlSchemaElement elem = obj as XmlSchemaElement;
 				if(elem != null)

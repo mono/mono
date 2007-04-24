@@ -78,6 +78,15 @@ namespace System.Xml.Schema
 			get { return compiledSelector; }
 		}
 
+		internal override void SetParent (XmlSchemaObject parent)
+		{
+			base.SetParent (parent);
+			if (Selector != null)
+				Selector.SetParent (this);
+			foreach (XmlSchemaObject obj in Fields)
+				obj.SetParent (this);
+		}
+
 		/// <remarks>
 		/// 1. name must be present
 		/// 2. selector and field must be present
@@ -87,13 +96,6 @@ namespace System.Xml.Schema
 			// If this is already compiled this time, simply skip.
 			if (CompilationId == schema.CompilationId)
 				return 0;
-
-#if NET_2_0
-			if (Selector != null)
-				Selector.Parent = this;
-			foreach (XmlSchemaObject obj in Fields)
-				obj.Parent = this;
-#endif
 
 			if(Name == null)
 				error(h,"Required attribute name must be present");

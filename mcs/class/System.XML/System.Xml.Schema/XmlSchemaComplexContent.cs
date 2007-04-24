@@ -59,6 +59,13 @@ namespace System.Xml.Schema
 			set{ content = value; }
 		}
 
+		internal override void SetParent (XmlSchemaObject parent)
+		{
+			base.SetParent (parent);
+			if (Content != null)
+				Content.SetParent (this);
+		}
+
 		/// <remarks>
 		/// 1. Content must be present
 		/// </remarks>
@@ -67,11 +74,6 @@ namespace System.Xml.Schema
 			// If this is already compiled this time, simply skip.
 			if (CompilationId == schema.CompilationId)
 				return 0;
-
-#if NET_2_0
-				if (Content != null)
-					Content.Parent = this;
-#endif
 
 			if (isRedefinedComponent) {
 				if (Annotation != null)

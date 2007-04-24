@@ -86,6 +86,13 @@ namespace System.Xml.Schema
 			get { return validatedListItemType; }
 		}
 
+		internal override void SetParent (XmlSchemaObject parent)
+		{
+			base.SetParent (parent);
+			if (ItemType != null)
+				ItemType.SetParent (this);
+		}
+
 		/// <remarks>
 		/// 1. One of itemType or a <simpleType> must be present, but not both.
 		/// 2. id must be of type ID
@@ -95,11 +102,6 @@ namespace System.Xml.Schema
 			// If this is already compiled this time, simply skip.
 			if (CompilationId == schema.CompilationId)
 				return 0;
-
-#if NET_2_0
-			if (ItemType != null)
-				ItemType.Parent = this;
-#endif
 
 			errorCount = 0;
 

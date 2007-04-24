@@ -322,6 +322,15 @@ namespace System.Xml.Schema
 
 		#endregion
 
+		internal override void SetParent (XmlSchemaObject parent)
+		{
+			base.SetParent (parent);
+			if (SchemaType != null)
+				SchemaType.SetParent (this);
+			foreach (XmlSchemaObject obj in Constraints)
+				obj.SetParent (this);
+		}
+
 		/// <remarks>
 		/// a) If Element has parent as schema:
 		///		1. name must be present and of type NCName.
@@ -354,12 +363,6 @@ namespace System.Xml.Schema
 				return 0;
 			InitPostCompileInformations ();
 			this.schema = schema;
-#if NET_2_0
-			if (SchemaType != null)
-				SchemaType.Parent = this;
-			foreach (XmlSchemaObject obj in Constraints)
-				obj.Parent = this;
-#endif
 
 			if(this.defaultValue != null && this.fixedValue != null)
 				error(h,"both default and fixed can't be present");
@@ -374,7 +377,7 @@ namespace System.Xml.Schema
 				else if(!XmlSchemaUtil.CheckNCName(this.name)) // b1.2
 					error(h,"attribute name must be NCName");
 				else
-					this.qName = new XmlQualifiedName (this.name, schema.TargetNamespace);
+					this.qName = new XmlQualifiedName (this.name, AncestorSchema.TargetNamespace);
 
 				if(form != XmlSchemaForm.None)
 					error(h,"form must be absent");

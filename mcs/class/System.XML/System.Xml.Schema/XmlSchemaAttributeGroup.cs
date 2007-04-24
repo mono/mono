@@ -102,6 +102,15 @@ namespace System.Xml.Schema
 			get{ return qualifiedName;}
 		}
 
+		internal override void SetParent (XmlSchemaObject parent)
+		{
+			base.SetParent (parent);
+			if (this.AnyAttribute != null)
+				this.AnyAttribute.SetParent (this);
+			foreach (XmlSchemaObject obj in Attributes)
+				obj.SetParent (this);
+		}
+
 		/// <remarks>
 		/// An Attribute group can only be defined as a child of XmlSchema or in XmlSchemaRedefine.
 		/// The other attributeGroup has type XmlSchemaAttributeGroupRef.
@@ -132,18 +141,11 @@ namespace System.Xml.Schema
 			
 			if(this.AnyAttribute != null)
 			{
-#if NET_2_0
-				this.AnyAttribute.Parent = this;
-#endif
 				errorCount += this.AnyAttribute.Compile(h, schema);
 			}
 			
 			foreach(XmlSchemaObject obj in Attributes)
 			{
-#if NET_2_0
-				obj.Parent = this;
-#endif
-
 				if(obj is XmlSchemaAttribute)
 				{
 					XmlSchemaAttribute attr = (XmlSchemaAttribute) obj;

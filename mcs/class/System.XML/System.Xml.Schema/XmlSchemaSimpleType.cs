@@ -227,6 +227,13 @@ namespace System.Xml.Schema
 			get{ return variety; }
 		}
 
+		internal override void SetParent (XmlSchemaObject parent)
+		{
+			base.SetParent (parent);
+			if (Content != null)
+				Content.SetParent (this);
+		}
+
 		/// <remarks>
 		/// For a simple Type:
 		///		1. Content must be present
@@ -251,10 +258,6 @@ namespace System.Xml.Schema
 			// If this is already compiled this time, simply skip.
 			if (CompilationId == schema.CompilationId)
 				return 0;
-#if NET_2_0
-			if (Content != null)
-				Content.Parent = this;
-#endif
 
 			errorCount = 0;
 
@@ -263,7 +266,7 @@ namespace System.Xml.Schema
 				if(this.Name != null) // a.1
 					error(h,"Name is prohibited in a local simpletype");
 				else
-					this.QNameInternal = new XmlQualifiedName(this.Name,schema.TargetNamespace);
+					this.QNameInternal = new XmlQualifiedName(this.Name, AncestorSchema.TargetNamespace);
 				if(this.Final != XmlSchemaDerivationMethod.None) //a.2
 					error(h,"Final is prohibited in a local simpletype");
 			}

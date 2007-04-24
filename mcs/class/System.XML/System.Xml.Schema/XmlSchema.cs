@@ -305,8 +305,17 @@ namespace System.Xml.Schema
 			DoCompile (handler, handledUris, col, resolver);
 		}
 
+		void SetParent ()
+		{
+			for (int i = 0; i < Items.Count; i++)
+				Items [i].SetParent (this);
+			for (int i = 0; i < Includes.Count; i++)
+				Includes [i].SetParent (this);
+		}
+
 		void DoCompile (ValidationEventHandler handler, Hashtable handledUris, XmlSchemaSet col, XmlResolver resolver)
 		{
+			SetParent ();
 			CompilationId = col.CompilationId;
 			schemas = col;
 			if (!schemas.Contains (this)) // e.g. xs:import
@@ -353,18 +362,12 @@ namespace System.Xml.Schema
 
 			compilationItems = new XmlSchemaObjectCollection ();
 			for (int i = 0; i < Items.Count; i++) {
-#if NET_2_0
-				Items [i].Parent = this;
-#endif
 				compilationItems.Add (Items [i]);
 			}
 
 			// First, we run into inclusion schemas to collect 
 			// compilation target items into compiledItems.
 			for (int i = 0; i < Includes.Count; i++) {
-#if NET_2_0
-				Includes [i].Parent = this;
-#endif
 				XmlSchemaExternal ext = Includes [i] as XmlSchemaExternal;
 				if (ext == null) {
 					error (handler, String.Format ("Object of Type {0} is not valid in Includes Property of XmlSchema", Includes [i].GetType().Name));
@@ -423,6 +426,7 @@ namespace System.Xml.Schema
 					}
 					includedSchema.schemas = schemas;
 				}
+				includedSchema.SetParent ();
 				ext.Schema = includedSchema;
 
 				// Set - actual - target namespace for the included schema * before compilation*.
@@ -447,15 +451,16 @@ namespace System.Xml.Schema
 				}
 
 				// Compile included schema.
+				// FIXME: this compilation causes bug #81360
 				includedSchema.DoCompile (handler, handledUris, col, resolver);
 
 				AddExternalComponentsTo (includedSchema, compilationItems);
 			}
 
 			// Compilation phase.
-			// At least each Compile() must gives unique (qualified) name for each component.
-			// It also checks self-resolvable properties correct.
-			// Post compilation schema information contribution is not required here.
+			// At least each Compile() must give unique (qualified) name for each component.
+			// It also checks self-resolvable properties correctness.
+			// Post compilation schema information contribution is not done here.
 			// It should be done by Validate().
 			for (int i = 0; i < compilationItems.Count; i++) {
 				XmlSchemaObject obj = compilationItems [i];

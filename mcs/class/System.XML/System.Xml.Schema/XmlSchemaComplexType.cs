@@ -187,6 +187,19 @@ namespace System.Xml.Schema
 			get{ return contentTypeParticle; }
 		}
 
+		internal override void SetParent (XmlSchemaObject parent)
+		{
+			base.SetParent (parent);
+			if (ContentModel != null)
+				ContentModel.SetParent (this);
+			if (Particle != null)
+				Particle.SetParent (this);
+			if (AnyAttribute != null)
+				AnyAttribute.SetParent (this);
+			foreach (XmlSchemaObject obj in Attributes)
+				obj.SetParent (this);
+		}
+
 		/// <remarks>
 		/// 1. If ContentModel is present, neither particle nor Attributes nor AnyAttribute can be present.
 		/// 2. If particle is present, 
@@ -206,17 +219,6 @@ namespace System.Xml.Schema
 			// If this is already compiled this time, simply skip.
 			if (CompilationId == schema.CompilationId)
 				return errorCount;
-
-#if NET_2_0
-			if (ContentModel != null)
-				ContentModel.Parent = this;
-			if (Particle != null)
-				Particle.Parent = this;
-			if (AnyAttribute != null)
-				AnyAttribute.Parent = this;
-			foreach (XmlSchemaObject obj in Attributes)
-				obj.Parent = this;
-#endif
 
 			ValidatedIsAbstract = isAbstract;
 
@@ -241,7 +243,7 @@ namespace System.Xml.Schema
 				else if(!XmlSchemaUtil.CheckNCName(Name))
 					error(h,"name must be a NCName");
 				else
-					this.QNameInternal = new XmlQualifiedName(Name, schema.TargetNamespace);
+					this.QNameInternal = new XmlQualifiedName(Name, AncestorSchema.TargetNamespace);
 				
 				if(Block != XmlSchemaDerivationMethod.None)
 				{

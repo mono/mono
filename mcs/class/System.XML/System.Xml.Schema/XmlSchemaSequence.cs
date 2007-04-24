@@ -56,6 +56,13 @@ namespace System.Xml.Schema
 			get{ return items; }
 		}
 
+		internal override void SetParent (XmlSchemaObject parent)
+		{
+			base.SetParent (parent);
+			foreach (XmlSchemaObject obj in Items)
+				obj.SetParent (this);
+		}
+
 		internal override int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
 			// If this is already compiled this time, simply skip.
@@ -67,9 +74,6 @@ namespace System.Xml.Schema
 
 			foreach(XmlSchemaObject obj in Items)
 			{
-#if NET_2_0
-				obj.Parent = this;
-#endif
 				if(obj is XmlSchemaElement ||
 					obj is XmlSchemaGroupRef ||
 					obj is XmlSchemaChoice ||

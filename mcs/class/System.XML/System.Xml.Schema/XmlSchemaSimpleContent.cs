@@ -51,6 +51,13 @@ namespace System.Xml.Schema
 			set{ content = value; }
 		}
 
+		internal override void SetParent (XmlSchemaObject parent)
+		{
+			base.SetParent (parent);
+			if (Content != null)
+				Content.SetParent (this);
+		}
+
 		///<remarks>
 		/// 1. Content must be present and one of restriction or extention
 		///</remarks>
@@ -66,9 +73,6 @@ namespace System.Xml.Schema
 			}
 			else
 			{
-#if NET_2_0
-				Content.Parent = this;
-#endif
 				if(Content is XmlSchemaSimpleContentRestriction)
 				{
 					XmlSchemaSimpleContentRestriction xscr = (XmlSchemaSimpleContentRestriction) Content;

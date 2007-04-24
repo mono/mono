@@ -74,6 +74,14 @@ namespace System.Xml.Schema
 		{
 			get{ return groups; }
 		}
+
+		internal override void SetParent (XmlSchemaObject parent)
+		{
+			base.SetParent (parent);
+			foreach (XmlSchemaObject i in Items)
+				i.SetParent (this);
+		}
+
 //<redefine 
 //  id = ID 
 //  schemaLocation = anyURI 

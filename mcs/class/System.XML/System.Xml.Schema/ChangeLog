@@ -1,3 +1,19 @@
+2007-04-24  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchema.cs XmlSchemaSimpleTypeList.cs
+	  XmlSchemaComplexContentRestriction.cs XmlSchemaGroup.cs
+	  XmlSchemaComplexContentExtension.cs XmlSchemaSequence.cs
+	  XmlSchemaSimpleContentRestriction.cs
+	  XmlSchemaSimpleContentExtension.cs
+	  XmlSchemaElement.cs XmlSchemaAll.cs XmlSchemaComplexType.cs
+	  XmlSchemaAttributeGroup.cs XmlSchemaSimpleTypeRestriction.cs
+	  XmlSchemaSimpleContent.cs XmlSchemaChoice.cs
+	  XmlSchemaSimpleType.cs XmlSchemaIdentityConstraint.cs
+	  XmlSchemaSimpleTypeUnion.cs XmlSchemaRedefine.cs
+	  XmlSchemaComplexContent.cs XmlSchemaAttribute.cs
+	  XmlSchemaObject.cs : set parent component in prior to compilation,
+	  bringing Parent to 1.x as internal. Moving toward fixing #81360.
+
 2006-12-11  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchemaIdentityConstraint.cs : give conflicting component in

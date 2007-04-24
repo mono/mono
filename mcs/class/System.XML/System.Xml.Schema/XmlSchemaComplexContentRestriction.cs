@@ -85,6 +85,17 @@ namespace System.Xml.Schema
 			get { return false; }
 		}
 
+		internal override void SetParent (XmlSchemaObject parent)
+		{
+			base.SetParent (parent);
+			if (Particle != null)
+				Particle.SetParent (this);
+			if (AnyAttribute != null)
+				AnyAttribute.SetParent (this);
+			foreach (XmlSchemaObject obj in Attributes)
+				obj.SetParent (this);
+		}
+
 		/// <remarks>
 		/// 1. base must be present
 		/// </remarks>
@@ -93,15 +104,6 @@ namespace System.Xml.Schema
 			// If this is already compiled this time, simply skip.
 			if (CompilationId == schema.CompilationId)
 				return 0;
-
-#if NET_2_0
-			if (Particle != null)
-				Particle.Parent = this;
-			if (AnyAttribute != null)
-				AnyAttribute.Parent = this;
-			foreach (XmlSchemaObject obj in Attributes)
-				obj.Parent = this;
-#endif
 
 			if (this.isRedefinedComponent) {
 				if (Annotation != null)

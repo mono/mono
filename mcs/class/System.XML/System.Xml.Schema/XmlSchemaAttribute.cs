@@ -208,6 +208,13 @@ namespace System.Xml.Schema
 
 		#endregion
 
+		internal override void SetParent (XmlSchemaObject parent)
+		{
+			base.SetParent (parent);
+			if (schemaType != null)
+				schemaType.SetParent (this);
+		}
+
 		/// <remarks>
 		/// For an attribute:
 		///  a) If the parent is schema 
@@ -253,11 +260,6 @@ namespace System.Xml.Schema
 			if (CompilationId == schema.CompilationId)
 				return 0;
 
-#if NET_2_0
-			if (schemaType != null)
-				schemaType.Parent = this;
-#endif
-
 			errorCount = 0;
 			
 			if(ParentIsSchema || isRedefineChild)//a
@@ -271,7 +273,7 @@ namespace System.Xml.Schema
 				if(Use != XmlSchemaUse.None)		// a.3
 					error(h,"use must be absent in the top level <attribute>");
 
-				targetNamespace = schema.TargetNamespace;
+				targetNamespace = AncestorSchema.TargetNamespace;
 
 				CompileCommon (h, schema, true);
 			}

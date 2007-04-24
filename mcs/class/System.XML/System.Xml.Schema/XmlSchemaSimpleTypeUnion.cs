@@ -71,6 +71,13 @@ namespace System.Xml.Schema
 			get { return validatedTypes; }
 		}
 
+		internal override void SetParent (XmlSchemaObject parent)
+		{
+			base.SetParent (parent);
+			foreach (XmlSchemaObject obj in BaseTypes)
+				obj.SetParent (this);
+		}
+
 		/// <remarks>
 		/// 1. Circular union type definition is disallowed. (WTH is this?)
 		/// 2. id must be a valid ID
@@ -80,11 +87,6 @@ namespace System.Xml.Schema
 			// If this is already compiled this time, simply skip.
 			if (CompilationId == schema.CompilationId)
 				return 0;
-
-#if NET_2_0
-			foreach (XmlSchemaObject obj in BaseTypes)
-				obj.Parent = this;
-#endif
 
 			errorCount = 0;
 

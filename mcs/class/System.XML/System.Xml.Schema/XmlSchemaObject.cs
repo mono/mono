@@ -51,9 +51,7 @@ namespace System.Xml.Schema
 		internal bool isRedefinedComponent;
 		internal XmlSchemaObject redefinedObject;
 
-#if NET_2_0
 		private XmlSchemaObject parent;
-#endif
 
 
 		protected XmlSchemaObject()
@@ -84,11 +82,29 @@ namespace System.Xml.Schema
 
 #if NET_2_0
 		[XmlIgnore]
-		public XmlSchemaObject Parent {
+		public
+#else
+		internal
+#endif
+		XmlSchemaObject Parent {
 			get { return parent; }
 			set { parent = value; }
 		}
-#endif
+
+		internal XmlSchema AncestorSchema {
+			get {
+				
+				for (XmlSchemaObject o = Parent; o != null; o = o.Parent)
+					if (o is XmlSchema)
+						return (XmlSchema) o;
+				throw new Exception (String.Format ("INTERNAL ERROR: Parent object is not set properly : {0} ({1},{2})", SourceUri, LineNumber, LinePosition));
+			}
+		}
+
+		internal virtual void SetParent (XmlSchemaObject parent)
+		{
+			Parent = parent;
+		}
 
 		// Undocumented Property
 		[XmlNamespaceDeclarations]
