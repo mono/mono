@@ -58,6 +58,24 @@ namespace MonoTests.System.Windows.Forms
 			Thread.CurrentThread.CurrentCulture = _originalCulture;
 		}
 		
+		[Test]
+		public void ContextMenuTest ()
+		{
+			ComboBox cmb = new ComboBox ();
+			ContextMenu cm = new ContextMenu ();
+			
+			Assert.IsNull (cmb.ContextMenu, "#1");
+			cmb.ContextMenu = cm;
+			Assert.AreSame (cmb.ContextMenu, cm, "#2");
+			cmb.DropDownStyle = ComboBoxStyle.DropDown;
+			Assert.AreSame (cmb.ContextMenu, cm, "#3");
+			cmb.DropDownStyle = ComboBoxStyle.DropDownList;
+			Assert.AreSame (cmb.ContextMenu, cm, "#4");
+			cmb.DropDownStyle = ComboBoxStyle.Simple;
+			Assert.AreSame (cmb.ContextMenu, cm, "#5");
+			
+		}
+		
 		[Test] // bug 80794
 		public void DataBindingTest ()
 		{
