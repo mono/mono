@@ -1,3 +1,16 @@
+2007-04-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* image.c (mono_image_load_module): New API function to load a module reference.
+
+	* image.c (load_modules): Load modules lazily. Fixes #80812.
+
+	* class.c (mono_class_from_typeref): Use mono_image_load_module.
+	
+	* reflection.c (mono_image_load_module_dynamic): Copy image->modules_loaded too.
+
+	* object-internals.h reflection.c icall-def.h (mono_image_load_module): Rename this 
+	to mono_image_load_module_dynamic.
+
 2007-04-23  Jonathan Chambers  <joncham@gmail.com>
 
 	* marshal.c: Fix calling convention for CCW on non-windows
