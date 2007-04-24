@@ -1780,8 +1780,8 @@ namespace System.Windows.Forms {
 
 		private void GotFocusHandler (object sender, EventArgs e)
 		{
-			if (selected_node == null && pre_selected_node != null)
-				SelectedNode = pre_selected_node;
+			if (selected_node == null)
+				SelectedNode = pre_selected_node == null ? Nodes [0] : pre_selected_node;
 			else if (selected_node != null)
 				UpdateNode (selected_node);
 		}
