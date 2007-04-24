@@ -216,6 +216,7 @@
     <Compile Include="System.Windows.Forms\BindingManagerDataErrorEventArgs.cs" />
     <Compile Include="System.Windows.Forms\BindingManagerDataErrorEventHandler.cs" />
     <Compile Include="System.Windows.Forms\BindingMemberInfo.cs" />
+    <Compile Include="System.Windows.Forms\BindingNavigator.cs" />
     <Compile Include="System.Windows.Forms\BindingSource.cs" />
     <Compile Include="System.Windows.Forms\BindingsCollection.cs" />
     <Compile Include="System.Windows.Forms\BootMode.cs" />
@@ -433,6 +434,9 @@
     <Compile Include="System.Windows.Forms\DrawItemEventArgs.cs" />
     <Compile Include="System.Windows.Forms\DrawItemEventHandler.cs" />
     <Compile Include="System.Windows.Forms\DrawItemState.cs" />
+    <Compile Include="System.Windows.Forms\DrawListViewColumnHeaderEventArgs.cs" />
+    <Compile Include="System.Windows.Forms\DrawListViewItemEventArgs.cs" />
+    <Compile Include="System.Windows.Forms\DrawListViewSubItemEventArgs.cs" />
     <Compile Include="System.Windows.Forms\DrawMode.cs" />
     <Compile Include="System.Windows.Forms\DrawTreeNodeEventArgs.cs" />
     <Compile Include="System.Windows.Forms\DrawTreeNodeEventHandler.cs" />
@@ -481,6 +485,7 @@
     <Compile Include="System.Windows.Forms\HelpNavigator.cs" />
     <Compile Include="System.Windows.Forms\HelpProvider.cs" />
     <Compile Include="System.Windows.Forms\HorizontalAlignment.cs" />
+    <Compile Include="System.Windows.Forms\HScrollProperties.cs" />
     <Compile Include="System.Windows.Forms\HtmlElementInsertionOrientation.cs" />
     <Compile Include="System.Windows.Forms\Hwnd.cs" />
     <Compile Include="System.Windows.Forms\IButtonControl.cs" />
@@ -579,6 +584,7 @@
     <Compile Include="System.Windows.Forms\MaskFormat.cs" />
     <Compile Include="System.Windows.Forms\MaskInputRejectedEventArgs.cs" />
     <Compile Include="System.Windows.Forms\MaskInputRejectedEventHandler.cs" />
+    <Compile Include="System.Windows.Forms\MaskedTextBox.cs" />
     <Compile Include="System.Windows.Forms\MdiClient.cs" />
     <Compile Include="System.Windows.Forms\MdiLayout.cs" />
     <Compile Include="System.Windows.Forms\MdiWindowManager.cs" />
@@ -689,6 +695,7 @@
     <Compile Include="System.Windows.Forms\ScrollEventHandler.cs" />
     <Compile Include="System.Windows.Forms\ScrollEventType.cs" />
     <Compile Include="System.Windows.Forms\ScrollOrientation.cs" />
+    <Compile Include="System.Windows.Forms\ScrollProperties.cs" />
     <Compile Include="System.Windows.Forms\ScrollableControl.cs" />
     <Compile Include="System.Windows.Forms\SearchDirectionHint.cs" />
     <Compile Include="System.Windows.Forms\SearchForVirtualItemEventArgs.cs" />
@@ -877,6 +884,7 @@
     <Compile Include="System.Windows.Forms\VScrollBar.cs" />
     <Compile Include="System.Windows.Forms\ValidationConstraints.cs" />
     <Compile Include="System.Windows.Forms\View.cs" />
+    <Compile Include="System.Windows.Forms\VScrollProperties.cs" />
     <Compile Include="System.Windows.Forms\WebBrowserDocumentCompletedEventArgs.cs" />
     <Compile Include="System.Windows.Forms\WebBrowserDocumentCompletedEventHandler.cs" />
     <Compile Include="System.Windows.Forms\WebBrowserEncryptionLevel.cs" />
@@ -906,7 +914,13 @@
     <Compile Include="System.Windows.Forms.Layout\TableLayout.cs" />
     <Compile Include="System.Windows.Forms.Layout\TableLayoutSettingsTypeConverter.cs" />
     <Compile Include="System.Windows.Forms.Theming\ThemeElements.cs" />
+    <Compile Include="System.Windows.Forms.Theming\ThemeElementsClearlooks.cs" />
     <Compile Include="System.Windows.Forms.Theming\ThemeElementsDefault.cs" />
+    <Compile Include="System.Windows.Forms.Theming\ThemeElementsGtk.cs" />
+    <Compile Include="System.Windows.Forms.Theming\ThemeElementsNice.cs" />
+    <Compile Include="System.Windows.Forms.Theming\Default\ButtonPainter.cs" />
+    <Compile Include="System.Windows.Forms.Theming\Default\TabControlPainter.cs" />
+    <Compile Include="System.Windows.Forms.Theming\Nice\TabControlPainter.cs" />
     <Compile Include="System.Windows.Forms.VisualStyles\BackgroundType.cs" />
     <Compile Include="System.Windows.Forms.VisualStyles\BooleanProperty.cs" />
     <Compile Include="System.Windows.Forms.VisualStyles\BorderType.cs" />

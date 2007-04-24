@@ -441,6 +441,7 @@ System.Windows.Forms/MainMenu.cs
 System.Windows.Forms/MaskFormat.cs
 System.Windows.Forms/MaskInputRejectedEventArgs.cs
 System.Windows.Forms/MaskInputRejectedEventHandler.cs
+System.Windows.Forms/MaskedTextBox.cs
 System.Windows.Forms/MdiClient.cs
 System.Windows.Forms/MdiLayout.cs
 System.Windows.Forms/MdiWindowManager.cs
