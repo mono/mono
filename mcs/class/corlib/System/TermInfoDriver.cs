@@ -28,7 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 #if NET_2_0
-#define DEBUG
+//#define DEBUG
 using System.Collections;
 using System.IO;
 using System.Text;

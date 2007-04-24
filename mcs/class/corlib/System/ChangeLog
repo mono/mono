@@ -1,3 +1,9 @@
+2007-04-24  Marek Habersack  <mhabersack@novell.com>
+
+	* TermInfoDriver.cs: don't include debug stuff by default - it
+	breaks multithreaded applications (they all attempt to open
+	console.log and fail because of sharing violation).
+
 2007-04-23  Jeffrey Stedfast  <fejj@novell.com>
 
 	* TermInfoDriver.cs (ReadKeyInternal): Since our input stream is
