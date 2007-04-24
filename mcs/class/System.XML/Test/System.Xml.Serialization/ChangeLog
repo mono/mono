@@ -1,3 +1,7 @@
+2007-04-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSerializerTests.cs : another case on #80759 from gert.
+
 2007-04-23  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlSerializerTests.cs :

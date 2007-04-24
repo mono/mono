@@ -1925,8 +1925,13 @@ namespace System.Xml.Serialization
 							XmlTypeMapElementInfo info = (XmlTypeMapElementInfo) mem.ElementInfo [0];
 							if (info.TypeData.Type == typeof (string))
 								GenerateSetMemberValue (mem, ob, "ReadString (" + GenerateGetMemberValue (mem, ob, isValueList) + ")", isValueList);
-							else
-								GenerateSetMemberValue (mem, ob, GenerateGetValueFromXmlString ("Reader.ReadString()", info.TypeData, info.MappedType), isValueList);
+							else {
+								WriteLineInd ("{");
+								string str = GetStrTempVar ();
+								WriteLine ("string " + str + " = Reader.ReadString();");
+								GenerateSetMemberValue (mem, ob, GenerateGetValueFromXmlString (str, info.TypeData, info.MappedType), isValueList);
+								WriteLineInd ("}");
+							}
 							GenerateEndHook ();
 						}
 						WriteLineUni ("}");
@@ -2143,10 +2148,16 @@ namespace System.Xml.Serialization
 				if (elem.IsNullable) return "ReadNullableQualifiedName ()";
 				else return "ReadElementQualifiedName ()";
 			}
-			else if (elem.IsNullable)
-				return GenerateGetValueFromXmlString ("ReadNullableString ()", elem.TypeData, elem.MappedType);
-			else
-				return GenerateGetValueFromXmlString ("Reader.ReadElementString ()", elem.TypeData, elem.MappedType);
+			else if (elem.IsNullable) {
+				string str = GetStrTempVar ();
+				WriteLine ("string " + str + " = ReadNullableString ();");
+				return GenerateGetValueFromXmlString (str, elem.TypeData, elem.MappedType);
+			}
+			else {
+				string str = GetStrTempVar ();
+				WriteLine ("string " + str + " = Reader.ReadElementString ();");
+				return GenerateGetValueFromXmlString (str, elem.TypeData, elem.MappedType);
+			}
 		}
 		
 		string GenerateGetValueFromXmlString (string value, TypeData typeData, XmlTypeMapping typeMap)

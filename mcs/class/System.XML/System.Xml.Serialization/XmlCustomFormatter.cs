@@ -334,6 +334,14 @@ namespace System.Xml.Serialization {
 
 		internal static string GenerateFromXmlString (TypeData type, string value)
 		{
+			if (type.NullableOverride)
+				return String.Concat ("(", value, " != null ? (", type.CSharpName, "?)", GenerateFromXmlStringCore (type, value), " : null)");
+			else
+				return GenerateFromXmlStringCore (type, value);
+		}
+
+		static string GenerateFromXmlStringCore (TypeData type, string value)
+		{
 			switch (type.XmlType)
 			{
 				case "boolean": return "XmlConvert.ToBoolean (" + value + ")";

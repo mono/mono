@@ -2605,6 +2605,34 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
+		public void HasNullableField2 ()
+		{
+			Bug80759 foo = new Bug80759 ();
+			foo.Test = "BAR";
+			foo.NullableInt = 10;
+
+			XmlSerializer serializer = new XmlSerializer (typeof (Bug80759));
+
+			MemoryStream stream = new MemoryStream ();
+
+			serializer.Serialize (stream, foo);
+			stream.Position = 0;
+			foo = (Bug80759) serializer.Deserialize (stream);
+
+			Assert.AreEqual ("BAR", foo.Test, "#1");
+			Assert.AreEqual (10, foo.NullableInt, "#2");
+
+			foo.NullableInt = null;
+			stream = new MemoryStream ();
+			serializer.Serialize (stream, foo);
+			stream.Position = 0;
+			foo = (Bug80759) serializer.Deserialize (stream);
+
+			Assert.AreEqual ("BAR", foo.Test, "#3");
+			Assert.IsNull (foo.NullableInt, "#4");
+		}
+
+		[Test]
 		public void SupportPrivateCtorOnly ()
 		{
 			XmlSerializer xs =
