@@ -58,14 +58,19 @@ namespace System.Windows.Forms
 		protected ToolStripDropDownItem (string text, Image image, EventHandler onClick, string name)
 			: base (text, image, onClick, name)
 		{
-			this.drop_down = CreateDefaultDropDown ();
-			this.drop_down.ItemAdded += new ToolStripItemEventHandler (DropDown_ItemAdded);
 		}
 		#endregion
 
 		#region Public Properties
 		public ToolStripDropDown DropDown {
-			get { return this.drop_down; }
+			get {
+				if (this.drop_down == null) {
+					this.drop_down = CreateDefaultDropDown ();
+					this.drop_down.ItemAdded += new ToolStripItemEventHandler (DropDown_ItemAdded);
+				}
+			
+				return this.drop_down;
+			}
 			set { this.drop_down = value; }
 		}
 
@@ -82,18 +87,18 @@ namespace System.Windows.Forms
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public ToolStripItemCollection DropDownItems {
-			get { return this.drop_down.Items; }
+			get { return this.DropDown.Items; }
 		}
 
 		[Browsable (false)]
 		public virtual bool HasDropDownItems {
-			get { return this.drop_down.Items.Count != 0; }
+			get { return this.drop_down != null && this.DropDown.Items.Count != 0; }
 		}
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public override bool Pressed {
-			get { return base.Pressed || this.DropDown.Visible; }
+			get { return base.Pressed || (this.drop_down != null && this.DropDown.Visible); }
 		}
 		#endregion
 
@@ -119,7 +124,7 @@ namespace System.Windows.Forms
 		#region Public Methods
 		public void HideDropDown ()
 		{
-			if (!this.DropDown.Visible)
+			if (this.drop_down == null || !this.DropDown.Visible)
 				return;
 
 			this.DropDown.Close (ToolStripDropDownCloseReason.CloseCalled);
@@ -239,7 +244,7 @@ namespace System.Windows.Forms
 		#region Internal Methods
 		internal void HideDropDown (ToolStripDropDownCloseReason reason)
 		{
-			if (!this.DropDown.Visible)
+			if (this.drop_down == null || !this.DropDown.Visible)
 				return;
 
 			this.DropDown.Close (reason);

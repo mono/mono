@@ -1008,7 +1008,7 @@ namespace System.Windows.Forms
 				this.Invalidate ();
 
 				if (this.IsOnDropDown)
-					if (!(this is ToolStripDropDownItem) || (this as ToolStripDropDownItem).DropDown.Visible == false) {
+					if (!(this is ToolStripDropDownItem) || !(this as ToolStripDropDownItem).HasDropDownItems || (this as ToolStripDropDownItem).DropDown.Visible == false) {
 						if ((this.Parent as ToolStripDropDown).OwnerItem != null)
 							((this.Parent as ToolStripDropDown).OwnerItem as ToolStripDropDownItem).HideDropDown ();
 						else

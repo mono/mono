@@ -131,7 +131,7 @@ namespace System.Windows.Forms
 			if (e.Item.Selected && !e.Item.Pressed)
 				using (Pen p = new Pen (this.ColorTable.ButtonSelectedBorder))
 					e.Graphics.DrawRectangle (p, paint_here);
-			else if (e.Item.Pressed && (e.Item.Owner is MenuStrip && (e.Item as ToolStripMenuItem).DropDown.Visible == true))
+			else if (e.Item.Pressed && (e.Item.Owner is MenuStrip && (e.Item as ToolStripMenuItem).HasDropDownItems) && (e.Item as ToolStripMenuItem).DropDown.Visible == true)
 				using (Pen p = new Pen (this.ColorTable.MenuBorder))
 					e.Graphics.DrawRectangle (p, paint_here);
 			else if (e.Item.Pressed)
@@ -280,12 +280,13 @@ namespace System.Windows.Forms
 			Rectangle paint_here = new Rectangle (1, 0, e.Item.Bounds.Width - 3, e.Item.Bounds.Height - 1);
 
 			if (e.Item.Selected || e.Item.Pressed) {		//|| (e.Item is ToolStripMenuItem && (e.Item as ToolStripMenuItem).DropDown.Visible)) {
-				if (this.ColorTable.UseSystemColors){
-					if (e.Item.Enabled) 
-						e.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (this.ColorTable.MenuItemSelectedGradientBegin), paint_here);}
+				if (this.ColorTable.UseSystemColors) {
+					if (e.Item.Enabled)
+						e.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (this.ColorTable.MenuItemSelectedGradientEnd), paint_here);
+				}
 				else
-					if (e.Item.Enabled) 
-						e.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (this.ColorTable.MenuItemSelected), paint_here);
+					if (e.Item.Enabled)
+						e.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (this.ColorTable.MenuItemSelectedGradientEnd), paint_here);
 				
 				using (Pen p = new Pen (this.ColorTable.MenuItemBorder))
 					e.Graphics.DrawRectangle (p, paint_here);				

@@ -110,7 +110,7 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		public bool DropDownButtonPressed {
-			get { return this.drop_down_button_selected || this.DropDown.Visible; }
+			get { return this.drop_down_button_selected || (this.HasDropDownItems && this.DropDown.Visible); }
 		}
 
 		[Browsable (false)]

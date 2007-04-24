@@ -1,3 +1,11 @@
+2007-04-24  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStripDropDownItem.cs: Lazy initialize the DropDown.  This prevents
+	us from created dropdowns for menu items that do not have subitems.
+	* ToolStripItem.cs, ToolStripProfessionalRenderer.cs, ToolStripSplitButton.cs:
+	Check HasDropDownItems before calling DropDown so a dropdown will not be
+	created if it isn't needed.
+
 2007-04-24  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs: Set the first node to the selected node when we get
