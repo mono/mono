@@ -76,8 +76,11 @@ namespace System {
 		string cursorAddress;
 		ConsoleColor fgcolor = ConsoleColor.White;
 		ConsoleColor bgcolor = ConsoleColor.Black;
-		string setafcolor; // TODO: use setforeground/setbackground if available for better
-		string setabcolor; // color mapping.
+		bool color16 = false; // terminal supports 16 colors
+		string setlfgcolor;
+		string setlbgcolor;
+		string setfgcolor;
+		string setbgcolor;
 		bool noGetPosition;
 		Hashtable keymap;
 		ByteMatcher rootmap;
@@ -130,15 +133,17 @@ namespace System {
 		public TermInfoDriver (string term)
 		{
 #if DEBUG
-			//File.Delete ("console.log");
+			File.Delete ("console.log");
 			logger = new StreamWriter (File.OpenWrite ("console.log"));
 #endif
 			this.term = term;
 
 			if (term == "xterm") {
 				reader = new TermInfoReader (term, KnownTerminals.xterm);
+				color16 = true;
 			} else if (term == "linux") {
 				reader = new TermInfoReader (term, KnownTerminals.linux);
+				color16 = true;
 			} else {
 				string filename = SearchTerminfo (term);
 				if (filename != null)
@@ -185,8 +190,12 @@ namespace System {
 
 			origPair = reader.Get (TermInfoStrings.OrigPair);
 			origColors = reader.Get (TermInfoStrings.OrigColors);
-			setafcolor = MangleParameters (reader.Get (TermInfoStrings.SetAForeground));
-			setabcolor = MangleParameters (reader.Get (TermInfoStrings.SetABackground));
+			setfgcolor = MangleParameters (reader.Get (TermInfoStrings.SetAForeground));
+			setbgcolor = MangleParameters (reader.Get (TermInfoStrings.SetABackground));
+			// lighter fg colours are 90 -> 97 rather than 30 -> 37
+			setlfgcolor = color16 ? setfgcolor.Replace ("[3", "[9") : setfgcolor;
+			// lighter bg colours are 100 -> 107 rather than 40 -> 47
+			setlbgcolor = color16 ? setbgcolor.Replace ("[4", "[10") : setbgcolor;
 			string resetColors = (origColors == null) ? origPair : origColors;
 			if (resetColors != null)
 				endString += resetColors;
@@ -246,34 +255,62 @@ namespace System {
 			return str.Replace ("%p2%d", "{1}");
 		}
 
-		static int TranslateColor (ConsoleColor desired)
+		static int TranslateColor (ConsoleColor desired, out bool light)
 		{
 			switch (desired) {
+			// Dark colours
 			case ConsoleColor.Black:
-			case ConsoleColor.DarkGray:
+				light = false;
 				return 0;
-			case ConsoleColor.DarkBlue:
-			case ConsoleColor.Blue:
-				return 4;
-			case ConsoleColor.DarkGreen:
-			case ConsoleColor.Green:
-				return 2;
-			case ConsoleColor.DarkCyan:
-			case ConsoleColor.Cyan:
-				return 6;
 			case ConsoleColor.DarkRed:
-			case ConsoleColor.Red:
+				light = false;
 				return 1;
-			case ConsoleColor.DarkMagenta:
-			case ConsoleColor.Magenta:
-				return 5;
+			case ConsoleColor.DarkGreen:
+				light = false;
+				return 2;
 			case ConsoleColor.DarkYellow:
-			case ConsoleColor.Yellow:
+				light = false;
 				return 3;
+			case ConsoleColor.DarkBlue:
+				light = false;
+				return 4;
+			case ConsoleColor.DarkMagenta:
+				light = false;
+				return 5;
+			case ConsoleColor.DarkCyan:
+				light = false;
+				return 6;
 			case ConsoleColor.Gray:
+				light = false;
+				return 7;
+			// Light colours
+			case ConsoleColor.DarkGray:
+				light = true;
+				return 0;
+			case ConsoleColor.Red:
+				light = true;
+				return 1;
+			case ConsoleColor.Green:
+				light = true;
+				return 2;
+			case ConsoleColor.Yellow:
+				light = true;
+				return 3;
+			case ConsoleColor.Blue:
+				light = true;
+				return 4;
+			case ConsoleColor.Magenta:
+				light = true;
+				return 5;
+			case ConsoleColor.Cyan:
+				light = true;
+				return 6;
 			case ConsoleColor.White:
+				light = true;
 				return 7;
 			}
+
+			light = false;
 
 			return 0;
 		}
@@ -380,7 +417,14 @@ namespace System {
 				}
 
 				bgcolor = value;
-				WriteConsole (String.Format (setabcolor, TranslateColor (value)));
+
+				bool light;
+				int colour = TranslateColor (value, out light);
+
+				if (light)
+					WriteConsole (String.Format (setlbgcolor, colour));
+				else
+					WriteConsole (String.Format (setbgcolor, colour));
 			}
 		}
 
@@ -398,7 +442,14 @@ namespace System {
 				}
 
 				fgcolor = value;
-				WriteConsole (String.Format (setafcolor, TranslateColor (value)));
+
+				bool light;
+				int colour = TranslateColor (value, out light);
+
+				if (light)
+					WriteConsole (String.Format (setlfgcolor, colour));
+				else
+					WriteConsole (String.Format (setfgcolor, colour));
 			}
 		}
 

@@ -1,3 +1,17 @@
+2007-04-24  Jeffrey Stedfast  <fejj@novell.com>
+
+	Fixes the last of the bugs listed in bug #77525
+
+	* TermInfoDriver.cs (ctor): For known terminal types, set color16
+	to true (since we know they support 16 colours).
+	(Init): set the setlfgcolor and setlbgcolor format strings.
+	(BackgroundColor): Use the appropriate formatter string for
+	setting the bgcolor.
+	(ForegroundColor): Use the appropriate formatter string for
+	setting the fgcolor.
+	(TranslateColor): Now takes (and sets appropriately) an output
+	'bool light' argument.
+
 2007-04-24  Marek Habersack  <mhabersack@novell.com>
 
 	* TermInfoDriver.cs: don't include debug stuff by default - it
