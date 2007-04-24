@@ -1,3 +1,8 @@
+2007-04-24  Andreia Gaita  <avidigal@novell.com>
+
+	* MimeIcon.cs: remove using blocks so that image streams are
+	not disposed of. Fixes #80151
+
 2007-04-24  Jackson Harper  <jackson@ximian.com>
 
 	* TextBoxBase.cs: Fixup the height of textboxes when the control

@@ -58,14 +58,14 @@ namespace System.Windows.Forms
 		
 		static internal Bitmap Get (string name)
 		{
-			using (Stream stream = assembly.GetManifestResourceStream (name)) {
-				if (stream == null) {
-					Console.WriteLine ("Failed to read {0}", name);
-					return null;
-				}
-				
-				return new Bitmap (stream);
+			Stream stream = assembly.GetManifestResourceStream (name);
+
+			if (stream == null) {
+				Console.WriteLine ("Failed to read {0}", name);
+				return null;
 			}
+				
+			return new Bitmap (stream);
 		}
 	}
 	
@@ -502,8 +502,8 @@ namespace System.Windows.Forms
 			g_object_unref (pixbuf);
 			
 			Image image = null;
-			using (MemoryStream s = new MemoryStream (result))
-				image = Image.FromStream (s);
+			MemoryStream s = new MemoryStream (result);
+			image = Image.FromStream (s);
 			
 			return image;
 		}
