@@ -1,3 +1,8 @@
+2007-04-24  Raja R Harinath  <rharinath@novell.com>
+
+	* BindingNavigatorTest.cs (CheckStandardItems): Avoid use of NUnit
+	API newer than present in the tree.
+
 2007-04-24  Alan McGovern <alan.mcgovern@gmail.com>
 
 	* BindingNavigatorTest.cs: Initial tests
@@ -1549,7 +1554,7 @@
 
 	* SystemInformationTest.cs: Add tests case for MenuFont.
 
-﻿2006-09-18  Jonathan Pobst  <monkey@jpobst.com>
+2006-09-18  Jonathan Pobst  <monkey@jpobst.com>
 	* EventArgsTest.cs: Add tests for ToolStrip*EventArgs.
 
 2006-09-13  Jonathan Pobst  <monkey@jpobst.com>

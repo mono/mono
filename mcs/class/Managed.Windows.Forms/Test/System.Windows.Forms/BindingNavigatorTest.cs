@@ -128,16 +128,16 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsNotNull(navigator.AddNewItem, "*10");
 			Assert.IsNull(navigator.BindingSource, "*11");
 
-			Assert.IsInstanceOfType(typeof(ToolStripButton), navigator.AddNewItem, "#1");
-			Assert.IsInstanceOfType(typeof(ToolStripButton), navigator.MoveFirstItem, "#2");
-			Assert.IsInstanceOfType(typeof(ToolStripButton), navigator.MoveLastItem, "#3");
-			Assert.IsInstanceOfType(typeof(ToolStripButton), navigator.MoveNextItem, "#4");
-			Assert.IsInstanceOfType(typeof(ToolStripButton), navigator.MovePreviousItem, "#5");
-			Assert.IsInstanceOfType(typeof(ToolStripButton), navigator.DeleteItem, "#6");
-			Assert.IsInstanceOfType(typeof(ToolStripLabel), navigator.CountItem, "#7");
-			Assert.IsInstanceOfType(typeof(ToolStripTextBox), navigator.PositionItem, "#8");
-			Assert.IsInstanceOfType(typeof(ToolStripButton), navigator.AddNewItem, "#9");
-			Assert.IsInstanceOfType(typeof(ToolStripButton), navigator.AddNewItem, "#10");
+			Assert.IsTrue(navigator.AddNewItem is ToolStripButton, "#1");
+			Assert.IsTrue(navigator.MoveFirstItem is ToolStripButton, "#2");
+			Assert.IsTrue(navigator.MoveLastItem is ToolStripButton, "#3");
+			Assert.IsTrue(navigator.MoveNextItem is ToolStripButton, "#4");
+			Assert.IsTrue(navigator.MovePreviousItem is ToolStripButton, "#5");
+			Assert.IsTrue(navigator.DeleteItem is ToolStripButton, "#6");
+			Assert.IsTrue(navigator.CountItem is ToolStripLabel, "#7");
+			Assert.IsTrue(navigator.PositionItem is ToolStripTextBox, "#8");
+			Assert.IsTrue(navigator.AddNewItem is ToolStripButton, "#9");
+			Assert.IsTrue(navigator.AddNewItem is ToolStripButton, "#10");
 			Assert.AreEqual("of {0}", navigator.CountItemFormat, "#11");
 		}
 
