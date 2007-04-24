@@ -3,6 +3,8 @@
 	* WebConfigurationHost.cs: wrap MapPath calls in try/catch,
 	because bad URLs can cause it to throw exceptions. If such
 	exception is caught, throw a HttpException for Bad Request (400).
+	Look for types in the top-level assemblies (App_Code and
+	friends).
 
 	* WebConfigurationManager.cs: added two internal methods for safe
 	retrieval of config sections.
