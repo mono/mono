@@ -67,7 +67,13 @@ IMAGES_RESOURCES = \
 	resources/2-up.png			\
 	resources/3-up.png			\
 	resources/4-up.png			\
-	resources/6-up.png
+	resources/6-up.png			\
+	resources/nav_delete.png		\
+	resources/nav_end.png			\
+	resources/nav_first.png			\
+	resources/nav_previous.png		\
+	resources/nav_next.png			\
+	resources/nav_plus.png
 
 
 TEST_DISTFILES = \

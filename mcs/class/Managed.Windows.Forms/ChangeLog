@@ -1,3 +1,7 @@
+2007-04-24  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Makefile: Add new resources for BindingNavigator to build.
+
 2007-04-24  Alan McGovern <alan.mcgovern@gmail.com>
 
 	* System.Windows.Forms.dll.resources - Added files for the BindingNavigator
