@@ -509,13 +509,75 @@ namespace System.Windows.Forms {
 			RunLoop(false, context);
 		}
 
+		private static void DisableFormsForModalLoop (Queue toplevels, ApplicationContext context)
+		{
+			Form f;
+
+			lock (forms) {
+				IEnumerator control = forms.GetEnumerator ();
+
+				while (control.MoveNext ()) {
+					f = (Form)control.Current;
+
+					// Don't disable the main form.
+					if (f == context.MainForm) {
+						continue;
+					}
+
+					// Don't disable any children of the main form.
+					// These do not have to be MDI children.
+					Control current = f;
+					bool is_child_of_main = false; ;
+
+					do {
+						if (current.Parent == context.MainForm) {
+							is_child_of_main = true;
+							break;
+						}
+						current = current.Parent;
+					} while (current != null);
+
+					if (is_child_of_main)
+						continue;
+
+					// Disable the rest
+					if (f.IsHandleCreated && XplatUI.IsEnabled (f.Handle)) {
+#if DebugRunLoop
+								Console.WriteLine("      Disabling form {0}", f);
+#endif
+						XplatUI.EnableWindow (f.Handle, false);
+						toplevels.Enqueue (f);
+					}
+				}
+			}
+				
+		}
+		
+		
+		private static void EnableFormsForModalLoop (Queue toplevels, ApplicationContext context)
+		{
+			while (toplevels.Count > 0) {
+#if DebugRunLoop
+						Console.WriteLine("      Re-Enabling form form {0}", toplevels.Peek());
+#endif
+				Form c = (Form)toplevels.Dequeue ();
+				if (c.IsHandleCreated) {
+					XplatUI.EnableWindow (c.window.Handle, true);
+					context.MainForm = c;
+				}
+			}
+#if DebugRunLoop
+					Console.WriteLine("   Done with the re-enable");
+#endif
+		}
+
 		internal static void RunLoop(bool Modal, ApplicationContext context) {
 			Queue		toplevels;
-			IEnumerator	control;
 			MSG		msg;
 			Object		queue_id;
 			MWFThread	thread;
-
+			ApplicationContext previous_thread_context;
+			
 			thread = MWFThread.Current;
 
 			/*
@@ -531,7 +593,8 @@ namespace System.Windows.Forms {
 			if (context == null) {
 				context = new ApplicationContext();
 			}
-
+		
+			previous_thread_context = thread.Context;
 			thread.Context = context;
 
 			if (context.MainForm != null) {
@@ -549,47 +612,8 @@ namespace System.Windows.Forms {
 			#endif
 
 			if (Modal) {
-				Form f;
-
-				toplevels = new Queue();
-				
-				lock (forms) {
-					control = forms.GetEnumerator();
-
-					while (control.MoveNext()) {
-						f = (Form)control.Current;
-						
-						// Don't disable the main form.
-						if (f == context.MainForm) {
-							continue;
-						}
-						
-						// Don't disable any children of the main form.
-						// These do not have to be MDI children.
-						Control current = f;
-						bool is_child_of_main = false;;
-
-						do {
-							if (current.Parent == context.MainForm) {
-								is_child_of_main = true;
-								break;
-							}
-							current = current.Parent;
-						} while (current != null);
-
-						if (is_child_of_main)
-							continue;
-						
-						// Disable the rest
-						if (f.IsHandleCreated && XplatUI.IsEnabled(f.Handle)) {
-							#if DebugRunLoop
-								Console.WriteLine("      Disabling form {0}", f);
-							#endif
-							XplatUI.EnableWindow(f.Handle, false);
-							toplevels.Enqueue(f);
-						}
-					}
-				}
+				toplevels = new Queue ();
+				DisableFormsForModalLoop (toplevels, context);
 				
 				// FIXME - need activate?
 				/* make sure the MainForm is enabled */
@@ -669,25 +693,12 @@ namespace System.Windows.Forms {
 			XplatUI.EndLoop(Thread.CurrentThread);
 
 			if (Modal) {
-				Form c;
-
 				Form old = context.MainForm;
 
 				context.MainForm = null;
 
-				while (toplevels.Count>0) {
-					#if DebugRunLoop
-						Console.WriteLine("      Re-Enabling form form {0}", toplevels.Peek());
-					#endif
-					c = (Form)toplevels.Dequeue();
-					if (c.IsHandleCreated) {
-						XplatUI.EnableWindow(c.window.Handle, true);
-						context.MainForm = c;
-					}
-				}
-				#if DebugRunLoop
-					Console.WriteLine("   Done with the re-enable");
-				#endif
+				EnableFormsForModalLoop (toplevels, context);
+				
 				if (context.MainForm != null && context.MainForm.IsHandleCreated) {
 					XplatUI.SetModal(context.MainForm.Handle, false);
 				}
@@ -705,6 +716,8 @@ namespace System.Windows.Forms {
 				context.MainForm.context = null;
 				context.MainForm = null;
 			}
+
+			thread.Context = previous_thread_context;
 
 			if (!Modal) {
 				thread.Exit();

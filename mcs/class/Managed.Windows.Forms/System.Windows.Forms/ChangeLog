@@ -1,3 +1,22 @@
+2007-04-25  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Control.cs: Only raise OnVisibleChanged if we're not recreating the
+	  handle.
+	* FormCollection.cs: Don't add a form if it's already in the
+	  collection.
+	* Form.cs: Change ShowDialog () to call ShowDialog (owner) with a null
+	  according to behaviour and MSDN. The ownerWin32 is the active
+	  window at the moment when we call ShowDialog, not the context's
+	  main form (the context's main form may open another form that opens
+	  a form with ShowDialog, the win32 owner is the second form). Add
+	  and remove forms to the Application.OpenForms in other places to
+	  better match MS behaviour. Add an IsActive property that raises
+	  On(de)Activated only if the active state has changed (we were
+	  raising OnDeactivated before OnActivated while creating forms).
+	* Application.cs: Refactor Enabling/Disabling of windows for modal
+	  dialog loops out to separate methods, and restore the thread
+	  context when we quit the method. Fixes #81407.
+
 2007-04-25  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: In ItemControl.HandleClicks, also fire 

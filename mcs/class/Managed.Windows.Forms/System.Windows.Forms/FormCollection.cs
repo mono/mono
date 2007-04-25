@@ -61,6 +61,9 @@ namespace System.Windows.Forms
 		#region Internal Add/Remove Methods
 		internal void Add (Form form)
 		{
+			if (base.InnerList.Contains (form))
+				return;
+			
 			base.InnerList.Add (form);
 		}
 		

@@ -49,6 +49,7 @@ namespace System.Windows.Forms {
 		#region Local Variables
 		internal bool			closing;
 		FormBorderStyle			form_border_style;
+		private bool			is_active;
 		private bool		        autoscale;
 		private Size			clientsize_set;
 		private Size		        autoscale_base_size;
@@ -99,6 +100,25 @@ namespace System.Windows.Forms {
 		static Form ()
 		{
 			default_icon = Locale.GetResource("mono.ico") as Icon;
+		}
+
+		internal bool IsActive {
+			get {
+				return is_active;
+			}
+			set {
+				if (is_active == value || IsRecreating) {
+					return;
+				}
+				
+				is_active = value;
+				if (is_active) {
+					Application.AddForm (this);
+					OnActivated (EventArgs.Empty);
+				} else {
+					OnDeactivate (EventArgs.Empty);
+				}
+			}
 		}
 
 		// warning: this is only hooked up when an mdi container is created.
@@ -1407,7 +1427,7 @@ namespace System.Windows.Forms {
 			if (IsDisposed)
 				return;
 
-			if (!is_visible)
+			if (!IsHandleCreated)
 				return;
 
 			XplatUI.SendMessage(this.Handle, Msg.WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
@@ -1453,7 +1473,7 @@ namespace System.Windows.Forms {
 #endif
 
 		public DialogResult ShowDialog() {
-			return ShowDialog(this.owner);
+			return ShowDialog (null);
 		}
 
 		public DialogResult ShowDialog(IWin32Window ownerWin32) {
@@ -1464,7 +1484,10 @@ namespace System.Windows.Forms {
 			Form owner_to_be = null;
 
 			if ((ownerWin32 == null) && (Application.MWFThread.Current.Context != null)) {
-				ownerWin32 = Application.MWFThread.Current.Context.MainForm;
+				IntPtr active = XplatUI.GetActive ();
+				if (active != IntPtr.Zero) {
+					ownerWin32 = Control.FromHandle (active) as Form;
+				}
 			}
 
 			if (ownerWin32 != null) {
@@ -1674,8 +1697,6 @@ namespace System.Windows.Forms {
 				return;
 			}
 			
-			Application.AddForm (this);
-			
 			UpdateBounds();
 
 			if ((XplatUI.SupportsTransparency() & TransparencySupport.Set) != 0) {
@@ -1785,6 +1806,7 @@ namespace System.Windows.Forms {
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected override void OnHandleDestroyed(EventArgs e) {
+			Application.RemoveForm (this);
 			base.OnHandleDestroyed (e);
 		}
 
@@ -1803,7 +1825,9 @@ namespace System.Windows.Forms {
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		protected virtual void OnLoad(EventArgs e) {
+		protected virtual void OnLoad (EventArgs e){
+			Application.AddForm (this);
+
 			if (AutoScale){
 				ApplyAutoScaling ();
 				AutoScale = false;
@@ -2085,6 +2109,9 @@ namespace System.Windows.Forms {
 				is_changing_visible_state = true;
 				has_been_visible = value || has_been_visible;
 				base.SetVisibleCore (value);
+				if (value) {
+					Application.AddForm (this);
+				}
 				
 				if (value && WindowState != FormWindowState.Normal)
 					XplatUI.SendMessage (Handle, Msg.WM_SHOWWINDOW, (IntPtr)1, IntPtr.Zero);
@@ -2222,9 +2249,9 @@ namespace System.Windows.Forms {
 								SendControlFocus (ActiveControl);
 						}
 
-						OnActivated(EventArgs.Empty);
+						IsActive = true;
 					} else {
-						OnDeactivate(EventArgs.Empty);
+						IsActive = false;
 					}
 					return;
 				}
@@ -2755,6 +2782,7 @@ namespace System.Windows.Forms {
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected virtual void OnFormClosed (FormClosedEventArgs e) {
+			Application.RemoveForm (this);
 			FormClosedEventHandler eh = (FormClosedEventHandler)(Events[FormClosedEvent]);
 			if (eh != null)
 				eh (this, e);

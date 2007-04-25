@@ -5051,10 +5051,9 @@ namespace System.Windows.Forms
 			}
 
 			// If the form is Max/Min, it got its OnVisibleChanged in SetVisibleCore
-			if (this is Form) {
-				Form f = (Form)this;
-				
-				if (f.IsMdiChild || f.WindowState == FormWindowState.Normal) /* XXX make sure this works for mdi forms */
+			Form f = this as Form;
+			if (f != null) {
+				if (!IsRecreating && (f.IsMdiChild || f.WindowState == FormWindowState.Normal)) /* XXX make sure this works for mdi forms */
 					OnVisibleChanged(EventArgs.Empty);
 			} else if (is_toplevel)
 				OnVisibleChanged(EventArgs.Empty);
