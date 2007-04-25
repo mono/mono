@@ -43,11 +43,12 @@ namespace System.Web.SessionState {
 		private static Type cncType = null;
 		private IDbConnection cnc = null;
 		private SessionConfig config;
+		private string AppPath = String.Empty;
                 
 		const string defaultParamPrefix = ":";
 		string paramPrefix;
-		string selectCommand = "SELECT timeout,staticobjectsdata,sessiondata FROM ASPStateTempSessions WHERE SessionID = :SessionID AND Expires > :Expires";
-		string insertCommand = "INSERT INTO ASPStateTempSessions (SessionId, Created, expires, timeout, StaticObjectsData, SessionData)  VALUES (:SessionID, :Created, :Expires, :Timeout, :StaticObjectsData, :SessionData)";
+		string selectCommand = "SELECT timeout,staticobjectsdata,sessiondata FROM ASPStateTempSessions WHERE SessionID = :SessionID AND Expires > :Expires AND AppPath = :AppPath";
+		string insertCommand = "INSERT INTO ASPStateTempSessions (SessionId, AppPath, Created, expires, timeout, StaticObjectsData, SessionData)  VALUES (:SessionID, :AppPath, :Created, :Expires, :Timeout, :StaticObjectsData, :SessionData)";
 		string updateCommand = "UPDATE ASPStateTempSessions SET expires = :Expires, timeout = :Timeout, SessionData = :SessionData WHERE SessionId = :SessionID";
 		string deleteCommand = "DELETE FROM ASPStateTempSessions WHERE SessionId = :SessionID";
 
@@ -67,7 +68,8 @@ namespace System.Web.SessionState {
 			string cncString;
 
 			this.config = config;
-
+			this.AppPath = context.Request.ApplicationPath;
+			
 			GetConnectionData (out providerAssemblyName, out connectionTypeName, out cncString);
 			if (cncType == null) {
 				Assembly dbAssembly = Assembly.Load (providerAssemblyName);
@@ -177,6 +179,7 @@ namespace System.Web.SessionState {
 			command.CommandText = selectCommand;
 			command.Parameters.Add (CreateParam (command, DbType.String, "SessionID", id));
 			command.Parameters.Add (CreateParam (command, DbType.DateTime, "Expires", DateTime.Now ));
+			command.Parameters.Add (CreateParam (command, DbType.String, "AppPath", this.AppPath));
 			command.Prepare ();
 			return command.ExecuteReader ();
 		}
@@ -225,9 +228,11 @@ namespace System.Web.SessionState {
 			IDataParameterCollection param;
 
 			command.CommandText = insertCommand;
+			
 
 			param = command.Parameters;
 			param.Add (CreateParam (command, DbType.String, "SessionID", session.SessionID));
+			param.Add (CreateParam (command, DbType.String, "AppPath", this.AppPath));
 			param.Add (CreateParam (command, DbType.DateTime, "Created", DateTime.Now));
 			param.Add (CreateParam (command, DbType.DateTime, "Expires", DateTime.Now.AddMinutes (timeout)));
 			param.Add (CreateParam (command, DbType.Int32, "Timeout", timeout));

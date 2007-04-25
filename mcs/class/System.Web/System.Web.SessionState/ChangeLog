@@ -1,3 +1,8 @@
+2007-01-26  Hubert FONGARNAND <informatique.internet@fiducial.fr>
+
+	* SessionSQLServerHandler.cs: differentiate session between applications
+	this require to add an AppName column to the aspstatetempsessions table
+
 2007-01-20  Miguel de Icaza  <miguel@novell.com>
 
 	* SessionDictionary.cs: Removed unused variable (dirty).
