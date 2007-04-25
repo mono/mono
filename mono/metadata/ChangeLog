@@ -1,3 +1,8 @@
+2007-04-25  Dick Porter  <dick@ximian.com>
+
+	* Makefile.am: Put the mingw enforced-optimisation back into the
+	PLATFORM_WIN32 section.
+
 2007-04-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* reflection.c (mono_image_load_module_dynamic): Fix crash introduced by previous
