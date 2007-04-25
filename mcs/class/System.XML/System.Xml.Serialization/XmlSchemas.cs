@@ -210,10 +210,6 @@ namespace System.Xml.Serialization
 		{
 			string ns = ((XmlSchema) value).TargetNamespace;
 			if (ns == null) ns = "";
-#if ONLY_1_1
-			if (table.Contains (ns))
-				throw new InvalidOperationException ("A schema with the namespace '" + ns + "' has already been added.");
-#endif
 			table [ns] = value;
 		}
 
