@@ -2680,7 +2680,7 @@ namespace Mono.CSharp {
 			}
 
 			if (!InferTypeArguments (param_types, arg_types, inferred_types)){
-				Console.WriteLine ("InferTypeArgument found {0} lambdas ", lambdas);
+				//Console.WriteLine ("InferTypeArgument found {0} lambdas ", lambdas);
 				if (lambdas == 0)
 					return false;
 
