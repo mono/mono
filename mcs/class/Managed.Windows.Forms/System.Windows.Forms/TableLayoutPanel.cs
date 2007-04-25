@@ -116,7 +116,13 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public TableLayoutSettings LayoutSettings {
 			get { return this.settings; }
-			set { throw new NotSupportedException (); }
+			set {
+				if (value.isSerialized) {
+					this.settings = value;
+					value.isSerialized = false;
+				} else
+					throw new NotSupportedException ("LayoutSettings value cannot be set directly.");
+			}
 		}
 
 		[Localizable (true)]

@@ -49,6 +49,7 @@ namespace System.Windows.Forms
 		private Dictionary<Object, int> rows;
 		private Dictionary<Object, int> row_spans;
 		private TableLayoutPanel panel;
+		internal bool isSerialized;
 
 		#region Internal Constructor
 		internal TableLayoutSettings (TableLayoutPanel panel)
@@ -63,6 +64,26 @@ namespace System.Windows.Forms
 			this.rows = new Dictionary<object, int> ();
 			this.row_spans = new Dictionary<object, int> ();
 			this.panel = panel;
+		}
+
+		private TableLayoutSettings (SerializationInfo serializationInfo, StreamingContext context)
+		{
+			TypeConverter converter = TypeDescriptor.GetConverter (this);
+			string text = serializationInfo.GetString ("SerializedString");
+			if (!string.IsNullOrEmpty (text) && (converter != null)) {
+				TableLayoutSettings settings = converter.ConvertFromInvariantString (text) as TableLayoutSettings;
+				this.column_styles = settings.column_styles;
+				this.row_styles = settings.row_styles;
+				this.grow_style = settings.grow_style;
+				this.column_count = settings.column_count;
+				this.row_count = settings.row_count;
+				this.columns = settings.columns;
+				this.column_spans = settings.column_spans;
+				this.rows = settings.rows;
+				this.row_spans = settings.row_spans;
+				this.panel = settings.panel;
+				this.isSerialized = true;
+			}
 		}
 		#endregion		
 
@@ -237,12 +258,41 @@ namespace System.Windows.Forms
 		}
 		#endregion
 
+		#region Internal Methods
+		internal List<ControlInfo> GetControls ()
+		{
+			List<ControlInfo> list = new List<ControlInfo>();
+			foreach (KeyValuePair <object, int> control in columns) {
+				ControlInfo info = new ControlInfo();
+				info.Control = control.Key;
+				info.Col = GetColumn(control);
+				info.ColSpan = GetColumnSpan (control);
+				info.Row = GetRow (control);
+				info.RowSpan = GetRowSpan (control);
+				list.Add (info);
+			}
+			return list;
+		}
+
+		#endregion
+
 		#region ISerializable Members
 		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
 		{
-			throw new NotImplementedException ();
+			TableLayoutSettingsTypeConverter conv = new TableLayoutSettingsTypeConverter ();
+			string text = conv.ConvertToInvariantString (this);
+			info.AddValue ("SerializedString", text);
 		}
 		#endregion
+	}
+
+	internal struct ControlInfo
+	{
+		public object Control;
+		public int	Row;
+		public int RowSpan;
+		public int Col;
+		public int ColSpan;
 	}
 }
 #endif

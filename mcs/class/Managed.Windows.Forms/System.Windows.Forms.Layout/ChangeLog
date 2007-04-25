@@ -1,3 +1,8 @@
+2007-04-24  Andreia Gaita  <avidigal@novell.com>
+
+	* TableLayoutSettingsTypeConverter.cs: Implemented the converters
+	for TableLayoutSettings.
+
 2007-04-22  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DefaultLayout.cs: Use the parent's DisplayRectangle for laying

@@ -27,11 +27,21 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Globalization;
 using System.Xml;
+using System.IO;
+using System.Collections.Generic;
 
 namespace System.Windows.Forms.Layout
 {
 	public class TableLayoutSettingsTypeConverter : TypeConverter
 	{
+		public override bool CanConvertTo (ITypeDescriptorContext context, Type destinationType)
+		{
+			if (destinationType == typeof (string))
+				return true;
+
+			return base.CanConvertTo (context, destinationType);
+		}
+
 		public override bool CanConvertFrom (ITypeDescriptorContext context, Type sourceType)
 		{
 			if (sourceType == typeof(string))
@@ -40,29 +50,151 @@ namespace System.Windows.Forms.Layout
 			return base.CanConvertFrom (context, sourceType);
 		}
 
-		public override bool CanConvertTo (ITypeDescriptorContext context, Type destinationType)
-		{
-			if (destinationType == typeof(string))
-				return true;
-
-			return base.CanConvertTo (context, destinationType);
-		}
-
-		public override object ConvertFrom (ITypeDescriptorContext context,
-						    CultureInfo culture,
-						    object value)
-		{
-			throw new NotImplementedException ();
-		}
+		
 
 		public override object ConvertTo (ITypeDescriptorContext context,
 						  CultureInfo culture,
 						  object value,
 						  Type destinationType)
 		{
-			throw new NotImplementedException ();
+			if (!(value is TableLayoutSettings) || destinationType != typeof (string))
+				return base.ConvertTo (context, culture, value, destinationType);
+
+			TableLayoutSettings settings = value as TableLayoutSettings;
+			StringWriter sw = new StringWriter ();
+			XmlTextWriter xw = new XmlTextWriter (sw);
+			xw.WriteStartDocument ();
+			List<ControlInfo> list = settings.GetControls ();
+			xw.WriteStartElement ("TableLayoutSettings");
+			xw.WriteStartElement ("Controls");
+			
+			foreach (ControlInfo info in list) {
+				xw.WriteStartElement ("Control");
+				xw.WriteAttributeString ("Name", info.Control.ToString ());
+				xw.WriteAttributeString ("Row", info.Row.ToString ());
+				xw.WriteAttributeString ("RowSpan", info.RowSpan.ToString ());
+				xw.WriteAttributeString ("Column", info.Col.ToString ());
+				xw.WriteAttributeString ("ColumnSpan", info.ColSpan.ToString ());
+				xw.WriteEndElement ();
+			}
+			xw.WriteEndElement ();
+
+
+			List<string> styles = new List<string> ();
+			
+			foreach (ColumnStyle style in settings.ColumnStyles) {
+				styles.Add (style.SizeType.ToString ());
+				styles.Add (style.Width.ToString ());
+			}
+
+			
+			xw.WriteStartElement ("Columms");
+			xw.WriteAttributeString ("Styles", String.Join (",", styles.ToArray ()));
+			xw.WriteEndElement ();
+			
+			styles.Clear();
+			foreach (RowStyle style in settings.RowStyles) {
+				styles.Add (style.SizeType.ToString ());
+				styles.Add (style.Height.ToString ());
+			}
+
+			xw.WriteStartElement ("Rows");
+			xw.WriteAttributeString ("Styles", String.Join (",", styles.ToArray ()));
+			xw.WriteEndElement ();
+
+			xw.WriteEndElement ();
+			xw.WriteEndDocument ();
+			xw.Close ();
+
+			return sw.ToString ();
+
 		}
 
+		public override object ConvertFrom (ITypeDescriptorContext context,
+						    CultureInfo culture,
+						    object value)
+		{
+			if (!(value is string))
+				return base.ConvertFrom(context, culture, value);
+
+			XmlDocument xmldoc = new XmlDocument();
+			xmldoc.LoadXml (value as string);
+			TableLayoutSettings settings = new TableLayoutSettings(new TableLayoutPanel ());
+			int count = ParseControl (xmldoc, settings);
+			ParseColumnStyle (xmldoc, settings);
+			ParseRowStyle (xmldoc, settings);
+			settings.RowCount = count;
+			
+
+			return settings;
+		}
+
+
+		private int ParseControl (XmlDocument xmldoc, TableLayoutSettings settings)
+		{
+			int count = 0;
+			foreach (XmlNode node in xmldoc.GetElementsByTagName ("Control")) {
+				if (node.Attributes["Name"] == null || string.IsNullOrEmpty(node.Attributes["Name"].Value))
+					continue;
+				if (node.Attributes["Row"] != null) {
+					settings.SetRow (node.Attributes["Name"].Value, GetValue (node.Attributes["Row"].Value));
+					count++;
+				}
+				if (node.Attributes["RowSpan"] != null) {
+					settings.SetRowSpan (node.Attributes["Name"].Value, GetValue (node.Attributes["RowSpan"].Value));
+				}
+				if (node.Attributes["Column"] != null)
+					settings.SetColumn (node.Attributes["Name"].Value, GetValue (node.Attributes["Column"].Value));
+				if (node.Attributes["ColumnSpan"] != null)
+					settings.SetColumnSpan (node.Attributes["Name"].Value, GetValue (node.Attributes["ColumnSpan"].Value));
+			}
+			return count;
+		}
+
+		private void ParseColumnStyle (XmlDocument xmldoc, TableLayoutSettings settings)
+		{
+			foreach (XmlNode node in xmldoc.GetElementsByTagName ("Columns")) {
+				if (node.Attributes["Styles"] == null)
+					continue;
+				string styles = node.Attributes["Styles"].Value;
+				if (styles == null)
+					continue;
+				string[] list = styles.Split (',');
+				for (int i = 0; i < list.Length; i+=2) {
+					float width = 0f;
+					SizeType type = (SizeType) Enum.Parse (typeof (SizeType), list[i]);
+					float.TryParse (list[i+1], out width);
+					settings.ColumnStyles.Add (new ColumnStyle (type, width));
+				}				
+			}
+		}
+
+		private void ParseRowStyle (XmlDocument xmldoc, TableLayoutSettings settings)
+		{
+			foreach (XmlNode node in xmldoc.GetElementsByTagName ("Rows")) {
+				if (node.Attributes["Styles"] == null)
+					continue;
+				string styles = node.Attributes["Styles"].Value;
+				if (styles == null)
+					continue;
+				string[] list = styles.Split (',');
+				for (int i = 0; i < list.Length; i += 2) {
+					float height = 0f;
+					SizeType type = (SizeType) Enum.Parse (typeof (SizeType), list[i]);
+					float.TryParse (list[i + 1], out height);
+					settings.RowStyles.Add (new RowStyle (type, height));
+				}
+			}
+		}
+
+		private int GetValue (string attValue)
+		{
+			int val = -1;
+			if (!string.IsNullOrEmpty (attValue)) {
+				int.TryParse (attValue, out val);
+			}
+			return val;
+		}
 	}
 }
 
