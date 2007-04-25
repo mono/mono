@@ -1,3 +1,33 @@
+2007-04-24  Miguel de Icaza  <miguel@novell.com>
+
+	* lambda.cs (ContextualReturn.Resolve): if the return type is not
+	set, set it.
+
+2007-04-23  Miguel de Icaza  <miguel@novell.com>
+
+	* anonymous.cs (AnonymousContainer): split the virtual Resolve
+	method in two methods: ResolveNoDefine and Resolve.
+
+	ResolveNoDefine will stop just after ResolveTopBlock has been
+	called.   
+
+	Resolve will then continue by creating a method and issuing the
+	call to method.Define ().
+
+	(AnonymousMethod): Split and implement the new Resolve and
+	ResolveNoDefine as well.
+
+	* lambda.cs (LambdaExpression): Split the anonymous method
+	resolution code into a separate routine (CoreCompatibilityTest)
+	from DoCompatibleTest.
+
+	(LambdaExpression.TryBuild): New method, this method tries to
+	build the LambdaExpression with the given set of types to be used
+	as the types for the various parameters of the lambda expression. 
+
+	If the compilation succeed with the given types, the infered type
+	of the Anonymous method is returned, otherwise null is returned.
+
 2007-04-23  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #81414

@@ -1460,7 +1460,7 @@ namespace Mono.CSharp {
 
 		public abstract string GetSignatureForError ();
 
-		public virtual bool Resolve (EmitContext ec)
+		public virtual bool ResolveNoDefine (EmitContext ec)
 		{
 			Report.Debug (64, "RESOLVE ANONYMOUS METHOD", this, Location, ec,
 				      RootScope, Parameters, ec.IsStatic);
@@ -1498,6 +1498,14 @@ namespace Mono.CSharp {
 			if (!aec.ResolveTopBlock (ec, Block, Parameters, null, out unreachable))
 				return false;
 
+			return true;
+		}
+
+		public virtual bool Resolve (EmitContext ec)
+		{
+			if (!ResolveNoDefine (ec))
+				return false;
+			
 			Report.Debug (64, "RESOLVE ANONYMOUS METHOD #3", this, ec, aec, Block);
 
 			if (aec.InferReturnType)
@@ -1691,16 +1699,38 @@ namespace Mono.CSharp {
 				Modifiers.INTERNAL, member_name, Parameters);
 		}
 
+		bool ResolveAnonymousDelegate (EmitContext ec)
+                {
+			// If we are inferring the return type, set it to the discovered value.
+			if (DelegateType == null){
+				DelegateType = aec.ReturnType;
+				
+				// The special value pointing to our internal type means it failed.
+				if (DelegateType == typeof (AnonymousDelegate))
+					return false;
+			}
+
+                        anonymous_delegate = new AnonymousDelegate (
+				this, DelegateType, Location).Resolve (ec);
+                        if (anonymous_delegate == null)
+                                return false;
+			return true;
+		}
+
 		public override bool Resolve (EmitContext ec)
 		{
 			if (!base.Resolve (ec))
 				return false;
 
-			anonymous_delegate = new AnonymousDelegate (
-				this, DelegateType, Location).Resolve (ec);
-			if (anonymous_delegate == null)
+			return ResolveAnonymousDelegate (ec);
+		}
+
+		public override bool ResolveNoDefine (EmitContext ec)
+		{
+			if (!base.ResolveNoDefine (ec))
 				return false;
 
+			return ResolveAnonymousDelegate (ec);
 			return true;
 		}
 
@@ -1746,6 +1776,14 @@ namespace Mono.CSharp {
 	public class AnonymousDelegate : DelegateCreation {
 		AnonymousMethod am;
 
+		//
+		// if target_type is null, this means that we do not know the type
+		// for this delegate, and we want to infer it from the various 
+		// returns (implicit and explicit) from the body of this anonymous
+		// method.
+		//
+		// for example, the lambda: x => 1
+		//
 		public AnonymousDelegate (AnonymousMethod am, Type target_type, Location l)
 		{
 			type = target_type;
@@ -1756,6 +1794,17 @@ namespace Mono.CSharp {
 		public override Expression DoResolve (EmitContext ec)
 		{
 			eclass = ExprClass.Value;
+
+			//
+			// If we are inferencing
+			//
+			if (type == null){
+				type = ec.ReturnType;
+
+				// No type was infered
+				if (type == null)
+					return null;
+			}
 
 			return this;
 		}

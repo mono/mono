@@ -2421,14 +2421,36 @@ namespace Mono.CSharp {
 		// Infers the remaining inferred_types from lambda expressions contained in the 
 		// invocation call.
 		//
-		static bool LambdaInfer (EmitContext ec, ArrayList arguments,
-					 Type[] param_types, Type[] arg_types, Type[] inferred_types)
+		// The method being called:
+		//   @method_generic_args: The generic type arguments for the method being called
+		//   @method_pd: The ParameterData for the method being called. 
+		//
+		// The call site:
+		//   @arguments: Arraylist of Argument()s.  The arguments being passed.
+		//
+		// Returns:
+		//   @inferred_types: the array that is populated with our results.
+		//
+		// true on success
+		//
+		static bool LambdaInfer (EmitContext ec,
+					 Type [] method_generic_args,
+					 ParameterData method_pd,
+					 ArrayList arguments,
+					 Type[] inferred_types)
 		{
-			int arg_count = arg_types.Length;
-			
-			for (int i = 0; i < arg_count; i++){
-				Argument a = (Argument) arguments [i];
-				
+			int arg_count = method_pd.Count;
+
+			//
+			// TODO: track the lambads that have resulted in a type inference
+			// and skip over those
+			//
+			// TODO: loop until there are no lambdas left to infer values (or
+			// one of the conditions is not satisfied)
+			//
+			for (int argn = 0; argn < arg_count; argn++){
+				Argument a = (Argument) arguments [argn];
+
 				LambdaExpression le = a.Expr as LambdaExpression;
 				
 				if (a == null)
@@ -2447,10 +2469,10 @@ namespace Mono.CSharp {
 				// parameters."
 				//
 				// 
-				if (!TypeManager.IsDelegateType (param_types [i]))
+				if (!TypeManager.IsDelegateType (method_pd.ParameterType (argn)))
 					continue;
 				
-				Type p_type = param_types [i];
+				Type p_type = method_pd.ParameterType (argn);
 				MethodGroupExpr method_group = Expression.MemberLookup (
 					ec.ContainerType, p_type, "Invoke", MemberTypes.Method,
 					Expression.AllBindingFlags, Location.Null) as MethodGroupExpr;
@@ -2459,14 +2481,14 @@ namespace Mono.CSharp {
 					// This we report elsewhere as -200, but here we can ignore
 					continue;
 				}
-				MethodInfo delegate_method = method_group.Methods [0] as MethodInfo;
-				if (delegate_method == null){
+				MethodInfo p_delegate_method = method_group.Methods [0] as MethodInfo;
+				if (p_delegate_method == null){
 					// This should not happen.
 					continue;
 				}
 				
-				Type return_type = delegate_method.ReturnType;
-				if (!return_type.IsGenericParameter)
+				Type p_return_type = p_delegate_method.ReturnType;
+				if (!p_return_type.IsGenericParameter)
 					continue;
 				
 				//
@@ -2475,25 +2497,22 @@ namespace Mono.CSharp {
 				// corresponding parameter in L, or no modifiers if
 				// L has an implicitly typed parameter list.
 				//
-				ParameterData delegate_pd = TypeManager.GetParameterData (delegate_method);
-				int delegate_pc = delegate_pd.Count;
-				if (delegate_pc != le.Parameters.Count)
+				ParameterData p_delegate_parameters = TypeManager.GetParameterData (p_delegate_method);
+				int p_delegate_parameter_count = p_delegate_parameters.Count;
+				if (p_delegate_parameter_count != le.Parameters.Count)
 					continue;
 
-#if false
-				//FIXME
 				if (le.HasExplicitParameters){
-					for (int j = 0; j < delegate_pc; j++){
-						if (delegate_pd.ParameterModifier [j] !=
-						    le.Parameters.ParameterModifier[j])
+					for (int j = 0; j < p_delegate_parameter_count; j++){
+						if (p_delegate_parameters.ParameterModifier (j) != 
+						    le.Parameters.ParameterModifier (j))
 							goto do_continue;
 					}
-				} else {
-					for (int j = 0; j < delegate_pc; j++)
-						if (le.Parameters.ParameterModifier [j] != Parameter.Modifier.NONE)
+				} else { 
+					for (int j = 0; j < p_delegate_parameter_count; j++)
+						if (le.Parameters.ParameterModifier (j) != Parameter.Modifier.NONE)
 							goto do_continue;
 				}
-#endif
 				
 				//
 				// TODO: P’s parameter types involve no method type
@@ -2501,7 +2520,16 @@ namespace Mono.CSharp {
 				// for which a consistent set of inferences have
 				// already been made.
 				//
-
+				//Console.WriteLine ("Method: {0}", p_delegate_method);
+				//for (int j = 0; j < p_delegate_parameter_count; j++){
+				//Console.WriteLine ("PType [{2}, {0}] = {1}", j, p_delegate_parameters.ParameterType (j), argn);
+				//}
+				
+				//
+				// At this point we know that P has method type parameters
+				// that involve only type parameters that have a consistent
+				// set of inferences made.
+				//
 				if (le.HasExplicitParameters){
 					//
 					// TODO: If L has an explicitly typed parameter
@@ -2518,12 +2546,62 @@ namespace Mono.CSharp {
 					// parameter types are given to the parameters of L,
 					// the body of L is a valid expression or statement
 					// block.
+
+					Type [] types = new Type [p_delegate_parameter_count];
+
+					bool failure = false;
+					for (int j = 0; j < p_delegate_parameter_count; j++){
+						Type p_pt = p_delegate_parameters.ParameterType (j);
+
+						if (!p_pt.IsGenericParameter){
+							types [j] = p_pt;
+							continue;
+						}
+
+						bool found = false;
+						for (int k = 0; k < method_generic_args.Length; k++){
+							if (method_generic_args [k] == p_pt){
+								types [j] = inferred_types [k];
+								break;
+							}
+						}
+						//
+						// If we could not infer just yet, continue
+						//
+						if (types [j] == null)
+							goto do_continue;
+					}
+
+					//
+					// If it results in a valid expression or statement block
+					//
+					Type lambda_inferred_type = le.TryBuild (ec, types);
+					//Console.WriteLine ("TryBuild: {0}", lambda_inferred_type);
+					if (lambda_inferred_type != null){
+						//Console.WriteLine ("Able to build");
+						// Success, set the proper inferred_type value to the new type.
+						
+						for (int k = 0; k < method_generic_args.Length; k++){
+							if (method_generic_args [k] == p_return_type){
+								inferred_types [k] = lambda_inferred_type;
+								break;
+							}
+						}
+					}
 				}
 				
 			do_continue:
 				;
 			}
 
+#if false
+			Console.WriteLine ("Inferred types");
+			foreach (Type it in inferred_types){
+				Console.WriteLine ("  IT: {0}", it);
+				if (it == null)
+					return false;
+			}
+#endif
 			return true;
 		}
 	
@@ -2550,11 +2628,12 @@ namespace Mono.CSharp {
 			if (arg_count != pd.Count)
 				return false;
 
-			Type[] method_args = method.GetGenericArguments ();
+			Type[] method_generic_args = method.GetGenericArguments ();
 
 			bool is_open = false;
-			for (int i = 0; i < method_args.Length; i++) {
-				if (method_args [i].IsGenericParameter) {
+			
+			for (int i = 0; i < method_generic_args.Length; i++) {
+				if (method_generic_args [i].IsGenericParameter) {
 					is_open = true;
 					break;
 				}
@@ -2564,7 +2643,7 @@ namespace Mono.CSharp {
 			if (!is_open)
 				return !TypeManager.IsGenericMethodDefinition (method);
 
-			Type[] inferred_types = new Type [method_args.Length];
+			Type[] inferred_types = new Type [method_generic_args.Length];
 
 			Type[] param_types = new Type [pd.Count];
 			Type[] arg_types = new Type [pd.Count];
@@ -2577,7 +2656,9 @@ namespace Mono.CSharp {
 				if (a.Expr is NullLiteral || a.Expr is MethodGroupExpr)
 					continue;
 								
-				if (a.Expr is AnonymousMethodExpression) {
+				if (a.Expr is LambdaExpression)
+					lambdas++;
+				else if (a.Expr is AnonymousMethodExpression) {
 					if (RootContext.Version != LanguageVersion.LINQ)
 						continue;
 
@@ -2595,20 +2676,17 @@ namespace Mono.CSharp {
 					continue;
 				}
 
-				if (a.Expr is LambdaExpression)
-					lambdas++;
-				
 				arg_types [i] = a.Type;
 			}
 
 			if (!InferTypeArguments (param_types, arg_types, inferred_types)){
-				Type it;
+				Console.WriteLine ("InferTypeArgument found {0} lambdas ", lambdas);
 				if (lambdas == 0)
 					return false;
-				
-				if (!LambdaInfer (ec, arguments, param_types, arg_types, inferred_types))
+
+				if (!LambdaInfer (ec, method_generic_args, pd, arguments, inferred_types))
 					return false;
-			}
+			} 
 
 			method = ((MethodInfo)method).MakeGenericMethod (inferred_types);
 

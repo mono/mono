@@ -1,3 +1,10 @@
+2007-04-23  Miguel de Icaza  <miguel@novell.com>
+
+	* generic.cs: Large update to LambdaInfer, this is merely an
+	update to start the lambda type inference.   It is by no means
+	complete.  It is currently merely able to build a sample program
+	(with no iteration for the type parameters).
+
 2007-04-12  Duncan Mak  <duncan@a-chinaman.com>
 
 	* cs-parser.jay (interface_method_declaration_body): Fixed typo.

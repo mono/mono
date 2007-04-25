@@ -140,8 +140,14 @@ namespace Mono.CSharp {
 
 			public virtual void Print (int code, string location, string text)
 			{
-				if (error_stack != null && error_stack.Count != 0)
+				if (error_stack != null && error_stack.Count != 0){
+					//
+					// This line is useful when debugging the inner working of
+					// Lambdas when various compilation attempts are done.
+					//
+					//Console.WriteLine ("DISABLED: {0} {1} {2}", code, location, text);
 					return;
+				}
 				
 				if (code < 0)
 					code = 8000-code;

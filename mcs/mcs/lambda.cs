@@ -144,6 +144,11 @@ namespace Mono.CSharp {
 						Parameters [i].Location);
 			}
 
+			return CoreCompatibilityTest (ec, clone, invoke_mb.ReturnType, delegate_type);
+		}
+
+		Expression CoreCompatibilityTest (EmitContext ec, bool clone, Type return_type, Type delegate_type)
+		{
 			//
 			// The return type of the delegate must be compatible with 
 			// the anonymous type.   Instead of doing a pass to examine the block
@@ -155,13 +160,47 @@ namespace Mono.CSharp {
 			
 			anonymous = new AnonymousMethod (
 				Parent != null ? Parent.AnonymousMethod : null, RootScope, Host,
-				GenericMethod, Parameters, Container, b, invoke_mb.ReturnType,
+				GenericMethod, Parameters, Container, b, return_type,
 				delegate_type, loc);
 
-			if (!anonymous.Resolve (ec))
+			bool r;
+			if (clone)
+				r = anonymous.ResolveNoDefine (ec);
+			else
+				r = anonymous.Resolve (ec);
+
+			// Resolution failed.
+			if (!r)
 				return null;
 
 			return anonymous.AnonymousDelegate;
+		}
+		
+		//
+		// TryBuild: tries to compile this LambdaExpression with the given
+		// types as the lambda expression parameter types.   
+		//
+		// If the lambda expression successfully builds with those types, the
+		// return value will be the inferred type for the lambda expression,
+		// otherwise the result will be null.
+		//
+		public Type TryBuild (EmitContext ec, Type [] types)
+		{
+			for (int i = 0; i < types.Length; i++)
+				Parameters [i].TypeName = new TypeExpression (types [i], Parameters [i].Location);
+
+			Expression e;
+			try {
+				Report.DisableErrors ();
+				e = CoreCompatibilityTest (ec, true, null, null);
+			} finally {
+				Report.EnableErrors ();
+			}
+			
+			if (e == null)
+				return null;
+			
+			return e.Type;
 		}
 	}
 
@@ -199,12 +238,18 @@ namespace Mono.CSharp {
 					Expression.Error_InvalidExpressionStatement (Expr.Location);
 					return false;
 				}
+				ec.ReturnType = Expr.Type;
 			} else {
 				if (Expr.Type != ec.ReturnType) {
-					Expr = Convert.ImplicitConversionRequired (
+					Expression nExpr = Convert.ImplicitConversionRequired (
 						ec, Expr, ec.ReturnType, loc);
-					if (Expr == null)
+					if (nExpr == null){
+						Report.Error (1662, loc, "Could not implicitly convert from {0} to {1}",
+							      TypeManager.CSharpName (Expr.Type),
+							      TypeManager.CSharpName (ec.ReturnType));
 						return false;
+					}
+					Expr = nExpr;
 				}
 			}
 
