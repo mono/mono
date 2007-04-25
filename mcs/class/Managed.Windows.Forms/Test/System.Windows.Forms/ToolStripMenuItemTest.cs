@@ -136,6 +136,8 @@ namespace MonoTests.System.Windows.Forms
 			c1.Show ();
 			f.Show ();
 			Assert.AreEqual (true, (tsmi.DropDownItems[0] as ToolStripMenuItem).IsMdiWindowListEntry, "R1");
+			
+			f.Close ();
 		}
 		
 		[Test]

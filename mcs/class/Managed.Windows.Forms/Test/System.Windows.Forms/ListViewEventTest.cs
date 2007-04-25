@@ -295,6 +295,8 @@ namespace MonoTests.System.Windows.Forms
 			lvw.Items.Remove (itemA);
 			Assert.AreEqual (2, selectedIndexChanged, "#C3");
 			Assert.IsTrue (itemA.Selected, "#C4");
+			
+			form.Close ();
 		}
 
 		[Test]
@@ -320,6 +322,8 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (1, selectedIndexChanged, "#B1");
 			itemB.Selected = true;
 			Assert.AreEqual (2, selectedIndexChanged, "#B2");
+			
+			form.Close ();
 		}
 	}
 }

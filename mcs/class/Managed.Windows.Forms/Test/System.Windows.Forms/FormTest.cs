@@ -12,6 +12,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
+using System.Collections;
 
 using NUnit.Framework;
 
@@ -22,7 +23,24 @@ namespace MonoTests.System.Windows.Forms
 	[TestFixture]
 	public class FormTest
 	{
-	
+		[Test]
+		public void DialogOwnerTest ()
+		{
+			using (Form first = new Form ()) {
+				using (TimeBombedForm second = new TimeBombedForm ()) {
+					first.Show ();
+					second.Load += new EventHandler (second_Load);
+					second.ShowDialog ();
+				}
+			}
+		}
+
+		void second_Load (object sender, EventArgs e)
+		{
+			Form second = (Form) sender;
+			Assert.IsNull (second.Owner, "#1");
+		}
+		
 		[Test]
 		[Category ("NotWorking")]
 		public void FormStartupPositionChangeTest ()
@@ -694,21 +712,22 @@ namespace MonoTests.System.Windows.Forms
 		public void FormParentedTest ()
 		{
 			using (Form frm = new Form ()) {
-				Form frm2 = new Form ();
-				frm2.TopLevel = false;
-				frm.ShowInTaskbar = false;
-				frm2.ShowInTaskbar = false;
-				frm2.Visible = true;
-				frm.Visible = true;
-				
-				EventLogger log = new EventLogger (frm);
-				EventLogger log2 = new EventLogger (frm2);
-				
-				frm.Controls.Add (frm2);
+				using (Form frm2 = new Form ()) {
+					frm2.TopLevel = false;
+					frm.ShowInTaskbar = false;
+					frm2.ShowInTaskbar = false;
+					frm2.Visible = true;
+					frm.Visible = true;
+					
+					EventLogger log = new EventLogger (frm);
+					EventLogger log2 = new EventLogger (frm2);
+					
+					frm.Controls.Add (frm2);
 
-				Assert.IsTrue (log2.EventRaised ("ParentChanged"), "#C1");
-				Assert.IsTrue (log.EventRaised ("ControlAdded"), "#P1");
-				Assert.AreSame (frm, frm2.Parent, "#02");
+					Assert.IsTrue (log2.EventRaised ("ParentChanged"), "#C1");
+					Assert.IsTrue (log.EventRaised ("ControlAdded"), "#P1");
+					Assert.AreSame (frm, frm2.Parent, "#02");
+				}
 			}
 		}
 		
@@ -923,7 +942,8 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (result, DialogResult.OK, "A5");
 			Assert.IsFalse (myform.Visible, "A6");
 			Assert.IsFalse (myform.IsDisposed, "A7");
-
+			myform.Dispose ();
+			
 			myform = new Form ();
 			myform.ShowInTaskbar = false;
 			myform.VisibleChanged += new EventHandler (myform_close);
@@ -932,6 +952,8 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (result, DialogResult.Cancel, "A8");
 			Assert.IsFalse (myform.Visible, "A9");
 			Assert.IsFalse (myform.IsDisposed, "A10");
+			
+			myform.Dispose ();
 		}
 
 		[Test]
@@ -1266,11 +1288,14 @@ namespace MonoTests.System.Windows.Forms
 			f1.DoDestroyHandle ();
 			Assert.AreEqual (1, handle_destroyed_count, "1");
 
-			f1 = new MyForm ();
-			f1.HandleDestroyed += new EventHandler (handle_destroyed);
-			f1.Show ();
-			f1.DoRecreateHandle ();
+			MyForm f2 = new MyForm ();
+			f2.HandleDestroyed += new EventHandler (handle_destroyed);
+			f2.Show ();
+			f2.DoRecreateHandle ();
 			Assert.AreEqual (2, handle_destroyed_count, "2");
+			
+			f1.Dispose ();
+			f2.Dispose ();
 		}
 
 		[Test]
@@ -1430,29 +1455,36 @@ namespace MonoTests.System.Windows.Forms
 			f2.Show (f);
 
 			Assert.AreSame (f, f2.Owner, "A1");
+			f2.Close ();
 
 			f2 = new Form ();
 
 			f2.Show (b);
 			Assert.AreSame (f, f2.Owner, "A2");
-
+			f2.Close ();
+			
 			Button b2 = new Button ();
 			f2 = new Form ();
 
 			f2.Show (b2);
 			Assert.AreEqual (null, f2.Owner, "A3");
+			f2.Close ();
 
 			f2 = new Form ();
 			f2.Show (null);
 			Assert.AreEqual (null, f2.Owner, "A4");
+			f2.Close ();
+			
+			f.Dispose ();
 		}
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void ShowWithOwnerIOE ()
 		{
-			Form f = new Form ();
-			f.Show (f);
+			using (Form f = new Form ()) {
+				f.Show (f);
+			}
 		}
 		
 		[Test]	// Bug #79959, #80574, #80791
@@ -1577,6 +1609,8 @@ namespace MonoTests.System.Windows.Forms
 			catch {	}
 			
 			Assert.AreEqual (null, f.Owner, "H1");
+
+			f.Dispose ();
 		}
 
 		private class MockForm : Form
@@ -1599,6 +1633,23 @@ namespace MonoTests.System.Windows.Forms
 
 			private bool _closeOnLoad;
 			private bool _visibleOnLoad;
+		}
+		
+		private class TimeBombedForm : Form
+		{
+			public Timer timer;
+			public TimeBombedForm ()
+			{
+				timer = new Timer ();
+				timer.Interval = 100;
+				timer.Tick += new EventHandler (timer_Tick);
+				timer.Start ();
+			}
+
+			void timer_Tick (object sender, EventArgs e)
+			{
+				Close ();
+			}
 		}
 	}
 }

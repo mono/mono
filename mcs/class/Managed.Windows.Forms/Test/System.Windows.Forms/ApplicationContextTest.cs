@@ -70,6 +70,8 @@ namespace MonoTests.System.Windows.Forms
 
 			Assert.AreEqual (true, reached_form_handle_destroyed, "3");
 			Assert.AreEqual (1, thread_exit_count, "4");
+
+			f1.Dispose ();
 		}
 
 		[Test]
@@ -90,6 +92,8 @@ namespace MonoTests.System.Windows.Forms
 			f1.DoDestroyHandle ();
 			Assert.AreEqual (true, reached_form_handle_destroyed, "3");
 			Assert.AreEqual (1, thread_exit_count, "4");
+			
+			f1.Dispose ();
 		}
 
 		[Test]
@@ -117,6 +121,7 @@ namespace MonoTests.System.Windows.Forms
 			f1.DoDestroyHandle ();
 			Assert.AreEqual (f1, ctx.MainForm, "4");
 			Assert.AreEqual (2, thread_exit_count, "5");
+			f1.Dispose ();
 		}
 
 		[Test]

@@ -63,6 +63,8 @@ namespace MonoTests.System.Windows.Forms
 			// A
 			object o = c.AccessibilityObject;
 			Assert.IsTrue (c.IsHandleCreated, "A0");
+			c.Dispose ();
+			
 			c = new Form ();
 			o = c.AccessibleDefaultActionDescription;
 			c.AccessibleDefaultActionDescription = "playdoh";
@@ -81,6 +83,8 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsFalse (c.IsHandleCreated, "A5");
 			// If we don't reset the control, handle creation will fail
 			// because AllowDrop requires STAThread, which Nunit doesn't do
+			c.Dispose ();
+			
 			c = new Form ();
 			o = c.Anchor;
 			c.Anchor = AnchorStyles.Right;
@@ -193,6 +197,8 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsFalse (c.IsHandleCreated, "A17a");
 			c.Capture = true;
 			Assert.IsTrue (c.IsHandleCreated, "A17b");
+			c.Dispose ();
+			
 			c = new Form ();
 			o = c.CausesValidation;
 			c.CausesValidation = false;
@@ -286,6 +292,8 @@ namespace MonoTests.System.Windows.Forms
 			o = c.Enabled;
 			c.Enabled = false;
 			Assert.IsFalse (c.IsHandleCreated, "A33");
+			c.Dispose ();
+			
 			c = new Form ();  //Reset just in case enable = false affects things
 			o = c.Focused;
 			Assert.IsFalse (c.IsHandleCreated, "A34");
@@ -297,6 +305,8 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsFalse (c.IsHandleCreated, "A36");
 			o = c.Handle;
 			Assert.IsTrue (c.IsHandleCreated, "A37");
+			c.Dispose ();
+			
 			c = new Form ();
 			o = c.HasChildren;
 			Assert.IsFalse (c.IsHandleCreated, "A38");
@@ -443,6 +453,8 @@ namespace MonoTests.System.Windows.Forms
 			c.TopLevel = false;
 			c.Parent = new Form ();
 			Assert.IsFalse (c.IsHandleCreated, "A53");
+			c.Close ();
+			
 			c = new Form ();
 #if NET_2_0
 			o = c.PreferredSize;
@@ -565,6 +577,7 @@ namespace MonoTests.System.Windows.Forms
 			c.WindowState = FormWindowState.Maximized;
 			Assert.IsFalse (c.IsHandleCreated, "FW1");
 
+			c.Dispose ();
 			TestHelper.RemoveWarning (o);
 		}
 
@@ -715,6 +728,7 @@ namespace MonoTests.System.Windows.Forms
 			
 			c.GetContainerControl ();
 			Assert.IsFalse (c.IsHandleCreated, "A11");
+			c.Dispose ();
 			
 			c = new Form ();
 			c.GetNextControl (new Control (), true);
@@ -736,19 +750,24 @@ namespace MonoTests.System.Windows.Forms
 			
 			c.PointToClient (new Point (100, 100));
 			Assert.IsTrue (c.IsHandleCreated, "A18");
+			c.Dispose ();
 			c = new Form ();
 			
 			c.PointToScreen (new Point (100, 100));
 			Assert.IsTrue (c.IsHandleCreated, "A19");
+			c.Dispose ();
+			
 			c = new Form ();
 			
 			//c.PreProcessControlMessage   ???
 			//c.PreProcessMessage          ???
 			c.RectangleToClient (new Rectangle (0, 0, 100, 100));
 			Assert.IsTrue (c.IsHandleCreated, "A20");
+			c.Dispose ();
 			c = new Form ();
 			c.RectangleToScreen (new Rectangle (0, 0, 100, 100));
 			Assert.IsTrue (c.IsHandleCreated, "A21");
+			c.Dispose ();
 			c = new Form ();
 			c.Refresh ();
 			Assert.IsFalse (c.IsHandleCreated, "A22");
@@ -778,6 +797,8 @@ namespace MonoTests.System.Windows.Forms
 #endif
 			c.Select ();
 			Assert.IsTrue (c.IsHandleCreated, "A34");
+			c.Dispose ();
+			
 			c = new Form ();
 			
 			c.SelectNextControl (new Control (), true, true, true, true);
@@ -848,6 +869,8 @@ namespace MonoTests.System.Windows.Forms
 			c.ValidateChildren ();
 			Assert.IsFalse (c.IsHandleCreated, "F16"); 
 #endif
+
+			c.Close ();
 		}
 
 		[Test]
@@ -939,14 +962,18 @@ namespace MonoTests.System.Windows.Forms
 #endif
 			c.PublicCreateAccessibilityInstance ();
 			Assert.IsTrue (c.IsHandleCreated, "A2");
+			c.Dispose ();
 			c = new ProtectedMethodsForm ();
 			c.PublicCreateControlsInstance ();
 			Assert.IsFalse (c.IsHandleCreated, "A3");
 			c.PublicCreateHandle ();
 			Assert.IsTrue (c.IsHandleCreated, "A4");
+			c.Dispose ();
+			
 			c = new ProtectedMethodsForm ();
 			c.PublicDestroyHandle ();
 			Assert.IsFalse (c.IsHandleCreated, "A5");
+			c.Dispose ();
 			c = new ProtectedMethodsForm ();
 #if NET_2_0
 			c.PublicGetAccessibilityObjectById (0);
@@ -976,6 +1003,8 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsFalse (c.IsHandleCreated, "A16");
 			c.PublicIsInputChar ('c');
 			Assert.IsTrue (c.IsHandleCreated, "A17");
+			c.Dispose ();
+			
 			c = new ProtectedMethodsForm ();
 			c.PublicIsInputKey (Keys.B);
 			Assert.IsFalse (c.IsHandleCreated, "A18");
@@ -986,6 +1015,7 @@ namespace MonoTests.System.Windows.Forms
 			f.Controls.Add (c);
 			c.PublicOnVisibleChanged (EventArgs.Empty);
 			Assert.IsFalse (c.IsHandleCreated, "A20");
+			c.Dispose ();
 			c = new ProtectedMethodsForm ();
 			c.PublicRaiseDragEvent (null, null);
 			Assert.IsFalse (c.IsHandleCreated, "A21");
@@ -1015,6 +1045,8 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsFalse (c.IsHandleCreated, "A32");
 			c.PublicSelect ();
 			Assert.IsTrue (c.IsHandleCreated, "A33");
+			c.Dispose ();
+			
 			c = new ProtectedMethodsForm ();
 #if !__MonoCS__ && NET_2_0
 			c.PublicSetAutoSizeMode (AutoSizeMode.GrowAndShrink);
@@ -1029,11 +1061,14 @@ namespace MonoTests.System.Windows.Forms
 			
 			c.PublicSetTopLevel (true);
 			Assert.IsFalse (c.IsHandleCreated, "A38");
+			c.Dispose ();
 			
 			c = new ProtectedMethodsForm ();
 			
 			c.PublicSetVisibleCore (true);
 			Assert.IsTrue (c.IsHandleCreated, "A39");
+			c.Dispose ();
+			
 			c = new ProtectedMethodsForm ();
 #if NET_2_0
 			c.PublicSizeFromClientSize (new Size (160, 160));
@@ -1045,7 +1080,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsFalse (c.IsHandleCreated, "A42");
 			c.PublicUpdateZOrder ();
 			Assert.IsFalse (c.IsHandleCreated, "A43");
-			
+			c.Dispose ();
 			
 			// Form
 			c = new ProtectedMethodsForm ();
@@ -1063,10 +1098,12 @@ namespace MonoTests.System.Windows.Forms
 			
 			c.PublicCenterToParent ();
 			Assert.IsTrue (c.IsHandleCreated, "F3");
+			c.Dispose ();
 			c = new ProtectedMethodsForm ();
 			
 			c.PublicCenterToScreen ();
 			Assert.IsTrue (c.IsHandleCreated, "F4");
+			c.Dispose ();
 			c = new ProtectedMethodsForm ();
 			
 			c.PublicGetScrollState (1);
@@ -1110,6 +1147,8 @@ namespace MonoTests.System.Windows.Forms
 			
 			c.PublicSelect (true, true);
 			Assert.IsTrue (c.IsHandleCreated, "F16");
+			c.Dispose ();
+			
 			c = new ProtectedMethodsForm();
 			
 			c.PublicSetDisplayRectLocation (13, 17);
@@ -1120,6 +1159,8 @@ namespace MonoTests.System.Windows.Forms
 			
 			c.PublicUpdateDefaultButton (3, false);
 			Assert.IsFalse (c.IsHandleCreated, "F19");
+
+			c.Dispose ();
 		}
 
 		private class ProtectedMethodsForm : Form

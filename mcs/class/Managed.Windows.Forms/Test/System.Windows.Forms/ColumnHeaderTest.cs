@@ -119,6 +119,8 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (1, colC.DisplayIndex, "#E3");
 			Assert.AreEqual (3, colD.DisplayIndex, "#E4");
 			Assert.AreEqual (0, columnReordered, "#E5");
+			
+			form.Close ();
 		}
 
 		[Test]

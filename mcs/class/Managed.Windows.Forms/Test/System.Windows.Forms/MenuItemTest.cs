@@ -193,6 +193,8 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual ("C1", mi1.Text, "#8");
 			mi2.Text = "C2";
 			Assert.AreEqual ("C2", mi2.Text, "#9");
+			
+			form.Close ();
 		}
 
 		bool event_reached;

@@ -1,3 +1,17 @@
+2007-04-25  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* FormHandleTest.cs, ControlEventTest.cs, MenuStripTest.cs,
+	  ProgressBarTest.cs, RichTextBoxTest.cs, ListViewEventTest.cs,
+	  TreeViewTest.cs, ColumnHeaderTest.cs, ApplicationContextTest.cs,
+	  MdiFormTest.cs, MenuItemTest.cs, TextBoxTest.cs, ListBoxTest.cs,
+	  ToolStripTest.cs, ToolStripMenuItemTest.cs, ControlTest.cs,
+	  ToolBarTest.cs: Dispose of the 61 forms we were keeping open while
+	  running the tests.
+	* ApplicationTest.cs: Dispose of the 61 forms we were keeping open
+	  while running the tests. Added OpenFormsTest.
+	* FormTest.cs: Dispose of the 61 forms we were keeping open while
+	  running the tests. Added DialogOwnerTest.
+
 2007-04-24  Alan McGovern <alan.mcgovern@gmail.com>
 
 	* BindingNavigatorTest.cs: Added more tests to check more behaviour

@@ -91,6 +91,8 @@ namespace MonoTests.System.Windows.Forms
 
 			Assert.IsTrue (tv.Nodes [0].IsVisible, "#D1");
 			Assert.IsFalse (tv.Nodes [99].IsVisible, "#D2");
+			
+			form.Close ();
 		}
 
 		[Test]
@@ -122,6 +124,8 @@ namespace MonoTests.System.Windows.Forms
 
 			Assert.IsFalse (tv.Nodes [0].IsVisible, "#D1");
 			Assert.IsTrue (tv.Nodes [99].IsVisible, "#D2");
+			
+			form.Close ();
 		}
 
 		[Test]
@@ -301,6 +305,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsFalse (nodeA.IsSelected, "#C5");
 			Assert.IsTrue (nodeB.IsSelected, "#C6");
 			Assert.AreSame (nodeB, tvw.SelectedNode, "#C7");
+			form.Close ();
 		}
 
 		[Test]
@@ -334,6 +339,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreSame (nodeB, cancelEventArgs.Node, "#B5");
 			Assert.IsFalse (nodeB.IsSelected, "#B6");
 			Assert.IsNull (tvw.SelectedNode, "#B7");
+			form.Close ();
 		}
 
 		[Test]

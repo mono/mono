@@ -963,6 +963,8 @@ namespace MonoTests.System.Windows.Forms
 			child3.Text = string.Empty;
 			Assert.AreEqual (string.Empty, main.Text, "#11");
 
+			main.Close ();
+			
 			child3.Dispose ();
 			child2.Dispose ();
 			child1.Dispose ();

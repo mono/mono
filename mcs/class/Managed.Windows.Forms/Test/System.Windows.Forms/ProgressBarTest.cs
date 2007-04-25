@@ -82,6 +82,8 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (Color.Red, progressBar.ForeColor, "#B3");
 			progressBar.ForeColor = Color.Blue;
 			Assert.AreEqual (Color.Blue, progressBar.ForeColor, "#B4");
+			
+			form.Close ();
 		}
 
 		[Test]

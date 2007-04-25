@@ -139,6 +139,8 @@ namespace MonoTests.System.Windows.Forms
 			form.Show ();
 			Assert.AreEqual (DockStyle.Top, toolBar.Dock, "#1");
 			Assert.AreEqual (form.ClientSize.Width, toolBar.Width, "#2");
+			
+			form.Close ();
 		}
 		
 		[Test]
@@ -166,6 +168,8 @@ namespace MonoTests.System.Windows.Forms
 			// We cannot determine exact size as it depends of font size
 			//Assert.IsTrue (toolBar.ButtonSize.Width >= 39, "#5");
 			//Assert.IsTrue (toolBar.ButtonSize.Height >= 36, "#6");
+			
+			form.Close ();
 		}
 	}
 

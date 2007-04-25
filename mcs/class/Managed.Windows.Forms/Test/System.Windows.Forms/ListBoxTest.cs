@@ -271,6 +271,8 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (-1, listBox.SelectedIndex, "#3");
 			listBox.SelectedIndex = 1;
 			Assert.AreEqual (1, listBox.SelectedIndex, "#4");
+			
+			form.Close ();
 		}
 
 		[Test] // bug #80753

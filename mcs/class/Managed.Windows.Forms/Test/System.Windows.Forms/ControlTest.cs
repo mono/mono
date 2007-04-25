@@ -1139,6 +1139,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsTrue (c.IsHandleCreated, "#2");
 			c.Visible = false;
 			Assert.IsTrue (c.IsHandleCreated, "#3");
+			form.Close ();
 		}
 
 		class OnCreateControlTest : Control {

@@ -240,6 +240,8 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (SystemColors.Window, textBox.BackColor, "#B13");
 			Assert.AreEqual (3, _invalidated, "#B14");
 			Assert.AreEqual (0, _paint, "#B15");
+			
+			form.Close ();
 		}
 
 		[Test] // bug #80626
@@ -505,6 +507,8 @@ namespace MonoTests.System.Windows.Forms
 #else
 			Assert.AreEqual (SystemColors.Window, textBox.BackColor, "#I2");
 #endif
+
+			form.Close ();
 		}
 
 		[Test]
@@ -571,6 +575,8 @@ namespace MonoTests.System.Windows.Forms
 			textBox.ResetBackColor ();
 			Assert.IsFalse (textBox.ReadOnly, "#K1");
 			Assert.AreEqual (SystemColors.Window, textBox.BackColor, "#K2");
+			
+			form.Close ();
 		}
 
 		[Test]
@@ -623,6 +629,8 @@ namespace MonoTests.System.Windows.Forms
 			form.Show ();
 
 			Assert.AreEqual (text, textBox.Text);
+			
+			form.Close ();
 		}
 
 		[Test] // bug #79909
@@ -648,6 +656,8 @@ namespace MonoTests.System.Windows.Forms
 			form.Show ();
 
 			Assert.AreEqual (text, textBox.Text, "#2");
+			
+			form.Close ();
 		}
 
 		

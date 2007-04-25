@@ -178,6 +178,8 @@ namespace MonoTests.System.Windows.Forms
 			c3.Show ();
 			Assert.AreEqual (5, tsmi.DropDownItems.Count, "Q14");
 			Assert.AreEqual (true, (tsmi.DropDownItems[4] as ToolStripMenuItem).Checked, "Q15");
+			
+			f.Close ();
 		}
 
 		private class ExposeProtectedProperties : MenuStrip

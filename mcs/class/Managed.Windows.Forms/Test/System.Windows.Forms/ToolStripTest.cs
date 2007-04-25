@@ -620,6 +620,8 @@ namespace MonoTests.System.Windows.Forms
 			ts.LayoutStyle = ToolStripLayoutStyle.StackWithOverflow;
 			Assert.AreEqual (ToolStripLayoutStyle.VerticalStackWithOverflow, ts.LayoutStyle, "A9");
 			Assert.AreEqual (Orientation.Vertical, ts.Orientation, "A10");
+			
+			f.Close ();
 		}
 		
 		[Test]

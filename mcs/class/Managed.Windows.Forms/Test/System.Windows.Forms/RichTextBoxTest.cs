@@ -275,6 +275,7 @@ namespace MonoTests.System.Windows.Forms
 #else
 			Assert.AreEqual (SystemColors.Window, rtb.BackColor, "#I2");
 #endif
+			form.Close ();
 		}
 
 		[Test]
@@ -342,6 +343,8 @@ namespace MonoTests.System.Windows.Forms
 			rtb.ResetBackColor ();
 			Assert.IsFalse (rtb.ReadOnly, "#K1");
 			Assert.AreEqual (SystemColors.Window, rtb.BackColor, "#K2");
+			
+			form.Close ();
 		}
 
 		[Test]

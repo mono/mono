@@ -394,6 +394,8 @@ namespace MonoTests.System.Windows.Forms
 
 			form.Refresh ();
 			Assert.AreEqual (0, invalidated, "#3");
+			
+			form.Close ();
 		}
 
 		private void Control_Invalidated (object sender, InvalidateEventArgs e)
