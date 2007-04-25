@@ -1,3 +1,7 @@
+2007-04-25  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* WriterTest.cs: Add a message if anyone forgets to close a form again.
+
 2007-03-10  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ResXResourceReaderTest.cs: Added test for special casing of .ico

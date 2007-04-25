@@ -13,6 +13,7 @@ using System.Globalization;
 using System.IO;
 using System.Resources;
 using System.Text;
+using System.Windows.Forms;
 
 using NUnit.Framework;
 
@@ -33,6 +34,17 @@ namespace MonoTests.System.Resources
 		public void TearDown ()
 		{
 			File.Delete (fileName);
+			
+#if NET_2_0
+			// This is totally out of place here, but since this test seem to be the last one run, and since nunit doesn't
+			// offer any global TearDown method, it was the option I found.
+			int c = Application.OpenForms.Count;
+			if (c > 0) {
+				Console.WriteLine ("HEY!");
+				Console.WriteLine ("You created " + c.ToString () + " form(s) and you didn't dispose of them!");
+				Console.WriteLine ("Please modify your test to shut me up.");
+			}
+#endif
 		}
 
 		[Test]
