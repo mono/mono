@@ -1,3 +1,8 @@
+2007-04-25  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DataGrid.cs: Uncomment MakeTransparent calls since bug #80151 is
+	fixed.
+
 2007-04-25  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* DrawListViewColumnHeaderEventHandler.cs, DrawToolTipEventArgs.cs,

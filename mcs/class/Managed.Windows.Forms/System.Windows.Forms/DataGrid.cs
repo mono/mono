@@ -314,9 +314,9 @@ namespace System.Windows.Forms
 			data_source_stack = new Stack ();
 
 			back_button_image = ResourceImageLoader.Get ("go-previous.png");
-			//back_button_image.MakeTransparent (Color.Transparent);
+			back_button_image.MakeTransparent (Color.Transparent);
 			parent_rows_button_image = ResourceImageLoader.Get ("go-top.png");
-			//parent_rows_button_image.MakeTransparent (Color.Transparent);
+			parent_rows_button_image.MakeTransparent (Color.Transparent);
 		}
 
 		#endregion	// Public Constructor
