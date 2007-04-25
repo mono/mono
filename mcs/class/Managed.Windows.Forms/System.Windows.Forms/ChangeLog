@@ -1,3 +1,9 @@
+2007-04-25  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListView.cs: In ItemControl.HandleClicks, also fire 
+	2.0 MouseClick or MouseDoubleClick events on the parent,
+	not only the Click/DoubleClick events.
+
 2007-04-24  Andreia Gaita  <avidigal@novell.com>
 
 	* TableLayoutSettings.cs: 

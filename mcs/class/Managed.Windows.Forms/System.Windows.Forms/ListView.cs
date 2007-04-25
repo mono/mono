@@ -2069,25 +2069,35 @@ namespace System.Windows.Forms
 #endif
 			}
 
-			void HandleClicks ()
+			void HandleClicks (MouseEventArgs me)
 			{
 				// if the click is not on an item,
 				// clicks remains as 0
-				if (clicks > 1)
+				if (clicks > 1) {
+#if !NET_2_0
 					owner.OnDoubleClick (EventArgs.Empty);
-				else if (clicks == 1)
+				} else if (clicks == 1) {
 					owner.OnClick (EventArgs.Empty);
+#else
+					owner.OnDoubleClick (EventArgs.Empty);
+					owner.OnMouseDoubleClick (me);
+				} else if (clicks == 1) {
+					owner.OnClick (EventArgs.Empty);
+					owner.OnMouseClick (me);
+#endif
+				}
 
 				clicks = 0;
 			}
 
 			private void ItemsMouseUp (object sender, MouseEventArgs me)
 			{
-				HandleClicks ();
+				MouseEventArgs owner_me = owner.TranslateMouseEventArgs (me);
+				HandleClicks (owner_me);
 
 				Capture = false;
 				if (owner.Items.Count == 0) {
-					owner.OnMouseUp (owner.TranslateMouseEventArgs (me));
+					owner.OnMouseUp (owner_me);
 					return;
 				}
 
@@ -2129,7 +2139,7 @@ namespace System.Windows.Forms
 				prev_selection = null;
 				box_select_mode = BoxSelect.None;
 				checking = false;
-				owner.OnMouseUp (owner.TranslateMouseEventArgs (me));
+				owner.OnMouseUp (owner_me);
 			}
 			
 			private void LabelEditFinished (object sender, EventArgs e)
