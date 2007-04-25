@@ -991,7 +991,11 @@ namespace MonoTests.System.XmlSerialization
 			TimeZone tz = TimeZone.CurrentTimeZone;
 			TimeSpan off = tz.GetUtcOffset (d);
 			string sp = string.Format ("{0}{1:00}:{2:00}", off.Ticks >= 0 ? "+" : "", off.Hours, off.Minutes);
+#if NET_2_0
+			Assert.AreEqual (Infoset ("<dateTime>0001-01-01T00:00:00</dateTime>"), WriterText);
+#else
 			Assert.AreEqual (Infoset ("<dateTime>0001-01-01T00:00:00.0000000" + sp + "</dateTime>"), WriterText);
+#endif
 		}
 
 		/*

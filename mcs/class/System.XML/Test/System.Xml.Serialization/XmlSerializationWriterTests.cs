@@ -128,7 +128,11 @@ namespace MonoTests.System.XmlSerialization
 		public void TestFromDateTime()
 		{
 			DateTime d = new DateTime();
+#if NET_2_0
+			Assert.AreEqual ("0001-01-01T00:00:00", FromDateTime (d));
+#else
 			Assert.AreEqual ("0001-01-01T00:00:00.0000000", FromDateTime (d).Substring (0, 27));
+#endif
 		}
 
 		[Test] // bug #77500
@@ -768,10 +772,17 @@ namespace MonoTests.System.XmlSerialization
 			xsw.Reset ();
 
 			xsw.ExecuteWriteTypedPrimitive ("x", ANamespace, dateTime, false);
+			// FIXME: This is a bad test case. The following switch
+			// should be applied to the entire test.
+#if NET_2_0
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"<x xmlns='{0}'>1973-08-13T00:00:00</x>", ANamespace),
+				xsw.Content, "#1");
+#else
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<x xmlns='{0}'>{1}</x>", ANamespace, FromDateTime (dateTime)),
 				xsw.Content, "#1");
-
+#endif
 			xsw.Reset ();
 
 			xsw.ExecuteWriteTypedPrimitive ("x", string.Empty, dateTime, false);
@@ -813,6 +824,8 @@ namespace MonoTests.System.XmlSerialization
 				FromDateTime (dateTime)), xsw.Content, "#7");
 		}
 
+		// FIXME: This is a bad test case.
+		// See TestWriteTypedPrimitive_DateTime.
 		[Test]
 		public void TestWriteTypedPrimitive_DateTime_XsiType ()
 		{

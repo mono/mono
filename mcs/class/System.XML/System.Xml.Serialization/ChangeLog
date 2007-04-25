@@ -1,5 +1,10 @@
 2007-04-25  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlCustomFormatter.cs :
+	  in 2.0, use F instead of f for dateTime formatting.
+
+2007-04-25  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlSchemas.cs : 1.1-only duplicate check does not seem to be
 	  required. This is also a workaround for 1.x ws proxy generation.
 

@@ -1,5 +1,9 @@
 2007-04-25  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlConvert.cs : in 2.0, use F instead of f in dateTime formatting.
+
+2007-04-25  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlReader.cs : fixed wrong depth comparison in ReadToNextSibling().
 	  Fixed bug #81451, by Eric Mercier.
 

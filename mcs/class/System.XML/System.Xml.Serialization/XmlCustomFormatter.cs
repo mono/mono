@@ -66,7 +66,11 @@ namespace System.Xml.Serialization {
 
 		internal static string FromDateTime (DateTime value)
 		{
+#if NET_2_0
+			return XmlConvert.ToString (value, "yyyy-MM-ddTHH:mm:ss.FFFFFFF");
+#else
 			return XmlConvert.ToString (value, "yyyy-MM-ddTHH:mm:ss.fffffffzzz");
+#endif
 		}
 
 		internal static string FromTime (DateTime value)
@@ -225,9 +229,15 @@ namespace System.Xml.Serialization {
 				case "boolean": return XmlConvert.ToString ((bool)value);
 				case "unsignedByte": return XmlConvert.ToString ((byte)value);
 				case "char": return XmlConvert.ToString ((int)(char)value);
+#if NET_2_0
+				case "dateTime": return XmlConvert.ToString ((DateTime)value, XmlDateTimeSerializationMode.Unspecified);
+				case "date": return ((DateTime)value).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+				case "time": return ((DateTime)value).ToString("HH:mm:ss.FFFFFFF", CultureInfo.InvariantCulture);
+#else
 				case "dateTime": return XmlConvert.ToString ((DateTime)value);
 				case "date": return ((DateTime)value).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
 				case "time": return ((DateTime)value).ToString("HH:mm:ss.fffffffzzz", CultureInfo.InvariantCulture);
+#endif
 				case "decimal": return XmlConvert.ToString ((decimal)value);
 				case "double": return XmlConvert.ToString ((double)value);
 				case "short": return XmlConvert.ToString ((Int16)value);
@@ -258,7 +268,11 @@ namespace System.Xml.Serialization {
 				case "char": return (char)XmlConvert.ToInt32 (value);
 				case "dateTime": return XmlConvert.ToDateTime (value);
 				case "date": return DateTime.ParseExact (value, "yyyy-MM-dd", null);
+#if NET_2_0
+				case "time": return DateTime.ParseExact (value, "HH:mm:ss.FFFFFFF", null);
+#else
 				case "time": return DateTime.ParseExact (value, "HH:mm:ss.fffffffzzz", null);
+#endif
 				case "decimal": return XmlConvert.ToDecimal (value);
 				case "double": return XmlConvert.ToDouble (value);
 				case "short": return XmlConvert.ToInt16 (value);
@@ -347,9 +361,15 @@ namespace System.Xml.Serialization {
 				case "boolean": return "XmlConvert.ToBoolean (" + value + ")";
 				case "unsignedByte": return "byte.Parse (" + value + ", CultureInfo.InvariantCulture)";
 				case "char": return "(char)Int32.Parse (" + value + ", CultureInfo.InvariantCulture)";
+#if NET_2_0
+				case "dateTime": return "XmlConvert.ToDateTime (" + value + ", XmlDateTimeSerializationMode.Unspecified)";
+				case "date": return "DateTime.ParseExact (" + value + ", \"yyyy-MM-dd\", CultureInfo.InvariantCulture)";
+				case "time": return "DateTime.ParseExact (" + value + ", \"HH:mm:ss.FFFFFFF\", CultureInfo.InvariantCulture)";
+#else
 				case "dateTime": return "XmlConvert.ToDateTime (" + value + ")";
 				case "date": return "DateTime.ParseExact (" + value + ", \"yyyy-MM-dd\", CultureInfo.InvariantCulture)";
 				case "time": return "DateTime.ParseExact (" + value + ", \"HH:mm:ss.fffffffzzz\", CultureInfo.InvariantCulture)";
+#endif
 				case "decimal": return "Decimal.Parse (" + value + ", CultureInfo.InvariantCulture)";
 				case "double": return "XmlConvert.ToDouble (" + value + ")";
 				case "short": return "Int16.Parse (" + value + ", CultureInfo.InvariantCulture)";

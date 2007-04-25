@@ -288,12 +288,12 @@ namespace System.Xml {
 			switch (mode) {
 			case XmlDateTimeSerializationMode.Local:
 			case XmlDateTimeSerializationMode.RoundtripKind:
-			default:
-				return ToDateTime (value, "yyyy-MM-ddTHH:mm:ss.fffffffzzz");
+				return ToDateTime (value, "yyyy-MM-ddTHH:mm:ss.FFFFFFFzzz");
 			case XmlDateTimeSerializationMode.Utc:
-				return ToDateTime (value, "yyyy-MM-ddTHH:mm:ss.fffffffZ").ToUniversalTime ();
+				return ToDateTime (value, "yyyy-MM-ddTHH:mm:ss.FFFFFFFZ").ToUniversalTime ();
 			case XmlDateTimeSerializationMode.Unspecified:
-				return ToDateTime (value, "yyyy-MM-ddTHH:mm:ss.fffffff");
+			default:
+				return ToDateTime (value, "yyyy-MM-ddTHH:mm:ss.FFFFFFF");
 			}
 		}
 #endif
@@ -499,17 +499,17 @@ namespace System.Xml {
 			case XmlDateTimeSerializationMode.RoundtripKind:
 			default:
 				return value.ToString (
-					"yyyy-MM-ddTHH:mm:ss.fffffffzzz",
+					"yyyy-MM-ddTHH:mm:ss.FFFFFFFzzz",
 					CultureInfo.InvariantCulture);
 				break;
 			case XmlDateTimeSerializationMode.Utc:
 				return value.ToUniversalTime ().ToString (
-					"yyyy-MM-ddTHH:mm:ss.fffffffZ",
+					"yyyy-MM-ddTHH:mm:ss.FFFFFFFZ",
 					CultureInfo.InvariantCulture);
 				break;
 			case XmlDateTimeSerializationMode.Unspecified:
 				return value.ToString (
-					"yyyy-MM-ddTHH:mm:ss.fffffff",
+					"yyyy-MM-ddTHH:mm:ss.FFFFFFF",
 					CultureInfo.InvariantCulture);
 				break;
 			}
