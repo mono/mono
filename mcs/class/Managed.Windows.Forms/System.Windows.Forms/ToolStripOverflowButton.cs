@@ -49,7 +49,12 @@ namespace System.Windows.Forms
 		
 		#region Public Properties
 		public override bool HasDropDownItems {
-			get { return this.DropDown.DisplayedItems.Count > 0; }
+			get { 
+				if (this.drop_down == null)
+					return false;
+					
+				return this.DropDown.DisplayedItems.Count > 0; 
+			}
 		}
 		#endregion
 

@@ -37,7 +37,7 @@ namespace System.Windows.Forms
 	[DefaultProperty ("DropDownItems")]
 	public abstract class ToolStripDropDownItem : ToolStripItem
 	{
-		private ToolStripDropDown drop_down;
+		internal ToolStripDropDown drop_down;
 		private ToolStripDropDownDirection drop_down_direction;
 
 		#region Protected Constructors
@@ -156,9 +156,10 @@ namespace System.Windows.Forms
 		protected override void Dispose (bool disposing)
 		{
 			if (!IsDisposed) {
-				foreach (ToolStripItem tsi in this.DropDownItems)
-					if (tsi is ToolStripMenuItem)
-						ToolStripManager.RemoveToolStripMenuItem ((ToolStripMenuItem)tsi);
+				if (this.HasDropDownItems)
+					foreach (ToolStripItem tsi in this.DropDownItems)
+						if (tsi is ToolStripMenuItem)
+							ToolStripManager.RemoveToolStripMenuItem ((ToolStripMenuItem)tsi);
 					
 				base.Dispose (disposing);
 			}
