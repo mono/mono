@@ -4862,6 +4862,11 @@ namespace System.Windows.Forms
 		}
 					
 		private void WmLButtonDown (ref Message m) {
+#if NET_2_0
+			// Let *Strips know another control was clicked
+			if (XplatUI.IsEnabled (Handle) && !(this is ToolStrip))
+				ToolStripManager.FireAppClicked ();
+#endif	
 			if (CanSelect) {
 				Select (true, true);
 			}
@@ -4898,6 +4903,11 @@ namespace System.Windows.Forms
 		}
 					
 		private void WmMButtonDown (ref Message m) {
+#if NET_2_0
+			// Let *Strips know another control was clicked
+			if (XplatUI.IsEnabled (Handle) && !(this is ToolStrip))
+				ToolStripManager.FireAppClicked ();
+#endif
 			InternalCapture = true;
 			OnMouseDown (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
 				mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
@@ -4939,6 +4949,11 @@ namespace System.Windows.Forms
 		}
 					
 		private void WmRButtonDown (ref Message m) {
+#if NET_2_0
+			// Let *Strips know another control was clicked
+			if (XplatUI.IsEnabled (Handle) && !(this is ToolStrip))
+				ToolStripManager.FireAppClicked ();
+#endif
 			InternalCapture = true;
 			OnMouseDown (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
 				mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 

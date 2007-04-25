@@ -1,3 +1,10 @@
+2007-04-25  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Control.cs, Form.cs: Use the better supported WM_?BUTTONDOWN and
+	WM_ACTIVATE messages instead of WM_MOUSEACTIVATE and
+	WM_ACTIVATEAPP.  This fixes menus not disappearing on X11 when
+	the form lost focus or another control was clicked.
+
 2007-04-25  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DataGrid.cs: Uncomment MakeTransparent calls since bug #80151 is

@@ -2251,6 +2251,10 @@ namespace System.Windows.Forms {
 
 						IsActive = true;
 					} else {
+#if NET_2_0
+						if (XplatUI.IsEnabled (Handle))
+							ToolStripManager.FireAppFocusChanged (this);
+#endif
 						IsActive = false;
 					}
 					return;
@@ -2495,27 +2499,6 @@ namespace System.Windows.Forms {
 					break;
 				}
 				
-#if NET_2_0
-				case Msg.WM_MOUSEACTIVATE: {
-					// Let *Strips know the form or another control has been clicked
-					if (XplatUI.IsEnabled (Handle))
-						ToolStripManager.FireAppClicked ();
-						
-					base.WndProc (ref m);
-					break;				
-				}
-				
-				case Msg.WM_ACTIVATEAPP: {
-					// Let *Strips know the app lost focus
-					if (m.WParam == (IntPtr)0) 
-						if (XplatUI.IsEnabled (Handle))
-							ToolStripManager.FireAppFocusChanged (this);
-							
-					base.WndProc (ref m);
-					break;				
-				}
-#endif
-
 				default: {
 					base.WndProc (ref m);
 					break;
