@@ -855,6 +855,8 @@ mono_assembly_load_reference (MonoImage *image, int index)
 	 * it inside a critical section.
 	 */
 	mono_assemblies_lock ();
+	if (!image->references)
+		mono_assembly_load_references (image, &status);
 	reference = image->references [index];
 	mono_assemblies_unlock ();
 	if (reference)
@@ -932,21 +934,12 @@ void
 mono_assembly_load_references (MonoImage *image, MonoImageOpenStatus *status)
 {
 	MonoTableInfo *t;
-	int i;
 
 	*status = MONO_IMAGE_OK;
 
 	t = &image->tables [MONO_TABLE_ASSEMBLYREF];
 	
 	image->references = g_new0 (MonoAssembly *, t->rows + 1);
-
-	/* resolve assembly references for modules */
-	for (i = 0; i < image->module_count; i++){
-		if (image->modules [i]) {
-			image->modules [i]->assembly = image->assembly;
-			mono_assembly_load_references (image->modules [i], status);
-		}
-	}
 }
 
 typedef struct AssemblyLoadHook AssemblyLoadHook;
@@ -1471,11 +1464,11 @@ mono_assembly_load_from_full (MonoImage *image, const char*fname,
 		/* avoid loading the same assembly twice for now... */
 		ass2 = search_loaded (&ass->aname, refonly);
 		if (ass2) {
+			mono_assemblies_unlock ();
 			g_free (ass);
 			g_free (base_dir);
 			mono_image_close (image);
 			*status = MONO_IMAGE_OK;
-			mono_assemblies_unlock ();
 			return ass2;
 		}
 	}

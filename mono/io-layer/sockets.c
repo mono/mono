@@ -15,6 +15,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/ioctl.h>
+#include <sys/poll.h>
 #ifdef HAVE_SYS_FILIO_H
 #include <sys/filio.h>     /* defines FIONBIO and FIONREAD */
 #endif
@@ -71,6 +72,11 @@ static void socket_close (gpointer handle, gpointer data G_GNUC_UNUSED)
 		return;
 	}
 
+	/* Shutdown the socket for reading, to interrupt any potential
+	 * receives that may be blocking for data.  See bug 75705.
+	 */
+	shutdown (GPOINTER_TO_UINT (handle), SHUT_RD);
+	
 	do {
 		ret = close (GPOINTER_TO_UINT(handle));
 	} while (ret == -1 && errno == EINTR &&
@@ -272,7 +278,8 @@ int _wapi_connect(guint32 fd, const struct sockaddr *serv_addr,
 		  socklen_t addrlen)
 {
 	gpointer handle = GUINT_TO_POINTER (fd);
-	int ret;
+	struct _WapiHandle_socket *socket_handle;
+	gboolean ok;
 	gint errnum;
 	
 	if (startup_count == 0) {
@@ -285,26 +292,82 @@ int _wapi_connect(guint32 fd, const struct sockaddr *serv_addr,
 		return(SOCKET_ERROR);
 	}
 	
-	do {
-		ret = connect (fd, serv_addr, addrlen);
-	} while (ret==-1 && errno==EINTR && !_wapi_thread_cur_apc_pending());
-
-	if (ret == -1) {
+	if (connect (fd, serv_addr, addrlen) == -1) {
+		struct pollfd fds;
+		int so_error;
+		socklen_t len;
+		
 		errnum = errno;
 		
+		if (errno != EINTR) {
 #ifdef DEBUG
-		g_message ("%s: connect error: %s", __func__,
-			   strerror (errnum));
+			g_message ("%s: connect error: %s", __func__,
+				   strerror (errnum));
 #endif
-		errnum = errno_to_WSA (errnum, __func__);
-		if (errnum == WSAEINPROGRESS)
-			errnum = WSAEWOULDBLOCK; /* see bug #73053 */
 
-		WSASetLastError (errnum);
+			errnum = errno_to_WSA (errnum, __func__);
+			if (errnum == WSAEINPROGRESS)
+				errnum = WSAEWOULDBLOCK; /* see bug #73053 */
+
+			WSASetLastError (errnum);
 		
-		return(SOCKET_ERROR);
+			return(SOCKET_ERROR);
+		}
+
+		fds.fd = fd;
+		fds.events = POLLOUT;
+		while (poll (&fds, 1, -1) == -1 &&
+		       !_wapi_thread_cur_apc_pending ()) {
+			if (errno != EINTR) {
+				errnum = errno_to_WSA (errno, __func__);
+
+#ifdef DEBUG
+				g_message ("%s: connect poll error: %s",
+					   __func__, strerror (errno));
+#endif
+
+				WSASetLastError (errnum);
+				return(SOCKET_ERROR);
+			}
+		}
+
+		len = sizeof(so_error);
+		if (getsockopt (fd, SOL_SOCKET, SO_ERROR, &so_error,
+				&len) == -1) {
+			errnum = errno_to_WSA (errno, __func__);
+
+#ifdef DEBUG
+			g_message ("%s: connect getsockopt error: %s",
+				   __func__, strerror (errno));
+#endif
+
+			WSASetLastError (errnum);
+			return(SOCKET_ERROR);
+		}
+		
+		if (so_error != 0) {
+			errnum = errno_to_WSA (so_error, __func__);
+
+			/* Need to save this socket error */
+			ok = _wapi_lookup_handle (handle, WAPI_HANDLE_SOCKET,
+						  (gpointer *)&socket_handle);
+			if (ok == FALSE) {
+				g_warning ("%s: error looking up socket handle %p", __func__, handle);
+			} else {
+				socket_handle->saved_error = errnum;
+			}
+			
+#ifdef DEBUG
+			g_message ("%s: connect getsockopt returned error: %s",
+				   __func__, strerror (so_error));
+#endif
+
+			WSASetLastError (errnum);
+			return(SOCKET_ERROR);
+		}
 	}
-	return(ret);
+		
+	return(0);
 }
 
 int _wapi_getpeername(guint32 fd, struct sockaddr *name, socklen_t *namelen)
@@ -497,6 +560,19 @@ int _wapi_recvfrom(guint32 fd, void *buf, size_t len, int recv_flags,
 	} while (ret == -1 && errno == EINTR &&
 		 !_wapi_thread_cur_apc_pending ());
 
+	if (ret == 0) {
+		/* According to the Linux man page, recvfrom only
+		 * returns 0 when the socket has been shut down
+		 * cleanly.  Turn this into an EINTR to simulate win32
+		 * behaviour of returning EINTR when a socket is
+		 * closed while the recvfrom is blocking (we use a
+		 * shutdown() in socket_close() to trigger this.) See
+		 * bug 75705.
+		 */
+		ret = -1;
+		errno = EINTR;
+	}
+	
 	if (ret == -1) {
 		gint errnum = errno;
 #ifdef DEBUG

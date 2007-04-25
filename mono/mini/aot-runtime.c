@@ -69,6 +69,7 @@ typedef struct MonoAotModule {
 	/* Pointer to the Global Offset Table */
 	gpointer *got;
 	guint32 got_size;
+	GHashTable *name_cache;
 	MonoAssemblyName *image_names;
 	char **image_guids;
 	MonoImage **image_table;
@@ -455,6 +456,7 @@ load_aot_module (MonoAssembly *assembly, gpointer user_data)
 	gpointer *got_addr = NULL;
 	gpointer *got = NULL;
 	guint32 *got_size_ptr = NULL;
+	int i;
 
 	if (mono_compile_aot)
 		return;
@@ -622,7 +624,19 @@ load_aot_module (MonoAssembly *assembly, gpointer user_data)
 
 	mono_jit_info_add_aot_module (assembly->image, info->code, info->code_end);
 
-	mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_AOT, "AOT loaded AOT Module for %s.\n", assembly->image->name);
+	/*
+	 * Since we store methoddef and classdef tokens when referring to methods/classes in
+	 * referenced assemblies, we depend on the exact versions of the referenced assemblies.
+	 * MS calls this 'hard binding'. This means we have to load all referenced assemblies
+	 * non-lazily, since we can't handle out-of-date errors later.
+	 */
+	for (i = 0; i < info->image_table_len; ++i)
+		load_image (info, i);
+
+	if (info->out_of_date)
+		mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_AOT, "AOT Module %s is unusable because a dependency is out-of-date.\n", assembly->image->name);
+	else
+		mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_AOT, "AOT loaded AOT Module for %s.\n", assembly->image->name);
 }
 
 void
@@ -798,6 +812,7 @@ mono_aot_get_class_from_name (MonoImage *image, const char *name_space, const ch
 	const char *name2, *name_space2;
 	MonoTableInfo  *t;
 	guint32 cols [MONO_TYPEDEF_SIZE];
+	GHashTable *nspace_table;
 
 	if (!aot_modules)
 		return FALSE;
@@ -811,6 +826,18 @@ mono_aot_get_class_from_name (MonoImage *image, const char *name_space, const ch
 	}
 
 	*klass = NULL;
+
+	/* First look in the cache */
+	if (!aot_module->name_cache)
+		aot_module->name_cache = g_hash_table_new (g_str_hash, g_str_equal);
+	nspace_table = g_hash_table_lookup (aot_module->name_cache, name_space);
+	if (nspace_table) {
+		*klass = g_hash_table_lookup (nspace_table, name);
+		if (*klass) {
+			mono_aot_unlock ();
+			return TRUE;
+		}
+	}
 
 	table_size = aot_module->class_name_table [0];
 	table = aot_module->class_name_table + 1;
@@ -849,6 +876,18 @@ mono_aot_get_class_from_name (MonoImage *image, const char *name_space, const ch
 			if (!strcmp (name, name2) && !strcmp (name_space, name_space2)) {
 				mono_aot_unlock ();
 				*klass = mono_class_get (image, token);
+
+				/* Add to cache */
+				if (*klass) {
+					mono_aot_lock ();
+					nspace_table = g_hash_table_lookup (aot_module->name_cache, name_space);
+					if (!nspace_table) {
+						nspace_table = g_hash_table_new (g_str_hash, g_str_equal);
+						g_hash_table_insert (aot_module->name_cache, (char*)name_space2, nspace_table);
+					}
+					g_hash_table_insert (nspace_table, (char*)name2, *klass);
+					mono_aot_unlock ();
+				}
 				return TRUE;
 			}
 
@@ -1849,7 +1888,7 @@ mono_aot_handle_pagefault (void *ptr)
 }
 
 /*
- * aot_dyn_resolve:
+ * mono_aot_plt_resolve:
  *
  *   This function is called by the entries in the PLT to resolve the actual method that
  * needs to be called. It returns a trampoline to the method and patches the PLT entry.
@@ -1979,7 +2018,7 @@ mono_aot_init (void)
 {
 }
 
-MonoJitInfo*
+gpointer
 mono_aot_get_method (MonoDomain *domain, MonoMethod *method)
 {
 	return NULL;
@@ -2045,6 +2084,12 @@ mono_aot_handle_pagefault (void *ptr)
 
 guint8*
 mono_aot_get_plt_entry (guint8 *code)
+{
+	return NULL;
+}
+
+gpointer
+mono_aot_plt_resolve (gpointer aot_module, guint32 plt_info_offset, guint8 *code)
 {
 	return NULL;
 }

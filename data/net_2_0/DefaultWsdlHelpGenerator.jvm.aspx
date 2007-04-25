@@ -17,6 +17,7 @@
 <%@ Import Namespace="System.Web.Services" %>
 <%@ Import Namespace="System.Web.Services.Description" %>
 <%@ Import Namespace="System.Web.Services.Configuration" %>
+<%@ Import Namespace="System.Web.Configuration" %>
 <%@ Import Namespace="System" %>
 <%@ Import Namespace="System.Net" %>
 <%@ Import Namespace="System.Globalization" %>
@@ -90,7 +91,9 @@ void Page_Load(object sender, EventArgs e)
 	Page.DataBind();
 	
 	ProfileViolations = new BasicProfileViolationCollection ();
-	WebServicesInteroperability.CheckConformance (WsiProfiles.BasicProfile1_1, descriptions, ProfileViolations);
+	foreach (WsiProfilesElement claims in ((WebServicesSection) WebConfigurationManager.GetSection("system.web/webServices")).ConformanceWarnings)
+		if (claims.Name != WsiProfiles.None)
+			WebServicesInteroperability.CheckConformance (claims.Name, descriptions, ProfileViolations);
 }
 
 void BuildOperationInfo ()
@@ -301,7 +304,8 @@ OperationBinding FindOperation (Binding binding, string name)
 
 string FormatBindingName (string name)
 {
-	if (name == DefaultBinding) return "Methods";
+	if (name.EndsWith("Soap")) return "Soap 1.1";
+	else if (name.EndsWith("Soap12")) return "Soap 1.2";
 	else return "Methods for binding<br>" + name;
 }
 
@@ -775,7 +779,6 @@ public class HtmlSampleGenerator: SampleGenerator
 		static readonly XmlQualifiedName anyType = new XmlQualifiedName ("anyType",XmlSchema.Namespace);
 		static readonly XmlQualifiedName arrayType = new XmlQualifiedName ("Array","http://schemas.xmlsoap.org/soap/encoding/");
 		static readonly XmlQualifiedName arrayTypeRefName = new XmlQualifiedName ("arrayType","http://schemas.xmlsoap.org/soap/encoding/");
-		const string SoapEnvelopeNamespace = "http://schemas.xmlsoap.org/soap/envelope/";
 		const string WsdlNamespace = "http://schemas.xmlsoap.org/wsdl/";
 		const string SoapEncodingNamespace = "http://schemas.xmlsoap.org/soap/encoding/";
 		
@@ -910,6 +913,10 @@ public class HtmlSampleGenerator: SampleGenerator
 		
 		public string GenerateSoapMessage (OperationBinding obin, Operation oper, OperationMessage msg)
 		{
+			string SoapEnvelopeNamespace = "http://schemas.xmlsoap.org/soap/envelope/";
+			if(obin.Binding.Name.EndsWith("Soap12"))
+				SoapEnvelopeNamespace = "http://www.w3.org/2003/05/soap-envelope";
+		
 			SoapOperationBinding sob = obin.Extensions.Find (typeof(SoapOperationBinding)) as SoapOperationBinding;
 			SoapBindingStyle style = (sob != null) ? sob.Style : SoapBindingStyle.Document;
 			
@@ -1520,7 +1527,7 @@ public class HtmlSampleGenerator: SampleGenerator
 		.title { color:dimgray; font-family: Arial; font-size:20pt; font-weight:900}
 		.operationTitle { color:dimgray; font-family: Arial; font-size:15pt; font-weight:900}
 		.method { font-size: x-small }
-		.bindingLabel { font-size: x-small; font-weight:bold; color:darkgray; line-height:8pt; display:block; margin-bottom:3px }
+		.bindingLabel { font-size: medium; font-weight:bold; color:darkgray; line-height:8pt; display:block; margin-bottom:3px }
 		.label { font-size: small; font-weight:bold; color:darkgray }
 		.paramTable { font-size: x-small }
 		.paramTable TR { background-color: gainsboro }

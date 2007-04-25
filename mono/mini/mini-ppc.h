@@ -99,8 +99,7 @@ typedef struct MonoCompileArch {
 #define PPC_LAST_ARG_REG ppc_r10
 #define PPC_FIRST_FPARG_REG ppc_f1
 #define PPC_LAST_FPARG_REG ppc_f8
-/* set the next to 0 once inssel-ppc.brg is updated */
-#define PPC_PASS_STRUCTS_BY_VALUE 1
+#define PPC_PASS_STRUCTS_BY_VALUE 0
 #define PPC_SMALL_RET_STRUCT_IN_REG 1
 
 #endif
@@ -131,7 +130,6 @@ typedef struct {
 		MonoPPCStackFrame *sframe;	\
 		__asm__ volatile("lwz   %0,0(r1)" : "=r" (sframe));	\
 		MONO_CONTEXT_SET_BP ((ctx), sframe->sp);	\
-		MONO_CONTEXT_SET_SP ((ctx), sframe->sp);	\
 		sframe = (MonoPPCStackFrame*)sframe->sp;	\
 		MONO_CONTEXT_SET_IP ((ctx), sframe->lr);	\
 	} while (0)

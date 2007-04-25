@@ -185,6 +185,7 @@ common_sources = \
 	mini.h		\
 	mini.c		\
 	method-to-ir.c \
+	version.h	\
 	optflags-def.h		\
 	jit-icalls.h \
 	jit-icalls.c \
@@ -233,7 +234,7 @@ test_sources = 		\
 	basic-math.cs	\
 	basic.cs		\
 	exceptions.cs	\
-	iltests.il		\
+	iltests.il.in		\
 	test.cs
 
 test_sources2 = generics.2.cs il2tests.2.il
@@ -364,6 +365,10 @@ generics.exe: generics.cs TestDriver.dll
 %.exe: %.2.il
 	$(ILASM2) -output=$@ $<
 
+iltests.il: iltests.il.in Makefile.am
+	echo '// DO NOT EDIT: This file has been generated from iltests.il.in' > iltests.il
+	cpp -Darch=$(arch_define) < $(srcdir)/iltests.il.in | sed 's/^#.*//' >> iltests.il
+
 %.exe: %.il
 	$(ILASM) -output=$@ $<
 
@@ -463,7 +468,9 @@ clean-local:
 pkgconfigdir = $(libdir)/pkgconfig
 
 if JIT_SUPPORTED
-BUILT_SOURCES= inssel.c inssel.h $(arch_built)
+BUILT_SOURCES = version.h inssel.c inssel.h $(arch_built)
+else
+BUILT_SOURCES = version.h
 endif
 
 CLEANFILES= $(BUILT_SOURCES) *.exe *.dll
@@ -482,3 +489,14 @@ EXTRA_DIST = $(common_BURGSRC) cprop.c TestDriver.cs ldscript ldscript.mono \
 	$(s390x_sources) inssel-s390x.brg cpu-s390x.md \
 	$(ia64_sources) inssel-ia64.brg cpu-ia64.md \
 	$(alpha_sources) inssel-alpha.brg cpu-alpha.md
+
+version.h: Makefile
+	if test -d $(srcdir)/.svn; then \
+		(cd $(srcdir); 	\
+			branch=`svn info | grep URL | sed -e 's/.*source//' -e 's,mono/mono/mini,,'`; \
+			version=`svn info | grep Revision | sed 's/.*: //'`; \
+			echo "#define FULL_VERSION \"$$branch r$$version\""; \
+		); \
+	else \
+		echo "#define FULL_VERSION \"tarball\""; \
+	fi > version.h

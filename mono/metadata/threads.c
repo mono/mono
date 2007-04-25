@@ -262,10 +262,14 @@ static guint32 WINAPI start_wrapper(void *data)
 	tid=thread->tid;
 
 	SET_CURRENT_OBJECT (thread);
+
+	/* Every thread references the appdomain which created it */
+	mono_thread_push_appdomain_ref (start_info->domain);
 	
 	if (!mono_domain_set (start_info->domain, FALSE)) {
 		/* No point in raising an appdomain_unloaded exception here */
 		/* FIXME: Cleanup here */
+		mono_thread_pop_appdomain_ref ();
 		return 0;
 	}
 
@@ -293,9 +297,6 @@ static guint32 WINAPI start_wrapper(void *data)
 	}
 	
 	g_free (start_info);
-
-	/* Every thread references the appdomain which created it */
-	mono_thread_push_appdomain_ref (mono_domain_get ());
 
 	thread_adjust_static_data (thread);
 #ifdef DEBUG
@@ -391,6 +392,43 @@ void mono_thread_create (MonoDomain *domain, gpointer func, gpointer arg)
 	ResumeThread (thread_handle);
 }
 
+/*
+ * mono_thread_get_stack_bounds:
+ *
+ *   Return the address and size of the current threads stack. Return NULL as the stack
+ * address if the stack address cannot be determined.
+ */
+static void
+mono_thread_get_stack_bounds (guint8 **staddr, size_t *stsize)
+{
+#ifndef PLATFORM_WIN32
+	pthread_attr_t attr;
+	guint8 *current = (guint8*)&attr;
+
+	pthread_attr_init (&attr);
+#ifdef HAVE_PTHREAD_GETATTR_NP
+		pthread_getattr_np (pthread_self(), &attr);
+#else
+#ifdef HAVE_PTHREAD_ATTR_GET_NP
+		pthread_attr_get_np (pthread_self(), &attr);
+#elif defined(sun)
+		*staddr = NULL;
+		pthread_attr_getstacksize (&attr, &stsize);
+#else
+		*staddr = NULL;
+		*stsize = 0;
+		return;
+#endif
+#endif
+
+#ifndef sun
+		pthread_attr_getstack (&attr, (void**)staddr, stsize);
+		if (*staddr)
+			g_assert ((current > *staddr) && (current < *staddr + *stsize));
+#endif
+#endif
+}	
+
 MonoThread *
 mono_thread_attach (MonoDomain *domain)
 {
@@ -441,7 +479,15 @@ mono_thread_attach (MonoDomain *domain)
 	thread_adjust_static_data (thread);
 
 	if (mono_thread_attach_cb) {
-		mono_thread_attach_cb (tid, &tid);
+		guint8 *staddr;
+		size_t stsize;
+
+		mono_thread_get_stack_bounds (&staddr, &stsize);
+
+		if (staddr == NULL)
+			mono_thread_attach_cb (tid, &tid);
+		else
+			mono_thread_attach_cb (tid, staddr + stsize);
 	}
 
 	return(thread);
@@ -1024,10 +1070,10 @@ HANDLE ves_icall_System_Threading_Mutex_CreateMutex_internal (MonoBoolean owned,
 	return(mutex);
 }                                                                   
 
-void ves_icall_System_Threading_Mutex_ReleaseMutex_internal (HANDLE handle ) { 
+MonoBoolean ves_icall_System_Threading_Mutex_ReleaseMutex_internal (HANDLE handle ) { 
 	MONO_ARCH_SAVE_REGS;
 
-	ReleaseMutex(handle);
+	return(ReleaseMutex (handle));
 }
 
 HANDLE ves_icall_System_Threading_Mutex_OpenMutex_internal (MonoString *name,
@@ -2348,15 +2394,14 @@ abort_appdomain_thread (gpointer key, gpointer value, gpointer user_data)
 	MonoDomain *domain = data->domain;
 
 	if (mono_thread_has_appdomain_ref (thread, domain)) {
-		HANDLE handle = OpenThread (THREAD_ALL_ACCESS, TRUE, thread->tid);
-		if (handle == NULL)
-			return;
-
 		/* printf ("ABORTING THREAD %p BECAUSE IT REFERENCES DOMAIN %s.\n", thread->tid, domain->friendly_name); */
 
 		ves_icall_System_Threading_Thread_Abort (thread, NULL);
 
 		if(data->wait.num<MAXIMUM_WAIT_OBJECTS) {
+			HANDLE handle = OpenThread (THREAD_ALL_ACCESS, TRUE, thread->tid);
+			if (handle == NULL)
+				return;
 			data->wait.handles [data->wait.num] = handle;
 			data->wait.threads [data->wait.num] = thread;
 			data->wait.num++;

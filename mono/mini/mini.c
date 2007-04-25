@@ -383,19 +383,19 @@ mono_jump_info_token_new (MonoMemPool *mp, MonoImage *image, guint32 token)
  * block_num: unique ID assigned at bblock creation
  */
 #define NEW_BBLOCK(cfg) (mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoBasicBlock)))
-#define ADD_BBLOCK(cfg,bbhash,b) do {	\
-		g_hash_table_insert (bbhash, (b)->cil_code, (b));	\
+#define ADD_BBLOCK(cfg,b) do {	\
+		cfg->cil_offset_to_bb [(b)->cil_code - cfg->cil_start] = (b);	\
 		(b)->block_num = cfg->num_bblocks++;	\
 		(b)->real_offset = real_offset;	\
 	} while (0)
 
-#define GET_BBLOCK(cfg,bbhash,tblock,ip) do {	\
-		(tblock) = g_hash_table_lookup (bbhash, (ip));	\
+#define GET_BBLOCK(cfg,tblock,ip) do {	\
+		(tblock) = cfg->cil_offset_to_bb [(ip) - cfg->cil_start]; \
 		if (!(tblock)) {	\
 			if ((ip) >= end || (ip) < header->code) UNVERIFIED; \
 			(tblock) = NEW_BBLOCK (cfg);	\
 			(tblock)->cil_code = (ip);	\
-			ADD_BBLOCK (cfg, (bbhash), (tblock));	\
+			ADD_BBLOCK (cfg, (tblock));	\
 		} \
 	} while (0)
 
@@ -686,7 +686,7 @@ mono_jump_info_token_new (MonoMemPool *mp, MonoImage *image, guint32 token)
 		ins->inst_i0 = cmp;	\
 		MONO_ADD_INS (bblock, ins);	\
 		ins->inst_many_bb = mono_mempool_alloc (cfg->mempool, sizeof(gpointer)*2);	\
-		GET_BBLOCK (cfg, bbhash, tblock, target);		\
+		GET_BBLOCK (cfg, tblock, target);		\
 		link_bblock (cfg, bblock, tblock);	\
 		ins->inst_true_bb = tblock;	\
 		CHECK_BBLOCK (target, ip, tblock);	\
@@ -695,7 +695,7 @@ mono_jump_info_token_new (MonoMemPool *mp, MonoImage *image, guint32 token)
 			ins->inst_false_bb = (next_block);	\
 			start_new_bblock = 1;	\
 		} else {	\
-			GET_BBLOCK (cfg, bbhash, tblock, ip);		\
+			GET_BBLOCK (cfg, tblock, ip);		\
 			link_bblock (cfg, bblock, tblock);	\
 			ins->inst_false_bb = tblock;	\
 			start_new_bblock = 2;	\
@@ -728,11 +728,11 @@ mono_jump_info_token_new (MonoMemPool *mp, MonoImage *image, guint32 token)
 		ins->opcode = (istrue)? CEE_BNE_UN: CEE_BEQ;	\
 		MONO_ADD_INS (bblock, ins);	\
 		ins->inst_many_bb = mono_mempool_alloc (cfg->mempool, sizeof(gpointer)*2);	\
-		GET_BBLOCK (cfg, bbhash, tblock, target);		\
+		GET_BBLOCK (cfg, tblock, target);		\
 		link_bblock (cfg, bblock, tblock);	\
 		ins->inst_true_bb = tblock;	\
 		CHECK_BBLOCK (target, ip, tblock);	\
-		GET_BBLOCK (cfg, bbhash, tblock, ip);		\
+		GET_BBLOCK (cfg, tblock, ip);		\
 		link_bblock (cfg, bblock, tblock);	\
 		ins->inst_false_bb = tblock;	\
 		start_new_bblock = 2;	\
@@ -937,7 +937,7 @@ mono_find_final_block (MonoCompile *cfg, unsigned char *ip, unsigned char *targe
 		if (MONO_OFFSET_IN_CLAUSE (clause, (ip - header->code)) && 
 		    (!MONO_OFFSET_IN_CLAUSE (clause, (target - header->code)))) {
 			if (clause->flags == type) {
-				handler = g_hash_table_lookup (cfg->bb_hash, header->code + clause->handler_offset);
+				handler = cfg->cil_offset_to_bb [clause->handler_offset];
 				g_assert (handler);
 				res = g_list_append (res, handler);
 			}
@@ -1010,32 +1010,22 @@ df_visit (MonoBasicBlock *start, int *dfn, MonoBasicBlock **array)
 	}
 }
 
-typedef struct {
-	const guchar *code;
-	MonoBasicBlock *best;
-} PrevStruct;
-
-static void
-previous_foreach (gconstpointer key, gpointer val, gpointer data)
-{
-	PrevStruct *p = data;
-	MonoBasicBlock *bb = val;
-	//printf ("FIDPREV %d %p  %p %p %p %p %d %d %d\n", bb->block_num, p->code, bb, p->best, bb->cil_code, p->best->cil_code,
-	//bb->method == p->best->method, bb->cil_code < p->code, bb->cil_code > p->best->cil_code);
-
-	if (bb->cil_code && bb->cil_code < p->code && bb->cil_code > p->best->cil_code)
-		p->best = bb;
-}
-
 static MonoBasicBlock*
-find_previous (GHashTable *bb_hash, MonoBasicBlock *start, const guchar *code) {
-	PrevStruct p;
+find_previous (MonoBasicBlock **bblocks, guint32 n_bblocks, MonoBasicBlock *start, const guchar *code)
+{
+	MonoBasicBlock *best = start;
+	int i;
 
-	p.code = code;
-	p.best = start;
+	for (i = 0; i < n_bblocks; ++i) {
+		if (bblocks [i]) {
+			MonoBasicBlock *bb = bblocks [i];
 
-	g_hash_table_foreach (bb_hash, (GHFunc)previous_foreach, &p);
-	return p.best;
+			if (bb->cil_code && bb->cil_code < code && bb->cil_code > best->cil_code)
+				best = bb;
+		}
+	}
+
+	return best;
 }
 
 static void
@@ -1817,7 +1807,8 @@ mono_compile_create_var_for_vreg (MonoCompile *cfg, MonoType *type, int opcode, 
 #endif
 
 	cfg->num_varinfo++;
-	//g_print ("created temp %d of type %s\n", num, mono_type_get_name (type));
+	if (cfg->verbose_level > 2)
+		g_print ("created temp %d of type %s\n", num, mono_type_get_name (type));
 	return inst;
 }
 
@@ -1884,7 +1875,14 @@ type_from_stack_type (MonoInst *ins) {
 			return &ins->klass->this_arg;
 		else
 			return &mono_defaults.object_class->this_arg;
-	case STACK_OBJ: return &mono_defaults.object_class->byval_arg;
+	case STACK_OBJ:
+		/* ins->klass may not be set for ldnull.
+		 * Also, if we have a boxed valuetype, we want an object lass,
+		 * not the valuetype class
+		 */
+		if (ins->klass && !ins->klass->valuetype)
+			return &ins->klass->byval_arg;
+		return &mono_defaults.object_class->byval_arg;
 	case STACK_VTYPE: return &ins->klass->byval_arg;
 	default:
 		g_error ("stack type %d to montype not handled\n", ins->type);
@@ -1898,7 +1896,7 @@ mono_type_from_stack_type (MonoInst *ins) {
 }
 
 static MonoClass*
-array_access_to_klass (int opcode)
+array_access_to_klass (int opcode, MonoInst *array_obj)
 {
 	switch (opcode) {
 	case CEE_LDELEM_U1:
@@ -1929,8 +1927,13 @@ array_access_to_klass (int opcode)
 	case CEE_STELEM_R8:
 		return mono_defaults.double_class;
 	case CEE_LDELEM_REF:
-	case CEE_STELEM_REF:
+	case CEE_STELEM_REF: {
+		MonoClass *klass = array_obj->klass;
+		/* FIXME: add assert */
+		if (klass && klass->rank)
+			return klass->element_class;
 		return mono_defaults.object_class;
+	}
 	default:
 		g_assert_not_reached ();
 	}
@@ -2331,11 +2334,16 @@ handle_stack_args (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst **sp, int coun
 				 * in the inlined methods do not inherit their in_stack from
 				 * the bblock they are inlined to. See bug #58863 for an
 				 * example.
+				 * This hack is disabled since it also prevents proper tracking of types.
 				 */
+#if 1
+				bb->out_stack [i] = mono_compile_create_var (cfg, type_from_stack_type (sp [i]), OP_LOCAL);
+#else
 				if (cfg->inlined_method)
 					bb->out_stack [i] = mono_compile_create_var (cfg, type_from_stack_type (sp [i]), OP_LOCAL);
 				else
 					bb->out_stack [i] = mono_compile_get_interface_var (cfg, i, sp [i]);
+#endif
 			}
 		}
 	}
@@ -2563,9 +2571,20 @@ target_type_is_incompatible (MonoCompile *cfg, MonoType *target, MonoInst *arg)
 		if (arg->type != STACK_I4 && arg->type != STACK_PTR)
 			return 1;
 		return 0;
-	case MONO_TYPE_CLASS:
-	case MONO_TYPE_STRING:
 	case MONO_TYPE_OBJECT:
+		if (arg->type != STACK_OBJ)
+			return 1;
+		return 0;
+	case MONO_TYPE_STRING:
+		if (arg->type != STACK_OBJ)
+			return 1;
+		/* ldnull has arg->klass unset */
+		/*if (arg->klass && arg->klass != mono_defaults.string_class) {
+			G_BREAKPOINT ();
+			return 1;
+		}*/
+		return 0;
+	case MONO_TYPE_CLASS:
 	case MONO_TYPE_SZARRAY:
 	case MONO_TYPE_ARRAY:    
 		if (arg->type != STACK_OBJ)
@@ -2787,7 +2806,7 @@ mono_emit_call_args (MonoCompile *cfg, MonoBasicBlock *bblock, MonoMethodSignatu
 	{
 		int i;
 		for (i = 0; i < sig->param_count; ++i) {
-			if (sig->params [i]->type == MONO_TYPE_R4) {
+			if (!sig->params [i]->byref && sig->params [i]->type == MONO_TYPE_R4) {
 				MonoInst *iargs [1];
 				int temp;
 				iargs [0] = args [i + sig->hasthis];
@@ -3406,7 +3425,7 @@ mono_method_check_inlining (MonoCompile *cfg, MonoMethod *method)
 		}
 #ifdef MONO_ARCH_SOFT_FLOAT
 		/* this complicates things, fix later */
-		if (signature->params [i]->type == MONO_TYPE_R4)
+		if (!signature->params [i]->byref && signature->params [i]->type == MONO_TYPE_R4)
 			return FALSE;
 #endif
 	}
@@ -3749,6 +3768,10 @@ inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig,
 	MonoBasicBlock *ebblock, *sbblock;
 	int i, costs, new_locals_offset;
 	MonoMethod *prev_inlined_method;
+	MonoBasicBlock **prev_cil_offset_to_bb;
+	unsigned char* prev_cil_start;
+	guint32 prev_cil_offset_to_bb_len;
+
 #if (MONO_INLINE_CALLED_LIMITED_METHODS)
 	if ((! inline_allways) && ! check_inline_called_method_name_limit (cmethod))
 		return 0;
@@ -3790,10 +3813,16 @@ inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig,
 
 	prev_inlined_method = cfg->inlined_method;
 	cfg->inlined_method = cmethod;
+	prev_cil_offset_to_bb = cfg->cil_offset_to_bb;
+	prev_cil_offset_to_bb_len = cfg->cil_offset_to_bb_len;
+	prev_cil_start = cfg->cil_start;
 
 	costs = mono_method_to_ir (cfg, cmethod, sbblock, ebblock, new_locals_offset, rvar, dont_inline, sp, real_offset, *ip == CEE_CALLVIRT);
 
 	cfg->inlined_method = prev_inlined_method;
+	cfg->cil_offset_to_bb = prev_cil_offset_to_bb;
+	cfg->cil_offset_to_bb_len = prev_cil_offset_to_bb_len;
+	cfg->cil_start = prev_cil_start;
 
 	if ((costs >= 0 && costs < 60) || inline_allways) {
 		if (cfg->verbose_level > 2)
@@ -3844,8 +3873,6 @@ inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig,
  * or through repeated runs where the compiler applies offline the optimizations to 
  * each method and then decides if it was worth it.
  *
- * TODO:
- * * consider using an array instead of an hash table (bb_hash)
  */
 
 #define CHECK_TYPE(ins) if (!(ins)->type) UNVERIFIED
@@ -3860,16 +3887,16 @@ inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig,
 /* offset from br.s -> br like opcodes */
 #define BIG_BRANCH_OFFSET 13
 
-static gboolean
+static inline gboolean
 ip_in_bb (MonoCompile *cfg, MonoBasicBlock *bb, const guint8* ip)
 {
-	MonoBasicBlock *b = g_hash_table_lookup (cfg->bb_hash, ip);
+	MonoBasicBlock *b = cfg->cil_offset_to_bb [ip - cfg->cil_start];
 	
 	return b == NULL || b == bb;
 }
 
 static int
-get_basic_blocks (MonoCompile *cfg, GHashTable *bbhash, MonoMethodHeader* header, guint real_offset, unsigned char *start, unsigned char *end, unsigned char **pos)
+get_basic_blocks (MonoCompile *cfg, MonoMethodHeader* header, guint real_offset, unsigned char *start, unsigned char *end, unsigned char **pos)
 {
 	unsigned char *ip = start;
 	unsigned char *target;
@@ -3907,17 +3934,17 @@ get_basic_blocks (MonoCompile *cfg, GHashTable *bbhash, MonoMethodHeader* header
 			break;
 		case MonoShortInlineBrTarget:
 			target = start + cli_addr + 2 + (signed char)ip [1];
-			GET_BBLOCK (cfg, bbhash, bblock, target);
+			GET_BBLOCK (cfg, bblock, target);
 			ip += 2;
 			if (ip < end)
-				GET_BBLOCK (cfg, bbhash, bblock, ip);
+				GET_BBLOCK (cfg, bblock, ip);
 			break;
 		case MonoInlineBrTarget:
 			target = start + cli_addr + 5 + (gint32)read32 (ip + 1);
-			GET_BBLOCK (cfg, bbhash, bblock, target);
+			GET_BBLOCK (cfg, bblock, target);
 			ip += 5;
 			if (ip < end)
-				GET_BBLOCK (cfg, bbhash, bblock, ip);
+				GET_BBLOCK (cfg, bblock, ip);
 			break;
 		case MonoInlineSwitch: {
 			guint32 n = read32 (ip + 1);
@@ -3925,11 +3952,11 @@ get_basic_blocks (MonoCompile *cfg, GHashTable *bbhash, MonoMethodHeader* header
 			ip += 5;
 			cli_addr += 5 + 4 * n;
 			target = start + cli_addr;
-			GET_BBLOCK (cfg, bbhash, bblock, target);
+			GET_BBLOCK (cfg, bblock, target);
 			
 			for (j = 0; j < n; ++j) {
 				target = start + cli_addr + (gint32)read32 (ip);
-				GET_BBLOCK (cfg, bbhash, bblock, target);
+				GET_BBLOCK (cfg, bblock, target);
 				ip += 4;
 			}
 			break;
@@ -3948,7 +3975,7 @@ get_basic_blocks (MonoCompile *cfg, GHashTable *bbhash, MonoMethodHeader* header
 			/* Find the start of the bblock containing the throw */
 			bblock = NULL;
 			while ((bb_start >= start) && !bblock) {
-				bblock = g_hash_table_lookup (bbhash, (bb_start));
+				bblock = cfg->cil_offset_to_bb [(bb_start) - start];
 				bb_start --;
 			}
 			if (bblock)
@@ -4078,6 +4105,13 @@ can_access_internals (MonoAssembly *accessing, MonoAssembly* accessed)
 static gboolean
 can_access_member (MonoClass *access_klass, MonoClass *member_klass, int access_level)
 {
+	if (access_klass->generic_class && member_klass->generic_class &&
+	    access_klass->generic_class->container_class && member_klass->generic_class->container_class) {
+		if (can_access_member (access_klass->generic_class->container_class,
+				       member_klass->generic_class->container_class, access_level))
+			return TRUE;
+	}
+
 	/* Partition I 8.5.3.2 */
 	/* the access level values are the same for fields and methods */
 	switch (access_level) {
@@ -4085,12 +4119,10 @@ can_access_member (MonoClass *access_klass, MonoClass *member_klass, int access_
 		/* same compilation unit */
 		return access_klass->image == member_klass->image;
 	case FIELD_ATTRIBUTE_PRIVATE:
-		if (access_klass->generic_class && member_klass->generic_class && member_klass->generic_class->container_class)
-			return member_klass->generic_class->container_class == access_klass->generic_class->container_class;
 		return access_klass == member_klass;
 	case FIELD_ATTRIBUTE_FAM_AND_ASSEM:
 		if (mono_class_has_parent (access_klass, member_klass) &&
-				can_access_internals (access_klass->image->assembly, member_klass->image->assembly))
+		    can_access_internals (access_klass->image->assembly, member_klass->image->assembly))
 			return TRUE;
 		return FALSE;
 	case FIELD_ATTRIBUTE_ASSEMBLY:
@@ -4175,6 +4207,8 @@ initialize_array_data (MonoMethod *method, gboolean aot, unsigned char *ip, Mono
 		if (newarr->inst_newa_len->opcode != OP_ICONST)
 			return NULL;
 		cmethod = mini_get_method (method, token, NULL, NULL);
+		if (!cmethod)
+			return NULL;
 		if (strcmp (cmethod->name, "InitializeArray") || strcmp (cmethod->klass->name, "RuntimeHelpers") || cmethod->klass->image != mono_defaults.corlib)
 			return NULL;
 		switch (mono_type_get_underlying_type (&klass->byval_arg)->type) {
@@ -4229,7 +4263,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 	MonoInst *zero_int32, *zero_int64, *zero_ptr, *zero_obj, *zero_r8;
 	MonoInst *ins, **sp, **stack_start;
 	MonoBasicBlock *bblock, *tblock = NULL, *init_localsbb = NULL;
-	GHashTable *bbhash;
 	MonoMethod *cmethod;
 	MonoInst **arg_array;
 	MonoMethodHeader *header;
@@ -4277,6 +4310,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 	sig = mono_method_signature (method);
 	num_args = sig->hasthis + sig->param_count;
 	ip = (unsigned char*)header->code;
+	cfg->cil_start = ip;
 	end = ip + header->code_size;
 	mono_jit_stats.cil_code_size += header->code_size;
 
@@ -4287,13 +4321,13 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 	g_assert (!sig->has_type_parameters);
 
-	if (cfg->method == method) {
+	if (cfg->method == method)
 		real_offset = 0;
-		bbhash = cfg->bb_hash;
-	} else {
+	else
 		real_offset = inline_offset;
-		bbhash = g_hash_table_new (g_direct_hash, NULL);
-	}
+
+	cfg->cil_offset_to_bb = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoBasicBlock*) * header->code_size);
+	cfg->cil_offset_to_bb_len = header->code_size;
 
 	if (cfg->verbose_level > 2)
 		g_print ("method to IR %s\n", mono_method_full_name (method, TRUE));
@@ -4329,9 +4363,9 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 		for (i = 0; i < header->num_clauses; ++i) {
 			MonoBasicBlock *try_bb;
 			MonoExceptionClause *clause = &header->clauses [i];
-			GET_BBLOCK (cfg, bbhash, try_bb, ip + clause->try_offset);
+			GET_BBLOCK (cfg, try_bb, ip + clause->try_offset);
 			try_bb->real_offset = clause->try_offset;
-			GET_BBLOCK (cfg, bbhash, tblock, ip + clause->handler_offset);
+			GET_BBLOCK (cfg, tblock, ip + clause->handler_offset);
 			tblock->real_offset = clause->handler_offset;
 			tblock->flags |= BB_EXCEPTION_HANDLER;
 
@@ -4380,7 +4414,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				MONO_ADD_INS (tblock, dummy_use);
 				
 				if (clause->flags == MONO_EXCEPTION_CLAUSE_FILTER) {
-					GET_BBLOCK (cfg, bbhash, tblock, ip + clause->data.filter_offset);
+					GET_BBLOCK (cfg, tblock, ip + clause->data.filter_offset);
 					tblock->real_offset = clause->data.filter_offset;
 					tblock->in_scount = 1;
 					tblock->in_stack = mono_mempool_alloc (cfg->mempool, sizeof (MonoInst*));
@@ -4405,7 +4439,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 	bblock = NEW_BBLOCK (cfg);
 	bblock->cil_code = ip;
 
-	ADD_BBLOCK (cfg, bbhash, bblock);
+	ADD_BBLOCK (cfg, bblock);
 
 	if (cfg->method == method) {
 		breakpoint_id = mono_debugger_method_has_breakpoint (method);
@@ -4500,7 +4534,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 		mono_emit_method_call_spilled (cfg, init_localsbb, secman->demandunmanaged, mono_method_signature (secman->demandunmanaged), NULL, ip, NULL);
 	}
 
-	if (get_basic_blocks (cfg, bbhash, header, real_offset, ip, end, &err_pos)) {
+	if (get_basic_blocks (cfg, header, real_offset, ip, end, &err_pos)) {
 		ip = err_pos;
 		UNVERIFIED;
 	}
@@ -4556,7 +4590,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			if (start_new_bblock == 2) {
 				g_assert (ip == tblock->cil_code);
 			} else {
-				GET_BBLOCK (cfg, bbhash, tblock, ip);
+				GET_BBLOCK (cfg, tblock, ip);
 			}
 			bblock->next_bb = tblock;
 			bblock = tblock;
@@ -4570,7 +4604,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			g_slist_free (class_inits);
 			class_inits = NULL;
 		} else {
-			if ((tblock = g_hash_table_lookup (bbhash, ip)) && (tblock != bblock)) {
+			if ((tblock = cfg->cil_offset_to_bb [ip - cfg->cil_start]) && (tblock != bblock)) {
 				link_bblock (cfg, bblock, tblock);
 				if (sp != stack_start) {
 					handle_stack_args (cfg, bblock, stack_start, sp - stack_start);
@@ -4938,6 +4972,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				} else if (constrained_call) {
 					cmethod = mono_get_method_constrained (image, token, constrained_call, generic_context, &cil_method);
 					cmethod = mono_get_inflated_method (cmethod);
+					cil_method = cmethod;
 				} else {
 					cmethod = mini_get_method (method, token, NULL, generic_context);
 					cil_method = cmethod;
@@ -5160,7 +5195,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					ip += 5;
 					real_offset += 5;
 
-					GET_BBLOCK (cfg, bbhash, bblock, ip);
+					GET_BBLOCK (cfg, bblock, ip);
 					ebblock->next_bb = bblock;
 					link_bblock (cfg, ebblock, bblock);
 
@@ -5355,7 +5390,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			MONO_ADD_INS (bblock, ins);
 			target = ip + 1 + (signed char)(*ip);
 			++ip;
-			GET_BBLOCK (cfg, bbhash, tblock, target);
+			GET_BBLOCK (cfg, tblock, target);
 			link_bblock (cfg, bblock, tblock);
 			CHECK_BBLOCK (target, ip, tblock);
 			ins->inst_target_bb = tblock;
@@ -5431,7 +5466,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			MONO_ADD_INS (bblock, ins);
 			target = ip + 4 + (gint32)read32(ip);
 			ip += 4;
-			GET_BBLOCK (cfg, bbhash, tblock, target);
+			GET_BBLOCK (cfg, tblock, target);
 			link_bblock (cfg, bblock, tblock);
 			CHECK_BBLOCK (target, ip, tblock);
 			ins->inst_target_bb = tblock;
@@ -5514,14 +5549,14 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			CHECK_OPSIZE (n * sizeof (guint32));
 			target = ip + n * sizeof (guint32);
 			MONO_ADD_INS (bblock, ins);
-			GET_BBLOCK (cfg, bbhash, tblock, target);
+			GET_BBLOCK (cfg, tblock, target);
 			link_bblock (cfg, bblock, tblock);
 			ins->klass = GUINT_TO_POINTER (n);
 			ins->inst_many_bb = mono_mempool_alloc (cfg->mempool, sizeof (MonoBasicBlock*) * (n + 1));
 			ins->inst_many_bb [n] = tblock;
 
 			for (i = 0; i < n; ++i) {
-				GET_BBLOCK (cfg, bbhash, tblock, target + (gint32)read32(ip));
+				GET_BBLOCK (cfg, tblock, target + (gint32)read32(ip));
 				link_bblock (cfg, bblock, tblock);
 				ins->inst_many_bb [i] = tblock;
 				ip += 4;
@@ -5863,6 +5898,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			n = read32 (ip + 1);
 
 			if (method->wrapper_type == MONO_WRAPPER_DYNAMIC_METHOD) {
+				/* FIXME: moving GC */
 				NEW_PCONST (cfg, ins, mono_method_get_wrapper_data (method, n));
 				ins->cil_code = ip;
 				ins->type = STACK_OBJ;
@@ -5885,6 +5921,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					MonoInst* domain_var;
 					
 					if (cfg->compile_aot) {
+						/* FIXME: bug when inlining methods from different assemblies (n is a token valid just in one). */
 						cfg->ldstr_list = g_list_prepend (cfg->ldstr_list, GINT_TO_POINTER (n));
 					}
 					/* avoid depending on undefined C behavior in sequence points */
@@ -6011,7 +6048,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 						ip += 5;
 						real_offset += 5;
 						
-						GET_BBLOCK (cfg, bbhash, bblock, ip);
+						GET_BBLOCK (cfg, bblock, ip);
 						ebblock->next_bb = bblock;
 						link_bblock (cfg, ebblock, bblock);
 
@@ -6077,7 +6114,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				ip += 5;
 				real_offset += 5;
 			
-				GET_BBLOCK (cfg, bbhash, bblock, ip);
+				GET_BBLOCK (cfg, bblock, ip);
 				ebblock->next_bb = bblock;
 				link_bblock (cfg, ebblock, bblock);
 
@@ -6129,7 +6166,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					ip += 5;
 					real_offset += 5;
 				
-					GET_BBLOCK (cfg, bbhash, bblock, ip);
+					GET_BBLOCK (cfg, bblock, ip);
 					ebblock->next_bb = bblock;
 					link_bblock (cfg, ebblock, bblock);
 	
@@ -6271,7 +6308,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				ip += 5;
 				real_offset += 5;
 			
-				GET_BBLOCK (cfg, bbhash, bblock, ip);
+				GET_BBLOCK (cfg, bblock, ip);
 				ebblock->next_bb = bblock;
 				link_bblock (cfg, ebblock, bblock);
 
@@ -6366,7 +6403,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 						ip += 5;
 						real_offset += 5;
 
-						GET_BBLOCK (cfg, bbhash, bblock, ip);
+						GET_BBLOCK (cfg, bblock, ip);
 						ebblock->next_bb = bblock;
 						link_bblock (cfg, ebblock, bblock);
 
@@ -6446,7 +6483,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 						ip += 5;
 						real_offset += 5;
 
-						GET_BBLOCK (cfg, bbhash, bblock, ip);
+						GET_BBLOCK (cfg, bblock, ip);
 						ebblock->next_bb = bblock;
 						link_bblock (cfg, ebblock, bblock);
 
@@ -6761,10 +6798,12 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					target = ip + 4 + (gint)(read32 (ip));
 					ip += 4;
 				}
-				GET_BBLOCK (cfg, bbhash, tblock, target);
+				GET_BBLOCK (cfg, tblock, target);
 				link_bblock (cfg, bblock, tblock);
 				CHECK_BBLOCK (target, ip, tblock);
 				ins->inst_target_bb = tblock;
+				GET_BBLOCK (cfg, tblock, ip);
+				link_bblock (cfg, bblock, tblock);
 				if (sp != stack_start) {
 					handle_stack_args (cfg, bblock, stack_start, sp - stack_start);
 					sp = stack_start;
@@ -6802,7 +6841,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			ins->inst_newa_class = klass;
 			ins->inst_newa_len = *sp;
 			ins->type = STACK_OBJ;
-			ins->klass = klass;
+			ins->klass = mono_array_class_get (klass, 1);
 			ip += 5;
 			*sp++ = ins;
 			/* 
@@ -6938,7 +6977,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			sp -= 2;
 			if (sp [0]->type != STACK_OBJ)
 				UNVERIFIED;
-			klass = array_access_to_klass (*ip);
+			klass = array_access_to_klass (*ip, sp [0]);
 			NEW_LDELEMA (cfg, load, sp, klass);
 			load->cil_code = ip;
 #ifdef MONO_ARCH_SOFT_FLOAT
@@ -6977,7 +7016,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			sp -= 3;
 			if (sp [0]->type != STACK_OBJ)
 				UNVERIFIED;
-			klass = array_access_to_klass (*ip);
+			klass = array_access_to_klass (*ip, sp [0]);
 			NEW_LDELEMA (cfg, load, sp, klass);
 			load->cil_code = ip;
 #ifdef MONO_ARCH_SOFT_FLOAT
@@ -7317,7 +7356,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			MONO_INST_NEW (cfg, ins, OP_BR);
 			ins->cil_code = ip;
 			MONO_ADD_INS (bblock, ins);
-			GET_BBLOCK (cfg, bbhash, tblock, target);
+			GET_BBLOCK (cfg, tblock, target);
 			link_bblock (cfg, bblock, tblock);
 			CHECK_BBLOCK (target, ip, tblock);
 			ins->inst_target_bb = tblock;
@@ -8017,7 +8056,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 	for (tmp = bb_recheck; tmp; tmp = tmp->next) {
 		bblock = tmp->data;
 		/*g_print ("need recheck in %s at IL_%04x\n", method->name, bblock->cil_code - header->code);*/
-		tblock = find_previous (bbhash, start_bblock, bblock->cil_code);
+		tblock = find_previous (cfg->cil_offset_to_bb, header->code_size, start_bblock, bblock->cil_code);
 		if (tblock != start_bblock) {
 			int l;
 			split_bblock (cfg, tblock, bblock);
@@ -8038,8 +8077,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			if (cfg->verbose_level > 2)
 				g_print ("REGION BB%d IL_%04x ID_%08X\n", bb->block_num, bb->real_offset, bb->region);
 		}
-	} else {
-		g_hash_table_destroy (bbhash);
 	}
 
 	g_slist_free (class_inits);
@@ -8059,23 +8096,17 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 	return inline_costs;
 
  inline_failure:
-	if (cfg->method != method) 
-		g_hash_table_destroy (bbhash);
 	g_slist_free (class_inits);
 	dont_inline = g_list_remove (dont_inline, method);
 	return -1;
 
  load_error:
-	if (cfg->method != method)
-		g_hash_table_destroy (bbhash);
 	g_slist_free (class_inits);
 	dont_inline = g_list_remove (dont_inline, method);
 	cfg->exception_type = MONO_EXCEPTION_TYPE_LOAD;
 	return -1;
 
  unverified:
-	if (cfg->method != method) 
-		g_hash_table_destroy (bbhash);
 	g_slist_free (class_inits);
 	dont_inline = g_list_remove (dont_inline, method);
 	cfg->exception_type = MONO_EXCEPTION_INVALID_PROGRAM;
@@ -9262,7 +9293,6 @@ void
 mono_destroy_compile (MonoCompile *cfg)
 {
 	//mono_mempool_stats (cfg->mempool);
-	g_hash_table_destroy (cfg->bb_hash);
 	mono_free_loop_info (cfg);
 	if (cfg->rs)
 		mono_regstate_free (cfg->rs);
@@ -11059,8 +11089,6 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	cfg->opt = opts;
 	cfg->prof_options = mono_profiler_get_events ();
 	cfg->run_cctors = run_cctors;
-	if (!cfg->new_ir)
-		cfg->bb_hash = g_hash_table_new (NULL, NULL);
 	cfg->domain = domain;
 	cfg->verbose_level = mini_verbose;
 	cfg->compile_aot = compile_aot;
@@ -11468,34 +11496,22 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 			ei->exvar_offset = exvar ? exvar->inst_offset : 0;
 
 			if (ei->flags == MONO_EXCEPTION_CLAUSE_FILTER) {
-				if (cfg->new_ir)
-					tblock = cfg->cil_offset_to_bb [ec->data.filter_offset];
-				else
-					tblock = g_hash_table_lookup (cfg->bb_hash, ip + ec->data.filter_offset);
+				tblock = cfg->cil_offset_to_bb [ec->data.filter_offset];
 				g_assert (tblock);
 				ei->data.filter = cfg->native_code + tblock->native_offset;
 			} else {
 				ei->data.catch_class = ec->data.catch_class;
 			}
 
-			if (cfg->new_ir)
-				tblock = cfg->cil_offset_to_bb [ec->try_offset];
-			else
-				tblock = g_hash_table_lookup (cfg->bb_hash, ip + ec->try_offset);
+			tblock = cfg->cil_offset_to_bb [ec->try_offset];
 			g_assert (tblock);
 			ei->try_start = cfg->native_code + tblock->native_offset;
 			g_assert (tblock->native_offset);
-			if (cfg->new_ir)
-				tblock = cfg->cil_offset_to_bb [ec->try_offset + ec->try_len];
-			else
-				tblock = g_hash_table_lookup (cfg->bb_hash, ip + ec->try_offset + ec->try_len);
+			tblock = cfg->cil_offset_to_bb [ec->try_offset + ec->try_len];
 			g_assert (tblock);
 			ei->try_end = cfg->native_code + tblock->native_offset;
 			g_assert (tblock->native_offset);
-			if (cfg->new_ir)
-				tblock = cfg->cil_offset_to_bb [ec->handler_offset];
-			else
-				tblock = g_hash_table_lookup (cfg->bb_hash, ip + ec->handler_offset);
+			tblock = cfg->cil_offset_to_bb [ec->handler_offset];
 			g_assert (tblock);
 			ei->handler_start = cfg->native_code + tblock->native_offset;
 		}
@@ -12356,8 +12372,13 @@ win32_time_proc (UINT uID, UINT uMsg, DWORD dwUser, DWORD dw1, DWORD dw2)
 	CONTEXT context;
 
 	context.ContextFlags = CONTEXT_CONTROL;
-	if (GetThreadContext (win32_main_thread, &context))
+	if (GetThreadContext (win32_main_thread, &context)) {
+#ifdef _WIN64
+		mono_profiler_stat_hit ((guchar *) context.Rip, &context);
+#else
 		mono_profiler_stat_hit ((guchar *) context.Eip, &context);
+#endif
+	}
 }
 #endif
 

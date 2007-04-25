@@ -1,15 +1,13 @@
 AUTOMAKE_OPTIONS = foreign
 ACLOCAL_AMFLAGS = -I .
 
-SUBDIRS = $(libgc_dir) mono $(ikvm_native_dir) support docs data runtime scripts man samples web 
+SUBDIRS = $(libgc_dir) mono $(ikvm_native_dir) support docs data runtime scripts man samples web msvc
 
 # Keep in sync with SUBDIRS
 ## 'tools' is not normally built
-DIST_SUBDIRS = libgc mono ikvm-native support docs data runtime scripts man samples web tools 
+DIST_SUBDIRS = libgc mono ikvm-native support docs data runtime scripts man samples web tools msvc
 
-vs_files = genmdesc.vcproj libmono.vcproj mono.vcproj mono.sln
-
-EXTRA_DIST= mono.pc.in mint.pc.in mono-uninstalled.pc.in dotnet.pc.in mono-cairo.pc.in LICENSE $(vs_files)
+EXTRA_DIST= mono.pc.in mint.pc.in mono-uninstalled.pc.in dotnet.pc.in mono-cairo.pc.in LICENSE
 
 DISTCHECK_CONFIGURE_FLAGS = EXTERNAL_MCS=false EXTERNAL_RUNTIME=false
 

@@ -650,7 +650,6 @@ static void
 enter_method (MonoMethod *method, RegParm *rParm, char *sp)
 {
 	int i, oParm = 0, iParm = 0;
-	MonoClass *class;
 	MonoObject *obj;
 	MonoMethodSignature *sig;
 	char *fname;
@@ -660,12 +659,6 @@ enter_method (MonoMethod *method, RegParm *rParm, char *sp)
 	size_data sz;
 	void *curParm;
 
-
-lc++;
-if (lc > 5000000) {
-fseek(stdout, 0L, SEEK_SET);
-lc = 0;
-}
 	fname = mono_method_full_name (method, TRUE);
 	indent (1);
 	printf ("ENTER: %s(", fname);
@@ -1331,8 +1324,8 @@ enum_retvalue:
 			/* Fall through */
 		case MONO_TYPE_VALUETYPE: {
 			MonoClass *klass = mono_class_from_mono_type (sig->ret);
-			if (sig->ret->data.klass->enumtype) {
-				simpletype = sig->ret->data.klass->enum_basetype->type;
+			if (klass->enumtype) {
+				simpletype = klass->enum_basetype->type;
 				goto enum_retvalue;
 			}
 			if (sig->pinvoke)
@@ -1358,7 +1351,7 @@ enum_retvalue:
 		case MONO_TYPE_VOID:
 			break;
 		default:
-			g_error ("Can't handle as return value 0x%x", sig->ret->type);
+			g_error ("mini-s390: cannot handle as return value 0x%x (0x%x)", sig->ret->type,simpletype);
 	}
 
 	if (sig->hasthis) {
@@ -1816,7 +1809,7 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb,
 	MonoMethodSignature *sig;
 	int i, n, lParamArea;
 	CallInfo *cinfo;
-	ArgInfo *ainfo;
+	ArgInfo *ainfo = NULL;
 	size_data sz;
 	int stackSize;
 
@@ -2280,15 +2273,8 @@ peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 			if (last_ins && (last_ins->opcode == OP_STOREI1_MEMBASE_REG) &&
 					ins->inst_basereg == last_ins->inst_destbasereg &&
 					ins->inst_offset == last_ins->inst_offset) {
-				if (ins->dreg == last_ins->sreg1) {
-					last_ins->next = ins->next;				
-					ins = ins->next;				
-					continue;
-				} else {
-					//static int c = 0; printf ("MATCHX %s %d\n", cfg->method->name,c++);
-					ins->opcode = OP_MOVE;
-					ins->sreg1 = last_ins->sreg1;
-				}
+				ins->opcode = (ins->opcode == OP_LOADI1_MEMBASE) ? CEE_CONV_I1 : CEE_CONV_U1;
+				ins->sreg1 = last_ins->sreg1;				
 			}
 			break;
 		case OP_LOADU2_MEMBASE:
@@ -2296,14 +2282,8 @@ peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 			if (last_ins && (last_ins->opcode == OP_STOREI2_MEMBASE_REG) &&
 					ins->inst_basereg == last_ins->inst_destbasereg &&
 					ins->inst_offset == last_ins->inst_offset) {
-				if (ins->dreg == last_ins->sreg1) {
-					last_ins->next = ins->next;				
-					ins = ins->next;				
-					continue;
-				} else {
-					ins->opcode = OP_MOVE;
-					ins->sreg1 = last_ins->sreg1;
-				}
+				ins->opcode = (ins->opcode == OP_LOADI2_MEMBASE) ? CEE_CONV_I2 : CEE_CONV_U2;
+				ins->sreg1 = last_ins->sreg1;				
 			}
 			break;
 		case CEE_CONV_I4:
@@ -2839,7 +2819,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		}
 			break;
 		case OP_LADD: {
-			short int *o[1];
 			s390_alr  (code, s390_r0, ins->sreg1);
 			s390_jnc  (code, 4);
 			s390_ahi  (code, s390_r1, 1);
@@ -3905,32 +3884,52 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			s390_lhi   (code, ins->dreg, 0);
 		}
 			break;
-		case OP_FBEQ:
-			EMIT_COND_BRANCH (ins, S390_CC_EQ|S390_CC_OV);
+		case OP_FBEQ: {
+			short *o;
+			s390_jo	(code, 0); CODEPTR(code, o);
+			EMIT_COND_BRANCH (ins, S390_CC_EQ);
+			PTRSLOT(code, o);
+		}
 			break;
 		case OP_FBNE_UN:
 			EMIT_COND_BRANCH (ins, S390_CC_NE|S390_CC_OV);
 			break;
-		case OP_FBLT:
+		case OP_FBLT: {
+			short *o;
+			s390_jo	(code, 0); CODEPTR(code, o);
 			EMIT_COND_BRANCH (ins, S390_CC_LT);
+			PTRSLOT(code, o);
+		}
 			break;
 		case OP_FBLT_UN:
 			EMIT_COND_BRANCH (ins, S390_CC_LT|S390_CC_OV);
 			break;
-		case OP_FBGT:
+		case OP_FBGT: {
+			short *o;
+			s390_jo	(code, 0); CODEPTR(code, o);
 			EMIT_COND_BRANCH (ins, S390_CC_GT);
+			PTRSLOT(code, o);
+		}
 			break;
 		case OP_FBGT_UN:
 			EMIT_COND_BRANCH (ins, S390_CC_GT|S390_CC_OV);
 			break;
-		case OP_FBGE:
+		case OP_FBGE: {
+			short *o;
+			s390_jo	(code, 0); CODEPTR(code, o);
 			EMIT_COND_BRANCH (ins, S390_CC_GE);
+			PTRSLOT(code, o);
+		}
 			break;
 		case OP_FBGE_UN:
 			EMIT_COND_BRANCH (ins, S390_CC_GE|S390_CC_OV);
 			break;
-		case OP_FBLE:
+		case OP_FBLE: {
+			short *o;
+			s390_jo	(code, 0); CODEPTR(code, o);
 			EMIT_COND_BRANCH (ins, S390_CC_LE);
+			PTRSLOT(code, o);
+		}
 			break;
 		case OP_FBLE_UN:
 			EMIT_COND_BRANCH (ins, S390_CC_LE|S390_CC_OV);
@@ -4603,8 +4602,7 @@ mono_arch_emit_exceptions (MonoCompile *cfg)
 			iExc;
 	guint32		code_size;
 	MonoClass	*exc_classes [MAX_EXC];
-	guint8		*exc_throw_start [MAX_EXC], 
-			*exc_throw_end [MAX_EXC];
+	guint8		*exc_throw_start [MAX_EXC];
 
 	for (patch_info = cfg->patch_info; 
 	     patch_info; 
@@ -4898,9 +4896,9 @@ mono_arch_print_tree (MonoInst *tree, int arity)
 			done = 1;
 			break;
 		case OP_S390_SETF4RET:
-			printf ("[f%ld,f%ld]", 
-				mono_arch_regname (tree->dreg),
-				mono_arch_regname (tree->sreg1));
+			printf ("[%s,%s]", 
+				mono_arch_fregname (tree->dreg),
+				mono_arch_fregname (tree->sreg1));
 			done = 1;
 			break;
 		case OP_TLS_GET:

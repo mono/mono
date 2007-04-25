@@ -1,7 +1,215 @@
+<<<<<<< .working
 2007-04-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (mini_emit_class_check_branch): New helper function.
 
+=======
+2007-04-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (peephole_pass_1): New pass to perform before local regalloc.
+
+	* mini-codegen.c (mono_opcode_to_cond): New helper function to convert conditional 
+	opcodes to the comparison relations.
+
+	* mini-codegen.c (mono_opcode_to_type): New helper function to convert conditional 
+	opcodes to their types.
+	
+	* mini-ia64.c mini-amd64.c: Use mono_opcode_to_cond and mono_opcode_to_type.
+
+	* mini-amd64.c (get_call_info): Allocate the result from the cfg mempool and cache 
+	it in cfg->arch.cinfo.
+
+	* local-propagation.c (mono_local_cprop_bb): Fix a warning.
+
+	* mini.h mini.c branch-opts.c: Change bbhash to be an array and store it in 
+	cfg->cil_offset_to_bb.
+
+2007-04-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* liveness.c (optimize_initlocals): New mini-pass to optimize away dead assignments
+	created becase of initlocals.
+
+2007-04-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-alpha.c cpu-alpha.md: More alpha port work from 
+	Sergey Tikhonov <tsv@solvo.ru>.
+
+2007-04-21  Andreas Faerber  <andreas.faerber@web.de>
+
+	* Makefile.am (BUILT_SOURCES): Fix for automake 1.6.x. Fixes #81417.
+
+2007-04-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* cpu-s390.md (break): Correct the length of break instruction.
+
+Thu Apr 19 16:28:52 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: fix a couple of soft-float issues and comments.
+
+2007-04-15  Miguel de Icaza  <miguel@novell.com>
+
+	* trace.c (is_filenamechar): - is also a filename char.
+
+2007-04-15  Neale Ferguson <neale@sinenomine.net>
+
+	* mini-s390.c: Correct checking for enum type in return value processing.
+
+2007-04-14  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile.am (BUILT_SOURCES): Add 'version.h'.
+	(version.h): Makefile is in the build directory.
+
+2007-04-06  Andreas Faerber  <andreas.faerber@web.de>
+
+	* mini-amd64.h: fix for assertion failure on Solaris/amd64
+
+2007-04-11  Martin Baulig  <martin@ximian.com>
+
+	* mini.c (can_access_member): Fix handling of generic classes;
+	fixes #81259.
+
+2007-04-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c (mono_aot_plt_resolve): Fix disabling of AOT. Fixes #81316.
+
+2007-04-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c: Fix disabling of AOT. Fixes #81316.
+
+Fri Mar 23 20:25:31 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-codegen.c: make sure the right spill amount is
+	used for fp or integer registers (fixes the float_sub_spill() on ppc).
+
+Fri Mar 23 19:43:35 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c: fixes for the fp_branch_nan test.
+
+2007-03-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* basic.cs: Comment out new test which still fails on ia64.
+
+Fri Mar 23 15:54:23 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: immediate shifted or fix (mono_metadata_user_string assert).
+
+Fri Mar 23 12:53:28 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c, mini-ppc.h: struct passing ABI fix (bug #77968).
+
+2007-03-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* cfold.c (FOLD_BINOP): Cast the result to gint32 to prevent overflow problems
+	on 64 bit machines. Fixes part of #80738.
+
+	* basic.cs: Add regression test.
+
+2007-03-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* inssel.brg basic.cs: Revert previous change to fix build.
+
+	* inssel.brg (SWITCH): Clean out the upper word of the switch value on 64 bit
+	platforms.
+	
+	* inssel.brg (SWITCH): Use an integer comparison. Fixes #80738.
+
+	* basic.cs: Add new regression test.
+
+2007-03-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-ia64.c (mono_arch_emit_prolog): Fix an assert when a function has too
+	many arguments.
+
+2007-03-16  Neale Ferguson <neale@sinenomine.net>
+
+	* cpu-s390x.md: Correct length of break instruction.
+
+2007-03-16  Neale Ferguson <neale@sinenomine.net>
+
+	* mini-s390x.c, cpu-s390x.md: Fix #80507 for s390x.
+	* mini-s390.c, cpu-s390.md: Fix #80507 for s390.
+
+2007-03-15  Jonathan Chambers  <joncham@gmail.com>
+
+	* *.c: Begin WIN64 port.
+	* mini.c:  Use correct register in profiler.
+	* mini-amd64.c: No inline assembly on Win64.
+	* mini-amd64.h: Implement MONO_INIT_CONTEXT_FROM_FUNC for Win64.
+	Only define MONO_ARCH_USE_SIGACTION on non-windows platforms.
+	* exceptions-amd64.c: Only need gregs_from_ucontext if MONO_ARCH_USE_SIGACTION
+	is defined. Implement mono_arch_sigctx_to_monoctx, mono_arch_monoctx_to_sigctx, and
+	mono_arch_ip_from_context for Win64.
+	
+	Contributed under MIT/X11 license.
+
+2007-03-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* exceptions-amd64.c (seh_handler): Ditto.
+
+	* exceptions-x86.c (seh_handler): Fix a memory leak.
+
+Thu Mar 15 13:47:59 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-arm.c, mini-mips.c, mini-ppc.c, mini-s390.c,
+	mini-s390x.c: fixed peephole optimizations to deal
+	correctly with 1 and 2 byte reload avoidance.
+
+Thu Mar 15 10:17:54 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* cpu-s390.md, cpu-s390x.md: update localloc length.
+
+Wed Mar 14 21:00:19 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* cpu-g4.md: added missing descriptions.
+
+2007-03-14  Miguel de Icaza  <miguel@novell.com>
+
+	*  Makefile.am: Add support so the tail tests are not executed on
+	PowerPC as that is a known limitation of the PowerPC port.
+
+2007-03-13  Jonathan Chambers  <joncham@gmail.com>
+
+	* runmdesc.bat:  Move to msvc directory.
+	
+2007-03-13  Jonathan Chambers  <joncham@gmail.com>
+
+	* runmdesc.bat:  Run executable that was produced by the current
+	target and sent via an argument.
+	
+2007-03-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_method_to_ir): Fix box+brtrue optimization. Fixes
+	#81102.
+
+	* generics.2.cs: Add regression test.
+
+2007-03-09  Wade berrier  <wberrier@novell.com>
+
+	* mini-ppc.h: Undo typo of MONO_CONTEXT_SET_SP (ppc doesn't define this symbol)
+
+2007-03-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c (load_aot_module): Load all dependent assemblies eagerly since all
+	AOT code depends on this.
+
+Thu Mar 8 19:36:13 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: more precise tracking of types in the eval stack
+	(part of fix for bug #81044).
+
+2007-03-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c (mono_aot_get_class_from_name): Add a cache.
+
+	* aot-compiler.c (encode_patch): Remove an obsolete comment.
+
+2007-03-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-exceptions.c (mono_handle_native_sigsegv): Fix a warning.
+
+	* mini.c (mono_method_to_ir): Add a workaround for bug #80733.
+
+>>>>>>> .merge-right.r76259
 2007-02-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (type_from_op): Convert CEE_CONV_U to OP_LCONV_TO_U when the argument is
@@ -2797,7 +3005,7 @@ Tue Jan 24 18:20:48 CET 2006 Paolo Molaro <lupus@ximian.com>
 	* inssel-s390.brg tramp-s390.c cpu-s390.md mini-s390.c mini-s390.h:
 	  Bring s390 up to current level.
 
-2005-12-12  Zoltan Varga  <vargaz@gmail.com>
+2005-12-12  Zltan Varga  <vargaz@gmail.com>
 
 	* generics.2.cs: Disable the newly added tests as they do not work yet.
 	
@@ -10184,6 +10392,7 @@ Mon Apr 7 16:31:34 CEST 2003 Paolo Molaro <lupus@ximian.com>
 	belongs.
 
 	* mini.pc.in: Call this package `mini' for the moment.
+
 
 
 

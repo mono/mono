@@ -65,7 +65,7 @@ mono_class_from_typeref (MonoImage *image, guint32 type_token)
 	guint32 idx;
 	const char *name, *nspace;
 	MonoClass *res;
-	MonoAssembly **references;
+	MonoImage *module;
 	
 	mono_metadata_decode_row (t, (type_token&0xffffff)-1, cols, MONO_TYPEREF_SIZE);
 
@@ -80,8 +80,9 @@ mono_class_from_typeref (MonoImage *image, guint32 type_token)
 		/* a typedef in disguise */
 		return mono_class_from_name (image, nspace, name);
 	case MONO_RESOLTION_SCOPE_MODULEREF:
-		if (image->modules [idx-1])
-			return mono_class_from_name (image->modules [idx - 1], nspace, name);
+		module = mono_image_load_module (image, idx);
+		if (module)
+			return mono_class_from_name (module, nspace, name);
 		else {
 			char *msg = g_strdup_printf ("%s%s%s", nspace, nspace [0] ? "." : "", name);
 			char *human_name;
@@ -125,15 +126,12 @@ mono_class_from_typeref (MonoImage *image, guint32 type_token)
 		break;
 	}
 
-	references = image->references;
-	if (!references [idx - 1])
+	if (!image->references || !image->references [idx - 1])
 		mono_assembly_load_reference (image, idx - 1);
-	/* If this assert fails, it probably means that you haven't installed an assembly load/search hook */
-	g_assert (references == image->references);
-	g_assert (references [idx - 1]);
+	g_assert (image->references [idx - 1]);
 
 	/* If the assembly did not load, register this as a type load exception */
-	if (references [idx - 1] == REFERENCE_MISSING){
+	if (image->references [idx - 1] == REFERENCE_MISSING){
 		MonoAssemblyName aname;
 		char *human_name;
 		
@@ -145,7 +143,7 @@ mono_class_from_typeref (MonoImage *image, guint32 type_token)
 		return NULL;
 	}
 
-	return mono_class_from_name (references [idx - 1]->image, nspace, name);
+	return mono_class_from_name (image->references [idx - 1]->image, nspace, name);
 }
 
 static inline MonoType*
@@ -252,9 +250,9 @@ mono_type_get_name_recurse (MonoType *type, GString *str, gboolean is_recursed,
 
 		mono_type_get_name_recurse (
 			type->data.type, str, FALSE, nested_format);
-		g_string_append (str, "*");
+		g_string_append_c (str, '*');
 		if (format == MONO_TYPE_NAME_FORMAT_ASSEMBLY_QUALIFIED)
-			_mono_type_get_assembly_name (type->data.klass, str);
+			_mono_type_get_assembly_name (mono_class_from_mono_type (type->data.type), str);
 		break;
 	}
 	case MONO_TYPE_VAR:
@@ -3117,7 +3115,7 @@ mono_class_get_nullable_param (MonoClass *klass)
  * Create the `MonoClass' for an instantiation of a generic type.
  * We only do this if we actually need it.
  */
-static MonoClass*
+MonoClass*
 mono_generic_class_get_class (MonoGenericClass *gclass)
 {
 	MonoClass *klass, *gklass;

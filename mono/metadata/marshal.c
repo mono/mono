@@ -276,22 +276,24 @@ static MonoObject*
 cominterop_get_ccw_object (MonoCCWInterface* ccw_entry, gboolean verify);
 
 /**
- * signature_cominterop:
- * @image: a image
- * @sig: managed method signature
+ * cominterop_method_signature:
+ * @method: a method
  *
  * Returns: the corresponding unmanaged method signature for a managed COM 
  * method.
  */
 static MonoMethodSignature*
-signature_cominterop (MonoImage *image, MonoMethodSignature *sig)
+cominterop_method_signature (MonoMethod* method)
 {
 	MonoMethodSignature *res;
+	MonoImage *image = method->klass->image;
+	MonoMethodSignature *sig = mono_method_signature (method);
+	gboolean preserve_sig = method->iflags & METHOD_IMPL_ATTRIBUTE_PRESERVE_SIG;
 	int sigsize;
 	int i;
 	int param_count = sig->param_count + 1; // convert this arg into IntPtr arg
 
-	if (!MONO_TYPE_IS_VOID (sig->ret))
+	if (!preserve_sig &&!MONO_TYPE_IS_VOID (sig->ret))
 		param_count++;
 
 	sigsize = sizeof (MonoMethodSignature) + ((param_count - MONO_ZERO_LEN_ARRAY) * sizeof (MonoType *));
@@ -307,11 +309,19 @@ signature_cominterop (MonoImage *image, MonoMethodSignature *sig)
 	// first arg is interface pointer
 	res->params[0] = &mono_defaults.int_class->byval_arg;
 
-	// last arg is return type
-	if (!MONO_TYPE_IS_VOID (sig->ret)) {
-		res->params[param_count-1] = mono_metadata_type_dup_mp (image, sig->ret);
-		res->params[param_count-1]->byref = 1;
-		res->params[param_count-1]->attrs = PARAM_ATTRIBUTE_OUT;
+	if (preserve_sig) {
+		res->ret = sig->ret;
+	}
+	else {
+		// last arg is return type
+		if (!MONO_TYPE_IS_VOID (sig->ret)) {
+			res->params[param_count-1] = mono_metadata_type_dup_mp (image, sig->ret);
+			res->params[param_count-1]->byref = 1;
+			res->params[param_count-1]->attrs = PARAM_ATTRIBUTE_OUT;
+		}
+
+		// return type is always int32 (HRESULT)
+		res->ret = &mono_defaults.int32_class->byval_arg;
 	}
 
 	// no pinvoke
@@ -322,9 +332,6 @@ signature_cominterop (MonoImage *image, MonoMethodSignature *sig)
 
 	// set param_count
 	res->param_count = param_count;
-
-	// return type is always int32 (HRESULT)
-	res->ret = &mono_defaults.int32_class->byval_arg;
 
 	// STDCALL on windows, CDECL everywhere else to work with XPCOM and MainWin COM
 #ifdef PLATFORM_WIN32
@@ -2426,7 +2433,8 @@ emit_object_to_ptr_conv (MonoMethodBuilder *mb, MonoType *type, MonoMarshalConv 
 	case MONO_MARSHAL_CONV_HANDLEREF: {
 		mono_mb_emit_ldloc (mb, 1);
 		mono_mb_emit_ldloc (mb, 0);
-		mono_mb_emit_ldflda (mb, G_STRUCT_OFFSET (MonoHandleRef, handle));
+		mono_mb_emit_icon (mb, G_STRUCT_OFFSET (MonoHandleRef, handle));
+		mono_mb_emit_byte (mb, CEE_ADD);
 		mono_mb_emit_byte (mb, CEE_LDIND_I);
 		mono_mb_emit_byte (mb, CEE_STIND_I);
 		break;
@@ -3364,7 +3372,7 @@ cominterop_get_native_wrapper_adjusted (MonoMethod *method)
 
 	// create unmanaged wrapper
 	mb_native = mono_mb_new (method->klass, method->name, MONO_WRAPPER_MANAGED_TO_NATIVE);
-	sig_native = signature_cominterop (method->klass->image, sig);
+	sig_native = cominterop_method_signature (method);
 
 	mspecs = g_new (MonoMarshalSpec*, sig_native->param_count+1);
 	memset (mspecs, 0, sizeof(MonoMarshalSpec*)*(sig_native->param_count+1));
@@ -3378,11 +3386,13 @@ cominterop_get_native_wrapper_adjusted (MonoMethod *method)
 	// first arg is IntPtr for interface
 	mspecs[1] = NULL;
 
-	// move return spec to last param
-	if (!MONO_TYPE_IS_VOID (sig->ret))
-		mspecs[sig_native->param_count] = mspecs[0];
+	if (!(method->iflags & METHOD_IMPL_ATTRIBUTE_PRESERVE_SIG)) {
+		// move return spec to last param
+		if (!MONO_TYPE_IS_VOID (sig->ret))
+			mspecs[sig_native->param_count] = mspecs[0];
 
-	mspecs[0] = NULL;
+		mspecs[0] = NULL;
+	}
 
 	mono_marshal_emit_native_wrapper(mono_defaults.corlib, mb_native, sig_native, piinfo, mspecs, piinfo->addr);
 
@@ -3443,15 +3453,14 @@ cominterop_get_native_wrapper (MonoMethod *method)
 			static MonoMethod * ThrowExceptionForHR = NULL;
 			static MonoMethod * GetInterface = NULL;
 			MonoMethod *adjusted_method;
-			int hr;
 			int retval = 0;
 			int ptr_this;
 			int i;
+			gboolean preserve_sig = method->iflags & METHOD_IMPL_ATTRIBUTE_PRESERVE_SIG;
 			if (!GetInterface)
 				GetInterface = mono_class_get_method_from_name (mono_defaults.com_object_class, "GetInterface", 1);
 
 			// add local variables
-			hr = mono_mb_add_local (mb, &mono_defaults.int32_class->byval_arg);
 			ptr_this = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
 			if (!MONO_TYPE_IS_VOID (sig->ret))
 				retval =  mono_mb_add_local (mb, sig->ret);
@@ -3472,23 +3481,21 @@ cominterop_get_native_wrapper (MonoMethod *method)
 				mono_mb_emit_ldarg (mb, i);
 
 			// push managed return value as byref last argument
-			if (!MONO_TYPE_IS_VOID (sig->ret))
+			if (!MONO_TYPE_IS_VOID (sig->ret) && !preserve_sig)
 				mono_mb_emit_ldloc_addr (mb, retval);
 			
 			adjusted_method = cominterop_get_native_wrapper_adjusted (method);
 			mono_mb_emit_managed_call (mb, adjusted_method, NULL);
 
-			// store HRESULT to check
-			mono_mb_emit_stloc (mb, hr);
+			if (!preserve_sig) {
+				if (!ThrowExceptionForHR)
+					ThrowExceptionForHR = mono_class_get_method_from_name (mono_defaults.marshal_class, "ThrowExceptionForHR", 1);
+				mono_mb_emit_managed_call (mb, ThrowExceptionForHR, NULL);
 
-			if (!ThrowExceptionForHR)
-				ThrowExceptionForHR = mono_class_get_method_from_name (mono_defaults.marshal_class, "ThrowExceptionForHR", 1);
-			mono_mb_emit_ldloc (mb, hr);
-			mono_mb_emit_managed_call (mb, ThrowExceptionForHR, NULL);
-
-			// load return value managed is expecting
-			if (!MONO_TYPE_IS_VOID (sig->ret))
-				mono_mb_emit_ldloc (mb, retval);
+				// load return value managed is expecting
+				if (!MONO_TYPE_IS_VOID (sig->ret))
+					mono_mb_emit_ldloc (mb, retval);
+			}
 
 			mono_mb_emit_byte (mb, CEE_RET);
 		}
@@ -6478,8 +6485,9 @@ emit_marshal_handleref (EmitMarshalContext *m, int argnum, MonoType *t,
 				"HandleRefs can not be returned from unmanaged code (or passed by ref)");
 			break;
 		} 
-		mono_mb_emit_ldarg (mb, argnum);
-		mono_mb_emit_ldflda (mb, G_STRUCT_OFFSET (MonoHandleRef, handle));
+		mono_mb_emit_ldarg_addr (mb, argnum);
+		mono_mb_emit_icon (mb, G_STRUCT_OFFSET (MonoHandleRef, handle));
+		mono_mb_emit_byte (mb, CEE_ADD);
 		mono_mb_emit_byte (mb, CEE_LDIND_I);
 		mono_mb_emit_stloc (mb, conv_arg);
 		break;
@@ -10079,7 +10087,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_ReleaseInternal (gpointer pUnk)
 	return (*(MonoIUnknown**)pUnk)->Release(pUnk);
 }
 
-void*
+static void*
 cominterop_get_idispatch_for_object (MonoObject* object)
 {
 	if (!object)
@@ -11244,7 +11252,13 @@ cominterop_setup_marshal_context (EmitMarshalContext *m, MonoMethod *method)
 	/* FIXME: which to use? */
 	csig = signature_dup (method->klass->image, sig);
 	/* csig = mono_metadata_signature_dup (sig); */
+	
+	/* STDCALL on windows, CDECL everywhere else to work with XPCOM and MainWin COM */
+#ifdef PLATFORM_WIN32
 	csig->call_convention = MONO_CALL_STDCALL;
+#else
+	csig->call_convention = MONO_CALL_C;
+#endif
 	csig->hasthis = 0;
 	csig->pinvoke = 1;
 
@@ -11326,7 +11340,7 @@ cominterop_get_ccw (MonoObject* object, MonoClass* itf)
 			ccw_list->data = ccw;
 		}
 		else
-			g_list_append (ccw_list, ccw);
+			ccw_list = g_list_append (ccw_list, ccw);
 		g_hash_table_insert (ccw_hash, GINT_TO_POINTER (mono_object_hash (object)), ccw_list);
 		/* register for finalization to clean up ccw */
 		mono_object_register_finalizer (object);
@@ -11373,6 +11387,7 @@ cominterop_get_ccw (MonoObject* object, MonoClass* itf)
 				MonoMethod *method = iface->methods [i];
 				MonoMethodSignature* sig_adjusted;
 				MonoMethodSignature* sig = mono_method_signature (method);
+				gboolean preserve_sig = method->iflags & METHOD_IMPL_ATTRIBUTE_PRESERVE_SIG;
 
 
 				mb = mono_mb_new (iface, method->name, MONO_WRAPPER_NATIVE_TO_MANAGED);
@@ -11391,7 +11406,7 @@ cominterop_get_ccw (MonoObject* object, MonoClass* itf)
 				mspecs [1] = NULL;
 
 				/* move return spec to last param */
-				if (!MONO_TYPE_IS_VOID (sig->ret))
+				if (!preserve_sig && !MONO_TYPE_IS_VOID (sig->ret))
 					mspecs [sig_adjusted->param_count] = mspecs [0];
 
 				mspecs [0] = NULL;
@@ -11508,11 +11523,12 @@ cominterop_get_managed_wrapper_adjusted (MonoMethod *method)
 	MonoMethodBuilder *mb;
 	MonoMarshalSpec **mspecs;
 	MonoMethodSignature *sig, *sig_native;
-	MonoExceptionClause *main_clause;
+	MonoExceptionClause *main_clause = NULL;
 	MonoMethodHeader *header;
 	int pos_leave;
-	int hr;
+	int hr = 0;
 	int i;
+	gboolean preserve_sig = method->iflags & METHOD_IMPL_ATTRIBUTE_PRESERVE_SIG;
 
 	if (!get_hr_for_exception)
 		get_hr_for_exception = mono_class_get_method_from_name (mono_defaults.marshal_class, "GetHRForException", -1);
@@ -11522,7 +11538,7 @@ cominterop_get_managed_wrapper_adjusted (MonoMethod *method)
 	/* create unmanaged wrapper */
 	mb = mono_mb_new (method->klass, method->name, MONO_WRAPPER_COMINTEROP);
 
-	sig_native = signature_cominterop (method->klass->image, sig);
+	sig_native = cominterop_method_signature (method);
 
 	mspecs = g_new0 (MonoMarshalSpec*, sig_native->param_count+1);
 
@@ -11536,19 +11552,21 @@ cominterop_get_managed_wrapper_adjusted (MonoMethod *method)
 	mspecs [1] = NULL;
 
 	/* move return spec to last param */
-	if (!MONO_TYPE_IS_VOID (sig->ret))
+	if (!preserve_sig && !MONO_TYPE_IS_VOID (sig->ret))
 		mspecs [sig_native->param_count] = mspecs [0];
 
 	mspecs [0] = NULL;
 
-	hr = mono_mb_add_local (mb, &mono_defaults.int32_class->byval_arg);
+	if (!preserve_sig) {
+		hr = mono_mb_add_local (mb, &mono_defaults.int32_class->byval_arg);
 
-	/* try */
+		/* try */
+		main_clause = g_new0 (MonoExceptionClause, 1);
+		main_clause->try_offset = mb->pos;
+	}
 
-	main_clause = g_new0 (MonoExceptionClause, 1);
-	main_clause->try_offset = mb->pos;
-
-	if (!MONO_TYPE_IS_VOID (sig->ret))
+	/* load last param to store result if not preserve_sig and not void */
+	if (!preserve_sig && !MONO_TYPE_IS_VOID (sig->ret))
 		mono_mb_emit_ldarg (mb, sig_native->param_count-1);
 
 	/* the CCW -> object conversion */
@@ -11561,29 +11579,31 @@ cominterop_get_managed_wrapper_adjusted (MonoMethod *method)
 
 	mono_mb_emit_managed_call (mb, method, NULL);
 
-	/* store result if we have one */
-	if (!MONO_TYPE_IS_VOID (sig->ret))
-		mono_mb_emit_byte (mb, CEE_STIND_REF);
+	if (!preserve_sig) {
+		/* store result if not preserve_sig and we have one */
+		if (!MONO_TYPE_IS_VOID (sig->ret))
+			mono_mb_emit_byte (mb, mono_type_to_stind (sig->ret));
 
-	pos_leave = mono_mb_emit_branch (mb, CEE_LEAVE);
+		pos_leave = mono_mb_emit_branch (mb, CEE_LEAVE);
 
-	/* Main exception catch */
-	main_clause->flags = MONO_EXCEPTION_CLAUSE_NONE;
-	main_clause->try_len = mb->pos - main_clause->try_offset;
-	main_clause->data.catch_class = mono_defaults.object_class;
-	
-	/* handler code */
-	main_clause->handler_offset = mb->pos;
-	mono_mb_emit_managed_call (mb, get_hr_for_exception, NULL);
-	mono_mb_emit_stloc (mb, hr);
-	mono_mb_emit_branch (mb, CEE_LEAVE);
-	main_clause->handler_len = mb->pos - main_clause->handler_offset;
-	/* end catch */
+		/* Main exception catch */
+		main_clause->flags = MONO_EXCEPTION_CLAUSE_NONE;
+		main_clause->try_len = mb->pos - main_clause->try_offset;
+		main_clause->data.catch_class = mono_defaults.object_class;
+		
+		/* handler code */
+		main_clause->handler_offset = mb->pos;
+		mono_mb_emit_managed_call (mb, get_hr_for_exception, NULL);
+		mono_mb_emit_stloc (mb, hr);
+		mono_mb_emit_branch (mb, CEE_LEAVE);
+		main_clause->handler_len = mb->pos - main_clause->handler_offset;
+		/* end catch */
 
-	mono_mb_patch_addr (mb, pos_leave, mb->pos - (pos_leave + 4));
+		mono_mb_patch_addr (mb, pos_leave, mb->pos - (pos_leave + 4));
 
-	/* FIXME: need to emit try/catch block and return failure code if exception */
-	mono_mb_emit_ldloc (mb, hr);
+		mono_mb_emit_ldloc (mb, hr);
+	}
+
 	mono_mb_emit_byte (mb, CEE_RET);
 
 	mono_loader_lock ();
@@ -11599,9 +11619,11 @@ cominterop_get_managed_wrapper_adjusted (MonoMethod *method)
 			mono_metadata_free_marshal_spec (mspecs [i]);
 	g_free (mspecs);
 
-	header = ((MonoMethodNormal *)res)->header;
-	header->num_clauses = 1;
-	header->clauses = main_clause;
+	if (!preserve_sig) {
+		header = ((MonoMethodNormal *)res)->header;
+		header->num_clauses = 1;
+		header->clauses = main_clause;
+	}
 
 	return res;
 }
@@ -11612,7 +11634,7 @@ cominterop_get_managed_wrapper_adjusted (MonoMethod *method)
  * Converts the standard string representation of a GUID 
  * to a 16 byte Microsoft GUID.
  */
-void
+static void
 cominterop_mono_string_to_guid (const MonoString* string, guint8 *guid) {
 	gunichar2 * chars = mono_string_chars (string);
 	int i = 0;
@@ -11673,7 +11695,7 @@ cominterop_ccw_addref (MonoCCWInterface* ccwe)
 	g_assert (ccw);
 	g_assert (ccw->gc_handle);
 	g_assert (ccw->ref_count >= 0);
-	ref_count = InterlockedIncrement (&ccw->ref_count);
+	ref_count = InterlockedIncrement ((gint32*)&ccw->ref_count);
 	if (ref_count == 1) {
 		guint32 oldhandle = ccw->gc_handle;
 		g_assert (oldhandle);
@@ -11691,7 +11713,7 @@ cominterop_ccw_release (MonoCCWInterface* ccwe)
 	MonoCCW* ccw = ccwe->ccw;
 	g_assert (ccw);
 	g_assert (ccw->ref_count > 0);
-	ref_count = InterlockedDecrement (&ccw->ref_count);
+	ref_count = InterlockedDecrement ((gint32*)&ccw->ref_count);
 	if (ref_count == 0) {
 		/* allow gc of object */
 		guint32 oldhandle = ccw->gc_handle;

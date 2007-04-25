@@ -47,6 +47,7 @@ LONG CALLBACK seh_handler(EXCEPTION_POINTERS* ep);
 
 #ifdef sun    // Solaris x86
 #  undef SIGSEGV_ON_ALTSTACK
+#  define MONO_ARCH_NOMAP32BIT
 
 struct sigcontext {
         unsigned short gs, __gsh;
@@ -162,13 +163,26 @@ typedef struct {
 	guint64 r15;
 } MonoContext;
 
-#define MONO_CONTEXT_SET_IP(ctx,ip) do { (ctx)->rip = (long)(ip); } while (0); 
-#define MONO_CONTEXT_SET_BP(ctx,bp) do { (ctx)->rbp = (long)(bp); } while (0); 
-#define MONO_CONTEXT_SET_SP(ctx,esp) do { (ctx)->rsp = (long)(esp); } while (0); 
+#define MONO_CONTEXT_SET_IP(ctx,ip) do { (ctx)->rip = (guint64)(ip); } while (0); 
+#define MONO_CONTEXT_SET_BP(ctx,bp) do { (ctx)->rbp = (guint64)(bp); } while (0); 
+#define MONO_CONTEXT_SET_SP(ctx,esp) do { (ctx)->rsp = (guint64)(esp); } while (0); 
 
 #define MONO_CONTEXT_GET_IP(ctx) ((gpointer)((ctx)->rip))
 #define MONO_CONTEXT_GET_BP(ctx) ((gpointer)((ctx)->rbp))
 #define MONO_CONTEXT_GET_SP(ctx) ((gpointer)((ctx)->rsp))
+
+#ifdef _MSC_VER
+
+#define MONO_INIT_CONTEXT_FROM_FUNC(ctx, start_func) do { \
+    guint64 stackptr; \
+	mono_arch_flush_register_windows (); \
+	stackptr = ((guint64)_GetAddressOfReturnAddress () - sizeof (void*));\
+	MONO_CONTEXT_SET_IP ((ctx), (start_func)); \
+	MONO_CONTEXT_SET_BP ((ctx), stackptr); \
+	MONO_CONTEXT_SET_SP ((ctx), stackptr); \
+} while (0)
+
+#else
 
 #define MONO_INIT_CONTEXT_FROM_FUNC(ctx,start_func) do {	\
 		mono_arch_flush_register_windows ();	\
@@ -177,7 +191,7 @@ typedef struct {
 		MONO_CONTEXT_SET_SP ((ctx), __builtin_frame_address (0));	\
 	} while (0)
 
-#define MONO_ARCH_USE_SIGACTION 1
+#endif
 
 /*
  * some icalls like mono_array_new_va needs to be called using a different 
@@ -186,6 +200,8 @@ typedef struct {
 #define MONO_ARCH_VARARG_ICALLS 1
 
 #ifndef PLATFORM_WIN32
+
+#define MONO_ARCH_USE_SIGACTION 1
 
 #ifdef HAVE_WORKING_SIGALTSTACK
 

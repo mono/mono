@@ -720,6 +720,7 @@ cpuid (int id, int* p_eax, int* p_ebx, int* p_ecx, int* p_edx)
 void
 mono_arch_cpu_init (void)
 {
+#ifndef _MSC_VER
 	guint16 fpcw;
 
 	/* spec compliance requires running with double precision */
@@ -728,6 +729,9 @@ mono_arch_cpu_init (void)
 	fpcw |= X86_FPCW_PREC_DOUBLE;
 	__asm__  __volatile__ ("fldcw %0\n": : "m" (fpcw));
 	__asm__  __volatile__ ("fnstcw %0\n": "=m" (fpcw));
+#else
+	_control87 (_PC_53, MCW_PC);
+#endif
 }
 
 /*
@@ -1941,7 +1945,6 @@ peephole_pass_1 (MonoCompile *cfg, MonoBasicBlock *bb)
 			}
 			break;
 		case OP_COMPARE_IMM:
-		case OP_LCOMPARE_IMM:
 			/* OP_COMPARE_IMM (reg, 0) 
 			 * --> 
 			 * OP_AMD64_TEST_NULL (reg) 
@@ -3913,12 +3916,12 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_CLT:
 		case OP_LCLT:
 		case OP_ICLT:
+		case OP_CGT:
+		case OP_ICGT:
+		case OP_LCGT:
 		case OP_CLT_UN:
 		case OP_LCLT_UN:
 		case OP_ICLT_UN:
-		case OP_CGT:
-		case OP_LCGT:
-		case OP_ICGT:
 		case OP_CGT_UN:
 		case OP_LCGT_UN:
 		case OP_ICGT_UN:
@@ -3961,7 +3964,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			EMIT_COND_SYSTEM_EXCEPTION (branch_cc_table [ins->opcode - OP_COND_EXC_IEQ], 
 						    (ins->opcode < OP_COND_EXC_INE_UN), ins->inst_p1);
 			break;
-
 		case CEE_BEQ:
 		case CEE_BNE_UN:
 		case CEE_BLT:
@@ -5507,9 +5509,8 @@ mono_arch_instrument_prolog (MonoCompile *cfg, void *func, void *p, gboolean ena
 	amd64_mov_reg_reg (code, AMD64_RSI, AMD64_RSP, 8);
 	code = emit_call (cfg, code, MONO_PATCH_INFO_ABS, (gpointer)func);
 
-	if (enable_arguments) {
+	if (enable_arguments)
 		amd64_alu_reg_imm (code, X86_ADD, AMD64_RSP, stack_area);
-	}
 
 	return code;
 }

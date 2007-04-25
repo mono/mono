@@ -1,3 +1,71 @@
+2007-04-24  Dick Porter  <dick@ximian.com>
+
+	* sockets.c (_wapi_recvfrom, socket_close): Force recvfrom() to
+	error if the socket is closed while the receive is blocking.
+	Fixes bug 75705.
+
+2007-04-13  Dick Porter  <dick@ximian.com>
+
+	* shared.h:
+	* shared.c: Complete the reimplementation of disabling of shared
+	memory, by not allocating sysv semaphores when shm disabling has
+	been requested (either at compile time or run time.)
+
+	* processes.c (CreateProcess): Don't synchronize locking across
+	processes when forking, when shared memory has been disabled.
+
+2007-04-06  Andreas Faerber  <andreas.faerber@web.de>
+
+	* wapi_glob.h:
+	* wapi_glob.c: remove reference to sys/cdefs.h, use glib instead.
+	Fixes: 81326
+
+2007-04-05  Dick Porter  <dick@ximian.com>
+
+	* io.c:
+	* io-portability.c (_wapi_io_scandir): Moved from io.c, and
+	changed to use a cut-down version of glob(3) that has been
+	extended to match with case-insensitivity if needed.
+
+	* wapi_glob.h:
+	* wapi_glob.c: Cut down implementation of glob(3), based on
+	OpenBSD.
+
+2007-03-22  Dick Porter  <dick@ximian.com>
+
+	* sockets.c (_wapi_connect): Do additional checks when connect(2)
+	fails, because some systems don't let it be restarted.  Patch
+	based on one submitted by Robert S Wojciechowski <robertw@ssgx.com>,
+	fixes bug 81010.
+
+2007-03-09  Jonathan Chambers  <joncham@gmail.com>
+
+	* io-layer.h:  Remove UNICODE and _UNICODE defines as 
+        these are done by configure.in now.
+	
+	Code is contributed under MIT/X11 license.
+        
+Thu Mar 8 19:42:17 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* shared.c: partial support for MONO_DISABLE_SHM env var.
+
+2007-03-05  Wade Berrier  <wberrier@novell.com>
+
+	* atomic.h: atomic fixes from Michael Matz for for s390 
+	and s390x ( bnc #237611 and bxc #80892 )
+
+2007-03-05  Miguel de Icaza  <miguel@novell.com>
+
+	* io.c (CreateFile): Use FILE_ATTRIBUTE_TEMPORARY to mean 0600
+	permissions.  For 80688
+
+	(MoveFile): Use errno_copy here, just to avoid a potential
+	errno-changing code in the future from g_free. 
+	
+	Also, ignore EXDEV errors as they are handled immediately after
+	(avoid printing out an error). 
+
+	Fixes: 80655
 
 Mon Feb 12 15:50:24 CET 2007 Paolo Molaro <lupus@ximian.com>
 

@@ -423,7 +423,7 @@ ICALL_TYPE(ASSEMN, "System.Reflection.AssemblyName", ASSEMN_1)
 ICALL(ASSEMN_1, "ParseName", ves_icall_System_Reflection_AssemblyName_ParseName)
 
 ICALL_TYPE(ASSEMB, "System.Reflection.Emit.AssemblyBuilder", ASSEMB_1)
-ICALL(ASSEMB_1, "InternalAddModule", mono_image_load_module)
+ICALL(ASSEMB_1, "InternalAddModule", mono_image_load_module_dynamic)
 ICALL(ASSEMB_2, "basic_init", mono_image_basic_init)
 
 ICALL_TYPE(CATTRB, "System.Reflection.Emit.CustomAttributeBuilder", CATTRB_1)
@@ -803,6 +803,7 @@ ICALL_TYPE(THREADP, "System.Threading.ThreadPool", THREADP_1)
 ICALL(THREADP_1, "GetAvailableThreads", ves_icall_System_Threading_ThreadPool_GetAvailableThreads)
 ICALL(THREADP_2, "GetMaxThreads", ves_icall_System_Threading_ThreadPool_GetMaxThreads)
 ICALL(THREADP_3, "GetMinThreads", ves_icall_System_Threading_ThreadPool_GetMinThreads)
+ICALL(THREADP_35, "SetMaxThreads", ves_icall_System_Threading_ThreadPool_SetMaxThreads)
 ICALL(THREADP_4, "SetMinThreads", ves_icall_System_Threading_ThreadPool_SetMinThreads)
 
 ICALL_TYPE(WAITH, "System.Threading.WaitHandle", WAITH_1)
@@ -811,7 +812,7 @@ ICALL(WAITH_2, "WaitAny_internal", ves_icall_System_Threading_WaitHandle_WaitAny
 ICALL(WAITH_3, "WaitOne_internal", ves_icall_System_Threading_WaitHandle_WaitOne_internal)
 
 ICALL_TYPE(TYPE, "System.Type", TYPE_1)
-ICALL(TYPE_1, "Equals", ves_icall_type_Equals)
+ICALL(TYPE_1, "EqualsInternal", ves_icall_System_Type_EqualsInternal)
 ICALL(TYPE_2, "GetGenericParameterAttributes", ves_icall_Type_GetGenericParameterAttributes)
 ICALL(TYPE_3, "GetGenericParameterConstraints_impl", ves_icall_Type_GetGenericParameterConstraints)
 ICALL(TYPE_4, "GetGenericParameterPosition", ves_icall_Type_GetGenericParameterPosition)

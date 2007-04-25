@@ -48,6 +48,7 @@ typedef enum {
 /* This is a copy of System.IO.FileOptions */
 typedef enum {
 	FileOptions_None = 0,
+	FileOptions_Temporary = 1,		// Internal.   See note in System.IO.FileOptions
 	FileOptions_Encrypted = 0x4000,
 	FileOptions_DeleteOnClose = 0x4000000,
 	FileOptions_SequentialScan = 0x8000000,
@@ -118,8 +119,10 @@ extern MonoBoolean
 ves_icall_System_IO_MonoIO_RemoveDirectory (MonoString *path, gint32 *error) MONO_INTERNAL;
 
 MonoArray *
-ves_icall_System_IO_MonoIO_GetFileSystemEntries (MonoString *_path, MonoString *_pattern,
-					gint mask, gint attrs, gint32 *error) MONO_INTERNAL;
+ves_icall_System_IO_MonoIO_GetFileSystemEntries (MonoString *path,
+						 MonoString *path_with_pattern,
+						 gint mask, gint attrs,
+						 gint32 *error) MONO_INTERNAL;
 
 extern MonoString *
 ves_icall_System_IO_MonoIO_GetCurrentDirectory (gint32 *error) MONO_INTERNAL;

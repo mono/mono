@@ -581,7 +581,6 @@ typedef struct {
 	MonoBasicBlock  *bb_exit;
 	MonoBasicBlock  *bb_init;
 	MonoBasicBlock **bblocks;
-	GHashTable      *bb_hash;
 	MonoBasicBlock **cil_offset_to_bb;
 	MonoMemPool     *state_pool; /* used by instruction selection */
 	MonoBasicBlock  *cbb;        /* used by instruction selection */
@@ -1260,8 +1259,8 @@ mono_local_deadce (MonoCompile *cfg);
 MonoSecurityFrame* ves_icall_System_Security_SecurityFrame_GetSecurityFrame (gint32 skip) MONO_INTERNAL;
 MonoArray* ves_icall_System_Security_SecurityFrame_GetSecurityStack (gint32 skip) MONO_INTERNAL;
 
-int mono_wapi_hps     (int argc, char **argv) MONO_INTERNAL;
-int mono_wapi_semdel  (int argc, char **argv) MONO_INTERNAL;
-int mono_wapi_seminfo (int argc, char **argv) MONO_INTERNAL;
+int mini_wapi_hps     (int argc, char **argv);
+int mini_wapi_semdel  (int argc, char **argv);
+int mini_wapi_seminfo (int argc, char **argv);
 
 #endif /* __MONO_MINI_H__ */

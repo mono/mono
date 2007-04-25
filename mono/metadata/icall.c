@@ -1115,7 +1115,7 @@ ves_icall_type_from_handle (MonoType *handle)
 }
 
 static MonoBoolean
-ves_icall_type_Equals (MonoReflectionType *type, MonoReflectionType *c)
+ves_icall_System_Type_EqualsInternal (MonoReflectionType *type, MonoReflectionType *c)
 {
 	MONO_ARCH_SAVE_REGS;
 
@@ -5655,11 +5655,11 @@ ves_icall_System_Environment_GetEnvironmentVariable (MonoString *name)
 /*
  * There is no standard way to get at environ.
  */
-#ifndef __MINGW32_VERSION
 #ifndef _MSC_VER
+#ifndef __MINGW32_VERSION
 extern
-#endif
 char **environ;
+#endif
 #endif
 
 static MonoArray *

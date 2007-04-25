@@ -14,6 +14,19 @@ Mono Ahead Of Time Compiler
 	assembly, while the -O=all flag instructs Mono to use all the
 	available optimizations.
 
+* Caching metadata
+------------------
+
+	Besides code, the AOT file also contains cached metadata information which allows
+	the runtime to avoid certain computations at runtime, like the computation of
+	generic vtables. This reduces both startup time, and memory usage. It is possible
+	to create an AOT image which contains only this cached information and no code by
+	using the 'metadata-only' option during compilation:
+
+	   mono --aot=metadata-only assembly.exe
+
+	This works even on platforms where AOT is not normally supported.
+
 * Position Independent Code
 ---------------------------
 
@@ -76,6 +89,18 @@ Mono Ahead Of Time Compiler
 	
 	svn diff -r 37739:38213 mini-x86.c 
 
+	* The Program Linkage Table
+
+	As in ELF, calls made from AOT code do not go through the GOT. Instead, a direct call is
+	made to an entry in the Program Linkage Table (PLT). This is based on the fact that on
+	most architectures, call instructions use a displacement instead of an absolute address, so
+	they are already position independent. An PLT entry is usually a jump instruction, which
+	initially points to some trampoline code which transfers control to the AOT loader, which
+	will compile the called method, and patch the PLT entry so that further calls are made
+	directly to the called method.
+	If the called method is in the same assembly, and does not need initialization (i.e. it
+    doesn't have GOT slots etc), then the call is made directly, bypassing the PLT.
+
 * The Precompiled File Format
 -----------------------------
 	
@@ -125,49 +150,97 @@ Mono Ahead Of Time Compiler
 	
 			A list of assemblies referenced by this AOT
 			module.
-	
+
+		methods
+			
+			The precompiled code itself.
+			
 		method_offsets
 	
-			The equivalent to a procedure linkage table. 
+			Maps method indexes to offsets in the methods array.
+
+		ex_info
+
+			Contains information about methods which is rarely used during normal execution, 
+			like exception and debug info.
+
+		ex_info_offsets
+
+			Maps method indexes to offsets in the ex_info array.
+
+		class_info
+
+			Contains precomputed metadata used to speed up various runtime functions.
+
+		class_info_offsets
+
+			Maps class indexes to offsets in the class_info array.
+
+		class_name_table
+
+			A hash table mapping class names to class indexes. Used to speed up 
+			mono_class_from_name ().
+
+		plt
+
+			The Program Linkage Table
+
+		plt_info
+
+			Contains information needed to find the method belonging to a given PLT entry.
 	
 * Performance considerations
 ----------------------------
 
-Using AOT code is a trade-off which might lead to higher or slower performance,
-depending on a lot of circumstances. Some of these are:
+	Using AOT code is a trade-off which might lead to higher or
+	slower performance, depending on a lot of circumstances. Some
+	of these are:
+	
+	- AOT code needs to be loaded from disk before being used, so
+	  cold startup of an application using AOT code MIGHT be
+	  slower than using JITed code. Warm startup (when the code is
+	  already in the machines cache) should be faster.  Also,
+	  JITing code takes time, and the JIT compiler also need to
+	  load additional metadata for the method from the disk, so
+	  startup can be faster even in the cold startup case.
 
-- AOT code needs to be loaded from disk before being used, so cold startup of
-  an application using AOT code MIGHT be slower than using JITed code. Warm
-  startup (when the code is already in the machines cache) should be faster.
-  Also, JITing code takes time, and the JIT compiler also need to load 
-  additional metadata for the method from the disk, so startup can be faster
-  even in the cold startup case.
-- AOT code is usually compiled with all optimizations turned on, while JITted
-  code is usually compiled with default optimizations, so the generated code
-  in the AOT case should be faster.
-- JITted code can directly access runtime data structures and helper functions,
-  while AOT code needs to go through an indirection (the GOT) to access them,
-  so it will be slower and somewhat bigger as well.
-- When JITting code, the JIT compiler needs to load a lot of metadata about
-  methods and types into memory.
-- JITted code has better locality, meaning that if A method calls B, then
-  the native code for A and B is usually quite close in memory, leading to
-  better cache behaviour thus improved performance. In contrast, the native
-  code of methods inside the AOT file is in a somewhat random order.
+	- AOT code is usually compiled with all optimizations turned
+	  on, while JITted code is usually compiled with default
+	  optimizations, so the generated code in the AOT case should
+	  be faster.
 
+	- JITted code can directly access runtime data structures and
+	  helper functions, while AOT code needs to go through an
+	  indirection (the GOT) to access them, so it will be slower
+	  and somewhat bigger as well.
+
+	- When JITting code, the JIT compiler needs to load a lot of
+	  metadata about methods and types into memory.
+
+	- JITted code has better locality, meaning that if A method
+	  calls B, then the native code for A and B is usually quite
+	  close in memory, leading to better cache behaviour thus
+	  improved performance. In contrast, the native code of
+	  methods inside the AOT file is in a somewhat random order.
+	
 * Future Work
 -------------
 
-- Currently, the runtime needs to setup some data structures and fill out
-  GOT entries before a method is first called. This means that even calls to
-  a method whose code is in the same AOT image need to go through the GOT,
-  instead of using a direct call.
-- On x86, the generated code uses call 0, pop REG, add GOTOFFSET, REG to 
-  materialize the GOT address. Newer versions of gcc use a separate function
-  to do this, maybe we need to do the same.
-- Currently, we get vtable addresses from the GOT. Another solution would be
-  to store the data from the vtables in the .bss section, so accessing them
-  would involve less indirection.
+	- Currently, when an AOT module is loaded, all of its
+	  dependent assemblies are also loaded eagerly, and these
+	  assemblies need to be exactly the same as the ones loaded
+	  when the AOT module was created ('hard binding'). Non-hard
+	  binding should be allowed.
 
+	- On x86, the generated code uses call 0, pop REG, add
+	  GOTOFFSET, REG to materialize the GOT address. Newer
+	  versions of gcc use a separate function to do this, maybe we
+	  need to do the same.
+
+	- Currently, we get vtable addresses from the GOT. Another
+	  solution would be to store the data from the vtables in the
+	  .bss section, so accessing them would involve less
+	  indirection.
+	
 
 

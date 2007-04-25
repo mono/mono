@@ -409,7 +409,7 @@ enum {
 
 typedef struct {
 	gint32  offset;
-	guint16 vtsize; /* in param area */
+	guint32 vtsize; /* in param area */
 	guint8  reg;
 	guint8  regtype : 4; /* 0 general, 1 basereg, 2 floating point register, see RegType* */
 	guint8  size    : 4; /* 1, 2, 4, 8, or regs used by RegTypeStructByVal */
@@ -619,6 +619,7 @@ calculate_sizes (MonoMethodSignature *sig, gboolean is_pinvoke)
 #else
 			add_general (&gr, &stack_size, cinfo->args + n, TRUE);
 			cinfo->args [n].regtype = RegTypeStructByAddr;
+			cinfo->args [n].vtsize = size;
 #endif
 			n++;
 			break;
@@ -648,6 +649,7 @@ calculate_sizes (MonoMethodSignature *sig, gboolean is_pinvoke)
 #else
 			add_general (&gr, &stack_size, cinfo->args + n, TRUE);
 			cinfo->args [n].regtype = RegTypeStructByAddr;
+			cinfo->args [n].vtsize = size;
 #endif
 			n++;
 			break;
@@ -995,9 +997,17 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call,
 				if (arg->type == STACK_I8)
 					call->used_iregs |= 1 << (ainfo->reg + 1);
 			} else if (ainfo->regtype == RegTypeStructByAddr) {
-				/* FIXME: where si the data allocated? */
-				arg->backend.reg3 = ainfo->reg;
-				call->used_iregs |= 1 << ainfo->reg;
+				if (ainfo->offset) {
+					MonoPPCArgInfo *ai = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoPPCArgInfo));
+					arg->opcode = OP_OUTARG_MEMBASE;
+					ai->reg = ainfo->reg;
+					ai->size = sizeof (gpointer);
+					ai->offset = ainfo->offset;
+					arg->backend.data = ai;
+				} else {
+					arg->backend.reg3 = ainfo->reg;
+					call->used_iregs |= 1 << ainfo->reg;
+				}
 			} else if (ainfo->regtype == RegTypeStructByVal) {
 				int cur_reg;
 				MonoPPCArgInfo *ai = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoPPCArgInfo));
@@ -1357,15 +1367,8 @@ peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 			if (last_ins && (last_ins->opcode == OP_STOREI1_MEMBASE_REG) &&
 					ins->inst_basereg == last_ins->inst_destbasereg &&
 					ins->inst_offset == last_ins->inst_offset) {
-				if (ins->dreg == last_ins->sreg1) {
-					last_ins->next = ins->next;				
-					ins = ins->next;				
-					continue;
-				} else {
-					//static int c = 0; printf ("MATCHX %s %d\n", cfg->method->name,c++);
-					ins->opcode = OP_MOVE;
-					ins->sreg1 = last_ins->sreg1;
-				}
+				ins->opcode = (ins->opcode == OP_LOADI1_MEMBASE) ? CEE_CONV_I1 : CEE_CONV_U1;
+				ins->sreg1 = last_ins->sreg1;				
 			}
 			break;
 		case OP_LOADU2_MEMBASE:
@@ -1373,15 +1376,8 @@ peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 			if (last_ins && (last_ins->opcode == OP_STOREI2_MEMBASE_REG) &&
 					ins->inst_basereg == last_ins->inst_destbasereg &&
 					ins->inst_offset == last_ins->inst_offset) {
-				if (ins->dreg == last_ins->sreg1) {
-					last_ins->next = ins->next;				
-					ins = ins->next;				
-					continue;
-				} else {
-					//static int c = 0; printf ("MATCHX %s %d\n", cfg->method->name,c++);
-					ins->opcode = OP_MOVE;
-					ins->sreg1 = last_ins->sreg1;
-				}
+				ins->opcode = (ins->opcode == OP_LOADI2_MEMBASE) ? CEE_CONV_I2 : CEE_CONV_U2;
+				ins->sreg1 = last_ins->sreg1;				
 			}
 			break;
 		case CEE_CONV_I4:
@@ -2780,7 +2776,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			if (!(ins->inst_imm & 0xffff0000)) {
 				ppc_ori (code, ins->sreg1, ins->dreg, ins->inst_imm);
 			} else if (!(ins->inst_imm & 0xffff)) {
-				ppc_oris (code, ins->sreg1, ins->dreg, ((guint32)(ins->inst_imm) >> 16));
+				ppc_oris (code, ins->dreg, ins->sreg1, ((guint32)(ins->inst_imm) >> 16));
 			} else {
 				g_assert_not_reached ();
 			}
@@ -3313,7 +3309,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			g_assert_not_reached ();
 			break;
 		case OP_FCOMPARE:
-			ppc_fcmpo (code, 0, ins->sreg1, ins->sreg2);
+			ppc_fcmpu (code, 0, ins->sreg1, ins->sreg2);
 			break;
 		case OP_FCEQ:
 			ppc_fcmpo (code, 0, ins->sreg1, ins->sreg2);
@@ -3354,6 +3350,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			EMIT_COND_BRANCH (ins, CEE_BNE_UN - CEE_BEQ);
 			break;
 		case OP_FBLT:
+			ppc_bc (code, PPC_BR_TRUE, PPC_BR_SO, 2);
 			EMIT_COND_BRANCH (ins, CEE_BLT - CEE_BEQ);
 			break;
 		case OP_FBLT_UN:
@@ -3361,6 +3358,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			EMIT_COND_BRANCH (ins, CEE_BLT_UN - CEE_BEQ);
 			break;
 		case OP_FBGT:
+			ppc_bc (code, PPC_BR_TRUE, PPC_BR_SO, 2);
 			EMIT_COND_BRANCH (ins, CEE_BGT - CEE_BEQ);
 			break;
 		case OP_FBGT_UN:
@@ -3368,12 +3366,14 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			EMIT_COND_BRANCH (ins, CEE_BGT_UN - CEE_BEQ);
 			break;
 		case OP_FBGE:
+			ppc_bc (code, PPC_BR_TRUE, PPC_BR_SO, 2);
 			EMIT_COND_BRANCH (ins, CEE_BGE - CEE_BEQ);
 			break;
 		case OP_FBGE_UN:
 			EMIT_COND_BRANCH (ins, CEE_BGE_UN - CEE_BEQ);
 			break;
 		case OP_FBLE:
+			ppc_bc (code, PPC_BR_TRUE, PPC_BR_SO, 2);
 			EMIT_COND_BRANCH (ins, CEE_BLE - CEE_BEQ);
 			break;
 		case OP_FBLE_UN:
@@ -3752,9 +3752,17 @@ register.  Should this case include linux/ppc?
 					code = emit_memcpy (code, ainfo->vtsize * sizeof (gpointer), inst->inst_basereg, doffset, ppc_r11, ainfo->offset + soffset);
 				}
 			} else if (ainfo->regtype == RegTypeStructByAddr) {
+				/* if it was originally a RegTypeBase */
+				if (ainfo->offset) {
+					/* load the previous stack pointer in r11 */
+					ppc_lwz (code, ppc_r11, 0, ppc_sp);
+					ppc_lwz (code, ppc_r11, ainfo->offset, ppc_r11);
+				} else {
+					ppc_mr (code, ppc_r11, ainfo->reg);
+				}
 				g_assert (ppc_is_imm16 (inst->inst_offset));
-				/* FIXME: handle overrun! with struct sizes not multiple of 4 */
-				code = emit_memcpy (code, ainfo->vtsize * sizeof (gpointer), inst->inst_basereg, inst->inst_offset, ainfo->reg, 0);
+				code = emit_memcpy (code, ainfo->vtsize, inst->inst_basereg, inst->inst_offset, ppc_r11, 0);
+				/*g_print ("copy in %s: %d bytes from %d to offset: %d\n", method->name, ainfo->vtsize, ainfo->reg, inst->inst_offset);*/
 			} else
 				g_assert_not_reached ();
 		}

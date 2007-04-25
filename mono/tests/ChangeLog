@@ -1,3 +1,19 @@
+2007-03-28  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile.am (test-bug-80307): Don't set PATH.
+
+2007-03-27  Raja R Harinath  <harinath@gmail.com>
+
+	* Makefile.am (JITTEST_PROG_RUN): Set MONO_CFG_DIR too.
+	(test-bug-80307): Use helper 'mcs' and 'gmcs' from build tree.
+
+2007-03-23  Jonathan Chambers  <joncham@gmail.com>
+
+	* libtest.c: Add tests for PreserveSigAttribute.
+	* cominterop.cs: Add tests for PreserveSigAttribute.
+	
+	Code is contributed under MIT/X11 license.
+
 2007-02-19  Massimiliano Mantione  <massi@ximian.com>
 	* iface7.cs, Makefile.am: Added test for bug 75903.
 

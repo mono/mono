@@ -2309,14 +2309,8 @@ peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 			if (last_ins && (last_ins->opcode == OP_STOREI1_MEMBASE_REG) &&
 					ins->inst_basereg == last_ins->inst_destbasereg &&
 					ins->inst_offset == last_ins->inst_offset) {
-				if (ins->dreg == last_ins->sreg1) {
-					last_ins->next = ins->next;				
-					ins = ins->next;				
-					continue;
-				} else {
-					ins->opcode = OP_MOVE;
-					ins->sreg1 = last_ins->sreg1;
-				}
+				ins->opcode = (ins->opcode == OP_LOADI1_MEMBASE) ? CEE_CONV_I1 : CEE_CONV_U1;
+				ins->sreg1 = last_ins->sreg1;				
 			}
 			break;
 		case OP_LOADU2_MEMBASE:
@@ -2324,14 +2318,8 @@ peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 			if (last_ins && (last_ins->opcode == OP_STOREI2_MEMBASE_REG) &&
 					ins->inst_basereg == last_ins->inst_destbasereg &&
 					ins->inst_offset == last_ins->inst_offset) {
-				if (ins->dreg == last_ins->sreg1) {
-					last_ins->next = ins->next;				
-					ins = ins->next;				
-					continue;
-				} else {
-					ins->opcode = OP_MOVE;
-					ins->sreg1 = last_ins->sreg1;
-				}
+				ins->opcode = (ins->opcode == OP_LOADI2_MEMBASE) ? CEE_CONV_I2 : CEE_CONV_U2;
+				ins->sreg1 = last_ins->sreg1;				
 			}
 			break;
 		case CEE_CONV_I4:
@@ -4063,32 +4051,52 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			s390_lghi  (code, ins->dreg, 0);
 		}
 			break;
-		case OP_FBEQ:
-			EMIT_COND_BRANCH (ins, S390_CC_EQ|S390_CC_OV);
+		case OP_FBEQ: {
+			short *o;
+			s390_jo (code, 0); CODEPTR(code, o);
+			EMIT_COND_BRANCH (ins, S390_CC_EQ);
+			PTRSLOT (code, o);
+		}
 			break;
 		case OP_FBNE_UN:
 			EMIT_COND_BRANCH (ins, S390_CC_NE|S390_CC_OV);
 			break;
-		case OP_FBLT:
+		case OP_FBLT: {
+			short *o;
+			s390_jo (code, 0); CODEPTR(code, o);
 			EMIT_COND_BRANCH (ins, S390_CC_LT);
+			PTRSLOT (code, o);
+		}
 			break;
 		case OP_FBLT_UN:
 			EMIT_COND_BRANCH (ins, S390_CC_LT|S390_CC_OV);
 			break;
-		case OP_FBGT:
+		case OP_FBGT: {
+			short *o;
+			s390_jo (code, 0); CODEPTR(code, o);
 			EMIT_COND_BRANCH (ins, S390_CC_GT);
+			PTRSLOT (code, o);
+		}
 			break;
 		case OP_FBGT_UN:
 			EMIT_COND_BRANCH (ins, S390_CC_GT|S390_CC_OV);
 			break;
-		case OP_FBGE:
+		case OP_FBGE: {
+			short *o;
+			s390_jo (code, 0); CODEPTR(code, o);
 			EMIT_COND_BRANCH (ins, S390_CC_GE);
+			PTRSLOT (code, o);
+		}
 			break;
 		case OP_FBGE_UN:
 			EMIT_COND_BRANCH (ins, S390_CC_GE|S390_CC_OV);
 			break;
-		case OP_FBLE:
+		case OP_FBLE: {
+			short *o;
+			s390_jo (code, 0); CODEPTR(code, o);
 			EMIT_COND_BRANCH (ins, S390_CC_LE);
+			PTRSLOT (code, o);
+		}
 			break;
 		case OP_FBLE_UN:
 			EMIT_COND_BRANCH (ins, S390_CC_LE|S390_CC_OV);
@@ -4788,8 +4796,7 @@ mono_arch_emit_exceptions (MonoCompile *cfg)
 			iExc;
 	guint32		code_size;
 	MonoClass	*exc_classes [MAX_EXC];
-	guint8		*exc_throw_start [MAX_EXC], 
-			*exc_throw_end [MAX_EXC];
+	guint8		*exc_throw_start [MAX_EXC];
 
 	for (patch_info = cfg->patch_info; 
 	     patch_info; 

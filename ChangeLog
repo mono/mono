@@ -1,3 +1,107 @@
+2007-04-19  Wade Berrier  <wberrier@novell.com>
+
+	* configure.in: version bump -> 1.2.4
+
+2007-04-15  Marek Habersack  <mhabersack@novell.com>
+
+	* data/net_2_0/web.config: add the default build providers
+	configuration.
+
+2007-04-06  Andreas Faerber  <andreas.faerber@web.de>
+
+	* configure.in: Added support for Solaris/amd64. Fixes bug #81325
+
+2007-04-06  Marek Habersack  <mhabersack@novell.com>
+
+	* data/net_2_0/machine.config: corrected the xhtmlConformance
+	entry to reference correct type.
+
+	* data/net_2_0/web.config: siteMap must be enabled by
+	default. Fixes bug #80611
+
+2007-04-05  Marek Habersack  <mhabersack@novell.com>
+
+	* data/browscap.ini: updated to the latest version.
+	Applied Mono-specific changes.
+
+2007-03-28  Raja R Harinath  <rharinath@novell.com>
+
+	* runtime/mono-wrapper.in (PATH): Include _tmpinst/bin.  Ensure
+	that library invocations of 'mcs' and 'gmcs' pick the in-tree versions.
+	* runtime/Makefile.am (mcs-do-run-test-profiles): Don't set PATH.
+	(all-local, install-local): Depend on TEST_SUPPORT_FILES too.
+	(test-support-files): Move creation of _tmpinst/bin directory ...
+	($(tmpinst)/bin/mono): ... here.
+	($(tmpinst)/bin/mbas, $(tmpinst)/bin/pedump): Remove.
+	(test-support-file): Depend on $(tmpinst)/bin/mono.
+
+2007-03-22  Marek Habersack  <mhabersack@novell.com>
+
+	* data/net_2_0/machine.config: added a few missing sections, added
+	missing allowDefinition and allowLocation attributes.
+
+2007-03-16  Wade Berrier  <wberrier@novell.com>
+
+	* configure.in: version bump -> 1.2.3.50 (RaceToLinux special release)
+
+2007-03-16  Marek Habersack  <mhabersack@novell.com>
+
+	* data/net_2_0/machine.config: added default profile provider
+	configuration.
+
+2007-03-15  Marek Habersack  <grendello@gmail.com>
+
+	* runtime/Makefile.am: add browscap.ini to symlinks
+
+	* configure.in: make sure browscap.ini is symlinked to from
+	runtime/etc/ so that no web tests that depend on the file's
+	presence fail.
+
+2007-03-15  Jonathan Chambers  <joncham@gmail.com>
+
+	* winconfig.h: Don't use MONO_XEN_OPT on windows.
+	Contributed under MIT/X11 license.
+
+2007-03-14  Marek Habersack  <mhabersack@novell.com>
+
+	* data/net_2_0/machine.config: add two missing section handlers.
+
+2007-03-13  Wade Berrier  <wberrier@novell.com>
+
+	* Makefile.am:
+	* msvc/Makefile.am:
+	Update EXTRA_DIST to take into account .vcproj file moves
+
+2007-03-13  Jonathan Chambers  <joncham@gmail.com>
+
+	* mono.sln, libmono.vcproj, mono.vcproj, genmdesc.vcproj, winsetup.bat,
+	mono/monodiet.vcproj, mono/pedump.vcproj: Move to msvc directory.
+	
+2007-03-13  Jonathan Chambers  <joncham@gmail.com>
+
+	* libmono.vcproj, mono.vcproj, genmdesc.vcproj, mono/monodiet.vcproj,
+	mono/pedump.vcproj: Fix	Release build target, add define to remove CRT warnings, 
+	structure output folders a bit better, begin WIN64 port, and change 
+	libmono to build a DLL instead	of a static library.
+	* mono.sln: Begin x64 target support.
+	
+Fri Mar 9 18:57:47 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am, configure.in, msvc: add msvc directory to the
+	distribution.
+	* msvc/create-windef.pl, msvc/mono.def: added def file for exported
+	functions.
+
+2007-03-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* docs/aot-compiler.txt: Update 'future work'.
+
+2007-03-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* docs/aot-compiler.txt: Add into about the PLT.
+	
+	* docs/aot-compiler.txt: Update a bit to reflect recent changes.
+
 2007-02-24  Raja R Harinath  <rharinath@novell.com>
 
 	* data/config.in (odbc32.dll) [os=osx]: Fix misplaced ".

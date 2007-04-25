@@ -6,7 +6,7 @@ AC_CANONICAL_SYSTEM
 m4_ifdef([_A][M_PROG_TAR],[_A][M_SET_OPTION([tar-ustar])])
 
 AM_CONFIG_HEADER(config.h)
-AM_INIT_AUTOMAKE(mono,1.2.3)
+AM_INIT_AUTOMAKE(mono,1.2.4)
 AM_MAINTAINER_MODE
 
 API_VER=1.0
@@ -70,7 +70,7 @@ case "$host" in
 			export CC
 		fi
 		HOST_CC="gcc"
-		CPPFLAGS="$CPPFLAGS -DWIN32_THREADS -DFD_SETSIZE=1024"
+		CPPFLAGS="$CPPFLAGS -DWIN32_THREADS -DFD_SETSIZE=1024 -DUNICODE -D_UNICODE"
 		libmono_cflags="-mno-cygwin"
 		libmono_ldflags="-mno-cygwin"
 		libdl=
@@ -1609,6 +1609,10 @@ case "$host" in
 		  solaris*)
 			LIBC="libc.so"
 			INTL="libintl.so"
+			if test "x$ac_cv_sizeof_void_p" = "x8"; then
+				TARGET=AMD64
+				arch_target=amd64
+			fi
 
 			# On solaris 10 x86, gcc prints a warning saying 'visibility attribute not supported on this configuration; ignored', but linking fails. A test case:
 			# int astruct __attribute__ ((visibility ("hidden")));
@@ -2010,6 +2014,20 @@ AC_CONFIG_COMMANDS([runtime/etc/mono/2.0/web.config],
     cd $depth
 ],[LN_S='$LN_S'])
 
+AC_CONFIG_COMMANDS([runtime/etc/mono/browscap.ini],
+[   depth=../../..
+    case $srcdir in
+    [[\\/$]]* | ?:[[\\/]]* ) reldir=$srcdir ;;
+    .) reldir=$depth ;;
+    *) reldir=$depth/$srcdir ;;
+    esac
+    $ac_aux_dir/install-sh -d runtime/etc/mono/
+    cd runtime/etc/mono/
+    rm -f browscap.ini
+    $LN_S $reldir/data/browscap.ini browscap.ini
+    cd $depth
+],[LN_S='$LN_S'])
+
 AC_OUTPUT([
 Makefile
 mint.pc
@@ -2067,6 +2085,7 @@ data/config
 tools/Makefile
 tools/locale-builder/Makefile
 runtime/Makefile
+msvc/Makefile
 ])
 
 if test x$platform_win32 = xyes; then

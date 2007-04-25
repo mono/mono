@@ -88,7 +88,7 @@ box:
 br.s:
 br: len:6
 br_reg: src1:i len:8
-break: len:4
+break: len:6
 brfalse.s:
 brfalse:
 brtrue.s:
@@ -173,13 +173,13 @@ fcompare: src1:f src2:f len:14
 float_add: dest:f src1:f src2:f len:6
 float_add_ovf:
 float_add_ovf_un:
-float_beq: len:8
-float_bge: len:8
+float_beq: len:10
+float_bge: len:10
 float_bge_un: len:8
-float_bgt: len:8
-float_ble: len:8
+float_bgt: len:10
+float_ble: len:10
 float_ble_un: len:8
-float_blt: len:8
+float_blt: len:10
 float_blt_un: len:8
 float_bne_un: len:8
 float_btg_un: len:8
@@ -326,7 +326,7 @@ loadu2_membase: dest:i src1:b len:26
 loadu4_mem: dest:i len:8
 loadu4_membase: dest:i src1:b len:18
 local:
-localloc: dest:i src1:i len:62
+localloc: dest:i src1:i len:72
 long_add: len: 18 dest:l src1:l src2:i clob:1
 long_add_imm:
 long_add_ovf_un: len:22 dest:l src1:l src2:i clob:1

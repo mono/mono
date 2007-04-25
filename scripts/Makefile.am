@@ -19,6 +19,7 @@ scripts_1_0 = \
 	gacutil			\
 	genxs			\
 	ilasm			\
+	installvst		\
 	macpack			\
 	mbas			\
 	mcs			\

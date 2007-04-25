@@ -5,8 +5,8 @@ check-local: test
 TEST_PROG = ../interpreter/mint
 JITTEST_PROG = ../mini/mono
 
-TEST_PROG_RUN = MONO_SHARED_DIR=$(mono_build_root)/runtime $(LIBTOOL) --mode=execute $(TEST_PROG)
-JITTEST_PROG_RUN = MONO_SHARED_DIR=$(mono_build_root)/runtime $(LIBTOOL) --mode=execute $(JITTEST_PROG)
+TEST_PROG_RUN = MONO_SHARED_DIR=$(mono_build_root)/runtime MONO_CFG_DIR=$(mono_build_root)/runtime/etc $(LIBTOOL) --mode=execute $(TEST_PROG)
+JITTEST_PROG_RUN = MONO_SHARED_DIR=$(mono_build_root)/runtime MONO_CFG_DIR=$(mono_build_root)/runtime/etc $(LIBTOOL) --mode=execute $(JITTEST_PROG)
 
 RUNTIME_ARGS=--config tests-config --optimize=all
 
@@ -500,7 +500,10 @@ test-inline-call-stack: TestDriver.dll test-inline-call-stack-library.dll test-i
 EXTRA_DIST += bug-80307.cs
 bug-80307.exe: $(srcdir)/bug-80307.cs
 	$(MCS) -r:System.Web -out:$@ $(srcdir)/bug-80307.cs
+
+# We use 'test-support-files' to handle an ordering issue between the 'mono/' and 'runtime/' directories
 test-bug-80307: bug-80307.exe
+	cd $(top_builddir)/runtime && $(MAKE) test-support-files
 	$(RUNTIME) bug-80307.exe
 
 # Useful if mono is compiled with --enable-shared=no

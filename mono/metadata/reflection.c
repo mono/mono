@@ -1662,6 +1662,9 @@ handle_enum:
 		g_free (buf);
 		return idx;
 	}
+	case MONO_TYPE_GENERICINST:
+		*ret_type = val->vtable->klass->generic_class->container_class->byval_arg.type;
+		goto handle_enum;
 	default:
 		g_error ("we don't encode constant type 0x%02x yet", *ret_type);
 	}
@@ -4601,7 +4604,7 @@ assembly_add_win32_resources (MonoDynamicImage *assembly, MonoReflectionAssembly
 
 	resource_tree_encode (tree, p, p, &p);
 
-	g_assert (p - buf < size);
+	g_assert (p - buf <= size);
 
 	assembly->win32_res = g_malloc (p - buf);
 	assembly->win32_res_size = p - buf;
@@ -4996,7 +4999,7 @@ mono_image_create_pefile (MonoReflectionModuleBuilder *mb, HANDLE file) {
 }
 
 MonoReflectionModule *
-mono_image_load_module (MonoReflectionAssemblyBuilder *ab, MonoString *fileName)
+mono_image_load_module_dynamic (MonoReflectionAssemblyBuilder *ab, MonoString *fileName)
 {
 	char *name;
 	MonoImage *image;
@@ -5004,6 +5007,7 @@ mono_image_load_module (MonoReflectionAssemblyBuilder *ab, MonoString *fileName)
 	MonoDynamicAssembly *assembly;
 	guint32 module_count;
 	MonoImage **new_modules;
+	gboolean *new_modules_loaded;
 	
 	name = mono_string_to_utf8 (fileName);
 
@@ -5025,14 +5029,19 @@ mono_image_load_module (MonoReflectionAssemblyBuilder *ab, MonoString *fileName)
 
 	module_count = image->assembly->image->module_count;
 	new_modules = g_new0 (MonoImage *, module_count + 1);
+	new_modules_loaded = g_new0 (gboolean, module_count + 1);
 
 	if (image->assembly->image->modules)
 		memcpy (new_modules, image->assembly->image->modules, module_count * sizeof (MonoImage *));
+	if (image->assembly->image->modules_loaded)
+		memcpy (new_modules_loaded, image->assembly->image->modules_loaded, module_count * sizeof (gboolean));
 	new_modules [module_count] = image;
+	new_modules_loaded [module_count] = TRUE;
 	mono_image_addref (image);
 
 	g_free (image->assembly->image->modules);
 	image->assembly->image->modules = new_modules;
+	image->assembly->image->modules_loaded = new_modules_loaded;
 	image->assembly->image->module_count ++;
 
 	mono_assembly_load_references (image, &status);
@@ -6589,11 +6598,16 @@ handle_enum:
 	case MONO_TYPE_U: /* error out instead? this should probably not happen */
 	case MONO_TYPE_I:
 #endif
-	case MONO_TYPE_R8:
 	case MONO_TYPE_U8:
 	case MONO_TYPE_I8: {
 		guint64 *val = g_malloc (sizeof (guint64));
 		*val = read64 (p);
+		*end = p + 8;
+		return val;
+	}
+	case MONO_TYPE_R8: {
+		double *val = g_malloc (sizeof (double));
+		readr8 (p, val);
 		*end = p + 8;
 		return val;
 	}
@@ -6721,6 +6735,13 @@ handle_type:
 				}
 				break;
 			case MONO_TYPE_R8:
+				for (i = 0; i < alen; i++) {
+					double val;
+					readr8 (p, &val);
+					mono_array_set (arr, double, i, val);
+					p += 8;
+				}
+				break;
 			case MONO_TYPE_U8:
 			case MONO_TYPE_I8:
 				for (i = 0; i < alen; i++) {
@@ -7673,9 +7694,23 @@ handle_enum:
 		swap_with_size (p, argval, 4, 1);
 		p += 4;
 		break;
+	case MONO_TYPE_R8:
+#if defined(ARM_FPU_FPA) && G_BYTE_ORDER == G_LITTLE_ENDIAN
+		p [0] = argval [4];
+		p [1] = argval [5];
+		p [2] = argval [6];
+		p [3] = argval [7];
+		p [4] = argval [0];
+		p [5] = argval [1];
+		p [6] = argval [2];
+		p [7] = argval [3];
+#else
+		swap_with_size (p, argval, 8, 1);
+#endif
+		p += 8;
+		break;
 	case MONO_TYPE_U8:
 	case MONO_TYPE_I8:
-	case MONO_TYPE_R8:
 		swap_with_size (p, argval, 8, 1);
 		p += 8;
 		break;
@@ -8647,7 +8682,7 @@ mono_reflection_bind_generic_parameters (MonoReflectionType *type, int type_argc
 	MonoGenericClass *gclass, *cached;
 	gboolean is_dynamic = FALSE;
 	MonoDomain *domain;
-	MonoType *geninst;
+	MonoClass *geninst;
 	int i;
 
 	mono_loader_lock ();
@@ -8712,22 +8747,17 @@ mono_reflection_bind_generic_parameters (MonoReflectionType *type, int type_argc
 
 	gclass->container_class = klass;
 
-	geninst = g_new0 (MonoType, 1);
-	geninst->type = MONO_TYPE_GENERICINST;
-
 	cached = mono_metadata_lookup_generic_class (gclass);
 	if (cached) {
 		g_free (gclass);
-		mono_loader_unlock ();
-		geninst->data.generic_class = cached;
-		return geninst;
+		gclass = cached;
 	}
-
-	geninst->data.generic_class = gclass;
 
 	mono_loader_unlock ();
 
-	return geninst;
+	geninst = mono_generic_class_get_class (gclass);
+
+	return &geninst->byval_arg;
 }
 
 MonoType*
@@ -9520,6 +9550,7 @@ mono_reflection_create_dynamic_method (MonoReflectionDynamicMethod *mb)
 {
 	ReflectionMethodBuilder rmb;
 	MonoMethodSignature *sig;
+	GSList *l;
 	int i;
 
 	sig = dynamic_method_to_signature (mb);
@@ -9537,19 +9568,58 @@ mono_reflection_create_dynamic_method (MonoReflectionDynamicMethod *mb)
 	rmb.refs = g_new0 (gpointer, mb->nrefs + 1);
 	for (i = 0; i < mb->nrefs; i += 2) {
 		MonoClass *handle_class;
-		gpointer ref = resolve_object (mb->module->image, 
-					       mono_array_get (mb->refs, MonoObject*, i), &handle_class);
-		if (!ref) {
-			g_free (rmb.refs);
-			mono_raise_exception (mono_get_exception_type_load (NULL, NULL));
-			return;
+		gpointer ref;
+		MonoObject *obj = mono_array_get (mb->refs, MonoObject*, i);
+
+		if (strcmp (obj->vtable->klass->name, "DynamicMethod") == 0) {
+			MonoReflectionDynamicMethod *method = (MonoReflectionDynamicMethod*)obj;
+			/*
+			 * The referenced DynamicMethod should already be created by the managed
+			 * code, except in the case of circular references. In that case, we store
+			 * method in the refs array, and fix it up later when the referenced 
+			 * DynamicMethod is created.
+			 */
+			if (method->mhandle) {
+				ref = method->mhandle;
+			} else {
+				/* FIXME: GC object stored in unmanaged memory */
+				ref = method;
+
+				/* FIXME: GC object stored in unmanaged memory */
+				method->referenced_by = g_slist_append (method->referenced_by, mb);
+			}
+			handle_class = mono_defaults.methodhandle_class;
+		} else {
+			ref = resolve_object (mb->module->image, obj, &handle_class);
+			if (!ref) {
+				g_free (rmb.refs);
+				mono_raise_exception (mono_get_exception_type_load (NULL, NULL));
+				return;
+			}
 		}
+
 		rmb.refs [i] = ref; /* FIXME: GC object stored in unmanaged memory (change also resolve_object() signature) */
 		rmb.refs [i + 1] = handle_class;
 	}		
 
 	/* FIXME: class */
 	mb->mhandle = reflection_methodbuilder_to_mono_method (mono_defaults.object_class, &rmb, sig);
+
+	/* Fix up refs entries pointing at us */
+	for (l = mb->referenced_by; l; l = l->next) {
+		MonoReflectionDynamicMethod *method = (MonoReflectionDynamicMethod*)l->data;
+		MonoMethodWrapper *wrapper = (MonoMethodWrapper*)method->mhandle;
+		gpointer *data;
+		
+		g_assert (method->mhandle);
+
+		data = (gpointer*)wrapper->method_data;
+		for (i = 0; i < GPOINTER_TO_UINT (data [0]); i += 2) {
+			if ((data [i + 1] == mb) && (data [i + 1 + 1] == mono_defaults.methodhandle_class))
+				data [i + 1] = mb->mhandle;
+		}
+	}
+	g_slist_free (mb->referenced_by);
 
 	g_free (rmb.refs);
 

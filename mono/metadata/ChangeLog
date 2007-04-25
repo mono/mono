@@ -1,3 +1,250 @@
+2007-04-25  Dick Porter  <dick@ximian.com>
+
+	* Makefile.am: Put the mingw enforced-optimisation back into the
+	PLATFORM_WIN32 section.
+
+2007-04-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (mono_image_load_module_dynamic): Fix crash introduced by previous
+	patch.
+
+	* image.c (mono_image_load_module): New API function to load a module reference.
+
+	* image.c (load_modules): Load modules lazily. Fixes #80812.
+
+	* class.c (mono_class_from_typeref): Use mono_image_load_module.
+	
+	* reflection.c (mono_image_load_module_dynamic): Copy image->modules_loaded too.
+
+	* object-internals.h reflection.c icall-def.h (mono_image_load_module): Rename this 
+	to mono_image_load_module_dynamic.
+
+2007-04-23  Jonathan Chambers  <joncham@gmail.com>
+
+	* marshal.c: Fix calling convention for CCW on non-windows
+	platforms. STDCALL on windows, CDECL everywhere else to work 
+	with XPCOM and MainWin COM.
+	
+	Code is contributed under MIT/X11 license.
+
+2007-04-23  Martin Baulig  <martin@ximian.com>
+
+	Fix #80969.
+
+	* loader.c
+	(method_from_memberref): Added `gboolean *used_context' argument.
+	(mono_get_method_from_token): Likewise.
+	(mono_get_method_full): Don't insert the method in the cache when
+	`used_context' is true.
+
+2007-04-23  Raja R Harinath  <rharinath@novell.com>
+
+	* monodiet.c (add_types_from_method): Fix "wrong type" warning.
+
+	* reflection.c (mono_reflection_bind_generic_parameters): Don't
+	create new MonoTypes for returned types.
+	* class.c (mono_generic_class_get_class): Export mono-internal.
+	* class-internals.h: Update to changes.
+
+Thu Apr 19 16:45:55 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* threadpool.c, threadpool.h, icall-def.h: patch from
+	Robert Jordan to implemnt ThreadPool.SetMaxThreads.
+
+2007-04-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* threads.c (mono_thread_get_stack_bounds): Fix windows build.
+	
+	* threads.c (mono_thread_get_stack_bounds): Remove an assert which can be triggered.
+
+	* threads.c (mono_thread_get_stack_bounds): New helper function.
+
+	* threads.c (mono_thread_attach): Applied patch from horst.reiterer@fabasoft.com.
+	Correctly compute stack bounds when attaching. Fixes #81394.
+
+Wed Apr 18 18:28:41 BST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: fix handling of doubles in custom attributes
+	for the arm-fpa format (bug #81368).
+
+2007-04-18  Raja R Harinath  <rharinath@novell.com>
+
+	* reflection.c (assembly_add_win32_resources): Mildly relax an
+	bounds check to let the end pointer point just past the end of the
+	allocated buffer.  (may fix #81384)
+
+2007-04-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* culture-info-table.h : regenerated.
+
+2007-04-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* threads.c (start_wrapper): Call push_appdomain_ref () earlier to fix races where
+	the thread is aborted early.
+
+2007-04-05  Dick Porter  <dick@ximian.com>
+
+	* file-io.c (ves_icall_System_IO_MonoIO_GetFileSystemEntries): use
+	FindFirstFile()/FindNextFile() to find entries.  This lets the
+	io-layer versions use MONO_IOMAP compatibility helpers.  Fixes bug
+	81038.
+
+	* appdomain.c (MONO_CORLIB_VERSION): Increment, as the usage of
+	the parameters of
+	ves_icall_System_IO_MonoIO_GetFileSystemEntries() has changed.
+
+2007-04-04  Martin Baulig  <martin@ximian.com>
+
+	* debug-helpers.c
+	(mono_method_desc_full_match): Add support for nested classes.
+
+2007-04-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (cominterop_get_managed_wrapper_adjusted): Fix warnings.
+
+2007-04-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* threads.c (abort_appdomain_thread): Avoid handle leakage if we are
+	waiting for too many threads.
+
+2007-03-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* environment.c: Fix return value check on uname so we can get the 
+	executing version on Solaris operating systems.
+
+2007-03-28  Jb Evain  <jbevain@gmail.com>
+
+	* class.c (mono_type_get_name_recurse): Complete the
+	fix for the creation of assembly qualified names for
+	pointer types. Fixes #81208.
+
+2007-03-27  Dick Porter  <dick@ximian.com>
+
+	* appdomain.c (MONO_CORLIB_VERSION): Increment, as the signature
+	of ves_icall_System_Threading_Mutex_ReleaseMutex_internal() has
+	changed.
+
+	* threads.c
+	(ves_icall_System_Threading_Mutex_ReleaseMutex_internal): Return
+	the value of ReleaseMutex().
+
+2007-03-27  Dick Porter  <dick@ximian.com>
+
+	* socket-io.c (ipaddress_to_struct_in_addr): IPAddress is stored
+	in little-endian order, not network endian, so must be converted
+	to host endian here.  Fixes bug 80593.
+
+2007-03-22  Jb Evain  <jbevain@gmail.com>
+
+	* class.c (mono_type_get_name_recurse): Fix the creation of assembly
+	qualified names for pointer types. Fixes #81208.
+
+2007-03-21  Jonathan Chambers  <joncham@gmail.com>
+
+	* marshal.c: Add support for PreserveSigAttribute. 
+	
+	Code is contributed under MIT/X11 license.
+
+2007-03-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* process.c: Fix endianness issues. Fixes #81126.
+
+	* reflection.c (mono_reflection_create_dynamic_method): Fix the last change so
+	multiple circular calls made from the same DynamicMethod work. Fixes #81141.
+
+	* image.c (mono_image_lookup_resource): Make this work on big-endian
+	machines.Change API contract so the caller needs to free the return value.
+	
+	* process.c (process_get_fileversion): Adapt to mono_image_lookup_resource ()
+	API change.
+	
+2007-03-14  Martin Baulig  <martin@ximian.com>
+
+	* debug-helpers.c (mono_type_get_desc): In `MONO_TYPE_ARRAY', use
+	mono_type_get_desc() as well.
+
+2007-03-13  Jonathan Chambers  <joncham@gmail.com>
+
+	* icall.c:  Fix environ access in VS.  
+	
+2007-03-13  Alp Toker  <alp@atoker.com>
+
+	* icall.c (ves_icall_MonoType_GetElementType): For enums, return null
+	rather than the underlying type. Based on a patch by Ben Maurer. Fixes
+	#63841.
+
+2007-03-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (mono_reflection_create_dynamic_method): Add support for 
+	circular references among dynamic methods. Fixes #81091.
+
+	* object-internals.h (MonoReflectionDynamicMethod): Add 'referenced_by' field.
+
+2007-03-09  Martin Baulig  <martin@ximian.com>
+
+	* reflection.c (encode_constant): Add support for MONO_TYPE_GENERICINST.
+
+2007-03-09  Jonathan Chambers  <joncham@gmail.com>
+
+	* appdomain.c:  Fix shadow copy on Windows. Use g_snprintf instead
+	of snprintf as it doesn't exist on Win32 (VS build); also for uniformity.  
+	
+	Code is contributed under MIT/X11 license.
+        
+2007-03-09  Gert Driesen  <drieseng@users.souceforge.net>
+
+	* loader.c: Reapply patch for bug #79424.
+
+2007-03-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* metadata.c (mono_type_to_unmanaged): Only convert object to
+	MARSHAL_CONV_SAFEHANDLE on the 2.0 profile.
+
+Tue Mar 6 15:39:48 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* class-internals.h, class.c, metadata.c, reflection.c: removed unused
+	(and incorrectly set) is_reference field from MonoGenericInst.
+
+2007-03-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* assembly.c (mono_assembly_load_from_full): Call mono_assemblies_unlock ()
+	a little earlier.
+
+	* icall.c (ves_icall_type_Equals): Rename this to ves_icall_System_Type_EqualsInternal.
+
+	* icall-def.h: Rename Type:Equals to Type:EqualsInternal.
+
+2007-03-05  Miguel de Icaza  <miguel@novell.com>
+
+	* file-io.c (ves_icall_System_IO_MonoIO_Open): Use the new
+	FileOptions.1 value to mean "temporary", map that to
+	FILE_ATTRIBUTE_TEMPORARY and use that to signal 600 permissions.
+
+	Fixes 80688
+
+2007-03-03  Marek Habersack  <mhabersack@novell.com>
+
+	* appdomain.c: implement MS .Net style shadow copying. Copies of
+	the assemblies are made in a subdirectory of the dynamic base
+	directory, the assembly names are preserved.
+	Copy .mdb and .config files along with the assemblies being shadowed.
+
+2007-02-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (emit_object_to_ptr_conv): Emit valid IL for handling HandleRefs.
+	(emit_marshal_handleref): Ditto.
+
+	* profiler.c: Applied patch from Tor Lillqvist (tml@novell.com) to fix output
+	on Visual C++. Fixes #80671.
+
+Wed Feb 28 16:53:40 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* boehm-gc.c, null-gc.c, object.h, object.c: sgen gc fixes
+	for clone operations.
+
+2007-02-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c: Fix warnings.
 
 Fri Feb 23 15:06:57 CET 2007 Paolo Molaro <lupus@ximian.com>
 
