@@ -1661,6 +1661,27 @@ namespace MonoTests.System.Xml
 				false);		// HasAttributes
 		}
 
+		// bug #81451
+		[Test]
+		public void ReadToNextSibling2 ()
+		{
+			string xml = @"<root><baz><bar><foo attr='value'/></bar><foo attr='value2'><bar><foo /></bar></foo></baz></root>";
+			RunTest (xml, new TestMethod (ReadToNextSibling2));
+		}
+
+		void ReadToNextSibling2 (XmlReader r)
+		{
+			r.MoveToContent (); // ->root
+			r.Read (); // root->baz
+			r.Read (); // baz->bar
+			Assert ("#1", r.ReadToNextSibling ("foo"));
+			AssertEquals ("#2", "value2", r.GetAttribute ("attr"));
+			r.Read (); // foo[@value='value2']->bar
+			Assert ("#3", !r.ReadToNextSibling ("foo"));
+			AssertEquals ("#4", XmlNodeType.EndElement, r.NodeType);
+			AssertEquals ("#5", "foo", r.LocalName);
+		}
+
 		[Test]
 		public void ReadSubtree ()
 		{
