@@ -1,5 +1,9 @@
 2007-04-25  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DateTimeTest.cs : looks like 'F' even removes preceding '.' ...
+
+2007-04-25  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DateTime.cs : implemented new-2.0 'F' pattern letter.
 
 2007-04-24  Jeffrey Stedfast  <fejj@novell.com>

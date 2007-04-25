@@ -1811,9 +1811,13 @@ namespace System
 					int startLen = result.Length;
 					ZeroPad (result, dec, tokLen);
 
-					if (omitZeros)
+					if (omitZeros) {
 						while (result.Length > startLen && result [result.Length - 1] == '0')
 							result.Length--;
+						// when the value was 0, then trim even preceding '.' (!) It is fixed character.
+						if (dec == 0 && startLen > 0 && result [startLen - 1] == '.')
+							result.Length--;
+					}
 
 					break;
 				case 't':

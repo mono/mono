@@ -1,5 +1,9 @@
 2007-04-25  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DateTimeTest.cs : test for 'F' rmoving preceding '.'
+
+2007-04-25  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DateTimeTest.cs : test for new-2.0 'F' pattern letter.
 
 2007-04-19  Gert Driesen  <drieseng@users.sourceforge.net>
