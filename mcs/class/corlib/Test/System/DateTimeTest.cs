@@ -1613,6 +1613,15 @@ public class DateTimeTest : Assertion
 		// This should never throw.
 		DateTime.MinValue.ToLocalTime ();
 	}
+
+	[Test]
+	public void OmittedSecondsFraction ()
+	{
+		DateTime today = DateTime.Today;
+		AssertEquals ("#1", "00:00:00.13579", today.AddTicks (1357900).ToString ("HH:mm:ss.FFFFFFF"));
+		DateTime dt = DateTime.ParseExact ("00:00:00.13579", "HH:mm:ss.FFFFFFF", CultureInfo.InvariantCulture);
+		AssertEquals ("#2", today, dt.AddTicks (-1357900));
+	}
 #endif
 }
 

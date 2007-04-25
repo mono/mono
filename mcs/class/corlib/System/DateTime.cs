@@ -1007,6 +1007,8 @@ namespace System
 				if (s.Length == valuePos)
 					break;
 
+				bool leading_zeros = true;
+
 				if (chars[pos] == '\'') {
 					num = 1;
 					while (pos+num < len) {
@@ -1213,11 +1215,16 @@ namespace System
 						return false;
 
 					break;
+#if NET_2_0
+				case 'F':
+					leading_zeros = false;
+					goto case 'f';
+#endif
 				case 'f':
 					if (fractionalSeconds != -1)
 						return false;
 					num = Math.Min (num, 6);
-					double decimalNumber = (double) _ParseNumber (s, valuePos, 0, num+1, true, sloppy_parsing, out num_parsed);
+					double decimalNumber = (double) _ParseNumber (s, valuePos, 0, num+1, leading_zeros, sloppy_parsing, out num_parsed);
 					if (num_parsed == -1)
 						return false;
 
@@ -1351,6 +1358,9 @@ namespace System
 					switch (chars [pos]) {
 					case 'm':
 					case 's':
+#if NET_2_0
+					case 'F':
+#endif
 					case 'f':
 					case 'z':
 						if (s.Length > valuePos && s [valuePos] == 'Z'
@@ -1751,6 +1761,7 @@ namespace System
 
 			while (i < format.Length) {
 				int tokLen;
+				bool omitZeros = false;
 				char ch = format [i];
 
 				switch (ch) {
@@ -1783,6 +1794,11 @@ namespace System
 					tokLen = CountRepeat (format, i, ch);
 					ZeroPad (result, this.Second, tokLen == 1 ? 1 : 2);
 					break;
+#if NET_2_0
+				case 'F':
+					omitZeros = true;
+					goto case 'f';
+#endif
 				case 'f':
 					// fraction of second, to same number of
 					// digits as there are f's
@@ -1792,7 +1808,12 @@ namespace System
 						throw new FormatException ("Invalid Format String");
 
 					int dec = (int)((long)(this.Ticks % TimeSpan.TicksPerSecond) / (long) Math.Pow (10, 7 - tokLen));
+					int startLen = result.Length;
 					ZeroPad (result, dec, tokLen);
+
+					if (omitZeros)
+						while (result.Length > startLen && result [result.Length - 1] == '0')
+							result.Length--;
 
 					break;
 				case 't':
