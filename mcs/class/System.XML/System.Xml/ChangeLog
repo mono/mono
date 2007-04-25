@@ -1,5 +1,9 @@
 2007-04-25  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlConvert.cs : MinValue and MaxValue, same for ToDateTime().
+
+2007-04-25  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlConvert.cs : MinValue and MaxValue are unchanged by the
 	  serialization mode (unlike DateTime.ToString()).
 

@@ -285,12 +285,16 @@ namespace System.Xml {
 		public static DateTime ToDateTime (string value, XmlDateTimeSerializationMode mode)
 		{
 			string modestr = null;
+			DateTime dt;
 			switch (mode) {
 			case XmlDateTimeSerializationMode.Local:
+				dt = ToDateTime (value, "yyyy-MM-ddTHH:mm:ss.FFFFFFFzzz");
+				return dt == DateTime.MinValue || dt == DateTime.MaxValue ? dt : dt.ToLocalTime ();
 			case XmlDateTimeSerializationMode.RoundtripKind:
-				return ToDateTime (value, "yyyy-MM-ddTHH:mm:ss.FFFFFFFzzz");
+				return ToDateTime (value, "yyyy-MM-ddTHH:mm:ss.FFFFFFF");
 			case XmlDateTimeSerializationMode.Utc:
-				return ToDateTime (value, "yyyy-MM-ddTHH:mm:ss.FFFFFFFZ").ToUniversalTime ();
+				dt = ToDateTime (value, "yyyy-MM-ddTHH:mm:ss.FFFFFFFZ");
+				return dt == DateTime.MinValue || dt == DateTime.MaxValue ? dt : dt.ToUniversalTime ();
 			case XmlDateTimeSerializationMode.Unspecified:
 			default:
 				return ToDateTime (value, "yyyy-MM-ddTHH:mm:ss.FFFFFFF");
