@@ -493,17 +493,27 @@ namespace System.Xml {
 #if NET_2_0
 		public static string ToString (DateTime value, XmlDateTimeSerializationMode mode)
 		{
+			// Unlike usual DateTime formatting, it preserves
+			// MaxValue/MinValue as is.
 			string modestr = null;
 			switch (mode) {
 			case XmlDateTimeSerializationMode.Local:
+				return (value == DateTime.MinValue ? DateTime.MinValue : value == DateTime.MaxValue ? value : value.ToLocalTime ()).ToString (
+					"yyyy-MM-ddTHH:mm:ss.FFFFFFFzzz",
+					CultureInfo.InvariantCulture);
+				break;
 			case XmlDateTimeSerializationMode.RoundtripKind:
+				return value.ToString (
+					"yyyy-MM-ddTHH:mm:ss.FFFFFFF",
+					CultureInfo.InvariantCulture);
+				break;
 			default:
 				return value.ToString (
 					"yyyy-MM-ddTHH:mm:ss.FFFFFFFzzz",
 					CultureInfo.InvariantCulture);
 				break;
 			case XmlDateTimeSerializationMode.Utc:
-				return value.ToUniversalTime ().ToString (
+				return (value == DateTime.MinValue ? DateTime.MinValue : value == DateTime.MaxValue ? value : value.ToUniversalTime ()).ToString (
 					"yyyy-MM-ddTHH:mm:ss.FFFFFFFZ",
 					CultureInfo.InvariantCulture);
 				break;

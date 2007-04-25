@@ -1,5 +1,10 @@
 2007-04-25  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlConvert.cs : MinValue and MaxValue are unchanged by the
+	  serialization mode (unlike DateTime.ToString()).
+
+2007-04-25  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlConvert.cs : in 2.0, use F instead of f in dateTime formatting.
 
 2007-04-25  Atsushi Enomoto  <atsushi@ximian.com>

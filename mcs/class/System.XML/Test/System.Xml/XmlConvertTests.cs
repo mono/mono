@@ -592,6 +592,18 @@ namespace MonoTests.System.Xml
 					AssertType.Fail (s + "should not fail");
 			}
 		}
+
+		[Test]
+		public void XmlDateTimeSerializationModeAndMaxValue ()
+		{
+			AssertEquals ("#1", "9999-12-31T23:59:59.9999999", XmlConvert.ToString (DateTime.MaxValue, XmlDateTimeSerializationMode.Unspecified).Substring (0, 27));
+			AssertEquals ("#2", "9999-12-31T23:59:59.9999999Z", XmlConvert.ToString (DateTime.MaxValue, XmlDateTimeSerializationMode.Utc));
+			AssertEquals ("#3", "9999-12-31T23:59:59.9999999", XmlConvert.ToString (DateTime.MaxValue, XmlDateTimeSerializationMode.RoundtripKind));
+			AssertEquals ("#4", "9999-12-31T23:59:59.9999999", XmlConvert.ToString (DateTime.MaxValue, XmlDateTimeSerializationMode.Local).Substring (0, 27));
+			// direct formatting string - no difference
+			AssertEquals ("#5", "9999-12-31T23:59:59.9999999Z", XmlConvert.ToString (DateTime.MaxValue, "yyyy-MM-ddTHH:mm:ss.FFFFFFFZ"));
+			AssertEquals ("#6", "9999-12-31T23:59:59.9999999", XmlConvert.ToString (DateTime.MaxValue, "yyyy-MM-ddTHH:mm:ss.FFFFFFFzzz").Substring (0, 27));
+		}
 #endif
 	}
 }

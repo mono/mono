@@ -313,9 +313,15 @@ namespace System.Xml.Serialization {
 				case "boolean": return "(" + value + "?\"true\":\"false\")";
 				case "unsignedByte": return value + ".ToString(CultureInfo.InvariantCulture)";
 				case "char": return "((int)(" + value + ")).ToString(CultureInfo.InvariantCulture)";
+#if NET_2_0
+				case "dateTime": return value + ".ToString(\"yyyy-MM-ddTHH:mm:ss.FFFFFFF\", CultureInfo.InvariantCulture)";
+				case "date": return value + ".ToString(\"yyyy-MM-dd\", CultureInfo.InvariantCulture)";
+				case "time": return value + ".ToString(\"HH:mm:ss.FFFFFFF\", CultureInfo.InvariantCulture)";
+#else
 				case "dateTime": return value + ".ToString(\"yyyy-MM-ddTHH:mm:ss.fffffffzzz\", CultureInfo.InvariantCulture)";
 				case "date": return value + ".ToString(\"yyyy-MM-dd\", CultureInfo.InvariantCulture)";
 				case "time": return value + ".ToString(\"HH:mm:ss.fffffffzzz\", CultureInfo.InvariantCulture)";
+#endif
 				case "decimal": return "XmlConvert.ToString (" + value + ")";
 				case "double": return "XmlConvert.ToString (" + value + ")";
 				case "short": return value + ".ToString(CultureInfo.InvariantCulture)";

@@ -1,5 +1,10 @@
 2007-04-25  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlConvertTests.cs : added test for MaxValue serialization with
+	  every XmlDateTimeSerializationMode.
+
+2007-04-25  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlReaderCommonTests.cs : added test for bug #81451.
 
 2007-04-24  Atsushi Enomoto  <atsushi@ximian.com>
