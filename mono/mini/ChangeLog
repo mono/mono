@@ -1,5 +1,8 @@
 2007-04-25  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-amd64.c (get_call_info): Allocate the result from the cfg mempool and cache 
+	it in cfg->arch.cinfo.
+
 	* local-propagation.c (mono_local_cprop_bb): Fix a warning.
 
 	* mini.h mini.c branch-opts.c: Change bbhash to be an array and store it in 
