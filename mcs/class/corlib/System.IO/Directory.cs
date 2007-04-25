@@ -503,10 +503,11 @@ namespace System.IO
 				throw new ArgumentException ("Path is invalid", "path");
 			}
 
-			string [] result = MonoIO.GetFileSystemEntries (wildpath, pattern, (int) attrs, (int) mask, out error);
+			string path_with_pattern = Path.Combine (wildpath, pattern);
+			string [] result = MonoIO.GetFileSystemEntries (path, path_with_pattern, (int) attrs, (int) mask, out error);
 			if (error != 0)
 				throw MonoIO.GetException (wildpath, error);
-
+			
 			return result;
 		}
 
