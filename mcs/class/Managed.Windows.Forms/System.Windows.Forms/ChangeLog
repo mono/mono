@@ -1,3 +1,11 @@
+2007-04-25  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* DrawListViewColumnHeaderEventHandler.cs, DrawToolTipEventArgs.cs,
+	  DrawListViewItemEventHandler.cs,
+	  DrawListViewSubItemEventHandler.cs, DrawToolTipEventHandler.cs:
+	  Added.
+	* X11Structs.cs: More ToString implementation.
+
 2007-04-25  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStripDropDownItem.cs: Don't lazy create a DropDown in Dispose.

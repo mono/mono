@@ -553,6 +553,13 @@ namespace System.Windows.Forms {
 		public override string ToString() {
 			switch (type)
 			{
+				case XEventName.Expose:
+					return ToString (ExposeEvent);
+				case XEventName.FocusIn:
+				case XEventName.FocusOut:
+					return ToString (FocusChangeEvent);
+				case XEventName.NoExpose:
+					return ToString (NoExposeEvent);
 				case XEventName.PropertyNotify:
 					return ToString (PropertyEvent);
 				case XEventName.ResizeRequest:
