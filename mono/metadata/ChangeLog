@@ -1,3 +1,8 @@
+2007-04-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* appdomain.c (add_assemblies_to_domain): Fix crash when an assembly reference
+	is missing.
+
 2007-04-25  Dick Porter  <dick@ximian.com>
 
 	* Makefile.am: Put the mingw enforced-optimisation back into the
