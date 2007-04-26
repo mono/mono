@@ -1,3 +1,15 @@
+2007-04-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Color.cs: Try to avoid calling GetName in GetHashCode when the color
+	isn't named. Commented code (#81465) to remove the string name member 
+	for the 2.0 profile (to avoid a reference in a struct).
+	* ColorConverter.cs: Use the new KnownColor static uint array.
+	* ColorTranslator.cs: Share code between From[Win32|Ole] (both BGR).
+	Reduce ToHtml switch size (when html name == known color name).
+	* KnownColors.cs: Remove the array of struct for every known colors.
+	Add an array of uint with color values and a method to return the name
+	of a known color. Big reduction of the static ctor code size.
+
 2007-04-26  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* gdipFunctions.cs: Add p/invoke definitions for GdipRecordMetafile

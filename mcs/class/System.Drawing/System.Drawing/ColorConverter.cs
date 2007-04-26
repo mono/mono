@@ -150,13 +150,10 @@ namespace System.Drawing
 			} 
 
 			if (!result.IsEmpty) {
-				Color resultColor = (Color) result;
-
 				// Look for a named or system color with those values
-				foreach (Color c in KnownColors.Values) {
-					if (c == resultColor)
-						return c;
-				}
+				Color known = KnownColors.FindColorMatch (result);
+				if (!known.IsEmpty)
+					return known;
 			}
 
 			return result;
@@ -228,9 +225,10 @@ namespace System.Drawing
 				if (cached != null)
 					return cached;
 
-				// copy all colors except the first empty slot
-				Array colors = Array.CreateInstance (typeof (Color), KnownColors.Values.Length - 1);
-				Array.Copy (KnownColors.Values, 1, colors, 0, colors.Length);
+				Array colors = Array.CreateInstance (typeof (Color), KnownColors.ArgbValues.Length - 1);
+				for (int i=1; i < KnownColors.ArgbValues.Length; i++) {
+					colors.SetValue (KnownColors.FromKnownColor ((KnownColor)i), i - 1);
+				}
 				Array.Sort (colors, 0, colors.Length, new CompareColors ());
 				cached = new StandardValuesCollection (colors);
 			}

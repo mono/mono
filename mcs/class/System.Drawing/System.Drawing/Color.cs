@@ -33,7 +33,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Collections;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 
@@ -66,26 +65,54 @@ namespace System.Drawing
 
 		internal short state;
 		internal short knownColor;
+// #if ONLY_1_1
+// Mono bug #81465 is holding this change
+		// MS 1.1 requires this member to be present for serialization (not so in 2.0)
+		// however it's bad to keep a string (reference) in a struct
 		internal string name;
-
+// #endif
 #if TARGET_JVM
 		internal java.awt.Color NativeObject {
 			get {
 				return new java.awt.Color (R, G, B, A);
 			}
 		}
+
+		internal static Color FromArgbNamed (int alpha, int red, int green, int blue, string name, KnownColor knownColor)
+		{
+			Color color = FromArgb (alpha, red, green, blue);
+			color.state = (short) (ColorType.Known|ColorType.Named);
+			color.name = KnownColors.GetName (knownColor);
+			color.knownColor = (short) knownColor;
+			return color;
+		}
+
+		internal static Color FromArgbSystem (int alpha, int red, int green, int blue, string name, KnownColor knownColor)
+		{
+			Color color = FromArgbNamed (alpha, red, green, blue, name, knownColor);
+			color.state |= (short) ColorType.System;
+			return color;
+		}
 #endif
 
 		public string Name {
-			get{
+			get {
+#if NET_2_0_ONCE_MONO_BUG_81465_IS_FIXED
+				if (IsNamedColor)
+					return KnownColors.GetName (knownColor);
+				else
+					return String.Format ("{0:x}", ToArgb ());
+#else
+				// name is required for serialization under 1.x, but not under 2.0
 				if (name == null) {
 					// Can happen with stuff deserialized from MS
 					if (IsNamedColor)
-						name = KnownColors.FromKnownColor ((KnownColor)knownColor).Name;
+						name = KnownColors.GetName (knownColor);
 					else
 						name = String.Format ("{0:x}", ToArgb ());
 				}
 				return name;
+#endif
 			}
 		}
 
@@ -118,26 +145,7 @@ namespace System.Drawing
 			CheckARGBValues (alpha, red, green, blue);
 			Color color = new Color ();
 			color.state = (short) ColorType.ARGB;
-			color.value = ((uint) alpha << 24) + (red << 16) + (green << 8) + blue;
-			return color;
-		}
-
-		internal static Color FromArgbNamed (int alpha, int red, int green, int blue, string name, KnownColor knownColor)
-		{
-			Color color = FromArgb (alpha, red, green, blue);
-			color.state = (short) (ColorType.Known|ColorType.Named);
-			//color.issystemcolor = false; //???
-			color.name = name;
-			// FIXME: here happens SEGFAULT.
-			//color.knownColor = (KnownColor) Enum.Parse (typeof (KnownColor), name, false);
-			color.knownColor = (short) knownColor;
-			return color;
-		}
-
-		internal static Color FromArgbSystem (int alpha, int red, int green, int blue, string name, KnownColor knownColor)
-		{
-			Color color = FromArgbNamed (alpha, red, green, blue, name, knownColor);
-			color.state |= (short) ColorType.System;
+			color.value = (int)((uint) alpha << 24) + (red << 16) + (green << 8) + blue;
 			return color;
 		}
 
@@ -431,7 +439,10 @@ namespace System.Drawing
 		
 		public override int GetHashCode ()
 		{
-			return ((int) value) ^ Name.GetHashCode ();
+			int hc = (int)(value ^ (value >> 32) ^ state ^ (knownColor >> 16));
+			if (IsNamedColor)
+				hc ^= Name.GetHashCode ();
+			return hc;
 		}
 
 		/// <summary>

@@ -7,7 +7,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // Copyright (C) 2001 Ximian, Inc.  http://www.ximian.com
-// Copyright (C) 2004,2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004,2006-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,6 +30,7 @@
 //
  
 using System.ComponentModel;
+using System.Globalization;
 
 namespace System.Drawing {
 
@@ -62,56 +63,53 @@ namespace System.Drawing {
 			return (Color) converter.ConvertFromString (htmlColor);
 		}
 
+		internal static Color FromBGR (int bgr)
+		{
+			Color result = Color.FromArgb (0xFF, (bgr & 0xFF), ((bgr >> 8) & 0xFF), ((bgr >> 16) & 0xFF));
+			Color known = KnownColors.FindColorMatch (result);
+			return (known.IsEmpty) ? result : known;
+		}
+
 		public static Color FromOle (int oleColor)
 		{
 			// OleColor format is BGR
-			int R = oleColor & 0xFF;
-			int G = (oleColor >> 8) & 0xFF;
-			int B = (oleColor >> 16) & 0xFF;
-
-			Color retcolor = Color.FromArgb (255, R, G, B);
-			foreach (Color c in KnownColors.Values) {
-				if (c == retcolor)
-					return c;
-			}
-
-			return retcolor;
+			return FromBGR (oleColor);
 		}
 
 		public static Color FromWin32 (int win32Color)
 		{
 			// Win32Color format is BGR
-			int R = win32Color & 0xFF;
-			int G = (win32Color >> 8) & 0xFF;
-			int B = (win32Color >> 16) & 0xFF;
-
-			Color retcolor = Color.FromArgb (255, R, G, B);
-			foreach (Color c in KnownColors.Values) {
-				if (c == retcolor)
-					return c;
-			}
-
-			return retcolor;
+			return FromBGR (win32Color);
 		}
 
 		public static string ToHtml (Color c)
 		{
-			KnownColor kc;
 			if (c.IsEmpty)
 				return String.Empty;
 
-			string result;
-			if(c.IsSystemColor) {
-				kc = c.ToKnownColor();
+			if (c.IsSystemColor) {
+				KnownColor kc = c.ToKnownColor ();
 				switch (kc) {
 				case KnownColor.ActiveBorder:
-					return "activeborder";
 				case KnownColor.ActiveCaption:
-					return "activecaption";
+				case KnownColor.AppWorkspace:
+				case KnownColor.GrayText:
+				case KnownColor.Highlight:
+				case KnownColor.HighlightText:
+				case KnownColor.InactiveBorder:
+				case KnownColor.InactiveCaption:
+				case KnownColor.InactiveCaptionText:
+				case KnownColor.InfoText:
+				case KnownColor.Menu:
+				case KnownColor.MenuText:
+				case KnownColor.ScrollBar:
+				case KnownColor.Window:
+				case KnownColor.WindowFrame:
+				case KnownColor.WindowText:
+					return KnownColors.GetName (kc).ToLower (CultureInfo.InvariantCulture);
+
 				case KnownColor.ActiveCaptionText:
 					return "captiontext";
-				case KnownColor.AppWorkspace:
-					return "appworkspace";
 				case KnownColor.Control:
 					return "buttonface";
 				case KnownColor.ControlDark:
@@ -126,64 +124,35 @@ namespace System.Drawing {
 					return "buttontext";
 				case KnownColor.Desktop:
 					return "background";
-				case KnownColor.GrayText:
-					return "graytext";
-				case KnownColor.Highlight:
 				case KnownColor.HotTrack:
 					return "highlight";
-				case KnownColor.HighlightText:
-					return "highlighttext";
-				case KnownColor.InactiveBorder:
-					return "inactiveborder";
-				case KnownColor.InactiveCaption:
-					return "inactivecaption";
-				case KnownColor.InactiveCaptionText:
-					return "inactivecaptiontext";
 				case KnownColor.Info:
 					return "infobackground";
-				case KnownColor.InfoText:
-					return "infotext";
-				case KnownColor.Menu:
-					return "menu";
-				case KnownColor.MenuText:
-					return "menutext";
-				case KnownColor.ScrollBar:
-					return "scrollbar";
-				case KnownColor.Window:
-					return "window";
-				case KnownColor.WindowFrame:
-					return "windowframe";
-				case KnownColor.WindowText:
-					return "windowtext";
+
 				default:
 					return String.Empty;
 				}
 			}
 
 			if (c.IsNamedColor) {
-				if (c == Color.LightGray) {
-					result =  "LightGrey";
-				}
+				if (c == Color.LightGray)
+					return "LightGrey";
 				else
-					result = c.Name;
+					return c.Name;
 			}
-			else
-				result = String.Format ("#{0:X2}{1:X2}{2:X2}", c.R, c.G, c.B);
 
-			return result;
+			return String.Format ("#{0:X2}{1:X2}{2:X2}", c.R, c.G, c.B);
 		}
 
 		public static int ToOle (Color c)
 		{
 			// OleColor format is BGR, same as Win32
-
 			return  ((c.B << 16) | (c.G << 8) | c.R);
 		}
 
 		public static int ToWin32 (Color c)
 		{
 			// Win32Color format is BGR, Same as OleColor
-
 			return  ((c.B << 16) | (c.G << 8) | c.R);
 		}
 	}

@@ -39,183 +39,183 @@ namespace System.Drawing {
 		{
 		}
 #endif
-		static Color[] knownColors = new Color [] {
-			Color.Empty,
-			Color.FromArgbSystem (0xFF, 0xD4, 0xD0, 0xC8, "ActiveBorder", KnownColor.ActiveBorder), 
-			Color.FromArgbSystem (0xFF, 0x00, 0x54, 0xE3, "ActiveCaption", KnownColor.ActiveCaption), 
-			Color.FromArgbSystem (0xFF, 0xFF, 0xFF, 0xFF, "ActiveCaptionText", KnownColor.ActiveCaptionText), 
-			Color.FromArgbSystem (0xFF, 0x80, 0x80, 0x80, "AppWorkspace", KnownColor.AppWorkspace), 
-			Color.FromArgbSystem (0xFF, 0xEC, 0xE9, 0xD8, "Control", KnownColor.Control), 
-			Color.FromArgbSystem (0xFF, 0xAC, 0xA8, 0x99, "ControlDark", KnownColor.ControlDark), 
-			Color.FromArgbSystem (0xFF, 0x71, 0x6F, 0x64, "ControlDarkDark", KnownColor.ControlDarkDark), 
-			Color.FromArgbSystem (0xFF, 0xF1, 0xEF, 0xE2, "ControlLight", KnownColor.ControlLight), 
-			Color.FromArgbSystem (0xFF, 0xFF, 0xFF, 0xFF, "ControlLightLight", KnownColor.ControlLightLight), 
-			Color.FromArgbSystem (0xFF, 0x00, 0x00, 0x00, "ControlText", KnownColor.ControlText), 
-			Color.FromArgbSystem (0xFF, 0x00, 0x4E, 0x98, "Desktop", KnownColor.Desktop), 
-			Color.FromArgbSystem (0xFF, 0xAC, 0xA8, 0x99, "GrayText", KnownColor.GrayText), 
-			Color.FromArgbSystem (0xFF, 0x31, 0x6A, 0xC5, "Highlight", KnownColor.Highlight), 
-			Color.FromArgbSystem (0xFF, 0xFF, 0xFF, 0xFF, "HighlightText", KnownColor.HighlightText), 
-			Color.FromArgbSystem (0xFF, 0x00, 0x00, 0x80, "HotTrack", KnownColor.HotTrack), 
-			Color.FromArgbSystem (0xFF, 0xD4, 0xD0, 0xC8, "InactiveBorder", KnownColor.InactiveBorder), 
-			Color.FromArgbSystem (0xFF, 0x7A, 0x96, 0xDF, "InactiveCaption", KnownColor.InactiveCaption), 
-			Color.FromArgbSystem (0xFF, 0xD8, 0xE4, 0xF8, "InactiveCaptionText", KnownColor.InactiveCaptionText), 
-			Color.FromArgbSystem (0xFF, 0xFF, 0xFF, 0xE1, "Info", KnownColor.Info), 
-			Color.FromArgbSystem (0xFF, 0x00, 0x00, 0x00, "InfoText", KnownColor.InfoText), 
-			Color.FromArgbSystem (0xFF, 0xFF, 0xFF, 0xFF, "Menu", KnownColor.Menu), 
-			Color.FromArgbSystem (0xFF, 0x00, 0x00, 0x00, "MenuText", KnownColor.MenuText), 
-			Color.FromArgbSystem (0xFF, 0xD4, 0xD0, 0xC8, "ScrollBar", KnownColor.ScrollBar), 
-			Color.FromArgbSystem (0xFF, 0xFF, 0xFF, 0xFF, "Window", KnownColor.Window), 
-			Color.FromArgbSystem (0xFF, 0x00, 0x00, 0x00, "WindowFrame", KnownColor.WindowFrame), 
-			Color.FromArgbSystem (0xFF, 0x00, 0x00, 0x00, "WindowText", KnownColor.WindowText), 
-			Color.FromArgbNamed (0x00, 0xFF, 0xFF, 0xFF, "Transparent", KnownColor.Transparent), 
-			Color.FromArgbNamed (0xFF, 0xF0, 0xF8, 0xFF, "AliceBlue", KnownColor.AliceBlue), 
-			Color.FromArgbNamed (0xFF, 0xFA, 0xEB, 0xD7, "AntiqueWhite", KnownColor.AntiqueWhite), 
-			Color.FromArgbNamed (0xFF, 0x00, 0xFF, 0xFF, "Aqua", KnownColor.Aqua), 
-			Color.FromArgbNamed (0xFF, 0x7F, 0xFF, 0xD4, "Aquamarine", KnownColor.Aquamarine), 
-			Color.FromArgbNamed (0xFF, 0xF0, 0xFF, 0xFF, "Azure", KnownColor.Azure), 
-			Color.FromArgbNamed (0xFF, 0xF5, 0xF5, 0xDC, "Beige", KnownColor.Beige), 
-			Color.FromArgbNamed (0xFF, 0xFF, 0xE4, 0xC4, "Bisque", KnownColor.Bisque), 
-			Color.FromArgbNamed (0xFF, 0x00, 0x00, 0x00, "Black", KnownColor.Black), 
-			Color.FromArgbNamed (0xFF, 0xFF, 0xEB, 0xCD, "BlanchedAlmond", KnownColor.BlanchedAlmond), 
-			Color.FromArgbNamed (0xFF, 0x00, 0x00, 0xFF, "Blue", KnownColor.Blue), 
-			Color.FromArgbNamed (0xFF, 0x8A, 0x2B, 0xE2, "BlueViolet", KnownColor.BlueViolet), 
-			Color.FromArgbNamed (0xFF, 0xA5, 0x2A, 0x2A, "Brown", KnownColor.Brown), 
-			Color.FromArgbNamed (0xFF, 0xDE, 0xB8, 0x87, "BurlyWood", KnownColor.BurlyWood), 
-			Color.FromArgbNamed (0xFF, 0x5F, 0x9E, 0xA0, "CadetBlue", KnownColor.CadetBlue), 
-			Color.FromArgbNamed (0xFF, 0x7F, 0xFF, 0x00, "Chartreuse", KnownColor.Chartreuse), 
-			Color.FromArgbNamed (0xFF, 0xD2, 0x69, 0x1E, "Chocolate", KnownColor.Chocolate), 
-			Color.FromArgbNamed (0xFF, 0xFF, 0x7F, 0x50, "Coral", KnownColor.Coral), 
-			Color.FromArgbNamed (0xFF, 0x64, 0x95, 0xED, "CornflowerBlue", KnownColor.CornflowerBlue), 
-			Color.FromArgbNamed (0xFF, 0xFF, 0xF8, 0xDC, "Cornsilk", KnownColor.Cornsilk), 
-			Color.FromArgbNamed (0xFF, 0xDC, 0x14, 0x3C, "Crimson", KnownColor.Crimson), 
-			Color.FromArgbNamed (0xFF, 0x00, 0xFF, 0xFF, "Cyan", KnownColor.Cyan), 
-			Color.FromArgbNamed (0xFF, 0x00, 0x00, 0x8B, "DarkBlue", KnownColor.DarkBlue), 
-			Color.FromArgbNamed (0xFF, 0x00, 0x8B, 0x8B, "DarkCyan", KnownColor.DarkCyan), 
-			Color.FromArgbNamed (0xFF, 0xB8, 0x86, 0x0B, "DarkGoldenrod", KnownColor.DarkGoldenrod), 
-			Color.FromArgbNamed (0xFF, 0xA9, 0xA9, 0xA9, "DarkGray", KnownColor.DarkGray), 
-			Color.FromArgbNamed (0xFF, 0x00, 0x64, 0x00, "DarkGreen", KnownColor.DarkGreen), 
-			Color.FromArgbNamed (0xFF, 0xBD, 0xB7, 0x6B, "DarkKhaki", KnownColor.DarkKhaki), 
-			Color.FromArgbNamed (0xFF, 0x8B, 0x00, 0x8B, "DarkMagenta", KnownColor.DarkMagenta), 
-			Color.FromArgbNamed (0xFF, 0x55, 0x6B, 0x2F, "DarkOliveGreen", KnownColor.DarkOliveGreen), 
-			Color.FromArgbNamed (0xFF, 0xFF, 0x8C, 0x00, "DarkOrange", KnownColor.DarkOrange), 
-			Color.FromArgbNamed (0xFF, 0x99, 0x32, 0xCC, "DarkOrchid", KnownColor.DarkOrchid), 
-			Color.FromArgbNamed (0xFF, 0x8B, 0x00, 0x00, "DarkRed", KnownColor.DarkRed), 
-			Color.FromArgbNamed (0xFF, 0xE9, 0x96, 0x7A, "DarkSalmon", KnownColor.DarkSalmon), 
-			Color.FromArgbNamed (0xFF, 0x8F, 0xBC, 0x8B, "DarkSeaGreen", KnownColor.DarkSeaGreen), 
-			Color.FromArgbNamed (0xFF, 0x48, 0x3D, 0x8B, "DarkSlateBlue", KnownColor.DarkSlateBlue), 
-			Color.FromArgbNamed (0xFF, 0x2F, 0x4F, 0x4F, "DarkSlateGray", KnownColor.DarkSlateGray), 
-			Color.FromArgbNamed (0xFF, 0x00, 0xCE, 0xD1, "DarkTurquoise", KnownColor.DarkTurquoise), 
-			Color.FromArgbNamed (0xFF, 0x94, 0x00, 0xD3, "DarkViolet", KnownColor.DarkViolet), 
-			Color.FromArgbNamed (0xFF, 0xFF, 0x14, 0x93, "DeepPink", KnownColor.DeepPink), 
-			Color.FromArgbNamed (0xFF, 0x00, 0xBF, 0xFF, "DeepSkyBlue", KnownColor.DeepSkyBlue), 
-			Color.FromArgbNamed (0xFF, 0x69, 0x69, 0x69, "DimGray", KnownColor.DimGray), 
-			Color.FromArgbNamed (0xFF, 0x1E, 0x90, 0xFF, "DodgerBlue", KnownColor.DodgerBlue), 
-			Color.FromArgbNamed (0xFF, 0xB2, 0x22, 0x22, "Firebrick", KnownColor.Firebrick), 
-			Color.FromArgbNamed (0xFF, 0xFF, 0xFA, 0xF0, "FloralWhite", KnownColor.FloralWhite), 
-			Color.FromArgbNamed (0xFF, 0x22, 0x8B, 0x22, "ForestGreen", KnownColor.ForestGreen), 
-			Color.FromArgbNamed (0xFF, 0xFF, 0x00, 0xFF, "Fuchsia", KnownColor.Fuchsia), 
-			Color.FromArgbNamed (0xFF, 0xDC, 0xDC, 0xDC, "Gainsboro", KnownColor.Gainsboro), 
-			Color.FromArgbNamed (0xFF, 0xF8, 0xF8, 0xFF, "GhostWhite", KnownColor.GhostWhite), 
-			Color.FromArgbNamed (0xFF, 0xFF, 0xD7, 0x00, "Gold", KnownColor.Gold), 
-			Color.FromArgbNamed (0xFF, 0xDA, 0xA5, 0x20, "Goldenrod", KnownColor.Goldenrod), 
-			Color.FromArgbNamed (0xFF, 0x80, 0x80, 0x80, "Gray", KnownColor.Gray), 
-			Color.FromArgbNamed (0xFF, 0x00, 0x80, 0x00, "Green", KnownColor.Green), 
-			Color.FromArgbNamed (0xFF, 0xAD, 0xFF, 0x2F, "GreenYellow", KnownColor.GreenYellow), 
-			Color.FromArgbNamed (0xFF, 0xF0, 0xFF, 0xF0, "Honeydew", KnownColor.Honeydew), 
-			Color.FromArgbNamed (0xFF, 0xFF, 0x69, 0xB4, "HotPink", KnownColor.HotPink), 
-			Color.FromArgbNamed (0xFF, 0xCD, 0x5C, 0x5C, "IndianRed", KnownColor.IndianRed), 
-			Color.FromArgbNamed (0xFF, 0x4B, 0x00, 0x82, "Indigo", KnownColor.Indigo), 
-			Color.FromArgbNamed (0xFF, 0xFF, 0xFF, 0xF0, "Ivory", KnownColor.Ivory), 
-			Color.FromArgbNamed (0xFF, 0xF0, 0xE6, 0x8C, "Khaki", KnownColor.Khaki), 
-			Color.FromArgbNamed (0xFF, 0xE6, 0xE6, 0xFA, "Lavender", KnownColor.Lavender), 
-			Color.FromArgbNamed (0xFF, 0xFF, 0xF0, 0xF5, "LavenderBlush", KnownColor.LavenderBlush), 
-			Color.FromArgbNamed (0xFF, 0x7C, 0xFC, 0x00, "LawnGreen", KnownColor.LawnGreen), 
-			Color.FromArgbNamed (0xFF, 0xFF, 0xFA, 0xCD, "LemonChiffon", KnownColor.LemonChiffon), 
-			Color.FromArgbNamed (0xFF, 0xAD, 0xD8, 0xE6, "LightBlue", KnownColor.LightBlue), 
-			Color.FromArgbNamed (0xFF, 0xF0, 0x80, 0x80, "LightCoral", KnownColor.LightCoral), 
-			Color.FromArgbNamed (0xFF, 0xE0, 0xFF, 0xFF, "LightCyan", KnownColor.LightCyan), 
-			Color.FromArgbNamed (0xFF, 0xFA, 0xFA, 0xD2, "LightGoldenrodYellow", KnownColor.LightGoldenrodYellow), 
-			Color.FromArgbNamed (0xFF, 0xD3, 0xD3, 0xD3, "LightGray", KnownColor.LightGray), 
-			Color.FromArgbNamed (0xFF, 0x90, 0xEE, 0x90, "LightGreen", KnownColor.LightGreen), 
-			Color.FromArgbNamed (0xFF, 0xFF, 0xB6, 0xC1, "LightPink", KnownColor.LightPink), 
-			Color.FromArgbNamed (0xFF, 0xFF, 0xA0, 0x7A, "LightSalmon", KnownColor.LightSalmon), 
-			Color.FromArgbNamed (0xFF, 0x20, 0xB2, 0xAA, "LightSeaGreen", KnownColor.LightSeaGreen), 
-			Color.FromArgbNamed (0xFF, 0x87, 0xCE, 0xFA, "LightSkyBlue", KnownColor.LightSkyBlue), 
-			Color.FromArgbNamed (0xFF, 0x77, 0x88, 0x99, "LightSlateGray", KnownColor.LightSlateGray), 
-			Color.FromArgbNamed (0xFF, 0xB0, 0xC4, 0xDE, "LightSteelBlue", KnownColor.LightSteelBlue), 
-			Color.FromArgbNamed (0xFF, 0xFF, 0xFF, 0xE0, "LightYellow", KnownColor.LightYellow), 
-			Color.FromArgbNamed (0xFF, 0x00, 0xFF, 0x00, "Lime", KnownColor.Lime), 
-			Color.FromArgbNamed (0xFF, 0x32, 0xCD, 0x32, "LimeGreen", KnownColor.LimeGreen), 
-			Color.FromArgbNamed (0xFF, 0xFA, 0xF0, 0xE6, "Linen", KnownColor.Linen), 
-			Color.FromArgbNamed (0xFF, 0xFF, 0x00, 0xFF, "Magenta", KnownColor.Magenta), 
-			Color.FromArgbNamed (0xFF, 0x80, 0x00, 0x00, "Maroon", KnownColor.Maroon), 
-			Color.FromArgbNamed (0xFF, 0x66, 0xCD, 0xAA, "MediumAquamarine", KnownColor.MediumAquamarine), 
-			Color.FromArgbNamed (0xFF, 0x00, 0x00, 0xCD, "MediumBlue", KnownColor.MediumBlue), 
-			Color.FromArgbNamed (0xFF, 0xBA, 0x55, 0xD3, "MediumOrchid", KnownColor.MediumOrchid), 
-			Color.FromArgbNamed (0xFF, 0x93, 0x70, 0xDB, "MediumPurple", KnownColor.MediumPurple), 
-			Color.FromArgbNamed (0xFF, 0x3C, 0xB3, 0x71, "MediumSeaGreen", KnownColor.MediumSeaGreen), 
-			Color.FromArgbNamed (0xFF, 0x7B, 0x68, 0xEE, "MediumSlateBlue", KnownColor.MediumSlateBlue), 
-			Color.FromArgbNamed (0xFF, 0x00, 0xFA, 0x9A, "MediumSpringGreen", KnownColor.MediumSpringGreen), 
-			Color.FromArgbNamed (0xFF, 0x48, 0xD1, 0xCC, "MediumTurquoise", KnownColor.MediumTurquoise), 
-			Color.FromArgbNamed (0xFF, 0xC7, 0x15, 0x85, "MediumVioletRed", KnownColor.MediumVioletRed), 
-			Color.FromArgbNamed (0xFF, 0x19, 0x19, 0x70, "MidnightBlue", KnownColor.MidnightBlue), 
-			Color.FromArgbNamed (0xFF, 0xF5, 0xFF, 0xFA, "MintCream", KnownColor.MintCream), 
-			Color.FromArgbNamed (0xFF, 0xFF, 0xE4, 0xE1, "MistyRose", KnownColor.MistyRose), 
-			Color.FromArgbNamed (0xFF, 0xFF, 0xE4, 0xB5, "Moccasin", KnownColor.Moccasin), 
-			Color.FromArgbNamed (0xFF, 0xFF, 0xDE, 0xAD, "NavajoWhite", KnownColor.NavajoWhite), 
-			Color.FromArgbNamed (0xFF, 0x00, 0x00, 0x80, "Navy", KnownColor.Navy), 
-			Color.FromArgbNamed (0xFF, 0xFD, 0xF5, 0xE6, "OldLace", KnownColor.OldLace), 
-			Color.FromArgbNamed (0xFF, 0x80, 0x80, 0x00, "Olive", KnownColor.Olive), 
-			Color.FromArgbNamed (0xFF, 0x6B, 0x8E, 0x23, "OliveDrab", KnownColor.OliveDrab), 
-			Color.FromArgbNamed (0xFF, 0xFF, 0xA5, 0x00, "Orange", KnownColor.Orange), 
-			Color.FromArgbNamed (0xFF, 0xFF, 0x45, 0x00, "OrangeRed", KnownColor.OrangeRed), 
-			Color.FromArgbNamed (0xFF, 0xDA, 0x70, 0xD6, "Orchid", KnownColor.Orchid), 
-			Color.FromArgbNamed (0xFF, 0xEE, 0xE8, 0xAA, "PaleGoldenrod", KnownColor.PaleGoldenrod), 
-			Color.FromArgbNamed (0xFF, 0x98, 0xFB, 0x98, "PaleGreen", KnownColor.PaleGreen), 
-			Color.FromArgbNamed (0xFF, 0xAF, 0xEE, 0xEE, "PaleTurquoise", KnownColor.PaleTurquoise), 
-			Color.FromArgbNamed (0xFF, 0xDB, 0x70, 0x93, "PaleVioletRed", KnownColor.PaleVioletRed), 
-			Color.FromArgbNamed (0xFF, 0xFF, 0xEF, 0xD5, "PapayaWhip", KnownColor.PapayaWhip), 
-			Color.FromArgbNamed (0xFF, 0xFF, 0xDA, 0xB9, "PeachPuff", KnownColor.PeachPuff), 
-			Color.FromArgbNamed (0xFF, 0xCD, 0x85, 0x3F, "Peru", KnownColor.Peru), 
-			Color.FromArgbNamed (0xFF, 0xFF, 0xC0, 0xCB, "Pink", KnownColor.Pink), 
-			Color.FromArgbNamed (0xFF, 0xDD, 0xA0, 0xDD, "Plum", KnownColor.Plum), 
-			Color.FromArgbNamed (0xFF, 0xB0, 0xE0, 0xE6, "PowderBlue", KnownColor.PowderBlue), 
-			Color.FromArgbNamed (0xFF, 0x80, 0x00, 0x80, "Purple", KnownColor.Purple), 
-			Color.FromArgbNamed (0xFF, 0xFF, 0x00, 0x00, "Red", KnownColor.Red), 
-			Color.FromArgbNamed (0xFF, 0xBC, 0x8F, 0x8F, "RosyBrown", KnownColor.RosyBrown), 
-			Color.FromArgbNamed (0xFF, 0x41, 0x69, 0xE1, "RoyalBlue", KnownColor.RoyalBlue), 
-			Color.FromArgbNamed (0xFF, 0x8B, 0x45, 0x13, "SaddleBrown", KnownColor.SaddleBrown), 
-			Color.FromArgbNamed (0xFF, 0xFA, 0x80, 0x72, "Salmon", KnownColor.Salmon), 
-			Color.FromArgbNamed (0xFF, 0xF4, 0xA4, 0x60, "SandyBrown", KnownColor.SandyBrown), 
-			Color.FromArgbNamed (0xFF, 0x2E, 0x8B, 0x57, "SeaGreen", KnownColor.SeaGreen), 
-			Color.FromArgbNamed (0xFF, 0xFF, 0xF5, 0xEE, "SeaShell", KnownColor.SeaShell), 
-			Color.FromArgbNamed (0xFF, 0xA0, 0x52, 0x2D, "Sienna", KnownColor.Sienna), 
-			Color.FromArgbNamed (0xFF, 0xC0, 0xC0, 0xC0, "Silver", KnownColor.Silver), 
-			Color.FromArgbNamed (0xFF, 0x87, 0xCE, 0xEB, "SkyBlue", KnownColor.SkyBlue), 
-			Color.FromArgbNamed (0xFF, 0x6A, 0x5A, 0xCD, "SlateBlue", KnownColor.SlateBlue), 
-			Color.FromArgbNamed (0xFF, 0x70, 0x80, 0x90, "SlateGray", KnownColor.SlateGray), 
-			Color.FromArgbNamed (0xFF, 0xFF, 0xFA, 0xFA, "Snow", KnownColor.Snow), 
-			Color.FromArgbNamed (0xFF, 0x00, 0xFF, 0x7F, "SpringGreen", KnownColor.SpringGreen), 
-			Color.FromArgbNamed (0xFF, 0x46, 0x82, 0xB4, "SteelBlue", KnownColor.SteelBlue), 
-			Color.FromArgbNamed (0xFF, 0xD2, 0xB4, 0x8C, "Tan", KnownColor.Tan), 
-			Color.FromArgbNamed (0xFF, 0x00, 0x80, 0x80, "Teal", KnownColor.Teal), 
-			Color.FromArgbNamed (0xFF, 0xD8, 0xBF, 0xD8, "Thistle", KnownColor.Thistle), 
-			Color.FromArgbNamed (0xFF, 0xFF, 0x63, 0x47, "Tomato", KnownColor.Tomato), 
-			Color.FromArgbNamed (0xFF, 0x40, 0xE0, 0xD0, "Turquoise", KnownColor.Turquoise), 
-			Color.FromArgbNamed (0xFF, 0xEE, 0x82, 0xEE, "Violet", KnownColor.Violet), 
-			Color.FromArgbNamed (0xFF, 0xF5, 0xDE, 0xB3, "Wheat", KnownColor.Wheat), 
-			Color.FromArgbNamed (0xFF, 0xFF, 0xFF, 0xFF, "White", KnownColor.White), 
-			Color.FromArgbNamed (0xFF, 0xF5, 0xF5, 0xF5, "WhiteSmoke", KnownColor.WhiteSmoke), 
-			Color.FromArgbNamed (0xFF, 0xFF, 0xFF, 0x00, "Yellow", KnownColor.Yellow), 
-			Color.FromArgbNamed (0xFF, 0x9A, 0xCD, 0x32, "YellowGreen", KnownColor.YellowGreen), 
+		static internal uint[] ArgbValues = new uint[] {
+			0x00000000,	/* 000 - Empty */
+			0xFFD4D0C8,	/* 001 - ActiveBorder */
+			0xFF0054E3,	/* 002 - ActiveCaption */
+			0xFFFFFFFF,	/* 003 - ActiveCaptionText */
+			0xFF808080,	/* 004 - AppWorkspace */
+			0xFFECE9D8,	/* 005 - Control */
+			0xFFACA899,	/* 006 - ControlDark */
+			0xFF716F64,	/* 007 - ControlDarkDark */
+			0xFFF1EFE2,	/* 008 - ControlLight */
+			0xFFFFFFFF,	/* 009 - ControlLightLight */
+			0xFF000000,	/* 010 - ControlText */
+			0xFF004E98,	/* 011 - Desktop */
+			0xFFACA899,	/* 012 - GrayText */
+			0xFF316AC5,	/* 013 - Highlight */
+			0xFFFFFFFF,	/* 014 - HighlightText */
+			0xFF000080,	/* 015 - HotTrack */
+			0xFFD4D0C8,	/* 016 - InactiveBorder */
+			0xFF7A96DF,	/* 017 - InactiveCaption */
+			0xFFD8E4F8,	/* 018 - InactiveCaptionText */
+			0xFFFFFFE1,	/* 019 - Info */
+			0xFF000000,	/* 020 - InfoText */
+			0xFFFFFFFF,	/* 021 - Menu */
+			0xFF000000,	/* 022 - MenuText */
+			0xFFD4D0C8,	/* 023 - ScrollBar */
+			0xFFFFFFFF,	/* 024 - Window */
+			0xFF000000,	/* 025 - WindowFrame */
+			0xFF000000,	/* 026 - WindowText */
+			0x00FFFFFF,	/* 027 - Transparent */
+			0xFFF0F8FF,	/* 028 - AliceBlue */
+			0xFFFAEBD7,	/* 029 - AntiqueWhite */
+			0xFF00FFFF,	/* 030 - Aqua */
+			0xFF7FFFD4,	/* 031 - Aquamarine */
+			0xFFF0FFFF,	/* 032 - Azure */
+			0xFFF5F5DC,	/* 033 - Beige */
+			0xFFFFE4C4,	/* 034 - Bisque */
+			0xFF000000,	/* 035 - Black */
+			0xFFFFEBCD,	/* 036 - BlanchedAlmond */
+			0xFF0000FF,	/* 037 - Blue */
+			0xFF8A2BE2,	/* 038 - BlueViolet */
+			0xFFA52A2A,	/* 039 - Brown */
+			0xFFDEB887,	/* 040 - BurlyWood */
+			0xFF5F9EA0,	/* 041 - CadetBlue */
+			0xFF7FFF00,	/* 042 - Chartreuse */
+			0xFFD2691E,	/* 043 - Chocolate */
+			0xFFFF7F50,	/* 044 - Coral */
+			0xFF6495ED,	/* 045 - CornflowerBlue */
+			0xFFFFF8DC,	/* 046 - Cornsilk */
+			0xFFDC143C,	/* 047 - Crimson */
+			0xFF00FFFF,	/* 048 - Cyan */
+			0xFF00008B,	/* 049 - DarkBlue */
+			0xFF008B8B,	/* 050 - DarkCyan */
+			0xFFB8860B,	/* 051 - DarkGoldenrod */
+			0xFFA9A9A9,	/* 052 - DarkGray */
+			0xFF006400,	/* 053 - DarkGreen */
+			0xFFBDB76B,	/* 054 - DarkKhaki */
+			0xFF8B008B,	/* 055 - DarkMagenta */
+			0xFF556B2F,	/* 056 - DarkOliveGreen */
+			0xFFFF8C00,	/* 057 - DarkOrange */
+			0xFF9932CC,	/* 058 - DarkOrchid */
+			0xFF8B0000,	/* 059 - DarkRed */
+			0xFFE9967A,	/* 060 - DarkSalmon */
+			0xFF8FBC8B,	/* 061 - DarkSeaGreen */
+			0xFF483D8B,	/* 062 - DarkSlateBlue */
+			0xFF2F4F4F,	/* 063 - DarkSlateGray */
+			0xFF00CED1,	/* 064 - DarkTurquoise */
+			0xFF9400D3,	/* 065 - DarkViolet */
+			0xFFFF1493,	/* 066 - DeepPink */
+			0xFF00BFFF,	/* 067 - DeepSkyBlue */
+			0xFF696969,	/* 068 - DimGray */
+			0xFF1E90FF,	/* 069 - DodgerBlue */
+			0xFFB22222,	/* 070 - Firebrick */
+			0xFFFFFAF0,	/* 071 - FloralWhite */
+			0xFF228B22,	/* 072 - ForestGreen */
+			0xFFFF00FF,	/* 073 - Fuchsia */
+			0xFFDCDCDC,	/* 074 - Gainsboro */
+			0xFFF8F8FF,	/* 075 - GhostWhite */
+			0xFFFFD700,	/* 076 - Gold */
+			0xFFDAA520,	/* 077 - Goldenrod */
+			0xFF808080,	/* 078 - Gray */
+			0xFF008000,	/* 079 - Green */
+			0xFFADFF2F,	/* 080 - GreenYellow */
+			0xFFF0FFF0,	/* 081 - Honeydew */
+			0xFFFF69B4,	/* 082 - HotPink */
+			0xFFCD5C5C,	/* 083 - IndianRed */
+			0xFF4B0082,	/* 084 - Indigo */
+			0xFFFFFFF0,	/* 085 - Ivory */
+			0xFFF0E68C,	/* 086 - Khaki */
+			0xFFE6E6FA,	/* 087 - Lavender */
+			0xFFFFF0F5,	/* 088 - LavenderBlush */
+			0xFF7CFC00,	/* 089 - LawnGreen */
+			0xFFFFFACD,	/* 090 - LemonChiffon */
+			0xFFADD8E6,	/* 091 - LightBlue */
+			0xFFF08080,	/* 092 - LightCoral */
+			0xFFE0FFFF,	/* 093 - LightCyan */
+			0xFFFAFAD2,	/* 094 - LightGoldenrodYellow */
+			0xFFD3D3D3,	/* 095 - LightGray */
+			0xFF90EE90,	/* 096 - LightGreen */
+			0xFFFFB6C1,	/* 097 - LightPink */
+			0xFFFFA07A,	/* 098 - LightSalmon */
+			0xFF20B2AA,	/* 099 - LightSeaGreen */
+			0xFF87CEFA,	/* 100 - LightSkyBlue */
+			0xFF778899,	/* 101 - LightSlateGray */
+			0xFFB0C4DE,	/* 102 - LightSteelBlue */
+			0xFFFFFFE0,	/* 103 - LightYellow */
+			0xFF00FF00,	/* 104 - Lime */
+			0xFF32CD32,	/* 105 - LimeGreen */
+			0xFFFAF0E6,	/* 106 - Linen */
+			0xFFFF00FF,	/* 107 - Magenta */
+			0xFF800000,	/* 108 - Maroon */
+			0xFF66CDAA,	/* 109 - MediumAquamarine */
+			0xFF0000CD,	/* 110 - MediumBlue */
+			0xFFBA55D3,	/* 111 - MediumOrchid */
+			0xFF9370DB,	/* 112 - MediumPurple */
+			0xFF3CB371,	/* 113 - MediumSeaGreen */
+			0xFF7B68EE,	/* 114 - MediumSlateBlue */
+			0xFF00FA9A,	/* 115 - MediumSpringGreen */
+			0xFF48D1CC,	/* 116 - MediumTurquoise */
+			0xFFC71585,	/* 117 - MediumVioletRed */
+			0xFF191970,	/* 118 - MidnightBlue */
+			0xFFF5FFFA,	/* 119 - MintCream */
+			0xFFFFE4E1,	/* 120 - MistyRose */
+			0xFFFFE4B5,	/* 121 - Moccasin */
+			0xFFFFDEAD,	/* 122 - NavajoWhite */
+			0xFF000080,	/* 123 - Navy */
+			0xFFFDF5E6,	/* 124 - OldLace */
+			0xFF808000,	/* 125 - Olive */
+			0xFF6B8E23,	/* 126 - OliveDrab */
+			0xFFFFA500,	/* 127 - Orange */
+			0xFFFF4500,	/* 128 - OrangeRed */
+			0xFFDA70D6,	/* 129 - Orchid */
+			0xFFEEE8AA,	/* 130 - PaleGoldenrod */
+			0xFF98FB98,	/* 131 - PaleGreen */
+			0xFFAFEEEE,	/* 132 - PaleTurquoise */
+			0xFFDB7093,	/* 133 - PaleVioletRed */
+			0xFFFFEFD5,	/* 134 - PapayaWhip */
+			0xFFFFDAB9,	/* 135 - PeachPuff */
+			0xFFCD853F,	/* 136 - Peru */
+			0xFFFFC0CB,	/* 137 - Pink */
+			0xFFDDA0DD,	/* 138 - Plum */
+			0xFFB0E0E6,	/* 139 - PowderBlue */
+			0xFF800080,	/* 140 - Purple */
+			0xFFFF0000,	/* 141 - Red */
+			0xFFBC8F8F,	/* 142 - RosyBrown */
+			0xFF4169E1,	/* 143 - RoyalBlue */
+			0xFF8B4513,	/* 144 - SaddleBrown */
+			0xFFFA8072,	/* 145 - Salmon */
+			0xFFF4A460,	/* 146 - SandyBrown */
+			0xFF2E8B57,	/* 147 - SeaGreen */
+			0xFFFFF5EE,	/* 148 - SeaShell */
+			0xFFA0522D,	/* 149 - Sienna */
+			0xFFC0C0C0,	/* 150 - Silver */
+			0xFF87CEEB,	/* 151 - SkyBlue */
+			0xFF6A5ACD,	/* 152 - SlateBlue */
+			0xFF708090,	/* 153 - SlateGray */
+			0xFFFFFAFA,	/* 154 - Snow */
+			0xFF00FF7F,	/* 155 - SpringGreen */
+			0xFF4682B4,	/* 156 - SteelBlue */
+			0xFFD2B48C,	/* 157 - Tan */
+			0xFF008080,	/* 158 - Teal */
+			0xFFD8BFD8,	/* 159 - Thistle */
+			0xFFFF6347,	/* 160 - Tomato */
+			0xFF40E0D0,	/* 161 - Turquoise */
+			0xFFEE82EE,	/* 162 - Violet */
+			0xFFF5DEB3,	/* 163 - Wheat */
+			0xFFFFFFFF,	/* 164 - White */
+			0xFFF5F5F5,	/* 165 - WhiteSmoke */
+			0xFFFFFF00,	/* 166 - Yellow */
+			0xFF9ACD32,	/* 167 - YellowGreen */
 #if NET_2_0
-			Color.FromArgbSystem (0xFF, 0xEC, 0xE9, 0xD8, "ButtonFace", KnownColor.ButtonFace), 
-			Color.FromArgbSystem (0xFF, 0xFF, 0xFF, 0xFF, "ButtonHighlight", KnownColor.ButtonHighlight), 
-			Color.FromArgbSystem (0xFF, 0xAC, 0xA8, 0x99, "ButtonShadow", KnownColor.ButtonShadow), 
-			Color.FromArgbSystem (0xFF, 0x3D, 0x95, 0xFF, "GradientActiveCaption", KnownColor.GradientActiveCaption), 
-			Color.FromArgbSystem (0xFF, 0x9D, 0xB9, 0xEB, "GradientInactiveCaption", KnownColor.GradientInactiveCaption), 
-			Color.FromArgbSystem (0xFF, 0xEC, 0xE9, 0xD8, "MenuBar", KnownColor.MenuBar), 
-			Color.FromArgbSystem (0xFF, 0x31, 0x6A, 0xC5, "MenuHighlight", KnownColor.MenuHighlight), 
+			0xFFECE9D8,	/* 168 - ButtonFace */
+			0xFFFFFFFF,	/* 169 - ButtonHighlight */
+			0xFFACA899,	/* 170 - ButtonShadow */
+			0xFF3D95FF,	/* 171 - GradientActiveCaption */
+			0xFF9DB9EB,	/* 172 - GradientInactiveCaption */
+			0xFFECE9D8,	/* 173 - MenuBar */
+			0xFF316AC5,	/* 174 - MenuHighlight */
 #endif
 		};
 
@@ -223,83 +223,279 @@ namespace System.Drawing {
 		{
 			if (GDIPlus.RunningOnWindows ()) {
 				// If we're on Windows we should behave like MS and pull the colors
-				InitOnWindows ();
+				RetrieveWindowsSystemColors ();
 			}
+			// note: Mono's SWF Theme class will call the static Update method to apply
+			// correct system colors outside Windows
 		}
 
-		private static void SetWindowsColor (GetSysColorIndex index, string name, KnownColor knownColor)
+		static void RetrieveWindowsSystemColors ()
 		{
-			uint rgb = GDIPlus.Win32GetSysColor (index);
-			Color color = Color.FromArgbSystem (255, (byte)rgb, (byte)(rgb >> 8), (byte)(rgb >> 16), name, knownColor);
-			knownColors [(int)knownColor] = color;
-		}
-
-		static void InitOnWindows ()
-		{
-			SetWindowsColor (GetSysColorIndex.COLOR_ACTIVEBORDER, "ActiveBorder", KnownColor.ActiveBorder);
-			SetWindowsColor (GetSysColorIndex.COLOR_ACTIVECAPTION, "ActiveCaption", KnownColor.ActiveCaption);
-			SetWindowsColor (GetSysColorIndex.COLOR_CAPTIONTEXT, "ActiveCaptionText", KnownColor.ActiveCaptionText);
-			SetWindowsColor (GetSysColorIndex.COLOR_APPWORKSPACE, "AppWorkspace", KnownColor.AppWorkspace);
-			SetWindowsColor (GetSysColorIndex.COLOR_BTNFACE, "Control", KnownColor.Control);
-			SetWindowsColor (GetSysColorIndex.COLOR_BTNSHADOW, "ControlDark", KnownColor.ControlDark);
-			SetWindowsColor (GetSysColorIndex.COLOR_3DDKSHADOW, "ControlDarkDark", KnownColor.ControlDarkDark);
-			SetWindowsColor (GetSysColorIndex.COLOR_3DLIGHT, "ControlLight", KnownColor.ControlLight);
-			SetWindowsColor (GetSysColorIndex.COLOR_BTNHIGHLIGHT, "ControlLightLight", KnownColor.ControlLightLight);
-			SetWindowsColor (GetSysColorIndex.COLOR_BTNTEXT, "ControlText", KnownColor.ControlText);
-			SetWindowsColor (GetSysColorIndex.COLOR_DESKTOP, "Desktop", KnownColor.Desktop);
-			SetWindowsColor (GetSysColorIndex.COLOR_GRAYTEXT, "GrayText", KnownColor.GrayText);
-			SetWindowsColor (GetSysColorIndex.COLOR_HIGHLIGHT, "Highlight", KnownColor.Highlight);
-			SetWindowsColor (GetSysColorIndex.COLOR_HIGHLIGHTTEXT, "HighlightText", KnownColor.HighlightText);
-			SetWindowsColor (GetSysColorIndex.COLOR_HOTLIGHT, "HotTrack", KnownColor.HotTrack);
-			SetWindowsColor (GetSysColorIndex.COLOR_INACTIVEBORDER, "InactiveBorder", KnownColor.InactiveBorder);
-			SetWindowsColor (GetSysColorIndex.COLOR_INACTIVECAPTION, "InactiveCaption", KnownColor.InactiveCaption);
-			SetWindowsColor (GetSysColorIndex.COLOR_INACTIVECAPTIONTEXT, "InactiveCaptionText", KnownColor.InactiveCaptionText);
-			SetWindowsColor (GetSysColorIndex.COLOR_INFOBK, "Info", KnownColor.Info);
-			SetWindowsColor (GetSysColorIndex.COLOR_INFOTEXT, "InfoText", KnownColor.InfoText);
-			SetWindowsColor (GetSysColorIndex.COLOR_MENU, "Menu", KnownColor.Menu);
-			SetWindowsColor (GetSysColorIndex.COLOR_MENUTEXT, "MenuText", KnownColor.MenuText);
-			SetWindowsColor (GetSysColorIndex.COLOR_SCROLLBAR, "ScrollBar", KnownColor.ScrollBar);
-			SetWindowsColor (GetSysColorIndex.COLOR_WINDOW, "Window", KnownColor.Window);
-			SetWindowsColor (GetSysColorIndex.COLOR_WINDOWFRAME, "WindowFrame", KnownColor.WindowFrame);
-			SetWindowsColor (GetSysColorIndex.COLOR_WINDOWTEXT, "WindowText", KnownColor.WindowText);
+			ArgbValues [(int)KnownColor.ActiveBorder] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_ACTIVEBORDER);
+			ArgbValues [(int)KnownColor.ActiveCaption] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_ACTIVECAPTION);
+			ArgbValues [(int)KnownColor.ActiveCaptionText] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_CAPTIONTEXT);
+			ArgbValues [(int)KnownColor.AppWorkspace] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_APPWORKSPACE);
+			ArgbValues [(int)KnownColor.Control] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_BTNFACE);
+			ArgbValues [(int)KnownColor.ControlDark] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_BTNSHADOW);
+			ArgbValues [(int)KnownColor.ControlDarkDark] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_3DDKSHADOW);
+			ArgbValues [(int)KnownColor.ControlLight] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_3DLIGHT);
+			ArgbValues [(int)KnownColor.ControlLightLight] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_BTNHIGHLIGHT);
+			ArgbValues [(int)KnownColor.ControlText] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_BTNTEXT);
+			ArgbValues [(int)KnownColor.Desktop] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_DESKTOP);
+			ArgbValues [(int)KnownColor.GrayText] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_GRAYTEXT);
+			ArgbValues [(int)KnownColor.Highlight] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_HIGHLIGHT);
+			ArgbValues [(int)KnownColor.HighlightText] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_HIGHLIGHTTEXT);
+			ArgbValues [(int)KnownColor.HotTrack] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_HOTLIGHT);
+			ArgbValues [(int)KnownColor.InactiveBorder] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_INACTIVEBORDER);
+			ArgbValues [(int)KnownColor.InactiveCaption] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_INACTIVECAPTION);
+			ArgbValues [(int)KnownColor.InactiveCaptionText] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_INACTIVECAPTIONTEXT);
+			ArgbValues [(int)KnownColor.Info] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_INFOBK);
+			ArgbValues [(int)KnownColor.InfoText] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_INFOTEXT);
+			ArgbValues [(int)KnownColor.Menu] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_MENU);
+			ArgbValues [(int)KnownColor.MenuText] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_MENUTEXT);
+			ArgbValues [(int)KnownColor.ScrollBar] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_SCROLLBAR);
+			ArgbValues [(int)KnownColor.Window] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_WINDOW);
+			ArgbValues [(int)KnownColor.WindowFrame] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_WINDOWFRAME);
+			ArgbValues [(int)KnownColor.WindowText] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_WINDOWTEXT);
 #if NET_2_0
-			SetWindowsColor (GetSysColorIndex.COLOR_BTNFACE, "ButtonFace", KnownColor.ButtonFace);
-			SetWindowsColor (GetSysColorIndex.COLOR_BTNHIGHLIGHT, "ButtonHighlight", KnownColor.ButtonHighlight);
-			SetWindowsColor (GetSysColorIndex.COLOR_BTNSHADOW, "ButtonShadow", KnownColor.ButtonShadow);
-			SetWindowsColor (GetSysColorIndex.COLOR_GRADIENTACTIVECAPTION, "GradientActiveCaption", KnownColor.GradientActiveCaption);
-			SetWindowsColor (GetSysColorIndex.COLOR_GRADIENTINACTIVECAPTION, "GradientInactiveCaption", KnownColor.GradientInactiveCaption);
-			SetWindowsColor (GetSysColorIndex.COLOR_MENUBAR, "MenuBar", KnownColor.MenuBar);
-			SetWindowsColor (GetSysColorIndex.COLOR_MENUHIGHLIGHT, "MenuHighlight", KnownColor.MenuHighlight);
+			ArgbValues [(int)KnownColor.ButtonFace] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_BTNFACE);
+			ArgbValues [(int)KnownColor.ButtonHighlight] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_BTNHIGHLIGHT);
+			ArgbValues [(int)KnownColor.ButtonShadow] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_BTNSHADOW);
+			ArgbValues [(int)KnownColor.GradientActiveCaption] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_GRADIENTACTIVECAPTION);
+			ArgbValues [(int)KnownColor.GradientInactiveCaption] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_GRADIENTINACTIVECAPTION);
+			ArgbValues [(int)KnownColor.MenuBar] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_MENUBAR);
+			ArgbValues [(int)KnownColor.MenuHighlight] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_MENUHIGHLIGHT);
 #endif
-		}
-
-		public static Color[] Values {
-			get { return knownColors; }
 		}
 
 		public static Color FromKnownColor (KnownColor kc)
 		{
-			int n = (int)kc;
-			if ((n <= 0) || (n >= knownColors.Length)) {
+			Color c;
+			short n = (short)kc;
+			if ((n <= 0) || (n >= ArgbValues.Length)) {
 				// This is what it returns!
-				Color c = Color.FromArgb (0, 0, 0, 0);
+				c = Color.FromArgb (0, 0, 0, 0);
+#if ONLY_1_1
 				c.name = kc.ToString ();
+#endif
 				c.state |= (short) Color.ColorType.Named;
-				c.knownColor = (short) kc;
-				return c;
+			} else {
+				c = new Color ();
+				c.state = (short) (Color.ColorType.ARGB | Color.ColorType.Known | Color.ColorType.Named);
+				if ((n < 27) || (n > 169))
+					c.state |= (short) Color.ColorType.System;
+				c.value = ArgbValues [n];
+#if ONLY_1_1
+				c.name = GetName (n);
+#endif
 			}
-			return knownColors [n];
+			c.knownColor = n;
+			return c;
+		}
+
+		public static string GetName (short kc)
+		{
+			switch (kc) {
+			case 1:		return "ActiveBorder";
+			case 2:		return "ActiveCaption";
+			case 3:		return "ActiveCaptionText";
+			case 4:		return "AppWorkspace";
+			case 5:		return "Control";
+			case 6:		return "ControlDark";
+			case 7:		return "ControlDarkDark";
+			case 8:		return "ControlLight";
+			case 9:		return "ControlLightLight";
+			case 10:	return "ControlText";
+			case 11:	return "Desktop";
+			case 12:	return "GrayText";
+			case 13:	return "Highlight";
+			case 14:	return "HighlightText";
+			case 15:	return "HotTrack";
+			case 16:	return "InactiveBorder";
+			case 17:	return "InactiveCaption";
+			case 18:	return "InactiveCaptionText";
+			case 19:	return "Info";
+			case 20:	return "InfoText";
+			case 21:	return "Menu";
+			case 22:	return "MenuText";
+			case 23:	return "ScrollBar";
+			case 24:	return "Window";
+			case 25:	return "WindowFrame";
+			case 26:	return "WindowText";
+			case 27:	return "Transparent";
+			case 28:	return "AliceBlue";
+			case 29:	return "AntiqueWhite";
+			case 30:	return "Aqua";
+			case 31:	return "Aquamarine";
+			case 32:	return "Azure";
+			case 33:	return "Beige";
+			case 34:	return "Bisque";
+			case 35:	return "Black";
+			case 36:	return "BlanchedAlmond";
+			case 37:	return "Blue";
+			case 38:	return "BlueViolet";
+			case 39:	return "Brown";
+			case 40:	return "BurlyWood";
+			case 41:	return "CadetBlue";
+			case 42:	return "Chartreuse";
+			case 43:	return "Chocolate";
+			case 44:	return "Coral";
+			case 45:	return "CornflowerBlue";
+			case 46:	return "Cornsilk";
+			case 47:	return "Crimson";
+			case 48:	return "Cyan";
+			case 49:	return "DarkBlue";
+			case 50:	return "DarkCyan";
+			case 51:	return "DarkGoldenrod";
+			case 52:	return "DarkGray";
+			case 53:	return "DarkGreen";
+			case 54:	return "DarkKhaki";
+			case 55:	return "DarkMagenta";
+			case 56:	return "DarkOliveGreen";
+			case 57:	return "DarkOrange";
+			case 58:	return "DarkOrchid";
+			case 59:	return "DarkRed";
+			case 60:	return "DarkSalmon";
+			case 61:	return "DarkSeaGreen";
+			case 62:	return "DarkSlateBlue";
+			case 63:	return "DarkSlateGray";
+			case 64:	return "DarkTurquoise";
+			case 65:	return "DarkViolet";
+			case 66:	return "DeepPink";
+			case 67:	return "DeepSkyBlue";
+			case 68:	return "DimGray";
+			case 69:	return "DodgerBlue";
+			case 70:	return "Firebrick";
+			case 71:	return "FloralWhite";
+			case 72:	return "ForestGreen";
+			case 73:	return "Fuchsia";
+			case 74:	return "Gainsboro";
+			case 75:	return "GhostWhite";
+			case 76:	return "Gold";
+			case 77:	return "Goldenrod";
+			case 78:	return "Gray";
+			case 79:	return "Green";
+			case 80:	return "GreenYellow";
+			case 81:	return "Honeydew";
+			case 82:	return "HotPink";
+			case 83:	return "IndianRed";
+			case 84:	return "Indigo";
+			case 85:	return "Ivory";
+			case 86:	return "Khaki";
+			case 87:	return "Lavender";
+			case 88:	return "LavenderBlush";
+			case 89:	return "LawnGreen";
+			case 90:	return "LemonChiffon";
+			case 91:	return "LightBlue";
+			case 92:	return "LightCoral";
+			case 93:	return "LightCyan";
+			case 94:	return "LightGoldenrodYellow";
+			case 95:	return "LightGray";
+			case 96:	return "LightGreen";
+			case 97:	return "LightPink";
+			case 98:	return "LightSalmon";
+			case 99:	return "LightSeaGreen";
+			case 100:	return "LightSkyBlue";
+			case 101:	return "LightSlateGray";
+			case 102:	return "LightSteelBlue";
+			case 103:	return "LightYellow";
+			case 104:	return "Lime";
+			case 105:	return "LimeGreen";
+			case 106:	return "Linen";
+			case 107:	return "Magenta";
+			case 108:	return "Maroon";
+			case 109:	return "MediumAquamarine";
+			case 110:	return "MediumBlue";
+			case 111:	return "MediumOrchid";
+			case 112:	return "MediumPurple";
+			case 113:	return "MediumSeaGreen";
+			case 114:	return "MediumSlateBlue";
+			case 115:	return "MediumSpringGreen";
+			case 116:	return "MediumTurquoise";
+			case 117:	return "MediumVioletRed";
+			case 118:	return "MidnightBlue";
+			case 119:	return "MintCream";
+			case 120:	return "MistyRose";
+			case 121:	return "Moccasin";
+			case 122:	return "NavajoWhite";
+			case 123:	return "Navy";
+			case 124:	return "OldLace";
+			case 125:	return "Olive";
+			case 126:	return "OliveDrab";
+			case 127:	return "Orange";
+			case 128:	return "OrangeRed";
+			case 129:	return "Orchid";
+			case 130:	return "PaleGoldenrod";
+			case 131:	return "PaleGreen";
+			case 132:	return "PaleTurquoise";
+			case 133:	return "PaleVioletRed";
+			case 134:	return "PapayaWhip";
+			case 135:	return "PeachPuff";
+			case 136:	return "Peru";
+			case 137:	return "Pink";
+			case 138:	return "Plum";
+			case 139:	return "PowderBlue";
+			case 140:	return "Purple";
+			case 141:	return "Red";
+			case 142:	return "RosyBrown";
+			case 143:	return "RoyalBlue";
+			case 144:	return "SaddleBrown";
+			case 145:	return "Salmon";
+			case 146:	return "SandyBrown";
+			case 147:	return "SeaGreen";
+			case 148:	return "SeaShell";
+			case 149:	return "Sienna";
+			case 150:	return "Silver";
+			case 151:	return "SkyBlue";
+			case 152:	return "SlateBlue";
+			case 153:	return "SlateGray";
+			case 154:	return "Snow";
+			case 155:	return "SpringGreen";
+			case 156:	return "SteelBlue";
+			case 157:	return "Tan";
+			case 158:	return "Teal";
+			case 159:	return "Thistle";
+			case 160:	return "Tomato";
+			case 161:	return "Turquoise";
+			case 162:	return "Violet";
+			case 163:	return "Wheat";
+			case 164:	return "White";
+			case 165:	return "WhiteSmoke";
+			case 166:	return "Yellow";
+			case 167:	return "YellowGreen";
+#if NET_2_0
+			case 168:	return "ButtonFace";
+			case 169:	return "ButtonHighlight";
+			case 170:	return "ButtonShadow";
+			case 171:	return "GradientActiveCaption";
+			case 172:	return "GradientInactiveCaption";
+			case 173:	return "MenuBar";
+			case 174:	return "MenuHighlight";
+#endif
+			default:	return String.Empty;
+			}
+		}
+
+		public static string GetName (KnownColor kc)
+		{
+			return GetName ((short)kc);
+		}
+
+		public static Color FindColorMatch (Color c)
+		{
+			uint argb = (uint) c.ToArgb ();
+			for (int i = 0; i < KnownColors.ArgbValues.Length; i++) {
+				if (argb == KnownColors.ArgbValues [i])
+					return KnownColors.FromKnownColor ((KnownColor)i);
+                        }
+			return Color.Empty;
 		}
 
 		// When this method is called, we teach any new color(s) to the Color class
 		// NOTE: This is called (reflection) by System.Windows.Forms.Theme (this isn't dead code)
-		public static Color Update (int knownColor, int color)
+		public static void Update (int knownColor, uint color)
 		{
-			Color c = knownColors[knownColor];
-			c.state = (short) (Color.ColorType.ARGB | Color.ColorType.Known | Color.ColorType.Named | Color.ColorType.System);
-			c.value = color;
-			knownColors[knownColor] = c;
-			return c;
+			ArgbValues[knownColor] = color;
 		}
 	}
 }
