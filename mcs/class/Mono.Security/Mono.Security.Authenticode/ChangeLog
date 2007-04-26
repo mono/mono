@@ -1,3 +1,8 @@
+2007-04-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AuthenticodeDeformatter.cs: Don't reset an existing reason inside
+	IsTrusted.
+
 2007-01-12  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AuthenticodeFormatter.cs: The ASN.1 structure must be padded to a

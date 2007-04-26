@@ -140,7 +140,8 @@ namespace Mono.Security.Authenticode {
 				return false;
 			}
 
-			reason = 0;
+			if (reason == -1)
+				reason = 0;
 			return true;
 		}
 
