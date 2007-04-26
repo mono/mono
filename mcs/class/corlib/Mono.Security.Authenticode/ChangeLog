@@ -1,3 +1,8 @@
+2007-04-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AuthenticodeBase.cs: Synch with latest Mono.Security version
+	* AuthenticodeDeformatter.cs: Synch with latest Mono.Security version
+
 2006-11-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AuthenticodeDeformatter.cs: Return (find) the SigningCertificate 

@@ -5,7 +5,7 @@
 //	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004, 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -63,10 +63,35 @@ namespace Mono.Security.Authenticode {
 		private int peOffset;
 		private int dirSecurityOffset;
 		private int dirSecuritySize;
+		private int coffSymbolTableOffset;
 
 		public AuthenticodeBase ()
 		{
 			fileblock = new byte [4096];
+		}
+
+		internal int PEOffset {
+			get {
+				if (blockNo < 1)
+					ReadFirstBlock ();
+				return peOffset;
+			}
+		}
+
+		internal int CoffSymbolTableOffset {
+			get {
+				if (blockNo < 1)
+					ReadFirstBlock ();
+				return coffSymbolTableOffset;
+			}
+		}
+
+		internal int SecurityOffset {
+			get {
+				if (blockNo < 1)
+					ReadFirstBlock ();
+				return dirSecurityOffset;
+			}
 		}
 
 		internal void Open (string filename)
@@ -117,12 +142,17 @@ namespace Mono.Security.Authenticode {
 
 			// 2. Read between DOS header and first part of PE header
 			// 2.1. Check for magic PE at start of header
-			if (BitConverterLE.ToUInt16 (fileblock, peOffset) != 0x4550)
+			//	PE - NT header ('P' 'E' 0x00 0x00)
+			if (BitConverterLE.ToUInt32 (fileblock, peOffset) != 0x4550)
 				return false;
 
 			// 2.2. Locate IMAGE_DIRECTORY_ENTRY_SECURITY (offset and size)
 			dirSecurityOffset = BitConverterLE.ToInt32 (fileblock, peOffset + 152);
 			dirSecuritySize = BitConverterLE.ToInt32 (fileblock, peOffset + 156);
+
+			// COFF symbol tables are deprecated - we'll strip them if we see them!
+			// (otherwise the signature won't work on MS and we don't want to support COFF for that)
+			coffSymbolTableOffset = BitConverterLE.ToInt32 (fileblock, peOffset + 12);
 
 			return true;
 		}
@@ -143,7 +173,6 @@ namespace Mono.Security.Authenticode {
 			return null;
 		}
 
-		// returns null if the file isn't signed
 		internal byte[] GetHash (HashAlgorithm hash)
 		{
 			if (blockNo < 1)
@@ -151,7 +180,8 @@ namespace Mono.Security.Authenticode {
 			fs.Position = blockLength;
 
 			// hash the rest of the file
-			long n = fs.Length - blockLength;
+			long n;
+			int addsize = 0;
 			// minus any authenticode signature (with 8 bytes header)
 			if (dirSecurityOffset > 0) {
 				// it is also possible that the signature block 
@@ -159,9 +189,32 @@ namespace Mono.Security.Authenticode {
 				if (dirSecurityOffset < blockLength) {
 					blockLength = dirSecurityOffset;
 					n = 0;
+				} else {
+					n = dirSecurityOffset - blockLength;
 				}
-				else
-					n -= (dirSecuritySize);
+			} else if (coffSymbolTableOffset > 0) {
+				fileblock[PEOffset + 12] = 0;
+				fileblock[PEOffset + 13] = 0;
+				fileblock[PEOffset + 14] = 0;
+				fileblock[PEOffset + 15] = 0;
+				fileblock[PEOffset + 16] = 0;
+				fileblock[PEOffset + 17] = 0;
+				fileblock[PEOffset + 18] = 0;
+				fileblock[PEOffset + 19] = 0;
+				// it is also possible that the signature block 
+				// starts within the block in memory (small EXE)
+				if (coffSymbolTableOffset < blockLength) {
+					blockLength = coffSymbolTableOffset;
+					n = 0;
+				} else {
+					n = coffSymbolTableOffset - blockLength;
+				}
+			} else {
+				addsize = (int) (fs.Length & 7);
+				if (addsize > 0)
+					addsize = 8 - addsize;
+				
+				n = fs.Length - blockLength;
 			}
 
 			// Authenticode(r) gymnastics
@@ -199,7 +252,13 @@ namespace Mono.Security.Authenticode {
 				// remainder
 				if (fs.Read (fileblock, 0, remainder) != remainder)
 					return null;
-				hash.TransformFinalBlock (fileblock, 0, remainder);
+
+				if (addsize > 0) {
+					hash.TransformBlock (fileblock, 0, remainder, fileblock, 0);
+					hash.TransformFinalBlock (new byte [addsize], 0, addsize);
+				} else {
+					hash.TransformFinalBlock (fileblock, 0, remainder);
+				}
 			}
 			return hash.Hash;
 		}

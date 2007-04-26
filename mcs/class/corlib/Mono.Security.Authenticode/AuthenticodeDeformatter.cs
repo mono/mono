@@ -5,7 +5,7 @@
 //	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -140,7 +140,8 @@ namespace Mono.Security.Authenticode {
 				return false;
 			}
 
-			reason = 0;
+			if (reason == -1)
+				reason = 0;
 			return true;
 		}
 
@@ -167,24 +168,24 @@ namespace Mono.Security.Authenticode {
 		private bool CheckSignature (string fileName) 
 		{
 			filename = fileName;
-			base.Open (filename);
-			entry = base.GetSecurityEntry ();
+			Open (filename);
+			entry = GetSecurityEntry ();
 			if (entry == null) {
 				// no signature is present
 				reason = 1;
-				base.Close ();
+				Close ();
 				return false;
 			}
 
 			PKCS7.ContentInfo ci = new PKCS7.ContentInfo (entry);
 			if (ci.ContentType != PKCS7.Oid.signedData) {
-				base.Close ();
+				Close ();
 				return false;
 			}
 
 			PKCS7.SignedData sd = new PKCS7.SignedData (ci.Content);
 			if (sd.ContentInfo.ContentType != spcIndirectDataContext) {
-				base.Close ();
+				Close ();
 				return false;
 			}
 
@@ -205,10 +206,10 @@ namespace Mono.Security.Authenticode {
 					break;
 				default:
 					reason = 5;
-					base.Close ();
+					Close ();
 					return false;
 			}
-			base.Close ();
+			Close ();
 
 			if (!signedHash.CompareValue (hash)) {
 				reason = 2;
@@ -319,21 +320,26 @@ namespace Mono.Security.Authenticode {
 				}
 			}
 
-			for (int i=0; i < sd.SignerInfo.UnauthenticatedAttributes.Count; i++) {
-				ASN1 attr = (ASN1) sd.SignerInfo.UnauthenticatedAttributes [i];
-				string oid = ASN1Convert.ToOid (attr [0]);
-				switch (oid) {
+			// timestamp signature is optional
+			if (sd.SignerInfo.UnauthenticatedAttributes.Count == 0) {
+				trustedTimestampRoot = true;
+			}  else {
+				for (int i = 0; i < sd.SignerInfo.UnauthenticatedAttributes.Count; i++) {
+					ASN1 attr = (ASN1) sd.SignerInfo.UnauthenticatedAttributes[i];
+					string oid = ASN1Convert.ToOid (attr[0]);
+					switch (oid) {
 					case PKCS7.Oid.countersignature:
 						// SEQUENCE {
 						//   OBJECT IDENTIFIER
 						//     countersignature (1 2 840 113549 1 9 6)
 						//   SET {
-						PKCS7.SignerInfo cs = new PKCS7.SignerInfo (attr [1]);
+						PKCS7.SignerInfo cs = new PKCS7.SignerInfo (attr[1]);
 						trustedTimestampRoot = VerifyCounterSignature (cs, signature);
 						break;
 					default:
 						// we don't support other unauthenticated attributes
 						break;
+					}
 				}
 			}
 
