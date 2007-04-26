@@ -149,6 +149,21 @@ namespace System.Windows.Forms {
 		{
 			OnActivated (EventArgs.Empty);
 		}
+
+		internal override void UpdateWindowText ()
+		{
+			if (!IsHandleCreated) {
+				return;
+			}
+			
+			if (shown_raised) {
+				/* we need to call .SetWindowStyle here instead of just .Text
+				   because the presence/absence of Text (== "" or not) can cause
+				   other window style things to appear/disappear */
+				XplatUI.SetWindowStyle (window.Handle, CreateParams);
+			}
+			base.UpdateWindowText ();
+		}
 		
 		private void SelectActiveControl ()
 		{

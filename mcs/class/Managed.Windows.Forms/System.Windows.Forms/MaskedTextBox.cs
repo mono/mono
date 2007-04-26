@@ -478,6 +478,9 @@ namespace System.Windows.Forms
 			get {
 				return base.MaxLength;
 			}
+			set {
+				// Do nothing, MTB doesn't support this.
+			}
 		}
 		
 		[EditorBrowsable (EditorBrowsableState.Never)]
@@ -486,6 +489,9 @@ namespace System.Windows.Forms
 		public override bool Multiline {
 			get {
 				return false;
+			}
+			set {
+				// Do nothing, MTB doesn't support this.
 			}
 		}
 		

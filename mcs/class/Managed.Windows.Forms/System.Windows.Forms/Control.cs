@@ -3037,16 +3037,18 @@ namespace System.Windows.Forms
 
 				if (text!=value) {
 					text=value;
-					if (IsHandleCreated) {
-						/* we need to call .SetWindowStyle here instead of just .Text
-						   because the presence/absence of Text (== "" or not) can cause
-						   other window style things to appear/disappear */
-						XplatUI.SetWindowStyle(window.Handle, CreateParams);
-						XplatUI.Text(Handle, text);
-					}
+					UpdateWindowText ();
 					OnTextChanged (EventArgs.Empty);
 				}
 			}
+		}
+		
+		internal virtual void UpdateWindowText ()
+		{
+			if (!IsHandleCreated) {
+				return;
+			}
+			XplatUI.Text (Handle, text);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Always)]
