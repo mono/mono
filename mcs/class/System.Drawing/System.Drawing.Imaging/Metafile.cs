@@ -36,7 +36,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Drawing.Imaging {
 
-	[MonoTODO ("Metafiles, both WMF and EMF formats, aren't supported.")]
+	[MonoTODO ("Metafiles, both WMF and EMF formats, are only partially supported.")]
 	[Serializable]
 #if ONLY_1_1
 	[ComVisible (false)]
@@ -88,19 +88,26 @@ namespace System.Drawing.Imaging {
 			GDIPlus.CheckStatus (status);
 		}
 
-		public Metafile (IntPtr referenceHtc, EmfType emfType) 
+		public Metafile (IntPtr referenceHdc, EmfType emfType) 
 		{
-			throw new NotImplementedException ();
+			RectangleF rect = new RectangleF ();
+			Status status = GDIPlus.GdipRecordMetafile (referenceHdc, emfType, ref rect, 
+				MetafileFrameUnit.GdiCompatible, null, out nativeObject);
+			GDIPlus.CheckStatus (status);
 		}
 
-		public Metafile (IntPtr referenceHtc, Rectangle frameRect) 
+		public Metafile (IntPtr referenceHdc, Rectangle frameRect) 
 		{
-			throw new NotImplementedException ();
+			Status status = GDIPlus.GdipRecordMetafileI (referenceHdc, EmfType.EmfPlusDual, ref frameRect, 
+				MetafileFrameUnit.GdiCompatible, null, out nativeObject);
+			GDIPlus.CheckStatus (status);
 		}
 
-		public Metafile (IntPtr referenceHtc, RectangleF frameRect) 
+		public Metafile (IntPtr referenceHdc, RectangleF frameRect) 
 		{
-			throw new NotImplementedException ();
+			Status status = GDIPlus.GdipRecordMetafile (referenceHdc, EmfType.EmfPlusDual, ref frameRect, 
+				MetafileFrameUnit.GdiCompatible, null, out nativeObject);
+			GDIPlus.CheckStatus (status);
 		}
 
 		public Metafile (IntPtr hmetafile, WmfPlaceableFileHeader wmfHeader) 
@@ -109,29 +116,47 @@ namespace System.Drawing.Imaging {
 			GDIPlus.CheckStatus (status);
 		}
 
-		public Metafile (Stream stream, IntPtr referenceHtc) 
+		public Metafile (Stream stream, IntPtr referenceHdc) 
 		{
-			throw new NotImplementedException ();
+			RectangleF rect = new RectangleF ();
+			Status status = Status.NotImplemented;
+			if (GDIPlus.RunningOnUnix ()) {
+				// TODO
+			} else {
+				status = GDIPlus.GdipRecordMetafileStream (new ComIStreamWrapper (stream), referenceHdc, 
+					EmfType.EmfPlusDual, ref rect, MetafileFrameUnit.GdiCompatible, null, out nativeObject);
+			}
+			GDIPlus.CheckStatus (status);
 		}
 
-		public Metafile (String fileName, IntPtr referenceHtc) 
+		public Metafile (string fileName, IntPtr referenceHdc) 
 		{
-			throw new NotImplementedException ();
+			RectangleF rect = new RectangleF ();
+			Status status = GDIPlus.GdipRecordMetafileFileName (fileName, referenceHdc, EmfType.EmfPlusDual, ref rect, 
+				MetafileFrameUnit.GdiCompatible, null, out nativeObject);
+			GDIPlus.CheckStatus (status);
 		}
 
 		public Metafile (IntPtr referenceHdc, EmfType emfType, string description) 
 		{
-			throw new NotImplementedException ();
+			RectangleF rect = new RectangleF ();
+			Status status = GDIPlus.GdipRecordMetafile (referenceHdc, emfType, ref rect, 
+				MetafileFrameUnit.GdiCompatible, description, out nativeObject);
+			GDIPlus.CheckStatus (status);
 		}
 
 		public Metafile (IntPtr referenceHdc, Rectangle frameRect, MetafileFrameUnit frameUnit) 
 		{
-			throw new NotImplementedException ();
+			Status status = GDIPlus.GdipRecordMetafileI (referenceHdc, EmfType.EmfPlusDual, ref frameRect, frameUnit,
+				null, out nativeObject);
+			GDIPlus.CheckStatus (status);
 		}
 
 		public Metafile (IntPtr referenceHdc, RectangleF frameRect, MetafileFrameUnit frameUnit) 
 		{
-			throw new NotImplementedException ();
+			Status status = GDIPlus.GdipRecordMetafile (referenceHdc, EmfType.EmfPlusDual, ref frameRect, frameUnit,
+				null, out nativeObject);
+			GDIPlus.CheckStatus (status);
 		}
 
 		public Metafile (IntPtr hmetafile, WmfPlaceableFileHeader wmfHeader, bool deleteWmf) 
@@ -142,136 +167,254 @@ namespace System.Drawing.Imaging {
 
 		public Metafile (Stream stream, IntPtr referenceHdc, EmfType type) 
 		{
-			throw new NotImplementedException ();
+			RectangleF rect = new RectangleF ();
+			Status status = Status.NotImplemented;
+			if (GDIPlus.RunningOnUnix ()) {
+				// TODO
+			} else {
+				status = GDIPlus.GdipRecordMetafileStream (new ComIStreamWrapper (stream), referenceHdc, 
+					type, ref rect, MetafileFrameUnit.GdiCompatible, null, out nativeObject);
+			}
+			GDIPlus.CheckStatus (status);
 		}
 
 		public Metafile (Stream stream, IntPtr referenceHdc, Rectangle frameRect) 
 		{
-			throw new NotImplementedException ();
+			Status status = Status.NotImplemented;
+			if (GDIPlus.RunningOnUnix ()) {
+				// TODO
+			} else {
+				status = GDIPlus.GdipRecordMetafileStreamI (new ComIStreamWrapper (stream), referenceHdc, 
+					EmfType.EmfPlusDual, ref frameRect, MetafileFrameUnit.GdiCompatible, null, 
+					out nativeObject);
+			}
+			GDIPlus.CheckStatus (status);
 		}
 
 		public Metafile (Stream stream, IntPtr referenceHdc, RectangleF frameRect) 
 		{
-			throw new NotImplementedException ();
+			Status status = Status.NotImplemented;
+			if (GDIPlus.RunningOnUnix ()) {
+				// TODO
+			} else {
+				status = GDIPlus.GdipRecordMetafileStream (new ComIStreamWrapper (stream), referenceHdc, 
+					EmfType.EmfPlusDual, ref frameRect, MetafileFrameUnit.GdiCompatible, null, 
+					out nativeObject);
+			}
+			GDIPlus.CheckStatus (status);
 		}
 
 		public Metafile (string fileName, IntPtr referenceHdc, EmfType type) 
 		{
-			throw new NotImplementedException ();
+			RectangleF rect = new RectangleF ();
+			Status status = GDIPlus.GdipRecordMetafileFileName (fileName, referenceHdc, type, ref rect, 
+				MetafileFrameUnit.GdiCompatible, null, out nativeObject);
+			GDIPlus.CheckStatus (status);
 		}
 
 		public Metafile (string fileName, IntPtr referenceHdc, Rectangle frameRect) 
 		{
-			throw new NotImplementedException ();
+			Status status = GDIPlus.GdipRecordMetafileFileNameI (fileName, referenceHdc, EmfType.EmfPlusDual, 
+				ref frameRect, MetafileFrameUnit.GdiCompatible, null, out nativeObject);
+			GDIPlus.CheckStatus (status);
 		}
 		
 		public Metafile (string fileName, IntPtr referenceHdc, RectangleF frameRect) 
 		{
-			throw new NotImplementedException ();
+			Status status = GDIPlus.GdipRecordMetafileFileName (fileName, referenceHdc, EmfType.EmfPlusDual, 
+				ref frameRect, MetafileFrameUnit.GdiCompatible, null, out nativeObject);
+			GDIPlus.CheckStatus (status);
 		}
 
 		public Metafile (IntPtr referenceHdc, Rectangle frameRect, MetafileFrameUnit frameUnit, EmfType type) 
 		{
-			throw new NotImplementedException ();
+			Status status = GDIPlus.GdipRecordMetafileI (referenceHdc, type, ref frameRect, frameUnit,
+				null, out nativeObject);
+			GDIPlus.CheckStatus (status);
 		}
 
 		public Metafile (IntPtr referenceHdc, RectangleF frameRect, MetafileFrameUnit frameUnit, EmfType type) 
 		{
-			throw new NotImplementedException ();
+			Status status = GDIPlus.GdipRecordMetafile (referenceHdc, type, ref frameRect, frameUnit,
+				null, out nativeObject);
+			GDIPlus.CheckStatus (status);
 		}
 
-		public Metafile (Stream stream, IntPtr referenceHtc, EmfType type, string description) 
+		public Metafile (Stream stream, IntPtr referenceHdc, EmfType type, string description) 
 		{
-			throw new NotImplementedException ();
+			Status status = Status.NotImplemented;
+			if (GDIPlus.RunningOnUnix ()) {
+				// TODO
+			} else {
+				RectangleF rect = new RectangleF ();
+				status = GDIPlus.GdipRecordMetafileStream (new ComIStreamWrapper (stream), referenceHdc, 
+					type, ref rect, MetafileFrameUnit.GdiCompatible, description, out nativeObject);
+			}
+			GDIPlus.CheckStatus (status);
 		}
 
 		public Metafile (Stream stream, IntPtr referenceHdc, Rectangle frameRect, MetafileFrameUnit frameUnit) 
 		{
-			throw new NotImplementedException ();
+			Status status = Status.NotImplemented;
+			if (GDIPlus.RunningOnUnix ()) {
+				// TODO
+			} else {
+				status = GDIPlus.GdipRecordMetafileStreamI (new ComIStreamWrapper (stream), referenceHdc, 
+					EmfType.EmfPlusDual, ref frameRect, MetafileFrameUnit.GdiCompatible, null, 
+					out nativeObject);
+			}
+			GDIPlus.CheckStatus (status);
 		}
 
 		public Metafile (Stream stream, IntPtr referenceHdc, RectangleF frameRect, MetafileFrameUnit frameUnit) 
 		{
-			throw new NotImplementedException ();
+			Status status = Status.NotImplemented;
+			if (GDIPlus.RunningOnUnix ()) {
+				// TODO
+			} else {
+				status = GDIPlus.GdipRecordMetafileStream (new ComIStreamWrapper (stream), referenceHdc, 
+					EmfType.EmfPlusDual, ref frameRect, MetafileFrameUnit.GdiCompatible, null, 
+					out nativeObject);
+			}
+			GDIPlus.CheckStatus (status);
 		}
 
 		public Metafile (string fileName, IntPtr referenceHdc, EmfType type, string description)
 		{
-			throw new NotImplementedException ();
+			RectangleF rect = new RectangleF ();
+			Status status = GDIPlus.GdipRecordMetafileFileName (fileName, referenceHdc, type, ref rect, 
+				MetafileFrameUnit.GdiCompatible, description, out nativeObject);
+			GDIPlus.CheckStatus (status);
 		}
 
 		public Metafile (string fileName, IntPtr referenceHdc, Rectangle frameRect, MetafileFrameUnit frameUnit) 
 		{
-			throw new NotImplementedException ();
+			Status status = GDIPlus.GdipRecordMetafileFileNameI (fileName, referenceHdc, EmfType.EmfPlusDual, 
+				ref frameRect, frameUnit, null, out nativeObject);
+			GDIPlus.CheckStatus (status);
 		}
 		
 		public Metafile (string fileName, IntPtr referenceHdc, RectangleF frameRect, MetafileFrameUnit frameUnit)
 		{
-			throw new NotImplementedException ();
+			Status status = GDIPlus.GdipRecordMetafileFileName (fileName, referenceHdc, EmfType.EmfPlusDual, 
+				ref frameRect, frameUnit, null, out nativeObject);
+			GDIPlus.CheckStatus (status);
 		}
 
-		public Metafile (IntPtr referenceHdc, Rectangle frameRect, MetafileFrameUnit frameUnit, EmfType type, string description) 
+		public Metafile (IntPtr referenceHdc, Rectangle frameRect, MetafileFrameUnit frameUnit, EmfType type,
+			string description) 
 		{
-			throw new NotImplementedException ();
+			Status status = GDIPlus.GdipRecordMetafileI (referenceHdc, type, ref frameRect, frameUnit,
+				description, out nativeObject);
+			GDIPlus.CheckStatus (status);
 		}
 
-		public Metafile (IntPtr referenceHdc, RectangleF frameRect, MetafileFrameUnit frameUnit, EmfType type, string description) 
+		public Metafile (IntPtr referenceHdc, RectangleF frameRect, MetafileFrameUnit frameUnit, EmfType type,
+			string description) 
 		{
-			throw new NotImplementedException ();
+			Status status = GDIPlus.GdipRecordMetafile (referenceHdc, type, ref frameRect, frameUnit,
+				description, out nativeObject);
+			GDIPlus.CheckStatus (status);
 		}
 
-		public Metafile (Stream stream, IntPtr referenceHdc, Rectangle frameRect, MetafileFrameUnit frameUnit, EmfType type) 
+		public Metafile (Stream stream, IntPtr referenceHdc, Rectangle frameRect, MetafileFrameUnit frameUnit,
+			EmfType type) 
 		{
-			throw new NotImplementedException ();
+			Status status = Status.NotImplemented;
+			if (GDIPlus.RunningOnUnix ()) {
+				// TODO
+			} else {
+				status = GDIPlus.GdipRecordMetafileStreamI (new ComIStreamWrapper (stream), referenceHdc, 
+					type, ref frameRect, frameUnit, null, out nativeObject);
+			}
+			GDIPlus.CheckStatus (status);
 		}
 
-		public Metafile (Stream stream, IntPtr referenceHdc, RectangleF frameRect, MetafileFrameUnit frameUnit, EmfType type) 
+		public Metafile (Stream stream, IntPtr referenceHdc, RectangleF frameRect, MetafileFrameUnit frameUnit,
+			EmfType type) 
 		{
-			throw new NotImplementedException ();
+			Status status = Status.NotImplemented;
+			if (GDIPlus.RunningOnUnix ()) {
+				// TODO
+			} else {
+				status = GDIPlus.GdipRecordMetafileStream (new ComIStreamWrapper (stream), referenceHdc, 
+					type, ref frameRect, frameUnit, null, out nativeObject);
+			}
+			GDIPlus.CheckStatus (status);
 		}
 
-		public Metafile (string fileName, IntPtr referenceHdc, Rectangle frameRect, MetafileFrameUnit frameUnit, EmfType type) 
+		public Metafile (string fileName, IntPtr referenceHdc, Rectangle frameRect, MetafileFrameUnit frameUnit,
+			EmfType type) 
 		{
-			throw new NotImplementedException ();
+			Status status = GDIPlus.GdipRecordMetafileFileNameI (fileName, referenceHdc, type, ref frameRect, frameUnit, 
+				null, out nativeObject);
+			GDIPlus.CheckStatus (status);
 		}
 		
-		public Metafile (string fileName, IntPtr referenceHdc, Rectangle frameRect, MetafileFrameUnit frameUnit, string description) 
+		public Metafile (string fileName, IntPtr referenceHdc, Rectangle frameRect, MetafileFrameUnit frameUnit,
+			string description) 
 		{
-			throw new NotImplementedException ();
+			Status status = GDIPlus.GdipRecordMetafileFileNameI (fileName, referenceHdc, EmfType.EmfPlusDual, 
+				ref frameRect, frameUnit, null, out nativeObject);
+			GDIPlus.CheckStatus (status);
 		}
 
-		public Metafile (string fileName, IntPtr referenceHdc, RectangleF frameRect, MetafileFrameUnit frameUnit, EmfType type) 
+		public Metafile (string fileName, IntPtr referenceHdc, RectangleF frameRect, MetafileFrameUnit frameUnit,
+			EmfType type) 
 		{
-			throw new NotImplementedException ();
+			Status status = GDIPlus.GdipRecordMetafileFileName (fileName, referenceHdc, type, ref frameRect, frameUnit, 
+				null, out nativeObject);
+			GDIPlus.CheckStatus (status);
 		}
 		
-		public Metafile (string fileName, IntPtr referenceHdc, RectangleF frameRect, MetafileFrameUnit frameUnit, string description) 
+		public Metafile (string fileName, IntPtr referenceHdc, RectangleF frameRect, MetafileFrameUnit frameUnit, 
+			string description) 
 		{
-			throw new NotImplementedException ();
+			Status status = GDIPlus.GdipRecordMetafileFileName (fileName, referenceHdc, EmfType.EmfPlusDual, 
+				ref frameRect, frameUnit, description, out nativeObject);
+			GDIPlus.CheckStatus (status);
 		}
 		
-		public Metafile (Stream stream, IntPtr referenceHdc, Rectangle frameRect, MetafileFrameUnit frameUnit, EmfType type,
-															string description) 
+		public Metafile (Stream stream, IntPtr referenceHdc, Rectangle frameRect, MetafileFrameUnit frameUnit, 
+			EmfType type, string description) 
 		{
-			throw new NotImplementedException ();
+			Status status = Status.NotImplemented;
+			if (GDIPlus.RunningOnUnix ()) {
+				// TODO
+			} else {
+				status = GDIPlus.GdipRecordMetafileStreamI (new ComIStreamWrapper (stream), referenceHdc, 
+					type, ref frameRect, frameUnit, description, out nativeObject);
+			}
+			GDIPlus.CheckStatus (status);
 		}
 
-		public Metafile (Stream stream, IntPtr referenceHdc, RectangleF frameRect, MetafileFrameUnit frameUnit, EmfType type,
-															string description) 
+		public Metafile (Stream stream, IntPtr referenceHdc, RectangleF frameRect, MetafileFrameUnit frameUnit, 
+			EmfType type, string description) 
 		{
-			throw new NotImplementedException ();
+			Status status = Status.NotImplemented;
+			if (GDIPlus.RunningOnUnix ()) {
+				// TODO
+			} else {
+				status = GDIPlus.GdipRecordMetafileStream (new ComIStreamWrapper (stream), referenceHdc, 
+					type, ref frameRect, frameUnit, description, out nativeObject);
+			}
+			GDIPlus.CheckStatus (status);
 		}
 
-		public Metafile (string fileName, IntPtr referenceHdc, Rectangle frameRect, MetafileFrameUnit frameUnit, EmfType type,
-															string description) 
+		public Metafile (string fileName, IntPtr referenceHdc, Rectangle frameRect, MetafileFrameUnit frameUnit, 
+			EmfType type, string description) 
 		{
-			throw new NotImplementedException ();
+			Status status = GDIPlus.GdipRecordMetafileFileNameI (fileName, referenceHdc, type, ref frameRect, 
+				frameUnit, description, out nativeObject);
+			GDIPlus.CheckStatus (status);
 		}
 		
-		public Metafile (string fileName, IntPtr referenceHdc, RectangleF frameRect, MetafileFrameUnit frameUnit, EmfType type,
-															string description) 
+		public Metafile (string fileName, IntPtr referenceHdc, RectangleF frameRect, MetafileFrameUnit frameUnit,
+			EmfType type, string description) 
 		{
-			throw new NotImplementedException ();
+			Status status = GDIPlus.GdipRecordMetafileFileName (fileName, referenceHdc, type, ref frameRect, frameUnit, 
+				description, out nativeObject);
+			GDIPlus.CheckStatus (status);
 		}
 
 		// methods
@@ -281,7 +424,7 @@ namespace System.Drawing.Imaging {
 			return nativeObject;
 		}
 
-		[MonoLimitation ("Metafiles aren't supported by libgdiplus.")]
+		[MonoLimitation ("Metafiles aren't only partially supported by libgdiplus.")]
 		public MetafileHeader GetMetafileHeader ()
 		{
 			IntPtr header = Marshal.AllocHGlobal (Marshal.SizeOf (typeof (MetafileHeader)));
@@ -295,7 +438,7 @@ namespace System.Drawing.Imaging {
 			}
 		}
 
-		[MonoLimitation ("Metafiles aren't supported by libgdiplus.")]
+		[MonoLimitation ("Metafiles aren't only partially supported by libgdiplus.")]
 		public static MetafileHeader GetMetafileHeader (IntPtr henhmetafile)
 		{
 			IntPtr header = Marshal.AllocHGlobal (Marshal.SizeOf (typeof (MetafileHeader)));
@@ -309,7 +452,7 @@ namespace System.Drawing.Imaging {
 			}
 		}
 
-		[MonoLimitation ("Metafiles aren't supported by libgdiplus.")]
+		[MonoLimitation ("Metafiles aren't only partially supported by libgdiplus.")]
 		public static MetafileHeader GetMetafileHeader (Stream stream)
 		{
 			if (stream == null)
@@ -337,7 +480,7 @@ namespace System.Drawing.Imaging {
 			}
 		}
 
-		[MonoLimitation ("Metafiles aren't supported by libgdiplus.")]
+		[MonoLimitation ("Metafiles aren't only partially supported by libgdiplus.")]
 		public static MetafileHeader GetMetafileHeader (string fileName)
 		{
 			if (fileName == null)
@@ -354,7 +497,7 @@ namespace System.Drawing.Imaging {
 			}
 		}
 
-		[MonoLimitation ("Metafiles aren't supported by libgdiplus.")]
+		[MonoLimitation ("Metafiles aren't only partially supported by libgdiplus.")]
 		public static MetafileHeader GetMetafileHeader (IntPtr henhmetafile, WmfPlaceableFileHeader wmfHeader)
 		{
 			IntPtr header = Marshal.AllocHGlobal (Marshal.SizeOf (typeof (MetafileHeader)));
@@ -368,7 +511,7 @@ namespace System.Drawing.Imaging {
 			}
 		}
 
-		[MonoLimitation ("Metafiles aren't supported by libgdiplus.")]
+		[MonoLimitation ("Metafiles aren't only partially supported by libgdiplus.")]
 		public void PlayRecord (EmfPlusRecordType recordType, int flags, int dataSize, byte[] data)
 		{
 			Status status = GDIPlus.GdipPlayMetafileRecord (nativeObject, recordType, flags, dataSize, data);
