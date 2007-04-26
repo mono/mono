@@ -1,3 +1,8 @@
+2007-04-26  Marek Habersack  <mhabersack@novell.com>
+
+	* PageCompiler.cs: the Master property must be in the partial
+	class if present. Fixes bug #81442
+
 2007-04-19  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* AspComponentFoundry.cs: Fixed build on 1.0 profile. Spaces to
