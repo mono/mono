@@ -1,3 +1,10 @@
+2007-04-26  Dick Porter  <dick@ximian.com>
+
+	* shared.c (_wapi_shm_semaphores_init): Need to check
+	MONO_DISABLE_SHM in this entry point, as it's called before
+	_wapi_shm_attach().  Fixes bug 81436.
+
+
 2007-04-13  Dick Porter  <dick@ximian.com>
 
 	* shared.h:
