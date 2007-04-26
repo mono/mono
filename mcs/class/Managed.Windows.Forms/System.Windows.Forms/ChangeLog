@@ -1,5 +1,10 @@
 2007-04-26  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Form.cs: Refactor WndProc into separate methods, just like Control is
+	  doing it.
+
+2007-04-26  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Control.cs: set_Text: move the call to the driver into a seperate
 	  virtual method so that Form can override it.
 	* MaskedTextBox.cs: Corcompare fixes.

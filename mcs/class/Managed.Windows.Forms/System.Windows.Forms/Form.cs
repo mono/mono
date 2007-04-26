@@ -2174,353 +2174,444 @@ namespace System.Windows.Forms {
 				return;
 			}
 
-			switch((Msg)m.Msg) {
-				case Msg.WM_DESTROY: {
-					if (!RecreatingHandle)
-						this.closing = true;
+			switch ((Msg)m.Msg) {
+			case Msg.WM_DESTROY: {
+				WmDestroy (ref m);
+				return;
+			}
 
-					base.WndProc(ref m);
-					return;
-				}
+			case Msg.WM_CLOSE: {
+				WmClose (ref m);
+				return;
+			}
 
-				case Msg.WM_CLOSE: {
-					Form act = Form.ActiveForm;
-					// Don't close this form if there's another modal form visible.
-					if (act != null && act != this && act.Modal == true) {
-						// Check if any of the parents up the tree is the modal form, 
-						// in which case we can still close this form.
-						Control current = this;
-						while (current != null && current.Parent != act) {
-							current = current.Parent;
-						}
-						if (current == null || current.Parent != act) {
-							return;
-						}
-					}
-
-					if (mdi_container != null) {
-						foreach (Form mdi_child in mdi_container.MdiChildren) {
-							mdi_child.FireClosingEvents (CloseReason.MdiFormClosing);
-						}
-					}
-
-					if (!is_modal) {
-						if (!FireClosingEvents (CloseReason.UserClosing)) {
-							OnClosed (EventArgs.Empty);
-#if NET_2_0
-							OnFormClosed (new FormClosedEventArgs (CloseReason.UserClosing));
-#endif
-							closing = true;
-							Dispose ();
-						}
-						else {
-							closing = false;
-						}
-					} else {
-						if (FireClosingEvents (CloseReason.UserClosing)) {
-							DialogResult = DialogResult.None;
-							closing = false;
-						}
-						else {
-							OnClosed (EventArgs.Empty);
-#if NET_2_0
-							OnFormClosed (new FormClosedEventArgs (CloseReason.UserClosing));
-#endif
-							closing = true;
-							Hide ();
-						}
-					}
-
-					
-					mdi_parent = null;
-
-					return;
-				}
-
-				case Msg.WM_WINDOWPOSCHANGED: {
-					if (WindowState != FormWindowState.Minimized) {
-						base.WndProc(ref m);
-					}
-					return;
-				}
+			case Msg.WM_WINDOWPOSCHANGED: {
+				WmWindowPosChanged (ref m);
+				return;
+			}
 
 #if NET_2_0
-				case Msg.WM_SYSCOMMAND: {
-					// Let *Strips know the app's title bar was clicked
-					if (XplatUI.IsEnabled (Handle))
-						ToolStripManager.FireAppClicked ();
-						
-					base.WndProc(ref m);
-					break;
-				}
+			case Msg.WM_SYSCOMMAND: {
+				WmSysCommand (ref m);
+				break;
+			}
 #endif
-	
-				case Msg.WM_ACTIVATE: {
-					if (m.WParam != (IntPtr)WindowActiveFlags.WA_INACTIVE) {
-						if (is_loaded) {
-							SelectActiveControl ();
 
-							if (ActiveControl != null && !ActiveControl.Focused)
-								SendControlFocus (ActiveControl);
-						}
+			case Msg.WM_ACTIVATE: {
+				WmActivate (ref m);
+				return;
+			}
 
-						IsActive = true;
-					} else {
-#if NET_2_0
-						if (XplatUI.IsEnabled (Handle))
-							ToolStripManager.FireAppFocusChanged (this);
-#endif
-						IsActive = false;
-					}
-					return;
-				}
+			case Msg.WM_KILLFOCUS: {
+				WmKillFocus (ref m);
+				return;
+			}
 
-				case Msg.WM_KILLFOCUS: {
-					base.WndProc(ref m);
-					return;
-				}
+			case Msg.WM_SETFOCUS: {
+				WmSetFocus (ref m);
+				return;
+			}
 
-				case Msg.WM_SETFOCUS: {
-					if (ActiveControl != null && ActiveControl != this) {
-						ActiveControl.Focus();
-						return;	// FIXME - do we need to run base.WndProc, even though we just changed focus?
-					}
-					if (IsMdiContainer) {
-						mdi_container.SendFocusToActiveChild ();
-						return;
-					}
-					base.WndProc(ref m);
-					return;
-				}
+			// Menu drawing
+			case Msg.WM_NCHITTEST: {
+				WmNcHitTest (ref m);
+				return;
+			}
 
-				// Menu drawing
-                case Msg.WM_NCHITTEST: {
-					if (XplatUI.IsEnabled (Handle) && ActiveMenu != null) {
-						int x = LowOrder ((int)m.LParam.ToInt32 ());
-						int y = HighOrder ((int)m.LParam.ToInt32 ());
+			case Msg.WM_NCLBUTTONDOWN: {
+				WmNcLButtonDown (ref m);
+				return;
+			}
 
-						XplatUI.ScreenToMenu (ActiveMenu.Wnd.window.Handle, ref x, ref y);
+			case Msg.WM_NCLBUTTONUP: {
+				WmNcLButtonUp (ref m);
+				return;
+			}
 
-						// If point is under menu return HTMENU, it prevents Win32 to return HTMOVE.
-						if ((x > 0) && (y > 0) && (x < ActiveMenu.Rect.Width) && (y < ActiveMenu.Rect.Height)) {
-							m.Result = new IntPtr ((int)HitTest.HTMENU);
-							return;
-						}
-					}
+			case Msg.WM_NCMOUSELEAVE: {
+				WmNcMouseLeave (ref m);
+				return;
+			}
 
-					base.WndProc (ref m);
-					return;
-				}
+			case Msg.WM_NCMOUSEMOVE: {
+				WmNcMouseMove (ref m);
+				return;
+			}
 
-                case Msg.WM_NCLBUTTONDOWN: {
-					if (XplatUI.IsEnabled (Handle) && ActiveMenu != null) {
-						ActiveMenu.OnMouseDown(this, new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), mouse_clicks, Control.MousePosition.X, Control.MousePosition.Y, 0));
-					}
+			case Msg.WM_NCPAINT: {
+				WmNcPaint (ref m);
+				return;
+			}
 
-					if (ActiveMaximizedMdiChild != null) {
-						if (ActiveMaximizedMdiChild.HandleMenuMouseDown (ActiveMenu,
-								LowOrder ((int) m.LParam.ToInt32 ()),
-								HighOrder ((int) m.LParam.ToInt32 ()))) {
-							// Don't let base process this message, otherwise we won't
-							// get a WM_NCLBUTTONUP.
-							return;
-						}
-					}
-					base.WndProc(ref m);
-					return;
-				}
+			case Msg.WM_NCCALCSIZE: {
+				WmNcCalcSize (ref m);
+				break;
+			}
 
-                case Msg.WM_NCLBUTTONUP: {
-					if (ActiveMaximizedMdiChild != null) {
-						ActiveMaximizedMdiChild.HandleMenuMouseUp (ActiveMenu,
-								LowOrder ((int)m.LParam.ToInt32 ()),
-								HighOrder ((int)m.LParam.ToInt32 ()));
-					}
-					base.WndProc (ref m);
-					return;
-				}
+			case Msg.WM_MOUSEMOVE: {
+				WmMouseMove (ref m);
+				break;
+			}
 
-				case Msg.WM_NCMOUSELEAVE: {
-					if (ActiveMaximizedMdiChild != null) {
-						ActiveMaximizedMdiChild.HandleMenuMouseLeave(ActiveMenu,
-								LowOrder((int)m.LParam.ToInt32()),
-								HighOrder((int)m.LParam.ToInt32()));
-					}
-					base.WndProc(ref m);
-					return;
-				}
-				
-				case Msg.WM_NCMOUSEMOVE: {
-					if (XplatUI.IsEnabled (Handle) && ActiveMenu != null) {
-						ActiveMenu.OnMouseMove(this, new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 0));
-					}
-					
-					if (ActiveMaximizedMdiChild != null) {
-						XplatUI.RequestAdditionalWM_NCMessages (Handle, false, true);
-						ActiveMaximizedMdiChild.HandleMenuMouseMove (ActiveMenu,
-								LowOrder ((int)m.LParam.ToInt32 ()),
-								HighOrder ((int)m.LParam.ToInt32 ()));
-					}
-					base.WndProc(ref m);
-					return;
-				}
+			case Msg.WM_LBUTTONDOWN:
+			case Msg.WM_MBUTTONDOWN:
+			case Msg.WM_RBUTTONDOWN: {
+				WmButtonDown (ref m);
+				return;
+			}
 
-				case Msg.WM_NCPAINT: {
-					if (ActiveMenu != null) {
-						PaintEventArgs	pe;
-						Point		pnt;
+			case Msg.WM_LBUTTONUP:
+			case Msg.WM_MBUTTONUP:
+			case Msg.WM_RBUTTONUP: {
+				WmButtonUp (ref m);
+				return;
+			}
 
-						pe = XplatUI.PaintEventStart(Handle, false);
-						pnt = XplatUI.GetMenuOrigin(window.Handle);
+			case Msg.WM_GETMINMAXINFO: {
+				WmGetMinMaxInfo (ref m);
+				break;
+			}
 
-						// The entire menu has to be in the clip rectangle because the 
-						// control buttons are right-aligned and otherwise they would
-						// stay painted when the window gets resized.
-						Rectangle clip = new Rectangle (pnt.X, pnt.Y, ClientSize.Width, 0);
-						clip = Rectangle.Union(clip, pe.ClipRectangle);
-						pe.SetClip(clip);
-						pe.Graphics.SetClip(clip);
-						
-						ActiveMenu.Draw (pe, new Rectangle (pnt.X, pnt.Y, ClientSize.Width, 0));
-
-						if (ActiveMaximizedMdiChild != null) {
-							ActiveMaximizedMdiChild.DrawMaximizedButtons (ActiveMenu, pe);
-						}
-
-						XplatUI.PaintEventEnd(Handle, false);
-					}
-
-					base.WndProc(ref m);
-					return;
-				}
-
-				case Msg.WM_NCCALCSIZE: {
-					XplatUIWin32.NCCALCSIZE_PARAMS	ncp;
-
-					if ((ActiveMenu != null) && (m.WParam == (IntPtr)1)) {
-						ncp = (XplatUIWin32.NCCALCSIZE_PARAMS)Marshal.PtrToStructure(m.LParam, typeof(XplatUIWin32.NCCALCSIZE_PARAMS));
-
-						// Adjust for menu
-						ncp.rgrc1.top += ThemeEngine.Current.CalcMenuBarSize (DeviceContext, ActiveMenu, ClientSize.Width);
-						Marshal.StructureToPtr(ncp, m.LParam, true);
-					}
-					DefWndProc(ref m);
-					break;
-				}
-
-				case Msg.WM_MOUSEMOVE: {
-					if (XplatUI.IsEnabled (Handle) && active_tracker != null) {
-						MouseEventArgs args = new MouseEventArgs (
-													FromParamToMouseButtons ((int) m.WParam.ToInt32()),
-													mouse_clicks, 
-													Control.MousePosition.X, 
-													Control.MousePosition.Y, 
-													0);
-
-						active_tracker.OnMotion (args);
-						break;
-					}
-					base.WndProc(ref m);
-					break;
-				}
-
-				case Msg.WM_LBUTTONDOWN:
-				case Msg.WM_MBUTTONDOWN:
-				case Msg.WM_RBUTTONDOWN: {					
-					if (XplatUI.IsEnabled (Handle) && active_tracker != null) {
-						MouseEventArgs args = new MouseEventArgs (
-													FromParamToMouseButtons ((int) m.WParam.ToInt32()),
-													mouse_clicks, 
-													Control.MousePosition.X, 
-													Control.MousePosition.Y, 
-													0);
-
-						if (!active_tracker.OnMouseDown (args)) {
-							Control control = GetRealChildAtPoint (Cursor.Position);
-							if (control != null) {
-								Point pt = control.PointToClient (Cursor.Position);
-								XplatUI.SendMessage (control.Handle, (Msg) m.Msg, m.WParam, MakeParam (pt.X, pt.Y));
-							}
-						}
-						
-						return;
-					}
-#if NET_2_0
-					ToolStripManager.FireAppClicked ();
-#endif
-					base.WndProc (ref m);
-					return;
-				}
-
-				case Msg.WM_LBUTTONUP:
-				case Msg.WM_MBUTTONUP:
-				case Msg.WM_RBUTTONUP: {
-					if (XplatUI.IsEnabled (Handle) && active_tracker != null) {
-						MouseButtons mb = FromParamToMouseButtons ((int) m.WParam.ToInt32());
-						
-						// We add in the button that was released (not sent in WParam)
-						switch((Msg)m.Msg) {
-							case Msg.WM_LBUTTONUP:
-								mb |= MouseButtons.Left;
-								break;
-							case Msg.WM_MBUTTONUP:
-								mb |= MouseButtons.Middle;
-								break;
-							case Msg.WM_RBUTTONUP:
-								mb |= MouseButtons.Right;
-								break;
-						}
-
-						MouseEventArgs args = new MouseEventArgs (
-													mb,
-													mouse_clicks, 
-													Control.MousePosition.X, 
-													Control.MousePosition.Y, 
-													0);
-						
-						active_tracker.OnMouseUp (args);
-						mouse_clicks = 1;
-						return;
-					}
-					base.WndProc(ref m);
-					return;
-				}
-
-				case Msg.WM_GETMINMAXINFO: {
-					MINMAXINFO	mmi;
-
-					if (m.LParam != IntPtr.Zero) {
-						mmi = (MINMAXINFO)Marshal.PtrToStructure(m.LParam, typeof(MINMAXINFO));
-
-						default_maximized_bounds = new Rectangle(mmi.ptMaxPosition.x, mmi.ptMaxPosition.y, mmi.ptMaxSize.x, mmi.ptMaxSize.y);
-						if (maximized_bounds != Rectangle.Empty) {
-							mmi.ptMaxPosition.x = maximized_bounds.Left;
-							mmi.ptMaxPosition.y = maximized_bounds.Top;
-							mmi.ptMaxSize.x = maximized_bounds.Width;
-							mmi.ptMaxSize.y = maximized_bounds.Height;
-						}
-
-						if (minimum_size != Size.Empty) {
-							mmi.ptMinTrackSize.x = minimum_size.Width;
-							mmi.ptMinTrackSize.y = minimum_size.Height;
-						}
-
-						if (maximum_size != Size.Empty) {
-							mmi.ptMaxTrackSize.x = maximum_size.Width;
-							mmi.ptMaxTrackSize.y = maximum_size.Height;
-						}
-						Marshal.StructureToPtr(mmi, m.LParam, false);
-					}
-					break;
-				}
-				
-				default: {
-					base.WndProc (ref m);
-					break;
-				}
+			default: {
+				base.WndProc (ref m);
+				break;
+			}
 			}
 		}
 		#endregion	// Protected Instance Methods
+
+#region WM methods
+
+		private void WmDestroy (ref Message m)
+		{
+			if (!RecreatingHandle)
+				this.closing = true;
+
+			base.WndProc (ref m);
+		}
+		
+		private void WmClose (ref Message m)
+		{
+			Form act = Form.ActiveForm;
+			// Don't close this form if there's another modal form visible.
+			if (act != null && act != this && act.Modal == true) {
+				// Check if any of the parents up the tree is the modal form, 
+				// in which case we can still close this form.
+				Control current = this;
+				while (current != null && current.Parent != act) {
+					current = current.Parent;
+				}
+				if (current == null || current.Parent != act) {
+					return;
+				}
+			}
+
+			if (mdi_container != null) {
+				foreach (Form mdi_child in mdi_container.MdiChildren) {
+					mdi_child.FireClosingEvents (CloseReason.MdiFormClosing);
+				}
+			}
+
+			if (!is_modal) {
+				if (!FireClosingEvents (CloseReason.UserClosing)) {
+					OnClosed (EventArgs.Empty);
+#if NET_2_0
+					OnFormClosed (new FormClosedEventArgs (CloseReason.UserClosing));
+#endif
+					closing = true;
+					Dispose ();
+				} else {
+					closing = false;
+				}
+			} else {
+				if (FireClosingEvents (CloseReason.UserClosing)) {
+					DialogResult = DialogResult.None;
+					closing = false;
+				} else {
+					OnClosed (EventArgs.Empty);
+#if NET_2_0
+					OnFormClosed (new FormClosedEventArgs (CloseReason.UserClosing));
+#endif
+					closing = true;
+					Hide ();
+				}
+			}
+
+
+			mdi_parent = null;
+		}
+		
+		private void WmWindowPosChanged (ref Message m)
+		{
+			if (WindowState != FormWindowState.Minimized) {
+				base.WndProc (ref m);
+			}
+		}
+
+#if NET_2_0
+		private void WmSysCommand (ref Message m)
+		{
+			// Let *Strips know the app's title bar was clicked
+			if (XplatUI.IsEnabled (Handle))
+				ToolStripManager.FireAppClicked ();
+
+			base.WndProc (ref m);
+		}
+#endif	
+		private void WmActivate (ref Message m)
+		{
+			if (m.WParam != (IntPtr)WindowActiveFlags.WA_INACTIVE) {
+				if (is_loaded) {
+					SelectActiveControl ();
+
+					if (ActiveControl != null && !ActiveControl.Focused)
+						SendControlFocus (ActiveControl);
+				}
+
+				IsActive = true;
+			} else {
+#if NET_2_0
+				if (XplatUI.IsEnabled (Handle))
+					ToolStripManager.FireAppFocusChanged (this);
+#endif
+				IsActive = false;
+			}
+		}
+		
+		private void WmKillFocus (ref Message m)
+		{
+			base.WndProc (ref m);
+		}
+		
+		private void WmSetFocus (ref Message m)
+		{
+			if (ActiveControl != null && ActiveControl != this) {
+				ActiveControl.Focus ();
+				return;	// FIXME - do we need to run base.WndProc, even though we just changed focus?
+			}
+			if (IsMdiContainer) {
+				mdi_container.SendFocusToActiveChild ();
+				return;
+			}
+			base.WndProc (ref m);
+		}
+		
+		private void WmNcHitTest (ref Message m)
+		{
+			if (XplatUI.IsEnabled (Handle) && ActiveMenu != null) {
+				int x = LowOrder ((int)m.LParam.ToInt32 ());
+				int y = HighOrder ((int)m.LParam.ToInt32 ());
+
+				XplatUI.ScreenToMenu (ActiveMenu.Wnd.window.Handle, ref x, ref y);
+
+				// If point is under menu return HTMENU, it prevents Win32 to return HTMOVE.
+				if ((x > 0) && (y > 0) && (x < ActiveMenu.Rect.Width) && (y < ActiveMenu.Rect.Height)) {
+					m.Result = new IntPtr ((int)HitTest.HTMENU);
+					return;
+				}
+			}
+
+			base.WndProc (ref m);
+		}
+		
+		private void WmNcLButtonDown (ref Message m)
+		{
+			if (XplatUI.IsEnabled (Handle) && ActiveMenu != null) {
+				ActiveMenu.OnMouseDown (this, new MouseEventArgs (FromParamToMouseButtons ((int)m.WParam.ToInt32 ()), mouse_clicks, Control.MousePosition.X, Control.MousePosition.Y, 0));
+			}
+
+			if (ActiveMaximizedMdiChild != null) {
+				if (ActiveMaximizedMdiChild.HandleMenuMouseDown (ActiveMenu,
+						LowOrder ((int)m.LParam.ToInt32 ()),
+						HighOrder ((int)m.LParam.ToInt32 ()))) {
+					// Don't let base process this message, otherwise we won't
+					// get a WM_NCLBUTTONUP.
+					return;
+				}
+			}
+			base.WndProc (ref m);
+		}
+		
+		private void WmNcLButtonUp (ref Message m)
+		{
+			if (ActiveMaximizedMdiChild != null) {
+				ActiveMaximizedMdiChild.HandleMenuMouseUp (ActiveMenu,
+						LowOrder ((int)m.LParam.ToInt32 ()),
+						HighOrder ((int)m.LParam.ToInt32 ()));
+			}
+			base.WndProc (ref m);
+		}
+		
+		private void WmNcMouseLeave (ref Message m)
+		{
+			if (ActiveMaximizedMdiChild != null) {
+				ActiveMaximizedMdiChild.HandleMenuMouseLeave (ActiveMenu,
+						LowOrder ((int)m.LParam.ToInt32 ()),
+						HighOrder ((int)m.LParam.ToInt32 ()));
+			}
+			base.WndProc (ref m);
+		}
+		
+		private void WmNcMouseMove (ref Message m)
+		{
+			if (XplatUI.IsEnabled (Handle) && ActiveMenu != null) {
+				ActiveMenu.OnMouseMove (this, new MouseEventArgs (FromParamToMouseButtons ((int)m.WParam.ToInt32 ()), mouse_clicks, LowOrder ((int)m.LParam.ToInt32 ()), HighOrder ((int)m.LParam.ToInt32 ()), 0));
+			}
+
+			if (ActiveMaximizedMdiChild != null) {
+				XplatUI.RequestAdditionalWM_NCMessages (Handle, false, true);
+				ActiveMaximizedMdiChild.HandleMenuMouseMove (ActiveMenu,
+						LowOrder ((int)m.LParam.ToInt32 ()),
+						HighOrder ((int)m.LParam.ToInt32 ()));
+			}
+			base.WndProc (ref m);
+		}
+		
+		private void WmNcPaint (ref Message m)
+		{
+			if (ActiveMenu != null) {
+				PaintEventArgs pe;
+				Point pnt;
+
+				pe = XplatUI.PaintEventStart (Handle, false);
+				pnt = XplatUI.GetMenuOrigin (window.Handle);
+
+				// The entire menu has to be in the clip rectangle because the 
+				// control buttons are right-aligned and otherwise they would
+				// stay painted when the window gets resized.
+				Rectangle clip = new Rectangle (pnt.X, pnt.Y, ClientSize.Width, 0);
+				clip = Rectangle.Union (clip, pe.ClipRectangle);
+				pe.SetClip (clip);
+				pe.Graphics.SetClip (clip);
+
+				ActiveMenu.Draw (pe, new Rectangle (pnt.X, pnt.Y, ClientSize.Width, 0));
+
+				if (ActiveMaximizedMdiChild != null) {
+					ActiveMaximizedMdiChild.DrawMaximizedButtons (ActiveMenu, pe);
+				}
+
+				XplatUI.PaintEventEnd (Handle, false);
+			}
+
+			base.WndProc (ref m);
+		}
+		
+		private void WmNcCalcSize (ref Message m)
+		{
+			XplatUIWin32.NCCALCSIZE_PARAMS ncp;
+
+			if ((ActiveMenu != null) && (m.WParam == (IntPtr)1)) {
+				ncp = (XplatUIWin32.NCCALCSIZE_PARAMS)Marshal.PtrToStructure (m.LParam, typeof (XplatUIWin32.NCCALCSIZE_PARAMS));
+
+				// Adjust for menu
+				ncp.rgrc1.top += ThemeEngine.Current.CalcMenuBarSize (DeviceContext, ActiveMenu, ClientSize.Width);
+				Marshal.StructureToPtr (ncp, m.LParam, true);
+			}
+			DefWndProc (ref m);		
+		}
+		
+		private void WmMouseMove (ref Message m)
+		{
+			if (XplatUI.IsEnabled (Handle) && active_tracker != null) {
+				MouseEventArgs args = new MouseEventArgs (
+					FromParamToMouseButtons ((int)m.WParam.ToInt32 ()),
+					mouse_clicks,
+					Control.MousePosition.X,
+					Control.MousePosition.Y,
+					0);
+
+				active_tracker.OnMotion (args);
+				return;
+			}
+			base.WndProc (ref m);
+		}
+		
+		private void WmButtonDown (ref Message m)
+		{
+			if (XplatUI.IsEnabled (Handle) && active_tracker != null) {
+				MouseEventArgs args = new MouseEventArgs (
+					FromParamToMouseButtons ((int)m.WParam.ToInt32 ()),
+					mouse_clicks,
+					Control.MousePosition.X,
+					Control.MousePosition.Y,
+					0);
+
+				if (!active_tracker.OnMouseDown (args)) {
+					Control control = GetRealChildAtPoint (Cursor.Position);
+					if (control != null) {
+						Point pt = control.PointToClient (Cursor.Position);
+						XplatUI.SendMessage (control.Handle, (Msg)m.Msg, m.WParam, MakeParam (pt.X, pt.Y));
+					}
+				}
+
+				return;
+			}
+#if NET_2_0
+			ToolStripManager.FireAppClicked ();
+#endif
+			base.WndProc (ref m);
+		}
+		
+		private void WmButtonUp (ref Message m)
+		{
+			if (XplatUI.IsEnabled (Handle) && active_tracker != null) {
+				MouseButtons mb = FromParamToMouseButtons ((int)m.WParam.ToInt32 ());
+
+				// We add in the button that was released (not sent in WParam)
+				switch ((Msg)m.Msg) {
+				case Msg.WM_LBUTTONUP:
+					mb |= MouseButtons.Left;
+					break;
+				case Msg.WM_MBUTTONUP:
+					mb |= MouseButtons.Middle;
+					break;
+				case Msg.WM_RBUTTONUP:
+					mb |= MouseButtons.Right;
+					break;
+				}
+
+				MouseEventArgs args = new MouseEventArgs (
+					mb,
+					mouse_clicks,
+					Control.MousePosition.X,
+					Control.MousePosition.Y,
+					0);
+
+				active_tracker.OnMouseUp (args);
+				mouse_clicks = 1;
+				return;
+			}
+			base.WndProc (ref m);
+		}
+		
+		private void WmGetMinMaxInfo (ref Message m)
+		{
+			MINMAXINFO mmi;
+
+			if (m.LParam != IntPtr.Zero) {
+				mmi = (MINMAXINFO)Marshal.PtrToStructure (m.LParam, typeof (MINMAXINFO));
+
+				default_maximized_bounds = new Rectangle (mmi.ptMaxPosition.x, mmi.ptMaxPosition.y, mmi.ptMaxSize.x, mmi.ptMaxSize.y);
+				if (maximized_bounds != Rectangle.Empty) {
+					mmi.ptMaxPosition.x = maximized_bounds.Left;
+					mmi.ptMaxPosition.y = maximized_bounds.Top;
+					mmi.ptMaxSize.x = maximized_bounds.Width;
+					mmi.ptMaxSize.y = maximized_bounds.Height;
+				}
+
+				if (minimum_size != Size.Empty) {
+					mmi.ptMinTrackSize.x = minimum_size.Width;
+					mmi.ptMinTrackSize.y = minimum_size.Height;
+				}
+
+				if (maximum_size != Size.Empty) {
+					mmi.ptMaxTrackSize.x = maximum_size.Width;
+					mmi.ptMaxTrackSize.y = maximum_size.Height;
+				}
+				Marshal.StructureToPtr (mmi, m.LParam, false);
+			}
+		}
+#endregion
 
 		internal override void FireEnter ()
 		{
