@@ -319,6 +319,9 @@ namespace System.Windows.Forms
 
 		public void Close (ToolStripDropDownCloseReason reason)
 		{
+			if (!this.Visible)
+				return;
+				
 			// Give users a chance to cancel the close
 			ToolStripDropDownClosingEventArgs e = new ToolStripDropDownClosingEventArgs (reason);
 			this.OnClosing (e);
@@ -343,8 +346,7 @@ namespace System.Windows.Forms
 
 			// Recursive hide all child dropdowns
 			foreach (ToolStripItem tsi in this.Items)
-				if (tsi is ToolStripMenuItem)
-					(tsi as ToolStripMenuItem).HideDropDown (reason);
+				tsi.Dismiss (reason);
 			
 			this.OnClosed (new ToolStripDropDownClosedEventArgs (reason));
 		}
@@ -364,6 +366,8 @@ namespace System.Windows.Forms
 			ToolStripManager.AppFocusChange += new EventHandler (ToolStripMenuTracker_AppFocusChange);
 
 			base.Show ();
+			
+			ToolStripManager.SetActiveToolStrip (this);
 			
 			this.OnOpened (EventArgs.Empty);
 		}
@@ -797,19 +801,93 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Private Methods
+		internal override void Dismiss (ToolStripDropDownCloseReason reason)
+		{
+			this.Close (reason);
+			base.Dismiss (reason);
+		}
+
+		internal override ToolStrip GetTopLevelToolStrip ()
+		{
+			if (this.OwnerItem == null)
+				return this;
+				
+			return this.OwnerItem.GetTopLevelToolStrip ();
+		}
+
+		internal override bool ProcessArrowKey (Keys keyData)
+		{
+			switch (keyData) {
+				case Keys.Down:
+				case Keys.Tab:
+					this.SelectNextToolStripItem (this.GetCurrentlySelectedItem (), true);
+					return true;
+				case Keys.Up:
+				case Keys.Shift | Keys.Tab:
+					this.SelectNextToolStripItem (this.GetCurrentlySelectedItem (), false);
+					return true;
+				case Keys.Right:
+					this.GetTopLevelToolStrip ().SelectNextToolStripItem (this.TopLevelOwnerItem, true);
+					return true;
+				case Keys.Left:
+				case Keys.Escape:
+					this.Dismiss (ToolStripDropDownCloseReason.Keyboard);
+					
+					ToolStrip parent_strip = this.OwnerItem.Parent;
+					ToolStripManager.SetActiveToolStrip (parent_strip);
+					
+					if (parent_strip is MenuStrip && keyData == Keys.Left) {
+						parent_strip.SelectNextToolStripItem (this.TopLevelOwnerItem, false);
+						this.TopLevelOwnerItem.Invalidate ();
+					} else if (parent_strip is MenuStrip && keyData == Keys.Escape) {
+						(parent_strip as MenuStrip).MenuDroppedDown = false;
+						this.TopLevelOwnerItem.Select ();
+					}				
+					return true;
+			}
+			
+			return false;
+		}
+
+		internal override void SelectNextToolStripItem (ToolStripItem start, bool forward)
+		{
+			ToolStripItem next_item = this.GetNextItem (start, forward ? ArrowDirection.Down : ArrowDirection.Up);
+
+			if (next_item != null)
+				this.ChangeSelection (next_item);
+		}
+		
 		private void ToolStripMenuTracker_AppFocusChange (object sender, EventArgs e)
 		{
-			this.Close (ToolStripDropDownCloseReason.AppFocusChange);
+			this.GetTopLevelToolStrip ().Dismiss (ToolStripDropDownCloseReason.AppFocusChange);
 		}
 
 		private void ToolStripMenuTracker_AppClicked (object sender, EventArgs e)
 		{
-			this.Close (ToolStripDropDownCloseReason.AppClicked);
+			this.GetTopLevelToolStrip ().Dismiss (ToolStripDropDownCloseReason.AppClicked);
 		}
 		#endregion
 
 		#region Internal Properties
 		internal override bool ActivateOnShow { get { return false; } }
+		
+		internal ToolStripItem TopLevelOwnerItem {
+			get {
+				ToolStripItem owner_item = this.OwnerItem;
+				ToolStrip ts = null;
+
+				while (owner_item != null) {
+					ts = owner_item.Owner;
+
+					if (ts != null && (ts is ToolStripDropDown))
+						owner_item = (ts as ToolStripDropDown).OwnerItem;
+					else
+						return owner_item;
+				}
+
+				return null;
+			}
+		}
 		#endregion
 	}
 }

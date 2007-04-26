@@ -131,9 +131,6 @@ namespace System.Windows.Forms
 			if (e.Item.Selected && !e.Item.Pressed)
 				using (Pen p = new Pen (this.ColorTable.ButtonSelectedBorder))
 					e.Graphics.DrawRectangle (p, paint_here);
-			else if (e.Item.Pressed && (e.Item.Owner is MenuStrip && (e.Item as ToolStripMenuItem).HasDropDownItems) && (e.Item as ToolStripMenuItem).DropDown.Visible == true)
-				using (Pen p = new Pen (this.ColorTable.MenuBorder))
-					e.Graphics.DrawRectangle (p, paint_here);
 			else if (e.Item.Pressed)
 				using (Pen p = new Pen (this.ColorTable.ButtonPressedBorder))
 					e.Graphics.DrawRectangle (p, paint_here);
@@ -276,20 +273,45 @@ namespace System.Windows.Forms
 		protected override void OnRenderMenuItemBackground (ToolStripItemRenderEventArgs e)
 		{
 			base.OnRenderMenuItemBackground (e);
+			
+			ToolStripMenuItem tsmi = (ToolStripMenuItem)e.Item;
+			Rectangle paint_here;
 
-			Rectangle paint_here = new Rectangle (1, 0, e.Item.Bounds.Width - 3, e.Item.Bounds.Height - 1);
-
-			if (e.Item.Selected || e.Item.Pressed) {		//|| (e.Item is ToolStripMenuItem && (e.Item as ToolStripMenuItem).DropDown.Visible)) {
-				if (this.ColorTable.UseSystemColors) {
-					if (e.Item.Enabled)
-						e.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (this.ColorTable.MenuItemSelectedGradientEnd), paint_here);
-				}
-				else
-					if (e.Item.Enabled)
-						e.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (this.ColorTable.MenuItemSelectedGradientEnd), paint_here);
+			if (tsmi.IsOnDropDown) {
+				paint_here = new Rectangle (1, 0, e.Item.Bounds.Width - 3, e.Item.Bounds.Height - 1);
 				
-				using (Pen p = new Pen (this.ColorTable.MenuItemBorder))
-					e.Graphics.DrawRectangle (p, paint_here);				
+				if (e.Item.Selected || e.Item.Pressed)
+					if (e.Item.Enabled)
+						e.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (this.ColorTable.MenuItemSelectedGradientEnd), paint_here);
+
+				if (tsmi.Selected || tsmi.Pressed)
+					using (Pen p = new Pen (this.ColorTable.MenuItemBorder))
+						e.Graphics.DrawRectangle (p, paint_here);
+			}
+			else {
+				paint_here = new Rectangle (0, 0, e.Item.Width, e.Item.Height);
+
+				if (e.Item.Pressed)
+					using (Brush b = new LinearGradientBrush (paint_here, this.ColorTable.ToolStripGradientBegin, this.ColorTable.ToolStripGradientEnd, LinearGradientMode.Vertical))
+						e.Graphics.FillRectangle (b, paint_here);
+				else if (e.Item.Selected)
+					using (Brush b = new LinearGradientBrush (paint_here, this.ColorTable.ButtonSelectedGradientBegin, this.ColorTable.ButtonSelectedGradientEnd, LinearGradientMode.Vertical))
+						e.Graphics.FillRectangle (b, paint_here);
+				else if (e.Item.BackColor != Control.DefaultBackColor && e.Item.BackColor != Color.Empty)
+					using (Brush b = new SolidBrush (e.Item.BackColor))
+						e.Graphics.FillRectangle (b, paint_here);
+
+				paint_here.Width -= 1;
+				paint_here.Height -= 1;
+
+				if (tsmi.Selected || tsmi.Pressed) {
+					if (tsmi.HasDropDownItems && tsmi.DropDown.Visible)
+						using (Pen p = new Pen (this.ColorTable.MenuBorder))
+							e.Graphics.DrawRectangle (p, paint_here);				
+					else
+						using (Pen p = new Pen (this.ColorTable.MenuItemBorder))
+							e.Graphics.DrawRectangle (p, paint_here);
+				}
 			}
 		}
 

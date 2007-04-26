@@ -139,8 +139,37 @@ namespace System.Windows.Forms
 			remove { Events.RemoveHandler (MenuDeactivateEvent, value); }
 		}
 		#endregion
+
+		#region Internal Properties
+		internal override bool KeyboardActive {
+			get { return base.KeyboardActive; }
+			set {
+				if (base.KeyboardActive != value) {
+					base.KeyboardActive = value;
+					
+					if (value)
+						this.OnMenuActivate (EventArgs.Empty);
+					else
+						this.OnMenuDeactivate (EventArgs.Empty);
+				}
+			}
+		}
+		
+		internal bool MenuDroppedDown {
+			get { return this.menu_selected; }
+			set { this.menu_selected = value; }
+		}
+		#endregion
 		
 		#region Internal Methods
+		internal override void Dismiss (ToolStripDropDownCloseReason reason)
+		{
+			// Make sure we don't auto-dropdown next time we're activated
+			this.MenuDroppedDown = false;
+			
+			base.Dismiss (reason);
+		}
+		
 		internal void FireMenuActivate ()
 		{
 			// The tracker lets us know when the form is clicked or loses focus
@@ -159,14 +188,22 @@ namespace System.Windows.Forms
 			this.OnMenuDeactivate (EventArgs.Empty);
 		}
 
+		internal override bool OnMenuKey ()
+		{
+			// Set ourselves active and select our first item
+			ToolStripManager.SetActiveToolStrip (this);
+			this.SelectNextToolStripItem (null, true);
+			return true;
+		}
+		
 		private void ToolStripMenuTracker_AppFocusChange (object sender, EventArgs e)
 		{
-			this.HideMenus (true, ToolStripDropDownCloseReason.AppFocusChange);
+			this.GetTopLevelToolStrip ().Dismiss (ToolStripDropDownCloseReason.AppFocusChange);
 		}
 
 		private void ToolStripMenuTracker_AppClicked (object sender, EventArgs e)
 		{
-			this.HideMenus (true, ToolStripDropDownCloseReason.AppClicked);
+			this.GetTopLevelToolStrip ().Dismiss (ToolStripDropDownCloseReason.AppClicked);
 		}
 		
 		internal void RefreshMdiItems ()

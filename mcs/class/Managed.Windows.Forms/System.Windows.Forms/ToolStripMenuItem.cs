@@ -39,6 +39,7 @@ namespace System.Windows.Forms
 	{
 		private CheckState checked_state;
 		private bool check_on_click;
+		private bool close_on_mouse_release;
 		private string shortcut_display_string;
 		private Keys shortcut_keys = Keys.None;
 		private bool show_shortcut_keys = true;
@@ -227,31 +228,11 @@ namespace System.Windows.Forms
 			if (!this.Enabled)
 				return;
 				
-			if (this.IsOnDropDown) {
-				if (this.HasDropDownItems)
-					return;
-
-				this.HideDropDown (ToolStripDropDownCloseReason.ItemClicked);
+			if (this.HasDropDownItems)
+				return;
 				
-				(this.Parent as ToolStripDropDown).Close (ToolStripDropDownCloseReason.ItemClicked);
-				ToolStripManager.FireAppFocusChanged (this.Parent);
-
-				Object parent = this.Parent;
-
-				// Find the top level MenuStrip to inform it to close all open
-				// dropdowns because this one was clicked
-				while (parent != null) {
-					if (parent is MenuStrip)
-						(parent as MenuStrip).HideMenus (true, ToolStripDropDownCloseReason.ItemClicked);
-
-					if (parent is ToolStripDropDown)
-						parent = (parent as ToolStripDropDown).OwnerItem;
-					else if (parent is ToolStripItem)
-						parent = (parent as ToolStripItem).Parent;
-					else
-						break;
-				}
-			}
+			if (this.IsOnDropDown)
+				this.GetTopLevelToolStrip ().Dismiss (ToolStripDropDownCloseReason.ItemClicked);
 
 			if (this.IsMdiWindowListEntry) {
 				this.mdi_client_form.MdiParent.MdiContainer.ActivateChild (this.mdi_client_form);
@@ -281,6 +262,9 @@ namespace System.Windows.Forms
 
 		protected override void OnMouseDown (MouseEventArgs e)
 		{
+			if (!this.IsOnDropDown && this.HasDropDownItems && this.DropDown.Visible)
+				this.close_on_mouse_release = true;
+				
 			if (this.HasDropDownItems && Enabled)
 				if (!this.DropDown.Visible)
 					this.ShowDropDown ();
@@ -303,6 +287,15 @@ namespace System.Windows.Forms
 
 		protected override void OnMouseUp (MouseEventArgs e)
 		{
+			if (this.close_on_mouse_release) {
+				this.DropDown.Dismiss (ToolStripDropDownCloseReason.ItemClicked);
+				this.Invalidate ();
+				this.close_on_mouse_release = false;
+				
+				if (!this.IsOnDropDown)
+					(this.Parent as MenuStrip).MenuDroppedDown = false;
+			}
+				
 			if (!this.HasDropDownItems && Enabled)
 				base.OnMouseUp (e);
 		}
@@ -320,10 +313,7 @@ namespace System.Windows.Forms
 				Color font_color = this.Enabled ? this.ForeColor : SystemColors.GrayText;
 				Image draw_image = this.Enabled ? this.Image : ToolStripRenderer.CreateDisabledImage (this.Image);
 
-				if (this.IsOnDropDown)
-					this.Owner.Renderer.DrawMenuItemBackground (new System.Windows.Forms.ToolStripItemRenderEventArgs (e.Graphics, this));
-				else
-					this.Owner.Renderer.DrawButtonBackground (new System.Windows.Forms.ToolStripItemRenderEventArgs (e.Graphics, this));
+				this.Owner.Renderer.DrawMenuItemBackground (new System.Windows.Forms.ToolStripItemRenderEventArgs (e.Graphics, this));
 
 				Rectangle text_layout_rect;
 				Rectangle image_layout_rect;
@@ -427,6 +417,19 @@ namespace System.Windows.Forms
 			}
 			
 			return key_string;
+		}
+		
+		internal void HandleAutoExpansion ()
+		{
+			if (this.HasDropDownItems) {
+				this.ShowDropDown ();
+				this.DropDown.SelectNextToolStripItem (null, true);
+			}
+		}
+
+		internal override void HandleClick (EventArgs e)
+		{
+			this.OnClick (e);
 		}
 		#endregion
 	}

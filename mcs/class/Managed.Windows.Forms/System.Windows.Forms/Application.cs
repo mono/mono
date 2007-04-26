@@ -142,6 +142,7 @@ namespace System.Windows.Forms {
 		private static bool			use_wait_cursor		= false;
 
 #if NET_2_0
+		private static ToolStrip keyboard_capture;
 		private static VisualStyleState visual_style_state = VisualStyleState.ClientAndNonClientAreasEnabled;
 #endif
 
@@ -659,9 +660,20 @@ namespace System.Windows.Forms {
 				case Msg.WM_KEYUP:
 				case Msg.WM_SYSKEYUP:
 					Message m;
+					m = Message.Create(msg.hwnd, (int)msg.message, msg.wParam, msg.lParam);
+
+#if NET_2_0
+					// If we have a control with keyboard capture (usually a *Strip)
+					// give it the message, and then drop the message
+					if (keyboard_capture != null) {
+						m.HWnd = keyboard_capture.Handle;
+						keyboard_capture.PreProcessMessage (ref m);
+						continue;
+					}
+#endif
+
 					Control c;
 
-					m = Message.Create(msg.hwnd, (int)msg.message, msg.wParam, msg.lParam);
 					c = Control.FromHandle(msg.hwnd);
 					if ((c != null) && !c.PreProcessMessage(ref m)) {
 						goto default;
@@ -750,6 +762,15 @@ namespace System.Windows.Forms {
 #endif
 		#endregion	// Events
 
+		#region Internal Properties
+#if NET_2_0
+		internal static ToolStrip KeyboardCapture {
+			get { return keyboard_capture; }
+			set { keyboard_capture = value; }
+		}
+#endif
+		#endregion
+		
 		#region Internal Methods
 		internal static void AddForm (Form f)
 		{

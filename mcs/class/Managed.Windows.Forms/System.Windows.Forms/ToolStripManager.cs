@@ -36,22 +36,13 @@ namespace System.Windows.Forms
 {
 	public sealed class ToolStripManager
 	{
-		private static ToolStripRenderer renderer;
-		private static ToolStripManagerRenderMode render_mode;
-		private static bool visual_styles_enabled;
-		private static List<ToolStrip> toolstrips;
-		private static List<ToolStripMenuItem> menu_items;
+		private static ToolStripRenderer renderer = new ToolStripProfessionalRenderer ();
+		private static ToolStripManagerRenderMode render_mode = ToolStripManagerRenderMode.Professional;
+		private static bool visual_styles_enabled = Application.RenderWithVisualStyles;
+		private static List<ToolStrip> toolstrips = new List<ToolStrip> ();
+		private static List<ToolStripMenuItem> menu_items = new List<ToolStripMenuItem> ();
 		
-		#region Static Constructor
-		static ToolStripManager ()
-		{
-			toolstrips = new List<ToolStrip> ();
-			menu_items = new List<ToolStripMenuItem> ();
-			ToolStripManager.renderer = new ToolStripProfessionalRenderer ();
-			ToolStripManager.render_mode = ToolStripManagerRenderMode.Professional;
-			ToolStripManager.visual_styles_enabled = Application.RenderWithVisualStyles;
-		}
-
+		#region Private Constructor
 		private ToolStripManager ()
 		{
 		}
@@ -407,6 +398,37 @@ namespace System.Windows.Forms
 				toolstrips.Add (ts);
 		}
 
+		internal static ToolStrip GetNextToolStrip (ToolStrip ts, bool forward)
+		{
+			lock (toolstrips) {
+				int index = toolstrips.IndexOf (ts);
+				
+				if (forward) {
+					// Look for any toolstrip after this one in the collection
+					for (int i = index + 1; i < toolstrips.Count; i++)
+						if (toolstrips[i].TopLevelControl == ts.TopLevelControl && !(toolstrips[i] is StatusStrip))
+							return toolstrips[i];
+
+					// Look for any toolstrip before this one in the collection
+					for (int i = 0; i < index; i++)
+						if (toolstrips[i].TopLevelControl == ts.TopLevelControl && !(toolstrips[i] is StatusStrip))
+							return toolstrips[i];
+				} else {
+					// Look for any toolstrip before this one in the collection
+					for (int i = index - 1; i >= 0; i--)
+						if (toolstrips[i].TopLevelControl == ts.TopLevelControl && !(toolstrips[i] is StatusStrip))
+							return toolstrips[i];
+
+					// Look for any toolstrip after this one in the collection
+					for (int i = toolstrips.Count - 1; i > index; i--)
+						if (toolstrips[i].TopLevelControl == ts.TopLevelControl && !(toolstrips[i] is StatusStrip))
+							return toolstrips[i];
+				}
+			}
+			
+			return null;
+		}
+		
 		internal static bool ProcessCmdKey (ref Message m, Keys keyData)
 		{
 			lock (menu_items)
@@ -415,6 +437,43 @@ namespace System.Windows.Forms
 						return true;
 			
 			return false;
+		}
+		
+		internal static bool ProcessMenuKey (ref Message m)
+		{
+			// If we have a currently active menu, deactivate it
+			if (Application.KeyboardCapture != null) {
+				if (Application.KeyboardCapture.OnMenuKey ())
+					return true;
+			}
+			
+			// Get the parent form of this message
+			Form f = (Form)Control.FromHandle (m.HWnd).TopLevelControl;
+
+			// Check the MainMenuStrip property first
+			if (f.MainMenuStrip != null)
+				if (f.MainMenuStrip.OnMenuKey ())
+					return true;
+					
+			// Look for any MenuStrip in the form
+			lock (toolstrips)
+				foreach (ToolStrip ts in toolstrips)
+					if (ts.TopLevelControl == f)
+						if (ts.OnMenuKey ())
+							return true;
+
+			return false;
+		}
+		
+		internal static void SetActiveToolStrip (ToolStrip toolStrip)
+		{
+			if (Application.KeyboardCapture != null)
+				Application.KeyboardCapture.KeyboardActive = false;
+				
+			if (toolStrip == null)
+				return;
+				
+			toolStrip.KeyboardActive = true;
 		}
 		
 		internal static void AddToolStripMenuItem (ToolStripMenuItem tsmi)
@@ -438,16 +497,25 @@ namespace System.Windows.Forms
 		internal static void FireAppClicked ()
 		{
 			if (AppClicked != null) AppClicked (null, EventArgs.Empty);
+			
+			if (Application.KeyboardCapture != null)
+				Application.KeyboardCapture.KeyboardActive = false;
 		}
 
 		internal static void FireAppFocusChanged (Form form)
 		{
 			if (AppFocusChange != null) AppFocusChange (form, EventArgs.Empty);
+
+			if (Application.KeyboardCapture != null)
+				Application.KeyboardCapture.KeyboardActive = false;
 		}
 
 		internal static void FireAppFocusChanged (object sender)
 		{
 			if (AppFocusChange != null) AppFocusChange (sender, EventArgs.Empty);
+
+			if (Application.KeyboardCapture != null)
+				Application.KeyboardCapture.KeyboardActive = false;
 		}
 		
 		private static void OnRendererChanged (EventArgs e)

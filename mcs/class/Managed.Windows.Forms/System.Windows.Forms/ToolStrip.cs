@@ -57,6 +57,7 @@ namespace System.Windows.Forms
 		private Size image_scaling_size;
 		private bool is_currently_merged;
 		private ToolStripItemCollection items;
+		private bool keyboard_active;
 		private LayoutEngine layout_engine;
 		private LayoutSettings layout_settings;
 		private ToolStripLayoutStyle layout_style;
@@ -71,7 +72,7 @@ namespace System.Windows.Forms
 		private bool stretch;
 
 		private ToolStripItem mouse_currently_over;
-		private bool menu_selected;
+		internal bool menu_selected;
 		private ToolStripItem tooltip_currently_showing;
 		#endregion
 
@@ -515,9 +516,6 @@ namespace System.Windows.Forms
 			if (!Enum.IsDefined (typeof (ArrowDirection), direction))
 				throw new InvalidEnumArgumentException (string.Format ("Enum argument value '{0}' is not valid for ArrowDirection", direction));
 
-			if (this.Items.Count == 1)
-				return null;
-				
 			ToolStripItem current_best = null;
 			int current_best_point;
 			
@@ -671,6 +669,16 @@ namespace System.Windows.Forms
 			base.OnDockChanged (e);
 		}
 
+		protected override bool IsInputChar (char charCode)
+		{
+			return base.IsInputChar (charCode);
+		}
+
+		protected override bool IsInputKey (Keys keyData)
+		{
+			return base.IsInputKey (keyData);
+		}
+		
 		protected override void OnEnabledChanged (EventArgs e)
 		{
 			base.OnEnabledChanged (e);
@@ -713,6 +721,8 @@ namespace System.Windows.Forms
 
 		protected virtual void OnItemClicked (ToolStripItemClickedEventArgs e)
 		{
+			ToolStripManager.SetActiveToolStrip (null);
+			
 			ToolStripItemClickedEventHandler eh = (ToolStripItemClickedEventHandler)(Events [ItemClickedEvent]);
 			if (eh != null)
 				eh (this, e);
@@ -969,7 +979,37 @@ namespace System.Windows.Forms
 
 		protected override bool ProcessCmdKey (ref Message msg, Keys keyData)
 		{
+			if ((keyData & Keys.Alt) == Keys.Alt && this.KeyboardActive) {
+				this.GetTopLevelToolStrip ().Dismiss (ToolStripDropDownCloseReason.Keyboard);
+				return true;
+			}
+			
 			return base.ProcessCmdKey (ref msg, keyData);
+		}
+
+		protected override bool ProcessDialogKey (Keys keyData)
+		{
+			// Give each item a chance to handle the key
+			foreach (ToolStripItem tsi in this.Items)
+				if (tsi.ProcessDialogKey (keyData))
+					return true;
+			
+			// See if I want to handle it
+			if (this.ProcessArrowKey (keyData))
+				return true;
+			
+			switch (keyData) {
+				case Keys.Escape:
+					this.Dismiss (ToolStripDropDownCloseReason.Keyboard);
+					return true;
+			}
+
+			return base.ProcessDialogKey (keyData);
+		}
+
+		protected override bool ProcessMnemonic (char charCode)
+		{
+			return base.ProcessMnemonic (charCode);
 		}
 		
 		protected override void SetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified)
@@ -1110,7 +1150,57 @@ namespace System.Windows.Forms
 		}
 		#endregion
 
+		#region Internal Properties
+		internal virtual bool KeyboardActive
+		{
+			get { return this.keyboard_active; }
+			set {
+				if (this.keyboard_active != value) {
+					this.keyboard_active = value;
+					
+					if (value)
+						Application.KeyboardCapture = this;
+					else if (Application.KeyboardCapture == this)
+						Application.KeyboardCapture = null;
+				}
+			}
+		}
+		#endregion
+		
 		#region Private Methods
+		internal void ChangeSelection (ToolStripItem nextItem)
+		{
+			if (Application.KeyboardCapture != this)
+				ToolStripManager.SetActiveToolStrip (this);
+				
+			foreach (ToolStripItem tsi in this.Items)
+				if (tsi != nextItem)
+					tsi.Dismiss (ToolStripDropDownCloseReason.Keyboard);
+					
+			nextItem.Select ();
+			
+			if (nextItem.Parent is MenuStrip && (nextItem.Parent as MenuStrip).MenuDroppedDown)
+				(nextItem as ToolStripMenuItem).HandleAutoExpansion ();
+		}
+		
+		internal virtual void Dismiss ()
+		{
+			this.Dismiss (ToolStripDropDownCloseReason.AppClicked);
+		}
+		
+		internal virtual void Dismiss (ToolStripDropDownCloseReason reason)
+		{
+			// Release our stranglehold on the keyboard
+			this.KeyboardActive = false;
+			
+			// Set our drop down flag to false;
+			this.menu_selected = false;
+			
+			// Make sure all of our items are deselected and repainted
+			foreach (ToolStripItem tsi in this.Items)
+				tsi.Dismiss (reason);
+		}
+		
 		private void DoAutoSize ()
 		{
 			if (this.AutoSize == true && this.Dock == DockStyle.None)
@@ -1120,6 +1210,15 @@ namespace System.Windows.Forms
 				this.Height = GetPreferredSize (Size.Empty).Height;
 		}
 
+		internal ToolStripItem GetCurrentlySelectedItem ()
+		{
+			foreach (ToolStripItem tsi in this.DisplayedItems)
+				if (tsi.Selected)
+					return tsi;
+					
+			return null;
+		}
+		
 		public override Size GetPreferredSize (Size proposedSize)
 		{
 			Size new_size = new Size (0, this.Height);
@@ -1144,6 +1243,17 @@ namespace System.Windows.Forms
 
 			new_size.Width += (this.GripRectangle.Width + this.GripMargin.Horizontal + this.Padding.Horizontal + 4);
 			return new_size;
+		}
+		
+		internal virtual ToolStrip GetTopLevelToolStrip ()
+		{
+			return this;
+		}
+		
+		internal void HandleItemClick (ToolStripItem dismissingItem)
+		{
+			this.GetTopLevelToolStrip ().Dismiss (ToolStripDropDownCloseReason.ItemClicked);
+			this.OnItemClicked (new ToolStripItemClickedEventArgs (dismissingItem));
 		}
 		
 		internal void HideMenus (bool release, ToolStripDropDownCloseReason reason)
@@ -1174,8 +1284,41 @@ namespace System.Windows.Forms
 			
 				this.OverflowButton.HideDropDown ();
 			}
+			
+			foreach (ToolStripItem tsi2 in this.Items)
+				if (tsi != tsi2)
+					tsi2.Dismiss (ToolStripDropDownCloseReason.Keyboard);
 		}
 		
+		internal virtual bool OnMenuKey ()
+		{
+			return false;
+		}
+
+		internal virtual bool ProcessArrowKey (Keys keyData)
+		{
+			switch (keyData) {
+				case Keys.Right:
+				case Keys.Tab:
+					this.SelectNextToolStripItem (this.GetCurrentlySelectedItem (), true);
+					return true;
+				case Keys.Left:
+				case Keys.Shift | Keys.Tab:
+					this.SelectNextToolStripItem (this.GetCurrentlySelectedItem (), false);
+					return true;
+			}
+
+			return false;
+		}
+
+		internal virtual void SelectNextToolStripItem (ToolStripItem start, bool forward)
+		{
+			ToolStripItem next_item = this.GetNextItem (start, forward ? ArrowDirection.Right : ArrowDirection.Left);
+			
+			this.ChangeSelection (next_item);
+		}
+
+		#region Stuff for ToolTips
 		private void MouseEnteredItem (ToolStripItem item)
 		{
 			if (this.show_item_tool_tips) {
@@ -1224,7 +1367,9 @@ namespace System.Windows.Forms
 
 			ToolTipTimer.Stop ();
 		}
-		
+		#endregion
+
+		#region Stuff for Merging
 		internal ToolStrip CurrentlyMergedWith {
 			get { return this.currently_merged_with; }
 			set { this.currently_merged_with = value; }
@@ -1299,6 +1444,7 @@ namespace System.Windows.Forms
 			// so just append it to the end.
 			item.Owner.Items.AddNoOwnerOrLayout (item);
 		}
+		#endregion
 		#endregion
 	}
 }

@@ -39,6 +39,7 @@ namespace System.Windows.Forms
 	public class ToolStripSplitButton : ToolStripDropDownItem
 	{
 		private bool button_pressed;
+		private ToolStripItem default_item;
 		private bool drop_down_button_selected;
 		private int drop_down_button_width;
 		
@@ -103,6 +104,16 @@ namespace System.Windows.Forms
 			get { return base.Selected; }
 		}
 
+		public ToolStripItem DefaultItem {
+			get { return this.default_item; }
+			set {
+				if (this.default_item != value) {
+					this.default_item = value;
+					this.OnDefaultItemChanged (EventArgs.Empty);
+				}
+			}
+		}
+		
 		[Browsable (false)]
 		public Rectangle DropDownButtonBounds {
 			get { return new Rectangle (this.Bounds.Right - this.drop_down_button_width, this.Bounds.Top, this.drop_down_button_width, this.Bounds.Height); }
@@ -268,6 +279,15 @@ namespace System.Windows.Forms
 			}
 		}
 
+		protected internal override bool ProcessDialogKey (Keys keyData)
+		{
+			if (this.Selected && keyData == Keys.Enter && this.DefaultItem != null) {
+				this.DefaultItem.FireEvent (EventArgs.Empty, ToolStripItemEventType.Click);
+				return true;
+			}
+
+			return base.ProcessDialogKey (keyData);
+		}
 		#endregion
 		
 		#region Public Events

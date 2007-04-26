@@ -853,6 +853,16 @@ namespace System.Windows.Forms
 			base.Dispose (disposing);
 		}
 		
+		protected internal virtual bool IsInputChar (char charCode)
+		{
+			return false;
+		}
+		
+		protected internal virtual bool IsInputKey (Keys keyData)
+		{
+			return false;
+		}
+		
 		protected virtual void OnAvailableChanged (EventArgs e)
 		{
 			EventHandler eh = (EventHandler)(Events [AvailableChangedEvent]);
@@ -870,7 +880,7 @@ namespace System.Windows.Forms
 
 		protected virtual void OnBoundsChanged ()
 		{
-			OnLayout (new LayoutEventArgs(null, ""));
+			OnLayout (new LayoutEventArgs(null, string.Empty));
 		}
 
 		protected virtual void OnClick (EventArgs e)
@@ -1095,6 +1105,21 @@ namespace System.Windows.Forms
 		}
 
 		protected internal virtual bool ProcessCmdKey (ref Message m, Keys keyData)
+		{
+			return false;
+		}
+		
+		protected internal virtual bool ProcessDialogKey (Keys keyData)
+		{
+			if (this.Selected && keyData == Keys.Enter) {
+				this.FireEvent (EventArgs.Empty, ToolStripItemEventType.Click);
+				return true;
+			}
+				
+			return false;
+		}
+		
+		protected internal virtual bool ProcessMnemonic (char charCode)
 		{
 			return false;
 		}
@@ -1404,6 +1429,22 @@ namespace System.Windows.Forms
 			}
 		}
 
+		internal virtual void Dismiss (ToolStripDropDownCloseReason reason)
+		{
+			if (is_selected) {
+				this.is_selected = false;
+				this.Invalidate ();
+			}
+		}
+
+		internal virtual ToolStrip GetTopLevelToolStrip ()
+		{
+			if (this.Parent != null)
+				return this.Parent.GetTopLevelToolStrip ();
+				
+			return null;
+		}
+
 		private void LayoutTextBeforeOrAfterImage (Rectangle totalArea, bool textFirst, Size textSize, Size imageSize, ContentAlignment textAlign, ContentAlignment imageAlign, out Rectangle textRect, out Rectangle imageRect)
 		{
 			int element_spacing = 0;	// Spacing between the Text and the Image
@@ -1489,7 +1530,7 @@ namespace System.Windows.Forms
 			switch (met) {
 				case ToolStripItemEventType.MouseUp:
 					this.OnMouseUp ((MouseEventArgs)e);
-					this.OnClick ((MouseEventArgs)e);
+					this.HandleClick (e);
 					break;
 				case ToolStripItemEventType.MouseDown:
 					this.OnMouseDown ((MouseEventArgs)e);
@@ -1510,9 +1551,15 @@ namespace System.Windows.Forms
 					this.OnPaint ((PaintEventArgs)e);
 					break;
 				case ToolStripItemEventType.Click:
-					this.OnClick (e);
+					this.HandleClick (e);
 					break;
 			}
+		}
+		
+		internal virtual void HandleClick (EventArgs e)
+		{
+			this.Parent.HandleItemClick (this);
+			this.OnClick (e);
 		}
 		
 		internal virtual void SetPlacement (ToolStripItemPlacement placement)

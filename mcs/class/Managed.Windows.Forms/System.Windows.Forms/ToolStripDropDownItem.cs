@@ -138,7 +138,8 @@ namespace System.Windows.Forms
 		{
 			if (!this.HasDropDownItems)
 				return;
-				
+			
+			this.Invalidate ();
 			this.OnDropDownOpening (this, EventArgs.Empty);
 			this.DropDown.Show (this.DropDownLocation);
 			this.OnDropDownShow (EventArgs.Empty);
@@ -213,6 +214,43 @@ namespace System.Windows.Forms
 
 			return base.ProcessCmdKey (ref m, keyData);
 		}
+
+		protected internal override bool ProcessDialogKey (Keys keyData)
+		{
+			if (!this.Selected || !this.HasDropDownItems)
+				return base.ProcessDialogKey (keyData);
+				
+			if (!this.IsOnDropDown) {
+				if (this.Parent.Orientation == Orientation.Horizontal) {
+					if (keyData == Keys.Down || keyData == Keys.Enter) {
+						if (this.Parent is MenuStrip)
+							(this.Parent as MenuStrip).MenuDroppedDown = true;
+						this.ShowDropDown ();
+						this.DropDown.SelectNextToolStripItem (null, true);
+						return true;
+					}
+				} else {
+					if (keyData == Keys.Right || keyData == Keys.Enter) {
+						if (this.Parent is MenuStrip)
+							(this.Parent as MenuStrip).MenuDroppedDown = true;
+						this.ShowDropDown ();
+						this.DropDown.SelectNextToolStripItem (null, true);
+						return true;
+					}
+				}
+			} else {
+				if (keyData == Keys.Right || keyData == Keys.Enter) {
+					if (this.HasDropDownItems) {
+						this.ShowDropDown ();
+						this.DropDown.SelectNextToolStripItem (null, true);
+						return true;
+					}
+				}
+			}
+			
+			
+			return base.ProcessDialogKey (keyData);
+		}
 		#endregion
 
 		#region Public Events
@@ -243,6 +281,14 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Internal Methods
+		internal override void Dismiss (ToolStripDropDownCloseReason reason)
+		{
+			if (this.HasDropDownItems && this.DropDown.Visible)
+				this.DropDown.Dismiss (reason);
+				
+			base.Dismiss (reason);
+		}
+		
 		internal void HideDropDown (ToolStripDropDownCloseReason reason)
 		{
 			if (this.drop_down == null || !this.DropDown.Visible)

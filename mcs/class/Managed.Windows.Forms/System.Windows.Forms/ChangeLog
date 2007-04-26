@@ -1,3 +1,16 @@
+2007-04-26  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Application.cs: Create a shortcut path so that currently selected
+	MenuStrips can intercept keyboard events without having focus.
+	* Control.cs: Handle WM_SYSCOMMAND message to activate MenuStrips.
+	* MenuStrip.cs, ToolStrip.cs, ToolStripDropDown.cs, ToolStripDropDownItem.cs,
+	ToolStripItem.cs, ToolStripManager.cs, ToolStripMenuItem.cs: Support
+	keyboard navigation (arrows, tab, enter, esc) on Windows.  Still need to
+	generate WM_SYSCOMMAND message in X11 for other platforms.
+	* ToolStripProfessionalRenderer.cs: ToolStripMenuItems need to be painted
+	in OnRenderMenuItemBackground instead of OnRenderButtonBackground.
+	* ToolStripSplitButton.cs: Add DefaultItem property.
+	
 2007-04-26  Everaldo Canuto  <everaldo@simios.org>
 
 	* MainMenu.cs: In OnMenuChanged pass PaintEventArgs to Draw method, it
