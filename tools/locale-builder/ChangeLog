@@ -1,3 +1,8 @@
+2007-04-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Driver.cs : use invariant culture to sort culture names.
+	  Fixed bug #81150, patch by Changwoo Ryu.
+
 2007-04-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Driver.cs : in some cultures month/year and day/month could be in

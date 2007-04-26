@@ -1174,7 +1174,7 @@ namespace Mono.Tools.LocaleBuilder {
                                 CultureInfoEntry aa = (CultureInfoEntry) a;
                                 CultureInfoEntry bb = (CultureInfoEntry) b;
 
-                                return aa.Name.ToLower ().CompareTo (bb.Name.ToLower ());
+                                return String.CompareOrdinal(aa.Name.ToLower (), bb.Name.ToLower ());
                         }
                 }
 

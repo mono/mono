@@ -1,3 +1,7 @@
+2007-04-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* culture-info-table.h : regenerated.
+
 2007-04-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* appdomain.c (add_assemblies_to_domain): Fix crash when an assembly reference
