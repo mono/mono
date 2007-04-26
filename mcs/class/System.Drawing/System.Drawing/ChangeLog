@@ -1,3 +1,8 @@
+2007-04-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* gdipFunctions.cs: Add p/invoke definitions for GdipRecordMetafile
+	[FileName|FromStream][I].
+
 2007-04-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Bitmap.cs: Add check in SetPixel for Format16bppGrayScale (but 

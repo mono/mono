@@ -76,22 +76,22 @@ namespace System.Drawing
 			// shutting down
 			GC.Collect ();	
 			GC.WaitForPendingFinalizers ();
-			
+#if false			
 			GdiPlusToken = 0;
 
-			// This causes crashes in MS GDI+ because this call occurs before
-			// all managed GDI objects are finalized. When they are finalized they call
-			// into a shutdown GDI+ and we crash.
-			//GdiplusShutdown (ref GdiPlusToken);
+			// This causes crashes in because this call occurs before all
+			// managed GDI+ objects are finalized. When they are finalized 
+			// they call into a shutdown GDI+ and we crash.
+			GdiplusShutdown (ref GdiPlusToken);
 
 			// This causes crashes in Mono libgdiplus because this call
 			// occurs before all managed GDI objects are finalized
 			// When they are finalized they use the closed display and
 			// crash
-			//if (UseX11Drawable && Display != IntPtr.Zero) {
-			//	XCloseDisplay (Display);
-			//}
-
+			if (UseX11Drawable && Display != IntPtr.Zero) {
+				XCloseDisplay (Display);
+			}
+#endif
 		}
 
 		static GDIPlus ()
@@ -112,7 +112,8 @@ namespace System.Drawing
 					"\n" +
 					"Please check http://www.mono-project.com/Problem:GDIPlusInit for details");
 			}
-			
+
+			// under MS 1.x this event is raised only for the default application domain
 			AppDomain.CurrentDomain.ProcessExit += new EventHandler (ProcessExit);
 		}
 
@@ -1631,11 +1632,31 @@ namespace System.Drawing
 		internal static extern Status GdipSetMetafileDownLevelRasterizationLimit (IntPtr metafile, uint metafileRasterizationLimitDpi);
 		[DllImport ("gdiplus.dll")]
 		internal static extern Status GdipPlayMetafileRecord (IntPtr metafile, EmfPlusRecordType recordType, int flags, int dataSize, byte[] data);
+
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipRecordMetafile (IntPtr hdc, EmfType type, ref RectangleF frameRect, 
+			MetafileFrameUnit frameUnit, [MarshalAs (UnmanagedType.LPWStr)] string description, out IntPtr metafile);
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipRecordMetafileI (IntPtr hdc, EmfType type, ref Rectangle frameRect, 
+			MetafileFrameUnit frameUnit, [MarshalAs (UnmanagedType.LPWStr)] string description, out IntPtr metafile);
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipRecordMetafileFileName ([MarshalAs (UnmanagedType.LPWStr)] string filename, IntPtr hdc, EmfType type,
+			ref RectangleF frameRect, MetafileFrameUnit frameUnit, [MarshalAs (UnmanagedType.LPWStr)] string description, out IntPtr metafile);
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipRecordMetafileFileNameI ([MarshalAs (UnmanagedType.LPWStr)] string filename, IntPtr hdc, EmfType type,
+			ref Rectangle frameRect, MetafileFrameUnit frameUnit, [MarshalAs (UnmanagedType.LPWStr)] string description, out IntPtr metafile);
 #if !TEST
 		[DllImport("gdiplus.dll", ExactSpelling=true, CharSet=CharSet.Unicode)]
 		internal static extern Status GdipCreateMetafileFromStream([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(ComIStreamMarshaler))] IStream stream, out IntPtr metafile);
 		[DllImport("gdiplus.dll", ExactSpelling=true, CharSet=CharSet.Unicode)]
 		internal static extern Status GdipGetMetafileHeaderFromStream([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(ComIStreamMarshaler))] IStream stream, IntPtr header);
+
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipRecordMetafileStream ([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(ComIStreamMarshaler))] IStream stream, IntPtr hdc, 
+			EmfType type, ref RectangleF frameRect, MetafileFrameUnit frameUnit, [MarshalAs (UnmanagedType.LPWStr)] string description, out IntPtr metafile);
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipRecordMetafileStreamI ([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(ComIStreamMarshaler))] IStream stream, IntPtr hdc, 
+			EmfType type, ref Rectangle frameRect, MetafileFrameUnit frameUnit, [MarshalAs (UnmanagedType.LPWStr)] string description, out IntPtr metafile);
 #endif
 		//ImageCodecInfo functions
 		[DllImport("gdiplus.dll")]
