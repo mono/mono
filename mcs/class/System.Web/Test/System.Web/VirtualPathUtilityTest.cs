@@ -42,6 +42,13 @@ namespace MonoTests.System.Web {
 
 	[TestFixture]
 	public class VirtualPathUtilityTest {
+
+#if TARGET_JVM
+		const string NunitWebAppName = "MainsoftWebApp20";
+#else
+		const string NunitWebAppName = "NunitWeb";
+#endif
+
 		[Test]
 		public void AppendTrailingSlash ()
 		{
@@ -494,13 +501,13 @@ namespace MonoTests.System.Web {
 
 		public static void GetFileName4_Load (Page p)
 		{
-			Assert.AreEqual ("NunitWeb", VPU.GetFileName ("~/"));
+			Assert.AreEqual (NunitWebAppName, VPU.GetFileName ("~/"));
 			Assert.AreEqual ("hola", VPU.GetFileName ("~/hola"));
 			Assert.AreEqual ("hola", VPU.GetFileName ("~/hola/"));
 			Assert.AreEqual ("hi", VPU.GetFileName ("~/hi/there/.."));
 			Assert.AreEqual ("there", VPU.GetFileName ("~/hi/there/."));
 
-			Assert.AreEqual ("NunitWeb", VPU.GetFileName ("~"));
+			Assert.AreEqual (NunitWebAppName, VPU.GetFileName ("~"));
 			Assert.AreEqual ("", VPU.GetFileName ("~/.."));
 			Assert.AreEqual ("", VPU.GetFileName ("~/../"));
 			Assert.AreEqual ("hi", VPU.GetFileName ("~/../hi"));
@@ -710,8 +717,8 @@ namespace MonoTests.System.Web {
 		}
         public static void ToAbsolute6_Load(Page p)
         {
-			Assert.AreEqual ("/NunitWeb/", VPU.ToAbsolute ("~/"));
-			Assert.AreEqual ("/NunitWeb", VPU.ToAbsolute ("~"));
+			Assert.AreEqual ("/" + NunitWebAppName + "/", VPU.ToAbsolute ("~/"));
+			Assert.AreEqual ("/" + NunitWebAppName, VPU.ToAbsolute ("~"));
 		}
 
 		[Test]
