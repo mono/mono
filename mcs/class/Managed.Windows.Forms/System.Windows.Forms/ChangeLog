@@ -1,3 +1,9 @@
+2007-04-26  Everaldo Canuto  <everaldo@simios.org>
+
+	* MainMenu.cs: In OnMenuChanged pass PaintEventArgs to Draw method, it
+	fixes some menu draw problem on Windows with border diferent from default
+	it also fixes #81403.
+
 2007-04-26  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Form.cs: Refactor WndProc into separate methods, just like Control is

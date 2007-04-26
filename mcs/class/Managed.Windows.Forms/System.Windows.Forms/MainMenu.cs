@@ -108,7 +108,6 @@ namespace System.Windows.Forms
 		{
 			if (Wnd.IsHandleCreated) {
 				Point pt = XplatUI.GetMenuOrigin (Wnd.window.Handle);
-				
 				PaintEventArgs pevent = XplatUI.PaintEventStart (Wnd.window.Handle, false);
 				pevent.Graphics.SetClip (new Rectangle (rect.X + pt.X, rect.Y + pt.Y, rect.Width, rect.Height));
 				Draw (pevent, Rect);
@@ -160,7 +159,14 @@ namespace System.Windows.Forms
 			Rectangle clip = Rect;
 			Height = 0; /* need this so the theme code will re-layout the menu items
 				       (why is the theme code doing the layout?  argh) */
-			Draw (clip);
+
+			if (!Wnd.IsHandleCreated)
+				return;
+			
+			PaintEventArgs pevent = XplatUI.PaintEventStart (Wnd.window.Handle, false);
+			pevent.Graphics.SetClip (clip);
+			
+			Draw (pevent, clip);
 		}
 
 		/* Mouse events from the form */
