@@ -28,7 +28,7 @@
 #if NET_2_0
 namespace System.Windows.Forms
 {
-	public delegate void DrawToolListViewColumnHeaderEventHandler (object sender, DrawListViewColumnHeaderEventArgs e);
+	public delegate void DrawListViewColumnHeaderEventHandler(object sender, DrawListViewColumnHeaderEventArgs e);
 }
 #endif
 

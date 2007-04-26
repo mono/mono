@@ -1,5 +1,11 @@
 2007-04-26  Alan McGovern <alan.mcgovern@gmail.com>
 
+	* ListView.cs: Added three missing 2.0 events and corresponding
+	EventHandlers. Added the OwnerDraw property.
+	* DrawListViewColumnHeaderEventHandler.cs: fixed typo
+
+2007-04-26  Alan McGovern <alan.mcgovern@gmail.com>
+
 	* DrawListViewItemEventArgs.cs
 	* DrawListViewSubItemEventArgs.cs: Brought classes up to 2.0 status.
 

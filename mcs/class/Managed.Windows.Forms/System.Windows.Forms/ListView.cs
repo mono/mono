@@ -73,6 +73,7 @@ namespace System.Windows.Forms
 		private readonly ListViewItemCollection items;
 #if NET_2_0
 		private readonly ListViewGroupCollection groups;
+		private bool owner_draw;
 		private bool show_groups = true;
 #endif
 		private bool label_edit;
@@ -121,6 +122,9 @@ namespace System.Windows.Forms
 		static object ItemDragEvent = new object ();
 		static object SelectedIndexChangedEvent = new object ();
 #if NET_2_0
+		static object DrawColumnHeaderEvent = new object();
+		static object DrawItemEvent = new object();
+		static object DrawSubItemEvent = new object();
 		static object ItemCheckedEvent = new object ();
 		static object ItemMouseHoverEvent = new object ();
 		static object CacheVirtualItemsEvent = new object ();
@@ -148,6 +152,23 @@ namespace System.Windows.Forms
 			add { Events.AddHandler (ColumnClickEvent, value); }
 			remove { Events.RemoveHandler (ColumnClickEvent, value); }
 		}
+
+#if NET_2_0
+		public event DrawListViewColumnHeaderEventHandler DrawColumnHeader {
+			add { Events.AddHandler(DrawColumnHeaderEvent, value); }
+			remove { Events.RemoveHandler(DrawColumnHeaderEvent, value); }
+		}
+
+		public event DrawListViewItemEventHandler DrawItem {
+			add { Events.AddHandler(DrawItemEvent, value); }
+			remove { Events.RemoveHandler(DrawItemEvent, value); }
+		}
+
+		public event DrawListViewSubItemEventHandler DrawSubItem {
+			add { Events.AddHandler(DrawSubItemEvent, value); }
+			remove { Events.RemoveHandler(DrawSubItemEvent, value); }
+		}
+#endif
 
 		public event EventHandler ItemActivate {
 			add { Events.AddHandler (ItemActivateEvent, value); }
@@ -565,6 +586,14 @@ namespace System.Windows.Forms
 			get { return multiselect; }
 			set { multiselect = value; }
 		}
+
+
+#if NET_2_0
+		[DefaultValue(false)]
+		public bool OwnerDraw {
+			get { return owner_draw; }
+		}
+#endif
 
 		[DefaultValue (true)]
 		public bool Scrollable {
@@ -2629,6 +2658,29 @@ namespace System.Windows.Forms
 			if (eh != null)
 				eh (this, e);
 		}
+
+#if NET_2_0
+		protected internal virtual void OnDrawColumnHeader(DrawListViewColumnHeaderEventArgs e)
+		{
+			DrawListViewColumnHeaderEventHandler eh = (DrawListViewColumnHeaderEventHandler)(Events[DrawColumnHeaderEvent]);
+			if (eh != null)
+				eh(this, e);
+		}
+
+		protected internal virtual void OnDrawItem(DrawListViewItemEventArgs e)
+		{
+			DrawListViewItemEventHandler eh = (DrawListViewItemEventHandler)(Events[DrawItemEvent]);
+			if (eh != null)
+				eh(this, e);
+		}
+
+		protected internal virtual void OnDrawSubItem(DrawListViewSubItemEventArgs e)
+		{
+			DrawListViewSubItemEventHandler eh = (DrawListViewSubItemEventHandler)(Events[DrawSubItemEvent]);
+			if (eh != null)
+				eh(this, e);
+		}
+#endif
 
 		protected override void OnEnabledChanged (EventArgs e)
 		{
