@@ -218,7 +218,7 @@ namespace MonoTests.System.Drawing {
 
 		// Graphics
 		[Test]
-		public void Graphics ()
+		public void Graphics_FromImage ()
 		{
 			IntPtr graphics;
 			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipGetImageGraphicsContext (IntPtr.Zero, out graphics), "GdipGetImageGraphicsContext");
@@ -1551,6 +1551,69 @@ namespace MonoTests.System.Drawing {
 			}
 			finally {
 				Assert.AreEqual (Status.Ok, GDIPlus.GdipDisposeImage (metafile), "GdipDisposeImage");
+			}
+		}
+
+		private void RecordFileName (IntPtr hdc, EmfType type, MetafileFrameUnit unit)
+		{
+			string filename = String.Format ("test-{0}-{1}.emf", type, unit);
+			IntPtr metafile;
+			RectangleF rect = new RectangleF (10, 20, 100, 200);
+			Status status = GDIPlus.GdipRecordMetafileFileName (filename, hdc, type, ref rect, unit, filename, out metafile);
+			if (metafile != IntPtr.Zero)
+				GDIPlus.GdipDisposeImage (metafile);
+			if (status == Status.Ok)
+				File.Delete (filename);
+			Assert.AreEqual (Status.Ok, status, filename);
+		}
+
+		private Status RecordFileName_EmptyRectangle (IntPtr hdc, MetafileFrameUnit unit)
+		{
+			string filename = String.Format ("emptyrectangle-{0}.emf", unit);
+			IntPtr metafile = IntPtr.Zero;
+			RectangleF empty = new RectangleF ();
+			Status status = GDIPlus.GdipRecordMetafileFileName (filename, hdc, EmfType.EmfPlusDual, ref empty, unit, filename, out metafile);
+			if (metafile != IntPtr.Zero)
+				GDIPlus.GdipDisposeImage (metafile);
+			if (status == Status.Ok)
+				File.Delete (filename);
+			return status;
+		}
+
+		[Test]
+		public void RecordMetafileFileName ()
+		{
+			using (Bitmap bmp = new Bitmap (100, 100, PixelFormat.Format32bppArgb)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					IntPtr hdc = g.GetHdc ();
+					try {
+						IntPtr metafile;
+						RectangleF rect = new RectangleF ();
+						Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipRecordMetafileFileName (null, hdc, EmfType.EmfPlusOnly, ref rect, MetafileFrameUnit.GdiCompatible, "unit test", out metafile), "filename-null");
+						Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipRecordMetafileFileName ("a.emf", IntPtr.Zero, EmfType.EmfPlusOnly, ref rect, MetafileFrameUnit.GdiCompatible, "unit test", out metafile), "hdc-null");
+						Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipRecordMetafileFileName ("b.emf", hdc, (EmfType)Int32.MaxValue, ref rect, MetafileFrameUnit.GdiCompatible, "unit test", out metafile), "type-invalid");
+						Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipRecordMetafileFileName ("c.emf", hdc, EmfType.EmfPlusOnly, ref rect, (MetafileFrameUnit)Int32.MaxValue, "unit test", out metafile), "unit-invalid");
+						Assert.AreEqual (Status.Ok, GDIPlus.GdipRecordMetafileFileName ("d.emf", hdc, EmfType.EmfPlusOnly, ref rect, MetafileFrameUnit.GdiCompatible, null, out metafile), "description-null");
+						GDIPlus.GdipDisposeImage (metafile);
+						File.Delete ("d.emf");
+						// test some variations
+						Assert.AreEqual (Status.GenericError, RecordFileName_EmptyRectangle (hdc, MetafileFrameUnit.Document), "EmptyRectangle-Document");
+						Assert.AreEqual (Status.GenericError, RecordFileName_EmptyRectangle (hdc, MetafileFrameUnit.Inch), "EmptyRectangle-Inch");
+						Assert.AreEqual (Status.GenericError, RecordFileName_EmptyRectangle (hdc, MetafileFrameUnit.Millimeter), "EmptyRectangle-Millimeter");
+						Assert.AreEqual (Status.GenericError, RecordFileName_EmptyRectangle (hdc, MetafileFrameUnit.Pixel), "EmptyRectangle-Pixel");
+						Assert.AreEqual (Status.GenericError, RecordFileName_EmptyRectangle (hdc, MetafileFrameUnit.Point), "EmptyRectangle-Point");
+						Assert.AreEqual (Status.Ok, RecordFileName_EmptyRectangle (hdc, MetafileFrameUnit.GdiCompatible), "EmptyRectangle-GdiCompatible");
+						RecordFileName (hdc, EmfType.EmfOnly, MetafileFrameUnit.Document);
+						RecordFileName (hdc, EmfType.EmfPlusDual, MetafileFrameUnit.GdiCompatible);
+						RecordFileName (hdc, EmfType.EmfPlusOnly, MetafileFrameUnit.Inch);
+						RecordFileName (hdc, EmfType.EmfOnly, MetafileFrameUnit.Millimeter);
+						RecordFileName (hdc, EmfType.EmfPlusDual, MetafileFrameUnit.Pixel);
+						RecordFileName (hdc, EmfType.EmfPlusOnly, MetafileFrameUnit.Point);
+					}
+					finally {
+						g.ReleaseHdc (hdc);
+					}
+				}
 			}
 		}
 	}
