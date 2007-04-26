@@ -465,5 +465,45 @@ namespace MonoTests.System.Drawing.Imaging {
 				}
 			}
 		}
+
+		private void Metafile_StreamEmfType (Stream stream, EmfType type)
+		{
+			using (Bitmap bmp = new Bitmap (10, 10, PixelFormat.Format32bppArgb)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					IntPtr hdc = g.GetHdc ();
+					try {
+						Metafile mf = new Metafile (stream, hdc, type);
+						CheckEmptyHeader (mf, type);
+					}
+					finally {
+						g.ReleaseHdc (hdc);
+					}
+				}
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (NullReferenceException))]
+		public void Metafile_StreamIntPtrEmfType_Null ()
+		{
+			Metafile_StreamEmfType (null, EmfType.EmfOnly);
+		}
+
+		[Test]
+		public void Metafile_StreamIntPtrEmfType_EmfOnly ()
+		{
+			using (MemoryStream ms = new MemoryStream ()) {
+				Metafile_StreamEmfType (ms, EmfType.EmfOnly);
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Metafile_StreamIntPtrEmfType_Invalid ()
+		{
+			using (MemoryStream ms = new MemoryStream ()) {
+				Metafile_StreamEmfType (ms, (EmfType)Int32.MinValue);
+			}
+		}
 	}
 }
