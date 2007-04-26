@@ -1,3 +1,8 @@
+2007-04-26  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* Metafile.cs: Reduce size by reusing more complex ctors. Add Linux
+	support to metafile recoding with the new delegate-based functions.
+
 2007-04-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Metafile.cs: Complete all ctors (except for stream-based one outside
