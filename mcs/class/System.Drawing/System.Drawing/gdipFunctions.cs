@@ -1942,6 +1942,18 @@ namespace System.Drawing
 		static internal extern Status GdipGetMetafileHeaderFromDelegate_linux (StreamGetHeaderDelegate getHeader, 
 			StreamGetBytesDelegate getBytes, StreamPutBytesDelegate putBytes, StreamSeekDelegate doSeek, 
 			StreamCloseDelegate close, StreamSizeDelegate size, IntPtr header);
+
+		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipRecordMetafileFromDelegate_linux (StreamGetHeaderDelegate getHeader, 
+			StreamGetBytesDelegate getBytes, StreamPutBytesDelegate putBytes, StreamSeekDelegate doSeek, 
+			StreamCloseDelegate close, StreamSizeDelegate size, IntPtr hdc, EmfType type, ref RectangleF frameRect, 
+			MetafileFrameUnit frameUnit, [MarshalAs (UnmanagedType.LPWStr)] string description, out IntPtr metafile);
+
+		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipRecordMetafileFromDelegateI_linux (StreamGetHeaderDelegate getHeader, 
+			StreamGetBytesDelegate getBytes, StreamPutBytesDelegate putBytes, StreamSeekDelegate doSeek, 
+			StreamCloseDelegate close, StreamSizeDelegate size, IntPtr hdc, EmfType type, ref Rectangle frameRect, 
+			MetafileFrameUnit frameUnit, [MarshalAs (UnmanagedType.LPWStr)] string description, out IntPtr metafile);
 #endregion
 	}
 }

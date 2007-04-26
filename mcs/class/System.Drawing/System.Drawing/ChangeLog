@@ -1,3 +1,8 @@
+2007-04-26  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* gdipFunctions.cs: Add p/invoke definitions for GdipRecordMetafile
+	FromDelegate[I]_linux.
+
 2007-04-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* gdipFunctions.cs: Add p/invoke definitions for GdipRecordMetafile
