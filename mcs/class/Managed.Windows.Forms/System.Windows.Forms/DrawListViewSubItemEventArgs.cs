@@ -35,6 +35,7 @@ namespace System.Windows.Forms
 
         private Rectangle bounds;
         private int columnIndex;
+		private bool drawDefault;
         private Graphics graphics;
         private ColumnHeader header;
         private ListViewItem item;
@@ -54,6 +55,10 @@ namespace System.Windows.Forms
         public int ColumnIndex {
             get { return columnIndex; }
         }
+
+		public bool DrawDefault {
+			get { return drawDefault; }
+		}
 
         public Graphics Graphics {
             get { return graphics; }

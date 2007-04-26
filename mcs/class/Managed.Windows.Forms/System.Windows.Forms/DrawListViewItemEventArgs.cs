@@ -95,7 +95,7 @@ namespace System.Windows.Forms
             throw new NotImplementedException();
         }
 
-        public void DrawFocusRectangle(Rectangle bounds)
+        public void DrawFocusRectangle()
         {
             throw new NotImplementedException();
         }

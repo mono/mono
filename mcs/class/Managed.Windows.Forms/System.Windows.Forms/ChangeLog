@@ -1,5 +1,10 @@
 2007-04-26  Alan McGovern <alan.mcgovern@gmail.com>
 
+	* DrawListViewItemEventArgs.cs
+	* DrawListViewSubItemEventArgs.cs: Brought classes up to 2.0 status.
+
+2007-04-26  Alan McGovern <alan.mcgovern@gmail.com>
+
 	* TextControl.cs: Fixed typo in constructor
 
 2007-04-26  Jonathan Pobst  <monkey@jpobst.com>
