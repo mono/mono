@@ -786,6 +786,16 @@ home directories that might be shared over the network.
 If set, extra checks are made during IO operations.  Currently, this
 includes only advisory locks around file writes.
 .TP
+.I "MONO_DISABLE_SHM"
+If set, disables the shared memory files used for cross-process
+handles: process have only private handles.  This means that process
+and thread handles are not available to other processes, and named
+mutexes, named events and named semaphores are not visible between
+processes.
+.Sp
+This is can also be enabled by default by passing the
+"--disable-shared-handles" option to configure.
+.TP
 .I "MONO_THEME"
 The name of the theme to be used by Windows.Forms.   Available themes today
 include "clearlooks", "nice" and "win32".
