@@ -5,7 +5,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004,2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004,2006-2007 Novell, Inc (http://www.novell.com)
 //
 
 using System;
@@ -137,10 +137,10 @@ namespace Mono.Tools {
 						string auth = args [i++].ToLower ();
 						switch (auth) {
 							case "individual":
-								af.Authority = Authority.Commercial;
+								af.Authority = Authority.Individual;
 								break;
 							case "commercial":
-								af.Authority = Authority.Individual;
+								af.Authority = Authority.Commercial;
 								break;
 							default:
 								Console.WriteLine ("Unknown authority {0}", auth);
