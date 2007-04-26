@@ -1,3 +1,7 @@
+2007-04-26  Alan McGovern <alan.mcgovern@gmail.com>
+
+	* TextControl.cs: Fixed typo in constructor
+
 2007-04-26  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Application.cs: Create a shortcut path so that currently selected

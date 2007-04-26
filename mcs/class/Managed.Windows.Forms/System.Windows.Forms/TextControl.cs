@@ -157,7 +157,7 @@ namespace System.Windows.Forms {
 			recalc = true;
 			alignment = document.alignment;
 
-			ending = ending;
+			this.ending = ending;
 		}
 
 		internal Line(Document document, int LineNo, string Text, Font font, SolidBrush color, LineEnding ending) : this (document, ending)
