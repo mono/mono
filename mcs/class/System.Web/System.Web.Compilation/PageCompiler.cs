@@ -269,7 +269,11 @@ namespace System.Web.Compilation
 				CodeExpression prop = new CodePropertyReferenceExpression (new CodeBaseReferenceExpression (), "Master");
 				prop = new CodeCastExpression (pageParser.MasterType, prop);
 				mprop.GetStatements.Add (new CodeMethodReturnStatement (prop));
-				mainClass.Members.Add (mprop);
+
+				if (partialClass != null)
+					partialClass.Members.Add (mprop);
+				else
+					mainClass.Members.Add (mprop);
 			}
 #endif
 			
