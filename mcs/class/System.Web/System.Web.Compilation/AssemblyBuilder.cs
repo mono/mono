@@ -227,11 +227,18 @@ namespace System.Web.Compilation {
 			foreach (string refasm in referenced_assemblies)
 				options.ReferencedAssemblies.Add (refasm);
 			
-			results = provider.CompileAssemblyFromFile (options, files.ToArray ());
-			
-			// FIXME: generate the code and display it
-			if (results.NativeCompilerReturnValue != 0)
-				throw new CompilationException (virtualPath, results.Errors, "");
+			results = provider.CompileAssemblyFromFile (options, files.ToArray ());			
+
+			if (results.NativeCompilerReturnValue != 0 || results.Errors.Count > 0) {
+				string fileText = null;
+				try {
+					using (StreamReader sr = File.OpenText (results.Errors [0].FileName)) {
+						fileText = sr.ReadToEnd ();
+					}
+				} catch (Exception) {}
+				
+				throw new CompilationException (virtualPath, results.Errors, fileText);
+			}
 			
 			Assembly assembly = results.CompiledAssembly;
 			if (assembly == null) {
@@ -241,7 +248,12 @@ namespace System.Web.Compilation {
 						"No assembly returned after compilation!?");
 				}
 
-				results.CompiledAssembly = Assembly.LoadFrom (options.OutputAssembly);
+				try {
+					results.CompiledAssembly = Assembly.LoadFrom (options.OutputAssembly);
+				} catch (Exception ex) {
+					results.TempFiles.Delete ();
+					throw new HttpException ("Unable to load compiled assembly");
+				}
 			}
 
 			if (!KeepFiles)

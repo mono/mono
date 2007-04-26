@@ -1,5 +1,8 @@
 2007-04-26  Marek Habersack  <mhabersack@novell.com>
 
+	* AssemblyBuilder.cs: handle compilation failures in a better
+	way.
+
 	* PageCompiler.cs: the Master property must be in the partial
 	class if present. Fixes bug #81442
 
