@@ -338,5 +338,132 @@ namespace MonoTests.System.Drawing.Imaging {
 				Metafile.GetMetafileHeader (hemf);
 			}
 		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Metafile_IntPtrBool_Zero ()
+		{
+			new Metafile (IntPtr.Zero, false);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Metafile_IntPtrEmfType_Zero ()
+		{
+			new Metafile (IntPtr.Zero, EmfType.EmfOnly);
+		}
+
+		private void CheckEmptyHeader (Metafile mf, EmfType type)
+		{
+			MetafileHeader mh = mf.GetMetafileHeader ();
+			Assert.AreEqual (0, mh.Bounds.X, "Bounds.X");
+			Assert.AreEqual (0, mh.Bounds.Y, "Bounds.Y");
+			Assert.AreEqual (0, mh.Bounds.Width, "Bounds.Width");
+			Assert.AreEqual (0, mh.Bounds.Height, "Bounds.Height");
+			Assert.AreEqual (0, mh.MetafileSize, "MetafileSize");
+			switch (type) {
+			case EmfType.EmfOnly:
+				Assert.AreEqual (MetafileType.Emf, mh.Type, "Type");
+				break;
+			case EmfType.EmfPlusDual:
+				Assert.AreEqual (MetafileType.EmfPlusDual, mh.Type, "Type");
+				break;
+			case EmfType.EmfPlusOnly:
+				Assert.AreEqual (MetafileType.EmfPlusOnly, mh.Type, "Type");
+				break;
+			default:
+				Assert.Fail ("Unknown EmfType '{0}'", type);
+				break;
+			}
+		}
+
+		private void Metafile_IntPtrEmfType (EmfType type)
+		{
+			using (Bitmap bmp = new Bitmap (10, 10, PixelFormat.Format32bppArgb)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					IntPtr hdc = g.GetHdc ();
+					try {
+						Metafile mf = new Metafile (hdc, type);
+						CheckEmptyHeader (mf, type);
+					}
+					finally {
+						g.ReleaseHdc (hdc);
+					}
+				}
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Metafile_IntPtrEmfType_Invalid ()
+		{
+			Metafile_IntPtrEmfType ((EmfType)Int32.MinValue);
+		}
+
+		[Test]
+		public void Metafile_IntPtrEmfType_EmfOnly ()
+		{
+			Metafile_IntPtrEmfType (EmfType.EmfOnly);
+		}
+
+		[Test]
+		public void Metafile_IntPtrEmfType_EmfPlusDual ()
+		{
+			Metafile_IntPtrEmfType (EmfType.EmfPlusDual);
+		}
+
+		[Test]
+		public void Metafile_IntPtrEmfType_EmfPlusOnly ()
+		{
+			Metafile_IntPtrEmfType (EmfType.EmfPlusOnly);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Metafile_IntPtrRectangle_Zero ()
+		{
+			new Metafile (IntPtr.Zero, new Rectangle (1, 2, 3, 4));
+		}
+
+		[Test]
+		public void Metafile_IntPtrRectangle_Empty ()
+		{
+			using (Bitmap bmp = new Bitmap (10, 10, PixelFormat.Format32bppArgb)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					IntPtr hdc = g.GetHdc ();
+					try {
+						Metafile mf = new Metafile (hdc, new Rectangle ());
+						CheckEmptyHeader (mf, EmfType.EmfPlusDual);
+					}
+					finally {
+						g.ReleaseHdc (hdc);
+					}
+				}
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Metafile_IntPtrRectangleF_Zero ()
+		{
+			new Metafile (IntPtr.Zero, new RectangleF (1, 2, 3, 4));
+		}
+
+		[Test]
+		public void Metafile_IntPtrRectangleF_Empty ()
+		{
+			using (Bitmap bmp = new Bitmap (10, 10, PixelFormat.Format32bppArgb)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					IntPtr hdc = g.GetHdc ();
+					try {
+						Metafile mf = new Metafile (hdc, new RectangleF ());
+						CheckEmptyHeader (mf, EmfType.EmfPlusDual);
+					}
+					finally {
+						g.ReleaseHdc (hdc);
+					}
+				}
+			}
+		}
 	}
 }
