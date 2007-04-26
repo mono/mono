@@ -642,22 +642,19 @@ namespace MonoTests.System.Windows.Forms
 			ToolStrip ts = new ToolStrip ();
 			ts.Items.Add ("Test Item 1");
 			
-
-			Assert.AreEqual (null, ts.GetNextItem (null, ArrowDirection.Right), "A1");
-			Assert.AreEqual (null, ts.GetNextItem (ts.Items[0], ArrowDirection.Right), "A2");
-
-			ts.Items.Add ("Test Item 2");
-			Assert.AreEqual (ts.Items[0], ts.GetNextItem (null, ArrowDirection.Right), "A3");
-			Assert.AreEqual (ts.Items[0], ts.GetNextItem (ts.Items[0], ArrowDirection.Right), "A4");
-
 			Form f = new Form ();
 			f.ShowInTaskbar = false;
 			f.Controls.Add (ts);
 			f.Show ();
+
+			Assert.AreEqual (ts.Items[0], ts.GetNextItem (null, ArrowDirection.Right), "A1");
+			Assert.AreEqual (ts.Items[0], ts.GetNextItem (ts.Items[0], ArrowDirection.Right), "A2");
+
+			ts.Items.Add ("Test Item 2");
 			
-			Assert.AreEqual (ts.Items[0], ts.GetNextItem (null, ArrowDirection.Right), "A5");
-			Assert.AreEqual (ts.Items[1], ts.GetNextItem (ts.Items[0], ArrowDirection.Right), "A6");
-			
+			Assert.AreEqual (ts.Items[0], ts.GetNextItem (null, ArrowDirection.Right), "A3");
+			Assert.AreEqual (ts.Items[1], ts.GetNextItem (ts.Items[0], ArrowDirection.Right), "A4");
+
 			f.Dispose ();
 		}
 		

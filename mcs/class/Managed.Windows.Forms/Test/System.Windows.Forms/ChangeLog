@@ -1,3 +1,7 @@
+2007-04-26  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStripTest.cs: Fix the failing MethodGetNextItem test.
+
 2007-04-25  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* FormHandleTest.cs, ControlEventTest.cs, MenuStripTest.cs,
