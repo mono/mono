@@ -1,5 +1,7 @@
 2007-04-26  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-amd64.c (peephole_pass_1): Fix and reenable this pass.
+	
 	* mini-amd64.c (mono_arch_local_regalloc): Disable the new peephole_pass_1 as it
 	causes the corlib unit tests to fail.
 
