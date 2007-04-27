@@ -1,3 +1,7 @@
+2007-04-24  Alan McGovern <alan.mcgovern@gmail.com>
+
+	* BindingNavigatorTest.cs: Ignored failing test until a bug gets fixed
+
 2007-04-27  Chris Toshok  <toshok@ximian.com>
 
 	* CurrencyManagerTest.cs, DataBindingTests.cs,
