@@ -24,9 +24,6 @@
 //
 //
 
-
-// COMPLETE
-
 using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
@@ -54,6 +51,14 @@ namespace System.Windows.Forms {
 		internal Control	active_control;			// Control for which the tooltip is currently displayed
 		internal Control	last_control;			// last control the mouse was in
 		internal Timer		timer;				// Used for the various intervals
+
+#if NET_2_0
+		private bool isBalloon;
+		private bool stripAmpersands;
+		private bool useAnimation;
+		private bool useFading;
+#endif
+
 		#endregion	// Local variables
 
 		#region ToolTipWindow Class
@@ -189,7 +194,12 @@ namespace System.Windows.Forms {
 			initial_delay = 500;
 			re_show_delay = 100;
 			show_always = false;
-
+#if NET_2_0
+			isBalloon = false;
+			stripAmpersands = false;
+			useAnimation = true;
+			useFading = true;
+#endif
 			tooltip_strings = new Hashtable(5);
 			controls = new ArrayList(5);
 
@@ -296,6 +306,34 @@ namespace System.Windows.Forms {
 				}
 			}
 		}
+
+
+#if NET_2_0
+		[DefaultValue (false)]
+		public bool IsBalloon {
+			get { return isBalloon; }
+			set { isBalloon = value; }
+		}
+
+		[DefaultValue (false)]
+		public bool StripAmpersands {
+			get { return stripAmpersands; }
+			set { stripAmpersands = value; }
+		}
+
+		[DefaultValue (true)]
+		public bool UseAnimation {
+			get { return useAnimation; }
+			set { useAnimation = value; }
+		}
+
+		[DefaultValue (true)]
+		public bool UseFading {
+			get { return useFading; }
+			set { useFading = value; }
+		}
+#endif
+
 		#endregion	// Public Instance Properties
 
 		#region Public Instance Methods
@@ -341,6 +379,27 @@ namespace System.Windows.Forms {
 		public override string ToString() {
 			return base.ToString() + " InitialDelay: " + initial_delay + ", ShowAlways: " + show_always;
 		}
+
+#if NET_2_0
+		public void Show (string text, IWin32Window win)
+		{
+			SetToolTip (win as Control, text);
+			ShowTooltip (win as Control);
+		}
+
+		[MonoTODO ("Finish implementing tooltip location")]
+		public void Show (string text, IWin32Window win, Point p)
+		{
+			SetToolTip (win as Control, text);
+			ShowTooltip (win as Control);
+		}
+
+		public void Hide (IWin32Window win) 
+		{
+			Hide (win as Control);
+		}
+#endif
+
 		#endregion	// Public Instance Methods
 
 		#region Protected Instance Methods
@@ -371,7 +430,12 @@ namespace System.Windows.Forms {
 		#region Private Methods
 		private void control_MouseEnter(object sender, EventArgs e) 
 		{
-			last_control = (Control)sender;
+			ShowTooltip (sender as Control);
+		}
+
+		private void ShowTooltip (Control control) 
+		{
+			last_control = control;
 
 			// Whatever we're displaying right now, we don't want it anymore
 			tooltip_window.Visible = false;
@@ -379,7 +443,7 @@ namespace System.Windows.Forms {
 			state = TipState.Initial;
 
 			// if we're in the same control as before (how'd that happen?) or if we're not active, leave
-			if (!is_active || (active_control == (Control)sender)) {
+			if (!is_active || (active_control == control)) {
 				return;
 			}
 
@@ -390,7 +454,7 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			string text = (string)tooltip_strings[sender];
+			string text = (string)tooltip_strings[control];
 			if (text != null && text.Length > 0) {
 
 				if (active_control == null) {
@@ -399,7 +463,7 @@ namespace System.Windows.Forms {
 					timer.Interval = re_show_delay;
 				}
 
-				active_control = (Control)sender;
+				active_control = control;
 				timer.Start ();
 			}
 		}
@@ -451,7 +515,13 @@ namespace System.Windows.Forms {
 			return false;
 		}
 
-		private void control_MouseLeave(object sender, EventArgs e) {
+		private void control_MouseLeave(object sender, EventArgs e) 
+		{
+			Hide (sender as Control);
+		}
+
+		private void Hide (Control sender)
+		{
 			timer.Stop();
 
 			if (!MouseInControl(tooltip_window) && !MouseInControl(active_control)) {
@@ -459,7 +529,7 @@ namespace System.Windows.Forms {
 				tooltip_window.Visible = false;
 			}
 			
-			if (last_control == (Control)sender)
+			if (last_control == sender)
 				last_control = null;
 		}
 
@@ -469,6 +539,26 @@ namespace System.Windows.Forms {
 				timer.Start();
 			}
 		}
+
+#if NET_2_0
+		protected internal virtual void OnPopup (PopupEventArgs e)
+		{
+			PopupEventHandler eh = (PopupEventHandler) (Events [PopupEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
+#endif
 		#endregion	// Private Methods
+
+		#region Events
+#if NET_2_0
+		static object PopupEvent = new object ();
+		
+		public event PopupEventHandler Popup {
+			add { Events.AddHandler (PopupEvent, value); }
+			remove { Events.RemoveHandler (PopupEvent, value); }
+		}
+#endif
+		#endregion
 	}
 }

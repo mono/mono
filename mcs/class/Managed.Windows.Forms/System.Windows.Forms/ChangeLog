@@ -1,3 +1,8 @@
+2007-04-27  Andreia Gaita  <avidigal@novell.com>
+
+	* ToolTip.cs: Add missing 2.0 properties. Implement 2.0 Show and 
+	Hide methods (not complete). Implement missing 2.0 OnPopup event.
+
 2007-04-27  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: In ItemControl.OnMouseDown restore a pair of braces I
