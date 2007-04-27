@@ -92,6 +92,8 @@ namespace System.Windows.Forms {
 
 		void Deactivate ()
 		{
+			bool redrawbar = (keynav_state != KeyNavState.Idle); 
+			
 			active = false;
 			popup_active = false;
 			hotkey_active = false;
@@ -105,6 +107,9 @@ namespace System.Windows.Forms {
 				DeselectItem (TopMenu.SelectedItem);
 			}
 			CurrentMenu = TopMenu;
+			
+			if (redrawbar)
+				(TopMenu as MainMenu).Draw ();			
 		}
 
 		MenuItem FindItemByCoords (Menu menu, Point pt)
