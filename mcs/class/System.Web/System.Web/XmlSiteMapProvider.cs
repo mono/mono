@@ -60,6 +60,24 @@ namespace System.Web
 			throw new NotImplementedException ();
 		}
 
+		XmlNode FindStartingNode (string file, out bool enableLocalization)
+		{
+			XmlDocument d = new XmlDocument ();
+			d.Load (file);
+
+			XmlNode enloc = d.DocumentElement.Attributes ["enableLocalization"];
+			if (enloc != null && !String.IsNullOrEmpty (enloc.Value))
+				enableLocalization = (bool) Convert.ChangeType (enloc.Value, typeof (bool));
+			else
+				enableLocalization = false;
+					
+			XmlNode nod = d.DocumentElement ["siteMapNode"];
+			if (nod == null)
+				throw new HttpException ("Invalid site map file: " + Path.GetFileName (file));
+
+			return nod;
+		}
+		
 		public override SiteMapNode BuildSiteMap ()
 		{
 			if (root != null)
@@ -74,18 +92,11 @@ namespace System.Web
 					building = true;
 					if (root != null)
 						return root;
-					XmlDocument d = new XmlDocument ();
-					d.Load (file);
 
-					XmlNode enloc = d.DocumentElement.Attributes ["enableLocalization"];
-					if (enloc != null && !String.IsNullOrEmpty (enloc.Value))
-						EnableLocalization = (bool) Convert.ChangeType (enloc.Value, typeof (bool));
-					
-					XmlNode nod = d.DocumentElement ["siteMapNode"];
-					if (nod == null)
-						throw new HttpException ("Invalid site map file: " + Path.GetFileName (file));
-						
-					root = BuildSiteMapRecursive (nod);
+					bool enableLocalization;
+					XmlNode node = FindStartingNode (file, out enableLocalization);
+					EnableLocalization = enableLocalization;
+					root = BuildSiteMapRecursive (node, EnableLocalization);
 						
 					AddNode (root);
 				} finally {
@@ -177,7 +188,7 @@ namespace System.Web
 			}
 		}
 		
-		SiteMapNode BuildSiteMapRecursive (XmlNode xmlNode)
+		SiteMapNode BuildSiteMapRecursive (XmlNode xmlNode, bool localize)
 		{
 			if (xmlNode.Name != "siteMapNode")
 				throw new ConfigurationException ("incorrect element name", xmlNode);
@@ -194,9 +205,11 @@ namespace System.Web
 				}
 				throw new ConfigurationException("Provider with name [" + provider + "] was not found.");
 			} else if (siteMapFile != null) {
-				throw new NotImplementedException ();
+				bool enableLocalization;
+				XmlNode node = FindStartingNode (HttpContext.Current.Request.MapPath (siteMapFile),
+								 out enableLocalization);
+				return BuildSiteMapRecursive (node, enableLocalization);
 			} else {
-
 				string url = GetOptionalAttribute (xmlNode, "url");
 				string title = GetOptionalAttribute (xmlNode, "title");
 				string description = GetOptionalAttribute (xmlNode, "description");
@@ -229,7 +242,7 @@ namespace System.Web
 
 				NameValueCollection attributes = null;
 				NameValueCollection explicitResourceKeys = null;
-				if (EnableLocalization)
+				if (localize)
 					CollectLocalizationInfo (xmlNode, ref title, ref description, ref attributes,
 								 ref explicitResourceKeys);
 				else
@@ -246,7 +259,7 @@ namespace System.Web
 				foreach (XmlNode child in xmlNode.ChildNodes) {
 					if (child.NodeType != XmlNodeType.Element)
 						continue;
-					AddNode (BuildSiteMapRecursive (child), node);
+					AddNode (BuildSiteMapRecursive (child, EnableLocalization), node);
 				}
 				
 				return node;
@@ -314,10 +327,12 @@ namespace System.Web
 		{
 			throw new NotImplementedException ();
 		}
+
 		void OnFileChanged (object sender, FileSystemEventArgs args)
 		{
 			Clear ();
 		}
+
 		public override SiteMapNode RootNode {
 			get {
 				BuildSiteMap ();

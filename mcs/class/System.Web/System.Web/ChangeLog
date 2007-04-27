@@ -1,3 +1,7 @@
+2007-04-27  Marek Habersack  <mhabersack@novell.com>
+
+	* XmlSiteMapProvider.cs: add support for siteMapFile attribute.
+
 2007-04-24  Marek Habersack  <mhabersack@novell.com>
 
 	* CapabilitiesLoader.cs: Hashtables used as property containers
