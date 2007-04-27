@@ -44,6 +44,9 @@ namespace System.Windows.Forms {
 		#region Protected Instance Fields
 		protected EventHandler onCurrentChangedHandler;
 		protected EventHandler onPositionChangedHandler;
+#if NET_2_0
+		internal EventHandler onCurrentItemChangedHandler;
+#endif
 		#endregion	// Protected Instance Fields
 
 		#region Public Instance Properties
@@ -130,6 +133,11 @@ namespace System.Windows.Forms {
 			if (pulling_data)
 				return;
 
+			// XXX
+			// this is wrong, since UpdateIsBinding ends up emitting ItemChanged, which causes PushData to be called, which
+			// gets us infinite recursion.  for now, comment out the call to PushData in CurrencyManager.OnItemChanged to, but
+			// this really needs fixing here.
+
 			UpdateIsBinding ();
 			foreach (Binding binding in Bindings)
 				binding.PushData ();
@@ -174,8 +182,12 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
+		public event EventHandler CurrentItemChanged {
+			add { onCurrentItemChangedHandler += value; }
+			remove { onCurrentItemChangedHandler -= value; }
+		}
+
 		public event BindingCompleteEventHandler BindingComplete;
-		public event EventHandler CurrentItemChanged;
 		public event BindingManagerDataErrorEventHandler DataError;
 #endif
 		#endregion	// Events

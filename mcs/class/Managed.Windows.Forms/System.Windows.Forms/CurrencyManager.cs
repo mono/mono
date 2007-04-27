@@ -57,8 +57,11 @@ namespace System.Windows.Forms {
 
 		public override object Current {
 			get {
-				if (listposition == -1 || listposition >= list.Count)
+				if (listposition == -1 || listposition >= list.Count) {
+					Console.WriteLine ("throwing exception from here");
+					Console.WriteLine (Environment.StackTrace);
 					throw new IndexOutOfRangeException ("list position");
+				}
 				return list [listposition];
 			}
 		}
@@ -175,17 +178,14 @@ namespace System.Windows.Forms {
 
 		public override void AddNew ()
 		{
-			if (list as IBindingList == null)
+			IBindingList ibl = list as IBindingList;
+
+			if (ibl == null)
 				throw new NotSupportedException ();
 
-			(list as IBindingList).AddNew ();
+			ibl.AddNew ();
 
-			EndCurrentEdit ();
-
-			listposition = list.Count - 1;
-
-			OnCurrentChanged (EventArgs.Empty);
-			OnPositionChanged (EventArgs.Empty);
+			ChangeRecordState (list.Count - 1, true, true, true, true);
 		}
 
 
@@ -245,16 +245,25 @@ namespace System.Windows.Forms {
 
 		protected internal override void OnCurrentChanged (EventArgs e)
 		{
-			BeginEdit ();
-
 			if (onCurrentChangedHandler != null) {
 				onCurrentChangedHandler (this, e);
 			}
+
+#if NET_2_0
+			// don't call OnCurrentItemChanged here, as it can be overridden
+			if (onCurrentItemChangedHandler != null) {
+				onCurrentItemChangedHandler (this, e);
+			}
+#endif
+
 		}
 
 #if NET_2_0
 		protected override void OnCurrentItemChanged (EventArgs e)
 		{
+			if (onCurrentItemChangedHandler != null) {
+				onCurrentItemChangedHandler (this, e);
+			}
 		}
 #endif
 
@@ -262,6 +271,12 @@ namespace System.Windows.Forms {
 		{
 			if (ItemChanged != null)
 				ItemChanged (this, e);
+
+#if fales
+			// XXX see the commend in BindingManagerbase.PushData
+			if (listposition != -1)
+				PushData ();
+#endif
 		}
 
 		protected virtual void OnPositionChanged (EventArgs e)
@@ -293,14 +308,38 @@ namespace System.Windows.Forms {
 			foreach (Binding binding in Bindings)
 				binding.UpdateIsBinding ();
 
+			ChangeRecordState (listposition, false, false, true, false);
+
 			OnItemChanged (new ItemChangedEventArgs (-1));
+		}
+
+		private void ChangeRecordState (int newPosition,
+						bool validating,
+						bool endCurrentEdit,
+						bool firePositionChanged,
+						bool pullData)
+		{
+			if (endCurrentEdit)
+				EndCurrentEdit ();
+
+			int old_index = listposition;
+
+			listposition = newPosition;
+
+			if (listposition >= list.Count)
+				listposition = list.Count - 1;
+
+			if (listposition != -1)
+				OnCurrentChanged (EventArgs.Empty);
+
+			if (firePositionChanged)
+				OnPositionChanged (EventArgs.Empty);
 		}
 
 		private void UpdateItem ()
 		{
 			// Probably should be validating or something here
 			if (listposition != -1) {
-				EndCurrentEdit ();
 			}
 			else if (list.Count > 0) {
 
@@ -336,34 +375,73 @@ namespace System.Windows.Forms {
 		{
 			switch (e.ListChangedType) {
 			case ListChangedType.PropertyDescriptorAdded:
+				OnMetaDataChanged (EventArgs.Empty);
+#if ONLY_1_1
+				// um...
+				OnMetaDataChanged (EventArgs.Empty);
+#endif
+				break;
 			case ListChangedType.PropertyDescriptorDeleted:
 			case ListChangedType.PropertyDescriptorChanged:
 				OnMetaDataChanged (EventArgs.Empty);
 				break;
 			case ListChangedType.ItemDeleted:
-				if (listposition == e.NewIndex) {
-					listposition = e.NewIndex - 1;
-					OnCurrentChanged (EventArgs.Empty);
+				if (list.Count == 0) {
+					/* the last row was deleted */
+					listposition = -1;
+					UpdateIsBinding ();
+
+#if NET_2_0
 					OnPositionChanged (EventArgs.Empty);
+					OnCurrentChanged (EventArgs.Empty);
+#endif
 				}
-					
+				else if (e.NewIndex <= listposition) {
+					/* the deleted row was either the current one, or one earlier in the list.
+					   Update the index and emit PositionChanged, CurrentChanged, and ItemChanged. */
+					ChangeRecordState (e.NewIndex,
+							   false, false, e.NewIndex != listposition, false);
+				}
+				else {
+					/* the deleted row was after the current one, so we don't
+					   need to update bound controls for Position/Current changed */
+				}
+
 				OnItemChanged (new ItemChangedEventArgs (-1));
 				break;
 			case ListChangedType.ItemAdded:
-				if (listposition == -1) {
-					/* do we need this logic up above in ItemDeleted as well? */
-					listposition = e.NewIndex == 0 ? 0 : e.NewIndex - 1;
-					OnPositionChanged (EventArgs.Empty);
-					OnCurrentChanged (EventArgs.Empty);
+				if (list.Count == 1) {
+					/* it's the first one we've added */
+					ChangeRecordState (e.NewIndex,
+							   false, false, true, false);
 
-					UpdateIsBinding ();
+					OnItemChanged (new ItemChangedEventArgs (-1));
+				}
+				else {
+#if NET_2_0
+					if (e.NewIndex <= listposition) {
+						ChangeRecordState (listposition,
+								   false, false, false, false);
+						OnItemChanged (new ItemChangedEventArgs (-1));
+						OnPositionChanged (EventArgs.Empty);
+					}
+					else {
+						OnItemChanged (new ItemChangedEventArgs (-1));
+					}
+#else
+					OnItemChanged (new ItemChangedEventArgs (-1));
+#endif
 				}
 
-				OnItemChanged (new ItemChangedEventArgs (-1));
 				break;
 			case ListChangedType.ItemChanged:
-				if (editing)
+				if (editing) {
+#if NET_2_0
+					if (e.NewIndex == listposition)
+						OnCurrentItemChanged (EventArgs.Empty);
+#endif
 					OnItemChanged (new ItemChangedEventArgs (e.NewIndex));
+				}
 				break;
 			default:
 				PushData ();

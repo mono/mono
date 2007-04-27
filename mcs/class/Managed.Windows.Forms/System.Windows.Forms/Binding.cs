@@ -142,7 +142,6 @@ namespace System.Windows.Forms {
 
 			manager.AddBinding (this);
 			manager.PositionChanged += new EventHandler (PositionChangedHandler);
-			manager.CurrentChanged += new EventHandler (CurrentChangedHandler);
 
 			is_null_desc = TypeDescriptor.GetProperties (manager.Current).Find (property_name + "IsNull", false);
 
@@ -173,9 +172,9 @@ namespace System.Windows.Forms {
 
 			PropertyDescriptor pd = TypeDescriptor.GetProperties (manager.Current).Find (binding_member_info.BindingField, true);
 			if (pd == null) {
-				data = ParseData (manager.Current, manager.Current.GetType ());
+				data = manager.Current;
 			} else {
-				data = ParseData (pd.GetValue (manager.Current), pd.PropertyType);
+				data = pd.GetValue (manager.Current);
 			}
 
 			data = FormatData (data);
@@ -199,11 +198,6 @@ namespace System.Windows.Forms {
 				return;
 			data = ParseData (data, pd.PropertyType);
 			pd.SetValue (manager.Current, data);
-		}
-
-		private void CurrentChangedHandler (object sender, EventArgs e)
-		{
-			PushData ();
 		}
 
 		private void ControlValidatingHandler (object sender, CancelEventArgs e)

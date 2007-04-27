@@ -44,7 +44,13 @@ namespace System.Windows.Forms {
 
 		void parent_PositionChanged (object sender, EventArgs args)
 		{
-			SetDataSource (parent.Current);
+			if (parent.Position == -1) {
+				SetDataSource (null);
+			}
+			else {
+				SetDataSource (parent.Current);
+			}
+
 			OnCurrentChanged (EventArgs.Empty);
 		}
 	}

@@ -1,3 +1,24 @@
+2007-04-27  Chris Toshok  <toshok@ximian.com>
+
+	* BindingManagerBase.cs: fill in CurrentItemChanged (and have an
+	internal handler that can be invoked from our subclasses.)  Also,
+	add a comment to PushData about how we need to fix it.
+
+	* CurrencyManager.cs: tons of changes here.  trying to get things
+	matching the behavior of .net wrt event orders (ItemChanged,
+	CurrentChanged, PositionChanged.)  I've implemented a private .net
+	symbol (ChangeRecordState) that appears in stack traces because
+	it's actually easier to do this than to effective inline all its
+	various behaviors at every call site.
+
+	* RelatedPropertyManager.cs: guard against an exception here by
+	not using parent.Current if the position is set to -1 (if the
+	parent datasource is cleared, for instance).
+
+	* Binding.cs: don't parse data in PushData (this might be wrong,
+	but it jives with MS's behavior.)  Also, don't call PushData when
+	we get a CurrentChanged event.
+
 2007-04-27  Andreia Gaita  <avidigal@novell.com>
 
 	* WebBrowser.cs,
