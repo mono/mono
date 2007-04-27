@@ -229,7 +229,7 @@ namespace System.Web.Compilation {
 			
 			results = provider.CompileAssemblyFromFile (options, files.ToArray ());			
 
-			if (results.NativeCompilerReturnValue != 0 || results.Errors.Count > 0) {
+			if (results.NativeCompilerReturnValue != 0) {
 				string fileText = null;
 				try {
 					using (StreamReader sr = File.OpenText (results.Errors [0].FileName)) {

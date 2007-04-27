@@ -140,7 +140,7 @@ namespace System.Web.Compilation
 			CompilerResults results = abuilder.BuildAssembly (cp);
 			Assembly ret = null;
 			
-			if (results.Errors.Count == 0) {
+			if (results.NativeCompilerReturnValue == 0) {
 				ret = results.CompiledAssembly;
 				BuildManager.TopLevelAssemblies.Add (ret);
 				HttpContext.AppGlobalResourcesAssembly = ret;
@@ -203,7 +203,7 @@ namespace System.Web.Compilation
 			CompilerResults results = abuilder.BuildAssembly (cp);
 			Assembly ret = null;
 			
-			if (results.Errors.Count == 0) {
+			if (results.NativeCompilerReturnValue == 0) {
 				ret = results.CompiledAssembly;
 				AddAssemblyToCache (virtualPath, ret);
 			} else {

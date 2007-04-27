@@ -1,5 +1,12 @@
 2007-04-27  Marek Habersack  <mhabersack@novell.com>
 
+	* AppCodeCompiler.cs: do not look at the number of errors, check
+	the compiler return code instead.
+	
+	* AssemblyBuilder.cs: as above
+
+	* AppResourcesCompiler.cs: as above
+	
 	* AspComponentFoundry.cs: formatting changes.
 	AssemblyFoundry looks for the specified namespace+type in the
 	top-level assemblies if necessary.
