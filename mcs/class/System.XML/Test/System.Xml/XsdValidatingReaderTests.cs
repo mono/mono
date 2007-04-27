@@ -378,5 +378,21 @@ namespace MonoTests.System.Xml
 			while (!validator.EOF)
 				validator.Read ();
 		}
+
+#if NET_2_0
+		[Test]
+		public void Bug81460 ()
+		{
+			string xsd = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'><xs:element name='foo'><xs:complexType><xs:attribute name='a' default='x' /></xs:complexType></xs:element></xs:schema>";
+			string xml = "<foo/>";
+			XmlReaderSettings s = new XmlReaderSettings ();
+			s.ValidationType = ValidationType.Schema;
+			s.Schemas.Add (XmlSchema.Read (new StringReader (xsd), null));
+			XmlReader r = XmlReader.Create (new StringReader (xml), s);
+			r.Read ();
+			r.MoveToFirstAttribute (); // default attribute
+			AssertEquals (String.Empty, r.Prefix);
+		}
+#endif
 	}
 }

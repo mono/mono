@@ -134,6 +134,7 @@ namespace Mono.Xml.Schema
 			xsinfo = new XmlSchemaInfo (); // transition cache
 			v.LineInfoProvider = this;
 			v.ValidationEventSender = reader;
+			this.nsResolver = nsResolver;
 #if !NON_MONO
 			ValidationEventHandler += delegate (object o, ValidationEventArgs e) {
 				settings.OnValidationError (o, e);

@@ -1,3 +1,8 @@
+2007-04-27  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchemaValidatingReader.cs : nsResolver field must be initialized.
+	  Fixed bug #81460.
+
 2006-11-17  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XsdValidatingReader.cs : when ValidationType is None, it does not
