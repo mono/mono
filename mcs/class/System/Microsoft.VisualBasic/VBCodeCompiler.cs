@@ -263,18 +263,16 @@ namespace Microsoft.VisualBasic
 				vbnc.Close ();
 			}
 
-			vbnc_output_lines = vbnc_output.Split (Environment.NewLine.ToCharArray ());
 			bool loadIt = true;
-			foreach (string error_line in vbnc_output_lines) {
-				CompilerError error = CreateErrorFromString (error_line);
-				if (null != error) {
-					results.Errors.Add (error);
-					if (!error.IsWarning)
-						loadIt = false;
-				}
-			}
 			if (results.NativeCompilerReturnValue != 0) {
 				loadIt = false;
+				vbnc_output_lines = vbnc_output.Split (Environment.NewLine.ToCharArray ());
+				foreach (string error_line in vbnc_output_lines) {
+					CompilerError error = CreateErrorFromString (error_line);
+					if (null != error) {
+						results.Errors.Add (error);
+					}
+				}
 			}
 
 			if (loadIt) {
