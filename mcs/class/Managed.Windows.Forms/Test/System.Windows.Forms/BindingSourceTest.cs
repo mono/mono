@@ -47,9 +47,12 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void DataSource_InitialAddChangingType ()
 		{
+			if (TestHelper.RunningOnUnix) {
+				Assert.Ignore ("Fails at the moment");
+			}
+
 			BindingSource source = new BindingSource ();
 
 			source.Add ((int)32);
@@ -450,9 +453,12 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))] // DataMember property 'hi' cannot be found on the DataSource.
-		[Category ("NotWorking")]
 		public void DataMemberArgumentException ()
 		{
+			if (TestHelper.RunningOnUnix) {
+				Assert.Ignore ("Fails at the moment");
+			}
+
 			ArrayList list = new ArrayList ();
 			BindingSource source = new BindingSource ();
 			source.DataSource = list;
@@ -504,9 +510,12 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void SuppliedDataSource ()
 		{
+			if (TestHelper.RunningOnUnix) {
+				Assert.Ignore ("Fails at the moment");
+			}
+
 			List<string> list = new List<string>();
 
 			BindingSource source;
@@ -522,9 +531,12 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void DataSourceMember_set ()
 		{
+			if (TestHelper.RunningOnUnix) {
+				Assert.Ignore ("Fails at the moment");
+			}
+
 			BindingSource source = new BindingSource ();
 
 			source.DataSource = new List<string>();
@@ -569,18 +581,24 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void AddNew ()
 		{
+			if (TestHelper.RunningOnUnix) {
+				Assert.Ignore ("Fails at the moment");
+			}
+
 			BindingSource source = new BindingSource ();
 			source.AddNew ();
 			Assert.AreEqual (1, source.Count, "1");
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void AddNew_NonBindingList ()
 		{
+			if (TestHelper.RunningOnUnix) {
+				Assert.Ignore ("Fails at the moment");
+			}
+
 			IList list = new List<object> ();
 			BindingSource source = new BindingSource ();
 			source.DataSource = list;
@@ -609,9 +627,12 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void AllowNew ()
 		{
+			if (TestHelper.RunningOnUnix) {
+				Assert.Ignore ("Fails at the moment");
+			}
+
 			BindingSource source = new BindingSource ();
 			source.AllowNew = false;
 
@@ -625,12 +646,15 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
-		[Category ("NotWorking")]
 		// "AllowNew can only be set to true on an
 		// IBindingList or on a read-write list with a default
 		// public constructor."
 		public void AllowNew_FixedSize ()
 		{
+			if (TestHelper.RunningOnUnix) {
+				Assert.Ignore ("Fails at the moment");
+			}
+
 			BindingSource source = new BindingSource ();
 			source.DataSource = new object[10];
 
@@ -722,10 +746,13 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
-		[Category ("NotWorking")]
 		// "AddNew cannot be called on the 'System.String' type.  This type does not have a public default constructor.  You can call AddNew on the 'System.String' type if you set AllowNew=true and handle the AddingNew event."
 		public void AddNew_Invalid ()
 		{
+			if (TestHelper.RunningOnUnix) {
+				Assert.Ignore ("Fails at the moment");
+			}
+
 			BindingSource source = new BindingSource ();
 			source.DataSource = new List<string>();
 			object o = source.AddNew ();
@@ -734,9 +761,12 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void BindingSuspended1 ()
 		{
+			if (TestHelper.RunningOnUnix) {
+				Assert.Ignore ("Fails at the moment");
+			}
+
 			/* how does this property work? */
 			BindingSource source = new BindingSource ();
 

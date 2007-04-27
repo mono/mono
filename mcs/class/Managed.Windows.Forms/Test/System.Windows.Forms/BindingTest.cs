@@ -86,9 +86,12 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void BindingManagerBaseTest ()
 		{
+			if (TestHelper.RunningOnUnix) {
+				Assert.Ignore ("Fails at the moment");
+			}
+
 			Control c1 = new Control ();
 			Control c2 = new Control ();
 			Binding binding;
@@ -179,9 +182,7 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 			f.BindingContextChanged += new EventHandler (Event_Handler1);
 
 			eventcount = 0;
-			Console.WriteLine (">>>");
 			f.Show ();
-			Console.WriteLine ("<<<");
 #if NET_2_0
 			Assert.AreEqual (5, eventcount, "A1");
 #else

@@ -39,9 +39,12 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 	public class BindingManagerBaseTest {
 		
 		[Test]
-		[Category ("NotWorking")]
 		public void BindingsTest ()
 		{
+			if (TestHelper.RunningOnUnix) {
+				Assert.Ignore ("Fails at the moment");
+			}
+
 			Control c1 = new Control ();
 			Control c2 = new Control ();
 
@@ -67,7 +70,7 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 			Assert.AreEqual (0, bm.Bindings.Count, "1");
 			Assert.AreEqual (1, bm2.Bindings.Count, "2");
 
-			Assert.AreEqual (bm2.Bindings[0], binding, "2");
+			Assert.AreEqual (bm2.Bindings[0], binding, "3");
 		}
 	}
 }
