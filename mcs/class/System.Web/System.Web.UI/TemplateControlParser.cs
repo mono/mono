@@ -124,9 +124,11 @@ namespace System.Web.UI {
 				string ns = GetString (atts, "Namespace", null);
 				string assembly = GetString (atts, "Assembly", null);
 
+#if !NET_2_0
 				if (ns != null && assembly == null)
 					ThrowParseException ("Need an Assembly attribute with Namespace.");
-
+#endif
+				
 				if (ns == null && assembly != null)
 					ThrowParseException ("Need a Namespace attribute with Assembly.");
 				

@@ -195,8 +195,13 @@ namespace System.Web.UI {
                 internal void RegisterNamespace (string tagPrefix, string ns, string assembly)
                 {
                         AddImport (ns);
-                        Assembly ass = AddAssemblyByName (assembly);
-                        AddDependency (ass.Location);
+                        Assembly ass = null;
+			
+			if (assembly != null && assembly.Length > 0) {
+				ass = AddAssemblyByName (assembly);
+				AddDependency (ass.Location);
+			}
+			
                         RootBuilder.Foundry.RegisterFoundry (tagPrefix, ass, ns);
                 }
 

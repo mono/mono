@@ -51,7 +51,7 @@ namespace System.Web.Compilation
 			foundries = new Hashtable (StringComparer.InvariantCultureIgnoreCase);
 #else
 			foundries = new Hashtable (CaseInsensitiveHashCodeProvider.DefaultInvariant,
-				CaseInsensitiveComparer.DefaultInvariant);
+						   CaseInsensitiveComparer.DefaultInvariant);
 #endif
 
 			Assembly sw = typeof (AspComponentFoundry).Assembly;
@@ -73,16 +73,16 @@ namespace System.Web.Compilation
 		}
 
 		public void RegisterFoundry (string foundryName,
-						Assembly assembly,
-						string nameSpace)
+					     Assembly assembly,
+					     string nameSpace)
 		{
 			AssemblyFoundry foundry = new AssemblyFoundry (assembly, nameSpace);
 			InternalRegister (foundryName, foundry);
 		}
 
 		public void RegisterFoundry (string foundryName,
-						string tagName,
-						Type type)
+					     string tagName,
+					     Type type)
 		{
 			TagNameFoundry foundry = new TagNameFoundry (tagName, type);
 			InternalRegister (foundryName, foundry);
@@ -90,16 +90,16 @@ namespace System.Web.Compilation
 
 #if NET_2_0
 		public void RegisterFoundry (string foundryName,
-						string tagName,
-						string source)
+					     string tagName,
+					     string source)
 		{
 			TagNameFoundry foundry = new TagNameFoundry (tagName, source);
 			InternalRegister (foundryName, foundry);
 		}
 
 		public void RegisterAssemblyFoundry (string foundryName,
-							string assemblyName,
-							string nameSpace)
+						     string assemblyName,
+						     string nameSpace)
 		{
 			AssemblyFoundry foundry = new AssemblyFoundry (assemblyName, nameSpace);
 			InternalRegister (foundryName, foundry);
@@ -272,9 +272,23 @@ namespace System.Web.Compilation
 				if (assembly == null && assemblyName != null)
 					assembly = GetAssemblyByName (assemblyName, true);
 #endif
+				string typeName = String.Format ("{0}.{1}", nameSpace, componentName);
 				if (assembly != null)
-					return assembly.GetType (nameSpace + "." + componentName, true, true);
-				
+					return assembly.GetType (typeName, true, true);
+
+#if NET_2_0
+				IList tla = BuildManager.TopLevelAssemblies;
+				if (tla != null && tla.Count > 0) {
+					Type ret = null;
+					foreach (Assembly asm in tla) {
+						if (asm == null)
+							continue;
+						ret = asm.GetType (typeName, false, true);
+						if (ret != null)
+							return ret;
+					}
+				}
+#endif
 				return null;
 			}
 
@@ -365,7 +379,7 @@ namespace System.Web.Compilation
 				}
 
 				string msg = String.Format ("Type {0} not registered for prefix {1}",
-					componentName, tagPrefix);
+							    componentName, tagPrefix);
 				throw new ApplicationException (msg);
 			}
 		}

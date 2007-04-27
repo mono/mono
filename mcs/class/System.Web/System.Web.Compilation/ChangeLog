@@ -1,3 +1,9 @@
+2007-04-27  Marek Habersack  <mhabersack@novell.com>
+
+	* AspComponentFoundry.cs: formatting changes.
+	AssemblyFoundry looks for the specified namespace+type in the
+	top-level assemblies if necessary.
+
 2007-04-26  Marek Habersack  <mhabersack@novell.com>
 
 	* AssemblyBuilder.cs: handle compilation failures in a better
