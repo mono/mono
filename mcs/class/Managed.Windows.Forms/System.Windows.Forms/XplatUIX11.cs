@@ -5524,16 +5524,16 @@ namespace System.Windows.Forms {
 				if (hwnd.client_window != hwnd.whole_window) {
 					XDestroyWindow(DisplayHandle, hwnd.client_window);
 					hwnd.client_window = hwnd.whole_window;
+				}	
 
-					/* by virtue of the way the tests are ordered when determining if it's PAINT
-					   or NCPAINT, client_window == whole_window will always be PAINT.  So, if we're
-					   waiting on an nc_expose, drop it and remove the hwnd from the list (unless
-					   there's a pending expose). */
-					if (hwnd.nc_expose_pending) {
-						hwnd.nc_expose_pending = false;
-						if (!hwnd.expose_pending)
-							hwnd.Queue.Paint.Remove (hwnd);
-					}
+				/* by virtue of the way the tests are ordered when determining if it's PAINT
+				   or NCPAINT, client_window == whole_window will always be PAINT.  So, if we're
+				   waiting on an nc_expose, drop it and remove the hwnd from the list (unless
+				   there's a pending expose). */
+				if (hwnd.nc_expose_pending) {
+					hwnd.nc_expose_pending = false;
+					if (!hwnd.expose_pending)
+						hwnd.Queue.Paint.Remove (hwnd);
 				}
 
 				size_hints = new XSizeHints();
@@ -5593,29 +5593,7 @@ namespace System.Windows.Forms {
 
 		internal override void SystrayRemove(IntPtr handle, ref ToolTip tt) {
 
-#if GTKSOCKET_SUPPORTS_REPARENTING
-			Hwnd	hwnd;
-
-			hwnd = Hwnd.ObjectFromHandle(handle);
-
-			/* in the XEMBED spec, it mentions 3 ways for a client window to break the protocol with the embedder.
-			 * 1. The embedder can unmap the window and reparent to the root window (we should probably handle this...)
-			 * 2. The client can reparent its window out of the embedder window.
-			 * 3. The client can destroy its window.
-			 *
-			 * this call to SetParent is case 2, but in
-			 * the spec it also mentions that gtk doesn't
-			 * support this at present.  Looking at HEAD
-			 * gtksocket-x11.c jives with this statement.
-			 *
-			 * so we can't reparent.  we have to destroy.
-			 */
-			SetParent(hwnd.whole_window, FosterParent);
-#else
-			Control	control = Control.FromHandle(handle);
-			if (control is NotifyIcon.NotifyIconWindow)
-				((NotifyIcon.NotifyIconWindow)control).InternalRecreateHandle ();
-#endif
+			SetVisible (handle, false, false);
 
 			// The caller can now re-dock it later...
 			if (tt != null) {
