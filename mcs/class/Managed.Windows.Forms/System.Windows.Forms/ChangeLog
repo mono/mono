@@ -1,3 +1,9 @@
+2007-04-27  Everaldo Canuto  <everaldo@simios.org>
+
+	* MenuAPI.cs: Remove unneeded "keynav_state = KeyNavState.Idle" before 
+	Deactivate calls, Deactivate method already do it. Also ser ActiveTracker
+	when <alt> key is pressed.
+
 2007-04-26  Everaldo Canuto  <everaldo@simios.org>
 
 	* XplatUIX11.cs: Simplify SystrayRemove to be like other libraries,	Gtk as 

@@ -528,13 +528,13 @@ namespace System.Windows.Forms {
 				case KeyNavState.Idle:
 					keynav_state = KeyNavState.Startup;
 					hotkey_active = true;
+					grab_control.ActiveTracker = this;
 					CurrentMenu = TopMenu;
 					main_menu.Draw ();
 					break;
 				case KeyNavState.Startup:
 					break;
 				default:
-					keynav_state = KeyNavState.Idle;
 					Deactivate ();
 					main_menu.Draw ();
 					break;
@@ -551,7 +551,6 @@ namespace System.Windows.Forms {
 					SelectItem (TopMenu, TopMenu.MenuItems [0], false);
 					break;
 				default:
-					keynav_state = KeyNavState.Idle;
 					Deactivate ();
 					main_menu.Draw ();
 					break;
