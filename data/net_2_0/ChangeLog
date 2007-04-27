@@ -1,0 +1,8 @@
+2007-04-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DefaultWsdlHelpGenerator.aspx :
+	  ProfileViolations could be null, when there is no Binding. So,
+	  don't omit null check.
+
+	  Stop your bad habit of missing ChangeLog. Former changes (as long
+	  as logged) can be seen in ../../ChangeLog.

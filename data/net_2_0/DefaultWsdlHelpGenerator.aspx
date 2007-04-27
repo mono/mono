@@ -1644,7 +1644,7 @@ function clearForm ()
 	<p class="label">Web Service Overview</p>
 	<%=WebServiceDescription%>
 	<br/><br/>
-	<% if (ProfileViolations.Count > 0) { %>
+	<% if (ProfileViolations != null && ProfileViolations.Count > 0) { %>
 		<p class="label">Basic Profile Conformance</p>
 		This web service does not conform to WS-I Basic Profile v1.1
 	<%
