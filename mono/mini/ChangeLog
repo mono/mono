@@ -1,3 +1,8 @@
+2007-04-27  Wade Berrier  <wberrier@novell.com>
+
+	* mini-s390x.c: Remove redeclaration of CompRelation and CompType (defined in 
+	mini.h) to fix build.
+
 2007-04-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-amd64.c (peephole_pass_1): Fix and reenable this pass.
