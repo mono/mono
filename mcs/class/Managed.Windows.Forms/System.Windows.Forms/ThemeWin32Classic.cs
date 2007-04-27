@@ -2402,7 +2402,7 @@ namespace System.Windows.Forms
 			// draw the item text			
 			// format for the item text
 			StringFormat format = new StringFormat ();
-			if (control.View == View.SmallIcon)
+			if (control.View == View.SmallIcon || control.View == View.LargeIcon)
 				format.LineAlignment = StringAlignment.Near;
 			else
 				format.LineAlignment = StringAlignment.Center;

@@ -2019,11 +2019,10 @@ namespace System.Windows.Forms
 					// Report clicks only if the item was clicked. On MS the
 					// clicks are only raised if you click an item
 					clicks = me.Clicks;
-					if (me.Clicks > 1)
+					if (me.Clicks > 1) {
 						if (owner.CheckBoxes)
 							clicked_item.Checked = !clicked_item.Checked;
-
-					else if (me.Clicks == 1) {
+					} else if (me.Clicks == 1) {
 						if (owner.LabelEdit && !changed)
 							BeginEdit (clicked_item); // this is probably not the correct place to execute BeginEdit
 					}
