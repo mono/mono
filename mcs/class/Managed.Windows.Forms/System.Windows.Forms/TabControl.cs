@@ -1149,7 +1149,20 @@ namespace System.Windows.Forms {
 
 		private void SetTab (int index, TabPage value)
 		{
-			((IList) Controls).Insert (index, value);
+			if (!tab_pages.Contains (value)) {
+				this.Controls.Add (value);
+			}
+			this.Controls.RemoveAt (index);
+			this.Controls.SetChildIndex (value, index);
+			Redraw ();
+		}
+
+		private void InsertTab (int index, TabPage value)
+		{
+			if (!tab_pages.Contains (value)) {
+				this.Controls.Add (value);
+			}
+			this.Controls.SetChildIndex (value, index);
 			Redraw ();
 		}
 
@@ -1412,7 +1425,7 @@ namespace System.Windows.Forms {
 				if (value == null)
 					throw new ArgumentException ("value");
 				owner.Controls.Add (page);
-                                return owner.Controls.IndexOf (page);
+				return owner.Controls.IndexOf (page);
 			}
 
 			bool IList.Contains (object value)
@@ -1436,6 +1449,12 @@ namespace System.Windows.Forms {
 				throw new NotSupportedException ();
 			}
 
+#if NET_2_0
+			public void Insert (int index, TabPage page)
+			{
+				owner.InsertTab (index, page);
+			}
+#endif
 			void IList.Remove (object value)
 			{
 				TabPage page = value as TabPage;

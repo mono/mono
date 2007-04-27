@@ -1,3 +1,13 @@
+2007-04-27  Andreia Gaita  <avidigal@novell.com>
+
+	* TabControl.cs: Change SetTab so it adds the tabpage to the list
+	of controls if it isn't already there - was blowing up when doing
+	tabcontrol.TabPages[i]=new TabPage(). 
+	SetTab now does a replace by removing the page at the index. 
+	Add a new InsertTab method that inserts a page in a given index 
+	instead of replacing. 
+	Implements TabPageCollection.Insert(int, TabPage).
+
 2007-04-27  Chris Toshok  <toshok@ximian.com>
 
 	* BindingManagerBase.cs: fill in CurrentItemChanged (and have an
