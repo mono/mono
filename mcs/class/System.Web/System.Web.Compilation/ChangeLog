@@ -2,7 +2,9 @@
 
 	* AppCodeCompiler.cs: do not look at the number of errors, check
 	the compiler return code instead.
-	
+	Resolve assembly names from the global web.config to their
+	locations before passing them to the compiler provider.
+
 	* AssemblyBuilder.cs: as above
 
 	* AppResourcesCompiler.cs: as above

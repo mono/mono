@@ -44,6 +44,48 @@ using System.Web.Util;
 
 namespace System.Web.Compilation
 {
+	class AssemblyPathResolver
+	{
+		static Dictionary <string, string> assemblyCache;
+
+		static AssemblyPathResolver ()
+		{
+			assemblyCache = new Dictionary <string, string> ();
+		}
+
+		public static string GetAssemblyPath (string assemblyName)
+		{
+			lock (assemblyCache) {
+				if (assemblyCache.ContainsKey (assemblyName))
+					return assemblyCache [assemblyName];
+
+				Assembly asm = null;
+				Exception error = null;
+				if (assemblyName.IndexOf (',') != -1) {
+					try {
+						asm = Assembly.Load (assemblyName);
+					} catch (Exception e) {
+						error = e;
+					}
+				}
+
+				if (asm == null) {
+					try {
+						asm = Assembly.LoadWithPartialName (assemblyName);
+					} catch (Exception e) {
+						error = e;
+					}
+				}
+                        
+				if (asm == null)
+					throw new HttpException (String.Format ("Unable to find assembly {0}", assemblyName), error);
+
+				assemblyCache.Add (assemblyName, asm.Location);
+				return asm.Location;
+			}
+		}
+	}
+	
 	internal class AppCodeAssembly
 	{
 		private List<string> files;
@@ -190,8 +232,8 @@ namespace System.Web.Compilation
 				foreach (AssemblyInfo ai in compilationSection.Assemblies)
 					if (ai.Assembly != "*") {
 						try {
-							asmName = new AssemblyName (ai.Assembly);
-							parameters.ReferencedAssemblies.Add (asmName.Name);
+							parameters.ReferencedAssemblies.Add (
+								AssemblyPathResolver.GetAssemblyPath (ai.Assembly));
 						} catch (Exception ex) {
 							throw new HttpException (
 								String.Format ("Could not find assembly {0}.", ai.Assembly),
@@ -230,7 +272,7 @@ namespace System.Web.Compilation
 				throw new CompilationException (null, results.Errors, null);
 			}
 		}
-
+		
 		private string PhysicalToVirtual (string file)
 		{
 			return file.Replace (HttpRuntime.AppDomainAppPath, "/").Replace (Path.DirectorySeparatorChar, '/');
