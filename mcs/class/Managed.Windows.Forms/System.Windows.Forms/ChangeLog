@@ -1,3 +1,9 @@
+2007-04-27  Everaldo Canuto  <everaldo@simios.org>
+
+	* MainMenu.cs: In draw method without parameters call draw method with 
+	PaintEvent, another one (just rect) adjust rectangle and we dont need it
+	as Rect property is already adjusted. Fixes #80694.
+
 2007-04-27  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Application.cs: Need to handle keyboard menu deselection here.

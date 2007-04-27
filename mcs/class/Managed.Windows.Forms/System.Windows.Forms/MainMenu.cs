@@ -101,7 +101,8 @@ namespace System.Windows.Forms
 
 		internal void Draw () 
 		{
-			Draw (Rect);
+			PaintEventArgs pe = XplatUI.PaintEventStart (Wnd.window.Handle, false);
+			Draw (pe, Rect);
 		}
 
 		internal void Draw (Rectangle rect) 
