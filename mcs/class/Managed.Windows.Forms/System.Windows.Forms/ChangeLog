@@ -1,3 +1,10 @@
+2007-04-27  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Application.cs: Need to handle keyboard menu deselection here.
+	* Control.cs: Use WM_SYSKEYUP instead of WM_SYSCOMMAND to start menu keyboard
+	navigation, allowing keyboard to work on X11.
+	* ToolStrip.cs: Don't worry about handling the Menu key here anymore.
+
 2007-04-27  Everaldo Canuto  <everaldo@simios.org>
 
 	* MenuAPI.cs: When deactivate menu verify if hotkey (_) is active and redraw

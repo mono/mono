@@ -4750,14 +4750,6 @@ namespace System.Windows.Forms
 					WmCaptureChanged (ref m);
 					return;
 				}
-
-#if NET_2_0
-				// The menu button was pressed (the Alt key)
-				case Msg.WM_SYSCOMMAND: {
-					WmSysCommand (ref m);
-					return;
-				}
-#endif
 			
 				default:
 					DefWndProc(ref m);
@@ -5098,6 +5090,11 @@ namespace System.Windows.Forms
 				if (form != null && form.ActiveMenu != null) {
 					form.ActiveMenu.ProcessCmdKey(ref m, (Keys)m.WParam.ToInt32());
 				}
+#if NET_2_0
+				else
+					if (ToolStripManager.ProcessMenuKey (ref m))
+						return;
+#endif
 			}
 
 			DefWndProc (ref m);
@@ -5143,16 +5140,6 @@ namespace System.Windows.Forms
 			ThemeEngine.Current.ResetDefaults();
 			OnSystemColorsChanged(EventArgs.Empty);
 		}
-
-#if NET_2_0
-		private void WmSysCommand (ref Message m)
-		{
-			if (m.WParam == (IntPtr)61696)  // SC_KEYMENU (Alt)
-				ToolStripManager.ProcessMenuKey (ref m);
-			else
-				DefWndProc (ref m);
-		}
-#endif
 
 		private void WmSetCursor (ref Message m) {
 			if ((cursor == null) || ((HitTest)(m.LParam.ToInt32() & 0xffff) != HitTest.HTCLIENT)) {

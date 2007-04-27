@@ -666,6 +666,13 @@ namespace System.Windows.Forms {
 					// If we have a control with keyboard capture (usually a *Strip)
 					// give it the message, and then drop the message
 					if (keyboard_capture != null) {
+						// WM_SYSKEYUP does not make it into ProcessCmdKey, so do it here
+						if ((Msg)m.Msg == Msg.WM_SYSKEYUP)
+							if (((Keys)m.WParam.ToInt32 () & Keys.Menu) == Keys.Menu) {
+								keyboard_capture.GetTopLevelToolStrip ().Dismiss (ToolStripDropDownCloseReason.Keyboard);
+								continue;
+						}
+
 						m.HWnd = keyboard_capture.Handle;
 						keyboard_capture.PreProcessMessage (ref m);
 						continue;

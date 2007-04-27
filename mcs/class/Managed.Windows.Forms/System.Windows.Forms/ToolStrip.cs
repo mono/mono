@@ -979,11 +979,6 @@ namespace System.Windows.Forms
 
 		protected override bool ProcessCmdKey (ref Message msg, Keys keyData)
 		{
-			if ((keyData & Keys.Alt) == Keys.Alt && this.KeyboardActive) {
-				this.GetTopLevelToolStrip ().Dismiss (ToolStripDropDownCloseReason.Keyboard);
-				return true;
-			}
-			
 			return base.ProcessCmdKey (ref msg, keyData);
 		}
 
