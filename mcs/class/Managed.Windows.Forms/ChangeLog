@@ -1,3 +1,8 @@
+2007-04-26  Jonathan Pobst  <monkey@jpobst.com>
+
+	* System.Windows.Forms.dll.sources: Add DrawListViewColumnHeaderEventHandler.cs,
+	DrawListViewItemEventHandler.cs, DrawListViewSubItemEventHandler.cs.
+
 2007-04-24  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Makefile: Add new resources for BindingNavigator to build.

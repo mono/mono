@@ -292,8 +292,11 @@ System.Windows.Forms/DrawItemEventArgs.cs
 System.Windows.Forms/DrawItemEventHandler.cs
 System.Windows.Forms/DrawItemState.cs
 System.Windows.Forms/DrawListViewColumnHeaderEventArgs.cs
+System.Windows.Forms/DrawListViewColumnHeaderEventHandler.cs
 System.Windows.Forms/DrawListViewItemEventArgs.cs
+System.Windows.Forms/DrawListViewItemEventHandler.cs
 System.Windows.Forms/DrawListViewSubItemEventArgs.cs
+System.Windows.Forms/DrawListViewSubItemEventHandler.cs
 System.Windows.Forms/DrawMode.cs
 System.Windows.Forms/DrawTreeNodeEventArgs.cs
 System.Windows.Forms/DrawTreeNodeEventHandler.cs
