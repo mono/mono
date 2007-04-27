@@ -1,3 +1,11 @@
+2007-04-27  Andreia Gaita  <avidigal@novell.com>
+
+	* WebBrowser.cs,
+	  WebBrowserBase.cs,
+	  WebBrowserSiteBase.cs,
+	  HtmlDocument.cs: Added stubbed out classes, no real implementations 
+	  yet.
+
 2007-04-27  Everaldo Canuto  <everaldo@simios.org>
 
 	* MainMenu.cs: In draw method without parameters call draw method with 

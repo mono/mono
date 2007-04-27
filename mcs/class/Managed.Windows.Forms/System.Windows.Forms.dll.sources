@@ -346,6 +346,7 @@ System.Windows.Forms/HelpNavigator.cs
 System.Windows.Forms/HelpProvider.cs
 System.Windows.Forms/HorizontalAlignment.cs
 System.Windows.Forms/HScrollProperties.cs
+System.Windows.Forms/HtmlDocument.cs
 System.Windows.Forms/HtmlElementInsertionOrientation.cs
 System.Windows.Forms/Hwnd.cs
 System.Windows.Forms/IButtonControl.cs
@@ -745,6 +746,8 @@ System.Windows.Forms/VScrollBar.cs
 System.Windows.Forms/ValidationConstraints.cs
 System.Windows.Forms/View.cs
 System.Windows.Forms/VScrollProperties.cs
+System.Windows.Forms/WebBrowser.cs
+System.Windows.Forms/WebBrowserBase.cs
 System.Windows.Forms/WebBrowserDocumentCompletedEventArgs.cs
 System.Windows.Forms/WebBrowserDocumentCompletedEventHandler.cs
 System.Windows.Forms/WebBrowserEncryptionLevel.cs
@@ -756,6 +759,7 @@ System.Windows.Forms/WebBrowserProgressChangedEventArgs.cs
 System.Windows.Forms/WebBrowserProgressChangedEventHandler.cs
 System.Windows.Forms/WebBrowserReadyState.cs
 System.Windows.Forms/WebBrowserRefreshOption.cs
+System.Windows.Forms/WebBrowserSiteBase.cs
 System.Windows.Forms/Win32DnD.cs
 System.Windows.Forms/X11DesktopColors.cs
 System.Windows.Forms/X11Dnd.cs
