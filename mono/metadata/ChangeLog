@@ -1,3 +1,8 @@
+2007-04-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* threads.c (build_wait_tids): Do not call mono_monitor_enter () here since the
+	caller holds threads_lock, leading to deadlocks. Fixes #81476.
+
 2007-04-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* loader.c (mono_loader_error_prepare_exception): Fix crash caused by calling
