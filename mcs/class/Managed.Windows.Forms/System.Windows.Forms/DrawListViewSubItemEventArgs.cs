@@ -56,9 +56,10 @@ namespace System.Windows.Forms
             get { return columnIndex; }
         }
 
-		public bool DrawDefault {
-			get { return drawDefault; }
-		}
+        public bool DrawDefault {
+            get { return drawDefault; }
+            set { drawDefault = value; }
+        }
 
         public Graphics Graphics {
             get { return graphics; }

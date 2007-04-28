@@ -1,3 +1,7 @@
+2007-04-28  Alan McGovern <alan.mcgovern@gmail.com>
+
+	* DrawListViewSubItemEventArgs.cs: Added missing setter
+
 2007-04-27  Andreia Gaita  <avidigal@novell.com>
 
 	* ToolTip.cs: Add missing 2.0 properties. Implement 2.0 Show and 
