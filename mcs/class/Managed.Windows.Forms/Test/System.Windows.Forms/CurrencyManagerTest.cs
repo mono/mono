@@ -768,10 +768,8 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 			BindingContext bc = new BindingContext ();
 			CurrencyManager cm = bc [data_source.Tables["Table1"], ""] as CurrencyManager;
 
-			data_source.Tables["Table1"].DefaultView.ListChanged += delegate (object sender, ListChangedEventArgs e) {
-				Console.WriteLine ("{0} {1} {2}", e.ListChangedType, e.OldIndex, e.NewIndex);
-				Console.WriteLine ("position = {0}", cm.Position);
-			};
+			data_source.Tables["Table1"].DefaultView.ListChanged += 
+				new ListChangedEventHandler (DataView_ListChanged);
 
 			event_num = current_changed = position_changed = -1;
 			cm.CurrentChanged += new EventHandler (CurrentChanged);
@@ -802,6 +800,11 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 
 			cm.CurrentChanged -= new EventHandler (CurrentChanged);
 			cm.PositionChanged -= new EventHandler (PositionChanged);
+		}
+
+		void DataView_ListChanged (object sender, ListChangedEventArgs e)
+		{
+			Console.WriteLine ("{0} {1} {2}", e.ListChangedType, e.OldIndex, e.NewIndex);
 		}
 
 		[Test]

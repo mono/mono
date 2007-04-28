@@ -710,7 +710,8 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 			DataSet dataSet1 = new DataSet();
 			dataSet1.Tables.Add();
 
-			dataSet1.Tables[0].Columns.CollectionChanged += delegate (object sender, CollectionChangeEventArgs e) { Console.WriteLine ("collection changed : {0} {1}", e.Action, e.Element.GetType()); };
+			dataSet1.Tables [0].Columns.CollectionChanged += new CollectionChangeEventHandler (
+				DataColumnCollection_CollectionChanged);
 
 			dataSet1.Tables[0].Columns.Add();
 
@@ -729,7 +730,8 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 			event_log = "";
 			event_num = 0;
 
-			dataSet1.Tables[0].DefaultView.ListChanged += delegate (object sender, ListChangedEventArgs e) { Console.WriteLine ("list changed : {0} {1} {2}", e.ListChangedType, e.OldIndex, e.NewIndex); };
+			dataSet1.Tables [0].DefaultView.ListChanged += new ListChangedEventHandler (
+				DataView_ListChanged);
 
 			dataSet1.Tables[0].Columns[0].ColumnName = "new name";
 
@@ -740,6 +742,16 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 			Assert.AreEqual (0, cm.Count, "4");
 
 			Assert.IsFalse (binding.IsBinding, "5");
+		}
+
+		void DataColumnCollection_CollectionChanged (object sender, CollectionChangeEventArgs e)
+		{
+			Console.WriteLine ("collection changed : {0} {1}", e.Action, e.Element.GetType());
+		}
+
+		void DataView_ListChanged (object sender, ListChangedEventArgs e)
+		{
+			Console.WriteLine ("list changed : {0} {1} {2}", e.ListChangedType, e.OldIndex, e.NewIndex);
 		}
 
 		[Test]
