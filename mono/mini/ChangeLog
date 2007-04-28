@@ -1,3 +1,7 @@
+2007-04-27  Neale Ferguson <neale@sinenomine.net>
+
+	* mini-s390x.c: Fix MONO_TYPE_VALUETYPE processing.
+
 2007-04-27  Wade Berrier  <wberrier@novell.com>
 
 	* mini-s390x.c: Remove redeclaration of CompRelation and CompType (defined in 
