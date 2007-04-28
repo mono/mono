@@ -2418,12 +2418,16 @@ namespace Mono.CSharp {
 		}
 
 		//
-		// Infers the remaining inferred_types from lambda expressions contained in the 
-		// invocation call.
+		// Infers the type of a single LambdaExpression in the invocation call and
+		// stores the infered type in the inferred_types array.
+		//
+		// The index of the arguments that contain lambdas is passed in
+		//
+		// @lambdas.  Merely to avoid rescanning the list.
 		//
 		// The method being called:
 		//   @method_generic_args: The generic type arguments for the method being called
-		//   @method_pd: The ParameterData for the method being called. 
+		//   @method_pd: The ParameterData for the method being called.
 		//
 		// The call site:
 		//   @arguments: Arraylist of Argument()s.  The arguments being passed.
@@ -2431,37 +2435,29 @@ namespace Mono.CSharp {
 		// Returns:
 		//   @inferred_types: the array that is populated with our results.
 		//
-		// true on success
+		// true if the code was able to do one inference.
 		//
 		static bool LambdaInfer (EmitContext ec,
 					 Type [] method_generic_args,
 					 ParameterData method_pd,
 					 ArrayList arguments,
-					 Type[] inferred_types)
+					 Type[] inferred_types,
+					 ArrayList lambdas)
 		{
-			int arg_count = method_pd.Count;
+			int last_count = lambdas.Count;
 
-			//
-			// TODO: track the lambads that have resulted in a type inference
-			// and skip over those
-			//
-			// TODO: loop until there are no lambdas left to infer values (or
-			// one of the conditions is not satisfied)
-			//
-			for (int argn = 0; argn < arg_count; argn++){
+			for (int i = 0; i < last_count; i++){
+				int argn = (int) lambdas [i];
+
 				Argument a = (Argument) arguments [argn];
 
 				LambdaExpression le = a.Expr as LambdaExpression;
-				
-				if (a == null)
-					continue;
-				
-				//
-				// TODO: "The argument is a lambda expression, in
-				// the following called L, from which no inferences
-				// have yet been made."
-				//
-				
+
+				if (le == null)
+					throw new Exception (
+					     String.Format ("Internal Compiler error: argument {0} should be a Lambda Expression",
+							    argn));
+							     
 				//
 				// "The corresponding parameter’s type, in the
 				// following called P, is a delegate type with a
@@ -2470,7 +2466,7 @@ namespace Mono.CSharp {
 				//
 				// 
 				if (!TypeManager.IsDelegateType (method_pd.ParameterType (argn)))
-					continue;
+					goto useless_lambda;
 				
 				Type p_type = method_pd.ParameterType (argn);
 				MethodGroupExpr method_group = Expression.MemberLookup (
@@ -2479,17 +2475,17 @@ namespace Mono.CSharp {
 				
 				if (method_group == null){
 					// This we report elsewhere as -200, but here we can ignore
-					continue;
+					goto useless_lambda;
 				}
 				MethodInfo p_delegate_method = method_group.Methods [0] as MethodInfo;
 				if (p_delegate_method == null){
 					// This should not happen.
-					continue;
+					goto useless_lambda;
 				}
 				
 				Type p_return_type = p_delegate_method.ReturnType;
 				if (!p_return_type.IsGenericParameter)
-					continue;
+					goto useless_lambda;
 				
 				//
 				// P and L have the same number of parameters, and
@@ -2500,18 +2496,18 @@ namespace Mono.CSharp {
 				ParameterData p_delegate_parameters = TypeManager.GetParameterData (p_delegate_method);
 				int p_delegate_parameter_count = p_delegate_parameters.Count;
 				if (p_delegate_parameter_count != le.Parameters.Count)
-					continue;
+					goto useless_lambda;
 
 				if (le.HasExplicitParameters){
 					for (int j = 0; j < p_delegate_parameter_count; j++){
 						if (p_delegate_parameters.ParameterModifier (j) != 
 						    le.Parameters.ParameterModifier (j))
-							goto do_continue;
+							goto useless_lambda;
 					}
 				} else { 
 					for (int j = 0; j < p_delegate_parameter_count; j++)
 						if (le.Parameters.ParameterModifier (j) != Parameter.Modifier.NONE)
-							goto do_continue;
+							goto useless_lambda;
 				}
 				
 				//
@@ -2576,19 +2572,25 @@ namespace Mono.CSharp {
 					// If it results in a valid expression or statement block
 					//
 					Type lambda_inferred_type = le.TryBuild (ec, types);
-					//Console.WriteLine ("TryBuild: {0}", lambda_inferred_type);
+
 					if (lambda_inferred_type != null){
-						//Console.WriteLine ("Able to build");
+						//
 						// Success, set the proper inferred_type value to the new type.
-						
+						// return true
+						//
 						for (int k = 0; k < method_generic_args.Length; k++){
 							if (method_generic_args [k] == p_return_type){
 								inferred_types [k] = lambda_inferred_type;
-								break;
+
+								lambdas.RemoveAt (i);
+								return true;
 							}
 						}
 					}
 				}
+
+			useless_lambda:
+				lambdas.RemoveAt (i);
 				
 			do_continue:
 				;
@@ -2602,7 +2604,9 @@ namespace Mono.CSharp {
 					return false;
 			}
 #endif
-			return true;
+
+			// No inference was made in any of the elements.
+			return false;
 		}
 	
 		/// <summary>
@@ -2647,8 +2651,8 @@ namespace Mono.CSharp {
 
 			Type[] param_types = new Type [pd.Count];
 			Type[] arg_types = new Type [pd.Count];
-
-			int lambdas = 0;
+			ArrayList lambdas = null;
+			
 			for (int i = 0; i < arg_count; i++) {
 				param_types [i] = pd.ParameterType (i);
 
@@ -2656,8 +2660,11 @@ namespace Mono.CSharp {
 				if (a.Expr is NullLiteral || a.Expr is MethodGroupExpr)
 					continue;
 								
-				if (a.Expr is LambdaExpression)
-					lambdas++;
+				if (a.Expr is LambdaExpression){
+					if (lambdas == null)
+						lambdas = new ArrayList ();
+					lambdas.Add (i);
+				}
 				else if (a.Expr is AnonymousMethodExpression) {
 					if (RootContext.Version != LanguageVersion.LINQ)
 						continue;
@@ -2681,11 +2688,18 @@ namespace Mono.CSharp {
 
 			if (!InferTypeArguments (param_types, arg_types, inferred_types)){
 				//Console.WriteLine ("InferTypeArgument found {0} lambdas ", lambdas);
-				if (lambdas == 0)
+				if (lambdas == null)
 					return false;
 
-				if (!LambdaInfer (ec, method_generic_args, pd, arguments, inferred_types))
-					return false;
+				//
+				// While the lambda expressions lead to a valid inference
+				// 
+				int lambda_count;
+				do {
+					lambda_count = lambdas.Count;
+					if (!LambdaInfer (ec, method_generic_args, pd, arguments, inferred_types, lambdas))
+						return false;
+				} while (lambdas.Count != 0 && lambdas.Count != lambda_count);
 			} 
 
 			method = ((MethodInfo)method).MakeGenericMethod (inferred_types);

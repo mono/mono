@@ -234,10 +234,6 @@ namespace Mono.CSharp {
 				return false;
 
 			if (ec.ReturnType == null){
-				if (!(Expr is ExpressionStatement)){
-					Expression.Error_InvalidExpressionStatement (Expr.Location);
-					return false;
-				}
 				ec.ReturnType = Expr.Type;
 			} else {
 				if (Expr.Type != ec.ReturnType) {

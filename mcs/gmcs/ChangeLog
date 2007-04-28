@@ -1,3 +1,12 @@
+2007-04-27  Miguel de Icaza  <miguel@novell.com>
+
+	* generic.cs (TypeManager.LambdaInfer): now this routine will
+	make only one inference from the list of lambda expression that
+	have not participated in inferring a type.
+
+	(TypeManager.InferTypeArguments): The logic that drives the type
+	inference in lambda expressions is now driven here. 
+
 2007-04-23  Miguel de Icaza  <miguel@novell.com>
 
 	* generic.cs: Large update to LambdaInfer, this is merely an

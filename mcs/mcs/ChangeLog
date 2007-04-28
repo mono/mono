@@ -1,3 +1,12 @@
+2007-04-27  Miguel de Icaza  <miguel@novell.com>
+
+	* statement.cs (If.CloneTo): Only clone the FalseStatement if it
+	exists. 
+
+	* lambda.cs (ContextualReturn.Resolve): An expression is valid
+	inside the ContextualReturn, it does not have to be an
+	ExpressionStatement. 
+
 2007-04-24  Miguel de Icaza  <miguel@novell.com>
 
 	* lambda.cs (ContextualReturn.Resolve): if the return type is not

@@ -325,7 +325,8 @@ namespace Mono.CSharp {
 
 			target.expr = expr.Clone (clonectx);
 			target.TrueStatement = TrueStatement.Clone (clonectx);
-			target.FalseStatement = FalseStatement.Clone (clonectx);
+			if (FalseStatement != null)
+				target.FalseStatement = FalseStatement.Clone (clonectx);
 		}
 	}
 

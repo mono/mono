@@ -1,3 +1,5 @@
+// Compiler options: -langversion:linq
+
 using System;
 public delegate TResult Func<TArg0, TResult> (TArg0 arg0);
 class Demo {
