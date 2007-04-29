@@ -171,7 +171,17 @@ namespace System.Drawing
 
 		public static Color FromName (string colorName)
 		{
-			return ColorConverter.StaticConvertFromString (null, colorName, null);
+			try {
+				KnownColor kc = (KnownColor) Enum.Parse (typeof (KnownColor), colorName, true);
+				return KnownColors.FromKnownColor (kc);
+			}
+			catch {
+				// This is what it returns! 	 
+				Color d = FromArgb (0, 0, 0, 0);
+				d.name = colorName;
+				d.state |= (short) ColorType.Named;
+				return d;
+			}
 		}
 
 	

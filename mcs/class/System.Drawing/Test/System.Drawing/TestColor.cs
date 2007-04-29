@@ -1139,6 +1139,14 @@ namespace MonoTests.System.Drawing {
 			Color.FromArgb (0, 0, 0, 256);
 		}
 
+		[Test]
+		public void FromName_Invalid () {
+			Color c = Color.FromName ("OingoBoingo");
+			Assert ("#1", c.IsNamedColor);
+			AssertEquals ("#2", c.ToArgb (), 0);
+			AssertEquals ("#3", c.Name, "OingoBoingo");
+		}
+
 		private void CheckRed (string message, Color color)
 		{
 			AssertEquals ("A", 255, color.A);
