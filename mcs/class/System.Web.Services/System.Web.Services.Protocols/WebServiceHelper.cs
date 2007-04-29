@@ -82,7 +82,7 @@ namespace System.Web.Services.Protocols
 			content_type = content_type.Trim ();
 			for (start = idx + 1; idx != -1;)
 			{
-				idx = cts.IndexOf (";", start);
+				idx = cts.IndexOf (';', start);
 				string body;
 				if (idx == -1)
 					body = cts.Substring (start);
@@ -92,7 +92,7 @@ namespace System.Web.Services.Protocols
 					start = idx + 1;
 				}
 				body = body.Trim ();
-				if (body.StartsWith ("charset="))
+				if (String.CompareOrdinal (body, 0, "charset=", 0, 8) == 0)
 				{
 					encoding = body.Substring (8);
 					encoding = encoding.TrimStart (trimChars).TrimEnd (trimChars);
@@ -100,6 +100,36 @@ namespace System.Web.Services.Protocols
 			}
 
 			return Encoding.GetEncoding (encoding);
+		}
+
+		public static string GetContextAction (string cts) {
+			if (cts == null || cts.Length == 0)
+				return null;
+
+			int start = 0;
+			int idx = cts.IndexOf (';');
+			for (start = idx + 1; idx != -1;)
+			{
+				idx = cts.IndexOf (';', start);
+				string body;
+				if (idx == -1)
+					body = cts.Substring (start);
+				else 
+				{
+					body = cts.Substring (start, idx - start);
+					start = idx + 1;
+				}
+				body = body.Trim ();
+				string actionEq = "action=";
+				if (String.CompareOrdinal(body, 0, actionEq, 0, actionEq.Length) == 0)
+				{
+					string action = body.Substring (actionEq.Length);
+					return action.Trim (trimChars);
+				}
+			}
+
+
+			return null;
 		}
 
 		public static void WriteSoapMessage (XmlTextWriter xtw, SoapMethodStubInfo method, SoapHeaderDirection dir, object bodyContent, SoapHeaderCollection headers, bool soap12)

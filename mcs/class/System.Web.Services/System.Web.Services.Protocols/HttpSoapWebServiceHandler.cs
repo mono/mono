@@ -144,13 +144,20 @@ namespace System.Web.Services.Protocols
 				// If the routing style is SoapAction, then we can get the method information now
 				// and set it to the SoapMessage
 
-				if (_typeStubInfo.RoutingStyle == SoapServiceRoutingStyle.SoapAction && !message.IsSoap12)
+				if (_typeStubInfo.RoutingStyle == SoapServiceRoutingStyle.SoapAction)
 				{
-					soapAction = request.Headers ["SOAPAction"];
-					if (soapAction == null) throw new SoapException ("Missing SOAPAction header", WebServiceHelper.ClientFaultCode (message.IsSoap12));
+					string headerName = message.IsSoap12 ? "action" : "SOAPAction";
+					soapAction = message.IsSoap12 ? WebServiceHelper.GetContextAction(request.ContentType) : request.Headers [headerName];
+					if (soapAction == null) {
+						if (!message.IsSoap12)
+							throw new SoapException ("Missing SOAPAction header", WebServiceHelper.ClientFaultCode (message.IsSoap12));
+					}
+					else
+					{
 					methodInfo = _typeStubInfo.GetMethodForSoapAction (soapAction);
-					if (methodInfo == null) throw new SoapException ("Server did not recognize the value of HTTP header SOAPAction: " + soapAction, WebServiceHelper.ClientFaultCode (message.IsSoap12));
+					if (methodInfo == null) throw new SoapException ("Server did not recognize the value of HTTP header " + headerName + ": " + soapAction, WebServiceHelper.ClientFaultCode (message.IsSoap12));
 					message.MethodStubInfo = methodInfo;
+					}
 				}
 
 				// Execute the high priority global extensions. Do not try to execute the medium and
@@ -164,7 +171,7 @@ namespace System.Web.Services.Protocols
 				// If the routing style is RequestElement, try to get the method name from the
 				// stream processed by the high priority extensions
 
-				if (_typeStubInfo.RoutingStyle == SoapServiceRoutingStyle.RequestElement || message.IsSoap12)
+				if (_typeStubInfo.RoutingStyle == SoapServiceRoutingStyle.RequestElement || (message.IsSoap12 && soapAction == null))
 				{
 					MemoryStream mstream;
 					byte[] buffer = null;
