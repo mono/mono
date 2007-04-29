@@ -350,11 +350,13 @@ void
 mono_print_ins_index (int i, MonoInst *ins)
 {
 	const char *spec = ins_get_spec (ins->opcode);
+	if (ins->opcode == OP_PHI)
+		printf ("FOO: %d\n", spec);
 	if (i != -1)
 		printf ("\t%-2d %s", i, mono_inst_name (ins->opcode));
 	else
 		printf (" %s", mono_inst_name (ins->opcode));
-	if (!spec) {
+	if (spec == MONO_ARCH_CPU_SPEC) {
 		/* This is a lowered opcode */
 		if (ins->dreg != -1)
 			printf (" R%d <-", ins->dreg);

@@ -1,9 +1,11 @@
-<<<<<<< .working
+2007-04-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-codegen.c (mono_print_ins_index): Fix printing of lowered opcodes.
+
 2007-04-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (mini_emit_class_check_branch): New helper function.
 
-=======
 2007-04-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-amd64.c (peephole_pass_1): New pass to perform before local regalloc.
