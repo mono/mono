@@ -50,11 +50,16 @@ namespace System.Collections.Specialized{
 		{
 		}
 
-		public NameValueCollection (NameValueCollection col) : base (col.HashCodeProvider,col.Comparer)
+		public NameValueCollection (NameValueCollection col ) : base ((col == null) ? null : col.HashCodeProvider,
+				                                             (col == null) ? null : col.Comparer)
 		{
 			if (col==null)
+#if NET_2_0
 				throw new ArgumentNullException ("col");
-			Add (col);
+#else
+				throw new NullReferenceException ();
+#endif				
+			Add(col);
 		}
 
 #if NET_2_0
@@ -67,7 +72,8 @@ namespace System.Collections.Specialized{
 		}
 
 		public NameValueCollection (int capacity, NameValueCollection col)
-			: base (capacity, col.HashCodeProvider, col.Comparer)
+			: base (capacity, (col == null) ? null : col.HashCodeProvider, 
+					(col == null) ? null : col.Comparer)
 		{
 			Add (col);			
 		}
@@ -201,7 +207,17 @@ namespace System.Collections.Specialized{
 
 			if (cachedAll == null)
 				RefreshCachedAll ();
+#if NET_2_0
+			try {
+#endif			
 			cachedAll.CopyTo (dest, index);
+#if NET_2_0
+		        }
+		        catch (ArrayTypeMismatchException)  
+		        {
+		        	throw new InvalidCastException();
+		        }
+#endif		        
 		}
 
 		private void RefreshCachedAll ()

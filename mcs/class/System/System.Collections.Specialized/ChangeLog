@@ -1,3 +1,8 @@
+2007-04-29  Ilya Kharmatsky <ilyak@mainsoft.com>
+
+	* NameValueCollection.cs: Proper exception handling in several
+	constructors and CopyTo method, under NET_2_0 target.
+
 2007-04-15  Marek Safar  <marek.safar@gmail.com>
 
 	* ListDictionary: Removed not used variable.

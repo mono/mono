@@ -292,6 +292,21 @@ namespace MonoTests.System.Collections.Specialized {
 			NameValueCollection c = new NameValueCollection ();
 			c.CopyTo (a, 0);
 		}
+		
+		[Test]
+#if NET_2_0
+		[ExpectedException (typeof (InvalidCastException))]
+#else		
+		[ExpectedException (typeof (ArrayTypeMismatchException))]
+#endif
+		public void CopyTo_WrongTypeArray ()
+		{
+			Array a = Array.CreateInstance (typeof (DateTime), 3);
+			NameValueCollection c = new NameValueCollection ();
+			for (int i = 0; i < 3; i++)
+				c.Add(i.ToString(), i.ToString());
+			c.CopyTo(a, 0);
+		}
 
 		[Test]
 		public void Remove () 
@@ -323,6 +338,28 @@ namespace MonoTests.System.Collections.Specialized {
 				AssertEquals ("Remove-3-Count", 0, c.Count);
 			}
 		}
+		[Test]
+#if NET_2_0
+		[ExpectedException (typeof (ArgumentNullException))]
+#else
+		[ExpectedException (typeof (NullReferenceException))]
+#endif		
+		public void Constructor_Null_NVC ()
+		{
+			NameValueCollection nvc = new NameValueCollection((NameValueCollection)null);
+		}
+		
+		[Test]
+#if NET_2_0
+		[ExpectedException (typeof (ArgumentNullException))]
+#else
+		[ExpectedException (typeof (NullReferenceException))]
+#endif		
+		public void Constructor_Capacity_Null_NVC ()
+		{
+			NameValueCollection nvc = new NameValueCollection(10, (NameValueCollection)null);
+		}
+
 #if NET_2_0
 		[Test]
 		public void Constructor_IEqualityComparer ()

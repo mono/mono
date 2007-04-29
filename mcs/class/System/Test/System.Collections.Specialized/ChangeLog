@@ -1,3 +1,9 @@
+2007-04-29  Ilya Kharmatsky <ilyak@mainsoft.com>
+
+	* NameValueCollectionTest.cs: Added test which checks proper exception
+	handling in several constructors and CopyTo method, under NET_2_0
+	target.
+
 2005-11-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* BitVector32Cas.cs: New. CAS unit tests.
