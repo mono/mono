@@ -1,3 +1,7 @@
+2007-04-29  Pedro Martínez Juliá  <pedromj@gmail.com>
+
+	* DataGridViewColumn.cs: Make HeaderText take preference over Name.
+
 2007-04-29  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* RichTextBox.cs: In LoadFile, use StreamReader to read plain text.

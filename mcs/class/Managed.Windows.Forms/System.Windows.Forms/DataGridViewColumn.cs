@@ -60,6 +60,8 @@ namespace System.Windows.Forms {
 		private bool visible = true;
 		private int width = 100;
 
+		private bool headerTextSet = false;
+
 		public DataGridViewColumn () {
 			cellTemplate = null;
 			base.DefaultCellStyle = new DataGridViewCellStyle();
@@ -227,7 +229,10 @@ Example */
 				}
 				return (string) headerCell.Value;
 			}
-			set { headerCell.Value = value; }
+			set {
+				headerCell.Value = value;
+				headerTextSet = true;
+			}
 		}
 
 		[Browsable (false)]
@@ -286,7 +291,9 @@ Example */
 			set {
 				if (name != value) {
 					name = value;
-					headerCell.Value = value;
+					if (!headerTextSet) {
+						headerCell.Value = value;
+					}
 					if (DataGridView != null) {
 						DataGridView.OnColumnNameChanged(new DataGridViewColumnEventArgs(this));
 					}
