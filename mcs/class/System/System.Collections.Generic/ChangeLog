@@ -1,3 +1,8 @@
+2007-04-30  Raja R Harinath  <harinath@gmail.com>
+
+	* RBTree.cs: New red-black tree implementation for use with
+	SortedDictionary.
+
 2007-04-19  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Queue.cs: Fixed binary serialization, based on patch provided by
