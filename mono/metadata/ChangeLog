@@ -1,3 +1,8 @@
+2007-04-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* metadata.c (mono_metadata_parse_type_full): Avoid an invalid free since the type
+	is now allocated from a mempool.
+
 2007-04-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* threads.c (build_wait_tids): Do not call mono_monitor_enter () here since the
