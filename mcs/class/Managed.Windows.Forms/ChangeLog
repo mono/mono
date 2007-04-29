@@ -1,3 +1,8 @@
+2007-04-29  Duncan Mak  <duncan@a-chinaman.com>
+
+	* SWF.csproj: 
+	* SWF2k5.csproj: Updated.
+
 2007-04-26  Jonathan Pobst  <monkey@jpobst.com>
 
 	* System.Windows.Forms.dll.sources: Add DrawListViewColumnHeaderEventHandler.cs,

@@ -435,8 +435,11 @@
     <Compile Include="System.Windows.Forms\DrawItemEventHandler.cs" />
     <Compile Include="System.Windows.Forms\DrawItemState.cs" />
     <Compile Include="System.Windows.Forms\DrawListViewColumnHeaderEventArgs.cs" />
+    <Compile Include="System.Windows.Forms\DrawListViewColumnHeaderEventHandler.cs" />
     <Compile Include="System.Windows.Forms\DrawListViewItemEventArgs.cs" />
+    <Compile Include="System.Windows.Forms\DrawListViewItemEventHandler.cs" />
     <Compile Include="System.Windows.Forms\DrawListViewSubItemEventArgs.cs" />
+    <Compile Include="System.Windows.Forms\DrawListViewSubItemEventHandler.cs" />
     <Compile Include="System.Windows.Forms\DrawMode.cs" />
     <Compile Include="System.Windows.Forms\DrawTreeNodeEventArgs.cs" />
     <Compile Include="System.Windows.Forms\DrawTreeNodeEventHandler.cs" />
@@ -486,6 +489,7 @@
     <Compile Include="System.Windows.Forms\HelpProvider.cs" />
     <Compile Include="System.Windows.Forms\HorizontalAlignment.cs" />
     <Compile Include="System.Windows.Forms\HScrollProperties.cs" />
+    <Compile Include="System.Windows.Forms\HtmlDocument.cs" />
     <Compile Include="System.Windows.Forms\HtmlElementInsertionOrientation.cs" />
     <Compile Include="System.Windows.Forms\Hwnd.cs" />
     <Compile Include="System.Windows.Forms\IButtonControl.cs" />
@@ -885,6 +889,8 @@
     <Compile Include="System.Windows.Forms\ValidationConstraints.cs" />
     <Compile Include="System.Windows.Forms\View.cs" />
     <Compile Include="System.Windows.Forms\VScrollProperties.cs" />
+    <Compile Include="System.Windows.Forms\WebBrowser.cs" />
+    <Compile Include="System.Windows.Forms\WebBrowserBase.cs" />
     <Compile Include="System.Windows.Forms\WebBrowserDocumentCompletedEventArgs.cs" />
     <Compile Include="System.Windows.Forms\WebBrowserDocumentCompletedEventHandler.cs" />
     <Compile Include="System.Windows.Forms\WebBrowserEncryptionLevel.cs" />
@@ -896,6 +902,7 @@
     <Compile Include="System.Windows.Forms\WebBrowserProgressChangedEventHandler.cs" />
     <Compile Include="System.Windows.Forms\WebBrowserReadyState.cs" />
     <Compile Include="System.Windows.Forms\WebBrowserRefreshOption.cs" />
+    <Compile Include="System.Windows.Forms\WebBrowserSiteBase.cs" />
     <Compile Include="System.Windows.Forms\Win32DnD.cs" />
     <Compile Include="System.Windows.Forms\X11DesktopColors.cs" />
     <Compile Include="System.Windows.Forms\X11Dnd.cs" />
@@ -981,13 +988,13 @@
     <Compile Include="System.Windows.Forms.X11Internal\XplatUIX11-new.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="resources\System.Windows.Forms.resources.prebuilt">
+    <EmbeddedResource Include="resources\System.Windows.Forms.resources">
       <LogicalName>System.Windows.Forms.resources</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="resources\System.Windows.Forms.en.resources.prebuilt">
+    <EmbeddedResource Include="resources\System.Windows.Forms.en.resources">
       <LogicalName>System.Windows.Forms.en.resources</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="resources\System.Windows.Forms.de.resources.prebuilt">
+    <EmbeddedResource Include="resources\System.Windows.Forms.de.resources">
       <LogicalName>System.Windows.Forms.de.resources</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources\SplitterNS.cur">
@@ -1022,7 +1029,7 @@
       <LogicalName>DnDMove.cur</LogicalName>
       <CustomToolNameSpace>System.Windows.Forms.DnDMove.cur</CustomToolNameSpace>
     </EmbeddedResource>
-    <EmbeddedResource Include="resources\keyboards.resources.prebuilt">
+    <EmbeddedResource Include="resources\keyboards.resources">
       <LogicalName>keyboards.resources</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources\16_computer.png">
@@ -1135,6 +1142,27 @@
     </EmbeddedResource>
     <EmbeddedResource Include="resources\6-up.png">
       <LogicalName>6-up.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\nav_delete.png">
+      <LogicalName>nav_delete.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\nav_end.png">
+      <LogicalName>nav_end.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\nav_first.png">
+      <LogicalName>nav_first.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\nav_next.png">
+      <LogicalName>nav_next.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\nav_plus.png">
+      <LogicalName>nav_plus.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\nav_previous.png">
+      <LogicalName>nav_previous.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="">
+      <LogicalName></LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

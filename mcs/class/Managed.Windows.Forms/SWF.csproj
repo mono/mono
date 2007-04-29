@@ -1604,12 +1604,27 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\DrawListViewColumnHeaderEventHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\DrawListViewItemEventArgs.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\DrawListViewItemEventHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\DrawListViewSubItemEventArgs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\DrawListViewSubItemEventHandler.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -1855,6 +1870,11 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\HScrollProperties.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\HtmlDocument.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -3854,6 +3874,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\WebBrowser.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\WebBrowserBase.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\WebBrowserDocumentCompletedEventArgs.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -3905,6 +3935,11 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\WebBrowserRefreshOption.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\WebBrowserSiteBase.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -4525,6 +4560,34 @@
                 />
                 <File
                     RelPath = "resources\6-up.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\nav_delete.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\nav_end.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\nav_first.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\nav_next.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\nav_plus.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\nav_previous.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = ""
                     BuildAction = "EmbeddedResource"
                 />
                 <File
