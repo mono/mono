@@ -1,3 +1,8 @@
+2007-04-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* threads.c (build_wait_tids): Do not call mono_monitor_enter () here since the
+	caller holds threads_lock, leading to deadlocks. Fixes #81476.
+
 2007-04-23  Jonathan Chambers  <joncham@gmail.com>
 
 	* marshal.c: Fix calling convention for CCW on non-windows
