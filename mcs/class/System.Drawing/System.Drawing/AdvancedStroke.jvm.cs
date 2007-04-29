@@ -533,6 +533,10 @@ namespace System.Drawing {
 				}
 			}
 
+			public virtual PathConsumer getConsumer () {
+				return this;
+			}
+
 			public void useProxy(FastPathProducer proxy) {
 				proxy.sendTo(this);
 			}

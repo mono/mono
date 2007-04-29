@@ -224,11 +224,15 @@ namespace System.Drawing
 			lock (creatingCached) {
 				if (cached != null)
 					return cached;
-
+#if TARGET_JVM
+				Color [] colors = (Color []) KnownColors.Values.Clone ();
+#else
 				Array colors = Array.CreateInstance (typeof (Color), KnownColors.ArgbValues.Length - 1);
 				for (int i=1; i < KnownColors.ArgbValues.Length; i++) {
 					colors.SetValue (KnownColors.FromKnownColor ((KnownColor)i), i - 1);
 				}
+#endif
+
 				Array.Sort (colors, 0, colors.Length, new CompareColors ());
 				cached = new StandardValuesCollection (colors);
 			}

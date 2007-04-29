@@ -297,5 +297,203 @@ namespace System.Drawing
 			}
 			return Values [n];
 		}
+
+				public static string GetName (short kc)
+		{
+			switch (kc) {
+			case 1:		return "ActiveBorder";
+			case 2:		return "ActiveCaption";
+			case 3:		return "ActiveCaptionText";
+			case 4:		return "AppWorkspace";
+			case 5:		return "Control";
+			case 6:		return "ControlDark";
+			case 7:		return "ControlDarkDark";
+			case 8:		return "ControlLight";
+			case 9:		return "ControlLightLight";
+			case 10:	return "ControlText";
+			case 11:	return "Desktop";
+			case 12:	return "GrayText";
+			case 13:	return "Highlight";
+			case 14:	return "HighlightText";
+			case 15:	return "HotTrack";
+			case 16:	return "InactiveBorder";
+			case 17:	return "InactiveCaption";
+			case 18:	return "InactiveCaptionText";
+			case 19:	return "Info";
+			case 20:	return "InfoText";
+			case 21:	return "Menu";
+			case 22:	return "MenuText";
+			case 23:	return "ScrollBar";
+			case 24:	return "Window";
+			case 25:	return "WindowFrame";
+			case 26:	return "WindowText";
+			case 27:	return "Transparent";
+			case 28:	return "AliceBlue";
+			case 29:	return "AntiqueWhite";
+			case 30:	return "Aqua";
+			case 31:	return "Aquamarine";
+			case 32:	return "Azure";
+			case 33:	return "Beige";
+			case 34:	return "Bisque";
+			case 35:	return "Black";
+			case 36:	return "BlanchedAlmond";
+			case 37:	return "Blue";
+			case 38:	return "BlueViolet";
+			case 39:	return "Brown";
+			case 40:	return "BurlyWood";
+			case 41:	return "CadetBlue";
+			case 42:	return "Chartreuse";
+			case 43:	return "Chocolate";
+			case 44:	return "Coral";
+			case 45:	return "CornflowerBlue";
+			case 46:	return "Cornsilk";
+			case 47:	return "Crimson";
+			case 48:	return "Cyan";
+			case 49:	return "DarkBlue";
+			case 50:	return "DarkCyan";
+			case 51:	return "DarkGoldenrod";
+			case 52:	return "DarkGray";
+			case 53:	return "DarkGreen";
+			case 54:	return "DarkKhaki";
+			case 55:	return "DarkMagenta";
+			case 56:	return "DarkOliveGreen";
+			case 57:	return "DarkOrange";
+			case 58:	return "DarkOrchid";
+			case 59:	return "DarkRed";
+			case 60:	return "DarkSalmon";
+			case 61:	return "DarkSeaGreen";
+			case 62:	return "DarkSlateBlue";
+			case 63:	return "DarkSlateGray";
+			case 64:	return "DarkTurquoise";
+			case 65:	return "DarkViolet";
+			case 66:	return "DeepPink";
+			case 67:	return "DeepSkyBlue";
+			case 68:	return "DimGray";
+			case 69:	return "DodgerBlue";
+			case 70:	return "Firebrick";
+			case 71:	return "FloralWhite";
+			case 72:	return "ForestGreen";
+			case 73:	return "Fuchsia";
+			case 74:	return "Gainsboro";
+			case 75:	return "GhostWhite";
+			case 76:	return "Gold";
+			case 77:	return "Goldenrod";
+			case 78:	return "Gray";
+			case 79:	return "Green";
+			case 80:	return "GreenYellow";
+			case 81:	return "Honeydew";
+			case 82:	return "HotPink";
+			case 83:	return "IndianRed";
+			case 84:	return "Indigo";
+			case 85:	return "Ivory";
+			case 86:	return "Khaki";
+			case 87:	return "Lavender";
+			case 88:	return "LavenderBlush";
+			case 89:	return "LawnGreen";
+			case 90:	return "LemonChiffon";
+			case 91:	return "LightBlue";
+			case 92:	return "LightCoral";
+			case 93:	return "LightCyan";
+			case 94:	return "LightGoldenrodYellow";
+			case 95:	return "LightGray";
+			case 96:	return "LightGreen";
+			case 97:	return "LightPink";
+			case 98:	return "LightSalmon";
+			case 99:	return "LightSeaGreen";
+			case 100:	return "LightSkyBlue";
+			case 101:	return "LightSlateGray";
+			case 102:	return "LightSteelBlue";
+			case 103:	return "LightYellow";
+			case 104:	return "Lime";
+			case 105:	return "LimeGreen";
+			case 106:	return "Linen";
+			case 107:	return "Magenta";
+			case 108:	return "Maroon";
+			case 109:	return "MediumAquamarine";
+			case 110:	return "MediumBlue";
+			case 111:	return "MediumOrchid";
+			case 112:	return "MediumPurple";
+			case 113:	return "MediumSeaGreen";
+			case 114:	return "MediumSlateBlue";
+			case 115:	return "MediumSpringGreen";
+			case 116:	return "MediumTurquoise";
+			case 117:	return "MediumVioletRed";
+			case 118:	return "MidnightBlue";
+			case 119:	return "MintCream";
+			case 120:	return "MistyRose";
+			case 121:	return "Moccasin";
+			case 122:	return "NavajoWhite";
+			case 123:	return "Navy";
+			case 124:	return "OldLace";
+			case 125:	return "Olive";
+			case 126:	return "OliveDrab";
+			case 127:	return "Orange";
+			case 128:	return "OrangeRed";
+			case 129:	return "Orchid";
+			case 130:	return "PaleGoldenrod";
+			case 131:	return "PaleGreen";
+			case 132:	return "PaleTurquoise";
+			case 133:	return "PaleVioletRed";
+			case 134:	return "PapayaWhip";
+			case 135:	return "PeachPuff";
+			case 136:	return "Peru";
+			case 137:	return "Pink";
+			case 138:	return "Plum";
+			case 139:	return "PowderBlue";
+			case 140:	return "Purple";
+			case 141:	return "Red";
+			case 142:	return "RosyBrown";
+			case 143:	return "RoyalBlue";
+			case 144:	return "SaddleBrown";
+			case 145:	return "Salmon";
+			case 146:	return "SandyBrown";
+			case 147:	return "SeaGreen";
+			case 148:	return "SeaShell";
+			case 149:	return "Sienna";
+			case 150:	return "Silver";
+			case 151:	return "SkyBlue";
+			case 152:	return "SlateBlue";
+			case 153:	return "SlateGray";
+			case 154:	return "Snow";
+			case 155:	return "SpringGreen";
+			case 156:	return "SteelBlue";
+			case 157:	return "Tan";
+			case 158:	return "Teal";
+			case 159:	return "Thistle";
+			case 160:	return "Tomato";
+			case 161:	return "Turquoise";
+			case 162:	return "Violet";
+			case 163:	return "Wheat";
+			case 164:	return "White";
+			case 165:	return "WhiteSmoke";
+			case 166:	return "Yellow";
+			case 167:	return "YellowGreen";
+#if NET_2_0
+			case 168:	return "ButtonFace";
+			case 169:	return "ButtonHighlight";
+			case 170:	return "ButtonShadow";
+			case 171:	return "GradientActiveCaption";
+			case 172:	return "GradientInactiveCaption";
+			case 173:	return "MenuBar";
+			case 174:	return "MenuHighlight";
+#endif
+			default:	return String.Empty;
+			}
+		}
+
+		public static string GetName (KnownColor kc)
+		{
+			return GetName ((short)kc);
+		}
+
+		public static Color FindColorMatch (Color c)
+		{
+			uint argb = (uint) c.ToArgb ();
+			for (int i = 0; i < Values.Length; i++) {
+				if (argb == Values [i].ToArgb ())
+					return KnownColors.FromKnownColor ((KnownColor) i);
+			}
+			return Color.Empty;
+		}
 	}
 }
