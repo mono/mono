@@ -145,7 +145,6 @@ namespace System.Web {
 #else
 		static Exception initialization_exception;
 #endif
-		HttpHandlersSection httpHandlersSection;
 #else
 		HandlerFactoryConfiguration factory_config;
 #endif
@@ -199,9 +198,7 @@ namespace System.Web {
 				}
 #endif
 
-#if NET_2_0
-				httpHandlersSection = (HttpHandlersSection) WebConfigurationManager.GetSection ("system.web/httpHandlers");
-#else
+#if ONLY_1_1
 				factory_config = (HandlerFactoryConfiguration) HttpContext.GetAppConfig ("system.web/httpHandlers");
 #endif
 			}
@@ -1146,6 +1143,7 @@ namespace System.Web {
 			
 			IHttpHandler handler = null;
 #if NET_2_0
+			HttpHandlersSection	httpHandlersSection = (HttpHandlersSection) WebConfigurationManager.GetSection ("system.web/httpHandlers");
 			object o = httpHandlersSection.LocateHandler (verb, url);
 #else
 			object o = factory_config.LocateHandler (verb, url);

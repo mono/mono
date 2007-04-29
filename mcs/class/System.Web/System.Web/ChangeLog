@@ -1,3 +1,8 @@
+2007-04-29 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* HttpApplication.cs: doesn't cache httpHandlersSection in instance, 
+	that allows to consider httpHandlers section in nested web.config.	
+
 2007-04-27  Marek Habersack  <mhabersack@novell.com>
 
 	* XmlSiteMapProvider.cs: add support for siteMapFile attribute.
