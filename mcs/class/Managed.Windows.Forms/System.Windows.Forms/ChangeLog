@@ -1,3 +1,8 @@
+2007-04-29  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* RichTextBox.cs: In LoadFile, use StreamReader to read plain text.
+	Fixes bug #81479. Include details of exception when LoadFile fails.
+
 2007-04-28  Alan McGovern <alan.mcgovern@gmail.com>
 
 	* DrawListViewSubItemEventArgs.cs: Added missing setter

@@ -876,21 +876,21 @@ namespace System.Windows.Forms {
 			
 			// FIXME - ignoring unicode
 			if (fileType == RichTextBoxStreamType.PlainText) {
-				StringBuilder   sb;
-				int             count;
-				byte[]          buffer;
+				StringBuilder sb;
+				char[] buffer;
 
 				try {
-					sb = new StringBuilder((int)data.Length);
-					buffer = new byte[1024];
+					sb = new StringBuilder ((int) data.Length);
+					buffer = new char [1024];
 				} catch {
 					throw new IOException("Not enough memory to load document");
 				}
 
-				count = 0;
-				while (count < data.Length) {
-					count += data.Read(buffer, count, 1024);
-					sb.Append(buffer);
+				StreamReader sr = new StreamReader (data, Encoding.Default, true);
+				int charsRead = sr.Read (buffer, 0, buffer.Length);
+				while (charsRead > 0) {
+					sb.Append (buffer, 0, charsRead);
+					charsRead = sr.Read (buffer, 0, buffer.Length);
 				}
 				base.Text = sb.ToString();
 				return;
@@ -924,8 +924,8 @@ namespace System.Windows.Forms {
 				LoadFile(data, fileType);
 			}
 #if !DEBUG
-			catch {
-				throw new IOException("Could not open file " + path);
+			catch (Exception ex) {
+				throw new IOException("Could not open file " + path, ex);
 			}
 #endif
 			finally {
