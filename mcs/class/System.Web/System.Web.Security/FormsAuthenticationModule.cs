@@ -179,7 +179,7 @@ namespace System.Web.Security
 			StringBuilder login = new StringBuilder ();
 			login.Append (UrlUtils.Combine (context.Request.ApplicationPath, loginPage));
 			login.AppendFormat ("?ReturnUrl={0}", HttpUtility.UrlEncode (context.Request.RawUrl));
-			context.Response.Redirect (login.ToString ());
+			context.Response.Redirect (login.ToString (), false);
 		}
 
 		public event FormsAuthenticationEventHandler Authenticate;
