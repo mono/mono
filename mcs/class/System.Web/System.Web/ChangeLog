@@ -1,5 +1,9 @@
 2007-04-29 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* HttpContext.jvm.cs: Response.End() must abort thread if not async.	
+
+2007-04-29 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* HttpApplication.cs: doesn't cache httpHandlersSection in instance, 
 	that allows to consider httpHandlers section in nested web.config.	
 

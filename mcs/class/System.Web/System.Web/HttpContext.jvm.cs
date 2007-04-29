@@ -84,7 +84,7 @@ namespace System.Web {
 
 		internal bool TimeoutPossible
 		{
-			get { return false; }
+			get { return true; }
 		}
 
 		internal bool IsPortletRequest { get { return ServletRequest is IPortletRequest; } }
