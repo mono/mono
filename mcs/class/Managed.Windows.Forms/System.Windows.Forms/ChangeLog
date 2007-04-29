@@ -1,3 +1,9 @@
+2007-04-29  Andreia Gaita  <avidigal@novell.com>
+
+	* TabControl.cs: Implement missing 2.0 methods (SelectTab, 
+	DeselectTab). Implement missing 2.0 TabPageCollection methods
+	(Add, ContainsKey, RemoveByKey, IndexOfKey)
+
 2007-04-29  Pedro Martínez Juliá  <pedromj@gmail.com>
 
 	* DataGridViewColumn.cs: Make HeaderText take preference over Name.

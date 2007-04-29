@@ -437,6 +437,22 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
+		public void SelectTab (TabPage tabPage)
+		{
+			if (tabPage == null)
+				throw new ArgumentNullException ("tabPage");
+
+			SelectTab (this.tab_pages [tabPage]);
+		}
+
+		public void SelectTab (string tabPageName)
+		{
+			if (tabPageName == null)
+				throw new ArgumentNullException ("tabPageName");
+
+			SelectTab (this.tab_pages [tabPageName]);
+		}
+
 		public void SelectTab (int index)
 		{
 			if (index < 0 || index > this.tab_pages.Count - 1)
@@ -444,6 +460,33 @@ namespace System.Windows.Forms {
 				
 			SelectedIndex = index;
 		}
+
+		public void DeselectTab (TabPage tabPage)
+		{
+			if (tabPage == null)
+				throw new ArgumentNullException ("tabPage");
+
+			DeselectTab (this.tab_pages [tabPage]);
+		}
+
+		public void DeselectTab (string key)
+		{
+			if (key == null)
+				throw new ArgumentNullException ("tabPageName");
+
+			DeselectTab (this.tab_pages [key]);
+		}
+
+		public void DeselectTab (int index)
+		{
+			if (index == SelectedIndex) {
+				if (index >= 0 && index < this.tab_pages.Count - 1)
+					SelectedIndex = ++index;
+				else
+					SelectedIndex = 0;
+			}
+		}
+
 #endif
 
 		public override string ToString ()
@@ -769,11 +812,6 @@ namespace System.Windows.Forms {
 		private void SizeChangedHandler (object sender, EventArgs e)
 		{
 			Redraw ();
-		}
-
-		internal void UpdateTabpage (TabPage page)
-		{
-
 		}
 
 		internal int IndexForTabPage (TabPage page)
@@ -1346,6 +1384,33 @@ namespace System.Windows.Forms {
 					owner.SetTab (index, value);
 				}    
 			}
+#if NET_2_0
+			public virtual TabPage this [string key] {
+				get {
+					if (string.IsNullOrEmpty (key))
+						return null;
+
+					int index = this.IndexOfKey (key);
+					if (index < 0 || index >= this.Count)
+						return null;
+					
+					return this[index];
+				}
+			}
+#endif
+
+			internal int this[TabPage tabPage] {
+				get {
+					if (tabPage == null)
+						return -1;
+
+					for (int i = 0; i < this.Count; i++)
+						if (this[i].Equals (tabPage))
+							return i;
+
+					return -1;
+				}
+			}
 
 			bool ICollection.IsSynchronized {
 				get { return false; }
@@ -1375,6 +1440,37 @@ namespace System.Windows.Forms {
 				owner.Controls.Add (page);
 			}
 
+#if NET_2_0
+			public void Add (string text)
+			{
+				TabPage page = new TabPage (text);
+				this.Add (page);
+			}
+
+			public void Add (string key, string text)
+			{
+				TabPage page = new TabPage (text);
+				page.Name = key;
+				this.Add (page);
+			}
+
+			public void Add (string key, string text, int imageIndex)
+			{
+				TabPage page = new TabPage (text);
+				page.Name = key;
+				page.ImageIndex = imageIndex;
+				this.Add (page);
+			}
+
+			[MonoTODO("Implement imagekey")]
+			public void Add (string key, string text, string imageKey)
+			{
+				TabPage page = new TabPage (text);
+				page.Name = key;
+				this.Add (page);
+			}
+#endif
+
 			public void AddRange (TabPage [] pages)
 			{
 				if (pages == null)
@@ -1394,6 +1490,14 @@ namespace System.Windows.Forms {
 				return owner.Controls.Contains (page);
 			}
 
+#if NET_2_0
+			public virtual bool ContainsKey (string key)
+			{
+				int index = this.IndexOfKey (key);
+				return (index >= 0 && index < this.Count);
+			}
+#endif
+
 			public IEnumerator GetEnumerator ()
 			{
 				return owner.Controls.GetEnumerator ();
@@ -1404,6 +1508,23 @@ namespace System.Windows.Forms {
 				return owner.Controls.IndexOf (page);
 			}
 
+#if NET_2_0
+			public virtual int IndexOfKey(string key)
+			{
+				if (string.IsNullOrEmpty (key))
+					return -1;
+
+				for (int i = 0; i < this.Count; i++) {
+					if (string.Compare (this[i].Name, key, true, 
+						System.Globalization.CultureInfo.InvariantCulture) == 0) {
+						return i;
+					}
+				}
+
+				return -1;
+			}
+#endif
+
 			public void Remove (TabPage page)
 			{
 				owner.Controls.Remove (page);
@@ -1413,6 +1534,15 @@ namespace System.Windows.Forms {
 			{
 				owner.Controls.RemoveAt (index);
 			}
+
+#if NET_2_0
+			public virtual void RemoveByKey (string key)
+			{
+				int index = this.IndexOfKey (key);
+				if (index >= 0 && index < this.Count)
+					this.RemoveAt (index);
+			}
+#endif
 
 			void ICollection.CopyTo (Array dest, int index)
 			{

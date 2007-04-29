@@ -621,12 +621,41 @@ namespace MonoTests.System.Windows.Forms
 		public void MethodSelectTab ()
 		{
 			TabControl tc = new TabControl ();
-			tc.TabPages.Add (new TabPage ("One"));
-			tc.TabPages.Add (new TabPage ("Two"));
+			tc.TabPages.Add ("One", "One");
+			tc.TabPages.Add ("Two", "Two");
+			tc.TabPages.Add ("Three", "Three");
 			
 			tc.SelectTab (1);
 			Assert.AreEqual (1, tc.SelectedIndex, "A1");
-		}
+
+			tc.SelectTab (tc.TabPages[2]);
+			Assert.AreEqual (2, tc.SelectedIndex, "A2");
+
+			tc.SelectTab ("One");
+			Assert.AreEqual (0, tc.SelectedIndex, "A3");
+
+			tc.SelectTab (1);
+			tc.DeselectTab (1);
+			Assert.AreEqual (2, tc.SelectedIndex, "A4");
+
+			tc.DeselectTab (2);
+			Assert.AreEqual (0, tc.SelectedIndex, "A5");
+
+			tc.DeselectTab (tc.TabPages[0]);
+			Assert.AreEqual (1, tc.SelectedIndex, "A6");		
+
+			tc.DeselectTab (tc.TabPages[0]);
+			Assert.AreEqual (1, tc.SelectedIndex, "A7");		
+
+			tc.DeselectTab (tc.TabPages[1]);
+			Assert.AreEqual (2, tc.SelectedIndex, "A7");		
+
+			tc.DeselectTab ("Two");
+			Assert.AreEqual (2, tc.SelectedIndex, "A8");		
+
+			tc.DeselectTab ("Three");
+			Assert.AreEqual (0, tc.SelectedIndex, "A8");		
+}
 
 		[Test]
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]

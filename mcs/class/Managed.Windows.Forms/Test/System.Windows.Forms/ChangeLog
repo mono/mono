@@ -1,3 +1,7 @@
+2007-04-29  Andreia Gaita  <avidigal@novell.com>
+
+	* TabControlTest.cs: Add more 2.0 select and deselect tab tests.
+
 2007-04-28  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DataBindingTest.cs: Avoid using anonymous methods to allow tests to
