@@ -499,7 +499,7 @@ namespace System.Windows.Forms
 			if (AppClicked != null) AppClicked (null, EventArgs.Empty);
 			
 			if (Application.KeyboardCapture != null)
-				Application.KeyboardCapture.KeyboardActive = false;
+				Application.KeyboardCapture.Dismiss (ToolStripDropDownCloseReason.AppClicked);
 		}
 
 		internal static void FireAppFocusChanged (Form form)
@@ -507,7 +507,7 @@ namespace System.Windows.Forms
 			if (AppFocusChange != null) AppFocusChange (form, EventArgs.Empty);
 
 			if (Application.KeyboardCapture != null)
-				Application.KeyboardCapture.KeyboardActive = false;
+				Application.KeyboardCapture.Dismiss (ToolStripDropDownCloseReason.AppFocusChange);
 		}
 
 		internal static void FireAppFocusChanged (object sender)
@@ -515,7 +515,7 @@ namespace System.Windows.Forms
 			if (AppFocusChange != null) AppFocusChange (sender, EventArgs.Empty);
 
 			if (Application.KeyboardCapture != null)
-				Application.KeyboardCapture.KeyboardActive = false;
+				Application.KeyboardCapture.Dismiss (ToolStripDropDownCloseReason.AppFocusChange);
 		}
 		
 		private static void OnRendererChanged (EventArgs e)

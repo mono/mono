@@ -662,6 +662,9 @@ namespace System.Windows.Forms {
 					Message m;
 					m = Message.Create(msg.hwnd, (int)msg.message, msg.wParam, msg.lParam);
 
+					Control c;
+					c = Control.FromHandle(msg.hwnd);
+
 #if NET_2_0
 					// If we have a control with keyboard capture (usually a *Strip)
 					// give it the message, and then drop the message
@@ -674,14 +677,17 @@ namespace System.Windows.Forms {
 						}
 
 						m.HWnd = keyboard_capture.Handle;
-						keyboard_capture.PreProcessMessage (ref m);
-						continue;
+						
+						if (!keyboard_capture.PreProcessMessage (ref m)) {
+							if (c == null || c.Parent == null || !(c.Parent is ToolStrip))
+								continue;
+							else
+								m.HWnd = msg.hwnd;
+						} else
+							continue;
 					}
 #endif
 
-					Control c;
-
-					c = Control.FromHandle(msg.hwnd);
 					if ((c != null) && !c.PreProcessMessage(ref m)) {
 						goto default;
 					}

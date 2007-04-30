@@ -562,6 +562,13 @@ namespace System.Windows.Forms
 
 		protected override bool ProcessDialogKey (Keys keyData)
 		{
+			// We don't want to let our base change the active ToolStrip
+			switch (keyData) {
+				case Keys.Control | Keys.Tab:
+				case Keys.Control | Keys.Shift | Keys.Tab:
+					return true;
+			}
+			
 			return base.ProcessDialogKey (keyData);
 		}
 
@@ -849,12 +856,14 @@ namespace System.Windows.Forms
 			return false;
 		}
 
-		internal override void SelectNextToolStripItem (ToolStripItem start, bool forward)
+		internal override ToolStripItem SelectNextToolStripItem (ToolStripItem start, bool forward)
 		{
 			ToolStripItem next_item = this.GetNextItem (start, forward ? ArrowDirection.Down : ArrowDirection.Up);
 
 			if (next_item != null)
 				this.ChangeSelection (next_item);
+				
+			return (next_item);
 		}
 		
 		private void ToolStripMenuTracker_AppFocusChange (object sender, EventArgs e)

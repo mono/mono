@@ -45,6 +45,7 @@ namespace System.Windows.Forms
 
 			this.control = c;
 			this.control_align = ContentAlignment.MiddleCenter;
+			this.control.TabStop = false;
 			this.OnSubscribeControlEvents (this.control);
 		}
 
@@ -380,6 +381,11 @@ namespace System.Windows.Forms
 				eh (this, e);
 		}
 
+		protected internal override bool ProcessDialogKey (Keys keyData)
+		{
+			return base.ProcessDialogKey (keyData);
+		}
+		
 		protected override void SetVisibleCore (bool visible)
 		{
 			base.SetVisibleCore (visible);
@@ -456,6 +462,14 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Private Methods
+		internal override void Dismiss (ToolStripDropDownCloseReason reason)
+		{
+			if (this.Selected)
+				this.Parent.Focus ();
+				
+			base.Dismiss (reason);
+		}
+		
 		private void HandleEnter (object sender, EventArgs e)
 		{
 			this.OnEnter (e);

@@ -984,6 +984,9 @@ namespace System.Windows.Forms
 
 		protected override bool ProcessDialogKey (Keys keyData)
 		{
+			if (!this.KeyboardActive)
+				return false;
+				
 			// Give each item a chance to handle the key
 			foreach (ToolStripItem tsi in this.Items)
 				if (tsi.ProcessDialogKey (keyData))
@@ -993,10 +996,44 @@ namespace System.Windows.Forms
 			if (this.ProcessArrowKey (keyData))
 				return true;
 			
+			ToolStrip ts = null;
+			
 			switch (keyData) {
 				case Keys.Escape:
 					this.Dismiss (ToolStripDropDownCloseReason.Keyboard);
 					return true;
+			
+				case Keys.Control | Keys.Tab:
+					ts = ToolStripManager.GetNextToolStrip (this, true);
+					
+					if (ts != null) {
+						foreach (ToolStripItem tsi in this.Items)
+							tsi.Dismiss (ToolStripDropDownCloseReason.Keyboard);
+
+						ToolStripManager.SetActiveToolStrip (ts);
+						ts.SelectNextToolStripItem (null, true);
+					}
+					
+					return true;
+				case Keys.Control | Keys.Shift | Keys.Tab:
+					ts = ToolStripManager.GetNextToolStrip (this, false);
+
+					if (ts != null) {
+						foreach (ToolStripItem tsi in this.Items)
+							tsi.Dismiss (ToolStripDropDownCloseReason.Keyboard);
+
+						ToolStripManager.SetActiveToolStrip (ts);
+						ts.SelectNextToolStripItem (null, true);
+					}
+					
+					return true;
+				case Keys.Down:
+				case Keys.Up:
+				case Keys.Left:
+				case Keys.Right:
+					if (GetCurrentlySelectedItem () is ToolStripControlHost)
+						return false;
+					break;
 			}
 
 			return base.ProcessDialogKey (keyData);
@@ -1292,25 +1329,63 @@ namespace System.Windows.Forms
 
 		internal virtual bool ProcessArrowKey (Keys keyData)
 		{
+			ToolStripItem tsi;
+			
 			switch (keyData) {
 				case Keys.Right:
+					tsi = this.GetCurrentlySelectedItem ();
+					
+					if (tsi is ToolStripControlHost)
+						return false;
+					
+					tsi = this.SelectNextToolStripItem (tsi, true);
+					
+					if (tsi is ToolStripControlHost)
+						(tsi as ToolStripControlHost).Focus ();
+						
+					return true;
 				case Keys.Tab:
-					this.SelectNextToolStripItem (this.GetCurrentlySelectedItem (), true);
+					tsi = this.GetCurrentlySelectedItem ();
+
+					tsi = this.SelectNextToolStripItem (tsi, true);
+
+					if (tsi is ToolStripControlHost)
+						(tsi as ToolStripControlHost).Focus ();
+						
 					return true;
 				case Keys.Left:
+					tsi = this.GetCurrentlySelectedItem ();
+
+					if (tsi is ToolStripControlHost)
+						return false;
+
+					tsi = this.SelectNextToolStripItem (tsi, false);
+
+					if (tsi is ToolStripControlHost)
+						(tsi as ToolStripControlHost).Focus ();
+
+					return true;
 				case Keys.Shift | Keys.Tab:
-					this.SelectNextToolStripItem (this.GetCurrentlySelectedItem (), false);
+					tsi = this.GetCurrentlySelectedItem ();
+					
+					tsi = this.SelectNextToolStripItem (tsi, false);
+
+					if (tsi is ToolStripControlHost)
+						(tsi as ToolStripControlHost).Focus ();
+
 					return true;
 			}
 
 			return false;
 		}
 
-		internal virtual void SelectNextToolStripItem (ToolStripItem start, bool forward)
+		internal virtual ToolStripItem SelectNextToolStripItem (ToolStripItem start, bool forward)
 		{
 			ToolStripItem next_item = this.GetNextItem (start, forward ? ArrowDirection.Right : ArrowDirection.Left);
 			
 			this.ChangeSelection (next_item);
+			
+			return next_item;
 		}
 
 		#region Stuff for ToolTips
