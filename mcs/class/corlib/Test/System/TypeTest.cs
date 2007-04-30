@@ -579,6 +579,13 @@ PublicKeyToken=b77a5c561934e089"));
 #endif // TARGET_JVM
 
 		[Test]
+		public void Equals_Type_Null ()
+		{
+			Assert.IsFalse (typeof (int).Equals ((Type) null), "#1");
+			Assert.IsFalse (typeof (int).Equals ((object) null), "#2");
+		}
+
+		[Test]
 		[Category("NotWorking")]
 		public void GetElementType_Bug63841 ()
 		{
