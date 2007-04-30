@@ -29,6 +29,7 @@
 #if NET_2_0
 
 using System.Collections;
+using System.Globalization;
 using System.Security.Permissions;
 
 namespace System.Web.UI.HtmlControls
