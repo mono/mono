@@ -3,6 +3,7 @@ Assembly/AssemblyInfo.cs
 ../../build/common/Locale.cs
 Microsoft.Win32/IRegistryApi.cs
 Microsoft.Win32/RegistryKey.cs
+Microsoft.Win32/RegistryKeyPermissionCheck.cs
 Microsoft.Win32/Registry.cs
 Microsoft.Win32/RegistryHive.cs
 Microsoft.Win32/RegistryValueKind.cs

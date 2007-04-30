@@ -32,10 +32,12 @@
 using System;
 using System.IO;
 using System.Threading;
+using System.Runtime.ConstrainedExecution;
 
 namespace Microsoft.Win32.SafeHandles {
 
 	public sealed class SafeWaitHandle : SafeHandleZeroOrMinusOneIsInvalid {
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
 		public SafeWaitHandle (IntPtr preexistingHandle, bool ownsHandle) : base (ownsHandle)
 		{
 			SetHandle (preexistingHandle);

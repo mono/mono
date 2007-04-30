@@ -1,3 +1,8 @@
+2007-04-30  Dick Porter  <dick@ximian.com>
+
+	* corlib.dll.sources: Added
+	Microsoft.Win32.RegistryKeyPermissionCheck.cs
+
 2007-03-22  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* corlib_test.dll.sources: Added missing Rfc2898DeriveBytes unit tests

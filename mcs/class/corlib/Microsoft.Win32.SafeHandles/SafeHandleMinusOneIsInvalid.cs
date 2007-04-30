@@ -31,10 +31,12 @@
 
 using System;
 using System.Runtime.InteropServices;
+using System.Runtime.ConstrainedExecution;
 
 namespace Microsoft.Win32.SafeHandles {
 
 	public abstract class SafeHandleMinusOneIsInvalid : SafeHandle, IDisposable {
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
 		protected SafeHandleMinusOneIsInvalid (bool ownsHandle) : base ((IntPtr) 0, ownsHandle) {
 		}
 

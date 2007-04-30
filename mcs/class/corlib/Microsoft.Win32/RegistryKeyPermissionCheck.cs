@@ -1,11 +1,11 @@
 //
-// Microsoft.Win32.RegistryHive.cs
+// Microsoft.Win32.RegistryKeyPermissionCheck.cs
 //
 // Author:
-//   Alexandre Pigolkine (pigolkine@gmx.de)
+//	Dick Porter (dick@ximian.com)
 
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,27 +29,15 @@
 
 using System;
 
-#if NET_2_0
-using System.Runtime.InteropServices;
-#endif
-
 namespace Microsoft.Win32
 {
 
 	[Serializable]
-#if NET_2_0
-	[ComVisible (true)]
-#endif
-	public enum RegistryHive
+	public enum RegistryKeyPermissionCheck
 	{
-		
-		ClassesRoot = -2147483648,
-		CurrentConfig = -2147483643,
-		CurrentUser = -2147483647,
-		DynData = -2147483642,
-		LocalMachine = -2147483646,
-		PerformanceData = -2147483644,
-		Users = -2147483645
+		Default			= 0,
+		ReadSubTree		= 1,
+		ReadWriteSubTree	= 2,
 	}
 
 }

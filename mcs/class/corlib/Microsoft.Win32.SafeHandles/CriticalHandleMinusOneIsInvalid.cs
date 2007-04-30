@@ -31,10 +31,12 @@
 
 using System;
 using System.Runtime.InteropServices;
+using System.Runtime.ConstrainedExecution;
 
 namespace Microsoft.Win32.SafeHandles {
 
 	public abstract class CriticalHandleMinusOneIsInvalid : CriticalHandle, IDisposable {
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
 		protected CriticalHandleMinusOneIsInvalid () : base ((IntPtr) (-1)) {
 		}
 

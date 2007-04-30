@@ -37,11 +37,18 @@ using System.Runtime.InteropServices;
 using System.Security;
 using System.Text;
 
+#if NET_2_0
+using System.Security.AccessControl;
+#endif
+
 namespace Microsoft.Win32
 {
 	/// <summary>
 	///	Wrapper class for Windows Registry Entry.
 	/// </summary>
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public sealed class RegistryKey : MarshalByRefObject, IDisposable 
 	{
 		//
@@ -258,6 +265,12 @@ namespace Microsoft.Win32
 
 			return RegistryApi.GetValue (this, name, defaultValue, options);
 		}
+
+		[ComVisible (false)]
+		public RegistryValueKind GetValueKind (string name)
+		{
+			throw new NotImplementedException ();
+		}
 #endif
 
 		/// <summary>
@@ -274,7 +287,20 @@ namespace Microsoft.Win32
 				throw new UnauthorizedAccessException ("Cannot write to the registry key.");
 			return RegistryApi.CreateSubKey (this, subkey);
 		}
-		
+
+#if NET_2_0
+		[ComVisible (false)]
+		public RegistryKey CreateSubKey (string subkey, RegistryKeyPermissionCheck permissionCheck)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[ComVisible (false)]
+		public RegistryKey CreateSubKey (string subkey, RegistryKeyPermissionCheck permissionCheck, RegistrySecurity registrySecurity)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 		
 		/// <summary>
 		///	Delete the specified subkey.
@@ -361,6 +387,18 @@ namespace Microsoft.Win32
 
 			RegistryApi.DeleteValue (this, value, shouldThrowWhenKeyMissing);
 		}
+
+#if NET_2_0
+		public RegistrySecurity GetAccessControl ()
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public RegistrySecurity GetAccessControl (AccessControlSections includeSections)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 		
 		
 		/// <summary>
@@ -391,6 +429,25 @@ namespace Microsoft.Win32
 				throw new ArgumentNullException ("machineName");
 			return RegistryApi.OpenRemoteBaseKey (hKey, machineName);
 		}
+
+#if NET_2_0
+		[ComVisible (false)]
+		public RegistryKey OpenSubKey (string name, RegistryKeyPermissionCheck permissionCheck)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[ComVisible (false)]
+		public RegistryKey OpenSubKey (string name, RegistryKeyPermissionCheck permissionCheck, RegistryRights rights)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public void SetAccessControl (RegistrySecurity registrySecurity)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 		
 		
 		/// <summary>

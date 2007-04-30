@@ -31,8 +31,15 @@
 
 using System;
 
+#if NET_2_0
+using System.Runtime.InteropServices;
+#endif
+
 namespace Microsoft.Win32
 {
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public
 #if NET_2_0
 	static
