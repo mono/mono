@@ -66,7 +66,7 @@ namespace System.Data.Common {
 				}
 			}
 
-			throw new ConfigurationException("DataProvider is missing!");
+			throw new ConfigurationErrorsException("Failed to find or load the registered .Net Framework Data Provider.");
 		}
 
 		public static DbProviderFactory GetFactory (string providerInvariantName)
@@ -77,7 +77,7 @@ namespace System.Data.Common {
 				if (row != null)
 					return GetFactory (row);
 			}
-			throw new ConfigurationException ("DataProvider is not found!");
+			throw new ConfigurationErrorsException ("Failed to find or load the registered .Net Framework Data Provider.");
 		}
 
 		public static DataTable GetFactoryClasses ()

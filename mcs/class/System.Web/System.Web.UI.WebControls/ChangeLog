@@ -1,3 +1,8 @@
+2007-04-30  Marek Habersack  <mhabersack@novell.com>
+
+	* SqlDataSource.cs: do not catch the exception if ProviderName is
+	not null or empty (as per docs and what MS.NET does).
+
 2007-04-19 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* ChangePassword.cs:

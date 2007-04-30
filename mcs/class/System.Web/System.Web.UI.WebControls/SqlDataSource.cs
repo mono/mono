@@ -91,13 +91,9 @@ namespace System.Web.UI.WebControls {
 		{
 			DbProviderFactory f = null;
 
-			if (ProviderName != null && ProviderName != "") {
-				try {
-					f = DbProviderFactories.GetFactory(ProviderName);
-				}
-				catch { /* nada */ }
-				if (f != null)
-					return f;
+			if (!String.IsNullOrEmpty (ProviderName)) {
+				f = DbProviderFactories.GetFactory(ProviderName);
+				return f;
 			}
 
 			return SqlClientFactory.Instance;

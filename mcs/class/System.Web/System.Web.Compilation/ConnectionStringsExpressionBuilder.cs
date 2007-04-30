@@ -54,7 +54,7 @@ namespace System.Web.Compilation {
 			Pair connString = parsedData as Pair;
 			return new CodeMethodInvokeExpression (
 				new CodeTypeReferenceExpression (typeof (ConnectionStringsExpressionBuilder)),
-				"GetConnectionString",
+				(bool)connString.Second ? "GetConnectionStringProviderName" : "GetConnectionString",
 				new CodeExpression [] {new CodePrimitiveExpression (connString.First)}
 			);
 		}
@@ -63,7 +63,7 @@ namespace System.Web.Compilation {
 		{
 			ConnectionStringSettings conn = WebConfigurationManager.ConnectionStrings [connectionStringName];
 			if (conn == null)
-				return "";
+				return String.Empty;
 			else
 				return conn.ConnectionString;
 		}
@@ -72,14 +72,29 @@ namespace System.Web.Compilation {
 		{
 			ConnectionStringSettings conn = WebConfigurationManager.ConnectionStrings [connectionStringName];
 			if (conn == null)
-				return "";
+				return String.Empty;
 			else
 				return conn.ProviderName;
 		}
 
 		public override	object ParseExpression (string expression, Type propertyType, ExpressionBuilderContext context)
 		{
-			return new Pair (expression, GetConnectionString (expression));
+			bool wantsProviderName = false;
+			string connStringName = String.Empty;
+
+			if (!String.IsNullOrEmpty (expression)) {
+				int subidx = expression.Length;
+				
+				if (expression.EndsWith (".providername", StringComparison.InvariantCultureIgnoreCase)) {
+					wantsProviderName = true;
+					subidx -= 13;
+				} else if (expression.EndsWith (".connectionstring", StringComparison.InvariantCultureIgnoreCase))
+					subidx -= 17;
+
+				connStringName = expression.Substring (0, subidx);
+			}
+			
+			return new Pair (connStringName, wantsProviderName);
 		}
 
 		public override bool SupportsEvaluate {

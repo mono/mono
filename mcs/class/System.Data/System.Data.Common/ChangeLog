@@ -1,3 +1,7 @@
+2007-04-30  Marek Habersack  <mhabersack@novell.com>
+
+	* DbProviderFactories.cs: throw the same exception MS.NET does.
+
 2007-03-03  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DbProviderFactoriesConfigurationHandler.cs: Added support for
