@@ -237,7 +237,7 @@ namespace System.Windows.Forms
 					continue;
 					
 				if ((tsi = FindMdiMenuItemOfForm (mdichild)) == null) {
-					if (CountMdiMenuItems () == 0 && this.mdi_window_list_item.DropDownItems.Count > 0)
+					if (CountMdiMenuItems () == 0 && this.mdi_window_list_item.DropDownItems.Count > 0 && !(this.mdi_window_list_item.DropDownItems[this.mdi_window_list_item.DropDownItems.Count - 1] is ToolStripSeparator))
 						this.mdi_window_list_item.DropDownItems.Add (new ToolStripSeparator ());
 						
 					tsi = new ToolStripMenuItem ();

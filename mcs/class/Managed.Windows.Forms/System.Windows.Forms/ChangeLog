@@ -1,3 +1,8 @@
+2007-04-30  Jonathan Pobst  <monkey@jpobst.com>
+
+	* MenuStrip.cs: Don't let multiple ToolStripSeparators get added to
+	the MDI menu item.  [Fixes bug #81483]
+
 2007-04-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DataGridViewColumn.cs: Initialize value of headercell to zero-length
