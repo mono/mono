@@ -39,9 +39,14 @@ namespace MonoTests.System.Windows.Forms
 	[TestFixture]
 	public class DataGridViewColumnTest
 	{
+		[SetUp]
+		public void SetUp ()
+		{
+			columnChanged = 0;
+		}
+
 		[Test] // bug #80746
-		[Category ("NotWorking")]
-		public void HeaderText ()
+		public void HeaderText_NotBound ()
 		{
 			DataGridViewColumn dvc = new DataGridViewColumn ();
 			Assert.AreEqual (string.Empty, dvc.HeaderText, "#A1");
@@ -70,26 +75,146 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")]
-		public void Name ()
+		public void HeaderText_Bound ()
 		{
-			DataGridViewColumn dvc = new DataGridViewColumn ();
-			Assert.AreEqual (string.Empty, dvc.Name, "#A1");
+			DataGridView dataGrid = new DataGridView ();
+			DataGridViewColumn dvc = new DataGridViewTextBoxColumn ();
+			dataGrid.ColumnNameChanged += new DataGridViewColumnEventHandler (
+				DataGridView_ColumnNameChanged);
+			dataGrid.Columns.Add (dvc);
+			Assert.AreEqual (string.Empty, dvc.HeaderText, "#A1");
 			Assert.AreEqual (string.Empty, dvc.HeaderCell.Value, "#A2");
-			dvc.Name = "A";
-			Assert.AreEqual ("A", dvc.Name, "#B");
+			Assert.AreEqual (string.Empty, dvc.Name, "#A3");
+			Assert.AreEqual (0, columnChanged, "#A4");
+			dvc.HeaderText = "A";
+			Assert.AreEqual ("A", dvc.HeaderText, "#B1");
 			Assert.AreEqual ("A", dvc.HeaderCell.Value, "#B2");
+			Assert.AreEqual (string.Empty, dvc.Name, "#B3");
+			Assert.AreEqual (0, columnChanged, "#B4");
 			dvc.Name = "B";
-			Assert.AreEqual ("B", dvc.Name, "#C1");
-			Assert.AreEqual ("B", dvc.HeaderCell.Value, "#C2");
-			dvc.Name = null;
-			Assert.AreEqual (string.Empty, dvc.Name, "#D1");
-			Assert.AreEqual (string.Empty, dvc.HeaderCell.Value, "#D2");
-			dvc.HeaderText = "D";
-			dvc.Name = "E";
-			Assert.AreEqual ("E", dvc.Name, "#E1");
-			Assert.AreEqual ("D", dvc.HeaderCell.Value, "#E2");
+			Assert.AreEqual ("A", dvc.HeaderText, "#C1");
+			Assert.AreEqual ("A", dvc.HeaderCell.Value, "#C2");
+			Assert.AreEqual ("B", dvc.Name, "#C3");
+			Assert.AreEqual (1, columnChanged, "#C4");
+			dvc.HeaderText = "C";
+			Assert.AreEqual ("C", dvc.HeaderText, "#D1");
+			Assert.AreEqual ("C", dvc.HeaderCell.Value, "#D2");
+			Assert.AreEqual ("B", dvc.Name, "#D3");
+			Assert.AreEqual (1, columnChanged, "#D4");
+			dvc.HeaderText = string.Empty;
+			Assert.AreEqual (string.Empty, dvc.HeaderText, "#E1");
+			Assert.AreEqual (string.Empty, dvc.HeaderCell.Value, "#E2");
+			Assert.AreEqual ("B", dvc.Name, "#E3");
+			Assert.AreEqual (1, columnChanged, "#E4");
 		}
+
+		[Test]
+		public void Name_Bound ()
+		{
+			DataGridView dataGrid = new DataGridView ();
+			DataGridViewColumn dvc = new DataGridViewTextBoxColumn ();
+			dataGrid.ColumnNameChanged += new DataGridViewColumnEventHandler (
+				DataGridView_ColumnNameChanged);
+			dataGrid.Columns.Add (dvc);
+			Assert.AreEqual (string.Empty, dvc.HeaderText, "#A1");
+			Assert.AreEqual (string.Empty, dvc.HeaderCell.Value, "#A2");
+			Assert.AreEqual (string.Empty, dvc.Name, "#A3");
+			Assert.AreEqual (0, columnChanged, "#A4");
+			dvc.Name = "A";
+			//Assert.AreEqual (string.Empty, dvc.HeaderText, "#B1");
+			Assert.AreEqual ("A", dvc.HeaderCell.Value, "#B2");
+			Assert.AreEqual ("A", dvc.Name, "#B3");
+			Assert.AreEqual (1, columnChanged, "#B4");
+			dvc.Name = "B";
+			Assert.AreEqual ("B", dvc.HeaderText, "#C1");
+			Assert.AreEqual ("B", dvc.HeaderCell.Value, "#C2");
+			Assert.AreEqual ("B", dvc.Name, "#C3");
+			Assert.AreEqual (2, columnChanged, "#C4");
+			dvc.Name = null;
+			Assert.AreEqual (string.Empty, dvc.HeaderText, "#D1");
+			Assert.AreEqual (string.Empty, dvc.HeaderCell.Value, "#D2");
+			Assert.AreEqual (string.Empty, dvc.Name, "#D3");
+			Assert.AreEqual (3, columnChanged, "#D4");
+			dvc.HeaderText = "C";
+			Assert.AreEqual ("C", dvc.HeaderText, "#E1");
+			Assert.AreEqual ("C", dvc.HeaderCell.Value, "#E2");
+			Assert.AreEqual (string.Empty, dvc.Name, "#E3");
+			Assert.AreEqual (3, columnChanged, "#E4");
+			dvc.Name = "D";
+			Assert.AreEqual ("C", dvc.HeaderText, "#F1");
+			Assert.AreEqual ("C", dvc.HeaderCell.Value, "#F2");
+			Assert.AreEqual ("D", dvc.Name, "#F3");
+			Assert.AreEqual (4, columnChanged, "#F4");
+			dvc.HeaderText = null;
+			Assert.AreEqual (string.Empty, dvc.HeaderText, "#G1");
+			Assert.IsNull (dvc.HeaderCell.Value, "#G2");
+			Assert.AreEqual ("D", dvc.Name, "#G3");
+			Assert.AreEqual (4, columnChanged, "#G4");
+			dvc.Name = "E";
+			Assert.AreEqual (string.Empty, dvc.HeaderText, "#H1");
+			Assert.IsNull (dvc.HeaderCell.Value, "#H2");
+			Assert.AreEqual ("E", dvc.Name, "#H3");
+			Assert.AreEqual (5, columnChanged, "#H4");
+			dvc.Name = null;
+			Assert.AreEqual (string.Empty, dvc.HeaderText, "#I1");
+			Assert.IsNull (dvc.HeaderCell.Value, "#I2");
+			Assert.AreEqual (string.Empty, dvc.Name, "#I3");
+			Assert.AreEqual (6, columnChanged, "#I4");
+			dvc.Name = "F";
+			Assert.AreEqual (string.Empty, dvc.HeaderText, "#J1");
+			Assert.IsNull (dvc.HeaderCell.Value, "#J2");
+			Assert.AreEqual ("F", dvc.Name, "#J3");
+			Assert.AreEqual (7, columnChanged, "#J4");
+			dvc.Name = "G";
+			Assert.AreEqual (string.Empty, dvc.HeaderText, "#K1");
+			Assert.IsNull (dvc.HeaderCell.Value, "#K2");
+			Assert.AreEqual ("G", dvc.Name, "#K3");
+			Assert.AreEqual (8, columnChanged, "#K4");
+		}
+
+		[Test]
+		public void Name_NotBound ()
+		{
+			DataGridViewColumn dvc = new DataGridViewTextBoxColumn ();
+			Assert.AreEqual (string.Empty, dvc.HeaderText, "#A1");
+			Assert.AreEqual (string.Empty, dvc.Name, "#A2");
+			Assert.AreEqual (string.Empty, dvc.HeaderCell.Value, "#A3");
+			dvc.Name = "A";
+			Assert.AreEqual ("A", dvc.HeaderText, "#B1");
+			Assert.AreEqual ("A", dvc.HeaderCell.Value, "#B2");
+			Assert.AreEqual ("A", dvc.Name, "#B3");
+			dvc.Name = "B";
+			Assert.AreEqual ("B", dvc.HeaderText, "#C1");
+			Assert.AreEqual ("B", dvc.HeaderCell.Value, "#C2");
+			Assert.AreEqual ("B", dvc.Name, "#C3");
+			dvc.Name = null;
+			Assert.AreEqual (string.Empty, dvc.HeaderText, "#D1");
+			Assert.AreEqual (string.Empty, dvc.HeaderCell.Value, "#D2");
+			Assert.AreEqual (string.Empty, dvc.Name, "#D3");
+			dvc.HeaderText = "C";
+			Assert.AreEqual ("C", dvc.HeaderText, "#E1");
+			Assert.AreEqual ("C", dvc.HeaderCell.Value, "#E2");
+			Assert.AreEqual (string.Empty, dvc.Name, "#E3");
+			dvc.Name = "D";
+			Assert.AreEqual ("C", dvc.HeaderText, "#F1");
+			Assert.AreEqual ("C", dvc.HeaderCell.Value, "#F2");
+			Assert.AreEqual ("D", dvc.Name, "#F3");
+			dvc.HeaderText = null;
+			Assert.AreEqual (string.Empty, dvc.HeaderText, "#G1");
+			Assert.IsNull (dvc.HeaderCell.Value, "#G2");
+			Assert.AreEqual ("D", dvc.Name, "#G3");
+			dvc.Name = "E";
+			Assert.AreEqual (string.Empty, dvc.HeaderText, "#H1");
+			Assert.IsNull (dvc.HeaderCell.Value, "#H2");
+			Assert.AreEqual ("E", dvc.Name, "#H3");
+		}
+
+		void DataGridView_ColumnNameChanged (object sender, DataGridViewColumnEventArgs e)
+		{
+			columnChanged++;
+		}
+
+		private int columnChanged;
 	}
 }
 #endif

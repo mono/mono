@@ -245,7 +245,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test] // bug #80626
-		[Category ("NotWorking")]
 		public void BorderStyle_None ()
 		{
 			textBox.BorderStyle = BorderStyle.None;

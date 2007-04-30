@@ -68,6 +68,7 @@ namespace System.Windows.Forms {
 			readOnly = false;
 			headerCell = new DataGridViewColumnHeaderCell();
 			headerCell.SetColumnIndex(Index);
+			headerCell.Value = string.Empty;
 			displayIndex = -1;
 		}
 
@@ -290,9 +291,12 @@ Example */
 			get { return name; }
 			set {
 				if (name != value) {
-					name = value;
+					if (value == null)
+						name = string.Empty;
+					else
+						name = value;
 					if (!headerTextSet) {
-						headerCell.Value = value;
+						headerCell.Value = name;
 					}
 					if (DataGridView != null) {
 						DataGridView.OnColumnNameChanged(new DataGridViewColumnEventArgs(this));

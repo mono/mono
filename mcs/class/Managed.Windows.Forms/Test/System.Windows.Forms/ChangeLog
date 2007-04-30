@@ -1,3 +1,12 @@
+2007-04-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DataGridViewColumnTest.cs: Added test for bug #81464, improved 
+	existing tests.
+	* DataGridViewTextBoxCellTest.cs: Added test for Value.
+	* RichTextBoxTest.cs: Added test for bug #80626.
+	* TabControlTest.cs: Added test for TabPageCollection indexer.
+	* TextBoxTest.cs: Enabled test for bug #80626.
+
 2007-04-29  Andreia Gaita  <avidigal@novell.com>
 
 	* TabControlTest.cs: Add more 2.0 select and deselect tab tests.

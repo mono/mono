@@ -716,4 +716,36 @@ namespace MonoTests.System.Windows.Forms
 		}
 #endif
 	}
+
+	[TestFixture]
+	public class TabPageCollectionTest
+	{
+		[Test]
+		public void Indexer ()
+		{
+			TabControl tab = new TabControl ();
+			TabControl.TabPageCollection tabPages = new TabControl.TabPageCollection (tab);
+			TabPage tabPageA = new TabPage ();
+			TabPage tabPageB = new TabPage ();
+			TabPage tabPageC = new TabPage ();
+			TabPage tabPageD = new TabPage ();
+			tabPages.Add (tabPageA);
+			Assert.AreSame (tabPageA, tabPages [0], "#1");
+			tabPages [0] = tabPageB;
+			Assert.AreSame (tabPageB, tabPages [0], "#2");
+			tabPages.Add (tabPageC);
+			Assert.AreSame (tabPageB, tabPages [0], "#3");
+			Assert.AreSame (tabPageC, tabPages [1], "#4");
+			tabPages.Remove (tabPageB);
+			Assert.AreSame (tabPageC, tabPages [0], "#5");
+			tabPages [0] = tabPageD;
+			Assert.AreSame (tabPageD, tabPages [0], "#6");
+
+			Form form = new Form ();
+			form.ShowInTaskbar = false;
+			form.Controls.Add (tab);
+			form.Show ();
+			form.Dispose ();
+		}
+	}
 }
