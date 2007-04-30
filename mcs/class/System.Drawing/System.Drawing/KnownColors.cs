@@ -493,9 +493,9 @@ namespace System.Drawing {
 
 		// When this method is called, we teach any new color(s) to the Color class
 		// NOTE: This is called (reflection) by System.Windows.Forms.Theme (this isn't dead code)
-		public static void Update (int knownColor, uint color)
+		public static void Update (int knownColor, int color)
 		{
-			ArgbValues[knownColor] = color;
+			ArgbValues[knownColor] = (uint)color;
 		}
 	}
 }

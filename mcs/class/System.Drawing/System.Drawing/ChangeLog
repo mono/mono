@@ -1,3 +1,8 @@
+2007-04-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Color.cs: Reflection didn't like the change from int to uint (thanks
+	to Gert for noticing again :-).
+
 2007-04-29  Konstantin Triger  <kostat@mainsoft.com>
 
 	* Color.cs: FromName - do not throw on unknown color.
