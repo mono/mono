@@ -1660,15 +1660,13 @@ namespace System.Web.UI.WebControls
 				if (target.Length > 0)
 					writer.AddAttribute ("target", target);
 				writer.RenderBeginTag (HtmlTextWriterTag.A);
-			}
-			else if (node.SelectAction != TreeNodeSelectAction.None) {
-				if (node.SelectAction == TreeNodeSelectAction.Expand && clientExpand)
+			} else if (node.SelectAction != TreeNodeSelectAction.None) {
+				if (node.SelectAction == TreeNodeSelectAction.Expand && clientExpand) {
 					writer.AddAttribute ("href", GetClientExpandEvent (node));
-				else
-					writer.AddAttribute ("href", GetClientEvent (node, "sel"));
-				writer.RenderBeginTag (HtmlTextWriterTag.A);
-			}
-			else
+					writer.RenderBeginTag (HtmlTextWriterTag.A);
+				} else
+					writer.RenderBeginTag (HtmlTextWriterTag.Span);
+			} else
 				writer.RenderBeginTag (HtmlTextWriterTag.Span);
 		}
 		

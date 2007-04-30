@@ -1,5 +1,7 @@
 2007-04-30  Marek Habersack  <mhabersack@novell.com>
 
+	* TreeView.cs: bring rendering closer to the MS.NET rendering.
+
 	* SqlDataSource.cs: do not catch the exception if ProviderName is
 	not null or empty (as per docs and what MS.NET does).
 
