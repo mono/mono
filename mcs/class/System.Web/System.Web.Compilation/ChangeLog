@@ -1,5 +1,9 @@
 2007-04-30  Marek Habersack  <mhabersack@novell.com>
 
+	* AppCodeCompiler.cs: support for cases when there exists a custom
+	profile class but there is no App_Code directory or it's
+	empty. Fixes bug #81489. 
+
 	* TemplateControlCompiler.cs: fix generation of code for
 	declarative attribute assignments of the form Font-Size="small"
 	(i.e. when a font size is assigned a symbolic, relative size

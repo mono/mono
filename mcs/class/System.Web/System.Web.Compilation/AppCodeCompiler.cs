@@ -252,7 +252,7 @@ namespace System.Web.Compilation
 				}
 			}
 
-			if (knownfiles.Count == 0 && unknownfiles.Count == 0)
+			if (knownfiles.Count == 0 && unknownfiles.Count == 0 && units.Count == 0)
 				return;
 			
 			outputAssemblyName = (string)FileUtils.CreateTemporaryFile (
