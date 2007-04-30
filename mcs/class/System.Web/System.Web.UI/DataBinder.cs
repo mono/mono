@@ -47,7 +47,7 @@ namespace System.Web.UI {
 			if (result == null)
 				return String.Empty;
 
-			if (format == null)
+			if (format == null || format.Length == 0)
 				return result.ToString ();
 
 			return String.Format (format, result);
