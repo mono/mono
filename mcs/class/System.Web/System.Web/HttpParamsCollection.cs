@@ -50,7 +50,7 @@ namespace System.Web
 			_serverVariables = serverVariables;
 			_cookies = cookies;
 			_merged = false;
-			IsReadOnly = true;
+			Protect ();
 		}
 
 		public override string Get (string name)
@@ -99,9 +99,12 @@ namespace System.Web
 
 			/* special handling for Cookies since
 			 * it isn't a NameValueCollection. */
-			string [] cookies = _cookies.AllKeys;
-			foreach (string k in cookies)
-				Add (k, _cookies [k].Value);
+			for (int i = 0; i < _cookies.Count; i++) {
+				HttpCookie cookie = _cookies [i];
+				Add (cookie.Name, cookie.Value);
+			}
+
+			_merged = true;
 
 			Protect ();
 		}
