@@ -1,3 +1,11 @@
+2007-04-30  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateControlCompiler.cs: fix generation of code for
+	declarative attribute assignments of the form Font-Size="small"
+	(i.e. when a font size is assigned a symbolic, relative size
+	value). This fixes for example rendering of the 0th level of
+	TreeView controls.
+
 2007-04-27  Marek Habersack  <mhabersack@novell.com>
 
 	* AppCodeCompiler.cs: do not look at the number of errors, check

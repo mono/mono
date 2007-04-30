@@ -1776,12 +1776,30 @@ namespace System.Web.Compilation
 			
 			if (value is System.Web.UI.WebControls.FontUnit) {
 				System.Web.UI.WebControls.FontUnit s = (System.Web.UI.WebControls.FontUnit) value;
+
+				Type cParamType = null;
+				object cParam = null;
+
+				switch (s.Type) {
+					case FontSize.AsUnit:
+					case FontSize.NotSet:
+						cParamType = typeof (System.Web.UI.WebControls.Unit);
+						cParam = s.Unit;
+						break;
+
+					default:
+						cParamType = typeof (string);
+						cParam = s.Type.ToString ();
+						break;
+				}
+				
 				ConstructorInfo c = typeof(System.Web.UI.WebControls.FontUnit).GetConstructor (
 					BindingFlags.Instance | BindingFlags.Public,
 					null,
-					new Type[] {typeof(System.Web.UI.WebControls.Unit)},
+					new Type[] {cParamType},
 					null);
-				return new InstanceDescriptor (c, new object[] {s.Unit});
+				if (c != null)
+					return new InstanceDescriptor (c, new object[] {cParam});
 			}
 			return null;
 		}
