@@ -145,8 +145,6 @@ namespace System.Web {
 #else
 		static Exception initialization_exception;
 #endif
-#else
-		HandlerFactoryConfiguration factory_config;
 #endif
 
 		//
@@ -196,10 +194,6 @@ namespace System.Web {
 					app_culture = cfg.Culture;
 					appui_culture = cfg.UICulture;
 				}
-#endif
-
-#if ONLY_1_1
-				factory_config = (HandlerFactoryConfiguration) HttpContext.GetAppConfig ("system.web/httpHandlers");
 #endif
 			}
 		}
@@ -1146,6 +1140,7 @@ namespace System.Web {
 			HttpHandlersSection	httpHandlersSection = (HttpHandlersSection) WebConfigurationManager.GetSection ("system.web/httpHandlers");
 			object o = httpHandlersSection.LocateHandler (verb, url);
 #else
+			HandlerFactoryConfiguration factory_config = (HandlerFactoryConfiguration) HttpContext.GetAppConfig ("system.web/httpHandlers");
 			object o = factory_config.LocateHandler (verb, url);
 #endif
 

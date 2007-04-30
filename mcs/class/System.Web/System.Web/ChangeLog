@@ -1,3 +1,7 @@
+2007-04-30 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* HttpApplication.cs: reverted r74717.
+
 2007-04-29 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* HttpContext.jvm.cs: Response.End() must abort thread if not async.	
