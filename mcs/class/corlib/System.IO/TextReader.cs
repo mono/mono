@@ -35,6 +35,9 @@ using System.Runtime.InteropServices;
 namespace System.IO {
 
 	[Serializable]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public abstract class TextReader : MarshalByRefObject, IDisposable {
 		
 		protected TextReader() { }

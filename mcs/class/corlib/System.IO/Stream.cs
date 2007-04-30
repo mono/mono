@@ -64,6 +64,7 @@ namespace System.IO
 		}
 
 #if NET_2_0
+		[ComVisible (false)]
 		public virtual bool CanTimeout {
 			get {
 				return false;
@@ -104,6 +105,7 @@ namespace System.IO
 			Dispose (true);
 		}
 
+		[ComVisible (false)]
 		public virtual int ReadTimeout {
 			get {
 				throw new InvalidOperationException ("Timeouts are not supported on this stream.");
@@ -113,6 +115,7 @@ namespace System.IO
 			}
 		}
 
+		[ComVisible (false)]
 		public virtual int WriteTimeout {
 			get {
 				throw new InvalidOperationException ("Timeouts are not supported on this stream.");

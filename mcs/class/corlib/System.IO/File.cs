@@ -36,6 +36,8 @@ using System;
 using System.Text;
 #if NET_2_0
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using System.Security.AccessControl;
 #endif
 
 namespace System.IO
@@ -43,6 +45,9 @@ namespace System.IO
 	/// <summary>
 	/// 
 	/// </summary>
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public
 #if NET_2_0
 	static
@@ -121,10 +126,32 @@ namespace System.IO
 
 		public static FileStream Create (string path)
 		{
-			return Create (path, 8192);
+			return(Create (path, 8192, FileOptions.None, null));
 		}
 
 		public static FileStream Create (string path, int buffersize)
+		{
+			return(Create (path, buffersize, FileOptions.None,
+				       null));
+		}
+
+#if NET_2_0
+		[MonoTODO ("options not implemented")]
+		public static FileStream Create (string path, int bufferSize,
+						 FileOptions options)
+		{
+			return(Create (path, bufferSize, options, null));
+		}
+		
+		[MonoTODO ("options and fileSecurity not implemented")]
+		public static FileStream Create (string path, int bufferSize,
+						 FileOptions options,
+						 FileSecurity fileSecurity)
+#else
+		private static FileStream Create (string path, int bufferSize,
+						  FileOptions options,
+						  object fileSecurity)
+#endif
 		{
 			if (null == path)
 				throw new ArgumentNullException ("path");
@@ -141,7 +168,7 @@ namespace System.IO
 			}
 
 			return new FileStream (path, FileMode.Create, FileAccess.ReadWrite,
-					       FileShare.None, buffersize);
+					       FileShare.None, bufferSize);
 		}
 
 		public static StreamWriter CreateText(string path)

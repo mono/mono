@@ -315,6 +315,20 @@ namespace System.IO
 				}
 			}
 		}
+
+		protected unsafe void Initialize (byte* pointer, long length,
+						  long capacity,
+						  FileAccess access)
+		{
+			fileaccess = access;
+			this.length = length;
+			this.capacity = capacity;
+			initial_position = 0;
+			current_position = initial_position;
+			canseek = true;
+			initial_pointer = new IntPtr ((void *)pointer);
+			closed = false;
+		}
 #endregion
 	}
 }

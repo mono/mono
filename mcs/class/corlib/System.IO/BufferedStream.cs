@@ -35,6 +35,9 @@ using System.Globalization;
 using System.Runtime.InteropServices;
 
 namespace System.IO {
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public sealed class BufferedStream : Stream {
 		Stream m_stream;
 		byte[] m_buffer;

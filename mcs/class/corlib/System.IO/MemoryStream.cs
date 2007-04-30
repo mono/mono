@@ -39,6 +39,9 @@ using System.Runtime.InteropServices;
 namespace System.IO
 {
 	[Serializable]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	[MonoTODO ("Serialization format not compatible with .NET")]
 	public class MemoryStream : Stream
 	{

@@ -34,10 +34,16 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Runtime.Serialization;
+#if NET_2_0
+using System.Runtime.InteropServices;
+#endif
 
 namespace System.IO
 {
 	   [Serializable]
+#if NET_2_0
+	   [ComVisible (true)]
+#endif
 	   public class EndOfStreamException : IOException
 	   {
 			 // Constructors

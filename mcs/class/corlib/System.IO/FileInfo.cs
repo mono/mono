@@ -35,6 +35,10 @@
 
 using System.Runtime.InteropServices;
 
+#if NET_2_0
+using System.Security.AccessControl;
+#endif
+
 namespace System.IO {
 
 	[Serializable]
@@ -245,5 +249,37 @@ namespace System.IO {
 		public override string ToString () {
 			return OriginalPath;
 		}
+
+#if NET_2_0
+		public FileSecurity GetAccessControl ()
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public FileSecurity GetAccessControl (AccessControlSections includeSections)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[ComVisible (false)]
+		public FileInfo Replace (string destinationFileName,
+					 string destinationBackupFileName)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[ComVisible (false)]
+		public FileInfo Replace (string destinationFileName,
+					 string destinationBackupFileName,
+					 bool ignoreMetadataErrors)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public void SetAccessControl (FileSecurity fileSecurity)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 	}
 }

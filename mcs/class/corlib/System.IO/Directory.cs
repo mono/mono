@@ -44,10 +44,14 @@ using System.Security.Permissions;
 using System.Text;
 #if NET_2_0
 using System.Security.AccessControl;
+using System.Runtime.InteropServices;
 #endif
 
 namespace System.IO
 {
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public
 #if NET_2_0
 	static
@@ -87,6 +91,14 @@ namespace System.IO
 			
 			return CreateDirectoriesInternal (path);
 		}
+
+#if NET_2_0
+		[MonoTODO ("DirectorySecurity not implemented")]
+		public static DirectoryInfo CreateDirectory (string path, DirectorySecurity directorySecurity)
+		{
+			return(CreateDirectory (path));
+		}
+#endif
 
 		static DirectoryInfo CreateDirectoriesInternal (string path)
 		{
@@ -395,6 +407,13 @@ namespace System.IO
 			if (!MonoIO.MoveFile (src, dest, out error))
 				throw MonoIO.GetException (error);
 		}
+
+#if NET_2_0
+		public static void SetAccessControl (string path, DirectorySecurity directorySecurity)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 
 		public static void SetCreationTime (string path, DateTime creation_time)
 		{

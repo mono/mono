@@ -1,3 +1,35 @@
+2007-04-30  Dick Porter  <dick@ximian.com>
+
+	* Directory.cs: 
+	* FileShare.cs: 
+	* DirectoryNotFoundException.cs: 
+	* SeekOrigin.cs: 
+	* FileAttributes.cs: 
+	* IOException.cs: 
+	* MemoryStream.cs: 
+	* FileMode.cs: 
+	* BinaryWriter.cs: 
+	* TextWriter.cs: 
+	* File.cs: 
+	* BinaryReader.cs: 
+	* TextReader.cs: 
+	* UnmanagedMemoryStream.cs: 
+	* StringWriter.cs: 
+	* FileAccess.cs: 
+	* FileLoadException.cs: 
+	* BufferedStream.cs: 
+	* Stream.cs: 
+	* FileInfo.cs: 
+	* FileStream.cs:
+	* StringReader.cs: 
+	* StreamWriter.cs: 
+	* EndOfStreamException.cs: 
+	* DriveInfo.cs: 
+	* StreamReader.cs: 
+	* PathTooLongException.cs: 
+	* DriveType.cs: 
+	* FileNotFoundException.cs: 2.0 profile updates
+
 2007-04-21  Alp Toker  <alp@atoker.com>
 
 	* FileStream.cs: Respect request for buffering in all cases.

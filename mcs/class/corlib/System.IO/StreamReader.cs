@@ -38,6 +38,9 @@ using System.Runtime.InteropServices;
 
 namespace System.IO {
 	[Serializable]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public class StreamReader : TextReader {
 
 		const int DefaultBufferSize = 1024;

@@ -24,9 +24,12 @@
 #if NET_2_0
 using System;
 using System.Text;
+using System.Runtime.InteropServices;
 
 namespace System.IO {
 
+	[ComVisible (true)]
+	[Serializable]
 	public enum DriveType {
 		CDRom = 5,
 		Fixed = 3,

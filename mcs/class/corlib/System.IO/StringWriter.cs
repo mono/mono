@@ -34,9 +34,16 @@
 using System.Globalization;
 using System.Text;
 
+#if NET_2_0
+using System.Runtime.InteropServices;
+#endif
+
 namespace System.IO {
 
 	[Serializable]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	[MonoTODO ("Serialization format not compatible with .NET")]
 	public class StringWriter : TextWriter {
                 

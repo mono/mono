@@ -94,13 +94,16 @@ namespace System.IO {
 			}
 		}
 
-		[MonoTODO ("Currently only works on Mono/Unix")]
+		[MonoTODO ("Currently get only works on Mono/Unix; set not implemented")]
 		public string VolumeLabel {
 			get {
 				if (_drive_type != _DriveType.Windows)
 					return path;
 				else
 					return path;
+			}
+			set {
+				throw new NotImplementedException ();
 			}
 		}
 		
@@ -265,9 +268,14 @@ namespace System.IO {
 				return WindowsGetDrives ();
 		}
 
-		public void GetObjectData (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+		void ISerializable.GetObjectData (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
 		{
 			throw new NotImplementedException ();
+		}
+
+		public override string ToString ()
+		{
+			return(Name);
 		}
 	}
 }

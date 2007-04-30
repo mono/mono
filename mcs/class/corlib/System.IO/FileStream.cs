@@ -39,23 +39,39 @@ using System.Threading;
 
 #if NET_2_0
 using Microsoft.Win32.SafeHandles;
+using System.Security.AccessControl;
 #endif
 
 namespace System.IO
 {
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public class FileStream : Stream
 	{
 		// construct from handle
 		
+#if NET_2_0_SAFEFILEHANDLE_ENABLED
+		[Obsolete ("Use FileStream(SafeFileHandle handle, FileAccess access) instead")]
+#endif
 		public FileStream (IntPtr handle, FileAccess access)
 			: this (handle, access, true, DefaultBufferSize, false) {}
 
+#if NET_2_0_SAFEFILEHANDLE_ENABLED
+		[Obsolete ("Use FileStream(SafeFileHandle handle, FileAccess access) instead")]
+#endif
 		public FileStream (IntPtr handle, FileAccess access, bool ownsHandle)
 			: this (handle, access, ownsHandle, DefaultBufferSize, false) {}
 		
+#if NET_2_0_SAFEFILEHANDLE_ENABLED
+		[Obsolete ("Use FileStream(SafeFileHandle handle, FileAccess access, int bufferSize) instead")]
+#endif
 		public FileStream (IntPtr handle, FileAccess access, bool ownsHandle, int bufferSize)
 			: this (handle, access, ownsHandle, bufferSize, false) {}
 
+#if NET_2_0_SAFEFILEHANDLE_ENABLED
+		[Obsolete ("Use FileStream(SafeFileHandle handle, FileAccess access, int bufferSize, bool isAsync) instead")]
+#endif
 		public FileStream (IntPtr handle, FileAccess access, bool ownsHandle, int bufferSize, bool isAsync)
 			: this (handle, access, ownsHandle, bufferSize, isAsync, false) {}
 
@@ -134,6 +150,38 @@ namespace System.IO
 		public FileStream (string name, FileMode mode, FileAccess access, FileShare share, int bufferSize, FileOptions options)
 			: this (name, mode, access, share, bufferSize, false, options)
 		{
+		}
+
+		public FileStream (SafeFileHandle handle, FileAccess access)
+			:this(handle, access, DefaultBufferSize, false)
+		{
+		}
+		
+		public FileStream (SafeFileHandle handle, FileAccess access,
+				   int bufferSize)
+			:this(handle, access, bufferSize, false)
+		{
+		}
+		
+		public FileStream (SafeFileHandle handle, FileAccess access,
+				   int bufferSize, bool isAsync)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public FileStream (string path, FileMode mode,
+				   FileSystemRights rights, FileShare share,
+				   int bufferSize, FileOptions options)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public FileStream (string path, FileMode mode,
+				   FileSystemRights rights, FileShare share,
+				   int bufferSize, FileOptions options,
+				   FileSecurity fileSecurity)
+		{
+			throw new NotImplementedException ();
 		}
 #endif
 
@@ -352,6 +400,9 @@ namespace System.IO
 			}
 		}
 
+#if NET_2_0_SAFEFILEHANDLE_ENABLED
+		[Obsolete ("Use SafeFileHandle instead")]
+#endif
 		public virtual IntPtr Handle {
 			[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 			[SecurityPermission (SecurityAction.InheritanceDemand, UnmanagedCode = true)]
@@ -851,6 +902,18 @@ namespace System.IO
 				buf = null;
 			}
 		}
+
+#if NET_2_0
+		public FileSecurity GetAccessControl ()
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public void SetAccessControl (FileSecurity fileSecurity)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 
 		// private.
 
