@@ -45,8 +45,10 @@ namespace System.Web.UI.HtmlControls
 		
 		public override Type GetChildControlType (string tagName, IDictionary attribs)
 		{
-			if (string.Compare (tagName, "TITLE", true) == 0)
-				return typeof(HtmlTitle);
+			if (String.Compare (tagName, "title", true, CultureInfo.InvariantCulture) == 0)
+				return typeof (HtmlTitle);
+			if (String.Compare (tagName, "link", true, CultureInfo.InvariantCulture) == 0)
+				return typeof (HtmlLink);
 			return null;
 		}
 	}

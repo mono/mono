@@ -1,3 +1,8 @@
+2007-04-27  Marek Habersack  <mhabersack@novell.com>
+
+	* HtmlHeadBuilder.cs: support <link> tags - we need to map virtual
+	paths that might happen in them.
+
 2007-04-18  Igor Zelmanovich  <igorz@mainsoft.com>
 
 	* HtmlForm.cs: for TARGET_J2EE: 
