@@ -36,10 +36,13 @@ using System.Collections;
 
 namespace System.Collections.Generic
 {
-	internal class RBTree<T> {
-		public class Node {
+	internal class RBTreeCore {
+		public interface INodeComparer<T> {
+			int Compare (T value, Node node);
+		}
+
+		public abstract class Node {
 			public Node left, right;
-			public T value;
 			uint size_black;
 
 			const uint black_mask = 1;
@@ -64,11 +67,12 @@ namespace System.Collections.Generic
 				return Size;
 			}
 
-			public Node (T v)
+			public Node ()
 			{
-				value = v;
 				size_black = 2; // Size == 1, IsBlack = false
 			}
+
+			public abstract void SwapValue (Node other);
 
 #if TEST
 			public int VerifyInvariants ()
@@ -100,19 +104,12 @@ namespace System.Collections.Generic
 				return black_depth_l + (IsBlack ? 1 : 0);
 			}
 
-			public void Dump (string indent)
-			{
-				Console.WriteLine ("{0}{1} {2}({3})", indent, value, IsBlack ? "*" : "", Size);
-				if (left != null)
-					left.Dump (indent + "  /");
-				if (right != null)
-					right.Dump (indent + "  \\");
-			}
+			public abstract void Dump (string indent);
 #endif
 		}
 
 		Node root;
-		IComparer<T> cmp;
+		object cmp;
 		uint version;
 
 #if ONE_MEMBER_CACHE
@@ -124,15 +121,17 @@ namespace System.Collections.Generic
 			if (cached_path == null)
 				return new List<Node> ();
 
-			List<Node> retval = cached_path;
+			List<Node> path = cached_path;
 			cached_path = null;
-			retval.Clear ();
-			return retval;
+			return path;
 		}
 
 		static void release_path (List<Node> path)
 		{
-			cached_path = path;
+			if (cached_path == null || cached_path.Capacity < path.Capacity) {
+				path.Clear ();
+				cached_path = path;
+			}
 		}
 #else
 		static List<Node> alloc_path ()
@@ -145,137 +144,47 @@ namespace System.Collections.Generic
 		}
 #endif
 
-		public RBTree () : this (Comparer<T>.Default)
+		public RBTreeCore (object cmp)
 		{
-		}
-
-		public RBTree (IComparer<T> cmp)
-		{
+			// cmp is INodeComparer<T> for some T
 			this.cmp = cmp;
 		}
 
-		int Find (T value, List<Node> path)
-		{
-			if (root == null)
-				throw new SystemException ("Internal Error: no tree");
-
-			int c = 0;
-			Node sibling = null;
-			Node current = root;
-
-			if (path != null)
-				path.Add (root);
-
-			while (current != null) {
-				c = cmp.Compare (value, current.value);
-				if (c == 0)
-					return c;
-
-				if (c < 0) {
-					sibling = current.right;
-					current = current.left;
-				} else {
-					sibling = current.left;
-					current = current.right;
-				}
-
-				if (path != null) {
-					path.Add (sibling);
-					path.Add (current);
-				}
-			}
-
-			return c;
-		}
-
-		public void Insert (T value)
+		// returns the newly inserted node (or null if the value is already in the tree)
+		public Node Insert<T> (T key, Node new_node)
 		{
 			if (root == null) {
-				root = new Node (value);
+				root = new_node;
 				root.IsBlack = true;
 				++version;
-				return;
+				return root;
 			}
 
 			List<Node> path = alloc_path ();
-			int in_tree_cmp = Find (value, path);
-			if (in_tree_cmp == 0)
-				throw new ArgumentException ("value already in the tree");
-
-			Node parent = path [path.Count - 3];
-			Node current = path [path.Count - 1] = new Node (value);
-
-			if (in_tree_cmp < 0)
-				parent.left = current;
-			else
-				parent.right = current;
-			for (int i = 0; i < path.Count - 2; i += 2)
-				++ path [i].Size;
-
-			if (!parent.IsBlack)
-				rebalance_insert (current, path);
-
-			// no need for a try .. finally, this is only used to mitigate allocations/gc
+			int in_tree_cmp = find_key (key, path);
+			Node retval = in_tree_cmp == 0 ? null : do_insert (in_tree_cmp, new_node, path);
+			// no need for a try .. finally, this is only used to mitigate allocations
 			release_path (path);
-
-			if (!root.IsBlack)
-				throw new SystemException ("Internal error: root is not black");
-			++version;
+			return retval;
 		}
 
-		public Node Remove (T value)
+		// returns the just-removed node (or null if the value wasn't in the tree)
+		public Node Remove<T> (T key)
 		{
 			if (root == null)
 				return null;
 
 			List<Node> path = alloc_path ();
-			int in_tree_cmp = Find (value, path);
-			if (in_tree_cmp != 0) {
-				release_path (path);
-				return null;
-			}
-
-			int curpos = path.Count - 1;
-			Node current = path [curpos];
-			T old_value = current.value;
-			bool changed = false;
-			for (; current.Size != 1; current = path [curpos]) {
-				Node next = current.left == null
-					? left_most (current.right, null, path)
-					: right_most (current.left, current.right, path);
-				current.value = next.value;
-				changed = true;
-				curpos = path.Count - 1;
-				if (next != path [curpos])
-					throw new SystemException ("Internal error: path wrong");
-
-			}
-			if (changed)
-				current.value = old_value;
-
-			// remove it from our data structures
-			path [curpos] = null;
-			node_reparent (curpos == 0 ? null : path [curpos-2], current, 0, null);
-
-			for (int i = 0; i < path.Count - 2; i += 2)
-				-- path [i].Size;
-
-			if (current.IsBlack)
-				rebalance_delete (path);
-
-			// no need for a try .. finally, this is only used to mitigate allocations/gc
+			int in_tree_cmp = find_key (key, path);
+			Node retval = in_tree_cmp == 0 ? do_remove (path) : null;
+			// no need for a try .. finally, this is only used to mitigate allocations
 			release_path (path);
-
-			if (root != null && !root.IsBlack)
-				throw new SystemException ("Internal Error: root is not black");
-
-			++version;
-			return current;
+			return retval;
 		}
 
-		public bool Contains (T value)
+		public bool Contains<T> (T key)
 		{
-			return root != null && Find (value, null) == 0;
+			return root != null && find_key (key, null) == 0;
 		}
 
 		public int Count {
@@ -306,11 +215,6 @@ namespace System.Collections.Generic
 			}
 		}
 
-		public Enumerator GetEnumerator ()
-		{
-			return new Enumerator (this);
-		}
-
 		public NodeEnumerator GetNodeEnumerator ()
 		{
 			return new NodeEnumerator (this);
@@ -333,46 +237,142 @@ namespace System.Collections.Generic
 		}
 #endif
 
-		void rebalance_insert (Node current, List<Node> path)
+		// Pre-condition: root != null
+		int find_key<T> (T key, List<Node> path)
 		{
-			for (int parpos = path.Count - 3; !path [parpos].IsBlack; parpos -= 4) {
-				// uncle == parpos - 1, grandpa == parpos - 2, great-grandpa = parpos - 4
-				if (path [parpos-1] == null || path [parpos-1].IsBlack) {
-					rebalance_insert__rotate_final (current, parpos, path);
-					return;
+			INodeComparer<T> cmp = (INodeComparer<T>) this.cmp;
+			int c = 0;
+			Node sibling = null;
+			Node current = root;
+
+			if (path != null)
+				path.Add (root);
+
+			while (current != null) {
+				c = cmp.Compare (key, current);
+				if (c == 0)
+					return c;
+
+				if (c < 0) {
+					sibling = current.right;
+					current = current.left;
+				} else {
+					sibling = current.left;
+					current = current.right;
 				}
 
-				path [parpos].IsBlack = path [parpos-1].IsBlack = true;
-
-				// move to the grandpa
-				current = path [parpos-2];
-				if (current == root) // => parpos == 2
-					return;
-
-				current.IsBlack = false;
+				if (path != null) {
+					path.Add (sibling);
+					path.Add (current);
+				}
 			}
 
+			return c;
 		}
 
-		void rebalance_delete (List<Node> path)
+		Node do_insert (int in_tree_cmp, Node current, List<Node> path)
 		{
-			path.Add (null); path.Add (null); // accomodate a rotation
+			path [path.Count - 1] = current;
+			Node parent = path [path.Count - 3];
 
-			for (int curpos = path.Count - 3; curpos > 0; curpos -= 2) {
-				Node current = path [curpos];
-				if (current != null && !current.IsBlack) {
-					current.IsBlack = true;
+			if (in_tree_cmp < 0)
+				parent.left = current;
+			else
+				parent.right = current;
+			for (int i = 0; i < path.Count - 2; i += 2)
+				++ path [i].Size;
+
+			if (!parent.IsBlack)
+				rebalance_insert (path);
+
+			if (!root.IsBlack)
+				throw new SystemException ("Internal error: root is not black");
+
+			++version;
+			return current;
+		}
+
+		Node do_remove (List<Node> path)
+		{
+			int curpos = path.Count - 1;
+
+			Node n1 = path [curpos];
+			Node n2 = null;
+			Node n3 = null;
+
+			if (n1.left != null) {
+				n2 = right_most (n1.left, n1.right, path);
+				n3 = n2.left == null ? null : right_most (n2.left, null, path);
+			} else if (n1.right != null) {
+				n2 = left_most (n1.right, n1.left, path);
+				n3 = n2.right == null ? null : left_most (n2.right, null, path);
+			}
+
+			if (n2 != null) {
+				n1.SwapValue (n2);
+				if (n3 != null)
+					n2.SwapValue (n3);
+			}
+
+			curpos = path.Count - 1;
+			Node current = path [curpos];
+
+			if (current.Size != 1)
+				throw new SystemException ("Internal Error: red-black violation somewhere");
+
+			// remove it from our data structures
+			path [curpos] = null;
+			node_reparent (curpos == 0 ? null : path [curpos-2], current, 0, null);
+
+			for (int i = 0; i < path.Count - 2; i += 2)
+				-- path [i].Size;
+
+			if (curpos != 0 && current.IsBlack)
+				rebalance_delete (path);
+
+			// no need for a try .. finally, this is only used to mitigate allocations/gc
+			release_path (path);
+
+			if (root != null && !root.IsBlack)
+				throw new SystemException ("Internal Error: root is not black");
+
+			++version;
+			return current;
+		}
+
+		// Pre-condition: current is red
+		void rebalance_insert (List<Node> path)
+		{
+			int curpos = path.Count - 1;
+			do {
+				// parent == curpos-2, uncle == curpos-3, grandpa == curpos-4
+				if (path [curpos-3] == null || path [curpos-3].IsBlack) {
+					rebalance_insert__rotate_final (curpos, path);
 					return;
 				}
 
+				path [curpos-2].IsBlack = path [curpos-3].IsBlack = true;
 
+				curpos -= 4; // move to the grandpa
+
+				if (curpos == 0) // => current == root
+					return;
+				path [curpos].IsBlack = false;
+			} while (!path [curpos-2].IsBlack);
+		}
+
+		// Pre-condition: current is black
+		void rebalance_delete (List<Node> path)
+		{
+			int curpos = path.Count - 1;
+			do {
 				Node sibling = path [curpos-1];
-
 				// current is black => sibling != null
-				if (!path [curpos-1].IsBlack) {
+				if (!sibling.IsBlack) {
 					// current is black && sibling is red 
-					// => both sibling.left and sibling.right are not null and are black
+					// => both sibling.left and sibling.right are black, and are not null
 					curpos = ensure_sibling_black (curpos, path);
+					// one of the nephews became the new sibling -- in either case, sibling != null
 					sibling = path [curpos-1];
 				}
 
@@ -383,13 +383,20 @@ namespace System.Collections.Generic
 				}
 
 				sibling.IsBlack = false;
-			}
+
+				curpos -= 2; // move to the parent
+
+				if (curpos == 0)
+					return;
+			} while (path [curpos].IsBlack);
+			path [curpos].IsBlack = true;
 		}
 
-		void rebalance_insert__rotate_final (Node current, int parpos, List<Node> path)
+		void rebalance_insert__rotate_final (int curpos, List<Node> path)
 		{
-			Node parent = path [parpos];
-			Node grandpa = path [parpos-2];
+			Node current = path [curpos];
+			Node parent = path [curpos-2];
+			Node grandpa = path [curpos-4];
 
 			uint grandpa_size = grandpa.Size;
 
@@ -418,7 +425,7 @@ namespace System.Collections.Generic
 				parent.FixSize (); /* parent is red already, so no need to set it */
 
 			new_root.IsBlack = true;
-			node_reparent (parpos == 2 ? null : path [parpos-4], grandpa, grandpa_size, new_root);
+			node_reparent (curpos == 4 ? null : path [curpos-6], grandpa, grandpa_size, new_root);
 		}
 
 		// Pre-condition: sibling is black, and one of sibling.left and sibling.right is red
@@ -491,6 +498,12 @@ namespace System.Collections.Generic
 			sibling.IsBlack = true;
 			node_reparent (curpos == 2 ? null : path [curpos-4], parent, parent_size, sibling);
 
+			// accomodate the rotation
+			if (curpos+1 == path.Count) {
+				path.Add (null);
+				path.Add (null);
+			}
+
 			path [curpos-2] = sibling;
 			path [curpos-1] = current_on_left ? sibling.right : sibling.left;
 			path [curpos] = parent;
@@ -541,46 +554,14 @@ namespace System.Collections.Generic
 			}
 		}
 
-		public struct Enumerator : IDisposable, IEnumerator, IEnumerator<T> {
-			NodeEnumerator host;
-
-			internal Enumerator (RBTree<T> tree)
-			{
-				host = new NodeEnumerator (tree);
-			}
-
-			void IEnumerator.Reset ()
-			{
-				((IEnumerator) host).Reset ();
-			}
-
-			public T Current {
-				get { return host.Current.value; }
-			}
-
-			object IEnumerator.Current {
-				get { return Current; }
-			}
-
-			public bool MoveNext ()
-			{
-				return host.MoveNext ();
-			}
-
-			public void Dispose ()
-			{
-				host.Dispose ();
-			}
-		}
-
 		public struct NodeEnumerator : IEnumerator, IEnumerator<Node> {
-			RBTree<T> tree;
+			RBTreeCore tree;
 			uint version;
 
 			List<Node> path;
 			Node current;
 
-			internal NodeEnumerator (RBTree<T> tree)
+			internal NodeEnumerator (RBTreeCore tree)
 			{
 				this.tree = tree;
 				version = tree.version;
@@ -617,6 +598,9 @@ namespace System.Collections.Generic
 						return false;
 
 					path = new List<Node> ();
+
+					// sentinel: "parent" of root is null
+					path.Add (null);
 					current = left_most (tree.root, null, path);
 					return true;
 				}
@@ -629,10 +613,7 @@ namespace System.Collections.Generic
 
 				int parpos = path.Count - 3;
 				Node parent;
-				for (;;) {
-					parent = parpos < 0 ? null : path [parpos];
-					if (parent == null)
-						break;
+				while ((parent = path [parpos]) != null) {
 					if (current == parent.left)
 						break;
 					current = parent;
@@ -666,13 +647,154 @@ namespace System.Collections.Generic
 #if TEST
 namespace Mono.ValidationTest {
 	using System.Collections.Generic;
+
+	internal class TreeSet<T> : IEnumerable<T>, IEnumerable
+	{
+		public class Node : RBTreeCore.Node {
+			public T value;
+
+			public Node (T v)
+			{
+				value = v;
+			}
+
+			public override void SwapValue (RBTreeCore.Node other)
+			{
+				Node o = (Node) other;
+				T v = value;
+				value = o.value;
+				o.value = v;
+			}
+
+			public override void Dump (string indent)
+			{
+				Console.WriteLine ("{0}{1} {2}({3})", indent, value, IsBlack ? "*" : "", Size);
+				if (left != null)
+					left.Dump (indent + "  /");
+				if (right != null)
+					right.Dump (indent + "  \\");
+			}
+		}
+
+		public class NodeComparer : RBTreeCore.INodeComparer<T> {
+			IComparer<T> cmp;
+
+			public int Compare (T value, RBTreeCore.Node node)
+			{
+				return cmp.Compare (value, ((Node) node).value);
+			}
+
+			private NodeComparer (IComparer<T> cmp)
+			{
+				this.cmp = cmp;
+			}
+			static NodeComparer Default = new NodeComparer (Comparer<T>.Default);
+			public static NodeComparer GetComparer (IComparer<T> cmp)
+			{
+				if (cmp == null || cmp == Comparer<T>.Default)
+					return Default;
+				return new NodeComparer (cmp);
+			}
+		}
+
+		public struct Enumerator : IDisposable, IEnumerator, IEnumerator<T> {
+			RBTreeCore.NodeEnumerator host;
+
+			internal Enumerator (TreeSet<T> tree)
+			{
+				host = new RBTreeCore.NodeEnumerator (tree.tree);
+			}
+
+			void IEnumerator.Reset ()
+			{
+				((IEnumerator) host).Reset ();
+			}
+
+			public T Current {
+				get { return ((Node) host.Current).value; }
+			}
+
+			object IEnumerator.Current {
+				get { return Current; }
+			}
+
+			public bool MoveNext ()
+			{
+				return host.MoveNext ();
+			}
+
+			public void Dispose ()
+			{
+				host.Dispose ();
+			}
+		}
+
+		RBTreeCore tree;
+
+		public TreeSet () : this (null)
+		{
+		}
+
+		public TreeSet (IComparer<T> cmp)
+		{
+			tree = new RBTreeCore (NodeComparer.GetComparer (cmp));
+		}
+
+		IEnumerator IEnumerable.GetEnumerator ()
+		{
+			return GetEnumerator ();
+		}
+
+		IEnumerator<T> IEnumerable<T>.GetEnumerator ()
+		{
+			return GetEnumerator ();
+		}
+
+		public Enumerator GetEnumerator ()
+		{
+			return new Enumerator (this);
+		}
+
+		public Node Insert (T value)
+		{
+			return (Node) tree.Insert (value, new Node (value));
+		}
+
+		public Node Remove (T value)
+		{
+			return (Node) tree.Remove (value);
+		}
+
+		public bool Contains (T value)
+		{
+			return tree.Contains (value);
+		}
+
+		public T this [int index] {
+			get { return ((Node) tree [index]).value; }
+		}
+
+		public int Count {
+			get { return (int) tree.Count; }
+		}
+
+		public void VerifyInvariants ()
+		{
+			tree.VerifyInvariants ();
+		}
+
+		public void Dump ()
+		{
+			tree.Dump ();
+		}
+	}
 	
 	class Test {
 		static void Main (string [] args)
 		{
 			Random r = new Random ();
 			Dictionary<int, int> d = new Dictionary<int, int> ();
-			RBTree<int> t = new RBTree<int> ();
+			TreeSet<int> t = new TreeSet<int> ();
 			int iters = args.Length == 0 ? 100000 : Int32.Parse (args [0]);
 
 			for (int i = 0; i < iters; ++i) {
@@ -704,9 +826,14 @@ namespace Mono.ValidationTest {
 				if (!t.Contains (n))
 					throw new Exception ("tree says it doesn't have a number it should");
 
+			Dictionary<int, int> d1 = new Dictionary<int, int> (d);
+
 			foreach (int n in t)
-				if (!d.ContainsKey (n))
+				if (!d1.Remove (n))
 					throw new Exception ("tree has a number it shouldn't");
+
+			if (d1.Count != 0)
+				throw new Exception ("tree has numbers it shouldn't");
 
 			for (int i = 0; i < iters; ++i) {
 				int n = r.Next ();
