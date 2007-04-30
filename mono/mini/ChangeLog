@@ -1,3 +1,7 @@
+2007-04-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* cpu-amd64.md (jmp): Increase the maximum size of the jmp opcode to 128.
+
 2007-04-29  Zoltan Varga  <vargaz@gmail.com>
 
 	* abcremoval.c (summarize_integer_value): Handle OP_LCONV_TO_I4 to fix abcrem on
