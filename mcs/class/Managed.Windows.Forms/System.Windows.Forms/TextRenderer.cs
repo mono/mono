@@ -266,8 +266,9 @@ namespace System.Windows.Forms
 			else {
 #endif
 				Graphics g = Graphics.FromImage (measure_bitmap);
+				StringFormat sf = FlagsToStringFormat (flags);
 
-				Size retval = g.MeasureString (text, font).ToSize ();
+				Size retval = g.MeasureString (text, font, Int32.MaxValue, sf).ToSize ();
 
 				if (retval.Width > 0 && (flags & TextFormatFlags.NoPadding) == 0)
 					retval.Width += 9;

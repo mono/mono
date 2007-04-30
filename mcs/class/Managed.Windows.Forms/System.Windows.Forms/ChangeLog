@@ -1,5 +1,10 @@
 2007-04-30  Jonathan Pobst  <monkey@jpobst.com>
 
+	* TextRenderer.cs: Use the flags argument when using the MeasureString
+	fallback algorithm.
+
+2007-04-30  Jonathan Pobst  <monkey@jpobst.com>
+
 	* MenuStrip.cs: Don't let multiple ToolStripSeparators get added to
 	the MDI menu item.  [Fixes bug #81483]
 
