@@ -561,6 +561,9 @@ namespace System.Data.Common
 		}
 
 #if NET_2_0
+#if TARGET_JVM
+		[Description("SkipJavaOutputValidation")]
+#endif
 		public virtual int Fill (DataSet dataSet)
 		{
 			throw new NotSupportedException();
