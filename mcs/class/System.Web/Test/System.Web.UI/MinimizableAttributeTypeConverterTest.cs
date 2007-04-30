@@ -68,9 +68,6 @@ namespace MonoTests.System.Web.UI {
 		}
 
 		[Test]
-#if TARGET_JVM
-		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		public void CanConvertFrom ()
 		{
 			TypeConverter tc = GetTypeConverter ();

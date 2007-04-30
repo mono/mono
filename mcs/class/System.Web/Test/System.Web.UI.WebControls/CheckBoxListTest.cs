@@ -168,9 +168,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 
 		[Test]
 		[Category("NunitWeb")]
-#if TARGET_JVM // Bug #6861
-		[Category("NotWorking")]
-#endif
 		public void GetItemStyle ()
 		{
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (GetItemStyle_Load));

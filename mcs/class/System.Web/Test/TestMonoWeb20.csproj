@@ -215,7 +215,10 @@
     <Compile Include="System.Web.UI.WebControls\CompareValidatorTest.cs" />
     <Compile Include="System.Web.UI.WebControls\CompleteWizardStepTest.cs" />
     <Compile Include="System.Web.UI.WebControls\CompositeControlTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\CompositeDataBoundControlTest.cs" />
     <Compile Include="System.Web.UI.WebControls\ContentTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\ControlParameterTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\CookieParameterTest.cs" />
     <Compile Include="System.Web.UI.WebControls\CreateUserWizardStepTest.cs" />
     <Compile Include="System.Web.UI.WebControls\CreateUserWizardTest.cs" />
     <Compile Include="System.Web.UI.WebControls\CrossPagePostingTest.cs" />
@@ -245,6 +248,7 @@
     <Compile Include="System.Web.UI.WebControls\FontInfoTest.cs" />
     <Compile Include="System.Web.UI.WebControls\FontNamesConverterTest.cs" />
     <Compile Include="System.Web.UI.WebControls\FontUnitTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\FormParameterTest.cs" />
     <Compile Include="System.Web.UI.WebControls\FormViewRowTest.cs" />
     <Compile Include="System.Web.UI.WebControls\FormViewTest.cs" />
     <Compile Include="System.Web.UI.WebControls\GridViewRowCollectionTest.cs" />
@@ -274,6 +278,7 @@
     <Compile Include="System.Web.UI.WebControls\LoginViewTest.cs" />
     <Compile Include="System.Web.UI.WebControls\MappingUrlTest.cs" />
     <Compile Include="System.Web.UI.WebControls\MasterPageTest.cs">
+      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="System.Web.UI.WebControls\MenuTest.cs" />
     <Compile Include="System.Web.UI.WebControls\MonthChangedEventArgsTest.cs" />
@@ -283,8 +288,10 @@
     <Compile Include="System.Web.UI.WebControls\PagedDataSourceTest.cs" />
     <Compile Include="System.Web.UI.WebControls\PagerSettingsTest.cs" />
     <Compile Include="System.Web.UI.WebControls\PanelTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\ParameterTest.cs" />
     <Compile Include="System.Web.UI.WebControls\PasswordRecoveryTest.cs" />
     <Compile Include="System.Web.UI.WebControls\PolygonHotSpotTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\QueryStringParameterTest.cs" />
     <Compile Include="System.Web.UI.WebControls\RadioButtonListTest.cs" />
     <Compile Include="System.Web.UI.WebControls\RadioButtonTest.cs" />
     <Compile Include="System.Web.UI.WebControls\RangeValidatorTest.cs" />
@@ -298,6 +305,7 @@
     <Compile Include="System.Web.UI.WebControls\RoleGroupCollectionTest.cs" />
     <Compile Include="System.Web.UI.WebControls\RoleGroupTest.cs" />
     <Compile Include="System.Web.UI.WebControls\SelectedDatesCollectionTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\SessionParameterTest.cs" />
     <Compile Include="System.Web.UI.WebControls\SiteMapDataSourceTest.cs" />
     <Compile Include="System.Web.UI.WebControls\SiteMapPathTest.cs" />
     <Compile Include="System.Web.UI.WebControls\SqlDataSourceDerbyTest.cs" />
@@ -356,12 +364,15 @@
     <Compile Include="System.Web.UI\CssStyleCollectionTest.cs" />
     <Compile Include="System.Web.UI\DataBindingCollectionTest.cs" />
     <Compile Include="System.Web.UI\DataBindingHandlerAttributeTest.cs" />
+    <Compile Include="System.Web.UI\DataSourceSelectArgumentsTest.cs" />
     <Compile Include="System.Web.UI\HtmlTextWriterTest.cs" />
+    <Compile Include="System.Web.UI\LiteralControlTest.cs" />
     <Compile Include="System.Web.UI\MinimizableAttributeTypeConverterTest.cs" />
     <Compile Include="System.Web.UI\OutputCacheParametersTest.cs" />
     <Compile Include="System.Web.UI\PageTest.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="System.Web.UI\PostBackOptionsTest.cs" />
     <Compile Include="System.Web.UI\PropertyConverterTest.cs" />
     <Compile Include="System.Web.UI\StateBagTest.cs" />
     <Compile Include="System.Web.UI\TemplateControlTest.cs" />
@@ -369,6 +380,7 @@
     <Compile Include="System.Web.UI\TestUrlPropertyAttribute.cs" />
     <Compile Include="System.Web.UI\ToolboxDataAttributeTest.cs" />
     <Compile Include="System.Web.UI\XhtmlTextWriterTest.cs" />
+    <Compile Include="System.Web\HttpBrowserCapabilitiesTest.cs" />
     <Compile Include="System.Web\HttpCacheVaryByHeadersTest.cs" />
     <Compile Include="System.Web\HttpCacheVaryByParamsTest.cs" />
     <Compile Include="System.Web\HttpClientCertificateTest.cs" />
