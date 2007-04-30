@@ -1,3 +1,7 @@
+2007-04-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* Type.cs (Equals): Allow a null argument.
+
 2007-04-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* Environment.cs (StackTrace): Avoid skipping a frame to be compatible with MS.

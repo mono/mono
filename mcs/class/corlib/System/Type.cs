@@ -421,6 +421,8 @@ namespace System {
 		}
 
 		public bool Equals (Type type) {
+			if (type == null)
+				return false;
 			return UnderlyingSystemType.EqualsInternal (type.UnderlyingSystemType);
 		}
 
