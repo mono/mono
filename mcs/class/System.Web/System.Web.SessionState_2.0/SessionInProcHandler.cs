@@ -294,6 +294,7 @@ namespace System.Web.SessionState
 			} else {
 				if (lockId == null || lockId.GetType() != typeof(Int32) || inProcItem.lockId != (Int32)lockId)
 					return;
+				inProcItem.resettingTimeout = true;
 				cache.Remove (CacheId);
 			}
 			

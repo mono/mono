@@ -1,3 +1,9 @@
+2007-04-30  Marek Habersack  <mhabersack@novell.com>
+
+	* SessionInProcHandler.cs: do not end session when setting and
+	releasing item in mid-session. Fixes bugs #81440, #81140 and
+	#80723
+
 2007-04-18  Marek Habersack  <mhabersack@novell.com>
 
 	* SessionInProcHandler.cs: added protection against raising early
