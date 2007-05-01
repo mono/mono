@@ -1,3 +1,8 @@
+2007-05-01 Adar Wesley <adarw@mainsoft.com>
+
+	* OleDbCommandBuilder.cs: Fixed typo and called base implementation
+	in Get[Insert|Updata|Delete]Command methods.
+
 2006-11-05 Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* added: OleDbFactory.cs

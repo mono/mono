@@ -115,22 +115,19 @@ namespace System.Data.OleDb
 			throw new NotImplementedException ();		
 		}
 
-		[MonoTODO]
 		public OleDbCommand GetDeleteCommand ()
 		{
-			throw new NotImplementedException ();
+			return base.GetDeleteCommand ();
 		}
 
-		[MonoTODO]
 		public OleDbCommand GetInsertCommand ()
 		{
-			throw new NotImplementedException ();
+			return base.GetInsertCommand ();
 		}
 
-		[MonoTODO]
-		public OleDbCommand GetUpdatetCommand ()
+		public OleDbCommand GetUpdateCommand ()
 		{
-			throw new NotImplementedException ();
+			return base.GetUpdateCommand ();
 		}
 
 		[MonoTODO]
