@@ -1119,9 +1119,12 @@ namespace System.Windows.Forms
 			return false;
 		}
 		
+		// ProcessMnemonic will only be called if we are supposed to handle
+		// it.  None of that fancy "thinking" needed!
 		protected internal virtual bool ProcessMnemonic (char charCode)
 		{
-			return false;
+			this.PerformClick ();
+			return true;
 		}
 		
 		protected internal virtual void SetBounds (Rectangle bounds)

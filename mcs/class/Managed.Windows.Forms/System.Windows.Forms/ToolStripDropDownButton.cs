@@ -135,6 +135,19 @@ namespace System.Windows.Forms
 				return;
 			}
 		}
+
+		protected internal override bool ProcessMnemonic (char charCode)
+		{
+			if (!this.Selected)
+				this.Parent.ChangeSelection (this);
+
+			if (this.HasDropDownItems)
+				this.ShowDropDown ();
+			else
+				this.PerformClick ();
+
+			return true;
+		}
 		#endregion
 	}
 }

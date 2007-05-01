@@ -248,6 +248,12 @@ namespace System.Windows.Forms
 						this.Owner.Renderer.DrawItemText (new System.Windows.Forms.ToolStripItemTextRenderEventArgs (e.Graphics, this, this.Text, text_layout_rect, font_color, this.Font, this.TextAlign));
 			}
 		}
+
+		protected internal override bool ProcessMnemonic (char charCode)
+		{
+			this.Parent.SelectNextToolStripItem (this, true);
+			return true;
+		}
 		#endregion
 	}
 }

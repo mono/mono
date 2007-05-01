@@ -1,3 +1,10 @@
+2007-05-01  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Application.cs: Give toolstrips a chance to process mnemonics.
+	* ToolStrip.cs, ToolStripDropDownButton.cs, ToolStripItem.cs,
+	ToolStripItemTextRenderEventArgs.cs, ToolStripLabel.cs,
+	ToolStripMenuItem.cs, ToolStripSplitButton.cs: Implement keyboard mnemonics.
+
 2007-05-01  Jackson Harper  <jackson@ximian.com>
 
 	* TextBoxBase.cs: Better preferred height, FixedSingle gets the

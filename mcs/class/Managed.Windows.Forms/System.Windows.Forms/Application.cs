@@ -678,7 +678,7 @@ namespace System.Windows.Forms {
 
 						m.HWnd = keyboard_capture.Handle;
 						
-						if (!keyboard_capture.PreProcessMessage (ref m)) {
+						if (!keyboard_capture.PreProcessMessage (ref m) && (m.Msg == (int)Msg.WM_KEYDOWN && !keyboard_capture.ProcessControlMnemonic ((char)m.WParam))) {
 							if (c == null || c.Parent == null || !(c.Parent is ToolStrip))
 								continue;
 							else

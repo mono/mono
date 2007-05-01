@@ -358,6 +358,20 @@ namespace System.Windows.Forms
 				
 			return base.ProcessCmdKey (ref m, keyData);
 		}
+
+		protected internal override bool ProcessMnemonic (char charCode)
+		{
+			if (!this.Selected)
+				this.Parent.ChangeSelection (this);
+				
+			if (this.HasDropDownItems) {
+				this.ShowDropDown ();
+				this.DropDown.SelectNextToolStripItem (null, true);
+			} else
+				this.PerformClick ();
+			
+			return true;
+		}
 		
 		protected internal override void SetBounds (Rectangle bounds)
 		{

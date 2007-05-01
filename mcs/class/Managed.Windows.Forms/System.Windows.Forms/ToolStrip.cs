@@ -1041,6 +1041,18 @@ namespace System.Windows.Forms
 
 		protected override bool ProcessMnemonic (char charCode)
 		{
+			// If any item has an explicit mnemonic, it gets the message
+			foreach (ToolStripItem tsi in this.Items)
+				if (tsi.Enabled && tsi.Visible && Control.IsMnemonic (charCode, tsi.Text))
+					return tsi.ProcessMnemonic (charCode);
+
+			string code = Char.ToUpper (charCode).ToString ();
+			
+			// If any item's text starts with our letter, it gets the message
+			foreach (ToolStripItem tsi in this.Items)
+				if (tsi.Enabled && tsi.Visible && tsi.Text.Length > 0 && tsi.Text.ToUpper ().StartsWith (code))
+					return tsi.ProcessMnemonic (charCode);
+
 			return base.ProcessMnemonic (charCode);
 		}
 		
@@ -1194,6 +1206,9 @@ namespace System.Windows.Forms
 						Application.KeyboardCapture = this;
 					else if (Application.KeyboardCapture == this)
 						Application.KeyboardCapture = null;
+					
+					// Redraw for mnemonic underlines
+					this.Refresh ();
 				}
 			}
 		}
@@ -1384,7 +1399,10 @@ namespace System.Windows.Forms
 			ToolStripItem next_item = this.GetNextItem (start, forward ? ArrowDirection.Right : ArrowDirection.Left);
 			
 			this.ChangeSelection (next_item);
-			
+
+			if (next_item is ToolStripControlHost)
+				(next_item as ToolStripControlHost).Focus ();
+		
 			return next_item;
 		}
 

@@ -81,7 +81,8 @@ namespace System.Windows.Forms
 					break;
 			}
 
-			this.text_format |= TextFormatFlags.HidePrefix;
+			if (Application.KeyboardCapture == null)
+				this.text_format |= TextFormatFlags.HidePrefix;
 		}
 
 		public ToolStripItemTextRenderEventArgs (Graphics g, ToolStripItem item, string text, Rectangle textRectangle, Color textColor, Font textFont, TextFormatFlags format)
