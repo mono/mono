@@ -56,7 +56,6 @@ namespace MonoTests.System.Reflection
 
 #if NET_2_0
 		[Test]
-		[Category ("NotWorking")] // Needs merge of attribute code into gmcs
 		public void PseudoCustomAttributes ()
 		{
 			Type t = typeof (MethodInfoTest);

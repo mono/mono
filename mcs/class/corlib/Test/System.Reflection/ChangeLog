@@ -1,3 +1,7 @@
+2007-05-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* MethodInfoTest.cs: Reenable a NotWorking test which is working now.
+
 2007-03-14  Eyal Alaluf <eyala@mainsoft.com>
 
 	* MethodInfoTest.cs: Disabled tests for TARGET_JVM that use MethodBody.
