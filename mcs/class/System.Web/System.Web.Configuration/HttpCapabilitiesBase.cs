@@ -50,18 +50,19 @@ namespace System.Web.Configuration
 			get { return capabilities [key] as string; }
 		}
 
-		public static HttpCapabilitiesBase GetConfigCapabilities (string configKey, HttpRequest request)
+		internal static string GetUserAgentForDetection (HttpRequest request)
 		{
-		        string ua;
+			string ua = null;
+
 #if NET_2_0
 			ua = null;
 			if (request.Context.CurrentHandler is System.Web.UI.Page)
 				ua = ((System.Web.UI.Page) request.Context.CurrentHandler).ClientTarget;
 			
-			if (ua == null || ua.Length == 0) {
+			if (String.IsNullOrEmpty (ua)) {
 				ua = request.ClientTarget;
 
-				if (ua == null || ua.Length == 0)
+				if (String.IsNullOrEmpty (ua))
 					ua = request.UserAgent;
 			}
 #else
@@ -69,6 +70,13 @@ namespace System.Web.Configuration
 			if (ua == null || ua.Length == 0)
 				ua = request.UserAgent;
 #endif
+			return ua;
+		}
+		
+		public static HttpCapabilitiesBase GetConfigCapabilities (string configKey, HttpRequest request)
+		{
+		        string ua = GetUserAgentForDetection (request);
+
 			HttpBrowserCapabilities bcap = new HttpBrowserCapabilities ();
 			bcap.useragent = ua;
 			bcap.capabilities = CapabilitiesLoader.GetCapabilities (ua);

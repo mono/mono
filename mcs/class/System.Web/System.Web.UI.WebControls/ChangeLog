@@ -1,3 +1,8 @@
+2007-05-01  Marek Habersack  <mhabersack@novell.com>
+
+	* BaseValidator.cs: do not use User-Agent directly, we must take
+	ClientTarget into account.
+
 2007-04-30  Marek Habersack  <mhabersack@novell.com>
 
 	* TreeView.cs: bring rendering closer to the MS.NET rendering.

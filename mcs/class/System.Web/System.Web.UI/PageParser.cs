@@ -312,25 +312,39 @@ namespace System.Web.UI
 			validateRequest = GetBool (atts, "ValidateRequest", validateRequest);
 			clientTarget = GetString (atts, "ClientTarget", null);
 			if (clientTarget != null) {
+				clientTarget = clientTarget.Trim ();
 #if NET_2_0
 				ClientTargetSection sec = (ClientTargetSection)WebConfigurationManager.GetSection ("system.web/clientTarget");
-				if (sec.ClientTargets[clientTarget] == null) {
+				ClientTarget ct = null;
+				
+				if ((ct = sec.ClientTargets [clientTarget]) == null)
+					clientTarget = clientTarget.ToLower (CultureInfo.InvariantCulture);
+				
+				if (ct == null && (ct = sec.ClientTargets [clientTarget]) == null) {
 					ThrowParseException (String.Format (
 							"ClientTarget '{0}' is an invalid alias. See the " +
 							"documentation for <clientTarget> config. section.",
 							clientTarget));
 				}
-				clientTarget = sec.ClientTargets[clientTarget].UserAgent;
+				clientTarget = ct.UserAgent;
 #else
 				NameValueCollection coll;
 				coll = (NameValueCollection) Context.GetConfig ("system.web/clientTarget");
-				if (coll == null || coll [clientTarget] == null) {
+				object ct = null;
+				
+				if (coll != null) {
+					ct = coll [clientTarget];
+					if (ct == null)
+						ct = coll [clientTarget.ToLower ()];
+				}
+				
+				if (ct == null) {
 					ThrowParseException (String.Format (
 							"ClientTarget '{0}' is an invalid alias. See the " +
 							"documentation for <clientTarget> config. section.",
 							clientTarget));
 				}
-				clientTarget = (string) coll [clientTarget];
+				clientTarget = (string) ct;
 #endif
 			}
 

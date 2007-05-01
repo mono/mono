@@ -297,7 +297,8 @@ namespace System.Web.UI.WebControls {
 				 * use anything in level 2.. */
 				&& Page.Request.Browser.W3CDomVersion.Major >= 1);
 #else
-			return UplevelHelper.IsUplevel (HttpContext.Current.Request.UserAgent);
+			return UplevelHelper.IsUplevel (
+				System.Web.Configuration.HttpCapabilitiesBase.GetUserAgentForDetection (HttpContext.Current.Request));
 #endif
 		}
 
@@ -398,7 +399,8 @@ namespace System.Web.UI.WebControls {
 									 "\n" + 
 									 "function ValidatorOnSubmit() {\n" + 
 									 "        if (Page_ValidationActive) {\n" + 
-									 "                return ValidatorCommonOnSubmit();\n" + 
+									 "                if (!ValidatorCommonOnSubmit())\n" +
+									 "                        return Page_ClientValidate ();\n" +
 									 "        }\n" + 
 									 "        return true;\n" + 
 									 "}\n" + 

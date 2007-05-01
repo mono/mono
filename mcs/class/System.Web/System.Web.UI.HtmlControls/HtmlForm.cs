@@ -216,7 +216,8 @@ namespace System.Web.UI.HtmlControls
 				 * use anything in level 2.. */
 				&& Page.Request.Browser.W3CDomVersion.Major >= 1);
 #else
-			return UplevelHelper.IsUplevel (HttpContext.Current.Request.UserAgent);
+			return UplevelHelper.IsUplevel (
+				System.Web.Configuration.HttpCapabilitiesBase.GetUserAgentForDetection (HttpContext.Current.Request));
 #endif
 		}
 

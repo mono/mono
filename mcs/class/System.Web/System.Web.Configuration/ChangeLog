@@ -1,3 +1,8 @@
+2007-05-01  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpCapabilitiesBase.cs: move the User-Agent code to a separate
+	internal method.
+
 2007-04-10  Marek Habersack  <mhabersack@novell.com>
 
 	* WebConfigurationSettings.cs: add NotifyFilter.Size to the
