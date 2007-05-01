@@ -1,11 +1,16 @@
 //
 // System.Collections.Generic.SortedDictionary
 //
-// Authors:
+// Author:
+//    Raja R Harinath <rharinath@novell.com>
+//
+// Authors of previous (superseded) version:
 //    Kazuki Oikawa (kazuki@panicode.com)
 //    Atsushi Enomoto (atsushi@ximian.com)
 //
 
+//
+// Copyright (C) 2007, Novell, Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -305,6 +310,7 @@ namespace System.Collections.Generic
 		{
 			Remove (ToKey (key));
 		}
+
 		ICollection IDictionary.Values {
 			get { return new ValueCollection (this); }
 		}
@@ -598,10 +604,9 @@ namespace System.Collections.Generic
 					host.Reset ();
 				}
 			}
-
 		}
 
-		public struct Enumerator : IEnumerator<KeyValuePair<TKey,TValue>>, IDisposable , IDictionaryEnumerator, IEnumerator
+		public struct Enumerator : IEnumerator<KeyValuePair<TKey,TValue>>, IDisposable, IDictionaryEnumerator, IEnumerator
 		{
 			RBTree.NodeEnumerator host;
 
