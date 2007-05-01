@@ -30,10 +30,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if NET_2_0
+using System.Runtime.InteropServices;
+#endif
 
 namespace System.Threading
 {
+#if NET_2_0
+	[ComVisible (true)]
+#else
 	[Serializable]
+#endif
 	public struct LockCookie
 	{
 		internal int ThreadId;
@@ -53,6 +60,34 @@ namespace System.Threading
 			ReaderLocks = reader_locks;
 			WriterLocks = writer_locks;
 		}
+
+#if NET_2_0
+		public override int GetHashCode ()
+		{
+			return(base.GetHashCode ());
+		}
+
+		public bool Equals (LockCookie obj)
+		{
+			if (this.ThreadId == obj.ThreadId &&
+			    this.ReaderLocks == obj.ReaderLocks &&
+			    this.WriterLocks == obj.WriterLocks) {
+				return(true);
+			} else {
+				return(false);
+			}
+		}
+		
+		public override bool Equals (Object obj)
+		{
+			if (!(obj is LockCookie)) {
+				return(false);
+			}
+			
+			return(obj.Equals (this));
+		}
+#endif
+
 	}
 }
 

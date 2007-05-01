@@ -33,10 +33,12 @@
 #if NET_2_0
 
 using System.Runtime.Serialization;
+using System.Runtime.InteropServices;
 
 namespace System.Threading
 {
 	[Serializable]
+	[ComVisible (false)]
 	public class AbandonedMutexException : SystemException
 	{
 		Mutex mutex;

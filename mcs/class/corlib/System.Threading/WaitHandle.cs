@@ -37,10 +37,14 @@ using System.Security.Permissions;
 #if NET_2_0
 using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
+using System.Runtime.ConstrainedExecution;
 #endif
 
 namespace System.Threading
 {
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public abstract class WaitHandle : MarshalByRefObject, IDisposable
 	{
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -138,12 +142,18 @@ namespace System.Threading
 		private static extern int WaitAny_internal(WaitHandle[] handles, int ms, bool exitContext);
 
 		// LAMESPEC: Doesn't specify how to signal failures
+#if NET_2_0
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
+#endif
 		public static int WaitAny(WaitHandle[] waitHandles)
 		{
 			CheckArray (waitHandles, false);
 			return(WaitAny_internal(waitHandles, Timeout.Infinite, false));
 		}
 
+#if NET_2_0
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
+#endif
 		public static int WaitAny(WaitHandle[] waitHandles,
 					  int millisecondsTimeout,
 					  bool exitContext)
@@ -158,6 +168,9 @@ namespace System.Threading
 			}
 		}
 
+#if NET_2_0
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
+#endif
 		public static int WaitAny(WaitHandle[] waitHandles,
 					  TimeSpan timeout, bool exitContext)
 		{
@@ -177,7 +190,12 @@ namespace System.Threading
 		}
 
 		[MonoTODO]
-		public WaitHandle() {
+#if NET_2_0
+		protected
+#else
+		public
+#endif
+		WaitHandle() {
 			// FIXME
 		}
 
@@ -235,16 +253,40 @@ namespace System.Threading
 		}
 
 		public SafeWaitHandle SafeWaitHandle {
+			[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
 			get {
 				return safe_wait_handle;
 			}
 
+			[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 			set {
 				if (safe_wait_handle != null)
 					safe_wait_handle.Close ();
 				
 				safe_wait_handle = value;
 			}
+		}
+
+		public static bool SignalAndWait (WaitHandle toSignal,
+						  WaitHandle toWaitOn)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public static bool SignalAndWait (WaitHandle toSignal,
+						  WaitHandle toWaitOn,
+						  int millisecondsTimeout,
+						  bool exitContext)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public static bool SignalAndWait (WaitHandle toSignal,
+						  WaitHandle toWaitOn,
+						  TimeSpan timeout,
+						  bool exitContext)
+		{
+			throw new NotImplementedException ();
 		}
 
 		public virtual bool WaitOne()

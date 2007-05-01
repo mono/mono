@@ -34,6 +34,7 @@
 
 #if NET_2_0
 using System.Runtime.Serialization;
+using System.Runtime.InteropServices;
 #endif
 
 namespace System.Threading {
@@ -43,6 +44,7 @@ namespace System.Threading {
 	/// </summary>
 #if NET_2_0
 	[Serializable]
+	[ComVisible (true)]
 #endif
 	public enum ThreadPriority {
 

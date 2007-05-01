@@ -32,9 +32,16 @@
 
 using System.Runtime.Serialization;
 
+#if NET_2_0
+using System.Runtime.InteropServices;
+#endif
+
 namespace System.Threading
 {
 	[Serializable]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public class SynchronizationLockException : SystemException
 	{
 		public SynchronizationLockException()

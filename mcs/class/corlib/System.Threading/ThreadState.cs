@@ -34,6 +34,7 @@
 
 #if NET_2_0
 using System.Runtime.Serialization;
+using System.Runtime.InteropServices;
 #endif
 
 namespace System.Threading {
@@ -41,6 +42,7 @@ namespace System.Threading {
 	[Flags]
 #if NET_2_0
 	[Serializable]
+	[ComVisible (true)]
 #endif
 	public enum ThreadState {
 		Running = 0x00000000,

@@ -115,6 +115,7 @@ namespace System.Threading
 
 		[ComVisible (false)]
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public extern static T CompareExchange<T> (ref T location, T value, T comparand) where T:class;
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -129,6 +130,7 @@ namespace System.Threading
 
 		[ComVisible (false)]
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public extern static T Exchange<T> (ref T location1, T value) where T:class;
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]

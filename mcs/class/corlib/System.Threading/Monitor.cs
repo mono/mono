@@ -35,11 +35,13 @@ using System.Runtime.Remoting.Contexts;
 
 #if NET_2_0
 using System.Runtime.ConstrainedExecution;
+using System.Runtime.InteropServices;
 #endif
 
 namespace System.Threading
 {
 #if NET_2_0
+	[ComVisible (true)]
 	public static class Monitor
 	{
 #else

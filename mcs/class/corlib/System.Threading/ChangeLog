@@ -1,3 +1,34 @@
+2007-05-01  Dick Porter  <dick@ximian.com>
+
+	* ThreadState.cs: 
+	* AsyncFlowControl.cs: 
+	* Interlocked.cs: 
+	* RegisteredWaitHandle.cs: 
+	* TimerCallback.cs: 
+	* ThreadStateException.cs: 
+	* Monitor.cs: 
+	* ThreadStart.cs: 
+	* WaitOrTimerCallback.cs: 
+	* LockCookie.cs: 
+	* EventWaitHandle.cs: 
+	* WaitHandle.cs: 
+	* ThreadAbortException.cs: 
+	* ThreadPriority.cs: 
+	* ReaderWriterLock.cs: 
+	* NativeOverlapped.cs: 
+	* Mutex.cs: 
+	* Overlapped.cs: 
+	* ThreadPool.cs: 
+	* ApartmentState.cs: 
+	* EventResetMode.cs: 
+	* SynchronizationLockException.cs: 
+	* ManualResetEvent.cs: 
+	* WaitCallback.cs: 
+	* IOCompletionCallback.cs: 
+	* AutoResetEvent.cs: 
+	* AbandonedMutexException.cs: 
+	* SendOrPostCallback.cs: 
+	* ThreadInterruptedException.cs: Update to 2.0 profile
 
 Thu Apr 19 16:47:52 CEST 2007 Paolo Molaro <lupus@ximian.com>
 

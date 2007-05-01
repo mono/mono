@@ -31,9 +31,11 @@
 
 using System.Security.AccessControl;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace System.Threading
 {
+	[ComVisible (true)]
 	public class EventWaitHandle : WaitHandle
 	{
 		private EventWaitHandle (IntPtr handle)

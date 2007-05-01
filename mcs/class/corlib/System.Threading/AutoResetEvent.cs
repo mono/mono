@@ -34,9 +34,16 @@
 using System;
 using System.Runtime.CompilerServices;
 
+#if NET_2_0
+using System.Runtime.InteropServices;
+#endif
+
 namespace System.Threading 
 {
 
+#if NET_2_0
+	[ComVisible (true)]
+#endif
  	public sealed class AutoResetEvent :
 #if NET_2_0
 	EventWaitHandle

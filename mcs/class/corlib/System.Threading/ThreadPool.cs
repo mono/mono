@@ -156,6 +156,14 @@ namespace System.Threading {
 							    (long) millisecondsTimeOutInterval, executeOnlyOnce);
 		}
 
+#if NET_2_0
+		[CLSCompliant (false)]
+		unsafe public static bool UnsafeQueueNativeOverlapped (NativeOverlapped *overlapped)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+
 		[SecurityPermission (SecurityAction.Demand, ControlEvidence=true, ControlPolicy=true)]
 		public static bool UnsafeQueueUserWorkItem (WaitCallback callback, object state)
 		{

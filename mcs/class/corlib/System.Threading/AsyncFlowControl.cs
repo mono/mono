@@ -77,5 +77,29 @@ namespace System.Threading {
 				_type = AsyncFlowControlType.None;
 			}
 		}
+
+		public override int GetHashCode ()
+		{
+			return(base.GetHashCode ());
+		}
+		
+		public override bool Equals (object obj)
+		{
+			if (!(obj is AsyncFlowControl)) {
+				return(false);
+			}
+			
+			return(obj.Equals (this));
+		}
+		
+		public bool Equals (AsyncFlowControl obj)
+		{
+			if (this._t == obj._t &&
+			    this._type == obj._type) {
+				return(true);
+			} else {
+				return(false);
+			}
+		}
 	}
 }

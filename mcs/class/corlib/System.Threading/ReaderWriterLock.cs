@@ -35,8 +35,16 @@
 
 using System.Collections;
 
+#if NET_2_0
+using System.Runtime.InteropServices;
+using System.Runtime.ConstrainedExecution;
+#endif
+
 namespace System.Threading
 {
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public sealed class ReaderWriterLock
 	{
 		private int seq_num = 1;
@@ -53,12 +61,18 @@ namespace System.Threading
 		}
 
 		public bool IsReaderLockHeld {
+#if NET_2_0
+			[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
+#endif
 			get {
 				lock (this) return reader_locks.ContainsKey (Thread.CurrentThreadId);
 			}
 		}
 
 		public bool IsWriterLockHeld {
+#if NET_2_0
+			[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
+#endif
 			get {
 				lock (this) return (state < 0 && Thread.CurrentThreadId == writer_lock_owner);
 			}
@@ -187,6 +201,9 @@ namespace System.Threading
 			return cookie;
 		}
 		
+#if NET_2_0
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
+#endif
 		public void ReleaseReaderLock()
 		{
 			lock (this) {
@@ -220,6 +237,9 @@ namespace System.Threading
 				writer_queue.Pulse ();
 		}
 
+#if NET_2_0
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
+#endif
 		public void ReleaseWriterLock()
 		{
 			lock (this) {

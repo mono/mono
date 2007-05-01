@@ -30,11 +30,8 @@
 
 #if NET_2_0
 
-using System.Runtime.InteropServices;
-
 namespace System.Threading 
 {
-	[ComVisible (false)]
 	public delegate void SendOrPostCallback (object state);
 }
 

@@ -35,10 +35,14 @@ using System.Security.Permissions;
 using System.Runtime.ConstrainedExecution;
 using System.Security.AccessControl;
 using System.IO;
+using System.Runtime.InteropServices;
 #endif
 
 namespace System.Threading
 {
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public sealed class Mutex : WaitHandle 
 	{
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -106,6 +110,11 @@ namespace System.Threading
 			Handle = CreateMutex_internal (initiallyOwned, name, out createdNew);
 		}
 
+		public MutexSecurity GetAccessControl ()
+		{
+			throw new NotImplementedException ();
+		}
+
 		public static Mutex OpenExisting (string name)
 		{
 			return(OpenExisting (name, MutexRights.Synchronize |
@@ -149,5 +158,12 @@ namespace System.Threading
 				throw new ApplicationException ("Mutex is not owned");
 			}
 		}
+
+#if NET_2_0
+		public void SetAccessControl (MutexSecurity mutexSecurity)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 	}
 }
