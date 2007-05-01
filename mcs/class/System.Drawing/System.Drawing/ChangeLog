@@ -1,3 +1,7 @@
+2007-05-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* KnownColors.cs: Force alpha values (opaque) on Win32's GetSysColor.
+
 2007-04-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Color.cs: Reflection didn't like the change from int to uint (thanks

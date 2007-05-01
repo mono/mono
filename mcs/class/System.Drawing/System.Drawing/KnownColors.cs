@@ -229,42 +229,48 @@ namespace System.Drawing {
 			// correct system colors outside Windows
 		}
 
+		// Windows values are without alpha, force it to opaque (or everything will be transparent)
+		static uint GetSysColor (GetSysColorIndex index)
+		{
+			return 0xFF000000 | GDIPlus.Win32GetSysColor (index);
+		}
+
 		static void RetrieveWindowsSystemColors ()
 		{
-			ArgbValues [(int)KnownColor.ActiveBorder] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_ACTIVEBORDER);
-			ArgbValues [(int)KnownColor.ActiveCaption] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_ACTIVECAPTION);
-			ArgbValues [(int)KnownColor.ActiveCaptionText] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_CAPTIONTEXT);
-			ArgbValues [(int)KnownColor.AppWorkspace] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_APPWORKSPACE);
-			ArgbValues [(int)KnownColor.Control] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_BTNFACE);
-			ArgbValues [(int)KnownColor.ControlDark] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_BTNSHADOW);
-			ArgbValues [(int)KnownColor.ControlDarkDark] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_3DDKSHADOW);
-			ArgbValues [(int)KnownColor.ControlLight] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_3DLIGHT);
-			ArgbValues [(int)KnownColor.ControlLightLight] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_BTNHIGHLIGHT);
-			ArgbValues [(int)KnownColor.ControlText] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_BTNTEXT);
-			ArgbValues [(int)KnownColor.Desktop] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_DESKTOP);
-			ArgbValues [(int)KnownColor.GrayText] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_GRAYTEXT);
-			ArgbValues [(int)KnownColor.Highlight] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_HIGHLIGHT);
-			ArgbValues [(int)KnownColor.HighlightText] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_HIGHLIGHTTEXT);
-			ArgbValues [(int)KnownColor.HotTrack] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_HOTLIGHT);
-			ArgbValues [(int)KnownColor.InactiveBorder] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_INACTIVEBORDER);
-			ArgbValues [(int)KnownColor.InactiveCaption] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_INACTIVECAPTION);
-			ArgbValues [(int)KnownColor.InactiveCaptionText] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_INACTIVECAPTIONTEXT);
-			ArgbValues [(int)KnownColor.Info] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_INFOBK);
-			ArgbValues [(int)KnownColor.InfoText] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_INFOTEXT);
-			ArgbValues [(int)KnownColor.Menu] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_MENU);
-			ArgbValues [(int)KnownColor.MenuText] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_MENUTEXT);
-			ArgbValues [(int)KnownColor.ScrollBar] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_SCROLLBAR);
-			ArgbValues [(int)KnownColor.Window] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_WINDOW);
-			ArgbValues [(int)KnownColor.WindowFrame] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_WINDOWFRAME);
-			ArgbValues [(int)KnownColor.WindowText] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_WINDOWTEXT);
+			ArgbValues [(int)KnownColor.ActiveBorder] = GetSysColor (GetSysColorIndex.COLOR_ACTIVEBORDER);
+			ArgbValues [(int)KnownColor.ActiveCaption] = GetSysColor (GetSysColorIndex.COLOR_ACTIVECAPTION);
+			ArgbValues [(int)KnownColor.ActiveCaptionText] = GetSysColor (GetSysColorIndex.COLOR_CAPTIONTEXT);
+			ArgbValues [(int)KnownColor.AppWorkspace] = GetSysColor (GetSysColorIndex.COLOR_APPWORKSPACE);
+			ArgbValues [(int)KnownColor.Control] = GetSysColor (GetSysColorIndex.COLOR_BTNFACE);
+			ArgbValues [(int)KnownColor.ControlDark] = GetSysColor (GetSysColorIndex.COLOR_BTNSHADOW);
+			ArgbValues [(int)KnownColor.ControlDarkDark] = GetSysColor (GetSysColorIndex.COLOR_3DDKSHADOW);
+			ArgbValues [(int)KnownColor.ControlLight] = GetSysColor (GetSysColorIndex.COLOR_3DLIGHT);
+			ArgbValues [(int)KnownColor.ControlLightLight] = GetSysColor (GetSysColorIndex.COLOR_BTNHIGHLIGHT);
+			ArgbValues [(int)KnownColor.ControlText] = GetSysColor (GetSysColorIndex.COLOR_BTNTEXT);
+			ArgbValues [(int)KnownColor.Desktop] = GetSysColor (GetSysColorIndex.COLOR_DESKTOP);
+			ArgbValues [(int)KnownColor.GrayText] = GetSysColor (GetSysColorIndex.COLOR_GRAYTEXT);
+			ArgbValues [(int)KnownColor.Highlight] = GetSysColor (GetSysColorIndex.COLOR_HIGHLIGHT);
+			ArgbValues [(int)KnownColor.HighlightText] = GetSysColor (GetSysColorIndex.COLOR_HIGHLIGHTTEXT);
+			ArgbValues [(int)KnownColor.HotTrack] = GetSysColor (GetSysColorIndex.COLOR_HOTLIGHT);
+			ArgbValues [(int)KnownColor.InactiveBorder] = GetSysColor (GetSysColorIndex.COLOR_INACTIVEBORDER);
+			ArgbValues [(int)KnownColor.InactiveCaption] = GetSysColor (GetSysColorIndex.COLOR_INACTIVECAPTION);
+			ArgbValues [(int)KnownColor.InactiveCaptionText] = GetSysColor (GetSysColorIndex.COLOR_INACTIVECAPTIONTEXT);
+			ArgbValues [(int)KnownColor.Info] = GetSysColor (GetSysColorIndex.COLOR_INFOBK);
+			ArgbValues [(int)KnownColor.InfoText] = GetSysColor (GetSysColorIndex.COLOR_INFOTEXT);
+			ArgbValues [(int)KnownColor.Menu] = GetSysColor (GetSysColorIndex.COLOR_MENU);
+			ArgbValues [(int)KnownColor.MenuText] = GetSysColor (GetSysColorIndex.COLOR_MENUTEXT);
+			ArgbValues [(int)KnownColor.ScrollBar] = GetSysColor (GetSysColorIndex.COLOR_SCROLLBAR);
+			ArgbValues [(int)KnownColor.Window] = GetSysColor (GetSysColorIndex.COLOR_WINDOW);
+			ArgbValues [(int)KnownColor.WindowFrame] = GetSysColor (GetSysColorIndex.COLOR_WINDOWFRAME);
+			ArgbValues [(int)KnownColor.WindowText] = GetSysColor (GetSysColorIndex.COLOR_WINDOWTEXT);
 #if NET_2_0
-			ArgbValues [(int)KnownColor.ButtonFace] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_BTNFACE);
-			ArgbValues [(int)KnownColor.ButtonHighlight] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_BTNHIGHLIGHT);
-			ArgbValues [(int)KnownColor.ButtonShadow] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_BTNSHADOW);
-			ArgbValues [(int)KnownColor.GradientActiveCaption] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_GRADIENTACTIVECAPTION);
-			ArgbValues [(int)KnownColor.GradientInactiveCaption] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_GRADIENTINACTIVECAPTION);
-			ArgbValues [(int)KnownColor.MenuBar] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_MENUBAR);
-			ArgbValues [(int)KnownColor.MenuHighlight] = GDIPlus.Win32GetSysColor (GetSysColorIndex.COLOR_MENUHIGHLIGHT);
+			ArgbValues [(int)KnownColor.ButtonFace] = GetSysColor (GetSysColorIndex.COLOR_BTNFACE);
+			ArgbValues [(int)KnownColor.ButtonHighlight] = GetSysColor (GetSysColorIndex.COLOR_BTNHIGHLIGHT);
+			ArgbValues [(int)KnownColor.ButtonShadow] = GetSysColor (GetSysColorIndex.COLOR_BTNSHADOW);
+			ArgbValues [(int)KnownColor.GradientActiveCaption] = GetSysColor (GetSysColorIndex.COLOR_GRADIENTACTIVECAPTION);
+			ArgbValues [(int)KnownColor.GradientInactiveCaption] = GetSysColor (GetSysColorIndex.COLOR_GRADIENTINACTIVECAPTION);
+			ArgbValues [(int)KnownColor.MenuBar] = GetSysColor (GetSysColorIndex.COLOR_MENUBAR);
+			ArgbValues [(int)KnownColor.MenuHighlight] = GetSysColor (GetSysColorIndex.COLOR_MENUHIGHLIGHT);
 #endif
 		}
 
