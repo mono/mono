@@ -1,3 +1,7 @@
+2007-05-01  Jonathan Pobst  <monkey@jpobst.com>
+
+	* GridItem.cs: Implement 2.0 Tag property.
+
 2007-05-01  Frederik Carlier <frederik.carlier@carlier-online.be> 
 
 	* TreeNodeCollection.cs: Fix ContainsKey and IndexOfKey methods to use
