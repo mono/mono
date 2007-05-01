@@ -294,5 +294,41 @@ namespace MonoTests.System.Windows.Forms
 				Assert.IsNull (ex.ParamName, "#D4");
 			}
 		}
+
+#if NET_2_0
+		[Test]
+		public void ContainsKey ()
+		{
+			TreeView tv = new TreeView ();
+
+			for (int i = 0; i < 10; i++) {
+				TreeNode node = new TreeNode ();
+				node.Name = i.ToString ();
+				tv.Nodes.Add (node);
+			}
+
+			for (int i = 0; i < 10; i++)
+				Assert.IsTrue (tv.Nodes.ContainsKey (i.ToString ()), "#CK1");
+				
+			Assert.AreEqual (false, tv.Nodes.ContainsKey ("42"), "#CK2");
+		}
+
+		[Test]
+		public void IndexOfKey ()
+		{
+			TreeView tv = new TreeView ();
+
+			for (int i = 0; i < 10; i++) {
+				TreeNode node = new TreeNode ();
+				node.Name = i.ToString ();
+				tv.Nodes.Add (node);
+			}
+
+			for (int i = 0; i < 10; i++)
+				Assert.AreEqual (tv.Nodes.IndexOfKey (i.ToString ()), i, "#KI1");
+
+			Assert.AreEqual (-1, tv.Nodes.IndexOfKey ("42"), "#KI2");
+		}
+#endif
 	}
 }

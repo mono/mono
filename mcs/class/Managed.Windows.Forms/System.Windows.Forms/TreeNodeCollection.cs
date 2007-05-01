@@ -204,7 +204,7 @@ namespace System.Windows.Forms {
 #if NET_2_0
 		public bool ContainsKey (string key)
 		{
-			for (int i = 0; i < nodes.Length; i++) {
+			for (int i = 0; i < count; i++) {
 				if (string.Compare (nodes [i].Name, key, true, CultureInfo.InvariantCulture) == 0)
 					return true;
 			}
@@ -230,7 +230,7 @@ namespace System.Windows.Forms {
 #if NET_2_0
 		public int IndexOfKey (string key)
 		{
-			for (int i = 0; i < nodes.Length; i++) {
+			for (int i = 0; i < count; i++) {
 				if (string.Compare (nodes [i].Name, key, true, CultureInfo.InvariantCulture) == 0)
 					return i;
 			}

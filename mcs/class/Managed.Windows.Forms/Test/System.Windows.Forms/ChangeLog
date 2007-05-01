@@ -1,3 +1,8 @@
+2007-05-01  Frederik Carlier <frederik.carlier@carlier-online.be> 
+
+	* TreeNodeCollectionTest.cs: Add Unit tests for ContainsKey and 
+      IndexOfKey methods.
+
 2007-04-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DataGridViewColumnTest.cs: Added test for bug #81464, improved 

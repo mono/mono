@@ -1,3 +1,8 @@
+2007-05-01  Frederik Carlier <frederik.carlier@carlier-online.be> 
+
+	* TreeNodeCollection.cs: Fix ContainsKey and IndexOfKey methods to use
+	count instead of Nodes.Length.  [Fixes bug #81448]
+
 2007-05-01  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ComboBox.cs: Fix paramName sent to ArgumentOutOfRangeException's.
