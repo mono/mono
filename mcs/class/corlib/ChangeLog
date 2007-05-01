@@ -1,3 +1,7 @@
+2007-05-01  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* corlib_test.dll.sources: Added ConstructorInfoTest.cs.
+
 2007-04-30  Dick Porter  <dick@ximian.com>
 
 	* corlib.dll.sources: Added
