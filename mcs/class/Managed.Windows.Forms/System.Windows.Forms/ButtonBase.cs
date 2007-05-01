@@ -602,6 +602,8 @@ namespace System.Windows.Forms {
 
 		#region	Events
 #if NET_2_0
+		[Browsable (true)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
 		public new event EventHandler AutoSizeChanged {
 			add { base.AutoSizeChanged += value; }
 			remove { base.AutoSizeChanged -= value; }
@@ -618,7 +620,9 @@ namespace System.Windows.Forms {
 
 
 		#region .NET 2.0 Public Instance Properties
+		[Browsable (true)]
 		[DefaultValue (false)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
 #if NET_2_0
 		public 
 #else
@@ -645,7 +649,9 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
-		[DefaultValue (true)]
+		[Browsable (true)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Visible)]
 		public override bool AutoSize {
 			get { return base.AutoSize; }
 			set { base.AutoSize = value; }
@@ -657,6 +663,9 @@ namespace System.Windows.Forms {
 		}
 		
 		[Localizable (true)]
+		[DefaultValue ("")]
+		[Editor ("System.Windows.Forms.Design.ImageIndexEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
+		[RefreshProperties (RefreshProperties.Repaint)]
 		public string ImageKey {
 			get { return this.image_key; }
 			set {

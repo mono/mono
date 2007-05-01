@@ -36,7 +36,7 @@ namespace System.Windows.Forms {
 	[ComVisible (true)]
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
 	[DefaultBindingProperty ("CheckState")]
-	[ToolboxItem ("")]
+	[ToolboxItem ("System.Windows.Forms.Design.AutoSizeToolboxItem," + Consts.AssemblySystem_Design)]
 #endif
 	public class CheckBox : ButtonBase {
 		#region Local Variables
@@ -373,6 +373,8 @@ namespace System.Windows.Forms {
 		}
 		
 #if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event MouseEventHandler MouseDoubleClick {
 			add { base.MouseDoubleClick += value; }
 			remove { base.MouseDoubleClick -= value; }

@@ -2031,7 +2031,9 @@ namespace System.Windows.Forms
 		}
 
 #if NET_2_0
-
+		[Browsable (false)]
+		[DefaultValue ("{X=0,Y=0}")]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public virtual Point AutoScrollOffset {
 			get {
 				return auto_scroll_offset;

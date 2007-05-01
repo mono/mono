@@ -1371,6 +1371,7 @@ namespace System.Windows.Forms {
 #if !NET_2_0
 		internal
 #else
+		[Browsable (false)]
 		[MonoTODO ("Implemented for Win32, needs X11 implementation")]
 		protected 
 #endif

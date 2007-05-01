@@ -40,6 +40,7 @@ namespace System.Windows.Forms
 #if NET_2_0
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
 	[ComVisible (true)]
+	[ToolboxItem ("System.Windows.Forms.Design.AutoSizeToolboxItem," + Consts.AssemblySystem_Design)]
 #endif
 	public class LinkLabel : Label, IButtonControl
 	{

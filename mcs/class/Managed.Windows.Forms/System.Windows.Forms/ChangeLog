@@ -1,4 +1,17 @@
 2007-05-01  Jonathan Pobst  <monkey@jpobst.com>
+	corcompare work: A - M
+	* BindingNavigator.cs
+	* Button.cs
+	* ButtonBase.cs
+	* CheckBox.cs
+	* Control.cs
+	* FlowLayoutPanel.cs
+	* Form.cs
+	* Label.cs
+	* LinkLabel.cs
+	* ListView.cs
+
+2007-05-01  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Application.cs: Give toolstrips a chance to process mnemonics.
 	* ToolStrip.cs, ToolStripDropDownButton.cs, ToolStripItem.cs,

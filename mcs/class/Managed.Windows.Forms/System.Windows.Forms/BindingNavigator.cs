@@ -35,7 +35,10 @@ using System.Runtime.InteropServices;
 namespace System.Windows.Forms
 {
 	[ComVisibleAttribute(true)]
+	[DefaultEvent ("RefreshItems")]
+	[DefaultProperty ("BindingSource")]
 	[ClassInterfaceAttribute(ClassInterfaceType.AutoDispatch)]
+	[Designer ("System.Windows.Forms.Design.BindingNavigatorDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	public class BindingNavigator : ToolStrip, ISupportInitialize
 	{
 		#region Private Fields
@@ -69,6 +72,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue (null)]
 		[TypeConverter(typeof(ReferenceConverter))]
 		public BindingSource BindingSource
 		{
@@ -183,7 +187,8 @@ namespace System.Windows.Forms
 
 		#region Constructors
 
-		public BindingNavigator()
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public BindingNavigator ()
 			: this(false)
 		{
 		}
@@ -204,6 +209,7 @@ namespace System.Windows.Forms
 				this.AddStandardItems();
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public BindingNavigator(IContainer container)
 			:base()
 		{
@@ -305,7 +311,8 @@ namespace System.Windows.Forms
 			this.RefreshItemsCore();
 		}
 
-		protected virtual void RefreshItemsCore()
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected virtual void RefreshItemsCore ()
 		{
 			try
 			{

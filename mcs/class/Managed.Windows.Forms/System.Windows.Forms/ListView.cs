@@ -820,6 +820,8 @@ namespace System.Windows.Forms
 		}
 
 #if NET_2_0
+		[DefaultValue (false)]
+		[RefreshProperties (RefreshProperties.Repaint)]
 		public bool VirtualMode {
 			get {
 				return virtual_mode;
@@ -836,6 +838,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue (0)]
+		[RefreshProperties (RefreshProperties.Repaint)]
 		public int VirtualListSize {
 			get {
 				return virtual_list_size;

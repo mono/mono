@@ -41,7 +41,7 @@ namespace System.Windows.Forms
 #if NET_2_0
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
 	[ComVisible (true)]
-	[ToolboxItem (true)]
+	[ToolboxItem ("System.Windows.Forms.Design.AutoSizeToolboxItem," + Consts.AssemblySystem_Design)]
 	[DefaultBindingProperty ("Text")]
 #endif
 	public class Label : Control
