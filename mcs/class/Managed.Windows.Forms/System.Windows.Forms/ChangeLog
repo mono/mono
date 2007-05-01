@@ -1,4 +1,9 @@
 2007-05-01  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ComboBox.cs: Fix paramName sent to ArgumentOutOfRangeException's.
+	[Fixes bug #81506]
+
+2007-05-01  Jonathan Pobst  <monkey@jpobst.com>
 	corcompare work: A - M
 	* BindingNavigator.cs
 	* Button.cs

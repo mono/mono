@@ -629,7 +629,7 @@ namespace System.Windows.Forms
 					return;
 
 				if (value <= -2 || value >= Items.Count)
-					throw new ArgumentOutOfRangeException ("Index of out range");
+					throw new ArgumentOutOfRangeException ("SelectedIndex");
 				selected_index = value;
 
 				if (dropdown_style != ComboBoxStyle.DropDownList) {
@@ -1152,7 +1152,7 @@ namespace System.Windows.Forms
 		protected override void RefreshItem (int index)
 		{
 			if (index < 0 || index >= Items.Count)
-				throw new ArgumentOutOfRangeException ("Index of out range");
+				throw new ArgumentOutOfRangeException ("index");
 				
 			if (draw_mode == DrawMode.OwnerDrawVariable)
 				item_heights.Remove (Items [index]);
@@ -1691,13 +1691,13 @@ namespace System.Windows.Forms
 			public virtual object this [int index] {
 				get {
 					if (index < 0 || index >= Count)
-						throw new ArgumentOutOfRangeException ("Index of out range");
+						throw new ArgumentOutOfRangeException ("index");
 
 					return object_items[index];
 				}
 				set {
 					if (index < 0 || index >= Count)
-						throw new ArgumentOutOfRangeException ("Index of out range");
+						throw new ArgumentOutOfRangeException ("index");
 					if (value == null)
 						throw new ArgumentNullException ("value");
 
@@ -1795,7 +1795,7 @@ namespace System.Windows.Forms
 			public void Insert (int index,  object item)
 			{
 				if (index < 0 || index > Count)
-					throw new ArgumentOutOfRangeException ("Index of out range");
+					throw new ArgumentOutOfRangeException ("index");
 				if (item == null)
 					throw new ArgumentNullException ("item");
 				
@@ -1823,7 +1823,7 @@ namespace System.Windows.Forms
 			public void RemoveAt (int index)
 			{
 				if (index < 0 || index >= Count)
-					throw new ArgumentOutOfRangeException ("Index of out range");
+					throw new ArgumentOutOfRangeException ("index");
 					
 				if (index == owner.SelectedIndex)
 					owner.SelectedIndex = -1;
