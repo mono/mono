@@ -134,11 +134,9 @@ namespace MonoTests.System.Collections.Generic
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
-		[Category ("NotWorking")] // see bug #78019
 		public void AddNullKeyNullable ()
 		{
-			SortedDictionary<Nullable<int>,string> d =
-				new SortedDictionary<Nullable<int>,string> ();
+			SortedDictionary<int?,string> d = new SortedDictionary<int?,string> ();
 			d.Add (null, "TEST");
 		}
 

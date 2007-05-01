@@ -138,6 +138,7 @@ System.CodeDom/FieldDirection.cs
 System.CodeDom/MemberAttributes.cs
 System.Collections.Generic/LinkedList.cs
 System.Collections.Generic/LinkedListNode.cs
+System.Collections.Generic/RBTree.cs
 System.Collections.Generic/Queue.cs
 System.Collections.Generic/SortedDictionary.cs
 System.Collections.Generic/SortedList.cs

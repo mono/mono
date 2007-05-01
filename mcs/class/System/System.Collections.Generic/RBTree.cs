@@ -36,7 +36,7 @@ using System.Collections;
 
 namespace System.Collections.Generic
 {
-	internal class RBTreeCore {
+	internal class RBTree : IEnumerable, IEnumerable<RBTree.Node> {
 		public interface INodeComparer<T> {
 			int Compare (T value, Node node);
 		}
@@ -144,14 +144,21 @@ namespace System.Collections.Generic
 		}
 #endif
 
-		public RBTreeCore (object cmp)
+		public RBTree (object cmp)
 		{
 			// cmp is INodeComparer<T> for some T
 			this.cmp = cmp;
 		}
 
-		// returns the newly inserted node (or null if the value is already in the tree)
-		public Node Insert<T> (T key, Node new_node)
+		public void Clear ()
+		{
+			root = null;
+			++version;
+		}
+
+		// if key is already in the tree, return the node associated with it
+		// if not, insert new_node into the tree, and return it
+		public Node Intern<T> (T key, Node new_node)
 		{
 			if (root == null) {
 				root = new_node;
@@ -162,7 +169,7 @@ namespace System.Collections.Generic
 
 			List<Node> path = alloc_path ();
 			int in_tree_cmp = find_key (key, path);
-			Node retval = in_tree_cmp == 0 ? null : do_insert (in_tree_cmp, new_node, path);
+			Node retval = in_tree_cmp == 0 ? path [path.Count - 1] : do_insert (in_tree_cmp, new_node, path);
 			// no need for a try .. finally, this is only used to mitigate allocations
 			release_path (path);
 			return retval;
@@ -182,9 +189,17 @@ namespace System.Collections.Generic
 			return retval;
 		}
 
-		public bool Contains<T> (T key)
+		public Node Lookup<T> (T key)
 		{
-			return root != null && find_key (key, null) == 0;
+			INodeComparer<T> cmp = (INodeComparer<T>) this.cmp;
+			Node current = root;
+			while (current != null) {
+				int c = cmp.Compare (key, current);
+				if (c == 0)
+					break;
+				current = c < 0 ? current.left : current.right;
+			}
+			return current;
 		}
 
 		public int Count {
@@ -215,9 +230,19 @@ namespace System.Collections.Generic
 			}
 		}
 
-		public NodeEnumerator GetNodeEnumerator ()
+		public NodeEnumerator GetEnumerator ()
 		{
 			return new NodeEnumerator (this);
+		}
+
+		IEnumerator<Node> IEnumerable<Node>.GetEnumerator ()
+		{
+			return GetEnumerator ();
+		}
+
+		IEnumerator IEnumerable.GetEnumerator ()
+		{
+			return GetEnumerator ();
 		}
 
 #if TEST
@@ -555,13 +580,13 @@ namespace System.Collections.Generic
 		}
 
 		public struct NodeEnumerator : IEnumerator, IEnumerator<Node> {
-			RBTreeCore tree;
+			RBTree tree;
 			uint version;
 
 			List<Node> path;
 			Node current;
 
-			internal NodeEnumerator (RBTreeCore tree)
+			internal NodeEnumerator (RBTree tree)
 			{
 				this.tree = tree;
 				version = tree.version;
@@ -569,7 +594,7 @@ namespace System.Collections.Generic
 				path = null;
 			}
 
-			void IEnumerator.Reset ()
+			public void Reset ()
 			{
 				check_version ();
 				current = null;
@@ -650,7 +675,7 @@ namespace Mono.ValidationTest {
 
 	internal class TreeSet<T> : IEnumerable<T>, IEnumerable
 	{
-		public class Node : RBTreeCore.Node {
+		public class Node : RBTree.Node {
 			public T value;
 
 			public Node (T v)
@@ -658,7 +683,7 @@ namespace Mono.ValidationTest {
 				value = v;
 			}
 
-			public override void SwapValue (RBTreeCore.Node other)
+			public override void SwapValue (RBTree.Node other)
 			{
 				Node o = (Node) other;
 				T v = value;
@@ -676,10 +701,10 @@ namespace Mono.ValidationTest {
 			}
 		}
 
-		public class NodeComparer : RBTreeCore.INodeComparer<T> {
+		public class NodeComparer : RBTree.INodeComparer<T> {
 			IComparer<T> cmp;
 
-			public int Compare (T value, RBTreeCore.Node node)
+			public int Compare (T value, RBTree.Node node)
 			{
 				return cmp.Compare (value, ((Node) node).value);
 			}
@@ -698,16 +723,16 @@ namespace Mono.ValidationTest {
 		}
 
 		public struct Enumerator : IDisposable, IEnumerator, IEnumerator<T> {
-			RBTreeCore.NodeEnumerator host;
+			RBTree.NodeEnumerator host;
 
 			internal Enumerator (TreeSet<T> tree)
 			{
-				host = new RBTreeCore.NodeEnumerator (tree.tree);
+				host = new RBTree.NodeEnumerator (tree.tree);
 			}
 
 			void IEnumerator.Reset ()
 			{
-				((IEnumerator) host).Reset ();
+				host.Reset ();
 			}
 
 			public T Current {
@@ -729,7 +754,7 @@ namespace Mono.ValidationTest {
 			}
 		}
 
-		RBTreeCore tree;
+		RBTree tree;
 
 		public TreeSet () : this (null)
 		{
@@ -737,7 +762,7 @@ namespace Mono.ValidationTest {
 
 		public TreeSet (IComparer<T> cmp)
 		{
-			tree = new RBTreeCore (NodeComparer.GetComparer (cmp));
+			tree = new RBTree (NodeComparer.GetComparer (cmp));
 		}
 
 		IEnumerator IEnumerable.GetEnumerator ()
@@ -755,19 +780,22 @@ namespace Mono.ValidationTest {
 			return new Enumerator (this);
 		}
 
-		public Node Insert (T value)
+		// returns true if the value was inserted, false if the value already existed in the tree
+		public bool Insert (T value)
 		{
-			return (Node) tree.Insert (value, new Node (value));
+			RBTree.Node n = new Node (value);
+			return tree.Intern (value, n) == n;
 		}
 
-		public Node Remove (T value)
+		// returns true if the value was removed, false if the value didn't exist in the tree
+		public bool Remove (T value)
 		{
-			return (Node) tree.Remove (value);
+			return tree.Remove (value) != null;
 		}
 
 		public bool Contains (T value)
 		{
-			return tree.Contains (value);
+			return tree.Lookup (value) != null;
 		}
 
 		public T this [int index] {
@@ -806,11 +834,11 @@ namespace Mono.ValidationTest {
 					continue;
 				d [n] = n;
 
-				if (t.Contains (n))
-					throw new Exception ("tree says it has a number it shouldn't");
-
 				try {
-					t.Insert (n);
+					if (t.Contains (n))
+						throw new Exception ("tree says it has a number it shouldn't");
+					if (!t.Insert (n))
+						throw new Exception ("tree says it has a number it shouldn't");
 				} catch {
 					Console.Error.WriteLine ("Exception while inserting {0} in iteration {1}", n, i);
 					throw;
@@ -850,7 +878,7 @@ namespace Mono.ValidationTest {
 				if ((j++ % 100) == 0)
 					t.VerifyInvariants ();
 				try {
-					if (t.Remove (n) == null)
+					if (!t.Remove (n))
 						throw new Exception ("tree says it doesn't have a number it should");
 
 				} catch {

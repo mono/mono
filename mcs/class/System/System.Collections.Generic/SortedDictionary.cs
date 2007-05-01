@@ -36,111 +36,116 @@ namespace System.Collections.Generic
 	[Serializable]
 	public class SortedDictionary<TKey,TValue> : IDictionary<TKey,TValue>, ICollection<KeyValuePair<TKey,TValue>>, IEnumerable<KeyValuePair<TKey,TValue>>, IDictionary, ICollection, IEnumerable
 	{
-		TKey [] _keys;
-		TValue [] _values;
-		IComparer<TKey> _comparer;
-		int _size;
-		int _version = 0;
-		const int DefaultCapacitySize = 4;
+		class Node : RBTree.Node {
+			public TKey key;
+			public TValue value;
 
-		KeyCollection _keyList;
-		ValueCollection _valueList;
+			public Node (TKey key, TValue value)
+			{
+				this.key = key;
+				this.value = value;
+			}
+
+			public override void SwapValue (RBTree.Node other)
+			{
+				Node o = (Node) other;
+				TKey k = key; key = o.key; o.key = k;
+				TValue v = value; value = o.value; o.value = v;
+			}
+
+			public KeyValuePair<TKey, TValue> AsKV ()
+			{
+				return new KeyValuePair<TKey, TValue> (key, value);
+			}
+
+			public DictionaryEntry AsDE ()
+			{
+				return new DictionaryEntry (key, value);
+			}
+		}
+
+		class NodeComparer : RBTree.INodeComparer<TKey> {
+			public IComparer<TKey> cmp;
+
+			public int Compare (TKey key, RBTree.Node node)
+			{
+				return cmp.Compare (key, ((Node) node).key);
+			}
+
+			private NodeComparer (IComparer<TKey> cmp)
+			{
+				this.cmp = cmp;
+			}
+			static NodeComparer Default = new NodeComparer (Comparer<TKey>.Default);
+			public static NodeComparer GetComparer (IComparer<TKey> cmp)
+			{
+				if (cmp == null || cmp == Comparer<TKey>.Default)
+					return Default;
+				return new NodeComparer (cmp);
+			}
+		}
+
+		RBTree tree;
+		NodeComparer cmp;
 
 		#region Constructor
-		public SortedDictionary () : this (0, null)
+		public SortedDictionary () : this ((IComparer<TKey>) null)
 		{
 		}
 
-		public SortedDictionary (IComparer<TKey> comparer) : this (0, comparer)
+		public SortedDictionary (IComparer<TKey> comparer)
 		{
+			cmp = NodeComparer.GetComparer (comparer);
+			tree = new RBTree (cmp);
 		}
 
 		public SortedDictionary (IDictionary<TKey,TValue> dic) : this (dic, null)
 		{
 		}
 
-		// it disappeared in 2.0 RTM
-		SortedDictionary (int capacity) : this (capacity, null)
-		{
-
-		}
-
-		public SortedDictionary (IDictionary<TKey,TValue> dic, IComparer<TKey> comparer) : this (dic == null ? 0 : dic.Count, comparer)
+		public SortedDictionary (IDictionary<TKey,TValue> dic, IComparer<TKey> comparer) : this (comparer)
 		{
 			if (dic == null)
 				throw new ArgumentNullException ();
-
-			dic.Keys.CopyTo (_keys, 0);
-			dic.Values.CopyTo (_values, 0);
-			Array.Sort<TKey,TValue> (_keys, _values);
-			_size = dic.Count;
-		}
-
-		// it disappeared in 2.0 RTM
-		SortedDictionary (int capacity, IComparer<TKey> comparer)
-		{
-			if (capacity < 0)
-				throw new ArgumentOutOfRangeException ();
-
-			_keys = new TKey [capacity];
-			_values = new TValue [capacity];
-			_size = 0;
-
-			if (comparer == null)
-				_comparer = Comparer<TKey>.Default;
-			else
-				_comparer = comparer;
+			foreach (KeyValuePair<TKey, TValue> entry in dic)
+				Add (entry.Key, entry.Value);
 		}
 		#endregion
 
 		#region PublicProperty
 
 		public IComparer<TKey> Comparer {
-			get { return _comparer; }
-		}
-
-		// It disappeared in 2.0 RTM.
-		int Capacity {
-			get { return _keys.Length; }
-			set {
-				if (value < _size)
-					throw new ArgumentOutOfRangeException ();
-				
-				Array.Resize<TKey> (ref _keys, value);
-				Array.Resize<TValue> (ref _values, value);
-			}
+			get { return cmp.cmp; }
 		}
 
 		public int Count {
-			get { return _size; }
+			get { return (int) tree.Count; }
 		}
 
 		public TValue this [TKey key] {
 			get {
-				int index = IndexOfKey (key);
-				if (index >= 0)
-					return _values [index];
-				
-				throw new KeyNotFoundException ();
+				Node n = (Node) tree.Lookup (key);
+				if (n == null)
+					throw new KeyNotFoundException ();
+				return n.value;
 			}
 			set {
 				if (key == null)
 					throw new ArgumentNullException ();
-				
-				int index = IndexOfKey (key);
-				if (index < 0)
-					Add (key, value);
-				else
-					_values [index] = value;
+
+				RBTree.Node n1 = new Node (key, value);
+				Node n2 = (Node) tree.Intern (key, n1);
+				if (n2 != n1)
+					n2.value = value;
 			}
 		}
 
 		public KeyCollection Keys {
-			get { return GetKeyCollection (); }
+			get { return new KeyCollection (this); }
 		}
 
 		public ValueCollection Values {
-			get { return GetValueCollection (); }
+			get { return new ValueCollection (this); }
 		}
 		#endregion
 
@@ -150,43 +155,30 @@ namespace System.Collections.Generic
 		{
 			if (key == null) 
 				throw new ArgumentNullException ();
-			
-			int index = Array.BinarySearch<TKey> (_keys, 0, _size, key, _comparer);
-			if (index >= 0)
+
+			RBTree.Node n1 = new Node (key, value);
+			Node n2 = (Node) tree.Intern (key, n1);
+			if (n2 != n1)
 				throw new ArgumentException ();
-
-			index = ~index;
-
-			if (_size == _keys.Length)
-				Capacity += Capacity > 0 ? Capacity : DefaultCapacitySize;
-
-			if (index < _size) {
-				Array.Copy (_keys, index, _keys, index + 1, _size - index);
-				Array.Copy (_values, index, _values, index + 1, _size - index);
-			}
-
-			_keys [index] = key;
-			_values [index] = value;
-			_size++;
-			_version++;
 		}
 
 		public void Clear ()
 		{
-			Array.Clear (_keys, 0, _size);
-			Array.Clear (_values, 0, _size);
-			_size = 0;
-			_version++;
+			tree.Clear ();
 		}
 
 		public bool ContainsKey (TKey key)
 		{
-			return IndexOfKey (key) >= 0;
+			return tree.Lookup (key) != null;
 		}
 
 		public bool ContainsValue (TValue value)
 		{
-			return IndexOfValue (value) >= 0;
+			IEqualityComparer<TValue> vcmp = EqualityComparer<TValue>.Default;
+			foreach (Node n in tree)
+				if (vcmp.Equals (value, n.value))
+					return true;
+			return false;
 		}
 
 		public void CopyTo (KeyValuePair<TKey,TValue>[] array, int arrayIndex)
@@ -195,12 +187,11 @@ namespace System.Collections.Generic
 				throw new ArgumentNullException ();
 			if (arrayIndex < 0 || array.Length <= arrayIndex)
 				throw new ArgumentOutOfRangeException ();
-			if (array.Length - arrayIndex < _size)
+			if (array.Length - arrayIndex < Count)
 				throw new ArgumentException ();
 
-			for (int i = 0; i < _size; i ++) {
-				array [arrayIndex + i] = new KeyValuePair<TKey,TValue> (_keys [i], _values [i]);
-			}
+			foreach (Node n in tree)
+				array [arrayIndex ++] = n.AsKV ();
 		}
 		
 		public Enumerator GetEnumerator ()
@@ -208,73 +199,21 @@ namespace System.Collections.Generic
 			return new Enumerator (this);
 		}
 
-		int IndexOfKey (TKey key)
-		{
-			if (key == null)
-				throw new ArgumentNullException ();
-
-			return Array.BinarySearch<TKey> (_keys, 0, _size, key, _comparer);
-		}
-
-		int IndexOfValue (TValue value)
-		{
-			return Array.IndexOf<TValue> (_values, value, 0, _size);
-		}
-
 		public bool Remove (TKey key)
 		{
-			int index = IndexOfKey (key);
-			if (index >= 0) {
-				RemoveAt (index);
-				return true;
-			}
-			return false;
-		}
-
-		void RemoveAt (int index)
-		{
-			if (index < 0 || _size <= index)
-				throw new ArgumentOutOfRangeException ();
-
-			_size--;
-			if (index < _size) {
-				Array.Copy (_keys, index + 1, _keys, index, _size - index);
-				Array.Copy (_values, index + 1, _values, index, _size - index);
-			}
-
-			_keys[_size] = default (TKey) ;
-			_values[_size] = default (TValue) ;
-			_version++;
+			return tree.Remove (key) != null;
 		}
 
 		public bool TryGetValue (TKey key, out TValue value)
 		{
-			int index = IndexOfKey (key);
-			if (index >= 0) {
-				value = _values [index];
-				return true;
-			}
-
-			value = default (TValue) ;
-			return false;			
+			Node n = (Node) tree.Lookup (key);
+			value = n == null ? default (TValue) : n.value;
+			return n != null;
 		}
 
 		#endregion
 
 		#region PrivateMethod
-		private KeyCollection GetKeyCollection ()
-		{
-			if (_keyList == null)
-				_keyList = new KeyCollection (this);
-			return _keyList;
-		}
-		private ValueCollection GetValueCollection ()
-		{
-			if (_valueList == null)
-				_valueList = new ValueCollection (this);
-			return _valueList;
-		}
-
 		TKey ToKey (object key)
 		{
 			if (key == null)
@@ -295,11 +234,11 @@ namespace System.Collections.Generic
 		#region IDictionary<TKey,TValue> Member
 
 		ICollection<TKey> IDictionary<TKey,TValue>.Keys {
-			get { return GetKeyCollection (); }
+			get { return new KeyCollection (this); }
 		}
 
 		ICollection<TValue> IDictionary<TKey,TValue>.Values {
-			get { return GetValueCollection (); }
+			get { return new ValueCollection (this); }
 		}
 
 		#endregion
@@ -313,8 +252,8 @@ namespace System.Collections.Generic
 
 		bool ICollection<KeyValuePair<TKey,TValue>>.Contains (KeyValuePair<TKey,TValue> item)
 		{
-			int index = IndexOfKey (item.Key);
-			return index >= 0 && Comparer<TValue>.Default.Compare (_values [index], item.Value) == 0;
+			Node n = (Node) tree.Lookup (item.Key);
+			return n != null && item.Value.Equals (n.value);
 		}
 
 		bool ICollection<KeyValuePair<TKey,TValue>>.IsReadOnly {
@@ -323,10 +262,10 @@ namespace System.Collections.Generic
 
 		bool ICollection<KeyValuePair<TKey,TValue>>.Remove (KeyValuePair<TKey,TValue> item)
 		{
-			int index = IndexOfKey (item.Key);
-			if (index >= 0 && Comparer<TValue>.Default.Compare (_values [index], item.Value) == 0) {
-				RemoveAt (index);
-				return true;
+			TValue value;
+			if (TryGetValue (item.Key, out value)) {
+				if (EqualityComparer<TValue>.Default.Equals (item.Value, value))
+					return Remove (item.Key);
 			}
 			return false;
 		}
@@ -359,7 +298,7 @@ namespace System.Collections.Generic
 		}
 
 		ICollection IDictionary.Keys  {
-			get { return GetKeyCollection (); }
+			get { return new KeyCollection (this); }
 		}
 
 		void IDictionary.Remove (object key)
@@ -367,19 +306,12 @@ namespace System.Collections.Generic
 			Remove (ToKey (key));
 		}
 		ICollection IDictionary.Values {
-			get { return GetValueCollection (); }
+			get { return new ValueCollection (this); }
 		}
 
 		object IDictionary.this [object key] {
-			get {
-				return this [ToKey (key)];
-			}
-			set {
-				if (!(value is TValue))
-					throw new ArgumentException ();
-
-				this [ToKey (key)] = ToValue (value);
-			}
+			get { return this [ToKey (key)]; }
+			set { this [ToKey (key)] = ToValue (value); }
 		}
 
 		#endregion
@@ -392,12 +324,11 @@ namespace System.Collections.Generic
 				throw new ArgumentNullException ();
 			if (index < 0 || array.Length <= index)
 				throw new ArgumentOutOfRangeException ();
-			if (array.Length - index < _size)
+			if (array.Length - index < Count)
 				throw new ArgumentException ();
 
-			for (int i = 0; i < _size; i ++) {
-				array.SetValue (new KeyValuePair<TKey,TValue> (_keys [i], _values [i]), i);
-			}
+			foreach (Node n in tree)
+				array.SetValue (n.AsDE (), index++);
 		}
 
 		bool ICollection.IsSynchronized {
@@ -461,13 +392,14 @@ namespace System.Collections.Generic
 					throw new ArgumentNullException ();
 				if (arrayIndex < 0 || array.Length <= arrayIndex)
 					throw new ArgumentOutOfRangeException ();
-				if (array.Length - arrayIndex < _dic._size)
+				if (array.Length - arrayIndex < Count)
 					throw new ArgumentException ();
-				Array.Copy (_dic._values, 0, array, arrayIndex, _dic._size);
+				foreach (Node n in _dic.tree)
+					array [arrayIndex++] = n.value;
 			}
 
 			public int Count {
-				get { return _dic._size; }
+				get { return _dic.Count; }
 			}
 
 			bool ICollection<TValue>.IsReadOnly {
@@ -489,15 +421,16 @@ namespace System.Collections.Generic
 				return new Enumerator (_dic);
 			}
 		
-			void ICollection.CopyTo(Array array, int index)
+			void ICollection.CopyTo (Array array, int index)
 			{
 				if (array == null)
 					throw new ArgumentNullException ();
 				if (index < 0 || array.Length <= index)
 					throw new ArgumentOutOfRangeException ();
-				if (array.Length - index < _dic._size)
+				if (array.Length - index < Count)
 					throw new ArgumentException ();
-				Array.Copy (_dic._values, 0, array, index, _dic._size);
+				foreach (Node n in _dic.tree)
+					array.SetValue (n.value, index++);
 			}
 
 			bool ICollection.IsSynchronized {
@@ -515,43 +448,25 @@ namespace System.Collections.Generic
 
 			public struct Enumerator : IEnumerator<TValue>,IEnumerator, IDisposable
 			{
-				SortedDictionary<TKey,TValue> _dic;
-				int _version;
-				int _index;
-				int _count;
+				RBTree.NodeEnumerator host;
 
 				internal Enumerator (SortedDictionary<TKey,TValue> dic)
 				{
-					_dic = dic;
-					_version = dic._version;
-					_index = -1;
-					_count = dic._size;
+					host = dic.tree.GetEnumerator ();
 				}
 
 				public TValue Current {
-					get {
-						if (_count <= _index)
-							throw new InvalidOperationException ();
-						return _dic._values [_index];
-					}
+					get { return ((Node) host.Current).value; }
 				}
 
 				public bool MoveNext ()
 				{
-					if (_version != _dic._version)
-						throw new InvalidOperationException ();
-
-					if (_index + 1 < _count) {
-						_index ++;
-						return true;
-					}
-
-					return false;
+					return host.MoveNext ();
 				}
 
 				public void Dispose ()
 				{
-					_dic = null;
+					host.Dispose ();
 				}
 
 				object IEnumerator.Current {
@@ -560,9 +475,7 @@ namespace System.Collections.Generic
 
 				void IEnumerator.Reset ()
 				{
-					if (_version != _dic._version)
-						throw new InvalidOperationException ();
-					_index = -1;
+					host.Reset ();
 				}
 			}
 		}
@@ -600,11 +513,18 @@ namespace System.Collections.Generic
 
 			public void CopyTo (TKey [] array, int arrayIndex)
 			{
-				Array.Copy (_dic._keys, 0, array, arrayIndex, _dic._size);
+				if (array == null)
+					throw new ArgumentNullException ();
+				if (arrayIndex < 0 || array.Length <= arrayIndex)
+					throw new ArgumentOutOfRangeException ();
+				if (array.Length - arrayIndex < Count)
+					throw new ArgumentException ();
+				foreach (Node n in _dic.tree)
+					array [arrayIndex++] = n.key;
 			}
 
 			public int Count {
-				get { return _dic._size; }
+				get { return _dic.Count; }
 			}
 
 			bool ICollection<TKey>.IsReadOnly {
@@ -627,9 +547,10 @@ namespace System.Collections.Generic
 					throw new ArgumentNullException ();
 				if (index < 0 || array.Length <= index)
 					throw new ArgumentOutOfRangeException ();
-				if (array.Length - index < _dic._size)
+				if (array.Length - index < Count)
 					throw new ArgumentException ();
-				Array.Copy (_dic._keys, 0, array, index, _dic._size);
+				foreach (Node n in _dic.tree)
+					array.SetValue (n.key, index++);
 			}
 
 			bool ICollection.IsSynchronized {
@@ -647,43 +568,25 @@ namespace System.Collections.Generic
 
 			public struct Enumerator : IEnumerator<TKey>, IEnumerator, IDisposable
 			{
-				SortedDictionary<TKey,TValue> _dic;
-				int _version;
-				int _index;
-				int _count;
+				RBTree.NodeEnumerator host;
 
 				internal Enumerator (SortedDictionary<TKey,TValue> dic)
 				{
-					_dic = dic;
-					_version = dic._version;
-					_index = -1;
-					_count = dic._size;
+					host = dic.tree.GetEnumerator ();
 				}
 
 				public TKey Current {
-					get {
-						if (_count <= _index)
-							throw new InvalidOperationException ();
-						return _dic._keys [_index];
-					}
+					get { return ((Node) host.Current).key; }
 				}
 
 				public bool MoveNext ()
 				{
-					if (_version != _dic._version)
-						throw new InvalidOperationException ();
-
-					if (_index + 1 < _count) {
-						_index ++;
-						return true;
-					}
-
-					return false;
+					return host.MoveNext ();
 				}
 
 				public void Dispose ()
 				{
-					_dic = null;
+					host.Dispose ();
 				}
 
 				object IEnumerator.Current {
@@ -692,9 +595,7 @@ namespace System.Collections.Generic
 
 				void IEnumerator.Reset ()
 				{
-					if (_version != _dic._version)
-						throw new InvalidOperationException ();
-					_index = -1;
+					host.Reset ();
 				}
 			}
 
@@ -702,83 +603,46 @@ namespace System.Collections.Generic
 
 		public struct Enumerator : IEnumerator<KeyValuePair<TKey,TValue>>, IDisposable , IDictionaryEnumerator, IEnumerator
 		{
-			SortedDictionary<TKey,TValue> _dic;
-			int _version;
-			int _index;
-			int _count;
+			RBTree.NodeEnumerator host;
 
 			internal Enumerator (SortedDictionary<TKey,TValue> dic)
 			{
-				_dic = dic;
-				_version = dic._version;
-				_index = -1;
-				_count = dic._size;
+				host = dic.tree.GetEnumerator ();
 			}
 
 			public KeyValuePair<TKey,TValue> Current {
-				get {
-					if (_count <= _index)
-						throw new InvalidOperationException ();
-					return new KeyValuePair<TKey,TValue> (_dic._keys [_index], _dic._values [_index]);
-				}
+				get { return ((Node) host.Current).AsKV (); }
 			}
 
 			public bool MoveNext ()
 			{
-				if (_version != _dic._version)
-					throw new InvalidOperationException ();
-
-				if (_index + 1 < _count) {
-					_index ++;
-					return true;
-				}
-
-				return false;
+				return host.MoveNext ();
 			}
 
 			public void Dispose ()
 			{
-				_dic = null;
+				host.Dispose ();
 			}
 
 			DictionaryEntry IDictionaryEnumerator.Entry {
-				get {
-					if (_count <= _index)
-						throw new InvalidOperationException ();
-					return new DictionaryEntry (_dic._keys [_index], _dic._values [_index]);
-				}
+				get { return ((Node) host.Current).AsDE (); }
 			}
 
 			object IDictionaryEnumerator.Key {
-				get {
-					if (_count <= _index)
-						throw new InvalidOperationException ();
-					return _dic._keys [_index];
-				}
+				get { return ((Node) host.Current).key; }
 			}
 
 			object IDictionaryEnumerator.Value {
-				get {
-					if (_count <= _index)
-						throw new InvalidOperationException ();
-					return _dic._values [_index];
-				}
+				get { return ((Node) host.Current).value; }
 			}
 
 			object IEnumerator.Current {
-				get {
-					if (_count <= _index)
-						throw new InvalidOperationException ();
-					return new DictionaryEntry (_dic._keys [_index], _dic._values [_index]);
-				}
+				get { return ((Node) host.Current).AsDE (); }
 			}
 
 			void IEnumerator.Reset ()
 			{
-				if (_version != _dic._version)
-					throw new InvalidOperationException ();
-
-				_index = -1;
+				host.Reset ();
 			}
 		}
 	}
