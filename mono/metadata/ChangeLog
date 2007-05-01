@@ -1,5 +1,12 @@
 2007-05-01  Zoltan Varga  <vargaz@gmail.com>
 
+	* icall.c (custom_attrs_get_by_type): Handle loading errors gracefully. Fixes
+	#81498.
+
+	* reflection.c (mono_reflection_get_custom_attrs_by_type): Handle loading errors
+	gracefully.
+	(mono_custom_attrs_from_index): Ditto.
+
 	* icall.c (ves_icall_InternalInvoke): Allow calling ctors of abstract classes. 
 	Fixes #81501.
 
