@@ -203,6 +203,7 @@ namespace System.Web.Security
 			if (context == null)
 				throw new HttpException ("Context is null!");
 
+			name = name.ToLower ();
 #if NET_2_0
 			AuthenticationSection section = (AuthenticationSection) WebConfigurationManager.GetSection (authConfigPath);
 			FormsAuthenticationCredentials config = section.Forms.Credentials;

@@ -1,3 +1,8 @@
+2007-05-02  Marek Habersack  <mhabersack@novell.com>
+
+	* FormsAuthentication.cs: user names are stored in lowercase in
+	the credentials database.
+
 2007-04-29 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* FormsAuthenticationModule.cs: 
