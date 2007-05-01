@@ -121,6 +121,20 @@
     <Compile Include="System.Xml.Xsl\XsltExceptionTests.cs" />
     <Compile Include="System.Xml.Xsl\XslTransformTests.cs" />
     <Compile Include="System.Xml\NameTableTests.cs" />
+    <Compile Include="System.Xml\nist_dom\fundamental\Attr\Attr.cs" />
+    <Compile Include="System.Xml\nist_dom\fundamental\CharacterData\CharacterData.cs" />
+    <Compile Include="System.Xml\nist_dom\fundamental\Comment\Comment.cs" />
+    <Compile Include="System.Xml\nist_dom\fundamental\Document\Document.cs" />
+    <Compile Include="System.Xml\nist_dom\fundamental\DOMImplementation\DOMImplementation.cs" />
+    <Compile Include="System.Xml\nist_dom\fundamental\Element\Element.cs" />
+    <Compile Include="System.Xml\nist_dom\fundamental\NamedNodeMap\NamedNodeMap.cs" />
+    <Compile Include="System.Xml\nist_dom\fundamental\NodeList\NodeList.cs" />
+    <Compile Include="System.Xml\nist_dom\fundamental\Node\Node.cs" />
+    <Compile Include="System.Xml\nist_dom\fundamental\Text\Text.cs" />
+    <Compile Include="System.Xml\nist_dom\ITest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Xml\nist_dom\util.cs" />
     <Compile Include="System.Xml\XmlAssert.cs" />
     <Compile Include="System.Xml\XmlAttributeCollectionTests.cs" />
     <Compile Include="System.Xml\XmlAttributeTests.cs" />
