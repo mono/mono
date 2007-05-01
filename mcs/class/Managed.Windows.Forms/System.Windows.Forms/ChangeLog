@@ -1,3 +1,9 @@
+2007-05-01  Jackson Harper  <jackson@ximian.com>
+
+	* TextBoxBase.cs: Better preferred height, FixedSingle gets the
+	wider area too.
+	- Don't set the BoundsSpecified
+
 2007-04-30  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Application.cs: When using the toolstrip shortcut mechanism, allow the

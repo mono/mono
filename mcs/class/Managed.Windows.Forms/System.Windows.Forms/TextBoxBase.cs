@@ -465,7 +465,7 @@ namespace System.Windows.Forms {
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public int PreferredHeight {
 			get {
-				return Font.Height + (BorderStyle != BorderStyle.Fixed3D ? 0 : 7);
+				return Font.Height + (BorderStyle == BorderStyle.None ? 1 : 8);
 			}
 		}
 
@@ -1250,7 +1250,6 @@ namespace System.Windows.Forms {
 					if (height != PreferredHeight) {
 						requested_height = height;
 						height = PreferredHeight;
-						specified |= BoundsSpecified.Height;
 					}
 				}
 			}
@@ -1472,7 +1471,7 @@ namespace System.Windows.Forms {
 		{
 			if (!richtext) {
 				if (!document.multiline) {
-					if (actual_border_style == BorderStyle.None && PreferredHeight != ClientSize.Height) {
+					if (PreferredHeight != ClientSize.Height) {
 						ClientSize = new Size (ClientSize.Width, PreferredHeight);
 					}
 				}
