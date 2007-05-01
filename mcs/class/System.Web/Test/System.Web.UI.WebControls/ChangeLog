@@ -1,3 +1,8 @@
+2007-05-01  Marek Habersack  <mhabersack@novell.com>
+
+	* TreeViewTest.cs: adjust generated HTML tests to the latest
+	rendering changes.
+
 2007-04-07  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* UnitTest.cs: Added test for unit value with no integral part. Code
