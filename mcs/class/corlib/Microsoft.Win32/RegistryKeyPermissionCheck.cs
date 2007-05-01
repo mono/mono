@@ -32,7 +32,6 @@ using System;
 namespace Microsoft.Win32
 {
 
-	[Serializable]
 	public enum RegistryKeyPermissionCheck
 	{
 		Default			= 0,

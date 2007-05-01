@@ -1,5 +1,5 @@
 // 
-// System.IO.FIle.cs 
+// System.IO.File.cs 
 //
 // 
 // Authors:
@@ -217,6 +217,18 @@ namespace System.IO
 			return MonoIO.ExistsFile (path, out error);
 		}
 
+#if NET_2_0
+		public static FileSecurity GetAccessControl (string path)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public static FileSecurity GetAccessControl (string path, AccessControlSections includeSections)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+
 		public static FileAttributes GetAttributes (string path)
 		{
 			if (null == path) {
@@ -381,6 +393,29 @@ namespace System.IO
 		{
 			return new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None);
 		}
+
+#if NET_2_0
+		public static void Replace (string sourceFileName,
+					    string destinationFileName,
+					    string destinationBackupFileName)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public static void Replace (string sourceFileName,
+					    string destinationFileName,
+					    string destinationBackupFileName,
+					    bool ignoreMetadataErrors)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public static void SetAccessControl (string path,
+						     FileSecurity fileSecurity)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 
 		public static void SetAttributes (string path,
 						  FileAttributes attributes)

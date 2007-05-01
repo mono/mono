@@ -40,6 +40,9 @@ using System.Runtime.InteropServices;
 namespace System.IO
 {
 	[Serializable]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public abstract class Stream : MarshalByRefObject, IDisposable
 	{
 		public static readonly Stream Null = new NullStream ();
@@ -123,6 +126,11 @@ namespace System.IO
 			set {
 				throw new InvalidOperationException ("Timeouts are not supported on this stream.");
 			}
+		}
+
+		public static Stream Synchronized (Stream stream)
+		{
+			throw new NotImplementedException ();
 		}
 #else
 		// 1.1 version of Close

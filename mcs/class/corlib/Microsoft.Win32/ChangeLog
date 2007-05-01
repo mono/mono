@@ -1,3 +1,7 @@
+2007-05-01  Dick Porter  <dick@ximian.com>
+
+	* RegistryKeyPermissionCheck.cs: Not serializable
+
 2007-04-30  Dick Porter  <dick@ximian.com>
 
 	* Registry.cs: 
