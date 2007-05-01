@@ -1,3 +1,8 @@
+2007-05-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (ves_icall_InternalInvoke): Allow calling ctors of abstract classes. 
+	Fixes #81501.
+
 2007-04-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* metadata.c (mono_metadata_parse_type_full): Avoid an invalid free since the type
