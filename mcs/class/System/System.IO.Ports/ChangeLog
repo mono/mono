@@ -1,3 +1,7 @@
+2007-05-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* WinSerialStream.cs: Fix build due to NativeOverlapped being updated
+	to 2.0 definition (int to IntPtr).
 
 Wed Apr 11 15:40:55 CEST 2007 Paolo Molaro <lupus@ximian.com>
 

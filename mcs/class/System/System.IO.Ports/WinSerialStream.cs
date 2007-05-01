@@ -102,13 +102,21 @@ namespace System.IO.Ports
 			// Init overlapped structures
 			NativeOverlapped wo = new NativeOverlapped ();
 			write_event = new ManualResetEvent (false);
+#if NET_2_0
+			wo.EventHandle = write_event.Handle;
+#else
 			wo.EventHandle = (int) write_event.Handle;
+#endif
 			write_overlapped = Marshal.AllocHGlobal (Marshal.SizeOf (typeof (NativeOverlapped)));
 			Marshal.StructureToPtr (wo, write_overlapped, true);
 
 			NativeOverlapped ro = new NativeOverlapped ();
 			read_event = new ManualResetEvent (false);
+#if NET_2_0
+			ro.EventHandle = read_event.Handle;
+#else
 			ro.EventHandle = (int) read_event.Handle;
+#endif
 			read_overlapped = Marshal.AllocHGlobal (Marshal.SizeOf (typeof (NativeOverlapped)));
 			Marshal.StructureToPtr (ro, read_overlapped, true);
 		}
