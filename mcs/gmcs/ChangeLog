@@ -1,3 +1,8 @@
+2007-05-01  Miguel de Icaza  <miguel@novell.com>
+
+	* cs-parser.jay: Allow parameters in operator declarations to have
+	attributes. 
+
 2007-04-27  Miguel de Icaza  <miguel@novell.com>
 
 	* generic.cs (TypeManager.LambdaInfer): now this routine will

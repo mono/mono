@@ -1918,13 +1918,13 @@ operator_body
 	; 
 operator_declarator
 	: type OPERATOR overloadable_operator 
-	  open_parens opt_parameter_modifier type IDENTIFIER CLOSE_PARENS
+	  open_parens opt_attributes opt_parameter_modifier type IDENTIFIER CLOSE_PARENS
 	  {
 		// TODO: wrong location
-		if ((Parameter.Modifier)$5 != Parameter.Modifier.NONE)
+		if ((Parameter.Modifier)$6 != Parameter.Modifier.NONE)
 			Error_ParameterModifierNotValid ((Location) $2);
 	  
-		LocatedToken lt = (LocatedToken) $7;
+		LocatedToken lt = (LocatedToken) $8;
 		Operator.OpType op = (Operator.OpType) $3;
 		CheckUnaryOperator (op, lt.Location);
 
@@ -1935,9 +1935,9 @@ operator_declarator
 			op = Operator.OpType.UnaryNegation;
 
 		Parameter [] pars = new Parameter [1];
-		Expression type = (Expression) $6;
+		Expression type = (Expression) $7;
 
-		pars [0] = new Parameter (type, lt.Value, Parameter.Modifier.NONE, null, lt.Location);
+		pars [0] = new Parameter (type, lt.Value, Parameter.Modifier.NONE, (Attributes) $5, lt.Location);
 
 		current_local_parameters = new Parameters (pars);
 
@@ -1951,25 +1951,25 @@ operator_declarator
 	  }
 	| type OPERATOR overloadable_operator
 	  open_parens 
-		opt_parameter_modifier type IDENTIFIER COMMA
-	  	opt_parameter_modifier type IDENTIFIER 
+		opt_attributes opt_parameter_modifier type IDENTIFIER COMMA
+	  	opt_attributes opt_parameter_modifier type IDENTIFIER 
 	  CLOSE_PARENS
           {
    		// TODO: wrong location
-		if ((Parameter.Modifier)$5 != Parameter.Modifier.NONE || (Parameter.Modifier)$9 != Parameter.Modifier.NONE)
+		if ((Parameter.Modifier)$6 != Parameter.Modifier.NONE || (Parameter.Modifier)$11 != Parameter.Modifier.NONE)
 			Error_ParameterModifierNotValid ((Location) $2);
 
-		LocatedToken ltParam1 = (LocatedToken) $7;
-		LocatedToken ltParam2 = (LocatedToken) $11;
+		LocatedToken ltParam1 = (LocatedToken) $8;
+		LocatedToken ltParam2 = (LocatedToken) $13;
 		CheckBinaryOperator ((Operator.OpType) $3, (Location) $2);
 
 		Parameter [] pars = new Parameter [2];
 
-		Expression typeL = (Expression) $6;
-		Expression typeR = (Expression) $10;
+		Expression typeL = (Expression) $7;
+		Expression typeR = (Expression) $12;
 
-	       pars [0] = new Parameter (typeL, ltParam1.Value, Parameter.Modifier.NONE, null, ltParam1.Location);
-	       pars [1] = new Parameter (typeR, ltParam2.Value, Parameter.Modifier.NONE, null, ltParam2.Location);
+	       pars [0] = new Parameter (typeL, ltParam1.Value, Parameter.Modifier.NONE, (Attributes) $5, ltParam1.Location);
+	       pars [1] = new Parameter (typeR, ltParam2.Value, Parameter.Modifier.NONE, (Attributes) $10, ltParam2.Location);
 
 	       current_local_parameters = new Parameters (pars);
 
