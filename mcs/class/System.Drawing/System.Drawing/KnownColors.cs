@@ -229,10 +229,12 @@ namespace System.Drawing {
 			// correct system colors outside Windows
 		}
 
-		// Windows values are without alpha, force it to opaque (or everything will be transparent)
+		// Windows values are in BGR format and without alpha
+		// so we force it to opaque (or everything will be transparent) and reverse B and R
 		static uint GetSysColor (GetSysColorIndex index)
 		{
-			return 0xFF000000 | GDIPlus.Win32GetSysColor (index);
+			uint bgr = GDIPlus.Win32GetSysColor (index);
+			return 0xFF000000 | (bgr & 0xFF) << 16 | (bgr & 0xFF00) | (bgr >> 16);
 		}
 
 		static void RetrieveWindowsSystemColors ()
