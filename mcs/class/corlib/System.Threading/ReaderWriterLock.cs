@@ -44,8 +44,10 @@ namespace System.Threading
 {
 #if NET_2_0
 	[ComVisible (true)]
-#endif
+	public sealed class ReaderWriterLock: CriticalFinalizerObject
+#else
 	public sealed class ReaderWriterLock
+#endif
 	{
 		private int seq_num = 1;
 		private int state;
