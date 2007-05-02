@@ -721,7 +721,7 @@ namespace Mainsoft.Web.Security
 		{
 			string selectQuery = "SELECT usr.UserId FROM aspnet_Membership mbr, aspnet_Users usr, aspnet_Applications app WHERE " +
 				"usr.LoweredUserName = ? AND app.LoweredApplicationName = ? " +
-				"AND app.ApplicationId = usr.app.ApplicationId " +
+				"AND usr.ApplicationId = app.ApplicationId " +
 				"AND usr.UserId = mbr.UserId";
 
 			OleDbCommand selectCmd = new OleDbCommand (selectQuery, (OleDbConnection) connection);
