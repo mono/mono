@@ -1,3 +1,8 @@
+2007-05-02  Raja R Harinath  <rharinath@novell.com>
+
+	* cs1534-2.cs: New test.  Ensure that the error handling isn't
+	limited to only erroneous 3-argument operators.
+
 2007-04-09  Raja R Harinath  <rharinath@novell.com>
 
 	* cs0103-5.cs: New test based on #81338.

@@ -1985,10 +1985,8 @@ operator_declarator
 	| conversion_operator_declarator
 	| type OPERATOR overloadable_operator
 	  open_parens 
-		opt_parameter_modifier type IDENTIFIER COMMA
-	  	opt_parameter_modifier type IDENTIFIER COMMA
-		opt_parameter_modifier type IDENTIFIER
-	  CLOSE_PARENS
+		opt_attributes opt_parameter_modifier type IDENTIFIER COMMA
+	  	opt_attributes opt_parameter_modifier type IDENTIFIER COMMA error
 	  {
 		Report.Error (1534, (Location) $2, "Overloaded binary operator `{0}' takes two parameters",
 			Operator.GetName ((Operator.OpType) $3));

@@ -1,3 +1,14 @@
+2007-05-02  Raja R Harinath  <rharinath@novell.com>
+
+	Fix regression in cs0631-3.cs
+	* cs-parser.jay (operator_declarator): Add opt_attributes to error
+	fallback.  Make error fallback catch more cases.
+
+2007-05-01  Miguel de Icaza  <miguel@novell.com>
+
+	* cs-parser.jay: Allow parameters in operator declarations to have
+	attributes. 
+
 2007-04-27  Miguel de Icaza  <miguel@novell.com>
 
 	* statement.cs (If.CloneTo): Only clone the FalseStatement if it
