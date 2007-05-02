@@ -1,3 +1,8 @@
+2007-05-01  Everaldo Canuto  <everaldo@simios.org>
+
+	* ContextMenu.cs: Add public method Show with alignment property to 2.0
+	stuff. Thanks aatdark for the patch. 
+
 2007-05-01  Jonathan Pobst  <monkey@jpobst.com>
 
 	* GridItem.cs: Implement 2.0 Tag property.

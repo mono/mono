@@ -97,6 +97,19 @@ namespace System.Windows.Forms
 			MenuTracker.TrackPopupMenu (this, pos);
 		}
 
+#if NET_2_0		
+		public void Show (Control control, Point pos, LeftRightAlignment alignment)
+		{
+			Point point;
+			
+			if (alignment == LeftRightAlignment.Left)
+				point = new Point ((pos.X - control.Width), pos.Y);
+			else
+				point = pos;
+
+			Show (control, point);
+		}
+#endif
 		#endregion Public Methods
 	}
 }
