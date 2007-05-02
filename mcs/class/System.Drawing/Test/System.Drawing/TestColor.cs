@@ -1,10 +1,11 @@
 //
 // Tests for System.Drawing.Color.cs
 //
-// Author:
+// Authors:
 //	Ravindra (rkumar@novell.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2004,2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004,2006-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -1257,6 +1258,55 @@ namespace MonoTests.System.Drawing {
 			Assert ("IsSystemColor", !color.IsSystemColor);
 		}
 
+		private void Compare (KnownColor kc, GetSysColorIndex index)
+		{
+			// we get BGR than needs to be converted into ARGB
+			Color sc = ColorTranslator.FromWin32 ((int)GDIPlus.Win32GetSysColor (index));
+			AssertEquals (kc.ToString (), Color.FromKnownColor (kc).ToArgb (), sc.ToArgb ());
+		}
+
+		[Test]
+		public void WindowsSystemColors ()
+		{
+			if (!GDIPlus.RunningOnWindows ())
+				return;
+			// ensure we can read *correctly* the Windows desktop colors
+			Compare (KnownColor.ActiveBorder, GetSysColorIndex.COLOR_ACTIVEBORDER);
+			Compare (KnownColor.ActiveCaption, GetSysColorIndex.COLOR_ACTIVECAPTION);
+			Compare (KnownColor.ActiveCaptionText, GetSysColorIndex.COLOR_CAPTIONTEXT);
+			Compare (KnownColor.AppWorkspace, GetSysColorIndex.COLOR_APPWORKSPACE);
+			Compare (KnownColor.Control, GetSysColorIndex.COLOR_BTNFACE);
+			Compare (KnownColor.ControlDark, GetSysColorIndex.COLOR_BTNSHADOW);
+			Compare (KnownColor.ControlDarkDark, GetSysColorIndex.COLOR_3DDKSHADOW);
+			Compare (KnownColor.ControlLight, GetSysColorIndex.COLOR_3DLIGHT);
+			Compare (KnownColor.ControlLightLight, GetSysColorIndex.COLOR_BTNHIGHLIGHT);
+			Compare (KnownColor.ControlText, GetSysColorIndex.COLOR_BTNTEXT);
+			Compare (KnownColor.Desktop, GetSysColorIndex.COLOR_DESKTOP);
+			Compare (KnownColor.GrayText, GetSysColorIndex.COLOR_GRAYTEXT);
+			Compare (KnownColor.Highlight, GetSysColorIndex.COLOR_HIGHLIGHT);
+			Compare (KnownColor.HighlightText, GetSysColorIndex.COLOR_HIGHLIGHTTEXT);
+			Compare (KnownColor.HotTrack, GetSysColorIndex.COLOR_HOTLIGHT);
+			Compare (KnownColor.InactiveBorder, GetSysColorIndex.COLOR_INACTIVEBORDER);
+			Compare (KnownColor.InactiveCaption, GetSysColorIndex.COLOR_INACTIVECAPTION);
+			Compare (KnownColor.InactiveCaptionText, GetSysColorIndex.COLOR_INACTIVECAPTIONTEXT);
+			Compare (KnownColor.Info, GetSysColorIndex.COLOR_INFOBK);
+			Compare (KnownColor.InfoText, GetSysColorIndex.COLOR_INFOTEXT);
+			Compare (KnownColor.Menu, GetSysColorIndex.COLOR_MENU);
+			Compare (KnownColor.MenuText, GetSysColorIndex.COLOR_MENUTEXT);
+			Compare (KnownColor.ScrollBar, GetSysColorIndex.COLOR_SCROLLBAR);
+			Compare (KnownColor.Window, GetSysColorIndex.COLOR_WINDOW);
+			Compare (KnownColor.WindowFrame, GetSysColorIndex.COLOR_WINDOWFRAME);
+			Compare (KnownColor.WindowText, GetSysColorIndex.COLOR_WINDOWTEXT);
+#if NET_2_0
+			Compare (KnownColor.ButtonFace, GetSysColorIndex.COLOR_BTNFACE);
+			Compare (KnownColor.ButtonHighlight, GetSysColorIndex.COLOR_BTNHIGHLIGHT);
+			Compare (KnownColor.ButtonShadow, GetSysColorIndex.COLOR_BTNSHADOW);
+			Compare (KnownColor.GradientActiveCaption, GetSysColorIndex.COLOR_GRADIENTACTIVECAPTION);
+			Compare (KnownColor.GradientInactiveCaption, GetSysColorIndex.COLOR_GRADIENTINACTIVECAPTION);
+			Compare (KnownColor.MenuBar, GetSysColorIndex.COLOR_MENUBAR);
+			Compare (KnownColor.MenuHighlight, GetSysColorIndex.COLOR_MENUHIGHLIGHT);
+#endif
+		}
 	}
 }
 

@@ -1,3 +1,8 @@
+2007-05-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TestColor.cs: Under Windows ensure we're getting the same values for
+	the desktop colors.
+
 2007-04-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* GDIPlusTest.cs: Add basic test cases for GdipRecordMetafileFileName
