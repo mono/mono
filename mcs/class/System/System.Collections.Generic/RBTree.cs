@@ -586,6 +586,8 @@ namespace System.Collections.Generic
 			public Node Current {
 				get {
 					check_version ();
+					if (pennants == null)
+						throw new InvalidOperationException ("state invalid before the first MoveNext()");
 					return pennants.Peek ();
 				}
 			}

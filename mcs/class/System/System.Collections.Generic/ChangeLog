@@ -1,5 +1,7 @@
 2007-05-02  Raja R Harinath  <rharinath@novell.com>
 
+	* RBTree.cs (Enumerator.Current): Remove nullref.
+
 	* SortedDictionary.cs (ICollection.Contains): Use EqualityComparer
 	for comparing the value field.
 
