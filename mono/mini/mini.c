@@ -2143,39 +2143,6 @@ mono_add_varcopy_to_end (MonoCompile *cfg, MonoBasicBlock *bb, int src, int dest
 }
 
 /*
- * We try to share variables when possible
- */
-static MonoInst *
-mono_compile_get_interface_var (MonoCompile *cfg, int slot, MonoInst *ins)
-{
-	MonoInst *res;
-	int pos, vnum;
-
-	/* inlining can result in deeper stacks */ 
-	if (slot >= mono_method_get_header (cfg->method)->max_stack)
-		return mono_compile_create_var (cfg, type_from_stack_type (ins), OP_LOCAL);
-
-	pos = ins->type - 1 + slot * STACK_MAX;
-
-	switch (ins->type) {
-	case STACK_I4:
-	case STACK_I8:
-	case STACK_R8:
-	case STACK_PTR:
-	case STACK_MP:
-	case STACK_OBJ:
-		if ((vnum = cfg->intvars [pos]))
-			return cfg->varinfo [vnum];
-		res = mono_compile_create_var (cfg, type_from_stack_type (ins), OP_LOCAL);
-		cfg->intvars [pos] = res->inst_c0;
-		break;
-	default:
-		res = mono_compile_create_var (cfg, type_from_stack_type (ins), OP_LOCAL);
-	}
-	return res;
-}
-
-/*
  * merge_stacks:
  *
  * Merge stack state between two basic blocks according to Ecma 335, Partition III,
@@ -11147,7 +11114,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	mono_compile_create_vars (cfg);
 
 	if (cfg->new_ir) {
-		cfg->opt &= MONO_OPT_PEEPHOLE | MONO_OPT_INTRINS | MONO_OPT_LOOP | MONO_OPT_EXCEPTION | MONO_OPT_AOT | MONO_OPT_BRANCH | MONO_OPT_LINEARS | MONO_OPT_INLINE | MONO_OPT_SHARED | MONO_OPT_AOT | MONO_OPT_TAILC | MONO_OPT_SSA | MONO_OPT_DEADCE | MONO_OPT_CONSPROP | MONO_OPT_CMOV | MONO_OPT_FCMOV;
+		cfg->opt &= MONO_OPT_PEEPHOLE | MONO_OPT_INTRINS | MONO_OPT_LOOP | MONO_OPT_EXCEPTION | MONO_OPT_AOT | MONO_OPT_BRANCH | MONO_OPT_LINEARS | MONO_OPT_INLINE | MONO_OPT_SHARED | MONO_OPT_AOT | MONO_OPT_TAILC | MONO_OPT_SSA | MONO_OPT_DEADCE | MONO_OPT_CONSPROP | MONO_OPT_CMOV | MONO_OPT_FCMOV | MONO_OPT_ABCREM;
 
 		i = mono_method_to_ir2 (cfg, method, NULL, NULL, NULL, NULL, NULL, 0, FALSE);
 	}
@@ -11300,8 +11267,12 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 			deadce_has_run = TRUE;
 		}
 		
-		if ((cfg->flags & MONO_CFG_HAS_LDELEMA) && (cfg->opt & MONO_OPT_ABCREM))
-			mono_perform_abc_removal (cfg);
+		if ((cfg->flags & MONO_CFG_HAS_LDELEMA) && (cfg->opt & MONO_OPT_ABCREM)) {
+			if (cfg->new_ir)
+				mono_perform_abc_removal2 (cfg);
+			else
+				mono_perform_abc_removal (cfg);
+		}
 
 		if (cfg->new_ir) {
 			mono_ssa_remove2 (cfg);
@@ -11322,6 +11293,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 
 	if (cfg->new_ir)
 		mono_decompose_vtype_opts (cfg);
+		mono_decompose_array_access_opts (cfg);
 	
 	if (!cfg->new_ir) {
 		if (cfg->verbose_level > 4)

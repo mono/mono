@@ -1101,6 +1101,7 @@ CompType          mono_opcode_to_type (int opcode, int cmp_opcode) MONO_INTERNAL
 
 void              mono_decompose_long_opts (MonoCompile *cfg);
 void              mono_decompose_vtype_opts (MonoCompile *cfg);
+void              mono_decompose_array_access_opts (MonoCompile *cfg);
 void              mono_handle_global_vregs (MonoCompile *cfg);
 void              mono_spill_global_vars (MonoCompile *cfg);
 
@@ -1246,6 +1247,8 @@ gboolean       mono_trace_eval                  (MonoMethod *method) MONO_INTERN
 
 extern void
 mono_perform_abc_removal (MonoCompile *cfg) MONO_INTERNAL;
+extern void
+mono_perform_abc_removal2 (MonoCompile *cfg) MONO_INTERNAL;
 extern void
 mono_perform_ssapre (MonoCompile *cfg) MONO_INTERNAL;
 extern void

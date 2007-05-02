@@ -817,30 +817,39 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
 	    (cfg)->cbb = (bblock); \
     } while (0)
 
-#if defined(__i386__)
 #define MONO_EMIT_BOUNDS_CHECK(cfg, array_reg, array_type, array_length_field, index_reg) do { \
             MonoInst *ins; \
-            MONO_INST_NEW ((cfg), ins, OP_X86_COMPARE_MEMBASE_REG); \
-            ins->inst_basereg = array_reg; \
-            ins->inst_offset = G_STRUCT_OFFSET (array_type, array_length_field); \
+            MONO_INST_NEW ((cfg), ins, OP_BOUNDS_CHECK); \
+            ins->sreg1 = array_reg; \
             ins->sreg2 = index_reg; \
+            ins->inst_imm = G_STRUCT_OFFSET (array_type, array_length_field); \
             MONO_ADD_INS ((cfg)->cbb, ins); \
+    } while (0)
+
+#if defined(__i386__)
+#define MONO_ARCH_EMIT_BOUNDS_CHECK(cfg, array_reg, offset, index_reg) do { \
+            MonoInst *inst; \
+            MONO_INST_NEW ((cfg), inst, OP_X86_COMPARE_MEMBASE_REG); \
+            inst->inst_basereg = array_reg; \
+            inst->inst_offset = offset; \
+            inst->sreg2 = index_reg; \
+            MONO_ADD_INS ((cfg)->cbb, inst); \
 			MONO_EMIT_NEW_COND_EXC (cfg, LE_UN, "IndexOutOfRangeException"); \
 	} while (0)
 #elif defined(__x86_64__)
-#define MONO_EMIT_BOUNDS_CHECK(cfg, array_reg, array_type, array_length_field, index_reg) do { \
-            MonoInst *ins; \
-            MONO_INST_NEW ((cfg), ins, OP_AMD64_ICOMPARE_MEMBASE_REG); \
-            ins->inst_basereg = array_reg; \
-            ins->inst_offset = G_STRUCT_OFFSET (array_type, array_length_field); \
-            ins->sreg2 = index_reg; \
-            MONO_ADD_INS ((cfg)->cbb, ins); \
+#define MONO_ARCH_EMIT_BOUNDS_CHECK(cfg, array_reg, offset, index_reg) do { \
+            MonoInst *inst; \
+            MONO_INST_NEW ((cfg), inst, OP_AMD64_ICOMPARE_MEMBASE_REG); \
+            inst->inst_basereg = array_reg; \
+            inst->inst_offset = offset; \
+            inst->sreg2 = index_reg; \
+            MONO_ADD_INS ((cfg)->cbb, inst); \
 			MONO_EMIT_NEW_COND_EXC (cfg, LE_UN, "IndexOutOfRangeException"); \
 	} while (0)
 #else
-#define MONO_EMIT_BOUNDS_CHECK(cfg, array_reg, array_type, array_length_field, index_reg) do { \
+#define MONO_ARCH_EMIT_BOUNDS_CHECK(cfg, array_reg, offset, index_reg) do { \
 			int _length_reg = alloc_ireg (cfg); \
-			MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOADI4_MEMBASE, _length_reg, array_reg, G_STRUCT_OFFSET (array_type, array_length_field)); \
+			MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOADI4_MEMBASE, _length_reg, array_reg, offset); \
 			MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, _length_reg, index_reg); \
 			MONO_EMIT_NEW_COND_EXC (cfg, LE_UN, "IndexOutOfRangeException"); \
 	} while (0)
@@ -5339,6 +5348,75 @@ mono_decompose_vtype_opts (MonoCompile *cfg)
 	}
 }
 
+/**
+ * mono_decompose_array_access_opts:
+ *
+ *  Decompose array access opcodes.
+ */
+void
+mono_decompose_array_access_opts (MonoCompile *cfg)
+{
+	MonoBasicBlock *bb, *first_bb;
+
+	/*
+	 * Unlike decompose_long_opts, this pass does not alter the CFG of the method so it 
+	 * can be executed anytime. 
+	 */
+
+	/**
+	 * Create a dummy bblock and emit code into it so we can use the normal 
+	 * code generation macros.
+	 */
+	cfg->cbb = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoBasicBlock));
+	first_bb = cfg->cbb;
+
+	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
+		MonoInst *ins;
+		MonoInst *prev = NULL;
+		MonoInst *dest;
+		gboolean restart;
+
+		if (cfg->verbose_level > 3) mono_print_bb (bb, "BEFORE DECOMPOSE-ARRAY-ACCESS-OPTS ");
+
+		cfg->cbb->code = cfg->cbb->last_ins = NULL;
+		restart = TRUE;
+
+		while (restart) {
+			restart = FALSE;
+
+			for (ins = bb->code; ins; ins = ins->next) {
+				switch (ins->opcode) {
+				case OP_LDLEN:
+					NEW_LOAD_MEMBASE (cfg, dest, OP_LOADI4_MEMBASE, ins->dreg, ins->sreg1,
+									  G_STRUCT_OFFSET (MonoArray, max_length));
+					MONO_ADD_INS (cfg->cbb, dest);
+					break;
+				case OP_BOUNDS_CHECK:
+					MONO_ARCH_EMIT_BOUNDS_CHECK (cfg, ins->sreg1, ins->inst_imm, ins->sreg2);
+					break;
+				default:
+					break;
+				}
+
+				g_assert (cfg->cbb == first_bb);
+
+				if (cfg->cbb->code || (cfg->cbb != first_bb)) {
+					/* Replace the original instruction with the new code sequence */
+
+					mono_replace_ins (cfg, bb, ins, &prev, first_bb, cfg->cbb);
+					first_bb->code = first_bb->last_ins = NULL;
+					first_bb->in_count = first_bb->out_count = 0;
+					cfg->cbb = first_bb;
+				}
+				else
+					prev = ins;
+			}
+		}
+
+		if (cfg->verbose_level > 3) mono_print_bb (bb, "AFTER DECOMPOSE-ARRAY-ACCESS-OPTS ");
+	}
+}
+
 /*
  * mono_method_to_ir: translates IL into basic blocks containing trees
  */
@@ -7654,28 +7732,29 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			inline_costs += 1;
 			break;
 		}
-		case CEE_LDLEN: {
-			int dreg;
-
+		case CEE_LDLEN:
 			CHECK_STACK (1);
 			--sp;
 			if (sp [0]->type != STACK_OBJ)
 				UNVERIFIED;
 
 			dreg = alloc_preg (cfg);
-			NEW_LOAD_MEMBASE (cfg, ins, OP_LOADI4_MEMBASE, dreg, sp [0]->dreg,
-							  G_STRUCT_OFFSET (MonoArray, max_length));
+			MONO_INST_NEW (cfg, ins, OP_LDLEN);
+			ins->dreg = alloc_preg (cfg);
+			ins->sreg1 = sp [0]->dreg;
+			ins->type = STACK_I4;
 			MONO_ADD_INS (cfg->cbb, ins);
 			ip ++;
 			*sp++ = ins;
 			break;
-		}
 		case CEE_LDELEMA:
 			CHECK_STACK (2);
 			sp -= 2;
 			CHECK_OPSIZE (5);
 			if (sp [0]->type != STACK_OBJ)
 				UNVERIFIED;
+
+			cfg->flags |= MONO_CFG_HAS_LDELEMA;
 
 			klass = mini_get_class (method, read32 (ip + 1), generic_context);
 			CHECK_TYPELOAD (klass);
@@ -7748,6 +7827,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			if (sp [0]->type != STACK_OBJ)
 				UNVERIFIED;
 
+			cfg->flags |= MONO_CFG_HAS_LDELEMA;
+
 			if (sp [1]->opcode == OP_ICONST) {
 				int array_reg = sp [0]->dreg;
 				int index_reg = sp [1]->dreg;
@@ -7779,6 +7860,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 
 			CHECK_STACK (3);
 			sp -= 3;
+
+			cfg->flags |= MONO_CFG_HAS_LDELEMA;
 
 			if (*ip == CEE_STELEM_ANY) {
 				CHECK_OPSIZE (5);

@@ -203,6 +203,7 @@ common_sources = \
 	ssa.c		\
 	ssa2.c		\
 	abcremoval.c	\
+	abcremoval2.c	\
 	abcremoval.h	\
 	ssapre.c	\
 	ssapre.h	\

@@ -393,9 +393,6 @@ analyze_liveness_bb (MonoCompile *cfg, MonoBasicBlock *bb)
 	}
 }
 
-static void
-optimize_initlocals (MonoCompile *cfg);
-
 /* generic liveness analysis code. CFG specific parts are 
  * in update_gen_kill_set()
  */

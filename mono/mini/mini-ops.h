@@ -545,7 +545,9 @@ MINI_OP(OP_STR_CHAR_ADDR, "str_char_addr", NONE, NONE, NONE)
 MINI_OP(OP_STRLEN, "strlen", NONE, NONE, NONE)
 MINI_OP(OP_GETTYPE, "gettype", NONE, NONE, NONE)
 MINI_OP(OP_GETHASHCODE, "gethashcode", NONE, NONE, NONE)
-/* get adrress of element in a 2D array */
+MINI_OP(OP_LDLEN, "ldlen", IREG, IREG, NONE)
+MINI_OP(OP_BOUNDS_CHECK, "bounds_check", NONE, IREG, IREG)
+/* get adress of element in a 2D array */
 MINI_OP(OP_LDELEMA2D, "getldelema2", NONE, NONE, NONE)
 /* inlined small memcpy with constant length */
 MINI_OP(OP_MEMCPY, "memcpy", NONE, NONE, NONE)
