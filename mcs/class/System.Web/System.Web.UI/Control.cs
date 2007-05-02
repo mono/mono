@@ -1204,7 +1204,11 @@ namespace System.Web.UI
 			if (relativeUrl.Length == 0)
 				return String.Empty;
 
-			if (Context != null && Context.Request != null && VirtualPathUtility.IsAppRelative (relativeUrl)) {
+			if (VirtualPathUtility.IsAbsolute (relativeUrl) || relativeUrl.IndexOf (':') >= 0)
+				return relativeUrl;
+
+			if (Context != null && Context.Request != null && TemplateSourceDirectory != null) {
+				relativeUrl = VirtualPathUtility.Combine (VirtualPathUtility.AppendTrailingSlash (TemplateSourceDirectory), relativeUrl);
 				string basePath = Context.Request.FilePath;
 				if (basePath.Length > 1 && basePath [basePath.Length - 1] != '/') {
 					basePath = VirtualPathUtility.GetDirectory (basePath);

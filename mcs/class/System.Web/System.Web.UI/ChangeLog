@@ -1,3 +1,8 @@
+2007-05-02 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* Control.cs:
+	ResolveClientUrl considers TemplateSourceDirectory property.
+
 2007-05-01  Marek Habersack  <mhabersack@novell.com>
 
 	* PageParser.cs: clientTarget comparisons must be case-insensitive
