@@ -33,21 +33,31 @@
 
 using System;
 using System.ComponentModel;
+using System.Runtime.InteropServices;
 
 namespace System.Diagnostics
 {
 	public class Stopwatch
 	{
-		[MonoTODO ("high resolution mode support")]
+		[DllImport ("kernel32.dll")]
+		static extern bool QueryPerformanceCounter (out long performance_count);
+
+		[DllImport ("kernel32.dll")]
+		static extern bool QueryPerformanceFrequency (out long frequency);
+
 		public static readonly long Frequency;
 
-		[MonoTODO ("high resolution mode support")]
 		public static readonly bool IsHighResolution;
 
-		[MonoTODO ("high resolution mode support")]
 		public static long GetTimestamp ()
 		{
-			return DateTime.Now.Ticks;
+			if (IsHighResolution) {
+				long performance_count;
+				QueryPerformanceCounter (out performance_count);
+				return performance_count;
+			}
+			else
+				return DateTime.Now.Ticks;
 		}
 
 		public static Stopwatch StartNew ()
@@ -61,6 +71,11 @@ namespace System.Diagnostics
 		{
 			Frequency = TimeSpan.TicksPerSecond;
 			IsHighResolution = false;
+			int platform = (int) Environment.OSVersion.Platform;
+			if ((platform != 4) && (platform != 128)) {
+				// try to use high performance timer on Windows.
+				IsHighResolution = QueryPerformanceFrequency (out Frequency);
+			}
 		}
 
 		public Stopwatch ()
@@ -71,14 +86,29 @@ namespace System.Diagnostics
 		long started;
 		bool is_running;
 
-		[MonoTODO ("high resolution mode support")]
 		public TimeSpan Elapsed {
-			get { return TimeSpan.FromTicks (ElapsedTicks); }
+			get {
+				if (IsHighResolution) {
+					// convert our ticks to TimeSpace ticks, 100 nano second units
+					return TimeSpan.FromTicks ((long)(TimeSpan.TicksPerSecond * ElapsedTicks / Frequency));
+				}
+				else {
+					return TimeSpan.FromTicks (ElapsedTicks); 
+				}
+			}
 		}
 
-		[MonoTODO ("high resolution mode support")]
 		public long ElapsedMilliseconds {
-			get { checked { return (long) Elapsed.TotalMilliseconds; } }
+			get { 
+				checked {
+					if (IsHighResolution) {
+						return (long)(1000 * ElapsedTicks / Frequency);
+					}
+					else {
+						return (long) Elapsed.TotalMilliseconds;
+					}
+				} 
+			}
 		}
 
 		public long ElapsedTicks {
