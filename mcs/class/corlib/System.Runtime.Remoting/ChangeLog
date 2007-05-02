@@ -1,3 +1,8 @@
+2007-05-02  Jonathan Chambers  <joncham@gmail.com>
+
+	* RemotingConfiguration.cs: Added Configure overload for 2.0
+	with MonoTODO for security.
+
 2006-12-18  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* RemotingServices.cs: FieldSetter and FieldGetter methods need

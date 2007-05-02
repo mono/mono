@@ -98,19 +98,28 @@ namespace System.Runtime.Remoting
 
 		// public methods
 		
-		public static void Configure (string filename) 
+#if NET_2_0
+		[MonoTODO ("Implement ensureSecurity")]
+		public
+#else
+		internal
+#endif
+		static void Configure (string filename, bool ensureSecurity) 
 		{
-			lock (channelTemplates)
-			{
-				if (!defaultConfigRead)
-				{
+			lock (channelTemplates) {
+				if (!defaultConfigRead) {
 					ReadConfigFile (Environment.GetMachineConfigPath ());
 					defaultConfigRead = true;
 				}
-				
+
 				if (filename != null)
 					ReadConfigFile (filename);
 			}
+		}
+		
+		public static void Configure (string filename) 
+		{
+			Configure (filename, false);
 		}
 
 		private static void ReadConfigFile (string filename)
