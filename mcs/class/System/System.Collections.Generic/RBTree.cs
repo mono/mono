@@ -321,26 +321,23 @@ namespace System.Collections.Generic
 		{
 			int curpos = path.Count - 1;
 
-			Node n1 = path [curpos];
-			Node n2 = null;
-			Node n3 = null;
-
-			if (n1.left != null) {
-				n2 = right_most (n1.left, n1.right, path);
-				n3 = n2.left == null ? null : right_most (n2.left, null, path);
-			} else if (n1.right != null) {
-				n2 = left_most (n1.right, n1.left, path);
-				n3 = n2.right == null ? null : left_most (n2.right, null, path);
-			}
-
-			if (n2 != null) {
-				n1.SwapValue (n2);
-				if (n3 != null)
-					n2.SwapValue (n3);
+			Node current = path [curpos];
+			if (current.left != null) {
+				Node pred = right_most (current.left, current.right, path);
+				current.SwapValue (pred);
+				if (pred.left != null) {
+					Node ppred = pred.left;
+					path.Add (null); path.Add (ppred);
+					pred.SwapValue (ppred);
+				}
+			} else if (current.right != null) {
+				Node succ = current.right;
+				path.Add (null); path.Add (succ);
+				current.SwapValue (succ);
 			}
 
 			curpos = path.Count - 1;
-			Node current = path [curpos];
+			current = path [curpos];
 
 			if (current.Size != 1)
 				throw new SystemException ("Internal Error: red-black violation somewhere");
@@ -554,19 +551,6 @@ namespace System.Collections.Generic
 		}
 
 		// Pre-condition: current != null
-		static Node left_most (Node current, Node sibling, List<Node> path)
-		{
-			for (;;) {
-				path.Add (sibling);
-				path.Add (current);
-				if (current.left == null)
-					return current;
-				sibling = current.right;
-				current = current.left;
-			}
-		}
-
-		// Pre-condition: current != null
 		static Node right_most (Node current, Node sibling, List<Node> path)
 		{
 			for (;;) {
@@ -583,30 +567,26 @@ namespace System.Collections.Generic
 			RBTree tree;
 			uint version;
 
-			List<Node> path;
-			Node current;
+			Stack<Node> pennants;
 
 			internal NodeEnumerator (RBTree tree)
 			{
 				this.tree = tree;
 				version = tree.version;
-				current = null;
-				path = null;
+				pennants = null;
 			}
 
 			public void Reset ()
 			{
-				check_version ();
-				current = null;
-				path = null;
+				if (tree == null)
+					throw new ObjectDisposedException ("enumerator");
+				pennants = null;
 			}
 
 			public Node Current {
 				get {
 					check_version ();
-					if (current == null)
-						throw new InvalidOperationException ();
-					return current;
+					return pennants.Peek ();
 				}
 			}
 
@@ -618,50 +598,34 @@ namespace System.Collections.Generic
 			{
 				check_version ();
 
-				if (current == null) {
-					if (tree.root == null || path != null)
+				Node next;
+				if (pennants == null) {
+					if (tree.root == null)
 						return false;
-
-					path = new List<Node> ();
-
-					// sentinel: "parent" of root is null
-					path.Add (null);
-					current = left_most (tree.root, null, path);
-					return true;
+					pennants = new Stack<Node> ();
+					next = tree.root;
+				} else {
+					if (pennants.Count == 0)
+						return false;
+					Node current = pennants.Pop ();
+					next = current.right;
 				}
+				for (; next != null; next = next.left)
+					pennants.Push (next);
 
-				if (current.right != null) {
-					// since we've already traversed current.left, don't bother saving it in path
-					current = left_most (current.right, null, path);
-					return true;
-				}
-
-				int parpos = path.Count - 3;
-				Node parent;
-				while ((parent = path [parpos]) != null) {
-					if (current == parent.left)
-						break;
-					current = parent;
-					parpos -= 2;
-				}
-
-				path.RemoveRange (parpos + 1, path.Count - parpos - 1);
-				current = parent;
-
-				return current != null;
+				return pennants.Count != 0;
 			}
 
 			public void Dispose ()
 			{
-				current = null;
-				path = null;
 				tree = null;
+				pennants = null;
 			}
 
 			void check_version ()
 			{
 				if (tree == null)
-					throw new ObjectDisposedException ("tree");
+					throw new ObjectDisposedException ("enumerator");
 				if (version != tree.version)
 					throw new InvalidOperationException ("tree modified");
 			}
@@ -856,9 +820,14 @@ namespace Mono.ValidationTest {
 
 			Dictionary<int, int> d1 = new Dictionary<int, int> (d);
 
-			foreach (int n in t)
+			int prev = -1;
+			foreach (int n in t) {
+				if (n < prev)
+					throw new Exception ("iteration out of order");
 				if (!d1.Remove (n))
 					throw new Exception ("tree has a number it shouldn't");
+				prev = n;
+			}
 
 			if (d1.Count != 0)
 				throw new Exception ("tree has numbers it shouldn't");

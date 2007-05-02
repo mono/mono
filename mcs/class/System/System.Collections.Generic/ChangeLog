@@ -1,3 +1,10 @@
+2007-05-02  Raja R Harinath  <rharinath@novell.com>
+
+	* RBTree.cs (do_remove): Remove some redundant assignments/checks.
+	(NodeEnumerator): Simplify.  Keep track of a list of
+	right-pennants that need to be traversed next, rather than
+	comparing parent pointers.
+
 2007-05-02  Raja R Harinath  <harinath@gmail.com>
 
 	Make add and remove operations O(log n).
