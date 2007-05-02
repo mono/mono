@@ -34,6 +34,9 @@ using System;
 namespace System.Runtime.InteropServices {
 
 	[AttributeUsage (AttributeTargets.Method, Inherited=false)]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public sealed class ComUnregisterFunctionAttribute : Attribute
 	{
 		public ComUnregisterFunctionAttribute ()

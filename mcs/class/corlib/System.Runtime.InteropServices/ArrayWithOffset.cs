@@ -33,6 +33,10 @@ using System;
 
 namespace System.Runtime.InteropServices {
 
+#if NET_2_0
+	[Serializable]
+	[ComVisible (true)]
+#endif
 	public struct ArrayWithOffset {
 		object array;
 		int offset;

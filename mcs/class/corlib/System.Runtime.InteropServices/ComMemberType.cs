@@ -33,6 +33,9 @@ using System;
 namespace System.Runtime.InteropServices
 {
 	[Serializable]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public enum ComMemberType {
 		Method  = 0,
 		PropGet = 1,

@@ -37,6 +37,7 @@ namespace System.Runtime.InteropServices {
 
 #if NET_2_0
 	[ComVisible(true)]
+	[Serializable]
 #endif
 	public enum UnmanagedType {
 

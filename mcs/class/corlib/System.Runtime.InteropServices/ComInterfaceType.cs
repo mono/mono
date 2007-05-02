@@ -31,7 +31,11 @@
 
 namespace System.Runtime.InteropServices
 {
-	[Serializable] public enum ComInterfaceType
+	[Serializable]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
+	public enum ComInterfaceType
 	{
 		InterfaceIsDual = 0,
 		InterfaceIsIUnknown = 1,

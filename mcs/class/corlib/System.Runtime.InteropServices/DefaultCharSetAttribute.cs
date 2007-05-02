@@ -13,7 +13,8 @@ using System.Runtime.Serialization;
 namespace System.Runtime.InteropServices
 {
 	[AttributeUsage (AttributeTargets.Module, Inherited = false)]
-	public class DefaultCharSetAttribute : Attribute
+	[ComVisible (true)]
+	public sealed class DefaultCharSetAttribute : Attribute
 	{
 		CharSet _set;
 

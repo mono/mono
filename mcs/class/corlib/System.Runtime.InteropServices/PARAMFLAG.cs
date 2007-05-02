@@ -34,8 +34,11 @@ namespace System.Runtime.InteropServices
 {
 #if NET_2_0
 	[Obsolete]
+#else
+	[ComVisible (false)]
 #endif
-	[Flags, Serializable, ComVisible (false)]
+	[Serializable]
+	[Flags]
 	public enum PARAMFLAG
 	{
 		PARAMFLAG_NONE = 0,

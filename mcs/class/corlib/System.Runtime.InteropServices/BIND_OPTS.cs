@@ -32,8 +32,9 @@ namespace System.Runtime.InteropServices
 {
 #if NET_2_0
 	[Obsolete]
-#endif
+#else
 	[ComVisible (false)]
+#endif
 	[StructLayout (LayoutKind.Sequential)]
 	public struct BIND_OPTS
 	{

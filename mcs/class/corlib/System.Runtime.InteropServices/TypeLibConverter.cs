@@ -46,6 +46,9 @@ namespace System.Runtime.InteropServices
 		}
 
 		[MonoTODO ("implement")]
+#if NET_2_0
+		[return: MarshalAs (UnmanagedType.Interface)]
+#endif
 		public object ConvertAssemblyToTypeLib (Assembly assembly, string strTypeLibName, TypeLibExporterFlags flags, ITypeLibExporterNotifySink notifySink)
 		{
 			throw new NotImplementedException ();

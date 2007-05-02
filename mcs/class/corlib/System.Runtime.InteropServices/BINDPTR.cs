@@ -34,8 +34,9 @@ namespace System.Runtime.InteropServices
 {
 #if NET_2_0
 	[Obsolete]
-#endif
+#else
 	[ComVisible(false)]
+#endif
 	[StructLayout (LayoutKind.Explicit, CharSet = CharSet.Unicode)]
 	public struct BINDPTR {
 		[FieldOffset (0)] 

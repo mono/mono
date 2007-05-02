@@ -18,6 +18,7 @@ namespace System.Runtime.InteropServices
 		protected IntPtr handle;
 		bool _disposed = false;
 
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
 		protected CriticalHandle (IntPtr invalidHandleValue)
 		{
 			handle = invalidHandleValue;
@@ -41,6 +42,7 @@ namespace System.Runtime.InteropServices
 			Dispose (true);
 		}
 
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public void Dispose (bool disposing)
 		{
 			if (_disposed)

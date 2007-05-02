@@ -35,6 +35,9 @@ using System.Globalization;
 
 namespace System.Runtime.InteropServices {
 	[Serializable]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public class ExternalException : SystemException {
 		// Constructors
 		public ExternalException ()

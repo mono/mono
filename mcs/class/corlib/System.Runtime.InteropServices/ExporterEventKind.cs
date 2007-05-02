@@ -32,7 +32,11 @@
 
 namespace System.Runtime.InteropServices
 {
-	[Serializable] public enum ExporterEventKind
+	[Serializable]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
+	public enum ExporterEventKind
 	{
 		NOTIF_TYPECONVERTED = 0,
 		NOTIF_CONVERTWARNING = 1,

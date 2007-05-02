@@ -34,9 +34,10 @@ namespace System.Runtime.InteropServices
 {
 #if NET_2_0
 	[Obsolete]
+#else
+	[ComVisible(false)]
 #endif
 	[Serializable]
-	[ComVisible(false)]
 	public enum DESCKIND {
 		DESCKIND_NONE = 0,
 		DESCKIND_FUNCDESC = 1,

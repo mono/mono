@@ -45,6 +45,14 @@ namespace System.Runtime.InteropServices
 #if NET_2_0
 		None = 0,
 		PreventClassMembers = 16,
+		ImportAsAgnostic = 2048,
+		ImportAsItanium = 1024,
+		ImportAsX64 = 512,
+		ImportAsX86 = 256,
+		ReflectionOnlyLoading = 4096,
+		SerializableValueClasses = 32,
+
+		// No longer defined
 		PlatformLegacy = 4096,
 		PlatformLibrary = 8192,
 		PlatformAppDomain = 16384,

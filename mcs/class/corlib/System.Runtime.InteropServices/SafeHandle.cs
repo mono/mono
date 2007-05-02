@@ -62,6 +62,7 @@ namespace System.Runtime.InteropServices
 		int refcount = 0;
 		bool owns_handle;
 		
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
 		protected SafeHandle (IntPtr invalidHandleValue, bool ownsHandle)
 		{
 			invalid_handle_value = invalidHandleValue;
@@ -69,6 +70,7 @@ namespace System.Runtime.InteropServices
 			refcount = 1;
 		}
 
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public void Close ()
 		{
 			if (refcount == 0)
@@ -95,6 +97,7 @@ namespace System.Runtime.InteropServices
 		// try { x.DangerousAddRef (ref release); ... }
 		// finally { if (release) x.DangerousRelease (); }
 		//
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
 		public void DangerousAddRef (ref bool success)
 		{
 			if (refcount == 0)
@@ -118,6 +121,7 @@ namespace System.Runtime.InteropServices
 			success = true;
 		}
 
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public IntPtr DangerousGetHandle ()
 		{
 			if (refcount == 0){
@@ -127,6 +131,7 @@ namespace System.Runtime.InteropServices
 			return handle;
 		}
 
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public void DangerousRelease ()
 		{
 			if (refcount == 0)
@@ -144,6 +149,7 @@ namespace System.Runtime.InteropServices
 			}
 		}
 
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public virtual void Dispose ()
 		{
 			Dispose (true);
@@ -154,11 +160,13 @@ namespace System.Runtime.InteropServices
 		// See documentation, this invalidates the handle without
 		// closing it.
 		//
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public void SetHandleAsInvalid ()
 		{
 			handle = invalid_handle_value;
 		}
 		
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		protected virtual void Dispose (bool disposing)
 		{
 			if (disposing)
@@ -173,20 +181,24 @@ namespace System.Runtime.InteropServices
 			}
 		}
 
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		protected abstract bool ReleaseHandle ();
 
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		protected void SetHandle (IntPtr handle)
 		{
 			this.handle = handle;
 		}
 
 		public bool IsClosed {
+			[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 			get {
 				return refcount == 0;
 			}
 		}
 
 		public abstract bool IsInvalid {
+			[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 			get;
 		}
 

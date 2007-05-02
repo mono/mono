@@ -196,6 +196,12 @@ namespace System.Runtime.InteropServices
 		{
 			copy_from_unmanaged (source, startIndex, destination, length);
 		}
+
+		public static IntPtr CreateAggregatedObject (IntPtr pOuter,
+							     object o)
+		{
+			throw new NotImplementedException ();
+		}
 #endif
 		
 		public static object CreateWrapperOfType (object o, Type t)
@@ -216,6 +222,9 @@ namespace System.Runtime.InteropServices
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		public extern static void DestroyStructure (IntPtr ptr, Type structuretype);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -360,6 +369,9 @@ namespace System.Runtime.InteropServices
 		}
 
 		[MonoTODO]
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		public static IntPtr GetExceptionPointers()
 		{
 			throw new NotImplementedException ();
@@ -378,6 +390,9 @@ namespace System.Runtime.InteropServices
 		}
 
 		[MonoTODO]
+#if NET_2_0
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
+#endif
 		public static int GetHRForLastWin32Error()
 		{
 			throw new NotImplementedException ();
@@ -434,6 +449,9 @@ namespace System.Runtime.InteropServices
 		public static extern int GetLastWin32Error();
 
 		[MonoTODO]
+#if NET_2_0
+		[Obsolete ("This method has been deprecated")]
+#endif
 		public static IntPtr GetManagedThunkForUnmanagedMethodPtr (IntPtr pfnMethodToWrap, IntPtr pbSignature, int cbSignature)
 		{
 			throw new NotImplementedException ();
@@ -490,6 +508,9 @@ namespace System.Runtime.InteropServices
 		}
 
 		[MonoTODO]
+#if NET_2_0
+		[Obsolete ("This method has been deprecated")]
+#endif
 		public static Thread GetThreadFromFiberCookie (int cookie)
 		{
 			throw new NotImplementedException ();
@@ -522,6 +543,13 @@ namespace System.Runtime.InteropServices
 		{
 			throw new NotImplementedException ();
 		}
+
+#if NET_2_0
+		public static string GetTypeInfoName (ITypeInfo typeInfo)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 
 #if NET_2_0
 		[Obsolete]
@@ -584,9 +612,17 @@ namespace System.Runtime.InteropServices
 		{
 			throw new NotImplementedException ();
 		}
+
+		public static object GetUniqueObjectForIUnknown (IntPtr unknown)
+		{
+			throw new NotImplementedException ();
+		}
 #endif
 
 		[MonoTODO]
+#if NET_2_0
+		[Obsolete ("This method has been deprecated")]
+#endif
 		public static IntPtr GetUnmanagedThunkForManagedMethodPtr (IntPtr pfnMethodToWrap, IntPtr pbSignature, int cbSignature)
 		{
 			throw new NotImplementedException ();
@@ -644,9 +680,15 @@ namespace System.Runtime.InteropServices
 		public extern static string PtrToStringBSTR (IntPtr ptr);
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		public extern static void PtrToStructure (IntPtr ptr, object structure);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		public extern static object PtrToStructure (IntPtr ptr, Type structureType);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -768,6 +810,9 @@ namespace System.Runtime.InteropServices
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static int ReleaseInternal (IntPtr pUnk);
 
+#if NET_2_0
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
+#endif
 		public static int Release (IntPtr pUnk)
 		{
 			if (pUnk == IntPtr.Zero)
@@ -802,6 +847,9 @@ namespace System.Runtime.InteropServices
 			throw new NotSupportedException ("MSDN states user code should never need to call this method.");
 		}
 
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		public static int SizeOf (object structure)
 		{
 			return SizeOf (structure.GetType ());
@@ -955,6 +1003,7 @@ namespace System.Runtime.InteropServices
 
 #if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
+		[ComVisible (true)]
 #endif
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static void StructureToPtr (object structure, IntPtr ptr, bool fDeleteOld);

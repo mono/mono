@@ -35,6 +35,9 @@ namespace System.Runtime.InteropServices {
 
 	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Class |
 			 AttributeTargets.Interface, Inherited=false)]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public sealed class AutomationProxyAttribute : Attribute
 	{
 		bool val;

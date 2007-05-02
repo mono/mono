@@ -1,3 +1,68 @@
+2007-05-02  Dick Porter  <dick@ximian.com>
+
+	* _ConstructorInfo.cs: 
+	* _EventInfo.cs: 
+	* _Exception.cs: 
+	* _FieldInfo.cs: 
+	* _MemberInfo.cs: 
+	* _MethodBase.cs: 
+	* _MethodInfo.cs: 
+	* _PropertyInfo.cs: 
+	* _Type.cs: 
+	* UCOMIMoniker.cs: 
+	* AutomationProxyAttribute.cs: 
+	* BestFitMappingAttribute.cs: 
+	* BStrWrapper.cs: 
+	* ClassInterfaceAttribute.cs: 
+	* CoClassAttribute.cs: 
+	* ComAliasNameAttribute.cs: 
+	* ComCompatibleVersionAttribute.cs: 
+	* ComConversionLossAttribute.cs: 
+	* ComDefaultInterfaceAttribute.cs: 
+	* ComEventInterfaceAttribute.cs: 
+	* COMException.cs: 
+	* ComImportAttribute.cs: 
+	* ComObjectInUseException.cs: 
+	* ComRegisterFunctionAttribute.cs: 
+	* ComUnregisterFunctionAttribute.cs: 
+	* ComVisible.cs: 
+	* CriticalHandle.cs: 
+	* CurrencyWrapper.cs: 
+	* DefaultCharSetAttribute.cs: 
+	* DispatchWrapper.cs: 
+	* DispIdAttribute.cs: 
+	* ErrorWrapper.cs: 
+	* ExtensibleClassFactory.cs: 
+	* ExternalException.cs: 
+	* Marshal.cs: 
+	* SafeHandle.cs: 
+	* StructLayoutAttribute.cs: 
+	* TypeLibConverter.cs: 
+	* ArrayWithOffset.cs: 
+	* BIND_OPTS.cs: 
+	* BINDPTR.cs: 
+	* CONNECTDATA.cs: 
+	* DISPPARAMS.cs: 
+	* ELEMDESC.cs: 
+	* EXCEPINFO.cs: 
+	* PARAMDESC.cs: 
+	* TYPELIBATTR.cs: 
+	* VARDESC.cs: 
+	* CALLCONV.cs: 
+	* CallingConvention.cs: 
+	* CharSet.cs: 
+	* ClassInterfaceType.cs: 
+	* ComInterfaceType.cs: 
+	* ComMemberType.cs: 
+	* DESCKIND.cs: 
+	* ExporterEventKind.cs: 
+	* PARAMFLAG.cs: 
+	* RegistrationClassContext.cs: 
+	* TYPEKIND.cs: 
+	* TypeLibImporterFlags.cs: 
+	* UnmanagedType.cs: 
+	* VARFLAGS.cs: Update to 2.0 profile
+
 2007-04-15  Alp Toker  <alp@atoker.com>
 
 	* Marshal.cs: Add new 2.0 Copy() from IntPtr[] overload.

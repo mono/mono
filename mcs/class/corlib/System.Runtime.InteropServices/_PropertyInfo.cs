@@ -17,6 +17,9 @@ namespace System.Runtime.InteropServices
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	[Guid ("F59ED4E4-E68F-3218-BD77-061AA82824BF")]
 	[TypeLibImportClass (typeof (PropertyInfo))]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public interface _PropertyInfo
 	{
 		bool Equals (object obj);

@@ -11,6 +11,8 @@ using System;
 
 namespace System.Runtime.InteropServices
 {
+	[Serializable]
+	[ComVisible (true)]
 	public sealed class BStrWrapper
 	{
 		string _value;

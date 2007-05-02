@@ -26,7 +26,7 @@ using System;
 namespace System.Runtime.InteropServices {
 
 #if NET_2_0
-	[ComVisible (false)]
+	[ComVisible (true)]
 #endif
 	[AttributeUsage (AttributeTargets.Class | AttributeTargets.Struct,
 			 Inherited=false)]

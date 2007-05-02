@@ -41,10 +41,10 @@ namespace System.Runtime.InteropServices
 		EnableActivateAsActivator = 65536,
 		EnableCodeDownload = 8192,
 		FromDefaultContext = 131072,
-		InprocHandler = 2,
-		InprocHandler16 = 32,
-		InprocServer = 1,
-		InprocServer16 = 8,
+		InProcessHandler = 2,
+		InProcessHandler16 = 32,
+		InProcessServer = 1,
+		InProcessServer16 = 8,
 		LocalServer = 4,
 		NoCodeDownload = 1024,
 		NoCustomMarshal = 4096,
@@ -54,7 +54,13 @@ namespace System.Runtime.InteropServices
 		Reserved2 = 128,
 		Reserved3 = 256,
 		Reserved4 = 512,
-		Reserved5 = 2048
+		Reserved5 = 2048,
+
+		// No longer defined
+		InprocHandler = 2,
+		InprocHandler16 = 32,
+		InprocServer = 1,
+		InprocServer16 = 8,
 	}
 }
 #endif

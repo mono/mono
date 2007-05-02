@@ -36,6 +36,9 @@ namespace System.Runtime.InteropServices
 {
 	[AttributeUsage(AttributeTargets.Assembly, AllowMultiple = false, 
 			Inherited = false)]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public sealed class ComCompatibleVersionAttribute : Attribute
 	{
 		private int major;

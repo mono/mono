@@ -16,6 +16,9 @@ namespace System.Runtime.InteropServices
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	[Guid ("9DE59C64-D889-35A1-B897-587D74469E5B")]
 	[TypeLibImportClass (typeof (EventInfo))]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public interface _EventInfo
 	{
 		void AddEventHandler (object target, Delegate handler);

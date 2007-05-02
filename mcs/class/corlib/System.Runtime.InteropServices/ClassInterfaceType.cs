@@ -34,6 +34,9 @@
 namespace System.Runtime.InteropServices {
 
 	[Serializable]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public enum ClassInterfaceType 
 	{
 		None = 0,

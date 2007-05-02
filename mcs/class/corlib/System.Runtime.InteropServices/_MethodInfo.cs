@@ -17,6 +17,9 @@ namespace System.Runtime.InteropServices
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	[Guid ("FFCC1B5D-ECB8-38DD-9B01-3DC8ABC2AA5F")]
 	[TypeLibImportClass (typeof (MethodInfo))]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public interface _MethodInfo
 	{
 		bool Equals (object obj);
