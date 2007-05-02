@@ -31,7 +31,6 @@ namespace System.Net
 		protected bool _hasRequest;
 		protected Stream _writeStream;
 		private GHWebAsyncResult _asyncWrite;
-		private GHWebAsyncResult _asyncRead;
 
 		private bool _isConnectionOpened;
 		
@@ -506,6 +505,65 @@ namespace System.Net
 			}
 		}
 
+		delegate WebResponse GetResponseDelegate();
+		private sealed class AsyncContext
+		{
+			public readonly AsyncCallback AsyncCallback;
+			public readonly Delegate AsyncDelegate;
+			public readonly object AsyncState;
+			public readonly DelegateAsyncResult DelegateAsyncResult;
+
+			public AsyncContext (Delegate @delegate, DelegateAsyncResult delegateAsyncResult, AsyncCallback asyncCallback, object userState) {
+				AsyncDelegate = @delegate;
+				AsyncCallback = asyncCallback;
+				AsyncState = userState;
+				DelegateAsyncResult = delegateAsyncResult;
+			}
+		}
+		private sealed class DelegateAsyncResult : IAsyncResult
+		{
+			
+			IAsyncResult _asyncResult;
+
+			public IAsyncResult AsyncResult {
+				get { return _asyncResult; }
+				set { _asyncResult = value; }
+			}
+
+			AsyncContext AsyncContext {
+				get { return (AsyncContext) _asyncResult.AsyncState; }
+			}
+
+			public static void Callback (IAsyncResult result) {
+				AsyncContext context = (AsyncContext) result.AsyncState;
+				context.AsyncCallback.Invoke (context.DelegateAsyncResult);
+			}
+
+			public Delegate AsyncDelegate {
+				get { return AsyncContext.AsyncDelegate; }
+			}
+
+			#region IAsyncResult Members
+
+			public object AsyncState {
+				get { return AsyncContext.AsyncState; }
+			}
+
+			public WaitHandle AsyncWaitHandle {
+				get { return _asyncResult.AsyncWaitHandle; }
+			}
+
+			public bool CompletedSynchronously {
+				get { return _asyncResult.CompletedSynchronously; }
+			}
+
+			public bool IsCompleted {
+				get { return _asyncResult.IsCompleted; }
+			}
+
+			#endregion
+		}
+		
 		public override WebResponse GetResponse()
 		{
 			lock(this)
@@ -660,39 +718,11 @@ namespace System.Net
 
 		public override IAsyncResult BeginGetResponse(AsyncCallback callback, object state)
 		{
-			lock(this)
-			{
-				if(_asyncRead != null && !_hasResponse)
-				{
-					throw new InvalidOperationException ("Cannot re-call start of asynchronous " +
-						"method while a previous call is still in progress.");
-				}
-	
-				_asyncRead = new GHWebAsyncResult (this, callback, state);
-				if (_hasResponse) 
-				{
-					if (_response != null) 
-					{
-						_asyncRead.SetCompleted (true, _writeStream);
-						_asyncRead.DoCallback ();
-						return _asyncRead;
-					}
-				}
-				
-
-				try
-				{
-					GetResponse();
-				}
-				catch(Exception e)
-				{
-					_asyncRead.SetCompleted(false, e);
-				}
-				_asyncRead.SetCompleted (true, _writeStream);
-				_asyncRead.DoCallback ();	
-				return _asyncRead;
-				
-			}
+			GetResponseDelegate d = new GetResponseDelegate (GetResponse);
+			DelegateAsyncResult result = new DelegateAsyncResult ();
+			AsyncContext userContext = new AsyncContext (d, result, callback, state);
+			result.AsyncResult = d.BeginInvoke (new AsyncCallback (DelegateAsyncResult.Callback), userContext);
+			return result;
 		}
 
 		public override WebResponse EndGetResponse(IAsyncResult asyncResult)
@@ -700,19 +730,11 @@ namespace System.Net
 			if (asyncResult == null)
 				throw new ArgumentNullException ("asyncResult");
 
-			GHWebAsyncResult result = asyncResult as GHWebAsyncResult;
+			DelegateAsyncResult result = asyncResult as DelegateAsyncResult;
 			if (result == null)
 				throw new ArgumentException ("Invalid IAsyncResult", "asyncResult");
 
-			
-			_asyncRead = result;
-			if (!result.WaitUntilComplete (_timeout, false)) 
-			{
-				Abort ();
-				throw new WebException("The request timed out", WebExceptionStatus.Timeout);
-			}
-			
-			return result.Response;
+			return ((GetResponseDelegate) result.AsyncDelegate).EndInvoke (result.AsyncResult);
 		}
 
 
