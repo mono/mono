@@ -257,8 +257,9 @@ namespace System.Collections.Generic
 
 		bool ICollection<KeyValuePair<TKey,TValue>>.Contains (KeyValuePair<TKey,TValue> item)
 		{
-			Node n = (Node) tree.Lookup (item.Key);
-			return n != null && item.Value.Equals (n.value);
+			TValue value;
+			return TryGetValue (item.Key, out value) &&
+				EqualityComparer<TValue>.Default.Equals (item.Value, value);
 		}
 
 		bool ICollection<KeyValuePair<TKey,TValue>>.IsReadOnly {
@@ -268,11 +269,9 @@ namespace System.Collections.Generic
 		bool ICollection<KeyValuePair<TKey,TValue>>.Remove (KeyValuePair<TKey,TValue> item)
 		{
 			TValue value;
-			if (TryGetValue (item.Key, out value)) {
-				if (EqualityComparer<TValue>.Default.Equals (item.Value, value))
-					return Remove (item.Key);
-			}
-			return false;
+			return TryGetValue (item.Key, out value) &&
+ 				EqualityComparer<TValue>.Default.Equals (item.Value, value) &&
+				Remove (item.Key);
 		}
 
 		#endregion
