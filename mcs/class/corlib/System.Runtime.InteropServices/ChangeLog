@@ -1,3 +1,7 @@
+2007-05-02  Jonathan Chambers  <joncham@gmail.com>
+
+	* ExtensibleClassFactory.cs: Don't use un-implemented overload.
+
 2007-05-02  Dick Porter  <dick@ximian.com>
 
 	* _ConstructorInfo.cs: 

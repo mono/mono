@@ -59,7 +59,7 @@ namespace System.Runtime.InteropServices
 
 		public static void RegisterObjectCreationCallback (ObjectCreationDelegate callback)
 		{
-			StackTrace trace = new StackTrace (Thread.CurrentThread, false);
+			StackTrace trace = new StackTrace (false);
 			StackFrame frame = trace.GetFrame (0);
 			hashtable.Add (frame.GetMethod ().DeclaringType, callback);
 		}
