@@ -32,6 +32,9 @@ using System.Drawing.Drawing2D;
 using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
+#if NET_2_0
+	[Docking (DockingBehavior.Ask)]
+#endif
 	[DefaultProperty("Nodes")]
 	[DefaultEvent("AfterSelect")]
 	[Designer("System.Windows.Forms.Design.TreeViewDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
@@ -225,10 +228,17 @@ namespace System.Windows.Forms {
 			set { hot_tracking = value; }
 		}
 
-		[DefaultValue(0)]
+#if NET_2_0
+		[DefaultValue (-1)]
+		[RelatedImageList ("ImageList")]
+		[RefreshProperties (RefreshProperties.Repaint)]
+		//[TypeConverter (typeof (NoneExcludedImageIndexConverter))]
+#else
+		[DefaultValue (0)]
+		[TypeConverter (typeof (TreeViewImageIndexConverter))]
+#endif
 		[Editor("System.Windows.Forms.Design.ImageIndexEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
 		[Localizable(true)]
-		[TypeConverter(typeof(TreeViewImageIndexConverter))]
 		public int ImageIndex {
 			get { return image_index; }
 			set {
@@ -243,6 +253,9 @@ namespace System.Windows.Forms {
 			}
 		}
 
+#if NET_2_0
+		[RefreshProperties (RefreshProperties.Repaint)]
+#endif
 		[DefaultValue(null)]
 		public ImageList ImageList {
 			get { return image_list; }
@@ -271,7 +284,9 @@ namespace System.Windows.Forms {
 			}
 		}
 
+#if !NET_2_0
 		[Localizable(true)]
+#endif
 		public int ItemHeight {
 			get {
 				if (item_height == -1)
@@ -325,10 +340,16 @@ namespace System.Windows.Forms {
 			}
 		}
 
+#if NET_2_0
+		[DefaultValue (-1)]
+		[RelatedImageList ("ImageList")]
+		//[TypeConverter (typeof (NoneExcludedImageIndexConverter))]
+#else
+		[DefaultValue (0)]
+		[TypeConverter (typeof (TreeViewImageIndexConverter))]
+#endif
 		[Editor("System.Windows.Forms.Design.ImageIndexEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
-		[TypeConverter(typeof(TreeViewImageIndexConverter))]
 		[Localizable(true)]
-		[DefaultValue(0)]
 		public int SelectedImageIndex {
 			get { return selected_image_index; }
 			set {
@@ -442,6 +463,10 @@ namespace System.Windows.Forms {
 			}
 		}
 
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+#endif
 		[DefaultValue(false)]
 		public bool Sorted {
 			get { return sorted; }
@@ -493,6 +518,8 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public IComparer TreeViewNodeSorter {
 			get {
 				return tree_view_node_sorter;
@@ -519,6 +546,7 @@ namespace System.Windows.Forms {
 
 #if NET_2_0
 		/// According to MSDN this property has no effect on the treeview
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		protected override bool DoubleBuffered {
 			get { return true; }
 			set { /* whatever */ }
@@ -526,6 +554,7 @@ namespace System.Windows.Forms {
 #endif
 
 #if NET_2_0
+		[DefaultValue ("Color [Black]")]
 		public
 #else
 		private
@@ -550,6 +579,10 @@ namespace System.Windows.Forms {
 		}
 #if NET_2_0
 		[Localizable (true)]
+		[DefaultValue ("")]
+		[RelatedImageList ("ImageList")]
+		[RefreshProperties (RefreshProperties.Repaint)]
+		[Editor ("System.Windows.Forms.Design.ImageIndexEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		public string ImageKey {
 			get { return image_key; }
 			set {
@@ -561,6 +594,11 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Localizable (true)]
+		[DefaultValue ("")]
+		[RelatedImageList ("ImageList")]
+		[RefreshProperties (RefreshProperties.Repaint)]
+		[Editor ("System.Windows.Forms.Design.ImageIndexEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		public string SelectedImageKey {
 			get { return selected_image_key; }
 			set {
@@ -574,6 +612,8 @@ namespace System.Windows.Forms {
 #endif
 
 #if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override ImageLayout BackgroundImageLayout {
 			get { return base.BackgroundImageLayout; }
 			set { base.BackgroundImageLayout = value; }
@@ -581,6 +621,7 @@ namespace System.Windows.Forms {
 #endif
 
 #if NET_2_0
+		[DefaultValue (TreeViewDrawMode.Normal)]
 		public TreeViewDrawMode DrawMode {
 			get { return draw_mode; }
 			set { draw_mode = value; }

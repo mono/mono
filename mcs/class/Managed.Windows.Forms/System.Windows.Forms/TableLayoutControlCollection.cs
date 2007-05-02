@@ -28,9 +28,13 @@
 
 #if NET_2_0
 using System;
+using System.ComponentModel;
+using System.ComponentModel.Design.Serialization;
 
 namespace System.Windows.Forms
 {
+	[DesignerSerializer ("System.Windows.Forms.Design.TableLayoutControlCollectionCodeDomSerializer, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.Serialization.CodeDomSerializer, " + Consts.AssemblySystem_Design)]
+	[ListBindable (false)]
 	public class TableLayoutControlCollection : Control.ControlCollection
 	{
 		private TableLayoutPanel panel;

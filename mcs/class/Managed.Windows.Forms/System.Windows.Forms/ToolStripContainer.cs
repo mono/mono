@@ -36,6 +36,7 @@ namespace System.Windows.Forms
 {
 	[ComVisible (true)]
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
+	[Designer ("System.Windows.Forms.Design.ToolStripContainerDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	public class ToolStripContainer : ContainerControl
 	{
 		private ToolStripPanel bottom_panel;

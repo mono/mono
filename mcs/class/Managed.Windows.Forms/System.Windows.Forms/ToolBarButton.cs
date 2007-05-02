@@ -110,6 +110,9 @@ namespace System.Windows.Forms
 			}
 		}
 
+#if NET_2_0
+		[RefreshProperties (RefreshProperties.Repaint)]
+#endif
 		[DefaultValue (-1)]
 		[Editor ("System.Windows.Forms.Design.ImageIndexEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		[Localizable (true)]

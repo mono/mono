@@ -169,6 +169,11 @@ namespace System.Windows.Forms
 
 		bool autosize = true;
 
+#if NET_2_0
+		[Browsable (true)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Visible)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
+#endif
 		[DefaultValue (true)]
 		[Localizable (true)]
 		public new bool AutoSize {

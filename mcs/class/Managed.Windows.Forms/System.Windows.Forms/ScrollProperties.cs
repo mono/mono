@@ -42,37 +42,47 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Properties
+		[DefaultValue (true)]
 		public bool Enabled {
 			get { return scroll_bar.Enabled; }
 			set { scroll_bar.Enabled = value; }
 		}
 		
+		[DefaultValue (10)]
+		[RefreshProperties (RefreshProperties.Repaint)]
 		public int LargeChange {
 			get { return scroll_bar.LargeChange; }
 			set { scroll_bar.LargeChange = value; }
 		}
-		
+
+		[DefaultValue (100)]
+		[RefreshProperties (RefreshProperties.Repaint)]
 		public int Maximum {
 			get { return scroll_bar.Maximum; }
 			set { scroll_bar.Maximum = value; }
 		}
-		
+
+		[DefaultValue (0)]
+		[RefreshProperties (RefreshProperties.Repaint)]
 		public int Minimum {
 			get { return scroll_bar.Minimum; }
 			set { scroll_bar.Minimum = value; }
 		}
-		
+
+		[DefaultValue (1)]
 		public int SmallChange {
 			get { return scroll_bar.SmallChange; }
 			set { scroll_bar.SmallChange = value; }
 		}
-		
+
+		[DefaultValue (0)]
 		[BindableAttribute (true)]
 		public int Value {
 			get { return scroll_bar.Value; }
 			set { scroll_bar.Value = value; }
 		}
-		
+
+		[DefaultValue (false)]
 		public bool Visible {
 			get { return scroll_bar.Visible; }
 			set { scroll_bar.Visible = value; }

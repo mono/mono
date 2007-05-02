@@ -533,6 +533,7 @@ namespace System.Windows.Forms {
 
 		#region Public Instance Properties
 #if NET_2_0
+		[DefaultValue ("None")]
 		public ToolTipIcon BalloonTipIcon {
 			get { return this.balloon_icon; }
 			set {
@@ -544,6 +545,9 @@ namespace System.Windows.Forms {
 		}
 
 		[Localizable(true)]
+		[DefaultValue ("")]
+		[Editor ("System.ComponentModel.Design.MultilineStringEditor, " + Consts.AssemblySystem_Design,
+			 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public string BalloonTipText {
 			get { return this.balloon_text; }
 			set {
@@ -555,6 +559,7 @@ namespace System.Windows.Forms {
 		}
  		
 		[Localizable(true)]
+		[DefaultValue ("")]
 		public string BalloonTipTitle {
 			get { return this.balloon_title; }
 			set {

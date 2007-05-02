@@ -147,6 +147,9 @@ namespace System.Windows.Forms {
 			}
 		}
 
+#if NET_2_0
+		[RefreshProperties (RefreshProperties.Repaint)]
+#endif
 		[DefaultValue(null)]
 		public ImageList ImageList {
 			get { return image_list; }
@@ -373,7 +376,11 @@ namespace System.Windows.Forms {
 			}
 		}
 
+#if NET_2_0
+		[Editor ("System.Windows.Forms.Design.TabPageCollectionEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
+#else
 		[DefaultValue(null)]
+#endif
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[MergableProperty(false)]
 		public TabPageCollection TabPages {

@@ -40,6 +40,7 @@ namespace System.Windows.Forms
 	[ToolboxItem (false)]
 	[Docking (DockingBehavior.Never)]
 	[InitializationEvent ("Load")]
+	[Designer ("System.Windows.Forms.Design.ToolStripContentPanelDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	public class ToolStripContentPanel : Panel
 	{
 		private ToolStripRenderMode render_mode;

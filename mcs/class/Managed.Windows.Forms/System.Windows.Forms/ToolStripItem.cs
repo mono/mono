@@ -37,6 +37,7 @@ namespace System.Windows.Forms
 	[DefaultProperty ("Text")]
 	[DesignTimeVisible (false)]
 	[ToolboxItem (false)]
+	[Designer ("System.Windows.Forms.Design.ToolStripItemDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	public abstract class ToolStripItem : Component, IDropTarget, IComponent, IDisposable
 	{
 		#region Private Variables
@@ -216,14 +217,12 @@ namespace System.Windows.Forms
 		}
 
 		[MonoTODO]
+		[Browsable (false)]
+		[DefaultValue (false)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public virtual bool AllowDrop {
-			get {
-				return this.allow_drop;
-			}
-			
-			set {
-				this.allow_drop = value;
-			}
+			get { return this.allow_drop; }
+			set { this.allow_drop = value; }
 		}
 		
 		[Browsable (false)]
@@ -342,6 +341,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Browsable (false)]
 		public bool IsDisposed {
 			get { return this.is_disposed; }
 		}
@@ -466,7 +466,9 @@ namespace System.Windows.Forms
 		[Localizable (true)]
 		[Browsable (false)]
 		[RelatedImageList ("Owner.ImageList")]
+		//[TypeConverter (typeof (NoneExcludedImageIndexConverter))]
 		[RefreshProperties (RefreshProperties.Repaint)]
+		[Editor ("System.Windows.Forms.Design.ToolStripImageIndexEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		public int ImageIndex {
 			get { return this.image_index; }
 			set {
@@ -488,8 +490,8 @@ namespace System.Windows.Forms
 		[Browsable (false)]
 		[RelatedImageList ("Owner.ImageList")]
 		[RefreshProperties (RefreshProperties.Repaint)]
-		public string ImageKey
-		{
+		[Editor ("System.Windows.Forms.Design.ToolStripImageIndexEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
+		public string ImageKey {
 			get { return this.image_key; }
 			set { 
 				if (this.image_key != value) {
@@ -632,6 +634,7 @@ namespace System.Windows.Forms
 		}
 		
 		[Localizable (true)]
+		[DefaultValue (false)]
 		public bool RightToLeftAutoMirrorImage {
 			get { return this.right_to_left_auto_mirror_image; }
 			set { 
@@ -713,6 +716,8 @@ namespace System.Windows.Forms
 		}
 
 		[Localizable (true)]
+		[Editor ("System.ComponentModel.Design.MultilineStringEditor, " + Consts.AssemblySystem_Design,
+			 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public string ToolTipText {
 			get { return this.tool_tip_text; }
 			set { this.tool_tip_text = value; }
@@ -1039,6 +1044,7 @@ namespace System.Windows.Forms
 				eh (this, e);
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected internal virtual void OnOwnerFontChanged (EventArgs e)
 		{
 		}
@@ -1054,6 +1060,7 @@ namespace System.Windows.Forms
 		}
 
 		// This is never called.
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected virtual void OnParentBackColorChanged (EventArgs e)
 		{
 		}
@@ -1073,10 +1080,12 @@ namespace System.Windows.Forms
 		}
 
 		// This is never called.
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected virtual void OnParentForeColorChanged (EventArgs e)
 		{
 		}
-	
+
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected internal virtual void OnParentRightToLeftChanged (EventArgs e)
 		{
 			this.OnRightToLeftChanged (e);

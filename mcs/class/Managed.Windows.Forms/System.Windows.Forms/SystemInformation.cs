@@ -28,6 +28,7 @@
 
 using System;
 using System.Drawing;
+using System.ComponentModel;
 
 namespace System.Windows.Forms
 {
@@ -319,8 +320,9 @@ namespace System.Windows.Forms
 				return XplatUI.MouseWheelScrollDelta;
 			}
 		}
-#endif
 
+		[EditorBrowsable (EditorBrowsableState.Never)]		
+#endif
 		public static bool MousePresent {
 			get {
 				return true;

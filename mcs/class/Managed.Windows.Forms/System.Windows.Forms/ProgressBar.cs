@@ -468,6 +468,7 @@ namespace System.Windows.Forms
 		}
 
 #if NET_2_0
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override void ResetForeColor ()
 		{
 			ForeColor = defaultForeColor;

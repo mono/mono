@@ -39,6 +39,7 @@ namespace System.Windows.Forms
 	[ComVisibleAttribute (true)]
 	[ClassInterfaceAttribute (ClassInterfaceType.AutoDispatch)]
 	[Docking (DockingBehavior.Never)]
+	[Designer ("System.Windows.Forms.Design.SplitterPanelDesigner, " + Consts.AssemblySystem_Design)]
 	public sealed class SplitterPanel : Panel
 	{
 		//private SplitContainer owner;

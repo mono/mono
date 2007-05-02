@@ -31,6 +31,7 @@ using System;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Windows.Forms.Layout;
+using System.ComponentModel.Design.Serialization;
 
 namespace System.Windows.Forms
 {
@@ -43,6 +44,8 @@ namespace System.Windows.Forms
 	[ProvideProperty ("RowSpan", typeof (Control))]
 	[DefaultProperty ("ColumnCount")]
 	[Docking (DockingBehavior.Never)]
+	[Designer ("System.Windows.Forms.Design.TableLayoutPanelDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
+	[DesignerSerializer ("System.Windows.Forms.Design.TableLayoutPanelCodeDomSerializer, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.Serialization.CodeDomSerializer, " + Consts.AssemblySystem_Design)]
 	public class TableLayoutPanel : Panel, IExtenderProvider
 	{
 		private TableLayoutSettings settings;

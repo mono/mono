@@ -29,10 +29,13 @@
 
 using System.Drawing;
 using System.Collections;
+using System.ComponentModel;
 using System.Windows.Forms.Layout;
 
 namespace System.Windows.Forms
 {
+	[ListBindable (false)]
+	[Editor ("System.Windows.Forms.Design.ToolStripCollectionEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 	public class ToolStripItemCollection : ArrangedElementCollection, IList, ICollection, IEnumerable
 	{
 		private ToolStrip owner;

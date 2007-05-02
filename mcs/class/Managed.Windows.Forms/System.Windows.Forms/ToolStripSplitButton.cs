@@ -104,6 +104,8 @@ namespace System.Windows.Forms
 			get { return base.Selected; }
 		}
 
+		[Browsable (false)]
+		[DefaultValue (null)]
 		public ToolStripItem DefaultItem {
 			get { return this.default_item; }
 			set {

@@ -35,7 +35,8 @@ namespace System.Windows.Forms {
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
 	[ComVisible (true)]
 	[DefaultBindingProperty ("Checked")]
-	[ToolboxItem ("")]
+	[ToolboxItem ("System.Windows.Forms.Design.AutoSizeToolboxItem," + Consts.AssemblySystem_Design)]
+	[Designer ("System.Windows.Forms.Design.RadioButtonDesigner, " + Consts.AssemblySystem_Design)]
 #endif
 	public class RadioButton : ButtonBase {
 		#region Local Variables
@@ -339,6 +340,8 @@ namespace System.Windows.Forms {
 		}
 		
 #if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event MouseEventHandler MouseDoubleClick { 
 			add { base.MouseDoubleClick += value; }
 			remove { base.MouseDoubleClick -= value; }

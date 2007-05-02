@@ -48,8 +48,10 @@ namespace System.Windows.Forms {
 			nodes = new TreeNode [OrigSize];
 		}
 
-		[Browsable(false)]
+#if !NET_2_0
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
+#endif
+		[Browsable(false)]
 		public int Count {
 			get { return count; }
 		}

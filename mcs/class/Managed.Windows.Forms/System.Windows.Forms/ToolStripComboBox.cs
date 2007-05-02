@@ -54,17 +54,28 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Properties
-		[LocalizableAttribute (true)]
+		[Browsable (true)]
+		[Localizable (true)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[Editor ("System.Windows.Forms.Design.ListControlStringCollectionEditor, " + Consts.AssemblySystem_Design,
+			 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public AutoCompleteStringCollection AutoCompleteCustomSource {
 			get { return ComboBox.AutoCompleteCustomSource; }
 			set { ComboBox.AutoCompleteCustomSource = value; }
 		}
 
+		[Browsable (true)]
+		[DefaultValue (AutoCompleteMode.None)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
 		public AutoCompleteMode AutoCompleteMode {
 			get { return ComboBox.AutoCompleteMode; }
 			set { ComboBox.AutoCompleteMode = value; }
 		}
 
+		[Browsable (true)]
+		[DefaultValue (AutoCompleteSource.None)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
 		public AutoCompleteSource AutoCompleteSource {
 			get { return ComboBox.AutoCompleteSource; }
 			set { ComboBox.AutoCompleteSource = value; }
@@ -120,6 +131,7 @@ namespace System.Windows.Forms
 		}
 
 		[LocalizableAttribute (true)]
+		[DefaultValue (FlatStyle.Popup)]
 		public FlatStyle FlatStyle {
 			get { return ComboBox.FlatStyle; }
 			set { ComboBox.FlatStyle = value; }

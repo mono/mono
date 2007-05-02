@@ -33,6 +33,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms.Layout;
 using System.Collections.Generic;
+using System.ComponentModel.Design.Serialization;
 
 namespace System.Windows.Forms
 {
@@ -40,6 +41,8 @@ namespace System.Windows.Forms
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
 	[DefaultEvent ("ItemClicked")]
 	[DefaultProperty ("Items")]
+	[Designer ("System.Windows.Forms.Design.ToolStripDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
+	[DesignerSerializer ("System.Windows.Forms.Design.ToolStripCodeDomSerializer, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.Serialization.CodeDomSerializer, " + Consts.AssemblySystem_Design)]
 	public class ToolStrip : ScrollableControl, IComponent, IDisposable
 	{
 		#region Private Variables
@@ -120,6 +123,7 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Properties
+		[DefaultValue (true)]
 		public bool AllowMerge {
 			get { return this.allow_merge; }
 			set { this.allow_merge = false; }
@@ -132,6 +136,7 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public override bool AutoScroll {
 			get { return base.AutoScroll; }
 			set { base.AutoScroll = value; }
@@ -139,6 +144,7 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public new Size AutoScrollMargin {
 			get { return base.AutoScrollMargin; }
 			set { base.AutoScrollMargin = value; }
@@ -146,6 +152,7 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public new Size AutoScrollMinSize {
 			get { return base.AutoScrollMinSize; }
 			set { base.AutoScrollMinSize = value; }
@@ -153,6 +160,7 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public new Point AutoScrollPosition {
 			get { return base.AutoScrollPosition; }
 			set { base.AutoScrollPosition = value; }
@@ -353,6 +361,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[MergableProperty (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public virtual ToolStripItemCollection Items {
 			get { return this.items; }
@@ -492,10 +501,17 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Methods
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new Control GetChildAtPoint (Point point)
 		{
 			return base.GetChildAtPoint (point);
 		}
+
+		//[EditorBrowsable (EditorBrowsableState.Never)]
+		//public new Control GetChildAtPoint (Point pt, GetChildAtPointSkip skipValue)
+		//{
+		//        return base.GetChildAtPoint (pt, skipValue);
+		//}
 		
 		public ToolStripItem GetItemAt (Point point)
 		{
@@ -597,12 +613,12 @@ namespace System.Windows.Forms
 			return current_best;
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public void ResetMinimumSize ()
 		{
 			this.MinimumSize = new Size (-1, -1);
 		}
 
-		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new void SetAutoScrollMargin (int x, int y)
 		{
@@ -1135,12 +1151,14 @@ namespace System.Windows.Forms
 		}
 
 		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event ControlEventHandler ControlAdded {
 			add { base.ControlAdded += value; }
 			remove { base.ControlAdded -= value; }
 		}
 
 		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event ControlEventHandler ControlRemoved {
 			add { base.ControlRemoved += value; }
 			remove { base.ControlRemoved -= value; }

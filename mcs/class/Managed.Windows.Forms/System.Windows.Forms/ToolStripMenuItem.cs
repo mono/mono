@@ -31,10 +31,12 @@ using System;
 using System.Drawing;
 using System.ComponentModel;
 using System.Windows.Forms.Design;
+using System.ComponentModel.Design.Serialization;
 
 namespace System.Windows.Forms
 {
 	[ToolStripItemDesignerAvailability (ToolStripItemDesignerAvailability.MenuStrip | ToolStripItemDesignerAvailability.ContextMenuStrip)]
+	[DesignerSerializer ("System.Windows.Forms.Design.ToolStripMenuItemCodeDomSerializer, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.Serialization.CodeDomSerializer, " + Consts.AssemblySystem_Design)]
 	public class ToolStripMenuItem : ToolStripDropDownItem
 	{
 		private CheckState checked_state;

@@ -27,8 +27,11 @@
 //
 
 #if NET_2_0
+using System.Runtime.InteropServices;
+
 namespace System.Windows.Forms
 {
+	[ComVisible (true)]
 	public class TreeNodeMouseHoverEventArgs : EventArgs
 	{
 		private TreeNode node;

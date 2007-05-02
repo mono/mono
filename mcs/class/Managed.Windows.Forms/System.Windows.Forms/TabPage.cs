@@ -62,6 +62,7 @@ namespace System.Windows.Forms {
 
 		#region .NET 2.0 Public Instance Properties
 #if NET_2_0
+		[DefaultValue (false)]
 		public bool UseVisualStyleBackColor {
 			get { return use_visual_style_back_color; }
 			set { use_visual_style_back_color = value; }
@@ -96,6 +97,9 @@ namespace System.Windows.Forms {
 			set { base.Enabled = value; }
 		}
 
+#if NET_2_0
+		[RefreshProperties (RefreshProperties.Repaint)]
+#endif
 		[DefaultValue(-1)]
 		[Editor("System.Windows.Forms.Design.ImageIndexEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
 		[Localizable(true)]
@@ -124,6 +128,9 @@ namespace System.Windows.Forms {
 			set { base.TabStop = value; }
 		}
 
+#if NET_2_0
+		[EditorBrowsable (EditorBrowsableState.Always)]
+#endif
 		[Browsable(true)]
 		[Localizable(true)]
 		public override string Text {
@@ -270,6 +277,8 @@ namespace System.Windows.Forms {
 		#endregion	// Events
 
 #if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new Point Location {
 			get {
 				return base.Location;

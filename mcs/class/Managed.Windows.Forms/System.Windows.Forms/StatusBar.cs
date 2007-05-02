@@ -97,7 +97,6 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
-		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		protected override bool DoubleBuffered {
 			get {

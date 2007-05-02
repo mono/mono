@@ -30,6 +30,9 @@ using System.Drawing;
 using System.Drawing.Text;
 
 namespace System.Windows.Forms {
+#if NET_2_0
+	[DefaultEvent ("Popup")]
+#endif
 	[ProvideProperty ("ToolTip", typeof(System.Windows.Forms.Control))]
 	[ToolboxItemFilter("System.Windows.Forms", ToolboxItemFilterType.Allow)]
 	public
@@ -315,18 +318,21 @@ namespace System.Windows.Forms {
 			set { isBalloon = value; }
 		}
 
+		[Browsable (true)]
 		[DefaultValue (false)]
 		public bool StripAmpersands {
 			get { return stripAmpersands; }
 			set { stripAmpersands = value; }
 		}
 
+		[Browsable (true)]
 		[DefaultValue (true)]
 		public bool UseAnimation {
 			get { return useAnimation; }
 			set { useAnimation = value; }
 		}
 
+		[Browsable (true)]
 		[DefaultValue (true)]
 		public bool UseFading {
 			get { return useFading; }
@@ -341,9 +347,14 @@ namespace System.Windows.Forms {
 			return false;
 		}
 
+#if NET_2_0
+		[Editor ("System.ComponentModel.Design.MultilineStringEditor, " + Consts.AssemblySystem_Design,
+			 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
+#endif
 		[Localizable (true)]
 		[DefaultValue ("")]
-		public string GetToolTip(Control control) {
+		public string GetToolTip (Control control)
+		{
 			string tooltip = (string)tooltip_strings[control];
 			if (tooltip == null)
 				return "";
@@ -541,7 +552,7 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
-		protected internal virtual void OnPopup (PopupEventArgs e)
+		internal virtual void OnPopup (PopupEventArgs e)
 		{
 			PopupEventHandler eh = (PopupEventHandler) (Events [PopupEvent]);
 			if (eh != null)

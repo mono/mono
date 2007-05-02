@@ -438,10 +438,14 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
 		public HScrollProperties HorizontalScroll {
 			get { return horizontalScroll; }
 		}
 
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
 		public VScrollProperties VerticalScroll {
 			get { return verticalScroll; }
 		}
