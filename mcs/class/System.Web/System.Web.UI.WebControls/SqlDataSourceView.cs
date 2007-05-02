@@ -229,7 +229,7 @@ namespace System.Web.UI.WebControls {
 				if (dataView == null) {
 					SqlDataSourceSelectingEventArgs selectingArgs = new SqlDataSourceSelectingEventArgs (command, arguments);
 					OnSelecting (selectingArgs);
-					if (selectingArgs.Cancel) {
+					if (selectingArgs.Cancel || !PrepareNullParameters (command, CancelSelectOnNullParameter)) {
 						return null;
 					}
 					try {
@@ -279,7 +279,7 @@ namespace System.Web.UI.WebControls {
 			else {
 				SqlDataSourceSelectingEventArgs selectingArgs = new SqlDataSourceSelectingEventArgs (command, arguments);
 				OnSelecting (selectingArgs);
-				if (selectingArgs.Cancel) {
+				if (selectingArgs.Cancel || !PrepareNullParameters (command, CancelSelectOnNullParameter)) {
 					return null;
 				}
 
@@ -302,6 +302,20 @@ namespace System.Web.UI.WebControls {
 
 				return reader;
 			}
+		}
+
+		static bool PrepareNullParameters (DbCommand command, bool cancelIfHas)
+		{
+			for (int i = 0; i < command.Parameters.Count; i++) {
+				DbParameter param = command.Parameters [i];
+				if (param.Value == null && ((param.Direction & ParameterDirection.Input) != 0)) {
+					if (cancelIfHas)
+						return false;
+					else
+						param.Value = DBNull.Value;
+				}
+			}
+			return true;
 		}
 
 		public int Update (IDictionary keys, IDictionary values, IDictionary oldValues)
@@ -450,10 +464,7 @@ namespace System.Web.UI.WebControls {
 		{
 			DbParameter dbp = factory.CreateParameter ();
 			dbp.ParameterName = ParameterPrefix + name;
-			if (value == null)
-				dbp.Value = DBNull.Value;
-			else
-				dbp.Value = value;
+			dbp.Value = value;
 			dbp.Direction = dir;
 			if (size != -1)
 				dbp.Size = size;
