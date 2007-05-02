@@ -1,3 +1,7 @@
+2007-05-02 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* ControlTest.cs: added new test.
+
 2007-01-23  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* TemplateControlTest.cs: removed not working attributes, TARGET_JVM

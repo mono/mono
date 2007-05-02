@@ -96,6 +96,7 @@ pushd Test\mainsoft\MainsoftWebApp20\
 xcopy /y WizardTest.skin App_Themes\Theme1\
 xcopy /y Theme1.skin App_Themes\Theme1\
 xcopy /y Theme2.skin App_Themes\Theme2\
+xcopy /y ResolveUrl.ascx Folder\
 mkdir XXX
 for %%i in (*.as*) DO sed "s/CodeFile=/CodeBehind=/" %%i > XXX\%%i
 move /Y XXX\* .

@@ -79,6 +79,8 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWebResources/PostBackMenuTest.aspx \
 	Test/mainsoft/NunitWebResources/PageWithStyleSheet.aspx \
 	Test/mainsoft/NunitWebResources/PageWithTheme.aspx \
+	Test/mainsoft/NunitWebResources/ResolveUrl.ascx \
+	Test/mainsoft/NunitWebResources/ResolveUrl.aspx \
 	Test/mainsoft/NunitWebResources/RunTimeSetTheme.aspx \
 	Test/mainsoft/NunitWebResources/ReadOnlyPropertyBind.aspx \
 	Test/mainsoft/NunitWebResources/ReadOnlyPropertyControl.ascx \

@@ -1207,12 +1207,21 @@ namespace System.Web.UI
 			if (VirtualPathUtility.IsAbsolute (relativeUrl) || relativeUrl.IndexOf (':') >= 0)
 				return relativeUrl;
 
-			if (Context != null && Context.Request != null && TemplateSourceDirectory != null) {
-				relativeUrl = VirtualPathUtility.Combine (VirtualPathUtility.AppendTrailingSlash (TemplateSourceDirectory), relativeUrl);
+			if (Context != null && Context.Request != null && TemplateSourceDirectory != null && TemplateSourceDirectory.Length > 0) {
 				string basePath = Context.Request.FilePath;
 				if (basePath.Length > 1 && basePath [basePath.Length - 1] != '/') {
 					basePath = VirtualPathUtility.GetDirectory (basePath);
 				}
+				
+				if(VirtualPathUtility.IsAppRelative(relativeUrl))
+					return VirtualPathUtility.MakeRelative (basePath, relativeUrl);
+
+				string templatePath = VirtualPathUtility.AppendTrailingSlash (TemplateSourceDirectory);
+				
+				if (basePath.Length == templatePath.Length && String.CompareOrdinal (basePath, templatePath) == 0)
+					return relativeUrl;
+
+				relativeUrl = VirtualPathUtility.Combine (templatePath, relativeUrl);
 				return VirtualPathUtility.MakeRelative (basePath, relativeUrl);
 			}
 			return relativeUrl;

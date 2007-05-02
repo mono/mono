@@ -644,6 +644,58 @@ namespace MonoTests.System.Web.UI
 
 			Assert.AreEqual ("MyPage.aspx?param=val&yes=no", ctrl.ResolveClientUrl ("~/MyPage.aspx?param=val&yes=no"), "~/../MyPage.aspx");
 			Assert.AreEqual ("../MyPage.aspx?param=val&yes=no", ctrl.ResolveClientUrl ("~/../MyPage.aspx?param=val&yes=no"), "~/../MyPage.aspx");
+
+			Assert.AreEqual ("./MyPage.aspx", ctrl.ResolveClientUrl ("./MyPage.aspx"), "ResolveClientUrl Failed");
+			Assert.AreEqual ("../MyPage.aspx", ctrl.ResolveClientUrl ("../MyPage.aspx"), "ResolveClientUrl Failed");
+		
+		}
+		
+		[Test]
+		[Category ("NunitWeb")]
+#if !TARGET_JVM
+		[Category ("NotWorking")] // TemplateSourceDirectory does't work properly
+#endif
+		public void ResolveClientUrl2 ()
+		{
+			WebTest t = new WebTest ("ResolveUrl.aspx");
+			PageDelegates delegates = new PageDelegates ();
+			delegates.Load = ResolveClientUrl2_Load;
+			t.Invoker = new PageInvoker (delegates);
+			string html = t.Run ();
+		}
+		
+		public static void ResolveClientUrl2_Load (Page p)
+		{
+			Control uc = p.FindControl ("WebUserControl1");
+			Control ctrl = uc.FindControl ("Label");
+			
+			string url = ctrl.ResolveClientUrl ("~/MyPage.aspx");
+			Assert.AreEqual ("MyPage.aspx", url, "ResolveClientUrl Failed");
+
+			Assert.AreEqual ("", ctrl.ResolveClientUrl (""), "empty string");
+
+			Assert.AreEqual ("./", ctrl.ResolveClientUrl ("~"), "~");
+			Assert.AreEqual ("./", ctrl.ResolveClientUrl ("~/"), "~/");
+
+			Assert.AreEqual ("../MyPage.aspx", ctrl.ResolveClientUrl ("~/../MyPage.aspx"), "~/../MyPage.aspx");
+			Assert.AreEqual ("../MyPage.aspx", ctrl.ResolveClientUrl ("~\\..\\MyPage.aspx"), "~\\..\\MyPage.aspx");
+			Assert.AreEqual ("MyPage.aspx", ctrl.ResolveClientUrl ("~////MyPage.aspx"), "ResolveClientUrl Failed");
+			Assert.AreEqual ("/MyPage.aspx", ctrl.ResolveClientUrl ("/MyPage.aspx"), "ResolveClientUrl Failed");
+			Assert.AreEqual ("/folder/MyPage.aspx", ctrl.ResolveClientUrl ("/folder/MyPage.aspx"), "ResolveClientUrl Failed");
+			Assert.AreEqual ("/NunitWeb/MyPage.aspx", ctrl.ResolveClientUrl ("/NunitWeb/MyPage.aspx"), "ResolveClientUrl Failed");
+			Assert.AreEqual ("\\NunitWeb/MyPage.aspx", ctrl.ResolveClientUrl ("\\NunitWeb/MyPage.aspx"), "ResolveClientUrl Failed");
+			Assert.AreEqual ("///NunitWeb\\..\\MyPage.aspx", ctrl.ResolveClientUrl ("///NunitWeb\\..\\MyPage.aspx"), "ResolveClientUrl Failed");
+			Assert.AreEqual ("Folder/NunitWeb/MyPage.aspx", ctrl.ResolveClientUrl ("NunitWeb/MyPage.aspx"), "ResolveClientUrl Failed");
+			Assert.AreEqual ("Folder/MyPage.aspx", ctrl.ResolveClientUrl ("NunitWeb/../MyPage.aspx"), "ResolveClientUrl Failed");
+			Assert.AreEqual ("Folder/NunitWeb/MyPage.aspx", ctrl.ResolveClientUrl ("NunitWeb/./MyPage.aspx"), "ResolveClientUrl Failed");
+			Assert.AreEqual ("http://google.com/", ctrl.ResolveClientUrl ("http://google.com/"), "ResolveClientUrl Failed");
+
+			Assert.AreEqual ("MyPage.aspx?param=val&yes=no", ctrl.ResolveClientUrl ("~/MyPage.aspx?param=val&yes=no"), "~/../MyPage.aspx");
+			Assert.AreEqual ("../MyPage.aspx?param=val&yes=no", ctrl.ResolveClientUrl ("~/../MyPage.aspx?param=val&yes=no"), "~/../MyPage.aspx");
+
+			Assert.AreEqual ("Folder/MyPage.aspx", ctrl.ResolveClientUrl ("./MyPage.aspx"), "ResolveClientUrl Failed");
+			Assert.AreEqual ("MyPage.aspx", ctrl.ResolveClientUrl ("../MyPage.aspx"), "ResolveClientUrl Failed");
+
 		}
 
 		[Test]
@@ -727,6 +779,19 @@ namespace MonoTests.System.Web.UI
 		{
 			WebTest.Unload ();
 		}
+		
+		[TestFixtureSetUp]
+		public void TestFixtureSetUp ()
+		{
+#if VISUAL_STUDIO
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.ResolveUrl.aspx", "ResolveUrl.aspx");
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.ResolveUrl.ascx", "Folder/ResolveUrl.ascx");
+#else
+			WebTest.CopyResource (GetType (), "ResolveUrl.aspx", "ResolveUrl.aspx");
+			WebTest.CopyResource (GetType (), "ResolveUrl.ascx", "Folder/ResolveUrl.ascx");
+#endif
+		}
+
 #endif
 
 		#region helpcalsses

@@ -1,5 +1,11 @@
 2007-05-02 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* Control.cs: ResolveClientUrl: optimization.
+	if basePath is the same as TemplateSourceDirectory 
+	releativeUrl is returned as is.
+
+2007-05-02 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* Control.cs:
 	ResolveClientUrl considers TemplateSourceDirectory property.
 
