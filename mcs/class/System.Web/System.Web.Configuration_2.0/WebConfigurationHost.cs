@@ -180,12 +180,8 @@ namespace System.Web.Configuration
 				return GetWebConfigFileName (mdir);
 			}
 			
-			try {
-				string dir = MapPath (configPath);
-				return GetWebConfigFileName (dir);
-			} catch (Exception ex) {
-				throw new HttpException (400, "Bad Request");
-			}
+			string dir = MapPath (configPath);
+			return GetWebConfigFileName (dir);
 		}
 		
 		public virtual string GetStreamNameForConfigSource (string streamName, string configSource)
