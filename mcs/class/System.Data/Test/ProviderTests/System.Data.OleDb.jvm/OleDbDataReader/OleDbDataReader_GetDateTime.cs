@@ -93,7 +93,6 @@ namespace MonoTests.System.Data.OleDb
 			}
 			finally
 			{
-				EndCase(exp); 
 				if (rdr != null && !rdr.IsClosed)
 				{
 					rdr.Close();
@@ -102,6 +101,7 @@ namespace MonoTests.System.Data.OleDb
 				{
 					con.Close();
 				}
+				EndCase(exp); 
 				exp = null;
 			}
 		}
@@ -140,7 +140,6 @@ namespace MonoTests.System.Data.OleDb
 			}
 			finally
 			{
-				EndCase(exp);
 				if (rdr != null && !rdr.IsClosed)
 				{
 					rdr.Close();
@@ -149,6 +148,7 @@ namespace MonoTests.System.Data.OleDb
 				{
 					con.Close();
 				}
+				EndCase(exp);
 			}
 		}
 		

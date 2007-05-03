@@ -203,11 +203,11 @@ namespace MonoTests.System.Data.OleDb
 				finally
 				{
 					if (rdr != null) rdr.Close();
-					EndCase(exp); 
-					exp = null;
 					//cleanup db:
 					OleDbCommand cleanup = new OleDbCommand("DELETE FROM Categories WHERE CategoryName='__TEST_RECORD__'", con);
 					cleanup.ExecuteNonQuery();
+					EndCase(exp); 
+					exp = null;
 				}
 			}
 
@@ -431,10 +431,10 @@ namespace MonoTests.System.Data.OleDb
 			}
 			finally
 			{
-				EndCase(exp);
 				if (reader != null) reader.Close();
 				tr.Commit();
 				con.Close();
+				EndCase(exp);
 			}
 		}
 		[Test]

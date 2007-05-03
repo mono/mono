@@ -128,9 +128,9 @@ namespace MonoTests.System.Data.OleDb
 				}
 				finally
 				{
+					currentlyTested.ExecuteDelete(rowId);
 					EndCase(exp);
 					exp = null;
-					currentlyTested.ExecuteDelete(rowId);
 				}
 			}
 		}
@@ -174,10 +174,10 @@ namespace MonoTests.System.Data.OleDb
 			}
 			finally
 			{
-				EndCase(exp);
-				exp = null;
 				DbTypeParametersCollection.ExecuteDelete(ConnectedDataProvider.EXTENDED_TYPES_TABLE_NAME, rowId);
 				conn.Close();
+				EndCase(exp);
+				exp = null;
 			}
 
 		}
@@ -214,10 +214,10 @@ namespace MonoTests.System.Data.OleDb
 				exp = ex;
 			}
 			finally {
-				EndCase(exp);
-				exp = null;
 				DbTypeParametersCollection.ExecuteDelete(ConnectedDataProvider.EXTENDED_TYPES_TABLE_NAME, rowId);
 				conn.Close();
+				EndCase(exp);
+				exp = null;
 			}
 		}
 	}

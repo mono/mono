@@ -116,12 +116,12 @@ namespace MonoTests.System.Data.OleDb
 			}
 			finally
 			{
-				EndCase(exp);
-				exp=null;
 				if (con != null && con.State == ConnectionState.Open)
 				{
 					con.Close();
 				}
+				EndCase(exp);
+				exp=null;
 			}
 		}
 
@@ -197,12 +197,12 @@ namespace MonoTests.System.Data.OleDb
 			}
 			finally
 			{
-				EndCase(exp);
-				exp = null;
 				if (con != null && con.State != ConnectionState.Closed)
 				{
 					con.Close();
 				}
+				EndCase(exp);
+				exp = null;
 			}
 		}
 		#endregion

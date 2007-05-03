@@ -150,7 +150,6 @@ public class OleDbParameter_ctor_SOtype : ADONetTesterClass
 		}
 		finally
 		{
-			EndCase(exp);
 			if(rdr != null && !rdr.IsClosed)
 			{
 				rdr.Close();
@@ -159,6 +158,7 @@ public class OleDbParameter_ctor_SOtype : ADONetTesterClass
 			{
 				con.Close();
 			}
+			EndCase(exp);
 			exp=null;
 		}
 	}

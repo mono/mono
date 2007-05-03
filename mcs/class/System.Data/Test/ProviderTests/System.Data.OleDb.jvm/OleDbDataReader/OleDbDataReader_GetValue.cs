@@ -154,8 +154,6 @@ namespace MonoTests.System.Data.OleDb
 				}
 				finally
 				{
-					EndCase(exp);
-					exp = null;
 					if (rdr != null && !rdr.IsClosed)
 					{
 						rdr.Close();
@@ -165,6 +163,8 @@ namespace MonoTests.System.Data.OleDb
 						selectCon.Close();
 					}
 					currentlyTested.ExecuteDelete(rowId);
+					EndCase(exp);
+					exp = null;
 				}
 			}
 		}
