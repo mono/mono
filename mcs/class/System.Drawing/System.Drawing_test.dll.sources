@@ -68,6 +68,7 @@ System.Drawing.Printing/PageSettingsTest.cs
 System.Drawing.Printing/PrinterUnitConvertTest.cs
 System.Drawing.Printing/PrintingPermissionAttributeTest.cs
 System.Drawing.Printing/PrintingPermissionTest.cs
+System.Drawing.Printing/PrintingServicesUnixTest.cs
 System.Drawing.Text/PrivateFontCollectionTest.cs
 System.Drawing.Text/InstalledFontCollectionTest.cs
 System.Drawing/BitmapCas.cs
