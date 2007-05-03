@@ -1,3 +1,8 @@
+2007-05-03  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PrintingServicesUnixTest.cs: New. Test case to make sure libgdiplus
+	was compiled with printing support.
+
 2006-11-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* PageSettingsTest.cs: Check for installed printers,
