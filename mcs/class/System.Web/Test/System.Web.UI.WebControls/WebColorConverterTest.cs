@@ -86,7 +86,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual(Color.FromArgb(0, 0, 2, 52), conv.ConvertFrom(null, null, "#234"), "B19");
 
 			// Garbage/whitespace tests
-			c = Color.FromName("\rFuchsia\n");
+			c = Color.FromName("\rGarbage\n");
 			Assert.AreEqual("#000000", conv.ConvertTo(null, null, c, typeof(string)), "B20");
 			Assert.AreEqual(Color.Fuchsia, conv.ConvertFrom(null, null, "\rFuchsia\n"), "B21");
 			Assert.AreEqual(Color.FromArgb(255, 1, 2, 3), conv.ConvertFrom(null, null, "#010203"), "B22");
