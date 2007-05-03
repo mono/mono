@@ -1444,6 +1444,7 @@ namespace System.Web.UI.WebControls
 			
 			if (hasChildNodes)
 			{
+				AddChildrenPadding (writer, node);
 				if (level >= levelLines.Count) {
 					if (hasNext) levelLines.Add (this);
 					else levelLines.Add (null);
@@ -1470,9 +1471,32 @@ namespace System.Web.UI.WebControls
 					for (int n=0; n<num; n++)
 						RenderNode (writer, node.ChildNodes [n], level + 1, levelLines, true, n<num-1);
 				}
+				AddChildrenPadding (writer, node);
 			}
 		}
 
+		private void AddChildrenPadding (HtmlTextWriter writer, TreeNode node)
+		{
+			if (nodeStyle == null)
+				return;
+			Unit cnp = nodeStyle.ChildNodesPadding;
+			double value;
+			
+			if (cnp.IsEmpty || (value = cnp.Value) == 0)
+				return;
+
+			if (cnp.Type != UnitType.Pixel)
+				return;
+
+			writer.RenderBeginTag (HtmlTextWriterTag.Table);
+			writer.AddAttribute ("height", ((int)value).ToString ());
+			writer.RenderBeginTag (HtmlTextWriterTag.Tr);
+			writer.RenderBeginTag (HtmlTextWriterTag.Td);
+			writer.RenderEndTag (); // td
+			writer.RenderEndTag (); // tr
+			writer.RenderEndTag (); // table
+		}
+		
 		private void RenderMenuItemSpacing (HtmlTextWriter writer, Unit itemSpacing) {
 			writer.AddStyleAttribute ("height", itemSpacing.ToString ());
 			writer.RenderBeginTag (HtmlTextWriterTag.Tr);
