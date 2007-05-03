@@ -43,22 +43,7 @@ namespace System.Web.UI {
 	{
 		StateBag bag;
 		HybridDictionary style;
-		string _value;
-		
-		string ValueInternal {
-			get { return _value; }
-			set {
-				_value = value;
-				if (bag != null) {
-					if (_value == null) {
-						bag.Remove (AttributeCollection.StyleAttribute);
-					}
-					else {
-						bag [AttributeCollection.StyleAttribute] = _value;
-					}
-				}
-			}
-		}
+		StringBuilder _value = new StringBuilder ();
 		
 		internal CssStyleCollection ()
 		{
@@ -73,56 +58,74 @@ namespace System.Web.UI {
 			: this ()
 		{
 			this.bag = bag;
-			if (bag != null)
-				_value = (string) bag [AttributeCollection.StyleAttribute];
+			if (bag != null && bag [AttributeCollection.StyleAttribute] != null)
+				_value.Append (bag [AttributeCollection.StyleAttribute]);
 			InitFromStyle ();
 		}
 
 		void InitFromStyle ()
 		{
 			style.Clear ();
-			if (_value != null) {
-				FillStyle (_value);
+			if (_value.Length > 0) {
+				int startIndex = 0;
+				while (startIndex >= 0) {
+					startIndex = ParseStyle (startIndex);
+				}
 			}
 		}
 
-		void FillStyle (string s)
+		int ParseStyle (int startIndex)
 		{
-			int mark = s.IndexOf (':');
-			if (mark == -1)
-				return;
-			string key = s.Substring (0, mark). Trim ();
-			if (mark + 1 > s.Length)
-				return;
+			int colon = -1;
+			for (int i = startIndex; i < _value.Length; i++) {
+				if (_value [i] == ':') {
+					colon = i;
+					break;
+				}
+			}
+			if (colon == -1 || colon + 1 == _value.Length)
+				return -1;
 
-			string fullValue = s.Substring (mark + 1);
-			if (fullValue == "")
-				return;
+			string key = _value.ToString (startIndex, colon - startIndex).Trim ();
 
-			mark = fullValue.IndexOf (';');
+			int semicolon = -1;
+			for (int i = colon + 1; i < _value.Length; i++) {
+				if (_value [i] == ';') {
+					semicolon = i;
+					break;
+				}
+			}
 			string value;
-			if (mark == -1)
-				value = fullValue.Trim ();
+			if (semicolon == -1)
+				value = _value.ToString (colon + 1, _value.Length - colon - 1).Trim ();
 			else
-				value = fullValue.Substring (0, mark).Trim ();
+				value = _value.ToString (colon + 1, semicolon - colon - 1).Trim ();
 
 			style.Add (key, value);
-			if (mark + 1 > fullValue.Length)
-				return;
-			FillStyle (fullValue.Substring (mark + 1));
+			if (semicolon == -1 || semicolon + 1 == _value.Length)
+				return -1;
+
+			return semicolon + 1;
 		}
 
-		string BagToString ()
+		void BagToValue ()
 		{
-			StringBuilder sb = new StringBuilder ();
+			_value.Length = 0;
 			foreach (string key in style.Keys) {
-				if (key == "background-image" && 0 != String.Compare ("url", ((string) style [key]).Substring (0, 3), true, CultureInfo.InvariantCulture))
-					sb.AppendFormat ("{0}:url({1});", key, HttpUtility.UrlPathEncode ((string) style [key]));
-				else
-					sb.AppendFormat ("{0}:{1};", key, style [key]);
+				AppendStyle (_value, key, (string) style [key]);
 			}
+		}
 
-			return sb.ToString ();
+		static void AppendStyle (StringBuilder sb, string key, string value)
+		{
+#if NET_2_0
+			if (String.Compare (key, "background-image", StringComparison.OrdinalIgnoreCase) == 0 && value.Length >= 3 && String.Compare ("url", 0, value, 0, 3, StringComparison.OrdinalIgnoreCase) != 0)
+#else
+			if (key == "background-image" && 0 != String.Compare ("url", value.Substring (0, 3), true, CultureInfo.InvariantCulture))
+#endif
+				sb.AppendFormat ("{0}:url({1});", key, HttpUtility.UrlPathEncode (value));
+			else
+				sb.AppendFormat ("{0}:{1};", key, value);
 		}
 
 		public int Count {
@@ -149,8 +152,30 @@ namespace System.Web.UI {
 
 		public void Add (string key, string value)
 		{
-			style [key] = value;
-			ValueInternal = BagToString ();
+			if (key == null)
+				throw new ArgumentNullException ("key");
+
+			if (value == null) {
+				Remove (key);
+				return;
+			}
+
+			string curr = (string) style [key];
+			if (curr == null) {
+				// just append
+				style [key] = value;
+				AppendStyle (_value, key, value);
+				if(bag!=null)
+					bag [AttributeCollection.StyleAttribute] = _value.ToString ();
+			}
+			else if (String.CompareOrdinal (curr, value) == 0) {
+				// do nothing
+				return;
+			}
+			else {
+				style [key] = value;
+				BagToValue ();
+			}
 		}
 
 #if NET_2_0
@@ -166,7 +191,7 @@ namespace System.Web.UI {
 		public void Clear ()
 		{
 			style.Clear ();
-			ValueInternal = null;
+			SetValueInternal (null);
 		}
 
 		public void Remove (string key)
@@ -175,9 +200,9 @@ namespace System.Web.UI {
 				return;
 			style.Remove (key);
 			if (style.Count == 0)
-				ValueInternal = null;
+				SetValueInternal (null);
 			else
-				ValueInternal = BagToString ();
+				BagToValue ();
 		}
 #if NET_2_0
 		public string this [HtmlTextWriterStyle key] {
@@ -199,10 +224,25 @@ namespace System.Web.UI {
 		internal
 #endif
 		string Value {
-			get { return ValueInternal; }
+			get { return _value.ToString (); }
 			set {
-				ValueInternal = value;
+				SetValueInternal (value);
 				InitFromStyle ();
+			}
+		}
+
+		void SetValueInternal (string value)
+		{
+			_value.Length = 0;
+			if (value != null)
+				_value.Append (value);
+			if (bag != null) {
+				if (value == null) {
+					bag.Remove (AttributeCollection.StyleAttribute);
+				}
+				else {
+					bag [AttributeCollection.StyleAttribute] = value;
+				}
 			}
 		}
 	}
