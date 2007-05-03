@@ -1,3 +1,8 @@
+2007-05-03  Marek Habersack  <mhabersack@novell.com>
+
+	* TreeView.cs: revert r76488, it wasn't entirely correct. I need
+	to investigate the special cases it solved a bit more.
+
 2007-05-02 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* SqlDataSourceView.cs:
