@@ -39,17 +39,18 @@ namespace System.Web.UI {
 	public class PartialCachingControl : BasePartialCachingControl
 	{
 		Type type;
+		object [] parameters;
 		Control control;
 
-		internal PartialCachingControl (Type type)
+		internal PartialCachingControl (Type type, object[] parameters)
 		{
 			this.type = type;
-
+			this.parameters = parameters;
 		}
 
 		internal override Control CreateControl ()
 		{
-			control = (Control) Activator.CreateInstance (type);
+			control = (Control) Activator.CreateInstance (type, parameters);
 			if (control is UserControl)
 				((UserControl) control).InitializeAsUserControl (Page);
 
@@ -61,4 +62,5 @@ namespace System.Web.UI {
 		}
 	}
 }
+
 

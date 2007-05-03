@@ -1,3 +1,9 @@
+2007-05-03 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* AggregateCacheDependency.cs:
+	* CacheDependency.cs:	
+	added missing API.	
+
 2007-04-10  Marek Habersack  <mhabersack@novell.com>
 
 	* CacheDependency.cs: add the NotifyFilters.Size to the

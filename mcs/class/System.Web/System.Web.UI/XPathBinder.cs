@@ -43,15 +43,10 @@ namespace System.Web.UI {
 
 		public static object Eval (object container, string xpath)
 		{
-			return Eval (container, xpath, null);
+			return Eval (container, xpath, (IXmlNamespaceResolver)null);
 		}
 
-		public static string Eval (object container, string xpath, string format)
-		{
-			return Eval (container, xpath, format, null);
-		}
-
-		public static string Eval (object container, string xpath, string format, IXmlNamespaceResolver resolver)
+		public static object Eval (object container, string xpath, IXmlNamespaceResolver resolver) 
 		{
 			if (xpath == null || xpath.Length == 0)
 				throw new ArgumentNullException ("xpath");
@@ -71,6 +66,18 @@ namespace System.Web.UI {
 					return null;
 			}
 
+			return result;
+		}
+
+		public static string Eval (object container, string xpath, string format)
+		{
+			return Eval (container, xpath, format, null);
+		}
+
+		public static string Eval (object container, string xpath, string format, IXmlNamespaceResolver resolver)
+		{
+			object result = Eval (container, xpath, (IXmlNamespaceResolver)null);
+			
 			if (result == null)
 				return String.Empty;
 			if (format == null || format.Length == 0)

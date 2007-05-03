@@ -47,6 +47,73 @@ namespace System.Web.UI {
 			this.bag = bag;
 		}
 
+		public override bool Equals (object obj) 
+		{
+			AttributeCollection other = obj as AttributeCollection;
+			if (other == null) {
+				return false;
+			}
+
+			if (Count != other.Count) {
+				return false;
+			}
+
+			foreach (string key in Keys) {
+				if (0 == String.CompareOrdinal (key, StyleAttribute)) {
+					continue;
+				}
+				if (0 == String.CompareOrdinal (other [key], this [key])) {
+					return false;
+				}
+			}
+
+			if ((styleCollection == null && other.styleCollection != null) ||
+				(styleCollection != null && other.styleCollection == null)) {
+				return false;
+			}
+			else if (styleCollection != null){
+				// other.styleCollection != null too
+				if (styleCollection.Count != other.styleCollection.Count){
+					return false;
+				}
+				foreach (string styleKey in styleCollection.Keys){
+					if (0 == String.CompareOrdinal(styleCollection [styleKey], other.styleCollection [styleKey])) {
+						return false;
+					}
+				}
+			}
+
+			return true;
+		}
+
+		public override int GetHashCode () 
+		{
+			int hashValue = 0;
+			
+			foreach (string key in Keys) {
+				if (key == StyleAttribute) {
+					continue;
+				}
+				hashValue ^= key.GetHashCode ();
+				string value = this [key];
+				if (value != null) {
+					hashValue ^= value.GetHashCode ();
+				}
+			}
+
+			if (styleCollection != null) {
+				foreach (string styleKey in styleCollection.Keys) {
+					hashValue ^= styleCollection [styleKey].GetHashCode ();
+					string styleValue = styleCollection [styleKey];
+					if (styleValue != null) {
+						hashValue ^= styleValue.GetHashCode ();
+					}
+				}
+			}
+
+			return hashValue;
+		}
+
 		public int Count {
 			get { return bag.Count; }
 		}

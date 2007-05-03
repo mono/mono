@@ -48,11 +48,11 @@ namespace System.Web.UI.WebControls {
 
 		#region Public Instance Methods
 		// We need to return all controls that have a validation property
-		public override TypeConverter.StandardValuesCollection GetStandardValues(ITypeDescriptorContext context) {
+		public override TypeConverter.StandardValuesCollection GetStandardValues(ITypeDescriptorContext context) 
+		{
 			if ((context != null) && (context.Container != null) && (context.Container.Components != null)) {
 				ArrayList		values;
 				int			count;
-				PropertyDescriptor	pd;
 				string			id;
 				ComponentCollection	components;		
 
@@ -61,8 +61,7 @@ namespace System.Web.UI.WebControls {
 				count = components.Count;
 
 				for (int i = 0; i < count; i++) {
-					pd = BaseValidator.GetValidationProperty(components[i]);
-					if (pd != null) {	// We have a ValidationProperty
+					if (FilterControl((Control)components[i])) {	// We have a ValidationProperty
 						id = ((Control)components[i]).ID;
 						if ((id != null) && (id.Length > 0)) {
 							values.Add(id);
@@ -78,6 +77,14 @@ namespace System.Web.UI.WebControls {
 				return null;
 			}
 			return base.GetStandardValues (context);
+		}
+
+#if NET_2_0
+		protected override 
+#endif
+		bool FilterControl (Control control) 
+		{
+			return BaseValidator.GetValidationProperty (control) != null;
 		}
 
 		public override bool GetStandardValuesExclusive(ITypeDescriptorContext context) {

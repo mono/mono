@@ -40,7 +40,9 @@ namespace System.Web.Caching
 		private List <CacheDependency> dependencies;
 		
 		public AggregateCacheDependency ()
-		{}
+		{
+			FinishInit ();
+		}
 
 		public void Add (params CacheDependency [] dependencies)
 		{
@@ -63,7 +65,7 @@ namespace System.Web.Caching
 				base.Start = DateTime.UtcNow;
 			}
 			if (somethingChanged)
-				base.SignalDependencyChanged ();
+				base.NotifyDependencyChanged (this, null);
 		}
 
 		public override string GetUniqueID ()
@@ -87,4 +89,5 @@ namespace System.Web.Caching
 	}
 }
 #endif
+
 

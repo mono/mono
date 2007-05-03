@@ -262,6 +262,19 @@ namespace System.Web {
 				return browsers;
 			}
 		}
+
+		public bool IsBrowser (string browserName) 
+		{
+			foreach (string browser in Browsers) {
+				if (0 == String.CompareOrdinal(browser, "Unknown")) {
+					continue;
+				}
+				if (0 == String.CompareOrdinal(browserName, browser)) {
+					return true;
+				}
+			}
+			return false;
+		}
 #endif
 		public bool CDF {
 			get {

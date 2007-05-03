@@ -54,6 +54,7 @@ namespace System.Web.Caching
 		bool hasChanged;
 #if NET_2_0
 		bool used;
+		DateTime utcLastModified;
 #endif
 		object locker = new object ();
 		
@@ -122,6 +123,10 @@ namespace System.Web.Caching
 			if (dependency != null)
 				dependency.DependencyChanged += new EventHandler (OnChildDependencyChanged);
 			this.start = start;
+
+#if NET_2_0
+			FinishInit ();
+#endif
 		}
 
 #if NET_2_0
@@ -147,6 +152,9 @@ namespace System.Web.Caching
 			if (DateTime.Now < start)
 				return;
 			hasChanged = true;
+#if NET_2_0
+			utcLastModified = DateTime.UtcNow;
+#endif
 			DisposeWatchers ();
 			
 			if (cache != null)
@@ -164,7 +172,16 @@ namespace System.Web.Caching
 				watchers = null;
 			}
 		}
+
 		public void Dispose ()
+		{
+			DependencyDispose ();
+		}
+
+#if NET_2_0
+		protected virtual
+#endif
+		void DependencyDispose () 
 		{
 			DisposeWatchers ();
 			if (dependency != null)
@@ -181,6 +198,11 @@ namespace System.Web.Caching
 		}
 		
 #if NET_2_0
+		protected internal void FinishInit () 
+		{
+			utcLastModified = DateTime.UtcNow;
+		}
+
 		internal bool IsUsed {
 			get { return used; }
 		}
@@ -189,6 +211,18 @@ namespace System.Web.Caching
 			get { return start; }
 			set { start = value; }
 		}
+
+		public DateTime UtcLastModified {
+			get {
+				return utcLastModified;
+			}
+		}
+
+		protected void SetUtcLastModified (DateTime utcLastModified) 
+		{
+			this.utcLastModified = utcLastModified;
+		}
+
 #endif
 		
 		public bool HasChanged {
@@ -214,24 +248,28 @@ namespace System.Web.Caching
 			}
 		}
 		
-		void OnChildDependencyChanged (object o, EventArgs a)
+		void OnChildDependencyChanged (object o, EventArgs e)
 		{
 			hasChanged = true;
-			OnDependencyChanged ();
+			OnDependencyChanged (o, e);
 		}
 		
-		void OnDependencyChanged ()
+		void OnDependencyChanged (object sender, EventArgs e)
 		{
 			if (DependencyChanged != null)
-				DependencyChanged (this, null);
+				DependencyChanged (sender, e);
 		}
 		
 #if NET_2_0
-		internal void SignalDependencyChanged ()
-		{
-			OnDependencyChanged ();
-		}
+		protected
+#else
+		internal
 #endif
+		void NotifyDependencyChanged (object sender, EventArgs e) 
+		{
+			OnDependencyChanged (sender, e);
+		}
+
 		internal event EventHandler DependencyChanged;
 	}
 }

@@ -49,7 +49,7 @@ namespace System.Web.UI {
 
 		public DataBindingHandlerAttribute (string name)
 		{
-			this.name = name;
+			this.name = (name != null) ? name : String.Empty;
 		}
 
 		public DataBindingHandlerAttribute (Type type)
@@ -58,6 +58,21 @@ namespace System.Web.UI {
 		}
 
 		public static readonly DataBindingHandlerAttribute Default;
+
+		public override bool Equals (object obj) 
+		{
+			DataBindingHandlerAttribute other = obj as DataBindingHandlerAttribute;
+			if (other == null) {
+				return false;
+			}
+
+			return HandlerTypeName.Equals (other.HandlerTypeName);
+		}
+
+		public override int GetHashCode () 
+		{
+			return HandlerTypeName.GetHashCode ();
+		}
 
 		public string HandlerTypeName {
 			get { return name; }

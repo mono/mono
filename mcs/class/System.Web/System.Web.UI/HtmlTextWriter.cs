@@ -31,6 +31,7 @@ using System.Globalization;
 using System.Collections;
 using System.Security.Permissions;
 using System.Text;
+using System.Web.UI.WebControls;
 
 namespace System.Web.UI {
 	
@@ -1129,6 +1130,51 @@ namespace System.Web.UI {
 		{
 			Write (HttpUtility.HtmlEncode (text));
 		}
+
+		[MonoNotSupported("")]
+		public virtual void WriteEncodedUrl (string url) 
+		{
+			// WriteUrlEncodedString (url, false);
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported ("")]
+		public virtual void WriteEncodedUrlParameter (string urlText) 
+		{
+			// WriteUrlEncodedString (urlText, true);
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported ("")]
+		protected void WriteUrlEncodedString (string text, bool argument) 
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported ("")]
+		public virtual void EnterStyle (Style style) 
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported ("")]
+		public virtual void EnterStyle (Style style, HtmlTextWriterTag tag) 
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported ("")]
+		public virtual void ExitStyle (Style style) 
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported ("")]
+		public virtual void ExitStyle (Style style, HtmlTextWriterTag tag) 
+		{
+			throw new NotImplementedException ();
+		}
+
 #endif
 	}
 }

@@ -1,5 +1,16 @@
 2007-05-03 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* AttributeCollection.cs:
+	* DataBindingHandlerAttribute.cs:
+	* HtmlTextWriter.cs:
+	* PartialCachingControl.cs:
+	* TemplateControl.cs:
+	* TemplateControl.jvm.cs:
+	* XPathBinder.cs:						
+	added missing API.	
+
+2007-05-03 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* CssStyleCollection.cs: optimization:
 	used StringBuilder instead string to hold value.
 	When added key that not exists in collection, value is recalculated by 
