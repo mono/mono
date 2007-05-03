@@ -520,12 +520,6 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 		[Test]
 		public void TestInsertRowAtCurrent ()
 		{
-#if NET_2_0
-			if (TestHelper.RunningOnUnix) {
-				Assert.Ignore ("Fails with 2.0 profile");
-			}
-#endif
-
 			Control c = new Control ();
 			c.CreateControl ();
 			Binding binding;
