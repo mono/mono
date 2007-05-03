@@ -706,7 +706,10 @@ namespace System.Web.UI.WebControls
 			INavigateUIData navigateUIData = hierarchyData as INavigateUIData;
 			if (navigateUIData != null) {
 				Text = navigateUIData.ToString ();
-				NavigateUrl = navigateUIData.NavigateUrl;
+				string url = navigateUIData.NavigateUrl;
+				NavigateUrl = url;
+				if (String.IsNullOrEmpty (url))
+					SelectAction = TreeNodeSelectAction.None;
 			}
 		}
 		

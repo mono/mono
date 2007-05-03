@@ -1,5 +1,9 @@
 2007-05-03  Marek Habersack  <mhabersack@novell.com>
 
+	* TreeNode.cs: correct version of the fix in r76488. Nodes
+	retrieved from a navigation data source which have empty URL will
+	not be selectable.
+
 	* TreeView.cs: revert r76488, it wasn't entirely correct. I need
 	to investigate the special cases it solved a bit more.
 
