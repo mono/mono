@@ -109,25 +109,24 @@ namespace System.Data.OleDb
 			DeriveParameters((AbstractDbCommand)command);
 		}
 
-		[MonoTODO]
 		protected override void Dispose (bool disposing) 
 		{
-			throw new NotImplementedException ();		
+			base.Dispose ();	
 		}
 
-		public OleDbCommand GetDeleteCommand ()
+		public new OleDbCommand GetDeleteCommand ()
 		{
-			return base.GetDeleteCommand ();
+			return (OleDbCommand) base.GetDeleteCommand ();
 		}
 
-		public OleDbCommand GetInsertCommand ()
+		public new OleDbCommand GetInsertCommand ()
 		{
-			return base.GetInsertCommand ();
+			return (OleDbCommand) base.GetInsertCommand ();
 		}
 
-		public OleDbCommand GetUpdateCommand ()
+		public new OleDbCommand GetUpdateCommand ()
 		{
-			return base.GetUpdateCommand ();
+			return (OleDbCommand) base.GetUpdateCommand ();
 		}
 
 		[MonoTODO]
