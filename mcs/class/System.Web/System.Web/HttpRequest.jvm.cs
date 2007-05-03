@@ -132,6 +132,8 @@ namespace System.Web
 
 		internal void GetSessionCookiesForPortal (HttpCookieCollection cookies)
 		{
+			if (context == null)
+				return;
 			HttpServletRequest servletReq = context.ServletRequest;
 			if (servletReq == null)
 				return;
