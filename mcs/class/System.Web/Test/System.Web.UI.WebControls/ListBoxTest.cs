@@ -367,9 +367,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 #if NET_2_0
         [Test]
-#if TARGET_JVM
-	[Ignore ("TD #7164")]
-#endif
         public void VerifyMultiSelectPositive()
         {
             ListBoxPoker list = new ListBoxPoker();
