@@ -1,3 +1,8 @@
+2007-05-03 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* ColorConverter.cs: fixed GetStandardValues() for TARGET_JVM
+	* Font.jvm.cs: fixed GetHeight()	
+
 2007-05-02  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* gdipEnums.cs: Add GetSysColorIndex

@@ -224,10 +224,7 @@ namespace System.Drawing {
 		public float GetHeight (Graphics graphics) {
 			if (graphics == null)
 				throw new ArgumentNullException ("graphics");
-
-			awt.Font f = NativeObject.deriveFont (graphics.GetFinalTransform ());
-			return (FontFamily.GetLineSpacing (Style) / FontFamily.GetEmHeight (Style))
-				* (f.getSize2D () / _screenResolutionConverter [(int) Unit]);
+			return GetHeight (graphics.DpiY);
 		}
 
 		public bool Italic {
