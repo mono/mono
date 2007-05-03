@@ -329,7 +329,7 @@ namespace System.Windows.Forms {
 			if (listposition >= list.Count)
 				listposition = list.Count - 1;
 
-			if (listposition != -1)
+			if (old_index != -1 && listposition != -1)
 				OnCurrentChanged (EventArgs.Empty);
 
 			if (firePositionChanged)
@@ -415,12 +415,16 @@ namespace System.Windows.Forms {
 					ChangeRecordState (e.NewIndex,
 							   false, false, true, false);
 
+#if ONLY_1_1
+					UpdateIsBinding ();
+#else
 					OnItemChanged (new ItemChangedEventArgs (-1));
+#endif
 				}
 				else {
 #if NET_2_0
 					if (e.NewIndex <= listposition) {
-						ChangeRecordState (listposition,
+						ChangeRecordState (listposition + 1,
 								   false, false, false, false);
 						OnItemChanged (new ItemChangedEventArgs (-1));
 						OnPositionChanged (EventArgs.Empty);

@@ -462,11 +462,6 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 		[Test]
 		public void TestInsertRowBeforeCurrent ()
 		{
-#if NET_2_0
-			if (TestHelper.RunningOnUnix) {
-				Assert.Ignore ("Fails with 2.0 profile");
-			}
-#endif
 			Control c = new Control ();
 			c.CreateControl ();
 			Binding binding;
@@ -961,6 +956,49 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 			Assert.AreEqual ("0: ItemChanged (index = -1)\n", event_log, "4");
 
 			Assert.AreEqual (2, cm.Count, "5");
+		}
+
+		[Test]
+		public void CancelAddNew ()
+		{
+			if (TestHelper.RunningOnUnix) {
+				Assert.Ignore ("Fails at the moment");
+			}
+
+			Control c = new Control ();
+			c.CreateControl ();
+			Binding binding;
+			CurrencyManager cm;
+
+			DataSet dataSet1 = new DataSet();
+			dataSet1.Tables.Add();
+			dataSet1.Tables[0].Columns.Add();
+
+			c.BindingContext = new BindingContext ();
+			cm = (CurrencyManager) c.BindingContext[dataSet1, dataSet1.Tables[0].TableName];
+			binding = c.DataBindings.Add ("Text", dataSet1.Tables[0], dataSet1.Tables[0].Columns[0].ColumnName);
+
+			HookupCurrencyManager (cm);
+#if WITH_BINDINGS
+			HookupBinding (binding);
+#endif
+			event_log = "";
+			event_num = 0;
+
+			cm.AddNew ();
+
+			cm.CancelCurrentEdit ();
+
+			Console.WriteLine (event_log);
+
+			Assert.AreEqual (
+#if NET_2_0
+				 "0: PositionChanged (to 0)\n1: CurrentChanged\n2: CurrentItemChanged\n3: ItemChanged (index = -1)\n4: ItemChanged (index = -1)\n5: PositionChanged (to -1)\n6: ItemChanged (index = -1)\n7: PositionChanged (to -1)\n8: CurrentChanged\n9: CurrentItemChanged\n10: ItemChanged (index = -1)\n11: ItemChanged (index = -1)\n",
+#else
+				 "0: PositionChanged (to 0)\n1: CurrentChanged\n2: ItemChanged (index = -1)\n3: ItemChanged (index = -1)\n4: CurrentChanged\n5: PositionChanged (to -1)\n6: ItemChanged (index = -1)\n7: ItemChanged (index = -1)\n8: ItemChanged (index = -1)\n",
+#endif
+				 event_log, "1");
+
 		}
 
 	}
