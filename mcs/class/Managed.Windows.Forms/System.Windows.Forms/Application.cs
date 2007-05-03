@@ -384,6 +384,11 @@ namespace System.Windows.Forms {
 			//FIXME: a stub to fill
 		}
 
+		public static void RaiseIdle (EventArgs e)
+		{
+			XplatUI.RaiseIdle (e);
+		}
+		
 		public static void Restart ()
 		{
 			//FIXME: ClickOnce stuff using the Update or UpdateAsync methods.

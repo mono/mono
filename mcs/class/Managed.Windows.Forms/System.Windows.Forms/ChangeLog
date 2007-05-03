@@ -1,3 +1,9 @@
+2007-05-03  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Application.cs: Add RaiseIdle.
+	* XplatUI.cs, XplatUIDriver.cs, XplatUIOSX.cs, XplatUIWin32.cs,
+	XplatUIX11.cs: Implement RaiseIdle.
+
 2007-05-02  Jonathan Pobst  <monkey@jpobst.com>
 	corcompare work: N - Z
 	* NotifyIcon.cs

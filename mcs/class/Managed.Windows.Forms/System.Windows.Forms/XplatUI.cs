@@ -746,6 +746,15 @@ namespace System.Windows.Forms {
 			driver.PostQuitMessage(exitCode);
 		}
 
+		internal static void RaiseIdle (EventArgs e)
+		{
+			#if DriverDebug
+				Console.WriteLine("RaiseIdle({0}): Called", e.ToString ());
+			#endif
+			
+			driver.RaiseIdle (e);
+		}
+		
 		internal static void RequestAdditionalWM_NCMessages(IntPtr handle, bool hover, bool leave) {
 			#if DriverDebug
 				Console.WriteLine("RequestAdditionalWM_NCMessages({0}, {1}, {2}): Called", Window(handle), hover, leave);

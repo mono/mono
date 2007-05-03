@@ -2317,6 +2317,12 @@ namespace System.Windows.Forms {
 		#endregion	// Public properties
 
 		#region Public Static Methods
+		internal override void RaiseIdle (EventArgs e)
+		{
+			if (Idle != null)
+				Idle (this, e);
+		}
+		
 		internal override IntPtr InitializeDriver() {
 			lock (this) {
 				if (DisplayHandle==IntPtr.Zero) {

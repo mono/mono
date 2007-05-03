@@ -252,7 +252,13 @@ namespace System.Windows.Forms.X11Internal {
 		#endregion	// Public properties
 
 		#region Public Static Methods
-		internal override IntPtr InitializeDriver()
+		internal override void RaiseIdle (EventArgs e)
+		{
+			X11ThreadQueue queue = ThreadQueue (Thread.CurrentThread);
+			queue.OnIdle (e);
+		}
+
+		internal override IntPtr InitializeDriver ()
 		{
 			lock (this) {
 				if (display == null)

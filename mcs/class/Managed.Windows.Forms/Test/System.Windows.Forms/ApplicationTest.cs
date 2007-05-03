@@ -126,6 +126,22 @@ namespace MonoTests.System.Windows.Forms
 			TestHelper.RemoveWarning (dummy);
 		}
 		
+		[Test]
+		public void MethodRaiseIdle ()
+		{
+			bool idle_raised = false;
+
+			Application.Idle += new EventHandler (delegate (Object obj, EventArgs e) { idle_raised = true; });
+			Application.RaiseIdle (EventArgs.Empty);
+			
+			Assert.AreEqual (true, idle_raised, "R1");
+		}
+
+		void Application_Idle (object sender, EventArgs e)
+		{
+			throw new Exception ("The method or operation is not implemented.");
+		}
+		
 		class OpenFormsTestForm : Form 
 		{
 			public bool have_been_opened;

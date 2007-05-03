@@ -333,6 +333,8 @@ namespace System.Windows.Forms {
 		internal abstract void ResetMouseHover(IntPtr hwnd);
 		internal abstract void RequestAdditionalWM_NCMessages(IntPtr hwnd, bool hover, bool leave);
 
+		internal abstract void RaiseIdle (EventArgs e);
+		
 		// System information
 		internal abstract int KeyboardSpeed { get; } 
 		internal abstract int KeyboardDelay { get; } 

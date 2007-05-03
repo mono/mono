@@ -750,6 +750,11 @@ namespace System.Windows.Forms {
 		#endregion 
 		
 		#region Public Methods
+		internal override void RaiseIdle (EventArgs e)
+		{
+			if (Idle != null)
+				Idle (this, e);
+		}
 
 		internal override IntPtr InitializeDriver() {
 			return IntPtr.Zero;

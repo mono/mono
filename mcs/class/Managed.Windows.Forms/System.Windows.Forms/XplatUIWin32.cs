@@ -987,6 +987,11 @@ namespace System.Windows.Forms {
 		#endregion	// Private Support Methods
 
 		#region Static Properties
+		internal override void RaiseIdle (EventArgs e)
+		{
+			if (Idle != null)
+				Idle (this, e);
+		}
 
 		internal override Keys ModifierKeys {
 			get {

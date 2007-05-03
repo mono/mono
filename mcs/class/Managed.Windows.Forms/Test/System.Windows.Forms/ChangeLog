@@ -1,3 +1,7 @@
+2007-05-03  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ApplicationTest.cs: Add a test for RaiseIdle.
+
 2007-05-01  Frederik Carlier <frederik.carlier@carlier-online.be> 
 
 	* TreeNodeCollectionTest.cs: Add Unit tests for ContainsKey and 
