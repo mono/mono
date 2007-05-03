@@ -223,7 +223,8 @@ namespace Mono.Xml
 
 		public override void Close ()
 		{
-			reader.Close ();
+			if (settings.CloseInput)
+				reader.Close ();
 		}
 
 		public override bool Read ()
