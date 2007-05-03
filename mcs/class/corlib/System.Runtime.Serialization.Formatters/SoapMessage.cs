@@ -34,9 +34,16 @@ using System;
 using System.Runtime.Remoting.Messaging;
 using System.Runtime.Serialization.Formatters;
 
+#if NET_2_0
+using System.Runtime.InteropServices;
+#endif
+
 namespace System.Runtime.Serialization.Formatters {
 
 	[Serializable]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public class SoapMessage : ISoapMessage
 	{
 		private Header[] headers;

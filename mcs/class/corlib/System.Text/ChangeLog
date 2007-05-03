@@ -1,3 +1,9 @@
+2007-05-03  Dick Porter  <dick@ximian.com>
+
+	* Encoding.cs: 
+	* UnicodeEncoding.cs: 
+	* UTF7Encoding.cs: Update to 2.0 profile
+
 2007-02-01  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Encoding.cs: Enabled ArgumentException in GetEncoding (string) again.

@@ -602,11 +602,13 @@ public abstract class Encoding
 		return encoding_infos;
 	}
 
+	[ComVisible (false)]
 	public bool IsAlwaysNormalized ()
 	{
 		return IsAlwaysNormalized (NormalizationForm.FormC);
 	}
 
+	[ComVisible (false)]
 	public virtual bool IsAlwaysNormalized (NormalizationForm form)
 	{
 		// umm, ASCIIEncoding should have overriden this method, no?

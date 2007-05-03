@@ -1,3 +1,8 @@
+2007-05-03  Dick Porter  <dick@ximian.com>
+
+	* ProxyAttribute.cs: 
+	* RealProxy.cs: Update to 2.0 profile
+
 2006-07-15  Jonathan Chambers  <joncham@gmail.com>
 
 	* RealProxy.cs: Indicate that all fields need keep in sync

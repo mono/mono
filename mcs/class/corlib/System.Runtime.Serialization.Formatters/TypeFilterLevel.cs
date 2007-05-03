@@ -32,8 +32,15 @@
 
 #if NET_1_1
 
+#if NET_2_0
+using System.Runtime.InteropServices;
+#endif
+
 namespace System.Runtime.Serialization.Formatters
 {
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public enum TypeFilterLevel
 	{
 		Low = 2,

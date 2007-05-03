@@ -355,6 +355,12 @@ public class UnicodeEncoding : Encoding
 		return count;
 	}
 
+	[ComVisible (false)]
+	public override Encoder GetEncoder ()
+	{
+		return(base.GetEncoder ());
+	}
+	
 	// Get the maximum number of bytes needed to encode a
 	// specified number of characters.
 	public override int GetMaxByteCount (int charCount)

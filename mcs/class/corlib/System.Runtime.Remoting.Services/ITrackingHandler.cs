@@ -31,7 +31,14 @@
 
 using System.Runtime.Remoting;
 
+#if NET_2_0
+using System.Runtime.InteropServices;
+#endif
+
 namespace System.Runtime.Remoting.Services {
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public interface ITrackingHandler
 	{
 		void DisconnectedObject (object obj);

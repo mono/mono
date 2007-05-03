@@ -36,6 +36,9 @@ using System.Security.Permissions;
 
 namespace System.Runtime.Serialization.Formatters.Binary {
 
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public sealed class BinaryFormatter : IRemotingFormatter, IFormatter 
 	{
 #if NET_2_0
@@ -115,7 +118,9 @@ namespace System.Runtime.Serialization.Formatters.Binary {
 		}
 
 #if NET_1_1
+#if !NET_2_0
 		[System.Runtime.InteropServices.ComVisible (false)]
+#endif
 		public TypeFilterLevel FilterLevel 
 		{
 			get { return filter_level; }

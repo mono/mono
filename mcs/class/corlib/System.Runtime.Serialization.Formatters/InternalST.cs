@@ -30,13 +30,59 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if NET_2_0
+using System.Runtime.InteropServices;
+using System.Diagnostics;
+using System.Reflection;
+#endif
+
 namespace System.Runtime.Serialization.Formatters
 {
 	//LAMESPEC: Use of this class??
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public sealed class InternalST
 	{
 		private InternalST ()
 		{
 		}
+
+#if NET_2_0
+		[Conditional ("_LOGGING")]
+		public static void InfoSoap (params object[] messages)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public static Assembly LoadAssemblyFromString (string assemblyString)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public static void SerializationSetValue (FieldInfo fi,
+							  object target,
+							  object value)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[Conditional ("SER_LOGGING")]
+		public static void Soap (params object[] messages)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[Conditional ("_DEBUG")]
+		public static void SoapAssert (bool condition, string message)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public static bool SoapCheckEnabled ()
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 	}
 }
