@@ -57,7 +57,7 @@ namespace Mainsoft.Web.Security
 			string querySelect = "SELECT RoleName FROM aspnet_Roles WHERE ApplicationId = ? AND LoweredRoleName = ?";
 			OleDbCommand cmdSelect = new OleDbCommand (querySelect, (OleDbConnection) connection);
 			AddParameter (cmdSelect, "ApplicationId", appId);
-			AddParameter (cmdSelect, "LoweredRoleName", rolename.ToLower ());
+			AddParameter (cmdSelect, "LoweredRoleName", rolename.ToLowerInvariant ());
 
 			using (OleDbDataReader reader = cmdSelect.ExecuteReader ()) {
 				if (reader.Read ())
@@ -69,7 +69,7 @@ namespace Mainsoft.Web.Security
 			AddParameter (cmdInsert, "ApplicationId", appId);
 			AddParameter (cmdInsert, "RoleId", Guid.NewGuid ().ToString ());
 			AddParameter (cmdInsert, "RoleName", rolename);
-			AddParameter (cmdInsert, "LoweredRoleName", rolename.ToLower ());
+			AddParameter (cmdInsert, "LoweredRoleName", rolename.ToLowerInvariant ());
 			cmdInsert.ExecuteNonQuery ();
 
 			return 0;
@@ -134,7 +134,7 @@ namespace Mainsoft.Web.Security
 			string querySelect = "SELECT RoleName FROM aspnet_Roles WHERE ApplicationId = ? AND LoweredRoleName = ?";
 			OleDbCommand cmdSelect = new OleDbCommand (querySelect, (OleDbConnection) connection);
 			AddParameter (cmdSelect, "ApplicationId", appId);
-			AddParameter (cmdSelect, "LoweredRoleName", rolename.ToLower ());
+			AddParameter (cmdSelect, "LoweredRoleName", rolename.ToLowerInvariant ());
 
 			using (OleDbDataReader reader = cmdSelect.ExecuteReader ()) {
 				if (reader.Read ())
@@ -157,7 +157,7 @@ namespace Mainsoft.Web.Security
 			OleDbCommand cmdSelUsers = new OleDbCommand (querySelUsers, (OleDbConnection) connection);
 			AddParameter (cmdSelUsers, "ApplicationId", appId);
 			for (int i = 0; i < userNames.Length; i++)
-				AddParameter (cmdSelUsers, "LoweredUserName", userNames [i].ToLower ());
+				AddParameter (cmdSelUsers, "LoweredUserName", userNames [i].ToLowerInvariant ());
 
 			int userIndex = 0;
 			using (OleDbDataReader reader = cmdSelUsers.ExecuteReader ()) {
@@ -171,7 +171,7 @@ namespace Mainsoft.Web.Security
 			if (userNames.Length != userIndex) {
 				// find not existing users and create them
 				for (int j = 0; j < userNames.Length; j++)
-					if (Array.IndexOf (loweredUsernames, userNames [j].ToLower ()) < 0) {
+					if (Array.IndexOf (loweredUsernames, userNames [j].ToLowerInvariant ()) < 0) {
 						string newUserId = Guid.NewGuid ().ToString ();
 						string queryAddUser = "INSERT INTO aspnet_Users (ApplicationId, UserId, UserName, " +
 							"LoweredUserName, IsAnonymous, LastActivityDate) VALUES (?, ?, ?, ?, ?, ?)";
@@ -179,7 +179,7 @@ namespace Mainsoft.Web.Security
 						AddParameter (cmdAddUser, "ApplicationId", appId);
 						AddParameter (cmdAddUser, "UserId", newUserId);
 						AddParameter (cmdAddUser, "UserName", userNames [j]);
-						AddParameter (cmdAddUser, "LoweredUserName", userNames [j].ToLower ());
+						AddParameter (cmdAddUser, "LoweredUserName", userNames [j].ToLowerInvariant ());
 						AddParameter (cmdAddUser, "IsAnonymous", 0);
 						AddParameter (cmdAddUser, "LastActivityDate", DateTime.UtcNow);
 						cmdAddUser.ExecuteNonQuery ();
@@ -193,7 +193,7 @@ namespace Mainsoft.Web.Security
 			OleDbCommand cmdSelRoles = new OleDbCommand (querySelRoles, (OleDbConnection) connection);
 			AddParameter (cmdSelRoles, "ApplicationId", appId);
 			for (int i = 0; i < roleNames.Length; i++)
-				AddParameter (cmdSelRoles, "LoweredRoleName", roleNames [i].ToLower ());
+				AddParameter (cmdSelRoles, "LoweredRoleName", roleNames [i].ToLowerInvariant ());
 
 			using (OleDbDataReader reader = cmdSelRoles.ExecuteReader ()) {
 				int i = 0;
@@ -250,7 +250,7 @@ namespace Mainsoft.Web.Security
 			OleDbCommand cmdSelect = new OleDbCommand (querySelect, (OleDbConnection) connection);
 			AddParameter (cmdSelect, "ApplicationId", appId);
 			AddParameter (cmdSelect, "RoleId", roleId);
-			AddParameter (cmdSelect, "LoweredUserName", "%" + userNameToMatch.ToLower() + "%");
+			AddParameter (cmdSelect, "LoweredUserName", "%" + userNameToMatch.ToLowerInvariant() + "%");
 			reader = cmdSelect.ExecuteReader ();
 
 			return 0;
@@ -336,7 +336,7 @@ namespace Mainsoft.Web.Security
 			OleDbCommand cmdSelUsers = new OleDbCommand (querySelUsers, (OleDbConnection) connection);
 			AddParameter (cmdSelUsers, "ApplicationId", appId);
 			for (int i = 0; i < userNames.Length; i++)
-				AddParameter (cmdSelUsers, "LoweredUserName", userNames [i].ToLower ());
+				AddParameter (cmdSelUsers, "LoweredUserName", userNames [i].ToLowerInvariant ());
 
 			using (OleDbDataReader reader = cmdSelUsers.ExecuteReader ()) {
 				int i = 0;
@@ -351,7 +351,7 @@ namespace Mainsoft.Web.Security
 			OleDbCommand cmdSelRoles = new OleDbCommand (querySelRoles, (OleDbConnection) connection);
 			AddParameter (cmdSelRoles, "ApplicationId", appId);
 			for (int i = 0; i < roleNames.Length; i++)
-				AddParameter (cmdSelRoles, "LoweredRoleName", roleNames [i].ToLower ());
+				AddParameter (cmdSelRoles, "LoweredRoleName", roleNames [i].ToLowerInvariant ());
 
 			using (OleDbDataReader reader = cmdSelRoles.ExecuteReader ()) {
 				int i = 0;
@@ -390,7 +390,7 @@ namespace Mainsoft.Web.Security
 			string selectQuery = "SELECT RoleId FROM aspnet_Roles WHERE LoweredRoleName = ? AND ApplicationId = ?";
 
 			OleDbCommand selectCmd = new OleDbCommand (selectQuery, (OleDbConnection) connection);
-			AddParameter (selectCmd, "LoweredRoleName", rolename.ToLower ());
+			AddParameter (selectCmd, "LoweredRoleName", rolename.ToLowerInvariant ());
 			AddParameter (selectCmd, "ApplicationId", applicationId);
 			using (OleDbDataReader reader = selectCmd.ExecuteReader ()) {
 				if (reader.Read ())
@@ -405,7 +405,7 @@ namespace Mainsoft.Web.Security
 			string selectQuery = "SELECT UserId FROM aspnet_Users WHERE LoweredUserName = ? AND ApplicationId = ?";
 
 			OleDbCommand selectCmd = new OleDbCommand (selectQuery, (OleDbConnection) connection);
-			AddParameter (selectCmd, "LoweredUserName", username.ToLower ());
+			AddParameter (selectCmd, "LoweredUserName", username.ToLowerInvariant ());
 			AddParameter (selectCmd, "ApplicationId", applicationId);
 			using (OleDbDataReader reader = selectCmd.ExecuteReader ()) {
 				if (reader.Read ())

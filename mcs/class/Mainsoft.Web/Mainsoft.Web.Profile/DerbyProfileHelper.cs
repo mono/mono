@@ -131,7 +131,7 @@ namespace Mainsoft.Web.Profile
 			AddParameter (cmdSelect, "ApplicationId", appId);
 			AddParameter (cmdSelect, "LastActivityDate", inactiveSinceDate);
 			if (!string.IsNullOrEmpty (userNameToMatch))
-				AddParameter (cmdSelect, "LoweredUserName", userNameToMatch.ToLower());
+				AddParameter (cmdSelect, "LoweredUserName", userNameToMatch.ToLowerInvariant());
 			reader = cmdSelect.ExecuteReader ();
 			return 0;
 		}
@@ -151,7 +151,7 @@ namespace Mainsoft.Web.Profile
 			OleDbCommand cmdSelect = new OleDbCommand (querySelect, (OleDbConnection) connection);
 			AddParameter (cmdSelect, "ApplicationId", appId);
 			if (!string.IsNullOrEmpty (userNameToMatch))
-				AddParameter (cmdSelect, "LoweredUserName", userNameToMatch.ToLower ());
+				AddParameter (cmdSelect, "LoweredUserName", userNameToMatch.ToLowerInvariant ());
 			reader = cmdSelect.ExecuteReader ();
 			return 0;
 		}
@@ -263,7 +263,7 @@ namespace Mainsoft.Web.Profile
 			if (trans != null)
 				selectCmd.Transaction = (OleDbTransaction) trans;
 
-			AddParameter (selectCmd, "LoweredUserName", username.ToLower ());
+			AddParameter (selectCmd, "LoweredUserName", username.ToLowerInvariant ());
 			AddParameter (selectCmd, "ApplicationId", applicationId);
 			using (OleDbDataReader reader = selectCmd.ExecuteReader ()) {
 				if (reader.Read ())

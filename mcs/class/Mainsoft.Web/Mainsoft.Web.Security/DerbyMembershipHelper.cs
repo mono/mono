@@ -106,7 +106,7 @@ namespace Mainsoft.Web.Security
 					OleDbCommand cmdMbrEmail = new OleDbCommand (queryMbrEmail, (OleDbConnection) connection);
 					cmdMbrEmail.Transaction = trans;
 					AddParameter (cmdMbrEmail, "ApplicationId", applicationId);
-					AddParameter (cmdMbrEmail, "LoweredEmail", email.ToLower ());
+					AddParameter (cmdMbrEmail, "LoweredEmail", email.ToLowerInvariant ());
 					using (OleDbDataReader reader = cmdMbrEmail.ExecuteReader ()) {
 						if (reader.Read ()) {
 							trans.Rollback ();
@@ -139,7 +139,7 @@ namespace Mainsoft.Web.Security
 				AddParameter (cmdInsertMbr, "PasswordFormat", passwordFormat);
 				AddParameter (cmdInsertMbr, "PasswordSalt", passwordSalt);
 				AddParameter (cmdInsertMbr, "Email", email);
-				AddParameter (cmdInsertMbr, "LoweredEmail", email != null ? email.ToLower () : null);
+				AddParameter (cmdInsertMbr, "LoweredEmail", email != null ? email.ToLowerInvariant () : null);
 				AddParameter (cmdInsertMbr, "PasswordQuestion", pwdQuestion);
 				AddParameter (cmdInsertMbr, "PasswordAnswer", pwdAnswer);
 				AddParameter (cmdInsertMbr, "IsApproved", isApproved);
@@ -171,7 +171,7 @@ namespace Mainsoft.Web.Security
 				"FROM aspnet_Membership mbr, aspnet_Users usr " +
 				"WHERE usr.UserId = mbr.UserId AND mbr.LoweredEmail LIKE ? ORDER BY usr.LoweredUserName";
 			OleDbCommand cmdSelect = new OleDbCommand (querySelect, (OleDbConnection) connection);
-			AddParameter (cmdSelect, "LoweredEmail", emailToMatch.ToLower ());
+			AddParameter (cmdSelect, "LoweredEmail", emailToMatch.ToLowerInvariant ());
 			reader = cmdSelect.ExecuteReader ();
 			return 0;
 		}
@@ -183,7 +183,7 @@ namespace Mainsoft.Web.Security
 				"FROM aspnet_Membership mbr, aspnet_Users usr " +
 				"WHERE usr.UserId = mbr.UserId AND usr.LoweredUserName LIKE ? ORDER BY usr.LoweredUserName";
 			OleDbCommand cmdSelect = new OleDbCommand (querySelect, (OleDbConnection) connection);
-			AddParameter (cmdSelect, "LoweredUserName", userNameToMatch.ToLower ());
+			AddParameter (cmdSelect, "LoweredUserName", userNameToMatch.ToLowerInvariant ());
 			reader = cmdSelect.ExecuteReader ();
 			return 0;
 		}
@@ -208,7 +208,7 @@ namespace Mainsoft.Web.Security
 
 			OleDbCommand cmdUsersActive = new OleDbCommand (queryUsersActive, (OleDbConnection) connection);
 			AddParameter (cmdUsersActive, "LastActivityDate", currentTimeUtc.AddMinutes (-minutesSinceLastInActive));
-			AddParameter (cmdUsersActive, "LoweredApplicationName", applicationName.ToLower ());
+			AddParameter (cmdUsersActive, "LoweredApplicationName", applicationName.ToLowerInvariant ());
 			using (OleDbDataReader reader = cmdUsersActive.ExecuteReader ()) {
 				if (reader.Read ())
 					return reader.GetInt32 (0);
@@ -224,8 +224,8 @@ namespace Mainsoft.Web.Security
 				"WHERE app.LoweredApplicationName = ? AND usr.ApplicationId = app.ApplicationId " +
 				"AND usr.UserId = mbr.UserId AND usr.LoweredUserName = ?";
 			OleDbCommand cmdSelect = new OleDbCommand (querySelect, (OleDbConnection) connection);
-			AddParameter (cmdSelect, "LoweredApplicationName", applicationName.ToLower ());
-			AddParameter (cmdSelect, "LoweredUserName", username.ToLower ());
+			AddParameter (cmdSelect, "LoweredApplicationName", applicationName.ToLowerInvariant ());
+			AddParameter (cmdSelect, "LoweredUserName", username.ToLowerInvariant ());
 
 			password = null;
 			string dbUserId = null;
@@ -298,8 +298,8 @@ namespace Mainsoft.Web.Security
 				"WHERE app.LoweredApplicationName = ? AND usr.ApplicationId = app.ApplicationId " +
 				"AND usr.UserId = mbr.UserId AND usr.LoweredUserName = ?";
 			OleDbCommand cmdSelect = new OleDbCommand (querySelect, (OleDbConnection) connection);
-			AddParameter (cmdSelect, "LoweredApplicationName", applicationName.ToLower ());
-			AddParameter (cmdSelect, "LoweredUserName", username.ToLower ());
+			AddParameter (cmdSelect, "LoweredApplicationName", applicationName.ToLowerInvariant ());
+			AddParameter (cmdSelect, "LoweredUserName", username.ToLowerInvariant ());
 			reader = cmdSelect.ExecuteReader ();
 			return 0;
 		}
@@ -311,9 +311,9 @@ namespace Mainsoft.Web.Security
 				"usr.UserId = mbr.UserId AND mbr.LoweredEmail " + (email == null ? "IS NULL" : "= ?");
 
 			OleDbCommand cmdSelect = new OleDbCommand (querySelect, (OleDbConnection) connection);
-			AddParameter (cmdSelect, "LoweredApplicationName", applicationName.ToLower ());
+			AddParameter (cmdSelect, "LoweredApplicationName", applicationName.ToLowerInvariant ());
 			if (email != null)
-				AddParameter (cmdSelect, "LoweredEmail", email.ToLower ());
+				AddParameter (cmdSelect, "LoweredEmail", email.ToLowerInvariant ());
 
 			username = null;
 			using (OleDbDataReader reader = cmdSelect.ExecuteReader ()) {
@@ -379,8 +379,8 @@ namespace Mainsoft.Web.Security
 				"WHERE app.LoweredApplicationName = ? AND usr.ApplicationId = app.ApplicationId " +
 				"AND usr.UserId = mbr.UserId AND usr.LoweredUserName = ?";
 			OleDbCommand cmdSelect = new OleDbCommand (querySelect, (OleDbConnection) connection);
-			AddParameter (cmdSelect, "LoweredApplicationName", applicationName.ToLower ());
-			AddParameter (cmdSelect, "LoweredUserName", username.ToLower ());
+			AddParameter (cmdSelect, "LoweredApplicationName", applicationName.ToLowerInvariant ());
+			AddParameter (cmdSelect, "LoweredUserName", username.ToLowerInvariant ());
 
 			string dbUserId = null;
 			string dbPassword = null;
@@ -503,7 +503,7 @@ namespace Mainsoft.Web.Security
 				"IsApproved = ?, LastLoginDate = ? WHERE UserId = ?";
 			OleDbCommand cmdUpdateMember = new OleDbCommand (queryUpdateMember, (OleDbConnection) connection);
 			AddParameter (cmdUpdateMember, "Email", email);
-			AddParameter (cmdUpdateMember, "LoweredEmail", email.ToLower ());
+			AddParameter (cmdUpdateMember, "LoweredEmail", email.ToLowerInvariant ());
 			AddParameter (cmdUpdateMember, "Comment", comment);
 			AddParameter (cmdUpdateMember, "IsApproved", isApproved);
 			AddParameter (cmdUpdateMember, "LastLoginDate", lastLoginDate);
@@ -521,8 +521,8 @@ namespace Mainsoft.Web.Security
 							"WHERE app.LoweredApplicationName = ? AND usr.ApplicationId = app.ApplicationId " +
 							"AND usr.UserId = mbr.UserId AND usr.LoweredUserName = ?";
 			OleDbCommand cmdSelect = new OleDbCommand (querySelect, (OleDbConnection) connection);
-			AddParameter (cmdSelect, "LoweredApplicationName", applicationName.ToLower ());
-			AddParameter (cmdSelect, "LoweredUserName", username.ToLower ());
+			AddParameter (cmdSelect, "LoweredApplicationName", applicationName.ToLowerInvariant ());
+			AddParameter (cmdSelect, "LoweredUserName", username.ToLowerInvariant ());
 
 			string dbUserId = string.Empty;
 			bool dbIsApproved = false;
@@ -599,7 +599,7 @@ namespace Mainsoft.Web.Security
 		{
 			string selectQuery = "SELECT UserId FROM aspnet_Users WHERE LoweredUserName = ? AND ApplicationId = ?";
 			OleDbCommand selectCmd = new OleDbCommand (selectQuery, (OleDbConnection) connection);
-			AddParameter (selectCmd, "LoweredUserName", username.ToLower ());
+			AddParameter (selectCmd, "LoweredUserName", username.ToLowerInvariant ());
 			AddParameter (selectCmd, "ApplicationId", applicationId);
 			if (trans != null)
 				selectCmd.Transaction = (OleDbTransaction) trans;
@@ -636,7 +636,7 @@ namespace Mainsoft.Web.Security
 			AddParameter (insertCmd, "ApplicationId", applicationId);
 			AddParameter (insertCmd, "UserId", userId);
 			AddParameter (insertCmd, "UserName", username);
-			AddParameter (insertCmd, "LoweredUserName", username.ToLower ());
+			AddParameter (insertCmd, "LoweredUserName", username.ToLowerInvariant ());
 			AddParameter (insertCmd, "IsAnonymous", isAnonymous);
 			AddParameter (insertCmd, "LastActivityDate", lastActivityDate);
 			if (trans != null)
@@ -725,8 +725,8 @@ namespace Mainsoft.Web.Security
 				"AND usr.UserId = mbr.UserId";
 
 			OleDbCommand selectCmd = new OleDbCommand (selectQuery, (OleDbConnection) connection);
-			AddParameter (selectCmd, "LoweredUserName", username.ToLower ());
-			AddParameter (selectCmd, "PasswordAnswer", applicationName.ToLower ());
+			AddParameter (selectCmd, "LoweredUserName", username.ToLowerInvariant ());
+			AddParameter (selectCmd, "PasswordAnswer", applicationName.ToLowerInvariant ());
 
 			using (OleDbDataReader reader = selectCmd.ExecuteReader ()) {
 				if (reader.Read ())

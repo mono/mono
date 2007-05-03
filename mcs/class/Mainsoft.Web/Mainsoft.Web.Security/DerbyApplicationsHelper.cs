@@ -53,7 +53,7 @@ namespace Mainsoft.Web.Security
 			string insertQuery = "INSERT INTO aspnet_Applications (ApplicationId, ApplicationName, LoweredApplicationName) VALUES  (?, ?, ?)";
 
 			OleDbCommand selectCmd = new OleDbCommand (selectQuery, (OleDbConnection) connection);
-			AddParameter (selectCmd, "LoweredApplicationName", applicationName.ToLower ());
+			AddParameter (selectCmd, "LoweredApplicationName", applicationName.ToLowerInvariant ());
 
 			using (OleDbDataReader reader = selectCmd.ExecuteReader ()) {
 				if (reader.Read ())
@@ -64,7 +64,7 @@ namespace Mainsoft.Web.Security
 			OleDbCommand insertCmd = new OleDbCommand (insertQuery, (OleDbConnection) connection);
 			AddParameter (insertCmd, "ApplicationId", applicationId);
 			AddParameter (insertCmd, "ApplicationName", applicationName);
-			AddParameter (insertCmd, "LoweredApplicationName", applicationName.ToLower ());
+			AddParameter (insertCmd, "LoweredApplicationName", applicationName.ToLowerInvariant ());
 			insertCmd.ExecuteNonQuery ();
 
 			return applicationId;
@@ -75,7 +75,7 @@ namespace Mainsoft.Web.Security
 			string selectQuery = "SELECT ApplicationId FROM aspnet_Applications WHERE LoweredApplicationName = ?";
 
 			OleDbCommand selectCmd = new OleDbCommand (selectQuery, (OleDbConnection) connection);
-			AddParameter (selectCmd, "LoweredApplicationName", applicationName.ToLower ());
+			AddParameter (selectCmd, "LoweredApplicationName", applicationName.ToLowerInvariant ());
 			using (OleDbDataReader reader = selectCmd.ExecuteReader ()) {
 				if (reader.Read ())
 					return reader.GetString (0);
