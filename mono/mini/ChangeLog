@@ -1,5 +1,7 @@
 2007-05-04  Zoltan Varga  <vargaz@gmail.com>
 
+	* abcremoval2.c (get_relation_from_ins): Handle OP_IREM_UN as in bug #71576.
+
 	* mini-ops.h: Add OP_NEWARR.
 
 	* method-to-ir.c: Decompose CEE_NEWARR after abcrem.

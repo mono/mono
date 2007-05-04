@@ -237,14 +237,19 @@ check_delta_safety (MonoVariableRelationsEvaluationArea *area, MonoSummarizedVal
 }
 
 /*
- * Given a MonoInst representing an integer value, store it in "summarized" form.
+ * get_relation_from_ins:
+ *
+ *   Obtain relations from a MonoInst.
+ *
  * result_value_kind: the "expected" kind of result;
  * result: the "summarized" value
  * returns the "actual" kind of result, if guessable (otherwise MONO_UNKNOWN_INTEGER_VALUE)
  */
 static MonoIntegerValueKind
-summarize_integer_value (MonoVariableRelationsEvaluationArea *area, MonoInst *ins, MonoSummarizedValue *result, MonoIntegerValueKind result_value_kind) {
+get_relation_from_ins (MonoVariableRelationsEvaluationArea *area, MonoInst *ins, MonoSummarizedValueRelation *result, MonoIntegerValueKind result_value_kind)
+{
 	MonoIntegerValueKind value_kind;
+	MonoSummarizedValue *value = &result->related_value;
 	
 	if (ins->type == STACK_I8) {
 		value_kind = MONO_INTEGER_VALUE_SIZE_8;
@@ -254,54 +259,65 @@ summarize_integer_value (MonoVariableRelationsEvaluationArea *area, MonoInst *in
 		value_kind = MONO_UNKNOWN_INTEGER_VALUE;
 	}
 
+	result->relation = MONO_EQ_RELATION;
+	MAKE_VALUE_ANY (*value);
+
 	switch (ins->opcode) {
 	case OP_ICONST:
-		result->type = MONO_CONSTANT_SUMMARIZED_VALUE;
-		result->value.constant.value = ins->inst_c0;
+		value->type = MONO_CONSTANT_SUMMARIZED_VALUE;
+		value->value.constant.value = ins->inst_c0;
 		break;
 	case OP_MOVE:
-		result->type = MONO_VARIABLE_SUMMARIZED_VALUE;
-		result->value.variable.variable = ins->sreg1;
-		result->value.variable.delta = 0;
+		value->type = MONO_VARIABLE_SUMMARIZED_VALUE;
+		value->value.variable.variable = ins->sreg1;
+		value->value.variable.delta = 0;
 		break;
 	case OP_PHI:
-		result->type = MONO_PHI_SUMMARIZED_VALUE;
-		result->value.phi.number_of_alternatives = *(ins->inst_phi_args);
-		result->value.phi.phi_alternatives = ins->inst_phi_args + 1;
+		value->type = MONO_PHI_SUMMARIZED_VALUE;
+		value->value.phi.number_of_alternatives = *(ins->inst_phi_args);
+		value->value.phi.phi_alternatives = ins->inst_phi_args + 1;
 		break;
 	case OP_IADD_IMM:
-		result->type = MONO_VARIABLE_SUMMARIZED_VALUE;
-		result->value.variable.variable = ins->sreg1;
-		result->value.variable.delta = ins->inst_imm;
+		value->type = MONO_VARIABLE_SUMMARIZED_VALUE;
+		value->value.variable.variable = ins->sreg1;
+		value->value.variable.delta = ins->inst_imm;
 		/* FIXME: */
 		//check_delta_safety (area, result);
 		break;
 	case OP_ISUB_IMM:
-		result->type = MONO_VARIABLE_SUMMARIZED_VALUE;
-		result->value.variable.variable = ins->sreg1;
-		result->value.variable.delta = ins->inst_imm;
+		value->type = MONO_VARIABLE_SUMMARIZED_VALUE;
+		value->value.variable.variable = ins->sreg1;
+		value->value.variable.delta = ins->inst_imm;
 		/* FIXME: */
 		//check_delta_safety (area, result);
+		break;
+	case OP_IREM_UN:
+		/* The result of an unsigned remainder is 0 < x < the divisor */
+		result->relation = MONO_LT_RELATION;
+		value->type = MONO_VARIABLE_SUMMARIZED_VALUE;
+		value->value.variable.variable = ins->sreg2;
+		value->value.variable.delta = 0;
+		value_kind = MONO_UNSIGNED_INTEGER_VALUE_SIZE_4;
 		break;
 	case OP_LDLEN:
 		/*
 		 * We represent arrays by their length, so r1<-ldlen r2 is stored
 		 * as r1 == r2 in the evaluation graph.
 		 */
-		result->type = MONO_VARIABLE_SUMMARIZED_VALUE;
-		result->value.variable.variable = ins->sreg1;
-		result->value.variable.delta = 0;
+		value->type = MONO_VARIABLE_SUMMARIZED_VALUE;
+		value->value.variable.variable = ins->sreg1;
+		value->value.variable.delta = 0;
 		value_kind = MONO_UNSIGNED_INTEGER_VALUE_SIZE_4;
 		break;
 	case OP_NEWARR:
-		result->type = MONO_VARIABLE_SUMMARIZED_VALUE;
-		result->value.variable.variable = ins->sreg1;
-		result->value.variable.delta = 0;
+		value->type = MONO_VARIABLE_SUMMARIZED_VALUE;
+		value->value.variable.variable = ins->sreg1;
+		value->value.variable.delta = 0;
 		break;
 
 		/* FIXME: Add more opcodes */
 	default:
-		MAKE_VALUE_ANY (*result);
+		break;
 	}
 	return value_kind;
 }
@@ -1109,7 +1125,7 @@ mono_perform_abc_removal2 (MonoCompile *cfg)
 				if (var)
 					area.variable_value_kind [ins->dreg] = type_to_value_kind (var->inst_vtype);
 
-				effective_value_kind = summarize_integer_value (&area, ins, &(area.relations [ins->dreg].related_value), area.variable_value_kind [ins->dreg]);
+				effective_value_kind = get_relation_from_ins (&area, ins, &area.relations [ins->dreg], area.variable_value_kind [ins->dreg]);
 
 				MONO_MAKE_RELATIONS_EVALUATION_RANGE_WEAK (range);
 				apply_value_kind_to_range (&range, area.variable_value_kind [i]);
