@@ -1,3 +1,26 @@
+2007-04-03  Amit Biswas  <amit@amitbiswas.com>
+
+	* SqlDataReader.cs (GetSqlBytes, GetProviderSpecificFieldType)
+	(GetProviderSpecificValue, GetProviderSpecificValues): Implemented
+	missing API.
+
+	* SqlParameter.cs (XmlSchemaCollectionDatabase): Implemented missing property
+	(XmlSchemaCollectionName): Implemented missing property
+	(XmlSchemaCollectionOwningSchema): Implemented missing property
+	(SourceColumnNullMapping): Existing implementation was not correct, Replaced the implementation
+	(.ctor): Implemented mising constructor new in .net 2.0
+
+	* SqlErrorCollection.cs (CopyTo): Implemented missing API
+
+	* SqlParameter.cs (InferSqlType): Corrected bug related to default values of
+	SqlDbType and DbType
+	(ResetSqlDbType): Implemented missing API
+	(ResetDbType): Implemented missing API	
+
+2007-03-09  Amit Biswas  <amit@amitbiswas.com>
+
+	* SqlParameterCollection.cs (CopyTo): Implemented missing API
+
 2007-04-02  Nagappan A  <anagappan@novell.com>
 
 	* SqlParameter.cs: Variable name fix.

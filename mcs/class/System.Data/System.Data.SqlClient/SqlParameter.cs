@@ -7,6 +7,7 @@
 //   Tim Coleman (tim@timcoleman.com)
 //   Diego Caravana (diego@toth.it)
 //   Umadevi S (sumadevi@novell.com)
+//   Amit Biswas (amit@amitbiswas.com)
 //
 // (C) Ximian, Inc. 2002
 // Copyright (C) Tim Coleman, 2002
@@ -70,6 +71,12 @@ namespace System.Data.SqlClient {
 		int localeId;
 		Object sqlValue;
 		string udtTypeName;
+#if NET_2_0
+		bool sourceColumnNullMapping;
+		string xmlSchemaCollectionDatabase = String.Empty;
+		string xmlSchemaCollectionOwningSchema = String.Empty;
+		string xmlSchemaCollectionName = String.Empty;
+#endif
 
 		#endregion // Fields
 
@@ -115,6 +122,17 @@ namespace System.Data.SqlClient {
 			SourceColumn = sourceColumn;
 			SourceVersion = sourceVersion;
 		}
+
+#if NET_2_0
+		public SqlParameter (string parameterName, SqlDbType dbType, int size, ParameterDirection direction, byte precision, byte scale, string sourceColumn, DataRowVersion sourceVersion, bool sourceColumnNullMapping, Object value, string xmlSchemaCollectionDatabase, string xmlSchemaCollectionOwningSchema, string xmlSchemaCollectionName)
+			: this (parameterName, dbType, size, direction, false, precision, scale, sourceColumn, sourceVersion, value)
+		{
+			XmlSchemaCollectionDatabase = xmlSchemaCollectionDatabase;
+			XmlSchemaCollectionOwningSchema = xmlSchemaCollectionOwningSchema;
+			XmlSchemaCollectionName = xmlSchemaCollectionName;
+			SourceColumnNullMapping = sourceColumnNullMapping;
+		}
+#endif
 
 		// This constructor is used internally to construct a
 		// SqlParameter.  The value array comes from sp_procedure_params_rowset.
@@ -400,11 +418,29 @@ namespace System.Data.SqlClient {
 		}
 	
 		public override bool SourceColumnNullMapping {
-			get { return false ; }
-			set { }
+			get { return sourceColumnNullMapping; }
+			set { sourceColumnNullMapping = value; }
+		}
+
+		public string XmlSchemaCollectionDatabase {
+		 	get { return xmlSchemaCollectionDatabase; } 
+			set { xmlSchemaCollectionDatabase = (value == null ? String.Empty : value); }
+		}
+
+		public string XmlSchemaCollectionName {
+		 	get { return xmlSchemaCollectionName; } 
+			set {
+				xmlSchemaCollectionName = (value == null ? String.Empty : value);
+			}
+		}
+
+		public string XmlSchemaCollectionOwningSchema {
+		 	get { return xmlSchemaCollectionOwningSchema; } 
+			set {
+				xmlSchemaCollectionOwningSchema = (value == null ? String.Empty : value);
+			}
 		}
 #endif
-
 		#endregion // Properties
 
 		#region Methods
@@ -418,8 +454,10 @@ namespace System.Data.SqlClient {
 		// infer type information.
 		private void InferSqlType (object value)
 		{
-			if (value == null || value == DBNull.Value)
+			if (value == null || value == DBNull.Value) {
+				SetSqlDbType (SqlDbType.NVarChar);
 				return;
+			}
 
 			Type type = value.GetType ();
 
@@ -820,11 +858,16 @@ namespace System.Data.SqlClient {
 		}
 
 #if NET_2_0
-		[MonoTODO ("Not implemented")]
+		
                 public override void ResetDbType ()
                 {
-                        throw new NotImplementedException ();
+                        InferSqlType (metaParameter.Value);
                 }
+
+		public void ResetSqlDbType ()
+		{
+			InferSqlType (metaParameter.Value);
+		}
 #endif // NET_2_0
 
 		#endregion // Methods

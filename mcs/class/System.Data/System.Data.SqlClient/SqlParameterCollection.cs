@@ -440,6 +440,11 @@ namespace System.Data.SqlClient {
 		
 			this.AddRange(values);	
 		}
+		
+		public void CopyTo (SqlParameter[] array, int index)
+		{
+			list.CopyTo (array, index);
+		}
 #endif
         
 		#endregion // Methods	

@@ -1171,24 +1171,31 @@ namespace System.Data.SqlClient {
 		}
 		
 #if NET_2_0
-                [MonoTODO]
-                public override Type GetProviderSpecificFieldType (int position)
-                {
-                        throw new NotImplementedException ();
-                }
 
-                [MonoTODO]                
-                public override object GetProviderSpecificValue (int position)
-                {
-                        throw new NotImplementedException ();                        
-                }
+		public override Type GetProviderSpecificFieldType (int position)
+		{
+			return (GetSqlValue (position).GetType());
+		}
+
+		public override object GetProviderSpecificValue (int position)
+		{
+			return (GetSqlValue (position));                        
+		}
                 
-                [MonoTODO]
-                public override int GetProviderSpecificValues (object [] values)
-                {
-                        throw new NotImplementedException ();                        
-                }
+		public override int GetProviderSpecificValues (object [] values)
+		{
+			return (GetSqlValues (values));                        
+		}
 
+		public virtual SqlBytes GetSqlBytes (int i)
+		{
+			//object value = GetSqlValue (i);
+			//if (!(value is SqlBinary))
+			//	throw new InvalidCastException ("Type is " + value.GetType ().ToString ());
+			Byte[] val = (byte[])GetValue(i);
+			SqlBytes sb = new SqlBytes (val);			
+			return (sb);
+		}
 #endif // NET_2_0
 
 		#endregion // Methods

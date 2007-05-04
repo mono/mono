@@ -77,7 +77,7 @@ namespace System.Data.SqlClient {
 
 		// Connection parameters
 		
-		internal TdsConnectionParameters parms = new TdsConnectionParameters ();
+		TdsConnectionParameters parms = new TdsConnectionParameters ();
 		NameValueCollection connStringParameters = null;
 		bool connectionReset;
 		bool pooling;
@@ -1565,12 +1565,10 @@ namespace System.Data.SqlClient {
 				throw new ArgumentNullException ();
 			if (newPassword.Length > 128)
 				throw new ArgumentException ("The value of newPassword exceeds its permittable length which is 128");
-			SqlConnection conn = new SqlConnection (connectionString);
-			using (conn) {
+			using (SqlConnection conn = new SqlConnection (connectionString)) {
 				conn.Open ();
 				conn.tds.Execute (String.Format ("sp_password '{0}', '{1}', '{2}'",
 								 conn.parms.Password, newPassword, conn.parms.User));
-				conn.Close ();
 			}
 		}
 #endif // NET_2_0
