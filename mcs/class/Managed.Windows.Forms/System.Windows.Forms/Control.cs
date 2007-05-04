@@ -3783,12 +3783,15 @@ namespace System.Windows.Forms
 			ScaleCore(dx, dy);
 		}
 
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
-		public void Scale(SizeF factor) {
+#if NET_2_0
+		public
+#else
+		internal
+#endif
+		void Scale(SizeF factor) {
 			ScaleCore(factor.Width, factor.Height);
 		}
-#endif
 
 		public void Select() {
 			Select(false, false);	
@@ -4291,7 +4294,7 @@ namespace System.Windows.Forms
 			/* Now scale our children */
 			Control [] controls = child_controls.GetAllControls ();
 			for (int i=0; i < controls.Length; i++) {
-				controls[i].Scale(dx, dy);
+				controls[i].Scale (new SizeF (dx, dy));
 			}
 
 			ResumeLayout();

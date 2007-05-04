@@ -1638,7 +1638,7 @@ namespace System.Windows.Forms {
 				dy = 1;
 			}
 
-			Scale (dx, dy);
+			Scale (new SizeF (dx, dy));
 			
 			AutoScaleBaseSize = current_size;
 		}
@@ -2056,7 +2056,7 @@ namespace System.Windows.Forms {
 				/* Now scale our children */
 				Control [] controls = Controls.GetAllControls ();
 				for (int i=0; i < controls.Length; i++) {
-					controls[i].Scale(dx, dy);
+					controls[i].Scale (new SizeF (dx, dy));
 				}
 			}
 

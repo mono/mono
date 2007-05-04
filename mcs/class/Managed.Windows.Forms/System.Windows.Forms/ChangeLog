@@ -1,5 +1,9 @@
 2007-05-04  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Control.cs, Form.cs: Fix some obsolete method warnings.
+
+2007-05-04  Jonathan Pobst  <monkey@jpobst.com>
+
 	* Control.cs: Implement GetChildAtPoint and OnParentCursorChanged.
 	* GetChildAtPointSkip.cs: Make internal for 1.1 profile.
 
