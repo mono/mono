@@ -1,3 +1,10 @@
+2007-05-04  Andreia Gaita  <avidigal@novell.com>
+
+	* ContainerControl.cs: Fix active_control attribution when going
+	up the parent chain so that the first parent container gets the control
+	and the rest of the parent containers get the child containers (skips
+	non-containers). Fixes #80729
+
 2007-05-04  Randolph Chung  <tausq@debian.org>
 
 	* FileDialog.cs: Implement the SupportMultiDottedExtensions property.

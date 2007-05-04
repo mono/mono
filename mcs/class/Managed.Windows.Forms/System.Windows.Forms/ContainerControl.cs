@@ -154,9 +154,12 @@ namespace System.Windows.Forms {
 					}
 
 					walk = this;
+					Control ctl = this;
 					while (walk != null) {
-						if (walk.Parent is ContainerControl)
-							((ContainerControl)walk.Parent).active_control = walk;
+						if (walk.Parent is ContainerControl) {
+							((ContainerControl) walk.Parent).active_control = ctl;
+							ctl = walk.Parent;
+						}
 						walk = walk.Parent;
 					}
 				}
