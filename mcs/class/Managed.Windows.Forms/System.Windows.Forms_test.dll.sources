@@ -74,6 +74,7 @@ System.Windows.Forms/ListViewTest.cs
 System.Windows.Forms/ListViewGroupTest.cs
 System.Windows.Forms/ListViewGroupCollectionTest.cs
 System.Windows.Forms/ListViewItemTest.cs
+System.Windows.Forms/MaskedTextBoxTest.cs
 System.Windows.Forms/MdiFormHandleTest.cs
 System.Windows.Forms/MdiFormTest.cs
 System.Windows.Forms/MessageTest.cs
