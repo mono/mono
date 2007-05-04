@@ -1,5 +1,9 @@
 2007-05-04  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	Added.
+
+2007-05-04  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* MdiFormTest.cs: Added DeactivatedEventTest.
 
 2007-05-03  Chris Toshok  <toshok@ximian.com>
