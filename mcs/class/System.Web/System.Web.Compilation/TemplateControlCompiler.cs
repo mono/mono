@@ -1449,7 +1449,9 @@ namespace System.Web.Compilation
 			prop.Name = "TemplateSourceDirectory";
 			prop.Attributes = MemberAttributes.Public | MemberAttributes.Override;
 
+#if NET_2_0
 			if (!(parser is MasterPageParser)) {
+#endif
 				// if ((this.Parent != null))
 				//   return this.Parent.TemplateSourceDirectory;
 				CodeFieldReferenceExpression parentField = new CodeFieldReferenceExpression ();
@@ -1468,8 +1470,10 @@ namespace System.Web.Compilation
 					parentRet);
 			
 				prop.GetStatements.Add (condStatement);
+#if NET_2_0
 			}
-			
+#endif
+
 			string tsd, bvd = parser.BaseVirtualDir;
 			int len = bvd.Length;
 			if (len >= 2 && bvd [0] == '~') {
