@@ -273,13 +273,15 @@ summarize_integer_value (MonoVariableRelationsEvaluationArea *area, MonoInst *in
 		result->type = MONO_VARIABLE_SUMMARIZED_VALUE;
 		result->value.variable.variable = ins->sreg1;
 		result->value.variable.delta = ins->inst_imm;
-		check_delta_safety (area, result);
+		/* FIXME: */
+		//check_delta_safety (area, result);
 		break;
 	case OP_ISUB_IMM:
 		result->type = MONO_VARIABLE_SUMMARIZED_VALUE;
 		result->value.variable.variable = ins->sreg1;
 		result->value.variable.delta = ins->inst_imm;
-		check_delta_safety (area, result);
+		/* FIXME: */
+		//check_delta_safety (area, result);
 		break;
 	case OP_LDLEN:
 		/*
@@ -287,7 +289,7 @@ summarize_integer_value (MonoVariableRelationsEvaluationArea *area, MonoInst *in
 		 * as r1 == r2 in the evaluation graph.
 		 */
 		result->type = MONO_VARIABLE_SUMMARIZED_VALUE;
-		result->value.variable.variable = ins->inst_basereg;
+		result->value.variable.variable = ins->sreg1;
 		result->value.variable.delta = 0;
 		value_kind = MONO_UNSIGNED_INTEGER_VALUE_SIZE_4;
 		break;
@@ -988,7 +990,45 @@ process_block (MonoBasicBlock *bb, MonoVariableRelationsEvaluationArea *area) {
 	remove_change_from_evaluation_area (&(additional_relations.relation2));
 }
 
-
+static MonoIntegerValueKind
+type_to_value_kind (MonoType *type)
+{
+	if (type->byref)
+		return MONO_UNKNOWN_INTEGER_VALUE;
+	switch (type->type) {
+	case MONO_TYPE_I1:
+		return MONO_INTEGER_VALUE_SIZE_1;
+		break;
+	case MONO_TYPE_U1:
+		return MONO_UNSIGNED_INTEGER_VALUE_SIZE_1;
+		break;
+	case MONO_TYPE_I2:
+		return MONO_INTEGER_VALUE_SIZE_2;
+		break;
+	case MONO_TYPE_U2:
+		return MONO_UNSIGNED_INTEGER_VALUE_SIZE_2;
+		break;
+	case MONO_TYPE_I4:
+		return MONO_INTEGER_VALUE_SIZE_4;
+		break;
+	case MONO_TYPE_U4:
+		return MONO_UNSIGNED_INTEGER_VALUE_SIZE_4;
+		break;
+	case MONO_TYPE_I:
+		return SIZEOF_VOID_P;
+		break;
+	case MONO_TYPE_U:
+		return (MONO_UNSIGNED_VALUE_FLAG|SIZEOF_VOID_P);
+		break;
+	case MONO_TYPE_I8:
+		return MONO_INTEGER_VALUE_SIZE_8;
+		break;
+	case MONO_TYPE_U8:
+		return MONO_UNSIGNED_INTEGER_VALUE_SIZE_8;
+	default:
+		return MONO_UNKNOWN_INTEGER_VALUE;
+	}
+}
 
 /**
  * mono_perform_abc_removal:
@@ -1050,15 +1090,19 @@ mono_perform_abc_removal2 (MonoCompile *cfg)
 				MonoIntegerValueKind effective_value_kind;
 				MonoRelationsEvaluationRange range;
 				MonoSummarizedValueRelation *type_relation;
+				MonoInst *var;
 
 				if (TRACE_ABC_REMOVAL)
 					mono_print_ins (ins);
 
+				var = get_vreg_to_inst (cfg, ins->dreg);
+				if (var)
+					area.variable_value_kind [ins->dreg] = type_to_value_kind (var->inst_vtype);
+
 				effective_value_kind = summarize_integer_value (&area, ins, &(area.relations [ins->dreg].related_value), area.variable_value_kind [ins->dreg]);
 
 				MONO_MAKE_RELATIONS_EVALUATION_RANGE_WEAK (range);
-				/* FIXME: set variable_value_kind */
-				//apply_value_kind_to_range (&range, area.variable_value_kind [i]);
+				apply_value_kind_to_range (&range, area.variable_value_kind [i]);
 				apply_value_kind_to_range (&range, effective_value_kind);
 					
 				if (range.upper < INT_MAX) {
