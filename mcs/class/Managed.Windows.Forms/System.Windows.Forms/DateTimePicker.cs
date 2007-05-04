@@ -1184,7 +1184,9 @@ namespace System.Windows.Forms {
 			}
 
 			// since the parent of the month calendar is the form, adjust accordingly.
-			screen_location = month_calendar.Parent.PointToClient(screen_location);
+			if (month_calendar.Parent != null) {
+				screen_location = month_calendar.Parent.PointToClient(screen_location);
+			}
 
 			return screen_location;
 		}
