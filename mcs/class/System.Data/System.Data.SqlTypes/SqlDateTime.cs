@@ -58,6 +58,8 @@ namespace System.Data.SqlTypes
 		public static readonly int SQLTicksPerHour = 1080000;
 		public static readonly int SQLTicksPerMinute = 18000;
 		public static readonly int SQLTicksPerSecond = 300;
+
+		static readonly DateTime zero_day = new DateTime (1900, 1, 1);
 	      
 		#endregion
 
@@ -84,8 +86,8 @@ namespace System.Data.SqlTypes
 		public SqlDateTime (int dayTicks, int timeTicks) 
 		{
 			try {
-				DateTime temp = new DateTime (1900, 1, 1);
-				this.value = new DateTime (temp.Ticks + (long)(dayTicks + timeTicks));
+				long ms = SQLTicksToMilliseconds (timeTicks);
+				this.value = zero_day.AddDays (dayTicks).AddMilliseconds (ms);
 			} catch (ArgumentOutOfRangeException ex) {
 				throw new SqlTypeException (ex.Message);
 			}
@@ -115,14 +117,22 @@ namespace System.Data.SqlTypes
 			CheckRange (this);
 		}
 
-		[MonoTODO ("Round milisecond")]
-		public SqlDateTime (int year, int month, int day, int hour, int minute, int second, double millisecond) 
+		static int TimeSpanTicksToSQLTicks (long ticks)
+		{
+			return (int) ((ticks * SQLTicksPerSecond) / TimeSpan.TicksPerSecond);
+		}
+
+		static long SQLTicksToMilliseconds (int timeTicks)
+		{
+			return (long) (((timeTicks * 1000.0) / SQLTicksPerSecond) + 0.5);
+		}
+
+		public SqlDateTime (int year, int month, int day, int hour, int minute, int second, double millisecond)
 		{
 			try {
-				DateTime t = new DateTime(year, month, day, hour, minute, second);
-			
-				long ticks = (long) (t.Ticks + millisecond * 10000);
-				this.value = new DateTime (ticks);
+				long ticks = (long) (millisecond * TimeSpan.TicksPerMillisecond);
+				long ms = SQLTicksToMilliseconds (TimeSpanTicksToSQLTicks (ticks));
+				this.value = new DateTime (year, month, day, hour, minute, second).AddMilliseconds (ms);
 			} catch (ArgumentOutOfRangeException ex) {
 				throw new SqlTypeException (ex.Message);
 			}
@@ -130,14 +140,17 @@ namespace System.Data.SqlTypes
 			CheckRange (this);
 		}
 
-		[MonoTODO ("Round bilisecond")]
-		public SqlDateTime (int year, int month, int day, int hour, int minute, int second, int bilisecond) // bilisecond??
+		// Some genius in MS came up with 'bilisecond', and gave it the ambiguous definition of one-"billionth"
+		// of a second.  I'm almost tempted to use a nanosecond or a picosecond depending on the current culture :-)
+		// But, wait!! it turns out it's a microsecond, in reality.  AAAAAAAAAAAARGH.  Did this misguided
+		// individual think that a millisecond is a millionth of a second and thus come up with the dastardly name
+		// and the very wrong definition?
+		public SqlDateTime (int year, int month, int day, int hour, int minute, int second, int bilisecond)
 		{
 			try {
-				DateTime t = new DateTime(year, month, day, hour, minute, second);
-			
-				long dateTick = (long) (t.Ticks + bilisecond * 10);
-				this.value = new DateTime (dateTick);
+				long ticks = bilisecond * 10;
+				long ms = SQLTicksToMilliseconds (TimeSpanTicksToSQLTicks (ticks));
+				this.value = new DateTime (year, month, day, hour, minute, second).AddMilliseconds (ms);
 			} catch (ArgumentOutOfRangeException ex) {
 				throw new SqlTypeException (ex.Message);
 			}
@@ -150,14 +163,7 @@ namespace System.Data.SqlTypes
 		#region Properties
 
 		public int DayTicks {
-			get { 
-				float DateTimeTicksPerHour = 3.6E+10f;
-
-				DateTime temp = new DateTime (1900, 1, 1);
-				
-				int result = (int)((this.Value.Ticks - temp.Ticks) / (24 * DateTimeTicksPerHour));
-				return result;
-			}
+			get { return (Value - zero_day).Days; }
 		}
 
 		public bool IsNull { 
@@ -165,23 +171,14 @@ namespace System.Data.SqlTypes
 		}
 
 		public int TimeTicks {
-			get {
-				if (this.IsNull)
-					throw new SqlNullValueException ();
-
-				return (int)(value.Hour * SQLTicksPerHour + 
-					     value.Minute * SQLTicksPerMinute +
-					     value.Second * SQLTicksPerSecond +
-					     value.Millisecond);
-			}
+			get { return TimeSpanTicksToSQLTicks (Value.TimeOfDay.Ticks); }
 		}
 
 		public DateTime Value {
 			get { 
 				if (this.IsNull) 
 					throw new SqlNullValueException ("The property contains Null.");
-				else 
-					return value; 
+				return value; 
 			}
 		}
 
@@ -302,7 +299,6 @@ namespace System.Data.SqlTypes
 		{
 			if (x.IsNull)
 				return SqlDateTime.Null;
-			
 			return new SqlDateTime (x.Value + t);
 		}
 
@@ -310,48 +306,42 @@ namespace System.Data.SqlTypes
 		{
 			if (x.IsNull || y.IsNull) 
 				return SqlBoolean.Null;
-			else
-				return new SqlBoolean (x.Value == y.Value);
+			return new SqlBoolean (x.Value == y.Value);
 		}
 
 		public static SqlBoolean operator > (SqlDateTime x, SqlDateTime y)
 		{
 			if (x.IsNull || y.IsNull) 
 				return SqlBoolean.Null;
-			else
-				return new SqlBoolean (x.Value > y.Value);
+			return new SqlBoolean (x.Value > y.Value);
 		}
 
 		public static SqlBoolean operator >= (SqlDateTime x, SqlDateTime y)
 		{
 			if (x.IsNull || y.IsNull) 
 				return SqlBoolean.Null;
-			else
-				return new SqlBoolean (x.Value >= y.Value);
+			return new SqlBoolean (x.Value >= y.Value);
 		}
 
 		public static SqlBoolean operator != (SqlDateTime x, SqlDateTime y)
 		{
 			if (x.IsNull || y.IsNull) 
 				return SqlBoolean.Null;
-			else
-				return new SqlBoolean (!(x.Value == y.Value));
+			return new SqlBoolean (!(x.Value == y.Value));
 		}
 
 		public static SqlBoolean operator < (SqlDateTime x, SqlDateTime y)
 		{
 			if (x.IsNull || y.IsNull) 
 				return SqlBoolean.Null;
-			else
-				return new SqlBoolean (x.Value < y.Value);
+			return new SqlBoolean (x.Value < y.Value);
 		}
 
 		public static SqlBoolean operator <= (SqlDateTime x, SqlDateTime y)
 		{
 			if (x.IsNull || y.IsNull) 
 				return SqlBoolean.Null;
-			else
-				return new SqlBoolean (x.Value <= y.Value);
+			return new SqlBoolean (x.Value <= y.Value);
 		}
 
 		public static SqlDateTime operator - (SqlDateTime x, TimeSpan t)

@@ -1,3 +1,7 @@
+2007-05-04  Raja R Harinath  <rharinath@novell.com>
+
+	* SqlDateTimeTest.cs (TicksRoundTrip, EffingBilisecond): New tests.
+
 2007-03-09  Nagappan A  <anagappan@novell.com>
 
 	* SqlBooleanTest.cs (GetXsdTypeTest, GreaterThanTest)

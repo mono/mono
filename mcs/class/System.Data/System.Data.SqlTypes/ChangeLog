@@ -1,3 +1,9 @@
+2007-05-04  Raja R Harinath  <rharinath@novell.com>
+
+	* SqlDateTime.cs: Rewrite parts converting SQL ticks to and from
+	DateTime ticks.  Attempt to understand what the damned 'bilisecond'
+	means.
+
 2007-03-09  Nagappan A  <anagappan@novell.com>
 
 	* SqlBoolean.cs (GreaterThan, GreaterThanOrEqual, LessThan)

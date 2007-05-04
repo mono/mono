@@ -560,6 +560,32 @@ namespace MonoTests.System.Data.SqlTypes
        			AssertEquals ("#Q05", 53, Result.Value.Minute);
 			AssertEquals ("#Q06", 4, Result.Value.Second);
 		}
+
+		[Test]
+		public void TicksRoundTrip ()
+		{
+			SqlDateTime d1 = new SqlDateTime (2007, 05, 04, 18, 02, 40, 398.25);
+			SqlDateTime d2 = new SqlDateTime (d1.DayTicks, d1.TimeTicks);
+
+			AssertEquals ("#R01", 39204, d1.DayTicks);
+			AssertEquals ("#R02", 19488119, d1.TimeTicks);
+			AssertEquals ("#R03", 633138985603970000, d1.Value.Ticks);
+			AssertEquals ("#R04", d1.DayTicks, d2.DayTicks);
+			AssertEquals ("#R05", d1.TimeTicks, d2.TimeTicks);
+			AssertEquals ("#R06", d1.Value.Ticks, d2.Value.Ticks);
+			AssertEquals ("#R07", d1, d2);
+		}
+
+		[Test]
+		public void EffingBilisecond ()
+		{
+			SqlDateTime d1 = new SqlDateTime (2007, 05, 04, 18, 02, 40, 398252);
+
+			AssertEquals ("#S01", 39204, d1.DayTicks);
+			AssertEquals ("#S02", 19488119, d1.TimeTicks);
+			AssertEquals ("#R03", 633138985603970000, d1.Value.Ticks);
+		}
+
 #if NET_2_0
 		[Test]
 		public void GetXsdTypeTest ()
