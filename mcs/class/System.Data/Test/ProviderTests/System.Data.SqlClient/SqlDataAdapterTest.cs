@@ -464,7 +464,8 @@ namespace MonoTests.System.Data.SqlClient
 			try {
 				count = adapter.Fill (ds, "numeric_family");
 				Assert.Fail ("#4 Overflow exception must be thrown");
-			}catch (OverflowException e) {
+			}catch (Exception e) {
+				Assert.AreEqual (typeof (OverflowException), e.GetType (), "#4 Overflow exception must be thrown");
 			}
 			Assert.AreEqual (0, ds.Tables [0].Rows.Count, "#5");
 			Assert.AreEqual (0, count, "#6");
@@ -510,7 +511,7 @@ namespace MonoTests.System.Data.SqlClient
 			data = new DataSet ("test");
 			try {
 				adapter.FillSchema (data , SchemaType.Source);
-			}catch (Exception e){
+			}catch {
 				if ( adapter.SelectCommand.Connection.State != ConnectionState.Closed)
 				{
 					Assert.Fail ("#0 Conn shud be closed if exception occurs");
@@ -745,7 +746,7 @@ namespace MonoTests.System.Data.SqlClient
 
 				Assert.AreEqual (1, dataSet.Tables.Count, "#1");
 
-				DataColumn col = dataSet.Tables[0].Columns[0]; 
+				//DataColumn col = dataSet.Tables[0].Columns[0]; 
 				Assert.IsFalse (dataSet.Tables[0].Columns[0].AllowDBNull,"#2");
 				Assert.IsTrue (dataSet.Tables[0].Columns[1].AllowDBNull,"#3");
 			}
@@ -822,7 +823,9 @@ namespace MonoTests.System.Data.SqlClient
 				try {
 					dataAdapter.FillSchema (dataSet, SchemaType.Mapped);
 					Assert.Fail ("#4 Error should be thrown");
-				} catch (InvalidOperationException e) {
+				} catch (Exception e) {
+					Assert.AreEqual (typeof (InvalidOperationException), e.GetType (),
+							 "#4 InvalidOperationException must be thrown");
 				}
 			}
 		}
@@ -867,6 +870,7 @@ namespace MonoTests.System.Data.SqlClient
 				DataColumn pcol2 = table1.Columns.Add ("type_int", typeof (int));
 
 				table2.Constraints.Add ("fk", pcol1, ccol1);
+				//table1.Constraints.Add ("fk1", pcol2, ccol2);
 
 				dataSet.EnforceConstraints = false;
 				dataAdapter.Fill (dataSet, "table1");

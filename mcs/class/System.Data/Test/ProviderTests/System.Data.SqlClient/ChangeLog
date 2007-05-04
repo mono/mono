@@ -1,3 +1,27 @@
+2007-04-03  Amit Biswas <amit@amitbiswas.com>
+
+	* SqlDataReaderTest.cs (GetSqlBytesTest): Test case for GetSqlBytes
+	(GetProviderSpecificFieldTypeTest): Test case for GetProviderSpecificFieldTypeTest
+	(GetProviderSpecificValueTest): Test case for GetProviderSpecificValueTest
+	(GetProviderSpecificValueLowerBoundaryTest):
+	(GetProviderSpecificValueUpperBoundaryTest):
+	(GetProviderSpecificValuesTest): Test case for GetProviderSpecificValuesTest
+	(GetProviderSpecificValuesSmallArrayTest): Test case with an array smaller than no. of columns
+	(GetProviderSpecificValuesLargeArrayTest): Test case with an array larger than no. of columns
+	(GetProviderSpecificValuesNullTest): Test case for null parameters
+
+	* SqlParameterTest.cs (XmlSchemaTest): Test case for properties related to XML schema
+	(SourceColumnNullMappingTest): Test case for SourceColumnNullMappingTest
+	(ctor7Test): Test case to the constructor new in .net 2.0
+
+	* SqlParameterTest.cs (ParameterType): Corrected a bug in the test case regarding
+	default values of SqlDbType and DbType
+	(SqlDbTypeTest): Test for SqlDbType and DbType properties
+	(ResetSqlDbTypeTest): Test for ResetSqlDbType method
+	(ResetDbTypeTest): Test for ResetDbType method
+
+	* SqlParameterCollectionTest.cs (CopyToTest): Test case for CopyTo method
+
 2007-03-23  Nidhi Rawal <rawalnidhi_rawal@yahoo.com>
 
 	* SqlCommandTest.cs (BeginExecuteXmlReaderTest): Written test case for the method

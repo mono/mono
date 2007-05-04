@@ -393,7 +393,7 @@ namespace MonoTests.System.Data
 				trans = conn.BeginTransaction ();
 				trans.Commit();
 				trans = conn.BeginTransaction ();
-			}catch (Exception e) {
+			}catch {
 				Assert.Fail ("#7 Transaction can be opened after a rollback/commit");
 			}finally {
 				trans.Rollback ();
@@ -483,13 +483,13 @@ namespace MonoTests.System.Data
 			conn = new SqlConnection (connectionString);
 
 			// Test InvalidOperation Exception is thrown if Connection is CLOSED
-			try{
+			try {
 				string s = conn.ServerVersion;
-				Assert.Fail (
-					"#1 InvalidOperation Exception Must be thrown if conn is closed");
-			}catch (AssertionException e){
+				Assert.Fail ("#1 InvalidOperation Exception Must be thrown if conn is closed");
+				Assert.AreEqual ("", s, "#1a Should be an empty string");
+			} catch (AssertionException e){
 				throw e;
-			}catch (Exception e){
+			} catch (Exception e){
 				Assert.AreEqual(typeof (InvalidOperationException), e.GetType (),
 					"#2 Incorrect Exception" + e.StackTrace);
 			}
@@ -1065,14 +1065,14 @@ namespace MonoTests.System.Data
 			Assert.AreEqual(true, flag, "#GS18 failed");
 		}
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
-		public void GetSchemaTest19()
+		[ExpectedException (typeof (ArgumentException))]
+		public void GetSchemaTest19 ()
 		{
 			String [] restrictions = new String[1];
-			DataTable tab1 = conn.GetSchema("RESTRICTIONS", restrictions);
+			conn.GetSchema("RESTRICTIONS", restrictions);
 		}
 		[Test]
-		public void GetSchemaTest20()
+		public void GetSchemaTest20 ()
 		{
 			bool flag = false;
 			DataTable tab1 = conn.GetSchema("DataTypes");
@@ -1193,11 +1193,11 @@ namespace MonoTests.System.Data
 			Assert.AreEqual(false, flag, "#GS24 failed");
 		}
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
-		public void GetSchemaTest25()
+		[ExpectedException (typeof (ArgumentException))]
+		public void GetSchemaTest25 ()
 		{
-			String [] restrictions = new String[1];
-			DataTable tab1 = conn.GetSchema("Mono", restrictions);
+			String [] restrictions = new String [1];
+			conn.GetSchema ("Mono", restrictions);
 		}
 	}
 #endif

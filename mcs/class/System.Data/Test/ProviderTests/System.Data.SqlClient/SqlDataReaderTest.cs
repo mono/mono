@@ -1014,5 +1014,211 @@ namespace MonoTests.System.Data.SqlClient
 				datetimeDataTable);
 		}
 
+#if NET_2_0
+		string connectionString = ConnectionManager.Singleton.ConnectionString;
+
+		//FIXME : Add more test cases
+		[Test]
+		public void GetProviderSpecificFieldTypeTest ()
+		{
+			using (SqlConnection conn = new SqlConnection (connectionString)) {
+				conn.Open ();
+				SqlCommand cmd = conn.CreateCommand ();
+				cmd.CommandText = "SELECT * FROM employee";
+				using (SqlDataReader rdr = cmd.ExecuteReader ()) {
+					rdr.Read();
+					Assert.AreEqual (6, rdr.FieldCount, "#1");
+					Assert.AreEqual(typeof(SqlInt32),rdr.GetProviderSpecificFieldType(0),"#2 The column at index 0 must have FieldType as SqlString");
+					Assert.AreEqual(typeof(SqlString),rdr.GetProviderSpecificFieldType(1),"#3 The column at index 1 must have FieldType as SqlString");
+					Assert.AreEqual(typeof(SqlDateTime),rdr.GetProviderSpecificFieldType(3),"#4 The column at index 3 must have FieldType as SqlString");
+				}
+				cmd.CommandText = "SELECT * FROM numeric_family";
+				using (SqlDataReader rdr = cmd.ExecuteReader ()) {
+					rdr.Read();
+					Assert.AreEqual (12, rdr.FieldCount, "#5");
+					Assert.AreEqual(typeof(SqlBoolean),rdr.GetProviderSpecificFieldType(1),"#6 The column at index 0 must have FieldType as SqlString");
+					Assert.AreEqual(typeof(SqlByte),rdr.GetProviderSpecificFieldType(2),"#7 The column at index 1 must have FieldType as SqlString");
+					Assert.AreEqual(typeof(SqlDecimal),rdr.GetProviderSpecificFieldType(6),"#8 The column at index 3 must have FieldType as SqlString");
+					Assert.AreEqual(typeof(SqlMoney),rdr.GetProviderSpecificFieldType(8),"#9 The column at index 3 must have FieldType as SqlString");
+					Assert.AreEqual(typeof(SqlSingle),rdr.GetProviderSpecificFieldType(10),"#10 The column at index 3 must have FieldType as SqlString");
+					Assert.AreEqual(typeof(SqlDouble),rdr.GetProviderSpecificFieldType(11),"#11 The column at index 3 must have FieldType as SqlString");
+				}
+			}
+		}
+
+		//FIXME : Add more test cases
+		[Test]
+		public void GetProviderSpecificValueTest ()
+		{
+			using (SqlConnection conn = new SqlConnection (connectionString)) {
+				conn.Open ();
+				SqlCommand cmd = conn.CreateCommand ();
+				cmd.CommandText = "SELECT * FROM employee";
+				using (SqlDataReader rdr = cmd.ExecuteReader ()) {
+					rdr.Read();
+					Assert.AreEqual (6, rdr.FieldCount, "#1");
+					Assert.AreEqual((SqlInt32)1,rdr.GetProviderSpecificValue(0),"#2 The column at index 0 must have FieldType as SqlString");
+					Assert.AreEqual((SqlString)"suresh",rdr.GetProviderSpecificValue(1),"#3 The column at index 1 must have FieldType as SqlString");
+					Assert.AreEqual((SqlDateTime)DateTime.Parse("8/22/1978"),rdr.GetProviderSpecificValue(3),"#4 The column at index 3 must have FieldType as SqlString");
+				}
+			}
+		}
+
+		[Test]
+		public void GetProviderSpecificValueLowerBoundaryTest ()
+		{
+			using (SqlConnection conn = new SqlConnection (connectionString)) {
+				conn.Open ();
+				SqlCommand cmd = conn.CreateCommand ();
+				cmd.CommandText = "SELECT * FROM employee";
+				using (SqlDataReader rdr = cmd.ExecuteReader ()) {
+					rdr.Read();
+					Assert.AreEqual (6, rdr.FieldCount, "#1");
+					try {
+						Assert.AreEqual((SqlInt32)1,rdr.GetProviderSpecificValue(-1),"#2 The column at index 0 must have FieldType as SqlString");
+					} catch (IndexOutOfRangeException) {
+						Assert.AreEqual((SqlInt32)1,rdr.GetProviderSpecificValue(0),"#2 The column at index 0 must have FieldType as SqlString");
+						Assert.AreEqual((SqlString)"suresh",rdr.GetProviderSpecificValue(1),"#3 The column at index 1 must have FieldType as SqlString");
+						Assert.AreEqual((SqlDateTime)DateTime.Parse("8/22/1978"),rdr.GetProviderSpecificValue(3),"#4 The column at index 3 must have FieldType as SqlString");
+						return;
+					}
+					Assert.Fail ("Expected exception IndexOutOfRangeException was not thrown");
+				}
+			}
+		}
+
+		[Test]
+		public void GetProviderSpecificValueUpperBoundaryTest ()
+		{
+			using (SqlConnection conn = new SqlConnection (connectionString)) {
+				conn.Open ();
+				SqlCommand cmd = conn.CreateCommand ();
+				cmd.CommandText = "SELECT * FROM employee";
+				using (SqlDataReader rdr = cmd.ExecuteReader ()) {
+					rdr.Read();
+					Assert.AreEqual (6, rdr.FieldCount, "#1");
+					try {
+						Assert.AreEqual((SqlInt32)1,rdr.GetProviderSpecificValue(rdr.FieldCount),"#2 The column at index 0 must have FieldType as SqlString");
+					} catch (IndexOutOfRangeException) {
+						Assert.AreEqual((SqlInt32)1,rdr.GetProviderSpecificValue(0),"#2 The column at index 0 must have FieldType as SqlString");
+						Assert.AreEqual((SqlString)"suresh",rdr.GetProviderSpecificValue(1),"#3 The column at index 1 must have FieldType as SqlString");
+						Assert.AreEqual((SqlDateTime)DateTime.Parse("8/22/1978"),rdr.GetProviderSpecificValue(3),"#4 The column at index 3 must have FieldType as SqlString");
+						return;
+					}
+					Assert.Fail ("Expected exception IndexOutOfRangeException was not thrown");
+				}
+			}
+		}
+
+		//FIXME : Add more test cases
+		[Test]
+		public void GetProviderSpecificValuesTest ()
+		{
+			using (SqlConnection conn = new SqlConnection (connectionString)) {
+				conn.Open ();
+				SqlCommand cmd = conn.CreateCommand ();
+				cmd.CommandText = "SELECT * FROM employee";
+				Object [] psValues = new Object[6];
+				using (SqlDataReader rdr = cmd.ExecuteReader ()) {
+					rdr.Read();
+					rdr.GetProviderSpecificValues (psValues);
+					Assert.AreEqual ((SqlInt32)1, psValues[0], "#");
+					Assert.AreEqual ((SqlString)"suresh", psValues[1], "#");
+					Assert.AreEqual ((SqlDateTime)DateTime.Parse("8/22/1978"), psValues[3], "#");
+				}
+			}
+		}
+
+		[Test]
+		public void GetProviderSpecificValuesSmallArrayTest ()
+		{
+			using (SqlConnection conn = new SqlConnection (connectionString)) {
+				conn.Open ();
+				SqlCommand cmd = conn.CreateCommand ();
+				cmd.CommandText = "SELECT * FROM employee";
+				Object [] psValues = new Object[2];
+				using (SqlDataReader rdr = cmd.ExecuteReader ()) {
+					rdr.Read();
+					rdr.GetProviderSpecificValues (psValues);
+					Assert.AreEqual ((SqlInt32)1, psValues[0], "#");
+					Assert.AreEqual ((SqlString)"suresh", psValues[1], "#");
+				}
+			}
+		}
+
+		[Test]
+		public void GetProviderSpecificValuesLargeArrayTest ()
+		{
+			using (SqlConnection conn = new SqlConnection (connectionString)) {
+				conn.Open ();
+				SqlCommand cmd = conn.CreateCommand ();
+				cmd.CommandText = "SELECT * FROM employee";
+				Object [] psValues = new Object[10];
+				using (SqlDataReader rdr = cmd.ExecuteReader ()) {
+					rdr.Read();
+					rdr.GetProviderSpecificValues (psValues);
+					Assert.AreEqual ((SqlInt32)1, psValues[0], "#");
+					Assert.AreEqual ((SqlString)"suresh", psValues[1], "#");
+					Assert.AreEqual ((SqlDateTime)DateTime.Parse("8/22/1978"), psValues[3], "#");
+					Assert.AreEqual (null, psValues[6], "#");
+					Assert.AreEqual (null, psValues[9], "#");
+				}
+			}
+		}
+
+		[Test]
+		public void GetProviderSpecificValuesNullTest ()
+		{
+			using (SqlConnection conn = new SqlConnection (connectionString)) {
+				conn.Open ();
+				SqlCommand cmd = conn.CreateCommand ();
+				cmd.CommandText = "SELECT * FROM employee";
+				Object [] psValues = new Object[2];
+				using (SqlDataReader rdr = cmd.ExecuteReader ()) {
+					rdr.Read();
+					try {
+						rdr.GetProviderSpecificValues (null);
+					} catch (NullReferenceException) {
+						Assert.AreEqual (null, psValues[0], "#");
+						Assert.AreEqual (null, psValues[1], "#");
+						return;
+					}
+					Assert.Fail ("Expected exception NullReferenceException was not thrown");
+				}
+			}
+		}
+
+		[Test]
+		public void GetSqlBytesTest ()
+		{
+			using (SqlConnection conn = new SqlConnection (connectionString)) {
+				conn.Open ();
+				SqlCommand cmd = conn.CreateCommand ();
+				cmd.CommandText = "SELECT * FROM binary_family";
+				using (SqlDataReader rdr = cmd.ExecuteReader ()) {
+					rdr.Read();
+					Assert.AreEqual (7, rdr.FieldCount, "#1");
+					
+					SqlBytes sb = rdr.GetSqlBytes (1);
+					long byteCount = sb.Length;
+					Assert.AreEqual (1, byteCount, "#");
+					Assert.AreEqual (53, sb[0], "#");
+
+					sb = rdr.GetSqlBytes (2);
+					Assert.AreEqual (typeof(SqlBinary), rdr.GetSqlValue(2).GetType(), "#");
+					byteCount = sb.Length;
+					Assert.AreEqual (30, byteCount, "#");
+					Assert.AreEqual (48, sb[0], "#");
+					Assert.AreEqual (49, sb[1], "#");
+					Assert.AreEqual (50, sb[2], "#");
+					Assert.AreEqual (53, sb[15], "#");
+					Assert.AreEqual (57, sb[29], "#");					
+				}
+			}
+			
+		}
+
+#endif // NET_2_0
+
 	}
 }
