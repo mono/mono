@@ -263,8 +263,8 @@ namespace System.Windows.Forms.Theming.Default
 			Rectangle panel_rect = GetTabPanelRect (tab);
 
 			if (tab.Appearance == TabAppearance.Normal) {
-				ThemeEngine.Current.CPDrawBorder3D (dc, panel_rect, Border3DStyle.RaisedInner, Border3DSide.Left | Border3DSide.Top, ThemeEngine.Current.ColorControl);
-				ThemeEngine.Current.CPDrawBorder3D (dc, panel_rect, Border3DStyle.Raised, Border3DSide.Right | Border3DSide.Bottom, ThemeEngine.Current.ColorControl);
+				ControlPaint.DrawBorder3D (dc, panel_rect, Border3DStyle.RaisedInner, Border3DSide.Left | Border3DSide.Top);
+				ControlPaint.DrawBorder3D (dc, panel_rect, Border3DStyle.Raised, Border3DSide.Right | Border3DSide.Bottom);
 			}
 
 			int start = 0;
@@ -299,8 +299,8 @@ namespace System.Windows.Forms.Theming.Default
 			if (tab.ShowSlider) {
 				Rectangle right = GetRightScrollRect (tab);
 				Rectangle left = GetLeftScrollRect (tab);
-				ThemeEngine.Current.CPDrawScrollButton (dc, right, ScrollButton.Right, tab.RightSliderState);
-				ThemeEngine.Current.CPDrawScrollButton (dc, left, ScrollButton.Left, tab.LeftSliderState);
+				ControlPaint.DrawScrollButton (dc, right, ScrollButton.Right, tab.RightSliderState);
+				ControlPaint.DrawScrollButton (dc, left, ScrollButton.Left, tab.LeftSliderState);
 			}
 		}
 
