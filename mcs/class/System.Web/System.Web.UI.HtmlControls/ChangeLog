@@ -1,3 +1,9 @@
+2007-05-04  Marek Habersack  <mhabersack@novell.com>
+
+	* HtmlAnchor.cs: use ResolveClientUrl when generating
+	attributes. Necessary if the control is in a master page which is
+	in a different directory than the current page.
+
 2007-05-01  Marek Habersack  <mhabersack@novell.com>
 
 	* HtmlForm.cs: do not use User-Agent directly, we must take

@@ -70,7 +70,13 @@ namespace System.Web.UI.WebControls {
 			Hashtable ht = null;
 			
 			if (ad_file != "" && ad_file != null) {
-				ReadAdsFromFile (Page.MapPath (ad_file));
+				ReadAdsFromFile (
+#if NET_2_0
+					GetPhysicalFilePath (ad_file)
+#else
+					Page.MapPath (ad_file)
+#endif
+				);
 				ht = ChooseAd ();
 			}
 

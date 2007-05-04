@@ -1449,24 +1449,26 @@ namespace System.Web.Compilation
 			prop.Name = "TemplateSourceDirectory";
 			prop.Attributes = MemberAttributes.Public | MemberAttributes.Override;
 
-			// if ((this.Parent != null))
-			//   return this.Parent.TemplateSourceDirectory;
-			CodeFieldReferenceExpression parentField = new CodeFieldReferenceExpression ();
-			parentField.TargetObject = thisRef;
-			parentField.FieldName = "Parent";
+			if (!(parser is MasterPageParser)) {
+				// if ((this.Parent != null))
+				//   return this.Parent.TemplateSourceDirectory;
+				CodeFieldReferenceExpression parentField = new CodeFieldReferenceExpression ();
+				parentField.TargetObject = thisRef;
+				parentField.FieldName = "Parent";
 			
-			CodeFieldReferenceExpression tsdField = new CodeFieldReferenceExpression ();
-			tsdField.TargetObject = parentField;
-			tsdField.FieldName = "TemplateSourceDirectory";
+				CodeFieldReferenceExpression tsdField = new CodeFieldReferenceExpression ();
+				tsdField.TargetObject = parentField;
+				tsdField.FieldName = "TemplateSourceDirectory";
 
-			CodeMethodReturnStatement parentRet = new CodeMethodReturnStatement (tsdField);
-			CodeConditionStatement condStatement = new CodeConditionStatement (
-				new CodeBinaryOperatorExpression (parentField,
-								  CodeBinaryOperatorType.IdentityInequality,
-								  new CodePrimitiveExpression (null)),
-				parentRet);
+				CodeMethodReturnStatement parentRet = new CodeMethodReturnStatement (tsdField);
+				CodeConditionStatement condStatement = new CodeConditionStatement (
+					new CodeBinaryOperatorExpression (parentField,
+									  CodeBinaryOperatorType.IdentityInequality,
+									  new CodePrimitiveExpression (null)),
+					parentRet);
 			
-			prop.GetStatements.Add (condStatement);
+				prop.GetStatements.Add (condStatement);
+			}
 			
 			string tsd, bvd = parser.BaseVirtualDir;
 			int len = bvd.Length;

@@ -220,10 +220,10 @@ namespace System.Web.UI
 		}
 
 #if NET_2_0
-			internal string UniqueID2ClientID (string uniqueId)
-			{
-				return uniqueId.Replace (IdSeparator, ClientIDSeparator);
-			}
+		internal string UniqueID2ClientID (string uniqueId)
+		{
+			return uniqueId.Replace (IdSeparator, ClientIDSeparator);
+		}
 
 		protected char ClientIDSeparator
 #else
@@ -946,6 +946,46 @@ namespace System.Web.UI
 			catch (UnauthorizedAccessException) {
 				throw new HttpException ("Access to the specified file was denied.");
 			}
+		}
+
+		internal string GetPhysicalFilePath (string virtualPath)
+		{
+			Page page = Page;
+			
+			if (VirtualPathUtility.IsAbsolute (virtualPath))
+				return page != null ? page.MapPath (virtualPath) : Context.Server.MapPath (virtualPath);
+
+			// We need to determine whether one of our parents is a
+			// master page. If so, we need to map the path
+			// relatively to the master page and not our containing
+			// page/control. This is necessary for cases when a
+			// relative path is used in a control placed in a master
+			// page and the master page is referenced from a
+			// location other than its own. In such cases MS.NET looks
+			// for the file in the directory where the master page
+			// is.
+			//
+			// An example of where it is needed is at
+			//
+			// http://quickstarts.asp.net/QuickStartv20/aspnet/samples/masterpages/masterpages_cs/pages/default.aspx
+			//
+			MasterPage master = null;
+			Control ctrl = Parent;
+
+			while (ctrl != null) {
+				if (ctrl is MasterPage) {
+					master = ctrl as MasterPage;
+					break;
+				}
+				ctrl = ctrl.Parent;
+			}
+			
+			string path;
+			if (master != null)
+				path = VirtualPathUtility.Combine (master.TemplateSourceDirectory, virtualPath);
+			else
+				path = VirtualPathUtility.Combine (TemplateSourceDirectory, virtualPath);
+			return page != null ? page.MapPath (path) : Context.Server.MapPath (path);
 		}
 #endif		
 

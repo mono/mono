@@ -1,3 +1,10 @@
+2007-05-04  Marek Habersack  <mhabersack@novell.com>
+
+	* Control.cs: added an internal method to resolve a physical path
+	to a file from its virtual path considering the possibility that a
+	control is placed in a master page, which in turn is referenced
+	from a directory another than that of master page itself.
+
 2007-05-03 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* AttributeCollection.cs:

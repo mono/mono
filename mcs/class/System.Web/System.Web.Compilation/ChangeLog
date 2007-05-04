@@ -1,3 +1,9 @@
+2007-05-04  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateControlCompiler.cs: do not query the parent for
+	TemplateSourceDirectory if we are generating code for a Master
+	Page.
+
 2007-04-30  Marek Habersack  <mhabersack@novell.com>
 
 	* ConnectionStringsExpressionBuilder.cs: support expressions with
