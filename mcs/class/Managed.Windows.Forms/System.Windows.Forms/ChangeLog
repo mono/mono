@@ -1,5 +1,10 @@
 2007-05-04  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Form.cs: Add OnDeactivateInternal.
+	* MdiClient.cs: Raise Deactivate event. Fixes #81409.
+
+2007-05-04  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* DateTimePicker.cs: CalculateDropDownLocation: do a null check before
 	  accessing the parent. Fixes #81508.
 

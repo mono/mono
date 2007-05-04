@@ -149,6 +149,11 @@ namespace System.Windows.Forms {
 		{
 			OnActivated (EventArgs.Empty);
 		}
+		
+		internal void OnDeactivateInternal ()
+		{
+			OnDeactivate (EventArgs.Empty);
+		}
 
 		internal override void UpdateWindowText ()
 		{

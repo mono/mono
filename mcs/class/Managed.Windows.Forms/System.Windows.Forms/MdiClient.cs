@@ -657,6 +657,7 @@ namespace System.Windows.Forms {
 				return;
 			
 			Form current = (Form) Controls [0];
+			bool raise_deactivate = ParentForm.ActiveControl == current;
 
 			// We want to resize the new active form before it is 
 			// made active to avoid flickering. Can't do it in the
@@ -666,6 +667,7 @@ namespace System.Windows.Forms {
 			// happen before the form is made active (and in many cases
 			// before it is visible, which avoids flickering as well).
 			MdiWindowManager wm = (MdiWindowManager)form.WindowManager;
+			
 			if (current.WindowState == FormWindowState.Maximized && form.WindowState != FormWindowState.Maximized && form.Visible) {
 				FormWindowState old_state = form.window_state;
 				SetWindowState (form, old_state, FormWindowState.Maximized, true);
@@ -682,6 +684,8 @@ namespace System.Windows.Forms {
 					XplatUI.InvalidateNC (current.Handle);
 				if (form.IsHandleCreated)
 					XplatUI.InvalidateNC (form.Handle);
+				if (raise_deactivate)
+					current.OnDeactivateInternal ();
 			}
 			active_child = (Form) Controls [0];
 			
