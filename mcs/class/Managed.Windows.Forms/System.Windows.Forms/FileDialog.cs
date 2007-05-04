@@ -70,6 +70,7 @@ namespace System.Windows.Forms
 		private string title;
 		private bool validateNames = true;
 #if NET_2_0
+		private bool supportMultiDottedExtensions;
 		private bool checkForIllegalChars = true;
 #endif
 		
@@ -595,6 +596,19 @@ namespace System.Windows.Forms
 			}
 		}
 		
+#if NET_2_0
+		[DefaultValue(false)]
+		public bool SupportMultiDottedExtensions {
+			get {
+				return supportMultiDottedExtensions;
+			}
+
+			set {
+				supportMultiDottedExtensions = value;
+			}
+		}
+#endif
+
 		[DefaultValue("")]
 		[Localizable(true)]
 		public string Title {
@@ -642,6 +656,9 @@ namespace System.Windows.Forms
 			FilterIndex = 1;
 			InitialDirectory = null;
 			restoreDirectory = false;
+#if NET_2_0
+			SupportMultiDottedExtensions = false;
+#endif
 			ShowHelp = false;
 			Title = null;
 			validateNames = true;
@@ -914,6 +931,17 @@ namespace System.Windows.Forms
 
 								if (extension.IndexOf ('*') != -1)
 									continue;
+
+#if NET_2_0
+								if (!supportMultiDottedExtensions) {
+									int lastdot = extension.LastIndexOf('.');
+									if (lastdot > 0) {
+										if (extension.LastIndexOf('.', lastdot - 1) != -1) {
+											extension = extension.Remove(0, lastdot);
+										}
+									}
+								}
+#endif
 
 								filter_exentsion = extension;
 								break;
