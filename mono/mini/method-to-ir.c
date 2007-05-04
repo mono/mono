@@ -5374,6 +5374,7 @@ mono_decompose_array_access_opts (MonoCompile *cfg)
 		MonoInst *ins;
 		MonoInst *prev = NULL;
 		MonoInst *dest;
+		MonoInst *iargs [3];
 		gboolean restart;
 
 		if (cfg->verbose_level > 3) mono_print_bb (bb, "BEFORE DECOMPOSE-ARRAY-ACCESS-OPTS ");
@@ -5393,6 +5394,27 @@ mono_decompose_array_access_opts (MonoCompile *cfg)
 					break;
 				case OP_BOUNDS_CHECK:
 					MONO_ARCH_EMIT_BOUNDS_CHECK (cfg, ins->sreg1, ins->inst_imm, ins->sreg2);
+					break;
+				case OP_NEWARR:
+					if (cfg->opt & MONO_OPT_SHARED) {
+						EMIT_NEW_DOMAINCONST (cfg, iargs [0]);
+						EMIT_NEW_CLASSCONST (cfg, iargs [1], ins->inst_newa_class);
+						MONO_INST_NEW (cfg, iargs [2], OP_MOVE);
+						iargs [2]->dreg = ins->sreg1;
+
+						dest = mono_emit_jit_icall (cfg, mono_array_new, iargs, ins->cil_code);
+						dest->dreg = ins->dreg;
+					} else {
+						MonoVTable *vtable = mono_class_vtable (cfg->domain, mono_array_class_get (ins->inst_newa_class, 1));
+
+						NEW_VTABLECONST (cfg, iargs [0], vtable);
+						MONO_ADD_INS (cfg->cbb, iargs [0]);
+						MONO_INST_NEW (cfg, iargs [1], OP_MOVE);
+						iargs [1]->dreg = ins->sreg1;
+
+						dest = mono_emit_jit_icall (cfg, mono_array_new_specific, iargs, ins->cil_code);
+						dest->dreg = ins->dreg;
+					}
 					break;
 				default:
 					break;
@@ -7700,9 +7722,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			/*
 			 * Array opcodes
 			 */
-		case CEE_NEWARR: {
-			MonoInst *iargs [3];
-
+		case CEE_NEWARR:
 			CHECK_STACK (1);
 			--sp;
 
@@ -7713,25 +7733,28 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			CHECK_TYPELOAD (klass);
 
 			if (cfg->opt & MONO_OPT_SHARED) {
+				/* Decompose now to avoid problems with references to the domainvar */
+				MonoInst *iargs [3];
+
 				EMIT_NEW_DOMAINCONST (cfg, iargs [0]);
 				EMIT_NEW_CLASSCONST (cfg, iargs [1], klass);
 				iargs [2] = sp [0];
 
 				*sp++ = mono_emit_jit_icall (cfg, mono_array_new, iargs, ip);
 			} else {
-				MonoVTable *vtable = mono_class_vtable (cfg->domain, mono_array_class_get (klass, 1));
-
-				NEW_VTABLECONST (cfg, iargs [0], vtable);
-				MONO_ADD_INS (cfg->cbb, iargs [0]);
-				iargs [1] = sp [0];
-
-				*sp++ = mono_emit_jit_icall (cfg, mono_array_new_specific, iargs, ip);
+				/* Decompose later since it is needed by abcrem */
+				MONO_INST_NEW (cfg, ins, OP_NEWARR);
+				ins->dreg = alloc_preg (cfg);
+				ins->sreg1 = sp [0]->dreg;
+				ins->inst_newa_class = klass;
+				ins->type = STACK_OBJ;
+				ins->klass = klass;
+				MONO_ADD_INS (cfg->cbb, ins);				
+				*sp++ = ins;
 			}
-
 			ip += 5;
 			inline_costs += 1;
 			break;
-		}
 		case CEE_LDLEN:
 			CHECK_STACK (1);
 			--sp;

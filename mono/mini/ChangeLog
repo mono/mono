@@ -1,5 +1,15 @@
 2007-05-04  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-ops.h: Add OP_NEWARR.
+
+	* method-to-ir.c: Decompose CEE_NEWARR after abcrem.
+
+	* abcremoval2.c (summarize_integer_value): Handle CEE_NEWARR too.
+
+	* abcremoval2.c (get_relations_from_previous_bb): Handle OP_ICOMPARE_IMM too.
+	
+	* abcremoval2.c (mono_perform_abc_removal2): Add symmetric relations.
+	
 	* abcremoval2.c (mono_perform_abc_removal2): Compute variable_value_kind as in the
 	original implementation.
 

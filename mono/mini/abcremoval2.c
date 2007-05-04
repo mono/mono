@@ -293,6 +293,11 @@ summarize_integer_value (MonoVariableRelationsEvaluationArea *area, MonoInst *in
 		result->value.variable.delta = 0;
 		value_kind = MONO_UNSIGNED_INTEGER_VALUE_SIZE_4;
 		break;
+	case OP_NEWARR:
+		result->type = MONO_VARIABLE_SUMMARIZED_VALUE;
+		result->value.variable.variable = ins->sreg1;
+		result->value.variable.delta = 0;
+		break;
 
 		/* FIXME: Add more opcodes */
 	default:
@@ -396,6 +401,11 @@ get_relations_from_previous_bb (MonoVariableRelationsEvaluationArea *area, MonoB
 				relations->relation2.relation.related_value.type = MONO_VARIABLE_SUMMARIZED_VALUE;
 				relations->relation2.relation.related_value.value.variable.variable = compare->sreg1;
 				relations->relation2.relation.related_value.value.variable.delta = 0;
+			} else if (compare->opcode == OP_ICOMPARE_IMM) {
+				relations->relation1.variable = compare->sreg1;
+				relations->relation1.relation.relation = branch_relation;
+				relations->relation1.relation.related_value.type = MONO_CONSTANT_SUMMARIZED_VALUE;
+				relations->relation1.relation.related_value.value.constant.value = compare->inst_imm;
 			}
 		}
 	}
@@ -560,7 +570,7 @@ evaluate_relation_with_target_variable (MonoVariableRelationsEvaluationArea *are
 		MonoSummarizedValueRelation *relation = &(area->relations [variable]);
 		
 		if (TRACE_ABC_REMOVAL) {
-			printf ("Evaluating varible %d (target variable %d)\n", variable, target_variable);
+			printf ("Evaluating variable %d (target variable %d)\n", variable, target_variable);
 			print_summarized_value_relation (relation);
 			printf ("\n");
 		}
@@ -620,7 +630,7 @@ evaluate_relation_with_target_variable (MonoVariableRelationsEvaluationArea *are
 						// Check if we are part of a recursive loop
 						if (context->status & MONO_RELATIONS_EVALUATION_IS_RECURSIVE) {
 							if (TRACE_ABC_REMOVAL) {
-								printf ("Recursivity detected for varible %d (target variable %d), status ", variable, target_variable);
+								printf ("Recursivity detected for variable %d (target variable %d), status ", variable, target_variable);
 								print_evaluation_context_status (context->status);
 							}
 							
@@ -673,7 +683,7 @@ evaluate_relation_with_target_variable (MonoVariableRelationsEvaluationArea *are
 					// This means we are part of a recursive loop
 					if (context->status & MONO_RELATIONS_EVALUATION_IS_RECURSIVE) {
 						if (TRACE_ABC_REMOVAL) {
-							printf ("Recursivity detected for varible %d (target variable %d), status ", variable, target_variable);
+							printf ("Recursivity detected for variable %d (target variable %d), status ", variable, target_variable);
 							print_evaluation_context_status (context->status);
 							printf ("\n");
 						}
@@ -720,7 +730,7 @@ evaluate_relation_with_target_variable (MonoVariableRelationsEvaluationArea *are
 		// Check if any recursivity bits are still in the status, and in any case clear them
 		if (context->status & MONO_RELATIONS_EVALUATION_IS_RECURSIVE) {
 			if (TRACE_ABC_REMOVAL) {
-				printf ("Recursivity for varible %d (target variable %d) discards computation, status ", variable, target_variable);
+				printf ("Recursivity for variable %d (target variable %d) discards computation, status ", variable, target_variable);
 				print_evaluation_context_status (context->status);
 				printf ("\n");
 			}
@@ -730,7 +740,7 @@ evaluate_relation_with_target_variable (MonoVariableRelationsEvaluationArea *are
 			context->status = MONO_RELATIONS_EVALUATION_NOT_STARTED;
 		} else {
 			if (TRACE_ABC_REMOVAL) {
-				printf ("Ranges for varible %d (target variable %d) computed: ", variable, target_variable);
+				printf ("Ranges for variable %d (target variable %d) computed: ", variable, target_variable);
 				print_evaluation_context_ranges (&(context->ranges));
 				printf ("\n");
 			}
@@ -748,7 +758,7 @@ evaluate_relation_with_target_variable (MonoVariableRelationsEvaluationArea *are
 		int path_value = 0;
 		
 		if (TRACE_ABC_REMOVAL) {
-			printf ("Evaluation of varible %d (target variable %d) already in progress\n", variable, target_variable);
+			printf ("Evaluation of variable %d (target variable %d) already in progress\n", variable, target_variable);
 			print_evaluation_context (context);
 			print_summarized_value_relation (context->current_relation);
 			printf ("\n");
@@ -814,7 +824,7 @@ evaluate_relation_with_target_variable (MonoVariableRelationsEvaluationArea *are
 	}
 	default:
 		if (TRACE_ABC_REMOVAL) {
-			printf ("Varible %d (target variable %d) already in a recursive ring, skipping\n", variable, target_variable);
+			printf ("Variable %d (target variable %d) already in a recursive ring, skipping\n", variable, target_variable);
 			print_evaluation_context (context);
 			print_summarized_value_relation (context->current_relation);
 			printf ("\n");
@@ -1138,7 +1148,28 @@ mono_perform_abc_removal2 (MonoCompile *cfg)
 		}
 	}
 
-	/* FIXME: Add symmetric relations */
+	/* Add symmetric relations */
+	for (i = 0; i < cfg->next_vreg; i++) {
+		if (area.relations [i].related_value.type == MONO_VARIABLE_SUMMARIZED_VALUE) {
+			int related_index = cfg->next_vreg + i;
+			int related_variable = area.relations [i].related_value.value.variable.variable;
+			
+			area.relations [related_index].relation = MONO_EQ_RELATION;
+			area.relations [related_index].relation_is_static_definition = TRUE;
+			area.relations [related_index].related_value.type = MONO_VARIABLE_SUMMARIZED_VALUE;
+			area.relations [related_index].related_value.value.variable.variable = i;
+			area.relations [related_index].related_value.value.variable.delta = - area.relations [i].related_value.value.variable.delta;
+			
+			area.relations [related_index].next = area.relations [related_variable].next;
+			area.relations [related_variable].next = &(area.relations [related_index]);
+			
+			if (TRACE_ABC_REMOVAL) {
+				printf ("Added symmetric summarized value for variable variable %d (to %d): ", i, related_variable);
+				print_summarized_value (&(area.relations [related_index].related_value));
+				printf ("\n");
+			}
+		}
+	}
 
 	process_block (cfg->bblocks [0], &area);
 }
