@@ -82,6 +82,51 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		public void DeactivatedEventTest ()
+		{
+			using (Form f = new Form ()) {
+				Form c1 = new Form ();
+				Form c2 = new Form ();
+				EventLogger log1 = new EventLogger (c1);
+				EventLogger log2 = new EventLogger (c2);
+
+				f.IsMdiContainer = true;
+				f.ShowInTaskbar = false;
+				c2.MdiParent = c1.MdiParent = f;
+
+				c1.Show ();
+				c2.Show ();
+				Assert.AreEqual (0, log1.CountEvents ("Deactivate"), "#A1");
+				Assert.AreEqual (0, log2.CountEvents ("Deactivate"), "#A2");
+
+				f.Show ();
+				Assert.AreEqual (1, log1.CountEvents ("Deactivate"), "#B1");
+				Assert.AreEqual (0, log2.CountEvents ("Deactivate"), "#B2");
+
+				c1.Show ();
+				c2.Show ();
+				Assert.AreEqual (1, log1.CountEvents ("Deactivate"), "#C1");
+				Assert.AreEqual (0, log2.CountEvents ("Deactivate"), "#C2");
+
+				c1.Activate ();
+				Assert.AreEqual (1, log1.CountEvents ("Deactivate"), "#D1");
+				Assert.AreEqual (1, log2.CountEvents ("Deactivate"), "#D2");
+
+				c1.Activate ();
+				Assert.AreEqual (1, log1.CountEvents ("Deactivate"), "#E1");
+				Assert.AreEqual (1, log2.CountEvents ("Deactivate"), "#E2");
+
+				c2.Activate ();
+				Assert.AreEqual (2, log1.CountEvents ("Deactivate"), "#F1");
+				Assert.AreEqual (1, log2.CountEvents ("Deactivate"), "#F2");
+
+				c1.Activate ();
+				Assert.AreEqual (2, log1.CountEvents ("Deactivate"), "#G1");
+				Assert.AreEqual (2, log2.CountEvents ("Deactivate"), "#G2");
+			}
+		}
+		
+		[Test]
 		public void ActivatedEventTest ()
 		{
 			using (Form f = new Form ()) {
