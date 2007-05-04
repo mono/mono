@@ -1309,7 +1309,8 @@ namespace MonoTests.System.Windows.Forms
 		[Test]
 		public void GetChildAtPointTest ()
 		{
-			Control c = null, d = null, e = null;
+			Control c = null, d = null;
+			TransparentControl e = null;
 
 			try {
 				c = new Control ();
@@ -1321,7 +1322,7 @@ namespace MonoTests.System.Windows.Forms
 				d.SetBounds (10, 10, 40, 40);
 				c.Controls.Add (d);
 
-				e = new Control ();
+				e = new TransparentControl ();
 				e.Name = "e1";
 				e.SetBounds (55, 55, 10, 10);
 
@@ -1330,22 +1331,40 @@ namespace MonoTests.System.Windows.Forms
 				Assert.IsFalse (e.Name == l.Name, "Child2");
 
 				l = c.GetChildAtPoint (new Point (57, 57));
-				Assert.IsNull (l, "Child3");
+				Assert.AreEqual (null, l, "Child3");
 
 				l = c.GetChildAtPoint (new Point (10, 10));
 				Assert.AreEqual (d.Name, l.Name, "Child4");
 
 				// GetChildAtPointSkip is not implemented and the following test is breaking for Net_2_0 profile
-//				#if NET_2_0
-//					c.Controls.Add (e);
-//					e.Visible = false;
-//					l = c.GetChildAtPoint (new Point (57, 57), GetChildAtPointSkip.Invisible);
-//					Assert.IsNull (l, "Child5");
+#if NET_2_0
+				c.Controls.Add (e);
+				e.Visible = false;
+				l = c.GetChildAtPoint (new Point (57, 57), GetChildAtPointSkip.Invisible);
+				Assert.IsNull (l, "Child5");
 
-//					e.Visible = true;
-//					l = c.GetChildAtPoint (new Point (57, 57), GetChildAtPointSkip.Invisible);
-//					Assert.AreSame (e.Name, l.Name, "Child6");
-//				#endif // NET_2_0
+				e.Visible = true;
+				l = c.GetChildAtPoint (new Point (57, 57), GetChildAtPointSkip.Invisible);
+				Assert.AreSame (e.Name, l.Name, "Child6");
+
+				e.Enabled = false;
+				l = c.GetChildAtPoint (new Point (57, 57), GetChildAtPointSkip.Disabled);
+				Assert.IsNull (l, "Child7");
+
+				e.Enabled = true;
+				l = c.GetChildAtPoint (new Point (57, 57), GetChildAtPointSkip.Disabled);
+				Assert.AreSame (e.Name, l.Name, "Child8");
+
+				
+				e.BackColor = Color.Transparent;
+				l = c.GetChildAtPoint (new Point (57, 57), GetChildAtPointSkip.Transparent);
+				Assert.IsNull (l, "Child9");
+
+				e.BackColor = Color.Green;
+				l = c.GetChildAtPoint (new Point (57, 57), GetChildAtPointSkip.Transparent);
+				Assert.AreSame (e.Name, l.Name, "Child10");
+
+#endif // NET_2_0
 			} finally {
 				if (c != null)
 					c.Dispose ();
@@ -1354,6 +1373,24 @@ namespace MonoTests.System.Windows.Forms
 			}
 		}
 
+		private class TransparentControl : Control
+		{
+			public TransparentControl ()
+			{
+				SetStyle (ControlStyles.SupportsTransparentBackColor, true);
+			}
+
+			protected override CreateParams CreateParams
+			{
+				get
+				{
+					CreateParams cp = base.CreateParams;
+					cp.ExStyle |= 0x00000020;
+					return cp;
+				}
+			}
+		}
+		
 		[Test]
 		public void ResetFontTest ()
 		{

@@ -3460,20 +3460,35 @@ namespace System.Windows.Forms
 			return null;
 		}
 
-		public Control GetChildAtPoint(Point pt) {
+		public Control GetChildAtPoint(Point pt)
+		{
+			return GetChildAtPoint (pt, GetChildAtPointSkip.None);
+		}
+
+#if NET_2_0
+		public
+#endif
+		Control GetChildAtPoint (Point pt, GetChildAtPointSkip skipValue)
+		{
 			// MS's version causes the handle to be created.  The stack trace shows that get_Handle is called here, but
 			// we'll just call CreateHandle instead.
 			if (!IsHandleCreated)
 				CreateHandle ();
-			
+
 			// Microsoft's version of this function doesn't seem to work, so I can't check
 			// if we only consider children or also grandchildren, etc.
 			// I'm gonna say 'children only'
-			for (int i=0; i<child_controls.Count; i++) {
-				if (child_controls[i].Bounds.Contains(pt)) {
-					return child_controls[i];
-				}
+			foreach (Control child in Controls) {
+				if ((skipValue & GetChildAtPointSkip.Disabled) == GetChildAtPointSkip.Disabled && !child.Enabled)
+					continue;
+				else if ((skipValue & GetChildAtPointSkip.Invisible) == GetChildAtPointSkip.Invisible && !child.Visible)
+					continue;
+				else if ((skipValue & GetChildAtPointSkip.Transparent) == GetChildAtPointSkip.Transparent && child.BackColor.A == 0x0)
+					continue;
+				else if (child.Bounds.Contains (pt))
+					return child;
 			}
+
 			return null;
 		}
 
@@ -5278,6 +5293,10 @@ namespace System.Windows.Forms
 			EventHandler eh = (EventHandler)(Events [CursorChangedEvent]);
 			if (eh != null)
 				eh (this, e);
+				
+#if NET_2_0
+			for (int i = 0; i < child_controls.Count; i++) child_controls[i].OnParentCursorChanged (e);
+#endif
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -5644,7 +5663,14 @@ namespace System.Windows.Forms
 				eh (this, e);
 		}
 
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
+#if NET_2_0
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected virtual void OnParentCursorChanged (EventArgs e)
+		{
+		}
+#endif
+
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected virtual void OnParentEnabledChanged(EventArgs e) {
 			if (is_enabled) {
 				OnEnabledChanged(e);

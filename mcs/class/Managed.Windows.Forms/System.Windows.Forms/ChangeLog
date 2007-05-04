@@ -1,3 +1,8 @@
+2007-05-04  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Control.cs: Implement GetChildAtPoint and OnParentCursorChanged.
+	* GetChildAtPointSkip.cs: Make internal for 1.1 profile.
+
 2007-05-04  Andreia Gaita  <avidigal@novell.com>
 
 	* ContainerControl.cs: Fix active_control attribution when going

@@ -27,11 +27,13 @@
 //
 
 
-#if NET_2_0
 namespace System.Windows.Forms
 {
 	[Flags]
-	public enum GetChildAtPointSkip
+#if NET_2_0
+	public 
+#endif
+	enum GetChildAtPointSkip
 	{
 		None = 0,
 		Invisible = 1,
@@ -39,4 +41,3 @@ namespace System.Windows.Forms
 		Transparent = 4
 	}
 }
-#endif

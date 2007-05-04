@@ -1,3 +1,7 @@
+2007-05-04  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ControlTest.cs: Expand GetChildAtPointTest to cover 2.0 cases.
+
 2007-05-04  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	Added.
