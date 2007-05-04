@@ -1,5 +1,11 @@
 2007-05-04  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* XplatUIX11.cs: Add a TranslateWindowSizeToXWindowSize overload that
+	  takes a size parameter, since the CreateParam's size isn't true for
+	  minimized forms. Fixes #81518,
+
+2007-05-04  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Form.cs: Add OnDeactivateInternal.
 	* MdiClient.cs: Raise Deactivate event. Fixes #81409.
 

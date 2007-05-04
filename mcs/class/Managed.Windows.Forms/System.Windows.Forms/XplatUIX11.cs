@@ -802,27 +802,31 @@ namespace System.Windows.Forms {
 
 		internal static Size TranslateWindowSizeToXWindowSize (CreateParams cp)
 		{
+			return TranslateWindowSizeToXWindowSize (cp, new Size (cp.Width, cp.Height));
+		}
+
+		internal static Size TranslateWindowSizeToXWindowSize (CreateParams cp, Size size)
+		{
 			/* 
 			 * If this is a form with no window manager, X is handling all the border and caption painting
 			 * so remove that from the area (since the area we set of the window here is the part of the window 
 			 * we're painting in only)
 			 */
-			Size rect = new Size (cp.Width, cp.Height);
 			Form form = cp.control as Form;
 			if (form != null && form.window_manager == null) {
 				Hwnd.Borders borders = Hwnd.GetBorders (cp, null);
-				Size xrect = rect;
+				Size xrect = size;
 
 				xrect.Width -= borders.left + borders.right;
 				xrect.Height -= borders.top + borders.bottom;
 
-				rect = xrect;
+				size = xrect;
 			}
-			if (rect.Height == 0)
-				rect.Height = 1;
-			if (rect.Width == 0)
-				rect.Width = 1;
-			return rect;
+			if (size.Height == 0)
+				size.Height = 1;
+			if (size.Width == 0)
+				size.Width = 1;
+			return size;
 		}
 
 		internal static Size TranslateXWindowSizeToWindowSize (CreateParams cp, int xWidth, int xHeight)
@@ -5351,7 +5355,7 @@ namespace System.Windows.Forms {
 
 				lock (XlibLock) {
 					Control ctrl = Control.FromHandle (handle);
-					Size TranslatedSize = TranslateWindowSizeToXWindowSize (ctrl.GetCreateParams ());
+					Size TranslatedSize = TranslateWindowSizeToXWindowSize (ctrl.GetCreateParams (), new Size (width, height));
 					XMoveResizeWindow (DisplayHandle, hwnd.whole_window, x, y, TranslatedSize.Width, TranslatedSize.Height);
 					PerformNCCalc(hwnd);
 				}
