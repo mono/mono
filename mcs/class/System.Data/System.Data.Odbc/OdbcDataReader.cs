@@ -904,10 +904,10 @@ namespace System.Data.Odbc
                 {
                         OdbcReturn ret = OdbcReturn.Error;
                         byte [] buffer = new byte [255];
-                        int outsize = 0;
+                        short outsize = 0;
                         int val = 0;
-                        ret = libodbc.SQLColAttribute (hstmt, column, fieldId, 
-                                                       buffer, buffer.Length, 
+                        ret = libodbc.SQLColAttribute (hstmt, (short)column, fieldId, 
+                                                       buffer, (short)buffer.Length, 
                                                        ref outsize, ref val);
                         if (ret != OdbcReturn.Success && ret != OdbcReturn.SuccessWithInfo)
                                 throw new OdbcException (new OdbcError ("SQLColAttribute",
@@ -922,10 +922,10 @@ namespace System.Data.Odbc
                 {
                         OdbcReturn ret = OdbcReturn.Error;
                         byte [] buffer = new byte [255];
-                        int outsize = 0;
+                        short outsize = 0;
                         int val = 0;
-                        ret = libodbc.SQLColAttribute (hstmt, column, fieldId, 
-                                                       buffer, buffer.Length, 
+                        ret = libodbc.SQLColAttribute (hstmt, (short)column, fieldId, 
+                                                       buffer, (short)buffer.Length, 
                                                        ref outsize, ref val);
                         if (ret != OdbcReturn.Success && ret != OdbcReturn.SuccessWithInfo)
                                 throw new OdbcException (new OdbcError ("SQLColAttribute",

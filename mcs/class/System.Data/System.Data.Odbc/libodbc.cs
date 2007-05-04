@@ -94,7 +94,7 @@ namespace System.Data.Odbc
         }
         
         // Keep this sorted.
-        internal enum FieldIdentifier 
+        internal enum FieldIdentifier : short
         {
                 AutoUniqueValue              = 11,    /* SQL_DESC_AUTO_UNIQUE_VALUE */
                 BaseColumnName               = 22,    /* SQL_DESC_BASE_COLUMN_NAME */
@@ -309,38 +309,38 @@ namespace System.Data.Odbc
                                                               ref short remainingStrLen);
                 [DllImport ("odbc32.dll")]
                 internal static extern OdbcReturn SQLColAttribute (IntPtr StmtHandle,
-                                                                   int column,
+                                                                   short column,
                                                                    FieldIdentifier fieldId,
                                                                    byte [] charAttributePtr, 
-                                                                   int bufferLength,
-                                                                   ref int strLengthPtr,
+                                                                   short bufferLength,
+                                                                   ref short strLengthPtr,
                                                                    ref int numericAttributePtr
                                                                    );
                 [DllImport ("odbc32.dll")]
                 internal static extern OdbcReturn SQLPrimaryKeys (IntPtr StmtHandle,
                                                                    string catalog,
-                                                                   int catalogLength,
+                                                                   short catalogLength,
                                                                    string schema, 
-                                                                   int schemaLength,
+                                                                   short schemaLength,
                                                                    string tableName,
-                                                                   int tableLength
+                                                                   short tableLength
                                                                    );
 
                 [DllImport ("odbc32.dll")]
                 internal static extern OdbcReturn SQLStatistics (IntPtr StmtHandle,
 								 string catalog,
-								 int catalogLength,
+								 short catalogLength,
 								 string schema, 
-								 int schemaLength,
+								 short schemaLength,
 								 string tableName,
-								 int tableLength,
+								 short tableLength,
 								 short unique,
 								 short Reserved
 								 );
 
                 [DllImport ("odbc32.dll")]
                 internal static extern OdbcReturn SQLBindCol (IntPtr StmtHandle,
-                                                                   int column,
+                                                                   short column,
                                                                    SQL_C_TYPE targetType,
                                                                    byte [] buffer, 
                                                                    int bufferLength,
@@ -349,7 +349,7 @@ namespace System.Data.Odbc
 
 		[DllImport ("odbc32.dll")]
                 internal static extern OdbcReturn SQLBindCol (IntPtr StmtHandle,
-                                                                   int column,
+                                                                   short column,
                                                                    SQL_C_TYPE targetType,
                                                                    ref short value, 
                                                                    int bufferLength,
