@@ -132,6 +132,8 @@ namespace System.Reflection.Emit {
 				this.interfaces = new Type[interfaces.Length];
 				System.Array.Copy (interfaces, this.interfaces, interfaces.Length);
 			}
+			if (!IsInterface && parent == null)
+				this.parent = mb.assemblyb.corlib_object_type;
 			pmodule = mb;
 			// skip .<Module> ?
 			table_idx = mb.get_next_table_index (this, 0x02, true);
@@ -173,25 +175,7 @@ namespace System.Reflection.Emit {
 
 		public override Type UnderlyingSystemType {
 			get {
-
-				// Return this as requested by Zoltan.
-				
 				return this;
-
-#if false
-				// Dont know what to do with the rest, should be killed:
-				// See bug: 75008.
-				//
-				////// This should return the type itself for non-enum types but 
-				////// that breaks mcs.
-				if (fields != null) {
-					foreach (FieldBuilder f in fields) {
-						if ((f != null) && (f.Attributes & FieldAttributes.Static) == 0)
-							return f.FieldType;
-					}
-				}
-				throw new InvalidOperationException ("Underlying type information on enumeration is not specified.");
-#endif
 			}
 		}
 

@@ -1,3 +1,9 @@
+2007-05-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* TypeBuilder.cs (.ctor): Convert null parent to typeof (object). Fixes #81530.
+
+	* TypeBuilder.cs (UnderlyingSystemType): Remove commented out code.
+
 2007-04-15  Alp Toker  <alp@atoker.com>
 
 	* ConstructorBuilder.cs: Make use of
