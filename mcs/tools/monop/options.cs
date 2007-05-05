@@ -45,7 +45,7 @@ public class Options
 	internal bool ProcessArgs (string[] args)
 	{
 		if (args.Length < 1) {
-			PrintUsage ();
+			PrintHelp ();
 			return false;
 		}
 
@@ -119,14 +119,9 @@ public class Options
 		Console.WriteLine ("runtime version: {0}", Environment.Version);
 	}
 
-	void PrintUsage ()
-	{
-		Console.WriteLine ("Usage is: monop [option] [-c] [-r:Assembly] [class-name]");
-	}
-
 	void PrintHelp ()
 	{
-		PrintUsage ();
+		Console.WriteLine ("Usage is: monop [option] [-c] [-r:Assembly] [class-name]");
 		Console.WriteLine ("");
 		Console.WriteLine ("options:");
 		Console.WriteLine ("\t--declared-only,-d\tOnly show members declared in the Type");
