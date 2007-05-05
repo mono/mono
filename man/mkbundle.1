@@ -10,7 +10,7 @@
 ..
 .TH mkbundle "mkbundle 1.0"
 .SH NAME
-mkbundle \- Creates a bundled executable.
+mkbundle, mkbundle2 \- Creates a bundled executable.
 .SH SYNOPSIS
 .PP
 .B mkbundle [options] assembly1 [assembly2 ...]
@@ -20,6 +20,10 @@ static copies of the assemblies listed on the command line.  By
 default only the assemblies specified in the command line will be
 included in the bundle.  To automatically include all of the
 dependencies referenced, use the "--deps" command line option.
+.PP
+Use \fImkbundle\FP when you want the startup runtime to load the 1.0
+profile, and use \fImkbundle2\fP when you want the startup runtime to load
+the 2.0 profile.
 .PP
 For example, to create a bundle for hello world, use the following
 command:
@@ -31,7 +35,7 @@ The above will pull hello.exe into a native program called "hello".  Notice
 that the produced image still contains the CIL image and no
 precompilation is done.
 .PP
-In addition, it is possible to control whether mkbundle should compile
+In addition, it is possible to control whether \fImkbundle\fP should compile
 the resulting executable or not with the -c option.  This is useful if
 you want to link additional libraries or control the generated output
 in more detail. For example, this could be used to link some libraries
@@ -42,7 +46,7 @@ statically:
 	$ cc host.c bundles.o /usr/lib/libmono.a -lc -lrt
 .fi
 .PP
-You may also use mkbundle to generate a bundle you can use when
+You may also use \fImkbundle\fP to generate a bundle you can use when
 embedding the Mono runtime in a native application.  In that case, use
 both the -c and --nomain options.  The resulting host.c file will
 not have a main() function.  Call mono_mkbundle_init() before
@@ -71,7 +75,7 @@ $prefix/etc/mono/2.0/machine.config depending on the profile that you
 are using (1.0 or 2.0)
 .TP
 .I  "--nodeps"
-This is the default: mkbundle will only include the assemblies that
+This is the default: \fImkbundle\fP will only include the assemblies that
 were specified on the command line to reduce the size of the resulting
 image created.
 .TP
@@ -81,7 +85,7 @@ assemblies listed on the command line option.  This is useful to
 distribute a self-contained image.
 .TP
 .I "--keeptemp"
-By default mkbundle will delete the temporary files that it uses to
+By default \fImkbundle\fP will delete the temporary files that it uses to
 produce the bundle.  This option keeps the file around.
 .TP
 .I "--machine-config FILE"
@@ -95,7 +99,7 @@ With the -c option, generate the host stub without a main() function.
 When passed, DIR will be set for the MONO_CFG_DIR environment variable
 .TP
 .I "--static"
-By default mkbundle dynamically links to mono and glib.  This option
+By default \fImkbundle\fP dynamically links to mono and glib.  This option
 causes it to statically link instead.
 .TP
 .I "-z"
@@ -104,7 +108,7 @@ executable files, but increases startup time and requires zlib to be
 installed on the target system.
 .SH WINDOWS
 On Windows systems, it it necessary to have  Unix-like toolchain to be
-installed for mkbundle to work.  You can use cygwin's and install gcc,
+installed for \fImkbundle\fP to work.  You can use cygwin's and install gcc,
 gcc-mingw and as packages. 
 .SH ENVIRONMENT VARIABLES
 .TP
