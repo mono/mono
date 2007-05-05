@@ -39,14 +39,15 @@ class ResGen {
 	}
 
 	static void Usage () {
-		string Usage = @"Mono Resource Generator version 0.1
-Usage:
-		resgen source.ext [dest.ext]";
 #if NET_2_0
-		Usage += @"
-		resgen [options] /compile source.ext[,dest.resources] [...]";
+		string Usage = @"Mono Resource Generator version 1.2 for the 2.0 profile
+Usage:
+		resgen2 source.ext [dest.ext]
+		resgen2 [options] /compile source.ext[,dest.resources] [...]";
 #else
-		Usage += @"
+		string Usage = @"Mono Resource Generator version 1.2 for the 1.0 profile
+Usage:
+		resgen source.ext [dest.ext]
 		resgen /compile source.ext[,dest.resources] [...]";
 #endif
 		Usage += @"
@@ -56,12 +57,13 @@ The currently supported formats are: '.txt' '.resources' '.resx' '.po'.
 If the destination file is not specified, source.resources will be used.";
 #if NET_2_0
 		Usage += @"
+
 Options:
-/compile
+-compile, /compile
 	takes a list of .resX or .txt files to convert to .resources files
 	in one bulk operation, replacing .ext with .resources for the 
 	output file name (if not set).
-/useSourcePath
+-usesourcepath, /useSourcePath
 	to resolve relative file paths, use the directory of the resource 
 	file as current directory.";
 #else
