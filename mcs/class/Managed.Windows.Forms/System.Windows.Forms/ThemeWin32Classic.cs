@@ -2416,15 +2416,20 @@ namespace System.Windows.Forms
 			else
 				format.FormatFlags = StringFormatFlags.NoWrap;
 
+			if ((control.View == View.LargeIcon && !item.Focused)
+					|| control.View == View.Details 
+#if NET_2_0
+					|| control.View == View.Tile
+#endif
+			   )
+				format.Trimming = StringTrimming.EllipsisCharacter;
+
 			Rectangle highlight_rect = text_rect;
 			if (control.View == View.Details) { // Adjustments for Details view
 				Size text_size = Size.Ceiling (dc.MeasureString (item.Text, item.Font));
 
 				if (!control.FullRowSelect) // Selection shouldn't be outside the item bounds
 					highlight_rect.Width = Math.Min (text_size.Width + 4, text_rect.Width);
-
-				if (text_size.Width > text_rect.Width)
-					format.Trimming = StringTrimming.EllipsisCharacter;
 			}
 
 			if (item.Selected && control.Focused)

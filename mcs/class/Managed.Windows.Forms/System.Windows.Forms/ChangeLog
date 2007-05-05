@@ -1,3 +1,9 @@
+2007-05-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ThemeWin32Classic.cs: When drawing ListViewItems,
+	use StringTrimming.EllipsisCharacter if the view is Tile, Details,
+	or LargeIcon _and_ item is not focused (match .Net behaviour).
+
 2007-05-04  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Control.cs, Form.cs: Fix some obsolete method warnings.
