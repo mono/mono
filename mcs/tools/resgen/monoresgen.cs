@@ -40,12 +40,14 @@ class ResGen {
 
 	static void Usage () {
 #if NET_2_0
-		string Usage = @"Mono Resource Generator version 1.2 for the 2.0 profile
+		string Usage = @"Mono Resource Generator version " + Consts.MonoVersion +
+		    @" for the 2.0 profile
 Usage:
 		resgen2 source.ext [dest.ext]
 		resgen2 [options] /compile source.ext[,dest.resources] [...]";
 #else
-		string Usage = @"Mono Resource Generator version 1.2 for the 1.0 profile
+		string Usage = @"Mono Resource Generator version " + Consts.MonoVersion +
+		    @" for the 1.0 profile
 Usage:
 		resgen source.ext [dest.ext]
 		resgen /compile source.ext[,dest.resources] [...]";
