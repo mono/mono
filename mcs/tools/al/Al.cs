@@ -468,7 +468,7 @@ namespace Mono.AssemblyLinker
 		}
 
 		private void PrintVersion () {
-			Console.WriteLine ("Mono Assembly Linker (al.exe) version " + Assembly.GetExecutingAssembly ().GetName ().Version.ToString ());
+			Console.WriteLine ("Mono Assembly Linker (al.exe) version " + Consts.MonoVersion);
 		}
 
 		private void Version () {

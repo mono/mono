@@ -75,7 +75,7 @@ public class Driver
 
 	static void WriteLogo ()
 	{
-		Console.WriteLine ("Mono Web Service Discovery Tool");
+		Console.WriteLine ("Mono Web Service Discovery Tool " + Consts.MonoVersion);
 		Console.WriteLine ();
 	}
 	
