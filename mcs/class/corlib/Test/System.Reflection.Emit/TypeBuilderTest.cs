@@ -1844,6 +1844,14 @@ public class TypeBuilderTest : Assertion
 		tb.CreateType ();
 	}
 
+	[Test]
+	public void ParentNull () {
+		TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public, null);
+		Type t = tb.CreateType ();
+
+		AssertEquals (typeof (object), t.BaseType);
+	}
+
 #if NET_2_0
 	[Test]
 	public void GenericType ()
