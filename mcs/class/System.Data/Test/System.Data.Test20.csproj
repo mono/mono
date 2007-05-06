@@ -94,11 +94,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="System.Data.Common\DataAdapterTest.cs" />
     <Compile Include="System.Data.Common\DataColumnMappingCollectionTest.cs" />
     <Compile Include="System.Data.Common\DataTableMappingCollectionTest.cs" />
     <Compile Include="System.Data.Common\DbConnectionStringBuilderTest.cs" />
     <Compile Include="System.Data.Common\DBDataPermissionAttributeTest.cs" />
     <Compile Include="System.Data.Common\DbProviderFactoriesConfigurationHandlerTest.cs" />
+    <Compile Include="System.Data.SqlClient\SqlConnectionStringBuilderTest.cs" />
     <Compile Include="System.Data.SqlTypes\SqlBinaryTest.cs" />
     <Compile Include="System.Data.SqlTypes\SqlBooleanTest.cs" />
     <Compile Include="System.Data.SqlTypes\SqlBytesTest.cs" />
@@ -115,6 +117,7 @@
     <Compile Include="System.Data.SqlTypes\SqlSingleTest.cs" />
     <Compile Include="System.Data.SqlTypes\SqlStringTest.cs" />
     <Compile Include="System.Data.Test.Utils\DataProvider.cs" />
+    <Compile Include="System.Data\BinarySerializationTest.cs" />
     <Compile Include="System.Data\ConstraintCollectionTest.cs" />
     <Compile Include="System.Data\ConstraintCollectionTest2.cs" />
     <Compile Include="System.Data\ConstraintExceptionTest.cs" />
@@ -146,10 +149,14 @@
     <Compile Include="System.Data\DataTableCollectionTest2.cs" />
     <Compile Include="System.Data\DataTableLoadRowTest.cs" />
     <Compile Include="System.Data\DataTableReaderTest.cs" />
+    <Compile Include="System.Data\DataTableReadWriteXmlTest.cs" />
+    <Compile Include="System.Data\DataTableReadXmlSchemaTest.cs" />
     <Compile Include="System.Data\DataTableTest.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="System.Data\DataTableTest2.cs" />
+    <Compile Include="System.Data\DataTableTest3.cs" />
+    <Compile Include="System.Data\DataTableTest4.cs" />
     <Compile Include="System.Data\DataViewManagerTest.cs" />
     <Compile Include="System.Data\DataViewTest.cs" />
     <Compile Include="System.Data\DataViewTest2.cs" />

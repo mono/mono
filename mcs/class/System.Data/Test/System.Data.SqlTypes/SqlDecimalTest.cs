@@ -141,9 +141,6 @@ namespace MonoTests.System.Data.SqlTypes
 
                 // Test properties
 		[Test]
-#if TARGET_JVM
-		[Ignore ("TD #7285")]
-#endif
                 public void Properties()
                 {
                 	byte[] b = Test1.BinData;
@@ -249,9 +246,6 @@ namespace MonoTests.System.Data.SqlTypes
                 }
 
 		[Test]
-#if TARGET_JVM
-		[Ignore ("TD #7285")]
-#endif
 		public void AdjustScale()
 		{
 			Assert.AreEqual ("6464.646400", SqlDecimal.AdjustScale (Test1, 2, false).Value.ToString (), "#E01");
@@ -266,9 +260,6 @@ namespace MonoTests.System.Data.SqlTypes
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Ignore ("TD #7285")]
-#endif
 		public void ConvertToPrecScale()
 		{
 			Assert.AreEqual (new SqlDecimal(6464.6m).Value, SqlDecimal.ConvertToPrecScale (Test1, 5, 1).Value, "#F01");

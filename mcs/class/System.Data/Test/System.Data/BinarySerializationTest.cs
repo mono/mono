@@ -113,6 +113,9 @@ public class BinarySerializationTest
 		dt.Rows[1].RejectChanges();
 	}
 	[Test]
+#if TARGET_JVM
+	[Ignore ("Net Binary formatting is not supported for DataSet")]
+#endif
 	public void DataTableSerializationTest2 ()
 	{
 		//Serialize Table
@@ -199,6 +202,9 @@ public class BinarySerializationTest
 			
 	}
 	[Test]
+#if TARGET_JVM
+	[Ignore ("Net Binary formatting is not supported for DataSet")]
+#endif
 	public void Test_With_Null_Values2 ()
 	{
 	 	//Serialize Table
@@ -376,6 +382,9 @@ public class BinarySerializationTest
 		
 	}
 	[Test]
+#if TARGET_JVM
+	[Ignore ("Net Binary formatting is not supported for DataSet")]
+#endif
 	public void DataSetSerializationTest2 ()
 	{
 		DataSet ds = new DataSet ();
@@ -572,6 +581,9 @@ public class BinarySerializationTest
 			Assert.AreEqual (ds.Relations [i].RelationName, ds.Relations [i].RelationName, "#9 Relation : {0} differs", ds.Relations [i]);
 	}
 	[Test]
+#if TARGET_JVM
+	[Ignore ("Net Binary formatting is not supported for DataSet")]
+#endif
 	public void Constraint_Relations_Test2 ()
 	{
 		//Serialize DataSet
