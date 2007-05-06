@@ -1,5 +1,7 @@
 2007-05-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* TypeBuilder.cs (CreateType): Fix build.
+	
 	* TypeBuilder.cs (.ctor): Convert null parent to typeof (object). Fixes #81530.
 
 	* TypeBuilder.cs (UnderlyingSystemType): Remove commented out code.

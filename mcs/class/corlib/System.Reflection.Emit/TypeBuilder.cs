@@ -132,9 +132,8 @@ namespace System.Reflection.Emit {
 				this.interfaces = new Type[interfaces.Length];
 				System.Array.Copy (interfaces, this.interfaces, interfaces.Length);
 			}
-			if (!IsInterface && parent == null)
-				this.parent = mb.assemblyb.corlib_object_type;
 			pmodule = mb;
+
 			// skip .<Module> ?
 			table_idx = mb.get_next_table_index (this, 0x02, true);
 			setup_internal_class (this);
@@ -664,6 +663,10 @@ namespace System.Reflection.Emit {
 			/* handle nesting_type */
 			if (created != null)
 				return created;
+
+			if (!IsInterface && (parent == null) && (this != pmodule.assemblyb.corlib_object_type) && (FullName != "<Module>")) {
+				SetParent (pmodule.assemblyb.corlib_object_type);
+			}
 
 			create_generic_class ();
 
@@ -1356,7 +1359,7 @@ namespace System.Reflection.Emit {
 
 			if (parentType == null && (attrs & TypeAttributes.Interface) == 0)
 				throw new ArgumentNullException ("parentType");
-			
+
 			parent = parentType;
 			// will just set the parent-related bits if called a second time
 			setup_internal_class (this);
