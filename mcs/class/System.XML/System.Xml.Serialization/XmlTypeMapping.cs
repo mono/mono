@@ -150,17 +150,16 @@ namespace System.Xml.Serialization
 			set { isNullable = value; }
 		}
 
-		internal XmlTypeMapping GetRealTypeMap (string objectFullTypeName)
+		internal XmlTypeMapping GetRealTypeMap (Type objectType)
 		{
 			if (TypeData.SchemaType == SchemaTypes.Enum)
 				return this;
 
 			// Returns the map for a subtype of this map's type
-			objectFullTypeName = objectFullTypeName.Replace ('+','.');
-			if (TypeFullName == objectFullTypeName) return this;
+			if (TypeData.Type == objectType) return this;
 			for (int n=0; n<_derivedTypes.Count; n++) {
 				XmlTypeMapping map = (XmlTypeMapping) _derivedTypes[n];
-				if (map.TypeFullName == objectFullTypeName) return map;
+				if (map.TypeData.Type == objectType) return map;
 			}
 			
 			return null;

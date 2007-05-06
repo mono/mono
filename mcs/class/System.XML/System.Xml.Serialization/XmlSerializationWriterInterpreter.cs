@@ -128,7 +128,7 @@ namespace System.Xml.Serialization
 				return;
 			}
 
-			XmlTypeMapping map = typeMap.GetRealTypeMap (ob.GetType().FullName);
+			XmlTypeMapping map = typeMap.GetRealTypeMap (ob.GetType());
 
 			if (map == null) 
 			{
