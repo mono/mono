@@ -198,7 +198,7 @@ namespace System.Configuration
 		}
 		internal static string GetMachineConfigPath ()
 		{
-			return "/META-INF/machine.config";
+			return System.Runtime.InteropServices.RuntimeEnvironment.SystemConfigurationFile;
 		}
 #else
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
