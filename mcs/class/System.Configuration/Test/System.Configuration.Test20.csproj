@@ -87,6 +87,7 @@
     <Compile Include="System.Configuration\ConfigurationLockCollectionTest.cs" />
     <Compile Include="System.Configuration\ConfigurationManagerTest.cs" />
     <Compile Include="System.Configuration\ConfigurationPermissionTest.cs" />
+    <Compile Include="System.Configuration\ConfigurationPropertyTest.cs" />
     <Compile Include="System.Configuration\ConnectionStringSettingsTest.cs" />
     <Compile Include="System.Configuration\DefaultValidatorTest.cs" />
     <Compile Include="System.Configuration\ExeConfigurationFileMapTest.cs" />

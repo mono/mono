@@ -112,9 +112,6 @@ namespace MonoTests.System.Configuration {
 
 		[Test]
 		[ExpectedException (typeof (NullReferenceException))]
-#if TARGET_JVM
-		[Category ("NotWorking")]
-#endif
 		public void ConvertTo_NullError ()
 		{
 			TimeSpanMinutesConverter cv = new TimeSpanMinutesConverter ();
