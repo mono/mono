@@ -317,8 +317,10 @@ namespace System.Web.UI.WebControls
 		public string Text {
 			get {
 				object o = ViewState ["Text"];
+				if (o == null)
+					o = ViewState ["Value"];
 				if (o != null) return (string)o;
-				return "";
+				return String.Empty;
 			}
 			set {
 				ViewState ["Text"] = value;
@@ -343,8 +345,10 @@ namespace System.Web.UI.WebControls
 		public string Value {
 			get {
 				object o = ViewState ["Value"];
+				if (o == null)
+					o = ViewState ["Text"];
 				if(o != null) return (string)o;
-				return "";
+				return String.Empty;
 			}
 			set {
 				ViewState ["Value"] = value;
@@ -651,24 +655,20 @@ namespace System.Web.UI.WebControls
 					Target = bin.Target;
 					
 				// Bind Text property
-					
+				string text = null;
 				if (bin.TextField.Length > 0) {
-					Text = Convert.ToString (GetBoundPropertyValue (bin.TextField));
+					text = Convert.ToString (GetBoundPropertyValue (bin.TextField));
 					if (bin.FormatString.Length > 0)
-						Text = string.Format (bin.FormatString, Text);
-					if (Text.Length == 0)
-						Text = bin.Text;
-					if (Text.Length == 0)
-						Text = bin.Value;
-					if (Text.Length == 0 && bin.ValueField.Length > 0)
-						Text = Convert.ToString (GetBoundPropertyValue (bin.ValueField));
+						text = string.Format (bin.FormatString, text);
 				}
-				else if (bin.Text.Length > 0)
-					Text = bin.Text;
-				else if (bin.Value.Length > 0)
-					Text = bin.Value;
-				else
-					Text = GetDefaultBoundText ();
+				if (String.IsNullOrEmpty (text)) {
+					if (bin.Text.Length > 0)
+						text = bin.Text;
+					else if (bin.Value.Length > 0)
+						text = bin.Value;
+				}
+				if (!String.IsNullOrEmpty (text))
+					Text = text;
 					
 				// Bind ToolTip property
 
@@ -681,35 +681,29 @@ namespace System.Web.UI.WebControls
 					ToolTip = bin.ToolTip;
 					
 				// Bind Value property
-
+				string value = null;
 				if (bin.ValueField.Length > 0) {
-					Value = Convert.ToString (GetBoundPropertyValue (bin.ValueField));
-					if (Value.Length == 0)
-						Value = bin.Value;
-					if (Value.Length == 0)
-						Value = bin.Text;
-					if(Value.Length == 0 && bin.TextField.Length > 0)
-						Value = Convert.ToString (GetBoundPropertyValue (bin.TextField));
+					value = Convert.ToString (GetBoundPropertyValue (bin.ValueField));
 				}
-				else if (bin.Value.Length > 0)
-					Value = bin.Value;
-				else if (bin.Text.Length > 0)
-					Value = bin.Text;
-				else if (Text.Length > 0)
-					Value = Text;
-				else
-					Value = GetDefaultBoundText ();
-			} else {
+				if (String.IsNullOrEmpty (value)) {
+					if (bin.Value.Length > 0)
+						value = bin.Value;
+					else if (bin.Text.Length > 0)
+						value = bin.Text;
+				}
+				if (!String.IsNullOrEmpty (value))
+					Value = value;
+			}
+			else {
 				Text = Value = GetDefaultBoundText ();
 			}
 
 			INavigateUIData navigateUIData = hierarchyData as INavigateUIData;
 			if (navigateUIData != null) {
+				SelectAction = TreeNodeSelectAction.None;
 				Text = navigateUIData.ToString ();
-				string url = navigateUIData.NavigateUrl;
-				NavigateUrl = url;
-				if (String.IsNullOrEmpty (url))
-					SelectAction = TreeNodeSelectAction.None;
+				NavigateUrl = navigateUIData.NavigateUrl;
+				ToolTip = navigateUIData.Description;
 			}
 		}
 		

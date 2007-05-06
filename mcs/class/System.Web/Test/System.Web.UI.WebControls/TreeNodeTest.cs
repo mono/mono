@@ -241,6 +241,30 @@ namespace MonoTests.System.Web.UI.WebControls {
 			node.ToggleExpandState ();
 			Assert.AreEqual (false, node.Expanded, "TreeNode_ToggleExpandState#3");
 		}
+
+		[Test]
+		public void TreeNode_TextValue1 ()
+		{
+			TreeNode node = new TreeNode ();
+			node.Text = "TTT";
+			Assert.AreEqual ("TTT", node.Value, "TreeNode_TextValue1#1");
+			node.Value = "";
+			Assert.AreEqual ("", node.Value, "TreeNode_TextValue1#2");
+			node.Value = null;
+			Assert.AreEqual ("TTT", node.Value, "TreeNode_TextValue1#3");
+		}
+
+		[Test]
+		public void TreeNode_TextValue2 ()
+		{
+			TreeNode node = new TreeNode ();
+			node.Value = "VVV";
+			Assert.AreEqual ("VVV", node.Text, "TreeNode_TextValue2#1");
+			node.Text = "";
+			Assert.AreEqual ("", node.Text, "TreeNode_TextValue2#2");
+			node.Text = null;
+			Assert.AreEqual ("VVV", node.Text, "TreeNode_TextValue2#3");
+		}
 	}
 }
 

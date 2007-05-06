@@ -486,6 +486,12 @@ namespace MonoTests.System.Web.UI.WebControls {
 
 			Assert.AreEqual ("value#default", m.Nodes[0].ChildNodes[9].Text, "CheckTreeNodes_Extra5#1");
 			Assert.AreEqual ("value#extra5", m.Nodes[0].ChildNodes[9].Value, "CheckTreeNodes_Extra5#2");
+
+			m.Nodes [0].ChildNodes [5].Text = "TTT";
+			Assert.AreEqual ("TTT", m.Nodes [0].ChildNodes [5].Value, "");
+			
+			m.Nodes [0].ChildNodes [6].Value = "VVV";
+			Assert.AreEqual ("VVV", m.Nodes [0].ChildNodes [6].Text, "");
 		}
 
 		void SetDataBindings (TreeView tv) {

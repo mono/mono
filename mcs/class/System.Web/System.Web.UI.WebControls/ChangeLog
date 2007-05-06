@@ -1,3 +1,9 @@
+2007-05-06 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* TreeNode.cs: fixed: 
+	when 'Value' property is not set, value of 'Text' property is used 
+	instead and vice versa.
+
 2007-05-04  Marek Habersack  <mhabersack@novell.com>
 
 	* AdRotator.cs: use the new GetPhysicalFilePath method to look up
