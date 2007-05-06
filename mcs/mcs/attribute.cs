@@ -663,7 +663,7 @@ namespace Mono.CSharp {
 		public string GetValidTargets ()
 		{
 			StringBuilder sb = new StringBuilder ();
-			AttributeTargets targets = GetAttributeUsage ().ValidOn;
+			AttributeTargets targets = GetAttributeUsage (Type).ValidOn;
 
 			if ((targets & AttributeTargets.Assembly) != 0)
 				sb.Append ("assembly, ");
@@ -715,32 +715,37 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
-		/// Returns AttributeUsage attribute for this type
+		/// Returns AttributeUsage attribute based on types hierarchy
 		/// </summary>
-		AttributeUsageAttribute GetAttributeUsage ()
+		static AttributeUsageAttribute GetAttributeUsage (Type type)
 		{
-			AttributeUsageAttribute ua = usage_attr_cache [Type] as AttributeUsageAttribute;
+			AttributeUsageAttribute ua = usage_attr_cache [type] as AttributeUsageAttribute;
 			if (ua != null)
 				return ua;
 
-			Class attr_class = TypeManager.LookupClass (Type);
+			Class attr_class = TypeManager.LookupClass (type);
 
 			if (attr_class == null) {
-				object[] usage_attr = Type.GetCustomAttributes (TypeManager.attribute_usage_type, true);
+				object[] usage_attr = type.GetCustomAttributes (TypeManager.attribute_usage_type, true);
 				ua = (AttributeUsageAttribute)usage_attr [0];
-				usage_attr_cache.Add (Type, ua);
+				usage_attr_cache.Add (type, ua);
 				return ua;
 			}
 
-			Attribute a = attr_class.OptAttributes == null
-				? null
-				: attr_class.OptAttributes.Search (TypeManager.attribute_usage_type);
+			Attribute a = null;
+			if (attr_class.OptAttributes != null)
+				a = attr_class.OptAttributes.Search (TypeManager.attribute_usage_type);
 
-			ua = a == null
-				? DefaultUsageAttribute 
-				: a.GetAttributeUsageAttribute ();
+			if (a == null) {
+				if (attr_class.TypeBuilder.BaseType != TypeManager.attribute_type)
+					ua = GetAttributeUsage (attr_class.TypeBuilder.BaseType);
+				else
+					ua = DefaultUsageAttribute;
+			} else {
+				ua = a.GetAttributeUsageAttribute ();
+			}
 
-			usage_attr_cache.Add (Type, ua);
+			usage_attr_cache.Add (type, ua);
 			return ua;
 		}
 
@@ -1185,7 +1190,7 @@ namespace Mono.CSharp {
 			if (cb == null)
 				return;
 
-			AttributeUsageAttribute usage_attr = GetAttributeUsage ();
+			AttributeUsageAttribute usage_attr = GetAttributeUsage (Type);
 			if ((usage_attr.ValidOn & Target) == 0) {
 				Report.Error (592, Location, "The attribute `{0}' is not valid on this declaration type. " +
 					      "It is valid on `{1}' declarations only",
@@ -1438,7 +1443,8 @@ namespace Mono.CSharp {
 					Report.SymbolRelatedToPreviousError (collision.Location, "");
 
 				Attribute a = (Attribute)d.Key;
-				Report.Error (579, a.Location, "The attribute `{0}' cannot be applied multiple times", a.GetSignatureForError ());
+				Report.Error (579, a.Location, "The attribute `{0}' cannot be applied multiple times",
+					a.GetSignatureForError ());
 			}
 		}
 
