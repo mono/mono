@@ -279,6 +279,7 @@ namespace Mono.CSharp
 %token OP_XOR_ASSIGN          "^="
 %token OP_OR_ASSIGN           "|="
 %token OP_PTR                 "->"
+%token OP_COALESCING          "??"
 
 /* Numbers */
 %token LITERAL_INTEGER           "int literal"
@@ -3847,9 +3848,9 @@ conditional_expression
 	  {
 		$$ = new Conditional ((Expression) $1, (Expression) $3, (Expression) $5);
 	  }
-	| conditional_or_expression INTERR INTERR expression
+	| conditional_or_expression OP_COALESCING expression
 	  {
-		$$ = new Nullable.NullCoalescingOperator ((Expression) $1, (Expression) $4, lexer.Location);
+		$$ = new Nullable.NullCoalescingOperator ((Expression) $1, (Expression) $3, lexer.Location);
 	  }
 	// We'll be resolved into a `parenthesized_expression_0' later on.
 	| conditional_or_expression INTERR CLOSE_PARENS

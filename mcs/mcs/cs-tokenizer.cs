@@ -887,6 +887,13 @@ namespace Mono.CSharp
 				val = Location;
 				return Token.TILDE;
 			case '?':
+#if GMCS_SOURCE
+				d = peek_char ();
+				if (d == '?') {
+					get_char ();
+					return Token.OP_COALESCING;
+				}
+#endif
 				return Token.INTERR;
 			}
 #if GMCS_SOURCE
