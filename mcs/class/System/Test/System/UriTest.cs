@@ -640,10 +640,12 @@ namespace MonoTests.System
 			AssertEquals ("#7e", "/", uri.AbsolutePath);
 			AssertEquals ("#7f", "/", uri.PathAndQuery);
 			AssertEquals ("#7g", "file://one_file.txt/", uri.GetLeftPart (UriPartial.Path));
+#if !TARGET_JVM
 			if (isWin32)
 				AssertEquals ("#7b", "\\\\one_file.txt\\", uri.LocalPath);
 			else
 				AssertEquals ("#7b", "/", uri.LocalPath);
+#endif
 			AssertEquals ("#7c", "file", uri.Scheme);
 			AssertEquals ("#7d", "one_file.txt", uri.Host);
 		}
