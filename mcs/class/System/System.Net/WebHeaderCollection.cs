@@ -113,7 +113,14 @@ namespace System.Net
 		protected WebHeaderCollection (SerializationInfo serializationInfo, 
 					       StreamingContext streamingContext)
 		{
-			int count = serializationInfo.GetInt32("Count");
+			int count;
+
+			try {
+				count = serializationInfo.GetInt32("Count");
+			} catch (SerializationException){
+				count = serializationInfo.GetInt32("count");
+			}
+			
 			for (int i = 0; i < count; i++) 
 				this.Add (serializationInfo.GetString (i.ToString ()),
 					serializationInfo.GetString ((count + i).ToString ()));
