@@ -1,3 +1,9 @@
+2007-05-07 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* MenuItem.cs: fixed: 
+	when 'Value' property is not set, value of 'Text' property is used 
+	instead and vice versa.
+
 2007-05-06 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* TreeNode.cs: fixed: 

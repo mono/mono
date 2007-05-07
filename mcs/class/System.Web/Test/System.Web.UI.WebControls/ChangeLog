@@ -1,3 +1,8 @@
+2007-05-07 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* MenuTest.cs:
+	new tests were added.	
+
 2007-05-06 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* TreeNodeTest.cs:

@@ -1544,6 +1544,30 @@ namespace MonoTests.System.Web.UI.WebControls
 			m.Items [0].ChildItems.Add (new MenuItem ());
 			m.Items [0].ChildItems [0].ChildItems.Add (new MenuItem ());
 		}
+
+		[Test]
+		public void MenuItem_TextValue1 ()
+		{
+			MenuItem item = new MenuItem ();
+			item.Text = "TTT";
+			Assert.AreEqual ("TTT", item.Value, "MenuItem_TextValue1#1");
+			item.Value = "";
+			Assert.AreEqual ("", item.Value, "MenuItem_TextValue1#2");
+			item.Value = null;
+			Assert.AreEqual ("TTT", item.Value, "MenuItem_TextValue1#3");
+		}
+
+		[Test]
+		public void MenuItem_TextValue2 ()
+		{
+			MenuItem item = new MenuItem ();
+			item.Value = "VVV";
+			Assert.AreEqual ("VVV", item.Text, "MenuItem_TextValue2#1");
+			item.Text = "";
+			Assert.AreEqual ("", item.Text, "MenuItem_TextValue2#2");
+			item.Text = null;
+			Assert.AreEqual ("VVV", item.Text, "MenuItem_TextValue2#3");
+		}
 	}
 }
 #endif

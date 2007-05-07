@@ -218,7 +218,12 @@ namespace System.Web.UI.WebControls
 		[DefaultValue ("")]
 		public string Text {
 			get {
-				return ViewState ["Text"] == null ? String.Empty : (String) ViewState ["Text"];
+				object o = ViewState ["Text"];
+				if (o == null)
+					o = ViewState ["Value"];
+				if (o != null)
+					return (string) o;
+				return String.Empty;
 			}
 			set {
 				ViewState ["Text"] = value;
@@ -240,7 +245,12 @@ namespace System.Web.UI.WebControls
 		[DefaultValue ("")]
 		public string Value {
 			get {
-				return ViewState ["Value"] == null ? String.Empty : (String) ViewState ["Value"];
+				object o = ViewState ["Value"];
+				if (o == null)
+					o = ViewState ["Text"];
+				if (o != null)
+					return (string) o;
+				return String.Empty;
 			}
 			set {
 				ViewState ["Value"] = value;
@@ -502,38 +512,36 @@ namespace System.Web.UI.WebControls
 					ToolTip = bin.ToolTip;
 
 				// Bind Value property
-
+				string value = null;
 				if (bin.ValueField.Length > 0) {
-					Value = Convert.ToString (GetBoundPropertyValue (bin.ValueField));
-					if (Value.Length == 0)
-						Value = bin.Value;
-					if (Value.Length == 0)
-						Value = bin.Text;
+					value = Convert.ToString (GetBoundPropertyValue (bin.ValueField));
 				}
-				else if (bin.Value.Length > 0)
-					Value = bin.Value;
-				else if (bin.Text.Length > 0)
-					Value = bin.Text;
-				else
-					Value = GetDefaultBoundText ();
-				
-				// Bind Text property
+				if (String.IsNullOrEmpty (value)) {
+					if (bin.Value.Length > 0)
+						value = bin.Value;
+					else if (bin.Text.Length > 0)
+						value = bin.Text;
+					else
+						value = String.Empty;
+				}
+				Value = value;
 
+				// Bind Text property
+				string text = null;
 				if (bin.TextField.Length > 0) {
-					Text = Convert.ToString (GetBoundPropertyValue (bin.TextField));
+					text = Convert.ToString (GetBoundPropertyValue (bin.TextField));
 					if (bin.FormatString.Length > 0)
-						Text = string.Format (bin.FormatString, Text);
-					if (Text.Length == 0)
-						Text = bin.Text;
-					if (Text.Length == 0)
-						Text = bin.Value;
+						text = string.Format (bin.FormatString, text);
 				}
-				else if (bin.Text.Length > 0)
-					Text = bin.Text;
-				else if (bin.Value.Length > 0)
-					Text = bin.Value;
-				else
-					Text = GetDefaultBoundText ();
+				if (String.IsNullOrEmpty (text)) {
+					if (bin.Text.Length > 0)
+						text = bin.Text;
+					else if (bin.Value.Length > 0)
+						text = bin.Value;
+					else
+						text = String.Empty;
+				}
+				Text = text;
 
 			}
 			else {
