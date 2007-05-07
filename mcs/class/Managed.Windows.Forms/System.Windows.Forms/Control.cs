@@ -320,6 +320,13 @@ namespace System.Windows.Forms
 			public void NotifyClients(AccessibleEvents accEvent, int childID) {
 			}
 
+#if NET_2_0
+			[MonoTODO ("Implement this")]
+			public void NotifyClients (AccessibleEvents accEvent, int objectID, int childID)
+			{
+			}
+
+#endif
 			public override string ToString() {
 				return "ControlAccessibleObject: Owner = " + owner.ToString() + ", Text: " + owner.text;
 			}
@@ -2755,6 +2762,13 @@ namespace System.Windows.Forms
 			}
 		}
 
+#if NET_2_0
+		[MonoNotSupported ("RTL is not supported")]
+		public bool IsMirrored {
+			get { return false; }
+		}
+#endif
+
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 #if NET_2_0
@@ -3104,6 +3118,18 @@ namespace System.Windows.Forms
 			}
 		}
 
+#if NET_2_0
+		public bool UseWaitCursor {
+			get { return Cursor == Cursors.WaitCursor; }
+			set {
+				if (value)
+					Cursor = Cursors.WaitCursor;
+				else
+					Cursor = Cursors.Default;
+			}
+		}
+#endif
+
 		[Localizable(true)]
 		[MWFCategory("Behavior")]
 		public bool Visible {
@@ -3145,6 +3171,14 @@ namespace System.Windows.Forms
 		#endregion	// Public Instance Properties
 
 		#region	Protected Instance Properties
+#if NET_2_0
+		// XXX - override once exists in System.Component
+		// Is only false in some ActiveX contexts
+		protected bool CanRaiseEvents {
+			get { return true; }
+		}
+#endif
+
 		protected virtual CreateParams CreateParams {
 			get {
 				CreateParams create_params = new CreateParams();
