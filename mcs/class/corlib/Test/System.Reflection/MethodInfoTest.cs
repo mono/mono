@@ -29,6 +29,7 @@
 
 using NUnit.Framework;
 using System;
+using System.Threading;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
@@ -153,6 +154,23 @@ namespace MonoTests.System.Reflection
 		{
 			out1 = null;
 		}
+
+#if NET_2_0
+		[Test]
+		public void InvokeThreadAbort () {
+			MethodInfo method = typeof (MethodInfoTest).GetMethod ("AbortIt");
+			try {
+				method.Invoke (null, new object [0]);
+			}
+			catch (ThreadAbortException ex) {
+				Thread.ResetAbort ();
+			}
+		}
+
+		public static void AbortIt () {
+			Thread.CurrentThread.Abort ();
+		}
+#endif			
 
 		[Test] // bug #76541
 		public void ToStringByRef ()

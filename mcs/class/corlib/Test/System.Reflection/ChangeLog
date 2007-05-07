@@ -1,3 +1,7 @@
+2007-05-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* MethodInfoTest.cs: Add test case for #81538.
+
 2007-05-01  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ConstructorInfoTest.cs: Added tests for Invoke.
