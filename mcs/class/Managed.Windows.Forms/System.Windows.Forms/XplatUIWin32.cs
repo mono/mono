@@ -782,7 +782,7 @@ namespace System.Windows.Forms {
 
 			wnd_proc = new WndProc(InternalWndProc);
 
-			FosterParent=Win32CreateWindow((int)WindowExStyles.WS_EX_TOOLWINDOW, "static", "Foster Parent Window", (int)WindowStyles.WS_OVERLAPPEDWINDOW, 0, 0, 0, 0, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
+			FosterParent=Win32CreateWindow(WindowExStyles.WS_EX_TOOLWINDOW, "static", "Foster Parent Window", WindowStyles.WS_OVERLAPPEDWINDOW, 0, 0, 0, 0, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
 
 			if (FosterParent==IntPtr.Zero) {
 				Win32MessageBox(IntPtr.Zero, "Could not create foster window, win32 error " + Win32GetLastError().ToString(), "Oops", 0);
@@ -1332,7 +1332,7 @@ namespace System.Windows.Forms {
 			string class_name = RegisterWindowClass (cp.ClassStyle);
 			HwndCreating = hwnd;
 
-			WindowHandle = Win32CreateWindow ((uint)cp.ExStyle, class_name, cp.Caption, (uint)cp.Style, cp.X, cp.Y, cp.Width, cp.Height, ParentHandle, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
+			WindowHandle = Win32CreateWindow (cp.WindowExStyle, class_name, cp.Caption, cp.WindowStyle, cp.X, cp.Y, cp.Width, cp.Height, ParentHandle, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
 
 			HwndCreating = null;
 
@@ -2905,7 +2905,7 @@ namespace System.Windows.Forms {
 		private extern static uint Win32GetLastError();
 
 		[DllImport ("user32.dll", EntryPoint="CreateWindowExW", CharSet=CharSet.Unicode, CallingConvention=CallingConvention.StdCall)]
-		internal extern static IntPtr Win32CreateWindow(uint dwExStyle, string lpClassName, string lpWindowName, uint dwStyle, int x, int y, int nWidth, int nHeight, IntPtr hWndParent, IntPtr hMenu, IntPtr hInstance, IntPtr lParam);
+		internal extern static IntPtr Win32CreateWindow(WindowExStyles dwExStyle, string lpClassName, string lpWindowName, WindowStyles dwStyle, int x, int y, int nWidth, int nHeight, IntPtr hWndParent, IntPtr hMenu, IntPtr hInstance, IntPtr lParam);
 
 		[DllImport ("user32.dll", EntryPoint="DestroyWindow", CallingConvention=CallingConvention.StdCall)]
 		internal extern static bool Win32DestroyWindow(IntPtr hWnd);

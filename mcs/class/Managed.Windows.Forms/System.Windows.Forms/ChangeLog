@@ -1,3 +1,17 @@
+2007-05-07  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* XplatUIWin32.cs: Changed Win32CreateWindow to take enums instead of
+	  uints.
+	* Form.cs: CreateParams: don't set WS_VISIBLE if we're changing
+	  visibility. We can't create forms visible, since we have to set the
+	  owner before making the form visible (otherwise Win32 will do
+	  strange things with task bar icons). The problem is that we set the
+	  internal is_visible to true before creating the control, so
+	  is_changing_visible_state is the only way of determining if we're
+	  in the process of creating the form due to setting Visible=true -
+	  this works because SetVisibleCore explicitly makes the form
+	  visibile afterwards anyways. Fixes #80775.
+
 2007-05-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ThemeWin32Classic.cs: When drawing ListViewItems,

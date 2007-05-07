@@ -1316,7 +1316,14 @@ namespace System.Windows.Forms {
 					cp.ExStyle |= (int)WindowExStyles.WS_EX_CONTEXTHELP;
 				}
 
-				if (VisibleInternal || this.IsRecreating)
+				//don't set WS_VISIBLE if we're changing visibility. We can't create forms visible, 
+				//since we have to set the owner before making the form visible 
+				//(otherwise Win32 will do strange things with task bar icons). 
+				//The problem is that we set the internal is_visible to true before creating the control, 
+				//so is_changing_visible_state is the only way of determining if we're 
+				//in the process of creating the form due to setting Visible=true.
+				//This works because SetVisibleCore explicitly makes the form visibile afterwards anyways.
+				if ((VisibleInternal && !is_changing_visible_state) || this.IsRecreating)
 					cp.Style |= (int)WindowStyles.WS_VISIBLE;
 
 				if (opacity < 1.0 || TransparencyKey != Color.Empty) {
