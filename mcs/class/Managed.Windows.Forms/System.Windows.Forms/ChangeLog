@@ -1,3 +1,9 @@
+2007-05-07  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStrip.cs: Do not call BeginMerge on DropDowns.
+	* ToolStripManager.cs: Call Merge on DropDowns.
+	[Fixes bug #81477]
+
 2007-05-07  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* XplatUIWin32.cs: Changed Win32CreateWindow to take enums instead of

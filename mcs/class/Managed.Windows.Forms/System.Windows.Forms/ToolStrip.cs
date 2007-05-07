@@ -1512,10 +1512,6 @@ namespace System.Windows.Forms
 				foreach (ToolStripItem tsi in this.Items)
 					this.pre_merge_items.Add (tsi);
 				}
-				
-				if (this is MenuStrip)
-					foreach (ToolStripMenuItem tsmi in this.Items)
-						tsmi.DropDown.BeginMerge ();
 			}
 		}
 		

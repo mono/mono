@@ -305,8 +305,7 @@ namespace System.Windows.Forms
 									ToolStripMenuItem source = (ToolStripMenuItem)tsi;
 									ToolStripMenuItem target = (ToolStripMenuItem)target_tsi;
 									
-									while (source.DropDownItems.Count > 0)
-										ToolStrip.SetItemParent (source.DropDownItems[0], target.DropDown);
+									ToolStripManager.Merge (source.DropDown, target.DropDown);
 								}
 								
 								break;

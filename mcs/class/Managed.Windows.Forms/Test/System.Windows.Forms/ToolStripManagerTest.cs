@@ -503,6 +503,31 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual ("Open 2", tsmi2.DropDownItems[1].Text, "M12-4");
 		}
 
+		[Test]  // For bug #81477
+		public void MethodMergeRecursive ()
+		{
+			MenuStrip ms1 = new MenuStrip ();
+			MenuStrip ms2 = new MenuStrip ();
+
+			ToolStripMenuItem tsmi1 = (ToolStripMenuItem)ms1.Items.Add ("File");
+			ToolStripMenuItem tsmi2 = (ToolStripMenuItem)ms2.Items.Add ("File");
+
+			tsmi1.DropDownItems.Add ("New 1");
+			tsmi1.DropDownItems.Add ("Open 1");
+
+			tsmi2.DropDownItems.Add ("New 2");
+			tsmi2.DropDownItems.Add ("Open 2");
+			
+			tsmi2.DropDownItems[0].MergeAction = MergeAction.Insert;
+			tsmi2.DropDownItems[0].MergeIndex = 0;
+
+			tsmi2.MergeAction = MergeAction.MatchOnly;
+
+			ToolStripManager.Merge (ms2, ms1);
+
+			Assert.AreEqual ("New 2", tsmi1.DropDownItems[0].Text, "M13");
+		}
+		
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void MethodMergeANE1 ()
