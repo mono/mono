@@ -2557,7 +2557,8 @@ namespace System.Windows.Forms {
 
 			if (obj == null) {
 				// Just clear it
-				Win32EmptyClipboard();
+				if (!Win32EmptyClipboard())
+					throw new ExternalException("Win32EmptyClipboard");
 				return;
 			}
 
@@ -2571,18 +2572,21 @@ namespace System.Windows.Forms {
 
 			if (type == DataFormats.GetFormat(DataFormats.Rtf).Id) {
 				hmem = Marshal.StringToHGlobalAnsi((string)obj);
-				Win32SetClipboardData((uint)type, hmem);
+				if (Win32SetClipboardData((uint)type, hmem) == IntPtr.Zero )
+					throw new ExternalException("Win32SetClipboardData");
 				return;
 			} else switch((ClipboardFormats)type) {
 				case ClipboardFormats.CF_UNICODETEXT: {
 					hmem = Marshal.StringToHGlobalUni((string)obj);
-					Win32SetClipboardData((uint)type, hmem);
+					if (Win32SetClipboardData((uint)type, hmem) == IntPtr.Zero)
+						throw new ExternalException("Win32SetClipboardData");
 					return;
 				}
 
 				case ClipboardFormats.CF_TEXT: {
 					hmem = Marshal.StringToHGlobalAnsi((string)obj);
-					Win32SetClipboardData((uint)type, hmem);
+					if (Win32SetClipboardData((uint)type, hmem) == IntPtr.Zero)
+						throw new ExternalException("Win32SetClipboardData");
 					return;
 				}
 
@@ -2594,7 +2598,8 @@ namespace System.Windows.Forms {
 					hmem_ptr = Win32GlobalLock(hmem);
 					Marshal.Copy(data, 0, hmem_ptr, data.Length);
 					Win32GlobalUnlock(hmem);
-					Win32SetClipboardData((uint)ClipboardFormats.CF_DIB, hmem);
+					if (Win32SetClipboardData((uint)ClipboardFormats.CF_DIB, hmem) == IntPtr.Zero)
+						throw new ExternalException("Win32SetClipboardData");
 					return;
 				}
 
@@ -2604,7 +2609,8 @@ namespace System.Windows.Forms {
 						hmem_ptr = Win32GlobalLock(hmem);
 						Marshal.Copy(data, 0, hmem_ptr, data.Length);
 						Win32GlobalUnlock(hmem);
-						Win32SetClipboardData((uint)type, hmem);
+						if (Win32SetClipboardData((uint)type, hmem) == IntPtr.Zero)
+							throw new ExternalException("Win32SetClipboardData");
 					}
 					return;
 				}

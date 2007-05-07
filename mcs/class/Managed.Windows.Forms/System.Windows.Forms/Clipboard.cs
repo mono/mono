@@ -200,11 +200,14 @@ namespace System.Windows.Forms {
 #endif
 
 		public static void SetDataObject(object data) {
-			SetDataObject(data, true);
-			
+			SetDataObject(data, false);  // MSDN says default behavior is to place non-persistent data to clipboard
 		}
 
 		public static void SetDataObject(object data, bool copy) {
+			SetDataObject(data, copy, 10, 100);   // MSDN says default behavior is to try 10 times with 100 ms delay
+		}
+
+		internal static void SetDataObjectImpl(object data, bool copy) {
 			IntPtr			clipboard_handle;
 			XplatUI.ObjectToClipboard converter;
 			int			native_format;
@@ -239,10 +242,13 @@ namespace System.Windows.Forms {
 			}
 			XplatUI.ClipboardClose(clipboard_handle);
 		}
-		
+
 #if NET_2_0
-		[MonoTODO ("Actually respect retryTimes, retryDelay.")]
-		public static void SetDataObject (object data, bool copy, int retryTimes, int retryDelay)
+		public 
+#else
+		internal 
+#endif
+		static void SetDataObject(object data, bool copy, int retryTimes, int retryDelay)
 		{
 			if (data == null)
 				throw new ArgumentNullException("data");
@@ -250,10 +256,26 @@ namespace System.Windows.Forms {
 				throw new ArgumentOutOfRangeException("retryTimes");
 			if (retryDelay < 0)
 				throw new ArgumentOutOfRangeException("retryDelay");
-				
-			SetDataObject(data, copy);
+
+			// MS implementation actually puts data to clipboard even when retryTimes == 0
+			bool retry = true;
+			do
+			{
+				retry = false;
+				--retryTimes;
+				try
+				{
+					SetDataObjectImpl(data, copy);
+				} catch (ExternalException) {
+					if (retryTimes <= 0)
+						throw;
+					retry = true;
+					Threading.Thread.Sleep(retryDelay);
+				}
+			} while (retry && retryTimes > 0);
 		}
 
+#if NET_2_0
 		[MonoInternalNote ("Needs additional checks for valid paths, see MSDN")]
 		public static void SetFileDropList (StringCollection filePaths)
 		{
