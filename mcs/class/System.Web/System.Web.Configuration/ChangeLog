@@ -1,8 +1,3 @@
-2007-05-07  Gert Driesen  <drieseng@users.sourceforge.net>
-
-	* PagesConfigurationHandler.cs: To match MS, silently ignore child
-	nodes.
-
 2007-05-01  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpCapabilitiesBase.cs: move the User-Agent code to a separate

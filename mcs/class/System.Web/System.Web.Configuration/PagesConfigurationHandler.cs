@@ -39,6 +39,9 @@ namespace System.Web.Configuration
 		{
 			PagesConfiguration config = new PagesConfiguration (parent);
 
+			if (section.HasChildNodes)
+				HandlersUtil.ThrowException ("No child nodes allowed here.", section);
+
 			string attvalue = AttValue ("buffer", section);
 			if (attvalue != null)
 				config.Buffer = GetBool ("buffer", attvalue, section);
