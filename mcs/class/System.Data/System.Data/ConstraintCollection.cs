@@ -424,5 +424,12 @@ namespace System.Data {
 				CollectionChanged(this, ccevent);
 			}
 		}
+
+#if NET_2_0
+		public void CopyTo (Constraint [] array, int index) 
+		{
+			base.CopyTo (array, index);
+		}
+#endif
 	}
 }

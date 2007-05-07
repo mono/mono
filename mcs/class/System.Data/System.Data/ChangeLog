@@ -1,3 +1,11 @@
+2007-05-07  Adar Wesley <adarw@mainsoft.com>
+
+	* ConstraintCollection.cs: added CopyTo method with strongly typed Constraint[] 
+	parameter.
+
+	* DataTable.cs: added implementation of IXmlSerializable. Added missing
+	method ReadXmlSerializable.
+
 2007-04-19  Chris Toshok  <toshok@ximian.com>
 
 	* DataColumnCollection.cs (Add): the Element in our

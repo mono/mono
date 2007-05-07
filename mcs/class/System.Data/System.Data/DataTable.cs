@@ -67,7 +67,7 @@ namespace System.Data {
 	public class DataTable : MarshalByValueComponent, IListSource, ISupportInitialize,
 				 ISerializable
 #if NET_2_0
-				 , ISupportInitializeNotification
+				 , ISupportInitializeNotification, IXmlSerializable
 #endif
 	{
 		#region Fields
@@ -1691,6 +1691,27 @@ namespace System.Data {
 		}
 
 #if NET_2_0
+
+		#region IXmlSerializable Members
+
+		[MonoNotSupported("")]
+		XmlSchema IXmlSerializable.GetSchema () 
+		{
+			return GetSchema ();
+		}
+
+		void IXmlSerializable.ReadXml (XmlReader reader) 
+		{
+			ReadXml (reader);
+		}
+
+		void IXmlSerializable.WriteXml (XmlWriter writer) 
+		{
+			WriteXml (writer);
+		}
+
+		#endregion
+
                 /// <summary>
                 ///     Loads the table with the values from the reader
                 /// </summary>
@@ -2177,6 +2198,12 @@ namespace System.Data {
 			}
 			if (target != null)
 				target.CopyProperties (this);
+		}
+
+		[MonoNotSupported("")]
+		protected virtual void ReadXmlSerializable (XmlReader reader)
+		{
+			throw new NotImplementedException ();
 		}
 #endif
 
