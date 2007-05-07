@@ -1,3 +1,8 @@
+2007-05-07  Adar Wesley <adarw@mainsoft.com>
+
+	* ProtocolReflector.cs: added missing method ReflectDescription.
+	implementation throws NotImplementedException.
+
 2007-03-21  Konstantin Triger <kostat@mainsoft.com>
 
 	* ConformanceChecker.cs, BasicProfileChecker.cs: enable looking the
