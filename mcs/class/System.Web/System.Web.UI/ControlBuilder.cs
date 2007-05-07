@@ -29,6 +29,7 @@
 //
 
 using System.Collections;
+using System.Configuration;
 using System.CodeDom;
 using System.Reflection;
 using System.Security.Permissions;
@@ -363,16 +364,59 @@ namespace System.Web.UI {
 			TagMapCollection tags = ps.TagMapping;
 			if (tags == null || tags.Count == 0)
 				return tagType;
+			
 			string tagTypeName = tagType.ToString ();
-			foreach (TagMapInfo tmi in tags)
-				if (tmi.TagType == tagTypeName) {
-					try {
-						return LoadType (tmi.MappedTagType);
-					} catch (Exception ex) {
-						throw new HttpException (String.Format ("Unable to map tag type {0}", tagTypeName),
-									 ex);
-					}
+			Type mappedType, originalType;
+			string originalTypeName = String.Empty, mappedTypeName = String.Empty;
+			bool missingType;
+			Exception error;
+			
+			foreach (TagMapInfo tmi in tags) {
+				error = null;
+				originalType = null;
+				
+				try {
+					originalTypeName = tmi.TagType;
+					originalType = LoadType (originalTypeName);
+					if (originalType == null)
+						missingType = true;
+					else
+						missingType = false;
+				} catch (Exception ex) {
+					missingType = true;
+					error = ex;
 				}
+				if (missingType)
+					throw new HttpException (String.Format ("Could not load type {0}", originalTypeName), error);
+				
+				if (originalTypeName == tagTypeName) {
+					mappedTypeName = tmi.MappedTagType;
+					error = null;
+					mappedType = null;
+					
+					try {
+						mappedType = LoadType (mappedTypeName);
+						if (mappedType == null)
+							missingType = true;
+						else
+							missingType = false;
+					} catch (Exception ex) {
+						missingType = true;
+						error = ex;
+					}
+
+					if (missingType)
+						throw new HttpException (String.Format ("Could not load type {0}", mappedTypeName),
+									 error);
+					
+					if (!mappedType.IsSubclassOf (originalType))
+						throw new ConfigurationErrorsException (
+							String.Format ("The specified type '{0}' used for mapping must inherit from the original type '{0}'.", mappedTypeName, originalTypeName));
+
+					return mappedType;
+				}
+			}
+			
 			return tagType;
 		}
 #endif

@@ -1,3 +1,10 @@
+2007-05-07  Marek Habersack  <mhabersack@novell.com>
+
+	* ControlBuilder.cs: when mapping types, catch casses of missing
+	original and mapped types.
+	If mapped type doesn't derive from the original type, throw an
+	exception. Fixes bug #81553.
+
 2007-05-04  Marek Habersack  <mhabersack@novell.com>
 
 	* Control.cs: added an internal method to resolve a physical path
