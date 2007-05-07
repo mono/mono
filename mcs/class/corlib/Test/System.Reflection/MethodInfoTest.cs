@@ -155,22 +155,30 @@ namespace MonoTests.System.Reflection
 			out1 = null;
 		}
 
-#if NET_2_0
-		[Test]
+		[Test] // bug #81538
 		public void InvokeThreadAbort () {
 			MethodInfo method = typeof (MethodInfoTest).GetMethod ("AbortIt");
 			try {
 				method.Invoke (null, new object [0]);
+				Assert.Fail ("#1");
 			}
+#if NET_2_0
 			catch (ThreadAbortException ex) {
 				Thread.ResetAbort ();
+				Assert.IsNull (ex.InnerException, "#2");
 			}
+#else
+			catch (TargetInvocationException ex) {
+				Thread.ResetAbort ();
+				Assert.IsNotNull (ex.InnerException, "#2");
+				Assert.AreEqual (typeof (ThreadAbortException), ex.InnerException.GetType (), "#3");
+			}
+#endif
 		}
 
 		public static void AbortIt () {
 			Thread.CurrentThread.Abort ();
 		}
-#endif			
 
 		[Test] // bug #76541
 		public void ToStringByRef ()

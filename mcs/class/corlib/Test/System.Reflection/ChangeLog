@@ -1,3 +1,8 @@
+2007-05-07  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* MethodInfoTest.cs: Modified test for bug #81538 to verify both
+	1.0 and 2.0 behavior.
+
 2007-05-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* MethodInfoTest.cs: Add test case for #81538.
