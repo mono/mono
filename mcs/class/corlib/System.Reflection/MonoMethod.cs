@@ -149,7 +149,7 @@ namespace System.Reflection {
 			} catch (TargetException) {
 				throw;
 #if NET_2_0
-			} catch (ThreadAbortException e) {
+			} catch (ThreadAbortException) {
 				throw;
 #endif
 			} catch (Exception e) {

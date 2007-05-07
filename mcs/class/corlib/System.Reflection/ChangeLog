@@ -1,5 +1,7 @@
 2007-05-07  Zoltan Varga  <vargaz@gmail.com>
 
+	* MonoMethod.cs (Invoke): Fix a warning.
+	
 	* MonoMethod.cs (Invoke): Don't wrap ThreadAbortException inside a 
 	TargetInvocationException on the 2.0 profile. Fixes #81538.
 
