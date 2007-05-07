@@ -311,8 +311,10 @@ namespace System.Runtime.Remoting.Messaging {
 					throw new RemotingException ("Requested service not found" + sname + ". No receiver for uri " + _uri);
 				}
 
-				if (CastTo (_typeName, type) != null) {
-					_methodBase = RemotingServices.GetMethodBaseFromName (type, _methodName, _methodSignature);
+				Type requestType = CastTo (_typeName, type);
+
+				if (requestType != null) {
+					_methodBase = RemotingServices.GetMethodBaseFromName (requestType, _methodName, _methodSignature);
 					if (_methodBase == null) throw new RemotingException ("Method " + _methodName + " not found in " + type);
 				}
 				else
