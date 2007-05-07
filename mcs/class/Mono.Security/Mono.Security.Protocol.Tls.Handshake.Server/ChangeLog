@@ -1,3 +1,9 @@
+2007-05-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TlsClientCertificate.cs: A client certficate with a RSA public key
+	can only be used, protocol wise, to sign. Which means we should always
+	be checking it's keyUsage for digitalSignature. Fix for bug #81511
+
 2006-09-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TlsClientCertificate.cs: Use Negotiating.Cipher instead of Cipher.

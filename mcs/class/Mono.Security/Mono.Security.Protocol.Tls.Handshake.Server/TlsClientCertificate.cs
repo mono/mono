@@ -105,10 +105,8 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 			switch (context.Negotiating.Cipher.ExchangeAlgorithmType)
 			{
 				case ExchangeAlgorithmType.RsaSign:
-					ku = KeyUsages.digitalSignature;
-					break;
 				case ExchangeAlgorithmType.RsaKeyX:
-					ku = KeyUsages.keyEncipherment;
+					ku = KeyUsages.digitalSignature;
 					break;
 				case ExchangeAlgorithmType.DiffieHellman:
 					ku = KeyUsages.keyAgreement;
