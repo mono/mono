@@ -1,3 +1,7 @@
+2007-05-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mini_method_compile): Only decompose_array_access_opts in the new IR.
+
 2007-05-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* abcremoval2.c (get_relation_from_ins): Handle OP_IREM_UN as in bug #71576.

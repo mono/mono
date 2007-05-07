@@ -11291,9 +11291,10 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	if (parts == 3)
 		return cfg;
 
-	if (cfg->new_ir)
+	if (cfg->new_ir) {
 		mono_decompose_vtype_opts (cfg);
 		mono_decompose_array_access_opts (cfg);
+	}
 	
 	if (!cfg->new_ir) {
 		if (cfg->verbose_level > 4)
