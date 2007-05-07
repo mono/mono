@@ -1,4 +1,8 @@
 2007-05-07  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Control.cs: Implement DrawToBitmap.
+
+2007-05-07  Jonathan Pobst  <monkey@jpobst.com>
 	Applying contributed patch from Stefan Noack.
 	
 	* Control.cs: Add [Get|Set]AutoSizeMode.

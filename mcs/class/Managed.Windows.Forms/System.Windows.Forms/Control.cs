@@ -2527,6 +2527,20 @@ namespace System.Windows.Forms
 				
 			}
 		}
+		
+		public void DrawToBitmap (Bitmap bitmap, Rectangle targetBounds)
+		{
+			Bitmap b = new Bitmap (Width, Height);
+			Graphics g = Graphics.FromImage (b);
+			
+			OnPaint (new PaintEventArgs (g, targetBounds));
+			
+			using (Graphics g2 = Graphics.FromImage (bitmap))
+				g2.DrawImage (b, targetBounds);
+			
+			b.Dispose ();
+			g.Dispose ();
+		}
 #endif
 		
 		[DispId(-514)]
