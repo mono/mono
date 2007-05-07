@@ -34,7 +34,9 @@ using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Reflection.Emit;
 using System.Security;
+using System.Threading;
 using System.Text;
+
 
 namespace System.Reflection {
 	
@@ -146,6 +148,10 @@ namespace System.Reflection {
 				throw;
 			} catch (TargetException) {
 				throw;
+#if NET_2_0
+			} catch (ThreadAbortException e) {
+				throw;
+#endif
 			} catch (Exception e) {
 				throw new TargetInvocationException (e);
 			}
