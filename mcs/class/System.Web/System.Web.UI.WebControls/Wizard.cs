@@ -199,29 +199,31 @@ namespace System.Web.UI.WebControls
 		
 	    [DefaultValueAttribute (-1)]
 	    [ThemeableAttribute (false)]
-		public virtual int ActiveStepIndex {
-			get {
-				return activeStepIndex;
-			}
-			set {
-				if (value < -1 || (value > WizardSteps.Count && (inited || WizardSteps.Count > 0)))
-					throw new ArgumentOutOfRangeException ("The ActiveStepIndex must be less than WizardSteps.Count and at least -1");
-
-				if (inited && !AllowNavigationToStep (value))
-					return;
-
-				activeStepIndex = value;
-
-				if (inited) {
-					multiView.ActiveViewIndex = value;
-					if (stepDatalist != null) {
-						stepDatalist.SelectedIndex = value;
-						stepDatalist.DataBind ();
-					}
-					OnActiveStepChanged (this, EventArgs.Empty);
-				}
-			}
-		}
+	    public virtual int ActiveStepIndex {
+		    get {
+			    return activeStepIndex;
+		    }
+		    set {
+			    if (value < -1 || (value > WizardSteps.Count && (inited || WizardSteps.Count > 0)))
+				    throw new ArgumentOutOfRangeException ("The ActiveStepIndex must be less than WizardSteps.Count and at least -1");
+			    
+			    if (inited && !AllowNavigationToStep (value))
+				    return;
+			    
+			    if(activeStepIndex != value) {
+				    activeStepIndex = value;
+				    
+				    if (inited) {
+					    multiView.ActiveViewIndex = value;
+					    if (stepDatalist != null) {
+						    stepDatalist.SelectedIndex = value;
+						    stepDatalist.DataBind ();
+					    }
+					    OnActiveStepChanged (this, EventArgs.Empty);
+				    }
+			    }
+		    }
+	    }
 		
 	    [UrlPropertyAttribute]
 	    [DefaultValueAttribute ("")]

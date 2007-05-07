@@ -1,3 +1,9 @@
+2007-05-07  Marek Habersack  <mhabersack@novell.com>
+
+	* Wizard.cs: additional checks to see whether the wizard needs to
+	move to a next step or not. Fixes bug #81532. Patch sent by Mike
+	Morano <mmorano@mikeandwan.us>, thanks!
+
 2007-05-07 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* FormView.cs: fixed:
