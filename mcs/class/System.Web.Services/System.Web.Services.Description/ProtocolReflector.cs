@@ -461,11 +461,13 @@ namespace System.Web.Services.Description {
 			return null;
 		}
 
+#if NET_2_0
 		[MonoNotSupported("Not Implemented")]
 		protected virtual void ReflectDescription () 
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 
 		#endregion
 	}
