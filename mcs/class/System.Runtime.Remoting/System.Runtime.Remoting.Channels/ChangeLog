@@ -1,3 +1,13 @@
+2007-05-07  Robert Jordan  <robertj@gmx.net>
+
+	* SoapMessageFormatter.cs (BuildMethodCallFromSoapMessage):
+	Validate DecodeXmlNamespaceForClrTypeNamespace's result.
+	Don't use RemotingServices.GetServerTypeForUri's result to
+	lookup the method from, because it returns the concrete server
+	type. We need the type that was used to make the call, which
+	we can compute from DecodeXmlNamespaceForClrTypeNamespace's output.
+	Fixes the last part of bug #77191.
+
 2007-28-02  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* ChannelCore.cs: Added missing null check. LoadWithPartialName can

@@ -222,9 +222,18 @@ namespace System.Runtime.Remoting.Channels {
 			headersList.Add(new Header("__Uri", uri));
 			headersList.Add(new Header("__MethodName", soapMessage.MethodName));
 			string typeNamespace, assemblyName;
-			SoapServices.DecodeXmlNamespaceForClrTypeNamespace(soapMessage.XmlNameSpace, out typeNamespace, out assemblyName);
 
-			_serverType = RemotingServices.GetServerTypeForUri(uri);
+			if (!SoapServices.DecodeXmlNamespaceForClrTypeNamespace(soapMessage.XmlNameSpace, out typeNamespace, out assemblyName))
+				throw new RemotingException ("Could not decode SoapMessage");
+
+			// Note that we don't need to validate the type in
+			// this place because MethodCall will do it anyway.
+
+			if (assemblyName == null) // corlib
+				_serverType = Type.GetType (typeNamespace, true);
+			else
+				_serverType = Type.GetType (typeNamespace + ", " + assemblyName, true);
+
 			headersList.Add(new Header("__TypeName", _serverType.FullName, false));
 			
 			if (soapMessage.Headers != null) {
