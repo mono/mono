@@ -31,7 +31,8 @@ namespace MonoTests.Remoting
 		public static string PrimitiveParams (Type type, object target, int a, uint b, char c, string d)
 		{
 			object[] parms = new object[] {a,b,c,d};
-			MethodBase m = type.GetMethod ("PrimitiveParams");
+			Type[] sig = new Type[] {typeof (int), typeof (uint), typeof (char), typeof (string)};
+			MethodBase m = type.GetMethod ("PrimitiveParams", sig);
 			return (string) m.Invoke (target, parms);
 		}
 

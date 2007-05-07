@@ -517,6 +517,11 @@ namespace MonoTests.Remoting
 			return "" + a + "-" + b + "-" + c + "-" + d + "@" + Thread.GetDomainID();
 		}
 
+		// declare an overload for bug #77191
+		public void PrimitiveParams ()
+		{
+		}
+
 		public override string PrimitiveParamsInOut (ref int a1, out int a2, ref float b1, out float b2, int filler, ref char c1, out char c2, ref string d1, out string d2)
 		{
 			string res = "" + a1 + "-" + b1.ToString(CultureInfo.InvariantCulture) + "-" + c1 + "-" + d1 + "@" + Thread.GetDomainID();
