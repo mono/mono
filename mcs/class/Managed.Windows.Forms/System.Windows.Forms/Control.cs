@@ -148,6 +148,7 @@ namespace System.Windows.Forms
 		Padding margin;
 		private ContextMenuStrip context_menu_strip;
 		Point auto_scroll_offset;
+		private AutoSizeMode auto_size_mode;
 #endif
 
 		#endregion	// Local Variables
@@ -998,6 +999,7 @@ namespace System.Windows.Forms
 			maximum_size = new Size();
 			minimum_size = new Size();
 			margin = this.DefaultMargin;
+			auto_size_mode = AutoSizeMode.GrowOnly;
 #endif
 
 			control_style = ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | 
@@ -1794,6 +1796,13 @@ namespace System.Windows.Forms
 			return CreateParams;
 		}
 
+#if NET_2_0
+		internal virtual Size GetPreferredSizeCore (Size proposedSize)
+		{
+			return this.explicit_bounds.Size;
+		}
+#endif
+
 		private void UpdateDistances() {
 			if (parent != null) {
 				if (bounds.Width >= 0)
@@ -2053,7 +2062,6 @@ namespace System.Windows.Forms
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[DefaultValue (false)]
-		[MonoTODO("This method currently does nothing")]
 		public virtual bool AutoSize {
 			get { return auto_size; }
 			set {
@@ -2490,7 +2498,8 @@ namespace System.Windows.Forms
 				anchor_style = AnchorStyles.Top | AnchorStyles.Left;
 
 				if (dock_style == DockStyle.None) {
-					Bounds = explicit_bounds;
+					bounds = explicit_bounds;
+					layout_type = LayoutType.Anchor;
 				}
 
 				if (parent != null) {
@@ -3526,7 +3535,7 @@ namespace System.Windows.Forms
 #if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public virtual Size GetPreferredSize (Size proposedSize) {
-			Size retsize = this.explicit_bounds.Size;
+			Size retsize = GetPreferredSizeCore (proposedSize);
 			
 			// If we're bigger than the MaximumSize, fix that
 			if (this.maximum_size.Width != 0 && retsize.Width > this.maximum_size.Width)
@@ -3973,6 +3982,11 @@ namespace System.Windows.Forms
 			// XXX need to implement this.
 			return null;
 		}
+		
+		protected internal AutoSizeMode GetAutoSizeMode () 
+		{
+			return auto_size_mode;
+		}
 #endif
 
 		protected internal bool GetStyle(ControlStyles flag) {
@@ -4308,6 +4322,13 @@ namespace System.Windows.Forms
 				container.ActiveControl = this;
 		}
 
+#if NET_2_0
+		protected void SetAutoSizeMode (AutoSizeMode mode)
+		{
+			auto_size_mode = mode;
+		}
+#endif
+		
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified) {
 			Rectangle old_explicit = explicit_bounds;

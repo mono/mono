@@ -1,3 +1,8 @@
+2007-05-07  Jonathan Pobst  <monkey@jpobst.com>
+	Applying contributed patch from Stefan Noack.
+
+	* DefaultLayout.cs: Implement AutoSize logic.	
+
 2007-04-24  Andreia Gaita  <avidigal@novell.com>
 
 	* TableLayoutSettingsTypeConverter.cs: Implemented the converters

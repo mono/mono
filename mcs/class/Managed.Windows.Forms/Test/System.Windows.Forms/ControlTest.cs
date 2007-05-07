@@ -3,6 +3,7 @@
 //
 // Authors:
 //      Ritvik Mayank (mritvik@novell.com)
+//		Stefan Noack (noackstefan@googlemail.com)
 //
 
 using System;
@@ -24,6 +25,136 @@ namespace MonoTests.System.Windows.Forms
 	[TestFixture]
 	public class ControlTest
 	{
+		
+#if NET_2_0
+		[Test]
+		public void AutoSizeTest ()
+		{
+			ControlAutoSizeTester c = new ControlAutoSizeTester (new Size (23, 17), AutoSizeMode.GrowAndShrink);
+			
+			Form f = new Form();
+			f.Size = new Size (200, 200);
+			c.Parent = f;
+			f.Show();
+			
+			Size s = new Size (42, 42);
+			c.Size = s;
+			
+			Point l = new Point (10, 10);
+			c.Location = l;
+			
+			//Check wether normal size setting is OK
+			Assert.AreEqual (s, c.Size, "#S1");
+			
+			//Check wether size remains without GetPreferredSize implemented even when AutoSize turned on.
+			c.AutoSize = true;
+			f.PerformLayout();
+			Assert.AreEqual (s, c.Size, "#S2");
+			
+			//Simulate a Control implementing GetPreferredSize
+			c.UseCustomPrefSize = true;
+			f.PerformLayout();
+			
+			//Check wether size shrinks to preferred size
+			Assert.AreEqual (c.CustomPrefSize, c.Size, "#S3");
+			//Check wether Location stays constant
+			Assert.AreEqual (l, c.Location, "#L1");
+			
+			//Check wether Dock is respected
+			c.Dock = DockStyle.Bottom;
+			Assert.AreEqual (f.ClientSize.Width, c.Width, "#D1");
+			
+			//Check wether size shrinks to preferred size again
+			c.Dock = DockStyle.None;
+			Assert.AreEqual (c.CustomPrefSize, c.Size, "#S4");
+			
+			//Check wether Anchor is respected for adjusting Locatioon
+			c.Anchor = AnchorStyles.Bottom;
+			f.Height += 50;
+			Assert.AreEqual (l.Y + 50, c.Top, "#A1");
+			//Check wether size is still OK
+			Assert.AreEqual (c.CustomPrefSize, c.Size, "#S5");
+			
+			
+			//just tidy up
+			c.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+			c.Location = l;
+			
+			//Check wether shrinking to zero is possible 
+			c.CustomPrefSize = new Size (0, 0);
+			f.PerformLayout();
+			Assert.AreEqual (c.CustomPrefSize, c.Size, "#S6");
+			
+			//Check wether MinimumSize is honored
+			c.MinimumSize = new Size (10, 12);
+			c.CustomPrefSize = new Size (5, 5);
+			f.PerformLayout();
+			Assert.AreEqual (c.MinimumSize, c.Size, "#S7");
+			c.MinimumSize = new Size (0, 0);
+			
+			//Check wether MaximumSize is honored
+			c.MaximumSize = new Size (100, 120); 
+			c.CustomPrefSize = new Size (500, 500);
+			f.PerformLayout();
+			Assert.AreEqual (c.MaximumSize, c.Size, "#S8");
+			
+			//Check wether shrinking does not happen when GrowOnly
+			c.AutoSize = false;
+			s = new Size (23, 23);
+			c.Size = s;
+			c.CustomPrefSize = new Size (5, 5);
+			c.AutoSizeMode = AutoSizeMode.GrowOnly;
+			c.AutoSize = true;
+			f.PerformLayout();
+			Assert.AreEqual (s, c.Size, "#S9");
+		}
+		
+		public class ControlAutoSizeTester : Control {
+			
+
+			public ControlAutoSizeTester (Size customPrefSize, AutoSizeMode autoSizeMode)
+			{
+				custom_prefsize = customPrefSize;
+				AutoSizeMode = autoSizeMode;
+			}
+			
+			public AutoSizeMode AutoSizeMode {
+				set {
+					base.SetAutoSizeMode (value);
+				}
+			}
+
+			private bool use_custom_prefsize = false;
+			public bool UseCustomPrefSize {
+				set {
+					use_custom_prefsize = value;
+				}
+			}
+			
+			private Size custom_prefsize;
+			
+			public Size CustomPrefSize {
+				get {
+					return custom_prefsize;
+				}
+				set {
+					custom_prefsize = value;
+				}
+			}
+			
+			
+			public override Size GetPreferredSize (Size proposedSize)
+			{
+				if (use_custom_prefsize) {
+					return custom_prefsize;
+				} else {	
+					return base.GetPreferredSize(proposedSize);
+				}
+			}
+			
+		}
+#endif
+		
 		[Test]
 		public void InvokeTestParentHandle ()
 		{

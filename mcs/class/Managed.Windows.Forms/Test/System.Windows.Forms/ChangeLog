@@ -1,5 +1,9 @@
 2007-05-07  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ControlTest.cs: Tests demonstrating Control.AutoSize from Stefan Noack.
+
+2007-05-07  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ToolStripManagerTest.cs: Add test for bug #81477.
 
 2007-05-04  Jonathan Pobst  <monkey@jpobst.com>

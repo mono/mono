@@ -1,4 +1,9 @@
 2007-05-07  Jonathan Pobst  <monkey@jpobst.com>
+	Applying contributed patch from Stefan Noack.
+	
+	* Control.cs: Add [Get|Set]AutoSizeMode.
+
+2007-05-07  Jonathan Pobst  <monkey@jpobst.com>
 
 	* MdiClient.cs: Unmerge menus when the last child is closed.
 

@@ -24,6 +24,7 @@
 //
 // Authors:
 //	Jonathan Pobst (monkey@jpobst.com)
+//	Stefan Noack (noackstefan@googlemail.com)
 //
 
 using System;
@@ -111,14 +112,8 @@ namespace System.Windows.Forms.Layout
 				left = child.Left;
 				top = child.Top;
 				
-#if NET_2_0
-				Size preferredsize = child.PreferredSize;
-				width = preferredsize.Width;
-				height = preferredsize.Height;
-#else
 				width = child.Width;
 				height = child.Height;
-#endif
 
 				if ((anchor & AnchorStyles.Right) != 0) {
 					if ((anchor & AnchorStyles.Left) != 0)
@@ -154,6 +149,57 @@ namespace System.Windows.Forms.Layout
 				child.SetBounds (left, top, width, height, BoundsSpecified.None);
 			}
 		}
+		
+#if NET_2_0
+		void LayoutAutoSizedChildren (Control parent, Control[] controls)
+		{
+			for (int i = 0; i < controls.Length; i++) {
+				int left;
+				int top;
+				int width;
+				int height;
+
+				Control child = controls[i];
+				if (!child.VisibleInternal
+				    || child.ControlLayoutType == Control.LayoutType.Dock
+				    || !child.AutoSize)
+					continue;
+
+				left = child.Left;
+				top = child.Top;
+				
+				Size preferredsize = child.PreferredSize;
+				
+				if (child.GetAutoSizeMode () == AutoSizeMode.GrowAndShrink) {
+					width = preferredsize.Width;
+					height = preferredsize.Height;
+				} else {
+					width = child.Width;
+					height = child.Height;
+					if (preferredsize.Width > width)
+						width = preferredsize.Width;
+					if (preferredsize.Height > height)
+						height = preferredsize.Height;
+						
+				}
+			
+				// Sanity
+				if (width < child.MinimumSize.Width)
+					width = child.MinimumSize.Width;
+
+				if (height < child.MinimumSize.Height)
+					height = child.MinimumSize.Height;
+				
+				if (child.MaximumSize.Width != 0 && width > child.MaximumSize.Width)
+					width = child.MaximumSize.Width;
+
+				if (child.MaximumSize.Height != 0 && height > child.MaximumSize.Height)
+					height = child.MaximumSize.Height;
+
+				child.SetBounds (left, top, width, height, BoundsSpecified.None);
+			}
+		}
+#endif
 
 		public override bool Layout (object container, LayoutEventArgs args)
 		{
@@ -163,6 +209,9 @@ namespace System.Windows.Forms.Layout
 
 			LayoutDockedChildren (parent, controls);
 			LayoutAnchoredChildren (parent, controls);
+#if NET_2_0
+			LayoutAutoSizedChildren (parent, controls);
+#endif
 
 			return false;
 		}
