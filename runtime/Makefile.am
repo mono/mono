@@ -108,23 +108,26 @@ $(tmpinst)/bin/mono: mono-wrapper etc/mono/config
 	$(mkinstalldirs) $(tmpinst)/bin
 	cp mono-wrapper $@
 
-$(tmpinst)/bin/mcs:
-	$(MAKE) test-support-file target=$@ file=class/lib/default/mcs.exe
+$(tmpinst)/bin/mcs: $(tmpinst)/bin/mono Makefile
+	echo '#! /bin/sh' > $@ ; \
+	r=`pwd`; m=`cd $(mcs_topdir) && pwd`; \
+	echo 'exec "'"$$r/$(tmpinst)/bin/mono"'" "'"$$m/class/lib/default/mcs.exe"'" "$$@"' >> $@ ; \
+	chmod +x $@
 
-$(tmpinst)/bin/gmcs:
-	$(MAKE) test-support-file target=$@ file=gmcs/gmcs.exe
+$(tmpinst)/bin/gmcs: $(tmpinst)/bin/mono Makefile
+	echo '#! /bin/sh' > $@ ; \
+	r=`pwd`; m=`cd $(mcs_topdir) && pwd`; \
+	echo 'exec "'"$$r/$(tmpinst)/bin/mono"'" "'"$$m/gmcs/gmcs.exe"'" "$$@"' >> $@ ; \
+	chmod +x $@
 
-$(tmpinst)/bin/ilasm:
-	$(MAKE) test-support-file target=$@ file=ilasm/ilasm.exe
+$(tmpinst)/bin/ilasm: $(tmpinst)/bin/mono Makefile
+	echo '#! /bin/sh' > $@ ; \
+	r=`pwd`; m=`cd $(mcs_topdir) && pwd`; \
+	echo 'exec "'"$$r/$(tmpinst)/bin/mono"'" "'"$$m/ilasm/ilasm.exe"'" "$$@"' >> $@ ; \
+	chmod +x $@
 
 test-support-files: $(TEST_SUPPORT_FILES)
 	@:
-
-test-support-file: $(tmpinst)/bin/mono
-	test -n '$(target)$(file)'
-	echo '#! /bin/sh' > $(target)
-	r=`pwd`; m=`cd $(mcs_topdir) && pwd`; echo 'exec "'"$$r/$(tmpinst)/bin/mono"'" "'"$$m/$(file)"'" "$$@"' >> $(target)
-	chmod +x $(target)
 
 # the 'cygnus' option also disables the default 'distdir:' target, which we _do_ want
 MYDISTFILES = $(DIST_COMMON)
