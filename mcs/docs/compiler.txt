@@ -646,6 +646,19 @@
 
 * Lambda Expressions
 
+	Lambda expressions can come in two forms: those that have implicit
+	parameter types and those that have explicit parameter types, for
+	example:
+
+		Explicit:	
+
+		        Foo ((int x) => x + 1);
+
+		Implicit:
+
+			Foo (x => x + 1)
+
+
 	One of the problems that am facing with lambda expressions is
 	that lambda expressions need to be "probed" with different
 	types until a working combination is found.
