@@ -44,6 +44,7 @@ System.Xml/nist_dom/fundamental/DOMImplementation/DOMImplementation.cs
 System.Xml/nist_dom/fundamental/Element/Element.cs
 System.Xml/nist_dom/fundamental/NamedNodeMap/NamedNodeMap.cs
 System.Xml/nist_dom/fundamental/NodeList/NodeList.cs
+System.Xml/nist_dom/fundamental/Node/Node.cs
 System.Xml/nist_dom/fundamental/Text/Text.cs
 System.Xml.Schema/XmlSchemaAssertion.cs
 System.Xml.Schema/XmlSchemaBuiltInDatatypeTests.cs

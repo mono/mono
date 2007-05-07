@@ -786,7 +786,7 @@ namespace System.Xml
 				throw new ArgumentException ("The node to be removed is not a child of this node.");
 			
 			if (newChild == this || IsAncestor (newChild))
-				throw new ArgumentException("Cannot insert a node or any ancestor of that node as a child of itself.");
+				throw new InvalidOperationException("Cannot insert a node or any ancestor of that node as a child of itself.");
 			
 			XmlNode next = oldChild.NextSibling;
 			RemoveChild (oldChild);
