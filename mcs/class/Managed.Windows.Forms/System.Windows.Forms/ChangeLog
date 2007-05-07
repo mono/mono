@@ -1,5 +1,9 @@
 2007-05-07  Jonathan Pobst  <monkey@jpobst.com>
 
+	* MdiClient.cs: Unmerge menus when the last child is closed.
+
+2007-05-07  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ToolStrip.cs: Do not call BeginMerge on DropDowns.
 	* ToolStripManager.cs: Call Merge on DropDowns.
 	[Fixes bug #81477]

@@ -619,6 +619,17 @@ namespace System.Windows.Forms {
 			if (Controls.Count == 0) {
 				XplatUI.RequestNCRecalc (Parent.Handle);
 				ParentForm.PerformLayout ();
+
+#if NET_2_0
+				// If we closed the last child, unmerge the menus.
+				// If it's not the last child, the menu will be unmerged
+				// when another child takes focus.
+				MenuStrip parent_menu = form.MdiParent.MainMenuStrip;
+
+				if (parent_menu != null)
+					if (parent_menu.IsCurrentlyMerged)
+						ToolStripManager.RevertMerge (parent_menu);
+#endif
 			}
 			SizeScrollBars ();
 			SetParentText (false);
