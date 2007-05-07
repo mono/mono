@@ -1,5 +1,14 @@
 2007-05-07  Marek Habersack  <mhabersack@novell.com>
 
+	* TemplateParser.cs: added support for implicit language
+	detection. If the language isn't set explicitly in the Page
+	directive, the language value taken from the configuration
+	considered to be implicit - that is, it can be overwritten by the
+	first <script> with the runat="server" and language="xx" sets the
+	language for the parser. This makes it possible to have the
+	default language set to "C#" and the inline code in, e.g.,
+	VisualBasic. 
+
 	* ControlBuilder.cs: when mapping types, catch casses of missing
 	original and mapped types.
 	If mapped type doesn't derive from the original type, throw an

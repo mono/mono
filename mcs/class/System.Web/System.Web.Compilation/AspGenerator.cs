@@ -557,7 +557,10 @@ namespace System.Web.Compilation
 		{
 			if (tagtype != TagType.Close) {
 				if (attributes != null && attributes.IsRunAtServer ()) {
-					CheckLanguage ((string) attributes ["language"]);
+					string language = (string) attributes ["language"];
+					if (language != null && language.Length > 0 && tparser.ImplicitLanguage)
+						tparser.SetLanguage (language);
+					CheckLanguage (language);
 					string src = (string) attributes ["src"];
 					if (src != null) {
 						if (src == "")

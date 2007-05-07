@@ -67,6 +67,7 @@ namespace System.Web.UI {
 		bool debug;
 		string compilerOptions;
 		string language;
+		bool implicitLanguage;
 		bool strictOn = false;
 		bool explicitOn = false;
 		bool linePragmasOn = false;
@@ -131,6 +132,7 @@ namespace System.Web.UI {
 #endif
 
 			language = CompilationConfig.DefaultLanguage;
+			implicitLanguage = true;
 		}
 		
 		internal void AddApplicationAssembly ()
@@ -410,7 +412,7 @@ namespace System.Web.UI {
 			foreach (string s in binDlls)
 				assemblies.Add (s);
 		}
-
+		
 		internal virtual void AddInterface (string iface)
 		{
 			if (interfaces == null)
@@ -541,7 +543,12 @@ namespace System.Web.UI {
 			
 			debug = GetBool (atts, "Debug", true);
 			compilerOptions = GetString (atts, "CompilerOptions", "");
-			language = GetString (atts, "Language", CompilationConfig.DefaultLanguage);
+			language = GetString (atts, "Language", "");
+			if (language.Length != 0)
+				implicitLanguage = false;
+			else
+				language = CompilationConfig.DefaultLanguage;
+			
 			strictOn = GetBool (atts, "Strict", CompilationConfig.Strict);
 			explicitOn = GetBool (atts, "Explicit", CompilationConfig.Explicit);
 			linePragmasOn = GetBool (atts, "LinePragmas", false);
@@ -735,6 +742,12 @@ namespace System.Web.UI {
 				baseTypeIsGlobal = true;
 		}
 
+		internal void SetLanguage (string language)
+		{
+			this.language = language;
+			implicitLanguage = false;
+		}
+		
 		Assembly GetAssemblyFromSource (string vpath)
 		{
 			vpath = UrlUtils.Combine (BaseVirtualDir, vpath);
@@ -898,6 +911,10 @@ namespace System.Web.UI {
 			get { return language; }
 		}
 
+		internal bool ImplicitLanguage {
+			get { return implicitLanguage; }
+		}
+		
 		internal bool StrictOn {
 			get { return strictOn; }
 		}

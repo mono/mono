@@ -1,3 +1,9 @@
+2007-05-07  Marek Habersack  <mhabersack@novell.com>
+
+	* AspGenerator.cs: if the parser's language is implicit (i.e. set
+	from the default configuration), the first script with the
+	language attribute present sets the language of the parser.
+
 2007-05-04  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateControlCompiler.cs: do not query the parent for
