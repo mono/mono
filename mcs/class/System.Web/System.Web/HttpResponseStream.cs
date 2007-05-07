@@ -458,7 +458,7 @@ namespace System.Web {
 
 	        public override void Write (byte [] buffer, int offset, int count)
 		{
-			bool buffering = response.Buffer;
+			bool buffering = response.BufferOutput;
 
 			if (buffering) {
 				// It does not matter whether we're in ApplyFilter or not

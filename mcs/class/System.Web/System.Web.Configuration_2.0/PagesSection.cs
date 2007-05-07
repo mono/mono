@@ -71,7 +71,7 @@ namespace System.Web.Configuration
 								      PropertyHelper.PositiveTimeSpanValidator,
 								      ConfigurationPropertyOptions.None);
 			autoEventWireupProp = new ConfigurationProperty ("autoEventWireup", typeof(bool), true);
-			bufferProp = new ConfigurationProperty ("buffer", typeof(bool), false);
+			bufferProp = new ConfigurationProperty ("buffer", typeof(bool), true);
 			controlsProp = new ConfigurationProperty ("controls", typeof(TagPrefixCollection), null,
 								  null, null, ConfigurationPropertyOptions.None);
 			enableEventValidationProp = new ConfigurationProperty ("enableEventValidation", typeof (bool), true);

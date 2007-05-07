@@ -1,3 +1,7 @@
+2007-05-07  Marek Habersack  <mhabersack@novell.com>
+
+	* PagesSection.cs: buffering is on by default.
+
 2007-04-24  Marek Habersack  <mhabersack@novell.com>
 
 	* WebConfigurationHost.cs: wrap MapPath calls in try/catch,

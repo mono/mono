@@ -1,3 +1,9 @@
+2007-05-07  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpResponseStream.cs: use BufferOutput
+
+	* HttpResponse.cs: support Buffer, but use BufferOutput
+
 2007-05-03 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* BrowserCapabilities.cs:

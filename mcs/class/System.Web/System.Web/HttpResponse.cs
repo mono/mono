@@ -598,7 +598,7 @@ namespace System.Web {
 			if (content_length >= 0){
 				write_headers.Add (new KnownResponseHeader (HttpWorkerRequest.HeaderContentLength,
 								      content_length.ToString (CultureInfo.InvariantCulture)));
-			} else if (Buffer){
+			} else if (BufferOutput){
 				if (final_flush){
 					//
 					// If we are buffering and this is the last flush, not a middle-flush,
@@ -764,7 +764,7 @@ namespace System.Web {
 		public void Redirect (string url, bool endResponse)
 		{
 			if (headers_sent)
-				throw new HttpException ("header have been already sent");
+				throw new HttpException ("Headers have already been sent");
 
 #if TARGET_J2EE
 			// In J2EE portal we need to handle Redirect at the processAction phase
