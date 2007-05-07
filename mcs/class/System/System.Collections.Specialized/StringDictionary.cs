@@ -38,11 +38,11 @@ namespace System.Collections.Specialized {
 	[DesignerSerializer ("System.Diagnostics.Design.StringDictionaryCodeDomSerializer, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.Serialization.CodeDomSerializer, " + Consts.AssemblySystem_Design)]
 	public class StringDictionary : IEnumerable
 	{
-		private Hashtable table;
+		private Hashtable contents;
 			
 		public StringDictionary()
 		{
-			table = new Hashtable();
+			contents = new Hashtable();
 		}
 		
 		// Public Instance Properties
@@ -50,7 +50,7 @@ namespace System.Collections.Specialized {
 		public virtual int Count
 		{
 			get {
-				return table.Count;
+				return contents.Count;
 			}
 		}
 		
@@ -68,7 +68,7 @@ namespace System.Collections.Specialized {
 			if (key == null)
 				throw new ArgumentNullException ("key");
 #endif
-			return (string) table [key.ToLower (CultureInfo.InvariantCulture)];
+			return (string) contents [key.ToLower (CultureInfo.InvariantCulture)];
 			}
 			
 			set {
@@ -76,28 +76,28 @@ namespace System.Collections.Specialized {
 			if (key == null)
 				throw new ArgumentNullException ("key");
 #endif
-				table[key.ToLower(CultureInfo.InvariantCulture)] = value;
+				contents[key.ToLower(CultureInfo.InvariantCulture)] = value;
 			}
 		}
 		
 		public virtual ICollection Keys
 		{
 			get {
-				return table.Keys;
+				return contents.Keys;
 			}
 		}
 		
 		public virtual ICollection Values
 		{
 			get {
-				return table.Values;
+				return contents.Values;
 			}
 		}
 		
 		public virtual object SyncRoot
 		{
 			get {
-				return table.SyncRoot;
+				return contents.SyncRoot;
 			}
 		}
 		
@@ -109,12 +109,12 @@ namespace System.Collections.Specialized {
 			if (key == null)
 				throw new ArgumentNullException ("key");
 #endif
-			table.Add (key.ToLower (CultureInfo.InvariantCulture), value);
+			contents.Add (key.ToLower (CultureInfo.InvariantCulture), value);
 		}
 		
 		public virtual void Clear()
 		{
-			table.Clear();
+			contents.Clear();
 		}
 		
 		public virtual bool ContainsKey(string key)
@@ -123,22 +123,22 @@ namespace System.Collections.Specialized {
 			if (key == null)
 				throw new ArgumentNullException ("key");
 #endif
-			return table.ContainsKey (key.ToLower (CultureInfo.InvariantCulture));
+			return contents.ContainsKey (key.ToLower (CultureInfo.InvariantCulture));
 		}
 		
 		public virtual bool ContainsValue(string value)
 		{
-			return table.ContainsValue(value);
+			return contents.ContainsValue(value);
 		}
 		
 		public virtual void CopyTo(Array array, int index)
 		{
-			table.CopyTo(array, index);
+			contents.CopyTo(array, index);
 		}
 		
 		public virtual IEnumerator GetEnumerator()
 		{
-			return table.GetEnumerator();
+			return contents.GetEnumerator();
 		}
 		
 		public virtual void Remove(string key)
@@ -147,7 +147,7 @@ namespace System.Collections.Specialized {
 			if (key == null)
 				throw new ArgumentNullException ("key");
 #endif
-			table.Remove (key.ToLower (CultureInfo.InvariantCulture));
+			contents.Remove (key.ToLower (CultureInfo.InvariantCulture));
 		}
 	}
 }
