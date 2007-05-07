@@ -1,5 +1,11 @@
 2007-05-07 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* FormView.cs: fixed:
+	avoid NullReferenceException when used EditTemplate w/o binding 
+	directive such Eval or Bind.	 
+
+2007-05-07 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* MenuItem.cs: fixed: 
 	when 'Value' property is not set, value of 'Text' property is used 
 	instead and vice versa.

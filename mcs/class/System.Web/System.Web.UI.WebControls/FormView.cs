@@ -1111,6 +1111,7 @@ namespace System.Web.UI.WebControls
 			
 			if (bt != null) {
 				IOrderedDictionary values = bt.ExtractValues (Row.Cells [0]);
+				if (values != null)
 				foreach (DictionaryEntry e in values) {
 					if (includeKeys || Array.IndexOf (DataKeyNames, e.Key) == -1)
 						fieldValues [e.Key] = e.Value;
