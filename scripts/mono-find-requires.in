@@ -69,7 +69,9 @@ REQUIRES=$(
 			ignore=0
 			req=""
 			split($_, toks, "\"")
-			for(i=1; i <= length(toks); i++) {
+			toks_size=0
+                        for(tok in toks) { toks_size++ }
+			for(i=1; i <= toks_size; i++) {
 				if(toks[i] ~ /target=/) {
 					req=toks[i+1]
 				}
@@ -84,7 +86,9 @@ REQUIRES=$(
 					}
 
 					split(attr, os_targets, ",")
-					for(j=1; j <= length(os_targets); j++) {
+					os_targets_size=0
+                                        for(os_target in os_targets) { os_targets_size++ }
+					for(j=1; j <= os_targets_size; j++) {
 						if(os_targets[j] == "linux") {
 							found=1
 						}
