@@ -1,3 +1,14 @@
+2007-05-08  Massimiliano Mantione  <massi@ximian.com>
+
+	* class-internals.h: Added MONO_CLASS_IMPLEMENTS_INTERFACE macro and
+	mono_class_interface_offset prototype to wrap all accesses to
+	"MonoClass.interface_offsets".
+
+	* class.c: Implemented mono_class_interface_offset, and wrapped all
+	accesses to "MonoClass.interface_offsets".
+
+	* monodiet.c, object.c, marshal.c, icall.c: wrapped all accesses to
+	"MonoClass.interface_offsets".
 
 Tue May 8 13:02:09 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
