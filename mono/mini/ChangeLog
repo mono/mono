@@ -1,3 +1,10 @@
+2007-05-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mono_method_to_ir2): Set cfg->ip while iterating through
+	the IL code. Fixes debugging support.
+
+	* mini.h (MONO_INST_NEW): Set ins->cil_code automatically using cfg->ip.
+
 2007-05-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mini_method_compile): Only decompose_array_access_opts in the new IR.

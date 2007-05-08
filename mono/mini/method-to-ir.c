@@ -5626,6 +5626,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 	NEW_BBLOCK (cfg, bblock);
 	bblock->cil_code = ip;
 	cfg->cbb = bblock;
+	cfg->ip = ip;
 
 	ADD_BBLOCK (cfg, bblock);
 
@@ -5764,7 +5765,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			cfg->real_offset = ip - header->code;
 		else
 			cfg->real_offset = inline_offset;
-
+		cfg->ip = ip;
+		
 		if (start_new_bblock) {
 			bblock->cil_length = ip - bblock->cil_code;
 			if (start_new_bblock == 2) {

@@ -87,12 +87,14 @@ enum {
 		(dest) = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
 		(dest)->opcode = (op);	\
         (dest)->dreg = (dest)->sreg1 = (dest)->sreg2 = -1;  \
+        (dest)->cil_code = (cfg)->ip;  \
 	} while (0)
 
 #define MONO_INST_NEW_CALL(cfg,dest,op) do {	\
 		(dest) = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoCallInst));	\
 		(dest)->inst.opcode = (op);	\
         (dest)->inst.dreg = (dest)->inst.sreg1 = (dest)->inst.sreg2 = -1;  \
+        (dest)->inst.cil_code = (cfg)->ip;  \
 	} while (0)
 
 #define MONO_INST_NEW_CALL_ARG(cfg,dest,op) do {	\
@@ -614,6 +616,8 @@ typedef struct {
 	 * this is NULL.
 	 */
 	MonoInst        *vret_addr;
+
+	const unsigned char *ip;
 	
 	struct MonoAliasingInformation *aliasing_info;
 
