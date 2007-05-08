@@ -2554,61 +2554,108 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		static readonly char [] dot_array = { '.' };
-		protected override TypeExpr DoResolveAsTypeStep (IResolveContext ec)
+		private class UnexpectedType
 		{
-			// If name is of the form `N.I', first lookup `N', then search a member `I' in it.
-			string rest = null;
-			string lookup_name = name;
-			int pos = name.IndexOf ('.');
-			if (pos >= 0) {
-				rest = name.Substring (pos + 1);
-				lookup_name = name.Substring (0, pos);
-			}
+		}
 
-			FullNamedExpression resolved = RootNamespace.Global.Lookup (ec.DeclContainer, lookup_name, Location.Null);
-
-			if (resolved != null && rest != null) {
-				// Now handle the rest of the the name.
-				string [] elements = rest.Split (dot_array);
-				string element;
-				int count = elements.Length;
-				int i = 0;
-				while (i < count && resolved != null && resolved is Namespace) {
-					Namespace ns = resolved as Namespace;
-					element = elements [i++];
-					lookup_name += "." + element;
-					resolved = ns.Lookup (ec.DeclContainer, element, Location.Null);
+		// This performes recursive type lookup, providing support for generic types.
+		// For example, given the type:
+		//
+		// System.Collections.Generic.KeyValuePair`2[[System.Int32],[System.String]]
+		//
+		// The types will be checked in the following order:
+		//                                                                             _
+		// System                                                                       |
+		// System.Collections                                                           |
+		// System.Collections.Generic                                                   |
+		//                        _                                                     |
+		//     System              | recursive call 1                                   |
+		//     System.Int32       _|                                                    | main method call
+		//                        _                                                     |
+		//     System              | recursive call 2                                   |
+		//     System.String      _|                                                    |
+		//                                                                              |
+		// System.Collections.Generic.KeyValuePair`2[[System.Int32],[System.String]]   _|
+		//
+		private Type TypeLookup (IResolveContext ec, string name)
+		{
+			int index = 0;
+			int dot = 0;
+			bool done = false;
+			FullNamedExpression resolved = null;
+			Type type = null;
+			Type recursive_type = null;
+			while (index < name.Length) {
+				if (name[index] == '[') {
+					int open = index;
+					int braces = 1;
+					do {
+						index++;
+						if (name[index] == '[')
+							braces++;
+						else if (name[index] == ']')
+							braces--;
+					} while (braces > 0);
+					recursive_type = TypeLookup (ec, name.Substring (open + 1, index - open - 1));
+					if (recursive_type == null || (recursive_type == typeof(UnexpectedType)))
+						return recursive_type;
 				}
+				else {
+					if (name[index] == ',')
+						done = true;
+					else if ((name[index] == '.' && !done) || (index == name.Length && name[0] != '[')) {
+						string substring = name.Substring(dot, index - dot);
 
-				if (resolved != null && resolved is TypeExpr) {
-					Type t = ((TypeExpr) resolved).Type;
-					while (t != null) {
-						if (!ec.DeclContainer.CheckAccessLevel (t)) {
-							resolved = null;
-							lookup_name = t.FullName;
-							break;
-						}
-						if (i == count) {
-							type = t;
-							return this;
-						}
-						t = TypeManager.GetNestedType (t, elements [i++]);
+						if (resolved == null)
+							resolved = RootNamespace.Global.Lookup (ec.DeclContainer, substring, Location.Null);
+						else if (resolved is Namespace)
+						    resolved = (resolved as Namespace).Lookup (ec.DeclContainer, substring, Location.Null);
+						else if (type != null)
+							type = TypeManager.GetNestedType (type, substring);
+						else
+							return null;
+
+						if (resolved == null)
+							return null;
+						else if (type == null && resolved is TypeExpr)
+							type = resolved.Type;
+
+						dot = index + 1;
 					}
 				}
+				index++;
+			}
+			if (name[0] != '[') {
+				string substring = name.Substring(dot, index - dot);
+
+				if (type != null)
+					return TypeManager.GetNestedType (type, substring);
+				else if (resolved != null) {
+					resolved = (resolved as Namespace).Lookup (ec.DeclContainer, substring, Location.Null);
+					if (resolved is TypeExpr)
+						return resolved.Type;
+					else {
+						resolved.Error_UnexpectedKind (ec.DeclContainer, "type", loc);
+						return typeof (UnexpectedType);
+					}
+				}
+				else
+					return null;
+			}
+			else
+				return recursive_type;
 			}
 
-			if (resolved == null) {
-				NamespaceEntry.Error_NamespaceNotFound (loc, lookup_name);
+		protected override TypeExpr DoResolveAsTypeStep (IResolveContext ec)
+		{
+			Type t = TypeLookup (ec, name);
+			if (t == null || !ec.DeclContainer.CheckAccessLevel (t)) {
+				NamespaceEntry.Error_NamespaceNotFound (loc, name);
 				return null;
 			}
-
-			if (!(resolved is TypeExpr)) {
-				resolved.Error_UnexpectedKind (ec.DeclContainer, "type", loc);
+			else if (t == typeof(UnexpectedType))
 				return null;
-			}
-
-			type = resolved.Type;
+			type = t;
 			return this;
 		}
 
@@ -4921,6 +4968,24 @@ namespace Mono.CSharp {
 		public void AddressOf (EmitContext ec, AddressOp mode)
 		{
 			EmitLoadAddress (ec);
+		}
+	}
+	
+	public sealed class VarExpr : Expression
+	{
+		public bool Handled;
+		public VarExpr (Location loc)
+		{
+			this.loc = loc;
+		}
+		
+		public override Expression DoResolve (EmitContext ec)
+		{
+			return null;
+		}
+		
+		public override void Emit (EmitContext ec)
+		{
 		}
 	}
 	

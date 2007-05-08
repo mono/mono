@@ -320,11 +320,26 @@ namespace Mono.CSharp {
 		//
 		public override Expression DoResolve (EmitContext ec)
 		{
+			// Handle initializations e.g. Person p = new Person () { Name = "Scott" };
+			if (source is IInitializable)
+				((IInitializable)source).Initialize (ec, target);
+
 			// Create an embedded assignment if our source is an assignment.
 			if (source is Assign)
 				source = embedded = ((Assign) source).GetEmbeddedAssign (loc);
 
 			real_source = source = source.Resolve (ec);
+			
+			// Check for and handle varible type inference
+			LocalVariableReference l = target as LocalVariableReference;
+			if (l != null) {
+				VarExpr v = l.Block.GetVariableType(l.Name) as VarExpr;
+				if (v != null && !v.Handled) {
+					((LocalInfo)l.Block.Variables[l.Name]).VariableType = real_source.Type;
+					v.Handled = true;
+				}
+			}
+			
 			if (source == null) {
 				// Ensure that we don't propagate the error as spurious "uninitialized variable" errors.
 				target = target.ResolveLValue (ec, EmptyExpression.Null, Location);

@@ -1476,6 +1476,7 @@ namespace Mono.CSharp {
 		// The statements in this block
 		//
 		protected ArrayList statements;
+		protected int current_statement;
 		int num_statements;
 
 		//
@@ -1977,6 +1978,12 @@ namespace Mono.CSharp {
 			statements.Add (s);
 			flags |= Flags.BlockUsed;
 		}
+		
+		public void InsertStatementAfterCurrent (Statement statement)
+		{
+			statements.Insert (current_statement + 1, statement);
+			flags |= Flags.BlockUsed;
+		}
 
 		public bool Used {
 			get { return (flags & Flags.BlockUsed) != 0; }
@@ -2265,13 +2272,12 @@ namespace Mono.CSharp {
 			// from the beginning of the function.  The outer Resolve() that detected the unreachability is
 			// responsible for handling the situation.
 			//
-			int statement_count = statements.Count;
-			for (int ix = 0; ix < statement_count; ix++){
-				Statement s = (Statement) statements [ix];
+			for (current_statement = 0; current_statement < statements.Count; current_statement++) {
+				Statement s = (Statement) statements [current_statement];
 				// Check possible empty statement (CS0642)
 				if (RootContext.WarningLevel >= 3 &&
-					ix + 1 < statement_count &&
-						statements [ix + 1] is Block)
+					current_statement + 1 < statements.Count &&
+						statements [current_statement + 1] is Block)
 					CheckPossibleMistakenEmptyStatement (s);
 
 				//
@@ -2300,14 +2306,14 @@ namespace Mono.CSharp {
 
 				if (!s.Resolve (ec)) {
 					ok = false;
-					statements [ix] = EmptyStatement.Value;
+					statements [current_statement] = EmptyStatement.Value;
 					continue;
 				}
 
 				if (unreachable && !(s is LabeledStatement) && !(s is Block))
-					statements [ix] = EmptyStatement.Value;
+					statements [current_statement] = EmptyStatement.Value;
 
-				num_statements = ix + 1;
+				num_statements = current_statement + 1;
 
 				unreachable = ec.CurrentBranching.CurrentUsageVector.IsUnreachable;
 				if (unreachable && s is LabeledStatement)
@@ -2315,7 +2321,7 @@ namespace Mono.CSharp {
 			}
 
 			Report.Debug (4, "RESOLVE BLOCK DONE", StartLocation,
-				      ec.CurrentBranching, statement_count, num_statements);
+				      ec.CurrentBranching, statements.Count, num_statements);
 
 			if (!ok)
 				return false;
@@ -3988,7 +3994,22 @@ namespace Mono.CSharp {
 				return false;
 			}
 			
-			TypeExpr texpr = type.ResolveAsTypeTerminal (ec, false);
+			TypeExpr texpr = null;
+			if (type is VarExpr) {
+				Unary u = ((Pair) declarators[0]).Second as Unary;
+				if (u == null)
+					return false;
+				
+				Expression e = u.Expr.Resolve (ec);
+				if (e == null || e.Type == null)
+					return false;
+				
+				Type t = TypeManager.GetPointerType (e.Type);
+				texpr = new TypeExpression (t, loc);
+			}
+			else
+				texpr = type.ResolveAsTypeTerminal (ec, false);
+
 			if (texpr == null)
 				return false;
 
@@ -4005,6 +4026,9 @@ namespace Mono.CSharp {
 			foreach (Pair p in declarators){
 				LocalInfo vi = (LocalInfo) p.First;
 				Expression e = (Expression) p.Second;
+				
+				if (type is VarExpr)
+					vi.VariableType = expr_type;
 
 				vi.VariableInfo.SetAssigned (ec);
 				vi.SetReadOnlyContext (LocalInfo.ReadOnlyContext.Fixed);
@@ -4478,7 +4502,17 @@ namespace Mono.CSharp {
 		{
 			int i = 0;
 
-			TypeExpr texpr = expr.ResolveAsTypeTerminal (ec, false);
+			TypeExpr texpr = null;
+			
+			if (expr is VarExpr) {
+				Expression e = ((Expression)((DictionaryEntry)var_list[0]).Value).Resolve (ec);
+				if (e == null || e.Type == null)
+					return false;
+				texpr = new TypeExpression (e.Type, loc);
+			}
+			else
+				texpr = expr.ResolveAsTypeTerminal (ec, false);
+
 			if (texpr == null)
 				return false;
 
@@ -4497,6 +4531,12 @@ namespace Mono.CSharp {
 
 			foreach (DictionaryEntry e in var_list){
 				Expression var = (Expression) e.Key;
+				
+				if (expr is VarExpr) {
+					LocalVariableReference l = var as LocalVariableReference;
+					((LocalInfo)l.Block.Variables[l.Name]).VariableType = expr_type;
+					((VarExpr)expr).Handled = true;
+				}
 
 				var = var.ResolveLValue (ec, new EmptyExpression (), loc);
 				if (var == null)
@@ -4793,6 +4833,46 @@ namespace Mono.CSharp {
 			expr = expr.Resolve (ec);
 			if (expr == null)
 				return false;
+
+			if (type is VarExpr) {
+				Type element_type = null;
+				if (TypeManager.HasElementType (expr.Type))
+					element_type = TypeManager.GetElementType (expr.Type);
+				else {
+					MethodGroupExpr mg = Expression.MemberLookup (
+						ec.ContainerType, expr.Type, "GetEnumerator", MemberTypes.Method,
+						Expression.AllBindingFlags, loc) as MethodGroupExpr;
+					
+					if (mg == null)
+							return false;
+					
+					MethodInfo get_enumerator = null;
+					foreach (MethodInfo mi in mg.Methods) {
+						if (TypeManager.GetParameterData (mi).Count != 0)
+							continue;
+						if ((mi.Attributes & MethodAttributes.Public) != MethodAttributes.Public)
+							continue;
+						if (CollectionForeach.IsOverride (mi))
+							continue;
+						get_enumerator = mi;
+					}
+					
+					if (get_enumerator == null)
+						return false;
+					
+					PropertyInfo pi = TypeManager.GetProperty (get_enumerator.ReturnType, "Current");
+					
+					if (pi == null)
+						return false;
+						
+					element_type = pi.PropertyType;
+				}
+
+				type = new TypeLookupExpression (element_type.AssemblyQualifiedName);
+                
+				LocalVariableReference lv = variable as LocalVariableReference;
+				((LocalInfo)lv.Block.Variables[lv.Name]).VariableType = element_type;
+			}
 
 			Constant c = expr as Constant;
 			if (c != null && c.GetValue () == null) {
@@ -5178,7 +5258,7 @@ namespace Mono.CSharp {
 					TypeManager.CSharpName (expr.Type));
 			}
 
-			bool IsOverride (MethodInfo m)
+			public static bool IsOverride (MethodInfo m)
 			{
 				m = (MethodInfo) TypeManager.DropGenericMethodArguments (m);
 

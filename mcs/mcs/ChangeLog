@@ -1,3 +1,40 @@
+2007-04-28  Scott Peterson  <lunchtimemama@gmail.com>
+
+	This code is contributed under the MIT X11 license
+	
+	The following enables support for several C# 3.0 language features:
+	
+	* cs-tokenizer.cs: Added support for the "var" keyword.
+	
+	* ecore.cs: Refactored TypeLookupExpression.DoResolveAsTypeStep().
+	  Added VarExpr class to facilitate type inferencing.
+	
+	* class.cs: Added IDictionary field AnonymousTypes to TypeContainer
+	  to support anonymous types.
+	
+	* assign.cs: Added support for type inferencing and initialization.
+	
+	* anonymous.cs: Added AnonymousClass class to enable anonymous types.
+	
+	* expression.cs: Added implicit array support to ArrayCreation.
+	  Added 5 types and 1 interface:
+	  
+	  IInitializable		Implementing classes can inject initializing
+	  				statements after object instantiation.
+	  
+	  Initializer			Stores data for object initialization.
+	  
+	  AnonymousType			An expression for anonymous types.
+	  
+	  AnonymousTypeParameter	Stores data about an anonymous type's field.
+	  
+	  NewInitialize			An expression for object initialization.
+	  
+	  CollectionInitialize		An expression for collection initialization.
+	
+	* statement.cs: Added "var" keyword support to the foreach, using, and fixed
+	  statements.
+
 2007-05-06  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #81500

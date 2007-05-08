@@ -1845,4 +1845,12 @@ namespace Mono.CSharp {
 			Report.Debug (128, "EMIT ANONYMOUS DELEGATE DONE", this, am, am.Scope, loc);
 		}
 	}
+	
+	public class AnonymousClass : CompilerGeneratedClass
+	{
+		public AnonymousClass (TypeContainer parent, Location loc)
+			: base (parent, null, 0, loc)
+		{
+		}
+	}
 }

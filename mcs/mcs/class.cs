@@ -2701,6 +2701,15 @@ namespace Mono.CSharp {
 				return base_cache;
 			}
 		}
+		
+		private IDictionary anonymous_types;
+		public IDictionary AnonymousTypes {
+			get {
+				if (anonymous_types == null)
+					anonymous_types = new HybridDictionary();
+				return anonymous_types;
+			}
+		}
 	}
 
 	public abstract class ClassOrStruct : TypeContainer {

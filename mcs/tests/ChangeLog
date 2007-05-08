@@ -1,3 +1,47 @@
+2007-04-28  Scott Peterson  <lunchtimemama@gmail.com>
+
+	This code is contributed under the MIT X11 license
+	
+	All of the following are new tests pretaining to C# 3.0 features
+	
+	* gtest-anontype-01.cs: Tests anonymous types
+	
+	* gtest-anontype-02.cs: Tests anonymous types initialized
+	  with local variables
+	  
+	* gtest-anontype-03.cs: Tests anonymous types initialized
+	  with object members
+	
+	* gtest-anontype-04.cs: Tests anonymous types initialized
+	  with a mix of literals, local variables and object members
+	  
+	* gtest-anontype-05.cs: Tests anonymous type consolidation
+	  
+	* gtest-collectioninit-01.cs: New test for collection initialization
+	
+	* gtest-implicitarray-01.cs: New test for implicit arrays
+	
+	* gtest-initialize-01.cs: Tests object initialization
+	
+	* gtest-var-01.cs: New test for variable type inference -
+	  the "var" keyword - when used with primitive types
+	  assigned to local variables
+	  
+	* gtest-var-02.cs: Testing the var keyword when assigning
+	  a user-defined type to a local variable
+	  
+	* gtest-var-03.cs: Tests the var keyword when using the
+	  foreach statement with an array
+	  
+	* gtest-var-04.cs: Tests the var keyword when using the
+	  foreach statement with generic collections
+	
+	* gtest-var-05.cs: Tests the var keyword when using
+	  the "using" statement
+	  
+	* gtest-var-06.cs: Tests the var keyword when using
+	  the "fixed" statement
+
 2007-03-29  Raja R Harinath  <rharinath@novell.com>
 
 	* gtest-325.cs: New test from #81121.

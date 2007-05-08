@@ -224,6 +224,7 @@ namespace Mono.CSharp
 /* C# keywords which are not really keywords */
 %token GET           "get"
 %token SET           "set"
+%token VAR
 
 %left LAST_KEYWORD
 
@@ -1127,6 +1128,7 @@ method_declaration
 		anonymous_host = (IAnonymousHost) $1;
 		if (RootContext.Documentation != null)
 			Lexer.doc_state = XmlCommentState.NotAllowed;
+		Lexer.VarParsing = true;
 	  }
 	  method_body
 	  {
@@ -1140,6 +1142,7 @@ method_declaration
 
 		if (RootContext.Documentation != null)
 			Lexer.doc_state = XmlCommentState.Allowed;
+		Lexer.VarParsing = false;
 	  }
 	;
 
@@ -2911,6 +2914,10 @@ type
 	  }
 	| array_type
 	| pointer_type
+	| VAR
+	  {
+	  	$$ = new VarExpr (lexer.Location);
+	  }
 	;
 
 pointer_type
@@ -3175,6 +3182,20 @@ invocation_expression
 	  }
 	;
 
+opt_object_initializer
+	: /* empty */		{ $$ = null; }
+	| OPEN_BRACE variable_declarators CLOSE_BRACE
+	  {
+	  	ArrayList vars = (ArrayList) $2;
+	  	ArrayList inits = new ArrayList (vars.Count);
+	  	foreach (VariableDeclaration variable in vars) {
+	  		Initializer i = new Initializer (variable.identifier, variable.expression_or_array_initializer);
+	  		inits.Add (i);
+	  	}
+	  	$$ = inits;
+	  }
+	;
+
 opt_argument_list
 	: /* empty */		{ $$ = null; }
 	| argument_list
@@ -3330,12 +3351,35 @@ post_decrement_expression
 new_expression
 	: object_or_delegate_creation_expression
 	| array_creation_expression
+	| collection_initialization_expression
+	| anonymous_type_expression
 	;
 
 object_or_delegate_creation_expression
-	: NEW type OPEN_PARENS opt_argument_list CLOSE_PARENS
+	: NEW type OPEN_PARENS opt_argument_list CLOSE_PARENS opt_object_initializer
 	  {
-		$$ = new New ((Expression) $2, (ArrayList) $4, (Location) $1);
+		if ($6 != null) {
+			if (RootContext.Version < LanguageVersion.LINQ) {
+		  		Error_ExpectingTypeName ((Expression) $2);
+		  		$$ = null;
+		  	}
+		  	else
+				$$ = new NewInitialize ((Expression) $2, (ArrayList) $4, (Location) $1, (ArrayList) $6);
+		}
+		else
+			$$ = new New ((Expression) $2, (ArrayList) $4, (Location) $1);
+	  }
+	;
+
+collection_initialization_expression
+	: NEW type OPEN_BRACE argument_list CLOSE_BRACE
+	  {
+	  	if (RootContext.Version < LanguageVersion.LINQ) {
+	  		Report.Error (1526, (Location) $1, "A new expression requires () or [] after type");
+			$$ = null;
+		}
+		else
+	  		$$ = new CollectionInitialize ((Expression) $2, new ArrayList (), (Location) $1, (ArrayList) $4);
 	  }
 	;
 
@@ -3350,6 +3394,15 @@ array_creation_expression
 	  {
 		$$ = new ArrayCreation ((Expression) $2, (string) $3, (ArrayList) $4, (Location) $1);
 	  }
+	| NEW rank_specifiers array_initializer
+	  {
+	  	if (RootContext.Version < LanguageVersion.LINQ) {
+	  		Report.Error (1031, (Location) $1, "Type expected");
+	  		$$ = null;
+	  	}
+	  	else
+	  		$$ = new ArrayCreation (new VarExpr((Location) $1), (string) $2, (ArrayList) $3, (Location) $1);
+	  }
 	| NEW error
 	  {
 		Report.Error (1031, (Location) $1, "Type expected");
@@ -3359,6 +3412,50 @@ array_creation_expression
 	  {
 		Report.Error (1526, (Location) $1, "A new expression requires () or [] after type");
 		$$ = null;
+	  }
+	;
+
+anonymous_type_expression
+	: NEW OPEN_BRACE anonymous_type_parameters CLOSE_BRACE
+	  {
+	  	if (RootContext.Version < LanguageVersion.LINQ) {
+	  		Report.Error (1031, (Location) $1, "Type expected");
+	  		$$ = null;
+	  	}
+	  	else
+	  		$$ = new AnonymousType ((ArrayList) $3, current_container, lexer.Location);
+	  }
+	;
+
+anonymous_type_parameters
+	: anonymous_type_parameter
+	  {
+	  	ArrayList a = new ArrayList (4);
+	  	a.Add ($1);
+	  	$$ = a;
+	  }
+	| anonymous_type_parameters COMMA anonymous_type_parameter
+	  {
+	  	ArrayList a = (ArrayList) $1;
+	  	a.Add ($3);
+	  	$$ = a;
+	  }
+	;
+
+anonymous_type_parameter
+	: variable_declarator
+	  {
+	  	VariableDeclaration v = (VariableDeclaration) $1;
+	  	Expression e = v.expression_or_array_initializer;
+	  	if (e == null) {
+	  		e = new LocalVariableReference (current_block, v.identifier, lexer.Location);
+	  	}
+	  	$$ = new AnonymousTypeParameter (e, v.identifier);
+	  }
+	| member_access
+	  {
+	  	MemberAccess ma = (MemberAccess) $1;
+	  	$$ = new AnonymousTypeParameter (ma, ma.Identifier);
 	  }
 	;
 
@@ -4420,6 +4517,10 @@ local_variable_declaration
 		else
 			$$ = null;
 	  }
+	| VAR variable_declarators
+	  {
+	  	$$ = new DictionaryEntry (new VarExpr (lexer.Location), $2);
+	  }
         | local_variable_pointer_type opt_rank_specifier_or_nullable variable_declarators
 	  {
 		if ($1 != null){
@@ -5050,6 +5151,9 @@ fixed_statement
 			v = current_block.AddVariable (type, (string) p.First, l);
 			if (v == null)
 				continue;
+
+			if (type is VarExpr)
+				v.VariableType = typeof(VarExpr); // Kinda lame. Avoids a problem in the VariableMap ctor
 
 			v.SetReadOnlyContext (LocalInfo.ReadOnlyContext.Fixed);
 			v.Pinned = true;

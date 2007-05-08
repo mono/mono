@@ -5678,6 +5678,17 @@ namespace Mono.CSharp {
 			if (type != null)
 				return this;
 
+			if (requested_base_type is VarExpr) {
+				if (initializers == null || initializers.Count == 0) {
+					Console.WriteLine ("Initializers required"); // FIXME proper error
+					return null;
+				}
+				Expression e = ((Expression)initializers[0]).Resolve (ec);
+				if (e == null)
+					return null; // FIXME proper error
+				requested_base_type = new TypeExpression (e.Type, loc);
+			}
+
 			if (!LookupType (ec))
 				return null;
 			
@@ -8500,6 +8511,249 @@ namespace Mono.CSharp {
 			StackAlloc target = (StackAlloc) t;
 			target.count = count.Clone (clonectx);
 			target.t = t.Clone (clonectx);
+		}
+	}
+	
+	public class Initializer
+	{
+		public readonly string Name;
+		public readonly Expression Value;
+
+		public Initializer (string name, Expression value)
+		{
+			Name = name;
+			Value = value;
+		}
+	}
+
+	public interface IInitializable
+	{
+		void Initialize (EmitContext ec, Expression target);
+	}
+
+	public class AnonymousType : Expression, IInitializable
+	{
+		private ArrayList parameters;
+		private TypeContainer parent;
+		private Location loc;
+		private TypeContainer anonymous_type;
+
+		public AnonymousType (ArrayList parameters, TypeContainer parent, Location loc)
+		{
+			this.parameters = parameters;
+			this.parent = parent;
+			this.loc = loc;
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			foreach (AnonymousTypeParameter p in parameters)
+				p.Resolve (ec);
+			
+			anonymous_type = GetAnonymousType (ec);
+
+			TypeExpression te = new TypeExpression (anonymous_type.TypeBuilder, loc);
+			return new New (te, null, loc).Resolve (ec);
+		}
+
+		private TypeContainer GetAnonymousType (EmitContext ec)
+		{
+			// See if we already have an anonymous type with the right fields.
+			// If not, create one.
+			// 
+			// Look through all availible pre-existing anonymous types:
+			foreach (DictionaryEntry d in parent.AnonymousTypes) {
+				ArrayList p = d.Key as ArrayList;
+				if (p.Count != parameters.Count)
+					continue;
+				bool match = true;
+				// And for each of the fields we need...
+				foreach (AnonymousTypeParameter atp in parameters) {
+					// ... check each of the pre-existing A-type's fields.
+					bool found = false;
+					foreach (AnonymousTypeParameter a in p)
+						if (atp.Equals(a)) {
+							found = true;
+							break;
+						}
+					// If the pre-existing A-type doesn't have one of our fields, try the next one
+					if (!found) {
+						match = false;
+						break;
+					}
+				}
+				// If it's a match, return it.
+				if (match)
+					return d.Value as TypeContainer;
+			}
+			// Otherwise, create a new type.
+			return CreateAnonymousType (ec);
+		}
+
+		private TypeContainer CreateAnonymousType (EmitContext ec)
+		{
+			TypeContainer type = new AnonymousClass (parent, loc);
+			foreach (AnonymousTypeParameter p in parameters) {
+				TypeExpression te = new TypeExpression (p.Type, loc);
+				Field field = new Field (type, te, Modifiers.PUBLIC, p.Name, null, loc);
+				type.AddField (field);
+			}
+			type.DefineType ();
+			type.DefineMembers ();
+			parent.AnonymousTypes.Add (parameters, type);
+			return type;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			TypeExpression te = new TypeExpression (anonymous_type.TypeBuilder, loc);
+			new New (te, null, loc).Emit(ec);
+		}
+
+		public void Initialize (EmitContext ec, Expression target)
+		{
+			LocalVariableReference lv = (LocalVariableReference)target;
+			foreach (AnonymousTypeParameter p in parameters) {
+				MemberAccess ma = new MemberAccess (lv, p.Name);
+				Assign a = new Assign (ma, (p.Expression is Assign)
+				                       ? ((Assign)p.Expression).Source
+				                       : p.Expression);
+				ec.CurrentBlock.InsertStatementAfterCurrent (new StatementExpression (a));
+			}
+		}
+	}
+
+	public class AnonymousTypeParameter : Expression
+	{
+		private LocatedToken token;
+		private string name;
+		private Expression expression;
+		private Type type;
+
+		public LocatedToken Token {
+			get { return token; }
+		}
+
+		public string Name {
+			get { return name; }
+		}
+
+		public Type Type {
+			get { return type; }
+		}
+
+		public Expression Expression {
+			get { return expression; }
+		}
+
+		public override bool Equals (object o)
+		{
+			AnonymousTypeParameter other = o as AnonymousTypeParameter;
+			return other != null && Name == other.Name && Type == other.Type;
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			Expression e = expression.Resolve(ec);
+			type = e.Type;
+			return e;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			expression.Emit(ec);
+		}
+
+		public AnonymousTypeParameter (Expression expression, string name)
+		{
+			this.name = name;
+			this.expression = expression;
+			type = expression.Type;
+		}
+	}
+
+	public class NewInitialize : New, IInitializable
+	{
+		private ArrayList initializers;
+
+		public void Initialize (EmitContext ec, Expression target)
+		{
+			LocalVariableReference lv = (LocalVariableReference)target;
+			for (int i = initializers.Count - 1; i >= 0; i--) {
+				MemberAccess ma = new MemberAccess (lv, ((Initializer)initializers[i]).Name);
+				Assign a = new Assign (ma, ((Initializer)initializers[i]).Value);
+				ec.CurrentBlock.InsertStatementAfterCurrent (new StatementExpression (a));
+			}
+		}
+
+		public NewInitialize (Expression requested_type, ArrayList arguments, Location l, ArrayList initializers)
+			: base (requested_type, arguments, l)
+		{
+			this.initializers = initializers;
+		}
+	}
+
+	public class CollectionInitialize : New, IInitializable
+	{
+		private ArrayList items;
+		
+		public CollectionInitialize (Expression type, ArrayList arguments, Location l, ArrayList items)
+			: base (type, arguments, l)
+		{
+			this.items = items;
+		}
+		
+		// A type is a valid collection if it implements IEnumerable and has a public Add method
+		private bool CheckCollection (EmitContext ec)
+		{
+			Expression e = base.Resolve (ec);
+			
+			if (e == null)
+				return false;
+			
+			bool is_ienumerable = false;
+			foreach (Type t in TypeManager.GetInterfaces (e.Type))
+				if (t == typeof (IEnumerable)) {
+					is_ienumerable = true;
+					break;
+				}
+			
+			if (!is_ienumerable)
+				return false;
+			
+			MethodGroupExpr mg = Expression.MemberLookup (
+				ec.ContainerType, e.Type, "Add", MemberTypes.Method,
+				Expression.AllBindingFlags, loc) as MethodGroupExpr;
+
+			if (mg == null)
+					return false;
+			
+			foreach (MethodInfo mi in mg.Methods) {
+				if (TypeManager.GetParameterData (mi).Count != 1)
+					continue;
+				if ((mi.Attributes & MethodAttributes.Public) != MethodAttributes.Public)
+					continue;
+				return true;
+			}
+			return false;
+		}
+		
+		public void Initialize (EmitContext ec, Expression target)
+		{
+			if (!CheckCollection (ec)) {
+				// TODO throw proper error
+				Console.WriteLine ("Error: This is not a collection");
+				return;
+			}
+			
+			LocalVariableReference lv = (LocalVariableReference) target;
+			for (int i = items.Count - 1; i >= 0; i--) {
+				MemberAccess ma = new MemberAccess (lv, "Add");
+				ArrayList array = new ArrayList ();
+				array.Add ((Argument)items[i]);
+				Invocation invoke = new Invocation (ma, array);
+				ec.CurrentBlock.InsertStatementAfterCurrent (new StatementExpression (invoke));
+			}
 		}
 	}
 }
