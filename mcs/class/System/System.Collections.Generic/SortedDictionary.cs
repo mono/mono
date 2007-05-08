@@ -45,6 +45,11 @@ namespace System.Collections.Generic
 			public TKey key;
 			public TValue value;
 
+			public Node (TKey key)
+			{
+				this.key = key;
+			}
+
 			public Node (TKey key, TValue value)
 			{
 				this.key = key;
@@ -69,7 +74,7 @@ namespace System.Collections.Generic
 			}
 		}
 
-		class NodeComparer : RBTree.INodeComparer<TKey> {
+		class NodeHelper : RBTree.INodeHelper<TKey> {
 			public IComparer<TKey> cmp;
 
 			public int Compare (TKey key, RBTree.Node node)
@@ -77,21 +82,26 @@ namespace System.Collections.Generic
 				return cmp.Compare (key, ((Node) node).key);
 			}
 
-			private NodeComparer (IComparer<TKey> cmp)
+			public RBTree.Node CreateNode (TKey key)
+			{
+				return new Node (key);
+			}
+
+			private NodeHelper (IComparer<TKey> cmp)
 			{
 				this.cmp = cmp;
 			}
-			static NodeComparer Default = new NodeComparer (Comparer<TKey>.Default);
-			public static NodeComparer GetComparer (IComparer<TKey> cmp)
+			static NodeHelper Default = new NodeHelper (Comparer<TKey>.Default);
+			public static NodeHelper GetHelper (IComparer<TKey> cmp)
 			{
 				if (cmp == null || cmp == Comparer<TKey>.Default)
 					return Default;
-				return new NodeComparer (cmp);
+				return new NodeHelper (cmp);
 			}
 		}
 
 		RBTree tree;
-		NodeComparer cmp;
+		NodeHelper hlp;
 
 		#region Constructor
 		public SortedDictionary () : this ((IComparer<TKey>) null)
@@ -100,8 +110,8 @@ namespace System.Collections.Generic
 
 		public SortedDictionary (IComparer<TKey> comparer)
 		{
-			cmp = NodeComparer.GetComparer (comparer);
-			tree = new RBTree (cmp);
+			hlp = NodeHelper.GetHelper (comparer);
+			tree = new RBTree (hlp);
 		}
 
 		public SortedDictionary (IDictionary<TKey,TValue> dic) : this (dic, null)
@@ -120,7 +130,7 @@ namespace System.Collections.Generic
 		#region PublicProperty
 
 		public IComparer<TKey> Comparer {
-			get { return cmp.cmp; }
+			get { return hlp.cmp; }
 		}
 
 		public int Count {
@@ -136,12 +146,9 @@ namespace System.Collections.Generic
 			}
 			set {
 				if (key == null)
-					throw new ArgumentNullException ();
-
-				RBTree.Node n1 = new Node (key, value);
-				Node n2 = (Node) tree.Intern (key, n1);
-				if (n2 != n1)
-					n2.value = value;
+					throw new ArgumentNullException ("key");
+				Node n = (Node) tree.Intern (key, null);
+				n.value = value;
 			}
 		}
 
@@ -159,12 +166,11 @@ namespace System.Collections.Generic
 		public void Add (TKey key, TValue value)
 		{
 			if (key == null) 
-				throw new ArgumentNullException ();
+				throw new ArgumentNullException ("key");
 
-			RBTree.Node n1 = new Node (key, value);
-			Node n2 = (Node) tree.Intern (key, n1);
-			if (n2 != n1)
-				throw new ArgumentException ();
+			RBTree.Node n = new Node (key, value);
+			if (tree.Intern (key, n) != n)
+				throw new ArgumentException ("key already present in dictionary", "key");
 		}
 
 		public void Clear ()

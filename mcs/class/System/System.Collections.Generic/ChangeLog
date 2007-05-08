@@ -1,3 +1,14 @@
+2007-05-08  Raja R Harinath  <rharinath@novell.com>
+
+	Avoid unnecessary allocation on indexer access
+	* SortedDictionary.cs (NodeHelper): Rename from NodeComparer.
+	(NodeHelper.CreateNode): New.
+	(Item.set): Move responsibility of creating new nodes to
+	RBTree.Intern.
+	* RBTree.cs (INodeHelper): Rename from INodeComparer.
+	(INodeHelper.CreateNode): New.
+	(Intern): Use it to create a new node if no node is passed in.
+
 2007-05-08 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* RBTree.cs: for TARGET_JVM used Thread Local Storage 

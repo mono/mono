@@ -37,8 +37,9 @@ using System.Collections;
 namespace System.Collections.Generic
 {
 	internal class RBTree : IEnumerable, IEnumerable<RBTree.Node> {
-		public interface INodeComparer<T> {
-			int Compare (T value, Node node);
+		public interface INodeHelper<T> {
+			int Compare (T key, Node node);
+			Node CreateNode (T key);
 		}
 
 		public abstract class Node {
@@ -109,7 +110,7 @@ namespace System.Collections.Generic
 		}
 
 		Node root;
-		object cmp;
+		object hlp;
 		uint version;
 
 #if ONE_MEMBER_CACHE
@@ -153,10 +154,10 @@ namespace System.Collections.Generic
 		}
 #endif
 
-		public RBTree (object cmp)
+		public RBTree (object hlp)
 		{
-			// cmp is INodeComparer<T> for some T
-			this.cmp = cmp;
+			// hlp is INodeHelper<T> for some T
+			this.hlp = hlp;
 		}
 
 		public void Clear ()
@@ -170,6 +171,8 @@ namespace System.Collections.Generic
 		public Node Intern<T> (T key, Node new_node)
 		{
 			if (root == null) {
+				if (new_node == null)
+					new_node = ((INodeHelper<T>) hlp).CreateNode (key);
 				root = new_node;
 				root.IsBlack = true;
 				++version;
@@ -178,7 +181,12 @@ namespace System.Collections.Generic
 
 			List<Node> path = alloc_path ();
 			int in_tree_cmp = find_key (key, path);
-			Node retval = in_tree_cmp == 0 ? path [path.Count - 1] : do_insert (in_tree_cmp, new_node, path);
+			Node retval = path [path.Count - 1];
+			if (retval == null) {
+				if (new_node == null)
+					new_node = ((INodeHelper<T>) hlp).CreateNode (key);
+				retval = do_insert (in_tree_cmp, new_node, path);
+			}
 			// no need for a try .. finally, this is only used to mitigate allocations
 			release_path (path);
 			return retval;
@@ -192,7 +200,9 @@ namespace System.Collections.Generic
 
 			List<Node> path = alloc_path ();
 			int in_tree_cmp = find_key (key, path);
-			Node retval = in_tree_cmp == 0 ? do_remove (path) : null;
+			Node retval = null;
+			if (in_tree_cmp == 0)
+				retval = do_remove (path);
 			// no need for a try .. finally, this is only used to mitigate allocations
 			release_path (path);
 			return retval;
@@ -200,10 +210,10 @@ namespace System.Collections.Generic
 
 		public Node Lookup<T> (T key)
 		{
-			INodeComparer<T> cmp = (INodeComparer<T>) this.cmp;
+			INodeHelper<T> hlp = (INodeHelper<T>) this.hlp;
 			Node current = root;
 			while (current != null) {
-				int c = cmp.Compare (key, current);
+				int c = hlp.Compare (key, current);
 				if (c == 0)
 					break;
 				current = c < 0 ? current.left : current.right;
@@ -274,7 +284,7 @@ namespace System.Collections.Generic
 		// Pre-condition: root != null
 		int find_key<T> (T key, List<Node> path)
 		{
-			INodeComparer<T> cmp = (INodeComparer<T>) this.cmp;
+			INodeHelper<T> hlp = (INodeHelper<T>) this.hlp;
 			int c = 0;
 			Node sibling = null;
 			Node current = root;
@@ -283,7 +293,7 @@ namespace System.Collections.Generic
 				path.Add (root);
 
 			while (current != null) {
-				c = cmp.Compare (key, current);
+				c = hlp.Compare (key, current);
 				if (c == 0)
 					return c;
 
@@ -676,7 +686,7 @@ namespace Mono.ValidationTest {
 			}
 		}
 
-		public class NodeComparer : RBTree.INodeComparer<T> {
+		public class NodeHelper : RBTree.INodeHelper<T> {
 			IComparer<T> cmp;
 
 			public int Compare (T value, RBTree.Node node)
@@ -684,16 +694,21 @@ namespace Mono.ValidationTest {
 				return cmp.Compare (value, ((Node) node).value);
 			}
 
-			private NodeComparer (IComparer<T> cmp)
+			public RBTree.Node CreateNode (T value)
+			{
+				return new Node (value);
+			}
+
+			private NodeHelper (IComparer<T> cmp)
 			{
 				this.cmp = cmp;
 			}
-			static NodeComparer Default = new NodeComparer (Comparer<T>.Default);
-			public static NodeComparer GetComparer (IComparer<T> cmp)
+			static NodeHelper Default = new NodeHelper (Comparer<T>.Default);
+			public static NodeHelper GetHelper (IComparer<T> cmp)
 			{
 				if (cmp == null || cmp == Comparer<T>.Default)
 					return Default;
-				return new NodeComparer (cmp);
+				return new NodeHelper (cmp);
 			}
 		}
 
@@ -737,7 +752,7 @@ namespace Mono.ValidationTest {
 
 		public TreeSet (IComparer<T> cmp)
 		{
-			tree = new RBTree (NodeComparer.GetComparer (cmp));
+			tree = new RBTree (NodeHelper.GetHelper (cmp));
 		}
 
 		IEnumerator IEnumerable.GetEnumerator ()
