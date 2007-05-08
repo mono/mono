@@ -220,6 +220,18 @@ public class DSATest : Assertion {
 		AssertNull ("exported-J", input.J);
 		AssertEquals ("xml", "<DSAKeyValue><P>s/Oc0t4gj0NRqkCKi4ynJnOAEukNhjkHJPOzNsHP69kyHMUwZ3AzOkLGYOWlOo2zlYKzSbZygDDI5dCWA5gQF2ZGHEUlWJMgUyHmkybOi44cyHaX9yeGfbnoc3xF9sYgkA3vPUZaJuYMOsBp3pyPdeN8/mLU8n0ivURyP+3Ge9M=</P><Q>qkcTW+Ce0L5k8OGTUMkRoGKDc1E=</Q><G>PU/MeGp6I/FBduuwD9UPeCFzg8Ib9H5osku5nT8AhHTY8zGqetuvHhxbESt4lLz8aXzX0oIiMsusBr6E/aBdooBI36fHwW8WndCmwkB1kv7mhRIB4302UrfvC2KWQuBypfl0++a1whBMCh5VTJYH1sBkFIaVNeUbt5Q6/UdiZVY=</G><Y>shJRUdGxEYxSKM5JVol9HAdQwIK+wF9X4n9SAD++vfZOMOYi+M1yuvQAlQvnSlTTWr7CZPRVAICLgDBbqi9iN+Id60ccJ+hw3pGDfLpJ7IdFPszJEeUO+SZBwf8njGXULqSODs/NTciiX7E07rm+KflxFOg0qtWAhmYLxIkDx7s=</Y><Seed>uYM5b20luvbuyevi9TXHwekbr5s=</Seed><PgenCounter>4A==</PgenCounter></DSAKeyValue>", d.ToXmlString (false));
 	}
+
+	[Test]
+	public void ImportExportWithoutY ()
+	{
+		DSA d = DSA.Create ();
+		DSAParameters input = AllTests.GetKey (true);
+		input.Y = null;
+		// Y is calculated from X
+		d.ImportParameters (input);
+		AssertEquals ("xmlPrivate", xmlPrivate, d.ToXmlString (true));
+		AssertEquals ("xmlPublic", xmlPublic, d.ToXmlString (false));
+	}
 }
 
 }

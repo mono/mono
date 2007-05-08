@@ -1,3 +1,9 @@
+2007-05-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DSATest.cs: Add test case where we import a key that has a null Y
+	(public part) but where X (private part) is available - and usable
+	to compute Y.
+
 2007-03-22  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* CryptoConfigTest.cs: Fix upper/lower/mixed cases tests as they work 
