@@ -1,3 +1,8 @@
+2007-05-08 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* RBTree.cs: for TARGET_JVM used Thread Local Storage 
+	istead Thread-Relative Static Fields 
+
 2007-05-02  Raja R Harinath  <rharinath@novell.com>
 
 	* RBTree.cs (Enumerator.Current): Remove nullref.

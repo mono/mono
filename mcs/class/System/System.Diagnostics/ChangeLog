@@ -1,3 +1,10 @@
+2007-05-08 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* TraceImpl.cs:
+	* TraceListener.cs:
+	for TARGET_JVM used Thread Local Storage istead 
+	Thread-Relative Static Fields 
+
 2007-05-02  Jonathan Chambers  <joncham@gmail.com>
 
 	* Stopwatch.cs : Implement high performance stopwatch on windows.

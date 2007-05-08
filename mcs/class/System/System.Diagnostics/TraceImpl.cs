@@ -45,11 +45,36 @@ namespace System.Diagnostics {
 
 		private static bool autoFlush;
 
+#if TARGET_JVM
+		static readonly LocalDataStoreSlot _indentLevelStore = System.Threading.Thread.AllocateDataSlot ();
+		static readonly LocalDataStoreSlot _indentSizeStore = System.Threading.Thread.AllocateDataSlot ();
+
+		private static int indentLevel {
+			get {
+				object o = System.Threading.Thread.GetData (_indentLevelStore);
+				if (o == null)
+					return 0;
+				return (int) o;
+			}
+			set { System.Threading.Thread.SetData (_indentLevelStore, value); }
+		}
+
+		private static int indentSize {
+			get {
+				object o = System.Threading.Thread.GetData (_indentSizeStore);
+				if (o == null)
+					return 0;
+				return (int) o;
+			}
+			set { System.Threading.Thread.SetData (_indentSizeStore, value); }
+		}
+#else
 		[ThreadStatic]
 		private static int indentLevel = 0;
 
 		[ThreadStatic]
 		private static int indentSize;
+#endif
 
 		static TraceImpl ()
 		{
