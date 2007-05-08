@@ -352,5 +352,49 @@ namespace MonoTests.Microsoft.VisualBasic
 			generator.GenerateCodeFromExpression (expression, sw, options);
 			return sw.ToString ();
 		}
+	
+		
+		[Test]
+		public void ArrayCreateExpressionTest ()
+		{
+			StringBuilder sb;
+
+			sb = new StringBuilder ();
+			using (StringWriter sw = new StringWriter (sb)) {
+				Assert.AreEqual ("New Integer() {5}", 
+					Generate (new CodeArrayCreateExpression(
+							typeof(int), 
+							new CodeExpression [] {
+								new CodePrimitiveExpression (5)
+								})
+						, sw));
+				sw.Close ();
+			}
+
+			sb = new StringBuilder ();
+			using (StringWriter sw = new StringWriter (sb)) {
+				Assert.AreEqual ("New Integer((5) - 1) {}", 
+					Generate (new CodeArrayCreateExpression(
+							typeof(int), 
+							new CodePrimitiveExpression (5))
+						, sw));
+				sw.Close ();
+			}
+
+
+			sb = new StringBuilder ();
+			using (StringWriter sw = new StringWriter (sb)) {
+				Assert.AreEqual ("New String() {\"a\", \"b\", \"c\"}", 
+					Generate (new CodeArrayCreateExpression(
+							typeof(string), 
+							new CodeExpression [] {
+								new CodePrimitiveExpression ("a"),
+								new CodePrimitiveExpression ("b"),
+								new CodePrimitiveExpression ("c"),
+								})
+						, sw));
+				sw.Close ();
+			}
+		}
 	}
 }
