@@ -211,7 +211,11 @@ namespace System.Web.UI {
 			// faster than a linear search?
 			
 			foreach (HtmlAttribute t in htmlattrs) {
+#if NET_2_0
+				if (String.Compare(t.name, attrName, StringComparison.OrdinalIgnoreCase) == 0)
+#else
 				if (String.Compare(t.name, attrName, true, CultureInfo.InvariantCulture) == 0)
+#endif
 					return t.key;
 			}
 
@@ -234,7 +238,11 @@ namespace System.Web.UI {
 			// faster than a linear search?
 			
 			foreach (HtmlStyle t in htmlstyles) {
+#if NET_2_0
+				if (String.Compare(t.name, styleName, StringComparison.OrdinalIgnoreCase) == 0)
+#else
 				if (String.Compare(t.name, styleName, true, CultureInfo.InvariantCulture) == 0)
+#endif
 					return t.key;
 			}
 
