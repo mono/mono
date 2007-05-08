@@ -1190,9 +1190,6 @@ namespace MonoTests.System.XmlSerialization
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
-#if TARGET_JVM
-		[Ignore ("TD #7461")]
-#endif
 		public void TypeMapping_IEnumerable_Object_NoMatchingAddMethod ()
 		{
 			Map (typeof (ObjectEnumerableNoMatchingAddMethod));
@@ -1200,9 +1197,6 @@ namespace MonoTests.System.XmlSerialization
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
-#if TARGET_JVM
-		[Ignore ("TD #7461")]
-#endif
 		public void TypeMapping_IEnumerable_Object_NoMatchingAddMethod_Array ()
 		{
 			Map (typeof (ObjectEnumerableNoMatchingAddMethod[]));
