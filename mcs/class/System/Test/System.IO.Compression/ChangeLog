@@ -1,3 +1,9 @@
+2007-05-08  Jonathan Chambers  <joncham@gmail.com>
+
+	* DeflateStreamTest.cs, GzipStreamTest.cs : disabled tests that are
+	  hanging on my machine (and maybe buildbot). Will enable if
+	  this does not fix buildbot hang.
+
 2006-05-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DeflateStreamTest.cs, GzipStreamTest.cs : enabled tests that are

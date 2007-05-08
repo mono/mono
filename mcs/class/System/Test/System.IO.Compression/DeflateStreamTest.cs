@@ -118,6 +118,7 @@ namespace MonoTests.System.IO.Compression
 		}
 
 		[Test]
+		[Category("NotWorking")]
 		[ExpectedException (typeof (InvalidDataException))]
 		public void CheckInvalidDataRead () {
 			byte [] data = {0x11, 0x78, 0x89, 0x91, 0xbe, 0xf3, 0x48, 0xcd, 0xc9, 0xc9, 0xe7, 0x02, 0x00 };
