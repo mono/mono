@@ -488,11 +488,12 @@ namespace System.Windows.Forms {
 
 		#region Public Instance Methods
 		public void ScrollControlIntoView(Control activeControl) {
-			int	x;
-			int	y;
 			int	corner_x;
 			int	corner_y;
 
+			Rectangle within = new Rectangle ();
+			within.Size = ClientSize;
+			
 			if (!AutoScroll || (!hscrollbar.VisibleInternal && !vscrollbar.VisibleInternal)) {
 				return;
 			}
@@ -501,42 +502,57 @@ namespace System.Windows.Forms {
 				return;
 			}
 
-			x = activeControl.Left;
-			y = activeControl.Top;
-
-			// Translate into coords relative to us
-			if (activeControl.Parent != this) {
-				activeControl.PointToScreen(ref x, ref y);
-				PointToClient(ref x, ref y);
+			if (vscrollbar.Visible) {
+				within.Width -= vscrollbar.Width;
 			}
-
-			x += scroll_position.X;
-			y += scroll_position.Y;
+			if (hscrollbar.Visible) {
+				within.Height -= hscrollbar.Height;
+			}
 
 			// Don't scroll if already visible
-			if ((activeControl.Left >= scroll_position.X) && (activeControl.Left < (scroll_position.X + ClientSize.Width)) &&
-			    (activeControl.Top >= scroll_position.Y) && (activeControl.Top < (scroll_position.Y + ClientSize.Height))) {
+			if (within.Contains (activeControl.Location) && within.Contains (activeControl.Right, activeControl.Bottom)) {
 				return;
 			}
 
-			// try to center
-			corner_x = Math.Max(0, x + activeControl.Width / 2 - ClientSize.Width / 2);
-			corner_y = Math.Max(0, y + activeControl.Height / 2 - ClientSize.Height / 2);
+			// If the control is above the top or the left, move it down and right until it aligns 
+			// with the top/left.
+			// If the control is below the bottom or to the right, move it up/left until it aligns
+			// with the bottom/right, but do never move it further than the top/left side.
+			int x_diff = 0, y_diff = 0;
+			if (activeControl.Top <= 0 || activeControl.Height >= within.Height) {
+				y_diff = -activeControl.Top;
+			} else if (activeControl.Bottom > within.Height) {
+				y_diff = within.Height - activeControl.Bottom;
+			}
+			if (activeControl.Left <= 0 || activeControl.Width >= within.Width) {
+				x_diff = -activeControl.Left;
+			} else if (activeControl.Right > within.Width) {
+				x_diff = within.Width - activeControl.Right;
+			}
+			corner_x = hscrollbar.Value - x_diff;
+			corner_y = vscrollbar.Value - y_diff;
 
-			if (hscrollbar.VisibleInternal && (corner_x > hscrollbar.Maximum)) {
-				corner_x = Math.Max(0, hscrollbar.Maximum - ClientSize.Width);
+			if (hscrollbar.VisibleInternal) {
+				if (corner_x > hscrollbar.Maximum) {
+					corner_x = hscrollbar.Maximum;
+				} else if (corner_x < hscrollbar.Minimum) {
+					corner_x = hscrollbar.Minimum;
+				}
+				if (corner_x != hscrollbar.Value) {
+					hscrollbar.Value = corner_x;
+				}
 			}
 
-			if (vscrollbar.VisibleInternal && (corner_y > vscrollbar.Maximum)) {
-				corner_y = Math.Max(0, vscrollbar.Maximum - ClientSize.Height);
+			if (vscrollbar.VisibleInternal) {
+				if (corner_y > vscrollbar.Maximum) {
+					corner_y = vscrollbar.Maximum;
+				} else if (corner_y < vscrollbar.Minimum) {
+					corner_y = vscrollbar.Minimum;
+				}
+				if (corner_y != vscrollbar.Value) {
+					vscrollbar.Value = corner_y;
+				}
 			}
-			if ((corner_x == scroll_position.X) && (corner_y == scroll_position.Y)) {
-				return;
-			}
-
-			//this.SetDisplayRectLocation(-corner_x, -corner_y);
-			hscrollbar.Value = corner_x;
-			vscrollbar.Value = corner_y;
 		}
 
 		public void SetAutoScrollMargin(int x, int y) {
@@ -664,8 +680,8 @@ namespace System.Windows.Forms {
 			num_of_children = Controls.Count;
 			width = 0;
 			height = 0;
-			extra_width = dock_padding.Right;
-			extra_height = dock_padding.Bottom;
+			extra_width = dock_padding.Right + hscrollbar.Value;
+			extra_height = dock_padding.Bottom + vscrollbar.Value;
 
 			for (int i = 0; i < num_of_children; i++) {
 				child = Controls[i];
@@ -794,6 +810,14 @@ namespace System.Windows.Forms {
 			 * ScrollWindow calls, pdb and toshok will each
 			 * pay you $5.
 			*/
+
+			if (!vscrollbar.Visible) {
+				vscrollbar.Value = 0;
+			}
+			if (!hscrollbar.Visible) {
+				hscrollbar.Value = 0;
+			}
+
 			if (hscroll_visible) {
 				hscrollbar.LargeChange = right_edge;
 				hscrollbar.SmallChange = 5;
@@ -841,6 +865,14 @@ namespace System.Windows.Forms {
 			UpdateSizeGripVisible ();
 
 			ResumeLayout ();
+			
+			// We should now scroll the active control into view, 
+			// the funny part is that ScrollableControl does not have 
+			// the concept of active control.
+			ContainerControl container = this as ContainerControl;
+			if (container != null && container.ActiveControl != null) {
+				ScrollControlIntoView (container.ActiveControl);
+			}
 		}
 
 		internal void UpdateSizeGripVisible ()
@@ -867,8 +899,12 @@ namespace System.Windows.Forms {
 
 		private void HandleScrollBar(object sender, EventArgs e) {
 			if (sender == vscrollbar) {
+				if (!vscrollbar.Visible)
+					return;
 				ScrollWindow(0, vscrollbar.Value- scroll_position.Y);
 			} else {
+				if (!hscrollbar.Visible)
+					return;
 				ScrollWindow(hscrollbar.Value - scroll_position.X, 0);
 			}
 		}

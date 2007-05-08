@@ -1,3 +1,17 @@
+2007-05-08  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* ScrollableControl.cs: ScrollIControlntoView: we now only move the
+	  control as much as necessary in order to make it entirely visible,
+	  instead of centering the control in the container (matches MS
+	  behaviour). CalculateCanvasSize: we need to take the current scroll
+	  position into account when calculating the maximum canvas,
+	  otherwise the following scenario will fail: resize so that the
+	  scrollbars appear, use the scrollbars to scroll, resize again
+	  smaller, and now the canvas size is too small. Recalculate: when
+	  showing scrollbars make sure they start off at 0, and try to scroll
+	  the active control into view. Fixes #79540. HandleScrollBar: don't
+	  scroll anywhere if the scrollbar isn't visible.
+
 2007-05-07  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: When focus changed, call Layout/Invalidate
