@@ -1,5 +1,23 @@
 2007-05-08  Massimiliano Mantione  <massi@ximian.com>
 
+	* class-internals.h: Removed "MonoClass.interface_offsets" as a first
+	step in implementing IMT, replaced it with two compact arrays
+	(interfaces_packed and interface_offsets_packed) and a bitmap that
+	is used for isinst checks (interface_bitmap).
+
+	* class.c: (compare_interface_ids): compare function to pass to
+	bsearch when looking for an interface with a given id.
+	(mono_class_interface_offset): reimplemented using bsearch on
+	interfaces_packed, getting the offset from interface_offsets_packed.
+	(print_implemented_interfaces): utility debugging function.
+	(setup_interface_offsets): reworked to initialize interfaces_packed,
+	interface_offsets_packed and interface_bitmap.
+
+	* object.c: replaced all accesses to "MonoClass.interface_offsets"
+	with uses of interfaces_packed and interface_offsets_packed.
+
+2007-05-08  Massimiliano Mantione  <massi@ximian.com>
+
 	* class-internals.h: Added MONO_CLASS_IMPLEMENTS_INTERFACE macro and
 	mono_class_interface_offset prototype to wrap all accesses to
 	"MonoClass.interface_offsets".

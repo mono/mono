@@ -1,3 +1,11 @@
+2007-05-08  Massimiliano Mantione  <massi@ximian.com>
+
+	* mini.h: Bumped aot revision.
+
+	* inssel.brg: modified code generation of type checks for interfaces
+	to use the new "MonoClass.interface_bitmap" instead of the old
+	"MonoClass.interface_offsets".
+
 2007-04-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* cpu-amd64.md (jmp): Increase the maximum size of the jmp opcode to 128.
