@@ -1037,9 +1037,6 @@ namespace MonoTests.System.XmlSerialization
 #if ONLY_1_1
 		[Category ("NotDotNet")] // wrong error message is reported in .NET 1.1
 #endif
-#if TARGET_JVM
-		[Ignore ("TD #7458")]
-#endif
 		public void TypeMapping_Attribute_ComplexType ()
 		{
 			SoapAttributes attrs = new SoapAttributes (typeof (Field_Encoded).GetMember ("Names")[0]);
@@ -1081,9 +1078,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Ignore ("TD #7458")]
-#endif
 		public void TypeMapping_Field_Encoded ()
 		{
 			XmlTypeMapping tm = Map (typeof (Field_Encoded));
@@ -1094,9 +1088,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Ignore ("TD #7458")]
-#endif
 		public void TypeMapping_Field_Encoded_DefaultNamespace ()
 		{
 			XmlTypeMapping tm = Map (typeof (Field_Encoded), AnotherNamespace);
@@ -1401,9 +1392,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Ignore ("TD #7458")]
-#endif
 		public void TypeMapping_InvalidDefault ()
 		{
 			SoapAttributes attrs = new SoapAttributes (typeof (Field_Encoded).GetMember ("Modifiers")[0]);

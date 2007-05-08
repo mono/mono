@@ -757,9 +757,6 @@ namespace MonoTests.System.XmlSerialization
 
 		[Test]
 		[Category ("NotDotNet")] // MS bug
-#if TARGET_JVM
-		[Ignore ("TD #7458")]
-#endif
 		public void TestSerializeField_Encoded ()
 		{
 			Field_Encoded f = new Field_Encoded ();
@@ -1472,9 +1469,6 @@ namespace MonoTests.System.XmlSerialization
 
 		// test DefaultValue /////////////////////////////////////////////////////
 		[Test]
-#if TARGET_JVM
-		[Ignore ("TD #7458")]
-#endif
 		public void TestSerializeDefaultValueAttribute ()
 		{
 			XmlAttributeOverrides overrides = new XmlAttributeOverrides ();
