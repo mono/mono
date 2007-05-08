@@ -1,3 +1,8 @@
+2007-05-08  Randolph Chung  <tausq@debian.org>
+
+	* DSAManaged.cs: Do not reject the input if only Y is null.
+	Fixes #81558. [small edits from Sebastien]
+
 2007-03-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SymmetricTransform.cs: Before 2.0 an IndexOutOfRangeException was 

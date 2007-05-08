@@ -297,21 +297,28 @@ namespace Mono.Security.Cryptography {
 		public override void ImportParameters (DSAParameters parameters) 
 		{
 			if (m_disposed)
-				throw new ObjectDisposedException ("");
+				throw new ObjectDisposedException (Locale.GetText ("Keypair was disposed"));
 
 			// if missing "mandatory" parameters
-			if ((parameters.P == null) || (parameters.Q == null) || (parameters.G == null) || (parameters.Y == null))
-				throw new CryptographicException ();
+			if ((parameters.P == null) || (parameters.Q == null) || (parameters.G == null))
+				throw new CryptographicException (Locale.GetText ("Missing mandatory DSA parameters (P, Q or G)."));
+			// We can calculate Y from X, but both can't be missing
+			if ((parameters.X == null) && (parameters.Y == null))
+				throw new CryptographicException (Locale.GetText ("Missing both public (Y) and private (X) keys."));
 
 			p = new BigInteger (parameters.P);
 			q = new BigInteger (parameters.Q);
 			g = new BigInteger (parameters.G);
-			y = new BigInteger (parameters.Y);
 			// optional parameter - private key
 			if (parameters.X != null)
 				x = new BigInteger (parameters.X);
 			else
 				x = null;
+			// we can calculate Y from X if required
+			if (parameters.Y != null)
+				y = new BigInteger (parameters.Y);
+			else
+				y = g.ModPow (x, p);
 			// optional parameter - pre-computation
 			if (parameters.J != null) {
 				j = new BigInteger (parameters.J);
@@ -334,7 +341,7 @@ namespace Mono.Security.Cryptography {
 		public override byte[] CreateSignature (byte[] rgbHash) 
 		{
 			if (m_disposed)
-				throw new ObjectDisposedException ("");
+				throw new ObjectDisposedException (Locale.GetText ("Keypair was disposed"));
 
 			if (rgbHash == null)
 				throw new ArgumentNullException ("rgbHash");
