@@ -52,7 +52,7 @@ namespace System.ComponentModel
 		// It is always null. See .ctor() for details.
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public object UserState {
+		public new object UserState {
 			get { return user_state; }
 		}
 	}
