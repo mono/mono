@@ -1,3 +1,13 @@
+2007-05-07  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListView.cs: When focus changed, call Layout/Invalidate
+	in the focused item to update the selected state (should show
+	entire label when ListView is focused, and a part of it if is not).
+	* ListViewItem.cs: When doing layout for LargeIcon, take into account
+	for displaying the entire label not only the Focused state of the
+	item, but also the Focused state of the ListView (match .Net
+	behaviour).
+
 2007-05-07  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Control.cs: Stub CanRaiseEvents, IsMirrored, and NotifyClients.

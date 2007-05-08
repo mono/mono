@@ -2504,7 +2504,11 @@ namespace System.Windows.Forms
 			if (FocusedItem == null)
 				SetFocusedItem (Items [0]);
 
-			item_control.Invalidate (FocusedItem.Bounds);
+			ListViewItem focused_item = FocusedItem;
+
+			item_control.Invalidate (focused_item.Bounds);
+			focused_item.Layout ();
+			item_control.Invalidate (focused_item.Bounds);
 		}
 
 		private void ListView_MouseEnter (object sender, EventArgs args)
