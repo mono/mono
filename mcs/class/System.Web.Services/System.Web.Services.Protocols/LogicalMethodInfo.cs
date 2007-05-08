@@ -82,6 +82,7 @@ namespace System.Web.Services.Protocols {
 			if (method_info.IsStatic)
 				throw new InvalidOperationException ("method is static");
 			
+			this.method_info = method_info;
 			this.end_method_info = end_method_info;
 		}
 		
@@ -164,6 +165,8 @@ namespace System.Web.Services.Protocols {
 
 		public MethodInfo MethodInfo {
 			get {
+				if (IsBeginMethod (method_info))
+					return null;
 				return method_info;
 			}
 		}
@@ -172,6 +175,10 @@ namespace System.Web.Services.Protocols {
 			get {
 				return method_info.Name;
 			}
+		}
+
+		internal MethodInfo ActualMethodInfo {
+			get { return method_info; }
 		}
 
 		void ComputeParameters ()

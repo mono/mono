@@ -1,3 +1,10 @@
+2007-05-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Web.Services.dll.sources :
+	  removed SoapClientMethod.cs (not in use).
+	* System.Web.Services_test.dll.sources :
+	  added LogicalMethodInfoTest.cs.
+
 2007-04-23  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Web.Services_test.dll.sources: added SoapServerType.cs.

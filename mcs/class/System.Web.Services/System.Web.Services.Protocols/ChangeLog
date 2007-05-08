@@ -1,3 +1,11 @@
+2007-05-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* LogicalMethodInfo.cs : MethodInfo is null when it is async.
+	  Added internal ActualMethodInfo to represent "sync or begin" method
+	  (i.e. former MethodInfo).
+	* HttpGetTypeStubInfo.cs, HttpPostTypeStubInfo.cs :
+	  MethodInfo -> ActualMethodInfo.
+
 2007-04-29  Konstantin Triger  <kostat@mainsoft.com>
 
 	*  WebServiceHelper.cs, HttpSoapWebServiceHandler.cs: add support for SOAP1.2

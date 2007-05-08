@@ -54,7 +54,7 @@ namespace System.Web.Services.Protocols
 		
 		protected override MethodStubInfo CreateMethodStubInfo (TypeStubInfo typeInfo, LogicalMethodInfo methodInfo, bool isClientProxy)
 		{
-			if (isClientProxy && methodInfo.MethodInfo.GetCustomAttributes (typeof(HttpMethodAttribute),true).Length == 0) return null;
+			if (isClientProxy && methodInfo.ActualMethodInfo.GetCustomAttributes (typeof(HttpMethodAttribute),true).Length == 0) return null;
 			if (!ValueCollectionParameterReader.IsSupported (methodInfo)) return null;
 			return new HttpPostMethodStubInfo (typeInfo, methodInfo);
 		}

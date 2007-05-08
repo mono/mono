@@ -158,7 +158,6 @@ System.Web.Services.Protocols/ServerProtocol.cs
 System.Web.Services.Protocols/ServerProtocolFactory.cs
 System.Web.Services.Protocols/ServerType.cs
 System.Web.Services.Protocols/SoapClientMessage.cs
-System.Web.Services.Protocols/SoapClientMethod.cs
 System.Web.Services.Protocols/SoapDocumentationHandler.cs
 System.Web.Services.Protocols/SoapDocumentMethodAttribute.cs
 System.Web.Services.Protocols/SoapDocumentServiceAttribute.cs
