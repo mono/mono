@@ -262,9 +262,13 @@ namespace System.Web {
 
 		public static string ToAppRelative (string virtualPath, string applicationPath)
 		{
+#if DEBUG
 			Console.WriteLine ("VirtualPathUtility.ToAppRelative (\"{0}\", \"{1}\")", virtualPath, applicationPath);
+#endif
 			virtualPath = Normalize (virtualPath);
+#if DEBUG
 			Console.WriteLine ("\tvirtualPath (normalized): {0}", virtualPath);
+#endif
 			if (IsAppRelative (virtualPath))
 				return virtualPath;
 
