@@ -1780,6 +1780,19 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 #if NET_2_0
+		[Test]
+		[Category ("NotWorking")]
+		public void UseWaitCursorTest ()
+		{
+			Control c = new Control ();
+			Assert.IsFalse (c.UseWaitCursor, "#1");
+			c.Cursor = Cursors.Hand;
+			c.UseWaitCursor = true;
+			Assert.AreEqual (Cursors.WaitCursor, c.Cursor, "#2");
+			c.UseWaitCursor = false;
+			Assert.AreEqual (Cursors.Hand, c.Cursor, "#3");
+		}
+
 		[Test] // bug #80621, #81125
 		public void DontCallSizeFromClientSize ()
 		{

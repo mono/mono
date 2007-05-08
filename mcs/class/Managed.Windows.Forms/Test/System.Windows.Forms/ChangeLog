@@ -1,6 +1,11 @@
+2007-05-08  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ControlTest.cs: Added test for UseWaitCursor.
+
 2007-05-07  Jonathan Pobst  <monkey@jpobst.com>
 
-	* ControlTest.cs: Tests demonstrating Control.AutoSize from Stefan Noack.
+	* ControlTest.cs: Tests demonstrating Control.AutoSize from 
+	Stefan Noack.
 
 2007-05-07  Jonathan Pobst  <monkey@jpobst.com>
 
