@@ -154,9 +154,9 @@ namespace Microsoft.VisualBasic
 
 				OutputType (createType);
 				
-				output.WriteLine (" {");
+				output.Write ("() {");
 				++Indent;
-				OutputExpressionList (initializers, true);
+				OutputExpressionList (initializers);
 				--Indent;
 				output.Write ("}");
 
@@ -171,7 +171,7 @@ namespace Microsoft.VisualBasic
 
 				OutputType (createType);
 
-				output.Write ('(');
+				output.Write ("((");
 
 				CodeExpression size = expression.SizeExpression;
 				if (size != null)
@@ -179,7 +179,7 @@ namespace Microsoft.VisualBasic
 				else
 					output.Write (expression.Size);
 
-				output.Write (')');
+				output.Write (") - 1) {}");
 			}
 		}
 

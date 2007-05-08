@@ -1,3 +1,7 @@
+2007-05-08  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* VBCodeGenerator.cs: Don't add newlines when creating array creations expressions, fix the initial size expression and make sure a there's always {} somewhere.
+
 2007-04-27  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* VBCodeCompiler.cs: In CompileFromFileBatch don't create error messages if compilation succeeded.
