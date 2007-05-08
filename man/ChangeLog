@@ -1,3 +1,7 @@
+2007-04-26  Dick Porter  <dick@ximian.com>
+
+	* mono.1: Document MONO_DISABLE_SHM
+
 2007-02-20  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* vbnc.1: Added man entry for vbnc.

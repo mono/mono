@@ -202,25 +202,6 @@ typedef struct {
 	      retStruct;
 } size_data;	
 
-typedef enum {
-	CMP_EQ,
-	CMP_NE,
-	CMP_LE,
-	CMP_GE,
-	CMP_LT,
-	CMP_GT,
-	CMP_LE_UN,
-	CMP_GE_UN,
-	CMP_LT_UN,
-	CMP_GT_UN
-} CompRelation;
-
-typedef enum {
-	CMP_TYPE_L,
-	CMP_TYPE_I,
-	CMP_TYPE_F
-} CompType;
-
 /*------------------------------------------------------------------*/
 /* Used by the instrument_emit_epilog 		                    */
 /*------------------------------------------------------------------*/
@@ -1394,8 +1375,8 @@ enum_retvalue:
 			/* Fall through */
 		case MONO_TYPE_VALUETYPE: {
 			MonoClass *klass = mono_class_from_mono_type (sig->ret);
-			if (sig->ret->data.klass->enumtype) {
-				simpletype = sig->ret->data.klass->enum_basetype->type;
+			if (klass->enumtype) {
+				simpletype = klass->enum_basetype->type;
 				goto enum_retvalue;
 			}
 			if (sig->pinvoke)

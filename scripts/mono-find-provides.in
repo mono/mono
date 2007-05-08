@@ -17,19 +17,15 @@ monolist=($(printf "%s\n" "${filelist[@]}" | egrep "\\.(exe|dll)\$"))
 #monolist=($(printf "%s\n" "${monolist[@]}" | egrep "/gac/"))
 # Disabled... see ChangeLog
 
-a=`which "$0"`
-d=`dirname "$a"`
-
 # Set the prefix, unless it is overriden (used when building mono rpms)
-: ${prefix=$d/..}
+: ${prefix=@prefix@}
 
-exec_prefix=$d/..
 libdir=$prefix/@reloc_libdir@
-bindir=$d
+bindir=$prefix/bin
 
 # Bail out if monodis or libmono is missing
 if [ ! -x $bindir/monodis ] || [ ! -f $libdir/libmono.so ] ; then
-	echo "monodis missing or unusable, exiting..."
+	echo "monodis missing or unusable, exiting..." 1>&2
 	exit 1
 fi
 

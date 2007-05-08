@@ -1,3 +1,85 @@
+2007-05-08  Robert Jordan  <robertj@gmx.net>
+
+	* process.c (CreateProcess_internal):
+	Pass CREATE_NO_WINDOW to CreateProcess when ProcessStartupInfo
+	.CreateNoWindow was specified. Fixes #81496.
+
+2007-05-08  Massimiliano Mantione  <massi@ximian.com>
+
+	* class-internals.h: Removed "MonoClass.interface_offsets" as a first
+	step in implementing IMT, replaced it with two compact arrays
+	(interfaces_packed and interface_offsets_packed) and a bitmap that
+	is used for isinst checks (interface_bitmap).
+
+	* class.c: (compare_interface_ids): compare function to pass to
+	bsearch when looking for an interface with a given id.
+	(mono_class_interface_offset): reimplemented using bsearch on
+	interfaces_packed, getting the offset from interface_offsets_packed.
+	(print_implemented_interfaces): utility debugging function.
+	(setup_interface_offsets): reworked to initialize interfaces_packed,
+	interface_offsets_packed and interface_bitmap.
+
+	* object.c: replaced all accesses to "MonoClass.interface_offsets"
+	with uses of interfaces_packed and interface_offsets_packed.
+
+2007-05-08  Massimiliano Mantione  <massi@ximian.com>
+
+	* class-internals.h: Added MONO_CLASS_IMPLEMENTS_INTERFACE macro and
+	mono_class_interface_offset prototype to wrap all accesses to
+	"MonoClass.interface_offsets".
+
+	* class.c: Implemented mono_class_interface_offset, and wrapped all
+	accesses to "MonoClass.interface_offsets".
+
+	* monodiet.c, object.c, marshal.c, icall.c: wrapped all accesses to
+	"MonoClass.interface_offsets".
+
+Tue May 8 13:02:09 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c, icall-def.h: implemented new GetFieldFromHandle and
+	GetMethodFromHandle overloads (bug #78637).
+
+Tue May 8 12:22:14 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* assembly.c: parse ProcessorArchitecture in assembly name and ignore
+	it for now (see mono-devel, from Marek Sieradzki <marek.sieradzki@gmail.com>).
+
+2007-05-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (custom_attrs_get_by_type): Handle loading errors gracefully. Fixes
+	#81498.
+
+	* reflection.c (mono_reflection_get_custom_attrs_by_type): Handle loading errors
+	gracefully.
+	(mono_custom_attrs_from_index): Ditto.
+
+	* icall.c (ves_icall_InternalInvoke): Allow calling ctors of abstract classes. 
+	Fixes #81501.
+
+2007-04-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* metadata.c (mono_metadata_parse_type_full): Avoid an invalid free since the type
+	is now allocated from a mempool.
+
+2007-04-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* threads.c (build_wait_tids): Do not call mono_monitor_enter () here since the
+	caller holds threads_lock, leading to deadlocks. Fixes #81476.
+
+2007-04-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* loader.c (mono_loader_error_prepare_exception): Fix crash caused by calling
+	mono_loader_clear_error () too late. Fixes #81463.
+
+2007-04-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* culture-info-table.h : regenerated.
+
+2007-04-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* appdomain.c (add_assemblies_to_domain): Fix crash when an assembly reference
+	is missing.
+
 2007-04-25  Dick Porter  <dick@ximian.com>
 
 	* Makefile.am: Put the mingw enforced-optimisation back into the

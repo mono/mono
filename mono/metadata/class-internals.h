@@ -268,7 +268,12 @@ struct _MonoClass {
 	guint16     interface_count;
 	guint16     interface_id;        /* unique inderface id (for interfaces) */
 	guint16     max_interface_id;
-        gint       *interface_offsets;   
+	
+	guint16     interface_offsets_count;
+	MonoClass **interfaces_packed;
+	guint16    *interface_offsets_packed;
+	guint8     *interface_bitmap;
+	
 	MonoClass **interfaces;
 
 	/*
@@ -321,6 +326,9 @@ struct _MonoClass {
 	/* Generic vtable. Initialized by a call to mono_class_setup_vtable () */
 	MonoMethod **vtable;	
 };
+
+#define MONO_CLASS_IMPLEMENTS_INTERFACE(k,uiid) (((uiid) <= (k)->max_interface_id) && ((k)->interface_bitmap [(uiid) >> 3] & (1 << ((uiid)&7))))
+int mono_class_interface_offset (MonoClass *klass, MonoClass *interface);
 
 /* the interface_offsets array is stored in memory before this struct */
 struct MonoVTable {

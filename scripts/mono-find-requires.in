@@ -12,22 +12,29 @@ IFS=$'\n'
 filelist=($(grep -Ev '/usr/doc/|/usr/share/doc/'))
 monolist=($(printf "%s\n" "${filelist[@]}" | egrep "\\.(exe|dll)\$"))
 
-a=`which "$0"`
-d=`dirname "$a"`
+# parse .config files to find which native libraries to depend on 
+#  (target attribute must have double quotes for this to work, ie: target="file" )
+# Add /etc/mono/config ?
+configlist=($(printf "%s\n" "${filelist[@]}" | egrep "\\.config\$"))
 
 # Set the prefix, unless it is overriden (used when building mono rpms)
-: ${prefix=$d/..}
+: ${prefix=@prefix@}
 
-exec_prefix=$d/..
 libdir=$prefix/@reloc_libdir@
-bindir=$d
+bindir=$prefix/bin
 
 # Bail out if monodis or libmono is missing
 if [ ! -x $bindir/monodis ] || [ ! -f $libdir/libmono.so ] ; then
-	echo "monodis missing or unusable, exiting..."
+	echo "monodis missing or unusable, exiting..." 1>&2
 	exit 1
 fi
 
+# special case for 64bit archs
+if test "x@reloc_libdir@" = "xlib64" ; then
+        libext="()(64bit)"
+else
+        libext=""
+fi
 
 # set LD_LIBRARY_PATH to ensure that libmono.so is found
 export LD_LIBRARY_PATH=$libdir${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
@@ -54,6 +61,51 @@ REQUIRES=$(
 				START=0
 			}
 		    ') 2> /dev/null
+	done
+	# Parse the xml .config files to see what native binaries we call into
+	# TODO: also check monodis --moduleref
+	for i in "${configlist[@]}"; do
+		awk 'match($_, /<dllmap .*target=.*/) {
+			ignore=0
+			req=""
+			split($_, toks, "\"")
+			toks_size=0
+                        for(tok in toks) { toks_size++ }
+			for(i=1; i <= toks_size; i++) {
+				if(toks[i] ~ /target=/) {
+					req=toks[i+1]
+				}
+				if(toks[i] ~ /os=/) {
+					negate=0
+					found=0
+
+					attr=toks[i+1]
+					if(attr ~ /^!/) {
+						attr=substr(attr, 2, length(attr)-1)
+						negate=1
+					}
+
+					split(attr, os_targets, ",")
+					os_targets_size=0
+                                        for(os_target in os_targets) { os_targets_size++ }
+					for(j=1; j <= os_targets_size; j++) {
+						if(os_targets[j] == "linux") {
+							found=1
+						}
+					}
+
+					if(negate) {
+						found=!found
+					}
+					if (!found) {
+						ignore=1
+					} 
+				}
+			}
+			if(!ignore) {
+				system("rpm -q --whatprovides --queryformat \"%{NAME}\n\" ""\""req"'$libext'""\"")
+			}
+		} ' $i 2>/dev/null
 	done
 )
 

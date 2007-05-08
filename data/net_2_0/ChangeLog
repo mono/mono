@@ -1,0 +1,13 @@
+2007-05-01  Marek Habersack  <mhabersack@novell.com>
+
+	* machine.config: added standard data provider factories, or
+	otherwise the SqlDataSource tests will fail.
+
+2007-04-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DefaultWsdlHelpGenerator.aspx :
+	  ProfileViolations could be null, when there is no Binding. So,
+	  don't omit null check.
+
+	  Stop your bad habit of missing ChangeLog. Former changes (as long
+	  as logged) can be seen in ../../ChangeLog.

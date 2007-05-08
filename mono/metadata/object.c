@@ -1078,11 +1078,14 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *class)
 
 	vt->max_interface_id = class->max_interface_id;
 	
+	//printf ("Initializing VT for class %s (interface_offsets_count = %d)\n",
+	//		class->name, class->interface_offsets_count);
+	
 	/* initialize interface offsets */
-	for (i = 0; i <= class->max_interface_id; ++i) {
-		int slot = class->interface_offsets [i];
-		if (slot >= 0)
-			interface_offsets [class->max_interface_id - i] = &(vt->vtable [slot]);
+	for (i = 0; i < class->interface_offsets_count; ++i) {
+		int interface_id = class->interfaces_packed [i]->interface_id;
+		int slot = class->interface_offsets_packed [i];
+		interface_offsets [class->max_interface_id - interface_id] = &(vt->vtable [slot]);
 	}
 
 	/* 
@@ -1197,7 +1200,7 @@ mono_class_proxy_vtable (MonoDomain *domain, MonoRemoteClass *remote_class, Mono
 		GPtrArray *ifaces;
 		int method_count;
 
-		if (iclass->interface_id <= class->max_interface_id && class->interface_offsets[iclass->interface_id] != -1) 
+		if (MONO_CLASS_IMPLEMENTS_INTERFACE (class, iclass->interface_id))
 			continue;	/* interface implemented by the class */
 		if (g_slist_find (extra_interfaces, iclass))
 			continue;
@@ -1210,7 +1213,7 @@ mono_class_proxy_vtable (MonoDomain *domain, MonoRemoteClass *remote_class, Mono
 		if (ifaces) {
 			for (i = 0; i < ifaces->len; ++i) {
 				MonoClass *ic = g_ptr_array_index (ifaces, i);
-				if (ic->interface_id <= class->max_interface_id && class->interface_offsets[ic->interface_id] != -1) 
+				if (MONO_CLASS_IMPLEMENTS_INTERFACE (class, ic->interface_id))
 					continue;	/* interface implemented by the class */
 				if (g_slist_find (extra_interfaces, ic))
 					continue;
@@ -1260,10 +1263,10 @@ mono_class_proxy_vtable (MonoDomain *domain, MonoRemoteClass *remote_class, Mono
 	pvt->max_interface_id = max_interface_id;
 
 	/* initialize interface offsets */
-	for (i = 0; i <= class->max_interface_id; ++i) {
-		int slot = class->interface_offsets [i];
-		if (slot >= 0)
-			interface_offsets [max_interface_id - i] = &(pvt->vtable [slot]);
+	for (i = 0; i < class->interface_offsets_count; ++i) {
+		int interface_id = class->interfaces_packed [i]->interface_id;
+		int slot = class->interface_offsets_packed [i];
+		interface_offsets [class->max_interface_id - interface_id] = &(pvt->vtable [slot]);
 	}
 
 	if (extra_interfaces) {
@@ -1588,7 +1591,7 @@ mono_object_get_virtual_method (MonoObject *obj, MonoMethod *method)
 	/* check method->slot is a valid index: perform isinstance? */
 	if (method->klass->flags & TYPE_ATTRIBUTE_INTERFACE) {
 		if (!is_proxy)
-			res = vtable [klass->interface_offsets [method->klass->interface_id] + method->slot];
+		       res = vtable [mono_class_interface_offset (klass, method->klass) + method->slot];
 	} else {
 		if (method->slot != -1)
 			res = vtable [method->slot];

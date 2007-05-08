@@ -1319,6 +1319,20 @@ ves_icall_System_Reflection_FieldInfo_GetUnmanagedMarshal (MonoReflectionField *
 }
 
 static MonoReflectionField*
+ves_icall_System_Reflection_FieldInfo_internal_from_handle_type (MonoClassField *handle, MonoClass *klass)
+{
+	g_assert (handle);
+
+	if (!klass)
+		klass = handle->parent;
+
+	/* FIXME: check that handle is a field of klass or of a parent: return null
+	 * and throw the exception in managed code.
+	 */
+	return mono_field_get_object (mono_domain_get (), klass, handle);
+}
+
+static MonoReflectionField*
 ves_icall_System_Reflection_FieldInfo_internal_from_handle (MonoClassField *handle)
 {
 	MONO_ARCH_SAVE_REGS;
@@ -1749,11 +1763,11 @@ ves_icall_Type_GetInterfaceMapData (MonoReflectionType *type, MonoReflectionType
 	mono_class_setup_vtable (class);
 
 	/* type doesn't implement iface: the exception is thrown in managed code */
-	if ((iclass->interface_id > class->max_interface_id) || !class->interface_offsets [iclass->interface_id])
+	if (! MONO_CLASS_IMPLEMENTS_INTERFACE (class, iclass->interface_id))
 			return;
 
 	len = mono_class_num_methods (iclass);
-	ioffset = class->interface_offsets [iclass->interface_id];
+	ioffset = mono_class_interface_offset (class, iclass);
 	domain = mono_object_domain (type);
 	*targets = mono_array_new (domain, mono_defaults.method_info_class, len);
 	*methods = mono_array_new (domain, mono_defaults.method_info_class, len);
@@ -2678,7 +2692,7 @@ ves_icall_InternalInvoke (MonoReflectionMethod *method, MonoObject *this, MonoAr
 	if (pcount != mono_method_signature (m)->param_count)
 		mono_raise_exception (mono_exception_from_name (mono_defaults.corlib, "System.Reflection", "TargetParameterCountException"));
 
-	if ((m->klass->flags & TYPE_ATTRIBUTE_ABSTRACT) && !strcmp (m->name, ".ctor"))
+	if ((m->klass->flags & TYPE_ATTRIBUTE_ABSTRACT) && !strcmp (m->name, ".ctor") && !this)
 		mono_raise_exception (mono_exception_from_name_msg (mono_defaults.corlib, "System", "MethodAccessException", "Cannot invoke constructor of an abstract class."));
 
 	if (m->klass->image->assembly->ref_only)
@@ -4360,6 +4374,15 @@ ves_icall_GetCurrentMethod (void)
 	MONO_ARCH_SAVE_REGS;
 
 	return mono_method_get_object (mono_domain_get (), m, NULL);
+}
+
+static MonoReflectionMethod*
+ves_icall_System_Reflection_MethodBase_GetMethodFromHandleInternalType (MonoMethod *method, MonoClass *klass)
+{
+	/* FIXME check that method belongs to klass or a parent */
+	if (!klass)
+		klass = method->klass;
+	return mono_method_get_object (mono_domain_get (), method, klass);
 }
 
 static MonoReflectionMethod*
@@ -6438,7 +6461,14 @@ custom_attrs_defined_internal (MonoObject *obj, MonoReflectionType *attr_type)
 static MonoArray*
 custom_attrs_get_by_type (MonoObject *obj, MonoReflectionType *attr_type)
 {
-	return mono_reflection_get_custom_attrs_by_type (obj, attr_type ? mono_class_from_mono_type (attr_type->type) : NULL);
+	MonoArray *res = mono_reflection_get_custom_attrs_by_type (obj, attr_type ? mono_class_from_mono_type (attr_type->type) : NULL);
+
+	if (mono_loader_get_last_error ()) {
+		mono_raise_exception (mono_loader_error_prepare_exception (mono_loader_get_last_error ()));
+		g_assert_not_reached ();
+	} else {
+		return res;
+	}
 }
 
 static MonoBoolean

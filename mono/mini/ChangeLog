@@ -38,7 +38,43 @@
 
 	* method-to-ir.c (mini_emit_class_check_branch): New helper function.
 
+=======
+2007-05-08  Massimiliano Mantione  <massi@ximian.com>
+
+	* mini.h: Bumped aot revision.
+
+	* inssel.brg: modified code generation of type checks for interfaces
+	to use the new "MonoClass.interface_bitmap" instead of the old
+	"MonoClass.interface_offsets".
+
+2007-04-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* cpu-amd64.md (jmp): Increase the maximum size of the jmp opcode to 128.
+
+2007-04-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* abcremoval.c (summarize_integer_value): Handle OP_LCONV_TO_I4 to fix abcrem on
+	64 bit platforms.
+
+2007-04-27  Neale Ferguson <neale@sinenomine.net>
+
+	* mini-s390x.c: Fix MONO_TYPE_VALUETYPE processing.
+
+2007-04-27  Wade Berrier  <wberrier@novell.com>
+
+	* mini-s390x.c: Remove redeclaration of CompRelation and CompType (defined in 
+	mini.h) to fix build.
+
+2007-04-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (peephole_pass_1): Fix and reenable this pass.
+	
+	* mini-amd64.c (mono_arch_local_regalloc): Disable the new peephole_pass_1 as it
+	causes the corlib unit tests to fail.
+
 2007-04-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-codegen.c (mono_opcode_to_type): Fix a bug in the previous patch.
 
 	* mini-amd64.c (peephole_pass_1): New pass to perform before local regalloc.
 

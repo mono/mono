@@ -1951,23 +1951,36 @@ mini_emit_load_intf_reg_vtable (MonoCompile *cfg, int intf_reg, int vtable_reg, 
 	}
 }
 
-/* Emit code which loads <klass_reg>->interface_offsets [klass->interface_id] */
-static void
-mini_emit_load_intf_reg_class (MonoCompile *cfg, int intf_reg, int klass_reg, MonoClass *klass)
-{
-	int ioffset_reg = alloc_preg (cfg);
 
-	MONO_EMIT_NEW_LOAD_MEMBASE (cfg, ioffset_reg, klass_reg, G_STRUCT_OFFSET (MonoClass, interface_offsets));
+/* 
+ * Emit code which loads into "intf_bit_reg" a nonzero value if the MonoKlass
+ * stored in "klass_reg" implements the interface "klass".
+ */
+static void
+mini_emit_load_intf_bit_reg_class (MonoCompile *cfg, int intf_bit_reg, int klass_reg, MonoClass *klass)
+{
+	int ibitmap_reg = alloc_preg (cfg);
+	int ibitmap_byte_reg = alloc_preg (cfg);
+
+	MONO_EMIT_NEW_LOAD_MEMBASE (cfg, ibitmap_reg, klass_reg, G_STRUCT_OFFSET (MonoClass, interface_bitmap));
 
 	if (cfg->compile_aot) {
 		int iid_reg = alloc_preg (cfg);
+		int shifted_iid_reg = alloc_preg (cfg);
+		int masked_iid_reg = alloc_preg (cfg);
+		int iid_one_bit_reg = alloc_preg (cfg);
+		int iid_bit_reg = alloc_preg (cfg);
 		MONO_EMIT_NEW_AOTCONST (cfg, iid_reg, klass, MONO_PATCH_INFO_IID);
-		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_SHL_IMM, iid_reg, iid_reg, 2);
-		MONO_EMIT_NEW_BIALU (cfg, OP_PADD, ioffset_reg, ioffset_reg, iid_reg);
-		MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOADI4_MEMBASE, intf_reg, ioffset_reg, 0);
+		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_SHR_IMM, shifted_iid_reg, iid_reg, 3);
+		MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOADU1_MEMBASE, ibitmap_byte_reg, ibitmap_reg, shifted_iid_reg);
+		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_IAND_IMM, masked_iid_reg, iid_reg, 7);
+		MONO_EMIT_NEW_ICONST (cfg, iid_one_bit_reg, 1);
+		MONO_EMIT_NEW_BIALU (cfg, OP_ISHL, iid_bit_reg, iid_one_bit_reg, masked_iid_reg);
+		MONO_EMIT_NEW_BIALU (cfg, OP_IAND, intf_bit_reg, ibitmap_byte_reg, iid_bit_reg);
+	} else {
+		MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOADI1_MEMBASE, ibitmap_byte_reg, ibitmap_reg, klass->interface_id >> 3);
+		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_AND_IMM, intf_bit_reg, ibitmap_byte_reg, 1 << (klass->interface_id & 7));
 	}
-	else
-		MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOADI4_MEMBASE, intf_reg, ioffset_reg, klass->interface_id * sizeof (int));
 }
 
 /* 
@@ -2058,13 +2071,13 @@ mini_emit_iface_cast (MonoCompile *cfg, int vtable_reg, MonoClass *klass, MonoBa
 static void 
 mini_emit_iface_class_cast (MonoCompile *cfg, int klass_reg, MonoClass *klass, MonoBasicBlock *false_target, MonoBasicBlock *true_target)
 {
-	int intf_reg = alloc_preg (cfg);
+	int intf_bit_reg = alloc_preg (cfg);
 
 	mini_emit_max_iid_check_class (cfg, klass_reg, klass, false_target);
-	mini_emit_load_intf_reg_class (cfg, intf_reg, klass_reg, klass);
-	MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, intf_reg, -1);
+	mini_emit_load_intf_bit_reg_class (cfg, intf_bit_reg, klass_reg, klass);
+	MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, intf_bit_reg, 0);
 	if (true_target)
-		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBGE, true_target);
+		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBNE_UN, true_target);
 	else
 		MONO_EMIT_NEW_COND_EXC (cfg, EQ, "InvalidCastException");
 }
@@ -10094,7 +10107,7 @@ mono_spill_global_vars (MonoCompile *cfg)
  *   parts of the tree could be separated by other instructions, killing the tree
  *   arguments, or stores killing loads etc. Also, should we fold loads into other
  *   instructions if the result of the load is used multiple times ?
- * - LAST MERGE: 76259.
+ * - LAST MERGE: 76948.
  */
 
 /*
