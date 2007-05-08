@@ -1,5 +1,9 @@
 2007-05-08  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mono_compile_get_interface_var): Remove this unused function.
+
+	* mini-ops.h inssel.brg mini-<ARCH>.c: Add a new opcode for ckfinite as well.
+
 	* mini-ops.h: Introduce new opcodes used in the IR instead of the original CEE_
 	opcodes for some opcodes.
 
