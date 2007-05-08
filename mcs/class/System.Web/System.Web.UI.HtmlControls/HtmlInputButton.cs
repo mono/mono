@@ -28,6 +28,7 @@
 
 using System.ComponentModel;
 using System.Globalization;
+using System.Reflection;
 using System.Security.Permissions;
 
 namespace System.Web.UI.HtmlControls {
@@ -97,15 +98,118 @@ namespace System.Web.UI.HtmlControls {
 
 		void RaisePostBackEventInternal (string eventArgument)
 		{
-			if (CausesValidation)
+			if (CausesValidation) {
 #if NET_2_0
 				Page.Validate (ValidationGroup);
 #else
 				Page.Validate ();
 #endif
-			OnServerClick (EventArgs.Empty);
+			}
+			
+			if (String.Compare (Type, "reset", true, CultureInfo.InvariantCulture) != 0)
+				OnServerClick (EventArgs.Empty);
+			else
+				ResetForm (FindForm ());
 		}
 
+		HtmlForm FindForm ()
+		{
+#if NET_2_0
+			return Page.Form;
+#else
+			HtmlForm ret = null;
+			Control p = Parent;
+			while (p != null) {
+				ret = p as HtmlForm;
+				if (ret == null) {
+					p = p.Parent;
+					continue;
+				}
+				return ret;
+			}
+
+			return null;
+#endif
+		}
+		
+		void ResetForm (HtmlForm form)
+		{
+			if (form == null || !form.HasControls ())
+				return;
+			
+			ResetChildrenValues (form.Controls);
+		}
+
+		void ResetChildrenValues (ControlCollection children)
+		{
+			foreach (Control child in children) {
+				if (child == null)
+					continue;
+				
+				if (child.HasControls ())
+					ResetChildrenValues (child.Controls);
+				ResetChildValue (child);
+			}
+		}
+
+		void ResetChildValue (Control child)
+		{
+			Type type = child.GetType ();
+			object[] attributes = type.GetCustomAttributes (false);
+			if (attributes == null || attributes.Length == 0)
+				return;
+
+			string defaultProperty = null;
+			DefaultPropertyAttribute defprop;
+			
+			foreach (object attr in attributes) {
+				defprop = attr as DefaultPropertyAttribute;
+				if (defprop == null)
+					continue;
+				defaultProperty = defprop.Name;
+				break;
+			}
+
+			if (defaultProperty == null || defaultProperty.Length == 0)
+				return;
+
+			PropertyInfo pi = null;
+			try {
+				pi = type.GetProperty (defaultProperty,
+						       BindingFlags.Instance |
+						       BindingFlags.Public |
+						       BindingFlags.Static |
+						       BindingFlags.IgnoreCase);
+			} catch (Exception) {
+				// ignore
+			}
+			if (pi == null || !pi.CanWrite)
+				return;
+			
+			attributes = pi.GetCustomAttributes (false);
+			if (attributes == null || attributes.Length == 0)
+				return;
+
+			DefaultValueAttribute defval = null;
+			object value = null;
+			
+			foreach (object attr in attributes) {
+				defval = attr as DefaultValueAttribute;
+				if (defval == null)
+					continue;
+				value = defval.Value;
+				break;
+			}
+			
+			if (value == null || pi.PropertyType != value.GetType ())
+				return;
+
+			try {
+				pi.SetValue (child, value, null);
+			} catch (Exception) {
+				// ignore
+			}
+		}
 #if NET_2_0
 		protected virtual void RaisePostBackEvent (string eventArgument)
 		{

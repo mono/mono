@@ -1,3 +1,10 @@
+2007-05-08  Marek Habersack  <mhabersack@novell.com>
+
+	* HtmlInputButton.cs: button of type 'reset' does not invoke
+	OnServerClick event.
+	'reset' buttons clear all the controls in the form to their
+	default values.
+
 2007-05-04  Marek Habersack  <mhabersack@novell.com>
 
 	* HtmlAnchor.cs: use ResolveClientUrl when generating
