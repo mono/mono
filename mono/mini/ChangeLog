@@ -1,5 +1,12 @@
 2007-05-09  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (emit_stobj): Get rid of ip argument.
+	(mono_emit_call_args): Ditto.
+	(mono_emit_calli): Ditto.
+	(mono_emit_method_call_full): Ditto.
+	(mono_emit_method_call): Ditto.
+	(mono_emit_native_call): Ditto.
+
 	* method-to-ir.c (mono_method_to_ir2): Set cfg->ip while iterating through
 	the IL code. Fixes debugging support.
 
