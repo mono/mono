@@ -1,3 +1,9 @@
+2007-05-08  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateControlCompiler.cs: BuildTemplateMethod is a delegate,
+	so use a delegate create expression - it may make difference for
+	languages other than C# (e.g. VisualBasic).
+
 2007-05-07  Marek Habersack  <mhabersack@novell.com>
 
 	* AspGenerator.cs: if the parser's language is implicit (i.e. set

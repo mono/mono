@@ -443,7 +443,7 @@ namespace System.Web.Compilation
 			CodeAssignStatement assign = new CodeAssignStatement (field, expr);
 #if NET_2_0
 			if (need_if) {
-				CodeExpression page = new CodePropertyReferenceExpression (new CodeThisReferenceExpression (), "Page");
+				CodeExpression page = new CodePropertyReferenceExpression (thisRef, "Page");
 				CodeExpression left = new CodeMethodInvokeExpression (page, "GetDataItem");
 				CodeBinaryOperatorExpression ce = new CodeBinaryOperatorExpression (left, CodeBinaryOperatorType.IdentityInequality, new CodePrimitiveExpression (null));
 				CodeConditionStatement ccs = new CodeConditionStatement (ce, assign);
@@ -740,7 +740,7 @@ namespace System.Web.Compilation
 			CodeAssignStatement assign = new CodeAssignStatement ();
 			assign.Left = new CodePropertyReferenceExpression (ctrlVar, mi.Name);
 			CodeMethodInvokeExpression getlro = new CodeMethodInvokeExpression (
-				new CodeThisReferenceExpression (),
+				thisRef,
 				"GetLocalResourceObject",
 				new CodeExpression [] { new CodePrimitiveExpression (resname) });
 			
@@ -1003,8 +1003,8 @@ namespace System.Web.Compilation
 		{
 			CodePropertyReferenceExpression prop = new CodePropertyReferenceExpression (ctrlVar, name);
 
-			CodeObjectCreateExpression newBuild = new CodeObjectCreateExpression (typeof (BuildTemplateMethod));
-			newBuild.Parameters.Add (new CodeMethodReferenceExpression (thisRef, methodName));
+			CodeDelegateCreateExpression newBuild = new CodeDelegateCreateExpression (
+				new CodeTypeReference (typeof (BuildTemplateMethod)), thisRef, methodName);
 
 			CodeObjectCreateExpression newCompiled = new CodeObjectCreateExpression (typeof (CompiledTemplateBuilder));
 			newCompiled.Parameters.Add (newBuild);
