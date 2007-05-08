@@ -47,9 +47,6 @@ namespace MonoTests.System.XmlSerialization
 		
 		[Test]
 		[NUnit.Framework.Category("NotDotNet")]
-#if TARGET_JVM
-		[Ignore ("TD #7463")]
-#endif
 		public void ReadLiteral ()
 		{
 			XmlSerializer ss = new XmlSerializer (GetLiteralTypeMapping ());
