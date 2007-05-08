@@ -149,17 +149,17 @@ namespace System.Reflection {
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private static extern FieldInfo internal_from_handle (IntPtr handle);
+		private static extern FieldInfo internal_from_handle_type (IntPtr field_handle, IntPtr type_handle);
 
 		public static FieldInfo GetFieldFromHandle (RuntimeFieldHandle handle)
 		{
-			return internal_from_handle (handle.Value);
+			return internal_from_handle_type (handle.Value, IntPtr.Zero);
 		}
 
 #if NET_2_0
 		public static FieldInfo GetFieldFromHandle (RuntimeFieldHandle handle, RuntimeTypeHandle declaringType)
 		{
-			throw new NotImplementedException ();
+			return internal_from_handle_type (handle.Value, declaringType.Value);
 		}
 #endif
 

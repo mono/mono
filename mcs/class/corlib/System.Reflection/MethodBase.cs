@@ -46,16 +46,16 @@ namespace System.Reflection {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static MethodBase GetCurrentMethod ();
 
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern static MethodBase GetMethodFromHandleInternal(IntPtr handle);
-
 		public static MethodBase GetMethodFromHandle(RuntimeMethodHandle handle) {
-			return GetMethodFromHandleInternal (handle.Value);
+			return GetMethodFromHandleInternalType (handle.Value, IntPtr.Zero);
 		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern static MethodBase GetMethodFromHandleInternalType (IntPtr method_handle, IntPtr type_handle);
 
 #if NET_2_0
 		public static MethodBase GetMethodFromHandle(RuntimeMethodHandle handle, RuntimeTypeHandle declaringType) {
-			throw new NotImplementedException ();
+			return GetMethodFromHandleInternalType (handle.Value, declaringType.Value);
 		}
 #endif
 
