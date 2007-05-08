@@ -1,3 +1,9 @@
+
+Tue May 8 12:22:14 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* assembly.c: parse ProcessorArchitecture in assembly name and ignore
+	it for now (see mono-devel, from Marek Sieradzki <marek.sieradzki@gmail.com>).
+
 2007-05-01  Zoltan Varga  <vargaz@gmail.com>
 
 	* icall.c (custom_attrs_get_by_type): Handle loading errors gracefully. Fixes
