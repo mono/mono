@@ -58,7 +58,7 @@ namespace System.Configuration
                         }
                 }
 
-                public new ConnectionStringSettings this [int index]
+                public ConnectionStringSettings this [int index]
                 {
                         get { return (ConnectionStringSettings) BaseGet (index); }
                         set {

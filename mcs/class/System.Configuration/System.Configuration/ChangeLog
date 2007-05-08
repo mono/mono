@@ -1,3 +1,8 @@
+2007-05-08 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* ConnectionStringSettingsCollection.cs: removed 'new' keyword, cause 
+	property doesn't hide any inherit property.
+
 2007-04-24  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* InternalConfigurationHost.cs : machine configuration covers all
