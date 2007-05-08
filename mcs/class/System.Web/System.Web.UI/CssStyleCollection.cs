@@ -54,8 +54,7 @@ namespace System.Web.UI {
 #endif
 		}
 
-		internal CssStyleCollection (StateBag bag)
-			: this ()
+		internal CssStyleCollection (StateBag bag) : this ()
 		{
 			this.bag = bag;
 			if (bag != null && bag [AttributeCollection.StyleAttribute] != null)
@@ -68,9 +67,8 @@ namespace System.Web.UI {
 			style.Clear ();
 			if (_value.Length > 0) {
 				int startIndex = 0;
-				while (startIndex >= 0) {
+				while (startIndex >= 0)
 					startIndex = ParseStyle (startIndex);
-				}
 			}
 		}
 
@@ -111,17 +109,18 @@ namespace System.Web.UI {
 		void BagToValue ()
 		{
 			_value.Length = 0;
-			foreach (string key in style.Keys) {
+			foreach (string key in style.Keys)
 				AppendStyle (_value, key, (string) style [key]);
-			}
 		}
 
 		static void AppendStyle (StringBuilder sb, string key, string value)
 		{
 #if NET_2_0
-			if (String.Compare (key, "background-image", StringComparison.OrdinalIgnoreCase) == 0 && value.Length >= 3 && String.Compare ("url", 0, value, 0, 3, StringComparison.OrdinalIgnoreCase) != 0)
+			if (String.Compare (key, "background-image", StringComparison.OrdinalIgnoreCase) == 0 &&
+			    value.Length >= 3 && String.Compare ("url", 0, value, 0, 3, StringComparison.OrdinalIgnoreCase) != 0)
 #else
-			if (key == "background-image" && 0 != String.Compare ("url", value.Substring (0, 3), true, CultureInfo.InvariantCulture))
+			if (key == "background-image" && 0 != String.Compare ("url", value.Substring (0, 3), true,
+									      CultureInfo.InvariantCulture))
 #endif
 				sb.AppendFormat ("{0}:url({1});", key, HttpUtility.UrlPathEncode (value));
 			else
@@ -129,25 +128,16 @@ namespace System.Web.UI {
 		}
 
 		public int Count {
-			get {
-				return style.Count;
-			}
+			get { return style.Count; }
 		}
 
 		public string this [string key] {
-			get {
-				return style [key] as string;
-			}
-
-			set {
-				Add (key, value);
-			}
+			get { return style [key] as string; }
+			set { Add (key, value); }
 		}
 
 		public ICollection Keys {
-			get {
-				return style.Keys;
-			}
+			get { return style.Keys; }
 		}
 
 		public void Add (string key, string value)
@@ -165,17 +155,16 @@ namespace System.Web.UI {
 				// just append
 				style [key] = value;
 				AppendStyle (_value, key, value);
-				if(bag!=null)
-					bag [AttributeCollection.StyleAttribute] = _value.ToString ();
-			}
-			else if (String.CompareOrdinal (curr, value) == 0) {
+			} else if (String.CompareOrdinal (curr, value) == 0) {
 				// do nothing
 				return;
-			}
-			else {
+			} else {
 				style [key] = value;
 				BagToValue ();
 			}
+
+			if (bag != null)
+				bag [AttributeCollection.StyleAttribute] = _value.ToString ();
 		}
 
 #if NET_2_0
@@ -206,12 +195,8 @@ namespace System.Web.UI {
 		}
 #if NET_2_0
 		public string this [HtmlTextWriterStyle key] {
-			get {
-				return style [HtmlTextWriter.StaticGetStyleName (key)] as string;
-			}
-			set {
-				Add (HtmlTextWriter.StaticGetStyleName (key), value);
-			}
+			get { return style [HtmlTextWriter.StaticGetStyleName (key)] as string; }
+			set { Add (HtmlTextWriter.StaticGetStyleName (key), value); }
 		}
 
 		public void Remove (HtmlTextWriterStyle key)
@@ -237,12 +222,10 @@ namespace System.Web.UI {
 			if (value != null)
 				_value.Append (value);
 			if (bag != null) {
-				if (value == null) {
+				if (value == null)
 					bag.Remove (AttributeCollection.StyleAttribute);
-				}
-				else {
+				else
 					bag [AttributeCollection.StyleAttribute] = value;
-				}
 			}
 		}
 	}

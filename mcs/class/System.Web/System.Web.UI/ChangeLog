@@ -1,3 +1,9 @@
+2007-05-08  Marek Habersack  <mhabersack@novell.com>
+
+	* CssStyleCollection.cs: put the style in the bag each time a key
+	is set, otherwise resetting of a key has no effect on rendered
+	style.
+
 2007-05-07  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateParser.cs: added support for implicit language
