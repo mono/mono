@@ -1,3 +1,7 @@
+2007-05-08  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* TestJpegCodec.cs: Add test cases for 8bpp indexed greyscale JPEG
+
 2007-04-26  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* MetafileTest.cs: Add test cases for some .ctor(Stream...)
