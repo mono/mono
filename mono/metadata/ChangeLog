@@ -1,4 +1,9 @@
 
+Tue May 8 13:02:09 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c, icall-def.h: implemented new GetFieldFromHandle and
+	GetMethodFromHandle overloads (bug #78637).
+
 Tue May 8 12:22:14 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* assembly.c: parse ProcessorArchitecture in assembly name and ignore
