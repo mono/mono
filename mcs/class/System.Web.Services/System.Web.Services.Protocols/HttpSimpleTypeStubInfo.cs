@@ -97,7 +97,7 @@ namespace System.Web.Services.Protocols
 
 	internal abstract class HttpSimpleTypeStubInfo : TypeStubInfo
 	{
-		public HttpSimpleTypeStubInfo (ServerType logicalTypeInfo): base (logicalTypeInfo)
+		public HttpSimpleTypeStubInfo (LogicalTypeInfo logicalTypeInfo): base (logicalTypeInfo)
 		{
 		}
 

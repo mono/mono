@@ -85,12 +85,12 @@ namespace System.Web.Services.Protocols {
 		Hashtable name_to_method = new Hashtable ();
 		MethodStubInfo[] methods;
 		ArrayList bindings = new ArrayList ();
-		ServerType logicalType;
+		LogicalTypeInfo logicalType;
 		string defaultBinding;
 		ArrayList mappings;
 		XmlSerializer[] serializers;
 
-		public TypeStubInfo (ServerType logicalTypeInfo)
+		public TypeStubInfo (LogicalTypeInfo logicalTypeInfo)
 		{
 			this.logicalType = logicalTypeInfo;
 
@@ -124,7 +124,7 @@ namespace System.Web.Services.Protocols {
 		}
 #endif
 		
-		public ServerType LogicalType
+		public LogicalTypeInfo LogicalType
 		{
 			get { return logicalType; }
 		}
@@ -300,23 +300,23 @@ namespace System.Web.Services.Protocols {
 
 		static internal TypeStubInfo GetTypeStub (Type t, string protocolName)
 		{
-			ServerType tm = GetLogicalTypeInfo (t);
+			LogicalTypeInfo tm = GetLogicalTypeInfo (t);
 			return tm.GetTypeStub (protocolName);
 		}
 		
 		//
 		// This needs to be thread safe
 		//
-		static internal ServerType GetLogicalTypeInfo (Type t)
+		static internal LogicalTypeInfo GetLogicalTypeInfo (Type t)
 		{
 			lock (type_to_manager)
 			{
-				ServerType tm = (ServerType) type_to_manager [t];
+				LogicalTypeInfo tm = (LogicalTypeInfo) type_to_manager [t];
 	
 				if (tm != null)
 					return tm;
 
-				tm = new ServerType (t);
+				tm = new LogicalTypeInfo (t);
 				type_to_manager [t] = tm;
 
 				return tm;

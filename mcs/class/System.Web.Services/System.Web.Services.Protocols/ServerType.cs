@@ -34,16 +34,30 @@ using System.Collections;
 
 namespace System.Web.Services.Protocols
 {
-	//
-	// This class has information abou a web service. Through providess
-	// access to the TypeStubInfo instances for each protocol.
-	//
 #if NET_2_0
 	public
 #else
 	internal
 #endif
-	class ServerType // It was LogicalTypeInfo until Mono 1.2.
+	class ServerType
+	{
+		LogicalTypeInfo type;
+
+		public ServerType (Type type)
+		{
+			this.type = TypeStubManager.GetLogicalTypeInfo (type);
+		}
+
+		internal LogicalTypeInfo LogicalType {
+			get { return type; }
+		}
+	}
+
+	//
+	// This class has information about a web service. Through providess
+	// access to the TypeStubInfo instances for each protocol.
+	//
+	internal class LogicalTypeInfo
 	{
 		LogicalMethodInfo[] logicalMethods;
 
@@ -61,7 +75,7 @@ namespace System.Web.Services.Protocols
 		TypeStubInfo httpGetProtocol;
 		TypeStubInfo httpPostProtocol;
 		
-		public ServerType (Type t)
+		public LogicalTypeInfo (Type t)
 		{
 			this.Type = t;
 

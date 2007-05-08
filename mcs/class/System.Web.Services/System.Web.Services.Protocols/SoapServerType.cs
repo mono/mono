@@ -55,11 +55,11 @@ namespace System.Web.Services.Protocols
 		}
 
 		public bool ServiceDefaultIsEncoded {
-			get { return UseEncoded; }
+			get { return LogicalType.UseEncoded; }
 		}
 
 		public string ServiceNamespace {
-			get { return WebServiceNamespace; }
+			get { return LogicalType.WebServiceNamespace; }
 		}
 
 		[MonoTODO]

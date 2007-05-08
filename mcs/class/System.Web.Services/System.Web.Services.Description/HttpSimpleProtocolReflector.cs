@@ -68,7 +68,7 @@ namespace System.Web.Services.Description {
 
 		protected override bool ReflectMethod ()
 		{
-			ServerType ti = TypeStubManager.GetLogicalTypeInfo (ServiceType);
+			LogicalTypeInfo ti = TypeStubManager.GetLogicalTypeInfo (ServiceType);
 			HttpOperationBinding sob = new HttpOperationBinding();
 			sob.Location = "/" + MethodStubInfo.Name;
 			OperationBinding.Extensions.Add (sob);

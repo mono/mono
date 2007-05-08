@@ -43,7 +43,7 @@ namespace System.Web.Services.Protocols
 
 	internal class HttpGetTypeStubInfo : HttpSimpleTypeStubInfo
 	{
-		public HttpGetTypeStubInfo (ServerType logicalTypeInfo): base (logicalTypeInfo)
+		public HttpGetTypeStubInfo (LogicalTypeInfo logicalTypeInfo): base (logicalTypeInfo)
 		{
 		}
 

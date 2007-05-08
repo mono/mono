@@ -1,3 +1,7 @@
+2007-05-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpSimpleProtocolReflector.cs : ServerType -> LogicalTypeInfo.
+
 2007-05-07  Adar Wesley <adarw@mainsoft.com>
 
 	* ProtocolReflector.cs: added missing method ReflectDescription.

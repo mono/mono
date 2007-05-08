@@ -452,7 +452,7 @@ namespace System.Web.Services.Protocols {
 		internal XmlReflectionImporter 	xmlImporter;
 		internal SoapReflectionImporter soapImporter;
 
-		public SoapTypeStubInfo (ServerType logicalTypeInfo)
+		public SoapTypeStubInfo (LogicalTypeInfo logicalTypeInfo)
 		: base (logicalTypeInfo)
 		{
 			xmlImporter = new XmlReflectionImporter ();
@@ -540,7 +540,7 @@ namespace System.Web.Services.Protocols {
 
 	internal class Soap12TypeStubInfo : SoapTypeStubInfo
 	{
-		public Soap12TypeStubInfo (ServerType logicalTypeInfo)
+		public Soap12TypeStubInfo (LogicalTypeInfo logicalTypeInfo)
 		: base (logicalTypeInfo)
 		{
 		}
