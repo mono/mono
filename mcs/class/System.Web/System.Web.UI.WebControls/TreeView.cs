@@ -1442,36 +1442,44 @@ namespace System.Web.UI.WebControls
 			
 			// Children
 			
-			if (hasChildNodes)
-			{
-				AddChildrenPadding (writer, node);
+			if (hasChildNodes) {
 				if (level >= levelLines.Count) {
-					if (hasNext) levelLines.Add (this);
-					else levelLines.Add (null);
+					if (hasNext)
+						levelLines.Add (this);
+					else
+						levelLines.Add (null);
 				} else {
-					if (hasNext) levelLines [level] = this;
-					else levelLines [level] = null;
+					if (hasNext)
+						levelLines [level] = this;
+					else
+						levelLines [level] = null;
 				}
 				
 				if (clientExpand) {
-					if (!(node.Expanded.HasValue && node.Expanded.Value)) writer.AddStyleAttribute ("display", "none");
-					else writer.AddStyleAttribute ("display", "block");
+					if (!(node.Expanded.HasValue && node.Expanded.Value))
+						writer.AddStyleAttribute ("display", "none");
+					else
+						writer.AddStyleAttribute ("display", "block");
 					writer.AddAttribute ("id", GetNodeClientId (node, null));
 					writer.RenderBeginTag (HtmlTextWriterTag.Span);
 					
 					if (renderChildNodes) {
+						AddChildrenPadding (writer, node);
 						int num = node.ChildNodes.Count;
 						for (int n=0; n<num; n++)
 							RenderNode (writer, node.ChildNodes [n], level + 1, levelLines, true, n<num-1);
+						if (hasNext)
+							AddChildrenPadding (writer, node);
 					}
 					writer.RenderEndTag ();	// SPAN
-				}
-				else if (renderChildNodes) {
+				} else if (renderChildNodes) {
+					AddChildrenPadding (writer, node);
 					int num = node.ChildNodes.Count;
 					for (int n=0; n<num; n++)
 						RenderNode (writer, node.ChildNodes [n], level + 1, levelLines, true, n<num-1);
+					if (hasNext)
+						AddChildrenPadding (writer, node);
 				}
-				AddChildrenPadding (writer, node);
 			}
 		}
 

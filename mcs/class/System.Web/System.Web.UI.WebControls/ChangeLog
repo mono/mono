@@ -1,3 +1,9 @@
+2007-05-08  Marek Habersack  <mhabersack@novell.com>
+
+	* TreeView.cs: children padding is rendered only before and after
+	the children are rendered, not between them. Also, render padding
+	only if there are any nodes to follow the current one.
+
 2007-05-07  Marek Habersack  <mhabersack@novell.com>
 
 	* Wizard.cs: additional checks to see whether the wizard needs to
