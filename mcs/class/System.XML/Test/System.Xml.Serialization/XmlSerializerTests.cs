@@ -240,9 +240,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Ignore ("TD #7464")]
-#endif
 		public void TestSerializeChar ()
 		{
 			Serialize ('A');
