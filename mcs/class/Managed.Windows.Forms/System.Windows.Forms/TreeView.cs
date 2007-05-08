@@ -548,7 +548,11 @@ namespace System.Windows.Forms {
 		/// According to MSDN this property has no effect on the treeview
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		protected override bool DoubleBuffered {
-			get { return true; }
+			get {
+				// This returns true on MS, but MSDN says it has no effect, and using double
+				// buffering breaks scrolling
+				return false;
+			}
 			set { /* whatever */ }
 		}
 #endif
@@ -1160,11 +1164,11 @@ namespace System.Windows.Forms {
 		internal void SetTop (TreeNode node)
 		{
 			if (!vbar.is_visible) {
-				skipped_nodes = node.visible_order;
+				skipped_nodes = node.visible_order - 1;
 				return;
 			}
 
-			vbar.Value = Math.Min (node.visible_order, vbar.Maximum - VisibleCount + 1);
+			vbar.Value = Math.Min (node.visible_order - 1, vbar.Maximum - VisibleCount + 1);
 		}
 
 		internal void SetBottom (TreeNode node)
@@ -1821,9 +1825,19 @@ namespace System.Windows.Forms {
 
 		private void GotFocusHandler (object sender, EventArgs e)
 		{
-			if (selected_node == null)
-				SelectedNode = pre_selected_node == null ? Nodes [0] : pre_selected_node;
-			else if (selected_node != null)
+			if (selected_node == null) {
+				if (pre_selected_node != null) {
+					SelectedNode = pre_selected_node;
+					return;
+				}
+#if NET_2_0
+				if (Nodes.Count > 1)
+					SelectedNode = Nodes [Nodes.Count - 1];
+#else
+				if (Nodes.Count > 1)
+					SelectedNode = Nodes [0];
+#endif
+			} else if (selected_node != null)
 				UpdateNode (selected_node);
 		}
 

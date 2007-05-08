@@ -1,3 +1,9 @@
+2007-05-08  Jackson Harper  <jackson@ximian.com>
+
+	* TreeView.cs: GotFocus differences between 1.1 and 2.0.
+	- Off by one error in SetTop
+	- Disable DoubeBuffering
+	
 2007-05-08  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* ScrollableControl.cs: ScrollIControlntoView: we now only move the
