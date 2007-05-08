@@ -1,3 +1,9 @@
+2007-05-08  Robert Jordan  <robertj@gmx.net>
+
+	* process.c (CreateProcess_internal):
+	Pass CREATE_NO_WINDOW to CreateProcess when ProcessStartupInfo
+	.CreateNoWindow was specified. Fixes #81496.
+
 2007-05-08  Massimiliano Mantione  <massi@ximian.com>
 
 	* class-internals.h: Removed "MonoClass.interface_offsets" as a first
