@@ -74,5 +74,14 @@ namespace System.Data.OleDb
                 return DbSQLState;
             }
         }
+
+		public override string ToString () 
+		{
+			string toStr;
+
+			toStr = String.Format("OleDbError: {0}. {1}", Message, _e.StackTrace);
+			return toStr;
+
+		}
     }
 }

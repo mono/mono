@@ -58,6 +58,14 @@ namespace System.Data.OleDb
             }
         }
 
+#if NET_2_0
+		public void CopyTo (OleDbError [] array, int index)
+		{
+			base.CopyTo (array, index);
+		}
+
+#endif
+
 		protected override AbstractDbError CreateDbError(SQLException e, AbstractDBConnection connection) {
 			return new OleDbError(e, connection);
 		}

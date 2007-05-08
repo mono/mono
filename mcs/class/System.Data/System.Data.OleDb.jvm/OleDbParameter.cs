@@ -228,6 +228,18 @@ namespace System.Data.OleDb
 			JdbcType = jdbcType;
 		}
 
+#if NET_2_0
+		public void ResetOleDbType ()
+		{
+			IsDbTypeSet = false;
+		}
+
+		public override void ResetDbType ()
+		{
+			ResetOleDbType ();
+		}
+#endif
+
 		protected internal sealed override void SetSpecialFeatures(ResultSet res)
 		{
 			IsOracleRefCursor = (res.getString("TYPE_NAME") == "REF CURSOR");

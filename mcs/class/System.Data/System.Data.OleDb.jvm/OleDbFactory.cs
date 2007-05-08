@@ -32,6 +32,8 @@ namespace System.Data.OleDb
 {
 	using System.Data;
 	using System.Data.Common;
+	using System.Security;
+	using System.Security.Permissions;
 
 	public sealed class OleDbFactory : DbProviderFactory
 	{
@@ -72,6 +74,12 @@ namespace System.Data.OleDb
 		public override DbDataAdapter CreateDataAdapter ()
 		{
 			return (DbDataAdapter) new OleDbDataAdapter ();
+		}
+
+		[MonoLimitation("Code Access Security is not supported")]
+		public override CodeAccessPermission CreatePermission (PermissionState state) 
+		{
+			return new OleDbPermission (state);
 		}
 
 		[MonoTODO]

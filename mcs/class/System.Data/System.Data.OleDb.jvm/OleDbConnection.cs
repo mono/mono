@@ -194,6 +194,14 @@ namespace System.Data.OleDb
 			//throw new NotImplementedException();
 		}
 
+#if NET_2_0
+		[MonoLimitation ("Empty implementation since State relies on java.sql.Connection.State always returning the correct state")]
+		public void ResetState () 
+		{
+		}
+
+#endif
+
 		protected internal sealed override void OnSqlWarning(SQLWarning warning)
 		{
 			OleDbErrorCollection col = new OleDbErrorCollection(warning, this);

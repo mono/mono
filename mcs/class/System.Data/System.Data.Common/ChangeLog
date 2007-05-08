@@ -1,3 +1,7 @@
+2007-05-08  Adar Wesley <adarw@mainsoft.com>
+
+	* DbProviderFactory.cs: minor refactoring for throwing exceptions
+
 2007-04-30  Marek Habersack  <mhabersack@novell.com>
 
 	* DbProviderFactories.cs: throw the same exception MS.NET does.

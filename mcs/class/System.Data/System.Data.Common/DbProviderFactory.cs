@@ -49,15 +49,14 @@ namespace System.Data.Common {
 
 		#region Properties
 
-		private void ThrowNotImplementedException ()
+		private NotImplementedException CreateNotImplementedException ()
 		{
-			throw new NotImplementedException ();
+			return new NotImplementedException ();
 		}
 
 		public virtual bool CanCreateDataSourceEnumerator { 
 			get {
-				ThrowNotImplementedException ();
-				return false; // To fix compiler error
+				throw CreateNotImplementedException ();
 			}
 		}
 		#endregion // Properties
@@ -66,50 +65,42 @@ namespace System.Data.Common {
 
 		public virtual DbCommand CreateCommand ()
 		{
-			ThrowNotImplementedException ();
-			return null; // To fix compiler error
+			throw CreateNotImplementedException ();
 		}
 
 		public virtual DbCommandBuilder CreateCommandBuilder ()
 		{
-			ThrowNotImplementedException ();
-			return null; // To fix compiler error
+			throw CreateNotImplementedException ();
 		}
 
 		public virtual DbConnection CreateConnection ()
 		{
-			ThrowNotImplementedException ();
-			return null; // To fix compiler error
+			throw CreateNotImplementedException ();
 		}
 
 		public virtual DbDataAdapter CreateDataAdapter ()
 		{
-			ThrowNotImplementedException ();
-			return null; // To fix compiler error
+			throw CreateNotImplementedException ();
 		}
 
 		public virtual DbDataSourceEnumerator CreateDataSourceEnumerator ()
 		{
-			ThrowNotImplementedException ();
-			return null; // To fix compiler error
+			throw CreateNotImplementedException ();
 		}
 
 		public virtual DbParameter CreateParameter ()
 		{
-			ThrowNotImplementedException ();
-			return null; // To fix compiler error
+			throw CreateNotImplementedException ();
 		}
 
 		public virtual CodeAccessPermission CreatePermission (PermissionState state)
 		{
-			ThrowNotImplementedException ();
-			return null; // To fix compiler error
+			throw CreateNotImplementedException ();
 		}
 
 		public virtual DbConnectionStringBuilder CreateConnectionStringBuilder ()
 		{
-			ThrowNotImplementedException ();
-			return null; // To fix compiler error
+			throw CreateNotImplementedException ();
 		}
 		#endregion // Methods
 	}

@@ -79,6 +79,12 @@ namespace System.Data.OleDb
 			return (int)OleDbConvert.JdbcTypeToOleDbType(jdbcType);   
 		}
 
+		[MonoNotSupported("")]
+		public OleDbDataReader GetData (int ordinal)
+		{
+			throw new NotImplementedException ();
+		}
+
 		#endregion // Methods
 	}
 }

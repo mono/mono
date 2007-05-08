@@ -1,3 +1,25 @@
+2007-05-08 Adar Wesley <adarw@mainsoft.com>
+
+	* OleDbCommandBuilder.cs: added missing methods QuoteIdentifier,
+	UnquoteIdentifier.
+
+	* OleDbConnection.cs: added missing method ResetState.
+
+	* OleDbDataReader.cs: added missing method GetData.
+
+	* OleDbError.cs: added missing method ToString.
+
+	* OleDbErrorCollection.cs: added missing method strongly typed
+	CopyTo.
+
+	* OleDbFactory.cs: added missing method CreatePermission.
+
+	* OleDbParameter.cs: added missing methods ResetOleDbType,
+	ResetDbType.
+
+	* OleDbParameterCollection.cs: added missing methods strongly
+	typed AddRange, IndexOf.
+
 2007-05-01 Adar Wesley <adarw@mainsoft.com>
 
 	* OleDbCommandBuilder.cs: Fixed typo and called base implementation

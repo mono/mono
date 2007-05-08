@@ -135,6 +135,21 @@ namespace System.Data.OleDb
 			throw new NotImplementedException ();
 		}
 
+#if NET_2_0
+
+		[MonoNotSupported("")]
+		public string QuoteIdentifier (string unquotedIdentifier, OleDbConnection connection) 
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported ("")]
+		public string UnquoteIdentifier (string quotedIdentifier, OleDbConnection connection)
+		{
+			throw new NotImplementedException ();
+		}
+
+#endif
 		#endregion // Methods
 	}
 }
