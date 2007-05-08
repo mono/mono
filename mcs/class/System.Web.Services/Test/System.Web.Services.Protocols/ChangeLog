@@ -1,5 +1,10 @@
 2007-05-08  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SoapServerTypeTest.cs : added some .ctor() tests to verify
+	  validity of attributes on the service class.
+
+2007-05-08  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* LogicalMethodInfoTest.cs : new test (cosmetic for now).
 
 2007-04-23  Atsushi Enomoto  <atsushi@ximian.com>

@@ -1,5 +1,15 @@
 2007-05-08  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SoapServerType.cs
+	  ServerType.cs
+	  Methods.cs : SoapBindingUse and SoapServiceRoutingStyle could just
+	  be stored in LogicalTypeInfo (as they are attributed in a web
+	  service class), and removed duplicates of them in SoapTypeStubInfo.
+	  Invalid attributes on a service class are checked in SoapServerType
+	  .ctor().
+
+2007-05-08  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlReturnReader.cs
 	  XmlReturnWriter.cs
 	  TypeStubManager.cs

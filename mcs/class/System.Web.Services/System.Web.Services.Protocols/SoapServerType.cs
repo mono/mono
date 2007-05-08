@@ -30,6 +30,7 @@
 
 #if NET_2_0
 
+using System.Web.Services.Description;
 using System.Web.Services.Configuration;
 
 namespace System.Web.Services.Protocols
@@ -40,6 +41,12 @@ namespace System.Web.Services.Protocols
 		public SoapServerType (Type type, WebServiceProtocols protocolsSupported)
 			: base (type)
 		{
+			// FIXME: these calls could be altered. Here they
+			// are invoked to verify attributes.
+			if ((protocolsSupported & WebServiceProtocols.HttpSoap) != 0)
+				LogicalType.GetTypeStub ("Soap");
+			if ((protocolsSupported & WebServiceProtocols.HttpSoap12) != 0)
+				LogicalType.GetTypeStub ("Soap12");
 		}
 
 		[MonoTODO]
@@ -55,16 +62,15 @@ namespace System.Web.Services.Protocols
 		}
 
 		public bool ServiceDefaultIsEncoded {
-			get { return LogicalType.UseEncoded; }
+			get { return LogicalType.BindingUse == SoapBindingUse.Encoded; }
 		}
 
 		public string ServiceNamespace {
 			get { return LogicalType.WebServiceNamespace; }
 		}
 
-		[MonoTODO]
 		public bool ServiceRoutingOnSoapAction {
-			get { throw new NotImplementedException (); }
+			get { return LogicalType.RoutingStyle == SoapServiceRoutingStyle.SoapAction; }
 		}
 	}
 }

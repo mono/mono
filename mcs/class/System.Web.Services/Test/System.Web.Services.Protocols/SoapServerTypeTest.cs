@@ -28,6 +28,62 @@ namespace MonoTests.System.Web.Services.Description
 		public void NamedServiceBinding ()
 		{
 			new SoapServerType (typeof (EdaInterface), WebServiceProtocols.HttpSoap);
+			new ServerType (typeof (EdaInterface));
+		}
+
+		[Test]
+		public void ConstructorHttpGet ()
+		{
+			SoapServerType st = new SoapServerType (typeof (EdaInterface), WebServiceProtocols.HttpGet);
+			// I wonder if this property makes sense here ...
+			Assert.IsTrue (st.ServiceRoutingOnSoapAction, "#1");
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		[Category ("NotWorking")]
+		public void DuplicateBindingAttribute ()
+		{
+			new SoapServerType (typeof (DuplicateService), WebServiceProtocols.HttpSoap);
+		}
+
+		[Test]
+		public void DuplicateBindingAttribute2 ()
+		{
+			// ServerType, not SoapServerType ... no failure.
+			new ServerType (typeof (DuplicateService));
+		}
+
+		[Test]
+		public void DuplicateBindingAttributeButNotInUse ()
+		{
+			new SoapServerType (typeof (DuplicateButUnusedService), WebServiceProtocols.AnyHttpSoap);
+		}
+
+		[Test]
+		[ExpectedException (typeof (SoapException))]
+		[Category ("NotWorking")]
+		public void DuplicateMethodsWithSoapAction ()
+		{
+			new SoapServerType (typeof (WebService1), WebServiceProtocols.HttpSoap);
+		}
+
+		[Test]
+		// still error because both methods have the same name (though
+		// the error message seems saying that the element name 
+		// conflicts with other "type" which I guess is the one built
+		// from another conflicting method).
+		[ExpectedException (typeof (InvalidOperationException))]
+		[Category ("NotWorking")]
+		public void DuplicateMethodsWithRequestElement1 ()
+		{
+			new SoapServerType (typeof (WebService2), WebServiceProtocols.HttpSoap);
+		}
+
+		[Test]
+		public void DuplicateMethodsWithRequestElement2 ()
+		{
+			new SoapServerType (typeof (WebService3), WebServiceProtocols.HttpSoap);
 		}
 
 		[Test]
@@ -41,6 +97,7 @@ namespace MonoTests.System.Web.Services.Description
 		// bug #78953
 		[WebServiceAttribute (Namespace = "www.DefaultNamespace.org")]
 		[WebServiceBindingAttribute (Name = "Local", Namespace = "urn:localBinding:local")]
+		[WebServiceBindingAttribute (Name = "Local2", Namespace = "urn:localBinding:local2")]
 		public class EdaInterface : WebService
 		{
 			[WebMethod]
@@ -74,6 +131,130 @@ namespace MonoTests.System.Web.Services.Description
 				Use = SoapBindingUse.Literal, 
 				ParameterStyle = SoapParameterStyle.Bare)]
 			public void BindingMethod ()
+			{
+			}
+		}
+
+		[WebServiceAttribute (Namespace = "www.DefaultNamespace.org")]
+		[WebServiceBindingAttribute (Name = "Duplicate", Namespace = "urn:localBinding:local")]
+		[WebServiceBindingAttribute (Name = "Duplicate", Namespace = "urn:localBinding:local")]
+		public class DuplicateService : WebService
+		{
+			[WebMethod]
+			public void Test ()
+			{
+			}
+
+			[WebMethod]
+			[SoapDocumentMethodAttribute ("urn:localBinding:local:LocalBindingMethod",
+				RequestNamespace = "urn:localBinding:local",
+				Binding = "Duplicate",
+				Use = SoapBindingUse.Literal, 
+				ParameterStyle = SoapParameterStyle.Bare)]
+			public void Foo ()
+			{
+			}
+		}
+
+		[WebServiceAttribute (Namespace = "www.DefaultNamespace.org")]
+		[WebServiceBindingAttribute (Name = "Duplicate", Namespace = "urn:localBinding:local")]
+		[WebServiceBindingAttribute (Name = "Duplicate", Namespace = "urn:localBinding:local")]
+		[WebServiceBindingAttribute (Name = "Local", Namespace = "urn:localBinding:local")]
+		public class DuplicateButUnusedService : WebService
+		{
+			[WebMethod]
+			public void Test ()
+			{
+			}
+
+			[WebMethod]
+			[SoapDocumentMethodAttribute ("urn:localBinding:local:LocalBindingMethod",
+				RequestNamespace = "urn:localBinding:local",
+				Binding = "Local",
+				Use = SoapBindingUse.Literal, 
+				ParameterStyle = SoapParameterStyle.Bare)]
+			public void Foo ()
+			{
+			}
+		}
+
+		[WebService]
+		public class WebService1 : WebService
+		{
+			[WebMethod]
+			public void Test ()
+			{
+			}
+
+			[WebMethod]
+			[SoapDocumentMethodAttribute ("urn:foo:method1",
+				RequestNamespace = "urn:foo:method1",
+				Use = SoapBindingUse.Literal)]
+			public void BindingMethod ()
+			{
+			}
+
+			[WebMethod]
+			[SoapDocumentMethodAttribute ("urn:foo:method1",
+				RequestNamespace = "urn:foo:method1",
+				Use = SoapBindingUse.Literal)]
+			public void BindingMethod2 ()
+			{
+			}
+		}
+
+		[WebService]
+		[SoapDocumentService (RoutingStyle = SoapServiceRoutingStyle.RequestElement)]
+		public class WebService2 : WebService
+		{
+			[WebMethod]
+			public void Test ()
+			{
+			}
+
+			[WebMethod]
+			[SoapDocumentMethodAttribute ("urn:foo:method1",
+				RequestNamespace = "urn:foo:method1",
+				RequestElementName = "Element1",
+				Use = SoapBindingUse.Literal)]
+			public void BindingMethod ()
+			{
+			}
+
+			[WebMethod]
+			[SoapDocumentMethodAttribute ("urn:foo:method1",
+				RequestNamespace = "urn:foo:method1",
+				RequestElementName = "Element1",
+				Use = SoapBindingUse.Literal)]
+			public void BindingMethod2 ()
+			{
+			}
+		}
+
+		[WebService]
+		[SoapDocumentService (RoutingStyle = SoapServiceRoutingStyle.RequestElement)]
+		public class WebService3 : WebService
+		{
+			[WebMethod]
+			public void Test ()
+			{
+			}
+
+			[WebMethod]
+			[SoapDocumentMethodAttribute ("urn:foo:method1",
+				RequestNamespace = "urn:foo:method1",
+				RequestElementName = "Element1",
+				Use = SoapBindingUse.Literal)]
+			public void BindingMethod ()
+			{
+			}
+
+			[WebMethod]
+			[SoapDocumentMethodAttribute ("urn:foo:method1",
+				RequestNamespace = "urn:foo:method1",
+				RequestElementName = "Element2",
+				Use = SoapBindingUse.Literal)]
+			public void BindingMethod2 ()
 			{
 			}
 		}

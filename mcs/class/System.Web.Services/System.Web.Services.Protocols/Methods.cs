@@ -116,7 +116,7 @@ namespace System.Web.Services.Protocols {
 			XmlElementAttribute optional_ns = null;
 
 			if (kind == null) {
-				Use = parent.Use;
+				Use = parent.LogicalType.BindingUse;
 				RequestName = "";
 				RequestNamespace = "";
 				ResponseName = "";
@@ -135,7 +135,7 @@ namespace System.Web.Services.Protocols {
 				Use = dma.Use;
 				if (Use == SoapBindingUse.Default) {
 					if (parent.SoapBindingStyle == SoapBindingStyle.Document)
-						Use = parent.Use;
+						Use = parent.LogicalType.BindingUse;
 					else
 						Use = SoapBindingUse.Literal;
 				}
@@ -445,8 +445,6 @@ namespace System.Web.Services.Protocols {
 
 		// Precomputed
 		internal SoapParameterStyle      ParameterStyle;
-		internal SoapServiceRoutingStyle RoutingStyle;
-		internal SoapBindingUse          Use;
 		internal SoapExtensionRuntimeConfig[][] SoapExtensions;
 		internal SoapBindingStyle SoapBindingStyle;
 		internal XmlReflectionImporter 	xmlImporter;
@@ -471,8 +469,6 @@ namespace System.Web.Services.Protocols {
 				SoapDocumentServiceAttribute a = (SoapDocumentServiceAttribute) o [0];
 
 				ParameterStyle = a.ParameterStyle;
-				RoutingStyle = a.RoutingStyle;
-				Use = a.Use;
 				SoapBindingStyle = SoapBindingStyle.Document;
 			} else {
 				o = Type.GetCustomAttributes (typeof (SoapRpcServiceAttribute), false);
@@ -480,24 +476,23 @@ namespace System.Web.Services.Protocols {
 					SoapRpcServiceAttribute srs = (SoapRpcServiceAttribute) o [0];
 					
 					ParameterStyle = SoapParameterStyle.Wrapped;
-					RoutingStyle = srs.RoutingStyle;
-					Use = SoapBindingUse.Encoded;
 					SoapBindingStyle = SoapBindingStyle.Rpc;
 				} else {
 					ParameterStyle = SoapParameterStyle.Wrapped;
-					RoutingStyle = SoapServiceRoutingStyle.SoapAction;
-					Use = SoapBindingUse.Literal;
 					SoapBindingStyle = SoapBindingStyle.Document;
 				}
 			}
 			
 			if (ParameterStyle == SoapParameterStyle.Default) ParameterStyle = SoapParameterStyle.Wrapped;
-			if (Use == SoapBindingUse.Default) Use = SoapBindingUse.Literal;
 			
 			xmlImporter.IncludeTypes (Type);
 			soapImporter.IncludeTypes (Type);
 
 			SoapExtensions = SoapExtension.GetTypeExtensions (Type);
+		}
+
+		internal SoapServiceRoutingStyle RoutingStyle {
+			get { return LogicalType.RoutingStyle; }
 		}
 
 		public override XmlReflectionImporter XmlImporter 
