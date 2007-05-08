@@ -1,3 +1,12 @@
+2007-05-07  Miguel de Icaza  <miguel@novell.com>
+ 
+	* WebHeaderCollection.cs: To be compatible with older versions of
+	Mono that might have serialized this in a different format, catch
+	the potential exception, and try the old name.
+
+	This should become a practice whenever we fix serialization in the
+ 	future. 
+	
 2007-04-17  Joel Reed  <joelwreed@gmail.com>
 
 	* WebHeaderCollection.cs: www-authenticate should be multivalue.
