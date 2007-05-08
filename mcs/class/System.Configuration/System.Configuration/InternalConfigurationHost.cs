@@ -166,7 +166,7 @@ namespace System.Configuration
 		public virtual Stream OpenStreamForRead (string streamName)
 		{
 #if TARGET_JVM
-			if (String.CompareOrdinal (streamName, "/META-INF/machine.config") == 0)
+			if (String.CompareOrdinal (streamName, System.Runtime.InteropServices.RuntimeEnvironment.SystemConfigurationFile) == 0)
 				return (Stream) vmw.common.IOUtils.getStreamForGHConfigs (streamName);
 #endif
 			if (!File.Exists (streamName))
