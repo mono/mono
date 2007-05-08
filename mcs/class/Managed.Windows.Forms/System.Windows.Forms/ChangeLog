@@ -1,3 +1,8 @@
+2007-05-08  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStripItemCollection.cs: Set the new item's parent and owner
+	in Insert like we do in Add.  [Fixes bug #81568]
+
 2007-05-08  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs: GotFocus differences between 1.1 and 2.0.

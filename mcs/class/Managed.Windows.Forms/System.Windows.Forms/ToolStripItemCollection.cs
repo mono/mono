@@ -211,6 +211,12 @@ namespace System.Windows.Forms
 			if (value == null)
 				throw new ArgumentNullException ("value");
 
+			value.Owner = owner;
+			value.Parent = owner;
+
+			if (value is ToolStripMenuItem && (value as ToolStripMenuItem).ShortcutKeys != Keys.None)
+				ToolStripManager.AddToolStripMenuItem ((ToolStripMenuItem)value);
+
 			base.Insert (index, value);
 			owner.OnItemAdded (new ToolStripItemEventArgs (value));
 			owner.PerformLayout ();
