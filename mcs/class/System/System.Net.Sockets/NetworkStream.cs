@@ -145,6 +145,9 @@ namespace System.Net.Sockets
 		}
 
 #if NET_2_0
+#if TARGET_JVM
+		[MonoNotSupported ("Not supported since Socket.ReceiveTimeout is not supported")]
+#endif
 		public override int ReadTimeout
 		{
 			get {
@@ -177,6 +180,9 @@ namespace System.Net.Sockets
 		}
 
 #if NET_2_0
+#if TARGET_JVM
+		[MonoNotSupported ("Not supported since Socket.SendTimeout is not supported")]
+#endif
 		public override int WriteTimeout
 		{
 			get {

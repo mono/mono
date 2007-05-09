@@ -1,3 +1,11 @@
+2007-05-09 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* NetworkStream.cs:
+	* TcpClient.cs:
+	* TcpListener.cs:
+	* UdpClient.cs:			
+	added MonoNotSupported attribute for TARGATE_JVM.	
+		
 2007-03-11  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TcpClient.cs: Do not initialize network stream in Connect. In

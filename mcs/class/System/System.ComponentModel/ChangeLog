@@ -1,3 +1,8 @@
+2007-05-09 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* Win32Exception.cs:
+	added MonoNotSupported attribute for TARGATE_JVM.	
+		
 2007-05-08 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* RunWorkerCompletedEventArgs.cs: added 'new' keyword, cause 

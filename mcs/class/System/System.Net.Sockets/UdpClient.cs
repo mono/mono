@@ -551,6 +551,9 @@ namespace System.Net.Sockets
 			}
 		}
 		
+#if TARGET_JVM
+		[MonoNotSupported ("Not supported as Socket.DontFragment is not supported")]
+#endif
 		public bool DontFragment
 		{
 			get {
@@ -561,6 +564,9 @@ namespace System.Net.Sockets
 			}
 		}
 
+#if TARGET_JVM
+		[MonoNotSupported ("Not supported as Socket.EnableBroadcast is not supported")]
+#endif
 		public bool EnableBroadcast
 		{
 			get {
@@ -571,6 +577,9 @@ namespace System.Net.Sockets
 			}
 		}
 		
+#if TARGET_JVM
+		[MonoNotSupported ("Not supported as Socket.ExclusiveAddressUse is not supported")]
+#endif
 		public bool ExclusiveAddressUse
 		{
 			get {
@@ -581,6 +590,9 @@ namespace System.Net.Sockets
 			}
 		}
 		
+#if TARGET_JVM
+		[MonoNotSupported ("Not supported as Socket.MulticastLoopback is not supported")]
+#endif
 		public bool MulticastLoopback
 		{
 			get {
@@ -591,6 +603,9 @@ namespace System.Net.Sockets
 			}
 		}
 		
+#if TARGET_JVM
+		[MonoNotSupported ("Not supported as Socket.Ttl is not supported")]
+#endif
 		public short Ttl
 		{
 			get {
