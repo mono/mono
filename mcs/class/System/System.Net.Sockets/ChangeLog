@@ -1,5 +1,9 @@
 2007-05-09 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* Socket.jvm.cs: Handle property throws NotImplementedException.	
+
+2007-05-09 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* NetworkStream.cs:
 	* TcpClient.cs:
 	* TcpListener.cs:

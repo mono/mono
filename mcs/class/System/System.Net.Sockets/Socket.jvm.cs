@@ -775,7 +775,7 @@ namespace System.Net.Sockets
 		{
 			get 
 			{
-				return (IntPtr) (-1);
+				throw new NotImplementedException ();
 			}
 		}
 
