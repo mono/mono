@@ -856,7 +856,7 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 
 	for (i = 0; i < sig->param_count + sig->hasthis; ++i) {
 		ArgInfo *ainfo = &cinfo->args [i];
-		inst = cfg->new_ir ? cfg->args [i] : cfg->varinfo [i];
+		inst = cfg->args [i];
 		if (inst->opcode != OP_REGVAR) {
 			inst->opcode = OP_REGOFFSET;
 			inst->inst_basereg = X86_EBP;
@@ -3929,7 +3929,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		case OP_CKFINITE: {
 			guchar *br1;
-
 			x86_push_reg (code, X86_EAX);
 			x86_fxam (code);
 			x86_fnstsw (code);
@@ -4314,7 +4313,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 	pos = 0;
 
 	for (i = 0; i < sig->param_count + sig->hasthis; ++i) {
-		inst = cfg->new_ir ? cfg->args [pos] : cfg->varinfo [pos];
+		inst = cfg->args [pos];
 		if (inst->opcode == OP_REGVAR) {
 			x86_mov_reg_membase (code, inst->dreg, X86_EBP, inst->inst_offset, 4);
 			if (cfg->verbose_level > 2)

@@ -114,6 +114,7 @@ enum {
 #define NULLIFY_INS(ins) do { \
         (ins)->opcode = OP_NOP; \
         (ins)->dreg = (ins)->sreg1 = (ins)->sreg2 = -1; \
+		(ins)->ssa_op = MONO_SSA_NOP; \
     } while (0)
 
 /* 
@@ -618,7 +619,7 @@ typedef struct {
 	MonoInst        *vret_addr;
 
 	const unsigned char *ip;
-	
+
 	struct MonoAliasingInformation *aliasing_info;
 
 	/* A hashtable of region ID-> SP var mappings */

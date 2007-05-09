@@ -1954,6 +1954,16 @@ mono_add_ins_to_end (MonoBasicBlock *bb, MonoInst *inst)
 	switch (bb->last_ins->opcode) {
 	case OP_BR:
 	case OP_BR_REG:
+	case CEE_BEQ:
+	case CEE_BGE:
+	case CEE_BGT:
+	case CEE_BLE:
+	case CEE_BLT:
+	case CEE_BNE_UN:
+	case CEE_BGE_UN:
+	case CEE_BGT_UN:
+	case CEE_BLE_UN:
+	case CEE_BLT_UN:
 	case CEE_SWITCH:
 		prev = bb->code;
 		while (prev->next && prev->next != bb->last_ins)
@@ -3055,7 +3065,7 @@ handle_load_float (MonoCompile *cfg, MonoBasicBlock *bblock, MonoInst *ptr, cons
 			int temp;	\
 			NEW_LOCLOADA (cfg, (ins), (idx));	\
 			handle_store_float (cfg, bblock, (ins), *sp, (ip));	\
-			MONO_INST_NEW (cfg, (ins), CEE_NOP);	\
+			MONO_INST_NEW (cfg, (ins), OP_NOP);	\
 		}	\
 	} while (0)
 #define LDARG_SOFT_FLOAT(cfg,ins,idx,ip) do {\
@@ -3071,7 +3081,7 @@ handle_load_float (MonoCompile *cfg, MonoBasicBlock *bblock, MonoInst *ptr, cons
 			int temp;	\
 			NEW_ARGLOADA (cfg, (ins), (idx));	\
 			handle_store_float (cfg, bblock, (ins), *sp, (ip));	\
-			MONO_INST_NEW (cfg, (ins), CEE_NOP);	\
+			MONO_INST_NEW (cfg, (ins), OP_NOP);	\
 		}	\
 	} while (0)
 #else
@@ -3616,7 +3626,7 @@ mini_get_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSigna
 	} else if (cmethod->klass->image == mono_defaults.corlib) {
 		if (cmethod->name [0] == 'B' && strcmp (cmethod->name, "Break") == 0
 				&& strcmp (cmethod->klass->name, "Debugger") == 0) {
-			MONO_INST_NEW (cfg, ins, CEE_BREAK);
+			MONO_INST_NEW (cfg, ins, OP_BREAK);
 			return ins;
 		}
 		if (cmethod->name [0] == 'g' && strcmp (cmethod->name, "get_IsRunningOnWindows") == 0
@@ -4618,8 +4628,12 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 		switch (*ip) {
 		case CEE_NOP:
+			MONO_INST_NEW (cfg, ins, OP_NOP);
+			ins->cil_code = ip++;
+			MONO_ADD_INS (bblock, ins);
+			break;
 		case CEE_BREAK:
-			MONO_INST_NEW (cfg, ins, *ip == CEE_NOP ? OP_NOP : OP_BREAK);
+			MONO_INST_NEW (cfg, ins, OP_BREAK);
 			ins->cil_code = ip++;
 			MONO_ADD_INS (bblock, ins);
 			break;
@@ -5086,7 +5100,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				/* FIXME: This assumes the two methods has the same number and type of arguments */
 				/*
 				 * We implement tail calls by storing the actual arguments into the 
-				 * argument variables, then emitting a CEE_JMP. Since the actual arguments
+				 * argument variables, then emitting a OP_JMP. Since the actual arguments
 				 * can refer to the arg variables, we have to spill them.
 				 */
 				handle_loaded_temps (cfg, bblock, sp, sp + n);
@@ -10373,8 +10387,8 @@ optimize_branches (MonoCompile *cfg)
 						continue;
 					}
 					bbn = bb->last_ins->inst_true_bb;
-					if (bbn->code && bbn->code->opcode == OP_BR &&
-					    bb->region == bbn->region && bbn->code->inst_target_bb->region == bb->region) {
+					if (bb->region == bbn->region && bbn->code && bbn->code->opcode == OP_BR &&
+					    bbn->code->inst_target_bb->region == bb->region) {
 						if (cfg->verbose_level > 2)		
 							g_print ("cbranch1 to branch triggered %d -> (%d) %d (0x%02x)\n", 
 								 bb->block_num, bbn->block_num, bbn->code->inst_target_bb->block_num, 
@@ -10398,8 +10412,8 @@ optimize_branches (MonoCompile *cfg)
 					}
 
 					bbn = bb->last_ins->inst_false_bb;
-					if (bbn->code && bbn->code->opcode == OP_BR &&
-					    bb->region == bbn->region && bbn->code->inst_target_bb->region == bb->region) {
+					if (bb->region == bbn->region && bbn->code && bbn->code->opcode == OP_BR &&
+					    bbn->code->inst_target_bb->region == bb->region) {
 						if (cfg->verbose_level > 2)
 							g_print ("cbranch2 to branch triggered %d -> (%d) %d (0x%02x)\n", 
 								 bb->block_num, bbn->block_num, bbn->code->inst_target_bb->block_num, 

@@ -1355,7 +1355,7 @@ emit_load_volatile_arguments (MonoCompile *cfg, unsigned int *code)
   for (i = 0; i < sig->param_count + sig->hasthis; ++i)
     {
       ArgInfo *ainfo = &cinfo->args [i];
-      MonoInst *inst = cfg->varinfo [i];
+      MonoInst *inst = cfg->args [i];
 
       switch(ainfo->storage)
 	{
@@ -1517,7 +1517,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
    for (i = 0; i < sig->param_count + sig->hasthis; ++i)
      {
        ArgInfo *ainfo = &cinfo->args [i];
-       MonoInst *inst = cfg->varinfo [i];
+       MonoInst *inst = cfg->args [i];
        int j;
 
        switch(ainfo->storage)
@@ -3829,6 +3829,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 	   }
 	   break;
 
+	 case OP_ENDFINALLY:
 	   {
              // Keep in sync with start_handler
              CFG_DEBUG(4) g_print("ALPHA_CHECK: [endfinally] basereg=%d, offset=%0lx\n",
@@ -3895,7 +3896,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
                              (gpointer)"mono_arch_rethrow_exception");
            break;
 
-	 case CEE_JMP:
+	 case OP_JMP:
 	   {
 	     /*
 	      * Note: this 'frame destruction' logic is useful for tail calls,
@@ -3942,7 +3943,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 	   alpha_mb(code);
 	   break;
 	  
-	 case CEE_CKFINITE:
+	 case OP_CKFINITE:
 	   // Float register contains a value which we need to check
 	   {
 		double	ni = -1.0 / 0.0;
@@ -5161,7 +5162,7 @@ mono_arch_get_allocatable_int_vars (MonoCompile *cfg)
 
    for (i = 0; i < sig->param_count + sig->hasthis; ++i)
      {
-       MonoInst *ins = cfg->varinfo [i];
+       MonoInst *ins = cfg->args [i];
 
        ArgInfo *ainfo = &cinfo->args [i];
 
@@ -5351,7 +5352,7 @@ mono_arch_instrument_prolog (MonoCompile *cfg, void *func, void *p,
       
       for (i = 0; i < n; ++i)
 	{
-	  inst = cfg->varinfo [i];
+	  inst = cfg->args [i];
 
 	  if (inst->opcode == OP_REGVAR)
 	    {
@@ -5769,7 +5770,7 @@ mono_arch_allocate_vars (MonoCompile *cfg)
    // Reserve space for method params
    for (i = 0; i < sig->param_count + sig->hasthis; ++i)
      {
-       inst = cfg->varinfo [i];
+       inst = cfg->args [i];
 
        if (inst->opcode != OP_REGVAR)
 	 {

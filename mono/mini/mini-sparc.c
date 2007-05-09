@@ -888,7 +888,7 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 	}
 
 	for (i = 0; i < sig->param_count + sig->hasthis; ++i) {
-		inst = cfg->new_ir ? cfg->args [i] : cfg->varinfo [i];
+		inst = m->args [i];
 		if (inst->opcode != OP_REGVAR) {
 			ArgInfo *ainfo = &cinfo->args [i];
 			gboolean inreg = TRUE;
@@ -2367,7 +2367,8 @@ emit_load_volatile_arguments (MonoCompile *cfg, guint32 *code)
 		ArgInfo *ainfo = cinfo->args + i;
 		gint32 stack_offset;
 		MonoType *arg_type;
-		inst = cfg->new_ir ? cfg->args [i] : cfg->varinfo [i];
+
+		inst = cfg->args [i];
 
 		if (sig->hasthis && (i == 0))
 			arg_type = &mono_defaults.object_class->byval_arg;
@@ -3262,13 +3263,9 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			NOT_IMPLEMENTED;
 #endif
 
-<<<<<<< .working
 			/* To compensate for the rounding of localloc_offset */
 			offset += sizeof (gpointer);
 			offset = ALIGN_TO (offset, MONO_ARCH_FRAME_ALIGNMENT);
-=======
-			offset = ALIGN_TO (offset, MONO_ARCH_LOCALLOC_ALIGNMENT);
->>>>>>> .merge-right.r71600
 			if (sparc_is_imm13 (offset))
 				sparc_sub_imm (code, FALSE, sparc_sp, offset, sparc_sp);
 			else {
@@ -4225,7 +4222,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		ArgInfo *ainfo = cinfo->args + i;
 		gint32 stack_offset;
 		MonoType *arg_type;
-		inst = cfg->new_ir ? cfg->args [i] : cfg->varinfo [i];
+		inst = cfg->args [i];
 
 		if (sig->hasthis && (i == 0))
 			arg_type = &mono_defaults.object_class->byval_arg;
