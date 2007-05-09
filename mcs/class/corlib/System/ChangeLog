@@ -1,7 +1,7 @@
 2007-05-09  Marek Habersack  <mhabersack@novell.com>
 
 	* DateTime.cs: add a format used in ASP.NET QuickStarts 
-	  ("HH':'mm 'PM' MM/dd/yyyy")
+	  ("HH':'mm tt MM/dd/yyyy")
 
 2007-04-30  Zoltan Varga  <vargaz@gmail.com>
 
