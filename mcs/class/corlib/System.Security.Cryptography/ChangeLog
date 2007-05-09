@@ -1,3 +1,8 @@
+2007-05-08  Randolph Chung  <tausq@debian.org>
+
+	* DSACryptoServiceProvider.cs: Implement the ImportCspBlob and
+	ExportCspBlob methods by calling into CryptoConvert.
+
 2007-04-03  Alp Toker  <alp@atoker.com>
 
 	* CryptoConfig.cs: CreateFromName(string,object[]) is params in 2.0.

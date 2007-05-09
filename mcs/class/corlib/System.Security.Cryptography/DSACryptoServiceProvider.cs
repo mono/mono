@@ -277,20 +277,39 @@ namespace System.Security.Cryptography {
 			get { return null; }
 		}
 
-		[MonoTODO ("call into CryptoConvert (doesn't currently support DSA)")]
 		[ComVisible (false)]
 		public byte[] ExportCspBlob (bool includePrivateParameters)
 		{
-			throw new NotImplementedException ("CryptoConvert doesn't currently support DSA");
+			byte[] blob = null;
+			if (includePrivateParameters)
+				blob = CryptoConvert.ToCapiPrivateKeyBlob (this);
+			else
+				blob = CryptoConvert.ToCapiPublicKeyBlob (this);
+			return blob;
 		}
 
-		[MonoTODO ("call into CryptoConvert (doesn't currently support DSA)")]
 		[ComVisible (false)]
 		public void ImportCspBlob (byte[] rawData)
 		{
 			if (rawData == null)
 				throw new ArgumentNullException ("rawData");
-			throw new NotImplementedException ("CryptoConvert doesn't currently support DSA");
+			DSA dsa = CryptoConvert.FromCapiKeyBlobDSA (rawData);
+			if (dsa is DSACryptoServiceProvider) {
+				DSAParameters dsap = dsa.ExportParameters (!(dsa as DSACryptoServiceProvider).PublicOnly);
+				ImportParameters (dsap);
+			} else {
+				// we can't know from DSA if the private key is available
+				try {
+					// so we try it...
+					DSAParameters dsap = dsa.ExportParameters (true);
+					ImportParameters (dsap);
+				}
+				catch {
+					// and fall back
+					DSAParameters dsap = dsa.ExportParameters (false);
+					ImportParameters (dsap);
+				}
+			}
 		}
 #endif
 	}
