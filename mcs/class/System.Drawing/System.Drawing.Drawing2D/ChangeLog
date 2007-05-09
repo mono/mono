@@ -1,3 +1,10 @@
+2007-05-09 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* AdjustableArrowCap.jvm.cs:
+	* CustomLineCap.jvm.cs:
+	* GraphicsPath.jvm.cs:
+	added MonoNotSupported attributes.			
+
 2006-11-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* GraphicsPath.cs: Better MonoTODO description.

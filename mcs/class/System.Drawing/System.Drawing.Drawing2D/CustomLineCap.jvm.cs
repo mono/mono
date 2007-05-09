@@ -40,7 +40,7 @@ namespace System.Drawing.Drawing2D
 	/// <summary>
 	/// Summary description for CustomLineCap.
 	/// </summary>
-	[MonoTODO]
+	[MonoNotSupported ("")]
 	public class CustomLineCap : MarshalByRefObject, ICloneable
 	{
 		private bool disposed;
@@ -49,15 +49,17 @@ namespace System.Drawing.Drawing2D
 
 		internal CustomLineCap () { }
 
+		[MonoNotSupported ("")]
 		public CustomLineCap (GraphicsPath fillPath, GraphicsPath strokePath) : this (fillPath, strokePath, LineCap.Flat, 0)
 		{
 		}
 
+		[MonoNotSupported ("")]
 		public CustomLineCap (GraphicsPath fillPath, GraphicsPath strokePath, LineCap baseCap) : this (fillPath, strokePath, baseCap, 0)
 		{
 		}
 
-		[MonoTODO]
+		[MonoNotSupported ("")]
 		public CustomLineCap(GraphicsPath fillPath, GraphicsPath strokePath, LineCap baseCap, float baseInset)
 		{
 			throw new NotImplementedException();

@@ -39,16 +39,17 @@ namespace System.Drawing.Drawing2D
 	/// <summary>
 	/// Summary description for AdjustableArrowCap.
 	/// </summary>
-	[MonoTODO]
+	[MonoNotSupported ("")]
 	public sealed class AdjustableArrowCap : CustomLineCap
 	{
 		// Constructors
 
+		[MonoNotSupported ("")]
 		public AdjustableArrowCap (float width, float height) : this (width, height, true)
 		{
 		}
 
-		[MonoTODO]
+		[MonoNotSupported ("")]
 		public AdjustableArrowCap (float width, float height, bool isFilled)
 		{
 			throw new NotImplementedException();

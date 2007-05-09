@@ -1,3 +1,7 @@
+2007-05-09 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* FontConverter.cs: for TARGET_JVM destructor is not used.
+
 2007-05-03 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* ColorConverter.cs: fixed GetStandardValues() for TARGET_JVM

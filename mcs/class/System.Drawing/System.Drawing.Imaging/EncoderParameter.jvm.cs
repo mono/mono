@@ -174,15 +174,10 @@ namespace System.Drawing.Imaging {
 		}
 
 		void Dispose (bool disposing) {
-			throw new NotImplementedException();
 		}
 
 		public void Dispose () {
 			Dispose (true);		
-		}
-
-		~EncoderParameter () {
-			Dispose (false);
 		}
 
 	}
