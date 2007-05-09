@@ -1540,6 +1540,25 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
+		[Category ("NotWorking")]
+		public void MeasureString_MultlineString_Width ()
+		{
+			using (Bitmap bitmap = new Bitmap (20, 20)) {
+				using (Graphics g = Graphics.FromImage (bitmap)) {
+					StringFormat string_format = new StringFormat();
+					
+					string text1 = "Test\nTest123\nTest 456\nTest 1,2,3,4,5...";
+					string text2 = "Test 1,2,3,4,5...";
+				
+					SizeF size1 = g.MeasureString (text1, font, SizeF.Empty, string_format);
+					SizeF size2 = g.MeasureString (text2, font, SizeF.Empty, string_format);
+					
+					Assert.AreEqual ((int) size1.Width, (int) size2.Width, "Multiline Text Width");
+				}
+			}
+		}
+
+		[Test]
 		public void MeasureString_Bug76664 ()
 		{
 			if (font == null)
