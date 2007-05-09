@@ -1,3 +1,9 @@
+2007-05-09  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* HtmlTextWriter.cs: used classes instead of sctrucs in TARGET_JVM for
+	AddedTag, AddedStyle and AddedAttr members
+	* TemplateControl.jvm.cs: refactored CachedString method
+
 2007-05-09  Marek Habersack  <mhabersack@novell.com>
 
 	* CollectionBuilder.cs: formatting changes

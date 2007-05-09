@@ -95,23 +95,26 @@ namespace System.Web.UI {
 				}
 				return table;
 			}
+			set
+			{
+				AppDomain.CurrentDomain.SetData ("TemplateControl.RES_STRING", value);
+			}
 		}
 
 		private string CachedString (string filename, int offset, int size)
 		{
 			string key = filename + offset + size;
-			lock (hashTableMutex) {
-				string strObj = (string) ResourceHash [key];
-				if (strObj == null) {
 
-					char [] tmp = System.Text.Encoding.UTF8.GetChars (GetResourceBytes (this.GetType ()), offset, size);
-					strObj = new string (tmp);
-					ResourceHash.Add (key, strObj);
-				}
+			string strObj = (string) ResourceHash [key];
+			if (strObj == null) {
+				char [] tmp = System.Text.Encoding.UTF8.GetChars (GetResourceBytes (this.GetType ()), offset, size);
+				strObj = new string (tmp);
 
-				return strObj;
+				Hashtable tmpResourceHash = (Hashtable) ResourceHash.Clone ();
+				tmpResourceHash.Add (key, strObj);
+				ResourceHash = tmpResourceHash;
 			}
-
+			return strObj;
 		}
 		public virtual string TemplateSourceDirectory_Private
 		{

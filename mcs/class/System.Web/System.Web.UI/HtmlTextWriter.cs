@@ -34,7 +34,7 @@ using System.Text;
 using System.Web.UI.WebControls;
 
 namespace System.Web.UI {
-	
+
 	// CAS
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
@@ -44,52 +44,52 @@ namespace System.Web.UI {
 		public HtmlTextWriter (TextWriter writer) : this (writer, DefaultTabString)
 		{
 		}
-	
+
 		public HtmlTextWriter (TextWriter writer, string tabString)
 		{
 			b = writer;
 			tab_string = tabString;
 		}
 
-		internal static string StaticGetStyleName (System.Web.UI.HtmlTextWriterStyle styleKey) 
+		internal static string StaticGetStyleName (System.Web.UI.HtmlTextWriterStyle styleKey)
 		{
 			if ((int) styleKey < htmlstyles.Length)
 				return htmlstyles [(int) styleKey].name;
 
 			return null;
 		}
-		
-		[MonoTODO("Does nothing")]
+
+		[MonoTODO ("Does nothing")]
 		protected static void RegisterAttribute (string name, HtmlTextWriterAttribute key)
 		{
 		}
-		
-		[MonoTODO("Does nothing")]
+
+		[MonoTODO ("Does nothing")]
 		protected static void RegisterStyle (string name, HtmlTextWriterStyle key)
 		{
 		}
-		
-		[MonoTODO("Does nothing")]
+
+		[MonoTODO ("Does nothing")]
 		protected static void RegisterTag (string name, HtmlTextWriterTag key)
 		{
 		}
-		
-	
+
+
 		public virtual void AddAttribute (HtmlTextWriterAttribute key, string value, bool fEncode)
 		{
 			if (fEncode)
 				value = EncodeAttributeValue (key, value);
 			AddAttribute (GetAttributeName (key), value, key);
 		}
-		
-		
+
+
 		public virtual void AddAttribute (HtmlTextWriterAttribute key, string value)
 		{
 			bool fEncode = key != HtmlTextWriterAttribute.Name;
 			AddAttribute (key, value, fEncode);
 		}
-	
-	
+
+
 		public virtual void AddAttribute (string name, string value, bool fEncode)
 		{
 			if (fEncode)
@@ -97,25 +97,33 @@ namespace System.Web.UI {
 
 			AddAttribute (name, value, GetAttributeKey (name));
 		}
-		
+
 		public virtual void AddAttribute (string name, string value)
 		{
 			bool fEncode = String.Compare ("name", name, true, CultureInfo.InvariantCulture) != 0;
 			AddAttribute (name, value, fEncode);
 		}
-	
+
 		protected virtual void AddAttribute (string name, string value, HtmlTextWriterAttribute key)
 		{
 			NextAttrStack ();
+#if TARGET_JVM
+			if (attrs [attrs_pos] == null)
+				attrs [attrs_pos] = new AddedAttr ();
+#endif
 			attrs [attrs_pos].name = name;
 			attrs [attrs_pos].value = value;
 			attrs [attrs_pos].key = key;
 		}
-		
-		
+
+
 		protected virtual void AddStyleAttribute (string name, string value, HtmlTextWriterStyle key)
 		{
 			NextStyleStack ();
+#if TARGET_JVM
+			if (styles [styles_pos] == null)
+				styles [styles_pos] = new AddedStyle ();
+#endif
 			styles [styles_pos].name = name;
 #if NET_2_0
 			value = HttpUtility.HtmlAttributeEncode (value);
@@ -123,53 +131,53 @@ namespace System.Web.UI {
 			styles [styles_pos].value = value;
 			styles [styles_pos].key = key;
 		}
-		
+
 
 		public virtual void AddStyleAttribute (string name, string value)
 		{
 			AddStyleAttribute (name, value, GetStyleKey (name));
 		}
-		
+
 		public virtual void AddStyleAttribute (HtmlTextWriterStyle key, string value)
 		{
 			AddStyleAttribute (GetStyleName (key), value, key);
 		}
-	
+
 		public override void Close ()
 		{
-			b.Close ();	
+			b.Close ();
 		}
 
 		protected virtual string EncodeAttributeValue (HtmlTextWriterAttribute attrKey, string value)
 		{
 			return HttpUtility.HtmlEncode (value);
 		}
-		
+
 		protected string EncodeAttributeValue (string value, bool fEncode)
 		{
 			if (fEncode)
 				return HttpUtility.HtmlEncode (value);
 			return value;
 		}
-		
+
 		protected string EncodeUrl (string url)
 		{
 			return HttpUtility.UrlPathEncode (url);
 		}
-		
+
 
 		protected virtual void FilterAttributes ()
 		{
 			AddedAttr style_attr = new AddedAttr ();
-			
-			for (int i = 0; i <= attrs_pos; i ++) {
+
+			for (int i = 0; i <= attrs_pos; i++) {
 				AddedAttr a = attrs [i];
 				if (OnAttributeRender (a.name, a.value, a.key)) {
 					if (a.key == HtmlTextWriterAttribute.Style) {
 						style_attr = a;
 						continue;
 					}
-					
+
 					WriteAttribute (a.name, a.value, false);
 				}
 			}
@@ -178,9 +186,9 @@ namespace System.Web.UI {
 				Write (SpaceChar);
 				Write ("style");
 				Write (EqualsDoubleQuoteString);
-				
-				
-				for (int i = 0; i <= styles_pos; i ++) {
+
+
+				for (int i = 0; i <= styles_pos; i++) {
 					AddedStyle a = styles [i];
 					if (OnStyleAttributeRender (a.name, a.value, a.key)) {
 #if NET_2_0
@@ -192,13 +200,13 @@ namespace System.Web.UI {
 					}
 				}
 
-				Write (style_attr.value);				
+				Write (style_attr.value);
 				Write (DoubleQuoteChar);
 			}
 
 			styles_pos = attrs_pos = -1;
 		}
-	
+
 		public override void Flush ()
 		{
 			b.Flush ();
@@ -210,17 +218,17 @@ namespace System.Web.UI {
 			// because there might be something added to
 			// the enum later. Do we really need anything
 			// faster than a linear search?
-			
+
 			foreach (HtmlAttribute t in htmlattrs) {
 #if NET_2_0
 				if (String.Compare(t.name, attrName, StringComparison.OrdinalIgnoreCase) == 0)
 #else
-				if (String.Compare(t.name, attrName, true, CultureInfo.InvariantCulture) == 0)
+				if (String.Compare (t.name, attrName, true, CultureInfo.InvariantCulture) == 0)
 #endif
 					return t.key;
 			}
 
-			return (HtmlTextWriterAttribute)(-1);		
+			return (HtmlTextWriterAttribute) (-1);
 		}
 
 		protected string GetAttributeName (HtmlTextWriterAttribute attrKey)
@@ -230,40 +238,40 @@ namespace System.Web.UI {
 
 			return null;
 		}
-		
+
 		protected HtmlTextWriterStyle GetStyleKey (string styleName)
 		{
 			// I don't think we want to binary search
 			// because there might be something added to
 			// the enum later. Do we really need anything
 			// faster than a linear search?
-			
+
 			foreach (HtmlStyle t in htmlstyles) {
 #if NET_2_0
 				if (String.Compare(t.name, styleName, StringComparison.OrdinalIgnoreCase) == 0)
 #else
-				if (String.Compare(t.name, styleName, true, CultureInfo.InvariantCulture) == 0)
+				if (String.Compare (t.name, styleName, true, CultureInfo.InvariantCulture) == 0)
 #endif
 					return t.key;
 			}
 
-			return (HtmlTextWriterStyle)(-1);			
+			return (HtmlTextWriterStyle) (-1);
 		}
-		
+
 		protected string GetStyleName (HtmlTextWriterStyle styleKey)
 		{
 			return StaticGetStyleName (styleKey);
 		}
-		
-		protected virtual HtmlTextWriterTag GetTagKey (string tagName) 
+
+		protected virtual HtmlTextWriterTag GetTagKey (string tagName)
 		{
 			// I don't think we want to binary search
 			// because there might be something added to
 			// the enum later. Do we really need anything
 			// faster than a linear search?
-			
+
 			foreach (HtmlTag t in tags) {
-				if (String.Compare(t.name, tagName, true, CultureInfo.InvariantCulture) == 0)
+				if (String.Compare (t.name, tagName, true, CultureInfo.InvariantCulture) == 0)
 					return t.key;
 			}
 
@@ -275,10 +283,10 @@ namespace System.Web.UI {
 			if ((int) tagKey < tags.Length)
 				return tags [(int) tagKey].name;
 
-			return null;	
+			return null;
 		}
-		
-		
+
+
 		protected virtual string GetTagName (HtmlTextWriterTag tagKey)
 		{
 			if ((int) tagKey < tags.Length)
@@ -286,17 +294,17 @@ namespace System.Web.UI {
 
 			return null;
 		}
-		
+
 		protected bool IsAttributeDefined (HtmlTextWriterAttribute key)
 		{
 			string value;
 			return IsAttributeDefined (key, out value);
 		}
-	
+
 		protected bool IsAttributeDefined (HtmlTextWriterAttribute key, out string value)
 		{
-			for (int i = 0; i <= attrs_pos; i ++)
-				if (attrs [i].key == key){
+			for (int i = 0; i <= attrs_pos; i++)
+				if (attrs [i].key == key) {
 					value = attrs [i].value;
 					return true;
 				}
@@ -304,17 +312,17 @@ namespace System.Web.UI {
 			value = null;
 			return false;
 		}
-		
+
 		protected bool IsStyleAttributeDefined (HtmlTextWriterStyle key)
 		{
 			string value;
 			return IsStyleAttributeDefined (key, out value);
 		}
-	
+
 		protected bool IsStyleAttributeDefined (HtmlTextWriterStyle key, out string value)
 		{
-			for (int i = 0; i <= styles_pos; i ++)
-				if (styles [i].key == key){
+			for (int i = 0; i <= styles_pos; i++)
+				if (styles [i].key == key) {
 					value = styles [i].value;
 					return true;
 				}
@@ -322,45 +330,45 @@ namespace System.Web.UI {
 			value = null;
 			return false;
 		}
-		
+
 		protected virtual bool OnAttributeRender (string name, string value, HtmlTextWriterAttribute key)
 		{
 			return true;
 		}
-		
+
 		protected virtual bool OnStyleAttributeRender (string name, string value, HtmlTextWriterStyle key)
 		{
 			return true;
 		}
-		
+
 		protected virtual bool OnTagRender (string name, HtmlTextWriterTag key)
 		{
 			return true;
 		}
-		
-	
+
+
 		protected virtual void OutputTabs ()
 		{
-			if (! newline)
+			if (!newline)
 				return;
 			newline = false;
 
-			for (int i = 0; i < Indent; i ++)
+			for (int i = 0; i < Indent; i++)
 				b.Write (tab_string);
 		}
-	
 
-			
+
+
 		protected string PopEndTag ()
 		{
 			if (tagstack_pos == -1)
 				throw new InvalidOperationException ();
-			
+
 			string s = TagName;
-			tagstack_pos --;
+			tagstack_pos--;
 			return s;
 		}
-		
+
 		protected void PushEndTag (string endTag)
 		{
 			NextTagStack ();
@@ -372,23 +380,23 @@ namespace System.Web.UI {
 			NextTagStack ();
 			TagKey = t;
 		}
-		
+
 
 		protected virtual string RenderAfterContent ()
 		{
 			return null;
 		}
-		
+
 		protected virtual string RenderAfterTag ()
 		{
 			return null;
 		}
-		
+
 		protected virtual string RenderBeforeContent ()
 		{
 			return null;
 		}
-			
+
 		protected virtual string RenderBeforeTag ()
 		{
 			return null;
@@ -396,17 +404,17 @@ namespace System.Web.UI {
 
 		public virtual void RenderBeginTag (string tagName)
 		{
-			if (! OnTagRender (tagName, GetTagKey (tagName)))
+			if (!OnTagRender (tagName, GetTagKey (tagName)))
 				return;
 
 			PushEndTag (tagName);
-			
+
 			DoBeginTag ();
 		}
-		
+
 		public virtual void RenderBeginTag (HtmlTextWriterTag tagKey)
 		{
-			if (! OnTagRender (GetTagName (tagKey), tagKey))
+			if (!OnTagRender (GetTagName (tagKey), tagKey))
 				return;
 
 			PushEndTag (tagKey);
@@ -419,7 +427,7 @@ namespace System.Web.UI {
 			if (s != null)
 				Write (s);
 		}
-		
+
 
 		void DoBeginTag ()
 		{
@@ -430,50 +438,50 @@ namespace System.Web.UI {
 			HtmlTextWriterTag key = (int) TagKey < tags.Length ? TagKey : HtmlTextWriterTag.Unknown;
 
 			switch (tags [(int) key].tag_type) {
-			case TagType.Inline:
-				Write (TagRightChar);
-				break;
-			case TagType.Block:
-				Write (TagRightChar);
-				WriteLine ();
-				Indent ++;
-				break;
-			case TagType.SelfClosing:
-				Write (SelfClosingTagEnd);
-				break;
+				case TagType.Inline:
+					Write (TagRightChar);
+					break;
+				case TagType.Block:
+					Write (TagRightChar);
+					WriteLine ();
+					Indent++;
+					break;
+				case TagType.SelfClosing:
+					Write (SelfClosingTagEnd);
+					break;
 			}
-			
+
 			// FIXME what do i do for self close here?
 			WriteIfNotNull (RenderBeforeContent ());
 		}
-		
+
 
 		public virtual void RenderEndTag ()
 		{
 			// FIXME what do i do for self close here?
 			WriteIfNotNull (RenderAfterContent ());
-			
+
 			HtmlTextWriterTag key = (int) TagKey < tags.Length ? TagKey : HtmlTextWriterTag.Unknown;
 
 			switch (tags [(int) key].tag_type) {
-			case TagType.Inline:
-				WriteEndTag (TagName);
-				break;
-			case TagType.Block:
-				Indent --;
-				WriteLineNoTabs ("");
-				WriteEndTag (TagName);
-				
-				break;
-			case TagType.SelfClosing:
-				// NADA
-				break;
+				case TagType.Inline:
+					WriteEndTag (TagName);
+					break;
+				case TagType.Block:
+					Indent--;
+					WriteLineNoTabs ("");
+					WriteEndTag (TagName);
+
+					break;
+				case TagType.SelfClosing:
+					// NADA
+					break;
 			}
 			WriteIfNotNull (RenderAfterTag ());
 
 			PopEndTag ();
 		}
-		
+
 
 		public virtual void WriteAttribute (string name, string value, bool fEncode)
 		{
@@ -486,28 +494,28 @@ namespace System.Web.UI {
 				Write (DoubleQuoteChar);
 			}
 		}
-		
-	
+
+
 		public virtual void WriteBeginTag (string tagName)
 		{
 			Write (TagLeftChar);
 			Write (tagName);
 		}
-		
+
 		public virtual void WriteEndTag (string tagName)
 		{
 			Write (EndTagLeftChars);
 			Write (tagName);
-			Write (TagRightChar);	
+			Write (TagRightChar);
 		}
-		
+
 		public virtual void WriteFullBeginTag (string tagName)
 		{
 			Write (TagLeftChar);
 			Write (tagName);
 			Write (TagRightChar);
 		}
-			
+
 		public virtual void WriteStyleAttribute (string name, string value)
 		{
 			WriteStyleAttribute (name, value, false);
@@ -520,49 +528,49 @@ namespace System.Web.UI {
 			Write (EncodeAttributeValue (value, fEncode));
 			Write (SemicolonChar);
 		}
-		
+
 		public override void Write (char [] buffer, int index, int count)
 		{
 			OutputTabs ();
 			b.Write (buffer, index, count);
 		}
-	
+
 		public override void Write (double value)
 		{
 			OutputTabs ();
 			b.Write (value);
 		}
-	
+
 		public override void Write (char value)
 		{
 			OutputTabs ();
 			b.Write (value);
 		}
-	
+
 		public override void Write (char [] buffer)
 		{
 			OutputTabs ();
 			b.Write (buffer);
 		}
-	
+
 		public override void Write (int value)
 		{
 			OutputTabs ();
 			b.Write (value);
 		}
-	
+
 		public override void Write (string format, object arg0)
 		{
 			OutputTabs ();
 			b.Write (format, arg0);
 		}
-	
+
 		public override void Write (string format, object arg0, object arg1)
 		{
 			OutputTabs ();
 			b.Write (format, arg0, arg1);
 		}
-	
+
 		public override void Write (string format, params object [] args)
 		{
 			OutputTabs ();
@@ -574,31 +582,31 @@ namespace System.Web.UI {
 			OutputTabs ();
 			b.Write (s);
 		}
-		
+
 		public override void Write (long value)
 		{
 			OutputTabs ();
 			b.Write (value);
 		}
-	
+
 		public override void Write (object value)
 		{
 			OutputTabs ();
 			b.Write (value);
 		}
-		
+
 		public override void Write (float value)
 		{
 			OutputTabs ();
 			b.Write (value);
 		}
-	
+
 		public override void Write (bool value)
 		{
 			OutputTabs ();
 			b.Write (value);
 		}
-	
+
 		public virtual void WriteAttribute (string name, string value)
 		{
 			WriteAttribute (name, value, false);
@@ -610,84 +618,84 @@ namespace System.Web.UI {
 			b.WriteLine (value);
 			newline = true;
 		}
-	
+
 		public override void WriteLine (long value)
 		{
 			OutputTabs ();
 			b.WriteLine (value);
 			newline = true;
 		}
-	
+
 		public override void WriteLine (object value)
 		{
 			OutputTabs ();
 			b.WriteLine (value);
-			newline = true;	
+			newline = true;
 		}
-	
+
 		public override void WriteLine (double value)
 		{
 			OutputTabs ();
 			b.WriteLine (value);
 			newline = true;
 		}
-	
+
 		public override void WriteLine (char [] buffer, int index, int count)
 		{
 			OutputTabs ();
 			b.WriteLine (buffer, index, count);
 			newline = true;
 		}
-	
+
 		public override void WriteLine (char [] buffer)
 		{
 			OutputTabs ();
 			b.WriteLine (buffer);
 			newline = true;
 		}
-		
+
 		public override void WriteLine (bool value)
 		{
 			OutputTabs ();
 			b.WriteLine (value);
 			newline = true;
 		}
-	
+
 		public override void WriteLine ()
 		{
 			OutputTabs ();
 			b.WriteLine ();
 			newline = true;
 		}
-	
+
 		public override void WriteLine (int value)
 		{
 			OutputTabs ();
 			b.WriteLine (value);
 			newline = true;
 		}
-	
+
 		public override void WriteLine (string format, object arg0, object arg1)
 		{
 			OutputTabs ();
 			b.WriteLine (format, arg0, arg1);
 			newline = true;
 		}
-	
+
 		public override void WriteLine (string format, object arg0)
 		{
 			OutputTabs ();
 			b.WriteLine (format, arg0);
 			newline = true;
 		}
-	
+
 		public override void WriteLine (string format, params object [] args)
 		{
 			OutputTabs ();
 			b.WriteLine (format, args);
 			newline = true;
 		}
-		
+
 		[CLSCompliant (false)]
 		public override void WriteLine (uint value)
 		{
@@ -695,21 +703,21 @@ namespace System.Web.UI {
 			b.WriteLine (value);
 			newline = true;
 		}
-	
+
 		public override void WriteLine (string s)
 		{
 			OutputTabs ();
 			b.WriteLine (s);
 			newline = true;
 		}
-	
+
 		public override void WriteLine (float value)
 		{
 			OutputTabs ();
 			b.WriteLine (value);
 			newline = true;
 		}
-	
+
 		public void WriteLineNoTabs (string s)
 		{
 			b.WriteLine (s);
@@ -718,7 +726,7 @@ namespace System.Web.UI {
 
 		public override Encoding Encoding {
 			get {
-				return b.Encoding;	
+				return b.Encoding;
 			}
 		}
 
@@ -731,16 +739,16 @@ namespace System.Web.UI {
 				indent = value;
 			}
 		}
-	
+
 		public System.IO.TextWriter InnerWriter {
 			get {
 				return b;
 			}
 			set {
 				b = value;
-			}	
+			}
 		}
-	
+
 		public override string NewLine {
 			get {
 				return b.NewLine;
@@ -749,7 +757,7 @@ namespace System.Web.UI {
 				b.NewLine = value;
 			}
 		}
-	
+
 		protected HtmlTextWriterTag TagKey {
 			get {
 				if (tagstack_pos == -1)
@@ -758,31 +766,39 @@ namespace System.Web.UI {
 				return tagstack [tagstack_pos].key;
 			}
 			set {
+#if TARGET_JVM
+				if (tagstack [tagstack_pos] == null)
+					tagstack [tagstack_pos] = new AddedTag ();
+#endif
 				tagstack [tagstack_pos].key = value;
 				tagstack [tagstack_pos].name = GetTagName (value);
 			}
 		}
-	
+
 		protected string TagName {
 			get {
 				if (tagstack_pos == -1)
 					throw new InvalidOperationException ();
-				
+
 				return tagstack [tagstack_pos].name;
 			}
 			set {
+#if TARGET_JVM
+				if (tagstack [tagstack_pos] == null)
+					tagstack [tagstack_pos] = new AddedTag ();
+#endif
 				tagstack [tagstack_pos].name = value;
 				tagstack [tagstack_pos].key = GetTagKey (value);
 				if (tagstack [tagstack_pos].key != HtmlTextWriterTag.Unknown)
 					tagstack [tagstack_pos].name = GetTagName (tagstack [tagstack_pos].key);
 			}
 		}
-		
+
 
 		TextWriter b;
 		string tab_string;
 		bool newline;
-		
+
 		//
 		// These emulate generic Stack <T>, since we can't use that ;-(. _pos is the current
 		// element.IE, you edit blah [blah_pos]. I *really* want generics, sigh.
@@ -792,19 +808,34 @@ namespace System.Web.UI {
 		AddedTag [] tagstack;
 
 		int styles_pos = -1, attrs_pos = -1, tagstack_pos = -1;
-		
-		struct AddedTag {
+
+#if TARGET_JVM
+		class
+#else
+		struct 
+#endif
+		AddedTag {
 			public string name;
 			public HtmlTextWriterTag key;
 		}
-		
-		struct AddedStyle {
+
+#if TARGET_JVM
+		class
+#else
+		struct 
+#endif
+		AddedStyle {
 			public string name;
 			public HtmlTextWriterStyle key;
 			public string value;
 		}
-		
-		struct AddedAttr {
+
+#if TARGET_JVM
+		class
+#else
+		struct 
+#endif
+		AddedAttr {
 			public string name;
 			public HtmlTextWriterAttribute key;
 			public string value;
@@ -814,10 +845,10 @@ namespace System.Web.UI {
 		{
 			if (styles == null)
 				styles = new AddedStyle [16];
-				
+
 			if (++styles_pos < styles.Length)
 				return;
-			
+
 			int nsize = styles.Length * 2;
 			AddedStyle [] ncontents = new AddedStyle [nsize];
 
@@ -829,10 +860,10 @@ namespace System.Web.UI {
 		{
 			if (attrs == null)
 				attrs = new AddedAttr [16];
-				
+
 			if (++attrs_pos < attrs.Length)
 				return;
-			
+
 			int nsize = attrs.Length * 2;
 			AddedAttr [] ncontents = new AddedAttr [nsize];
 
@@ -844,17 +875,17 @@ namespace System.Web.UI {
 		{
 			if (tagstack == null)
 				tagstack = new AddedTag [16];
-				
+
 			if (++tagstack_pos < tagstack.Length)
 				return;
-						
+
 			int nsize = tagstack.Length * 2;
 			AddedTag [] ncontents = new AddedTag [nsize];
 
 			Array.Copy (tagstack, ncontents, tagstack.Length);
 			tagstack = ncontents;
 		}
-	
+
 		public const string DefaultTabString = "\t";
 		public const char DoubleQuoteChar = '"';
 		public const string EndTagLeftChars = "</";
@@ -865,7 +896,7 @@ namespace System.Web.UI {
 		public const char SemicolonChar = ';';
 		public const char SingleQuoteChar = '\'';
 		public const char SlashChar = '/';
-		public const char SpaceChar = ' ' ;
+		public const char SpaceChar = ' ';
 		public const char StyleEqualsChar = ':';
 		public const char TagLeftChar = '<';
 		public const char TagRightChar = '>';
@@ -875,8 +906,8 @@ namespace System.Web.UI {
 			Inline,
 			SelfClosing,
 		}
-		
-		
+
+
 		struct HtmlTag {
 			public HtmlTextWriterTag key;
 			public string name;
@@ -893,7 +924,7 @@ namespace System.Web.UI {
 		struct HtmlStyle {
 			public HtmlTextWriterStyle key;
 			public string name;
-			
+
 			public HtmlStyle (HtmlTextWriterStyle k, string n)
 			{
 				key = k;
@@ -901,7 +932,7 @@ namespace System.Web.UI {
 			}
 		}
 
-		
+
 		struct HtmlAttribute {
 			public HtmlTextWriterAttribute key;
 			public string name;
@@ -912,7 +943,7 @@ namespace System.Web.UI {
 				name = n;
 			}
 		}
-		
+
 		static HtmlTag [] tags = {
 			new HtmlTag (HtmlTextWriterTag.Unknown,    "",                  TagType.Block),
 			new HtmlTag (HtmlTextWriterTag.A,          "a",                 TagType.Inline),
@@ -1139,46 +1170,46 @@ namespace System.Web.UI {
 			Write (HttpUtility.HtmlEncode (text));
 		}
 
-		[MonoNotSupported("")]
-		public virtual void WriteEncodedUrl (string url) 
+		[MonoNotSupported ("")]
+		public virtual void WriteEncodedUrl (string url)
 		{
 			// WriteUrlEncodedString (url, false);
 			throw new NotImplementedException ();
 		}
 
 		[MonoNotSupported ("")]
-		public virtual void WriteEncodedUrlParameter (string urlText) 
+		public virtual void WriteEncodedUrlParameter (string urlText)
 		{
 			// WriteUrlEncodedString (urlText, true);
 			throw new NotImplementedException ();
 		}
 
 		[MonoNotSupported ("")]
-		protected void WriteUrlEncodedString (string text, bool argument) 
+		protected void WriteUrlEncodedString (string text, bool argument)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoNotSupported ("")]
-		public virtual void EnterStyle (Style style) 
+		public virtual void EnterStyle (Style style)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoNotSupported ("")]
-		public virtual void EnterStyle (Style style, HtmlTextWriterTag tag) 
+		public virtual void EnterStyle (Style style, HtmlTextWriterTag tag)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoNotSupported ("")]
-		public virtual void ExitStyle (Style style) 
+		public virtual void ExitStyle (Style style)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoNotSupported ("")]
-		public virtual void ExitStyle (Style style, HtmlTextWriterTag tag) 
+		public virtual void ExitStyle (Style style, HtmlTextWriterTag tag)
 		{
 			throw new NotImplementedException ();
 		}
