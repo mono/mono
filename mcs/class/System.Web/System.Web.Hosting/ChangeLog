@@ -1,3 +1,8 @@
+2007-05-09 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* ApplicationHost.cs:
+	added MonoNotSupported attribute for TARGATE_JVM.	
+
 2007-04-13  Marek Habersack  <mhabersack@novell.com>
 
 	* ApplicationHost.cs: clear the dynamic base directory before

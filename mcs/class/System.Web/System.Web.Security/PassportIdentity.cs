@@ -33,6 +33,7 @@ using System.Security.Principal;
 
 namespace System.Web.Security {
 
+	[MonoNotSupported ("")]
 	[MonoTODO("Not implemented")]
 	// CAS - no InheritanceDemand here as the class is sealed
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
