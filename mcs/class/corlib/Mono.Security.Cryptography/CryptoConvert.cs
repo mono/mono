@@ -5,11 +5,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com)
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2006 Novell Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -166,9 +162,83 @@ namespace Mono.Security.Cryptography {
 					Array.Reverse (rsap.D);
 				}
 
-				RSA rsa = (RSA)RSA.Create ();
-				rsa.ImportParameters (rsap);
+				RSA rsa = null;
+				try {
+					rsa = RSA.Create ();
+					rsa.ImportParameters (rsap);
+				}
+				catch (CryptographicException) {
+					// this may cause problem when this code is run under
+					// the SYSTEM identity on Windows (e.g. ASP.NET). See
+					// http://bugzilla.ximian.com/show_bug.cgi?id=77559
+					CspParameters csp = new CspParameters ();
+					csp.Flags = CspProviderFlags.UseMachineKeyStore;
+					rsa = new RSACryptoServiceProvider (csp);
+					rsa.ImportParameters (rsap);
+				}
 				return rsa;
+			}
+			catch (Exception e) {
+				throw new CryptographicException ("Invalid blob.", e);
+			}
+		}
+
+		static public DSA FromCapiPrivateKeyBlobDSA (byte[] blob)
+		{
+			return FromCapiPrivateKeyBlobDSA (blob, 0);
+		}
+
+		static public DSA FromCapiPrivateKeyBlobDSA (byte[] blob, int offset)
+		{
+			if (blob == null)
+				throw new ArgumentNullException ("blob");
+			if (offset >= blob.Length)
+				throw new ArgumentException ("blob is too small.");
+
+			try {
+				if ((blob [offset] != 0x07) ||				// PRIVATEKEYBLOB (0x07)
+				    (blob [offset + 1] != 0x02) ||			// Version (0x02)
+				    (blob [offset + 2] != 0x00) ||			// Reserved (word)
+				    (blob [offset + 3] != 0x00) ||
+				    (ToUInt32LE (blob, offset + 8) != 0x32535344))	// DWORD magic
+					throw new CryptographicException ("Invalid blob header");
+
+				int bitlen = ToInt32LE (blob, offset + 12);
+				DSAParameters dsap = new DSAParameters ();
+				int bytelen = bitlen >> 3;
+				int pos = offset + 16;
+
+				dsap.P = new byte [bytelen];
+				Buffer.BlockCopy (blob, pos, dsap.P, 0, bytelen);
+				Array.Reverse (dsap.P);
+				pos += bytelen;
+
+				dsap.Q = new byte [20];
+				Buffer.BlockCopy (blob, pos, dsap.Q, 0, 20);
+				Array.Reverse (dsap.Q);
+				pos += 20;
+
+				dsap.G = new byte [bytelen];
+				Buffer.BlockCopy (blob, pos, dsap.G, 0, bytelen);
+				Array.Reverse (dsap.G);
+				pos += bytelen;
+
+				dsap.X = new byte [20];
+				Buffer.BlockCopy (blob, pos, dsap.X, 0, 20);
+				Array.Reverse (dsap.X);
+				pos += 20;
+
+				dsap.Counter = ToInt32LE (blob, pos);
+				pos += 4;
+
+				dsap.Seed = new byte [20];
+				Buffer.BlockCopy (blob, pos, dsap.Seed, 0, 20);
+				Array.Reverse (dsap.Seed);
+				pos += 20;
+
+				DSA dsa = (DSA)DSA.Create ();
+				dsa.ImportParameters (dsap);
+				return dsa;
 			}
 			catch (Exception e) {
 				throw new CryptographicException ("Invalid blob.", e);
@@ -247,6 +317,60 @@ namespace Mono.Security.Cryptography {
 			return blob;
 		}
 
+		static public byte[] ToCapiPrivateKeyBlob (DSA dsa)
+		{
+			DSAParameters p = dsa.ExportParameters (true);
+			int keyLength = p.P.Length; // in bytes
+
+			// header + P + Q + G + X + count + seed
+			byte[] blob = new byte [16 + keyLength + 20 + keyLength + 20 + 4 + 20];
+
+			blob [0] = 0x07;	// Type - PRIVATEKEYBLOB (0x07)
+			blob [1] = 0x02;	// Version - Always CUR_BLOB_VERSION (0x02)
+			// [2], [3]		// RESERVED - Always 0
+			blob [5] = 0x22;	// ALGID
+			blob [8] = 0x44;	// Magic
+			blob [9] = 0x53;
+			blob [10] = 0x53;
+			blob [11] = 0x32;
+
+			byte[] bitlen = GetBytesLE (keyLength << 3);
+			blob [12] = bitlen [0];
+			blob [13] = bitlen [1];
+			blob [14] = bitlen [2];
+			blob [15] = bitlen [3];
+
+			int pos = 16;
+			byte[] part = p.P;
+			Array.Reverse (part);
+			Buffer.BlockCopy (part, 0, blob, pos, keyLength);
+			pos += keyLength;
+
+			part = p.Q;
+			Array.Reverse (part);
+			Buffer.BlockCopy (part, 0, blob, pos, 20);
+			pos += 20;
+
+			part = p.G;
+			Array.Reverse (part);
+			Buffer.BlockCopy (part, 0, blob, pos, keyLength);
+			pos += keyLength;
+
+			part = p.X;
+			Array.Reverse (part);
+			Buffer.BlockCopy (part, 0, blob, pos, 20);
+			pos += 20;
+
+			Buffer.BlockCopy (GetBytesLE (p.Counter), 0, blob, pos, 4);
+			pos += 4;
+
+			part = p.Seed;
+			Array.Reverse (part);
+			Buffer.BlockCopy (part, 0, blob, pos, 20);
+
+			return blob;
+		}
+
 		static public RSA FromCapiPublicKeyBlob (byte[] blob) 
 		{
 			return FromCapiPublicKeyBlob (blob, 0);
@@ -287,9 +411,83 @@ namespace Mono.Security.Cryptography {
 				Buffer.BlockCopy (blob, pos, rsap.Modulus, 0, byteLen);
 				Array.Reverse (rsap.Modulus);
 
-				RSA rsa = (RSA)RSA.Create ();
-				rsa.ImportParameters (rsap);
+				RSA rsa = null;
+				try {
+					rsa = RSA.Create ();
+					rsa.ImportParameters (rsap);
+				}
+				catch (CryptographicException) {
+					// this may cause problem when this code is run under
+					// the SYSTEM identity on Windows (e.g. ASP.NET). See
+					// http://bugzilla.ximian.com/show_bug.cgi?id=77559
+					CspParameters csp = new CspParameters ();
+					csp.Flags = CspProviderFlags.UseMachineKeyStore;
+					rsa = new RSACryptoServiceProvider (csp);
+					rsa.ImportParameters (rsap);
+				}
 				return rsa;
+			}
+			catch (Exception e) {
+				throw new CryptographicException ("Invalid blob.", e);
+			}
+		}
+
+		static public DSA FromCapiPublicKeyBlobDSA (byte[] blob)
+		{
+			return FromCapiPublicKeyBlobDSA (blob, 0);
+		}
+
+		static public DSA FromCapiPublicKeyBlobDSA (byte[] blob, int offset)
+		{
+			if (blob == null)
+				throw new ArgumentNullException ("blob");
+			if (offset >= blob.Length)
+				throw new ArgumentException ("blob is too small.");
+
+			try {
+				if ((blob [offset] != 0x06) ||				// PUBLICKEYBLOB (0x06)
+				    (blob [offset + 1] != 0x02) ||			// Version (0x02)
+				    (blob [offset + 2] != 0x00) ||			// Reserved (word)
+				    (blob [offset + 3] != 0x00) ||
+				    (ToUInt32LE (blob, offset + 8) != 0x31535344))	// DWORD magic
+					throw new CryptographicException ("Invalid blob header");
+
+				int bitlen = ToInt32LE (blob, offset + 12);
+				DSAParameters dsap = new DSAParameters ();
+				int bytelen = bitlen >> 3;
+				int pos = offset + 16;
+
+				dsap.P = new byte [bytelen];
+				Buffer.BlockCopy (blob, pos, dsap.P, 0, bytelen);
+				Array.Reverse (dsap.P);
+				pos += bytelen;
+
+				dsap.Q = new byte [20];
+				Buffer.BlockCopy (blob, pos, dsap.Q, 0, 20);
+				Array.Reverse (dsap.Q);
+				pos += 20;
+
+				dsap.G = new byte [bytelen];
+				Buffer.BlockCopy (blob, pos, dsap.G, 0, bytelen);
+				Array.Reverse (dsap.G);
+				pos += bytelen;
+
+				dsap.Y = new byte [bytelen];
+				Buffer.BlockCopy (blob, pos, dsap.Y, 0, bytelen);
+				Array.Reverse (dsap.Y);
+				pos += bytelen;
+
+				dsap.Counter = ToInt32LE (blob, pos);
+				pos += 4;
+
+				dsap.Seed = new byte [20];
+				Buffer.BlockCopy (blob, pos, dsap.Seed, 0, 20);
+				Array.Reverse (dsap.Seed);
+				pos += 20;
+
+				DSA dsa = (DSA)DSA.Create ();
+				dsa.ImportParameters (dsap);
+				return dsa;
 			}
 			catch (Exception e) {
 				throw new CryptographicException ("Invalid blob.", e);
@@ -332,6 +530,62 @@ namespace Mono.Security.Cryptography {
 			return blob;
 		}
 
+		static public byte[] ToCapiPublicKeyBlob (DSA dsa)
+		{
+			DSAParameters p = dsa.ExportParameters (false);
+			int keyLength = p.P.Length; // in bytes
+
+			// header + P + Q + G + Y + count + seed
+			byte[] blob = new byte [16 + keyLength + 20 + keyLength + keyLength + 4 + 20];
+
+			blob [0] = 0x06;	// Type - PUBLICKEYBLOB (0x06)
+			blob [1] = 0x02;	// Version - Always CUR_BLOB_VERSION (0x02)
+			// [2], [3]		// RESERVED - Always 0
+			blob [5] = 0x22;	// ALGID
+			blob [8] = 0x44;	// Magic
+			blob [9] = 0x53;
+			blob [10] = 0x53;
+			blob [11] = 0x31;
+
+			byte[] bitlen = GetBytesLE (keyLength << 3);
+			blob [12] = bitlen [0];
+			blob [13] = bitlen [1];
+			blob [14] = bitlen [2];
+			blob [15] = bitlen [3];
+
+			int pos = 16;
+			byte[] part;
+
+			part = p.P;
+			Array.Reverse (part);
+			Buffer.BlockCopy (part, 0, blob, pos, keyLength);
+			pos += keyLength;
+
+			part = p.Q;
+			Array.Reverse (part);
+			Buffer.BlockCopy (part, 0, blob, pos, 20);
+			pos += 20;
+
+			part = p.G;
+			Array.Reverse (part);
+			Buffer.BlockCopy (part, 0, blob, pos, keyLength);
+			pos += keyLength;
+
+			part = p.Y;
+			Array.Reverse (part);
+			Buffer.BlockCopy (part, 0, blob, pos, keyLength);
+			pos += keyLength;
+
+			Buffer.BlockCopy (GetBytesLE (p.Counter), 0, blob, pos, 4);
+			pos += 4;
+
+			part = p.Seed;
+			Array.Reverse (part);
+			Buffer.BlockCopy (part, 0, blob, pos, 20);
+
+			return blob;
+		}
+
 		// PRIVATEKEYBLOB
 		// PUBLICKEYBLOB
 		static public RSA FromCapiKeyBlob (byte[] blob) 
@@ -362,6 +616,27 @@ namespace Mono.Security.Cryptography {
 			throw new CryptographicException ("Unknown blob format.");
 		}
 
+		static public DSA FromCapiKeyBlobDSA (byte[] blob)
+		{
+			return FromCapiKeyBlobDSA (blob, 0);
+		}
+
+		static public DSA FromCapiKeyBlobDSA (byte[] blob, int offset)
+		{
+			if (blob == null)
+				throw new ArgumentNullException ("blob");
+			if (offset >= blob.Length)
+				throw new ArgumentException ("blob is too small.");
+
+			switch (blob [offset]) {
+				case 0x06:
+					return FromCapiPublicKeyBlobDSA (blob, offset);
+				case 0x07:
+					return FromCapiPrivateKeyBlobDSA (blob, offset);
+			}
+			throw new CryptographicException ("Unknown blob format.");
+		}
+
 		static public byte[] ToCapiKeyBlob (AsymmetricAlgorithm keypair, bool includePrivateKey) 
 		{
 			if (keypair == null)
@@ -370,6 +645,8 @@ namespace Mono.Security.Cryptography {
 			// check between RSA and DSA (and potentially others like DH)
 			if (keypair is RSA)
 				return ToCapiKeyBlob ((RSA)keypair, includePrivateKey);
+			else if (keypair is DSA)
+				return ToCapiKeyBlob ((DSA)keypair, includePrivateKey);
 			else
 				return null;	// TODO
 		}
@@ -383,6 +660,17 @@ namespace Mono.Security.Cryptography {
 				return ToCapiPrivateKeyBlob (rsa);
 			else
 				return ToCapiPublicKeyBlob (rsa);
+		}
+
+		static public byte[] ToCapiKeyBlob (DSA dsa, bool includePrivateKey)
+		{
+			if (dsa == null)
+				throw new ArgumentNullException ("dsa");
+
+			if (includePrivateKey)
+				return ToCapiPrivateKeyBlob (dsa);
+			else
+				return ToCapiPublicKeyBlob (dsa);
 		}
 
 		static public string ToHex (byte[] input) 
