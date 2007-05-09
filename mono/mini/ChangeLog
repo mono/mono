@@ -1,5 +1,10 @@
 2007-05-09  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-codegen.c (mono_spillvar_offset): Avoid an assert here.
+
+	* method-to-ir.c (mono_method_to_ir2): Don't print after-method-to-ir IR in inlined
+	methods.
+
 	* mini.c (mini_method_compile): Remove unused coalesce_pass.
 
 	* method-to-ir.c (emit_stobj): Get rid of ip argument.

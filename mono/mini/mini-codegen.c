@@ -221,8 +221,8 @@ mono_spillvar_offset (MonoCompile *cfg, int spillvar, gboolean fp)
 	g_assert_not_reached();
 #endif
 	if (G_UNLIKELY (spillvar >= (fp ? cfg->spill_info_float_len : cfg->spill_info_len))) {
-		resize_spill_info (cfg, fp);
-		g_assert (spillvar < (fp ? cfg->spill_info_float_len : cfg->spill_info_len));
+		while (spillvar >= (fp ? cfg->spill_info_float_len : cfg->spill_info_len))
+			resize_spill_info (cfg, fp);
 	}
 
 	/*

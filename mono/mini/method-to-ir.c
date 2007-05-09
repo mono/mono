@@ -8906,7 +8906,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 		return -1;
 	}
 
-	if (cfg->verbose_level > 1) mono_print_code (cfg, "AFTER METHOD-TO-IR");
+	if ((cfg->verbose_level > 1) && (cfg->method == method)) 
+		mono_print_code (cfg, "AFTER METHOD-TO-IR");
 
 	return inline_costs;
 
