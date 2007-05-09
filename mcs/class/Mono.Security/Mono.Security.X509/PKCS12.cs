@@ -270,8 +270,10 @@ namespace Mono.Security.X509 {
 		//private int _version;
 		private byte[] _password;
 		private ArrayList _keyBags;
+		private ArrayList _secretBags;
 		private X509CertificateCollection _certs;
 		private bool _keyBagsChanged;
+		private bool _secretBagsChanged;
 		private bool _certsChanged;
 		private int _iterations;
 		private ArrayList _safeBags;
@@ -283,8 +285,10 @@ namespace Mono.Security.X509 {
 		{
 			_iterations = recommendedIterationCount;
 			_keyBags = new ArrayList ();
+			_secretBags = new ArrayList ();
 			_certs = new X509CertificateCollection ();
 			_keyBagsChanged = false;
+			_secretBagsChanged = false;
 			_certsChanged = false;
 			_safeBags = new ArrayList ();
 		}
@@ -502,6 +506,24 @@ namespace Mono.Security.X509 {
 					_keyBagsChanged = false;
 				}
 				return ArrayList.ReadOnly(_keyBags);
+			}
+		}
+
+		public ArrayList Secrets {
+			get {
+				if (_secretBagsChanged) {
+					_secretBags.Clear ();
+					foreach (SafeBag sb in _safeBags) {
+						if (sb.BagOID.Equals (secretBag)) {
+							ASN1 safeBag = sb.ASN1;
+							ASN1 bagValue = safeBag [1];
+							byte[] secret = bagValue.Value;
+							_secretBags.Add(secret);
+						}
+					}
+					_secretBagsChanged = false;
+				}
+				return ArrayList.ReadOnly(_secretBags);
 			}
 		}
 
@@ -741,7 +763,8 @@ namespace Mono.Security.X509 {
 					// TODO
 					break;
 				case secretBag: 
-					// TODO
+					byte[] secret = bagValue.Value;
+					_secretBags.Add(secret);
 					break;
 				case safeContentsBag:
 					// TODO - ? recurse ?
@@ -936,6 +959,63 @@ namespace Mono.Security.X509 {
 			return safeBag;
 		}
 
+		private ASN1 SecretBagSafeBag (byte[] secret, IDictionary attributes) 
+		{
+			ASN1 safeBag = new ASN1 (0x30);
+			safeBag.Add (ASN1Convert.FromOid (secretBag));
+			ASN1 bagValue = new ASN1 (0x80, secret);
+			safeBag.Add (bagValue);
+
+			if (attributes != null) {
+				ASN1 bagAttributes = new ASN1 (0x31);
+				IDictionaryEnumerator de = attributes.GetEnumerator ();
+
+				while (de.MoveNext ()) {
+					string oid = (string)de.Key;
+					switch (oid) {
+					case PKCS9.friendlyName:
+						ArrayList names = (ArrayList)de.Value;
+						if (names.Count > 0) {
+							ASN1 pkcs12Attribute = new ASN1 (0x30);
+							pkcs12Attribute.Add (ASN1Convert.FromOid (PKCS9.friendlyName));
+							ASN1 attrValues = new ASN1 (0x31);
+							foreach (byte[] name in names) {
+								ASN1 attrValue = new ASN1 (0x1e);
+								attrValue.Value = name;
+								attrValues.Add (attrValue);
+							}
+							pkcs12Attribute.Add (attrValues);
+							bagAttributes.Add (pkcs12Attribute);
+						}
+						break;
+					case PKCS9.localKeyId:
+						ArrayList keys = (ArrayList)de.Value;
+						if (keys.Count > 0) {
+							ASN1 pkcs12Attribute = new ASN1 (0x30);
+							pkcs12Attribute.Add (ASN1Convert.FromOid (PKCS9.localKeyId));
+							ASN1 attrValues = new ASN1 (0x31);
+							foreach (byte[] key in keys) {
+								ASN1 attrValue = new ASN1 (0x04);
+								attrValue.Value = key;
+								attrValues.Add (attrValue);
+							}
+							pkcs12Attribute.Add (attrValues);
+							bagAttributes.Add (pkcs12Attribute);
+						}
+						break;
+					default:
+						break;
+					}
+				}
+
+				if (bagAttributes.Count > 0) {
+					safeBag.Add (bagAttributes);
+				}
+			}
+
+			return safeBag;
+		}
+
 		private ASN1 CertificateSafeBag (X509Certificate x509, IDictionary attributes) 
 		{
 			ASN1 encapsulatedCertificate = new ASN1 (0x04, x509.RawData);
@@ -1014,7 +1094,7 @@ namespace Mono.Security.X509 {
 			return hmac.ComputeHash (data, 0, data.Length);
 		}
 
-                /*
+		/*
 		 * SafeContents ::= SEQUENCE OF SafeBag
 		 * 
 		 * SafeBag ::= SEQUENCE {
@@ -1087,36 +1167,8 @@ namespace Mono.Security.X509 {
 				}
 
 				if (certsSafeBag.Count > 0) {
-					byte[] certsSalt = new byte [8];
-					RNG.GetBytes (certsSalt);
-
-					ASN1 seqParams = new ASN1 (0x30);
-					seqParams.Add (new ASN1 (0x04, certsSalt));
-					seqParams.Add (ASN1Convert.FromInt32 (_iterations));
-
-					ASN1 seqPbe = new ASN1 (0x30);
-					seqPbe.Add (ASN1Convert.FromOid (pbeWithSHAAnd3KeyTripleDESCBC));
-					seqPbe.Add (seqParams);
-
-					byte[] encrypted = Encrypt (pbeWithSHAAnd3KeyTripleDESCBC, certsSalt, _iterations, certsSafeBag.GetBytes ());
-					ASN1 encryptedCerts = new ASN1 (0x80, encrypted);
-
-					ASN1 seq = new ASN1 (0x30);
-					seq.Add (ASN1Convert.FromOid (PKCS7.Oid.data));
-					seq.Add (seqPbe);
-					seq.Add (encryptedCerts);
-
-					ASN1 certsVersion = new ASN1 (0x02, new byte [1] { 0x00 });
-					ASN1 encData = new ASN1 (0x30);
-					encData.Add (certsVersion);
-					encData.Add (seq);
-
-					ASN1 certsContent = new ASN1 (0xA0);
-					certsContent.Add (encData);
-
-					PKCS7.ContentInfo bag = new PKCS7.ContentInfo (PKCS7.Oid.encryptedData);
-					bag.Content = certsContent;
-					safeBagSequence.Add (bag.ASN1);
+					PKCS7.ContentInfo contentInfo = EncryptedContentInfo (certsSafeBag, pbeWithSHAAnd3KeyTripleDESCBC);
+					safeBagSequence.Add (contentInfo.ASN1);
 				}
 			}
 
@@ -1135,6 +1187,21 @@ namespace Mono.Security.X509 {
 					PKCS7.ContentInfo keyBag = new PKCS7.ContentInfo (PKCS7.Oid.data);
 					keyBag.Content = content;
 					safeBagSequence.Add (keyBag.ASN1);
+				}
+			}
+
+			// Doing SecretBags separately in case we want to change their encryption independently.
+			if (_safeBags.Count > 0) {
+				ASN1 secretsSafeBag = new ASN1 (0x30);
+				foreach (SafeBag sb in _safeBags) {
+					if (sb.BagOID.Equals (secretBag)) {
+						secretsSafeBag.Add (sb.ASN1);
+					}
+				}
+
+				if (secretsSafeBag.Count > 0) {
+					PKCS7.ContentInfo contentInfo = EncryptedContentInfo (secretsSafeBag, pbeWithSHAAnd3KeyTripleDESCBC);
+					safeBagSequence.Add (contentInfo.ASN1);
 				}
 			}
 
@@ -1175,6 +1242,41 @@ namespace Mono.Security.X509 {
 			}
 
 			return pfx.GetBytes ();
+		}
+
+		// Creates an encrypted PKCS#7 ContentInfo with safeBags as its SafeContents.  Used in GetBytes(), above.
+		private PKCS7.ContentInfo EncryptedContentInfo(ASN1 safeBags, string algorithmOid)
+		{
+			byte[] salt = new byte [8];
+			RNG.GetBytes (salt);
+
+			ASN1 seqParams = new ASN1 (0x30);
+			seqParams.Add (new ASN1 (0x04, salt));
+			seqParams.Add (ASN1Convert.FromInt32 (_iterations));
+
+			ASN1 seqPbe = new ASN1 (0x30);
+			seqPbe.Add (ASN1Convert.FromOid (algorithmOid));
+			seqPbe.Add (seqParams);
+
+			byte[] encrypted = Encrypt (algorithmOid, salt, _iterations, safeBags.GetBytes ());
+			ASN1 encryptedContent = new ASN1 (0x80, encrypted);
+
+			ASN1 seq = new ASN1 (0x30);
+			seq.Add (ASN1Convert.FromOid (PKCS7.Oid.data));
+			seq.Add (seqPbe);
+			seq.Add (encryptedContent);
+
+			ASN1 version = new ASN1 (0x02, new byte [1] { 0x00 });
+			ASN1 encData = new ASN1 (0x30);
+			encData.Add (version);
+			encData.Add (seq);
+
+			ASN1 finalContent = new ASN1 (0xA0);
+			finalContent.Add (encData);
+
+			PKCS7.ContentInfo bag = new PKCS7.ContentInfo (PKCS7.Oid.encryptedData);
+			bag.Content = finalContent;
+			return bag;
 		}
 
 		public void AddCertificate (X509Certificate cert)
@@ -1457,6 +1559,56 @@ namespace Mono.Security.X509 {
 			}
 		}
 
+		public void AddSecretBag (byte[] secret)
+		{
+			AddSecretBag (secret, null);
+		}
+
+		public void AddSecretBag (byte[] secret, IDictionary attributes)
+		{
+			bool found = false;
+
+			for (int i = 0; !found && i < _safeBags.Count; i++) {
+				SafeBag sb = (SafeBag)_safeBags [i];
+
+				if (sb.BagOID.Equals (secretBag)) {
+					ASN1 bagValue = sb.ASN1 [1];
+					byte[] ssecret = bagValue.Value;
+
+					if (Compare (secret, ssecret)) {
+						found = true;
+					}
+				}
+			}
+
+			if (!found) {
+				_safeBags.Add (new SafeBag (secretBag, SecretBagSafeBag (secret, attributes)));
+				_secretBagsChanged = true;
+			}
+		}
+
+		public void RemoveSecretBag (byte[] secret)
+		{
+			int sIndex = -1;
+
+			for (int i = 0; sIndex == -1 && i < _safeBags.Count; i++) {
+				SafeBag sb = (SafeBag)_safeBags [i];
+
+				if (sb.BagOID.Equals (secretBag)) {
+					ASN1 bagValue = sb.ASN1 [1];
+					byte[] ssecret = bagValue.Value;
+
+					if (Compare (secret, ssecret)) {
+						sIndex = i;
+					}
+				}
+			}
+
+			if (sIndex != -1) {
+				_safeBags.RemoveAt (sIndex);
+				_secretBagsChanged = true;
+			}
+		}
 
 		public AsymmetricAlgorithm GetAsymmetricAlgorithm (IDictionary attrs)
 		{
@@ -1531,6 +1683,52 @@ namespace Mono.Security.X509 {
 								Array.Clear (decrypted, 0, decrypted.Length);
 							}
 							return aa;
+						}
+					}
+				}
+			}
+
+			return null;
+		}
+
+		public byte[] GetSecret (IDictionary attrs)
+		{
+			foreach (SafeBag sb in _safeBags) {
+				if (sb.BagOID.Equals (secretBag)) {
+					ASN1 safeBag = sb.ASN1;
+
+					if (safeBag.Count == 3) {
+						ASN1 bagAttributes = safeBag [2];
+
+						int bagAttributesFound = 0;
+						for (int i = 0; i < bagAttributes.Count; i++) {
+							ASN1 pkcs12Attribute = bagAttributes [i];
+							ASN1 attrId = pkcs12Attribute [0];
+							string ao = ASN1Convert.ToOid (attrId);
+							ArrayList dattrValues = (ArrayList)attrs [ao];
+
+							if (dattrValues != null) {
+								ASN1 attrValues = pkcs12Attribute [1];
+
+								if (dattrValues.Count == attrValues.Count) {
+									int attrValuesFound = 0;
+									for (int j = 0; j < attrValues.Count; j++) {
+										ASN1 attrValue = attrValues [j];
+										byte[] value = (byte[])dattrValues [j];
+									
+										if (Compare (value, attrValue.Value)) {
+											attrValuesFound += 1;
+										}
+									}
+									if (attrValuesFound == attrValues.Count) {
+										bagAttributesFound += 1;
+									}
+								}
+							}
+						}
+						if (bagAttributesFound == bagAttributes.Count) {
+							ASN1 bagValue = safeBag [1];
+							return bagValue.Value;
 						}
 					}
 				}

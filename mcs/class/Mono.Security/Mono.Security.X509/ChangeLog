@@ -1,5 +1,6 @@
 2007-05-09  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* PKCS12.cs: Adds SecretBag support. Patch by Jay Miller.
 	* X509Certificate.cs: Fix IsCurrent (use UTC).
 
 2006-12-14  Sebastien Pouliot  <sebastien@ximian.com>
