@@ -683,7 +683,7 @@ namespace System.Windows.Forms {
 
 						m.HWnd = keyboard_capture.Handle;
 						
-						if (!keyboard_capture.PreProcessMessage (ref m) && (m.Msg == (int)Msg.WM_KEYDOWN && !keyboard_capture.ProcessControlMnemonic ((char)m.WParam))) {
+						if (keyboard_capture.PreProcessControlMessageInternal (ref m) != PreProcessControlState.MessageProcessed && (m.Msg == (int)Msg.WM_KEYDOWN && !keyboard_capture.ProcessControlMnemonic ((char)m.WParam))) {
 							if (c == null || c.Parent == null || !(c.Parent is ToolStrip))
 								continue;
 							else
@@ -693,7 +693,7 @@ namespace System.Windows.Forms {
 					}
 #endif
 
-					if ((c != null) && !c.PreProcessMessage(ref m)) {
+					if ((c != null) && c.PreProcessControlMessageInternal (ref m) != PreProcessControlState.MessageProcessed) {
 						goto default;
 					}
 					break;

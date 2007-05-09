@@ -3738,7 +3738,51 @@ namespace System.Windows.Forms
 			return new Point(x, y);
 		}
 
-		public virtual bool PreProcessMessage(ref Message msg) {
+#if NET_2_0
+		public PreProcessControlState PreProcessControlMessage (ref Message msg)
+		{
+			return PreProcessControlMessageInternal (ref msg);
+		}
+#endif
+
+		internal PreProcessControlState PreProcessControlMessageInternal (ref Message msg)
+		{
+			switch ((Msg)msg.Msg) {
+				case Msg.WM_KEYDOWN:
+				case Msg.WM_SYSKEYDOWN:
+#if NET_2_0
+					PreviewKeyDownEventArgs e = new PreviewKeyDownEventArgs ((Keys)msg.WParam.ToInt32 () | XplatUI.State.ModifierKeys);
+					OnPreviewKeyDown (e);
+				
+					if (e.IsInputKey)
+						return PreProcessControlState.MessageNeeded;
+#endif
+				
+					if (PreProcessMessage (ref msg))
+						return PreProcessControlState.MessageProcessed;
+
+					if (IsInputKey ((Keys)msg.WParam.ToInt32 () | XplatUI.State.ModifierKeys))
+						return PreProcessControlState.MessageNeeded;	
+					
+					break;
+				case Msg.WM_CHAR:
+				case Msg.WM_SYSCHAR:
+					if (PreProcessMessage (ref msg))
+						return PreProcessControlState.MessageProcessed;
+						
+					if (IsInputChar ((char)msg.WParam))
+						return PreProcessControlState.MessageNeeded;
+						
+					break;
+				default:
+					break;
+			}
+				
+			return PreProcessControlState.MessageNotNeeded;
+		}
+		
+		public virtual bool PreProcessMessage (ref Message msg)
+		{
 			return InternalPreProcessMessage (ref msg);
 		}
 
@@ -3981,6 +4025,15 @@ namespace System.Windows.Forms
 				((ControlAccessibleObject)accessibility_object).NotifyClients (accEvent, childID);
 		}
 
+#if NET_2_0
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected void AccessibilityNotifyClients (AccessibleEvents accEvent, int objectID, int childID)
+		{
+			if (accessibility_object != null && accessibility_object is ControlAccessibleObject)
+				((ControlAccessibleObject)accessibility_object).NotifyClients (accEvent, objectID, childID);
+		}
+#endif
+
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual AccessibleObject CreateAccessibilityInstance() {
 			CreateControl ();
@@ -4098,7 +4151,7 @@ namespace System.Windows.Forms
 			if (!IsHandleCreated)
 				CreateHandle ();
 
-			return true;
+			return false;
 		}
 
 		protected virtual bool IsInputKey (Keys keyData) {
@@ -5808,6 +5861,14 @@ namespace System.Windows.Forms
 		}
 
 #if NET_2_0
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected virtual void OnPreviewKeyDown (PreviewKeyDownEventArgs e)
+		{
+			PreviewKeyDownEventHandler eh = (PreviewKeyDownEventHandler)(Events[PreviewKeyDownEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
+
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected virtual void OnRegionChanged (EventArgs e)
 		{

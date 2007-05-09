@@ -1845,6 +1845,323 @@ namespace MonoTests.System.Windows.Forms
 				set { base.FontHeight = value; }
 			}
 		}
+
+		const int WM_KEYDOWN = 0x0100;
+		const int WM_CHAR = 0x0102;
+		const int WM_SYSCHAR = 0x0106;
+		const int WM_KEYUP = 0x0101;
+
+#if NET_2_0
+		[Test]
+		public void MethodPreProcessControlMessage ()
+		{
+			bool testing_callstack = false;
+
+			MyControl c = new MyControl ();
+			Message m = new Message ();
+			m.HWnd = c.Handle;
+			m.Msg = WM_KEYDOWN;
+			m.WParam = (IntPtr)Keys.Down;
+			m.LParam = IntPtr.Zero;
+
+			if (testing_callstack) Console.WriteLine ("Start");
+			Assert.AreEqual (PreProcessControlState.MessageNotNeeded, c.PreProcessControlMessage (ref m), "A1");
+			if (testing_callstack) Console.WriteLine ("End {0}\n", m.WParam.ToString ());
+
+			c.SetState (State.OnPreviewKeyDown);
+			if (testing_callstack) Console.WriteLine ("Start");
+			Assert.AreEqual (PreProcessControlState.MessageNeeded, c.PreProcessControlMessage (ref m), "A2");
+			if (testing_callstack) Console.WriteLine ("End {0}\n", m.WParam.ToString ());
+
+			c.SetState (State.ProcessCmdKey);
+			if (testing_callstack) Console.WriteLine ("Start");
+			Assert.AreEqual (PreProcessControlState.MessageProcessed, c.PreProcessControlMessage (ref m), "A3");
+			if (testing_callstack) Console.WriteLine ("End {0}\n", m.WParam.ToString ());
+
+			c.SetState (State.IsInputKey);
+			if (testing_callstack) Console.WriteLine ("Start");
+			Assert.AreEqual (PreProcessControlState.MessageNeeded, c.PreProcessControlMessage (ref m), "A4");
+			if (testing_callstack) Console.WriteLine ("End {0}\n", m.WParam.ToString ());
+
+			c.SetState (State.ProcessDialogKey);
+			if (testing_callstack) Console.WriteLine ("Start");
+			Assert.AreEqual (PreProcessControlState.MessageProcessed, c.PreProcessControlMessage (ref m), "A5");
+			if (testing_callstack) Console.WriteLine ("End {0}\n", m.WParam.ToString ());
+
+
+			m.Msg = WM_CHAR;
+			c.SetState (State.None);
+			if (testing_callstack) Console.WriteLine ("Start");
+			Assert.AreEqual (PreProcessControlState.MessageNotNeeded, c.PreProcessControlMessage (ref m), "A6");
+			if (testing_callstack) Console.WriteLine ("End {0}\n", m.WParam.ToString ());
+
+			c.SetState (State.IsInputChar);
+			if (testing_callstack) Console.WriteLine ("Start");
+			Assert.AreEqual (PreProcessControlState.MessageNeeded, c.PreProcessControlMessage (ref m), "A7");
+			if (testing_callstack) Console.WriteLine ("End {0}\n", m.WParam.ToString ());
+
+			c.SetState (State.ProcessDialogChar);
+			if (testing_callstack) Console.WriteLine ("Start");
+			Assert.AreEqual (PreProcessControlState.MessageProcessed, c.PreProcessControlMessage (ref m), "A8");
+			if (testing_callstack) Console.WriteLine ("End {0}\n", m.WParam.ToString ());
+
+
+			m.Msg = WM_SYSCHAR;
+			c.SetState (State.None);
+			if (testing_callstack) Console.WriteLine ("Start");
+			Assert.AreEqual (PreProcessControlState.MessageNotNeeded, c.PreProcessControlMessage (ref m), "A9");
+			if (testing_callstack) Console.WriteLine ("End {0}\n", m.WParam.ToString ());
+
+			c.SetState (State.IsInputChar);
+			if (testing_callstack) Console.WriteLine ("Start");
+			Assert.AreEqual (PreProcessControlState.MessageNeeded, c.PreProcessControlMessage (ref m), "A10");
+			if (testing_callstack) Console.WriteLine ("End {0}\n", m.WParam.ToString ());
+
+			c.SetState (State.ProcessDialogChar);
+			if (testing_callstack) Console.WriteLine ("Start");
+			Assert.AreEqual (PreProcessControlState.MessageProcessed, c.PreProcessControlMessage (ref m), "A11");
+			if (testing_callstack) Console.WriteLine ("End {0}\n", m.WParam.ToString ());
+
+
+			m.Msg = WM_KEYUP;
+			if (testing_callstack) Console.WriteLine ("Start");
+			Assert.AreEqual (PreProcessControlState.MessageNotNeeded, c.PreProcessControlMessage (ref m), "A12");
+			if (testing_callstack) Console.WriteLine ("End {0}\n", m.WParam.ToString ());
+
+			c.SetState (State.OnPreviewKeyDown);
+			if (testing_callstack) Console.WriteLine ("Start");
+			Assert.AreEqual (PreProcessControlState.MessageNotNeeded, c.PreProcessControlMessage (ref m), "A13");
+			if (testing_callstack) Console.WriteLine ("End {0}\n", m.WParam.ToString ());
+
+			c.SetState (State.ProcessCmdKey);
+			if (testing_callstack) Console.WriteLine ("Start");
+			Assert.AreEqual (PreProcessControlState.MessageNotNeeded, c.PreProcessControlMessage (ref m), "A14");
+			if (testing_callstack) Console.WriteLine ("End {0}\n", m.WParam.ToString ());
+
+			c.SetState (State.IsInputKey);
+			if (testing_callstack) Console.WriteLine ("Start");
+			Assert.AreEqual (PreProcessControlState.MessageNotNeeded, c.PreProcessControlMessage (ref m), "A15");
+			if (testing_callstack) Console.WriteLine ("End {0}\n", m.WParam.ToString ());
+
+			c.SetState (State.ProcessDialogKey);
+			if (testing_callstack) Console.WriteLine ("Start");
+			Assert.AreEqual (PreProcessControlState.MessageNotNeeded, c.PreProcessControlMessage (ref m), "A16");
+			if (testing_callstack) Console.WriteLine ("End {0}\n", m.WParam.ToString ());
+		}
+#endif
+
+		[Test]
+		public void MethodPreProcessMessage ()
+		{
+			bool testing_callstack = false;
+
+			MyControl c = new MyControl ();
+			Message m = new Message ();
+			m.HWnd = c.Handle;
+			m.Msg = WM_KEYDOWN;
+			m.WParam = (IntPtr)Keys.Down;
+			m.LParam = IntPtr.Zero;
+
+			if (testing_callstack) Console.WriteLine ("Start");
+			Assert.AreEqual (false, c.PreProcessMessage (ref m), "A1");
+			if (testing_callstack) Console.WriteLine ("End {0}\n", m.WParam.ToString ());
+
+			c.SetState (State.OnPreviewKeyDown);
+			if (testing_callstack) Console.WriteLine ("Start");
+			Assert.AreEqual (false, c.PreProcessMessage (ref m), "A2");
+			if (testing_callstack) Console.WriteLine ("End {0}\n", m.WParam.ToString ());
+
+			c.SetState (State.ProcessCmdKey);
+			if (testing_callstack) Console.WriteLine ("Start");
+			Assert.AreEqual (true, c.PreProcessMessage (ref m), "A3");
+			if (testing_callstack) Console.WriteLine ("End {0}\n", m.WParam.ToString ());
+
+			c.SetState (State.IsInputKey);
+			if (testing_callstack) Console.WriteLine ("Start");
+			Assert.AreEqual (false, c.PreProcessMessage (ref m), "A4");
+			if (testing_callstack) Console.WriteLine ("End {0}\n", m.WParam.ToString ());
+
+			c.SetState (State.ProcessDialogKey);
+			if (testing_callstack) Console.WriteLine ("Start");
+			Assert.AreEqual (true, c.PreProcessMessage (ref m), "A5");
+			if (testing_callstack) Console.WriteLine ("End {0}\n", m.WParam.ToString ());
+
+
+			m.Msg = WM_CHAR;
+			c.SetState (State.None);
+			if (testing_callstack) Console.WriteLine ("Start");
+			Assert.AreEqual (false, c.PreProcessMessage (ref m), "A6");
+			if (testing_callstack) Console.WriteLine ("End {0}\n", m.WParam.ToString ());
+
+			c.SetState (State.IsInputChar);
+			if (testing_callstack) Console.WriteLine ("Start");
+			Assert.AreEqual (false, c.PreProcessMessage (ref m), "A7");
+			if (testing_callstack) Console.WriteLine ("End {0}\n", m.WParam.ToString ());
+
+			c.SetState (State.ProcessDialogChar);
+			if (testing_callstack) Console.WriteLine ("Start");
+			Assert.AreEqual (true, c.PreProcessMessage (ref m), "A8");
+			if (testing_callstack) Console.WriteLine ("End {0}\n", m.WParam.ToString ());
+
+
+			m.Msg = WM_SYSCHAR;
+			c.SetState (State.None);
+			if (testing_callstack) Console.WriteLine ("Start");
+			Assert.AreEqual (false, c.PreProcessMessage (ref m), "A9");
+			if (testing_callstack) Console.WriteLine ("End {0}\n", m.WParam.ToString ());
+
+			c.SetState (State.IsInputChar);
+			if (testing_callstack) Console.WriteLine ("Start");
+			Assert.AreEqual (false, c.PreProcessMessage (ref m), "A10");
+			if (testing_callstack) Console.WriteLine ("End {0}\n", m.WParam.ToString ());
+
+			c.SetState (State.ProcessDialogChar);
+			if (testing_callstack) Console.WriteLine ("Start");
+			Assert.AreEqual (true, c.PreProcessMessage (ref m), "A11");
+			if (testing_callstack) Console.WriteLine ("End {0}\n", m.WParam.ToString ());
+
+
+			m.Msg = WM_KEYUP;
+			if (testing_callstack) Console.WriteLine ("Start");
+			Assert.AreEqual (false, c.PreProcessMessage (ref m), "A12");
+			if (testing_callstack) Console.WriteLine ("End {0}\n", m.WParam.ToString ());
+
+			c.SetState (State.OnPreviewKeyDown);
+			if (testing_callstack) Console.WriteLine ("Start");
+			Assert.AreEqual (false, c.PreProcessMessage (ref m), "A13");
+			if (testing_callstack) Console.WriteLine ("End {0}\n", m.WParam.ToString ());
+
+			c.SetState (State.ProcessCmdKey);
+			if (testing_callstack) Console.WriteLine ("Start");
+			Assert.AreEqual (false, c.PreProcessMessage (ref m), "A14");
+			if (testing_callstack) Console.WriteLine ("End {0}\n", m.WParam.ToString ());
+
+			c.SetState (State.IsInputKey);
+			if (testing_callstack) Console.WriteLine ("Start");
+			Assert.AreEqual (false, c.PreProcessMessage (ref m), "A15");
+			if (testing_callstack) Console.WriteLine ("End {0}\n", m.WParam.ToString ());
+
+			c.SetState (State.ProcessDialogKey);
+			if (testing_callstack) Console.WriteLine ("Start");
+			Assert.AreEqual (false, c.PreProcessMessage (ref m), "A16");
+			if (testing_callstack) Console.WriteLine ("End {0}\n", m.WParam.ToString ());
+		}
+		private enum State
+		{
+			None,
+			ProcessCmdKey,
+			OnPreviewKeyDown,
+			IsInputChar,
+			IsInputKey,
+			PreProcessMessage,
+			ProcessDialogKey,
+			ProcessDialogChar
+		}
+
+		private class MyControl : Control
+		{
+
+			private State current_state;
+			bool testing_callstack = false;
+
+			public void SetState (State state)
+			{
+				current_state = state;
+			}
+
+			protected override bool ProcessCmdKey (ref Message msg, Keys keyData)
+			{
+				if (testing_callstack) Console.Write ("ProcessCmdKey[");
+				if (current_state == State.ProcessCmdKey) {
+					if (testing_callstack) Console.WriteLine ("]");
+					return true;
+				}
+
+				bool retval = base.ProcessCmdKey (ref msg, keyData);
+				if (testing_callstack) Console.WriteLine ("]");
+				return retval;
+			}
+
+#if NET_2_0
+			protected override void OnPreviewKeyDown (PreviewKeyDownEventArgs e)
+			{
+				if (testing_callstack) Console.Write ("OnPreviewKeyDown[");
+				if (current_state == State.OnPreviewKeyDown) {
+					e.IsInputKey = true;
+					if (testing_callstack) Console.WriteLine ("]");
+					return;
+				}
+
+				base.OnPreviewKeyDown (e);
+				if (testing_callstack) Console.WriteLine ("]");
+			}
+#endif
+
+			protected override bool IsInputChar (char charCode)
+			{
+				if (testing_callstack) Console.Write ("IsInputChar[");
+				if (current_state == State.IsInputChar) {
+					if (testing_callstack) Console.WriteLine ("true]");
+					return true;
+				}
+
+				bool retval = base.IsInputChar (charCode);
+				if (testing_callstack) Console.WriteLine ("{0}]", retval.ToString ());
+				return retval;
+			}
+
+			protected override bool IsInputKey (Keys keyData)
+			{
+				if (testing_callstack) Console.Write ("IsInputKey[");
+				if (current_state == State.IsInputKey) {
+					if (testing_callstack) Console.WriteLine ("]");
+					return true;
+				}
+
+				bool retval = base.IsInputKey (keyData);
+				if (testing_callstack) Console.WriteLine ("]");
+				return retval;
+			}
+
+			public override bool PreProcessMessage (ref Message msg)
+			{
+				if (testing_callstack) Console.Write ("PreProcessMessage[");
+				if (current_state == State.PreProcessMessage) {
+					if (testing_callstack) Console.WriteLine ("]");
+					return true;
+				}
+
+				bool retval = base.PreProcessMessage (ref msg);
+				if (testing_callstack) Console.WriteLine ("]");
+				return retval;
+			}
+
+			protected override bool ProcessDialogKey (Keys keyData)
+			{
+				if (testing_callstack) Console.Write ("ProcessDialogKey[");
+				if (current_state == State.ProcessDialogKey) {
+					if (testing_callstack) Console.WriteLine ("]");
+					return true;
+				}
+
+				bool retval = base.ProcessDialogKey (keyData);
+				if (testing_callstack) Console.WriteLine ("]");
+				return retval;
+			}
+
+			protected override bool ProcessDialogChar (char charCode)
+			{
+				if (testing_callstack) Console.Write ("ProcessDialogChar[");
+				if (current_state == State.ProcessDialogChar) {
+					if (testing_callstack) Console.WriteLine ("]");
+					return true;
+				}
+
+				bool retval = base.ProcessDialogChar (charCode);
+				if (testing_callstack) Console.WriteLine ("]");
+				return retval;
+			}
+		}
 	}
 
 	[TestFixture]

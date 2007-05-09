@@ -1,3 +1,11 @@
+2007-05-09  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Control.cs: Implement PreProcessControlMessage.  Default IsInputChar
+	to false.
+	* Application.cs: Use PreProcessControlMessage instead of
+	PreProcessMessage.
+	* PreProcessControlMessage.cs: Make internal for 1.1.
+
 2007-05-08  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* Control.cs: Add InternalContains focus property, which hast the same

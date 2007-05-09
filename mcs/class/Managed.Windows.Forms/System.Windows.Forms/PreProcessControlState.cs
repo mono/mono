@@ -27,14 +27,15 @@
 //
 
 
-#if NET_2_0
 namespace System.Windows.Forms
 {
-	public enum PreProcessControlState
+#if NET_2_0
+	public 
+#endif
+	enum PreProcessControlState
 	{
 		MessageProcessed = 0,
 		MessageNeeded = 1,
 		MessageNotNeeded = 2
 	}
 }
-#endif
