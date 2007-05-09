@@ -1760,7 +1760,58 @@ namespace Mono.CSharp {
 					Type = TypeManager.bool_type;
 					return this;
 				}
+
+#if GMCS_SOURCE												
+				//
+				// Delegate equality
+				//
+				MethodGroupExpr mg = null;
+				Type delegate_type = null;
+				if (left.eclass == ExprClass.MethodGroup) {
+					if (!TypeManager.IsDelegateType(r)) {
+						Error_OperatorCannotBeApplied(Location, OperName(oper),
+						        left.ExprClassName, right.ExprClassName);
+						return null;
+					}
+					mg = (MethodGroupExpr)left;
+					delegate_type = r;
+				} else if (right.eclass == ExprClass.MethodGroup) {
+					if (!TypeManager.IsDelegateType(l)) {
+						Error_OperatorCannotBeApplied(Location, OperName(oper),
+						        left.ExprClassName, right.ExprClassName);
+						return null;
+					}
+					mg = (MethodGroupExpr)right;
+					delegate_type = l;
+				}
+
+				if (mg != null) {
+					Expression e = ImplicitDelegateCreation.Create (ec, mg, delegate_type, loc);
+					if (e == null)
+						return null;
+
+					// Find operator method
+					string op = oper_names[(int)oper];
+					MemberInfo[] mi = TypeManager.MemberLookup(ec.ContainerType, null,
+						TypeManager.delegate_type, MemberTypes.Method, AllBindingFlags, op, null);
+
+					ArrayList args = new ArrayList(2);
+					args.Add(new Argument(e, Argument.AType.Expression));
+					if (delegate_type == l)
+						args.Insert(0, new Argument(left, Argument.AType.Expression));
+					else
+						args.Add(new Argument(right, Argument.AType.Expression));
+
+					return new BinaryMethod (TypeManager.bool_type, (MethodInfo)mi [0], args);
+				}
+#endif				
+				if (l == TypeManager.anonymous_method_type || r == TypeManager.anonymous_method_type) {
+					Error_OperatorCannotBeApplied(Location, OperName(oper),
+						left.ExprClassName, right.ExprClassName);
+					return null;
+				}				
 			}
+
 
 			//
 			// Do not perform operator overload resolution when both sides are

@@ -68,6 +68,12 @@ namespace Mono.CSharp {
 		{
 			ec.ig.Emit(OpCodes.Ldnull);
 		}
+		
+		public override string ExprClassName {
+			get {
+				return GetSignatureForError ();
+			}
+		}
 
 		public override string GetSignatureForError ()
 		{

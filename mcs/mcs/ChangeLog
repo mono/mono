@@ -1,3 +1,10 @@
+2007-05-09  Marek Safar  <marek.safar@gmail.com>
+
+	* literal.cs (NullConstant): Print null in all cases.
+	
+	* expression.cs (Binary.ResolveOperator): Implemented delegate
+	 comparison based on C# 2.0 changes.
+
 2007-04-28  Scott Peterson  <lunchtimemama@gmail.com>
 
 	This code is contributed under the MIT X11 license
