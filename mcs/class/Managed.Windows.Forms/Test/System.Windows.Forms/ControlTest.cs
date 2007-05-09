@@ -2162,6 +2162,29 @@ namespace MonoTests.System.Windows.Forms
 				return retval;
 			}
 		}
+		
+		[Test]
+		public void MethodIsInputChar ()
+		{
+			// Basically, show that this method always returns false
+			InputCharControl m = new InputCharControl ();
+			bool result = false;
+			
+			for (int i = 0; i < 256; i++)
+				result |= m.PublicIsInputChar ((char)i);
+			
+			Assert.AreEqual (false, result, "I1");
+		}
+
+		private class InputCharControl : Control
+		{
+			public bool PublicIsInputChar (char charCode)
+			{
+				return base.IsInputChar (charCode);
+			}
+
+		}
+
 	}
 
 	[TestFixture]

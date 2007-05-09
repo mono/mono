@@ -1,5 +1,9 @@
 2007-05-09  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ControlTest.cs: Added test for IsInputChar.
+
+2007-05-09  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ControlTest.cs: Added tests for PreProcessMessage and
 	PreProcessControlMessage.
 
