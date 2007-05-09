@@ -121,6 +121,9 @@ namespace System.Configuration {
 			return ConfigurationFactory.Create (typeof(ExeConfigurationHost), map);
 		}
 
+#if TARGET_JVM
+		[MonoLimitation ("Supported only when the userLevel parameter is set to ConfigurationUserLevel.None. Other values are not supported because Environment.GetFolderPath method is not implemented.")]
+#endif
 		public static Configuration OpenExeConfiguration (ConfigurationUserLevel userLevel)
 		{
 			return OpenExeConfigurationInternal (userLevel, Assembly.GetCallingAssembly (), null);

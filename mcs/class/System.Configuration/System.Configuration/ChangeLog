@@ -1,3 +1,8 @@
+2007-05-09 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* ConfigurationManager.cs:
+	added MonoLimitation attribute for TARGATE_JVM.	
+		
 2007-05-08 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* ConnectionStringSettingsCollection.cs: removed 'new' keyword, cause 
