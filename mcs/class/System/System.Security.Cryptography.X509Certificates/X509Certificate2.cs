@@ -27,7 +27,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0 && SECURITY_DEP
+#if NET_2_0
 
 using System.IO;
 using System.Text;
@@ -38,7 +38,7 @@ using MX = Mono.Security.X509;
 namespace System.Security.Cryptography.X509Certificates {
 
 	public class X509Certificate2 : X509Certificate {
-
+#if SECURITY_DEP
 		private bool _archived;
 		private X509ExtensionCollection _extensions;
 		private string _name = String.Empty;
@@ -639,7 +639,14 @@ namespace System.Security.Cryptography.X509Certificates {
 		internal MX.X509Certificate MonoCertificate {
 			get { return _cert; }
 		}
+
+#else
+		// HACK - this ensure the type X509Certificate2 and PrivateKey property exists in the build before
+		// Mono.Security.dll is built. This is required to get working client certificate in SSL/TLS
+		public AsymmetricAlgorithm PrivateKey {
+			get { return null; }
+		}
+#endif
 	}
 }
-
 #endif

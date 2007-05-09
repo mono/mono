@@ -1,3 +1,10 @@
+2007-05-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509Certificate2.cs: Leave a small stub (PrivateKey property) if
+	SECURITY_DEP isn't defined. This will let Mono.Security.dll build
+	correctly under 2.0 while enabling the use of X509Certificate2 to add
+	support for X.509 client certificates in SSL/TLS.
+
 2006-12-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X500DistinguishedName.cs: Add an internal method to compare 
