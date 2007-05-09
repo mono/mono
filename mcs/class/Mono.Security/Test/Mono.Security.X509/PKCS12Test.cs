@@ -803,5 +803,62 @@ namespace MonoTests.Mono.Security.X509 {
 			string dsa = "<DSAKeyValue><P>5IuvQIwV1z187gOWEmjBIAXoF8qedGVLmlSXKngz2qXFcuo0s5RoQtUb/XfwqEKeZJOQtsICMUYTegNpzJgtVp1eI18ov61/D9BplWJcGgcqXoxzSX79EiKOVeVW6a5yKZaHCCfXd0PwhrgJChsUpeYD5kV5Ten6U1/BCb1+xcM=</P><Q>gD/k/PNM5T7LDxcKKlRs0GdsDTs=</Q><G>ZtQWiiCt/tEyn6V/p7PQ6nc/62yi5CnY2Lwh3Zr3zOW0d03f7NqijJx1Elof/mbTEcLvhEPsqYhuTLpMPzWWx2f8mb0PmSkTkU7YAq7+a69QVqovHrUqyO4iRyV4ayHdFD/O8BCB95YdnEG7XkSSXS7GHrjNaciPPzs+0E+iztk=</G><Y>D1MorDgvPfMRYUHDPafWevf2ATLTIXEQFNXDPk3rGaKMr54IPUEK/8yiR4J6VqGj/eyyi7c5tcqgGYWCm5ZoqLtrupCk4a1ltkQx0h4iL1NBT/qc+C/oLEMkFn4r2GT3ZPrweUgduQJtkDbM6zYP8jmrfSfs90dv3TPEfk3uJFc=</Y><X>KIPSF3S+8ElzzqFz7Hm2GsiV2zQ=</X></DSAKeyValue>";
 			Assert.AreEqual (dsa, (pfx.Keys[0] as DSA).ToXmlString (true), "Key[0]");
 		}
+
+		static public byte[] secret = { 0x50, 0xF7, 0xC4, 0xB3, 0x8B, 0x12, 0x12, 0x0F, 0x7A, 0x1E, 0x5B, 0x5A, 0x4F, 0x23, 0x7C, 0xE5, 0x73 };
+      
+		[Test]
+		public void AddSecretBag_Test1 ()
+		{
+			PKCS12 p12 = new PKCS12 ();
+			p12.AddSecretBag (secret);
+
+			Assert.AreEqual (1, p12.Secrets.Count, "ASB1.1");
+			Assert.AreEqual (p12.Secrets [0] as byte[], secret, "ASB1.2");
+		}
+
+		[Test]
+		public void AddSecretBag_Test2 ()
+		{
+			PKCS12 p12 = new PKCS12 ();
+
+			IDictionary attrs = new Hashtable ();
+			ArrayList attrValues = new ArrayList ();
+			attrValues.Add (Encoding.BigEndianUnicode.GetBytes ("Friendly name"));
+			attrs.Add (PKCS9.friendlyName, attrValues);
+
+			p12.AddSecretBag (secret, attrs);
+
+			Assert.AreEqual (1, p12.Secrets.Count, "ASB2.1");
+			Assert.AreEqual (p12.Secrets [0] as byte[], secret, "ASB2.2");
+		}
+
+		[Test]
+		public void RemoveSecretBag_Test1 ()
+		{
+			PKCS12 p12 = new PKCS12 ();
+			p12.AddSecretBag (secret);
+
+			Assert.AreEqual (1, p12.Secrets.Count, "RSB1.1");
+
+			p12.RemoveSecretBag (secret);
+
+			Assert.AreEqual (0, p12.Secrets.Count, "RSB1.2");
+		}
+
+		[Test]
+		public void SecretBagImportExport_Test1 ()
+		{
+			PKCS12 p12_1 = new PKCS12 ();
+			p12_1.AddSecretBag (secret);
+
+			Assert.AreEqual (1, p12_1.Secrets.Count, "SBIE1.1");
+
+			byte[] buf = p12_1.GetBytes ();
+
+			PKCS12 p12_2 = new PKCS12 (buf);
+
+			Assert.AreEqual (1, p12_2.Secrets.Count, "SBIE1.2");
+			Assert.AreEqual (p12_2.Secrets [0] as byte[], secret, "SBIE1.3");
+		}
 	}
 }
