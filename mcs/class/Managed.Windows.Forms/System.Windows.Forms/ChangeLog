@@ -1,5 +1,10 @@
 2007-05-09  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Control.cs: When using UseWaitCursor, we have to store the requested
+	Cursor to use when UseWaitCursor is turned off.
+
+2007-05-09  Jonathan Pobst  <monkey@jpobst.com>
+
 	* Control.cs: Implement PreProcessControlMessage.  Default IsInputChar
 	to false.
 	* Application.cs: Use PreProcessControlMessage instead of

@@ -1781,7 +1781,6 @@ namespace MonoTests.System.Windows.Forms
 
 #if NET_2_0
 		[Test]
-		[Category ("NotWorking")]
 		public void UseWaitCursorTest ()
 		{
 			Control c = new Control ();
@@ -1791,6 +1790,14 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (Cursors.WaitCursor, c.Cursor, "#2");
 			c.UseWaitCursor = false;
 			Assert.AreEqual (Cursors.Hand, c.Cursor, "#3");
+			
+			c.UseWaitCursor = true;
+			c.Cursor = Cursors.Help;
+			Assert.AreEqual (Cursors.WaitCursor, c.Cursor, "#4");
+			Assert.AreEqual (true, c.UseWaitCursor, "#5");
+			
+			c.UseWaitCursor = false;
+			Assert.AreEqual (Cursors.Help, c.Cursor, "#6");
 		}
 
 		[Test] // bug #80621, #81125

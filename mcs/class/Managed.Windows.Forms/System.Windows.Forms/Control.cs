@@ -129,6 +129,7 @@ namespace System.Windows.Forms
 		RightToLeft             right_to_left; // drawing direction for control
 		ContextMenu             context_menu; // Context menu associated with the control
 		internal bool		use_compatible_text_rendering;
+		private bool		use_wait_cursor;
 
 		// double buffering
 		DoubleBuffer            backbuffer;
@@ -1867,8 +1868,8 @@ namespace System.Windows.Forms
 			if ((!bounds.Contains (pt) && !Capture) || (GetChildAtPoint (pt) != null))
 				return;
 
-			if (cursor != null) {
-				XplatUI.SetCursor (window.Handle, cursor.handle);
+			if (cursor != null || use_wait_cursor) {
+				XplatUI.SetCursor (window.Handle, Cursor.handle);
 			} else {
 				XplatUI.SetCursor (window.Handle, GetAvailableCursor ().handle);
 			}
@@ -2446,6 +2447,11 @@ namespace System.Windows.Forms
 		[MWFCategory("Appearance")]
 		public virtual Cursor Cursor {
 			get {
+#if NET_2_0
+				if (use_wait_cursor)
+					return Cursors.WaitCursor;
+#endif
+
 				if (cursor != null) {
 					return cursor;
 				}
@@ -3140,12 +3146,13 @@ namespace System.Windows.Forms
 
 #if NET_2_0
 		public bool UseWaitCursor {
-			get { return Cursor == Cursors.WaitCursor; }
+			get { return use_wait_cursor; }
 			set {
-				if (value)
-					Cursor = Cursors.WaitCursor;
-				else
-					Cursor = Cursors.Default;
+				if (use_wait_cursor != value) {
+					use_wait_cursor = value;
+					UpdateCursor ();
+					OnCursorChanged (EventArgs.Empty);
+				}
 			}
 		}
 #endif
@@ -5304,12 +5311,12 @@ namespace System.Windows.Forms
 		}
 
 		private void WmSetCursor (ref Message m) {
-			if ((cursor == null) || ((HitTest)(m.LParam.ToInt32() & 0xffff) != HitTest.HTCLIENT)) {
+			if ((cursor == null && use_wait_cursor == false) || ((HitTest)(m.LParam.ToInt32() & 0xffff) != HitTest.HTCLIENT)) {
 				DefWndProc(ref m);
 				return;
 			}
 
-			XplatUI.SetCursor(window.Handle, cursor.handle);
+			XplatUI.SetCursor(window.Handle, Cursor.handle);
 			m.Result = (IntPtr)1;
 		}
 
