@@ -1,3 +1,7 @@
+2007-05-08  Randolph Chung  <tausq@debian.org>
+
+	* CryptoConvert.cs: Add DSA blob conversion functions.
+
 2007-03-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SymmetricTransform.cs: Fix KeepLastBlock to be true for decryption 
