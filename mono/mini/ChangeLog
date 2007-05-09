@@ -1,5 +1,9 @@
 2007-05-09  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (decompose_opcode): Fix OP_ICONV_TO_I8.
+
+	* basic-long.cs: Add new test.
+
 	* linear-scan.c (compare_by_interval_start_pos_func): Fix here too.
 
 	* mini.c (compare_by_interval_start_pos_func): Fix comparison of empty intervals.

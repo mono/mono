@@ -4433,7 +4433,7 @@ decompose_opcode (MonoCompile *cfg, MonoInst *ins)
 		ins->opcode = OP_MOVE;
 		break;
 	case OP_ICONV_TO_I8:
-		ins->opcode = OP_MOVE;
+		ins->opcode = OP_SEXT_I4;
 		break;
 	case OP_LCONV_TO_U4:
 		/* Clean out the upper word */
