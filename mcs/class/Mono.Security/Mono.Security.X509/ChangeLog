@@ -1,3 +1,7 @@
+2007-05-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509Certificate.cs: Fix IsCurrent (use UTC).
+
 2006-12-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X501Name.cs: Added support for (some cases of) T.61 strings, like
