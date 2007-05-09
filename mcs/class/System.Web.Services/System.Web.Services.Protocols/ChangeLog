@@ -1,5 +1,11 @@
 2007-05-08  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SoapServerMethod.cs : Some refactoring. simply use GetMethod() in
+	  type stub. WsiClaims could be retrieved from type stub.
+	* SoapServerType.cs : store server methods and implement GetMethod().
+
+2007-05-08  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SoapServerType.cs
 	  ServerType.cs
 	  Methods.cs : SoapBindingUse and SoapServiceRoutingStyle could just

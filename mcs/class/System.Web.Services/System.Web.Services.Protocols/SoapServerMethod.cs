@@ -40,7 +40,6 @@ namespace System.Web.Services.Protocols
 	public sealed class SoapServerMethod
 	{
 		SoapMethodStubInfo info;
-		WsiProfiles wsi_claims;
 
 		[MonoTODO] // what to do here?
 		public SoapServerMethod ()
@@ -51,18 +50,7 @@ namespace System.Web.Services.Protocols
 		public SoapServerMethod (Type serverType, LogicalMethodInfo methodInfo)
 		{
 			TypeStubInfo type = TypeStubManager.GetTypeStub (serverType, "Soap");
-			wsi_claims = type.WsiClaims;
-			foreach (SoapMethodStubInfo m in type.Methods) {
-				bool match = false;
-				if (m.MethodInfo.MethodInfo == null)
-					match = m.MethodInfo.EndMethodInfo == methodInfo.EndMethodInfo;
-				else 
-					match = m.MethodInfo.MethodInfo == methodInfo.MethodInfo;
-				if (!match)
-					continue;
-				info = m;
-				break;
-			}
+			info = type.GetMethod (methodInfo.Name) as SoapMethodStubInfo;
 			if (info == null)
 				throw new InvalidOperationException ("Argument methodInfo does not seem to be a member of the server type.");
 		}
@@ -116,7 +104,7 @@ namespace System.Web.Services.Protocols
 		}
 
 		public WsiProfiles WsiClaims {
-			get { return wsi_claims; }
+			get { return info.TypeStub.WsiClaims; }
 		}
 	}
 }

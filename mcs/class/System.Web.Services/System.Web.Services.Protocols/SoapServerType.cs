@@ -30,6 +30,7 @@
 
 #if NET_2_0
 
+using System.Collections;
 using System.Web.Services.Description;
 using System.Web.Services.Configuration;
 
@@ -37,7 +38,8 @@ namespace System.Web.Services.Protocols
 {
 	public sealed class SoapServerType : ServerType
 	{
-		[MonoTODO]
+		Hashtable serverMethods = new Hashtable ();
+
 		public SoapServerType (Type type, WebServiceProtocols protocolsSupported)
 			: base (type)
 		{
@@ -47,6 +49,11 @@ namespace System.Web.Services.Protocols
 				LogicalType.GetTypeStub ("Soap");
 			if ((protocolsSupported & WebServiceProtocols.HttpSoap12) != 0)
 				LogicalType.GetTypeStub ("Soap12");
+
+			foreach (LogicalMethodInfo m in LogicalType.LogicalMethods) {
+				SoapServerMethod sm = new SoapServerMethod (type, m);
+				serverMethods.Add (sm.Action, sm);
+			}
 		}
 
 		[MonoTODO]
@@ -55,10 +62,11 @@ namespace System.Web.Services.Protocols
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public SoapServerMethod GetMethod (object key)
 		{
-			throw new NotImplementedException ();
+			if (key == null)
+				throw new ArgumentNullException ("key");
+			return serverMethods [key] as SoapServerMethod;
 		}
 
 		public bool ServiceDefaultIsEncoded {

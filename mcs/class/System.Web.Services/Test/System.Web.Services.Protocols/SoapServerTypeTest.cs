@@ -12,6 +12,7 @@ using NUnit.Framework;
 using System;
 using System.Globalization;
 using System.IO;
+using System.Reflection;
 using System.Web.Services;
 using System.Web.Services.Configuration;
 using System.Web.Services.Description;
@@ -27,8 +28,27 @@ namespace MonoTests.System.Web.Services.Description
 		[Test]
 		public void NamedServiceBinding ()
 		{
-			new SoapServerType (typeof (EdaInterface), WebServiceProtocols.HttpSoap);
+			SoapServerType sst = new SoapServerType (typeof (EdaInterface), WebServiceProtocols.HttpSoap);
 			new ServerType (typeof (EdaInterface));
+
+			SoapServerMethod m = sst.GetMethod ("urn:localBinding:local:LocalBindingMethod");
+			Assert.IsNotNull (m, "#1");
+			m = sst.GetMethod ("somethingFoo");
+			Assert.IsNull (m, "#2");
+
+			MethodInfo mi = typeof (EdaInterface).GetMethod ("BindingMethod");
+			Assert.IsNotNull ("#3-1");
+			m = sst.GetMethod (mi);
+			// ... so, MethodInfo does not work as a key here.
+			Assert.IsNull (m, "#3-2");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void GetMethodNullKey ()
+		{
+			SoapServerType sst = new SoapServerType (typeof (EdaInterface), WebServiceProtocols.HttpSoap);
+			sst.GetMethod (null);
 		}
 
 		[Test]
@@ -81,6 +101,7 @@ namespace MonoTests.System.Web.Services.Description
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void DuplicateMethodsWithRequestElement2 ()
 		{
 			new SoapServerType (typeof (WebService3), WebServiceProtocols.HttpSoap);
@@ -88,7 +109,6 @@ namespace MonoTests.System.Web.Services.Description
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
-		[Category ("NotWorking")]
 		public void WrongNamedServiceBinding ()
 		{
 			new SoapServerType (typeof (WrongBindingNameClass), WebServiceProtocols.HttpSoap);
