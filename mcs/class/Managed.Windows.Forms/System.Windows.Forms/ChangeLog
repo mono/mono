@@ -1,3 +1,11 @@
+2007-05-08  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* Control.cs: Add InternalContains focus property, which hast the same
+	functionality of ContainsFocus, but also including implicit controls.
+	* ListViewItem.cs: Use InternalContainsFocus instead of ContainsFocus,
+	since we need to know if the focus is contained in our implicit
+	ItemControl when calculating Layout. Fixes part of #80888.
+
 2007-05-08  Everaldo Canuto  <everaldo@simios.org>
 
 	* ToolTip.cs: Remove center form string alignment as it must be align to

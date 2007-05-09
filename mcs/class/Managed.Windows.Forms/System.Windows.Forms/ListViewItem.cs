@@ -752,7 +752,7 @@ namespace System.Windows.Forms
 
 				SizeF sz = owner.DeviceContext.MeasureString (Text, Font);
 				if ((int) sz.Width > text_size.Width) {
-					if (Focused && owner.ContainsFocus) {
+					if (Focused && owner.InternalContainsFocus) {
 						int text_width = text_size.Width;
 						StringFormat format = new StringFormat ();
 						format.Alignment = StringAlignment.Center;

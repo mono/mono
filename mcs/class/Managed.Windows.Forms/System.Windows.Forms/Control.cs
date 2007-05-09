@@ -1120,6 +1120,26 @@ namespace System.Windows.Forms
 				return false;
 			}
 		}
+
+		// Looks for focus in child controls
+		// and also in the implicit ones
+		internal bool InternalContainsFocus {
+			get {
+				IntPtr focused_window;
+
+				focused_window = XplatUI.GetFocus();
+				if (IsHandleCreated) {
+					if (focused_window == Handle)
+						return true;
+
+					foreach (Control child_control in child_controls.GetAllControls ())
+						if (child_control.InternalContainsFocus)
+							return true;
+				}
+
+				return false;
+			}
+		}
 		
 		// Mouse is currently within the control's bounds
 		internal bool Entered {
