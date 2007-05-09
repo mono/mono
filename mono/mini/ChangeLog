@@ -1,5 +1,7 @@
 2007-05-09  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mini_method_compile): Remove unused coalesce_pass.
+
 	* method-to-ir.c (emit_stobj): Get rid of ip argument.
 	(mono_emit_call_args): Ditto.
 	(mono_emit_calli): Ditto.

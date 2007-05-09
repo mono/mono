@@ -10885,32 +10885,6 @@ mono_codegen (MonoCompile *cfg)
 }
 
 static void
-mono_coalesce_pass (MonoCompile *cfg)
-{
-#if 0
-	MonoBasicBlock *bb;
-	MonoInst *ins;
-
-	/* FIXME: Finish this */
-
-	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
-		if (cfg->verbose_level > 1) {
-			printf ("COALESCE BB%d:\n", bb->block_num);
-		}
-
-		for (ins = bb->code; ins; ins = ins->next) {
-			if ((ins->opcode == OP_MOVE) && get_vreg_to_inst (cfg, ins->dreg) && get_vreg_to_inst (cfg, ins->sreg1)) {
-				MonoLiveRange *ranged = &MONO_VARINFO (cfg, get_vreg_to_inst (cfg, ins->dreg)->inst_c0)->range;
-				MonoLiveRange *ranges = &MONO_VARINFO (cfg, get_vreg_to_inst (cfg, ins->sreg1)->inst_c0)->range;
-				if (ranged->first_use.abs_pos >= ranges->last_use.abs_pos)
-					;
-			}
-		}
-	}
-#endif
-}
-
-static void
 remove_critical_edges (MonoCompile *cfg) {
 	MonoBasicBlock *bb;
 	MonoBasicBlock *previous_bb;
@@ -11359,9 +11333,6 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 		cfg->comp_done &= ~MONO_COMP_LIVENESS;
 		if (!(cfg->comp_done & MONO_COMP_LIVENESS))
 			mono_analyze_liveness (cfg);
-
-		if (cfg->new_ir)
-			mono_coalesce_pass (cfg);
 
 		if (cfg->aliasing_info != NULL) {
 			mono_aliasing_deadce (cfg->aliasing_info);
