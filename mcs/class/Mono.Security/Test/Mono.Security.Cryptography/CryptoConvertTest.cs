@@ -264,10 +264,10 @@ namespace MonoTests.Mono.Security.Cryptography {
 			byte[] publicKey = CryptoConvert.ToCapiKeyBlob (rsa, false);
 			AssertEquals ("RSA-PublicKey", BitConverter.ToString (strongNamePublicKey, 12), BitConverter.ToString (publicKey));
 			
-			// TODO dsa (not implemented yet)
 			AsymmetricAlgorithm dsa = DSA.Create ();
-			AssertNull ("DSA-KeyPair", CryptoConvert.ToCapiKeyBlob (dsa, true));
-			AssertNull ("DSA-PublicKey", CryptoConvert.ToCapiKeyBlob (dsa, false));
+			dsa.FromXmlString (dsaKeyPairString);
+			AssertEquals ("DSA-KeyPair", dsaPrivBlob, CryptoConvert.ToCapiKeyBlob (dsa, true));
+			AssertEquals ("DSA-PublicKey", BitConverter.ToString (dsaPubBlob), BitConverter.ToString (CryptoConvert.ToCapiKeyBlob (dsa, false)));
 		}
 
 		[Test]
@@ -328,6 +328,232 @@ namespace MonoTests.Mono.Security.Cryptography {
 			rsa.FromXmlString (strongNamePublicKeyString);
 			publicKey = CryptoConvert.ToCapiPublicKeyBlob (rsa);
 			AssertEquals ("PublicKey-2", BitConverter.ToString (strongNamePublicKey, 12), BitConverter.ToString (publicKey));
+		}
+
+		/* DSA key tests */
+		static byte[] dsaPrivBlob = { 7, 2, 0, 0, 0, 34, 0, 0, 68, 83,
+			83, 50, 0, 4, 0, 0, 69, 144, 99, 249,
+			41, 174, 97, 185, 66, 236, 179, 197, 182, 101,
+			146, 165, 47, 36, 234, 199, 170, 99, 97, 8,
+			224, 141, 189, 97, 86, 96, 240, 53, 69, 135,
+			123, 169, 165, 64, 50, 51, 144, 131, 158, 151,
+			218, 224, 159, 194, 166, 107, 132, 201, 148, 74,
+			38, 62, 231, 221, 157, 216, 239, 66, 248, 68,
+			26, 23, 123, 253, 157, 123, 65, 199, 109, 138,
+			231, 217, 247, 170, 81, 51, 43, 252, 66, 210,
+			75, 127, 68, 147, 141, 213, 174, 251, 109, 152,
+			244, 113, 14, 194, 198, 222, 69, 157, 146, 154,
+			224, 158, 46, 181, 204, 251, 10, 124, 153, 26,
+			239, 105, 199, 53, 43, 51, 255, 118, 213, 58,
+			111, 212, 166, 235, 29, 143, 53, 193, 210, 7,
+			78, 198, 7, 3, 219, 0, 57, 81, 179, 46,
+			58, 180, 61, 222, 145, 109, 165, 23, 119, 162,
+			91, 55, 48, 230, 133, 54, 103, 58, 139, 99,
+			146, 149, 90, 197, 167, 60, 164, 35, 90, 168,
+			150, 138, 107, 17, 219, 191, 163, 4, 98, 13,
+			109, 98, 122, 178, 247, 46, 73, 124, 53, 228,
+			137, 21, 20, 45, 214, 217, 202, 51, 87, 45,
+			78, 190, 19, 209, 249, 13, 31, 88, 52, 108,
+			196, 110, 54, 19, 252, 189, 80, 216, 191, 222,
+			192, 10, 112, 231, 67, 104, 154, 205, 1, 172,
+			194, 226, 187, 60, 252, 104, 176, 27, 87, 244,
+			217, 166, 140, 245, 97, 187, 64, 188, 103, 129,
+			194, 56, 206, 61, 169, 66, 171, 49, 234, 206,
+			29, 141, 249, 110, 171, 127, 135, 23, 20, 58,
+			156, 16, 252, 185, 148, 20, 202, 87, 124, 160,
+			65, 169, 243, 32, 164, 19, 59, 58, 188, 109,
+			43, 1, 150, 0, 0, 0, 203, 217, 189, 181,
+			208, 230, 19, 165, 199, 206, 44, 204, 209, 156,
+			80, 26, 199, 66, 198, 13 };
+
+		static byte[] dsaPubBlob = { 6, 2, 0, 0, 0, 34, 0, 0, 68, 83,
+			83, 49, 0, 4, 0, 0, 69, 144, 99, 249,
+			41, 174, 97, 185, 66, 236, 179, 197, 182, 101,
+			146, 165, 47, 36, 234, 199, 170, 99, 97, 8,
+			224, 141, 189, 97, 86, 96, 240, 53, 69, 135,
+			123, 169, 165, 64, 50, 51, 144, 131, 158, 151,
+			218, 224, 159, 194, 166, 107, 132, 201, 148, 74,
+			38, 62, 231, 221, 157, 216, 239, 66, 248, 68,
+			26, 23, 123, 253, 157, 123, 65, 199, 109, 138,
+			231, 217, 247, 170, 81, 51, 43, 252, 66, 210,
+			75, 127, 68, 147, 141, 213, 174, 251, 109, 152,
+			244, 113, 14, 194, 198, 222, 69, 157, 146, 154,
+			224, 158, 46, 181, 204, 251, 10, 124, 153, 26,
+			239, 105, 199, 53, 43, 51, 255, 118, 213, 58,
+			111, 212, 166, 235, 29, 143, 53, 193, 210, 7,
+			78, 198, 7, 3, 219, 0, 57, 81, 179, 46,
+			58, 180, 61, 222, 145, 109, 165, 23, 119, 162,
+			91, 55, 48, 230, 133, 54, 103, 58, 139, 99,
+			146, 149, 90, 197, 167, 60, 164, 35, 90, 168,
+			150, 138, 107, 17, 219, 191, 163, 4, 98, 13,
+			109, 98, 122, 178, 247, 46, 73, 124, 53, 228,
+			137, 21, 20, 45, 214, 217, 202, 51, 87, 45,
+			78, 190, 19, 209, 249, 13, 31, 88, 52, 108,
+			196, 110, 54, 19, 252, 189, 80, 216, 191, 222,
+			192, 10, 112, 231, 67, 104, 154, 205, 1, 172,
+			194, 226, 187, 60, 252, 104, 176, 27, 87, 244,
+			217, 166, 140, 245, 97, 187, 64, 188, 103, 129,
+			194, 56, 206, 61, 169, 66, 171, 49, 234, 206,
+			29, 141, 249, 110, 171, 127, 135, 23, 20, 58,
+			156, 16, 185, 163, 1, 154, 216, 44, 43, 101,
+			67, 65, 35, 30, 70, 97, 44, 194, 46, 9,
+			182, 125, 162, 93, 231, 223, 50, 55, 14, 218,
+			93, 6, 176, 10, 195, 91, 83, 98, 73, 65,
+			88, 250, 7, 120, 0, 155, 35, 138, 54, 37,
+			80, 125, 44, 51, 25, 29, 198, 18, 107, 84,
+			60, 27, 227, 218, 32, 74, 62, 76, 222, 6,
+			76, 129, 254, 197, 53, 189, 4, 243, 203, 94,
+			73, 190, 102, 196, 88, 170, 17, 199, 119, 180,
+			205, 151, 184, 12, 168, 236, 81, 117, 49, 223,
+			204, 69, 50, 246, 230, 124, 57, 208, 75, 5,
+			178, 58, 7, 193, 224, 103, 60, 233, 2, 242,
+			82, 53, 252, 157, 202, 146, 231, 255, 250, 38,
+			150, 0, 0, 0, 203, 217, 189, 181, 208, 230,
+			19, 165, 199, 206, 44, 204, 209, 156, 80, 26,
+			199, 66, 198, 13 };
+
+		static string dsaKeyPairString = "<DSAKeyValue><P>66bUbzrVdv8zKzXHae8amXwK+8y1Lp7gmpKdRd7Gwg5x9Jht+67VjZNEf0vSQvwrM1Gq99nnim3HQXud/XsXGkT4Qu/Ynd3nPiZKlMmEa6bCn+Dal56DkDMyQKWpe4dFNfBgVmG9jeAIYWOqx+okL6WSZbbFs+xCuWGuKfljkEU=</P><Q>3j20Oi6zUTkA2wMHxk4H0sE1jx0=</Q><G>EJw6FBeHf6tu+Y0dzuoxq0KpPc44woFnvEC7YfWMptn0VxuwaPw8u+LCrAHNmmhD53AKwN6/2FC9/BM2bsRsNFgfDfnRE75OLVczytnWLRQVieQ1fEku97J6Ym0NYgSjv9sRa4qWqFojpDynxVqVkmOLOmc2heYwN1uidxelbZE=</G><Y>Jvr/55LKnfw1UvIC6Txn4MEHOrIFS9A5fOb2MkXM3zF1UeyoDLiXzbR3xxGqWMRmvkley/MEvTXF/oFMBt5MPkog2uMbPFRrEsYdGTMsfVAlNoojmwB4B/pYQUliU1vDCrAGXdoONzLf512ifbYJLsIsYUYeI0FDZSss2JoBo7k=</Y><Seed>DcZCxxpQnNHMLM7HpRPm0LW92cs=</Seed><PgenCounter>lg==</PgenCounter><X>ASttvDo7E6Qg86lBoHxXyhSUufw=</X></DSAKeyValue>";
+		static string dsaPubKeyString =  "<DSAKeyValue><P>66bUbzrVdv8zKzXHae8amXwK+8y1Lp7gmpKdRd7Gwg5x9Jht+67VjZNEf0vSQvwrM1Gq99nnim3HQXud/XsXGkT4Qu/Ynd3nPiZKlMmEa6bCn+Dal56DkDMyQKWpe4dFNfBgVmG9jeAIYWOqx+okL6WSZbbFs+xCuWGuKfljkEU=</P><Q>3j20Oi6zUTkA2wMHxk4H0sE1jx0=</Q><G>EJw6FBeHf6tu+Y0dzuoxq0KpPc44woFnvEC7YfWMptn0VxuwaPw8u+LCrAHNmmhD53AKwN6/2FC9/BM2bsRsNFgfDfnRE75OLVczytnWLRQVieQ1fEku97J6Ym0NYgSjv9sRa4qWqFojpDynxVqVkmOLOmc2heYwN1uidxelbZE=</G><Y>Jvr/55LKnfw1UvIC6Txn4MEHOrIFS9A5fOb2MkXM3zF1UeyoDLiXzbR3xxGqWMRmvkley/MEvTXF/oFMBt5MPkog2uMbPFRrEsYdGTMsfVAlNoojmwB4B/pYQUliU1vDCrAGXdoONzLf512ifbYJLsIsYUYeI0FDZSss2JoBo7k=</Y><Seed>DcZCxxpQnNHMLM7HpRPm0LW92cs=</Seed><PgenCounter>lg==</PgenCounter></DSAKeyValue>";
+
+		[Test]
+		public void FromCapiKeyBlobDSA ()
+		{
+			DSA dsa = CryptoConvert.FromCapiKeyBlobDSA (dsaPrivBlob);
+			AssertEquals ("KeyPair", dsaKeyPairString, dsa.ToXmlString (true));
+			AssertEquals ("PublicKey", dsaPubKeyString, dsa.ToXmlString (false));
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void FromCapiKeyBlobDSA_Null ()
+		{
+			DSA dsa = CryptoConvert.FromCapiKeyBlobDSA (null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void FromCapiKeyBlobDSA_InvalidOffset ()
+		{
+			DSA dsa = CryptoConvert.FromCapiKeyBlobDSA (new byte [0], 0);
+		}
+
+		[Test]
+		[ExpectedException (typeof (CryptographicException))]
+		public void FromCapiKeyBlobDSA_UnknownBlob ()
+		{
+			byte[] blob = new byte [334];
+			DSA dsa = CryptoConvert.FromCapiKeyBlobDSA (blob, 0);
+		}
+
+		[Test]
+		public void FromCapiPrivateKeyBlobDSA ()
+		{
+			DSA dsa = CryptoConvert.FromCapiPrivateKeyBlobDSA (dsaPrivBlob, 0);
+			AssertEquals ("KeyPair", dsaKeyPairString, dsa.ToXmlString (true));
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void FromCapiPrivateKeyBlobDSA_Null ()
+		{
+			DSA dsa = CryptoConvert.FromCapiPrivateKeyBlobDSA (null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void FromCapiPrivateKeyBlobDSA_InvalidOffset ()
+		{
+			DSA dsa = CryptoConvert.FromCapiPrivateKeyBlobDSA (new byte[0], 0);
+		}
+
+		[Test]
+		[ExpectedException (typeof (CryptographicException))]
+		public void FromCapiPrivateKeyBlobDSA_Invalid ()
+		{
+			byte[] blob = new byte[334];
+			DSA dsa = CryptoConvert.FromCapiPrivateKeyBlobDSA (blob, 0);
+		}
+
+		[Test]
+		public void FromCapiPublicKeyBlobDSA ()
+		{
+			DSA dsa = CryptoConvert.FromCapiPublicKeyBlobDSA (dsaPubBlob, 0);
+			AssertEquals ("PublicKey", dsaPubKeyString, dsa.ToXmlString (false));
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void FromCapiPublicKeyBlobDSA_Null ()
+		{
+			DSA dsa = CryptoConvert.FromCapiPublicKeyBlobDSA (null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void FromCapiPublicKeyBlobDSA_InvalidOffset ()
+		{
+			DSA dsa = CryptoConvert.FromCapiPublicKeyBlobDSA (new byte[0], 0);
+		}
+
+		[Test]
+		[ExpectedException (typeof (CryptographicException))]
+		public void FromCapiPublicKeyBlobDSA_Invalid ()
+		{
+			byte[] blob = new byte[400];
+			DSA dsa = CryptoConvert.FromCapiPublicKeyBlobDSA (blob, 0);
+		}
+
+		[Test]
+		public void ToCapiKeyBlob_DSA ()
+		{
+			DSA dsa = DSA.Create ();
+			dsa.FromXmlString (dsaKeyPairString);
+			byte[] keypair = CryptoConvert.ToCapiKeyBlob (dsa, true);
+			AssertEquals ("KeyPair", dsaPrivBlob, keypair);
+
+			byte[] pubkey = CryptoConvert.ToCapiKeyBlob (dsa, false);
+			AssertEquals ("PublicKey", BitConverter.ToString (dsaPubBlob), BitConverter.ToString (pubkey));
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void ToCapiKeyBlob_DSANull ()
+		{
+			DSA dsa = null;
+			CryptoConvert.ToCapiKeyBlob (dsa, false);
+		}
+
+		[Test]
+		public void ToCapiPrivateKeyBlob_DSA ()
+		{
+			DSA dsa = DSA.Create ();
+			dsa.FromXmlString (dsaKeyPairString);
+			byte[] keypair = CryptoConvert.ToCapiPrivateKeyBlob (dsa);
+			AssertEquals ("KeyPair", dsaPrivBlob, keypair);
+		}
+
+		[Test]
+		[ExpectedException (typeof (CryptographicException))]
+		public void ToCapiPrivateKeyBlob_PublicKeyOnly_DSA ()
+		{
+			DSA dsa = DSA.Create ();
+			dsa.FromXmlString (dsaPubKeyString);
+			byte[] pubkey = CryptoConvert.ToCapiPrivateKeyBlob (dsa);
+		}
+
+		[Test]
+		public void ToCapiPublicKeyBlob_DSA ()
+		{
+			DSA dsa = DSA.Create ();
+			// full keypair
+			dsa.FromXmlString (dsaKeyPairString);
+			byte[] pubkey = CryptoConvert.ToCapiPublicKeyBlob (dsa);
+			AssertEquals ("PublicKey-1", BitConverter.ToString (dsaPubBlob), BitConverter.ToString (pubkey));
+
+			// public key only
+			dsa.FromXmlString (dsaPubKeyString);
+			pubkey = CryptoConvert.ToCapiPublicKeyBlob (dsa);
+			AssertEquals ("PublicKey-2", BitConverter.ToString (dsaPubBlob), BitConverter.ToString (pubkey));
 		}
 
 		[Test]

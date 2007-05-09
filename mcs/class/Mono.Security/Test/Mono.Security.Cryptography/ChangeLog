@@ -1,3 +1,7 @@
+2007-05-08  Randolph Chung  <tausq@debian.org>
+
+	* CryptoConvertTest.cs: Add tests for DSA conversion functions.
+
 2006-10-04  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* PKCS1Test.cs: Ensure the latest changes didn't break some SSL3 
