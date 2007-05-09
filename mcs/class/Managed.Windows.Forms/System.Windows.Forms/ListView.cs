@@ -1523,7 +1523,10 @@ namespace System.Windows.Forms
 				keysearch_text = string.Empty;
 			}
 			
-			keysearch_text += (char) ke.KeyData;
+			if (!Char.IsLetterOrDigit ((char)ke.KeyCode))
+				return false;
+
+			keysearch_text += (char)ke.KeyCode;
 			keysearch_tickcnt = current_tickcnt;
 
 			int start = FocusedItem == null ? 0 : FocusedItem.Index;
@@ -1790,6 +1793,9 @@ namespace System.Windows.Forms
 			if (ke.Handled || Items.Count == 0 || !item_control.Visible)
 				return;
 
+			if (ke.Alt || ke.Control)
+				return;
+				
 			ke.Handled = KeySearchString (ke);
 		}
 
