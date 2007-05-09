@@ -1,3 +1,8 @@
+2007-05-08  Randolph Chung  <tausq@debian.org>
+
+	* DSACryptoServiceProviderTest.cs: Remove "NotWorking" annotation
+	for the blob tests that should now pass.
+
 2007-05-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DSATest.cs: Add test case where we import a key that has a null Y
