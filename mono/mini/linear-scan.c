@@ -257,15 +257,14 @@ compare_by_interval_start_pos_func (gconstpointer a, gconstpointer b)
 	MonoMethodVar *v1 = (MonoMethodVar*)a;
 	MonoMethodVar *v2 = (MonoMethodVar*)b;
 
-	if (v1->interval->range && v2->interval->range)
+	if (v1 == v2)
+		return 0;
+	else if (v1->interval->range && v2->interval->range)
 		return v1->interval->range->from - v2->interval->range->from;
+	else if (v1->interval->range)
+		return -1;
 	else
-		if (v1 == v2)
-			return 0;
-		else if (v1->interval->range)
-			return -1;
-		else
-			return 1;
+		return 1;
 }
 
 #if 0
