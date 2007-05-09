@@ -1,3 +1,8 @@
+2007-05-09  Marek Habersack  <mhabersack@novell.com>
+
+	* DateTimeTest.cs: added tests for the "HH':'mm tt MM/dd/yyyy"
+	parse format.
+
 2007-04-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TypeTest.cs: Added test for Equals with null argument.

@@ -702,6 +702,23 @@ public class DateTimeTest : Assertion
 		t1 = DateTime.Parse ("Monday, 25 February 2002 05:25",
 			new CultureInfo ("hi-IN"));
 		AssertEquals ("H18", t2.Ticks, t1.Ticks);
+
+		// ASP.NET QuickStarts
+		t2 = new DateTime (2002, 10, 7, 15, 6, 0);
+		t1 = DateTime.Parse ("3:06 PM 10/7/2002");
+		AssertEquals ("H19a", t2.Ticks, t1.Ticks);
+
+		t2 = new DateTime (2002, 10, 7, 15, 6, 0);
+		t1 = DateTime.Parse ("3:06 pm 10/7/2002");
+		AssertEquals ("H19b", t2.Ticks, t1.Ticks);
+		
+		t2 = new DateTime (2002, 10, 7, 3, 6, 0);
+		t1 = DateTime.Parse ("3:06 AM 10/7/2002");
+		AssertEquals ("H19c", t2.Ticks, t1.Ticks);
+
+		t2 = new DateTime (2002, 10, 7, 3, 6, 0);
+		t1 = DateTime.Parse ("3:06 am 10/7/2002");
+		AssertEquals ("H19d", t2.Ticks, t1.Ticks);
 	}
 
 	[Test]
