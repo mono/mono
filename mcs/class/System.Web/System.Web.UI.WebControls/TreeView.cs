@@ -1485,15 +1485,16 @@ namespace System.Web.UI.WebControls
 
 		private void AddChildrenPadding (HtmlTextWriter writer, TreeNode node)
 		{
-			if (nodeStyle == null)
-				return;
-			Unit cnp = nodeStyle.ChildNodesPadding;
-			double value;
+			int level = node.Depth;
+			Unit cnp = Unit.Empty;
 			
-			if (cnp.IsEmpty || (value = cnp.Value) == 0)
-				return;
-
-			if (cnp.Type != UnitType.Pixel)
+			if (levelStyles != null && level < levelStyles.Count)
+				cnp = levelStyles [level].ChildNodesPadding;
+			if (cnp.IsEmpty && nodeStyle != null)
+				cnp = nodeStyle.ChildNodesPadding;
+			
+			double value;
+			if (cnp.IsEmpty || (value = cnp.Value) == 0 || cnp.Type != UnitType.Pixel)
 				return;
 
 			writer.RenderBeginTag (HtmlTextWriterTag.Table);

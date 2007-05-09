@@ -46,7 +46,10 @@ namespace System.Web.UI.WebControls
 		
 		public int Add (TreeNodeStyle style)
 		{
-			style.Font.Underline = false;
+			// It looks weird, but it seems that there must be at least one style saved in the control state, or
+			// otherwise tests fail. The line below makes sure that, whether or not modified by user, the Underline
+			// property will always have unaltered value _and_ the style collection will contain at least one item.
+			style.Font.Underline = style.Font.Underline;
 			return ((IList)this).Add (style);
 		}
 		
