@@ -75,7 +75,6 @@ namespace System.Windows.Forms {
 
 				string_format = new StringFormat();
 				string_format.LineAlignment = StringAlignment.Center;
-				string_format.Alignment = StringAlignment.Center;
 				string_format.FormatFlags = StringFormatFlags.NoWrap;
 				string_format.HotkeyPrefix = HotkeyPrefix.Hide;
 

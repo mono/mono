@@ -1,3 +1,8 @@
+2007-05-08  Everaldo Canuto  <everaldo@simios.org>
+
+	* ToolTip.cs: Remove center form string alignment as it must be align to
+	left.
+
 2007-05-08  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStripItemCollection.cs: Set the new item's parent and owner
