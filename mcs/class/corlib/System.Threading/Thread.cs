@@ -95,14 +95,14 @@ namespace System.Threading {
 		private IntPtr serialized_ui_culture_info;
 		private int serialized_ui_culture_info_len;
 		private ExecutionContext _ec;
+		private bool thread_dump_requested;
+		private IntPtr end_stack;
+		private bool thread_interrupt_requested;
+		private byte apartment_state = (byte)ApartmentState.Unknown;
 		/* 
 		 * These fields are used to avoid having to increment corlib versions
 		 * when a new field is added to the unmanaged MonoThread structure.
 		 */
-		private IntPtr unused1;
-		private IntPtr unused2;
-		private IntPtr unused3;
-		private IntPtr unused4;
 		private IntPtr unused5;
 		private IntPtr unused6;
 		private IntPtr unused7;
@@ -305,11 +305,22 @@ namespace System.Threading {
 #endif
 		public ApartmentState ApartmentState {
 			get {
-				return(ApartmentState.Unknown);
+				return (ApartmentState)apartment_state;
 			}
-			
-			set {
-				// FIXME: Implement setter.
+
+			set	{
+#if NET_2_0
+				TrySetApartmentState (value);
+#else
+				if (ThreadState != ThreadState.Unstarted)
+					throw new ThreadStateException ("Thread was in an invalid state for the operation being executed.");
+
+				if (value != ApartmentState.STA && value != ApartmentState.MTA)
+					throw new ArgumentException ("value is not a valid apartment state.");
+
+				if ((ApartmentState)apartment_state == ApartmentState.Unknown)
+					apartment_state = (byte)value;
+#endif
 			}
 		}
 
@@ -870,40 +881,29 @@ namespace System.Threading {
 		{
 			throw new NotImplementedException ();
 		}
-
-		//
-		// We disable warning 618, because we are accessing the
-		// empty property ApartmentState which produces an Obsolete
-		// message, but since its an empty routine needed for 1.x
-		// we use it.
-		//
-		// Maybe we should later turn these into internal methods for 1.x
-		// instead and have the property call these.
-		
 		
 		public ApartmentState GetApartmentState ()
 		{
-			return this.ApartmentState;
+			return (ApartmentState)apartment_state;
 		}
 
 		public void SetApartmentState (ApartmentState state)
 		{
-			this.ApartmentState = state;
+			if (!TrySetApartmentState (state))
+				throw new InvalidOperationException ("Failed to set the specified COM apartment state.");
 		}
 
-		[MonoTODO]
-		public bool TrySetApartmentState (ApartmentState state)
+		public bool TrySetApartmentState (ApartmentState state) 
 		{
-			try {
-				this.ApartmentState = state;
-				return true;
-			}
-			catch (ArgumentException) {
-				throw;
-			}
-			catch {
+			if (ThreadState != ThreadState.Unstarted)
+				throw new ThreadStateException ("Thread was in an invalid state for the operation being executed.");
+
+			if ((ApartmentState)apartment_state != ApartmentState.Unknown)
 				return false;
-			}
+
+			apartment_state = (byte)state;
+
+			return true;
 		}
 		
 		[ComVisible (false)]

@@ -643,6 +643,61 @@ namespace MonoTests.System.Threading {
 			}
 		}
 	}
+
+
+	[TestFixture]
+	public class ThreadApartmentTest : Assertion
+	{
+		void Start ()
+		{
+		}
+
+		[Test]
+		public void TestApartmentState ()
+		{
+			Thread t1 = new Thread (Start);
+			Thread t2 = new Thread (Start);
+			Thread t3 = new Thread (Start);
+
+			Assert ("Thread1 Default", t1.ApartmentState == ApartmentState.Unknown);
+			Assert ("Thread2 Default", t2.ApartmentState == ApartmentState.Unknown);
+			Assert ("Thread3 Default", t3.ApartmentState == ApartmentState.Unknown);
+
+			t1.ApartmentState = ApartmentState.STA;
+			Assert ("Thread1 Set Once", t1.ApartmentState == ApartmentState.STA);
+			t1.ApartmentState = ApartmentState.MTA;
+			Assert ("Thread1 Set Twice", t1.ApartmentState == ApartmentState.STA);
+
+			t2.ApartmentState = ApartmentState.MTA;
+			Assert ("Thread2 Set Once", t2.ApartmentState == ApartmentState.MTA);
+			t2.ApartmentState = ApartmentState.STA;
+			Assert ("Thread2 Set Twice", t2.ApartmentState == ApartmentState.MTA);
+
+			bool exception_occured = false;
+			try {
+				t3.ApartmentState = ApartmentState.Unknown;
+			}
+			catch (Exception) {
+				exception_occured = true;
+			}
+			Assert ("Thread3 Set Invalid", t3.ApartmentState == ApartmentState.Unknown);
+#if NET_2_0
+			Assert ("Thread3 Set Invalid Exception Occured", !exception_occured);
+#else
+			Assert ("Thread3 Set Invalid Exception Occured", exception_occured);
+#endif
+
+			t1.Start ();
+			exception_occured = false;
+			try {
+				t1.ApartmentState = ApartmentState.STA;
+			}
+			catch (Exception) {
+				exception_occured = true;
+			}
+			Assert ("Thread1 Started Invalid Exception Occured", exception_occured);
+		}
+	}
 	
 	public class TestUtil
 	{

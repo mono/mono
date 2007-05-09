@@ -1,3 +1,7 @@
+2007-05-09  Jonathan Chambers  <joncham@gmail.com>
+
+	* Thread.cs: Implement ApartmentState related items.
+
 2007-05-02  Dick Porter  <dick@ximian.com>
 
 	* ReaderWriterLock.cs: ReaderWriterLock derives from

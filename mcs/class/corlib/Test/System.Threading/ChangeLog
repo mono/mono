@@ -1,3 +1,7 @@
+2007-05-09  Jonathan Chambers  <joncham@gmail.com>
+
+	* Thread.cs: Add ApartmentState related tests.
+
 2007-04-03  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* MutexTest.cs: Enabled test for bug #79358.
