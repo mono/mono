@@ -516,6 +516,7 @@ namespace System.Data.SqlClient
 			return true;
 		}
 
+		[MonoNotSupported ("")] // Note that base.ShouldSerialize() is called but not implemented
 		public override bool ShouldSerialize (string keyword)
 		{
 			if (!ContainsKey (keyword))

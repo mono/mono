@@ -1,3 +1,7 @@
+2007-05-09 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* SqlConnectionStringBuilder.cs: added MonoNotSupported attribute.
+
 2007-04-03  Amit Biswas  <amit@amitbiswas.com>
 
 	* SqlDataReader.cs (GetSqlBytes, GetProviderSpecificFieldType)
