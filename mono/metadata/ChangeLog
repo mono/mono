@@ -1,3 +1,16 @@
+2007-05-09  Jonathan Chambers  <joncham@gmail.com>
+
+	* threads.c: Initialize Thread.AprtmentState and set on Thread.Start
+	in start_wrapper. Added mono_thread_init_apartment_state and
+	mono_thread_cleanup_apartment_state.
+	* object.c: Initialize thread apartment state on main thread
+	by checking for STAThreadAttribute on entry point.
+	* object-internals.h: Add apartment_state field to MonoThread.
+	* threads-types.h: Add unmanaged definition of 
+	System.Threading.ApartmentState, MonoThreadApartmentState.
+	
+	Code is contributed under MIT/X11 license.
+	
 2007-05-08  Jonathan Chambers  <joncham@gmail.com>
 
 	* class.c: Fix windows build.
