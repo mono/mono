@@ -1706,9 +1706,10 @@ namespace System.Windows.Forms
 		{
 			if (msg.Msg == (int)Msg.WM_KEYDOWN) {
 				Keys key_data = (Keys)msg.WParam.ToInt32();
-				if (HandleNavKeys (key_data))
-					return true;
+				
+				HandleNavKeys (key_data);
 			} 
+			
 			return base.InternalPreProcessMessage (ref msg);
 		}
 
