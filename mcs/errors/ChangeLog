@@ -1,3 +1,10 @@
+2007-05-08  Scott Peterson  <lunchtimemama@gmail.com>
+	* gcs1526.cs:
+	* gcs1526-2.cs:
+	* gcs1031.cs:
+	  Make sure that Linq syntax fails correctly
+	  when not compiling for Linq.
+
 2007-05-02  Raja R Harinath  <rharinath@novell.com>
 
 	* cs1534-2.cs: New test.  Ensure that the error handling isn't
