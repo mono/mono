@@ -45,9 +45,9 @@ namespace System.Web.UI {
 	public class ControlBuilder
 	{
 		internal static BindingFlags flagsNoCase = BindingFlags.Public |
-							   BindingFlags.Instance |
-							   BindingFlags.Static |
-							   BindingFlags.IgnoreCase;
+			BindingFlags.Instance |
+			BindingFlags.Static |
+			BindingFlags.IgnoreCase;
 
 		TemplateParser parser;
 		internal ControlBuilder parentBuilder;
@@ -237,21 +237,21 @@ namespace System.Web.UI {
 
 		public virtual void AppendLiteralString (string s)
 		{
-			if (s == null || s == "")
+			if (s == null || s.Length == 0)
 				return;
 
 			if (childrenAsProperties || !isIParserAccessor) {
 				if (defaultPropertyBuilder != null) {
 					defaultPropertyBuilder.AppendLiteralString (s);
-				} else if (s.Trim () != "") {
-					throw new HttpException ("Literal content not allowed for " + tagName + " " +
-								GetType () + " \"" + s + "\"");
+				} else if (s.Trim ().Length != 0) {
+					throw new HttpException (String.Format ("Literal content not allowed for '{0}' {1} \"{2}\"",
+										tagName, GetType (), s));
 				}
 
 				return;
 			}
 			
-			if (!AllowWhitespaceLiterals () && s.Trim () == "")
+			if (!AllowWhitespaceLiterals () && s.Trim ().Length == 0)
 				return;
 
 			if (HtmlDecodeLiterals ())
@@ -527,10 +527,9 @@ namespace System.Web.UI {
 			} else if (atts.Length > 0) {
 				ParseChildrenAttribute att = (ParseChildrenAttribute) atts [0];
 				childrenAsProperties = att.ChildrenAsProperties;
-				if (childrenAsProperties && att.DefaultProperty != "") {
+				if (childrenAsProperties && att.DefaultProperty.Length != 0)
 					defaultPropertyBuilder = CreatePropertyBuilder (att.DefaultProperty,
 											parser, null);
-				}
 			}
 		}
 
@@ -560,7 +559,7 @@ namespace System.Web.UI {
 
 		internal string GetNextID (string proposedID)
 		{
-			if (proposedID != null && proposedID.Trim () != "")
+			if (proposedID != null && proposedID.Trim ().Length != 0)
 				return proposedID;
 
 			return "_bctrl_" + nextID++;
@@ -574,15 +573,26 @@ namespace System.Web.UI {
 		{
 			ControlBuilder childBuilder = null;
 			if (childrenAsProperties) {
-				if (defaultPropertyBuilder == null) {
+				if (defaultPropertyBuilder == null)
 					childBuilder = CreatePropertyBuilder (tagid, parser, atts);
-				} else {
-					childBuilder = defaultPropertyBuilder.CreateSubBuilder (tagid, atts,
-											null, parser, location);
+				else {
+					if (defaultPropertyBuilder.TagName == tagid) {
+						// The child tag is the same what our default property name. Act as if there was
+						// no default property builder, or otherwise we'll end up with invalid nested
+						// builder call.
+						defaultPropertyBuilder = null;
+						childBuilder = CreatePropertyBuilder (tagid, parser, atts);
+					} else
+						childBuilder = defaultPropertyBuilder.CreateSubBuilder (tagid, atts,
+													null, parser,
+													location);
 				}
 				return childBuilder;
 			}
 
+			if (tagName == tagid)
+				return null;
+			
 			childType = GetChildControlType (tagid, atts);
 			if (childType == null)
 				return null;

@@ -1,3 +1,15 @@
+2007-05-09  Marek Habersack  <mhabersack@novell.com>
+
+	* CollectionBuilder.cs: formatting changes
+
+	* ControlBuilder.cs: if a control enables children as properties,
+	has a default property and parser encounters a child tag/container
+	with the default property name, discard the default property
+	builder in order to avoid invalid sub builder invocation. An
+	example is: <asp:DropDownList><Items></Items></asp:DropDownList>
+	Formatting changes.
+	When checking for empty string, use Length not comparison with ""
+	
 2007-05-08  Marek Habersack  <mhabersack@novell.com>
 
 	* CssStyleCollection.cs: put the style in the bag each time a key

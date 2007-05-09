@@ -63,15 +63,17 @@ namespace System.Web.UI
 					   string tagName,
 					   string id,
 					   IDictionary attribs)
-		{
+		{			
 			base.Init (parser, parentBuilder, type, tagName, id, attribs);
 
 			PropertyInfo prop = parentBuilder.ControlType.GetProperty (tagName, flagsNoCase);
 			SetControlType (prop.PropertyType);
 
 			MemberInfo[] mems = ControlType.GetMember ("Item", MemberTypes.Property, flagsNoCase & ~BindingFlags.IgnoreCase);
-			if (mems.Length > 0) prop = (PropertyInfo) mems [0];
-			else throw new HttpException ("Collection of type '" + ControlType + "' does not have an indexer.");
+			if (mems.Length > 0)
+				prop = (PropertyInfo) mems [0];
+			else
+				throw new HttpException ("Collection of type '" + ControlType + "' does not have an indexer.");
 			
 			elementType = prop.PropertyType;
 		}
