@@ -182,7 +182,9 @@ namespace Mono.Security {
 			// to support both UTCTime and GeneralizedTime (and not so common format)
 			string mask = null;
 			int year;
+#if !NET_2_0
 			bool utc = true;
+#endif
 			switch (t.Length) {
 				case 11:
 					// illegal format, still it's supported for compatibility
@@ -213,7 +215,9 @@ namespace Mono.Security {
 					t = String.Format ("{0}{1}{2}{3}{4}:{5}{6}", century, t.Substring (0, 12), sign, 
 						t[13], t[14], t[15], t[16]);
 					mask = "yyyyMMddHHmmsszzz";
+#if !NET_2_0
 					utc = false;
+#endif
 					break;
 			}
 #if NET_2_0
