@@ -899,7 +899,11 @@ namespace Mono.Security.Protocol.Tls
 
 		public override void Close()
 		{
+#if NET_2_0
+			base.Close ();
+#else
 			((IDisposable)this).Dispose();
+#endif
 		}
 
 		public override void Flush()
@@ -1143,13 +1147,17 @@ namespace Mono.Security.Protocol.Tls
 			this.Dispose(false);
 		}
 
+#if !NET_2_0
 		public void Dispose()
 		{
 			this.Dispose(true);
 			GC.SuppressFinalize(this);
 		}
 
-		protected virtual void Dispose(bool disposing)
+		protected virtual void Dispose (bool disposing)
+#else
+		protected override void Dispose (bool disposing)
+#endif
 		{
 			if (!this.disposed)
 			{
@@ -1175,6 +1183,9 @@ namespace Mono.Security.Protocol.Tls
 				}
 
 				this.disposed = true;
+#if NET_2_0
+				base.Dispose (disposing);
+#endif
 			}
 		}
 

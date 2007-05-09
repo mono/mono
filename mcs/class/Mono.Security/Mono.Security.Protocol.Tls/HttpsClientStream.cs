@@ -5,7 +5,7 @@
 // Author:
 //      Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2004-2006 Novell, Inc. (http://www.novell.com)
+// Copyright (C) 2004-2007 Novell, Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,6 +30,7 @@
 using System;
 using System.IO;
 using System.Net;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 
 namespace Mono.Security.Protocol.Tls {
@@ -56,7 +57,17 @@ namespace Mono.Security.Protocol.Tls {
                         // also saved from reflection
                         base.CheckCertRevocationStatus = ServicePointManager.CheckCertificateRevocationList;
 #endif
-                }
+#if NET_2_0
+			ClientCertSelection += delegate (X509CertificateCollection clientCerts, X509Certificate serverCertificate,
+				string targetHost, X509CertificateCollection serverRequestedCertificates) {
+				return ((clientCerts == null) || (clientCerts.Count == 0)) ? null : clientCerts [0];
+			};
+			PrivateKeySelection += delegate (X509Certificate certificate, string targetHost) {
+				X509Certificate2 cert = (certificate as X509Certificate2);
+				return (cert == null) ? null : cert.PrivateKey;
+			};
+#endif
+               }
 
 		public bool TrustFailure {
 			get { 
