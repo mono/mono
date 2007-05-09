@@ -283,8 +283,15 @@ void GC_stop_world()
 #         endif
 	  continue;
 	}
-	if (SuspendThread(thread_table[i].handle) == (DWORD)-1)
-	  ABORT("SuspendThread failed");
+	if (SuspendThread(thread_table[i].handle) == (DWORD)-1) {
+          thread_table[i].stack_base = 0; /* prevent stack from being pushed */
+#         ifndef CYGWIN32
+            /* this breaks pthread_join on Cygwin, which is guaranteed to  */
+	    /* only see user pthreads 					   */
+	    thread_table[i].in_use = FALSE;
+	    CloseHandle(thread_table[i].handle);
+#         endif
+	}
 #     endif
       thread_table[i].suspended = TRUE;
     }
