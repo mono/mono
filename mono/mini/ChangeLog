@@ -1,5 +1,7 @@
 2007-05-09  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (compare_by_interval_start_pos_func): Fix comparison of empty intervals.
+
 	* mini-codegen.c (mono_spillvar_offset): Avoid an assert here.
 
 	* method-to-ir.c (mono_method_to_ir2): Don't print after-method-to-ir IR in inlined

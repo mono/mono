@@ -8560,13 +8560,14 @@ compare_by_interval_start_pos_func (gconstpointer a, gconstpointer b)
 	MonoMethodVar *v1 = (MonoMethodVar*)a;
 	MonoMethodVar *v2 = (MonoMethodVar*)b;
 
-	if (v1->interval->range && v2->interval->range)
+	if (v1 == v2)
+		return 0;
+	else if (v1->interval->range && v2->interval->range)
 		return v1->interval->range->from - v2->interval->range->from;
+	else if (v1->interval->range)
+		return -1;
 	else
-		if (v1 == v2)
-			return 0;
-		else
-			return 1;
+		return 1;
 }
 
 #if 0
@@ -8609,6 +8610,19 @@ mono_allocate_stack_slots_full2 (MonoCompile *cfg, gboolean backward, guint32 *s
 	}
 
 	vars = g_list_sort (g_list_copy (vars), compare_by_interval_start_pos_func);
+
+	/* Sanity check */
+	/*
+	i = 0;
+	for (unhandled = vars; unhandled; unhandled = unhandled->next) {
+		MonoMethodVar *current = unhandled->data;
+
+		if (current->interval->range) {
+			g_assert (current->interval->range->from >= i);
+			i = current->interval->range->from;
+		}
+	}
+	*/
 
 	offset = 0;
 	*stack_align = 0;
@@ -8690,6 +8704,11 @@ mono_allocate_stack_slots_full2 (MonoCompile *cfg, gboolean backward, guint32 *s
 			}
 			else
 				pos = current->interval->range->from;
+
+			LSCAN_DEBUG (printf ("process R%d ", inst->dreg));
+			if (current->interval->range)
+				LSCAN_DEBUG (mono_linterval_print (current->interval));
+			LSCAN_DEBUG (printf ("\n"));
 
 			/* Check for intervals in active which expired or inactive */
 			changed = TRUE;
