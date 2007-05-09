@@ -143,6 +143,9 @@ namespace System
 			// For example, the pattern below is for Japanese.
 			"yyyy'\u5E74'MM'\u6708'dd'\u65E5' HH'\u6642'mm'\u5206'ss'\u79D2'",
 
+			// This one is parsed for all cultures
+			"HH':'mm 'PM' MM/dd/yyyy",
+
 /*
 			// Full date and time
 			"F", "G", "r", "s", "u", "U",
