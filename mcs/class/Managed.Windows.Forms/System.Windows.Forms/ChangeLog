@@ -1,3 +1,8 @@
+2007-05-10  Andreia Gaita  <avidigal@novell.com>
+
+	* TableLayoutSettings.cs: A big doh! fix and bowing down of head in 
+	shame. (I blame my ever-persisting and annoying cold)
+
 2007-05-09  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ListView.cs: Don't eat navigation keys.  Let them flow through to

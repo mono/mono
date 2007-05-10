@@ -265,10 +265,10 @@ namespace System.Windows.Forms
 			foreach (KeyValuePair <object, int> control in columns) {
 				ControlInfo info = new ControlInfo();
 				info.Control = control.Key;
-				info.Col = GetColumn(control);
-				info.ColSpan = GetColumnSpan (control);
-				info.Row = GetRow (control);
-				info.RowSpan = GetRowSpan (control);
+				info.Col = GetColumn(control.Key);
+				info.ColSpan = GetColumnSpan (control.Key);
+				info.Row = GetRow (control.Key);
+				info.RowSpan = GetRowSpan (control.Key);
 				list.Add (info);
 			}
 			return list;
