@@ -1167,7 +1167,7 @@ namespace System.Web.UI
 
 		public virtual bool HasControls ()
 		{
-		    return (_controls != null && _controls.Count > 0);
+			return (_controls != null && _controls.Count > 0);
 		}
 
 #if NET_2_0

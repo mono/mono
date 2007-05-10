@@ -370,8 +370,11 @@ namespace System.Web.UI.WebControls {
 
 #if !NET_2_0
 			IEnumerable list = DataSourceResolver.ResolveDataSource (DataSource, DataMember);
-			PerformDataBinding (list);
+#else
+			IEnumerable list = GetData ().ExecuteSelect (DataSourceSelectArguments.Empty);
 #endif
+			PerformDataBinding (list);
+
 		}
 
 #if NET_2_0
@@ -470,7 +473,10 @@ namespace System.Web.UI.WebControls {
 		[MonoTODO ("why override?")]
 		protected override void PerformSelect ()
 		{
-			base.PerformSelect ();
+			OnDataBinding (EventArgs.Empty);
+			RequiresDataBinding = false;
+			MarkAsDataBound ();
+			OnDataBound (EventArgs.Empty);
 		}
 
 		protected internal override void RenderContents (HtmlTextWriter writer)

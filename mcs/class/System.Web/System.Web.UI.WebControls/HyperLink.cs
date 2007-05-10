@@ -109,7 +109,7 @@ namespace System.Web.UI.WebControls {
 #endif		
 		override void RenderContents (HtmlTextWriter w)	
 		{
-			if (HasControls ()) {
+			if (HasControls () || HasRenderMethodDelegate ()) {
 				base.RenderContents (w);
 				return;
 			}

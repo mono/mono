@@ -211,12 +211,11 @@ namespace System.Web.UI.WebControls {
 #endif		
 		override void RenderContents (HtmlTextWriter writer)
 		{
-			if (HasControls ()) {
+			if (Rows.Count > 0) {
 				writer.Indent++;
-				foreach (Control c in Controls) {
-					c.RenderControl (writer);
-				}
-
+				foreach (TableRow row in Rows)
+					if (row != null)
+						row.RenderControl (writer);
 				writer.Indent--;
 			}
 		}

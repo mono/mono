@@ -183,7 +183,7 @@ namespace System.Web.UI.WebControls {
 #endif		
 		override void RenderContents (HtmlTextWriter writer)
 		{
-			if (HasControls ())
+			if (HasControls () || HasRenderMethodDelegate ())
 				base.RenderContents (writer);
 			else
 				writer.Write (Text);

@@ -1,5 +1,17 @@
 2007-05-10  Marek Habersack  <mhabersack@novell.com>
 
+	* Table.cs: render rows, not controls
+
+	* HyperLink.cs: RenderContents must check if the render method
+	delegate is present and, if yes, call the base RenderContents.
+
+	* LinkButton.cs: as above.
+
+	* Label.cs: as above.
+
+	* TableCell.cs: as above.
+	This change makes the HeaderTemplate in the Wizard control work.
+	
 	* Wizard.cs: if a next/previous step handler modifies
 	ActiveStepIndex do not, respectively, increase/decrease the
 	current step, but use whatever was set in the handler.
