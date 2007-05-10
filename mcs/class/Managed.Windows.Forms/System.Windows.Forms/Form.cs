@@ -1808,7 +1808,7 @@ namespace System.Windows.Forms {
 				XplatUI.SetMenu(window.Handle, menu);
 			}
 
-			OnLoad(EventArgs.Empty);
+			OnLoadInternal (EventArgs.Empty);
 			
 			// Send initial location
 			OnLocationChanged(EventArgs.Empty);
@@ -1856,30 +1856,9 @@ namespace System.Windows.Forms {
 		protected virtual void OnLoad (EventArgs e){
 			Application.AddForm (this);
 
-			if (AutoScale){
-				ApplyAutoScaling ();
-				AutoScale = false;
-			}
-
-			EventHandler eh = (EventHandler)(Events [LoadEvent]);
+			EventHandler eh = (EventHandler)(Events[LoadEvent]);
 			if (eh != null)
 				eh (this, e);
-
-			if (!IsMdiChild) {
-				switch (StartPosition) {
-					case FormStartPosition.CenterScreen:
-						this.CenterToScreen();
-						break;
-					case FormStartPosition.CenterParent:
-						this.CenterToParent ();
-						break;
-					case FormStartPosition.Manual: 
-						Left = CreateParams.X;
-						Top = CreateParams.Y;
-						break;
-				}
-			}
-			is_loaded = true;
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -2626,6 +2605,7 @@ namespace System.Windows.Forms {
 		}
 #endregion
 
+		#region Internal / Private Methods
 		internal override void FireEnter ()
 		{
 			// do nothing - forms don't generate OnEnter
@@ -2661,6 +2641,34 @@ namespace System.Windows.Forms {
 		}
 
 		internal override bool ActivateOnShow { get { return !this.ShowWithoutActivation; } }
+		
+		private void OnLoadInternal (EventArgs e)
+		{
+			if (AutoScale) {
+				ApplyAutoScaling ();
+				AutoScale = false;
+			}
+
+			OnLoad (e);
+
+			if (!IsMdiChild) {
+				switch (StartPosition) {
+					case FormStartPosition.CenterScreen:
+						this.CenterToScreen ();
+						break;
+					case FormStartPosition.CenterParent:
+						this.CenterToParent ();
+						break;
+					case FormStartPosition.Manual:
+						Left = CreateParams.X;
+						Top = CreateParams.Y;
+						break;
+				}
+			}
+			
+			is_loaded = true;
+		}
+		#endregion
 		
 		#region Events
 		static object ActivatedEvent = new object ();

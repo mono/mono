@@ -1599,6 +1599,36 @@ namespace MonoTests.System.Windows.Forms
 		}
 #endif
 		
+		[Test]  // Bug #81582
+		public void GotFocusWithoutCallingOnLoadBase ()
+		{
+			NoOnLoadBaseForm f = new NoOnLoadBaseForm ();
+			f.Show ();
+			Assert.AreEqual (true, f.got_focus_called, "H1");
+			f.Dispose ();
+		}
+
+		private class NoOnLoadBaseForm : Form
+		{
+			public bool got_focus_called = false;
+
+			public NoOnLoadBaseForm ()
+			{
+				TreeView tv = new TreeView ();
+				tv.GotFocus += new EventHandler (tv_GotFocus);
+				Controls.Add (tv);
+			}
+
+			void tv_GotFocus (object sender, EventArgs e)
+			{
+				got_focus_called = true;
+			}
+
+			protected override void OnLoad (EventArgs e)
+			{
+			}
+		}
+
 		[Test]  // Bug #80773
 		public void DontSetOwnerOnShowDialogException ()
 		{

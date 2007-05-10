@@ -1,3 +1,9 @@
+2007-05-10  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Form.cs: Move some of OnLoad to OnLoadInternal so it gets called
+	even if OnLoad is overriden and base.OnLoad is not called.
+	[Fixes bug #81582]
+
 2007-05-10  Andreia Gaita  <avidigal@novell.com>
 
 	* TableLayoutSettings.cs: A big doh! fix and bowing down of head in 
