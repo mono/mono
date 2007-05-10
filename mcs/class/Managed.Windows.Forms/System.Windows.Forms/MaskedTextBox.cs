@@ -61,6 +61,7 @@ namespace System.Windows.Forms
 		private MaskFormat cut_copy_mask_format;
 		private bool use_system_password_char;
 		private Type validating_type;
+		private bool is_empty_mask;
 		
 #endregion
 #region Events
@@ -119,14 +120,17 @@ namespace System.Windows.Forms
 		public MaskedTextBox ()
 		{
 			provider = new MaskedTextProvider ("<>", CultureInfo.CurrentCulture);
+			is_empty_mask = true;
+			Init ();
 		}
 
 		public MaskedTextBox (MaskedTextProvider maskedTextProvider)
 		{
-			if (provider == null) {
+			if (maskedTextProvider == null) {
 				throw new ArgumentNullException ();
 			}
 			provider = maskedTextProvider;
+			Init ();
 		}
 
 		public MaskedTextBox (string mask)
@@ -135,6 +139,12 @@ namespace System.Windows.Forms
 				throw new ArgumentNullException ();
 			}
 			provider = new MaskedTextProvider (mask, CultureInfo.CurrentCulture);
+			Init ();
+		}
+		private void Init ()
+		{
+			BackColor = SystemColors.Window;
+			cut_copy_mask_format = MaskFormat.IncludeLiterals;
 		}
 #endregion
 #region Public and protected methods
@@ -214,7 +224,26 @@ namespace System.Windows.Forms
 
 		protected override void OnKeyPress (KeyPressEventArgs e)
 		{
-			base.OnKeyPress (e);
+			if (is_empty_mask) {
+				base.OnKeyPress (e);
+				return;
+			}
+			
+			int testPosition;
+			MaskedTextResultHint resultHint;
+			bool result;
+			
+			if (IsOverwriteMode) {
+				result = provider.InsertAt (e.KeyChar, SelectionStart, out testPosition, out resultHint);
+			} else {
+				result = provider.Replace (e.KeyChar, SelectionStart, out testPosition, out resultHint);
+			}
+			
+			if (!result) {
+				OnMaskInputRejected (new MaskInputRejectedEventArgs (testPosition, resultHint));
+			}
+			
+			e.Handled = true;
 		}
 
 		protected override void OnKeyUp (KeyEventArgs e)
@@ -226,6 +255,13 @@ namespace System.Windows.Forms
 		protected virtual void OnMaskChanged (EventArgs e)
 		{
 			EventHandler eh = (EventHandler) Events [MaskChangedEvent];
+			if (eh != null)
+				eh (this, e);
+		}
+		
+		private void OnMaskInputRejected (MaskInputRejectedEventArgs e)
+		{
+			MaskInputRejectedEventHandler eh = (MaskInputRejectedEventHandler) Events [MaskInputRejectedEvent];
 			if (eh != null)
 				eh (this, e);
 		}
@@ -377,6 +413,9 @@ namespace System.Windows.Forms
 				return cut_copy_mask_format;
 			}
 			set {
+				if (!Enum.IsDefined (typeof (MaskFormat), value)) {
+					throw new InvalidEnumArgumentException ("value", (int)value, typeof (MaskFormat));
+				}
 				cut_copy_mask_format = value;
 			}
 		}
@@ -409,6 +448,9 @@ namespace System.Windows.Forms
 				return insert_key_mode;
 			}
 			set {
+				if (!Enum.IsDefined (typeof (InsertKeyMode), value)) {
+					throw new InvalidEnumArgumentException ("value", (int)value, typeof (InsertKeyMode));
+				}
 				insert_key_mode = value;
 			}
 		}
@@ -429,7 +471,11 @@ namespace System.Windows.Forms
 		[Browsable (false)]
 		public new string [] Lines {
 			get {
-				return base.Lines;
+				string text = Text;
+				if (text == null || text == string.Empty)
+					return new string [] {};
+				
+				return Text.Split (new string [] {"\r\n", "\r", "\n"}, StringSplitOptions.None);
 			}
 			set {
 				// Do nothing, not supported by MTB.
@@ -442,9 +488,17 @@ namespace System.Windows.Forms
 		[DefaultValue ("")]
 		public string Mask {
 			get {
+				if (is_empty_mask)
+					return string.Empty;
+				
 				return provider.Mask;
 			}
 			set {
+				is_empty_mask = (value == string.Empty || value == null);
+				if (is_empty_mask) {
+					value = "<>";
+				}
+				
 				provider = new MaskedTextProvider (value, provider.Culture, provider.AllowPromptAsInput, provider.PromptChar, provider.PasswordChar, provider.AsciiOnly);
 			}
 		}
@@ -460,6 +514,9 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public MaskedTextProvider MaskedTextProvider {
 			get {
+				if (is_empty_mask)
+					return null;
+					
 				return provider.Clone () as MaskedTextProvider;
 			}
 		}
@@ -583,10 +640,27 @@ namespace System.Windows.Forms
 		[DefaultValue ("")]
 		public override string Text {
 			get {
+				if (is_empty_mask)
+					return base.Text;
+				
+				// The base constructor may call Text before we get to create a provider, 
+				// so it may be null even though it's not an empty mask.
+				if (provider == null)
+					return string.Empty;
+					
 				return provider.ToString ();
 			}
 			set {
-				provider.Set (value);
+				string initial_text = Text;
+				
+				if (is_empty_mask) {
+					base.Text = value;
+				} else {
+					InputText (value, true, true);
+				}
+				if (Text != initial_text) {
+					OnTextChanged (EventArgs.Empty);
+				}
 			}
 		}
 		
@@ -629,8 +703,12 @@ namespace System.Windows.Forms
 				}
 			}
 			set {
-				provider.IncludeLiterals = (value == MaskFormat.IncludeLiterals) || (value == MaskFormat.IncludePromptAndLiterals);
-				provider.IncludePrompt = (value == MaskFormat.IncludePrompt) || (value == MaskFormat.IncludePromptAndLiterals);
+				if (!Enum.IsDefined (typeof (MaskFormat), value)) {
+					throw new InvalidEnumArgumentException ("value", (int)value, typeof (MaskFormat));
+				}
+				
+				provider.IncludeLiterals = (value & MaskFormat.IncludeLiterals) == MaskFormat.IncludeLiterals;
+				provider.IncludePrompt = (value & MaskFormat.IncludePrompt) == MaskFormat.IncludePrompt;
 			}
 		}
 			
@@ -671,14 +749,49 @@ namespace System.Windows.Forms
 		internal override Color ChangeBackColor (Color backColor)
 		{
 #if NET_2_0
-			backcolor_set = false;
-			if (!ReadOnly) {
-				backColor = SystemColors.Window;
-			}
+			//backcolor_set = false;
+			//if (!ReadOnly) {
+			//        backColor = SystemColors.Window;
+			//}
 #else
 				backColor = SystemColors.Window;
 #endif
 			return backColor;
+		}
+		
+		private void InputText (string text, bool overwrite, bool clear)
+		{
+			string input = text;
+			
+			if (clear) {
+				provider.Clear ();
+			}
+
+			int testPosition;
+			MaskedTextResultHint resultHint;
+			bool result = false;
+			
+			if (RejectInputOnFirstFailure) {
+				if (overwrite) {
+					provider.Replace (input, SelectionStart, SelectionStart + SelectionLength, out testPosition, out resultHint);
+				} else {
+					provider.InsertAt (input, SelectionStart);
+				}
+			} else {
+				while (!result && input.Length > 0) {
+					if (overwrite) {
+						result = provider.Replace (input, SelectionStart, SelectionStart + input.Length, out testPosition, out resultHint);
+					} else {
+						result = provider.InsertAt (input, SelectionStart, out testPosition, out resultHint);
+					}
+					
+					if (result) {
+						break;
+					}
+					
+					input = input.Substring (0, Math.Min(testPosition - SelectionStart - 1, input.Length - 1));
+				}
+			}
 		}
 #endregion
 	}
