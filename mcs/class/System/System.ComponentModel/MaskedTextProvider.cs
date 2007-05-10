@@ -1735,7 +1735,15 @@ namespace System.ComponentModel {
 				} else if (ed.Editable) {
 					if (IsPassword) {
 						if (ignorePasswordChar) {
-							result.Append (ed.Input);
+							if (!ed.FilledIn) {
+								if (includePrompt) {
+									result.Append (PromptChar);
+								} else {
+									result.Append (" ");
+								}
+							} else {
+								result.Append (ed.Input);
+							}
 						} else {
 							result.Append (PasswordChar);
 						}

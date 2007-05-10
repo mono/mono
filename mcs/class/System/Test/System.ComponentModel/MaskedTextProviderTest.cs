@@ -38,6 +38,14 @@ namespace MonoTests.System.ComponentModel
 		}
 		
 		[Test]
+		public void PasswordTest ()
+		{
+
+			MaskedTextProvider mtp = new MaskedTextProvider ("abcd", CultureInfo.GetCultureInfo ("es-AR"), false, '>', '^', false); 
+			Assert.AreEqual (" bcd", mtp.ToString (), "#A1");
+			
+		}
+		[Test]
 		public void DefaultCultureTest ()
 		{
 			CultureInfo currentUI = Thread.CurrentThread.CurrentUICulture;

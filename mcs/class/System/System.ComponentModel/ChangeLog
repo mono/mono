@@ -1,3 +1,7 @@
+2007-05-10  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* MaskedTextProvider.cs: Small fix for ToString for passwords.
+
 2007-05-09 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* Win32Exception.cs:
