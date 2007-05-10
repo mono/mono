@@ -223,6 +223,11 @@ namespace System.Data.ProviderBase
 			}
 		}
 
+		protected virtual string InternalCommandText {
+			get { return CommandText; }
+			//set { CommandText = value; }
+		}
+
 		internal CommandBehavior Behavior
 		{
 			get { return _behavior; }
@@ -417,7 +422,7 @@ namespace System.Data.ProviderBase
 				case CommandType.TableDirect :
 					return CreateTableDirectCommandText(CommandText);
 				case CommandType.StoredProcedure :
-					return CreateStoredProcedureCommandTextSimple(CommandText, Parameters, DeriveParameters(CommandText, false));
+					return CreateStoredProcedureCommandTextSimple (InternalCommandText, Parameters, DeriveParameters (InternalCommandText, false));
 				case CommandType.Text :
 
 					int userParametersPosition = 0;

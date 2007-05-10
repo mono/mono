@@ -42,7 +42,7 @@ using java.sql;
 
 namespace System.Data.SqlClient
 {
-	public class SqlCommand : AbstractDbCommand
+	public sealed class SqlCommand : AbstractDbCommand
 	{
 		#region Fields
 
@@ -84,9 +84,9 @@ namespace System.Data.SqlClient
 
 		#region Properties
 
-		public override string CommandText {
+		protected override string InternalCommandText {
 			get {
-				string commandText = base.CommandText;
+				string commandText = CommandText;
 				if (CommandType != CommandType.StoredProcedure ||
 					string.IsNullOrEmpty (commandText) ||
 					commandText [0] == '[' ||
@@ -98,9 +98,6 @@ namespace System.Data.SqlClient
 					commandText = String.Concat ("[", commandText, "]");
 
 				return commandText;
-			}
-			set {
-				base.CommandText = value;
 			}
 		}
 
