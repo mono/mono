@@ -60,6 +60,14 @@ namespace System.Data.SqlClient
             }
         }
 
+#if NET_2_0
+		public void CopyTo (SqlError [] array, int index)
+		{
+			base.CopyTo (array, index);
+		}
+
+#endif
+
 		protected override AbstractDbError CreateDbError(java.sql.SQLException e, AbstractDBConnection connection) {
 			return new SqlError(e, connection);
 		}

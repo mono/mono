@@ -235,6 +235,18 @@ namespace System.Data.SqlTypes
 			return value.GetHashCode ();
 		}
 
+#if NET_2_0
+		public static SqlDateTime Add (SqlDateTime x, TimeSpan t)
+		{
+			return (x + t);
+		}
+
+		public static SqlDateTime Subtract (SqlDateTime x, TimeSpan t)
+		{
+			return (x - t);
+		}
+#endif
+
 		public static SqlBoolean GreaterThan (SqlDateTime x, SqlDateTime y)
 		{
 			return (x > y);

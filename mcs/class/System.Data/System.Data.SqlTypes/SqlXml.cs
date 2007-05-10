@@ -84,7 +84,13 @@ namespace System.Data.SqlTypes
 			XmlQualifiedName qualifiedName = new XmlQualifiedName ("anyType", "http://www.w3.org/2001/XMLSchema");
 			return qualifiedName;
 		}
-		
+
+		[MonoNotSupported("")]
+		public XmlReader CreateReader ()
+		{
+			throw new NotImplementedException ();
+		}
+
 		[MonoTODO]
 		XmlSchema IXmlSerializable.GetSchema ()
 		{

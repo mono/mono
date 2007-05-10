@@ -165,7 +165,70 @@ namespace System.Data.SqlClient
 			}
 		}
 
+#if NET_2_0
+
+		[MonoNotSupported("")]
+		public static void ChangePassword (string connectionString, string newPassword) 
+		{
+			throw new NotImplementedException ();
+
+			// FIXME: refactored from Mono implementation.  Not finished!!!
+			if (connectionString == null || newPassword == null || newPassword == String.Empty)
+				throw new ArgumentNullException ();
+			if (newPassword.Length > 128)
+				throw new ArgumentException ("The value of newPassword exceeds its permittable length which is 128");
+
+			SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder (connectionString);
+			if (builder.IntegratedSecurity) {
+				throw new ArgumentException ("Can't use integrated security when changing password");
+			}
+			
+			using (SqlConnection conn = new SqlConnection (connectionString)) {
+				conn.Open ();
+				SqlCommand cmd = conn.CreateCommand ();
+				cmd.CommandText = "sp_password";
+				cmd.CommandType = CommandType.StoredProcedure;
+				// FIXME: Need to extract old password and user from our structures
+				// of the connectionString.
+				cmd.Parameters.Add (builder.Password); // Is this good???
+				cmd.Parameters.Add (newPassword);
+				cmd.Parameters.Add (builder.UserID); // Is this good???
+				cmd.ExecuteNonQuery();
+			}
+		}
+
+		#region Pooling
+
+		[MonoNotSupported("Pooling not supported")]
+		public static void ClearPool (SqlConnection connection) 
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported ("Pooling not supported")]
+		public static void ClearAllPools () 
+		{
+			throw new NotImplementedException ();
+		}
+
+		#endregion
+		#region Statistics
+
+		[MonoNotSupported ("Statistics not supported")]
+		public IDictionary RetrieveStatistics ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported ("Statistics not supported")]
+		public void ResetStatistics ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		#endregion
+#endif
 		#endregion // Methods
-        
+
 	}
 }

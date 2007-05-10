@@ -1,3 +1,22 @@
+2007-05-10  Adar Wesley <adarw@mainsoft.com>
+
+	* SqlCommand.cs: added missing methods Asynch operations
+
+	* SqlConnection.cs: added missing methods ChangePassword, ClearPool,
+	ClearAllPools, RetrieveStatistics, ResetStatistics.
+
+	* SqlDataReader.cs: added missing methods GetSqlBytes, GetSqlChars,
+	GetSqlXml, IsCommandBehavior.
+
+	* SqlErrorCollection.cs: added missing method strongly typed CopyTo.
+
+	* SqlParameter.cs: added missing methods ResetSqlDbType, ResetDbType.
+
+	* SqlParameterCollection.cs: added missing methods strongly typed
+	AddRange, IndexOf.
+
+	* SqlTransaction.cs: added missing methods Save, Rollback.
+
 2006-08-24  Konstantin Triger <kostat@mainsoft.com>
 
 	* SqlCommand, SqlParameter.cs: correctly resolve parameters without '@'.

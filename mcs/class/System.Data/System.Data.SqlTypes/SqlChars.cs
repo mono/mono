@@ -169,9 +169,25 @@ namespace System.Data.SqlTypes
 			buffer = null;
 			notNull = false;
 		}
-                                                                                
+
+		public SqlString ToSqlString ()
+		{
+			if (buffer == null) {
+				return SqlString.Null;
+			}
+			else {
+				return new SqlString (buffer.ToString ());
+			}
+		}
+                                                              
 		[MonoTODO]
 		public long Read (long offset, char [] buffer, int offsetInBuffer, int count)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported("")]
+		public void Write (long offset, char [] buffer, int offsetInBuffer, int count)
 		{
 			throw new NotImplementedException ();
 		}

@@ -179,7 +179,7 @@ namespace System.Data.SqlTypes
 			return (x > y);
 		}
 
-		public static SqlBoolean GreaterThanOrEqual (SqlBoolean x, SqlBoolean y) 
+		public static SqlBoolean GreaterThanOrEquals (SqlBoolean x, SqlBoolean y) 
 		{
 			return (x >= y);
 		}
@@ -189,7 +189,7 @@ namespace System.Data.SqlTypes
 			return (x < y);
 		}
 
-		public static SqlBoolean LessThanOrEqual (SqlBoolean x, SqlBoolean y) 
+		public static SqlBoolean LessThanOrEquals (SqlBoolean x, SqlBoolean y) 
 		{
 			return (x <= y);
 		}

@@ -210,9 +210,78 @@ namespace System.Data.SqlClient
 
 		protected internal sealed override SystemException CreateException(SQLException e)
 		{
-			return new SqlException(e, Connection);		
+			return new SqlException(e, Connection);
 		}
 
+		#region Asynchronous behavior
+#if NET_2_0
+		[MonoNotSupported ("Asynchronous behavior not implemented")]
+		public IAsyncResult BeginExecuteReader () 
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported ("Asynchronous behavior not implemented")]
+		public IAsyncResult BeginExecuteReader (CommandBehavior behavior) 
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported ("Asynchronous behavior not implemented")]
+		public IAsyncResult BeginExecuteReader (AsyncCallback callback, Object stateObject) 
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported ("Asynchronous behavior not implemented")]
+		public IAsyncResult BeginExecuteReader (AsyncCallback callback, Object stateObject, CommandBehavior behavior) 
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported ("Asynchronous behavior not implemented")]
+		public SqlDataReader EndExecuteReader (IAsyncResult asyncResult)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported ("Asynchronous behavior not implemented")]
+		public IAsyncResult BeginExecuteXmlReader () 
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported ("Asynchronous behavior not implemented")]
+		public IAsyncResult BeginExecuteXmlReader (AsyncCallback callback, Object stateObject)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported ("Asynchronous behavior not implemented")]
+		public XmlReader EndExecuteXmlReader (IAsyncResult asyncResult)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported ("Asynchronous behavior not implemented")]
+		public IAsyncResult BeginExecuteNonQuery ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported ("Asynchronous behavior not implemented")]
+		public IAsyncResult BeginExecuteNonQuery (AsyncCallback callback, Object stateObject)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported ("Asynchronous behavior not implemented")]
+		public int EndExecuteNonQuery (IAsyncResult asyncResult)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+		#endregion
 		#endregion // Methods
 	}
 }

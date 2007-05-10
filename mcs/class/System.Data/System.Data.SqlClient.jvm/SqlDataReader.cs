@@ -116,6 +116,37 @@ namespace System.Data.SqlClient
             }
         }
 
+#if NET_2_0
+
+		public virtual SqlBytes GetSqlBytes (int columnIndex)
+		{
+			byte [] bytes = GetBytes (columnIndex);
+			if (IsDBNull (columnIndex)) {
+				return SqlBytes.Null;
+			}
+			else {
+				return new SqlBytes (bytes);
+			}
+		}
+
+		public virtual SqlChars GetSqlChars (int columnIndex)
+		{
+			SqlString sqlStr = GetSqlString (columnIndex);
+			if (sqlStr.IsNull) {
+				return SqlChars.Null;
+			}
+			else {
+				return new SqlChars (sqlStr);
+			}
+		}
+
+		[MonoNotSupported("SqlXml is not fully implemented")]
+		public virtual SqlXml GetSqlXml (int columnIndex)
+		{
+			throw new NotImplementedException ();
+		}
+
+#endif
 
         // Gets the value of the specified column as a SqlDecimal.
         public SqlDecimal GetSqlDecimal(int columnIndex)
@@ -293,6 +324,12 @@ namespace System.Data.SqlClient
             }
         }
 
+#if NET_2_0
+		protected bool IsCommandBehavior (CommandBehavior condition)
+		{
+			return (_command.Behavior & condition) == condition;
+		}
+#endif
 		#endregion // Methods
     }
 }

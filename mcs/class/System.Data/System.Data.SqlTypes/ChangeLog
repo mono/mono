@@ -1,3 +1,18 @@
+2007-05-10  Adar Wesley <adarw@mainsoft.com>
+
+	* SqlBoolean.cs: fixed typo in method names GreaterThanOrEquals,
+	LessThanOrEquals.
+
+	* SqlByte.cs: added missing method Modulus.
+
+	* SqlBytes.cs: added missing methods Read, Write.
+
+	* SqlChars.cs: added missing methods ToSqlString, Write.
+
+	* SqlDateTime.cs: added missing methods Add, Subtract.
+
+	* SqlXml.cs: added missing method CreateReader.
+
 2007-05-04  Raja R Harinath  <rharinath@novell.com>
 
 	* SqlDateTime.cs: Rewrite parts converting SQL ticks to and from

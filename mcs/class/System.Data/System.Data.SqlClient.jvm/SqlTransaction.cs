@@ -68,6 +68,16 @@ namespace System.Data.SqlClient
             }
         }
 
+		[MonoNotSupported("")]
+		public void Save (string savePointName) 
+		{
+			throw new NotImplementedException ();
+		}
 
-    
-    }}
+		[MonoNotSupported ("")]
+		public void Rollback (string transactionName) 
+		{
+			throw new NotImplementedException ();
+		}
+    }
+}

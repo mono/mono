@@ -101,6 +101,11 @@ namespace System.Data.SqlClient
         }
 
 #if NET_2_0
+		public void AddRange (SqlParameter [] values)
+		{
+			base.AddRange (values);
+		}
+
 		public SqlParameter AddWithValue (string parameterName, object value)
 		{
 			return Add (parameterName, value);
@@ -109,6 +114,11 @@ namespace System.Data.SqlClient
 		public bool Contains (SqlParameter value)
 		{
 			return base.Contains (value);
+		}
+
+		public int IndexOf (SqlParameter value)
+		{
+			return base.IndexOf (value);
 		}
 
 		public void CopyTo (SqlParameter [] array, int index)

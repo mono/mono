@@ -242,7 +242,19 @@ namespace System.Data.SqlClient
 			JdbcType = dataType;
 		}
 
-		protected internal sealed override void SetSpecialFeatures(ResultSet res)
+#if NET_2_0
+		public void ResetSqlDbType ()
+		{
+			IsDbTypeSet = false;
+		}
+
+		public override void ResetDbType ()
+		{
+			ResetSqlDbType ();
+		}
+#endif
+
+		protected internal sealed override void SetSpecialFeatures (ResultSet res)
 		{
 			// do nothing
 		}

@@ -232,7 +232,19 @@ namespace System.Data.SqlTypes
 		{
 			throw new NotImplementedException ();
 		}
-                                                                                
+
+		[MonoNotSupported("")]
+		public long Read (long offset, byte [] buffer, int offsetInBuffer, int count)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported ("")]
+		public void Write (long offset, byte [] buffer, int offsetInBuffer, int count)
+		{
+			throw new NotImplementedException ();
+		}
+
 		#endregion
 	}
 }
