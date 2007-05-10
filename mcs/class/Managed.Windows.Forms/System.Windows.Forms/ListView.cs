@@ -1986,13 +1986,25 @@ namespace System.Windows.Forms
 						continue;
 
 					if (owner.items [i].CheckRectReal.Contains (pt)) {
-						// Don't check if StateImageList has less than two items
-						if (owner.StateImageList != null && owner.StateImageList.Images.Count < 2)
+						ListViewItem item = owner.items [i];
+
+						// Don't modify check state if we have only one image
+						// and if we are in 1.1 profile only take into account
+						// double clicks
+						if (owner.StateImageList != null && owner.StateImageList.Images.Count < 2 
+#if !NET_2_0
+								&& me.Clicks == 1
+#endif
+								)
 							return;
 
-						checking = true;
-						ListViewItem item = owner.items [i];
+						// Generate an extra ItemCheck event when we got two clicks
+						// (Match weird .Net behaviour)
+						if (me.Clicks == 2)
+							item.Checked = !item.Checked;
+
 						item.Checked = !item.Checked;
+						checking = true;
 						return;
 					}
 					

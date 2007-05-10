@@ -1,3 +1,12 @@
+2007-05-10  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListView.cs: When clicking the checkbox on the items
+	take into account the double clicks even if we have only
+	one image in StateImageList (only for 1.0/1.1). Also 
+	generate an extra change of checked state when we receive
+	the second click on checkbox (match .Net behaviour). 
+	Fixes part of #81191.
+
 2007-05-10  Everaldo Canuto  <everaldo@simios.org>
 
 	* ThemeWin32Classic.cs: Fix text rectangles in Tooltips.
