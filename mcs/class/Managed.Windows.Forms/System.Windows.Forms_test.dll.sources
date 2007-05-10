@@ -118,6 +118,7 @@ System.Windows.Forms/ToolStripContainerTest.cs
 System.Windows.Forms/ToolStripContentPanelTest.cs
 System.Windows.Forms/ToolStripControlHostTest.cs
 System.Windows.Forms/ToolStripDropDownTest.cs
+System.Windows.Forms/ToolStripItemCollectionTest.cs
 System.Windows.Forms/ToolStripItemTest.cs
 System.Windows.Forms/ToolStripLabelTest.cs
 System.Windows.Forms/ToolStripManagerTest.cs

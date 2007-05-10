@@ -1,3 +1,8 @@
+2007-05-10  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* System.Windows.Forms_test.dll.sources: Added
+	ToolStripItemCollectionTest.cs.
+
 2007-05-04  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* System.Windows.Forms_test.dll.sources: Added MaskedTextBoxTest.cs
