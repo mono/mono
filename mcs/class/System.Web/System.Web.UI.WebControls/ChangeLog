@@ -1,3 +1,9 @@
+2007-05-10  Marek Habersack  <mhabersack@novell.com>
+
+	* Wizard.cs: if a next/previous step handler modifies
+	ActiveStepIndex do not, respectively, increase/decrease the
+	current step, but use whatever was set in the handler.
+
 2007-05-09  Marek Habersack  <mhabersack@novell.com>
 
 	* TreeNodeStyleCollection.cs: do not set font's underline flag to

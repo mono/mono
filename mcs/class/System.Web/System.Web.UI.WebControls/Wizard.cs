@@ -206,10 +206,9 @@ namespace System.Web.UI.WebControls
 		    set {
 			    if (value < -1 || (value > WizardSteps.Count && (inited || WizardSteps.Count > 0)))
 				    throw new ArgumentOutOfRangeException ("The ActiveStepIndex must be less than WizardSteps.Count and at least -1");
-			    
 			    if (inited && !AllowNavigationToStep (value))
 				    return;
-			    
+
 			    if(activeStepIndex != value) {
 				    activeStepIndex = value;
 				    
@@ -558,7 +557,7 @@ namespace System.Web.UI.WebControls
 		[DefaultValue (null)]
 		[TemplateContainer (typeof(Wizard), BindingDirection.OneWay)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-	    [Browsable (false)]
+		[Browsable (false)]
 		public virtual ITemplate SideBarTemplate {
 			get { return sideBarTemplate; }
 			set { sideBarTemplate = value; UpdateViews (); }
@@ -1363,8 +1362,9 @@ namespace System.Web.UI.WebControls
 				case "MoveNext":
 					if (ActiveStepIndex < WizardSteps.Count - 1) {
 						WizardNavigationEventArgs args = new WizardNavigationEventArgs (ActiveStepIndex, ActiveStepIndex + 1);
+						int curStep = ActiveStepIndex;
 						OnNextButtonClick (args);
-						if (!args.Cancel)
+						if (!args.Cancel && curStep == activeStepIndex)
 							ActiveStepIndex++;
 					}
 					break;
@@ -1372,11 +1372,13 @@ namespace System.Web.UI.WebControls
 				case "MovePrevious":
 					if (ActiveStepIndex > 0) {
 						WizardNavigationEventArgs args = new WizardNavigationEventArgs (ActiveStepIndex, ActiveStepIndex - 1);
+						int curStep = ActiveStepIndex;
 						OnPreviousButtonClick (args);
 						if (!args.Cancel) {
-							if (history != null)
+							if (history != null && activeStepIndex < curStep)
 								history.Remove (ActiveStepIndex);
-							ActiveStepIndex--;
+							if (curStep == activeStepIndex)
+								ActiveStepIndex--;
 						}
 					}
 					break;
