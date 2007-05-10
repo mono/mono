@@ -221,14 +221,7 @@ mono_linear_scan (MonoCompile *cfg, GList *vars, GList *regs, regmask_t *used_ma
 		}
 	}
 
-	{
-		static int all_n_regvars = 0;
-
-		all_n_regvars += n_regvars;
-
-		if (cfg->verbose_level > 2)
-			printf ("ALL REGVARS: %d\n", all_n_regvars);
-	}
+	mono_jit_stats.regvars += n_regvars;
 
 	/* Compute used regs */
 	used_regs = 0;

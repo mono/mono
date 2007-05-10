@@ -1,3 +1,7 @@
+2007-05-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* linear-scan.c (mono_linear_scan): Update mono_jit_stats.regvars.
+
 2007-05-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (decompose_opcode): Fix OP_ICONV_TO_I8.
