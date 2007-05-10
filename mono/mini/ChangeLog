@@ -1,5 +1,10 @@
 2007-05-10  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-runtime.c (decode_cached_class_info): Skip generic types.
+
+	* aot-compiler.c: Add minimal support for AOTing generic code by skipping 
+	everything generic.
+
 	* mini.c (mono_method_to_ir): Disable AOT when calling helper_compile_generic_method.
 
 2007-05-09  Zoltan Varga  <vargaz@gmail.com>
