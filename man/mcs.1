@@ -196,6 +196,8 @@ Names the output file to be generated.
 Used for benchmarking.  The compiler will only parse its input files.
 .TP
 .I \-pkg:package1[,packageN]
+Reference assemblies for the given packages.
+.Sp
 The compiler will invoke pkg-config --libs on the set of packages
 specified on the command line to obtain libraries and directories to
 compile the code.
@@ -211,6 +213,10 @@ This will instruct the compiler to reference the System.* libraries
 available on a typical dotnet framework installation, notice that this
 does not include all of the Mono libraries, only the System.* ones.  This
 is a convenient shortcut for those porting code.
+.TP
+.TP
+.I \-pkg:olive
+Use this to reference the "Olive" libraries (the 3.0 and 3.5 extended libraries).
 .TP
 .I -resource:RESOURCE[,ID]
 Embeds to the given resource file.  The optional ID can be used to
