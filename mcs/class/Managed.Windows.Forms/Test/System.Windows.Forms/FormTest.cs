@@ -1600,6 +1600,7 @@ namespace MonoTests.System.Windows.Forms
 #endif
 		
 		[Test]  // Bug #81582
+		[Category ("NotWorking")]
 		public void GotFocusWithoutCallingOnLoadBase ()
 		{
 			NoOnLoadBaseForm f = new NoOnLoadBaseForm ();

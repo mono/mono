@@ -1,5 +1,10 @@
 2007-05-10  Jonathan Pobst  <monkey@jpobst.com>
 
+	* FormTest.cs: Marking test for bug 81582 as NotWorking as it fails
+	on X11.  Bug is reopened.
+
+2007-05-10  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ToolStripItemCollectionTest.cs: Enable tests.
 
 2007-05-10  Rolf Bjarne Kvinge <RKvinge@novell.com> 
