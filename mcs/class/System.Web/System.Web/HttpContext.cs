@@ -173,8 +173,19 @@ namespace System.Web {
 
 		public bool IsCustomErrorEnabled {
 			get {
+				try {
+					return IsCustomErrorEnabledUnsafe;
+				}
+				catch {
+					return false;
+				}
+			}
+		}
+
+		internal bool IsCustomErrorEnabledUnsafe {
+			get {
 #if NET_2_0
-				CustomErrorsSection cfg = WebConfigurationManager.SafeGetSection ("system.web/customErrors", typeof (CustomErrorsSection)) as CustomErrorsSection;
+				CustomErrorsSection cfg = (CustomErrorsSection) WebConfigurationManager.GetSection ("system.web/customErrors");
 #else
 				CustomErrorsConfig cfg = null;
 				try {

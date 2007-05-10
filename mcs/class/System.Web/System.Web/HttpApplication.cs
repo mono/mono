@@ -803,8 +803,9 @@ namespace System.Web {
 						error = new HttpException ("", error);
 						response.StatusCode = 500;
 					}
-					if (!RedirectCustomError ())
-						FinalErrorWrite (response, ((HttpException) error).GetHtmlErrorMessage ());
+					HttpException httpEx = (HttpException) error;
+					if (!RedirectCustomError (ref httpEx))
+						FinalErrorWrite (response, httpEx.GetHtmlErrorMessage ());
 					else
 						response.Flush (true);
 				} else {
@@ -1243,9 +1244,10 @@ namespace System.Web {
 			return true;
 		}
 							
-		bool RedirectCustomError ()
+		bool RedirectCustomError (ref HttpException httpEx)
 		{
-			if (!context.IsCustomErrorEnabled)
+			try {
+			if (!context.IsCustomErrorEnabledUnsafe)
 				return false;
 			
 #if NET_2_0
@@ -1280,6 +1282,11 @@ namespace System.Web {
 				return false;
 			
 			return RedirectErrorPage (redirect);
+			}
+			catch (Exception ex) {
+				httpEx = new HttpException (500, "", ex);
+				return false;
+			}
 		}
 #endregion
 	}
