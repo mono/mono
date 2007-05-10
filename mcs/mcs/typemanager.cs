@@ -1828,6 +1828,10 @@ namespace Mono.CSharp {
 	//
 	public static bool IsFriendAssembly (Assembly assembly)
 	{
+		// FIXME: This should not be reached
+		if (assembly == CodeGen.Assembly.Builder)
+			return false;
+
 		if (assembly_internals_vis_attrs.Contains (assembly))
 			return (bool)(assembly_internals_vis_attrs [assembly]);
 		
