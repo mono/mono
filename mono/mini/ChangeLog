@@ -1,5 +1,7 @@
 2007-05-10  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (compile_method): Fix a typo in a comment.
+
 	* aot-runtime.c (decode_cached_class_info): Skip generic types.
 
 	* aot-compiler.c: Add minimal support for AOTing generic code by skipping 
