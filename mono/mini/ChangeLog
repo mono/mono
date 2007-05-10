@@ -1,5 +1,7 @@
 2007-05-10  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.h mini-<ARCH>.h: Get rid of MONO_ARCH_HAS_XP_LOCAL_REGALLOC.
+
 	* aot-compiler.c (compile_method): Fix a typo in a comment.
 
 	* aot-runtime.c (decode_cached_class_info): Skip generic types.
