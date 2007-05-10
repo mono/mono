@@ -92,14 +92,15 @@ namespace System.Windows.Forms
 			SetStyle (ControlStyles.SupportsTransparentBackColor, true);
 
 			this.SuspendLayout ();
-			this.items = new ToolStripItemCollection (this, items);
+			
+			this.items = new ToolStripItemCollection (this, items, true);
 			this.allow_merge = true;
 			base.AutoSize = true;
 			this.back_color = Control.DefaultBackColor;
 			this.can_overflow = true;
 			base.CausesValidation = false;
 			this.default_drop_down_direction = ToolStripDropDownDirection.BelowRight;
-			this.displayed_items = new ToolStripItemCollection (this, null);
+			this.displayed_items = new ToolStripItemCollection (this, null, true);
 			this.Dock = this.DefaultDock;
 			base.Font = new Font ("Tahoma", 8.25f);
 			this.fore_color = Control.DefaultForeColor;
@@ -728,7 +729,9 @@ namespace System.Windows.Forms
 			e.Item.Available = true;
 			e.Item.SetPlacement (ToolStripItemPlacement.Main);
 			this.DoAutoSize ();
-			this.PerformLayout ();
+			
+			if (this.Created)
+				this.PerformLayout ();
 			
 			ToolStripItemEventHandler eh = (ToolStripItemEventHandler)(Events [ItemAddedEvent]);
 			if (eh != null)

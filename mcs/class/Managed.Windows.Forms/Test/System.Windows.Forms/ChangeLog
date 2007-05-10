@@ -1,3 +1,7 @@
+2007-05-10  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStripItemCollectionTest.cs: Enable tests.
+
 2007-05-10  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* MaskedTextBoxTest.cs: Added more tests.

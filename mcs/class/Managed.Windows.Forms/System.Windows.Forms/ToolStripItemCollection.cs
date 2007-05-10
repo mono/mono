@@ -39,18 +39,34 @@ namespace System.Windows.Forms
 	public class ToolStripItemCollection : ArrangedElementCollection, IList, ICollection, IEnumerable
 	{
 		private ToolStrip owner;
-
+		private bool internal_created;
+		
 		#region Public Constructor
 		public ToolStripItemCollection (ToolStrip owner, ToolStripItem[] value) : base ()
 		{
 			if (owner == null)
 				throw new ArgumentNullException ("owner");
 
+			if (value == null)
+				throw new ArgumentNullException ("toolStripItems");
+
 			this.owner = owner;
 
+			foreach (ToolStripItem tsi in value)
+				this.AddNoOwnerOrLayout (tsi);
+		}
+
+		internal ToolStripItemCollection (ToolStrip owner, ToolStripItem[] value, bool internalcreated) : base ()
+		{
+			if (owner == null)
+				throw new ArgumentNullException ("owner");
+
+			this.internal_created = internalcreated;
+			this.owner = owner;
+			
 			if (value != null)
 				foreach (ToolStripItem tsi in value)
-					this.Add (tsi);
+					this.AddNoOwnerOrLayout (tsi);
 		}
 		#endregion
 
@@ -91,14 +107,15 @@ namespace System.Windows.Forms
 				throw new ArgumentNullException ("value");
 
 			value.Owner = owner;
-			value.Parent = owner;
-			
+				
 			if (value is ToolStripMenuItem && (value as ToolStripMenuItem).ShortcutKeys != Keys.None)
 				ToolStripManager.AddToolStripMenuItem ((ToolStripMenuItem)value);
 				
 			int index = base.Add (value);
 			
-			owner.OnItemAdded (new ToolStripItemEventArgs (value));
+			if (this.internal_created)
+				owner.OnItemAdded (new ToolStripItemEventArgs (value));
+				
 			return index;
 		}
 
@@ -211,15 +228,18 @@ namespace System.Windows.Forms
 			if (value == null)
 				throw new ArgumentNullException ("value");
 
-			value.Owner = owner;
-			value.Parent = owner;
-
 			if (value is ToolStripMenuItem && (value as ToolStripMenuItem).ShortcutKeys != Keys.None)
 				ToolStripManager.AddToolStripMenuItem ((ToolStripMenuItem)value);
 
 			base.Insert (index, value);
-			owner.OnItemAdded (new ToolStripItemEventArgs (value));
-			owner.PerformLayout ();
+			
+			if (internal_created) {
+				value.Owner = owner;
+				owner.OnItemAdded (new ToolStripItemEventArgs (value));
+			}
+			
+			if (owner.Created)
+				owner.PerformLayout ();
 		}
 
 		public void Remove (ToolStripItem value)
@@ -228,8 +248,17 @@ namespace System.Windows.Forms
 				throw new NotSupportedException ("This collection is read-only");
 
 			base.Remove (value);
-			owner.OnItemRemoved (new ToolStripItemEventArgs (value));
-			owner.PerformLayout ();
+			
+			if (value != null && internal_created) {
+				value.Owner = null;
+				value.Parent = null;
+			}
+			
+			if (internal_created)
+				owner.OnItemRemoved (new ToolStripItemEventArgs (value));
+			
+			if (owner.Created)	
+				owner.PerformLayout ();
 		}
 
 		public new void RemoveAt (int index)
@@ -238,9 +267,7 @@ namespace System.Windows.Forms
 				throw new NotSupportedException ("This collection is read-only");
 
 			ToolStripItem tsi = (ToolStripItem)base[index];
-			base.RemoveAt (index);
-			owner.OnItemRemoved (new ToolStripItemEventArgs (tsi));
-			owner.PerformLayout ();
+			this.Remove (tsi);
 		}
 
 		public virtual void RemoveByKey (string key)

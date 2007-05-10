@@ -36,7 +36,6 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	[Category ("NotWorking")]
 	public class ToolStripItemCollectionTests
 	{
 		private List<ToolStripItem> itemsAdded;
@@ -102,6 +101,13 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void ConstructorANE ()
+		{
+			new ToolStripItemCollection (new ToolStrip (), (ToolStripItem[])null);
+		}
+		
+		[Test]
 		public void Constructor_Items_Null ()
 		{
 			try {
@@ -147,6 +153,41 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreSame (buttonA, items [2], "#C5");
 			Assert.AreSame (toolStrip, buttonC.Owner, "#C6");
 			Assert.IsNull (buttonC.ParentToolStrip, "#C7");
+		}
+
+		[Test]
+		public void Insert_Owned_CreateControl ()
+		{
+			ToolStrip toolStrip = CreateToolStrip ();
+			toolStrip.CreateControl ();
+			ToolStripItemCollection items = toolStrip.Items;
+
+			MockToolStripButton buttonA = new MockToolStripButton ("A");
+			items.Insert (0, buttonA);
+			Assert.AreEqual (1, items.Count, "#A1");
+			Assert.AreEqual (1, itemsAdded.Count, "#A2");
+			Assert.AreSame (buttonA, items[0], "#A3");
+			Assert.AreSame (toolStrip, buttonA.Owner, "#A4");
+			Assert.IsNotNull (buttonA.ParentToolStrip, "#A5");
+
+			MockToolStripButton buttonB = new MockToolStripButton ("B");
+			items.Insert (0, buttonB);
+			Assert.AreEqual (2, items.Count, "#B1");
+			Assert.AreEqual (2, itemsAdded.Count, "#B2");
+			Assert.AreSame (buttonB, items[0], "#B3");
+			Assert.AreSame (buttonA, items[1], "#B4");
+			Assert.AreSame (toolStrip, buttonB.Owner, "#B5");
+			Assert.IsNotNull (buttonB.ParentToolStrip, "#B6");
+
+			MockToolStripButton buttonC = new MockToolStripButton ("C");
+			items.Insert (1, buttonC);
+			Assert.AreEqual (3, items.Count, "#C1");
+			Assert.AreEqual (3, itemsAdded.Count, "#C2");
+			Assert.AreSame (buttonB, items[0], "#C3");
+			Assert.AreSame (buttonC, items[1], "#C4");
+			Assert.AreSame (buttonA, items[2], "#C5");
+			Assert.AreSame (toolStrip, buttonC.Owner, "#C6");
+			Assert.IsNotNull (buttonC.ParentToolStrip, "#C7");
 		}
 
 		[Test]
