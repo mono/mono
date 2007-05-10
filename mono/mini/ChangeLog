@@ -1,5 +1,7 @@
 2007-05-11  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (find_typespec_for_class): Fix the assert.
+
 	* mini.h (MONO_AOT_FILE_VERSION): Bump AOT file version.
 
 	* mini.h (MonoCompile): Add 'token_info_hash' field.
