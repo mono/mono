@@ -1,3 +1,9 @@
+2007-05-10  Dick Porter  <dick@ximian.com>
+
+	* sockets.c (_wapi_recvfrom): Refine the fix to bug 75705 so EINTR
+	isn't returned if the remote end shuts down cleanly.  Fixes zmd
+	and the second example in bug 75705.
+
 2007-04-26  Dick Porter  <dick@ximian.com>
 
 	* shared.c (_wapi_shm_semaphores_init): Need to check
