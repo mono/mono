@@ -1,3 +1,7 @@
+2007-05-10  Everaldo Canuto  <everaldo@simios.org>
+
+	* ThemeWin32Classic.cs: Fix text rectangles in Tooltips.
+
 2007-05-10  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Form.cs: Move some of OnLoad to OnLoadInternal so it gets called

@@ -4624,13 +4624,17 @@ namespace System.Windows.Forms
 		#endregion	// ToolBar
 
 		#region ToolTip
-		public override void DrawToolTip(Graphics dc, Rectangle clip_rectangle, ToolTip.ToolTipWindow control) {
+		public override void DrawToolTip(Graphics dc, Rectangle clip_rectangle, ToolTip.ToolTipWindow control)
+		{
+			Rectangle text_rect = Rectangle.Inflate (control.ClientRectangle, -2, -1);
+			
 			dc.FillRectangle(SystemBrushes.Info, control.ClientRectangle);
 			dc.DrawRectangle(SystemPens.WindowFrame, 0, 0, control.Width-1, control.Height-1);
-			dc.DrawString(control.Text, control.Font, ResPool.GetSolidBrush(this.ColorInfoText), control.ClientRectangle, control.string_format);
+			dc.DrawString(control.Text, control.Font, ResPool.GetSolidBrush(this.ColorInfoText), text_rect, control.string_format);
 		}
 
-		public override Size ToolTipSize(ToolTip.ToolTipWindow tt, string text) {
+		public override Size ToolTipSize(ToolTip.ToolTipWindow tt, string text)
+		{
 			SizeF	sizef;
 
 			sizef = tt.DeviceContext.MeasureString(text, tt.Font, SizeF.Empty, tt.string_format);
