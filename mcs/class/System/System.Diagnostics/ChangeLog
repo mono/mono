@@ -1,3 +1,8 @@
+2007-05-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TextWriterTraceListener.cs : open log file in readwrite share mode.
+	  This fixes bug #81296.
+
 2007-05-08 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* TraceImpl.cs:

@@ -73,7 +73,7 @@ namespace System.Diagnostics {
 		{
 			if (fileName == null)
 				throw new ArgumentNullException ("fileName");
-			writer = File.AppendText (fileName);
+			writer = new StreamWriter (new FileStream (fileName, FileMode.Append, FileAccess.Write, FileShare.ReadWrite));
 		}
 
 		public TextWriterTraceListener (TextWriter writer, string name) 
