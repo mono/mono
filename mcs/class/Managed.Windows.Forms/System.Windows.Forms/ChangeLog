@@ -1,5 +1,10 @@
 2007-05-10  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ToolStrip.cs, ToolStripManager.cs: We need to remove items from
+	the owner's Items collection on merge.
+
+2007-05-10  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ToolStrip.cs: Use new internal ToolStripItemCollection constructor.
 	* ToolStripItemCollection.cs: Lots of fixes to when events get called
 	and parent/owner gets changed based on gert's unit tests.

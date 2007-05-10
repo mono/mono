@@ -524,11 +524,11 @@ namespace System.Windows.Forms
 
 		private static void RemoveItemFromParentToolStrip (ToolStripItem tsi)
 		{
-			if (tsi.Parent != null) {
-				tsi.Parent.Items.RemoveNoOwnerOrLayout (tsi);
+			if (tsi.Owner != null) {
+				tsi.Owner.Items.RemoveNoOwnerOrLayout (tsi);
 
-				if (tsi.Parent is ToolStripOverflow)
-					(tsi.Parent as ToolStripOverflow).ParentToolStrip.Items.RemoveNoOwnerOrLayout (tsi);
+				if (tsi.Owner is ToolStripOverflow)
+					(tsi.Owner as ToolStripOverflow).ParentToolStrip.Items.RemoveNoOwnerOrLayout (tsi);
 			}
 		}
 		

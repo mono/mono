@@ -1109,11 +1109,11 @@ namespace System.Windows.Forms
 		
 		protected internal static void SetItemParent (ToolStripItem item, ToolStrip parent)
 		{
-			if (item.Parent != null) {
-				item.Parent.Items.RemoveNoOwnerOrLayout (item);
-				
-				if (item.Parent is ToolStripOverflow)
-					(item.Parent as ToolStripOverflow).ParentToolStrip.Items.RemoveNoOwnerOrLayout (item);
+			if (item.Owner != null) {
+				item.Owner.Items.RemoveNoOwnerOrLayout (item);
+
+				if (item.Owner is ToolStripOverflow)
+					(item.Owner as ToolStripOverflow).ParentToolStrip.Items.RemoveNoOwnerOrLayout (item);
 			}
 			
 			parent.Items.AddNoOwnerOrLayout (item);
