@@ -1,5 +1,11 @@
 2007-05-09  Jonathan Chambers  <joncham@gmail.com>
 
+	* threads.c: Handle if mono_thread_current returns NULL 
+	
+	Code is contributed under MIT/X11 license.
+
+2007-05-09  Jonathan Chambers  <joncham@gmail.com>
+
 	* threads.c: Initialize Thread.AprtmentState and set on Thread.Start
 	in start_wrapper. Added mono_thread_init_apartment_state and
 	mono_thread_cleanup_apartment_state.
