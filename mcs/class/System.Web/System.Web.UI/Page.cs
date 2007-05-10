@@ -2140,6 +2140,28 @@ public partial class Page : TemplateControl, IHttpHandler
 			}
 
 			if (asyncResults.Count > 0) {
+#if TARGET_JVM
+				TimeSpan timeout = AsyncTimeout;
+				long t1 = DateTime.Now.Ticks;
+				bool signalled = true;
+				for (int i = 0; i < asyncResults.Count; i++) {
+					if (asyncResults [i].IsCompleted)
+						continue;
+
+					if (signalled)
+						signalled = asyncResults [i].AsyncWaitHandle.WaitOne (timeout, false);
+
+					if (signalled) {
+						long t2 = DateTime.Now.Ticks;
+						timeout = AsyncTimeout - TimeSpan.FromTicks (t2 - t1);
+						if (timeout.Ticks <= 0)
+							signalled = false;
+					}
+					else {
+						localParallelTasks [i].TimeoutHandler (asyncResults [i]);
+					}
+				}
+#else
 				WaitHandle [] waitArray = new WaitHandle [asyncResults.Count];
 				int i = 0;
 				for (i = 0; i < asyncResults.Count; i++) {
@@ -2153,6 +2175,7 @@ public partial class Page : TemplateControl, IHttpHandler
 						}
 					}
 				}
+#endif
 			}
 			DateTime endWait = DateTime.Now;
 			TimeSpan elapsed = endWait - startExecution;

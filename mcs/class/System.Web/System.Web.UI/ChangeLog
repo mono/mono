@@ -1,3 +1,8 @@
+2007-05-10 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* Page.cs: ExecuteRegisteredAsyncTasks:
+	implimentation for TARGET_JVM doesn't use WaitHandle.WaitAll, but WaitOne
+
 2007-05-09  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* HtmlTextWriter.cs: used classes instead of sctrucs in TARGET_JVM for
