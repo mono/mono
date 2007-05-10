@@ -1,3 +1,15 @@
+2007-05-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.h (MONO_AOT_FILE_VERSION): Bump AOT file version.
+
+	* mini.h (MonoCompile): Add 'token_info_hash' field.
+
+	* mini.c: Save token->method associations during compilation so the AOT 
+	compiler can use it.
+	
+	* aot-compiler.c aot-runtime.c: Add support for compiling non-generic methods
+	which reference generic classes and methods.
+
 2007-05-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.h mini-<ARCH>.h: Get rid of MONO_ARCH_HAS_XP_LOCAL_REGALLOC.
