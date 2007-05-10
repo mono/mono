@@ -428,6 +428,7 @@ namespace System.Data.SqlClient
 			}
 		}
 
+		[DisplayNameAttribute ("Trust Server Certificate")]
 		public bool TrustServerCertificate { 
 			get { return _trustServerCertificate; } 
 			set {
@@ -436,6 +437,7 @@ namespace System.Data.SqlClient
 			}
 		}
 
+		[DisplayNameAttribute ("Type System Version")]
 		public string TypeSystemVersion { 
 			get { return _typeSystemVersion; } 
 			set {
@@ -444,6 +446,7 @@ namespace System.Data.SqlClient
 			}
 		}
 
+		[DisplayNameAttribute ("User Instance")]
 		public bool UserInstance { 
 			get { return _userInstance; }
 			set { 
@@ -452,6 +455,7 @@ namespace System.Data.SqlClient
 			}
 		}
 
+		[DisplayNameAttribute ("Context Connection")]
 		public bool ContextConnection { 
 			get { return _contextConnection; }
 			set { 

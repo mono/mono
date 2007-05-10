@@ -1,3 +1,10 @@
+2007-05-10  Nagappan A  <anagappan@novell.com>
+
+	* SqlClientMetaDataCollectionNames.cs: Fixed incorrect constructor
+	type.
+
+	* SqlConnectionStringBuilder.cs: Fixed missing attributes.
+
 2007-05-09 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* SqlConnectionStringBuilder.cs: added MonoNotSupported attribute.

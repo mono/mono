@@ -35,8 +35,7 @@ namespace System.Data.SqlClient
 	/// <summary>
 	/// Collection names
 	/// </summary>
-	//note : MS documentation has it as public sealed abstract.!
-	public sealed class SqlClientMetaDataCollectionNames {
+	public static class SqlClientMetaDataCollectionNames {
 
 	public static readonly string Columns;
 	public static readonly string Databases;
@@ -51,12 +50,9 @@ namespace System.Data.SqlClient
 	public static readonly string Users;
 	public static readonly string ViewColumns;
 	public static readonly string Views;
-		
-	
+
 	}
-
 }
-
 
 #endif
 
