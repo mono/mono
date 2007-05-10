@@ -1,3 +1,9 @@
+2007-05-10  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* SHA1CryptoServiceProvider.cs: Reduce by half the number of required
+	memory allocations to produce a hash (in >90% of the cases) by reusing
+	an existing memory buffer (instead of always allocating a new one).
+
 2007-05-08  Randolph Chung  <tausq@debian.org>
 
 	* DSACryptoServiceProvider.cs: Implement the ImportCspBlob and

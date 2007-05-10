@@ -407,7 +407,8 @@ namespace System.Security.Cryptography {
 			if (paddingSize < 1)
 				paddingSize += BLOCK_SIZE_BYTES;
 
-			byte[] fooBuffer = new byte[inputCount+paddingSize+8];
+			int length = inputCount+paddingSize+8;
+			byte[] fooBuffer = (length == 64) ? _ProcessingBuffer : new byte[length];
 
 			for (int i=0; i<inputCount; i++) {
 				fooBuffer[i] = inputBuffer[i+inputOffset];
@@ -423,9 +424,8 @@ namespace System.Security.Cryptography {
 			AddLength (size, fooBuffer, inputCount+paddingSize);
 			ProcessBlock (fooBuffer, 0);
 
-			if (inputCount+paddingSize+8 == 128) {
-				ProcessBlock(fooBuffer, 64);
-			}
+			if (length == 128)
+				ProcessBlock (fooBuffer, 64);
 		}
 
 		internal void AddLength (ulong length, byte[] buffer, int position)
