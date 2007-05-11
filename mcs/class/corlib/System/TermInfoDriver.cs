@@ -353,6 +353,9 @@ namespace System {
 					IncrementX ();
 				break;
 			case ConsoleKey.Clear:
+				WriteConsole (clear);
+				cursorLeft = 0;
+				cursorTop = 0;
 				break;
 			case ConsoleKey.Enter:
 				break;
@@ -800,6 +803,8 @@ namespace System {
 			}
 
 			WriteConsole (clear);
+			cursorLeft = 0;
+			cursorTop = 0;
 		}
 
 		public void Beep (int frequency, int duration)

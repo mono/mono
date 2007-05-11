@@ -1,3 +1,12 @@
+2007-05-11  Jeffrey Stedfast  <fejj@novell.com>
+
+	Fixes bug #81540
+
+	* TermInfoDriver.cs (WriteSpecialKey): Actually clear the screen
+	and reset the cursor position to 0,0 when the key is
+	ConsoleKey.Clear.
+	(Clear): Reset the cursor position to 0,0
+
 2007-05-09  Marek Safar  <marek.safar@gmail.com>
 
 	* MulticastDelegate.cs: Fixed operators logic.
@@ -13,7 +22,8 @@
 
 2007-04-27  Zoltan Varga  <vargaz@gmail.com>
 
-	* Environment.cs (StackTrace): Avoid skipping a frame to be compatible with MS.
+	* Environment.cs (StackTrace): Avoid skipping a frame to be
+	compatible with MS.
 
 2007-04-25  Atsushi Enomoto  <atsushi@ximian.com>
 
