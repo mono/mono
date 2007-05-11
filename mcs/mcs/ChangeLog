@@ -1,3 +1,7 @@
+2007-05-11  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile [PROFILE=net_2_0_bootstrap]: Add special-case rules.
+
 2007-05-11  Marek Safar  <marek.safar@gmail.com>
 
 	* typemanager.cs (IsFriendAssembly): Should not be called for building

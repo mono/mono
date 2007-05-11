@@ -20,7 +20,30 @@ CLEAN_FILES = y.output *.exe *.mdb
 cs-parser.cs: cs-parser.jay $(topdir)/jay/skeleton.cs
 	$(topdir)/jay/jay -ctv < $(topdir)/jay/skeleton.cs $< > jay-tmp.out && mv jay-tmp.out $@
 
+ifeq (net_2_0_bootstrap, $(PROFILE))
+
+all-local $(STD_TARGET:=-local):
+	@:
+
+all-local: $(PROGRAM) $(PROGRAM).config
+clean-local: clean-program
+clean-program:
+	rm -f $(PROGRAM) $(PROGRAM).config
+
+progdir = $(dir $(PROGRAM))
+
+$(progdir):
+	$(MKINSTALLDIRS) $@
+
+$(PROGRAM): $(topdir)/class/lib/default/mcs.exe | $(progdir)
+	cp $< $@
+
+$(PROGRAM).config: $(topdir)/gmcs/gmcs.exe.config | $(progdir)
+	cp $< $@
+
+else
 include ../build/executable.make
+endif
 
 ifeq (default, $(PROFILE))
 # Utility rule to make debugging somewhat easier.

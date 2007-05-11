@@ -45,13 +45,15 @@ lib_dir = lib
 endif
 
 makefrag = $(depsdir)/$(PROFILE)_$(LIBRARY).makefrag
-the_lib = $(topdir)/class/$(lib_dir)/$(PROFILE)/$(LIBRARY_NAME)
+the_libdir = $(topdir)/class/$(lib_dir)/$(PROFILE)/
+the_lib = $(the_libdir)$(LIBRARY_NAME)
 the_pdb = $(the_lib:.dll=.pdb)
 the_mdb = $(the_lib).mdb
 library_CLEAN_FILES += $(makefrag) $(the_lib) $(the_pdb) $(the_mdb)
 
 ifdef LIBRARY_NEEDS_POSTPROCESSING
-build_lib = fixup/$(PROFILE)/$(LIBRARY_NAME)
+build_libdir = fixup/$(PROFILE)/
+build_lib = $(build_libdir)$(LIBRARY_NAME)
 library_CLEAN_FILES += $(build_lib) $(build_lib:.dll=.pdb)
 else
 build_lib = $(the_lib)
@@ -290,7 +292,12 @@ endif
 
 # The library
 
-$(build_lib): $(response) $(sn) $(BUILT_SOURCES)
+$(the_libdir) $(build_libdir):
+	$(MKINSTALLDIRS) $@
+
+$(the_lib): | $(the_libdir)
+
+$(build_lib): $(response) $(sn) $(BUILT_SOURCES) | $(build_libdir)
 ifdef LIBRARY_USE_INTERMEDIATE_FILE
 	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) -target:library -out:$(LIBRARY_NAME) $(BUILT_SOURCES_cmdline) @$(response)
 	$(SN) $(SNFLAGS) $(LIBRARY_NAME) $(LIBRARY_SNK)

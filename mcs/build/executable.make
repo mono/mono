@@ -2,7 +2,8 @@
 #
 # The rules for building a program.
 
-base_prog = $(shell basename $(PROGRAM))
+base_prog = $(notdir $(PROGRAM))
+prog_dir = $(dir $(PROGRAM))
 sourcefile = $(base_prog).sources
 base_prog_config := $(wildcard $(base_prog).config.$(PROFILE))
 ifndef base_prog_config
@@ -80,7 +81,10 @@ ifndef PROGRAM_COMPILE
 PROGRAM_COMPILE = $(CSCOMPILE)
 endif
 
-$(PROGRAM): $(BUILT_SOURCES) $(EXTRA_SOURCES) $(response)
+$(prog_dir):
+	$(MKINSTALLDIRS) $@
+
+$(PROGRAM): $(BUILT_SOURCES) $(EXTRA_SOURCES) $(response) | $(prog_dir)
 	$(PROGRAM_COMPILE) -target:exe -out:$(base_prog) $(BUILT_SOURCES) $(EXTRA_SOURCES) @$(response)
 ifneq ($(base_prog),$(PROGRAM))
 	mv $(base_prog) $(PROGRAM)
