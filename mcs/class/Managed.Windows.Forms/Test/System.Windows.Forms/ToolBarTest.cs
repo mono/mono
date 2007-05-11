@@ -191,6 +191,55 @@ namespace MonoTests.System.Windows.Forms
 			form.Close ();
 		}
 
+		[Test]
+		public void HorizontalSizeTest ()
+		{
+			// Test aproximated sizes (> 30 and < 30) because it depends of font size. 
+			Form form = new Form ();
+			form.ShowInTaskbar = false;
+			form.Show ();
+			
+			ToolBar toolbar = new ToolBar ();
+			Assert.IsTrue (toolbar.Size.Height > 30, "#1");
+
+			toolbar.Buttons.Add (new ToolBarButton (""));
+			Assert.IsTrue (toolbar.Size.Height > 30, "#2");
+
+			form.Controls.Add (toolbar);
+			Assert.IsTrue (toolbar.Size.Height < 30, "#3");
+
+			// TODO: Notworking at moment.
+			//toolbar.Buttons.Add (new ToolBarButton ("Test"));
+			//Assert.IsTrue (toolbar.Size.Height > 30, "#4");
+			
+			form.Close ();
+		}
+
+		[Test]
+		public void VerticalSizeTest ()
+		{
+			// Test aproximated sizes (> 30 and < 30) because it depends of font size. 
+			Form form = new Form ();
+			form.ShowInTaskbar = false;
+			form.Show ();
+			
+			ToolBar toolbar = new ToolBar ();
+			toolbar.Dock = DockStyle.Left;
+			Assert.IsTrue (toolbar.Size.Width > 30, "#1");
+
+			toolbar.Buttons.Add (new ToolBarButton (""));
+			Assert.IsTrue (toolbar.Size.Width > 30, "#2");
+
+			form.Controls.Add (toolbar);
+			Assert.IsTrue (toolbar.Size.Width < 30, "#3");
+
+			// TODO: Notworking at moment.
+			//toolbar.Buttons.Add (new ToolBarButton ("Test"));
+			//Assert.IsTrue (toolbar.Size.Width > 30, "#4");
+			
+			form.Close ();
+		}
+
 	}
 
 	// [MonoTODO ("Add test for ButtonClickEvent (Visual Test)"]
