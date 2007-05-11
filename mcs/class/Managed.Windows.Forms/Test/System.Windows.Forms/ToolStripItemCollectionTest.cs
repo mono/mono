@@ -101,13 +101,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void ConstructorANE ()
-		{
-			new ToolStripItemCollection (new ToolStrip (), (ToolStripItem[])null);
-		}
-		
-		[Test]
 		public void Constructor_Items_Null ()
 		{
 			try {

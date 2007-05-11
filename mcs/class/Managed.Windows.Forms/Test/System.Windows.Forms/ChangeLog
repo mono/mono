@@ -1,3 +1,7 @@
+2007-05-11  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ToolStripItemCollectionTest.cs: Removed duplicate test.
+
 2007-05-11  Everaldo Canuto  <everaldo@simios.org>
 
 	* ToolBarTest.cs: Add tests for toolbar size (horizontal and vertical),
