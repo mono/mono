@@ -171,6 +171,26 @@ namespace MonoTests.System.Windows.Forms
 			
 			form.Close ();
 		}
+
+		[Test]
+		public void CreateHandleTest ()
+		{
+			Form form = new Form ();
+			form.ShowInTaskbar = false;
+			form.Show ();
+
+			ToolBar toolbar = new ToolBar ();
+			Assert.IsFalse (toolbar.IsHandleCreated, "#1");
+			
+			toolbar.Buttons.Add (new ToolBarButton (""));
+			Assert.IsFalse (toolbar.IsHandleCreated, "#2");
+			
+			form.Controls.Add (toolbar);
+			Assert.IsTrue (toolbar.IsHandleCreated, "#3");
+			
+			form.Close ();
+		}
+
 	}
 
 	// [MonoTODO ("Add test for ButtonClickEvent (Visual Test)"]

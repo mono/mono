@@ -1,3 +1,7 @@
+2007-05-10  Everaldo Canuto  <everaldo@simios.org>
+
+	* ToolBarTest.cs: CreateHandleTest added.
+
 2007-05-10  Jonathan Pobst  <monkey@jpobst.com>
 
 	* FormTest.cs: Marking test for bug 81582 as NotWorking as it fails
