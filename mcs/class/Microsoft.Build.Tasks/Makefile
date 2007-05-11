@@ -26,9 +26,9 @@ TEST_MCS_FLAGS = \
 
 EXTRA_DISTFILES = Test/resources/test.cs
 
-test-local: test.dll
+test-local: Test/resources/test.dll
 
-test.dll: Test/resources/test.cs
+Test/resources/test.dll: Test/resources/test.cs
 	$(CSCOMPILE) -target:library Test/resources/test.cs
 
 include ../../build/library.make

@@ -1,3 +1,7 @@
+2007-05-11  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (Test/resources/test.dll): Use full name, not just test.dll.
+
 2007-02-18  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* Makefile: Compile Test/resources/test.cs before test-local.
