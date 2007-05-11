@@ -22,7 +22,7 @@ cs-parser.cs: cs-parser.jay $(topdir)/jay/skeleton.cs
 
 ifeq (net_2_0_bootstrap, $(PROFILE))
 
-all-local $(STD_TARGET:=-local):
+all-local $(STD_TARGETS:=-local):
 	@:
 
 all-local: $(PROGRAM) $(PROGRAM).config
