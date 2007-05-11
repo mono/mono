@@ -1,5 +1,11 @@
 2007-05-11  Everaldo Canuto  <everaldo@simios.org>
 
+	* ToolBar.cs: Check for handle created in redraw to prevent unneeded size
+	calculations, it reduces the size cauculation from 7 to 3 on a toolbar with
+	3 buttons.
+
+2007-05-11  Everaldo Canuto  <everaldo@simios.org>
+
 	* ToolBar.cs: Save default_size on create handle to use later for buttons
 	without text, needed to mimic win32 behavior.
 

@@ -840,6 +840,9 @@ namespace System.Windows.Forms
 
 		internal void Redraw (bool recalculate, bool force)
 		{
+			if (!IsHandleCreated)
+				return;
+
 			bool invalidate = true;
 			
 			if (recalculate)
