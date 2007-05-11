@@ -1,5 +1,12 @@
 ../../build/common/Consts.cs
+../corlib/Mono.DataConvert/DataConverter.cs
 Assembly/AssemblyInfo.cs
+System/DateTimeOffset.cs
+System/InvalidTimeZoneException.cs
+System/TimeZoneInfo.AdjustmentRule.cs
+System/TimeZoneInfo.cs
+System/TimeZoneInfo.TranstitionTime.cs
+System/TimeZoneNotFoundException.cs
 System.Runtime.CompilerServices/ExtensionAttribute.cs
 System.Linq/Enumerable.cs
 System.Linq/Funcs.cs

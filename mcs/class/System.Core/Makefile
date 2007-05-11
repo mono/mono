@@ -3,7 +3,7 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.Core.dll
-LIB_MCS_FLAGS = -langversion:linq /r:$(corlib)
+LIB_MCS_FLAGS = -langversion:linq -d:LIBC /r:$(corlib)
 NO_TEST = yes
 
 # This is a .NET 2.0 only assembly

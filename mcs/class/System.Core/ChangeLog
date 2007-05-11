@@ -1,3 +1,17 @@
+2007-05-11  Stephane Delcroix  <stephane@delcroix.org>
+
+	* System/DateTimeOffset.cs:
+	* System/InvalidTimeZoneException.cs:
+	* System/TimeZoneInfo.AdjustmentRules.cs:
+	* System/TimeZoneInfo.cs:
+	* System/TimeZoneInfo.TransitionTime.cs
+	* System/TimeZoneNotFoundException.cs: new TimeZoneInfo class
+
+	* System.Core.dll.sources: Added the above files
+
+	* Makefile: compile with -d:LIBC so TimeZoneInfo will look for libc
+	defined timezones
+
 2007-03-29  Miguel de Icaza  <miguel@novell.com>
 
 	* Reapply the patch from Antonello, and rework the code to not use
