@@ -1,3 +1,8 @@
+2007-05-10  Jonathan Chambers  <joncham@gmail.com>
+
+	* BinaryClientFormatterSinkProvider.cs: Allow typeFilterLevel property
+	if NET_1_1 or greater; matches code already in BinaryCore.
+
 2007-05-07  Robert Jordan  <robertj@gmx.net>
 
 	* SoapMessageFormatter.cs (BuildMethodCallFromSoapMessage):
