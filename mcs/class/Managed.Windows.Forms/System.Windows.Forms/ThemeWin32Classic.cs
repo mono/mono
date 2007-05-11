@@ -2373,10 +2373,18 @@ namespace System.Windows.Forms
 					}
 				}
 				else {
-					if (item.Checked && control.StateImageList.Images.Count > 1)
-						control.StateImageList.Draw (dc, rect_checkrect.Location, 1);
-					else if (control.StateImageList.Images.Count > 0)
-						control.StateImageList.Draw (dc, rect_checkrect.Location, 0);
+					int simage_idx;
+					if (item.Checked)
+#if NET_2_0
+						simage_idx = control.StateImageList.Images.Count > 1 ? 1 : -1;
+#else
+						simage_idx = control.StateImageList.Images.Count > 1 ? 1 : 0;
+#endif
+					else
+						simage_idx = control.StateImageList.Images.Count > 0 ? 0 : -1;
+
+					if (simage_idx > -1)
+						control.StateImageList.Draw (dc, rect_checkrect.Location, simage_idx);
 				}
 			}
 

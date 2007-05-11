@@ -1,3 +1,11 @@
+2007-05-10  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ThemeWinClassic.cs: For .Net 2.0 don't draw any image
+	if we are using checkboxes, checked is true, and we have less
+	than two images in StateImageList; for the 1.1 in the same scenario
+	draw the first image if we have at least one image in StateImageList.
+	Fixes part of #81191.
+
 2007-05-10  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStrip.cs, ToolStripManager.cs: We need to remove items from
