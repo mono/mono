@@ -453,6 +453,10 @@ namespace System.Windows.Forms
 		{
 			base.CreateHandle ();
 			default_size = CalcButtonSize ();
+			
+			// In win32 the recalculate size only happens for not flat style
+			if (appearance != ToolBarAppearance.Flat)
+				Redraw (true);
 		}
 
 		protected override void Dispose (bool disposing)
@@ -840,9 +844,6 @@ namespace System.Windows.Forms
 
 		internal void Redraw (bool recalculate, bool force)
 		{
-			if (!IsHandleCreated)
-				return;
-
 			bool invalidate = true;
 			
 			if (recalculate)

@@ -1,3 +1,11 @@
+2007-05-11  Everaldo Canuto  <everaldo@simios.org>
+
+	* ToolBar.cs: 
+	- When not flat call redraw to recalculate sizes on creare handle to match
+	win32 behavior.
+	- Revert 77220 because it causes some regressions in toobar
+	button.
+
 2007-05-11  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* MaskedTextBox.cs: Update the base text whenever the text changes. MTB
