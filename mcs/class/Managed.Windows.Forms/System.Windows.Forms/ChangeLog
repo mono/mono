@@ -1,5 +1,10 @@
 2007-05-11  Everaldo Canuto  <everaldo@simios.org>
 
+	* ToolBar.cs: Save default_size on create handle to use later for buttons
+	without text, needed to mimic win32 behavior.
+
+2007-05-11  Everaldo Canuto  <everaldo@simios.org>
+
 	* ToolBar.cs: Fix button layour to best fit width or height according to
 	vertical or not. Fixes #81524.
 

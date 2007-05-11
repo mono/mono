@@ -46,6 +46,7 @@ namespace System.Windows.Forms
 		private bool size_specified = false;
 		private ToolBarItem current_item;
 		internal ToolBarItem[] items;
+		internal Size default_size;
 		#endregion Instance Variables
 
 		#region Events
@@ -451,6 +452,7 @@ namespace System.Windows.Forms
 		protected override void CreateHandle ()
 		{
 			base.CreateHandle ();
+			default_size = CalcButtonSize ();
 		}
 
 		protected override void Dispose (bool disposing)
@@ -1316,7 +1318,8 @@ namespace System.Windows.Forms
 			if (button.Style == ToolBarButtonStyle.Separator)
 				return new Size (theme.ToolBarSeparatorWidth, ht);
 
-			Size size = TextSize;
+			Size size = TextSize.IsEmpty ? toolbar.default_size : TextSize;
+			
 			Size image_size = (toolbar.ImageSize == Size.Empty) ? new Size (16, 16) : toolbar.ImageSize;
 
 			int image_width = image_size.Width + 2 * theme.ToolBarImageGripWidth; 
