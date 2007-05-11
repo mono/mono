@@ -411,7 +411,7 @@ namespace System.Web.UI {
 					
 					if (!mappedType.IsSubclassOf (originalType))
 						throw new ConfigurationErrorsException (
-							String.Format ("The specified type '{0}' used for mapping must inherit from the original type '{0}'.", mappedTypeName, originalTypeName));
+							String.Format ("The specified type '{0}' used for mapping must inherit from the original type '{1}'.", mappedTypeName, originalTypeName));
 
 					return mappedType;
 				}

@@ -1,3 +1,7 @@
+2007-05-11  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ControlBuilder.cs: Fixed exception message in MapType.
+
 2007-05-10  Marek Habersack  <mhabersack@novell.com>
 
 	* Control.cs: small formatting change
