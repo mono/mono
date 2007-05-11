@@ -16,6 +16,7 @@ using System.Globalization;
 using System.IO;
 using System.Web.Services;
 using System.Web.Services.Description;
+using System.Web.Services.Protocols;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
@@ -212,6 +213,43 @@ namespace MonoTests.System.Web.Services.Description
 				"</wsdl:definitions>", Environment.NewLine), sw.ToString (), "#5");
 		}
 
+		[Test]
+		[Category ("NotWorking")]
+		public void ReflectTypeNonDefaultBinding ()
+		{
+			// bug #78953
+			ServiceDescriptionReflector r =
+				new ServiceDescriptionReflector ();
+			r.Reflect (typeof (EdaInterface), "urn:foo");
+//foreach (ServiceDescription sss in r.ServiceDescriptions) sss.Write (Console.Out);
+			// It should create two wsdls, one for www.DefaultNamespace.org and
+			// another for urn:localBinding:local .
+			Assert.AreEqual (2, r.ServiceDescriptions.Count, "#1");
+			Assert.IsNotNull (r.ServiceDescriptions ["www.DefaultNamespace.org"], "#1-1");
+			ServiceDescription sd = r.ServiceDescriptions ["urn:localBinding:local"];
+			Assert.IsNotNull (sd, "#1-2");
+#if NET_2_0
+			// Soap and Soap12
+			Assert.AreEqual (2, sd.Bindings.Count, "#2-2.0");
+#else
+			// Soap
+			Assert.AreEqual (1, sd.Bindings.Count, "#2-1.1");
+#endif
+			Binding b = sd.Bindings [0];
+			Assert.AreEqual ("Local", b.Name, "#3");
+		}
+
+		[Test]
+		public void Bug79087 ()
+		{
+			ServiceDescriptionReflector r =
+				new ServiceDescriptionReflector ();
+			r.Reflect (typeof (Bug79807Service), "urn:foo");
+			StringWriter sw = new StringWriter ();
+			r.ServiceDescriptions [0].Write (sw);
+			ServiceDescription.Read (new StringReader (sw.ToString ()));
+		}
+
 		public class IncludeTestServices : WebService
 		{
 			[WebMethod ()]
@@ -256,5 +294,71 @@ namespace MonoTests.System.Web.Services.Description
 			}
 		}
 #endif
+
+		// bug #78953
+		[WebServiceAttribute (Namespace = "www.DefaultNamespace.org")]
+		[WebServiceBindingAttribute (Name = "Local", Namespace = "urn:localBinding:local")]
+		public class EdaInterface : WebService
+		{
+			[WebMethod]
+			public void Test ()
+			{
+			}
+
+			[WebMethod]
+			public void Test2 ()
+			{
+			}
+
+			[WebMethod]
+			[SoapDocumentMethodAttribute ("urn:localBinding:local:LocalBindingMethod",
+				RequestNamespace = "urn:localBinding:local",
+				Binding = "Local",
+				Use = SoapBindingUse.Literal, 
+				ParameterStyle = SoapParameterStyle.Bare)]
+			public void BindingMethod ()
+			{
+			}
+		}
+
+		// bug #79807
+		public class Bug79807Item
+		{
+			public string stringOne;
+			public string stringTwo;
+		}
+
+		public class Bug79807AnotherItem
+		{
+			public string stringOne;
+			public string stringTwo;
+		}
+
+		[WebService]
+		[SoapRpcService]
+		public class Bug79807Service : WebService
+		{
+			[WebMethod]
+			public Bug79807Item [] Method1 (int count)
+			{
+				Bug79807Item [] arr = new Bug79807Item [count];
+				for (int i = 0;i < count;i++) {
+					arr [i].stringOne = "one";
+					arr [i].stringTwo = "two";
+				}
+				return arr;
+			}
+
+			[WebMethod]
+			public Bug79807AnotherItem [] Method2 (int count)
+			{
+				Bug79807AnotherItem [] arr = new Bug79807AnotherItem [count];
+				for (int i = 0;i < count;i++) {
+					arr [i].stringOne = "one";
+					arr [i].stringTwo = "two";
+				}
+				return arr;
+			}
+		}
 	}
 }
