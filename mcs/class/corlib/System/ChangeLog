@@ -1,3 +1,12 @@
+2007-05-11  Jeffrey Stedfast  <fejj@novell.com>
+
+	Fixes bug #81540
+
+	* TermInfoDriver.cs (WriteSpecialKey): Actually clear the screen
+	and reset the cursor position to 0,0 when the key is
+	ConsoleKey.Clear.
+	(Clear): Reset the cursor position to 0,0
+
 2007-04-24  Jeffrey Stedfast  <fejj@novell.com>
 
 	Fixes the last of the bugs listed in bug #77525
