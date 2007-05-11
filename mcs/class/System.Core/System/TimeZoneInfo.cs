@@ -475,7 +475,7 @@ namespace System
 				DST_end -= (BaseUtcOffset + rule.DaylightDelta);
 			}
 
-			return (dateTime >= DST_start && dateTime < DST_end)
+			return (dateTime >= DST_start && dateTime < DST_end);
 		}
 
 		public bool IsDaylightSavingTime (DateTimeOffset dateTimeOffset)
