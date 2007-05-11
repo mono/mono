@@ -1,3 +1,9 @@
+2007-05-10  Everaldo Canuto  <everaldo@simios.org>
+
+	* ToolBarButton.cs: When change style call ToolBar.Redraw to update
+	toolbar size info because different styles theres different sizes.
+	Fixes #81522.
+
 2007-05-10  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ThemeWinClassic.cs: For .Net 2.0 don't draw any image

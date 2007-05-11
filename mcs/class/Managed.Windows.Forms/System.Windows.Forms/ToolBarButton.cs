@@ -186,7 +186,9 @@ namespace System.Windows.Forms
 					return;
 
 				style = value;
-				Invalidate ();
+				
+				if (parent != null)
+					parent.Redraw (true);
 			}
 		}
 
