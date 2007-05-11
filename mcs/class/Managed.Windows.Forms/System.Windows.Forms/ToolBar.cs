@@ -941,7 +941,7 @@ namespace System.Windows.Forms
 				if (size_specified && (button.Style != ToolBarButtonStyle.Separator))
 					changed = item.Layout (adjusted_size);
 				else
-					changed = item.Layout ();
+					changed = item.Layout (Vertical, calculated_size);
 				
 				bool is_separator = button.Style == ToolBarButtonStyle.Separator;
 				
@@ -1336,7 +1336,7 @@ namespace System.Windows.Forms
 		}
 
 		
-		public bool Layout ()
+		public bool Layout (bool vertical, int calculated_size)
 		{
 			if (toolbar == null || !button.Visible)
 				return false;
@@ -1345,8 +1345,14 @@ namespace System.Windows.Forms
 			Size size = psize;
 			if ((!toolbar.SizeSpecified) || (button.Style == ToolBarButtonStyle.Separator)) {
 				size = CalculateSize ();
+
 				if (size.Width == 0 || size.Height == 0)
 					size = psize;
+
+				if (vertical)
+					size.Width = calculated_size;
+				else
+					size.Height = calculated_size;
 			}
 			return Layout (size);
 		}

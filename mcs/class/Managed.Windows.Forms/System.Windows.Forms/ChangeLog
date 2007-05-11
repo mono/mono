@@ -1,3 +1,8 @@
+2007-05-11  Everaldo Canuto  <everaldo@simios.org>
+
+	* ToolBar.cs: Fix button layour to best fit width or height according to
+	vertical or not. Fixes #81524.
+
 2007-05-10  Everaldo Canuto  <everaldo@simios.org>
 
 	* ToolBarButton.cs: When change style call ToolBar.Redraw to update
