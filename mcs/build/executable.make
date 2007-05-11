@@ -3,7 +3,7 @@
 # The rules for building a program.
 
 base_prog = $(notdir $(PROGRAM))
-prog_dir = $(dir $(PROGRAM))
+prog_dir = $(filter-out . ./, $(dir $(PROGRAM)))
 sourcefile = $(base_prog).sources
 base_prog_config := $(wildcard $(base_prog).config.$(PROFILE))
 ifndef base_prog_config
@@ -81,10 +81,13 @@ ifndef PROGRAM_COMPILE
 PROGRAM_COMPILE = $(CSCOMPILE)
 endif
 
-$(prog_dir):
-	$(MKINSTALLDIRS) $@
+ifdef prog_dir
+$(prog_dir)/.stamp:
+	$(MKINSTALLDIRS) $(@D)
+	touch $@
+endif
 
-$(PROGRAM): $(BUILT_SOURCES) $(EXTRA_SOURCES) $(response) | $(prog_dir)
+$(PROGRAM): $(BUILT_SOURCES) $(EXTRA_SOURCES) $(response) $(prog_dir:=/.stamp)
 	$(PROGRAM_COMPILE) -target:exe -out:$(base_prog) $(BUILT_SOURCES) $(EXTRA_SOURCES) @$(response)
 ifneq ($(base_prog),$(PROGRAM))
 	mv $(base_prog) $(PROGRAM)
@@ -114,6 +117,6 @@ endif
 all-local: $(makefrag)
 
 ifneq ($(response),$(sourcefile))
-$(response): $(topdir)/build/executable.make | $(depsdir)
+$(response): $(topdir)/build/executable.make $(depsdir)/.stamp
 endif
-$(makefrag): $(topdir)/build/executable.make | $(depsdir)
+$(makefrag): $(topdir)/build/executable.make $(depsdir)/.stamp

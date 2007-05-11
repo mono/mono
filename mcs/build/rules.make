@@ -158,8 +158,9 @@ dist-default:
 	    $(MKINSTALLDIRS) $$dest && cp -p $$f $$dest || exit 1 ; \
 	done
 
-$(depsdir):
-	$(MKINSTALLDIRS) $@
+$(depsdir)/.stamp:
+	$(MKINSTALLDIRS) $(@D)
+	touch $@
 
 # Useful
 

@@ -67,7 +67,7 @@ do-profile-check-monolite:
 
 else
 
-do-profile-check-monolite: $(depsdir)
+do-profile-check-monolite: $(depsdir)/.stamp
 	echo "*** The compiler '$(BOOTSTRAP_MCS)' doesn't appear to be usable." 1>&2
 	echo "*** Trying the 'monolite' directory." 1>&2
 	echo dummy > $(monolite_flag)
@@ -75,7 +75,7 @@ do-profile-check-monolite: $(depsdir)
 
 endif
 
-$(PROFILE_CS): $(topdir)/build/profiles/basic.make | $(depsdir)
+$(PROFILE_CS): $(topdir)/build/profiles/basic.make $(depsdir)/.stamp
 	echo 'class X { static int Main () { return 0; } }' > $@
 
 $(PROFILE_EXE): $(PROFILE_CS)

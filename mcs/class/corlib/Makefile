@@ -69,5 +69,5 @@ $(cmp_makefrag): $(cmp_response)
 #
 # -include $(cmp_makefrag)
 
-$(cmp_response) $(cmp_makefrag): Makefile | $(depsdir)
+$(cmp_response) $(cmp_makefrag): Makefile $(depsdir)/.stamp
 endif

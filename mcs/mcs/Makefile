@@ -32,13 +32,14 @@ clean-program:
 
 progdir = $(dir $(PROGRAM))
 
-$(progdir):
-	$(MKINSTALLDIRS) $@
+$(progdir)/.stamp:
+	$(MKINSTALLDIRS) $(@D)
+	touch $@
 
-$(PROGRAM): $(topdir)/class/lib/default/mcs.exe | $(progdir)
+$(PROGRAM): $(topdir)/class/lib/default/mcs.exe $(progdir)/.stamp
 	cp $< $@
 
-$(PROGRAM).config: $(topdir)/gmcs/gmcs.exe.config | $(progdir)
+$(PROGRAM).config: $(topdir)/gmcs/gmcs.exe.config $(progdir)/.stamp
 	cp $< $@
 
 else

@@ -292,12 +292,13 @@ endif
 
 # The library
 
-$(the_libdir) $(build_libdir):
-	$(MKINSTALLDIRS) $@
+$(the_libdir)/.stamp $(build_libdir:=/.stamp):
+	$(MKINSTALLDIRS) $(@D)
+	touch $@
 
-$(the_lib): | $(the_libdir)
+$(the_lib): $(the_libdir)/.stamp
 
-$(build_lib): $(response) $(sn) $(BUILT_SOURCES) | $(build_libdir)
+$(build_lib): $(response) $(sn) $(BUILT_SOURCES) $(build_libdir:=/.stamp)
 ifdef LIBRARY_USE_INTERMEDIATE_FILE
 	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) -target:library -out:$(LIBRARY_NAME) $(BUILT_SOURCES_cmdline) @$(response)
 	$(SN) $(SNFLAGS) $(LIBRARY_NAME) $(LIBRARY_SNK)
@@ -360,6 +361,6 @@ endif
 
 all-local: $(makefrag) $(test_makefrag) $(btest_makefrag)
 ifneq ($(response),$(sourcefile))
-$(response): $(topdir)/build/library.make | $(depsdir)
+$(response): $(topdir)/build/library.make $(depsdir)/.stamp
 endif
-$(makefrag) $(test_response) $(test_makefrag) $(btest_response) $(btest_makefrag): $(topdir)/build/library.make | $(depsdir)
+$(makefrag) $(test_response) $(test_makefrag) $(btest_response) $(btest_makefrag): $(topdir)/build/library.make $(depsdir)/.stamp
