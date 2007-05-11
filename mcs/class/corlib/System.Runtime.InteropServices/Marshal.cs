@@ -919,7 +919,7 @@ namespace System.Runtime.InteropServices
 			int len = s.Length;
 			IntPtr ctm = AllocCoTaskMem ((len+1) * 2 + 4);
 			byte [] buffer = null;
-			WriteInt32 (ctm, 0, len);
+			WriteInt32 (ctm, 0, len*2);
 			try {
 				buffer = s.GetBuffer ();
 
