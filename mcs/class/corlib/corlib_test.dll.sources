@@ -43,6 +43,7 @@ System/DateTimeTest.cs
 System/DecimalFormatterTest.cs
 System/DecimalTest2.cs
 System/DecimalTest.cs
+System.Diagnostics/DebuggerDisplayAttributeTest.cs
 System.Diagnostics/DebugTest.cs
 System.Diagnostics/StackFrameTest.cs
 System.Diagnostics/StackTraceTest.cs
