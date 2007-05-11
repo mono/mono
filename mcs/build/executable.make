@@ -3,7 +3,7 @@
 # The rules for building a program.
 
 base_prog = $(notdir $(PROGRAM))
-prog_dir = $(filter-out . ./, $(dir $(PROGRAM)))
+prog_dir := $(filter-out . ./, $(dir $(PROGRAM)))
 sourcefile = $(base_prog).sources
 base_prog_config := $(wildcard $(base_prog).config.$(PROFILE))
 ifndef base_prog_config
