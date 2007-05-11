@@ -1,3 +1,8 @@
+2007-05-11  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* MaskedTextBox.cs: Update the base text whenever the text changes. MTB
+	  now actually enters a usable state.
+
 2007-05-11  Everaldo Canuto  <everaldo@simios.org>
 
 	* ToolBar.cs: Check for handle created in redraw to prevent unneeded size

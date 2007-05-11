@@ -62,6 +62,7 @@ namespace System.Windows.Forms
 		private bool use_system_password_char;
 		private Type validating_type;
 		private bool is_empty_mask;
+		private bool setting_text;
 		
 #endregion
 #region Events
@@ -145,6 +146,7 @@ namespace System.Windows.Forms
 		{
 			BackColor = SystemColors.Window;
 			cut_copy_mask_format = MaskFormat.IncludeLiterals;
+			UpdateVisibleText ();
 		}
 #endregion
 #region Public and protected methods
@@ -236,11 +238,14 @@ namespace System.Windows.Forms
 			if (IsOverwriteMode) {
 				result = provider.InsertAt (e.KeyChar, SelectionStart, out testPosition, out resultHint);
 			} else {
-				result = provider.Replace (e.KeyChar, SelectionStart, out testPosition, out resultHint);
+				result = provider.Replace (e.KeyChar, SelectionStart, SelectionStart, out testPosition, out resultHint);
 			}
 			
 			if (!result) {
 				OnMaskInputRejected (new MaskInputRejectedEventArgs (testPosition, resultHint));
+			} else {
+				SelectionStart++;
+				UpdateVisibleText ();
 			}
 			
 			e.Handled = true;
@@ -356,6 +361,7 @@ namespace System.Windows.Forms
 			} 
 			set { 
 				provider = new MaskedTextProvider (provider.Mask, provider.Culture, value, provider.PromptChar, provider.PasswordChar, provider.AsciiOnly);
+				UpdateVisibleText ();
 			} 
 		}
 		
@@ -367,6 +373,7 @@ namespace System.Windows.Forms
 			}
 			set {
 				provider = new MaskedTextProvider (provider.Mask, provider.Culture, provider.AllowPromptAsInput, provider.PromptChar, provider.PasswordChar, value);
+				UpdateVisibleText ();
 			}
 		}
 		
@@ -403,6 +410,7 @@ namespace System.Windows.Forms
 			}
 			set {
 				provider = new MaskedTextProvider (provider.Mask, value, provider.AllowPromptAsInput, provider.PromptChar, provider.PasswordChar, provider.AsciiOnly);
+				UpdateVisibleText ();
 			}
 		}
 		
@@ -500,6 +508,7 @@ namespace System.Windows.Forms
 				}
 				
 				provider = new MaskedTextProvider (value, provider.Culture, provider.AllowPromptAsInput, provider.PromptChar, provider.PasswordChar, provider.AsciiOnly);
+				UpdateVisibleText ();
 			}
 		}
 		
@@ -560,6 +569,7 @@ namespace System.Windows.Forms
 			}
 			set {
 				provider.PasswordChar = value;
+				UpdateVisibleText ();
 			}
 		}
 			
@@ -572,6 +582,7 @@ namespace System.Windows.Forms
 			}
 			set {
 				provider.PromptChar = value;
+				UpdateVisibleText ();
 			}
 		}
 		
@@ -620,6 +631,7 @@ namespace System.Windows.Forms
 			}
 			set {
 				base.SelectedText = value;
+				UpdateVisibleText ();
 			}
 		}
 		
@@ -640,7 +652,7 @@ namespace System.Windows.Forms
 		[DefaultValue ("")]
 		public override string Text {
 			get {
-				if (is_empty_mask)
+				if (is_empty_mask || setting_text)
 					return base.Text;
 				
 				// The base constructor may call Text before we get to create a provider, 
@@ -648,19 +660,19 @@ namespace System.Windows.Forms
 				if (provider == null)
 					return string.Empty;
 					
-				return provider.ToString ();
+				return provider.ToString (true, true);
 			}
 			set {
 				string initial_text = Text;
 				
 				if (is_empty_mask) {
+					setting_text = true;
 					base.Text = value;
+					setting_text = false;
 				} else {
 					InputText (value, true, true);
 				}
-				if (Text != initial_text) {
-					OnTextChanged (EventArgs.Empty);
-				}
+				UpdateVisibleText ();
 			}
 		}
 		
@@ -746,17 +758,30 @@ namespace System.Windows.Forms
 		}
 #endregion
 #region Internal and private members
+		internal override void OnPaintInternal (PaintEventArgs pevent)
+		{
+			base.OnPaintInternal (pevent);
+			//pevent.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (BackColor), ClientRectangle);
+			//TextRenderer.DrawText (pevent.Graphics, Text, Font, ClientRectangle, ForeColor, TextFormatFlags.SingleLine);
+			//pevent.Handled = true;
+		}
+		
 		internal override Color ChangeBackColor (Color backColor)
 		{
-#if NET_2_0
-			//backcolor_set = false;
-			//if (!ReadOnly) {
-			//        backColor = SystemColors.Window;
-			//}
-#else
-				backColor = SystemColors.Window;
-#endif
 			return backColor;
+		}
+		
+		private void UpdateVisibleText ()
+		{
+			string text = Text;
+
+			setting_text = true;
+			if (base.Text != text) {
+				int selstart = SelectionStart;
+				base.Text = text;
+				SelectionStart = selstart;
+			}
+			setting_text = false;
 		}
 		
 		private void InputText (string text, bool overwrite, bool clear)
