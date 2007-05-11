@@ -1,3 +1,11 @@
+2007-05-10  Jonathan Chambers  <joncham@gmail.com>
+
+	* marshal.c: LPTSTR == LPWSTR on Win32. Fixes #81370.
+	* metadata.c: If no encoding is set, check for unicode
+	on class.
+	
+	Code is contributed under MIT/X11 license.
+
 2007-05-09  Jonathan Chambers  <joncham@gmail.com>
 
 	* threads.c: Handle if mono_thread_current returns NULL 
