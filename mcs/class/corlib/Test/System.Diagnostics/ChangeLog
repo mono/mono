@@ -1,3 +1,7 @@
+2007-05-11  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* DebuggerDisplayAttributeTest.cs: Added.
+
 2006-07-24  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* StackFrameTest.cs: Spaces to tabs. Marked tests that fail on Mono
