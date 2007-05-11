@@ -1,3 +1,9 @@
+2007-05-11  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DebuggerDisplayAttributeTest.cs: Make test forward compatible.
+	Replaced Assert.AreEqual null comparison with Assert.IsNull. Replaced
+	"" with string.Empty.
+
 2007-05-11  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* DebuggerDisplayAttributeTest.cs: Added.
