@@ -57,9 +57,6 @@ namespace System
 		IntPtr hash_table;
 		#endregion
 
-		[ThreadStatic]
-		static bool coinitialized;
-
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern __ComObject CreateRCW (Type t);
 
@@ -79,12 +76,6 @@ namespace System
 
 		public __ComObject ()
 		{
-			// call CoInitialize once per thread
-			if (!coinitialized) {
-				CoInitialize (IntPtr.Zero);
-				coinitialized = true;
-			}
-
 			Type t = GetType ();
 			int hr = CoCreateInstance (GetCLSID (t), IntPtr.Zero, 0x1 | 0x4 | 0x10, IID_IUnknown, out iunknown);
 			Marshal.ThrowExceptionForHR (hr);
@@ -92,12 +83,6 @@ namespace System
 
 		internal __ComObject (Type t)
 		{
-			// call CoInitialize once per thread
-			if (!coinitialized) {
-				CoInitialize (IntPtr.Zero);
-				coinitialized = true;
-			}
-
 			int hr = CoCreateInstance (GetCLSID (t), IntPtr.Zero, 0x1 | 0x4 | 0x10, IID_IUnknown, out iunknown);
 			Marshal.ThrowExceptionForHR (hr);
 		}
@@ -202,9 +187,6 @@ namespace System
 			// but IUnknown is identity in COM
 			return iunknown.ToInt32 ();
 		}
-
-		[DllImport ("ole32.dll", CallingConvention = CallingConvention.StdCall)]
-		static extern int CoInitialize (IntPtr pvReserved);
 
 		[DllImport ("ole32.dll", CallingConvention = CallingConvention.StdCall, ExactSpelling = true, PreserveSig = true)]
 		static extern int CoCreateInstance (
