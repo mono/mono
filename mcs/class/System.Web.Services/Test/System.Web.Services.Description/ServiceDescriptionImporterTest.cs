@@ -93,6 +93,31 @@ namespace MonoTests.System.Web.Services.Description
 				new CodeCompileUnit (),
 				new WebReferenceOptions ());
 		}
+
+		[Test]
+		[Ignore ("This test requires HttpGet available by configuration.")]
+		public void ImportHttpOnlyWsdl ()
+		{
+			ServiceDescriptionImporter imp =
+				new ServiceDescriptionImporter ();
+			imp.AddServiceDescription (ServiceDescription.Read ("Test/System.Web.Services.Description/test3.wsdl"), null, null);
+			CodeNamespace cns = new CodeNamespace ();
+			CodeCompileUnit ccu = new CodeCompileUnit ();
+			ccu.Namespaces.Add (cns);
+			imp.Import (cns, ccu);
+			// FIXME: this test could require more precise result
+			bool verified = false;
+			Assert.AreEqual (1, ccu.Namespaces.Count, "#1");
+			Assert.AreEqual (1, ccu.Namespaces [0].Types.Count, "#2");
+			foreach (CodeTypeDeclaration cd in ccu.Namespaces [0].Types) {
+Console.WriteLine ("***" + cd.Name);
+				if (cd.Name != "MyService")
+					continue;
+				Assert.AreEqual ("System.Web.Services.Protocols.HttpGetClientProtocol", cd.BaseTypes [0].BaseType);
+				verified = true;
+			}
+			Assert.IsTrue (verified, "verified");
+		}
 #endif
 	}
 }

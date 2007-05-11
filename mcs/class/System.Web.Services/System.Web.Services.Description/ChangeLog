@@ -1,3 +1,10 @@
+2007-05-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ProtocolImporter.cs, ServiceDescriptionImporter.cs : when there
+	  is no binding item for a supported protocol in a WSDL, skip such
+	  protocol and try next protocol, so that it can match HTTPGET-only
+	  WSDLs. Part of fix for #81457.
+
 2007-05-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* HttpSimpleProtocolReflector.cs : ServerType -> LogicalTypeInfo.

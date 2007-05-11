@@ -141,24 +141,13 @@ namespace System.Web.Services.Description {
 
 		public ServiceDescriptionImportWarnings Import (CodeNamespace codeNamespace, CodeCompileUnit codeCompileUnit)
 		{
-			ProtocolImporter importer = GetImporter ();
-			
-			if (!importer.Import (this, codeNamespace, importInfo))
-				throw new Exception ("None of the supported bindings was found");
-				
-			return importer.Warnings;
-		}
-		
-		ProtocolImporter GetImporter ()
-		{
-			ArrayList importers = GetSupportedImporters ();
-			if (protocolName == null || protocolName == "") protocolName = "Soap";
-			foreach (ProtocolImporter importer in importers) {
-				if (importer.ProtocolName.ToUpper () == protocolName.ToUpper ())
-					return importer;
+			foreach (ProtocolImporter importer in GetSupportedImporters ()) {
+				if ((protocolName != null && protocolName.Length != 0) && String.Compare (importer.ProtocolName, protocolName, true) != 0)
+					continue;
+				if (importer.Import (this, codeNamespace, importInfo))
+					return importer.Warnings;
 			}
-			
-			throw new Exception ("Protocol " + protocolName + " not supported");
+			throw new Exception ("None of the supported bindings was found");
 		}
 		
 		ArrayList GetSupportedImporters ()

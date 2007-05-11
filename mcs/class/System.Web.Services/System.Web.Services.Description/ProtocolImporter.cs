@@ -258,7 +258,7 @@ namespace System.Web.Services.Description {
 			EndNamespace ();
 			
 			if (!found) warnings = ServiceDescriptionImportWarnings.NoCodeGenerated;
-			return true;
+			return found;
 		}
 
 		void ImportPortBinding (bool multipleBindings)
@@ -790,13 +790,13 @@ namespace System.Web.Services.Description {
 		public void UnsupportedOperationBindingWarning (string text)
 		{
 			warnings |= ServiceDescriptionImportWarnings.UnsupportedOperationsIgnored;
-			AddGlobalComments ("WARNING: Could not generate operation " + OperationBinding.Name + ". " + text);
+			AddGlobalComments ("WARNING: Could not generate operation binding " + OperationBinding.Name + ". " + text);
 		}
 
 		public void UnsupportedOperationWarning (string text)
 		{
 			warnings |= ServiceDescriptionImportWarnings.UnsupportedOperationsIgnored;
-			AddGlobalComments ("WARNING: Could not generate operation " + OperationBinding.Name + ". " + text);
+			AddGlobalComments ("WARNING: Could not generate operation " + Operation.Name + ". " + text);
 		}
 
 		void AddGlobalComments (string comments)
