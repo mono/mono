@@ -904,7 +904,8 @@ namespace System.Windows.Forms
 		// button size to be at least large enough to show the image.
 		private Size AdjustedButtonSize {
 			get {
-				Size size = ButtonSize;
+				Size size = default_size.IsEmpty ? ButtonSize : default_size;
+				
 				if (size_specified) {
 					if (Appearance == ToolBarAppearance.Flat)
 						size = CalcButtonSize ();

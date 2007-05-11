@@ -1,5 +1,10 @@
 2007-05-11  Everaldo Canuto  <everaldo@simios.org>
 
+	* ToolBar.cs: Adjust size to default size when button theres no text and
+	image, it fixes remaining issues from #81524.
+
+2007-05-11  Everaldo Canuto  <everaldo@simios.org>
+
 	* ToolBar.cs: 
 	- When not flat call redraw to recalculate sizes on creare handle to match
 	win32 behavior.
