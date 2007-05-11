@@ -104,6 +104,7 @@ namespace System.Web.Services.Protocols
 				routingStyle = at.RoutingStyle;
 			}
 			else if (t.GetCustomAttributes (typeof(SoapRpcServiceAttribute), true).Length > 0) {
+				o = t.GetCustomAttributes (typeof(SoapRpcServiceAttribute), true);
 				SoapRpcServiceAttribute at = (SoapRpcServiceAttribute) o[0];
 #if NET_2_0
 				bindingUse = at.Use;

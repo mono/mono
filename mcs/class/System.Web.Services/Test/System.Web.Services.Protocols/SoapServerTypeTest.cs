@@ -114,6 +114,22 @@ namespace MonoTests.System.Web.Services.Description
 			new SoapServerType (typeof (WrongBindingNameClass), WebServiceProtocols.HttpSoap);
 		}
 
+		[Test]
+		public void SimpleRpcType ()
+		{
+			new SoapServerType (typeof (SimpleRpcService), WebServiceProtocols.HttpSoap);
+		}
+
+		[WebService]
+		[SoapRpcService]
+		public class SimpleRpcService : WebService
+		{
+			[WebMethod]
+			public void Hello ()
+			{
+			}
+		}
+
 		// bug #78953
 		[WebServiceAttribute (Namespace = "www.DefaultNamespace.org")]
 		[WebServiceBindingAttribute (Name = "Local", Namespace = "urn:localBinding:local")]
