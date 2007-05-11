@@ -184,7 +184,9 @@ namespace System.Windows.Forms
 					return;
 
 				autosize = value;
-				Redraw (true);
+				
+				if (IsHandleCreated)
+					Redraw (true);
 			}
 		}
 
@@ -1003,12 +1005,12 @@ namespace System.Windows.Forms
 			if (Wrappable)
 				calculated_size += Vertical ? x : y;
 			
-			if (Vertical)
-				if (requested_size >= 0)
-					SetBounds (Bounds.X, Bounds.Y, AutoSize ? calculated_size : requested_size, Width, BoundsSpecified.None);
-			else
-				if (requested_size >= 0)
-					SetBounds (Bounds.X, Bounds.Y, Height, AutoSize ? calculated_size : requested_size, BoundsSpecified.None);
+			if (IsHandleCreated) {
+				if (Vertical)
+					Width = calculated_size;
+				else
+					Height = calculated_size; 
+			}
 			
 			return changed;
 		}

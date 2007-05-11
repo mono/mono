@@ -1,5 +1,10 @@
 2007-05-11  Everaldo Canuto  <everaldo@simios.org>
 
+	* ToolBar.cs: Fix autosize and get it working only after hadle is created,
+	also prevent redraw in set_autosize if handle is not created. Fixes #81523.
+
+2007-05-11  Everaldo Canuto  <everaldo@simios.org>
+
 	* ToolBar.cs: Adjust size to default size when button theres no text and
 	image, it fixes remaining issues from #81524.
 
