@@ -50,7 +50,12 @@ namespace System.Diagnostics {
 		Type target_type;
 
 		public DebuggerDisplayAttribute (string value) {
+			if (value == null)
+				value = string.Empty;
+
 			this.value = value;
+			this.type = string.Empty;
+			this.name = string.Empty;
 		}
 
 		public string Value {
@@ -64,8 +69,11 @@ namespace System.Diagnostics {
 				return target_type;
 			}
 			set {
+				if (value == null)
+					throw new ArgumentNullException ("value");
+
 				target_type = value;
-				target_type_name = target_type.Name;
+				target_type_name = target_type.AssemblyQualifiedName;
 			}
 		}
 
@@ -94,7 +102,7 @@ namespace System.Diagnostics {
 			}
 
 			set {
-				type = name;
+				name = value;
 			}
 		}
 	}
