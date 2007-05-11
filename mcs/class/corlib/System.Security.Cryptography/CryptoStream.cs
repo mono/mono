@@ -198,11 +198,14 @@ namespace System.Security.Cryptography {
 							length += transformed;
 							_transformedCount += transformed;
 						}
-						byte[] input = _transform.TransformFinalBlock (_waitingBlock, 0, _waitingCount);
-						transformed = input.Length;
-						Buffer.BlockCopy (input, 0, _transformedBlock, _transformedCount, input.Length);
-						// zeroize this last block
-						Array.Clear (input, 0, input.Length);
+						if (!_flushedFinalBlock) {
+							byte[] input = _transform.TransformFinalBlock (_waitingBlock, 0, _waitingCount);
+							transformed = input.Length;
+							Buffer.BlockCopy (input, 0, _transformedBlock, _transformedCount, input.Length);
+							// zeroize this last block
+							Array.Clear (input, 0, input.Length);
+							_flushedFinalBlock = true;
+						}
 					}
 
 					length += transformed;

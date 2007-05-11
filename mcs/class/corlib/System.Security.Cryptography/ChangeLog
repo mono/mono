@@ -1,3 +1,8 @@
+2007-05-11  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* CryptoStream.cs: Ensure TransformFinalBlock isn't called multiple 
+	times. Fix bug #81597.
+
 2007-05-10  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* SHA1CryptoServiceProvider.cs: Reduce by half the number of required
