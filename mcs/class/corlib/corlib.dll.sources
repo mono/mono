@@ -1058,6 +1058,7 @@ System.Security/SecurityElement.cs
 System.Security/SecurityFrame.cs
 System.Security/SecurityException.cs
 System.Security/SecurityManager.cs
+System.Security/SecuritySafeCriticalAttribute.cs
 System.Security/SecurityTransparentAttribute.cs
 System.Security/SecurityTreatAsSafeAttribute.cs
 System.Security/SecurityZone.cs
