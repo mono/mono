@@ -158,6 +158,9 @@ dist-default:
 	    $(MKINSTALLDIRS) $$dest && cp -p $$f $$dest || exit 1 ; \
 	done
 
+$(depsdir):
+	$(MKINSTALLDIRS) $@
+
 # Useful
 
 withmcs:

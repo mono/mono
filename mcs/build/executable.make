@@ -112,4 +112,8 @@ endif
 -include $(makefrag)
 
 all-local: $(makefrag)
-$(makefrag): $(topdir)/build/executable.make
+
+ifneq ($(response),$(sourcefile))
+$(response): $(topdir)/build/executable.make | $(depsdir)
+endif
+$(makefrag): $(topdir)/build/executable.make | $(depsdir)

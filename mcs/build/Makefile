@@ -36,4 +36,4 @@ DISTFILES = \
 	$(PLATFORMS:%=platforms/%.make) $(PROFILES:%=profiles/%.make)
 
 dist-local: dist-default
-	$(MKINSTALLDIRS) $(distdir)/deps
+

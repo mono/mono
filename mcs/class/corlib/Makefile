@@ -68,4 +68,6 @@ $(cmp_makefrag): $(cmp_response)
 # leading to a broken build.
 #
 # -include $(cmp_makefrag)
+
+$(cmp_response) $(cmp_makefrag): Makefile | $(depsdir)
 endif

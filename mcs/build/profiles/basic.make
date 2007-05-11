@@ -3,7 +3,7 @@
 with_mono_path = MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH"
 with_mono_path_monolite = MONO_PATH="$(topdir)/class/lib/monolite$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH"
 
-monolite_flag := $(topdir)/build/deps/use-monolite
+monolite_flag := $(depsdir)/use-monolite
 use_monolite := $(wildcard $(monolite_flag))
 
 ifdef use_monolite
@@ -38,7 +38,7 @@ clean-profile:
 post-profile-cleanup:
 	@rm -f $(monolite_flag)
 
-PROFILE_CS  = $(topdir)/build/deps/basic-profile-check.cs
+PROFILE_CS  = $(depsdir)/basic-profile-check.cs
 PROFILE_EXE = $(PROFILE_CS:.cs=.exe)
 PROFILE_OUT = $(PROFILE_CS:.cs=.out)
 
@@ -67,7 +67,7 @@ do-profile-check-monolite:
 
 else
 
-do-profile-check-monolite:
+do-profile-check-monolite: $(depsdir)
 	echo "*** The compiler '$(BOOTSTRAP_MCS)' doesn't appear to be usable." 1>&2
 	echo "*** Trying the 'monolite' directory." 1>&2
 	echo dummy > $(monolite_flag)
@@ -75,7 +75,7 @@ do-profile-check-monolite:
 
 endif
 
-$(PROFILE_CS): $(topdir)/build/profiles/basic.make
+$(PROFILE_CS): $(topdir)/build/profiles/basic.make | $(depsdir)
 	echo 'class X { static int Main () { return 0; } }' > $@
 
 $(PROFILE_EXE): $(PROFILE_CS)

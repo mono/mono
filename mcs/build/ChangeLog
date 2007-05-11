@@ -1,5 +1,12 @@
 2007-05-11  Raja R Harinath  <rharinath@novell.com>
 
+	* Makefile (dist-local): Remove special-case code.
+	* rules.make ($(depsdir)): New rule to create the dependencies
+	directory on demand.
+	* library.make, executable.make: Make generated files depend on
+	$(depsdir).
+	* profiles/basic.make: Likewise.
+
 	* profiles/net_2_0_bootstrap.make: Move rules for mcs.exe to
 	mcs/Makefile.
 	* library.make (the_libdir, build_libdir): New.  Create these

@@ -359,4 +359,7 @@ $(btest_makefrag): $(btest_response)
 endif
 
 all-local: $(makefrag) $(test_makefrag) $(btest_makefrag)
-$(makefrag) $(test_makefrag) $(btest_makefrag): $(topdir)/build/library.make
+ifneq ($(response),$(sourcefile))
+$(response): $(topdir)/build/library.make | $(depsdir)
+endif
+$(makefrag) $(test_response) $(test_makefrag) $(btest_response) $(btest_makefrag): $(topdir)/build/library.make | $(depsdir)

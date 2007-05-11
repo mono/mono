@@ -1,3 +1,7 @@
+2007-05-11  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (cmp_makefrag, cmp_response): Depend on $(depsdir).
+
 2007-05-11  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* corlib_test.dll.sources: Added DebuggerDisplayAttributeTest.cs.
