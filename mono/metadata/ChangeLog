@@ -1,3 +1,8 @@
+2007-05-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* class-internals.h (_MonoGenericContainer): Widen type_argc filed to 31 bits.
+	Fixes #81599.
+
 2007-05-11  Jonathan Chambers  <joncham@gmail.com>
 
 	* object.c: Always initialize apartment, even if 
