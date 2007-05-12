@@ -425,6 +425,13 @@ get_call_info (MonoMemPool *mp, MonoMethodSignature *sig, gboolean is_pinvoke)
 		add_general (&gr, &stack_size, &cinfo->sig_cookie);
 	}
 
+#if defined(__APPLE__)
+	if ((stack_size % 16) != 0) { 
+		cinfo->need_stack_align = TRUE;
+		stack_size += cinfo->stack_align_amount = 16-(stack_size % 16);
+	}
+#endif
+
 	cinfo->stack_usage = stack_size;
 	cinfo->reg_usage = gr;
 	cinfo->freg_usage = fr;
@@ -1043,6 +1050,15 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call,
 
 	call->stack_usage = cinfo->stack_usage;
 
+#if defined(__APPLE__)
+	if (cinfo->need_stack_align) {
+		MONO_INST_NEW (cfg, arg, OP_X86_OUTARG_ALIGN_STACK);
+		arg->inst_c0 = cinfo->stack_align_amount;
+		arg->next = call->out_args;
+		call->out_args = arg;
+        }
+#endif 
+
 	return call;
 }
 
@@ -1245,6 +1261,11 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call, gboolean is_virtual)
 			cinfo->stack_usage -= 4;
 		}
 	}
+
+#if defined(__APPLE__)
+	/* FIXME: */
+	g_assert_not_reached ();
+#endif
 
 	call->stack_usage = cinfo->stack_usage;
 }
@@ -3232,9 +3253,15 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 							  (gpointer)"mono_arch_rethrow_exception");
 			break;
 		}
-		case OP_CALL_HANDLER: 
+		case OP_CALL_HANDLER:
+#if __APPLE__
+	x86_alu_reg_imm (code, X86_SUB, X86_ESP, 8);
+#endif
 			mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_BB, ins->inst_target_bb);
 			x86_call_imm (code, 0);
+#ifdef __APPLE__
+			x86_alu_reg_imm (code, X86_ADD, X86_ESP, 12);
+#endif
 			break;
 		case OP_START_HANDLER: {
 			MonoInst *spvar = mono_find_spvar_for_region (cfg, bb->region);
@@ -4266,6 +4293,20 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 
 	alloc_size -= pos;
 
+#if __APPLE__
+	/* the original alloc_size is already aligned: there is %ebp and retip pushed, so realign */
+	{
+		int tot = alloc_size + pos + 4 + 4; /* ret ip + ebp */
+		if (tot & 4) {
+			tot += 4;
+			alloc_size += 4;
+		}
+		if (tot & 8) {
+			alloc_size += 8;
+		}
+	}
+#endif
+
 	if (alloc_size) {
 		/* See mono_emit_stack_alloc */
 #if defined(PLATFORM_WIN32) || defined(MONO_ARCH_SIGSEGV_ON_ALTSTACK)
@@ -4281,6 +4322,15 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		x86_alu_reg_imm (code, X86_SUB, X86_ESP, alloc_size);
 #endif
 	}
+
+#if __APPLE_
+	/* check the stack is aligned */
+	x86_mov_reg_reg (code, X86_EDX, X86_ESP, 4);
+	x86_alu_reg_imm (code, X86_AND, X86_EDX, 15);
+	x86_alu_reg_imm (code, X86_CMP, X86_EDX, 0);
+	x86_branch_disp (code, X86_CC_EQ, 3, FALSE);
+	x86_breakpoint (code);
+#endif
 
         /* compute max_offset in order to use short forward jumps */
 	max_offset = 0;
