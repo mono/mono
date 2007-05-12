@@ -1,5 +1,7 @@
 2007-05-12  Zoltan Varga  <vargaz@gmail.com>
 
+	* cpu-x86.md minix-86.c: Add a peephole_pass_1 () as on amd64.
+
 	* mini-x86.c (mono_arch_output_basic_block): Use mono_opcode_to_cond () in a few
 	places.
 	
