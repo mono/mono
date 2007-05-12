@@ -1,3 +1,7 @@
+2007-05-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-x86.c (get_call_info): Allocate result from a mempool.
+
 2007-05-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (find_typespec_for_class): Fix the assert.
