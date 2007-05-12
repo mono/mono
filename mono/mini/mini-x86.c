@@ -1554,10 +1554,6 @@ insert_after_ins (MonoBasicBlock *bb, MonoInst *ins, MonoInst *to_insert)
 #define INST_IGNORES_CFLAGS(opcode) (!(((opcode) == OP_ADC) || ((opcode) == OP_IADC) || ((opcode) == OP_ADC_IMM) || ((opcode) == OP_IADC_IMM) || ((opcode) == OP_SBB) || ((opcode) == OP_ISBB) || ((opcode) == OP_SBB_IMM) || ((opcode) == OP_ISBB_IMM)))
 
 /*
-#define INST_IGNORES_CFLAGS(opcode) (((opcode) == OP_BR) || ((opcode) == OP_STORE_MEMBASE_IMM) || ((opcode) == OP_STOREI4_MEMBASE_IMM) || ((opcode) == OP_STOREI4_MEMBASE_REG) || ((opcode) == OP_STOREI1_MEMBASE_REG) || ((opcode) == OP_STOREI1_MEMBASE_IMM) || ((opcode) == OP_STOREI2_MEMBASE_REG) || ((opcode) == OP_STOREI2_MEMBASE_IMM) || ((opcode) == OP_IXOR) || ((opcode) == OP_MOVE) || ((opcode) == OP_ICONST) || ((opcode) == OP_IADD) || ((opcode) == OP_X86_PUSH) || ((opcode) == OP_X86_PUSH_IMM) || ((opcode) == OP_X86_PUSH_MEMBASE) || ((opcode) == OP_COMPARE_IMM) || ((opcode) == OP_ICOMPARE_IMM) || ((opcode) == OP_LOAD_MEMBASE) || ((opcode) == OP_LOADI4_MEMBASE))
-*/
-
-/*
  * peephole_pass_1:
  *
  *   Perform peephole opts which should/can be performed before local regalloc
