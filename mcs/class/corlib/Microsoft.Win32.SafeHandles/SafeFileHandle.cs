@@ -40,6 +40,11 @@ namespace Microsoft.Win32.SafeHandles {
 			SetHandle (preexistingHandle);
 		}
 
+		// This is just for marshalling
+		internal SafeFileHandle () : base (true)
+		{
+		}
+
 		protected override bool ReleaseHandle ()
 		{
 			MonoIOError error;

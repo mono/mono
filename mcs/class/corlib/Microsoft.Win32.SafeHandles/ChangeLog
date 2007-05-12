@@ -1,3 +1,8 @@
+2007-05-12  Jonathan Chambers  <joncham@gmail.com>
+
+	* SafeWaitHandle.cs: Add internal empty
+	constructor for pinvoke marshalling.
+
 2007-04-30  Dick Porter  <dick@ximian.com>
 
 	* CriticalHandleZeroOrMinusOneIsInvalid.cs: 
