@@ -163,10 +163,11 @@ namespace System.IO
 		{
 		}
 		
+		[MonoLimitationAttribute("Need to use SafeFileHandle instead of underlying handle")]
 		public FileStream (SafeFileHandle handle, FileAccess access,
 				   int bufferSize, bool isAsync)
+			:this (handle.DangerousGetHandle (), access, false, bufferSize, isAsync)
 		{
-			throw new NotImplementedException ();
 		}
 
 		public FileStream (string path, FileMode mode,

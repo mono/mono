@@ -1,3 +1,7 @@
+2007-05-12  Jonathan Chambers  <joncham@gmail.com>
+
+	* FileStream.cs: Implement SafeHandle constructors.
+
 2007-05-01  Dick Porter  <dick@ximian.com>
 
 	* File.cs:
