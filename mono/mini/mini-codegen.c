@@ -263,42 +263,6 @@ mono_spillvar_offset (MonoCompile *cfg, int spillvar, gboolean fp)
 	return info->offset;
 }
 
-#if MONO_ARCH_USE_FPSTACK
-
-/*
- * Creates a store for spilled floating point items
- */
-static MonoInst*
-create_spilled_store_float (MonoCompile *cfg, int spill, int reg, MonoInst *ins)
-{
-	MonoInst *store;
-	MONO_INST_NEW (cfg, store, OP_STORER8_MEMBASE_REG);
-	store->sreg1 = reg;
-	store->inst_destbasereg = cfg->frame_reg;
-	store->inst_offset = mono_spillvar_offset_float (cfg, spill);
-
-	DEBUG (printf ("SPILLED FLOAT STORE (%d at 0x%08lx(%%sp)) (from %d)\n", spill, (long)store->inst_offset, reg));
-	return store;
-}
-
-/*
- * Creates a load for spilled floating point items 
- */
-static MonoInst*
-create_spilled_load_float (MonoCompile *cfg, int spill, int reg, MonoInst *ins)
-{
-	MonoInst *load;
-	MONO_INST_NEW (cfg, load, OP_LOADR8_SPILL_MEMBASE);
-	load->dreg = reg;
-	load->inst_basereg = cfg->frame_reg;
-	load->inst_offset = mono_spillvar_offset_float (cfg, spill);
-
-	DEBUG (printf ("SPILLED FLOAT LOAD (%d at 0x%08lx(%%sp)) (from %d)\n", spill, (long)load->inst_offset, reg));
-	return load;
-}
-
-#endif /* MONO_ARCH_USE_FPSTACK */
-
 #define regmask(reg) (((regmask_t)1) << (reg))
 
 #define is_hard_ireg(r) ((r) >= 0 && (r) < MONO_MAX_IREGS)
