@@ -46,6 +46,10 @@ namespace Mono {
 	unsafe public abstract class DataConverter {
 #else
 	unsafe internal abstract class DataConverter {
+
+// Disables the warning: CLS compliance checking will not be performed on
+//  `XXXX' because it is not visible from outside this assembly
+#pragma warning disable  3019
 #endif
 		static DataConverter SwapConv = new SwapConverter ();
 		static DataConverter CopyConv = new CopyConverter ();
