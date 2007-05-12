@@ -1,5 +1,8 @@
 2007-05-12  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-x86.c (mono_arch_output_basic_block): Use mono_opcode_to_cond () in a few
+	places.
+	
 	* mini-x86.c (mono_arch_emit_exceptions): Decrease the size of the exception 
 	throwing code a bit.
 
