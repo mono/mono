@@ -854,7 +854,6 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
 
 #define ADD_BINOP(op) do {	\
 		MONO_INST_NEW (cfg, ins, (op));	\
-		ins->cil_code = ip;	\
 		sp -= 2;	\
 		ins->sreg1 = sp [0]->dreg;	\
 		ins->sreg2 = sp [1]->dreg;	\
@@ -868,7 +867,6 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
 
 #define ADD_UNOP(op) do {	\
 		MONO_INST_NEW (cfg, ins, (op));	\
-		ins->cil_code = ip;	\
 		sp--;	\
 		ins->sreg1 = sp [0]->dreg;	\
 		type_from_op (ins, sp [0], NULL);	\
@@ -885,7 +883,6 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
 		MONO_INST_NEW(cfg, cmp, OP_COMPARE);	\
 		cmp->sreg1 = sp [0]->dreg;	\
 		cmp->sreg2 = sp [1]->dreg;	\
-		cmp->cil_code = ins->cil_code;	\
 		type_from_op (cmp, sp [0], sp [1]);	\
 		CHECK_TYPE (cmp);	\
 		type_from_op (ins, sp [0], sp [1]);	\
@@ -3940,7 +3937,6 @@ inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig,
 		/* always add some code to avoid block split failures */
 		MONO_INST_NEW (cfg, ins, OP_NOP);
 		MONO_ADD_INS (prev_cbb, ins);
-		ins->cil_code = ip;
 
 		prev_cbb->next_bb = sbblock;
 		link_bblock (cfg, prev_cbb, sbblock);
@@ -5889,7 +5885,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 		case CEE_NOP:
 		case CEE_BREAK:
 			MONO_INST_NEW (cfg, ins, (*ip) == CEE_NOP ? OP_NOP : OP_BREAK);
-			ins->cil_code = ip++;
+			ip++;
 			MONO_ADD_INS (bblock, ins);
 			break;
 		case CEE_LDARG_0:
@@ -5900,7 +5896,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			n = (*ip)-CEE_LDARG_0;
 			CHECK_ARG (n);
 			EMIT_NEW_ARGLOAD (cfg, ins, n);
-			ins->cil_code = ip++;
+			ip++;
 			*sp++ = ins;
 			break;
 		case CEE_LDLOC_0:
@@ -5911,7 +5907,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			n = (*ip)-CEE_LDLOC_0;
 			CHECK_LOCAL (n);
 			EMIT_NEW_LOCLOAD (cfg, ins, n);
-			ins->cil_code = ip++;
+			ip++;
 			*sp++ = ins;
 			break;
 		case CEE_STLOC_0:
@@ -5937,7 +5933,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				sp [0]->dreg = (cfg)->locals [n]->dreg;
 			} else {
 				EMIT_NEW_LOCSTORE (cfg, ins, n, *sp);
-				ins->cil_code = ip;
 			}
 			++ip;
 			inline_costs += 1;
@@ -5949,7 +5944,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			n = ip [1];
 			CHECK_ARG (n);
 			EMIT_NEW_ARGLOAD (cfg, ins, n);
-			ins->cil_code = ip;
 			*sp++ = ins;
 			ip += 2;
 			break;
@@ -5959,7 +5953,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			n = ip [1];
 			CHECK_ARG (n);
 			NEW_ARGLOADA (cfg, ins, n);
-			ins->cil_code = ip;
 			MONO_ADD_INS (cfg->cbb, ins);
 			*sp++ = ins;
 			ip += 2;
@@ -5973,7 +5966,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			if (!dont_verify_stloc && target_type_is_incompatible (cfg, param_types [ip [1]], *sp))
 				UNVERIFIED;
 			EMIT_NEW_ARGSTORE (cfg, ins, n, *sp);
-			ins->cil_code = ip;
 			ip += 2;
 			break;
 		case CEE_LDLOC_S:
@@ -5982,7 +5974,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			n = ip [1];
 			CHECK_LOCAL (n);
 			EMIT_NEW_LOCLOAD (cfg, ins, n);
-			ins->cil_code = ip;
 			*sp++ = ins;
 			ip += 2;
 			break;
@@ -6014,7 +6005,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 #endif
 
 			EMIT_NEW_LOCLOADA (cfg, ins, ip [1]);
-			ins->cil_code = ip;
 			*sp++ = ins;
 			ip += 2;
 			break;
@@ -6026,14 +6016,12 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			if (!dont_verify_stloc && target_type_is_incompatible (cfg, header->locals [ip [1]], *sp))
 				UNVERIFIED;
 			EMIT_NEW_LOCSTORE (cfg, ins, ip [1], *sp);
-			ins->cil_code = ip;
 			ip += 2;
 			inline_costs += 1;
 			break;
 		case CEE_LDNULL:
 			CHECK_STACK_OVF (1);
 			EMIT_NEW_PCONST (cfg, ins, NULL);
-			ins->cil_code = ip;
 			ins->type = STACK_OBJ;
 			++ip;
 			*sp++ = ins;
@@ -6041,7 +6029,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 		case CEE_LDC_I4_M1:
 			CHECK_STACK_OVF (1);
 			EMIT_NEW_ICONST (cfg, ins, -1);
-			ins->cil_code = ip;
 			++ip;
 			*sp++ = ins;
 			break;
@@ -6056,7 +6043,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 		case CEE_LDC_I4_8:
 			CHECK_STACK_OVF (1);
 			EMIT_NEW_ICONST (cfg, ins, (*ip) - CEE_LDC_I4_0);
-			ins->cil_code = ip;
 			++ip;
 			*sp++ = ins;
 			break;
@@ -6065,7 +6051,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			CHECK_STACK_OVF (1);
 			++ip;
 			EMIT_NEW_ICONST (cfg, ins, *((signed char*)ip));
-			ins->cil_code = ip;
 			++ip;
 			*sp++ = ins;
 			break;
@@ -6073,7 +6058,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			CHECK_OPSIZE (5);
 			CHECK_STACK_OVF (1);
 			EMIT_NEW_ICONST (cfg, ins, (gint32)read32 (ip + 1));
-			ins->cil_code = ip;
 			ip += 5;
 			*sp++ = ins;
 			break;
@@ -6081,7 +6065,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			CHECK_OPSIZE (9);
 			CHECK_STACK_OVF (1);
 			MONO_INST_NEW (cfg, ins, OP_I8CONST);
-			ins->cil_code = ip;
 			ins->type = STACK_I8;
 			ins->dreg = alloc_dreg (cfg, STACK_I8);
 			++ip;
@@ -6138,16 +6121,12 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			ins = *sp;
 
 			temp = mono_compile_create_var (cfg, type_from_stack_type (ins), OP_LOCAL);
-			temp->cil_code = ip;
 			EMIT_NEW_TEMPSTORE (cfg, store, temp->inst_c0, ins);
-			store->cil_code = ip;
 
 			EMIT_NEW_TEMPLOAD (cfg, ins, temp->inst_c0);
-			ins->cil_code = ip;
 			*sp++ = ins;
 
 			EMIT_NEW_TEMPLOAD (cfg, ins, temp->inst_c0);
-			ins->cil_code = ip;
 			*sp++ = ins;
 
 			++ip;
@@ -6363,14 +6342,12 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					/* Prevent argument from being register allocated */
 					arg_array [i]->flags |= MONO_INST_VOLATILE;
 					EMIT_NEW_ARGSTORE (cfg, ins, i, sp [i]);
-					ins->cil_code = ip;
 				}
 
 				/* FIXME: */
 				cfg->disable_aot = 1;
 
 				MONO_INST_NEW (cfg, ins, OP_JMP);
-				ins->cil_code = ip;
 				ins->inst_p0 = cmethod;
 				ins->inst_p1 = arg_array [0];
 				MONO_ADD_INS (bblock, ins);
@@ -6384,8 +6361,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 
 			/* Conversion to a JIT intrinsic */
 			if (cmethod && (cfg->opt & MONO_OPT_INTRINS) && (ins = mini_emit_inst_for_method (cfg, cmethod, fsig, sp))) {
-				ins->cil_code = ip;
-
 				if (!MONO_TYPE_IS_VOID (fsig->ret)) {
 					type_to_eval_stack_type (fsig->ret, ins);
 					*sp = ins;
@@ -6447,11 +6422,9 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				if (!has_vtargs) {
 					for (i = 0; i < n; ++i) {
 						NEW_ARGSTORE (cfg, ins, i, sp [i]);
-						ins->cil_code = ip;
 						MONO_ADD_INS (bblock, ins);
 					}
 					MONO_INST_NEW (cfg, ins, OP_BR);
-					ins->cil_code = ip;
 					MONO_ADD_INS (bblock, ins);
 					tblock = start_bblock->out_bb [0];
 					link_bblock (cfg, bblock, tblock);
@@ -6535,7 +6508,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					--sp;
 					//g_assert (returnvar != -1);
 					EMIT_NEW_TEMPSTORE (cfg, store, return_var->inst_c0, *sp);
-					store->cil_code = sp [0]->cil_code;
 					cfg->ret_var_set = TRUE;
 				} 
 			} else {
@@ -6560,7 +6532,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			if (sp != stack_start)
 				UNVERIFIED;
 			MONO_INST_NEW (cfg, ins, OP_BR);
-			ins->cil_code = ip++;
+			ip++;
 			ins->inst_target_bb = end_bblock;
 			MONO_ADD_INS (bblock, ins);
 			link_bblock (cfg, bblock, end_bblock);
@@ -6569,7 +6541,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 		case CEE_BR_S:
 			CHECK_OPSIZE (2);
 			MONO_INST_NEW (cfg, ins, OP_BR);
-			ins->cil_code = ip++;
+			ip++;
 			target = ip + 1 + (signed char)(*ip);
 			++ip;
 			GET_BBLOCK (cfg, tblock, target);
@@ -6597,7 +6569,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			CHECK_OPSIZE (2);
 			CHECK_STACK (2);
 			MONO_INST_NEW (cfg, ins, *ip + BIG_BRANCH_OFFSET);
-			ins->cil_code = ip++;
+			ip++;
 			target = ip + 1 + *(signed char*)ip;
 			ip++;
 
@@ -6609,7 +6581,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 		case CEE_BR:
 			CHECK_OPSIZE (5);
 			MONO_INST_NEW (cfg, ins, OP_BR);
-			ins->cil_code = ip++;
+			ip++;
 
 			target = ip + 4 + (gint32)read32(ip);
 			ip += 4;
@@ -6635,7 +6607,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			gboolean is_short = ((*ip) == CEE_BRFALSE_S) || ((*ip) == CEE_BRTRUE_S);
 			gboolean is_true = ((*ip) == CEE_BRTRUE_S) || ((*ip) == CEE_BRTRUE);
 			guint32 opsize = is_short ? 1 : 4;
-			guint8 *orig_ip = ip;
 
 			CHECK_OPSIZE (opsize);
 			CHECK_STACK (1);
@@ -6658,7 +6629,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 
 			MONO_INST_NEW(cfg, cmp, OP_ICOMPARE_IMM);
 			cmp->sreg1 = sp [0]->dreg;
-			cmp->cil_code = orig_ip;
 			type_from_op (cmp, sp [0], NULL);
 			CHECK_TYPE (cmp);
 
@@ -6666,7 +6636,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			if (cmp->opcode == OP_LCOMPARE_IMM) {
 				/* Convert it to OP_LCOMPARE */
 				MONO_INST_NEW (cfg, ins, OP_I8CONST);
-				ins->cil_code = ip;
 				ins->type = STACK_I8;
 				ins->dreg = alloc_dreg (cfg, STACK_I8);
 				ins->inst_l = 0;
@@ -6678,7 +6647,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			MONO_ADD_INS (bblock, cmp);
 
 			MONO_INST_NEW (cfg, ins, is_true ? CEE_BNE_UN : CEE_BEQ);
-			ins->cil_code = orig_ip;
 			type_from_op (ins, sp [0], NULL);
 			MONO_ADD_INS (bblock, ins);
 			ins->inst_many_bb = mono_mempool_alloc (cfg->mempool, sizeof(gpointer)*2);
@@ -6705,7 +6673,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			CHECK_OPSIZE (5);
 			CHECK_STACK (2);
 			MONO_INST_NEW (cfg, ins, *ip);
-			ins->cil_code = ip++;
+			ip++;
 			target = ip + 4 + (gint32)read32(ip);
 			ip += 4;
 
@@ -6822,7 +6790,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			ins->type = ldind_type [*ip - CEE_LDIND_I1];
 			ins->flags |= ins_flag;
 			ins_flag = 0;
-			ins->cil_code = ip;
 			MONO_ADD_INS (bblock, ins);
 			*sp++ = ins;
 			++ip;
@@ -6850,7 +6817,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			CHECK_STACK (2);
 
 			MONO_INST_NEW (cfg, ins, (*ip));
-			ins->cil_code = ip;
 			sp -= 2;
 			ins->sreg1 = sp [0]->dreg;
 			ins->sreg2 = sp [1]->dreg;
@@ -6891,7 +6857,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			CHECK_STACK (2);
 
 			MONO_INST_NEW (cfg, ins, (*ip));
-			ins->cil_code = ip;
 			sp -= 2;
 			ins->sreg1 = sp [0]->dreg;
 			ins->sreg2 = sp [1]->dreg;
@@ -7101,7 +7066,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 
 			if (method->wrapper_type == MONO_WRAPPER_DYNAMIC_METHOD) {
 				EMIT_NEW_PCONST (cfg, ins, mono_method_get_wrapper_data (method, n));
-				ins->cil_code = ip;
 				ins->type = STACK_OBJ;
 				*sp = ins;
 			}
@@ -7148,7 +7112,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					} 
 					else {
 						NEW_PCONST (cfg, ins, NULL);
-						ins->cil_code = ip;
 						ins->type = STACK_OBJ;
 						ins->inst_p0 = mono_ldstr (cfg->domain, image, mono_metadata_token_index (n));
 						*sp = ins;
@@ -7426,7 +7389,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				/*printf ("box-brtrue opt at 0x%04x in %s\n", real_offset, method->name);*/
 				ip += 5;
 				MONO_INST_NEW (cfg, ins, OP_BR);
-				ins->cil_code = ip;
 				if (*ip == CEE_BRTRUE_S) {
 					CHECK_OPSIZE (2);
 					ip++;
@@ -7665,7 +7627,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 						EMIT_NEW_SFLDACONST (cfg, ins, field);
 					else
 						EMIT_NEW_PCONST (cfg, ins, addr);
-					ins->cil_code = ip;
 				} else {
 					/* 
 					 * insert call to mono_threads_get_static_data (GPOINTER_TO_UINT (addr)) 
@@ -8039,7 +8000,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			--sp;
 
 			MONO_INST_NEW (cfg, ins, OP_CKFINITE);
-			ins->cil_code = ip;
 			ins->sreg1 = sp [0]->dreg;
 			ins->dreg = alloc_freg (cfg);
 			ins->type = STACK_R8;
@@ -8085,7 +8045,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			klass = mono_class_get_full (image, read32 (ip + 1), generic_context);
 			CHECK_TYPELOAD (klass);
 			mono_class_init (klass);
-			ins->cil_code = ip;
 
 			loc = mono_compile_create_var (cfg, &mono_defaults.typed_reference_class->byval_arg, OP_LOCAL);
 			EMIT_NEW_TEMPLOADA (cfg, addr, loc->inst_c0);
@@ -8184,11 +8143,10 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			MONO_INST_NEW (cfg, ins, OP_THROW);
 			--sp;
 			ins->sreg1 = sp [0]->dreg;
-			ins->cil_code = ip++;
+			ip++;
 			bblock->out_of_line = TRUE;
 			MONO_ADD_INS (bblock, ins);
 			MONO_INST_NEW (cfg, ins, OP_NOT_REACHED);
-			ins->cil_code = ip - 1;
 			MONO_ADD_INS (bblock, ins);
 			sp = stack_start;
 			
@@ -8198,7 +8156,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 		case CEE_ENDFINALLY:
 			MONO_INST_NEW (cfg, ins, OP_ENDFINALLY);
 			MONO_ADD_INS (bblock, ins);
-			ins->cil_code = ip++;
+			ip++;
 			start_new_bblock = 1;
 
 			/*
@@ -8274,7 +8232,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					tblock = tmp->data;
 					link_bblock (cfg, bblock, tblock);
 					MONO_INST_NEW (cfg, ins, OP_CALL_HANDLER);
-					ins->cil_code = ip;
 					ins->inst_target_bb = tblock;
 					MONO_ADD_INS (bblock, ins);
 				}
@@ -8282,7 +8239,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			} 
 
 			MONO_INST_NEW (cfg, ins, OP_BR);
-			ins->cil_code = ip;
 			MONO_ADD_INS (bblock, ins);
 			GET_BBLOCK (cfg, tblock, target);
 			link_bblock (cfg, bblock, tblock);
@@ -8333,7 +8289,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				CHECK_OPSIZE (6);
 				token = read32 (ip + 2);
 				EMIT_NEW_PCONST (cfg, ins, mono_method_get_wrapper_data (method, token));
-				ins->cil_code = ip;
 				*sp++ = ins;
 				ip += 6;
 				inline_costs += 10 * num_calls++;
@@ -8376,7 +8331,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				MONO_INST_NEW (cfg, ins, OP_MOVE);
 				ins->dreg = alloc_preg (cfg);
 				ins->sreg1 = sp [0]->dreg;
-				ins->cil_code = ip;
 				ins->type = STACK_MP;
 				MONO_ADD_INS (cfg->cbb, ins);
 				*sp++ = ins;
@@ -8433,7 +8387,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					UNVERIFIED;
 				
 				MONO_INST_NEW (cfg, ins, OP_BR);
-				ins->cil_code = ip;
 				ins->inst_target_bb = end_bblock;
 				MONO_ADD_INS (bblock, ins);
 				link_bblock (cfg, bblock, end_bblock);
@@ -8472,7 +8425,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				CHECK_OPSIZE (6);
 				token = read32 (ip + 2);
 				EMIT_NEW_CLASSCONST (cfg, ins, mono_method_get_wrapper_data (method, token));
-				ins->cil_code = ip;
 				*sp++ = ins;
 				ip += 6;
 				inline_costs += 10 * num_calls++;
@@ -8528,7 +8480,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				sp -= 2;
 				cmp->sreg1 = sp [0]->dreg;
 				cmp->sreg2 = sp [1]->dreg;
-				cmp->cil_code = ip;
 				type_from_op (cmp, sp [0], sp [1]);
 				CHECK_TYPE (cmp);
 				if ((sp [0]->type == STACK_I8) || ((sizeof (gpointer) == 8) && ((sp [0]->type == STACK_PTR) || (sp [0]->type == STACK_OBJ) || (sp [0]->type == STACK_MP))))
@@ -8538,7 +8489,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				else
 					cmp->opcode = OP_ICOMPARE;
 				MONO_ADD_INS (bblock, cmp);
-				ins->cil_code = ip;
 				ins->type = STACK_I4;
 				ins->dreg = alloc_dreg (cfg, ins->type);
 				type_from_op (ins, sp [0], sp [1]);
@@ -8615,7 +8565,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				n = read16 (ip + 2);
 				CHECK_ARG (n);
 				EMIT_NEW_ARGLOAD (cfg, ins, n);
-				ins->cil_code = ip;
 				*sp++ = ins;
 				ip += 4;
 				break;
@@ -8625,7 +8574,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				n = read16 (ip + 2);
 				CHECK_ARG (n);
 				NEW_ARGLOADA (cfg, ins, n);
-				ins->cil_code = ip;
 				MONO_ADD_INS (cfg->cbb, ins);
 				*sp++ = ins;
 				ip += 4;
@@ -8639,7 +8587,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				if (!dont_verify_stloc && target_type_is_incompatible (cfg, param_types [n], *sp))
 					UNVERIFIED;
 				EMIT_NEW_ARGSTORE (cfg, ins, n, *sp);
-				ins->cil_code = ip;
 				ip += 4;
 				break;
 			case CEE_LDLOC:
@@ -8657,7 +8604,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				n = read16 (ip + 2);
 				CHECK_LOCAL (n);
 				EMIT_NEW_LOCLOADA (cfg, ins, n);
-				ins->cil_code = ip;
 				*sp++ = ins;
 				ip += 4;
 				break;
@@ -8670,7 +8616,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				if (!dont_verify_stloc && target_type_is_incompatible (cfg, header->locals [n], *sp))
 					UNVERIFIED;
 				EMIT_NEW_LOCSTORE (cfg, ins, n, *sp);
-				ins->cil_code = ip;
 				ip += 4;
 				inline_costs += 1;
 				break;
@@ -8696,7 +8641,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					ins->dreg = alloc_preg (cfg);
 					ins->sreg1 = sp [0]->dreg;
 				}
-				ins->cil_code = ip;
 				ins->type = STACK_PTR;
 				MONO_ADD_INS (cfg->cbb, ins);
 
@@ -8717,7 +8661,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					UNVERIFIED;
 				MONO_INST_NEW (cfg, ins, OP_ENDFILTER);
 				ins->sreg1 = (*sp)->dreg;
-				ins->cil_code = ip;
 				MONO_ADD_INS (bblock, ins);
 				start_new_bblock = 1;
 				ip += 2;
@@ -8831,10 +8774,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				g_assert (handler_offset != -1);
 
 				EMIT_NEW_TEMPLOAD (cfg, load, mono_find_exvar_for_offset (cfg, handler_offset)->inst_c0);
-				load->cil_code = ip;
 				MONO_INST_NEW (cfg, ins, OP_RETHROW);
 				ins->sreg1 = load->dreg;
-				ins->cil_code = ip;
 				MONO_ADD_INS (bblock, ins);
 				sp = stack_start;
 				link_bblock (cfg, bblock, end_bblock);
@@ -8860,7 +8801,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					token = mono_class_value_size (klass, &align);
 				}
 				EMIT_NEW_ICONST (cfg, ins, token);
-				ins->cil_code = ip;
 				*sp++= ins;
 				ip += 6;
 				break;
