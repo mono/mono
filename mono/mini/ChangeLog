@@ -1,3 +1,7 @@
+2007-05-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mono_method_to_ir2): Merge r71065 (Optimize InitArray () calls).
+
 2007-05-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-x86.c: Remove old definition of INST_IGNORES_CFLAGS.
