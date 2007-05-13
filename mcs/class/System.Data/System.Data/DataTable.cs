@@ -2293,7 +2293,7 @@ namespace System.Data {
 				columns = ParseSortString (this, sort, out sorts, false);
 
 			if (Rows.Count == 0)
-				return new DataRow [0];
+				return NewRowArray (0);
 
 			//if sort order is not given, sort it in Ascending order of the
 			//columns involved in the filter
