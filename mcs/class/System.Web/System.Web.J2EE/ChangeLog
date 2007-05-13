@@ -1,3 +1,8 @@
+2007-05-13  Igor Zelmanovich <igorz@mainsoft.com>
+
+	* PageMapper.cs: 
+	make it case sensitive if file system is case sensitive
+
 2007-01-04  Igor Zelmanovich <igorz@mainsoft.com>
 
 	* PageMapper.cs: refactoring: 
