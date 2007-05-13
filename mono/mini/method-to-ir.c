@@ -10098,7 +10098,6 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - use sext/zext opcodes instead of shifts
  * - add OP_ICALL
  * - get rid of TEMPLOADs if possible and use vregs instead
- * - clean up/automatize setting of ins->cil_code
  * - clean up usage of OP_P/OP_ opcodes
  * - cleanup usage of DUMMY_USE
  * - cleanup the setting of ins->type for MonoInst's which are pushed on the 
@@ -10164,14 +10163,11 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - check for fp stack leakage in other opcodes too. (-> 'exceptions' optimization)
  * - add all micro optimizations from the old JIT
  * - put tree optimizations into the deadce pass
- * - the simple deadce from the current JIT is still needed, could do some of the
- *   work of the local deadce pass.
  * - scimark slowdown.
  * - decompose op_start_handler/op_endfilter/op_endfinally earlier using an arch
  *   specific function.
  * - unify the float comparison opcodes with the other comparison opcodes, i.e.
  *   fcompare + branchCC.
- * - clean up the contents of the cpu-<ARCH>.md files.
  * - implement pass+receive vtypes in registers.
  * - sig->ret->byref seems to be set for some calls made from ldfld wrappers when
  *   running generics.exe.
