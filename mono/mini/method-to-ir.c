@@ -2103,20 +2103,54 @@ mini_emit_class_check_branch (MonoCompile *cfg, int klass_reg, MonoClass *klass,
 }
 	
 static void 
-mini_emit_castclass (MonoCompile *cfg, int klass_reg, MonoClass *klass)
+mini_emit_castclass (MonoCompile *cfg, int obj_reg, int klass_reg, MonoClass *klass, MonoBasicBlock *object_is_null)
 {
-	int idepth_reg = alloc_preg (cfg);
-	int stypes_reg = alloc_preg (cfg);
-	int stype = alloc_preg (cfg);
+	if (klass->rank) {
+		int rank_reg = alloc_preg (cfg);
+		int eclass_reg = alloc_preg (cfg);
 
-	if (klass->idepth > MONO_DEFAULT_SUPERTABLE_SIZE) {
-		MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOADU2_MEMBASE, idepth_reg, klass_reg, G_STRUCT_OFFSET (MonoClass, idepth));
-		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, idepth_reg, klass->idepth);
-		MONO_EMIT_NEW_COND_EXC (cfg, LT_UN, "InvalidCastException");
+		MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOADU1_MEMBASE, rank_reg, klass_reg, G_STRUCT_OFFSET (MonoClass, rank));
+		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, rank_reg, klass->rank);
+		MONO_EMIT_NEW_COND_EXC (cfg, NE_UN, "InvalidCastException");
+		//		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, klass_reg, vtable_reg, G_STRUCT_OFFSET (MonoVTable, klass));
+		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, eclass_reg, klass_reg, G_STRUCT_OFFSET (MonoClass, cast_class));
+		if (klass->cast_class == mono_defaults.object_class) {
+			int parent_reg = alloc_preg (cfg);
+			MONO_EMIT_NEW_LOAD_MEMBASE (cfg, parent_reg, eclass_reg, G_STRUCT_OFFSET (MonoClass, parent));
+			mini_emit_class_check_branch (cfg, parent_reg, mono_defaults.enum_class->parent, OP_PBNE_UN, object_is_null);
+			mini_emit_class_check (cfg, eclass_reg, mono_defaults.enum_class);
+		} else if (klass->cast_class == mono_defaults.enum_class->parent) {
+			mini_emit_class_check_branch (cfg, eclass_reg, mono_defaults.enum_class->parent, OP_PBEQ, object_is_null);
+			mini_emit_class_check (cfg, eclass_reg, mono_defaults.enum_class);
+		} else if (klass->cast_class == mono_defaults.enum_class) {
+			mini_emit_class_check (cfg, eclass_reg, mono_defaults.enum_class);
+		} else if (klass->cast_class->flags & TYPE_ATTRIBUTE_INTERFACE) {
+			mini_emit_iface_class_cast (cfg, eclass_reg, klass->cast_class, NULL, NULL);
+		} else {
+			mini_emit_castclass (cfg, obj_reg, eclass_reg, klass->cast_class, object_is_null);
+		}
+
+		if ((klass->rank == 1) && (klass->byval_arg.type == MONO_TYPE_SZARRAY)) {
+			/* Check that the object is a vector too */
+			int bounds_reg = alloc_preg (cfg);
+			MONO_EMIT_NEW_LOAD_MEMBASE (cfg, bounds_reg, obj_reg, G_STRUCT_OFFSET (MonoArray, bounds));
+			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, bounds_reg, 0);
+			MONO_EMIT_NEW_COND_EXC (cfg, NE_UN, "InvalidCastException");
+		}
+	} else {
+		int idepth_reg = alloc_preg (cfg);
+		int stypes_reg = alloc_preg (cfg);
+		int stype = alloc_preg (cfg);
+
+		if (klass->idepth > MONO_DEFAULT_SUPERTABLE_SIZE) {
+			MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOADU2_MEMBASE, idepth_reg, klass_reg, G_STRUCT_OFFSET (MonoClass, idepth));
+			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, idepth_reg, klass->idepth);
+			MONO_EMIT_NEW_COND_EXC (cfg, LT_UN, "InvalidCastException");
+		}
+		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, stypes_reg, klass_reg, G_STRUCT_OFFSET (MonoClass, supertypes));
+		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, stype, stypes_reg, ((klass->idepth - 1) * SIZEOF_VOID_P));
+		mini_emit_class_check (cfg, stype, klass);
 	}
-	MONO_EMIT_NEW_LOAD_MEMBASE (cfg, stypes_reg, klass_reg, G_STRUCT_OFFSET (MonoClass, supertypes));
-	MONO_EMIT_NEW_LOAD_MEMBASE (cfg, stype, stypes_reg, ((klass->idepth - 1) * SIZEOF_VOID_P));
-	mini_emit_class_check (cfg, stype, klass);
 }
 
 static void 
@@ -2884,53 +2918,19 @@ handle_castclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned ch
 
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, vtable_reg, obj_reg, G_STRUCT_OFFSET (MonoObject, vtable));
 
-		if (klass->rank) {
-			int rank_reg = alloc_preg (cfg);
-			int eclass_reg = alloc_preg (cfg);
-
-			MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOADU1_MEMBASE, rank_reg, vtable_reg, G_STRUCT_OFFSET (MonoVTable, rank));
-			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, rank_reg, klass->rank);
-			MONO_EMIT_NEW_COND_EXC (cfg, NE_UN, "InvalidCastException");
-			MONO_EMIT_NEW_LOAD_MEMBASE (cfg, klass_reg, vtable_reg, G_STRUCT_OFFSET (MonoVTable, klass));
-			MONO_EMIT_NEW_LOAD_MEMBASE (cfg, eclass_reg, klass_reg, G_STRUCT_OFFSET (MonoClass, cast_class));
-			if (klass->cast_class == mono_defaults.object_class) {
-				int parent_reg = alloc_preg (cfg);
-				MONO_EMIT_NEW_LOAD_MEMBASE (cfg, parent_reg, eclass_reg, G_STRUCT_OFFSET (MonoClass, parent));
-				mini_emit_class_check_branch (cfg, parent_reg, mono_defaults.enum_class->parent, OP_PBNE_UN, is_null_bb);
-				mini_emit_class_check (cfg, eclass_reg, mono_defaults.enum_class);
-			} else if (klass->cast_class == mono_defaults.enum_class->parent) {
-				mini_emit_class_check_branch (cfg, eclass_reg, mono_defaults.enum_class->parent, OP_PBEQ, is_null_bb);
-				mini_emit_class_check (cfg, eclass_reg, mono_defaults.enum_class);
-			} else if (klass->cast_class == mono_defaults.enum_class) {
-				mini_emit_class_check (cfg, eclass_reg, mono_defaults.enum_class);
-			} else if (klass->cast_class->flags & TYPE_ATTRIBUTE_INTERFACE) {
-				mini_emit_iface_class_cast (cfg, eclass_reg, klass->cast_class, NULL, NULL);
-			} else {
-				mini_emit_castclass (cfg, eclass_reg, klass->cast_class);
-			}
-
-			if ((klass->rank == 1) && (klass->byval_arg.type == MONO_TYPE_SZARRAY)) {
-				/* Check that the object is a vector too */
-				int bounds_reg = alloc_preg (cfg);
-				MONO_EMIT_NEW_LOAD_MEMBASE (cfg, bounds_reg, obj_reg, G_STRUCT_OFFSET (MonoArray, bounds));
-				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, bounds_reg, 0);
-				MONO_EMIT_NEW_COND_EXC (cfg, NE_UN, "InvalidCastException");
-			}
-		} else {
-			if (!cfg->compile_aot && !(cfg->opt & MONO_OPT_SHARED) && (klass->flags & TYPE_ATTRIBUTE_SEALED)) {
-				/* the remoting code is broken, access the class for now */
-				if (0) {
-					MonoVTable *vt = mono_class_vtable (cfg->domain, klass);
-					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, vtable_reg, vt);
-				} else {
-					MONO_EMIT_NEW_LOAD_MEMBASE (cfg, klass_reg, vtable_reg, G_STRUCT_OFFSET (MonoVTable, klass));
-					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, klass_reg, klass);
-				}
-				MONO_EMIT_NEW_COND_EXC (cfg, NE_UN, "InvalidCastException");
+		if (!klass->rank && !cfg->compile_aot && !(cfg->opt & MONO_OPT_SHARED) && (klass->flags & TYPE_ATTRIBUTE_SEALED)) {
+			/* the remoting code is broken, access the class for now */
+			if (0) {
+				MonoVTable *vt = mono_class_vtable (cfg->domain, klass);
+				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, vtable_reg, vt);
 			} else {
 				MONO_EMIT_NEW_LOAD_MEMBASE (cfg, klass_reg, vtable_reg, G_STRUCT_OFFSET (MonoVTable, klass));
-				mini_emit_castclass (cfg, klass_reg, klass);
+				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, klass_reg, klass);
 			}
+			MONO_EMIT_NEW_COND_EXC (cfg, NE_UN, "InvalidCastException");
+		} else {
+			MONO_EMIT_NEW_LOAD_MEMBASE (cfg, klass_reg, vtable_reg, G_STRUCT_OFFSET (MonoVTable, klass));
+			mini_emit_castclass (cfg, obj_reg, klass_reg, klass, is_null_bb);
 		}
 	}
 
@@ -3193,7 +3193,7 @@ handle_ccastclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned c
 
 		MONO_START_BB (cfg, no_proxy_bb);
 
-		mini_emit_castclass (cfg, klass_reg, klass);
+		mini_emit_castclass (cfg, obj_reg, klass_reg, klass, ok_result_bb);
 	}
 
 	MONO_START_BB (cfg, ok_result_bb);

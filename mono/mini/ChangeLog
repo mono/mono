@@ -1,3 +1,7 @@
+2007-05-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c: Merge r72357.
+
 2007-05-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (mono_method_to_ir2): Remove redundant setting of ins->cil_code.
