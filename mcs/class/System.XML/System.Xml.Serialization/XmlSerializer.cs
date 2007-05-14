@@ -549,6 +549,11 @@ namespace System.Xml.Serialization
 			throw new NotImplementedException ();
 		}
 
+		[MonoNotSupported("")]
+		public void Serialize (XmlWriter xmlWriter, Object o, XmlSerializerNamespaces namespaces, string encodingStyle, string id)
+		{
+			throw new NotImplementedException ();
+		}
 #endif
 		
 		XmlSerializationWriter CreateWriter (XmlMapping typeMapping)

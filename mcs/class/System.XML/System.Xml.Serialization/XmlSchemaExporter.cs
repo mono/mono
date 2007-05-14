@@ -69,6 +69,14 @@ namespace System.Xml.Serialization {
 			throw new NotImplementedException ();
 		}
 
+#if NET_2_0
+		[MonoNotSupported("")]
+		public string ExportAnyType (XmlMembersMapping members)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+
 		public void ExportMembersMapping (XmlMembersMapping xmlMembersMapping)
 		{
 			ExportMembersMapping (xmlMembersMapping, true);

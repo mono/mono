@@ -836,6 +836,14 @@ namespace System.Xml.Serialization
 			}
 		}
 
+#if NET_2_0
+		[MonoNotSupported("")]
+		protected void WriteStartElement (string name, string ns, Object o, bool writePrefixed, XmlSerializerNamespaces xmlns)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+
 		protected void WriteTypedPrimitive (string name, string ns, object o, bool xsiType)
 		{
 			string value;

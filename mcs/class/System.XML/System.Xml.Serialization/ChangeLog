@@ -1,3 +1,16 @@
+2007-05-14  Adar Wesley <adarw@mainsoft.com>
+
+	* XmlSchemaExporter.cs: added missing overload for method ExportAnyType.
+
+	* XmlSchemas.cs: added missing methods Add, AddReference, Contains,
+	GetSchemas.
+
+	* XmlSerializationReader.cs: added missing method AddReaderCount.
+
+	* XmlSerializationWriter.cs: added missing overload WriteStartElement.
+
+	* XmlSerializer.cs: added missing overload Serialize.
+
 2007-04-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlCustomFormatter.cs : fix GenerateToXmlString() as well.

@@ -269,6 +269,14 @@ namespace System.Xml.Serialization
 			return new InvalidOperationException (message);
 		}
 
+#if NET_2_0
+		[MonoNotSupported("")]
+		protected void CheckReaderCount (ref int whileIterations, ref int readerCount)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+
 		protected Array EnsureArrayIndex (Array a, int index, Type elementType)
 		{
 			if (a != null && index < a.Length)

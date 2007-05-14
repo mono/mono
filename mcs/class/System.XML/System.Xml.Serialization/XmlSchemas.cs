@@ -107,10 +107,32 @@ namespace System.Xml.Serialization
 				Add (schema);
 		}
 
+#if NET_2_0
+		[MonoNotSupported("")]
+		public int Add (XmlSchema schema, Uri baseUri)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported("")]
+		public void AddReference (XmlSchema schema)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+
 		public bool Contains (XmlSchema schema)
 		{
 			return List.Contains (schema);
 		}
+
+#if NET_2_0
+		[MonoNotSupported("")]
+		public bool Contains (string targetNamespace)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 
 		public void CopyTo (XmlSchema[] array, int index) 
 		{
@@ -176,6 +198,14 @@ namespace System.Xml.Serialization
 			if (res != null && res.GetType () != type) return null;
 			else return res;
 		}
+
+#if NET_2_0
+		[MonoNotSupported("")]
+		public IList GetSchemas (string ns)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 
 		public int IndexOf (XmlSchema schema)
 		{
