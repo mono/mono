@@ -45,7 +45,7 @@ namespace System.Web.Configuration {
 	{
 #if !TARGET_J2EE
 		static IInternalConfigConfigurationFactory configFactory;
-		static Hashtable configurations = new Hashtable ();
+		static Hashtable configurations = Hashtable.Synchronized (new Hashtable ());
 #else
 		static internal IInternalConfigConfigurationFactory configFactory
 		{
@@ -79,7 +79,7 @@ namespace System.Web.Configuration {
 					lock (AppDomain.CurrentDomain){
 						object initialized = AppDomain.CurrentDomain.GetData("WebConfigurationManager.configurations.initialized");
 						if (initialized == null){
-							table = new Hashtable();
+							table = Hashtable.Synchronized (new Hashtable ());
 							configurations = table;
 						}
 					}
@@ -186,13 +186,8 @@ namespace System.Web.Configuration {
 
 			conf = (_Configuration) configurations [path];
 			if (conf == null) {
-				lock (configurations) {
-					conf = (_Configuration) configurations [path];
-					if (conf == null) {
 						conf = ConfigurationFactory.Create (typeof (WebConfigurationHost), null, path, site, locationSubPath, server, userName, password);
 						configurations [path] = conf;
-					}
-				}
 			}
 			return conf;
 		}
@@ -247,11 +242,7 @@ namespace System.Web.Configuration {
 		
 		public static object GetSection (string sectionName)
 		{
-			string path = (HttpContext.Current != null
-			    && HttpContext.Current.Request != null) ?
-				HttpContext.Current.Request.Path : HttpRuntime.AppDomainAppVirtualPath;
-
-			return GetSection (sectionName, path);
+			return GetSection (sectionName, GetCurrentPath (HttpContext.Current));
 		}
 
 		public static object GetSection (string sectionName, string path)
@@ -263,6 +254,16 @@ namespace System.Web.Configuration {
 				return null;
 
 			return get_runtime_object.Invoke (section, new object [0]);
+		}
+
+		static string GetCurrentPath (HttpContext ctx)
+		{
+			return (ctx != null && ctx.Request != null) ? ctx.Request.Path : HttpRuntime.AppDomainAppVirtualPath;
+		}
+
+		internal static void RemoveConfigurationFromCache (HttpContext ctx)
+		{
+			configurations.Remove (GetCurrentPath (ctx));
 		}
 
 		readonly static MethodInfo get_runtime_object = typeof (ConfigurationSection).GetMethod ("GetRuntimeObject", BindingFlags.NonPublic | BindingFlags.Instance);

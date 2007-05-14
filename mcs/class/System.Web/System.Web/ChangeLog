@@ -1,3 +1,9 @@
+2007-05-14 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* HttpApplication.cs:
+	prevent DOS attack: remove configuration from the cache in case 
+	of invalid resource not exists	
+
 2007-05-14  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* TraceContext.cs: refactoring, cached TraceManager

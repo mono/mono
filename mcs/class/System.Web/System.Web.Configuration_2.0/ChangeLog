@@ -1,3 +1,9 @@
+2007-05-14  Igor Zelmanovich <igorz@mainsoft.com>
+
+	* WebConfigurationManager.cs: 
+	make configurations synchronized.
+	added new internal method RemoveConfigurationFromCache.
+
 2007-05-07  Marek Habersack  <mhabersack@novell.com>
 
 	* PagesSection.cs: buffering is on by default.

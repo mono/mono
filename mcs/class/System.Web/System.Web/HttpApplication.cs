@@ -145,6 +145,7 @@ namespace System.Web {
 #else
 		static Exception initialization_exception;
 #endif
+		bool removeConfigurationFromCache;
 #endif
 
 		//
@@ -635,6 +636,14 @@ namespace System.Web {
 				}
 			}
 			stop_processing = true;
+#if NET_2_0
+			// we want to remove configuration from the cache in case of 
+			// invalid resource not exists to prevent DOS attack.
+			HttpException httpEx = e as HttpException;
+			if (httpEx != null && httpEx.GetHttpCode () == 404) {
+				removeConfigurationFromCache = true;
+			}
+#endif
 		}
 		
 		//
@@ -1090,6 +1099,12 @@ namespace System.Web {
 
 		void PostDone ()
 		{
+#if NET_2_0
+			if (removeConfigurationFromCache) {
+				WebConfigurationManager.RemoveConfigurationFromCache (context);
+				removeConfigurationFromCache = false;
+			}
+#endif
 			Thread th = Thread.CurrentThread;
 #if !TARGET_JVM
 			if (Thread.CurrentPrincipal != prev_user)
