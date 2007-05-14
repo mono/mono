@@ -144,7 +144,7 @@ namespace System.ComponentModel
 			}
 
 			foreach (PropertyDescriptor p in properties) {
-				if (0 == String.Compare (name, p.Name, ignoreCase))
+				if (0 == String.Compare (name, p.Name, ignoreCase, System.Globalization.CultureInfo.InvariantCulture))
 					return p;
 			}
 			return null;

@@ -1,3 +1,8 @@
+2007-05-14  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* PropertyDescriptorCollection.cs: fixed Find method, compare using
+	invariant culture
+
 2007-05-10  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* MaskedTextProvider.cs: Small fix for ToString for passwords.
