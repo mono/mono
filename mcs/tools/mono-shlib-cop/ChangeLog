@@ -1,3 +1,9 @@
+2007-05-14  Wade Berrier  <wberrier@novell.com>
+
+	* mono-shlib-cop.exe.config: Remove "does-not-exist" dllmap
+	(Was complicating packaging on ia64: There is no libc.so.6 on
+	ia64, only libc.so.6.1)
+
 2007-04-09  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (cleanup): Use '-f' to silence 'rm'.
