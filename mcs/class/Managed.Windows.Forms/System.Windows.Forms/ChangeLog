@@ -1,3 +1,8 @@
+2007-05-14  Jackson Harper  <jackson@ximian.com>
+
+	* TextControl.cs: Because the line endings are including in the
+	text, we don't need to add them in anymore.
+
 2007-05-11  Everaldo Canuto  <everaldo@simios.org>
 
 	* ToolBar.cs: Fix autosize and get it working only after hadle is created,

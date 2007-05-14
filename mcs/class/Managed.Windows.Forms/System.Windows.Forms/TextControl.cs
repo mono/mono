@@ -3690,7 +3690,7 @@ namespace System.Windows.Forms {
 			// Count the lines in the middle
 
 			for (i = 1; i < line.line_no; i++) {
-				length += GetLine(i).text.Length + LineEndingLength (line.ending);
+				length += GetLine(i).text.Length;
 			}
 
 			length += pos;
