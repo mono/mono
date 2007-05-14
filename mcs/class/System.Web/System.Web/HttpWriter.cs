@@ -120,10 +120,10 @@ namespace System.Web {
 			if (buffer == null || index < 0 || count < 0 || (buffer.Length - index) < count)
 				throw new ArgumentOutOfRangeException ();
 			
-			int length = encoding.GetByteCount (buffer, index, count);
+			int length = encoding.GetMaxByteCount (count);
 			byte [] bytebuffer = GetByteBuffer (length);
-			encoding.GetBytes (buffer, index, count, bytebuffer, 0);
-			output_stream.Write (bytebuffer, 0, length);
+			int realLength = encoding.GetBytes (buffer, index, count, bytebuffer, 0);
+			output_stream.Write (bytebuffer, 0, realLength);
 			if (response.buffer)
 				return;
 
@@ -145,17 +145,10 @@ namespace System.Web {
 			if (index < 0 || count < 0 || ((index + count > s.Length)))
 				throw new ArgumentOutOfRangeException ();
 			
-			int length;
-			if (index == 0 && count == s.Length) {
-				length = encoding.GetByteCount (s); 
-			} else {
-				char [] chars = s.ToCharArray (index, count);
-				length = encoding.GetByteCount (chars);
-			}
-
+			int length = encoding.GetMaxByteCount (count);
 			byte [] bytebuffer = GetByteBuffer (length);
-			encoding.GetBytes (s, index, count, bytebuffer, 0);
-			output_stream.Write (bytebuffer, 0, length);
+			int realLength = encoding.GetBytes (s, index, count, bytebuffer, 0);
+			output_stream.Write (bytebuffer, 0, realLength);
 			if (response.buffer)
 				return;
 

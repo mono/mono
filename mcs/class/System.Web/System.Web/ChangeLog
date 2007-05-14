@@ -1,3 +1,8 @@
+2007-05-14  Vladimir Krasnov  <vladimirk@mainsoft.com>
+	
+	* HttpWriter.cs: GetMaxByteCount was used in Write and WriteString
+	methods to improve performance of HttpWriter
+
 2007-05-14 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* HttpApplication.cs:
