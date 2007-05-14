@@ -311,7 +311,13 @@ namespace System.Configuration
 				if (readProps.ContainsKey (prop))
 					throw new ConfigurationException ("The attribute '" + prop.Name + "' may only appear once in this element.");
 				
-				prop.SetStringValue (reader.Value);
+				try {
+					prop.SetStringValue (reader.Value);
+				}
+				catch (Exception ex) {
+					string msg = String.Format ("The value of the property '{0}' cannot be parsed.", prop.Name);
+					throw new ConfigurationErrorsException (msg, reader);
+				}
 				readProps [prop] = prop.Name;
 			}
 			
