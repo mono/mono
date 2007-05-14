@@ -95,6 +95,8 @@ namespace System.Web {
 		bool validate_cookies, validate_query_string, validate_form;
 		bool checked_cookies, checked_query_string, checked_form;
 
+		readonly static char [] queryTrimChars = {'?'};
+		
 		static HttpRequest ()
 		{
 			host_addresses = GetLocalHostAddresses ();
@@ -115,30 +117,86 @@ namespace System.Web {
 			query_string_nvc.Protect ();
 		}
 
-		UriBuilder UrlComponents {
-			get {
-				if (url_components == null) {
-					url_components = new UriBuilder ();
-					url_components.Scheme = worker_request.GetProtocol ();
-					url_components.Host = worker_request.GetServerName ();
-					url_components.Port = worker_request.GetLocalPort ();
-					url_components.Path = worker_request.GetUriPath ();
-					
-					byte[] queryStringRaw = worker_request.GetQueryStringRawBytes();
-					if(queryStringRaw != null)
-						url_components.Query = ContentEncoding.GetString(queryStringRaw);
-					else
-						url_components.Query = worker_request.GetQueryString();
-				}
-				return url_components;
-			}
-		}
-		
 		internal HttpRequest (HttpWorkerRequest worker_request, HttpContext context)
 		{
 			this.worker_request = worker_request;
 			this.context = context;
 		}
+		
+		UriBuilder UrlComponents {
+			get {
+				if (url_components == null) {
+					string query;
+					byte[] queryStringRaw = worker_request.GetQueryStringRawBytes();
+					if(queryStringRaw != null)
+						query = ContentEncoding.GetString(queryStringRaw);
+					else
+						query = worker_request.GetQueryString();
+					
+					BuildUrlComponents (
+#if NET_2_0
+						ApplyUrlMapping (worker_request.GetUriPath ()),
+#else
+						worker_request.GetUriPath (),
+#endif
+						query);
+				}
+				return url_components;
+			}
+		}
+
+		void BuildUrlComponents (string path, string query)
+		{
+			if (url_components != null)
+				return;
+			url_components = new UriBuilder ();
+			url_components.Scheme = worker_request.GetProtocol ();
+			url_components.Host = worker_request.GetServerName ();
+			url_components.Port = worker_request.GetLocalPort ();
+			url_components.Path = path;
+			if (query != null && query.Length > 0)
+				url_components.Query = query.TrimStart (queryTrimChars);
+		}
+
+#if NET_2_0
+		internal string ApplyUrlMapping (string url)
+		{
+			UrlMappingsSection ums = WebConfigurationManager.GetSection ("system.web/urlMappings", ApplicationPath) as UrlMappingsSection;
+			UrlMappingCollection umc;
+
+			if (ums == null || !ums.IsEnabled || (umc = ums.UrlMappings).Count == 0)
+				return url;
+
+			string relUrl = VirtualPathUtility.ToAppRelative (url);
+			UrlMapping um = null;
+			
+			foreach (UrlMapping u in umc) {
+				if (u == null)
+					continue;
+				if (String.Compare (relUrl, u.Url, StringComparison.Ordinal) == 0) {
+					um = u;
+					break;
+				}
+			}
+
+			if (um == null)
+				return url;
+
+			string rawUrl = VirtualPathUtility.ToAbsolute (um.MappedUrl.Trim ());
+			Uri newUrl = new Uri ("http://host.com" + rawUrl);
+
+			if (url_components != null) {
+				url_components.Path = newUrl.AbsolutePath;
+				url_components.Query = newUrl.Query.TrimStart (queryTrimChars);
+				query_string_nvc = new WebROCollection ();
+				HttpUtility.ParseQueryString (newUrl.Query, Encoding.Default, query_string_nvc);
+				query_string_nvc.Protect ();
+			} else
+				BuildUrlComponents (newUrl.AbsolutePath, newUrl.Query);
+
+			return url_components.Path;
+		}
+#endif
 
 		string [] SplitHeader (int header_index)
 		{
@@ -343,7 +401,13 @@ namespace System.Web {
 					return "/"; // required for 2.0
 
 				if (file_path == null)
-					file_path = UrlUtils.Canonic (worker_request.GetFilePath ());
+					file_path = UrlUtils.Canonic (
+#if NET_2_0
+						ApplyUrlMapping (worker_request.GetFilePath ())
+#else
+						worker_request.GetFilePath ()
+#endif
+					);
 
 				return file_path;
 			}
@@ -958,7 +1022,7 @@ namespace System.Web {
 					if (orig_url == null)
 						cached_url = UrlComponents.Uri;
 					else
-						cached_url = new Uri (orig_url); 
+						cached_url = new Uri (orig_url);
 				}
 
 				return cached_url;			

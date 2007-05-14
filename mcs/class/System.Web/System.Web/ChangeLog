@@ -1,7 +1,10 @@
-2007-05-14  Vladimir Krasnov  <vladimirk@mainsoft.com>
-	
-	* HttpWriter.cs: GetMaxByteCount was used in Write and WriteString
-	methods to improve performance of HttpWriter
+2007-05-14  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpUtility.cs: when parsing query strings, skip the leading ?
+	for the first parameter name.
+
+	* HttpRequest.cs: added support for mapping urls, as defined in
+	the system.web/urlMappings section.
 
 2007-05-14 Igor Zelmanovich <igorz@mainsoft.com>
 

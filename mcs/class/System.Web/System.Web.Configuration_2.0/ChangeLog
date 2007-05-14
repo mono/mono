@@ -1,3 +1,10 @@
+2007-05-14  Marek Habersack  <mhabersack@novell.com>
+
+	* UrlMappingCollection.cs: implemented the Item (string) indexer.
+
+	* UrlMapping.cs: implemented the URL validation callback body
+	(doesn't work at the moment).
+
 2007-05-14  Igor Zelmanovich <igorz@mainsoft.com>
 
 	* WebConfigurationManager.cs: 

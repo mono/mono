@@ -44,7 +44,11 @@ namespace System.Web.Configuration {
 
 		static void ValidateUrl (object value)
 		{
-			/* XXX validate the url */
+			string url = value as string;
+			if (String.IsNullOrEmpty (url))
+				return;
+			if (!VirtualPathUtility.IsAppRelative (url))
+				throw new ConfigurationException ("Only app-relative (~/) URLs are allowed");
 		}
 
 		static UrlMapping ()

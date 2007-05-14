@@ -1014,6 +1014,7 @@ namespace System.Web {
 				return;
 
 			int namePos = 0;
+			bool first = true;
 			while (namePos <= query.Length) {
 				int valuePos = -1, valueEnd = -1;
 				for (int q = namePos; q < query.Length; q++) {
@@ -1025,6 +1026,12 @@ namespace System.Web {
 					}
 				}
 
+				if (first) {
+					first = false;
+					if (query [namePos] == '?')
+						namePos++;
+				}
+				
 				string name, value;
 				if (valuePos == -1) {
 					name = null;
@@ -1041,7 +1048,8 @@ namespace System.Web {
 				value = UrlDecode (query.Substring (valuePos, valueEnd - valuePos), encoding);
 
 				result.Add (name, value);
-				if (namePos == -1) break;
+				if (namePos == -1)
+					break;
 			}
 		}
 		#endregion // Methods
