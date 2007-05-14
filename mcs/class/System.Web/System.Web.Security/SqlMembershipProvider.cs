@@ -483,7 +483,7 @@ namespace System.Web.Security {
 				while (reader.Read ())
 					users.Add (GetUserFromReader (reader, null, null));
 
-				totalRecords = Convert.ToInt32 (command.Parameters ["ReturnValue"].Value);
+				totalRecords = Convert.ToInt32 (command.Parameters ["@ReturnValue"].Value);
 				return users;
 			} catch (Exception) {
 				totalRecords = 0;

@@ -1,3 +1,7 @@
+2007-05-14 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* SqlMembershipProvider.cs: Fix parameter binding to stored procedures.
+
 2007-05-09 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* PassportIdentity.cs:
