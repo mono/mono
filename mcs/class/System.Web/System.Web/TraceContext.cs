@@ -38,6 +38,7 @@ namespace System.Web {
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class TraceContext {
 		HttpContext _Context;
+		TraceManager _traceManager;
 		bool _Enabled;
 		TraceMode _Mode;
 		TraceData data;
@@ -61,7 +62,7 @@ namespace System.Web {
 		public bool IsEnabled {
 			get {
 				if (!_haveTrace)
-					return HttpRuntime.TraceManager.Enabled;
+					return TraceManager.Enabled;
 				return _Enabled;
 			}
 
@@ -70,6 +71,17 @@ namespace System.Web {
 					data = new TraceData ();
 				_haveTrace = true;
 				_Enabled = value;
+			}
+		}
+
+		TraceManager TraceManager
+		{
+			get
+			{
+				if (_traceManager == null)
+					_traceManager = HttpRuntime.TraceManager;
+
+				return _traceManager;
 			}
 		}
 
@@ -134,7 +146,7 @@ namespace System.Web {
 			AddCookies ();
 			AddHeaders ();
 			AddServerVars ();
-			HttpRuntime.TraceManager.AddTraceData (data);
+			TraceManager.AddTraceData (data);
 			data_saved = true;
 		}
 

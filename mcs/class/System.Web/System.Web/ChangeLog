@@ -1,3 +1,7 @@
+2007-05-14  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* TraceContext.cs: refactoring, cached TraceManager
+
 2007-05-03 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* HttpApplication.cs:
