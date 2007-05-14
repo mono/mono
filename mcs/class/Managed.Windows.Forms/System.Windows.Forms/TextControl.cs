@@ -3636,7 +3636,7 @@ namespace System.Windows.Forms {
 				line = GetLine(i);
 
 				start = chars;
-				chars += line.text.Length + LineEndingLength (line.ending);
+				chars += line.text.Length;
 
 				if (index <= chars) {
 					// we found the line
