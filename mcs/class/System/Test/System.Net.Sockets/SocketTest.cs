@@ -2573,6 +2573,107 @@ namespace MonoTests.System.Net.Sockets
 			}
 		}
 #endif
+
+		static Socket CWRSocket;
+		static bool CWRReceiving = true;
+		static ManualResetEvent CWRReady = new ManualResetEvent (false);
+		
+		private static void CWRReceiveThread ()
+		{
+			byte[] buf = new byte[256];
+			
+			try {
+				CWRSocket.Receive (buf);
+			} catch (SocketException) {
+				CWRReceiving = false;
+			}
+
+			CWRReady.Set ();
+		}
+		
+		[Test]
+		public void CloseWhileReceiving ()
+		{
+			CWRSocket = new Socket (AddressFamily.InterNetwork,
+						SocketType.Dgram,
+						ProtocolType.Udp);
+			CWRSocket.Bind (new IPEndPoint (IPAddress.Loopback,
+							1256));
+			
+			Thread recv_thread = new Thread (new ThreadStart (CWRReceiveThread));
+			CWRReady.Reset ();
+			recv_thread.Start ();
+			Thread.Sleep (250);	/* Wait for the thread to be already receiving */
+
+			CWRSocket.Close ();
+			if (CWRReady.WaitOne (1000, false) == false) {
+				Assert.Fail ("CloseWhileReceiving wait timed out");
+			}
+			
+			Assert.IsFalse (CWRReceiving);
+		}
+
+		static bool RRCLastRead = false;
+		static ManualResetEvent RRCReady = new ManualResetEvent (false);
+		
+		private static void RRCClientThread ()
+		{
+			byte[] bytes = new byte[8];
+			int readbyte;
+			
+			Socket sock = new Socket (AddressFamily.InterNetwork,
+						  SocketType.Stream,
+						  ProtocolType.Tcp);
+			sock.Connect (new IPEndPoint (IPAddress.Loopback,
+						      1257));
+			
+			NetworkStream stream = new NetworkStream (sock);
+
+			readbyte = stream.ReadByte ();
+			Assertion.AssertEquals ("ReceiveRemoteClosed #1",
+						0, readbyte);
+			
+			stream.Read (bytes, 0, 0);
+
+			readbyte = stream.ReadByte ();
+			Assertion.AssertEquals ("ReceiveRemoteClosed #2",
+						0, readbyte);
+			
+			stream.Read (bytes, 0, 0);
+
+			readbyte = stream.ReadByte ();
+			Assertion.AssertEquals ("ReceiveRemoteClosed #3",
+						-1, readbyte);
+
+			sock.Close ();
+
+			RRCLastRead = true;
+			RRCReady.Set ();
+		}
+		
+		[Test]
+		public void ReceiveRemoteClosed ()
+		{
+			Socket sock = new Socket (AddressFamily.InterNetwork,
+						  SocketType.Stream,
+						  ProtocolType.Tcp);
+			sock.Bind (new IPEndPoint (IPAddress.Loopback, 1257));
+			sock.Listen (1);
+			
+			RRCReady.Reset ();
+			Thread client_thread = new Thread (new ThreadStart (RRCClientThread));
+			client_thread.Start ();
+			
+			Socket client = sock.Accept ();
+			NetworkStream stream = new NetworkStream (client);
+			stream.WriteByte (0x00);
+			stream.WriteByte (0x00);
+			client.Close ();
+			sock.Close ();
+
+			RRCReady.WaitOne (1000, false);
+			Assert.IsTrue (RRCLastRead);
+		}
 	}
 }
 

@@ -1,3 +1,7 @@
+2007-05-14  Dick Porter  <dick@ximian.com>
+
+	* SocketTest.cs: Tests for bug 75705
+
 2007-04-21  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TcpClientTest.cs: Enabled test for bug #81105.
