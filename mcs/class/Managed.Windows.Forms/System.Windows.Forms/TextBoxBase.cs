@@ -769,6 +769,90 @@ namespace System.Windows.Forms {
 		public void Undo() {
 			document.undo.Undo();
 		}
+
+#if NET_2_0
+		public virtual char GetCharFromPosition (Point p)
+		{
+			int index;
+			LineTag tag = document.FindCursor (p.X, p.Y, out index);
+			if (tag == null)
+				return (char) 0; // Shouldn't happen
+
+			if (index >= tag.line.text.Length) {
+				
+				if (tag.line.ending == LineEnding.Wrap) {
+					// If we have wrapped text, we return the first char of the next line
+					Line line = document.GetLine (tag.line.line_no + 1);
+					if (line != null)
+						return line.text [0];
+
+				}
+
+				if (tag.line.line_no == document.Lines) {
+					// Last line returns the last char
+					return tag.line.text [tag.line.text.Length - 1];
+				}
+
+				// This really shouldn't happen
+				return (char) 0;
+			}
+			return tag.line.text [index];
+		}
+
+		public virtual int GetCharIndexFromPosition (Point p)
+		{
+			int line_index;
+			LineTag tag = document.FindCursor (p.X, p.Y, out line_index);
+			if (tag == null)
+				return 0;
+
+			if (line_index >= tag.line.text.Length) {
+
+				if (tag.line.ending == LineEnding.Wrap) {
+					// If we have wrapped text, we return the first char of the next line
+					Line line = document.GetLine (tag.line.line_no + 1);
+					if (line != null)
+						return document.LineTagToCharIndex (line, 0);
+				}
+
+				if (tag.line.line_no == document.Lines) {
+					// Last line returns the last char
+					return document.LineTagToCharIndex (tag.line, tag.line.text.Length - 1);
+				}
+
+				return 0;
+			}
+
+			return document.LineTagToCharIndex (tag.line, line_index);
+		}
+
+		public virtual Point GetPositionFromCharIndex (int index)
+		{
+			int pos;
+			Line line;
+			LineTag tag;
+
+			document.CharIndexToLineTag (index, out line, out tag, out pos);
+
+			return new Point ((int) (line.widths [pos] +
+							  line.X + document.viewport_x),
+					line.Y + document.viewport_y + tag.shift);
+		}
+
+		public int GetFirstCharIndexFromLine (int line_number)
+		{
+			Line line = document.GetLine (line_number + 1);
+			if (line == null)
+				return -1;
+					
+			return document.LineTagToCharIndex (line, 0);
+		}
+
+		public int GetFirstCharIndexOfCurrentLine ()
+		{
+			return document.LineTagToCharIndex (document.caret.line, 0);
+		}
+#endif
 		#endregion	// Public Instance Methods
 
 		#region Protected Instance Methods

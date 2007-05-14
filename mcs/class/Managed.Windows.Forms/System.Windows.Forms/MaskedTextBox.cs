@@ -162,7 +162,7 @@ namespace System.Windows.Forms
 		{
 			base.CreateHandle ();
 		}
-#if notyet
+
 		public override char GetCharFromPosition (Point pt)
 		{
 			return base.GetCharFromPosition (pt);
@@ -172,7 +172,7 @@ namespace System.Windows.Forms
 		{
 			return base.GetCharIndexFromPosition (pt);
 		}
-#endif	
+
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public int GetFirstCharIndexFromLine (int lineNumber)
 		{
@@ -190,12 +190,12 @@ namespace System.Windows.Forms
 		{
 			return 0;
 		}
-#if notyet
+
 		public override Point GetPositionFromCharIndex (int index)
 		{
 			return base.GetPositionFromCharIndex (index);
 		}
-#endif
+
 		protected override bool IsInputKey (Keys keyData)
 		{
 			return base.IsInputKey (keyData);

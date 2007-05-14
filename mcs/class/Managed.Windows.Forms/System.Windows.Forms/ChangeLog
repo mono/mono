@@ -1,5 +1,12 @@
 2007-05-14  Jackson Harper  <jackson@ximian.com>
 
+	* TextBoxBase.cs: Implement some of the new 2.0 methods.
+	* RichTextBox.cs: We need to override these methods on 2.0.
+	* MaskedTextBox.cs: These are implemented now
+	* TextControl.cs: This was off by one.
+
+2007-05-14  Jackson Harper  <jackson@ximian.com>
+
 	* TextControl.cs: Because the line endings are including in the
 	text, we don't need to add them in anymore.
 

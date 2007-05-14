@@ -3643,7 +3643,7 @@ namespace System.Windows.Forms {
 					tag = line.tags;
 
 					while (tag != null) {
-						if (index < (start + tag.start + tag.length)) {
+						if (index < (start + tag.start + tag.length - 1)) {
 							line_out = line;
 							tag_out = LineTag.GetFinalTag (tag);
 							pos = index - start;

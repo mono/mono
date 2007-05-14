@@ -827,7 +827,11 @@ namespace System.Windows.Forms {
 			return Find(str, -1, -1, options);
 		}
 
-		public char GetCharFromPosition(Point pt) {
+		public
+#if NET_2_0
+		override
+#endif
+		char GetCharFromPosition(Point pt) {
 			LineTag	tag;
 			int	pos;
 
@@ -841,7 +845,11 @@ namespace System.Windows.Forms {
 			
 		}
 
-		public int GetCharIndexFromPosition(Point pt) {
+		public
+#if NET_2_0
+		override
+#endif	
+		int GetCharIndexFromPosition(Point pt) {
 			LineTag	tag;
 			int	pos;
 
@@ -850,7 +858,11 @@ namespace System.Windows.Forms {
 			return document.LineTagToCharIndex(tag.line, pos);
 		}
 
-		public int GetLineFromCharIndex(int index) {
+		public
+#if NET_2_0
+		override
+#endif
+		int GetLineFromCharIndex(int index) {
 			Line	line;
 			LineTag	tag;
 			int	pos;
@@ -860,7 +872,11 @@ namespace System.Windows.Forms {
 			return line.LineNo - 1;
 		}
 
-		public Point GetPositionFromCharIndex(int index) {
+		public
+#if NET_2_0
+		override
+#endif
+		Point GetPositionFromCharIndex(int index) {
 			Line	line;
 			LineTag	tag;
 			int	pos;
