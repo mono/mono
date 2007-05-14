@@ -1,3 +1,8 @@
+2007-05-14  Igor Zelmanovich <igorz@mainsoft.com>
+
+	* PageMapper.cs: 
+	fixed previous patch
+
 2007-05-13  Igor Zelmanovich <igorz@mainsoft.com>
 
 	* PageMapper.cs: 
