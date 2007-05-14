@@ -583,12 +583,13 @@ namespace System.Web.UI
 		{
 			if (hiddenFields == null)
 				return;
-	
+
+			writer.RenderBeginTag (HtmlTextWriterTag.Div);
 			foreach (string key in hiddenFields.Keys) {
 				string value = hiddenFields [key] as string;
 				writer.WriteLine ("<input type=\"hidden\" name=\"{0}\" id=\"{0}\" value=\"{1}\" />", key, value);
 			}
-	
+			writer.RenderEndTag (); // DIV
 			hiddenFields = null;
 		}
 		
