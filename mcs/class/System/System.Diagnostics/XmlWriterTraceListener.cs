@@ -38,7 +38,7 @@ using System.Xml;
 
 namespace System.Diagnostics
 {
-	public class XmlWriterTraceListener : TraceListener
+	public class XmlWriterTraceListener : TextWriterTraceListener
 	{
 		const string e2e_ns = "http://schemas.microsoft.com/2004/06/E2ETraceEvent";
 		const string sys_ns = "http://schemas.microsoft.com/2004/06/windows/eventlog/system";
@@ -79,7 +79,7 @@ namespace System.Diagnostics
 			this.name = name;
 		}
 
-		public void Close ()
+		public virtual void Close ()
 		{
 			w.Close ();
 		}
@@ -98,6 +98,7 @@ namespace System.Diagnostics
 				   Guid.Empty, 2, true, data);
 		}
 
+		[MonoLimitation ("level is not always correct")]
 		public override void TraceData (TraceEventCache eventCache,
 			string source, TraceEventType eventType, int id,
 			params object [] data)
@@ -107,6 +108,7 @@ namespace System.Diagnostics
 				   Guid.Empty, 2, true, data);
 		}
 
+		[MonoLimitation ("level is not always correct")]
 		public override void TraceEvent (TraceEventCache eventCache,
 			string source, TraceEventType eventType, int id,
 			string message)
@@ -116,6 +118,7 @@ namespace System.Diagnostics
 				   id, false, Guid.Empty, 2, true, message);
 		}
 
+		[MonoLimitation ("level is not always correct")]
 		public override void TraceEvent (TraceEventCache eventCache,
 			string source, TraceEventType eventType, int id,
 			string format, params object [] args)
@@ -138,6 +141,7 @@ namespace System.Diagnostics
 			WriteLine (message);
 		}
 
+		[MonoLimitation ("level is not always correct")]
 		public override void WriteLine (string message)
 		{
 			// FIXME: what is the correct level?

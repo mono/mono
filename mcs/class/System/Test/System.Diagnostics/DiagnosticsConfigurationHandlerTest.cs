@@ -209,7 +209,10 @@ namespace MonoTests.System.Diagnostics {
 				"<remove/>",
 				"<add/>",
 				"<remove name=\"foo\" extra=\"arg\"/>",
+#if NET_2_0 // type is optional (it could indicate a named listener)
+#else
 				"<add name=\"foo\"/>",
+#endif
 				"<add type=\"foo\"/>",
 				"<add name=\"foo\" type=\"invalid-type\"/>",
 			};

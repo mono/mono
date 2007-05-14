@@ -1,3 +1,10 @@
+2007-05-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.dll.sources :
+	  Added EventTypeFilter.cs, TraceFilter.cs, SourceFilter.cs, 
+	  DelimitedListTraceListener.cs, SwitchAttribute.cs and
+	  SwitchLevelAttribute.cs in sys.diagnostics.
+
 2007-05-02  Raja R Harinath  <harinath@gmail.com>
 
 	* System.dll.sources: Add RBTree.cs.

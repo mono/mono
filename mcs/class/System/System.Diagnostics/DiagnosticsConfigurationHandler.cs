@@ -268,9 +268,14 @@ namespace System.Diagnostics
 #if NET_2_0
 		static readonly Hashtable static_sources = new Hashtable ();
 
-		[MonoTODO]
 		private void AddSharedListenersNode (IDictionary d, XmlNode node)
 		{
+			TraceListenerCollection shared_listeners = d ["sharedListeners"] as TraceListenerCollection;
+			if (shared_listeners == null) {
+				shared_listeners = new TraceListenerCollection ();
+				d ["sharedListeners"] = shared_listeners;
+			}
+			AddTraceListenersTo (node, shared_listeners);
 		}
 
 		private void AddSourcesNode (IDictionary d, XmlNode node)
@@ -350,6 +355,11 @@ namespace System.Diagnostics
 		// for add, "name" and "type" are required; initializeData is optional
 		private void AddTraceListeners (XmlNode listenersNode)
 		{
+			AddTraceListenersTo (listenersNode, TraceImpl.Listeners);
+		}
+
+		private void AddTraceListenersTo (XmlNode listenersNode, TraceListenerCollection listeners)
+		{
 #if !TARGET_JVM
 			// There are no attributes on <listeners/>
 			ValidateInvalidAttributes (listenersNode.Attributes, listenersNode);
@@ -366,9 +376,13 @@ namespace System.Diagnostics
 					switch (child.Name) {
 						case "add":
 							name = GetAttribute (attributes, "name", true, child);
+#if NET_2_0
+							type = GetAttribute (attributes, "type", false, child);
+#else
 							type = GetAttribute (attributes, "type", true, child);
+#endif
 							id = GetAttribute (attributes, "initializeData", false, child);
-							AddTraceListener (name, type, id);
+							AddTraceListener (name, type, id, listeners);
 							break;
 						case "remove":
 							name = GetAttribute (attributes, "name", true, child);
@@ -389,8 +403,24 @@ namespace System.Diagnostics
 #endif
 		}
 
-		private void AddTraceListener (string name, string type, string initializeData)
+		private void AddTraceListener (string name, string type, string initializeData, TraceListenerCollection listeners)
 		{
+			if (type == null) {
+				// indicated by name.
+#if implemented // FIXME
+				//TraceListener shared = shared_listeners [name];
+				//if (shared == null)
+					// throw new ConfigurationException (String.Format ("Shared trace listener {0} does not exist", name));
+				//listeners.Add (shared);
+#else
+				// FIXME: there are such cases
+				// that <sharedListeners> element comes
+				// after <listeners> element, so skip
+				// such errors for now.
+#endif
+				return;
+			}
+
 			Type t = Type.GetType (type);
 			if (t == null)
 				throw new ConfigurationException (string.Format ("Invalid Type Specified: {0}", type));
@@ -413,7 +443,7 @@ namespace System.Diagnostics
 			
 			TraceListener l = (TraceListener) ctor.Invoke (args);
 			l.Name = name;
-			TraceImpl.Listeners.Add (l);
+			listeners.Add (l);
 		}
 
 		private void RemoveTraceListener (string name)

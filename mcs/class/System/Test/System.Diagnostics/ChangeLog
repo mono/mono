@@ -1,3 +1,8 @@
+2007-05-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DiagnosticsConfigurationHandlerTest.cs : in 2.0 configuration item
+	  listeners/add/@type is optional (for named shared listener support).
+
 2007-04-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TraceListenerTest.cs : new test.

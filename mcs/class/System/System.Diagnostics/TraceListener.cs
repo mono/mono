@@ -34,6 +34,7 @@
 //
 
 using System;
+using System.Collections.Specialized;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 
@@ -44,6 +45,8 @@ namespace System.Diagnostics {
 #if TARGET_JVM
 		readonly LocalDataStoreSlot _indentLevelStore = System.Threading.Thread.AllocateDataSlot ();
 		readonly LocalDataStoreSlot _indentSizeStore = System.Threading.Thread.AllocateDataSlot ();
+		readonly LocalDataStoreSlot _attributesStore = System.Threading.Thread.AllocateDataSlot ();
+		readonly LocalDataStoreSlot _filterStore = System.Threading.Thread.AllocateDataSlot ();
 		
 		private int indentLevel {
 			get {
@@ -64,12 +67,30 @@ namespace System.Diagnostics {
 			}
 			set { System.Threading.Thread.SetData (_indentSizeStore, value); }
 		}
+
+		private StringDictionary attributes {
+			get { return (StringDictionary) System.Threading.Thread.GetData (_attributesStore); }
+			set { System.Threading.Thread.SetData (_attributesStore, value); }
+		}
+
+		private TraceFilter filter {
+			get { return (TraceFilter) System.Threading.Thread.GetData (_filterStore); }
+			set { System.Threading.Thread.SetData (_filterStore, value); }
+		}
 #else
 		[ThreadStatic]
 		private int indentLevel = 0;
 
 		[ThreadStatic]
 		private int indentSize = 4;
+
+#if NET_2_0
+		static readonly string [] empty_array = new string [0];
+		[ThreadStatic]
+		private StringDictionary attributes = new StringDictionary ();
+		[ThreadStatic]
+		private TraceFilter filter;
+#endif
 #endif
 
 		private string name = null;
@@ -186,6 +207,11 @@ namespace System.Diagnostics {
 		public virtual void TraceData (TraceEventCache eventCache, string source,
 			TraceEventType eventType, int id, object data)
 		{
+			if (Filter != null &&
+			    !Filter.ShouldTrace (eventCache, source, eventType,
+						 id, null, null, data, null))
+				return;
+
 			WriteLine (String.Format ("{0} {1}: {2} : {3}", source, eventType, id, data));
 
 			// any of the eventCache content are not written.
@@ -195,6 +221,11 @@ namespace System.Diagnostics {
 		public virtual void TraceData (TraceEventCache eventCache, string source,
 			TraceEventType eventType, int id, params object [] data)
 		{
+			if (Filter != null &&
+			    !Filter.ShouldTrace (eventCache, source, eventType,
+						 id, null, null, null, data))
+				return;
+
 			string s = null;
 			string [] arr = new string [data.Length];
 			for (int i = 0; i < arr.Length; i++)
@@ -228,6 +259,24 @@ namespace System.Diagnostics {
 		{
 			TraceData (eventCache, source, TraceEventType.Transfer, id, String.Format ("{0}, relatedActivityId={1}", message, relatedActivityId));
 		}
+
+		[MonoTODO ("The property exists but the values are not considered")]
+		protected virtual string [] GetSupportedAttributes ()
+		{
+			return empty_array;
+		}
+
+		[MonoTODO ("The property exists but the values are not considered")]
+		public StringDictionary Attributes {
+			get { return attributes; }
+		}
+
+		[ComVisibleAttribute (false)]
+		public TraceFilter Filter {
+			get { return filter; }
+			set { filter = value; }
+		}
+
 #endif
 	}
 }
