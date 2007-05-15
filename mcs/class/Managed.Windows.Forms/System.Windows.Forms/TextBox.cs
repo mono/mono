@@ -436,6 +436,10 @@ namespace System.Windows.Forms {
 			} else {
 				undo.Enabled = true;
 			}
+
+			if (ReadOnly) {
+				undo.Enabled = cut.Enabled = paste.Enabled = delete.Enabled = false;
+			}
 		}
 
 		private void undo_Click(object sender, EventArgs e) {

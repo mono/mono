@@ -1,5 +1,10 @@
 2007-05-15  Jackson Harper  <jackson@ximian.com>
 
+	* TextBox.cs: Disable some of the menu options when using a
+	readonly textbox.
+
+2007-05-15  Jackson Harper  <jackson@ximian.com>
+
 	* TextBox.cs:
 	* TextBoxBase.cs:
 	* RichTextBox.cs: Some new 2.0 methods
