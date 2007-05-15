@@ -1,5 +1,7 @@
 2007-05-15  Zoltan Varga  <vargaz@gmail.com>
 
+	* cpu-amd64.md (jmp): Fix a warning.
+
 	* inssel.brg (CEE_SWITCH): Hopefully fix #80738.
 
 	* basic.cs: Add new regression test.
