@@ -100,6 +100,13 @@ namespace MonoTests.Microsoft.Build.Utilities {
 			clb.AppendFileNameIfNotNull (item);
 			
 			Assert.AreEqual (itemSpec, clb.ToString (), "A1");
+
+			item = new TaskItem ();
+			item.ItemSpec = itemSpec = "a b";
+			clb = new CommandLineBuilder ();
+			clb.AppendFileNameIfNotNull (item);
+
+			Assert.AreEqual ("\"" + itemSpec + "\"", clb.ToString (), "A2");
 		}
 		
 		[Test]
@@ -108,11 +115,16 @@ namespace MonoTests.Microsoft.Build.Utilities {
 			
 			string filename = "filename.txt";
 			
-			clb = new CommandLineBuilder ();
-			
+			clb = new CommandLineBuilder ();	
 			clb.AppendFileNameIfNotNull (filename);
 			
 			Assert.AreEqual (filename, clb.ToString (), "A1");
+
+			filename = "a b";
+			clb = new CommandLineBuilder ();
+			clb.AppendFileNameIfNotNull (filename);
+
+			Assert.AreEqual ("\"" + filename + "\"", clb.ToString (), "A2");
 		}
 
 		[Test]
@@ -162,6 +174,11 @@ namespace MonoTests.Microsoft.Build.Utilities {
 			clb.AppendFileNamesIfNotNull ((string[]) null, "sep");
 			
 			Assert.AreEqual ("a\tb\tc", clb.ToString (), "A3");
+
+			clb = new CommandLineBuilder ();
+			clb.AppendFileNamesIfNotNull (new string [] { "a", "b c"}, " ");
+
+			Assert.AreEqual ("a \"b c\"", clb.ToString (), "A4");
 		}
 		
 		[Test]
@@ -185,6 +202,11 @@ namespace MonoTests.Microsoft.Build.Utilities {
 			clb.AppendFileNamesIfNotNull ((ITaskItem[]) null, "sep");
 			
 			Assert.AreEqual ("ab", clb.ToString (), "A2");
+
+			clb = new CommandLineBuilder ();
+			clb.AppendFileNamesIfNotNull (new ITaskItem [] { new TaskItem ("a"), new TaskItem ("b c") }, " ");
+
+			Assert.AreEqual ("a \"b c\"", clb.ToString (), "A3");
 		}
 
 		[Test]
@@ -523,18 +545,18 @@ namespace MonoTests.Microsoft.Build.Utilities {
 		{
 			CLBTester clbt = new CLBTester ();
 
-			Assert.AreEqual (false, clbt.IsQuotingRequired(""), "A1");
-			Assert.AreEqual (true, clbt.IsQuotingRequired(" "), "A2");
-			Assert.AreEqual (false, clbt.IsQuotingRequired("a"), "A3");
-			Assert.AreEqual (true, clbt.IsQuotingRequired("a a"), "A4");
-			Assert.AreEqual (true, clbt.IsQuotingRequired("\'\'"), "A5");
-			Assert.AreEqual (true, clbt.IsQuotingRequired("\' \'"), "A6");
-			Assert.AreEqual (true, clbt.IsQuotingRequired("\"\""), "A7");
-			Assert.AreEqual (true, clbt.IsQuotingRequired("\" \""), "A8");
-			Assert.AreEqual (true, clbt.IsQuotingRequired("\n\n"), "A9");
-			Assert.AreEqual (true, clbt.IsQuotingRequired("\n \n"), "A10");
-			Assert.AreEqual (true, clbt.IsQuotingRequired("\t\t"), "A11");
-			Assert.AreEqual (true, clbt.IsQuotingRequired("\t \t"), "A12");
+			Assert.AreEqual (false, clbt.IsQuotingRequired (""), "A1");
+			Assert.AreEqual (true, clbt.IsQuotingRequired (" "), "A2");
+			Assert.AreEqual (false, clbt.IsQuotingRequired ("a"), "A3");
+			Assert.AreEqual (true, clbt.IsQuotingRequired ("a a"), "A4");
+			Assert.AreEqual (true, clbt.IsQuotingRequired ("\'\'"), "A5");
+			Assert.AreEqual (true, clbt.IsQuotingRequired ("\' \'"), "A6");
+			Assert.AreEqual (true, clbt.IsQuotingRequired ("\"\""), "A7");
+			Assert.AreEqual (true, clbt.IsQuotingRequired ("\" \""), "A8");
+			Assert.AreEqual (true, clbt.IsQuotingRequired ("\n\n"), "A9");
+			Assert.AreEqual (true, clbt.IsQuotingRequired ("\n \n"), "A10");
+			Assert.AreEqual (true, clbt.IsQuotingRequired ("\t\t"), "A11");
+			Assert.AreEqual (true, clbt.IsQuotingRequired ("\t \t"), "A12");
 		}
 
 		[Test]

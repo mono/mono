@@ -1,3 +1,8 @@
+2007-05-16  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* CommandLineBuilderTest.cs: Added tests for filenames that contain
+	spaces.
+
 2006-12-19  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* CommandLineBuilderTest.cs, TaskItemTest.cs: More tests.
