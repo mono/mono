@@ -1,3 +1,8 @@
+2007-05-15  Marek Habersack  <mhabersack@novell.com>
+
+	* System.Web.dll.sources: added
+	System.Web.Compilation/XsdBuildProvider.cs
+
 2007-04-18  Marek Habersack  <grendello@gmail.com>
 
 	* Makefile (System.Web/UplevelHelper.cs): use binary in the

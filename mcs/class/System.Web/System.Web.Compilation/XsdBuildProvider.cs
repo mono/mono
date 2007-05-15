@@ -2,9 +2,9 @@
 // System.Web.Compilation.WsdlBuildProvider
 //
 // Authors:
-//	Marek Habersack <grendello@gmail.com>
+//	Marek Habersack <mhabersack@novell.com>
 //
-// (C) 2006 Marek Habersack
+// (C) 2007 Novell, Inc
 //
 
 //
@@ -28,41 +28,41 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0 && WEBSERVICES_DEP
-
+#if NET_2_0
 using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
-using System.Collections;
+using System.Data;
 using System.IO;
 using System.Reflection;
-using System.Web.UI;
-using System.Web.Services.Description;
-using System.Xml.Serialization;
+using System.Web;
 
 namespace System.Web.Compilation {
-
 	[BuildProviderAppliesTo (BuildProviderAppliesTo.Web|BuildProviderAppliesTo.Code)]
-	sealed class WsdlBuildProvider : BuildProvider {
-		public WsdlBuildProvider()
+	sealed class XsdBuildProvider : BuildProvider {
+		public XsdBuildProvider()
 		{
 		}
 
 		public override void GenerateCode (AssemblyBuilder assemblyBuilder)
 		{
 			CodeCompileUnit unit = new CodeCompileUnit ();
-			CodeNamespace proxyCode = new CodeNamespace(null);
-			unit.Namespaces.Add (proxyCode);
+			CodeNamespace dataSetCode = new CodeNamespace(null);
+			unit.Namespaces.Add (dataSetCode);
 			
 			string path = HttpContext.Current.Request.MapPath (VirtualPath);
-			ServiceDescription description = ServiceDescription.Read (path);
-			ServiceDescriptionImporter importer = new ServiceDescriptionImporter ();
-				
-			importer.AddServiceDescription (description, null, null);
-			importer.Style = ServiceDescriptionImportStyle.Client;
-			importer.CodeGenerator = assemblyBuilder.CodeDomProvider;
-			importer.CodeGenerationOptions = CodeGenerationOptions.GenerateProperties | CodeGenerationOptions.GenerateNewAsync;
-			importer.Import (proxyCode, unit);
+			
+			DataSet ds = new DataSet ();
+			ds.ReadXmlSchema (path);
+			
+			CodeDomProvider provider = assemblyBuilder.CodeDomProvider;
+			if (provider == null)
+				throw new HttpException ("Assembly builder has no code provider");
+			
+			ICodeGenerator generator = provider.CreateGenerator ();
+			if (generator == null)
+				throw new HttpException ("Could not create a code generator");
+			TypedDataSetGenerator.Generate (ds, dataSetCode, generator);
 			assemblyBuilder.AddCodeCompileUnit (unit);
 		}
 	}

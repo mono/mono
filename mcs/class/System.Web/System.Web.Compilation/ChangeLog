@@ -1,3 +1,13 @@
+2007-05-15  Marek Habersack  <mhabersack@novell.com>
+
+	* WsdlBuildProvider.cs: make the code actually work - get the
+	physical path of VirtualPath instead of converting it to absolute
+	URI path.
+	Do not generate source, add the code unit to assembly builder
+	instead.
+
+	* XsdBuildProvider.cs: added
+
 2007-05-08  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateControlCompiler.cs: BuildTemplateMethod is a delegate,
