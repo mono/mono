@@ -830,6 +830,7 @@ namespace System.Net
 					return false;
 				*/
 
+				method = "GET";
 				uriString = webResponse.Headers ["Location"];
 				break;
 			case HttpStatusCode.SeeOther: //303
