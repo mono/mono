@@ -67,7 +67,7 @@ namespace Microsoft.Build.Utilities
 				return;
 			
 			AppendSpaceIfNotEmpty ();
-			commandLine.Append (fileName);
+			AppendFileNameWithQuoting (fileName);
 		}
 		
 		public void AppendFileNameIfNotNull (ITaskItem fileItem)
@@ -76,7 +76,7 @@ namespace Microsoft.Build.Utilities
 				return;
 			
 			AppendSpaceIfNotEmpty ();
-			commandLine.Append (fileItem.ToString());
+			AppendFileNameWithQuoting (fileItem.ToString ());
 		}
 		
 		public void AppendFileNamesIfNotNull (string[] fileNames,
@@ -95,9 +95,9 @@ namespace Microsoft.Build.Utilities
 					continue;
 				if (appendDelimiter) {
 					commandLine.Append (delimiter);
-					commandLine.Append (fileNames [i]);
+					AppendFileNameWithQuoting (fileNames [i]);
 				} else {
-					commandLine.Append (fileNames [i]);
+					AppendFileNameWithQuoting (fileNames [i]);
 					appendDelimiter = true;
 				}
 			}
@@ -119,9 +119,9 @@ namespace Microsoft.Build.Utilities
 					continue;
 				if (appendDelimiter) {
 					commandLine.Append (delimiter);
-					commandLine.Append (fileItems [i].ToString ());
+					AppendFileNameWithQuoting (fileItems [i].ToString ());
 				} else {
-					commandLine.Append (fileItems [i].ToString ());
+					AppendFileNameWithQuoting (fileItems [i].ToString ());
 					appendDelimiter = true;
 				}
 			}
