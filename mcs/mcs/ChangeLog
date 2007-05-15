@@ -1,3 +1,11 @@
+2007-05-15  Marek Safar  <marek.safar@gmail.com>
+
+	* flowanalysis.cs: Unified error message.
+
+	* statement.cs (Block): Removed switch_block.
+	(AddSwitchBlock): A label has to be unique in the scope of method.
+	(DoLookupLabel): Simplified.
+
 2007-05-15  Raja R Harinath  <rharinath@novell.com>
 
 	* statement.cs (ToplevelBlock.child): Remove.
