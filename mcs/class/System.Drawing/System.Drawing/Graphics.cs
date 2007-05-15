@@ -610,7 +610,6 @@ namespace System.Drawing
 			GDIPlus.CheckStatus (status);
 		}
 
-		
 		public void DrawImage (Image image, PointF point)
 		{
 			if (image == null)
@@ -620,7 +619,6 @@ namespace System.Drawing
 			GDIPlus.CheckStatus (status);
 		}
 
-		
 		public void DrawImage (Image image, Point [] destPoints)
 		{
 			if (image == null)
@@ -632,7 +630,6 @@ namespace System.Drawing
 			GDIPlus.CheckStatus (status);
 		}
 
-		
 		public void DrawImage (Image image, Point point)
 		{
 			if (image == null)
@@ -640,7 +637,6 @@ namespace System.Drawing
 			DrawImage (image, point.X, point.Y);
 		}
 
-		
 		public void DrawImage (Image image, Rectangle rect)
 		{
 			if (image == null)
@@ -648,7 +644,6 @@ namespace System.Drawing
 			DrawImage (image, rect.X, rect.Y, rect.Width, rect.Height);
 		}
 
-		
 		public void DrawImage (Image image, PointF [] destPoints)
 		{
 			if (image == null)
@@ -659,7 +654,6 @@ namespace System.Drawing
 			GDIPlus.CheckStatus (status);
 		}
 
-		
 		public void DrawImage (Image image, int x, int y)
 		{
 			if (image == null)
@@ -668,7 +662,6 @@ namespace System.Drawing
 			GDIPlus.CheckStatus (status);
 		}
 
-		
 		public void DrawImage (Image image, float x, float y)
 		{
 			if (image == null)
@@ -677,7 +670,6 @@ namespace System.Drawing
 			GDIPlus.CheckStatus (status);
 		}
 
-		
 		public void DrawImage (Image image, Rectangle destRect, Rectangle srcRect, GraphicsUnit srcUnit)
 		{
 			if (image == null)
@@ -700,7 +692,6 @@ namespace System.Drawing
 			GDIPlus.CheckStatus (status);
 		}
 
-		
 		public void DrawImage (Image image, Point [] destPoints, Rectangle srcRect, GraphicsUnit srcUnit)
 		{
 			if (image == null)
@@ -715,7 +706,6 @@ namespace System.Drawing
 			GDIPlus.CheckStatus (status);
 		}
 
-		
 		public void DrawImage (Image image, PointF [] destPoints, RectangleF srcRect, GraphicsUnit srcUnit)
 		{
 			if (image == null)
@@ -730,7 +720,6 @@ namespace System.Drawing
 			GDIPlus.CheckStatus (status);
 		}
 
-		
 		public void DrawImage (Image image, Point [] destPoints, Rectangle srcRect, GraphicsUnit srcUnit, 
                                 ImageAttributes imageAttr)
 		{
@@ -754,7 +743,6 @@ namespace System.Drawing
 			GDIPlus.CheckStatus (status);
 		}
 
-		
 		public void DrawImage (Image image, PointF [] destPoints, RectangleF srcRect, GraphicsUnit srcUnit, 
                                 ImageAttributes imageAttr)
 		{
@@ -769,7 +757,6 @@ namespace System.Drawing
 			GDIPlus.CheckStatus (status);
 		}
 
-		
 		public void DrawImage (Image image, int x, int y, Rectangle srcRect, GraphicsUnit srcUnit)
 		{			
 			if (image == null)
@@ -794,7 +781,6 @@ namespace System.Drawing
 			GDIPlus.CheckStatus (status);
 		}
 
-		
 		public void DrawImage (Image image, PointF [] destPoints, RectangleF srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback)
 		{
 			if (image == null)
@@ -808,7 +794,6 @@ namespace System.Drawing
 			GDIPlus.CheckStatus (status);
 		}
 
-		
 		public void DrawImage (Image image, Point [] destPoints, Rectangle srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback)
 		{
 			if (image == null)
@@ -823,7 +808,6 @@ namespace System.Drawing
 			GDIPlus.CheckStatus (status);
 		}
 
-		
 		public void DrawImage (Image image, Point [] destPoints, Rectangle srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback, int callbackData)
 		{
 			if (image == null)
@@ -838,7 +822,6 @@ namespace System.Drawing
 			GDIPlus.CheckStatus (status);
 		}
 
-		
 		public void DrawImage (Image image, Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, GraphicsUnit srcUnit)
 		{
 			if (image == null)
@@ -859,7 +842,6 @@ namespace System.Drawing
 			GDIPlus.CheckStatus (status);
 		}
 
-		
 		public void DrawImage (Image image, Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, GraphicsUnit srcUnit)
 		{
 			if (image == null)
@@ -871,7 +853,6 @@ namespace System.Drawing
 			GDIPlus.CheckStatus (status);
 		}
 
-		
 		public void DrawImage (Image image, Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, GraphicsUnit srcUnit, ImageAttributes imageAttrs)
 		{
 			if (image == null)
@@ -918,7 +899,6 @@ namespace System.Drawing
 			GDIPlus.CheckStatus (status);
 		}
 
-		
 		public void DrawImage (Image image, Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback, IntPtr callbackData)
 		{
 			if (image == null)
@@ -930,7 +910,6 @@ namespace System.Drawing
 			GDIPlus.CheckStatus (status);
 		}
 
-		
 		public void DrawImage (Image image, Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback, IntPtr callbackData)
 		{
 			if (image == null)
@@ -944,15 +923,11 @@ namespace System.Drawing
 		
 		public void DrawImageUnscaled (Image image, Point point)
 		{
-			if (image == null)
-				throw new ArgumentNullException ("image");
 			DrawImageUnscaled (image, point.X, point.Y);
 		}
 		
 		public void DrawImageUnscaled (Image image, Rectangle rect)
 		{
-			if (image == null)
-				throw new ArgumentNullException ("image");
 			DrawImageUnscaled (image, rect.X, rect.Y, rect.Width, rect.Height);
 		}
 		
@@ -967,20 +942,27 @@ namespace System.Drawing
 		{
 			if (image == null)
 				throw new ArgumentNullException ("image");
-			Image tmpImg = new Bitmap (width, height);
-			Graphics g = FromImage (tmpImg);
-			g.DrawImage (image, 0, 0, image.Width, image.Height);
-			this.DrawImage (tmpImg, x, y, width, height);
-			tmpImg.Dispose ();
-			g.Dispose ();
+
+			// avoid creating an empty, or negative w/h, bitmap...
+			if ((width <= 0) || (height <= 0))
+				return;
+
+			using (Image tmpImg = new Bitmap (width, height)) {
+				using (Graphics g = FromImage (tmpImg)) {
+					g.DrawImage (image, 0, 0, image.Width, image.Height);
+					DrawImage (tmpImg, x, y, width, height);
+				}
+			}
 		}
 
 #if NET_2_0
 		public void DrawImageUnscaledAndClipped (Image image, Rectangle rect)
 		{
-			int height, width;			
-			width = (image.Width > rect.Width) ? rect.Width : image.Width;
-			height = (image.Height > rect.Height) ? rect.Height : image.Height;
+			if (image == null)
+				throw new ArgumentNullException ("image");
+
+			int width = (image.Width > rect.Width) ? rect.Width : image.Width;
+			int height = (image.Height > rect.Height) ? rect.Height : image.Height;
 
 			DrawImageUnscaled (image, rect.X, rect.Y, width, height);			
 		}

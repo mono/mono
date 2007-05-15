@@ -1,3 +1,11 @@
+2007-05-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Graphics.cs: Fix DrawImageUnscaled for empty (width or height <= 0)
+	Fix NRE in DrawImageUnscaledAndClipped. Remove lines with only tabs in
+	them.
+	* RectangleF.cs: A rectangle with a negative width or height is also
+	empty.
+
 2007-05-09 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* FontConverter.cs: for TARGET_JVM destructor is not used.
