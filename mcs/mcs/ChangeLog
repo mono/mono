@@ -1,3 +1,15 @@
+2007-05-15  Raja R Harinath  <harinath@gmail.com>
+
+	Rationalize ResolveMeta, part 1
+	* statement.cs (Block.local_map, Block.LocalMap): Remove.
+	(Block.AssignableSlots): New.
+	(Block.ResolveMeta): Make protected.  Don't create a VariableMap
+	for locals -- move code from VariableMap here.  Avoid unnecessary
+	allocations.
+	* flowanalysis.cs (FlowBranching.local_map): Remove.
+	(FlowBranching..ctor): Use Block.AssignableSlots.
+	(VariableMap): Remove unused constructors.
+
 2007-05-11  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile [PROFILE=net_2_0_bootstrap]: Add special-case rules.

@@ -116,7 +116,7 @@ namespace Mono.CSharp
 		// </summary>
 		public readonly Location Location;
 
-		protected VariableMap param_map, local_map;
+		protected VariableMap param_map;
 
 		static int next_id = 0;
 		int id;
@@ -394,15 +394,11 @@ namespace Mono.CSharp
 			UsageVector vector;
 			if (Block != null) {
 				param_map = Block.ParameterMap;
-				local_map = Block.LocalMap;
-
 				UsageVector parent_vector = parent != null ? parent.CurrentUsageVector : null;
 				vector = new UsageVector (
-					stype, parent_vector, Block, loc,
-					param_map.Length, local_map.Length);
+					stype, parent_vector, Block, loc, param_map.Length, Block.AssignableSlots);
 			} else {
 				param_map = Parent.param_map;
-				local_map = Parent.local_map;
 				vector = new UsageVector (
 					stype, Parent.CurrentUsageVector, null, loc);
 			}
@@ -1506,41 +1502,6 @@ namespace Mono.CSharp
 				map [i] = new VariableInfo (ip.ParameterName (i),
 					TypeManager.GetElementType (ip.ParameterType (i)), i, Length);
 
-				Length += map [i].Length;
-			}
-		}
-
-		public VariableMap (LocalInfo[] locals)
-			: this (null, locals)
-		{ }
-
-		public VariableMap (VariableMap parent, LocalInfo[] locals)
-		{
-			int offset = 0, start = 0;
-			if (parent != null && parent.map != null) {
-				offset = parent.Length;
-				start = parent.Count;
-			}
-
-			Count = locals.Length + start;
-			
-			if (Count == 0)
-				return;
-			
-			map = new VariableInfo [Count];
-			Length = offset;
-
-			if (parent != null && parent.map != null) {
-				parent.map.CopyTo (map, 0);
-			}
-
-			for (int i = start; i < Count; i++) {
-				LocalInfo li = locals [i-start];
-
-				if (li.VariableType == null)
-					continue;
-
-				map [i] = li.VariableInfo = new VariableInfo (li, Length);
 				Length += map [i].Length;
 			}
 		}

@@ -1897,7 +1897,7 @@ namespace Mono.CSharp {
 			AddKnownVariable (name, vi);
 
 			if ((flags & Flags.VariablesInitialized) != 0)
-				throw new Exception ();
+				throw new InternalErrorException ("block has already been resolved");
 
 			return vi;
 		}
@@ -2007,7 +2007,7 @@ namespace Mono.CSharp {
 			flags |= Flags.IsDestructor;
 		}
 
-		VariableMap param_map, local_map;
+		VariableMap param_map;
 
 		public VariableMap ParameterMap {
 			get {
@@ -2019,12 +2019,13 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public VariableMap LocalMap {
+		int assignable_slots;
+		public int AssignableSlots {
 			get {
-				if ((flags & Flags.VariablesInitialized) == 0)
+				if ((flags & Flags.VariablesInitialized) == 0){
 					throw new Exception ("Variables have not been initialized yet");
-
-				return local_map;
+				}
+				return assignable_slots;
 			}
 		}
 
@@ -2061,35 +2062,15 @@ namespace Mono.CSharp {
 		///   tc: is our typecontainer (to resolve type references)
 		///   ig: is the code generator:
 		/// </remarks>
-		public void ResolveMeta (ToplevelBlock toplevel, EmitContext ec, Parameters ip)
+		protected void ResolveMeta (ToplevelBlock toplevel, EmitContext ec, Parameters ip)
 		{
 			Report.Debug (64, "BLOCK RESOLVE META", this, Parent, toplevel);
+
+			int offset = Parent == null ? 0 : Parent.AssignableSlots;
 
 			// If some parent block was unsafe, we remain unsafe even if this block
 			// isn't explicitly marked as such.
 			using (ec.With (EmitContext.Flags.InUnsafe, ec.InUnsafe | Unsafe)) {
-				//
-				// Compute the VariableMap's.
-				//
-				// Unfortunately, we don't know the type when adding variables with
-				// AddVariable(), so we need to compute this info here.
-				//
-
-				LocalInfo[] locals;
-				if (variables != null) {
-					foreach (LocalInfo li in variables.Values)
-						li.Resolve (ec);
-
-					locals = new LocalInfo [variables.Count];
-					variables.Values.CopyTo (locals, 0);
-				} else
-					locals = new LocalInfo [0];
-
-				if (Parent != null)
-					local_map = new VariableMap (Parent.LocalMap, locals);
-				else
-					local_map = new VariableMap (locals);
-
 				param_map = new VariableMap (ip);
 				flags |= Flags.VariablesInitialized;
 
@@ -2097,6 +2078,14 @@ namespace Mono.CSharp {
 				// Process this block variables
 				//
 				if (variables != null) {
+					// resolve all variables before handling constants
+					foreach (LocalInfo li in variables.Values) {
+						if (li.Resolve (ec)) {
+							li.VariableInfo = new VariableInfo (li, offset);
+							offset += li.VariableInfo.Length;
+						}
+					}
+
 					foreach (DictionaryEntry de in variables) {
 						string name = (string) de.Key;
 						LocalInfo vi = (LocalInfo) de.Value;
@@ -2104,17 +2093,6 @@ namespace Mono.CSharp {
 
 						if (variable_type == null)
 							continue;
-
-						if (variable_type.IsPointer) {
-							//
-							// Am not really convinced that this test is required (Microsoft does it)
-							// but the fact is that you would not be able to use the pointer variable
-							// *anyways*
-							//
-							if (!TypeManager.VerifyUnManaged (TypeManager.GetElementType (variable_type),
-											  vi.Location))
-								continue;
-						}
 
 						if (constants == null)
 							continue;
@@ -2159,6 +2137,8 @@ namespace Mono.CSharp {
 						}
 					}
 				}
+
+				assignable_slots = offset;
 
 				//
 				// Now, handle the children
