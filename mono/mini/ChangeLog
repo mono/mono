@@ -1,3 +1,9 @@
+2007-05-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-ia64.c (mono_arch_output_basic_block): Sign extend in CEE_CONV_I8/CEE_CONV_I.
+
+	* basic-long.cs: Add new test.
+	
 2007-05-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-sparc.c (mono_spillvar_offset_float): Fix sparc build.
