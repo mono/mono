@@ -934,12 +934,14 @@ namespace System.Windows.Forms
 
 #if NET_2_0
 								if (!supportMultiDottedExtensions) {
+#endif
 									int lastdot = extension.LastIndexOf('.');
 									if (lastdot > 0) {
 										if (extension.LastIndexOf('.', lastdot - 1) != -1) {
 											extension = extension.Remove(0, lastdot);
 										}
 									}
+#if NET_2_0
 								}
 #endif
 
