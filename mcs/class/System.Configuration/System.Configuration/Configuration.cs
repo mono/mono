@@ -51,12 +51,14 @@ namespace System.Configuration {
 		
 		string configPath;
 		string locationConfigPath;
-			
-		internal Configuration (Configuration parent)
+		string locationSubPath;
+
+		internal Configuration (Configuration parent, string locationSubPath)
 		{
 			this.parent = parent;
 			this.system = parent.system;
 			this.rootGroup = parent.rootGroup;
+			this.locationSubPath = locationSubPath;
 		}
 		
 		internal Configuration (InternalConfigurationSystem system, string locationSubPath)
@@ -140,6 +142,19 @@ namespace System.Configuration {
 			get { return locationConfigPath; }
 		}
 
+		internal string GetLocationSubPath ()
+		{
+			Configuration confg = parent;
+			string path = null;
+			while (confg != null) {
+				path = confg.locationSubPath;
+				if (!String.IsNullOrEmpty (path))
+					return path;
+				confg = confg.parent;
+			}
+			return path;
+		}
+
 		internal string ConfigPath {
 			get { return configPath; }
 		}
@@ -162,12 +177,15 @@ namespace System.Configuration {
 			}
 		}
 
-		[MonoTODO ("HostingContext")]
 		ContextInformation evaluationContext;
 		public ContextInformation EvaluationContext {
 			get {
-				if (evaluationContext == null)
-					evaluationContext = new ContextInformation (this, null /* XXX */);
+				if (evaluationContext == null) {
+					object ctx = system.Host.CreateConfigurationContext (configPath, GetLocationSubPath() );
+					evaluationContext = new ContextInformation (this, ctx);
+				}
+
+
 				return evaluationContext;
 			}
 		}
@@ -407,7 +425,7 @@ namespace System.Configuration {
 		
 		bool Load ()
 		{
-			if (streamName == null || streamName == "")
+			if (String.IsNullOrEmpty (streamName))
 				return true;
 
 			XmlTextReader reader = null;

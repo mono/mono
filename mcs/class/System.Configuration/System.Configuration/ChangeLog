@@ -1,5 +1,11 @@
 2007-05-15 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* Configuration.cs:
+	* ConfigurationLocation.cs:
+	implemented EvaluationContext property.		
+
+2007-05-15 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* ConfigurationLocationCollection.cs: for TARGET_JVM only:
 	location path is case-insensitive.
 		

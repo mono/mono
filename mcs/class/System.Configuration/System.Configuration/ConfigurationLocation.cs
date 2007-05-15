@@ -82,7 +82,7 @@ namespace System.Configuration {
 					}
 				}
 				
-				configuration = new Configuration (parent);
+				configuration = new Configuration (parent, path);
 				using (XmlTextReader tr = new XmlTextReader (new StringReader (xmlContent)))
 					configuration.ReadData (tr, allowOverride);
 
