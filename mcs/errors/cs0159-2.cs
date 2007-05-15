@@ -1,4 +1,4 @@
-// cs0159-2.cs: No such label `case 20:' within the scope of the goto statement
+// CS0159: The label `case 20:' could not be found within the scope of the goto statement
 // Line: 13
 
 class y {

@@ -1,5 +1,5 @@
-// cs0159.cs: No such label `default:' within the scope of the goto statement
-// Line:
+// CS0159: The label `default:' could not be found within the scope of the goto statement
+// Line: 10
 
 class X {
 
