@@ -32,6 +32,8 @@
 
 using System;
 using System.CodeDom;
+using System.ComponentModel;
+using System.Reflection;
 using System.Web;
 using System.Web.UI;
 
@@ -55,20 +57,15 @@ namespace System.Web.Compilation {
 		{
 			ResourceExpressionFields fields = parsedData as ResourceExpressionFields;
 			CodeExpression[] expr;
-			string methodName;
 			
 			if (!String.IsNullOrEmpty (fields.ClassKey)) {
 				expr = new CodeExpression [] {
 					new CodePrimitiveExpression (fields.ClassKey),
 					new CodePrimitiveExpression (fields.ResourceKey)
 				};
-				methodName = "GetGlobalResourceObject";
-			} else {
-				expr = new CodeExpression [] { new CodePrimitiveExpression (fields.ResourceKey) };
-				methodName = "GetLocalResourceObject";
-			}
-			
-			return new CodeMethodInvokeExpression (new CodeThisReferenceExpression (), methodName, expr);
+				return new CodeMethodInvokeExpression (new CodeThisReferenceExpression (), "GetGlobalResourceObject", expr);
+			} else
+				return CreateGetLocalResourceObject (entry.PropertyInfo, fields.ResourceKey);
 		}
 
 		public static ResourceExpressionFields ParseExpression (string expression)
@@ -89,6 +86,48 @@ namespace System.Web.Compilation {
 
 		public override bool SupportsEvaluate {
 			get { return true; }
+		}
+
+		internal static CodeExpression CreateGetLocalResourceObject (MemberInfo mi, string resname)
+		{
+			Type member_type = null;
+			if (mi is PropertyInfo)
+				member_type = ((PropertyInfo)mi).PropertyType;
+			else if (mi is FieldInfo)
+				member_type = ((FieldInfo)mi).FieldType;
+			else
+				return null; // an "impossible" case
+
+			string memberName = mi.Name;
+			Type declaringType = mi.DeclaringType;
+			TypeConverter converter = TypeDescriptor.GetProperties (declaringType) [memberName].Converter;
+
+			if (member_type != typeof (System.Drawing.Color) &&
+			    (converter == null || converter.CanConvertFrom (typeof (String)))) {
+				CodeMethodInvokeExpression getlro = new CodeMethodInvokeExpression (
+					new CodeThisReferenceExpression (),
+					"GetLocalResourceObject",
+					new CodeExpression [] { new CodePrimitiveExpression (resname) });
+			
+				CodeMethodInvokeExpression convert = new CodeMethodInvokeExpression ();
+				convert.Method = new CodeMethodReferenceExpression (
+					new CodeTypeReferenceExpression (typeof (System.Convert)),
+					"ToString");
+				convert.Parameters.Add (getlro);
+				return convert;
+			} else {
+				CodeMethodInvokeExpression getlro = new CodeMethodInvokeExpression (
+					new CodeThisReferenceExpression (),
+					"GetLocalResourceObject",
+					new CodeExpression [] {
+						new CodePrimitiveExpression (resname),
+						new CodeTypeOfExpression (new CodeTypeReference (declaringType)),
+						new CodePrimitiveExpression (memberName)
+					}
+				);
+
+				return new CodeCastExpression (member_type, getlro);
+			}
 		}
 	}
 

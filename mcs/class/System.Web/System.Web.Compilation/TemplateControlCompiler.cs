@@ -690,39 +690,39 @@ namespace System.Web.Compilation
 				throw new HttpException (
 					String.Format ("Failed to create an instance of type `{0}'", builderType), e);
 			}
-			// FIXME: create and pass an instance of BoundPropertyEntry
-			CodeMethodInvokeExpression convert = new CodeMethodInvokeExpression ();
-			convert.Method = new CodeMethodReferenceExpression (
-				new CodeTypeReferenceExpression (typeof(Convert)),
-				"ToString");
-			convert.Parameters.Add (eb.GetCodeExpression (null, parsedData, ctx));
-			convert.Parameters.Add (
-				new CodeFieldReferenceExpression (
-					new CodeTypeReferenceExpression ("System.Globalization.CultureInfo"),
-					"CurrentCulture"));
-			assign.Right = convert;
+			
+			BoundPropertyEntry bpe = CreateBoundPropertyEntry (member as PropertyInfo, prefix, expr);
+			assign.Right = eb.GetCodeExpression (bpe, parsedData, ctx);
 			
 			method.Statements.Add (assign);
 		}
 
+		BoundPropertyEntry CreateBoundPropertyEntry (PropertyInfo pi, string prefix, string expr)
+		{
+			if (pi == null)
+				return null;
+
+			BoundPropertyEntry ret = new BoundPropertyEntry ();
+			ret.Expression = expr;
+			ret.ExpressionPrefix = prefix;
+			ret.Generated = false;
+			ret.Name = pi.Name;
+			ret.PropertyInfo = pi;
+			ret.Type = pi.PropertyType;
+
+			return ret;
+		}
+		
 		void AssignPropertyFromResources (CodeMemberMethod method, MemberInfo mi, string attvalue)
 		{
-			string resname = String.Format ("{0}.{1}", attvalue, mi.Name);
 			bool isProperty = mi.MemberType == MemberTypes.Property;
 			bool isField = !isProperty && (mi.MemberType == MemberTypes.Field);
 
 			if (!isProperty && !isField || !IsWritablePropertyOrField (mi))
-				return;
-			
-			Type member_type = null;
-			if (isProperty) {
-				PropertyInfo pi = mi as PropertyInfo;
-				member_type = pi.PropertyType;
-			} else if (isField) { 
-				FieldInfo fi = mi as FieldInfo;
-				member_type = fi.FieldType;
-			} else // should never happen
-				return;
+				return;			
+
+			string memberName = mi.Name;
+			string resname = String.Format ("{0}.{1}", attvalue, memberName);
 
 			// __ctrl.Text = System.Convert.ToString(HttpContext.GetLocalResourceObject("ButtonResource1.Text"));
 			string inputFile = parser.InputFile;
@@ -736,21 +736,22 @@ namespace System.Web.Compilation
 			object obj = HttpContext.GetLocalResourceObject (inputFile, resname);
 			if (obj == null)
 				return;
-			
-			CodeAssignStatement assign = new CodeAssignStatement ();
-			assign.Left = new CodePropertyReferenceExpression (ctrlVar, mi.Name);
-			CodeMethodInvokeExpression getlro = new CodeMethodInvokeExpression (
-				thisRef,
-				"GetLocalResourceObject",
-				new CodeExpression [] { new CodePrimitiveExpression (resname) });
-			
-			CodeMethodInvokeExpression convert = new CodeMethodInvokeExpression ();
-			convert.Method = new CodeMethodReferenceExpression (
-				new CodeTypeReferenceExpression (typeof(System.Convert)),
-				"ToString");
-			convert.Parameters.Add (getlro);
-			assign.Right = convert;			
 
+			Type member_type = null;
+			if (isProperty)
+				member_type = ((PropertyInfo)mi).PropertyType;
+			else if (isField)
+				member_type = ((FieldInfo)mi).FieldType;
+			else
+				return; // an "impossible" case
+			
+			Type declaringType = mi.DeclaringType;
+			TypeConverter converter = TypeDescriptor.GetProperties (declaringType) [memberName].Converter;
+			CodeAssignStatement assign = new CodeAssignStatement ();
+			
+			assign.Left = new CodePropertyReferenceExpression (ctrlVar, memberName);
+			assign.Right = ResourceExpressionBuilder.CreateGetLocalResourceObject (mi, resname);
+			
 			method.Statements.Add (assign);
 		}
 

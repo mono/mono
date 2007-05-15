@@ -1,5 +1,12 @@
 2007-05-15  Marek Habersack  <mhabersack@novell.com>
 
+	* ResourceExpressionBuilder.cs: added a static method to generate
+	a GetLocalResourceObject call which properly handles types which
+	cannot be converted from strings.
+
+	* TemplateControlCompiler.cs: use code described above to generate
+	code for properties assigned from resources.
+
 	* WsdlBuildProvider.cs: make the code actually work - get the
 	physical path of VirtualPath instead of converting it to absolute
 	URI path.
