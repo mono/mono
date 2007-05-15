@@ -2472,7 +2472,6 @@ namespace Mono.CSharp {
 		// if we are the topmost block
 		//
 		Block container;
-		ToplevelBlock child;	
 		GenericMethod generic;
 		FlowBranchingToplevel top_level_branching;
 		AnonymousContainer anonymous_container;
@@ -2655,9 +2654,11 @@ namespace Mono.CSharp {
 		//
 		public void ReParent (ToplevelBlock new_parent)
 		{
+			if ((flags & Flags.VariablesInitialized) != 0)
+				throw new InternalErrorException ("block has already been resolved");
+
 			container = new_parent;
 			Parent = new_parent;
-			new_parent.child = this;
 		}
 
 		//
@@ -2753,9 +2754,6 @@ namespace Mono.CSharp {
 			}
 
 			ResolveMeta (this, ec, ip);
-
-			if (child != null)
-				child.ResolveMeta (this, ec, ip);
 
 			top_level_branching = ec.StartFlowBranching (this);
 

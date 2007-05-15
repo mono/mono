@@ -1,3 +1,7 @@
+2007-05-15  Raja R Harinath  <rharinath@novell.com>
+
+	* statement.cs (ToplevelBlock.child): Remove.
+
 2007-05-15  Raja R Harinath  <harinath@gmail.com>
 
 	Rationalize ResolveMeta: refactoring
