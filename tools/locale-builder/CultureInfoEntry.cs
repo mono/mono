@@ -80,13 +80,14 @@ namespace Mono.Tools.LocaleBuilder {
                         builder.AppendFormat ("{0}, {1}, {2}, {3}," +
                                         "{4}, {5}, {6}, " +
                                         "{7}, {8}, {9}, " +
-                                        "{10}, {11}, " +
-                                        "{12}, " +
-                                        "{13}, {14}, {15}",
+                                        "{10}, {11}, {12}, " +
+                                        "{13}, " +
+                                        "{14}, {15}, {16}",
                                         Lcid, ParentLcid, SpecificLcid, RegionId,
                                         EncodeStringIdx (Name), EncodeStringIdx (IcuName), EncodeStringIdx (EnglishName),
                                         EncodeStringIdx (DisplayName), EncodeStringIdx (NativeName), EncodeStringIdx (Win3Lang),
                                         EncodeStringIdx (ISO3Lang), EncodeStringIdx (ISO2Lang),
+                                        EncodeStringIdx (Territory),
                                         ValuesString (CalendarData),
                                         DateTimeFormatEntry == null ? -1 : DateTimeFormatEntry.Row,
                                         NumberFormatEntry == null ? -1 : NumberFormatEntry.Row,

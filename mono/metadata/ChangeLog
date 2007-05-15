@@ -1,3 +1,11 @@
+2007-05-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* object-internals.h
+	  culture-info.h : added territory field in MonoCulture and
+	  CultureInfoEntry foreach. Added lcid field in RegionInfoEntry.
+	* locales.c : fill territory field above too.
+	* culture-info-table.h : regenerated.
+
 2007-05-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* class-internals.h (_MonoGenericContainer): Widen type_argc filed to 31 bits.
