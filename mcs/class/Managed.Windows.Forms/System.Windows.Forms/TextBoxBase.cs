@@ -229,7 +229,9 @@ namespace System.Windows.Forms {
 							ClientSize = new Size(ClientSize.Width, PreferredHeight);
 						}
 					}
+#if NET_1_1
 					OnAutoSizeChanged(EventArgs.Empty);
+#endif
 				}
 			}
 		}
@@ -649,6 +651,16 @@ namespace System.Windows.Forms {
 				}
 			}
 		}
+#if NET_2_0
+		public override ImageLayout BackgroundImageLayout {
+			get { return base.BackgroundImageLayout; } 
+			set { base.BackgroundImageLayout = value; }
+		}
+
+		protected override Cursor DefaultCursor {
+			get { return Cursors.IBeam; }
+		}
+#endif
 		#endregion	// Public Instance Properties
 
 		#region Protected Instance Properties
@@ -663,6 +675,15 @@ namespace System.Windows.Forms {
 				return new Size(100, 20);
 			}
 		}
+
+#if NET_2_0
+		// Currently our double buffering breaks our scrolling, so don't let people enable this
+		protected override bool DoubleBuffered {
+			get { return false; }
+			set { }
+		}
+#endif
+		
 		#endregion	// Protected Instance Properties
 
 		#region Public Instance Methods
@@ -771,6 +792,11 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
+		public void DeselectAll ()
+		{
+			SelectionLength = 0;
+		}
+
 		public virtual char GetCharFromPosition (Point p)
 		{
 			int index;
@@ -905,12 +931,13 @@ namespace System.Windows.Forms {
 			if (eh != null)
 				eh (this, e);
 		}
-
+#if NET_1_1
 		protected virtual void OnAutoSizeChanged(EventArgs e) {
 			EventHandler eh = (EventHandler)(Events [AutoSizeChangedEvent]);
 			if (eh != null)
 				eh (this, e);
 		}
+#endif
 
 		protected virtual void OnBorderStyleChanged(EventArgs e) {
 			EventHandler eh = (EventHandler)(Events [BorderStyleChangedEvent]);
@@ -961,6 +988,12 @@ namespace System.Windows.Forms {
 				eh (this, e);
 		}
 
+#if NET_2_0
+		protected override bool ProcessCmdKey (ref Message msg, Keys keyData)
+		{
+			return base.ProcessCmdKey (ref msg, keyData);
+		}
+#endif
 		protected override bool ProcessDialogKey(Keys keyData) {
 			return base.ProcessDialogKey(keyData);
 		}

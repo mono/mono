@@ -326,6 +326,14 @@ namespace System.Windows.Forms {
 		}
 		#endregion	// Public Instance Properties
 
+		public void Paste (string text)
+		{
+			document.ReplaceSelection (CaseAdjust (text), false);
+
+			ScrollToCaret();
+			OnTextChanged(EventArgs.Empty);
+		}
+
 		#region Protected Instance Methods
 		protected override CreateParams CreateParams {
 			get {
@@ -338,9 +346,7 @@ namespace System.Windows.Forms {
 				return base.DefaultImeMode;
 			}
 		}
-		#endregion	// Protected Instance Methods
 
-		#region Protected Instance Methods
 #if NET_2_0
 		protected override void Dispose (bool disposing)
 		{

@@ -1046,6 +1046,22 @@ namespace System.Windows.Forms {
 //			}
 		}
 
+#if NET_2_0
+		public void DrawToBitmap (Bitmap bitmap, Rectangle clip)
+		{
+			Graphics dc = Graphics.FromImage (bitmap);
+
+			if (backcolor_set || (Enabled && !read_only)) {
+				dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (BackColor), clip);
+			} else {
+				dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorControl), clip);
+			}
+			
+			// Draw the viewable document
+			document.Draw (dc, clip);
+		}
+#endif
+
 		#endregion	// Public Instance Methods
 
 		#region Protected Instance Methods
@@ -1127,6 +1143,13 @@ namespace System.Windows.Forms {
 		protected override void WndProc(ref Message m) {
 			base.WndProc (ref m);
 		}
+
+#if NET_2_0
+		protected override bool ProcessCmdKey (ref Message msg, Keys keyData)
+		{
+			return base.ProcessCmdKey (ref msg, keyData);
+		}
+#endif
 		#endregion	// Protected Instance Methods
 
 		#region Events
