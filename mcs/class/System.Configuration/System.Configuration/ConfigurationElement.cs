@@ -310,11 +310,17 @@ namespace System.Configuration
 				
 				if (readProps.ContainsKey (prop))
 					throw new ConfigurationException ("The attribute '" + prop.Name + "' may only appear once in this element.");
-				
+
+				string value = null;
 				try {
-					prop.SetStringValue (reader.Value);
-				}
-				catch (Exception ex) {
+					value = reader.Value;
+					ValidateValue (prop.Property, value);
+					prop.SetStringValue (value);
+				} catch (ConfigurationErrorsException) {
+					throw;
+				} catch (ConfigurationException) {
+					throw;
+				} catch (Exception ex) {
 					string msg = String.Format ("The value of the property '{0}' cannot be parsed.", prop.Name);
 					throw new ConfigurationErrorsException (msg, reader);
 				}
@@ -324,9 +330,7 @@ namespace System.Configuration
 			reader.MoveToElement ();
 			if (reader.IsEmptyElement) {
 				reader.Skip ();
-			}
-			else {
-
+			} else {
 				int depth = reader.Depth;
 
 				reader.ReadStartElement ();
@@ -537,6 +541,18 @@ namespace System.Configuration
 		{
 			PropertyInformation info = ElementInformation.Properties [propName];
 			return info != null && info.ValueOrigin == PropertyValueOrigin.SetHere;
+		}
+
+		void ValidateValue (ConfigurationProperty p, string value)
+		{
+			ConfigurationValidatorBase validator;
+			if (p == null || (validator = p.Validator) == null)
+				return;
+			
+			if (!validator.CanValidate (p.Type))
+				throw new ConfigurationException (
+					String.Format ("Validator does not support type {0}", p.Type));
+			validator.Validate (p.ConvertFromString (value));
 		}
 	}
 	
