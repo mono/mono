@@ -1,3 +1,9 @@
+2007-05-15  Massimiliano Mantione  <massi@ximian.com>
+
+	* inssel.brg: added "mini_emit_load_intf_bit_reg_vtable", and used it
+	inside "mini_emit_isninst_iface_cast" and "mini_emit_castclass_iface"
+	so that all isinst checks now use "interface_bitmap".
+
 2007-05-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* cpu-amd64.md (jmp): Fix a warning.

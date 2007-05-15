@@ -1,3 +1,15 @@
+2007-05-15  Massimiliano Mantione  <massi@ximian.com>
+
+	* class-internals.h: Added "MonoVTable.interface_bitmap" as a next
+	step in implementing IMT, so that all isinst checks now can go
+	through the bitmap.
+	This was needed because vtables for TransparentProxy need to look
+	like the vtable of the "target" class, so they need to point to
+	its interface bitmap directly.
+
+	* object.c: inside "mono_class_create_runtime_vtable" and
+	"mono_class_proxy_vtable", initialize "MonoVTable.interface_bitmap".
+
 2007-05-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* object-internals.h
