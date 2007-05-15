@@ -1,3 +1,8 @@
+2007-05-15  Eyal Alaluf  <eyala@mainsoft.com>
+
+	* IncludeHelperServlet.cs: Add System.Web.GH.IncludeHelperServlet for
+	  backward compatibility.
+
 2007-03-21  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* BaseHttpServlet.cs: fixed service, should not update context

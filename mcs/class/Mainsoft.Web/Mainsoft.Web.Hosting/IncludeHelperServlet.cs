@@ -117,3 +117,11 @@ namespace Mainsoft.Web.Hosting
 		}
 	}
 }
+
+namespace System.Web.GH
+{
+	public class IncludeHelperServlet : Mainsoft.Web.Hosting.IncludeHelperServlet
+	{
+	}
+
+}
