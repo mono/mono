@@ -284,11 +284,21 @@ namespace System.Web.UI {
 			return HttpContext.GetGlobalResourceObject (className, resourceKey);
 		}
 
-		[MonoTODO ("Not implemented")]
 		protected object GetGlobalResourceObject (string className, string resourceKey, Type objType, string propName)
 		{
-			// FIXME: not sure how to implement that one yet
-			throw new NotSupportedException();
+			if (String.IsNullOrEmpty (resourceKey) || String.IsNullOrEmpty (propName) ||
+			    String.IsNullOrEmpty (className) || objType == null)
+				return null;
+
+			object globalObject = GetGlobalResourceObject (className, resourceKey);
+			if (globalObject == null)
+				return null;
+			
+			TypeConverter converter = TypeDescriptor.GetProperties (objType) [propName].Converter;
+			if (converter == null || !converter.CanConvertFrom (globalObject.GetType ()))
+				return null;
+			
+			return converter.ConvertFrom (globalObject);
 		}
 
 		protected object GetLocalResourceObject (string resourceKey)
@@ -299,8 +309,18 @@ namespace System.Web.UI {
 		
 		protected object GetLocalResourceObject (string resourceKey, Type objType, string propName)
 		{
-			// FIXME: not sure how to implement that one yet
-			throw new NotSupportedException();
+			if (String.IsNullOrEmpty (resourceKey) || String.IsNullOrEmpty (propName) || objType == null)
+				return null;
+
+			object localObject = GetLocalResourceObject (resourceKey);
+			if (localObject == null)
+				return null;
+			
+			TypeConverter converter = TypeDescriptor.GetProperties (objType) [propName].Converter;
+			if (converter == null || !converter.CanConvertFrom (localObject.GetType ()))
+				return null;
+			
+			return converter.ConvertFrom (localObject);
 		}
 #endif
 		
