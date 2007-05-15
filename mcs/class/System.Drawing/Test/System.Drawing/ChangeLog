@@ -1,3 +1,13 @@
+2007-05-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* GDIPlusTest.cs: Add test cases for GdipDrawImage[I] (overflow) and 
+	GdipDrawImageRectRect (GraphicsUnit).
+	* TestGraphics.cs: Add test cases for DrawImage, DrawImageUnscaled and
+	DrawImageUnscaledAndClipped (2.0).
+	* TestRectangle.cs: Add test cases for negative width/height. Fix some
+	test cases that were using RectangleF instead of Rectangle.
+	* TestRectangleF.cs: Add test cases for negative width/height.
+
 2007-05-08  Everaldo Canuto  <everaldo@simios.org>
 
 	* TestGraphics.cs: MeasureString_MultlineString_Width added (NotWorking)

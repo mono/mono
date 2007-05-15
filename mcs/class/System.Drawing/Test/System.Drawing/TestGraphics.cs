@@ -2192,5 +2192,518 @@ namespace MonoTests.System.Drawing
 				}
 			}
 		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void DrawIcon_NullRectangle ()
+		{
+			using (Bitmap bmp = new Bitmap (40, 40)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					g.DrawIcon (null, new Rectangle (0, 0, 32, 32));
+				}
+			}
+		}
+
+		[Test]
+		public void DrawIcon_IconRectangle ()
+		{
+			using (Bitmap bmp = new Bitmap (40, 40)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					g.DrawIcon (SystemIcons.Application, new Rectangle (0, 0, 40, 20));
+					// Rectangle is empty when X, Y, Width and Height == 0 
+					// (yep X and Y too, RectangleF only checks for Width and Height)
+					g.DrawIcon (SystemIcons.Asterisk, new Rectangle (0, 0, 0, 0));
+					// so this one is half-empty ;-)
+					g.DrawIcon (SystemIcons.Error, new Rectangle (20, 40, 0, 0));
+					// negative width or height isn't empty (for Rectangle)
+					g.DrawIconUnstretched (SystemIcons.WinLogo, new Rectangle (10, 20, -1, 0));
+					g.DrawIconUnstretched (SystemIcons.WinLogo, new Rectangle (20, 10, 0, -1));
+				}
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void DrawIcon_NullIntInt ()
+		{
+			using (Bitmap bmp = new Bitmap (40, 40)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					g.DrawIcon (null, 4, 2);
+				}
+			}
+		}
+
+		[Test]
+		public void DrawIcon_IconIntInt ()
+		{
+			using (Bitmap bmp = new Bitmap (40, 40)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					g.DrawIcon (SystemIcons.Exclamation, 4, 2);
+					g.DrawIcon (SystemIcons.Hand, 0, 0);
+				}
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void DrawIconUnstretched_NullRectangle ()
+		{
+			using (Bitmap bmp = new Bitmap (40, 40)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					g.DrawIconUnstretched (null, new Rectangle (0, 0, 40, 20));
+				}
+			}
+		}
+
+		[Test]
+		public void DrawIconUnstretched_IconRectangle ()
+		{
+			using (Bitmap bmp = new Bitmap (40, 40)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					g.DrawIconUnstretched (SystemIcons.Information, new Rectangle (0, 0, 40, 20));
+					// Rectangle is empty when X, Y, Width and Height == 0 
+					// (yep X and Y too, RectangleF only checks for Width and Height)
+					g.DrawIconUnstretched (SystemIcons.Question, new Rectangle (0, 0, 0, 0));
+					// so this one is half-empty ;-)
+					g.DrawIconUnstretched (SystemIcons.Warning, new Rectangle (20, 40, 0, 0));
+					// negative width or height isn't empty (for Rectangle)
+					g.DrawIconUnstretched (SystemIcons.WinLogo, new Rectangle (10, 20, -1, 0));
+					g.DrawIconUnstretched (SystemIcons.WinLogo, new Rectangle (20, 10, 0, -1));
+				}
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void DrawImage_NullRectangleF ()
+		{
+			using (Bitmap bmp = new Bitmap (40, 40)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					g.DrawImage (null, new RectangleF (0, 0, 0, 0));
+				}
+			}
+		}
+
+		[Test]
+		public void DrawImage_ImageRectangleF ()
+		{
+			using (Bitmap bmp = new Bitmap (40, 40)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					g.DrawImage (bmp, new RectangleF (0, 0, 0, 0));
+					g.DrawImage (bmp, new RectangleF (20, 40, 0, 0));
+					g.DrawImage (bmp, new RectangleF (10, 20, -1, 0));
+					g.DrawImage (bmp, new RectangleF (20, 10, 0, -1));
+				}
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void DrawImage_NullPointF ()
+		{
+			using (Bitmap bmp = new Bitmap (40, 40)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					g.DrawImage (null, new PointF (0, 0));
+				}
+			}
+		}
+
+		[Test]
+		public void DrawImage_ImagePointF ()
+		{
+			using (Bitmap bmp = new Bitmap (40, 40)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					g.DrawImage (bmp, new PointF (0, 0));
+				}
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void DrawImage_NullPointFArray ()
+		{
+			using (Bitmap bmp = new Bitmap (40, 40)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					g.DrawImage (null, new PointF[0]);
+				}
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void DrawImage_ImagePointFArrayNull ()
+		{
+			using (Bitmap bmp = new Bitmap (40, 40)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					g.DrawImage (bmp, (PointF[])null);
+				}
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void DrawImage_ImagePointFArrayEmpty ()
+		{
+			using (Bitmap bmp = new Bitmap (40, 40)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					g.DrawImage (bmp, new PointF[0]);
+				}
+			}
+		}
+
+		[Test]
+		public void DrawImage_ImagePointFArray ()
+		{
+			using (Bitmap bmp = new Bitmap (40, 40)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					g.DrawImage (bmp, new PointF[] { 
+						new PointF (0, 0), new PointF (1, 1), new PointF (2, 2) });
+				}
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void DrawImage_NullRectangle ()
+		{
+			using (Bitmap bmp = new Bitmap (40, 40)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					g.DrawImage (null, new Rectangle (0, 0, 0, 0));
+				}
+			}
+		}
+
+		[Test]
+		public void DrawImage_ImageRectangle ()
+		{
+			using (Bitmap bmp = new Bitmap (40, 40)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					// Rectangle is empty when X, Y, Width and Height == 0 
+					// (yep X and Y too, RectangleF only checks for Width and Height)
+					g.DrawImage (bmp, new Rectangle (0, 0, 0, 0));
+					// so this one is half-empty ;-)
+					g.DrawImage (bmp, new Rectangle (20, 40, 0, 0));
+					// negative width or height isn't empty (for Rectangle)
+					g.DrawImage (bmp, new Rectangle (10, 20, -1, 0));
+					g.DrawImage (bmp, new Rectangle (20, 10, 0, -1));
+				}
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void DrawImage_NullPoint ()
+		{
+			using (Bitmap bmp = new Bitmap (40, 40)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					g.DrawImage (null, new Point (0, 0));
+				}
+			}
+		}
+
+		[Test]
+		public void DrawImage_ImagePoint ()
+		{
+			using (Bitmap bmp = new Bitmap (40, 40)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					g.DrawImage (bmp, new Point (0, 0));
+				}
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void DrawImage_NullPointArray ()
+		{
+			using (Bitmap bmp = new Bitmap (40, 40)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					g.DrawImage (null, new Point[0]);
+				}
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void DrawImage_ImagePointArrayNull ()
+		{
+			using (Bitmap bmp = new Bitmap (40, 40)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					g.DrawImage (bmp, (Point[]) null);
+				}
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void DrawImage_ImagePointArrayEmpty ()
+		{
+			using (Bitmap bmp = new Bitmap (40, 40)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					g.DrawImage (bmp, new Point[0]);
+				}
+			}
+		}
+
+		[Test]
+		public void DrawImage_ImagePointArray ()
+		{
+			using (Bitmap bmp = new Bitmap (40, 40)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					g.DrawImage (bmp, new Point[] { 
+						new Point (0, 0), new Point (1, 1), new Point (2, 2) });
+				}
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void DrawImage_NullIntInt ()
+		{
+			using (Bitmap bmp = new Bitmap (40, 40)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					g.DrawImage (null, Int32.MaxValue, Int32.MinValue);
+				}
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (OverflowException))]
+		public void DrawImage_ImageIntInt_Overflow ()
+		{
+			using (Bitmap bmp = new Bitmap (40, 40)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					g.DrawImage (bmp, Int32.MaxValue, Int32.MinValue);
+				}
+			}
+		}
+
+		[Test]
+		public void DrawImage_ImageIntInt ()
+		{
+			using (Bitmap bmp = new Bitmap (40, 40)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					g.DrawImage (bmp, -40, -40);
+				}
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void DrawImage_NullFloat ()
+		{
+			using (Bitmap bmp = new Bitmap (40, 40)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					g.DrawImage (null, Single.MaxValue, Single.MinValue);
+				}
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (OverflowException))]
+		public void DrawImage_ImageFloatFloat_Overflow ()
+		{
+			using (Bitmap bmp = new Bitmap (40, 40)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					g.DrawImage (bmp, Single.MaxValue, Single.MinValue);
+				}
+			}
+		}
+
+		[Test]
+		public void DrawImage_ImageFloatFloat ()
+		{
+			using (Bitmap bmp = new Bitmap (40, 40)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					g.DrawImage (bmp, -40.0f, -40.0f);
+				}
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void DrawImage_NullRectangleRectangleGraphicsUnit ()
+		{
+			using (Bitmap bmp = new Bitmap (40, 40)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					g.DrawImage (null, new Rectangle (), new Rectangle (), GraphicsUnit.Display);
+				}
+			}
+		}
+
+		private void DrawImage_ImageRectangleRectangleGraphicsUnit (GraphicsUnit unit)
+		{
+			using (Bitmap bmp = new Bitmap (40, 40)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					Rectangle r = new Rectangle (0, 0, 40, 40);
+					g.DrawImage (bmp, r, r, unit);
+				}
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void DrawImage_ImageRectangleRectangleGraphicsUnit_Display ()
+		{
+			DrawImage_ImageRectangleRectangleGraphicsUnit (GraphicsUnit.Display);
+		}
+
+		[Test]
+		[ExpectedException (typeof (NotImplementedException))]
+		public void DrawImage_ImageRectangleRectangleGraphicsUnit_Document ()
+		{
+			DrawImage_ImageRectangleRectangleGraphicsUnit (GraphicsUnit.Document);
+		}
+
+		[Test]
+		[ExpectedException (typeof (NotImplementedException))]
+		public void DrawImage_ImageRectangleRectangleGraphicsUnit_Inch ()
+		{
+			DrawImage_ImageRectangleRectangleGraphicsUnit (GraphicsUnit.Inch);
+		}
+
+		[Test]
+		[ExpectedException (typeof (NotImplementedException))]
+		public void DrawImage_ImageRectangleRectangleGraphicsUnit_Millimeter ()
+		{
+			DrawImage_ImageRectangleRectangleGraphicsUnit (GraphicsUnit.Millimeter);
+		}
+
+		[Test]
+		public void DrawImage_ImageRectangleRectangleGraphicsUnit_Pixel ()
+		{
+			// this unit works
+			DrawImage_ImageRectangleRectangleGraphicsUnit (GraphicsUnit.Pixel);
+		}
+
+		[Test]
+		[ExpectedException (typeof (NotImplementedException))]
+		public void DrawImage_ImageRectangleRectangleGraphicsUnit_Point ()
+		{
+			DrawImage_ImageRectangleRectangleGraphicsUnit (GraphicsUnit.Point);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void DrawImage_ImageRectangleRectangleGraphicsUnit_World ()
+		{
+			DrawImage_ImageRectangleRectangleGraphicsUnit (GraphicsUnit.World);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void DrawImageUnscaled_NullPoint ()
+		{
+			using (Bitmap bmp = new Bitmap (40, 40)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					g.DrawImageUnscaled (null, new Point (0, 0));
+				}
+			}
+		}
+
+		[Test]
+		public void DrawImageUnscaled_ImagePoint ()
+		{
+			using (Bitmap bmp = new Bitmap (40, 40)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					g.DrawImageUnscaled (bmp, new Point (0, 0));
+				}
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void DrawImageUnscaled_NullRectangle ()
+		{
+			using (Bitmap bmp = new Bitmap (40, 40)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					g.DrawImageUnscaled (null, new Rectangle (0, 0, -1, -1));
+				}
+			}
+		}
+
+		[Test]
+		public void DrawImageUnscaled_ImageRectangle ()
+		{
+			using (Bitmap bmp = new Bitmap (40, 40)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					g.DrawImageUnscaled (bmp, new Rectangle (0, 0, -1, -1));
+				}
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void DrawImageUnscaled_NullIntInt ()
+		{
+			using (Bitmap bmp = new Bitmap (40, 40)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					g.DrawImageUnscaled (null, 0, 0);
+				}
+			}
+		}
+
+		[Test]
+		public void DrawImageUnscaled_ImageIntInt ()
+		{
+			using (Bitmap bmp = new Bitmap (40, 40)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					g.DrawImageUnscaled (bmp, 0, 0);
+				}
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void DrawImageUnscaled_NullIntIntIntInt ()
+		{
+			using (Bitmap bmp = new Bitmap (40, 40)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					g.DrawImageUnscaled (null, 0, 0, -1, -1);
+				}
+			}
+		}
+
+		[Test]
+		public void DrawImageUnscaled_ImageIntIntIntInt ()
+		{
+			using (Bitmap bmp = new Bitmap (40, 40)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					g.DrawImageUnscaled (bmp, 0, 0, -1, -1);
+				}
+			}
+		}
+#if NET_2_0
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void DrawImageUnscaledAndClipped_Null ()
+		{
+			using (Bitmap bmp = new Bitmap (40, 40)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					g.DrawImageUnscaledAndClipped (null, new Rectangle (0, 0, 0, 0));
+				}
+			}
+		}
+
+		[Test]
+		public void DrawImageUnscaledAndClipped ()
+		{
+			using (Bitmap bmp = new Bitmap (40, 40)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					// Rectangle is empty when X, Y, Width and Height == 0 
+					// (yep X and Y too, RectangleF only checks for Width and Height)
+					g.DrawImageUnscaledAndClipped (bmp, new Rectangle (0, 0, 0, 0));
+					// so this one is half-empty ;-)
+					g.DrawImageUnscaledAndClipped (bmp, new Rectangle (20, 40, 0, 0));
+					// negative width or height isn't empty (for Rectangle)
+					g.DrawImageUnscaledAndClipped (bmp, new Rectangle (10, 20, -1, 0));
+					g.DrawImageUnscaledAndClipped (bmp, new Rectangle (20, 10, 0, -1));
+					// smaller
+					g.DrawImageUnscaledAndClipped (bmp, new Rectangle (0, 0, 10, 20));
+					g.DrawImageUnscaledAndClipped (bmp, new Rectangle (0, 0, 40, 10));
+					g.DrawImageUnscaledAndClipped (bmp, new Rectangle (0, 0, 80, 20));
+				}
+			}
+		}
+#endif
 	}
 }

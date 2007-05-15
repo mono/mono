@@ -82,6 +82,7 @@ namespace MonoTests.System.Drawing
 			Assert.IsFalse (rect_0.IsEmpty, "0");
 			Assert.IsTrue (rect_2.IsEmpty, "2");
 			Assert.IsFalse (rect_3.IsEmpty, "3");
+			Assert.IsFalse (new Rectangle (0, 0, -1, -1).IsEmpty, "negative w/h");
 		}
 
 		[Test]
@@ -202,32 +203,51 @@ namespace MonoTests.System.Drawing
 		[Test]
 		public void Union ()
 		{
-			Assert.AreEqual (RectangleF.FromLTRB (5, 5, 50, 50), RectangleF.Union (rect_0, rect_1));
+			Assert.AreEqual (Rectangle.FromLTRB (5, 5, 50, 50), Rectangle.Union (rect_0, rect_1));
 		}
 
 		[Test]
 		public void Operator_Equal ()
 		{
-			RectangleF r0 = new RectangleF (1, 2, 3, 4);
-			RectangleF r1 = r0;
+			Rectangle r0 = new Rectangle (1, 2, 3, 4);
+			Rectangle r1 = r0;
 			Assert.IsTrue (r0 == r1, "self");
-			Assert.IsFalse (r0 == new RectangleF (0, 2, 3, 4), "X");
-			Assert.IsFalse (r0 == new RectangleF (1, 0, 3, 4), "Y");
-			Assert.IsFalse (r0 == new RectangleF (1, 2, 0, 4), "Width");
-			Assert.IsFalse (r0 == new RectangleF (1, 2, 3, 0), "Height");
+			Assert.IsFalse (r0 == new Rectangle (0, 2, 3, 4), "X");
+			Assert.IsFalse (r0 == new Rectangle (1, 0, 3, 4), "Y");
+			Assert.IsFalse (r0 == new Rectangle (1, 2, 0, 4), "Width");
+			Assert.IsFalse (r0 == new Rectangle (1, 2, 3, 0), "Height");
 		}
 
 		[Test]
 		public void Operator_NotEqual ()
 		{
-			RectangleF r0 = new RectangleF (1, 2, 3, 4);
-			RectangleF r1 = r0;
+			Rectangle r0 = new Rectangle (1, 2, 3, 4);
+			Rectangle r1 = r0;
 			Assert.IsFalse (r0 != r1, "self");
-			Assert.IsTrue (r0 != new RectangleF (0, 2, 3, 4), "X");
-			Assert.IsTrue (r0 != new RectangleF (1, 0, 3, 4), "Y");
-			Assert.IsTrue (r0 != new RectangleF (1, 2, 0, 4), "Width");
-			Assert.IsTrue (r0 != new RectangleF (1, 2, 3, 0), "Height");
+			Assert.IsTrue (r0 != new Rectangle (0, 2, 3, 4), "X");
+			Assert.IsTrue (r0 != new Rectangle (1, 0, 3, 4), "Y");
+			Assert.IsTrue (r0 != new Rectangle (1, 2, 0, 4), "Width");
+			Assert.IsTrue (r0 != new Rectangle (1, 2, 3, 0), "Height");
+		}
+
+		[Test]
+		public void NegativeWidth ()
+		{
+			Rectangle r = new Rectangle (0, 0, -1, 10);
+			Assert.AreEqual (0, r.X, "X");
+			Assert.AreEqual (0, r.Y, "Y");
+			Assert.AreEqual (-1, r.Width, "Width");
+			Assert.AreEqual (10, r.Height, "Height");
+		}
+
+		[Test]
+		public void NegativeHeight ()
+		{
+			Rectangle r = new Rectangle (10, 10, 10, -1);
+			Assert.AreEqual (10, r.X, "X");
+			Assert.AreEqual (10, r.Y, "Y");
+			Assert.AreEqual (10, r.Width, "Width");
+			Assert.AreEqual (-1, r.Height, "Height");
 		}
 	}
 }
-

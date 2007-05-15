@@ -84,6 +84,7 @@ namespace MonoTests.System.Drawing
 			Assert.IsTrue (rect_2.IsEmpty, "2");
 			Assert.IsTrue (rect_3.IsEmpty, "3");
 			Assert.IsTrue (rect_6.IsEmpty, "6");
+			Assert.IsTrue (new RectangleF (0, 0, -1, -1).IsEmpty, "negative w/h");
 		}
 
 		[Test]
@@ -216,6 +217,25 @@ namespace MonoTests.System.Drawing
 			Assert.IsTrue (r0 != new RectangleF (1, 2, 0, 4), "Width");
 			Assert.IsTrue (r0 != new RectangleF (1, 2, 3, 0), "Height");
 		}
+
+		[Test]
+		public void NegativeWidth ()
+		{
+			RectangleF r = new RectangleF (0, 0, -1, 10);
+			Assert.AreEqual (0, r.X, "X");
+			Assert.AreEqual (0, r.Y, "Y");
+			Assert.AreEqual (-1, r.Width, "Width");
+			Assert.AreEqual (10, r.Height, "Height");
+		}
+
+		[Test]
+		public void NegativeHeight ()
+		{
+			RectangleF r = new RectangleF (10, 10, 10, -1);
+			Assert.AreEqual (10, r.X, "X");
+			Assert.AreEqual (10, r.Y, "Y");
+			Assert.AreEqual (10, r.Width, "Width");
+			Assert.AreEqual (-1, r.Height, "Height");
+		}
 	}
 }
-

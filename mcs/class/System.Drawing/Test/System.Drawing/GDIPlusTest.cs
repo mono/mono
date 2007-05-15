@@ -218,22 +218,90 @@ namespace MonoTests.System.Drawing {
 
 		// Graphics
 		[Test]
-		public void Graphics_FromImage ()
+		public void GdipGetImageGraphicsContext_Null ()
 		{
 			IntPtr graphics;
 			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipGetImageGraphicsContext (IntPtr.Zero, out graphics), "GdipGetImageGraphicsContext");
+		}
 
+		private void Graphics_DrawImage (IntPtr image, bool metafile)
+		{
+			IntPtr graphics;
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipGetImageGraphicsContext (image, out graphics), "GdipGetImageGraphicsContext");
+			Assert.IsTrue (graphics != IntPtr.Zero, "graphics");
+
+			if (metafile) {
+				Assert.AreEqual (Status.Ok, GDIPlus.GdipDrawImage (graphics, image, Single.MinValue, Single.MaxValue), "FloatMinMax");
+				Assert.AreEqual (Status.Ok, GDIPlus.GdipDrawImageI (graphics, image, Int32.MinValue, Int32.MaxValue), "IntMinMax");
+			} else {
+				Assert.AreEqual (Status.ValueOverflow, GDIPlus.GdipDrawImage (graphics, image, Single.MinValue, Single.MaxValue), "FloatOverflow");
+				Assert.AreEqual (Status.Ok, GDIPlus.GdipDrawImage (graphics, image, 1073741888, 0), "FloatXMax");
+				Assert.AreEqual (Status.ValueOverflow, GDIPlus.GdipDrawImage (graphics, image, 1073741889, 0), "FloatXMaxOverflow");
+				Assert.AreEqual (Status.Ok, GDIPlus.GdipDrawImage (graphics, image, 0, 1073741888), "FloatYMax");
+				Assert.AreEqual (Status.ValueOverflow, GDIPlus.GdipDrawImage (graphics, image, 0, 1073741889), "FloatYMaxOverflow");
+				Assert.AreEqual (Status.Ok, GDIPlus.GdipDrawImage (graphics, image, -1073741888, 0), "FloatXMin");
+				Assert.AreEqual (Status.ValueOverflow, GDIPlus.GdipDrawImage (graphics, image, -1073741889, 0), "FloatXMinOverflow");
+				Assert.AreEqual (Status.Ok, GDIPlus.GdipDrawImage (graphics, image, 0, -1073741888), "FloatYMin");
+				Assert.AreEqual (Status.ValueOverflow, GDIPlus.GdipDrawImage (graphics, image, 0, -1073741889), "FloatYMinOverflow");
+
+				Assert.AreEqual (Status.ValueOverflow, GDIPlus.GdipDrawImageI (graphics, image, Int32.MinValue, Int32.MaxValue), "IntOverflow");
+				// the real limit of MS GDI+ is 1073741951 but differs (by a very few) from the float limit 
+				Assert.AreEqual (Status.Ok, GDIPlus.GdipDrawImageI (graphics, image, 1073741824, 0), "IntXMax");
+				Assert.AreEqual (Status.ValueOverflow, GDIPlus.GdipDrawImageI (graphics, image, 1073741952, 0), "IntXMaxOverflow");
+				Assert.AreEqual (Status.Ok, GDIPlus.GdipDrawImageI (graphics, image, 0, 1073741824), "IntYMax");
+				Assert.AreEqual (Status.ValueOverflow, GDIPlus.GdipDrawImageI (graphics, image, 0, 1073741952), "IntYMaxOverflow");
+				Assert.AreEqual (Status.Ok, GDIPlus.GdipDrawImageI (graphics, image, -1073741824, 0), "IntXMin");
+				// the real limit of MS GDI+ is -1073741825 but int-to-float convertion in libgdiplus turns this into a -1073741824
+				Assert.AreEqual (Status.ValueOverflow, GDIPlus.GdipDrawImageI (graphics, image, -1073741899, 0), "IntXMinOverflow");
+				Assert.AreEqual (Status.Ok, GDIPlus.GdipDrawImageI (graphics, image, 0, -1073741824), "IntYMin");
+				Assert.AreEqual (Status.ValueOverflow, GDIPlus.GdipDrawImageI (graphics, image, 0, -1073741899), "IntYMinOverflow");
+			}
+
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipDrawImageRectRectI (graphics, image, 0, 0, 10, 10, 0, 0, 10, 10, GraphicsUnit.Display, IntPtr.Zero, null, IntPtr.Zero), "Display");
+			Assert.AreEqual (Status.NotImplemented, GDIPlus.GdipDrawImageRectRectI (graphics, image, 0, 0, 10, 10, 0, 0, 10, 10, GraphicsUnit.Document, IntPtr.Zero, null, IntPtr.Zero), "Document");
+			Assert.AreEqual (Status.NotImplemented, GDIPlus.GdipDrawImageRectRectI (graphics, image, 0, 0, 10, 10, 0, 0, 10, 10, GraphicsUnit.Inch, IntPtr.Zero, null, IntPtr.Zero), "Inch");
+			Assert.AreEqual (Status.NotImplemented, GDIPlus.GdipDrawImageRectRectI (graphics, image, 0, 0, 10, 10, 0, 0, 10, 10, GraphicsUnit.Millimeter, IntPtr.Zero, null, IntPtr.Zero), "Millimeter");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipDrawImageRectRectI (graphics, image, 0, 0, 10, 10, 0, 0, 10, 10, GraphicsUnit.Pixel, IntPtr.Zero, null, IntPtr.Zero), "Pixel");
+			Assert.AreEqual (Status.NotImplemented, GDIPlus.GdipDrawImageRectRectI (graphics, image, 0, 0, 10, 10, 0, 0, 10, 10, GraphicsUnit.Point, IntPtr.Zero, null, IntPtr.Zero), "Point");
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipDrawImageRectRectI (graphics, image, 0, 0, 10, 10, 0, 0, 10, 10, GraphicsUnit.World, IntPtr.Zero, null, IntPtr.Zero), "World");
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipDrawImageRectRectI (graphics, image, 0, 0, 10, 10, 0, 0, 10, 10, (GraphicsUnit) Int32.MinValue, IntPtr.Zero, null, IntPtr.Zero), "invalid");
+
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipDeleteGraphics (graphics), "GdipDeleteGraphics");
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipDeleteGraphics (IntPtr.Zero), "GdipDeleteGraphics-null");
+		}
+
+		[Test]
+		public void Graphics_FromImage_Bitmap ()
+		{
 			IntPtr image;
 			GDIPlus.GdipCreateBitmapFromScan0 (10, 10, 0, PixelFormat.Format32bppArgb, IntPtr.Zero, out image);
 			Assert.IsTrue (image != IntPtr.Zero, "image");
 
-			Assert.AreEqual (Status.Ok, GDIPlus.GdipGetImageGraphicsContext (image, out graphics), "GdipGetImageGraphicsContext");
-			Assert.IsTrue (graphics != IntPtr.Zero, "graphics");
-
-			Assert.AreEqual (Status.Ok, GDIPlus.GdipDeleteGraphics (graphics), "GdipDeleteGraphics");
-			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipDeleteGraphics (IntPtr.Zero), "GdipDeleteGraphics-null");
+			Graphics_DrawImage (image, false);
 
 			Assert.AreEqual (Status.Ok, GDIPlus.GdipDisposeImage (image), "GdipDisposeImage");
+		}
+
+		[Test]
+		[Category ("NotWorking")] // incomplete GdipDrawImageRectRect[I] support
+		public void Graphics_FromImage_Metafile ()
+		{
+			using (Bitmap bmp = new Bitmap (100, 100, PixelFormat.Format32bppArgb)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					IntPtr metafile = IntPtr.Zero;
+					IntPtr hdc = g.GetHdc ();
+					try {
+						RectangleF rect = new RectangleF (10, 20, 100, 200);
+						Assert.AreEqual (Status.Ok, GDIPlus.GdipRecordMetafileFileName ("test-drawimage.emf", hdc, EmfType.EmfPlusOnly, ref rect, MetafileFrameUnit.GdiCompatible, null, out metafile), "GdipRecordMetafileFileName");
+						Assert.IsTrue (metafile != IntPtr.Zero, "image");
+
+						Graphics_DrawImage (metafile, true);
+					}
+					finally {
+						Assert.AreEqual (Status.Ok, GDIPlus.GdipDisposeImage (metafile), "GdipDisposeImage");
+					}
+				}
+			}
 		}
 
 		[Test]
