@@ -78,6 +78,8 @@ namespace System.Globalization
 		private string icu_name;
 		[NonSerialized]
 		private string win3lang;
+		[NonSerialized]
+		private string territory;
 		volatile CompareInfo compareInfo;
 		[NonSerialized]
 		private unsafe readonly int *calendar_data;
@@ -154,6 +156,11 @@ namespace System.Globalization
 		internal static CultureInfo ConstructCurrentUICulture ()
 		{
 			return ConstructCurrentCulture ();
+		}
+
+		// it is used for RegionInfo.
+		internal string Territory {
+			get { return territory; }
 		}
 
 		public virtual int LCID {

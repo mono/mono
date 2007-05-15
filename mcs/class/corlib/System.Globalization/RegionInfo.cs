@@ -56,6 +56,7 @@ namespace System.Globalization
 			}
 		}
 
+		int lcid; // it is used only for Equals() (not even used in GetHashCode()).
 		int regionId;
 		string iso2Name;
 		string iso3Name;
@@ -67,10 +68,16 @@ namespace System.Globalization
 
 		public RegionInfo (int lcid)
 		{
+#if NET_2_0
+			if (!GetByTerritory (CultureInfo.GetCultureInfo (lcid)))
+				throw new ArgumentException (
+					String.Format ("Region ID {0} (0x{0:X4}) is not a supported region.", lcid), "lcid");
+#else
 			if (!construct_internal_region_from_lcid (lcid))
 				throw new ArgumentException (
 					String.Format ("Region ID {0} (0x{0:X4}) is not a " +
 							"supported region.", lcid), "lcid");
+#endif
 		}
 
 		public RegionInfo (string name)
@@ -78,9 +85,28 @@ namespace System.Globalization
 			if (name == null)
 				throw new ArgumentNullException ();
 
+#if NET_2_0
+			if (construct_internal_region_from_name (name.ToUpperInvariant ())) {
+				lcid = name.GetHashCode (); // random-ish
+				return;
+			}
+			if (!GetByTerritory (CultureInfo.GetCultureInfo (name)))
+				throw new ArgumentException (String.Format ("Region name {0} is not supported.", name), "name");
+#else
 			if (!construct_internal_region_from_name (name.ToUpperInvariant ()))
 				throw new ArgumentException ("Region name " + name +
 						" is not supported.", "name");
+#endif
+		}
+
+		bool GetByTerritory (CultureInfo ci)
+		{
+			if (ci == null)
+				throw new Exception ("INTERNAL ERROR: should not happen.");
+			if (ci.IsNeutralCulture || ci.Territory == null)
+				return false;
+			this.lcid = ci.LCID;
+			return construct_internal_region_from_name (ci.Territory.ToUpperInvariant ());
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -108,6 +134,12 @@ namespace System.Globalization
 		public virtual string EnglishName {
 			get { return englishName; }
 		}
+
+#if NET_2_0
+		public virtual int GeoId {
+			get { return regionId; }
+		}
+#endif
 
 		public virtual bool IsMetric {
 			get {
@@ -157,6 +189,16 @@ namespace System.Globalization
 		// methods
 
 #if NET_2_0
+		public override bool Equals (object value)
+		{
+			RegionInfo other = value as RegionInfo;
+			return other != null && lcid == other.lcid;
+		}
+
+		public override int GetHashCode ()
+		{
+			return (int) (0x80000000 + (regionId << 3) + regionId); // it i still based on regionId
+		}
 #else
 		public override bool Equals (object value)
 		{
