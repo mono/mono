@@ -2055,18 +2055,67 @@ namespace Mono.CSharp {
 			anonymous_children.Add (b);
 		}
 
-		/// <summary>
-		///   Emits the variable declarations and labels.
-		/// </summary>
-		/// <remarks>
-		///   tc: is our typecontainer (to resolve type references)
-		///   ig: is the code generator:
-		/// </remarks>
+		void DoResolveConstants (EmitContext ec)
+		{
+			if (constants == null)
+				return;
+
+			if (variables == null)
+				throw new InternalErrorException ("cannot happen");
+
+			foreach (DictionaryEntry de in variables) {
+				string name = (string) de.Key;
+				LocalInfo vi = (LocalInfo) de.Value;
+				Type variable_type = vi.VariableType;
+
+				if (variable_type == null)
+					continue;
+
+				Expression cv = (Expression) constants [name];
+				if (cv == null)
+					continue;
+
+				// Don't let 'const int Foo = Foo;' succeed.
+				// Removing the name from 'constants' ensures that we get a LocalVariableReference below,
+				// which in turn causes the 'must be constant' error to be triggered.
+				constants.Remove (name);
+
+				if (!Const.IsConstantTypeValid (variable_type)) {
+					Const.Error_InvalidConstantType (variable_type, loc);
+					continue;
+				}
+
+				ec.CurrentBlock = this;
+				Expression e;
+				using (ec.With (EmitContext.Flags.ConstantCheckState, (flags & Flags.Unchecked) == 0)) {
+					e = cv.Resolve (ec);
+				}
+				if (e == null)
+					continue;
+
+				Constant ce = e as Constant;
+				if (ce == null) {
+					Const.Error_ExpressionMustBeConstant (vi.Location, name);
+					continue;
+				}
+
+				e = ce.ConvertImplicitly (variable_type);
+				if (e == null) {
+					if (!variable_type.IsValueType && variable_type != TypeManager.string_type && !ce.IsDefaultValue)
+						Const.Error_ConstantCanBeInitializedWithNullOnly (vi.Location, vi.Name);
+					else
+						ce.Error_ValueCannotBeConverted (null, vi.Location, variable_type, false);
+					continue;
+				}
+
+				constants.Add (name, e);
+				vi.IsConstant = true;
+			}
+		}
+
 		protected void ResolveMeta (ToplevelBlock toplevel, EmitContext ec, Parameters ip)
 		{
 			Report.Debug (64, "BLOCK RESOLVE META", this, Parent, toplevel);
-
-			int offset = Parent == null ? 0 : Parent.AssignableSlots;
 
 			// If some parent block was unsafe, we remain unsafe even if this block
 			// isn't explicitly marked as such.
@@ -2074,75 +2123,19 @@ namespace Mono.CSharp {
 				param_map = new VariableMap (ip);
 				flags |= Flags.VariablesInitialized;
 
-				//
-				// Process this block variables
-				//
+				int offset = Parent == null ? 0 : Parent.AssignableSlots;
 				if (variables != null) {
-					// resolve all variables before handling constants
 					foreach (LocalInfo li in variables.Values) {
 						if (li.Resolve (ec)) {
 							li.VariableInfo = new VariableInfo (li, offset);
 							offset += li.VariableInfo.Length;
 						}
 					}
-
-					foreach (DictionaryEntry de in variables) {
-						string name = (string) de.Key;
-						LocalInfo vi = (LocalInfo) de.Value;
-						Type variable_type = vi.VariableType;
-
-						if (variable_type == null)
-							continue;
-
-						if (constants == null)
-							continue;
-
-						Expression cv = (Expression) constants [name];
-						if (cv == null)
-							continue;
-
-						// Don't let 'const int Foo = Foo;' succeed.
-						// Removing the name from 'constants' ensures that we get a LocalVariableReference below,
-						// which in turn causes the 'must be constant' error to be triggered.
-						constants.Remove (name);
-
-						if (!Const.IsConstantTypeValid (variable_type)) {
-							Const.Error_InvalidConstantType (variable_type, loc);
-							continue;
-						}
-
-						using (ec.With (EmitContext.Flags.ConstantCheckState, (flags & Flags.Unchecked) == 0)) {
-							ec.CurrentBlock = this;
-							Expression e = cv.Resolve (ec);
-							if (e == null)
-								continue;
-
-							Constant ce = e as Constant;
-							if (ce == null) {
-								Const.Error_ExpressionMustBeConstant (vi.Location, name);
-								continue;
-							}
-
-							e = ce.ConvertImplicitly (variable_type);
-							if (e == null) {
-								if (!variable_type.IsValueType && variable_type != TypeManager.string_type && !ce.IsDefaultValue)
-									Const.Error_ConstantCanBeInitializedWithNullOnly (vi.Location, vi.Name);
-								else
-									ce.Error_ValueCannotBeConverted (null, vi.Location, variable_type, false);
-								continue;
-							}
-
-							constants.Add (name, e);
-							vi.IsConstant = true;
-						}
-					}
 				}
-
 				assignable_slots = offset;
 
-				//
-				// Now, handle the children
-				//
+				DoResolveConstants (ec);
+
 				if (children != null) {
 					foreach (Block b in children)
 						b.ResolveMeta (toplevel, ec, ip);

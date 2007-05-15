@@ -1,6 +1,11 @@
 2007-05-15  Raja R Harinath  <harinath@gmail.com>
 
-	Rationalize ResolveMeta, part 1
+	Rationalize ResolveMeta: refactoring
+	(Block.ResolveMeta): Remove wrong or superfluous comments.  Carve
+	out constant handling code into ...
+	(Block.DoResolveConstants): ... this.
+
+	Rationalize ResolveMeta: kill local_map
 	* statement.cs (Block.local_map, Block.LocalMap): Remove.
 	(Block.AssignableSlots): New.
 	(Block.ResolveMeta): Make protected.  Don't create a VariableMap
