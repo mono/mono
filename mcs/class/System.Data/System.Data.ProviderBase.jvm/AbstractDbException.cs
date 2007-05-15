@@ -43,7 +43,13 @@ namespace System.Data.ProviderBase {
 	* 2. Method "void GetObjectData(...,...)" is not supported (serialization)
 	*/
 
-	public abstract class AbstractDbException :  System.SystemException {
+	public abstract class AbstractDbException :
+#if NET_2_0
+		DbException
+#else
+		System.SystemException
+#endif
+	{
 		protected SQLException _cause;
 		protected AbstractDBConnection _connection;
 

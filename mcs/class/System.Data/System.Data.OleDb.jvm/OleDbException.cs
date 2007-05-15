@@ -45,7 +45,34 @@ namespace System.Data.OleDb
     *    is not supported.
     * 2. Method "void GetObjectData(...,...)" is not supported (serialization)
     */
+#if NET_2_0
+	public sealed class OleDbException : AbstractDbException
+	{
+		internal OleDbException (Exception cause, OleDbConnection connection) : base (cause, connection) { }
 
+		internal OleDbException (SQLException cause, OleDbConnection connection) : base (cause, connection) { }
+
+		internal OleDbException (string message, SQLException cause, OleDbConnection connection) : base (message, cause, connection) { }
+
+		protected override AbstractDbErrorCollection DbErrors {
+			get {
+				return Errors;
+			}
+		}
+
+		public OleDbErrorCollection Errors {
+			get {
+				return new OleDbErrorCollection (_cause, _connection);
+			}
+		}
+
+		public override int ErrorCode {
+			get {
+				return DbErrorCode;
+			}
+		}
+	}
+#else
     public sealed class OleDbException :  System.Runtime.InteropServices.ExternalException
     {
 		private class OleDbExceptionImpl : AbstractDbException {
@@ -132,4 +159,5 @@ namespace System.Data.OleDb
 		}
 
     }
+#endif
 }
