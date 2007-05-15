@@ -67,6 +67,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Configuration;
 using System.Globalization;
+using System.Reflection;
 using System.Security.Permissions;
 using System.Security.Principal;
 using System.Threading;
@@ -1304,6 +1305,63 @@ namespace System.Web {
 			}
 		}
 #endregion
+
+		private static string privateBinPath;
+		private static string PrivateBinPath {
+			get {
+				if (privateBinPath != null)
+					return privateBinPath;
+				
+				AppDomainSetup setup = AppDomain.CurrentDomain.SetupInformation;
+				privateBinPath = Path.Combine(setup.ApplicationBase, setup.PrivateBinPath);
+				return privateBinPath;
+			}
+		}		
+
+		internal static Type LoadType (string typeName)
+		{
+			return LoadType (typeName, false);
+		}
+		
+		internal static Type LoadType (string typeName, bool throwOnMissing)
+		{
+			Type type = Type.GetType (typeName, throwOnMissing);
+			if (type != null)
+				return type;
+
+#if NET_2_0
+			IList tla = System.Web.Compilation.BuildManager.TopLevelAssemblies;
+			if (tla != null && tla.Count > 0) {
+				foreach (Assembly asm in tla) {
+					if (asm == null)
+						continue;
+					type = asm.GetType (typeName, throwOnMissing);
+					if (type != null)
+						break;
+				}
+			}
+			if (type != null)
+				return type;
+#endif
+			
+			if (!Directory.Exists (PrivateBinPath))
+				return null;
+			
+			string[] binDlls = Directory.GetFiles(PrivateBinPath, "*.dll");
+			foreach (string s in binDlls) {
+				Assembly binA = Assembly.LoadFrom (s);
+				type = binA.GetType (typeName, throwOnMissing);
+				if (type == null)
+					continue;
+				
+				return type;
+			}
+
+			if (throwOnMissing)
+				throw new TypeLoadException (String.Format ("Type '{0}' cannot be found", typeName));
+			
+			return null;
+		}
 	}
 
 	//

@@ -90,58 +90,10 @@ namespace System.Web.Configuration
 		{
 			return configPath + "/" + locatinSubPath;
 		}
-
-		private static string privateBinPath;
-
-		private static string PrivateBinPath {
-			get {
-				if (privateBinPath != null)
-					return privateBinPath;
-				
-				AppDomainSetup setup = AppDomain.CurrentDomain.SetupInformation;
-				privateBinPath = Path.Combine(setup.ApplicationBase, setup.PrivateBinPath);
-				return privateBinPath;
-			}
-		}
-		
-		private Type LoadType(string typeName)
-		{
-			Type type = Type.GetType (typeName);
-			if (type != null)
-				return type;
-
-			IList tla = System.Web.Compilation.BuildManager.TopLevelAssemblies;
-			if (tla != null && tla.Count > 0) {
-				foreach (Assembly asm in tla) {
-					if (asm == null)
-						continue;
-					type = asm.GetType (typeName, false);
-					if (type != null)
-						break;
-				}
-			}
-			if (type != null)
-				return type;
-			
-			if (!Directory.Exists (PrivateBinPath))
-				return null;
-			
-			string[] binDlls = Directory.GetFiles(PrivateBinPath, "*.dll");
-			foreach (string s in binDlls) {
-				Assembly binA = Assembly.LoadFrom (s);
-				type = binA.GetType (typeName);
-				if (type == null)
-					continue;
-				
-				return type;
-			}
-			
-			return null;
-		}
 		
 		public virtual Type GetConfigType (string typeName, bool throwOnError)
 		{
-		        Type type = LoadType(typeName);
+		        Type type = HttpApplication.LoadType (typeName);
 			if (type == null && throwOnError)
 				throw new ConfigurationErrorsException ("Type not found: '" + typeName + "'");
 			return type;

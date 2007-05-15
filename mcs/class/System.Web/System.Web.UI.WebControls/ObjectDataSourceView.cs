@@ -483,44 +483,11 @@ namespace System.Web.UI.WebControls
 				return privateBinPath;
 			}
 		}
-
-		private Type LoadType (string typeName)
-		{
-			Type type = Type.GetType (typeName);
-			if (type != null)
-				return type;
-
-			IList tla;
-			if ((tla = BuildManager.TopLevelAssemblies) != null) {
-				foreach (Assembly asm in tla) {
-					if (asm == null)
-						continue;
-					type = asm.GetType (typeName);
-					if (type != null)
-						return type;
-				}
-			}
-
-			if (!Directory.Exists (PrivateBinPath))
-				return null;
-
-			string [] binDlls = Directory.GetFiles (PrivateBinPath, "*.dll");
-			foreach (string s in binDlls) {
-				Assembly binA = Assembly.LoadFrom (s);
-				type = binA.GetType (typeName);
-				if (type == null)
-					continue;
-
-				return type;
-			}
-
-			return null;
-		}
     
 		Type ObjectType {
 			get {
 				if (objectType == null) {
-					objectType = LoadType (TypeName);
+					objectType = HttpApplication.LoadType (TypeName);
 					if (objectType == null)
 						throw new InvalidOperationException ("Type not found: " + TypeName);
 				}
@@ -531,7 +498,7 @@ namespace System.Web.UI.WebControls
 		Type DataObjectType {
 			get {
 				if (dataObjectType == null) {
-					dataObjectType = LoadType (DataObjectTypeName);
+					dataObjectType = HttpApplication.LoadType (DataObjectTypeName);
 					if (dataObjectType == null)
 						throw new InvalidOperationException ("Type not found: " + DataObjectTypeName);
 				}

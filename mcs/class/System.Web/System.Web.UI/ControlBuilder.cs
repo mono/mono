@@ -318,40 +318,7 @@ namespace System.Web.UI {
 		{
 		}
 
-#if NET_2_0
-		static Type LoadType (string typeName)
-                {
-                        Type type = Type.GetType (typeName);
-                        if (type != null)
-                                return type;
-
-                        IList tla;
-                        if ((tla = BuildManager.TopLevelAssemblies) != null) {
-                                foreach (Assembly asm in tla) {
-                                        if (asm == null)
-                                                continue;
-                                        type = asm.GetType (typeName);
-                                        if (type != null)
-                                                return type;
-                                }
-                        }
-
-                        if (!Directory.Exists (PrivateBinPath))
-                                return null;
-
-                        string [] binDlls = Directory.GetFiles (PrivateBinPath, "*.dll");
-                        foreach (string s in binDlls) {
-                                Assembly binA = Assembly.LoadFrom (s);
-                                type = binA.GetType (typeName);
-                                if (type == null)
-                                        continue;
-
-                                return type;
-                        }
-
-                        return null;
-                }
-		
+#if NET_2_0		
 		static Type MapTagType (Type tagType)
 		{
 			if (tagType == null)
@@ -377,7 +344,7 @@ namespace System.Web.UI {
 				
 				try {
 					originalTypeName = tmi.TagType;
-					originalType = LoadType (originalTypeName);
+					originalType = HttpApplication.LoadType (originalTypeName);
 					if (originalType == null)
 						missingType = true;
 					else
@@ -395,7 +362,7 @@ namespace System.Web.UI {
 					mappedType = null;
 					
 					try {
-						mappedType = LoadType (mappedTypeName);
+						mappedType = HttpApplication.LoadType (mappedTypeName);
 						if (mappedType == null)
 							missingType = true;
 						else

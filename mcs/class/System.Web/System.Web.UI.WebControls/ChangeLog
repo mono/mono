@@ -1,3 +1,8 @@
+2007-05-15  Marek Habersack  <mhabersack@novell.com>
+
+	* ObjectDataSourceView.cs: refactoring - use
+	HttpApplication.LoadType to look up types.
+
 2007-05-10  Marek Habersack  <mhabersack@novell.com>
 
 	* Table.cs: render rows, not controls

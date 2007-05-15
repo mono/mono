@@ -363,44 +363,17 @@ namespace System.Web.UI {
 
 		internal Type LoadType (string typeName)
 		{
-			// First try loaded assemblies, then try assemblies in Bin directory.
-			Type type = null;
-			bool seenBin = false;
-			Assembly [] assemblies = AppDomain.CurrentDomain.GetAssemblies ();
-			foreach (Assembly ass in assemblies) {
-				type = ass.GetType (typeName);
-				if (type == null)
-					continue;
-
-				if (Path.GetDirectoryName (ass.Location) != PrivateBinPath) {
-					AddAssembly (ass, true);
-				} else {
-					seenBin = true;
-				}
-
-				AddDependency (ass.Location);
-				return type;
-			}
-
-			if (seenBin)
+			Type type = HttpApplication.LoadType (typeName);
+			if (type == null)
 				return null;
+			Assembly asm = type.Assembly;
+			string location = asm.Location;
+			
+			AddDependency (location);
+			if (Path.GetDirectoryName (location) != PrivateBinPath)
+				AddAssembly (asm, true);
 
-			// Load from bin
-			if (!Directory.Exists (PrivateBinPath))
-				return null;
-
-			string [] binDlls = Directory.GetFiles (PrivateBinPath, "*.dll");
-			foreach (string s in binDlls) {
-				Assembly binA = Assembly.LoadFrom (s);
-				type = binA.GetType (typeName);
-				if (type == null)
-					continue;
-
-				AddDependency (binA.Location);
-				return type;
-			}
-
-			return null;
+			return type;
 		}
 
 		void AddAssembliesInBin ()

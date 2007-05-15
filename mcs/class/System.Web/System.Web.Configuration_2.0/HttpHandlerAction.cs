@@ -179,19 +179,7 @@ namespace System.Web.Configuration
 		{
 			Type t = null;
 			
-			t = System.Type.GetType (type_name, false);
-			if (t == null) {
-				IList tla = System.Web.Compilation.BuildManager.TopLevelAssemblies;
-				if (tla != null && tla.Count > 0) {
-					foreach (Assembly asm in tla) {
-						if (asm == null)
-							continue;
-						t = asm.GetType (type_name, false);
-						if (t != null)
-							break;
-					}
-				}
-			}
+			t = HttpApplication.LoadType (type_name, false);
 
 			if (t == null)
 				throw new HttpException (String.Format ("Failed to load httpHandler type `{0}'", type_name));

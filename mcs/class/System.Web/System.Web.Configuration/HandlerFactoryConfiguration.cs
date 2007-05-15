@@ -107,7 +107,7 @@ namespace System.Web.Configuration {
 			Type t;
 			
 			try {
-				t = Type.GetType (type_name, true);
+				t = HttpApplication.LoadType (type_name, true);
 			} catch {
 				throw new HttpException (String.Format ("Failed to load httpHandler type `{0}'", type_name));
 			}

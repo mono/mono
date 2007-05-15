@@ -1,3 +1,13 @@
+2007-05-15  Marek Habersack  <mhabersack@novell.com>
+
+	* BuildProviderCollection.cs: refactoring - use
+	HttpApplication.LoadType to actually look up the type.
+
+	* HttpHandlerAction.cs: as above
+
+	* WebConfigurationHost.cs: refactoring - moved the LoadType to
+	HttpApplication to share the code between 1.1 and 2.0 profiles.
+
 2007-05-14  Marek Habersack  <mhabersack@novell.com>
 
 	* UrlMappingCollection.cs: implemented the Item (string) indexer.

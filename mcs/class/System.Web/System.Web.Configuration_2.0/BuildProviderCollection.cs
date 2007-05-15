@@ -98,8 +98,11 @@ namespace System.Web.Configuration
 			foreach (BuildProvider provider in this) {
 				if (extension != provider.Extension)
 					continue;
-
-				Type type = Type.GetType (provider.Type);
+				
+				Type type = HttpApplication.LoadType (provider.Type);
+				if (type == null)
+					return null;
+				
 				return (System.Web.Compilation.BuildProvider) Activator.CreateInstance (type, null);
 			}
 
