@@ -1204,7 +1204,7 @@ namespace Mono.CSharp {
 					action = Action.AlwaysFalse;
 					Report.Warning (184, 1, loc, "The given expression is never of the provided (`{0}') type",
 						TypeManager.CSharpName (probe_type));
-				} else {
+				} else if (etype.IsValueType) {
 					Report.Warning (183, 1, loc, "The given expression is always of the provided (`{0}') type",
 						TypeManager.CSharpName (probe_type));
 				}
