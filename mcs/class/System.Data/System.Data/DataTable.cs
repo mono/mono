@@ -2462,9 +2462,15 @@ namespace System.Data {
 #if NET_2_0
 		private XmlWriterSettings GetWriterSettings ()
 		{
+			return GetWriterSettings (false);
+		}
+
+		private XmlWriterSettings GetWriterSettings (bool closeOutput)
+		{
 			XmlWriterSettings s = new XmlWriterSettings ();
 			s.Indent = true;
 			s.OmitXmlDeclaration = true;
+			s.CloseOutput = closeOutput;
 			return s;
 		}
 
@@ -2537,7 +2543,7 @@ namespace System.Data {
 		{
 			XmlWriter xw = null;
 			try {
-				xw = XmlWriter.Create (fileName, GetWriterSettings ());
+				xw = XmlWriter.Create (fileName, GetWriterSettings (true));
 				WriteXml (xw, mode, writeHierarchy);
 			} finally {
 				if (xw != null)

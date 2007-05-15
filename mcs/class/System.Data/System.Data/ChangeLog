@@ -1,3 +1,7 @@
+2007-05-07  Konstantin Triger <kostat@mainsoft.com>
+
+	* DataTable.cs: ensure the file is closed in DataTable.WriteXml(filename).
+
 2007-05-07  Adar Wesley <adarw@mainsoft.com>
 
 	* ConstraintCollection.cs: added CopyTo method with strongly typed Constraint[] 
