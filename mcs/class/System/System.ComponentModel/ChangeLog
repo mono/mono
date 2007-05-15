@@ -1,3 +1,21 @@
+2007-05-15 Adar Wesley <adarw@mainsoft.com>
+
+	* AttributeCollection.cs: added missing method FromExisting.
+
+	* Container.cs: added missing method ValidateName
+
+	* DefaultValueAttribute.cs: added missing method SetValue.
+
+	* EventHandlerList.cs: added missing method AddHandlers.
+
+	* MemberDescriptor.cs: added missing method GetInvocationTarget.
+
+	* PropertyDescriptor.cs: added missing method GetValueChangedHandler.
+
+	* TypeDescriptor.cs: added missing methods CreateInstance, GetFullComponentName,
+	GetClassName, GetReflectionType, CreateAssociation, GetAssociation, 
+	RemoveAssociation, RemoveAssociations.
+
 2007-05-14  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* PropertyDescriptorCollection.cs: fixed Find method, compare using

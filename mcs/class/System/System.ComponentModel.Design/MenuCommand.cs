@@ -118,6 +118,14 @@ namespace System.ComponentModel.Design
 				handler (this, EventArgs.Empty);
 		}
 		
+#if NET_2_0
+		[MonoNotSupported("")]
+		public virtual void Invoke (object arg)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+
 		protected virtual void OnCommandChanged (EventArgs e)
 		{
 			if (CommandChanged != null)

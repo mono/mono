@@ -1,3 +1,7 @@
+2007-05-15  Adar Wesley <adarw@mainsoft.com>
+
+	* ContextStack.cs: added missing method Append.
+
 2006-03-10  Raja R Harinath  <rharinath@novell.com>
 
 	* CodeDomSerializerException.cs: Move to System.Design.dll.

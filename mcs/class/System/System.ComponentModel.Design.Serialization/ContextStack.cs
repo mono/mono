@@ -83,5 +83,13 @@ namespace System.ComponentModel.Design.Serialization
 		{
 			stack.Push (context);
 		}
+
+#if NET_2_0
+		[MonoNotSupported ("")]
+		public void Append (object context)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 	}
 }

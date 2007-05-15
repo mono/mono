@@ -41,6 +41,14 @@ namespace System.Diagnostics {
 
 		private Trace () {}
 
+#if NET_2_0
+		[MonoNotSupported ("")]
+		public static void Refresh ()
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+
 		public static bool AutoFlush {
 			get {return TraceImpl.AutoFlush;}
 			set {TraceImpl.AutoFlush = value;}
@@ -259,4 +267,5 @@ namespace System.Diagnostics {
 #endif
 	}
 }
+
 

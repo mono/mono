@@ -237,6 +237,14 @@ namespace System.ComponentModel
 		return component;
         }
 
+#if NET_2_0
+		[MonoNotSupported("")]
+		protected virtual object GetInvocationTarget (Type type, object instance)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+
         protected static MethodInfo FindMethod(Type componentClass, string name, 
             Type[ ] args, Type returnType)
         {

@@ -54,6 +54,14 @@ namespace System.ComponentModel
 					attrList.Add (attributes[i]);
 		}
 
+#if NET_2_0
+		[MonoNotSupported("")]
+		public static AttributeCollection FromExisting (AttributeCollection existing, params Attribute [] newAttributes)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+
 		public bool Contains (Attribute attr)
 		{
 			Attribute at = this [attr.GetType ()];

@@ -68,6 +68,19 @@ namespace System.ComponentModel {
 			entry.value = Delegate.Combine (entry.value, value);
 		}
 
+#if NET_2_0
+		public void AddHandlers (EventHandlerList listToAddFrom)
+		{
+			if (listToAddFrom == null) {
+				return;
+			}
+
+			for (ListNode entry = listToAddFrom.head; entry != null; entry = entry.next) {
+				AddHandler (entry.key, entry.value);
+			}
+		}
+#endif
+
 		public void RemoveHandler (object key, Delegate value)
 		{
 			ListNode entry = FindEntry (key);

@@ -103,6 +103,13 @@ namespace System.ComponentModel
 			get { return DefaultValue; }
 		}
 
+#if NET_2_0
+		protected void SetValue (object value)
+		{
+			DefaultValue = value;
+		}
+#endif
+
 		public override bool Equals (object obj)
 		{
 			if (!(obj is DefaultValueAttribute))

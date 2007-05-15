@@ -1,3 +1,7 @@
+2007-05-15 Adar Wesley <adarw@mainsoft.com>
+
+	* MenuCommand.cs: added missing method overload Invoke
+
 2006-09-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ViewTechnology.cs: update for 2.0. Patch by Ivan N. Zlatev.

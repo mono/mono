@@ -1,3 +1,7 @@
+2007-05-15 Adar Wesley <adarw@mainsoft.com>
+
+	* Trace.cs: added missing method Refresh.
+
 2007-05-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* EventTypeFilter.cs

@@ -142,6 +142,14 @@ namespace System.ComponentModel {
 			}
 		}
 
+#if NET_2_0
+		[MonoNotSupported("")]
+		protected virtual void ValidateName (IComponent component, string name)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+
 		protected virtual ISite CreateSite (IComponent component, string name)
 		{
 			return new DefaultSite (name, component, this);

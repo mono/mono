@@ -158,6 +158,14 @@ namespace System.ComponentModel
 				notifiers [component] = handler;
 		}
 
+#if NET_2_0
+		[MonoNotSupported("")]
+		protected internal EventHandler GetValueChangedHandler (object component)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+
 		protected virtual void OnValueChanged (object component, EventArgs e)
 		{
 			if (notifiers == null)
@@ -230,4 +238,5 @@ namespace System.ComponentModel
 		}
 	}
 }
+
 

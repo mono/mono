@@ -51,6 +51,14 @@ public sealed class TypeDescriptor
 	{
 	}
 
+#if NET_2_0
+	[MonoNotSupported("")]
+	public static object CreateInstance (IServiceProvider provider, Type objectType, Type [] argTypes, object [] args)
+	{
+		throw new NotImplementedException ();
+	}
+#endif
+
 	[MonoTODO]
 	public static void AddEditorTable (Type editorBaseType, Hashtable table)
 	{
@@ -180,6 +188,20 @@ public sealed class TypeDescriptor
 #endif
 		}
 	}
+
+#if NET_2_0
+	[MonoNotSupported("")]
+	public static string GetFullComponentName (object component)
+	{
+		throw new NotImplementedException ();
+	}
+
+	[MonoNotSupported("")]
+	public static string GetClassName (Type componentType)
+	{
+		throw new NotImplementedException ();
+	}
+#endif
 
 	public static TypeConverter GetConverter (object component)
 	{
@@ -521,6 +543,45 @@ public sealed class TypeDescriptor
 	{
 		return GetTypeInfo (componentType).GetProperties (attributes);
 	}
+
+#if NET_2_0
+	[MonoNotSupported ("")]
+	public static Type GetReflectionType (object instance)
+	{
+		throw new NotImplementedException ();
+	}
+
+	[MonoNotSupported ("")]
+	public static Type GetReflectionType (Type type)
+	{
+		throw new NotImplementedException ();
+	}
+
+	[MonoNotSupported("Associations not supported")]
+	public static void CreateAssociation (object primary, object secondary)
+	{
+		throw new NotImplementedException ();
+	}
+
+	[MonoNotSupported ("Associations not supported")]
+	public static object GetAssociation (Type type, object primary)
+	{
+		throw new NotImplementedException ();
+	}
+
+	[MonoNotSupported ("Associations not supported")]
+	public static void RemoveAssociation (object primary, object secondary)
+	{
+		throw new NotImplementedException ();
+	}
+
+	[MonoNotSupported ("Associations not supported")]
+	public static void RemoveAssociations (object primary)
+	{
+		throw new NotImplementedException ();
+	}
+
+#endif
 
 	public static void SortDescriptorArray (IList infos)
 	{
