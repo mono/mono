@@ -50,7 +50,11 @@ namespace System.Configuration {
 		internal ConfigurationLocation Find (string location)
 		{
 			foreach (ConfigurationLocation loc in InnerList)
+#if TARGET_JVM
+				if (String.Compare (loc.Path, location, StringComparison.OrdinalIgnoreCase) == 0)
+#else
 				if (loc.Path == location)
+#endif
 					return loc;
 			return null;
 		}

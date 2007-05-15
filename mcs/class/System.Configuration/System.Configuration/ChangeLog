@@ -1,3 +1,8 @@
+2007-05-15 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* ConfigurationLocationCollection.cs: for TARGET_JVM only:
+	location path is case-insensitive.
+		
 2007-05-15  Marek Habersack  <mhabersack@novell.com>
 
 	* ConfigurationElement.cs: added value validation on

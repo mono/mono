@@ -122,7 +122,17 @@ namespace System.Web.Configuration
 
 				if (map == null)
 #if TARGET_J2EE
+				{
+					// check META-INF/web.config exists
+					java.lang.ClassLoader cl = (java.lang.ClassLoader) AppDomain.CurrentDomain.GetData ("GH_ContextClassLoader");
+					if (cl == null)
+						return null;
+					java.net.URL url = cl.getResource ("META-INF/web.config");
+					if (url == null)
+						return null;
+
 					return "/META-INF/web.config";
+				}
 #else
 					mdir = Path.GetDirectoryName (System.Runtime.InteropServices.RuntimeEnvironment.SystemConfigurationFile);
 #endif
@@ -173,7 +183,11 @@ namespace System.Web.Configuration
 			} else {
 				int i;
 				if (locationSubPath == null)
+				{
 					configPath = fullPath;
+					if (configPath.Length > 1)
+						configPath = VirtualPathUtility.RemoveTrailingSlash (configPath);
+				}
 				else
 					configPath = locationSubPath;
 
@@ -260,6 +274,18 @@ namespace System.Web.Configuration
 
 		string GetWebConfigFileName (string dir)
 		{
+#if TARGET_J2EE
+			DirectoryInfo d = GetCaseSensitiveExistingDirectory (new DirectoryInfo (dir));
+			if (d == null)
+				return null;
+
+			FileInfo file = (FileInfo) FindByName ("web.config", d.GetFiles ("W*"));
+			if (file == null)
+				file = (FileInfo) FindByName ("web.config", d.GetFiles ("w*"));
+
+			if (file != null)
+				return file.FullName;
+#else
 			string[] filenames = new string[] {"Web.Config", "Web.config", "web.config" };
 
 			foreach (string fn in filenames) {
@@ -267,10 +293,30 @@ namespace System.Web.Configuration
 				if (File.Exists (file))
 					return file;
 			}
-
+#endif
 			return null;
 		}
+#if TARGET_J2EE
+		static DirectoryInfo GetCaseSensitiveExistingDirectory (DirectoryInfo dir) {
+			if (dir.Exists)
+				return dir;
+
+			DirectoryInfo parent = GetCaseSensitiveExistingDirectory (dir.Parent);
+			if (parent == null)
+				return null;
+
+			return (DirectoryInfo) FindByName (dir.Name, parent.GetDirectories ());
+		}
 		
+		static FileSystemInfo FindByName (string name, FileSystemInfo [] infos)
+		{
+			for (int i = 0; i < infos.Length; i++) {
+				if (String.Compare (name, infos [i].Name, StringComparison.OrdinalIgnoreCase) == 0)
+					return infos [i];
+			}
+			return null;
+		}
+#endif
 		public virtual bool IsAboveApplication (string configPath)
 		{
 			throw new NotImplementedException ();

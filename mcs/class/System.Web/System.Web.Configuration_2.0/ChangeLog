@@ -1,3 +1,11 @@
+2007-05-15  Igor Zelmanovich <igorz@mainsoft.com>
+
+	* WebConfigurationManager.cs: 
+	make configurations hashtable case-insensitive.
+	* WebConfigurationHost.cs: for TARGET_J2EE only:
+	GetStreamName returns file path in right case, that make it works 
+	on case-sensitive file system.
+
 2007-05-15  Marek Habersack  <mhabersack@novell.com>
 
 	* BuildProviderCollection.cs: refactoring - use

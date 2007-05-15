@@ -439,10 +439,6 @@ namespace System.Web.J2EE
 		}
 		internal string GetTypeFromResources()
 		{
-			string phisicalPath = _context.Request.MapPath (_url);
-			if (!File.Exists (phisicalPath) && !Directory.Exists (phisicalPath))
-				return null;
-
 			string typeName = null;
 
 			//if the desciptor exists in the war - get the type

@@ -1,3 +1,8 @@
+2007-05-15  Igor Zelmanovich <igorz@mainsoft.com>
+
+	* PageMapper.cs: reverted r77353, 77321
+	make it case-insensitive
+
 2007-05-14  Igor Zelmanovich <igorz@mainsoft.com>
 
 	* PageMapper.cs: 

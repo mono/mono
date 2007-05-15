@@ -79,7 +79,7 @@ namespace System.Web.Configuration {
 					lock (AppDomain.CurrentDomain){
 						object initialized = AppDomain.CurrentDomain.GetData("WebConfigurationManager.configurations.initialized");
 						if (initialized == null){
-							table = Hashtable.Synchronized (new Hashtable ());
+							table = Hashtable.Synchronized (new Hashtable (StringComparer.OrdinalIgnoreCase));
 							configurations = table;
 						}
 					}
