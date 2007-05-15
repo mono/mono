@@ -51,8 +51,6 @@ namespace Mainsoft.Web.Hosting
 		static readonly LocalDataStoreSlot _servletSlot = Thread.GetNamedDataSlot(J2EEConsts.CURRENT_SERVLET);
 
 		bool _appVirDirInited = false;
-		Field _derbyContextService;
-		java.lang.ThreadLocal _derbyLocal;
 
 		public BaseHttpServlet()
 		{
@@ -63,55 +61,6 @@ namespace Mainsoft.Web.Hosting
 			base.init(config);
 			InitServlet(config);
 			
-		}
-
-		void InitDerby () {
-			try {
-				java.lang.ClassLoader loader = vmw.common.TypeUtils.ToClass (this).getClassLoader ();
-				java.lang.Class derbyContextService = loader.loadClass ("org.apache.derby.iapi.services.context.ContextService");
-				if (derbyContextService.getClassLoader () == loader)
-					_derbyContextService = derbyContextService.getDeclaredField ("factory");
-			}
-			catch {
-				_derbyContextService = null;
-			}
-		}
-
-		internal void CleanupDerby () {
-			if (_derbyContextService == null)
-				return;
-			try {
-
-				if (_derbyLocal == null) {
-					_derbyContextService.setAccessible (true);
-					object contextServiceFact = _derbyContextService.get (null);
-					if (contextServiceFact == null)
-						return;
-
-					Field derbyLocalField = vmw.common.TypeUtils.ToClass (contextServiceFact).getDeclaredField ("threadContextList");
-					if (derbyLocalField == null) {
-						_derbyContextService = null;
-						return;
-					}
-
-					derbyLocalField.setAccessible (true);
-					object derbyLocal = derbyLocalField.get (contextServiceFact);
-					if (derbyLocal == null || !(derbyLocal is java.lang.ThreadLocal)) {
-						_derbyContextService = null;
-						return;
-					}
-					_derbyLocal = (java.lang.ThreadLocal) derbyLocal;
-				}
-
-
-				_derbyLocal.set (null);
-			}
-			catch (Exception e) {
-#if DEBUG
-				Console.WriteLine (e.ToString ());
-				_derbyContextService = null;
-#endif
-			}
 		}
 
 		protected virtual void InitServlet(ServletConfig config)
@@ -135,7 +84,6 @@ namespace Mainsoft.Web.Hosting
 				servletDomain.SetData(J2EEConsts.SERVLET_CONFIG, config);
 				servletDomain.SetData(J2EEConsts.RESOURCE_LOADER, new vmw.@internal.j2ee.ServletResourceLoader(config.getServletContext()));
 
-				InitDerby ();
 				config.getServletContext().setAttribute(J2EEConsts.APP_DOMAIN, servletDomain);
 				config.getServletContext ().setAttribute (J2EEConsts.CURRENT_SERVLET, this);
 			}
@@ -215,7 +163,6 @@ namespace Mainsoft.Web.Hosting
 				Thread.SetData(_servletResponseSlot, null);
 				Thread.SetData(_servletSlot, null);
 				vmw.@internal.EnvironmentUtils.clearAppDomain();
-				CleanupDerby ();
 			}
 		}
 
@@ -247,22 +194,6 @@ namespace Mainsoft.Web.Hosting
 			finally
 			{
 				vmw.@internal.EnvironmentUtils.clearAppDomain();
-				CleanupDerby ();
-				if (_derbyContextService != null) {
-					try {
-						URL u = vmw.common.TypeUtils.ToClass (this).getClassLoader ().getResource ("org/apache/derby/iapi/services/context/ContextService.class");
-						if (u != null) {
-							URLConnection con = u.openConnection ();
-							if (con is JarURLConnection)
-								((JarURLConnection) con).getJarFile ().close ();
-						}
-					}
-					catch (Exception ex) {
-#if DEBUG
-						Console.WriteLine (ex.ToString ());
-#endif
-					}
-				}
 			}
 		}
 

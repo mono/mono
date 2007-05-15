@@ -63,9 +63,6 @@ namespace Mainsoft.Web.SessionState
 			finally {
 				if (setDomain) {
 					vmw.@internal.EnvironmentUtils.clearAppDomain ();
-					BaseHttpServlet servlet = (BaseHttpServlet) se.getSession ().getServletContext ().getAttribute (J2EEConsts.CURRENT_SERVLET);
-					if (servlet != null)
-						servlet.CleanupDerby ();
 				}
 			}
 		}
