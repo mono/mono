@@ -1,5 +1,9 @@
 2007-05-15  Zoltan Varga  <vargaz@gmail.com>
 
+	* inssel.brg (CEE_SWITCH): Hopefully fix #80738.
+
+	* basic.cs: Add new regression test.
+
 	* basic.cs: Remove test which is now in basic-long.cs.
 
 	* mini-ia64.c (mono_arch_output_basic_block): Sign extend in CEE_CONV_I8/CEE_CONV_I.
