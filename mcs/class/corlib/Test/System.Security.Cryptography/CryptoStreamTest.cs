@@ -1341,5 +1341,52 @@ namespace MonoTests.System.Security.Cryptography {
 
 			AssertEquals ("Length", 64, cms.ToArray ().Length);
 		}
+
+		private void WriteByte (PaddingMode mode, bool padded)
+		{
+			byte[] Key = new byte[16];
+			byte[] IV = new byte[16];
+			byte[] Buffer = new byte[64];
+
+			Rijndael alg = Rijndael.Create ();
+			alg.Mode = CipherMode.CBC;
+			alg.Padding = mode;
+
+			MemoryStream cms = new MemoryStream ();
+			ICryptoTransform ct = alg.CreateEncryptor (Key, IV);
+			CryptoStream cs = new CryptoStream (cms, ct, CryptoStreamMode.Write);
+			for (int i = 0; i < Buffer.Length; i++)
+				cs.WriteByte (Buffer[i]);
+			cs.Close ();
+
+			byte[] result = cms.ToArray ();
+			// if padded then add one block, if not then it's the original length
+			int len = padded ? 80: 64;
+			AssertEquals (mode.ToString () + ".Encrypted.Length", len, result.Length);
+
+			cms = new MemoryStream ();
+			ct = alg.CreateDecryptor (Key, IV);
+			cs = new CryptoStream (cms, ct, CryptoStreamMode.Write);
+			for (int i = 0; i < result.Length; i++)
+				cs.WriteByte (result[i]);
+			cs.Close ();
+
+			byte[] plaintext = cms.ToArray ();
+			AssertEquals (mode.ToString () + ".Decrypted.Length", 64, plaintext.Length);
+
+			AssertEquals (mode.ToString () + ".Date", Buffer, plaintext);
+		}
+
+		[Test]
+		public void WriteByte ()
+		{
+			WriteByte (PaddingMode.None, false);
+			WriteByte (PaddingMode.Zeros, false);
+			WriteByte (PaddingMode.PKCS7, true);	// related to bug #81597
+#if NET_2_0
+			WriteByte (PaddingMode.ANSIX923, true);
+			WriteByte (PaddingMode.ISO10126, true);
+#endif
+		}
 	}
 }
