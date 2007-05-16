@@ -301,7 +301,20 @@ namespace System.Web {
 
 			path = Canonize (path);
 
-			if (path.IndexOf ('.') < 0)
+			int dotPos = path.IndexOf ('.');
+			while (dotPos >= 0) {
+				if (++dotPos == path.Length)
+					break;
+
+				char nextChar = path [dotPos];
+
+				if ((nextChar == '/') || (nextChar == '.'))
+					break;
+
+				dotPos = path.IndexOf ('.', dotPos);
+			}
+
+			if (dotPos < 0)
 				return path;
 
 			bool starts_with_tilda = false;

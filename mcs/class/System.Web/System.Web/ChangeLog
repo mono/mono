@@ -1,3 +1,8 @@
+2007-05-16  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* VirtualPathUtility.cs: Normalize method check more carefully if need
+	to normalize, performance fix
+
 2007-05-16  Konstantin Triger <kostat@mainsoft.com>
 
 	* HttpContext.cs: correctly check for request locality.
