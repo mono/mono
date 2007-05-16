@@ -1,3 +1,7 @@
+2007-05-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* FieldBuilder.cs: Support calling SetValue (). Fixes #81638.
+
 2007-05-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* TypeBuilder.cs (CreateType): Fix build.
