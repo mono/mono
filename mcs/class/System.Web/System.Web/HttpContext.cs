@@ -200,8 +200,7 @@ namespace System.Web {
 				if (cfg.Mode == CustomErrorMode.On)
 					return true;
 
-				return (cfg.Mode == CustomErrorMode.RemoteOnly) && 
-					(Request.WorkerRequest.GetLocalAddress () != Request.UserHostAddress);
+				return (cfg.Mode == CustomErrorMode.RemoteOnly) && !Request.IsLocal;
 			}
 		}
 #if !TARGET_JVM
