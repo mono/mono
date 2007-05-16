@@ -52,6 +52,24 @@ namespace System.Windows.Forms {
 
 		private TitleButtons maximized_title_buttons;
 		private bool is_visible_pending;
+		private byte last_activation_event; // 0 = none, 1 = activated, 2 = deactivated.
+
+		public void RaiseActivated ()
+		{
+			if (last_activation_event == 1)
+				return;
+			
+			last_activation_event = 1;
+			form.OnActivatedInternal ();
+		}
+		
+		public void RaiseDeactivate ()
+		{
+			if (last_activation_event == 2)
+				return;
+			last_activation_event = 2;
+			form.OnDeactivateInternal ();
+		}
 
 		public override int MenuHeight {
 			get {

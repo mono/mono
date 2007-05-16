@@ -613,8 +613,13 @@ namespace System.Windows.Forms {
 					next.WindowState = FormWindowState.Maximized;
 				ActivateChild (next);
 			}
-
+	
+			form.Visible = false;
 			Controls.Remove (form);
+			
+			if (Controls.Count == 0) {
+				((MdiWindowManager) form.window_manager).RaiseDeactivate ();
+			}
 
 			if (Controls.Count == 0) {
 				XplatUI.RequestNCRecalc (Parent.Handle);
@@ -695,8 +700,11 @@ namespace System.Windows.Forms {
 					XplatUI.InvalidateNC (current.Handle);
 				if (form.IsHandleCreated)
 					XplatUI.InvalidateNC (form.Handle);
-				if (raise_deactivate)
-					current.OnDeactivateInternal ();
+				if (raise_deactivate) {
+					MdiWindowManager current_wm = (MdiWindowManager) current.window_manager;
+					current_wm.RaiseDeactivate ();
+					
+				}
 			}
 			active_child = (Form) Controls [0];
 			
@@ -704,7 +712,8 @@ namespace System.Windows.Forms {
 				bool raise_activated = ParentForm.ActiveControl != active_child;
 				ParentForm.ActiveControl = active_child;
 				if (raise_activated) {
-					active_child.OnActivatedInternal ();
+					MdiWindowManager active_wm = (MdiWindowManager) active_child.window_manager;
+					active_wm.RaiseActivated ();
 				}
 			}
 		}

@@ -1,3 +1,7 @@
+2007-05-16  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* MaskedTextBox.cs: Small fix for Text that fixes a broken test.
+
 2007-05-16  Andreia Gaita <avidigal@novell.com> 
 
 	* ContainerControl.cs: only process tab key if there are no 

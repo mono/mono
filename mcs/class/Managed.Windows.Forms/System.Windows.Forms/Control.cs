@@ -5232,10 +5232,11 @@ namespace System.Windows.Forms
 			else {
 				if (parent != null && Focused) {
 					Control	container;
-
+					Form frm = this as Form;
+					
 					// Need to start at parent, GetContainerControl might return ourselves if we're a container
 					container = (Control)parent.GetContainerControl();
-					if (container != null) {
+					if (container != null && (frm == null || !frm.IsMdiChild)) {
 						container.SelectNextControl(this, true, true, true, true);
 					}
 				}
