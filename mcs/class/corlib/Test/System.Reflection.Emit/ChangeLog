@@ -1,3 +1,8 @@
+2007-05-16  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TypeBuilderTest.cs: Use Assert instead of deprecated Assertion
+	class. Number tests. Added tests for bug #81638 and #81640.
+
 2007-05-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* TypeBuilderTest.cs: Add test for null parent.
