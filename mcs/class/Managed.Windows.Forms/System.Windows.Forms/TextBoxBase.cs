@@ -2116,6 +2116,10 @@ namespace System.Windows.Forms {
 
 		internal abstract Color ChangeBackColor (Color backColor);
 
+		internal override bool IsInputCharInternal (char charCode)
+		{
+			return true;
+		}
 		#endregion	// Private Methods
 
 #if NET_2_0

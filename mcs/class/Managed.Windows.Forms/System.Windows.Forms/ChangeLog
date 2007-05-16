@@ -1,3 +1,11 @@
+2007-05-15  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Control.cs: Make IsInputCharInternal to allow controls to
+	override it and still match MS API.
+	* TextBoxBase.cs: Override IsInputCharInternal and always
+	return true.
+	[Fixes bug #81616]
+
 2007-05-15  Jackson Harper  <jackson@ximian.com>
 
 	* TextBox.cs: Disable some of the menu options when using a

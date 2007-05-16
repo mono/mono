@@ -4158,9 +4158,13 @@ namespace System.Windows.Forms
 			if (!IsHandleCreated)
 				CreateHandle ();
 
-			return false;
+			return IsInputCharInternal (charCode);
 		}
 
+		internal virtual bool IsInputCharInternal (char charCode) {
+			return false;
+		}
+		
 		protected virtual bool IsInputKey (Keys keyData) {
 			// Doc says this one calls IsInputChar; not sure what to do with that
 			return false;

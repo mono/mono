@@ -1,3 +1,7 @@
+2007-05-15  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TextBoxTest.cs: Add test for IsInputChar method.
+
 2007-05-11  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ToolStripItemCollectionTest.cs: Removed duplicate test.
