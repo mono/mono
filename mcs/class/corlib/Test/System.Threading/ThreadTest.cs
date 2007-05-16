@@ -655,9 +655,9 @@ namespace MonoTests.System.Threading {
 		[Test]
 		public void TestApartmentState ()
 		{
-			Thread t1 = new Thread (Start);
-			Thread t2 = new Thread (Start);
-			Thread t3 = new Thread (Start);
+			Thread t1 = new Thread (new ThreadStart (Start));
+			Thread t2 = new Thread (new ThreadStart (Start));
+			Thread t3 = new Thread (new ThreadStart (Start));
 
 			Assert ("Thread1 Default", t1.ApartmentState == ApartmentState.Unknown);
 			Assert ("Thread2 Default", t2.ApartmentState == ApartmentState.Unknown);
