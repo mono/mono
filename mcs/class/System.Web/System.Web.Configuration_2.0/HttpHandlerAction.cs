@@ -202,11 +202,18 @@ namespace System.Web.Configuration
 				j--;
 				FileMatchingInfo fm = Paths [j];
 
+				bool ignoreCase =
+#if TARGET_J2EE
+					true;
+#else
+					false;
+#endif
+
 				if (fm.MatchExact != null)
-					return fm.MatchExact.Length == p.Length && StrUtils.EndsWith (p, fm.MatchExact);
+					return fm.MatchExact.Length == p.Length && StrUtils.EndsWith (p, fm.MatchExact, ignoreCase);
 					
 				if (fm.EndsWith != null)
-					return StrUtils.EndsWith (p, fm.EndsWith);
+					return StrUtils.EndsWith (p, fm.EndsWith, ignoreCase);
 
 				if (fm.MatchExpr == "*")
 					return true;
