@@ -1,14 +1,12 @@
 //
-// System.Diagnostics.SymbolStore.ISymbolDocument
+// System.Diagnostics.SymbolStore.ISymbolBinder1
 //
 // Author:
-//   Duco Fijma (duco@lorentz.xs4all.nl)
+//	Dick Porter (dick@ximian.com)
 //
-//   (c) 2002 Duco Fijma
-// 
 
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,25 +30,12 @@
 
 #if NET_2_0
 using System.Runtime.InteropServices;
-#endif
 
 namespace System.Diagnostics.SymbolStore
 {
-#if NET_2_0
 	[ComVisible (true)]
-#endif
-	public interface ISymbolDocument {
-		Guid CheckSumAlgorithmId {get; }
-		Guid DocumentType {get; }
-		bool HasEmbeddedSource {get; }
-		Guid Language {get; }	
-		Guid LanguageVendor {get; }
-		int SourceLength {get; }
-		string URL {get; }
-	
-
-		int FindClosestLine (int line);
-		byte[] GetCheckSum ();
-		byte[] GetSourceRange (int startLine, int startColumn, int endLine, int endColumn);
+	public interface ISymbolBinder1 {
+		ISymbolReader GetReader (IntPtr importer, string filename, string searchPath);
 	}
 }
+#endif

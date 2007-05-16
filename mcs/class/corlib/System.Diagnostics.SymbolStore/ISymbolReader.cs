@@ -30,32 +30,35 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if NET_2_0
+using System.Runtime.InteropServices;
+#endif
+
 namespace System.Diagnostics.SymbolStore
 {
+#if NET_2_0
+	[ComVisible (true)]
+#endif
+	public interface ISymbolReader {
+		SymbolToken UserEntryPoint {get; }
 
-public interface ISymbolReader {
+		ISymbolDocument GetDocument (
+			string url,
+			Guid language,
+			Guid languageVendor,
+			Guid documentType);
+		ISymbolDocument[] GetDocuments ();
+		ISymbolVariable[] GetGlobalVariables ();
 
-	SymbolToken UserEntryPoint {get; }
+		ISymbolMethod GetMethod (SymbolToken method);
+		ISymbolMethod GetMethod (SymbolToken method, int version);
 
-	ISymbolDocument GetDocument (
-		string url,
-		Guid language,
-		Guid languageVendor,
-		Guid documentType);
-	ISymbolDocument[] GetDocuments ();
-	ISymbolVariable[] GetGlobalVariables ();
-
-	ISymbolMethod GetMethod (SymbolToken method);
-	ISymbolMethod GetMethod (SymbolToken method, int version);
-
-	ISymbolMethod GetMethodFromDocumentPosition (
-		ISymbolDocument document,
-		int line,
-		int column);
-	ISymbolNamespace[] GetNamespaces ();
-	byte[] GetSymAttribute (SymbolToken parent, string name);
-	ISymbolVariable[] GetVariables (SymbolToken parent);
-
-}
-
+		ISymbolMethod GetMethodFromDocumentPosition (
+			ISymbolDocument document,
+			int line,
+			int column);
+		ISymbolNamespace[] GetNamespaces ();
+		byte[] GetSymAttribute (SymbolToken parent, string name);
+		ISymbolVariable[] GetVariables (SymbolToken parent);
+	}
 }

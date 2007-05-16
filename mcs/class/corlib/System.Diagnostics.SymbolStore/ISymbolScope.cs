@@ -30,20 +30,23 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if NET_2_0
+using System.Runtime.InteropServices;
+#endif
+
 namespace System.Diagnostics.SymbolStore
 {
+#if NET_2_0
+	[ComVisible (true)]
+#endif
+	public interface ISymbolScope {
+		int EndOffset {get ;}
+		ISymbolMethod Method {get; }
+		ISymbolScope Parent {get ;}
+		int StartOffset {get ;}
 
-public interface ISymbolScope {
-
-	int EndOffset {get ;}
-	ISymbolMethod Method {get; }
-	ISymbolScope Parent {get ;}
-	int StartOffset {get ;}
-
-	ISymbolScope[] GetChildren ();
-	ISymbolVariable[] GetLocals ();
-	ISymbolNamespace[] GetNamespaces ();
-
-}
-
+		ISymbolScope[] GetChildren ();
+		ISymbolVariable[] GetLocals ();
+		ISymbolNamespace[] GetNamespaces ();
+	}
 }

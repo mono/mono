@@ -30,13 +30,20 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if NET_2_0
+using System.Runtime.InteropServices;
+#endif
+
 namespace System.Diagnostics.SymbolStore
 {
 
-public interface ISymbolBinder {
-
-	ISymbolReader GetReader (int importer, string filename, string searchPath);
-
-}
-
+#if NET_2_0
+	[ComVisible (true)]
+#endif
+	public interface ISymbolBinder {
+#if NET_2_0
+		[Obsolete ("This interface is not 64-bit clean.  Use ISymbolBinder1 instead", false)]
+#endif
+		ISymbolReader GetReader (int importer, string filename, string searchPath);
+	}
 }

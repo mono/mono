@@ -30,19 +30,29 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if NET_2_0
+using System.Runtime.InteropServices;
+#endif
+
 namespace System.Diagnostics.SymbolStore
 {
-
-public enum SymAddressKind {
-	ILOffset = 1,
-	NativeRVA = 2,
-	NativeRegister = 3,
-	NativeRegisterRelative = 4,
-	NativeOffset = 5,
-	NativeRegisterRegister = 6,
-	NativeRegisterStack = 7,
-	NativeStackRegister = 8,
-	BitField = 9
-}
-
+#if NET_2_0
+	[ComVisible (true)]
+	[Serializable]
+#endif
+	public enum SymAddressKind {
+		ILOffset = 1,
+		NativeRVA = 2,
+		NativeRegister = 3,
+		NativeRegisterRelative = 4,
+		NativeOffset = 5,
+		NativeRegisterRegister = 6,
+		NativeRegisterStack = 7,
+		NativeStackRegister = 8,
+		BitField = 9
+#if NET_2_0
+		,
+		NativeSectionOffset = 10
+#endif
+	}
 }

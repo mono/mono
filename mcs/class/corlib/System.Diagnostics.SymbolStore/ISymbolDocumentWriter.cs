@@ -23,14 +23,17 @@
 //
 using System;
 
+#if NET_2_0
+using System.Runtime.InteropServices;
+#endif
+
 namespace System.Diagnostics.SymbolStore
 {
-
-public interface ISymbolDocumentWriter {
-
-	void SetCheckSum (Guid algorithmId, byte[] checkSum);
-	void SetSource (byte[] source);
-
-}
-
+#if NET_2_0
+	[ComVisible (true)]
+#endif
+	public interface ISymbolDocumentWriter {
+		void SetCheckSum (Guid algorithmId, byte[] checkSum);
+		void SetSource (byte[] source);
+	}
 }
