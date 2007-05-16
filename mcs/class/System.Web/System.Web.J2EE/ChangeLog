@@ -1,3 +1,8 @@
+2007-05-16  Igor Zelmanovich <igorz@mainsoft.com>
+
+	* PageMapper.cs: prevent DOS attack:
+	dont cache MetaProvider for not valid resource.
+
 2007-05-15  Igor Zelmanovich <igorz@mainsoft.com>
 
 	* PageMapper.cs: reverted r77353, 77321

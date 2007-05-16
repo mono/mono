@@ -247,15 +247,24 @@ namespace System.Web.J2EE
 
 			string ICachedXmlDoc.GetAssemblyResourceName (HttpContext context, string o)
 			{
-				return GetMetaByURL(context, o).Resource;
+				MetaProvider p = GetMetaByURL (context, o);
+				if (p == null)
+					return null;
+				return p.Resource;
 			}
 			Type ICachedXmlDoc.GetType (HttpContext context, string o)
 			{
-				return GetMetaByURL(context, o).Type;
+				MetaProvider p = GetMetaByURL (context, o);
+				if (p == null)
+					return null;
+				return p.Type;
 			}
 			Assembly ICachedXmlDoc.GetAssembly (HttpContext context, string o)
 			{
-				return GetMetaByURL(context, o).Assembly;
+				MetaProvider p = GetMetaByURL (context, o);
+				if (p == null)
+					return null;
+				return p.Assembly;
 			}
 
 			internal IDictionaryEnumerator GetEnumerator()
@@ -268,53 +277,21 @@ namespace System.Web.J2EE
 			//but only will became important in production mode when dynamyc compilation will be enabled
 			//Anyway, locking whole table and compiling under lock looks odd
 			//spivak.December 07 2006
+			//
+			//prevent DOS attack. dont cache MetaProvider for not valid resource
+			//igorz. May 16 2007
 			public MetaProvider GetMetaByURL(HttpContext context, string url)
 			{
-
-#if !NO_GLOBAL_LOCK_ON_COMPILE
-				string lwUrl = url.ToLowerInvariant();
-				lock (_table)
-				{
-					object retVal = _table[lwUrl];
-					if (retVal == null)
-					{
-						retVal = PageCompiler.GetCompiler(context, url);
-						_table[lwUrl] = retVal;
-					}
-				
-					return (MetaProvider)retVal;
+				string lwUrl = url.ToLowerInvariant ();
+				MetaProvider retVal = (MetaProvider) _table [lwUrl];
+				if (retVal == null) {
+					retVal = PageCompiler.GetCompiler (context, url);
+					if (retVal.Type == null && retVal.Assembly == null)
+						return null;
+					_table [lwUrl] = retVal;
 				}
 
-#else
-				string lwUrl = url.ToLower();
-				if (!_table.ContainsKey(lwUrl))
-				{
-					lock (_table.SyncRoot)
-					{
-						if (_table.ContainsKey(lwUrl))
-							goto Fused;
-						_table[lwUrl] = _fuse;
-					}
-					try
-					{
-						MetaProvider meta = PageCompiler.GetCompiler(url);
-						lock (_table.SyncRoot)
-						{
-							return (MetaProvider)(_table[lwUrl] = meta);
-						}
-					}
-					catch(Exception e)
-					{
-						_table.Remove(lwUrl);
-					}
-				}				
-			Fused:
-				
-				while (_table[lwUrl] == _fuse) 
-					Thread.Sleep(10);
-
-				return !_table.ContainsKey(lwUrl)? PageCompiler.Error: (MetaProvider)_table[lwUrl];
-#endif
+				return retVal;
 			}
 		}
 		
@@ -387,10 +364,13 @@ namespace System.Web.J2EE
 #endif
 				if (typeName != null)
 				{
-					if ((_type = Type.GetType(typeName)) != null)
+					if ((_type = Type.GetType (typeName)) != null)
 						_assembly = _type.Assembly;
-					else
-						_assembly = Assembly.Load(_origAssemblyName);
+					else {
+						if (_origAssemblyName == null)
+							throw new TypeLoadException ("Cannot load type '" + typeName + "'");
+						_assembly = Assembly.Load (_origAssemblyName);
+					}
 				}
 			}
 		}
