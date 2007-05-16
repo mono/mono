@@ -125,7 +125,7 @@ namespace System.Xml
 		public static XmlWriter Create (string file, XmlWriterSettings settings)
 		{
 			Encoding enc = settings != null ? settings.Encoding : Encoding.UTF8;
-			return Create (new StreamWriter (file, false, enc), settings);
+			return CreateTextWriter (new StreamWriter (file, false, enc), settings, true);
 		}
 
 		public static XmlWriter Create (StringBuilder builder, XmlWriterSettings settings)
@@ -135,7 +135,9 @@ namespace System.Xml
 
 		public static XmlWriter Create (TextWriter writer, XmlWriterSettings settings)
 		{
-			return CreateTextWriter (writer, settings);
+			if (settings == null)
+				settings = new XmlWriterSettings ();
+			return CreateTextWriter (writer, settings, settings.CloseOutput);
 		}
 
 		public static XmlWriter Create (XmlWriter writer, XmlWriterSettings settings)
@@ -146,11 +148,11 @@ namespace System.Xml
 			return writer;
 		}
 
-		private static XmlWriter CreateTextWriter (TextWriter writer, XmlWriterSettings settings)
+		private static XmlWriter CreateTextWriter (TextWriter writer, XmlWriterSettings settings, bool closeOutput)
 		{
 			if (settings == null)
 				settings = new XmlWriterSettings ();
-			XmlTextWriter xtw = new XmlTextWriter (writer, settings);
+			XmlTextWriter xtw = new XmlTextWriter (writer, settings, closeOutput);
 			return Create (xtw, settings);
 		}
 

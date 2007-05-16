@@ -1,3 +1,8 @@
+2007-05-15  Konstantin Triger <kostat@mainsoft.com>
+
+	* XmlWriter.cs, XmlTextWriter2.cs: ensure the file
+		is closed in XmlWriter.Create(filename).
+
 2007-04-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlConvert.cs : MinValue and MaxValue, same for ToDateTime().

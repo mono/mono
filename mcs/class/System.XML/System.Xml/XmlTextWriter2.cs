@@ -263,14 +263,14 @@ namespace Mono.Xml
 
 #if NET_2_0
 		internal XmlTextWriter (
-			TextWriter writer, XmlWriterSettings settings)
+			TextWriter writer, XmlWriterSettings settings, bool closeOutput)
 		{
 			if (settings == null)
 				settings = new XmlWriterSettings ();
 
 			Initialize (writer);
 
-			close_output_stream = settings.CloseOutput;
+			close_output_stream = closeOutput;
 			allow_doc_fragment =
 				settings.ConformanceLevel != ConformanceLevel.Document;
 			switch (settings.ConformanceLevel) {
