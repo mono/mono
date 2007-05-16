@@ -1,3 +1,7 @@
+2007-05-16  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* MaskedTextBox.cs: Small fix for Text that fixes a broken test.
+
 2007-05-15  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Control.cs: Make IsInputCharInternal to allow controls to

@@ -660,7 +660,7 @@ namespace System.Windows.Forms
 				if (provider == null)
 					return string.Empty;
 					
-				return provider.ToString (true, true);
+				return provider.ToString ();
 			}
 			set {
 				string initial_text = Text;
