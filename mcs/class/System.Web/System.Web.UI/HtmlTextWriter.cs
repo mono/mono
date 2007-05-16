@@ -41,6 +41,31 @@ namespace System.Web.UI {
 	public class HtmlTextWriter : TextWriter {
 
 
+		readonly static Hashtable _tagTable;
+		readonly static Hashtable _attributeTable;
+		readonly static Hashtable _styleTable;
+
+		static HtmlTextWriter ()
+		{
+			_tagTable = new Hashtable (tags.Length, 
+				CaseInsensitiveHashCodeProvider.Default, CaseInsensitiveComparer.Default);
+			
+			_attributeTable = new Hashtable (htmlattrs.Length, 
+				CaseInsensitiveHashCodeProvider.Default, CaseInsensitiveComparer.Default);
+			
+			_styleTable = new Hashtable (htmlstyles.Length, 
+				CaseInsensitiveHashCodeProvider.Default, CaseInsensitiveComparer.Default);
+
+			foreach (HtmlTag tag in tags)
+				_tagTable.Add (tag.name, tag);
+
+			foreach (HtmlAttribute attr in htmlattrs)
+				_attributeTable.Add (attr.name, attr);
+
+			foreach (HtmlStyle style in htmlstyles)
+				_styleTable.Add (style.name, style);
+		}
+
 		public HtmlTextWriter (TextWriter writer) : this (writer, DefaultTabString)
 		{
 		}
@@ -214,21 +239,11 @@ namespace System.Web.UI {
 
 		protected HtmlTextWriterAttribute GetAttributeKey (string attrName)
 		{
-			// I don't think we want to binary search
-			// because there might be something added to
-			// the enum later. Do we really need anything
-			// faster than a linear search?
+			object attribute = _attributeTable [attrName];
+			if (attribute == null)
+				return (HtmlTextWriterAttribute) (-1);
 
-			foreach (HtmlAttribute t in htmlattrs) {
-#if NET_2_0
-				if (String.Compare(t.name, attrName, StringComparison.OrdinalIgnoreCase) == 0)
-#else
-				if (String.Compare (t.name, attrName, true, CultureInfo.InvariantCulture) == 0)
-#endif
-					return t.key;
-			}
-
-			return (HtmlTextWriterAttribute) (-1);
+			return (HtmlTextWriterAttribute) ((HtmlAttribute) attribute).key;
 		}
 
 		protected string GetAttributeName (HtmlTextWriterAttribute attrKey)
@@ -241,21 +256,11 @@ namespace System.Web.UI {
 
 		protected HtmlTextWriterStyle GetStyleKey (string styleName)
 		{
-			// I don't think we want to binary search
-			// because there might be something added to
-			// the enum later. Do we really need anything
-			// faster than a linear search?
+			object style = _styleTable [styleName];
+			if (style == null)
+				return (HtmlTextWriterStyle) (-1);
 
-			foreach (HtmlStyle t in htmlstyles) {
-#if NET_2_0
-				if (String.Compare(t.name, styleName, StringComparison.OrdinalIgnoreCase) == 0)
-#else
-				if (String.Compare (t.name, styleName, true, CultureInfo.InvariantCulture) == 0)
-#endif
-					return t.key;
-			}
-
-			return (HtmlTextWriterStyle) (-1);
+			return (HtmlTextWriterStyle) ((HtmlStyle) style).key;
 		}
 
 		protected string GetStyleName (HtmlTextWriterStyle styleKey)
@@ -265,17 +270,11 @@ namespace System.Web.UI {
 
 		protected virtual HtmlTextWriterTag GetTagKey (string tagName)
 		{
-			// I don't think we want to binary search
-			// because there might be something added to
-			// the enum later. Do we really need anything
-			// faster than a linear search?
+			object tag = _tagTable [tagName];
+			if (tag == null)
+				return HtmlTextWriterTag.Unknown;
 
-			foreach (HtmlTag t in tags) {
-				if (String.Compare (t.name, tagName, true, CultureInfo.InvariantCulture) == 0)
-					return t.key;
-			}
-
-			return HtmlTextWriterTag.Unknown;
+			return (HtmlTextWriterTag) ((HtmlTag) tag).key;
 		}
 
 		internal static string StaticGetTagName (HtmlTextWriterTag tagKey)
@@ -908,10 +907,10 @@ namespace System.Web.UI {
 		}
 
 
-		struct HtmlTag {
-			public HtmlTextWriterTag key;
-			public string name;
-			public TagType tag_type;
+		sealed class HtmlTag {
+			readonly public HtmlTextWriterTag key;
+			readonly public string name;
+			readonly public TagType tag_type;
 
 			public HtmlTag (HtmlTextWriterTag k, string n, TagType tt)
 			{
@@ -921,9 +920,9 @@ namespace System.Web.UI {
 			}
 		}
 
-		struct HtmlStyle {
-			public HtmlTextWriterStyle key;
-			public string name;
+		sealed class HtmlStyle {
+			readonly public HtmlTextWriterStyle key;
+			readonly public string name;
 
 			public HtmlStyle (HtmlTextWriterStyle k, string n)
 			{
@@ -933,9 +932,9 @@ namespace System.Web.UI {
 		}
 
 
-		struct HtmlAttribute {
-			public HtmlTextWriterAttribute key;
-			public string name;
+		sealed class HtmlAttribute {
+			readonly public HtmlTextWriterAttribute key;
+			readonly public string name;
 
 			public HtmlAttribute (HtmlTextWriterAttribute k, string n)
 			{

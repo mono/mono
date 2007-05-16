@@ -1,3 +1,9 @@
+2007-05-16  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* HtmlTextWriter.cs: refactoring, created hashtables for tags, styles
+	and attributes arrays, that gives performance improvement in GetTagKey
+	GetStyleKey and GetAttributeKey methods
+
 2007-05-15  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateControl.cs: implemented the 3-parameter overloads of
