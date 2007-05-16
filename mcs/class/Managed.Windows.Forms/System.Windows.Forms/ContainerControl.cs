@@ -425,8 +425,10 @@ namespace System.Windows.Forms {
 
 			switch (key) {
 				case Keys.Tab: {
-					if (ProcessTabKey((Control.ModifierKeys & Keys.Shift) == 0)) {
-						return true;
+					if ((keyData & (Keys.Alt | Keys.Control)) == Keys.None) {
+						if (ProcessTabKey ((Control.ModifierKeys & Keys.Shift) == 0)) {
+							return true;
+						}
 					}
 					break;
 				}

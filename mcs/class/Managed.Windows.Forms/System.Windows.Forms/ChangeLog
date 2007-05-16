@@ -1,3 +1,11 @@
+2007-05-16  Andreia Gaita <avidigal@novell.com> 
+
+	* ContainerControl.cs: only process tab key if there are no 
+	modifier keys present, otherwise the control does the 
+	tab processing, if it needs to. Fixes #81622
+	* TabControl.cs: Fixes calculation for which tab to select on
+	shift+ctrl+tab.
+
 2007-05-16  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* MaskedTextBox.cs: Small fix for Text that fixes a broken test.

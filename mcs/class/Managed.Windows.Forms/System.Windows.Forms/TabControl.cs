@@ -586,7 +586,7 @@ namespace System.Windows.Forms {
 				if ((e.KeyData & Keys.Shift) == 0)
 					SelectedIndex = (SelectedIndex + 1) % TabCount;
 				else
-					SelectedIndex = (SelectedIndex - 1) % TabCount;
+					SelectedIndex = (SelectedIndex + TabCount - 1) % TabCount;
 				e.Handled = true;
 			} else if (e.KeyCode == Keys.Home) {
 				SelectedIndex = 0;
