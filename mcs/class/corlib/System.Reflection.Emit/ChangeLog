@@ -1,5 +1,10 @@
 2007-05-16  Zoltan Varga  <vargaz@gmail.com>
 
+	* TypeBuilder.cs (GetFields): Return MonoField objects if the type is already
+	created.
+
+	* FieldBuilder.cs (SetValue): Make this not supported again.
+	
 	* FieldBuilder.cs: Support calling SetValue (). Fixes #81638.
 
 2007-05-06  Zoltan Varga  <vargaz@gmail.com>

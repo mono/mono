@@ -203,12 +203,7 @@ namespace System.Reflection.Emit {
 		}
 
 		public override void SetValue( object obj, object val, BindingFlags invokeAttr, Binder binder, CultureInfo culture) {
-			// MS throws NotSupportedException here, but we sometimes return
-			// FieldBuilders instead of FieldInfos so we have to support this
-			if (typeb.is_created)
-				typeb.CreateType ().GetField (Name).SetValue (obj, val, invokeAttr, binder, culture);
-			else
-				throw CreateNotSupportedException ();
+			throw CreateNotSupportedException ();
 		}
 
 		internal override UnmanagedMarshal UMarshal {
