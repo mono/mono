@@ -1,3 +1,7 @@
+2007-05-16  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* CryptoStream.cs: Fix another problem that can occurs with WriteByte.
+
 2007-05-11  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* CryptoStream.cs: Ensure TransformFinalBlock isn't called multiple 

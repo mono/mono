@@ -291,8 +291,10 @@ namespace System.Security.Cryptography {
 						_workingBlock = new byte [size];
 					}
 
-					int len = _transform.TransformBlock (buffer, offset, size, _workingBlock, 0);
-					_stream.Write (_workingBlock, 0, len);
+					if (size > 0) {
+						int len = _transform.TransformBlock (buffer, offset, size, _workingBlock, 0);
+						_stream.Write (_workingBlock, 0, len);
+					}
 
 					if (rem > 0)
 						Buffer.BlockCopy (buffer, buffer.Length - rem, _workingBlock, 0, rem);
