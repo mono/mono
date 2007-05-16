@@ -1,3 +1,8 @@
+2007-05-16  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* XmlWriterTests.cs: Added tests for Close that verify closing of
+	underlying stream.
+
 2007-04-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XsdValidatingReaderTests.cs : added test for bug #81460.

@@ -207,6 +207,68 @@ namespace MonoTests.System.Xml
 		}
 
 #if NET_2_0
+		[Test]
+		public void Close_File ()
+		{
+			string file = Path.GetTempFileName ();
+			XmlWriter writer = XmlWriter.Create (file);
+			writer.Close ();
+			File.Delete (file);
+
+			XmlWriterSettings settings = new XmlWriterSettings ();
+			settings.CloseOutput = true;
+			writer = XmlWriter.Create (file, settings);
+			writer.Close ();
+			File.Delete (file);
+		}
+
+		[Test]
+		public void Close_Stream ()
+		{
+			MemoryStream ms = new MemoryStream ();
+			XmlWriter writer = XmlWriter.Create (ms);
+			writer.Close ();
+			Assert.IsTrue (ms.CanWrite, "#1");
+
+			XmlWriterSettings settings = new XmlWriterSettings ();
+			settings.CloseOutput = true;
+			writer = XmlWriter.Create (ms, settings);
+			writer.Close ();
+			Assert.IsFalse (ms.CanWrite, "#2");
+		}
+
+		[Test]
+		public void Close_TextWriter ()
+		{
+			MemoryStream ms = new MemoryStream ();
+			XmlWriter writer = XmlWriter.Create (new StreamWriter (ms));
+			writer.Close ();
+			Assert.IsTrue (ms.CanWrite, "#1");
+
+			XmlWriterSettings settings = new XmlWriterSettings ();
+			settings.CloseOutput = true;
+			writer = XmlWriter.Create (new StreamWriter (ms), settings);
+			writer.Close ();
+			Assert.IsFalse (ms.CanWrite, "#2");
+		}
+
+		[Test]
+		public void Close_XmlWriter ()
+		{
+			MemoryStream ms = new MemoryStream ();
+			XmlTextWriter xtw = new XmlTextWriter (ms, Encoding.UTF8);
+			XmlWriter writer = XmlWriter.Create (xtw);
+			writer.Close ();
+			Assert.IsFalse (ms.CanWrite, "#1");
+
+			ms = new MemoryStream ();
+			xtw = new XmlTextWriter (ms, Encoding.UTF8);
+			XmlWriterSettings settings = new XmlWriterSettings ();
+			settings.CloseOutput = true;
+			writer = XmlWriter.Create (xtw, settings);
+			writer.Close ();
+			Assert.IsFalse (ms.CanWrite, "#2");
+		}
 
 		XPathNavigator GetNavigator (string xml)
 		{
