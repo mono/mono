@@ -121,6 +121,12 @@ namespace System.Windows.Forms {
 				base.OnPaint(pevent);
 			}
 
+			protected override void OnTextChanged (EventArgs args)
+			{
+				Invalidate ();
+				base.OnTextChanged (args); 
+			}
+
 			protected override void Dispose(bool disposing) {
 				if (disposing) {
 					this.string_format.Dispose();
@@ -377,13 +383,17 @@ namespace System.Windows.Forms {
 			}
 			
 			// if SetToolTip is called from a control and the mouse is currently over that control,
-			// make sure that tooltip_window.Text gets updated
-			if (caption != null && last_control == control) {
+			// make sure that tooltip_window.Text gets updated if it's being shown,
+			// or show the tooltip for it if is not
+			if (active_control == control && caption != null && state == TipState.Show) {
 				Size size = ThemeEngine.Current.ToolTipSize(tooltip_window, caption);
 				tooltip_window.Width = size.Width;
 				tooltip_window.Height = size.Height;
 				tooltip_window.Text = caption;
-			}
+				timer.Stop ();
+				timer.Start ();
+			} else if (MouseInControl (control))
+				ShowTooltip (control);
 		}
 
 		public override string ToString() {
@@ -452,10 +462,8 @@ namespace System.Windows.Forms {
 			timer.Stop();
 			state = TipState.Initial;
 
-			// if we're in the same control as before (how'd that happen?) or if we're not active, leave
-			if (!is_active || (active_control == control)) {
+			if (!is_active)
 				return;
-			}
 
 			if (!show_always) {
 				IContainerControl cc = last_control.GetContainerControl ();

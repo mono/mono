@@ -1,3 +1,12 @@
+2007-05-16  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+	
+	* ToolTips.cs: Update Text if SetToolTip is called for a control
+	already showing the tooltip, as well as restarting its timer; show
+	tooltip if we are inside the control bounds by the time of calling
+	SetToolTip. Inside ShowTooltip remove the check to not show the 
+	tooltip again for the active control (it is allowed by .Net to 
+	show the tooltip on the same control multiple times).
+
 2007-05-16  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* MaskedTextBox.cs: Small fix for Text that fixes a broken test.
