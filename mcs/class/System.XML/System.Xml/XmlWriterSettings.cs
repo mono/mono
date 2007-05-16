@@ -56,24 +56,9 @@ namespace System.Xml
 			Reset ();
 		}
 
-		private XmlWriterSettings (XmlWriterSettings org)
-		{
-			checkCharacters = org.checkCharacters;
-			closeOutput = org.closeOutput;
-			conformance = org.conformance;
-			encoding = org.encoding;
-			indent = org.indent;
-			indentChars = org.indentChars;
-			newLineChars = org.newLineChars;
-			newLineOnAttributes = org.newLineOnAttributes;
-			newLineHandling = org.newLineHandling;
-			outputMethod = org.outputMethod;
-			omitXmlDeclaration = org.omitXmlDeclaration;
-		}
-
 		public XmlWriterSettings Clone ()
 		{
-			return new XmlWriterSettings (this);
+			return (XmlWriterSettings) MemberwiseClone ();
 		}
 
 		public void Reset ()
