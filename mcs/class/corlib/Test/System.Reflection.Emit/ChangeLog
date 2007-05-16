@@ -1,5 +1,10 @@
 2007-05-16  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* TypeBuilderTest.cs: Added GetFields test for bug #81368. Enabled
+	test for bug #81640.
+
+2007-05-16  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* TypeBuilderTest.cs: Use Assert instead of deprecated Assertion
 	class. Number tests. Added tests for bug #81638 and #81640.
 

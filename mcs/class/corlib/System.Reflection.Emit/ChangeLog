@@ -1,3 +1,8 @@
+2007-05-16  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TypeBuilder.cs (GetField): Return MonoField instance if the type is
+	already created. Fixed other part of bug #81368.
+
 2007-05-16  Zoltan Varga  <vargaz@gmail.com>
 
 	* TypeBuilder.cs (GetFields): Return MonoField objects if the type is already

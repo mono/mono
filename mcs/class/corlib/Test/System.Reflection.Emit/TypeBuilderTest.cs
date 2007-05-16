@@ -1317,9 +1317,22 @@ namespace MonoTests.System.Reflection.Emit
 			tb.DefineField ("TestField", typeof (int), FieldAttributes.Public);
 
 			Type emittedType = tb.CreateType ();
+			FieldInfo [] dynamicFields = tb.GetFields ();
+			FieldInfo [] emittedFields = emittedType.GetFields ();
 
-			Assert.AreEqual (1, tb.GetFields ().Length);
-			Assert.AreEqual (tb.GetFields ().Length, emittedType.GetFields ().Length);
+			Assert.AreEqual (1, dynamicFields.Length, "#A1");
+			Assert.AreEqual (dynamicFields.Length, emittedFields.Length, "#A2");
+			Assert.IsFalse ((dynamicFields [0]) is FieldBuilder, "#A3");
+			Assert.IsFalse ((emittedFields [0]) is FieldBuilder, "#A4");
+
+			// bug #81638
+			object value = Activator.CreateInstance (emittedType);
+			emittedFields [0].SetValue (value, 5);
+			Assert.AreEqual (5, emittedFields [0].GetValue (value), "#B1");
+			Assert.AreEqual (5, dynamicFields [0].GetValue (value), "#B2");
+			dynamicFields [0].SetValue (value, 4);
+			Assert.AreEqual (4, emittedFields [0].GetValue (value), "#B3");
+			Assert.AreEqual (4, dynamicFields [0].GetValue (value), "#B4");
 		}
 
 		[Test]
@@ -1370,16 +1383,16 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.AreEqual (dynamicField.Name, emittedField.Name, "#A2");
 			Assert.IsNull (tb.GetField ("TestOtherField"), "#A3");
 			Assert.IsFalse (emittedField is FieldBuilder, "#A4");
-			//Assert.IsFalse (dynamicField is FieldBuilder, "#A5");
+			Assert.IsFalse (dynamicField is FieldBuilder, "#A5");
 
 			// bug #81638
 			object value = Activator.CreateInstance (emittedType);
 			emittedField.SetValue (value, 5);
 			Assert.AreEqual (5, emittedField.GetValue (value), "#B1");
-			//Assert.AreEqual (5, dynamicField.GetValue (value), "#B2");
+			Assert.AreEqual (5, dynamicField.GetValue (value), "#B2");
 			dynamicField.SetValue (value, 4);
 			Assert.AreEqual (4, emittedField.GetValue (value), "#B3");
-			//Assert.AreEqual (4, dynamicField.GetValue (value), "#B4");
+			Assert.AreEqual (4, dynamicField.GetValue (value), "#B4");
 		}
 
 		[Test] // bug #81640

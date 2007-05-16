@@ -851,6 +851,9 @@ namespace System.Reflection.Emit {
 		}
 
 		public override FieldInfo GetField( string name, BindingFlags bindingAttr) {
+			if (created != null)
+				return created.GetField (name, bindingAttr);
+
 			if (fields == null)
 				return null;
 
