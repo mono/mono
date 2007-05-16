@@ -8565,29 +8565,165 @@ namespace Mono.CSharp {
 		}
 	}
 	
+	public interface IInitializable
+	{
+		bool Initialize (EmitContext ec, Expression target);
+	}
+	
 	public class Initializer
 	{
 		public readonly string Name;
-		public readonly Expression Value;
+		public readonly object Value;
 
 		public Initializer (string name, Expression value)
 		{
 			Name = name;
 			Value = value;
 		}
+
+		public Initializer (string name, IInitializable value)
+		{
+			Name = name;
+			Value = value;
+		}
+	}
+	
+	public class ObjectInitializer : IInitializable
+	{
+		readonly ArrayList initializers;
+		public ObjectInitializer (ArrayList initializers)
+		{
+			this.initializers = initializers;
+		}
+		
+		public bool Initialize (EmitContext ec, Expression target)
+		{
+			ArrayList initialized = new ArrayList (initializers.Count);
+			for (int i = initializers.Count - 1; i >= 0; i--) {
+				Initializer initializer = initializers[i] as Initializer;
+				if (initialized.Contains (initializer.Name)) {
+					//FIXME proper error
+					Console.WriteLine ("Object member can only be initialized once");
+					return false;
+				}
+				
+				MemberAccess ma = new MemberAccess (target, initializer.Name);
+				Expression expr = initializer.Value as Expression;
+				// If it's an expresison, append the assign.
+				if (expr != null) {
+					Assign a = new Assign (ma, expr);
+					ec.CurrentBlock.InsertStatementAfterCurrent (new StatementExpression (a));
+				}
+				// If it's another initializer (object or collection), initialize it.
+				else if (!((IInitializable)initializer.Value).Initialize (ec, ma))
+							return false;
+				
+				initialized.Add (initializer.Name);
+			}
+			return true;
+		}
+	}
+	
+	public class CollectionInitializer : IInitializable
+	{
+		readonly ArrayList items;
+		public CollectionInitializer (ArrayList items)
+		{
+			this.items = items;
+		}
+		
+		bool CheckCollection (EmitContext ec, Expression e)
+		{
+			if (e == null || e.Type == null)
+				return false;
+			bool is_ienumerable = false;
+			foreach (Type t in TypeManager.GetInterfaces (e.Type))
+				if (t == typeof (IEnumerable)) {
+					is_ienumerable = true;
+					break;
+				}
+			
+			if (!is_ienumerable)
+				return false;
+			
+			MethodGroupExpr mg = Expression.MemberLookup (
+				ec.ContainerType, e.Type, "Add", MemberTypes.Method,
+				Expression.AllBindingFlags, Location.Null) as MethodGroupExpr;
+
+			if (mg == null)
+					return false;
+			
+			foreach (MethodInfo mi in mg.Methods) {
+				if (TypeManager.GetParameterData (mi).Count != 1)
+					continue;
+				if ((mi.Attributes & MethodAttributes.Public) != MethodAttributes.Public)
+					continue;
+				return true;
+			}
+			return false;
+		}
+		
+		public bool Initialize (EmitContext ec, Expression target)
+		{
+			if (!CheckCollection (ec, target.Resolve (ec))) {
+				// FIXME throw proper error
+				Console.WriteLine ("Error: This is not a collection");
+				return false;
+			}
+			
+			for (int i = items.Count - 1; i >= 0; i--) {
+				MemberAccess ma = new MemberAccess (target, "Add");
+				ArrayList array = new ArrayList ();
+				array.Add (new Argument ((Expression)items[i]));
+				Invocation invoke = new Invocation (ma, array);
+				ec.CurrentBlock.InsertStatementAfterCurrent (new StatementExpression (invoke));
+			}
+			return true;
+		}
+	}
+	
+	public class AnonymousTypeInitializer : IInitializable
+	{
+		readonly ArrayList initializers;
+		public AnonymousTypeInitializer (ArrayList initializers)
+		{
+			this.initializers = initializers;
+		}
+		
+		public bool Initialize (EmitContext ec, Expression target)
+		{
+			foreach (AnonymousTypeParameter p in initializers) {
+				MemberAccess ma = new MemberAccess (target, p.Name);
+				Assign a = p.Expression as Assign;
+				Assign assign = new Assign (ma, (a != null) ? a.Source : p.Expression);
+				ec.CurrentBlock.InsertStatementAfterCurrent (new StatementExpression (assign));
+			}
+			return true;
+		}
 	}
 
-	public interface IInitializable
+	public class NewInitialize : New, IInitializable
 	{
-		void Initialize (EmitContext ec, Expression target);
+		IInitializable initializer;
+
+		public bool Initialize (EmitContext ec, Expression target)
+		{
+			return initializer.Initialize (ec, target);
+		}
+
+		public NewInitialize (Expression requested_type, ArrayList arguments, IInitializable initializer, Location l)
+			: base (requested_type, arguments, l)
+		{
+			this.initializer = initializer;
+		}
 	}
 
-	public class AnonymousType : Expression, IInitializable
+	public class AnonymousType : Expression
 	{
-		private ArrayList parameters;
-		private TypeContainer parent;
-		private Location loc;
-		private TypeContainer anonymous_type;
+		ArrayList parameters;
+		TypeContainer parent;
+		Location loc;
+		TypeContainer anonymous_type;
 
 		public AnonymousType (ArrayList parameters, TypeContainer parent, Location loc)
 		{
@@ -8604,10 +8740,11 @@ namespace Mono.CSharp {
 			anonymous_type = GetAnonymousType (ec);
 
 			TypeExpression te = new TypeExpression (anonymous_type.TypeBuilder, loc);
-			return new New (te, null, loc).Resolve (ec);
+			AnonymousTypeInitializer ati = new AnonymousTypeInitializer (parameters);
+			return new NewInitialize (te, null, ati, loc).Resolve (ec);
 		}
 
-		private TypeContainer GetAnonymousType (EmitContext ec)
+		TypeContainer GetAnonymousType (EmitContext ec)
 		{
 			// See if we already have an anonymous type with the right fields.
 			// If not, create one.
@@ -8641,7 +8778,7 @@ namespace Mono.CSharp {
 			return CreateAnonymousType (ec);
 		}
 
-		private TypeContainer CreateAnonymousType (EmitContext ec)
+		TypeContainer CreateAnonymousType (EmitContext ec)
 		{
 			TypeContainer type = new AnonymousClass (parent, loc);
 			foreach (AnonymousTypeParameter p in parameters) {
@@ -8660,26 +8797,14 @@ namespace Mono.CSharp {
 			TypeExpression te = new TypeExpression (anonymous_type.TypeBuilder, loc);
 			new New (te, null, loc).Emit(ec);
 		}
-
-		public void Initialize (EmitContext ec, Expression target)
-		{
-			LocalVariableReference lv = (LocalVariableReference)target;
-			foreach (AnonymousTypeParameter p in parameters) {
-				MemberAccess ma = new MemberAccess (lv, p.Name);
-				Assign a = new Assign (ma, (p.Expression is Assign)
-				                       ? ((Assign)p.Expression).Source
-				                       : p.Expression);
-				ec.CurrentBlock.InsertStatementAfterCurrent (new StatementExpression (a));
-			}
-		}
 	}
 
 	public class AnonymousTypeParameter : Expression
 	{
-		private LocatedToken token;
-		private string name;
-		private Expression expression;
-		private Type type;
+		LocatedToken token;
+		string name;
+		Expression expression;
+		Type type;
 
 		public LocatedToken Token {
 			get { return token; }
@@ -8720,91 +8845,6 @@ namespace Mono.CSharp {
 			this.name = name;
 			this.expression = expression;
 			type = expression.Type;
-		}
-	}
-
-	public class NewInitialize : New, IInitializable
-	{
-		private ArrayList initializers;
-
-		public void Initialize (EmitContext ec, Expression target)
-		{
-			LocalVariableReference lv = (LocalVariableReference)target;
-			for (int i = initializers.Count - 1; i >= 0; i--) {
-				MemberAccess ma = new MemberAccess (lv, ((Initializer)initializers[i]).Name);
-				Assign a = new Assign (ma, ((Initializer)initializers[i]).Value);
-				ec.CurrentBlock.InsertStatementAfterCurrent (new StatementExpression (a));
-			}
-		}
-
-		public NewInitialize (Expression requested_type, ArrayList arguments, Location l, ArrayList initializers)
-			: base (requested_type, arguments, l)
-		{
-			this.initializers = initializers;
-		}
-	}
-
-	public class CollectionInitialize : New, IInitializable
-	{
-		private ArrayList items;
-		
-		public CollectionInitialize (Expression type, ArrayList arguments, Location l, ArrayList items)
-			: base (type, arguments, l)
-		{
-			this.items = items;
-		}
-		
-		// A type is a valid collection if it implements IEnumerable and has a public Add method
-		private bool CheckCollection (EmitContext ec)
-		{
-			Expression e = base.Resolve (ec);
-			
-			if (e == null)
-				return false;
-			
-			bool is_ienumerable = false;
-			foreach (Type t in TypeManager.GetInterfaces (e.Type))
-				if (t == typeof (IEnumerable)) {
-					is_ienumerable = true;
-					break;
-				}
-			
-			if (!is_ienumerable)
-				return false;
-			
-			MethodGroupExpr mg = Expression.MemberLookup (
-				ec.ContainerType, e.Type, "Add", MemberTypes.Method,
-				Expression.AllBindingFlags, loc) as MethodGroupExpr;
-
-			if (mg == null)
-					return false;
-			
-			foreach (MethodInfo mi in mg.Methods) {
-				if (TypeManager.GetParameterData (mi).Count != 1)
-					continue;
-				if ((mi.Attributes & MethodAttributes.Public) != MethodAttributes.Public)
-					continue;
-				return true;
-			}
-			return false;
-		}
-		
-		public void Initialize (EmitContext ec, Expression target)
-		{
-			if (!CheckCollection (ec)) {
-				// TODO throw proper error
-				Console.WriteLine ("Error: This is not a collection");
-				return;
-			}
-			
-			LocalVariableReference lv = (LocalVariableReference) target;
-			for (int i = items.Count - 1; i >= 0; i--) {
-				MemberAccess ma = new MemberAccess (lv, "Add");
-				ArrayList array = new ArrayList ();
-				array.Add ((Argument)items[i]);
-				Invocation invoke = new Invocation (ma, array);
-				ec.CurrentBlock.InsertStatementAfterCurrent (new StatementExpression (invoke));
-			}
 		}
 	}
 }

@@ -1,3 +1,8 @@
+2007-05-15  Scott Peterson  <lunchtimemama@gmail.com>
+	* gcs0201.cs:
+	  Make sure that Linq syntax fails correctly
+	  when not compiling for Linq.
+
 2007-05-08  Scott Peterson  <lunchtimemama@gmail.com>
 	* gcs1526.cs:
 	* gcs1526-2.cs:

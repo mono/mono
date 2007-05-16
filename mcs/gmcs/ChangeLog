@@ -1,3 +1,8 @@
+2007-05-15  Scott Peterson  <lunchtimemama@gmail.com>
+	
+	* cs-parser.jay: Improved grammar for object and collection
+	  initialization.
+
 2007-04-28  Scott Peterson  <lunchtimemama@gmail.com>
 
 	This code is contributed under the MIT X11 license

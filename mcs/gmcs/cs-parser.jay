@@ -1516,7 +1516,7 @@ property_declaration
 
 		prop = new Property (current_class, (Expression) $3, (int) $2, false,
 				     name, (Attributes) $1, get_block, set_block, accessors.declared_in_reverse);
-		
+
 		current_container.AddProperty (prop);
 		implicit_value_parameter_type = null;
 
@@ -3196,6 +3196,97 @@ opt_object_initializer
 	  }
 	;
 
+opt_object_or_collection_initializer
+	: /* empty */		{ $$ = null; }
+	| object_or_collection_initializer
+	;
+
+object_or_collection_initializer
+	: object_initializer
+	| collection_initializer
+	;
+
+object_initializer
+	: OPEN_BRACE opt_member_initializer_list CLOSE_BRACE
+	  {
+	  	if ($2 == null)
+	  		$$ = null;
+	  	else
+	  		$$ = new ObjectInitializer ((ArrayList)$2);
+	  }
+	| OPEN_BRACE member_initializer_list COMMA CLOSE_BRACE
+	  {
+	  	$$ = new ObjectInitializer ((ArrayList) $2);
+	  }
+	;
+
+opt_member_initializer_list
+	: /* empty */		{ $$ = null; }
+	| member_initializer_list
+	;
+
+member_initializer_list
+	: member_initializer
+	  {
+	  	ArrayList a = new ArrayList ();
+	  	a.Add ($1);
+	  	$$ = a;
+	  }
+	| member_initializer_list COMMA member_initializer
+	  {
+	  	ArrayList a = (ArrayList)$1;
+	  	a.Add ($3);
+	  	$$ = a;
+	  }
+	;
+
+member_initializer
+	: IDENTIFIER ASSIGN initializer_value
+	  {
+	  	LocatedToken id = $1 as LocatedToken;
+	  	IInitializable i = $3 as IInitializable;
+	  	if (i != null)
+	  		$$ = new Initializer (id.Value, i);
+	  	else
+	  		$$ = new Initializer (id.Value, (Expression)$3);
+	  }
+	;
+
+initializer_value
+	: expression
+	| object_or_collection_initializer
+	;
+
+collection_initializer
+	: OPEN_BRACE element_initializer_list CLOSE_BRACE
+	  {
+	  	$$ = new CollectionInitializer ((ArrayList) $2);
+	  }
+	| OPEN_BRACE element_initializer_list COMMA CLOSE_BRACE
+	  {
+	  	$$ = new CollectionInitializer ((ArrayList) $2);
+	  }
+	;
+
+element_initializer_list
+	: element_initializer
+	  {
+	  	ArrayList a = new ArrayList ();
+	  	a.Add ($1);
+	  	$$ = a;
+	  }
+	| element_initializer_list COMMA element_initializer
+	  {
+	  	ArrayList a = $1 as ArrayList;
+	  	a.Add ($3);
+	  	$$ = a;
+	  }
+	;
+
+element_initializer
+	: non_assignment_expression
+	;
+
 opt_argument_list
 	: /* empty */		{ $$ = null; }
 	| argument_list
@@ -3351,12 +3442,11 @@ post_decrement_expression
 new_expression
 	: object_or_delegate_creation_expression
 	| array_creation_expression
-	| collection_initialization_expression
 	| anonymous_type_expression
 	;
 
 object_or_delegate_creation_expression
-	: NEW type OPEN_PARENS opt_argument_list CLOSE_PARENS opt_object_initializer
+	: NEW type OPEN_PARENS opt_argument_list CLOSE_PARENS opt_object_or_collection_initializer
 	  {
 		if ($6 != null) {
 			if (RootContext.Version < LanguageVersion.LINQ) {
@@ -3364,22 +3454,19 @@ object_or_delegate_creation_expression
 		  		$$ = null;
 		  	}
 		  	else
-				$$ = new NewInitialize ((Expression) $2, (ArrayList) $4, (Location) $1, (ArrayList) $6);
+				$$ = new NewInitialize ((Expression) $2, (ArrayList) $4, (IInitializable) $6, (Location) $1);
 		}
 		else
 			$$ = new New ((Expression) $2, (ArrayList) $4, (Location) $1);
 	  }
-	;
-
-collection_initialization_expression
-	: NEW type OPEN_BRACE argument_list CLOSE_BRACE
+	| NEW type object_or_collection_initializer
 	  {
 	  	if (RootContext.Version < LanguageVersion.LINQ) {
 	  		Report.Error (1526, (Location) $1, "A new expression requires () or [] after type");
-			$$ = null;
-		}
-		else
-	  		$$ = new CollectionInitialize ((Expression) $2, new ArrayList (), (Location) $1, (ArrayList) $4);
+	  		$$ = null;
+	  	}
+	  	else
+			$$ = new NewInitialize ((Expression) $2, new ArrayList (), (IInitializable) $3, (Location) $1);
 	  }
 	;
 

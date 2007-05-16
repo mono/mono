@@ -320,10 +320,6 @@ namespace Mono.CSharp {
 		//
 		public override Expression DoResolve (EmitContext ec)
 		{
-			// Handle initializations e.g. Person p = new Person () { Name = "Scott" };
-			if (source is IInitializable)
-				((IInitializable)source).Initialize (ec, target);
-
 			// Create an embedded assignment if our source is an assignment.
 			if (source is Assign)
 				source = embedded = ((Assign) source).GetEmbeddedAssign (loc);
@@ -378,6 +374,11 @@ namespace Mono.CSharp {
 			target = target.ResolveLValue (ec, source, Location);
 
 			if (target == null)
+				return null;
+			
+			// Handle initializations e.g. Person p = new Person () { Name = "Scott" };
+			IInitializable initializer = source as IInitializable;
+			if (initializer != null && !initializer.Initialize (ec, target))
 				return null;
 
 			bool same_assignment = (embedded != null) ? embedded.Target.Equals(target) : source.Equals (target);
