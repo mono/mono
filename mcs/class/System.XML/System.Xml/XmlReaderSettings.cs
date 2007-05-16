@@ -62,32 +62,11 @@ namespace System.Xml
 			Reset ();
 		}
 
-		private XmlReaderSettings (XmlReaderSettings org)
-		{
-			checkCharacters = org.checkCharacters;
-			closeInput = org.closeInput;
-			conformance = org.conformance;
-			ignoreComments = org.ignoreComments;
-			ignoreProcessingInstructions = 
-				org.ignoreProcessingInstructions;
-			ignoreWhitespace = org.ignoreWhitespace;
-			lineNumberOffset = org.lineNumberOffset;
-			linePositionOffset = org.linePositionOffset;
-			prohibitDtd = org.prohibitDtd;
-			schemas = org.schemas;
-			validationFlags = org.validationFlags;
-			validationType = org.validationType;
-			nameTable = org.nameTable;
-			xmlResolver = org.xmlResolver;
-			if (org.ValidationEventHandler != null)
-				ValidationEventHandler += org.ValidationEventHandler;
-		}
-
 		public event ValidationEventHandler ValidationEventHandler;
 
 		public XmlReaderSettings Clone ()
 		{
-			return new XmlReaderSettings (this);
+			return (XmlReaderSettings) MemberwiseClone ();
 		}
 
 		public void Reset ()
