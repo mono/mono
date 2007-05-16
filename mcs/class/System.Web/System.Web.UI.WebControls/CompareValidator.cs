@@ -62,18 +62,20 @@ namespace System.Web.UI.WebControls {
 
 		protected override bool ControlPropertiesValid ()
 		{
-			if ((this.Operator != ValidationCompareOperator.DataTypeCheck) && ControlToCompare.Length == 0 && !BaseCompareValidator.CanConvert (this.ValueToCompare, this.Type, this.CultureInvariantValues))
-            {
-                throw new HttpException(
-                    String.Format("Unable to convert the value: {0} as a {1}", ValueToCompare, Enum.GetName(typeof(ValidationDataType), this.Type)));
-            }
+			if ((this.Operator != ValidationCompareOperator.DataTypeCheck) && ControlToCompare.Length == 0 &&
+			    !BaseCompareValidator.CanConvert (this.ValueToCompare, this.Type, this.CultureInvariantValues))
+			{
+				throw new HttpException(
+					String.Format("Unable to convert the value: {0} as a {1}", ValueToCompare,
+						      Enum.GetName(typeof(ValidationDataType), this.Type)));
+			}
 
 			if (ControlToCompare.Length > 0) {
 				if (string.CompareOrdinal (ControlToCompare, ControlToValidate) == 0)
 					throw new HttpException (String.Format ("Control '{0}' cannot have the same value '{1}' for both ControlToValidate and ControlToCompare.", ID, ControlToCompare));
 				CheckControlValidationProperty (ControlToCompare, "");
 			}
-
+			
 			return base.ControlPropertiesValid ();
 		}
 
@@ -92,9 +94,9 @@ namespace System.Web.UI.WebControls {
 			/* ControlToCompare takes precendence, if it's set. */
 			compare = (ControlToCompare != "" ? GetControlValidationValue (ControlToCompare) : ValueToCompare);
 
-            return BaseCompareValidator.Compare (GetControlValidationValue (ControlToValidate), false, 
-                                compare, this.CultureInvariantValues,
-							    Operator, this.Type);
+			return BaseCompareValidator.Compare (GetControlValidationValue (ControlToValidate), false, 
+							     compare, this.CultureInvariantValues,
+							     Operator, this.Type);
 		}
 
 		[DefaultValue("")]

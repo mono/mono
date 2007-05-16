@@ -1,3 +1,7 @@
+2007-05-16  Marek Habersack  <mhabersack@novell.com>
+
+	* CompareValidator.cs: formatting changes
+
 2007-05-15  Marek Habersack  <mhabersack@novell.com>
 
 	* ObjectDataSourceView.cs: refactoring - use

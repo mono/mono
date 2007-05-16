@@ -209,7 +209,7 @@ function Page_ClientValidate()
 /*******************/
 /* type converters */
 
-function ToInteger (s)
+function ToInteger (s, validator)
 {
 	if ((v = parseInt(s, 10)) != s - 0)
 		return null;
@@ -217,12 +217,12 @@ function ToInteger (s)
 		return v;
 }
 
-function ToString (s)
+function ToString (s, validator)
 {
 	return s;
 }
 
-function ToDouble (s)
+function ToDouble (s, validator)
 {
 	if ((v = parseFloat(s)) != s - 0)
 		return null;
@@ -230,16 +230,70 @@ function ToDouble (s)
 		return v;
 }
 
-function ToDate (s)
+function ToDate (s, validator)
 {
-	/* NYI */
-	return null;
+  if (!HaveRegexp ())
+        return null;
+    var m, day, month, year;
+    var yearFirstExp = new RegExp("^\\s*((\\d{4})|(\\d{2}))([-/]|\\. ?)(\\d{1,2})\\4(\\d{1,2})\\s*$");
+    m = s.match(yearFirstExp);
+    if (m != null && (m[2].length == 4 || validator.dateorder == "ymd")) {
+        day = m[6];
+        month = m[5];
+        year = (m[2].length == 4) ? m[2] : GetFullYear(parseInt(m[3], 10), validator.cutoffyear)
+    }
+    else {
+        if (validator.dateorder == "ymd") return null;
+        var yearLastExp = new RegExp("^\\s*(\\d{1,2})([-/]|\\. ?)(\\d{1,2})\\2((\\d{4})|(\\d{2}))\\s*$");
+        m = s.match(yearLastExp);
+        if (m == null) return null;
+        if (validator.dateorder == "mdy") {
+            day = m[3];
+            month = m[1];
+        }
+        else {
+            day = m[1];
+            month = m[3];
+        }
+        year = (m[5].length == 4) ? m[5] : GetFullYear(parseInt(m[6], 10), validator.cutoffyear)
+    }
+    month -= 1;
+    var date = new Date(year, month, day);
+    return (typeof(date) == "object" && year == date.getFullYear() && month == date.getMonth() && day == date.getDate()) ? date.valueOf() : null;  
 }
 
 function ToCurrency (s)
 {
-	/* NYI */
-	return null;
+  if (!HaveRegexp ())
+    return null;
+  
+	var hasDigits = (validator.digits > 0);
+	var beginGroupSize, subsequentGroupSize;
+	var groupSizeNum = parseInt(validator.groupsize, 10);
+	if (!isNaN(groupSizeNum) && groupSizeNum > 0) {
+		beginGroupSize = "{1," + groupSizeNum + "}";
+		subsequentGroupSize = "{" + groupSizeNum + "}";
+	} else {
+		beginGroupSize = subsequentGroupSize = "+";
+	}
+	var exp = new RegExp("^\\s*([-\\+])?((\\d" + beginGroupSize + "(\\" + validator.groupchar + "\\d" + subsequentGroupSize + ")+)|\\d*)"
+                       + (hasDigits ? "\\" + validator.decimalchar + "?(\\d{0," + validator.digits + "})" : "")
+                       + "\\s*$");
+	var m = s.match(exp);
+	if (m == null)
+		return null;
+	if (m[2].length == 0 && hasDigits && m[5].length == 0)
+		return null;
+	var cleanInput = (m[1] != null ? m[1] : "") + m[2].replace(new RegExp("(\\" + validator.groupchar + ")", "g"), "") + ((hasDigits && m[5].length > 0) ? "." + m[5] : "");
+	var num = parseFloat(cleanInput);
+	return (isNaN(num) ? null : num);
+}
+
+function GetFullYear(year, maxYear)
+{
+    var twoDigitMaxYear = maxYear % 100;
+    var centure = maxYear - twoDigitMaxYear;
+    return ((year > twoDigitMaxYear) ? (centure - 100 + year) : (centure + year));
 }
 
 /*******************/
@@ -256,13 +310,13 @@ function CompareValidatorEvaluateIsValid (validator)
 	var ctrl_value = ValidatorTrim (ValidatorGetValue (ControlToValidate));
 	var compare = (ControlToCompare != null && ControlToCompare != "") ? ValidatorTrim (ValidatorGetValue (ControlToCompare)) : ValueToCompare;
 
-	var left = Convert (ctrl_value, DataType);
+	var left = Convert (ctrl_value, DataType, validator);
  	if (left == null) {
 		ValidatorFailed (validator);
 		return false;
 	}
       
-	var right = Convert (compare, DataType);
+	var right = Convert (compare, DataType, validator);
 	if (right == null) {
 		ValidatorSucceeded (validator);
 		 return true;
@@ -313,7 +367,7 @@ function RangeValidatorEvaluateIsValid (validator)
 		return true;
 	}
 
-	var val = Convert (ctrl_value, DataType);
+	var val = Convert (ctrl_value, DataType, validator);
 	if (val == null || val < MinimumValue || val > MaximumValue) {
 		ValidatorFailed (validator);
 		return false;
@@ -404,11 +458,11 @@ function CustomValidatorEvaluateIsValid (validator)
 /*********************/
 /* utility functions */
 
-function Convert (s, ty)
+function Convert (s, ty, validator)
 {
 	var cvt = this ["To" + ty];
 	if (typeof (cvt) == 'function')
-		return cvt (s);
+		return cvt (s, validator);
 	else
 		return null;
 }
