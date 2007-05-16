@@ -1,5 +1,11 @@
 2007-05-16  Marek Habersack  <mhabersack@novell.com>
 
+	* webform.js: in WebForm_ClientCallback set the id of the
+	__EVENTVALIDATION element when creating it or otherwise
+	WebForm_getFormData will not ignore it as expected by
+	WebForm_DoCallback, which will result in the variable being
+	present twice in the POST request.
+
 	* WebUIValidation.js: ported ToCurrency and ToDate converters from
 	WebUIValidation_2.0.js.
 

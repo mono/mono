@@ -2,12 +2,6 @@
 
 	* HttpContext.cs: correctly check for request locality.
 
-2007-05-16  Marek Habersack  <mhabersack@novell.com>
-
-	* HttpRequest.cs: do not add duplicate fields to the form
-	collection. Unbreaks the TreeView populate on demand sample from
-	the XSP2 tests.
-
 2007-05-15  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpApplication.cs: refactoring - moved LoadType from

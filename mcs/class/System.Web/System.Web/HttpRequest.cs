@@ -525,10 +525,6 @@ namespace System.Web {
 		void AddRawKeyValue (StringBuilder key, StringBuilder value)
 		{
 			string decodedKey = HttpUtility.UrlDecode (key.ToString (), ContentEncoding);
-			if (form.Get (decodedKey) != null)
-				// probably should warn about a duplicate here. Also, should we replace the old value instead?
-				return;
-			
 			form.Add (decodedKey,
 				  HttpUtility.UrlDecode (value.ToString (), ContentEncoding));
 

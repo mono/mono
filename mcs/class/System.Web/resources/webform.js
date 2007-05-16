@@ -156,7 +156,10 @@ function WebForm_DoCallback (id, arg, callback, ctx, errorCallback, currForm)
 {
 	currForm = WebForm_GetFormFromCtrl (id, currForm);
 	var qs = WebForm_getFormData (currForm) + "__CALLBACKTARGET=" + id + "&__CALLBACKARGUMENT=" + encodeURIComponent(arg);
-	if (currForm["__EVENTVALIDATION"]) qs += "&__EVENTVALIDATION=" + encodeURIComponent(currForm["__EVENTVALIDATION"].value);
+  
+  if (currForm["__EVENTVALIDATION"])
+    qs += "&__EVENTVALIDATION=" + encodeURIComponent(currForm["__EVENTVALIDATION"].value);
+  
 	WebForm_httpPost (currForm.serverURL || document.URL, qs, function (httpPost) { WebForm_ClientCallback (httpPost, ctx, callback, errorCallback, currForm); });
 }
 
@@ -178,6 +181,7 @@ function WebForm_ClientCallback (httpPost, ctx, callback, errorCallback, currFor
 						validationFieldElement = document.createElement("INPUT");
 						validationFieldElement.type = "hidden";
 						validationFieldElement.name = "__EVENTVALIDATION";
+            validationFieldElement.id = validationFieldElement.name;
 						currForm.appendChild(validationFieldElement);
 					}
 					validationFieldElement.value = validationField;
@@ -203,11 +207,10 @@ function WebForm_getFormData (currForm)
 			var type = elem.type;
 			if ((type == "text" || type == "hidden" || type == "password" ||
 				((type == "checkbox" || type == "radio") && elem.checked)) &&
-				(elem.id != "__EVENTVALIDATION")) {
+          (elem.id != "__EVENTVALIDATION")) {
 				qs += elem.name + "=" + encodeURIComponent (elem.value) + "&";
 			}
-		}
-		else if (tagName == "select") {
+		} else if (tagName == "select") {
 			var selectCount = elem.options.length;
 			for (var j = 0; j < selectCount; j++) {
 				var selectChild = elem.options[j];
