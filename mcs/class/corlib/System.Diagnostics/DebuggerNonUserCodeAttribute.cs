@@ -38,6 +38,7 @@ namespace System.Diagnostics
 {
 	[AttributeUsageAttribute(AttributeTargets.Class|AttributeTargets.Struct|AttributeTargets.Constructor|AttributeTargets.Method|AttributeTargets.Property, Inherited=false)] 
 	[ComVisibleAttribute(true)] 
+	[Serializable]
 	public sealed class DebuggerNonUserCodeAttribute : Attribute
 	{
 		public DebuggerNonUserCodeAttribute () {

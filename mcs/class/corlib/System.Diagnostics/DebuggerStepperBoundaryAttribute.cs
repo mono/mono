@@ -1,12 +1,11 @@
 //
-// System.Diagnostics.DebuggerBrowsableAttribute.cs
+// System.Diagnostics.DebuggerStepThroughAttribute.cs
 //
-// Author:
-//   Chris Toshok (toshok@novell.com)
+// Author: Dick Porter (dick@ximian.com)
 //
 
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,33 +27,23 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if NET_2_0
+
 using System;
-
-#if NET_2_0
 using System.Runtime.InteropServices;
-#endif
 
-namespace System.Diagnostics {
-
-	[AttributeUsageAttribute(AttributeTargets.Field | AttributeTargets.Property)]	
-#if NET_2_0
-	[ComVisible (true)]
-	public sealed class DebuggerBrowsableAttribute : Attribute
-#else
-	internal sealed class DebuggerBrowsableAttribute : Attribute
-#endif
+namespace System.Diagnostics
+{
+	[Serializable]
+	[ComVisible (true)] 
+	[AttributeUsage (AttributeTargets.Constructor|AttributeTargets.Method,
+			 Inherited=false)] 
+	public sealed class DebuggerStepperBoundaryAttribute : Attribute
 	{
-		DebuggerBrowsableState state;
-
-		public DebuggerBrowsableAttribute (DebuggerBrowsableState state) {
-			this.state = state;
-		}
-
-		public DebuggerBrowsableState State {
-			get {
-				return state;
-			}
+		public DebuggerStepperBoundaryAttribute ()
+		{
 		}
 	}
-
 }
+
+#endif

@@ -294,6 +294,7 @@ System.Diagnostics/DebuggerDisplayAttribute.cs
 System.Diagnostics/DebuggerHiddenAttribute.cs
 System.Diagnostics/DebuggerNonUserCodeAttribute.cs
 System.Diagnostics/DebuggerStepThroughAttribute.cs
+System.Diagnostics/DebuggerStepperBoundaryAttribute.cs
 System.Diagnostics/DebuggerTypeProxyAttribute.cs
 System.Diagnostics/DebuggerVisualizerAttribute.cs
 System.Diagnostics/StackFrame.cs

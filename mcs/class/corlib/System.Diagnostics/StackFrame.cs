@@ -35,9 +35,16 @@ using System.Security;
 using System.Security.Permissions;
 using System.Text;
 
+#if NET_2_0
+using System.Runtime.InteropServices;
+#endif
+
 namespace System.Diagnostics {
 
 	[Serializable]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	[MonoTODO ("Serialized objects are not compatible with MS.NET")]
         public class StackFrame {
 

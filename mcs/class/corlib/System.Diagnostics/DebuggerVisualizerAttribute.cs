@@ -30,10 +30,15 @@
 
 using System;
 
+#if NET_2_0
+using System.Runtime.InteropServices;
+#endif
+
 namespace System.Diagnostics {
 
 	[AttributeUsageAttribute(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Assembly, AllowMultiple=true)]
 #if NET_2_0
+	[ComVisible (true)]
 	public sealed class DebuggerVisualizerAttribute : Attribute
 #else
 	internal sealed class DebuggerVisualizerAttribute : Attribute
@@ -52,6 +57,16 @@ namespace System.Diagnostics {
 			this.visualizerName = visualizerName;
 			this.visualizerSourceName = visualizerSourceName;
 		}
+
+#if NET_2_0
+		public DebuggerVisualizerAttribute (string visualizerTypeName,
+						    Type visualizerObjectSource)
+		{
+			this.visualizerName = visualizerTypeName;
+			this.visualizerSource = visualizerObjectSource;
+			this.visualizerSourceName = visualizerObjectSource.AssemblyQualifiedName;
+		}
+#endif
 
 		public DebuggerVisualizerAttribute(Type visualizer, string visualizerSourceName) {
 			this.visualizerSourceName = visualizerSourceName;

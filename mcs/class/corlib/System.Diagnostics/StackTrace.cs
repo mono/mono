@@ -41,6 +41,9 @@ using System.Threading;
 namespace System.Diagnostics {
 
 	[Serializable]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	[MonoTODO ("Serialized objects are not compatible with .NET")]
 	public class StackTrace {
 

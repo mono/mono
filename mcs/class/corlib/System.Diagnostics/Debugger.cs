@@ -31,11 +31,18 @@
 //
 using System;
 
+#if NET_2_0
+using System.Runtime.InteropServices;
+#endif
+
 namespace System.Diagnostics
 {
 	/// <summary>
 	/// Enables communication with a debugger.
 	/// </summary>
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	[MonoTODO ("The Debugger class is not functional")]
 	public sealed class Debugger
 	{

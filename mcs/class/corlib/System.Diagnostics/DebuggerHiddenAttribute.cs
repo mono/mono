@@ -31,12 +31,19 @@
 
 using System;
 
+#if NET_2_0
+using System.Runtime.InteropServices;
+#endif
+
 namespace System.Diagnostics
 {
 	[AttributeUsage (AttributeTargets.Constructor |
 			 AttributeTargets.Method | AttributeTargets.Property,
 			 Inherited=false)]
 	[Serializable]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public sealed class DebuggerHiddenAttribute : Attribute
 	{
 		public DebuggerHiddenAttribute ()

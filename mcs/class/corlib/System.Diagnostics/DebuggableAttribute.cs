@@ -31,9 +31,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if NET_2_0
+using System.Runtime.InteropServices;
+#endif
+
 namespace System.Diagnostics {
 	
 	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Module)]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public sealed class DebuggableAttribute : System.Attribute {
 
 		private bool JITTrackingEnabledFlag;
@@ -50,6 +57,13 @@ namespace System.Diagnostics {
 		}
 
 		private DebuggingModes debuggingModes = DebuggingModes.None;
+
+		public DebuggingModes DebuggingFlags 
+		{
+			get {
+				throw new NotImplementedException ();
+			}
+		}
 #endif
 
 		// Public Instance Constructors

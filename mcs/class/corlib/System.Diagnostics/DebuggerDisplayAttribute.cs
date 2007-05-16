@@ -30,6 +30,10 @@
 
 using System;
 
+#if NET_2_0
+using System.Runtime.InteropServices;
+#endif
+
 namespace System.Diagnostics {
 
 	[AttributeUsageAttribute(AttributeTargets.Class |
@@ -40,6 +44,7 @@ namespace System.Diagnostics {
 				 AttributeTargets.Property |
 				 AttributeTargets.Assembly, AllowMultiple=true)]	
 #if NET_2_0
+	[ComVisible (true)]
 	public sealed class DebuggerDisplayAttribute : Attribute
 #else
 	internal sealed class DebuggerDisplayAttribute : Attribute
