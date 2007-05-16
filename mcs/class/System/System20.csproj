@@ -775,6 +775,8 @@
     <Compile Include="System.Net.Sockets\GHSocketFactory.jvm.cs" />
     <Compile Include="System.Net.Sockets\GHStreamSocket.jvm.cs" />
     <Compile Include="System.Net.Sockets\GHStreamSocketSSL.jvm.cs" />
+    <Compile Include="System.Net.Sockets\IOControlCode.cs" />
+    <Compile Include="System.Net.Sockets\IPPacketInformation.cs" />
     <Compile Include="System.Net.Sockets\IPv6MulticastOption.cs" />
     <Compile Include="System.Net.Sockets\LingerOption.cs" />
     <Compile Include="System.Net.Sockets\MulticastOption.cs" />

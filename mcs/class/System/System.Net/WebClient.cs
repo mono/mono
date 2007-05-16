@@ -1039,6 +1039,12 @@ namespace System.Net
 				DownloadFileCompleted (this, args);
 		}
 
+		protected virtual void OnDownloadProgressChanged (DownloadProgressChangedEventArgs e)
+		{
+			if (DownloadProgressChanged != null)
+				DownloadProgressChanged (this, e);
+		}
+
 		protected virtual void OnDownloadStringCompleted (
 			DownloadStringCompletedEventArgs args)
 		{
@@ -1074,6 +1080,12 @@ namespace System.Net
 				UploadFileCompleted (this, args);
 		}
 
+		protected virtual void OnUploadProgressChanged (UploadProgressChangedEventArgs e)
+		{
+			if (UploadProgressChanged != null)
+				UploadProgressChanged (this, e);
+		}
+
 		protected virtual void OnUploadStringCompleted (
 			UploadStringCompletedEventArgs args)
 		{
@@ -1087,7 +1099,24 @@ namespace System.Net
 			if (UploadValuesCompleted != null)
 				UploadValuesCompleted (this, args);
 		}
+
+		[MonoNotSupported("")]
+		protected virtual WebRequest GetWebRequest (Uri address)
+		{
+			throw new NotImplementedException ();
+		}
+
+		protected virtual WebResponse GetWebResponse (WebRequest request)
+		{
+			return request.GetResponse ();
+		}
+
+		protected virtual WebResponse GetWebResponse (WebRequest request, IAsyncResult result)
+		{
+			return request.EndGetResponse (result);
+		}
 #endif
 	}
 }
+
 

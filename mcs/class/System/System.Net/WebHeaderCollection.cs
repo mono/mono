@@ -236,6 +236,14 @@ namespace System.Net
 			return restricted.ContainsKey (headerName);
 		}
 
+#if NET_2_0
+		[MonoNotSupported("")]
+		public static bool IsRestricted (string headerName, bool response)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+
 		public override void OnDeserialization (object sender)
 		{
 		}
@@ -297,6 +305,36 @@ namespace System.Net
 		}
 
 #if NET_2_0
+		public void Add (HttpRequestHeader header, string value)
+		{
+			Add (RequestHeaderToString (header), value);
+		}
+
+		public void Remove (HttpRequestHeader header)
+		{
+			Remove (RequestHeaderToString (header));
+		}
+
+		public void Set (HttpRequestHeader header, string value)
+		{
+			Set (RequestHeaderToString (header), value);
+		}
+
+		public void Add (HttpResponseHeader header, string value)
+		{
+			Add (ResponseHeaderToString (header), value);
+		}
+
+		public void Remove (HttpResponseHeader header)
+		{
+			Remove (ResponseHeaderToString (header));
+		}
+
+		public void Set (HttpResponseHeader header, string value)
+		{
+			Set (ResponseHeaderToString (header), value);
+		}
+
 		string RequestHeaderToString (HttpRequestHeader value)
 		{
 			switch (value){
@@ -589,4 +627,5 @@ namespace System.Net
 							
 	}
 }
+
 

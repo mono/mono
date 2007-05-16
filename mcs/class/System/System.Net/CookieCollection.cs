@@ -76,6 +76,13 @@ namespace System.Net
 			list.CopyTo (array, arrayIndex);
 		}
 
+#if NET_2_0
+		public void CopyTo (Cookie [] array, int index)
+		{
+			list.CopyTo (array, index);
+		}
+#endif
+
 		// IEnumerable
 		public IEnumerator GetEnumerator ()
 		{

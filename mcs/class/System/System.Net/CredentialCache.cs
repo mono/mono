@@ -126,6 +126,26 @@ namespace System.Net {
 			cache.Remove (new CredentialCacheKey (uriPrefix, authType));
 		}
 		
+#if NET_2_0
+		[MonoNotSupported ("")]
+		public void Add (string host, int port, string authenticationType, NetworkCredential credential)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported ("")]
+		public NetworkCredential GetCredential (string host, int port, string authenticationType)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported ("")]
+		public void Remove (string host, int port, string authenticationType)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+
 		class CredentialCacheKey {
 			Uri uriPrefix;
 			string authType;
@@ -180,4 +200,5 @@ namespace System.Net {
 		}
 	} 
 }
+
 

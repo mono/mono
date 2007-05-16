@@ -40,6 +40,9 @@ using System.Threading;
 using System.Reflection;
 using System.IO;
 using System.Net.Configuration;
+#if NET_2_0
+using System.Collections.Generic;
+#endif
 
 namespace System.Net.Sockets 
 {
@@ -1459,6 +1462,14 @@ namespace System.Net.Sockets
 			req.CheckIfThrowDelayedException();
 		}
 
+#if NET_2_0
+		[MonoNotSupported ("")]
+		public void EndDisconnect (IAsyncResult asyncResult)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+
 		public int EndReceive(IAsyncResult result) {
             		EnsureStillUsable();
 
@@ -1641,6 +1652,14 @@ namespace System.Net.Sockets
 
 			return result;
 		}
+
+#if NET_2_0
+		[MonoNotSupported ("")]
+		public int IOControl (IOControlCode ioControlCode, byte [] optionInValue, byte [] optionOutValue)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 
 #if !TARGET_JVM
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -1937,6 +1956,77 @@ namespace System.Net.Sockets
 
 			return Send_nochecks (buf, 0, size, flags);
 		}
+
+#if NET_2_0
+		[MonoNotSupported ("")]
+		public int Send (byte [] buffer, int offset, int size, SocketFlags socketFlags, out SocketError errorCode)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported ("")]
+		public int Send (IList<ArraySegment<byte>> buffers)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported ("")]
+		public int Send (IList<ArraySegment<byte>> buffers, SocketFlags socketFlags)
+		{
+			throw new NotImplementedException ();
+		}
+
+		//[CLSCompliantAttribute (false)]
+		[MonoNotSupported ("")]
+		public int Send (IList<ArraySegment<byte>> buffers, SocketFlags socketFlags, out SocketError errorCode)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported ("")]
+		public int Receive (byte [] buffer, int offset, int size, SocketFlags socketFlags, out SocketError errorCode)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported ("")]
+		public int Receive (IList<ArraySegment<byte>> buffers)
+		{
+			throw new NotImplementedException ();
+		}
+
+		//[CLSCompliantAttribute (false)]
+		[MonoNotSupported ("")]
+		public int Receive (IList<ArraySegment<byte>> buffers, SocketFlags socketFlags)
+		{
+			throw new NotImplementedException ();
+		}
+
+		//[CLSCompliantAttribute (false)]
+		[MonoNotSupported ("")]
+		public int Receive (IList<ArraySegment<byte>> buffers, SocketFlags socketFlags, out SocketError errorCode)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported ("")]
+		public int ReceiveMessageFrom (byte [] buffer, int offset, int size, ref SocketFlags socketFlags, ref EndPoint remoteEP, out IPPacketInformation ipPacketInformation)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported ("")]
+		public IAsyncResult BeginReceiveMessageFrom (byte [] buffer, int offset, int size, SocketFlags socketFlags, ref EndPoint remoteEP, AsyncCallback callback, Object state)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported ("")]
+		public int EndReceiveMessageFrom (IAsyncResult asyncResult, ref SocketFlags socketFlags, ref EndPoint endPoint, out IPPacketInformation ipPacketInformation)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 
 #if !TARGET_JVM
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -2409,26 +2499,38 @@ namespace System.Net.Sockets
             throw new NotImplementedException();
         }
 
+		[MonoNotSupported ("")]
+		public Socket EndAccept (out byte [] buffer, IAsyncResult asyncResult)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported ("")]
+		public Socket EndAccept (out byte [] buffer, out int bytesTransferred, IAsyncResult asyncResult)
+		{
+			throw new NotImplementedException ();
+		}
+
         [MonoTODO]
         public IAsyncResult BeginDisconnect(bool reuseSocket, AsyncCallback callback, object state)
         {
             throw new NotImplementedException();
         }
 
-        [MonoTODO] //FIXME: generic list can't be compiled
-        public IAsyncResult BeginSend(IList buffers, SocketFlags socketFlags,
-            AsyncCallback callback, object state)
-        {
-            throw new NotImplementedException();
-        }
-        
-        [MonoTODO] //FIXME: generic list can't be compiled
-        public IAsyncResult BeginSend(IList buffers, SocketFlags socketFlags,
-                                        out SocketError errorCode, AsyncCallback callback,
-                                        object state)
-        {
-            throw new NotImplementedException();
-        }
+		[MonoNotSupported ("")]
+		public IAsyncResult BeginSend (IList<ArraySegment<byte>> buffers, SocketFlags socketFlags, AsyncCallback callback, object state)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported ("")]
+		[CLSCompliantAttribute (false)]
+		public IAsyncResult BeginSend (IList<ArraySegment<byte>> buffers, SocketFlags socketFlags, 
+										out SocketError errorCode, AsyncCallback callback, 
+										object state)
+		{
+			throw new NotImplementedException ();
+		}
 
         [MonoTODO]
         public IAsyncResult BeginSend(byte[] buffer, int offset, int size,
@@ -2437,6 +2539,68 @@ namespace System.Net.Sockets
         {
             throw new NotImplementedException();
         }
+
+		[MonoNotSupported ("")]
+		public int EndSend (IAsyncResult asyncResult, out SocketError errorCode)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported ("")]
+		public IAsyncResult BeginReceive (byte [] buffer, int offset, int size, SocketFlags socketFlags, out SocketError errorCode, AsyncCallback callback, Object state)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[CLSCompliantAttribute (false)]
+		[MonoNotSupported ("")]
+		public IAsyncResult BeginReceive (IList<ArraySegment<byte>> buffers, SocketFlags socketFlags, AsyncCallback callback, Object state)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[CLSCompliantAttribute (false)]
+		[MonoNotSupported ("")]
+		public IAsyncResult BeginReceive (IList<ArraySegment<byte>> buffers, SocketFlags socketFlags, out SocketError errorCode, AsyncCallback callback, Object state)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported ("")]
+		public int EndReceive (IAsyncResult asyncResult, out SocketError errorCode)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported ("")]
+		public void SendFile (string fileName)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported ("")]
+		public void SendFile (string fileName, byte [] preBuffer, byte [] postBuffer, TransmitFileOptions flags)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported ("")]
+		public IAsyncResult BeginSendFile (string fileName, AsyncCallback callback, object state)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported ("")]
+		public IAsyncResult BeginSendFile (string fileName, byte [] preBuffer, byte [] postBuffer, TransmitFileOptions flags, AsyncCallback callback, object state)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported ("")]
+		public void EndSendFile (IAsyncResult asyncResult)
+		{
+			throw new NotImplementedException ();
+		}
 
         [MonoTODO]
         public void Close(int timeout)
@@ -2462,7 +2626,18 @@ namespace System.Net.Sockets
             throw new NotImplementedException();
         }
 
-            #endregion //Methods
+		[MonoNotSupported ("")]
+		public void Disconnect (bool reuseSocket)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported ("")]
+		public SocketInformation DuplicateAndClose (int targetProcessId)
+		{
+			throw new NotImplementedException ();
+		}
+			#endregion //Methods
 
 #endif
         #endregion

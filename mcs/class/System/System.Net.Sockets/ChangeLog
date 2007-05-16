@@ -1,3 +1,12 @@
+2007-05-16 Adar Wesley <adarw@mainsoft.com>
+
+	* Socket.jvm.cs: added missing methods EndDisconnect, IOControl,
+	Send 2.0 overloads, Receive 2.0 overloads, ReceiveMessageFrom,
+	BeginReceiveMessageFrom, EndReceiveMessageFrom, 
+	EndAccept 2.0 overloads, BeginSend, EndSend, BeginReceive, 
+	EndReceive, SendFile, BeginSendFile, EndSendFile, Disconnect,
+	DuplicateAndClose
+
 2007-05-09 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* Socket.jvm.cs: Handle property throws NotImplementedException.	

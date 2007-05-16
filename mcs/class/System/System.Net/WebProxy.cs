@@ -222,8 +222,10 @@ namespace System.Net
 			}
 		}
 
-		void ISerializable.GetObjectData (SerializationInfo serializationInfo,
-		                                  StreamingContext streamingContext)
+#if NET_2_0
+		protected virtual 
+#endif
+		void GetObjectData (SerializationInfo serializationInfo, StreamingContext streamingContext)
 		{
 			serializationInfo.AddValue ("_BypassOnLocal", bypassOnLocal);
 			serializationInfo.AddValue ("_ProxyAddress", address);
@@ -231,6 +233,12 @@ namespace System.Net
 #if NET_2_0
 			serializationInfo.AddValue ("_UseDefaultCredentials", UseDefaultCredentials);
 #endif
+		}
+
+		void ISerializable.GetObjectData (SerializationInfo serializationInfo,
+		                                  StreamingContext streamingContext)
+		{
+			GetObjectData (serializationInfo, streamingContext);
 		}
 
 		// Private Methods

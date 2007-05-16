@@ -1,3 +1,21 @@
+2007-05-16 Adar Wesley <adarw@mainsoft.com>
+
+	* CookieCollection.cs: added missing method strongly typed CopyTo.
+
+	* CredentialCache.cs: added missing methods Add, Remove, GetCredential
+
+	* HttpWebRequest.jvm.cs: added missing ClientCertificates getter.
+
+	* ServicePoint.cs: added missing method CloseConnectionGroup.
+
+	* WebClient.cs: added missing methods OnDownloadProgressChanged,
+	OnUploadProgressChanged, GetWebRequest, GetWebResponse
+
+	* WebHeaderCollection.cs: added missing methods IsRestricted, Add,
+	Remove, Set.
+
+	* WebProxy.cs: added missing method GetObjectData.
+
 2007-05-15  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpWebRequest.cs: fold all methods into GET for

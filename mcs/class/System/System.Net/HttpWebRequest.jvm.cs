@@ -79,6 +79,8 @@ namespace System.Net
 		{
 			[MonoTODO]
 			get{return _provider.GetX509Certificates();}
+			[MonoNotSupported("")]
+			set { throw new NotImplementedException (); }
 		}
 
 		public string Connection

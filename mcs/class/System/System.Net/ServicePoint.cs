@@ -254,6 +254,14 @@ namespace System.Net
 			return cnc.SendRequest (request);
 		}
 #endif
+#if NET_2_0
+		[MonoNotSupported ("")]
+		public bool CloseConnectionGroup (string connectionGroupName)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+
 		internal void IncrementConnection ()
 		{
 			lock (locker) {
@@ -278,4 +286,5 @@ namespace System.Net
 		}
 	}
 }
+
 
