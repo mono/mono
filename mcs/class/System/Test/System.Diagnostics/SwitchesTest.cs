@@ -153,6 +153,35 @@ namespace MonoTests.System.Diagnostics {
 		{
 			AssertNull (tns.ExposeSupportedAttributes ());
 		}
+
+		[Test] // no ArgumentNullException happens...
+		public void BooleanSwitchNullDefaultValue ()
+		{
+			new BooleanSwitch ("test", "", null);
+		}
+
+		[Test]
+		public void BooleanSwitchValidDefaultValue ()
+		{
+			BooleanSwitch s = new BooleanSwitch ("test", "", "2");
+			Assert ("#1", s.Enabled);
+			s = new BooleanSwitch ("test", "", "0");
+			Assert ("#2", !s.Enabled);
+			s = new BooleanSwitch ("test", "", "true");
+			Assert ("#3", s.Enabled);
+			s = new BooleanSwitch ("test", "", "True");
+			Assert ("#4", s.Enabled);
+			s = new BooleanSwitch ("test", "", "truE");
+			Assert ("#5", s.Enabled);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void BooleanSwitchInvalidDefaultValue ()
+		{
+			BooleanSwitch s = new BooleanSwitch ("test", "", "hoge");
+			Assert (!s.Enabled);
+		}
 #endif
 	}
 }

@@ -1,3 +1,7 @@
+2007-05-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.dll.sources : added TraceOptions.cs.
+
 2007-05-16  Adar Wesley <adarw@mainsoft.com>
 
 	* System20.csproj: added classes to compilation set IOControlCode.cs,

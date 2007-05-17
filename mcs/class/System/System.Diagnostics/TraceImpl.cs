@@ -135,6 +135,22 @@ namespace System.Diagnostics {
 			}
 		}
 
+		static bool use_global_lock;
+#if NET_2_0
+		static CorrelationManager correlation_manager = new CorrelationManager ();
+
+		[MonoLimitation ("the property exists but it does nothing.")]
+		public static CorrelationManager CorrelationManager {
+			get { return correlation_manager; }
+		}
+#endif
+
+		[MonoLimitation ("the property exists but it does nothing.")]
+		public static bool UseGlobalLock {
+			get { return use_global_lock; }
+			set { use_global_lock = value; }
+		}
+
 		// Initialize the world.
 		//
 		// This logically belongs in the static constructor (as it only needs

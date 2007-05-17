@@ -1,3 +1,15 @@
+2007-05-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TraceOptions.cs : new enum.
+	* TraceListener.cs : support TraceOutputOptions. Fixed missing
+	  NET_2_0 condition in TARGET_JVM section.
+	* TraceSwitch.cs, BooleanSwitch.cs :
+	  Added missing constructors and OnValueChanged().
+	* Trace.cs, TraceImpl.cs :
+	  Added CorrelationManager and UseGlobalLock.
+	* TraceEventCache.cs : initialize property values at construction.
+	* Switch.cs : added XmlIgnore on Attributes.
+
 2007-05-15 Adar Wesley <adarw@mainsoft.com>
 
 	* Trace.cs: added missing method Refresh.

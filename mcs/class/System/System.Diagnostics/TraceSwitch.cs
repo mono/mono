@@ -34,12 +34,23 @@
 
 namespace System.Diagnostics
 {
+#if NET_2_0
+	[SwitchLevel (typeof (TraceLevel))]
+#endif
 	public class TraceSwitch : Switch
 	{
 		public TraceSwitch(string displayName, string description)
 			: base(displayName, description)
 		{
 		}
+
+#if NET_2_0
+		public TraceSwitch(string displayName, string description, string defaultSwitchValue)
+			: base(displayName, description)
+		{
+			Value = defaultSwitchValue;
+		}
+#endif
 
 		public TraceLevel Level {
 			get {return (TraceLevel) SwitchSetting;}
@@ -76,6 +87,13 @@ namespace System.Diagnostics
 			if (SwitchSetting < 0)
 				SwitchSetting = (int) TraceLevel.Off;
 		}
+
+#if NET_2_0
+		protected override void OnValueChanged ()
+		{
+			Level = (TraceLevel) Enum.Parse (typeof (TraceLevel), Value);
+		}
+#endif
 	}
 }
 

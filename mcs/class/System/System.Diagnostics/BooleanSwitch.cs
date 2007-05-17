@@ -28,6 +28,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+using System.Globalization;
 
 namespace System.Diagnostics
 {
@@ -35,6 +36,9 @@ namespace System.Diagnostics
 	/// Provides a simple on/off switch that controls debugging
 	/// and tracing output
 	/// </summary>
+#if NET_2_0
+	[SwitchLevel (typeof (bool))]
+#endif
 	public class BooleanSwitch : Switch
 	{
 		/// <summary>
@@ -44,6 +48,17 @@ namespace System.Diagnostics
 			: base(displayName, description)
 		{
 		}
+
+#if NET_2_0
+		/// <summary>
+		/// Initializes a new instance
+		/// </summary>
+		public BooleanSwitch(string displayName, string description, string defaultSwitchValue)
+			: base(displayName, description)
+		{
+			Value = defaultSwitchValue;
+		}
+#endif
 
 		/// <summary>
 		/// Specifies whether the switch is enabled or disabled
@@ -55,6 +70,17 @@ namespace System.Diagnostics
 				SwitchSetting = Convert.ToInt32(value);
 			}
 		}
+
+#if NET_2_0
+		protected override void OnValueChanged ()
+		{
+			int i;
+			if (int.TryParse (Value, out i))
+				Enabled = i != 0;
+			else
+				Enabled = Convert.ToBoolean (Value);
+		}
+#endif
 	}
 }
 

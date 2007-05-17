@@ -518,6 +518,7 @@ System.Diagnostics/TraceImpl.cs
 System.Diagnostics/TraceLevel.cs
 System.Diagnostics/TraceListenerCollection.cs
 System.Diagnostics/TraceListener.cs
+System.Diagnostics/TraceOptions.cs
 System.Diagnostics/TraceSource.cs
 System.Diagnostics/TraceSwitch.cs
 System.Diagnostics/Win32EventLog.cs

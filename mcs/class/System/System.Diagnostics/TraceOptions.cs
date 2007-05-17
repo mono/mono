@@ -1,10 +1,8 @@
 //
-// TraceEventCache.cs
+// System.Diagnostics.TraceOptions.cs
 //
 // Author:
-//	Atsushi Enomoto  <atsushi@ximian.com>
-//
-// Copyright (C) 2007 Novell, Inc.
+//   Atsushi Enomoto  <atsushi@ximian.com>
 //
 
 //
@@ -29,55 +27,19 @@
 //
 
 #if NET_2_0
-
-using System;
-using System.Collections;
-using System.Text;
-using System.Threading;
-
 namespace System.Diagnostics
 {
-	public class TraceEventCache
+	[Flags]
+	public enum TraceOptions
 	{
-		DateTime started;
-		CorrelationManager manager;
-		string callstack, thread;
-		int process;
-		long timestamp;
-
-		public TraceEventCache ()
-		{
-			started = DateTime.Now;
-			manager = Trace.CorrelationManager;
-			callstack = Environment.StackTrace;
-			timestamp = Stopwatch.GetTimestamp ();
-			thread = Thread.CurrentThread.Name;
-			process = Process.GetCurrentProcess ().Id;
-		}
-
-		public string Callstack {
-			get { return callstack; }
-		}
-
-		public DateTime DateTime {
-			get { return started; }
-		}
-
-		public Stack LogicalOperationStack {
-			get { return manager.LogicalOperationStack; }
-		}
-
-		public int ProcessId {
-			get { return process; }
-		}
-
-		public string ThreadId {
-			get { return thread; }
-		}
-
-		public long Timestamp {
-			get { return timestamp; }
-		}
+		None = 0,
+		LogicalOperationStack = 1,
+		DateTime = 2,
+		Timestamp = 4,
+		ProcessId = 8,
+		ThreadId = 16,
+		Callstack = 32,
 	}
 }
+
 #endif

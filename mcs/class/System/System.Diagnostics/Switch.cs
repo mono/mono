@@ -103,6 +103,9 @@ namespace System.Diagnostics
 #if NET_2_0
 		StringDictionary attributes = new StringDictionary ();
 
+#if XML_DEP
+		[System.Xml.Serialization.XmlIgnore]
+#endif
 		public StringDictionary Attributes {
 			get { return attributes; }
 		}

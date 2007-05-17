@@ -34,6 +34,7 @@
 //
 
 using System;
+using System.Collections;
 using System.Collections.Specialized;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
@@ -47,6 +48,7 @@ namespace System.Diagnostics {
 		readonly LocalDataStoreSlot _indentSizeStore = System.Threading.Thread.AllocateDataSlot ();
 		readonly LocalDataStoreSlot _attributesStore = System.Threading.Thread.AllocateDataSlot ();
 		readonly LocalDataStoreSlot _filterStore = System.Threading.Thread.AllocateDataSlot ();
+		readonly LocalDataStoreSlot _optionsStore = System.Threading.Thread.AllocateDataSlot ();
 		
 		private int indentLevel {
 			get {
@@ -68,6 +70,7 @@ namespace System.Diagnostics {
 			set { System.Threading.Thread.SetData (_indentSizeStore, value); }
 		}
 
+#if NET_2_0
 		private StringDictionary attributes {
 			get { return (StringDictionary) System.Threading.Thread.GetData (_attributesStore); }
 			set { System.Threading.Thread.SetData (_attributesStore, value); }
@@ -77,6 +80,12 @@ namespace System.Diagnostics {
 			get { return (TraceFilter) System.Threading.Thread.GetData (_filterStore); }
 			set { System.Threading.Thread.SetData (_filterStore, value); }
 		}
+
+		private TraceOptions options {
+			get { return (TraceOptions) System.Threading.Thread.GetData (_optionsStore); }
+			set { System.Threading.Thread.SetData (_optionsStore, value); }
+		}
+#endif
 #else
 		[ThreadStatic]
 		private int indentLevel = 0;
@@ -90,6 +99,8 @@ namespace System.Diagnostics {
 		private StringDictionary attributes = new StringDictionary ();
 		[ThreadStatic]
 		private TraceFilter filter;
+		[ThreadStatic]
+		private TraceOptions options;
 #endif
 #endif
 
@@ -124,6 +135,13 @@ namespace System.Diagnostics {
 			get {return needIndent;}
 			set {needIndent = value;}
 		}
+
+#if NET_2_0
+		[MonoLimitation ("This property exists but is never considered.")]
+		public virtual bool IsThreadSafe {
+			get { return false; }
+		}
+#endif
 
 		public virtual void Close ()
 		{
@@ -203,6 +221,15 @@ namespace System.Diagnostics {
 		}
 
 #if NET_2_0
+		static string FormatArray (ICollection list, string joiner)
+		{
+			string [] arr = new string [list.Count];
+			int i = 0;
+			foreach (object o in list)
+				arr [i++] = o != null ? o.ToString () : String.Empty;
+			return String.Join (joiner, arr);
+		}
+
 		[ComVisible (false)]
 		public virtual void TraceData (TraceEventCache eventCache, string source,
 			TraceEventType eventType, int id, object data)
@@ -214,7 +241,21 @@ namespace System.Diagnostics {
 
 			WriteLine (String.Format ("{0} {1}: {2} : {3}", source, eventType, id, data));
 
-			// any of the eventCache content are not written.
+			if (eventCache == null)
+				return;
+
+			if ((TraceOutputOptions & TraceOptions.ProcessId) != 0)
+				WriteLine ("    ProcessId=" + eventCache.ProcessId);
+			if ((TraceOutputOptions & TraceOptions.LogicalOperationStack) != 0)
+				WriteLine ("    LogicalOperationStack=" + FormatArray (eventCache.LogicalOperationStack, ", "));
+			if ((TraceOutputOptions & TraceOptions.ThreadId) != 0)
+				WriteLine ("    ThreadId=" + eventCache.ThreadId);
+			if ((TraceOutputOptions & TraceOptions.DateTime) != 0)
+				WriteLine ("    DateTime=" + eventCache.DateTime.ToString ("o"));
+			if ((TraceOutputOptions & TraceOptions.Timestamp) != 0)
+				WriteLine ("    Timestamp=" + eventCache.Timestamp);
+			if ((TraceOutputOptions & TraceOptions.Callstack) != 0)
+				WriteLine ("    Callstack=" + eventCache.Callstack);
 		}
 
 		[ComVisible (false)]
@@ -226,13 +267,7 @@ namespace System.Diagnostics {
 						 id, null, null, null, data))
 				return;
 
-			string s = null;
-			string [] arr = new string [data.Length];
-			for (int i = 0; i < arr.Length; i++)
-				arr [i] = data [i] != null ? data [i].ToString () : String.Empty;
-			WriteLine (String.Format ("{0} {1}: {2} : {3}", source, eventType, id, String.Join (" ", arr)));
-
-			// any of the eventCache content are not written.
+			TraceData (eventCache, source, eventType, id, FormatArray (data, " "));
 		}
 
 		[ComVisible (false)]
@@ -277,6 +312,10 @@ namespace System.Diagnostics {
 			set { filter = value; }
 		}
 
+		public TraceOptions TraceOutputOptions {
+			get { return options; }
+			set { options = value; }
+		}
 #endif
 	}
 }

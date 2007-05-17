@@ -68,6 +68,21 @@ namespace System.Diagnostics {
 			get {return TraceImpl.Listeners;}
 		}
 
+#if NET_2_0
+		[MonoLimitation ("the property exists but it does nothing.")]
+		public static CorrelationManager CorrelationManager {
+			get { return TraceImpl.CorrelationManager; }
+		}
+
+		public
+#else
+		internal
+#endif
+		static bool UseGlobalLock {
+			get { return TraceImpl.UseGlobalLock; }
+			set { TraceImpl.UseGlobalLock = value; }
+		}
+
 		[Conditional("TRACE")]
 		public static void Assert (bool condition)
 		{
