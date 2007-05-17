@@ -72,19 +72,6 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 			Assert.IsNull (b.DataSource, "ctornull2");
 		}
 
-		// XXX this belongs in a ControlBindingsCollectionTest
-		// file.
-		[Test]
-		[ExpectedException (typeof (ArgumentException))] // MS: "This would cause two bindings in the collection to bind to the same property."
-		public void DuplicateBindingAdd ()
-		{
-			Control c1 = new Control ();
-			Control c2 = new Control ();
-
-			c2.DataBindings.Add ("Text", c1, "Text");
-			c2.DataBindings.Add ("Text", c1, "Text");
-		}
-
 		[Test]
 		public void BindingManagerBaseTest ()
 		{

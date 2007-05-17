@@ -1,3 +1,26 @@
+2007-05-17  Chris Toshok  <toshok@ximian.com>
+
+	* ControlBindingsCollectionTest.cs: new test file, move a test
+	from BindingTest here.
+
+	* BindingTest.cs (DuplicateBindingAdd): move the test to
+	ControlBindingsCollectionTest.
+
+	* BindingManagerBaseTest.cs (BindingsTest): enable this test.
+	passes now.
+
+	* DataBindingTests.cs: define #WITH_BINDINGS, since we now seem to
+	work with them.
+	(TestInsertRowBeforeCurrent): ignore this test on 2.0 though, as
+	we generate too many Binding.Format events.
+	(TestColumnAdd): ignore this test on 1.1, until System.Data
+	generates the proper (2) number of events causing us to emit
+	MetadataChanged.
+
+	* CurrencyManagerTest.cs (AddNew2): ignore this test for the time
+	being.  it's hitting a System.Data exception which doesn't happen
+	on MS.
+
 2007-05-17  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* TextBoxTest.cs: BackColorTest: Fix it, we may get invalidates and

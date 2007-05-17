@@ -33,7 +33,7 @@ using System.Collections;
 namespace System.Windows.Forms {
 	public abstract class BindingManagerBase {
 		private BindingsCollection	bindings;
-		private bool pulling_data;
+		internal bool transfering_data; /* true if we're pushing or pulling data */
 
 		#region Public Constructors
 		public BindingManagerBase()
@@ -118,29 +118,32 @@ namespace System.Windows.Forms {
 
 		protected void PullData()
 		{
-			pulling_data = true;
 			try {
-				UpdateIsBinding ();
-				foreach (Binding binding in Bindings)
+				if (!transfering_data) {
+					transfering_data = true;
+					UpdateIsBinding ();
+				}
+				foreach (Binding binding in Bindings) {
 					binding.PullData ();
+				}
 			} finally {
-				pulling_data = false;
+				transfering_data = false;
 			}
 		}
 
 		protected void PushData()
 		{
-			if (pulling_data)
-				return;
-
-			// XXX
-			// this is wrong, since UpdateIsBinding ends up emitting ItemChanged, which causes PushData to be called, which
-			// gets us infinite recursion.  for now, comment out the call to PushData in CurrencyManager.OnItemChanged to, but
-			// this really needs fixing here.
-
-			UpdateIsBinding ();
-			foreach (Binding binding in Bindings)
-				binding.PushData ();
+			try {
+				if (!transfering_data) {
+					transfering_data = true;
+					UpdateIsBinding ();
+				}
+				foreach (Binding binding in Bindings) {
+					binding.PushData ();
+				}
+			} finally {
+				transfering_data = false;
+			}
 		}
 
 

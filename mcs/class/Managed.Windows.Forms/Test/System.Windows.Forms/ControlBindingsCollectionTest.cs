@@ -23,50 +23,27 @@
 //	Chris Toshok	toshok@ximian.com
 
 using System;
-using System.Collections;
-using System.ComponentModel;
 using System.Data;
-using System.Reflection;
+using System.Collections;
 using System.Windows.Forms;
 
 using NUnit.Framework;
 
-using CategoryAttribute = NUnit.Framework.CategoryAttribute;
+namespace MonoTests.System.Windows.Forms.DataBinding {
 
-namespace MonoTests.System.Windows.Forms.DataBinding
-{
 	[TestFixture]
-	public class BindingManagerBaseTest {
-		
+	public class ControlBindingsCollectionTest {
+
 		[Test]
-		public void BindingsTest ()
+		[ExpectedException (typeof (ArgumentException))] // MS: "This would cause two bindings in the collection to bind to the same property."
+		public void DuplicateBindingAdd ()
 		{
 			Control c1 = new Control ();
 			Control c2 = new Control ();
 
-			c1.CreateControl ();
-			c2.CreateControl ();
-
-			Binding binding;
-			BindingManagerBase bm, bm2;
-
-			c1.BindingContext = new BindingContext ();
-			c2.BindingContext = c1.BindingContext;
-
-			bm = c2.BindingContext[c1, "Text"];
-			bm2 = c2.BindingContext[c1];
-
-#if NET_2_0
-			bm.BindingComplete += delegate (object sender, BindingCompleteEventArgs e) { Console.WriteLine (Environment.StackTrace); };
-			bm2.BindingComplete += delegate (object sender, BindingCompleteEventArgs e) { Console.WriteLine (Environment.StackTrace); };
-#endif
-
-			binding = c2.DataBindings.Add ("Text", c1, "Text");
-
-			Assert.AreEqual (0, bm.Bindings.Count, "1");
-			Assert.AreEqual (1, bm2.Bindings.Count, "2");
-
-			Assert.AreEqual (bm2.Bindings[0], binding, "3");
+			c2.DataBindings.Add ("Text", c1, "Text");
+			c2.DataBindings.Add ("Text", c1, "Text");
 		}
 	}
+
 }

@@ -272,11 +272,9 @@ namespace System.Windows.Forms {
 			if (ItemChanged != null)
 				ItemChanged (this, e);
 
-#if fales
-			// XXX see the commend in BindingManagerbase.PushData
-			if (listposition != -1)
-				PushData ();
-#endif
+			transfering_data = true;
+			PushData ();
+			transfering_data = false;
 		}
 
 		protected virtual void OnPositionChanged (EventArgs e)
@@ -376,10 +374,6 @@ namespace System.Windows.Forms {
 			switch (e.ListChangedType) {
 			case ListChangedType.PropertyDescriptorAdded:
 				OnMetaDataChanged (EventArgs.Empty);
-#if ONLY_1_1
-				// um...
-				OnMetaDataChanged (EventArgs.Empty);
-#endif
 				break;
 			case ListChangedType.PropertyDescriptorDeleted:
 			case ListChangedType.PropertyDescriptorChanged:

@@ -1722,9 +1722,8 @@ namespace System.Windows.Forms
 			if (data_bindings == null)
 				return;
 
-			BindingContext binding_context = BindingContext;
 			foreach (Binding binding in data_bindings) {
-				binding.Check (binding_context);
+				binding.Check ();
 			}
 		}
 

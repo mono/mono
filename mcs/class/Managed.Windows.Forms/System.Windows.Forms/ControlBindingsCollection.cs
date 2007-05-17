@@ -123,7 +123,7 @@ namespace System.Windows.Forms {
 			}
 
 			binding.SetControl (control);
-			binding.Check (control.BindingContext);
+			binding.Check ();
 			base.AddCore (binding);
 		}
 

@@ -36,6 +36,9 @@ namespace System.Windows.Forms {
 		private object data_source;
 		private string data_member;
 
+		private bool is_binding;
+		private bool checked_isnull;
+
 		private BindingMemberInfo binding_member_info;
 		private Control control;
 
@@ -84,11 +87,7 @@ namespace System.Windows.Forms {
 
 		public bool IsBinding {
 			get {
-				if (control == null || !control.Created)
-					return false;
-				if (manager == null || manager.IsSuspended)
-					return false;
-				return true;
+				return is_binding;
 			}
 		}
 
@@ -133,17 +132,24 @@ namespace System.Windows.Forms {
 			this.control = control;
 		}
 
-		internal void Check (BindingContext binding_context)
+		internal void Check ()
 		{
 			if (control == null || control.BindingContext == null)
 				return;
 
-			manager = control.BindingContext [data_source, data_member];
+			if (manager == null) {
+				manager = control.BindingContext [data_source];
+				manager.AddBinding (this);
+				manager.PositionChanged += new EventHandler (PositionChangedHandler);
+			}
 
-			manager.AddBinding (this);
-			manager.PositionChanged += new EventHandler (PositionChangedHandler);
+			if (manager.Position == -1)
+				return;
 
-			is_null_desc = TypeDescriptor.GetProperties (manager.Current).Find (property_name + "IsNull", false);
+			if (!checked_isnull) {
+				is_null_desc = TypeDescriptor.GetProperties (manager.Current).Find (property_name + "IsNull", false);
+				checked_isnull = true;
+			}
 
 			PushData ();
 		}
@@ -183,6 +189,13 @@ namespace System.Windows.Forms {
 
 		internal void UpdateIsBinding ()
 		{
+			is_binding = false;
+			if (control == null || !control.Created)
+				return;
+			if (manager == null || manager.IsSuspended)
+				return;
+
+			is_binding = true;
 			PushData ();
 		}
 
@@ -216,6 +229,7 @@ namespace System.Windows.Forms {
 
 		private void PositionChangedHandler (object sender, EventArgs e)
 		{
+			Check ();
 			PushData ();
 		}
 
