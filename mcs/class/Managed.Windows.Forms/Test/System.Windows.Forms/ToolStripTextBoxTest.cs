@@ -45,9 +45,9 @@ namespace MonoTests.System.Windows.Forms
 
 			Assert.AreEqual (false, tsi.AcceptsReturn, "A1");
 			Assert.AreEqual (false, tsi.AcceptsTab, "A2");
-			//Assert.AreEqual ("System.Windows.Forms.AutoCompleteStringCollection", tsi.AutoCompleteCustomSource.GetType ().ToString (), "A3");
-			//Assert.AreEqual (AutoCompleteMode.None, tsi.AutoCompleteMode, "A4");
-			//Assert.AreEqual (AutoCompleteSource.None, tsi.AutoCompleteSource, "A5");
+			Assert.AreEqual ("System.Windows.Forms.AutoCompleteStringCollection", tsi.AutoCompleteCustomSource.GetType ().ToString (), "A3");
+			Assert.AreEqual (AutoCompleteMode.None, tsi.AutoCompleteMode, "A4");
+			Assert.AreEqual (AutoCompleteSource.None, tsi.AutoCompleteSource, "A5");
 			Assert.AreEqual (BorderStyle.Fixed3D, tsi.BorderStyle, "A6");
 			Assert.AreEqual (false, tsi.CanUndo, "A7");
 			Assert.AreEqual (CharacterCasing.Normal, tsi.CharacterCasing, "A8");
@@ -60,7 +60,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (string.Empty, tsi.SelectedText, "A14");
 			Assert.AreEqual (0, tsi.SelectionLength, "A15");
 			Assert.AreEqual (0, tsi.SelectionStart, "A16");
-			//Assert.AreEqual (true, tsi.ShortcutsEnabled, "A17");
+			Assert.AreEqual (true, tsi.ShortcutsEnabled, "A17");
 			Assert.AreEqual ("System.Windows.Forms.ToolStripTextBox+ToolStripTextBoxControl", tsi.TextBox.GetType ().ToString (), "A18");
 			Assert.AreEqual (HorizontalAlignment.Left, tsi.TextBoxTextAlign, "A19");
 			Assert.AreEqual (0, tsi.TextLength, "A20");
@@ -116,53 +116,53 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (string.Empty, ew.ToString (), "B3");
 		}
 
-		//[Test]
-		//public void PropertyAutoCompleteCustomSource ()
-		//{
-		//        ToolStripTextBox tsi = new ToolStripTextBox ();
-		//        EventWatcher ew = new EventWatcher (tsi);
+		[Test]
+		public void PropertyAutoCompleteCustomSource ()
+		{
+			ToolStripTextBox tsi = new ToolStripTextBox ();
+			EventWatcher ew = new EventWatcher (tsi);
 
-		//        AutoCompleteStringCollection acsc = new AutoCompleteStringCollection ();
-		//        acsc.AddRange (new string[] {"Apple", "Banana"});
+			AutoCompleteStringCollection acsc = new AutoCompleteStringCollection ();
+			acsc.AddRange (new string[] { "Apple", "Banana" });
 
-		//        tsi.AutoCompleteCustomSource = acsc;
-		//        Assert.AreSame (acsc, tsi.AutoCompleteCustomSource, "B1");
-		//        Assert.AreEqual (string.Empty, ew.ToString (), "B2");
+			tsi.AutoCompleteCustomSource = acsc;
+			Assert.AreSame (acsc, tsi.AutoCompleteCustomSource, "B1");
+			Assert.AreEqual (string.Empty, ew.ToString (), "B2");
 
-		//        ew.Clear ();
-		//        tsi.AutoCompleteCustomSource = acsc;
-		//        Assert.AreEqual (string.Empty, ew.ToString (), "B3");
-		//}
+			ew.Clear ();
+			tsi.AutoCompleteCustomSource = acsc;
+			Assert.AreEqual (string.Empty, ew.ToString (), "B3");
+		}
 
-		//[Test]
-		//public void PropertyAutoCompleteMode ()
-		//{
-		//        ToolStripTextBox tsi = new ToolStripTextBox ();
-		//        EventWatcher ew = new EventWatcher (tsi);
+		[Test]
+		public void PropertyAutoCompleteMode ()
+		{
+			ToolStripTextBox tsi = new ToolStripTextBox ();
+			EventWatcher ew = new EventWatcher (tsi);
 
-		//        tsi.AutoCompleteMode = AutoCompleteMode.Append;
-		//        Assert.AreEqual (AutoCompleteMode.Append, tsi.AutoCompleteMode, "B1");
-		//        Assert.AreEqual (string.Empty, ew.ToString (), "B2");
+			tsi.AutoCompleteMode = AutoCompleteMode.Append;
+			Assert.AreEqual (AutoCompleteMode.Append, tsi.AutoCompleteMode, "B1");
+			Assert.AreEqual (string.Empty, ew.ToString (), "B2");
 
-		//        ew.Clear ();
-		//        tsi.AutoCompleteMode = AutoCompleteMode.Append;
-		//        Assert.AreEqual (string.Empty, ew.ToString (), "B3");
-		//}
+			ew.Clear ();
+			tsi.AutoCompleteMode = AutoCompleteMode.Append;
+			Assert.AreEqual (string.Empty, ew.ToString (), "B3");
+		}
 
-		//[Test]
-		//public void PropertyAutoCompleteSource ()
-		//{
-		//        ToolStripTextBox tsi = new ToolStripTextBox ();
-		//        EventWatcher ew = new EventWatcher (tsi);
+		[Test]
+		public void PropertyAutoCompleteSource ()
+		{
+			ToolStripTextBox tsi = new ToolStripTextBox ();
+			EventWatcher ew = new EventWatcher (tsi);
 
-		//        tsi.AutoCompleteSource = AutoCompleteSource.RecentlyUsedList;
-		//        Assert.AreEqual (AutoCompleteSource.RecentlyUsedList, tsi.AutoCompleteSource, "B1");
-		//        Assert.AreEqual (string.Empty, ew.ToString (), "B2");
+			tsi.AutoCompleteSource = AutoCompleteSource.RecentlyUsedList;
+			Assert.AreEqual (AutoCompleteSource.RecentlyUsedList, tsi.AutoCompleteSource, "B1");
+			Assert.AreEqual (string.Empty, ew.ToString (), "B2");
 
-		//        ew.Clear ();
-		//        tsi.AutoCompleteSource = AutoCompleteSource.RecentlyUsedList;
-		//        Assert.AreEqual (string.Empty, ew.ToString (), "B3");
-		//}
+			ew.Clear ();
+			tsi.AutoCompleteSource = AutoCompleteSource.RecentlyUsedList;
+			Assert.AreEqual (string.Empty, ew.ToString (), "B3");
+		}
 
 		[Test]
 		public void PropertyBorderStyle ()
@@ -324,20 +324,20 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (string.Empty, ew.ToString (), "B3");
 		}
 
-		//[Test]
-		//public void PropertyShortcutsEnabled ()
-		//{
-		//        ToolStripTextBox tsi = new ToolStripTextBox ();
-		//        EventWatcher ew = new EventWatcher (tsi);
+		[Test]
+		public void PropertyShortcutsEnabled ()
+		{
+			ToolStripTextBox tsi = new ToolStripTextBox ();
+			EventWatcher ew = new EventWatcher (tsi);
 
-		//        tsi.ShortcutsEnabled = false;
-		//        Assert.AreEqual (false, tsi.ShortcutsEnabled, "B1");
-		//        Assert.AreEqual (string.Empty, ew.ToString (), "B2");
+			tsi.ShortcutsEnabled = false;
+			Assert.AreEqual (false, tsi.ShortcutsEnabled, "B1");
+			Assert.AreEqual (string.Empty, ew.ToString (), "B2");
 
-		//        ew.Clear ();
-		//        tsi.ShortcutsEnabled = false;
-		//        Assert.AreEqual (string.Empty, ew.ToString (), "B3");
-		//}
+			ew.Clear ();
+			tsi.ShortcutsEnabled = false;
+			Assert.AreEqual (string.Empty, ew.ToString (), "B3");
+		}
 
 		[Test]
 		public void PropertyTextBoxTextAlign ()

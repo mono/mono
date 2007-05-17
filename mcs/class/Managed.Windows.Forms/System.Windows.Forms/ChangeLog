@@ -1,3 +1,7 @@
+2007-05-17  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStripTextBox.cs: Wire up new 2.0 Textbox methods/properties.
+
 2007-05-16  Everaldo Canuto  <ecanuto@novell.com>
 
 	* Control.cs: 

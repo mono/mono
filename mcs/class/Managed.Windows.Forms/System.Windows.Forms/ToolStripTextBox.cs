@@ -69,7 +69,35 @@ namespace System.Windows.Forms
 			get { return this.TextBox.AcceptsTab; }
 			set { this.TextBox.AcceptsTab = value; }
 		}
+
+		[MonoTODO ("AutoCompletion algorithm is currently not implemented.")]
+		[Browsable (true)]
+		[Localizable (true)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		public AutoCompleteStringCollection AutoCompleteCustomSource {
+			get { return this.TextBox.AutoCompleteCustomSource; }
+			set { this.TextBox.AutoCompleteCustomSource = value; }
+		}
 		
+		[MonoTODO("AutoCompletion algorithm is currently not implemented.")]
+		[Browsable (true)]
+		[DefaultValue (AutoCompleteMode.None)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
+		public AutoCompleteMode AutoCompleteMode {
+			get { return this.TextBox.AutoCompleteMode; }
+			set { this.TextBox.AutoCompleteMode = value; }
+		}
+
+		[MonoTODO("AutoCompletion algorithm is currently not implemented.")]
+		[Browsable (true)]
+		[DefaultValue (AutoCompleteSource.None)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
+		public AutoCompleteSource AutoCompleteSource {
+			get { return this.TextBox.AutoCompleteSource; }
+			set { this.TextBox.AutoCompleteSource = value; }
+		}
+
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -175,6 +203,12 @@ namespace System.Windows.Forms
 			set { this.TextBox.SelectionStart = value; }
 		}
 
+		[DefaultValue (true)]
+		public bool ShortcutsEnabled {
+			get { return this.TextBox.ShortcutsEnabled; }
+			set { this.TextBox.ShortcutsEnabled = value; }
+		}
+		
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public TextBox TextBox {
@@ -234,6 +268,41 @@ namespace System.Windows.Forms
 			this.TextBox.Cut ();
 		}
 
+		public void DeselectAll ()
+		{
+			this.TextBox.DeselectAll ();
+		}
+		
+		public char GetCharFromPosition (Point pt)
+		{
+			return this.TextBox.GetCharFromPosition (pt);
+		}
+		
+		public int GetCharIndexFromPosition (Point pt)
+		{
+			return this.TextBox.GetCharIndexFromPosition (pt);
+		}
+		
+		public int GetFirstCharIndexFromLine (int lineNumber)
+		{
+			return this.TextBox.GetFirstCharIndexFromLine (lineNumber);
+		}
+		
+		public int GetFirstCharIndexOfCurrentLine ()
+		{
+			return this.TextBox.GetFirstCharIndexOfCurrentLine ();
+		}
+		
+		public int GetLineFromCharIndex (int index)
+		{
+			return this.TextBox.GetLineFromCharIndex (index);
+		}
+		
+		public Point GetPositionFromCharIndex (int index)
+		{
+			return this.TextBox.GetPositionFromCharIndex (index);
+		}
+		
 		public override Size GetPreferredSize (Size constrainingSize)
 		{
 			return this.DefaultSize;

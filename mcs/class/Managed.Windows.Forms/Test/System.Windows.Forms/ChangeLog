@@ -1,3 +1,8 @@
+2007-05-17  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStripTextBoxTest.cs: Enable tests for auto complete and shortcuts
+	enabled stuff.
+
 2007-05-16  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ImageKeyConverterTest.cs: Added.
