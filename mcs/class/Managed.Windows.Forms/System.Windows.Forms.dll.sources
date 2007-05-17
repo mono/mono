@@ -368,6 +368,7 @@ System.Windows.Forms/IRootGridEntry.cs
 System.Windows.Forms/IWin32Window.cs
 System.Windows.Forms/IWindowTarget.cs
 System.Windows.Forms/ImageIndexConverter.cs
+System.Windows.Forms/ImageKeyConverter.cs
 System.Windows.Forms/ImageLayout.cs
 System.Windows.Forms/ImageList.cs
 System.Windows.Forms/ImageListConverter.cs
@@ -732,6 +733,7 @@ System.Windows.Forms/TreeViewEventHandler.cs
 System.Windows.Forms/TreeViewHitTestInfo.cs
 System.Windows.Forms/TreeViewHitTestLocations.cs
 System.Windows.Forms/TreeViewImageIndexConverter.cs
+System.Windows.Forms/TreeViewImageKeyConverter.cs
 System.Windows.Forms/TypeValidationEventArgs.cs
 System.Windows.Forms/TypeValidationEventHandler.cs
 System.Windows.Forms/UICues.cs

@@ -1,3 +1,8 @@
+2007-05-16  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ImageKeyConverterTest.cs: Added.
+	* TreeViewImageKeyConverterTest.cs: Added.
+
 2007-05-15  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TextBoxTest.cs: Add test for IsInputChar method.

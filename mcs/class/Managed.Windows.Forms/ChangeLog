@@ -1,3 +1,10 @@
+2007-05-16  Jonathan Pobst  <monkey@jpobst.com>
+
+	* System.Windows.Forms.dll.sources: Add ImageKeyConverter.cs,
+	TreeViewImageKeyConverter.cs.
+	* System.Windows.Forms_test.dll.sources: Add ImageKeyConverterTest.cs,
+	TreeViewImageKeyConverterTest.cs.
+
 2007-05-16  Olivier Dufour  <olivier.duff@free.fr>
 
 	* ColumnHeaderConverter: Added
