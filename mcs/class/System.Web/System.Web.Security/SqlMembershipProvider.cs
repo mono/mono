@@ -370,7 +370,7 @@ namespace System.Web.Security {
 
 				command.ExecuteNonQuery ();
 
-				if (((int) command.Parameters ["NumTablesDeletedFrom"].Value) == 0)
+				if (((int) command.Parameters ["@NumTablesDeletedFrom"].Value) == 0)
 					return false;
 
 				if (GetReturnValue (returnValue) == 0)
