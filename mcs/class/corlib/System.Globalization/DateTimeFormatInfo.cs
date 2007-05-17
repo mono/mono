@@ -67,6 +67,8 @@ namespace System.Globalization
 #endif
 		private static DateTimeFormatInfo theInvariantDateTimeFormatInfo;
 
+		private const string _RoundtripPattern = "yyyy'-'MM'-'dd'T'HH':'mm':'ss.fffffffK";
+
 		//
 		// BIG FAT WARNING:
 		//
@@ -560,6 +562,14 @@ namespace System.Globalization
 			get
 			{
 				return _RFC1123Pattern;
+			}
+		}
+
+		internal string RoundtripPattern
+		{
+			get
+			{
+				return _RoundtripPattern;
 			}
 		}
 

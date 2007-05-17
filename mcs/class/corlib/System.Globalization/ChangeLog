@@ -1,3 +1,7 @@
+2007-05-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DateTimeFormatInfo.cs : added roundtrip pattern (only in 2.0).
+
 2007-05-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* RegionInfo.cs, CultureInfo.cs : in 2.0 RegionInfo could be created

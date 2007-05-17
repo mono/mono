@@ -1,3 +1,7 @@
+2007-05-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DateTime.cs : added support for 'K'.
+
 2007-05-11  Jonathan Chambers  <joncham@gmail.com>
 
 	* __ComObject.cs: No need to call CoInitialize anymore since

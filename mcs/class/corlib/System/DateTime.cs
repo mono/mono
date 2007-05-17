@@ -969,6 +969,9 @@ namespace System
 					       DateTimeStyles style,
 					       ref bool longYear)
 		{
+#if NET_2_0
+			DateTimeKind explicit_kind = DateTimeKind.Unspecified;
+#endif
 			bool useutc = false, use_localtime = true;
 			bool use_invariant = false;
 			bool sloppy_parsing = false;
@@ -1288,7 +1291,38 @@ namespace System
 						num = 2;
 					}
 					break;
+#if NET_2_0
+				case 'K':
+					if (s [valuePos] == 'Z') {
+						valuePos++;
+						explicit_kind = DateTimeKind.Utc;
+					} else if (s [valuePos] == '+' || s [valuePos] == '-') {
+						if (tzsign != -1)
+							return false;
+						if (s [valuePos] == '+')
+							tzsign = 0;
+						else if (s [valuePos] == '-')
+							tzsign = 1;
+						valuePos++;
 
+						// zzz
+						tzoffset = _ParseNumber (s, valuePos, 0, 2, true, sloppy_parsing, out num_parsed);
+						if (num_parsed < 0)
+							return false;
+						valuePos += num_parsed;
+						if (Char.IsDigit (s [valuePos]))
+							num_parsed = 0;
+						else if (!_ParseString (s, valuePos, 0, dfi.TimeSeparator, out num_parsed))
+							return false;
+						valuePos += num_parsed;
+						tzoffmin = _ParseNumber (s, valuePos, 0, 2, true, sloppy_parsing, out num_parsed);
+						if (num_parsed < 0)
+							return false;
+						num = 2;
+						explicit_kind = DateTimeKind.Local;
+					}
+					break;
+#endif
 				// LAMESPEC: This should be part of UTCpattern
 				// string and thus should not be considered here.
 				//
@@ -1471,11 +1505,16 @@ namespace System
 			long newticks = (result.ticks - utcoffset).Ticks;
 
 			result = new DateTime (false, new TimeSpan (newticks));
-			if (use_localtime)
-				result = result.ToLocalTime ();
 #if NET_2_0
+			if (explicit_kind != DateTimeKind.Unspecified)
+				result.kind = explicit_kind;
+			else if (use_localtime)
+				result = result.ToLocalTime ();
 			else
 				result.kind = DateTimeKind.Utc;
+#else
+			if (use_localtime)
+				result = result.ToLocalTime ();
 #endif
 
 			return true;
@@ -1708,6 +1747,11 @@ namespace System
 			case 'M':
 				pattern = dfi.MonthDayPattern;
 				break;
+#if NET_2_0
+			case 'o':
+				pattern = dfi.RoundtripPattern;
+				break;
+#endif
 			case 'r':
 			case 'R':
 				pattern = dfi.RFC1123Pattern;
@@ -1741,6 +1785,7 @@ namespace System
 			default:
 				pattern = null;
 				break;
+//				throw new FormatException (String.Format ("Invalid format pattern: '{0}'", format));
 			}
 
 			return pattern;
@@ -1860,6 +1905,26 @@ namespace System
 						break;
 					}
 					break;
+#if NET_2_0
+				case 'K': // 'Z' (UTC) or zzz (Local)
+					tokLen = 1;
+					switch (kind) {
+					case DateTimeKind.Utc:
+						result.Append ('Z');
+						break;
+					case DateTimeKind.Local:
+						offset = TimeZone.CurrentTimeZone.GetUtcOffset (this);
+						if (offset.Ticks >= 0)
+							result.Append ('+');
+						else
+							result.Append ('-');
+						result.Append (Math.Abs (offset.Hours).ToString ("00"));
+						result.Append (':');
+						result.Append (Math.Abs (offset.Minutes).ToString ("00"));
+						break;
+					}
+					break;
+#endif
 				//
 				// Date tokens
 				//

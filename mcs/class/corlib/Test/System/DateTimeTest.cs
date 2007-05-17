@@ -1642,6 +1642,25 @@ public class DateTimeTest : Assertion
 		AssertEquals ("#3", String.Empty, today.ToString (".FFFFFFF"));
 		AssertEquals ("#4", "$", today.ToString ("$FFFFFFF"));
 	}
+
+	[Test]
+	public void KindInPattern ()
+	{
+		// only 2.0 supports 'K'
+		AssertEquals ("#1", "00:00:00", new DateTime (2000, 1, 1).ToString ("HH:mm:ssK"));
+		AssertEquals ("#2", 'Z', DateTime.Today.ToUniversalTime ().ToString ("HH:mm:ssK") [8]);
+		AssertEquals ("#3", "00:00:00+09:00".Length, DateTime.Today.ToString ("HH:mm:ssK").Length);
+	}
+
+	[Test]
+	public void RoundtripPattern ()
+	{
+		// only 2.0 supports 'o'
+		AssertEquals ("#1", "2000-01-01T00:00:00.0000000", new DateTime (2000, 1, 1).ToString ("o"));
+		AssertEquals ("#2", "2000-01-01T00:00:00.0000000Z", DateTime.SpecifyKind (new DateTime (2000, 1, 1), DateTimeKind.Utc).ToString ("o"));
+		AssertEquals ("#3", "2000-01-01T00:00:00.0000000+09:00".Length,
+			      DateTime.SpecifyKind (new DateTime (2000, 1, 1), DateTimeKind.Local).ToString ("o").Length);
+	}
 #endif
 }
 
