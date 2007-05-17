@@ -264,17 +264,17 @@ namespace Microsoft.VisualBasic
 				GenerateExpression (targetObject);
 				Output.Write ('.');
 			}
-			Output.Write (expression.FieldName);
+			Output.Write (CreateEscapedIdentifier (expression.FieldName));
 		}
 		
 		protected override void GenerateArgumentReferenceExpression (CodeArgumentReferenceExpression expression)
 		{
-			Output.Write (expression.ParameterName);
+			Output.Write (CreateEscapedIdentifier (expression.ParameterName));
 		}
 
 		protected override void GenerateVariableReferenceExpression (CodeVariableReferenceExpression expression)
 		{
-			Output.Write (expression.VariableName);
+			Output.Write (CreateEscapedIdentifier (expression.VariableName));
 		}
 		
 		protected override void GenerateIndexerExpression (CodeIndexerExpression expression)
@@ -315,9 +315,11 @@ namespace Microsoft.VisualBasic
 
 		protected override void GenerateMethodReferenceExpression (CodeMethodReferenceExpression expression)
 		{
-			GenerateExpression (expression.TargetObject);
-			Output.Write ('.');
-			Output.Write (expression.MethodName);
+			if (expression.TargetObject != null) {
+				GenerateExpression (expression.TargetObject);
+				Output.Write ('.');
+			}
+			Output.Write (CreateEscapedIdentifier (expression.MethodName));
 		}
 
 		protected override void GenerateEventReferenceExpression (CodeEventReferenceExpression expression)
@@ -325,8 +327,10 @@ namespace Microsoft.VisualBasic
 			if (expression.TargetObject != null) {
 				GenerateExpression (expression.TargetObject);
 				Output.Write ('.');
+				Output.Write (CreateEscapedIdentifier (expression.EventName));
+			} else {
+				Output.Write (expression.EventName + "Event");
 			}
-			Output.Write (CreateEscapedIdentifier(expression.EventName));
 		}
 
 		protected override void GenerateDelegateInvokeExpression (CodeDelegateInvokeExpression expression)
@@ -394,7 +398,11 @@ namespace Microsoft.VisualBasic
 
 		protected override void GeneratePropertyReferenceExpression (CodePropertyReferenceExpression expression)
 		{
-			GenerateMemberReferenceExpression (expression.TargetObject, expression.PropertyName);
+			if (expression.TargetObject != null) {
+				GenerateMemberReferenceExpression (expression.TargetObject, expression.PropertyName);
+			} else {
+				Output.Write (CreateEscapedIdentifier (expression.PropertyName));
+			}
 		}
 
 		protected override void GeneratePropertySetValueReferenceExpression (CodePropertySetValueReferenceExpression expression)
@@ -550,7 +558,11 @@ namespace Microsoft.VisualBasic
 			TextWriter output = Output;
 
 			Output.Write ("AddHandler ");
-			GenerateEventReferenceExpression (statement.Event);
+			if (statement.Event.TargetObject != null) {
+				GenerateEventReferenceExpression (statement.Event);
+			} else {
+				Output.Write (CreateEscapedIdentifier (statement.Event.EventName));
+			}
 			Output.Write ( ", ");
 			GenerateExpression (statement.Listener);
 			output.WriteLine ();
@@ -561,7 +573,11 @@ namespace Microsoft.VisualBasic
 			TextWriter output = Output;
 
 			Output.Write ("RemoveHandler ");
-			GenerateEventReferenceExpression (statement.Event);
+			if (statement.Event.TargetObject != null) {
+				GenerateEventReferenceExpression (statement.Event);
+			} else {
+				Output.Write (CreateEscapedIdentifier (statement.Event.EventName));
+			}
 			Output.Write ( ", ");
 			GenerateExpression (statement.Listener);
 			output.WriteLine ();
@@ -1514,6 +1530,7 @@ namespace Microsoft.VisualBasic
 #endif
 				default:
 					output = type.BaseType.Replace('+', '.');
+					output = CreateEscapedIdentifier (output);
 					break;
 				}
 			}
