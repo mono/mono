@@ -1,5 +1,9 @@
 2007-05-17  Jonathan Pobst  <monkey@jpobst.com>
 
+	* TreeViewImageIndexConverterTest.cs: Added.
+
+2007-05-17  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ToolStripTextBoxTest.cs: Enable tests for auto complete and shortcuts
 	enabled stuff.
 
