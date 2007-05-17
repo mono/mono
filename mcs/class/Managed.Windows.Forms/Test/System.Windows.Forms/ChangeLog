@@ -1,5 +1,9 @@
 2007-05-17  Andreia Gaita  <avidigal@novell.com>
 
+	* TabControlTest.cs: Ignore the enter/leave tests for a bit
+
+2007-05-17  Andreia Gaita  <avidigal@novell.com>
+
 	* TabControlTest.cs: Add tests for Enter/Leave events on tabpages
 
 2007-05-17  Jonathan Pobst  <monkey@jpobst.com>

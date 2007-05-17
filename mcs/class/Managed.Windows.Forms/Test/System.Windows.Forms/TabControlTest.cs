@@ -716,6 +716,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void EnterLeaveEvents ()
 		{
 			Form f = new Form ();
