@@ -396,5 +396,54 @@ namespace MonoTests.Microsoft.VisualBasic
 				sw.Close ();
 			}
 		}
+		
+		[Test]
+		public void EscapedIdentifierTest ()
+		{
+			StringBuilder sb;
+			string code;
+			
+			sb = new StringBuilder ();
+			using (StringWriter sw = new StringWriter (sb)) {
+				code = Generate (new CodeVariableReferenceExpression ("set"), sw); 
+				Assert.AreEqual ("[set]", code, "#01");
+				sw.Close ();
+			}
+			
+			sb = new StringBuilder ();
+			using (StringWriter sw = new StringWriter (sb)) {
+				code = Generate (new CodeTypeReferenceExpression ("set"), sw); 
+				Assert.AreEqual ("[set]", code, "#02");
+				sw.Close ();
+			}
+			
+			sb = new StringBuilder ();
+			using (StringWriter sw = new StringWriter (sb)) {
+				code = Generate (new CodePropertyReferenceExpression (null, "set"), sw); 
+				Assert.AreEqual ("[set]", code, "#03");
+				sw.Close ();
+			}
+			
+			sb = new StringBuilder ();
+			using (StringWriter sw = new StringWriter (sb)) {
+				code = Generate (new CodeMethodReferenceExpression (null, "set"), sw); 
+				Assert.AreEqual ("[set]", code, "#04");
+				sw.Close ();
+			}
+			
+			sb = new StringBuilder ();
+			using (StringWriter sw = new StringWriter (sb)) {
+				code = Generate (new CodeFieldReferenceExpression (null, "set"), sw); 
+				Assert.AreEqual ("[set]", code, "#05");
+				sw.Close ();
+			}
+			
+			sb = new StringBuilder ();
+			using (StringWriter sw = new StringWriter (sb)) {
+				code = Generate (new CodeEventReferenceExpression (null, "set"), sw); 
+				Assert.AreEqual ("setEvent", code, "#06");
+				sw.Close ();
+			}
+		}
 	}
 }

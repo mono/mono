@@ -132,7 +132,48 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"AddHandler ., {0}", NewLine), Generate (), "#6");
 		}
+		
+		[Test]
+		public void CodeAttachEventStatementKeywordTest ()
+		{
+			CodeEventReferenceExpression cere = new CodeEventReferenceExpression (
+				new CodeSnippetExpression ("Set"), "Event");
+			CodeSnippetExpression handler = new CodeSnippetExpression ("Handles");
 
+			CodeAttachEventStatement attachEventStatement = new CodeAttachEventStatement ();
+			statement = attachEventStatement;
+
+			try {
+				Generate ();
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException) {
+			}
+
+			attachEventStatement.Event = cere;
+			try {
+				Generate ();
+				Assert.Fail ("#2");
+			} catch (ArgumentNullException) {
+			}
+
+			attachEventStatement.Event = null;
+			attachEventStatement.Listener = handler;
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"AddHandler , Handles{0}", NewLine), Generate (), "#3");
+
+			attachEventStatement.Event = cere;
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"AddHandler Set.[Event], Handles{0}", NewLine), Generate (), "#4");
+
+			attachEventStatement.Event = new CodeEventReferenceExpression (
+				new CodeSnippetExpression ((string) null), "");
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"AddHandler ., Handles{0}", NewLine), Generate (), "#5");
+
+			attachEventStatement.Listener = new CodeSnippetExpression ("");
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"AddHandler ., {0}", NewLine), Generate (), "#6");
+		}
 		[Test]
 		public void CodeCommentStatementTest ()
 		{
