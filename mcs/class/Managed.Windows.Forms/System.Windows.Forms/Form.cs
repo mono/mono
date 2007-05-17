@@ -1946,6 +1946,15 @@ namespace System.Windows.Forms {
 				return true;
 			}
 
+			// Handle keyboard cues state.
+			if ((keyData & Keys.Alt) != 0) {
+				Control toplevel = TopLevelControl;
+				if (toplevel != null) {
+					IntPtr param = MakeParam ((int) MsgUIState.UIS_CLEAR, (int) MsgUIState.UISF_HIDEACCEL);
+					XplatUI.SendMessage (toplevel.Handle, Msg.WM_CHANGEUISTATE, param, IntPtr.Zero);
+				}
+			}
+
 			// Give our menu a shot
 			if (ActiveMenu != null) {
 				return ActiveMenu.ProcessCmdKey(ref msg, keyData);
