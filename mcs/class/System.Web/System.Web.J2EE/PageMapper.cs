@@ -372,6 +372,11 @@ namespace System.Web.J2EE
 						_assembly = Assembly.Load (_origAssemblyName);
 					}
 				}
+
+#if DEBUG
+				Console.WriteLine ("Loaded type:" + _type);
+				Console.WriteLine ("Loaded assembly:" + _assembly);
+#endif
 			}
 		}
 		private bool InternalCompile()
