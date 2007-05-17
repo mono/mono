@@ -1,7 +1,7 @@
 2007-05-17  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ThreadTest.cs: Use Assert instead of deprecated Assertion class.
-	Code formatting. Added test for bug #81568.
+	Code formatting. Added test for bug #81658.
 
 2007-05-16  Gert Driesen  <drieseng@users.sourceoforge.net>
 
