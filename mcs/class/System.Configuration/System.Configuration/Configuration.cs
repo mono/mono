@@ -167,8 +167,15 @@ namespace System.Configuration {
 			get { return (ConnectionStringsSection) GetSection ("connectionStrings"); }
 		}
 
+		// MSDN: If the value for this FilePath property represents a merged view and 
+		// no actual file exists for the application, the path to the parent configuration 
+		// file is returned.
 		public string FilePath {
-			get { return streamName; }
+			get {
+				if (streamName == null && parent != null)
+					return parent.FilePath;
+				return streamName;
+			}
 		}
 
 		public bool HasFile {

@@ -1,3 +1,10 @@
+2007-05-17 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* Configuration.cs: FilePath implemented according to MSDN:
+	If the value for this FilePath property represents a merged view and 
+	no actual file exists for the application, the path to the parent 
+	configuration file is returned.
+
 2007-05-15 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* Configuration.cs:
