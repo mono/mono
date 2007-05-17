@@ -1,3 +1,8 @@
+2007-05-17  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* TextBoxTest.cs: BackColorTest: Fix it, we may get invalidates and
+	  paints after a Form.Show ().
+
 2007-05-17  Andreia Gaita  <avidigal@novell.com>
 
 	* TabControlTest.cs: Ignore the enter/leave tests for a bit

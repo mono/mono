@@ -221,6 +221,9 @@ namespace MonoTests.System.Windows.Forms
 			form.Controls.Add (textBox);
 			form.Show ();
 
+			_invalidated = 0;
+			_paint = 0;
+			
 			Assert.AreEqual (Color.White, textBox.BackColor, "#B1");
 			Assert.AreEqual (0, _invalidated, "#B2");
 			Assert.AreEqual (0, _paint, "#B3");
