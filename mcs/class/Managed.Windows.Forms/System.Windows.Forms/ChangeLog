@@ -1,3 +1,11 @@
+2007-05-16  Everaldo Canuto  <ecanuto@novell.com>
+
+	* Control.cs: 
+	- WmUpdateUIState added to handle state changes, it make call to
+	OnChangeUICues event.
+	- Fixed ShowKeyboardCues to check for MenuAccessKeysUnderlined in
+	SystemInformation.
+
 2007-05-16  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ImageKeyConverter.cs: Added.

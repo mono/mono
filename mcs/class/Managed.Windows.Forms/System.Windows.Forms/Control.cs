@@ -104,6 +104,7 @@ namespace System.Windows.Forms
 		internal Font			font;			// font for control
 		string                  text; // window/title text for control
 		internal                BorderStyle		border_style;		// Border style of control
+		bool                    show_keyboard_cues; // Current keyboard cues 
 
 		// Layout
 		internal enum LayoutType {
@@ -999,6 +1000,7 @@ namespace System.Windows.Forms
 			tab_stop = true;
 			ime_mode = ImeMode.Inherit;
 			use_compatible_text_rendering = true;
+			show_keyboard_cues = false;
 
 #if NET_2_0
 			backgroundimage_layout = ImageLayout.Tile;
@@ -3355,7 +3357,7 @@ namespace System.Windows.Forms
 #endif
 		protected bool ShowKeyboardCues {
 			get {
-				return true;
+				return SystemInformation.MenuAccessKeysUnderlined || show_keyboard_cues;
 			}
 		}
 		#endregion	// Protected Instance Properties
@@ -4924,6 +4926,11 @@ namespace System.Windows.Forms
 					return;
 				}
 			
+				case Msg.WM_UPDATEUISTATE: {
+					WmUpdateUIState (ref m);
+					return;
+				}
+
 				default:
 					DefWndProc(ref m);
 					return;
@@ -5331,6 +5338,11 @@ namespace System.Windows.Forms
 			m.Result = (IntPtr) 0;
 		}
 
+		private void WmUpdateUIState (ref Message m) {
+			UICues cues = UICues.None;
+			OnChangeUICues (new UICuesEventArgs (cues));
+			Invalidate ();
+		}
 
 		#endregion
 
