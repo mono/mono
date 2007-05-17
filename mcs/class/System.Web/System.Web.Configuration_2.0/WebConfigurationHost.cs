@@ -298,6 +298,8 @@ namespace System.Web.Configuration
 		}
 #if TARGET_J2EE
 		static DirectoryInfo GetCaseSensitiveExistingDirectory (DirectoryInfo dir) {
+			if (dir == null)
+				return null;
 			if (dir.Exists)
 				return dir;
 

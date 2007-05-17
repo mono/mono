@@ -1,3 +1,8 @@
+2007-05-17  Igor Zelmanovich <igorz@mainsoft.com>
+
+	* WebConfigurationHost.cs: for TARGET_J2EE only:
+	prevent NullRefference Exception.
+
 2007-05-15  Igor Zelmanovich <igorz@mainsoft.com>
 
 	* WebConfigurationManager.cs: 
