@@ -445,6 +445,42 @@ namespace MonoTests.System.Windows.Forms
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
+		public void AddRangeNullTest ()
+		{
+			col.AddRange ((object []) null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void AddRangeNullTest2 ()
+		{
+			col.AddRange ((ListBox.ObjectCollection) null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void ContainsNullTest ()
+		{
+			col.Contains (null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void IndexOfNullTest ()
+		{
+			col.IndexOf (null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void InsertNullTest ()
+		{
+			col.Add ("Item1");
+			col.Insert (0, null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
 		public void IndexerNullTest ()
 		{
 			col.Add ("Item1");
