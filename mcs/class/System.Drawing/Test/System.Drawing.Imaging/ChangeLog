@@ -1,3 +1,7 @@
+2007-05-17  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* MetafileTest.cs: Ignore test Measure if no fonts are available.
+
 2007-05-17  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* MetafileTest.cs: Add a few test cases on what happens when recording

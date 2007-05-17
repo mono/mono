@@ -319,6 +319,18 @@ namespace MonoTests.System.Drawing.Imaging {
 	[TestFixture]
 	public class MetafileFulltrustTest {
 
+		private Font test_font;
+
+		[TestFixtureSetUp]
+		public void FixtureSetUp ()
+		{
+			try {
+				test_font = new Font (FontFamily.GenericMonospace, 12);
+			}
+			catch (ArgumentException) {
+			}
+		}
+
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void Static_GetMetafileHeader_IntPtr_Zero ()
@@ -586,6 +598,9 @@ namespace MonoTests.System.Drawing.Imaging {
 		[Test]
 		public void Measure ()
 		{
+			if (test_font == null)
+				Assert.Ignore ("No font family could be found.");
+
 			Metafile mf;
 			using (Bitmap bmp = new Bitmap (100, 100, PixelFormat.Format32bppArgb)) {
 				using (Graphics g = Graphics.FromImage (bmp)) {
@@ -598,23 +613,21 @@ namespace MonoTests.System.Drawing.Imaging {
 					}
 				}
 				using (Graphics g = Graphics.FromImage (mf)) {
-					using (Font font = new Font (FontFamily.GenericMonospace, 12)) {
-						string text = "this\nis a test";
-						CharacterRange[] ranges = new CharacterRange[2];
-						ranges[0] = new CharacterRange (0, 5);
-						ranges[1] = new CharacterRange (5, 9);
+					string text = "this\nis a test";
+					CharacterRange[] ranges = new CharacterRange[2];
+					ranges[0] = new CharacterRange (0, 5);
+					ranges[1] = new CharacterRange (5, 9);
 
-						SizeF size = g.MeasureString (text, font);
-						Assert.IsFalse (size.IsEmpty, "MeasureString");
+					SizeF size = g.MeasureString (text, test_font);
+					Assert.IsFalse (size.IsEmpty, "MeasureString");
 
-						StringFormat sf = new StringFormat ();
-						sf.FormatFlags = StringFormatFlags.NoClip;
-						sf.SetMeasurableCharacterRanges (ranges);
+					StringFormat sf = new StringFormat ();
+					sf.FormatFlags = StringFormatFlags.NoClip;
+					sf.SetMeasurableCharacterRanges (ranges);
 
-						RectangleF rect = new RectangleF (0, 0, size.Width, size.Height);
-						Region[] region = g.MeasureCharacterRanges (text, font, rect, sf);
-						Assert.AreEqual (2, region.Length, "MeasureCharacterRanges");
-					}
+					RectangleF rect = new RectangleF (0, 0, size.Width, size.Height);
+					Region[] region = g.MeasureCharacterRanges (text, test_font, rect, sf);
+					Assert.AreEqual (2, region.Length, "MeasureCharacterRanges");
 				}
 				mf.Dispose ();
 			}
