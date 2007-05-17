@@ -10,14 +10,6 @@
 	* expression.cs (Is.DoResolve): Only value types have constant `is´
 	behaviour.
 
-2007-05-15  Marek Safar  <marek.safar@gmail.com>
-
-	* flowanalysis.cs: Unified error message.
-
-	* statement.cs (Block): Removed switch_block.
-	(AddSwitchBlock): A label has to be unique in the scope of method.
-	(DoLookupLabel): Simplified.
-
 2007-05-15  Raja R Harinath  <rharinath@novell.com>
 
 	* statement.cs (ToplevelBlock.child): Remove.
@@ -55,7 +47,6 @@
 	* expression.cs (Binary.ResolveOperator): Implemented delegate
 	 comparison based on C# 2.0 changes.
 
->>>>>>> .r77513
 2007-04-28  Scott Peterson  <lunchtimemama@gmail.com>
 
 	This code is contributed under the MIT X11 license
@@ -1265,7 +1256,7 @@
 	step, after overload resolution has taken place instead of doing
 	the check at the low-level `This.DoResolve' level.
 
-	The `This.DoResolve' happens before overload resolution, so it has
+	The `This.DoResolve'(appens before overload resolution, so it has
 	no way of knowing if the method that will be called will be
 	instace or static, triggering an erroneous report for cs0188 (Bug
 	78113).
@@ -4403,7 +4394,7 @@
 	* literal.cs (NullLiteral.Reduce): null can be converted to any
 	reference type.
 
-2005-10-28  KornÃ©l PÃ¡l  <kornelpal@hotmail.com>
+2005-10-28  Kornél Pál  <kornelpal@hotmail.com>
 
 	* driver.cs: Use Encoding.Default as default code page instead
 	  of ISO-28591.
@@ -4828,7 +4819,7 @@
 	  (PartialContainer.Create): check abstract/sealed/static strictly
 	  but abstract/sealed can exist only at one side. Fixed bug #75883.
 
-2005-09-01  KornÃ©l PÃ¡l  <kornelpal@hotmail.com>
+2005-09-01  Kornél Pál  <kornelpal@hotmail.com>
 
 	Fix #75945.
 	* attribute.cs (Attribute.GetMarshal): If ArraySubType is not
@@ -4908,7 +4899,7 @@
 	* statement.cs : (Continue.Resolve()) Unlike break, continue is not
 	  allowed inside a switch (without loop). Fixed bug #75433.
 
-2005-08-26  KornÃ©l PÃ¡l  <kornelpal@hotmail.com>
+2005-08-26  Kornél Pál  <kornelpal@hotmail.com>
 
 	* AssemblyInfo.cs: Using Consts.MonoVersion instead of MonoVersion.cs.
 	* mcs.exe.sources: Using Consts.MonoVersion instead of MonoVersion.cs.
@@ -10774,9 +10765,9 @@
 	According to the spec, 
 
 	In a member access of the form E.I, if E is a single identifier,
-	and if the meaning of E as a simple-name (Â§7.5.2) is a constant,
+	and if the meaning of E as a simple-name (§7.5.2) is a constant,
 	field, property, localvariable, or parameter with the same type as
-	the meaning of E as a type-name (Â§3.8), then both possible
+	the meaning of E as a type-name (§3.8), then both possible
 	meanings of E are permitted.
 
 	We did not check that E as a simple-name had the same type as E as
@@ -12088,12 +12079,12 @@
 	basically ignored the method name.  Now we make sure that the
 	method name is one of the valid indexer names.
 
-2004-03-14  Gustavo GirÃ¡ldez  <gustavo.giraldez@gmx.net>
+2004-03-14  Gustavo Giráldez  <gustavo.giraldez@gmx.net>
  
  	* support.cs (SeekableStreamReader): Keep track of stream byte
  	positions and don't mix them with character offsets to the buffer.
 
-	Patch from Gustavo GirÃ¡ldez
+	Patch from Gustavo Giráldez
 
 2004-03-15  Marek Safar  <marek.safar@seznam.cz>
 
@@ -15442,7 +15433,7 @@ Tue Jan 28 17:30:57 CET 2003 Paolo Molaro <lupus@ximian.com>
 
 	* driver.cs: fixed bug #37187.
 
-2003-01-27  Pedro Martinez JuliÃ¡  <yoros@wanadoo.es>
+2003-01-27  Pedro Martinez Juliá  <yoros@wanadoo.es>
 
 	* expression.cs (IndexerAccess.DoResolve): Before trying to resolve
 	any indexer, it's needed to build a list with all the indexers in the
@@ -16830,7 +16821,7 @@ Tue Dec 3 19:32:04 CET 2002 Paolo Molaro <lupus@ximian.com>
 	without debugging support.
 
 	* delegate.cs (Delegate.CloseDelegate): Removed, use CloseType instead.
-	Fixes bug #30235.  Thanks to Ricardo FernÃ¡ndez Pascual.
+	Fixes bug #30235.  Thanks to Ricardo Fernández Pascual.
 
 2002-09-12  Martin Baulig  <martin@gnome.org>
 

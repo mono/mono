@@ -1,3 +1,8 @@
+2007-05-17  Raja R Harinath  <rharinath@novell.com>
+
+	* cs0159-5.cs, cs0159-6.cs, cs0159-7.cs: New tests as
+	counterpoints to #81633.
+
 2007-05-15  Scott Peterson  <lunchtimemama@gmail.com>
 	* gcs0201.cs:
 	  Make sure that Linq syntax fails correctly

@@ -1,4 +1,4 @@
-// CS0159:  The label `skip:' could not be found within the scope of the goto statement
+// cs0159-4.cs: No such label `skip' in this scope
 // Line: 9
 
 class Foo {

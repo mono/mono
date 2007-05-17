@@ -556,12 +556,6 @@ namespace Mono.CSharp
 			stmt.AddUsageVector (vector);
 			return false;
 		}
-		
-		public static void Error_UnknownLabel (Location loc, string label)
-		{
-			Report.Error(159, loc, "The label `{0}:' could not be found within the scope of the goto statement",
-				label);
-		}
 
 		protected override UsageVector Merge ()
 		{
@@ -729,7 +723,7 @@ namespace Mono.CSharp
 				throw new InternalErrorException ("Shouldn't get here");
 
 			if (Parent == null) {
-				Error_UnknownLabel (goto_stmt.loc, name);
+				Report.Error (159, goto_stmt.loc, "No such label `{0}' in this scope", name);
 				return false;
 			}
 
