@@ -72,6 +72,7 @@ namespace Microsoft.Build.Tasks {
 
 		public override bool Execute ()
 		{
+			assembly_resolver.Log = Log;
 			List <ITaskItem> tempResolvedFiles = new List <ITaskItem> ();
 		
 			foreach (ITaskItem item in assemblies) {

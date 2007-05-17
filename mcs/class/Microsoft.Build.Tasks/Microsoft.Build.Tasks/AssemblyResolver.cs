@@ -40,15 +40,12 @@ namespace Microsoft.Build.Tasks {
 
 		// name -> (version -> assemblypath)
 		Dictionary <string, Dictionary <Version, string>> gac;
+		TaskLoggingHelper log;
 
-		Dictionary <string, Dictionary <Version, string>> hint_path_assemblies;
-		Dictionary <string, object> hint_paths;
-	
 		public AssemblyResolver ()
 		{
 			gac = new Dictionary <string, Dictionary <Version, string>> ();
-			hint_path_assemblies = new Dictionary <string, Dictionary <Version, string>> ();
-			hint_paths = new Dictionary <string, object> ();
+
 			GatherGacAssemblies ();
 		}
 
@@ -89,64 +86,33 @@ namespace Microsoft.Build.Tasks {
 			}
 		}
 
-		void GatherHintPathAssemblies (string hintPath)
-		{
-			if (hint_paths.ContainsKey (hintPath))
-				return;
-
-			Assembly a;
-			AssemblyName name;
-
-			try {
-				foreach (string assembly_name in Directory.GetFiles (Path.GetDirectoryName (hintPath))) {
-					try {
-						a = Assembly.ReflectionOnlyLoadFrom (assembly_name);
-						name = new AssemblyName (a.FullName);
-	
-						if (!hint_path_assemblies.ContainsKey (name.Name))
-							hint_path_assemblies [name.Name] = new Dictionary <Version, string> ();
-						hint_path_assemblies [name.Name] [name.Version] = assembly_name;
-						hint_paths [hintPath] = null;
-					} catch {
-					}
-				}
-			} catch {
-			}
-		}
-
 		public string ResolveAssemblyReference (ITaskItem reference)
 		{
 			AssemblyName name = null;
 			string resolved = null;
 
-			try {
-				name = new AssemblyName (reference.ItemSpec);
-			} catch {
-				return null;
-			}
+			name = new AssemblyName (reference.ItemSpec);
 
-			if (reference.GetMetadata ("HintPath") != String.Empty)
-				resolved = ResolveHintPathReference (name, reference.GetMetadata ("HintPath"));
+			if (reference.GetMetadata ("HintPath") != String.Empty) {
+
+				bool specificVersion;
+
+				if (reference.GetMetadata ("SpecificVersion") != String.Empty) {
+					specificVersion = Boolean.Parse (reference.GetMetadata ("SpecificVersion"));
+				} else {
+					specificVersion = IsStrongNamed (name);
+				}
+
+				resolved = ResolveHintPathReference (name, reference.GetMetadata ("HintPath"), specificVersion);
+			}
 			
 			if (resolved == null)
-				resolved = ResolveGacReference (name);
+				resolved = ResolveGacReference (name, gac);
 
 			return resolved;
 		}
 
-		string ResolveGacReference (AssemblyName name)
-		{
-			return ResolveGenericReference (name, gac);
-		}
-
-		string ResolveHintPathReference (AssemblyName name, string hintpath)
-		{
-			if (hintpath != String.Empty)
-				GatherHintPathAssemblies (hintpath);
-			return ResolveGenericReference (name, hint_path_assemblies);
-		}
-
-		string ResolveGenericReference (AssemblyName name, Dictionary <string, Dictionary <Version, string>> dic)
+		string ResolveGacReference (AssemblyName name, Dictionary <string, Dictionary <Version, string>> dic)
 		{
 			// FIXME: deal with SpecificVersion=False
 
@@ -165,6 +131,63 @@ namespace Microsoft.Build.Tasks {
 			Array.Sort (versions, (IComparer <Version>) null);
 			Version highest = versions [versions.Length - 1];
 			return dic [name.Name] [highest];
+		}
+
+		string ResolveHintPathReference (AssemblyName name, string hintpath, bool specificVersion)
+		{
+			AssemblyName found;
+			string ret = null;
+
+			if (!File.Exists (hintpath))
+				log.LogMessage (MessageImportance.Low, "HintPath {0} does not exist.", hintpath);
+
+			try {
+				found = AssemblyName.GetAssemblyName (hintpath);
+				if (AssemblyNamesCompatible (name, found, specificVersion))
+					ret = hintpath;
+				else
+					log.LogMessage (MessageImportance.Low, "Assembly names are not compatible.");
+			} catch {
+			}
+
+			return ret;
+		}
+
+		static bool AssemblyNamesCompatible (AssemblyName a, AssemblyName b, bool specificVersion)
+		{
+			if (a.Name != b.Name)
+				return false;
+
+			if (a.CultureInfo != null && a.CultureInfo != b.CultureInfo)
+				return false;
+
+			if (specificVersion && a.Version != null && a.Version > b.Version)
+				return false;
+
+			byte [] a_bytes = a.GetPublicKeyToken ();
+			byte [] b_bytes = b.GetPublicKeyToken ();
+
+			if (specificVersion) {
+				if (a_bytes == null || a_bytes.Length == 0)
+					return false;
+				if (b_bytes == null || b_bytes.Length == 0)
+					return false;
+
+				for (int i = 0; i < a_bytes.Length; i++)
+					if (a_bytes [i] != b_bytes [i])
+						return false;
+			}
+
+			return true;
+		}
+
+		static bool IsStrongNamed (AssemblyName name)
+		{
+			return (name.Version != null && name.GetPublicKeyToken ().Length != 0);
+		}
+
+		public TaskLoggingHelper Log {
+			set { log = value; }
 		}
 	}
 }
