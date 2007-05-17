@@ -103,6 +103,7 @@ System.Windows.Forms/ColumnClickEventArgs.cs
 System.Windows.Forms/ColumnClickEventHandler.cs
 System.Windows.Forms/ColumnHeader.cs
 System.Windows.Forms/ColumnHeaderAutoResizeStyle.cs
+System.Windows.Forms/ColumnHeaderConverter.cs
 System.Windows.Forms/ColumnHeaderStyle.cs
 System.Windows.Forms/ColumnReorderedEventArgs.cs
 System.Windows.Forms/ColumnReorderedEventHandler.cs
@@ -230,6 +231,8 @@ System.Windows.Forms/DataGridViewHitTestType.cs
 System.Windows.Forms/DataGridViewImageCell.cs
 System.Windows.Forms/DataGridViewImageCellLayout.cs
 System.Windows.Forms/DataGridViewImageColumn.cs
+System.Windows.Forms/DataGridViewLinkCell.cs
+System.Windows.Forms/DataGridViewLinkColumn.cs
 System.Windows.Forms/DataGridViewPaintParts.cs
 System.Windows.Forms/DataGridViewRow.cs
 System.Windows.Forms/DataGridViewRowCancelEventArgs.cs

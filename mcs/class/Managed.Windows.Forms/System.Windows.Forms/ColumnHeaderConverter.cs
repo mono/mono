@@ -26,6 +26,8 @@
 
 // COMPLETE
 
+#if NET_2_0
+
 using System.ComponentModel;
 using System.ComponentModel.Design.Serialization;
 using System.Collections;
@@ -34,7 +36,7 @@ using System.Reflection;
 
 namespace System.Windows.Forms
 {
-	class ColumnHeaderConverter : ExpandableObjectConverter
+	public class ColumnHeaderConverter : ExpandableObjectConverter
 	{
 		public ColumnHeaderConverter ()
 		{
@@ -93,3 +95,5 @@ namespace System.Windows.Forms
 		}
 	}
 }
+
+#endif
