@@ -28,6 +28,7 @@
 
 using System;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -503,6 +504,166 @@ namespace MonoTests.System.Drawing.Imaging {
 		{
 			using (MemoryStream ms = new MemoryStream ()) {
 				Metafile_StreamEmfType (ms, (EmfType)Int32.MinValue);
+			}
+		}
+
+		private void CreateFilename (EmfType type, bool single)
+		{
+			string name = String.Format ("{0}-{1}.emf", type, single ? "Single" : "Multiple");
+			string filename = Path.Combine (Path.GetTempPath (), name);
+			Metafile mf;
+			using (Bitmap bmp = new Bitmap (100, 100, PixelFormat.Format32bppArgb)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					IntPtr hdc = g.GetHdc ();
+					try {
+						mf = new Metafile (filename, hdc, type);
+						Assert.AreEqual (0, new FileInfo (filename).Length, "Empty");
+					}
+					finally {
+						g.ReleaseHdc (hdc);
+					}
+				}
+				long size = 0;
+				using (Graphics g = Graphics.FromImage (mf)) {
+					g.FillRectangle (Brushes.BlueViolet, 10, 10, 80, 80);
+					size = new FileInfo (filename).Length;
+					Assert.AreEqual (0, size, "Still-Empty");
+				}
+// FIXME / doesn't work on mono yet
+//				size = new FileInfo (filename).Length;
+//				Assert.IsTrue (size > 0, "Non-Empty/GraphicsDisposed");
+				if (!single) {
+					// can we append stuff ?
+					using (Graphics g = Graphics.FromImage (mf)) {
+						g.DrawRectangle (Pens.Azure, 10, 10, 80, 80);
+						// happily no :)
+					}
+				}
+				mf.Dispose ();
+				Assert.AreEqual (size, new FileInfo (filename).Length, "Non-Empty/MetafileDisposed");
+			}
+		}
+
+		[Test]
+		public void CreateFilename_SingleGraphics_EmfOnly ()
+		{
+			CreateFilename (EmfType.EmfOnly, true);
+		}
+
+		[Test]
+		public void CreateFilename_SingleGraphics_EmfPlusDual ()
+		{
+			CreateFilename (EmfType.EmfPlusDual, true);
+		}
+
+		[Test]
+		public void CreateFilename_SingleGraphics_EmfPlusOnly ()
+		{
+			CreateFilename (EmfType.EmfPlusOnly, true);
+		}
+
+		[Test]
+		[ExpectedException (typeof (OutOfMemoryException))]
+		public void CreateFilename_MultipleGraphics_EmfOnly ()
+		{
+			CreateFilename (EmfType.EmfOnly, false);
+		}
+
+		[Test]
+		[ExpectedException (typeof (OutOfMemoryException))]
+		public void CreateFilename_MultipleGraphics_EmfPlusDual ()
+		{
+			CreateFilename (EmfType.EmfPlusDual, false);
+		}
+
+		[Test]
+		[ExpectedException (typeof (OutOfMemoryException))]
+		public void CreateFilename_MultipleGraphics_EmfPlusOnly ()
+		{
+			CreateFilename (EmfType.EmfPlusOnly, false);
+		}
+
+		[Test]
+		public void Measure ()
+		{
+			Metafile mf;
+			using (Bitmap bmp = new Bitmap (100, 100, PixelFormat.Format32bppArgb)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					IntPtr hdc = g.GetHdc ();
+					try {
+						mf = new Metafile (hdc, EmfType.EmfPlusOnly);
+					}
+					finally {
+						g.ReleaseHdc (hdc);
+					}
+				}
+				using (Graphics g = Graphics.FromImage (mf)) {
+					using (Font font = new Font (FontFamily.GenericMonospace, 12)) {
+						string text = "this\nis a test";
+						CharacterRange[] ranges = new CharacterRange[2];
+						ranges[0] = new CharacterRange (0, 5);
+						ranges[1] = new CharacterRange (5, 9);
+
+						SizeF size = g.MeasureString (text, font);
+						Assert.IsFalse (size.IsEmpty, "MeasureString");
+
+						StringFormat sf = new StringFormat ();
+						sf.FormatFlags = StringFormatFlags.NoClip;
+						sf.SetMeasurableCharacterRanges (ranges);
+
+						RectangleF rect = new RectangleF (0, 0, size.Width, size.Height);
+						Region[] region = g.MeasureCharacterRanges (text, font, rect, sf);
+						Assert.AreEqual (2, region.Length, "MeasureCharacterRanges");
+					}
+				}
+				mf.Dispose ();
+			}
+		}
+
+		[Test]
+		public void WorldTransforms ()
+		{
+			Metafile mf;
+			using (Bitmap bmp = new Bitmap (100, 100, PixelFormat.Format32bppArgb)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					IntPtr hdc = g.GetHdc ();
+					try {
+						mf = new Metafile (hdc, EmfType.EmfPlusOnly);
+					}
+					finally {
+						g.ReleaseHdc (hdc);
+					}
+				}
+				using (Graphics g = Graphics.FromImage (mf)) {
+					Assert.IsTrue (g.Transform.IsIdentity, "Initial/IsIdentity");
+					g.ScaleTransform (2f, 0.5f);
+					Assert.IsFalse (g.Transform.IsIdentity, "Scale/IsIdentity");
+					g.RotateTransform (90);
+					g.TranslateTransform (-2, 2);
+					Matrix m = g.Transform;
+					g.MultiplyTransform (m);
+					// check
+					float[] elements = g.Transform.Elements;
+					Assert.AreEqual (-1f, elements[0], 0.00001f, "a0");
+					Assert.AreEqual (0f, elements[1], 0.00001f, "a1");
+					Assert.AreEqual (0f, elements[2], 0.00001f, "a2");
+					Assert.AreEqual (-1f, elements[3], 0.00001f, "a3");
+					Assert.AreEqual (-2f, elements[4], 0.00001f, "a4");
+					Assert.AreEqual (-3f, elements[5], 0.00001f, "a5");
+
+					g.Transform = m;
+					elements = g.Transform.Elements;
+					Assert.AreEqual (0f, elements[0], 0.00001f, "b0");
+					Assert.AreEqual (0.5f, elements[1], 0.00001f, "b1");
+					Assert.AreEqual (-2f, elements[2], 0.00001f, "b2");
+					Assert.AreEqual (0f, elements[3], 0.00001f, "b3");
+					Assert.AreEqual (-4f, elements[4], 0.00001f, "b4");
+					Assert.AreEqual (-1f, elements[5], 0.00001f, "b5");
+
+					g.ResetTransform ();
+					Assert.IsTrue (g.Transform.IsIdentity, "Reset/IsIdentity");
+				}
+				mf.Dispose ();
 			}
 		}
 	}

@@ -1,3 +1,8 @@
+2007-05-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* MetafileTest.cs: Add a few test cases on what happens when recording
+	metafiles.
+
 2007-05-08  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* TestJpegCodec.cs: Add test cases for 8bpp indexed greyscale JPEG
