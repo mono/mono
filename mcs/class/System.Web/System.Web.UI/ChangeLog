@@ -1,3 +1,7 @@
+2007-05-17  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* TemplateControl.jvm.cs: refactored key for CachedString method
+
 2007-05-16  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* HtmlTextWriter.cs: refactoring, created hashtables for tags, styles

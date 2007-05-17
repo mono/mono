@@ -101,9 +101,9 @@ namespace System.Web.UI {
 			}
 		}
 
-		private string CachedString (string filename, int offset, int size)
+		private string CachedString (Type type, int offset, int size)
 		{
-			string key = filename + offset + size;
+			CacheKey key = new CacheKey (type, offset, size);
 
 			string strObj = (string) ResourceHash [key];
 			if (strObj == null) {
@@ -156,7 +156,7 @@ namespace System.Web.UI {
 											int size,
 											bool fAsciiOnly)
 		{
-			string str = CachedString (this.GetType ().FullName, offset, size);
+			string str = CachedString (this.GetType (), offset, size);
 			return new LiteralControl (str);
 		}
 
@@ -421,7 +421,7 @@ namespace System.Web.UI {
 		protected void WriteUTF8ResourceString (HtmlTextWriter output, int offset,
 							int size, bool fAsciiOnly)
 		{
-			string str = CachedString (this.GetType ().FullName, offset, size);
+			string str = CachedString (this.GetType (), offset, size);
 			output.Write (str);
 		}
 
@@ -466,6 +466,34 @@ namespace System.Web.UI {
 				Control template = Activator.CreateInstance (type) as Control;
 				template.SetBindingContainer (false);
 				control.Controls.Add (template);
+			}
+		}
+
+		sealed private class CacheKey
+		{
+			readonly Type _type;
+			readonly int _offset;
+			readonly int _size;
+
+			public CacheKey (Type type, int offset, int size)
+			{
+				_type = type;
+				_offset = offset;
+				_size = size;
+			}
+
+			public override int GetHashCode ()
+			{
+				return _type.GetHashCode () ^ _offset ^ _size;
+			}
+
+			public override bool Equals (object obj)
+			{
+				if (obj == null || !(obj is CacheKey))
+					return false;
+
+				CacheKey key = (CacheKey) obj;
+				return key._type == _type && key._offset == _offset && key._size == _size;
 			}
 		}
 
