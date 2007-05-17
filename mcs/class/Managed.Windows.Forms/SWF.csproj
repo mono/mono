@@ -4612,10 +4612,6 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
-
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
                     RelPath = "Consts.cs"
                     Link = "../../build/common/Consts.cs"
                     SubType = "Code"

@@ -1166,9 +1166,6 @@
     <EmbeddedResource Include="resources\nav_previous.png">
       <LogicalName>nav_previous.png</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="">
-      <LogicalName></LogicalName>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="System.Windows.Forms\ChangeLog" />
