@@ -105,6 +105,7 @@ namespace System.Windows.Forms
 		string                  text; // window/title text for control
 		internal                BorderStyle		border_style;		// Border style of control
 		bool                    show_keyboard_cues; // Current keyboard cues 
+		bool                    show_focus_cues; // Current focus cues 
 
 		// Layout
 		internal enum LayoutType {
@@ -1001,6 +1002,7 @@ namespace System.Windows.Forms
 			ime_mode = ImeMode.Inherit;
 			use_compatible_text_rendering = true;
 			show_keyboard_cues = false;
+			show_focus_cues = true;
 
 #if NET_2_0
 			backgroundimage_layout = ImageLayout.Tile;
@@ -3345,7 +3347,7 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		protected virtual bool ShowFocusCues {
 			get {
-				return true;
+				return show_focus_cues;
 			}
 		}
 
@@ -5339,9 +5341,32 @@ namespace System.Windows.Forms
 		}
 
 		private void WmUpdateUIState (ref Message m) {
+			int action = LowOrder (m.WParam.ToInt32 ());
+			int element = HighOrder (m.WParam.ToInt32 ());
+
+			if (action == (int) MsgUIState.UIS_INITIALIZE)
+				return;
+
 			UICues cues = UICues.None;
-			OnChangeUICues (new UICuesEventArgs (cues));
-			Invalidate ();
+
+			if ((element & (int) MsgUIState.UISF_HIDEACCEL) != 0) {
+				if ((action == (int) MsgUIState.UIS_CLEAR) != show_keyboard_cues) {
+					cues |= UICues.ChangeKeyboard;
+					show_keyboard_cues = (action == (int) MsgUIState.UIS_CLEAR);
+				}
+			}
+
+			if ((element & (int) MsgUIState.UISF_HIDEFOCUS) != 0) {
+				if ((action == (int) MsgUIState.UIS_CLEAR) != show_focus_cues) {
+					cues |= UICues.ChangeFocus;
+					show_focus_cues = (action == (int) MsgUIState.UIS_CLEAR);
+				}
+			}
+
+			if ((cues & UICues.Changed) != UICues.None) {
+				OnChangeUICues (new UICuesEventArgs (cues));
+				Invalidate ();
+			}
 		}
 
 		#endregion

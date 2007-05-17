@@ -1,3 +1,8 @@
+2007-05-17  Everaldo Canuto  <ecanuto@novell.com>
+
+	* Control.cs: Implement WmUpdateUIState, show_focus_cues and
+	keyboard_cues is properly handled by message method.  
+
 2007-05-17  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TreeViewImageIndexConverter.cs: Add 2.0 methods.
