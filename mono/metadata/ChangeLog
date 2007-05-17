@@ -1,3 +1,11 @@
+2007-05-16  Jb Evain  <jb@nurv.fr>
+
+	* class-internals.h (MonoDefaults): Add an attribute_class and
+	  customattribute_data_class.
+	* domain.c (mono_init_internal): Populate them.
+	* reflection.c: Use them to remove duplicates. Make a vew
+	MonoClass variables `static'.
+
 2007-05-15  Massimiliano Mantione  <massi@ximian.com>
 
 	* class-internals.h: Added "MonoVTable.interface_bitmap" as a next
