@@ -1,3 +1,8 @@
+2007-05-17  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListBox.cs: Throw the some missing exceptions in
+	ListBox.ObjectCollection methods.
+
 2007-05-17  Jackson Harper  <jackson@ximian.com>
 
 	* TextBoxBase.cs: Recalculate the document when the word wrap

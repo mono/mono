@@ -2022,6 +2022,9 @@ namespace System.Windows.Forms
 
 			public void AddRange (object[] items)
 			{
+				if (items == null)
+					throw new ArgumentNullException ("items");
+
 				foreach (object mi in items)
 					AddItem (mi);
 
@@ -2030,6 +2033,9 @@ namespace System.Windows.Forms
 
 			public void AddRange (ObjectCollection col)
 			{
+				if (col == null)
+					throw new ArgumentNullException ("col");
+
 				foreach (object mi in col)
 					AddItem (mi);
 
@@ -2052,6 +2058,9 @@ namespace System.Windows.Forms
 			}
 			public bool Contains (object obj)
 			{
+				if (obj == null)
+					throw new ArgumentNullException ("obj");
+
 				return object_items.Contains (obj);
 			}
 
@@ -2077,6 +2086,9 @@ namespace System.Windows.Forms
 
 			public int IndexOf (object value)
 			{
+				if (value == null)
+					throw new ArgumentNullException ("value");
+
 				return object_items.IndexOf (value);
 			}
 
@@ -2084,6 +2096,8 @@ namespace System.Windows.Forms
 			{
 				if (index < 0 || index > Count)
 					throw new ArgumentOutOfRangeException ("Index of out range");
+				if (item == null)
+					throw new ArgumentNullException ("item");
 					
 				owner.BeginUpdate ();
 				object_items.Insert (index, item);
@@ -2093,6 +2107,9 @@ namespace System.Windows.Forms
 
 			public void Remove (object value)
 			{				
+				if (value == null)
+					return;
+
 				RemoveAt (IndexOf (value));				
 			}
 
