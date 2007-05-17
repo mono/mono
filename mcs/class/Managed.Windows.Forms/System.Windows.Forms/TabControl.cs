@@ -29,8 +29,15 @@ using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Drawing;
 
+#if NET_2_0
+using System.Runtime.InteropServices;
+#endif
 
 namespace System.Windows.Forms {
+#if NET_2_0
+	[ComVisibleAttribute (true)]
+	[ClassInterfaceAttribute (ClassInterfaceType.AutoDispatch)]
+#endif
 	[DefaultEvent("SelectedIndexChanged")]
 	[DefaultProperty("TabPages")]
 	[Designer("System.Windows.Forms.Design.TabControlDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
@@ -53,6 +60,8 @@ namespace System.Windows.Forms {
 		private ButtonState right_slider_state;
 		private ButtonState left_slider_state;
 		private int slider_pos = 0;
+
+		private bool rightToLeftLayout;
 		#endregion	// Fields
 
 		#region Public Constructors
@@ -112,11 +121,28 @@ namespace System.Windows.Forms {
 			set { base.BackgroundImage = value; }
 		}
 
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public override ImageLayout BackgroundImageLayout {
+			get { return base.BackgroundImageLayout; }
+			set { base.BackgroundImageLayout = value; }
+		}
+#endif
+		
 		public override Rectangle DisplayRectangle {
 			get {
 				return ThemeEngine.Current.TabControlGetDisplayRectangle (this);
 			}
 		}
+
+#if NET_2_0
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		protected override bool DoubleBuffered {
+			get { return base.DoubleBuffered; }
+			set { base.DoubleBuffered = value; }
+		}
+#endif
 
 		[DefaultValue(TabDrawMode.Normal)]
 		public TabDrawMode DrawMode {
@@ -195,6 +221,21 @@ namespace System.Windows.Forms {
 			}
 
 		}
+
+#if NET_2_0
+		[MonoTODO ("Saves the value and raises event, but needs actual implementation call")]
+		[Localizable (true)]
+		[DefaultValue (false)]
+		public virtual bool RightToLeftLayout {
+			get { return this.rightToLeftLayout; }
+			set {
+				if (value != this.rightToLeftLayout) {
+					this.rightToLeftLayout = value;
+					this.OnRightToLeftLayoutChanged (EventArgs.Empty);
+				}
+			}
+		}
+#endif
 
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -394,7 +435,6 @@ namespace System.Windows.Forms {
 			get { return base.Text; }
 			set { base.Text = value; }
 		}
-
 		#endregion	// Public Instance Properties
 
 		#region Internal Properties
@@ -510,14 +550,11 @@ namespace System.Windows.Forms {
 		#endregion	// Public Instance Methods
 
 		#region Protected Instance Methods
+
+		#region Handles
 		protected override Control.ControlCollection CreateControlsInstance ()
 		{
 			return new TabControl.ControlCollection (this);
-		}
-
-		protected void UpdateTabSelection (bool uiselected)
-		{
-			ResizeTabPages ();
 		}
 
 		protected override void CreateHandle ()
@@ -544,6 +581,14 @@ namespace System.Windows.Forms {
 			base.OnHandleDestroyed (e);
 		}
 
+		protected override void Dispose (bool disposing)
+		{
+			base.Dispose (disposing);
+		}
+
+		#endregion
+
+		#region Events
 		protected virtual void OnDrawItem (DrawItemEventArgs e)
 		{
 			if (DrawMode != TabDrawMode.OwnerDrawFixed)
@@ -575,6 +620,90 @@ namespace System.Windows.Forms {
 			base.OnStyleChanged (e);
 		}
 
+		protected virtual void OnSelectedIndexChanged (EventArgs e)
+		{
+			EventHandler eh = (EventHandler) (Events[SelectedIndexChangedEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
+
+		internal override void OnPaintInternal (PaintEventArgs pe)
+		{
+			Draw (pe.Graphics, pe.ClipRectangle);
+			pe.Handled = true;
+		}
+
+#if NET_2_0
+		protected override void OnEnter (EventArgs e)
+		{
+			base.OnEnter (e);
+			if (SelectedTab != null)
+				SelectedTab.FireEnter ();
+		}
+
+		protected override void OnLeave (EventArgs e)
+		{
+			if (SelectedTab != null)
+				SelectedTab.FireLeave ();
+			base.OnLeave (e);
+		}
+
+		protected virtual void OnRightToLeftLayoutChanged (EventArgs e)
+		{
+			EventHandler eh = (EventHandler) (Events[RightToLeftLayoutChangedEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
+
+		protected override void ScaleCore (float dx, float dy)
+		{
+			base.ScaleCore (dx, dy);
+		}
+
+		protected virtual void OnDeselecting (TabControlCancelEventArgs e)
+		{
+			TabControlCancelEventHandler eh = (TabControlCancelEventHandler) (Events[DeselectingEvent]);
+			if (eh != null)
+				eh (this, e);
+
+			if (!e.Cancel)
+				OnDeselected (new TabControlEventArgs (SelectedTab, selected_index, TabControlAction.Deselected));
+		}
+
+		protected virtual void OnDeselected (TabControlEventArgs e)
+		{
+			TabControlEventHandler eh = (TabControlEventHandler) (Events[DeselectedEvent]);
+			if (eh != null)
+				eh (this, e);
+
+			if (this.SelectedTab != null)
+				this.SelectedTab.FireLeave ();
+		}
+
+		protected virtual void OnSelecting (TabControlCancelEventArgs e)
+		{
+			TabControlCancelEventHandler eh = (TabControlCancelEventHandler) (Events[SelectingEvent]);
+			if (eh != null)
+				eh (this, e);
+
+			if (!e.Cancel)
+				OnSelected (new TabControlEventArgs (SelectedTab, selected_index, TabControlAction.Selected));
+		}
+
+		protected virtual void OnSelected (TabControlEventArgs e)
+		{
+			TabControlEventHandler eh = (TabControlEventHandler) (Events[SelectedEvent]);
+			if (eh != null)
+				eh (this, e);
+
+			if (this.SelectedTab != null)
+				this.SelectedTab.FireEnter ();
+		}
+#endif
+
+		#endregion
+
+		#region Keys
 		protected override bool ProcessKeyPreview (ref Message m)
 		{
 			return base.ProcessKeyPreview (ref m);
@@ -616,12 +745,9 @@ namespace System.Windows.Forms {
 			}
 			return base.IsInputKey (key);
 		}
+		#endregion
 
-		protected override void Dispose (bool disposing)
-		{
-			base.Dispose (disposing);
-		}
-
+		#region Pages Collection
 		protected void RemoveAll ()
 		{
 			Controls.Clear ();
@@ -639,6 +765,12 @@ namespace System.Windows.Forms {
 			object [] pages = (object []) Array.CreateInstance (type, Controls.Count);
 			Controls.CopyTo (pages, 0);
 			return pages;
+		}
+		#endregion
+
+		protected void UpdateTabSelection (bool uiselected)
+		{
+			ResizeTabPages ();
 		}
 
 		protected string GetToolTipText (object item)
@@ -668,60 +800,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-#if NET_2_0
-		protected virtual void OnDeselecting (TabControlCancelEventArgs e)
-		{
-			TabControlCancelEventHandler eh = (TabControlCancelEventHandler) (Events[DeselectingEvent]);
-			if (eh != null)
-				eh (this, e);
-
-			if (!e.Cancel)
-				OnDeselected (new TabControlEventArgs (SelectedTab, selected_index, TabControlAction.Deselected));
-		}
-
-		protected virtual void OnDeselected (TabControlEventArgs e)
-		{
-			TabControlEventHandler eh = (TabControlEventHandler) (Events[DeselectedEvent]);
-			if (eh != null)
-				eh (this, e);
-
-			if (this.SelectedTab != null)
-				this.SelectedTab.FireLeave ();
-		}
-
-		protected virtual void OnSelecting (TabControlCancelEventArgs e)
-		{
-			TabControlCancelEventHandler eh = (TabControlCancelEventHandler) (Events[SelectingEvent]);
-			if (eh != null)
-				eh (this, e);
-			
-			if (!e.Cancel)
-				OnSelected (new TabControlEventArgs (SelectedTab, selected_index, TabControlAction.Selected));
-		}
-
-		protected virtual void OnSelected (TabControlEventArgs e)
-		{
-			TabControlEventHandler eh = (TabControlEventHandler)(Events[SelectedEvent]);
-			if (eh != null)
-				eh (this, e);
-
-			if (this.SelectedTab != null)
-				this.SelectedTab.FireEnter ();
-		}
-#endif
-
-		protected virtual void OnSelectedIndexChanged (EventArgs e)
-		{
-			EventHandler eh = (EventHandler)(Events [SelectedIndexChangedEvent]);
-			if (eh != null)
-				eh (this, e);
-		}
-
-		internal override void OnPaintInternal (PaintEventArgs pe)
-		{
-			Draw (pe.Graphics, pe.ClipRectangle);
-			pe.Handled = true;
-		}
 		#endregion	// Protected Instance Methods
 
 		#region Internal & Private Methods
@@ -1255,6 +1333,16 @@ namespace System.Windows.Forms {
 			remove { base.BackgroundImageChanged -= value; }
 		}
 
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler BackgroundImageLayoutChanged
+		{
+			add { base.BackgroundImageLayoutChanged += value; }
+			remove { base.BackgroundImageLayoutChanged -= value; }
+		}
+#endif
+
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public new event EventHandler ForeColorChanged {
@@ -1319,6 +1407,13 @@ namespace System.Windows.Forms {
 		{
 			add { Events.AddHandler (DeselectingEvent, value); }
 			remove { Events.RemoveHandler (DeselectingEvent, value); }
+		}
+
+		static object RightToLeftLayoutChangedEvent = new object ();
+		public event EventHandler RightToLeftLayoutChanged
+		{
+			add { Events.AddHandler (RightToLeftLayoutChangedEvent, value); }
+			remove { Events.RemoveHandler (RightToLeftLayoutChangedEvent, value); }
 		}
 #endif
 		#endregion	// Events
@@ -1475,6 +1570,7 @@ namespace System.Windows.Forms {
 				TabPage page = new TabPage (text);
 				page.Name = key;
 				this.Add (page);
+				page.ImageKey = imageKey;
 			}
 #endif
 
@@ -1587,9 +1683,37 @@ namespace System.Windows.Forms {
 			}
 
 #if NET_2_0
+			public void Insert (int index, string text)
+			{
+				owner.InsertTab (index, new TabPage (text));
+			}
+			
 			public void Insert (int index, TabPage page)
 			{
 				owner.InsertTab (index, page);
+			}
+
+			public void Insert (int index, string key, string text)
+			{
+				TabPage page = new TabPage(text);
+				page.Name = key;
+				owner.InsertTab (index, page);
+			}
+
+			public void Insert (int index, string key, string text, int imageIndex) 
+			{
+				TabPage page = new TabPage(text);
+				page.Name = key;
+				owner.InsertTab (index, page);
+				page.ImageIndex = imageIndex;
+			}
+
+			public void Insert (int index, string key, string text, string imageKey) 
+			{
+				TabPage page = new TabPage(text);
+				page.Name = key;
+				owner.InsertTab (index, page);
+				page.ImageKey = imageKey;
 			}
 #endif
 			void IList.Remove (object value)

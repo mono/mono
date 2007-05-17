@@ -36,7 +36,8 @@ namespace System.Windows.Forms {
 	[ToolboxItem(false)]
 	public class TabPage : Panel {
 		#region Fields
-		private int image_index = -1;
+		private int imageIndex = -1;
+		private string imageKey;
 		private string tooltip_text = String.Empty;
 		private Rectangle tab_bounds;
 		private int row;
@@ -105,14 +106,35 @@ namespace System.Windows.Forms {
 		[Localizable(true)]
 		[TypeConverter(typeof(ImageIndexConverter))]
 		public int ImageIndex {
-			get { return image_index; }
+			get { return imageIndex; }
 			set {
-				if (image_index == value)
+				if (imageIndex == value)
 					return;
-				image_index = value;
+				imageIndex = value;
 				UpdateOwner ();
 			}
 		}
+
+#if NET_2_0
+		[RefreshProperties (RefreshProperties.Repaint)]
+		[DefaultValue ("")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Editor ("System.Windows.Forms.Design.ImageIndexEditor, " + Consts.AssemblySystem_Design,
+			 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
+		[TypeConverter (typeof (ImageKeyConverter))]
+		public string ImageKey
+		{
+			get { return imageKey; }
+			set {
+				imageKey = value;
+				TabControl control = this.Parent as TabControl;
+				if (control != null) {
+					ImageIndex = control.ImageList.Images.IndexOfKey (imageKey);
+				}
+			}
+		}
+
+#endif
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
@@ -236,6 +258,17 @@ namespace System.Windows.Forms {
 			}
 		}
 
+#if NET_2_0
+		protected override void OnEnter (EventArgs e)
+		{
+			base.OnEnter (e);
+		}
+
+		protected override void OnLeave (EventArgs e)
+		{
+			base.OnLeave (e);
+		}
+#endif
 		#endregion	// Protected Instance Methods
 
 		#region Events

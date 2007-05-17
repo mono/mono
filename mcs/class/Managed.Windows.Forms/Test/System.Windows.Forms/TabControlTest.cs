@@ -714,6 +714,36 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (1, tcea2.TabPageIndex, "A4");
 			f.Close ();
 		}
+
+		[Test]
+		public void EnterLeaveEvents ()
+		{
+			Form f = new Form ();
+			TabControl tc = new TabControl ();
+			TabPage p1 = new TabPage ();
+			string events = string.Empty;
+			tc.Enter += new EventHandler (delegate (Object obj, EventArgs e) { events += ("tc_OnEnter;"); });
+			tc.Leave += new EventHandler (delegate (Object obj, EventArgs e) { events += ("tc_OnLeave;"); });
+			p1.Enter += new EventHandler (delegate (Object obj, EventArgs e) { events += ("p1_OnEnter;");});
+			p1.Leave += new EventHandler (delegate (Object obj, EventArgs e) { events += ("p1_OnLeave;"); });
+			tc.TabPages.Add (p1);
+
+			Button b1 = new Button ();
+
+			tc.TabIndex = 0;
+			b1.TabIndex = 1;
+
+			f.Controls.Add (b1);
+			f.Controls.Add (tc);
+
+			f.Show ();
+			Assert.AreEqual ("tc_OnEnter;p1_OnEnter;", events, "A1");
+			b1.Focus ();
+			Assert.AreEqual ("tc_OnEnter;p1_OnEnter;p1_OnLeave;tc_OnLeave;", events, "A2");
+		}
+
+		
+
 #endif
 	}
 

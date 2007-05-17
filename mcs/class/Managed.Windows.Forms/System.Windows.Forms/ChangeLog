@@ -1,3 +1,8 @@
+2007-05-17  Andreia Gaita  <avidigal@novell.com>
+
+	* TabControl.cs: Add 2.0 methods and events, including
+	OnEnter / OnLeave and raises it for tabpages (fixes #79869)
+	* TabPage.cs: Add 2.0 methods
 2007-05-17  Everaldo Canuto  <ecanuto@novell.com>
 
 	* Control.cs: Implement WmUpdateUIState, show_focus_cues and
