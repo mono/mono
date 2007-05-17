@@ -648,6 +648,7 @@ namespace System.Windows.Forms {
 						word_wrap = value;
 						document.Wrap = value;
 					}
+					CalculateDocument ();
 				}
 			}
 		}
