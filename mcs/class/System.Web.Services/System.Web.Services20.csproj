@@ -364,19 +364,19 @@
   <PropertyGroup>
     <PostBuildEvent>echo Parsing DefaultWsdlHelpGenerator.jvm.aspx
   
-copy ..\..\..\..\..\mono\data\net_2_0\DefaultWsdlHelpGenerator.jvm.aspx .
+copy ..\..\..\..\..\mono\data\net_2_0\DefaultWsdlHelpGenerator.jvm.aspx DefaultWsdlHelpGenerator.aspx
 
-"%25VMW_HOME%25\bin\aspxparser.exe" /reference:"$(FrameworkDir)\System.dll" /reference:"$(FrameworkDir)\System.Web.dll" /reference:"System.Web.Services.dll" /reference:"$(FrameworkDir)\System.Xml.dll" /reference:"..\..\..\lib\J2EE.Helpers.dll" /novalidator /appdir:$(ProjectDir)$(OutDir) /out:$(ProjectDir)\WEB-INF\lib\$(TargetName).jar /bindir:$(TargetDir)$(OutDir) /virtdir:/MonoSystemWeb /aspxfiles:DefaultWsdlHelpGenerator.jvm.aspx /precompileall /tempDir:$(ProjectDir)$(OutDir) /assembly:$(TargetPath)
+"%25VMW_HOME%25\bin\aspxparser.exe" /reference:"$(FrameworkDir)\System.dll" /reference:"$(FrameworkDir)\System.Web.dll" /reference:"System.Web.Services.dll" /reference:"$(FrameworkDir)\System.Xml.dll" /reference:"..\..\..\lib\J2EE.Helpers.dll" /novalidator /appdir:$(ProjectDir)$(OutDir) /out:$(ProjectDir)\WEB-INF\lib\$(TargetName).jar /bindir:$(TargetDir)$(OutDir) /virtdir:/MonoSystemWeb /aspxfiles:DefaultWsdlHelpGenerator.aspx /precompileall /tempDir:$(ProjectDir)$(OutDir) /assembly:$(TargetPath) /nomd5
 
-del DefaultWsdlHelpGenerator.jvm.aspx
+del DefaultWsdlHelpGenerator.aspx
 
 set td=%25random%25
 echo %25td%25\ASP
 md %25td%25\ASP
 md %25td%25\assemblies
-copy assemblies\defaultwsdlhelpgenerator.jvm.aspx.xml %25td%25\assemblies\defaultwsdlhelpgenerator.aspx.xml 
+copy assemblies\defaultwsdlhelpgenerator.aspx.xml %25td%25\assemblies\defaultwsdlhelpgenerator.aspx.xml 
 cd assemblies\A*
-copy *.ghres ..\..\%25td%25\dll.ghres
+copy *.ghres ..\..\%25td%25\
 copy ASP ..\..\%25td%25\ASP
 cd ..\..\%25td%25
 
