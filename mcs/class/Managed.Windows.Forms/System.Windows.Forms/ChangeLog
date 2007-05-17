@@ -1,3 +1,7 @@
+2007-05-17  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Clipboard.cs: Implement missing GetText overload.
+
 2007-05-17  Chris Toshok  <toshok@ximian.com>
 
 	* Control.cs (CheckDataBindings): remove the binding_context arg

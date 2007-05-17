@@ -161,12 +161,39 @@ namespace System.Windows.Forms {
 		
 		public static string GetText ()
 		{
+			return GetText (TextDataFormat.UnicodeText);
+		}
+		
+		public static string GetText (TextDataFormat format)
+		{
+			if (!Enum.IsDefined (typeof (TextDataFormat), format))
+				throw new InvalidEnumArgumentException (string.Format ("Enum argument value '{0}' is not valid for TextDataFormat", format));
+				
 			IDataObject data = GetDataObject ();
 			
 			if (data == null)
 				return string.Empty;
 				
-			string retval = (string)data.GetData (DataFormats.UnicodeText, true);
+			string retval;
+			
+			switch (format) {
+				case TextDataFormat.Text:
+				default:
+					retval = (string)data.GetData (DataFormats.Text, true);
+					break;
+				case TextDataFormat.UnicodeText:
+					retval = (string)data.GetData (DataFormats.UnicodeText, true);
+					break;
+				case TextDataFormat.Rtf:
+					retval = (string)data.GetData (DataFormats.Rtf, true);
+					break;
+				case TextDataFormat.Html:
+					retval = (string)data.GetData (DataFormats.Html, true);
+					break;
+				case TextDataFormat.CommaSeparatedValue:
+					retval = (string)data.GetData (DataFormats.CommaSeparatedValue, true);
+					break;
+			}
 			
 			return retval == null ? string.Empty : retval;
 		}
