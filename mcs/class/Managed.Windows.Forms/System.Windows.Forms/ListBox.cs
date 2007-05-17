@@ -1882,7 +1882,7 @@ namespace System.Windows.Forms
 			} else if (canvas_size.Width > ClientRectangle.Width && HorizontalScrollbar) {
 				show = true;					
 				hscrollbar.Maximum = canvas_size.Width;
-				hscrollbar.LargeChange = items_area.Width;
+				hscrollbar.LargeChange = Math.Max (0, items_area.Width);
 			}
 
 			hbar_offset = hscrollbar.Value;
