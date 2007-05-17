@@ -659,6 +659,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\ColumnHeaderConverter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\ColumnHeaderStyle.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -1290,6 +1295,16 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\DataGridViewImageColumn.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\DataGridViewLinkCell.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\DataGridViewLinkColumn.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -1980,6 +1995,11 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\ImageIndexConverter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\ImageKeyConverter.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -3804,6 +3824,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\TreeViewImageKeyConverter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\TypeValidationEventArgs.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -4587,7 +4612,7 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
-                    RelPath = ""
+
                     BuildAction = "EmbeddedResource"
                 />
                 <File

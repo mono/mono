@@ -246,6 +246,7 @@
     <Compile Include="System.Windows.Forms\ColumnClickEventHandler.cs" />
     <Compile Include="System.Windows.Forms\ColumnHeader.cs" />
     <Compile Include="System.Windows.Forms\ColumnHeaderAutoResizeStyle.cs" />
+    <Compile Include="System.Windows.Forms\ColumnHeaderConverter.cs" />
     <Compile Include="System.Windows.Forms\ColumnHeaderStyle.cs" />
     <Compile Include="System.Windows.Forms\ColumnReorderedEventArgs.cs" />
     <Compile Include="System.Windows.Forms\ColumnReorderedEventHandler.cs" />
@@ -373,6 +374,8 @@
     <Compile Include="System.Windows.Forms\DataGridViewImageCell.cs" />
     <Compile Include="System.Windows.Forms\DataGridViewImageCellLayout.cs" />
     <Compile Include="System.Windows.Forms\DataGridViewImageColumn.cs" />
+    <Compile Include="System.Windows.Forms\DataGridViewLinkCell.cs" />
+    <Compile Include="System.Windows.Forms\DataGridViewLinkColumn.cs" />
     <Compile Include="System.Windows.Forms\DataGridViewPaintParts.cs" />
     <Compile Include="System.Windows.Forms\DataGridViewRow.cs" />
     <Compile Include="System.Windows.Forms\DataGridViewRowCancelEventArgs.cs" />
@@ -511,6 +514,7 @@
     <Compile Include="System.Windows.Forms\IWin32Window.cs" />
     <Compile Include="System.Windows.Forms\IWindowTarget.cs" />
     <Compile Include="System.Windows.Forms\ImageIndexConverter.cs" />
+    <Compile Include="System.Windows.Forms\ImageKeyConverter.cs" />
     <Compile Include="System.Windows.Forms\ImageLayout.cs" />
     <Compile Include="System.Windows.Forms\ImageList.cs" />
     <Compile Include="System.Windows.Forms\ImageListConverter.cs" />
@@ -875,6 +879,7 @@
     <Compile Include="System.Windows.Forms\TreeViewHitTestInfo.cs" />
     <Compile Include="System.Windows.Forms\TreeViewHitTestLocations.cs" />
     <Compile Include="System.Windows.Forms\TreeViewImageIndexConverter.cs" />
+    <Compile Include="System.Windows.Forms\TreeViewImageKeyConverter.cs" />
     <Compile Include="System.Windows.Forms\TypeValidationEventArgs.cs" />
     <Compile Include="System.Windows.Forms\TypeValidationEventHandler.cs" />
     <Compile Include="System.Windows.Forms\UICues.cs" />
@@ -988,13 +993,13 @@
     <Compile Include="System.Windows.Forms.X11Internal\XplatUIX11-new.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="resources\System.Windows.Forms.resources">
+    <EmbeddedResource Include="resources\System.Windows.Forms.resources.prebuilt">
       <LogicalName>System.Windows.Forms.resources</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="resources\System.Windows.Forms.en.resources">
+    <EmbeddedResource Include="resources\System.Windows.Forms.en.resources.prebuilt">
       <LogicalName>System.Windows.Forms.en.resources</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="resources\System.Windows.Forms.de.resources">
+    <EmbeddedResource Include="resources\System.Windows.Forms.de.resources.prebuilt">
       <LogicalName>System.Windows.Forms.de.resources</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources\SplitterNS.cur">
@@ -1029,7 +1034,7 @@
       <LogicalName>DnDMove.cur</LogicalName>
       <CustomToolNameSpace>System.Windows.Forms.DnDMove.cur</CustomToolNameSpace>
     </EmbeddedResource>
-    <EmbeddedResource Include="resources\keyboards.resources">
+    <EmbeddedResource Include="resources\keyboards.resources.prebuilt">
       <LogicalName>keyboards.resources</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources\16_computer.png">
