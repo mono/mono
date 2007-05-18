@@ -64,8 +64,10 @@ System.Windows.Forms/HelpProviderTest.cs
 System.Windows.Forms/HScrollPropertiesTest.cs
 System.Windows.Forms/ImageKeyConverterTest.cs
 System.Windows.Forms/ImageListTest.cs
+System.Windows.Forms/KeysConverterTest.cs
 System.Windows.Forms/LabelTest.cs
 System.Windows.Forms/LinkAreaTest.cs
+System.Windows.Forms/LinkConverterTest.cs
 System.Windows.Forms/LinkLabelTest.cs
 System.Windows.Forms/ListControlTest.cs
 System.Windows.Forms/ListBoxEventTest.cs

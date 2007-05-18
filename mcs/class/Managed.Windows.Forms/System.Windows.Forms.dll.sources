@@ -419,6 +419,7 @@ System.Windows.Forms/LinkArea.cs
 System.Windows.Forms/LinkBehavior.cs
 System.Windows.Forms/LinkClickedEventArgs.cs
 System.Windows.Forms/LinkClickedEventHandler.cs
+System.Windows.Forms/LinkConverter.cs
 System.Windows.Forms/LinkLabel.cs
 System.Windows.Forms/LinkLabelLinkClickedEventArgs.cs
 System.Windows.Forms/LinkLabelLinkClickedEventHandler.cs

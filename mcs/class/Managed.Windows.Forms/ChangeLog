@@ -1,5 +1,11 @@
 2007-05-17  Jonathan Pobst  <monkey@jpobst.com>
 
+	* System.Windows.Forms_test.dll.sources: Add KeysConverterTest, 
+	LinkConverterTest.cs.
+	* System.Windows.Forms.dll.sources: Add LinkConverter.cs.
+
+2007-05-17  Jonathan Pobst  <monkey@jpobst.com>
+
 	* System.Windows.Forms_test.dll.sources: Add TreeViewImageIndexConverterTest.cs.
 
 2007-05-16  Jonathan Pobst  <monkey@jpobst.com>

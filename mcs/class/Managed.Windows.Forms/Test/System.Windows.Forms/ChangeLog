@@ -1,3 +1,9 @@
+2007-05-18  Jonathan Pobst  <monkey@jpobst.com>
+
+	* KeysConverterTest.cs: Added.
+	* LinkConverterTest.cs: Added.
+	* LinkLabelTest.cs: Added tests for LinkLabel.Link.
+
 2007-05-17  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListBoxTest.cs: New test for some exceptions in

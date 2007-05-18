@@ -660,7 +660,7 @@ namespace System.Windows.Forms
 		// System.Windows.Forms.LinkLabel.Link
 		//
 #if NET_2_0
-		// XXX [TypeConverter (typeof (LinkConverter))]
+		[TypeConverter (typeof (LinkConverter))]
 #endif
 		public class Link
 		{
@@ -674,6 +674,11 @@ namespace System.Windows.Forms
 			internal ArrayList pieces;
 			private bool focused;
 			private bool active;
+#if NET_2_0
+			private string description;
+			private string name;
+			private object tag;
+#endif
 
 			internal Link (LinkLabel owner)
 			{
@@ -687,6 +692,44 @@ namespace System.Windows.Forms
 			}
 
 #if NET_2_0
+			public Link ()
+			{
+				this.enabled = true;
+				this.name = string.Empty;
+				this.pieces = new ArrayList ();
+			}
+
+			public Link (int start, int length) : this ()
+			{
+				this.start = start;
+				this.length = length;
+			}
+
+			public Link (int start, int length, Object linkData) : this (start, length)
+			{
+				this.linkData = linkData;
+			}
+#endif
+
+			#region Public Properties
+#if NET_2_0
+			public string Description {
+				get { return this.description; }
+				set { this.description = value; }
+			}
+			
+			public string Name {
+				get { return this.name; }
+				set { this.name = value; }
+			}
+			
+			[Bindable (true)]
+			[Localizable (false)]
+			public Object Tag {
+				get { return this.tag; }
+				set { this.tag = value; }
+			}
+				
 			[DefaultValue (true)]
 #endif
 			public bool Enabled {
@@ -777,6 +820,7 @@ namespace System.Windows.Forms
 					active = value;
 				}
 			}
+			#endregion
 
 			private void Invalidate ()
 			{
@@ -806,7 +850,7 @@ namespace System.Windows.Forms
 		}
 
 		//
-		// System.Windows.Forms.LinkLabel.Link
+		// System.Windows.Forms.LinkLabel.LinkCollection
 		//
 		public class LinkCollection :  IList, ICollection, IEnumerable
 		{

@@ -1,3 +1,9 @@
+2007-05-18  Jonathan Pobst  <monkey@jpobst.com>
+
+	* KeysConverter.cs: Add CanConvertTo.
+	* LinkLabel.cs: Add some 2.0 constructors and properties to LinkLabel.Link.
+	* LinkConverter.cs: Added.
+
 2007-05-18  Everaldo Canuto  <ecanuto@novell.com>
 
 	* Cursor.cs: Apply Sebastien patch from #81669 to open file in read mode,

@@ -45,6 +45,16 @@ namespace System.Windows.Forms {
 			return false;
 		}
 
+#if NET_2_0
+		public override bool CanConvertTo (ITypeDescriptorContext context, Type destinationType)
+		{
+			if (destinationType == typeof (Enum[]))
+				return true;
+				
+			return base.CanConvertTo (context, destinationType);
+		}
+#endif
+
 		public int Compare(object a, object b) {
 			if (a is string && b is string) {
 				return String.Compare((string) a, (string)b);
