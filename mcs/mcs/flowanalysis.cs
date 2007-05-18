@@ -116,8 +116,6 @@ namespace Mono.CSharp
 		// </summary>
 		public readonly Location Location;
 
-		protected VariableMap param_map;
-
 		static int next_id = 0;
 		int id;
 
@@ -393,12 +391,10 @@ namespace Mono.CSharp
 
 			UsageVector vector;
 			if (Block != null) {
-				param_map = Block.ParameterMap;
 				UsageVector parent_vector = parent != null ? parent.CurrentUsageVector : null;
 				vector = new UsageVector (
-					stype, parent_vector, Block, loc, param_map.Length, Block.AssignableSlots);
+					stype, parent_vector, Block, loc, Block.Toplevel.ParameterMap.Length, Block.AssignableSlots);
 			} else {
-				param_map = Parent.param_map;
 				vector = new UsageVector (
 					stype, Parent.CurrentUsageVector, null, loc);
 			}
@@ -676,6 +672,7 @@ namespace Mono.CSharp
 		{
 			if (vector.IsUnreachable)
 				return;
+			VariableMap param_map = Block.Toplevel.ParameterMap;
 			for (int i = 0; i < param_map.Count; i++) {
 				VariableInfo var = param_map [i];
 

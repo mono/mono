@@ -2010,18 +2010,6 @@ namespace Mono.CSharp {
 			flags |= Flags.IsDestructor;
 		}
 
-		VariableMap param_map;
-
-		public VariableMap ParameterMap {
-			get {
-				if ((flags & Flags.VariablesInitialized) == 0){
-					throw new Exception ("Variables have not been initialized yet");
-				}
-
-				return param_map;
-			}
-		}
-
 		int assignable_slots;
 		public int AssignableSlots {
 			get {
@@ -2116,33 +2104,31 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected void ResolveMeta (ToplevelBlock toplevel, EmitContext ec, Parameters ip)
+		protected void ResolveMeta (EmitContext ec, int offset)
 		{
-			Report.Debug (64, "BLOCK RESOLVE META", this, Parent, toplevel);
+			Report.Debug (64, "BLOCK RESOLVE META", this, Parent);
 
 			// If some parent block was unsafe, we remain unsafe even if this block
 			// isn't explicitly marked as such.
 			using (ec.With (EmitContext.Flags.InUnsafe, ec.InUnsafe | Unsafe)) {
-				param_map = new VariableMap (ip);
 				flags |= Flags.VariablesInitialized;
 
-				int offset = Parent == null ? 0 : Parent.AssignableSlots;
 				if (variables != null) {
 					foreach (LocalInfo li in variables.Values) {
-						if (li.Resolve (ec)) {
-							li.VariableInfo = new VariableInfo (li, offset);
-							offset += li.VariableInfo.Length;
-						}
+						if (!li.Resolve (ec))
+							continue;
+						li.VariableInfo = new VariableInfo (li, offset);
+						offset += li.VariableInfo.Length;
 					}
 				}
 				assignable_slots = offset;
 
 				DoResolveConstants (ec);
 
-				if (children != null) {
-					foreach (Block b in children)
-						b.ResolveMeta (toplevel, ec, ip);
-				}
+				if (children == null)
+					return;
+				foreach (Block b in children)
+					b.ResolveMeta (ec, offset);
 			}
 		}
 
@@ -2738,6 +2724,18 @@ namespace Mono.CSharp {
 			return this_variable == null || this_variable.IsThisAssigned (ec);
 		}
 
+		VariableMap param_map;
+
+		public VariableMap ParameterMap {
+			get {
+				if ((flags & Flags.VariablesInitialized) == 0){
+					throw new Exception ("Variables have not been initialized yet");
+				}
+
+				return param_map;
+			}
+		}
+
 		public bool ResolveMeta (EmitContext ec, Parameters ip)
 		{
 			int errors = Report.Errors;
@@ -2755,7 +2753,10 @@ namespace Mono.CSharp {
 				}
 			}
 
-			ResolveMeta (this, ec, ip);
+			int offset = Parent == null ? 0 : Parent.AssignableSlots;
+			param_map = new VariableMap (parameters);
+
+			ResolveMeta (ec, offset);
 
 			top_level_branching = ec.StartFlowBranching (this);
 

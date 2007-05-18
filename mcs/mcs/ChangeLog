@@ -1,5 +1,14 @@
 2007-05-18  Raja R Harinath  <rharinath@novell.com>
 
+	Avoid creating ParameterMap in every block
+	* statement.cs (Block.ParameterMap): Move ...
+	(ToplevelBlock.ParameterMap): ... here.
+	(ToplevelBlock.ResolveMeta): Create VariableMap for parameters
+	only once.
+	* flowanalysis.cs (FlowBranching.param_map): Remove.
+	(FlowBranching.UsageVector): Update to changes.
+	(FlowBranchingToplevel.CheckOutParameters): Likewise.
+
 	* statement.cs (Block.CloneTo): Clone Toplevel field too.
 
 	* expression.cs (ParameterReference): Distinguish between block
