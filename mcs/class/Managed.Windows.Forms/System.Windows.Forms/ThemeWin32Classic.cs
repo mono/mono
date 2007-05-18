@@ -2362,16 +2362,18 @@ namespace System.Windows.Forms
 						// adjustments to get the check-mark at the right place
 						rect.X ++; rect.Y ++;
 						// following logic is taken from DrawFrameControl method
+						int x_offset = rect.Width / 5;
+						int y_offset = rect.Height / 3;
 						for (int i = 0; i < check_wd; i++) {
-							dc.DrawLine (check_pen, rect.Left + check_wd / 2,
-								     rect.Top + check_wd + i,
-								     rect.Left + check_wd / 2 + 2 * scale,
-								     rect.Top + check_wd + 2 * scale + i);
+							dc.DrawLine (check_pen, rect.Left + x_offset,
+								     rect.Top + y_offset + i,
+								     rect.Left + x_offset + 2 * scale,
+								     rect.Top + y_offset + 2 * scale + i);
 							dc.DrawLine (check_pen,
-								     rect.Left + check_wd / 2 + 2 * scale,
-								     rect.Top + check_wd + 2 * scale + i,
-								     rect.Left + check_wd / 2 + 6 * scale,
-								     rect.Top + check_wd - 2 * scale + i);
+								     rect.Left + x_offset + 2 * scale,
+								     rect.Top + y_offset + 2 * scale + i,
+								     rect.Left + x_offset + 6 * scale,
+								     rect.Top + y_offset - 2 * scale + i);
 						}
 					}
 				}
