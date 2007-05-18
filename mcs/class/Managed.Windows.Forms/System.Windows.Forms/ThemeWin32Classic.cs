@@ -845,9 +845,12 @@ namespace System.Windows.Forms
 			checkbox_rectangle = new Rectangle(text_rectangle.X, text_rectangle.Y, checkmark_size, checkmark_size);
 
 			text_format = new StringFormat();
-			text_format.Alignment=StringAlignment.Near;
-			text_format.LineAlignment=StringAlignment.Center;
-			text_format.HotkeyPrefix = HotkeyPrefix.Show;
+			text_format.Alignment = StringAlignment.Near;
+			text_format.LineAlignment = StringAlignment.Center;
+			if (checkbox.ShowKeyboardCuesInternal)
+				text_format.HotkeyPrefix = HotkeyPrefix.Show;
+			else
+				text_format.HotkeyPrefix = HotkeyPrefix.Hide;
 
 			/* Calculate the position of text and checkbox rectangle */
 			if (checkbox.appearance!=Appearance.Button) {
