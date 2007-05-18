@@ -1,3 +1,8 @@
+2007-05-18  Everaldo Canuto  <ecanuto@novell.com>
+
+	* Control.cs: ShowKeyboardCuesInternal add to expose ShowKeyboardCues
+	for 1.0, becuse ShowKeyboardCues is protected on 1.0.  
+
 2007-05-17  Everaldo Canuto  <ecanuto@novell.com>
 
 	* Control.cs: Finish implementation of UI State using WmChangeUIState

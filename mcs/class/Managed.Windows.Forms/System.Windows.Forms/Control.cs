@@ -3358,9 +3358,16 @@ namespace System.Windows.Forms
 #endif
 		protected bool ShowKeyboardCues {
 			get {
+				return ShowKeyboardCuesInternal;
+			}
+		}
+
+		internal bool ShowKeyboardCuesInternal {
+			get {
 				return SystemInformation.MenuAccessKeysUnderlined || show_keyboard_cues;
 			}
 		}
+
 		#endregion	// Protected Instance Properties
 
 		#region Public Static Methods
