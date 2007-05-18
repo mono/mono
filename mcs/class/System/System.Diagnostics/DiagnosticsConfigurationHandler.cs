@@ -41,6 +41,15 @@ using System.Xml;
 #endif
 namespace System.Diagnostics
 {
+	// It handles following elements in <system.diagnostics> :
+	//	- <sharedListeners> [2.0]
+	//	- <sources>
+	//		- <source>
+	//			- <listeners> (collection)
+	//	- <switches>
+	//		- <add name=string value=string />
+	//	- <trace autoflush=bool indentsize=int useGlobalLock=bool>
+	//		- <listeners>
 	internal sealed class DiagnosticsConfiguration
 	{
 #if NO_LOCK_FREE
@@ -85,7 +94,7 @@ namespace System.Diagnostics
 			elementHandlers ["trace"] = new ElementHandler (AddTraceNode);
 #if NET_2_0
 			elementHandlers ["sources"] = new ElementHandler (AddSourcesNode);
-			elementHandlers ["sharedListeners"] = new ElementHandler (AddSharedListenersNode);
+			//elementHandlers ["sharedListeners"] = new ElementHandler (AddSharedListenersNode);
 #endif
 		}
 
@@ -97,6 +106,19 @@ namespace System.Diagnostics
 			else
 				d = (IDictionary) ((ICloneable)parent).Clone();
 
+#if NET_2_0
+			// process <sharedListeners> first
+			foreach (XmlNode child in section.ChildNodes) {
+				switch (child.NodeType) {
+				case XmlNodeType.Element:
+					if (child.LocalName != "sharedListeners")
+						continue;
+					AddSharedListenersNode (d, child);
+					break;
+				}
+			}
+#endif
+
 			foreach (XmlNode child in section.ChildNodes) {
 				XmlNodeType type = child.NodeType;
 
@@ -106,6 +128,10 @@ namespace System.Diagnostics
 				case XmlNodeType.Comment:
 					continue;
 				case XmlNodeType.Element:
+#if NET_2_0
+					if (child.LocalName == "sharedListeners")
+						continue;
+#endif
 					ElementHandler eh = (ElementHandler) elementHandlers [child.Name];
 					if (eh != null)
 						eh (d, child);
@@ -221,7 +247,7 @@ namespace System.Diagnostics
 					continue;
 				if (t == XmlNodeType.Element) {
 					if (child.Name == "listeners")
-						AddTraceListeners (child);
+						AddTraceListeners (d, child);
 					else
 						ThrowUnrecognizedElement (child);
 					ValidateInvalidAttributes (child.Attributes, child);
@@ -268,14 +294,20 @@ namespace System.Diagnostics
 #if NET_2_0
 		static readonly Hashtable static_sources = new Hashtable ();
 
-		private void AddSharedListenersNode (IDictionary d, XmlNode node)
+		private TraceListenerCollection GetSharedListeners (IDictionary d)
 		{
 			TraceListenerCollection shared_listeners = d ["sharedListeners"] as TraceListenerCollection;
 			if (shared_listeners == null) {
 				shared_listeners = new TraceListenerCollection ();
 				d ["sharedListeners"] = shared_listeners;
 			}
-			AddTraceListenersTo (node, shared_listeners);
+			return shared_listeners;
+		}
+
+		private void AddSharedListenersNode (IDictionary d, XmlNode node)
+		{
+			TraceListenerCollection shared_listeners = GetSharedListeners (d);
+			AddTraceListenersTo (d, node, shared_listeners);
 		}
 
 		private void AddSourcesNode (IDictionary d, XmlNode node)
@@ -296,7 +328,7 @@ namespace System.Diagnostics
 					continue;
 				if (t == XmlNodeType.Element) {
 					if (child.Name == "source")
-						AddTraceSource (sources, child);
+						AddTraceSource (d, sources, child);
 					else
 						ThrowUnrecognizedElement (child);
 //					ValidateInvalidAttributes (child.Attributes, child);
@@ -306,7 +338,7 @@ namespace System.Diagnostics
 			}
 		}
 
-		private void AddTraceSource (Hashtable sources, XmlNode node)
+		private void AddTraceSource (IDictionary d, Hashtable sources, XmlNode node)
 		{
 			string name = null;
 			SourceLevels levels = SourceLevels.Error;
@@ -340,7 +372,7 @@ namespace System.Diagnostics
 					continue;
 				if (t == XmlNodeType.Element) {
 					if (child.Name == "listeners")
-						AddTraceListeners (child);
+						AddTraceListeners (d, child);
 					else
 						ThrowUnrecognizedElement (child);
 					ValidateInvalidAttributes (child.Attributes, child);
@@ -353,12 +385,12 @@ namespace System.Diagnostics
 
 		// only defines "add" and "remove", but "clear" also works
 		// for add, "name" and "type" are required; initializeData is optional
-		private void AddTraceListeners (XmlNode listenersNode)
+		private void AddTraceListeners (IDictionary d, XmlNode listenersNode)
 		{
-			AddTraceListenersTo (listenersNode, TraceImpl.Listeners);
+			AddTraceListenersTo (d, listenersNode, TraceImpl.Listeners);
 		}
 
-		private void AddTraceListenersTo (XmlNode listenersNode, TraceListenerCollection listeners)
+		private void AddTraceListenersTo (IDictionary d, XmlNode listenersNode, TraceListenerCollection listeners)
 		{
 #if !TARGET_JVM
 			// There are no attributes on <listeners/>
@@ -382,7 +414,7 @@ namespace System.Diagnostics
 							type = GetAttribute (attributes, "type", true, child);
 #endif
 							id = GetAttribute (attributes, "initializeData", false, child);
-							AddTraceListener (name, type, id, listeners);
+							AddTraceListener (d, name, type, id, listeners);
 							break;
 						case "remove":
 							name = GetAttribute (attributes, "name", true, child);
@@ -403,21 +435,14 @@ namespace System.Diagnostics
 #endif
 		}
 
-		private void AddTraceListener (string name, string type, string initializeData, TraceListenerCollection listeners)
+		private void AddTraceListener (IDictionary d, string name, string type, string initializeData, TraceListenerCollection listeners)
 		{
 			if (type == null) {
 				// indicated by name.
-#if implemented // FIXME
-				//TraceListener shared = shared_listeners [name];
-				//if (shared == null)
-					// throw new ConfigurationException (String.Format ("Shared trace listener {0} does not exist", name));
-				//listeners.Add (shared);
-#else
-				// FIXME: there are such cases
-				// that <sharedListeners> element comes
-				// after <listeners> element, so skip
-				// such errors for now.
-#endif
+				TraceListener shared = GetSharedListeners (d) [name];
+				if (shared == null)
+					throw new ConfigurationException (String.Format ("Shared trace listener {0} does not exist", name));
+				listeners.Add (shared);
 				return;
 			}
 

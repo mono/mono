@@ -88,6 +88,40 @@ namespace System.Diagnostics
 		{
 			throw new NotImplementedException();
 		}
+
+#if NET_2_0
+		[MonoTODO]
+		public override void TraceData (TraceEventCache eventCache,
+						string source, TraceEventType eventType,
+						int id, object data)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public override void TraceData (TraceEventCache eventCache,
+						string source, TraceEventType eventType,
+						int id, params object [] data)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public override void TraceEvent (TraceEventCache eventCache,
+						 string source, TraceEventType eventType,
+						 int id, string message)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public override void TraceEvent (TraceEventCache eventCache,
+						 string source, TraceEventType eventType,
+						 int id, string format, params object [] args)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 	}
 }
 

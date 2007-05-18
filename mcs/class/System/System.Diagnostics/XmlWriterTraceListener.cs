@@ -52,7 +52,7 @@ namespace System.Diagnostics
 		}
 
 		public XmlWriterTraceListener (string filename, string name)
-			: this (File.AppendText (filename), name)
+			: this (new StreamWriter (new FileStream (filename, FileMode.Append, FileAccess.Write, FileShare.ReadWrite)), name)
 		{
 		}
 

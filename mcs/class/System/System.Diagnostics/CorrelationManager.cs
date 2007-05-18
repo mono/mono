@@ -44,7 +44,6 @@ namespace System.Diagnostics
 		{
 		}
 
-		[MonoTODO]
 		public Guid ActivityId {
 			get { return activity; }
 			set { activity = value; }

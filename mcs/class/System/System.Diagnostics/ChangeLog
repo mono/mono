@@ -1,5 +1,13 @@
 2007-05-19  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlWriterTraceListener.cs : open file in shared r/w mode.
+	* DiagnosticsConfigurationHandler.cs : process <sharedListeners>
+	  elements first, so that named listeners work fine.
+	* EventLogTraceListener.cs : added 2.0 stubs.
+	* CorrelationManager.cs : removed todo.
+
+2007-05-19  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* TraceListener.cs : in TraceTransfer(), use TraceEvent() (some
 	  derived classes depend on this change).
 	* DelimitedListTraceListener.cs : implemented.
