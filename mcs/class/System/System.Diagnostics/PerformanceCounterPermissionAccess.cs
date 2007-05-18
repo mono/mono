@@ -32,9 +32,6 @@
 
 namespace System.Diagnostics {
 
-#if NET_2_0
-	[Serializable]
-#endif
 	[Flags]
 	public enum PerformanceCounterPermissionAccess {
 		None=0x00,

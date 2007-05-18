@@ -312,6 +312,7 @@ namespace System.Diagnostics {
 			set { filter = value; }
 		}
 
+		[ComVisibleAttribute (false)]
 		public TraceOptions TraceOutputOptions {
 			get { return options; }
 			set { options = value; }

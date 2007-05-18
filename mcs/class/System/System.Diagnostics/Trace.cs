@@ -69,7 +69,6 @@ namespace System.Diagnostics {
 		}
 
 #if NET_2_0
-		[MonoLimitation ("the property exists but it does nothing.")]
 		public static CorrelationManager CorrelationManager {
 			get { return TraceImpl.CorrelationManager; }
 		}

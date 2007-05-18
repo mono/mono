@@ -139,7 +139,6 @@ namespace System.Diagnostics {
 #if NET_2_0
 		static CorrelationManager correlation_manager = new CorrelationManager ();
 
-		[MonoLimitation ("the property exists but it does nothing.")]
 		public static CorrelationManager CorrelationManager {
 			get { return correlation_manager; }
 		}

@@ -45,10 +45,13 @@ namespace System.Diagnostics
 	 AttributeTargets.Event)]
 	public sealed class SwitchAttribute : Attribute
 	{
-		[MonoTODO]
 		public static SwitchAttribute [] GetAll (Assembly assembly)
 		{
-			throw new NotImplementedException ();
+			object [] atts = assembly.GetCustomAttributes (typeof (SwitchAttribute), false);
+			SwitchAttribute [] ret = new SwitchAttribute [atts.Length];
+			for (int i = 0; i < atts.Length; i++)
+				ret [i] = (SwitchAttribute) atts [i];
+			return ret;
 		}
 
 		public SwitchAttribute (string switchName, Type switchType)

@@ -30,7 +30,10 @@
 
 namespace System.Diagnostics {
 
-	[Flags, Serializable]
+	[Flags]
+#if !NET_2_0
+	[Serializable]
+#endif
 	public enum EventLogPermissionAccess {
 		None=0,
 #if NET_2_0

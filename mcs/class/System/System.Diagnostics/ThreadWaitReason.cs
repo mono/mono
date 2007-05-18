@@ -29,7 +29,9 @@
 //
 
 namespace System.Diagnostics {
+#if !NET_2_0
 	[Serializable]
+#endif
 	public enum ThreadWaitReason {
 		EventPairHigh=7,
 		EventPairLow=8,

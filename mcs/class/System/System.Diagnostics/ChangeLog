@@ -1,3 +1,12 @@
+2007-05-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* EventLogPermissionAccess.cs ProcessPriorityClass.cs
+	  ProcessWindowStyle.cs ThreadWaitReason.cs TraceImpl.cs
+	  Trace.cs ThreadPriorityLevel.cs EventLogEntryType.cs
+	  PerformanceCounterPermissionAccess.cs PerformanceCounterType.cs
+	  TraceListener.cs ThreadState.cs : cosmetic API fixes.
+	* SwitchAttribute.cs : implemented GetAll().
+
 2007-05-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TraceOptions.cs : new enum.
