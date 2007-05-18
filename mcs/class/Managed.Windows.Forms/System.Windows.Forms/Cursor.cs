@@ -144,7 +144,11 @@ namespace System.Windows.Forms {
 			CreateCursor(stream);
 		}
 
-		public Cursor(string fileName) : this (new FileStream (fileName, FileMode.Open)) {
+		public Cursor (string fileName)
+		{
+			using (FileStream fs = File.OpenRead (fileName)) {
+				CreateCursor (fs);
+			}
 		}
 
 		public Cursor(Type type, string resource) {
