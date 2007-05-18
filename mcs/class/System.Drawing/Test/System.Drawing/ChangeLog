@@ -1,3 +1,8 @@
+2007-05-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TestBitmap.cs: Don't use IntPtr.ToInt32 as it may not represent the
+	pointer correctly in 64bits architectures. Thanks to Zoltan.
+
 2007-05-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* GDIPlusTest.cs: Add test cases for GdipDrawImage[I] (overflow) and 

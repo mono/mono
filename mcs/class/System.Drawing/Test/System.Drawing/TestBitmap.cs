@@ -858,14 +858,14 @@ namespace MonoTests.System.Drawing {
 			try {
 				int index = 0;
 				int bbps = Image.GetPixelFormatSize (fmt);
-				int pos = bd.Scan0.ToInt32 ();
+				long pos = bd.Scan0.ToInt64 ();
 				byte[] btv = new byte[1];
 				for (int y = 0; y < bd.Height; y++) {
 					for (int x = 0; x < bd.Width; x++) {
 
 						/* Read the pixels*/
 						for (int bt = 0; bt < bbps / 8; bt++, index++) {
-							int cur = pos;
+							long cur = pos;
 							cur += y * bd.Stride;
 							cur += x * bbps / 8;
 							cur += bt;
