@@ -182,8 +182,10 @@ namespace System.Drawing
 		}
 
 		public Icon (string fileName)
-			: this (new FileStream (fileName, FileMode.Open), 32, 32)
-		{			
+		{
+			using (FileStream fs = File.OpenRead (fileName)) {
+				InitFromStreamWithSize (fs, 32, 32);
+			}
 		}
 
 		public Icon (Type type, string resource)
@@ -247,14 +249,18 @@ namespace System.Drawing
 		{
 		}
 		
-		public Icon (string fileName, int width, int height) : 
-			this (new FileStream (fileName, FileMode.Open), width, height)
+		public Icon (string fileName, int width, int height)
 		{
+			using (FileStream fs = File.OpenRead (fileName)) {
+				InitFromStreamWithSize (fs, width, height);
+			}
 		}
 	
-		public Icon (string fileName, Size size) : 
-			this (new FileStream (fileName, FileMode.Open), size)
+		public Icon (string fileName, Size size)
 		{
+			using (FileStream fs = File.OpenRead (fileName)) {
+				InitFromStreamWithSize (fs, size.Width, size.Height);
+			}
 		}
 
 		[MonoLimitation ("The same icon, SystemIcons.WinLogo, is returned for all file types.")]
