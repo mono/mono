@@ -4926,6 +4926,11 @@ namespace System.Windows.Forms
 					WmCaptureChanged (ref m);
 					return;
 				}
+
+				case Msg.WM_CHANGEUISTATE: {
+					WmChangeUIState (ref m);
+					return;
+				}
 			
 				case Msg.WM_UPDATEUISTATE: {
 					WmUpdateUIState (ref m);
@@ -5337,6 +5342,12 @@ namespace System.Windows.Forms
 			is_captured = false;
 			OnMouseCaptureChanged (EventArgs.Empty);
 			m.Result = (IntPtr) 0;
+		}
+
+		private void WmChangeUIState (ref Message m) {
+			foreach (Control control in Controls) {
+				XplatUI.SendMessage (control.Handle, Msg.WM_UPDATEUISTATE, m.WParam, m.LParam);
+			}
 		}
 
 		private void WmUpdateUIState (ref Message m) {
