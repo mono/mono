@@ -1,5 +1,7 @@
 2007-05-18  Raja R Harinath  <rharinath@novell.com>
 
+	* statement.cs (Block.CloneTo): Clone Toplevel field too.
+
 	* expression.cs (ParameterReference): Distinguish between block
 	where parameter was referenced and declared.
 

@@ -1441,7 +1441,7 @@ namespace Mono.CSharp {
 		public readonly Location  StartLocation;
 		public Location EndLocation = Location.Null;
 
-		public readonly ToplevelBlock Toplevel;
+		public ToplevelBlock Toplevel;
 
 		[Flags]
 		public enum Flags : ushort {
@@ -2428,6 +2428,7 @@ namespace Mono.CSharp {
 		{
 			Block target = (Block) t;
 
+			target.Toplevel = (ToplevelBlock) clonectx.LookupBlock (Toplevel);
 			if (Parent != null)
 				target.Parent = clonectx.LookupBlock (Parent);
 			
