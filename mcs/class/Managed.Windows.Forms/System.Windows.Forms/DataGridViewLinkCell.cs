@@ -85,10 +85,18 @@ namespace System.Windows.Forms
 		{
 			throw new NotImplementedException ();
 		}
-		[MonoTODO]
+
 		protected override bool KeyUpUnsharesRow (KeyEventArgs e, int rowIndex)
 		{
-			throw new NotImplementedException ();
+			if (e.KeyCode != Keys.Space
+				&& trackVisitedState == true
+				&& linkVisited == false
+				&& !e.Shift 
+				&& !e.Control
+				&& !e.Alt)
+				return true;
+			return false;
+
 		}
 		[MonoTODO]
 		protected override bool MouseDownUnsharesRow (DataGridViewCellMouseEventArgs e)
@@ -98,17 +106,22 @@ namespace System.Windows.Forms
 		[MonoTODO]
 		protected override bool MouseLeaveUnsharesRow (int rowIndex)
 		{
-			throw new NotImplementedException ();
+			return (linkState != LinkState.Normal);
 		}
+
 		[MonoTODO]
 		protected override bool MouseMoveUnsharesRow (DataGridViewCellMouseEventArgs e)
 		{
-			throw new NotImplementedException ();
+			if (linkState == LinkState.Hover)
+				return true;
+			return false;
+			//TODO check if color ever changed
+			//true if the mouse pointer is over the link and the link is has not yet changed color to reflect the hover state; otherwise, false.
 		}
-		[MonoTODO]
+
 		protected override bool MouseUpUnsharesRow (DataGridViewCellMouseEventArgs e)
 		{
-			throw new NotImplementedException ();
+			return (linkState == LinkState.Hover);
 		}
 		[MonoTODO]
 		protected override void OnKeyUp (KeyEventArgs e, int rowIndex)
@@ -118,12 +131,16 @@ namespace System.Windows.Forms
 		[MonoTODO]
 		protected override void OnMouseDown (DataGridViewCellMouseEventArgs e)
 		{
-			throw new NotImplementedException ();
+			base.OnMouseDown (e);
+			linkState |= LinkState.Active;
+			DataGridView.InvalidateCell (this);
 		}
 		[MonoTODO]
 		protected override void OnMouseLeave (int rowIndex)
 		{
-			throw new NotImplementedException ();
+			base.OnMouseLeave (rowIndex);
+			linkState |= LinkState.Normal;
+			DataGridView.InvalidateCell (this);
 		}
 		[MonoTODO]
 		protected override void OnMouseMove (DataGridViewCellMouseEventArgs e)
@@ -133,16 +150,67 @@ namespace System.Windows.Forms
 		[MonoTODO]
 		protected override void OnMouseUp (DataGridViewCellMouseEventArgs e)
 		{
-			throw new NotImplementedException ();
+			base.OnMouseUp (e);
+			linkState |= LinkState.Visited;
+			LinkVisited = true;
+			DataGridView.InvalidateCell (this);
+			Action ();//load link but dot not know how
 		}
 		[MonoTODO]
 		protected override void Paint (Graphics graphics, Rectangle clipBounds, Rectangle cellBounds, int rowIndex, DataGridViewElementStates cellState, object value, object formattedValue, string errorText, DataGridViewCellStyle cellStyle, DataGridViewAdvancedBorderStyle advancedBorderStyle, DataGridViewPaintParts paintParts)
 		{
-			throw new NotImplementedException ();
+
+			this.PaintBorder (graphics, clipBounds, cellBounds, cellStyle, advancedBorderStyle);
+			
+			graphics.FillRectangle (new SolidBrush(cellStyle.BackColor), cellBounds);
+
+			Font font = (Font)cellStyle.Font.Clone ();
+
+			Color color;
+			switch (LinkBehavior) {
+				case LinkBehavior.AlwaysUnderline: {
+					font = new Font (font.FontFamily, font.Size, font.Style | FontStyle.Underline, font.Unit);
+					break;
+				}
+				case LinkBehavior.HoverUnderline: {
+					if (linkState == LinkState.Hover)
+						font = new Font (font.FontFamily, font.Size, font.Style | FontStyle.Underline, font.Unit);
+					break;
+				}
+				case LinkBehavior.NeverUnderline: {
+					break;
+				}
+				case LinkBehavior.SystemDefault: {
+					//TODO get system behaviour
+					// if system.underline it?
+					//for moment underline all
+					font = new Font (font.FontFamily, font.Size, font.Style | FontStyle.Underline, font.Unit);
+					break;
+				}
+			}
+			
+			if (linkState == LinkState.Active)
+				color = ActiveLinkColor;
+			if (linkVisited)
+				color = VisitedLinkColor;
+			else
+				color = LinkColor;
+			
+			graphics.DrawString (formattedValue.ToString(), font, new SolidBrush (color), clipBounds );
+
 		}
 		
 		#endregion
-		
+
+		#region Private Methods
+
+		private void Action ()
+		{
+			//TODO
+		}
+
+		#endregion
+
 		#region Private fields
 
 		private Color activeLinkColor;
@@ -151,6 +219,7 @@ namespace System.Windows.Forms
 		private bool linkVisited;
 		private bool trackVisitedState;
 		private bool useColumnTextForLinkValue;
+		private LinkState linkState;
 
 		#endregion
 
@@ -214,7 +283,7 @@ namespace System.Windows.Forms
 				DataGridViewLinkCell cell = base.Owner as DataGridViewLinkCell;
 				if (cell.DataGridView != null && cell.RowIndex == -1)
 					throw new InvalidOperationException ();
-				//cell.Click ();
+				cell.Action ();
 			}
 
 			public override int GetChildCount ()

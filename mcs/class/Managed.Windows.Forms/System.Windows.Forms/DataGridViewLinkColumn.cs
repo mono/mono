@@ -50,7 +50,7 @@ namespace System.Windows.Forms
 
 		public override string ToString ()
 		{
-			throw new NotImplementedException ();
+			return base.ToString ();
 		}
 
 		#region private fields
@@ -60,22 +60,31 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Properties
-		[MonoTODO]
+
 		public Color ActiveLinkColor {
 			get {
 				DataGridViewLinkCell template = CellTemplate as DataGridViewLinkCell;
 				if (template == null)
 					throw new InvalidOperationException ("CellTemplate is null when getting this property.");
-				//TODO : default The default value is the user's Internet Explorer setting for the color of links in the hover state.
 				return template.ActiveLinkColor; 
 			}
 			set {
+				if (this.ActiveLinkColor == value) 
+					return;
+
 				DataGridViewLinkCell template = CellTemplate as DataGridViewLinkCell;
 				if (template == null)
 					throw new InvalidOperationException ("CellTemplate is null when getting this property.");
-				//TODO : sets the ActiveLinkColor property of every cell in the column 
-				//TODO : refreshes the column display
-				template.ActiveLinkColor = value; 
+
+				template.ActiveLinkColor = value;
+
+				foreach (DataGridViewRow row in DataGridView.Rows) {
+					DataGridViewLinkCell cell = row.Cells[Index] as DataGridViewLinkCell;
+					if (cell != null)
+						cell.ActiveLinkColor = value;
+				}
+				DataGridView.InvalidateColumn (Index);
+
 			}
 		}
 
@@ -84,40 +93,54 @@ namespace System.Windows.Forms
 			set { base.CellTemplate = value as DataGridViewLinkCell; }
 		}
 
-		[MonoTODO]
+
 		public LinkBehavior LinkBehavior {
 			get	{
 				DataGridViewLinkCell template = CellTemplate as DataGridViewLinkCell;
 				if (template == null)
 					throw new InvalidOperationException ("CellTemplate is null when getting this property.");
-				//TODO : default The default value is LinkBehavior.SystemDefault
 				return template.LinkBehavior;
 			}
 			set	{
+				if (this.LinkBehavior == value) 
+					return;
+
 				DataGridViewLinkCell template = CellTemplate as DataGridViewLinkCell;
 				if (template == null)
 					throw new InvalidOperationException ("CellTemplate is null when getting this property.");
-				//TODO : sets the LinkBehavior property of every cell in the column 
-				//TODO : refreshes the column display
+
 				template.LinkBehavior = value;
+				foreach (DataGridViewRow row in DataGridView.Rows)
+				{
+					DataGridViewLinkCell cell = row.Cells[Index] as DataGridViewLinkCell;
+					if (cell != null)
+						cell.LinkBehavior = value;
+				}
+				DataGridView.InvalidateColumn (Index);
 			}
 		}
-		[MonoTODO]
+
 		public Color LinkColor {
 			get	{
 				DataGridViewLinkCell template = CellTemplate as DataGridViewLinkCell;
 				if (template == null)
 					throw new InvalidOperationException ("CellTemplate is null when getting this property.");
-				//TODO : default The default value is the user's Internet Explorer setting for the link color.
 				return template.LinkColor;
 			}
 			set	{
+				if (this.LinkColor == value)
+					return;
 				DataGridViewLinkCell template = CellTemplate as DataGridViewLinkCell;
 				if (template == null)
 					throw new InvalidOperationException ("CellTemplate is null when getting this property.");
-				//TODO : sets the LinkColor property of every cell in the column 
-				//TODO : refreshes the column display
 				template.LinkColor = value;
+				foreach (DataGridViewRow row in DataGridView.Rows)
+				{
+					DataGridViewLinkCell cell = row.Cells[Index] as DataGridViewLinkCell;
+					if (cell != null)
+						cell.LinkColor = value;
+				}
+				DataGridView.InvalidateColumn (Index);
 			}
 		}
 		[MonoTODO]
@@ -129,70 +152,90 @@ namespace System.Windows.Forms
 				return text;
 			}
 			set {
+				if (this.Text == value)
+					return;
 				DataGridViewLinkCell template = CellTemplate as DataGridViewLinkCell;
 				if (template == null)
 					throw new InvalidOperationException ("CellTemplate is null when getting this property.");
 				//TODO : sets the Text property of every cell in the column 
-				//TODO : refreshes the column display
 				//TODO only if UseColumnTextForLinkValue is true
 				text = value;
+				DataGridView.InvalidateColumn (Index);
 			}
 		}
+
 		//When TrackVisitedState is true, the VisitedLinkColor property value is used to display links that have already been visited.
-		[MonoTODO]
 		public bool TrackVisitedState {
 			get {
 				DataGridViewLinkCell template = CellTemplate as DataGridViewLinkCell;
 				if (template == null)
 					throw new InvalidOperationException ("CellTemplate is null when getting this property.");
-				//TODO : default The default value is true
 				return template.TrackVisitedState;
 			}
 			set {
+				if (this.TrackVisitedState == value)
+					return;
 				DataGridViewLinkCell template = CellTemplate as DataGridViewLinkCell;
 				if (template == null)
 					throw new InvalidOperationException ("CellTemplate is null when getting this property.");
-				//TODO : sets the TrackVisitedState property of every cell in the column 
-				//TODO : refreshes the column display
 				template.TrackVisitedState = value;
+				foreach (DataGridViewRow row in DataGridView.Rows)
+				{
+					DataGridViewLinkCell cell = row.Cells[Index] as DataGridViewLinkCell;
+					if (cell != null)
+						cell.TrackVisitedState = value;
+				}
+				DataGridView.InvalidateColumn (Index);
 			}
 		}
+
 		// true if the Text property value is displayed as the link text; false if the cell FormattedValue property value is displayed as the link text. The default is false.
-		[MonoTODO]
 		public bool UseColumnTextForLinkValue {
 			get {
 				DataGridViewLinkCell template = CellTemplate as DataGridViewLinkCell;
 				if (template == null)
 					throw new InvalidOperationException ("CellTemplate is null when getting this property.");
-				//TODO : default The default value is false
 				return template.UseColumnTextForLinkValue;
 			}
 			set {
+				if (this.UseColumnTextForLinkValue == value)
+					return;
 				DataGridViewLinkCell template = CellTemplate as DataGridViewLinkCell;
 				if (template == null)
 					throw new InvalidOperationException ("CellTemplate is null when getting this property.");
-				//TODO : sets the UseColumnTextForLinkValue property of every cell in the column 
-				//TODO : refreshes the column display
 				template.UseColumnTextForLinkValue = value;
+				foreach (DataGridViewRow row in DataGridView.Rows)
+				{
+					DataGridViewLinkCell cell = row.Cells[Index] as DataGridViewLinkCell;
+					if (cell != null)
+						cell.UseColumnTextForLinkValue = value;
+				}
+				DataGridView.InvalidateColumn (Index);
 			}
 		}
+
 		//If the TrackVisitedState property is set to false, the VisitedLinkColor property is ignored.
-		[MonoTODO]
 		public Color VisitedLinkColor {
 			get {
 				DataGridViewLinkCell template = CellTemplate as DataGridViewLinkCell;
 				if (template == null)
 					throw new InvalidOperationException ("CellTemplate is null when getting this property.");
-				//TODO : default The default value is the user's Internet Explorer setting for the visited link color.
 				return template.VisitedLinkColor;
 			}
 			set {
+				if (this.VisitedLinkColor == value)
+					return;
 				DataGridViewLinkCell template = CellTemplate as DataGridViewLinkCell;
 				if (template == null)
 					throw new InvalidOperationException ("CellTemplate is null when getting this property.");
-				//TODO : sets the VisitedLinkColor property of every cell in the column 
-				//TODO : refreshes the column display
 				template.VisitedLinkColor = value;
+				foreach (DataGridViewRow row in DataGridView.Rows)
+				{
+					DataGridViewLinkCell cell = row.Cells[Index] as DataGridViewLinkCell;
+					if (cell != null)
+						cell.VisitedLinkColor = value;
+				}
+				DataGridView.InvalidateColumn (Index);
 			}
 		}
 		#endregion
