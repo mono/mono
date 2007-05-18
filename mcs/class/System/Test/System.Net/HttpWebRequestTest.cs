@@ -278,6 +278,155 @@ namespace MonoTests.System.Net
 			}
 		}
 
+		[Test]
+		public void ReadTimeout ()
+		{
+			IPEndPoint localEP = new IPEndPoint (IPAddress.Loopback, 8764);
+			string url = "http://" + localEP.ToString () + "/original/";
+
+			using (SocketResponder responder = new SocketResponder (localEP, new SocketRequestHandler (RedirectRequestHandler))) {
+				responder.Start ();
+
+				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
+				req.Method = "POST";
+				req.AllowAutoRedirect = false;
+				req.Timeout = 200;
+				req.ReadWriteTimeout = 100;
+				req.KeepAlive = false;
+				Stream rs = req.GetRequestStream ();
+				rs.Close ();
+				using (HttpWebResponse resp = (HttpWebResponse) req.GetResponse ()) {
+					try {
+						Stream s = resp.GetResponseStream ();
+						s.ReadByte ();
+						Assert.Fail ("#1");
+					} catch (WebException ex) {
+						Assert.AreEqual (typeof (WebException), ex.GetType (), "#2");
+						Assert.IsNull (ex.InnerException, "#3");
+						Assert.IsNull (ex.Response, "#4");
+						Assert.AreEqual (WebExceptionStatus.Timeout, ex.Status, "#5");
+					}
+				}
+				responder.Stop ();
+			}
+		}
+
+		[Test] // bug #81624
+		public void AllowAutoRedirect ()
+		{
+			IPEndPoint localEP = new IPEndPoint (IPAddress.Loopback, 8764);
+			string url = "http://" + localEP.ToString () + "/original/";
+
+			// allow autoredirect
+			using (SocketResponder responder = new SocketResponder (localEP, new SocketRequestHandler (RedirectRequestHandler))) {
+				responder.Start ();
+
+				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
+				req.Method = "POST";
+				req.Timeout = 2000;
+				req.ReadWriteTimeout = 2000;
+				req.KeepAlive = false;
+				Stream rs = req.GetRequestStream ();
+				rs.Close ();
+				using (HttpWebResponse resp = (HttpWebResponse) req.GetResponse ()) {
+					StreamReader sr = new StreamReader (resp.GetResponseStream (),
+						Encoding.UTF8);
+					string body = sr.ReadToEnd ();
+
+					Assert.AreEqual (resp.StatusCode, HttpStatusCode.OK, "#A1");
+					Assert.AreEqual (resp.ResponseUri.ToString (), "http://" +
+						localEP.ToString () + "/moved/", "#A2");
+					Assert.AreEqual ("GET", resp.Method, "#A3");
+					Assert.AreEqual ("LOOKS OK", body, "#A4");
+				}
+				responder.Stop ();
+			}
+
+			// do not allow autoredirect
+			using (SocketResponder responder = new SocketResponder (localEP, new SocketRequestHandler (RedirectRequestHandler))) {
+				responder.Start ();
+
+				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
+				req.Method = "POST";
+				req.AllowAutoRedirect = false;
+				req.Timeout = 1000;
+				req.ReadWriteTimeout = 1000;
+				req.KeepAlive = false;
+				Stream rs = req.GetRequestStream ();
+				rs.Close ();
+				using (HttpWebResponse resp = (HttpWebResponse) req.GetResponse ()) {
+					Assert.AreEqual (resp.StatusCode, HttpStatusCode.Found, "#B1");
+					Assert.AreEqual (url, resp.ResponseUri.ToString (), "#B2");
+					Assert.AreEqual ("POST", resp.Method, "#B3");
+				}
+				responder.Stop ();
+			}
+		}
+
+		[Test] // bug #81671
+		[Category ("NotWorking")]
+		public void InternalServerError ()
+		{
+			IPEndPoint localEP = new IPEndPoint (IPAddress.Loopback, 8764);
+			string url = "http://" + localEP.ToString () + "/original/";
+
+			// POST
+			using (SocketResponder responder = new SocketResponder (localEP, new SocketRequestHandler (InternalErrorHandler))) {
+				responder.Start ();
+
+				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
+				req.Method = "POST";
+				req.Timeout = 2000;
+				req.ReadWriteTimeout = 2000;
+				req.KeepAlive = false;
+				Stream rs = req.GetRequestStream ();
+				rs.Close ();
+
+				try {
+					req.GetResponse ();
+					Assert.Fail ("#1");
+				} catch (WebException ex) {
+					Assert.AreEqual (typeof (WebException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.AreEqual (WebExceptionStatus.ProtocolError, ex.Status, "#4");
+
+					HttpWebResponse webResponse = ex.Response as HttpWebResponse;
+					Assert.IsNotNull (webResponse, "#5");
+					Assert.AreEqual ("POST", webResponse.Method, "#6");
+					webResponse.Close ();
+				}
+
+				responder.Stop ();
+			}
+
+			// GET
+			using (SocketResponder responder = new SocketResponder (localEP, new SocketRequestHandler (InternalErrorHandler))) {
+				responder.Start ();
+
+				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
+				req.Method = "GET";
+				req.Timeout = 2000;
+				req.ReadWriteTimeout = 2000;
+				req.KeepAlive = false;
+
+				try {
+					req.GetResponse ();
+					Assert.Fail ("#1");
+				} catch (WebException ex) {
+					Assert.AreEqual (typeof (WebException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.AreEqual (WebExceptionStatus.ProtocolError, ex.Status, "#4");
+
+					HttpWebResponse webResponse = ex.Response as HttpWebResponse;
+					Assert.IsNotNull (webResponse, "#5");
+					Assert.AreEqual ("GET", webResponse.Method, "#6");
+					webResponse.Close ();
+				}
+
+				responder.Stop ();
+			}
+		}
+
 		private static byte [] EchoRequestHandler (Socket socket)
 		{
 			MemoryStream ms = new MemoryStream ();
@@ -296,13 +445,64 @@ namespace MonoTests.System.Net
 			StreamReader sr = new StreamReader (ms, Encoding.UTF8);
 			string request = sr.ReadToEnd ();
 
-			MemoryStream outputStream = new MemoryStream ();
 			StringWriter sw = new StringWriter ();
 			sw.WriteLine ("HTTP/1.1 200 OK");
 			sw.WriteLine ("Content-Type: text/xml");
 			sw.WriteLine ("Content-Length: " + request.Length.ToString (CultureInfo.InvariantCulture));
 			sw.WriteLine ();
 			sw.Write (request);
+			sw.Flush ();
+
+			return Encoding.UTF8.GetBytes (sw.ToString ());
+		}
+
+		static byte [] RedirectRequestHandler (Socket socket)
+		{
+			MemoryStream ms = new MemoryStream ();
+			byte [] buffer = new byte [4096];
+			int bytesReceived = socket.Receive (buffer);
+			while (bytesReceived > 0) {
+				ms.Write (buffer, 0, bytesReceived);
+				if (socket.Available > 0) {
+					bytesReceived = socket.Receive (buffer);
+				} else {
+					bytesReceived = 0;
+				}
+			}
+			ms.Flush ();
+			ms.Position = 0;
+			string statusLine = null;
+			using (StreamReader sr = new StreamReader (ms, Encoding.UTF8)) {
+				statusLine = sr.ReadLine ();
+			}
+
+			StringWriter sw = new StringWriter ();
+			if (statusLine.StartsWith ("POST /original/")) {
+				sw.WriteLine ("HTTP/1.1 302 Found");
+				sw.WriteLine ("Location: " + "http://" + IPAddress.Loopback.ToString () + ":8764/moved/");
+				sw.WriteLine ();
+				sw.Flush ();
+			} else if (statusLine.StartsWith ("GET /moved/")) {
+				sw.WriteLine ("HTTP/1.1 200 OK");
+				sw.WriteLine ("Content-Type: text/plain");
+				sw.WriteLine ("Content-Length: 8");
+				sw.WriteLine ();
+				sw.Write ("LOOKS OK");
+				sw.Flush ();
+			} else {
+				sw.WriteLine ("HTTP/1.1 500 Too Lazy");
+				sw.WriteLine ();
+				sw.Flush ();
+			}
+
+			return Encoding.UTF8.GetBytes (sw.ToString ());
+		}
+
+		static byte [] InternalErrorHandler (Socket socket)
+		{
+			StringWriter sw = new StringWriter ();
+			sw.WriteLine ("HTTP/1.1 500 Too Lazy");
+			sw.WriteLine ();
 			sw.Flush ();
 
 			return Encoding.UTF8.GetBytes (sw.ToString ());

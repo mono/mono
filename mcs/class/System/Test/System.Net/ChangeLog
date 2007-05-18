@@ -1,3 +1,8 @@
+2007-05-18  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* HttpWebRequestTest.cs: Added test for exception thrown on read
+	timeout. Added tests for bug #81624 and #81671.
+
 2007-04-23  Marek Habersack  <mhabersack@novell.com>
 
 	* CookieContainerTest.cs: the GetCookies test works now.
