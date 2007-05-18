@@ -1,4 +1,9 @@
-2007-05-16 Adar Wesley <adarw@mainsoft.com>
+2007-05-18  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* WebConnectionStream.cs: On read timeout, throw WebException with
+	status Timeout instead of IOException.
+
+2007-05-16  Adar Wesley <adarw@mainsoft.com>
 
 	* CookieCollection.cs: added missing method strongly typed CopyTo.
 

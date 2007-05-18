@@ -249,7 +249,8 @@ namespace System.Net
 			if (!res.IsCompleted && !res.WaitUntilComplete (request.ReadWriteTimeout, false)) {
 				nextReadCalled = true;
 				cnc.Close (true);
-				throw new IOException ("Read timed out.");
+				throw new WebException ("The operation has timed out.",
+					WebExceptionStatus.Timeout);
 			}
 
 			return EndRead (res);
