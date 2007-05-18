@@ -2575,41 +2575,11 @@ namespace System.Windows.Forms {
 			}
 
 			// Set the default location location for forms.
-			Point previous, next;
-			Rectangle within;
+			Point next;
 			if (cp.control is Form) {
-				if (parent_hwnd != null) {
-					previous = parent_hwnd.previous_child_startup_location;
-					within = parent_hwnd.client_rectangle;
-				} else {
-					previous = Hwnd.previous_main_startup_location;
-					within = System.Windows.Forms.Screen.PrimaryScreen.WorkingArea;
-				}
-				
-				if (previous.X == int.MinValue || previous.Y == int.MinValue) {
-					next = Point.Empty;
-				} else {
-					next = new Point (previous.X + 22, previous.Y + 22);
-				}
-				
-				if (!within.Contains (next.X * 3, next.Y * 3)) {
-					next = Point.Empty;
-				}
-				
-				if (next == Point.Empty && cp.Parent == IntPtr.Zero) {
-					next = new Point (22, 22);
-				}
-				
-				if (parent_hwnd != null) {
-					parent_hwnd.previous_child_startup_location = next;
-				} else {
-					Hwnd.previous_main_startup_location = next;
-				}
-				
-				if (X == int.MinValue && Y == int.MinValue) {
-					X = next.X;
-					Y = next.Y;
-				}
+				next = Hwnd.GetNextStackedFormLocation (cp, parent_hwnd);
+				X = next.X;
+				Y = next.Y;
 			}
 			ValueMask = SetWindowValuemask.BitGravity | SetWindowValuemask.WinGravity;
 

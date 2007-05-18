@@ -1,3 +1,13 @@
+2007-05-18  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* CreateParams.cs: Make HasWindowManager marginally faster.
+	* XplatUIX11.cs, Hwnd.cs: CreateWindow: Move the default location code
+	  into Hwnd so that other drivers can use it as well.
+	* XplatUIWin32.cs: CreateWindow: If the window has a window manager get
+	  the default location from Hwnd. Fixes MDI client windows always
+	  showing up at (0,0) in Windows (Win32 won't set the default
+	  location since the window styles aren't correct).
+
 2007-05-18  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TreeView.cs: Modified DoubleBuffered to just use the base

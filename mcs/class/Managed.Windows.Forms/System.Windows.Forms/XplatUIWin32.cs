@@ -1329,10 +1329,17 @@ namespace System.Windows.Forms {
 				ParentHandle = FosterParent;
 			}
 
+			Point location;
+			if (cp.HasWindowManager) {
+				location = Hwnd.GetNextStackedFormLocation (cp, Hwnd.ObjectFromHandle (cp.Parent));
+			} else {
+				location = new Point (cp.X, cp.Y);
+			}
+
 			string class_name = RegisterWindowClass (cp.ClassStyle);
 			HwndCreating = hwnd;
 
-			WindowHandle = Win32CreateWindow (cp.WindowExStyle, class_name, cp.Caption, cp.WindowStyle, cp.X, cp.Y, cp.Width, cp.Height, ParentHandle, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
+			WindowHandle = Win32CreateWindow (cp.WindowExStyle, class_name, cp.Caption, cp.WindowStyle, location.X, location.Y, cp.Width, cp.Height, ParentHandle, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
 
 			HwndCreating = null;
 

@@ -128,7 +128,15 @@ namespace System.Windows.Forms {
 		
 		internal bool HasWindowManager {
 			get {
-				return control != null && control is Form && ((Form) control).window_manager != null;
+				if (control == null)
+					return false;
+				
+				Form form = control as Form;
+				
+				if (form == null)
+					return false;
+				
+				return form.window_manager != null;
 			}
 		}
 		internal WindowExStyles WindowExStyle {
