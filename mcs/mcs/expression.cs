@@ -3713,7 +3713,7 @@ namespace Mono.CSharp {
 		Parameter par;
 		string name;
 		int idx;
-		Block block;
+		ToplevelBlock referenced;
 		VariableInfo vi;
 		public bool is_ref, is_out;
 
@@ -3743,11 +3743,11 @@ namespace Mono.CSharp {
 
 		Variable variable;
 		
-		public ParameterReference (Parameter par, Block block, int idx, Location loc)
+		public ParameterReference (Parameter par, ToplevelBlock referenced, int idx, Location loc)
 		{
 			this.par = par;
 			this.name = par.Name;
-			this.block = block;
+			this.referenced = referenced;
 			this.idx  = idx;
 			this.loc = loc;
 			eclass = ExprClass.Variable;
@@ -3811,32 +3811,28 @@ namespace Mono.CSharp {
 			is_out = (mod & Parameter.Modifier.OUT) == Parameter.Modifier.OUT;
 			eclass = ExprClass.Variable;
 
+			ToplevelBlock declared = referenced;
+			while (!declared.IsLocalParameter (name))
+				declared = declared.Container;
+
 			if (is_out)
-				vi = block.ParameterMap [idx];
+				vi = declared.ParameterMap [idx];
 
 			AnonymousContainer am = ec.CurrentAnonymousMethod;
 			if (am == null)
 				return true;
 
-			if (is_ref && !block.Toplevel.IsLocalParameter (name)){
+			if (is_ref && declared != referenced) {
 				Report.Error (1628, Location,
 					      "Cannot use ref or out parameter `{0}' inside an " +
 					      "anonymous method block", par.Name);
 				return false;
 			}
 
-			if (!am.IsIterator && block.Toplevel.IsLocalParameter (name))
+			if (!am.IsIterator && declared == referenced)
 				return true;
 
-			ToplevelBlock toplevel = block.Toplevel;
-			while (toplevel != null) {
-				if (toplevel.IsLocalParameter (name))
-					break;
-
-				toplevel = toplevel.Container;
-			}
-
-			ScopeInfo scope = toplevel.CreateScopeInfo ();
+			ScopeInfo scope = declared.CreateScopeInfo ();
 			variable = scope.AddParameter (par, idx);
 			type = variable.Type;
 			return true;
@@ -3853,7 +3849,7 @@ namespace Mono.CSharp {
 			if (pr == null)
 				return false;
 
-			return name == pr.name && block == pr.block;
+			return name == pr.name && referenced == pr.referenced;
 		}
 
 		//

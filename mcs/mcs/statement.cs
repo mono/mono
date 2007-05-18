@@ -2671,12 +2671,9 @@ namespace Mono.CSharp {
 		//
 		public ParameterReference GetParameterReference (string name, Location loc)
 		{
-			Parameter par;
 			int idx;
-
 			for (ToplevelBlock t = this; t != null; t = t.Container) {
-				Parameters pars = t.Parameters;
-				par = pars.GetParameterByName (name, out idx);
+				Parameter par = t.Parameters.GetParameterByName (name, out idx);
 				if (par != null)
 					return new ParameterReference (par, this, idx, loc);
 			}

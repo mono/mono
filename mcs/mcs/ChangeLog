@@ -1,3 +1,8 @@
+2007-05-18  Raja R Harinath  <rharinath@novell.com>
+
+	* expression.cs (ParameterReference): Distinguish between block
+	where parameter was referenced and declared.
+
 2007-05-18  Marek Safar  <marek.safar@gmail.com>
 
 	* flowanalysis.cs, statement.cs: Put back improved error handling.
