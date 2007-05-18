@@ -1,4 +1,4 @@
-// CS0159: No such label `a' in this scope
+// CS0159: The label `a:' could not be found within the scope of the goto statement
 // Line: 8
 
 class Foo {

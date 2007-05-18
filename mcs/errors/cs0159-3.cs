@@ -1,5 +1,5 @@
-// cs0159-3.cs: No such label `case null:' within the scope of the goto statement
-// Line: 10
+// CS0159: The label `case null:' could not be found within the scope of the goto statement
+// Line: 1
 
 class y {
 	static void Main ()

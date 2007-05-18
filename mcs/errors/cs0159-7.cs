@@ -1,5 +1,5 @@
-// CS0159: No such label `a' in this scope
-// Line: 8
+// CS0159: The label `a:' could not be found within the scope of the goto statement
+// Line: 9
 
 class Foo {
 	static void Main ()
