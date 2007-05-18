@@ -1,3 +1,10 @@
+2007-05-18  Jackson Harper  <jackson@ximian.com>
+
+	* RichTextBox.cs: Recalculate the document after the scrollbars
+	property is changed.
+	* TextBoxBase.cs: ScrollBars is not a flags enum...This fixes
+	81486.
+
 2007-05-18  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* CreateParams.cs: Make HasWindowManager marginally faster.

@@ -154,8 +154,6 @@ namespace System.Windows.Forms {
 			document.ViewPortHeight = canvas_height;
 
 			Cursor = Cursors.IBeam;
-
-			CalculateScrollBars();
 		}
 		#endregion	// Internal Constructor
 
@@ -1817,25 +1815,35 @@ namespace System.Windows.Forms {
 			}
 
 			if (!WordWrap) {
-				if ((scrollbars & RichTextBoxScrollBars.Horizontal) != 0) {
-					if (((scrollbars & RichTextBoxScrollBars.ForcedHorizontal) != 0) || hscroll.Enabled) {
-						hscroll.Visible = true;
-					} else {
-						hscroll.Visible = false;
-					}
-				} else {
+				switch (scrollbars) {
+				case RichTextBoxScrollBars.Both:
+				case RichTextBoxScrollBars.Horizontal:
+					hscroll.Visible = hscroll.Enabled;
+					break;
+				case RichTextBoxScrollBars.ForcedBoth:
+				case RichTextBoxScrollBars.ForcedHorizontal:
+					hscroll.Visible = true;
+					break;
+				default:
 					hscroll.Visible = false;
-				}
-			}
-
-			if ((scrollbars & RichTextBoxScrollBars.Vertical) != 0) {
-				if (((scrollbars & RichTextBoxScrollBars.ForcedVertical) != 0) || vscroll.Enabled) {
-					vscroll.Visible = true;
-				} else {
-					vscroll.Visible = false;
+					break;
 				}
 			} else {
+				hscroll.Visible = false;
+			}
+
+			switch (scrollbars) {
+			case RichTextBoxScrollBars.Both:
+			case RichTextBoxScrollBars.Vertical:
+				vscroll.Visible = vscroll.Enabled;
+				break;
+			case RichTextBoxScrollBars.ForcedBoth:
+			case RichTextBoxScrollBars.ForcedVertical:
+				vscroll.Visible = true;
+				break;
+			default:
 				vscroll.Visible = false;
+				break;
 			}
 
 			PositionControls ();
