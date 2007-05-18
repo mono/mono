@@ -722,7 +722,7 @@ namespace System.Windows.Forms {
 			} else {
 				RecalculateVisibleOrder (root_node);
 				UpdateScrollBars (true);
-				vbar.Value = vbar.Maximum;
+				SetTop (Nodes [Nodes.Count - 1]);
 			}
 		}
 
@@ -1831,8 +1831,7 @@ namespace System.Windows.Forms {
 					return;
 				}
 #if NET_2_0
-				if (Nodes.Count > 1)
-					SelectedNode = Nodes [Nodes.Count - 1];
+				SelectedNode = TopNode;
 #else
 				if (Nodes.Count > 1)
 					SelectedNode = Nodes [0];

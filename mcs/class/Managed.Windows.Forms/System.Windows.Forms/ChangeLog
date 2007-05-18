@@ -1,3 +1,10 @@
+2007-05-18  Jackson Harper  <jackson@ximian.com>
+
+	* TreeView.cs: Set the top node to the last child node when
+	expanding all
+	- When we get focus, if there is no selected node, use the top
+	node.
+
 2007-05-18  Jonathan Pobst  <monkey@jpobst.com>
 
 	* KeysConverter.cs: Add CanConvertTo.
