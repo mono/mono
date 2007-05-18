@@ -2013,9 +2013,8 @@ namespace Mono.CSharp {
 		int assignable_slots;
 		public int AssignableSlots {
 			get {
-				if ((flags & Flags.VariablesInitialized) == 0){
+				if ((flags & Flags.VariablesInitialized) == 0)
 					throw new Exception ("Variables have not been initialized yet");
-				}
 				return assignable_slots;
 			}
 		}
@@ -2724,14 +2723,11 @@ namespace Mono.CSharp {
 			return this_variable == null || this_variable.IsThisAssigned (ec);
 		}
 
-		VariableMap param_map;
-
-		public VariableMap ParameterMap {
+		VariableInfo [] param_map;
+		public VariableInfo [] ParameterMap {
 			get {
-				if ((flags & Flags.VariablesInitialized) == 0){
+				if ((flags & Flags.VariablesInitialized) == 0)
 					throw new Exception ("Variables have not been initialized yet");
-				}
-
 				return param_map;
 			}
 		}
@@ -2754,7 +2750,20 @@ namespace Mono.CSharp {
 			}
 
 			int offset = Parent == null ? 0 : Parent.AssignableSlots;
-			param_map = new VariableMap (parameters);
+
+			if (parameters != null) {
+				for (int i = 0; i < parameters.Count; ++i) {
+					Parameter.Modifier mod = parameters.ParameterModifier (i);
+
+					if ((mod & Parameter.Modifier.OUT) != Parameter.Modifier.OUT)
+						continue;
+
+					if (param_map == null)
+						param_map = new VariableInfo [parameters.Count];
+					param_map [i] = new VariableInfo (ip, i, offset);
+					offset += param_map [i].Length;
+				}
+			}
 
 			ResolveMeta (ec, offset);
 

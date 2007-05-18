@@ -1,5 +1,15 @@
 2007-05-18  Raja R Harinath  <rharinath@novell.com>
 
+	Track all assignable slots in one bit array
+	* statement.cs (ToplevelBlock.ParameterMap): Convert into array.
+	(ToplevelBlock.ResolveMeta): Don't create a VariableMap.  Move
+	logic from VariableMap constructor here.  Use the same 'offset'
+	variable that's later used for computing offsets of local
+	variables.
+	* flowanalysis.cs (UsageVector.parameters): Remove.
+	(UsageVector): Update to changes.
+	(VariableMap): Remove.
+
 	Avoid creating ParameterMap in every block
 	* statement.cs (Block.ParameterMap): Move ...
 	(ToplevelBlock.ParameterMap): ... here.

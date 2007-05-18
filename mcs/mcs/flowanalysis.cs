@@ -140,11 +140,6 @@ namespace Mono.CSharp
 			public readonly Block Block;
 
 			// <summary>
-			//   The number of parameters in this block.
-			// </summary>
-			public readonly int CountParameters;
-
-			// <summary>
 			//   The number of locals in this block.
 			// </summary>
 			public readonly int CountLocals;
@@ -164,7 +159,7 @@ namespace Mono.CSharp
 			//
 			// Private.
 			//
-			MyBitVector locals, parameters;
+			MyBitVector locals;
 			bool is_unreachable;
 
 			static int next_id = 0;
@@ -173,22 +168,17 @@ namespace Mono.CSharp
 			//
 			// Normally, you should not use any of these constructors.
 			//
-			public UsageVector (SiblingType type, UsageVector parent, Block block, Location loc, int num_params, int num_locals)
+			public UsageVector (SiblingType type, UsageVector parent, Block block, Location loc, int num_locals)
 			{
 				this.Type = type;
 				this.Block = block;
 				this.Location = loc;
 				this.InheritsFrom = parent;
-				this.CountParameters = num_params;
 				this.CountLocals = num_locals;
 
 				locals = num_locals == 0 
 					? MyBitVector.Empty
 					: new MyBitVector (parent == null ? MyBitVector.Empty : parent.locals, num_locals);
-
-				parameters = num_params == 0
-					? MyBitVector.Empty
-					: new MyBitVector (parent == null ? MyBitVector.Empty : parent.parameters, num_params);
 
 				if (parent != null)
 					is_unreachable = parent.is_unreachable;
@@ -198,10 +188,10 @@ namespace Mono.CSharp
 			}
 
 			public UsageVector (SiblingType type, UsageVector parent, Block block, Location loc)
-				: this (type, parent, block, loc, parent.CountParameters, parent.CountLocals)
+				: this (type, parent, block, loc, parent.CountLocals)
 			{ }
 
-			private UsageVector (MyBitVector parameters, MyBitVector locals, bool is_unreachable, Block block, Location loc)
+			private UsageVector (MyBitVector locals, bool is_unreachable, Block block, Location loc)
 			{
 				this.Type = SiblingType.Block;
 				this.Location = loc;
@@ -209,7 +199,6 @@ namespace Mono.CSharp
 
 				this.is_unreachable = is_unreachable;
 
-				this.parameters = parameters;
 				this.locals = locals;
 
 				id = ++next_id;
@@ -221,10 +210,9 @@ namespace Mono.CSharp
 			// </summary>
 			public UsageVector Clone ()
 			{
-				UsageVector retval = new UsageVector (Type, null, Block, Location, CountParameters, CountLocals);
+				UsageVector retval = new UsageVector (Type, null, Block, Location, CountLocals);
 
 				retval.locals = locals.Clone ();
-				retval.parameters = parameters.Clone ();
 				retval.is_unreachable = is_unreachable;
 
 				return retval;
@@ -235,7 +223,7 @@ namespace Mono.CSharp
 				if (!ignoreReachability && !var.IsParameter && IsUnreachable)
 					return true;
 
-				return var.IsAssigned (var.IsParameter ? parameters : locals);
+				return var.IsAssigned (locals);
 			}
 
 			public void SetAssigned (VariableInfo var)
@@ -243,7 +231,7 @@ namespace Mono.CSharp
 				if (!var.IsParameter && IsUnreachable)
 					return;
 
-				var.SetAssigned (var.IsParameter ? parameters : locals);
+				var.SetAssigned (locals);
 			}
 
 			public bool IsFieldAssigned (VariableInfo var, string name)
@@ -251,7 +239,7 @@ namespace Mono.CSharp
 				if (!var.IsParameter && IsUnreachable)
 					return true;
 
-				return var.IsFieldAssigned (var.IsParameter ? parameters : locals, name);
+				return var.IsFieldAssigned (locals, name);
 			}
 
 			public void SetFieldAssigned (VariableInfo var, string name)
@@ -259,7 +247,7 @@ namespace Mono.CSharp
 				if (!var.IsParameter && IsUnreachable)
 					return;
 
-				var.SetFieldAssigned (var.IsParameter ? parameters : locals, name);
+				var.SetFieldAssigned (locals, name);
 			}
 
 			public bool IsUnreachable {
@@ -282,24 +270,19 @@ namespace Mono.CSharp
 					return sibling_list;
 
 				MyBitVector locals = null;
-				MyBitVector parameters = null;
 				bool is_unreachable = sibling_list.is_unreachable;
 
-				if (!sibling_list.IsUnreachable) {
+				if (!sibling_list.IsUnreachable)
 					locals &= sibling_list.locals;
-					parameters &= sibling_list.parameters;
-				}
 
 				for (UsageVector child = sibling_list.Next; child != null; child = child.Next) {
 					is_unreachable &= child.is_unreachable;
 
-					if (!child.IsUnreachable) {
+					if (!child.IsUnreachable)
 						locals &= child.locals;
-						parameters &= child.parameters;
-					}
 				}
 
-				return new UsageVector (parameters, locals, is_unreachable, null, loc);
+				return new UsageVector (locals, is_unreachable, null, loc);
 			}
 
 			// <summary>
@@ -328,7 +311,6 @@ namespace Mono.CSharp
 				}
 
 				locals |= child.locals;
-				parameters |= child.parameters;
 
 				if (overwrite)
 					is_unreachable = new_isunr;
@@ -345,19 +327,14 @@ namespace Mono.CSharp
 				if (o_vectors == null)
 					return;
 
-				if (IsUnreachable) {
-					if (locals != null)
-						locals.SetAll (true);
-					if (parameters != null)
-						parameters.SetAll (true);
-				}
+				if (IsUnreachable && locals != null)
+					locals.SetAll (true);
 
 				for (UsageVector vector = o_vectors; vector != null; vector = vector.Next) {
 					Report.Debug (1, "    MERGING BREAK ORIGIN", vector);
 					if (vector.IsUnreachable)
 						continue;
 					locals &= vector.locals;
-					parameters &= vector.parameters;
 					is_unreachable &= vector.is_unreachable;
 				}
 
@@ -370,7 +347,7 @@ namespace Mono.CSharp
 
 			public override string ToString ()
 			{
-				return String.Format ("Vector ({0},{1},{2}-{3}-{4})", Type, id, is_unreachable, parameters, locals);
+				return String.Format ("Vector ({0},{1},{2}-{3})", Type, id, is_unreachable, locals);
 			}
 		}
 
@@ -392,11 +369,9 @@ namespace Mono.CSharp
 			UsageVector vector;
 			if (Block != null) {
 				UsageVector parent_vector = parent != null ? parent.CurrentUsageVector : null;
-				vector = new UsageVector (
-					stype, parent_vector, Block, loc, Block.Toplevel.ParameterMap.Length, Block.AssignableSlots);
+				vector = new UsageVector (stype, parent_vector, Block, loc, Block.AssignableSlots);
 			} else {
-				vector = new UsageVector (
-					stype, Parent.CurrentUsageVector, null, loc);
+				vector = new UsageVector (stype, Parent.CurrentUsageVector, null, loc);
 			}
 
 			AddSibling (vector);
@@ -672,8 +647,10 @@ namespace Mono.CSharp
 		{
 			if (vector.IsUnreachable)
 				return;
-			VariableMap param_map = Block.Toplevel.ParameterMap;
-			for (int i = 0; i < param_map.Count; i++) {
+			VariableInfo [] param_map = Block.Toplevel.ParameterMap;
+			if (param_map == null)
+				return;
+			for (int i = 0; i < param_map.Length; i++) {
 				VariableInfo var = param_map [i];
 
 				if (var == null)
@@ -1285,7 +1262,6 @@ namespace Mono.CSharp
 		public readonly bool IsParameter;
 
 		public readonly LocalInfo LocalInfo;
-		public readonly int ParameterIndex;
 
 		readonly VariableInfo Parent;
 		VariableInfo[] sub_info;
@@ -1311,7 +1287,6 @@ namespace Mono.CSharp
 
 			this.IsParameter = parent.IsParameter;
 			this.LocalInfo = parent.LocalInfo;
-			this.ParameterIndex = parent.ParameterIndex;
 
 			Initialize ();
 		}
@@ -1336,10 +1311,9 @@ namespace Mono.CSharp
 			this.IsParameter = false;
 		}
 
-		public VariableInfo (string name, Type type, int param_idx, int offset)
-			: this (name, type, offset)
+		public VariableInfo (Parameters ip, int i, int offset)
+			: this (ip.ParameterName (i), TypeManager.GetElementType (ip.ParameterType (i)), offset)
 		{
-			this.ParameterIndex = param_idx;
 			this.IsParameter = true;
 		}
 
@@ -1461,70 +1435,6 @@ namespace Mono.CSharp
 		{
 			return String.Format ("VariableInfo ({0}:{1}:{2}:{3}:{4})",
 					      Name, TypeInfo, Offset, Length, IsParameter);
-		}
-	}
-
-	// <summary>
-	//   This is used by the flow code to hold the `layout' of the flow vector for
-	//   all locals and all parameters (ie. we create one instance of this class for the
-	//   locals and another one for the params).
-	// </summary>
-	public class VariableMap {
-		// <summary>
-		//   The number of variables in the map.
-		// </summary>
-		public readonly int Count;
-
-		// <summary>
-		//   Total length of the flow vector for this map.
-		// <summary>
-		public readonly int Length;
-
-		VariableInfo[] map;
-
-		public VariableMap (Parameters ip)
-		{
-			Count = ip != null ? ip.Count : 0;
-			
-			// Dont bother allocating anything!
-			if (Count == 0)
-				return;
-			
-			Length = 0;
-
-			for (int i = 0; i < Count; i++) {
-				Parameter.Modifier mod = ip.ParameterModifier (i);
-
-				if ((mod & Parameter.Modifier.OUT) != Parameter.Modifier.OUT)
-					continue;
-
-				// Dont allocate till we find an out var.
-				if (map == null)
-					map = new VariableInfo [Count];
-
-				map [i] = new VariableInfo (ip.ParameterName (i),
-					TypeManager.GetElementType (ip.ParameterType (i)), i, Length);
-
-				Length += map [i].Length;
-			}
-		}
-
-		// <summary>
-		//   Returns the VariableInfo for variable @index or null if we don't need to
-		//   compute assignment info for this variable.
-		// </summary>
-		public VariableInfo this [int index] {
-			get {
-				if (map == null)
-					return null;
-				
-				return map [index];
-			}
-		}
-
-		public override string ToString ()
-		{
-			return String.Format ("VariableMap ({0}:{1})", Count, Length);
 		}
 	}
 
