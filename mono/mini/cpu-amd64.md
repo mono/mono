@@ -462,6 +462,7 @@ op_bigmul_un: len:3 dest:i src1:a src2:i
 sext_i1: dest:i src1:i len:4
 sext_i2: dest:i src1:i len:4
 sext_i4: dest:i src1:i len:8
+zext_i4: dest:i src1:i len:8
 
 # 32 bit opcodes
 # FIXME: fix sizes

@@ -4470,9 +4470,21 @@ decompose_opcode (MonoCompile *cfg, MonoInst *ins)
 		break;
 	case OP_ICONV_TO_I4:
 	case OP_ICONV_TO_U4:
-	case OP_ICONV_TO_I:
-	case OP_ICONV_TO_U:
 		ins->opcode = OP_MOVE;
+		break;
+	case OP_ICONV_TO_I:
+#if SIZEOF_VOID_P == 8
+		ins->opcode = OP_SEXT_I4;
+#else
+		ins->opcode = OP_MOVE;
+#endif
+		break;
+	case OP_ICONV_TO_U:
+#if SIZEOF_VOID_P == 8
+		ins->opcode = OP_ZEXT_I4;
+#else
+		ins->opcode = OP_MOVE;
+#endif
 		break;
 
 		/* Long opcodes on 64 bit machines */
@@ -4489,6 +4501,9 @@ decompose_opcode (MonoCompile *cfg, MonoInst *ins)
 		break;
 	case OP_ICONV_TO_I8:
 		ins->opcode = OP_SEXT_I4;
+		break;
+	case OP_ICONV_TO_U8:
+		ins->opcode = OP_ZEXT_I4;
 		break;
 	case OP_LCONV_TO_U4:
 		/* Clean out the upper word */
@@ -4517,14 +4532,12 @@ decompose_opcode (MonoCompile *cfg, MonoInst *ins)
 		break;
 		
 	case OP_ICONV_TO_OVF_I8:
-		/* Sign extend the value in the lower word into the upper word */
-		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_LSHR_IMM, ins->dreg, ins->sreg1, 0);
-		ins->opcode = OP_NOP;
+		ins->opcode = OP_SEXT_I4;
 		break;
 	case OP_ICONV_TO_OVF_U8:
 		MONO_EMIT_NEW_COMPARE_IMM (cfg,ins->sreg1, 0);
 		MONO_EMIT_NEW_COND_EXC (cfg, LT, "OverflowException");
-		MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, ins->dreg, ins->sreg1);
+		MONO_EMIT_NEW_UNALU (cfg, OP_ZEXT_I4, ins->dreg, ins->sreg1);
 		ins->opcode = OP_NOP;
 		break;
 	case OP_ICONV_TO_OVF_I8_UN:
