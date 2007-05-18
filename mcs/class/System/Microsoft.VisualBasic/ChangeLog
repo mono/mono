@@ -1,5 +1,9 @@
 2007-05-17  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* VBCodeGenerator.cs: Add support for delegates with parameters, and misc fixes for event handling to match MS.
+
+2007-05-17  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* VBCodeGenerator.cs: Always create escaped identifiers if the
 	  identifier matches a keyword.
 

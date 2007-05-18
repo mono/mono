@@ -327,19 +327,34 @@ namespace Microsoft.VisualBasic
 			if (expression.TargetObject != null) {
 				GenerateExpression (expression.TargetObject);
 				Output.Write ('.');
-				Output.Write (CreateEscapedIdentifier (expression.EventName));
+				if (expression.TargetObject is CodeThisReferenceExpression) {
+					// We're actually creating a reference to a compiler-generated field here...
+					Output.Write (expression.EventName + "Event");
+				} else {
+					Output.Write (CreateEscapedIdentifier (expression.EventName));
+				}
 			} else {
-				Output.Write (expression.EventName + "Event");
+				Output.Write (CreateEscapedIdentifier (expression.EventName + "Event"));
 			}
 		}
 
 		protected override void GenerateDelegateInvokeExpression (CodeDelegateInvokeExpression expression)
 		{
+			CodeEventReferenceExpression ev = expression.TargetObject as CodeEventReferenceExpression;
+			
 			Output.Write ("RaiseEvent ");
-			GenerateExpression (expression.TargetObject);
+			if (ev != null) {
+				if (ev.TargetObject != null && !(ev.TargetObject is CodeThisReferenceExpression)) {
+					GenerateExpression (ev.TargetObject);
+					Output.Write (".");
+				}
+				Output.Write (ev.EventName);
+			} else if (expression.TargetObject != null) {
+				GenerateExpression (expression.TargetObject);
+			}
 			Output.Write ('(');
 			OutputExpressionList (expression.Parameters);
-			Output.WriteLine (')');
+			Output.Write (')');
 		}
 		
 		protected override void GenerateObjectCreateExpression (CodeObjectCreateExpression expression)
@@ -966,6 +981,7 @@ namespace Microsoft.VisualBasic
 
 				output.Write (delegateDecl.Name);
 				output.Write ("(");
+				OutputParameters (delegateDecl.Parameters);
 				Output.Write (")");
 				if (!isSub) {
 					Output.Write (" As ");
