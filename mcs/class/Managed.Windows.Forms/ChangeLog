@@ -1,3 +1,8 @@
+2007-05-18  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* System.Windows.Forms.dll.sources: Added DrawToolTipEventArgs.cs and
+	  DrawToolTipEventHandler.cs
+
 2007-05-17  Jonathan Pobst  <monkey@jpobst.com>
 
 	* System.Windows.Forms_test.dll.sources: Add KeysConverterTest, 

@@ -301,6 +301,8 @@ System.Windows.Forms/DrawListViewItemEventHandler.cs
 System.Windows.Forms/DrawListViewSubItemEventArgs.cs
 System.Windows.Forms/DrawListViewSubItemEventHandler.cs
 System.Windows.Forms/DrawMode.cs
+System.Windows.Forms/DrawToolTipEventArgs.cs
+System.Windows.Forms/DrawToolTipEventHandler.cs
 System.Windows.Forms/DrawTreeNodeEventArgs.cs
 System.Windows.Forms/DrawTreeNodeEventHandler.cs
 System.Windows.Forms/ErrorBlinkStyle.cs
