@@ -1,3 +1,7 @@
+2007-05-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System_test.dll.sources : added DelimitedListTraceListenerTest.cs.
+
 2007-04-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.dll.sources : added XmlWriterTraceListener.cs.

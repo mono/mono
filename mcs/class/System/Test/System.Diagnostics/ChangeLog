@@ -1,3 +1,7 @@
+2007-05-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DelimitedListTraceListenerTest.cs : new test.
+
 2007-05-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SwitchesTest.cs : added tests for BooleanSwitch Value.

@@ -35,6 +35,7 @@ using System.Collections;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace System.Diagnostics
 {
@@ -87,36 +88,70 @@ namespace System.Diagnostics
 			return attributes;
 		}
 
-		[MonoTODO]
 		public override void TraceData (TraceEventCache eventCache,
 						string source, TraceEventType eventType,
 						int id, object data)
 		{
-			throw new NotImplementedException ();
+			TraceCore (eventCache, source, eventType, id, null, data);
 		}
 
-		[MonoTODO]
 		public override void TraceData (TraceEventCache eventCache,
 						string source, TraceEventType eventType,
 						int id, params object [] data)
 		{
-			throw new NotImplementedException ();
+			TraceCore (eventCache, source, eventType, id, null, data);
 		}
 
-		[MonoTODO]
 		public override void TraceEvent (TraceEventCache eventCache,
 						 string source, TraceEventType eventType,
 						 int id, string message)
 		{
-			throw new NotImplementedException ();
+			TraceCore (eventCache, source, eventType, id, message);
 		}
 
-		[MonoTODO]
 		public override void TraceEvent (TraceEventCache eventCache,
 						 string source, TraceEventType eventType,
 						 int id, string format, params object [] args)
 		{
-			throw new NotImplementedException ();
+			TraceCore (eventCache, source, eventType, id, String.Format (format, args));
+		}
+
+		void TraceCore (TraceEventCache c, string source, TraceEventType eventType, int id, string message, params object [] data)
+		{
+			// source, eventType, id, message?, data-comma-separated
+			Write (String.Format ("{1}{0}{2}{0}{3}{0}{4}{0}{5}{0}{6}{0}{7}{0}{8}{0}{9}{0}{10}{0}{11}{12}",
+			       delimiter,
+			       source != null ? "\"" + source.Replace ("\"", "\"\"") + "\"": null,
+			       eventType,
+			       id,
+			       message != null ? "\"" + message.Replace ("\"", "\"\"") + "\"" : null,
+			       FormatData (data),
+			       IsTarget (c, TraceOptions.ProcessId) ? c.ProcessId.ToString () : null,
+			       IsTarget (c, TraceOptions.LogicalOperationStack) ? FormatArray (c.LogicalOperationStack, ", ") : null,
+			       IsTarget (c, TraceOptions.ThreadId) ? c.ThreadId : null,
+			       IsTarget (c, TraceOptions.DateTime) ? c.DateTime.ToString ("o") : null,
+			       IsTarget (c, TraceOptions.Timestamp) ? c.Timestamp.ToString () : null,
+			       IsTarget (c, TraceOptions.Callstack) ? c.Callstack : null,
+			       Environment.NewLine));
+		}
+
+		bool IsTarget (TraceEventCache c, TraceOptions opt)
+		{
+			return c != null && (TraceOutputOptions & opt) != 0;
+		}
+
+		string FormatData (object [] data)
+		{
+			if (data == null || data.Length == 0)
+				return null;
+			StringBuilder sb = new StringBuilder ();
+			for (int i = 0; i < data.Length; i++) {
+				if (data [i] != null)
+					sb.Append ('"').Append (data [i].ToString ().Replace ("\"", "\"\"")).Append ('"');
+				if (i + 1 < data.Length)
+					sb.Append (',');
+			}
+			return sb.ToString ();
 		}
 	}
 }

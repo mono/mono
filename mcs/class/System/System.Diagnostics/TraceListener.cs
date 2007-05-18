@@ -221,7 +221,7 @@ namespace System.Diagnostics {
 		}
 
 #if NET_2_0
-		static string FormatArray (ICollection list, string joiner)
+		internal static string FormatArray (ICollection list, string joiner)
 		{
 			string [] arr = new string [list.Count];
 			int i = 0;
@@ -292,7 +292,7 @@ namespace System.Diagnostics {
 		[ComVisible (false)]
 		public virtual void TraceTransfer (TraceEventCache eventCache, string source, int id, string message, Guid relatedActivityId)
 		{
-			TraceData (eventCache, source, TraceEventType.Transfer, id, String.Format ("{0}, relatedActivityId={1}", message, relatedActivityId));
+			TraceEvent (eventCache, source, TraceEventType.Transfer, id, String.Format ("{0}, relatedActivityId={1}", message, relatedActivityId));
 		}
 
 		[MonoTODO ("The property exists but the values are not considered")]

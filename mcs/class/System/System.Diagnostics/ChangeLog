@@ -1,3 +1,9 @@
+2007-05-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TraceListener.cs : in TraceTransfer(), use TraceEvent() (some
+	  derived classes depend on this change).
+	* DelimitedListTraceListener.cs : implemented.
+
 2007-05-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* EventLogPermissionAccess.cs ProcessPriorityClass.cs

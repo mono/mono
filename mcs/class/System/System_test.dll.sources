@@ -143,6 +143,7 @@ System.Configuration/SettingsPropertyCollectionTest.cs
 System.Configuration/SettingsPropertyTest.cs
 System.Configuration/SettingsPropertyValueCollectionTest.cs
 System.Configuration/SettingsPropertyValueTest.cs
+System.Diagnostics/DelimitedListTraceListenerTest.cs
 System.Diagnostics/EventLogTest.cs
 System.Diagnostics/StopwatchTest.cs
 System.Diagnostics/SourceSwitchTest.cs
