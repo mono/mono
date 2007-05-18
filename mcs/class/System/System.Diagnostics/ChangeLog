@@ -1,3 +1,7 @@
+2007-05-18  Marek Safar  <marek.safar@gmail.com>
+
+	* DiagnosticsConfigurationHandler.cs: Fixed 1.1 build.
+
 2007-05-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlWriterTraceListener.cs : open file in shared r/w mode.

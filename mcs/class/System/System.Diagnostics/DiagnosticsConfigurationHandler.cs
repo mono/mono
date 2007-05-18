@@ -437,6 +437,7 @@ namespace System.Diagnostics
 
 		private void AddTraceListener (IDictionary d, string name, string type, string initializeData, TraceListenerCollection listeners)
 		{
+#if NET_2_0		
 			if (type == null) {
 				// indicated by name.
 				TraceListener shared = GetSharedListeners (d) [name];
@@ -445,7 +446,7 @@ namespace System.Diagnostics
 				listeners.Add (shared);
 				return;
 			}
-
+#endif
 			Type t = Type.GetType (type);
 			if (t == null)
 				throw new ConfigurationException (string.Format ("Invalid Type Specified: {0}", type));
