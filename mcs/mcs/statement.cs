@@ -917,7 +917,7 @@ namespace Mono.CSharp {
 			}
 
 			if (!ec.Switch.GotDefault){
-				Report.Error (159, loc, "No such label `default:' within the scope of the goto statement");
+				FlowBranchingBlock.Error_UnknownLabel (loc, "default");
 				return;
 			}
 			ec.ig.Emit (OpCodes.Br, ec.Switch.DefaultTarget);
@@ -976,7 +976,8 @@ namespace Mono.CSharp {
 			sl = (SwitchLabel) ec.Switch.Elements [val];
 
 			if (sl == null){
-				Report.Error (159, loc, "No such label `case {0}:' within the scope of the goto statement", c.GetValue () == null ? "null" : val.ToString ());
+				FlowBranchingBlock.Error_UnknownLabel (loc, "case " + 
+					(c.GetValue () == null ? "null" : val.ToString ()));
 				return false;
 			}
 
@@ -1593,7 +1594,7 @@ namespace Mono.CSharp {
 		protected static void Error_158 (string name, Location loc)
 		{
 			Report.Error (158, loc, "The label `{0}' shadows another label " +
-				      "by the same name in a contained scope.", name);
+				      "by the same name in a contained scope", name);
 		}
 
 		/// <summary>
@@ -1614,9 +1615,10 @@ namespace Mono.CSharp {
 
 			Block cur = this;
 			while (cur != null) {
-				if (cur.DoLookupLabel (name) != null) {
-					Report.Error (140, target.loc,
-						      "The label `{0}' is a duplicate", name);
+				LabeledStatement s = cur.DoLookupLabel (name);
+				if (s != null) {
+					Report.SymbolRelatedToPreviousError (s.loc, s.Name);
+					Report.Error (140, target.loc, "The label `{0}' is a duplicate", name);
 					return false;
 				}
 
@@ -1638,6 +1640,7 @@ namespace Mono.CSharp {
 						if (s == null)
 							continue;
 
+						Report.SymbolRelatedToPreviousError (s.loc, s.Name);
 						Error_158 (name, target.loc);
 						return false;
 					}
@@ -2594,6 +2597,7 @@ namespace Mono.CSharp {
 		{
 			LabeledStatement s = LookupLabel (name);
 			if (s != null) {
+				Report.SymbolRelatedToPreviousError (s.loc, s.Name);
 				Error_158 (name, loc);
 				return false;
 			}

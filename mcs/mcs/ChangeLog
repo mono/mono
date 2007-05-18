@@ -1,3 +1,7 @@
+2007-05-18  Marek Safar  <marek.safar@gmail.com>
+
+	* flowanalysis.cs, statement.cs: Put back improved error handling.
+
 2007-05-15  Scott Peterson  <lunchtimemama@gmail.com>
 	
 	* assign.cs:
@@ -7,7 +11,7 @@
 2007-05-15  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #81380
-	* expression.cs (Is.DoResolve): Only value types have constant `is´
+	* expression.cs (Is.DoResolve): Only value types have constant `is'
 	behaviour.
 
 2007-05-15  Raja R Harinath  <rharinath@novell.com>
