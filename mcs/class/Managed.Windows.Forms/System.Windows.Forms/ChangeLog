@@ -1,5 +1,11 @@
 2007-05-18  Everaldo Canuto  <ecanuto@novell.com>
 
+	* Control.cs: According to MSDN controls created in the designer theres 
+	keyboard accelerators visible by default. So included check for design
+	in ShowKeyboardCuesInternal.  
+
+2007-05-18  Everaldo Canuto  <ecanuto@novell.com>
+
 	* ThemeWin32Classic.cs: Check for ShowKeyboardCues true when draw combobox 
 	text. Fixes #81621.  
 

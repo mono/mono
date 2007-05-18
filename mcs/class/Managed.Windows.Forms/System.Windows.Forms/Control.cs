@@ -3364,7 +3364,10 @@ namespace System.Windows.Forms
 
 		internal bool ShowKeyboardCuesInternal {
 			get {
-				return SystemInformation.MenuAccessKeysUnderlined || show_keyboard_cues;
+				if (SystemInformation.MenuAccessKeysUnderlined || DesignMode)
+					return true; 
+
+				return show_keyboard_cues;
 			}
 		}
 
