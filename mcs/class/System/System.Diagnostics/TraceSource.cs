@@ -33,15 +33,14 @@
 using System;
 using System.Collections;
 using System.Collections.Specialized;
+using System.Configuration;
 
 namespace System.Diagnostics
 {
 	public class TraceSource
 	{
 		SourceSwitch source_switch;
-		TraceListenerCollection listeners =
-			new TraceListenerCollection ();
-		TraceEventCache cache = new TraceEventCache ();
+		TraceListenerCollection listeners;
 
 		public TraceSource (string name)
 			: this (name, SourceLevels.Off)
@@ -52,8 +51,16 @@ namespace System.Diagnostics
 		{
 			if (name == null)
 				throw new ArgumentNullException ("name");
+			Hashtable sources = DiagnosticsConfiguration.Settings ["sources"] as Hashtable;
+			TraceSourceInfo info = sources != null ? sources [name] as TraceSourceInfo : null;
 			source_switch = new SourceSwitch (name);
-			source_switch.Level = sourceLevels;
+
+			if (info == null)
+				listeners = new TraceListenerCollection ();
+			else {
+				source_switch.Level = info.Levels;
+				listeners = info.Listeners;
+			}
 		}
 
 		public StringDictionary Attributes {
@@ -101,7 +108,7 @@ namespace System.Diagnostics
 				return;
 			lock (((ICollection) listeners).SyncRoot) {
 				foreach (TraceListener tl in listeners)
-					tl.TraceData (cache, Name, eventType, id, data);
+					tl.TraceData (null, Name, eventType, id, data);
 			}
 		}
 
@@ -113,7 +120,7 @@ namespace System.Diagnostics
 				return;
 			lock (((ICollection) listeners).SyncRoot) {
 				foreach (TraceListener tl in listeners)
-					tl.TraceData (cache, Name, eventType, id, data);
+					tl.TraceData (null, Name, eventType, id, data);
 			}
 		}
 
@@ -124,7 +131,7 @@ namespace System.Diagnostics
 				return;
 			lock (((ICollection) listeners).SyncRoot) {
 				foreach (TraceListener tl in listeners)
-					tl.TraceEvent (cache, Name, eventType, id);
+					tl.TraceEvent (null, Name, eventType, id);
 			}
 		}
 
@@ -136,7 +143,7 @@ namespace System.Diagnostics
 				return;
 			lock (((ICollection) listeners).SyncRoot) {
 				foreach (TraceListener tl in listeners)
-					tl.TraceEvent (cache, Name, eventType, id, message);
+					tl.TraceEvent (null, Name, eventType, id, message);
 			}
 		}
 
@@ -148,7 +155,7 @@ namespace System.Diagnostics
 				return;
 			lock (((ICollection) listeners).SyncRoot) {
 				foreach (TraceListener tl in listeners)
-					tl.TraceEvent (cache, Name, eventType, id, format, args);
+					tl.TraceEvent (null, Name, eventType, id, format, args);
 			}
 		}
 
@@ -172,7 +179,7 @@ namespace System.Diagnostics
 				return;
 			lock (((ICollection) listeners).SyncRoot) {
 				foreach (TraceListener tl in listeners)
-					tl.TraceTransfer (cache, Name, id, message, relatedActivityId);
+					tl.TraceTransfer (null, Name, id, message, relatedActivityId);
 			}
 		}
 

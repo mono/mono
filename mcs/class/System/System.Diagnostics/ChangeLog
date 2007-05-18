@@ -1,8 +1,17 @@
+2007-05-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TraceSourceInfo.cs : new class for storing configuration data.
+	* TraceSource.cs : TraceEventCache arguments should be null (they are
+	  nullable). Use TraceSourceInfo above.
+	* DiagnosticsConfigurationHandler.cs : removed hack to store listeners
+	  in named sources, not traceimpl. Create TraceSource objects from
+	  configuration data.
+
 2007-05-18  Marek Safar  <marek.safar@gmail.com>
 
 	* DiagnosticsConfigurationHandler.cs: Fixed 1.1 build.
 
-2007-05-19  Atsushi Enomoto  <atsushi@ximian.com>
+2007-05-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlWriterTraceListener.cs : open file in shared r/w mode.
 	* DiagnosticsConfigurationHandler.cs : process <sharedListeners>
@@ -10,7 +19,7 @@
 	* EventLogTraceListener.cs : added 2.0 stubs.
 	* CorrelationManager.cs : removed todo.
 
-2007-05-19  Atsushi Enomoto  <atsushi@ximian.com>
+2007-05-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TraceListener.cs : in TraceTransfer(), use TraceEvent() (some
 	  derived classes depend on this change).

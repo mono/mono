@@ -94,7 +94,6 @@ namespace System.Diagnostics
 			elementHandlers ["trace"] = new ElementHandler (AddTraceNode);
 #if NET_2_0
 			elementHandlers ["sources"] = new ElementHandler (AddSourcesNode);
-			//elementHandlers ["sharedListeners"] = new ElementHandler (AddSharedListenersNode);
 #endif
 		}
 
@@ -113,7 +112,7 @@ namespace System.Diagnostics
 				case XmlNodeType.Element:
 					if (child.LocalName != "sharedListeners")
 						continue;
-					AddSharedListenersNode (d, child);
+					AddTraceListeners (d, child, GetSharedListeners (d));
 					break;
 				}
 			}
@@ -247,7 +246,7 @@ namespace System.Diagnostics
 					continue;
 				if (t == XmlNodeType.Element) {
 					if (child.Name == "listeners")
-						AddTraceListeners (d, child);
+						AddTraceListeners (d, child, TraceImpl.Listeners);
 					else
 						ThrowUnrecognizedElement (child);
 					ValidateInvalidAttributes (child.Attributes, child);
@@ -292,8 +291,6 @@ namespace System.Diagnostics
 		}
 
 #if NET_2_0
-		static readonly Hashtable static_sources = new Hashtable ();
-
 		private TraceListenerCollection GetSharedListeners (IDictionary d)
 		{
 			TraceListenerCollection shared_listeners = d ["sharedListeners"] as TraceListenerCollection;
@@ -302,12 +299,6 @@ namespace System.Diagnostics
 				d ["sharedListeners"] = shared_listeners;
 			}
 			return shared_listeners;
-		}
-
-		private void AddSharedListenersNode (IDictionary d, XmlNode node)
-		{
-			TraceListenerCollection shared_listeners = GetSharedListeners (d);
-			AddTraceListenersTo (d, node, shared_listeners);
 		}
 
 		private void AddSourcesNode (IDictionary d, XmlNode node)
@@ -319,8 +310,6 @@ namespace System.Diagnostics
 				sources = new Hashtable ();
 				d ["sources"] = sources;
 			}
-			// FIXME: here I replace the table with fake static variable.
-			sources = static_sources;
 
 			foreach (XmlNode child in node.ChildNodes) {
 				XmlNodeType t = child.NodeType;
@@ -359,12 +348,12 @@ namespace System.Diagnostics
 			if (name == null)
 				throw new ConfigurationException ("Mandatory attribute 'name' is missing in 'source' element.");
 
-			// FIXME: it should raise an error for duplicate name sources.
+			// ignore duplicate ones (no error occurs)
 			if (sources.ContainsKey (name))
 				return;
 
-			TraceSource source = new TraceSource (name, levels);
-			sources.Add (source.Name, source);
+			TraceSourceInfo sinfo = new TraceSourceInfo (name, levels);
+			sources.Add (sinfo.Name, sinfo);
 			
 			foreach (XmlNode child in node.ChildNodes) {
 				XmlNodeType t = child.NodeType;
@@ -372,7 +361,7 @@ namespace System.Diagnostics
 					continue;
 				if (t == XmlNodeType.Element) {
 					if (child.Name == "listeners")
-						AddTraceListeners (d, child);
+						AddTraceListeners (d, child, sinfo.Listeners);
 					else
 						ThrowUnrecognizedElement (child);
 					ValidateInvalidAttributes (child.Attributes, child);
@@ -384,13 +373,8 @@ namespace System.Diagnostics
 #endif
 
 		// only defines "add" and "remove", but "clear" also works
-		// for add, "name" and "type" are required; initializeData is optional
-		private void AddTraceListeners (IDictionary d, XmlNode listenersNode)
-		{
-			AddTraceListenersTo (d, listenersNode, TraceImpl.Listeners);
-		}
-
-		private void AddTraceListenersTo (IDictionary d, XmlNode listenersNode, TraceListenerCollection listeners)
+		// for add, "name" is required; initializeData is optional; "type" is required in 1.x, optional in 2.0.
+		private void AddTraceListeners (IDictionary d, XmlNode listenersNode, TraceListenerCollection listeners)
 		{
 #if !TARGET_JVM
 			// There are no attributes on <listeners/>

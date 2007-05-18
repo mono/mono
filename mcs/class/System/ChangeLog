@@ -1,3 +1,7 @@
+2007-05-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.dll.sources : added TraceSourceInfo.cs.
+
 2007-05-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.dll.sources : added TraceOptions.cs.

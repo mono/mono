@@ -520,6 +520,7 @@ System.Diagnostics/TraceListenerCollection.cs
 System.Diagnostics/TraceListener.cs
 System.Diagnostics/TraceOptions.cs
 System.Diagnostics/TraceSource.cs
+System.Diagnostics/TraceSourceInfo.cs
 System.Diagnostics/TraceSwitch.cs
 System.Diagnostics/Win32EventLog.cs
 System.Diagnostics/XmlWriterTraceListener.cs
