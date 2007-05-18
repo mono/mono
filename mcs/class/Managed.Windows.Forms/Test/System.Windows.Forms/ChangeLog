@@ -1,3 +1,7 @@
+2007-05-18  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TreeViewTest.cs: Added test for DoubleBuffered.
+
 2007-05-18  Jonathan Pobst  <monkey@jpobst.com>
 
 	* KeysConverterTest.cs: Added.

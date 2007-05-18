@@ -30,6 +30,26 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (tv.SelectedNode, null, "#4");
 		}
 
+#if NET_2_0
+		[Test] // bug #81424
+		public void DoubleBuffered ()
+		{
+			MockTreeView tv = new MockTreeView ();
+			Assert.IsFalse (tv.IsDoubleBuffered, "#A1");
+			Assert.IsTrue (tv.GetControlStyle (ControlStyles.AllPaintingInWmPaint), "#A2");
+			Assert.IsFalse (tv.GetControlStyle (ControlStyles.DoubleBuffer), "#A3");
+			Assert.IsFalse (tv.GetControlStyle (ControlStyles.OptimizedDoubleBuffer), "#A4");
+			Assert.IsFalse (tv.GetControlStyle (ControlStyles.UserPaint), "#A5");
+
+			tv.IsDoubleBuffered = true;
+			Assert.IsTrue (tv.IsDoubleBuffered, "#B1");
+			Assert.IsTrue (tv.GetControlStyle (ControlStyles.AllPaintingInWmPaint), "#B2");
+			Assert.IsFalse (tv.GetControlStyle (ControlStyles.DoubleBuffer), "#B3");
+			Assert.IsTrue (tv.GetControlStyle (ControlStyles.OptimizedDoubleBuffer), "#B4");
+			Assert.IsFalse (tv.GetControlStyle (ControlStyles.UserPaint), "#B5");
+		}
+#endif
+
 		[Test]
 		public void SimpleShowTest ()
 		{
@@ -208,6 +228,22 @@ namespace MonoTests.System.Windows.Forms
 
 			form.Dispose ();
 		}
+
+		class MockTreeView : TreeView
+		{
+			public bool GetControlStyle (ControlStyles style)
+			{
+				return base.GetStyle (style);
+			}
+
+#if NET_2_0
+			public bool IsDoubleBuffered {
+				get { return DoubleBuffered; }
+				set { DoubleBuffered = value; }
+			}
+#endif
+		}
+
 	}
 
 	[TestFixture]

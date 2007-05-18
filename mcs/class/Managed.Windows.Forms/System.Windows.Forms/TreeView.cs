@@ -548,12 +548,8 @@ namespace System.Windows.Forms {
 		/// According to MSDN this property has no effect on the treeview
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		protected override bool DoubleBuffered {
-			get {
-				// This returns true on MS, but MSDN says it has no effect, and using double
-				// buffering breaks scrolling
-				return false;
-			}
-			set { /* whatever */ }
+			get { return base.DoubleBuffered; }
+			set { base.DoubleBuffered = value; }
 		}
 #endif
 

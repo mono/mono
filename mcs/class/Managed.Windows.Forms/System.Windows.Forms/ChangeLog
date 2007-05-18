@@ -1,3 +1,8 @@
+2007-05-18  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TreeView.cs: Modified DoubleBuffered to just use the base
+	implementation.
+
 2007-05-18  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs: Set the top node to the last child node when
