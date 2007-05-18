@@ -445,5 +445,73 @@ namespace MonoTests.Microsoft.VisualBasic
 				sw.Close ();
 			}
 		}
+		
+		[Test]
+		public void EventReferenceTest ()
+		{
+			StringBuilder sb;
+			string code;
+			
+			sb = new StringBuilder ();
+			using (StringWriter sw = new StringWriter (sb)) {
+				code = Generate (new CodeEventReferenceExpression (null, null), sw);
+				Assert.AreEqual ("[Event]", code, "#01");
+			}
+			
+			sb = new StringBuilder ();
+			using (StringWriter sw = new StringWriter (sb)) {
+				code = Generate (new CodeEventReferenceExpression (null, "abc"), sw);
+				Assert.AreEqual ("abcEvent", code, "#02");
+			}			
+			
+			sb = new StringBuilder ();
+			using (StringWriter sw = new StringWriter (sb)) {
+				code = Generate (new CodeEventReferenceExpression (new CodeThisReferenceExpression (), null), sw);
+				Assert.AreEqual ("Me.Event", code, "#03");
+			}
+						
+			sb = new StringBuilder ();
+			using (StringWriter sw = new StringWriter (sb)) {
+				code = Generate (new CodeEventReferenceExpression (new CodeThisReferenceExpression (), "abc"), sw);
+				Assert.AreEqual ("Me.abcEvent", code, "#04");
+			}
+			
+			sb = new StringBuilder ();
+			using (StringWriter sw = new StringWriter (sb)) {
+				code = Generate (new CodeEventReferenceExpression (new CodePrimitiveExpression ("primitive"), null), sw);
+				Assert.AreEqual ("\"primitive\".", code, "#05");
+			}
+			
+			sb = new StringBuilder ();
+			using (StringWriter sw = new StringWriter (sb)) {
+				code = Generate (new CodeEventReferenceExpression (new CodePrimitiveExpression ("primitive"), "abc"), sw);
+				Assert.AreEqual ("\"primitive\".abc", code, "#06");
+			}
+		}
+		
+		[Test]
+		public void DelegateInvokeTest ()
+		{
+			StringBuilder sb;
+			string code;
+			
+			sb = new StringBuilder ();
+			using (StringWriter sw = new StringWriter (sb)) {
+				code = Generate (new CodeDelegateInvokeExpression (null, new CodePrimitiveExpression ("abc")), sw);
+				Assert.AreEqual ("RaiseEvent (\"abc\")", code, "#02");
+			}			
+						
+			sb = new StringBuilder ();
+			using (StringWriter sw = new StringWriter (sb)) {
+				code = Generate (new CodeDelegateInvokeExpression (new CodeThisReferenceExpression (), new CodePrimitiveExpression ("abc")), sw);
+				Assert.AreEqual ("RaiseEvent Me(\"abc\")", code, "#04");
+			}
+			
+			sb = new StringBuilder ();
+			using (StringWriter sw = new StringWriter (sb)) {
+				code = Generate (new CodeDelegateInvokeExpression (new CodePrimitiveExpression ("primitive"), new CodePrimitiveExpression ("abc")), sw);
+				Assert.AreEqual ("RaiseEvent \"primitive\"(\"abc\")", code, "#06");
+			}
+		}
 	}
 }

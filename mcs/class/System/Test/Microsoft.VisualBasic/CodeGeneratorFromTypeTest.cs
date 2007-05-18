@@ -1353,6 +1353,17 @@ namespace MonoTests.Microsoft.VisualBasic
 				"    Dim x As Test.InnerType{0}" +
 				"End Sub{0}", NewLine), code);
 		}
+		
+		[Test]
+		public void DelegateWithParametersTest ()
+		{
+			CodeTypeDelegate type = new CodeTypeDelegate("A");
+			type.Parameters.Add (new CodeParameterDeclarationExpression ("type", "param"));
+			
+			string code = GenerateCodeFromType (type, Options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture, 
+				"Public Delegate Sub A(ByVal param As type){0}", NewLine), code);
+		}
 	}
 
 	[TestFixture]
