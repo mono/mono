@@ -48,6 +48,7 @@ System.Windows.Forms/DataGridViewElementTest.cs
 System.Windows.Forms/DataGridViewRowTest.cs
 System.Windows.Forms/DataGridViewTest.cs
 System.Windows.Forms/DataGridViewTextBoxCellTest.cs
+System.Windows.Forms/DataObjectTest.cs
 System.Windows.Forms/DateTimePickerTest.cs
 System.Windows.Forms/DefaultLayoutTest.cs
 System.Windows.Forms/ErrorProviderTest.cs

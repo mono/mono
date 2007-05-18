@@ -27,7 +27,11 @@
 // COMPLETE
 
 using System;
+using System.IO;
+using System.Drawing;
 using System.Collections;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
@@ -177,7 +181,42 @@ namespace System.Windows.Forms {
 		}
 		#endregion	// Public Constructors
 
-		#region Public Instance Properties
+		#region Public Instance Methods
+#if NET_2_0
+		public virtual bool ContainsAudio ()
+		{
+			return GetDataPresent (DataFormats.WaveAudio, true);
+		}
+		
+		public virtual bool ContainsFileDropList ()
+		{
+			return GetDataPresent (DataFormats.FileDrop, true);
+		}
+		
+		public virtual bool ContainsImage ()
+		{
+			return GetDataPresent (DataFormats.Bitmap, true);
+		}
+		
+		public virtual bool ContainsText ()
+		{
+			return GetDataPresent (DataFormats.UnicodeText, true);
+		}
+		
+		public virtual bool ContainsText (TextDataFormat format)
+		{
+			if (!Enum.IsDefined (typeof (TextDataFormat), format))
+				throw new InvalidEnumArgumentException (string.Format ("Enum argument value '{0}' is not valid for TextDataFormat", format));
+
+			return GetDataPresent (TextFormatToDataFormat (format), true);
+		}
+		
+		public virtual Stream GetAudioStream ()
+		{
+			return (Stream)GetData (DataFormats.WaveAudio, true);
+		}
+#endif
+
 		public virtual object GetData(string format) {
 			return GetData(format, true);
 		}
@@ -214,6 +253,12 @@ namespace System.Windows.Forms {
 			return GetDataPresent(format.FullName, true);
 		}
 
+#if NET_2_0
+		public virtual StringCollection GetFileDropList ()
+		{
+			return (StringCollection)GetData (DataFormats.FileDrop, true);
+		}
+#endif
 		public virtual string[] GetFormats() {
 			return GetFormats(true);
 		}
@@ -221,6 +266,44 @@ namespace System.Windows.Forms {
 		public virtual string[] GetFormats(bool autoConvert) {
 			return Entry.Entries(entries, autoConvert);
 		}
+
+#if NET_2_0
+		public virtual Image GetImage ()
+		{
+			return (Image)GetData (DataFormats.Bitmap, true);
+		}
+
+		public virtual string GetText ()
+		{
+			return (string)GetData (DataFormats.UnicodeText, true);
+		}
+
+		public virtual string GetText (TextDataFormat format)
+		{
+			if (!Enum.IsDefined (typeof (TextDataFormat), format))
+				throw new InvalidEnumArgumentException (string.Format ("Enum argument value '{0}' is not valid for TextDataFormat", format));
+
+			return (string)GetData (TextFormatToDataFormat (format), false);
+		}
+
+		public virtual void SetAudio (byte[] audioBytes)
+		{
+			if (audioBytes == null)
+				throw new ArgumentNullException ("audioBytes");
+
+			MemoryStream ms = new MemoryStream (audioBytes);
+
+			SetAudio (ms);
+		}
+
+		public virtual void SetAudio (Stream audioStream)
+		{
+			if (audioStream == null)
+				throw new ArgumentNullException ("audioStream");
+
+			SetData (DataFormats.WaveAudio, audioStream);
+		}
+#endif
 
 		public virtual void SetData(object data) {
 			SetData(data.GetType(), data); 
@@ -261,9 +344,59 @@ namespace System.Windows.Forms {
 		public virtual void SetData(Type format, object data) {
 			SetData(EnsureFormat(format), true, data);
 		}
-		#endregion	// Public Instance Properties
+		
+#if NET_2_0
+		[MonoInternalNote ("Needs additional checks for valid paths, see MSDN")]
+		public virtual void SetFileDropList (StringCollection filePaths)
+		{
+			if (filePaths == null)
+				throw new ArgumentNullException ("filePaths");
 
-		#region Public Instance Methods
+			SetData (DataFormats.FileDrop, filePaths);
+		}
+
+		public virtual void SetImage (Image image)
+		{
+			if (image == null)
+				throw new ArgumentNullException ("image");
+
+			SetData (DataFormats.Bitmap, image);
+		}
+
+		public virtual void SetText (string text)
+		{
+			if (string.IsNullOrEmpty (text))
+				throw new ArgumentNullException ("text");
+
+			SetData (DataFormats.UnicodeText, text);
+		}
+
+		public virtual void SetText (string text, TextDataFormat format)
+		{
+			if (string.IsNullOrEmpty (text))
+				throw new ArgumentNullException ("text");
+			if (!Enum.IsDefined (typeof (TextDataFormat), format))
+				throw new InvalidEnumArgumentException (string.Format ("Enum argument value '{0}' is not valid for TextDataFormat", format));
+
+			switch (format) {
+				case TextDataFormat.Text:
+					SetData (DataFormats.Text, text);
+					break;
+				case TextDataFormat.UnicodeText:
+					SetData (DataFormats.UnicodeText, text);
+					break;
+				case TextDataFormat.Rtf:
+					SetData (DataFormats.Rtf, text);
+					break;
+				case TextDataFormat.Html:
+					SetData (DataFormats.Html, text);
+					break;
+				case TextDataFormat.CommaSeparatedValue:
+					SetData (DataFormats.CommaSeparatedValue, text);
+					break;
+			}
+		}
+#endif
 		#endregion	// Public Instance Methods
 
 		#region Private Methods
@@ -283,6 +416,24 @@ namespace System.Windows.Forms {
 			return EnsureFormat(type.FullName);
 		}
 
+#if NET_2_0
+		private string TextFormatToDataFormat (TextDataFormat format)
+		{
+			switch (format) {
+				case TextDataFormat.Text:
+				default:
+					return DataFormats.Text;
+				case TextDataFormat.UnicodeText:
+					return DataFormats.UnicodeText;
+				case TextDataFormat.Rtf:
+					return DataFormats.Rtf;
+				case TextDataFormat.Html:
+					return DataFormats.Html;
+				case TextDataFormat.CommaSeparatedValue:
+					return DataFormats.CommaSeparatedValue;
+			}
+		}
+#endif
 		#endregion	// Private Methods
 	}
 }

@@ -1,3 +1,7 @@
+2007-05-18  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DataObject.cs: Implement 2.0 methods.
+
 2007-05-18  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ThemeWin32Classic.cs: Draw the check marks in ListViewItems
