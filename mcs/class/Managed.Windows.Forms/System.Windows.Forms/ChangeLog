@@ -1,5 +1,10 @@
 2007-05-18  Everaldo Canuto  <ecanuto@novell.com>
 
+	* ThemeWin32Classic.cs: Check for ShowKeyboardCues true when draw toolbar 
+	button text. Fixes #79640.  
+
+2007-05-18  Everaldo Canuto  <ecanuto@novell.com>
+
 	* Control.cs: According to MSDN controls created in the designer theres 
 	keyboard accelerators visible by default. So included check for design
 	in ShowKeyboardCuesInternal.  

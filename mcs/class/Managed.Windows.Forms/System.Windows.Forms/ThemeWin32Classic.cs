@@ -4384,7 +4384,11 @@ namespace System.Windows.Forms
 			StringFormat format = new StringFormat ();
 			format.Trimming = StringTrimming.EllipsisCharacter;
 			format.LineAlignment = StringAlignment.Center;
-			format.HotkeyPrefix = MenuAccessKeysUnderlined ? HotkeyPrefix.Show : HotkeyPrefix.Hide;
+			if (control.ShowKeyboardCuesInternal)
+				format.HotkeyPrefix = HotkeyPrefix.Show;
+			else
+				format.HotkeyPrefix = HotkeyPrefix.Hide;
+
 			if (control.TextAlign == ToolBarTextAlign.Underneath)
 				format.Alignment = StringAlignment.Center;
 			else
