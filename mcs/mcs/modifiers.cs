@@ -204,7 +204,7 @@ namespace Mono.CSharp {
 		// </summary>
 		public static int Check (int allowed, int mod, int def_access, Location l)
 		{
-			int invalid_flags  = (~allowed) & mod;
+			int invalid_flags  = (~allowed) & (mod & Modifiers.Accessibility);
 			int i;
 
 			if (invalid_flags == 0){

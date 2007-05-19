@@ -5,7 +5,8 @@
 	
 	* decl.cs (MemberCore): Refactored ModFlags into property.
 
-	* modifiers.c: Add new modifier (COMPILER_GENERATED).
+	* modifiers.cs: Add new modifier (COMPILER_GENERATED).
+	(Check): Check only accessibility modifiers.
 
 2007-05-18  Raja R Harinath  <rharinath@novell.com>
 
