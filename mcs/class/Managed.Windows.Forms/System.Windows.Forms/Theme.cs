@@ -131,14 +131,14 @@ namespace System.Windows.Forms
 		
 		public HatchBrush GetHatchBrush (HatchStyle hatchStyle, Color foreColor, Color backColor)
 		{
-			string hash = hatchStyle.ToString () + foreColor.ToString () + backColor.ToString ();
+			string hash = ((int)hatchStyle).ToString () + foreColor.ToString () + backColor.ToString ();
 
 			lock (hatchbrushes) {
-				if (hatchbrushes.Contains (hash))
-					return (HatchBrush) hatchbrushes[hash];
-
-				HatchBrush brush = new HatchBrush (hatchStyle, foreColor, backColor);
-				hatchbrushes.Add (hash, brush);
+				HatchBrush brush = (HatchBrush) hatchbrushes[hash];
+				if (brush == null) {
+					brush = new HatchBrush (hatchStyle, foreColor, backColor);
+					hatchbrushes.Add (hash, brush);
+				}
 				return brush;
 			}
 		}
