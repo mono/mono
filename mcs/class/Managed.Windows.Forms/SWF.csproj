@@ -1649,6 +1649,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\DrawToolTipEventArgs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\DrawToolTipEventHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\DrawTreeNodeEventArgs.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -2239,6 +2249,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\LinkConverter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\LinkLabel.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -2555,6 +2570,16 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\NumericUpDown.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\NumericUpDownAcceleration.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\NumericUpDownAccelerationCollection.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

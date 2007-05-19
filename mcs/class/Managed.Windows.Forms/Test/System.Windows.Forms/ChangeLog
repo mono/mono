@@ -1,3 +1,7 @@
+2007-05-19  Andreia Gaita  <avidigal@novell.com>
+
+	* NumericUpDownTest: Added.
+
 2007-05-18  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DataObjectTest.cs: Added.

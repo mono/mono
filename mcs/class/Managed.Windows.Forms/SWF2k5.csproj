@@ -444,6 +444,8 @@
     <Compile Include="System.Windows.Forms\DrawListViewSubItemEventArgs.cs" />
     <Compile Include="System.Windows.Forms\DrawListViewSubItemEventHandler.cs" />
     <Compile Include="System.Windows.Forms\DrawMode.cs" />
+    <Compile Include="System.Windows.Forms\DrawToolTipEventArgs.cs" />
+    <Compile Include="System.Windows.Forms\DrawToolTipEventHandler.cs" />
     <Compile Include="System.Windows.Forms\DrawTreeNodeEventArgs.cs" />
     <Compile Include="System.Windows.Forms\DrawTreeNodeEventHandler.cs" />
     <Compile Include="System.Windows.Forms\ErrorBlinkStyle.cs" />
@@ -562,6 +564,7 @@
     <Compile Include="System.Windows.Forms\LinkBehavior.cs" />
     <Compile Include="System.Windows.Forms\LinkClickedEventArgs.cs" />
     <Compile Include="System.Windows.Forms\LinkClickedEventHandler.cs" />
+    <Compile Include="System.Windows.Forms\LinkConverter.cs" />
     <Compile Include="System.Windows.Forms\LinkLabel.cs" />
     <Compile Include="System.Windows.Forms\LinkLabelLinkClickedEventArgs.cs" />
     <Compile Include="System.Windows.Forms\LinkLabelLinkClickedEventHandler.cs" />
@@ -626,6 +629,8 @@
     <Compile Include="System.Windows.Forms\NotifyIcon.cs" />
     <Compile Include="System.Windows.Forms\NumericTextBox.cs" />
     <Compile Include="System.Windows.Forms\NumericUpDown.cs" />
+    <Compile Include="System.Windows.Forms\NumericUpDownAcceleration.cs" />
+    <Compile Include="System.Windows.Forms\NumericUpDownAccelerationCollection.cs" />
     <Compile Include="System.Windows.Forms\OSFeature.cs" />
     <Compile Include="System.Windows.Forms\OSXStructs.cs" />
     <Compile Include="System.Windows.Forms\OpacityConverter.cs" />

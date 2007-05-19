@@ -1,3 +1,10 @@
+2007-05-19  Andreia Gaita  <avidigal@novell.com>
+
+	* NumericUpDown.cs: Added 2.0 methods (spin acceleration)
+	* NumericUpDownAcceleration.cs, 
+	  NumericUpDownAccelerationCollection.cs: Added 2.0
+	  implementation.
+
 2007-05-19  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* RichTextBox.cs: Recalculate the document after the ScrollBars

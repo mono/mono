@@ -88,6 +88,7 @@ System.Windows.Forms/MenuTest.cs
 System.Windows.Forms/MenuItemTest.cs
 System.Windows.Forms/MonthCalendarTest.cs
 System.Windows.Forms/NotifyIconTest.cs
+System.Windows.Forms/NumericUpDownTest.cs
 System.Windows.Forms/PaddingTest.cs
 System.Windows.Forms/PaddingConverterTest.cs
 System.Windows.Forms/PaintEventArgsTest.cs

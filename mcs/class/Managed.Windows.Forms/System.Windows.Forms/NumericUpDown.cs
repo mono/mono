@@ -53,6 +53,13 @@ namespace System.Windows.Forms {
 		private decimal	minimum;
 		private bool	thousands_separator;
 		private decimal	dvalue;
+		
+
+#if NET_2_0
+		NumericUpDownAccelerationCollection accelerations;
+		private long buttonPressedTicks;
+		private bool isSpinning;
+#endif
 		#endregion	// Local Variables
 
 		#region Public Constructors
@@ -148,6 +155,17 @@ namespace System.Windows.Forms {
 		#endregion	// Private Methods
 
 		#region Public Instance Properties
+
+#if NET_2_0		
+		public NumericUpDownAccelerationCollection Accelerations {
+			get {
+				if (accelerations == null)
+					accelerations = new NumericUpDownAccelerationCollection ();
+				return accelerations;
+			}
+		}
+#endif
+
 		[DefaultValue(0)]
 		public int DecimalPlaces {
 			get {
@@ -174,6 +192,7 @@ namespace System.Windows.Forms {
 
 		public decimal Increment {
 			get {
+
 				return increment;
 			}
 
@@ -476,6 +495,19 @@ namespace System.Windows.Forms {
 			base.OnLostFocus(e);
 			if (this.UserEdit)
 				this.UpdateEditText();
+		}
+
+		protected override void OnKeyUp (KeyEventArgs e)
+		{
+			isSpinning = false;
+			base.OnKeyUp (e);
+		}
+
+		protected override void OnKeyDown (KeyEventArgs e)
+		{
+			buttonPressedTicks = DateTime.Now.Ticks;
+			isSpinning = true;
+			base.OnKeyDown (e);
 		}
 #endif
 		#endregion	// Protected Instance Methods
