@@ -1,3 +1,12 @@
+2007-05-19  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* threads.c: In "start_wrapper", set apartment_state to MTA if
+	apartment_state is Unknown and we're running on 2.0 profile or
+	higher.
+	* object.c: In "mono_runtime_exec_main", if STAThread is not applied
+	to main method, then set apartment_state to Unknown on 1.0 profile,
+	and MTA on 2.0 profile.
+
 2007-05-16  Jb Evain  <jb@nurv.fr>
 
 	* class-internals.h (MonoDefaults): Add an attribute_class and
