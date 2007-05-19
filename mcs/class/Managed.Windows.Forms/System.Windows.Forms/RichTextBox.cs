@@ -327,7 +327,10 @@ namespace System.Windows.Forms {
 					throw new InvalidEnumArgumentException ("value", (int) value,
 						typeof (RichTextBoxScrollBars));
 
-				scrollbars = value;
+				if (value != scrollbars) {
+					scrollbars = value;
+					CalculateDocument ();
+				}
 			}
 		}
 

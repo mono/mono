@@ -1,3 +1,8 @@
+2007-05-19  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* RichTextBox.cs: Recalculate the document after the ScrollBars
+	property is changed. Fixes bug #81681.
+
 2007-05-18  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DataObject.cs: Implement 2.0 methods.
