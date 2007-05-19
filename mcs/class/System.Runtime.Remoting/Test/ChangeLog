@@ -1,3 +1,7 @@
+2007-05-19  Robert Jordan  <robertj@gmx.net>
+
+	* IpcChannelTest.cs: Add test for bug #81653.
+
 2007-02-05  Robert Jordan  <robertj@gmx.net>
 
 	* BaseCalls.cs (PrimitiveParams): Add dummy overload method for

@@ -1,3 +1,7 @@
+2007-05-19  Robert Jordan  <robertj@gmx.net>
+
+	* System.Runtime.Remoting_test.dll.sources: add IpcChannelTest.cs
+
 2007-01-09  Robert Jordan  <robertj@gmx.net>
 
 	* System.Runtime.Remoting_test.dll.sources: add GenericTest.cs.
@@ -11,8 +15,8 @@
 
 2005-11-06  Svetlana Zholkovsky  <svetlanaz@mainsoft.com>
 
-    * Add System.Runtime.Remoting.vmwcsproj and System.Runtime.Remoting.sln
-    * AssemblyInfo.cs: only TARGET_JVM changes
+	* Add System.Runtime.Remoting.vmwcsproj and System.Runtime.Remoting.sln
+	* AssemblyInfo.cs: only TARGET_JVM changes
 
 2005-11-05  Robert Jordan  <robertj@gmx.net>
 
