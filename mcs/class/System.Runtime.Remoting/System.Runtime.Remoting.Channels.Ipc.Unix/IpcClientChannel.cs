@@ -80,6 +80,9 @@ namespace System.Runtime.Remoting.Channels.Ipc.Unix
                 //
                 internal static string IpcToUnix (string url)
                 {
+			if (url == null)
+				return null;
+
                         string portName;
                         string objectUri;
                         Win32.IpcChannelHelper.Parse (url, out portName, out objectUri);
@@ -106,7 +109,7 @@ namespace System.Runtime.Remoting.Channels.Ipc.Unix
         //
         // Simple message sink that changes ipc URLs to unix URLs.
         //
-        class UrlMapperSink : IMessageSink
+        sealed class UrlMapperSink : IMessageSink
         {
                 readonly IMessageSink _sink;
 
@@ -120,14 +123,11 @@ namespace System.Runtime.Remoting.Channels.Ipc.Unix
                         get { return _sink.NextSink; }
                 }
 
-                void ChangeUri (IMessage msg)
+                static void ChangeUri (IMessage msg)
                 {
                         string uri = msg.Properties ["__Uri"] as string;
                         if (uri != null) {
-                                string objectUri;
-                                Win32.IpcChannelHelper.Parse (uri, out objectUri);
-                                if (objectUri != null)
-                                        msg.Properties ["__Uri"] = objectUri;
+				 msg.Properties ["__Uri"] = IpcClientChannel.IpcToUnix (uri);
                         }
                 }
 
