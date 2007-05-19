@@ -1,3 +1,7 @@
+2007-05-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-codegen.c (mono_local_regalloc): Fix long-shift-regalloc on amd64.
+
 2007-05-15  Massimiliano Mantione  <massi@ximian.com>
 
 	* inssel.brg: added "mini_emit_load_intf_bit_reg_vtable", and used it
