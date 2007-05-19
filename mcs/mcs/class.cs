@@ -4121,6 +4121,10 @@ namespace Mono.CSharp {
 
 		public override void Emit ()
 		{
+#if GMCS_SOURCE			
+			if ((ModFlags & Modifiers.COMPILER_GENERATED) != 0)
+				MethodBuilder.SetCustomAttribute (TypeManager.compiler_generated_attr);
+#endif
 			if (OptAttributes != null)
 				OptAttributes.Emit ();
 
@@ -5780,6 +5784,11 @@ namespace Mono.CSharp {
 
 		public override void Emit ()
 		{
+#if GMCS_SOURCE			
+			if ((ModFlags & Modifiers.COMPILER_GENERATED) != 0)
+				FieldBuilder.SetCustomAttribute (TypeManager.compiler_generated_attr);
+#endif
+
 			if (OptAttributes != null) {
 				OptAttributes.Emit ();
 			}
@@ -6304,6 +6313,10 @@ namespace Mono.CSharp {
 		{
 			EmitMethod (parent);
 
+#if GMCS_SOURCE			
+			if ((ModFlags & Modifiers.COMPILER_GENERATED) != 0)
+				method_data.MethodBuilder.SetCustomAttribute (TypeManager.compiler_generated_attr);
+#endif			
 			if (OptAttributes != null)
 				OptAttributes.Emit ();
 

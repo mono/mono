@@ -45,7 +45,7 @@ namespace Mono.CSharp {
 		protected CompilerGeneratedClass (DeclSpace parent, GenericMethod generic,
 						  int mod, Location loc)
 			: base (parent.NamespaceEntry, parent,
-				MakeProxyName (generic, loc), mod, null)
+				MakeProxyName (generic, loc), mod | Modifiers.COMPILER_GENERATED, null)
 		{
 			this.generic_method = generic;
 
@@ -1544,7 +1544,7 @@ namespace Mono.CSharp {
 						      GenericMethod generic, TypeExpr return_type,
 						      int mod, MemberName name, Parameters parameters)
 				: base (scope != null ? scope : am.Host,
-					generic, return_type, mod, false, name, parameters, null)
+					generic, return_type, mod | Modifiers.COMPILER_GENERATED, false, name, parameters, null)
 			{
 				this.AnonymousMethod = am;
 				this.Scope = scope;
@@ -1566,14 +1566,6 @@ namespace Mono.CSharp {
 				aec.MethodIsStatic = Scope == null;
 				return aec;
 			}
-
-#if GMCS_SOURCES
-			public override void Emit ()
-			{
-				MethodBuilder.SetCustomAttribute (TypeManager.compiler_generated_attr);
-				base.Emit ();
-			}
-#endif
 		}
 	}
 

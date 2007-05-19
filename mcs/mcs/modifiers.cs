@@ -32,11 +32,12 @@ namespace Mono.CSharp {
 		//
 		// We use this internally to flag that the method contains an iterator
 		//
-		public const int METHOD_YIELDS		= 0x8000;
-		public const int METHOD_GENERIC		= 0x10000;
-		public const int PARTIAL		= 0x20000;
-		public const int DEFAULT_ACCESS_MODIFER = 0x40000;
-		public const int METHOD_EXTENSION	= 0x80000;
+		public const int METHOD_YIELDS			= 0x8000;
+		public const int METHOD_GENERIC			= 0x10000;
+		public const int PARTIAL					= 0x20000;
+		public const int DEFAULT_ACCESS_MODIFER	= 0x40000;
+		public const int METHOD_EXTENSION		= 0x80000;
+		public const int COMPILER_GENERATED		= 0x100000;
 
 		public const int Accessibility =
 			PUBLIC | PROTECTED | INTERNAL | PRIVATE;

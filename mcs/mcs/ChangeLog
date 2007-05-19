@@ -1,3 +1,12 @@
+2007-05-19  Marek Safar  <marek.safar@gmail.com>
+
+	* anonymous.cs, class.cs: Emit Compiler generated attribute when
+	member is marked as compiler generated.
+	
+	* decl.cs (MemberCore): Refactored ModFlags into property.
+
+	* modifiers.c: Add new modifier (COMPILER_GENERATED).
+
 2007-05-18  Raja R Harinath  <rharinath@novell.com>
 
 	Track all assignable slots in one bit array

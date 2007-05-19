@@ -314,7 +314,17 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Modifier flags that the user specified in the source code
 		/// </summary>
-		public int ModFlags;
+		private int mod_flags;
+		public int ModFlags {
+			set {
+				mod_flags = value;
+				if ((value & Modifiers.COMPILER_GENERATED) != 0)
+					caching_flags = Flags.IsUsed | Flags.IsAssigned;
+			}
+			get {
+				return mod_flags;
+			}
+		}
 
 		public readonly DeclSpace Parent;
 
