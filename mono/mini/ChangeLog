@@ -1,3 +1,8 @@
+2007-05-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-codegen.c (mono_local_regalloc): Fix long-shift-regalloc on amd64.
+	(mono_local_regalloc): Clean up the code a bit.
+
 2007-05-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (decompose_opcode): Clean up int->long conversion a bit.
