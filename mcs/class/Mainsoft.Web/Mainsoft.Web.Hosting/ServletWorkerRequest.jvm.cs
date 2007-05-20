@@ -113,7 +113,12 @@ namespace Mainsoft.Web.Hosting {
 			// the one containing more information wins.
 			if (contextPath.Length + servletPath.Length > requestURI.Length)
 				requestURI = contextPath + servletPath;
-			
+			else { 
+				int contextPos = requestURI.IndexOf(contextPath, StringComparison.Ordinal);
+				if (contextPos > 0)
+					requestURI = requestURI.Substring (contextPos);
+			}
+
 			_requestUri = Uri.UnescapeDataString(requestURI);
 			const int dotInvokeLength = 7; //".invoke".Length
 			if (_requestUri.Length > dotInvokeLength &&
