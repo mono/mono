@@ -1,3 +1,7 @@
+2007-05-20  Konstantin Triger <kostat@mainsoft.com>
+
+	* ProtocolReflector.cs: init context with current checker.
+
 2007-05-11  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ProtocolImporter.cs, ServiceDescriptionImporter.cs : when there

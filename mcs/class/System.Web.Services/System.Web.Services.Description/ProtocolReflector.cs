@@ -290,6 +290,7 @@ namespace System.Web.Services.Description {
 				ConformanceCheckContext ctx = new ConformanceCheckContext (col, violations);
 				ConformanceChecker[] checkers = WebServicesInteroperability.GetCheckers (binfo.WebServiceBindingAttribute.ConformsTo);
 				foreach (ConformanceChecker checker in checkers) {
+					ctx.Checker = checker;
 					WebServicesInteroperability.Check (ctx, checker, binding);
 					if (violations.Count > 0)
 						throw new InvalidOperationException (violations [0].ToString ());
