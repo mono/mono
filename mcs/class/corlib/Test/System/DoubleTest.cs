@@ -13,11 +13,11 @@ using System.Threading;
 
 using NUnit.Framework;
 
-namespace MonoTests.System {
-
+namespace MonoTests.System
+{
 	[TestFixture]
-	public class DoubleTest : Assertion {
-		
+	public class DoubleTest
+	{
 		private const Double d_zero = 0.0;
 		private const Double d_neg = -1234.5678;
 		private const Double d_pos = 1234.9999;
@@ -27,24 +27,14 @@ namespace MonoTests.System {
 		private const Double d_ninf = Double.NegativeInfinity;
 		private const String s = "What Ever";
 		private NumberFormatInfo Nfi = NumberFormatInfo.InvariantInfo;
-		
-		
-		private string[] string_values = {
-			"1", ".1", "1.1", "-12", "44.444432", ".000021121", 
-			"   .00001", "  .223    ", "         -221.3233",
-			" 1.7976931348623157e308 ", "+1.7976931348623157E308", "-1.7976931348623157e308",
-			"4.9406564584124650e-324",
-			"6.28318530717958647692528676655900577",
-			"1e-05",
-			"6363883797383966.2933E-726",
-		};
 
-		private string[] string_values_fail = {
+		private string [] string_values;
+		private string [] string_values_fail = {
 			"",     // empty
 			"- 1.0" // Inner whitespace
 		};
-		
-		private double[] double_values = {
+
+		private double [] double_values = {
 			1, .1, 1.1, -12, 44.444432, .000021121,
 			.00001, .223, -221.3233,
 			1.7976931348623157e308, 1.7976931348623157e308, -1.7976931348623157e308,
@@ -55,9 +45,10 @@ namespace MonoTests.System {
 		};
 
 		[SetUp]
-		public void GetReady()
+		public void GetReady ()
 		{
 			string sep = NumberFormatInfo.CurrentInfo.NumberDecimalSeparator;
+			string_values = new string [15];
 			string_values [0] = "1";
 			string_values [1] = sep + "1";
 			string_values [2] = "1" + sep + "1";
@@ -77,181 +68,215 @@ namespace MonoTests.System {
 
 		[Test]
 		public void PublicFields ()
-		{												  
-			Assertion.AssertEquals("Epsilon Field has wrong value", 3.9406564584124654e-324, Double.Epsilon);
-			Assertion.AssertEquals("MaxValue Field has wrong value", 1.7976931348623157e+308, Double.MaxValue);
-			Assertion.AssertEquals("MinValue Field has wrong value", -1.7976931348623157e+308, Double.MinValue);
-			Assertion.AssertEquals("NegativeInfinity Field has wrong value",  (double)-1.0 / (double)(0.0), Double.NegativeInfinity);		
-			Assertion.AssertEquals("PositiveInfinity Field has wrong value",  (double)1.0 / (double)(0.0), Double.PositiveInfinity);		
+		{
+			Assert.AreEqual (3.9406564584124654e-324, Double.Epsilon, "#1");
+			Assert.AreEqual (1.7976931348623157e+308, Double.MaxValue, "#2");
+			Assert.AreEqual (-1.7976931348623157e+308, Double.MinValue, "#3");
+			Assert.AreEqual ((double) -1.0 / (double) (0.0), Double.NegativeInfinity, "#4");
+			Assert.AreEqual ((double) 1.0 / (double) (0.0), Double.PositiveInfinity, "#5");
 		}
 
 		[Test]
-		public void CompareTo () {
+		public void CompareTo ()
+		{
 			//If you do int foo =  d_ninf.CompareTo(d_pinf); Assertion.Assert(".." foo < 0, true) this works.... WHY???
-			Assertion.Assert("CompareTo Infinity failed", d_ninf.CompareTo(d_pinf) < 0);		
+			Assert.IsTrue (d_ninf.CompareTo (d_pinf) < 0, "#A1");
+			Assert.IsTrue (d_neg.CompareTo (d_pos) < 0, "#A2");
+			Assert.IsTrue (d_nan.CompareTo (d_neg) < 0, "#A3");
 
-			Assertion.Assert("CompareTo Failed01", d_neg.CompareTo(d_pos) < 0);
-			Assertion.Assert("CompareTo NaN Failed", d_nan.CompareTo(d_neg) < 0);				
+			Assert.AreEqual (0, d_pos.CompareTo (d_pos2), "#B1");
+			Assert.AreEqual (0, d_pinf.CompareTo (d_pinf), "#B2");
+			Assert.AreEqual (0, d_ninf.CompareTo (d_ninf), "#B3");
+			Assert.AreEqual (0, d_nan.CompareTo (d_nan), "#B4");
 
-			Assertion.AssertEquals("CompareTo Failed02", 0, d_pos.CompareTo(d_pos2));		
-			Assertion.AssertEquals("CompareTo Failed03", 0, d_pinf.CompareTo(d_pinf));		
-			Assertion.AssertEquals("CompareTo Failed04", 0, d_ninf.CompareTo(d_ninf));		
-			Assertion.AssertEquals("CompareTo Failed05", 0, d_nan.CompareTo(d_nan));		
+			Assert.IsTrue (d_pos.CompareTo (d_neg) > 0, "#C1");
+			Assert.IsTrue (d_pos.CompareTo (d_nan) > 0, "#C2");
+			Assert.IsTrue (d_pos.CompareTo (null) > 0, "#C3");
 
-			Assertion.Assert("CompareTo Failed06", d_pos.CompareTo(d_neg) > 0);		
-			Assertion.Assert("CompareTo Failed07", d_pos.CompareTo(d_nan) > 0);		
-			Assertion.Assert("CompareTo Failed08", d_pos.CompareTo(null) > 0);		
-			
 			try {
-				d_pos.CompareTo(s);
-				Assertion.Fail("CompareTo should raise a System.ArgumentException");
+				d_pos.CompareTo (s);
+				Assert.Fail ("#D1");
+			} catch (ArgumentException ex) {
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#D2");
 			}
-			catch (Exception e) {
-				Assertion.AssertEquals("CompareTo should be a System.ArgumentException", typeof(ArgumentException), e.GetType());
-			}		
-			
 		}
 
 		[Test]
-		public void Equals () {
-			Assertion.AssertEquals("Equals Failed", true, d_pos.Equals(d_pos2));
-			Assertion.AssertEquals("Equals Failed", false, d_pos.Equals(d_neg));
-			Assertion.AssertEquals("Equals Failed", false, d_pos.Equals(s));
-			
+		public void Equals ()
+		{
+			Assert.IsTrue (d_pos.Equals (d_pos2), "#1");
+			Assert.IsFalse (d_pos.Equals (d_neg), "#2");
+			Assert.IsFalse (d_pos.Equals (s), "#3");
 		}
 
 		[Test]
-		public void TestTypeCode () {
-			Assertion.AssertEquals("GetTypeCode Failed", TypeCode.Double, d_pos.GetTypeCode());		
+		public void TestTypeCode ()
+		{
+			Assert.AreEqual (TypeCode.Double, d_pos.GetTypeCode ());
 		}
 
 		[Test]
-		public void IsInfinity() {
-			Assertion.AssertEquals("IsInfinity Failed", true, Double.IsInfinity(Double.PositiveInfinity));
-			Assertion.AssertEquals("IsInfinity Failed", true, Double.IsInfinity(Double.NegativeInfinity));
-			Assertion.AssertEquals("IsInfinity Failed", false, Double.IsInfinity(12));		
+		public void IsInfinity ()
+		{
+			Assert.IsTrue (Double.IsInfinity (Double.PositiveInfinity), "#1");
+			Assert.IsTrue (Double.IsInfinity (Double.NegativeInfinity), "#2");
+			Assert.IsFalse (Double.IsInfinity (12), "#3");
 		}
 
 		[Test]
-		public void IsNan() {
-			Assertion.AssertEquals("IsNan Failed", true, Double.IsNaN(Double.NaN));
-			Assertion.AssertEquals("IsNan Failed", false, Double.IsNaN(12));
-			Assertion.AssertEquals("IsNan Failed", false, Double.IsNaN(Double.PositiveInfinity));
+		public void IsNan ()
+		{
+			Assert.IsTrue (Double.IsNaN (Double.NaN), "#1");
+			Assert.IsFalse (Double.IsNaN (12), "#2");
+			Assert.IsFalse (Double.IsNaN (Double.PositiveInfinity), "#3");
 		}
 
 		[Test]
-		public void IsNegativeInfinity() {
-			Assertion.AssertEquals("IsNegativeInfinity Failed", true, Double.IsNegativeInfinity(Double.NegativeInfinity));
-			Assertion.AssertEquals("IsNegativeInfinity Failed", false, Double.IsNegativeInfinity(12));		
+		public void IsNegativeInfinity ()
+		{
+			Assert.IsTrue (Double.IsNegativeInfinity (Double.NegativeInfinity), "#1");
+			Assert.IsFalse (Double.IsNegativeInfinity (12), "#2");
 		}
 
 		[Test]
-		public void IsPositiveInfinity() {
-			Assertion.AssertEquals("IsPositiveInfinity Failed", true, Double.IsPositiveInfinity(Double.PositiveInfinity));
-			Assertion.AssertEquals("IsPositiveInfinity Failed", false, Double.IsPositiveInfinity(12));		
+		public void IsPositiveInfinity ()
+		{
+			Assert.IsTrue (Double.IsPositiveInfinity (Double.PositiveInfinity), "#1");
+			Assert.IsFalse (Double.IsPositiveInfinity (12), "#2");
 		}
 
 		[Test]
-		public void Parse() {
-			int i=0;
+		public void Parse ()
+		{
+			int i = 0;
 			try {
-				for(i=0;i<string_values.Length;i++) {			
-					Assertion.AssertEquals("Parse Failed", double_values[i], Double.Parse(string_values[i]));
+				for (i = 0; i < string_values.Length; i++) {
+					Assert.AreEqual (double_values [i], Double.Parse (string_values [i]), "#A1");
 				}
 			} catch (Exception e) {
-				Assertion.Fail("TestParse: i=" + i + " failed with e = " + e.ToString());
-			}
-			
-			try {
-				Assertion.AssertEquals("Parse Failed NumberStyles.Float", 10.1111, Double.Parse(" 10.1111 ", NumberStyles.Float, Nfi));
-			} catch (Exception e) {
-				Assertion.Fail("TestParse: Parse Failed NumberStyles.Float with e = " + e.ToString());
+				Assert.Fail ("#A2: i=" + i + " failed with e = " + e.ToString ());
 			}
 
 			try {
-				Assertion.AssertEquals("Parse Failed NumberStyles.AllowThousands", 1234.5678, Double.Parse("1,234.5678", NumberStyles.Float | NumberStyles.AllowThousands, Nfi));
+				Assert.AreEqual (10.1111, Double.Parse (" 10.1111 ", NumberStyles.Float, Nfi), "#B1");
 			} catch (Exception e) {
-				Assertion.Fail("TestParse: Parse Failed NumberStyles.AllowThousands with e = " + e.ToString());
+				Assert.Fail ("#B2: Parse Failed NumberStyles.Float with e = " + e.ToString ());
 			}
-		
-			try {
-				Double.Parse(null);
-				Assertion.Fail("Parse should raise a ArgumentNullException");
-			}
-			catch (Exception e) {
-				Assertion.Assert("Parse should be a ArgumentNullException", typeof(ArgumentNullException) == e.GetType());
-			}		
 
 			try {
-				Double.Parse("save the elk");
-				Assertion.Fail("Parse should raise a FormatException");
+				Assert.AreEqual (1234.5678, Double.Parse ("1,234.5678", NumberStyles.Float | NumberStyles.AllowThousands, Nfi), "#C1");
+			} catch (Exception e) {
+				Assertion.Fail ("#C2: Parse Failed NumberStyles.AllowThousands with e = " + e.ToString ());
 			}
-			catch (Exception e) {
-				Assertion.Assert("Parse should be a FormatException", typeof(FormatException) == e.GetType());
-			}		
+
+			try {
+				Double.Parse (null);
+				Assertion.Fail ("#D1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#D2");
+				Assert.IsNull (ex.InnerException, "#D3");
+				Assert.IsNotNull (ex.Message, "#D4");
+				Assert.IsNotNull (ex.ParamName, "#D5");
+			}
+
+			try {
+				Double.Parse ("save the elk");
+				Assert.Fail ("#E1");
+			} catch (FormatException ex) {
+				Assert.AreEqual (typeof (FormatException), ex.GetType (), "#E2");
+				Assert.IsNull (ex.InnerException, "#E3");
+				Assert.IsNotNull (ex.Message, "#E4");
+			}
 
 			string sep = NumberFormatInfo.CurrentInfo.NumberDecimalSeparator;
 			double ovf_plus = 0;
 			try {
-				ovf_plus = Double.Parse("1" + sep + "79769313486232e308");
-				Assertion.Fail("Parse should have raised an OverflowException +");
+				ovf_plus = Double.Parse ("1" + sep + "79769313486232e308");
+				Assert.Fail ("#F1");
+			} catch (OverflowException ex) {
+				Assert.AreEqual (typeof (OverflowException), ex.GetType (), "#F2");
+				Assert.IsNull (ex.InnerException, "#F3");
+				Assert.IsNotNull (ex.Message, "#F4");
 			}
-			catch (Exception e) {
-				Assertion.AssertEquals("Should be an OverflowException + for " + ovf_plus, typeof(OverflowException), e.GetType());
-			}		
 
 			try {
-				Double.Parse("-1" + sep + "79769313486232e308");
-				Assertion.Fail("Parse should have raised an OverflowException -");
+				Double.Parse ("-1" + sep + "79769313486232e308");
+				Assertion.Fail ("#G1");
+			} catch (OverflowException ex) {
+				Assert.AreEqual (typeof (OverflowException), ex.GetType (), "#G2");
+				Assert.IsNull (ex.InnerException, "#G3");
+				Assert.IsNotNull (ex.Message, "#G4");
 			}
-			catch (Exception e) {
-				Assertion.AssertEquals("Should be an OverflowException -", typeof(OverflowException), e.GetType());
-			}		
 
 			for (i = 0; i < string_values_fail.Length; ++i) {
 				try {
 					Double.Parse (string_values_fail [i]);
-					Assertion.Fail ("Parse () should fail on '" + string_values_fail [i]);
+					Assertion.Fail ("#H1: " + string_values_fail [i]);
+				} catch (FormatException ex) {
+					Assert.AreEqual (typeof (FormatException), ex.GetType (), "#H2");
+					Assert.IsNull (ex.InnerException, "#H3");
+					Assert.IsNotNull (ex.Message, "#H4");
 				}
-				catch (FormatException) {
-				}
+			}
+		}
+
+		[Test] // bug #81630
+		[Category ("NotWorking")]
+		public void Parse_Whitespace ()
+		{
+			try {
+				double.Parse (" ");
+				Assert.Fail ("#1");
+			} catch (FormatException ex) {
+				Assert.AreEqual (typeof (FormatException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
 			}
 		}
 
 		[Test]
-		public void TestToString() {
-			//ToString is not yet Implemented......
-			//Assertion.AssertEquals("ToString Failed", "1234.9999", d_pos.ToString());
-			double d;
+		public void TestToString ()
+		{
 			try {
-				d = 3.1415;
+				double d = 3.1415;
 				d.ToString ("X");
-				d.ToString ("D");
-				Assertion.Fail("Should have thrown FormatException");
-			} catch (FormatException) {
-				/* do nothing, this is what we expect */
-			} catch (Exception e) {
-				Assertion.Fail("Unexpected exception e: " + e);
+				Assert.Fail ("#A1");
+			} catch (FormatException ex) {
+				Assert.AreEqual (typeof (FormatException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
 			}
 
-			CustomFormatHelper();
-			
+			try {
+				double d = 3.1415;
+				d.ToString ("D");
+				Assert.Fail ("#B1");
+			} catch (FormatException ex) {
+				Assert.AreEqual (typeof (FormatException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+			}
+
+			CustomFormatHelper ();
 		}
-		
-		private class Element {
+
+		private class Element
+		{
 			public double value;
 			public string format;
 			public string result;
-			public Element (double value, string format, string result) {
+
+			public Element (double value, string format, string result)
+			{
 				this.value = value;
 				this.format = format;
 				this.result = result;
 			}
 		}
 
-		public void CustomFormatHelper () {
-
-			NumberFormatInfo nfi = new NumberFormatInfo();
+		public void CustomFormatHelper ()
+		{
+			NumberFormatInfo nfi = new NumberFormatInfo ();
 
 			nfi.NaNSymbol = "NaN";
 			nfi.PositiveSign = "+";
@@ -260,230 +285,240 @@ namespace MonoTests.System {
 			nfi.PositiveInfinitySymbol = "Infinity";
 			nfi.NegativeInfinitySymbol = "-Infinity";
 
-			nfi.NumberDecimalDigits = 5; 
+			nfi.NumberDecimalDigits = 5;
 			nfi.NumberDecimalSeparator = ".";
 			nfi.NumberGroupSeparator = ",";
-			nfi.NumberGroupSizes = new int[] {3};
+			nfi.NumberGroupSizes = new int [] { 3 };
 			nfi.NumberNegativePattern = 2;
 
 			nfi.CurrencyDecimalDigits = 2;
 			nfi.CurrencyDecimalSeparator = ".";
 			nfi.CurrencyGroupSeparator = ",";
-			nfi.CurrencyGroupSizes = new int[] {3};
+			nfi.CurrencyGroupSizes = new int [] { 3 };
 			nfi.CurrencyNegativePattern = 8;
 			nfi.CurrencyPositivePattern = 3;
 			nfi.CurrencySymbol = "$";
 
-			nfi.PercentDecimalDigits = 5; 
+			nfi.PercentDecimalDigits = 5;
 			nfi.PercentDecimalSeparator = ".";
 			nfi.PercentGroupSeparator = ",";
-			nfi.PercentGroupSizes = new int[] {3};
+			nfi.PercentGroupSizes = new int [] { 3 };
 			nfi.PercentNegativePattern = 0;
 			nfi.PercentPositivePattern = 0;
 			nfi.PercentSymbol = "%";
 
-			ArrayList list = new ArrayList();
-			list.Add(new Element(123d, "#####", "123"));
-			list.Add(new Element(123d, "00000", "00123"));
-			list.Add(new Element(123d, "(###) ### - ####", "()  - 123"));
-			list.Add(new Element(123d, "#.##", "123"));
-			list.Add(new Element(123d, "0.00", "123.00"));
-			list.Add(new Element(123d, "00.00", "123.00"));
-			list.Add(new Element(123d, "#,#", "123"));
-			list.Add(new Element(123d, "#,,", ""));
-			list.Add(new Element(123d, "#,,,", ""));
-			list.Add(new Element(123d, "#,##0,,", "0"));
-			list.Add(new Element(123d, "#0.##%", "12300%"));
-			list.Add(new Element(123d, "0.###E+0", "1.23E+2"));
-			list.Add(new Element(123d, "0.###E+000", "1.23E+002"));
-			list.Add(new Element(123d, "0.###E-000", "1.23E002"));
-			list.Add(new Element(123d, "[##-##-##]", "[-1-23]"));
-			list.Add(new Element(123d, "##;(##)", "123"));
-			list.Add(new Element(123d, "##;(##)", "123"));
-			list.Add(new Element(1234567890d, "#####", "1234567890"));
-			list.Add(new Element(1234567890d, "00000", "1234567890"));
-			list.Add(new Element(1234567890d,
+			ArrayList list = new ArrayList ();
+			list.Add (new Element (123d, "#####", "123"));
+			list.Add (new Element (123d, "00000", "00123"));
+			list.Add (new Element (123d, "(###) ### - ####", "()  - 123"));
+			list.Add (new Element (123d, "#.##", "123"));
+			list.Add (new Element (123d, "0.00", "123.00"));
+			list.Add (new Element (123d, "00.00", "123.00"));
+			list.Add (new Element (123d, "#,#", "123"));
+			list.Add (new Element (123d, "#,,", ""));
+			list.Add (new Element (123d, "#,,,", ""));
+			list.Add (new Element (123d, "#,##0,,", "0"));
+			list.Add (new Element (123d, "#0.##%", "12300%"));
+			list.Add (new Element (123d, "0.###E+0", "1.23E+2"));
+			list.Add (new Element (123d, "0.###E+000", "1.23E+002"));
+			list.Add (new Element (123d, "0.###E-000", "1.23E002"));
+			list.Add (new Element (123d, "[##-##-##]", "[-1-23]"));
+			list.Add (new Element (123d, "##;(##)", "123"));
+			list.Add (new Element (123d, "##;(##)", "123"));
+			list.Add (new Element (1234567890d, "#####", "1234567890"));
+			list.Add (new Element (1234567890d, "00000", "1234567890"));
+			list.Add (new Element (1234567890d,
 						"(###) ### - ####", "(123) 456 - 7890"));
-			list.Add(new Element(1234567890d, "#.##", "1234567890"));
-			list.Add(new Element(1234567890d, "0.00", "1234567890.00"));
-			list.Add(new Element(1234567890d, "00.00", "1234567890.00"));
-			list.Add(new Element(1234567890d, "#,#", "1,234,567,890"));
-			list.Add(new Element(1234567890d, "#,,", "1235"));
-			list.Add(new Element(1234567890d, "#,,,", "1"));
-			list.Add(new Element(1234567890d, "#,##0,,", "1,235"));
-			list.Add(new Element(1234567890d, "#0.##%", "123456789000%"));
-			list.Add(new Element(1234567890d, "0.###E+0", "1.235E+9"));
-			list.Add(new Element(1234567890d, "0.###E+000", "1.235E+009"));
-			list.Add(new Element(1234567890d, "0.###E-000", "1.235E009"));
-			list.Add(new Element(1234567890d, "[##-##-##]", "[123456-78-90]"));
-			list.Add(new Element(1234567890d, "##;(##)", "1234567890"));
-			list.Add(new Element(1234567890d, "##;(##)", "1234567890"));
-			list.Add(new Element(1.2d, "#####", "1"));
-			list.Add(new Element(1.2d, "00000", "00001"));
-			list.Add(new Element(1.2d, "(###) ### - ####", "()  - 1"));
-			list.Add(new Element(1.2d, "#.##", "1.2"));
-			list.Add(new Element(1.2d, "0.00", "1.20"));
-			list.Add(new Element(1.2d, "00.00", "01.20"));
-			list.Add(new Element(1.2d, "#,#", "1"));
-			list.Add(new Element(1.2d, "#,,", ""));
-			list.Add(new Element(1.2d, "#,,,", ""));
-			list.Add(new Element(1.2d, "#,##0,,", "0"));
-			list.Add(new Element(1.2d, "#0.##%", "120%"));
-			list.Add(new Element(1.2d, "0.###E+0", "1.2E+0"));
-			list.Add(new Element(1.2d, "0.###E+000", "1.2E+000"));
-			list.Add(new Element(1.2d, "0.###E-000", "1.2E000"));
-			list.Add(new Element(1.2d, "[##-##-##]", "[--1]"));
-			list.Add(new Element(1.2d, "##;(##)", "1"));
-			list.Add(new Element(1.2d, "##;(##)", "1"));
-			list.Add(new Element(0.086d, "#####", ""));
-			list.Add(new Element(0.086d, "00000", "00000"));
-			list.Add(new Element(0.086d, "(###) ### - ####", "()  - "));
-			list.Add(new Element(0.086d, "#.##", ".09"));
-			list.Add(new Element(0.086d, "0.00", "0.09"));
-			list.Add(new Element(0.086d, "00.00", "00.09"));
-			list.Add(new Element(0.086d, "#,#", ""));
-			list.Add(new Element(0.086d, "#,,", ""));
-			list.Add(new Element(0.086d, "#,,,", ""));
-			list.Add(new Element(0.086d, "#,##0,,", "0"));
-			list.Add(new Element(0.086d, "#0.##%", "8.6%"));
-			list.Add(new Element(0.086d, "0.###E+0", "8.6E-2"));
-			list.Add(new Element(0.086d, "0.###E+000", "8.6E-002"));
-			list.Add(new Element(0.086d, "0.###E-000", "8.6E-002"));
-			list.Add(new Element(0.086d, "[##-##-##]", "[--]"));
-			list.Add(new Element(0.086d, "##;(##)", ""));
-			list.Add(new Element(0.086d, "##;(##)", ""));
-			list.Add(new Element(86000d, "#####", "86000"));
-			list.Add(new Element(86000d, "00000", "86000"));
-			list.Add(new Element(86000d, "(###) ### - ####", "() 8 - 6000"));
-			list.Add(new Element(86000d, "#.##", "86000"));
-			list.Add(new Element(86000d, "0.00", "86000.00"));
-			list.Add(new Element(86000d, "00.00", "86000.00"));
-			list.Add(new Element(86000d, "#,#", "86,000"));
-			list.Add(new Element(86000d, "#,,", ""));
-			list.Add(new Element(86000d, "#,,,", ""));
-			list.Add(new Element(86000d, "#,##0,,", "0"));
-			list.Add(new Element(86000d, "#0.##%", "8600000%"));
-			list.Add(new Element(86000d, "0.###E+0", "8.6E+4"));
-			list.Add(new Element(86000d, "0.###E+000", "8.6E+004"));
-			list.Add(new Element(86000d, "0.###E-000", "8.6E004"));
-			list.Add(new Element(86000d, "[##-##-##]", "[8-60-00]"));
-			list.Add(new Element(86000d, "##;(##)", "86000"));
-			list.Add(new Element(86000d, "##;(##)", "86000"));
-			list.Add(new Element(123456d, "#####", "123456"));
-			list.Add(new Element(123456d, "00000", "123456"));
-			list.Add(new Element(123456d, "(###) ### - ####", "() 12 - 3456"));
-			list.Add(new Element(123456d, "#.##", "123456"));
-			list.Add(new Element(123456d, "0.00", "123456.00"));
-			list.Add(new Element(123456d, "00.00", "123456.00"));
-			list.Add(new Element(123456d, "#,#", "123,456"));
-			list.Add(new Element(123456d, "#,,", ""));
-			list.Add(new Element(123456d, "#,,,", ""));
-			list.Add(new Element(123456d, "#,##0,,", "0"));
-			list.Add(new Element(123456d, "#0.##%", "12345600%"));
-			list.Add(new Element(123456d, "0.###E+0", "1.235E+5"));
-			list.Add(new Element(123456d, "0.###E+000", "1.235E+005"));
-			list.Add(new Element(123456d, "0.###E-000", "1.235E005"));
-			list.Add(new Element(123456d, "[##-##-##]", "[12-34-56]"));
-			list.Add(new Element(123456d, "##;(##)", "123456"));
-			list.Add(new Element(123456d, "##;(##)", "123456"));
-			list.Add(new Element(1234d, "#####", "1234"));
-			list.Add(new Element(1234d, "00000", "01234"));
-			list.Add(new Element(1234d, "(###) ### - ####", "()  - 1234"));
-			list.Add(new Element(1234d, "#.##", "1234"));
-			list.Add(new Element(1234d, "0.00", "1234.00"));
-			list.Add(new Element(1234d, "00.00", "1234.00"));
-			list.Add(new Element(1234d, "#,#", "1,234"));
-			list.Add(new Element(1234d, "#,,", ""));
-			list.Add(new Element(1234d, "#,,,", ""));
-			list.Add(new Element(1234d, "#,##0,,", "0"));
-			list.Add(new Element(1234d, "#0.##%", "123400%"));
-			list.Add(new Element(1234d, "0.###E+0", "1.234E+3"));
-			list.Add(new Element(1234d, "0.###E+000", "1.234E+003"));
-			list.Add(new Element(1234d, "0.###E-000", "1.234E003"));
-			list.Add(new Element(1234d, "[##-##-##]", "[-12-34]"));
-			list.Add(new Element(1234d, "##;(##)", "1234"));
-			list.Add(new Element(1234d, "##;(##)", "1234"));
-			list.Add(new Element(-1234d, "#####", "-1234"));
-			list.Add(new Element(-1234d, "00000", "-01234"));
-			list.Add(new Element(-1234d, "(###) ### - ####", "-()  - 1234"));
-			list.Add(new Element(-1234d, "#.##", "-1234"));
-			list.Add(new Element(-1234d, "0.00", "-1234.00"));
-			list.Add(new Element(-1234d, "00.00", "-1234.00"));
-			list.Add(new Element(-1234d, "#,#", "-1,234"));
-			list.Add(new Element(-1234d, "#,,", ""));
-			list.Add(new Element(-1234d, "#,,,", ""));
-			list.Add(new Element(-1234d, "#,##0,,", "0"));
-			list.Add(new Element(-1234d, "#0.##%", "-123400%"));
-			list.Add(new Element(-1234d, "0.###E+0", "-1.234E+3"));
-			list.Add(new Element(-1234d, "0.###E+000", "-1.234E+003"));
-			list.Add(new Element(-1234d, "0.###E-000", "-1.234E003"));
-			list.Add(new Element(-1234d, "[##-##-##]", "-[-12-34]"));
-			list.Add(new Element(-1234d, "##;(##)", "(1234)"));
-			list.Add(new Element(-1234d, "##;(##)", "(1234)"));
-			list.Add(new Element(12345678901234567890.123d,
+			list.Add (new Element (1234567890d, "#.##", "1234567890"));
+			list.Add (new Element (1234567890d, "0.00", "1234567890.00"));
+			list.Add (new Element (1234567890d, "00.00", "1234567890.00"));
+			list.Add (new Element (1234567890d, "#,#", "1,234,567,890"));
+			list.Add (new Element (1234567890d, "#,,", "1235"));
+			list.Add (new Element (1234567890d, "#,,,", "1"));
+			list.Add (new Element (1234567890d, "#,##0,,", "1,235"));
+			list.Add (new Element (1234567890d, "#0.##%", "123456789000%"));
+			list.Add (new Element (1234567890d, "0.###E+0", "1.235E+9"));
+			list.Add (new Element (1234567890d, "0.###E+000", "1.235E+009"));
+			list.Add (new Element (1234567890d, "0.###E-000", "1.235E009"));
+			list.Add (new Element (1234567890d, "[##-##-##]", "[123456-78-90]"));
+			list.Add (new Element (1234567890d, "##;(##)", "1234567890"));
+			list.Add (new Element (1234567890d, "##;(##)", "1234567890"));
+			list.Add (new Element (1.2d, "#####", "1"));
+			list.Add (new Element (1.2d, "00000", "00001"));
+			list.Add (new Element (1.2d, "(###) ### - ####", "()  - 1"));
+			list.Add (new Element (1.2d, "#.##", "1.2"));
+			list.Add (new Element (1.2d, "0.00", "1.20"));
+			list.Add (new Element (1.2d, "00.00", "01.20"));
+			list.Add (new Element (1.2d, "#,#", "1"));
+			list.Add (new Element (1.2d, "#,,", ""));
+			list.Add (new Element (1.2d, "#,,,", ""));
+			list.Add (new Element (1.2d, "#,##0,,", "0"));
+			list.Add (new Element (1.2d, "#0.##%", "120%"));
+			list.Add (new Element (1.2d, "0.###E+0", "1.2E+0"));
+			list.Add (new Element (1.2d, "0.###E+000", "1.2E+000"));
+			list.Add (new Element (1.2d, "0.###E-000", "1.2E000"));
+			list.Add (new Element (1.2d, "[##-##-##]", "[--1]"));
+			list.Add (new Element (1.2d, "##;(##)", "1"));
+			list.Add (new Element (1.2d, "##;(##)", "1"));
+			list.Add (new Element (0.086d, "#####", ""));
+			list.Add (new Element (0.086d, "00000", "00000"));
+			list.Add (new Element (0.086d, "(###) ### - ####", "()  - "));
+			list.Add (new Element (0.086d, "#.##", ".09"));
+			list.Add (new Element (0.086d, "0.00", "0.09"));
+			list.Add (new Element (0.086d, "00.00", "00.09"));
+			list.Add (new Element (0.086d, "#,#", ""));
+			list.Add (new Element (0.086d, "#,,", ""));
+			list.Add (new Element (0.086d, "#,,,", ""));
+			list.Add (new Element (0.086d, "#,##0,,", "0"));
+			list.Add (new Element (0.086d, "#0.##%", "8.6%"));
+			list.Add (new Element (0.086d, "0.###E+0", "8.6E-2"));
+			list.Add (new Element (0.086d, "0.###E+000", "8.6E-002"));
+			list.Add (new Element (0.086d, "0.###E-000", "8.6E-002"));
+			list.Add (new Element (0.086d, "[##-##-##]", "[--]"));
+			list.Add (new Element (0.086d, "##;(##)", ""));
+			list.Add (new Element (0.086d, "##;(##)", ""));
+			list.Add (new Element (86000d, "#####", "86000"));
+			list.Add (new Element (86000d, "00000", "86000"));
+			list.Add (new Element (86000d, "(###) ### - ####", "() 8 - 6000"));
+			list.Add (new Element (86000d, "#.##", "86000"));
+			list.Add (new Element (86000d, "0.00", "86000.00"));
+			list.Add (new Element (86000d, "00.00", "86000.00"));
+			list.Add (new Element (86000d, "#,#", "86,000"));
+			list.Add (new Element (86000d, "#,,", ""));
+			list.Add (new Element (86000d, "#,,,", ""));
+			list.Add (new Element (86000d, "#,##0,,", "0"));
+			list.Add (new Element (86000d, "#0.##%", "8600000%"));
+			list.Add (new Element (86000d, "0.###E+0", "8.6E+4"));
+			list.Add (new Element (86000d, "0.###E+000", "8.6E+004"));
+			list.Add (new Element (86000d, "0.###E-000", "8.6E004"));
+			list.Add (new Element (86000d, "[##-##-##]", "[8-60-00]"));
+			list.Add (new Element (86000d, "##;(##)", "86000"));
+			list.Add (new Element (86000d, "##;(##)", "86000"));
+			list.Add (new Element (123456d, "#####", "123456"));
+			list.Add (new Element (123456d, "00000", "123456"));
+			list.Add (new Element (123456d, "(###) ### - ####", "() 12 - 3456"));
+			list.Add (new Element (123456d, "#.##", "123456"));
+			list.Add (new Element (123456d, "0.00", "123456.00"));
+			list.Add (new Element (123456d, "00.00", "123456.00"));
+			list.Add (new Element (123456d, "#,#", "123,456"));
+			list.Add (new Element (123456d, "#,,", ""));
+			list.Add (new Element (123456d, "#,,,", ""));
+			list.Add (new Element (123456d, "#,##0,,", "0"));
+			list.Add (new Element (123456d, "#0.##%", "12345600%"));
+			list.Add (new Element (123456d, "0.###E+0", "1.235E+5"));
+			list.Add (new Element (123456d, "0.###E+000", "1.235E+005"));
+			list.Add (new Element (123456d, "0.###E-000", "1.235E005"));
+			list.Add (new Element (123456d, "[##-##-##]", "[12-34-56]"));
+			list.Add (new Element (123456d, "##;(##)", "123456"));
+			list.Add (new Element (123456d, "##;(##)", "123456"));
+			list.Add (new Element (1234d, "#####", "1234"));
+			list.Add (new Element (1234d, "00000", "01234"));
+			list.Add (new Element (1234d, "(###) ### - ####", "()  - 1234"));
+			list.Add (new Element (1234d, "#.##", "1234"));
+			list.Add (new Element (1234d, "0.00", "1234.00"));
+			list.Add (new Element (1234d, "00.00", "1234.00"));
+			list.Add (new Element (1234d, "#,#", "1,234"));
+			list.Add (new Element (1234d, "#,,", ""));
+			list.Add (new Element (1234d, "#,,,", ""));
+			list.Add (new Element (1234d, "#,##0,,", "0"));
+			list.Add (new Element (1234d, "#0.##%", "123400%"));
+			list.Add (new Element (1234d, "0.###E+0", "1.234E+3"));
+			list.Add (new Element (1234d, "0.###E+000", "1.234E+003"));
+			list.Add (new Element (1234d, "0.###E-000", "1.234E003"));
+			list.Add (new Element (1234d, "[##-##-##]", "[-12-34]"));
+			list.Add (new Element (1234d, "##;(##)", "1234"));
+			list.Add (new Element (1234d, "##;(##)", "1234"));
+			list.Add (new Element (-1234d, "#####", "-1234"));
+			list.Add (new Element (-1234d, "00000", "-01234"));
+			list.Add (new Element (-1234d, "(###) ### - ####", "-()  - 1234"));
+			list.Add (new Element (-1234d, "#.##", "-1234"));
+			list.Add (new Element (-1234d, "0.00", "-1234.00"));
+			list.Add (new Element (-1234d, "00.00", "-1234.00"));
+			list.Add (new Element (-1234d, "#,#", "-1,234"));
+			list.Add (new Element (-1234d, "#,,", ""));
+			list.Add (new Element (-1234d, "#,,,", ""));
+			list.Add (new Element (-1234d, "#,##0,,", "0"));
+			list.Add (new Element (-1234d, "#0.##%", "-123400%"));
+			list.Add (new Element (-1234d, "0.###E+0", "-1.234E+3"));
+			list.Add (new Element (-1234d, "0.###E+000", "-1.234E+003"));
+			list.Add (new Element (-1234d, "0.###E-000", "-1.234E003"));
+			list.Add (new Element (-1234d, "[##-##-##]", "-[-12-34]"));
+			list.Add (new Element (-1234d, "##;(##)", "(1234)"));
+			list.Add (new Element (-1234d, "##;(##)", "(1234)"));
+			list.Add (new Element (12345678901234567890.123d,
 						"#####", "12345678901234600000"));
-			list.Add(new Element(12345678901234567890.123d,
+			list.Add (new Element (12345678901234567890.123d,
 						"00000", "12345678901234600000"));
-			list.Add(new Element(12345678901234567890.123d,
+			list.Add (new Element (12345678901234567890.123d,
 						"(###) ### - ####", "(1234567890123) 460 - 0000"));
-			list.Add(new Element(12345678901234567890.123d,
+			list.Add (new Element (12345678901234567890.123d,
 						"#.##", "12345678901234600000"));
-			list.Add(new Element(12345678901234567890.123d,
+			list.Add (new Element (12345678901234567890.123d,
 						"0.00", "12345678901234600000.00"));
-			list.Add(new Element(12345678901234567890.123d,
+			list.Add (new Element (12345678901234567890.123d,
 						"00.00", "12345678901234600000.00"));
-			list.Add(new Element(12345678901234567890.123d,
+			list.Add (new Element (12345678901234567890.123d,
 						"#,#", "12,345,678,901,234,600,000"));
-			list.Add(new Element(12345678901234567890.123d,
+			list.Add (new Element (12345678901234567890.123d,
 						"#,,", "12345678901235"));
-			list.Add(new Element(12345678901234567890.123d,
+			list.Add (new Element (12345678901234567890.123d,
 						"#,,,", "12345678901"));
-			list.Add(new Element(12345678901234567890.123d,
+			list.Add (new Element (12345678901234567890.123d,
 						"#,##0,,", "12,345,678,901,235"));
-			list.Add(new Element(12345678901234567890.123d,
+			list.Add (new Element (12345678901234567890.123d,
 						"#0.##%", "1234567890123460000000%"));
-			list.Add(new Element(12345678901234567890.123d,
+			list.Add (new Element (12345678901234567890.123d,
 						"0.###E+0", "1.235E+19"));
-			list.Add(new Element(12345678901234567890.123d,
+			list.Add (new Element (12345678901234567890.123d,
 						"0.###E+000", "1.235E+019"));
-			list.Add(new Element(12345678901234567890.123d,
+			list.Add (new Element (12345678901234567890.123d,
 						"0.###E-000", "1.235E019"));
-			list.Add(new Element(12345678901234567890.123d,
+			list.Add (new Element (12345678901234567890.123d,
 						"[##-##-##]", "[1234567890123460-00-00]"));
-			list.Add(new Element(12345678901234567890.123d,
+			list.Add (new Element (12345678901234567890.123d,
 						"##;(##)", "12345678901234600000"));
-			list.Add(new Element(12345678901234567890.123d,
+			list.Add (new Element (12345678901234567890.123d,
 						"##;(##)", "12345678901234600000"));
 			foreach (Element e in list) {
-				Assertion.AssertEquals(
-						"ToString Failed: '" + e.value + "' Should be \"" + e.result + "\" with \"" + e.format + "\"",
-						e.result, e.value.ToString(e.format, nfi));
+				Assert.AreEqual (e.result, e.value.ToString (e.format, nfi),
+					"ToString Failed: '" + e.value + "' Should be \"" + e.result + "\" with \"" + e.format + "\"");
 			}
-			
 		}
 
 		[Test]
-		public void ToString_Defaults () 
+		public void ToString_Defaults ()
 		{
-			Double i = 254.9d;
-			// everything defaults to "G"
-			string def = i.ToString ("G");
-			AssertEquals ("ToString()", def, i.ToString ());
-			AssertEquals ("ToString((IFormatProvider)null)", def, i.ToString ((IFormatProvider)null));
-			AssertEquals ("ToString((string)null)", def, i.ToString ((string)null));
-			AssertEquals ("ToString(empty)", def, i.ToString (String.Empty));
-			AssertEquals ("ToString(null,null)", def, i.ToString (null, null));
-			AssertEquals ("ToString(empty,null)", def, i.ToString (String.Empty, null));
-
-			AssertEquals ("ToString(G)", "254.9", def);
+			CultureInfo originalCulture = CultureInfo.CurrentCulture;
+			Thread.CurrentThread.CurrentCulture = new CultureInfo ("nl-BE");
+			try {
+				Double i = 254.9d;
+				// everything defaults to "G"
+				string def = i.ToString ("G");
+				Assert.AreEqual (def, i.ToString (), "#1");
+				Assert.AreEqual (def, i.ToString ((IFormatProvider) null), "#2");
+				Assert.AreEqual (def, i.ToString ((string) null), "#3");
+				Assert.AreEqual (def, i.ToString (String.Empty), "#4");
+				Assert.AreEqual (def, i.ToString (null, null), "#5");
+				Assert.AreEqual (def, i.ToString (String.Empty, null), "#6");
+				Assert.AreEqual ("254,9", def, "#7");
+			} finally {
+				// restore original culture
+				Thread.CurrentThread.CurrentCulture = originalCulture;
+			}
 		}
 
-		[Test]
+		[Test] // bug #72955
 		public void LongLongValueRoundtrip ()
 		{
-			// from bug #72955
-			double d = 0.0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000222;
-			AssertEquals ("1.97626258336499E-323", d.ToString ("R"));
+			CultureInfo originalCulture = CultureInfo.CurrentCulture;
+			Thread.CurrentThread.CurrentCulture = new CultureInfo ("nl-BE");
+			try {
+				double d = 0.0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000222;
+				Assert.AreEqual ("1,97626258336499E-323", d.ToString ("R"));
+			} finally {
+				// restore original culture
+				Thread.CurrentThread.CurrentCulture = originalCulture;
+			}
 		}
 
 		[Test]
@@ -498,8 +533,8 @@ namespace MonoTests.System {
 		{
 			// from bug #72221
 			double d;
-			Assert ("parse", Double.TryParse ("0dead", NumberStyles.HexNumber, null, out d));
-			AssertEquals ("value", 57842, d, 0);
+			Assert.IsTrue (Double.TryParse ("0dead", NumberStyles.HexNumber, null, out d), "#1");
+			Assert.AreEqual (57842, d, "#2");
 		}
 
 		[Test]
@@ -513,24 +548,32 @@ namespace MonoTests.System {
 		public void HexNumber_NoHexToParse ()
 		{
 			double d;
-			Assert ("parse", Double.TryParse ("0", NumberStyles.HexNumber, null, out d));
-			AssertEquals ("value", 0, d, 0);
+			Assert.IsTrue (Double.TryParse ("0", NumberStyles.HexNumber, null, out d), "#1");
+			Assert.AreEqual (0, d, "#2");
 		}
 
 		[Test]
 		public void TryParseBug78546 ()
 		{
 			double value;
-			Assert (!Double.TryParse ("error",
-				NumberStyles.Integer, null, out value));
+			Assert.IsFalse (Double.TryParse ("error", NumberStyles.Integer,
+				null, out value));
 		}
 
 		[Test] // bug #77721
 		public void ParseCurrency ()
 		{
+			CultureInfo originalCulture = CultureInfo.CurrentCulture;
 			Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US");
-			NumberFormatInfo f = NumberFormatInfo.CurrentInfo;
-			double dMin = double.Parse ("$0.00", NumberStyles.Currency, f);
+			try {
+				NumberFormatInfo f = NumberFormatInfo.CurrentInfo;
+				double d = double.Parse ("$4.56", NumberStyles.Currency, f);
+				Assert.AreEqual (4.56, d);
+			} finally {
+				// restore original culture
+				Thread.CurrentThread.CurrentCulture = originalCulture;
+			}
+
 		}
 	}
 }

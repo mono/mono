@@ -1,3 +1,9 @@
+2007-05-20  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DoubleTest.cs: Use Assert instead of deprecated Assertion. Code
+	style fixes. Added test for bug #81630. Fixed culture-sensitive
+	tests.
+
 2007-05-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTimeTest.cs : test for 'o' and 'K'.
