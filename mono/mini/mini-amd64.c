@@ -1937,6 +1937,7 @@ peephole_pass_1 (MonoCompile *cfg, MonoBasicBlock *bb)
 			}
 			break;
 		case OP_COMPARE_IMM:
+		case OP_LCOMPARE_IMM:
 			/* OP_COMPARE_IMM (reg, 0) 
 			 * --> 
 			 * OP_AMD64_TEST_NULL (reg) 

@@ -1,3 +1,7 @@
+2007-05-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (peephole_pass_1): Handle OP_LCOMPARE_IMM as well.
+
 2007-05-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-codegen.c (mono_local_regalloc): Fix long-shift-regalloc on amd64.
