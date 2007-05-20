@@ -1,3 +1,7 @@
+2007-05-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_marshal_get_delegate_invoke): Improve the generated IL a little.
+
 2007-05-19  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* threads.c: In "start_wrapper", set apartment_state to MTA if
