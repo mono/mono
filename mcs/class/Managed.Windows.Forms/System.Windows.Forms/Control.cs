@@ -118,6 +118,7 @@ namespace System.Windows.Forms
 		internal AnchorStyles anchor_style; // anchoring requirements for our control
 		internal DockStyle dock_style; // docking requirements for our control
 		LayoutType layout_type;
+		private bool recalculate_distances = true;  // Delay anchor calculations
 
 		// Please leave the next 2 as internal until DefaultLayout (2.0) is rewritten
 		internal int			dist_right; // distance to the right border of the parent
@@ -1840,6 +1841,8 @@ namespace System.Windows.Forms
 					dist_right = parent.ClientSize.Width - bounds.X - bounds.Width;
 				if (bounds.Height >= 0)
 					dist_bottom = parent.ClientSize.Height - bounds.Y - bounds.Height;
+
+				recalculate_distances = false;
 			}
 		}
 		
@@ -3724,6 +3727,10 @@ namespace System.Windows.Forms
 				return;
 			}
 
+			foreach (Control c in Controls.GetAllControls ())
+				if (c.recalculate_distances)
+					c.UpdateDistances ();
+					
 			layout_pending = false;
 
 			// Prevent us from getting messed up
@@ -4140,7 +4147,6 @@ namespace System.Windows.Forms
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void InitLayout() {
-			UpdateDistances();
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -4487,10 +4493,8 @@ namespace System.Windows.Forms
 				// The control has already been sent a WM_WINDOWPOSCHANGED message and it has the correct
 				// data, but it'll be overwritten when we call UpdateBounds unless we get the updated
 				// size.
-				if (width < 0 || height < 0) {
-					int cw, ch, ix, iy;
-					XplatUI.GetWindowPos(Handle, this is Form, out ix, out iy, out width, out height, out cw, out ch);
-				}
+				int cw, ch, ix, iy;
+				XplatUI.GetWindowPos(Handle, this is Form, out ix, out iy, out width, out height, out cw, out ch);
 			}
 
 			// BoundsSpecified tells us which variables were programatic (user-set).
@@ -4538,8 +4542,6 @@ namespace System.Windows.Forms
 
 			if (explicit_bounds.Height == height)
 				explicit_bounds.Height = stored_explicit_bounds.Height;
-
-			UpdateDistances();
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]

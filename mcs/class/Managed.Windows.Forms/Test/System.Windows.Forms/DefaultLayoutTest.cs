@@ -411,6 +411,99 @@ namespace MonoTests.System.Windows.Forms
 
 			Assert.AreEqual (new Rectangle (0, 0, 0, 0), c.Bounds, "N1");
 		}
+
+		[Test] // bug 81694
+		public void TestNestedControls ()
+		{
+			MainForm f = new MainForm ();
+			f.ShowInTaskbar = false;
+			
+			f.Show ();
+			Assert.AreEqual (new Rectangle (210, 212, 75, 23), f._userControl._button2.Bounds, "K1");
+			
+			f.Dispose ();
+		}
+
+		[Test] // bug 81695
+		public void TestNestedControls2 ()
+		{
+			MainForm f = new MainForm ();
+			f.ShowInTaskbar = false;
+
+			f.Show ();
+			
+			Size s = f.Size;
+			f.Size = new Size (10, 10);
+			f.Size = s;
+			
+			Assert.AreEqual (new Rectangle (210, 212, 75, 23), f._userControl._button2.Bounds, "K1");
+
+			f.Dispose ();
+		}
+
+		private class MainForm : Form
+		{
+			public UserControl1 _userControl;
+			
+			public MainForm ()
+			{
+				SuspendLayout ();
+				// 
+				// _userControl
+				// 
+				_userControl = new UserControl1 ();
+				_userControl.Anchor = (AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom | AnchorStyles.Right);
+				_userControl.BackColor = Color.White;
+				_userControl.Location = new Point (8, 8);
+				_userControl.Size = new Size (288, 238);
+				_userControl.TabIndex = 0;
+				Controls.Add (_userControl);
+				// 
+				// MainForm
+				// 
+				ClientSize = new Size (304, 280);
+				Location = new Point (250, 100);
+				StartPosition = FormStartPosition.Manual;
+				Text = "bug #81694";
+				ResumeLayout (false);
+			}
+		}
+		
+		private class UserControl1 : UserControl
+		{
+			private Button _button1;
+			public Button _button2;
+
+			public UserControl1 ()
+			{
+				SuspendLayout ();
+				// 
+				// _button1
+				// 
+				_button1 = new Button ();
+				_button1.Location = new Point (4, 4);
+				_button1.Size = new Size (75, 23);
+				_button1.TabIndex = 0;
+				_button1.Text = "Button1";
+				Controls.Add (_button1);
+				// 
+				// _button2
+				// 
+				_button2 = new Button ();
+				_button2.Anchor = (AnchorStyles.Bottom | AnchorStyles.Right);
+				_button2.Location = new Point (210, 212);
+				_button2.Size = new Size (75, 23);
+				_button2.TabIndex = 1;
+				_button2.Text = "Button2";
+				Controls.Add (_button2);
+				// 
+				// UserControl1
+				// 
+				BackColor = Color.White;
+				ClientSize = new Size (288, 238);
+				ResumeLayout (false);
+			}
+		}
 	}
 
 	[TestFixture]	

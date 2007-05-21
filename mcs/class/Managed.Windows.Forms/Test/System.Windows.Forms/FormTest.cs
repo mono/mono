@@ -1644,6 +1644,19 @@ namespace MonoTests.System.Windows.Forms
 			f.Dispose ();
 		}
 
+		[Test]
+		public void FormCantGetTooSmall ()
+		{
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+			f.Show ();
+			
+			f.Size = new Size (10, 10);
+			Assert.AreEqual (new Size (124, 36), f.Size, "L1");
+			
+			f.Dispose ();
+		}
+		
 		private class MockForm : Form
 		{
 			public bool CloseOnLoad {
