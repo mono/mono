@@ -93,6 +93,9 @@ namespace System.Web.Profile
 			if (!ProfileManager.Enabled)
 				return;
 
+			if (!app.Context.ProfileInitialized)
+				return;
+
 			if (ProfileManager.AutomaticSaveEnabled) {
 				profile = app.Context.Profile;
 

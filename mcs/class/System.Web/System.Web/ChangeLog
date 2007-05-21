@@ -1,3 +1,7 @@
+2007-05-21  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* HttpContext.cs: added ProfileInitialized boolean property
+
 2007-05-16  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* VirtualPathUtility.cs: Normalize method check more carefully if need

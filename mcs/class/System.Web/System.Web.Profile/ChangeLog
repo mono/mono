@@ -1,3 +1,8 @@
+2007-05-21  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* ProfileModule.cs: OnLeave checks if Profile was accessed during a
+	request
+
 2007-04-17 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* ProfileManager.cs:

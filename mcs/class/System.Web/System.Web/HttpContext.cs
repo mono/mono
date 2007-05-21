@@ -332,6 +332,10 @@ namespace System.Web {
 			get { return GetPreviousHandler (); }
 		}
 
+		internal bool ProfileInitialized {
+			get { return profile != null; }
+		}
+
 		public ProfileBase Profile {
 			get {
 				if (profile == null) {
