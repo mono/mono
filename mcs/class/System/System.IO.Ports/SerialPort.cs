@@ -22,11 +22,13 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Text;
 using System.Runtime.InteropServices;
 
 namespace System.IO.Ports
 {
+	[MonitoringDescription ("")]
 	public class SerialPort : Component
 	{
 		public const int InfiniteTimeout = -1;
@@ -104,6 +106,8 @@ namespace System.IO.Ports
 			return default_port_name;
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		public Stream BaseStream {
 			get {
 				if (!is_open)
@@ -114,6 +118,8 @@ namespace System.IO.Ports
 		}
 
 		[DefaultValueAttribute (DefaultBaudRate)]
+		[Browsable (true)]
+		[MonitoringDescription ("")]
 		public int BaudRate {
 			get {
 				return baud_rate;
@@ -129,6 +135,8 @@ namespace System.IO.Ports
 			}
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		public bool BreakState {
 			get {
 				return break_state;
@@ -143,6 +151,8 @@ namespace System.IO.Ports
 			}
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		public int BytesToRead {
 			get {
 				CheckOpen ();
@@ -150,6 +160,8 @@ namespace System.IO.Ports
 			}
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		public int BytesToWrite {
 			get {
 				CheckOpen ();
@@ -157,6 +169,8 @@ namespace System.IO.Ports
 			}
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		public bool CDHolding {
 			get {
 				CheckOpen ();
@@ -164,6 +178,8 @@ namespace System.IO.Ports
 			}
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		public bool CtsHolding {
 			get {
 				CheckOpen ();
@@ -172,6 +188,8 @@ namespace System.IO.Ports
 		}
 
 		[DefaultValueAttribute(DefaultDataBits)]
+		[Browsable (true)]
+		[MonitoringDescription ("")]
 		public int DataBits {
 			get {
 				return data_bits;
@@ -188,6 +206,9 @@ namespace System.IO.Ports
 		}
 
 		[MonoTODO("Not implemented")]
+		[Browsable (true)]
+		[MonitoringDescription ("")]
+		[DefaultValue (false)]
 		public bool DiscardNull {
 			get {
 				CheckOpen ();
@@ -199,6 +220,8 @@ namespace System.IO.Ports
 			}
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		public bool DsrHolding {
 			get {
 				CheckOpen ();
@@ -207,6 +230,8 @@ namespace System.IO.Ports
 		}
 
 		[DefaultValueAttribute(false)]
+		[Browsable (true)]
+		[MonitoringDescription ("")]
 		public bool DtrEnable {
 			get {
 				return dtr_enable;
@@ -221,6 +246,9 @@ namespace System.IO.Ports
 			}
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
+		[MonitoringDescription ("")]
 		public Encoding Encoding {
 			get {
 				return encoding;
@@ -234,6 +262,8 @@ namespace System.IO.Ports
 		}
 
 		[DefaultValueAttribute(Handshake.None)]
+		[Browsable (true)]
+		[MonitoringDescription ("")]
 		public Handshake Handshake {
 			get {
 				return handshake;
@@ -249,6 +279,7 @@ namespace System.IO.Ports
 			}
 		}
 
+		[Browsable (false)]
 		public bool IsOpen {
 			get {
 				return is_open;
@@ -256,6 +287,8 @@ namespace System.IO.Ports
 		}
 
 		[DefaultValueAttribute("\n")]
+		[Browsable (false)]
+		[MonitoringDescription ("")]
 		public string NewLine {
 			get {
 				return new_line;
@@ -269,6 +302,8 @@ namespace System.IO.Ports
 		}
 
 		[DefaultValueAttribute(DefaultParity)]
+		[Browsable (true)]
+		[MonitoringDescription ("")]
 		public Parity Parity {
 			get {
 				return parity;
@@ -285,6 +320,8 @@ namespace System.IO.Ports
 		}
 
 		[MonoTODO("Not implemented")]
+		[Browsable (true)]
+		[MonitoringDescription ("")]
 		public byte ParityReplace {
 			get {
 				throw new NotImplementedException ();
@@ -295,6 +332,8 @@ namespace System.IO.Ports
 		}
 
 		
+		[Browsable (true)]
+		[MonitoringDescription ("")]
 		public string PortName {
 			get {
 				return port_name;
@@ -312,6 +351,8 @@ namespace System.IO.Ports
 		}
 
 		[DefaultValueAttribute(DefaultReadBufferSize)]
+		[Browsable (true)]
+		[MonitoringDescription ("")]
 		public int ReadBufferSize {
 			get {
 				return readBufferSize;
@@ -329,6 +370,8 @@ namespace System.IO.Ports
 		}
 
 		[DefaultValueAttribute(InfiniteTimeout)]
+		[Browsable (true)]
+		[MonitoringDescription ("")]
 		public int ReadTimeout {
 			get {
 				return read_timeout;
@@ -346,6 +389,8 @@ namespace System.IO.Ports
 
 		[MonoTODO("Not implemented")]
 		[DefaultValueAttribute(1)]
+		[Browsable (true)]
+		[MonitoringDescription ("")]
 		public int ReceivedBytesThreshold {
 			get {
 				throw new NotImplementedException ();
@@ -359,6 +404,8 @@ namespace System.IO.Ports
 		}
 
 		[DefaultValueAttribute(false)]
+		[Browsable (true)]
+		[MonitoringDescription ("")]
 		public bool RtsEnable {
 			get {
 				return rts_enable;
@@ -374,6 +421,8 @@ namespace System.IO.Ports
 		}
 
 		[DefaultValueAttribute(DefaultStopBits)]
+		[Browsable (true)]
+		[MonitoringDescription ("")]
 		public StopBits StopBits {
 			get {
 				return stop_bits;
@@ -390,6 +439,8 @@ namespace System.IO.Ports
 		}
 
 		[DefaultValueAttribute(DefaultWriteBufferSize)]
+		[Browsable (true)]
+		[MonitoringDescription ("")]
 		public int WriteBufferSize {
 			get {
 				return writeBufferSize;
@@ -407,6 +458,8 @@ namespace System.IO.Ports
 		}
 
 		[DefaultValueAttribute(InfiniteTimeout)]
+		[Browsable (true)]
+		[MonitoringDescription ("")]
 		public int WriteTimeout {
 			get {
 				return write_timeout;
@@ -705,16 +758,19 @@ namespace System.IO.Ports
 		}
 
 		// events
+		[MonitoringDescription ("")]
 		public event SerialErrorReceivedEventHandler ErrorReceived {
 			add { Events.AddHandler (error_received, value); }
 			remove { Events.RemoveHandler (error_received, value); }
 		}
 		
+		[MonitoringDescription ("")]
 		public event SerialPinChangedEventHandler PinChanged {
 			add { Events.AddHandler (pin_changed, value); }
 			remove { Events.RemoveHandler (pin_changed, value); }
 		}
 		
+		[MonitoringDescription ("")]
 		public event SerialDataReceivedEventHandler DataReceived {
 			add { Events.AddHandler (data_received, value); }
 			remove { Events.RemoveHandler (data_received, value); }
