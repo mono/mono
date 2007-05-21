@@ -476,7 +476,10 @@ namespace System.Windows.Forms {
 				   another one?  print it out and exit, this means
 				   we've got a runtime/SWF bug. */
 				Console.WriteLine (t);
-				Application.Exit();
+				// Don't use Application.Exit here, since it may cause a stack overflow
+				// in certain cases. It's however hard to reproduce since it seems to 
+				// be depending on when the GC kicks in.
+				Environment.Exit(1);
 			}
 
 			MWFThread.Current.HandlingException = true;
