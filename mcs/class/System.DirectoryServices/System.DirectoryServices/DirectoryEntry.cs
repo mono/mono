@@ -39,6 +39,7 @@ using System.Globalization;
 using System.DirectoryServices.Design;
 using System.Collections.Specialized;
 using System.Configuration;
+using System.Runtime.InteropServices;
 
 namespace System.DirectoryServices
 {
@@ -944,6 +945,41 @@ namespace System.DirectoryServices
 		{
 			throw new NotImplementedException();
 		}
+
+#if NET_2_0
+		/// <summary>
+		/// Gets a property value from the native Active Directory Entry.
+		/// </summary>
+		/// <param name="propertyName">The name of the property to get. 
+		/// </param>
+		/// <returns>The value of the property</returns>
+		/// <remarks>
+		/// Not implemented yet.
+		[ComVisibleAttribute (false)]
+		[MonoNotSupported ("")]
+		public object InvokeGet (string propertyName)
+		{
+			throw new NotImplementedException ();
+		}
+
+		/// <summary>
+		/// Sets a property value on the native Active Directory Entry.
+		/// </summary>
+		/// <param name="propertyName">The name of the property to get. 
+		/// </param>
+		/// <param name="args">
+		/// An array of type Object that contains the arguments of the property 
+		/// beeing set. 
+		/// </param>
+		/// <remarks>
+		/// Not implemented yet.
+		[ComVisibleAttribute (false)]
+		[MonoNotSupported ("")]
+		public void InvokeSet (string propertyName, params object [] args)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 
 		/// <summary>
 		/// Creates a copy of this entry, as a child of the specified parent, with 
