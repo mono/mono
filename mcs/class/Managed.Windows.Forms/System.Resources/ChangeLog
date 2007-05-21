@@ -1,3 +1,10 @@
+2007-05-21  Andreia Gaita <avidigal@novell.com>
+
+	* ResXDataNode.cs: Added
+	* ResXResourceWriter.cs: Add 2.0 support for ResXDataNode resource.
+	* ResXResourceReader.cs: Added support for comment nodes (coming from
+	ResXDataNode), fix bug on GetDataValue, refactor code to guidelines.
+
 2007-04-18  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ResXFileRef.cs: byte [] is only supported on 2.0 profile.

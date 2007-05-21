@@ -137,20 +137,24 @@ namespace System.Resources
 			sb.Insert(sb.Length, Environment.NewLine);
 			writer.WriteString(sb.ToString());
 		}
+		void WriteBytes (string name, Type type, byte[] value, int offset, int length)
+		{
+			WriteBytes (name, type, value, offset, length, String.Empty);
+		}
 
-		void WriteBytes (string name, Type type, byte [] value, int offset, int length)
+		void WriteBytes (string name, Type type, byte[] value, int offset, int length, string comment)
 		{
 			writer.WriteStartElement ("data");
 			writer.WriteAttributeString ("name", name);
 
 			if (type != null) {
 				writer.WriteAttributeString ("type", type.AssemblyQualifiedName);
-                                // byte[] should never get a mimetype, otherwise MS.NET won't be able
-                                // to parse the data.
-                                if (type != typeof (byte[]))
-                                    writer.WriteAttributeString ("mimetype", ByteArraySerializedObjectMimeType);
+				// byte[] should never get a mimetype, otherwise MS.NET won't be able
+				// to parse the data.
+				if (type != typeof (byte[]))
+					writer.WriteAttributeString ("mimetype", ByteArraySerializedObjectMimeType);
 				writer.WriteStartElement ("value");
-				WriteNiceBase64(value, offset, length);
+				WriteNiceBase64 (value, offset, length);
 			} else {
 				writer.WriteAttributeString ("mimetype", BinSerializedObjectMimeType);
 				writer.WriteStartElement ("value");
@@ -158,6 +162,13 @@ namespace System.Resources
 			}
 
 			writer.WriteEndElement ();
+
+			if (!(comment == null || comment.Equals (String.Empty))) {
+				writer.WriteStartElement ("comment");
+				writer.WriteString (comment);
+				writer.WriteEndElement ();
+			}
+			
 			writer.WriteEndElement ();
 		}
 
@@ -168,18 +179,26 @@ namespace System.Resources
 
 		void WriteString (string name, string value)
 		{
-                        WriteString (name, value, null);
+			WriteString (name, value, null);
 		}
-
 		void WriteString (string name, string value, Type type)
+		{
+			WriteString (name, value, type, String.Empty);
+		}
+		void WriteString (string name, string value, Type type, string comment)
 		{
 			writer.WriteStartElement ("data");
 			writer.WriteAttributeString ("name", name);
-                        if (type != null)
-                                writer.WriteAttributeString ("type", type.AssemblyQualifiedName);
+			if (type != null)
+				writer.WriteAttributeString ("type", type.AssemblyQualifiedName);
 			writer.WriteStartElement ("value");
 			writer.WriteString (value);
 			writer.WriteEndElement ();
+			if (!(comment == null || comment.Equals (String.Empty))) {
+				writer.WriteStartElement ("comment");
+				writer.WriteString (comment);
+				writer.WriteEndElement ();
+			}
 			writer.WriteEndElement ();
 			writer.WriteWhitespace ("\n  ");
 		}
@@ -203,6 +222,11 @@ namespace System.Resources
 
 		public void AddResource (string name, object value)
 		{
+			AddResource (name, value, String.Empty);
+		}
+
+		private void AddResource (string name, object value, string comment)
+		{
 			if (value is string) {
 				AddResource (name, (string) value);
 				return;
@@ -219,8 +243,8 @@ namespace System.Resources
 			if (value == null)
 				throw new ArgumentNullException ("value");
 
-                        if (!value.GetType ().IsSerializable)
-                                throw new InvalidOperationException (String.Format ("The element '{0}' of type '{1}' is not serializable.", name, value.GetType ().Name));
+			if (!value.GetType ().IsSerializable)
+					throw new InvalidOperationException (String.Format ("The element '{0}' of type '{1}' is not serializable.", name, value.GetType ().Name));
 
 			if (written)
 				throw new InvalidOperationException ("The resource is already generated.");
@@ -251,7 +275,7 @@ namespace System.Resources
 								     e.Message);
 			}
 
-			WriteBytes (name, null, ms.GetBuffer (), 0, (int) ms.Length);
+			WriteBytes (name, null, ms.GetBuffer (), 0, (int) ms.Length, comment);
 			ms.Close ();
 		}
 		
@@ -271,6 +295,13 @@ namespace System.Resources
 
 			WriteString (name, value);
 		}
+
+#if NET_2_0
+		public void AddResource (ResXDataNode node)
+		{
+			AddResource (node.Name, node.Value, node.Comment);
+		}
+#endif
 
 		public void Close ()
 		{

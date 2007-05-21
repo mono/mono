@@ -2,6 +2,7 @@
 ../../build/common/MonoTODOAttribute.cs
 Assembly/AssemblyInfo.cs
 Assembly/Locale.cs
+System.Resources/ResXDataNode.cs
 System.Resources/ResXFileRef.cs
 System.Resources/ResXNullRef.cs
 System.Resources/ResXResourceReader.cs

@@ -151,6 +151,7 @@ System.Windows.Forms/VScrollPropertiesTest.cs
 System.Windows.Forms.Layout/TableLayoutSettingsTypeConverterTest.cs
 System.Resources/CompatTest.cs
 System.Resources/CultureTest.cs
+System.Resources/ResXDataNodeTest.cs
 System.Resources/ResXFileRefTest.cs
 System.Resources/ResXResourceReaderTest.cs
 System.Resources/WriterTest.cs

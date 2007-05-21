@@ -1,3 +1,8 @@
+2007-05-21  Andreia Gaita  <avidigal@novell.com>
+
+	* System.Windows.Forms.dll.sources: Add ResXDataNode.cs
+	* System.Windows.Forms_test.dll.sources: Add ResXDataNodeTest.cs
+
 2007-05-19  Andreia Gaita  <avidigal@novell.com>
 
 	* System.Windows.Forms.dll.sources: Add NumericUpDownAcceleration.cs,

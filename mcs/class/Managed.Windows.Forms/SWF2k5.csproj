@@ -145,6 +145,7 @@
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
     <Compile Include="Assembly\Locale.cs" />
+    <Compile Include="System.Resources\ResXDataNode.cs" />
     <Compile Include="System.Resources\ResXFileRef.cs" />
     <Compile Include="System.Resources\ResXNullRef.cs" />
     <Compile Include="System.Resources\ResXResourceReader.cs" />
