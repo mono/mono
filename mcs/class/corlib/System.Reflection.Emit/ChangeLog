@@ -1,3 +1,11 @@
+2007-05-21  Jb Evain  <jb@nurv.fr>
+
+	* TypeBuilder.cs
+	  MethodBuilder.cs:
+		Tag methods and types as HasSecurity when adding a
+		SuppressUnmanagedCodeSecurityAttribute on them.
+		Makes peverify happy.
+
 2007-05-16  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TypeBuilder.cs (GetField): Return MonoField instance if the type is

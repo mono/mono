@@ -1283,6 +1283,8 @@ namespace System.Reflection.Emit {
 			} else if (attrname == "System.Runtime.InteropServices.ComImportAttribute") {
 				attrs |= TypeAttributes.Import;
 				return;
+			} else if (attrname == "System.Security.SuppressUnmanagedCodeSecurityAttribute") {
+				attrs |= TypeAttributes.HasSecurity;
 			}
 
 			if (cattrs != null) {

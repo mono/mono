@@ -385,6 +385,9 @@ namespace System.Reflection.Emit {
 					attrs |= MethodAttributes.SpecialName;
 					return;
 #endif
+				case "System.Security.SuppressUnmanagedCodeSecurityAttribute":
+					attrs |= MethodAttributes.HasSecurity:
+					break;
 			}
 
 			if (cattrs != null) {
