@@ -1,3 +1,12 @@
+2007-05-18  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* CustomDataClassGenerator.cs: Misc fixes in order to emit correct VB code.
+	CreateDataSetDefaultCtor: we're creating a delegate, not an object, so use a DelegateCreateExpression.
+	CreateDataSetSchemaChanged: we're comparing value types, use the correct equality operator.
+	CreateTableGetEnumerator: explicity state that the method is an implementation of IEnumerable.GetEnumerator.
+	CreateTableEventStarter: we're invoking a delegate, so use a DelegateInvokeExpression.
+	Several changes to not generate members with names that only differ by case.
+
 2007-05-18  Chris Toshok  <toshok@ximian.com>
 
 	* DataColumnCollection.cs (Add ()): handle the default name case

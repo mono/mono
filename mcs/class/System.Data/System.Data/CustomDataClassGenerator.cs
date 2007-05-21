@@ -430,6 +430,11 @@ namespace System.Data
 			return new CodeMethodInvokeExpression (target, name, parameters);
 		}
 
+		private CodeBinaryOperatorExpression EqualsValue (CodeExpression exp1, CodeExpression exp2)
+		{
+			return new CodeBinaryOperatorExpression (exp1, CodeBinaryOperatorType.ValueEquality, exp2);
+		}
+
 		// note that this is "Identity" equality comparison
 		private CodeBinaryOperatorExpression Equals (CodeExpression exp1, CodeExpression exp2)
 		{
@@ -552,7 +557,13 @@ namespace System.Data
 				VarDecl (
 					typeof (CollectionChangeEventHandler), 
 					"handler", 
-					New (typeof (CollectionChangeEventHandler), FieldRef ("SchemaChanged")));
+					New (
+						typeof (CollectionChangeEventHandler), 
+						new CodeDelegateCreateExpression (
+							new CodeTypeReference (typeof (CollectionChangeEventHandler)),
+							new CodeThisReferenceExpression (), 
+							"SchemaChanged")));
+
 			ctor.Statements.Add (stmt2);
 
 			// Code: Tables.CollectionChanged += handler;
@@ -860,7 +871,7 @@ namespace System.Data
 
 			m.Statements.Add (
 				new CodeConditionStatement (
-					Equals (
+					EqualsValue (
 						PropRef (ParamRef ("e"), "Action"),
 						FieldRef (TypeRefExp (typeof (CollectionChangeAction)), "Remove")),
 					new CodeStatement [] { Eval (MethodInvoke ("InitializeFields")) },
@@ -989,8 +1000,8 @@ namespace System.Data
 		{
 			CodeConstructor c = new CodeConstructor ();
 			c.Attributes = MemberAttributes.Assembly;
-			c.Parameters.Add (Param (typeof (DataTable), "table"));
-			c.BaseConstructorArgs.Add (PropRef (ParamRef ("table"), "TableName"));
+			c.Parameters.Add (Param (typeof (DataTable), GetRowTableFieldName (dt)));
+			c.BaseConstructorArgs.Add (PropRef (ParamRef (GetRowTableFieldName (dt)), "TableName"));
 			// TODO: implement
 			c.Statements.Add (Comment ("TODO: implement"));
 			c.Statements.Add (Throw (New (typeof (NotImplementedException))));
@@ -1061,6 +1072,7 @@ namespace System.Data
 			m.Attributes = MemberAttributes.Public;
 			m.ReturnType = TypeRef (typeof (IEnumerator));
 			m.Statements.Add (Return (MethodInvoke (PropRef ("Rows"), "GetEnumerator")));
+			m.ImplementationTypes.Add (TypeRef (typeof (IEnumerable)));
 			return m;
 		}
 
@@ -1225,9 +1237,9 @@ namespace System.Data
 					ParamRef ("e"))));
 			string eventName = opts.TableMemberName (dt.TableName, gen) + "Row" + type;
 			CodeStatement trueStmt = Eval (
-				MethodInvoke (
-					eventName,
-					This (),
+				new CodeDelegateInvokeExpression(
+					new CodeEventReferenceExpression (This (), eventName),
+					This (), 
 					New (
 						opts.EventArgsName (dt.TableName, gen),
 						Cast (opts.RowName (dt.TableName, gen), PropRef (ParamRef ("e"), "Row")),
@@ -1289,16 +1301,20 @@ namespace System.Data
 			c.Attributes = MemberAttributes.Assembly;
 			c.Parameters.Add (Param (typeof (DataRowBuilder), "builder"));
 			c.BaseConstructorArgs.Add (ParamRef ("builder"));
-			c.Statements.Add (Let (FieldRef ("table"), Cast (
+			c.Statements.Add (Let (FieldRef (GetRowTableFieldName (dt)), Cast (
 				opts.TableTypeName (dt.TableName, gen),
 				PropRef ("Table"))));
 			return c;
 		}
-
+		
+		private string GetRowTableFieldName (DataTable dt)
+		{
+			return "table" + dt.TableName;
+		}
 		private CodeMemberField CreateRowTableField (DataTable dt)
 		{
 			CodeMemberField f = new CodeMemberField ();
-			f.Name = "table";
+			f.Name = GetRowTableFieldName (dt);
 			f.Type = TypeRef (opts.TableTypeName (dt.TableName, gen));
 			return f;
 		}
@@ -1319,7 +1335,7 @@ namespace System.Data
 			//    return (type) ret;
 			p.GetStatements.Add (VarDecl (typeof (object), "ret",
 				IndexerRef (PropRef 
-					(PropRef ("table"), 
+					(PropRef (GetRowTableFieldName (dt)), 
 					opts.TableColName (col.ColumnName, gen) + "Column"))));
 			p.GetStatements.Add (new CodeConditionStatement (
 				Equals (
@@ -1330,7 +1346,7 @@ namespace System.Data
 				new CodeStatement [] {
 					Return (Cast (col.DataType, Local ("ret"))) }));
 
-			p.SetStatements.Add (Let (IndexerRef (PropRef (PropRef ("table"), opts.TableColName (col.ColumnName, gen) + "Column")), new CodePropertySetValueReferenceExpression ()));
+			p.SetStatements.Add (Let (IndexerRef (PropRef (PropRef (GetRowTableFieldName (dt)), opts.TableColName (col.ColumnName, gen) + "Column")), new CodePropertySetValueReferenceExpression ()));
 
 			return p;
 		}
@@ -1345,7 +1361,7 @@ namespace System.Data
 				"IsNull",
 				// table[foo].[bar]Column
 				PropRef (
-					PropRef ("table"), 
+					PropRef (GetRowTableFieldName (dt)), 
 					opts.TableColName (col.ColumnName, gen) + "Column"))));
 			return m;
 		}
@@ -1357,7 +1373,7 @@ namespace System.Data
 			m.Attributes = MemberAttributes.Public;
 			m.Statements.Add (Let (IndexerRef (
 				PropRef (
-					PropRef ("table"), 
+					PropRef (GetRowTableFieldName (dt)), 
 					opts.TableColName (col.ColumnName, gen) + "Column")),
 				PropRef (TypeRefExp (typeof (DBNull)), "Value")));
 
@@ -1420,8 +1436,8 @@ namespace System.Data
 		// Code:
 		//  public class [foo]ChangeEventArgs : EventArgs
 		//  {
-		//    private [foo]Row row;
-		//    private DataRowAction action;
+		//    private [foo]Row eventRow;
+		//    private DataRowAction eventAction;
 		//    (.ctor())
 		//    (Row)
 		//    (Action)
@@ -1436,10 +1452,10 @@ namespace System.Data
 			t.Members.Add (
 				new CodeMemberField (
 					TypeRef (opts.RowName (dt.TableName, gen)),
-					"row"));
+					"eventRow"));
 			t.Members.Add (
 				new CodeMemberField (
-					TypeRef (typeof (DataRowAction)), "action"));
+					TypeRef (typeof (DataRowAction)), "eventAction"));
 			t.Members.Add (CreateEventCtor (dt));
 
 			t.Members.Add (CreateEventRow (dt));
@@ -1452,8 +1468,8 @@ namespace System.Data
 		// Code:
 		//  public [foo]RowChangeEventArgs ([foo]Row r, DataRowAction a)
 		//  {
-		//    row = r;
-		//    action = a;
+		//    eventRow = r;
+		//    eventAction = a;
 		//  }
 		private CodeConstructor CreateEventCtor (DataTable dt)
 		{
@@ -1461,15 +1477,15 @@ namespace System.Data
 			c.Attributes = MemberAttributes.Public;
 			c.Parameters.Add (Param (TypeRef (opts.RowName (dt.TableName, gen)), "r"));
 			c.Parameters.Add (Param (TypeRef (typeof (DataRowAction)), "a"));
-			c.Statements.Add (Let (FieldRef ("row"), ParamRef ("r")));
-			c.Statements.Add (Let (FieldRef ("action"), ParamRef ("a")));
+			c.Statements.Add (Let (FieldRef ("eventRow"), ParamRef ("r")));
+			c.Statements.Add (Let (FieldRef ("eventAction"), ParamRef ("a")));
 
 			return c;
 		}
 
 		// Code:
 		//  public [foo]Row Row {
-		//   get { return row; }
+		//   get { return eventRow; }
 		// }
 		private CodeMemberProperty CreateEventRow (DataTable dt)
 		{
@@ -1478,13 +1494,13 @@ namespace System.Data
 			p.Attributes = MemberAttributes.Public | MemberAttributes.Final;
 			p.Type = TypeRef (opts.RowName (dt.TableName, gen));
 			p.HasSet = false;
-			p.GetStatements.Add (Return (FieldRef ("row")));
+			p.GetStatements.Add (Return (FieldRef ("eventRow")));
 			return p;
 		}
 
 		// Code:
 		//  public DataRowAction Action {
-		//   get { return action; }
+		//   get { return eventAction; }
 		// }
 		private CodeMemberProperty CreateEventAction (DataTable dt)
 		{
@@ -1493,7 +1509,7 @@ namespace System.Data
 			p.Attributes = MemberAttributes.Public | MemberAttributes.Final;
 			p.Type = TypeRef (typeof (DataRowAction));
 			p.HasSet = false;
-			p.GetStatements.Add (Return (FieldRef ("action")));
+			p.GetStatements.Add (Return (FieldRef ("eventAction")));
 			return p;
 		}
 
