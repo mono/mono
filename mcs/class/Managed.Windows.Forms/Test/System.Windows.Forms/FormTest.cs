@@ -1645,8 +1645,11 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		[NUnit.Framework.Category ("NotWorking")]
 		public void FormCantGetTooSmall ()
 		{
+			// This only applies on windows, x11 will let the window
+			// get as small as requested.
 			Form f = new Form ();
 			f.ShowInTaskbar = false;
 			f.Show ();

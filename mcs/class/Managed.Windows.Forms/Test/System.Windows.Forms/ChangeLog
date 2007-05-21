@@ -1,5 +1,9 @@
 2007-05-21  Jonathan Pobst  <monkey@jpobst.com>
 
+	* FormTest.cs: Mark FormCantGetTooSmall as NotWorking.  It only applies to Windows.
+
+2007-05-21  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DefaultLayoutTest.cs: Tests for bugs 81694, 81695.
 	* FormTest.cs: Test setting the form size smaller than the WM will
 	allow it.
