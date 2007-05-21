@@ -1,3 +1,10 @@
+2007-05-21  Adar Wesley <adarw@mainsoft.com>
+
+	* Font.jvm.cs: added implementation for Equals and GetHashCode.
+
+	* Graphics.jvm.cs: added missing DrawImage overloads, 
+	DrawImageUnscaledAndClipped.
+
 2007-05-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Icon.cs: Always open icon files as read only. Fix #81669.

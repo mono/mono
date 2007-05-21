@@ -170,7 +170,22 @@ namespace System.Drawing {
 		}
 
 		#endregion
-		
+
+		public override bool Equals (object obj)
+		{
+			Font other = obj as Font;
+			if (other == null) {
+				return false;
+			}
+
+			return NativeObject.Equals (other.NativeObject);
+		}
+
+		public override int GetHashCode ()
+		{
+			return NativeObject.GetHashCode ();
+		}
+
 #if INTPTR_SUPPORT
 		[MonoTODO]
 		public IntPtr ToHfont ()
