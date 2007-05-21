@@ -191,13 +191,47 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[ExpectedException (typeof (NotSupportedException))]
-		public void TestHasElementType ()
+		public void TestHasElementType_Incomplete ()
 		{
 			// According to the MSDN docs, this member works, but in reality, it
 			// returns a NotSupportedException
 			TypeBuilder tb = module.DefineType (genTypeName ());
-			bool b = tb.HasElementType;
+#if NET_2_0
+			Assert.IsFalse (tb.HasElementType);
+#else
+			try {
+				bool b = tb.HasElementType;
+				Assert.Fail ("#1: " + b);
+			} catch (NotSupportedException ex) {
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+#endif
+		}
+
+		[Test]
+#if ONLY_1_1
+		[Category ("NotWorking")]
+#endif
+		public void TestHasElementType_Complete ()
+		{
+			// According to the MSDN docs, this member works, but in reality, it
+			// returns a NotSupportedException
+			TypeBuilder tb = module.DefineType (genTypeName ());
+			tb.CreateType ();
+#if NET_2_0
+			Assert.IsFalse (tb.HasElementType);
+#else
+			try {
+				bool b = tb.HasElementType;
+				Assert.Fail ("#1: " + b);
+			} catch (NotSupportedException ex) {
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+#endif
 		}
 
 		[Test]
@@ -1396,7 +1430,6 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test] // bug #81640
-		[Category ("NotWorking")]
 		public void TestGetFieldComplete_Type ()
 		{
 			TypeBuilder tb = module.DefineType (genTypeName ());
@@ -1786,6 +1819,24 @@ namespace MonoTests.System.Reflection.Emit
 			typeBuilder.DefineField ("myField", enumBuilder, FieldAttributes.Private);
 			typeBuilder.CreateType ();
 			enumBuilder.CreateType ();
+		}
+
+		[Test]
+		public void SetCustomAttribute_SuppressUnmanagedCodeSecurity ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName ());
+			ConstructorInfo attrCtor = typeof (SuppressUnmanagedCodeSecurityAttribute).
+				GetConstructor (new Type [0]);
+			CustomAttributeBuilder caBuilder = new CustomAttributeBuilder (
+				attrCtor, new object [0]);
+			Assert.IsTrue ((tb.Attributes & TypeAttributes.HasSecurity) == 0, "#1");
+			tb.SetCustomAttribute (caBuilder);
+			//Assert.IsTrue ((tb.Attributes & TypeAttributes.HasSecurity) == 0, "#2");
+			Type emittedType = tb.CreateType ();
+			Assert.AreEqual (TypeAttributes.HasSecurity, emittedType.Attributes & TypeAttributes.HasSecurity, "#3");
+			//Assert.IsTrue ((tb.Attributes & TypeAttributes.HasSecurity) == 0, "#4");
+			object [] emittedAttrs = emittedType.GetCustomAttributes (typeof (SuppressUnmanagedCodeSecurityAttribute), true);
+			Assert.AreEqual (1, emittedAttrs.Length, "#5");
 		}
 
 		private void DefineStringProperty (TypeBuilder tb, string propertyName, string fieldName, MethodAttributes methodAttribs)

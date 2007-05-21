@@ -1,3 +1,13 @@
+2007-05-21  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* MethodBuilderTest.cs: Split up GetCustomAttributes test and marked
+	the one for a baked type as NotWorking. Added test for 
+	SetCustomAttribute with SuppressUnmanagedCodeSecurity attribute.
+	* TypeBuilderTest.cs: Split up HasElementType test and marked the
+	baked variant as NotWorking on the 1.0 profile. Enabled additional
+	test for bug #81640. Added test for SetCustomAttribute with
+	SuppressUnmanagedCodeSecurity attribute.
+
 2007-05-16  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TypeBuilderTest.cs: Added GetFields test for bug #81368. Enabled

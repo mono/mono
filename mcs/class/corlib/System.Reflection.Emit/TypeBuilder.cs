@@ -1144,8 +1144,15 @@ namespace System.Reflection.Emit {
 			throw not_supported ();
 		}
 
-		protected override bool HasElementTypeImpl () {
+		protected override bool HasElementTypeImpl ()
+		{
+#if NET_2_0
+			// a TypeBuilder can never represent an array, pointer
+			if (!is_created)
+				return false;
+#else
 			check_created ();
+#endif
 			return created.HasElementType;
 		}
 

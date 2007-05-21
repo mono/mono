@@ -450,11 +450,34 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		public void TestGetCustomAttributes ()
+		public void TestGetCustomAttributes_Incomplete ()
 		{
 			MethodBuilder mb = genClass.DefineMethod (
 				genMethodName (), 0, typeof (void),
 				new Type [1] { typeof (int) });
+
+			try {
+				mb.GetCustomAttributes (true);
+				Assert.Fail ("#1");
+			} catch (NotSupportedException) {
+			}
+
+			try {
+				mb.GetCustomAttributes (null, true);
+				Assert.Fail ("#2");
+			} catch (NotSupportedException) {
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void TestGetCustomAttributes_Complete ()
+		{
+			MethodBuilder mb = genClass.DefineMethod (
+				genMethodName (), 0, typeof (void),
+				new Type [1] { typeof (int) });
+			mb.GetILGenerator ().Emit (OpCodes.Ret);
+			genClass.CreateType ();
 
 			try {
 				mb.GetCustomAttributes (true);
@@ -560,6 +583,30 @@ namespace MonoTests.System.Reflection.Emit
 				Assert.IsNotNull (ex.Message, "#4");
 				Assert.IsNull (ex.ParamName, "#5");
 			}
+		}
+
+		[Test]
+		public void SetCustomAttribute_SuppressUnmanagedCodeSecurity ()
+		{
+			string mname = genMethodName ();
+
+			TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
+			MethodBuilder mb = tb.DefineMethod (mname, MethodAttributes.Public,
+				typeof (void), new Type [] { typeof (int), typeof (string) });
+			ConstructorInfo attrCtor = typeof (SuppressUnmanagedCodeSecurityAttribute).
+				GetConstructor (new Type [0]);
+			CustomAttributeBuilder caBuilder = new CustomAttributeBuilder (
+				attrCtor, new object [0]);
+			Assert.IsTrue ((mb.Attributes & MethodAttributes.HasSecurity) == 0, "#1");
+			mb.SetCustomAttribute (caBuilder);
+			//Assert.IsTrue ((mb.Attributes & MethodAttributes.HasSecurity) == 0, "#2");
+			mb.GetILGenerator ().Emit (OpCodes.Ret);
+			Type emittedType = tb.CreateType ();
+			MethodInfo emittedMethod = emittedType.GetMethod (mname);
+			Assert.AreEqual (MethodAttributes.HasSecurity, emittedMethod.Attributes & MethodAttributes.HasSecurity, "#3");
+			//Assert.IsTrue ((mb.Attributes & MethodAttributes.HasSecurity) == 0, "#4");
+			object [] emittedAttrs = emittedMethod.GetCustomAttributes (typeof (SuppressUnmanagedCodeSecurityAttribute), true);
+			Assert.AreEqual (1, emittedAttrs.Length, "#5");
 		}
 
 		[AttributeUsage (AttributeTargets.Parameter)]
