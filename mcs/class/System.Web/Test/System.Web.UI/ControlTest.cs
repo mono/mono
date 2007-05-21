@@ -699,6 +699,109 @@ namespace MonoTests.System.Web.UI
 		}
 
 		[Test]
+		[Category ("NunitWeb")]
+		[Category ("NotWorking")]
+		public void ResolveUrl ()
+		{
+			WebTest t = new WebTest (PageInvoker.CreateOnLoad (ResolveUrl_Load));
+			string html = t.Run ();
+		}
+
+		public static void ResolveUrl_Load (Page p)
+		{
+#if TARGET_JVM
+			string appPath = "/MainsoftWebApp20";
+#else
+			string appPath = "/NunitWeb";
+#endif
+			Control ctrl = new Control ();
+			p.Controls.Add (ctrl);
+			Assert.AreEqual (appPath + "/MyPage.aspx", ctrl.ResolveUrl ("~/MyPage.aspx"), "ResolveClientUrl Failed");
+
+			Assert.AreEqual ("", ctrl.ResolveUrl (""), "empty string");
+
+			Assert.AreEqual (appPath + "/", ctrl.ResolveUrl ("~"), "~");
+			Assert.AreEqual (appPath + "/", ctrl.ResolveUrl ("~/"), "~/");
+
+			Assert.AreEqual ("/MyPage.aspx", ctrl.ResolveUrl ("~/../MyPage.aspx"), "~/../MyPage.aspx");
+			Assert.AreEqual ("/MyPage.aspx", ctrl.ResolveUrl ("~\\..\\MyPage.aspx"), "~\\..\\MyPage.aspx");
+			Assert.AreEqual (appPath + "/MyPage.aspx", ctrl.ResolveUrl ("~////MyPage.aspx"), "ResolveClientUrl Failed");
+			Assert.AreEqual ("/MyPage.aspx", ctrl.ResolveUrl ("/MyPage.aspx"), "ResolveClientUrl Failed");
+			Assert.AreEqual ("/folder/MyPage.aspx", ctrl.ResolveUrl ("/folder/MyPage.aspx"), "ResolveClientUrl Failed");
+			Assert.AreEqual ("/NunitWeb/MyPage.aspx", ctrl.ResolveUrl ("/NunitWeb/MyPage.aspx"), "ResolveClientUrl Failed");
+			Assert.AreEqual ("\\NunitWeb/MyPage.aspx", ctrl.ResolveUrl ("\\NunitWeb/MyPage.aspx"), "ResolveClientUrl Failed");
+			Assert.AreEqual ("///NunitWeb\\..\\MyPage.aspx", ctrl.ResolveUrl ("///NunitWeb\\..\\MyPage.aspx"), "ResolveClientUrl Failed");
+			Assert.AreEqual (appPath + "/NunitWeb/MyPage.aspx", ctrl.ResolveUrl ("NunitWeb/MyPage.aspx"), "ResolveClientUrl Failed");
+			Assert.AreEqual (appPath + "/MyPage.aspx", ctrl.ResolveUrl ("NunitWeb/../MyPage.aspx"), "ResolveClientUrl Failed");
+			Assert.AreEqual (appPath + "/NunitWeb/MyPage.aspx", ctrl.ResolveUrl ("NunitWeb/./MyPage.aspx"), "ResolveClientUrl Failed");
+			Assert.AreEqual ("http://google.com/", ctrl.ResolveUrl ("http://google.com/"), "ResolveClientUrl Failed");
+
+			Assert.AreEqual (appPath + "/MyPage.aspx?param=val&yes=no", ctrl.ResolveUrl ("~/MyPage.aspx?param=val&yes=no"), "~/../MyPage.aspx");
+			Assert.AreEqual ("/MyPage.aspx?param=val&yes=no", ctrl.ResolveUrl ("~/../MyPage.aspx?param=val&yes=no"), "~/../MyPage.aspx");
+
+			Assert.AreEqual (appPath + "/MyPage.aspx", ctrl.ResolveUrl ("./MyPage.aspx"), "ResolveClientUrl Failed");
+			Assert.AreEqual ("/MyPage.aspx", ctrl.ResolveUrl ("../MyPage.aspx"), "ResolveClientUrl Failed");
+
+			Assert.AreEqual ("/", ctrl.ResolveUrl (".."), "..");
+			Assert.AreEqual ("/", ctrl.ResolveUrl ("../"), "../");
+		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		[Category ("NotWorking")]
+		public void ResolveUrl2 ()
+		{
+			WebTest t = new WebTest ("ResolveUrl.aspx");
+			PageDelegates delegates = new PageDelegates ();
+			delegates.Load = ResolveUrl2_Load;
+			t.Invoker = new PageInvoker (delegates);
+			string html = t.Run ();
+		}
+
+		public static void ResolveUrl2_Load (Page p)
+		{
+#if TARGET_JVM
+			string appPath = "/MainsoftWebApp20";
+#else
+			string appPath = "/NunitWeb";
+#endif
+			Control uc = p.FindControl ("WebUserControl1");
+			Control ctrl = uc.FindControl ("Label");
+
+			Assert.AreEqual (appPath + "/MyPage.aspx", ctrl.ResolveUrl ("~/MyPage.aspx"), "ResolveClientUrl Failed");
+
+			Assert.AreEqual ("", ctrl.ResolveUrl (""), "empty string");
+
+			Assert.AreEqual (appPath + "/", ctrl.ResolveUrl ("~"), "~");
+			Assert.AreEqual (appPath + "/", ctrl.ResolveUrl ("~/"), "~/");
+
+			Assert.AreEqual ("/MyPage.aspx", ctrl.ResolveUrl ("~/../MyPage.aspx"), "~/../MyPage.aspx");
+			Assert.AreEqual ("/MyPage.aspx", ctrl.ResolveUrl ("~\\..\\MyPage.aspx"), "~\\..\\MyPage.aspx");
+			Assert.AreEqual (appPath + "/MyPage.aspx", ctrl.ResolveUrl ("~////MyPage.aspx"), "ResolveClientUrl Failed");
+			Assert.AreEqual ("/MyPage.aspx", ctrl.ResolveUrl ("/MyPage.aspx"), "ResolveClientUrl Failed");
+			Assert.AreEqual ("/folder/MyPage.aspx", ctrl.ResolveUrl ("/folder/MyPage.aspx"), "ResolveClientUrl Failed");
+			Assert.AreEqual ("/NunitWeb/MyPage.aspx", ctrl.ResolveUrl ("/NunitWeb/MyPage.aspx"), "ResolveClientUrl Failed");
+			Assert.AreEqual ("\\NunitWeb/MyPage.aspx", ctrl.ResolveUrl ("\\NunitWeb/MyPage.aspx"), "ResolveClientUrl Failed");
+			Assert.AreEqual ("///NunitWeb\\..\\MyPage.aspx", ctrl.ResolveUrl ("///NunitWeb\\..\\MyPage.aspx"), "ResolveClientUrl Failed");
+			Assert.AreEqual (appPath + "/Folder/NunitWeb/MyPage.aspx", ctrl.ResolveUrl ("NunitWeb/MyPage.aspx"), "ResolveClientUrl Failed");
+			Assert.AreEqual (appPath + "/Folder/MyPage.aspx", ctrl.ResolveUrl ("NunitWeb/../MyPage.aspx"), "ResolveClientUrl Failed");
+			Assert.AreEqual (appPath + "/Folder/NunitWeb/MyPage.aspx", ctrl.ResolveUrl ("NunitWeb/./MyPage.aspx"), "ResolveClientUrl Failed");
+			Assert.AreEqual ("http://google.com/", ctrl.ResolveUrl ("http://google.com/"), "ResolveClientUrl Failed");
+
+			Assert.AreEqual (appPath + "/MyPage.aspx?param=val&yes=no", ctrl.ResolveUrl ("~/MyPage.aspx?param=val&yes=no"), "~/../MyPage.aspx");
+			Assert.AreEqual ("/MyPage.aspx?param=val&yes=no", ctrl.ResolveUrl ("~/../MyPage.aspx?param=val&yes=no"), "~/../MyPage.aspx");
+
+			Assert.AreEqual (appPath + "/Folder/MyPage.aspx", ctrl.ResolveUrl ("./MyPage.aspx"), "ResolveClientUrl Failed");
+			Assert.AreEqual (appPath + "/MyPage.aspx", ctrl.ResolveUrl ("../MyPage.aspx"), "ResolveClientUrl Failed");
+
+			Assert.AreEqual (appPath + "/", ctrl.ResolveUrl (".."), "..");
+			Assert.AreEqual (appPath + "/", ctrl.ResolveUrl ("../"), "../");
+			Assert.AreEqual ("/", ctrl.ResolveUrl ("../.."), "../..");
+			Assert.AreEqual ("/", ctrl.ResolveUrl ("../../"), "../../");
+			Assert.AreEqual ("/MyPage.aspx", ctrl.ResolveUrl ("../../MyPage.aspx"), "../../MyPage.aspx");
+		}
+
+		[Test]
 		[Category ("NotWorking")] // Not implemented exception
 		public void ResolveAdapter_2 ()
 		{

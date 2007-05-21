@@ -1,3 +1,7 @@
+2007-05-21 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* ControlTest.cs: added new tests.
+
 2007-05-02 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* ControlTest.cs: added new test.
