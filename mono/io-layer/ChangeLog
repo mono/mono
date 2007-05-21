@@ -1,3 +1,9 @@
+2007-05-21  Dick Porter  <dick@ximian.com>
+
+	* io-portability.c (_wapi_g_dir_open): Don't propagate any errors
+	from the second call to g_dir_open, preserve the original error if
+	the second call still fails but clear the error if it succeeds.
+
 2007-05-10  Dick Porter  <dick@ximian.com>
 
 	* sockets.c (_wapi_recvfrom): Refine the fix to bug 75705 so EINTR
