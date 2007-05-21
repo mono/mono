@@ -174,12 +174,13 @@ namespace Microsoft.VisualBasic
 
 			if (options.CompilerOptions != null) {
 				args.Append (options.CompilerOptions);
+				args.Append (" ");
 			}
 			/* Disabled, vbnc does not support this.
 			args.Append (" -- "); // makes vbnc not try to process filenames as options
 			*/
 			foreach (string source in fileNames)
-				args.AppendFormat ("\"{0}\" ", source);
+				args.AppendFormat (" \"{0}\" ", source);
 
 			return args.ToString ();
 		}
@@ -251,6 +252,7 @@ namespace Microsoft.VisualBasic
 				vbnc.StartInfo.FileName = "vbnc";
 				vbnc.StartInfo.Arguments = BuildArgs (options, fileNames);
 			}
+			//Console.WriteLine (vbnc.StartInfo.Arguments);
 			vbnc.StartInfo.CreateNoWindow = true;
 			vbnc.StartInfo.UseShellExecute = false;
 			vbnc.StartInfo.RedirectStandardOutput = true;
