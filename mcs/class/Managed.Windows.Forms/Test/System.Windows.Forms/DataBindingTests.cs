@@ -583,12 +583,6 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 		[Test]
 		public void TestColumnAdd ()
 		{
-#if ONLY_1_1
-			if (TestHelper.RunningOnUnix) {
-				Assert.Ignore ("in 1.1, DataView emits 2 MetadataChanged events per column add.  fix in System.Data");
-			}
-#endif
-
 			Control c = new Control ();
 			c.CreateControl ();
 			Binding binding;
