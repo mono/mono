@@ -57,12 +57,12 @@ namespace System.Web.UI {
 			if (callBack == null)
 				throw new ArgumentNullException ("callBack");
 
-			int rowAffected = 0;
+			int rowAffected;
 			try {
 				rowAffected = ExecuteDelete (keys, values);
 			}
 			catch (Exception e) {
-				if (!callBack (rowAffected, e))
+				if (!callBack (0, e))
 					throw;
 				return;
 			}
@@ -94,16 +94,16 @@ namespace System.Web.UI {
 			if (callBack == null)
 				throw new ArgumentNullException("callBack");
 
-			int rowAffected = 0;
-			Exception passOn = null;
+			int rowAffected;
 			try {
 				rowAffected = ExecuteInsert (values);
 			} catch (Exception e) {
-				passOn = e;
+				if (!callBack (0, e))
+					throw;
+				return;
 			}
 
-			if (!callBack (rowAffected, passOn) && passOn != null)
-				throw passOn;
+			callBack (rowAffected, null);
 		}
 
 		protected virtual void OnDataSourceViewChanged (EventArgs eventArgs)
@@ -151,16 +151,16 @@ namespace System.Web.UI {
 			if (callBack == null)
 				throw new ArgumentNullException ("callBack");
 
-			int rowAffected = 0;
-			Exception passOn = null;
+			int rowAffected;
 			try {
 				rowAffected = ExecuteUpdate (keys, values, oldValues);
 			} catch (Exception e) {
-				passOn = e;
+				if (!callBack (0, e))
+					throw;
+				return;
 			}
 
-			if (!callBack (rowAffected, passOn) && passOn != null)
-				throw passOn;
+			callBack (rowAffected, null);
 		} 
 		
 		public virtual bool CanDelete { get { return false; } }

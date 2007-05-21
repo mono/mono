@@ -1,3 +1,9 @@
+2007-05-21 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* DataSourceView.cs: refactoring: Update, Insert methods:
+	exception is re-thrown from catch scope. 
+	It allows actual call stack be shown	
+
 2007-05-17  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* TemplateControl.jvm.cs: refactored key for CachedString method
