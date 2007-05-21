@@ -386,7 +386,7 @@ namespace System.Reflection.Emit {
 					return;
 #endif
 				case "System.Security.SuppressUnmanagedCodeSecurityAttribute":
-					attrs |= MethodAttributes.HasSecurity:
+					attrs |= MethodAttributes.HasSecurity;
 					break;
 			}
 
