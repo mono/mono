@@ -1,3 +1,7 @@
+2007-05-21  Adar Wesley <adarw@mainsoft.com>
+
+	* LineLayout.jvm.cs: change MemberwiseClone to clone.
+
 2006-08-25  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PrivateFontCollection.cs: Fix warning by reusing the full path.

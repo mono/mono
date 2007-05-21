@@ -171,7 +171,7 @@ namespace System.Drawing.Text {
 		}
 
 		internal awt.Shape GetOutline(float x, float y) {
-			geom.AffineTransform t = (geom.AffineTransform) _lineIter.Transform.MemberwiseClone();
+			geom.AffineTransform t = (geom.AffineTransform) _lineIter.Transform.clone();
 
 			if (_lineIter.Format.IsVertical)
 				t.translate(y + NativeY, -(x + NativeX));

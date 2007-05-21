@@ -29,7 +29,7 @@ namespace System.Drawing
 
 
 		public Region ()
-			: this ((geom.Area) InfiniteRegion.NativeObject.MemberwiseClone ())
+			: this ((geom.Area) InfiniteRegion.NativeObject.clone ())
 		{                  
 		}
 
@@ -140,7 +140,7 @@ namespace System.Drawing
 		{
 			if (region == null)
 				throw new ArgumentNullException("region");
-			geom.Area a = (geom.Area) region.NativeObject.MemberwiseClone ();
+			geom.Area a = (geom.Area) region.NativeObject.clone ();
 			a.subtract(NativeObject);
 			Shape = a;
 		}
@@ -338,7 +338,7 @@ namespace System.Drawing
 		#region MakeInfinite
 		public void MakeInfinite()
 		{
-			Shape = (geom.Area) InfiniteRegion.NativeObject.MemberwiseClone ();
+			Shape = (geom.Area) InfiniteRegion.NativeObject.clone ();
 		}
 		#endregion 
 
@@ -382,7 +382,7 @@ namespace System.Drawing
 		#region Clone
 		public Region Clone()
 		{
-			return new Region ((geom.Area) NativeObject.MemberwiseClone ());
+			return new Region ((geom.Area) NativeObject.clone ());
 		}
 		#endregion
 	}

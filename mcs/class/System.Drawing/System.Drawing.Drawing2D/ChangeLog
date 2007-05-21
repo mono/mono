@@ -1,3 +1,7 @@
+2007-05-21  Adar Wesley <adarw@mainsoft.com>
+
+	* Matrix.jvm.cs: changed MemberwiseClone to clone.
+
 2007-05-09 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* AdjustableArrowCap.jvm.cs:

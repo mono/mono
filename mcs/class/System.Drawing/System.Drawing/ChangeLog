@@ -1,5 +1,11 @@
 2007-05-21  Adar Wesley <adarw@mainsoft.com>
 
+	* Graphics.jvm.cs
+	* Pen.jvm.cs
+	* Region.jvm.cs: Changed MemberwiseClone to clone.
+ 
+2007-05-21  Adar Wesley <adarw@mainsoft.com>
+
 	* Font.jvm.cs: added implementation for Equals and GetHashCode.
 
 	* Graphics.jvm.cs: added missing DrawImage overloads, 
