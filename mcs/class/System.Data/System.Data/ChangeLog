@@ -1,3 +1,15 @@
+2007-05-18  Chris Toshok  <toshok@ximian.com>
+
+	* DataColumnCollection.cs (Add ()): handle the default name case
+	in Add(DataColumn).
+	(Add (string)): same - let Add(DataColumn) handle the default name
+	setting.
+	(Add (DataColumn)): in the 1.1 case, we need to add the column's
+	PropertyChanged handler *before* possibly setting the column name
+	to the default so we emit the right events (Changed/Added).  In
+	the 2.0 case, we add the event handler after the name is set, and
+	therefore only emit the Added event.
+
 2007-05-07  Adar Wesley <adarw@mainsoft.com>
 
 	* ConstraintCollection.cs: added CopyTo method with strongly typed Constraint[] 

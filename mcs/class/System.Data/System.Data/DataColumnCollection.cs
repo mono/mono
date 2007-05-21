@@ -168,8 +168,7 @@ namespace System.Data {
 #endif
 		DataColumn Add()
 		{
-			string defaultName = GetNextDefaultColumnName ();
-			DataColumn column = new DataColumn (defaultName);
+			DataColumn column = new DataColumn (null);
 			Add (column);
 			return column;
 		}
@@ -266,6 +265,13 @@ namespace System.Data {
 			if (column == null)
 				throw new ArgumentNullException ("column", "'column' argument cannot be null.");
 
+#if !NET_2_0
+			/* in 1.1, they must do this here, as the
+			 * setting of ColumnName below causes an event
+			 * to be raised */
+			column.PropertyChanged += new PropertyChangedEventHandler (ColumnPropertyChanged);
+#endif
+
 			if (column.ColumnName.Equals(String.Empty))
 			{
 				column.ColumnName = GetNextDefaultColumnName ();
@@ -277,11 +283,10 @@ namespace System.Data {
 			if (column.Table != null)
 				throw new ArgumentException ("Column '" + column.ColumnName + "' already belongs to this or another DataTable.");
 
-			CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Add, column);
-
 			column.SetTable (parentTable);
 			RegisterName(column.ColumnName, column);
 			int ordinal = base.List.Add(column);
+
 #if NET_2_0
 			column.Ordinal = ordinal;
 #else
@@ -310,9 +315,11 @@ namespace System.Data {
 			if (column.AutoIncrement)
 				autoIncrement.Add(column);
 
+#if NET_2_0
 			column.PropertyChanged += new PropertyChangedEventHandler (ColumnPropertyChanged);
+#endif
 
-			OnCollectionChanged (e);
+			OnCollectionChanged (new CollectionChangeEventArgs(CollectionChangeAction.Add, column));
 		}
 
 		/// <summary>
@@ -326,11 +333,6 @@ namespace System.Data {
 #endif
 		DataColumn Add(string columnName)
 		{
-			if (columnName == null || columnName == String.Empty)
-			{
-				columnName = GetNextDefaultColumnName();
-			}
-			
 			DataColumn column = new DataColumn(columnName);
 			Add (column);
 			return column;

@@ -895,6 +895,72 @@ table changed.
 			AssertEquals (result, eventWriter.ToString ().Replace ("\r\n", "\n"));
 		}
 
+		[Test]
+		public void DefaultColumnNameAddListChangedTest ()
+		{
+#if NET_2_0
+			string result = @"setting table...
+---- OnListChanged PropertyDescriptorChanged,0,0
+----- UpdateIndex : True
+---- OnListChanged Reset,-1,-1
+table was set.
+---- OnListChanged PropertyDescriptorAdded,0,0
+ default named column added.
+---- OnListChanged PropertyDescriptorAdded,0,0
+ non-default named column added.
+---- OnListChanged PropertyDescriptorAdded,0,0
+ another default named column added (Column2).
+---- OnListChanged PropertyDescriptorAdded,0,0
+ add a column with the same name as the default columnnames.
+---- OnListChanged PropertyDescriptorAdded,0,0
+ add a column with a null name.
+---- OnListChanged PropertyDescriptorAdded,0,0
+ add a column with an empty name.
+";
+#else
+			string result = @"setting table...
+---- OnListChanged PropertyDescriptorChanged,0,0
+----- UpdateIndex : True
+---- OnListChanged Reset,-1,-1
+table was set.
+---- OnListChanged PropertyDescriptorChanged,0,0
+---- OnListChanged PropertyDescriptorAdded,0,0
+ default named column added.
+---- OnListChanged PropertyDescriptorAdded,0,0
+ non-default named column added.
+---- OnListChanged PropertyDescriptorChanged,0,0
+---- OnListChanged PropertyDescriptorAdded,0,0
+ another default named column added (Column2).
+---- OnListChanged PropertyDescriptorAdded,0,0
+ add a column with the same name as the default columnnames.
+---- OnListChanged PropertyDescriptorChanged,0,0
+---- OnListChanged PropertyDescriptorAdded,0,0
+ add a column with a null name.
+---- OnListChanged PropertyDescriptorChanged,0,0
+---- OnListChanged PropertyDescriptorAdded,0,0
+ add a column with an empty name.
+";
+#endif
+			eventWriter = new StringWriter ();
+			DataTable dt = new DataTable ("table");
+			ComplexEventSequence1View dv =
+				new ComplexEventSequence1View (dt, eventWriter);
+			dt.Columns.Add ();
+			eventWriter.WriteLine (" default named column added.");
+			dt.Columns.Add ("non-defaultNamedColumn");
+			eventWriter.WriteLine (" non-default named column added.");
+			DataColumn c = dt.Columns.Add ();
+			eventWriter.WriteLine (" another default named column added ({0}).", c.ColumnName);
+			dt.Columns.Add ("Column3");
+			eventWriter.WriteLine (" add a column with the same name as the default columnnames.");
+			dt.Columns.Add ((string)null);
+			eventWriter.WriteLine (" add a column with a null name.");
+			dt.Columns.Add ("");
+			eventWriter.WriteLine (" add a column with an empty name.");
+
+			AssertEquals (result, eventWriter.ToString ().Replace ("\r\n", "\n"));
+		}
+
 		public class ComplexEventSequence1View : DataView
 		{
 			TextWriter w;
