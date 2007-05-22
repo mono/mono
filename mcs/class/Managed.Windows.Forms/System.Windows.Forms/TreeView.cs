@@ -1118,12 +1118,16 @@ namespace System.Windows.Forms {
 
 		internal void SetTop (TreeNode node)
 		{
+			int order = 0;
+			if (node != null)
+				order = node.visible_order - 1;
+
 			if (!vbar.is_visible) {
-				skipped_nodes = node.visible_order;
+				skipped_nodes = order;
 				return;
 			}
 
-			vbar.Value = Math.Min (node.visible_order, vbar.Maximum - VisibleCount);
+			vbar.Value = Math.Min (order, vbar.Maximum - VisibleCount + 1);
 		}
 
 		internal void SetBottom (TreeNode node)
