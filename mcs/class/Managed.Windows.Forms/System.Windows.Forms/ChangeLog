@@ -1,3 +1,7 @@
+2007-05-22  Everaldo Canuto  <ecanuto@novell.com>
+
+	* MenuAPI.cs: Prevent context menu to be typed as MainMenu. Fixes #81509.  
+
 2007-05-22  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* InternalWindowManager.cs: ToolTipShow: Don't show tooltip if the form

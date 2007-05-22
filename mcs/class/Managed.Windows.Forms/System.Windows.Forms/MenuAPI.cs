@@ -92,8 +92,8 @@ namespace System.Windows.Forms {
 
 		void Deactivate ()
 		{
-			bool redrawbar = (keynav_state != KeyNavState.Idle); 
-			
+			bool redrawbar = (keynav_state != KeyNavState.Idle) && (TopMenu is MainMenu); 
+
 			active = false;
 			popup_active = false;
 			hotkey_active = false;
@@ -107,7 +107,7 @@ namespace System.Windows.Forms {
 				DeselectItem (TopMenu.SelectedItem);
 			}
 			CurrentMenu = TopMenu;
-			
+
 			if (redrawbar)
 				(TopMenu as MainMenu).Draw ();			
 		}
