@@ -55,6 +55,14 @@ namespace System.Web.Compilation
 				AddOutputCacheAttribute ();
 		}
 
+#if NET_2_0
+		protected internal override void CreateMethods ()
+		{
+			base.CreateMethods ();
+			CreateProfileProperty ();
+		}
+#endif
+		
 		private void AddOutputCacheAttribute ()
 		{
 			CodeAttributeDeclaration cad;

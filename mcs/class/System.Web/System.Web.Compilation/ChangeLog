@@ -1,3 +1,8 @@
+2007-05-22  Marek Habersack  <mhabersack@novell.com>
+
+	* UserControlCompiler.cs: the Profile property should be present
+	also in user controls.
+
 2007-05-15  Marek Habersack  <mhabersack@novell.com>
 
 	* ResourceExpressionBuilder.cs: added a static method to generate
