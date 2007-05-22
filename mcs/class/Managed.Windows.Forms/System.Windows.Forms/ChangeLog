@@ -1,3 +1,11 @@
+2007-05-21  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListView.cs: Use Theme.ListViewHorizontalSpacing for List and
+	SmallIcon views, now that we have a standarized horizontal spacing.
+
+	* ThemeWin32Classic.cs: ListViewHorizontalSpacing now has a value of
+	4, just like the other views (Match .Net).
+
 2007-05-21  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Control.cs: Delay calculating anchor distances until we actually layout.

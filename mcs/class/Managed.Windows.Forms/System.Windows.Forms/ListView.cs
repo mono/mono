@@ -1483,7 +1483,8 @@ namespace System.Windows.Forms
 				break;
 
 			case View.SmallIcon:
-				LayoutIcons (SmallIconItemSize, alignment == ListViewAlignment.Left, 4, 2);
+				LayoutIcons (SmallIconItemSize, alignment == ListViewAlignment.Left, 
+						ThemeEngine.Current.ListViewHorizontalSpacing, 2);
 				break;
 
 			case View.LargeIcon:
@@ -1493,7 +1494,8 @@ namespace System.Windows.Forms
 				break;
 
 			case View.List:
-				LayoutIcons (SmallIconItemSize, true, 4, 2);
+				LayoutIcons (SmallIconItemSize, true, 
+						ThemeEngine.Current.ListViewHorizontalSpacing, 2);
 				break;
 #if NET_2_0
 			case View.Tile:

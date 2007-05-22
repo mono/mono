@@ -2606,7 +2606,7 @@ namespace System.Windows.Forms
 		}
 
 		public override int ListViewHorizontalSpacing {
-			get { return 10; }
+			get { return 4; }
 		}
 
 		public override Size ListViewDefaultSize {
