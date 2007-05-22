@@ -14,6 +14,7 @@ using System.Windows.Forms;
 using System.ComponentModel;
 using NUnit.Framework;
 using CategoryAttribute = NUnit.Framework.CategoryAttribute;
+using System.Threading;
 
 namespace MonoTests.System.Windows.Forms
 {

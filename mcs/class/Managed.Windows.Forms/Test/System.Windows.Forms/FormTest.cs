@@ -24,6 +24,97 @@ namespace MonoTests.System.Windows.Forms
 	public class FormTest
 	{
 		[Test]
+		public void ShowDialogCloseTest ()
+		{
+			using (TimeBombedForm f = new TimeBombedForm ()) {
+				EventLogger log = new EventLogger (f);
+				f.timer.Interval = 1000;
+				f.VisibleChanged += delegate (object sender, EventArgs e) { f.Reason = "VisibleChanged"; ((Control)sender).Visible = false; };
+				f.ShowDialog ();
+				
+				Assert.AreEqual ("VisibleChanged", f.Reason, "#00");
+				Assert.AreEqual (1, log.CountEvents ("Closing"), "#01");
+#if NET_2_0
+				Assert.AreEqual (1, log.CountEvents ("FormClosing"), "#02");
+#endif
+				Assert.AreEqual (1, log.CountEvents ("HandleDestroyed"), "#03");
+
+				Assert.AreEqual (0, log.CountEvents ("Closed"), "#04");
+#if NET_2_0
+				Assert.AreEqual (0, log.CountEvents ("FormClosed"), "#05");
+#endif
+				Assert.AreEqual (0, log.CountEvents ("Disposed"), "#06");
+			}
+
+			using (TimeBombedForm f = new TimeBombedForm ()) {
+				EventLogger log = new EventLogger (f);
+				f.ShowDialog ();
+
+				Assert.AreEqual ("Bombed", f.Reason, "#A0");
+				Assert.AreEqual (1, log.CountEvents ("Closing"), "#A1");
+#if NET_2_0
+				Assert.AreEqual (1, log.CountEvents ("FormClosing"), "#A2");
+#endif
+				Assert.AreEqual (1, log.CountEvents ("HandleDestroyed"), "#A3");
+
+				Assert.AreEqual (1, log.CountEvents ("Closed"), "#A4");
+#if NET_2_0
+				Assert.AreEqual (1, log.CountEvents ("FormClosed"), "#A5");
+#endif
+				Assert.AreEqual (0, log.CountEvents ("Disposed"), "#A6");
+			}
+
+
+			using (TimeBombedForm f = new TimeBombedForm ()) {
+				EventLogger log = new EventLogger (f);
+				f.VisibleChanged += delegate (object sender, EventArgs e) 
+				{ 
+					f.Reason = "VisibleChanged"; 
+					f.Visible = false;
+					f.DialogResult = DialogResult.OK;
+					Assert.AreEqual (false, f.Visible, "#B?");
+				};
+				f.ShowDialog ();
+
+				Assert.AreEqual ("VisibleChanged", f.Reason, "#B0");
+				Assert.AreEqual (1, log.CountEvents ("Closing"), "#B1");
+#if NET_2_0
+				Assert.AreEqual (1, log.CountEvents ("FormClosing"), "#B2");
+#endif
+				Assert.AreEqual (1, log.CountEvents ("HandleDestroyed"), "#B3");
+
+				Assert.AreEqual (1, log.CountEvents ("Closed"), "#B4");
+#if NET_2_0
+				Assert.AreEqual (1, log.CountEvents ("FormClosed"), "#B5");
+#endif
+				Assert.AreEqual (0, log.CountEvents ("Disposed"), "#B6");
+			}
+
+
+			using (TimeBombedForm f = new TimeBombedForm ()) {
+				EventLogger log = new EventLogger (f);
+				f.DialogResult = DialogResult.None;
+				f.ShowDialog ();
+
+				Assert.AreEqual ("Bombed", f.Reason, "#C0");
+				Assert.AreEqual (1, log.CountEvents ("Closing"), "#C1");
+#if NET_2_0
+				Assert.AreEqual (1, log.CountEvents ("FormClosing"), "#C2");
+#endif
+				Assert.AreEqual (1, log.CountEvents ("HandleDestroyed"), "#C3");
+
+				Assert.AreEqual (1, log.CountEvents ("Closed"), "#C4");
+#if NET_2_0
+				Assert.AreEqual (1, log.CountEvents ("FormClosed"), "#C5");
+#endif
+				Assert.AreEqual (0, log.CountEvents ("Disposed"), "#C6");
+				
+				Assert.AreEqual (DialogResult.Cancel, f.DialogResult, "#C7");
+			}
+
+		}
+	
+		[Test]
 		public void DialogOwnerTest ()
 		{
 			using (Form first = new Form ()) {
@@ -1680,21 +1771,33 @@ namespace MonoTests.System.Windows.Forms
 
 			private bool _closeOnLoad;
 			private bool _visibleOnLoad;
-		}
-		
-		private class TimeBombedForm : Form
-		{
-			public Timer timer;
-			public TimeBombedForm ()
-			{
-				timer = new Timer ();
-				timer.Interval = 100;
-				timer.Tick += new EventHandler (timer_Tick);
-				timer.Start ();
-			}
+		}	
+	}
 
-			void timer_Tick (object sender, EventArgs e)
-			{
+	public class TimeBombedForm : Form
+	{
+		public Timer timer;
+		public bool CloseOnPaint;
+		public string Reason;
+		public TimeBombedForm ()
+		{
+			timer = new Timer ();
+			timer.Interval = 100;
+			timer.Tick += new EventHandler (timer_Tick);
+			timer.Start ();
+		}
+
+		void timer_Tick (object sender, EventArgs e)
+		{
+			Reason = "Bombed";
+			Close ();
+		}
+
+		protected override void OnPaint (PaintEventArgs pevent)
+		{
+			base.OnPaint (pevent);
+			if (CloseOnPaint) {
+				Reason = "OnPaint";
 				Close ();
 			}
 		}
