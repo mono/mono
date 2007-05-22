@@ -1,3 +1,8 @@
+2007-05-22  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateBuilder.cs: in the absence of containerAttribute,
+	default to two-way binding direction.
+
 2007-05-21 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* DataSourceView.cs: refactoring: Update, Insert methods:

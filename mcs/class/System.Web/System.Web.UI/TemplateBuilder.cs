@@ -70,7 +70,7 @@ namespace System.Web.UI {
 		
 #if NET_2_0
 		internal BindingDirection BindingDirection {
-			get { return containerAttribute != null ? containerAttribute.BindingDirection : BindingDirection.OneWay; }
+			get { return containerAttribute != null ? containerAttribute.BindingDirection : BindingDirection.TwoWay; }
 		}
 		
 		internal void RegisterBoundProperty (Type controlType, string controlProperty, string controlId, string fieldName)
