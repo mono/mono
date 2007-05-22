@@ -1022,6 +1022,9 @@ namespace System.Windows.Forms {
 		// Called from ToolTipStart if tooltip is already shown (with only_refresh = true)
 		public void ToolTipShow (bool only_refresh)
 		{
+			if (!form.Visible)
+				return;
+
 			string text = Locale.GetText (tooltip_hovered_button.Caption.ToString ());
 
 			tooltip_timer.Interval = tooltip_hide_interval;

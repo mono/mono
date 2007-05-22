@@ -1,5 +1,10 @@
 2007-05-22  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* InternalWindowManager.cs: ToolTipShow: Don't show tooltip if the form
+	  isn't visible anymore. Fixes #81651.
+
+2007-05-22  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Control.cs: WmShowWindow: Update children's z-order after setting
 	  their parent. SetParent may show the window, thereby corrupting
 	  z-order, since the window will be shown on top.
