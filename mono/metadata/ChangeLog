@@ -1,3 +1,8 @@
+2007-05-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (encode_cattr_value): Fix yet another object cattr encoding issue.
+	(load_cattr_value): Ditto.
+
 2007-05-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (mono_marshal_get_delegate_invoke): Improve the generated IL a little.
