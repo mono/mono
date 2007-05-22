@@ -1,3 +1,8 @@
+2007-05-22  Jackson Harper  <jackson@ximian.com>
+
+	* TreeView.cs: Setting top with a null node should set to the very
+	top.
+
 2007-05-22  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Form.cs: ShowDialog: destroy the handle when message loop is
