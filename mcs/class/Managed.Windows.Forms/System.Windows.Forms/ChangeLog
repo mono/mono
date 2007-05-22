@@ -1,3 +1,8 @@
+2007-05-22  Jackson Harper  <jackson@ximian.com>
+
+	* RichTextBox.cs: Set the line endings correctly, when flushing
+	RTF text.
+
 2007-05-22  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* XplatUIX11.cs: MinimumWindowSize on X11 is actually

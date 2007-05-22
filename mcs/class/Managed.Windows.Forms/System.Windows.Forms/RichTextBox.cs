@@ -1545,8 +1545,11 @@ namespace System.Windows.Forms {
 
 			rtf_chars += rtf_line.Length;
 
+			
+
 			if (rtf_cursor_x == 0) {
-				document.Add(rtf_cursor_y, rtf_line.ToString(), rtf_rtfalign, font, rtf_color, LineEnding.Wrap);
+				document.Add(rtf_cursor_y, rtf_line.ToString(), rtf_rtfalign, font, rtf_color,
+						newline ? LineEnding.Rich : LineEnding.Wrap);
 				if (rtf_par_line_left_indent != 0) {
 					Line line = document.GetLine (rtf_cursor_y);
 					line.indent = rtf_par_line_left_indent;
@@ -1558,10 +1561,14 @@ namespace System.Windows.Forms {
 				line.indent = rtf_par_line_left_indent;
 				if (rtf_line.Length > 0) {
 					document.InsertString(line, rtf_cursor_x, rtf_line.ToString());
-					document.FormatText(line, rtf_cursor_x + 1, line, rtf_cursor_x + 1 + length, font, rtf_color, null, FormatSpecified.Font | FormatSpecified.Color); // FormatText is 1-based
+					document.FormatText (line, rtf_cursor_x + 1, line, rtf_cursor_x + 1 + length,
+							font, rtf_color, null,
+							FormatSpecified.Font | FormatSpecified.Color);
 				}
 				if (newline) {
 					document.Split(line, rtf_cursor_x + length);
+					line = document.GetLine (rtf_cursor_y);
+					line.ending = LineEnding.Rich;
 				}
 			}
 
