@@ -74,12 +74,30 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 					0, 
 					(int)context.HandshakeMessages.Length);
 
-				// RSAManaged of the selected ClientCertificate 
-				// (at this moment the first one)
-				RSA rsa = this.getClientCertRSA((RSA)privKey);
+				// CreateSignature uses ((RSA)privKey).DecryptValue which is not implemented
+				// in RSACryptoServiceProvider. Other implementations likely implement DecryptValue
+				// so we will try the CreateSignature method.
+				byte[] signature = null;
+				if (!(privKey is RSACryptoServiceProvider))
+				{
+					try
+					{
+						signature = hash.CreateSignature((RSA)privKey);
+					}
+					catch (NotImplementedException)
+					{ }
+				}
+				// If DecryptValue is not implemented, then try to export the private
+				// key and let the RSAManaged class do the DecryptValue
+				if (signature == null)
+				{
+					// RSAManaged of the selected ClientCertificate 
+					// (at this moment the first one)
+					RSA rsa = this.getClientCertRSA((RSA)privKey);
 
-				// Write message
-				byte[] signature = hash.CreateSignature(rsa);
+					// Write message
+					signature = hash.CreateSignature(rsa);
+				}
 				this.Write((short)signature.Length);
 				this.Write(signature, 0, signature.Length);
 			}
@@ -107,12 +125,30 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 					0,
 					(int)context.HandshakeMessages.Length);
 
-				// RSAManaged of the selected ClientCertificate 
-				// (at this moment the first one)
-				RSA rsa = this.getClientCertRSA((RSA)privKey);
+				// CreateSignature uses ((RSA)privKey).DecryptValue which is not implemented
+				// in RSACryptoServiceProvider. Other implementations likely implement DecryptValue
+				// so we will try the CreateSignature method.
+				byte[] signature = null;
+				if (!(privKey is RSACryptoServiceProvider))
+				{
+					try
+					{
+						signature = hash.CreateSignature((RSA)privKey);
+					}
+					catch (NotImplementedException)
+					{ }
+				}
+				// If DecryptValue is not implemented, then try to export the private
+				// key and let the RSAManaged class do the DecryptValue
+				if (signature == null)
+				{
+					// RSAManaged of the selected ClientCertificate 
+					// (at this moment the first one)
+					RSA rsa = this.getClientCertRSA((RSA)privKey);
 
-				// Write message
-				byte[] signature = hash.CreateSignature(rsa);
+					// Write message
+					signature = hash.CreateSignature(rsa);
+				}
 				this.Write((short)signature.Length);
 				this.Write(signature, 0, signature.Length);
 			}

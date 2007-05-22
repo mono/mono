@@ -1,3 +1,11 @@
+2007-05-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TlsClientCertificate.cs: If possible avoid to export the private key
+	(it could be non-exportable in a different RSA class implementation).
+	Patch from Roy Versteeg to fix #81592.
+	* TlsClientCertificateVerify.cs: Add chain support for x.509 client 
+	certificates. Based on Roy Versteeg patch to fix #80557.
+
 2006-12-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TlsServerCertificate.cs: typo.

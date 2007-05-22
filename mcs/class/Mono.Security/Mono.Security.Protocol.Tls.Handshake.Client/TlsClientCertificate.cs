@@ -93,23 +93,26 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			context.ClientSettings.ClientCertificate = clientCert;
 		}
 
-		private void Write (X509Certificate clientCert)
+		private void SendCertificates ()
 		{
-			byte[] rawdata = clientCert.GetRawCertData();
-			// Compose the message
-			this.WriteInt24(rawdata.Length + 3);
-			this.WriteInt24(rawdata.Length);
-			this.Write(rawdata);
+			TlsStream chain = new TlsStream ();
+
+			X509Certificate currentCert = this.ClientCertificate;
+			while (currentCert != null) {
+				byte[] rawCert = currentCert.GetRawCertData ();
+				chain.WriteInt24 (rawCert.Length);
+				chain.Write(rawCert);
+				currentCert = FindParentCertificate (currentCert);
+			}
+			this.WriteInt24 ((int)chain.Length);
+			this.Write (chain.ToArray ());
 		}
 
 		protected override void ProcessAsSsl3()
 		{
-			if (this.ClientCertificate != null)
-			{
-				Write (this.ClientCertificate);
-			}
-			else
-			{
+			if (this.ClientCertificate != null) {
+				SendCertificates ();
+			} else {
 				// an Alert warning for NoCertificate (41) 
 				// should be sent from here - but that would
 				// break the current message handling
@@ -118,15 +121,25 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 		protected override void ProcessAsTls1()
 		{
-			if (this.ClientCertificate != null)
-			{
-				Write (this.ClientCertificate);
-			}
-			else
-			{
+			if (this.ClientCertificate != null) {
+				SendCertificates ();
+			} else {
 				// return message with empty certificate (see 7.4.6 in RFC2246)
 				this.WriteInt24 (0);
 			}
+		}
+
+		private X509Certificate FindParentCertificate (X509Certificate cert)
+		{
+			// This certificate is the root certificate
+			if (cert.GetName () == cert.GetIssuerName ())
+				return null;
+
+			foreach (X509Certificate certificate in this.Context.ClientSettings.Certificates) {
+				if (cert.GetName () == cert.GetIssuerName ())
+					return certificate;
+			}
+			return null;
 		}
 
 		#endregion
