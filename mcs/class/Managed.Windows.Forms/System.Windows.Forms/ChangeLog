@@ -1,5 +1,22 @@
 2007-05-22  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Control.cs: WmShowWindow: Update children's z-order after setting
+	  their parent. SetParent may show the window, thereby corrupting
+	  z-order, since the window will be shown on top.
+	* XplatUIWin32.cs: SetParent: don't call SetVisible on forms. Prevents
+	  multiple (and redundant) WM_SHOWWINDOW messages.
+	* MdiWindowManager.cs: RaiseDeactivate: only raise after an Activate
+	  event has already been raised.
+	* Form.cs: Change is_changing_visible_state to a counter, since
+	  SetVisibleCore can be called recursively. CreateHandle: when
+	  creating mdi children, send (De)Activated events.
+	* MdiClient.cs: Update use of is_changing_visible_state.
+	* Application.cs: OnThreadException: Surround exception handling with
+	  try/finally to ensure we always reset the error-handling state
+	  before leaving.
+
+2007-05-22  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* ThemeWin32Classic.cs: DrawProgressBar: Avoid a DivideByZero exception
 	  (#81704).
 

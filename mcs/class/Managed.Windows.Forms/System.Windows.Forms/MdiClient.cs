@@ -668,8 +668,8 @@ namespace System.Windows.Forms {
 		{
 			if (Controls.Count < 1)
 				return;
-			
-			if (ParentForm.is_changing_visible_state)
+
+			if (ParentForm.is_changing_visible_state > 0)
 				return;
 			
 			Form current = (Form) Controls [0];
@@ -691,6 +691,7 @@ namespace System.Windows.Forms {
 				form.window_state = FormWindowState.Maximized;
 				SetParentText (false);
 			}
+
 			form.BringToFront ();
 			form.SendControlFocus (form);
 			SetWindowStates (wm);
@@ -916,7 +917,7 @@ namespace System.Windows.Forms {
 		
 		internal void ActivateActiveMdiChild ()
 		{
-			if (ParentForm.is_changing_visible_state)
+			if (ParentForm.is_changing_visible_state > 0)
 				return;
 				
 			for (int i = 0; i < Controls.Count; i++) {

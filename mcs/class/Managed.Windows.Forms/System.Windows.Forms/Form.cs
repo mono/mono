@@ -86,7 +86,7 @@ namespace System.Windows.Forms {
 		Color				transparency_key;
 		internal MenuTracker		active_tracker;
 		private bool			is_loaded;
-		internal bool			is_changing_visible_state;
+		internal int			is_changing_visible_state;
 		internal bool			has_been_visible;
 		private bool			shown_raised;  // The shown event is only raised once
 
@@ -1323,7 +1323,7 @@ namespace System.Windows.Forms {
 				//so is_changing_visible_state is the only way of determining if we're 
 				//in the process of creating the form due to setting Visible=true.
 				//This works because SetVisibleCore explicitly makes the form visibile afterwards anyways.
-				if ((VisibleInternal && !is_changing_visible_state) || this.IsRecreating)
+				if ((VisibleInternal && is_changing_visible_state == 0) || this.IsRecreating)
 					cp.Style |= (int)WindowStyles.WS_VISIBLE;
 
 				if (opacity < 1.0 || TransparencyKey != Color.Empty) {
@@ -1752,6 +1752,24 @@ namespace System.Windows.Forms {
 			}
 			
 			if (window_manager != null) {
+				if (IsMdiChild && VisibleInternal) {
+					MdiWindowManager wm;
+					// Loop through all the other mdi siblings and raise Deactivate events.
+					if (MdiParent != null) {
+						foreach (Form form in MdiParent.MdiChildren) {
+							wm = form.window_manager as MdiWindowManager;
+							if (wm != null) {
+								// This will only raise deactivate once, and only if activate has
+								// already been raised.
+								wm.RaiseDeactivate ();
+							}
+						}
+					}
+					
+					wm = window_manager as MdiWindowManager;
+					wm.RaiseActivated ();
+				}
+				
 				if (window_state != FormWindowState.Normal) {
 					window_manager.SetWindowState ((FormWindowState) int.MaxValue, window_state);
 				}
@@ -2122,7 +2140,7 @@ namespace System.Windows.Forms {
 					return;
 				}
 			} else {
-				is_changing_visible_state = true;
+				is_changing_visible_state++;
 				has_been_visible = value || has_been_visible;
 				base.SetVisibleCore (value);
 				if (value) {
@@ -2132,7 +2150,7 @@ namespace System.Windows.Forms {
 				if (value && WindowState != FormWindowState.Normal)
 					XplatUI.SendMessage (Handle, Msg.WM_SHOWWINDOW, (IntPtr)1, IntPtr.Zero);
 					
-				is_changing_visible_state = false;
+				is_changing_visible_state--;
 			}
 			
 			if (value && IsMdiContainer) {

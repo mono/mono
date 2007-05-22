@@ -65,7 +65,7 @@ namespace System.Windows.Forms {
 		
 		public void RaiseDeactivate ()
 		{
-			if (last_activation_event == 2)
+			if (last_activation_event != 1)
 				return;
 			last_activation_event = 2;
 			form.OnDeactivateInternal ();

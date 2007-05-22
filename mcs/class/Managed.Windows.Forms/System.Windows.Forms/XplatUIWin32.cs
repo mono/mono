@@ -1912,10 +1912,11 @@ namespace System.Windows.Forms {
 				if (!(c is Form)) {
 					Win32ShowWindow(handle, WindowPlacementFlags.SW_HIDE);
 				}
-			}
-			else
-				SetVisible (handle, c.is_visible, true);
-				
+			} else {
+				if (!(c is Form)) {
+					SetVisible (handle, c.is_visible, true);
+				}
+			}	
 			// The Win32SetParent is lame, it can very well move the window
 			// ref: http://groups.google.com/group/microsoft.public.vb.winapi/browse_thread/thread/1b82ccc54231ecee/afa82835bfc0422a%23afa82835bfc0422a
 			// Here we save the position before changing the parent, and if it has changed afterwards restore it.

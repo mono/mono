@@ -482,22 +482,24 @@ namespace System.Windows.Forms {
 				Environment.Exit(1);
 			}
 
-			MWFThread.Current.HandlingException = true;
+			try {
+				MWFThread.Current.HandlingException = true;
 
-			if (Application.ThreadException != null) {
-				Application.ThreadException(null, new ThreadExceptionEventArgs(t));
-				return;
+				if (Application.ThreadException != null) {
+					Application.ThreadException(null, new ThreadExceptionEventArgs(t));
+					return;
+				}
+
+				if (SystemInformation.UserInteractive) {
+					Form form = new ThreadExceptionDialog (t);
+					form.ShowDialog ();
+				} else {
+					Console.WriteLine (t.ToString ());
+					Application.Exit ();
+				}
+			} finally {
+				MWFThread.Current.HandlingException = false;
 			}
-
-			if (SystemInformation.UserInteractive) {
-				Form form = new ThreadExceptionDialog (t);
-				form.ShowDialog ();
-			} else {
-				Console.WriteLine (t.ToString ());
-				Application.Exit ();
-			}
-
-			MWFThread.Current.HandlingException = false;
 		}
 
 		public static void RemoveMessageFilter(IMessageFilter filter) {
