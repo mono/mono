@@ -305,6 +305,13 @@ namespace MonoTests.System.Drawing {
 		}
 
 		[Test]
+		public void GdipCreateFromHDC_Null ()
+		{
+			IntPtr graphics;
+			Assert.AreEqual (Status.OutOfMemory, GDIPlus.GdipCreateFromHDC (IntPtr.Zero, out graphics), "GdipCreateFromHDC(null)");
+		}
+
+		[Test]
 		public void MeasureCharacterRanges ()
 		{
 			IntPtr image;

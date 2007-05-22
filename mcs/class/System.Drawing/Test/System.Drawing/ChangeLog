@@ -1,3 +1,8 @@
+2007-05-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* GDIPlusTest.cs: Add test cases for GdipCreateFromHDC when HDC is
+	NULL. This match MS behavior as seen in (unfixed) bug #81709.
+
 2007-05-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TestBitmap.cs: Don't use IntPtr.ToInt32 as it may not represent the
