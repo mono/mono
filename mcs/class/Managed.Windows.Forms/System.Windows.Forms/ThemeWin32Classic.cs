@@ -60,7 +60,7 @@ namespace System.Windows.Forms
 		const int SEPARATOR_MIN_WIDTH = 20;
 		const int SM_CXBORDER = 1;
 		const int SM_CYBORDER = 1;		
-		const int MENU_TAB_SPACE = 8;		// Pixels added to the width of an item because of a tab
+		const int MENU_TAB_SPACE = 8;		// Pixels added to the width of an item because of a tabd
 		const int MENU_BAR_ITEMS_SPACE = 8;	// Space between menu bar items
 
 		#region	Principal Theme Methods
@@ -3590,7 +3590,7 @@ namespace System.Windows.Forms
 #if NET_2_0
 			case 1: { // Continuous
 				int pixels_to_draw;
-				pixels_to_draw = (int)(client_area.Width * ((double)(ctrl.Value - ctrl.Minimum) / (double)(ctrl.Maximum - ctrl.Minimum)));
+				pixels_to_draw = (int)(client_area.Width * ((double)(ctrl.Value - ctrl.Minimum) / (double)(Math.Max(ctrl.Maximum - ctrl.Minimum, 1))));
 				dc.FillRectangle (ResPool.GetSolidBrush (progressbarblock_color), new Rectangle (client_area.X, client_area.Y, pixels_to_draw, client_area.Height));
 				break;
 			}
@@ -3614,7 +3614,7 @@ namespace System.Windows.Forms
 				int block_count = 0;
 				
 				block_width = (client_area.Height * 2) / 3;
-				barpos_pixels = ((ctrl.Value - ctrl.Minimum) * client_area.Width) / (ctrl.Maximum - ctrl.Minimum);
+				barpos_pixels = ((ctrl.Value - ctrl.Minimum) * client_area.Width) / (Math.Max(ctrl.Maximum - ctrl.Minimum, 1));
 				increment = block_width + space_betweenblocks;
 				
 				block_rect = new Rectangle (start_pixel, client_area.Y, block_width, client_area.Height);
