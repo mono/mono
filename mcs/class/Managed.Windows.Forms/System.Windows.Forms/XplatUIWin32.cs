@@ -2286,19 +2286,25 @@ namespace System.Windows.Forms {
 
 		internal override bool GetFontMetrics(Graphics g, Font font, out int ascent, out int descent) {
 			IntPtr		dc;
+			IntPtr		prevobj;
 			TEXTMETRIC	tm;
 
 			tm = new TEXTMETRIC();
 
-			dc = Win32GetDC(IntPtr.Zero);
-			Win32SelectObject(dc, font.ToHfont());
-			if (Win32GetTextMetrics(dc, ref tm) == false) {
-				Win32ReleaseDC(IntPtr.Zero, dc);
+			dc = Win32GetDC (IntPtr.Zero);
+			prevobj = Win32SelectObject (dc, font.ToHfont ());
+			
+			if (Win32GetTextMetrics (dc, ref tm) == false) {
+				prevobj = Win32SelectObject (dc, prevobj);
+				Win32DeleteObject (prevobj);
+				Win32ReleaseDC (IntPtr.Zero, dc);
 				ascent = 0;
 				descent = 0;
 				return false;
 			}
-			Win32ReleaseDC(IntPtr.Zero, dc);
+			prevobj = Win32SelectObject (dc, prevobj);
+			Win32DeleteObject (prevobj);
+			Win32ReleaseDC (IntPtr.Zero, dc);
 
 			ascent = tm.tmAscent;
 			descent = tm.tmDescent;

@@ -1,3 +1,8 @@
+2007-05-22  Jonathan Pobst  <monkey@jpobst.com>
+
+	* XplatUIWin32.cs: Plug a GDI leak caused by calling Font.ToHfont ()
+	without calling DeleteObject.  [Should fix bug #81709]
+
 2007-05-22  Jackson Harper  <jackson@ximian.com>
 
 	* RichTextBox.cs: Set the line endings correctly, when flushing
