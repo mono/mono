@@ -2110,7 +2110,7 @@ namespace System.Windows.Forms {
 
 		internal override  Size MinimizedWindowSize {
 			get {
-				return new Size(1, 1);
+				return new Size(0, 0);
 			}
 		} 
 

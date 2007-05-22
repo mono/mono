@@ -1,3 +1,8 @@
+2007-05-22  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* XplatUIX11.cs: MinimumWindowSize on X11 is actually
+	 {Width=0,Height=0}.
+
 2007-05-22  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs: Setting top with a null node should set to the very

@@ -1,3 +1,8 @@
+2007-05-22  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* FormTest.cs: Renamed FormCantGetTooSmall test and use comparison
+	with SystemInformation.MinimumWindowSize. Enable test.
+
 2007-05-22  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* FormTest.cs: Added ShowDialogCloseTest.

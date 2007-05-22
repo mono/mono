@@ -1736,21 +1736,18 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[NUnit.Framework.Category ("NotWorking")]
-		public void FormCantGetTooSmall ()
+		public void MinimumWindowSize ()
 		{
-			// This only applies on windows, x11 will let the window
-			// get as small as requested.
 			Form f = new Form ();
 			f.ShowInTaskbar = false;
 			f.Show ();
 			
-			f.Size = new Size (10, 10);
-			Assert.AreEqual (new Size (124, 36), f.Size, "L1");
-			
+			f.Size = new Size (0, 0);
+			Assert.AreEqual (SystemInformation.MinimumWindowSize, f.Size);
+
 			f.Dispose ();
 		}
-		
+
 		private class MockForm : Form
 		{
 			public bool CloseOnLoad {
