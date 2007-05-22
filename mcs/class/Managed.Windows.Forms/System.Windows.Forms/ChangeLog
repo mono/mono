@@ -1,5 +1,10 @@
 2007-05-22  Jackson Harper  <jackson@ximian.com>
 
+	* RichTextBox.cs: Set the line endings correctly, when flushing
+	RTF text.
+
+2007-05-22  Jackson Harper  <jackson@ximian.com>
+
 	* TreeView.cs: Setting top with a null node should set to the very
 	top.
 
