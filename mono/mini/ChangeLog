@@ -1,3 +1,8 @@
+2007-05-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-ia64.c (mono_arch_lowering_pass): Fix the handling of
+	icompare_imm -128 + op_iclt. Fixes #81703.
+
 2007-05-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-codegen.c (mono_local_regalloc): Fix long-shift-regalloc on amd64.
