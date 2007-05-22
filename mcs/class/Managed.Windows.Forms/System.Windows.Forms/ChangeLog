@@ -1,3 +1,14 @@
+2007-05-22  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Form.cs: ShowDialog: destroy the handle when message loop is
+	  finished, matches MS behaviour. Refactor parts of WmClose into
+	  RaiseCloseEvents, that only raises events if they haven't already
+	  been raised. Fixes #81688 and #81521.
+	* Application.cs: Don't call close on the form when exiting a modal
+	  loop, it will raise all the (Form)Closed/Closing events again if
+	  WM_CLOSE has been sent earlier on, instead call RaiseCloseEvent,
+	  which doesn'r raise any events it they have been raised before.
+
 2007-05-22  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Control.cs: Add OnPrint.

@@ -740,7 +740,7 @@ namespace System.Windows.Forms {
 				#if DebugRunLoop
 					Console.WriteLine("   Done with the SetModal");
 				#endif
-				old.Close();
+				old.RaiseCloseEvents (true);
 				old.is_modal = false;
 			}
 

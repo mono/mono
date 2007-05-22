@@ -48,6 +48,7 @@ namespace System.Windows.Forms {
 	public class Form : ContainerControl {
 		#region Local Variables
 		internal bool			closing;
+		private bool			closed;
 		FormBorderStyle			form_border_style;
 		private bool			is_active;
 		private bool		        autoscale;
@@ -1459,6 +1460,8 @@ namespace System.Windows.Forms {
 				return;
 
 			XplatUI.SendMessage(this.Handle, Msg.WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
+			
+			closed = true;
 		}
 
 		public void LayoutMdi(MdiLayout value) {
@@ -1583,11 +1586,15 @@ namespace System.Windows.Forms {
 				XplatUI.Activate(owner.window.Handle);
 			}
 
-			if (DialogResult != DialogResult.None) {
-				return DialogResult;
+			if (IsHandleCreated) {
+				DestroyHandle ();
 			}
-			DialogResult = DialogResult.Cancel;
-			return DialogResult.Cancel;
+
+			if (DialogResult == DialogResult.None) {
+				DialogResult = DialogResult.Cancel;
+			}
+			
+			return DialogResult;
 		}
 
 		public override string ToString() {
@@ -2309,6 +2316,33 @@ namespace System.Windows.Forms {
 			base.WndProc (ref m);
 		}
 		
+		internal bool RaiseCloseEvents (bool last_check)
+		{
+			if (last_check && Visible) {
+				Hide ();
+			}
+			
+			if (last_check && closed) {
+				return false;
+			}
+			
+			bool cancelled = FireClosingEvents (CloseReason.UserClosing);
+			if (!cancelled) {
+				if (!last_check || DialogResult != DialogResult.None) {
+					OnClosed (EventArgs.Empty);
+#if NET_2_0
+					OnFormClosed (new FormClosedEventArgs (CloseReason.UserClosing));
+#endif
+				}
+				closing = true;
+			} else {
+				DialogResult = DialogResult.None;
+				closing = false;
+			}
+				
+			return cancelled;
+		}
+		
 		private void WmClose (ref Message m)
 		{
 			Form act = Form.ActiveForm;
@@ -2331,31 +2365,18 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			if (!is_modal) {
-				if (!FireClosingEvents (CloseReason.UserClosing)) {
-					OnClosed (EventArgs.Empty);
-#if NET_2_0
-					OnFormClosed (new FormClosedEventArgs (CloseReason.UserClosing));
-#endif
-					closing = true;
-					Dispose ();
+			if (!RaiseCloseEvents (false)) {
+				if (is_modal) {
+					Hide ();
 				} else {
-					closing = false;
+					Dispose ();
 				}
 			} else {
-				if (FireClosingEvents (CloseReason.UserClosing)) {
+				if (is_modal) {
 					DialogResult = DialogResult.None;
-					closing = false;
-				} else {
-					OnClosed (EventArgs.Empty);
-#if NET_2_0
-					OnFormClosed (new FormClosedEventArgs (CloseReason.UserClosing));
-#endif
-					closing = true;
-					Hide ();
 				}
+				closing = false;	
 			}
-
 
 			mdi_parent = null;
 		}
