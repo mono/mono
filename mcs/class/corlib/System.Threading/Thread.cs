@@ -312,7 +312,7 @@ namespace System.Threading {
 #if NET_2_0
 				TrySetApartmentState (value);
 #else
-				if (ThreadState != ThreadState.Unstarted)
+				if ((ThreadState & ThreadState.Unstarted) == 0)
 					throw new ThreadStateException ("Thread was in an invalid state for the operation being executed.");
 
 				if (value != ApartmentState.STA && value != ApartmentState.MTA)
@@ -895,7 +895,7 @@ namespace System.Threading {
 
 		public bool TrySetApartmentState (ApartmentState state) 
 		{
-			if (ThreadState != ThreadState.Unstarted)
+			if ((ThreadState & ThreadState.Unstarted) == 0)
 				throw new ThreadStateException ("Thread was in an invalid state for the operation being executed.");
 
 			if ((ApartmentState)apartment_state != ApartmentState.Unknown)
