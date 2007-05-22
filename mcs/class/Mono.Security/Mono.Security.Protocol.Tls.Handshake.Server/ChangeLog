@@ -1,3 +1,8 @@
+2007-05-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TlsClientCertificate.cs: Add chain support for x.509 client 
+	certificates. Based on Roy Versteeg patch to fix #80557.
+
 2007-05-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TlsClientCertificate.cs: A client certficate with a RSA public key

@@ -34,7 +34,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 	{
 		#region Fields
 
-		private X509Certificate clientCertificate;
+		private X509CertificateCollection clientCertificates;
 
 		#endregion
 
@@ -51,8 +51,9 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 
 		public override void Update()
 		{
-			if (clientCertificate != null)
-				this.Context.ClientSettings.Certificates.Add (this.Context.ClientSettings.ClientCertificate);
+			foreach (X509Certificate certificate in clientCertificates) {
+				this.Context.ClientSettings.Certificates.Add (new SSCX.X509Certificate (certificate.RawData));
+			}
 		}
 
 		#endregion
@@ -66,21 +67,19 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 
 		protected override void ProcessAsTls1()
 		{
+			int bytesRead = 0;
 			int length = this.ReadInt24 ();
-			if (length > 0)	
-			{
-				// the next three bytes won't be here for 0-length
-				length = this.ReadInt24();
-				if (length > 0) 
-				{
-					byte[] certs = this.ReadBytes (length);
-					this.clientCertificate = new X509Certificate (certs);
-				}
+			this.clientCertificates = new X509CertificateCollection ();
+			while (length > bytesRead) {
+				int certLength = this.ReadInt24 ();
+				bytesRead += certLength + 3;
+				byte[] cert = this.ReadBytes (certLength);
+				this.clientCertificates.Add (new X509Certificate (cert));
 			}
 
-			if (this.clientCertificate != null) 
+			if (this.clientCertificates.Count > 0) 
 			{
-				this.validateCertificate (this.clientCertificate);
+				this.validateCertificates (this.clientCertificates);
 			} 
 			else if ((this.Context as ServerContext).ClientCertificateRequired) 
 			{
@@ -156,7 +155,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 			return false;
 		}
 
-		private void validateCertificate (X509Certificate certificate)
+		private void validateCertificates (X509CertificateCollection certificates)
 		{
 			ServerContext context = (ServerContext)this.Context;
 			AlertDescription description = AlertDescription.BadCertificate;
@@ -165,25 +164,37 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 
 			// note: certificate may be null is no certificate is sent
 			// (e.g. optional mutual authentication)
-			if (certificate != null)
-			{
+			if (certificates.Count > 0) {
+				X509Certificate leaf = certificates[0];
+			
 				ArrayList errors = new ArrayList ();
 
 				// SSL specific check - not all certificates can be 
 				// used to server-side SSL some rules applies after 
 				// all ;-)
-				if (!checkCertificateUsage (certificate))
+				if (!checkCertificateUsage (leaf))
 				{
 					// WinError.h CERT_E_PURPOSE 0x800B0106
 					errors.Add ((int)-2146762490);
 				}
 
-				X509Chain verify = new X509Chain ();
+				X509Chain verify;
+				// was a chain supplied ? if so use it, if not
+				if (certificates.Count > 1) {
+					// if so use it (and don't build our own)
+					X509CertificateCollection chain = new X509CertificateCollection (certificates);
+					chain.Remove (leaf);
+					verify = new X509Chain (chain);
+				} else {
+					// if not, then let's build our own (based on what's available in the stores)
+					verify = new X509Chain ();
+				}
+
 				bool result = false;
 
 				try
 				{
-					result = verify.Build (certificate);
+					result = verify.Build (leaf);
 				}
 				catch (Exception)
 				{
@@ -234,8 +245,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 							break;
 					}
 				}
-
-				client = new SSCX.X509Certificate (certificate.RawData);
+				client = new SSCX.X509Certificate (leaf.RawData);
 				certificateErrors = (int[])errors.ToArray (typeof (int));
 			}
 			else
@@ -243,6 +253,10 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 				certificateErrors = new int[0];
 			}
 
+			SSCX.X509CertificateCollection certCollection = new SSCX.X509CertificateCollection ();
+			foreach (X509Certificate certificate in certificates) {
+				certCollection.Add (new SSCX.X509Certificate (certificate.RawData));
+			}
 			if (!context.SslStream.RaiseClientCertificateValidation(client, certificateErrors))
 			{
 				throw new TlsException (
