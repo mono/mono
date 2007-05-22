@@ -508,11 +508,11 @@ namespace System.Windows.Forms
 			return base.GetChildAtPoint (point);
 		}
 
-		//[EditorBrowsable (EditorBrowsableState.Never)]
-		//public new Control GetChildAtPoint (Point pt, GetChildAtPointSkip skipValue)
-		//{
-		//        return base.GetChildAtPoint (pt, skipValue);
-		//}
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new Control GetChildAtPoint (Point pt, GetChildAtPointSkip skipValue)
+		{
+			return base.GetChildAtPoint (pt, skipValue);
+		}
 		
 		public ToolStripItem GetItemAt (Point point)
 		{

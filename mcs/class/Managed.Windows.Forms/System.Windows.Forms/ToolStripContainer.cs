@@ -229,6 +229,11 @@ namespace System.Windows.Forms
 			return new ToolStripContainerTypedControlCollection (this);
 		}
 
+		protected override void OnRightToLeftChanged (EventArgs e)
+		{
+			base.OnRightToLeftChanged (e);
+		}
+		
 		protected override void OnSizeChanged (EventArgs e)
 		{
 			base.OnSizeChanged (e);

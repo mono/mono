@@ -1,3 +1,10 @@
+2007-05-22  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Control.cs: Add OnPrint.
+	* ToolStrip.cs: Add GetChildAtPoint.
+	* ToolStripContainer.cs: Add OnRightToLeftChanged.
+	* ToolStripRenderer.cs: Make CreateMirrorImage internal.
+
 2007-05-22  Everaldo Canuto  <ecanuto@novell.com>
 
 	* MenuAPI.cs: Prevent context menu to be typed as MainMenu. Fixes #81509.  

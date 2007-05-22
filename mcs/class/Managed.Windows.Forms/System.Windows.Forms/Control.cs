@@ -5947,6 +5947,14 @@ namespace System.Windows.Forms
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected virtual void OnPrint (PaintEventArgs e)
+		{
+			PaintEventHandler eh = (PaintEventHandler)(Events[PaintEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
+
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected virtual void OnRegionChanged (EventArgs e)
 		{
 			EventHandler eh = (EventHandler)(Events[RegionChangedEvent]);

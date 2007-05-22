@@ -70,17 +70,6 @@ namespace System.Windows.Forms
 			
 			return b;
 		}
-
-		public static Image CreateMirrorImage (Image normalImage)
-		{
-			if (normalImage == null)
-				return null;
-				
-			Bitmap b = new Bitmap (normalImage);
-			b.RotateFlip (RotateFlipType.RotateNoneFlipX);
-			
-			return b;
-		}
 		
 		public void DrawArrow (ToolStripArrowRenderEventArgs e)
 		{ this.OnRenderArrow (e); }
@@ -416,6 +405,17 @@ namespace System.Windows.Forms
 		#endregion
 		
 		#region Private Methods
+		internal static Image CreateMirrorImage (Image normalImage)
+		{
+			if (normalImage == null)
+				return null;
+
+			Bitmap b = new Bitmap (normalImage);
+			b.RotateFlip (RotateFlipType.RotateNoneFlipX);
+
+			return b;
+		}
+
 		private void DrawBackground (Graphics g, Rectangle bounds, Image image, ImageLayout layout)
 		{
 			// Center and Tile don't matter if the image is larger than the control
