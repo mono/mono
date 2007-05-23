@@ -24,6 +24,7 @@ include ../../build/library.make
 
 EXTRA_DISTFILES = Test/resources/indexed.png	\
 	Test/System.Drawing/bitmaps/1bit.png	\
+	Test/System.Drawing/bitmaps/81674-2bpp.png	\
 	Test/System.Drawing/bitmaps/4bit.png	\
 	Test/System.Drawing/bitmaps/almogaver1bit.bmp	\
 	Test/System.Drawing/bitmaps/almogaver24bits1.bmp	\

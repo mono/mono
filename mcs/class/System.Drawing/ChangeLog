@@ -1,3 +1,7 @@
+2007-05-23  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* Makefile: Add a 2bpp PNG test file to the dist.
+
 2007-05-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Makefile: Add a greyscale JPEG test file to the dist.
