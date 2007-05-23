@@ -175,7 +175,7 @@ namespace System.Web.UI {
                         
                         if (!File.Exists (realpath))
                                 throw new ParseException (Location, "Could not find file \"" + realpath + "\".");
-                        string vpath = UrlUtils.Combine (BaseVirtualDir, src);
+			string vpath = VirtualPathUtility.Combine (BaseVirtualDir, src);
                         Type type = null;
                         AddDependency (realpath);
                         try {
