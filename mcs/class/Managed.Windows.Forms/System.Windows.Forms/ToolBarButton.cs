@@ -52,6 +52,9 @@ namespace System.Windows.Forms
 		private string text = "";
 		private string tooltip = "";
 		private bool visible = true;
+#if NET_2_0
+		private string name;
+#endif
 		#endregion
 
 		#region constructors
@@ -136,6 +139,21 @@ namespace System.Windows.Forms
 					Invalidate ();
 			}
 		}
+
+#if NET_2_0
+		[Browsable (false)]
+		public string Name {
+			get {
+				if (name == null)
+					return string.Empty;
+					
+				return name;
+			}
+			set {
+				name = value;
+			}
+		}
+#endif
 
 		[Browsable (false)]
 		public ToolBar Parent {
