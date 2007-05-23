@@ -398,8 +398,9 @@ namespace System.Windows.Forms {
 		}
 
 		private string UpdateEditText (decimal val) {
-			if (suppress_validation > 0)
-				return Text;
+			// TODO: why is this here?
+//			if (suppress_validation > 0)
+//			    return Text;
 
 			decimal ret = val;
 			string text = Text;
