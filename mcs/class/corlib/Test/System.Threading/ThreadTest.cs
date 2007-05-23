@@ -353,7 +353,6 @@ namespace MonoTests.System.Threading
 			}
 		}
 
-
 		public void TestIsBackground1()
 		{
 			C2Test test1 = new C2Test();
@@ -647,6 +646,50 @@ namespace MonoTests.System.Threading
 	}
 
 	[TestFixture]
+	public class ThreadStateTest {
+		void Start ()
+		{
+		}
+
+		[Test] // bug #81720
+		[Category ("NotWorking")]
+		public void IsBackGround ()
+		{
+			Thread t1 = new Thread (new ThreadStart (Start));
+			Assert.AreEqual (ThreadState.Unstarted, t1.ThreadState, "#A1");
+			Assert.IsFalse (t1.IsBackground, "#A2");
+			t1.Start ();
+			t1.Join ();
+			Assert.AreEqual (ThreadState.Stopped, t1.ThreadState, "#A3");
+			try {
+				bool isBackGround = t1.IsBackground;
+				Assert.Fail ("#A4: " + isBackGround.ToString ());
+			} catch (ThreadStateException ex) {
+				Assert.AreEqual (typeof (ThreadStateException), ex.GetType (), "#A5");
+				Assert.IsNull (ex.InnerException, "#A6");
+				Assert.IsNotNull (ex.Message, "#A7");
+			}
+
+			Thread t2 = new Thread (new ThreadStart (Start));
+			Assert.AreEqual (ThreadState.Unstarted, t2.ThreadState, "#B1");
+			t2.IsBackground = true;
+			Assert.AreEqual (ThreadState.Unstarted | ThreadState.Background, t2.ThreadState, "#B2");
+			Assert.IsTrue (t2.IsBackground, "#B3");
+			t2.Start ();
+			t2.Join ();
+			Assert.AreEqual (ThreadState.Stopped, t2.ThreadState, "#B4");
+			try {
+				bool isBackGround = t2.IsBackground;
+				Assert.Fail ("#B5: " + isBackGround.ToString ());
+			} catch (ThreadStateException ex) {
+				Assert.AreEqual (typeof (ThreadStateException), ex.GetType (), "#B6");
+				Assert.IsNull (ex.InnerException, "#B7");
+				Assert.IsNotNull (ex.Message, "#B8");
+			}
+		}
+	}
+
+	[TestFixture]
 	public class ThreadApartmentTest
 	{
 		void Start ()
@@ -660,12 +703,37 @@ namespace MonoTests.System.Threading
 			Thread t1 = new Thread (new ThreadStart (Start));
 			t1.Start ();
 			t1.Join ();
-			Assert.AreEqual (ThreadState.Stopped, t1.ThreadState, "#1");
 			try {
 				ApartmentState state = t1.ApartmentState;
-				Assert.Fail ("#2");
-			} catch (ThreadStateException) {
+				Assert.Fail ("#A1: " + state.ToString ());
+			} catch (ThreadStateException ex) {
+				Assert.AreEqual (typeof (ThreadStateException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
 			}
+
+			Thread t2 = new Thread (new ThreadStart (Start));
+			t2.IsBackground = true;
+			t2.Start ();
+			t2.Join ();
+			try {
+				ApartmentState state = t2.ApartmentState;
+				Assert.Fail ("#B1: " + state.ToString ());
+			} catch (ThreadStateException ex) {
+				Assert.AreEqual (typeof (ThreadStateException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+			}
+		}
+
+		[Test]
+		public void ApartmentState_BackGround ()
+		{
+			Thread t1 = new Thread (new ThreadStart (Start));
+			t1.IsBackground = true;
+			Assert.AreEqual (ApartmentState.Unknown, t1.ApartmentState, "#1");
+			t1.ApartmentState = ApartmentState.STA;
+			Assert.AreEqual (ApartmentState.STA, t1.ApartmentState, "#2");
 		}
 
 		[Test]

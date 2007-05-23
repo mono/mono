@@ -1,3 +1,9 @@
+2007-05-23  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ThreadTest.cs: Added test for bug #81720. Improved test for
+	bug #81658. Added test for changing ApartmentState on background
+	thread.
+
 2007-05-17  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ThreadTest.cs: Use Assert instead of deprecated Assertion class.
