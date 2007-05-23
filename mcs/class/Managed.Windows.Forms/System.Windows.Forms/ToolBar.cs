@@ -556,7 +556,7 @@ namespace System.Windows.Forms
 
 		#region Private Methods
 		private void FocusChanged (object sender, EventArgs args)
-		{return;
+		{
 			if (Appearance != ToolBarAppearance.Flat || Buttons.Count == 0)
 				return;
 
