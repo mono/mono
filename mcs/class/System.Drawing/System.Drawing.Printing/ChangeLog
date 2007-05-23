@@ -1,3 +1,11 @@
+2007-05-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PreviewPrintController.cs: Reduce bitmap size and avoid scaling the
+	print preview (fix bug #80765). Patch from Vladimir Dimitrov.
+	* PrintingServicesUnix.cs: Reorder calculation to avoid loss of 
+	precision in integer division. Use printer resolution for Cairo
+	fallback. Patch from Vladimir Dimitrov.
+
 2007-03-13  Andreia Gaita  <avidigal@novell.com>
 
 	* PrintingServices.cs: Add missing static method SysPrn.GetPrintDialogInfo

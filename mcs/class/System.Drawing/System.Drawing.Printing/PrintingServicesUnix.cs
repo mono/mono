@@ -780,10 +780,10 @@ namespace System.Drawing.Printing
 			}
 
 			GdipGetPostScriptGraphicsContext (name,
-				width / 100 * 72,
-				height / 100 * 72, 
-				// Harcoded dpy's
-				300, 300, ref graphics);
+				width * 72 / 100,
+				height * 72 / 100, 
+				default_page_settings.PrinterResolution.X,
+				default_page_settings.PrinterResolution.Y, ref graphics);
 
 			DOCINFO doc = new DOCINFO ();
 			doc.filename = name.ToString();
