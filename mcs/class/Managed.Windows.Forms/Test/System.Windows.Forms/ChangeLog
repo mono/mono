@@ -1,5 +1,9 @@
 2007-05-23  Everaldo Canuto  <ecanuto@novell.com>
 
+	* TestHelper.cs: Remove Event log we already have a EventLogger class.
+
+2007-05-23  Everaldo Canuto  <ecanuto@novell.com>
+
 	* TestHelper.cs: Event log added.
 
 2007-05-23  Everaldo Canuto  <ecanuto@novell.com>
