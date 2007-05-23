@@ -58,32 +58,32 @@ namespace System
 #if NET_2_0
 		// FIXME: they should not be exposed, but there are some
 		// dependent code in the runtime.
-		public int InternalArray__ICollection_get_Count<T> ()
+		protected int InternalArray__ICollection_get_Count<T> ()
 		{
 			return Length;
 		}
 
-		public IEnumerator<T> InternalArray__IEnumerable_GetEnumerator<T> ()
+		protected IEnumerator<T> InternalArray__IEnumerable_GetEnumerator<T> ()
 		{
 			return new InternalEnumerator<T> (this);
 		}
 
-		public void InternalArray__ICollection_Clear<T> ()
+		protected void InternalArray__ICollection_Clear<T> ()
 		{
 			throw new NotSupportedException ("Collection is read-only");
 		}
 
-		public void InternalArray__ICollection_Add<T> (T item)
+		protected void InternalArray__ICollection_Add<T> (T item)
 		{
 			throw new NotSupportedException ("Collection is read-only");
 		}
 
-		public bool InternalArray__ICollection_Remove<T> (T item)
+		protected bool InternalArray__ICollection_Remove<T> (T item)
 		{
 			throw new NotSupportedException ("Collection is read-only");
 		}
 
-		public bool InternalArray__ICollection_Contains<T> (T item)
+		protected bool InternalArray__ICollection_Contains<T> (T item)
 		{
 			if (this.Rank > 1)
 				throw new RankException (Locale.GetText ("Only single dimension arrays are supported."));
@@ -106,7 +106,7 @@ namespace System
 			return false;
 		}
 
-		public void InternalArray__ICollection_CopyTo<T> (T[] array, int index)
+		protected void InternalArray__ICollection_CopyTo<T> (T[] array, int index)
 		{
 			if (array == null)
 				throw new ArgumentNullException ("array");
@@ -126,17 +126,17 @@ namespace System
 			Copy (this, this.GetLowerBound (0), array, index, this.GetLength (0));
 		}
 
-		public void InternalArray__Insert<T> (int index, T item)
+		protected void InternalArray__Insert<T> (int index, T item)
 		{
 			throw new NotSupportedException ("Collection is read-only");
 		}
 
-		public void InternalArray__RemoveAt<T> (int index)
+		protected void InternalArray__RemoveAt<T> (int index)
 		{
 			throw new NotSupportedException ("Collection is read-only");
 		}
 
-		public int InternalArray__IndexOf<T> (T item)
+		protected int InternalArray__IndexOf<T> (T item)
 		{
 			if (this.Rank > 1)
 				throw new RankException (Locale.GetText ("Only single dimension arrays are supported."));
@@ -169,7 +169,7 @@ namespace System
 			return retVal;
 		}
 
-		public T InternalArray__get_Item<T> (int index)
+		protected T InternalArray__get_Item<T> (int index)
 		{
 			if (unchecked ((uint) index) >= unchecked ((uint) Length))
 				throw new ArgumentOutOfRangeException ("index");
@@ -179,7 +179,7 @@ namespace System
 			return value;
 		}
 
-		public void InternalArray__set_Item<T> (int index, T item)
+		protected void InternalArray__set_Item<T> (int index, T item)
 		{
 			throw new NotSupportedException ("Collection is read-only");
 		}
