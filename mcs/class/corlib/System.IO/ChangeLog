@@ -1,3 +1,9 @@
+2007-05-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* UnmanagedMemoryStream.cs : couple of bugfixes. in Read(), don't
+	  return buffer beyond the requested length. Fixed .ctor() for wrong
+	  capacity initialization.
+
 2007-05-12  Jonathan Chambers  <joncham@gmail.com>
 
 	* FileStream.cs: Implement SafeHandle constructors.

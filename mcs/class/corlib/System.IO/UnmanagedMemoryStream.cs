@@ -80,7 +80,7 @@ namespace System.IO
 			initial_pointer = new IntPtr((void*)pointer);
 		}
 		
-		public unsafe UnmanagedMemoryStream (byte *pointer, long len, long cap,	FileAccess access)
+		public unsafe UnmanagedMemoryStream (byte *pointer, long len, long capacity, FileAccess access)
 		{
 			if (pointer == null)
 				throw new ArgumentNullException("The pointer value is a null reference");
@@ -92,7 +92,7 @@ namespace System.IO
 				throw new ArgumentOutOfRangeException("The length value is greater than the capacity value");
 			fileaccess = access;
 			length = len;
-			capacity = cap;
+			this.capacity = capacity;
 			initial_position = 0;
 			current_position = initial_position;
 			canseek = true;
@@ -108,7 +108,7 @@ namespace System.IO
 				if (closed)
 					return false;
 				else
-					return ((fileaccess == FileAccess.Read || fileaccess == FileAccess.ReadWrite)? true:false);
+					return ((fileaccess == FileAccess.Read || fileaccess == FileAccess.ReadWrite)? current_position < capacity : false);
 			}
 		}
 
@@ -189,12 +189,12 @@ namespace System.IO
 					if (current_position == capacity)
 						return (0);
 					else {
+						int progress = current_position + count < capacity ? count : (int) (capacity - current_position);
 						unsafe {
-							Marshal.Copy(initial_pointer, buffer, offset, 
-								     (int)length);
-							current_position += length;
+							Marshal.Copy(initial_pointer, buffer, offset, progress);
+							current_position += progress;
 						}
-						return (buffer.GetLength(0));
+						return progress;
 					}
 				}
 			}
