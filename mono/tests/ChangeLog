@@ -1,3 +1,7 @@
+2007-05-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* delegate.cs: Add a multicast delegate test.
+
 2007-05-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* pinvoke2.cs libtest.c: Fix up asany in/out tests.
