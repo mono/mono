@@ -71,7 +71,7 @@ namespace MonoTests.System.Drawing.Imaging {
 			return sRslt;
 		}
 
-		/* Checks bitmap features on a know 1bbp bitmap */
+		/* Checks bitmap features on a known 1bbp bitmap */
 		[Test]
 		public void Bitmap1bitFeatures ()
 		{
@@ -80,8 +80,13 @@ namespace MonoTests.System.Drawing.Imaging {
 				GraphicsUnit unit = GraphicsUnit.World;
 				RectangleF rect = bmp.GetBounds (ref unit);
 
-				// ??? why is it a 4bbp ?
 				Assert.AreEqual (PixelFormat.Format1bppIndexed, bmp.PixelFormat);
+
+				Assert.AreEqual (0, bmp.Palette.Flags, "Palette.Flags");
+				Assert.AreEqual (2, bmp.Palette.Entries.Length, "Palette.Entries");
+				Assert.AreEqual (-16777216, bmp.Palette.Entries[0].ToArgb (), "Palette.0");
+				Assert.AreEqual (-1, bmp.Palette.Entries[1].ToArgb (), "Palette.1");
+
 				Assert.AreEqual (288, bmp.Width, "bmp.Width");
 				Assert.AreEqual (384, bmp.Height, "bmp.Height");
 
@@ -281,7 +286,128 @@ namespace MonoTests.System.Drawing.Imaging {
 			}
 		}
 
-		/* Checks bitmap features on a know 8bbp bitmap */
+		/* Checks bitmap features on a known 2bbp bitmap */
+		[Test]
+		public void Bitmap2bitFeatures ()
+		{
+			string sInFile = getInFile ("bitmaps/81674-2bpp.png");
+			using (Bitmap bmp = new Bitmap (sInFile)) {
+				GraphicsUnit unit = GraphicsUnit.World;
+				RectangleF rect = bmp.GetBounds (ref unit);
+
+				// quite a promotion! (2 -> 32)
+				Assert.AreEqual (PixelFormat.Format32bppArgb, bmp.PixelFormat);
+
+				// MS returns a random Flags value (not a good sign)
+				//Assert.AreEqual (0, bmp.Palette.Flags, "Palette.Flags");
+				Assert.AreEqual (0, bmp.Palette.Entries.Length, "Palette.Entries");
+
+				Assert.AreEqual (100, bmp.Width, "bmp.Width");
+				Assert.AreEqual (100, bmp.Height, "bmp.Height");
+
+				Assert.AreEqual (0, rect.X, "rect.X");
+				Assert.AreEqual (0, rect.Y, "rect.Y");
+				Assert.AreEqual (100, rect.Width, "rect.Width");
+				Assert.AreEqual (100, rect.Height, "rect.Height");
+
+				Assert.AreEqual (100, bmp.Size.Width, "bmp.Size.Width");
+				Assert.AreEqual (100, bmp.Size.Height, "bmp.Size.Height");
+			}
+		}
+
+		[Test]
+		public void Bitmap2bitPixels ()
+		{
+			string sInFile = getInFile ("bitmaps/81674-2bpp.png");
+			using (Bitmap bmp = new Bitmap (sInFile)) {
+#if false
+				for (int x = 0; x < bmp.Width; x += 32) {
+					for (int y = 0; y < bmp.Height; y += 32)
+						Console.WriteLine ("\t\t\t\tAssert.AreEqual ({0}, bmp.GetPixel ({1}, {2}).ToArgb (), \"{1},{2}\");", bmp.GetPixel (x, y).ToArgb (), x, y);
+				}
+#else
+				// sampling values from a well known bitmap
+				Assert.AreEqual (-11249559, bmp.GetPixel (0, 0).ToArgb (), "0,0");
+				Assert.AreEqual (-11249559, bmp.GetPixel (0, 32).ToArgb (), "0,32");
+				Assert.AreEqual (-11249559, bmp.GetPixel (0, 64).ToArgb (), "0,64");
+				Assert.AreEqual (-11249559, bmp.GetPixel (0, 96).ToArgb (), "0,96");
+				Assert.AreEqual (-11249559, bmp.GetPixel (32, 0).ToArgb (), "32,0");
+				Assert.AreEqual (-16777216, bmp.GetPixel (32, 32).ToArgb (), "32,32");
+				Assert.AreEqual (-11249559, bmp.GetPixel (32, 64).ToArgb (), "32,64");
+				Assert.AreEqual (-11249559, bmp.GetPixel (32, 96).ToArgb (), "32,96");
+				Assert.AreEqual (-11249559, bmp.GetPixel (64, 0).ToArgb (), "64,0");
+				Assert.AreEqual (-16777216, bmp.GetPixel (64, 32).ToArgb (), "64,32");
+				Assert.AreEqual (-11249559, bmp.GetPixel (64, 64).ToArgb (), "64,64");
+				Assert.AreEqual (-11249559, bmp.GetPixel (64, 96).ToArgb (), "64,96");
+				Assert.AreEqual (-11249559, bmp.GetPixel (96, 0).ToArgb (), "96,0");
+				Assert.AreEqual (-11249559, bmp.GetPixel (96, 32).ToArgb (), "96,32");
+				Assert.AreEqual (-11249559, bmp.GetPixel (96, 64).ToArgb (), "96,64");
+				Assert.AreEqual (-11249559, bmp.GetPixel (96, 96).ToArgb (), "96,96");
+#endif
+			}
+		}
+
+		[Test]
+		public void Bitmap2bitData ()
+		{
+			string sInFile = getInFile ("bitmaps/81674-2bpp.png");
+			using (Bitmap bmp = new Bitmap (sInFile)) {
+				BitmapData data = bmp.LockBits (new Rectangle (0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
+				try {
+					Assert.AreEqual (bmp.Height, data.Height, "Height");
+					Assert.AreEqual (bmp.Width, data.Width, "Width");
+					Assert.AreEqual (PixelFormat.Format24bppRgb, data.PixelFormat, "PixelFormat");
+					Assert.AreEqual (300, data.Stride, "Stride");
+					int size = data.Height * data.Stride;
+					unsafe {
+						byte* scan = (byte*) data.Scan0;
+#if false
+						// 1009 is the first prime after 1000 (so we're not affected by a recurring pattern)
+						for (int p = 0; p < size; p += 1009) {
+							Console.WriteLine ("\t\t\t\t\t\tAssert.AreEqual ({0}, *(scan + {1}), \"{1}\");", *(scan + p), p);
+						}
+#else
+						// sampling values from a well known bitmap
+						Assert.AreEqual (105, *(scan + 0), "0");
+						Assert.AreEqual (88, *(scan + 1009), "1009");
+						Assert.AreEqual (255, *(scan + 2018), "2018");
+						Assert.AreEqual (105, *(scan + 3027), "3027");
+						Assert.AreEqual (88, *(scan + 4036), "4036");
+						Assert.AreEqual (84, *(scan + 5045), "5045");
+						Assert.AreEqual (255, *(scan + 6054), "6054");
+						Assert.AreEqual (88, *(scan + 7063), "7063");
+						Assert.AreEqual (84, *(scan + 8072), "8072");
+						Assert.AreEqual (0, *(scan + 9081), "9081");
+						Assert.AreEqual (0, *(scan + 10090), "10090");
+						Assert.AreEqual (84, *(scan + 11099), "11099");
+						Assert.AreEqual (0, *(scan + 12108), "12108");
+						Assert.AreEqual (88, *(scan + 13117), "13117");
+						Assert.AreEqual (84, *(scan + 14126), "14126");
+						Assert.AreEqual (105, *(scan + 15135), "15135");
+						Assert.AreEqual (88, *(scan + 16144), "16144");
+						Assert.AreEqual (84, *(scan + 17153), "17153");
+						Assert.AreEqual (0, *(scan + 18162), "18162");
+						Assert.AreEqual (88, *(scan + 19171), "19171");
+						Assert.AreEqual (84, *(scan + 20180), "20180");
+						Assert.AreEqual (0, *(scan + 21189), "21189");
+						Assert.AreEqual (88, *(scan + 22198), "22198");
+						Assert.AreEqual (84, *(scan + 23207), "23207");
+						Assert.AreEqual (105, *(scan + 24216), "24216");
+						Assert.AreEqual (88, *(scan + 25225), "25225");
+						Assert.AreEqual (0, *(scan + 26234), "26234");
+						Assert.AreEqual (105, *(scan + 27243), "27243");
+						Assert.AreEqual (88, *(scan + 28252), "28252");
+						Assert.AreEqual (84, *(scan + 29261), "29261");
+#endif
+					}
+				}
+				finally {
+					bmp.UnlockBits (data);
+				}
+			}
+		}
+
+		/* Checks bitmap features on a known 4bbp bitmap */
 		[Test]
 		public void Bitmap4bitFeatures ()
 		{
@@ -291,6 +417,26 @@ namespace MonoTests.System.Drawing.Imaging {
 				RectangleF rect = bmp.GetBounds (ref unit);
 
 				Assert.AreEqual (PixelFormat.Format4bppIndexed, bmp.PixelFormat);
+
+				Assert.AreEqual (0, bmp.Palette.Flags, "Palette.Flags");
+				Assert.AreEqual (16, bmp.Palette.Entries.Length, "Palette.Entries");
+				Assert.AreEqual (-12106173, bmp.Palette.Entries[0].ToArgb (), "Palette.0");
+				Assert.AreEqual (-10979957, bmp.Palette.Entries[1].ToArgb (), "Palette.1");
+				Assert.AreEqual (-8879241, bmp.Palette.Entries[2].ToArgb (), "Palette.2");
+				Assert.AreEqual (-10381134, bmp.Palette.Entries[3].ToArgb (), "Palette.3");
+				Assert.AreEqual (-7441574, bmp.Palette.Entries[4].ToArgb (), "Palette.4");
+				Assert.AreEqual (-6391673, bmp.Palette.Entries[5].ToArgb (), "Palette.5");
+				Assert.AreEqual (-5861009, bmp.Palette.Entries[6].ToArgb (), "Palette.6");
+				Assert.AreEqual (-3824008, bmp.Palette.Entries[7].ToArgb (), "Palette.7");
+				Assert.AreEqual (-5790569, bmp.Palette.Entries[8].ToArgb (), "Palette.8");
+				Assert.AreEqual (-6178617, bmp.Palette.Entries[9].ToArgb (), "Palette.9");
+				Assert.AreEqual (-4668490, bmp.Palette.Entries[10].ToArgb (), "Palette.10");
+				Assert.AreEqual (-5060143, bmp.Palette.Entries[11].ToArgb (), "Palette.11");
+				Assert.AreEqual (-3492461, bmp.Palette.Entries[12].ToArgb (), "Palette.12");
+				Assert.AreEqual (-2967099, bmp.Palette.Entries[13].ToArgb (), "Palette.13");
+				Assert.AreEqual (-2175574, bmp.Palette.Entries[14].ToArgb (), "Palette.14");
+				Assert.AreEqual (-1314578, bmp.Palette.Entries[15].ToArgb (), "Palette.15");
+
 				Assert.AreEqual (288, bmp.Width, "bmp.Width");
 				Assert.AreEqual (384, bmp.Height, "bmp.Height");
 

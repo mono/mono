@@ -1,3 +1,8 @@
+2007-05-23  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* PngCodecTest.cs: Add test cases for 2bpp PNG images. Add some 
+	palette assertions in 1bpp and 4bpp test cases.
+
 2007-05-17  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* MetafileTest.cs: Ignore test Measure if no fonts are available.
