@@ -1,3 +1,7 @@
+2007-05-23  Rolf Bjarne Kvinge <RKvinge@novell.com>
+
+	* ToolBarButton.cs: Implement Name.
+
 2007-05-22  Everaldo Canuto  <ecanuto@novell.com>
 
 	* ToolBar.cs: Fix OnButtonDropDown to save item used in dropdown instead of
