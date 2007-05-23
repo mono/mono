@@ -1343,9 +1343,14 @@ namespace Mono.CSharp
 			if (vector [Offset])
 				return true;
 
-			for (VariableInfo parent = Parent; parent != null; parent = parent.Parent)
-				if (vector [parent.Offset])
+			// FIXME: Fix SetFieldAssigned to set the whole range like SetAssigned below. Then, get rid of this stanza
+			for (VariableInfo parent = Parent; parent != null; parent = parent.Parent) {
+				if (vector [parent.Offset]) {
+					// 'parent' is assigned, but someone forgot to note that all its components are assigned too
+					parent.SetAssigned (vector);
 					return true;
+				}
+			}
 
 			// Return unless this is a struct.
 			if (!TypeInfo.IsStruct)
@@ -1379,7 +1384,10 @@ namespace Mono.CSharp
 
 		public void SetAssigned (MyBitVector vector)
 		{
-			vector [Offset] = true;
+			if (Length == 1)
+				vector [Offset] = true;
+			else
+				vector.SetRange (Offset, Length);
 		}
 
 		public bool IsFieldAssigned (EmitContext ec, string name, Location loc)
@@ -1629,6 +1637,30 @@ namespace Mono.CSharp
 		public MyBitVector Clone ()
 		{
 			return Count == 0 ? Empty : new MyBitVector (this, Count);
+		}
+
+		public void SetRange (int offset, int length)
+		{
+			if (offset > Count || offset + length > Count)
+				throw new ArgumentOutOfRangeException ();
+
+			if (shared == null && vector == null)
+				return;
+
+			int i = 0;
+			if (shared != null) {
+				if (offset + length <= shared.Count) {
+					for (; i < length; ++i)
+						if (!shared [i+offset])
+						    break;
+					if (i == length)
+						return;
+				}
+				initialize_vector ();
+			}
+			for (; i < length; ++i)
+				vector [i+offset] = true;
+
 		}
 
 		public void SetAll (bool value)

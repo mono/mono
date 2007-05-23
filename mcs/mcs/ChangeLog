@@ -1,3 +1,10 @@
+2007-05-23  Raja R Harinath  <rharinath@novell.com>
+
+	* flowanalysis.cs (VariableInfo.SetAssigned): When noting a
+	variable as assigned, note also that all its components are
+	assigned too.
+	(MyBitVector.SetRange): New.  Function to set multiple bits to true.
+
 2007-05-19  Marek Safar  <marek.safar@gmail.com>
 
 	* anonymous.cs, class.cs: Emit Compiler generated attribute when
