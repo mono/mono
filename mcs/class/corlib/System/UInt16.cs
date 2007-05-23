@@ -33,6 +33,9 @@ namespace System
 {
 	[Serializable]
 	[CLSCompliant (false)]
+#if NET_2_0
+	[System.Runtime.InteropServices.ComVisible (true)]
+#endif
 	public struct UInt16 : IFormattable, IConvertible, IComparable
 #if NET_2_0
 		, IComparable<UInt16>, IEquatable <UInt16>

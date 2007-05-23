@@ -33,6 +33,9 @@
 namespace System
 {
 	[Serializable]
+#if NET_2_0
+	[System.Runtime.InteropServices.ComVisible (true)]
+#endif
 	public struct Void
 	{
 	}

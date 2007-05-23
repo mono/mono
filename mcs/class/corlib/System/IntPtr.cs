@@ -52,6 +52,9 @@ using System.Runtime.ConstrainedExecution;
 namespace System
 {
 	[Serializable]
+#if NET_2_0
+	[System.Runtime.InteropServices.ComVisible (true)]
+#endif
 	public unsafe struct IntPtr : ISerializable
 	{
 		private void *value;

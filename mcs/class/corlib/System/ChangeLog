@@ -1,3 +1,13 @@
+2007-05-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Int16.cs UInt64.cs UIntPtr.cs Double.cs CrossAppDomainDelegate.cs
+	  ResolveEventHandler.cs IntPtr.cs UnhandledExceptionEventHandler.cs
+	  Void.cs AssemblyLoadEventHandler.cs SByte.cs UInt16.cs DateTime.cs
+	  Byte.cs TimeSpan.cs Decimal.cs Int32.cs Delegate.cs
+	  AppDomainInitializer.cs MulticastDelegate.cs Int64.cs
+	  EventHandler.cs Single.cs UInt32.cs AsyncCallback.cs :
+	  cosmetic attribute fixes (ComVisible/Serializable).
+
 2007-05-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Convert.cs : completed 2.0 (ToBase64CharArray).

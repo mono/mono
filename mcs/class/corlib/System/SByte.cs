@@ -33,6 +33,9 @@ namespace System
 {
 	[CLSCompliant(false)]
 	[Serializable]
+#if NET_2_0
+	[System.Runtime.InteropServices.ComVisible (true)]
+#endif
 	public struct SByte : IFormattable, IConvertible, IComparable
 #if NET_2_0
 		, IComparable<SByte>, IEquatable <SByte>

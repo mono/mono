@@ -42,6 +42,10 @@ namespace System
 #if NET_1_1
 	[ClassInterface (ClassInterfaceType.AutoDual)]
 #endif
+#if NET_2_0
+	[System.Runtime.InteropServices.ComVisible (true)]
+	[Serializable]
+#endif
 	public abstract class Delegate : ICloneable, ISerializable
 	{
 		private Type target_type;
@@ -398,6 +402,7 @@ namespace System
 		///   concatenated invocation lists of an Array of MulticastDelegates
 		/// </symmary>
 #if NET_2_0
+		[System.Runtime.InteropServices.ComVisible (true)]
 		public static Delegate Combine (params Delegate[] delegates)
 #else
 		public static Delegate Combine (Delegate[] delegates)

@@ -37,6 +37,7 @@ namespace System {
 	public delegate void EventHandler <TEventArgs> (object sender, TEventArgs e) where TEventArgs : EventArgs;
 
 	[Serializable]
+	[System.Runtime.InteropServices.ComVisible (true)]
 #endif
 	public delegate void EventHandler (object sender, EventArgs e);
 

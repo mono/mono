@@ -52,6 +52,9 @@ namespace System
     /// digits, suitable for financial and commercial calculations
     /// </summary>
 	[Serializable]
+#if NET_2_0
+	[System.Runtime.InteropServices.ComVisible (true)]
+#endif
     public struct Decimal: IFormattable, IConvertible, IComparable
 #if NET_2_0
 	, IComparable<Decimal>, IEquatable <Decimal>

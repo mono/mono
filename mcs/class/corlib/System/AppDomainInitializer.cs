@@ -29,7 +29,8 @@
 #if NET_2_0
 
 namespace System {
-
+	[System.Runtime.InteropServices.ComVisible (true)]
+	[Serializable]
 	public delegate void AppDomainInitializer (string[] args);
 
 }

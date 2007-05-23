@@ -32,5 +32,9 @@
 
 namespace System
 {
+#if NET_2_0
+	[System.Runtime.InteropServices.ComVisible (true)]
+	[Serializable]
+#endif
 	public delegate void AsyncCallback (IAsyncResult ar);
 }

@@ -36,6 +36,10 @@ using System.Runtime.Serialization;
 
 namespace System
 {
+#if NET_2_0
+	[System.Runtime.InteropServices.ComVisible (true)]
+	[Serializable]
+#endif
 	public abstract class MulticastDelegate : Delegate
 	{
 		private MulticastDelegate prev;

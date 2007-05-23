@@ -32,6 +32,9 @@ using System.Globalization;
 namespace System {
 	
 	[Serializable]
+#if NET_2_0
+	[System.Runtime.InteropServices.ComVisible (true)]
+#endif
 	public struct Int16 : IFormattable, IConvertible, IComparable
 #if NET_2_0
 		, IComparable<Int16>, IEquatable <Int16>

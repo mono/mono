@@ -32,5 +32,8 @@
 
 namespace System
 {
+#if NET_2_0
+	[System.Runtime.InteropServices.ComVisible (true)]
+#endif
 	public delegate void CrossAppDomainDelegate ();
 }

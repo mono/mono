@@ -39,6 +39,9 @@ using System.Runtime.ConstrainedExecution;
 namespace System
 {
 	[Serializable]
+#if NET_2_0
+	[System.Runtime.InteropServices.ComVisible (true)]
+#endif
 	public struct Single : IComparable, IFormattable, IConvertible
 #if NET_2_0
 		, IComparable <float>, IEquatable <float>

@@ -34,6 +34,9 @@ using System.Threading;
 namespace System {
 	
 	[Serializable]
+#if NET_2_0
+	[System.Runtime.InteropServices.ComVisible (true)]
+#endif
 	public struct Int64 : IFormattable, IConvertible, IComparable
 #if NET_2_0
 		, IComparable<Int64>, IEquatable <Int64>

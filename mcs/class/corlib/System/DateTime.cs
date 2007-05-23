@@ -44,6 +44,9 @@ namespace System
 	/// 
 	[Serializable]
 	[StructLayout (LayoutKind.Auto)]
+#if NET_2_0
+	[System.Runtime.InteropServices.ComVisible (true)]
+#endif
 	public struct DateTime : IFormattable, IConvertible, IComparable
 #if NET_2_0
 		, IComparable<DateTime>, IEquatable <DateTime>

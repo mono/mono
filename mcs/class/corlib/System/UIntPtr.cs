@@ -44,6 +44,9 @@ namespace System
 {
 	[Serializable]
 	[CLSCompliant (false)]
+#if NET_2_0
+	[System.Runtime.InteropServices.ComVisible (true)]
+#endif
 	public unsafe struct UIntPtr : ISerializable
 	{
 		public static readonly UIntPtr Zero = new UIntPtr (0u);
