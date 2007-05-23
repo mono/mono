@@ -1,10 +1,7 @@
-2007-05-23  Rolf Bjarne Kvinge <RKvinge@novell.com> 
-
-	* ToolBarButton.cs: Implement Name.
-
 2007-05-22  Everaldo Canuto  <ecanuto@novell.com>
 
-	* ToolBar.cs: Prevent context menu to be typed as MainMenu. Fixes #81675.  
+	* ToolBar.cs: Fix OnButtonDropDown to save item used in dropdown instead of
+	use current_item, it prevents some NRE. Fixes #81675.  
 
 2007-05-22  Andreia Gaita  <avidigal@novell.com>
 
