@@ -1,3 +1,7 @@
+2007-05-22  Everaldo Canuto  <ecanuto@novell.com>
+
+	* ToolBar.cs: Prevent context menu to be typed as MainMenu. Fixes #81675.  
+
 2007-05-22  Andreia Gaita  <avidigal@novell.com>
 
 	* NumericUpDown.cs: Fix PieChart by not returning from UpdateEditText

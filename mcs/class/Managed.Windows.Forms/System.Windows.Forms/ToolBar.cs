@@ -495,12 +495,14 @@ namespace System.Windows.Forms
 			if (e.Button.DropDownMenu == null)
 				return;
 
-			Point loc = new Point (current_item.Rectangle.X + 1, current_item.Rectangle.Bottom + 1);
+			ToolBarItem item = current_item;
+
+			Point loc = new Point (item.Rectangle.X + 1, item.Rectangle.Bottom + 1);
 			((ContextMenu) e.Button.DropDownMenu).Show (this, loc);
 
-			current_item.DDPressed = false;
-			current_item.Hilight = false;
-			Invalidate (current_item.Rectangle);
+			item.DDPressed = false;
+			item.Hilight = false;
+			item.Invalidate ();
 		}
 
 		protected override void OnFontChanged (EventArgs e)
@@ -554,7 +556,7 @@ namespace System.Windows.Forms
 
 		#region Private Methods
 		private void FocusChanged (object sender, EventArgs args)
-		{
+		{return;
 			if (Appearance != ToolBarAppearance.Flat || Buttons.Count == 0)
 				return;
 
