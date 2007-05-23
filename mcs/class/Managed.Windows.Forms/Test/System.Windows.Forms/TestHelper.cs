@@ -21,7 +21,6 @@ namespace MonoTests.System.Windows.Forms
 	{
 		public TestHelper()
 		{
-			event_log = new ArrayList (); 
 		}
 
 		public static void RemoveWarning (params object [] param)
