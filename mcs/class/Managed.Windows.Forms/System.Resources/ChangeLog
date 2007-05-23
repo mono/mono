@@ -1,3 +1,7 @@
+2007-05-23  Andreia Gaita <avidigal@novell.com>
+
+	* ResXResourceReader.cs: Fix CDATA detection
+
 2007-05-21  Andreia Gaita <avidigal@novell.com>
 
 	* ResXDataNode.cs: Added

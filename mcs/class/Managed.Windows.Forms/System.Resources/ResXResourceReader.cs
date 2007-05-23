@@ -220,12 +220,11 @@ namespace System.Resources
 			while (xmlReader.Read ()) {
 				if (xmlReader.NodeType == XmlNodeType.EndElement && xmlReader.LocalName == "data")
 					break;
-				if (xmlReader.NodeType == XmlNodeType.Element && 
-					xmlReader.Name == "value"
-					) {
-						value = xmlReader.ReadString ().Trim ();
-						break;
-					}
+				if ((xmlReader.NodeType == XmlNodeType.Element && xmlReader.Name == "value") || 
+					(xmlReader.NodeType == XmlNodeType.CDATA)) {
+					value = xmlReader.ReadString ().Trim ();
+					break;
+				}
 			}
 #else
 			xmlReader.Read ();
