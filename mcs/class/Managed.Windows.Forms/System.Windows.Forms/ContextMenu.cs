@@ -37,9 +37,18 @@ namespace System.Windows.Forms
 		private Control	src_control;
 
 		#region Events
-		
+#if NET_2_0
+		static object CollapseEvent = new object ();
+#endif
 		static object PopupEvent = new object ();
-		
+
+#if NET_2_0
+		public event EventHandler Collapse {
+			add { Events.AddHandler (CollapseEvent, value); }
+			remove { Events.RemoveHandler (CollapseEvent, value); }
+		}
+#endif
+
 		public event EventHandler Popup {
 			add { Events.AddHandler (PopupEvent, value); }
 			remove { Events.RemoveHandler (PopupEvent, value); }
@@ -77,7 +86,16 @@ namespace System.Windows.Forms
 		#endregion Public Properties
 
 		#region Public Methods
-				
+
+#if NET_2_0
+		protected internal virtual void OnCollapse (EventArgs e)
+		{
+			EventHandler eh = (EventHandler) (Events [CollapseEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
+#endif
+
 		protected internal virtual void OnPopup (EventArgs e)
 		{
 			EventHandler eh = (EventHandler) (Events [PopupEvent]);
@@ -95,6 +113,9 @@ namespace System.Windows.Forms
 			OnPopup (EventArgs.Empty);
 			pos = control.PointToScreen (pos);
 			MenuTracker.TrackPopupMenu (this, pos);
+#if NET_2_0
+			OnCollapse (EventArgs.Empty);
+#endif
 		}
 
 #if NET_2_0		
