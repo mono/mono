@@ -1,3 +1,10 @@
+2007-05-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Convert.cs : completed 2.0 (ToBase64CharArray).
+	* String.cs : removed MonoTODO.
+	* DataMisalignedException.cs : removed extra .ctor().
+	* Array.cs : internalize extra members. Fixed reliability contract.
+
 2007-05-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTime.cs : added support for 'K'.

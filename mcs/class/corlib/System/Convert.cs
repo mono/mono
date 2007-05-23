@@ -95,6 +95,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace System {
   
@@ -217,6 +218,7 @@ namespace System {
 		}
 
 #if NET_2_0
+		[ComVisible (true)]
 		public static string ToBase64String (byte[] inArray, Base64FormattingOptions options)
 		{
 			if (inArray == null)
@@ -224,6 +226,7 @@ namespace System {
 			return ToBase64String (inArray, 0, inArray.Length, options);
 		}
 
+		[ComVisible (true)]
 		public static string ToBase64String (byte[] inArray, int offset, int length, Base64FormattingOptions options)
 		{
 			if (inArray == null)
@@ -234,22 +237,57 @@ namespace System {
 			if (offset > inArray.Length - length)
 				throw new ArgumentOutOfRangeException ("offset + length > array.Length");
 
-			Encoding encoding = new ASCIIEncoding ();
+			if (options == Base64FormattingOptions.InsertLineBreaks)
+				return ToBase64StringBuilderWithLine (inArray, offset, length).ToString ();
+			else
+				return Encoding.ASCII.GetString (toBase64Transform.InternalTransformFinalBlock (inArray, offset, length));
+		}
+
+		public static int ToBase64CharArray (byte[] inArray, int offsetIn, int length, 
+						    char[] outArray, int offsetOut, Base64FormattingOptions options)
+		{
+			if (inArray == null)
+				throw new ArgumentNullException ("inArray");
+			if (outArray == null)
+				throw new ArgumentNullException ("outArray");
+			if (offsetIn < 0 || length < 0 || offsetOut < 0)
+				throw new ArgumentOutOfRangeException ("offsetIn, length, offsetOut < 0");
+			// avoid integer overflow
+			if (offsetIn > inArray.Length - length)
+				throw new ArgumentOutOfRangeException ("offsetIn + length > array.Length");
+
+			// note: normally ToBase64Transform doesn't support multiple block processing
+			if (options == Base64FormattingOptions.InsertLineBreaks) {
+				StringBuilder sb = ToBase64StringBuilderWithLine (inArray, offsetIn, length);
+				sb.CopyTo (0, outArray, offsetOut, sb.Length);
+				return sb.Length;
+			} else {
+				byte[] outArr = toBase64Transform.InternalTransformFinalBlock (inArray, offsetIn, length);
+			
+				char[] cOutArr = Encoding.ASCII.GetChars (outArr);
+			
+				// avoid integer overflow
+				if (offsetOut > outArray.Length - cOutArr.Length)
+					throw new ArgumentOutOfRangeException ("offsetOut + cOutArr.Length > outArray.Length");
+			
+				Array.Copy (cOutArr, 0, outArray, offsetOut, cOutArr.Length);
+				return cOutArr.Length;
+			}
+		}
+
+		static StringBuilder ToBase64StringBuilderWithLine (byte [] inArray, int offset, int length)
+		{
 			BinaryReader reader = new BinaryReader (new MemoryStream (inArray, offset, length));
 			byte[] b = null;
 
-			if (options == Base64FormattingOptions.InsertLineBreaks) {
-				StringBuilder sb = new StringBuilder ();
-				do {
-					// 54 bytes of input makes for 72 bytes of output.
-					b = reader.ReadBytes (54);
-					if (b.Length > 0)
-						sb.AppendLine (encoding.GetString (toBase64Transform.InternalTransformFinalBlock (b, 0, b.Length)));
-				} while (b.Length > 0);
-				return sb.ToString ();
-			} else {
-				return encoding.GetString (toBase64Transform.InternalTransformFinalBlock (inArray, offset, length));
-			}
+			StringBuilder sb = new StringBuilder ();
+			do {
+				// 54 bytes of input makes for 72 bytes of output.
+				b = reader.ReadBytes (54);
+				if (b.Length > 0)
+					sb.AppendLine (Encoding.ASCII.GetString (toBase64Transform.InternalTransformFinalBlock (b, 0, b.Length)));
+			} while (b.Length > 0);
+			return sb;
 		}
 #endif
 

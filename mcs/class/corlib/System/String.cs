@@ -221,7 +221,7 @@ namespace System
 
 #if NET_2_0
 		[ComVisible (false)]
-		[MonoTODO]
+		[MonoDocumentationNote ("optimization")]
 		public String[] Split (char[] separator, int count, StringSplitOptions options)
 		{
 			if (separator == null || separator.Length == 0)

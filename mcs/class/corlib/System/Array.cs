@@ -43,6 +43,9 @@ using System.Runtime.ConstrainedExecution;
 namespace System
 {
 	[Serializable]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	// FIXME: We are doing way to many double/triple exception checks for the overloaded functions"
 	// FIXME: Sort overloads parameter checks are VERY inconsistent"
 	public abstract class Array : ICloneable, ICollection, IList, IEnumerable
@@ -53,32 +56,32 @@ namespace System
 		}
 
 #if NET_2_0
-		protected int InternalArray__ICollection_get_Count<T> ()
+		internal int InternalArray__ICollection_get_Count<T> ()
 		{
 			return Length;
 		}
 
-		protected IEnumerator<T> InternalArray__IEnumerable_GetEnumerator<T> ()
+		internal IEnumerator<T> InternalArray__IEnumerable_GetEnumerator<T> ()
 		{
 			return new InternalEnumerator<T> (this);
 		}
 
-		protected void InternalArray__ICollection_Clear<T> ()
+		internal void InternalArray__ICollection_Clear<T> ()
 		{
 			throw new NotSupportedException ("Collection is read-only");
 		}
 
-		protected void InternalArray__ICollection_Add<T> (T item)
+		internal void InternalArray__ICollection_Add<T> (T item)
 		{
 			throw new NotSupportedException ("Collection is read-only");
 		}
 
-		protected bool InternalArray__ICollection_Remove<T> (T item)
+		internal bool InternalArray__ICollection_Remove<T> (T item)
 		{
 			throw new NotSupportedException ("Collection is read-only");
 		}
 
-		protected bool InternalArray__ICollection_Contains<T> (T item)
+		internal bool InternalArray__ICollection_Contains<T> (T item)
 		{
 			if (this.Rank > 1)
 				throw new RankException (Locale.GetText ("Only single dimension arrays are supported."));
@@ -101,7 +104,7 @@ namespace System
 			return false;
 		}
 
-		protected void InternalArray__ICollection_CopyTo<T> (T[] array, int index)
+		internal void InternalArray__ICollection_CopyTo<T> (T[] array, int index)
 		{
 			if (array == null)
 				throw new ArgumentNullException ("array");
@@ -121,17 +124,17 @@ namespace System
 			Copy (this, this.GetLowerBound (0), array, index, this.GetLength (0));
 		}
 
-		protected void InternalArray__Insert<T> (int index, T item)
+		internal void InternalArray__Insert<T> (int index, T item)
 		{
 			throw new NotSupportedException ("Collection is read-only");
 		}
 
-		protected void InternalArray__RemoveAt<T> (int index)
+		internal void InternalArray__RemoveAt<T> (int index)
 		{
 			throw new NotSupportedException ("Collection is read-only");
 		}
 
-		protected int InternalArray__IndexOf<T> (T item)
+		internal int InternalArray__IndexOf<T> (T item)
 		{
 			if (this.Rank > 1)
 				throw new RankException (Locale.GetText ("Only single dimension arrays are supported."));
@@ -164,7 +167,7 @@ namespace System
 			return retVal;
 		}
 
-		protected T InternalArray__get_Item<T> (int index)
+		internal T InternalArray__get_Item<T> (int index)
 		{
 			if (unchecked ((uint) index) >= unchecked ((uint) Length))
 				throw new ArgumentOutOfRangeException ("index");
@@ -174,7 +177,7 @@ namespace System
 			return value;
 		}
 
-		protected void InternalArray__set_Item<T> (int index, T item)
+		internal void InternalArray__set_Item<T> (int index, T item)
 		{
 			throw new NotSupportedException ("Collection is read-only");
 		}
@@ -1501,7 +1504,7 @@ namespace System
 		}
 	
 #if NET_2_0
-		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
+		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
 		public static void Sort<T> (T [] array)
 		{
 			if (array == null)
@@ -1510,7 +1513,7 @@ namespace System
 			Sort<T, T> (array, null, 0, array.Length, null);
 		}
 
-		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
+		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
 		public static void Sort<TKey, TValue> (TKey [] keys, TValue [] items)
 		{
 			if (keys == null)
@@ -1519,7 +1522,7 @@ namespace System
 			Sort<TKey, TValue> (keys, items, 0, keys.Length, null);
 		}
 
-		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
+		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
 		public static void Sort<T> (T [] array, IComparer<T> comparer)
 		{
 			if (array == null)
@@ -1528,7 +1531,7 @@ namespace System
 			Sort<T, T> (array, null, 0, array.Length, comparer);
 		}
 
-		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
+		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
 		public static void Sort<TKey, TValue> (TKey [] keys, TValue [] items, IComparer<TKey> comparer)
 		{
 			if (keys == null)
@@ -1537,7 +1540,7 @@ namespace System
 			Sort<TKey, TValue> (keys, items, 0, keys.Length, comparer);
 		}
 
-		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
+		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
 		public static void Sort<T> (T [] array, int index, int length)
 		{
 			if (array == null)
@@ -1546,13 +1549,13 @@ namespace System
 			Sort<T, T> (array, null, index, length, null);
 		}
 
-		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
+		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
 		public static void Sort<TKey, TValue> (TKey [] keys, TValue [] items, int index, int length)
 		{
 			Sort<TKey, TValue> (keys, items, index, length, null);
 		}
 
-		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
+		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
 		public static void Sort<T> (T [] array, int index, int length, IComparer<T> comparer)
 		{
 			if (array == null)
@@ -1561,7 +1564,7 @@ namespace System
 			Sort<T, T> (array, null, index, length, comparer);
 		}
 
-		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
+		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
 		public static void Sort<TKey, TValue> (TKey [] keys, TValue [] items, int index, int length, IComparer<TKey> comparer)
 		{
 			if (keys == null)

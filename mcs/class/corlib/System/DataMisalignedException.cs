@@ -55,10 +55,12 @@ namespace System
 			HResult = Result;
 		}
 
+		/*
 		protected DataMisalignedException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
 		}
+		*/
 	}
 }
 
