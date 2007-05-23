@@ -54,6 +54,19 @@ namespace System.Windows.Forms
 		}
 #endif
 
+		#region Events
+
+#if NET_2_0
+		static object CollapseEvent = new object ();
+
+		public event EventHandler Collapse {
+			add { Events.AddHandler (CollapseEvent, value); }
+			remove { Events.RemoveHandler (CollapseEvent, value); }
+		}
+#endif
+		
+		#endregion Events
+
 		#region Public Properties
 		[Localizable(true)]
 #if NET_2_0
@@ -94,6 +107,15 @@ namespace System.Windows.Forms
 		{
 			return base.ToString () + ", GetForm: " + form;
 		}
+
+#if NET_2_0
+		protected internal virtual void OnCollapse (EventArgs e)
+		{
+			EventHandler eh = (EventHandler) (Events [CollapseEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
+#endif
 
 		#endregion Public Methods
 		

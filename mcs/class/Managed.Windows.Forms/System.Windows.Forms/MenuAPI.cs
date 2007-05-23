@@ -286,7 +286,7 @@ namespace System.Windows.Forms {
 
 			/* When popup item then close all sub popups and unselect all sub items */
 			if (item.IsPopup) {
-				HideSubPopups (item);
+				HideSubPopups (item, TopMenu);
 				
 				/* Unselect all selected sub itens */
 				foreach (MenuItem subitem in item.MenuItems)
@@ -371,11 +371,11 @@ namespace System.Windows.Forms {
 			puw.ShowWindow ();
 		}
 
-		static public void HideSubPopups (Menu menu)
+		static public void HideSubPopups (Menu menu, Menu topmenu)
 		{
 			foreach (MenuItem item in menu.MenuItems)
 				if (item.IsPopup)
-					HideSubPopups (item);
+					HideSubPopups (item, null);
 
 			if (menu.Wnd == null)
 				return;
@@ -383,6 +383,11 @@ namespace System.Windows.Forms {
 			PopUpWindow puw = menu.Wnd as PopUpWindow;
 			puw.Hide ();
 			menu.Wnd = null;
+
+#if NET_2_0
+			if ((topmenu != null) && (topmenu is MainMenu))
+				((MainMenu) topmenu).OnCollapse (EventArgs.Empty);
+#endif
 		}
 
 		MenuItem FindSubItemByCoord (Menu menu, Point pnt)
@@ -708,7 +713,7 @@ namespace System.Windows.Forms {
 						CurrentMenu = item;
 					}
 				} else {
-					HideSubPopups (CurrentMenu);
+					HideSubPopups (CurrentMenu, TopMenu);
 					CurrentMenu = CurrentMenu.parent_menu;
 				}
 				break;
@@ -783,7 +788,7 @@ namespace System.Windows.Forms {
 		public void HideWindow ()
 		{
 			XplatUI.SetCursor (form.Handle, form.Cursor.handle);
-			MenuTracker.HideSubPopups (menu);
+			MenuTracker.HideSubPopups (menu, null);
     		Hide ();
 		}
 
