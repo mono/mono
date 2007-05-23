@@ -1,5 +1,9 @@
 2007-05-23  Everaldo Canuto  <ecanuto@novell.com>
 
+	* ContextMenu.cs: Implement ProcessCmdKey with control parameter.
+
+2007-05-23  Everaldo Canuto  <ecanuto@novell.com>
+
 	* ContextMenu.cs: Implement Collapse.
 
 2007-05-23  Rolf Bjarne Kvinge <RKvinge@novell.com>

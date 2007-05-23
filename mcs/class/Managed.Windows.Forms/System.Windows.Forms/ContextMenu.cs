@@ -88,6 +88,12 @@ namespace System.Windows.Forms
 		#region Public Methods
 
 #if NET_2_0
+		protected internal virtual bool ProcessCmdKey (ref Message msg, Keys keyData, Control control)
+		{
+			src_control = control;
+    		return ProcessCmdKey (ref msg, keyData);
+		}
+
 		protected internal virtual void OnCollapse (EventArgs e)
 		{
 			EventHandler eh = (EventHandler) (Events [CollapseEvent]);
