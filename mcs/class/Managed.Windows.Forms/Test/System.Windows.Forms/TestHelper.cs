@@ -12,6 +12,7 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Reflection;
+using System.Collections;
 using NUnit.Framework;
 
 namespace MonoTests.System.Windows.Forms
@@ -20,7 +21,7 @@ namespace MonoTests.System.Windows.Forms
 	{
 		public TestHelper()
 		{
-			// nothing to do.
+			event_log = new ArrayList (); 
 		}
 
 		public static void RemoveWarning (params object [] param)
@@ -52,6 +53,26 @@ namespace MonoTests.System.Windows.Forms
 				return ((platform == 4) || (platform == 128));
 			}
 		}
+
+		#region Event log
+
+		private ArrayList event_log;
+
+		public ArrayList EventLog {
+			get { return event_log; }
+		}
+
+		private void AddEvent (string text)
+		{
+			event_log.Add (text);
+		}
+
+		public void OnClick (object sender, EventArgs e)
+		{
+			AddEvent ("OnClick");
+		}
+
+		#endregion // Event log
 	}
 	
 	[Flags]

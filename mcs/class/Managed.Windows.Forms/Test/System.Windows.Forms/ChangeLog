@@ -1,5 +1,9 @@
 2007-05-23  Everaldo Canuto  <ecanuto@novell.com>
 
+	* TestHelper.cs: Event log added.
+
+2007-05-23  Everaldo Canuto  <ecanuto@novell.com>
+
 	* ContextMenuTest.cs: ContextMenu tests added.
 
 2007-05-23  Rolf Bjarne Kvinge <RKvinge@novell.com> 
