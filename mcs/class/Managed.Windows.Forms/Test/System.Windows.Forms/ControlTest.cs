@@ -2192,6 +2192,22 @@ namespace MonoTests.System.Windows.Forms
 
 		}
 
+		[Test] // bug #81118, 81718
+		public void VisibleTriggersLayout ()
+		{
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+			
+			Control c = new Control ();
+			c.Visible = false;
+			
+			f.Controls.Add (c);
+			
+			c.Dock = DockStyle.Fill;
+			c.Visible = true;
+			
+			Assert.AreEqual (f.ClientSize.Width, c.Width, "L1");
+		}
 	}
 
 	[TestFixture]

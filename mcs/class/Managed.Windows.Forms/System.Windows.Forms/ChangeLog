@@ -1,3 +1,8 @@
+2007-05-23  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Control.cs: Apply patch from George to call parent.PerformLayout
+	when Visible is changed.  [Fixes bugs #81118, 81718]
+
 2007-05-23  Everaldo Canuto  <ecanuto@novell.com>
 
 	* MainMenu.cs, MenuAPI.cs: Implement Collapse event for MainMenu (2.0).

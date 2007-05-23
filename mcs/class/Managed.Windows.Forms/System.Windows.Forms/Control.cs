@@ -3177,7 +3177,12 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				SetVisibleCore(value);
+				if (this.is_visible != value) {
+					SetVisibleCore(value);
+
+					if (parent != null)
+						parent.PerformLayout (this, "Visible");
+				}
 			}
 		}
 

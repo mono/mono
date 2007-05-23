@@ -1,5 +1,10 @@
 2007-05-23  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ControlTest.cs: Add test to show that setting a control's Visible
+	property causes it's parent to relayout.
+
+2007-05-23  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DefaultLayoutTest.cs: Add test for docking when parent has Padding.
 
 2007-05-23  Everaldo Canuto  <ecanuto@novell.com>
