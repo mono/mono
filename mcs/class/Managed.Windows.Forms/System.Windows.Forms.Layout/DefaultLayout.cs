@@ -39,6 +39,13 @@ namespace System.Windows.Forms.Layout
 			Rectangle space = parent.DisplayRectangle;
 			MdiClient mdi = null;
 			
+#if NET_2_0
+			space.X += parent.Padding.Left;
+			space.Y += parent.Padding.Top;
+			space.Width -= parent.Padding.Horizontal;
+			space.Height -= parent.Padding.Vertical;
+#endif
+
 			// Deal with docking; go through in reverse, MS docs say that lowest Z-order is closest to edge
 			for (int i = controls.Length - 1; i >= 0; i--) {
 				Control child = controls[i];

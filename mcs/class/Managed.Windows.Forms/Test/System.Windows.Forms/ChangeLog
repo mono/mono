@@ -1,3 +1,7 @@
+2007-05-23  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DefaultLayoutTest.cs: Add test for docking when parent has Padding.
+
 2007-05-23  Everaldo Canuto  <ecanuto@novell.com>
 
 	* TestHelper.cs: Remove Event log we already have a EventLogger class.

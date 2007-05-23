@@ -1,3 +1,8 @@
+2007-05-23  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DefaultLayout.cs: Take parent's padding into account when docking
+	children.
+
 2007-05-07  Jonathan Pobst  <monkey@jpobst.com>
 	Applying contributed patch from Stefan Noack.
 

@@ -504,6 +504,25 @@ namespace MonoTests.System.Windows.Forms
 				ResumeLayout (false);
 			}
 		}
+
+#if NET_2_0
+		[Test]
+		public void TestDockFillWithPadding ()
+		{
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+			f.Padding = new Padding (15, 15, 15, 15);
+
+			Control c = new Control ();
+			c.Dock = DockStyle.Fill;
+			f.Controls.Add (c);
+
+			f.Show ();
+			Assert.AreEqual (new Size (f.ClientSize.Width - 30, f.ClientSize.Height - 30), c.Size, "K1");
+
+			f.Dispose ();
+		}
+#endif
 	}
 
 	[TestFixture]	
