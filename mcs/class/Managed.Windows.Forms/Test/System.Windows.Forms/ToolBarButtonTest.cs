@@ -77,6 +77,21 @@ namespace MonoTests.System.Windows.Forms
 			tbb.Text = null;
 			Assert.AreEqual ("", tbb.Text, "A3");
 		}
+		
+#if NET_2_0
+		[Test]
+		public void Name ()
+		{
+			ToolBarButton tbb = new ToolBarButton ();
+			Assert.AreEqual ("", tbb.Name, "A1");
+			tbb.Name = "abc";
+			Assert.AreEqual ("abc", tbb.Name, "A2");
+			tbb.Name = "";
+			Assert.AreEqual ("", tbb.Name, "A3");
+			tbb.Name = null;
+			Assert.AreEqual ("", tbb.Name, "A4");
+		}
+#endif
 	}
 
 }

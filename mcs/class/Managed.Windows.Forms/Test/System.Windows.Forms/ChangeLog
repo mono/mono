@@ -1,3 +1,7 @@
+2007-05-23  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* ToolBarButtonTest.cs: Added test for Name.
+
 2007-05-22  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* FormTest.cs: Renamed FormCantGetTooSmall test and use comparison
