@@ -1515,7 +1515,7 @@ property_declaration
 			syntax_error (lexer.Location, "a property can't have type arguments");
 
 		prop = new Property (current_class, (Expression) $3, (int) $2, false,
-				     name, (Attributes) $1, get_block, set_block, accessors.declared_in_reverse);
+				     name, (Attributes) $1, get_block, set_block, accessors.declared_in_reverse, current_block);
 
 		current_container.AddProperty (prop);
 		implicit_value_parameter_type = null;

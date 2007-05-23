@@ -1,3 +1,12 @@
+2007-05-22  Scott Peterson  <lunchtimemama@gmail.com>
+	
+	* gtest-autoproperty-01.cs: Test for instance automatic properties (C# 3.0)
+	
+	* gtest-autoproperty-02.cs: Test for static automatic properties (C# 3.0)
+	
+	* gtest-autoproperty-03.cs: Make sure that the field and accessor methods
+	  of an automatic property have the CompilerGenerated attribute (C# 3.0)
+
 2007-05-15  Scott Peterson  <lunchtimemama@gmail.com>
 
 	* gtest-initialize-02.cs: Uber-test for object and

@@ -1,3 +1,7 @@
+2007-05-22  Scott Peterson  <lunchtimemama@gmail.com>
+	* gcs0271.cs, gcs0272.cs: Test automatic properties
+	  for proper access control.
+
 2007-05-17  Raja R Harinath  <rharinath@novell.com>
 
 	* cs0159-5.cs, cs0159-6.cs, cs0159-7.cs: New tests as

@@ -5784,9 +5784,10 @@ namespace Mono.CSharp {
 
 		public override void Emit ()
 		{
-#if GMCS_SOURCE			
-			if ((ModFlags & Modifiers.COMPILER_GENERATED) != 0)
+#if GMCS_SOURCE
+			if ((ModFlags & Modifiers.COMPILER_GENERATED) != 0) {
 				FieldBuilder.SetCustomAttribute (TypeManager.compiler_generated_attr);
+			}
 #endif
 
 			if (OptAttributes != null) {
@@ -6030,8 +6031,8 @@ namespace Mono.CSharp {
 			Modifiers.INTERNAL |
 			Modifiers.PRIVATE |
 			Modifiers.STATIC |
-		        Modifiers.VOLATILE |
-		        Modifiers.UNSAFE |
+			Modifiers.VOLATILE |
+			Modifiers.UNSAFE |
 			Modifiers.READONLY;
 
 		public Field (DeclSpace parent, Expression type, int mod, string name,
@@ -6602,8 +6603,8 @@ namespace Mono.CSharp {
 				//
 				// Check for custom access modifier
 				//
-				if (ModFlags == 0) {
-					ModFlags = method.ModFlags;
+				if ((ModFlags & Modifiers.Accessibility) == 0) {
+					ModFlags |= method.ModFlags;
 					flags = method.flags;
 				} else {
 					if (container.Kind == Kind.Interface)
@@ -6650,6 +6651,7 @@ namespace Mono.CSharp {
 			
 			void CheckModifiers (int modflags)
 			{
+				modflags &= Modifiers.Accessibility;
 				int flags = 0;
 				int mflags = method.ModFlags & Modifiers.Accessibility;
 
@@ -6747,7 +6749,8 @@ namespace Mono.CSharp {
 			//
 			// Accessors modifiers check
 			//
-			if (Get.ModFlags != 0 && Set.ModFlags != 0) {
+			if ((Get.ModFlags & Modifiers.Accessibility) != 0 &&
+				(Set.ModFlags & Modifiers.Accessibility) != 0) {
 				Report.Error (274, Location, "`{0}': Cannot specify accessibility modifiers for both accessors of the property or indexer",
 						GetSignatureForError ());
 				return false;
@@ -6930,13 +6933,52 @@ namespace Mono.CSharp {
 		const int AllowedInterfaceModifiers =
 			Modifiers.NEW;
 
+		void CreateAutomaticProperty (Block block, Accessor get_block, Accessor set_block)
+		{
+			// Make the field
+			Field field = new Field (
+				Parent, Type,
+				Modifiers.COMPILER_GENERATED | Modifiers.PRIVATE | (ModFlags & Modifiers.STATIC),
+				CompilerGeneratedClass.MakeName ("CompilerGeneratedField"),
+				null, Location);
+			((TypeContainer)Parent).AddField (field);
+
+			// Make get block
+			get_block.Block = new ToplevelBlock (block, null, Location);
+			Return r = new Return (new SimpleName(field.Name, Location), Location);
+			get_block.Block.AddStatement (r);
+			get_block.ModFlags |= Modifiers.COMPILER_GENERATED;
+
+			// Make set block
+			Parameters parameters = new Parameters (new Parameter (Type, "value", Parameter.Modifier.NONE, null, Location));
+			set_block.Block = new ToplevelBlock (block, parameters, Location);
+			Assign a = new Assign (new SimpleName(field.Name, Location), new SimpleName ("value", Location));
+			set_block.Block.AddStatement (new StatementExpression(a));
+			set_block.ModFlags |= Modifiers.COMPILER_GENERATED;
+		}
+
 		public Property (DeclSpace parent, Expression type, int mod, bool is_iface,
 				 MemberName name, Attributes attrs, Accessor get_block,
 				 Accessor set_block, bool define_set_first)
+			: this (parent, type, mod, is_iface, name, attrs, get_block, set_block,
+				define_set_first, null)
+		{
+		}
+		
+		public Property (DeclSpace parent, Expression type, int mod, bool is_iface,
+				 MemberName name, Attributes attrs, Accessor get_block,
+				 Accessor set_block, bool define_set_first, Block current_block)
 			: base (parent, type, mod,
 				is_iface ? AllowedInterfaceModifiers : AllowedModifiers,
 				is_iface, name, attrs, define_set_first)
 		{
+			if (RootContext.Version >= LanguageVersion.LINQ &&
+				!is_iface &&
+				(mod & (Modifiers.ABSTRACT | Modifiers.EXTERN)) == 0 &&
+				get_block != null && get_block.Block == null &&
+				set_block != null && set_block.Block == null)
+				CreateAutomaticProperty (current_block, get_block, set_block);
+
 			if (get_block == null)
 				Get = new GetMethod (this);
 			else
@@ -8320,3 +8362,4 @@ namespace Mono.CSharp {
 		}
 	}
 }
+

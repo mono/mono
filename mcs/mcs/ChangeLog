@@ -1,3 +1,8 @@
+2007-05-23  Scott Peterson  <lunchtimemama@gmail.com>
+	
+	* class.cs: Implemented automatic properties (C# 3.0)
+	  Thanks to Marek for the help.
+
 2007-05-23  Raja R Harinath  <rharinath@novell.com>
 
 	* flowanalysis.cs (VariableInfo.SetAssigned): When noting a

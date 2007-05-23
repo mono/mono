@@ -1,3 +1,7 @@
+2007-05-22  Scott Peterson  <lunchtimemama@gmail.com>
+	
+	* cs-parser.jay: Implemented automatic properties (C# 3.0)
+
 2007-05-15  Scott Peterson  <lunchtimemama@gmail.com>
 	
 	* cs-parser.jay: Improved grammar for object and collection
