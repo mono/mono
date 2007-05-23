@@ -87,20 +87,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 		
 		[Test]
-		public void GetContextMenuTest ()
-		{
-			Form myform = new Form ();
-			myform.ShowInTaskbar = false;
-			ContextMenu mycontextmenu = new ContextMenu ();
-			myform.ContextMenu= mycontextmenu;
-			MenuItem menuItem1 = new MenuItem ();
-			menuItem1.Text = "1";
-			mycontextmenu.MenuItems.Add (menuItem1);
-			Assert.AreEqual (mycontextmenu, menuItem1.GetContextMenu (),"#11");
-			myform.Dispose ();
-		}
-		
-		[Test]
 		public void MenuItemMerge ()
 		{
 			MenuItem itemA2 = new MenuItem ("Exit");

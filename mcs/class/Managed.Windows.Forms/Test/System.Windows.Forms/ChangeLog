@@ -1,3 +1,7 @@
+2007-05-23  Everaldo Canuto  <ecanuto@novell.com>
+
+	* ContextMenuTest.cs: ContextMenu tests added.
+
 2007-05-23  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* ToolBarButtonTest.cs: Added test for Name.
