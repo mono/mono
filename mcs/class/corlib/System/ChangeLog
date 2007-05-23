@@ -1,5 +1,10 @@
 2007-05-23  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Array.cs : reverting Array.cs fixes since the runtime depends on
+	  those method attributes.
+
+2007-05-23  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Int16.cs UInt64.cs UIntPtr.cs Double.cs CrossAppDomainDelegate.cs
 	  ResolveEventHandler.cs IntPtr.cs UnhandledExceptionEventHandler.cs
 	  Void.cs AssemblyLoadEventHandler.cs SByte.cs UInt16.cs DateTime.cs
