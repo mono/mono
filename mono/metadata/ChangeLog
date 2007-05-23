@@ -1,3 +1,8 @@
+2007-05-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (mono_custom_attrs_from_param): Make a copy of the dynamic attr
+	info.
+
 2007-05-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* reflection.c (encode_cattr_value): Fix yet another object cattr encoding issue.
