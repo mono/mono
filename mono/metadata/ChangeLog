@@ -1,5 +1,7 @@
 2007-05-24  Zoltan Varga  <vargaz@gmail.com>
 
+	* reflection.c (mono_custom_attrs_from_builders): Add an assertion.
+	
 	* reflection.c (lookup_custom_attr): Make a copy here too.
 
 	* image.c (mono_image_check_for_module_cctor): Avoid accessing metadata in
