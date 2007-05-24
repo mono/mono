@@ -1,5 +1,13 @@
 2007-05-24  Zoltan Varga  <vargaz@gmail.com>
 
+	* reflection.c (lookup_custom_attr): Make a copy here too.
+
+	* image.c (mono_image_check_for_module_cctor): Avoid accessing metadata in
+	dynamic images.
+
+	* class.c (mono_class_init): Avoid accessing the metadata in dynamic
+	images.
+
 	* reflection.c (mono_custom_attrs_from_param): Make a copy of the dynamic attr
 	info.
 
