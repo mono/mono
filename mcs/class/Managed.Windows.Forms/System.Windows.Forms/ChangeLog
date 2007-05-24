@@ -1,3 +1,7 @@
+2007-05-23  Everaldo Canuto  <ecanuto@novell.com>
+
+	* LinkLabel.cs: Implement public FlatStyle.
+
 2007-05-23  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Control.cs: Apply patch from George to call parent.PerformLayout

@@ -250,6 +250,20 @@ namespace System.Windows.Forms
 			}
 		}
 
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public FlatStyle FlatStyle {
+			get { return base.FlatStyle; }
+			set {
+				if (base.FlatStyle == value)
+					return;
+
+				base.FlatStyle = value;
+			}
+		}
+#endif
+
 		#endregion // Public Properties
 
 		DialogResult IButtonControl.DialogResult {
