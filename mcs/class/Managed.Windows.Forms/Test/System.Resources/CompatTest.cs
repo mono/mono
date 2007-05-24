@@ -53,14 +53,22 @@ namespace MonoTests.System.Resources
 		[Test]
 		public void TestReader ()
 		{
-			Helper.TestReader (Path.Combine (Path.Combine ("Test", "System.Resources"), "compat_1_1.resx"));
+			string fileName = Path.Combine (Path.Combine ("Test", "System.Resources"), "compat_1_1.resx");
+			if (!File.Exists (fileName))
+				fileName = String.Format ("..{0}System.Resources{0}compat_1_1.resx", Path.DirectorySeparatorChar);
+		
+			Helper.TestReader (fileName);
 		}
 
 #if NET_2_0
 		[Test]
 		public void TestReader_2_0 ()
 		{
-			Helper.TestReader (Path.Combine (Path.Combine ("Test", "System.Resources"), "compat_2_0.resx"));
+			string fileName = Path.Combine (Path.Combine ("Test", "System.Resources"), "compat_2_0.resx");
+			if (!File.Exists (fileName))
+				fileName = String.Format ("..{0}System.Resources{0}compat_2_0.resx", Path.DirectorySeparatorChar);
+		
+			Helper.TestReader (fileName);
 		}
 #endif
 	}

@@ -1,3 +1,8 @@
+2007-05-23  Andreia Gaita <avidigal@novell.com>
+
+	* ResXResourceReaderTest.cs, CompatTest.cs: Fix tests so they can run 
+	in make run-test and with the tests scripts.
+
 2007-05-21  Andreia Gaita <avidigal@novell.com>
 	
 	* ResXDataNodeTest.cs: Added tests
