@@ -64,15 +64,15 @@ namespace System.IO
 			current_position = initial_position;
 		}
 		
-		public unsafe UnmanagedMemoryStream (byte *pointer, long len)
+		public unsafe UnmanagedMemoryStream (byte *pointer, long length)
 		{
 			if (pointer == null)
-				throw new ArgumentNullException("The pointer value is a null reference ");
-			if (len < 0)
-				throw new ArgumentOutOfRangeException("The length value is less than zero");
+				throw new ArgumentNullException("pointer");
+			if (length < 0)
+				throw new ArgumentOutOfRangeException("length", "Non-negative number required.");
 			fileaccess = FileAccess.Read;
-			length = len;
-			capacity = len;
+			this.length = length;
+			capacity = length;
 			initial_position = 0;
 			current_position = initial_position;
 			canseek = true;
@@ -80,18 +80,20 @@ namespace System.IO
 			initial_pointer = new IntPtr((void*)pointer);
 		}
 		
-		public unsafe UnmanagedMemoryStream (byte *pointer, long len, long capacity, FileAccess access)
+		public unsafe UnmanagedMemoryStream (byte *pointer, long length, long capacity, FileAccess access)
 		{
 			if (pointer == null)
-				throw new ArgumentNullException("The pointer value is a null reference");
-			if (len < 0)
-				throw new ArgumentOutOfRangeException("The length value is less than zero");
+				throw new ArgumentNullException("pointer");
+			if (length < 0)
+				throw new ArgumentOutOfRangeException("length", "Non-negative number required.");
 			if (capacity < 0)
-				throw new ArgumentOutOfRangeException("The capacity value is less than zero");
-			if (len > capacity)
-				throw new ArgumentOutOfRangeException("The length value is greater than the capacity value");
+				throw new ArgumentOutOfRangeException("capacity", "Non-negative number required.");
+			if (length > capacity)
+				throw new ArgumentOutOfRangeException("length", "The length cannot be greater than the capacity.");
+			if (!Enum.IsDefined (typeof (FileAccess), access))
+				throw new ArgumentOutOfRangeException ("access", "Enum value was out of legal range.");
 			fileaccess = access;
-			length = len;
+			this.length = length;
 			this.capacity = capacity;
 			initial_position = 0;
 			current_position = initial_position;
@@ -175,16 +177,17 @@ namespace System.IO
 				if (closed)
 					throw new ObjectDisposedException("The stream is closed");
 
-
 				if (buffer == null)
-					throw new ArgumentNullException("The buffer parameter is set to a null reference");
-				if (offset < 0 || count < 0)
-					throw new ArgumentOutOfRangeException("The offset or count parameter is less than zero");
+					throw new ArgumentNullException("buffer");
+				if (offset < 0)
+					throw new ArgumentOutOfRangeException("offset", "Non-negative number required.");
+				if (count < 0)
+					throw new ArgumentOutOfRangeException("count", "Non-negative number required.");
 				if ((buffer.Length - offset) < count)
 					throw new ArgumentException("The length of the buffer array minus the offset parameter is less than the count parameter");
 
 				if (fileaccess == FileAccess.Write)
-					throw new NotSupportedException("Read property is false");
+					throw new NotSupportedException("Stream does not support reading");
 				else {
 					if (current_position == capacity)
 						return (0);
@@ -207,7 +210,7 @@ namespace System.IO
 			int byteread;
 
 			if (fileaccess== FileAccess.Write)
-				throw new NotSupportedException("The underlying memory does not support reading");
+				throw new NotSupportedException("Stream does not support reading");
 			else {
 				if (current_position == length)
 					return (-1);

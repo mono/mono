@@ -1,3 +1,8 @@
+2007-05-24  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* UnmanagedMemoryStream.cs: Changed argument names and exceptions 
+	(msg, params) to match MS. Verify access argument in ctor. 
+
 2007-05-23  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* UnmanagedMemoryStream.cs : couple of bugfixes. in Read(), don't
