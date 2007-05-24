@@ -918,6 +918,28 @@ namespace System.Windows.Forms
 				}
 			}
 
+#if NET_2_0
+			public
+#else
+			internal
+#endif
+			int Add (Link link)
+			{
+				/* remove the default 0,-1 link */
+				if (IsDefault) {
+					/* don't call Clear() here to save the additional CreateLinkPieces */
+					collection.Clear ();
+				}
+
+				int idx = collection.Add (link);
+
+				owner.sorted_links = null;
+				owner.CheckLinks ();
+				owner.CreateLinkPieces ();
+
+				return idx;
+			}
+
 			public Link Add (int start, int length)
 			{
 				return Add (start, length, null);
@@ -934,22 +956,12 @@ namespace System.Windows.Forms
 			public Link Add (int start, int length, object o)
 			{
 				Link link = new Link (owner);
-				int idx;
-
-				/* remove the default 0,-1 link */
-				if (IsDefault) {
-					/* don't call Clear() here to save the additional CreateLinkPieces */
-					collection.Clear ();
-				}
-
 				link.Length = length;
 				link.Start = start;
 				link.LinkData = o;
-				idx = collection.Add (link);
 
-				owner.sorted_links = null;
-				owner.CheckLinks ();
-				owner.CreateLinkPieces ();
+				int idx = Add (link);
+
 				return (Link) collection[idx];
 			}
 

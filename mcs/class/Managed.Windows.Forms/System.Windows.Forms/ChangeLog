@@ -1,5 +1,9 @@
 2007-05-23  Everaldo Canuto  <ecanuto@novell.com>
 
+	* LinkLabel.cs: Implement LinkCollection.Add with Link parameter (2.0).
+
+2007-05-23  Everaldo Canuto  <ecanuto@novell.com>
+
 	* LinkLabelLinkClickedEventArgs.cs, LinkLabel.cs: Implement Button property.
 
 2007-05-23  Everaldo Canuto  <ecanuto@novell.com>
