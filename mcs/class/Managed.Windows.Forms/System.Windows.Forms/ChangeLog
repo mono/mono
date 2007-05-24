@@ -1,3 +1,11 @@
+2007-05-24  Jackson Harper  <jackson@ximian.com>
+
+	* TextControl.cs: We need to manually break apart tabbed text and
+	move the tabs, since the system.drawing tabbing mechanism relies
+	on tab stops.
+	* TextBoxBase.cs: Move the caret properly when the user enters a
+	tab.
+
 2007-05-24  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ContainerControl.cs: Don't check CanSelect before calling

@@ -1254,11 +1254,7 @@ namespace System.Windows.Forms {
 
 				case Keys.Tab: {
 					if (!read_only && accepts_tab && document.multiline) {
-						document.InsertChar(document.CaretLine, document.CaretPosition, '\t');
-						if (document.selection_visible) {
-							document.ReplaceSelection("", false);
-						}
-						document.SetSelectionToCaret(true);
+						document.InsertCharAtCaret ('\t', true);
 
 						OnTextChanged(EventArgs.Empty);
 						CaretMoved(this, null);

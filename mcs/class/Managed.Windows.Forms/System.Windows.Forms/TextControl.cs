@@ -2131,7 +2131,7 @@ namespace System.Windows.Forms {
 						}
 
 						tag.Draw (g, current_brush,
-								line.widths [Math.Max (0, old_tag_pos - 1)] + line.X - viewport_x,
+								line.X - viewport_x,
 								line_y + tag.shift,
 								old_tag_pos - 1, Math.Min (tag.length, tag_pos - old_tag_pos),
 								text.ToString() );
@@ -4506,14 +4506,14 @@ namespace System.Windows.Forms {
 			return (int) (picture.Height + 0.5F);
 		}
 
-		internal override void Draw (Graphics dc, Brush brush, float x, float y, int start, int end)
+		internal override void Draw (Graphics dc, Brush brush, float xoff, float y, int start, int end)
 		{
-			picture.DrawImage (dc, x, y, false);
+			picture.DrawImage (dc, xoff + line.widths [start], y, false);
 		}
 
-		internal override void Draw (Graphics dc, Brush brush, float x, float y, int start, int end, string text)
+		internal override void Draw (Graphics dc, Brush brush, float xoff, float y, int start, int end, string text)
 		{
-			picture.DrawImage (dc, x, y, false);
+			picture.DrawImage (dc, xoff + + line.widths [start], y, false);
 		}
 
 		public override string Text ()
@@ -4611,12 +4611,15 @@ namespace System.Windows.Forms {
 
 		internal virtual SizeF SizeOfPosition (Graphics dc, int pos)
 		{
-			
 			if (pos >= line.TextLengthWithoutEnding () && line.document.multiline)
 				return SizeF.Empty;
 
 			string text = line.text.ToString (pos, 1);
 			switch ((int) text [0]) {
+			case '\t':
+				SizeF res = dc.MeasureString (" ", font, 10000, Document.string_format);
+				res.Width *= 8.0F;
+				return res;
 			case 10:
 			case 13:
 				return dc.MeasureString ("\u0013", font, 10000, Document.string_format);
@@ -4635,9 +4638,16 @@ namespace System.Windows.Forms {
 			dc.DrawString (line.text.ToString (start, end), font, brush, x, y, StringFormat.GenericTypographic);
 		}
 
-		internal virtual void Draw (Graphics dc, Brush brush, float x, float y, int start, int end, string text)
+		internal virtual void Draw (Graphics dc, Brush brush, float xoff, float y, int start, int end, string text)
 		{
-			dc.DrawString (text.Substring (start, end), font, brush, x, y, StringFormat.GenericTypographic);
+			while (start < end) {
+				int tab_index = text.IndexOf ("\t", start);
+				if (tab_index == -1)
+					tab_index = end;
+				dc.DrawString (text.Substring (start, tab_index - start), font, brush, xoff + line.widths [start],
+						y, StringFormat.GenericTypographic);
+				start = tab_index + 1;
+			}
 		}
 
 		///<summary>Break a tag into two with identical attributes; pos is 1-based; returns tag starting at &gt;pos&lt; or null if end-of-line</summary>
