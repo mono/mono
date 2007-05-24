@@ -1,3 +1,7 @@
+2007-05-24 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* Menu.cs: fixed: alt attribute is rendered as well.
+
 2007-05-16  Marek Habersack  <mhabersack@novell.com>
 
 	* CompareValidator.cs: formatting changes

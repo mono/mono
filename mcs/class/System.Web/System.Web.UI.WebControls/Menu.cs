@@ -1718,6 +1718,8 @@ namespace System.Web.UI.WebControls
 					writer.RenderBeginTag (HtmlTextWriterTag.Td);
 					writer.AddAttribute ("src", ResolveClientUrl (popOutImage));
 					writer.AddAttribute ("border", "0");
+					string toolTip = String.Format (isDynamicItem ? DynamicPopOutImageTextFormatString : StaticPopOutImageTextFormatString, item.Text);
+					writer.AddAttribute (HtmlTextWriterAttribute.Alt, toolTip);
 					writer.RenderBeginTag (HtmlTextWriterTag.Img);
 					writer.RenderEndTag ();	// IMG
 					writer.RenderEndTag ();	// TD
