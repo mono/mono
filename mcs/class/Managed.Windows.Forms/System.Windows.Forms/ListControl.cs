@@ -244,6 +244,9 @@ namespace System.Windows.Forms
 			if (data_manager != null) {
 				PropertyDescriptorCollection col = data_manager.GetItemProperties ();
 				prop = col.Find (field, true);
+			} else {
+				PropertyDescriptorCollection properties = TypeDescriptor.GetProperties (item);
+				prop = properties.Find (field, true);
 			}
 			
 			if (prop == null)
@@ -254,13 +257,10 @@ namespace System.Windows.Forms
 
 		public string GetItemText (object item)
 		{
-			if (data_manager != null) {
-				object fil = FilterItemOnProperty (item, DisplayMember);
-				if (fil != null) {
-					return fil.ToString ();
-				}
-			}
-								
+			object fil = FilterItemOnProperty (item, DisplayMember);
+			if (fil != null)
+				return fil.ToString ();
+
 			return item.ToString ();
 		}
 
