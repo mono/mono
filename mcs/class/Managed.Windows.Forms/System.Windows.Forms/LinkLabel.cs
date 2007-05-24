@@ -262,6 +262,17 @@ namespace System.Windows.Forms
 				base.FlatStyle = value;
 			}
 		}
+
+		[RefreshProperties (RefreshProperties.Repaint)]
+		public Padding Padding {
+			get { return base.Padding; }
+			set {
+				if (base.Padding == value)
+					return;
+
+				base.Padding = value;
+			}
+		}
 #endif
 
 		#endregion // Public Properties
