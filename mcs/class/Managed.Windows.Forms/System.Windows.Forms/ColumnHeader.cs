@@ -220,7 +220,7 @@ namespace System.Windows.Forms
 		[Editor ("System.Windows.Forms.Design.ImageIndexEditor, " + Consts.AssemblySystem_Design,
 			 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		[RefreshProperties (RefreshProperties.Repaint)]
-		// XXX [TypeConverter (typeof (ImageKeyConverter))]
+		[TypeConverter (typeof (ImageKeyConverter))]
 		public string ImageKey {
 			get {
 				return image_key;
