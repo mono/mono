@@ -1,3 +1,9 @@
+2007-05-24  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Application.cs: When we have captured the keyboard for a menu,
+	check for mouse down events in case we need to close the menu.
+	* Control.cs, Form.cs: Remove mouse down checks for menus.
+
 2007-05-24  Jackson Harper  <jackson@ximian.com>
 
 	* TextControl.cs: We need to manually break apart tabbed text and

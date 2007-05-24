@@ -2586,9 +2586,7 @@ namespace System.Windows.Forms {
 
 				return;
 			}
-#if NET_2_0
-			ToolStripManager.FireAppClicked ();
-#endif
+
 			base.WndProc (ref m);
 		}
 		

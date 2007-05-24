@@ -702,6 +702,25 @@ namespace System.Windows.Forms {
 						goto default;
 					}
 					break;
+#if NET_2_0
+				case Msg.WM_LBUTTONDOWN:
+				case Msg.WM_MBUTTONDOWN:
+				case Msg.WM_RBUTTONDOWN:
+					if (keyboard_capture != null) {
+						Control c2 = Control.FromHandle (msg.hwnd);
+						
+						// If we clicked a ToolStrip, we have to make sure it isn't
+						// the one we are on, or any of its parents or children
+						// If we clicked off the dropped down menu, release everything
+						if (c2 is ToolStrip) {
+							if ((c2 as ToolStrip).GetTopLevelToolStrip () != keyboard_capture.GetTopLevelToolStrip ())
+								ToolStripManager.FireAppClicked ();
+						} else
+							ToolStripManager.FireAppClicked ();
+					}
+					
+					goto default;
+#endif
 				case Msg.WM_QUIT:
 					quit = true; // make sure we exit
 					break;
