@@ -1,3 +1,7 @@
+2007-05-23 Gonzalo Paniagua Javier <gonzalo.mono@gmail.com>
+
+	* Context.cs: fix the calculation of the unix time.
+
 2007-05-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* HttpsClientStream.cs: Add support for client certificates from

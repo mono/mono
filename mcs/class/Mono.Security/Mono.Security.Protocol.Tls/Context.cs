@@ -316,7 +316,7 @@ namespace Mono.Security.Protocol.Tls
 		{
 			DateTime now = DateTime.UtcNow;
 																		     
-			return (int)(now.Ticks - UNIX_BASE_TICKS / TimeSpan.TicksPerSecond);
+			return (int)((now.Ticks - UNIX_BASE_TICKS) / TimeSpan.TicksPerSecond);
 		}
 
 		public byte[] GetSecureRandomBytes(int count)
