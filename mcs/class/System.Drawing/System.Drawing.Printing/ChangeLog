@@ -1,3 +1,9 @@
+2007-05-24  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* PrintingServicesWin32.cs: Pass 0 as mode to DocumentProperties to
+	obtain the size of the buffer required to hold the DEVMODE structure.
+	Fixes bug #81723.
+
 2007-05-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PreviewPrintController.cs: Reduce bitmap size and avoid scaling the

@@ -81,7 +81,7 @@ namespace System.Drawing.Printing
 
 			try {
 				Win32OpenPrinter (printer, out hPrn, IntPtr.Zero);
-				ret = Win32DocumentProperties (IntPtr.Zero, hPrn, null, IntPtr.Zero, IntPtr.Zero, 2);
+				ret = Win32DocumentProperties (IntPtr.Zero, hPrn, null, IntPtr.Zero, IntPtr.Zero, 0);
 
 				if (ret < 0)
 					return;
