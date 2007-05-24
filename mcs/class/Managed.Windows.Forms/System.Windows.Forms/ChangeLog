@@ -1,3 +1,8 @@
+2007-05-24  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* ComboBox.cs: If there are few items in the drop down list, make it
+	  the exact size the items need, no bigger. Fixes #81612.
+
 2007-05-24  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Application.cs: When we have captured the keyboard for a menu,
