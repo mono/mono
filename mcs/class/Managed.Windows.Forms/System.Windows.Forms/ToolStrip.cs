@@ -740,7 +740,8 @@ namespace System.Windows.Forms
 
 		protected virtual void OnItemClicked (ToolStripItemClickedEventArgs e)
 		{
-			ToolStripManager.SetActiveToolStrip (null);
+			if (this.KeyboardActive)
+				ToolStripManager.SetActiveToolStrip (null);
 			
 			ToolStripItemClickedEventHandler eh = (ToolStripItemClickedEventHandler)(Events [ItemClickedEvent]);
 			if (eh != null)
@@ -1068,9 +1069,10 @@ namespace System.Windows.Forms
 			string code = Char.ToUpper (charCode).ToString ();
 			
 			// If any item's text starts with our letter, it gets the message
-			foreach (ToolStripItem tsi in this.Items)
-				if (tsi.Enabled && tsi.Visible && tsi.Text.Length > 0 && tsi.Text.ToUpper ().StartsWith (code))
-					return tsi.ProcessMnemonic (charCode);
+			if (this is MenuStrip)
+				foreach (ToolStripItem tsi in this.Items)
+					if (tsi.Enabled && tsi.Visible && tsi.Text.Length > 0 && tsi.Text.ToUpper ().StartsWith (code))
+						return tsi.ProcessMnemonic (charCode);
 
 			return base.ProcessMnemonic (charCode);
 		}
@@ -1318,7 +1320,7 @@ namespace System.Windows.Forms
 			return this;
 		}
 		
-		internal void HandleItemClick (ToolStripItem dismissingItem)
+		internal virtual void HandleItemClick (ToolStripItem dismissingItem)
 		{
 			this.GetTopLevelToolStrip ().Dismiss (ToolStripDropDownCloseReason.ItemClicked);
 			this.OnItemClicked (new ToolStripItemClickedEventArgs (dismissingItem));

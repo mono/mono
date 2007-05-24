@@ -469,7 +469,7 @@ namespace System.Windows.Forms {
 				c = GetNextControl(c, true);
 				if (c != null) {
 					// This is stupid. I want to be able to call c.ProcessMnemonic directly
-					if (c.CanSelect && c.ProcessControlMnemonic(charCode)) {
+					if (c.ProcessControlMnemonic(charCode)) {
 						return(true);
 					}
 					continue;

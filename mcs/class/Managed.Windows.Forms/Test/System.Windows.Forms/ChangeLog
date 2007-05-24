@@ -1,3 +1,8 @@
+2007-05-24  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ContainerControlTest.cs: Test to show ProcessMnemonic is called
+	regardless of CanSelect.
+
 2007-05-23  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TestHelper.cs: Remove reference to event_log from constructor.

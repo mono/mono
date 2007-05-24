@@ -252,5 +252,46 @@ namespace MonoTests.System.Windows.Forms {
 			form.Dispose();
 
 		}
+		
+		[Test]
+		public void MnemonicCalledWhenCanSelectFalse ()
+		{
+			MyForm f = new MyForm ();
+			f.ShowInTaskbar = false;
+			
+			MyControl c = new MyControl ();
+			
+			f.Controls.Add (c);
+			f.Show ();
+			
+			Assert.AreEqual (false, c.CanSelect, "A1");
+			f.PublicProcessMnemonic ('b');
+			
+			Assert.AreEqual (true, c.mnemonic_called, "A2");
+		}
+		
+		private class MyForm : Form
+		{
+			public bool PublicProcessMnemonic (char charCode)
+			{
+				return this.ProcessMnemonic (charCode);
+			}
+		}
+		
+		private class MyControl : Control
+		{
+			public bool mnemonic_called;
+			
+			public MyControl ()
+			{
+				SetStyle (ControlStyles.Selectable, false);
+			}
+			
+			protected override bool ProcessMnemonic (char charCode)
+			{
+				mnemonic_called = true;
+				return base.ProcessMnemonic (charCode);
+			}
+		}
 	}
 }

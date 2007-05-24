@@ -1,6 +1,13 @@
+2007-05-24  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ContainerControl.cs: Don't check CanSelect before calling
+	ProcessMnemonic.
+	* ToolStrip.cs: Only do implicit mnemonics on MenuStrips.  Don't
+	release a KeyboardActive on click if it's not ours.
+
 2007-05-23  Andreia Gaita  <avidigal@novell.com>
 
-* ColumnHeader.cs: Add TypeConverter
+	* ColumnHeader.cs: Add TypeConverter
 
 2007-05-23  Everaldo Canuto  <ecanuto@novell.com>
 
