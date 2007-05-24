@@ -1,3 +1,7 @@
+2007-05-24  Konstantin Triger <kostat@mainsoft.com>
+
+	* TypeTranslator.cs: fix typo: set IsNullable flag for primitiveNullableTypes.
+
 2007-05-14  Adar Wesley <adarw@mainsoft.com>
 
 	* XmlSchemaExporter.cs: added missing overload for method ExportAnyType.

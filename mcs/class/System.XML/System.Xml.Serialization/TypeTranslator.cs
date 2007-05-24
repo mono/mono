@@ -136,7 +136,7 @@ namespace System.Xml.Serialization
 			primitiveTypes.Add ("base64", new TypeData (typeof (byte[]), "base64", true));
 
 #if NET_2_0
-			primitiveNullableTypes = new Hashtable ();
+			primitiveNullableTypes = Hashtable.Synchronized(new Hashtable ());
 			foreach (DictionaryEntry de in primitiveTypes) {
 				TypeData td = (TypeData) de.Value;
 				TypeData ntd = new TypeData (td.Type, td.XmlType, true);
@@ -163,14 +163,13 @@ namespace System.Xml.Serialization
 
 				TypeData pt = GetTypeData (type); // beware this recursive call btw ...
 				if (pt != null) {
-					lock (primitiveNullableTypes) {
 						TypeData tt = (TypeData) primitiveNullableTypes [pt.XmlType];
 						if (tt == null) {
 							tt = new TypeData (type, pt.XmlType, true);
+							tt.IsNullable = true;
 							primitiveNullableTypes [pt.XmlType] = tt;
 						}
 						return tt;
-					}
 				}
 			}
 #endif
