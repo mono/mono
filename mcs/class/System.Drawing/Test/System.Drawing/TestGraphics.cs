@@ -1347,6 +1347,27 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
+		public void FillRectangles_NormalBehavior ()
+		{
+			using (Bitmap bitmap = new Bitmap (20, 20)) {
+				using (Graphics g = Graphics.FromImage (bitmap)) {
+					g.Clear (Color.Fuchsia);
+					Rectangle rect = new Rectangle (5, 5, 10, 10);
+					g.Clip = new Region (rect);
+					g.FillRectangle (Brushes.Red, rect);
+				}
+				Assert.AreEqual (Color.Red.ToArgb (), bitmap.GetPixel (5, 5).ToArgb (), "5,5");
+				Assert.AreEqual (Color.Red.ToArgb (), bitmap.GetPixel (14, 5).ToArgb (), "14,5");
+				Assert.AreEqual (Color.Red.ToArgb (), bitmap.GetPixel (5, 14).ToArgb (), "5,14");
+				Assert.AreEqual (Color.Red.ToArgb (), bitmap.GetPixel (14, 14).ToArgb (), "14,14");
+
+				Assert.AreEqual (Color.Fuchsia.ToArgb (), bitmap.GetPixel (15, 5).ToArgb (), "15,5");
+				Assert.AreEqual (Color.Fuchsia.ToArgb (), bitmap.GetPixel (5, 15).ToArgb (), "5,15");
+				Assert.AreEqual (Color.Fuchsia.ToArgb (), bitmap.GetPixel (15, 15).ToArgb (), "15,15");
+			}
+		}
+
+		[Test]
 		public void MeasureString_StringFont ()
 		{
 			using (Bitmap bitmap = new Bitmap (20, 20)) {

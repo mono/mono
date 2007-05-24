@@ -1,3 +1,8 @@
+2007-05-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TestGraphics.cs: Add test cases for the normal behaviour of 
+	FillRectangles.
+
 2007-05-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* GDIPlusTest.cs: Add test cases for GdipCreateFromHDC when HDC is
