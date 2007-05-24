@@ -288,6 +288,7 @@ namespace System.Web.Services.Description {
 				ServiceDescriptionCollection col = new ServiceDescriptionCollection ();
 				col.Add (desc);
 				ConformanceCheckContext ctx = new ConformanceCheckContext (col, violations);
+				ctx.ServiceDescription = desc;
 				ConformanceChecker[] checkers = WebServicesInteroperability.GetCheckers (binfo.WebServiceBindingAttribute.ConformsTo);
 				foreach (ConformanceChecker checker in checkers) {
 					ctx.Checker = checker;
