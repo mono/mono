@@ -4617,6 +4617,8 @@ namespace System.Windows.Forms {
 			string text = line.text.ToString (pos, 1);
 			switch ((int) text [0]) {
 			case '\t':
+				if (!line.document.multiline)
+					goto case 10;
 				SizeF res = dc.MeasureString (" ", font, 10000, Document.string_format);
 				res.Width *= 8.0F;
 				return res;
@@ -4646,6 +4648,11 @@ namespace System.Windows.Forms {
 					tab_index = end;
 				dc.DrawString (text.Substring (start, tab_index - start), font, brush, xoff + line.widths [start],
 						y, StringFormat.GenericTypographic);
+
+				// non multilines get the unknown char 
+				if (!line.document.multiline && tab_index != end)
+					dc.DrawString ("\u0013", font, brush,  xoff + line.widths [tab_index], y, Document.string_format);
+					
 				start = tab_index + 1;
 			}
 		}

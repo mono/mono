@@ -6,6 +6,11 @@
 
 2007-05-24  Jackson Harper  <jackson@ximian.com>
 
+	* TextControl.cs: Handle tabs in non multiline mode a little
+	differently.
+
+2007-05-24  Jackson Harper  <jackson@ximian.com>
+
 	* TextControl.cs: We need to manually break apart tabbed text and
 	move the tabs, since the system.drawing tabbing mechanism relies
 	on tab stops.
