@@ -2612,6 +2612,170 @@ namespace MonoTests.System.Drawing
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
+		public void DrawImage_NullPointRectangleGraphicsUnit ()
+		{
+			Rectangle r = new Rectangle (1, 2, 3, 4);
+			Point[] pts = new Point[3] { new Point (1, 1), new Point (2, 2), new Point (3, 3) };
+			using (Bitmap bmp = new Bitmap (40, 40)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					g.DrawImage (null, pts, r, GraphicsUnit.Pixel);
+				}
+			}
+		}
+
+		private void DrawImage_ImagePointRectangleGraphicsUnit (Point[] pts)
+		{
+			Rectangle r = new Rectangle (1, 2, 3, 4);
+			using (Bitmap bmp = new Bitmap (40, 40)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					g.DrawImage (bmp, pts, r, GraphicsUnit.Pixel);
+				}
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void DrawImage_ImageNullRectangleGraphicsUnit ()
+		{
+			DrawImage_ImagePointRectangleGraphicsUnit (null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void DrawImage_ImagePoint0RectangleGraphicsUnit ()
+		{
+			DrawImage_ImagePointRectangleGraphicsUnit (new Point[0]);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void DrawImage_ImagePoint1RectangleGraphicsUnit ()
+		{
+			Point p = new Point (1, 1);
+			DrawImage_ImagePointRectangleGraphicsUnit (new Point[1] { p });
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void DrawImage_ImagePoint2RectangleGraphicsUnit ()
+		{
+			Point p = new Point (1, 1);
+			DrawImage_ImagePointRectangleGraphicsUnit (new Point[2] { p, p });
+		}
+
+		[Test]
+		public void DrawImage_ImagePoint3RectangleGraphicsUnit ()
+		{
+			Point p = new Point (1, 1);
+			DrawImage_ImagePointRectangleGraphicsUnit (new Point[3] { p, p, p });
+		}
+
+		[Test]
+		[ExpectedException (typeof (NotImplementedException))]
+		public void DrawImage_ImagePoint4RectangleGraphicsUnit ()
+		{
+			Point p = new Point (1, 1);
+			DrawImage_ImagePointRectangleGraphicsUnit (new Point[4] { p, p, p, p });
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void DrawImage_NullPointFRectangleGraphicsUnit ()
+		{
+			Rectangle r = new Rectangle (1, 2, 3, 4);
+			PointF[] pts = new PointF[3] { new PointF (1, 1), new PointF (2, 2), new PointF (3, 3) };
+			using (Bitmap bmp = new Bitmap (40, 40)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					g.DrawImage (null, pts, r, GraphicsUnit.Pixel);
+				}
+			}
+		}
+
+		private void DrawImage_ImagePointFRectangleGraphicsUnit (PointF[] pts)
+		{
+			Rectangle r = new Rectangle (1, 2, 3, 4);
+			using (Bitmap bmp = new Bitmap (40, 40)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					g.DrawImage (bmp, pts, r, GraphicsUnit.Pixel);
+				}
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void DrawImage_ImageNullFRectangleGraphicsUnit ()
+		{
+			DrawImage_ImagePointFRectangleGraphicsUnit (null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void DrawImage_ImagePointF0RectangleGraphicsUnit ()
+		{
+			DrawImage_ImagePointFRectangleGraphicsUnit (new PointF[0]);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void DrawImage_ImagePointF1RectangleGraphicsUnit ()
+		{
+			PointF p = new PointF (1, 1);
+			DrawImage_ImagePointFRectangleGraphicsUnit (new PointF[1] { p });
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void DrawImage_ImagePointF2RectangleGraphicsUnit ()
+		{
+			PointF p = new PointF (1, 1);
+			DrawImage_ImagePointFRectangleGraphicsUnit (new PointF[2] { p, p });
+		}
+
+		[Test]
+		public void DrawImage_ImagePointF3RectangleGraphicsUnit ()
+		{
+			PointF p = new PointF (1, 1);
+			DrawImage_ImagePointFRectangleGraphicsUnit (new PointF[3] { p, p, p });
+		}
+
+		[Test]
+		[ExpectedException (typeof (NotImplementedException))]
+		public void DrawImage_ImagePointF4RectangleGraphicsUnit ()
+		{
+			PointF p = new PointF (1, 1);
+			DrawImage_ImagePointFRectangleGraphicsUnit (new PointF[4] { p, p, p, p });
+		}
+
+		[Test]
+		public void DrawImage_ImagePointRectangleGraphicsUnitNull ()
+		{
+			Point p = new Point (1, 1);
+			Point[] pts = new Point[3] { p, p, p };
+			Rectangle r = new Rectangle (1, 2, 3, 4);
+			using (Bitmap bmp = new Bitmap (40, 40)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					g.DrawImage (bmp, pts, r, GraphicsUnit.Pixel, null);
+				}
+			}
+		}
+
+		[Test]
+		public void DrawImage_ImagePointRectangleGraphicsUnitAttributes ()
+		{
+			Point p = new Point (1, 1);
+			Point[] pts = new Point[3] { p, p, p };
+			Rectangle r = new Rectangle (1, 2, 3, 4);
+			using (Bitmap bmp = new Bitmap (40, 40)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					ImageAttributes ia = new ImageAttributes ();
+					ia.SetThreshold (1.0f);
+					g.DrawImage (bmp, pts, r, GraphicsUnit.Pixel, ia);
+				}
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
 		public void DrawImageUnscaled_NullPoint ()
 		{
 			using (Bitmap bmp = new Bitmap (40, 40)) {

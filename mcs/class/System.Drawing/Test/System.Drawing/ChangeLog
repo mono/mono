@@ -1,3 +1,8 @@
+2007-05-24  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* TestGraphics.cs: Add test cases for DrawImage overloads accepting
+	Point or PointF arrays as destination points.
+
 2007-05-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TestGraphics.cs: Add test cases for the normal behaviour of 
