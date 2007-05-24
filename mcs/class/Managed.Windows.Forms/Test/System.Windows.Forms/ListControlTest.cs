@@ -80,7 +80,81 @@ namespace MonoTests.System.Windows.Forms
 				Assert.AreEqual ("SUCCESS", cb.Text, "#02");
 			}
 		}
+
+		[Test]
+		public void GetItemText ()
+		{
+			MockItem itemA = new MockItem ("A", 1);
+			MockItem itemB = new MockItem ("B", 2);
+			object itemC = new object ();
+
+			ListControlChild lc = new ListControlChild ();
+			lc.DisplayMember = "Text";
+
+			// No DataSource available
+			Assert.AreEqual ("A", lc.GetItemText (itemA), "#A1");
+			Assert.AreEqual ("B", lc.GetItemText (itemB), "#A2");
+			Assert.AreEqual (itemC.GetType ().FullName, lc.GetItemText (itemC), "#A3");
+
+			lc.DisplayMember = String.Empty;
+
+			Assert.AreEqual (itemA.GetType ().FullName, lc.GetItemText (itemA), "#B1");
+			Assert.AreEqual (itemB.GetType ().FullName, lc.GetItemText (itemB), "#B2");
+			Assert.AreEqual (itemC.GetType ().FullName, lc.GetItemText (itemC), "#B3");
+
+			// DataSource available
+			object [] objects = new object [] {itemA, itemB, itemC};
+			lc.DisplayMember = "Text";
+			lc.DataSource = objects;
+
+			Assert.AreEqual ("A", lc.GetItemText (itemA), "#C1");
+			Assert.AreEqual ("B", lc.GetItemText (itemB), "#C2");
+			Assert.AreEqual (itemC.GetType ().FullName, lc.GetItemText (itemC), "#C3");
+
+			lc.DisplayMember = String.Empty;
+
+			Assert.AreEqual (itemA.GetType ().FullName, lc.GetItemText (itemA), "#D1");
+			Assert.AreEqual (itemB.GetType ().FullName, lc.GetItemText (itemB), "#D2");
+			Assert.AreEqual (itemC.GetType ().FullName, lc.GetItemText (itemC), "#D3");
+		}
 		
+		[Test]
+		public void FilterItemOnProperty ()
+		{
+			MockItem itemA = new MockItem ("A", 1);
+			MockItem itemB = new MockItem ("B", 2);
+			object itemC = new object ();
+
+			ListControlChild lc = new ListControlChild ();
+			lc.DisplayMember = "Text";
+
+			// No DataSource available
+			Assert.AreEqual ("A", lc.FilterItem (itemA, lc.DisplayMember), "#A1");
+			Assert.AreEqual ("B", lc.FilterItem (itemB, lc.DisplayMember), "#A2");
+			Assert.AreEqual (itemC, lc.FilterItem (itemC, lc.DisplayMember), "#A3");
+
+			lc.DisplayMember = String.Empty;
+
+			Assert.AreEqual (itemA, lc.FilterItem (itemA, lc.DisplayMember), "#B1");
+			Assert.AreEqual (itemB, lc.FilterItem (itemB, lc.DisplayMember), "#B2");
+			Assert.AreEqual (itemC, lc.FilterItem (itemC, lc.DisplayMember), "#B3");
+
+			// DataSource available
+			object [] objects = new object [] {itemA, itemB, itemC};
+			lc.DisplayMember = "Text";
+			lc.DataSource = objects;
+
+			Assert.AreEqual ("A", lc.FilterItem (itemA, lc.DisplayMember), "#C1");
+			Assert.AreEqual ("B", lc.FilterItem (itemB, lc.DisplayMember), "#C2");
+			Assert.AreEqual (itemC, lc.FilterItem (itemC, lc.DisplayMember), "#C3");
+
+			lc.DisplayMember = String.Empty;
+
+			Assert.AreEqual (itemA, lc.FilterItem (itemA, lc.DisplayMember), "#D1");
+			Assert.AreEqual (itemB, lc.FilterItem (itemB, lc.DisplayMember), "#D2");
+			Assert.AreEqual (itemC, lc.FilterItem (itemC, lc.DisplayMember), "#D3");
+		}
+
 		[Test]
 		public void DisplayMemberNullTest ()
 		{
@@ -123,6 +197,11 @@ namespace MonoTests.System.Windows.Forms
 		}
 #endif
 
+		public object FilterItem (object obj, string field)
+		{
+			return FilterItemOnProperty (obj, field);
+		}
+
 		protected override void RefreshItem (int index)
 		{
 		}
@@ -130,6 +209,27 @@ namespace MonoTests.System.Windows.Forms
 		protected override void SetItemsCore (IList items)
 		{
 		}
+	}
+		
+	public class MockItem
+	{
+		public MockItem (string text, int value)
+		{
+			_text = text;
+			_value = value;
+		}
+			
+		public string Text {
+			get { return _text; }
+		}
+			
+		public int Value {
+			get { return _value; }
+		}
+			
+		private readonly string _text;
+		private readonly int _value;
+		
 	}
 }
 

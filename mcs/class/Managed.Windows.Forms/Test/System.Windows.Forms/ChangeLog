@@ -1,3 +1,10 @@
+2007-05-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListControlTest.cs:
+	* CheckedListBoxTest.cs: Move the GetItemText test
+	to ListControl, since the method it's part of it. Also
+	add a FilterItemOnProperty test.
+
 2007-05-24  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DefaultLayoutTest.cs: Add test for bug 81199. (nested controls)

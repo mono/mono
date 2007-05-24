@@ -213,26 +213,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[NUnit.Framework.Category ("NotWorking")]
-		public void GetItemText ()
-		{
-			MockItem itemA = new MockItem ("A", 1);
-			MockItem itemB = new MockItem ("B", 2);
-
-			CheckedListBox clb = new CheckedListBox ();
-			clb.DisplayMember = "Text";
-			clb.Items.Add (itemA, true);
-
-			Assert.AreEqual ("A", clb.GetItemText (itemA), "#A1");
-			Assert.AreEqual ("B", clb.GetItemText (itemB), "#A2");
-
-			clb.DisplayMember = string.Empty;
-
-			Assert.AreEqual (itemA.GetType ().FullName, clb.GetItemText (itemA), "#B1");
-			Assert.AreEqual (itemB.GetType ().FullName, clb.GetItemText (itemB), "#B2");
-		}
-
-		[Test]
 		public void SelectionMode_Invalid ()
 		{
 			CheckedListBox clb = new CheckedListBox ();
@@ -580,24 +560,5 @@ namespace MonoTests.System.Windows.Forms
 #endif
 		}
 
-		public class MockItem
-		{
-			public MockItem (string text, int value)
-			{
-				_text = text;
-				_value = value;
-			}
-
-			public string Text {
-				get { return _text; }
-			}
-
-			public int Value {
-				get { return _value; }
-			}
-
-			private readonly string _text;
-			private readonly int _value;
-		}
 	}
 }
