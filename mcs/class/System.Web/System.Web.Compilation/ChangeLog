@@ -1,3 +1,9 @@
+2007-05-24  Marek Habersack  <mhabersack@novell.com>
+
+	* PageCompiler.cs: added support for the PreviousPageType directive.
+
+	* Directive.cs: as above.
+
 2007-05-22  Marek Habersack  <mhabersack@novell.com>
 
 	* UserControlCompiler.cs: the Profile property should be present

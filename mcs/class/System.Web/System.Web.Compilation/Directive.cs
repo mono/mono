@@ -72,6 +72,7 @@ namespace System.Web.Compilation
 
 #if NET_2_0
 		static string [] mastertype_atts = { "virtualpath", "typename" };
+		static string [] previouspagetype_atts = { "virtualpath", "typename" };
 #endif
 		
 		static Directive ()
@@ -189,6 +190,10 @@ namespace System.Web.Compilation
 			valid_attributes = new Hashtable (comparer);
 			foreach (string att in control_atts) valid_attributes.Add (att, null);
 			directivesHash.Add ("MASTER", valid_attributes);
+
+			valid_attributes = new Hashtable (comparer);
+			foreach (string att in previouspagetype_atts) valid_attributes.Add (att, null);
+			directivesHash.Add ("PREVIOUSPAGETYPE", valid_attributes);
 #endif
 		}
 		

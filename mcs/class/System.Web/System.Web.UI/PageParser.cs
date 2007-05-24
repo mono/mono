@@ -72,6 +72,7 @@ namespace System.Web.UI
 		bool maintainScrollPositionOnPostBack;
 		int maxPageStateFieldLength = -1;
 		string pageParserFilter = String.Empty;
+		Type previousPageType;
 #endif
 
 		public PageParser ()
@@ -373,23 +374,41 @@ namespace System.Web.UI
 		
 #if NET_2_0
 		internal override void AddDirective (string directive, Hashtable atts)
-		{
-			if (String.Compare ("MasterType", directive, true) == 0) {
-				string type = GetString (atts, "TypeName", null);
-				if (type != null) {
-					masterType = LoadType (type);
-					if (masterType == null)
-						ThrowParseException ("Could not load type '" + type + "'.");
-				} else {
-					string path = GetString (atts, "VirtualPath", null);
-					if (path != null)
-						masterType = MasterPageParser.GetCompiledMasterType (path, MapPath (path), HttpContext.Current);
+		{			
+			bool isMasterType = String.Compare ("MasterType", directive, StringComparison.OrdinalIgnoreCase) == 0;
+			bool isPreviousPageType = isMasterType ? false : String.Compare ("PreviousPageType", directive,
+											 StringComparison.OrdinalIgnoreCase) == 0;
+			
+			string typeName = null;
+			string virtualPath = null;
+			Type type = null;
+			
+			if (isMasterType || isPreviousPageType) {
+				typeName = GetString (atts, "TypeName", null);
+				virtualPath = GetString (atts, "VirtualPath", null);
+
+				if (typeName != null && virtualPath != null)
+					ThrowParseException (
+						String.Format ("The '{0}' directive must have exactly one attribute: TypeName or VirtualPath", directive));
+				if (typeName != null) {
+					type = LoadType (typeName);
+					if (type == null)
+						ThrowParseException (String.Format ("Could not load type '{0}'.", typeName));
+				} else if (virtualPath != null) {
+					string mappedPath = MapPath (virtualPath);
+					if (isMasterType)
+						type = masterType = MasterPageParser.GetCompiledMasterType (virtualPath,
+												     mappedPath,
+												     HttpContext.Current);
 					else
-						ThrowParseException ("The MasterType directive must have either a TypeName or a VirtualPath attribute.");
-				}
-				AddAssembly (masterType.Assembly, true);
-			}
-			else
+						type = previousPageType = GetCompiledPageType (virtualPath, mappedPath,
+											       HttpContext.Current);
+				} else
+					ThrowParseException (
+						String.Format ("The {0} directive must have either a TypeName or a VirtualPath attribute.", directive));
+
+				AddAssembly (type.Assembly, true);
+			} else
 				base.AddDirective (directive, atts);
 		}
 #endif
@@ -404,6 +423,12 @@ namespace System.Web.UI
 			return retval;
 		}
 
+		public static Type GetCompiledPageType (string virtualPath, string inputFile, HttpContext context)
+		{
+			PageParser pp = new PageParser (virtualPath, inputFile, context);
+			return pp.CompileIntoType ();
+		}
+		
 		protected override Type CompileIntoType ()
 		{
 			AspGenerator generator = new AspGenerator (this);
@@ -525,6 +550,10 @@ namespace System.Web.UI
 
 		internal string PageParserFilterType {
 			get { return pageParserFilter; }
+		}
+
+		internal Type PreviousPageType {
+			get { return previousPageType; }
 		}
 #endif
 	}

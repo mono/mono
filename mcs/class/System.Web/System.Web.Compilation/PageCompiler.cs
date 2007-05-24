@@ -254,27 +254,35 @@ namespace System.Web.Compilation
 				new CodePrimitiveExpression (pageParser.OutputCacheVaryByParam)
 				};
 		}
-                
+
+#if NET_2_0
+		void CreateStronglyTypedProperty (Type type, string name)
+		{
+			if (type == null)
+				return;
+			
+			CodeMemberProperty mprop = new CodeMemberProperty ();
+			mprop.Name = name;
+			mprop.Type = new CodeTypeReference (type);
+			mprop.Attributes = MemberAttributes.Public | MemberAttributes.New;
+			CodeExpression prop = new CodePropertyReferenceExpression (new CodeBaseReferenceExpression (), name);
+			prop = new CodeCastExpression (type, prop);
+			mprop.GetStatements.Add (new CodeMethodReturnStatement (prop));
+			if (partialClass != null)
+				partialClass.Members.Add (mprop);
+			else
+				mainClass.Members.Add (mprop);
+		}
+#endif
+		
 		protected internal override void CreateMethods ()
 		{
 			base.CreateMethods ();
 
 #if NET_2_0
 			CreateProfileProperty ();
-			if (pageParser.MasterType != null) {
-				CodeMemberProperty mprop = new CodeMemberProperty ();
-				mprop.Name = "Master";
-				mprop.Type = new CodeTypeReference (pageParser.MasterType);
-				mprop.Attributes = MemberAttributes.Public | MemberAttributes.New;
-				CodeExpression prop = new CodePropertyReferenceExpression (new CodeBaseReferenceExpression (), "Master");
-				prop = new CodeCastExpression (pageParser.MasterType, prop);
-				mprop.GetStatements.Add (new CodeMethodReturnStatement (prop));
-
-				if (partialClass != null)
-					partialClass.Members.Add (mprop);
-				else
-					mainClass.Members.Add (mprop);
-			}
+			CreateStronglyTypedProperty (pageParser.MasterType, "Master");
+			CreateStronglyTypedProperty (pageParser.PreviousPageType, "PreviousPage");
 #endif
 			
 			CreateGetTypeHashCode ();
