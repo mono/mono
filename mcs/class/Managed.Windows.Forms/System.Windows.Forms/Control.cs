@@ -2541,9 +2541,10 @@ namespace System.Windows.Forms
 					layout_type = LayoutType.Anchor;
 				}
 
-				if (parent != null) {
+				if (parent != null)
 					parent.PerformLayout(this, "Dock");
-				}
+				else if (Controls.Count > 0)
+					PerformLayout ();
 
 				OnDockChanged(EventArgs.Empty);
 			}

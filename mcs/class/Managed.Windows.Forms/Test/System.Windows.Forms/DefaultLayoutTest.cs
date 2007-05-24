@@ -523,6 +523,43 @@ namespace MonoTests.System.Windows.Forms
 			f.Dispose ();
 		}
 #endif
+
+		[Test]  // bug #81199
+		public void NestedControls ()
+		{
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+			
+			MyUserControl c = new MyUserControl ();
+			c.Dock = DockStyle.Fill;
+			c.Size = new Size (500, 500);
+			
+			f.SuspendLayout ();
+			f.Controls.Add (c);
+			f.ClientSize = new Size (500, 500);
+			f.ResumeLayout (false);
+			
+			f.Show ();
+			
+			Assert.AreEqual (new Size (600, 600), c.lv.Size, "I1");
+		}
+		
+		private class MyUserControl : UserControl
+		{
+			public ListView lv;
+			
+			public MyUserControl ()
+			{
+				lv = new ListView ();
+				SuspendLayout ();
+				lv.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top;
+				lv.Size = new Size (300, 300);
+				
+				Controls.Add (lv);
+				Size = new Size (200, 200);
+				ResumeLayout (false);
+			}
+		}
 	}
 
 	[TestFixture]	

@@ -1,3 +1,9 @@
+2007-05-24  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Control.cs: If a control doesn't have a parent when it's Dock is
+	set, but it has children, it needs to do a layout.  Fixes some nested
+	controls issues.  [Fixes bug #81199]
+
 2007-05-24  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* ComboBox.cs: If there are few items in the drop down list, make it

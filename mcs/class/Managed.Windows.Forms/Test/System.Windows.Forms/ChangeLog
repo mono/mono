@@ -1,5 +1,9 @@
 2007-05-24  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DefaultLayoutTest.cs: Add test for bug 81199. (nested controls)
+
+2007-05-24  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ContainerControlTest.cs: Test to show ProcessMnemonic is called
 	regardless of CanSelect.
 
