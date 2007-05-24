@@ -446,7 +446,11 @@ namespace System.Windows.Forms
 			active_link = null;
 
 			if (clicked_link != null)
+#if NET_2_0
+				OnLinkClicked (new LinkLabelLinkClickedEventArgs (clicked_link, e.Button));
+#else
 				OnLinkClicked (new LinkLabelLinkClickedEventArgs (clicked_link));
+#endif
 		}
 
 		protected override void OnPaint (PaintEventArgs pevent)

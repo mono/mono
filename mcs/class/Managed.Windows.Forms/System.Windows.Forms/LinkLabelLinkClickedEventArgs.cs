@@ -21,29 +21,39 @@
 //
 // Authors:
 //	Jordi Mas i Hernandez, jordi@ximian.com
+//  Everaldo Canuto, ecanuto@novell.com
 //
-
-// COMPLETE
 
 using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms 
 {
-
 	[ComVisible(true)]
 	public class LinkLabelLinkClickedEventArgs : EventArgs 
 	{
-		private LinkLabel.Link link;		
-		
+		private MouseButtons button;
+		private LinkLabel.Link link;
+
 		public LinkLabelLinkClickedEventArgs (LinkLabel.Link link)
 		{
+			this.button = MouseButtons.Left;
 			this.link = link;
 		}
-				
-		public LinkLabel.Link Link{
-			get {return link; }
+
+#if NET_2_0
+		public LinkLabelLinkClickedEventArgs (LinkLabel.Link link, MouseButtons button)
+		{
+			this.button = button;
+			this.link = link;
 		}
-		
+
+		public MouseButtons Button {
+			get { return this.button; }
+		}
+#endif
+
+		public LinkLabel.Link Link {
+			get { return link; }
+		}
 	}
 }
-
