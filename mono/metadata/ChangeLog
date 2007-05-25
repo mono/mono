@@ -1,3 +1,9 @@
+2007-05-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* reflection.c: HasSecurity can be present even if no specially 
+	encoded (CAS) attributes are available (e.g. SuppressUnmanagedCode
+	SecurityAttribute). Fix CAS regression tests on buildbot.
+
 2007-05-24  Jonathan Chambers  <joncham@gmail.com>
 
        * appdomain.c: Add configure checks for header files.
