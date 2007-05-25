@@ -153,6 +153,7 @@ namespace System.Windows.Forms
 		private ContextMenuStrip context_menu_strip;
 		Point auto_scroll_offset;
 		private AutoSizeMode auto_size_mode;
+		private bool suppressing_key_press;
 #endif
 
 		#endregion	// Local Variables
@@ -4236,6 +4237,9 @@ namespace System.Windows.Forms
 				case (int)Msg.WM_KEYDOWN: {
 					key_event = new KeyEventArgs ((Keys)msg.WParam.ToInt32 ());
 					OnKeyDown (key_event);
+#if NET_2_0
+					suppressing_key_press = key_event.SuppressKeyPress;
+#endif
 					return key_event.Handled;
 				}
 
@@ -4248,6 +4252,10 @@ namespace System.Windows.Forms
 
 				case (int)Msg.WM_SYSCHAR:
 				case (int)Msg.WM_CHAR: {
+#if NET_2_0
+					if (suppressing_key_press)
+						return true;
+#endif
 					KeyPressEventArgs	key_press_event;
 
 					key_press_event = new KeyPressEventArgs((char)msg.WParam);

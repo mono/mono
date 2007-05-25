@@ -35,6 +35,10 @@ namespace System.Windows.Forms {
 		private Keys	key_data;
 		private bool	event_handled;
 
+#if NET_2_0
+		private bool	supress_key_press;
+#endif
+
 		#region Public Constructors
 		public KeyEventArgs(Keys keyData) {
 			this.key_data=keyData | XplatUI.State.ModifierKeys;
@@ -106,6 +110,18 @@ namespace System.Windows.Forms {
 				}
 			}
 		}
+		
+#if NET_2_0
+		public bool SuppressKeyPress {
+			get {
+				return supress_key_press;
+			}
+			set {
+				supress_key_press = value;
+				event_handled = true;
+			}
+		}
+#endif
 		#endregion	// Public Instance Properties
 	}
 }
