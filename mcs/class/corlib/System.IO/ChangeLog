@@ -1,3 +1,21 @@
+2007-05-25  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* UnmanagedMemoryStream.cs: In Read and ReadByte, use Marshal.ReadByte
+	to read bytes as this allows us to start reading from the current
+	position. In Read, return 0 when reading beyond the end of the stream
+	and only read bytes until the end of the stream (not capacity).
+	In ReadByte, return -1 when reading beyond the end of the stream.
+	In SetLength: changed argument validation (and reported exceptions) to
+	match MS, removed duplicate access check and changed the current
+	position if length is less than position. In Write: throw
+	NotSupportedException when attempting to write beyond capacity, use
+	Marshal.WriteByte since that allows us to start writing from the
+	current position. Adjust length when position moves beyond length
+	in both Write and WriteByte. Allow position to be moved beyond
+	capacity of stream. Fixed position using Seek (=+ typo). Changed
+	CanRead to ignore current position. Allow Position to be used to move
+	beyond capacity of stream.
+
 2007-05-24  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* UnmanagedMemoryStream.cs: Changed argument names and exceptions 

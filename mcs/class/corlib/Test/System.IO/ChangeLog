@@ -1,3 +1,9 @@
+2007-05-25  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* UnmanagedMemoryStreamTest.cs: Added tests for CanRead, CanSeek,
+	CanWrite, Seek, Write. Improved existing tests for SetLength,
+	Position. Enabled tests that were previously failing.
+
 2007-05-24  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* UnmanagedMemoryStreamTest.cs: Fixed several tests and added several

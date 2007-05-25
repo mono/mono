@@ -1,14 +1,11 @@
-//------------------------------------------------------------------------------
 //
 // System.IO.UnmanagedMemoryStream.cs
 //
 // Copyright (C) 2006 Sridhar Kulkarni, All Rights Reserved
 //
-// Author:         Sridhar Kulkarni (sridharkulkarni@gmail.com)
-// Created:        Monday, July 10, 2006
-//
-//------------------------------------------------------------------------------
-
+// Authors:
+// 	Sridhar Kulkarni (sridharkulkarni@gmail.com)
+// 	Gert Driesen (drieseng@users.sourceforge.net)
 //
 // Copyright (C) 2005-2006 Novell, Inc (http://www.novell.com)
 //
@@ -37,7 +34,6 @@
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
-
 
 namespace System.IO
 {
@@ -109,14 +105,13 @@ namespace System.IO
 			get {
 				if (closed)
 					return false;
-				else
-					return ((fileaccess == FileAccess.Read || fileaccess == FileAccess.ReadWrite)? current_position < capacity : false);
+				return (fileaccess == FileAccess.Read || fileaccess == FileAccess.ReadWrite);
 			}
 		}
 
 		public override bool CanSeek {
 			get {
-				return ((closed) ? false : true);
+				return !closed;
 			}
 		}
 		
@@ -124,8 +119,7 @@ namespace System.IO
 			get {
 				if (closed)
 					return (false);
-				else
-					return ((fileaccess == FileAccess.Write || fileaccess == FileAccess.ReadWrite)? true:false);
+				return (fileaccess == FileAccess.Write || fileaccess == FileAccess.ReadWrite);
 			}
 		}
 		public long Capacity {
@@ -148,16 +142,16 @@ namespace System.IO
 			get {
 				if (closed)
 					throw new ObjectDisposedException("The stream is closed");
-				else
-					return (current_position);
+				return (current_position);
 			}
 			set {
 				if (closed)
 					throw new ObjectDisposedException("The stream is closed");
-				if (value < 0 || value > (long)Int32.MaxValue || value > capacity)
-					throw new ArgumentOutOfRangeException("value that is less than zero, or the position is larger than Int32.MaxValue or capacity of the stream");
-				else
-					current_position = value;
+				if (value < 0)
+					throw new ArgumentOutOfRangeException("value", "Non-negative number required.");
+				if (value > (long)Int32.MaxValue)
+					throw new ArgumentOutOfRangeException("value", "The position is larger than Int32.MaxValue.");
+				current_position = value;
 			}
 		}
 
@@ -189,14 +183,12 @@ namespace System.IO
 				if (fileaccess == FileAccess.Write)
 					throw new NotSupportedException("Stream does not support reading");
 				else {
-					if (current_position == capacity)
+					if (current_position >= length)
 						return (0);
 					else {
-						int progress = current_position + count < capacity ? count : (int) (capacity - current_position);
-						unsafe {
-							Marshal.Copy(initial_pointer, buffer, offset, progress);
-							current_position += progress;
-						}
+						int progress = current_position + count < length ? count : (int) (length - current_position);
+						for (int i = 0; i < progress; i++)
+							buffer [offset + i] = Marshal.ReadByte (initial_pointer, (int) current_position++);
 						return progress;
 					}
 				}
@@ -204,30 +196,19 @@ namespace System.IO
 		public override int ReadByte () {
 			if (closed)
 				throw new ObjectDisposedException("The stream is closed");
-			if (current_position == capacity)
-				throw new NotSupportedException("The current position is at the end of the stream");
-
-			int byteread;
 
 			if (fileaccess== FileAccess.Write)
 				throw new NotSupportedException("Stream does not support reading");
 			else {
-				if (current_position == length)
+				if (current_position >= length)
 					return (-1);
-				else {
-					unsafe {
-						byteread = (int)Marshal.ReadByte(initial_pointer, (int)current_position);
-						current_position++;
-					}
-					return(byteread);
-				}
+				return (int) Marshal.ReadByte(initial_pointer, (int) current_position++);
 			}
 		}
 		public override long Seek (long offset,	SeekOrigin loc) {
 			if (closed)
 				throw new ObjectDisposedException("The stream is closed");
-			if (offset > capacity)
-				throw new ArgumentOutOfRangeException("The offset value is larger than the maximum size of the stream");
+
 			long refpoint;
 			switch(loc) {
 			case SeekOrigin.Begin:
@@ -244,7 +225,7 @@ namespace System.IO
 			default:
 				throw new ArgumentException("Invalid SeekOrigin option");
 			}
-			refpoint =+ (int)offset;
+			refpoint += (int)offset;
 			if (refpoint < initial_position)
 				throw new IOException("An attempt was made to seek before the beginning of the stream");
 			current_position = refpoint;
@@ -255,14 +236,15 @@ namespace System.IO
 		{
 			if (closed)
 				throw new ObjectDisposedException("The stream is closed");
-			if (value < 0 || value > capacity)
-				throw new ArgumentOutOfRangeException("The specified value is negative or exceeds the capacity of the stream");
+			if (value < 0)
+				throw new ArgumentOutOfRangeException("length", "Non-negative number required.");
+			if (value > capacity)
+				throw new IOException ("Unable to expand length of this stream beyond its capacity.");
 			if (fileaccess == FileAccess.Read)
-				throw new NotSupportedException("write property is set to false");
-			if (fileaccess == FileAccess.Read)
-				throw new NotSupportedException("Length change not supported; see object construction");
-			else
-				length = value;
+				throw new NotSupportedException ("Stream does not support writing.");
+			length = value;
+			if (length < current_position)
+				current_position = length;
 		}
 
 		public override void Flush ()
@@ -285,19 +267,25 @@ namespace System.IO
 				throw new ObjectDisposedException("The stream is closed");
 			if (buffer == null)
 				throw new ArgumentNullException("The buffer parameter is a null reference");
-			if (count > capacity)
-				throw new ArgumentOutOfRangeException("The count value is greater than the capacity of the stream");
-			if (offset < 0 || count < 0)
-				throw new ArgumentOutOfRangeException("One of the specified parameters is less than zero");
+			if ((current_position + count) > capacity)
+				throw new NotSupportedException ("Unable to expand length of this stream beyond its capacity.");
+			if (offset < 0)
+				throw new ArgumentOutOfRangeException("offset", "Non-negative number required.");
+			if (count < 0)
+				throw new ArgumentOutOfRangeException("count", "Non-negative number required.");
 			if ((buffer.Length - offset) < count)
 				throw new ArgumentException("The length of the buffer array minus the offset parameter is less than the count parameter");
 			if (fileaccess == FileAccess.Read)
-				throw new NotSupportedException("write property is set to false");
+				throw new NotSupportedException ("Stream does not support writing.");
 			else {
 				unsafe {
-					//COPY data from managed buffer to unmanaged mem pointer
-					Marshal.Copy(buffer, offset, initial_pointer, (int)length);
-					current_position += length;
+					// use Marshal.WriteByte since that allow us to start writing
+					// from the current position
+					for (int i = 0; i < count; i++)
+						Marshal.WriteByte (initial_pointer, (int) current_position++, buffer [offset + i]);
+
+					if (current_position > length)
+						length = current_position;
 				}
 			}
 		}
@@ -310,11 +298,13 @@ namespace System.IO
 			if (current_position == capacity)
 				throw new NotSupportedException("The current position is at the end of the capacity of the stream");
 			if (fileaccess == FileAccess.Read)
-				throw new NotSupportedException("write property is set to false");
+				throw new NotSupportedException("Stream does not support writing.");
 			else {
 				unsafe {
 					Marshal.WriteByte(initial_pointer, (int)current_position, value);
 					current_position++;
+					if (current_position > length)
+						length = current_position;
 				}
 			}
 		}

@@ -8,13 +8,15 @@
 // (c) 2006 Sridhar Kulkarni.
 // Copyright (C) 2004 Novell (http://www.novell.com)
 //
+
 #if NET_2_0 && !TARGET_JVM
-using NUnit.Framework;
-using System.IO;
 using System;
-using System.Text;
-using System.Runtime.InteropServices;
 using System.Collections;
+using System.IO;
+using System.Runtime.InteropServices;
+using System.Text;
+
+using NUnit.Framework;
 
 namespace MonoTests.System.IO
 {
@@ -31,10 +33,10 @@ namespace MonoTests.System.IO
 		public void SetUp()
 		{
 			testStreamData = UnicodeEncoding.Unicode.GetBytes("Here is some mono testdata");
-			mem_intptr = Marshal.AllocHGlobal(testStreamData.Length);
-			mem_byteptr = (byte*)mem_intptr.ToPointer();
 			length = testStreamData.Length;
-			capacity = testStreamData.Length;
+			capacity = testStreamData.Length * 2;
+			mem_intptr = Marshal.AllocHGlobal(capacity);
+			mem_byteptr = (byte*)mem_intptr.ToPointer();
 			readData = new byte[length];
 		}
 
@@ -49,7 +51,7 @@ namespace MonoTests.System.IO
 		// Verify that the first count bytes in testBytes are the same as
 		// the count bytes from index start in testStreamData
 		//
-		void VerifyTestData(string id, byte[] testBytes, int start, int count)
+		void VerifyTestData (string id, byte [] testBytes, int start, int count)
 		{
 			if (testBytes == null)
 				Assert.Fail(id + "+1 testBytes is null");
@@ -126,7 +128,6 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[Category ("NotWorking")] // CanRead should return true even if we're at or beyond end of stream
 		public void Constructor2 ()
 		{
 			UnmanagedMemoryStream ums;
@@ -244,7 +245,7 @@ namespace MonoTests.System.IO
 
 		[Test]
 		[ExpectedException (typeof (ObjectDisposedException))]
-		public void Flush_Closed ()
+		public void Flush_Stream_Closed ()
 		{
 			UnmanagedMemoryStream ums = new 
 				UnmanagedMemoryStream(mem_byteptr, length);
@@ -253,28 +254,110 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		public void CanRead ()
+		{
+			UnmanagedMemoryStream ums = new 
+				UnmanagedMemoryStream(mem_byteptr, length, capacity, FileAccess.Read);
+			Assert.IsTrue (ums.CanRead, "#1");
+			ums.Seek (length, SeekOrigin.Begin);
+			Assert.IsTrue (ums.CanRead, "#2");
+			ums.Seek (capacity, SeekOrigin.Begin);
+			Assert.IsTrue (ums.CanRead, "#3");
+			ums.Seek (capacity + 1, SeekOrigin.Begin);
+			Assert.IsTrue (ums.CanRead, "#4");
+			ums.Seek (0, SeekOrigin.Begin);
+			Assert.IsTrue (ums.CanRead, "#5");
+			ums.Close ();
+		}
+
+		[Test]
+		public void CanRead_Stream_Closed ()
+		{
+			UnmanagedMemoryStream ums = new 
+				UnmanagedMemoryStream(mem_byteptr, length, capacity, FileAccess.ReadWrite);
+			ums.Close ();
+			Assert.IsFalse (ums.CanRead);
+		}
+
+		[Test]
+		public void CanSeek ()
+		{
+			UnmanagedMemoryStream ums = new 
+				UnmanagedMemoryStream(mem_byteptr, length, capacity, FileAccess.Read);
+			Assert.IsTrue (ums.CanSeek, "#1");
+			ums.Seek (length, SeekOrigin.Begin);
+			Assert.IsTrue (ums.CanSeek, "#2");
+			ums.Seek (capacity, SeekOrigin.Begin);
+			Assert.IsTrue (ums.CanSeek, "#3");
+			ums.Seek (capacity + 1, SeekOrigin.Begin);
+			Assert.IsTrue (ums.CanSeek, "#4");
+			ums.Seek (0, SeekOrigin.Begin);
+			Assert.IsTrue (ums.CanSeek, "#5");
+			ums.Close ();
+		}
+
+		[Test]
+		public void CanSeek_Stream_Closed ()
+		{
+			UnmanagedMemoryStream ums = new 
+				UnmanagedMemoryStream(mem_byteptr, length, capacity, FileAccess.ReadWrite);
+			Assert.IsTrue (ums.CanSeek, "#1");
+			ums.Close ();
+			Assert.IsFalse (ums.CanSeek, "#2");
+		}
+
+		[Test]
+		public void CanWrite ()
+		{
+			UnmanagedMemoryStream ums = new 
+				UnmanagedMemoryStream(mem_byteptr, length, capacity, FileAccess.ReadWrite);
+			Assert.IsTrue (ums.CanWrite, "#1");
+			ums.Seek (length, SeekOrigin.Begin);
+			Assert.IsTrue (ums.CanWrite, "#2");
+			ums.Seek (capacity, SeekOrigin.Begin);
+			Assert.IsTrue (ums.CanWrite, "#3");
+			ums.Seek (capacity + 1, SeekOrigin.Begin);
+			Assert.IsTrue (ums.CanWrite, "#4");
+			ums.Seek (0, SeekOrigin.Begin);
+			Assert.IsTrue (ums.CanWrite, "#5");
+			ums.Close ();
+		}
+
+		[Test]
+		public void CanWrite_Stream_Closed ()
+		{
+			UnmanagedMemoryStream ums = new 
+				UnmanagedMemoryStream(mem_byteptr, length, capacity, FileAccess.ReadWrite);
+			Assert.IsTrue (ums.CanWrite, "#1");
+			ums.Close ();
+			Assert.IsFalse (ums.CanWrite, "#2");
+		}
+
+		[Test]
 		public void Read ()
 		{
 			UnmanagedMemoryStream ums = new 
-				UnmanagedMemoryStream(mem_byteptr, length, length, FileAccess.ReadWrite);
+				UnmanagedMemoryStream(mem_byteptr, length, capacity, FileAccess.ReadWrite);
 			ums.Write (testStreamData, 0, testStreamData.Length);
 			ums.Position = 0;
 
-			ums.Read (readData, 0, (length/2));
-			VerifyTestData ("R1", readData, 0, (length / 2));
+			Assert.AreEqual (length / 2, ums.Read (readData, 0, (length / 2)), "#1");
+			VerifyTestData ("#2", readData, 0, (length / 2));
+			Assert.AreEqual (length / 2, ums.Position, "#3");
 			
 			//Seek back to begining
 			ums.Seek (0, SeekOrigin.Begin);
 			
 			//Read complete stream
-			ums.Read (readData, 0, length);
-			VerifyTestData ("r2", readData, 0, length);
+			Assert.AreEqual (length, ums.Read (readData, 0, length), "#4");
+			VerifyTestData ("#5", readData, 0, length);
+			Assert.AreEqual (length, ums.Position, "#6");
 			
 			//Seek to mid of the stream and read till end
 			ums.Seek ((length / 2), SeekOrigin.Begin);
 			ums.Read (readData, 0, (length / 2));
-			VerifyTestData ("r3", readData, (length / 2), (length / 2));
+			VerifyTestData ("#7", readData, (length / 2), (length / 2));
+			Assert.AreEqual (length, ums.Position, "#8");
 			ums.Close ();
 		}
 
@@ -298,7 +381,7 @@ namespace MonoTests.System.IO
 
 		[Test]
 		[ExpectedException (typeof (ObjectDisposedException))]
-		public void Read_Closed ()
+		public void Read_Stream_Closed ()
 		{
 			UnmanagedMemoryStream ums = new 
 				UnmanagedMemoryStream(mem_byteptr, length);
@@ -337,7 +420,9 @@ namespace MonoTests.System.IO
 				ums.Read (readData, 1, readData.Length);
 				Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
-				// Non-negative number required
+				// Offset and length were out of bounds for the array or count
+				// is greater than the number of elements from index to the end
+				// of the source collection
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
@@ -346,7 +431,7 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[Category ("NotWorking")] // when reading on or beyond the end of the stream we must return 0
+		//[Category ("NotWorking")] // when reading on or beyond the end of the stream we must return 0
 		public void Read_EndOfStream ()
 		{
 			UnmanagedMemoryStream ums = new 
@@ -355,6 +440,10 @@ namespace MonoTests.System.IO
 			Assert.AreEqual (0, ums.Read (readData, 0, 1), "#1");
 			ums.Seek(length + 1, SeekOrigin.Begin);
 			Assert.AreEqual (0, ums.Read (readData, 0, 1), "#2");
+			ums.Seek(length - 3, SeekOrigin.Begin);
+			Assert.AreEqual (3, ums.Read (readData, 0, 5), "#3");
+			ums.Seek(capacity + 1, SeekOrigin.Begin);
+			Assert.AreEqual (0, ums.Read (readData, 0, 1), "#4");
 			ums.Close ();
 		}
 
@@ -409,7 +498,7 @@ namespace MonoTests.System.IO
 
 		[Test]
 		[ExpectedException (typeof (ObjectDisposedException))]
-		public void ReadByte_Closed ()
+		public void ReadByte_Stream_Closed ()
 		{
 			UnmanagedMemoryStream ums = new 
 				UnmanagedMemoryStream(mem_byteptr, length);
@@ -418,17 +507,21 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[Category ("NotWorking")] // when reading on or beyond the end of the stream we must return -1
+		//[Category ("NotWorking")] // when reading on or beyond the end of the stream we must return -1
 		public void ReadByte_EndOfStream ()
 		{
 			UnmanagedMemoryStream ums = new
-				UnmanagedMemoryStream(mem_byteptr, length, length * 2, FileAccess.ReadWrite);
+				UnmanagedMemoryStream(mem_byteptr, length, capacity, FileAccess.ReadWrite);
 			ums.Write (testStreamData, 0, testStreamData.Length);
 			ums.Position = 0;
 			ums.Seek(length, SeekOrigin.Begin);
 			Assert.AreEqual (-1, ums.ReadByte (), "#3");
 			ums.Seek(length + 1, SeekOrigin.Begin);
 			Assert.AreEqual (-1, ums.ReadByte (), "#4");
+			ums.Seek(capacity, SeekOrigin.Begin);
+			Assert.AreEqual (-1, ums.ReadByte (), "#5");
+			ums.Seek(capacity + 1, SeekOrigin.Begin);
+			Assert.AreEqual (-1, ums.ReadByte (), "#6");
 			ums.Close();
 		}
 
@@ -436,7 +529,7 @@ namespace MonoTests.System.IO
 		public void ReadByte_WriteOnly ()
 		{
 			UnmanagedMemoryStream ums = new
-				UnmanagedMemoryStream(mem_byteptr, length, length, FileAccess.Write);
+				UnmanagedMemoryStream(mem_byteptr, length, capacity, FileAccess.Write);
 			try {
 				ums.ReadByte ();
 				Assert.Fail ("#1");
@@ -450,8 +543,94 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
+		public void Seek ()
+		{
+			UnmanagedMemoryStream ums = new
+				UnmanagedMemoryStream(mem_byteptr, length, capacity, FileAccess.Write);
+			Assert.AreEqual (5, ums.Seek (5, SeekOrigin.Begin), "#A1");
+			Assert.AreEqual (5, ums.Position, "#A2");
+			Assert.AreEqual (length, ums.Length, "#A3");
+
+			ums.Seek (2, SeekOrigin.Current);
+			//Assert.AreEqual (7, ums.Seek (2, SeekOrigin.Current), "#B1");
+			Assert.AreEqual (7, ums.Position, "#B2");
+			Assert.AreEqual (length, ums.Length, "#B3");
+
+			Assert.AreEqual (length + 2, ums.Seek (2, SeekOrigin.End), "#C1");
+			Assert.AreEqual (length + 2, ums.Position, "#C2");
+			Assert.AreEqual (length, ums.Length, "#C3");
+
+			Assert.AreEqual (0, ums.Seek (0, SeekOrigin.Begin), "#D1");
+			Assert.AreEqual (0, ums.Position, "#D2");
+			Assert.AreEqual (length, ums.Length, "#D3");
+
+			Assert.AreEqual (length - 2, ums.Seek (-2, SeekOrigin.End), "#E1");
+			Assert.AreEqual (length - 2, ums.Position, "#E2");
+			Assert.AreEqual (length, ums.Length, "#E3");
+
+			Assert.AreEqual (length - 5, ums.Seek (-3, SeekOrigin.Current), "#F1");
+			Assert.AreEqual (length - 5, ums.Position, "#F2");
+			Assert.AreEqual (length, ums.Length, "#F3");
+
+			Assert.AreEqual (capacity + 5, ums.Seek (capacity + 5, SeekOrigin.Begin), "#G1");
+			Assert.AreEqual (capacity + 5, ums.Position, "#G2");
+			Assert.AreEqual (length, ums.Length, "#G3");
+		}
+
+		[Test]
+		public void Seek_Origin_Invalid ()
+		{
+			UnmanagedMemoryStream ums = new
+				UnmanagedMemoryStream(mem_byteptr, 5, 10, FileAccess.Read);
+			try {
+				ums.Seek(1, (SeekOrigin) 666);
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Invalid seek origin
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
+			ums.Close();
+		}
+
+		[Test]
+		public void Seek_Offset_Invalid ()
+		{
+			UnmanagedMemoryStream ums = new
+				UnmanagedMemoryStream(mem_byteptr, length, capacity, FileAccess.ReadWrite);
+			ums.Write (testStreamData, 0, testStreamData.Length);
+			ums.Position = 0;
+			try {
+				ums.Seek(-1, SeekOrigin.Begin);
+				Assert.Fail ("#A1");
+			} catch (IOException ex) {
+				// An attempt was made to move the position before the beginning
+				// of the stream
+				Assert.AreEqual (typeof (IOException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+			}
+
+			ums.Position = 2;
+			try {
+				ums.Seek(-3, SeekOrigin.Current);
+				Assert.Fail ("#B1");
+			} catch (IOException ex) {
+				// An attempt was made to move the position before the beginning
+				// of the stream
+				Assert.AreEqual (typeof (IOException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+			}
+
+			ums.Close();
+		}
+
+		[Test]
 		[ExpectedException (typeof (ObjectDisposedException))]
-		public void Seek_Closed () 
+		public void Seek_Stream_Closed () 
 		{
 			UnmanagedMemoryStream ums = new
 				UnmanagedMemoryStream(mem_byteptr, length);
@@ -460,45 +639,43 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		public void Seek_EndOfStream ()
+		public void Write ()
 		{
-			UnmanagedMemoryStream ums = new
-				UnmanagedMemoryStream(mem_byteptr, 5, 10, FileAccess.Read);
-			ums.Seek(5, SeekOrigin.Begin);
-			ums.Close();
-		}
-
-		[Test]
-		[Category ("NotWorking")] // seeking beyond length or even beyond capacity must be allowed
-		public void Seek_Offset_Capacity ()
-		{
-			UnmanagedMemoryStream ums;
-
-			// offset equals capacity
-			ums = new UnmanagedMemoryStream(mem_byteptr, 5, 6, FileAccess.Read);
-			ums.Seek(ums.Capacity, SeekOrigin.Begin);
-			ums.Close();
-
-			// offset exceeds capacity
-			ums = new UnmanagedMemoryStream(mem_byteptr, 5, 6, FileAccess.Read);
-			ums.Seek(int.MaxValue, SeekOrigin.Begin);
-			ums.Close();
-		}
-
-		[Test]
-		public void Seek_Offset_Negative ()
-		{
-			UnmanagedMemoryStream ums = new
-				UnmanagedMemoryStream(mem_byteptr, length, length, FileAccess.ReadWrite);
-			ums.Write (testStreamData, 0, testStreamData.Length);
+			UnmanagedMemoryStream ums = new 
+				UnmanagedMemoryStream(mem_byteptr, length, capacity, FileAccess.ReadWrite);
+			ums.Write (testStreamData, 0, length);
+			Assert.AreEqual (capacity, ums.Capacity, "#A1");
+			Assert.AreEqual (length, ums.Position, "#A2");
+			Assert.AreEqual (length, ums.Length, "#A3");
 			ums.Position = 0;
+			ums.Read (readData, 0, length);
+			Assert.AreEqual (capacity, ums.Capacity, "#B1");
+			Assert.AreEqual (length, ums.Position, "#B2");
+			Assert.AreEqual (length, ums.Length, "#B3");
+			VerifyTestData ("#B4", readData, 0, length);
+			ums.Write (testStreamData, 2, 2);
+			Assert.AreEqual (capacity, ums.Capacity, "#C1");
+			Assert.AreEqual (length + 2, ums.Position, "#C1");
+			Assert.AreEqual (length + 2, ums.Length, "#C2");
+			ums.Position = length;
+			Assert.AreEqual (testStreamData [2], ums.ReadByte (), "#D1");
+			Assert.AreEqual (testStreamData [3], ums.ReadByte (), "#D2");
+			ums.Close();
+		}
+
+		[Test]
+		public void Write_Capacity_Exceeded ()
+		{
+			UnmanagedMemoryStream ums = new 
+				UnmanagedMemoryStream(mem_byteptr, length, length + 2, FileAccess.ReadWrite);
+			ums.Write (testStreamData, 0, length);
+			ums.Write (testStreamData, 0, 2);
 			try {
-				ums.Seek(-1, SeekOrigin.Begin);
+				ums.Write (testStreamData, 0, 1);
 				Assert.Fail ("#1");
-			} catch (IOException ex) {
-				// An attempt was made to move the position before the beginning
-				// of the stream
-				Assert.AreEqual (typeof (IOException), ex.GetType (), "#2");
+			} catch (NotSupportedException ex) {
+				// Unable to expand length of this stream beyond its capacity
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
 			}
@@ -506,20 +683,46 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		public void Write ()
+		public void Write_Count_Negative ()
 		{
-			UnmanagedMemoryStream ums = new 
+			UnmanagedMemoryStream ums = new
 				UnmanagedMemoryStream(mem_byteptr, length, capacity, FileAccess.ReadWrite);
-			ums.Write(testStreamData, 0, length);
-			ums.Position = 0;
-			ums.Read(readData, 0, length);
-			VerifyTestData("RW1", readData, 0, length);
+			try {
+				ums.Write (testStreamData, 0, -1);
+				Assert.Fail ("#1");
+			} catch (ArgumentOutOfRangeException ex) {
+				// Non-negative number required
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("count", ex.ParamName, "#6");
+			}
+			ums.Close();
+		}
+
+		[Test]
+		public void Write_Offset_Negative ()
+		{
+			UnmanagedMemoryStream ums = new
+				UnmanagedMemoryStream(mem_byteptr, length, capacity, FileAccess.ReadWrite);
+			try {
+				ums.Write (testStreamData, -1, testStreamData.Length);
+				Assert.Fail ("#1");
+			} catch (ArgumentOutOfRangeException ex) {
+				// Non-negative number required
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("offset", ex.ParamName, "#6");
+			}
 			ums.Close();
 		}
 
 		[Test]
 		[ExpectedException (typeof (ObjectDisposedException))]
-		public void Write_Closed ()
+		public void Write_Stream_Closed ()
 		{
 			UnmanagedMemoryStream ums = new 
 				UnmanagedMemoryStream(mem_byteptr, length);
@@ -528,7 +731,7 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		public void Write_ReadOnly ()
+		public void Write_Stream_ReadOnly ()
 		{
 			UnmanagedMemoryStream ums = new
 				UnmanagedMemoryStream(mem_byteptr, length);
@@ -548,16 +751,39 @@ namespace MonoTests.System.IO
 		public void WriteByte ()
 		{
 			UnmanagedMemoryStream ums = new 
-				UnmanagedMemoryStream(mem_byteptr, length, capacity, FileAccess.ReadWrite);
+				UnmanagedMemoryStream(mem_byteptr, 3, 5, FileAccess.ReadWrite);
 			ums.WriteByte (testStreamData [0]);
+			Assert.AreEqual (5, ums.Capacity, "#A1");
+			Assert.AreEqual (1, ums.Position, "#A2");
+			Assert.AreEqual (3, ums.Length, "#A3");
+			ums.WriteByte (testStreamData [1]);
+			Assert.AreEqual (5, ums.Capacity, "#B1");
+			Assert.AreEqual (2, ums.Position, "#B2");
+			Assert.AreEqual (3, ums.Length, "#B3");
+			ums.WriteByte (testStreamData [2]);
+			Assert.AreEqual (5, ums.Capacity, "#C1");
+			Assert.AreEqual (3, ums.Position, "#C2");
+			Assert.AreEqual (3, ums.Length, "#C3");
+			ums.WriteByte (testStreamData [3]);
+			Assert.AreEqual (5, ums.Capacity, "#D1");
+			Assert.AreEqual (4, ums.Position, "#D2");
+			Assert.AreEqual (4, ums.Length, "#D3");
+			ums.WriteByte (testStreamData [4]);
+			Assert.AreEqual (5, ums.Capacity, "#E1");
+			Assert.AreEqual (5, ums.Position, "#E2");
+			Assert.AreEqual (5, ums.Length, "#E3");
 			ums.Seek (0, SeekOrigin.Begin);
-			Assert.AreEqual (testStreamData [0], ums.ReadByte ());
+			Assert.AreEqual (testStreamData [0], ums.ReadByte (), "#F1");
+			Assert.AreEqual (testStreamData [1], ums.ReadByte (), "#F2");
+			Assert.AreEqual (testStreamData [2], ums.ReadByte (), "#F3");
+			Assert.AreEqual (testStreamData [3], ums.ReadByte (), "#F4");
+			Assert.AreEqual (testStreamData [4], ums.ReadByte (), "#F5");
 			ums.Close ();
 		}
 
 		[Test]
 		[ExpectedException (typeof (ObjectDisposedException))]
-		public void WriteByte_Closed ()
+		public void WriteByte_Stream_Closed ()
 		{
 			UnmanagedMemoryStream ums = new UnmanagedMemoryStream(mem_byteptr,
 				length, length, FileAccess.Write);
@@ -566,7 +792,26 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		public void WriteByte_ReadOnly ()
+		public void WriteByte_Capacity_Exceeded ()
+		{
+			UnmanagedMemoryStream ums = new 
+				UnmanagedMemoryStream(mem_byteptr, 1, 2, FileAccess.ReadWrite);
+			ums.WriteByte (0x44);
+			ums.WriteByte (0x45);
+			try {
+				ums.WriteByte (0x46);
+				Assert.Fail ("#1");
+			} catch (NotSupportedException ex) {
+				// Unable to expand length of this stream beyond its capacity
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+			ums.Close();
+		}
+
+		[Test]
+		public void WriteByte_Stream_ReadOnly ()
 		{
 			UnmanagedMemoryStream ums = new 
 				UnmanagedMemoryStream(mem_byteptr, length);
@@ -583,18 +828,90 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[ExpectedException (typeof (NotSupportedException))]
-		public void _SetLength()
+		public void SetLength ()
 		{
-			UnmanagedMemoryStream ums = new 
-				UnmanagedMemoryStream(mem_byteptr, length);
-			ums.SetLength((length - 2));
+			UnmanagedMemoryStream ums = new UnmanagedMemoryStream(mem_byteptr,
+				length, capacity, FileAccess.ReadWrite);
+			ums.Write (testStreamData, 0, testStreamData.Length);
+			ums.SetLength (length - 1);
+			Assert.AreEqual (capacity, ums.Capacity, "#A1");
+			Assert.AreEqual (length - 1, ums.Length, "#A2");
+			Assert.AreEqual (length - 1, ums.Position, "#A3");
+			ums.SetLength (length + 1);
+			Assert.AreEqual (capacity, ums.Capacity, "#B1");
+			Assert.AreEqual (length + 1, ums.Length, "#B2");
+			Assert.AreEqual (length - 1, ums.Position, "#B3");
+			ums.SetLength (length);
+			Assert.AreEqual (capacity, ums.Capacity, "#C1");
+			Assert.AreEqual (length, ums.Length, "#C2");
+			Assert.AreEqual (length - 1, ums.Position, "#C3");
+			ums.SetLength (0);
+			Assert.AreEqual (capacity, ums.Capacity, "#D1");
+			Assert.AreEqual (0, ums.Length, "#D2");
+			Assert.AreEqual (0, ums.Position, "#D3");
+			ums.SetLength (capacity);
+			Assert.AreEqual (capacity, ums.Capacity, "#E1");
+			Assert.AreEqual (capacity, ums.Length, "#E2");
+			Assert.AreEqual (0, ums.Position, "#E3");
+			ums.Close();
+		}
+
+		[Test]
+		public void SetLength_Capacity_Exceeded ()
+		{
+			UnmanagedMemoryStream ums = new UnmanagedMemoryStream(mem_byteptr,
+				length, capacity, FileAccess.ReadWrite);
+			try {
+				ums.SetLength (capacity + 1);
+				Assert.Fail ("#1");
+			} catch (IOException ex) {
+				// Unable to expand length of this stream beyond its capacity
+				Assert.AreEqual (typeof (IOException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+			ums.Close();
+		}
+
+		[Test]
+		public void SetLength_Negative ()
+		{
+			UnmanagedMemoryStream ums = new UnmanagedMemoryStream(mem_byteptr,
+				length, capacity, FileAccess.ReadWrite);
+			try {
+				ums.SetLength(-1);
+				Assert.Fail ("#1");
+			} catch (ArgumentOutOfRangeException ex) {
+				// Non-negative number required
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("length", ex.ParamName, "#6");
+			}
+			ums.Close();
+		}
+
+		[Test]
+		public void SetLength_Stream_ReadOnly ()
+		{
+			UnmanagedMemoryStream ums = new UnmanagedMemoryStream(mem_byteptr,
+				length);
+			try {
+				ums.SetLength (length);
+				Assert.Fail ("#1");
+			} catch (NotSupportedException ex) {
+				// Stream does not support writing
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
 			ums.Close();
 		}
 
 		[Test]
 		[ExpectedException (typeof (ObjectDisposedException))]
-		public void Capacity_Disposed()
+		public void Capacity_Stream_Closed ()
 		{
 			UnmanagedMemoryStream ums = new 
 				UnmanagedMemoryStream(mem_byteptr, length);
@@ -604,55 +921,109 @@ namespace MonoTests.System.IO
 
 		[Test]
 		[ExpectedException (typeof (ObjectDisposedException))]
-		public void Close_get_Length()
+		public void Length_Stream_Closed ()
 		{
 			UnmanagedMemoryStream ums = new 
 				UnmanagedMemoryStream(mem_byteptr, length);
 			ums.Close();
 			long x = ums.Length;
 		}
-		
+
 		[Test]
-		[ExpectedException (typeof (ObjectDisposedException))]
-		public void Close_get_Position()
+		public void Position ()
 		{
-			UnmanagedMemoryStream ums = new 
-				UnmanagedMemoryStream(mem_byteptr, length);
+			UnmanagedMemoryStream ums = new UnmanagedMemoryStream(mem_byteptr,
+				length, capacity, FileAccess.ReadWrite);
+			Assert.AreEqual (0, ums.Position, "#1");
+			ums.Position = capacity;
+			Assert.AreEqual (capacity, ums.Position, "#2");
+			ums.Position = length;
+			Assert.AreEqual (length, ums.Position, "#3");
+			ums.Position = int.MaxValue;
+			Assert.AreEqual (int.MaxValue, ums.Position, "#4");
+			ums.Position = 0;
+			Assert.AreEqual (0, ums.Position, "#5");
 			ums.Close();
-			long x = ums.Position;
 		}
 
 		[Test]
-		[ExpectedException (typeof (ObjectDisposedException))]
-		public void Close_set_Position()
+		public void Position_MaxValue_Exceeded ()
 		{
-			UnmanagedMemoryStream ums = new 
-				UnmanagedMemoryStream(mem_byteptr, length);
+			UnmanagedMemoryStream ums = new UnmanagedMemoryStream(mem_byteptr,
+				length, capacity, FileAccess.ReadWrite);
+			try {
+				ums.Position = 0x80000000;
+				Assert.Fail ("#1");
+			} catch (ArgumentOutOfRangeException ex) {
+				// MemoryStream length must be non-negative and less than
+				// 2^31 - 1 - origin
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("value", ex.ParamName, "#6");
+			}
 			ums.Close();
-			ums.Position = (length - 1);// Set to some acceptable value.
 		}
+
 		[Test]
-		[Category ("NotWorking")]
-		[ExpectedException (typeof (ObjectDisposedException))]
-		public void Close_get_PositionPointer()
+		public void Position_Negative ()
+		{
+			UnmanagedMemoryStream ums = new 
+				UnmanagedMemoryStream(mem_byteptr, length);
+			try {
+				ums.Position = -1;
+				Assert.Fail ("#1");
+			} catch (ArgumentOutOfRangeException ex) {
+				// Non-negative number required
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("value", ex.ParamName, "#6");
+			}
+			ums.Close ();
+		}
+
+		[Test]
+		public void Position_Stream_Closed ()
 		{
 			UnmanagedMemoryStream ums = new 
 				UnmanagedMemoryStream(mem_byteptr, length);
 			ums.Close();
-			byte* bptr = ums.PositionPointer;
+			try {
+				long x = ums.Position;
+				Assert.Fail ("#1: " + x);
+			} catch (ObjectDisposedException) {
+			}
+
+			try {
+				ums.Position = 0;
+				Assert.Fail ("#2");
+			} catch (ObjectDisposedException) {
+			}
 		}
 
 		[Test]
 		[Category ("NotWorking")]
-		[ExpectedException (typeof (ObjectDisposedException))]
-		public void Close_set_PositionPointer()
+		public void PositionPointer_Stream_Closed ()
 		{
 			UnmanagedMemoryStream ums = new 
 				UnmanagedMemoryStream(mem_byteptr, length);
 			ums.Close();
-			ums.PositionPointer = (byte *) (length - 1); //position pointer to somewhere within the length/capacity
+			try {
+				byte* bptr = ums.PositionPointer;
+				Assert.Fail ("#1");
+			} catch (ObjectDisposedException) {
+			}
+
+			try {
+				// position pointer to somewhere within the capacity
+				ums.PositionPointer = (byte*) (capacity - 1);
+				Assert.Fail ("#2");
+			} catch (ObjectDisposedException) {
+			}
 		}
 	}
 }
 #endif
-
