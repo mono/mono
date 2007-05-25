@@ -531,11 +531,8 @@ namespace System.Windows.Forms
 				return "";
 			}
 			set {
-				bool suppress_validation = changing_text;
-
 				txtView.Text = value;
-
-				if (!suppress_validation)
+				if (this.UserEdit)
 					ValidateEditText();
 
 				txtView.SelectionLength = 0;
@@ -677,7 +674,7 @@ namespace System.Windows.Forms
 
 		protected virtual void OnTextBoxLostFocus (object source, EventArgs e)
 		{
-			if (user_edit) {
+			if (UserEdit) {
 				ValidateEditText();
 			}
 		}

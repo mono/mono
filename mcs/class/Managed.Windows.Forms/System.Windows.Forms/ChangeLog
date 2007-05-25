@@ -1,3 +1,12 @@
+2007-05-25  Andreia Gaita  <avidigal@novell.com>
+	Proper fixes for PieChart
+	
+	* NumericUpDown.cs: Refactor code to fix regressions on #79950 and
+	fixes for PieChart. suppress_validation should not be a counter,
+	if there are several BeginInit calls, the first EndInit will 
+	activate validation. Fix exceptions thrown by set_Value.
+	* UpDownBase.cs: ValidateText only if it's the user editing it.
+
 2007-05-23  Andreia Gaita  <avidigal@novell.com>
 
 	* NumericUpDown.cs: Fix PieChart by not returning from UpdateEditText
@@ -25832,5 +25841,3 @@
 	  XplatUIDriver.cs, XplatUIStructs.cs, XplatUIWin32.cs,
 	  XplatUIX11.cs, lang.cs:
 	  - Initial check-in
-
-
