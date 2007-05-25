@@ -1,3 +1,8 @@
+2007-05-25  Raja R Harinath  <rharinath@novell.com>
+
+	* cs-parser.jay: Use 'start_block' and 'end_block' rather than
+	modifying current_block directly.
+
 2007-05-22  Scott Peterson  <lunchtimemama@gmail.com>
 	
 	* cs-parser.jay: Implemented automatic properties (C# 3.0)

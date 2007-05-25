@@ -4217,8 +4217,9 @@ for_statement
 	: FOR open_parens 
 	  opt_for_initializer SEMICOLON
 	  {
-		Block assign_block = new Block (current_block);
-		current_block = assign_block;
+		Location l = lexer.Location;
+		start_block (l);  
+		Block assign_block = current_block;
 
 		if ($3 is DictionaryEntry){
 			DictionaryEntry de = (DictionaryEntry) $3;
@@ -4234,7 +4235,6 @@ for_statement
 				if (vi == null)
 					continue;
 
-				Location l = lexer.Location;
 				Expression expr = decl.expression_or_array_initializer;
 					
 				LocalVariableReference var;
@@ -4263,10 +4263,8 @@ for_statement
 		For f = new For ((Statement) $5, (Expression) $6, (Statement) $8, (Statement) $10, l);
 
 		current_block.AddStatement (f);
-		while (current_block.Implicit)
-			current_block = current_block.Parent;
-		$$ = current_block;
-		current_block = current_block.Parent;
+
+		$$ = end_block (lexer.Location);
 	  }
 	;
 
@@ -4322,8 +4320,8 @@ foreach_statement
 	| FOREACH open_parens type IDENTIFIER IN
 	  expression CLOSE_PARENS 
 	  {
-		Block foreach_block = new Block (current_block);
-		current_block = foreach_block;
+		start_block (lexer.Location);
+		Block foreach_block = current_block;
 
 		LocatedToken lt = (LocatedToken) $4;
 		Location l = lt.Location;
@@ -4352,10 +4350,7 @@ foreach_statement
 			current_block.AddStatement (f);
 		}
 
-		while (current_block.Implicit)
-			  current_block = current_block.Parent;
-		$$ = current_block;
-		current_block = current_block.Parent;
+		$$ = end_block (lexer.Location);
 	  }
 	;
 
@@ -4553,9 +4548,8 @@ catch_clause
 
 				one.Add (new VariableDeclaration (lt, null));
 
-				current_block = new Block (current_block);
-				Block b = declare_local_variables (type, one, lt.Location);
-				current_block = b;
+				start_block (lexer.Location);
+				current_block = declare_local_variables (type, one, lt.Location);
 			}
 		}
 	  } block {
@@ -4570,10 +4564,7 @@ catch_clause
 
 			if (lt != null){
 				id = lt.Value;
-				while (current_block.Implicit)
-					current_block = current_block.Parent;
-				var_block = current_block;
-				current_block = current_block.Parent;
+				var_block = end_block (lexer.Location);
 			}
 		}
 
@@ -4627,8 +4618,8 @@ fixed_statement
 		Location l = (Location) $1;
 		int top = list.Count;
 
-		Block assign_block = new Block (current_block);
-		current_block = assign_block;
+		start_block (lexer.Location);
+		Block assign_block = current_block;
 
 		for (int i = 0; i < top; i++){
 			Pair p = (Pair) list [i];
@@ -4651,10 +4642,8 @@ fixed_statement
 		Fixed f = new Fixed ((Expression) $3, (ArrayList) $4, (Statement) $7, l);
 
 		current_block.AddStatement (f);
-		while (current_block.Implicit)
-			current_block = current_block.Parent;
-		$$ = current_block;
-		current_block = current_block.Parent;
+
+		$$ = end_block (lexer.Location);
 	  }
 	;
 
@@ -4702,8 +4691,8 @@ lock_statement
 using_statement
 	: USING open_parens resource_acquisition CLOSE_PARENS
 	  {
-		Block assign_block = new Block (current_block);
-		current_block = assign_block;
+		start_block (lexer.Location);
+		Block assign_block = current_block;
 
 		if ($3 is DictionaryEntry){
 			DictionaryEntry de = (DictionaryEntry) $3;
@@ -4751,10 +4740,7 @@ using_statement
 	  {
 		Using u = new Using ($5, (Statement) $6, (Location) $1);
 		current_block.AddStatement (u);
-		while (current_block.Implicit)
-			current_block = current_block.Parent;
-		$$ = current_block;
-		current_block = current_block.Parent;
+		$$ = end_block (lexer.Location);
 	  }
 	; 
 
