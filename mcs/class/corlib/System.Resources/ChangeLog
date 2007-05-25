@@ -1,3 +1,7 @@
+2007-05-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MissingSatelliteAssemblyException.cs : new file.
+
 2007-02-16  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ResourceReader.cs: Fixed typo.
