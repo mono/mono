@@ -1,3 +1,9 @@
+2007-05-25  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateControlCompiler.cs: Changed a few incorrect 
+	ObjectCreationExpression to the correct DelegateCreationExpression.
+	Fixes #81706.
+
 2007-05-24  Marek Habersack  <mhabersack@novell.com>
 
 	* PageCompiler.cs: added support for the PreviousPageType directive.

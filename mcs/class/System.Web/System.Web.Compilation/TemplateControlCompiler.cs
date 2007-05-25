@@ -1019,11 +1019,11 @@ namespace System.Web.Compilation
 		{
 			CodePropertyReferenceExpression prop = new CodePropertyReferenceExpression (ctrlVar, name);
 
-			CodeObjectCreateExpression newBuild = new CodeObjectCreateExpression (typeof (BuildTemplateMethod));
-			newBuild.Parameters.Add (new CodeMethodReferenceExpression (thisRef, methodName));
+			CodeDelegateCreateExpression newBuild = new CodeDelegateCreateExpression (
+				new CodeTypeReference (typeof (BuildTemplateMethod)), thisRef, methodName);
 
-			CodeObjectCreateExpression newExtract = new CodeObjectCreateExpression (typeof (ExtractTemplateValuesMethod));
-			newExtract.Parameters.Add (new CodeMethodReferenceExpression (thisRef, extractMethodName));
+			CodeDelegateCreateExpression newExtract = new CodeDelegateCreateExpression (
+				new CodeTypeReference (typeof (ExtractTemplateValuesMethod)), thisRef, extractMethodName);
 
 			CodeObjectCreateExpression newCompiled = new CodeObjectCreateExpression (typeof (CompiledBindableTemplateBuilder));
 			newCompiled.Parameters.Add (newBuild);
@@ -1095,8 +1095,8 @@ namespace System.Web.Compilation
 
 		void AddContentTemplateInvocation (ContentBuilderInternal cbuilder, CodeMemberMethod method, string methodName)
 		{
-			CodeObjectCreateExpression newBuild = new CodeObjectCreateExpression (typeof (BuildTemplateMethod));
-			newBuild.Parameters.Add (new CodeMethodReferenceExpression (thisRef, methodName));
+			CodeDelegateCreateExpression newBuild = new CodeDelegateCreateExpression (
+				new CodeTypeReference (typeof (BuildTemplateMethod)), thisRef, methodName);
 
 			CodeObjectCreateExpression newCompiled = new CodeObjectCreateExpression (typeof (CompiledTemplateBuilder));
 			newCompiled.Parameters.Add (newBuild);
