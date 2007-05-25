@@ -326,7 +326,7 @@ namespace MonoTests.System.Windows.Forms
 			textBox.SelectionStart = textBox.SelectionStart + textBox.SelectionLength;
 			Assert.AreEqual (1, _changed, "#2");
 			textBox.Paste ();
-			//Assert.AreEqual (2, _changed, "#3");
+			Assert.AreEqual (2, _changed, "#3");
 			Assert.AreEqual ("ABCDABCD", textBox.Text, "#4");
 		}
 
