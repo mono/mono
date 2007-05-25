@@ -1,3 +1,9 @@
+2007-05-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* corlib.dll.sources : added MissingSatelliteAssemblyException.cs
+	  and IdnMapping.cs. Removed obsolete 2.0 NotCancelableException.cs.
+	* corlib_test.dll.sources : added IdnMappingTest.cs.
+
 2007-05-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* corlib_test.dll.sources : added RegionInfoTest.cs.
