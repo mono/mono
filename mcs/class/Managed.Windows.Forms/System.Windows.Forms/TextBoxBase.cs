@@ -737,6 +737,8 @@ namespace System.Windows.Forms {
 			document.undo.BeginUserAction (Locale.GetText ("Cut"));
 			document.ReplaceSelection (String.Empty, false);
 			document.undo.EndUserAction ();
+
+			OnTextChanged (EventArgs.Empty);
 		}
 
 		public void Paste() {
@@ -2116,6 +2118,7 @@ namespace System.Windows.Forms {
 				}
 			}
 
+			OnTextChanged (EventArgs.Empty);
 			return true;
 		}
 

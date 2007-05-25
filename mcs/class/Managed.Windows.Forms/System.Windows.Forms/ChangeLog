@@ -1,3 +1,7 @@
+2007-05-25  Jackson Harper  <jackson@ximian.com>
+
+	* TextBoxBase.cs: Raise textchanged when cutting and pasting text.
+
 2007-05-25  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* KeyEventArgs.cs: Added SuppressKeyPress.
