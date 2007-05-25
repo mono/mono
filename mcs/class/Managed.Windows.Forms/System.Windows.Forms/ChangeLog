@@ -1,3 +1,11 @@
+2007-05-24  Andreia Gaita  <avidigal@novell.com>
+
+	* NumericUpDown.cs: Refactor code to fix regressions on #79950 and
+	problems with PieChart. suppress_validation should not be a counter,
+	if there are several BeginInit calls, the first EndInit will 
+	activate validation. Fix exceptions thrown by set_Value.
+	* UpDownBase.cs: ValidateText only if it's the user editing it.
+
 2007-05-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListControl.cs: FilterItemOnProperty should return the filtered

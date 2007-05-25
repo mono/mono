@@ -45,7 +45,7 @@ namespace System.Windows.Forms {
 #endif
 	public class NumericUpDown : UpDownBase, ISupportInitialize {
 		#region Local Variables
-		private int	suppress_validation;
+		private bool	suppress_validation;
 		private int	decimal_places;
 		private bool	hexadecimal;
 		private decimal	increment;
@@ -64,7 +64,7 @@ namespace System.Windows.Forms {
 
 		#region Public Constructors
 		public NumericUpDown() {
-			suppress_validation = 0;
+			suppress_validation = false;
 			decimal_places = 0;
 			hexadecimal = false;
 			increment = 1M;
@@ -270,20 +270,23 @@ namespace System.Windows.Forms {
 		public decimal Value {
 			get {
 				if (UserEdit)
-					dvalue = ParseEditText (Text);
+					ValidateEditText ();
 				return dvalue;
 			}
 
 			set {
-				if (suppress_validation <= 0) {
-					if ((value < minimum) || (value > maximum)) {
-						throw new ArgumentException("NumericUpDown.Value must be within the specified Minimum and Maximum values", "value");
-					}
-				}
 				if (value != dvalue) {
+					if (!suppress_validation && ((value < minimum) || (value > maximum))) {
+#if NET_2_0
+						throw new ArgumentOutOfRangeException ("value", "NumericUpDown.Value must be within the specified Minimum and Maximum values");
+#else
+						throw new ArgumentException ("NumericUpDown.Value must be within the specified Minimum and Maximum values", "value");						
+#endif
+					}
+
 					dvalue = value;
-					OnValueChanged(EventArgs.Empty);
-					Text = UpdateEditText (dvalue);
+					OnValueChanged (EventArgs.Empty);
+					UpdateEditText ();
 				}
 			}
 		}
@@ -291,13 +294,13 @@ namespace System.Windows.Forms {
 
 		#region Public Instance Methods
 		public void BeginInit() {
-			suppress_validation++;
+			suppress_validation = true;
 		}
 
 		public void EndInit() {
-			suppress_validation--;
-			if (suppress_validation == 0)
-				UpdateEditText ();
+			suppress_validation = false;
+			Value = Check (dvalue);
+			UpdateEditText ();
 		}
 
 		public override string ToString() {
@@ -305,20 +308,19 @@ namespace System.Windows.Forms {
 		}
 
 		public override void DownButton() {
-			decimal val = dvalue;
 			if (UserEdit) {
-				val = ParseEditText (Text);
+				ParseEditText ();
 			}
 
-			Value = Math.Max(minimum, unchecked(val - increment));
+			Value = Math.Max (minimum, unchecked (dvalue - increment));
 		}
 
 		public override void UpButton() {
-			decimal val = dvalue;
-			if (UserEdit)
-				val = ParseEditText (Text);
+			if (UserEdit) {
+				ParseEditText ();
+			}
 
-			Value = Math.Min(maximum, unchecked(val + increment));
+			Value = Math.Min (maximum, unchecked (dvalue + increment));
 		}
 		#endregion	// Public Instance Methods
 
@@ -360,54 +362,45 @@ namespace System.Windows.Forms {
 		}
 
 		protected void ParseEditText () {
-			Value = ParseEditText (Text);
-			UserEdit = false;
-		}
-
-		private decimal ParseEditText (string text) {
-			UserEdit = false;
-			decimal ret = dvalue;
-
 			try {
-				string user_edit_text = text;
-
 				if (!hexadecimal) {
-					ret = decimal.Parse(user_edit_text, CultureInfo.CurrentCulture);
+					Value = decimal.Parse (Text, CultureInfo.CurrentCulture);
 				} else {
 #if !NET_2_0
-					ret = Convert.ToDecimal (Convert.ToInt32 (user_edit_text, 16));
+					Value = Check (Convert.ToDecimal (Convert.ToInt32 (Text, 16)));
 #else
-					ret = Convert.ToDecimal (Convert.ToInt32 (user_edit_text, 10));
+					Value = Check (Convert.ToDecimal (Convert.ToInt32 (Text, 10)));
 #endif
 				}
-
-				if (ret < minimum) {
-					ret = minimum;
-				}
-
-				if (ret > maximum) {
-					ret = maximum;
-				}
 			}
-			catch {}
+			catch { }
+			finally {
+				UserEdit = false;
+			}
+		}
+
+		private decimal Check (decimal val)
+		{
+			decimal ret = val;
+			if (ret < minimum) {
+				ret = minimum;
+			}
+
+			if (ret > maximum) {
+				ret = maximum;
+			}
+
 			return ret;
 		}
 
-		protected override void UpdateEditText() {
-			Text = UpdateEditText (ParseEditText (Text));
-		}
-
-		private string UpdateEditText (decimal val) {
-			// TODO: why is this here?
-//			if (suppress_validation > 0)
-//			    return Text;
-
-			decimal ret = val;
-			string text = Text;
+		protected override void UpdateEditText () {
+			if (suppress_validation)
+				return;
 
 			if (UserEdit)
-				ret = ParseEditText (text); // parse user input
+				ParseEditText ();
 
+			ChangingText = true;
 			if (!hexadecimal) {
 				// "N" and "F" differ only in that "N" includes commas
 				// every 3 digits to the left of the decimal and "F"
@@ -423,15 +416,14 @@ namespace System.Windows.Forms {
 
 				format_string += decimal_places;
 
-				ChangingText = true;
-				text = ret.ToString(format_string, CultureInfo.CurrentCulture);
-			}
-			else {
+				Text = dvalue.ToString (format_string, CultureInfo.CurrentCulture);
+
+			} else {
 				// Decimal.ToString doesn't know the "X" formatter, and
 				// converting it to an int is narrowing, so do it
 				// manually...
 
-				int[] bits = decimal.GetBits(ret);
+				int[] bits = decimal.GetBits (dvalue);
 
 				bool negative = (bits[3] < 0);
 
@@ -443,59 +435,57 @@ namespace System.Windows.Forms {
 
 				radix[0] = 1;
 
-				for (int i=0; i < scale; i++)
-					wide_number_multiply_by_10(radix);
+				for (int i = 0; i < scale; i++)
+					wide_number_multiply_by_10 (radix);
 
 				int num_chars = 0;
 
-				while (!wide_number_less_than(bits, radix)) {
+				while (!wide_number_less_than (bits, radix)) {
 					num_chars++;
-					wide_number_multiply_by_16(radix);
+					wide_number_multiply_by_16 (radix);
 				}
 
 				if (num_chars == 0) {
-//					ChangingText = true;
-					text = "0";
-					return text;
+					Text = "0";
 				}
 
 				StringBuilder chars = new StringBuilder ();
 
 				if (negative)
-					chars.Append('-');
+					chars.Append ('-');
 
-				for (int i=0; i < num_chars; i++) {
+				for (int i = 0; i < num_chars; i++) {
 					int digit = 0;
 
-					wide_number_divide_by_16(radix);
+					wide_number_divide_by_16 (radix);
 
-					while (!wide_number_less_than(bits, radix)) { // greater than or equals
+					while (!wide_number_less_than (bits, radix)) { // greater than or equals
 						digit++;
-						wide_number_subtract(bits, radix);
+						wide_number_subtract (bits, radix);
 					}
 
 					if (digit < 10) {
-						chars.Append((char)('0' + digit));
+						chars.Append ((char) ('0' + digit));
 					} else {
-						chars.Append((char)('A' + digit - 10));
+						chars.Append ((char) ('A' + digit - 10));
 					}
 				}
 
-//				ChangingText = true;
-				text = chars.ToString();
+				Text = chars.ToString ();
 			}
-			return text;
 		}
 
+
 		protected override void ValidateEditText() {
-			Value = ParseEditText (Text);
+			ParseEditText ();
+			UpdateEditText ();
 		}
 
 #if NET_2_0
 		protected override void OnLostFocus(EventArgs e) {
 			base.OnLostFocus(e);
-			if (this.UserEdit)
-				this.UpdateEditText();
+			if (UserEdit)
+				UpdateEditText();
 		}
 
 		protected override void OnKeyUp (KeyEventArgs e)
