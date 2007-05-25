@@ -2110,7 +2110,7 @@ namespace System.Windows.Forms {
 
 		internal override  Size MinimizedWindowSize {
 			get {
-				return new Size(0, 0);
+				return new Size(1, 1);
 			}
 		} 
 
@@ -2122,7 +2122,7 @@ namespace System.Windows.Forms {
 
 		internal override  Size MinimumWindowSize {
 			get {
-				return new Size(1, 1);
+				return new Size(0, 0);
 			}
 		} 
 
