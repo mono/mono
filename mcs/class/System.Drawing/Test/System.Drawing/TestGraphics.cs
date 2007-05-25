@@ -2768,7 +2768,6 @@ namespace MonoTests.System.Drawing
 			using (Bitmap bmp = new Bitmap (40, 40)) {
 				using (Graphics g = Graphics.FromImage (bmp)) {
 					ImageAttributes ia = new ImageAttributes ();
-					ia.SetThreshold (1.0f);
 					g.DrawImage (bmp, pts, r, GraphicsUnit.Pixel, ia);
 				}
 			}
