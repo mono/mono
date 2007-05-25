@@ -1,3 +1,7 @@
+2007-05-25  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* KeyEventArgsTest.cs: Added.
+
 2007-05-24  Andreia Gaita  <avidigal@novell.com>
 
 	* NumericUpDownTest.cs: Added 1.1 and 2.0 tests.
