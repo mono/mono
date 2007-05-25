@@ -20,6 +20,7 @@ namespace MonoTests.System.Windows.Forms
 	public class TextBoxTest
 	{
 		TextBox textBox;
+		int _changed;
 		int _invalidated;
 		int _paint;
 
@@ -29,6 +30,7 @@ namespace MonoTests.System.Windows.Forms
 			textBox = new TextBox();
 			textBox.Invalidated += new InvalidateEventHandler (TextBox_Invalidated);
 			textBox.Paint += new PaintEventHandler (TextBox_Paint);
+			textBox.TextChanged += new EventHandler (TextBox_TextChanged);
 			Reset ();
 		}
 
@@ -297,8 +299,10 @@ namespace MonoTests.System.Windows.Forms
 		{
 			textBox.Text = "ABCDE";
 			textBox.SelectionLength = 4;
+			Assert.AreEqual (1, _changed, "#1");
 			textBox.Copy ();
-			Assert.AreEqual ("ABCD", textBox.SelectedText, "#30");
+			Assert.AreEqual (1, _changed, "#2");
+			Assert.AreEqual ("ABCD", textBox.SelectedText, "#3");
 		}
 
 		[Test]
@@ -306,8 +310,10 @@ namespace MonoTests.System.Windows.Forms
 		{
 			textBox.Text = "ABCDE";
 			textBox.SelectionLength = 4;
+			Assert.AreEqual (1, _changed, "#1");
 			textBox.Cut ();
-			Assert.AreEqual ("E", textBox.Text, "#31");
+			Assert.AreEqual (2, _changed, "#2");
+			Assert.AreEqual ("E", textBox.Text, "#3");
 		}
 
 		[Test]
@@ -315,10 +321,13 @@ namespace MonoTests.System.Windows.Forms
 		{
 			textBox.Text = "ABCDE";
 			textBox.SelectionLength = 4;
+			Assert.AreEqual (1, _changed, "#1");
 			textBox.Copy ();
 			textBox.SelectionStart = textBox.SelectionStart + textBox.SelectionLength;
+			Assert.AreEqual (1, _changed, "#2");
 			textBox.Paste ();
-			Assert.AreEqual ("ABCDABCD", textBox.Text, "#32");
+			//Assert.AreEqual (2, _changed, "#3");
+			Assert.AreEqual ("ABCDABCD", textBox.Text, "#4");
 		}
 
 		[Test] // bug #80301
@@ -678,6 +687,11 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (false, textBox.Modified, "modified-3");
 		}
 
+		void TextBox_TextChanged (object sender, EventArgs e)
+		{
+			_changed++;
+		}
+
 		void TextBox_Invalidated (object sender, InvalidateEventArgs e)
 		{
 			_invalidated++;
@@ -690,6 +704,7 @@ namespace MonoTests.System.Windows.Forms
 
 		void Reset ()
 		{
+			_changed = 0;
 			_invalidated = 0;
 			_paint = 0;
 		}

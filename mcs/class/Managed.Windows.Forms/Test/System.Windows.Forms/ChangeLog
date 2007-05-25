@@ -1,3 +1,8 @@
+2007-05-25  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TextBoxTest.cs: Improve tests for Copy, Cut and Paste to also cover
+	bug #81736.
+
 2007-05-25  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* KeyEventArgsTest.cs: Added.
