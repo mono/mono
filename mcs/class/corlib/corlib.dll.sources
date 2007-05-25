@@ -216,7 +216,6 @@ System/RuntimeFieldHandle.cs
 System/RuntimeMethodHandle.cs
 System/RuntimeTypeHandle.cs
 System/ModuleHandle.cs
-System/NotCancelableException.cs
 System/SByte.cs
 System/SerializableAttribute.cs
 System/Single.cs
@@ -333,6 +332,7 @@ System.Globalization/GregorianCalendar.cs
 System.Globalization/GregorianCalendarTypes.cs
 System.Globalization/HebrewCalendar.cs
 System.Globalization/HijriCalendar.cs
+System.Globalization/IdnMapping.cs
 System.Globalization/JapaneseCalendar.cs
 System.Globalization/JulianCalendar.cs
 System.Globalization/KoreanCalendar.cs
@@ -524,6 +524,7 @@ System.Reflection.Emit/UnmanagedMarshal.cs
 System.Resources/IResourceReader.cs
 System.Resources/IResourceWriter.cs
 System.Resources/MissingManifestResourceException.cs
+System.Resources/MissingSatelliteAssemblyException.cs
 System.Resources/NeutralResourcesLanguageAttribute.cs
 System.Resources/ResourceManager.cs
 System.Resources/ResourceReader.cs
