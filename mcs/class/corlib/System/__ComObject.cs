@@ -109,8 +109,7 @@ namespace System
 			throw new COMException ("Could not find base COM type for type " + t.ToString());
 		}
 
-		internal IntPtr GetInterface(Type t)
-		{
+		internal IntPtr GetInterface (Type t, bool throwException) {
 			CheckIUnknown ();
 			IntPtr pItf = FindInterface (this, t);
 			if (pItf != IntPtr.Zero) {
@@ -120,9 +119,16 @@ namespace System
 			Guid iid = t.GUID;
 			IntPtr ppv;
 			int hr = Marshal.QueryInterface (iunknown, ref iid, out ppv);
-			Marshal.ThrowExceptionForHR (hr);
-			AddInterface (this, t, ppv);
+			if (throwException)
+				Marshal.ThrowExceptionForHR (hr);
+			if (hr > 0 && ppv != IntPtr.Zero)
+				AddInterface (this, t, ppv);
 			return ppv;
+		}
+
+		internal IntPtr GetInterface(Type t)
+		{
+			return GetInterface (t, true);
 		}
 
 		private void CheckIUnknown ()

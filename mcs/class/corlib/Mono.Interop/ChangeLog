@@ -1,3 +1,8 @@
+2007-05-25  Jonathan Chambers  <joncham@gmail.com>
+
+	* ComInteropProxy.cs: Call __ComObject.GetInterface overload
+	that does not throw exception.  Fixes as and is operators for COM objects.
+
 2007-02-08  Jonathan Chambers  <joncham@gmail.com>
 
 	* ComInteropProxy.cs: Moved some code to unmanaged and cleanup some things.

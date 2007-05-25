@@ -120,7 +120,7 @@ namespace Mono.Interop
             if ((fromType.Attributes & TypeAttributes.Import) == 0)
                 return false;
 
-            if (co.GetInterface (fromType) == IntPtr.Zero)
+            if (co.GetInterface (fromType, false) == IntPtr.Zero)
                 return false;
             
             return true;

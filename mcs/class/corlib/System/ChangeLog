@@ -1,3 +1,8 @@
+2007-05-25  Jonathan Chambers  <joncham@gmail.com>
+
+	* __ComObject.cs: Add overload to GetInterface to allow
+	not throwing exceptions. Fixes as and is operators for COM objects.
+
 2007-05-23  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Array.cs : reverting Array.cs fixes since the runtime depends on
