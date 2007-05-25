@@ -933,7 +933,15 @@ namespace System.Web.UI.WebControls
 			foreach (DictionaryEntry de in values) {
 				PropertyInfo p = DataObjectType.GetProperty ((string)de.Key);
 				if (p == null) throw new InvalidOperationException ("Property " + de.Key + " not found in type '" +DataObjectType + "'.");
-				p.SetValue (ob, ConvertParameter (p.PropertyType, de.Value), null);
+				object[] attributes = p.GetCustomAttributes (typeof (System.ComponentModel.TypeConverterAttribute),
+									     true);
+				Type propertyType = p.PropertyType;
+				object value = de.Value;
+				object converted = ConvertParameterWithTypeConverter (attributes, propertyType, value);
+				if (converted == null)
+					converted = ConvertParameter (propertyType, value);
+						   
+				p.SetValue (ob, converted, null);
 			}
 			return ob;
 		}
@@ -1033,11 +1041,13 @@ namespace System.Web.UI.WebControls
 
 			outParamInfos = null;
 			object[] values = new object [methodParams.Length];
+			object converted;
+			
 			foreach (ParameterInfo mp in methodParams) {
 			
 				// Parameter names must match
 				if (!viewParams.Contains (mp.Name)) return null;
-					
+				
 				values [mp.Position] = ConvertParameter (mp.ParameterType, viewParams [mp.Name]);
 				if (mp.ParameterType.IsByRef) {
 					if (outParamInfos == null) outParamInfos = new ArrayList ();
@@ -1045,6 +1055,33 @@ namespace System.Web.UI.WebControls
 				}
 			}
 			return values;
+		}
+
+		object ConvertParameterWithTypeConverter (object[] attributes, Type targetType, object value)
+		{
+			if (attributes == null || attributes.Length == 0 || value == null)
+				return null;
+			TypeConverterAttribute tca;
+			Type converterType;
+			TypeConverter converter;
+			
+			foreach (object a in attributes) {
+				tca = a as TypeConverterAttribute;
+				if (tca == null)
+					continue;
+				converterType = Type.GetType (tca.ConverterTypeName, false);
+				if (converterType == null)
+					continue;
+				converter = Activator.CreateInstance (converterType, new object[] {targetType}) as TypeConverter;
+				if (converter == null)
+					continue;
+				if (converter.CanConvertFrom (value.GetType ()))
+					return converter.ConvertFrom (value);
+				else if (converter.CanConvertFrom (typeof (string)))
+					return converter.ConvertFrom (value.ToString ());
+			}
+			
+			return null;
 		}
 		
 		object ConvertParameter (Type targetType, object value)
