@@ -29,6 +29,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Drawing;
+using System.Threading;
 using System.Collections;
 using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
@@ -280,6 +281,8 @@ namespace System.Windows.Forms {
 			public IntPtr Action;
 			public IntPtr [] SupportedTypes;
 			public MouseButtons MouseState;
+			public DragDropEffects AllowedEffects;
+			public Point CurMousePos;
 			
 			public IntPtr LastWindow;
 			public IntPtr LastTopLevel;
@@ -340,6 +343,7 @@ namespace System.Windows.Forms {
 		// check out the TODO below
 		//private IntPtr CurrentCursorHandle;
 
+		private bool tracking = false;
 		private X11Keyboard keyboard;
 
 		public X11Dnd (IntPtr display, X11Keyboard keyboard)
@@ -384,7 +388,7 @@ namespace System.Windows.Forms {
 			drag_data.MouseState = XplatUIX11.MouseState;
 			drag_data.Data = data;
 			drag_data.SupportedTypes = DetermineSupportedTypes (data);
-
+			drag_data.AllowedEffects = allowed_effects;
 			drag_data.Action = ActionFromEffect (allowed_effects);
 
 			if (CursorNo == null) {
@@ -396,19 +400,74 @@ namespace System.Windows.Forms {
 			}
 
 			drag_data.LastTopLevel = IntPtr.Zero;
-			return DragDropEffects.Copy;
+
+			System.Windows.Forms.MSG msg = new MSG();
+			object queue_id = XplatUI.StartLoop (Thread.CurrentThread);
+
+			Timer timer = new Timer ();
+			timer.Tick += new EventHandler (DndTickHandler);
+			timer.Interval = 50;
+			timer.Start ();
+
+			int suc;
+			drag_data.State = DragState.Dragging;
+
+			suc = XplatUIX11.XSetSelectionOwner (display, XdndSelection,
+					drag_data.Window, IntPtr.Zero);
+
+			if (suc == 0) {
+				Console.Error.WriteLine ("Could not take ownership of XdndSelection aborting drag.");
+				drag_data.Reset ();
+				return DragDropEffects.None;
+			}
+
+			drag_data.State = DragState.Dragging;
+			drag_data.CurMousePos = new Point ();
+			tracking = true;
+
+			while (tracking && XplatUI.GetMessage (queue_id, ref msg, IntPtr.Zero, 0, 0)) {
+
+				if (msg.message >= Msg.WM_KEYFIRST && msg.message <= Msg.WM_KEYLAST) {
+					HandleKeyMessage (msg);
+				} else {
+					switch (msg.message) {
+					case Msg.WM_LBUTTONUP:
+					case Msg.WM_RBUTTONUP:
+						if (msg.message == Msg.WM_LBUTTONDOWN && drag_data.MouseState != MouseButtons.Left)
+							break;;
+						if (msg.message == Msg.WM_RBUTTONDOWN && drag_data.MouseState != MouseButtons.Right)
+							break;
+						
+						HandleButtonUpMsg ();
+						break;
+					case Msg.WM_MOUSEMOVE:
+						drag_data.CurMousePos.X = Control.LowOrder ((int) msg.lParam.ToInt32 ());
+						drag_data.CurMousePos.Y = Control.HighOrder ((int) msg.lParam.ToInt32 ());
+
+						HandleMouseOver ();
+						// We don't want to dispatch mouse move
+						continue;
+					}
+
+					XplatUI.DispatchMessage (ref msg);
+				}
+			}
+
+			timer.Stop ();
+			if (drag_event != null)
+				return drag_event.Effect;
+
+			return DragDropEffects.None;
 		}
 
-		public bool HandleButtonRelease (ref XEvent xevent)
+		private void DndTickHandler (object sender, EventArgs e)
 		{
-			if (drag_data == null)
-				return false;
+			HandleMouseOver ();
+		}
 
-			if (!((drag_data.MouseState == MouseButtons.Left &&
-					      xevent.ButtonEvent.button == 1) ||
-					    (drag_data.MouseState == MouseButtons.Right &&
-							    xevent.ButtonEvent.button == 3)))
-				return false;
+		public void HandleButtonUpMsg ()
+		{
+			
 
 			if (drag_data.State == DragState.Beginning) {
 				//state = State.Accepting;
@@ -416,8 +475,8 @@ namespace System.Windows.Forms {
 
 				if (drag_data.WillAccept) {
 
-					if (QueryContinue (xevent, false, DragAction.Drop))
-						return true;
+					if (QueryContinue (false, DragAction.Drop))
+						return;
 					
 				}
 
@@ -427,101 +486,73 @@ namespace System.Windows.Forms {
 				// handlers
 			}
 
-			return false;
+			return;
 		}
 
-		public bool HandleMotionNotify (ref XEvent xevent)
+		public bool HandleMouseOver ()
 		{
-			if (drag_data == null)
-				return false;
+			bool dnd_aware = false;
+			IntPtr toplevel = IntPtr.Zero;
+			IntPtr window = XplatUIX11.RootWindowHandle;
 
-			if (drag_data.State == DragState.Beginning) {
-				int suc;
+			IntPtr root, child;
+			int x_temp, y_temp;
+			int x_root, y_root;
+			int mask_return;
+			int x = x_root = drag_data.CurMousePos.X;
+			int y = y_root = drag_data.CurMousePos.Y;
 
-				drag_data.State = DragState.Dragging;
-
-				suc = XplatUIX11.XSetSelectionOwner (display, XdndSelection,
-						drag_data.Window,
-						xevent.ButtonEvent.time);
-
-				if (suc == 0) {
-					Console.Error.WriteLine ("Could not take ownership of XdndSelection aborting drag.");
-					drag_data.Reset ();
-					return false;
-				}
-
-				drag_data.State = DragState.Dragging;
-			} else if (drag_data.State != DragState.None) {
-				bool dnd_aware = false;
-				IntPtr toplevel = IntPtr.Zero;
-				IntPtr window = XplatUIX11.RootWindowHandle;
-
-				IntPtr root, child;
-				int x_temp, y_temp;
-				int mask_return;
-
-				while (XplatUIX11.XQueryPointer (display,
-						       window,
-						       out root, out child,
-						       out x_temp, out y_temp,
-						       out xevent.MotionEvent.x,
-						       out xevent.MotionEvent.y,
-						       out mask_return)) {
+			while (XplatUIX11.XQueryPointer (display, window, out root, out child,
+					       out x_temp, out y_temp, out x, out y, out mask_return)) {
 					
-					if (!dnd_aware) {
-						dnd_aware = IsWindowDndAware (window);
-						if (dnd_aware) {
-							toplevel = window;
-							xevent.MotionEvent.x_root = x_temp;
-							xevent.MotionEvent.y_root = y_temp;
-						}
+				if (!dnd_aware) {
+					dnd_aware = IsWindowDndAware (window);
+					if (dnd_aware) {
+						toplevel = window;
+						x_root = x_temp;
+						y_root = y_temp;
 					}
+				}
 
-					if (child == IntPtr.Zero)
-						break;
+				if (child == IntPtr.Zero)
+					break;
 					
-					window = child;
-				}
-
-				if (window != drag_data.LastWindow && drag_data.State == DragState.Entered) {
-					drag_data.State = DragState.Dragging;
-
-					// TODO: Send a Leave if this is an MWF window
-
-					if (toplevel != drag_data.LastTopLevel)
-						SendLeave (drag_data.LastTopLevel, xevent.MotionEvent.window);
-				}
-
-				drag_data.State = DragState.Entered;
-				if (toplevel != drag_data.LastTopLevel) {
-					// Entering a new toplevel window
-					SendEnter (toplevel, drag_data.Window, drag_data.SupportedTypes);
-				} else {
-					// Already in a toplevel window, so send a position
-					SendPosition (toplevel, drag_data.Window,
-							drag_data.Action,
-							xevent.MotionEvent.x_root,
-							xevent.MotionEvent.y_root,
-							xevent.MotionEvent.time);
-				}
-
-				drag_data.LastTopLevel = toplevel;
-				drag_data.LastWindow = window;
-				return true;
+				window = child;
 			}
-			return false;
+
+			if (window != drag_data.LastWindow && drag_data.State == DragState.Entered) {
+				drag_data.State = DragState.Dragging;
+
+				// TODO: Send a Leave if this is an MWF window
+
+				if (toplevel != drag_data.LastTopLevel)
+					SendLeave (drag_data.LastTopLevel, toplevel);
+			}
+
+			drag_data.State = DragState.Entered;
+			if (toplevel != drag_data.LastTopLevel) {
+				// Entering a new toplevel window
+				SendEnter (toplevel, drag_data.Window, drag_data.SupportedTypes);
+			} else {
+				// Already in a toplevel window, so send a position
+				SendPosition (toplevel, drag_data.Window,
+						drag_data.Action,
+						x_root,	y_root,
+						IntPtr.Zero);
+			}
+
+			drag_data.LastTopLevel = toplevel;
+			drag_data.LastWindow = window;
+			return true;
 		}
 
-		public bool HandleKeyPress (ref XEvent xevent)
+		public void HandleKeyMessage (MSG msg)
 		{
-			if (VirtualKeys.VK_ESCAPE == (VirtualKeys) keyboard.EventToVkey (xevent)) {
-				if (!QueryContinue (xevent, true, DragAction.Cancel))
-					return true;
+			if (VirtualKeys.VK_ESCAPE == (VirtualKeys) msg.wParam) {
+				QueryContinue (true, DragAction.Cancel);
 			}
-
-			return false;
 		}
-
+		
 		// return true if the event is handled here
 		public bool HandleClientMessage (ref XEvent xevent)
 		{
@@ -578,7 +609,7 @@ namespace System.Windows.Forms {
 			return true;
 		}
 
-		private bool QueryContinue (XEvent xevent, bool escape, DragAction action)
+		private bool QueryContinue (bool escape, DragAction action)
 		{
 			QueryContinueDragEventArgs qce = new QueryContinueDragEventArgs ((int) XplatUI.State.ModifierKeys,
 					escape, action);
@@ -590,14 +621,15 @@ namespace System.Windows.Forms {
 			case DragAction.Continue:
 				return true;
 			case DragAction.Drop:
-				SendDrop (drag_data.LastTopLevel, source, xevent.ButtonEvent.time);
-				break;
+				SendDrop (drag_data.LastTopLevel, source, IntPtr.Zero);
+				return true;
 			case DragAction.Cancel:
 				drag_data.Reset ();
 				c.InternalCapture = false;
 				break;
 			}
 
+			tracking = false;
 			return false;
 		}
 
@@ -692,7 +724,11 @@ namespace System.Windows.Forms {
 			pos_y = (int) xevent.ClientMessageEvent.ptr3 & 0xFFFF;
 
 			// Copy is implicitly allowed
-			allowed = EffectFromAction (xevent.ClientMessageEvent.ptr5) | DragDropEffects.Copy;
+			Control source_control = MwfWindow (source);
+			if (source_control == null)
+				allowed = EffectFromAction (xevent.ClientMessageEvent.ptr5) | DragDropEffects.Copy;
+			else
+				allowed = drag_data.AllowedEffects;
 
 			IntPtr parent, child, new_child, last_drop_child;
 			parent = XplatUIX11.XRootWindow (display, 0);
@@ -741,16 +777,19 @@ namespace System.Windows.Forms {
 
 			if (converts_pending > 0)
 				return true;
+
 			if (!status_sent) {
 				drag_event = new DragEventArgs (data, 0, pos_x, pos_y,
 					allowed, DragDropEffects.None);
 				control.DndEnter (drag_event);
+				
 				SendStatus (source, drag_event.Effect);
 				status_sent = true;
 			} else {
 				drag_event.x = pos_x;
 				drag_event.y = pos_y;
 				control.DndOver (drag_event);
+
 				SendStatus (source, drag_event.Effect);
 			}
 			
@@ -777,7 +816,7 @@ namespace System.Windows.Forms {
 			if (control != null && drag_event != null) {
 				drag_event = new DragEventArgs (data,
 						0, pos_x, pos_y,
-					allowed, DragDropEffects.None);
+					allowed, drag_event.Effect);
 				control.DndDrop (drag_event);
 			}
 			SendFinished ();
@@ -794,9 +833,10 @@ namespace System.Windows.Forms {
 
 		private bool HandleStatusEvent (ref XEvent xevent)
 		{
+			
 			if (drag_data != null && drag_data.State == DragState.Entered) {
 
-				if (!QueryContinue (xevent, false, DragAction.Continue))
+				if (!QueryContinue (false, DragAction.Continue))
 					return true;
 
 				drag_data.WillAccept = ((int) xevent.ClientMessageEvent.ptr2 & 0x1) != 0;
@@ -816,6 +856,7 @@ namespace System.Windows.Forms {
 				allowed |= DragDropEffects.Move;
 			if (action == XdndActionLink)
 				allowed |= DragDropEffects.Link;
+
 			return allowed;
 		}
 
@@ -1002,6 +1043,8 @@ namespace System.Windows.Forms {
 			xevent.ClientMessageEvent.ptr1 = toplevel;
 
 			XplatUIX11.XSendEvent (display, source, false, IntPtr.Zero, ref xevent);
+
+			tracking = false;
 		}
 
 		// There is a somewhat decent amount of overhead

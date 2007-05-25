@@ -1963,8 +1963,6 @@ namespace System.Windows.Forms.X11Internal {
 
 				switch (xevent.type) {
 				case XEventName.KeyPress:
-					if (Dnd.InDrag ())
-						Dnd.HandleKeyPress (ref xevent);
 					Keyboard.KeyEvent (FocusWindow.Handle, xevent, ref msg);
 					return true;
 
@@ -2084,12 +2082,6 @@ namespace System.Windows.Forms.X11Internal {
 				}
 
 				case XEventName.ButtonRelease:
-					if (Dnd.InDrag()) {
-						if (Dnd.HandleButtonRelease (ref xevent))
-							return true;
-						// Don't return here, so that the BUTTONUP message can get through
-					}
-
 					switch(xevent.ButtonEvent.button) {
 					case 1:
 						if (client) {
@@ -2166,9 +2158,6 @@ namespace System.Windows.Forms.X11Internal {
 								  client ? hwnd.ClientWindow.ToInt32() : hwnd.WholeWindow.ToInt32(),
 								  xevent.MotionEvent.x, xevent.MotionEvent.y);
 #endif
-
-						if (Dnd.HandleMotionNotify (ref xevent))
-							goto ProcessNextMessage;
 
 						if (Grab.Hwnd != IntPtr.Zero)
 							msg.hwnd = Grab.Hwnd;

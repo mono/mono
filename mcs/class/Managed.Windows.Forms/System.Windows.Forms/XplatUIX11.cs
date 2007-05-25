@@ -3624,8 +3624,6 @@ namespace System.Windows.Forms {
 			//
 			switch(xevent.type) {
 				case XEventName.KeyPress: {
-					if (Dnd.InDrag ())
-						Dnd.HandleKeyPress (ref xevent);
 					Keyboard.KeyEvent (FocusWindow, xevent, ref msg);
 					break;
 				}
@@ -3753,12 +3751,6 @@ namespace System.Windows.Forms {
 				}
 
 				case XEventName.ButtonRelease: {
-					if (Dnd.InDrag()) {
-						if (Dnd.HandleButtonRelease (ref xevent)) {
-							break;
-						}
-						// Allow the LBUTTONUP message to get through
-					}
 
 					switch(xevent.ButtonEvent.button) {
 						case 1: {
@@ -3843,8 +3835,6 @@ namespace System.Windows.Forms {
 							Console.WriteLine("GetMessage(): Window {0:X} MotionNotify x={1} y={2}", client ? hwnd.client_window.ToInt32() : hwnd.whole_window.ToInt32(), xevent.MotionEvent.x, xevent.MotionEvent.y);
 						#endif
 
-						if (Dnd.HandleMotionNotify (ref xevent))
-							goto ProcessNextMessage;
 						if (Grab.Hwnd != IntPtr.Zero) {
 							msg.hwnd = Grab.Hwnd;
 						} else {

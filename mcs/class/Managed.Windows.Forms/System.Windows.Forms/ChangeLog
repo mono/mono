@@ -1,3 +1,9 @@
+2007-05-25  Jackson Harper  <jackson@ximian.com>
+
+	* X11Dnd.cs: Rework to make StartDrag a blocking call that runs
+	it's own message loop.
+	* XplatUIX11.cs: Remove some of the dnd hooks
+
 2007-05-25  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* XplatUIX11.cs: Change MinimumWindowSize to {Width=0,Height=0}
