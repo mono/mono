@@ -2118,7 +2118,6 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			OnTextChanged (EventArgs.Empty);
 			return true;
 		}
 
