@@ -1,3 +1,8 @@
+2007-05-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XQueryConvert.cs : removed unused methods. They will prevent
+	  System.Xml.Core.dll implementation.
+
 2007-05-15  Konstantin Triger <kostat@mainsoft.com>
 
 	* XmlWriter.cs, XmlTextWriter2.cs: ensure the file
