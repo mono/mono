@@ -1,3 +1,9 @@
+2007-05-26  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* XmlWriterTests.cs: Renamed Close* tests to Create*, and improved
+	their coverage. Commented out newly introduced tests since they fail
+	on Mono.
+
 2007-05-16  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* XmlWriterTests.cs: Added tests for Close that verify closing of

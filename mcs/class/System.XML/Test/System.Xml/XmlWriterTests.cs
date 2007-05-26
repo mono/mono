@@ -208,66 +208,148 @@ namespace MonoTests.System.Xml
 
 #if NET_2_0
 		[Test]
-		public void Close_File ()
+		public void Create_File ()
 		{
 			string file = Path.GetTempFileName ();
 			XmlWriter writer = XmlWriter.Create (file);
+			Assert.IsNotNull (writer.Settings, "#A1");
+			//Assert.IsTrue (writer.Settings.CloseOutput, "#A2");
 			writer.Close ();
 			File.Delete (file);
 
 			XmlWriterSettings settings = new XmlWriterSettings ();
 			settings.CloseOutput = true;
 			writer = XmlWriter.Create (file, settings);
+			//Assert.IsFalse (object.ReferenceEquals (settings, writer.Settings), "#B1");
+			Assert.IsTrue (settings.CloseOutput, "#B2");
+			writer.Close ();
+			File.Delete (file);
+
+			writer = XmlWriter.Create (file, (XmlWriterSettings) null);
+			Assert.IsNotNull (writer.Settings, "#C1");
+			//Assert.IsTrue (writer.Settings.CloseOutput, "#C2");
+			writer.Close ();
+			File.Delete (file);
+
+			settings = new XmlWriterSettings ();
+			writer = XmlWriter.Create (file, settings);
+			//Assert.IsFalse (object.ReferenceEquals (settings, writer.Settings), "#D1");
+			//Assert.IsTrue (writer.Settings.CloseOutput, "#D2");
+			writer.Close ();
+			File.Delete (file);
+
+			writer = XmlWriter.Create (file);
+			Assert.IsNotNull (writer.Settings, "#E1");
+			//Assert.IsTrue (writer.Settings.CloseOutput, "#E2");
 			writer.Close ();
 			File.Delete (file);
 		}
 
 		[Test]
-		public void Close_Stream ()
+		public void Create_Stream ()
 		{
 			MemoryStream ms = new MemoryStream ();
 			XmlWriter writer = XmlWriter.Create (ms);
+			Assert.IsNotNull (writer.Settings, "#A1");
+			Assert.IsFalse (writer.Settings.CloseOutput, "#A2");
 			writer.Close ();
-			Assert.IsTrue (ms.CanWrite, "#1");
+			Assert.IsTrue (ms.CanWrite, "#A3");
 
 			XmlWriterSettings settings = new XmlWriterSettings ();
 			settings.CloseOutput = true;
 			writer = XmlWriter.Create (ms, settings);
+			//Assert.IsFalse (object.ReferenceEquals (settings, writer.Settings), "#B1");
+			Assert.IsTrue (settings.CloseOutput, "#B2");
 			writer.Close ();
-			Assert.IsFalse (ms.CanWrite, "#2");
+			Assert.IsFalse (ms.CanWrite, "#B3");
+
+			ms = new MemoryStream ();
+			settings = new XmlWriterSettings ();
+			writer = XmlWriter.Create (ms, settings);
+			//Assert.IsFalse (object.ReferenceEquals (settings, writer.Settings), "#C1");
+			Assert.IsFalse (writer.Settings.CloseOutput, "#C2");
+			writer.Close ();
+			Assert.IsTrue (ms.CanWrite, "#C3");
+
+			ms = new MemoryStream ();
+			writer = XmlWriter.Create (ms, (XmlWriterSettings) null);
+			Assert.IsNotNull (writer.Settings, "#D1");
+			Assert.IsFalse (writer.Settings.CloseOutput, "#D2");
+			writer.Close ();
+			Assert.IsTrue (ms.CanWrite, "#D3");
 		}
 
 		[Test]
-		public void Close_TextWriter ()
+		public void Create_TextWriter ()
 		{
 			MemoryStream ms = new MemoryStream ();
 			XmlWriter writer = XmlWriter.Create (new StreamWriter (ms));
+			Assert.IsNotNull (writer.Settings, "#A1");
+			Assert.IsFalse (writer.Settings.CloseOutput, "#A2");
 			writer.Close ();
-			Assert.IsTrue (ms.CanWrite, "#1");
+			Assert.IsTrue (ms.CanWrite, "#A3");
 
 			XmlWriterSettings settings = new XmlWriterSettings ();
 			settings.CloseOutput = true;
 			writer = XmlWriter.Create (new StreamWriter (ms), settings);
+			//Assert.IsFalse (object.ReferenceEquals (settings, writer.Settings), "#B1");
+			Assert.IsTrue (settings.CloseOutput, "#B2");
 			writer.Close ();
-			Assert.IsFalse (ms.CanWrite, "#2");
+			Assert.IsFalse (ms.CanWrite, "#B3");
+
+			ms = new MemoryStream ();
+			settings = new XmlWriterSettings ();
+			writer = XmlWriter.Create (new StreamWriter (ms), settings);
+			//Assert.IsFalse (object.ReferenceEquals (settings, writer.Settings), "#C1");
+			Assert.IsFalse (writer.Settings.CloseOutput, "#C2");
+			writer.Close ();
+			Assert.IsTrue (ms.CanWrite, "#C3");
+
+			ms = new MemoryStream ();
+			writer = XmlWriter.Create (new StreamWriter (ms), (XmlWriterSettings) null);
+			Assert.IsNotNull (writer.Settings, "#D1");
+			Assert.IsFalse (writer.Settings.CloseOutput, "#D2");
+			writer.Close ();
+			Assert.IsTrue (ms.CanWrite, "#D3");
 		}
 
 		[Test]
-		public void Close_XmlWriter ()
+		public void Create_XmlWriter ()
 		{
 			MemoryStream ms = new MemoryStream ();
 			XmlTextWriter xtw = new XmlTextWriter (ms, Encoding.UTF8);
 			XmlWriter writer = XmlWriter.Create (xtw);
+			Assert.IsNotNull (writer.Settings, "#A1");
+			Assert.IsFalse (writer.Settings.CloseOutput, "#A2");
 			writer.Close ();
-			Assert.IsFalse (ms.CanWrite, "#1");
+			Assert.IsFalse (ms.CanWrite, "#A3");
 
 			ms = new MemoryStream ();
 			xtw = new XmlTextWriter (ms, Encoding.UTF8);
 			XmlWriterSettings settings = new XmlWriterSettings ();
 			settings.CloseOutput = true;
 			writer = XmlWriter.Create (xtw, settings);
+			//Assert.IsFalse (object.ReferenceEquals (settings, writer.Settings), "#B1");
+			//Assert.IsFalse (writer.Settings.CloseOutput, "#B2");
 			writer.Close ();
-			Assert.IsFalse (ms.CanWrite, "#2");
+			Assert.IsFalse (ms.CanWrite, "#B3");
+
+			ms = new MemoryStream ();
+			xtw = new XmlTextWriter (ms, Encoding.UTF8);
+			settings = new XmlWriterSettings ();
+			writer = XmlWriter.Create (xtw, settings);
+			//Assert.IsFalse (object.ReferenceEquals (settings, writer.Settings), "#C1");
+			Assert.IsFalse (writer.Settings.CloseOutput, "#C2");
+			writer.Close ();
+			Assert.IsFalse (ms.CanWrite, "#C3");
+
+			ms = new MemoryStream ();
+			xtw = new XmlTextWriter (ms, Encoding.UTF8);
+			writer = XmlWriter.Create (xtw, (XmlWriterSettings) null);
+			Assert.IsNotNull (writer.Settings, "#D1");
+			Assert.IsFalse (writer.Settings.CloseOutput, "#D2");
+			writer.Close ();
+			Assert.IsFalse (ms.CanWrite, "#D3");
 		}
 
 		XPathNavigator GetNavigator (string xml)
