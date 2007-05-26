@@ -352,6 +352,30 @@ namespace MonoTests.System.Xml
 			Assert.IsFalse (ms.CanWrite, "#D3");
 		}
 
+		[Test]
+		[Category ("NotWorking")]
+		public void Create_XmlWriter2 ()
+		{
+			MemoryStream ms = new MemoryStream ();
+			XmlWriterSettings settings = new XmlWriterSettings ();
+			XmlWriter xw = XmlWriter.Create (ms, settings);
+			XmlWriter writer = XmlWriter.Create (xw, new XmlWriterSettings ());
+			Assert.IsNotNull (writer.Settings, "#A1");
+			Assert.IsFalse (writer.Settings.CloseOutput, "#A2");
+			writer.Close ();
+			Assert.IsTrue (ms.CanWrite, "#A3");
+
+			ms = new MemoryStream ();
+			settings = new XmlWriterSettings ();
+			settings.CloseOutput = true;
+			xw = XmlWriter.Create (ms, settings);
+			writer = XmlWriter.Create (xw, new XmlWriterSettings ());
+			Assert.IsNotNull (writer.Settings, "#B1");
+			Assert.IsTrue (writer.Settings.CloseOutput, "#B2");
+			writer.Close ();
+			Assert.IsFalse (ms.CanWrite, "#B3");
+		}
+
 		XPathNavigator GetNavigator (string xml)
 		{
 			return new XPathDocument (XmlReader.Create (

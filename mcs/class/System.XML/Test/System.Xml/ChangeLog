@@ -2,7 +2,7 @@
 
 	* XmlWriterTests.cs: Renamed Close* tests to Create*, and improved
 	their coverage. Commented out newly introduced tests since they fail
-	on Mono.
+	on Mono. Added NotWorking Create_XmlWriter2 test.
 
 2007-05-16  Gert Driesen  <drieseng@users.sourceforge.net>
 
