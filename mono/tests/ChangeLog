@@ -1,3 +1,7 @@
+2007-05-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* delegate.cs: Add more delegate tests.
+
 2007-05-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* delegate.cs: Add a multicast delegate test.
