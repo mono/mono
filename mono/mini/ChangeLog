@@ -1,5 +1,8 @@
 2007-05-27  Zoltan Varga  <vargaz@gmail.com>
 
+	* driver.c (mono_main): Call g_thread_init () early since newer glib versions
+	require it.
+
 	* abcremoval.c (mono_perform_abc_removal): Avoid using alloca.
 
 2007-05-24  Jonathan Chambers  <joncham@gmail.com>
