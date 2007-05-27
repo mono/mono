@@ -695,6 +695,8 @@ namespace System.Windows.Forms
 
 		internal void Layout ()
 		{
+			if (owner == null)
+				return;
 			int item_ht;
 			Rectangle total;
 			Size text_size = owner.text_size;

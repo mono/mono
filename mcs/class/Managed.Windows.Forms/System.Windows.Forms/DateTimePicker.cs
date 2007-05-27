@@ -31,6 +31,7 @@ using System;
 using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
+using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
@@ -395,15 +396,28 @@ namespace System.Windows.Forms {
 		public DateTime MaxDate {
 			set {
 				if (value < min_date) {
-					throw new ArgumentException ();
+					string msg = string.Format (CultureInfo.CurrentCulture,
+						"'{0}' is not a valid value for 'MaxDate'. 'MaxDate' "
+						+ "must be greater than or equal to MinDate.",
+						value.ToString ("G"));
+#if NET_2_0
+					throw new ArgumentOutOfRangeException ("MaxDate", msg);
+#else
+					throw new ArgumentException (msg);
+#endif
 				}
 				if (value > MaxDateTime) {
-					throw new SystemException ();
+					string msg = string.Format (CultureInfo.CurrentCulture,
+						"DateTimePicker does not support dates after {0}.",
+						MaxDateTime.ToString ("G", CultureInfo.CurrentCulture));
+#if NET_2_0
+					throw new ArgumentOutOfRangeException ("MaxDate", msg);
+#else
+					throw new ArgumentException (msg, "value");
+#endif
 				}
 				if (max_date != value) {
 					max_date = value;
-					
-					// TODO: verify this is correct behaviour when value > max date
 					if (Value > max_date) {
 						Value = max_date;
 						// invalidate the value inside this control
@@ -426,16 +440,34 @@ namespace System.Windows.Forms {
 		
 		public DateTime MinDate {
 			set {
-				if (value < min_date) {
-					throw new ArgumentException ();
+#if NET_2_0
+				if (value > MaxDate) {
+#else
+				if (value >= MaxDate) {
+#endif
+					string msg = string.Format (CultureInfo.CurrentCulture,
+						"'{0}' is not a valid value for 'MinDate'. 'MinDate' "
+						+ "must be less than MaxDate.",
+						value.ToString ("G"));
+#if NET_2_0
+					throw new ArgumentOutOfRangeException ("MinDate", msg);
+#else
+					throw new ArgumentException (msg);
+#endif
 				}
 				if (value < MinDateTime) {
-					throw new SystemException ();
+					string msg = string.Format (CultureInfo.CurrentCulture,
+						"DateTimePicker does not support dates before {0}.",
+						MinDateTime.ToString ("G", CultureInfo.CurrentCulture));
+#if NET_2_0
+					throw new ArgumentOutOfRangeException ("MinDate", msg);
+#else
+					throw new ArgumentException (msg, "value");
+#endif
+
 				}
 				if (min_date != value) {
 					min_date = value;
-					
-					// TODO: verify this is correct behaviour when value > max date
 					if (Value < min_date) {
 						Value = min_date;
 						// invalidate the value inside this control

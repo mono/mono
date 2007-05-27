@@ -3134,9 +3134,7 @@ namespace MonoTests.System.Windows.Forms {
 			Assert.AreEqual ("WindowText", dt.ForeColor.Name, "F1");
 			Assert.AreEqual (DateTimePickerFormat.Long, dt.Format, "F2");
 			
-			Assert.AreEqual (new DateTime (9998, 12, 31, 0, 0, 0), dt.MaxDate, "M1");
 			Assert.AreEqual (new DateTime (9998, 12, 31, 0, 0, 0), DateTimePicker.MaxDateTime, "M2");
-			Assert.AreEqual (new DateTime (1753, 1, 1), dt.MinDate, "M3");
 			Assert.AreEqual (new DateTime (1753, 1, 1), DateTimePicker.MinDateTime, "M4");
 #if NET_2_0
 			Assert.AreEqual (new DateTime (9998, 12, 31, 0, 0, 0), DateTimePicker.MaximumDateTime, "M5");
@@ -3159,7 +3157,186 @@ namespace MonoTests.System.Windows.Forms {
 			
 			Assert.AreEqual (DateTime.Today, dt.Value.Date, "V1");
 		}
-		
+
+		[Test]
+		public void MaxDate ()
+		{
+			DateTimePicker dt = new DateTimePicker ();
+			Assert.AreEqual (new DateTime (9998, 12, 31), dt.MaxDate, "#1");
+			dt.Value = new DateTime (2007, 8, 13);
+			Assert.AreEqual (new DateTime (9998, 12, 31), dt.MaxDate, "#2");
+			Assert.AreEqual (new DateTime (2007, 8, 13), dt.Value, "#3");
+			dt.MaxDate = new DateTime (2010, 2, 10);
+			Assert.AreEqual (new DateTime (2010, 2, 10), dt.MaxDate, "#4");
+			Assert.AreEqual (new DateTime (2007, 8, 13), dt.Value, "#5");
+			dt.MaxDate = new DateTime (2005, 10, 15);
+			Assert.AreEqual (new DateTime (2005, 10, 15), dt.MaxDate, "#6");
+			Assert.AreEqual (new DateTime (2005, 10, 15), dt.Value, "#7");
+			dt.MaxDate = new DateTime (2008, 1, 4);
+			Assert.AreEqual (new DateTime (2008, 1, 4), dt.MaxDate, "#8");
+			Assert.AreEqual (new DateTime (2005, 10, 15), dt.Value, "#9");
+			dt.MaxDate = dt.MinDate;
+			Assert.AreEqual (new DateTime (1753, 1, 1), dt.MaxDate, "#10");
+			Assert.AreEqual (new DateTime (1753, 1, 1), dt.Value, "#11");
+			dt.MaxDate = DateTimePicker.MaxDateTime;
+			Assert.AreEqual (DateTimePicker.MaxDateTime, dt.MaxDate, "#12");
+			Assert.AreEqual (new DateTime (1753, 1, 1), dt.Value, "#13");
+		}
+
+		[Test]
+		public void MaxDate_Invalid ()
+		{
+			DateTimePicker dt = new DateTimePicker ();
+
+			// not less or equal to MaxDateTime
+			try {
+				dt.MaxDate = new DateTime (9999, 1, 1);
+				Assert.Fail ("#A1");
+#if NET_2_0
+			} catch (ArgumentOutOfRangeException ex) {
+				// DateTimePicker does not support dates after 12/31/9998 12:00:00 AM
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsNotNull (ex.ParamName, "#A5");
+				Assert.AreEqual ("MaxDate", ex.ParamName, "#A6");
+			}
+#else
+			} catch (ArgumentException ex) {
+				// DateTimePicker does not support dates after 12/31/9998 12:00:00 AM
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsNotNull (ex.ParamName, "#A5");
+				Assert.AreEqual ("value", ex.ParamName, "#A6");
+			}
+#endif
+
+			dt.MinDate = new DateTime (2007, 8, 13);
+
+			// not less than MinDate
+			try {
+				dt.MaxDate = new DateTime (2007, 8, 12);
+				Assert.Fail ("#B1");
+#if NET_2_0
+			} catch (ArgumentOutOfRangeException ex) {
+				// '8/12/2007 12:00:00 AM' is not a valid value for 'MaxDate'.
+				// 'MaxDate' must be greater than or equal to MinDate.
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.IsNotNull (ex.ParamName, "#B5");
+				Assert.AreEqual ("MaxDate", ex.ParamName, "#B6");
+			}
+#else
+			} catch (ArgumentException ex) {
+				// '8/12/2007 12:00:00 AM' is not a valid value for 'MaxDate'.
+				// 'MaxDate' must be greater than or equal to MinDate.
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.IsNull (ex.ParamName, "#B5");
+			}
+#endif
+		}
+
+		[Test]
+		public void MinDate ()
+		{
+			DateTimePicker dt = new DateTimePicker ();
+			Assert.AreEqual (new DateTime (1753, 1, 1), dt.MinDate, "#1");
+			dt.Value = new DateTime (2007, 8, 13);
+			Assert.AreEqual (new DateTime (1753, 1, 1), dt.MinDate, "#2");
+			Assert.AreEqual (new DateTime (2007, 8, 13), dt.Value, "#3");
+			dt.MinDate = new DateTime (2005, 1, 15);
+			Assert.AreEqual (new DateTime (2005, 1, 15), dt.MinDate, "#4");
+			Assert.AreEqual (new DateTime (2007, 8, 13), dt.Value, "#5");
+			dt.MinDate = new DateTime (2008, 2, 5);
+			Assert.AreEqual (new DateTime (2008, 2, 5), dt.MinDate, "#6");
+			Assert.AreEqual (new DateTime (2008, 2, 5), dt.Value, "#7");
+			dt.MinDate = new DateTime (2004, 8, 20);
+			Assert.AreEqual (new DateTime (2004, 8, 20), dt.MinDate, "#8");
+			Assert.AreEqual (new DateTime (2008, 2, 5), dt.Value, "#9");
+			dt.MinDate = DateTimePicker.MinDateTime;
+			Assert.AreEqual (DateTimePicker.MinDateTime, dt.MinDate, "#10");
+			Assert.AreEqual (new DateTime (2008, 2, 5), dt.Value, "#11");
+		}
+
+		[Test]
+		public void MinDate_Invalid ()
+		{
+			DateTimePicker dt = new DateTimePicker ();
+
+			// less than MinDateTime
+			try {
+				dt.MinDate = new DateTime (1752, 12, 31);
+				Assert.Fail ("#A1");
+#if NET_2_0
+			} catch (ArgumentOutOfRangeException ex) {
+				// DateTimePicker does not support dates before 1/1/1753 12:00:00 AM
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsNotNull (ex.ParamName, "#A5");
+				Assert.AreEqual ("MinDate", ex.ParamName, "#A6");
+			}
+#else
+			} catch (ArgumentException ex) {
+				// DateTimePicker does not support dates before 1/1/1753 12:00:00 AM
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsNotNull (ex.ParamName, "#A5");
+				Assert.AreEqual ("value", ex.ParamName, "#A6");
+			}
+#endif
+
+			dt.MaxDate = new DateTime (2007, 8, 13);
+
+			// equal to MaxDate
+#if NET_2_0
+			dt.MinDate = new DateTime (2007, 8, 13);
+			Assert.AreEqual (new DateTime (2007, 8, 13), dt.MinDate, "#B1");
+#else
+			try {
+				dt.MinDate = new DateTime (2007, 8, 13);
+				Assert.Fail ("#B1");
+			} catch (ArgumentException ex) {
+				// '8/13/2007 12:00:00 AM' is not a valid value for 'MinDate'.
+				// 'MinDate' must be less than MaxDate
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.IsNull (ex.ParamName, "#B5");
+			}
+#endif
+
+			// not less than MaxDate
+			try {
+				dt.MinDate = new DateTime (2007, 8, 14);
+				Assert.Fail ("#C1");
+#if NET_2_0
+			/} catch (ArgumentOutOfRangeException ex) {
+				// '8/13/2007 12:00:00 AM' is not a valid value for 'MinDate'.
+				// 'MinDate' must be less than MaxDate
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#C2");
+				Assert.IsNull (ex.InnerException, "#C3");
+				Assert.IsNotNull (ex.Message, "#C4");
+				Assert.IsNotNull (ex.ParamName, "#C5");
+				Assert.AreEqual ("MinDate", ex.ParamName, "#C6");
+			}
+#else
+			} catch (ArgumentException ex) {
+				// '8/13/2007 12:00:00 AM' is not a valid value for 'MinDate'.
+				// 'MinDate' must be less than MaxDate
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#C2");
+				Assert.IsNull (ex.InnerException, "#C3");
+				Assert.IsNotNull (ex.Message, "#C4");
+				Assert.IsNull (ex.ParamName, "#C5");
+			}
+#endif
+		}
+
 		[Test]
 		public void TextTest ()
 		{

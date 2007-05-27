@@ -1,3 +1,10 @@
+2007-05-28  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DateTimePicker.cs: Changed exceptions thrown by MinDate and MaxDate
+	to match MS. Fixed MinDate to only accept value less than or equal
+	to MaxDate on 2.0 profile and less than MaxDate on 1.0 profile.
+	Removed TODO's that are now verified by unit tests.
+
 2007-05-27  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TreeNodeCollection.cs: Minor corrections to exceptions to match
