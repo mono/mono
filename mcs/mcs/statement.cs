@@ -1556,13 +1556,6 @@ namespace Mono.CSharp {
 				Explicit = (ExplicitBlock) this;
 			else
 				Explicit = parent.Explicit;
-
-			if (parent != null && Implicit) {
-				if (Explicit.known_variables == null)
-					Explicit.known_variables = new Hashtable ();
-				// share with parent
-				known_variables = Explicit.known_variables;
-			}
 		}
 
 		public Block CreateSwitchBlock (Location start)
@@ -1698,50 +1691,15 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		Hashtable known_variables;
-
-		// <summary>
-		//   Marks a variable with name @name as being used in this or a child block.
-		//   If a variable name has been used in a child block, it's illegal to
-		//   declare a variable with the same name in the current block.
-		// </summary>
-		void AddKnownVariable (string name, LocalInfo info)
-		{
-			if (known_variables == null)
-				known_variables = new Hashtable ();
-
-			known_variables [name] = info;
-		}
-
-		LocalInfo GetKnownVariableInfo (string name, bool recurse)
-		{
-			if (known_variables != null) {
-				LocalInfo vi = (LocalInfo) known_variables [name];
-				if (vi != null)
-					return vi;
-			}
-
-			if (!recurse || (children == null))
-				return null;
-
-			foreach (Block block in children) {
-				LocalInfo vi = block.GetKnownVariableInfo (name, true);
-				if (vi != null)
-					return vi;
-			}
-
-			return null;
-		}
-
 		public bool CheckInvariantMeaningInBlock (string name, Expression e, Location loc)
 		{
 			Block b = this;
-			LocalInfo kvi = b.GetKnownVariableInfo (name, true);
+			LocalInfo kvi = b.Explicit.GetKnownVariableInfo (name, true);
 			while (kvi == null) {
 				b = b.Explicit.Parent;
 				if (b == null)
 					return true;
-				kvi = b.GetKnownVariableInfo (name, false);
+				kvi = b.Explicit.GetKnownVariableInfo (name, true);
 			}
 
 			if (kvi.Block == b)
@@ -1865,7 +1823,7 @@ namespace Mono.CSharp {
 
 		protected bool DoCheckError136 (string name, string scope, Location loc)
 		{
-			LocalInfo vi = GetKnownVariableInfo (name, false);
+			LocalInfo vi = Explicit.GetKnownVariableInfo (name, false);
 			if (vi != null) {
 				Report.SymbolRelatedToPreviousError (vi.Location, name);
 				Error_AlreadyDeclared (loc, name, scope != null ? scope : "child");
@@ -1889,7 +1847,7 @@ namespace Mono.CSharp {
 			LocalInfo vi = GetLocalInfo (name);
 			if (vi != null) {
 				Report.SymbolRelatedToPreviousError (vi.Location, name);
-				if (known_variables == vi.Block.known_variables)
+				if (Explicit == vi.Block.Explicit)
 					Report.Error (128, l,
 						"A local variable named `{0}' is already defined in this scope", name);
 				else
@@ -1902,7 +1860,7 @@ namespace Mono.CSharp {
 
 			vi = new LocalInfo (type, name, this, l);
 			Variables.Add (name, vi);
-			AddKnownVariable (name, vi);
+			Explicit.AddKnownVariable (name, vi);
 
 			if ((flags & Flags.VariablesInitialized) != 0)
 				throw new InternalErrorException ("block has already been resolved");
@@ -2452,6 +2410,36 @@ namespace Mono.CSharp {
 		public ExplicitBlock (Block parent, Flags flags, Location start, Location end)
 			: base (parent, flags | Flags.IsExplicit, start, end)
 		{
+		}
+
+		Hashtable known_variables;
+
+		// <summary>
+		//   Marks a variable with name @name as being used in this or a child block.
+		//   If a variable name has been used in a child block, it's illegal to
+		//   declare a variable with the same name in the current block.
+		// </summary>
+		internal void AddKnownVariable (string name, LocalInfo info)
+		{
+			if (known_variables == null)
+				known_variables = new Hashtable ();
+
+			known_variables [name] = info;
+
+			if (Parent != null)
+				Parent.Explicit.AddKnownVariable (name, info);
+		}
+
+		internal LocalInfo GetKnownVariableInfo (string name, bool recurse)
+		{
+			if (known_variables == null)
+				return null;
+			LocalInfo vi = (LocalInfo) known_variables [name];
+			if (vi == null)
+				return null;
+			if (!recurse && vi.Block.Explicit != this)
+				return null;
+			return vi;
 		}
 	}
 

@@ -1,5 +1,12 @@
 2007-05-27  Raja R Harinath  <harinath@gmail.com>
 
+	Mildly speed up CheckInvariantMeaningInBlock
+	* statement.cs (ExplicitBlock.AddKnownVariable): Move here from Block.
+	Recursively call AddKnownVariable to all enclosing blocks.
+	(ExplicitBlock.GetKnownVariableInfo): Move here from Block.
+	Remove recursive calls.
+	(Block): Update to changes.
+
 	New ExplicitBlock invariants
 	* statement.cs (Block.Explicit): New field.  It points to the
 	immediately enclosing non-implicit block.
