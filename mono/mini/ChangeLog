@@ -1,3 +1,7 @@
+2007-05-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* abcremoval2.c (mono_perform_abc_removal2): Avoid using alloca.
+
 2007-05-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-amd64.c (peephole_pass_1): Handle OP_LCOMPARE_IMM as well.
