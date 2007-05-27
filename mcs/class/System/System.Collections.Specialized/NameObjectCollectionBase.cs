@@ -209,7 +209,9 @@ namespace System.Collections.Specialized
 #endif
 			m_defCapacity = capacity;
 			Init();
-		}
+		}		
+
+#if NET_2_0
 
 		internal NameObjectCollectionBase (IEqualityComparer equalityComparer, IComparer comparer, IHashCodeProvider hcp)
 		{
@@ -221,15 +223,19 @@ namespace System.Collections.Specialized
 			Init ();
 		}
 
-#if NET_2_0
 		protected NameObjectCollectionBase (IEqualityComparer equalityComparer) : this( (equalityComparer == null ? StringComparer.InvariantCultureIgnoreCase : equalityComparer), null, null)
 		{			
 		}		
 
 		[Obsolete ("Use NameObjectCollectionBase(IEqualityComparer)")]
 #endif
-		protected NameObjectCollectionBase( IHashCodeProvider hashProvider, IComparer comparer ) : this(null, comparer, hashProvider)
+		protected NameObjectCollectionBase( IHashCodeProvider hashProvider, IComparer comparer )
 		{			
+			m_comparer = comparer;
+			m_hashprovider = hashProvider;
+			m_readonly = false;
+			m_defCapacity = 0;
+			Init ();
 		}
 
 		protected NameObjectCollectionBase (SerializationInfo info, StreamingContext context)

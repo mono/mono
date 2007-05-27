@@ -49,19 +49,24 @@ namespace System.Collections.Specialized{
 		public NameValueCollection (int capacity) : base (capacity)
 		{
 		}
-
-		public NameValueCollection (NameValueCollection col) : base (( col == null ) ? null : col.EqualityComparer ,
-																(col == null) ? null : col.Comparer, 
-																(col == null) ? null : col.HashCodeProvider)
+#if NET_2_0
+        public NameValueCollection (NameValueCollection col) : base (( col == null ) ? null : col.EqualityComparer ,
+                                                                (col == null) ? null : col.Comparer, 
+                                                                (col == null) ? null : col.HashCodeProvider)
+        {
+            if (col==null)
+                throw new ArgumentNullException ("col");		
+            Add(col);
+        }
+#else
+		public NameValueCollection (NameValueCollection col) : base ((col == null) ? null : col.HashCodeProvider ,
+																(col == null) ? null : col.Comparer)																
 		{
 			if (col==null)
-#if NET_2_0
-				throw new ArgumentNullException ("col");
-#else
-				throw new NullReferenceException ();
-#endif				
+				throw new NullReferenceException ();		
 			Add(col);
 		}
+#endif
 
 #if NET_2_0
 		[Obsolete ("Use NameValueCollection (IEqualityComparer)")]
