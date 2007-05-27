@@ -43,34 +43,46 @@ namespace System.Xml.Serialization
 		static Hashtable nameCache;
 		static Hashtable primitiveTypes;
 		static Hashtable primitiveArrayTypes;
-		static Hashtable primitiveNullableTypes;
+		static Hashtable nullableTypes;
 
 #if TARGET_JVM
-		const string AppDomainCacheName = "System.Xml.Serialization.TypeTranslator.AppDomainCache";
-		static Hashtable AppDomainCache {
-			get {
-				Hashtable res = (Hashtable)AppDomain.CurrentDomain.GetData(AppDomainCacheName);
+		static readonly object AppDomain_TypeTranslatorCacheLock = new object ();
+		const string AppDomain_nameCacheName = "System.Xml.Serialization.TypeTranslator.nameCache";
+		const string AppDomain_nullableTypesName = "System.Xml.Serialization.TypeTranslator.nullableTypes";
+		
+		static Hashtable AppDomain_nameCache {
+			get { return GetAppDomainCache (AppDomain_nameCacheName); }
+		}
 
-				if(res == null) {
-					lock(AppDomainCacheName) {
-						res = (Hashtable)AppDomain.CurrentDomain.GetData(AppDomainCacheName);
-						if (res == null) {
-							res = new Hashtable();
-							AppDomain.CurrentDomain.SetData(AppDomainCacheName, res);
-						}
+		static Hashtable AppDomain_nullableTypes {
+			get { return GetAppDomainCache (AppDomain_nullableTypesName); }
+		}
+
+		static Hashtable GetAppDomainCache(string name) {
+			Hashtable res = (Hashtable) AppDomain.CurrentDomain.GetData (name);
+
+			if (res == null) {
+				lock (AppDomain_TypeTranslatorCacheLock) {
+					res = (Hashtable) AppDomain.CurrentDomain.GetData (name);
+					if (res == null) {
+						res = Hashtable.Synchronized (new Hashtable ());
+						AppDomain.CurrentDomain.SetData (name, res);
 					}
 				}
-
-				return res;
 			}
+
+			return res;
 		}
 #endif
 
 		static TypeTranslator ()
 		{
 			nameCache = new Hashtable ();
-			primitiveArrayTypes = new Hashtable ();
+			primitiveArrayTypes = Hashtable.Synchronized (new Hashtable ());
 
+#if !TARGET_JVM
+			nameCache = Hashtable.Synchronized (nameCache);
+#endif
 			// XSD Types with direct map to CLR types
 
 			nameCache.Add (typeof (bool), new TypeData (typeof (bool), "boolean", true));
@@ -136,12 +148,12 @@ namespace System.Xml.Serialization
 			primitiveTypes.Add ("base64", new TypeData (typeof (byte[]), "base64", true));
 
 #if NET_2_0
-			primitiveNullableTypes = Hashtable.Synchronized(new Hashtable ());
+			nullableTypes = Hashtable.Synchronized(new Hashtable ());
 			foreach (DictionaryEntry de in primitiveTypes) {
 				TypeData td = (TypeData) de.Value;
 				TypeData ntd = new TypeData (td.Type, td.XmlType, true);
 				ntd.IsNullable = true;
-				primitiveNullableTypes.Add (de.Key, ntd);
+				nullableTypes.Add (de.Key, ntd);
 			}
 #endif
 		}
@@ -163,11 +175,19 @@ namespace System.Xml.Serialization
 
 				TypeData pt = GetTypeData (type); // beware this recursive call btw ...
 				if (pt != null) {
-						TypeData tt = (TypeData) primitiveNullableTypes [pt.XmlType];
+						TypeData tt = (TypeData) nullableTypes [pt.XmlType];
+#if TARGET_JVM
+						if (tt == null)
+							tt = (TypeData) AppDomain_nullableTypes [pt.XmlType];
+#endif
 						if (tt == null) {
-							tt = new TypeData (type, pt.XmlType, true);
+							tt = new TypeData (type, pt.XmlType, false);
 							tt.IsNullable = true;
-							primitiveNullableTypes [pt.XmlType] = tt;
+#if TARGET_JVM
+							AppDomain_nullableTypes [pt.XmlType] = tt;
+#else
+							nullableTypes [pt.XmlType] = tt;
+#endif
 						}
 						return tt;
 				}
@@ -180,7 +200,6 @@ namespace System.Xml.Serialization
 				// that's why the following check is needed.
 				TypeData at = GetPrimitiveTypeData (xmlDataType);
 				if (type.IsArray && type != at.Type) {
-					lock (primitiveArrayTypes) {
 						TypeData tt = (TypeData) primitiveArrayTypes [xmlDataType];
 						if (tt != null)
 							return tt;
@@ -191,17 +210,15 @@ namespace System.Xml.Serialization
 						}
 						else
 							throw new InvalidOperationException ("Cannot convert values of type '" + type.GetElementType () + "' to '" + xmlDataType + "'");
-					}
 				}
 				return at;
 			}
 
-			lock (nameCache) {
 				TypeData typeData = nameCache[runtimeType] as TypeData;
 				if (typeData != null) return typeData;
 
 #if TARGET_JVM
-				Hashtable dynamicCache = AppDomainCache;
+				Hashtable dynamicCache = AppDomain_nameCache;
 				typeData = dynamicCache[runtimeType] as TypeData;
 				if (typeData != null) return typeData;
 #endif
@@ -232,7 +249,6 @@ namespace System.Xml.Serialization
 				nameCache[runtimeType] = typeData;
 #endif
 				return typeData;
-			}
 		}
 
 		public static bool IsPrimitive (Type type)
@@ -250,8 +266,8 @@ namespace System.Xml.Serialization
 			TypeData td = (TypeData) primitiveTypes [typeName];
 			if (td != null && !td.Type.IsValueType)
 				return td;
-			// for 1.x profile, 'primitiveNullableTypes' is null
-			Hashtable table = nullable && primitiveNullableTypes != null ? primitiveNullableTypes : primitiveTypes;
+			// for 1.x profile, 'nullableTypes' is null
+			Hashtable table = nullable && nullableTypes != null ? nullableTypes : primitiveTypes;
 			td = (TypeData) table [typeName];
 			if (td == null) throw new NotSupportedException ("Data type '" + typeName + "' not supported");
 			return td;

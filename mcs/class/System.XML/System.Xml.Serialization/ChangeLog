@@ -1,3 +1,12 @@
+2007-05-27  Konstantin Triger <kostat@mainsoft.com>
+
+	* TypeTranslator.cs:
+		1. Fix the construction of TypeData for nullable types: it should not
+			be primitive since the primitive were loaded in static ctor.
+		2. Rename primitiveNullableTypes -> nullableTypes to reflect 
+			correctly the field purpose.
+		3. Unify synchronization with synchronized hashtable.
+
 2007-05-24  Konstantin Triger <kostat@mainsoft.com>
 
 	* TypeTranslator.cs: fix typo: set IsNullable flag for primitiveNullableTypes.
