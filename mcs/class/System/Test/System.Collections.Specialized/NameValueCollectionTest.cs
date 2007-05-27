@@ -383,6 +383,25 @@ namespace MonoTests.System.Collections.Specialized {
 		{
 			new NameValueCollection (-1, new EqualityComparer ());
 		}
+
+		[Test]
+		public void Constructor_IEqualityComparer_Null ()
+		{
+			NameValueCollection c1 = new NameValueCollection ((IEqualityComparer)null);
+			c1.Add ("key", "value");
+			AssertEquals ("Constructor_IEqualityComparer_Null", c1.Get ("KEY"), "value");
+			c1.Remove ("key");
+		}
+
+		[Test]
+		public void Constructor_NameValueCollection ()
+		{
+			NameValueCollection c1 = new NameValueCollection (StringComparer.InvariantCultureIgnoreCase);
+			c1.Add ("key", "value");
+			NameValueCollection c2 = new NameValueCollection (c1);
+			AssertEquals ("Constructor_NameValueCollection", c2.Get ("KEY"), "value");
+			c2.Remove ("key");
+		}
 #endif
 	}
 }

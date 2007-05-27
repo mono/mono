@@ -211,25 +211,25 @@ namespace System.Collections.Specialized
 			Init();
 		}
 
-#if NET_2_0
-		protected NameObjectCollectionBase (IEqualityComparer equalityComparer)
+		internal NameObjectCollectionBase (IEqualityComparer equalityComparer, IComparer comparer, IHashCodeProvider hcp)
 		{
-			m_readonly = false;
 			equality_comparer = equalityComparer;
+			m_comparer = comparer;
+			m_hashprovider = hcp;
+			m_readonly = false;
 			m_defCapacity = 0;
-			Init();
+			Init ();
 		}
+
+#if NET_2_0
+		protected NameObjectCollectionBase (IEqualityComparer equalityComparer) : this( (equalityComparer == null ? StringComparer.InvariantCultureIgnoreCase : equalityComparer), null, null)
+		{			
+		}		
 
 		[Obsolete ("Use NameObjectCollectionBase(IEqualityComparer)")]
 #endif
-		protected NameObjectCollectionBase( IHashCodeProvider hashProvider, IComparer comparer )
-		{
-			m_readonly = false;
-			
-			m_hashprovider = hashProvider;
-			m_comparer = comparer;
-			m_defCapacity = 0;
-			Init();
+		protected NameObjectCollectionBase( IHashCodeProvider hashProvider, IComparer comparer ) : this(null, comparer, hashProvider)
+		{			
 		}
 
 		protected NameObjectCollectionBase (SerializationInfo info, StreamingContext context)
@@ -241,7 +241,7 @@ namespace System.Collections.Specialized
 		protected NameObjectCollectionBase (int capacity, IEqualityComparer equalityComparer)
 		{
 			m_readonly = false;
-			equality_comparer = equalityComparer;
+			equality_comparer = (equalityComparer == null ? StringComparer.InvariantCultureIgnoreCase : equalityComparer);
 			m_defCapacity = capacity;
 			Init();
 		}

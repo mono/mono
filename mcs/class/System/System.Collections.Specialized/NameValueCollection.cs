@@ -50,8 +50,9 @@ namespace System.Collections.Specialized{
 		{
 		}
 
-		public NameValueCollection (NameValueCollection col ) : base ((col == null) ? null : col.HashCodeProvider,
-				                                             (col == null) ? null : col.Comparer)
+		public NameValueCollection (NameValueCollection col) : base (( col == null ) ? null : col.EqualityComparer ,
+																(col == null) ? null : col.Comparer, 
+																(col == null) ? null : col.HashCodeProvider)
 		{
 			if (col==null)
 #if NET_2_0
