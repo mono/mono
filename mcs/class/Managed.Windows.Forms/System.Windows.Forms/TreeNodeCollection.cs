@@ -78,7 +78,7 @@ namespace System.Windows.Forms {
 			}
 			set {
 				if (!(value is TreeNode))
-					throw new ArgumentException ("value");
+					throw new ArgumentException ("Parameter must be of type TreeNode.", "value");
 				this [index] = (TreeNode) value;
 			}
 		}
@@ -172,7 +172,7 @@ namespace System.Windows.Forms {
 		public virtual void AddRange (TreeNode [] nodes)
 		{
 			if (nodes == null)
-				throw new ArgumentNullException("node");
+				throw new ArgumentNullException("nodes");
 
 			// We can't just use Array.Copy because the nodes also
 			// need to have some properties set when they are added.

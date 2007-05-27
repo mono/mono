@@ -1,3 +1,8 @@
+2007-05-27  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TreeNodeCollectionTest.cs: Added tests for Add and AddRange. Fixed
+	and improved test for IList indexer.
+
 2007-05-25  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TextBoxTest.cs: Improve tests for Copy, Cut and Paste to also cover

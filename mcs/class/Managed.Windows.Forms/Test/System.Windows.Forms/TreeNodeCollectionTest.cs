@@ -111,6 +111,73 @@ namespace MonoTests.System.Windows.Forms
         }
 
 		[Test]
+		public void Add_Child_Null ()
+		{
+			TreeView tv = new TreeView ();
+			try {
+				tv.Nodes.Add ((TreeNode) null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("node", ex.ParamName, "#6");
+			}
+		}
+
+		[Test]
+		public void AddRange ()
+		{
+			TreeView tv = new TreeView ();
+			TreeNode nodeA = new TreeNode ("A");
+			TreeNode nodeB = new TreeNode ("B");
+			TreeNode nodeC = new TreeNode ("C");
+			TreeNode nodeD = new TreeNode ("D");
+			tv.Nodes.AddRange (new TreeNode [] { nodeA, nodeB });
+			Assert.AreEqual (2, tv.Nodes.Count, "#A1");
+			Assert.AreSame (nodeA, tv.Nodes [0], "#A2");
+			Assert.AreSame (nodeB, tv.Nodes [1], "#A3");
+			tv.Nodes.AddRange (new TreeNode [] { nodeC });
+			Assert.AreEqual (3, tv.Nodes.Count, "#B1");
+			Assert.AreSame (nodeC, tv.Nodes [2], "#B2");
+		}
+
+		[Test]
+		public void AddRange_Node_Null ()
+		{
+			TreeView tv = new TreeView ();
+			TreeNode nodeA = new TreeNode ("A");
+			TreeNode nodeB = new TreeNode ("B");
+			try {
+				tv.Nodes.AddRange (new TreeNode [] { nodeA, null, nodeB });
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("node", ex.ParamName, "#6");
+			}
+		}
+
+		[Test]
+		public void AddRange_Nodes_Null ()
+		{
+			TreeView tv = new TreeView ();
+			try {
+				tv.Nodes.AddRange ((TreeNode []) null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("nodes", ex.ParamName, "#6");
+			}
+		}
+
+		[Test]
 		public void Remove ()
 		{
 			TreeView tv = new TreeView ();
@@ -289,9 +356,24 @@ namespace MonoTests.System.Windows.Forms
 				list [0] = "whatever";
 				Assert.Fail ("#D1");
 			} catch (ArgumentException ex) {
+				// Parameter must be of type TreeNode
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#D2");
 				Assert.IsNull (ex.InnerException, "#D3");
-				Assert.IsNull (ex.ParamName, "#D4");
+#if NET_2_0
+				Assert.AreEqual ("value", ex.ParamName, "#D4");
+#endif
+			}
+
+			try {
+				list [0] = null;
+				Assert.Fail ("#E1");
+			} catch (ArgumentException ex) {
+				// Parameter must be of type TreeNode
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#E2");
+				Assert.IsNull (ex.InnerException, "#E3");
+#if NET_2_0
+				Assert.AreEqual ("value", ex.ParamName, "#E4");
+#endif
 			}
 		}
 
