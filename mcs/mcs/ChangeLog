@@ -1,5 +1,13 @@
 2007-05-27  Raja R Harinath  <harinath@gmail.com>
 
+	Introduce ExplicitBlock
+	* statement.cs (ExplicitBlock): New.
+	(ToplevelBlock): Derive from it.
+	(Block.Flags.IsExplicit): Rename from '...Implicit' and invert
+	sense of flag.
+	(Block.Implicit): Update to changes.
+	* cs-parser.jay: Update to changes.
+
 	Remove unused field
 	* codegen.cs (EmitContext.IsLastStatement): Remove.
 	* statement.cs (Block.DoEmit): Update to changes.

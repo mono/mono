@@ -4297,7 +4297,7 @@ statement_expression_list
 	  {
 		// CHANGE: was `null'
 		Statement s = (Statement) $1;
-		Block b = new Block (current_block, Block.Flags.Implicit, s.loc, lexer.Location);   
+		Block b = new Block (current_block, s.loc, lexer.Location);   
 
 		b.AddStatement (s);
 		$$ = b;
@@ -4941,7 +4941,7 @@ Block declare_local_variables (Expression type, ArrayList variable_declarators, 
 	// int j = 1;  int k = j + 1;
 	//
 	if (current_block.Used)
-		implicit_block = new Block (current_block, Block.Flags.Implicit, loc, Location.Null);
+		implicit_block = new Block (current_block, loc, Location.Null);
 	else
 		implicit_block = current_block;
 
@@ -4979,7 +4979,7 @@ Block declare_local_constants (Expression type, ArrayList declarators)
 	Block implicit_block;
 
 	if (current_block.Used)
-		implicit_block = new Block (current_block, Block.Flags.Implicit);
+		implicit_block = new Block (current_block);
 	else
 		implicit_block = current_block;
 
@@ -5163,7 +5163,7 @@ void start_block (Location loc)
 			current_generic_method, loc);
 		top_current_block = current_block;
 	} else {
-		current_block = new Block (current_block, loc, Location.Null);
+		current_block = new ExplicitBlock (current_block, loc, Location.Null);
 	}
 }
 

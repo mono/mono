@@ -1445,7 +1445,7 @@ namespace Mono.CSharp {
 
 		[Flags]
 		public enum Flags : ushort {
-			Implicit  = 1,
+			IsExplicit = 1,
 			Unchecked = 2,
 			BlockUsed = 4,
 			VariablesInitialized = 8,
@@ -1460,7 +1460,7 @@ namespace Mono.CSharp {
 		protected Flags flags;
 
 		public bool Implicit {
-			get { return (flags & Flags.Implicit) != 0; }
+			get { return (flags & Flags.IsExplicit) == 0; }
 		}
 
 		public bool Unchecked {
@@ -1561,7 +1561,8 @@ namespace Mono.CSharp {
 
 		public Block CreateSwitchBlock (Location start)
 		{
-			Block new_block = new Block (this, start, start);
+			// FIXME: should this be implicit?
+			Block new_block = new ExplicitBlock (this, start, start);
 			new_block.switch_block = this;
 			return new_block;
 		}
@@ -2438,6 +2439,18 @@ namespace Mono.CSharp {
 		}
 	}
 
+	public class ExplicitBlock : Block {
+		public ExplicitBlock (Block parent, Location start, Location end)
+			: this (parent, (Flags) 0, start, end)
+		{
+		}
+
+		public ExplicitBlock (Block parent, Flags flags, Location start, Location end)
+			: base (parent, flags | Flags.IsExplicit, start, end)
+		{
+		}
+	}
+
 	//
 	// A toplevel block contains extra information, the split is done
 	// only to separate information that would otherwise bloat the more
@@ -2446,7 +2459,7 @@ namespace Mono.CSharp {
 	// In particular, this was introduced when the support for Anonymous
 	// Methods was implemented. 
 	// 
-	public class ToplevelBlock : Block {
+	public class ToplevelBlock : ExplicitBlock {
 		//
 		// Pointer to the host of this anonymous method, or null
 		// if we are the topmost block
@@ -2773,7 +2786,7 @@ namespace Mono.CSharp {
 		{
 			flags |= Flags.IsIterator;
 
-			Block block = new Block (this);
+			Block block = new ExplicitBlock (this, StartLocation, EndLocation);
 			foreach (Statement stmt in statements)
 				block.AddStatement (stmt);
 			statements = new ArrayList ();

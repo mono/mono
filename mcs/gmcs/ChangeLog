@@ -1,3 +1,8 @@
+2007-05-27  Raja R Harinath  <harinath@gmail.com>
+
+	* cs-parser.jay: Update to changes introduced in Block and
+	ExplicitBlock.
+
 2007-05-25  Raja R Harinath  <rharinath@novell.com>
 
 	* cs-parser.jay: Use 'start_block' and 'end_block' rather than
