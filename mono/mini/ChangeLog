@@ -1,3 +1,7 @@
+2007-05-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* abcremoval.c (mono_perform_abc_removal): Avoid using alloca.
+
 2007-05-24  Jonathan Chambers  <joncham@gmail.com>
 
 	* mini.c: Add configure checks for header files.
