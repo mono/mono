@@ -642,10 +642,15 @@ namespace System.Web.UI.WebControls {
 		}
 
 		// LAME SPEC: MSDN says value should be saved in ViewState but tests show otherwise.
-		private string selectCommand = "";
+		private string selectCommand;
 		public string SelectCommand {
-			get { return selectCommand; }
-			set { selectCommand = value; }
+			get { return selectCommand != null ? selectCommand : string.Empty; }
+			set {
+				if (SelectCommand == value)
+					return;
+				selectCommand = value;
+				OnDataSourceViewChanged (EventArgs.Empty);
+			}
 		}
 
 		// LAME SPEC: MSDN says value should be saved in ViewState but tests show otherwise.

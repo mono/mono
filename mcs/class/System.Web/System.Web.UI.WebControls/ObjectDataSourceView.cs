@@ -401,7 +401,10 @@ namespace System.Web.UI.WebControls
 				return selectCountMethod != null ? selectCountMethod : string.Empty;
 			}
 			set {
+				if (SelectCountMethod == value)
+					return;
 				selectCountMethod = value;
+				OnDataSourceViewChanged (EventArgs.Empty);
 			}
 		}
 
@@ -410,7 +413,10 @@ namespace System.Web.UI.WebControls
 				return selectMethod != null ? selectMethod : string.Empty;
 			}
 			set {
+				if (SelectMethod == value)
+					return;
 				selectMethod = value;
+				OnDataSourceViewChanged (EventArgs.Empty);
 			}
 		}
 

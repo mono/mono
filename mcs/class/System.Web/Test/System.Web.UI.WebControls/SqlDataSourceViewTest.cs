@@ -375,6 +375,53 @@ namespace MonoTests.System.Web.UI.WebControls
 			DontMatchParams,
 		}
 
+		[Test]
+		public void SelectCommand_DataSourceViewChanged2 ()
+		{
+			SqlDataSource ds = new SqlDataSource ();
+			SqlViewPoker view = new SqlViewPoker (ds, "DefaultView", null);
+			view.DataSourceViewChanged += new EventHandler (view_DataSourceViewChanged);
+
+			Assert.AreEqual ("", view.SelectCommand);
+			view.SelectCommand = null;
+			Assert.AreEqual (1, eventsCalled.Count);
+			Assert.AreEqual ("view_DataSourceViewChanged", eventsCalled [0]);
+			Assert.AreEqual ("", view.SelectCommand);
+
+			view.SelectCommand = null;
+			Assert.AreEqual (2, eventsCalled.Count);
+			Assert.AreEqual ("view_DataSourceViewChanged", eventsCalled [1]);
+			Assert.AreEqual ("", view.SelectCommand);
+
+			view.SelectCommand = "";
+			Assert.AreEqual (2, eventsCalled.Count);
+		}
+
+		[Test]
+		public void SelectCommand_DataSourceViewChanged1 ()
+		{
+			SqlDataSource ds = new SqlDataSource ();
+			SqlViewPoker view = new SqlViewPoker (ds, "DefaultView", null);
+			view.DataSourceViewChanged+=new EventHandler(view_DataSourceViewChanged);
+
+			view.SelectCommand = "select 1";
+			Assert.AreEqual (1, eventsCalled.Count);
+			Assert.AreEqual ("view_DataSourceViewChanged", eventsCalled[0]);
+			
+			view.SelectCommand = "select 2";
+			Assert.AreEqual (2, eventsCalled.Count);
+			Assert.AreEqual ("view_DataSourceViewChanged", eventsCalled [1]);
+
+			view.SelectCommand = "select 2";
+			Assert.AreEqual (2, eventsCalled.Count);
+
+			view.SelectCommandType = SqlDataSourceCommandType.StoredProcedure;
+			Assert.AreEqual (2, eventsCalled.Count);
+
+			view.SelectCommandType = SqlDataSourceCommandType.Text;
+			Assert.AreEqual (2, eventsCalled.Count);
+		}
+
 		private static SqlViewPoker InitializeView (InitViewType initType, ConflictOptions conflictDetection, out Hashtable keys, out Hashtable old_value, out Hashtable new_value) 
 		{
 			SqlDataSource ds = new SqlDataSource ();

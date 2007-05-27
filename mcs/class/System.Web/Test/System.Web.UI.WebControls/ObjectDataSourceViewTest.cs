@@ -931,6 +931,77 @@ namespace MonoTests.System.Web.UI.WebControls
 			}
 		}
 
+		[Test]
+		public void SelectCountMethod_DataSourceViewChanged ()
+		{
+			ObjectViewPoker view = new ObjectViewPoker (new ObjectDataSource (), "", null);
+			view.DataSourceViewChanged += new EventHandler (view_DataSourceViewChanged);
+
+			Assert.AreEqual ("", view.SelectCountMethod);
+			view.SelectCountMethod = null;
+			Assert.AreEqual (1, eventsCalled.Count);
+			Assert.AreEqual ("view_DataSourceViewChanged", eventsCalled [0]);
+			Assert.AreEqual ("", view.SelectCountMethod);
+
+			view.SelectCountMethod = null;
+			Assert.AreEqual (2, eventsCalled.Count);
+			Assert.AreEqual ("view_DataSourceViewChanged", eventsCalled [1]);
+			Assert.AreEqual ("", view.SelectCountMethod);
+
+			view.SelectCountMethod = "";
+			Assert.AreEqual (2, eventsCalled.Count);
+		}
+
+		[Test]
+		public void SelectMethod_DataSourceViewChanged2 ()
+		{
+			ObjectViewPoker view = new ObjectViewPoker (new ObjectDataSource (), "", null);
+			view.DataSourceViewChanged += new EventHandler (view_DataSourceViewChanged);
+
+			Assert.AreEqual ("", view.SelectMethod);
+			view.SelectMethod = null;
+			Assert.AreEqual (1, eventsCalled.Count);
+			Assert.AreEqual ("view_DataSourceViewChanged", eventsCalled [0]);
+			Assert.AreEqual ("", view.SelectMethod);
+
+			view.SelectMethod = null;
+			Assert.AreEqual (2, eventsCalled.Count);
+			Assert.AreEqual ("view_DataSourceViewChanged", eventsCalled [1]);
+			Assert.AreEqual ("", view.SelectMethod);
+
+			view.SelectMethod = "";
+			Assert.AreEqual (2, eventsCalled.Count);
+		}
+
+		[Test]
+		public void SelectMethod_DataSourceViewChanged1 ()
+		{
+			ObjectViewPoker view = new ObjectViewPoker (new ObjectDataSource (), "", null);
+			view.DataSourceViewChanged+=new EventHandler(view_DataSourceViewChanged);
+
+			view.SelectMethod = "select_1";
+			Assert.AreEqual (1, eventsCalled.Count);
+			Assert.AreEqual ("view_DataSourceViewChanged", eventsCalled [0]);
+
+			view.SelectMethod = "select_2";
+			Assert.AreEqual (2, eventsCalled.Count);
+			Assert.AreEqual ("view_DataSourceViewChanged", eventsCalled [1]);
+
+			view.SelectMethod = "select_2";
+			Assert.AreEqual (2, eventsCalled.Count);
+
+			view.SelectCountMethod = "selectCount_1";
+			Assert.AreEqual (3, eventsCalled.Count);
+			Assert.AreEqual ("view_DataSourceViewChanged", eventsCalled [2]);
+
+			view.SelectCountMethod = "selectCount_2";
+			Assert.AreEqual (4, eventsCalled.Count);
+			Assert.AreEqual ("view_DataSourceViewChanged", eventsCalled [3]);
+
+			view.SelectCountMethod = "selectCount_2";
+			Assert.AreEqual (4, eventsCalled.Count);
+		}
+
 		private static void InitializeView (ObjectViewPoker view, InitViewType initType, out Hashtable keys, out Hashtable old_value, out Hashtable new_value) 
 		{
 			view.TypeName = typeof (DummyDataSourceObject).AssemblyQualifiedName;

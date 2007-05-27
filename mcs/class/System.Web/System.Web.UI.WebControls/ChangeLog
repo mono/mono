@@ -1,3 +1,11 @@
+2007-05-27 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* ObjectDataSourceView.cs: fixed SelectMethod and SelectCountMethod properties:
+	when changed, DataSourceViewChanged event is raised.
+	
+	* SqlDataSourceView: fixed SelectCommand property:
+	when changed, DataSourceViewChanged event is raised.
+
 2007-05-25  Marek Habersack  <mhabersack@novell.com>
 
 	* ObjectDataSourceView.cs: CreateDataObject must pay attention to
