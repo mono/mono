@@ -1,5 +1,11 @@
 2007-05-27  Raja R Harinath  <harinath@gmail.com>
 
+	New ExplicitBlock invariants
+	* statement.cs (Block.Explicit): New field.  It points to the
+	immediately enclosing non-implicit block.
+	(Block..ctor): Maintain the invariant.
+	* cs-parser.jay: Take advantage of invariant.
+
 	Introduce ExplicitBlock
 	* statement.cs (ExplicitBlock): New.
 	(ToplevelBlock): Derive from it.

@@ -4153,11 +4153,7 @@ switch_section
 	  }
  	  statement_list 
 	  {
-		Block topmost = current_block;
-
-		while (topmost.Implicit)
-			topmost = topmost.Parent;
-		$$ = new SwitchSection ((ArrayList) $1, topmost);
+		$$ = new SwitchSection ((ArrayList) $1, current_block.Explicit);
 	  }
 	;
 
@@ -5170,13 +5166,9 @@ void start_block (Location loc)
 Block
 end_block (Location loc)
 {
-	Block retval;
-
-	while (current_block.Implicit)
-		current_block = current_block.Parent;
-	retval = current_block;
-	current_block.SetEndLocation (loc);
-	current_block = current_block.Parent;
+	Block retval = current_block.Explicit;
+	retval.SetEndLocation (loc);
+	current_block = retval.Parent;
 	if (current_block == null)
 		top_current_block = null;
 	return retval;

@@ -1441,6 +1441,7 @@ namespace Mono.CSharp {
 		public readonly Location  StartLocation;
 		public Location EndLocation = Location.Null;
 
+		public ExplicitBlock Explicit;
 		public ToplevelBlock Toplevel;
 
 		[Flags]
@@ -1551,11 +1552,16 @@ namespace Mono.CSharp {
 			else
 				Toplevel = parent.Toplevel;
 
+			if ((flags & Flags.IsExplicit) != 0)
+				Explicit = (ExplicitBlock) this;
+			else
+				Explicit = parent.Explicit;
+
 			if (parent != null && Implicit) {
-				if (parent.known_variables == null)
-					parent.known_variables = new Hashtable ();
+				if (Explicit.known_variables == null)
+					Explicit.known_variables = new Hashtable ();
 				// share with parent
-				known_variables = parent.known_variables;
+				known_variables = Explicit.known_variables;
 			}
 		}
 
@@ -1732,9 +1738,7 @@ namespace Mono.CSharp {
 			Block b = this;
 			LocalInfo kvi = b.GetKnownVariableInfo (name, true);
 			while (kvi == null) {
-				while (b.Implicit)
-					b = b.Parent;
-				b = b.Parent;
+				b = b.Explicit.Parent;
 				if (b == null)
 					return true;
 				kvi = b.GetKnownVariableInfo (name, false);
@@ -1744,7 +1748,7 @@ namespace Mono.CSharp {
 				return true;
 
 			// Is kvi.Block nested inside 'b'
-			if (b.known_variables != kvi.Block.known_variables) {
+			if (b.Explicit != kvi.Block.Explicit) {
 				//
 				// If a variable by the same name it defined in a nested block of this
 				// block, we violate the invariant meaning in a block.

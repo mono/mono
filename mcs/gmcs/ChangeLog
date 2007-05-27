@@ -1,5 +1,7 @@
 2007-05-27  Raja R Harinath  <harinath@gmail.com>
 
+	* cs-parser.jay: Update to new ExplicitBlock invariant.
+
 	* cs-parser.jay: Update to changes introduced in Block and
 	ExplicitBlock.
 
