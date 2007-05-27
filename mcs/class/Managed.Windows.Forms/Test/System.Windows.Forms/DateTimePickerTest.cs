@@ -22,7 +22,6 @@
 // Authors:
 //	Rolf Bjarne Kvinge	RKvinge@novell.com
 
-
 using System;
 using System.ComponentModel;
 using System.Drawing;
@@ -48,24 +47,18 @@ namespace MonoTests.System.Windows.Forms {
 		
 		private static void CheckCulture ()
 		{
-			try {
-				if (Environment.OSVersion.Platform == PlatformID.Win32Windows) {
-					int LCID = GetUserDefaultLCID ();
-					if ((new CultureInfo ("en-US")).LCID != LCID) {
-						Assert.Ignore ("Must be called with us-english locale, current locale is: " + new CultureInfo (LCID).Name);
-						return;
-					}
+			if (!TestHelper.RunningOnUnix) {
+				int LCID = GetUserDefaultLCID ();
+				if ((new CultureInfo ("en-US")).LCID != LCID) {
+					Assert.Ignore ("Must be called with us-english locale, current locale is: " + new CultureInfo (LCID).Name);
 				}
-			} catch (Exception ex) {
-				//ignore any exceptions.
-				TestHelper.RemoveWarning (ex);
 			}
 			
 			if (Thread.CurrentThread.CurrentCulture.Name != "en-US") {
 				Assert.Ignore ("Must be called with us-english locale, current locale is: " + Thread.CurrentThread.CurrentCulture.Name);
-				return;
 			}
 		}
+
 #if NET_2_0
 		// Only use on Windows!
 		public static string GenerateCustomFormatTests ()
@@ -132,9 +125,7 @@ namespace MonoTests.System.Windows.Forms {
 
 			return builder.ToString ();
 		}
-#endif	
-
-
+#endif
 
 		// On Windows this test must be called with en-US locale specified in the regional settings.
 		// There is no way to change this programmatically for the test to run correctly on other locales
@@ -3002,8 +2993,6 @@ namespace MonoTests.System.Windows.Forms {
 				Assert.AreEqual (@" 07-02", dt.Text, "#1423");
 				dt.CustomFormat = @"-yy-MM";
 				Assert.AreEqual (@"-07-02", dt.Text, "#1424");
-
-
 			}
 		}
 
@@ -3174,10 +3163,12 @@ namespace MonoTests.System.Windows.Forms {
 		[Test]
 		public void TextTest ()
 		{
+			CheckCulture ();
+
 			DateTimePicker dt = new DateTimePicker ();
 			EventLogger log = new EventLogger (dt);
 			DateTime tomorrow = DateTime.Today.AddDays (1);
-			
+
 			log.Clear ();
 			dt.Value = tomorrow;
 			Assert.AreEqual ("", dt.Text, "#1");
@@ -3236,7 +3227,6 @@ namespace MonoTests.System.Windows.Forms {
 		{
 			DateTimePicker dt = new DateTimePicker ();
 			dt.Text = "abcdef";
-		
 		}
 	}
 }

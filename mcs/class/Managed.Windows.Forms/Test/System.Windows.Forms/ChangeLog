@@ -1,5 +1,10 @@
 2007-05-27  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* DateTimePickerTest.cs: Avoid test failures on Windows system with
+	non-us locale.
+
+2007-05-27  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* NumericUpDownTest.cs: Avoid use of global identifier since csc 1.x
 	does not support this.
 	* FormTest.cs: Avoid using anonymous methods. Allows our test to build
