@@ -347,8 +347,6 @@ namespace Mono.CSharp {
 		/// </summary>
 		public bool InIterator;
 
-		public bool IsLastStatement;
-
 		/// <summary>
 		///  Whether we are in a `fixed' initialization
 		/// </summary>

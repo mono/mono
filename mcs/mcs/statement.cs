@@ -2340,15 +2340,6 @@ namespace Mono.CSharp {
 		{
 			for (int ix = 0; ix < num_statements; ix++){
 				Statement s = (Statement) statements [ix];
-
-				// Check whether we are the last statement in a
-				// top-level block.
-
-				if (((Parent == null) || Implicit) && (ix+1 == num_statements) && !(s is Block))
-					ec.IsLastStatement = true;
-				else
-					ec.IsLastStatement = false;
-
 				s.Emit (ec);
 			}
 		}
