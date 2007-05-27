@@ -2,6 +2,7 @@
 using System;
 using System.ComponentModel;
 using System.Drawing;
+using System.Globalization;
 using System.Reflection;
 using System.Windows.Forms;
 using System.Collections;
@@ -83,7 +84,7 @@ namespace MonoTests.System.Windows.Forms
 		[Test]
 		public void Hexadecimal ()
 		{
-			Threading.Thread.CurrentThread.CurrentCulture = new global::System.Globalization.CultureInfo ("en-US");
+			Threading.Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US");
 			Form f = new Form ();
 			NumericUpDown nud = new NumericUpDown ();
 			nud.Maximum = 100000;
@@ -100,7 +101,7 @@ namespace MonoTests.System.Windows.Forms
 		[Test]
 		public void ThousandsSeparator ()
 		{
-			Threading.Thread.CurrentThread.CurrentCulture = new global::System.Globalization.CultureInfo ("en-US");
+			Threading.Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US");
 			Form f = new Form ();
 			NumericUpDown nud = new NumericUpDown ();
 			nud.Maximum = 100000;

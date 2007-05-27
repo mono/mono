@@ -29,7 +29,7 @@ namespace MonoTests.System.Windows.Forms
 			using (TimeBombedForm f = new TimeBombedForm ()) {
 				EventLogger log = new EventLogger (f);
 				f.timer.Interval = 1000;
-				f.VisibleChanged += delegate (object sender, EventArgs e) { f.Reason = "VisibleChanged"; ((Control)sender).Visible = false; };
+				f.VisibleChanged += new EventHandler (Form_VisibleChanged1);
 				f.ShowDialog ();
 				
 				Assert.AreEqual ("VisibleChanged", f.Reason, "#00");
@@ -67,13 +67,7 @@ namespace MonoTests.System.Windows.Forms
 
 			using (TimeBombedForm f = new TimeBombedForm ()) {
 				EventLogger log = new EventLogger (f);
-				f.VisibleChanged += delegate (object sender, EventArgs e) 
-				{ 
-					f.Reason = "VisibleChanged"; 
-					f.Visible = false;
-					f.DialogResult = DialogResult.OK;
-					Assert.AreEqual (false, f.Visible, "#B?");
-				};
+				f.VisibleChanged += new EventHandler (Form_VisibleChanged2);
 				f.ShowDialog ();
 
 				Assert.AreEqual ("VisibleChanged", f.Reason, "#B0");
@@ -111,9 +105,24 @@ namespace MonoTests.System.Windows.Forms
 				
 				Assert.AreEqual (DialogResult.Cancel, f.DialogResult, "#C7");
 			}
-
 		}
-	
+
+		void Form_VisibleChanged1 (object sender, EventArgs e)
+		{
+			TimeBombedForm f = (TimeBombedForm) sender;
+			f.Reason = "VisibleChanged";
+			f.Visible = false;
+		}
+
+		void Form_VisibleChanged2 (object sender, EventArgs e)
+		{
+			TimeBombedForm f = (TimeBombedForm) sender;
+			f.Reason = "VisibleChanged";
+			f.Visible = false;
+			f.DialogResult = DialogResult.OK;
+			Assert.IsFalse (f.Visible);
+		}
+
 		[Test]
 		public void DialogOwnerTest ()
 		{
