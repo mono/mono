@@ -312,6 +312,48 @@ namespace MonoTests.System.Drawing {
 		}
 
 		[Test]
+		public void DrawRectangles ()
+		{
+			IntPtr image;
+			GDIPlus.GdipCreateBitmapFromScan0 (10, 10, 0, PixelFormat.Format32bppArgb, IntPtr.Zero, out image);
+			Assert.IsTrue (image != IntPtr.Zero, "image");
+
+			IntPtr graphics;
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipGetImageGraphicsContext (image, out graphics), "GdipGetImageGraphicsContext");
+			Assert.IsTrue (graphics != IntPtr.Zero, "graphics");
+
+			Rectangle[] r = new Rectangle[1] { new Rectangle (1, 2, -2, -1) };
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipDrawRectanglesI (graphics, IntPtr.Zero, r, 1), "GdipDrawRectanglesI-PenNull");
+
+			RectangleF[] rf = new RectangleF[2] { new RectangleF (1, 2, -2, -1), new RectangleF (0, 0, 10, 10) };
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipDrawRectangles (graphics, IntPtr.Zero, rf, 2), "GdipDrawRectanglesI-PenNull");
+
+			IntPtr pen;
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipCreatePen1 (0, 0f, Unit.UnitWorld, out pen), "GdipCreatePen1");
+			Assert.IsTrue (pen != IntPtr.Zero, "pen");
+
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipDrawRectanglesI (IntPtr.Zero, pen, r, 1), "GdipDrawRectanglesI-GraphicsNull");
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipDrawRectangles (IntPtr.Zero, pen, rf, 2), "GdipDrawRectangles-GraphicsNull");
+
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipDrawRectanglesI (graphics, pen, null, 1), "GdipDrawRectanglesI-RectanglesNull");
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipDrawRectangles (graphics, pen, null, 1), "GdipDrawRectangles-RectanglesNull");
+
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipDrawRectanglesI (graphics, pen, new Rectangle[0], 0), "GdipDrawRectanglesI-RectanglesEmpty");
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipDrawRectangles (graphics, pen, new RectangleF[0], 0), "GdipDrawRectangles-RectanglesEmpty");
+
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipDrawRectanglesI (graphics, pen, r, -1), "GdipDrawRectanglesI-RectanglesNegative");
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipDrawRectangles (graphics, pen, rf, -1), "GdipDrawRectangles-RectanglesNegative");
+
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipDrawRectanglesI (graphics, pen, r, 1), "GdipDrawRectanglesI-Rectangles1");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipDrawRectangles (graphics, pen, rf, 2), "GdipDrawRectangles-Rectangles2");
+
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipDeletePen (pen), "GdipDeletePen");
+
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipDeleteGraphics (graphics), "GdipDeleteGraphics");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipDisposeImage (image), "GdipDisposeImage");
+		}
+
+		[Test]
 		public void MeasureCharacterRanges ()
 		{
 			IntPtr image;

@@ -1427,12 +1427,10 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-		[Category ("NotWorking")] // libgdiplus is one pixel off (+1,+1)
 		public void FillDrawRectangle_Width_2 ()
 		{
 			// even pen size
 			using (Bitmap bitmap = FillDrawRectangle (2.0f)) {
-				bitmap.Save (@"FillDrawRectangle_Width_2.bmp");
 				// NW
 				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (3, 3).ToArgb (), "3,3");
 				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (4, 4).ToArgb (), "4,4");
@@ -1592,7 +1590,6 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-		[Category ("NotWorking")] // libgdiplus is one pixel off (+1,+1)
 		public void DrawFillRectangle_Width_2 ()
 		{
 			// even pen size

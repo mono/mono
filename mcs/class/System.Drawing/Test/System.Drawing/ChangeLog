@@ -1,3 +1,9 @@
+2007-05-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* GDIPlusTest.cs: Add test cases for GdipDrawRectangles[I]
+	* TestGraphics.cs: Re-enable [Draw|Fill]Rectangles tests and remove
+	the saved bitmap (used for debugging).
+
 2007-05-28  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* TestGraphics.cs: Add test cases for [Draw|Fill]Rectangles (#81737)
