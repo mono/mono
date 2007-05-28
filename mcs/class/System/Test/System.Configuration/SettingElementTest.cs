@@ -46,7 +46,9 @@ namespace MonoTests.System.Configuration
 				SettingElementCollection c = new SettingElementCollection ();
 				c.Add (null);
 				Assert.Fail ();
-			} catch {
+			} catch (NullReferenceException) {
+				// .net s cks here
+			} catch (ArgumentNullException) {
 			}
 		}
 
