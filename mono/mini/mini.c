@@ -10666,10 +10666,11 @@ mini_select_instructions (MonoCompile *cfg)
 
 				bb->last_ins->opcode = reverse_branch_op (bb->last_ins->opcode);
 			} else {			
-				MonoInst *inst = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoInst));
-				inst->opcode = OP_BR;
-				inst->inst_target_bb = bb->last_ins->inst_false_bb;
-				mono_bblock_add_inst (bb, inst);
+				MonoInst *ins;
+
+				MONO_INST_NEW (cfg, ins, OP_BR);
+				ins->inst_target_bb = bb->last_ins->inst_false_bb;
+				MONO_ADD_INS (bb, ins);
 			}
 		}
 	}

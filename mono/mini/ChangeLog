@@ -1,5 +1,7 @@
 2007-05-28  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mini_select_instructions): Add MONO_INST_NEW in one place.
+
 	* mini-codegen.c: Remove unused regstate2 functions.
 
 	* method-to-ir.c (mono_method_to_ir2): Fix loading of static fields of type i8.
