@@ -118,7 +118,7 @@ namespace System.Windows.Forms {
 			}
 			set {
 				supress_key_press = value;
-				event_handled = true;
+				event_handled = value;
 			}
 		}
 #endif

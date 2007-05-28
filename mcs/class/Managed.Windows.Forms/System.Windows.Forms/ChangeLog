@@ -1,3 +1,7 @@
+2007-05-28  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* KeyEventArgs.cs: Fix typo.
+
 2007-05-28  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DateTimePicker.cs: Changed exceptions thrown by MinDate and MaxDate
