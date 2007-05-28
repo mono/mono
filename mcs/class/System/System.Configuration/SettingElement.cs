@@ -44,7 +44,7 @@ namespace System.Configuration
 		static SettingElement ()
 		{
 #if CONFIGURATION_DEP
-			name_prop = new ConfigurationProperty ("name", typeof (string), null, ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
+			name_prop = new ConfigurationProperty ("name", typeof (string), String.Empty, ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
 			serialize_as_prop = new ConfigurationProperty ("serializeAs", typeof (SettingsSerializeAs), null, ConfigurationPropertyOptions.IsRequired);
 			value_prop = new ConfigurationProperty ("value", typeof (SettingValueElement), null, ConfigurationPropertyOptions.IsRequired);
 			properties = new ConfigurationPropertyCollection ();

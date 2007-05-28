@@ -1,5 +1,10 @@
 2007-05-28  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SettingElement.cs : fix default value (null->"").
+	* SettingElementCollection.cs : implemented all.
+
+2007-05-28  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SettingsProviderAttribute.cs :
 	  Return assembly qualified name. Check null args.
 	* ConfigXmlDocument.cs : it implements IConfigErrorInfo.

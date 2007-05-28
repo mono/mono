@@ -40,28 +40,29 @@ namespace System.Configuration
 		{
 		}
 
-		[MonoTODO]
 		public void Add (SettingElement element)
 		{
-			throw new NotImplementedException ();
+			BaseAdd (element);
 		}
 
-		[MonoTODO]
 		public void Clear ()
 		{
-			throw new NotImplementedException ();
+			BaseClear ();
 		}
 
-		[MonoTODO]
 		public SettingElement Get (string elementKey)
 		{
-			throw new NotImplementedException ();
+			foreach (SettingElement el in this)
+				if (el.Name == elementKey)
+					return el;
+			return null;
 		}
 
-		[MonoTODO]
 		public void Remove (SettingElement element)
 		{
-			throw new NotImplementedException ();
+			if (element == null)
+				throw new ArgumentNullException ("element");
+			BaseRemove (element.Name);
 		}
 
 #if (CONFIGURATION_DEP)
