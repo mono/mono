@@ -1,5 +1,9 @@
 2007-05-28  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* TextBoxTest.cs: Ignore a couple of font-dependent tests.
+
+2007-05-28  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* MonthCalendarTest.cs: Added InitialSizeTest.
 
 2007-05-28  Rolf Bjarne Kvinge <RKvinge@novell.com> 

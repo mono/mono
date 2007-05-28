@@ -250,6 +250,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test] // bug #80626
+		[Ignore ("Depends on default font height")]
 		public void BorderStyle_None ()
 		{
 			textBox.BorderStyle = BorderStyle.None;
@@ -281,6 +282,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test] // bug #80620
+		[Ignore ("Depends on default font height")]
 		public void ClientRectangle_Borders ()
 		{
 			textBox.CreateControl ();
