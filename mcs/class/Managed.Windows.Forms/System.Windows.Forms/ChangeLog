@@ -1,3 +1,9 @@
+2007-05-28  Andreia Gaita  <avidigal@novell.com>
+
+	* X11Dnd.cs: A direct cast to VirtualKeys is not allowed from
+	an IntPtr on csc (it builds fine on mcs, could it be a compiler
+	bug?), convert the ptr to Int32 first.
+
 2007-05-28  Jackson Harper  <jackson@ximian.com>
 
 	* X11Dnd.cs: Add a timer, so after drop, if a finish is not

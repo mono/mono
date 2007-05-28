@@ -559,7 +559,7 @@ namespace System.Windows.Forms {
 
 		public void HandleKeyMessage (MSG msg)
 		{
-			if (VirtualKeys.VK_ESCAPE == (VirtualKeys) msg.wParam) {
+			if (VirtualKeys.VK_ESCAPE == (VirtualKeys) msg.wParam.ToInt32()) {
 				QueryContinue (true, DragAction.Cancel);
 			}
 		}
