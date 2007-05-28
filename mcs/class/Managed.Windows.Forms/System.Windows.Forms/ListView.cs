@@ -103,6 +103,8 @@ namespace System.Windows.Forms
 		private ItemMatrixLocation [] items_matrix_location;
 		private Size item_size; // used for caching item size
 #if NET_2_0
+		private bool show_item_tooltips;
+		private ToolTip item_tooltip;
 		private Size tile_size;
 		private bool virtual_mode;
 		private int virtual_list_size;
@@ -248,6 +250,10 @@ namespace System.Windows.Forms
 			selected_items = new SelectedListViewItemCollection (this);
 			items_location = new Point [16];
 			items_matrix_location = new ItemMatrixLocation [16];
+#if NET_2_0
+			item_tooltip = new ToolTip ();
+			item_tooltip.Active = false;
+#endif
 
 			InternalBorderStyle = BorderStyle.Fixed3D;
 
@@ -635,6 +641,17 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public ListViewGroupCollection Groups {
 			get { return groups; }
+		}
+
+		[DefaultValue (false)]
+		public bool ShowItemToolTips {
+			get {
+				return show_item_tooltips;
+			}
+			set {
+				show_item_tooltips = value;
+				item_tooltip.Active = false;
+			}
 		}
 #endif
 
@@ -1816,6 +1833,7 @@ namespace System.Windows.Forms
 			bool hover_processed = false;
 			bool checking = false;
 			ListViewItem prev_hovered_item;
+			ListViewItem prev_tooltip_item;
 			int clicks;
 			
 			ListViewLabelEditTextBox edit_text_box;
@@ -2076,14 +2094,30 @@ namespace System.Windows.Forms
 				bool done = PerformBoxSelection (new Point (me.X, me.Y));
 
 				if (!done && hover_processed) {
-
 					Point pt = PointToClient (Control.MousePosition);
 					ListViewItem item = owner.GetItemAt (pt.X, pt.Y);
+
 					if (item != null && item != prev_hovered_item) {
 						hover_processed = false;
 						XplatUI.ResetMouseHover (Handle);
 					}
 				}
+
+#if NET_2_0
+				if (!done && owner.ShowItemToolTips) {
+					Point pt = PointToClient (Control.MousePosition);
+					ListViewItem item = owner.GetItemAt (pt.X, pt.Y);
+
+					if (item == null) {
+						owner.item_tooltip.Active = false;
+						prev_tooltip_item = null;
+					} else if (item != prev_tooltip_item && item.ToolTipText.Length > 0) {
+						owner.item_tooltip.Active = true;
+						owner.item_tooltip.SetToolTip (owner, item.ToolTipText);
+						prev_tooltip_item = item;
+					}
+				}
+#endif
 
 				owner.OnMouseMove (owner.TranslateMouseEventArgs (me));
 			}

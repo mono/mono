@@ -50,6 +50,7 @@ namespace System.Windows.Forms
 		private ListViewGroup group = null;
 		private string name = String.Empty;
 		private string image_key = String.Empty;
+		string tooltip_text = String.Empty;
 		int index;			// cached index for VirtualMode
 #endif
 		Rectangle bounds;
@@ -531,6 +532,19 @@ namespace System.Windows.Forms
 				}
 			}
 		}
+
+		[DefaultValue ("")]
+		public string ToolTipText {
+			get {
+				return tooltip_text;
+			}
+			set {
+				if (value == null)
+					value = String.Empty;
+
+				tooltip_text = value;
+			}
+		}
 #endif
 
 		#endregion	// Public Instance Properties
@@ -568,6 +582,7 @@ namespace System.Windows.Forms
 			clone.owner = null;
 #if NET_2_0
 			clone.name = name;
+			clone.tooltip_text = tooltip_text;
 #endif
 
 			return clone;
