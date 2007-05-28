@@ -1788,7 +1788,7 @@ namespace MonoTests.System.Windows.Forms
 		public TimeBombedForm ()
 		{
 			timer = new Timer ();
-			timer.Interval = 100;
+			timer.Interval = 500;
 			timer.Tick += new EventHandler (timer_Tick);
 			timer.Start ();
 		}

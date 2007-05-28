@@ -1,3 +1,8 @@
+2007-05-28  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* FormTest.cs: Increase timeout value. Might prevent tests from failing
+	  on slower computers.
+
 2007-05-28  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DateTimePickerTest.cs: Added tests for MinDate and MaxDate.
