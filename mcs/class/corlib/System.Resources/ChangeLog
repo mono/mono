@@ -1,5 +1,10 @@
 2007-05-28  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ResourceWriter.cs : fix for runtime serialization type index.
+	  Fixed bug #81759.
+
+2007-05-28  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ResourceWriter.cs : temporarily disable 2.0 output until I get
 	  bug #81759 fixed.
 

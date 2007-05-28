@@ -1,5 +1,9 @@
 2007-05-28  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ResourceWriterTest.cs : new test, contains one for bug #81759.
+
+2007-05-28  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ResourceManagerTest.cs : added tests for GetStream() (including
 	  2.0 resource format tests).
 

@@ -132,6 +132,7 @@ System.Reflection/StrongNameKeyPairTest.cs
 System/ResolveEventArgsTest.cs
 System.Resources/ResourceReaderTest.cs
 System.Resources/ResourceManagerTest.cs
+System.Resources/ResourceWriterTest.cs
 System.Runtime.CompilerServices/RuntimeHelpersTest.cs
 System.Runtime.CompilerServices/RuntimeWrappedExceptionTest.cs
 System.Runtime.InteropServices/GCHandleTest.cs

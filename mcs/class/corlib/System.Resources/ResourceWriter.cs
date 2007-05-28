@@ -56,7 +56,7 @@ namespace System.Resources
 			}
 		}
 
-#if NET_2_0_temporarily_disabled
+#if NET_2_0
 		SortedList resources = new SortedList (StringComparer.Ordinal);
 #else
 		Hashtable resources = new Hashtable(CaseInsensitiveHashCodeProvider.Default, CaseInsensitiveComparer.Default);
@@ -155,7 +155,7 @@ namespace System.Resources
 			stream=null;
 		}
 
-#if NET_2_0_temporarily_disabled
+#if NET_2_0
 		public void AddResourceData (string name, string typeName, byte [] serializedData)
 		{
 			if (name == null)
@@ -202,7 +202,7 @@ namespace System.Resources
 							     Encoding.UTF8);
 
 			resman.Write(typeof(ResourceReader).AssemblyQualifiedName);
-#if NET_2_0_temporarily_disabled
+#if NET_2_0
 			resman.Write(typeof(ResourceSet).FullName);
 #else
 			resman.Write(typeof(ResourceSet).AssemblyQualifiedName);
@@ -261,7 +261,7 @@ namespace System.Resources
 				object typeObj = tbn != null ? (object) tbn.TypeName : type;
 
 				/* Keep a list of unique types */
-#if NET_2_0_temporarily_disabled
+#if NET_2_0
 				// do not output predefined ones.
 				switch (type != null ? Type.GetTypeCode (type) : TypeCode.Empty) {
 				case TypeCode.Decimal:
@@ -289,7 +289,7 @@ namespace System.Resources
 					if (!types.Contains (typeObj))
 						types.Add (typeObj);
 					/* Write the data section */
-					Write7BitEncodedInt(res_data, types.IndexOf(typeObj));
+					Write7BitEncodedInt(res_data, (int) PredefinedResourceType.FistCustom + types.IndexOf(typeObj));
 					break;
 				}
 #else
@@ -302,7 +302,7 @@ namespace System.Resources
 				/* Strangely, Char is serialized
 				 * rather than just written out
 				 */
-#if NET_2_0_temporarily_disabled
+#if NET_2_0
 				if (tbn != null)
 					res_data.Write((byte []) tbn.Value);
 				else if (type==typeof(Byte)) {
@@ -410,7 +410,7 @@ namespace System.Resources
 			
 			/* now do the ResourceReader header */
 
-#if NET_2_0_temporarily_disabled
+#if NET_2_0
 			writer.Write(2);
 #else
 			writer.Write(1);
