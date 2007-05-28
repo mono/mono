@@ -161,7 +161,12 @@ table.sampleCode {{width: 100%; background-color: #ffffcc; }}
 		{
 			StringBuilder builder = new StringBuilder ();
 			WriteFileTop (builder, "Runtime Error");
-			builder.Append (@"<p><strong>Description:</strong> An application error occurred on the server. The current custom error settings for this application prevent the details of the application error from being viewed remotely (for security reasons). It could, however, be viewed by browsers running on the local server machine.</p>
+			builder.Append (@"<p><strong>Description:</strong> An application error occurred on the server. The current custom error settings for this application prevent the details of the application error from being viewed remotely (for security reasons)." + (
+#if TARGET_J2EE //on portal we cannot know if we run locally
+				HttpContext.Current.IsPortletRequest ? String.Empty :
+#endif
+				" It could, however, be viewed by browsers running on the local server machine.") 
+				+ @"</p>
 <p><strong>Details:</strong> To enable the details of this specific error message to be viewable on remote machines, please create a &lt;customErrors&gt; tag within a &quot;web.config&quot; configuration file located in the root directory of the current web application. This &lt;customErrors&gt; tag should then have its &quot;mode&quot; attribute set to &quot;Off&quot;.</p>
 <table class=""sampleCode""><tr><td><pre>
 
