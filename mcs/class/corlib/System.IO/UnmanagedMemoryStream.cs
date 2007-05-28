@@ -50,6 +50,8 @@ namespace System.IO
 		long initial_position;
 		long current_position;
 		
+		internal event EventHandler Closed;
+		
 #region Constructor
 		protected UnmanagedMemoryStream()
 		{
@@ -257,8 +259,11 @@ namespace System.IO
 		 
 		protected override void Dispose (bool disposing)
 		{
-
+			if (closed)
+				return;
 			closed = true;
+			if (Closed != null)
+				Closed (this, null);
 		}
 		 
 		public override void Write (byte[] buffer, int offset, int count)

@@ -57,6 +57,14 @@ namespace System.IO {
 			position = 0;
 		}
 
+		internal IntPtr BaseAddress {
+			get {
+				unsafe {
+					return new IntPtr ((void*) base_address);
+				}
+			}
+		}
+
 		public override bool CanRead {
 			get {
 				return true;

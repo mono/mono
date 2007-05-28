@@ -35,11 +35,15 @@
 using System.Collections;
 using System.Reflection;
 using System.Globalization;
+using System.Runtime.InteropServices;
 using System.IO;
 
 namespace System.Resources
 {
 	[Serializable]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public class ResourceManager
 	{
 		public static readonly int HeaderVersionNumber = 1;
@@ -56,6 +60,10 @@ namespace System.Resources
 		
 		/* Recursing through culture parents stops here */
 		private CultureInfo neutral_culture;
+
+#if NET_2_0
+		private UltimateResourceFallbackLocation fallbackLocation;
+#endif
 		
 		// constructors
 		protected ResourceManager () {
@@ -280,13 +288,36 @@ namespace System.Resources
 					return ass.GetManifestResourceStream (s);
 			return null;
 		}
-		
+
+#if NET_2_0
+		[CLSCompliant (false)]
+		[ComVisible (false)]
+		public UnmanagedMemoryStream GetStream (string name)
+		{
+			return GetStream (name, CultureInfo.InvariantCulture);
+		}
+
+		[CLSCompliant (false)]
+		[ComVisible (false)]
+		public UnmanagedMemoryStream GetStream (string name, CultureInfo culture)
+		{
+			if (name == null)
+				throw new ArgumentNullException ("name");
+			if (culture == null)
+				throw new ArgumentNullException ("culture");
+			ResourceSet set = InternalGetResourceSet (culture, true, true);
+			if (set == null)
+				throw new MissingManifestResourceException (String.Format ("Could not find any resource appropriate for the specified culture or its parents (resource file : \"{0}\")", GetResourceFileName(culture)));
+
+			return set.GetStream (name);
+		}
+#endif
 		protected virtual ResourceSet InternalGetResourceSet (CultureInfo culture, bool Createifnotexists, bool tryParents)
 		{
 			ResourceSet set;
 			
 			if (culture == null) {
-				string msg = String.Format ("Could not find any resource appropiate for the " +
+				string msg = String.Format ("Could not find any resource appropriate for the " +
 							    "specified culture or its parents (assembly:{0})",
 							    MainAssembly != null ? MainAssembly.GetName ().Name : "");
 							    
@@ -331,7 +362,7 @@ namespace System.Resources
 					 */
 					set=(ResourceSet)Activator.CreateInstance(resourceSetType, args);
 				} else if (culture.Equals (CultureInfo.InvariantCulture)) {
-					string msg = "Could not find any resource appropiate for the " +
+					string msg = "Could not find any resource appropriate for the " +
 						     "specified culture or its parents. " +
 						     "Make sure \"{1}\" was correctly embedded or " +
 						     "linked into assembly \"{0}\".";
@@ -424,5 +455,13 @@ namespace System.Resources
 				return(new Version(sat_attr.Version));
 			}
 		}
+
+#if NET_2_0
+		[MonoTODO ("the property exists but is not respected")]
+		protected UltimateResourceFallbackLocation FallbackLocation {
+			get { return fallbackLocation; }
+			set { fallbackLocation = value; }
+		}
+#endif
 	}
 }

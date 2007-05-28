@@ -30,6 +30,8 @@
 #if NET_2_0
 namespace System.Resources
 {
+	[System.Runtime.InteropServices.ComVisible (true)]
+	[Serializable]
 	public enum UltimateResourceFallbackLocation {
 		MainAssembly = 0,
 		Satellite = 1

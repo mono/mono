@@ -71,6 +71,51 @@ namespace MonoTests.System.Resources
 			Assert.AreEqual ("Hello World", rm.GetObject ("HelloWorld"), "#02");
 		}
 
+#if NET_2_0
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void GetStreamOverNonStream ()
+		{
+			Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
+			ResourceManager rm = ResourceManager.
+				CreateFileBasedResourceManager ("MyResources", "Test/resources", null);
+			UnmanagedMemoryStream s = rm.GetStream ("HelloWorld");
+			Assert.AreEqual (10, s.Length, "#1");
+			Assert.AreEqual ("Hello World", new StreamReader (s).ReadToEnd (), "#2");
+		}
+
+		[Test]
+		public void TestInvariantCultureStreamMissing ()
+		{
+			Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
+			ResourceManager rm = ResourceManager.
+				CreateFileBasedResourceManager ("StreamTest", "Test/resources", null);
+			Assert.IsNull (rm.GetStream ("HelloWorld")); // no such resource
+		}
+
+		[Test]
+		public void TestInvariantCultureStream ()
+		{
+			Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
+			ResourceManager rm = ResourceManager.
+				CreateFileBasedResourceManager ("StreamTest", "Test/resources", null);
+			UnmanagedMemoryStream s = rm.GetStream ("test");
+			Assert.AreEqual (22, s.Length, "#1");
+			Assert.AreEqual ("veritas vos liberabit\n", new StreamReader (s).ReadToEnd (), "#2");
+		}
+
+		[Test]
+		public void TestCustomCultureStream ()
+		{
+			Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
+			ResourceManager rm = ResourceManager.
+				CreateFileBasedResourceManager ("StreamTest", "Test/resources", null);
+			UnmanagedMemoryStream s = rm.GetStream ("test", new CultureInfo ("ja-JP"));
+			Assert.AreEqual (22, s.Length, "#1");
+			Assert.AreEqual ("Veritas Vos Liberabit\n", new StreamReader (s).ReadToEnd (), "#2");
+		}
+#endif
+
 		[Test]
 		public void TestGermanCulture ()
 		{

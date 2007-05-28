@@ -39,9 +39,28 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace System.Resources
 {
+#if NET_2_0
+	[System.Runtime.InteropServices.ComVisible (true)]
+#endif
 	public sealed class ResourceWriter : IResourceWriter, IDisposable
 	{
-		Hashtable resources;
+		class TypeByNameObject
+		{
+			public readonly string TypeName;
+			public readonly byte [] Value;
+
+			public TypeByNameObject (string typeName, byte [] value)
+			{
+				TypeName = typeName;
+				Value = (byte []) value.Clone ();
+			}
+		}
+
+#if NET_2_0
+		SortedList resources = new SortedList (StringComparer.Ordinal);
+#else
+		Hashtable resources = new Hashtable(CaseInsensitiveHashCodeProvider.Default, CaseInsensitiveComparer.Default);
+#endif
 		Stream stream;
 		
 		public ResourceWriter (Stream stream)
@@ -52,7 +71,6 @@ namespace System.Resources
 				throw new ArgumentException ("stream is not writable.");
 
 			this.stream=stream;
-			resources=new Hashtable(CaseInsensitiveHashCodeProvider.Default, CaseInsensitiveComparer.Default);
 		}
 		
 		public ResourceWriter (String fileName)
@@ -61,7 +79,6 @@ namespace System.Resources
 				throw new ArgumentNullException ("fileName is null.");
 
 			stream=new FileStream(fileName, FileMode.Create, FileAccess.Write);
-			resources=new Hashtable(CaseInsensitiveHashCodeProvider.Default, CaseInsensitiveComparer.Default);
 		}
 		
 		public void AddResource (string name, byte[] value)
@@ -137,7 +154,22 @@ namespace System.Resources
 			resources=null;
 			stream=null;
 		}
-		
+
+#if NET_2_0
+		public void AddResourceData (string name, string typeName, byte [] serializedData)
+		{
+			if (name == null)
+				throw new ArgumentNullException ("name");
+			if (typeName == null)
+				throw new ArgumentNullException ("typeName");
+			if (serializedData == null)
+				throw new ArgumentNullException ("serializedData");
+
+			// shortcut
+			AddResource (name, new TypeByNameObject (typeName, serializedData));
+		}
+#endif
+
 		private bool generated=false;
 		
 		public void Generate () {
@@ -170,7 +202,11 @@ namespace System.Resources
 							     Encoding.UTF8);
 
 			resman.Write(typeof(ResourceReader).AssemblyQualifiedName);
+#if NET_2_0
+			resman.Write(typeof(ResourceSet).FullName);
+#else
 			resman.Write(typeof(ResourceSet).AssemblyQualifiedName);
+#endif
 
 			/* Only space for 32 bits of header len in the
 			 * resource file format
@@ -218,19 +254,116 @@ namespace System.Resources
 					count++;
 					continue;
 				}
-				
-				Type type=res_enum.Value.GetType();
+				// implementation note: TypeByNameObject is
+				// not used in 1.x profile.
+				TypeByNameObject tbn = res_enum.Value as TypeByNameObject;
+				Type type = tbn != null ? null : res_enum.Value.GetType();
+				object typeObj = tbn != null ? (object) tbn.TypeName : type;
 
 				/* Keep a list of unique types */
-				if(!types.Contains(type)) {
-					types.Add(type);
-				}
+#if NET_2_0
+				// do not output predefined ones.
+				switch (type != null ? Type.GetTypeCode (type) : TypeCode.Empty) {
+				case TypeCode.Decimal:
+				case TypeCode.Single:
+				case TypeCode.Double:
+				case TypeCode.SByte:
+				case TypeCode.Int16:
+				case TypeCode.Int32:
+				case TypeCode.Int64:
+				case TypeCode.Byte:
+				case TypeCode.UInt16:
+				case TypeCode.UInt32:
+				case TypeCode.UInt64:
+				case TypeCode.DateTime:
+				case TypeCode.String:
+					break;
+				default:
+					if (type == typeof (TimeSpan))
+						break;
+					if (type == typeof (MemoryStream))
+						break;
+					if (type==typeof(byte[]))
+						break;
 
+					if (!types.Contains (typeObj))
+						types.Add (typeObj);
+					/* Write the data section */
+					Write7BitEncodedInt(res_data, types.IndexOf(typeObj));
+					break;
+				}
+#else
+				if (!types.Contains (typeObj))
+					types.Add (typeObj);
 				/* Write the data section */
 				Write7BitEncodedInt(res_data, types.IndexOf(type));
+#endif
+
 				/* Strangely, Char is serialized
 				 * rather than just written out
 				 */
+#if NET_2_0
+				if (tbn != null)
+					res_data.Write((byte []) tbn.Value);
+				else if (type==typeof(Byte)) {
+					res_data.Write((byte) PredefinedResourceType.Byte);
+					res_data.Write((Byte)res_enum.Value);
+				} else if (type==typeof(Decimal)) {
+					res_data.Write((byte) PredefinedResourceType.Decimal);
+					res_data.Write((Decimal)res_enum.Value);
+				} else if (type==typeof(DateTime)) {
+					res_data.Write((byte) PredefinedResourceType.DateTime);
+					res_data.Write(((DateTime)res_enum.Value).Ticks);
+				} else if (type==typeof(Double)) {
+					res_data.Write((byte) PredefinedResourceType.Double);
+					res_data.Write((Double)res_enum.Value);
+				} else if (type==typeof(Int16)) {
+					res_data.Write((byte) PredefinedResourceType.Int16);
+					res_data.Write((Int16)res_enum.Value);
+				} else if (type==typeof(Int32)) {
+					res_data.Write((byte) PredefinedResourceType.Int32);
+					res_data.Write((Int32)res_enum.Value);
+				} else if (type==typeof(Int64)) {
+					res_data.Write((byte) PredefinedResourceType.Int64);
+					res_data.Write((Int64)res_enum.Value);
+				} else if (type==typeof(SByte)) {
+					res_data.Write((byte) PredefinedResourceType.SByte);
+					res_data.Write((SByte)res_enum.Value);
+				} else if (type==typeof(Single)) {
+					res_data.Write((byte) PredefinedResourceType.Single);
+					res_data.Write((Single)res_enum.Value);
+				} else if (type==typeof(String)) {
+					res_data.Write((byte) PredefinedResourceType.String);
+					res_data.Write((String)res_enum.Value);
+				} else if (type==typeof(TimeSpan)) {
+					res_data.Write((byte) PredefinedResourceType.TimeSpan);
+					res_data.Write(((TimeSpan)res_enum.Value).Ticks);
+				} else if (type==typeof(UInt16)) {
+					res_data.Write((byte) PredefinedResourceType.UInt16);
+					res_data.Write((UInt16)res_enum.Value);
+				} else if (type==typeof(UInt32)) {
+					res_data.Write((byte) PredefinedResourceType.UInt32);
+					res_data.Write((UInt32)res_enum.Value);
+				} else if (type==typeof(UInt64)) {
+					res_data.Write((byte) PredefinedResourceType.UInt64);
+					res_data.Write((UInt64)res_enum.Value);
+				} else if (type==typeof(byte[])) {
+					res_data.Write((byte) PredefinedResourceType.ByteArray);
+					byte [] data = (byte[])res_enum.Value;
+					res_data.Write((uint) data.Length);
+					res_data.Write(data, 0, data.Length);
+				} else if (type==typeof(MemoryStream)) {
+					res_data.Write((byte) PredefinedResourceType.Stream);
+					byte [] data = ((MemoryStream)res_enum.Value).ToArray ();
+					res_data.Write((uint) data.Length);
+					res_data.Write(data, 0, data.Length);
+				} else {
+					/* non-intrinsic types are
+					 * serialized
+					 */
+					formatter.Serialize(res_data.BaseStream, res_enum.Value);
+				}
+#else
 				if(type==typeof(Byte)) {
 					res_data.Write((Byte)res_enum.Value);
 				} else if (type==typeof(Decimal)) {
@@ -265,6 +398,7 @@ namespace System.Resources
 					 */
 					formatter.Serialize(res_data.BaseStream, res_enum.Value);
 				}
+#endif
 
 				count++;
 			}
@@ -276,13 +410,20 @@ namespace System.Resources
 			
 			/* now do the ResourceReader header */
 
+#if NET_2_0
+			writer.Write(2);
+#else
 			writer.Write(1);
+#endif
 			writer.Write(resources.Count);
 			writer.Write(types.Count);
 
 			/* Write all of the unique types */
-			foreach(Type type in types) {
-				writer.Write(type.AssemblyQualifiedName);
+			foreach(object type in types) {
+				if (type is Type)
+					writer.Write(((Type) type).AssemblyQualifiedName);
+				else
+					writer.Write((string) type);
 			}
 
 			/* Pad the next fields (hash values) on an 8
@@ -328,6 +469,7 @@ namespace System.Resources
 			writer.Flush();
 		}
 
+		// looks like it is (similar to) DJB hash
 		private int GetHash(string name)
 		{
 			uint hash=5381;

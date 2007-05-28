@@ -1,3 +1,8 @@
+2007-05-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* UnmanagedMemoryStream.cs : added Closed event for sys.Resources use.
+	* IntPtrStream.cs : added internal get_BaseAddress(), for the same.
+
 2007-05-25  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* UnmanagedMemoryStream.cs: In Read and ReadByte, use Marshal.ReadByte

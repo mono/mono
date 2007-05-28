@@ -1,3 +1,13 @@
+2007-05-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* IResourceWriter.cs NeutralResourcesLanguageAttribute.cs
+	  SatelliteContractVersionAttribute.cs ResourceManager.cs
+	  IResourceReader.cs ResourceSet.cs ResourceWriter.cs
+	  ResourceReader.cs UltimateResourceFallbackLocation.cs
+	  MissingManifestResourceException.cs :
+	  implemented 2.0 resource support (write, and remaining read bits)
+	  and GetStream(). Cosmetic attributes fixes.
+
 2007-05-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* MissingSatelliteAssemblyException.cs : new file.

@@ -32,6 +32,9 @@
 
 namespace System.Resources
 {
+#if NET_2_0
+	[System.Runtime.InteropServices.ComVisible (true)]
+#endif
 	[AttributeUsage (AttributeTargets.Assembly)]
 	public sealed class NeutralResourcesLanguageAttribute : Attribute
 	{

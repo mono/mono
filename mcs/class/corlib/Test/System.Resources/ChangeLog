@@ -1,3 +1,8 @@
+2007-05-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ResourceManagerTest.cs : added tests for GetStream() (including
+	  2.0 resource format tests).
+
 2006-12-30  Alexander Olk  <alex.olk@googlemail.com>
 
 	* ResourceManagerTest.cs: add one new test and remove NotWorking.

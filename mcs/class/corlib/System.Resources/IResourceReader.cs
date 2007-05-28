@@ -35,6 +35,9 @@ using System.Collections;
 
 namespace System.Resources
 {
+#if NET_2_0
+	[System.Runtime.InteropServices.ComVisible (true)]
+#endif
 	public interface IResourceReader : IEnumerable, IDisposable
 	{
 		void Close();

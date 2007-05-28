@@ -38,6 +38,9 @@ using System.Security.Permissions;
 namespace System.Resources
 {
 	[Serializable]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public class ResourceSet : IDisposable
 
 #if (NET_1_1)
@@ -46,6 +49,9 @@ namespace System.Resources
 
 	{
 
+#if NET_2_0
+		[NonSerialized]
+#endif
 		protected IResourceReader Reader;
 		protected Hashtable Table;
 
@@ -198,5 +204,20 @@ namespace System.Resources
 			while (i.MoveNext ()) 
 				Table.Add (i.Key, i.Value);
 		}
+
+#if NET_2_0
+		internal UnmanagedMemoryStream GetStream (string name)
+		{
+			if (Reader == null)
+				throw new InvalidOperationException ("ResourceSet is closed.");
+
+			IDictionaryEnumerator i = Reader.GetEnumerator();
+			i.Reset ();
+			while (i.MoveNext ())
+				if (name == (string) i.Key)
+					return ((ResourceReader.ResourceEnumerator) i).ValueAsStream;
+			return null;
+		}
+#endif
 	}
 }

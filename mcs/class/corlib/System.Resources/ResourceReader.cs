@@ -6,9 +6,10 @@
 //	Nick Drochak <ndrochak@gol.com>
 //	Dick Porter <dick@ximian.com>
 //	Marek Safar <marek.safar@seznam.cz>
+//	Atsushi Enomoto  <atsushi@ximian.com>
 //
 // (C) 2001, 2002 Ximian Inc, http://www.ximian.com
-// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005,2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -34,6 +35,7 @@ using System.Collections;
 using System.Resources;
 using System.IO;
 using System.Text;
+using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Permissions;
@@ -64,6 +66,9 @@ namespace System.Resources
 		FistCustom	= 64
 	}
 
+#if NET_2_0
+	[System.Runtime.InteropServices.ComVisible (true)]
+#endif
 	public sealed class ResourceReader : IResourceReader, IEnumerable, IDisposable
 	{
 		BinaryReader reader;
@@ -179,7 +184,6 @@ namespace System.Resources
 						throw new ArgumentException("Malformed .resources file (padding values incorrect)");
 					}
 				}
-
 				/* Read in the hash values for each
 				 * resource name.  These can be used
 				 * by ResourceSet (calling internal
@@ -303,7 +307,10 @@ namespace System.Resources
 					return reader.ReadBytes (reader.ReadInt32 ());
 
 				case PredefinedResourceType.Stream:
-					throw new NotImplementedException (PredefinedResourceType.Stream.ToString ());
+					// FIXME: create pinned UnmanagedMemoryStream for efficiency.
+					byte [] bytes = new byte [reader.ReadUInt32 ()];
+					reader.Read (bytes, 0, bytes.Length);
+					return new MemoryStream (bytes);
 			}
 
 			type_index -= (int)PredefinedResourceType.FistCustom;
@@ -367,7 +374,7 @@ namespace System.Resources
 			}
 			return obj;
 		}
-
+		
 		private object ResourceValue(int index)
 		{
 			lock(this)
@@ -397,6 +404,60 @@ namespace System.Resources
 				return ReadValueVer1 (types[type_index]);
 			}
 		}
+
+#if NET_2_0
+		internal UnmanagedMemoryStream ResourceValueAsStream (string name, int index)
+		{
+			lock(this)
+			{
+				long pos=positions[index]+nameSectionOffset;
+				reader.BaseStream.Seek(pos, SeekOrigin.Begin);
+
+				/* Read a 7-bit encoded byte length field */
+				long len=Read7BitEncodedInt();
+				/* ... and skip that data to the info
+				 * we want, the offset into the data
+				 * section
+				 */
+				reader.BaseStream.Seek(len, SeekOrigin.Current);
+
+				long data_offset=reader.ReadInt32();
+				reader.BaseStream.Seek(data_offset+dataSectionOffset, SeekOrigin.Begin);
+				int type_index=Read7BitEncodedInt();
+				if ((PredefinedResourceType)type_index != PredefinedResourceType.Stream)
+					throw new InvalidOperationException (String.Format ("Resource '{0}' was not a Stream. Use GetObject() instead.", name));
+
+				// here we return a Stream from exactly
+				// current position so that the returned
+				// Stream represents a single object stream.
+				long slen = reader.ReadInt32();
+				IntPtrStream basePtrStream = reader.BaseStream as IntPtrStream;
+				unsafe {
+					if (basePtrStream != null) {
+						byte* addr = (byte*) basePtrStream.BaseAddress.ToPointer ();
+						addr += basePtrStream.Position;
+						return new UnmanagedMemoryStream ((byte*) (void*) addr, slen);
+					} else {
+						IntPtr ptr = Marshal.AllocHGlobal ((int) slen);
+						byte* addr = (byte*) ptr.ToPointer ();
+						UnmanagedMemoryStream ms = new UnmanagedMemoryStream (addr, slen, slen, FileAccess.ReadWrite);
+						// The memory resource must be freed
+						// when the stream is disposed.
+						ms.Closed += delegate (object o, EventArgs e) {
+							Marshal.FreeHGlobal (ptr);
+						};
+						byte [] bytes = new byte [slen < 1024 ? slen : 1024];
+						for (int i = 0; i < slen; i += bytes.Length) {
+							int x = reader.Read (bytes, 0, bytes.Length);
+							ms.Write (bytes, 0, x);
+						}
+						ms.Seek (0, SeekOrigin.Begin);
+						return ms;
+					}
+				}
+			}
+		}
+#endif
 
 		public void Close ()
 		{
@@ -482,6 +543,19 @@ namespace System.Resources
 					return(reader.ResourceValue(index));
 				}
 			}
+			
+#if NET_2_0
+			public UnmanagedMemoryStream ValueAsStream
+			{
+				get {
+					if (reader.reader == null)
+						throw new InvalidOperationException("ResourceReader is closed.");
+					if (index < 0)
+						throw new InvalidOperationException("Enumeration has not started. Call MoveNext.");
+					return(reader.ResourceValueAsStream((string) Key, index));
+				}
+			}
+#endif
 			
 			public virtual object Current
 			{
