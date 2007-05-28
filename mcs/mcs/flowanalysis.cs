@@ -407,8 +407,18 @@ namespace Mono.CSharp
 		// </summary>
 		public UsageVector MergeChild (FlowBranching child)
 		{
-			bool overwrite = child.Type == BranchingType.Labeled ||
-				(child.Type == BranchingType.Block && child.Block != null && child.Block.Implicit);
+			bool overwrite = false;
+
+			switch (child.Type) {
+			case BranchingType.Labeled:
+				overwrite = true;
+				break;
+			case BranchingType.Block:
+				if (child.Block != null && child.Block != child.Block.Explicit)
+					overwrite = true;
+				break;
+			}
+
 			Report.Debug (2, "  MERGING CHILD", this, child);
 			UsageVector result = CurrentUsageVector.MergeChild (child.Merge (), overwrite);
 			Report.Debug (2, "  MERGING CHILD DONE", this, result);

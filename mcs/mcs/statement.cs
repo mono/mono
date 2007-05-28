@@ -1460,10 +1460,6 @@ namespace Mono.CSharp {
 		}
 		protected Flags flags;
 
-		public bool Implicit {
-			get { return (flags & Flags.IsExplicit) == 0; }
-		}
-
 		public bool Unchecked {
 			get { return (flags & Flags.Unchecked) != 0; }
 			set { flags |= Flags.Unchecked; }
@@ -1622,7 +1618,7 @@ namespace Mono.CSharp {
 					return false;
 				}
 
-				if (!Implicit)
+				if (this == Explicit)
 					break;
 
 				cur = cur.Parent;
@@ -1668,7 +1664,7 @@ namespace Mono.CSharp {
 				return null;
 
 			foreach (Block child in children) {
-				if (!child.Implicit)
+				if (Explicit != child.Explicit)
 					continue;
 
 				s = child.LookupLabel (name);
@@ -1766,7 +1762,7 @@ namespace Mono.CSharp {
 				return false;
 
 			Block b = this;
-			while (b.Implicit) {
+			while (b != Explicit) {
 				if (!b.Parent.DoCheckError136_InChildren (name, loc))
 					return false;
 				b = b.Parent;
@@ -2314,7 +2310,7 @@ namespace Mono.CSharp {
 			ec.CurrentBlock = this;
 
 			bool emit_debug_info = (CodeGen.SymbolWriter != null);
-			bool is_lexical_block = !Implicit && (Parent != null);
+			bool is_lexical_block = this == Explicit && Parent != null;
 
 			if (emit_debug_info) {
 				if (is_lexical_block)
