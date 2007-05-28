@@ -187,6 +187,8 @@ namespace System.Windows.Forms {
 			
 			// this replaces paint so call the control version
 			base.Paint += new PaintEventHandler (PaintHandler);
+			
+			Size = DefaultSize;
 		}
 		
 		// called when this control is added to date time picker

@@ -1,5 +1,10 @@
 2007-05-28  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* MonthCalendar.cs: Set the size after initializing all the relevant
+	  variables. Fixes #81742.
+
+2007-05-28  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* KeyEventArgs.cs: Fix typo.
 
 2007-05-28  Gert Driesen  <drieseng@users.sourceforge.net>
