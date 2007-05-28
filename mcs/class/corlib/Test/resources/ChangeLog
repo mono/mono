@@ -1,0 +1,6 @@
+2007-05-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* StreamTest.ja.resources, StreamTest.resources :
+	  new resources for ResourceManagerTest.
+
+	  (ChangeLog was missing until today.)
