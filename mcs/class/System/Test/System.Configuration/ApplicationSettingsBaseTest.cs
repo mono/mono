@@ -283,9 +283,13 @@ namespace MonoTests.System.Configuration {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestSettings2_Properties ()
 		{
+			// This test will fail when there are newer versions
+			// of the test assemblies - so conditionalize it in
+			// such cases.
+			string expected = "MonoTests.System.Configuration.ProviderPoker, System_test_net_2_0, Version=0.0.0.0";
+			Assert.AreEqual (expected, new SettingsProviderAttribute (typeof (ProviderPoker)).ProviderTypeName.Substring (0, expected.Length), "#1");
 			TestSettings2 settings = new TestSettings2 ();
 
 			/* should throw ConfigurationException */

@@ -1,3 +1,7 @@
+2007-05-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ApplicationSettingsBaseTest.cs : enable working test.
+
 2007-01-14  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
         * SettingsPropertyValueTest.cs: added tests for IsDirty proprty

@@ -38,6 +38,9 @@ namespace System.Configuration
 {
 	[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
 	public sealed class ConfigXmlDocument : XmlDocument, IConfigXmlNode
+#if NET_2_0 && CONFIGURATION_DEP
+		, System.Configuration.Internal.IConfigErrorInfo
+#endif
 	{
 		XmlTextReader reader;
 		string fileName;

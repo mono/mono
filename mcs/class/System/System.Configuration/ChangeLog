@@ -1,3 +1,9 @@
+2007-05-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SettingsProviderAttribute.cs :
+	  Return assembly qualified name. Check null args.
+	* ConfigXmlDocument.cs : it implements IConfigErrorInfo.
+
 2007-03-15  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* SettingsPropertyValue.cs: fixed binary deserealization that may be

@@ -38,12 +38,16 @@ namespace System.Configuration
 
 		public SettingsProviderAttribute (string providerTypeName)
 		{
+			if (providerTypeName == null)
+				throw new ArgumentNullException ("providerTypeName");
 			this.providerTypeName = providerTypeName;
 		}
 
 		public SettingsProviderAttribute (Type providerType)
 		{
-			this.providerTypeName = providerType.Name;
+			if (providerType == null)
+				throw new ArgumentNullException ("providerType");
+			this.providerTypeName = providerType.AssemblyQualifiedName;
 		}
 
 
