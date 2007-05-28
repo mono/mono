@@ -5506,6 +5506,16 @@ namespace System.Windows.Forms
 			DrawBorderInternal(graphics, bounds.Left, bounds.Bottom-1, bounds.Right-1, bounds.Bottom-1, bottomWidth, bottomColor, bottomStyle, Border3DSide.Bottom);
 		}
 
+		public override void CPDrawBorder (Graphics graphics, RectangleF bounds, Color leftColor, int leftWidth,
+			ButtonBorderStyle leftStyle, Color topColor, int topWidth, ButtonBorderStyle topStyle,
+			Color rightColor, int rightWidth, ButtonBorderStyle rightStyle, Color bottomColor,
+			int bottomWidth, ButtonBorderStyle bottomStyle) {
+			DrawBorderInternal(graphics, bounds.Left, bounds.Top, bounds.Left, bounds.Bottom-1, leftWidth, leftColor, leftStyle, Border3DSide.Left);
+			DrawBorderInternal(graphics, bounds.Left, bounds.Top, bounds.Right-1, bounds.Top, topWidth, topColor, topStyle, Border3DSide.Top);
+			DrawBorderInternal(graphics, bounds.Right-1, bounds.Top, bounds.Right-1, bounds.Bottom-1, rightWidth, rightColor, rightStyle, Border3DSide.Right);
+			DrawBorderInternal(graphics, bounds.Left, bounds.Bottom-1, bounds.Right-1, bounds.Bottom-1, bottomWidth, bottomColor, bottomStyle, Border3DSide.Bottom);
+		}
+
 		public override void CPDrawBorder3D (Graphics graphics, Rectangle rectangle, Border3DStyle style, Border3DSide sides) {
 			CPDrawBorder3D(graphics, rectangle, style, sides, ColorControl);
 		}
@@ -6465,7 +6475,14 @@ namespace System.Windows.Forms
 			dc.DrawString (s, font, ResPool.GetSolidBrush (cpcolor.Dark), layoutRectangle, format);
 		}
 
-		private static void DrawBorderInternal(Graphics graphics, int startX, int startY, int endX, int endY,
+		private static void DrawBorderInternal (Graphics graphics, int startX, int startY, int endX, int endY,
+			int width, Color color, ButtonBorderStyle style, Border3DSide side) 
+		{
+			DrawBorderInternal (graphics, (float) startX, (float) startY, (float) endX, (float) endY, 
+				width, color, style, side);
+		}
+
+		private static void DrawBorderInternal (Graphics graphics, float startX, float startY, float endX, float endY,
 			int width, Color color, ButtonBorderStyle style, Border3DSide side) {
 
 			Pen pen = null;

@@ -990,6 +990,11 @@ namespace System.Windows.Forms
 			Color rightColor, int rightWidth, ButtonBorderStyle rightStyle, Color bottomColor,
 			int bottomWidth, ButtonBorderStyle bottomStyle);
 
+		public abstract void CPDrawBorder (Graphics graphics, RectangleF bounds, Color leftColor, int leftWidth,
+			ButtonBorderStyle leftStyle, Color topColor, int topWidth, ButtonBorderStyle topStyle,
+			Color rightColor, int rightWidth, ButtonBorderStyle rightStyle, Color bottomColor,
+			int bottomWidth, ButtonBorderStyle bottomStyle);
+
 		public abstract void CPDrawBorder3D (Graphics graphics, Rectangle rectangle, Border3DStyle style, Border3DSide sides);
 		public abstract void CPDrawBorder3D (Graphics graphics, Rectangle rectangle, Border3DStyle style, Border3DSide sides, Color control_color);
 		public abstract void CPDrawButton (Graphics graphics, Rectangle rectangle, ButtonState state);

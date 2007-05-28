@@ -1,3 +1,19 @@
+2007-05-28  Andreia Gaita  <avidigal@novell.com>
+
+	* PageSetupDialog.cs: Implement PrintPreview control to display
+	the preview thumbnail. Change unit conversion to use 
+	PrinterUnitConvert methods.
+	
+	Note: there is a huge bug in ms.net where the default margins are 
+	interpreted as centimeters (?), when in fact they are set in inches. When 
+	loading the page setup dialog initially (ms.net), the default margins 
+	are set to 1 inch, and the dialog shows them with value 10, when in fact 
+	it should be 25 (properly converted). Our dialog doesn't have this bug.
+	
+	* Theme.cs, ThemeWin32Classic.cs: Add a CPDrawBorder override for 
+	RectangleF.
+	* ControlPaint.cs: Add a DrawBorder internal method for RectangleF.
+
 2007-05-28  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs:

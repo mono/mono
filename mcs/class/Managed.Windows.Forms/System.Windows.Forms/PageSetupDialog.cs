@@ -38,8 +38,6 @@ namespace System.Windows.Forms {
 
 	[DefaultProperty("Document")]
 	public sealed class PageSetupDialog : CommonDialog {
-		//const int yard_pound_default = 100;
-		//static readonly int meter_default = (int) Math.Round (10 * 3.937 * 100);
 
 		#region Local variables
 		private PrintDocument document;
@@ -75,6 +73,7 @@ namespace System.Windows.Forms {
 		private ComboBox combobox_source;
 		private ComboBox combobox_size;
 		private PrinterForm printer_helper_form;
+		private PagePreview pagePreview;
 		#endregion // Local variables
 
 		#region Public Constructors
@@ -222,6 +221,7 @@ namespace System.Windows.Forms {
 			this.textbox_top = new System.Windows.Forms.NumericTextBox();
 			this.textbox_right = new System.Windows.Forms.NumericTextBox();
 			this.textbox_bottom = new System.Windows.Forms.NumericTextBox();
+			this.pagePreview = new PagePreview ();
 			this.groupbox_paper.SuspendLayout();
 			this.groupbox_orientation.SuspendLayout();
 			this.groupbox_margin.SuspendLayout();
@@ -254,6 +254,7 @@ namespace System.Windows.Forms {
 			this.combobox_size.Name = "combobox_size";
 			this.combobox_size.Size = new System.Drawing.Size(240, 21);
 			this.combobox_size.TabIndex = 2;
+			this.combobox_size.SelectedIndexChanged += new EventHandler(this.OnPaperSizeChange);
 			// 
 			// label_source
 			// 
@@ -289,6 +290,7 @@ namespace System.Windows.Forms {
 			this.radio_landscape.Size = new System.Drawing.Size(80, 24);
 			this.radio_landscape.TabIndex = 7;
 			this.radio_landscape.Text = "L&andscape";
+			this.radio_landscape.CheckedChanged += new EventHandler(this.OnLandscapeChange);
 			// 
 			// radio_portrait
 			// 
@@ -380,6 +382,7 @@ namespace System.Windows.Forms {
 			this.textbox_left.Name = "textbox_left";
 			this.textbox_left.Size = new System.Drawing.Size(48, 20);
 			this.textbox_left.TabIndex = 4;
+			this.textbox_left.TextChanged +=new EventHandler(OnMarginChange);
 			// 
 			// textbox_top
 			//
@@ -387,6 +390,7 @@ namespace System.Windows.Forms {
 			this.textbox_top.Name = "textbox_top";
 			this.textbox_top.Size = new System.Drawing.Size(48, 20);
 			this.textbox_top.TabIndex = 5;
+			this.textbox_top.TextChanged +=new EventHandler(OnMarginChange);
 			// 
 			// textbox_right
 			// 
@@ -394,6 +398,7 @@ namespace System.Windows.Forms {
 			this.textbox_right.Name = "textbox_right";
 			this.textbox_right.Size = new System.Drawing.Size(48, 20);
 			this.textbox_right.TabIndex = 6;
+			this.textbox_right.TextChanged +=new EventHandler(OnMarginChange);
 			// 
 			// textbox_bottom
 			// 
@@ -401,6 +406,14 @@ namespace System.Windows.Forms {
 			this.textbox_bottom.Name = "textbox_bottom";
 			this.textbox_bottom.Size = new System.Drawing.Size(48, 20);
 			this.textbox_bottom.TabIndex = 7;
+			this.textbox_bottom.TextChanged +=new EventHandler(OnMarginChange);
+			// 
+			// pagePreview
+			// 
+			this.pagePreview.Location = new System.Drawing.Point (96, 5);
+			this.pagePreview.Name = "pagePreview";
+			this.pagePreview.Size = new System.Drawing.Size (150, 150);
+			this.pagePreview.TabIndex = 6;
 			// 
 			// Form3
 			// 
@@ -408,7 +421,8 @@ namespace System.Windows.Forms {
 			form.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
 			form.CancelButton = this.button_cancel;
 			form.ClientSize = new System.Drawing.Size(360, 390);
-			form.Controls.Add(this.button_printer);
+			form.Controls.Add (this.pagePreview);
+			form.Controls.Add (this.button_printer);
 			form.Controls.Add(this.button_cancel);
 			form.Controls.Add(this.button_ok);
 			form.Controls.Add(this.groupbox_margin);
@@ -444,15 +458,15 @@ namespace System.Windows.Forms {
 		private double ToLocalizedLength (int marginsUnit)
 		{
 			return UseYardPound ?
-				marginsUnit / 100.0 :
-				marginsUnit / 10.0;
+				PrinterUnitConvert.Convert (marginsUnit, PrinterUnit.ThousandthsOfAnInch, PrinterUnit.Display) :
+				PrinterUnitConvert.Convert (marginsUnit, PrinterUnit.ThousandthsOfAnInch, PrinterUnit.TenthsOfAMillimeter);
 		}
 
 		private int FromLocalizedLength (double marginsUnit)
 		{
-			return UseYardPound ?
-				(int) (marginsUnit * 100.0) :
-				(int) (marginsUnit * 3.937);
+			return  (int)(UseYardPound ?
+				PrinterUnitConvert.Convert (marginsUnit, PrinterUnit.Display, PrinterUnit.ThousandthsOfAnInch) :
+				PrinterUnitConvert.Convert (marginsUnit, PrinterUnit.TenthsOfAMillimeter, PrinterUnit.ThousandthsOfAnInch));
 		}
 
 		private string LocalizedLengthUnit ()
@@ -500,6 +514,10 @@ namespace System.Windows.Forms {
 			groupbox_orientation.Enabled = AllowOrientation;
 			groupbox_paper.Enabled = AllowPaper;
 			groupbox_margin.Enabled = AllowMargins;
+
+			pagePreview.Setup (PageSettings);
+
+			
 		}
 
 		private void OnClickOkButton (object sender, EventArgs e)
@@ -560,6 +578,33 @@ namespace System.Windows.Forms {
 					PrinterSettings.PrinterName = printer_helper_form.SelectedPrinter;
 
 			button_ok.Select ();
+		}
+
+		void OnPaperSizeChange (object sender, EventArgs e)
+		{
+			if (combobox_size.SelectedItem != null) {
+				foreach (PaperSize paper_size in InternalPrinterSettings.PaperSizes) {
+					if (paper_size.PaperName == (string) combobox_size.SelectedItem) {
+						pagePreview.SetSize (paper_size.Width, paper_size.Height);
+						break;
+					}
+				}
+			}
+		}
+
+		void OnMarginChange (object sender, EventArgs e)
+		{
+			pagePreview.SetMargins (
+				FromLocalizedLength (textbox_left.Value),
+				FromLocalizedLength (textbox_right.Value),
+				FromLocalizedLength (textbox_top.Value),
+				FromLocalizedLength (textbox_bottom.Value)
+			);
+		}
+
+		void OnLandscapeChange (object sender, EventArgs e)
+		{
+			pagePreview.Landscape = radio_landscape.Checked;
 		}
 		#endregion // Private Helper
 
@@ -786,5 +831,125 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		private class PagePreview : UserControl
+		{
+			int width;
+			int height;
+
+			int marginBottom;
+			int marginTop;
+			int marginLeft;
+			int marginRight;
+			bool landscape;
+
+			bool loaded = false;
+
+			System.Text.StringBuilder sb;
+			float displayHeight;
+			Font font;
+
+			public bool Landscape
+			{
+				get { return landscape; }
+				set
+				{
+					if (landscape != value) {
+						landscape = value;
+						int a = width;
+						width = height;
+						height = a;
+					}
+					Invalidate ();
+				}
+			}
+
+			public float Height {
+				get { return displayHeight; }
+				set { displayHeight = value; }
+			}
+
+			public PagePreview ()
+			{
+				sb = new System.Text.StringBuilder ();
+				for (int i = 0; i < 4; i++) {
+					sb.Append ("blabla piu piublapiu haha lai dlais dhlçai shd ");
+					sb.Append ("çoasd çlaj sdç\r\n lajsd lçaisdj lçillaisd lahs dli");
+					sb.Append ("laksjd liasjdliasdj blabla piu piublapiu haha ");
+					sb.Append ("lai dlais dhlçai shd çoasd çlaj sdç lajsd lçaisdj");
+					sb.Append (" lçillaisd lahs dli laksjd liasjdliasdj\r\n\r\n");
+				}
+				
+				font = new Font (FontFamily.GenericSansSerif, 4);
+				this.displayHeight = 130;
+			}
+
+			public void SetSize (int width, int height)
+			{
+				this.width = width;
+				this.height = height;
+				this.Invalidate ();
+			}
+
+			public void SetMargins (int left, int right, int top, int bottom)
+			{
+				this.marginBottom = bottom;
+				this.marginTop = top;
+				this.marginLeft = left;
+				this.marginRight = right;
+				this.Invalidate ();
+			}
+
+
+			public void Setup (PageSettings pageSettings)
+			{
+				this.width = pageSettings.PaperSize.Width;
+				this.height = pageSettings.PaperSize.Height;
+
+				Margins margins = pageSettings.Margins;
+				this.marginBottom = margins.Bottom;
+				this.marginTop = margins.Top;
+				this.marginLeft = margins.Left;
+				this.marginRight = margins.Right;
+				this.landscape = pageSettings.Landscape;
+				this.loaded = true;
+			}
+
+			protected override void OnPaint (PaintEventArgs e)
+			{
+				if (!loaded) {
+					base.OnPaint (e);
+					return;
+				}
+
+				Graphics g = e.Graphics;
+
+				float w = (width * displayHeight) / height;
+				float top = (marginTop * displayHeight) / height;
+				float left = (marginLeft * displayHeight) / height;
+				float bottom = (marginBottom * displayHeight) / height;
+				float right = (marginRight * displayHeight) / height;
+
+				g.FillRectangle (SystemBrushes.ControlDark, 4, 4, w + 4, displayHeight + 4);
+				g.FillRectangle (Brushes.White, 0, 0, w, displayHeight);
+
+				RectangleF outerrect = new RectangleF (0, 0, w, displayHeight);
+				RectangleF innerrect = new RectangleF (left, top,
+														w - left - right,
+														displayHeight - top - bottom);
+
+				ControlPaint.DrawBorder (g, outerrect, Color.Black, ButtonBorderStyle.Solid);
+				ControlPaint.DrawBorder (g, innerrect, SystemColors.ControlDark, ButtonBorderStyle.Dashed);
+
+				g.DrawString (sb.ToString (), font, Brushes.Black,
+								new RectangleF (innerrect.X + 2,
+											innerrect.Y + 2,
+											innerrect.Width - 4,
+											innerrect.Height - 4));
+
+
+				base.OnPaint (e);
+			}
+		}
 	}
+
 }
