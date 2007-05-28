@@ -3316,7 +3316,7 @@ namespace MonoTests.System.Windows.Forms {
 				dt.MinDate = new DateTime (2007, 8, 14);
 				Assert.Fail ("#C1");
 #if NET_2_0
-			/} catch (ArgumentOutOfRangeException ex) {
+			} catch (ArgumentOutOfRangeException ex) {
 				// '8/14/2007 12:00:00 AM' is not a valid value for 'MinDate'.
 				// 'MinDate' must be less than MaxDate
 				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#C2");
