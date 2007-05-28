@@ -1,3 +1,10 @@
+2007-05-28  Jackson Harper  <jackson@ximian.com>
+
+	* X11Dnd.cs: Keep tracking until the xdnd finished event is
+	recieved. TODO: I should probably stick a timer on the dropped
+	event, and finish the drag if the XDND Finished event never shows
+	(because some apps don't seem to send it).
+
 2007-05-28  Everaldo Canuto  <ecanuto@novell.com>
 
 	* ToolBar.cs: Fix toolbar default width for button with image. Fixes

@@ -567,6 +567,8 @@ namespace System.Windows.Forms {
 				return Accepting_HandleLeaveEvent (ref xevent);
 			if (xevent.ClientMessageEvent.message_type == XdndStatus)
 				return HandleStatusEvent (ref xevent);
+			if (xevent.ClientMessageEvent.message_type == XdndFinished)
+				return HandleFinishedEvent (ref xevent);
 
 			return false;
 		}
@@ -846,6 +848,12 @@ namespace System.Windows.Forms {
 			return true;
 		}
 
+		private bool HandleFinishedEvent (ref XEvent xevent)
+		{
+			tracking = false;
+			return true;
+		}
+
 		private DragDropEffects EffectFromAction (IntPtr action)
 		{
 			DragDropEffects allowed = DragDropEffects.None;
@@ -1043,8 +1051,6 @@ namespace System.Windows.Forms {
 			xevent.ClientMessageEvent.ptr1 = toplevel;
 
 			XplatUIX11.XSendEvent (display, source, false, IntPtr.Zero, ref xevent);
-
-			tracking = false;
 		}
 
 		// There is a somewhat decent amount of overhead
