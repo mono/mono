@@ -1,3 +1,7 @@
+2007-05-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (ves_icall_get_method_info): Handle loader errors. Fixes #81724.
+
 2007-05-25  Jonathan Chambers  <joncham@gmail.com>
 
        * marshal.c: Fix interface lookup loops for
