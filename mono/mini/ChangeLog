@@ -1,3 +1,7 @@
+2007-05-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mono_method_to_ir2): Fix loading of static fields of type i8.
+
 2007-05-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* abcremoval2.c (mono_perform_abc_removal2): Avoid using alloca.

@@ -345,6 +345,12 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
 		(dest)->dreg = alloc_dreg ((cfg), STACK_PTR);	\
 	} while (0)
 
+#define NEW_I8CONST(cfg,dest,val) do {  \
+        MONO_INST_NEW ((cfg), (dest), OP_I8CONST); \
+        (dest)->dreg = alloc_lreg ((cfg)); \
+        (dest)->inst_l = (val); \
+	} while (0)
+
 #define NEW_STORE_MEMBASE(cfg,dest,op,base,offset,sr) do { \
         MONO_INST_NEW ((cfg), (dest), (op)); \
         (dest)->sreg1 = sr; \
@@ -570,6 +576,8 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
 #define EMIT_NEW_ICONST(cfg,dest,val) do { NEW_ICONST ((cfg), (dest), (val)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
 
 #define EMIT_NEW_PCONST(cfg,dest,val) do { NEW_PCONST ((cfg), (dest), (val)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
+
+#define	EMIT_NEW_I8CONST(cfg,dest,val) do { NEW_I8CONST ((cfg), (dest), (val)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
 
 #define EMIT_NEW_AOTCONST(cfg,dest,patch_type,cons) do { NEW_AOTCONST ((cfg), (dest), (patch_type), (cons)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
 
@@ -7719,9 +7727,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 						break;
 					case MONO_TYPE_I8:
 					case MONO_TYPE_U8:
-						MONO_INST_NEW (cfg, *sp, OP_I8CONST);
-						sp [0]->type = STACK_I8;
-						sp [0]->inst_l = *((gint64 *)addr);
+						EMIT_NEW_I8CONST (cfg, *sp, *((gint64 *)addr));
 						sp++;
 						break;
 					case MONO_TYPE_R4:
