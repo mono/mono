@@ -1,3 +1,8 @@
+2007-05-28  Everaldo Canuto  <ecanuto@novell.com>
+
+	* ToolBar.cs: Fix toolbar default width for button with image. Fixes
+	#81733.
+
 2007-05-28  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* MonthCalendar.cs: Only mark the keypresses we actually handle as

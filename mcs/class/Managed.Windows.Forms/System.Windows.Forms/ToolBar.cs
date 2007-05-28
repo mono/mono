@@ -1327,7 +1327,11 @@ namespace System.Windows.Forms
 			if (button.Style == ToolBarButtonStyle.Separator)
 				return new Size (theme.ToolBarSeparatorWidth, ht);
 
-			Size size = TextSize.IsEmpty ? toolbar.default_size : TextSize;
+			Size size;
+			if (TextSize.IsEmpty && (button.Image == null))
+				size = toolbar.default_size;
+			else
+				size = TextSize;
 			
 			Size image_size = (toolbar.ImageSize == Size.Empty) ? new Size (16, 16) : toolbar.ImageSize;
 
