@@ -344,6 +344,7 @@ namespace System.Windows.Forms {
 		//private IntPtr CurrentCursorHandle;
 
 		private bool tracking = false;
+		private bool dropped = false;
 		private X11Keyboard keyboard;
 
 		public X11Dnd (IntPtr display, X11Keyboard keyboard)
@@ -462,6 +463,16 @@ namespace System.Windows.Forms {
 
 		private void DndTickHandler (object sender, EventArgs e)
 		{
+			// This is to make sure we don't get stuck in a loop if another
+			// app doesn't finish the DND operation
+			if (dropped) {
+				Timer t = (Timer) sender;
+				if (t.Interval == 500)
+					tracking = false;
+				else
+					t.Interval = 500;
+			}
+
 			HandleMouseOver ();
 		}
 
@@ -1006,6 +1017,7 @@ namespace System.Windows.Forms {
 			xevent.ClientMessageEvent.ptr3 = time;
 			
 			XplatUIX11.XSendEvent (display, handle, false, IntPtr.Zero, ref xevent);
+			dropped = true;
 		}
 
 		private void SendPosition (IntPtr handle, IntPtr from, IntPtr action, int x, int y, IntPtr time)

@@ -1,5 +1,10 @@
 2007-05-28  Jackson Harper  <jackson@ximian.com>
 
+	* X11Dnd.cs: Add a timer, so after drop, if a finish is not
+	recieved, we will exit the dnd tracking loop.
+
+2007-05-28  Jackson Harper  <jackson@ximian.com>
+
 	* X11Dnd.cs: Keep tracking until the xdnd finished event is
 	recieved. TODO: I should probably stick a timer on the dropped
 	event, and finish the drag if the XDND Finished event never shows
