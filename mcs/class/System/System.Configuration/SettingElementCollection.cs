@@ -26,15 +26,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
+#if NET_2_0 && CONFIGURATION_DEP
 using System;
 
 namespace System.Configuration
 {
 	public sealed class SettingElementCollection
-#if (CONFIGURATION_DEP)
 		: ConfigurationElementCollection
-#endif
 	{
 		public SettingElementCollection ()
 		{
@@ -65,7 +63,6 @@ namespace System.Configuration
 			BaseRemove (element.Name);
 		}
 
-#if (CONFIGURATION_DEP)
 		protected override ConfigurationElement CreateNewElement ()
 		{
 			return new SettingElement ();
@@ -83,7 +80,6 @@ namespace System.Configuration
 		protected override string ElementName {
 			get { return "setting"; }
 		}
-#endif
 	}
 
 }

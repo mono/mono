@@ -1,5 +1,9 @@
 2007-05-28  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SettingElementCollection.cs : fix build, cyclic build mess.
+
+2007-05-28  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SettingElement.cs : fix default value (null->"").
 	* SettingElementCollection.cs : implemented all.
 
