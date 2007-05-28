@@ -1,3 +1,8 @@
+2007-05-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* liveness.c (update_gen_kill_set): No need to set VOLATILE flags here, it is done
+	by the update_volatile () function.
+
 2007-05-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* driver.c (mono_main): Call g_thread_init () early since newer glib versions
