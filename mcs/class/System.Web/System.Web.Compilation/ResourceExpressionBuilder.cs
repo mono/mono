@@ -57,13 +57,21 @@ namespace System.Web.Compilation {
 		{
 			ResourceExpressionFields fields = parsedData as ResourceExpressionFields;
 			CodeExpression[] expr;
+
+			// TODO: check what MS runtime does in this situation
+			if (entry == null)
+				return null;
 			
 			if (!String.IsNullOrEmpty (fields.ClassKey)) {
+				if (! (entry.PropertyInfo is PropertyInfo))
+					return null; // TODO: check what MS runtime does here
+				
 				expr = new CodeExpression [] {
 					new CodePrimitiveExpression (fields.ClassKey),
 					new CodePrimitiveExpression (fields.ResourceKey)
 				};
-				return new CodeMethodInvokeExpression (new CodeThisReferenceExpression (), "GetGlobalResourceObject", expr);
+				CodeMethodInvokeExpression getgro = new CodeMethodInvokeExpression (new CodeThisReferenceExpression (), "GetGlobalResourceObject", expr);
+				return new CodeCastExpression (entry.PropertyInfo.PropertyType, getgro);
 			} else
 				return CreateGetLocalResourceObject (entry.PropertyInfo, fields.ResourceKey);
 		}

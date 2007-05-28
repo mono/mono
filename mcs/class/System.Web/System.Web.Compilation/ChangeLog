@@ -1,3 +1,9 @@
+2007-05-28  Marek Habersack  <mhabersack@novell.com>
+
+	* ResourceExpressionBuilder.cs: properly cast
+	GetGlobalResourceObject calls to the type of the property being
+	assigned to.
+
 2007-05-25  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateControlCompiler.cs: Changed a few incorrect 
