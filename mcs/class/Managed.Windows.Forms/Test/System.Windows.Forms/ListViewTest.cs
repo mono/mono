@@ -57,6 +57,9 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (View.LargeIcon, mylistview.View, "#29");
 			mylistview.View = View.List;
 			Assert.AreEqual (false, mylistview.TopItem.Checked, "#30");
+#if NET_2_0
+			Assert.AreEqual (false, mylistview.ShowItemToolTips, "#31");
+#endif
 		}
 
 		[Test]

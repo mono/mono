@@ -1,3 +1,8 @@
+2007-05-28  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListView.cs:
+	* ListViewItem.cs: Added 2.0 ListViewItem.ToolTipText tests.
+
 2007-05-28  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* TextBoxTest.cs: Ignore a couple of font-dependent tests.

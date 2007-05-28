@@ -263,6 +263,7 @@ namespace MonoTests.System.Windows.Forms
 #if NET_2_0
 			Assert.AreEqual (String.Empty, item.Name, "DefaultValues#8");
 			Assert.AreEqual(String.Empty, item.ImageKey, "DefaultValues#9");
+			Assert.AreEqual (String.Empty, item.ToolTipText, "DefaultValues#10");
 #endif
 		}
 
@@ -340,6 +341,9 @@ namespace MonoTests.System.Windows.Forms
 			item1.BackColor = Color.Red;
 			item1.Font = new Font ("Arial", 14);
 			item1.SubItems.Add ("Element2");
+#if NET_2_0
+			item1.ToolTipText = item1.Text;
+#endif
 
 			ListViewItem item2 =  (ListViewItem) item1.Clone ();
 			Assert.AreEqual (Color.Blue, item2.ForeColor, "#1");
@@ -349,6 +353,9 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (2, item2.SubItems.Count, "#5");
 			Assert.AreEqual ("Hello", item2.SubItems [0].Text, "#6");
 			Assert.AreEqual ("Element2", item2.SubItems[1].Text, "#7");
+#if NET_2_0
+			Assert.AreEqual (item1.ToolTipText, item2.ToolTipText, "#8");
+#endif
 		}
 
 #if NET_2_0
@@ -372,6 +379,14 @@ namespace MonoTests.System.Windows.Forms
 			item1.ImageIndex = 0;
 			item1.ImageKey = String.Empty;
 			Assert.AreEqual (-1, item1.ImageIndex, "ImageIndex#4");
+		}
+
+		[Test]
+		public void ListViewItemToolTipText ()
+		{
+			ListViewItem item1 = new ListViewItem();
+			item1.ToolTipText = null;
+			Assert.AreEqual (String.Empty, item1.ToolTipText, "ToolTipText#1");
 		}
 #endif
 	}
