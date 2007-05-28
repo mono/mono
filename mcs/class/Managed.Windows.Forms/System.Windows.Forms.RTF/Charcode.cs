@@ -84,7 +84,10 @@ namespace System.Windows.Forms.RTF {
 				return codes[c];
 			}
 
-			private set {
+#if NET_2_0
+			private 
+#endif			
+			set {
 				if (c < 0 || c >= size) {
 					return;
 				}

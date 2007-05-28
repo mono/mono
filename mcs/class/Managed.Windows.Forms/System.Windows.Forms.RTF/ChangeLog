@@ -1,3 +1,8 @@
+2007-05-28  Andreia Gaita  <avidigal@novell.com>
+
+	* Charcode.cs: The "private" keyword is not allowed on 1.1 setters
+	on csc (blows up teh vs 2003 build)
+	
 2007-05-18  Marek Safar  <marek.safar@gmail.com>
 
 	* Charcode.cs: Added AnsiGeneric caching. 
