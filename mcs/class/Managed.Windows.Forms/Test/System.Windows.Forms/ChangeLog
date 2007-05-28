@@ -1,5 +1,9 @@
 2007-05-28  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* MonthCalendarTest.cs: Added InitialSizeTest.
+
+2007-05-28  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* FormTest.cs: Increase timeout value. Might prevent tests from failing
 	  on slower computers.
 

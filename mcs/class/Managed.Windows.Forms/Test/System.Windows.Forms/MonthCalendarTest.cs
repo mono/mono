@@ -125,6 +125,13 @@ namespace MonoTests.System.Windows.Forms
 
 			myfrm.Dispose ();
 		}
+		
+		[Test]
+		public void InitialSizeTest ()
+		{
+			MonthCalendar cal = new MonthCalendar ();
+			Assert.IsTrue (cal.Size != Size.Empty, "#01");
+		}
 	
 		[Test]
 		public void MonthCalMaxSelectionCountException ()
