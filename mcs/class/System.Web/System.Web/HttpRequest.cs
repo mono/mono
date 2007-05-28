@@ -882,12 +882,27 @@ namespace System.Web {
 
 		public string Path {
 			get {
-				if (unescaped_path == null)
+				if (unescaped_path == null) {
+					string path;
+					if (url_components != null) {
+						// use only if it's already been instantiated, so that we can't go into endless
+						// recursion in some scenarios
+						path = UrlComponents.Path;
+					} else {
 #if NET_2_0
-					unescaped_path = Uri.UnescapeDataString (UrlComponents.Path);
+						path = ApplyUrlMapping (worker_request.GetUriPath ());
 #else
-					unescaped_path = HttpUtility.UrlDecode (UrlComponents.Path);
+						path = worker_request.GetUriPath ();
 #endif
+					}
+						
+#if NET_2_0
+					unescaped_path = Uri.UnescapeDataString (path);
+#else
+					unescaped_path = HttpUtility.UrlDecode (path);
+#endif
+				}
+				
 				return unescaped_path;
 			}
 		}

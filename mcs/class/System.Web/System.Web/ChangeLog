@@ -1,3 +1,10 @@
+2007-05-28  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpRequest.cs: since Path is used from within
+	WebConfigurationManager, under some conditions it may lead to
+	endless recursion if the UrlComponents is not instantiated when
+	Path_get is called.
+
 2007-05-21  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* HttpContext.cs: added ProfileInitialized boolean property
