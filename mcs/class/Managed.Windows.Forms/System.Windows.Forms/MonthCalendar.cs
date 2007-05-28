@@ -2044,6 +2044,7 @@ namespace System.Windows.Forms {
 				if (!is_shift_pressed && e.Shift) {
 					first_select_start_date = SelectionStart;
 					is_shift_pressed = e.Shift;
+					e.Handled = true;
 				}
 				switch (e.KeyCode) {
 					case Keys.Home:
@@ -2059,6 +2060,7 @@ namespace System.Windows.Forms {
 							this.SetSelectionRange (date, date);
 						}
 						this.OnDateChanged (new DateRangeEventArgs (SelectionStart, SelectionEnd));
+						e.Handled = true;
 						break;
 					case Keys.End:
 						// set the date to the last of the month
@@ -2073,6 +2075,7 @@ namespace System.Windows.Forms {
 							this.SetSelectionRange (date, date);
 						}
 						this.OnDateChanged (new DateRangeEventArgs (SelectionStart, SelectionEnd));
+						e.Handled = true;
 						break;
 					case Keys.PageUp:
 						// set the date to the last of the month
@@ -2083,6 +2086,7 @@ namespace System.Windows.Forms {
 							this.SetSelectionRange (date, date);
 						}
 						this.OnDateChanged (new DateRangeEventArgs (SelectionStart, SelectionEnd));
+						e.Handled = true;
 						break;
 					case Keys.PageDown:
 						// set the date to the last of the month
@@ -2093,6 +2097,7 @@ namespace System.Windows.Forms {
 							this.SetSelectionRange (date, date);
 						}
 						this.OnDateChanged (new DateRangeEventArgs (SelectionStart, SelectionEnd));
+						e.Handled = true;
 						break;
 					case Keys.Up:
 						// set the back 1 week
@@ -2103,6 +2108,7 @@ namespace System.Windows.Forms {
 							this.SetSelectionRange (date, date);
 						}
 						this.OnDateChanged (new DateRangeEventArgs (SelectionStart, SelectionEnd));
+						e.Handled = true;
 						break;
 					case Keys.Down:
 						// set the date forward 1 week
@@ -2113,6 +2119,7 @@ namespace System.Windows.Forms {
 							this.SetSelectionRange (date, date);
 						}
 						this.OnDateChanged (new DateRangeEventArgs (SelectionStart, SelectionEnd));
+						e.Handled = true;
 						break;
 					case Keys.Left:
 						// move one left
@@ -2123,6 +2130,7 @@ namespace System.Windows.Forms {
 							this.SetSelectionRange (date, date);
 						}
 						this.OnDateChanged (new DateRangeEventArgs (SelectionStart, SelectionEnd));
+						e.Handled = true;
 						break;
 					case Keys.Right:
 						// move one left
@@ -2133,11 +2141,11 @@ namespace System.Windows.Forms {
 							this.SetSelectionRange (date, date);
 						}
 						this.OnDateChanged (new DateRangeEventArgs (SelectionStart, SelectionEnd));
+						e.Handled = true;
 						break;
 					default:
 						break;
 				}
-				e.Handled = true;
 			}
 		}
 

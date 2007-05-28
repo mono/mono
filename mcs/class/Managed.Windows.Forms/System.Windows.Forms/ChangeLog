@@ -1,5 +1,10 @@
 2007-05-28  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* MonthCalendar.cs: Only mark the keypresses we actually handle as
+	  handled.
+
+2007-05-28  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* MonthCalendar.cs: Set the size after initializing all the relevant
 	  variables. Fixes #81742.
 
