@@ -1367,6 +1367,317 @@ namespace MonoTests.System.Drawing
 			}
 		}
 
+		// see bug #81737 for details
+		private Bitmap FillDrawRectangle (float width)
+		{
+			Bitmap bitmap = new Bitmap (20, 20);
+			using (Graphics g = Graphics.FromImage (bitmap)) {
+				g.Clear (Color.Red);
+				Rectangle rect = new Rectangle (5, 5, 10, 10);
+				g.FillRectangle (Brushes.Green, rect);
+				if (width >= 0) {
+					using (Pen pen = new Pen (Color.Blue, width)) {
+						g.DrawRectangle (pen, rect);
+					}
+				} else {
+					g.DrawRectangle (Pens.Blue, rect);
+				}
+			}
+			return bitmap;
+		}
+
+		[Test]
+		public void FillDrawRectangle_Width_Default ()
+		{
+			// default pen size
+			using (Bitmap bitmap = FillDrawRectangle (Single.MinValue)) {
+				// NW
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (4, 4).ToArgb (), "4,4");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (5, 5).ToArgb (), "5,5");
+				Assert.AreEqual (0xFF008000, (uint) bitmap.GetPixel (6, 6).ToArgb (), "6,6");
+				// N
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (9, 4).ToArgb (), "9,4");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (9, 5).ToArgb (), "9,5");
+				Assert.AreEqual (0xFF008000, (uint) bitmap.GetPixel (9, 6).ToArgb (), "9,6");
+				// NE
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (16, 4).ToArgb (), "16,4");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (15, 5).ToArgb (), "15,5");
+				Assert.AreEqual (0xFF008000, (uint) bitmap.GetPixel (14, 6).ToArgb (), "14,6");
+				// E
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (16, 9).ToArgb (), "16,9");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (15, 9).ToArgb (), "15,9");
+				Assert.AreEqual (0xFF008000, (uint) bitmap.GetPixel (14, 9).ToArgb (), "14,9");
+				// SE
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (16, 16).ToArgb (), "16,16");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (15, 15).ToArgb (), "15,15");
+				Assert.AreEqual (0xFF008000, (uint) bitmap.GetPixel (14, 14).ToArgb (), "14,14");
+				// S
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (9, 16).ToArgb (), "9,16");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (9, 15).ToArgb (), "9,15");
+				Assert.AreEqual (0xFF008000, (uint) bitmap.GetPixel (9, 14).ToArgb (), "9,14");
+				// SW
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (4, 16).ToArgb (), "4,16");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (5, 15).ToArgb (), "5,15");
+				Assert.AreEqual (0xFF008000, (uint) bitmap.GetPixel (6, 14).ToArgb (), "6,14");
+				// W
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (4, 9).ToArgb (), "4,9");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (5, 9).ToArgb (), "5,9");
+				Assert.AreEqual (0xFF008000, (uint) bitmap.GetPixel (6, 9).ToArgb (), "6,9");
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")] // libgdiplus is one pixel off (+1,+1)
+		public void FillDrawRectangle_Width_2 ()
+		{
+			// even pen size
+			using (Bitmap bitmap = FillDrawRectangle (2.0f)) {
+				bitmap.Save (@"FillDrawRectangle_Width_2.bmp");
+				// NW
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (3, 3).ToArgb (), "3,3");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (4, 4).ToArgb (), "4,4");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (5, 5).ToArgb (), "5,5");
+				Assert.AreEqual (0xFF008000, (uint) bitmap.GetPixel (6, 6).ToArgb (), "6,6");
+				// N
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (9, 3).ToArgb (), "9,3");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (9, 4).ToArgb (), "9,4");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (9, 5).ToArgb (), "9,5");
+				Assert.AreEqual (0xFF008000, (uint) bitmap.GetPixel (9, 6).ToArgb (), "9,6");
+				// NE
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (16, 3).ToArgb (), "16,3");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (15, 4).ToArgb (), "15,4");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (14, 5).ToArgb (), "14,5");
+				Assert.AreEqual (0xFF008000, (uint) bitmap.GetPixel (13, 6).ToArgb (), "13,6");
+				// E
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (16, 9).ToArgb (), "16,9");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (15, 9).ToArgb (), "15,9");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (14, 9).ToArgb (), "14,9");
+				Assert.AreEqual (0xFF008000, (uint) bitmap.GetPixel (13, 9).ToArgb (), "13,9");
+				// SE
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (16, 16).ToArgb (), "16,16");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (15, 15).ToArgb (), "15,15");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (14, 14).ToArgb (), "14,14");
+				Assert.AreEqual (0xFF008000, (uint) bitmap.GetPixel (13, 13).ToArgb (), "13,13");
+				// S
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (9, 16).ToArgb (), "9,16");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (9, 15).ToArgb (), "9,15");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (9, 14).ToArgb (), "9,14");
+				Assert.AreEqual (0xFF008000, (uint) bitmap.GetPixel (9, 13).ToArgb (), "9,13");
+				// SW
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (3, 16).ToArgb (), "3,16");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (4, 15).ToArgb (), "4,15");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (5, 14).ToArgb (), "5,14");
+				Assert.AreEqual (0xFF008000, (uint) bitmap.GetPixel (6, 13).ToArgb (), "6,13");
+				// W
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (3, 9).ToArgb (), "3,9");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (4, 9).ToArgb (), "4,9");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (5, 9).ToArgb (), "5,9");
+				Assert.AreEqual (0xFF008000, (uint) bitmap.GetPixel (6, 9).ToArgb (), "6,9");
+			}
+		}
+
+		[Test]
+		public void FillDrawRectangle_Width_3 ()
+		{
+			// odd pen size
+			using (Bitmap bitmap = FillDrawRectangle (3.0f)) {
+				// NW
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (3, 3).ToArgb (), "3,3");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (4, 4).ToArgb (), "4,4");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (5, 5).ToArgb (), "5,5");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (6, 6).ToArgb (), "6,6");
+				Assert.AreEqual (0xFF008000, (uint) bitmap.GetPixel (7, 7).ToArgb (), "7,7");
+				// N
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (9, 3).ToArgb (), "9,3");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (9, 4).ToArgb (), "9,4");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (9, 5).ToArgb (), "9,5");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (9, 6).ToArgb (), "9,6");
+				Assert.AreEqual (0xFF008000, (uint) bitmap.GetPixel (9, 7).ToArgb (), "9,7");
+				// NE
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (17, 3).ToArgb (), "17,3");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (16, 4).ToArgb (), "16,4");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (15, 5).ToArgb (), "15,5");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (14, 6).ToArgb (), "14,6");
+				Assert.AreEqual (0xFF008000, (uint) bitmap.GetPixel (13, 7).ToArgb (), "13,7");
+				// E
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (17, 9).ToArgb (), "17,9");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (16, 9).ToArgb (), "16,9");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (15, 9).ToArgb (), "15,9");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (14, 9).ToArgb (), "14,9");
+				Assert.AreEqual (0xFF008000, (uint) bitmap.GetPixel (13, 9).ToArgb (), "13,9");
+				// SE
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (17, 17).ToArgb (), "17,17");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (16, 16).ToArgb (), "16,16");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (15, 15).ToArgb (), "15,15");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (14, 14).ToArgb (), "14,14");
+				Assert.AreEqual (0xFF008000, (uint) bitmap.GetPixel (13, 13).ToArgb (), "13,13");
+				// S
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (9, 17).ToArgb (), "9,17");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (9, 16).ToArgb (), "9,16");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (9, 15).ToArgb (), "9,15");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (9, 14).ToArgb (), "9,14");
+				Assert.AreEqual (0xFF008000, (uint) bitmap.GetPixel (9, 13).ToArgb (), "9,13");
+				// SW
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (3, 17).ToArgb (), "3,17");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (4, 16).ToArgb (), "4,16");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (5, 15).ToArgb (), "5,15");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (6, 14).ToArgb (), "6,14");
+				Assert.AreEqual (0xFF008000, (uint) bitmap.GetPixel (7, 13).ToArgb (), "7,13");
+				// W
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (3, 9).ToArgb (), "3,9");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (4, 9).ToArgb (), "4,9");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (5, 9).ToArgb (), "5,9");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (6, 9).ToArgb (), "6,9");
+				Assert.AreEqual (0xFF008000, (uint) bitmap.GetPixel (7, 9).ToArgb (), "7,9");
+			}
+		}
+
+		// reverse, draw the fill over
+		private Bitmap DrawFillRectangle (float width)
+		{
+			Bitmap bitmap = new Bitmap (20, 20);
+			using (Graphics g = Graphics.FromImage (bitmap)) {
+				g.Clear (Color.Red);
+				Rectangle rect = new Rectangle (5, 5, 10, 10);
+				if (width >= 0) {
+					using (Pen pen = new Pen (Color.Blue, width)) {
+						g.DrawRectangle (pen, rect);
+					}
+				} else {
+					g.DrawRectangle (Pens.Blue, rect);
+				}
+				g.FillRectangle (Brushes.Green, rect);
+			}
+			return bitmap;
+		}
+
+		[Test]
+		public void DrawFillRectangle_Width_Default ()
+		{
+			// default pen size
+			using (Bitmap bitmap = DrawFillRectangle (Single.MinValue)) {
+				// NW - no blue border
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (4, 4).ToArgb (), "4,4");
+				Assert.AreEqual (0xFF008000, (uint) bitmap.GetPixel (5, 5).ToArgb (), "5,5");
+				Assert.AreEqual (0xFF008000, (uint) bitmap.GetPixel (6, 6).ToArgb (), "6,6");
+				// N - no blue border
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (9, 4).ToArgb (), "9,4");
+				Assert.AreEqual (0xFF008000, (uint) bitmap.GetPixel (9, 5).ToArgb (), "9,5");
+				Assert.AreEqual (0xFF008000, (uint) bitmap.GetPixel (9, 6).ToArgb (), "9,6");
+				// NE
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (16, 4).ToArgb (), "16,4");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (15, 5).ToArgb (), "15,5");
+				Assert.AreEqual (0xFF008000, (uint) bitmap.GetPixel (14, 6).ToArgb (), "14,6");
+				// E
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (16, 9).ToArgb (), "16,9");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (15, 9).ToArgb (), "15,9");
+				Assert.AreEqual (0xFF008000, (uint) bitmap.GetPixel (14, 9).ToArgb (), "14,9");
+				// SE
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (16, 16).ToArgb (), "16,16");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (15, 15).ToArgb (), "15,15");
+				Assert.AreEqual (0xFF008000, (uint) bitmap.GetPixel (14, 14).ToArgb (), "14,14");
+				// S
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (9, 16).ToArgb (), "9,16");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (9, 15).ToArgb (), "9,15");
+				Assert.AreEqual (0xFF008000, (uint) bitmap.GetPixel (9, 14).ToArgb (), "9,14");
+				// SW
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (4, 16).ToArgb (), "4,16");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (5, 15).ToArgb (), "5,15");
+				Assert.AreEqual (0xFF008000, (uint) bitmap.GetPixel (6, 14).ToArgb (), "6,14");
+				// W - no blue border
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (4, 9).ToArgb (), "4,9");
+				Assert.AreEqual (0xFF008000, (uint) bitmap.GetPixel (5, 9).ToArgb (), "5,9");
+				Assert.AreEqual (0xFF008000, (uint) bitmap.GetPixel (6, 9).ToArgb (), "6,9");
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")] // libgdiplus is one pixel off (+1,+1)
+		public void DrawFillRectangle_Width_2 ()
+		{
+			// even pen size
+			using (Bitmap bitmap = DrawFillRectangle (2.0f)) {
+				// looks like a one pixel border - but enlarged
+				// NW
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (3, 3).ToArgb (), "3,3");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (4, 4).ToArgb (), "4,4");
+				Assert.AreEqual (0xFF008000, (uint) bitmap.GetPixel (5, 5).ToArgb (), "5,5");
+				// N
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (9, 3).ToArgb (), "9,3");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (9, 4).ToArgb (), "9,4");
+				Assert.AreEqual (0xFF008000, (uint) bitmap.GetPixel (9, 5).ToArgb (), "9,5");
+				// NE
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (16, 3).ToArgb (), "16,3");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (15, 4).ToArgb (), "15,4");
+				Assert.AreEqual (0xFF008000, (uint) bitmap.GetPixel (14, 5).ToArgb (), "14,5");
+				// E
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (16, 9).ToArgb (), "16,9");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (15, 9).ToArgb (), "15,9");
+				Assert.AreEqual (0xFF008000, (uint) bitmap.GetPixel (14, 9).ToArgb (), "14,9");
+				// SE
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (16, 16).ToArgb (), "16,16");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (15, 15).ToArgb (), "15,15");
+				Assert.AreEqual (0xFF008000, (uint) bitmap.GetPixel (14, 14).ToArgb (), "14,14");
+				// S
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (9, 16).ToArgb (), "9,16");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (9, 15).ToArgb (), "9,15");
+				Assert.AreEqual (0xFF008000, (uint) bitmap.GetPixel (9, 14).ToArgb (), "9,14");
+				// SW
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (3, 16).ToArgb (), "4,16");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (4, 15).ToArgb (), "5,15");
+				Assert.AreEqual (0xFF008000, (uint) bitmap.GetPixel (5, 14).ToArgb (), "6,14");
+				// W
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (3, 9).ToArgb (), "3,9");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (4, 9).ToArgb (), "4,9");
+				Assert.AreEqual (0xFF008000, (uint) bitmap.GetPixel (5, 9).ToArgb (), "5,9");
+			}
+		}
+
+		[Test]
+		public void DrawFillRectangle_Width_3 ()
+		{
+			// odd pen size
+			using (Bitmap bitmap = DrawFillRectangle (3.0f)) {
+				// NW
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (3, 3).ToArgb (), "3,3");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (4, 4).ToArgb (), "4,4");
+				Assert.AreEqual (0xFF008000, (uint) bitmap.GetPixel (5, 5).ToArgb (), "5,5");
+				// N
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (9, 3).ToArgb (), "9,3");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (9, 4).ToArgb (), "9,4");
+				Assert.AreEqual (0xFF008000, (uint) bitmap.GetPixel (9, 5).ToArgb (), "9,5");
+				// NE
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (17, 3).ToArgb (), "17,3");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (16, 4).ToArgb (), "16,4");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (15, 4).ToArgb (), "15,4");
+				Assert.AreEqual (0xFF008000, (uint) bitmap.GetPixel (14, 5).ToArgb (), "14,5");
+				// E
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (17, 9).ToArgb (), "17,9");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (16, 9).ToArgb (), "16,9");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (15, 9).ToArgb (), "15,9");
+				Assert.AreEqual (0xFF008000, (uint) bitmap.GetPixel (14, 9).ToArgb (), "14,9");
+				// SE
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (17, 17).ToArgb (), "17,17");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (16, 16).ToArgb (), "16,16");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (15, 15).ToArgb (), "15,15");
+				Assert.AreEqual (0xFF008000, (uint) bitmap.GetPixel (14, 14).ToArgb (), "14,14");
+				// S
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (9, 17).ToArgb (), "9,17");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (9, 16).ToArgb (), "9,16");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (9, 15).ToArgb (), "9,15");
+				Assert.AreEqual (0xFF008000, (uint) bitmap.GetPixel (9, 14).ToArgb (), "9,14");
+				// SW
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (3, 17).ToArgb (), "3,17");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (4, 16).ToArgb (), "4,16");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (5, 15).ToArgb (), "5,15");
+				Assert.AreEqual (0xFF008000, (uint) bitmap.GetPixel (6, 14).ToArgb (), "6,14");
+				// W
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (3, 9).ToArgb (), "3,9");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (4, 9).ToArgb (), "4,9");
+				Assert.AreEqual (0xFF008000, (uint) bitmap.GetPixel (5, 9).ToArgb (), "5,9");
+			}
+		}
+
 		[Test]
 		public void MeasureString_StringFont ()
 		{
