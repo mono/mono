@@ -62,6 +62,11 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			LoadViewState (savedState);
 		}
+
+		public void DoRaiseDataSourceChangedEvent ()
+		{
+			base.RaiseDataSourceChangedEvent(new EventArgs());
+		}
 	}
 
 	class CustomSqlDataSourceView : SqlDataSourceView
@@ -772,6 +777,102 @@ namespace MonoTests.System.Web.UI.WebControls
 				sb.AppendFormat ("{0}:{1}={2}", p.DbType, p.ParameterName, p.Value);
 			}
 			return sb.ToString ();
+		}
+
+		#region help_results
+		class eventAssert
+		{
+			private static int _testcounter;
+			private static bool _eventChecker;
+			private eventAssert ()
+			{
+				_testcounter = 0;
+			}
+
+			public static bool eventChecker
+			{
+				get
+				{
+					throw new NotImplementedException ();
+				}
+				set
+				{
+					_eventChecker = value;
+				}
+			}
+
+			static private void testAdded ()
+			{
+				_testcounter++;
+				_eventChecker = false;
+			}
+
+			public static void IsTrue (string msg)
+			{
+				Assert.IsTrue (_eventChecker, msg + "#" + _testcounter);
+				testAdded ();
+
+			}
+
+			public static void IsFalse (string msg)
+			{
+				Assert.IsFalse (_eventChecker, msg + "#" + _testcounter);
+				testAdded ();
+			}
+		}
+		#endregion
+
+		[Test]
+		public void SqlDataSource_DataSourceViewChanged ()
+		{
+			SqlPoker sql = new SqlPoker ();
+			((IDataSource) sql).DataSourceChanged += new EventHandler (SqlDataSourceTest_DataSourceChanged);
+
+			sql.DoRaiseDataSourceChangedEvent ();
+			eventAssert.IsTrue ("SqlDataSourceView"); // Assert include counter the first is zero
+			sql.CacheKeyDependency = "hi";
+			eventAssert.IsFalse ("SqlDataSourceView");
+			sql.CancelSelectOnNullParameter = false;
+			eventAssert.IsFalse ("SqlDataSourceView");
+			sql.ConflictDetection = ConflictOptions.CompareAllValues;
+			eventAssert.IsFalse ("SqlDataSourceView");
+			sql.DeleteCommandType = SqlDataSourceCommandType.StoredProcedure;
+			eventAssert.IsFalse ("SqlDataSourceView");
+			sql.InsertCommandType = SqlDataSourceCommandType.StoredProcedure;
+			eventAssert.IsFalse ("SqlDataSourceView");
+			sql.SelectCommandType = SqlDataSourceCommandType.StoredProcedure;
+			eventAssert.IsFalse ("SqlDataSourceView");
+			sql.UpdateCommandType = SqlDataSourceCommandType.StoredProcedure;
+			eventAssert.IsFalse ("SqlDataSourceView");
+			sql.OldValuesParameterFormatString = "{1}";
+			eventAssert.IsFalse ("SqlDataSourceView");
+			sql.SqlCacheDependency = "hi";
+			eventAssert.IsFalse ("SqlDataSourceView");
+			sql.SortParameterName = "hi";
+			eventAssert.IsFalse ("SqlDataSourceView");
+			sql.CacheDuration = 1;
+			eventAssert.IsFalse ("SqlDataSourceView");
+			sql.CacheExpirationPolicy = DataSourceCacheExpiry.Sliding;
+			eventAssert.IsFalse ("SqlDataSourceView");
+			sql.EnableCaching = true;
+			eventAssert.IsFalse ("SqlDataSourceView");
+			sql.DataSourceMode = SqlDataSourceMode.DataReader;
+			eventAssert.IsTrue ("SqlDataSourceView");
+			sql.DeleteCommand = "DELETE foo";
+			eventAssert.IsFalse ("SqlDataSourceView");
+			sql.InsertCommand = "INSERT foo";
+			eventAssert.IsFalse ("SqlDataSourceView");
+			sql.SelectCommand = "SELECT foo";
+			eventAssert.IsFalse ("SqlDataSourceView");
+			sql.UpdateCommand = "UPDATE foo";
+			eventAssert.IsFalse ("SqlDataSourceView");
+			sql.FilterExpression = "hi";
+			eventAssert.IsFalse ("SqlDataSourceView");
+		}
+
+		void SqlDataSourceTest_DataSourceChanged (object sender, EventArgs e)
+		{
+			eventAssert.eventChecker = true;
 		}
 
 		//exceptions 

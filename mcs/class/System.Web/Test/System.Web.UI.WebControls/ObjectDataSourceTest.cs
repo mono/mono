@@ -55,6 +55,11 @@ namespace MonoTests.System.Web.UI.WebControls
 		TrackViewState ();
 		}
 
+		public void DoRaiseDataSourceChangedEvent ()
+		{
+			base.RaiseDataSourceChangedEvent (new EventArgs ());
+		}
+
 		public object SaveState ()
 		{	
 		 return SaveViewState ();			
@@ -134,9 +139,7 @@ namespace MonoTests.System.Web.UI.WebControls
 	[TestFixture]
 	public class ObjectDataSourceTest
 	{
-		
-
-
+		bool eventChecker;
 		[TestFixtureTearDown]
 		public void TearDown ()
 		{
@@ -1206,6 +1209,94 @@ namespace MonoTests.System.Web.UI.WebControls
 			view.ExecuteUpdate (keys, new_value, old_value);
 			Assert.AreEqual (true, MyTableObject.UpdateWithDataObjectTypeNameAllValues, "UpdateExecute_DataObjectTypeNameCompareAllValues");
 			Assert.AreEqual ("n_1001, n_Mahesh, n_chand, k_1001, ov_Mahesh, ov_chand", MyTableObject.UpdatePassedValues, "UpdateExecute_DataObjectTypeName Values");
+		}
+
+		[Test]
+		public void ObjectDataSource_DataSourceChanged ()
+		{
+			ObjectDataSourcePoker ods = new ObjectDataSourcePoker ();
+			InitObjectDataSource (ods, "");
+			((IDataSource) ods).DataSourceChanged += new EventHandler (ObjectDataSourceTest_DataSourceChanged);
+			
+			// Check if event raised
+			ods.DoRaiseDataSourceChangedEvent ();
+			Assert.IsTrue (eventChecker, "DataSourceChanged#1");
+
+			eventChecker = false;
+			ods.ConflictDetection = ConflictOptions.CompareAllValues;
+			Assert.IsFalse (eventChecker, "DataSourceChanged#2");
+
+			eventChecker = false;
+			ods.DataObjectTypeName = "MyData";
+			Assert.IsFalse (eventChecker, "DataSourceChanged#3");
+
+			eventChecker = false;
+			ods.EnablePaging = true;
+			Assert.IsFalse (eventChecker, "DataSourceChanged#4");
+
+			eventChecker = false;
+			ods.FilterExpression = "ID='{0}'";
+			Assert.IsFalse (eventChecker, "DataSourceChanged#5");
+
+
+			eventChecker = false;
+			TextBox TextBox1 = new TextBox ();
+			TextBox1.Text = "1001";
+			FormParameter p = new FormParameter ("ID", "TextBox1");
+			p.DefaultValue = "1002";
+			ods.FilterParameters.Add (p);
+			Assert.IsFalse (eventChecker, "DataSourceChanged#6");
+
+			eventChecker = false;
+			ods.MaximumRowsParameterName = "SelectCount";
+			Assert.IsFalse (eventChecker, "DataSourceChanged#7");
+
+			eventChecker = false;
+			ods.OldValuesParameterFormatString = "ID";
+			Assert.IsFalse (eventChecker, "DataSourceChanged#8");
+
+			eventChecker = false;
+			Parameter dummy = new Parameter ();
+			dummy.Name = "Test";
+			ods.SelectParameters.Add (dummy);
+			Assert.IsFalse (eventChecker, "DataSourceChanged#9");
+
+			eventChecker = false;
+			ods.SortParameterName = "sortExpression";
+			Assert.IsFalse (eventChecker, "DataSourceChanged#10");
+
+			eventChecker = false;
+			ods.StartRowIndexParameterName = "ID";
+			Assert.IsFalse (eventChecker, "DataSourceChanged#11");
+
+			eventChecker = false; 
+			ods.CacheDuration = 1000;
+			Assert.IsFalse (eventChecker, "DataSourceChanged#12");
+
+			eventChecker = false;
+			ods.CacheExpirationPolicy = DataSourceCacheExpiry.Sliding;
+			Assert.IsFalse (eventChecker, "DataSourceChanged#13");
+
+			eventChecker = false;
+			ods.CacheKeyDependency = "ID";
+			Assert.IsFalse (eventChecker, "DataSourceChanged#14");
+
+			eventChecker = false;
+			ods.ConvertNullToDBNull = true;
+			Assert.IsFalse (eventChecker, "DataSourceChanged#15");
+
+			eventChecker = false;
+			ods.EnableCaching = true;
+			Assert.IsFalse (eventChecker, "DataSourceChanged#16");
+
+			eventChecker = false;
+			ods.SqlCacheDependency = "Northwind:Employees";
+			Assert.IsFalse (eventChecker, "DataSourceChanged#17");
+		}
+
+		void ObjectDataSourceTest_DataSourceChanged (object sender, EventArgs e)
+		{
+			eventChecker = true;
 		}
 
 		//Excpetions

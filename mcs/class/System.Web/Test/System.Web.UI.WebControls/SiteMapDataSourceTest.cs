@@ -123,6 +123,41 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (5, p.StateBag.Count, "StartingNodeUrl#2");
 		}
 
+		
+		[Test]
+		public void SiteMapDataSource_DataSourceChanged ()
+		{
+			PokerSiteMapDataSource p = new PokerSiteMapDataSource ();
+			((IDataSource) p).DataSourceChanged += new EventHandler (SiteMapDataSourceTest_DataSourceChanged);
+			
+			eventChecker = false;
+			p.ShowStartingNode = false;
+			Assert.IsTrue (eventChecker, "DataSourceChanged#1");
+
+			eventChecker = false;
+			p.SiteMapProvider = "test";
+			Assert.IsTrue (eventChecker, "DataSourceChanged#2");
+
+			eventChecker = false;
+			p.StartFromCurrentNode = true;
+			Assert.IsTrue (eventChecker, "DataSourceChanged#3");
+
+			eventChecker = false;
+			p.StartingNodeOffset = 1;
+			Assert.IsTrue (eventChecker, "DataSourceChanged#4");
+
+			eventChecker = false;
+			p.StartingNodeUrl = "default.aspx";
+			Assert.IsTrue (eventChecker, "DataSourceChanged#5");
+		}
+
+		bool eventChecker;
+		void SiteMapDataSourceTest_DataSourceChanged (object sender, EventArgs e)
+		{
+			eventChecker = true;
+		}
+
+
 		[Test]
 		public void SiteMapDataSource_GetList ()
 		{
@@ -262,7 +297,5 @@ namespace MonoTests.System.Web.UI.WebControls
 			}
 		}
 	}
-
-	
 }
 #endif

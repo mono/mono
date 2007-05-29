@@ -61,6 +61,11 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			LoadViewState (savedState);
 		}
+
+		public void DoOnDataSourceViewChanged ()
+		{
+			base.OnDataSourceViewChanged (new EventArgs());
+		}
 	}
 
 	[TestFixture]
@@ -157,7 +162,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-        public void ViewState ()
+		public void ViewState ()
 		{
 			SqlDataSource ds = new SqlDataSource ();
 			SqlViewPoker sql = new SqlViewPoker (ds, "DefaultView", null);
@@ -192,41 +197,127 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual ("update command", sql.UpdateCommand, "A12");
 			Assert.AreEqual (SqlDataSourceCommandType.Text, sql.UpdateCommandType, "A13");
 
-			object state = sql.SaveToViewState();
+			object state = sql.SaveToViewState ();
 			Assert.IsNull (state, "ViewState is null");
 
 			sql = new SqlViewPoker (ds, "DefaultView", null);
 			sql.LoadFromViewState (state);
 
-            Assert.IsTrue(sql.CancelSelectOnNullParameter, "B1");
-            Assert.IsFalse(sql.CanDelete, "B2");
-            Assert.IsFalse(sql.CanInsert, "B3");
-            Assert.IsFalse(sql.CanPage, "B4");
-            Assert.IsFalse(sql.CanRetrieveTotalRowCount, "B5");
-            Assert.IsTrue(sql.CanSort, "B6");
-            Assert.IsFalse(sql.CanUpdate, "B7");
+			Assert.IsTrue (sql.CancelSelectOnNullParameter, "B1");
+			Assert.IsFalse (sql.CanDelete, "B2");
+			Assert.IsFalse (sql.CanInsert, "B3");
+			Assert.IsFalse (sql.CanPage, "B4");
+			Assert.IsFalse (sql.CanRetrieveTotalRowCount, "B5");
+			Assert.IsTrue (sql.CanSort, "B6");
+			Assert.IsFalse (sql.CanUpdate, "B7");
 			Assert.AreEqual (ConflictOptions.OverwriteChanges, sql.ConflictDetection, "B8");
 			Assert.AreEqual ("", sql.DeleteCommand, "B9");
-            Assert.AreEqual(SqlDataSourceCommandType.Text, sql.DeleteCommandType, "B10");
-            Assert.IsNotNull(sql.DeleteParameters, "B11");
-            Assert.AreEqual(0, sql.DeleteParameters.Count, "B12");
+			Assert.AreEqual (SqlDataSourceCommandType.Text, sql.DeleteCommandType, "B10");
+			Assert.IsNotNull (sql.DeleteParameters, "B11");
+			Assert.AreEqual (0, sql.DeleteParameters.Count, "B12");
 			Assert.AreEqual ("", sql.FilterExpression, "B13");
-            Assert.IsNotNull(sql.FilterParameters, "B14");
-            Assert.AreEqual(0, sql.FilterParameters.Count, "B15");
+			Assert.IsNotNull (sql.FilterParameters, "B14");
+			Assert.AreEqual (0, sql.FilterParameters.Count, "B15");
 			Assert.AreEqual ("", sql.InsertCommand, "B16");
-            Assert.AreEqual(SqlDataSourceCommandType.Text, sql.InsertCommandType, "B17");
-            Assert.IsNotNull(sql.InsertParameters, "B18");
-            Assert.AreEqual(0, sql.InsertParameters.Count, "B19");
+			Assert.AreEqual (SqlDataSourceCommandType.Text, sql.InsertCommandType, "B17");
+			Assert.IsNotNull (sql.InsertParameters, "B18");
+			Assert.AreEqual (0, sql.InsertParameters.Count, "B19");
 			Assert.AreEqual ("{0}", sql.OldValuesParameterFormatString, "B20");
 			Assert.AreEqual ("", sql.SelectCommand, "B21");
-            Assert.AreEqual(SqlDataSourceCommandType.Text, sql.SelectCommandType, "B22");
-            Assert.IsNotNull(sql.SelectParameters, "B23");
-            Assert.AreEqual(0, sql.SelectParameters.Count, "B24");
+			Assert.AreEqual (SqlDataSourceCommandType.Text, sql.SelectCommandType, "B22");
+			Assert.IsNotNull (sql.SelectParameters, "B23");
+			Assert.AreEqual (0, sql.SelectParameters.Count, "B24");
 			Assert.AreEqual ("", sql.SortParameterName, "B25");
 			Assert.AreEqual ("", sql.UpdateCommand, "B26");
-            Assert.AreEqual(SqlDataSourceCommandType.Text, sql.UpdateCommandType, "B27");
-            Assert.IsNotNull(sql.UpdateParameters, "B28");
-            Assert.AreEqual(0, sql.UpdateParameters.Count, "B29");
+			Assert.AreEqual (SqlDataSourceCommandType.Text, sql.UpdateCommandType, "B27");
+			Assert.IsNotNull (sql.UpdateParameters, "B28");
+			Assert.AreEqual (0, sql.UpdateParameters.Count, "B29");
+		}
+
+		#region help_results
+		class eventAssert
+		{
+			private static int _testcounter;
+			private static bool _eventChecker;
+			private eventAssert ()
+			{
+				_testcounter = 0;
+			}
+
+			public static bool eventChecker
+			{
+				get
+				{
+					throw new NotImplementedException ();
+				}
+				set
+				{
+					_eventChecker = value;
+				}
+			}
+
+			static private void testAdded ()
+			{
+				_testcounter++;
+				_eventChecker = false;
+			}
+
+			public static void IsTrue (string msg)
+			{
+				Assert.IsTrue (_eventChecker, msg + "#" + _testcounter);
+				testAdded ();
+
+			}
+
+			public static void IsFalse (string msg)
+			{
+				Assert.IsFalse (_eventChecker, msg + "#" + _testcounter);
+				testAdded ();
+			}
+		}
+		#endregion
+
+		[Test]
+		public void SqlDataSourceView_DataSourceViewChanged ()
+		{
+			SqlDataSource ds = new SqlDataSource ();
+			SqlViewPoker sql = new SqlViewPoker (ds, "DefaultView", null);
+			sql.DataSourceViewChanged += new EventHandler (sql_DataSourceViewChanged);
+			sql.DoOnDataSourceViewChanged ();
+			eventAssert.IsTrue ("SqlDataSourceView"); // Assert include counter the first is zero
+			/* XXX test parameters */
+
+			sql.CancelSelectOnNullParameter = false;
+			eventAssert.IsTrue ("SqlDataSourceView");
+			sql.ConflictDetection = ConflictOptions.CompareAllValues;
+			eventAssert.IsTrue ("SqlDataSourceView");
+			sql.DeleteCommandType = SqlDataSourceCommandType.Text;
+			eventAssert.IsFalse ("SqlDataSourceView");
+			sql.DeleteCommand = "delete command";
+			eventAssert.IsFalse ("SqlDataSourceView");
+			sql.FilterExpression = "filter expression";
+			eventAssert.IsTrue ("SqlDataSourceView");
+			sql.InsertCommand = "insert command";
+			eventAssert.IsFalse ("SqlDataSourceView");
+			sql.InsertCommandType = SqlDataSourceCommandType.Text;
+			eventAssert.IsFalse ("SqlDataSourceView");
+			sql.OldValuesParameterFormatString = "{1}";
+			eventAssert.IsTrue ("SqlDataSourceView");
+			sql.SelectCommand = "select command";
+			eventAssert.IsTrue ("SqlDataSourceView");
+			sql.SelectCommandType = SqlDataSourceCommandType.Text;
+			eventAssert.IsFalse ("SqlDataSourceView");
+			sql.SortParameterName = "sort parameter";
+			eventAssert.IsTrue ("SqlDataSourceView");
+			sql.UpdateCommand = "update command";
+			eventAssert.IsFalse ("SqlDataSourceView");
+			sql.UpdateCommandType = SqlDataSourceCommandType.Text;
+			eventAssert.IsFalse ("SqlDataSourceView");
+		}
+
+		void sql_DataSourceViewChanged (object sender, EventArgs e)
+		{
+			eventAssert.eventChecker = true;
 		}
 
 		[Test]

@@ -72,6 +72,11 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			base.OnTransforming (e);
 		}
+
+		public void DoOnDataSourceChanged ()
+		{
+			base.OnDataSourceChanged (new EventArgs ());
+		}
 	}
 
 	[TestFixture]
@@ -82,7 +87,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		[TestFixtureSetUp]
 		public void CopyTestResources ()
 		{
-#if DOT_NET 
+#if DOT_NET
 			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.XMLDataSourceTest.xml", "XMLDataSourceTest.xml");
 			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.XMLDataSourceTest.xsl", "XMLDataSourceTest.xsl");
 			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.XMLDataSourceTest1.aspx", "XMLDataSourceTest1.aspx");
@@ -90,12 +95,12 @@ namespace MonoTests.System.Web.UI.WebControls
 			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.XMLDataSourceTest3.aspx", "XMLDataSourceTest3.aspx");
 			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.XMLDataSourceTest4.aspx", "XMLDataSourceTest4.aspx");
 #else
-			WebTest.CopyResource (GetType (), "XMLDataSourceTest.xml", "XMLDataSourceTest.xml");
-			WebTest.CopyResource (GetType (), "XMLDataSourceTest.xsl", "XMLDataSourceTest.xsl");
-			WebTest.CopyResource (GetType (), "XMLDataSourceTest1.aspx", "XMLDataSourceTest1.aspx");
-			WebTest.CopyResource (GetType (), "XMLDataSourceTest2.aspx", "XMLDataSourceTest2.aspx");
-			WebTest.CopyResource (GetType (), "XMLDataSourceTest3.aspx", "XMLDataSourceTest3.aspx");
-			WebTest.CopyResource (GetType (), "XMLDataSourceTest4.aspx", "XMLDataSourceTest4.aspx");
+                        WebTest.CopyResource (GetType (), "XMLDataSourceTest.xml", "XMLDataSourceTest.xml");
+                        WebTest.CopyResource (GetType (), "XMLDataSourceTest.xsl", "XMLDataSourceTest.xsl");
+                        WebTest.CopyResource (GetType (), "XMLDataSourceTest1.aspx", "XMLDataSourceTest1.aspx");
+                        WebTest.CopyResource (GetType (), "XMLDataSourceTest2.aspx", "XMLDataSourceTest2.aspx");
+                        WebTest.CopyResource (GetType (), "XMLDataSourceTest3.aspx", "XMLDataSourceTest3.aspx");
+                        WebTest.CopyResource (GetType (), "XMLDataSourceTest4.aspx", "XMLDataSourceTest4.aspx");
 #endif
 		}
 
@@ -167,6 +172,75 @@ namespace MonoTests.System.Web.UI.WebControls
 			copy.LoadState (state);
 			Assert.AreEqual ("", copy.DataFile, "A1");
 			Assert.AreEqual ("", copy.TransformFile, "A2");
+		}
+
+		#region help_results
+		class eventAssert
+		{
+			private static int _testcounter;
+			private static bool _eventChecker;
+			private eventAssert ()
+			{
+				_testcounter = 0;
+			}
+
+			public static bool eventChecker
+			{
+				get
+				{
+					throw new NotImplementedException ();
+				}
+				set
+				{
+					_eventChecker = value;
+				}
+			}
+
+			static private void testAdded ()
+			{
+				_testcounter++;
+				_eventChecker = false;
+			}
+
+			public static void IsTrue (string msg)
+			{
+				Assert.IsTrue (_eventChecker, msg + "#" + _testcounter);
+				testAdded ();
+
+			}
+
+			public static void IsFalse (string msg)
+			{
+				Assert.IsFalse (_eventChecker, msg + "#" + _testcounter);
+				testAdded ();
+			}
+		}
+		#endregion
+
+		[Test]
+		public void XmlDataSource_DataSourceViewChanged ()
+		{
+			DSPoker p = new DSPoker ();
+			((IDataSource) p).DataSourceChanged += new EventHandler (XmlDataSourceTest_DataSourceChanged);
+			p.DoOnDataSourceChanged ();
+			eventAssert.IsTrue ("XmlDataSource"); // Assert include counter the first is zero
+
+			p.Data = data;
+			eventAssert.IsTrue ("XmlDataSource");
+			p.Transform = "transform";
+			eventAssert.IsTrue ("XmlDataSource");
+			p.XPath = "xpath";
+			eventAssert.IsTrue ("XmlDataSource");
+			p.DataFile = "DataFile";
+			eventAssert.IsTrue ("XmlDataSource");
+			p.TransformFile = "TransformFile";
+			eventAssert.IsTrue ("XmlDataSource");
+		}
+
+		void XmlDataSourceTest_DataSourceChanged (object sender, EventArgs e)
+		{
+			eventAssert.eventChecker = true;
+			
 		}
 
 		[Test]

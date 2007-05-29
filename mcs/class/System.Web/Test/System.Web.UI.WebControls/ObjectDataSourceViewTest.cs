@@ -141,6 +141,11 @@ namespace MonoTests.System.Web.UI.WebControls
 			return base.ExecuteDelete (keys, oldValues);
 		}
 
+		public void DoOnDataSourceViewChanged ()
+		{
+			base.OnDataSourceViewChanged (new EventArgs ());
+		}
+
 	}
 
 	[TestFixture]
@@ -929,6 +934,107 @@ namespace MonoTests.System.Web.UI.WebControls
 				evaluateCount++;
 				return String.Format ("{0}{1}", DefaultValue, evaluateCount);
 			}
+		}
+
+		#region help_results
+		class eventAssert
+		{
+			private static int _testcounter;
+			private static bool _eventChecker;
+			private eventAssert ()
+			{
+				_testcounter = 0;
+			}
+
+			public static bool eventChecker
+			{
+				get
+				{
+					throw new NotImplementedException ();
+				}
+				set
+				{
+					_eventChecker = value;
+				}
+			}
+
+			static private void testAdded ()
+			{
+				_testcounter++;
+				_eventChecker = false;
+			}
+
+			public static void IsTrue (string msg)
+			{
+				Assert.IsTrue (_eventChecker, msg + "#" + _testcounter);
+				testAdded ();
+			
+			}
+
+			public static void IsFalse (string msg)
+			{
+				Assert.IsFalse (_eventChecker, msg + "#" + _testcounter);
+				testAdded ();
+			}
+		}
+		#endregion
+
+		[Test]
+		public void ObjectDataSourceView_DataSourceViewChanged ()
+		{
+			ObjectDataSource ds = new ObjectDataSource ();
+			ObjectViewPoker sql = new ObjectViewPoker (ds, "DefaultView", null);
+			sql.DataSourceViewChanged += new EventHandler (sql_DataSourceViewChanged);
+			
+			sql.DoOnDataSourceViewChanged ();
+			eventAssert.IsTrue ("DataSourceViewChanged");
+
+			sql.ConflictDetection = ConflictOptions.CompareAllValues;
+			eventAssert.IsTrue ("DataSourceViewChanged");
+
+			sql.ConvertNullToDBNull = true;
+			eventAssert.IsFalse ("DataSourceViewChanged");
+
+			sql.DataObjectTypeName = "test";
+			eventAssert.IsTrue ("DataSourceViewChanged");
+
+			sql.DeleteMethod = "test";
+			eventAssert.IsFalse ("DataSourceViewChanged");
+
+			sql.EnablePaging = true;
+			eventAssert.IsTrue ("DataSourceViewChanged");
+
+			sql.InsertMethod = "test";
+			eventAssert.IsFalse ("DataSourceViewChanged");
+
+			sql.FilterExpression = "test";
+			eventAssert.IsTrue ("DataSourceViewChanged");
+
+			sql.MaximumRowsParameterName = "test";
+			eventAssert.IsTrue ("DataSourceViewChanged");
+
+			sql.SelectCountMethod = "test";
+			eventAssert.IsTrue ("DataSourceViewChanged");
+
+			sql.SelectMethod = "test";
+			eventAssert.IsTrue ("DataSourceViewChanged");
+
+			sql.OldValuesParameterFormatString = "test";
+			eventAssert.IsTrue ("DataSourceViewChanged");
+
+			sql.StartRowIndexParameterName = "test";
+			eventAssert.IsTrue ("DataSourceViewChanged");
+
+			sql.TypeName = "test";
+			eventAssert.IsTrue ("DataSourceViewChanged");
+
+			sql.UpdateMethod = "test";
+			eventAssert.IsFalse ("DataSourceViewChanged");
+		}
+
+		void sql_DataSourceViewChanged (object sender, EventArgs e)
+		{
+			eventAssert.eventChecker = true;
 		}
 
 		[Test]
