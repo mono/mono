@@ -1445,18 +1445,15 @@ namespace Mono.CSharp {
 		public ToplevelBlock Toplevel;
 
 		[Flags]
-		public enum Flags : ushort {
-			IsExplicit = 1,
-			Unchecked = 2,
-			BlockUsed = 4,
-			VariablesInitialized = 8,
-			HasRet = 16,
-			IsDestructor = 32,
-			IsToplevel = 64,
-			Unsafe = 128,
-			HasVarargs = 256, // Used in ToplevelBlock
-			IsIterator = 512
-
+		public enum Flags : byte {
+			Unchecked = 1,
+			BlockUsed = 2,
+			VariablesInitialized = 4,
+			HasRet = 8,
+			IsDestructor = 16,
+			Unsafe = 32,
+			HasVarargs = 64, // Used in ToplevelBlock
+			IsIterator = 128
 		}
 		protected Flags flags;
 
@@ -1532,8 +1529,13 @@ namespace Mono.CSharp {
 
 		public Block (Block parent, Flags flags, Location start, Location end)
 		{
-			if (parent != null)
+			if (parent != null) {
 				parent.AddChild (this);
+
+				// the appropriate constructors will fixup these fields
+				Toplevel = parent.Toplevel;
+				Explicit = parent.Explicit;
+			}
 			
 			this.Parent = parent;
 			this.flags = flags;
@@ -1542,16 +1544,6 @@ namespace Mono.CSharp {
 			this.loc = start;
 			this_id = id++;
 			statements = new ArrayList ();
-
-			if ((flags & Flags.IsToplevel) != 0)
-				Toplevel = (ToplevelBlock) this;
-			else
-				Toplevel = parent.Toplevel;
-
-			if ((flags & Flags.IsExplicit) != 0)
-				Explicit = (ExplicitBlock) this;
-			else
-				Explicit = parent.Explicit;
 		}
 
 		public Block CreateSwitchBlock (Location start)
@@ -2255,9 +2247,7 @@ namespace Mono.CSharp {
 
 			// If we're a non-static `struct' constructor which doesn't have an
 			// initializer, then we must initialize all of the struct's fields.
-			if ((flags & Flags.IsToplevel) != 0 && 
-			    !Toplevel.IsThisAssigned (ec) &&
-			    !vector.IsUnreachable)
+			if (this == Toplevel && !Toplevel.IsThisAssigned (ec) && !vector.IsUnreachable)
 				ok = false;
 
 			if ((labels != null) && (RootContext.WarningLevel >= 2)) {
@@ -2364,6 +2354,7 @@ namespace Mono.CSharp {
 			Block target = (Block) t;
 
 			target.Toplevel = (ToplevelBlock) clonectx.LookupBlock (Toplevel);
+			target.Explicit = (ExplicitBlock) clonectx.LookupBlock (Explicit);
 			if (Parent != null)
 				target.Parent = clonectx.LookupBlock (Parent);
 			
@@ -2404,8 +2395,9 @@ namespace Mono.CSharp {
 		}
 
 		public ExplicitBlock (Block parent, Flags flags, Location start, Location end)
-			: base (parent, flags | Flags.IsExplicit, start, end)
+			: base (parent, flags, start, end)
 		{
+			this.Explicit = this;
 		}
 
 		Hashtable known_variables;
@@ -2544,8 +2536,10 @@ namespace Mono.CSharp {
 		}
 
 		public ToplevelBlock (Block container, Flags flags, Parameters parameters, Location start) :
-			base (null, flags | Flags.IsToplevel, start, Location.Null)
+			base (null, flags, start, Location.Null)
 		{
+			this.Toplevel = this;
+
 			this.parameters = parameters == null ? Parameters.EmptyReadOnlyParameters : parameters;
 			this.container = container;
 		}

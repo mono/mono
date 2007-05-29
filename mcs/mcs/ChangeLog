@@ -1,3 +1,11 @@
+2007-05-29  Raja R Harinath  <rharinath@novell.com>
+
+	* statement.cs (Block.Flags): Remove IsExplicit and IsToplevel flags.
+	(Block.Resolve): Update to changes.
+	(Block..ctor): Move setting of "correct" 'Toplevel'
+	and 'Explicit' fields to ...
+	(ExplicitBlock..ctor, ToplevelBlock..ctor): ... here.
+
 2007-05-27  Raja R Harinath  <harinath@gmail.com>
 
 	Kill Block.Implicit
