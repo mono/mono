@@ -143,7 +143,7 @@ namespace System.ComponentModel.Design
 			}
 		}
 
-		[MonoTODO]
+		[MonoTODO("Low-priority: designers are no-ops on Mono")]
 		public CollectionEditor (Type type)
 		{
 		}
