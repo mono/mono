@@ -2,7 +2,7 @@
 
 	* SiteMapProvider.cs: updated the node accessibility comments.
 	If Roles not null and user is not in at least one of the
-	configured roles (or the collection is empty), return false.
+	specified roles, return false.
 	If there Url is null or empty, return false.
 
 2007-05-28  Marek Habersack  <mhabersack@novell.com>

@@ -183,8 +183,9 @@ namespace System.Web {
 			*/
 
 			/* 1. */
-			if (node.Roles != null) {
-				foreach (string rolename in node.Roles)
+			IList roles = node.Roles;
+			if (roles != null && roles.Count > 0) {
+				foreach (string rolename in roles)
 					if (rolename == "*" || context.User.IsInRole (rolename))
 						return true;
 				return false;
