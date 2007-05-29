@@ -1833,7 +1833,9 @@ namespace System.Windows.Forms
 			bool hover_processed = false;
 			bool checking = false;
 			ListViewItem prev_hovered_item;
+#if NET_2_0
 			ListViewItem prev_tooltip_item;
+#endif
 			int clicks;
 			
 			ListViewLabelEditTextBox edit_text_box;

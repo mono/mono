@@ -1,3 +1,8 @@
+2007-05-28  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListView.cs: The declaration of prev_tooltip_item should be inside
+	a NET_2_0 conditional (avoid a warning).
+
 2007-05-28  Andreia Gaita  <avidigal@novell.com>
 
 	* PageSetupDialog.cs: Implement PrintPreview control to display
