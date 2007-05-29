@@ -1,3 +1,7 @@
+2007-05-29  Robert Jordan  <robertj@gmx.net>
+
+	* marshal.[c|h]: add mono_win32_compat_* wrappers. Fixes #81754.
+
 2007-05-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* icall.c (ves_icall_get_method_info): Handle loader errors. Fixes #81724.
