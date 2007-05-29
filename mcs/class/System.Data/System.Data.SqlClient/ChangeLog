@@ -1,3 +1,9 @@
+2007-05-29  Nagappan A  <anagappan@novell.com>
+
+	* SqlCommand.cs (Dispose): Command.Dispose closing
+	connection. Fixes bug # 81710. Thanks to AMC <amc1999@gmail.com>
+	for the fix.
+
 2007-05-10  Nagappan A  <anagappan@novell.com>
 
 	* SqlClientMetaDataCollectionNames.cs: Fixed incorrect constructor

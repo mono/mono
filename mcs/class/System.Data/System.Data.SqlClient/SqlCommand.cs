@@ -578,17 +578,13 @@ namespace System.Data.SqlClient {
 
 		protected override void Dispose (bool disposing)
 		{
-			if (!disposed) {
-				if (disposing) {
-					base.Dispose (disposing);
-					if (connection != null)
-						connection.Dispose ();
-					if (transaction != null)
-						transaction.Dispose ();
-					parameters.Clear ();
-				}
-				disposed = true;
+			if (disposed) return;
+			if (disposing) {
+				parameters.Clear();
+				transaction = null;
+				connection = null;
 			}
+			disposed = true;
 		}
 
 		public 
