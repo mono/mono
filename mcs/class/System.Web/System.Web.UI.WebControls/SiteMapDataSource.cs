@@ -131,7 +131,10 @@ namespace System.Web.UI.WebControls
 		[DefaultValue (0)]
 		public virtual int StartingNodeOffset {
 			get { return ViewState.GetInt ("StartingNodeOffset", 0); }
-			set { ViewState["StartingNodeOffset"] = value; }
+			set {
+				ViewState ["StartingNodeOffset"] = value;
+				OnDataSourceChanged (EventArgs.Empty);
+			}
 		}
 		
 		[DefaultValueAttribute (false)]

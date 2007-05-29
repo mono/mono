@@ -294,7 +294,12 @@ namespace System.Web.UI.WebControls
 		private ConflictOptions conflictDetection = ConflictOptions.OverwriteChanges;
 		public ConflictOptions ConflictDetection {
 			get { return conflictDetection; }
-			set { conflictDetection = value; }
+			set {
+				if (ConflictDetection == value)
+					return;
+				conflictDetection = value;
+				OnDataSourceViewChanged (EventArgs.Empty);
+			}
 		}
 
 		public bool ConvertNullToDBNull	{
@@ -307,8 +312,11 @@ namespace System.Web.UI.WebControls
 				return dataObjectTypeName != null ? dataObjectTypeName : string.Empty;
 			}
 			set {
+				if (DataObjectTypeName == value)
+					return;
 				dataObjectTypeName = value;
 				dataObjectType = null;
+				OnDataSourceViewChanged (EventArgs.Empty);
 			}
 		}
 
@@ -335,7 +343,10 @@ namespace System.Web.UI.WebControls
 				return enablePaging;
 			}
 			set {
+				if (EnablePaging == value)
+					return;
 				enablePaging = value;
+				OnDataSourceViewChanged (EventArgs.Empty);
 			}
 		}
 
@@ -344,7 +355,10 @@ namespace System.Web.UI.WebControls
 				return filterExpression != null ? filterExpression : string.Empty;
 			}
 			set {
+				if (FilterExpression == value)
+					return;
 				filterExpression = value;
+				OnDataSourceViewChanged (EventArgs.Empty);
 			}
 		}
 
@@ -383,7 +397,10 @@ namespace System.Web.UI.WebControls
 				return maximumRowsParameterName != null ? maximumRowsParameterName : "maximumRows";
 			}
 			set {
+				if (MaximumRowsParameterName == value)
+					return;
 				maximumRowsParameterName = value;
+				OnDataSourceViewChanged (EventArgs.Empty);
 			}
 		}
 
@@ -392,7 +409,10 @@ namespace System.Web.UI.WebControls
 				return oldValuesParameterFormatString != null ? oldValuesParameterFormatString : "{0}";
 			}
 			set {
+				if (OldValuesParameterFormatString == value)
+					return;
 				oldValuesParameterFormatString = value;
+				OnDataSourceViewChanged (EventArgs.Empty);
 			}
 		}
 
@@ -446,7 +466,10 @@ namespace System.Web.UI.WebControls
 				return startRowIndexParameterName != null ? startRowIndexParameterName : "startRowIndex";
 			}
 			set {
+				if (StartRowIndexParameterName == value)
+					return;
 				startRowIndexParameterName = value;
+				OnDataSourceViewChanged (EventArgs.Empty);
 			}
 		}
 
@@ -455,8 +478,11 @@ namespace System.Web.UI.WebControls
 				return typeName != null ? typeName : string.Empty;
 			}
 			set {
+				if (TypeName == value)
+					return;
 				typeName = value;
 				objectType = null;
+				OnDataSourceViewChanged (EventArgs.Empty);
 			}
 		}
 

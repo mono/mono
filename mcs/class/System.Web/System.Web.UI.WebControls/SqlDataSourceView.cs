@@ -531,7 +531,12 @@ namespace System.Web.UI.WebControls {
 		private bool cancelSelectOnNullParameter = true;
 		public bool CancelSelectOnNullParameter {
 			get { return cancelSelectOnNullParameter; }
-			set { cancelSelectOnNullParameter = value; }
+			set {
+				if (CancelSelectOnNullParameter == value)
+					return;
+				cancelSelectOnNullParameter = value;
+				OnDataSourceViewChanged (EventArgs.Empty);
+			}
 		}
 
 		public override bool CanDelete {
@@ -570,7 +575,12 @@ namespace System.Web.UI.WebControls {
 		private ConflictOptions conflictDetection = ConflictOptions.OverwriteChanges;
 		public ConflictOptions ConflictDetection {
 			get { return conflictDetection; }
-			set { conflictDetection = value; }
+			set {
+				if (ConflictDetection == value)
+					return;
+				conflictDetection = value;
+				OnDataSourceViewChanged (EventArgs.Empty);
+			}
 		}
 
 		// LAME SPEC: MSDN says value should be saved in ViewState but tests show otherwise.
@@ -598,7 +608,12 @@ namespace System.Web.UI.WebControls {
 		private string filterExpression = "";
 		public string FilterExpression {
 			get { return filterExpression; }
-			set { filterExpression = value; }
+			set {
+				if (FilterExpression == value)
+					return;
+				filterExpression = value;
+				OnDataSourceViewChanged (EventArgs.Empty);
+			}
 		}
 
 		[EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
@@ -638,7 +653,12 @@ namespace System.Web.UI.WebControls {
 		[DefaultValue ("{0}")]
 		public string OldValuesParameterFormatString {
 			get { return oldValuesParameterFormatString; }
-			set { oldValuesParameterFormatString = value; }
+			set {
+				if (OldValuesParameterFormatString == value)
+					return;
+				oldValuesParameterFormatString = value;
+				OnDataSourceViewChanged (EventArgs.Empty);
+			}
 		}
 
 		// LAME SPEC: MSDN says value should be saved in ViewState but tests show otherwise.
@@ -668,7 +688,12 @@ namespace System.Web.UI.WebControls {
 		private string sortParameterName = "";
 		public string SortParameterName {
 			get { return sortParameterName; }
-			set { sortParameterName = value; }
+			set {
+				if (SortParameterName == value)
+					return;
+				sortParameterName = value;
+				OnDataSourceViewChanged (EventArgs.Empty);
+			}
 		}
 
 		// LAME SPEC: MSDN says value should be saved in ViewState but tests show otherwise.

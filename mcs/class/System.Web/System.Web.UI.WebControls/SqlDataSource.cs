@@ -81,9 +81,6 @@ namespace System.Web.UI.WebControls {
 		protected virtual SqlDataSourceView CreateDataSourceView (string viewName)
 		{
 			SqlDataSourceView view = new SqlDataSourceView (this, viewName, this.Context);
-			view.DataSourceViewChanged += new EventHandler (ViewChanged);
-			if (IsTrackingViewState)
-				((IStateManager) view).TrackViewState ();			
 			return view;
 		}
 
@@ -436,17 +433,11 @@ namespace System.Web.UI.WebControls {
 			get {
 				if (view == null) {
 					view = CreateDataSourceView ("DefaultView");
-					view.DataSourceViewChanged += new EventHandler (ViewChanged);
 					if (IsTrackingViewState)
 						((IStateManager) view).TrackViewState ();
 				}
 				return view;
 			}
-		}
-		
-		void ViewChanged (object source, EventArgs e)
-		{
-			RaiseDataSourceChangedEvent (e);
 		}
 	}
 }
