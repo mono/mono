@@ -1,3 +1,9 @@
+2007-05-29  Rodrigo Kumpera  <kumpera@gmail.com>
+
+	* inssel.brg (mini_emit_virtual_call): Statically dispatch virtual calls to
+	sealed classes or methods.
+	*devirtualization.cs: tests for the new optimization
+
 2007-05-29  Zoltan Varga  <vargaz@gmail.com>
 
 	* liveness.c (update_gen_kill_set): No need to set VOLATILE flags here, it is done
