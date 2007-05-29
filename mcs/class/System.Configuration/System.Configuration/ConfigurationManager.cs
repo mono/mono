@@ -134,7 +134,7 @@ namespace System.Configuration {
 			return OpenExeConfigurationInternal (ConfigurationUserLevel.None, Assembly.GetCallingAssembly (), exePath);
 		}
 
-		[MonoTODO ("userLevel")]
+		[MonoLimitation("ConfigurationUserLevel parameter is not supported.")]
 		public static Configuration OpenMappedExeConfiguration (ExeConfigurationFileMap fileMap, ConfigurationUserLevel userLevel)
 		{
 			return ConfigurationFactory.Create (typeof(ExeConfigurationHost), fileMap);

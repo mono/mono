@@ -122,7 +122,7 @@ namespace System.Configuration
 			return names.GetEnumerator ();
 		}
 
-		[MonoTODO ("we can't possibly *always* return false here...")]
+		[MonoInternalNote ("we can't possibly *always* return false here...")]
 		public bool IsReadOnly (string name)
 		{
 			for (int i = 0; i < names.Count; i ++) {

@@ -82,7 +82,7 @@ namespace System.Configuration
 			get { return name; }
 		}
 
-		[MonoTODO ("Check if this is correct")]
+		[MonoInternalNote ("Check if this is correct")]
 		public string SectionGroupName {
 			get { return group.XPath; }
 		}

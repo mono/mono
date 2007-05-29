@@ -96,7 +96,7 @@ namespace System.Configuration
 			return elem;
 		}
 
-		[MonoTODO ("find the proper location for the decryption stuff")]
+		[MonoInternalNote ("find the proper location for the decryption stuff")]
 		protected internal virtual void DeserializeSection (XmlReader reader)
 		{
 			reader.MoveToContent ();

@@ -65,7 +65,7 @@ namespace System.Configuration
 			set { collectionType = value; }
 		}
 		
-		[MonoTODO ("Do something with this in ConfigurationElementCollection")]
+		[MonoInternalNote ("Do something with this in ConfigurationElementCollection")]
 		public Type ItemType {
 			get { return itemType; }
 		}

@@ -52,7 +52,7 @@ namespace System.Configuration
 			get { return ctx; }
 		}
 
-		[MonoTODO ("should this use HostingContext instead?")]
+		[MonoInternalNote ("should this use HostingContext instead?")]
 		public bool IsMachineLevel {
 			get {
 				return config.ConfigPath == "machine";

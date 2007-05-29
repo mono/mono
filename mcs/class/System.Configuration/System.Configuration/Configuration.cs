@@ -381,8 +381,8 @@ namespace System.Configuration {
 		{
 			SaveAs (filename, mode, false);
 		}
-		
-		[MonoTODO ("Detect if file has changed")]
+
+		[MonoInternalNote ("Detect if file has changed")]
 		public void SaveAs (string filename, ConfigurationSaveMode mode, bool forceUpdateAll)
 		{
 			Save (new FileStream (filename, FileMode.OpenOrCreate, FileAccess.Write), mode, forceUpdateAll);

@@ -88,8 +88,8 @@ namespace System.Configuration
 		public abstract string GetStreamName (string configPath);
 		public abstract void Init (IInternalConfigRoot root, params object[] hostInitParams);
 		public abstract void InitForConfiguration (ref string locationSubPath, out string configPath, out string locationConfigPath, IInternalConfigRoot root, params object[] hostInitConfigurationParams);
-		
-		[MonoTODO ("remote config")]
+
+		[MonoNotSupported ("mono does not support remote configuration")]
 		public virtual string GetStreamNameForConfigSource (string streamName, string configSource)
 		{
 			throw new NotSupportedException ("mono does not support remote configuration");
