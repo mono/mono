@@ -1,3 +1,10 @@
+2007-05-29  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Margins.cs: Implement missing == and != operators (MoMA reports them
+	but they were not included in the class status pages). Fix property 
+	setters (to check value), reduced code duplication and changed 
+	GetHashCode to be less CPU intensive.
+
 2007-05-24  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* PrintingServicesWin32.cs: Pass 0 as mode to DocumentProperties to

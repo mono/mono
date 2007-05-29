@@ -4,12 +4,10 @@
 // Authors:
 //   Dennis Hayes (dennish@Raytek.com)
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//   Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002 Ximian, Inc
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004, 2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,7 +29,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.ComponentModel;
 
 namespace System.Drawing.Printing
@@ -40,14 +37,13 @@ namespace System.Drawing.Printing
 	[Serializable]
 #endif
 	[TypeConverter (typeof (MarginsConverter))]
-	public class Margins : ICloneable
-	{
+	public class Margins : ICloneable {
 		int left;
 		int right;
 		int top;
 		int bottom;
 
-		public Margins()
+		public Margins ()
 		{
 			left = 100;
 			right = 100;
@@ -55,23 +51,12 @@ namespace System.Drawing.Printing
 			bottom = 100;
 		}
 
-		public Margins(int left, int right, int top, int bottom)
+		public Margins (int left, int right, int top, int bottom)
 		{
-			//Verify parameters
-			if (left < 0)
-				throw new System.ArgumentException("All Margins must be greater than 0", "left");
-			if (right < 0)
-				throw new System.ArgumentException("All Margins must be greater than 0", "right");
-			if (top < 0)
-				throw new System.ArgumentException("All Margins must be greater than 0", "top");
-			if (bottom < 0)
-				throw new System.ArgumentException("All Margins must be greater than 0", "bottom");
-
-			//Set proprities
-			this.left = left;
-			this.right = right;
-			this.top = top;
-			this.bottom = bottom;
+			Left = left;
+			Right = right;
+			Top = top;
+			Bottom = bottom;
 		}
 
 		public int Left {
@@ -79,8 +64,8 @@ namespace System.Drawing.Printing
 				return left;
 			}
 			set {
-				if (left < 0)
-					throw new System.ArgumentException("All Margins must be greater than 0", "left");
+				if (value < 0)
+					InvalidMargin ("left");
 				left = value;
 			}
 		}
@@ -90,8 +75,8 @@ namespace System.Drawing.Printing
 				return right;
 			}
 			set {
-				if (right < 0)
-					throw new System.ArgumentException("All Margins must be greater than 0", "right");
+				if (value < 0)
+					InvalidMargin ("right");
 				right = value;
 			}
 		}
@@ -101,8 +86,8 @@ namespace System.Drawing.Printing
 				return top;
 			}
 			set {
-				if (top < 0)
-					throw new System.ArgumentException("All Margins must be greater than 0", "top");
+				if (value < 0)
+					InvalidMargin ("top");
 				top = value;
 			}
 		}
@@ -112,40 +97,61 @@ namespace System.Drawing.Printing
 				return bottom;
 			}
 			set {
-				if (bottom < 0)
-					throw new System.ArgumentException("All Margins must be greater than 0", "bottom");
+				if (value < 0)
+					InvalidMargin ("bottom");
 				bottom = value;
 			}
 		}
-		
-		public object Clone()
+
+		private void InvalidMargin (string property)
 		{
-			return new Margins (this.Left, this.Right, this.Top, this.Bottom);
+			string msg = Locale.GetText ("All Margins must be greater than 0");
+			throw new System.ArgumentException (msg, property);
+		}
+		
+		public object Clone ()
+		{
+			return new Margins (left, right, top, bottom);
 		}
 
 		public override bool Equals (object obj)
 		{	
-			Margins m = obj as Margins;
+			return Equals (obj as Margins);
+		}
 
-			if (m == null)
+		private bool Equals (Margins m)
+		{
+			// avoid recursion with == operator
+			if ((object)m == null)
 				return false;
-			if (m.Left == left && m.Right == right && m.Top == top && m.Bottom == bottom)
-				return true;
-
-			return false;
+			return ((m.Left == left) && (m.Right == right) && (m.Top == top) && (m.Bottom == bottom));
 		}
 
 		public override int GetHashCode ()
 		{
-			// Try to create a somewhat meaningful hash
-			int hash = left + right * 2^8 + top * 2^16 + bottom * 2^24;
-			return hash;
+			return left | (right << 8) | (right >> 24) | (top << 16) | (top >> 16) | (bottom << 24) | (bottom >> 8);
 		}
 		
-		public override string ToString()
+		public override string ToString ()
 		{
 			string ret = "[Margins Left={0} Right={1} Top={2} Bottom={3}]";
-			return String.Format (ret, this.Left, this.Right, this.Top, this.Bottom);
+			return String.Format (ret, left, right, top, bottom);
+		}
+
+		public static bool operator == (Margins m1, Margins m2)
+		{
+			// avoid recursion with == operator
+			if ((object)m1 == null)
+				return ((object)m2 == null);
+			return m1.Equals (m2);
+		}
+
+		public static bool operator != (Margins m1, Margins m2)
+		{
+			// avoid recursion with == operator
+			if ((object)m1 == null)
+				return ((object)m2 != null);
+			return !m1.Equals (m2);
 		}
 	}
 }
