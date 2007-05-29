@@ -71,7 +71,7 @@ namespace System.ComponentModel
 			set { support_cancel = value; }
 		}
 
-		[MonoTODO ("What should happen when IsBusy != true?")]
+		//[MonoTODO ("What should happen when IsBusy != true?")]
 		public void CancelAsync ()
 		{
 			if (!support_cancel)
