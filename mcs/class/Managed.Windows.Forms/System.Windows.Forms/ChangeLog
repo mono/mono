@@ -1,5 +1,10 @@
 2007-05-29  Andreia Gaita  <avidigal@novell.com>
 
+	* PageSetupDialog.cs: Fix #80728 - Changing the printer doesn't
+	update the page setup screen.
+
+2007-05-29  Andreia Gaita  <avidigal@novell.com>
+
 	* PageSetupDialog.cs: Fix landscape mode.
 
 2007-05-28  Carlos Alberto Cortez <calberto.cortez@gmail.com>

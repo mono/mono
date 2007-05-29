@@ -72,7 +72,6 @@ namespace System.Windows.Forms {
 		private NumericTextBox textbox_bottom;
 		private ComboBox combobox_source;
 		private ComboBox combobox_size;
-		private PrinterForm printer_helper_form;
 		private PagePreview pagePreview;
 		#endregion // Local variables
 
@@ -565,8 +564,7 @@ namespace System.Windows.Forms {
 
 		void OnClickPrinterButton (object sender, EventArgs args)
 		{
-			if (printer_helper_form == null)
-				printer_helper_form = new PrinterForm (this);
+			PrinterForm printer_helper_form = new PrinterForm (this);
 
 			printer_helper_form.UpdateValues ();
 
@@ -575,7 +573,10 @@ namespace System.Windows.Forms {
 				if (printer_helper_form.SelectedPrinter != PrinterSettings.PrinterName)
 					PrinterSettings.PrinterName = printer_helper_form.SelectedPrinter;
 
+			PageSettings = PrinterSettings.DefaultPageSettings;
+			SetPrinterDetails ();
 			button_ok.Select ();
+			printer_helper_form.Dispose ();
 		}
 
 		void OnPaperSizeChange (object sender, EventArgs e)
