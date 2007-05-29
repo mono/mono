@@ -410,7 +410,7 @@ namespace System.Windows.Forms {
 			// 
 			// pagePreview
 			// 
-			this.pagePreview.Location = new System.Drawing.Point (96, 5);
+			this.pagePreview.Location = new System.Drawing.Point (130, 10);
 			this.pagePreview.Name = "pagePreview";
 			this.pagePreview.Size = new System.Drawing.Size (150, 150);
 			this.pagePreview.TabIndex = 6;
@@ -516,8 +516,6 @@ namespace System.Windows.Forms {
 			groupbox_margin.Enabled = AllowMargins;
 
 			pagePreview.Setup (PageSettings);
-
-			
 		}
 
 		private void OnClickOkButton (object sender, EventArgs e)
@@ -855,17 +853,19 @@ namespace System.Windows.Forms {
 				{
 					if (landscape != value) {
 						landscape = value;
-						int a = width;
-						width = height;
-						height = a;
+						Invalidate ();
 					}
-					Invalidate ();
 				}
 			}
 
 			public float Height {
 				get { return displayHeight; }
-				set { displayHeight = value; }
+				set { 
+					if (displayHeight != value) {
+						displayHeight = value; 
+						Invalidate ();
+					}
+				}
 			}
 
 			public PagePreview ()
@@ -923,19 +923,31 @@ namespace System.Windows.Forms {
 
 				Graphics g = e.Graphics;
 
+				float h = displayHeight;
 				float w = (width * displayHeight) / height;
 				float top = (marginTop * displayHeight) / height;
 				float left = (marginLeft * displayHeight) / height;
 				float bottom = (marginBottom * displayHeight) / height;
 				float right = (marginRight * displayHeight) / height;
 
-				g.FillRectangle (SystemBrushes.ControlDark, 4, 4, w + 4, displayHeight + 4);
-				g.FillRectangle (Brushes.White, 0, 0, w, displayHeight);
+				if (landscape) {
+					float a = w;
+					w = h;
+					h = a;
+					a = right;
+					right = top;
+					top = left;
+					left = bottom;
+					bottom = a;
+				}
+				
+				g.FillRectangle (SystemBrushes.ControlDark, 4, 4, w + 4, h + 4);
+				g.FillRectangle (Brushes.White, 0, 0, w, h);
 
-				RectangleF outerrect = new RectangleF (0, 0, w, displayHeight);
+				RectangleF outerrect = new RectangleF (0, 0, w, h);
 				RectangleF innerrect = new RectangleF (left, top,
 														w - left - right,
-														displayHeight - top - bottom);
+														h - top - bottom);
 
 				ControlPaint.DrawBorder (g, outerrect, Color.Black, ButtonBorderStyle.Solid);
 				ControlPaint.DrawBorder (g, innerrect, SystemColors.ControlDark, ButtonBorderStyle.Dashed);
