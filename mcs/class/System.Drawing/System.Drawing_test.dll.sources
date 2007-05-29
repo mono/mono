@@ -64,6 +64,7 @@ System.Drawing.Imaging/TestColorMatrix.cs
 System.Drawing.Imaging/TestImageAttributes.cs
 System.Drawing.Imaging/TiffCodecTest.cs
 System.Drawing.Imaging/WmfPlaceableFileHeaderTest.cs
+System.Drawing.Printing/MarginsTest.cs
 System.Drawing.Printing/PageSettingsTest.cs
 System.Drawing.Printing/PrinterUnitConvertTest.cs
 System.Drawing.Printing/PrintingPermissionAttributeTest.cs

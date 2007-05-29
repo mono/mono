@@ -1,3 +1,8 @@
+2007-05-29  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* System.Drawing_test.dll.sources: Add System.Drawing.Printing.Margins
+	unit tests to the build.
+
 2007-05-23  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* Makefile: Add a 2bpp PNG test file to the dist.
