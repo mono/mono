@@ -115,13 +115,13 @@ namespace System.Web.Configuration {
 			return ConfigurationManager.OpenMachineConfiguration ();
 		}
 		
-		[MonoTODO ("need to handle locationSubPath")]
+		[MonoLimitation ("locationSubPath is not handled")]
 		public static _Configuration OpenMachineConfiguration (string locationSubPath)
 		{
 			return OpenMachineConfiguration ();
 		}
 
-		[MonoTODO("Mono does not support remote configuration")]
+		[MonoLimitation("Mono does not support remote configuration")]
 		public static _Configuration OpenMachineConfiguration (string locationSubPath,
 								       string server)
 		{
@@ -131,7 +131,7 @@ namespace System.Web.Configuration {
 			throw new NotSupportedException ("Mono doesn't support remote configuration");
 		}
 
-		[MonoTODO("Mono does not support remote configuration")]
+		[MonoLimitation("Mono does not support remote configuration")]
 		public static _Configuration OpenMachineConfiguration (string locationSubPath,
 								       string server,
 								       IntPtr userToken)
@@ -141,7 +141,7 @@ namespace System.Web.Configuration {
 			throw new NotSupportedException ("Mono doesn't support remote configuration");
 		}
 
-		[MonoTODO("Mono does not support remote configuration")]
+		[MonoLimitation("Mono does not support remote configuration")]
 		public static _Configuration OpenMachineConfiguration (string locationSubPath,
 								       string server,
 								       string userName,

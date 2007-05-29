@@ -200,17 +200,17 @@ namespace System.Web.Handlers
 			manager.TraceData [item - 1].Render (output);
 		}
 
-		[MonoTODO ("Not implemented, does nothing")]
+		[MonoLimitation ("Not implemented, does nothing")]
 		protected void ShowDetails (DataSet data)
 		{
 		}
 #if NET_2_0
-		[MonoTODO ("Not implemented, does nothing")]
+		[MonoLimitation ("Not implemented, does nothing")]
 		protected void ShowRequests (IList data)
 		{
 		}
 
-		[MonoTODO ("Not implemented, does nothing")]
+		[MonoLimitation ("Not implemented, does nothing")]
 		protected void ShowVersionDetails ()
 		{
 		}

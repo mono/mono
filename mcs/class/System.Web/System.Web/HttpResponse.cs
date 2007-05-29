@@ -883,7 +883,7 @@ namespace System.Web {
 
 #if TARGET_JVM
 		public void WriteFile (IntPtr fileHandle, long offset, long size) {
-			throw new NotSupportedException("IntPtr not supported");
+			throw new PlatformNotSupportedException("IntPtr not supported");
 		}
 #else
 		public void WriteFile (IntPtr fileHandle, long offset, long size)
