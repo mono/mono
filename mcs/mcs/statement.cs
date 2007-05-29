@@ -1740,7 +1740,7 @@ namespace Mono.CSharp {
 					return false;
 			}
 
-			for (Block b = Toplevel.ContainerBlock; b != null; b = b.Toplevel.ContainerBlock) {
+			for (Block b = Toplevel.Parent; b != null; b = b.Toplevel.Parent) {
 				if (!b.CheckError136_InParents (name, loc))
 					return false;
 			}
@@ -1801,7 +1801,7 @@ namespace Mono.CSharp {
 					return false;
 			}
 
-			for (Block c = Toplevel.ContainerBlock; c != null; c = c.Toplevel.ContainerBlock) {
+			for (Block c = Toplevel.Parent; c != null; c = c.Toplevel.Parent) {
 				if (!c.DoCheckError136 (name, "parent or current", loc))
 					return false;
 			}
@@ -2440,11 +2440,6 @@ namespace Mono.CSharp {
 	// Methods was implemented. 
 	// 
 	public class ToplevelBlock : ExplicitBlock {
-		//
-		// Pointer to the host of this anonymous method, or null
-		// if we are the topmost block
-		//
-		Block container;
 		GenericMethod generic;
 		FlowBranchingToplevel top_level_branching;
 		AnonymousContainer anonymous_container;
@@ -2469,15 +2464,13 @@ namespace Mono.CSharp {
 
 		public bool CompleteContexts (EmitContext ec)
 		{
-			Report.Debug (64, "TOPLEVEL COMPLETE CONTEXTS", this,
-				      container, root_scope);
+			Report.Debug (64, "TOPLEVEL COMPLETE CONTEXTS", this, Parent, root_scope);
 
 			if (root_scope != null)
 				root_scope.LinkScopes ();
 
-			if ((container == null) && (root_scope != null)) {
-				Report.Debug (64, "TOPLEVEL COMPLETE CONTEXTS #1", this,
-					      root_scope);
+			if (Parent == null && root_scope != null) {
+				Report.Debug (64, "TOPLEVEL COMPLETE CONTEXTS #1", this, root_scope);
 
 				if (root_scope.DefineType () == null)
 					return false;
@@ -2497,11 +2490,7 @@ namespace Mono.CSharp {
 		}
 
 		public ToplevelBlock Container {
-			get { return container != null ? container.Toplevel : null; }
-		}
-
-		public Block ContainerBlock {
-			get { return container; }
+			get { return Parent == null ? null : Parent.Toplevel; }
 		}
 
 		public AnonymousContainer AnonymousContainer {
@@ -2509,18 +2498,13 @@ namespace Mono.CSharp {
 			set { anonymous_container = value; }
 		}
 
-		//
-		// Parent is only used by anonymous blocks to link back to their
-		// parents
-		//
-		public ToplevelBlock (Block container, Parameters parameters, Location start) :
-			this (container, (Flags) 0, parameters, start)
+		public ToplevelBlock (Block parent, Parameters parameters, Location start) :
+			this (parent, (Flags) 0, parameters, start)
 		{
 		}
 
-		public ToplevelBlock (Block container, Parameters parameters, GenericMethod generic,
-				      Location start) :
-			this (container, parameters, start)
+		public ToplevelBlock (Block parent, Parameters parameters, GenericMethod generic, Location start) :
+			this (parent, parameters, start)
 		{
 			this.generic = generic;
 		}
@@ -2535,13 +2519,17 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public ToplevelBlock (Block container, Flags flags, Parameters parameters, Location start) :
+		// We use 'Parent' to hook up to the containing block, but don't want to register the current block as a child.
+		// So, we use a two-stage setup -- first pass a null parent to the base constructor, and then override 'Parent'.
+		public ToplevelBlock (Block parent, Flags flags, Parameters parameters, Location start) :
 			base (null, flags, start, Location.Null)
 		{
 			this.Toplevel = this;
 
 			this.parameters = parameters == null ? Parameters.EmptyReadOnlyParameters : parameters;
-			this.container = container;
+			this.Parent = parent;
+			if (parent != null)
+				parent.AddAnonymousChild (this);
 		}
 
 		public ToplevelBlock (Location loc) : this (null, (Flags) 0, null, loc)
@@ -2595,10 +2583,9 @@ namespace Mono.CSharp {
 
 		public void CreateIteratorHost (RootScopeInfo root)
 		{
-			Report.Debug (64, "CREATE ITERATOR HOST", this, root,
-				      container, root_scope);
+			Report.Debug (64, "CREATE ITERATOR HOST", this, root, Parent, root_scope);
 
-			if ((container != null) || (root_scope != null))
+			if (Parent != null || root_scope != null)
 				throw new InternalErrorException ();
 
 			scope_info = root_scope = root;
@@ -2633,7 +2620,6 @@ namespace Mono.CSharp {
 			if ((flags & Flags.VariablesInitialized) != 0)
 				throw new InternalErrorException ("block has already been resolved");
 
-			container = new_parent;
 			Parent = new_parent;
 		}
 
@@ -2728,7 +2714,7 @@ namespace Mono.CSharp {
 			if (ip != null)
 				parameters = ip;
 
-			if (!IsIterator && (container != null) && (parameters != null)) {
+			if (!IsIterator && Parent != null && parameters != null) {
 				foreach (Parameter p in parameters.FixedParameters) {
 					if (!CheckError136_InParents (p.Name, loc))
 						return false;

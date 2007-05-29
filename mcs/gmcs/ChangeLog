@@ -1,3 +1,8 @@
+2007-05-29  Raja R Harinath  <rharinath@novell.com>
+
+	* cs-parser.jay: Update to changes in ToplevelBlock.
+	(top_current_block): Remove.
+
 2007-05-27  Raja R Harinath  <harinath@gmail.com>
 
 	* cs-parser.jay: Update to new ExplicitBlock invariant.

@@ -1,5 +1,15 @@
 2007-05-29  Raja R Harinath  <rharinath@novell.com>
 
+	* statement.cs (ToplevelBlock.container): Remove field.  It's
+	redundant with 'Parent'.
+	(ToplevelBlock.ContainerBlock): Remove accessor.
+	(ToplevelBlock..ctor): Update to changes.  Register anonymous
+	child with parent here, ...
+	* cs-parser.jay (end_anonymous): ... not here.  Don't modify
+	current_block.
+	(start_anonymous): Don't save current_block.
+	(top_current_block): Remove.
+
 	* statement.cs (Block.Flags): Remove IsExplicit and IsToplevel flags.
 	(Block.Resolve): Update to changes.
 	(Block..ctor): Move setting of "correct" 'Toplevel'
