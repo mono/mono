@@ -91,6 +91,7 @@ System.Data.Odbc/OdbcParameterCollectionTest.cs
 System.Data.OleDb/OleDbParameterCollectionTest.cs
 System.Data.OleDb/OleDbPermissionAttributeTest.cs
 System.Data.OleDb/OleDbPermissionTest.cs
+System.Data.SqlClient/SqlCommandTest.cs
 System.Data.SqlClient/SqlConnectionTest.cs
 System.Data.SqlClient/SqlConnectionStringBuilderTest.cs
 System.Data.SqlClient/SqlClientPermissionAttributeTest.cs

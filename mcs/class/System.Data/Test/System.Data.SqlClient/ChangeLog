@@ -1,3 +1,7 @@
+2007-05-29  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* SqlCommandTest.cs: Added test for bug #81710.
+
 2005-09-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SqlClientPermissionAttributeTest.cs: Removed *Choice security 
