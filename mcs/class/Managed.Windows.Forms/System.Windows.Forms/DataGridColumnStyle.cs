@@ -525,12 +525,16 @@ namespace System.Windows.Forms
 			
 			bounds.X += 2;
 			bounds.Width -=	2;
+
+			if (arrow_drawing != ArrowDrawing.No)
+				bounds.Width -= 16;
+
 			g.DrawString (HeaderText, DataGridTableStyle.HeaderFont, ThemeEngine.Current.ResPool.GetSolidBrush (DataGridTableStyle.CurrentHeaderForeColor), 
 				bounds, string_format_hdr);
 
 			if (arrow_drawing != ArrowDrawing.No) {
 				// Draw 6 x 6
-				Point pnt = new Point (bounds.X + bounds.Width  - 12, bounds.Y + ((bounds.Height - 6)/2));
+				Point pnt = new Point (bounds.X + bounds.Width + 4, bounds.Y + ((bounds.Height - 6)/2));
 				
 				if (arrow_drawing == ArrowDrawing.Ascending) {
 					g.DrawLine (SystemPens.ControlLightLight, pnt.X + 6, pnt.Y + 6, pnt.X + 3, pnt.Y);

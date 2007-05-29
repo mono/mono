@@ -1,3 +1,8 @@
+2007-05-29  Everaldo Canuto  <ecanuto@novell.com>
+
+	* DataGridColumnStyle.cs: Fix grid header arrow drawing over column name. 
+	Fixes #80147.
+
 2007-05-29  Jackson Harper  <jackson@ximian.com>
 
 	* TreeNode.cs: Fix off by one on calculating whether or not a node
