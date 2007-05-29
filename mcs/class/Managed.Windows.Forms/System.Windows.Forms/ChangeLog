@@ -1,5 +1,10 @@
 2007-05-28  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* SystemInformation.cs: Add 2.0 IconSizeVerticalSpacing and
+	IconSizeHorizontalSpacing.
+
+2007-05-28  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* ListView.cs: The declaration of prev_tooltip_item should be inside
 	a NET_2_0 conditional (avoid a warning).
 

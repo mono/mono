@@ -170,6 +170,20 @@ namespace System.Windows.Forms
 			}
 		}
 
+#if NET_2_0
+		public static int IconHorizontalSpacing {
+			get {
+				return IconSpacingSize.Width;
+			}
+		}
+
+		public static int IconVerticalSpacing {
+			get {
+				return IconSpacingSize.Height;
+			}
+		}
+#endif
+
 		public static Size IconSpacingSize {
 			get {
 				return ThemeEngine.Current.IconSpacingSize;
