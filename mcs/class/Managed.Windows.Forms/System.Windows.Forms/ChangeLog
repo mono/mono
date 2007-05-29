@@ -1,3 +1,8 @@
+2007-05-29  Jackson Harper  <jackson@ximian.com>
+
+	* TreeNode.cs: Fix off by one on calculating whether or not a node
+	is visible.
+
 2007-05-29  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Control.cs: ResumeLayout(false) should recalculate anchor distances.

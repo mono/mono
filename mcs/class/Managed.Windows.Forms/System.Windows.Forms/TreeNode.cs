@@ -410,7 +410,7 @@ namespace System.Windows.Forms {
 				if (TreeView == null || !TreeView.IsHandleCreated || !TreeView.Visible)
 					return false;
 
-				if (visible_order < TreeView.skipped_nodes || visible_order - TreeView.skipped_nodes > TreeView.VisibleCount)
+				if (visible_order <= TreeView.skipped_nodes || visible_order - TreeView.skipped_nodes > TreeView.VisibleCount)
 					return false;
 
 				TreeNode parent = Parent;
