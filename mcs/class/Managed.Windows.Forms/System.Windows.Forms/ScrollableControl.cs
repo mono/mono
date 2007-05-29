@@ -864,7 +864,7 @@ namespace System.Windows.Forms {
 
 			UpdateSizeGripVisible ();
 
-			ResumeLayout ();
+			ResumeLayout (false);
 			
 			// We should now scroll the active control into view, 
 			// the funny part is that ScrollableControl does not have 

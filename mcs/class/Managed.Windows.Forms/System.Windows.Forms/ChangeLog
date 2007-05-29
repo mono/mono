@@ -1,3 +1,10 @@
+2007-05-29  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Control.cs: ResumeLayout(false) should recalculate anchor distances.
+	* ScrollableControl.cs: Force an UpdateDistances when we move the
+	scrollbars.
+	[Fixes bug #80605]
+
 2007-05-29  Andreia Gaita  <avidigal@novell.com>
 
 	* PageSetupDialog.cs: Fix #80728 - Changing the printer doesn't

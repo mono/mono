@@ -608,7 +608,7 @@ namespace System.Windows.Forms
 					for (int i = 0; i < controls.Length; i++)
 						AddImplicit (controls [i]);
 				} finally {
-					owner.ResumeLayout ();
+					owner.ResumeLayout (false);
 				}
 			}
 
@@ -3917,6 +3917,10 @@ namespace System.Windows.Forms
 			}
 
 			if (layout_suspended == 0) {
+				if (!performLayout)
+					foreach (Control c in Controls.GetAllControls ())
+						c.recalculate_distances = true;
+
 				if (performLayout && layout_pending) {
 					PerformLayout();
 				}
@@ -4017,6 +4021,8 @@ namespace System.Windows.Forms
 				SetBoundsCore (x, y, width, height, specified);
 			else
 				return;
+			
+			UpdateDistances ();
 			
 			if (parent != null)
 				parent.PerformLayout(this, "Bounds");

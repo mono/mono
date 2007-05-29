@@ -2208,6 +2208,36 @@ namespace MonoTests.System.Windows.Forms
 			
 			Assert.AreEqual (f.ClientSize.Width, c.Width, "L1");
 		}
+		
+		[Test]
+		public void ResumeLayoutEffects ()
+		{
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+			f.ClientSize = new Size (300, 300);
+			
+			Button button1 = new Button ();
+			f.Controls.Add (button1);
+			button1.Anchor = AnchorStyles.Right | AnchorStyles.Bottom;
+			button1.Location = new Point (f.ClientSize.Width - button1.Width, f.ClientSize.Height - button1.Height);
+
+			f.Show ();
+			
+			Assert.AreEqual (new Point (225, 277), button1.Location, "A1");
+			
+			f.SuspendLayout ();
+			f.Height += 10;
+			f.ResumeLayout (false);
+			f.PerformLayout ();
+
+			Assert.AreEqual (new Point (225, 277), button1.Location, "A2");
+
+			f.SuspendLayout ();
+			f.Height += 10;
+			f.ResumeLayout ();
+
+			Assert.AreEqual (new Point (225, 287), button1.Location, "A3");
+		}
 	}
 
 	[TestFixture]
