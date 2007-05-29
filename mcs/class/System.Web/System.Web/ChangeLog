@@ -1,3 +1,10 @@
+2007-05-29  Marek Habersack  <mhabersack@novell.com>
+
+	* SiteMapProvider.cs: updated the node accessibility comments.
+	If Roles not null and user is not in at least one of the
+	configured roles (or the collection is empty), return false.
+	If there Url is null or empty, return false.
+
 2007-05-28  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpRequest.cs: since Path is used from within

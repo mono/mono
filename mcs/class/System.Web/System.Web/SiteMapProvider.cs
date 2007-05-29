@@ -171,33 +171,32 @@ namespace System.Web {
 			if (!SecurityTrimmingEnabled)
 				return true;
 
-			/* the node is accessible (according to msdn2)
-			 * if:
+			/* The node is accessible (according to msdn2) if:
 			 *
-			 * 1. the current user is in the node's Roles.
+			 * 1. The Roles exists on node and the current user is in at least one of the specified roles.
 			 *
-			 * 2. the current thread's WindowsIdentity has
-			 * file access to the url. (and the url is
-			 * located within the current application).
+			 * 2. The current thread has an associated WindowsIdentity that has file access to the requested URL and
+			 * the URL is located within the directory structure for the application.
 			 *
-			 * 3. the <authorization> configuration element
-			 * lists the current user as being authorized
-			 * for the node's url. (and the url is located
-			 * within the current application)
+			 * 3. The current user is authorized specifically for the requested URL in the authorization element for
+			 * the current application and the URL is located within the directory structure for the application. 
 			*/
 
 			/* 1. */
-			if (node.Roles != null)
+			if (node.Roles != null) {
 				foreach (string rolename in node.Roles)
 					if (rolename == "*" || context.User.IsInRole (rolename))
 						return true;
+				return false;
+			}
 
 			/* 2. */
 			/* XXX */
 
+			/* 3. */
 			string url = node.Url;
 			if(String.IsNullOrEmpty(url))
-				return true;
+				return false;
 			// TODO check url is located within the current application
 
 			if (VirtualPathUtility.IsAppRelative (url) || !VirtualPathUtility.IsAbsolute (url))
