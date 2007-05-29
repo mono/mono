@@ -1,3 +1,9 @@
+2007-05-29  Marek Habersack  <mhabersack@novell.com>
+
+	* ThemeDirectoryCompiler.cs: pass the skin file's
+	virtual path to the skin file parser as its first paramenter, and
+	not a physical path.
+
 2007-05-28  Marek Habersack  <mhabersack@novell.com>
 
 	* ResourceExpressionBuilder.cs: properly cast

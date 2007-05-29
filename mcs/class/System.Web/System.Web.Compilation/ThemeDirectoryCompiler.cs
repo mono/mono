@@ -61,11 +61,12 @@ namespace System.Web.UI
 			
 			ptp.RootBuilder = new RootBuilder ();
 
+			string skin_file_url;
 			for (int i = 0; i < skin_files.Length; i ++) {
-				string skin_file_url = UrlUtils.Combine (physicalPath, Path.GetFileName (skin_files [i]));
+				skin_file_url = VirtualPathUtility.Combine (virtualPath, Path.GetFileName (skin_files [i]));
 				PageThemeFileParser ptfp = new PageThemeFileParser (skin_file_url,
-										   skin_files[i],
-										   context);
+										    skin_files[i],
+										    context);
 
 				ptp.AddDependency (skin_files [i]);
 				AspGenerator gen = new AspGenerator (ptfp);
