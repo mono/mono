@@ -980,6 +980,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		#endregion
 
 		[Test]
+		[Category ("NotWorking")]
 		public void ObjectDataSourceView_DataSourceViewChanged ()
 		{
 			ObjectDataSource ds = new ObjectDataSource ();
