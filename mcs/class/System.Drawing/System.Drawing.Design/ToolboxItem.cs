@@ -187,7 +187,7 @@ namespace System.Drawing.Design
 			throw new NotImplementedException ();
 		} 
 
-		[MonoTODO] 
+		[MonoNotSupported("")] 
 		public Type GetType (IDesignerHost host)
 		{
 			if (host == null)

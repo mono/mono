@@ -660,7 +660,7 @@ namespace System.Drawing {
 			DrawImage(image, destPoints, srcRect, srcUnit, null);
 		}
 
-		[MonoTODO]
+		[MonoLimitation("ImageAttributes parameter is ignored.")]
 		public void DrawImage (Image image, Point [] destPoints, Rectangle srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr) {
 			//TBD: ImageAttributes
 			if (srcUnit != GraphicsUnit.Pixel)
@@ -672,8 +672,8 @@ namespace System.Drawing {
 			Region region = new Region(srcRect);
 			DrawImage(image, mx, region);
 		}
-		
-		[MonoTODO]
+
+		[MonoLimitation ("ImageAttributes parameter is ignored.")]
 		public void DrawImage (Image image, PointF [] destPoints, RectangleF srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr) {
 			//TBD: ImageAttributes
 			if (srcUnit != GraphicsUnit.Pixel)
@@ -716,9 +716,8 @@ namespace System.Drawing {
 		public void DrawImage (Image image, Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, GraphicsUnit srcUnit) {
 			DrawImage(image, destRect, srcX, srcY, srcWidth, srcHeight, srcUnit, null);
 		}
-		
 
-		[MonoTODO]
+		[MonoLimitation ("ImageAttributes parameter is ignored.")]
 		public void DrawImage (Image image, Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, GraphicsUnit srcUnit, ImageAttributes imageAttr) {			
 			//TBD: attributes
 			DrawImage(
@@ -727,8 +726,8 @@ namespace System.Drawing {
 				new Rectangle(srcX, srcY, srcWidth, srcHeight),
 				srcUnit);
 		}
-		
-		[MonoTODO]
+
+		[MonoLimitation ("ImageAttributes parameter is ignored.")]
 		public void DrawImage (Image image, Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, GraphicsUnit srcUnit, ImageAttributes imageAttrs) {
 			//TBD: attributes
 			DrawImage(
