@@ -410,12 +410,13 @@ namespace MonoTests.System.Data.SqlClient
 	
 			// Test Connection  cannot be modified when reader is in use
 			// NOTE : msdotnet contradicts documented behavior 	
+			/*
 			cmd.CommandText = "select * from numeric_family where id=1";
 			reader = cmd.ExecuteReader ();
 			reader.Read ();
 			conn.Close (); // valid operation 
 			conn = new SqlConnection (connectionString);
-
+			*/
 			/*
 			// NOTE msdotnet contradcits documented behavior 
 			// If the above testcase fails, then this shud be tested 	
@@ -910,6 +911,317 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.AreEqual(2, cmd.Parameters.Count);
 		}
 
+		[Test]
+		public void StoredProc_NoParameterTest ()
+		{
+			string query = "create procedure #tmp_sp_proc as begin";
+			query += " select 'data' end";
+			SqlConnection conn = new SqlConnection (connectionString);
+			SqlCommand cmd = conn.CreateCommand ();
+			cmd.CommandText = query ;
+			conn.Open ();
+			cmd.ExecuteNonQuery ();
+	
+			cmd.CommandType = CommandType.StoredProcedure;
+			cmd.CommandText = "#tmp_sp_proc";
+			using (SqlDataReader reader = cmd.ExecuteReader()) {
+				if (reader.Read ())
+					Assert.AreEqual ("data", reader.GetString(0),"#1");
+				else
+					Assert.Fail ("#2 Select shud return data");
+			}
+			conn.Close ();
+		}
+	
+		[Test]
+		public void StoredProc_ParameterTest ()
+		{
+			string create_query  = CREATE_TMP_SP_PARAM_TEST;
+			string drop_query = DROP_TMP_SP_PARAM_TEST;
+
+			SqlConnection conn = new SqlConnection (connectionString);
+			
+			conn.Open ();
+			SqlCommand cmd = conn.CreateCommand ();
+			int label = 0 ;
+			string error = "";
+			while (label != -1) {
+				try {
+					switch (label) {
+						case 0 :
+							// Test BigInt Param	
+							DBHelper.ExecuteNonQuery (conn,
+									String.Format(create_query, "bigint"));
+							rpc_helper_function (cmd, SqlDbType.BigInt, 0, Int64.MaxValue);
+							rpc_helper_function (cmd, SqlDbType.BigInt, 0, Int64.MinValue);
+							break;
+						case 1 :
+							// Test Binary Param 
+							DBHelper.ExecuteNonQuery (conn,
+									String.Format(create_query, "binary(5)"));
+							//rpc_helper_function (cmd, SqlDbType.Binary, 0, new byte[] {});
+							rpc_helper_function (cmd, SqlDbType.Binary, 5, new byte[] {1,2,3,4,5});
+							break;
+						case 2 :
+							// Test Bit Param
+							DBHelper.ExecuteNonQuery (conn,
+									String.Format(create_query, "bit"));
+							rpc_helper_function (cmd, SqlDbType.Bit, 0, true);
+							rpc_helper_function (cmd, SqlDbType.Bit, 0, false);
+							break;
+						case 3 :
+							// Testing Char 
+							DBHelper.ExecuteNonQuery (conn,
+									String.Format(create_query, "char(10)"));
+							rpc_helper_function (cmd, SqlDbType.Char, 10, "characters");
+							/*
+							rpc_helper_function (cmd, SqlDbType.Char, 10, "");
+							rpc_helper_function (cmd, SqlDbType.Char, 10, null);
+							*/
+							break;
+						case 4 :
+							// Testing DateTime
+							DBHelper.ExecuteNonQuery (conn,
+									String.Format(create_query, "datetime"));
+							rpc_helper_function (cmd, SqlDbType.DateTime, 0, "2079-06-06 23:59:00");
+							/*
+							rpc_helper_function (cmd, SqlDbType.DateTime, 10, "");
+							rpc_helper_function (cmd, SqlDbType.DateTime, 10, null);
+							*/
+							break;
+						case 5 :
+							// Test Decimal Param
+							DBHelper.ExecuteNonQuery (conn, 
+									String.Format(create_query,"decimal(10,2)"));
+							/*
+							rpc_helper_function (cmd, SqlDbType.Decimal, 0, 10.01);
+							rpc_helper_function (cmd, SqlDbType.Decimal, 0, -10.01);
+							*/
+							break;
+						case 6 :
+							// Test Float Param
+							DBHelper.ExecuteNonQuery (conn, 
+									String.Format(create_query,"float"));
+							rpc_helper_function (cmd, SqlDbType.Float, 0, 10.0);
+							rpc_helper_function (cmd, SqlDbType.Float, 0, 0);
+							/*
+							rpc_helper_function (cmd, SqlDbType.Float, 0, null);
+							*/
+							break;
+						case 7 :
+							// Testing Image
+							/* NOT WORKING
+							   DBHelper.ExecuteNonQuery (conn,
+							   String.Format(create_query, "image"));
+							   rpc_helper_function (cmd, SqlDbType.Image, 0, );
+							   rpc_helper_function (cmd, SqlDbType.Image, 0, );
+							   rpc_helper_function (cmd, SqlDbType.Image, 0, );
+							   /* NOT WORKING*/
+							break;
+						case 8 :
+							// Test Integer Param	
+							DBHelper.ExecuteNonQuery (conn,
+							String.Format(create_query,"int"));
+							rpc_helper_function (cmd, SqlDbType.Int, 0, 10);
+							/*
+							rpc_helper_function (cmd, SqlDbType.Int, 0, null);
+							*/
+							break;
+						case 9 :
+							// Test Money Param	
+							DBHelper.ExecuteNonQuery (conn,
+									String.Format(create_query,"money"));
+							/*
+							rpc_helper_function (cmd, SqlDbType.Money, 0, 10.0);
+							rpc_helper_function (cmd, SqlDbType.Money, 0, null);
+							*/
+							break;
+						case 23 :
+							// Test NChar Param	
+							DBHelper.ExecuteNonQuery (conn,
+									String.Format(create_query,"nchar(10)"));
+							/*
+							rpc_helper_function (cmd, SqlDbType.NChar, 10, "nchar");
+							rpc_helper_function (cmd, SqlDbType.NChar, 10, "");
+							rpc_helper_function (cmd, SqlDbType.NChar, 10, null); 
+							*/
+							break;
+						case 10 :
+							// Test NText Param	
+							DBHelper.ExecuteNonQuery (conn,
+									String.Format(create_query,"ntext"));
+							/*
+							rpc_helper_function (cmd, SqlDbType.NText, 0, "ntext");
+							rpc_helper_function (cmd, SqlDbType.NText, 0, "");
+							rpc_helper_function (cmd, SqlDbType.NText, 0, null); 
+							*/
+							break;
+						case 11 :
+							// Test NVarChar Param	
+							DBHelper.ExecuteNonQuery (conn,
+									String.Format(create_query,"nvarchar(10)"));
+							rpc_helper_function (cmd, SqlDbType.NVarChar, 10, "nvarchar");
+							rpc_helper_function (cmd, SqlDbType.NVarChar, 10, "");
+							//rpc_helper_function (cmd, SqlDbType.NVarChar, 10, null); 
+							break;
+						case 12 :
+							// Test Real Param	
+							DBHelper.ExecuteNonQuery (conn,
+							String.Format(create_query,"real"));
+							rpc_helper_function (cmd, SqlDbType.Real, 0, 10.0);
+							//rpc_helper_function (cmd, SqlDbType.Real, 0, null); 
+							break;
+						case 13 :
+							// Test SmallDateTime Param	
+							DBHelper.ExecuteNonQuery (conn,
+									String.Format(create_query,"smalldatetime"));
+							rpc_helper_function (cmd, SqlDbType.SmallDateTime, 0, "6/6/2079 11:59:00 PM");
+							/*
+							rpc_helper_function (cmd, SqlDbType.SmallDateTime, 0, "");
+							rpc_helper_function (cmd, SqlDbType.SmallDateTime, 0, null);
+							*/
+							break;
+						case 14 :
+							// Test SmallInt Param	
+							DBHelper.ExecuteNonQuery (conn,
+							String.Format(create_query,"smallint"));
+							rpc_helper_function (cmd, SqlDbType.SmallInt, 0, 10);
+							rpc_helper_function (cmd, SqlDbType.SmallInt, 0, -10);
+							//rpc_helper_function (cmd, SqlDbType.SmallInt, 0, null);
+							break;
+						case 15 :
+							// Test SmallMoney Param	
+							DBHelper.ExecuteNonQuery (conn,
+									String.Format(create_query,"smallmoney"));
+							/*
+							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0, 10.0);
+							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0, -10.0);
+							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0, null);
+							*/
+							break;
+						case 16 :
+							// Test Text Param	
+							DBHelper.ExecuteNonQuery (conn,
+									String.Format(create_query,"text"));
+							/*
+							rpc_helper_function (cmd, SqlDbType.Text, 0, "text");
+							rpc_helper_function (cmd, SqlDbType.Text, 0, "");
+							rpc_helper_function (cmd, SqlDbType.Text, 0, null);
+							*/
+							break;
+						case 17 :
+							// Test TimeStamp Param	
+							/* NOT WORKING
+							   DBHelper.ExecuteNonQuery (conn,
+							   String.Format(create_query,"timestamp"));
+							   rpc_helper_function (cmd, SqlDbType.TimeStamp, 0, "");
+							   rpc_helper_function (cmd, SqlDbType.TimeStamp, 0, "");
+							   rpc_helper_function (cmd, SqlDbType.TimeStamp, 0, null); 
+							 */
+							break;
+						case 18 :
+							// Test TinyInt Param	
+							DBHelper.ExecuteNonQuery (conn,
+									String.Format(create_query,"tinyint"));
+							/*
+							rpc_helper_function (cmd, SqlDbType.TinyInt, 0, 10);
+							rpc_helper_function (cmd, SqlDbType.TinyInt, 0, -10);
+							rpc_helper_function (cmd, SqlDbType.TinyInt, 0, null);
+							*/
+							break;
+						case 19 :
+							// Test UniqueIdentifier Param	
+							/*
+							DBHelper.ExecuteNonQuery (conn,
+									String.Format(create_query,"uniqueidentifier"));
+							rpc_helper_function (cmd, SqlDbType.UniqueIdentifier, 0, "0f159bf395b1d04f8c2ef5c02c3add96");
+							rpc_helper_function (cmd, SqlDbType.UniqueIdentifier, 0, null); 
+							*/
+							break;
+						case 20 :
+							// Test VarBinary Param	
+							/* NOT WORKING
+							   DBHelper.ExecuteNonQuery (conn,
+							   String.Format(create_query,"varbinary (10)"));
+							   rpc_helper_function (cmd, SqlDbType.VarBinary, 0,);
+							   rpc_helper_function (cmd, SqlDbType.VarBinary, 0,);
+							   rpc_helper_function (cmd, SqlDbType.VarBinary, 0, null); 
+							 */
+							break;
+						case 21 :
+							// Test Varchar Param
+							DBHelper.ExecuteNonQuery (conn,
+									String.Format(create_query,"varchar(10)"));
+							rpc_helper_function (cmd, SqlDbType.VarChar, 10, "VarChar");
+							break;
+						case 22 :
+							// Test Variant Param	
+							/* NOT WORKING
+							   DBHelper.ExecuteNonQuery (conn,
+							   String.Format(create_query,"variant"));
+							   rpc_helper_function (cmd, SqlDbType.Variant, 0, );
+							   rpc_helper_function (cmd, SqlDbType.Variant, 0, );
+							   rpc_helper_function (cmd, SqlDbType.Variant, 0, null); 
+							 */
+							break; 
+						default :
+							label = -2;
+							break; 
+					}
+				}catch (AssertionException e) {
+					error += String.Format (" Case {0} INCORRECT VALUE : {1}\n",label, e.Message);
+				}catch (Exception e) {
+					error += String.Format (" Case {0} NOT WORKING : {1}\n",label, e.Message);
+				}
+
+				label++;
+				if (label != -1)
+					DBHelper.ExecuteNonQuery (conn, drop_query);
+			}
+			if (error != String.Empty)
+				Assert.Fail (error);
+		}
+
+		private void rpc_helper_function (SqlCommand cmd, SqlDbType type, int size, object val)
+		{
+				cmd.Parameters.Clear ();
+				SqlParameter param1 ;
+				SqlParameter param2 ;
+				if (size != 0) {
+					param1 = new SqlParameter ("@param1", type, size);
+					param2 = new SqlParameter ("@param2", type, size);
+				}
+				else {
+					param1 = new SqlParameter ("@param1", type);
+					param2 = new SqlParameter ("@param2", type);
+				}
+
+				SqlParameter retval = new SqlParameter ("retval", SqlDbType.Int);
+				param1.Value = val;
+				param1.Direction = ParameterDirection.Input;
+				param2.Direction = ParameterDirection.Output;
+				retval.Direction = ParameterDirection.ReturnValue;
+				cmd.Parameters.Add (param1);
+				cmd.Parameters.Add (param2);
+				cmd.Parameters.Add (retval);
+				cmd.CommandText = "#tmp_sp_param_test";
+				cmd.CommandType = CommandType.StoredProcedure;
+				using (SqlDataReader reader = cmd.ExecuteReader ()) {
+					while (reader.Read ()) {
+						if (param1.Value != null && param1.Value.GetType () == typeof (string))
+							Assert.AreEqual (param1.Value,
+									 reader.GetValue(0).ToString (),"#1");
+						else
+							Assert.AreEqual (param1.Value,
+									 reader.GetValue(0),"#1");
+					}
+				}
+				if (param1.Value != null && param1.Value.GetType () == typeof (string) && param2.Value != null)
+					Assert.AreEqual (param1.Value.ToString (), param2.Value.ToString (), "#2");
+				else
+					Assert.AreEqual (param1.Value, param2.Value, "#2");
+				Assert.AreEqual (5, retval.Value, "#3");
+		}
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
@@ -1105,6 +1417,9 @@ namespace MonoTests.System.Data.SqlClient
 			OK = 0,
 			Error = 3
 		}
+
+		private readonly string CREATE_TMP_SP_PARAM_TEST = "create procedure #tmp_sp_param_test (@param1 {0}, @param2 {0} output) as begin select @param1 set @param2=@param1 return 5 end";
+		private readonly string DROP_TMP_SP_PARAM_TEST = "drop procedure #tmp_sp_param_test";
 
 		private readonly string CREATE_TMP_SP_TEMP_INSERT_PERSON = ("create procedure #sp_temp_insert_employee ( " + Environment.NewLine + 
 									    "@fname varchar (20)) " + Environment.NewLine + 

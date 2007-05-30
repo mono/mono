@@ -1,3 +1,9 @@
+2007-05-30  Nagappan A  <anagappan@novell.com>
+
+	* SqlCommandTest.cs (StoredProc_NoParameterTest)
+	(StoredProc_ParameterTest, rpc_helper_function): Added new methods
+	to test the implementation of TDS RPC.
+
 2007-04-03  Amit Biswas <amit@amitbiswas.com>
 
 	* SqlDataReaderTest.cs (GetSqlBytesTest): Test case for GetSqlBytes

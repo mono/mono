@@ -977,9 +977,10 @@ namespace MonoTests.System.Data.SqlClient
 			reader = cmd.ExecuteReader ();
 
 			while (reader.Read ()){
-				for (int j=1; j< noOfColumns ; ++j)
+				for (int j=1; j< noOfColumns ; ++j) {
 					Assert.AreEqual (table.Rows[i][j], reader[j],
 						String.Format (fmt, table.TableName, i+1, j));
+				}
 				
 				i++;
 			}
