@@ -1,5 +1,10 @@
 2007-05-29  Everaldo Canuto  <ecanuto@novell.com>
 
+	* DataGridTextBoxColumn.cs: Fix texbox position to prevent override grid
+	lines. Fixes #80285. 
+
+2007-05-29  Everaldo Canuto  <ecanuto@novell.com>
+
 	* DataGridColumnStyle.cs: Add char trimming column header text format. 
 
 2007-05-29  Everaldo Canuto  <ecanuto@novell.com>
