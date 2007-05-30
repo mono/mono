@@ -1,3 +1,11 @@
+2007-05-30  Marek Habersack  <mhabersack@novell.com>
+
+	* SectionGroupInfo.cs: <location> elements are case-insensitive
+	and the same 'path' attribute may be used only once.
+
+	* ConfigurationLocationCollection.cs: Find should be
+	case-insensitive for all targets, not just TARGET_JVM.
+
 2007-05-17 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* Configuration.cs: FilePath implemented according to MSDN:

@@ -307,8 +307,13 @@ namespace System.Configuration
 					if (path != null && path.Length > 0) {
 						string xml = reader.ReadOuterXml ();
 						string[] pathList = path.Split (',');
+						string tpath;
 						foreach (string p in pathList) {
-							ConfigurationLocation loc = new ConfigurationLocation (p.Trim (), xml, config, allowOverride);
+							tpath = p.Trim ();
+							if (config.Locations.Find (tpath) != null)
+								ThrowException ("Sections must only appear once per config file.", reader);
+							
+							ConfigurationLocation loc = new ConfigurationLocation (tpath, xml, config, allowOverride);
 							config.Locations.Add (loc);
 						}
 					} else {
