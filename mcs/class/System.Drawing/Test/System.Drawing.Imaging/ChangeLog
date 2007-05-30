@@ -1,3 +1,8 @@
+2007-05-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TestImageAttributes.cs: Add test cases for ColorMatrixFlags and for
+	Gray ColorMatrix uses.
+
 2007-05-23  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* PngCodecTest.cs: Add test cases for 2bpp PNG images. Add some 
