@@ -1,3 +1,11 @@
+2007-05-30  Jeffrey Stedfast  <fejj@novell.com>
+
+	* SmtpClient.cs: Fall back to HELO if EHLO fails. Also, do not
+	write out a Bcc header to the SMTP server - these are meant to be
+	dropped. MAIL FROM: and RCPT TO: commands are not meant to have a
+	space after the colon before the address - this will break on some
+	SMTP servers.
+
 2007-02-16  Geoff Norton  <gnorton@customerdna.com>
 
 	* SmtpClient.cs: Dont send bare LF.  Send <CR><LF> regardless

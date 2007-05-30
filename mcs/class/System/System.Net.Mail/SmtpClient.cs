@@ -68,8 +68,6 @@ namespace System.Net.Mail {
 
 		Mutex mutex = new Mutex ();
 
-		const string MimeVersion = "1.0 (produced by Mono System.Net.Mail.SmtpClient)";
-
 		#endregion // Fields
 
 		#region Constructors
@@ -289,16 +287,24 @@ namespace System.Net.Mail {
 				throw new SmtpException (status.StatusCode, status.Description);
 
 			// EHLO
-			status = SendCommand (Command.Ehlo, Dns.GetHostName ());
+			
+			// FIXME: parse the list of extensions so we don't bother wasting
+			// our time trying commands if they aren't supported.
+			status = SendCommand ("EHLO " + Dns.GetHostName ());
 
 			if (IsError (status)) {
-				throw new SmtpException (status.StatusCode, status.Description);
+				status = SendCommand ("HELO " + Dns.GetHostName ());
+				
+				if (IsError (status))
+					throw new SmtpException (status.StatusCode, status.Description);
 			}
 
 			if (EnableSsl) {
+				// FIXME: only attempt this if STARTTLS is supported
 				InitiateSecureConnection ();
 			}
 
+			// FIXME: only do this if AUTH is supported
 			PerformAuthentication ();
 
 			MailAddress from = message.From;
@@ -307,7 +313,7 @@ namespace System.Net.Mail {
 				from = defaultFrom;
 			
 			// MAIL FROM:
-			status = SendCommand (Command.MailFrom, '<' + from.Address + '>');
+			status = SendCommand ("MAIL FROM:<" + from.Address + '>');
 			if (IsError (status)) {
 				throw new SmtpException (status.StatusCode, status.Description);
 			}
@@ -316,17 +322,17 @@ namespace System.Net.Mail {
 			List<SmtpFailedRecipientException> sfre = new List<SmtpFailedRecipientException> ();
 
 			for (int i = 0; i < message.To.Count; i ++) {
-				status = SendCommand (Command.RcptTo, '<' + message.To [i].Address + '>');
+				status = SendCommand ("RCPT TO:<" + message.To [i].Address + '>');
 				if (IsError (status)) 
 					sfre.Add (new SmtpFailedRecipientException (status.StatusCode, message.To [i].Address));
 			}
 			for (int i = 0; i < message.CC.Count; i ++) {
-				status = SendCommand (Command.RcptTo, '<' + message.CC [i].Address + '>');
+				status = SendCommand ("RCPT TO:<" + message.CC [i].Address + '>');
 				if (IsError (status)) 
 					sfre.Add (new SmtpFailedRecipientException (status.StatusCode, message.CC [i].Address));
 			}
 			for (int i = 0; i < message.Bcc.Count; i ++) {
-				status = SendCommand (Command.RcptTo, '<' + message.Bcc [i].Address + '>');
+				status = SendCommand ("RCPT TO:<" + message.Bcc [i].Address + '>');
 				if (IsError (status)) 
 					sfre.Add (new SmtpFailedRecipientException (status.StatusCode, message.Bcc [i].Address));
 			}
@@ -343,7 +349,7 @@ namespace System.Net.Mail {
 #endif
 
 			// DATA
-			status = SendCommand (Command.Data);
+			status = SendCommand ("DATA");
 			if (IsError (status))
 				throw new SmtpException (status.StatusCode, status.Description);
 
@@ -352,8 +358,6 @@ namespace System.Net.Mail {
 			SendHeader (HeaderName.To, message.To.ToString ());
 			if (message.CC.Count > 0)
 				SendHeader (HeaderName.Cc, message.CC.ToString ());
-			if (message.Bcc.Count > 0)
-				SendHeader (HeaderName.Bcc, message.Bcc.ToString ());
 			SendHeader (HeaderName.Subject, message.Subject);
 
 			foreach (string s in message.Headers.AllKeys)
@@ -378,7 +382,7 @@ namespace System.Net.Mail {
 				throw new SmtpException (status.StatusCode, status.Description);
 
 			try {
-				status = SendCommand (Command.Quit);
+				status = SendCommand ("QUIT");
 			}
 			catch (System.IO.IOException) {
 				//We excuse server for the rude connection closing as a response to QUIT
@@ -547,14 +551,6 @@ namespace System.Net.Mail {
 			}
 		}
 
-		private SmtpResponse SendCommand (string command, string data)
-		{
-			writer.Write (command);
-			writer.Write (" ");
-			SendData (data);
-			return Read ();
-		}
-
 		private SmtpResponse SendCommand (string command)
 		{
 			writer.Write (command);
@@ -624,7 +620,7 @@ namespace System.Net.Mail {
 		}
 
 		private void InitiateSecureConnection () {
-			SmtpResponse response = SendCommand (Command.StartTls);
+			SmtpResponse response = SendCommand ("STARTTLS");
 
 			if (IsError (response)) {
 				throw new SmtpException (SmtpStatusCode.GeneralFailure, "Server does not support secure connections.");
@@ -665,7 +661,7 @@ namespace System.Net.Mail {
 		}
 
 		void Authenticate (string Username, string Password) {
-			SmtpResponse status = SendCommand (Command.AuthLogin);
+			SmtpResponse status = SendCommand ("AUTH LOGIN");
 			if (((int) status.StatusCode) != 334) {
 				throw new SmtpException (status.StatusCode, status.Description);
 			}
@@ -688,19 +684,7 @@ namespace System.Net.Mail {
 				}
 		*/
 		#endregion // Methods
-
-		// The Command struct is used to store constant string values representing SMTP commands.
-		private struct Command {
-			public const string Data = "DATA";
-			public const string Helo = "HELO";
-			public const string Ehlo = "EHLO";
-			public const string MailFrom = "MAIL FROM:";
-			public const string Quit = "QUIT";
-			public const string RcptTo = "RCPT TO:";
-			public const string StartTls = "STARTTLS";
-			public const string AuthLogin = "AUTH LOGIN";
-		}
-
+		
 		// The HeaderName struct is used to store constant string values representing mail headers.
 		private struct HeaderName {
 			public const string ContentTransferEncoding = "Content-Transfer-Encoding";
@@ -736,7 +720,7 @@ namespace System.Net.Mail {
 				// parse the response code
 				response.StatusCode = (SmtpStatusCode) Int32.Parse (line.Substring (0, 3));
 
-				// set the rawsponse
+				// set the raw response
 				response.Description = line;
 
 				return response;
