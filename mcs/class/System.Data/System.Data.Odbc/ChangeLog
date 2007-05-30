@@ -1,3 +1,8 @@
+2007-05-30  Nagappan A  <anagappan@novell.com>
+
+	* OdbcDataReader.cs (GetValue): Adds nano seconds as tickcs from
+	the received buffer.
+
 2007-05-25  Nagappan A  <anagappan@novell.com>
 
 	* OdbcDataReader.cs (GetValue): Sybase returns the fraction values

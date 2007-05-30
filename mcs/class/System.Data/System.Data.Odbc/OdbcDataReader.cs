@@ -727,12 +727,10 @@ namespace System.Data.Odbc
 					OdbcTimestamp ts_data = new OdbcTimestamp();
 					ret = libodbc.SQLGetData (hstmt, ColIndex, col.SqlCType, ref ts_data, 0, ref outsize);
 					if (outsize!=-1) {// This means SQL_NULL_DATA
-						/* Sybase returns the fraction values in nano seconds,
-						   but DateTime expects the value in milliseconds,
-						   so the conversion. */
-						int fraction = Convert.ToInt32 (ts_data.fraction > 999 ? ts_data.fraction / 1000000 : ts_data.fraction);
 						DataValue = new DateTime(ts_data.year,ts_data.month,ts_data.day,ts_data.hour,
-								       ts_data.minute,ts_data.second, fraction);
+								       ts_data.minute,ts_data.second);
+						if (ts_data.fraction != 0)
+							DataValue = ((DateTime) DataValue).AddTicks ((long)ts_data.fraction / 100);
 					}
 					break;
 				case OdbcType.VarBinary :
