@@ -75,7 +75,7 @@ namespace Mono.Data.Tds.Protocol {
 		ArrayList tableNames;
 		ArrayList columnNames;
 
-		TdsMetaParameterCollection parameters;
+		TdsMetaParameterCollection parameters = new TdsMetaParameterCollection ();
 
 		bool queryInProgress;
 		int cancelsRequested;
@@ -624,15 +624,36 @@ namespace Mono.Data.Tds.Protocol {
 				element = GetStringValue (false, false);
 				break;
 			case TdsColumnType.BigVarBinary :
-				comm.GetTdsShort ();
+				if (outParam)
+					comm.Skip (1);
 				len = comm.GetTdsShort ();
 				element = comm.GetBytes (len, true);
 				break;
+				/*
+			case TdsColumnType.BigBinary :
+				if (outParam)
+					comm.Skip (2);
+				len = comm.GetTdsShort ();
+				element = comm.GetBytes (len, true);
+				break;
+				*/
+			case TdsColumnType.BigBinary :
+				if (outParam)
+					comm.Skip (2);
+				element = GetBinaryValue ();
+				break;
+			case TdsColumnType.BigChar :
 			case TdsColumnType.BigVarChar :
-				comm.Skip (2);
+				if (outParam)
+					comm.Skip (2);
 				element = GetStringValue (false, false);
 				break;
 			case TdsColumnType.NChar :
+			case TdsColumnType.BigNVarChar :
+				if (outParam)
+					comm.Skip(2);
+				element = GetStringValue (true, false);
+				break;
 			case TdsColumnType.NVarChar :
 				if (outParam) 
 					comm.Skip (1);
@@ -701,10 +722,13 @@ namespace Mono.Data.Tds.Protocol {
 				break;
 			case TdsColumnType.UniqueIdentifier :
 				if (comm.Peek () != 16) { // If it's null, then what to do?
-					/*byte swallowed =*/ comm.GetByte();	
+					/*byte swallowed =*/ comm.GetByte();
 					element = DBNull.Value;
 					break;
 				}
+				if (outParam)
+					comm.Skip (1);
+				
 				len = comm.GetByte () & 0xff;
 				if (len > 0) {
 					byte[] guidBytes = comm.GetBytes (len, true);
@@ -726,7 +750,6 @@ namespace Mono.Data.Tds.Protocol {
 			default :
 				return DBNull.Value;
 			}
-
 			return element;
 		}
 
@@ -734,16 +757,17 @@ namespace Mono.Data.Tds.Protocol {
 		{
 			int len;
 			object result = DBNull.Value;
+
 			if (tdsVersion == TdsVersion.tds70) {
 				len = comm.GetTdsShort ();
 				if (len != 0xffff && len > 0)
 					result = comm.GetBytes (len, true);
-			} 
-			else {
+			} else {
 				len = (comm.GetByte () & 0xff);
 				if (len != 0)
 					result = comm.GetBytes (len, true);
 			}
+
 			return result;
 		}
 
@@ -810,13 +834,12 @@ namespace Mono.Data.Tds.Protocol {
 				return DBNull.Value;
 			
 			bool positive = (comm.GetByte () == 1);
-
 			if (len > 16)
 				throw new OverflowException ();
 
 			for (int i = 0, index = 0; i < len && i < 16; i += 4, index += 1) 
 				bits[index] = comm.GetTdsInt ();
-
+			
 			if (bits [3] != 0) 
 				return new TdsBigDecimal (precision, scale, !positive, bits);
 			else
@@ -935,11 +958,9 @@ namespace Mono.Data.Tds.Protocol {
 			}
 		}
 
-		[MonoTODO]
 		private object GetMoneyValue (TdsColumnType type)
 		{
 			int len;
-			object result = null;
 
 			switch (type) {
 			case TdsColumnType.SmallMoney :
@@ -1039,24 +1060,11 @@ namespace Mono.Data.Tds.Protocol {
 				case TdsColumnType.SmallMoney :
 				case TdsColumnType.Real :
 				case TdsColumnType.DateTime4 :
+				  /*
+				case TdsColumnType.Decimal:
+				case TdsColumnType.Numeric:
+				  */
 					return true;
-				case TdsColumnType.IntN :
-				case TdsColumnType.MoneyN :
-				case TdsColumnType.VarChar :
-				case TdsColumnType.NVarChar :
-				case TdsColumnType.DateTimeN :
-				case TdsColumnType.FloatN :
-				case TdsColumnType.Char :
-				case TdsColumnType.NChar :
-				case TdsColumnType.NText :
-				case TdsColumnType.Image :
-				case TdsColumnType.VarBinary :
-				case TdsColumnType.Binary :
-				case TdsColumnType.Decimal :
-				case TdsColumnType.Numeric :
-				case TdsColumnType.BitN :
-				case TdsColumnType.UniqueIdentifier :
-					return false;
 				default :
 					return false;
 			}
@@ -1268,7 +1276,7 @@ namespace Mono.Data.Tds.Protocol {
 			switch (type) {
 			case TdsEnvPacketSubType.BlockSize :
 				string blockSize;
-				cLen = comm.GetByte () & 0xff;
+				cLen = comm.GetByte ();
 				blockSize = comm.GetString (cLen);
 
 				if (tdsVersion == TdsVersion.tds70) 
@@ -1280,7 +1288,7 @@ namespace Mono.Data.Tds.Protocol {
 				comm.ResizeOutBuf (packetSize);
 				break;
 			case TdsEnvPacketSubType.CharSet :
-				cLen = comm.GetByte () & 0xff;
+				cLen = comm.GetByte ();
 				if (tdsVersion == TdsVersion.tds70) {
 					SetCharset (comm.GetString (cLen));
 					comm.Skip (len - 2 - cLen * 2);
@@ -1292,7 +1300,7 @@ namespace Mono.Data.Tds.Protocol {
 
 				break;
 			case TdsEnvPacketSubType.Database :
-				cLen = comm.GetByte () & 0xff;
+				cLen = comm.GetByte ();
 				string newDB = comm.GetString (cLen);
 				cLen = comm.GetByte () & 0xff;
 				comm.GetString (cLen);
@@ -1388,12 +1396,11 @@ namespace Mono.Data.Tds.Protocol {
 		protected void ProcessOutputParam ()
 		{
 			GetSubPacketLength ();
-			comm.GetString (comm.GetByte () & 0xff);
+			/*string paramName = */comm.GetString (comm.GetByte () & 0xff);
 			comm.Skip (5);
 
 			TdsColumnType colType = (TdsColumnType) comm.GetByte ();
 			object value = GetColumnValue (colType, true);
-
 			outputParameters.Add (value);
 		}
 
@@ -1440,7 +1447,7 @@ namespace Mono.Data.Tds.Protocol {
 				ProcessAuthentication ();
 				break;
 			case TdsPacketSubType.ReturnStatus :
-				Comm.Skip (4);
+				ProcessReturnStatus ();
 				break;
 			case TdsPacketSubType.ProcId:
 				Comm.Skip (8);
@@ -1524,6 +1531,11 @@ namespace Mono.Data.Tds.Protocol {
 				language = "us_english";
 
 			this.language = language;
+		}
+
+		protected virtual void ProcessReturnStatus () 
+		{
+			comm.Skip(4);
 		}
 
 		#endregion // Private Methods

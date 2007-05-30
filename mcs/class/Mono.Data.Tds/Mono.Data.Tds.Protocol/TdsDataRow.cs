@@ -80,7 +80,7 @@ namespace Mono.Data.Tds.Protocol {
 
 		public object this[int index] {
 			get { 
-				if (index > list.Count)
+				if (index >= list.Count)
 					throw new IndexOutOfRangeException ();
 				return list[index]; 
 			}

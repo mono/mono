@@ -61,7 +61,9 @@ namespace Mono.Data.Tds.Protocol {
 		BigBinary = 0xad,
 		BigVarBinary = 0xa5,
 		BigVarChar = 0xa7,
+		BigNVarChar = 0xe7,
 		BigChar = 0xaf,
-		SmallMoney = 0x7a
+		SmallMoney = 0x7a,
+		Variant = 0x62
 	}
 }

@@ -1,3 +1,26 @@
+2007-05-30  Nagappan A  <anagappan@novell.com>
+
+	* TdsColumnType.cs: Added new types BigNVarChar, Variant to
+	TdsColumnType enumerator.
+
+	* TdsComm.cs (Append): Appends new data types to the TDS data
+	stream and also implemented new Append overloaded method.
+
+	* Tds.cs (BeginLoad): New case to handle BigBinary.
+	(GetMoneyValue): Simplified the switch / case conditions.
+
+	* TdsDataRow.cs: Instance of index checks for the given index to
+	be less than list count, else an exception will be thrown.
+
+	* Tds70.cs (sqlserverMagic): Modified byte values.
+	(ExecProc): Now directly calls ExecRPC for any number of
+	parameters being passed.
+	(ExecRPC): New logic to handle parameters.
+	(WriteParameterInfo): New private method to generate information
+	about each parameter.
+	(ProcessReturnStatus): New protected method to process the return
+	status of output parameter value.
+
 2007-03-21  Nagappan A  <anagappan@novell.com>
 
 	* Tds70.cs (BuildParameters, FormatParameter): Include @ before

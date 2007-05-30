@@ -148,29 +148,50 @@ namespace Mono.Data.Tds.Protocol {
 		}
 		public void Append (object o)
 		{
-			switch (o.GetType ().ToString ()) {
-			case "System.Byte":
+			if (o == null || o == DBNull.Value) {
+				Append ((byte)0);
+				return ;
+			}
+			switch (Type.GetTypeCode (o.GetType ())) {
+			case TypeCode.Byte :
 				Append ((byte) o);
 				return;
-			case "System.Byte[]":
-				Append ((byte[]) o);
+			case TypeCode.Boolean:
+				if ((bool)o == true)
+					Append ((byte)1);
+				else
+					Append ((byte)0);
 				return;
-			case "System.Int16":
+			case TypeCode.Object :
+				if (o is byte[])
+					Append ((byte[]) o);
+				return;
+			case TypeCode.Int16 :
 				Append ((short) o);
 				return;
-			case "System.Int32":
+			case TypeCode.Int32 :
 				Append ((int) o);
 				return;
-			case "System.String":
+			case TypeCode.String :
 				Append ((string) o);
 				return;
-			case "System.Double":
+			case TypeCode.Double :
 				Append ((double) o);
 				return;
-			case "System.Int64":
+			case TypeCode.Single :
+				Append ((float) o);
+				return;
+			case TypeCode.Int64 :
 				Append ((long) o);
 				return;
+			case TypeCode.Decimal:
+				Append ((decimal) o, 17);
+				return;
+			case TypeCode.DateTime:
+				Append ((DateTime) o, 8);
+				return;
 			}
+			throw new InvalidOperationException (String.Format ("Object Type :{0} , not being appended", o.GetType ()));
 		}
 
 		public void Append (byte b)
@@ -182,7 +203,29 @@ namespace Mono.Data.Tds.Protocol {
 			Store (nextOutBufferIndex, b);
 			nextOutBufferIndex++;
 		}	
-		
+
+		public void Append (DateTime t, int bytes)
+		{
+			DateTime epoch = new DateTime (1900,1,1);
+			
+			TimeSpan span = t - epoch;
+			int days = span.Days ;
+			int val = 0;	
+
+			if (bytes == 8) {
+				long ms = (span.Hours * 3600 + span.Minutes * 60 + span.Seconds)*1000L + (long)span.Milliseconds;
+				val = (int) ((ms*300)/1000);
+				Append ((int) days);
+				Append ((int) val);
+			} else if (bytes ==4) {
+				val = span.Hours * 60 + span.Minutes;
+				Append ((ushort) days);
+				Append ((short) val);
+			} else {
+				throw new Exception ("Invalid No of bytes");
+			}
+		}
+
 		public void Append (byte[] b)
 		{
 			Append (b, b.Length, (byte) 0);
@@ -199,6 +242,14 @@ namespace Mono.Data.Tds.Protocol {
 		}	
 
 		public void Append (short s)
+		{
+			if(!BitConverter.IsLittleEndian)
+				Append (Swap (BitConverter.GetBytes(s)));
+			else 
+				Append (BitConverter.GetBytes (s));
+		}
+
+		public void Append (ushort s)
 		{
 			if(!BitConverter.IsLittleEndian)
 				Append (Swap (BitConverter.GetBytes(s)));
@@ -239,26 +290,37 @@ namespace Mono.Data.Tds.Protocol {
 
 		public void Append (double value)
 		{
-			Append (BitConverter.DoubleToInt64Bits (value));
+			if (!BitConverter.IsLittleEndian)
+				Append (Swap (BitConverter.GetBytes (value)));
+			else
+				Append (BitConverter.GetBytes (value));
+		}
+
+		public void Append (float value)
+		{
+			if (!BitConverter.IsLittleEndian)
+				Append (Swap (BitConverter.GetBytes (value)));
+			else
+				Append (BitConverter.GetBytes (value));
 		}
 
 		public void Append (long l)
 		{
-			if (tdsVersion < TdsVersion.tds70) {
-				Append ((byte) (((byte) (l >> 56)) & 0xff));
-				Append ((byte) (((byte) (l >> 48)) & 0xff));
-				Append ((byte) (((byte) (l >> 40)) & 0xff));
-				Append ((byte) (((byte) (l >> 32)) & 0xff));
-				Append ((byte) (((byte) (l >> 24)) & 0xff));
-				Append ((byte) (((byte) (l >> 16)) & 0xff));
-				Append ((byte) (((byte) (l >> 8)) & 0xff));
-				Append ((byte) (((byte) (l >> 0)) & 0xff));
-			}
-			else 
-				if (!BitConverter.IsLittleEndian)
-					Append (Swap (BitConverter.GetBytes (l)));
-				else
-					Append (BitConverter.GetBytes (l));
+			if (!BitConverter.IsLittleEndian)
+				Append (Swap (BitConverter.GetBytes (l)));
+			else
+				Append (BitConverter.GetBytes (l));
+		}
+
+		public void Append (decimal d, int bytes)
+		{
+			int[] arr = Decimal.GetBits (d);
+			byte sign =  (d > 0 ? (byte)1 : (byte)0);
+			Append (sign) ;
+			Append (arr[0]);
+			Append (arr[1]);
+			Append (arr[2]);
+			Append ((int)0);
 		}
 
 		public void Close ()
