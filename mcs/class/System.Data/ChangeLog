@@ -1,3 +1,8 @@
+2007-05-30  Nagappan A  <anagappan@novell.com>
+
+	* System.Data.dll.sources: Added SqlBulkCopy.cs,
+	SqlBulkCopyColumnMappingCollection.cs.
+
 2007-05-29  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* System.Data_test.dll.sources: Added SqlCommandTest.cs.
