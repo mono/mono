@@ -1,3 +1,8 @@
+2007-05-30  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* AssemblyResourceLoader.cs: GetResourceUrl, TARGET_JVM will use type's
+	hashcode for resource url
+
 2007-04-06  Marek Habersack  <mhabersack@novell.com>
 
 	* AssemblyResourceLoader.cs: use the correct query parameter

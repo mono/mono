@@ -45,9 +45,12 @@ namespace System.Web.Handlers {
 			string apath = type.Assembly.Location;
 			string atime = String.Empty;
 
+#if TARGET_JVM
+			atime = String.Format ("{0}t={1}", HttpUtility.QueryParamSeparator, type.GetHashCode ());
+#else
 			if (apath != String.Empty)
 				atime = String.Format ("{0}t={1}", HttpUtility.QueryParamSeparator, File.GetLastWriteTimeUtc (apath).Ticks);
-
+#endif
 			string href = String.Format ("WebResource.axd?a={1}{0}r={2}{3}",
 						     HttpUtility.QueryParamSeparator, aname,
 						     HttpUtility.UrlEncode (resourceName), atime);
