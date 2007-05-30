@@ -1,5 +1,10 @@
 2007-05-30  Jackson Harper  <jackson@ximian.com>
 
+	* TextControl.cs: Redid the pageup/pagedown a little to simplify
+	things and fix bug #81311.
+
+2007-05-30  Jackson Harper  <jackson@ximian.com>
+
 	* X11Dnd.cs: Now that we have our own event loop, we need to
 	cancel when we get a mouseup but it won't be accepted.
 

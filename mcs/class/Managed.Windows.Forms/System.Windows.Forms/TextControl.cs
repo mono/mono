@@ -1840,56 +1840,38 @@ namespace System.Windows.Forms {
 
 				case CaretDirection.PgUp: {
 
-					int new_y, y_offset;
-
-					if (viewport_y == 0) {
-
-						// This should probably be handled elsewhere
-						if (!(owner is RichTextBox)) {
-							// Page down doesn't do anything in a regular TextBox
-							// if the bottom of the document
-							// is already visible, the page and the caret stay still
-							return;
-						}
-
-						// We're just placing the caret at the end of the document, no scrolling needed
+					if (viewport_y == 0 && owner.richtext) {
 						owner.vscroll.Value = 0;
 						Line line = GetLine (1);
 						PositionCaret (line, 0);
 					}
 
-					y_offset = caret.line.Y - viewport_y;
-					new_y = caret.line.Y - viewport_height;
+					int y_offset = caret.line.Y + caret.line.height - 1 - viewport_y;
+					int index;
+					LineTag top = FindCursor ((int) caret.line.widths [caret.pos],
+							viewport_y - viewport_height, out index);
 
-					owner.vscroll.Value = Math.Max (new_y, 0);
-					PositionCaret ((int)caret.line.widths[caret.pos], y_offset + viewport_y);
+					owner.vscroll.Value = Math.Min (top.line.Y, owner.vscroll.Maximum - viewport_height);
+					PositionCaret ((int) caret.line.widths [caret.pos], y_offset + viewport_y);
+
 					return;
 				}
 
 				case CaretDirection.PgDn: {
-					int new_y, y_offset;
 
-					if ((viewport_y + viewport_height) > document_y) {
-
-						// This should probably be handled elsewhere
-						if (!(owner is RichTextBox)) {
-							// Page up doesn't do anything in a regular TextBox
-							// if the bottom of the document
-							// is already visible, the page and the caret stay still
-							return;
-						}
-
-						// We're just placing the caret at the end of the document, no scrolling needed
+					if (viewport_y + viewport_height >= document_y && owner.richtext) {
 						owner.vscroll.Value = owner.vscroll.Maximum - viewport_height + 1;
 						Line line = GetLine (lines);
 						PositionCaret (line, line.Text.Length);
 					}
 
-					y_offset = caret.line.Y - viewport_y;
-					new_y = caret.line.Y + viewport_height;
-					
-					owner.vscroll.Value = Math.Min (new_y, owner.vscroll.Maximum - viewport_height + 1);
-					PositionCaret ((int)caret.line.widths[caret.pos], y_offset + viewport_y);
+					int y_offset = caret.line.Y - viewport_y;
+					int index;
+					LineTag top = FindCursor ((int) caret.line.widths [caret.pos],
+							viewport_y + viewport_height, out index);
+
+					owner.vscroll.Value = Math.Min (top.line.Y, owner.vscroll.Maximum - viewport_height);
+					PositionCaret ((int) caret.line.widths [caret.pos], y_offset + viewport_y);
 					
 					return;
 				}
