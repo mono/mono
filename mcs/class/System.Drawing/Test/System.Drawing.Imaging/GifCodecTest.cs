@@ -1,5 +1,5 @@
 //
-// PNG Codec class testing unit
+// GIF Codec class testing unit
 //
 // Authors:
 // 	Jordi Mas i Hernàndez (jordi@ximian.com)
@@ -206,6 +206,21 @@ namespace MonoTests.System.Drawing.Imaging {
 				}
 				finally {
 					bmp.UnlockBits (data);
+				}
+			}
+		}
+
+		[Test]
+		public void Interlaced ()
+		{
+			string sInFile = getInFile ("bitmaps/81773-interlaced.gif");
+			using (Bitmap bmp = new Bitmap (sInFile)) {
+				for (int i = 0; i < 255; i++) {
+					Color c = bmp.GetPixel (0, i);
+					Assert.AreEqual (255, c.A, "A" + i.ToString ());
+					Assert.AreEqual (i, c.R, "R" + i.ToString ());
+					Assert.AreEqual (i, c.G, "G" + i.ToString ());
+					Assert.AreEqual (i, c.B, "B" + i.ToString ());
 				}
 			}
 		}

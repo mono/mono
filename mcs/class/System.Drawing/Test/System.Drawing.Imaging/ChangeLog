@@ -1,5 +1,6 @@
-2007-05-30  Sebastien Pouliot  <sebastien@ximian.com>
+2007-05-30  Sebastien Pouliot  <sebastien@ximian.com> 
 
+	* GifCodecTest.cs: Add test case for interlaced GIF
 	* TestImageAttributes.cs: Add test cases for ColorMatrixFlags and for
 	Gray ColorMatrix uses.
 
