@@ -94,12 +94,22 @@ namespace System.Web.Configuration {
 		}
 #endif
 
-		static internal ArrayList extra_assemblies = null;
+		static ArrayList extra_assemblies = null;
 		static internal ArrayList ExtraAssemblies {
 			get {
 				if (extra_assemblies == null)
 					extra_assemblies = new ArrayList();
 				return extra_assemblies;
+			}
+		}
+
+		static bool hasConfigErrors = false;
+		static object hasConfigErrorsLock = new object ();
+		static internal bool HasConfigErrors {
+			get {
+				lock (hasConfigErrorsLock) {
+					return hasConfigErrors;
+				}
 			}
 		}
 		
@@ -186,8 +196,15 @@ namespace System.Web.Configuration {
 
 			conf = (_Configuration) configurations [path];
 			if (conf == null) {
-						conf = ConfigurationFactory.Create (typeof (WebConfigurationHost), null, path, site, locationSubPath, server, userName, password);
-						configurations [path] = conf;
+				try {
+					conf = ConfigurationFactory.Create (typeof (WebConfigurationHost), null, path, site, locationSubPath, server, userName, password);
+					configurations [path] = conf;
+				} catch (Exception ex) {
+					lock (hasConfigErrorsLock) {
+						hasConfigErrors = true;
+					}
+					throw ex;
+				}
 			}
 			return conf;
 		}

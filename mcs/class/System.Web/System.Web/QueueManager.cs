@@ -30,6 +30,7 @@
 
 using System;
 using System.Collections;
+using System.Text;
 using System.Threading;
 using System.Web.Configuration;
 
@@ -37,29 +38,60 @@ namespace System.Web
 {
 	class QueueManager
 	{
-		int minFree;
-		int minLocalFree;
-		int queueLimit;
+		// keep the defaults in sync with the ones in HttpRuntimeSection.cs
+		int minFree = 8;
+		int minLocalFree = 4;
+		int queueLimit = 5000;
 		Queue queue;
 		bool disposing;
-
+		Exception initialException;
+		
 		public QueueManager ()
 		{
+			Exception ex = null;
+			
+			try {
 #if NET_2_0
-			HttpRuntimeSection config;
+				HttpRuntimeSection config;
 
-			config = (HttpRuntimeSection) WebConfigurationManager.GetSection ("system.web/httpRuntime");
+				config = (HttpRuntimeSection) WebConfigurationManager.GetSection ("system.web/httpRuntime");
 #else
-			HttpRuntimeConfig config;
+				HttpRuntimeConfig config;
 
-			config = (HttpRuntimeConfig) HttpContext.GetAppConfig ("system.web/httpRuntime");
+				config = (HttpRuntimeConfig) HttpContext.GetAppConfig ("system.web/httpRuntime");
 #endif
-			minFree = config.MinFreeThreads;
-			minLocalFree = config.MinLocalRequestFreeThreads;
-			queueLimit = config.AppRequestQueueLimit;
-			queue = new Queue (queueLimit);
+				minFree = config.MinFreeThreads;
+				minLocalFree = config.MinLocalRequestFreeThreads;
+				queueLimit = config.AppRequestQueueLimit;
+			} catch (Exception e) {
+				ex = e;
+			}
+
+			try {
+				queue = new Queue (queueLimit);
+			} catch (Exception e) {
+				if (ex == null) {
+					initialException = e;
+				} else {
+					StringBuilder sb = new StringBuilder ("Several exceptions occurred:\n");
+					sb.AppendFormat ("--- Exception Q1:\n{0}\n", ex.ToString ());
+					sb.AppendFormat ("--- Exception Q2:\n{0}\n", e.ToString ());
+					initialException = new Exception (sb.ToString ());
+				}
+			}
+
+			if (initialException == null && ex != null)
+				initialException = ex;
 		}
 
+		public bool HasException {
+			get { return initialException != null; }
+		}
+
+		public Exception InitialException {
+			get { return initialException; }
+		}
+		
 		bool CanExecuteRequest (HttpWorkerRequest req)
 		{
 			if (disposing)

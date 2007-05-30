@@ -1,3 +1,20 @@
+2007-05-30  Marek Habersack  <mhabersack@novell.com>
+
+	* TraceManager.cs: Catch all the possible exceptions in the
+	constructor - the object MUST be created successfully (even if
+	there are errors).
+
+	* HttpRequest.cs: do not attempt to apply url mappings if the
+	configuration manager has errors.
+
+	* HttpRuntime.cs: handle static constructor exceptions later on,
+	during the first call to ReallyProcessRequest.
+
+	* QueueManager.cs: provide defaults for the parameters to be read
+	from the config file(s).
+	Catch all the possible exceptions in the constructor - the object
+	MUST be created successfully (even if there are errors).
+
 2007-05-29  Marek Habersack  <mhabersack@novell.com>
 
 	* SiteMapProvider.cs: updated the node accessibility comments.

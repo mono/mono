@@ -106,7 +106,9 @@ namespace System.Web {
 		static TimeoutManager timeout_manager;
 		static Cache cache;
 		static WaitCallback do_RealProcessRequest;
-
+		static Exception initialException;
+		static bool firstRun;
+		
 #if NET_2_0
 		static bool assemblyMappingEnabled;
 		static object assemblyMappingLock = new object ();
@@ -114,11 +116,27 @@ namespace System.Web {
 		
 		static HttpRuntime ()
 		{
+			firstRun = true;
 #if NET_2_0
-			WebConfigurationManager.Init ();
+			try {
+				WebConfigurationManager.Init ();
+			} catch (Exception ex) {
+				initialException = ex;
+			}
+			
 #endif
+
+			// The classes in whose constructors exceptions may be thrown, should be handled the same way QueueManager
+			// and TraceManager are below. The constructors themselves MUST NOT throw any exceptions - we MUST be sure
+			// the objects are created here. The exceptions will be dealt with below, in RealProcessRequest.
 			queue_manager = new QueueManager ();
+			if (queue_manager.HasException)
+				initialException = queue_manager.InitialException;
+
 			trace_manager = new TraceManager ();
+			if (trace_manager.HasException)
+					initialException = trace_manager.InitialException;
+
 			timeout_manager = new TimeoutManager ();
 			cache = new Cache ();
 			do_RealProcessRequest = new WaitCallback (RealProcessRequest);
@@ -129,9 +147,10 @@ namespace System.Web {
 #endif
 		public HttpRuntime ()
 		{
+
 		}
 #endif
-
+		
 #region AppDomain handling
 		//
 		// http://radio.weblogs.com/0105476/stories/2002/07/12/executingAspxPagesWithoutAWebServer.html
@@ -253,24 +272,34 @@ namespace System.Web {
 				return;
 			ThreadPool.QueueUserWorkItem (do_RealProcessRequest, request);
 		}
-
+		
 		static void RealProcessRequest (object o)
 		{
 			HttpContext context = new HttpContext ((HttpWorkerRequest) o);
 			HttpContext.Current = context;
 
+			bool error = false;
+			if (firstRun) {
+				firstRun = false;
+				if (initialException != null) {
+					FinishWithException ((HttpWorkerRequest) o, new HttpException ("Initial exception", initialException));
+					error = true;
+				}
+			}
+			
 			//
 			// Get application instance (create or reuse an instance of the correct class)
 			//
 			HttpApplication app = null;
-			bool error = false;
-			try {
-				app = HttpApplicationFactory.GetApplication (context);
-			} catch (Exception e) {
-				FinishWithException ((HttpWorkerRequest) o, new HttpException ("", e));
-				error = true;
+			if (!error) {
+				try {
+					app = HttpApplicationFactory.GetApplication (context);
+				} catch (Exception e) {
+					FinishWithException ((HttpWorkerRequest) o, new HttpException ("", e));
+					error = true;
+				}
 			}
-
+			
 			if (error) {
 				context.Request.ReleaseResources ();
 				context.Response.ReleaseResources ();

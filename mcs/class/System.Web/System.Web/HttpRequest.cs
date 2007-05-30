@@ -161,6 +161,9 @@ namespace System.Web {
 #if NET_2_0
 		internal string ApplyUrlMapping (string url)
 		{
+			if (WebConfigurationManager.HasConfigErrors)
+				return url;
+			
 			UrlMappingsSection ums = WebConfigurationManager.GetSection ("system.web/urlMappings", ApplicationPath) as UrlMappingsSection;
 			UrlMappingCollection umc;
 

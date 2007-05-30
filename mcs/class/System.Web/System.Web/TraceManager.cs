@@ -47,34 +47,49 @@ namespace System.Web {
 
 		private int cur_item;
 		private TraceData[] data;
+
+		Exception initialException;
 		
 		public TraceManager ()
 		{
+			try {
 #if NET_2_0
-			TraceSection config = WebConfigurationManager.GetSection ("system.web/trace") as TraceSection;
-			if (config == null)
-				config = new TraceSection ();
+				mode = TraceMode.SortByTime;
+				TraceSection config = WebConfigurationManager.GetSection ("system.web/trace") as TraceSection;
+				if (config == null)
+					config = new TraceSection ();
 #else
-			TraceConfig config = (TraceConfig) HttpContext.GetAppConfig (traceConfigPath);
+				TraceConfig config = (TraceConfig) HttpContext.GetAppConfig (traceConfigPath);
 #endif
 
-			if (config == null)
-				return;
+				if (config == null)
+					return;
 			
-			enabled = config.Enabled;
-			local_only = config.LocalOnly;
-			page_output = config.PageOutput;
+				enabled = config.Enabled;
+				local_only = config.LocalOnly;
+				page_output = config.PageOutput;
 #if NET_2_0
-			if (config.TraceMode == TraceDisplayMode.SortByTime)
-				mode = TraceMode.SortByTime;
-			else
-				mode = TraceMode.SortByCategory;
+				if (config.TraceMode == TraceDisplayMode.SortByTime)
+					mode = TraceMode.SortByTime;
+				else
+					mode = TraceMode.SortByCategory;
 #else
-			mode = config.TraceMode;
+				mode = config.TraceMode;
 #endif
-			request_limit = config.RequestLimit;
+				request_limit = config.RequestLimit;
+			} catch (Exception ex) {
+				initialException = ex;
+			}
 		}
 
+		public bool HasException {
+			get { return initialException != null; }
+		}
+
+		public Exception InitialException {
+			get { return initialException; }
+		}
+		
 		public bool Enabled {
 			get { return enabled; }
 			set { enabled = value; }
