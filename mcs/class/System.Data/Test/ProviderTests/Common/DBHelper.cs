@@ -51,7 +51,7 @@ namespace MonoTests.System.Data
 			int result = -1;
 			try {
 				result = command.ExecuteNonQuery ();
-			} catch (Exception e) {
+			} catch {
 				return -2;
 			}
 			return result;
@@ -65,7 +65,7 @@ namespace MonoTests.System.Data
 			int result = -1;
 			try {
 				result = command.ExecuteNonQuery ();
-			} catch (Exception e) {
+			} catch {
 				return -2;
 			}
 			return result;

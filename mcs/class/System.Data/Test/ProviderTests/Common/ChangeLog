@@ -1,3 +1,7 @@
+2007-05-30  Nagappan A  <anagappan@novell.com>
+
+	* DBHelper.cs: Fixed warnings of unused variables.
+
 2007-03-09  Andreia Gaita  <avidigal@novell.com>
 
 	* ConnectionManager.cs: small fix to close the connection if we 
