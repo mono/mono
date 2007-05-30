@@ -478,8 +478,6 @@ namespace System.Windows.Forms {
 
 		public void HandleButtonUpMsg ()
 		{
-			
-
 			if (drag_data.State == DragState.Beginning) {
 				//state = State.Accepting;
 			} else if (drag_data.State != DragState.None) {
@@ -487,8 +485,11 @@ namespace System.Windows.Forms {
 				if (drag_data.WillAccept) {
 
 					if (QueryContinue (false, DragAction.Drop))
+						return;					
+				} else {
+
+					if (QueryContinue (false, DragAction.Cancel))
 						return;
-					
 				}
 
 				drag_data.State = DragState.None;
