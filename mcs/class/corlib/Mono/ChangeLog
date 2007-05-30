@@ -1,3 +1,12 @@
+2007-05-30  Miguel de Icaza  <miguel@novell.com>
+
+	* DataConverter.cs: Fix the PutBytesLE and PutByteBE, they were
+	overwriting memory that was out of range.    
+
+	Fix based on patch from Luis Gomes.
+
+	A couple of fixes to compile with MS.NET 2.0 (from Luis as well). 
+
 2007-04-06  Miguel de Icaza  <miguel@novell.com>
 
 	* a.cs: Test this stuff.

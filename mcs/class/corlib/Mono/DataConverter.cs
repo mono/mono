@@ -345,6 +345,8 @@ namespace Mono {
 		//
 		static bool PackOne (PackContext b, object oarg)
 		{
+			int n;
+			
 			switch (b.description [b.i]){
 			case '^':
 				b.conv = BigEndian;
@@ -441,7 +443,6 @@ namespace Mono {
 				
 			case '$': case 'z':
 				bool add_null = b.description [b.i] == 'z';
-				int n;
 				b.i++;
 				if (b.i >= b.description.Length)
 					throw new ArgumentException ("$ description needs a type specified", "description");
@@ -508,7 +509,7 @@ namespace Mono {
 			ArrayList result = new ArrayList ();
 			int idx = startIndex;
 			bool align = false;
-			int repeat = 0;
+			int repeat = 0, n;
 			
 			for (int i = 0; i < description.Length && idx < buffer.Length; ){
 				int save = i;
@@ -641,7 +642,6 @@ namespace Mono {
 				
 				case '$': case 'z':
 					// bool with_null = description [i] == 'z';
-					int n;
 					i++;
 					if (i >= description.Length)
 						throw new ArgumentException ("$ description needs a type specified", "description");
@@ -897,7 +897,7 @@ namespace Mono {
 			public override void PutBytes (byte [] dest, int destIdx, double value)
 			{
 				Check (dest, destIdx, 8);
-				fixed (byte *target = (&dest [destIdx])){
+				fixed (byte *target = &dest [destIdx]){
 					long *source = (long *) &value;
 
 					*((long *)target) = *source;
@@ -1226,8 +1226,9 @@ namespace Mono {
 				for (; i < count; i++)
 					*dest++ = *src++;
 			} else {
+				dest += count;
 				for (; i < count; i++)
-					dest [i-count] = *src++;
+					*(--dest) = *src++;
 			}
 		}
 
@@ -1236,8 +1237,9 @@ namespace Mono {
 			int i = 0;
 			
 			if (BitConverter.IsLittleEndian){
+				dest += count;
 				for (; i < count; i++)
-					dest [i-count] = *src++;
+					*(--dest) = *src++;
 			} else {
 				for (; i < count; i++)
 					*dest++ = *src++;

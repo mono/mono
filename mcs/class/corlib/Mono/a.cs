@@ -40,5 +40,13 @@ class X {
 		Dump (DataConverter.Pack ("_s!i", 0x7b, 0x12345678), "7b 00 00 00 78 56 34 12");
 
 		Console.WriteLine ("Tests {0}", fail ? "failed" : "passed");
+
+		byte [] source = new byte [] { 1, 2, 3, 4 };
+		byte [] dest = new byte [4];
+
+		int l = DataConverter.Int32FromBE (source, 0);
+		if (l != 0x01020304){
+			Console.WriteLine ("Failure");
+		}
 	}
 }
