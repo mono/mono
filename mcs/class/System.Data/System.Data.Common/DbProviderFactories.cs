@@ -77,7 +77,7 @@ namespace System.Data.Common {
 				if (row != null)
 					return GetFactory (row);
 			}
-			throw new ConfigurationErrorsException ("Failed to find or load the registered .Net Framework Data Provider.");
+			throw new ConfigurationErrorsException (String.Format("Failed to find or load the registered .Net Framework Data Provider '{0}'.", providerInvariantName));
 		}
 
 		public static DataTable GetFactoryClasses ()
