@@ -333,7 +333,6 @@ namespace System.Configuration {
 
 			if (setting.Provider != null && Providers [setting.Provider.Name] == null)
 				Providers.Add (setting.Provider);
-if (Providers.Count == 0) throw new Exception (setting.Provider.Name + ((object) Providers [setting.Provider.Name] ?? "(null)"));
 		}
 #endif
 

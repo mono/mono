@@ -1,5 +1,9 @@
 2007-05-30  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ApplicationSettingsBase.cs : removed garbage debugging stuff.
+
+2007-05-30  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ConfigXmlDocument.cs : added explicit interface implementations.
 	* ApplicationSettingsBase.cs : split deeply-nested get_Properties()
 	  into itself and a method. Treat default LocalFileSettingsProvider
