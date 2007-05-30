@@ -35,6 +35,9 @@ using vmw.common;
 
 namespace Mainsoft.Web.Hosting
 {
+	/// <summary>
+	/// <para>This class supports the Framework infrastructure and is not intended to be used directly from your code.</para>
+	/// </summary>
 	public class BaseStaticHttpServlet : HttpServlet
 	{
 		public BaseStaticHttpServlet()
@@ -159,6 +162,9 @@ namespace Mainsoft.Web.Hosting
 
 namespace System.Web.J2EE
 {
+	/// <summary>
+	/// <para>This class supports the Framework infrastructure and is not intended to be used directly from your code.</para>
+	/// </summary>
 	public class BaseStaticHttpServlet : Mainsoft.Web.Hosting.BaseStaticHttpServlet
 	{
 	}
@@ -168,6 +174,9 @@ namespace System.Web.J2EE
 
 namespace System.Web.GH
 {
+	/// <summary>
+	/// <para>This class supports the Framework infrastructure and is not intended to be used directly from your code.</para>
+	/// </summary>
 	public class BaseStaticHttpServlet : Mainsoft.Web.Hosting.BaseStaticHttpServlet
 	{
 	}

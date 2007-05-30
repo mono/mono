@@ -43,6 +43,9 @@ using System.Globalization;
 
 namespace Mainsoft.Web.Hosting
 {
+	/// <summary>
+	/// <para>This class supports the Framework infrastructure and is not intended to be used directly from your code.</para>
+	/// </summary>
 	public class BaseHttpServlet : HttpServlet
 	{
 		//private AppDomain _servletDomain;
@@ -296,7 +299,7 @@ namespace Mainsoft.Web.Hosting
 		}
 	}
 
-	public class GHWebDeseserializer : vmw.@internal.io.IObjectsDeserializer 
+	class GHWebDeseserializer : vmw.@internal.io.IObjectsDeserializer 
 	{
 
 			Object vmw.@internal.io.IObjectsDeserializer.Deserialize(java.io.ObjectInputStream stream)
@@ -309,6 +312,9 @@ namespace Mainsoft.Web.Hosting
 
 namespace System.Web.GH
 {
+	/// <summary>
+	/// <para>This class supports the Framework infrastructure and is not intended to be used directly from your code.</para>
+	/// </summary>
 	public class BaseHttpServlet : Mainsoft.Web.Hosting.BaseHttpServlet
 	{
 	}
@@ -317,6 +323,9 @@ namespace System.Web.GH
 
 namespace System.Web.J2EE
 {
+	/// <summary>
+	/// <para>This class supports the Framework infrastructure and is not intended to be used directly from your code.</para>
+	/// </summary>
 	public class BaseHttpServlet : Mainsoft.Web.Hosting.BaseHttpServlet
 	{
 	}

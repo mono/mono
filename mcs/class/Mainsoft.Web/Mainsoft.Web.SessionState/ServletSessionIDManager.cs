@@ -33,6 +33,9 @@ using javax.servlet.http;
 
 namespace Mainsoft.Web.SessionState
 {
+	/// <summary>
+	/// <para>This class supports the Framework infrastructure and is not intended to be used directly from your code.</para>
+	/// </summary>
 	public sealed class ServletSessionIDManager : ISessionIDManager
 	{
 		#region ISessionIDManager Members

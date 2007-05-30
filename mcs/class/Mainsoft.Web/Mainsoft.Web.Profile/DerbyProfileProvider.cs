@@ -45,6 +45,9 @@ using System.Configuration.Provider;
 
 namespace Mainsoft.Web.Profile
 {
+	/// <summary>
+	/// <para>This class supports the Framework infrastructure and is not intended to be used directly from your code.</para>
+	/// </summary>
 	public class DerbyProfileProvider : ProfileProvider
 	{
 		ConnectionStringSettings _connectionString;

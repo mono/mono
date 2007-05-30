@@ -32,6 +32,10 @@ using System.Text;
 
 namespace Mainsoft.Web.Profile
 {
+	/// <summary>
+	/// <para>This class supports the Framework infrastructure and is not intended to be used directly from your code.</para>
+	/// </summary>
+	[Obsolete]
 	public class CloudscapeProfileProvider : DerbyProfileProvider
 	{
 		public override void Initialize (string name, NameValueCollection config)

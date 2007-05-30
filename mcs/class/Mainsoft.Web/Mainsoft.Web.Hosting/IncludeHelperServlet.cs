@@ -38,6 +38,9 @@ using vmw.@internal.j2ee;
 
 namespace Mainsoft.Web.Hosting
 {
+	/// <summary>
+	/// <para>This class supports the Framework infrastructure and is not intended to be used directly from your code.</para>
+	/// </summary>
 	public class IncludeHelperServlet : HttpServlet
 	{
 		public IncludeHelperServlet()
@@ -78,7 +81,7 @@ namespace Mainsoft.Web.Hosting
 			PrintWriter jwriter;
 		}
 
-		public class JavaWriterFromTextWriter : Writer
+		class JavaWriterFromTextWriter : Writer
 		{
 			public JavaWriterFromTextWriter(TextWriter writer)
 			{
@@ -120,6 +123,9 @@ namespace Mainsoft.Web.Hosting
 
 namespace System.Web.GH
 {
+	/// <summary>
+	/// <para>This class supports the Framework infrastructure and is not intended to be used directly from your code.</para>
+	/// </summary>
 	public class IncludeHelperServlet : Mainsoft.Web.Hosting.IncludeHelperServlet
 	{
 	}

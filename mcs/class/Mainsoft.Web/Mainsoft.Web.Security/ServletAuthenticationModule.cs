@@ -34,6 +34,9 @@ using javax.servlet.http;
 
 namespace Mainsoft.Web.Security
 {
+	/// <summary>
+	/// <para>This class supports the Framework infrastructure and is not intended to be used directly from your code.</para>
+	/// </summary>
 	public sealed class SevletAuthenticationModule : IHttpModule
 	{
 		public void Dispose () {

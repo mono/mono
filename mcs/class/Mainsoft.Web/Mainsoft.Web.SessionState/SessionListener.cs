@@ -32,7 +32,7 @@ using Mainsoft.Web.Hosting;
 namespace Mainsoft.Web.SessionState
 {
 	/// <summary>
-	/// Summary description for Class1.
+	/// <para>This class supports the Framework infrastructure and is not intended to be used directly from your code.</para>
 	/// </summary>
 	public class SessionListener : javax.servlet.http.HttpSessionListener
 	{
@@ -72,7 +72,7 @@ namespace Mainsoft.Web.SessionState
 namespace System.Web.GH
 {
 	/// <summary>
-	/// Summary description for Class1.
+	/// <para>This class supports the Framework infrastructure and is not intended to be used directly from your code.</para>
 	/// </summary>
 	public class SessionListener : Mainsoft.Web.SessionState.SessionListener
 	{
@@ -82,7 +82,7 @@ namespace System.Web.GH
 namespace System.Web.J2EE
 {
 	/// <summary>
-	/// Summary description for Class1.
+	/// <para>This class supports the Framework infrastructure and is not intended to be used directly from your code.</para>
 	/// </summary>
 	public class SessionListener : Mainsoft.Web.SessionState.SessionListener
 	{
