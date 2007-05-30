@@ -1,3 +1,8 @@
+2007-05-30  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* standalone/projref: Added two projects where one project references
+	library.
+
 2006-07-17  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* Csc/Csc.csproj: Moved to 1.csproj and 2.csproj.
