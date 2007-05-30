@@ -27,7 +27,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#define SPEW
+//#define SPEW
 
 #if NET_2_0
 
@@ -352,6 +352,12 @@ namespace MonoTests.System.Configuration {
 			Assert.AreEqual (2, settings.Values.Count, "Count");
 			Assert.AreEqual ("go", settings.Values[0], "0");
 			Assert.AreEqual ("mono", settings.Values[1], "1");
+		}
+
+		[Test]
+		public void Providers ()
+		{
+			Assert.AreEqual (0, new TestSettings1 ().Providers.Count);
 		}
 	}
 }

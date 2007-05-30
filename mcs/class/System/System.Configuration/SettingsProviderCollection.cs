@@ -50,6 +50,8 @@ namespace System.Configuration
 #if (CONFIGURATION_DEP)
 		public override void Add (ProviderBase provider)
 		{
+			if (String.IsNullOrEmpty (provider.Name))
+				throw new ArgumentException ("Provider name cannot be null or empty");
 			providers.Add (provider.Name, provider);
 		}
 #endif

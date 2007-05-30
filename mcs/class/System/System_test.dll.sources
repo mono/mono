@@ -139,6 +139,7 @@ System.ComponentModel.Design/ServiceContainerTest.cs
 System.ComponentModel.Design.Serialization/InstanceDescriptorTest.cs
 System.Configuration/ApplicationSettingsBaseTest.cs
 System.Configuration/LocalFileSettingsProviderTest.cs
+System.Configuration/SettingsBaseTest.cs
 System.Configuration/SettingElementTest.cs
 System.Configuration/SettingsPropertyCollectionTest.cs
 System.Configuration/SettingsPropertyTest.cs

@@ -1,3 +1,12 @@
+2007-05-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SettingsBase.cs : property values are filled only when each
+	  property is accessed. It should not use virtual providers,
+	  properties or context internally since they could be overriden.
+	* SettingsPropertyValue.cs : to serialize value as string, use
+	  TypeConverter as well (as deserialization).
+	* SettingsProviderCollection.cs : (Add) null arg check.
+
 2007-05-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SettingElementCollection.cs : fix build, cyclic build mess.

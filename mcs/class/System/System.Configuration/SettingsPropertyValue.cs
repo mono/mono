@@ -28,6 +28,7 @@
 
 #if NET_2_0
 using System;
+using System.Globalization;
 using System.IO;
 using System.ComponentModel;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -105,7 +106,6 @@ namespace System.Configuration
 			}
 		}
 
-		[MonoTODO ("string type converter?")]
 		public object SerializedValue {
 			get {
 				if (needSerializedValue) {
@@ -114,8 +114,7 @@ namespace System.Configuration
 					switch (property.SerializeAs)
 					{
 					case SettingsSerializeAs.String:
-						/* the docs say use a string type converter.. this means what? */
-						serializedValue = propertyValue.ToString();
+						serializedValue = TypeDescriptor.GetConverter (property.PropertyType).ConvertToString (propertyValue);
 						break;
 #if (XML_DEP)
 					case SettingsSerializeAs.Xml:

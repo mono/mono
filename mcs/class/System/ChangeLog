@@ -1,3 +1,7 @@
+2007-05-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System_test.dll.sources : added SettingsBaseTest.cs.
+
 2007-05-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System_test.dll.sources : added SettingElementTest.cs.

@@ -28,6 +28,7 @@
 
 #if NET_2_0
 using System;
+using System.Collections;
 using System.ComponentModel;
 
 namespace System.Configuration
@@ -46,6 +47,7 @@ namespace System.Configuration
 			this.context = context;
 			this.properties = properties;
 			this.providers = providers;
+			// values do not seem to be reset here!! (otherwise one of the SettingsBaseTest will fail)
 		}
 
 		public virtual void Save ()
@@ -117,24 +119,12 @@ namespace System.Configuration
 			get {
 				if (sync) {
 					lock (this) {
-						return GetPropertyValues ();
+						return values;
 					}
+				} else {
+					return values;
 				}
-				else
-					return GetPropertyValues ();
 			}
-		}
-
-		SettingsPropertyValueCollection GetPropertyValues ()
-		{
-			SettingsPropertyValueCollection col = new SettingsPropertyValueCollection ();
-
-			foreach (SettingsProperty prop in properties)
-			{
-				col.Add (new SettingsPropertyValue (prop));
-			}
-
-			return col;
 		}
 
 		public virtual SettingsProviderCollection Providers {
@@ -149,6 +139,10 @@ namespace System.Configuration
 			if (Properties == null || (prop = Properties [propertyName]) == null)
 				throw new SettingsPropertyNotFoundException (
 					string.Format ("The settings property '{0}' was not found", propertyName));
+
+			if (values [propertyName] == null)
+				foreach (SettingsPropertyValue v in prop.Provider.GetPropertyValues (Context, Properties))
+					values.Add (v);
 
 			return PropertyValues [propertyName].PropertyValue;
 		}
@@ -175,6 +169,7 @@ namespace System.Configuration
 		SettingsContext context;
 		SettingsPropertyCollection properties;
 		SettingsProviderCollection providers;
+		SettingsPropertyValueCollection values = new SettingsPropertyValueCollection ();
 	}
 }
 
