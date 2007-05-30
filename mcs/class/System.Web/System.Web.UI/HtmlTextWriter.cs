@@ -175,13 +175,13 @@ namespace System.Web.UI {
 
 		protected virtual string EncodeAttributeValue (HtmlTextWriterAttribute attrKey, string value)
 		{
-			return HttpUtility.HtmlEncode (value);
+			return HttpUtility.HtmlAttributeEncode (value);
 		}
 
 		protected string EncodeAttributeValue (string value, bool fEncode)
 		{
 			if (fEncode)
-				return HttpUtility.HtmlEncode (value);
+				return HttpUtility.HtmlAttributeEncode (value);
 			return value;
 		}
 

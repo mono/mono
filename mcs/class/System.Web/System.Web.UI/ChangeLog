@@ -1,3 +1,8 @@
+2007-05-30  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* HtmlTextWriter.cs: EncodeAttributeValue should call 
+	HtmlAttributeEncode as documented
+
 2007-05-24  Marek Habersack  <mhabersack@novell.com>
 
 	* PageParser.cs: added support for the PreviousPageType
