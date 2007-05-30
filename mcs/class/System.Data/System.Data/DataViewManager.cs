@@ -384,6 +384,7 @@ namespace System.Data
 			throw new NotImplementedException ();
 		}
 	
+		[MonoLimitation("Supported only empty list of listAccessors")]
 		PropertyDescriptorCollection ITypedList.GetItemProperties (PropertyDescriptor[] listAccessors)
 		{
 			if (dataSet == null)

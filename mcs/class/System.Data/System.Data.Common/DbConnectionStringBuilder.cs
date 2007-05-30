@@ -179,7 +179,7 @@ namespace System.Data.Common
 
                 }
 
-		[MonoTODO]
+		[MonoLimitation("useOdbcRules set to true is not supported")]
 		public static void AppendKeyValuePair (StringBuilder builder, string keyword, string value,
 						       bool useOdbcRules)
 		{
