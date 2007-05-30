@@ -1,3 +1,7 @@
+2007-05-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* IComponentDiscoveryService.cs: New 2.0 interface (required by SDD)
+
 2007-05-15 Adar Wesley <adarw@mainsoft.com>
 
 	* MenuCommand.cs: added missing method overload Invoke
