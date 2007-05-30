@@ -1,10 +1,3 @@
-if exists (select name from sysdatabases where
-        name = 'mono-test') 
-        drop database [mono-test];
-create database [mono-test];
-grant all privileges on [mono-test] to monotester;
-go
-
 use monotest;
 
 -- =================================== OBJECT NUMERIC_FAMILY============================
@@ -61,7 +54,7 @@ go
 grant all privileges on binary_family to monotester;
 go
 
-insert into binary_family values (1, convert (binary, '555555'), convert (varbinary, '0123456789012345678901234567890123456789012345678901234567890123456789'), 
+insert into binary_family values (1, convert (binary, '5'), convert (varbinary, '0123456789012345678901234567890123456789012345678901234567890123456789'), 
 					convert (image, '66666666'), convert (image, '777777'), 
 					convert (image, '888888'), convert (image, '999999'));
 --insert into binary_family values (2,
@@ -92,7 +85,7 @@ go
 grant all privileges on string_family to monotester;
 go
 
-insert into string_family values (1,newid(),"char","varchar","text","ntext");
+insert into string_family values (1,newid(),'char','varchar','text','ntext');
 insert into string_family values (4,null,null,null,null,null);
 go
 -- =================================== END OBJECT STRING_FAMILY ========================
@@ -114,7 +107,7 @@ create table datetime_family (
 
 grant all privileges on datetime_family to monotester;
 go
-insert into datetime_family values (1,'2079-06-06 23:59:00','9999-12-31 23:59:59.997');
+insert into datetime_family values (1,'2079-06-06 23:59:00','9999-12-31 23:59:59:00');
 insert into datetime_family values (4,null,null);
 go
 
