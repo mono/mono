@@ -53,8 +53,8 @@ using System.Xml;
 namespace System.Data.SqlClient {
 	[DesignerAttribute ("Microsoft.VSDesigner.Data.VS.SqlCommandDesigner, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.IDesigner")]
 	 [ToolboxItemAttribute ("System.Drawing.Design.ToolboxItem, "+ Consts.AssemblySystem_Drawing)]
-	[DefaultEventAttribute ("RecordsAffected")]
 #if NET_2_0
+	[DefaultEventAttribute ("RecordsAffected")]
 	public sealed class SqlCommand : DbCommand, IDbCommand, ICloneable
 #else
         public sealed class SqlCommand : Component, IDbCommand, ICloneable
@@ -224,7 +224,9 @@ namespace System.Data.SqlClient {
 		[Browsable (false)]
 		[DefaultValue (true)]
 		[DesignOnly (true)]
+#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Never)]
+#endif
 		public 
 #if NET_2_0
                 override
@@ -307,6 +309,8 @@ namespace System.Data.SqlClient {
 		}
 
 #if NET_2_0
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public SqlNotificationRequest Notification { 
 			get { return notification; } 
 			set { notification = value; }
@@ -576,6 +580,7 @@ namespace System.Data.SqlClient {
 			return ExecuteReader (behavior);
 		}
 
+#if NET_2_0
 		protected override void Dispose (bool disposing)
 		{
 			if (disposed) return;
@@ -586,6 +591,7 @@ namespace System.Data.SqlClient {
 			}
 			disposed = true;
 		}
+#endif
 
 		public 
 #if NET_2_0

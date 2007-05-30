@@ -184,9 +184,10 @@ namespace System.Data.SqlClient {
 
 #if !NET_2_0
 		[DataSysDescription ("Current SqlServer that the connection is opened to, 'Data Source=X' in the connection string. ")]
+#else
+		[Browsable(true)]
 #endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		[Browsable(true)]
 		public 
 #if NET_2_0
 		override
@@ -266,6 +267,7 @@ namespace System.Data.SqlClient {
 			set { fireInfoMessageEventOnUserErrors = value; }
 		}
 		
+		[DefaultValue (false)]
 		public bool StatisticsEnabled { 
 			get { return statisticsEnabled; } 
 			set { statisticsEnabled = value; }

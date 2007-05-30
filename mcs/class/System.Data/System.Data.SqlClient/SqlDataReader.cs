@@ -376,11 +376,13 @@ namespace System.Data.SqlClient {
 			}
 		}
 		
+#if !NET_2_0
 		[EditorBrowsableAttribute (EditorBrowsableState.Never)] 
 		public new IDataReader GetData (int i)
 		{
 			return ((IDataReader) this [i]);
 		}
+#endif
 
 		public 
 #if NET_2_0
@@ -1085,7 +1087,7 @@ namespace System.Data.SqlClient {
 			GC.SuppressFinalize (this);
 		}
 
-		public 
+		public
 #if NET_2_0
 		override 
 #endif

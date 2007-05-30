@@ -156,21 +156,21 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		protected  override DbParameter GetParameter (int index)
 		{
-			throw new NotImplementedException();
+			return this [index];
 		}
 
 		protected override DbParameter GetParameter (string parameterName)
 		{
-			throw new NotImplementedException ();
+			return this [parameterName];
 		}
 	
 		protected  override void SetParameter (int index, DbParameter value)
 		{
-                        throw new NotImplementedException();
+			this [index] = value;
                 }
 		protected override void SetParameter (string parameterName, DbParameter value)
 		{
-                        throw new NotImplementedException();
+			this [parameterName] = value;
                 }
 #endif
 		object IList.this [int index] {
@@ -204,7 +204,9 @@ namespace System.Data.SqlClient {
 
 		#region Methods
 
+#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Never)]
+#endif // NET_2_0
 		public  
 #if NET_2_0
 		override
@@ -228,8 +230,10 @@ namespace System.Data.SqlClient {
 			return value;
 		}
 		
+#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[Obsolete ("Do not call this method.")]
+#endif // NET_2_0
 		public SqlParameter Add (string parameterName, object value)
 		{
 			return Add (new SqlParameter (parameterName, value));

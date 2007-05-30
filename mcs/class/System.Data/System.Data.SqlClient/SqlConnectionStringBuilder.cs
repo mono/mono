@@ -187,6 +187,7 @@ namespace System.Data.SqlClient
 			}
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		[DisplayNameAttribute ("AttachDbFilename")]
 		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		public string AttachDBFilename { 
@@ -228,6 +229,7 @@ namespace System.Data.SqlClient
 		}
 
 		[DisplayNameAttribute ("Data Source")]
+		[TypeConverterAttribute (typeof (string))]
 		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		public string DataSource { 
 			get { return _dataSource; }
@@ -258,6 +260,7 @@ namespace System.Data.SqlClient
 		}
 
 		[DisplayNameAttribute ("Failover Partner")]
+		[TypeConverterAttribute (typeof (string))]
 		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		public string FailoverPartner { 
 			get { return _failoverPartner; }
@@ -268,6 +271,7 @@ namespace System.Data.SqlClient
 		}
 
 		[DisplayNameAttribute ("Initial Catalog")]
+		[TypeConverterAttribute (typeof (string))]
 		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		public string InitialCatalog { 
 			get { return _initialCatalog; }
@@ -344,6 +348,7 @@ namespace System.Data.SqlClient
 		}
 
 		[DisplayNameAttribute ("Network Library")]
+		[TypeConverterAttribute (typeof (string))]
 		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		public string NetworkLibrary { 
 			get { return _networkLibrary; }
@@ -428,7 +433,8 @@ namespace System.Data.SqlClient
 			}
 		}
 
-		[DisplayNameAttribute ("Trust Server Certificate")]
+		[DisplayNameAttribute ("TrustServerCertificate")]
+		[RefreshProperties (RefreshProperties.All)]
 		public bool TrustServerCertificate { 
 			get { return _trustServerCertificate; } 
 			set {
@@ -438,6 +444,7 @@ namespace System.Data.SqlClient
 		}
 
 		[DisplayNameAttribute ("Type System Version")]
+		[RefreshProperties (RefreshProperties.All)]
 		public string TypeSystemVersion { 
 			get { return _typeSystemVersion; } 
 			set {
@@ -447,6 +454,7 @@ namespace System.Data.SqlClient
 		}
 
 		[DisplayNameAttribute ("User Instance")]
+		[RefreshProperties (RefreshProperties.All)]
 		public bool UserInstance { 
 			get { return _userInstance; }
 			set { 
@@ -455,6 +463,7 @@ namespace System.Data.SqlClient
 			}
 		}
 
+		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		[DisplayNameAttribute ("Context Connection")]
 		public bool ContextConnection { 
 			get { return _contextConnection; }

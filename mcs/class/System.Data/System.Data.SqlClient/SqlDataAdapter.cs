@@ -174,7 +174,6 @@ namespace System.Data.SqlClient {
 		}
 
 #if NET_2_0
-		[DefaultValue (1)]
 		public override int UpdateBatchSize { 
 			get { return updateBatchSize; }
 			set { 

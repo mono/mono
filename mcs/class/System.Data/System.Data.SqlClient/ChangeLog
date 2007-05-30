@@ -1,5 +1,29 @@
 2007-05-30  Nagappan A  <anagappan@novell.com>
 
+	* SqlParameter.cs (SqlParameter): Updated constructor to use the
+	new TDS RPC implementation.
+	Fixed missing attributes.
+	(SetDbType): Added new case for sql_variant type.
+	(ConvertToFrameworkType): Implemented new private method to
+	convert the data type to framework type.
+
+	* SqlParameterCollection.cs: Fixed missing attributes and
+	implemented missing methods.
+
+	* SqlConnection.cs: Fixed missing attributes.
+
+	* SqlConnectionStringBuilder.cs: Certain attributes are missing or
+	its value or they are not appropriate. Fixed them.
+
+	* SqlDataReader.cs (GetData): Method is available only under 1.0
+	profile.
+	
+	* SqlCommandBuilder.cs: Certain attributes are available only
+	under 2.0 profile, so moved them inside ifdef.
+
+	* SqlCommand.cs: Certain attributes are available only under 2.0
+	profile, so moved them inside ifdef.
+
 	* SqlBulkCopy.cs: Added new stubs.
 
 	* SqlBulkCopyColumnMappingCollection.cs: Added new stubs.

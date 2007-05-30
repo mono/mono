@@ -118,11 +118,12 @@ namespace System.Data.SqlClient {
 		}
 
 		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 #if !NET_2_0
 		[DataSysDescription ("The character used in a text command as the opening quote for quoting identifiers that contain special characters.")]
-#endif
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+#else
 		[EditorBrowsable (EditorBrowsableState.Never)]
+#endif // NET_2_0
 		public 
 #if NET_2_0
 		override
@@ -137,11 +138,12 @@ namespace System.Data.SqlClient {
 		}
 
 		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 #if !NET_2_0
 		[DataSysDescription ("The character used in a text command as the closing quote for quoting identifiers that contain special characters. ")]
-#endif
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+#else
 		[EditorBrowsable (EditorBrowsableState.Never)]
+#endif // NET_2_0
 		public 
 #if NET_2_0
 		override
@@ -632,11 +634,11 @@ namespace System.Data.SqlClient {
 			return true;
 		}
 
-		public 
+		public
 #if NET_2_0
 		override
-#endif // NET_2_0
-                void RefreshSchema () 
+#endif
+		void RefreshSchema () 
 		{
 			// FIXME: "Figure out what else needs to be cleaned up when we refresh."
 			tableName = String.Empty;

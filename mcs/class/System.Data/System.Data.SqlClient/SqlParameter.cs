@@ -90,9 +90,10 @@ namespace System.Data.SqlClient {
 
 		public SqlParameter (string parameterName, object value) 
 		{
-			metaParameter = new TdsMetaParameter (parameterName, SqlTypeToFrameworkType (value));
+ 			metaParameter = new TdsMetaParameter (parameterName, value);
+ 			InferSqlType (value);
+ 			metaParameter.Value =  SqlTypeToFrameworkType(value);
 			this.sourceVersion = DataRowVersion.Current;
-			InferSqlType (value);
 		}
 		
 		public SqlParameter (string parameterName, SqlDbType dbType) 
@@ -116,8 +117,10 @@ namespace System.Data.SqlClient {
 			metaParameter = new TdsMetaParameter (parameterName, size, 
 							      isNullable, precision, 
 							      scale, 
-							      SqlTypeToFrameworkType (value));
-			SqlDbType = dbType;
+							      value);
+			if (dbType != SqlDbType.Variant) 
+				SqlDbType = dbType;
+			metaParameter.Value = SqlTypeToFrameworkType (value);
 			Direction = direction;
 			SourceColumn = sourceColumn;
 			SourceVersion = sourceVersion;
@@ -299,6 +302,7 @@ namespace System.Data.SqlClient {
 		[DefaultValue (0)]
 #if ONLY_1_0 || ONLY_1_1
 		[DataSysDescription ("For decimal, numeric, varnumeric DBTypes.")]
+#else
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 #endif
@@ -311,6 +315,7 @@ namespace System.Data.SqlClient {
 		[DefaultValue (0)]
 #if ONLY_1_0 || ONLY_1_1
 		[DataSysDescription ("For decimal, numeric, varnumeric DBTypes.")]
+#else
 		[Browsable (false)]
                 [EditorBrowsable (EditorBrowsableState.Never)]
 #endif
@@ -407,11 +412,14 @@ namespace System.Data.SqlClient {
 			set{ compareInfo = value; }
 		}
 
+		[Browsable (false)]
 		public int LocaleId { 
 			get { return localeId; }
 			set { localeId = value; }
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public Object SqlValue { 
 			get { return sqlValue; }
 			set { sqlValue = value; }
@@ -460,7 +468,6 @@ namespace System.Data.SqlClient {
 			}
 
 			Type type = value.GetType ();
-
 			string exception = String.Format ("The parameter data type of {0} is invalid.", type.Name);
 
 			switch (type.FullName) {
@@ -690,6 +697,9 @@ namespace System.Data.SqlClient {
 			case "varchar":
 				SqlDbType = SqlDbType.VarChar;
 				break;
+			case "sql_variant":
+				SqlDbType = SqlDbType.Variant;
+				break;
 			default:
 				SqlDbType = SqlDbType.Variant;
 				break;
@@ -823,7 +833,7 @@ namespace System.Data.SqlClient {
 		private object SqlTypeToFrameworkType (object value)
 		{
 			if (! (value is INullable)) // if the value is not SqlType
-				return value;
+				return ConvertToFrameworkType (value);
 
 			// Map to .net type, as Mono TDS respects only types from .net
 			switch (value.GetType ().FullName) {
@@ -855,6 +865,56 @@ namespace System.Data.SqlClient {
 				return ( (SqlString) value).Value;
 			}
 			return value;
+		}
+
+		private object ConvertToFrameworkType (object value)
+		{
+			if (value == null || value == DBNull.Value)
+				return value;
+			switch (sqlDbType)  {
+			case SqlDbType.BigInt :
+				return Convert.ChangeType (value, typeof (Int64));
+			case SqlDbType.Binary:
+			case SqlDbType.VarBinary:
+				if (value is byte[])
+					return value;
+				break;
+			case SqlDbType.Bit:
+				return Convert.ChangeType (value, typeof (bool));
+			case SqlDbType.Int:
+				return Convert.ChangeType (value, typeof (Int32));
+			case SqlDbType.SmallInt :
+				return Convert.ChangeType (value, typeof (Int16));
+			case SqlDbType.TinyInt :
+				return Convert.ChangeType (value, typeof (byte));
+			case SqlDbType.Float:
+				return Convert.ChangeType (value, typeof (Double));
+			case SqlDbType.Real:
+				return Convert.ChangeType (value, typeof (Single));
+			case SqlDbType.Decimal:
+				return Convert.ChangeType (value, typeof (Decimal));
+			case SqlDbType.Money:
+			case SqlDbType.SmallMoney:
+				{
+					Decimal val = (Decimal)Convert.ChangeType (value, typeof (Decimal));
+					return Decimal.Round(val, 4);
+				}
+			case SqlDbType.DateTime:
+			case SqlDbType.SmallDateTime:
+				return Convert.ChangeType (value, typeof (DateTime));
+			case SqlDbType.VarChar:
+			case SqlDbType.NVarChar:
+			case SqlDbType.Char:
+			case SqlDbType.NChar:
+			case SqlDbType.Text:
+			case SqlDbType.NText:
+				return Convert.ChangeType (value,  typeof (string));
+			case SqlDbType.UniqueIdentifier:
+				return Convert.ChangeType (value,  typeof (Guid));
+			case SqlDbType.Variant:
+				return metaParameter.Value;
+			}
+			throw new  NotImplementedException ("Type Not Supported : " + sqlDbType.ToString());
 		}
 
 #if NET_2_0
