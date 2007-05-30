@@ -36,6 +36,7 @@ EXTRA_DISTFILES = Test/resources/indexed.png	\
 	Test/System.Drawing/bitmaps/maketransparent.bmp	\
 	Test/System.Drawing/bitmaps/nature24bits.gif	\
 	Test/System.Drawing/bitmaps/nature24bits87.gif	\
+	Test/System.Drawing/bitmaps/81773-interlaced.gif	\
 	Test/System.Drawing/bitmaps/nature24bits.jpg	\
 	Test/System.Drawing/bitmaps/nature-greyscale.jpg	\
 	Test/System.Drawing/bitmaps/smiley.ico	\

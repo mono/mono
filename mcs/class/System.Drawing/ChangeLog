@@ -1,3 +1,7 @@
+2007-05-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Makefile: Add an interlaced GIF test file to the dist.
+
 2007-05-29  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* System.Drawing_test.dll.sources: Add System.Drawing.Printing.Margins
