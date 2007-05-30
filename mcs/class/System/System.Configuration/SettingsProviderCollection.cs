@@ -40,25 +40,24 @@ namespace System.Configuration
 		: ProviderCollection
 #endif
 	{
-		Hashtable providers;
-
 		public SettingsProviderCollection ()
 		{
-			providers = new Hashtable ();
 		}
 
 #if (CONFIGURATION_DEP)
 		public override void Add (ProviderBase provider)
 		{
+			if (!(provider is SettingsProvider))
+				throw new ArgumentException ("SettingsProvider is expected");
 			if (String.IsNullOrEmpty (provider.Name))
 				throw new ArgumentException ("Provider name cannot be null or empty");
-			providers.Add (provider.Name, provider);
+			base.Add (provider);
 		}
 #endif
 
 		public new SettingsProvider this [ string name ] { 
 			get {
-				return (SettingsProvider)providers [ name ];
+				return (SettingsProvider) base [ name ];
 			}
 		}
 	}

@@ -3,8 +3,9 @@
 //
 // Authors:
 //	Chris Toshok (toshok@ximian.com)
+//	Atsushi Enomoto (atsushi@ximian.com)
 //
-// (C) 2005 Novell, Inc (http://www.novell.com)
+// (C) 2005, 2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the

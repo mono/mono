@@ -1,5 +1,16 @@
 2007-05-30  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ConfigXmlDocument.cs : added explicit interface implementations.
+	* ApplicationSettingsBase.cs : split deeply-nested get_Properties()
+	  into itself and a method. Treat default LocalFileSettingsProvider
+	  as a (valid) settings provider. Removed a fixme (only public
+	  members should be available).
+	* SettingsBase.cs : check lock state in Save().
+	* SettingsProviderCollection.cs : remove bogus table field which
+	  conflicts with the table in base ProviderCollection class.
+
+2007-05-30  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SettingsBase.cs : property values are filled only when each
 	  property is accessed. It should not use virtual providers,
 	  properties or context internally since they could be overriden.

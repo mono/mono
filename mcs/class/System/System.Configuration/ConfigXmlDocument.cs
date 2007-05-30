@@ -117,6 +117,16 @@ namespace System.Configuration
 			}
 		}
 
+#if NET_2_0 && CONFIGURATION_DEP
+		string System.Configuration.Internal.IConfigErrorInfo.Filename {
+			get { return Filename; }
+		}
+
+		int System.Configuration.Internal.IConfigErrorInfo.LineNumber {
+			get { return LineNumber; }
+		}
+#endif
+
 		//
 		// Wrappers for Xml* that just provide file name and line number addition
 		//

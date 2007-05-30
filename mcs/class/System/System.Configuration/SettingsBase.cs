@@ -52,6 +52,15 @@ namespace System.Configuration
 
 		public virtual void Save ()
 		{
+			if (sync)
+				lock (this)
+					SaveCore ();
+			else
+				SaveCore ();
+		}
+
+		void SaveCore ()
+		{
 			//
 			// Copied from ApplicationSettingsBase
 			//

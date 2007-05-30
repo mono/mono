@@ -250,86 +250,90 @@ namespace System.Configuration {
 
 					properties = new SettingsPropertyCollection ();
 
-					foreach (PropertyInfo prop in GetType().GetProperties (/* only public properties? */)) {
+					foreach (PropertyInfo prop in GetType ().GetProperties ()) { // only public properties
 						SettingAttribute[] setting_attrs = (SettingAttribute[])prop.GetCustomAttributes (typeof (SettingAttribute), false);
-						if (setting_attrs != null && setting_attrs.Length > 0) {
-							SettingsAttributeDictionary dict = new SettingsAttributeDictionary ();
-							SettingsProvider provider = null;
-							object defaultValue = null;
-							SettingsSerializeAs serializeAs = SettingsSerializeAs.String;
-
-							foreach (Attribute a in prop.GetCustomAttributes (false)) {
-								/* the attributes we handle natively here */
-								if (a is SettingsProviderAttribute) {
-									Type provider_type = Type.GetType (((SettingsProviderAttribute)a).ProviderTypeName);
-									provider = (SettingsProvider) Activator.CreateInstance (provider_type);
-									provider.Initialize (null, null);
-								}
-								else if (a is DefaultSettingValueAttribute) {
-									defaultValue = ((DefaultSettingValueAttribute)a).Value; /* XXX this is a string.. do we convert? */
-									// note: for StringCollection, TypeDescriptor.GetConverter(prop.PropertyType) returns
-									// CollectionConverter, however this class cannot handle the XML serialized strings
-									if (prop.PropertyType == typeof(StringCollection)) {
-										XmlSerializer xs = new XmlSerializer (typeof (string[]));
-										string[] values = (string[]) xs.Deserialize (new StringReader ((string)defaultValue));
-										StringCollection sc = new StringCollection ();
-										sc.AddRange (values);
-										defaultValue = sc;
-									} else if (prop.PropertyType != typeof(string)) {
-										defaultValue = TypeDescriptor.GetConverter(prop.PropertyType).ConvertFromString((string)defaultValue);
-									}
-								}
-								else if (a is SettingsSerializeAsAttribute) {
-									serializeAs = ((SettingsSerializeAsAttribute)a).SerializeAs;
-								}
-								else if (a is ApplicationScopedSettingAttribute ||
-									 a is UserScopedSettingAttribute) {
-									dict.Add (a.GetType(), a);
-								}
-								else {
-									dict.Add (a.GetType(), a);
-								}
-							}
-
-							SettingsProperty setting = new SettingsProperty (prop.Name,
-													 prop.PropertyType,
-													 provider,
-													 false /* XXX */,
-													 defaultValue /* XXX always a string? */,
-													 serializeAs,
-													 dict,
-													 false, false);
-
-
-							if (providerService != null)
-								setting.Provider = providerService.GetSettingsProvider (setting);
-
-							if (provider == null) {
-								if (local_provider == null) {
-									local_provider = new LocalFileSettingsProvider ();
-									local_provider.Initialize (null, null);
-								}
-								setting.Provider = local_provider;
-							}
-
-							if (provider != null) {
-								/* make sure we're using the same instance of a
-								   given provider across multiple properties */
-								SettingsProvider p = Providers[provider.Name];
-								if (p != null)
-									setting.Provider = p;
-							}
-
-							properties.Add (setting);
-
-							if (setting.Provider != null && Providers [setting.Provider.Name] == null)
-								Providers.Add (setting.Provider);
-						}
+						if (setting_attrs == null || setting_attrs.Length == 0)
+							continue;
+						CreateSettingsProperty (prop, properties, ref local_provider);
 					}
 				}
 
 				return properties;
 			}
+		}
+
+		void CreateSettingsProperty (PropertyInfo prop, SettingsPropertyCollection properties, ref LocalFileSettingsProvider local_provider)
+		{
+			SettingsAttributeDictionary dict = new SettingsAttributeDictionary ();
+			SettingsProvider provider = null;
+			object defaultValue = null;
+			SettingsSerializeAs serializeAs = SettingsSerializeAs.String;
+
+			foreach (Attribute a in prop.GetCustomAttributes (false)) {
+				/* the attributes we handle natively here */
+				if (a is SettingsProviderAttribute) {
+					Type provider_type = Type.GetType (((SettingsProviderAttribute)a).ProviderTypeName);
+					provider = (SettingsProvider) Activator.CreateInstance (provider_type);
+					provider.Initialize (null, null);
+				}
+				else if (a is DefaultSettingValueAttribute) {
+					defaultValue = ((DefaultSettingValueAttribute)a).Value; /* XXX this is a string.. do we convert? */
+					// note: for StringCollection, TypeDescriptor.GetConverter(prop.PropertyType) returns
+					// CollectionConverter, however this class cannot handle the XML serialized strings
+					if (prop.PropertyType == typeof(StringCollection)) {
+						XmlSerializer xs = new XmlSerializer (typeof (string[]));
+						string[] values = (string[]) xs.Deserialize (new StringReader ((string)defaultValue));
+						StringCollection sc = new StringCollection ();
+						sc.AddRange (values);
+						defaultValue = sc;
+					} else if (prop.PropertyType != typeof(string)) {
+						defaultValue = TypeDescriptor.GetConverter(prop.PropertyType).ConvertFromString((string)defaultValue);
+					}
+				}
+				else if (a is SettingsSerializeAsAttribute) {
+					serializeAs = ((SettingsSerializeAsAttribute)a).SerializeAs;
+				}
+				else if (a is ApplicationScopedSettingAttribute ||
+					 a is UserScopedSettingAttribute) {
+					dict.Add (a.GetType(), a);
+				}
+				else {
+					dict.Add (a.GetType(), a);
+				}
+			}
+
+			SettingsProperty setting =
+				new SettingsProperty (prop.Name, prop.PropertyType, provider, false /* XXX */,
+						      defaultValue /* XXX always a string? */, serializeAs, dict,
+						      false, false);
+
+
+			if (providerService != null)
+				setting.Provider = providerService.GetSettingsProvider (setting);
+
+			if (provider == null) {
+				if (local_provider == null) {
+					local_provider = new LocalFileSettingsProvider ();
+					local_provider.Initialize (null, null);
+				}
+				setting.Provider = local_provider;
+				// .NET ends up to set this to providers.
+				provider = local_provider;
+			}
+
+			if (provider != null) {
+				/* make sure we're using the same instance of a
+				   given provider across multiple properties */
+				SettingsProvider p = Providers[provider.Name];
+				if (p != null)
+					setting.Provider = p;
+			}
+
+			properties.Add (setting);
+
+			if (setting.Provider != null && Providers [setting.Provider.Name] == null)
+				Providers.Add (setting.Provider);
+if (Providers.Count == 0) throw new Exception (setting.Provider.Name + ((object) Providers [setting.Provider.Name] ?? "(null)"));
 		}
 #endif
 
