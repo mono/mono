@@ -427,7 +427,7 @@ namespace Mono {
 				for (j = b.i+1; j < b.description.Length; j++){
 					if (b.description [j] == ']')
 						break;
-					int n = ((short) b.description [j]) - ((short) '0');
+					n = ((short) b.description [j]) - ((short) '0');
 					if (n >= 0 && n <= 9){
 						if (count == -1)
 							count = n;
@@ -626,7 +626,7 @@ namespace Mono {
 					for (j = i+1; j < description.Length; j++){
 						if (description [j] == ']')
 							break;
-						int n = ((short) description [j]) - ((short) '0');
+						n = ((short) description [j]) - ((short) '0');
 						if (n >= 0 && n <= 9){
 							if (count == -1)
 								count = n;
