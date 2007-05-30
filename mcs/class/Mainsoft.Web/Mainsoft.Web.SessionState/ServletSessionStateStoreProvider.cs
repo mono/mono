@@ -38,6 +38,7 @@ namespace Mainsoft.Web.SessionState
 {
 	/// <summary>
 	/// <para>This class supports the Framework infrastructure and is not intended to be used directly from your code.</para>
+	/// <para>Manages session state information using Java EE session API.</para>
 	/// </summary>
 	public sealed partial class ServletSessionStateStoreProvider : SessionStateStoreProviderBase
 	{

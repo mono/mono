@@ -47,6 +47,7 @@ namespace Mainsoft.Web.Profile
 {
 	/// <summary>
 	/// <para>This class supports the Framework infrastructure and is not intended to be used directly from your code.</para>
+	/// <para>Manages storage of profile information for an ASP.NET application in a Derby database.</para>
 	/// </summary>
 	public class DerbyProfileProvider : ProfileProvider
 	{

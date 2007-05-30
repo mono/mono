@@ -36,6 +36,7 @@ namespace Mainsoft.Web.Security
 {
 	/// <summary>
 	/// <para>This class supports the Framework infrastructure and is not intended to be used directly from your code.</para>
+	/// <para>Sets the identity of the user for an ASP.NET Java EE application.</para>
 	/// </summary>
 	public sealed class SevletAuthenticationModule : IHttpModule
 	{
