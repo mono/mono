@@ -21,10 +21,8 @@
 //
 // Author:
 //	Jordi Mas i Hernandez <jordi@ximian.com>
+//      Chris Toshok <toshok@ximian.com>
 //
-//
-
-// NOT COMPLETE
 
 using System.Drawing;
 using System.ComponentModel;
@@ -230,6 +228,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+
 		[Editor("System.Windows.Forms.Design.DataGridColumnStyleMappingNameEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
 		[Localizable(true)]
 #if NET_2_0
@@ -368,17 +367,19 @@ namespace System.Windows.Forms
 			}
 			
 			if (property_descriptor == null) {
-				PropertyDescriptorCollection propcol = value.GetItemProperties ();
+				property_descriptor = value.GetItemProperties ()[mapping_name];
 
-				for (int i = 0; i < propcol.Count ; i++) {
-					if (propcol[i].Name == mapping_name) {
-						property_descriptor = propcol[i];
-						break;
-					}
-				}
+// 				Console.WriteLine ("mapping name = {0}", mapping_name);
+// 				foreach (PropertyDescriptor prop in value.GetItemProperties ()) {
+// 					Console.WriteLine (" + prop = {0}", prop.Name);
+// 				}
 
 				if (property_descriptor == null)
 					throw new InvalidOperationException ("The PropertyDescriptor for this column is a null reference");
+
+				 /*MonoTests.System.Windows.Forms.DataGridColumnStyleTest.GetColumnValueAtRow : System.InvalidOperationException : The 'foo' DataGridColumnStyle cannot be used because it is not associated with a Property or Column in the DataSource.*/
+
+				
 			}
 		}
 
@@ -432,7 +433,7 @@ namespace System.Windows.Forms
 
 		protected internal abstract Size GetPreferredSize (Graphics g,  object value);
 
-		void  IDataGridColumnStyleEditingNotificationService.ColumnStartedEditing (Control editingControl)
+		void IDataGridColumnStyleEditingNotificationService.ColumnStartedEditing (Control editingControl)
 		{
 			ColumnStartedEditing (editingControl);
 		}

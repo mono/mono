@@ -483,6 +483,11 @@ namespace System.Windows.Forms
 				if (value.ColumnNumber >= CurrentTableStyle.GridColumnStyles.Count)
 					value.ColumnNumber = CurrentTableStyle.GridColumnStyles.Count == 0 ? 0 : CurrentTableStyle.GridColumnStyles.Count - 1;
 
+
+				/* now make sure we don't go negative */
+				if (value.RowNumber < 0) value.RowNumber = 0;
+				if (value.ColumnNumber < 0) value.ColumnNumber = 0;
+
 				bool was_changing = is_changing;
 
 				add_row_changed = add_row_changed || was_changing;

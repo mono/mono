@@ -1,3 +1,14 @@
+2007-05-30  Chris Toshok  <toshok@ximian.com>
+
+	* DataGrid.cs (set_CurrentCell): guard against negative
+	column/row.
+
+	* DataGridColumnStyle.cs (CheckValidDataSource): just use the
+	array index syntax instead of looping over the property names.
+
+	* DataGridTextBoxColumn.cs: add a changed handler on the textbox,
+	and set IsInEditOrNavigateMode to false there.
+
 2007-05-30  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs: Make sure we don't get a bad visible order when
