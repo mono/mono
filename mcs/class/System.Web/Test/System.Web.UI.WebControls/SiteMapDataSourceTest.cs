@@ -125,7 +125,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		
 		[Test]
-		[Category("NotWorking")]
 		public void SiteMapDataSource_DataSourceChanged ()
 		{
 			PokerSiteMapDataSource p = new PokerSiteMapDataSource ();

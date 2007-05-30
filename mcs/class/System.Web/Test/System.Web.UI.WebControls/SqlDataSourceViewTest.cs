@@ -278,7 +278,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		#endregion
 
 		[Test]
-		[Category ("NotWorking")]
 		public void SqlDataSourceView_DataSourceViewChanged ()
 		{
 			SqlDataSource ds = new SqlDataSource ();

@@ -823,7 +823,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		#endregion
 
 		[Test]
-		[Category ("NotWorking")]
 		public void SqlDataSource_DataSourceViewChanged ()
 		{
 			SqlPoker sql = new SqlPoker ();
