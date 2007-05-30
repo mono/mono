@@ -7,8 +7,7 @@
 // 
 // (C) 2003 Martin Willemoes Hansen
 // (C) 2003 Andreas Nahr
-// 
-
+// Copyright (C) 2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,10 +29,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Text;
 using System.IO;
-using System.Drawing;
 using System.ComponentModel;
 using System.Windows.Forms;
 
@@ -133,5 +130,12 @@ namespace System.Drawing.Design
 		{
 			return new Bitmap (stream);
 		}
+#if NET_2_0
+		[MonoTODO]
+		protected virtual Type[] GetImageExtenders ()
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 	}
 }

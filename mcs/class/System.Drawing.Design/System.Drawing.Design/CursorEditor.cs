@@ -7,8 +7,7 @@
 // 
 // (C) 2003 Martin Willemoes Hansen
 // (C) 2003 Andreas Nahr
-// 
-
+// Copyright (C) 2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,8 +29,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.Drawing;
 using System.ComponentModel;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
@@ -94,5 +91,10 @@ namespace System.Drawing.Design
 		{
 			return UITypeEditorEditStyle.DropDown;
 		}
+#if NET_2_0
+		public override bool IsDropDownResizable {
+			get { return true; }
+		}
+#endif
 	}
 }

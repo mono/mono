@@ -1,3 +1,11 @@
+2007-05-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CursorEditor.cs: Add new (2.0) IsDropDownResizable property.
+	* ImageEditor.cs: Add new (2.0) GetImageExtenders method.
+	* ToolboxItemContainer.cs: New. Stub to reduce MoMA missing report.
+	* ToolboxItemCreator.cs: New. Stub to reduce MoMA missing report.
+	* ToolboxService.cs: New. Stub to reduce MoMA missing report.
+
 2006-10-25  Chris Toshok  <toshok@ximian.com>
 
 	* IconEditor.cs: the value we're painting isn't an Image, it's an
