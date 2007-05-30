@@ -1,3 +1,7 @@
+2007-05-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* System.Drawing.Design.dll.sources: Add Toolbox* 2.0 classes.
+
 2003-07-21  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* System.Drawing.Design.dll.sources: Added AssemblyInfo.cs, Locale.cs, TODOAttribute.cs
