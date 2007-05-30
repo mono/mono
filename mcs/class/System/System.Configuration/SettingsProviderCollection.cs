@@ -53,13 +53,13 @@ namespace System.Configuration
 				throw new ArgumentException ("Provider name cannot be null or empty");
 			base.Add (provider);
 		}
-#endif
 
 		public new SettingsProvider this [ string name ] { 
 			get {
 				return (SettingsProvider) base [ name ];
 			}
 		}
+#endif
 	}
 }
 
