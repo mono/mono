@@ -1,3 +1,9 @@
+2007-05-30  Jackson Harper  <jackson@ximian.com>
+
+	* TreeView.cs: Make sure we don't get a bad visible order when
+	setting to the top node.  Fixes some misc crashing in
+	ControlInspector.
+
 2007-05-30  Andreia Gaita  <avidigal@novell.com>
 
 	* UserControl.cs: Add 2.0 AutoSizeMode

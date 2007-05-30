@@ -1161,7 +1161,7 @@ namespace System.Windows.Forms {
 		{
 			int order = 0;
 			if (node != null)
-				order = node.visible_order - 1;
+				order = Math.Max (0, node.visible_order - 1);
 
 			if (!vbar.is_visible) {
 				skipped_nodes = order;
