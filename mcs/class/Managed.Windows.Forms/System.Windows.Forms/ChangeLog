@@ -1,5 +1,9 @@
 2007-05-29  Everaldo Canuto  <ecanuto@novell.com>
 
+	* DataGridColumnStyle.cs: Add char trimming column header text format. 
+
+2007-05-29  Everaldo Canuto  <ecanuto@novell.com>
+
 	* DataGridColumnStyle.cs: Fix grid header arrow drawing over column name. 
 	Fixes #80147.
 

@@ -157,6 +157,7 @@ namespace System.Windows.Forms
 			string_format_hdr = new StringFormat ();
 			string_format_hdr.FormatFlags |= StringFormatFlags.NoWrap;
 			string_format_hdr.LineAlignment  = StringAlignment.Center;
+			string_format_hdr.Trimming = StringTrimming.Character;
 		}
 
 		#endregion
