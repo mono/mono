@@ -1,3 +1,12 @@
+2007-05-30  Nagappan A  <anagappan@novell.com>
+
+	* TdsMetaParameter.cs (GetActualSize): Multiply length by 2, if
+	the data type is nvarchar, nchar or ntext.
+	(GetSize): Added new case for decimal, uniqueidentifier,
+	smallmoney, bit, nchar, ntext.
+	(GetBytes): Implemented new internal method to encode the data.
+	(GetMetaType): Modified the return values appropriately.
+
 2007-03-21  Nagappan A  <anagappan@novell.com>
 
 	* TdsMetaParameter.cs (Prepare): Include @ before parameter name,

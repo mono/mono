@@ -194,7 +194,10 @@ namespace Mono.Data.Tds {
 
 			switch (Value.GetType ().ToString ()) {
 			case "System.String":
-				return ((string) value).Length;
+				int len = ((string)value).Length;
+				if (TypeName == "nvarchar" || TypeName == "nchar" || TypeName == "ntext")
+					len *= 2;
+				return len ;	
 			case "System.Byte[]":
 				return ((byte[]) value).Length;
 			}
@@ -203,45 +206,91 @@ namespace Mono.Data.Tds {
 
 		private int GetSize ()
 		{
-			if (IsNullable) {
-				switch (TypeName) {
-				case "bigint":
-					return 8;
-				case "datetime":
-					return 8;
-				case "float":
-					return 8;
-				case "int":
-					return 4;
-				case "real":
-					return 4;
-				case "smalldatetime":
-					return 4;
-				case "smallint":
-					return 2;
-				case "tinyint":
-					return 1;
-				}
+			switch (TypeName) {
+			case "decimal":
+				return 17;
+			case "uniqueidentifier":
+				return 16;
+			case "bigint":
+			case "datetime":
+			case "float":
+			case "money":
+				return 8;
+			case "int":
+			case "real":
+			case "smalldatetime":
+			case "smallmoney":
+				return 4;
+			case "smallint":
+				return 2;
+			case "tinyint":
+			case "bit":
+				return 1;
+			/*
+			case "nvarchar" :
+			*/
+			case "nchar" :
+			case "ntext" :
+				return size*2 ;
 			}
 			return size;
+		}
+
+		internal byte[] GetBytes ()
+		{
+			byte[] result = {};
+			if (Value == DBNull.Value || Value == null)
+				return result;
+
+			switch (TypeName)
+			{
+				case "nvarchar" :
+				case "nchar" :
+				case "ntext" :
+					return Encoding.Unicode.GetBytes ((string)Value);
+				case "varchar" :
+				case "char" :
+				case "text" :
+					return Encoding.Default.GetBytes ((string)Value);
+				default :
+					return ((byte[]) Value);
+			}
 		}
 
 		internal TdsColumnType GetMetaType ()
 		{
 			switch (TypeName) {
 			case "binary":
-				return TdsColumnType.Binary;
+				return TdsColumnType.BigBinary;
 			case "bit":
+				if (IsNullable)
+					return TdsColumnType.BitN;
 				return TdsColumnType.Bit;
+			case "bigint":
+				return TdsColumnType.IntN;
 			case "char":
 				return TdsColumnType.Char;
+			case "money":
+				if (IsNullable)
+					return TdsColumnType.MoneyN;
+				return TdsColumnType.Money;
+			case "smallmoney":
+				if (IsNullable)
+					return TdsColumnType.MoneyN ;
+				return TdsColumnType.Money4;
 			case "decimal":
 				return TdsColumnType.Decimal;
 			case "datetime":
 				if (IsNullable)
 					return TdsColumnType.DateTimeN;
 				return TdsColumnType.DateTime;
+			case "smalldatetime":
+				if (IsNullable)
+					return TdsColumnType.DateTimeN;
+				return TdsColumnType.DateTime4;
 			case "float":
+				if (IsNullable)
+					return TdsColumnType.FloatN ;
 				return TdsColumnType.Float8;
 			case "image":
 				return TdsColumnType.Image;
@@ -256,8 +305,10 @@ namespace Mono.Data.Tds {
 			case "ntext":
 				return TdsColumnType.NText;
 			case "nvarchar":
-				return TdsColumnType.NVarChar;
+				return TdsColumnType.BigNVarChar;
 			case "real":
+				if (IsNullable)
+					return TdsColumnType.FloatN ;
 				return TdsColumnType.Real;
 			case "smallint":
 				if (IsNullable)
@@ -272,11 +323,11 @@ namespace Mono.Data.Tds {
 			case "uniqueidentifier":
 				return TdsColumnType.UniqueIdentifier;
 			case "varbinary":
-				return TdsColumnType.VarBinary;
+				return TdsColumnType.BigVarBinary;
 			case "varchar":
-				return TdsColumnType.VarChar;
+				return TdsColumnType.BigVarChar;
 			default:
-				throw new NotSupportedException ();
+				throw new NotSupportedException ("Unknown Type : " + TypeName);
 			}
 		}
 
