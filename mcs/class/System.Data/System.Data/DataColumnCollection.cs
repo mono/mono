@@ -173,10 +173,12 @@ namespace System.Data {
 			return column;
 		}
 
+#if NET_2_0
 		public void CopyTo (DataColumn [] array, int index)
 		{
 			CopyTo ((Array) array, index);
 		}
+#endif
 
 		internal void RegisterName(string name, DataColumn column)
 		{

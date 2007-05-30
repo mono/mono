@@ -505,10 +505,12 @@ namespace System.Data {
 				Add (relation);
 		}
 
+#if NET_2_0
 		public void CopyTo (DataRelation [] array, int index)
 		{
 			CopyTo ((Array) array, index);
 		}
+#endif
 
 		internal virtual void PostAddRange ()
 		{

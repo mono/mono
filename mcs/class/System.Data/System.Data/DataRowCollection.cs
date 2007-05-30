@@ -78,7 +78,13 @@ namespace System.Data
 			}
 		}
 
-		public override int Count
+		public
+#if NET_2_0
+		override
+#else
+		new
+#endif
+		int Count
 		{
 			get {
 				return List.Count;
