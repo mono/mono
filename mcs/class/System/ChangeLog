@@ -1,3 +1,7 @@
+2007-05-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* System.dll.sources: Add S.C.D.IComponentDiscoveryService
+
 2007-05-30  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System_test.dll.sources : added SettingsBaseTest.cs.
