@@ -48,6 +48,18 @@ namespace System.Windows.Forms {
 		#endregion	// Public Constructors
 
 		#region Public Instance Properties
+#if NET_2_0
+		[Browsable (true)]
+		[LocalizableAttribute(true)] 
+		public AutoSizeMode AutoSizeMode {
+			get { return base.GetAutoSizeMode (); } 
+			set {
+				if (base.GetAutoSizeMode () != value) {
+					base.SetAutoSizeMode (value);
+				}
+			} 
+		}
+#endif
 		protected override Size DefaultSize {
 			get {
 				return new Size(150, 150);

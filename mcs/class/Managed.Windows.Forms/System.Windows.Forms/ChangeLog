@@ -1,3 +1,7 @@
+2007-05-30  Andreia Gaita  <avidigal@novell.com>
+
+	* UserControl.cs: Add 2.0 AutoSizeMode
+
 2007-05-29  Everaldo Canuto  <ecanuto@novell.com>
 
 	* DataGridTextBoxColumn.cs: Fix textbox horizontal offset.
