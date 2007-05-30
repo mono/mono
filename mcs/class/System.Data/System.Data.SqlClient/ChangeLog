@@ -1,3 +1,9 @@
+2007-05-30  Nagappan A  <anagappan@novell.com>
+
+	* SqlBulkCopy.cs: Added new stubs.
+
+	* SqlBulkCopyColumnMappingCollection.cs: Added new stubs.
+
 2007-05-29  Nagappan A  <anagappan@novell.com>
 
 	* SqlCommand.cs (Dispose): Command.Dispose closing
