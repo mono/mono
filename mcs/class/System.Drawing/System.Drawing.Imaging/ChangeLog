@@ -1,3 +1,9 @@
+2007-05-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ImageAttributes.cs: Remove TODO for ColorMatrixFlags and Gray 
+	ColorMatrix support methods. Add TODO on some stuff not supported by
+	libgdiplus (so MoMA reports gets more accurate). Fix coding style.
+
 2007-05-09 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* EncoderParameter.jvm.cs: removed destructor, 

@@ -8,7 +8,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002-4 Ximian, Inc.  http://www.ximian.com
-// Copyright (C) 2004, 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004, 2006-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -38,48 +38,43 @@ namespace System.Drawing.Imaging {
 	[StructLayout(LayoutKind.Sequential)]
 	public sealed class ImageAttributes : ICloneable, IDisposable {
 		
-		private IntPtr nativeImageAttr = IntPtr.Zero;
+		private IntPtr nativeImageAttr;
 		
-		internal IntPtr NativeObject{
-			get{
+		internal IntPtr NativeObject {
+			get {
 				return nativeImageAttr;
 			}
 		}
 		
-		internal  ImageAttributes(IntPtr native)
+		internal ImageAttributes (IntPtr native)
 		{
 			nativeImageAttr = native;
 		}
 		
-		public ImageAttributes() {				
-			
-			Status status = GDIPlus.GdipCreateImageAttributes(out nativeImageAttr);
-						
-			if (status != Status.Ok)
-				throw new Exception ("Error calling GDIPlus.GdipCreateImageAttributes:" +status);
-			
-		}
-
-		public void ClearBrushRemapTable()
+		public ImageAttributes ()
 		{
-			ClearRemapTable (ColorAdjustType.Brush);			
-		}
-
-		//Clears the color keys for all GDI+ objects
-		public void ClearColorKey() 
-		{			                 
-			ClearColorKey (ColorAdjustType.Default);
-		}
-
-		public void ClearColorKey(ColorAdjustType type)
-		{
-			Status status = GDIPlus.GdipSetImageAttributesColorKeys (nativeImageAttr, 
-				type, false, 0, 0);
-			
+			Status status = GDIPlus.GdipCreateImageAttributes (out nativeImageAttr);
 			GDIPlus.CheckStatus (status);
 		}
 
-		public void ClearColorMatrix()
+		public void ClearBrushRemapTable ()
+		{
+			ClearRemapTable (ColorAdjustType.Brush);
+		}
+
+		//Clears the color keys for all GDI+ objects
+		public void ClearColorKey () 
+		{
+			ClearColorKey (ColorAdjustType.Default);
+		}
+
+		public void ClearColorKey (ColorAdjustType type)
+		{
+			Status status = GDIPlus.GdipSetImageAttributesColorKeys (nativeImageAttr, type, false, 0, 0);
+			GDIPlus.CheckStatus (status);
+		}
+
+		public void ClearColorMatrix ()
 		{
 			ClearColorMatrix (ColorAdjustType.Default);
 		}
@@ -90,101 +85,91 @@ namespace System.Drawing.Imaging {
 				IntPtr.Zero, IntPtr.Zero, ColorMatrixFlag.Default);
 			GDIPlus.CheckStatus (status);
 		}
-		
-		public void ClearGamma()
+
+		public void ClearGamma ()
 		{
 			ClearGamma (ColorAdjustType.Default);
 		}
-		
-		public void ClearGamma(ColorAdjustType type)
+
+		public void ClearGamma (ColorAdjustType type)
 		{
-			Status status = GDIPlus.GdipSetImageAttributesGamma (nativeImageAttr, 	type, false, 0);
-			
+			Status status = GDIPlus.GdipSetImageAttributesGamma (nativeImageAttr, type, false, 0);
 			GDIPlus.CheckStatus (status);
 		}
-		
-		public void ClearNoOp()
+
+		public void ClearNoOp ()
 		{
 			ClearNoOp (ColorAdjustType.Default);
 		}
-		
-		public void ClearNoOp(ColorAdjustType type)
+
+		public void ClearNoOp (ColorAdjustType type)
 		{
 			Status status = GDIPlus.GdipSetImageAttributesNoOp (nativeImageAttr, type, false);
-			
 			GDIPlus.CheckStatus (status);
 		}
 
-		public void ClearOutputChannel()
+		public void ClearOutputChannel ()
 		{
 			ClearOutputChannel (ColorAdjustType.Default);
 		}
-		
-		public void ClearOutputChannel(ColorAdjustType type)
+
+		public void ClearOutputChannel (ColorAdjustType type)
 		{
-			Status status = GDIPlus.GdipSetImageAttributesOutputChannel (nativeImageAttr, 	
-				type, false, ColorChannelFlag.ColorChannelLast);
-			
+			Status status = GDIPlus.GdipSetImageAttributesOutputChannel (nativeImageAttr, type, false, 
+				ColorChannelFlag.ColorChannelLast);
 			GDIPlus.CheckStatus (status);
 		}
 
-		public void ClearOutputChannelColorProfile()
+		public void ClearOutputChannelColorProfile ()
 		{
 			ClearOutputChannelColorProfile (ColorAdjustType.Default);
 		}
-		
-		public void ClearOutputChannelColorProfile(ColorAdjustType type)
+
+		public void ClearOutputChannelColorProfile (ColorAdjustType type)
 		{
-			Status status = GDIPlus.GdipSetImageAttributesOutputChannelColorProfile (nativeImageAttr, 
-				type, false, null);
-			
+			Status status = GDIPlus.GdipSetImageAttributesOutputChannelColorProfile (nativeImageAttr, type, false, 
+				null);
 			GDIPlus.CheckStatus (status);
 		}
 
-		public void ClearRemapTable()
+		public void ClearRemapTable ()
 		{
 			ClearRemapTable (ColorAdjustType.Default);
 		}
-		
-		public void ClearRemapTable(ColorAdjustType type)
+
+		public void ClearRemapTable (ColorAdjustType type)
 		{
-			Status status = GDIPlus.GdipSetImageAttributesRemapTable (nativeImageAttr, 
-				type, false, 0, IntPtr.Zero);
-			
+			Status status = GDIPlus.GdipSetImageAttributesRemapTable (nativeImageAttr, type, false, 0, IntPtr.Zero);
 			GDIPlus.CheckStatus (status);
 		}
 
-		public void ClearThreshold()
+		public void ClearThreshold ()
 		{
 			ClearThreshold (ColorAdjustType.Default);
 		}
-		
-		public void ClearThreshold(ColorAdjustType type)
+
+		public void ClearThreshold (ColorAdjustType type)
 		{
-			Status status = GDIPlus.GdipSetImageAttributesThreshold (nativeImageAttr,
-				type, false, 0);
-			
+			Status status = GDIPlus.GdipSetImageAttributesThreshold (nativeImageAttr, type, false, 0);
 			GDIPlus.CheckStatus (status);
 		}
 
 		//Sets the color keys for all GDI+ objects
-		public void SetColorKey(Color colorLow, Color colorHigh)
+		public void SetColorKey (Color colorLow, Color colorHigh)
 		{
 			SetColorKey (colorLow, colorHigh, ColorAdjustType.Default);
 		}
 
-		public void SetColorMatrix (ColorMatrix colorMatrix) 
+		public void SetColorMatrix (ColorMatrix colorMatrix)
 		{
 			SetColorMatrix (colorMatrix, ColorMatrixFlag.Default, ColorAdjustType.Default);
 		}
 
-		[MonoTODO ("colorMatrixFlag parameter is ignored in libgdiplus")]
-		public void SetColorMatrix (ColorMatrix colorMatrix, ColorMatrixFlag colorMatrixFlag) 
+		public void SetColorMatrix (ColorMatrix colorMatrix, ColorMatrixFlag colorMatrixFlag)
 		{
 			SetColorMatrix (colorMatrix, colorMatrixFlag, ColorAdjustType.Default);
 		}
 
-		[MonoTODO ("colorMatrixFlag parameter is ignored in libgdiplus")]
 		public void SetColorMatrix (ColorMatrix colorMatrix, ColorMatrixFlag colorMatrixFlag, ColorAdjustType colorAdjustType)
 		{
 			IntPtr cm = ColorMatrix.Alloc (colorMatrix);
@@ -197,46 +182,43 @@ namespace System.Drawing.Imaging {
 				ColorMatrix.Free (cm);
 			}
 		}
-		
-		public void Dispose() 
+
+		public void Dispose ()
 		{
 			if (nativeImageAttr != IntPtr.Zero) {
-				
-				Status status = GDIPlus.GdipDisposeImageAttributes(nativeImageAttr);
-				GDIPlus.CheckStatus (status);				
+				Status status = GDIPlus.GdipDisposeImageAttributes (nativeImageAttr);
 				nativeImageAttr = IntPtr.Zero;
-			}			
-			
+				GDIPlus.CheckStatus (status);
+			}
 			System.GC.SuppressFinalize (this);
 		}
 
-		~ImageAttributes() 
-		{			
+		~ImageAttributes ()
+		{
 			Dispose ();
-		}		
+		}
 		
-		public object Clone()
-		{	
-			IntPtr imgclone;	
-			
-			Status status = GDIPlus.GdipCloneImageAttributes (nativeImageAttr, out imgclone);						
-			GDIPlus.CheckStatus (status);						
-			
-			return new ImageAttributes (imgclone);			
-		}		
-		
-		public void GetAdjustedPalette(ColorPalette palette,  ColorAdjustType type)
+		public object Clone ()
+		{
+			IntPtr imgclone;
+
+			Status status = GDIPlus.GdipCloneImageAttributes (nativeImageAttr, out imgclone);
+			GDIPlus.CheckStatus (status);
+
+			return new ImageAttributes (imgclone);
+		}
+
+		[MonoTODO ("Not supported by libgdiplus")]
+		public void GetAdjustedPalette (ColorPalette palette, ColorAdjustType type)
 		{
 			IntPtr colorPalette;
-			
-			Status status = GDIPlus.GdipGetImageAttributesAdjustedPalette (nativeImageAttr,
-    				out colorPalette,  type);
-    				
+
+			Status status = GDIPlus.GdipGetImageAttributesAdjustedPalette (nativeImageAttr, out colorPalette, type);
     			palette.setFromGDIPalette (colorPalette);
 			GDIPlus.CheckStatus (status);
-		}		
-		
-		public void SetBrushRemapTable(ColorMap[] map)
+		}
+
+		public void SetBrushRemapTable (ColorMap[] map)
 		{
 			GdiColorMap gdiclr = new GdiColorMap ();						
 			IntPtr clrmap, lpPointer;
@@ -260,136 +242,104 @@ namespace System.Drawing.Imaging {
 				Marshal.FreeHGlobal (clrmap);   
 			}
 		}
-		
-		
-		public void SetColorKey(Color colorLow,   Color colorHigh, ColorAdjustType type)
+
+		public void SetColorKey (Color colorLow, Color colorHigh, ColorAdjustType type)
 		{
-			Status status = GDIPlus.GdipSetImageAttributesColorKeys (nativeImageAttr,                                            
-                                            type, true,  colorLow.ToArgb (), colorHigh.ToArgb ());
-                                            
-			GDIPlus.CheckStatus (status);					                                         
+			Status status = GDIPlus.GdipSetImageAttributesColorKeys (nativeImageAttr, type, true, 
+				colorLow.ToArgb (), colorHigh.ToArgb ());
+			GDIPlus.CheckStatus (status);
 		}
-		
-		
-		[MonoTODO ("grayMatrix parameter is ignored in libgdiplus")]
+
 		public void SetColorMatrices (ColorMatrix newColorMatrix, ColorMatrix grayMatrix)
 		{
-			IntPtr cm = ColorMatrix.Alloc (newColorMatrix);
-			try {
-				IntPtr gm = ColorMatrix.Alloc (grayMatrix);
-				try {
-					Status status = GDIPlus.GdipSetImageAttributesColorMatrix (nativeImageAttr, 
-						ColorAdjustType.Default, true, cm, gm, ColorMatrixFlag.Default);
-					GDIPlus.CheckStatus (status);
-				}
-				finally {
-					ColorMatrix.Free (gm);
-				}
-			}
-			finally {
-				ColorMatrix.Free (cm);
-			}
+			SetColorMatrices (newColorMatrix, grayMatrix, ColorMatrixFlag.Default, ColorAdjustType.Default);
 		}		
 		
-		[MonoTODO ("grayMatrix and colorMatrixFlag parameters are ignored in libgdiplus")]
 		public void SetColorMatrices (ColorMatrix newColorMatrix, ColorMatrix grayMatrix, ColorMatrixFlag flags)
 		{
-			IntPtr cm = ColorMatrix.Alloc (newColorMatrix);
-			try {
-				IntPtr gm = ColorMatrix.Alloc (grayMatrix);
-				try {
-					Status status = GDIPlus.GdipSetImageAttributesColorMatrix (nativeImageAttr, 
-						ColorAdjustType.Default, true, cm, gm, flags);
-					GDIPlus.CheckStatus (status);
-				}
-				finally {
-					ColorMatrix.Free (gm);
-				}
-			}
-			finally {
-				ColorMatrix.Free (cm);
-			}
+			SetColorMatrices (newColorMatrix, grayMatrix, flags, ColorAdjustType.Default);
 		}
 		
-		[MonoTODO ("grayMatrix and colorMatrixFlag parameters are ignored in libgdiplus")]
 		public void SetColorMatrices (ColorMatrix newColorMatrix, ColorMatrix grayMatrix, ColorMatrixFlag mode, ColorAdjustType type)
 		{
+			Status status;
 			IntPtr cm = ColorMatrix.Alloc (newColorMatrix);
 			try {
-				IntPtr gm = ColorMatrix.Alloc (grayMatrix);
-				try {
-					Status status = GDIPlus.GdipSetImageAttributesColorMatrix (nativeImageAttr, 
-						ColorAdjustType.Default, true, cm, gm, mode);
-					GDIPlus.CheckStatus (status);
-				}
-				finally {
-					ColorMatrix.Free (gm);
+				if (grayMatrix == null) {
+					status = GDIPlus.GdipSetImageAttributesColorMatrix (nativeImageAttr, type, true, cm,
+						IntPtr.Zero, mode);
+				} else {
+					IntPtr gm = ColorMatrix.Alloc (grayMatrix);
+					try {
+						status = GDIPlus.GdipSetImageAttributesColorMatrix (nativeImageAttr, type, true,
+							cm, gm, mode);
+					}
+					finally {
+						ColorMatrix.Free (gm);
+					}
 				}
 			}
 			finally {
 				ColorMatrix.Free (cm);
 			}
+			GDIPlus.CheckStatus (status);
 		}		
 
-		public void SetGamma(float gamma)
+		public void SetGamma (float gamma)
 		{
-			SetGamma (gamma, ColorAdjustType.Default);			
-		}		
-		
-		public void SetGamma(float gamma, ColorAdjustType coloradjust)
+			SetGamma (gamma, ColorAdjustType.Default);
+		}
+
+		public void SetGamma (float gamma, ColorAdjustType coloradjust)
 		{
-			Status status = GDIPlus.GdipSetImageAttributesGamma (nativeImageAttr, coloradjust, true, 
-				gamma);
-			
+			Status status = GDIPlus.GdipSetImageAttributesGamma (nativeImageAttr, coloradjust, true, gamma);
 			GDIPlus.CheckStatus (status);						
 		}	
 		
-		public void SetNoOp()
+		public void SetNoOp ()
 		{
 			SetNoOp (ColorAdjustType.Default);						
 		}			
 		
-		public void SetNoOp(ColorAdjustType type)
+		public void SetNoOp (ColorAdjustType type)
 		{
-			Status status = GDIPlus.GdipSetImageAttributesNoOp (nativeImageAttr, 
-				type, true);
-			
-			GDIPlus.CheckStatus (status);			
-		}					
-		
-		public void SetOutputChannel(ColorChannelFlag flags)
-		{
-			SetOutputChannel (flags, ColorAdjustType.Default);		
+			Status status = GDIPlus.GdipSetImageAttributesNoOp (nativeImageAttr, type, true);
+			GDIPlus.CheckStatus (status);
 		}
-		
-		public void SetOutputChannel(ColorChannelFlag flags,  ColorAdjustType type)
+
+		[MonoTODO ("Not supported by libgdiplus")]
+		public void SetOutputChannel (ColorChannelFlag flags)
 		{
-			Status status = GDIPlus.GdipSetImageAttributesOutputChannel (nativeImageAttr, 	
-				type, true, flags);
-				
-			GDIPlus.CheckStatus (status);			
-		}		
-		
-		public void SetOutputChannelColorProfile(string colorProfileFilename)
+			SetOutputChannel (flags, ColorAdjustType.Default);
+		}
+
+		[MonoTODO ("Not supported by libgdiplus")]
+		public void SetOutputChannel (ColorChannelFlag flags, ColorAdjustType type)
 		{
-			SetOutputChannelColorProfile (colorProfileFilename, ColorAdjustType.Default);			
-		}		
-		
-		public void SetOutputChannelColorProfile(string colorProfileFilename,  ColorAdjustType type)
+			Status status = GDIPlus.GdipSetImageAttributesOutputChannel (nativeImageAttr, type, true, flags);
+			GDIPlus.CheckStatus (status);
+		}
+
+		[MonoTODO ("Not supported by libgdiplus")]
+		public void SetOutputChannelColorProfile (string colorProfileFilename)
+		{
+			SetOutputChannelColorProfile (colorProfileFilename, ColorAdjustType.Default);
+		}
+
+		[MonoTODO ("Not supported by libgdiplus")]
+		public void SetOutputChannelColorProfile (string colorProfileFilename, ColorAdjustType type)
 		{
 			Status status = GDIPlus.GdipSetImageAttributesOutputChannelColorProfile (nativeImageAttr, 
 				type, true, colorProfileFilename);
-				
-			GDIPlus.CheckStatus (status);												
-		}		
-		
-		public void SetRemapTable(ColorMap[] map)
-		{			
+			GDIPlus.CheckStatus (status);
+		}
+
+		public void SetRemapTable (ColorMap[] map)
+		{
 			SetRemapTable (map, ColorAdjustType.Default);
 		}
 
-		
-		public void SetRemapTable(ColorMap[] map, ColorAdjustType type)
+		public void SetRemapTable (ColorMap[] map, ColorAdjustType type)
 		{
 			GdiColorMap gdiclr = new GdiColorMap ();						
 			IntPtr clrmap, lpPointer;
@@ -413,38 +363,34 @@ namespace System.Drawing.Imaging {
 				Marshal.FreeHGlobal (clrmap);
 			}
 		}		
-		
-		public void SetThreshold(float threshold)
+
+		[MonoTODO ("Not supported by libgdiplus")]
+		public void SetThreshold (float threshold)
 		{
 			SetThreshold (threshold, ColorAdjustType.Default);
-		}		
-		
-		public void SetThreshold(float threshold, ColorAdjustType type)
-		{
-			Status status = GDIPlus.GdipSetImageAttributesThreshold (nativeImageAttr,
-				type, true, 0);
-			
-			GDIPlus.CheckStatus (status);			
-		}		
+		}
 
-		public void SetWrapMode(WrapMode mode)
+		[MonoTODO ("Not supported by libgdiplus")]
+		public void SetThreshold (float threshold, ColorAdjustType type)
+		{
+			Status status = GDIPlus.GdipSetImageAttributesThreshold (nativeImageAttr, type, true, 0);
+			GDIPlus.CheckStatus (status);
+		}
+
+		public void SetWrapMode (WrapMode mode)
 		{
 			SetWrapMode (mode, Color.Black);
 		}
 		
-		
-		public void SetWrapMode(WrapMode mode,  Color color)
+		public void SetWrapMode (WrapMode mode, Color color)
 		{
-			SetWrapMode (mode,  color, false);
+			SetWrapMode (mode, color, false);
 		}
-		
-		
-		public void SetWrapMode(WrapMode mode,  Color color, bool clamp)
+
+		public void SetWrapMode (WrapMode mode, Color color, bool clamp)
 		{
-			Status status = GDIPlus.GdipSetImageAttributesWrapMode (nativeImageAttr,  mode,
-    				color.ToArgb(), clamp);	
-    			
-    			GDIPlus.CheckStatus (status);			
-		}		
+			Status status = GDIPlus.GdipSetImageAttributesWrapMode (nativeImageAttr, mode, color.ToArgb (), clamp);
+    			GDIPlus.CheckStatus (status);
+		}
 	}
 }
