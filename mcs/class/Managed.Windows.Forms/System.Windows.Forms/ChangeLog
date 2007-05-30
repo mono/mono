@@ -1,6 +1,10 @@
 2007-05-29  Everaldo Canuto  <ecanuto@novell.com>
 
-	* DataGridTextBoxColumn.cs: Fix texbox position to prevent override grid
+	* DataGridTextBoxColumn.cs: Fix textbox horizontal offset.
+
+2007-05-29  Everaldo Canuto  <ecanuto@novell.com>
+
+	* DataGridTextBoxColumn.cs: Fix textbox position to prevent override grid
 	lines. Fixes #80285. 
 
 2007-05-29  Everaldo Canuto  <ecanuto@novell.com>

@@ -280,10 +280,13 @@ namespace System.Windows.Forms
 			
 			g.FillRectangle (backBrush, textBounds);
 			PaintGridLine (g, textBounds);
-			
+
+			textBounds.X += offset_x;
+			textBounds.Width -= offset_x;
+
 			textBounds.Y += offset_y;
 			textBounds.Height -= offset_y;
-			
+
 			string_format.FormatFlags |= StringFormatFlags.NoWrap;
 			g.DrawString (text, DataGridTableStyle.DataGrid.Font, foreBrush, textBounds, string_format);
 			
