@@ -250,13 +250,13 @@ namespace System.Drawing {
 		public void SetTabStops(float firstTabOffset, float[] tabStops) {
 //			_firstTabOffset = firstTabOffset;
 //			_tabStops = tabStops != null ? (float[])tabStops.Clone() : null;
-			throw new NotSupportedException();
+			throw new NotImplementedException();
 		}
 
 		public void SetDigitSubstitution(int language,  StringDigitSubstitute substitute) {
 //			_digitSubstituteMethod = substitute;
 //			_digitSubstituteLanguage = language;
-			throw new NotSupportedException();
+			throw new NotImplementedException();
 		}
 
 		[MonoTODO]

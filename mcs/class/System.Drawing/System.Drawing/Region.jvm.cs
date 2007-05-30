@@ -365,7 +365,7 @@ namespace System.Drawing
 		
 		public RectangleF[] GetRegionScans(Matrix matrix)
 		{
-			throw new NotSupportedException();
+			throw new NotImplementedException();
 		}
 		
 		#region Transform 

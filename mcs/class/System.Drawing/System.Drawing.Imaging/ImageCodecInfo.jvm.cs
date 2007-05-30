@@ -119,7 +119,7 @@ namespace System.Drawing.Imaging {
 		public string DllName 
 		{
 			get { return dllName; }
-			set { throw new NotSupportedException(); }
+			set { throw new PlatformNotSupportedException(); }
 		}
 
 		
