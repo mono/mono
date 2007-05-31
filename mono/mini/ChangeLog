@@ -1,5 +1,7 @@
 2007-05-31  Zoltan Varga  <vargaz@gmail.com>
 
+	* tramp-ia64.c (mono_arch_create_trampoline_code): Fix ia64 build.
+
 	* mini-x86.c (mono_arch_get_delegate_invoke_impl): New arch dependent function.
 	(mono_arch_get_this_arg_from_call): Ditto.
 
