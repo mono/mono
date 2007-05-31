@@ -1,3 +1,7 @@
+2007-05-31  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ApplicationSettingsBaseTest.cs : NotWorking Providers().
+
 2007-05-30  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SettingsBaseTest.cs : new test.
