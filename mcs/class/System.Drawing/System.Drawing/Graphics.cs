@@ -52,9 +52,7 @@ namespace System.Drawing
 		private bool disposed = false;
 		private static float defDpiX = 0;
 		private static float defDpiY = 0;
-#if NET_2_0
 		private IntPtr deviceContextHdc;
-#endif
 
 #if !NET_2_0
 		[ComVisible(false)]
@@ -1771,14 +1769,9 @@ namespace System.Drawing
 #endif
 		public IntPtr GetHdc ()
 		{
-			IntPtr hdc;
-			GDIPlus.CheckStatus (GDIPlus.GdipGetDC (this.nativeObject, out hdc));
-#if NET_2_0
-			deviceContextHdc = hdc;
-#endif
-			return hdc;
+			GDIPlus.CheckStatus (GDIPlus.GdipGetDC (this.nativeObject, out deviceContextHdc));
+			return deviceContextHdc;
 		}
-
 		
 		public Color GetNearestColor (Color color)
 		{
@@ -2040,27 +2033,21 @@ namespace System.Drawing
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		public void ReleaseHdc (IntPtr hdc)
 		{
-			Status status = GDIPlus.GdipReleaseDC (nativeObject, hdc);
-			GDIPlus.CheckStatus (status);
-#if NET_2_0
-			if (hdc == deviceContextHdc)
-				deviceContextHdc = IntPtr.Zero;
-#endif
+			ReleaseHdcInternal (hdc);
 		}
 
 #if NET_2_0
+		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 		public void ReleaseHdc ()
 		{
-			if (deviceContextHdc == IntPtr.Zero)
-				throw new ArgumentException ("Invalid Handle");
-
-			ReleaseHdc (deviceContextHdc);
+			ReleaseHdcInternal (deviceContextHdc);
 		}
 #endif
 
-		[MonoTODO ("Parameter hdc doesn't map well into libgdiplus")]
+		[MonoLimitation ("Can only be used when hdc was provided by Graphics.GetHdc() method")]
 #if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Never)]
 #else
@@ -2069,9 +2056,13 @@ namespace System.Drawing
 		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 		public void ReleaseHdcInternal (IntPtr hdc)
 		{
-			throw new NotImplementedException ();
+			Status status = Status.InvalidParameter;
+			if (hdc == deviceContextHdc) {
+				status = GDIPlus.GdipReleaseDC (nativeObject, deviceContextHdc);
+				deviceContextHdc = IntPtr.Zero;
+			}
+			GDIPlus.CheckStatus (status);
 		}
-
 		
 		public void ResetClip ()
 		{
@@ -2482,6 +2473,7 @@ namespace System.Drawing
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public object GetContextInfo ()
 		{
+			// only known source of information @ http://blogs.wdevs.com/jdunlap/Default.aspx
 			throw new NotImplementedException ();
 		}
 #endif

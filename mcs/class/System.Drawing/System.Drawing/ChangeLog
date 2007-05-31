@@ -1,3 +1,8 @@
+2007-05-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Graphics.cs: Refactor [Get|Release]Hdc to get ReleaseHdcInternal
+	working (as long as the HDC comes from GetHdc).
+
 2007-05-21  Adar Wesley <adarw@mainsoft.com>
 
 	* Graphics.jvm.cs
