@@ -1196,5 +1196,84 @@ OnGotFocus: ContainerControl 1 System.Windows.Forms.ContainerControl
 
 			form.Dispose ();
 		}
+
+		/// <summary>
+		/// Check that the active control is set before OnEnter is fired, and
+		/// that the events are fired without a Form
+		/// </summary>
+		[Test]
+		public void ActiveControl4 () {
+			sb = new StringBuilder ();
+
+			ContainerControl cc = new ContainerControl ();
+			WrappedEnterLeave1 c1 = new WrappedEnterLeave1 (sb);
+			WrappedEnterLeave2 c2 = new WrappedEnterLeave2 (sb);
+
+			cc.Controls.Add (c1);
+			cc.Controls.Add (c2);
+
+			sb.Append (":Selecting WrappedEnterLeave1:");
+			c1.Select ();
+			sb.Append (":Selecting WrappedEnterLeave2:");
+			c2.Select ();
+
+			Assert.AreEqual (
+				":Selecting WrappedEnterLeave1:"+
+				":Before OnEnter:System.Windows.Forms.ContainerControl:MonoTests.System.Windows.Forms.FocusTest+WrappedEnterLeave1:"+
+				":After OnEnter:System.Windows.Forms.ContainerControl:MonoTests.System.Windows.Forms.FocusTest+WrappedEnterLeave1:"+
+				":Selecting WrappedEnterLeave2:"+
+				":Before OnLeave:System.Windows.Forms.ContainerControl:MonoTests.System.Windows.Forms.FocusTest+WrappedEnterLeave2:"+
+				":After OnLeave:System.Windows.Forms.ContainerControl:MonoTests.System.Windows.Forms.FocusTest+WrappedEnterLeave2:"+
+				":Before OnValidating:System.Windows.Forms.ContainerControl:MonoTests.System.Windows.Forms.FocusTest+WrappedEnterLeave2:"+
+				":After OnValidating:System.Windows.Forms.ContainerControl:MonoTests.System.Windows.Forms.FocusTest+WrappedEnterLeave2:"+
+				":Before OnValidated:System.Windows.Forms.ContainerControl:MonoTests.System.Windows.Forms.FocusTest+WrappedEnterLeave2:"+
+				":After OnValidated:System.Windows.Forms.ContainerControl:MonoTests.System.Windows.Forms.FocusTest+WrappedEnterLeave2:"+
+				":Before OnEnter:System.Windows.Forms.ContainerControl:MonoTests.System.Windows.Forms.FocusTest+WrappedEnterLeave2:"+
+				":After OnEnter:System.Windows.Forms.ContainerControl:MonoTests.System.Windows.Forms.FocusTest+WrappedEnterLeave2:"
+				, 
+				sb.ToString(), "#A1");
+		}
+
+		class WrappedEnterLeave : Control {
+			StringBuilder sb;
+			public WrappedEnterLeave (StringBuilder sb) {
+				this.sb = sb;
+			}
+
+			protected override void OnEnter (EventArgs e) {
+				IContainerControl c = GetContainerControl ();
+				sb.AppendFormat (":Before OnEnter:{0}:{1}:", c, c.ActiveControl);
+				base.OnEnter (e);
+				sb.AppendFormat (":After OnEnter:{0}:{1}:", c, c.ActiveControl);
+			}
+
+			protected override void OnLeave (EventArgs e) {
+				IContainerControl c = GetContainerControl ();
+				sb.AppendFormat (":Before OnLeave:{0}:{1}:", c, c.ActiveControl);
+				base.OnLeave(e);
+				sb.AppendFormat (":After OnLeave:{0}:{1}:", c, c.ActiveControl);
+			}
+
+			protected override void OnValidated(EventArgs e) {
+				IContainerControl c = GetContainerControl ();
+				sb.AppendFormat (":Before OnValidated:{0}:{1}:", c, c.ActiveControl);
+				base.OnValidated (e);
+				sb.AppendFormat (":After OnValidated:{0}:{1}:", c, c.ActiveControl);
+			}
+
+			protected override void OnValidating(CancelEventArgs e) {
+				IContainerControl c = GetContainerControl ();
+				sb.AppendFormat (":Before OnValidating:{0}:{1}:", c, c.ActiveControl);
+				base.OnValidating (e);
+				sb.AppendFormat (":After OnValidating:{0}:{1}:", c, c.ActiveControl);
+			}
+		}
+
+		class WrappedEnterLeave1: WrappedEnterLeave {
+			public WrappedEnterLeave1 (StringBuilder sb): base(sb){}
+		}
+		class WrappedEnterLeave2: WrappedEnterLeave {
+			public WrappedEnterLeave2 (StringBuilder sb): base(sb){}
+		}
 	}
 }
