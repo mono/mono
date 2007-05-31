@@ -1,3 +1,7 @@
+2007-05-31  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* AssemblyInfo.cs: Update assembly attributes.
+
 2006-12-21  Daniel Nauck  <dna@mono-project.de>
 
 	* Locale.cs: Added Locale.GetText (string msg, params object [] args).
