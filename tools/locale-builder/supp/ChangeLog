@@ -1,3 +1,7 @@
+2007-05-31  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* en-US.xml: Add a few date/time patterns.
+
 2006-06-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* en.xml, en-US.xml : move US-only date patterns from en.xml to
