@@ -1,3 +1,7 @@
+2007-05-31  Jackson Harper  <jackson@ximian.com>
+
+	* TextBoxBase.cs: These seem to be the correct values.
+
 2007-05-31  Everaldo Canuto  <ecanuto@novell.com>
 
 	* FileDialog.cs: When close dialog with ok set filterindex using combobox

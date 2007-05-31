@@ -465,7 +465,7 @@ namespace System.Windows.Forms {
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public int PreferredHeight {
 			get {
-				return Font.Height + (BorderStyle == BorderStyle.None ? 1 : 8);
+				return Font.Height + (BorderStyle == BorderStyle.None ? 0 : 7);
 			}
 		}
 
