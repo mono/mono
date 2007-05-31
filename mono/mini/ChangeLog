@@ -1,6 +1,7 @@
 2007-05-31  Zoltan Varga  <vargaz@gmail.com>
 
 	* tramp-ia64.c (mono_arch_create_trampoline_code): Fix ia64 build.
+	(mono_arch_create_trampoline_code): Revert this.
 
 2007-05-28  Zoltan Varga  <vargaz@gmail.com>
 
