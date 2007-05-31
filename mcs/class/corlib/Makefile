@@ -36,6 +36,9 @@ EXTRA_DISTFILES = \
 	Test/resources/MyResources.de.resources	\
 	Test/resources/Empty.resources		\
 	Test/resources/AFile.txt		\
+	Test/resources/StreamTest.resources	\
+	Test/resources/StreamTest.ja.resources	\
+	Test/resources/bug81759.resources	\
 	$(RESOURCE_FILES)
 
 include $(topdir)/build/library.make
