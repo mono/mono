@@ -3218,9 +3218,8 @@ namespace System.Windows.Forms
 
 		#region	Protected Instance Properties
 #if NET_2_0
-		// XXX - override once exists in System.Component
 		// Is only false in some ActiveX contexts
-		protected bool CanRaiseEvents {
+		protected override bool CanRaiseEvents {
 			get { return true; }
 		}
 #endif

@@ -107,7 +107,7 @@ namespace System.Windows.Forms
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public ImeMode ImeMode {
+		public new ImeMode ImeMode {
 			get { return base.ImeMode; }
 			set { base.ImeMode = value; }
 		}
@@ -133,7 +133,7 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public bool UseWaitCursor {
+		public new bool UseWaitCursor {
 			get { return false; }
 			set { throw new NotSupportedException (); }
 		}
@@ -147,7 +147,7 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Methods
-		public void DrawToBitmap (Bitmap bitmap, Rectangle targetBounds) 
+		public new void DrawToBitmap (Bitmap bitmap, Rectangle targetBounds) 
 		{
 			throw new NotImplementedException ();
 		}

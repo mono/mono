@@ -86,7 +86,7 @@ namespace System.Windows.Forms
 #if NET_2_0
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event EventHandler BackgroundImageLayoutChanged {
+		public new event EventHandler BackgroundImageLayoutChanged {
 			add	{ base.BackgroundImageLayoutChanged += value; }
 			remove { base.BackgroundImageLayoutChanged -= value; }
 		}
@@ -167,14 +167,14 @@ namespace System.Windows.Forms
 #if NET_2_0
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		[Browsable(false)]
-		public event MouseEventHandler MouseDoubleClick {
+		public new event MouseEventHandler MouseDoubleClick {
 			add { base.MouseDoubleClick += value; }
 			remove { base.MouseDoubleClick -= value; }
 		}
 			
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event EventHandler PaddingChanged {
+		public new event EventHandler PaddingChanged {
 			add { base.PaddingChanged += value; }
 			remove { base.PaddingChanged -= value; }
 		}
@@ -381,7 +381,7 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public Padding Padding {
+		public new Padding Padding {
 			get { return base.Padding; }
 			set { base.Padding = value; }
 		}

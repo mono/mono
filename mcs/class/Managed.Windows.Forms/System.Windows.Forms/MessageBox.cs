@@ -151,7 +151,7 @@ namespace System.Windows.Forms
 			#endregion	// Protected Instance Properties
 
 			#region MessageBoxForm Methods
-			internal void SetHelpData (string file_path, string keyword, HelpNavigator navigator, object param)
+			public void SetHelpData (string file_path, string keyword, HelpNavigator navigator, object param)
 			{
 				help_file_path = file_path;
 				help_keyword = keyword;

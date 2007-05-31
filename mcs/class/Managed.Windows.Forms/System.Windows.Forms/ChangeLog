@@ -1,5 +1,11 @@
 2007-05-31  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* ProgressBar.cs, WebBrowserBase.cs, Control.cs, MaskedTextBox.cs,
+	  MessageBox.cs, PropertyGrid.cs, RichTextBox.cs: Fix warnings and
+	  corcompare issues.
+
+2007-05-31  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* ProgressBar.cs: Implemented missing 2.0 members.
 
 2007-05-31  Rolf Bjarne Kvinge <RKvinge@novell.com> 

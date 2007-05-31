@@ -174,13 +174,13 @@ namespace System.Windows.Forms
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public int GetFirstCharIndexFromLine (int lineNumber)
+		public new int GetFirstCharIndexFromLine (int lineNumber)
 		{
 			return 0;
 		}
 		
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public int GetFirstCharIndexOfCurrentLine ()
+		public new int GetFirstCharIndexOfCurrentLine ()
 		{
 			return 0;
 		}
@@ -663,7 +663,6 @@ namespace System.Windows.Forms
 				return provider.ToString ();
 			}
 			set {
-				string initial_text = Text;
 				
 				if (is_empty_mask) {
 					setting_text = true;

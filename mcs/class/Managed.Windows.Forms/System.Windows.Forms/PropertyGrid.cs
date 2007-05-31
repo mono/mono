@@ -252,6 +252,14 @@ namespace System.Windows.Forms {
 			}
 		}
 
+#if NET_2_0
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		[Browsable(false)]
+		public override ImageLayout BackgroundImageLayout {
+			get { return base.BackgroundImageLayout; }
+			set { base.BackgroundImageLayout = value; }
+		}
+#endif
 
 		[BrowsableAttribute(false)]
 		[EditorBrowsableAttribute(EditorBrowsableState.Advanced)]
@@ -425,6 +433,16 @@ namespace System.Windows.Forms {
 			}
 		}
 
+#if NET_2_0
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public new Padding Padding {
+			get { return base.Padding; }
+			set { base.Padding = value; }
+		}
+#endif
+		
 		[DefaultValue(PropertySort.CategorizedAlphabetical)]
 		public PropertySort PropertySort {
 			get {
@@ -737,6 +755,13 @@ namespace System.Windows.Forms {
 				eh (this, e);
 		}
 
+#if NET_2_0
+		protected override void OnEnabledChanged (EventArgs e) {
+			base.OnEnabledChanged (e);
+		}
+
+#endif
+		
 		protected override void OnFontChanged(EventArgs e) {
 			base.OnFontChanged (e);
 		}
@@ -774,6 +799,14 @@ namespace System.Windows.Forms {
 			base.OnPaint (pevent);
 		}
 
+#if NET_2_0
+		protected virtual void OnPropertySortChanged(EventArgs e) {
+			EventHandler eh = (EventHandler) Events [PropertySortChangedEvent];
+			if (eh != null)
+				eh (this, e);
+		}		
+#endif
+		
 		[MonoTODO]
 		protected virtual void OnPropertyTabChanged (PropertyTabChangedEventArgs e) {
 			throw new NotImplementedException();
@@ -871,12 +904,91 @@ namespace System.Windows.Forms {
 			remove { base.BackgroundImageChanged -= value; }
 		}
 
+#if NET_2_0
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public new event EventHandler BackgroundImageLayoutChanged {
+			add { base.BackgroundImageLayoutChanged += value; }
+			remove { base.BackgroundImageLayoutChanged -= value; }
+		}
+#endif
+		
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public new event EventHandler ForeColorChanged {
 			add { base.ForeColorChanged += value; }
 			remove { base.ForeColorChanged -= value; }
 		}
+#if NET_2_0
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[Browsable(false)]
+		public new event KeyEventHandler KeyDown {
+			add { base.KeyDown += value; }
+			remove { base.KeyDown -= value; }
+		}
+		
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		public new event KeyPressEventHandler KeyPress {
+			add { base.KeyPress += value; }
+			remove { base.KeyPress -= value; }
+		}
+		
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[Browsable(false)]
+		public new event KeyEventHandler KeyUp {
+			add { base.KeyUp += value; }
+			remove { base.KeyUp -= value; }
+		}
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		public new event MouseEventHandler MouseDown {
+			add { base.MouseDown += value; }
+			remove { base.MouseDown -= value; }
+		}
+		
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[Browsable(false)]
+		public new event EventHandler MouseEnter {
+			add { base.MouseEnter += value; }
+			remove { base.MouseEnter -= value; }
+		}
+
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[Browsable(false)]
+		public new event EventHandler MouseLeave {
+			add { base.MouseLeave += value; }
+			remove { base.MouseLeave -= value; }
+		}
+
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[Browsable(false)]
+		public new event MouseEventHandler MouseMove {
+			add { base.MouseMove += value; }
+			remove { base.MouseMove -= value; }
+		}
+		
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[Browsable(false)]
+		public new event MouseEventHandler MouseUp {
+			add { base.MouseUp += value; }
+			remove { base.MouseUp -= value; }
+		}
+		
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public new event EventHandler PaddingChanged {
+			add { base.PaddingChanged += value; }
+			remove { base.PaddingChanged -= value; }
+		}
+		
+		[Browsable(false)]
+		public new event EventHandler TextChanged {
+			add { base.TextChanged += value; }
+			remove { base.TextChanged -= value; }
+		}
+#endif
 		#endregion
 
 		#region Com2Interop.IComPropertyBrowser Interface

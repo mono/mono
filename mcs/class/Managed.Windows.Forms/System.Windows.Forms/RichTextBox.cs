@@ -1050,7 +1050,7 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
-		public void DrawToBitmap (Bitmap bitmap, Rectangle clip)
+		public new void DrawToBitmap (Bitmap bitmap, Rectangle clip)
 		{
 			Graphics dc = Graphics.FromImage (bitmap);
 
