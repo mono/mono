@@ -1,5 +1,10 @@
 2007-05-31  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Control.cs: Corcompare issues.
+	* MessageBox.cs: Implemented missing 2.0 functions.
+
+2007-05-31  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* CheckedListBox.cs, ListBox.cs, ListControl.cs, ComboBox.cs:
 	  Implemented more 2.0 members.
 

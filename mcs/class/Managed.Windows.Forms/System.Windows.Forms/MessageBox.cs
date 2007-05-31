@@ -61,6 +61,10 @@ namespace System.Windows.Forms
 			int			button_left;
 			Button[]		buttons = new Button[4];
 			bool                    show_help;
+			string help_file_path;
+			string help_keyword;
+			HelpNavigator help_navigator;
+			object help_param;
 			#endregion	// MessageBoxFrom Local Variables
 			
 			#region MessageBoxForm Constructors
@@ -147,6 +151,14 @@ namespace System.Windows.Forms
 			#endregion	// Protected Instance Properties
 
 			#region MessageBoxForm Methods
+			internal void SetHelpData (string file_path, string keyword, HelpNavigator navigator, object param)
+			{
+				help_file_path = file_path;
+				help_keyword = keyword;
+				help_navigator = navigator;
+				help_param = param;
+			}
+			
 			public DialogResult RunDialog ()
 			{
 				this.StartPosition = FormStartPosition.CenterScreen;
@@ -559,6 +571,94 @@ namespace System.Windows.Forms
 		{
 			MessageBoxForm form = new MessageBoxForm (null, text, caption, buttons,
 								  icon, defaultButton, options, displayHelpButton);
+			return form.RunDialog ();
+		}
+		
+		[MonoTODO ("Help is not implemented")]
+		public static DialogResult Show (string text, string caption, MessageBoxButtons buttons, MessageBoxIcon icon,
+						 MessageBoxDefaultButton defaultButton, MessageBoxOptions options,
+						 string helpFilePath)
+		{
+			MessageBoxForm form = new MessageBoxForm (null, text, caption, buttons,
+								  icon, defaultButton, options, true);
+			form.SetHelpData (helpFilePath, null, HelpNavigator.TableOfContents, null);
+			return form.RunDialog ();
+		}
+		
+		[MonoTODO ("Help is not implemented")]
+		public static DialogResult Show (string text, string caption, MessageBoxButtons buttons, MessageBoxIcon icon,
+						 MessageBoxDefaultButton defaultButton, MessageBoxOptions options,
+						 string helpFilePath, string keyword)
+		{
+			MessageBoxForm form = new MessageBoxForm (null, text, caption, buttons,
+								  icon, defaultButton, options, true);
+			form.SetHelpData (helpFilePath, keyword, HelpNavigator.TableOfContents, null);
+			return form.RunDialog ();
+		}
+		
+		[MonoTODO ("Help is not implemented")]
+		public static DialogResult Show (string text, string caption, MessageBoxButtons buttons, MessageBoxIcon icon,
+						 MessageBoxDefaultButton defaultButton, MessageBoxOptions options,
+						 string helpFilePath, HelpNavigator navigator)
+		{
+			MessageBoxForm form = new MessageBoxForm (null, text, caption, buttons,
+								  icon, defaultButton, options, true);
+			form.SetHelpData (helpFilePath, null, navigator, null);
+			return form.RunDialog ();
+		}
+		
+		[MonoTODO ("Help is not implemented")]
+		public static DialogResult Show (string text, string caption, MessageBoxButtons buttons, MessageBoxIcon icon,
+						 MessageBoxDefaultButton defaultButton, MessageBoxOptions options,
+						 string helpFilePath, HelpNavigator navigator, object param)
+		{
+			MessageBoxForm form = new MessageBoxForm (null, text, caption, buttons,
+								  icon, defaultButton, options, true);
+			form.SetHelpData (helpFilePath, null, navigator, param);
+			return form.RunDialog ();
+		}
+		
+		[MonoTODO ("Help is not implemented")]
+		public static DialogResult Show (IWin32Window owner, string text, string caption, MessageBoxButtons buttons, MessageBoxIcon icon,
+						 MessageBoxDefaultButton defaultButton, MessageBoxOptions options,
+						 string helpFilePath)
+		{
+			MessageBoxForm form = new MessageBoxForm (owner, text, caption, buttons,
+								  icon, defaultButton, options, true);
+			form.SetHelpData (helpFilePath, null, HelpNavigator.TableOfContents, null);
+			return form.RunDialog ();
+		}
+		
+		[MonoTODO ("Help is not implemented")]
+		public static DialogResult Show (IWin32Window owner, string text, string caption, MessageBoxButtons buttons, MessageBoxIcon icon,
+						 MessageBoxDefaultButton defaultButton, MessageBoxOptions options,
+						 string helpFilePath, string keyword)
+		{
+			MessageBoxForm form = new MessageBoxForm (owner, text, caption, buttons,
+								  icon, defaultButton, options, true);
+			form.SetHelpData (helpFilePath, keyword, HelpNavigator.TableOfContents, null);
+			return form.RunDialog ();
+		}
+		
+		[MonoTODO ("Help is not implemented")]
+		public static DialogResult Show (IWin32Window owner, string text, string caption, MessageBoxButtons buttons, MessageBoxIcon icon,
+						 MessageBoxDefaultButton defaultButton, MessageBoxOptions options,
+						 string helpFilePath, HelpNavigator navigator)
+		{
+			MessageBoxForm form = new MessageBoxForm (owner, text, caption, buttons,
+								  icon, defaultButton, options, true);
+			form.SetHelpData (helpFilePath, null, navigator, null);
+			return form.RunDialog ();
+		}
+		
+		[MonoTODO ("Help is not implemented")]
+		public static DialogResult Show (IWin32Window owner, string text, string caption, MessageBoxButtons buttons, MessageBoxIcon icon,
+						 MessageBoxDefaultButton defaultButton, MessageBoxOptions options,
+						 string helpFilePath, HelpNavigator navigator, object param)
+		{
+			MessageBoxForm form = new MessageBoxForm (owner, text, caption, buttons,
+								  icon, defaultButton, options, true);
+			form.SetHelpData (helpFilePath, null, navigator, param);
 			return form.RunDialog ();
 		}
 #endif

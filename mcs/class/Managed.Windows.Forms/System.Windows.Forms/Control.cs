@@ -2797,6 +2797,9 @@ namespace System.Windows.Forms
 		}
 
 #if NET_2_0
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[Browsable(false)]
 		[MonoNotSupported ("RTL is not supported")]
 		public bool IsMirrored {
 			get { return false; }
@@ -3152,7 +3155,10 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
+#if NET_2_0		
+		[EditorBrowsable(EditorBrowsableState.Always)]
+		[Browsable(true)]
+		[DefaultValue (false)]
 		public bool UseWaitCursor {
 			get { return use_wait_cursor; }
 			set {
@@ -3773,6 +3779,7 @@ namespace System.Windows.Forms
 		}
 
 #if NET_2_0
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public PreProcessControlState PreProcessControlMessage (ref Message msg)
 		{
 			return PreProcessControlMessageInternal (ref msg);
