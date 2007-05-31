@@ -1,6 +1,11 @@
 2007-05-30  Andreia Gaita  <avidigal@novell.com>
 
-	ContainerControl.cs: Raise Validation and Enter/Leave events
+	* ContainerControl.cs: Set active_control even earlier, before 
+	firing any events, and undo it if validation returns false.
+
+2007-05-30  Andreia Gaita  <avidigal@novell.com>
+
+	* ContainerControl.cs: Raise Validation and Enter/Leave events
 	even if there is no Form and set active_control earlier, just
 	before firing Enter events (toshok's patches). Fixes #80647.
 

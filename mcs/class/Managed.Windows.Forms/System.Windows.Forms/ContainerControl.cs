@@ -114,6 +114,8 @@ namespace System.Windows.Forms {
 				bool fire_enter = true;
 				Control root = common_container;
 
+				active_control = value;
+
 				// Generate the leave messages
 				while (walk != common_container) {
 					if (walk == value) {
@@ -134,12 +136,10 @@ namespace System.Windows.Forms {
 
 				for (int i = 0; i < validation_chain.Count; i ++) {
 					if (!ValidateControl ((Control)validation_chain[i])) {
-						value = (Control)validation_chain[i];
+						active_control = value = (Control)validation_chain[i];
 						fire_enter = true;
 					}
 				}
-
-				active_control = value;
 
 				if (fire_enter) {
 					walk = value;
