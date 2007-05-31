@@ -1152,6 +1152,144 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual(40, r1.Height, "Scale2");
 		}
 
+#if NET_2_0
+		[Test]
+		public void ScaleChildrenTest ()
+		{
+			ScaleChildrenControl c = new ScaleChildrenControl ();
+			Assert.AreEqual (true, c.PublicScaleChildren, "A1");
+		}
+		
+		private class ScaleChildrenControl : Control
+		{
+			public bool PublicScaleChildren {
+				get { return base.ScaleChildren; }
+			}
+		}
+		
+		[Test]
+		public void ScaleControlTest ()
+		{
+			ScaleControl c = new ScaleControl ();
+			
+			c.Location = new Point (5, 10);
+			c.Size = new Size (15, 20);
+			
+			Assert.AreEqual (new Rectangle (5, 10, 15, 20), c.Bounds, "A1");
+
+			c.PublicScaleControl (new SizeF (1.5f, 1.3f), BoundsSpecified.All);
+			Assert.AreEqual (new Rectangle (8, 13, 22, 26), c.Bounds, "A2");
+
+			c.PublicScaleControl (new SizeF (2f, 1.5f), BoundsSpecified.Location);
+			Assert.AreEqual (new Rectangle (16, 20, 22, 26), c.Bounds, "A3");
+
+			c.PublicScaleControl (new SizeF (1.5f, 2f), BoundsSpecified.Size);
+			Assert.AreEqual (new Rectangle (16, 20, 33, 52), c.Bounds, "A4");
+
+			c.PublicScaleControl (new SizeF (1.5f, 1.5f), BoundsSpecified.Width);
+			Assert.AreEqual (new Rectangle (16, 20, 50, 52), c.Bounds, "A5");
+
+			c.PublicScaleControl (new SizeF (1.5f, 1.3f), BoundsSpecified.None);
+			Assert.AreEqual (new Rectangle (16, 20, 50, 52), c.Bounds, "A6");
+			
+			// Test with ScaleChildren
+			c = new ScaleControl ();
+
+			c.Location = new Point (5, 10);
+			c.Size = new Size (50, 50);
+			
+			Control c2 = new Control ();
+			c2.Location = new Point (15, 15);
+			c2.Size = new Size (25, 25);
+			c.Controls.Add (c2);
+
+			Assert.AreEqual (new Rectangle (5, 10, 50, 50), c.Bounds, "B1");
+			Assert.AreEqual (new Rectangle (15, 15, 25, 25), c2.Bounds, "B2");
+
+			c.scale_children = false;
+
+			c.PublicScaleControl (new SizeF (2f, 2f), BoundsSpecified.All);
+			Assert.AreEqual (new Rectangle (10, 20, 100, 100), c.Bounds, "B3");
+			Assert.AreEqual (new Rectangle (15, 15, 25, 25), c2.Bounds, "B4");
+
+			c.scale_children = true;
+
+			// Will not scale children in ScaleControl
+			c.PublicScaleControl (new SizeF (2f, 2f), BoundsSpecified.All);
+			Assert.AreEqual (new Rectangle (20, 40, 200, 200), c.Bounds, "B5");
+			Assert.AreEqual (new Rectangle (15, 15, 25, 25), c2.Bounds, "B6");
+			
+			// Does scale children in Scale
+			c.Scale (new SizeF (2f, 2f));
+			Assert.AreEqual (new Rectangle (40, 80, 400, 400), c.Bounds, "B7");
+			Assert.AreEqual (new Rectangle (30, 30, 50, 50), c2.Bounds, "B8");
+		}
+		
+		[Test]
+		public void GetScaledBoundsTest ()
+		{
+			ScaleControl c = new ScaleControl ();
+			
+			Rectangle r = new Rectangle (10, 20, 30, 40);
+
+			Assert.AreEqual (new Rectangle (20, 10, 60, 20), c.PublicGetScaledBounds (r, new SizeF (2f, .5f), BoundsSpecified.All), "A1");
+			Assert.AreEqual (new Rectangle (20, 10, 30, 40), c.PublicGetScaledBounds (r, new SizeF (2f, .5f), BoundsSpecified.Location), "A2");
+			Assert.AreEqual (new Rectangle (10, 20, 60, 20), c.PublicGetScaledBounds (r, new SizeF (2f, .5f), BoundsSpecified.Size), "A3");
+			Assert.AreEqual (new Rectangle (10, 20, 30, 20), c.PublicGetScaledBounds (r, new SizeF (2f, .5f), BoundsSpecified.Height), "A4");
+			Assert.AreEqual (new Rectangle (20, 20, 30, 40), c.PublicGetScaledBounds (r, new SizeF (2f, .5f), BoundsSpecified.X), "A5");
+			Assert.AreEqual (new Rectangle (10, 20, 30, 40), c.PublicGetScaledBounds (r, new SizeF (2f, .5f), BoundsSpecified.None), "A6");
+			
+			c.PublicSetTopLevel (true);
+
+			Assert.AreEqual (new Rectangle (10, 20, 60, 20), c.PublicGetScaledBounds (r, new SizeF (2f, .5f), BoundsSpecified.All), "A7");
+			Assert.AreEqual (new Rectangle (10, 20, 30, 40), c.PublicGetScaledBounds (r, new SizeF (2f, .5f), BoundsSpecified.Location), "A8");
+			Assert.AreEqual (new Rectangle (10, 20, 60, 20), c.PublicGetScaledBounds (r, new SizeF (2f, .5f), BoundsSpecified.Size), "A9");
+			Assert.AreEqual (new Rectangle (10, 20, 30, 20), c.PublicGetScaledBounds (r, new SizeF (2f, .5f), BoundsSpecified.Height), "A10");
+			Assert.AreEqual (new Rectangle (10, 20, 30, 40), c.PublicGetScaledBounds (r, new SizeF (2f, .5f), BoundsSpecified.X), "A11");
+			Assert.AreEqual (new Rectangle (10, 20, 30, 40), c.PublicGetScaledBounds (r, new SizeF (2f, .5f), BoundsSpecified.None), "A12");
+
+			c = new ScaleControl ();
+			c.PublicSetStyle (ControlStyles.FixedHeight, true);
+			c.PublicSetStyle (ControlStyles.FixedWidth, true);
+
+			Assert.AreEqual (new Rectangle (20, 10, 30, 40), c.PublicGetScaledBounds (r, new SizeF (2f, .5f), BoundsSpecified.All), "A13");
+			Assert.AreEqual (new Rectangle (20, 10, 30, 40), c.PublicGetScaledBounds (r, new SizeF (2f, .5f), BoundsSpecified.Location), "A14");
+			Assert.AreEqual (new Rectangle (10, 20, 30, 40), c.PublicGetScaledBounds (r, new SizeF (2f, .5f), BoundsSpecified.Size), "A15");
+			Assert.AreEqual (new Rectangle (10, 20, 30, 40), c.PublicGetScaledBounds (r, new SizeF (2f, .5f), BoundsSpecified.Height), "A16");
+			Assert.AreEqual (new Rectangle (20, 20, 30, 40), c.PublicGetScaledBounds (r, new SizeF (2f, .5f), BoundsSpecified.X), "A17");
+			Assert.AreEqual (new Rectangle (10, 20, 30, 40), c.PublicGetScaledBounds (r, new SizeF (2f, .5f), BoundsSpecified.None), "A18");
+		}
+		
+		private class ScaleControl : Control
+		{
+			public bool scale_children = true;
+			
+			public void PublicScaleControl (SizeF factor, BoundsSpecified specified)
+			{
+				base.ScaleControl (factor, specified);
+			}
+
+			public Rectangle PublicGetScaledBounds (Rectangle bounds, SizeF factor, BoundsSpecified specified)
+			{
+				return base.GetScaledBounds (bounds, factor, specified);
+			}
+			
+			public void PublicSetStyle (ControlStyles flag, bool value)
+			{
+				base.SetStyle (flag, value);
+			}
+			
+			public void PublicSetTopLevel (bool value)
+			{
+				base.SetTopLevel (value);
+			}
+			
+			protected override bool ScaleChildren {
+				get { return scale_children; }
+			}
+		}
+#endif
+
 		class TestWindowTarget : IWindowTarget
 		{
 			public void OnHandleChange (IntPtr newHandle) {

@@ -3356,6 +3356,16 @@ namespace System.Windows.Forms
 			}
 		}
 
+#if NET_2_0
+		protected
+#else
+		internal
+#endif
+		virtual bool ScaleChildren
+		{
+			get { return true; }
+		}
+	
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -3954,8 +3964,18 @@ namespace System.Windows.Forms
 #else
 		internal
 #endif
-		void Scale(SizeF factor) {
-			ScaleCore(factor.Width, factor.Height);
+		void Scale (SizeF factor) 
+		{
+			SuspendLayout ();
+			
+			ScaleControl (factor, BoundsSpecified.All);
+
+			// Scale children
+			if (ScaleChildren)
+				foreach (Control c in Controls.GetAllControls ())
+					c.ScaleControl (factor, BoundsSpecified.All);
+
+			ResumeLayout ();
 		}
 
 		public void Select() {
@@ -4154,7 +4174,28 @@ namespace System.Windows.Forms
 		{
 			return auto_size_mode;
 		}
+		
+		protected 
+#else
+		internal
 #endif
+		virtual Rectangle GetScaledBounds (Rectangle bounds, SizeF factor, BoundsSpecified specified)
+		{
+			// Top level controls do not scale location
+			if (!is_toplevel) {
+				if ((specified & BoundsSpecified.X) == BoundsSpecified.X)
+					bounds.X = (int)Math.Round (bounds.Left * factor.Width);
+				if ((specified & BoundsSpecified.Y) == BoundsSpecified.Y)
+					bounds.Y = (int)Math.Round (bounds.Top * factor.Height);
+			}
+			
+			if ((specified & BoundsSpecified.Width) == BoundsSpecified.Width && !GetStyle (ControlStyles.FixedWidth))
+				bounds.Width = (int)Math.Round (bounds.Width * factor.Width);
+			if ((specified & BoundsSpecified.Height) == BoundsSpecified.Height && !GetStyle (ControlStyles.FixedHeight))
+				bounds.Height = (int)Math.Round (bounds.Height * factor.Height);
+				
+			return bounds;
+		}
 
 		protected internal bool GetStyle(ControlStyles flag) {
 			return (control_style & flag) != 0;
@@ -4456,6 +4497,18 @@ namespace System.Windows.Forms
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected LeftRightAlignment RtlTranslateLeftRight(LeftRightAlignment align) {
 			return RtlTranslateAlignment(align);
+		}
+
+#if NET_2_0
+		protected
+#else
+		internal
+#endif
+		virtual void ScaleControl (SizeF factor, BoundsSpecified specified)
+		{
+			Rectangle new_bounds = GetScaledBounds (new Rectangle (Location, ClientSize), factor, specified);
+
+			SetBounds (new_bounds.X, new_bounds.Y, new_bounds.Width, new_bounds.Height, specified);
 		}
 
 #if NET_2_0

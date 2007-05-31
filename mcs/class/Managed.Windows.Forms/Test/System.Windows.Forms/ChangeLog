@@ -1,3 +1,7 @@
+2007-05-31  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ControlTest.cs: Add tests for 2.0 scaling methods.
+
 2007-05-30  Andreia Gaita  <avidigal@novell.com>
 
 	* FocusTest.cs: Add tests for ContainerControl - fire events even if 
