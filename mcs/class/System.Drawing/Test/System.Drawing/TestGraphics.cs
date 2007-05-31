@@ -35,10 +35,12 @@ using System.Drawing.Imaging;
 using System.Drawing.Text;
 using System.IO;
 using System.Reflection;
+using System.Security.Permissions;
 
-namespace MonoTests.System.Drawing
-{
+namespace MonoTests.System.Drawing {
+
 	[TestFixture]
+	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
 	public class GraphicsTest {
 
 		private RectangleF[] rects;
@@ -60,7 +62,7 @@ namespace MonoTests.System.Drawing
 			if (font != null)
 				font.Dispose ();
 		}
-		
+
 
 		private bool IsEmptyBitmap (Bitmap bitmap, out int x, out int y)
 		{
@@ -121,31 +123,31 @@ namespace MonoTests.System.Drawing
 			Graphics g = Graphics.FromImage (bmp);
 			Region r = new Region ();
 
-			AssertEquals ("DefaultProperties1", r.GetBounds (g) , g.ClipBounds);
+			AssertEquals ("DefaultProperties1", r.GetBounds (g), g.ClipBounds);
 			AssertEquals ("DefaultProperties2", CompositingMode.SourceOver, g.CompositingMode);
 			AssertEquals ("DefaultProperties3", CompositingQuality.Default, g.CompositingQuality);
 			AssertEquals ("DefaultProperties4", InterpolationMode.Bilinear, g.InterpolationMode);
 			AssertEquals ("DefaultProperties5", 1, g.PageScale);
 			AssertEquals ("DefaultProperties6", GraphicsUnit.Display, g.PageUnit);
 			AssertEquals ("DefaultProperties7", PixelOffsetMode.Default, g.PixelOffsetMode);
-			AssertEquals ("DefaultProperties8", new Point (0, 0) , g.RenderingOrigin);
+			AssertEquals ("DefaultProperties8", new Point (0, 0), g.RenderingOrigin);
 			AssertEquals ("DefaultProperties9", SmoothingMode.None, g.SmoothingMode);
 			AssertEquals ("DefaultProperties10", TextRenderingHint.SystemDefault, g.TextRenderingHint);
 
 			r.Dispose ();
 		}
-		
+
 		[Test]
 		public void SetGetProperties ()
 		{
 			Bitmap bmp = new Bitmap (200, 200);
-			Graphics g = Graphics.FromImage (bmp);						
-			
+			Graphics g = Graphics.FromImage (bmp);
+
 			g.CompositingMode = CompositingMode.SourceCopy;
 			g.CompositingQuality = CompositingQuality.GammaCorrected;
 			g.InterpolationMode = InterpolationMode.HighQualityBilinear;
 			g.PageScale = 2;
-			g.PageUnit = GraphicsUnit.Inch;			
+			g.PageUnit = GraphicsUnit.Inch;
 			g.PixelOffsetMode = PixelOffsetMode.Half;
 			g.RenderingOrigin = new Point (10, 20);
 			g.SmoothingMode = SmoothingMode.AntiAlias;
@@ -160,14 +162,14 @@ namespace MonoTests.System.Drawing
 			AssertEquals ("SetGetProperties7", PixelOffsetMode.Half, g.PixelOffsetMode);
 			AssertEquals ("SetGetProperties8", new Point (10, 20), g.RenderingOrigin);
 			AssertEquals ("SetGetProperties9", SmoothingMode.AntiAlias, g.SmoothingMode);
-			AssertEquals ("SetGetProperties10", TextRenderingHint.SystemDefault, g.TextRenderingHint);			
+			AssertEquals ("SetGetProperties10", TextRenderingHint.SystemDefault, g.TextRenderingHint);
 		}
 
 		// Properties
 		[Test]
 		public void Clip ()
 		{
-			RectangleF[] rects ;
+			RectangleF[] rects;
 			Bitmap bmp = new Bitmap (200, 200);
 			Graphics g = Graphics.FromImage (bmp);
 			g.Clip = new Region (new Rectangle (50, 40, 210, 220));
@@ -259,7 +261,7 @@ namespace MonoTests.System.Drawing
 		[Test]
 		public void SetClip ()
 		{
-			RectangleF[] rects ;
+			RectangleF[] rects;
 			Bitmap bmp = new Bitmap (200, 200);
 			Graphics g = Graphics.FromImage (bmp);
 
@@ -292,43 +294,43 @@ namespace MonoTests.System.Drawing
 			AssertEquals ("SetClip13", 210, rects[0].Width);
 			AssertEquals ("SetClip14", 220, rects[0].Height);
 		}
-		
+
 		[Test]
 		public void SetSaveReset ()
 		{
 			Bitmap bmp = new Bitmap (200, 200);
 			Graphics g = Graphics.FromImage (bmp);
 			GraphicsState state_default, state_modified;
-			
+
 			state_default = g.Save (); // Default
-			
+
 			g.CompositingMode = CompositingMode.SourceCopy;
 			g.CompositingQuality = CompositingQuality.GammaCorrected;
 			g.InterpolationMode = InterpolationMode.HighQualityBilinear;
 			g.PageScale = 2;
-			g.PageUnit = GraphicsUnit.Inch;			
+			g.PageUnit = GraphicsUnit.Inch;
 			g.PixelOffsetMode = PixelOffsetMode.Half;
 			g.Clip = new Region (new Rectangle (0, 0, 100, 100));
 			g.RenderingOrigin = new Point (10, 20);
 			g.SmoothingMode = SmoothingMode.AntiAlias;
 			g.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
-			
-			
+
+
 			state_modified = g.Save (); // Modified
-			
+
 			g.CompositingMode = CompositingMode.SourceOver;
 			g.CompositingQuality = CompositingQuality.Default;
 			g.InterpolationMode = InterpolationMode.Bilinear;
 			g.PageScale = 5;
-			g.PageUnit = GraphicsUnit.Display;			
+			g.PageUnit = GraphicsUnit.Display;
 			g.PixelOffsetMode = PixelOffsetMode.Default;
 			g.Clip = new Region (new Rectangle (1, 2, 20, 25));
 			g.RenderingOrigin = new Point (5, 6);
 			g.SmoothingMode = SmoothingMode.None;
-			g.TextRenderingHint = TextRenderingHint.SystemDefault;			
-						
+			g.TextRenderingHint = TextRenderingHint.SystemDefault;
+
 			g.Restore (state_modified);
-			
+
 			AssertEquals ("SetSaveReset1", CompositingMode.SourceCopy, g.CompositingMode);
 			AssertEquals ("SetSaveReset2", CompositingQuality.GammaCorrected, g.CompositingQuality);
 			AssertEquals ("SetSaveReset3", InterpolationMode.HighQualityBilinear, g.InterpolationMode);
@@ -337,26 +339,26 @@ namespace MonoTests.System.Drawing
 			AssertEquals ("SetSaveReset6", PixelOffsetMode.Half, g.PixelOffsetMode);
 			AssertEquals ("SetSaveReset7", new Point (10, 20), g.RenderingOrigin);
 			AssertEquals ("SetSaveReset8", SmoothingMode.AntiAlias, g.SmoothingMode);
-			AssertEquals ("SetSaveReset9", TextRenderingHint.ClearTypeGridFit, g.TextRenderingHint);			
+			AssertEquals ("SetSaveReset9", TextRenderingHint.ClearTypeGridFit, g.TextRenderingHint);
 			AssertEquals ("SetSaveReset10", 0, (int) g.ClipBounds.X);
 			AssertEquals ("SetSaveReset10", 0, (int) g.ClipBounds.Y);
-			
-			g.Restore (state_default);			
-			
+
+			g.Restore (state_default);
+
 			AssertEquals ("SetSaveReset11", CompositingMode.SourceOver, g.CompositingMode);
 			AssertEquals ("SetSaveReset12", CompositingQuality.Default, g.CompositingQuality);
 			AssertEquals ("SetSaveReset13", InterpolationMode.Bilinear, g.InterpolationMode);
 			AssertEquals ("SetSaveReset14", 1, g.PageScale);
 			AssertEquals ("SetSaveReset15", GraphicsUnit.Display, g.PageUnit);
 			AssertEquals ("SetSaveReset16", PixelOffsetMode.Default, g.PixelOffsetMode);
-			AssertEquals ("SetSaveReset17", new Point (0, 0) , g.RenderingOrigin);
+			AssertEquals ("SetSaveReset17", new Point (0, 0), g.RenderingOrigin);
 			AssertEquals ("SetSaveReset18", SmoothingMode.None, g.SmoothingMode);
-			AssertEquals ("SetSaveReset19", TextRenderingHint.SystemDefault, g.TextRenderingHint);		
+			AssertEquals ("SetSaveReset19", TextRenderingHint.SystemDefault, g.TextRenderingHint);
 
 			Region r = new Region ();
-			AssertEquals ("SetSaveReset20", r.GetBounds (g) , g.ClipBounds);
-			
-			g.Dispose ();			
+			AssertEquals ("SetSaveReset20", r.GetBounds (g), g.ClipBounds);
+
+			g.Dispose ();
 		}
 
 		[Test]
@@ -621,7 +623,7 @@ namespace MonoTests.System.Drawing
 			g.TranslateTransform (8, 8);
 			CheckBounds ("translate.ClipBounds", g.ClipBounds, -8, -24, 32, 16);
 			CheckBounds ("translate.Clip.GetBounds", g.Clip.GetBounds (g), -8, -24, 32, 16);
-			
+
 			g.MultiplyTransform (g.Transform);
 			CheckBounds ("multiply.ClipBounds", g.ClipBounds, -104, -56, 64, 64);
 			CheckBounds ("multiply.Clip.GetBounds", g.Clip.GetBounds (g), -104, -56, 64, 64);
@@ -1214,7 +1216,7 @@ namespace MonoTests.System.Drawing
 		[ExpectedException (typeof (ArgumentException))]
 		public void BeginContainer_GraphicsUnit_Bad ()
 		{
-			BeginContainer_GraphicsUnit ((GraphicsUnit)Int32.MinValue);
+			BeginContainer_GraphicsUnit ((GraphicsUnit) Int32.MinValue);
 		}
 
 		[Test]
@@ -1330,7 +1332,7 @@ namespace MonoTests.System.Drawing
 		{
 			using (Bitmap bitmap = new Bitmap (20, 20)) {
 				using (Graphics g = Graphics.FromImage (bitmap)) {
-					g.FillRectangles (Brushes.Red, (RectangleF[])null);
+					g.FillRectangles (Brushes.Red, (RectangleF[]) null);
 				}
 			}
 		}
@@ -1675,6 +1677,156 @@ namespace MonoTests.System.Drawing
 			}
 		}
 
+		private Bitmap DrawLines (float width)
+		{
+			Bitmap bitmap = new Bitmap (20, 20);
+			using (Graphics g = Graphics.FromImage (bitmap)) {
+				g.Clear (Color.Red);
+				Point[] pts = new Point[3] { new Point (5, 5), new Point (15, 5), new Point (15, 15) };
+				if (width >= 0) {
+					using (Pen pen = new Pen (Color.Blue, width)) {
+						g.DrawLines (pen, pts);
+					}
+				} else {
+					g.DrawLines (Pens.Blue, pts);
+				}
+			}
+			return bitmap;
+		}
+
+		[Test]
+		public void DrawLines_Width_Default ()
+		{
+			// default pen size
+			using (Bitmap bitmap = DrawLines (Single.MinValue)) {
+				// start
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (4, 4).ToArgb (), "4,4");
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (4, 5).ToArgb (), "4,5");
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (4, 6).ToArgb (), "4,6");
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (5, 4).ToArgb (), "5,4");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (5, 5).ToArgb (), "5,5");
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (5, 6).ToArgb (), "5,6");
+				// middle
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (14, 4).ToArgb (), "14,4");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (14, 5).ToArgb (), "14,5");
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (14, 6).ToArgb (), "14,6");
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (15, 4).ToArgb (), "15,4");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (15, 5).ToArgb (), "15,5");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (15, 6).ToArgb (), "15,6");
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (16, 4).ToArgb (), "16,4");
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (16, 5).ToArgb (), "16,5");
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (16, 6).ToArgb (), "16,6");
+				//end
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (14, 15).ToArgb (), "14,15");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (15, 15).ToArgb (), "15,15");
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (16, 15).ToArgb (), "16,15");
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (14, 16).ToArgb (), "14,16");
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (15, 16).ToArgb (), "15,16");
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (16, 16).ToArgb (), "16,16");
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void DrawLines_Width_2 ()
+		{
+			// default pen size
+			using (Bitmap bitmap = DrawLines (2.0f)) {
+				// start
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (4, 3).ToArgb (), "4,3");
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (4, 4).ToArgb (), "4,4");
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (4, 5).ToArgb (), "4,5");
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (4, 6).ToArgb (), "4,6");
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (5, 3).ToArgb (), "5,3");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (5, 4).ToArgb (), "5,4");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (5, 5).ToArgb (), "5,5");
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (5, 6).ToArgb (), "5,6");
+				// middle
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (13, 3).ToArgb (), "13,3");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (13, 4).ToArgb (), "13,4");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (13, 5).ToArgb (), "13,5");
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (13, 6).ToArgb (), "13,6");
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (14, 3).ToArgb (), "14,3");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (14, 4).ToArgb (), "14,4");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (14, 5).ToArgb (), "14,5");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (14, 6).ToArgb (), "14,6");
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (15, 3).ToArgb (), "15,3");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (15, 4).ToArgb (), "15,4");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (15, 5).ToArgb (), "15,5");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (15, 6).ToArgb (), "15,6");
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (16, 3).ToArgb (), "16,3");
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (16, 4).ToArgb (), "16,4");
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (16, 5).ToArgb (), "16,5");
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (16, 6).ToArgb (), "16,6");
+				//end
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (13, 14).ToArgb (), "13,14");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (14, 14).ToArgb (), "14,14");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (15, 14).ToArgb (), "15,14");
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (16, 14).ToArgb (), "16,14");
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (13, 15).ToArgb (), "13,15");
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (14, 15).ToArgb (), "14,15");
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (15, 15).ToArgb (), "15,15");
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (16, 15).ToArgb (), "16,15");
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void DrawLines_Width_3 ()
+		{
+			// default pen size
+			using (Bitmap bitmap = DrawLines (3.0f)) {
+				// start
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (4, 3).ToArgb (), "4,3");
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (4, 4).ToArgb (), "4,4");
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (4, 5).ToArgb (), "4,5");
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (4, 6).ToArgb (), "4,6");
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (4, 7).ToArgb (), "4,7");
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (5, 3).ToArgb (), "5,3");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (5, 4).ToArgb (), "5,4");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (5, 5).ToArgb (), "5,5");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (5, 6).ToArgb (), "5,6");
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (5, 7).ToArgb (), "5,7");
+				// middle
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (13, 3).ToArgb (), "13,3");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (13, 4).ToArgb (), "13,4");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (13, 5).ToArgb (), "13,5");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (13, 6).ToArgb (), "13,6");
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (13, 7).ToArgb (), "13,7");
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (14, 3).ToArgb (), "14,3");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (14, 4).ToArgb (), "14,4");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (14, 5).ToArgb (), "14,5");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (14, 6).ToArgb (), "14,6");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (14, 7).ToArgb (), "14,7");
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (15, 3).ToArgb (), "15,3");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (15, 4).ToArgb (), "15,4");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (15, 5).ToArgb (), "15,5");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (15, 6).ToArgb (), "15,6");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (15, 7).ToArgb (), "15,7");
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (16, 3).ToArgb (), "16,3");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (16, 4).ToArgb (), "16,4");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (16, 5).ToArgb (), "16,5");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (16, 6).ToArgb (), "16,6");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (16, 7).ToArgb (), "16,7");
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (17, 3).ToArgb (), "17,3");
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (17, 4).ToArgb (), "17,4");
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (17, 5).ToArgb (), "17,5");
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (17, 6).ToArgb (), "17,6");
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (17, 7).ToArgb (), "17,7");
+				//end
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (13, 14).ToArgb (), "13,14");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (14, 14).ToArgb (), "14,14");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (15, 14).ToArgb (), "15,14");
+				Assert.AreEqual (0xFF0000FF, (uint) bitmap.GetPixel (16, 14).ToArgb (), "16,14");
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (17, 14).ToArgb (), "17,14");
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (13, 15).ToArgb (), "13,15");
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (14, 15).ToArgb (), "14,15");
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (15, 15).ToArgb (), "15,15");
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (16, 15).ToArgb (), "16,15");
+				Assert.AreEqual (0xFFFF0000, (uint) bitmap.GetPixel (17, 15).ToArgb (), "17,15");
+			}
+		}
+
 		[Test]
 		public void MeasureString_StringFont ()
 		{
@@ -1874,14 +2026,14 @@ namespace MonoTests.System.Drawing
 		{
 			using (Bitmap bitmap = new Bitmap (20, 20)) {
 				using (Graphics g = Graphics.FromImage (bitmap)) {
-					StringFormat string_format = new StringFormat();
-					
+					StringFormat string_format = new StringFormat ();
+
 					string text1 = "Test\nTest123\nTest 456\nTest 1,2,3,4,5...";
 					string text2 = "Test 1,2,3,4,5...";
-				
+
 					SizeF size1 = g.MeasureString (text1, font, SizeF.Empty, string_format);
 					SizeF size2 = g.MeasureString (text2, font, SizeF.Empty, string_format);
-					
+
 					Assert.AreEqual ((int) size1.Width, (int) size2.Width, "Multiline Text Width");
 				}
 			}
@@ -2009,9 +2161,9 @@ namespace MonoTests.System.Drawing
 				Assert.Ignore ("Couldn't create required font");
 
 			string text = "this\nis a test";
-			CharacterRange[] ranges = new CharacterRange [2];
-			ranges[0] = new CharacterRange (0,5);
-			ranges[1] = new CharacterRange (5,9);
+			CharacterRange[] ranges = new CharacterRange[2];
+			ranges[0] = new CharacterRange (0, 5);
+			ranges[1] = new CharacterRange (5, 9);
 
 			StringFormat string_format = new StringFormat ();
 			string_format.FormatFlags = StringFormatFlags.NoClip;
@@ -2019,8 +2171,8 @@ namespace MonoTests.System.Drawing
 
 			using (Bitmap bitmap = new Bitmap (20, 20)) {
 				using (Graphics g = Graphics.FromImage (bitmap)) {
-					SizeF size = g.MeasureString (text, font, new Point (0,0), string_format);
-					RectangleF layout_rect = new RectangleF (0.0f, 0.0f, size.Width, size.Height);			
+					SizeF size = g.MeasureString (text, font, new Point (0, 0), string_format);
+					RectangleF layout_rect = new RectangleF (0.0f, 0.0f, size.Width, size.Height);
 					Region[] regions = g.MeasureCharacterRanges (text, font, layout_rect, string_format);
 
 					AssertEquals ("Length", 2, regions.Length);
@@ -2353,39 +2505,81 @@ namespace MonoTests.System.Drawing
 				}
 			}
 		}
+
+		[Test]
+		public void GetReleaseHdcInternal ()
+		{
+			using (Bitmap b = new Bitmap (10, 10)) {
+				using (Graphics g = Graphics.FromImage (b)) {
+					IntPtr hdc1 = g.GetHdc ();
+					g.ReleaseHdcInternal (hdc1);
+					IntPtr hdc2 = g.GetHdc ();
+					g.ReleaseHdcInternal (hdc2);
+					Assert.AreEqual (hdc1, hdc2, "hdc");
+				}
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ReleaseHdcInternal_IntPtrZero ()
+		{
+			using (Bitmap b = new Bitmap (10, 10)) {
+				using (Graphics g = Graphics.FromImage (b)) {
+					g.ReleaseHdcInternal (IntPtr.Zero);
+				}
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ReleaseHdcInternal_TwoTimes ()
+		{
+			using (Bitmap b = new Bitmap (10, 10)) {
+				using (Graphics g = Graphics.FromImage (b)) {
+					IntPtr hdc = g.GetHdc ();
+					g.ReleaseHdcInternal (hdc);
+					g.ReleaseHdcInternal (hdc);
+				}
+			}
+		}
 #if NET_2_0
 		[Test]
 		public void TestReleaseHdc ()
 		{
-			Bitmap b = new Bitmap (100, 100);
-			Graphics g = Graphics.FromImage (b);
-
-			g.GetHdc ();
-			g.ReleaseHdc ();
-			g.GetHdc ();
-			g.ReleaseHdc ();
+			using (Bitmap b = new Bitmap (10, 10)) {
+				using (Graphics g = Graphics.FromImage (b)) {
+					IntPtr hdc1 = g.GetHdc ();
+					g.ReleaseHdc ();
+					IntPtr hdc2 = g.GetHdc ();
+					g.ReleaseHdc ();
+					Assert.AreEqual (hdc1, hdc2, "hdc");
+				}
+			}
 		}
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void TestReleaseHdcException ()
 		{
-			Bitmap b = new Bitmap (100, 100);
-			Graphics g = Graphics.FromImage (b);
-
-			g.ReleaseHdc ();
+			using (Bitmap b = new Bitmap (10, 10)) {
+				using (Graphics g = Graphics.FromImage (b)) {
+					g.ReleaseHdc ();
+				}
+			}
 		}
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void TestReleaseHdcException2 ()
 		{
-			Bitmap b = new Bitmap (100, 100);
-			Graphics g = Graphics.FromImage (b);
-
-			g.GetHdc ();
-			g.ReleaseHdc ();
-			g.ReleaseHdc ();
+			using (Bitmap b = new Bitmap (10, 10)) {
+				using (Graphics g = Graphics.FromImage (b)) {
+					g.GetHdc ();
+					g.ReleaseHdc ();
+					g.ReleaseHdc ();
+				}
+			}
 		}
 #endif
 		[Test]
@@ -2664,7 +2858,7 @@ namespace MonoTests.System.Drawing
 		{
 			using (Bitmap bmp = new Bitmap (40, 40)) {
 				using (Graphics g = Graphics.FromImage (bmp)) {
-					g.DrawImage (bmp, (PointF[])null);
+					g.DrawImage (bmp, (PointF[]) null);
 				}
 			}
 		}
@@ -3197,5 +3391,26 @@ namespace MonoTests.System.Drawing
 			}
 		}
 #endif
+	}
+
+	[TestFixture]
+	public class GraphicsFullTrustTest {
+
+		// note: this test would fail, on ReleaseHdc, without fulltrust
+		// i.e. it's a demand and not a linkdemand
+		[Test]
+		public void GetReleaseHdc ()
+		{
+			using (Bitmap b = new Bitmap (100, 100)) {
+				using (Graphics g = Graphics.FromImage (b)) {
+					IntPtr hdc1 = g.GetHdc ();
+					g.ReleaseHdc (hdc1);
+					IntPtr hdc2 = g.GetHdc ();
+					g.ReleaseHdc (hdc2);
+					Assert.AreEqual (hdc1, hdc2, "hdc");
+				}
+			}
+		}
+
 	}
 }
