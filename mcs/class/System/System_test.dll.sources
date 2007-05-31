@@ -124,6 +124,7 @@ System.ComponentModel/Int16ConverterTests.cs
 System.ComponentModel/Int32ConverterTests.cs
 System.ComponentModel/Int64ConverterTests.cs
 System.ComponentModel/LicenseManagerTests.cs
+System.ComponentModel/LookupBindingPropertiesAttributeTest.cs
 System.ComponentModel/MaskedTextProviderTest.cs
 System.ComponentModel/PropertyDescriptorCollectionTests.cs
 System.ComponentModel/PropertyDescriptorTests.cs

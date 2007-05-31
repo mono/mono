@@ -340,6 +340,7 @@ System.ComponentModel/ListSortDescriptionCollection.cs
 System.ComponentModel/ListSortDescription.cs
 System.ComponentModel/ListSortDirection.cs
 System.ComponentModel/LocalizableAttribute.cs
+System.ComponentModel/LookupBindingPropertiesAttribute.cs
 System.ComponentModel/MarshalByValueComponent.cs
 System.ComponentModel/MaskedTextProvider.cs
 System.ComponentModel/MaskedTextResultHint.cs

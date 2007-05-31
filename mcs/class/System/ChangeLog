@@ -1,3 +1,9 @@
+2007-05-31  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* System.dll.sources: Added LookupBindingPropertiesAttribute.cs.
+	* System_test.dll.sources: Added
+	  LookupBindingPropertiesAttributeTest.cs
+
 2007-05-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* System.dll.sources: Add S.C.D.IComponentDiscoveryService
