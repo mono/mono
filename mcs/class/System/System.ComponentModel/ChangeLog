@@ -1,5 +1,10 @@
 2007-05-31  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* LookupBindingPropertiesAttribute.cs:
+	  Should be sealed. Implemented GetHashCode().
+
+2007-05-31  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ContainerFilterService.cs CustomTypeDescriptor.cs
 	  InstanceCreationEditor.cs InvalidAsynchronousStateException.cs
 	  MultilineStringConverter.cs NestedContainer.cs

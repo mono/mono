@@ -35,7 +35,7 @@ using System;
 namespace System.ComponentModel
 {	
 	[AttributeUsage(AttributeTargets.Class)]
-	public class LookupBindingPropertiesAttribute : Attribute
+	public sealed class LookupBindingPropertiesAttribute : Attribute
 	{
 		private string data_source;
 		private string display_member;
@@ -63,7 +63,10 @@ namespace System.ComponentModel
 		
 		public override int GetHashCode()
 		{
-			return base.GetHashCode();
+			return  (data_source != null ? data_source.GetHashCode () : 1) << 24 +
+				(display_member != null ? display_member.GetHashCode () : 1) << 16 +
+				(lookup_member != null ? lookup_member.GetHashCode () : 1) << 8 +
+				(value_member != null ? value_member.GetHashCode () : 1);
 		}
 
 		public override bool Equals(object obj)

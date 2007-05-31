@@ -52,12 +52,14 @@ namespace MonoTests.System.ComponentModel {
 			Assert.AreSame ("dd", b.LookupMember, "#B4");
 
 			c = new LookupBindingPropertiesAttribute ("aa", "bb", "cc", "dd");
+
 			Assert.AreEqual ("aa", c.DataSource, "#C1");
 			Assert.AreEqual ("bb", c.DisplayMember, "#C2");
 			Assert.AreEqual ("cc", c.ValueMember, "#C3");
 			Assert.AreEqual ("dd", c.LookupMember, "#C4");
 
 			Assert.IsTrue (b.Equals (c), "#Eq1");
+			Assert.AreEqual (b.GetHashCode (), c.GetHashCode (), "#Hash");
 
 			d = LookupBindingPropertiesAttribute.Default;
 			Assert.IsNull (d.DataSource, "#D1");
