@@ -1,5 +1,9 @@
 2007-05-31  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* PropertyDescriptor.cs : oops, wrong fix.
+
+2007-05-31  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* PropertyDescriptor.cs : call base. fix winforms tests.
 
 2007-05-31  Rolf Bjarne Kvinge <RKvinge@novell.com> 

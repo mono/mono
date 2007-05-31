@@ -168,7 +168,7 @@ namespace System.ComponentModel
 		[MonoNotSupported ("")]
 		protected override void FillAttributes (IList attributeList)
 		{
-			return base.FillAttributes (attributeList);
+			base.FillAttributes (attributeList);
 		}
 
 		[MonoNotSupported ("")]
