@@ -143,6 +143,7 @@ namespace System
 				throw new ArgumentException (Locale.GetText ("Incompatible Delegate Types."));
 
 			combined = (MulticastDelegate)follow.Clone ();
+			combined.SetMulticastInvoke ();
 
 			for (clone = combined, orig = ((MulticastDelegate)follow).prev; orig != null; orig = orig.prev) {
 				

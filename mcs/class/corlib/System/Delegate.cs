@@ -48,10 +48,11 @@ namespace System
 #endif
 	public abstract class Delegate : ICloneable, ISerializable
 	{
-		private Type target_type;
-		private object m_target;
-		private string method_name;
 		private IntPtr method_ptr;
+		private IntPtr invoke_impl;
+		private object m_target;
+		private Type target_type;
+		private string method_name;
 		private IntPtr delegate_trampoline;
 		private MethodInfo method_info;
 
@@ -101,6 +102,9 @@ namespace System
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern Delegate CreateDelegate_internal (Type type, object target, MethodInfo info);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal extern void SetMulticastInvoke ();
 
 #if NET_2_0
 		public

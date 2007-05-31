@@ -1,3 +1,13 @@
+2007-05-31  Zoltan Varga  <vargaz@gmail.com>
+
+	* Delegate.cs: Add invoke_impl field. Reorder fields for better cache behavior. Add
+	SetMulticastDelegate icall.
+
+	* MulticastDelegate.cs (CombineImpl): Call SetMulticastDelegate () on newly created
+	delegate.
+
+	* Environment.cs: Bump corlib version.
+	
 2007-05-25  Jonathan Chambers  <joncham@gmail.com>
 
 	* __ComObject.cs: Add overload to GetInterface to allow
