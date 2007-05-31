@@ -1,3 +1,19 @@
+2007-05-31  Zoltan Varga  <vargaz@gmail.com>
+
+	* inssel.brg (mini_emit_virtual_call): Call delegate->Invoke through the delegate's
+	invoke_impl field.
+
+	* mini-amd64.c (mono_arch_get_delegate_invoke_impl): New arch dependent function.
+	(mono_arch_get_this_arg_from_call): Ditto.
+
+	* tramp-amd64.c (mono_arch_patch_delegate_trampoline): Removed.
+	
+	* mini-trampolines.c (mono_delegate_trampoline): Complete rewrite. On first call,
+	try to create optimized invoke code and use that for further invocations. 
+	Otherwise, use the original mono_marshal_get_delegate_invoke () implementation.
+
+	* mini-x86.h mini-ia64.h: Remove MONO_ARCH_HAS_CREATE_DELEGATE_TRAMPOLINE for now.
+
 2007-05-29  Rodrigo Kumpera  <kumpera@gmail.com>
 
 	* inssel.brg (mini_emit_virtual_call): Statically dispatch virtual calls to
