@@ -99,7 +99,11 @@ namespace System.ComponentModel
 			} catch { }
 		}
 
+#if NET_2_0
+		public virtual object Value {
+#else
 		public object Value {
+#endif
 			get { return DefaultValue; }
 		}
 

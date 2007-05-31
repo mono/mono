@@ -63,7 +63,23 @@ namespace System.ComponentModel
 			is_nullable = isNullable;
 			this.length = length;
 		}
-		
+
+		public bool IsIdentity {
+			get { return is_identity; }
+		}
+
+		public bool IsNullable {
+			get { return is_nullable; }
+		}
+
+		public int Length {
+			get { return length; }
+		}
+
+		public bool PrimaryKey {
+			get { return primary_key; }
+		}
+
 		public override bool Equals (object obj)
 		{
 			DataObjectFieldAttribute other = obj as DataObjectFieldAttribute;

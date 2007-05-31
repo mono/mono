@@ -220,6 +220,9 @@ namespace System.ComponentModel
                 return null;
         }
 
+//#if NET_2_0 // uncomment when it is implemented
+//	[Obsolete ("Use GetInvocationTarget")]
+//#endif
         protected static object GetInvokee(Type componentClass, object component)
         {
 		if (component is IComponent) {

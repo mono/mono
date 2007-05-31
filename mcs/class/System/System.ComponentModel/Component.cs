@@ -32,10 +32,15 @@
 
 using System;
 using System.ComponentModel;
+using System.Runtime.InteropServices;
 
 namespace System.ComponentModel {
 
 	[DesignerCategory ("Component")]
+#if NET_2_0
+	[ComVisible (true)]
+	[ClassInterface (ClassInterfaceType.AutoDispatch)]
+#endif
 	public class Component : MarshalByRefObject, IComponent, IDisposable
 	{
 
@@ -47,6 +52,12 @@ namespace System.ComponentModel {
 		{
 			event_handlers = null;
 		}
+
+#if NET_2_0
+		protected virtual bool CanRaiseEvents {
+			get { return false; }
+		}
+#endif
 
 		[Browsable (false), DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public IContainer Container {

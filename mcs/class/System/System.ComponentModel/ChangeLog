@@ -1,3 +1,14 @@
+2007-05-31  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* AsyncOperationManager.cs AttributeCollection.cs
+	  BackgroundWorker.cs BindingList.cs CategoryAttribute.cs
+	  Component.cs DataObjectFieldAttribute.cs DefaultValueAttribute.cs
+	  DescriptionAttribute.cs EventDescriptorCollection.cs
+	  IComNativeDescriptorHandler.cs IListSource.cs
+	  ListSortDescriptionCollection.cs MemberDescriptor.cs
+	  PropertyDescriptor.cs SyntaxCheck.cs ToolboxItemFilterAttribute.cs:
+	  2.0 profile updates.
+
 2007-05-15 Adar Wesley <adarw@mainsoft.com>
 
 	* AttributeCollection.cs: added missing method FromExisting.

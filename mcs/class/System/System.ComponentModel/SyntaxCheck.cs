@@ -33,13 +33,15 @@ using System.IO;
 namespace System.ComponentModel
 {
 #if NET_2_0
-	sealed
+	static
 #endif
 	public class SyntaxCheck
 	{
+#if !NET_2_0
 		private SyntaxCheck ()
 		{
 		}
+#endif
 
 		public static bool CheckMachineName (string value)
 		{

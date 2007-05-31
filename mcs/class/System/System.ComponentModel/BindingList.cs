@@ -333,6 +333,18 @@ namespace System.ComponentModel {
 			get { return SortPropertyCore; }
 		}
 
+		bool IBindingList.AllowEdit {
+			get { return AllowEdit; }
+		}
+
+		bool IBindingList.AllowNew {
+			get { return AllowNew; }
+		}
+
+		bool IBindingList.AllowRemove {
+			get { return AllowRemove; }
+		}
+
 		bool IBindingList.SupportsChangeNotification {
 			get { return SupportsChangeNotificationCore; }
 		}

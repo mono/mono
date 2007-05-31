@@ -82,6 +82,13 @@ namespace System.ComponentModel {
 		{
 			return desc.GetHashCode ();
 		}
+
+#if NET_2_0
+		public override bool IsDefaultAttribute ()
+		{
+			return this == Default;
+		}
+#endif
 	}
 }
 

@@ -42,7 +42,7 @@ namespace System.ComponentModel {
 			list = new ArrayList();
 		}
 
-		public virtual int Count {
+		public int Count {
 			get { return list.Count; }
 		}
 

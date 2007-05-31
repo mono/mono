@@ -44,6 +44,7 @@ namespace System.ComponentModel
 			current_context = default_context;
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public static SynchronizationContext SynchronizationContext {
 			get { return current_context; }
 			[SecurityPermission (SecurityAction.LinkDemand)]

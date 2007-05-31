@@ -33,6 +33,7 @@ using System.Threading;
 
 namespace System.ComponentModel
 {
+	[DefaultEvent ("DoWork")]
 	public class BackgroundWorker : Component
 	{
 		public BackgroundWorker ()

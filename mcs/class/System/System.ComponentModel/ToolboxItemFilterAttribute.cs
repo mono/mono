@@ -84,5 +84,13 @@ namespace System.ComponentModel
 				return false;
 			return ((ToolboxItemFilterAttribute) obj).FilterString == Filter;
 		}
+
+#if NET_2_0
+		[MonoTODO]
+		public override string ToString ()
+		{
+			return base.ToString ();
+		}
+#endif
 	}
 }

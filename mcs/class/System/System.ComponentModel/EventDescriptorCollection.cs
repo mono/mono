@@ -39,7 +39,7 @@ namespace System.ComponentModel
 	public class EventDescriptorCollection : IList, ICollection, IEnumerable
 	{
 		private ArrayList eventList = new ArrayList ();
-		
+		private bool isReadOnly;
 		public static readonly EventDescriptorCollection Empty = new EventDescriptorCollection ();
 		
 		private EventDescriptorCollection ()
@@ -52,7 +52,16 @@ namespace System.ComponentModel
 		}
 		
 		public EventDescriptorCollection (EventDescriptor[] events) 
+			: this (events, false)
 		{
+		}
+
+#if NET_2_0
+		public
+#endif
+		EventDescriptorCollection (EventDescriptor[] events, bool readOnly) 
+		{
+			this.isReadOnly = readOnly;
 			if (events == null)
 				return;
 
@@ -60,15 +69,22 @@ namespace System.ComponentModel
 				this.Add (events[i]);
 		}
 
-		public int Add (EventDescriptor value) {
+		public int Add (EventDescriptor value)
+		{
+			if (isReadOnly)
+				throw new InvalidOperationException ("The collection is read-only");
 			return eventList.Add (value);
 		}
 
-		void IList.Clear () {
+		void IList.Clear ()
+		{
 			Clear ();
 		}
 
-		public void Clear () {
+		public void Clear ()
+		{
+			if (isReadOnly)
+				throw new InvalidOperationException ("The collection is read-only");
 			eventList.Clear ();
 		}
 
@@ -97,19 +113,29 @@ namespace System.ComponentModel
 			return eventList.IndexOf (value);
 		}
 
-		public void Insert (int index, EventDescriptor value) {
+		public void Insert (int index, EventDescriptor value)
+		{
+			if (isReadOnly)
+				throw new InvalidOperationException ("The collection is read-only");
 			eventList.Insert (index, value);
 		}
 
-		public void Remove (EventDescriptor value) {
+		public void Remove (EventDescriptor value)
+		{
+			if (isReadOnly)
+				throw new InvalidOperationException ("The collection is read-only");
 			eventList.Remove (value);
 		}
 
-		void IList.RemoveAt (int index) {
+		void IList.RemoveAt (int index)
+		{
 			RemoveAt (index);
 		}
 
-		public void RemoveAt (int index) {
+		public void RemoveAt (int index)
+		{
+			if (isReadOnly)
+				throw new InvalidOperationException ("The collection is read-only");
 			eventList.RemoveAt (index);
 		}
 
@@ -243,6 +269,8 @@ namespace System.ComponentModel
 				return eventList[index];
 			}
 			set {
+				if (isReadOnly)
+					throw new InvalidOperationException ("The collection is read-only");
 				eventList[index] = value;
 			}
 		}

@@ -47,7 +47,11 @@ namespace System.ComponentModel
 			attrList = attributes;
 		}
 		
+#if NET_2_0
+		public AttributeCollection (params Attribute[] attributes)
+#else
 		public AttributeCollection (Attribute[] attributes)
+#endif
 		{
 			if (attributes != null)
 				for (int i = 0; i < attributes.Length; i++)

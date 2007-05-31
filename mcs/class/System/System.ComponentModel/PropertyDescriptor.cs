@@ -98,6 +98,12 @@ namespace System.ComponentModel
 
 		public abstract Type PropertyType { get; }
 
+#if NET_2_0
+		public virtual bool SupportsChangeEvents {
+			get { return false; }
+		}
+#endif
+
 		public DesignerSerializationVisibility SerializationVisibility {
 			get {
 				foreach (Attribute attr in AttributeArray) {
@@ -159,6 +165,18 @@ namespace System.ComponentModel
 		}
 
 #if NET_2_0
+		[MonoNotSupported ("")]
+		protected override void FillAttributes (IList attributeList)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported ("")]
+		protected override Object GetInvocationTarget (Type type, object instance)
+		{
+			throw new NotImplementedException ();
+		}
+
 		[MonoNotSupported("")]
 		protected internal EventHandler GetValueChangedHandler (object component)
 		{
