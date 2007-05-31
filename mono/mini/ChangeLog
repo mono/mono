@@ -1,5 +1,10 @@
 2007-05-31  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-x86.c (mono_arch_get_delegate_invoke_impl): New arch dependent function.
+	(mono_arch_get_this_arg_from_call): Ditto.
+
+	* tramp-x86.c (mono_arch_patch_delegate_trampoline): Removed.
+
 	* inssel.brg (mini_emit_virtual_call): Call delegate->Invoke through the delegate's
 	invoke_impl field.
 
