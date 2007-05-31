@@ -188,26 +188,25 @@ namespace System.Web {
 				foreach (string rolename in roles)
 					if (rolename == "*" || context.User.IsInRole (rolename))
 						return true;
-				return false;
 			}
-
+			
 			/* 2. */
 			/* XXX */
 
 			/* 3. */
 			string url = node.Url;
-			if(String.IsNullOrEmpty(url))
-				return false;
-			// TODO check url is located within the current application
+			if(!String.IsNullOrEmpty(url)) {
+				// TODO check url is located within the current application
 
-			if (VirtualPathUtility.IsAppRelative (url) || !VirtualPathUtility.IsAbsolute (url))
-				url = VirtualPathUtility.Combine (VirtualPathUtility.AppendTrailingSlash (HttpRuntime.AppDomainAppVirtualPath), url);
+				if (VirtualPathUtility.IsAppRelative (url) || !VirtualPathUtility.IsAbsolute (url))
+					url = VirtualPathUtility.Combine (VirtualPathUtility.AppendTrailingSlash (HttpRuntime.AppDomainAppVirtualPath), url);
 
-			AuthorizationSection config = (AuthorizationSection) WebConfigurationManager.GetSection (
-				"system.web/authorization",
-				url);
-			if (config != null)
-				return config.IsValidUser (context.User, context.Request.HttpMethod);
+				AuthorizationSection config = (AuthorizationSection) WebConfigurationManager.GetSection (
+					"system.web/authorization",
+					url);
+				if (config != null)
+					return config.IsValidUser (context.User, context.Request.HttpMethod);
+			}
 
 			return false;
 		}

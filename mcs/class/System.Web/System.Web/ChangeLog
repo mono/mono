@@ -1,3 +1,9 @@
+2007-05-31  Marek Habersack  <mhabersack@novell.com>
+
+	* SiteMapProvider.cs: implemented proper logic of authorizing
+	user's access to a sitemap node, as per MSDN2 docs. Patch from
+	Dumitru Ban <dban@dako.ro>, thanks!
+
 2007-05-30  Marek Habersack  <mhabersack@novell.com>
 
 	* TraceManager.cs: Catch all the possible exceptions in the
