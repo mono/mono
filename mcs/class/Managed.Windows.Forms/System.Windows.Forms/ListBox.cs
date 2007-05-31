@@ -917,6 +917,15 @@ namespace System.Windows.Forms
 				item_heights.Remove (Items [index]);
 		}
 
+#if NET_2_0
+		protected override void RefreshItems ()
+		{
+			for (int i = 0; i < Items.Count; i++) {
+				RefreshItem (i);
+			}
+		}
+#endif
+		
 		protected override void SetBoundsCore (int x,  int y, int width, int height, BoundsSpecified specified)
 		{
 			if ((specified & BoundsSpecified.Height) == BoundsSpecified.Height)

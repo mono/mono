@@ -37,6 +37,7 @@ namespace System.Windows.Forms
 #if NET_2_0
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
 	[ComVisible (true)]
+	[LookupBindingPropertiesAttribute ()]
 #endif
 	public class CheckedListBox : ListBox
 	{
@@ -107,6 +108,15 @@ namespace System.Windows.Forms
 			add { Events.AddHandler (ItemCheckEvent, value); }
 			remove { Events.RemoveHandler (ItemCheckEvent, value); }
 		}
+		
+#if NET_2_0
+		[Browsable (true)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
+		public new event MouseEventHandler MouseClick {
+			add { base.MouseClick += value; }
+			remove { base.MouseClick -= value; }
+		}
+#endif
 		#endregion Events
 
 		#region Public Properties
@@ -203,6 +213,15 @@ namespace System.Windows.Forms
 			set { base.ValueMember = value; }			
 		}
 		
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public new Padding Padding {
+			get { return base.Padding; }
+			set { base.Padding = value; }
+		}
+#endif
 		#endregion Public Properties
 
 		#region Public Methods
@@ -290,6 +309,14 @@ namespace System.Windows.Forms
 			base.OnSelectedIndexChanged (e);
 		}
 
+#if NET_2_0
+		protected override void RefreshItem (int index)
+		{
+			for (int i = 0; i < Items.Count; i++) {
+				RefreshItem (i);
+			}
+		}
+#endif
 		public void SetItemChecked (int index, bool value)
 		{
 			SetItemCheckState (index, value ? CheckState.Checked : CheckState.Unchecked);

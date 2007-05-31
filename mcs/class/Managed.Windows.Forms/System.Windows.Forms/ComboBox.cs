@@ -1159,6 +1159,13 @@ namespace System.Windows.Forms
 		}
 
 #if NET_2_0
+		protected override void RefreshItems ()
+		{
+			for (int i = 0; i < Items.Count; i++) {
+				RefreshItem (i);
+			}
+		}
+
 		public override void ResetText ()
 		{
 			Text = String.Empty;

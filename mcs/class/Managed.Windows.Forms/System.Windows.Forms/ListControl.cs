@@ -188,6 +188,7 @@ namespace System.Windows.Forms
 						 	return;
 						}
 					}
+					SelectedIndex = -1;
 					
 				}
 			}
@@ -340,6 +341,12 @@ namespace System.Windows.Forms
 		}
 
 		protected abstract void RefreshItem (int index);
+		
+#if NET_2_0
+		protected virtual void RefreshItems ()
+		{
+		}
+#endif
 
 		protected virtual void SetItemCore (int index,	object value)
 		{
