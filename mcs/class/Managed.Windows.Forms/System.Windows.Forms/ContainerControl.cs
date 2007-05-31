@@ -79,92 +79,90 @@ namespace System.Windows.Forms {
 
 				// Fire the enter and leave events if possible
 				Form form = FindForm ();
-				if (form != null) {
-					Control active = GetMostDeeplyNestedActiveControl (form);
-					Control common_container = GetCommonContainer (active, value);
-					ArrayList chain = new ArrayList ();
-					ArrayList validation_chain = new ArrayList ();
-					Control walk = active;
+				Control active = GetMostDeeplyNestedActiveControl (form == null ? this : form);
+				Control common_container = GetCommonContainer (active, value);
+				ArrayList chain = new ArrayList ();
+				ArrayList validation_chain = new ArrayList ();
+				Control walk = active;
 
-					// we split this up into three steps:
-					//    1. walk up the tree (if we need to) to our root, firing leave events.
-					//    2. validate.
-					//    3. walk down the tree (if we need to), firing enter events.
+				// we split this up into three steps:
+				//    1. walk up the tree (if we need to) to our root, firing leave events.
+				//    2. validate.
+				//    3. walk down the tree (if we need to), firing enter events.
 
-					// "our root" is either the common container of the current active
-					// control and the new active control, or the current active control,
-					// or the new active control.  That is, it's either one of these three
-					// configurations:
+				// "our root" is either the common container of the current active
+				// control and the new active control, or the current active control,
+				// or the new active control.  That is, it's either one of these three
+				// configurations:
 
-					//  (1)     root	    (2)  new   	      (3)  current
-					//          /  \	       	/   \		    /  	\
-					//	  ...  	...	      ...   ...		  ...  	...
-					//     	  /      \	      /	       			  \
-					//     current 	 new   	   current   			  new
+				//  (1)     root	    (2)  new   	      (3)  current
+				//          /  \	       	/   \		    /  	\
+				//	  ...  	...	      ...   ...		  ...  	...
+				//     	  /      \	      /	       			  \
+				//     current 	 new   	   current   			  new
 
 
-					// note (3) doesn't require any upward walking, and no leave events are generated.
-					//      (2) doesn't require any downward walking, and no enter events are generated.
+				// note (3) doesn't require any upward walking, and no leave events are generated.
+				//      (2) doesn't require any downward walking, and no enter events are generated.
 
-					// as we walk up the tree, we generate a list of all controls which cause
-					// validation.  After firing the leave events, we invoke (in order starting from
-					// the most deeply nested) their Validating event.  If one sets CancelEventArgs.Cancel
-					// to true, we ignore the control the user wanted to set ActiveControl to, and use
-					// the Validating control instead.
+				// as we walk up the tree, we generate a list of all controls which cause
+				// validation.  After firing the leave events, we invoke (in order starting from
+				// the most deeply nested) their Validating event.  If one sets CancelEventArgs.Cancel
+				// to true, we ignore the control the user wanted to set ActiveControl to, and use
+				// the Validating control instead.
 
-					bool fire_enter = true;
-					Control root = common_container;
+				bool fire_enter = true;
+				Control root = common_container;
 
-					// Generate the leave messages
-					while (walk != common_container) {
-						if (walk == value) {
-							root = value;
-							fire_enter = false;
-							break;
-						}
-						walk.FireLeave ();
-						/* clear our idea of the active control as we go back up */
-						if (walk is ContainerControl)
-							((ContainerControl)walk).active_control = null;
-
-						if (walk.CausesValidation)
-							validation_chain.Add (walk);
-
-						walk = walk.Parent;
+				// Generate the leave messages
+				while (walk != common_container) {
+					if (walk == value) {
+						root = value;
+						fire_enter = false;
+						break;
 					}
+					walk.FireLeave ();
+					/* clear our idea of the active control as we go back up */
+					if (walk is ContainerControl)
+						((ContainerControl)walk).active_control = null;
 
-					for (int i = 0; i < validation_chain.Count; i ++) {
-						if (!ValidateControl ((Control)validation_chain[i])) {
-							value = (Control)validation_chain[i];
-							fire_enter = true;
-						}
-					}
+					if (walk.CausesValidation)
+						validation_chain.Add (walk);
 
-					if (fire_enter) {
-						walk = value;
-						while (walk != root) {
-							chain.Add (walk);
-							walk = walk.Parent;
-						}
+					walk = walk.Parent;
+				}
 
-						for (int i = chain.Count - 1; i >= 0; i--) {
-							walk = (Control) chain [i];
-							walk.FireEnter ();
-						}
-					}
-
-					walk = this;
-					Control ctl = this;
-					while (walk != null) {
-						if (walk.Parent is ContainerControl) {
-							((ContainerControl) walk.Parent).active_control = ctl;
-							ctl = walk.Parent;
-						}
-						walk = walk.Parent;
+				for (int i = 0; i < validation_chain.Count; i ++) {
+					if (!ValidateControl ((Control)validation_chain[i])) {
+						value = (Control)validation_chain[i];
+						fire_enter = true;
 					}
 				}
 
 				active_control = value;
+
+				if (fire_enter) {
+					walk = value;
+					while (walk != root) {
+						chain.Add (walk);
+						walk = walk.Parent;
+					}
+
+					for (int i = chain.Count - 1; i >= 0; i--) {
+						walk = (Control) chain [i];
+						walk.FireEnter ();
+					}
+				}
+
+				walk = this;
+				Control ctl = this;
+				while (walk != null) {
+					if (walk.Parent is ContainerControl) {
+						((ContainerControl) walk.Parent).active_control = ctl;
+						ctl = walk.Parent;
+					}
+					walk = walk.Parent;
+				}
 
 				if (this is Form)
 					CheckAcceptButton();

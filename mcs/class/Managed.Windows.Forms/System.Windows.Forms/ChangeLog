@@ -1,3 +1,9 @@
+2007-05-30  Andreia Gaita  <avidigal@novell.com>
+
+	ContainerControl.cs: Raise Validation and Enter/Leave events
+	even if there is no Form and set active_control earlier, just
+	before firing Enter events (toshok's patches). Fixes #80647.
+
 2007-05-30  Jackson Harper  <jackson@ximian.com>
 
 	* TextControl.cs: Redid the pageup/pagedown a little to simplify
