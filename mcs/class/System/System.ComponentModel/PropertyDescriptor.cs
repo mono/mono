@@ -168,13 +168,13 @@ namespace System.ComponentModel
 		[MonoNotSupported ("")]
 		protected override void FillAttributes (IList attributeList)
 		{
-			throw new NotImplementedException ();
+			return base.FillAttributes (attributeList);
 		}
 
 		[MonoNotSupported ("")]
 		protected override Object GetInvocationTarget (Type type, object instance)
 		{
-			throw new NotImplementedException ();
+			return base.GetInvocationTarget (type, instance);
 		}
 
 		[MonoNotSupported("")]
