@@ -1,3 +1,8 @@
+2007-05-31  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* BaseValidator.cs: RegisterValidatorCommonScript, fixed type passed
+	to ClientScriptManager
+
 2007-05-29 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* ObjectDataSourceView.cs:

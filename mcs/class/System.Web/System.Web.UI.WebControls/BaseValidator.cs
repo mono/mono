@@ -431,9 +431,9 @@ namespace System.Web.UI.WebControls {
 
 		protected void RegisterValidatorCommonScript ()
 		{
-			if (!Page.ClientScript.IsClientScriptIncludeRegistered (GetType (), "Mono-System.Web-ValidationClientScriptBlock"))
-				Page.ClientScript.RegisterClientScriptInclude (GetType (), "Mono-System.Web-ValidationClientScriptBlock",
-					Page.ClientScript.GetWebResourceUrl (GetType (), 
+			if (!Page.ClientScript.IsClientScriptIncludeRegistered (typeof (BaseValidator), "Mono-System.Web-ValidationClientScriptBlock"))
+				Page.ClientScript.RegisterClientScriptInclude (typeof (BaseValidator), "Mono-System.Web-ValidationClientScriptBlock",
+					Page.ClientScript.GetWebResourceUrl (typeof (BaseValidator), 
 #if NET_2_0
 						"WebUIValidation_2.0.js"));
 #else		
