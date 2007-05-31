@@ -55,6 +55,7 @@ namespace System.Windows.Forms
 #if NET_2_0
 		internal ProgressBarStyle style;
 		Timer marquee_timer;
+		bool right_to_left_layout;
 #endif
 
 #if NET_2_0
@@ -64,6 +65,8 @@ namespace System.Windows.Forms
 
 		#region events
 
+		static object RightToLeftLayoutChangedEvent = new object ();
+			
 #if ONLY_1_1
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
@@ -80,6 +83,15 @@ namespace System.Windows.Forms
 			remove { base.BackgroundImageChanged -= value; }
 		}
 		
+#if NET_2_0
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public event EventHandler BackgroundImageLayoutChanged {
+			add	{ base.BackgroundImageLayoutChanged += value; }
+			remove { base.BackgroundImageLayoutChanged -= value; }
+		}
+#endif
+			
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler CausesValidationChanged {
@@ -151,7 +163,23 @@ namespace System.Windows.Forms
 			add { base.Leave += value; }
 			remove { base.Leave -= value; }
 		}
-		
+
+#if NET_2_0
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		[Browsable(false)]
+		public event MouseEventHandler MouseDoubleClick {
+			add { base.MouseDoubleClick += value; }
+			remove { base.MouseDoubleClick -= value; }
+		}
+			
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public event EventHandler PaddingChanged {
+			add { base.PaddingChanged += value; }
+			remove { base.PaddingChanged -= value; }
+		}
+#endif
+			
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event PaintEventHandler Paint {
@@ -165,6 +193,12 @@ namespace System.Windows.Forms
 		public new event EventHandler RightToLeftChanged {
 			add { base.RightToLeftChanged += value; }
 			remove { base.RightToLeftChanged -= value; }
+		}
+#endif
+#if NET_2_0
+		public new event EventHandler RightToLeftLayoutChanged {
+			add { Events.AddHandler (RightToLeftLayoutChangedEvent, value); }
+			remove { Events.RemoveHandler (RightToLeftLayoutChangedEvent, value); }
 		}
 #endif
 		
@@ -220,6 +254,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+#if ONLY_1_1
 		// Setting this property in MS .Net 1.1 does not have any visual effect and it
 		// does not fire a BackColorChanged event
 		[Browsable (false)]
@@ -229,6 +264,7 @@ namespace System.Windows.Forms
 			get { return base.BackColor; }
 			set { base.BackColor = value; }
 		}
+#endif
 
 		// Setting this property in MS .Net 1.1 does not have any visual effect and it
 		// does not fire a BackgroundImageChanged event
@@ -240,6 +276,14 @@ namespace System.Windows.Forms
 			set { base.BackgroundImage = value; }
 		}
 
+#if NET_2_0
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public override ImageLayout BackgroundImageLayout {
+				get	{ return base.BackgroundImageLayout; }
+				set { base.BackgroundImageLayout = value; }
+		}
+#endif
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new bool CausesValidation
@@ -263,6 +307,13 @@ namespace System.Windows.Forms
 			get { return ThemeEngine.Current.ProgressBarDefaultSize; }
 		}
 
+#if NET_2_0
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		protected override bool DoubleBuffered {
+				get { return base.DoubleBuffered; }
+				set { base.DoubleBuffered = value; }
+		}
+#endif
 		// Setting this property in MS .Net 1.1 does not have any visual effect and it
 		// does not fire a FontChanged event
 		[Browsable (false)]
@@ -326,6 +377,29 @@ namespace System.Windows.Forms
 			}
 		}
 
+#if NET_2_0
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public Padding Padding {
+			get { return base.Padding; }
+			set { base.Padding = value; }
+		}
+			
+		[Localizable(true)]
+		[DefaultValue(false)]
+		[MonoTODO ("Layout is currently always from left to right")]
+		public virtual bool RightToLeftLayout {
+				get { return right_to_left_layout;}
+				set	{ 
+					if (right_to_left_layout != value) {
+						right_to_left_layout = value;
+						OnRightToLeftLayoutChanged (EventArgs.Empty);
+					}
+				}		
+		}
+#endif
+			
 #if ONLY_1_1
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
@@ -458,6 +532,31 @@ namespace System.Windows.Forms
 			UpdateAreas ();
 		}
 
+#if NET_2_0
+		protected override void OnBackColorChanged (EventArgs e)
+		{
+			base.OnBackColorChanged (e);
+		}
+			
+		protected override void OnForeColorChanged (EventArgs e)
+		{
+			base.OnForeColorChanged (e);
+		}
+			
+		protected override void OnHandleDestroyed (EventArgs e)
+		{
+			base.OnHandleDestroyed (e);
+		}
+			
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		protected virtual void OnRightToLeftLayoutChanged(EventArgs e)
+		{
+				EventHandler eh = (EventHandler) Events [RightToLeftLayoutChangedEvent];
+				if (eh != null)
+					eh (this, e);
+		}
+#endif
+			
 		public void PerformStep ()
 		{
 			if (Value >= Maximum)
