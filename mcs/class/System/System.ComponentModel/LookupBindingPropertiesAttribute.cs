@@ -34,7 +34,8 @@ using System;
 
 namespace System.ComponentModel
 {	
-	public class LookupBindingPropertiesAttribute
+	[AttributeUsage(AttributeTargets.Class)]
+	public class LookupBindingPropertiesAttribute : Attribute
 	{
 		private string data_source;
 		private string display_member;
