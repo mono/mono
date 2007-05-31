@@ -1,3 +1,7 @@
+2007-05-31  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* LookupBindingPropertiesAttributeTest.cs: Added.
+
 2007-05-10  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* MaskedTextProviderTest.cs: New test.
