@@ -1,3 +1,8 @@
+2007-05-31  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Application.cs: Try to avoid NRE when Assembly.GetEntryAssembly is
+	  null (strange, but it seems to happen when running unit tests).
+
 2007-05-30  Andreia Gaita  <avidigal@novell.com>
 
 	* ContainerControl.cs: Set active_control even earlier, before 

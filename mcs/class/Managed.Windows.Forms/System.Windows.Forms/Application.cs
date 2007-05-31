@@ -198,13 +198,19 @@ namespace System.Windows.Forms {
 
 		public static string CompanyName {
 			get {
-				AssemblyCompanyAttribute[] attrs = (AssemblyCompanyAttribute[]) Assembly.GetEntryAssembly().GetCustomAttributes(typeof(AssemblyCompanyAttribute), true);
+				Assembly assembly = Assembly.GetEntryAssembly ();
+				if (assembly == null)
+					assembly = Assembly.GetCallingAssembly ();
+				if (assembly == null)
+					return string.Empty;
+					
+				AssemblyCompanyAttribute[] attrs = (AssemblyCompanyAttribute[]) assembly.GetCustomAttributes(typeof(AssemblyCompanyAttribute), true);
 				
 				if ((attrs != null) && attrs.Length>0) {
 					return attrs[0].Company;
 				}
 
-				return Assembly.GetEntryAssembly().GetName().Name;
+				return assembly.GetName().Name;
 			}
 		}
 
@@ -249,13 +255,19 @@ namespace System.Windows.Forms {
 
 		public static string ProductName {
 			get {
-				AssemblyProductAttribute[] attrs = (AssemblyProductAttribute[]) Assembly.GetEntryAssembly().GetCustomAttributes(typeof(AssemblyProductAttribute), true);
+				Assembly assembly = Assembly.GetEntryAssembly ();
+				if (assembly == null)
+					assembly = Assembly.GetCallingAssembly ();
+				if (assembly == null)
+					return string.Empty;
+					
+				AssemblyProductAttribute[] attrs = (AssemblyProductAttribute[]) assembly.GetCustomAttributes(typeof(AssemblyProductAttribute), true);
 				
 				if ((attrs != null) && attrs.Length>0) {
 					return attrs[0].Product;
 				}
 
-				return Assembly.GetEntryAssembly().GetName().Name;
+				return assembly.GetName ().Name;
 			}
 		}
 
@@ -263,7 +275,13 @@ namespace System.Windows.Forms {
 			get {
 				String version;
 
-				version = Assembly.GetEntryAssembly().GetName().Version.ToString();
+				Assembly assembly = Assembly.GetEntryAssembly ();
+				if (assembly == null)
+					assembly = Assembly.GetCallingAssembly ();
+				if (assembly == null)
+					return string.Empty;
+
+				version = assembly.GetName ().Version.ToString ();
 
 				return version;
 			}
