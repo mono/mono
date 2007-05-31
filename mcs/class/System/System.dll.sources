@@ -189,7 +189,9 @@ System.ComponentModel/Component.cs
 System.ComponentModel/ComponentEditor.cs
 System.ComponentModel/ComponentResourceManager.cs
 System.ComponentModel/Container.cs
+System.ComponentModel/ContainerFilterService.cs
 System.ComponentModel/CultureInfoConverter.cs
+System.ComponentModel/CustomTypeDescriptor.cs
 System.ComponentModel/DataObjectAttribute.cs
 System.ComponentModel/DataObjectFieldAttribute.cs
 System.ComponentModel/DataObjectMethodAttribute.cs
@@ -312,6 +314,8 @@ System.ComponentModel/InheritanceLevel.cs
 System.ComponentModel/InitializationEventAttribute.cs
 System.ComponentModel/INotifyPropertyChanged.cs
 System.ComponentModel/InstallerTypeAttribute.cs
+System.ComponentModel/InstanceCreationEditor.cs
+System.ComponentModel/InvalidAsynchronousStateException.cs
 System.ComponentModel/Int16Converter.cs
 System.ComponentModel/Int32Converter.cs
 System.ComponentModel/Int64Converter.cs
@@ -346,7 +350,10 @@ System.ComponentModel/MaskedTextProvider.cs
 System.ComponentModel/MaskedTextResultHint.cs
 System.ComponentModel/MemberDescriptor.cs
 System.ComponentModel/MergablePropertyAttribute.cs
+System.ComponentModel/MultilineStringConverter.cs
+System.ComponentModel/NestedContainer.cs
 System.ComponentModel/NotifyParentPropertyAttribute.cs
+System.ComponentModel/NullableConverter.cs
 System.ComponentModel/ParenthesizePropertyNameAttribute.cs
 System.ComponentModel/PasswordPropertyTextAttribute.cs
 System.ComponentModel/PropertyChangedEventArgs.cs
@@ -379,6 +386,8 @@ System.ComponentModel/ToolboxItemFilterAttribute.cs
 System.ComponentModel/ToolboxItemFilterType.cs
 System.ComponentModel/TypeConverterAttribute.cs
 System.ComponentModel/TypeConverter.cs
+System.ComponentModel/TypeDescriptionProvider.cs
+System.ComponentModel/TypeDescriptionProviderAttribute.cs
 System.ComponentModel/TypeDescriptor.cs
 System.ComponentModel/TypeListConverter.cs
 System.ComponentModel/UInt16Converter.cs

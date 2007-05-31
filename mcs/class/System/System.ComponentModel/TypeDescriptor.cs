@@ -52,6 +52,40 @@ public sealed class TypeDescriptor
 	}
 
 #if NET_2_0
+	[MonoNotSupported ("")]
+	[EditorBrowsable (EditorBrowsableState.Advanced)]
+	public static Type ComObjectType {
+		get { throw new NotImplementedException (); }
+	}
+
+	[MonoNotSupported("")]
+	[EditorBrowsable (EditorBrowsableState.Advanced)]
+	public static TypeDescriptionProvider AddAttributes (object instance, params Attribute [] attributes)
+	{
+		throw new NotImplementedException ();
+	}
+
+	[MonoNotSupported("")]
+	[EditorBrowsable (EditorBrowsableState.Advanced)]
+	public static TypeDescriptionProvider AddAttributes (Type type, params Attribute [] attributes)
+	{
+		throw new NotImplementedException ();
+	}
+
+	[MonoNotSupported("")]
+	[EditorBrowsable (EditorBrowsableState.Advanced)]
+	public static void AddProvider (TypeDescriptionProvider provider, object instance)
+	{
+		throw new NotImplementedException ();
+	}
+
+	[MonoNotSupported("")]
+	[EditorBrowsable (EditorBrowsableState.Advanced)]
+	public static void AddProvider (TypeDescriptionProvider provider, Type type)
+	{
+		throw new NotImplementedException ();
+	}
+
 	[MonoNotSupported("")]
 	public static object CreateInstance (IServiceProvider provider, Type objectType, Type [] argTypes, object [] args)
 	{
@@ -60,6 +94,9 @@ public sealed class TypeDescriptor
 #endif
 
 	[MonoTODO]
+#if NET_2_0
+	[EditorBrowsable (EditorBrowsableState.Advanced)]
+#endif
 	public static void AddEditorTable (Type editorBaseType, Hashtable table)
 	{
 		throw new NotImplementedException ();
@@ -84,7 +121,11 @@ public sealed class TypeDescriptor
 	public static EventDescriptor CreateEvent (Type componentType,
 						   string name,
 						   Type type,
+#if NET_2_0
+						   params Attribute [] attributes)
+#else
 						   Attribute [] attributes)
+#endif
 	{
 		return new ReflectionEventDescriptor (componentType, name, type, attributes);
 	}
@@ -92,7 +133,11 @@ public sealed class TypeDescriptor
 	[ReflectionPermission (SecurityAction.LinkDemand, TypeInformation = true, MemberAccess = true)]
 	public static EventDescriptor CreateEvent (Type componentType,
 						   EventDescriptor oldEventDescriptor,
+#if NET_2_0
+						   params Attribute [] attributes)
+#else
 						   Attribute [] attributes)
+#endif
 	{
 		return new ReflectionEventDescriptor (componentType, oldEventDescriptor, attributes);
 	}
@@ -101,7 +146,11 @@ public sealed class TypeDescriptor
 	public static PropertyDescriptor CreateProperty (Type componentType,
 							 string name,
 							 Type type,
+#if NET_2_0
+							 params Attribute [] attributes)
+#else
 							 Attribute [] attributes)
+#endif
 	{
 		return new ReflectionPropertyDescriptor (componentType, name, type, attributes);
 	}
@@ -109,7 +158,11 @@ public sealed class TypeDescriptor
 	[ReflectionPermission (SecurityAction.LinkDemand, TypeInformation = true, MemberAccess = true)]
 	public static PropertyDescriptor CreateProperty (Type componentType,
 							 PropertyDescriptor oldPropertyDescriptor,
+#if NET_2_0
+							 params Attribute [] attributes)
+#else
 							 Attribute [] attributes)
+#endif
 	{
 		return new ReflectionPropertyDescriptor (componentType, oldPropertyDescriptor, attributes);
 	}
@@ -127,6 +180,9 @@ public sealed class TypeDescriptor
 		return GetAttributes (component, false);
 	}
 
+#if NET_2_0
+	[EditorBrowsable (EditorBrowsableState.Advanced)]
+#endif
 	public static AttributeCollection GetAttributes (object component, bool noCustomTypeDesc)
 	{
 		if (component == null)
@@ -148,6 +204,9 @@ public sealed class TypeDescriptor
 		return GetClassName (component, false);
 	}
 
+#if NET_2_0
+	[EditorBrowsable (EditorBrowsableState.Advanced)]
+#endif
 	public static string GetClassName (object component, bool noCustomTypeDesc)
 	{
 		if (component == null)
@@ -170,6 +229,9 @@ public sealed class TypeDescriptor
 		return GetComponentName (component, false);
 	}
 
+#if NET_2_0
+	[EditorBrowsable (EditorBrowsableState.Advanced)]
+#endif
 	public static string GetComponentName (object component, bool noCustomTypeDesc)
 	{
 		if (component == null)
@@ -208,6 +270,9 @@ public sealed class TypeDescriptor
 		return GetConverter (component, false);
 	}
 
+#if NET_2_0
+	[EditorBrowsable (EditorBrowsableState.Advanced)]
+#endif
 	public static TypeConverter GetConverter (object component, bool noCustomTypeDesc)
 	{
 		if (component == null)
@@ -347,6 +412,9 @@ public sealed class TypeDescriptor
 		return GetDefaultEvent (component, false);
 	}
 
+#if NET_2_0
+	[EditorBrowsable (EditorBrowsableState.Advanced)]
+#endif
 	public static EventDescriptor GetDefaultEvent (object component, bool noCustomTypeDesc)
 	{
 		if (!noCustomTypeDesc && (component is ICustomTypeDescriptor))
@@ -370,6 +438,9 @@ public sealed class TypeDescriptor
 		return GetDefaultProperty (component, false);
 	}
 
+#if NET_2_0
+	[EditorBrowsable (EditorBrowsableState.Advanced)]
+#endif
 	public static PropertyDescriptor GetDefaultProperty (object component, bool noCustomTypeDesc)
 	{
 		if (!noCustomTypeDesc && (component is ICustomTypeDescriptor))
@@ -421,6 +492,9 @@ public sealed class TypeDescriptor
 		return GetEditor (component, editorBaseType, false);
 	}
 
+#if NET_2_0
+	[EditorBrowsable (EditorBrowsableState.Advanced)]
+#endif
 	public static object GetEditor (object component, Type editorBaseType, bool noCustomTypeDesc)
 	{
 		if (component == null)
@@ -461,6 +535,9 @@ public sealed class TypeDescriptor
 		return GetEvents (component, attributes, false);
 	}
 
+#if NET_2_0
+	[EditorBrowsable (EditorBrowsableState.Advanced)]
+#endif
 	public static EventDescriptorCollection GetEvents (object component, bool noCustomTypeDesc)
 	{
 		if (!noCustomTypeDesc && (component is ICustomTypeDescriptor))
@@ -479,6 +556,9 @@ public sealed class TypeDescriptor
 		return GetTypeInfo (componentType).GetEvents (attributes);
 	}
 
+#if NET_2_0
+	[EditorBrowsable (EditorBrowsableState.Advanced)]
+#endif
 	public static EventDescriptorCollection GetEvents (object component, Attribute [] attributes, bool noCustomTypeDesc)
 	{
 		if (!noCustomTypeDesc && (component is ICustomTypeDescriptor))
@@ -523,6 +603,9 @@ public sealed class TypeDescriptor
 		}
 	}
 
+#if NET_2_0
+	[EditorBrowsable (EditorBrowsableState.Advanced)]
+#endif
 	public static PropertyDescriptorCollection GetProperties (object component, bool noCustomTypeDesc)
 	{
 		if (component == null)
@@ -546,41 +629,74 @@ public sealed class TypeDescriptor
 
 #if NET_2_0
 	[MonoNotSupported ("")]
+	[EditorBrowsable (EditorBrowsableState.Advanced)]
+	public static TypeDescriptionProvider GetProvider (object instance)
+	{
+		throw new NotImplementedException ();
+	}
+
+	[MonoNotSupported ("")]
+	[EditorBrowsable (EditorBrowsableState.Advanced)]
+	public static TypeDescriptionProvider GetProvider (Type type)
+	{
+		throw new NotImplementedException ();
+	}
+
+	[MonoNotSupported ("")]
+	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public static Type GetReflectionType (object instance)
 	{
 		throw new NotImplementedException ();
 	}
 
 	[MonoNotSupported ("")]
+	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public static Type GetReflectionType (Type type)
 	{
 		throw new NotImplementedException ();
 	}
 
 	[MonoNotSupported("Associations not supported")]
+	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public static void CreateAssociation (object primary, object secondary)
 	{
 		throw new NotImplementedException ();
 	}
 
 	[MonoNotSupported ("Associations not supported")]
+	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public static object GetAssociation (Type type, object primary)
 	{
 		throw new NotImplementedException ();
 	}
 
 	[MonoNotSupported ("Associations not supported")]
+	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public static void RemoveAssociation (object primary, object secondary)
 	{
 		throw new NotImplementedException ();
 	}
 
 	[MonoNotSupported ("Associations not supported")]
+	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public static void RemoveAssociations (object primary)
 	{
 		throw new NotImplementedException ();
 	}
 
+	[MonoNotSupported ("")]
+	[EditorBrowsable (EditorBrowsableState.Advanced)]
+	public static void RemoveProvider (TypeDescriptionProvider provider, object instance)
+	{
+		throw new NotImplementedException ();
+	}
+
+	[MonoNotSupported ("")]
+	[EditorBrowsable (EditorBrowsableState.Advanced)]
+	public static void RemoveProvider (TypeDescriptionProvider provider, Type type)
+	{
+		throw new NotImplementedException ();
+	}
 #endif
 
 	public static void SortDescriptorArray (IList infos)

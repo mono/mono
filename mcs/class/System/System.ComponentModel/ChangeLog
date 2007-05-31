@@ -1,5 +1,15 @@
 2007-05-31  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ContainerFilterService.cs CustomTypeDescriptor.cs
+	  InstanceCreationEditor.cs InvalidAsynchronousStateException.cs
+	  MultilineStringConverter.cs NestedContainer.cs
+	  NullableConverter.cs TypeDescriptionProvider.cs
+	  TypeDescriptionProviderAttribute.cs :
+	  2.0 stubs except for [Obsolete].
+	* TypeDescriptor.cs : added missing 2.0 members.
+
+2007-05-31  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* PropertyDescriptor.cs : oops, wrong fix.
 
 2007-05-31  Atsushi Enomoto  <atsushi@ximian.com>

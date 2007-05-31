@@ -1,8 +1,12 @@
 //
-// (C) 2006 Mainsoft Corporation (http://www.mainsoft.com)
+// NestedContainer.cs
 //
-// Authors:
-//	Konstantin Triger <kostat@mainsoft.com>
+// Author:
+//	Atsushi Enomoto  <atsushi@ximian.com>
+//
+// Copyright (C) 2007 Novell, Inc. http://www.novell.com
+//
+
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -11,10 +15,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -27,18 +31,48 @@
 #if NET_2_0
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace System.ComponentModel
 {
-	public enum DataObjectMethodType
+	public class NestedContainer : Container, INestedContainer
 	{
-		Fill = 0,
-		Select = 1,
-		Update = 2,
-		Insert = 3,
-		Delete = 4
+		IComponent owner;
+
+		[MonoTODO]
+		public NestedContainer (IComponent owner)
+		{
+			if (owner == null)
+				throw new ArgumentNullException ("component");
+			this.owner = owner;
+		}
+
+		[MonoTODO]
+		public IComponent Owner {
+			get { return owner; }
+		}
+
+		[MonoTODO]
+		protected virtual string OwnerName {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		protected override ISite CreateSite (IComponent component, string name)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		protected override void Dispose (bool disposing)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		protected override object GetService (Type serviceType)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }
 
