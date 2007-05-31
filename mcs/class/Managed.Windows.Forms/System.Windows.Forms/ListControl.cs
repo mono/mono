@@ -369,6 +369,11 @@ namespace System.Windows.Forms
 		private void ConnectToDataSource ()
 		{
 			if (data_source == null) {
+				if (data_manager != null) { // Disconnect handlers from previous manager
+					data_manager.PositionChanged -= new EventHandler (OnPositionChanged);
+					data_manager.ItemChanged -= new ItemChangedEventHandler (OnItemChanged);
+				} 
+
 				data_manager = null;
 				return;
 			}

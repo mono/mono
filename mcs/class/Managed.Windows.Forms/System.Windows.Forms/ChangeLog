@@ -1,3 +1,9 @@
+2007-05-31  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListControl.cs: Disconnect PositionChanged and ItemChanged
+	handlers from previous data manager when DataSource is set to
+	null. Fixes #81771.
+
 2007-05-31  Jackson Harper  <jackson@ximian.com>
 
 	* TextBoxBase.cs: These seem to be the correct values.
