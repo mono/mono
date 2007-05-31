@@ -1,3 +1,17 @@
+2007-05-31  Zoltan Varga  <vargaz@gmail.com>
+
+	* domain-internals.h (MonoDomain): Add two new hash tables to store delegate
+	invoke_impl code.
+
+	* object-internals.h (_MonoDelegate): Reflect changes to managed object layout.
+
+	* object.c (mono_delegate_ctor): Initialize invoke_impl field with an arch
+	dependent trampoline.
+
+	* appdomain.c (MONO_CORLIB_VERSION): Bump corlib version.
+
+	* icall.c (ves_icall_System_Delegate_SetMulticastInvoke): New icall.
+
 2007-05-29  Robert Jordan  <robertj@gmx.net>
 
 	* marshal.[c|h]: add mono_win32_compat_* wrappers. Fixes #81754.
