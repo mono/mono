@@ -1004,6 +1004,8 @@ namespace System.Windows.Forms
 				lastFolder = mwfFileView.CurrentFolder;
 			}
 
+			setFilterIndex = filterIndex;
+
 			CancelEventArgs cancelEventArgs = new CancelEventArgs ();
 
 			cancelEventArgs.Cancel = false;

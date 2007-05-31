@@ -1,3 +1,8 @@
+2007-05-31  Everaldo Canuto  <ecanuto@novell.com>
+
+	* FileDialog.cs: When close dialog with ok set filterindex using combobox
+	value. Fixes #81784.
+
 2007-05-31  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Control.cs: Implement 2.0 scaling methods.
