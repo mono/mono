@@ -231,6 +231,39 @@ namespace MonoTests.System.Xml
 			w.Flush ();
 			AssertEquals ("<root />", sb.ToString ());
 		}
+
+		[Test]
+		public void NewLineOnAttributesMixedContent ()
+		{
+			StringWriter sw = new StringWriter ();
+			XmlWriterSettings s = new XmlWriterSettings ();
+			s.NewLineOnAttributes = true;
+			s.OmitXmlDeclaration = true;
+			XmlWriter w = XmlWriter.Create (sw, s);
+			w.WriteStartElement ("root");
+			w.WriteAttributeString ("a", "v");
+			w.WriteAttributeString ("b", "x");
+			w.WriteString ("some string");
+			w.WriteEndElement ();
+			w.Close ();
+			AssertEquals ("#1", "<root a=\"v\" b=\"x\">some string</root>", sw.ToString ());
+
+			// mixed content: bug #81770
+			string expected = "<root>some string<mixed\n    a=\"v\"\n    b=\"x\">some string</mixed></root>";
+			s.Indent = true;
+			sw = new StringWriter ();
+			w = XmlWriter.Create (sw, s);
+			w.WriteStartElement ("root");
+			w.WriteString ("some string");
+			w.WriteStartElement ("mixed");
+			w.WriteAttributeString ("a", "v");
+			w.WriteAttributeString ("b", "x");
+			w.WriteString ("some string");
+			w.WriteEndElement ();
+			w.WriteEndElement ();
+			w.Close ();
+			AssertEquals ("#2", expected, sw.ToString ());
+		}
 	}
 }
 #endif

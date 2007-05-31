@@ -1,3 +1,7 @@
+2007-05-31  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlWriterSettingsTests.cs : added test for NewLineOnAttributes.
+
 2007-05-26  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* XmlWriterTests.cs: Renamed Close* tests to Create*, and improved

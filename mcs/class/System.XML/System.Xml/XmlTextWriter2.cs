@@ -839,7 +839,7 @@ namespace Mono.Xml
 			}
 
 			if (indent_attributes)
-				WriteIndent ();
+				WriteIndentAttribute ();
 			else if (state != WriteState.Start)
 				writer.Write (' ');
 
@@ -1223,26 +1223,33 @@ namespace Mono.Xml
 
 		void WriteIndent ()
 		{
-			WriteIndentCore (0);
+			WriteIndentCore (0, false);
 		}
 
 		void WriteIndentEndElement ()
 		{
-			WriteIndentCore (-1);
+			WriteIndentCore (-1, false);
 		}
 
-		void WriteIndentCore (int nestFix)
+		void WriteIndentAttribute ()
+		{
+			if (!WriteIndentCore (0, true))
+				writer.Write (' '); // space is required instead.
+		}
+
+		bool WriteIndentCore (int nestFix, bool attribute)
 		{
 			if (!indent)
-				return;
+				return false;
 			for (int i = open_count - 1; i >= 0; i--)
-				if (elements [i].HasSimple)
-					return;
+				if (!attribute && elements [i].HasSimple)
+					return false;
 
 			if (state != WriteState.Start)
 				writer.Write (newline);
 			for (int i = 0; i < open_count + nestFix; i++)
 				writer.Write (indent_string);
+			return true;
 		}
 
 		void OutputAutoStartDocument ()
