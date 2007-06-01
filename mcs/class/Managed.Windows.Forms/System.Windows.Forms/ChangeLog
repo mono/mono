@@ -1,3 +1,8 @@
+2007-06-01  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Control.cs: Perform layout when AutoSize changes.
+	* Form.cs: Implement AutoSizing.
+
 2007-06-01  Chris Toshok  <toshok@ximian.com>
 
 	* DataGrid.cs: remove the XXX'ed check at the top of

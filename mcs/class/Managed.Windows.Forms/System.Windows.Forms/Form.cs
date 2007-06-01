@@ -146,6 +146,32 @@ namespace System.Windows.Forms {
 			return cea.Cancel;
 #endif
 		}
+		
+#if NET_2_0
+		internal override Size GetPreferredSizeCore (Size proposedSize)
+		{
+			Size retsize = Size.Empty;
+			
+			foreach (Control child in Controls) {
+				if (child.Dock == DockStyle.Fill) {
+					if (child.Bounds.Right > retsize.Width)
+						retsize.Width = child.Bounds.Right;
+				} 
+				else if (child.Dock != DockStyle.Top && child.Dock != DockStyle.Bottom && (child.Anchor & AnchorStyles.Right) == 0 && (child.Bounds.Right + child.Margin.Right) > retsize.Width)
+					retsize.Width = child.Bounds.Right + child.Margin.Right;
+
+				if (child.Dock == DockStyle.Fill) {
+					if (child.Bounds.Bottom > retsize.Height)
+						retsize.Height = child.Bounds.Bottom;
+				}
+				else if (child.Dock != DockStyle.Left && child.Dock != DockStyle.Right && (child.Anchor & AnchorStyles.Bottom) == 0 && (child.Bounds.Bottom + child.Margin.Bottom) > retsize.Height)
+					retsize.Height = child.Bounds.Bottom + child.Margin.Bottom;
+			}
+
+			return retsize;
+		}
+#endif
+
 		internal void OnActivatedInternal ()
 		{
 			OnActivated (EventArgs.Empty);
@@ -444,6 +470,27 @@ namespace System.Windows.Forms {
 				base.AutoScroll = value;
 			}
 		}
+
+#if NET_2_0
+		public override bool AutoSize {
+			get { return base.AutoSize; }
+			set { base.AutoSize = value; }
+		}
+		
+		[Localizable (true)]
+		public AutoSizeMode AutoSizeMode {
+			get { return base.GetAutoSizeMode (); }
+			set { 
+				if (base.GetAutoSizeMode () != value) {
+					if (!Enum.IsDefined (typeof (AutoSizeMode), value))
+						throw new InvalidEnumArgumentException (string.Format ("Enum argument value '{0}' is not valid for AutoSizeMode", value));
+
+					base.SetAutoSizeMode (value);
+					PerformLayout (this, "AutoSizeMode");
+				}
+			}
+		}
+#endif
 
 		public override Color BackColor {
 			get {
@@ -2965,6 +3012,26 @@ namespace System.Windows.Forms {
 		protected override void OnLayout (LayoutEventArgs levent)
 		{
 			base.OnLayout (levent);
+			
+			if (this.AutoSize) {
+				if (this.AutoSizeMode == AutoSizeMode.GrowAndShrink)
+					this.ClientSize = GetPreferredSizeCore (this.ClientSize);
+				else {
+					Size s = GetPreferredSizeCore (this.ClientSize);
+					
+					if (this.ClientSize.Height > s.Height)
+						s.Height = this.ClientSize.Height;
+					if (this.ClientSize.Width > s.Width)
+						s.Width = this.ClientSize.Width;
+						
+					if (!s.Equals (this.ClientSize)) {
+						Size NewSize = InternalSizeFromClientSize (s);
+			
+						if (NewSize != Size.Empty)
+							SetBounds (bounds.X, bounds.Y, NewSize.Width, NewSize.Height, BoundsSpecified.None);
+					}
+				}
+			}
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]

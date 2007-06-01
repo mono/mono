@@ -1757,6 +1757,67 @@ namespace MonoTests.System.Windows.Forms
 			f.Dispose ();
 		}
 
+#if NET_2_0
+		[Test]
+		public void AutoSizeGrowOnly ()
+		{
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+			f.AutoSize = true;
+
+			Button b = new Button ();
+			b.Size = new Size (200, 200);
+			b.Location = new Point (200, 200);
+			f.Controls.Add (b);
+
+			f.Show ();
+
+			Assert.AreEqual (new Size (403, 403), f.ClientSize, "A1");
+		}
+
+		[Test]
+		public void AutoSizeReset ()
+		{
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+
+			Button b = new Button ();
+			b.Size = new Size (200, 200);
+			b.Location = new Point (200, 200);
+			f.Controls.Add (b);
+
+			f.Show ();
+
+			Size start_size = f.ClientSize;
+
+			f.AutoSize = true;
+			Assert.AreEqual (new Size (403, 403), f.ClientSize, "A1");
+
+			f.AutoSize = false;
+			Assert.AreEqual (start_size, f.ClientSize, "A2");
+		}
+
+		[Test]
+		public void AutoSizeGrowAndShrink ()
+		{
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+			f.AutoSize = true;
+			f.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+
+			f.Show ();
+
+			Assert.AreEqual (SystemInformation.MinimumWindowSize, f.Size, "A1");
+
+			Button b = new Button ();
+			b.Size = new Size (200, 200);
+			b.Location = new Point (0, 0);
+			f.Controls.Add (b);
+
+			Assert.AreEqual (new Size (203, 203), f.ClientSize, "A2");
+		}
+#endif
+
 		private class MockForm : Form
 		{
 			public bool CloseOnLoad {

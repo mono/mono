@@ -2102,6 +2102,12 @@ namespace System.Windows.Forms
 			set {
 				if (this.auto_size != value) {
 					auto_size = value;
+					
+					// If we're turning this off, reset our size
+					if (!value)
+						Size = explicit_bounds.Size;
+						
+					PerformLayout (this, "AutoSize");
 					OnAutoSizeChanged (EventArgs.Empty);
 				}
 			}
