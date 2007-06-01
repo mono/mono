@@ -114,7 +114,11 @@ namespace MonoTests.System.Windows.Forms
 			// Height: autosize = false
 			Assert.IsFalse (l1.Height.Equals (l2.Height), "#7");
 			Assert.IsTrue (l1.Height.Equals (l3.Height), "#8");
+#if NET_2_0
+			Assert.IsTrue ((l4.Height > l1.Height), "#9");
+#else
 			Assert.IsTrue (l1.Height.Equals (l4.Height), "#9");
+#endif
 			
 			// Width: autosize = false
 			Assert.IsFalse (l1.Width.Equals (l2.Width), "#10");
