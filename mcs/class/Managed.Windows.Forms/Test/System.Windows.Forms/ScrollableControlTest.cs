@@ -19,6 +19,23 @@ namespace MonoTests.System.Windows.Forms
 	public class ScrollableControlTest
 	{
 		[Test]
+		public void ResizeAnchoredTest ()
+		{
+			ScrollableControl sc = new ScrollableControl ();
+			object h = sc.Handle;
+			sc.Size = new Size (23, 45);
+			Label lbl = new Label ();
+			lbl.Anchor = AnchorStyles.Bottom | AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+			lbl.Size = sc.ClientSize;
+			sc.Controls.Add (lbl);
+			sc.Height *= 2;
+			sc.Height *= 2;
+			Assert.AreEqual (lbl.Location, Point.Empty, "#1");
+			Assert.AreEqual (lbl.Size, sc.ClientSize, "#2");
+			
+			TestHelper.RemoveWarning (h);
+		}
+		[Test]
 		public void AutoSize ()
 		{
 			ScrollableControl sc = new ScrollableControl ();

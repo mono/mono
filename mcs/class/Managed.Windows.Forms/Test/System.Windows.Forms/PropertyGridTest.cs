@@ -47,6 +47,45 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (0, pg.SelectedObjects.Length, "#B3");
 		}
 
+		[Test]
+		public void SelectedObject_Null2 ()
+		{
+			PropertyGrid pg = new PropertyGrid ();
+			EventLogger log = new EventLogger (pg);
+			
+			Assert.IsNull (pg.SelectedObject, "#A1");
+			Assert.IsNotNull (pg.SelectedObjects, "#A2");
+			Assert.AreEqual (0, pg.SelectedObjects.Length, "#A3");
+			Assert.IsNull (pg.SelectedGridItem, "A4");
+			
+			pg.SelectedObject = new TextBox ();
+			Assert.IsNotNull (pg.SelectedObject, "#B1");
+			Assert.IsNotNull (pg.SelectedObjects, "#B2");
+			Assert.AreEqual (1, pg.SelectedObjects.Length, "#B3");
+			Assert.IsNotNull (pg.SelectedGridItem, "B4");
+			Assert.AreEqual (1, log.EventsRaised, "B5");
+			Assert.AreEqual ("SelectedObjectsChanged", log.EventsJoined (";"), "B6");
+
+			pg.SelectedObject = null;
+			Assert.IsNull (pg.SelectedObject, "#C1");
+			Assert.IsNotNull (pg.SelectedObjects, "#C2");
+			Assert.AreEqual (0, pg.SelectedObjects.Length, "#C3");
+			Assert.IsNull (pg.SelectedGridItem, "C4");
+			Assert.AreEqual (2, log.EventsRaised, "B5");
+			Assert.AreEqual ("SelectedObjectsChanged;SelectedObjectsChanged", log.EventsJoined (";"), "B6");
+			
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException), "GridItem specified to PropertyGrid.SelectedGridItem must be a valid GridItem.")]
+		public void SelectedGridItem_Null ()
+		{
+			PropertyGrid pg = new PropertyGrid ();
+			pg.SelectedObject = new TextBox ();
+			Assert.IsNotNull (pg.SelectedGridItem, "#1");
+			pg.SelectedGridItem = null;
+		}
+
 		[Test] // bug #79615
 		public void SelectedObjects_Multiple ()
 		{
