@@ -3,6 +3,10 @@
 	* CalendarTest.cs : test for bug #81783 and AddYears() for leap year
 	  (similar issue).
 
+2007-05-31  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* DateTimeFormatInfo.cs: Added EraName.
+
 2007-05-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* IdnMappingTest.cs : new test.

@@ -477,8 +477,8 @@ public class GregorianCalendar : Calendar {
 	/// </param>
 	public GregorianCalendar(GregorianCalendarTypes type) {
 		CalendarType = type;
-		M_AbbrEraNames = new string[] {"C.E."};
-		M_EraNames = new string[] {"Common Era"};
+		M_AbbrEraNames = new string[] {"AD"};
+		M_EraNames = new string[] {"A.D."};
 		if (twoDigitYearMax == 99)
 			twoDigitYearMax = 2029;
 	}

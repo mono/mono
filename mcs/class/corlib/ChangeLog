@@ -1,3 +1,7 @@
+2007-05-31  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* corlib_test.dll.sources : added DateTimeFormatInfoTest.cs.
+
 2007-05-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* corlib_test.dll.sources : added ResourceWriterTest.cs.

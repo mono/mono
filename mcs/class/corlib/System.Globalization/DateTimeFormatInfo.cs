@@ -240,7 +240,15 @@ namespace System.Globalization
 				if (CultureInfo.InvariantCulture.CompareInfo
 					.Compare (eraName, eras [i],
 					CompareOptions.IgnoreCase) == 0)
-					return i;
+					return calendar.Eras [i];
+			
+			eras = calendar.AbbreviatedEraNames;
+			for (int i = 0; i < eras.Length; i++)
+				if (CultureInfo.InvariantCulture.CompareInfo
+					.Compare (eraName, eras [i],
+					CompareOptions.IgnoreCase) == 0)
+					return calendar.Eras [i];
+			
 			return -1;
 		}
 

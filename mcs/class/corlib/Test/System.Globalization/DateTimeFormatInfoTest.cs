@@ -48,6 +48,19 @@ namespace MonoTests.System.Globalization {
 			string [] two = dtfi.GetAllDateTimePatterns ();
 			Assert (one != two);
                 }
+
+		[Test]
+		public void EraName ()
+		{
+			CultureInfo en_US = new CultureInfo ("en-US");
+			DateTimeFormatInfo dtfi = en_US.DateTimeFormat;
+			AssertEquals ("#1", "AD", dtfi.GetAbbreviatedEraName (0));
+			AssertEquals ("#2", "A.D.", dtfi.GetEraName (1));
+			AssertEquals ("#3", 1, dtfi.GetEra ("A.D."));
+			AssertEquals ("#4", 1, dtfi.GetEra ("AD"));
+			AssertEquals ("#5", -1, dtfi.GetEra ("C.E"));
+			AssertEquals ("#6", -1, dtfi.GetEra ("Common Era"));
+		}
 #if !TARGET_JVM
 		[Test]
 		public void Bug78569 ()
@@ -56,7 +69,7 @@ namespace MonoTests.System.Globalization {
 			CultureInfo ci = new CultureInfo ("en-GB");
 			string s = dt.ToString (ci);
 			DateTime dt2 = DateTime.Parse (s, ci);
-			Assert.AreEqual (dt.Month, dt2.Month);
+			AssertEquals ("1", dt.Month, dt2.Month);
 		}
 #endif
         }

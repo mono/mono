@@ -5,6 +5,14 @@
 	  consider that the max days in the target month (for AddYears()
 	  leap year month could matter). Fixed bug #81783.
 
+2007-05-31  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* GregorianCalendar.cs: Change era names from C.E./Common Era 
+	to AD/A.D.
+	* DateTimeFormatInfo.cs: GetEra: search the abbreviated era names
+	as well for the era, and return the era, not the index of the era 
+	in the array.
+
 2007-05-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* IdnMapping.cs : new 2.0 class.
