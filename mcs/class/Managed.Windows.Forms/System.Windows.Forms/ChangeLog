@@ -1,3 +1,10 @@
+2007-06-01  Chris Toshok  <toshok@ximian.com>
+
+	* DataGridTextBoxColumn.cs: TextBox.TextChanged event handler
+	adding idempotent (add/remove in Edit()), and also make sure we
+	don't add it until after we set the text, so it's not tripped in
+	Edit().  Fixes unit test regression.
+
 2007-06-01  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Control.cs: In UpdateBounds, only recalculate anchor distances if the

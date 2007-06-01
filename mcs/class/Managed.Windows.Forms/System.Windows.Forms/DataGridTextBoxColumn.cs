@@ -169,9 +169,9 @@ namespace System.Windows.Forms
 
 		protected internal override void Edit (CurrencyManager source, int rowNum,  Rectangle bounds,  bool _ro, string instantText, bool cellIsVisible)
 		{
-			textbox.TextChanged += new EventHandler (textbox_TextChanged);
-
 			grid.SuspendLayout ();
+
+			textbox.TextChanged -= new EventHandler (textbox_TextChanged);
 
 			textbox.TextAlign = alignment;
 			
@@ -185,6 +185,8 @@ namespace System.Windows.Forms
 			} else {
 				textbox.Text = GetFormattedValue (source, rowNum);
 			}
+
+			textbox.TextChanged += new EventHandler (textbox_TextChanged);
 
 			textbox.ReadOnly = ro;
 			textbox.Bounds = new Rectangle (new Point (bounds.X + offset_x, bounds.Y + offset_y),
