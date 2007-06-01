@@ -2107,7 +2107,6 @@ namespace System.Windows.Forms
 					if (!value)
 						Size = explicit_bounds.Size;
 						
-					PerformLayout (this, "AutoSize");
 					OnAutoSizeChanged (EventArgs.Empty);
 				}
 			}

@@ -474,7 +474,12 @@ namespace System.Windows.Forms {
 #if NET_2_0
 		public override bool AutoSize {
 			get { return base.AutoSize; }
-			set { base.AutoSize = value; }
+			set { 
+				if (base.AutoSize != value) {
+					base.AutoSize = value;
+					PerformLayout (this, "AutoSize");
+				}
+			}
 		}
 		
 		[Localizable (true)]
@@ -3014,22 +3019,24 @@ namespace System.Windows.Forms {
 			base.OnLayout (levent);
 			
 			if (this.AutoSize) {
+				Size new_size;
+				
 				if (this.AutoSizeMode == AutoSizeMode.GrowAndShrink)
-					this.ClientSize = GetPreferredSizeCore (this.ClientSize);
+					new_size = GetPreferredSizeCore (this.ClientSize);
 				else {
-					Size s = GetPreferredSizeCore (this.ClientSize);
-					
-					if (this.ClientSize.Height > s.Height)
-						s.Height = this.ClientSize.Height;
-					if (this.ClientSize.Width > s.Width)
-						s.Width = this.ClientSize.Width;
-						
-					if (!s.Equals (this.ClientSize)) {
-						Size NewSize = InternalSizeFromClientSize (s);
-			
-						if (NewSize != Size.Empty)
-							SetBounds (bounds.X, bounds.Y, NewSize.Width, NewSize.Height, BoundsSpecified.None);
-					}
+					new_size = GetPreferredSizeCore (this.ClientSize);
+
+					if (this.ClientSize.Height > new_size.Height)
+						new_size.Height = this.ClientSize.Height;
+					if (this.ClientSize.Width > new_size.Width)
+						new_size.Width = this.ClientSize.Width;
+				}
+
+				if (!new_size.Equals (this.ClientSize)) {
+					Size NewSize = InternalSizeFromClientSize (new_size);
+		
+					if (NewSize != Size.Empty)
+						SetBounds (bounds.X, bounds.Y, NewSize.Width, NewSize.Height, BoundsSpecified.None);
 				}
 			}
 		}

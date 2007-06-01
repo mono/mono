@@ -1,5 +1,12 @@
 2007-06-01  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Control.cs: Don't perform layout when AutoSize changes.
+	* Form.cs: Perform layout in AutoSize override.  Don't set ClientSize
+	directly when autosizing, use SetBounds with BoundsSpecified.None.
+	Fixes unit tests my last commit broke.
+
+2007-06-01  Jonathan Pobst  <monkey@jpobst.com>
+
 	* Control.cs: Perform layout when AutoSize changes.
 	* Form.cs: Implement AutoSizing.
 
