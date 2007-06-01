@@ -1,3 +1,8 @@
+2007-06-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-x86.c (mono_arch_get_delegate_invoke_impl): Disable the static case for now
+	as it causes regressions.
+
 2007-05-31  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-x86.c (mono_arch_get_delegate_invoke_impl): Implement support for the
