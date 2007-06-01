@@ -9,6 +9,7 @@
 
 using System;
 using System.Reflection; 
+using System.ComponentModel;
 
 using NUnit.Framework;
 
@@ -27,6 +28,31 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (1, methods.Length, "GetAccessors#1");
 			Assert.IsNotNull (methods[0], "GetAccessors#2");
 						
+		}
+
+		[Test]
+		public void GetCustomAttributesInherited ()
+		{
+			Type derived = typeof (Derived);
+			PropertyInfo p = derived.GetProperty ("P");
+
+			Assert.AreEqual (2, p.GetCustomAttributes (true).Length);
+		}
+			
+		class Base {
+			[DesignOnly (true)]
+			[Description ("Desc")]
+			public virtual string P {
+				get { return null; }
+				set { }
+			}
+		}
+
+		class Derived : Base {
+			public override string P {
+				get { return null; }
+				set { }
+			}
 		}
 
 #if NET_2_0
