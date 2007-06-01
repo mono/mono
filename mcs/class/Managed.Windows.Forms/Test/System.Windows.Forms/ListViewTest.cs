@@ -439,6 +439,44 @@ namespace MonoTests.System.Windows.Forms
 			}
 		}
 
+		[Test]
+		public void RedrawItems_Exceptions ()
+		{
+			ListView lvw = new ListView ();
+			lvw.Items.Add ("A");
+			lvw.Items.Add ("B");
+
+			try {
+				lvw.RedrawItems (-1, 1, true);
+				Assert.Fail ("#A1");
+			} catch (ArgumentOutOfRangeException) {
+			}
+
+			try {
+				lvw.RedrawItems (0, -1, true);
+				Assert.Fail ("#A2");
+			} catch (ArgumentOutOfRangeException) {
+			}
+
+			try {
+				lvw.RedrawItems (lvw.Items.Count, 1, true);
+				Assert.Fail ("#A3");
+			} catch (ArgumentOutOfRangeException) {
+			}
+
+			try {
+				lvw.RedrawItems (0, lvw.Items.Count, true);
+				Assert.Fail ("#A4");
+			} catch (ArgumentOutOfRangeException) {
+			}
+
+			try {
+				lvw.RedrawItems (1, 0, true);
+				Assert.Fail ("#A5");
+			} catch (ArgumentException) {
+			}
+		}
+
 		const int item_count = 3;
 		ListViewItem [] items = new ListViewItem [item_count];
 
