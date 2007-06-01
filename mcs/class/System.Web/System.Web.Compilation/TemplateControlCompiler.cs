@@ -64,7 +64,7 @@ namespace System.Web.Compilation
 		internal static CodeVariableReferenceExpression ctrlVar = new CodeVariableReferenceExpression ("__ctrl");
 		
 #if NET_2_0
-		static Regex bindRegex = new Regex (@"Bind\s*\(""(.*?)""\)\s*%>", RegexOptions.Compiled);
+		static Regex bindRegex = new Regex (@"Bind\s*\(""(.*?)""\)\s*%>", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 #endif
 
 		public TemplateControlCompiler (TemplateControlParser parser)
@@ -415,7 +415,7 @@ namespace System.Web.Compilation
 #if NET_2_0
 			bool need_if = false;
 			value = value.Trim ();
-			if (StrUtils.StartsWith (value, "Bind")) {
+			if (StrUtils.StartsWith (value, "Bind", true)) {
 				value = "Eval" + value.Substring (4);
 				need_if = true;
 			}
@@ -503,7 +503,7 @@ namespace System.Web.Compilation
 		{
 			string str = value.Trim ();
 			str = str.Substring (3).Trim ();	// eats "<%#"
-			if (StrUtils.StartsWith (str, "Bind")) {
+			if (StrUtils.StartsWith (str, "Bind", true)) {
 				Match match = bindRegex.Match (str);
 				if (match.Success) {
 					string bindingName = match.Groups [1].Value;

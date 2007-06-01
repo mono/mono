@@ -1,3 +1,8 @@
+2007-06-01  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateControlCompiler.cs: be case-insensitive when looking for
+	Bind requests.
+
 2007-05-29  Marek Habersack  <mhabersack@novell.com>
 
 	* ThemeDirectoryCompiler.cs: pass the skin file's
