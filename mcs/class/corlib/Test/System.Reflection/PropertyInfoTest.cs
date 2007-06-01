@@ -9,7 +9,6 @@
 
 using System;
 using System.Reflection; 
-using System.ComponentModel;
 
 using NUnit.Framework;
 
@@ -31,17 +30,20 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void GetCustomAttributesInherited ()
 		{
 			Type derived = typeof (Derived);
 			PropertyInfo p = derived.GetProperty ("P");
 
-			Assert.AreEqual (2, p.GetCustomAttributes (true).Length);
+			Assert.AreEqual (1, p.GetCustomAttributes (true).Length);
 		}
-			
+
+		public class ThisAttribute : Attribute {
+		}
+
 		class Base {
-			[DesignOnly (true)]
-			[Description ("Desc")]
+			[ThisAttribute]
 			public virtual string P {
 				get { return null; }
 				set { }

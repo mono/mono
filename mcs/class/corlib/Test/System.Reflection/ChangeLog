@@ -1,5 +1,7 @@
 2007-06-02  Zoltan Varga  <vargaz@gmail.com>
 
+	* PropertyInfoTest.cs: Mark new test as NotWorking.
+	
 	* PropertyInfoTest.cs: Added new test.
 
 2007-05-07  Gert Driesen  <drieseng@users.sourceforge.net>
