@@ -1,5 +1,11 @@
 2007-06-01  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-amd64.c cpu-amd64.md: Correct length of r4const instruction and take into
+	account if it contains a rex prefix.
+	(peephole_pass): Handle OP_FMOVE as well.
+
+2007-06-01  Zoltan Varga  <vargaz@gmail.com>
+
 	* mini-x86.c (mono_arch_get_delegate_invoke_impl): Disable the static case for now
 	as it causes regressions.
 
