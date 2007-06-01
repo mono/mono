@@ -1,3 +1,8 @@
+2007-06-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MonoTODOAttribute.cs : fixed regression that those derived todo
+	  attribute types are not reported in the class status pages.
+
 2006-12-14  Eyal Alaluf <eyala@mainsoft.com>
 
 	* MonoTODOAttribute.cs: Add MonoDocumentationNoteAttribute,

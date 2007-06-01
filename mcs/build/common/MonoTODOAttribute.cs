@@ -48,7 +48,7 @@ namespace System {
 			this.comment = comment;
 		}
 
-		public string Comment {
+		public virtual string Comment {
 			get { return comment; }
 		}
 	}
@@ -60,6 +60,10 @@ namespace System {
 			: base (comment)
 		{
 		}
+
+		public override string Comment {
+			get { return base.Comment; }
+		}
 	}
 
 	[AttributeUsage (AttributeTargets.All, AllowMultiple=true)]
@@ -68,6 +72,10 @@ namespace System {
 		public MonoExtensionAttribute (string comment)
 			: base (comment)
 		{
+		}
+
+		public override string Comment {
+			get { return base.Comment; }
 		}
 	}
 
@@ -78,6 +86,10 @@ namespace System {
 			: base (comment)
 		{
 		}
+
+		public override string Comment {
+			get { return base.Comment; }
+		}
 	}
 
 	[AttributeUsage (AttributeTargets.All, AllowMultiple=true)]
@@ -87,6 +99,10 @@ namespace System {
 			: base (comment)
 		{
 		}
+
+		public override string Comment {
+			get { return base.Comment; }
+		}
 	}
 
 	[AttributeUsage (AttributeTargets.All, AllowMultiple=true)]
@@ -95,6 +111,10 @@ namespace System {
 		public MonoNotSupportedAttribute (string comment)
 			: base (comment)
 		{
+		}
+
+		public override string Comment {
+			get { return base.Comment; }
 		}
 	}
 }
