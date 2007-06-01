@@ -231,7 +231,7 @@ namespace System.Windows.Forms {
 			scroll_position = new Point(0, 0);
 			dock_padding = new DockPaddingEdges(this);
 			SizeChanged +=new EventHandler(Recalculate);
-			VisibleChanged += new EventHandler(Recalculate);
+			VisibleChanged += new EventHandler (VisibleChangedHandler);
 			LocationChanged += new EventHandler (LocationChangedHandler);
 			ParentChanged += new EventHandler (ParentChangedHandler);
 			HandleCreated += new EventHandler (AddScrollbars);
@@ -242,6 +242,11 @@ namespace System.Windows.Forms {
 			horizontalScroll = new HScrollProperties (this);
 			verticalScroll = new VScrollProperties (this);
 #endif
+		}
+
+		void VisibleChangedHandler (object sender, EventArgs e)
+		{
+			Recalculate (false);
 		}
 
 		void LocationChangedHandler (object sender, EventArgs e)
@@ -467,7 +472,7 @@ namespace System.Windows.Forms {
 			set {
 				if (hscrollbar.VisibleInternal != value) {
 					force_hscroll_visible = value;
-					Recalculate(this, EventArgs.Empty);
+					Recalculate (false);
 				}
 			}
 		}
@@ -480,7 +485,7 @@ namespace System.Windows.Forms {
 			set {
 				if (vscrollbar.VisibleInternal != value) {
 					force_vscroll_visible = value;
-					Recalculate(this, EventArgs.Empty);
+					Recalculate (false);
 				}
 			}
 		}
@@ -565,14 +570,14 @@ namespace System.Windows.Forms {
 			}
 
 			auto_scroll_margin = new Size(x, y);
-			Recalculate(this, EventArgs.Empty);
+			Recalculate (false);
 		}
 		#endregion	// Public Instance Methods
 
 		#region Protected Instance Methods
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void AdjustFormScrollbars(bool displayScrollbars) {
-			Recalculate(this, EventArgs.Empty);
+			Recalculate (false);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -747,6 +752,10 @@ namespace System.Windows.Forms {
 		}
 
 		private void Recalculate (object sender, EventArgs e) {
+			Recalculate (true);
+		}
+				
+		private void Recalculate (bool doLayout) {
 			if (!IsHandleCreated) {
 				return;
 			}
@@ -864,7 +873,7 @@ namespace System.Windows.Forms {
 
 			UpdateSizeGripVisible ();
 
-			ResumeLayout (false);
+			ResumeLayout (doLayout);
 			
 			// We should now scroll the active control into view, 
 			// the funny part is that ScrollableControl does not have 

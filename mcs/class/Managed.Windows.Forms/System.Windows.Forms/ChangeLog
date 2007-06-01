@@ -1,3 +1,13 @@
+2007-06-01  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* PropertyGrid.cs: Anchor the help description to the bottom of the
+	  help panel and refactor SelectGridItem into a
+	  SelectGridItemInternal that can be set to null (and update it to
+	  clear the help texts when it is set to null). Set root item to null
+	  when there's no SelectedObject. Fixes #80438.
+	* ScrollableControl.cs: In Recalculate we need to ResumeLayout(true)
+	  when we're recalculating after a resize (only).
+
 2007-05-31  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: Implement 2.0 RedrawItems method.

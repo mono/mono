@@ -117,7 +117,7 @@ namespace System.Windows.Forms {
 
 			
 			help_description_label = new Label();
-			help_description_label.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+			help_description_label.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom;
 			help_description_label.Name = "help_description_label";
 			help_description_label.Font = this.Font;
 			help_description_label.Location = new Point(2,help_title_label.Top+help_title_label.Height);
@@ -484,34 +484,58 @@ namespace System.Windows.Forms {
 		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		public GridItem SelectedGridItem {
 			get {
-				return selected_grid_item;
+				return SelectedGridItemInternal;
 			}
 
 			set {
+				if (value == null) {
+					throw new ArgumentException ("GridItem specified to PropertyGrid.SelectedGridItem must be a valid GridItem.");
+				}
+
+				GridItem oldItem = selected_grid_item;
+				
+				SelectedGridItemInternal = value;
+
+				OnSelectedGridItemChanged (new SelectedGridItemChangedEventArgs (oldItem, selected_grid_item));
+			}
+		}
+		
+		internal GridItem SelectedGridItemInternal {
+			get
+			{
+				return selected_grid_item;
+			}
+
+			set
+			{
 				if (selected_grid_item == value) {
 					return;
 				}
 
 				GridItem oldItem = selected_grid_item;
 				selected_grid_item = value;
-				this.help_title_label.Text = selected_grid_item.Label;
-				if (selected_grid_item.PropertyDescriptor != null)
-					this.help_description_label.Text = selected_grid_item.PropertyDescriptor.Description;
-					
-				current_property_value = value.Value;
-				if (oldItem != null && oldItem.PropertyDescriptor != null) {
-					for (int i = 0; i < ((GridEntry)oldItem).SelectedObjects.Length; i ++) {
-						object target = GetTarget (oldItem, i);
-						oldItem.PropertyDescriptor.RemoveValueChanged(target, new EventHandler(HandlePropertyValueChanged));
+				if (selected_grid_item == null) {
+					help_title_label.Text = string.Empty;
+					help_description_label.Text = string.Empty;
+				} else {
+					help_title_label.Text = selected_grid_item.Label;
+					if (selected_grid_item.PropertyDescriptor != null)
+						this.help_description_label.Text = selected_grid_item.PropertyDescriptor.Description;
+
+					current_property_value = value.Value;
+					if (oldItem != null && oldItem.PropertyDescriptor != null) {
+						for (int i = 0; i < ((GridEntry)oldItem).SelectedObjects.Length; i++) {
+							object target = GetTarget (oldItem, i);
+							oldItem.PropertyDescriptor.RemoveValueChanged (target, new EventHandler (HandlePropertyValueChanged));
+						}
+					}
+					if (selected_grid_item.PropertyDescriptor != null) {
+						for (int i = 0; i < ((GridEntry)selected_grid_item).SelectedObjects.Length; i++) {
+							object target = GetTarget (selected_grid_item, i);
+							selected_grid_item.PropertyDescriptor.AddValueChanged (target, new EventHandler (HandlePropertyValueChanged));
+						}
 					}
 				}
-				if (selected_grid_item.PropertyDescriptor != null) {
-					for (int i = 0; i < ((GridEntry)selected_grid_item).SelectedObjects.Length; i ++) {
-						object target = GetTarget (selected_grid_item, i);
-						selected_grid_item.PropertyDescriptor.AddValueChanged(target, new EventHandler(HandlePropertyValueChanged));
-					}
-				}
-				OnSelectedGridItemChanged(new SelectedGridItemChangedEventArgs (oldItem, selected_grid_item));
 			}
 		}
 
@@ -562,13 +586,15 @@ namespace System.Windows.Forms {
 							this.PropertyTabs.AddTabType(tabType);
 						}
 					}
+				} else {
+					SelectedGridItemInternal = null;
 				}
 
 				RefreshTabs(PropertyTabScope.Component);
 				ReflectObjects();
 				if (root_grid_item != null) {
 					/* find the first non category grid item and select it */
-					SelectedGridItem = FindFirstItem (root_grid_item);
+					SelectedGridItemInternal = FindFirstItem (root_grid_item);
 				}
 				property_grid_view.Refresh();
 				OnSelectedObjectsChanged (EventArgs.Empty);
@@ -1160,6 +1186,8 @@ namespace System.Windows.Forms {
 								    selected_objects.Length > 1 ? selected_objects : selected_objects[0]);
 									   
 				PopulateMergedGridItems (selected_objects, root_grid_item.GridItems, true, root_grid_item);
+			} else {
+				root_grid_item = null;
 			}
 		}
 
