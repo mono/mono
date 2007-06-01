@@ -1,5 +1,8 @@
 2007-06-01  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-amd64.c (mono_arch_output_basic_block): Unify div/rem opcodes and handle
+	the sreg2==rdx case.
+	
 	* mini-amd64.c cpu-amd64.md: Correct length of r4const instruction and take into
 	account if it contains a rex prefix.
 	(peephole_pass): Handle OP_FMOVE as well.
