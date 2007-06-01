@@ -178,6 +178,20 @@ namespace Mono.AssemblyCompare
 			return (object []) list.ToArray (type);
 		}
 
+		public static bool IsMonoTODOAttribute (string s)
+		{
+			if (s == null)
+				return false;
+			if (//s.EndsWith ("MonoTODOAttribute") ||
+			    s.EndsWith ("MonoDocumentationNoteAttribute") ||
+			    s.EndsWith ("MonoExtensionAttribute") ||
+//			    s.EndsWith ("MonoInternalNoteAttribute") ||
+			    s.EndsWith ("MonoLimitationAttribute") ||
+			    s.EndsWith ("MonoNotSupportedAttribute"))
+				return true;
+			return s.EndsWith ("TODOAttribute");
+		}
+
 		protected void AddAttribute (XmlNode node, string name, string value)
 		{
 			XmlAttribute attr = document.CreateAttribute (name);
@@ -581,7 +595,7 @@ namespace Mono.AssemblyCompare
 				count = other.Length;
 				for (int i = 0; i < count; i++) {
 					XMLClass c = other [i];
-					if (c == null || c.Name.EndsWith ("TODOAttribute"))
+					if (c == null || IsMonoTODOAttribute (c.Name))
 						continue;
 
 					node = document.CreateElement ("class", null);
@@ -872,7 +886,7 @@ namespace Mono.AssemblyCompare
 				count = other.Length;
 				for (int i = 0; i < count; i++) {
 					XMLClass c = other [i];
-					if (c == null || c.Name.EndsWith ("TODOAttribute"))
+					if (c == null || IsMonoTODOAttribute (c.Name))
 						continue;
 
 					node = document.CreateElement ("nestedclass", null);
@@ -1095,11 +1109,11 @@ namespace Mono.AssemblyCompare
 
 		protected override bool CheckIfAdd (string value, XmlNode node)
 		{
-			if (value.EndsWith ("TODOAttribute")) {
+			if (IsMonoTODOAttribute (value)) {
 				isTodo = true;
 
 				XmlNode pNode = node.SelectSingleNode ("properties");
-				if (pNode.ChildNodes [0].Attributes ["value"] != null) {
+				if (pNode != null && pNode.ChildNodes.Count > 0 && pNode.ChildNodes [0].Attributes ["value"] != null) {
 					comment = pNode.ChildNodes [0].Attributes ["value"].Value;
 				}
 				return false;
@@ -1166,7 +1180,7 @@ namespace Mono.AssemblyCompare
 		{
 			XmlNode pNode = node.SelectSingleNode ("properties");
 
-			if (name.EndsWith ("TODOAttribute")) {
+			if (IsMonoTODOAttribute (name)) {
 				isTodo = true;
 				if (pNode.ChildNodes [0].Attributes ["value"] != null) {
 					comment = pNode.ChildNodes [0].Attributes ["value"].Value;

@@ -120,6 +120,20 @@ namespace Mono.AssemblyInfo
 			attr.Value = value;
 			node.Attributes.Append (attr);
 		}
+
+		public static bool IsMonoTODOAttribute (string s)
+		{
+			if (s == null)
+				return false;
+			if (//s.EndsWith ("MonoTODOAttribute") ||
+			    s.EndsWith ("MonoDocumentationNoteAttribute") ||
+			    s.EndsWith ("MonoExtensionAttribute") ||
+//			    s.EndsWith ("MonoInternalNoteAttribute") ||
+			    s.EndsWith ("MonoLimitationAttribute") ||
+			    s.EndsWith ("MonoNotSupportedAttribute"))
+				return true;
+			return s.EndsWith ("TODOAttribute");
+		}
 	}
 
 	class AssemblyData : BaseData
@@ -901,7 +915,7 @@ namespace Mono.AssemblyInfo
 
 			for (int i = 0; i < atts.Length; ++i) {
 				Type t = atts [i].GetType ();
-				if (!t.IsPublic && !t.Name.EndsWith ("TODOAttribute"))
+				if (!t.IsPublic && !IsMonoTODOAttribute ("TODOAttribute"))
 					continue;
 
 				// we ignore attributes that inherit from SecurityAttribute on purpose as they:
@@ -958,7 +972,7 @@ namespace Mono.AssemblyInfo
 		private static bool MustDocumentAttribute (Type attributeType)
 		{
 			// only document MonoTODOAttribute and public attributes
-			return attributeType.Name.EndsWith ("TODOAttribute") || attributeType.IsPublic;
+			return attributeType.IsPublic || IsMonoTODOAttribute (attributeType.Name);
 		}
 	}
 

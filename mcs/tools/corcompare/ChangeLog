@@ -1,3 +1,8 @@
+2007-06-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* mono-api-info.cs mono-api-diff.cs :
+	  handle MonoTODOAttribute derivations.
+
 2007-04-17  Alp Toker  <alp@atoker.com>
 
 	* mono-api-diff.cs:
