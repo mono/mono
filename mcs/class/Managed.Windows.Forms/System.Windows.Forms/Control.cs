@@ -3935,7 +3935,7 @@ namespace System.Windows.Forms
 			if (layout_suspended == 0) {
 				if (!performLayout)
 					foreach (Control c in Controls.GetAllControls ())
-						c.recalculate_distances = true;
+						c.UpdateDistances ();
 
 				if (performLayout && layout_pending) {
 					PerformLayout();
@@ -4048,7 +4048,9 @@ namespace System.Windows.Forms
 			else
 				return;
 			
-			UpdateDistances ();
+			// If the user explicitly moved or resized us, recalculate our anchor distances
+			if (specified != BoundsSpecified.None)
+				UpdateDistances ();
 			
 			if (parent != null)
 				parent.PerformLayout(this, "Bounds");

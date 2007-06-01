@@ -1,3 +1,9 @@
+2007-06-01  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Control.cs: In UpdateBounds, only recalculate anchor distances if the
+	change is user explicit, not when the layout engine moves stuff.  Fixes
+	anchoring to bottom and right.  [Fixes bug #81790]
+
 2007-06-01  Andreia Gaita  <avidigal@novell.com>
 
 	* PrintDialog.cs: Add collation preview thumbnails. Fixes #80726.
