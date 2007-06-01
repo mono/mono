@@ -75,6 +75,7 @@ namespace System.Windows.Forms
 		private Label label_type;
 		private Label label_where;
 		private Label label_comment;
+		private CollatePreview collate;
 
 		public PrintDialog ()
 		{
@@ -516,27 +517,35 @@ namespace System.Windows.Forms
 			chkbox_print.Location = new Point (305, 115);
 			chkbox_print.Text = "Print to fil&e";
 
-			label = new Label ();
-			label.Text = "Number of &copies:";
-			label.AutoSize = true;
-			label.Location = new Point (20, 20);
-			group_box_copies.Controls.Add (label);
 
 			updown_copies = new NumericUpDown ();
 			updown_copies.TabIndex = 31;
-			updown_copies.Location = new Point (120, 20);
+			updown_copies.Location = new Point (105, 18);
 			updown_copies.Minimum = 1;
 			group_box_copies.Controls.Add (updown_copies);
 			updown_copies.ValueChanged += new System.EventHandler (OnUpDownValueChanged);
 			updown_copies.Size = new System.Drawing.Size (40, 20);
 
+			label = new Label ();
+			label.Text = "Number of &copies:";
+			label.AutoSize = true;
+			label.Location = new Point (10, 20);
+			group_box_copies.Controls.Add (label);
+
 			chkbox_collate = new CheckBox ();
 			chkbox_collate.TabIndex = 32;
-			chkbox_collate.Location = new Point (20, 40);
+			chkbox_collate.Location = new Point (105, 55);
 			chkbox_collate.Text = "C&ollate";
-			chkbox_collate.Width = 80;
+			chkbox_collate.Width = 58;
+			chkbox_collate.CheckedChanged += new EventHandler(chkbox_collate_CheckedChanged);
+		
 			group_box_copies.Controls.Add (chkbox_collate);
 
+			collate = new CollatePreview ();
+			collate.Location = new Point (6, 50);
+			collate.Size = new Size (100, 45);
+			group_box_copies.Controls.Add (collate);
+			
 
 
 			// Printer combo
@@ -578,10 +587,10 @@ namespace System.Windows.Forms
 			radio_pages.Checked = true;
 		}
 
-		private void OnPrinterSelectedIndexChanged (object sender,  System.EventArgs e)
-    		{    			
-    			SetPrinterDetails ();
-    		}
+		private void OnPrinterSelectedIndexChanged (object sender,  System.EventArgs e) 
+		{
+			SetPrinterDetails ();
+		}
 
 		private void SetPrinterDetails ()
 		{
@@ -617,6 +626,95 @@ namespace System.Windows.Forms
 			}
 			catch  {
 				accept_button.Enabled = false;
+			}
+		}
+
+		private void chkbox_collate_CheckedChanged(object sender, EventArgs e) {
+			collate.Collate = chkbox_collate.Checked;
+		}
+
+		class CollatePreview : UserControl 
+		{	
+			private bool collate;
+			public bool Collate {
+				get { return collate;}
+				set { if (collate != value) {
+						  collate = value;
+						  Invalidate();
+					  }
+				}
+			}
+
+			Font font;
+
+			public CollatePreview () 
+			{
+				font = new Font(FontFamily.GenericSansSerif, 10);
+			}
+			
+			protected override void OnPaint(PaintEventArgs e) 
+			{
+				if (collate)
+					DrawCollate (e.Graphics);
+				else
+					DrawNoCollate (e.Graphics);
+
+				base.OnPaint (e);
+			}
+
+			void DrawCollate (Graphics g)
+			{
+				int x1 = 0;
+				int y1 = 12;
+
+				int x2 = 14;
+				int y2 = 6;
+
+				int x3 = 26;
+				int y3 = 0;
+
+				for (int i = 0; i < 2; i++) {
+					
+					g.FillRectangle (Brushes.White, x3 + (i*18), y3, 18, 24);
+					ControlPaint.DrawBorder (g, new Rectangle (x3 + (i*18), y3, 18, 24), SystemColors.ControlDark, ButtonBorderStyle.Solid);
+					g.DrawString ((i+1).ToString(), font, SystemBrushes.ControlDarkDark, x3 + (i*18) + 5, y3 + 5, StringFormat.GenericTypographic);
+
+					g.FillRectangle (Brushes.White, x2 + (i*18), y2, 18, 24);
+					ControlPaint.DrawBorder (g, new Rectangle (x2 + (i*18), y2, 18, 24), SystemColors.ControlDark, ButtonBorderStyle.Solid);
+					g.DrawString ((i+1).ToString(), font, SystemBrushes.ControlDarkDark, x2 + (i*18) + 5, y2 + 5, StringFormat.GenericTypographic);
+				
+					g.FillRectangle (Brushes.White, x1 + (i*18), y1, 18, 24);
+					ControlPaint.DrawBorder (g, new Rectangle (x1 + (i*18), y1, 18, 24), SystemColors.ControlDark, ButtonBorderStyle.Solid);
+					g.DrawString ((i+1).ToString(), font, SystemBrushes.ControlDarkDark, x1 + (i*18) + 5, y1 + 5, StringFormat.GenericTypographic);
+
+
+					x1 += 28;
+					x2 += 28;
+					x3 += 28;
+				}
+			}
+
+			void DrawNoCollate (Graphics g) 
+			{
+				int x1 = 0;
+				int y1 = 12;
+
+				int x2 = 13;
+				int y2 = 4;
+
+				for (int i = 0; i < 3; i++) {
+					
+					g.FillRectangle (Brushes.White, x2 + (i*18), y2, 18, 24);
+					ControlPaint.DrawBorder (g, new Rectangle (x2 + (i*18), y2, 18, 24), SystemColors.ControlDark, ButtonBorderStyle.Solid);
+					g.DrawString ((i+1).ToString(), font, SystemBrushes.ControlDarkDark, x2 + (i*18) + 5, y2 + 5, StringFormat.GenericTypographic);
+				
+					g.FillRectangle (Brushes.White, x1 + (i*18), y1, 18, 24);
+					ControlPaint.DrawBorder (g, new Rectangle (x1 + (i*18), y1, 18, 24), SystemColors.ControlDark, ButtonBorderStyle.Solid);
+					g.DrawString ((i+1).ToString(), font, SystemBrushes.ControlDarkDark, x1 + (i*18) + 5, y1 + 5, StringFormat.GenericTypographic);
+
+					x1 += 15;
+					x2 += 15;
+				}
 			}
 		}
 	}
