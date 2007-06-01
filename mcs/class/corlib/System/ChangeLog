@@ -1,5 +1,7 @@
 2007-06-02  Zoltan Varga  <vargaz@gmail.com>
 
+	* MonoCustomAttrs.cs (GetBase): Revert last change as it breaks the build.
+	
 	* MonoCustomAttrs.cs (GetBase): Handle properties correctly. Fixes #81797.
 
 2007-05-31  Zoltan Varga  <vargaz@gmail.com>
