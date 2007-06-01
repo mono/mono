@@ -3025,6 +3025,27 @@ namespace System.Windows.Forms
 			return items [index].GetBounds (portion);
 		}
 
+#if NET_2_0
+		public void RedrawItems (int startIndex, int endIndex, bool invalidateOnly)
+		{
+			if (startIndex < 0 || startIndex >= items.Count)
+				throw new ArgumentOutOfRangeException ("startIndex");
+			if (endIndex < 0 || endIndex >= items.Count)
+				throw new ArgumentOutOfRangeException ("endIndex");
+			if (startIndex > endIndex)
+				throw new ArgumentException ("startIndex");
+
+			if (updating)
+				return;
+
+			for (int i = startIndex; i <= endIndex; i++)
+				item_control.Invalidate (items [i].Bounds);
+
+			if (!invalidateOnly)
+				Update ();
+		}
+#endif
+
 		public void Sort ()
 		{
 #if NET_2_0
