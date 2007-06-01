@@ -1,3 +1,10 @@
+2007-05-31  Jeffrey Stedfast  <fejj@gnome.org>
+
+	* SmtpClient.cs: Added an extensions parser to figure out if the
+	ESMTP server supports things like STARTTLS and which AUTH
+	mechanisms are supported. Don't try authenticating if no authmechs
+	are supported.
+
 2007-05-30  Jeffrey Stedfast  <fejj@novell.com>
 
 	* SmtpClient.cs: Fall back to HELO if EHLO fails. Also, do not

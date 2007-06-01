@@ -57,7 +57,7 @@ namespace System.Net.Mail {
 		string pickupDirectoryLocation;
 		SmtpDeliveryMethod deliveryMethod;
 		bool enableSsl;
-		X509CertificateCollection clientCertificates;
+		//X509CertificateCollection clientCertificates;
 
 		TcpClient client;
 		NetworkStream stream;
@@ -65,6 +65,20 @@ namespace System.Net.Mail {
 		StreamReader reader;
 		int boundaryIndex;
 		MailAddress defaultFrom;
+
+		// ESMTP state
+		enum AuthMechs {
+			None        = 0,
+			CramMD5     = 0x01,
+			DigestMD5   = 0x02,
+			GssAPI      = 0x04,
+			Kerberos4   = 0x08,
+			Login       = 0x10,
+			Plain       = 0x20,
+		}
+		
+		AuthMechs authMechs = AuthMechs.None;
+		bool canStartTLS = false;
 
 		Mutex mutex = new Mutex ();
 
@@ -118,7 +132,7 @@ namespace System.Net.Mail {
 		public X509CertificateCollection ClientCertificates {
 			get {
 				throw new NotImplementedException ("Client certificates are not supported");
-				return clientCertificates;
+				//return clientCertificates;
 			}
 		}
 
@@ -133,6 +147,7 @@ namespace System.Net.Mail {
 		}
 
 		public bool EnableSsl {
+			// FIXME: So... is this supposed to enable SSL port functionality? or STARTTLS? Or both?
 			get { return enableSsl; }
 			set { enableSsl = value; }
 		}
@@ -158,9 +173,9 @@ namespace System.Net.Mail {
 			get { return port; }
 			// FIXME: Check to make sure an email is not being sent.
 			set { 
-				if (value <= 0)
+				if (value <= 0 || value > 65535)
 					throw new ArgumentOutOfRangeException ();
-				port = value; 
+				port = value;
 			}
 		}
 
@@ -263,15 +278,67 @@ namespace System.Net.Mail {
 				SmtpResponse response = SmtpResponse.Parse (line);
 
 				return response;
-			}
-			else {
+			} else {
 				throw new System.IO.IOException ("Connection closed");
 			}
 		}
 
-		public void Send (MailMessage message) {
-			CheckHostAndPort ();
+		void ParseExtensions (string extens)
+		{
+			char []delims = new char [1] { ' ' };
+			int ln = 0;
+			
+			do {
+				if (ln != 0)
+					ln++;
+				
+				if (ln > extens.Length)
+					break;
+				
+				if (extens.Substring (ln, 4) == "AUTH" &&
+				    (extens[ln + 4] == ' ' || extens[ln + 4] == '=')) {
+					int eoln = extens.IndexOf ('\n', ln + 4);
+					string mechlist = extens.Substring (ln, eoln);
+					string []mechs = mechlist.Split (delims);
+					
+					ln = eoln;
+					
+					for (int i = 0; i < mechs.Length; i++) {
+						switch (mechs[i]) {
+						case "CRAM-MD5":
+							authMechs |= AuthMechs.CramMD5;
+							break;
+						case "DIGEST-MD5":
+							authMechs |= AuthMechs.DigestMD5;
+							break;
+						case "GSSAPI":
+							authMechs |= AuthMechs.GssAPI;
+							break;
+						case "KERBEROS_V4":
+							authMechs |= AuthMechs.Kerberos4;
+							break;
+						case "LOGIN":
+							authMechs |= AuthMechs.Login;
+							break;
+						case "PLAIN":
+							authMechs |= AuthMechs.Plain;
+							break;
+						}
+					}
+				} else if (extens.Substring (ln, 8) == "STARTTLS") {
+					canStartTLS = true;
+				}
+			} while ((ln = extens.IndexOf ('\n', ln)) != -1);
+		}
 
+		public void Send (MailMessage message)
+		{
+			if (String.IsNullOrEmpty (Host))
+				throw new InvalidOperationException ("The SMTP host was not specified");
+			
+			if (port == 0)
+				port = 25;
+			
 			// Block while sending
 			mutex.WaitOne ();
 
@@ -291,22 +358,37 @@ namespace System.Net.Mail {
 			// FIXME: parse the list of extensions so we don't bother wasting
 			// our time trying commands if they aren't supported.
 			status = SendCommand ("EHLO " + Dns.GetHostName ());
-
+			
 			if (IsError (status)) {
 				status = SendCommand ("HELO " + Dns.GetHostName ());
 				
 				if (IsError (status))
 					throw new SmtpException (status.StatusCode, status.Description);
+			} else {
+				// Parse ESMTP extensions
+				string extens = status.Description;
+				
+				if (extens != null)
+					ParseExtensions (extens);
 			}
-
-			if (EnableSsl) {
-				// FIXME: only attempt this if STARTTLS is supported
+			
+			if (enableSsl) {
+				// FIXME: I get the feeling from the docs that EnableSsl is meant
+				// for using the SSL-port and not STARTTLS (or, if it includes
+				// STARTTLS... only use STARTTLS if the SSL-type in the certificate
+				// is TLS and not SSLv2 or SSLv3)
+				
+				// FIXME: even tho we have a canStartTLS flag... ignore it for now
+				// so that the STARTTLS command can throw the appropriate
+				// SmtpException if STARTTLS is unavailable
 				InitiateSecureConnection ();
+				
+				// FIXME: re-EHLO?
 			}
-
-			// FIXME: only do this if AUTH is supported
-			PerformAuthentication ();
-
+			
+			if (authMechs != AuthMechs.None)
+				Authenticate ();
+			
 			MailAddress from = message.From;
 
 			if (from == null)
@@ -370,8 +452,7 @@ namespace System.Net.Mail {
 
 			if (hasAttachments || hasAlternateViews) {
 				SendMultipartBody (message);
-			}
-			else {
+			} else {
 				SendSimpleBody (message);
 			}
 
@@ -383,9 +464,8 @@ namespace System.Net.Mail {
 
 			try {
 				status = SendCommand ("QUIT");
-			}
-			catch (System.IO.IOException) {
-				//We excuse server for the rude connection closing as a response to QUIT
+			} catch (System.IO.IOException) {
+				// We excuse server for the rude connection closing as a response to QUIT
 			}
 
 			writer.Close ();
@@ -598,8 +678,7 @@ namespace System.Net.Mail {
 				if (i > 127) {
 					writer.Write ("=");
 					writer.Write (Convert.ToString (i, 16).ToUpper ());
-				}
-				else
+				} else
 					writer.Write (Convert.ToChar (i));
 			}
 
@@ -638,29 +717,27 @@ namespace System.Net.Mail {
 			throw new NotImplementedException ();
 #endif
 		}
-
-		void CheckHostAndPort () {
-			if (String.IsNullOrEmpty (Host))
-				throw new InvalidOperationException ("The SMTP host was not specified");
-
-			if (Port == 0)
-				Port = 25;
-		}
 		
-		void PerformAuthentication () {
+		void Authenticate ()
+		{
+			string user = null, pass = null;
+			
 			if (UseDefaultCredentials) {
-				Authenticate (
-					CredentialCache.DefaultCredentials.GetCredential (new System.Uri ("smtp://" + host), "basic").UserName,
-					CredentialCache.DefaultCredentials.GetCredential (new System.Uri ("smtp://" + host), "basic").Password);
+				user = CredentialCache.DefaultCredentials.GetCredential (new System.Uri ("smtp://" + host), "basic").UserName;
+				pass = 	CredentialCache.DefaultCredentials.GetCredential (new System.Uri ("smtp://" + host), "basic").Password;
+			} else if (Credentials != null) {
+				user = Credentials.GetCredential (host, port, "smtp").UserName;
+				pass = Credentials.GetCredential (host, port, "smtp").Password;
+			} else {
+				return;
 			}
-			else if (Credentials != null) {
-				Authenticate (
-					Credentials.GetCredential (host, port, "smtp").UserName,
-					Credentials.GetCredential (host, port, "smtp").Password);
-			}
+			
+			Authenticate (user, pass);
 		}
 
-		void Authenticate (string Username, string Password) {
+		void Authenticate (string Username, string Password)
+		{
+			// FIXME: use the proper AuthMech
 			SmtpResponse status = SendCommand ("AUTH LOGIN");
 			if (((int) status.StatusCode) != 334) {
 				throw new SmtpException (status.StatusCode, status.Description);
@@ -676,13 +753,13 @@ namespace System.Net.Mail {
 				throw new SmtpException (status.StatusCode, status.Description);
 			}
 		}
-		/*
-				[MonoTODO]
-				private sealed ContextAwareResult IGetContextAwareResult.GetContextAwareResult ()
-				{
-					throw new NotImplementedException ();
-				}
-		*/
+		
+		/*[MonoTODO]
+		private sealed ContextAwareResult IGetContextAwareResult.GetContextAwareResult ()
+		{
+			throw new NotImplementedException ();
+		}*/
+		
 		#endregion // Methods
 		
 		// The HeaderName struct is used to store constant string values representing mail headers.
@@ -711,7 +788,7 @@ namespace System.Net.Mail {
 
 				if (line.Length < 4)
 					throw new SmtpException ("Response is to short " +
-								   line.Length + ".");
+								 line.Length + ".");
 
 				if ((line [3] != ' ') && (line [3] != '-'))
 					throw new SmtpException ("Response format is wrong.(" +
