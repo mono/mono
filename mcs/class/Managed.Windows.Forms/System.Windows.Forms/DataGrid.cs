@@ -1414,7 +1414,7 @@ namespace System.Windows.Forms
 		{
 			base.OnLeave (e);
 
-			this.EndEdit ();
+			EndEdit ();
 			if (cursor_in_add_row) {
 				ListManager.CancelCurrentEdit ();
 			}
@@ -1808,11 +1808,6 @@ namespace System.Windows.Forms
 
 		protected bool ProcessGridKey (KeyEventArgs ke)
 		{
-			/* if we have no rows, exit immediately.
-			   XXX is this necessary? */
-			if (RowsCount == 0)
-				return false;
-
 			bool ctrl_pressed = ((ke.Modifiers & Keys.Control) != 0);
 			//bool alt_pressed = ((ke.Modifiers & Keys.Alt) != 0);
 			bool shift_pressed = ((ke.Modifiers & Keys.Shift) != 0);
