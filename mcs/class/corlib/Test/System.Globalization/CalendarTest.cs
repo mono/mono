@@ -540,6 +540,28 @@ public class CalendarTest : TestCase {
 		AssertEquals (29, days);
 	}
 
+	[Test] // bug #81783
+	public void GregorianAddMonth ()
+	{
+		GregorianCalendar c = new GregorianCalendar ();
+		DateTime d = new DateTime (2007, 5, 31);
+		DateTime prev = c.AddMonths (d, -1);
+		AssertEquals ("prev", 4, prev.Month);
+		DateTime next = c.AddMonths (d, 1);
+		AssertEquals ("next", 6, next.Month);
+	}
+
+	[Test]
+	public void AddYearOnLeapYear ()
+	{
+		GregorianCalendar c = new GregorianCalendar ();
+		DateTime d = new DateTime (2004, 2, 29);
+		DateTime prev = c.AddYears (d, -1);
+		AssertEquals ("prev", 2, prev.Month);
+		DateTime next = c.AddYears (d, 1);
+		AssertEquals ("next", 2, next.Month);
+	}
+
 	/* UK TODO: breaks with current DateTime implementation.
 	 * I've a newer one that works, but that requires to much changes.
 	 * for now.

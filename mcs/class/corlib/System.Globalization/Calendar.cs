@@ -30,11 +30,15 @@ namespace System.Globalization {
 
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 
 /// <remarks>
 /// The class serves as a base class for calendar classes.
 /// </remarks>
 [Serializable]
+#if NET_2_0
+[ComVisible (true)]
+#endif
 public abstract class Calendar
 #if NET_2_0
 	: ICloneable
@@ -152,19 +156,36 @@ public abstract class Calendar
 	}
 
 	// LAMESPEC: huh, why not Calendar but Object?
+	[ComVisible (false)]
 	public virtual object Clone ()
 	{
 		Calendar c = (Calendar) MemberwiseClone ();
 		c.m_isReadOnly = false;
 		return c;
 	}
+
+	[MonoTODO]
+	[ComVisible (false)]
+	public virtual int GetLeapMonth (int year)
+	{
+		throw new NotImplementedException ();
+	}
+
+	[MonoTODO]
+	[ComVisible (false)]
+	public virtual int GetLeapMonth (int year, int era)
+	{
+		throw new NotImplementedException ();
+	}
 #endif
 
 #if NET_2_0
+	[ComVisible (false)]
 	public bool IsReadOnly {
 		get { return m_isReadOnly; }
 	}
 
+	[ComVisible (false)]
 	public static Calendar ReadOnly (Calendar source)
 	{
 		if (source.m_isReadOnly)

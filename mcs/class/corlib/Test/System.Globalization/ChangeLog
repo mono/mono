@@ -1,3 +1,8 @@
+2007-06-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CalendarTest.cs : test for bug #81783 and AddYears() for leap year
+	  (similar issue).
+
 2007-05-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* IdnMappingTest.cs : new test.

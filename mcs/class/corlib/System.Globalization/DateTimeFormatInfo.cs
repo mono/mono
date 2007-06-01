@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections;
+using System.Runtime.InteropServices;
 using System.Threading;
 
 namespace System.Globalization
@@ -48,6 +49,9 @@ namespace System.Globalization
 #endif
 
 	[Serializable]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public sealed class DateTimeFormatInfo : ICloneable, IFormatProvider {
 		private static readonly string MSG_READONLY = "This instance is read only";
 		private static readonly string MSG_ARRAYSIZE_MONTH = "An array with exactly 13 elements is needed";
@@ -765,22 +769,26 @@ namespace System.Globalization
 
 #if NET_2_0
 		[MonoTODO ("NotImplemented")]
+		[ComVisible (false)]
 		public string [] AbbreviatedMonthGenitiveNames {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO ("NotImplemented")]
+		[ComVisible (false)]
 		public string [] MonthGenitiveNames {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO ("NotImplemented")]
-		public string [] NativeCalendarName {
+		[ComVisible (false)]
+		public string NativeCalendarName {
 			get { throw new NotImplementedException (); }
 		}
 
+		[ComVisible (false)]
 		public string [] ShortestDayNames {
 			get {
 				return shortDayNames;
@@ -801,6 +809,7 @@ namespace System.Globalization
 			}
 		}
 
+		[ComVisible (false)]
 		public string GetShortestDayName (DayOfWeek dayOfWeek)
 		{
 			int index = (int) dayOfWeek;
@@ -811,6 +820,7 @@ namespace System.Globalization
 		}
 
 		[MonoTODO ("NotImplemented")]
+		[ComVisible (false)]
 		public void SetAllDateTimePatterns (string [] patterns, char format)
 		{
 			throw new NotImplementedException ();

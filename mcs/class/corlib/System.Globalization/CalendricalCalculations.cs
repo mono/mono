@@ -672,6 +672,9 @@ internal class CCGregorianCalendar {
 		int day, month, year;
 		dmy_from_fixed(out day, out month, out year, rd);
 		month += months;
+		int maxday = GetDaysInMonth (year, month);
+		if (day > maxday)
+			day = maxday;
 		rd = fixed_from_dmy(day, month, year);
 		System.DateTime t = CCFixed.ToDateTime(rd);
 		return t.Add(time.TimeOfDay);
@@ -695,6 +698,9 @@ internal class CCGregorianCalendar {
 		int day, month, year;
 		dmy_from_fixed(out day, out month, out year, rd);
 		year += years;
+		int maxday = GetDaysInMonth (year, month);
+		if (day > maxday)
+			day = maxday;
 		rd = fixed_from_dmy(day, month, year);
 		System.DateTime t = CCFixed.ToDateTime(rd);
 		return t.Add(time.TimeOfDay);
