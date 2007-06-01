@@ -1,5 +1,13 @@
 2007-06-01  Andreia Gaita  <avidigal@novell.com>
 
+	* ContainerControl.cs: 
+	Fire enter event for common ancestor if it is not a ContainerControl.
+	Send focus to the active_control and not the 'value', the active 
+	control might have been changed in one of the events fired.	
+	Definitely fixes #80159.
+
+2007-06-01  Andreia Gaita  <avidigal@novell.com>
+
 	* DataGrid.cs: Finish editing when focus leave the datagrid. Fixes #80159.
 
 2007-06-01  Rolf Bjarne Kvinge <RKvinge@novell.com> 

@@ -80,7 +80,7 @@ namespace System.Windows.Forms {
 				// Fire the enter and leave events if possible
 				Form form = FindForm ();
 				Control active = GetMostDeeplyNestedActiveControl (form == null ? this : form);
-				Control common_container = GetCommonContainer (active, value);
+				Control common_ancestor = GetCommonContainer (active, value);
 				ArrayList chain = new ArrayList ();
 				ArrayList validation_chain = new ArrayList ();
 				Control walk = active;
@@ -90,7 +90,7 @@ namespace System.Windows.Forms {
 				//    2. validate.
 				//    3. walk down the tree (if we need to), firing enter events.
 
-				// "our root" is either the common container of the current active
+				// "our root" is either the common ancestor of the current active
 				// control and the new active control, or the current active control,
 				// or the new active control.  That is, it's either one of these three
 				// configurations:
@@ -112,12 +112,12 @@ namespace System.Windows.Forms {
 				// the Validating control instead.
 
 				bool fire_enter = true;
-				Control root = common_container;
+				Control root = common_ancestor;
 
 				active_control = value;
 
 				// Generate the leave messages
-				while (walk != common_container) {
+				while (walk != common_ancestor) {
 					if (walk == value) {
 						root = value;
 						fire_enter = false;
@@ -148,6 +148,9 @@ namespace System.Windows.Forms {
 						walk = walk.Parent;
 					}
 
+					if (root != null && walk == root && !(root is ContainerControl))
+						chain.Add (walk);
+
 					for (int i = chain.Count - 1; i >= 0; i--) {
 						walk = (Control) chain [i];
 						walk.FireEnter ();
@@ -171,7 +174,7 @@ namespace System.Windows.Forms {
 				ScrollControlIntoView(active_control);
 
 				// Let the control know it's selected
-				SendControlFocus (value);
+				SendControlFocus (active_control);
 			}
 		}
 
