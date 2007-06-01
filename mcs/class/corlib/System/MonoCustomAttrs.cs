@@ -298,9 +298,12 @@ namespace System
 			if (obj is MonoProperty)
 			{
 				MonoProperty prop = (MonoProperty) obj;
-				method = prop.GetGetMethod (true);
-				if (method == null)
-					method = prop.GetSetMethod (true);
+				if (prop.DeclaringType.BaseType != null) {
+					PropertyInfo baseProp = prop.DeclaringType.BaseType.GetProperty (prop.Name);
+					if (baseProp != prop)
+						return baseProp;
+				}
+				return null;
 			}
 			else if (obj is MonoMethod)
 			{

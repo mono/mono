@@ -1,3 +1,7 @@
+2007-06-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* MonoCustomAttrs.cs (GetBase): Handle properties correctly. Fixes #81797.
+
 2007-05-31  Zoltan Varga  <vargaz@gmail.com>
 
 	* Delegate.cs: Add invoke_impl field. Reorder fields for better cache behavior. Add
