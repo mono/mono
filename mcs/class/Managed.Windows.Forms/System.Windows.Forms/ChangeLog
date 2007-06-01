@@ -1,3 +1,7 @@
+2007-06-01  Andreia Gaita  <avidigal@novell.com>
+
+	* DataGrid.cs: Finish editing when focus leave the datagrid. Fixes #80159.
+
 2007-06-01  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* PropertyGrid.cs: Anchor the help description to the bottom of the

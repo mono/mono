@@ -1414,6 +1414,7 @@ namespace System.Windows.Forms
 		{
 			base.OnLeave (e);
 
+			this.EndEdit ();
 			if (cursor_in_add_row) {
 				ListManager.CancelCurrentEdit ();
 			}
