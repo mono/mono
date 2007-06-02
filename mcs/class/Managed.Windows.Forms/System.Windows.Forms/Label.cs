@@ -354,37 +354,51 @@ namespace System.Windows.Forms
 			set { base.ImeMode = value; }
 		}
 
+		internal virtual Size InternalGetPreferredSize (Size proposed)
+		{
+			Size size;
+
+			if (Text == string.Empty) {
+				size = new Size (0, Font.Height);
+			} else {
+				size = Size.Ceiling (DeviceContext.MeasureString (Text, Font, req_witdthsize, string_format));
+				size.Width += 3;
+			}
+
+#if NET_2_0
+			if (!use_compatible_text_rendering)
+				return size;
+#else
+				size.Height = Font.Height;
+#endif
+
+			if (border_style == BorderStyle.None)
+				size.Height += 3;
+			else
+				size.Height += 6;
+			
+			return size;
+		}
+
+#if NET_2_0
+		public override	Size GetPreferredSize (Size proposed)
+		{
+			return InternalGetPreferredSize (proposed);
+		}
+#endif
+
 		[Browsable(false)]
 		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public virtual int PreferredHeight {
-			get { 
-				int preferred_height = Font.Height;
-
-#if NET_2_0
-				if (!use_compatible_text_rendering)
-					return preferred_height;
-#endif
-
-				if (border_style == BorderStyle.None)
-					return preferred_height + 3;
-					
-				return preferred_height + 6;
-			}
+			get { return InternalGetPreferredSize (Size.Empty).Height; }
 		}
 
 		[Browsable(false)]
 		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public virtual int PreferredWidth {
-			get {
-				if (Text == string.Empty)
-					return 0;
-
-				SizeF size;
-				size = DeviceContext.MeasureString (Text, Font, req_witdthsize, string_format);
-				return (int) size.Width + 3;
-			}
+			get { return InternalGetPreferredSize (Size.Empty).Width; }
 		}
 
 #if NET_2_0

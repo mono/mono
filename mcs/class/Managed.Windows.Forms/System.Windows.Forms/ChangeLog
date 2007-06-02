@@ -1,3 +1,8 @@
+2007-06-01  Everaldo Canuto  <ecanuto@novell.com>
+
+	* Label.cs: Fixes preferred sizes for 2.0 profile, also adjust some
+	values for autosize. Fixes #80137.
+
 2007-06-01  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Control.cs: Don't perform layout when AutoSize changes.
