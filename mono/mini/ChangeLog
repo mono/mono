@@ -1,5 +1,10 @@
 2007-06-02  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-x86.c (mono_arch_get_delegate_invoke_impl): Disable the static case 
+	permanently since the current approach doesn't work.
+
+2007-06-02  Zoltan Varga  <vargaz@gmail.com>
+
 	* inssel.brg (stmt): Only call delegate->invoke_impl if 
 	MONO_ARCH_HAVE_CREATE_DELEGATE_TRAMPOLINE is defined.
 
