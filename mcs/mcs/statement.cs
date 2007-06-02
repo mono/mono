@@ -99,9 +99,6 @@ namespace Mono.CSharp {
 		public Statement Clone (CloneContext clonectx)
 		{
 			Statement s = (Statement) this.MemberwiseClone ();
-			if (s is Block)
-				clonectx.AddBlockMap ((Block) this, (Block) s);
-			
 			CloneTo (clonectx, s);
 			return s;
 		}
@@ -2352,6 +2349,8 @@ namespace Mono.CSharp {
 		protected override void CloneTo (CloneContext clonectx, Statement t)
 		{
 			Block target = (Block) t;
+
+			clonectx.AddBlockMap (this, target);
 
 			target.Toplevel = (ToplevelBlock) clonectx.LookupBlock (Toplevel);
 			target.Explicit = (ExplicitBlock) clonectx.LookupBlock (Explicit);

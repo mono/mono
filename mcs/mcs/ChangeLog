@@ -1,3 +1,8 @@
+2007-06-02  Raja R Harinath  <harinath@gmail.com>
+
+	* statement.cs (Statement.Clone): Move special case code ...
+	(Block.CloneTo): ... here.
+
 2007-05-29  Raja R Harinath  <rharinath@novell.com>
 
 	* statement.cs (ToplevelBlock.container): Remove field.  It's
