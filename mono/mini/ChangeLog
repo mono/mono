@@ -1,3 +1,8 @@
+2007-06-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* inssel.brg (stmt): Only call delegate->invoke_impl if 
+	MONO_ARCH_HAVE_CREATE_DELEGATE_TRAMPOLINE is defined.
+
 2007-06-01  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-amd64.c (mono_arch_output_basic_block): Unify div/rem opcodes and handle
