@@ -1,5 +1,7 @@
 2007-06-02  Raja R Harinath  <harinath@gmail.com>
 
+	* statement.cs (Block.IsChildOf): Remove.
+
 	* statement.cs (Statement.Clone): Move special case code ...
 	(Block.CloneTo): ... here.
 

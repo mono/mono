@@ -2326,21 +2326,6 @@ namespace Mono.CSharp {
 			ec.CurrentBlock = prev_block;
 		}
 
-		//
-		// Returns true if we ar ea child of `b'.
-		//
-		public bool IsChildOf (Block b)
-		{
-			Block current = this;
-			
-			do {
-				if (current.Parent == b)
-					return true;
-				current = current.Parent;
-			} while (current != null);
-			return false;
-		}
-
 		public override string ToString ()
 		{
 			return String.Format ("{0} ({1}:{2})", GetType (),ID, StartLocation);
