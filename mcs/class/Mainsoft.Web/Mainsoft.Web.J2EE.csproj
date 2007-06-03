@@ -10,7 +10,6 @@
     <AssemblyName>Mainsoft.Web</AssemblyName>
     <JDKName>1.5.0_05</JDKName>
     <GHProjectType>1</GHProjectType>
-    <GHProjectKind>runtime</GHProjectKind>
     <Version>2.0</Version>
     <RootNamespace>Mainsoft.Web</RootNamespace>
     <jarserver>iap2</jarserver>
@@ -38,6 +37,7 @@
     <JDKName>1.5.0_05</JDKName>
     <jarserver>iap2</jarserver>
     <TargetPlatform>0</TargetPlatform>
+    <DocumentationFile>bin\Release_Java20\Mainsoft.Web.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_Java20|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -59,6 +59,7 @@
     <JDKName>1.5.0_05</JDKName>
     <jarserver>iap2</jarserver>
     <TargetPlatform>0</TargetPlatform>
+    <DocumentationFile>bin\Debug_Java20\Mainsoft.Web.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_Java|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
