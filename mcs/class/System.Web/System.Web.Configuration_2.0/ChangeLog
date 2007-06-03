@@ -1,3 +1,8 @@
+2007-06-03  Adar Wesley <adarw@mainsoft.com>
+
+	* ProfilePropertySettingsCollection.cs: added missing method 
+	OnDeserializeUnrecognizedElement.
+
 2007-05-30  Marek Habersack  <mhabersack@novell.com>
 
 	* WebConfigurationManager.cs: if errors happen when opening the

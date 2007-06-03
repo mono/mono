@@ -73,6 +73,15 @@ namespace System.Web.Configuration
 			return ((ProfilePropertySettings)element).Name;
 		}
 
+		protected override bool OnDeserializeUnrecognizedElement (string elementName, XmlReader reader) 
+		{
+			if (elementName == "clear" || elementName == "group") {
+				throw new ConfigurationErrorsException (String.Format ("{0} is not permitted here", elementName), reader);
+			}
+
+			return base.OnDeserializeUnrecognizedElement (elementName, reader);
+		}
+
 		public string GetKey (int index)
 		{
 			ProfilePropertySettings s = Get (index);
