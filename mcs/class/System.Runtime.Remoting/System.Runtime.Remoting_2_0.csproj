@@ -148,7 +148,7 @@
       <HintPath>..\lib\J2SE.Helpers.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="rt, Version=0.0.0.0, Culture=neutral">
+    <Reference Include="rt">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\rt.dll</HintPath>
       <Private>False</Private>

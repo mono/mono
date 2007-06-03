@@ -89,7 +89,7 @@
     <Reference Include="J2SE.Helpers, Version=0.0.0.0, Culture=neutral">
       <Private>False</Private>
     </Reference>
-    <Reference Include="rt, Version=0.0.0.0, Culture=neutral">
+    <Reference Include="rt">
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />

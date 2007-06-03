@@ -106,7 +106,7 @@
     </VisualStudio>
   </ProjectExtensions>
   <ItemGroup>
-    <Reference Include="rt, Version=0.0.0.0, Culture=neutral">
+    <Reference Include="rt">
       <HintPath>..\lib\rt.dll</HintPath>
       <Private>False</Private>
     </Reference>

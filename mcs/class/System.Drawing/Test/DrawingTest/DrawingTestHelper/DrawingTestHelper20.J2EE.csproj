@@ -95,7 +95,7 @@
       <HintPath>..\..\..\..\..\nunit20\nunit-console\bin\Debug_Java20\nunit.framework.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="rt, Version=0.0.0.0, Culture=neutral">
+    <Reference Include="rt">
       <HintPath>..\..\..\..\lib\rt.dll</HintPath>
       <Private>False</Private>
     </Reference>
