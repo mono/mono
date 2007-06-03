@@ -201,7 +201,8 @@
       <Private>False</Private>
       <HintPath>..\lib\J2SE.Helpers.dll</HintPath>
     </Reference>
-    <Reference Include="rt, Version=0.0.0.0, Culture=neutral">
+    <Reference Include="rt">
+      <HintPath>..\lib\rt.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System.Configuration" />
