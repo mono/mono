@@ -1,3 +1,13 @@
+2007-06-03  Raja R Harinath  <harinath@gmail.com>
+
+	Partly speed up CS0136 error checks.
+	* statement.cs (ExplicitBlock.GetKnownVariableInfo): Remove
+	'recurse' parameter.
+	(Block.DoCheckError136): Only check errors in parameters.  Move
+	local variable checks ...
+	(Block.AddVariable): ... here, and ...
+	(ToplevelBlock.ResolveMeta): ... here.
+
 2007-06-02  Raja R Harinath  <harinath@gmail.com>
 
 	* statement.cs (Block.IsChildOf): Remove.

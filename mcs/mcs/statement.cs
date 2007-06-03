@@ -1679,12 +1679,12 @@ namespace Mono.CSharp {
 		public bool CheckInvariantMeaningInBlock (string name, Expression e, Location loc)
 		{
 			Block b = this;
-			LocalInfo kvi = b.Explicit.GetKnownVariableInfo (name, true);
+			LocalInfo kvi = b.Explicit.GetKnownVariableInfo (name);
 			while (kvi == null) {
 				b = b.Explicit.Parent;
 				if (b == null)
 					return true;
-				kvi = b.Explicit.GetKnownVariableInfo (name, true);
+				kvi = b.Explicit.GetKnownVariableInfo (name);
 			}
 
 			if (kvi.Block == b)
@@ -1808,19 +1808,11 @@ namespace Mono.CSharp {
 
 		protected bool DoCheckError136 (string name, string scope, Location loc)
 		{
-			LocalInfo vi = Explicit.GetKnownVariableInfo (name, false);
-			if (vi != null) {
-				Report.SymbolRelatedToPreviousError (vi.Location, name);
-				Error_AlreadyDeclared (loc, name, scope != null ? scope : "child");
-				return false;
-			}
-
 			int idx;
 			Parameter p = Toplevel.Parameters.GetParameterByName (name, out idx);
 			if (p != null) {
 				Report.SymbolRelatedToPreviousError (p.Location, name);
-				Error_AlreadyDeclared (
-					loc, name, scope != null ? scope : "method argument");
+				Error_AlreadyDeclared (loc, name, scope != null ? scope : "method argument");
 				return false;
 			}
 
@@ -1840,6 +1832,15 @@ namespace Mono.CSharp {
 				return null;
 			}
 
+			vi = Explicit.GetKnownVariableInfo (name);
+			if (vi != null) {
+				Report.SymbolRelatedToPreviousError (vi.Location, name);
+				Error_AlreadyDeclared (l, name, "child");
+				return null;
+			}
+
+			// FIXME: Parameters should be tracked by KnownVariableInfo
+			//        This ^%@$%@@#^#%* UGLY recursion needs to be stomped out
 			if (!CheckError136 (name, null, true, true, l))
 				return null;
 
@@ -1853,7 +1854,7 @@ namespace Mono.CSharp {
 			return vi;
 		}
 
-		void Error_AlreadyDeclared (Location loc, string var, string reason)
+		protected static void Error_AlreadyDeclared (Location loc, string var, string reason)
 		{
 			Report.Error (136, loc, "A local variable named `{0}' cannot be declared " +
 				      "in this scope because it would give a different meaning " +
@@ -2402,16 +2403,9 @@ namespace Mono.CSharp {
 				Parent.Explicit.AddKnownVariable (name, info);
 		}
 
-		internal LocalInfo GetKnownVariableInfo (string name, bool recurse)
+		internal LocalInfo GetKnownVariableInfo (string name)
 		{
-			if (known_variables == null)
-				return null;
-			LocalInfo vi = (LocalInfo) known_variables [name];
-			if (vi == null)
-				return null;
-			if (!recurse && vi.Block.Explicit != this)
-				return null;
-			return vi;
+			return known_variables == null ? null : (LocalInfo) known_variables [name];
 		}
 	}
 
@@ -2700,6 +2694,14 @@ namespace Mono.CSharp {
 
 			if (!IsIterator && Parent != null && parameters != null) {
 				foreach (Parameter p in parameters.FixedParameters) {
+					LocalInfo vi = GetLocalInfo (p.Name);
+					if (vi != null) {
+						Report.SymbolRelatedToPreviousError (vi.Location, p.Name);
+						Error_AlreadyDeclared (loc, p.Name, "parent or current");
+						return false;
+					}
+
+					// FIXME: Add a 'GetParameterInfo' method and use it. This recursion is ugly
 					if (!CheckError136_InParents (p.Name, loc))
 						return false;
 				}
