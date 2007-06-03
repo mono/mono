@@ -308,6 +308,7 @@
     <Compile Include="System.Collections.Generic\LinkedList.cs" />
     <Compile Include="System.Collections.Generic\LinkedListNode.cs" />
     <Compile Include="System.Collections.Generic\Queue.cs" />
+    <Compile Include="System.Collections.Generic\RBTree.cs" />
     <Compile Include="System.Collections.Generic\SortedDictionary.cs" />
     <Compile Include="System.Collections.Generic\SortedList.cs" />
     <Compile Include="System.Collections.Generic\Stack.cs" />
@@ -547,6 +548,8 @@
     <Compile Include="System.ComponentModel\ToolboxItemFilterType.cs" />
     <Compile Include="System.ComponentModel\TypeConverter.cs" />
     <Compile Include="System.ComponentModel\TypeConverterAttribute.cs" />
+    <Compile Include="System.ComponentModel\TypeDescriptionProvider.cs" />
+    <Compile Include="System.ComponentModel\TypeDescriptionProviderAttribute.cs" />
     <Compile Include="System.ComponentModel\TypeDescriptor.cs" />
     <Compile Include="System.ComponentModel\TypeListConverter.cs" />
     <Compile Include="System.ComponentModel\UInt16Converter.cs" />
@@ -610,6 +613,7 @@
     <Compile Include="System.Configuration\SpecialSettingAttribute.cs" />
     <Compile Include="System.Configuration\UserScopedSettingAttribute.cs" />
     <Compile Include="System.Configuration\UserSettingsGroup.cs" />
+    <Compile Include="System.Diagnostics\CorrelationManager.cs" />
     <Compile Include="System.Diagnostics\Debug.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -630,6 +634,7 @@
     </Compile>
     <Compile Include="System.Diagnostics\TraceEventCache.jvm.cs" />
     <Compile Include="System.Diagnostics\TraceEventType.cs" />
+    <Compile Include="System.Diagnostics\TraceFilter.cs" />
     <Compile Include="System.Diagnostics\TraceImpl.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -642,7 +647,9 @@
     <Compile Include="System.Diagnostics\TraceListenerCollection.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="System.Diagnostics\TraceOptions.cs" />
     <Compile Include="System.Diagnostics\TraceSource.cs" />
+    <Compile Include="System.Diagnostics\TraceSourceInfo.cs" />
     <Compile Include="System.IO\ErrorEventArgs.cs" />
     <Compile Include="System.IO\ErrorEventHandler.cs" />
     <Compile Include="System.IO\FileAction.cs" />
