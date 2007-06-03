@@ -46,12 +46,6 @@ namespace System.Web.Configuration
 			}
 		}
 
-		protected override ConfigurationPropertyCollection Properties {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-
 		[ConfigurationPropertyAttribute ("readAccessProperties", DefaultValue = null)]
 		public string [] ReadAccessProperties {
 			get {

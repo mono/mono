@@ -47,12 +47,6 @@ namespace System.Web.Configuration
 			}
 		}
 
-		protected override ConfigurationPropertyCollection Properties {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-
 		[StringValidator (MinLength = 1)]
 		[ConfigurationProperty ("type", IsRequired = true, DefaultValue = "")]
 		public string Type {

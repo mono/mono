@@ -55,12 +55,6 @@ namespace System.Web.Configuration
 				this ["enableCompression"] = value;
 			}
 		}
-
-		protected override ConfigurationPropertyCollection Properties {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
 	}
 }
 

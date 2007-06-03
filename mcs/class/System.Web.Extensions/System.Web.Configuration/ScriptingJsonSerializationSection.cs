@@ -53,12 +53,6 @@ namespace System.Web.Configuration
 			}
 		}
 
-		protected override ConfigurationPropertyCollection Properties {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-
 		[ConfigurationPropertyAttribute ("recursionLimit", DefaultValue = 100)]
 		public int RecursionLimit {
 			get {

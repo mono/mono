@@ -37,12 +37,6 @@ namespace System.Web.Configuration
 	[ConfigurationCollection (typeof (Converter))]
 	public class ConvertersCollection : ConfigurationElementCollection
 	{
-		protected override ConfigurationPropertyCollection Properties {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-
 		public Converter this [int index] {
 			get {
 				return (Converter) BaseGet (index);
