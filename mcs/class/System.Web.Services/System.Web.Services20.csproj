@@ -363,23 +363,27 @@
   </ProjectExtensions>
   <PropertyGroup>
     <PostBuildEvent>echo Parsing DefaultWsdlHelpGenerator.jvm.aspx
-  
-copy ..\..\..\..\..\mono\data\net_2_0\DefaultWsdlHelpGenerator.jvm.aspx DefaultWsdlHelpGenerator.aspx
 
-"%25VMW_HOME%25\bin\aspxparser.exe" /reference:"$(FrameworkDir)\System.dll" /reference:"$(FrameworkDir)\System.Web.dll" /reference:"System.Web.Services.dll" /reference:"$(FrameworkDir)\System.Xml.dll" /reference:"..\..\..\lib\J2EE.Helpers.dll" /novalidator /appdir:$(ProjectDir)$(OutDir) /out:$(ProjectDir)\WEB-INF\lib\$(TargetName).jar /bindir:$(TargetDir)$(OutDir) /virtdir:/MonoSystemWeb /aspxfiles:DefaultWsdlHelpGenerator.aspx /precompileall /tempDir:$(ProjectDir)$(OutDir) /assembly:$(TargetPath) /nomd5
+rmdir /S /Q parse
+mkdir parse
+copy System.Web.Services.* parse
+cd parse
 
-del DefaultWsdlHelpGenerator.aspx
+copy ..\..\..\..\..\..\mono\data\net_2_0\DefaultWsdlHelpGenerator.jvm.aspx DefaultWsdlHelpGenerator.aspx
 
-set td=%25random%25
-echo %25td%25\ASP
-md %25td%25\ASP
-md %25td%25\assemblies
-copy assemblies\defaultwsdlhelpgenerator.aspx.xml %25td%25\assemblies\defaultwsdlhelpgenerator.aspx.xml 
-cd assemblies\A*
-copy *.ghres ..\..\%25td%25\
-copy ASP ..\..\%25td%25\ASP
-cd ..\..\%25td%25
+"%25VMW_HOME%25\bin\aspxparser.exe" /reference:"C:\WINDOWS\Microsoft.NET\Framework\v2.0.50727\System.dll" /reference:"C:\WINDOWS\Microsoft.NET\Framework\v2.0.50727\System.Web.dll" /reference:"System.Web.Services.dll" /reference:"C:\WINDOWS\Microsoft.NET\Framework\v2.0.50727\System.Xml.dll" /reference:"..\..\..\..\lib\J2EE.Helpers.dll" /novalidator /appdir:%25CD%25 /out:C:\views2\builder1\studio\GH\runtime\monobuild\mcs\class\System.Web.Services\\WEB-INF\lib\System.Web.Services.jar /bindir:%25CD%25 /virtdir:/MonoSystemWeb /aspxfiles:DefaultWsdlHelpGenerator.aspx /precompileall /tempDir:%25CD%25 /assembly:%CD%\System.Web.Services.dll /nomd5
 
+cd ..
+
+rmdir /S /Q pack
+mkdir pack
+md pack\ASP
+md pack\assemblies
+copy parse\assemblies\defaultwsdlhelpgenerator.aspx.xml pack\assemblies\defaultwsdlhelpgenerator.aspx.xml 
+cd parse\assemblies\A*
+copy *.ghres ..\..\..\pack
+copy ASP ..\..\..\pack\ASP
+cd ..\..\..\pack
 
 echo Unzipping System.Web.Services.jar...
 set jar=$(TargetDir)$(TargetName).jar
@@ -387,8 +391,6 @@ set jar=$(TargetDir)$(TargetName).jar
 echo Repackaging...
 jar cfm "%25jar%25" .\META-INF\MANIFEST.MF *
 
-cd ..
-rmdir /S /Q %25td%25
-rmdir /S /Q assemblies</PostBuildEvent>
+cd ..</PostBuildEvent>
   </PropertyGroup>
 </Project>
