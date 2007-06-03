@@ -1,4 +1,4 @@
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug_Java</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -9,12 +9,12 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Mainsoft.Web.AspnetConfig</AssemblyName>
-    <JDKName>1.5.0_05</JDKName>
+    <JDKName>1.6.0</JDKName>
     <GHProjectType>3</GHProjectType>
     <GHProjectKind>runtime</GHProjectKind>
     <Version>2.0</Version>
     <RootNamespace>Mainsoft.Web.AspnetConfig</RootNamespace>
-    <jarserver>ipa</jarserver>
+    <jarserver>ip2</jarserver>
     <ApplicationServerType>tomcat</ApplicationServerType>
     <FlatWebApp>true</FlatWebApp>
     <NoDeploy>true</NoDeploy>
@@ -72,7 +72,7 @@
           <NTLMAuthentication>False</NTLMAuthentication>
         </WebProjectProperties>
       </FlavorProperties>
-      <UserProperties REFS-JarPath-system-drawing="..\..\..\..\..\lib\System.Drawing.jar;..\..\..\..\..\lib\jai_imageio.jar;..\..\..\..\..\lib\jai_core.jar;..\..\..\..\..\lib\jai_codec.jar;..\..\..\..\..\lib\clibwrapper_jiio.jar;..\..\..\..\..\lib\mlibwrapper_jai.jar" REFS-JarPath-system-configuration="..\..\..\..\..\lib\System.Configuration.jar" REFS-JarPath-system-xml="..\..\..\..\..\..\lib\System.Xml.jar" REFS-JarPath-system-web="..\..\..\..\..\..\lib\System.Web.jar" REFS-JarPath-system-data="..\..\..\..\..\..\lib\System.Data.jar" REFS-JarPath-system="..\..\..\..\..\..\lib\System.jar" REFS-JarPath-mscorlib="..\..\..\..\..\..\lib\mscorlib.jar" />
+      <UserProperties REFS-JarPath-mscorlib="..\..\..\..\..\..\lib\mscorlib.jar" REFS-JarPath-system="..\..\..\..\..\..\lib\System.jar" REFS-JarPath-system-data="..\..\..\..\..\..\lib\System.Data.jar" REFS-JarPath-system-web="..\..\..\..\..\..\lib\System.Web.jar" REFS-JarPath-system-xml="..\..\..\..\..\..\lib\System.Xml.jar" REFS-JarPath-system-configuration="..\..\..\..\..\lib\System.Configuration.jar" REFS-JarPath-system-drawing="..\..\..\..\..\lib\System.Drawing.jar;..\..\..\..\..\lib\jai_imageio.jar;..\..\..\..\..\lib\jai_core.jar;..\..\..\..\..\lib\jai_codec.jar;..\..\..\..\..\lib\clibwrapper_jiio.jar;..\..\..\..\..\lib\mlibwrapper_jai.jar" />
     </VisualStudio>
   </ProjectExtensions>
   <ItemGroup>
