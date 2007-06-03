@@ -94,7 +94,6 @@ namespace System.Diagnostics {
 		private int indentSize = 4;
 
 #if NET_2_0
-		static readonly string [] empty_array = new string [0];
 		[ThreadStatic]
 		private StringDictionary attributes = new StringDictionary ();
 		[ThreadStatic]
@@ -102,6 +101,10 @@ namespace System.Diagnostics {
 		[ThreadStatic]
 		private TraceOptions options;
 #endif
+#endif
+
+#if NET_2_0
+		static readonly string [] empty_array = new string [0];
 #endif
 
 		private string name = null;

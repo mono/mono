@@ -31,9 +31,11 @@
 
 using System.IO;
 using System.Text;
+#if SECURITY_DEP
 using Mono.Security;
 using Mono.Security.Cryptography;
 using MX = Mono.Security.X509;
+#endif
 
 namespace System.Security.Cryptography.X509Certificates {
 
