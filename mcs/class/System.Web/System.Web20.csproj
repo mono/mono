@@ -9,12 +9,13 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>System.Web</RootNamespace>
     <AssemblyName>System.Web</AssemblyName>
-    <JDKName>1.5.0_05</JDKName>
+    <JDKName>1.6</JDKName>
     <GHProjectType>1</GHProjectType>
     <!-- workaqround that should be changed to be "framework" when we will be able to compile without MS refs -->
     <GHProjectKind>runtime</GHProjectKind>
     <Version>2.0</Version>
     <ProjectTypeGuids>{F6B19D50-1E2E-4e87-ADFB-10393B439DE0};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <jarserver>ip2</jarserver>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release_Java20|AnyCPU' ">
     <OutputPath>bin\Release_Java20\</OutputPath>
@@ -678,7 +679,6 @@
     <Compile Include="System.Web.UI.WebControls\MenuItemBindingCollection.cs" />
     <Compile Include="System.Web.UI.WebControls\MenuItemCollection.cs" />
     <Compile Include="System.Web.UI.WebControls\MenuItemStyle.cs">
-      <SubType>Component</SubType>
     </Compile>
     <Compile Include="System.Web.UI.WebControls\MenuItemStyleCollection.cs" />
     <Compile Include="System.Web.UI.WebControls\MenuItemTemplateContainer.cs" />
@@ -708,7 +708,6 @@
     <Compile Include="System.Web.UI.WebControls\PagerSettings.cs" />
     <Compile Include="System.Web.UI.WebControls\Panel.cs" />
     <Compile Include="System.Web.UI.WebControls\PanelStyle.cs">
-      <SubType>Component</SubType>
     </Compile>
     <Compile Include="System.Web.UI.WebControls\Parameter.cs" />
     <Compile Include="System.Web.UI.WebControls\ParameterCollection.cs" />
@@ -770,7 +769,6 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="System.Web.UI.WebControls\SubMenuStyle.cs">
-      <SubType>Component</SubType>
     </Compile>
     <Compile Include="System.Web.UI.WebControls\SubMenuStyleCollection.cs" />
     <Compile Include="System.Web.UI.WebControls\Table.cs" />
@@ -788,7 +786,6 @@
     <Compile Include="System.Web.UI.WebControls\TableRowCollection.cs" />
     <Compile Include="System.Web.UI.WebControls\TableRowSection.cs" />
     <Compile Include="System.Web.UI.WebControls\TableSectionStyle.cs">
-      <SubType>Component</SubType>
     </Compile>
     <Compile Include="System.Web.UI.WebControls\TableStyle.cs">
       <SubType>Component</SubType>
@@ -809,7 +806,6 @@
     <Compile Include="System.Web.UI.WebControls\TreeNodeEventHandler.cs" />
     <Compile Include="System.Web.UI.WebControls\TreeNodeSelectAction.cs" />
     <Compile Include="System.Web.UI.WebControls\TreeNodeStyle.cs">
-      <SubType>Component</SubType>
     </Compile>
     <Compile Include="System.Web.UI.WebControls\TreeNodeStyleCollection.cs" />
     <Compile Include="System.Web.UI.WebControls\TreeNodeTypes.cs" />
@@ -1357,9 +1353,9 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="j2ee">
+    <Reference Include="JavaEE, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <Private>False</Private>
-      <HintPath>..\lib\j2ee.dll</HintPath>
+      <HintPath>..\lib\JavaEE.dll</HintPath>
     </Reference>
     <Reference Include="J2EE.Helpers">
       <Private>False</Private>
@@ -1398,7 +1394,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties REFS-JarPath-j2se-helpers="..\lib\J2SE.Helpers.jar" REFS-JarPath-j2ee-helpers="..\lib\J2EE.Helpers.jar" REFS-JarPath-j2ee="..\lib\j2ee.jar" REFS-JarPath-rt="..\lib\rt.jar" REFS-JarPath-mscorlib="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\mscorlib.jar" REFS-JarPath-system="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\System.jar" REFS-JarPath-system-xml="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\System.Xml.jar" REFS-JarPath-system-drawing="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\System.Drawing.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\jai_imageio.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\jai_core.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\jai_codec.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\clibwrapper_jiio.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\mlibwrapper_jai.jar" REFS-JarPath-system-data="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\System.Data.jar" REFS-JarPath-system-configuration="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\System.Configuration.jar" />
+      <UserProperties REFS-JarPath-system-configuration="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\System.Configuration.jar" REFS-JarPath-system-data="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\System.Data.jar" REFS-JarPath-system-drawing="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\System.Drawing.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\jai_imageio.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\jai_core.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\jai_codec.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\clibwrapper_jiio.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\mlibwrapper_jai.jar" REFS-JarPath-system-xml="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\System.Xml.jar" REFS-JarPath-system="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\System.jar" REFS-JarPath-mscorlib="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\mscorlib.jar" REFS-JarPath-rt="..\lib\rt.jar" REFS-JarPath-j2ee="..\lib\j2ee.jar" REFS-JarPath-j2ee-helpers="..\lib\J2EE.Helpers.jar" REFS-JarPath-j2se-helpers="..\lib\J2SE.Helpers.jar" REFS-JarPath-javaee="" REFS-RefInfo-javaee="repository:JavaEE:tomcat:1.3" />
     </VisualStudio>
   </ProjectExtensions>
   <PropertyGroup>
