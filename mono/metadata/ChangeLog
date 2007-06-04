@@ -1,3 +1,8 @@
+2007-06-04  Mark Probst  <mark.probst@gmail.com>
+
+	* domain.c, domain-internals.h (MonoDomain): jit_code_hash is a
+	MonoInternalHashTable now.
+
 2007-05-31  Zoltan Varga  <vargaz@gmail.com>
 
 	* domain-internals.h (MonoDomain): Add two new hash tables to store delegate

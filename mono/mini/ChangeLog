@@ -1,3 +1,7 @@
+2007-06-04  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c, driver.c: Changed MonoDomain.jit_code_hash to a
+	MonoInternalHashTable.
 
 Mon Jun 4 11:29:43 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
