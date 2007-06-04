@@ -1,5 +1,8 @@
 2007-06-04  Raja R Harinath  <rharinath@novell.com>
 
+	* flowanalysis.cs (FlowBranching.CheckOutParameters): Move ...
+	* statement.cs (ToplevelBlock.CheckOutParameters): ... here.
+
 	* statement.cs (ToplevelBlock.ResolveMeta): Move CS0136 checks ...
 	(ToplevelBlock.ProcessParameters) ... here.
 	(ToplevelBlock..ctor): Invoke it.

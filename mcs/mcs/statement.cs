@@ -2749,6 +2749,30 @@ namespace Mono.CSharp {
 			return Report.Errors == errors;
 		}
 
+		// <summary>
+		//   Check whether all `out' parameters have been assigned.
+		// </summary>
+		public void CheckOutParameters (FlowBranching.UsageVector vector, Location loc)
+		{
+			if (vector.IsUnreachable)
+				return;
+			VariableInfo [] param_map = ParameterMap;
+			if (param_map == null)
+				return;
+			for (int i = 0; i < param_map.Length; i++) {
+				VariableInfo var = param_map [i];
+
+				if (var == null)
+					continue;
+
+				if (vector.IsAssigned (var, false))
+					continue;
+
+				Report.Error (177, loc, "The out parameter `{0}' must be assigned to before control leaves the current method",
+					var.Name);
+			}
+		}
+
 		public override void EmitMeta (EmitContext ec)
 		{
 			base.EmitMeta (ec);

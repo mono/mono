@@ -650,30 +650,6 @@ namespace Mono.CSharp
 		{
 		}
 
-		// <summary>
-		//   Check whether all `out' parameters have been assigned.
-		// </summary>
-		void CheckOutParameters (UsageVector vector, Location loc)
-		{
-			if (vector.IsUnreachable)
-				return;
-			VariableInfo [] param_map = Block.Toplevel.ParameterMap;
-			if (param_map == null)
-				return;
-			for (int i = 0; i < param_map.Length; i++) {
-				VariableInfo var = param_map [i];
-
-				if (var == null)
-					continue;
-
-				if (vector.IsAssigned (var, false))
-					continue;
-
-				Report.Error (177, loc, "The out parameter `{0}' must be assigned to before control leaves the current method",
-					var.Name);
-			}
-		}
-
 		public override bool InTryWithCatch ()
 		{
 			return false;
@@ -727,10 +703,10 @@ namespace Mono.CSharp
 		protected override UsageVector Merge ()
 		{
 			for (UsageVector origin = return_origins; origin != null; origin = origin.Next)
-				CheckOutParameters (origin, origin.Location);
+				Block.Toplevel.CheckOutParameters (origin, origin.Location);
 
 			UsageVector vector = base.Merge ();
-			CheckOutParameters (vector, Block.loc);
+			Block.Toplevel.CheckOutParameters (vector, Block.loc);
 			// Note: we _do_not_ merge in the return origins
 			return vector;
 		}
