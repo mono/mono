@@ -2508,6 +2508,9 @@ namespace Mono.CSharp {
 			this.Parent = parent;
 			if (parent != null)
 				parent.AddAnonymousChild (this);
+
+			if (this.parameters.Count != 0)
+				ProcessParameters ();
 		}
 
 		public ToplevelBlock (Location loc) : this (null, (Flags) 0, null, loc)
@@ -2529,6 +2532,34 @@ namespace Mono.CSharp {
 			}
 
 			return true;
+		}
+
+		ToplevelParameterInfo [] parameter_info;
+		void ProcessParameters ()
+		{
+			int n = parameters.Count;
+			parameter_info = new ToplevelParameterInfo [n];
+			for (int i = 0; i < n; ++i) {
+				parameter_info [i] = new ToplevelParameterInfo (this, i);
+
+				string name = parameters [i].Name;
+
+				LocalInfo vi = GetLocalInfo (name);
+				if (vi != null) {
+					Report.SymbolRelatedToPreviousError (vi.Location, name);
+					Error_AlreadyDeclared (loc, name, "parent or current");
+					continue;
+				}
+
+				// FIXME: Add a 'GetParameterInfo' method and use it. This recursion is ugly
+				if (!CheckError136_InParents (name, loc))
+					continue;
+
+				//AddKnownVariable (name, parameter_info [i]);
+			}
+
+			// mark this block as "used" so that we create local declarations in a sub-block
+			this.Use ();
 		}
 
 		bool DoCheckError158 (string name, Location loc)
@@ -2696,21 +2727,6 @@ namespace Mono.CSharp {
 			// Assert: orig_count != parameter.Count => orig_count == 0
 			if (orig_count != 0 && orig_count != parameters.Count)
 				throw new InternalErrorException ("parameter information mismatch");
-
-			if (!IsIterator && Parent != null) {
-				foreach (Parameter p in parameters.FixedParameters) {
-					LocalInfo vi = GetLocalInfo (p.Name);
-					if (vi != null) {
-						Report.SymbolRelatedToPreviousError (vi.Location, p.Name);
-						Error_AlreadyDeclared (loc, p.Name, "parent or current");
-						return false;
-					}
-
-					// FIXME: Add a 'GetParameterInfo' method and use it. This recursion is ugly
-					if (!CheckError136_InParents (p.Name, loc))
-						return false;
-				}
-			}
 
 			int offset = Parent == null ? 0 : Parent.AssignableSlots;
 
