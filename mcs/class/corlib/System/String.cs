@@ -582,9 +582,28 @@ namespace System
 			return Compare (this, strB, false);
 		}
 
-		public static int CompareOrdinal (String strA, String strB)
+		public static unsafe int CompareOrdinal (String strA, String strB)
 		{
-			return CompareOrdinal (strA, strB, CompareOptions.Ordinal);
+			if (strA == null) {
+				if (strB == null)
+					return 0;
+				else
+					return -1;
+			} else if (strB == null) {
+				return 1;
+			}
+			fixed (char* aptr = strA, bptr = strB) {
+				char* ap = aptr;
+				char* end = ap + Math.Min (strA.Length, strB.Length);
+				char* bp = bptr;
+				while (ap < end) {
+					if (*ap != *bp)
+						return *ap - *bp;
+					ap++;
+					bp++;
+				}
+				return strA.Length - strB.Length;
+			}
 		}
 
 		internal static int CompareOrdinal (String strA, String strB, CompareOptions options)
@@ -594,8 +613,7 @@ namespace System
 					return 0;
 				else
 					return -1;
-			}
-			else if (strB == null) {
+			} else if (strB == null) {
 				return 1;
 			}
 

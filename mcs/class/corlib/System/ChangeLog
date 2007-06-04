@@ -1,3 +1,8 @@
+
+Mon Jun 4 14:52:17 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* String.cs: optimized CompareOrdinal ().
+
 2007-06-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* MonoCustomAttrs.cs (GetBase): Revert last change as it breaks the build.
