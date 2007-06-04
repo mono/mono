@@ -1,5 +1,13 @@
 2007-06-04  Raja R Harinath  <rharinath@novell.com>
 
+	* statement.cs (ToplevelBlock.CloneTo): New.  Copy over parameter
+	information too.
+	(ToplevelBlock.GetParameterInfo): Split out of ...
+	(ToplevelBlock.GetParameterRefernce): ... this.
+	(ToplevelBlock.ParameterMap): Remove.
+	* expression.cs (ParameterReference): Update to use
+	ToplevelParameterInfo.
+
 	* statement.cs (ToplevelBlock.ProcessParameters): Workaround some
 	regression.
 

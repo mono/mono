@@ -2390,22 +2390,24 @@ namespace Mono.CSharp {
 	}
 
 	public class ToplevelParameterInfo : IKnownVariable {
-		ToplevelBlock block;
-		int idx;
+		public readonly ToplevelBlock Block;
+		public readonly int Index;
 		public VariableInfo VariableInfo;
 
-		public Block Block {
-			get { return block; }
+		Block IKnownVariable.Block {
+			get { return Block; }
 		}
-
+		public Parameter Parameter {
+			get { return Block.Parameters [Index]; }
+		}
 		public Location Location {
-			get { return block.Parameters [idx].Location; }
+			get { return Parameter.Location; }
 		}
 
 		public ToplevelParameterInfo (ToplevelBlock block, int idx)
 		{
-			this.block = block;
-			this.idx = idx;
+			this.Block = block;
+			this.Index = idx;
 		}
 	}
 
@@ -2515,6 +2517,19 @@ namespace Mono.CSharp {
 
 		public ToplevelBlock (Location loc) : this (null, (Flags) 0, null, loc)
 		{
+		}
+
+		protected override void CloneTo (CloneContext clonectx, Statement t)
+		{
+			ToplevelBlock target = (ToplevelBlock) t;
+			base.CloneTo (clonectx, t);
+
+			if (this.parameters.Count == 0)
+				return;
+
+			target.parameter_info = new ToplevelParameterInfo [parameters.Count];
+			for (int i = 0; i < parameters.Count; ++i)
+				target.parameter_info [i] = new ToplevelParameterInfo (target, i);
 		}
 
 		public bool CheckError158 (string name, Location loc)
@@ -2639,11 +2654,17 @@ namespace Mono.CSharp {
 		//
 		public ParameterReference GetParameterReference (string name, Location loc)
 		{
+			ToplevelParameterInfo p = GetParameterInfo (name);
+			return p == null ? null : new ParameterReference (this, p, loc);
+		}
+
+		public ToplevelParameterInfo GetParameterInfo (string name)
+		{
 			int idx;
 			for (ToplevelBlock t = this; t != null; t = t.Container) {
 				Parameter par = t.Parameters.GetParameterByName (name, out idx);
 				if (par != null)
-					return new ParameterReference (par, this, idx, loc);
+					return t.parameter_info [idx];
 			}
 			return null;
 		}
@@ -2705,15 +2726,6 @@ namespace Mono.CSharp {
 			return this_variable == null || this_variable.IsThisAssigned (ec);
 		}
 
-		VariableInfo [] param_map;
-		public VariableInfo [] ParameterMap {
-			get {
-				if ((flags & Flags.VariablesInitialized) == 0)
-					throw new Exception ("Variables have not been initialized yet");
-				return param_map;
-			}
-		}
-
 		public bool ResolveMeta (EmitContext ec, Parameters ip)
 		{
 			int errors = Report.Errors;
@@ -2737,10 +2749,9 @@ namespace Mono.CSharp {
 				if ((mod & Parameter.Modifier.OUT) != Parameter.Modifier.OUT)
 					continue;
 
-				if (param_map == null)
-					param_map = new VariableInfo [parameters.Count];
-				param_map [i] = new VariableInfo (ip, i, offset);
-				offset += param_map [i].Length;
+				VariableInfo vi = new VariableInfo (ip, i, offset);
+				parameter_info [i].VariableInfo = vi;
+				offset += vi.Length;
 			}
 
 			ResolveMeta (ec, offset);
@@ -2757,11 +2768,11 @@ namespace Mono.CSharp {
 		{
 			if (vector.IsUnreachable)
 				return;
-			VariableInfo [] param_map = ParameterMap;
-			if (param_map == null)
-				return;
-			for (int i = 0; i < param_map.Length; i++) {
-				VariableInfo var = param_map [i];
+
+			int n = parameter_info == null ? 0 : parameter_info.Length;
+
+			for (int i = 0; i < n; i++) {
+				VariableInfo var = parameter_info [i].VariableInfo;
 
 				if (var == null)
 					continue;

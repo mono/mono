@@ -70,11 +70,9 @@ namespace Mono.CSharp
 			}
 
 			// TODO: eplicit li.Type means .Cast between IEnumerable and IEnumerable<T>
-			AnonymousMethodExpression ame = new AnonymousMethodExpression (
-				null, null, host,
-				new Parameters (new Parameter (li.Type, li.Name, Parameter.Modifier.NONE, null, loc)),
-				block, loc);
-			ame.Block = new ToplevelBlock (loc);
+			Parameters p = new Parameters (new Parameter (li.Type, li.Name, Parameter.Modifier.NONE, null, loc));
+			AnonymousMethodExpression ame = new AnonymousMethodExpression (null, null, host, p, block, loc);
+			ame.Block = new ToplevelBlock (p, loc);
 			ame.Block.AddStatement (new Return (expr, loc));
 
 			ArrayList args = new ArrayList (2);

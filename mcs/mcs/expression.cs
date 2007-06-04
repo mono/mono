@@ -3710,97 +3710,84 @@ namespace Mono.CSharp {
 	///   representation.
 	/// </summary>
 	public class ParameterReference : VariableReference, IVariable {
-		Parameter par;
-		string name;
-		int idx;
+		ToplevelParameterInfo pi;
 		ToplevelBlock referenced;
-		VariableInfo vi;
+
 		public bool is_ref, is_out;
 
 		public bool IsOut {
-			get {
-				return is_out;
-			}
+			get { return is_out; }
 		}
 
 		public override bool IsRef {
-			get {
-				return is_ref;
-			}
+			get { return is_ref; }
 		}
 
 		public string Name {
-			get {
-				return name;
-			}
+			get { return Parameter.Name; }
 		}
 
 		public Parameter Parameter {
-			get {
-				return par;
-			}
+			get { return pi.Parameter; }
 		}
 
 		Variable variable;
 		
-		public ParameterReference (Parameter par, ToplevelBlock referenced, int idx, Location loc)
+		public ParameterReference (ToplevelBlock referenced, ToplevelParameterInfo pi, Location loc)
 		{
-			this.par = par;
-			this.name = par.Name;
+			this.pi = pi;
 			this.referenced = referenced;
-			this.idx  = idx;
 			this.loc = loc;
 			eclass = ExprClass.Variable;
 		}
 
 		public VariableInfo VariableInfo {
-			get { return vi; }
+			get { return pi.VariableInfo; }
 		}
 
 		public override Variable Variable {
-			get { return variable != null ? variable : par.Variable; }
+			get { return variable != null ? variable : Parameter.Variable; }
 		}
 
 		public bool VerifyFixed ()
 		{
 			// A parameter is fixed if it's a value parameter (i.e., no modifier like out, ref, param).
-			return par.ModFlags == Parameter.Modifier.NONE;
+			return Parameter.ModFlags == Parameter.Modifier.NONE;
 		}
 
 		public bool IsAssigned (EmitContext ec, Location loc)
 		{
-			if (!ec.DoFlowAnalysis || !is_out || ec.CurrentBranching.IsAssigned (vi))
+			if (!ec.DoFlowAnalysis || !is_out || ec.CurrentBranching.IsAssigned (VariableInfo))
 				return true;
 
-			Report.Error (269, loc,
-				      "Use of unassigned out parameter `{0}'", par.Name);
+			Report.Error (269, loc, "Use of unassigned out parameter `{0}'", Name);
 			return false;
 		}
 
 		public bool IsFieldAssigned (EmitContext ec, string field_name, Location loc)
 		{
-			if (!ec.DoFlowAnalysis || !is_out || ec.CurrentBranching.IsFieldAssigned (vi, field_name))
+			if (!ec.DoFlowAnalysis || !is_out || ec.CurrentBranching.IsFieldAssigned (VariableInfo, field_name))
 				return true;
 
-			Report.Error (170, loc,
-				      "Use of possibly unassigned field `" + field_name + "'");
+			Report.Error (170, loc, "Use of possibly unassigned field `{0}'", field_name);
 			return false;
 		}
 
 		public void SetAssigned (EmitContext ec)
 		{
 			if (is_out && ec.DoFlowAnalysis)
-				ec.CurrentBranching.SetAssigned (vi);
+				ec.CurrentBranching.SetAssigned (VariableInfo);
 		}
 
 		public void SetFieldAssigned (EmitContext ec, string field_name)
 		{
 			if (is_out && ec.DoFlowAnalysis)
-				ec.CurrentBranching.SetFieldAssigned (vi, field_name);
+				ec.CurrentBranching.SetFieldAssigned (VariableInfo, field_name);
 		}
 
 		protected bool DoResolveBase (EmitContext ec)
 		{
+			Parameter par = Parameter;
 			if (!par.Resolve (ec)) {
 				//TODO:
 			}
@@ -3811,12 +3798,7 @@ namespace Mono.CSharp {
 			is_out = (mod & Parameter.Modifier.OUT) == Parameter.Modifier.OUT;
 			eclass = ExprClass.Variable;
 
-			ToplevelBlock declared = referenced;
-			while (!declared.IsLocalParameter (name))
-				declared = declared.Container;
-
-			if (is_out)
-				vi = declared.ParameterMap [idx];
+			ToplevelBlock declared = pi.Block;
 
 			AnonymousContainer am = ec.CurrentAnonymousMethod;
 			if (am == null)
@@ -3833,14 +3815,14 @@ namespace Mono.CSharp {
 				return true;
 
 			ScopeInfo scope = declared.CreateScopeInfo ();
-			variable = scope.AddParameter (par, idx);
+			variable = scope.AddParameter (par, pi.Index);
 			type = variable.Type;
 			return true;
 		}
 
-		public override int GetHashCode()
+		public override int GetHashCode ()
 		{
-			return name.GetHashCode ();
+			return Name.GetHashCode ();
 		}
 
 		public override bool Equals (object obj)
@@ -3849,7 +3831,7 @@ namespace Mono.CSharp {
 			if (pr == null)
 				return false;
 
-			return name == pr.name && referenced == pr.referenced;
+			return Name == pr.Name && referenced == pr.referenced;
 		}
 
 		//
@@ -3870,7 +3852,7 @@ namespace Mono.CSharp {
 				return null;
 
 			if (is_out && ec.DoFlowAnalysis &&
-			    (!ec.OmitStructFlowAnalysis || !vi.TypeInfo.IsStruct) && !IsAssigned (ec, loc))
+			    (!ec.OmitStructFlowAnalysis || !VariableInfo.TypeInfo.IsStruct) && !IsAssigned (ec, loc))
 				return null;
 
 			return this;
@@ -3902,7 +3884,7 @@ namespace Mono.CSharp {
 		
 		public override string ToString ()
 		{
-			return "ParameterReference[" + name + "]";
+			return "ParameterReference[" + Name + "]";
 		}
 	}
 	
