@@ -1,5 +1,10 @@
 2007-06-04  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Button.cs: Completely reformat and a little refactor to bring
+	this closer to Mono circa 2007.
+
+2007-06-04  Jonathan Pobst  <monkey@jpobst.com>
+
 	* CheckBox.cs, Form.cs, RadioButton.cs: Change call to ButtonBase.Redraw
 	to be ButtonBase.Invalidate.
 
