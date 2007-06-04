@@ -27,7 +27,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
+#if NET_2_0 && CONFIGURATION_DEP
 #if CONFIGURATION_DEP && !TARGET_JVM
 extern alias PrebuiltSystem;
 using NameValueCollection = PrebuiltSystem.System.Collections.Specialized.NameValueCollection;
@@ -40,15 +40,18 @@ namespace System.Configuration
 {
 	public class LocalFileSettingsProvider : SettingsProvider, IApplicationSettingsProvider
 	{
+		CustomizableFileSettingsProvider impl;
+
 		public LocalFileSettingsProvider ()
 		{
+			impl = new CustomizableFileSettingsProvider ();
 		}
 
 		[MonoTODO]
 		public SettingsPropertyValue GetPreviousVersion (SettingsContext context,
 								 SettingsProperty property)
 		{
-			throw new NotImplementedException ();
+			return impl.GetPreviousVersion (context, property);
 		}
 
 
@@ -59,8 +62,9 @@ namespace System.Configuration
 			SettingsPropertyValueCollection pv = new SettingsPropertyValueCollection ();
 			foreach (SettingsProperty prop in properties)
 				pv.Add (new SettingsPropertyValue (prop));
-
 			return pv;
+			// FIXME: enable this when the compiler issue is solved.
+			//return impl.GetPropertyValues (context, properties);
 		}
 
 #if CONFIGURATION_DEP
@@ -70,8 +74,10 @@ namespace System.Configuration
 			if (name == null)
 				name = "LocalFileSettingsProvider";
 			if (values != null)
-				applicationName = values["applicationName"];
+				impl.ApplicationName = values ["applicationName"];
 
+			// FIXME: this must be enabled
+			//impl.Initialize (name, values);
 			base.Initialize (name, values);
 		}
 #endif
@@ -79,27 +85,26 @@ namespace System.Configuration
 		[MonoTODO]
 		public void Reset (SettingsContext context)
 		{
-			throw new NotImplementedException ();
+			impl.Reset (context);
 		}
 
 		[MonoTODO]
 		public override void SetPropertyValues (SettingsContext context,
 							SettingsPropertyValueCollection values)
 		{
-			throw new NotImplementedException ();
+			impl.SetPropertyValues (context, values);
 		}
 
 		[MonoTODO]
 		public void Upgrade (SettingsContext context,
 				     SettingsPropertyCollection properties)
 		{
-			throw new NotImplementedException ();
+			impl.Upgrade (context, properties);
 		}
 
-		string applicationName = "";
 		public override string ApplicationName {
-			get { return applicationName; }
-			set { applicationName = value; }
+			get { return impl.ApplicationName; }
+			set { impl.ApplicationName = value; }
 		}
 
 		bool IsUserSetting (SettingsProperty prop)

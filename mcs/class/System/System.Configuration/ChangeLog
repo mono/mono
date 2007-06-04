@@ -1,3 +1,14 @@
+2007-06-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CustomizableLocalFileSettingsProvider.cs : contribution for
+	  LocalFileSettingsProvider implementation, by Noriaki Okimoto
+	  (seara@ojk.sppd.ne.jp), modified by myself to fit for System.dll.
+	  Origin of code license assignment at
+	  http://ojk.sppd.ne.jp/ojkblog/?date=20070603#p01.
+	* LocalFileSettingsProvider.cs : rewriting to use above.
+
+	  Due to some kind of compiler issue it is not enabled yet.
+
 2007-05-30  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ApplicationSettingsBase.cs : removed garbage debugging stuff.

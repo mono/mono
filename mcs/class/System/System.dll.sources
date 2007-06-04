@@ -404,6 +404,7 @@ System.Configuration/ConfigHelper.cs
 System.Configuration/ConfigurationException.cs
 System.Configuration/ConfigurationSettings.cs
 System.Configuration/ConfigXmlDocument.cs
+System.Configuration/CustomizableFileSettingsProvider.cs
 System.Configuration/DefaultSettingValueAttribute.cs
 System.Configuration/DictionarySectionHandler.cs
 System.Configuration/IApplicationSettingsProvider.cs
