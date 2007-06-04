@@ -1,3 +1,8 @@
+2007-06-04  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* PropertyGridTest.cs: Added test for bug #81796, and reworked
+	SelectedGridItem_Null test to no longer check actual message.
+
 2007-06-01  Jonathan Pobst  <monkey@jpobst.com>
 
 	* FormTest.cs: Modify AutoSizeGrowAndShrink test to pass on all WM's.

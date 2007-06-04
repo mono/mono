@@ -34,6 +34,15 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsNotNull (pg.SelectedGridItem, "#B6");
 		}
 
+		[Test] // bug #81796
+		public void SelectedObject_NoProperties ()
+		{
+			PropertyGrid propertyGrid = new PropertyGrid ();
+			propertyGrid.SelectedObject = new Button ();
+			propertyGrid.SelectedObject = new object ();
+			propertyGrid.SelectedObject = new Button ();
+		}
+
 		[Test]
 		public void SelectedObject_Null ()
 		{
@@ -71,19 +80,27 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsNotNull (pg.SelectedObjects, "#C2");
 			Assert.AreEqual (0, pg.SelectedObjects.Length, "#C3");
 			Assert.IsNull (pg.SelectedGridItem, "C4");
-			Assert.AreEqual (2, log.EventsRaised, "B5");
-			Assert.AreEqual ("SelectedObjectsChanged;SelectedObjectsChanged", log.EventsJoined (";"), "B6");
-			
+			Assert.AreEqual (2, log.EventsRaised, "C5");
+			Assert.AreEqual ("SelectedObjectsChanged;SelectedObjectsChanged", log.EventsJoined (";"), "C6");
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException), "GridItem specified to PropertyGrid.SelectedGridItem must be a valid GridItem.")]
 		public void SelectedGridItem_Null ()
 		{
 			PropertyGrid pg = new PropertyGrid ();
 			pg.SelectedObject = new TextBox ();
 			Assert.IsNotNull (pg.SelectedGridItem, "#1");
-			pg.SelectedGridItem = null;
+			try {
+				pg.SelectedGridItem = null;
+				Assert.Fail ("#2");
+			} catch (ArgumentException ex) {
+				// GridItem specified to PropertyGrid.SelectedGridItem must be
+				// a valid GridItem
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#3");
+				Assert.IsNull (ex.InnerException, "#4");
+				Assert.IsNotNull (ex.Message, "#5");
+				Assert.IsNull (ex.ParamName, "#6");
+			}
 		}
 
 		[Test] // bug #79615
@@ -155,7 +172,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (selected_objects, pg.SelectedGridItem.Parent.Value, "4");
 
 			Assert.IsNull (pg.SelectedGridItem.Parent.Parent, "5");
-		}		
+		}
 
 		class ArrayTest_object
 		{
