@@ -156,7 +156,7 @@ namespace System.Windows.Forms {
 					EventHandler eh = (EventHandler)(Events [AppearanceChangedEvent]);
 					if (eh != null)
 						eh (this, EventArgs.Empty);
-					Redraw();
+					Invalidate();
 				}
 			}
 		}
@@ -186,7 +186,7 @@ namespace System.Windows.Forms {
 				if (value != radiobutton_alignment) {
 					radiobutton_alignment = value;
 
-					Redraw();
+					Invalidate();
 				}
 			}
 		}
@@ -208,11 +208,11 @@ namespace System.Windows.Forms {
 				if (value && (check_state != CheckState.Checked)) {
 					UpdateSiblings();
 					check_state = CheckState.Checked;
-					Redraw();
+					Invalidate();
 					OnCheckedChanged(EventArgs.Empty);
 				} else if (!value && (check_state != CheckState.Unchecked)) {
 					check_state = CheckState.Unchecked;
-					Redraw();
+					Invalidate();
 					OnCheckedChanged(EventArgs.Empty);
 				}
 			}
@@ -234,7 +234,7 @@ namespace System.Windows.Forms {
 			set {
 				if (value != text_alignment) {
 					text_alignment = value;
-					Redraw();
+					Invalidate();
 				}
 			}
 		}

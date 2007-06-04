@@ -1,5 +1,10 @@
 2007-06-04  Jonathan Pobst  <monkey@jpobst.com>
 
+	* CheckBox.cs, Form.cs, RadioButton.cs: Change call to ButtonBase.Redraw
+	to be ButtonBase.Invalidate.
+
+2007-06-04  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ButtonBase.cs: GetPreferredSize is 2.0 only.  Fixes build.
 
 2007-06-04  Jonathan Pobst  <monkey@jpobst.com>

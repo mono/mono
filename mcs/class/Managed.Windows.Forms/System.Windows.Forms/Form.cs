@@ -2729,11 +2729,11 @@ namespace System.Windows.Forms {
 				
 				if (ActiveControl is Button) {
 					a_button.paint_as_acceptbutton = false;
-					a_button.Redraw();
+					a_button.Invalidate();
 					return;
 				} else {
 					a_button.paint_as_acceptbutton = true;
-					a_button.Redraw();
+					a_button.Invalidate();
 				}
 			}
 		}
