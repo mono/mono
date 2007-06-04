@@ -2559,7 +2559,8 @@ namespace Mono.CSharp {
 			}
 
 			// mark this block as "used" so that we create local declarations in a sub-block
-			this.Use ();
+			// FIXME: This appears to uncover a lot of bugs
+			//this.Use ();
 		}
 
 		bool DoCheckError158 (string name, Location loc)

@@ -1,5 +1,8 @@
 2007-06-04  Raja R Harinath  <rharinath@novell.com>
 
+	* statement.cs (ToplevelBlock.ProcessParameters): Workaround some
+	regression.
+
 	* flowanalysis.cs (FlowBranching.CheckOutParameters): Move ...
 	* statement.cs (ToplevelBlock.CheckOutParameters): ... here.
 
