@@ -1,3 +1,12 @@
+2007-06-04  Raja R Harinath  <rharinath@novell.com>
+
+	* statement.cs (IKnownVariable): New interface.
+	(LocalInfo): Implement it.
+	(ToplevelParameterInfo): New class.
+	(ExplicitBlock.AddKnownVariable): Use IKnownVariable.
+	(ExplicitBlock.GetKnownVariable): Likewise.  Rename from
+	GetKnownVariableInfo.
+
 2007-06-03  Raja R Harinath  <harinath@gmail.com>
 
 	Partly speed up CS0136 error checks.

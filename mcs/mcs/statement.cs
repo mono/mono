@@ -1135,10 +1135,15 @@ namespace Mono.CSharp {
 		public abstract void EmitAddressOf (EmitContext ec);
 	}
 
+	public interface IKnownVariable {
+		Block Block { get; }
+		Location Location { get; }
+	}
+
 	//
 	// The information about a user-perceived local variable
 	//
-	public class LocalInfo {
+	public class LocalInfo : IKnownVariable {
 		public Expression Type;
 
 		public Type VariableType;
@@ -1265,42 +1270,23 @@ namespace Mono.CSharp {
 		}
 
 		public bool IsCaptured {
-			get {
-				return (flags & Flags.Captured) != 0;
-			}
-
-			set {
-				flags |= Flags.Captured;
-			}
+			get { return (flags & Flags.Captured) != 0; }
+			set { flags |= Flags.Captured; }
 		}
 
 		public bool IsConstant {
-			get {
-				return (flags & Flags.IsConstant) != 0;
-			}
-			set {
-				flags |= Flags.IsConstant;
-			}
+			get { return (flags & Flags.IsConstant) != 0; }
+			set { flags |= Flags.IsConstant; }
 		}
 
 		public bool AddressTaken {
-			get {
-				return (flags & Flags.AddressTaken) != 0;
-			}
-
-			set {
-				flags |= Flags.AddressTaken;
-			}
+			get { return (flags & Flags.AddressTaken) != 0; }
+			set { flags |= Flags.AddressTaken; }
 		}
 
 		public bool CompilerGenerated {
-			get {
-				return (flags & Flags.CompilerGenerated) != 0;
-			}
-
-			set {
-				flags |= Flags.CompilerGenerated;
-			}
+			get { return (flags & Flags.CompilerGenerated) != 0; }
+			set { flags |= Flags.CompilerGenerated; }
 		}
 
 		public override string ToString ()
@@ -1310,18 +1296,12 @@ namespace Mono.CSharp {
 		}
 
 		public bool Used {
-			get {
-				return (flags & Flags.Used) != 0;
-			}
-			set {
-				flags = value ? (flags | Flags.Used) : (unchecked (flags & ~Flags.Used));
-			}
+			get { return (flags & Flags.Used) != 0; }
+			set { flags = value ? (flags | Flags.Used) : (unchecked (flags & ~Flags.Used)); }
 		}
 
 		public bool ReadOnly {
-			get {
-				return (flags & Flags.ReadOnly) != 0;
-			}
+			get { return (flags & Flags.ReadOnly) != 0; }
 		}
 
 		public void SetReadOnlyContext (ReadOnlyContext context)
@@ -1351,21 +1331,21 @@ namespace Mono.CSharp {
 		// allocated in a pinned slot with DeclareLocal.
 		//
 		public bool Pinned {
-			get {
-				return (flags & Flags.Pinned) != 0;
-			}
-			set {
-				flags = value ? (flags | Flags.Pinned) : (flags & ~Flags.Pinned);
-			}
+			get { return (flags & Flags.Pinned) != 0; }
+			set { flags = value ? (flags | Flags.Pinned) : (flags & ~Flags.Pinned); }
 		}
 
 		public bool IsThis {
-			get {
-				return (flags & Flags.IsThis) != 0;
-			}
-			set {
-				flags = value ? (flags | Flags.IsThis) : (flags & ~Flags.IsThis);
-			}
+			get { return (flags & Flags.IsThis) != 0; }
+			set { flags = value ? (flags | Flags.IsThis) : (flags & ~Flags.IsThis); }
+		}
+
+		Block IKnownVariable.Block {
+			get { return Block; }
+		}
+
+		Location IKnownVariable.Location {
+			get { return Location; }
 		}
 
 		protected class LocalVariable : Variable
@@ -1679,12 +1659,12 @@ namespace Mono.CSharp {
 		public bool CheckInvariantMeaningInBlock (string name, Expression e, Location loc)
 		{
 			Block b = this;
-			LocalInfo kvi = b.Explicit.GetKnownVariableInfo (name);
+			IKnownVariable kvi = b.Explicit.GetKnownVariable (name);
 			while (kvi == null) {
 				b = b.Explicit.Parent;
 				if (b == null)
 					return true;
-				kvi = b.Explicit.GetKnownVariableInfo (name);
+				kvi = b.Explicit.GetKnownVariable (name);
 			}
 
 			if (kvi.Block == b)
@@ -1832,14 +1812,14 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			vi = Explicit.GetKnownVariableInfo (name);
-			if (vi != null) {
-				Report.SymbolRelatedToPreviousError (vi.Location, name);
+			IKnownVariable kvi = Explicit.GetKnownVariable (name);
+			if (kvi != null) {
+				Report.SymbolRelatedToPreviousError (kvi.Location, name);
 				Error_AlreadyDeclared (l, name, "child");
 				return null;
 			}
 
-			// FIXME: Parameters should be tracked by KnownVariableInfo
+			// FIXME: Parameters should be tracked by KnownVariable
 			//        This ^%@$%@@#^#%* UGLY recursion needs to be stomped out
 			if (!CheckError136 (name, null, true, true, l))
 				return null;
@@ -2392,7 +2372,7 @@ namespace Mono.CSharp {
 		//   If a variable name has been used in a child block, it's illegal to
 		//   declare a variable with the same name in the current block.
 		// </summary>
-		internal void AddKnownVariable (string name, LocalInfo info)
+		internal void AddKnownVariable (string name, IKnownVariable info)
 		{
 			if (known_variables == null)
 				known_variables = new Hashtable ();
@@ -2403,9 +2383,29 @@ namespace Mono.CSharp {
 				Parent.Explicit.AddKnownVariable (name, info);
 		}
 
-		internal LocalInfo GetKnownVariableInfo (string name)
+		internal IKnownVariable GetKnownVariable (string name)
 		{
-			return known_variables == null ? null : (LocalInfo) known_variables [name];
+			return known_variables == null ? null : (IKnownVariable) known_variables [name];
+		}
+	}
+
+	public class ToplevelParameterInfo : IKnownVariable {
+		ToplevelBlock block;
+		int idx;
+		public VariableInfo VariableInfo;
+
+		public Block Block {
+			get { return block; }
+		}
+
+		public Location Location {
+			get { return block.Parameters [idx].Location; }
+		}
+
+		public ToplevelParameterInfo (ToplevelBlock block, int idx)
+		{
+			this.block = block;
+			this.idx = idx;
 		}
 	}
 
