@@ -915,7 +915,7 @@ namespace Mono.AssemblyInfo
 
 			for (int i = 0; i < atts.Length; ++i) {
 				Type t = atts [i].GetType ();
-				if (!t.IsPublic && !IsMonoTODOAttribute ("TODOAttribute"))
+				if (!t.IsPublic && !IsMonoTODOAttribute (t.Name))
 					continue;
 
 				// we ignore attributes that inherit from SecurityAttribute on purpose as they:
