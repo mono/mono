@@ -1,5 +1,9 @@
 2007-06-01  Jonathan Pobst  <monkey@jpobst.com>
 
+	* FormTest.cs: Modify AutoSizeGrowAndShrink test to pass on all WM's.
+
+2007-06-01  Jonathan Pobst  <monkey@jpobst.com>
+
 	* FormTest.cs: Add tests for AutoSize'ing.
 
 2007-05-23  Everaldo Canuto  <ecanuto@novell.com>

@@ -1807,7 +1807,9 @@ namespace MonoTests.System.Windows.Forms
 
 			f.Show ();
 
-			Assert.AreEqual (SystemInformation.MinimumWindowSize, f.Size, "A1");
+			// Make sure form shrunk
+			Assert.IsTrue (f.ClientSize.Width < 150, "A1");
+			Assert.IsTrue (f.ClientSize.Height < 150, "A1-2");
 
 			Button b = new Button ();
 			b.Size = new Size (200, 200);
