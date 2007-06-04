@@ -1872,8 +1872,10 @@ namespace Mono.CSharp {
 					Error_ParameterNameCollision (p.Location, type_argument_name, "method parameter");
 					return false;
 				}
+
+				// FIXME: This is wrong, since it only looks at the outermost set of variables
 				if (block != null) {
-					LocalInfo li = (LocalInfo)block.Variables[type_argument_name];
+					LocalInfo li = (LocalInfo)block.Variables [type_argument_name];
 					if (li != null) {
 						Error_ParameterNameCollision (li.Location, type_argument_name, "local variable");
 						return false;
