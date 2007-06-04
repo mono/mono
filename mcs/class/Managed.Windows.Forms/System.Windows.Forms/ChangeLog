@@ -1,5 +1,9 @@
 2007-06-04  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ButtonBase.cs: GetPreferredSize is 2.0 only.  Fixes build.
+
+2007-06-04  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ButtonBase.cs: Completely reformat and a little refactor to bring
 	this closer to Mono circa 2007.
 

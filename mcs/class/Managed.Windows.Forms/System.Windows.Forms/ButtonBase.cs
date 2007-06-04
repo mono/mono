@@ -70,6 +70,7 @@ namespace System.Windows.Forms {
 			this.image_key = string.Empty;
 			this.text_image_relation = TextImageRelation.Overlay;
 			this.use_mnemonic = true;
+			use_visual_style_back_color = true;
 #endif
 			image_index	= -1;
 			image		= null;
@@ -267,9 +268,9 @@ namespace System.Windows.Forms {
 				
 					if (value != null && image != null)
 						image = null;
-				}
 				
-				Invalidate ();
+					Invalidate ();
+				}
 			}
 		}
 
@@ -465,11 +466,13 @@ namespace System.Windows.Forms {
 		#endregion	// Public Instance Properties
 
 		#region Public Methods
+#if NET_2_0
 		// The base calls into GetPreferredSizeCore, which we will override in our subclasses
 		public override Size GetPreferredSize (Size proposedSize)
 		{
 			return base.GetPreferredSize (proposedSize);
 		}
+#endif
 		#endregion
 		
 		#region Protected Methods
@@ -506,7 +509,7 @@ namespace System.Windows.Forms {
 			base.OnKeyDown (kevent);
 		}
 
-		protected override void OnKeyUp(KeyEventArgs kevent)
+		protected override void OnKeyUp (KeyEventArgs kevent)
 		{
 			if (kevent.KeyData == Keys.Space) {
 				OnMouseUp (new MouseEventArgs (MouseButtons.Left, 1, 2, 2, 0));
@@ -517,7 +520,7 @@ namespace System.Windows.Forms {
 			base.OnKeyUp (kevent);
 		}
 
-		protected override void OnLostFocus(EventArgs e)
+		protected override void OnLostFocus (EventArgs e)
 		{
 			Invalidate ();
 			base.OnLostFocus (e);
@@ -611,20 +614,20 @@ namespace System.Windows.Forms {
 			base.OnParentChanged (e);
 		}
 
-		protected override void OnTextChanged(EventArgs e)
+		protected override void OnTextChanged (EventArgs e)
 		{
 			Invalidate ();
 			base.OnTextChanged (e);
 		}
 
-		protected override void OnVisibleChanged(EventArgs e)
+		protected override void OnVisibleChanged (EventArgs e)
 		{
 			if (!Visible) {
 				is_pressed = false;
 				is_entered = false;
 			}
 			
-			base.OnVisibleChanged(e);
+			base.OnVisibleChanged (e);
 		}
 
 		protected void ResetFlagsandPaint ()
@@ -633,7 +636,7 @@ namespace System.Windows.Forms {
 			// Should we do Invalidate (); ?
 		}
 
-		protected override void WndProc(ref Message m)
+		protected override void WndProc (ref Message m)
 		{
 			switch ((Msg)m.Msg) {
 				case Msg.WM_LBUTTONDBLCLK: {
