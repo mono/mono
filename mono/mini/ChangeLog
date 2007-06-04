@@ -1,3 +1,9 @@
+
+Mon Jun 4 11:29:43 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* inssel.brg, mini.c, mini-ops.h: optimized Math.Mini/Max
+	signed integer methods.
+
 2007-06-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-x86.c (mono_arch_get_delegate_invoke_impl): Disable the static case 
