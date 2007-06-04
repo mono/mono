@@ -1,3 +1,8 @@
+2007-06-04  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ButtonBase.cs: Completely reformat and a little refactor to bring
+	this closer to Mono circa 2007.
+
 2007-06-01  Everaldo Canuto  <ecanuto@novell.com>
 
 	* Label.cs: Fixes preferred sizes for 2.0 profile, also adjust some
