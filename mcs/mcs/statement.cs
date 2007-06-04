@@ -2685,6 +2685,7 @@ namespace Mono.CSharp {
 		public bool ResolveMeta (EmitContext ec, Parameters ip)
 		{
 			int errors = Report.Errors;
+			int orig_count = parameters.Count;
 
 			if (top_level_branching != null)
 				return true;
@@ -2692,7 +2693,11 @@ namespace Mono.CSharp {
 			if (ip != null)
 				parameters = ip;
 
-			if (!IsIterator && Parent != null && parameters != null) {
+			// Assert: orig_count != parameter.Count => orig_count == 0
+			if (orig_count != 0 && orig_count != parameters.Count)
+				throw new InternalErrorException ("parameter information mismatch");
+
+			if (!IsIterator && Parent != null) {
 				foreach (Parameter p in parameters.FixedParameters) {
 					LocalInfo vi = GetLocalInfo (p.Name);
 					if (vi != null) {
@@ -2709,18 +2714,16 @@ namespace Mono.CSharp {
 
 			int offset = Parent == null ? 0 : Parent.AssignableSlots;
 
-			if (parameters != null) {
-				for (int i = 0; i < parameters.Count; ++i) {
-					Parameter.Modifier mod = parameters.ParameterModifier (i);
+			for (int i = 0; i < orig_count; ++i) {
+				Parameter.Modifier mod = parameters.ParameterModifier (i);
 
-					if ((mod & Parameter.Modifier.OUT) != Parameter.Modifier.OUT)
-						continue;
+				if ((mod & Parameter.Modifier.OUT) != Parameter.Modifier.OUT)
+					continue;
 
-					if (param_map == null)
-						param_map = new VariableInfo [parameters.Count];
-					param_map [i] = new VariableInfo (ip, i, offset);
-					offset += param_map [i].Length;
-				}
+				if (param_map == null)
+					param_map = new VariableInfo [parameters.Count];
+				param_map [i] = new VariableInfo (ip, i, offset);
+				offset += param_map [i].Length;
 			}
 
 			ResolveMeta (ec, offset);

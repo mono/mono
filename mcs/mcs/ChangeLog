@@ -1,5 +1,8 @@
 2007-06-04  Raja R Harinath  <rharinath@novell.com>
 
+	* statement.cs (ToplevelBlock.ResolveMeta): Add sanity checks for
+	new parameters.
+
 	* statement.cs (IKnownVariable): New interface.
 	(LocalInfo): Implement it.
 	(ToplevelParameterInfo): New class.
