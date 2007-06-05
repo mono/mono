@@ -10263,7 +10263,6 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - create a helper function for allocating a stack slot, taking into account 
  *   MONO_CFG_HAS_SPILLUP.
  * - merge new GC changes in mini.c.
- * - merge the stack merge stuff.
  * - merge the soft float support.
  * - merge r68207.
  * - merge r78640.
@@ -10275,8 +10274,6 @@ mono_spill_global_vars (MonoCompile *cfg)
  *   remove the op_ opcodes from the cpu-..md files, clean up the cpu-..md files.
  * - make the cpu_ tables smaller when the usage of the cee_ opcodes is removed.
  * - optimize mono_regstate2_alloc_int/float.
- * - patch_delegate_trampoline () only works on call_membase, but the new JIT can't create
- *   such code.
  * - need to write a tree optimization pass, but the creation of trees is difficult, i.e.
  *   parts of the tree could be separated by other instructions, killing the tree
  *   arguments, or stores killing loads etc. Also, should we fold loads into other

@@ -1,5 +1,7 @@
 2007-06-05  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c: Remove a FIXME.
+	
 	* method-to-ir.c: Merge 77433.
 
 2007-05-31  Zoltan Varga  <vargaz@gmail.com>
