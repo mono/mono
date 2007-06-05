@@ -1,3 +1,8 @@
+2007-06-06  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c, driver.c: Reverted the MonoInternalHashTable changes.
+	Have to figure out what makes it crash the SWF regression.
+
 2007-06-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-ia64.c (mono_arch_lowering_pass): Fix ia64 build.

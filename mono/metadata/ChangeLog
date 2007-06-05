@@ -1,3 +1,10 @@
+2007-06-06  Mark Probst  <mark.probst@gmail.com>
+
+	* class.c, image.c, class-internals.h, domain.c,
+	domain-internals.h (MonoImage): Reverting MonoInternalHashTable
+	changes.  Have to figure out what makes them break the SWF
+	regression.
+
 2007-06-04  Mark Probst  <mark.probst@gmail.com>
 
 	* class.c, image.c, class-internals.h (MonoImage): class_cache is
