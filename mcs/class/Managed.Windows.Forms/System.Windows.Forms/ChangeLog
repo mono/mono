@@ -1,3 +1,9 @@
+2007-06-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListView.cs: Work around for #81602, since an unkown an pretty
+	infrequent condition appears only in some systems (old linux boxes, it
+	seems).
+
 2007-06-04  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Button.cs: Completely reformat and a little refactor to bring
