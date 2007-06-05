@@ -768,6 +768,14 @@ formal_typar_attr	: /* EMPTY */
                           {
                                 $$ = new PEAPI.GenericParamAttributes ();
                           }
+			| formal_typar_attr PLUS
+                          {
+                               $$ = (PEAPI.GenericParamAttributes) $1 | PEAPI.GenericParamAttributes.Covariant; 
+                          }
+			| formal_typar_attr DASH
+                          {
+                               $$ = (PEAPI.GenericParamAttributes) $1 | PEAPI.GenericParamAttributes.Contravariant; 
+                          }
 			| formal_typar_attr D_CTOR
                           {
                                $$ = (PEAPI.GenericParamAttributes) $1 | PEAPI.GenericParamAttributes.DefaultConstructorConstrait; 
