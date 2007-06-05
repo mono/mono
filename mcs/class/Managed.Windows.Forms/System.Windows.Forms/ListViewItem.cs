@@ -602,6 +602,12 @@ namespace System.Windows.Forms
 				
 			Rectangle rect;
 
+#if NET_2_0
+			// Can't cache bounds in Virtual mode,
+			// since we can get different item instances at each invocation
+			if (owner.VirtualMode)
+				Layout ();
+#endif
 			switch (portion) {
 			case ItemBoundsPortion.Icon:
 				rect = icon_rect;

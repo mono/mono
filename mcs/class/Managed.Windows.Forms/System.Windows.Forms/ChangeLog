@@ -1,3 +1,8 @@
+2007-06-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListViewItem.cs: We can't cache Bounds in VirtualMode 
+	since we can get different item instances every time we retrieve it.
+
 2007-06-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: Work around for #81602, since an unkown an pretty
