@@ -1,3 +1,15 @@
+2007-06-05  Andreia Gaita  <avidigal@novell.com>
+
+	* build-csproj, build-csproj2k5, swf.csproj, SWF2k5.csproj: 
+	Move external Consts.cs and MonoTODOAttribute.cs dependencies 
+	to the mwf tree, change the build scripts accordingly (so a 
+	user can compile and debug with mwf without having all the mono 
+	source tree). 
+	Remove Mono.Posix reference from build-csproj2k5. 
+	Fix conditional compilation symbols (NET_1_1 should also be 
+	defined on 2.0)
+	Synch up the *.csproj files
+
 2007-05-25  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* System.Windows.Forms_test.dll.sources: Added KeyEventArgsTest.cs

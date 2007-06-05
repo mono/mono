@@ -4643,13 +4643,13 @@
                 />
                 <File
                     RelPath = "Consts.cs"
-                    Link = "../../build/common/Consts.cs"
+                    Link = "common/Consts.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "MonoTODOAttribute.cs"
-                    Link = "../../build/common/MonoTODOAttribute.cs"
+                    Link = "common/MonoTODOAttribute.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
