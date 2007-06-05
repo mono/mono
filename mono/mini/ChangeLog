@@ -1,3 +1,9 @@
+
+Tue Jun 5 17:40:04 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: optimizee out the type check when storing null in a
+	reference array.
+
 2007-06-04  Mark Probst  <mark.probst@gmail.com>
 
 	* mini.c, driver.c: Changed MonoDomain.jit_code_hash to a
