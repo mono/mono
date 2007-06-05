@@ -2006,6 +2006,39 @@ mini_emit_load_intf_bit_reg_class (MonoCompile *cfg, int intf_bit_reg, int klass
 }
 
 /* 
+ * Emit code which loads into "intf_bit_reg" a nonzero value if the MonoVTable
+ * stored in "vtable_reg" implements the interface "klass".
+ */
+static void
+mini_emit_load_intf_bit_reg_vtable (MonoCompile *cfg, int intf_bit_reg, int vtable_reg, MonoClass *klass)
+{
+	int ibitmap_reg = alloc_preg (cfg);
+	int ibitmap_byte_reg = alloc_preg (cfg);
+ 
+	MONO_EMIT_NEW_LOAD_MEMBASE (cfg, ibitmap_reg, vtable_reg, G_STRUCT_OFFSET (MonoVTable, interface_bitmap));
+
+	if (cfg->compile_aot) {
+		int iid_reg = alloc_preg (cfg);
+		int shifted_iid_reg = alloc_preg (cfg);
+		int ibitmap_byte_address_reg = alloc_preg (cfg);
+		int masked_iid_reg = alloc_preg (cfg);
+		int iid_one_bit_reg = alloc_preg (cfg);
+		int iid_bit_reg = alloc_preg (cfg);
+		MONO_EMIT_NEW_AOTCONST (cfg, iid_reg, klass, MONO_PATCH_INFO_IID);
+		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ISHR_IMM, shifted_iid_reg, iid_reg, 3);
+		MONO_EMIT_NEW_BIALU (cfg, OP_PADD, ibitmap_byte_address_reg, ibitmap_reg, shifted_iid_reg);
+		MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOADU1_MEMBASE, ibitmap_byte_reg, ibitmap_byte_address_reg, 0);
+		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_AND_IMM, masked_iid_reg, iid_reg, 7);
+		MONO_EMIT_NEW_ICONST (cfg, iid_one_bit_reg, 1);
+		MONO_EMIT_NEW_BIALU (cfg, OP_ISHL, iid_bit_reg, iid_one_bit_reg, masked_iid_reg);
+		MONO_EMIT_NEW_BIALU (cfg, OP_IAND, intf_bit_reg, ibitmap_byte_reg, iid_bit_reg);
+	} else {
+		MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOADI1_MEMBASE, ibitmap_byte_reg, ibitmap_reg, klass->interface_id >> 3);
+		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_IAND_IMM, intf_bit_reg, ibitmap_byte_reg, 1 << (klass->interface_id & 7));
+	}
+}
+
+/* 
  * Emit code which checks whenever the interface id of @klass is smaller than
  * than the value given by max_iid_reg.
 */
@@ -2078,7 +2111,7 @@ mini_emit_iface_cast (MonoCompile *cfg, int vtable_reg, MonoClass *klass, MonoBa
 	int intf_reg = alloc_preg (cfg);
 
 	mini_emit_max_iid_check_vtable (cfg, vtable_reg, klass, false_target);
-	mini_emit_load_intf_reg_vtable (cfg, intf_reg, vtable_reg, klass);
+	mini_emit_load_intf_bit_reg_vtable (cfg, intf_reg, vtable_reg, klass);
 	MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, intf_reg, 0);
 	if (true_target)
 		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBNE_UN, true_target);
@@ -2088,7 +2121,6 @@ mini_emit_iface_cast (MonoCompile *cfg, int vtable_reg, MonoClass *klass, MonoBa
 
 /*
  * Variant of the above that takes a register to the class, not the vtable.
- * Note that inside interfaces_offsets the empty value is -1, not NULL, in this case.
  */
 static void 
 mini_emit_iface_class_cast (MonoCompile *cfg, int klass_reg, MonoClass *klass, MonoBasicBlock *false_target, MonoBasicBlock *true_target)
@@ -6428,7 +6460,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				/* Because of the PCONST below */
 				cfg->disable_aot = TRUE;
 				EMIT_NEW_TEMPLOAD (cfg, iargs [0], this_temp->inst_c0);
-				NEW_METHODCONST (cfg, iargs [1], cmethod);
+				EMIT_NEW_METHODCONST (cfg, iargs [1], cmethod);
 				EMIT_NEW_PCONST (cfg, iargs [2], mono_method_get_context (cmethod));
 				EMIT_NEW_TEMPLOADA (cfg, iargs [3], this_arg_temp->inst_c0);
 				addr = mono_emit_jit_icall (cfg, mono_helper_compile_generic_method, iargs);
@@ -10236,7 +10268,6 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - merge r68207.
  * - merge r78640.
  * - merge the ia64 switch changes.
- * - merge r77433.
  * - merge the mips conditional changes.
  * - get rid of duplicate functions like can_access_... from method-to-ir.c.
  * - use the op_ opcodes in the old JIT as well.
