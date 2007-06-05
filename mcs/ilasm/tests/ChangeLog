@@ -1,3 +1,7 @@
+2007-06-05  Rodrigo Kumpera <kumpera@gmail.com
+
+	* generics-variance.il: New. Test for variance related generic modifiers <+T> and <-T> 
+
 2007-01-11  Ankit Jain  <jankit@novell.com>
 
 	* test-custom-mod-1.il: New. Test for custom mods.
