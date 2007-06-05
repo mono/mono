@@ -1,3 +1,7 @@
+2007-06-05  Robert Jordan  <robertj@gmx.net>
+
+	* RemotingServicesTest.cs: Add test for bug #81811.
+
 2007-05-19  Robert Jordan  <robertj@gmx.net>
 
 	* IpcChannelTest.cs: Add test for bug #81653.

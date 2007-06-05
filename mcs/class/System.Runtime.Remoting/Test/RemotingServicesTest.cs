@@ -586,6 +586,27 @@ namespace MonoTests.Remoting
 				}
 			}
 		}
+
+		[Test]
+		public void GetObjectWithChannelDataTest ()
+		{
+			TcpChannel chn = null;
+			try {
+				chn = new TcpChannel(1247);
+				ChannelServices.RegisterChannel(chn);
+				
+				RemotingConfiguration.RegisterWellKnownServiceType(typeof(MarshalObject), "getobjectwithchanneldata.rem", WellKnownObjectMode.Singleton);
+
+				string channelData = "test";
+				AssertNotNull ("#01", Activator.GetObject(typeof(MarshalObject), "tcp://localhost:1247/getobjectwithchanneldata.rem", channelData));
+
+			} finally {
+				try {
+					ChannelServices.UnregisterChannel(chn);
+				} catch {
+				}
+			}
+		}
 		
 		[Test]
 		public void ConnectProxyCast ()
