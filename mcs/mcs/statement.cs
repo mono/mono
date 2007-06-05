@@ -1710,21 +1710,6 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		public bool CheckError136_InParents (string name, Location loc)
-		{
-			for (Block b = Parent; b != null; b = b.Parent) {
-				if (!b.DoCheckError136 (name, "parent or current", loc))
-					return false;
-			}
-
-			for (Block b = Toplevel.Parent; b != null; b = b.Toplevel.Parent) {
-				if (!b.CheckError136_InParents (name, loc))
-					return false;
-			}
-
-			return true;
-		}
-
 		public bool CheckError136_InChildren (string name, Location loc)
 		{
 			if (!DoCheckError136_InChildren (name, loc))
@@ -1762,24 +1747,13 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public bool CheckError136 (string name, string scope, bool check_parents,
-					   bool check_children, Location loc)
+		public bool CheckError136 (string name, string scope, bool check_children, Location loc)
 		{
 			if (!DoCheckError136 (name, scope, loc))
 				return false;
 
-			if (check_parents) {
-				if (!CheckError136_InParents (name, loc))
-					return false;
-			}
-
 			if (check_children) {
 				if (!CheckError136_InChildren (name, loc))
-					return false;
-			}
-
-			for (Block c = Toplevel.Parent; c != null; c = c.Toplevel.Parent) {
-				if (!c.DoCheckError136 (name, "parent or current", loc))
 					return false;
 			}
 
@@ -1812,6 +1786,13 @@ namespace Mono.CSharp {
 				return null;
 			}
 
+			ToplevelParameterInfo pi = Toplevel.GetParameterInfo (name);
+			if (pi != null) {
+				Report.SymbolRelatedToPreviousError (pi.Location, name);
+				Error_AlreadyDeclared (loc, name,
+					pi.Block == Toplevel ? "method argument" : "parent or current");
+			}
+
 			IKnownVariable kvi = Explicit.GetKnownVariable (name);
 			if (kvi != null) {
 				Report.SymbolRelatedToPreviousError (kvi.Location, name);
@@ -1821,7 +1802,7 @@ namespace Mono.CSharp {
 
 			// FIXME: Parameters should be tracked by KnownVariable
 			//        This ^%@$%@@#^#%* UGLY recursion needs to be stomped out
-			if (!CheckError136 (name, null, true, true, l))
+			if (!CheckError136 (name, null, true, l))
 				return null;
 
 			vi = new LocalInfo (type, name, this, l);
@@ -2566,9 +2547,12 @@ namespace Mono.CSharp {
 					continue;
 				}
 
-				// FIXME: Add a 'GetParameterInfo' method and use it. This recursion is ugly
-				if (!CheckError136_InParents (name, loc))
+				ToplevelParameterInfo pi = Parent == null ? null : Parent.Toplevel.GetParameterInfo (name);
+				if (pi != null) {
+					Report.SymbolRelatedToPreviousError (pi.Location, name);
+					Error_AlreadyDeclared (loc, name, "parent or current");
 					continue;
+				}
 
 				//AddKnownVariable (name, parameter_info [i]);
 			}
