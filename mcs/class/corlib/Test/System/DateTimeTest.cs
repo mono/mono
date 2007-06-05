@@ -900,7 +900,22 @@ public class DateTimeTest : Assertion
 	        IFormatProvider format = new CultureInfo("fr-FR", true);
 		DateTime t1 = DateTime.Parse(frDateTime, format);
 	}
-
+	
+	[Test]
+#if NET_2_0
+	[ExpectedException(typeof (FormatException))]
+#else
+	[ExpectedException(typeof (ArgumentOutOfRangeException))]
+#endif
+	public void ParseFormatExceptionForInvalidYear ()
+	{
+		// Bug #77633.  In .NET 1..1, the expected exception is ArgumentOutOfRangeException
+		// In .NET 2.0, the expected exception is FormatException
+		// build a string with the year of 5 digits
+		string s = "1/1/10000";
+		DateTime dt = DateTime.Parse (s);
+	}
+	
 	public void TestOA ()
 	{
 		double number=5000.41443;

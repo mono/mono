@@ -1,3 +1,7 @@
+2007-06-05  David Ferguson <davecferguson@gmail.com>
+
+	* DateTimeTest.cs : Add test for DateTime.Parse() exceptions.
+	
 2007-05-20  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DoubleTest.cs: Use Assert instead of deprecated Assertion. Code

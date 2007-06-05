@@ -844,6 +844,10 @@ namespace System
 			// but right now we don't support all the supported
 			// patterns for each culture, so try InvariantCulture
 			// as a quick remedy.
+			
+			const string formatExceptionMessage = "String was not recognized as a valid DateTime.";
+			const string argumentYearRangeExceptionMessage = "Valid values are between 1 and 9999, inclusive.";
+			
 			if (s == null)
 				throw new ArgumentNullException (Locale.GetText ("s is null"));
 			DateTime result;
@@ -866,12 +870,17 @@ namespace System
 			if (ParseExact (s, commonFormats, DateTimeFormatInfo.InvariantInfo, styles, out result, false, ref longYear))
 				return result;
 
+#if NET_2_0
+			// .NET does not throw an ArgumentOutOfRangeException, but .NET 1.1 does.
+			throw new FormatException (formatExceptionMessage);
+#else
 			if (longYear) {
 				throw new ArgumentOutOfRangeException ("year",
-					"Valid values are between 1 and 9999 inclusive");
+					argumentYearRangeExceptionMessage);
 			}
 
-			throw new FormatException ("String was not recognized as a valid DateTime.");
+			throw new FormatException (formatExceptionMessage);
+#endif
 		}
 
 		public static DateTime ParseExact (string s, string format, IFormatProvider fp)

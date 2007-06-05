@@ -1,4 +1,10 @@
+2007-06-05  David Ferguson <davecferguson@gmail.com>
 
+	* DateTime.cs: Changed DateTime.Parse() to throw a FormatException
+	  instead of an ArgumentOutOfRangeException for .NET 2.0.  An
+	  ArgumentOutOfRangeException is still thrown for .NET 1.1.
+	  Fixes bug #77633
+	  
 Mon Jun 4 14:52:17 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* String.cs: optimized CompareOrdinal ().
