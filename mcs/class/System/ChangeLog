@@ -1,3 +1,10 @@
+2007-06-05  Raja R Harinath  <harinath@gmail.com>
+
+	Make cyclic-dependency handling more readable
+	* Makefile (MISSING_DEPS): New.  Contains the list of cyclic
+	dependencies that aren't present.
+	(echo-warning): Simplify drastically.
+
 2007-06-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.dll.sources :

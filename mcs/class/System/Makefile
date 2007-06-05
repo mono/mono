@@ -66,26 +66,14 @@ ifdef USE_BOOT_COMPILE
 LIBRARY_COMPILE = $(BOOT_COMPILE)
 endif
 
-ifneq ($(CYCLIC_DEPS:%=../lib/$(PROFILE)/%), $(CYCLIC_DEP_FILES))
+MISSING_DEPS := $(filter-out $(notdir $(CYCLIC_DEP_FILES)), $(CYCLIC_DEPS))
+ifdef MISSING_DEPS
 NO_SIGN_ASSEMBLY = yes
 NO_INSTALL = yes
 all-local: echo-warning
 .PHONY: echo-warning
-
-ifeq   (, $(strip $(CYCLIC_DEP_FILES)))
 echo-warning:
-	@echo "** Warning: System.dll built without parts that depend on: $(CYCLIC_DEPS)"
-else     # defined CYCLIC_DEP_FILES
-ifdef      SECURITY_DEP_FILE
-echo-warning:
-	@echo "** Warning: built System.dll with 'Mono.Security.dll'-dependent parts"
-	@echo "** Warning: ... without 'System.Xml.dll' present: it may not be usable"
-	@echo "** Warning: ... without 'System.Configuration.dll' present: it may not be usable"
-else
-echo-warning:
-	@echo "** Warning: System.dll built without parts that depend on Mono.Security.dll"
-endif
-endif
+	@echo "** Warning: System.dll built without parts that depend on: $(MISSING_DEPS)"
 endif
 
 include ../../build/library.make
