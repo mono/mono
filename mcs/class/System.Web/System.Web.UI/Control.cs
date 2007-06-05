@@ -383,15 +383,11 @@ namespace System.Web.UI
 #if NET_2_0
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public TemplateControl TemplateControl 
-		{
-			get {
-				return _templateControl;
-			}
+		public TemplateControl TemplateControl {
+			get { return _templateControl; }
+			
 			[EditorBrowsable (EditorBrowsableState.Never)]
-			set {
-				_templateControl = value;
-			}
+			set { _templateControl = value; }
 		}
 #endif		
 
@@ -400,7 +396,13 @@ namespace System.Web.UI
 		[Browsable (false)]
 		[WebSysDescription ("A virtual directory containing the parent of the control.")]
                 public virtual string TemplateSourceDirectory {
-			get { return (_parent == null) ? String.Empty : _parent.TemplateSourceDirectory; }
+			get {
+#if NET_2_0
+				return (_templateControl == null) ? String.Empty : _templateControl.TemplateSourceDirectory;
+#else
+				return (_parent == null) ? String.Empty : _parent.TemplateSourceDirectory;
+#endif
+			}
                 }
 #endif
 
@@ -1247,8 +1249,9 @@ namespace System.Web.UI
 			if (VirtualPathUtility.IsAbsolute (relativeUrl) || relativeUrl.IndexOf (':') >= 0)
 				return relativeUrl;
 
-			if (Context != null && Context.Request != null && TemplateSourceDirectory != null && TemplateSourceDirectory.Length > 0) {
-				string basePath = Context.Request.FilePath;
+			HttpContext context = Context;
+			if (context != null && context.Request != null) {
+				string basePath = context.Request.CurrentExecutionFilePath;
 				if (basePath.Length > 1 && basePath [basePath.Length - 1] != '/') {
 					basePath = VirtualPathUtility.GetDirectory (basePath);
 				}
@@ -1256,7 +1259,11 @@ namespace System.Web.UI
 				if(VirtualPathUtility.IsAppRelative(relativeUrl))
 					return VirtualPathUtility.MakeRelative (basePath, relativeUrl);
 
-				string templatePath = VirtualPathUtility.AppendTrailingSlash (TemplateSourceDirectory);
+				string templateSourceDirectory = TemplateSourceDirectory;
+				if (templateSourceDirectory == null || templateSourceDirectory.Length == 0)
+					return relativeUrl;
+				
+				string templatePath = VirtualPathUtility.AppendTrailingSlash (templateSourceDirectory);
 				
 				if (basePath.Length == templatePath.Length && String.CompareOrdinal (basePath, templatePath) == 0)
 					return relativeUrl;

@@ -1,3 +1,9 @@
+2007-06-05  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateControlCompiler.cs: TemplateSourceDirectory in the 2.0
+	profile uses the TemplateControl property instead of Parent. This
+	allows to return the correct path.
+
 2007-06-01  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateControlCompiler.cs: be case-insensitive when looking for

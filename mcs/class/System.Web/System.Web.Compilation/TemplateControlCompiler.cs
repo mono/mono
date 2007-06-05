@@ -1453,12 +1453,15 @@ namespace System.Web.Compilation
 #if NET_2_0
 			if (!(parser is MasterPageParser)) {
 #endif
-				// if ((this.Parent != null))
-				//   return this.Parent.TemplateSourceDirectory;
+				// if ((this.TemplateControl != null))
+				//   return this.TemplateControl.TemplateSourceDirectory;
 				CodeFieldReferenceExpression parentField = new CodeFieldReferenceExpression ();
 				parentField.TargetObject = thisRef;
+#if NET_2_0
+				parentField.FieldName = "TemplateControl";
+#else
 				parentField.FieldName = "Parent";
-			
+#endif
 				CodeFieldReferenceExpression tsdField = new CodeFieldReferenceExpression ();
 				tsdField.TargetObject = parentField;
 				tsdField.FieldName = "TemplateSourceDirectory";

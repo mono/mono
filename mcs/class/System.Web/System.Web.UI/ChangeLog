@@ -1,3 +1,13 @@
+2007-06-05  Marek Habersack  <mhabersack@novell.com>
+
+	* Control.cs: TemplateSourceDirectory uses TemplateControl to
+	lookup the virtual source directory in the 2.0 instead of the
+	Parent.
+	ResolveClientUrl copes with empty TemplateSourceDirectory in the
+	correct way now - the check is made after the basePath checks.
+	The changes above make ResolveClientUrl work properly when called
+	from within a control residing in a TemplateControl.
+
 2007-05-30  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* HtmlTextWriter.cs: EncodeAttributeValue should call 
