@@ -1,3 +1,169 @@
+2007-06-04  Mark Probst  <mark.probst@gmail.com>
+
+	* class.c, image.c, class-internals.h (MonoImage): class_cache is
+	a MonoInternalHashTable now.
+
+2007-06-04  Mark Probst  <mark.probst@gmail.com>
+
+	* domain.c, domain-internals.h (MonoDomain): jit_code_hash is a
+	MonoInternalHashTable now.
+
+2007-05-31  Zoltan Varga  <vargaz@gmail.com>
+
+	* domain-internals.h (MonoDomain): Add two new hash tables to store delegate
+	invoke_impl code.
+
+	* object-internals.h (_MonoDelegate): Reflect changes to managed object layout.
+
+	* object.c (mono_delegate_ctor): Initialize invoke_impl field with an arch
+	dependent trampoline.
+
+	* appdomain.c (MONO_CORLIB_VERSION): Bump corlib version.
+
+	* icall.c (ves_icall_System_Delegate_SetMulticastInvoke): New icall.
+
+2007-05-29  Robert Jordan  <robertj@gmx.net>
+
+	* marshal.[c|h]: add mono_win32_compat_* wrappers. Fixes #81754.
+
+2007-05-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (ves_icall_get_method_info): Handle loader errors. Fixes #81724.
+
+2007-05-25  Jonathan Chambers  <joncham@gmail.com>
+
+       * marshal.c: Fix interface lookup loops for
+       cominterop_get_com_slot_for_method and 
+       cominterop_get_method_interface. Only need to lookup
+       if type is a class, else use interface type method is on.
+
+       Code is contributed under MIT/X11 license.
+
+2007-05-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* reflection.c: HasSecurity can be present even if no specially 
+	encoded (CAS) attributes are available (e.g. SuppressUnmanagedCode
+	SecurityAttribute). Fix CAS regression tests on buildbot.
+
+2007-05-24  Jonathan Chambers  <joncham@gmail.com>
+
+       * appdomain.c: Add configure checks for header files.
+       * image.c: Add configure checks for header files.
+       * file-io.c: Add configure checks for header files.
+       * debug-mono-symfile.c: Add configure checks for header files.
+       * threadpool.c: Add configure checks for header files.
+       * console-io.c: Add configure checks for header files.
+       * profiler.c: Add configure checks for header files.
+       * rawbuffer.c: Add configure checks for header files.
+       * icall.c: Add configure checks for header files.
+       * rand.c: Add configure checks for header files.
+       * socket-io.c: Add configure checks for header files.
+
+       Code is contributed under MIT/X11 license.
+
+2007-05-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (mono_custom_attrs_from_builders): Remove the 
+	assertion as it breaks the build.
+	
+	* reflection.c (mono_custom_attrs_from_builders): Add an assertion.
+
+	* reflection.c (lookup_custom_attr): Make a copy here too.
+
+	* image.c (mono_image_check_for_module_cctor): Avoid accessing metadata in
+	dynamic images.
+
+	* class.c (mono_class_init): Avoid accessing the metadata in dynamic
+	images.
+
+	* reflection.c (mono_custom_attrs_from_param): Make a copy of the dynamic attr
+	info.
+
+2007-05-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (encode_cattr_value): Fix yet another object cattr encoding issue.
+	(load_cattr_value): Ditto.
+
+2007-05-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_marshal_get_delegate_invoke): Improve the generated IL a little.
+
+2007-05-19  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* threads.c: In "start_wrapper", set apartment_state to MTA if
+	apartment_state is Unknown and we're running on 2.0 profile or
+	higher.
+	* object.c: In "mono_runtime_exec_main", if STAThread is not applied
+	to main method, then set apartment_state to Unknown on 1.0 profile,
+	and MTA on 2.0 profile.
+
+2007-05-16  Jb Evain  <jb@nurv.fr>
+
+	* class-internals.h (MonoDefaults): Add an attribute_class and
+	  customattribute_data_class.
+	* domain.c (mono_init_internal): Populate them.
+	* reflection.c: Use them to remove duplicates. Make a vew
+	MonoClass variables `static'.
+
+2007-05-15  Massimiliano Mantione  <massi@ximian.com>
+
+	* class-internals.h: Added "MonoVTable.interface_bitmap" as a next
+	step in implementing IMT, so that all isinst checks now can go
+	through the bitmap.
+	This was needed because vtables for TransparentProxy need to look
+	like the vtable of the "target" class, so they need to point to
+	its interface bitmap directly.
+
+	* object.c: inside "mono_class_create_runtime_vtable" and
+	"mono_class_proxy_vtable", initialize "MonoVTable.interface_bitmap".
+
+2007-05-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* object-internals.h
+	  culture-info.h : added territory field in MonoCulture and
+	  CultureInfoEntry foreach. Added lcid field in RegionInfoEntry.
+	* locales.c : fill territory field above too.
+	* culture-info-table.h : regenerated.
+
+2007-05-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* class-internals.h (_MonoGenericContainer): Widen type_argc filed to 31 bits.
+	Fixes #81599.
+
+2007-05-11  Jonathan Chambers  <joncham@gmail.com>
+
+	* object.c: Always initialize apartment, even if 
+	there is no custom attributes on entry point.
+	
+	Code is contributed under MIT/X11 license.
+
+2007-05-10  Jonathan Chambers  <joncham@gmail.com>
+
+	* marshal.c: LPTSTR == LPWSTR on Win32. Fixes #81370.
+	* metadata.c: If no encoding is set, check for unicode
+	on class.
+	
+	Code is contributed under MIT/X11 license.
+
+2007-05-09  Jonathan Chambers  <joncham@gmail.com>
+
+	* threads.c: Handle if mono_thread_current returns NULL 
+	
+	Code is contributed under MIT/X11 license.
+
+2007-05-09  Jonathan Chambers  <joncham@gmail.com>
+
+	* threads.c: Initialize Thread.AprtmentState and set on Thread.Start
+	in start_wrapper. Added mono_thread_init_apartment_state and
+	mono_thread_cleanup_apartment_state.
+	* object.c: Initialize thread apartment state on main thread
+	by checking for STAThreadAttribute on entry point.
+	* object-internals.h: Add apartment_state field to MonoThread.
+	* threads-types.h: Add unmanaged definition of 
+	System.Threading.ApartmentState, MonoThreadApartmentState.
+	
+	Code is contributed under MIT/X11 license.
+	
 2007-05-08  Jonathan Chambers  <joncham@gmail.com>
 
 	* class.c: Fix windows build.

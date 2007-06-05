@@ -1,3 +1,19 @@
+2007-06-04  Mark Probst  <mark.probst@gmail.com>
+
+	* Makefile.am:
+	* mono-internal-hash.c, mono-internal-hash.h: Hash table which
+	uses the value themselves as nodes, hence doesn't have to allocate
+	nodes.
+
+2007-05-24  Jonathan Chambers  <joncham@gmail.com>
+
+	* mono-path.c: Add configure checks for header files.
+	* mono-codeman.c: Add configure checks for header files.
+	* mono-poll.h: Add configure checks for header files.
+	* mono-stdlib.c: Add configure checks for header files.
+	
+	Code is contributed under MIT/X11 license.
+
 2007-03-09  Jonathan Chambers  <joncham@gmail.com>
 
 	* mono-dl.c:  Use Unicode characters for Win32 functions.

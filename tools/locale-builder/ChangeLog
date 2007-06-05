@@ -1,3 +1,8 @@
+2007-05-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CultureInfoEntry.cs : output Territory, which is used for RegionInfo.
+	* RegionInfoEntry.cs : added dummy int which is a slot for LCID.
+
 2007-04-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Driver.cs : use invariant culture to sort culture names.

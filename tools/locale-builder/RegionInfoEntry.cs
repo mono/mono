@@ -16,9 +16,8 @@ namespace Mono.Tools.LocaleBuilder
 {
 	public class RegionInfoEntry : Entry
 	{
-		public int RegionId; // numbered by alphabetical order of ISO2Name.
+		public int RegionId; // it is GeoId in 2.0.
 		// public byte MeasurementSystem;
-		// public int GeoId;
 		public string ISO2Name = String.Empty; // supplementalData.xml
 		public string ISO3Name = String.Empty;
 		public string Win3Name = String.Empty;
@@ -31,7 +30,7 @@ namespace Mono.Tools.LocaleBuilder
 
 		public void AppendTableRow (StringBuilder builder)
 		{
-			builder.Append ("\t{");
+			builder.Append ("\t{ 0, "); // 0 is a slot for LCID (stored at managed code)
 			builder.Append (RegionId);
 			builder.Append (',');
 			// builder.Append (MeasurementSystem);

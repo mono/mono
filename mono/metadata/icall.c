@@ -14,8 +14,12 @@
 #include <stdarg.h>
 #include <string.h>
 #include <ctype.h>
+#ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
+#endif
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 #if defined (PLATFORM_WIN32)
 #include <stdlib.h>
 #endif
@@ -1353,6 +1357,10 @@ ves_icall_get_method_info (MonoMethod *method, MonoMethodInfo *info)
 		method = mono_get_inflated_method (method);
 
 	sig = mono_method_signature (method);
+	if (!sig) {
+		g_assert (mono_loader_get_last_error ());
+		mono_raise_exception (mono_loader_error_prepare_exception (mono_loader_get_last_error ()));
+	}
 	
 	info->parent = mono_type_get_object (domain, &method->klass->byval_arg);
 	info->ret = mono_type_get_object (domain, sig->ret);
@@ -5200,6 +5208,23 @@ ves_icall_System_Delegate_CreateDelegate_internal (MonoReflectionType *type, Mon
 	mono_delegate_ctor (delegate, target, func);
 
 	return delegate;
+}
+
+static void
+ves_icall_System_Delegate_SetMulticastInvoke (MonoDelegate *this)
+{
+	gpointer iter;
+	MonoMethod *invoke;
+
+	/* Find the Invoke method */
+	iter = NULL;
+	while ((invoke = mono_class_get_methods (this->object.vtable->klass, &iter))) {
+		if (!strcmp (invoke->name, "Invoke"))
+			break;
+	}
+	g_assert (invoke);
+
+	this->invoke_impl = mono_compile_method (mono_marshal_get_delegate_invoke (invoke));
 }
 
 /*

@@ -129,6 +129,7 @@ conv.u4: dest:i src1:i
 conv.u2: dest:i src1:i len:3
 conv.u1: dest:i src1:y len:3
 conv.i: dest:i src1:i len:3
+<<<<<<< .working
 
 int_add: dest:i src1:i src2:i len:2 clob:1
 int_sub: dest:i src1:i src2:i len:2 clob:1
@@ -158,6 +159,11 @@ int_conv_to_i: dest:i src1:i len:3
 
 int_conv_to_r_un: dest:f src1:i len:32
 
+=======
+
+int_xor: dest:i src1:i src2:i len:2 clob:1
+
+>>>>>>> .merge-right.r78649
 throw: src1:i len:13
 rethrow: src1:i len:13
 start_handler: len:16

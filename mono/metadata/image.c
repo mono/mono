@@ -26,9 +26,12 @@
 #include <mono/io-layer/io-layer.h>
 #include <mono/utils/mono-logger.h>
 #include <mono/utils/mono-path.h>
+#include <mono/metadata/class-internals.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 
 #define INVALID_ADDRESS 0xffffffff
 
@@ -446,6 +449,11 @@ mono_image_check_for_module_cctor (MonoImage *image)
 		image->checked_module_cctor = TRUE;
 		return;
 	}
+	if (image->dynamic) {
+		/* FIXME: */
+		image->checked_module_cctor = TRUE;
+		return;
+	}
 	if (t->rows >= 1) {
 		guint32 nameidx = mono_metadata_decode_row_col (t, 0, MONO_TYPEDEF_NAME);
 		const char *name = mono_metadata_string_heap (image, nameidx);
@@ -570,12 +578,31 @@ build_guid_table (gboolean refonly)
 	g_hash_table_foreach (loaded_images, register_guid, NULL);
 }
 
+static gpointer
+class_key_extract (gpointer value)
+{
+	MonoClass *class = value;
+
+	return GUINT_TO_POINTER (class->type_token);
+}
+
+static gpointer*
+class_next_value (gpointer value)
+{
+	MonoClass *class = value;
+
+	return (gpointer*)&class->next_class_cache;
+}
+
 void
 mono_image_init (MonoImage *image)
 {
 	image->mempool = mono_mempool_new ();
 	image->method_cache = g_hash_table_new (NULL, NULL);
-	image->class_cache = g_hash_table_new (NULL, NULL);
+	mono_internal_hash_table_init (&image->class_cache,
+				       g_direct_hash,
+				       class_key_extract,
+				       class_next_value);
 	image->field_cache = g_hash_table_new (NULL, NULL);
 
 	image->delegate_begin_invoke_cache = 
@@ -1125,7 +1152,7 @@ mono_image_close (MonoImage *image)
 	}
 
 	g_hash_table_destroy (image->method_cache);
-	g_hash_table_destroy (image->class_cache);
+	mono_internal_hash_table_destroy (&image->class_cache);
 	g_hash_table_destroy (image->field_cache);
 	if (image->array_cache) {
 		g_hash_table_foreach (image->array_cache, free_array_cache_entry, NULL);

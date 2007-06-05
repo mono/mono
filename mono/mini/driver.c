@@ -11,7 +11,9 @@
 
 #include <config.h>
 #include <signal.h>
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/loader.h>
@@ -335,8 +337,8 @@ mini_regression (MonoImage *image, int verbose, int *total_run) {
 		/* fixme: ugly hack - delete all previously compiled methods */
 		g_hash_table_destroy (mono_domain_get ()->jit_trampoline_hash);
 		mono_domain_get ()->jit_trampoline_hash = g_hash_table_new (mono_aligned_addr_hash, NULL);
-		g_hash_table_destroy (mono_domain_get ()->jit_code_hash);
-		mono_domain_get ()->jit_code_hash = g_hash_table_new (mono_aligned_addr_hash, NULL);
+		mono_internal_hash_table_destroy (&(mono_domain_get ()->jit_code_hash));
+		mono_jit_code_hash_init (&(mono_domain_get ()->jit_code_hash));
 
 		g_timer_start (timer);
 		if (mini_stats_fd)
@@ -692,6 +694,9 @@ mono_main (int argc, char* argv[])
 	char *forced_version = NULL;
 
 	setlocale (LC_ALL, "");
+
+	if (!g_thread_supported ())
+		g_thread_init (NULL);
 
 	if (mono_running_on_valgrind () && getenv ("MONO_VALGRIND_LEAK_CHECK")) {
 		GMemVTable mem_vtable;

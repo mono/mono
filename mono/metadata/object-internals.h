@@ -274,7 +274,7 @@ struct _MonoThread {
 	MonoBoolean thread_dump_requested;
 	gpointer end_stack; /* This is only used when running in the debugger. */
 	MonoBoolean thread_interrupt_requested;
-	gpointer unused4;
+	guint8	apartment_state;
 	gpointer unused5;
 	gpointer unused6;
 	gpointer unused7;
@@ -387,6 +387,7 @@ typedef struct {
 	MonoString *iso2lang;
 	MonoString *icu_name;
 	MonoString *win3lang;
+	MonoString *territory;
 	MonoCompareInfo *compareinfo;
 	const gint32 *calendar_data;
 	const void* text_info_data;
@@ -519,10 +520,11 @@ struct _MonoReflectionGenericMethod {
 
 struct _MonoDelegate {
 	MonoObject object;
-	MonoObject *target_type;
-	MonoObject *target;
-	MonoString *method_name;
 	gpointer method_ptr;
+	gpointer invoke_impl;
+	MonoObject *target;
+	MonoObject *target_type;
+	MonoString *method_name;
 	gpointer delegate_trampoline;
 	MonoReflectionMethod *method_info;
 };

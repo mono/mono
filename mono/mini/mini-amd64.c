@@ -44,6 +44,8 @@ static gboolean use_sse2 = !MONO_ARCH_USE_FPSTACK;
 
 #define IS_IMM32(val) ((((guint64)val) >> 32) == 0)
 
+#define IS_REX(inst) (((inst) >= 0x40) && ((inst) <= 0x4f))
+
 #ifdef PLATFORM_WIN32
 /* Under windows, the default pinvoke calling convention is stdcall */
 #define CALLCONV_IS_STDCALL(call_conv) (((call_conv) == MONO_CALL_STDCALL) || ((call_conv) == MONO_CALL_DEFAULT))
@@ -2093,6 +2095,7 @@ peephole_pass_1 (MonoCompile *cfg, MonoBasicBlock *bb)
 		case CEE_CONV_I4:
 		case CEE_CONV_U4:
 		case OP_MOVE:
+		case OP_FMOVE:
 			/*
 			 * Removes:
 			 *
@@ -2321,6 +2324,7 @@ peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 		case CEE_CONV_I4:
 		case CEE_CONV_U4:
 		case OP_MOVE:
+		case OP_FMOVE:
 			/*
 			 * Removes:
 			 *
@@ -3298,23 +3302,52 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		}
 		case CEE_DIV:
 		case OP_LDIV:
-			amd64_cdq (code);
-			amd64_div_reg (code, ins->sreg2, TRUE);
+		case CEE_REM:
+		case OP_LREM:
+			/* Regalloc magic makes the div/rem cases the same */
+			if (ins->sreg2 == AMD64_RDX) {
+				amd64_mov_membase_reg (code, AMD64_RSP, -8, AMD64_RDX, 8);
+				amd64_cdq (code);
+				amd64_div_membase (code, AMD64_RSP, -8, TRUE);
+			} else {
+				amd64_cdq (code);
+				amd64_div_reg (code, ins->sreg2, TRUE);
+			}
 			break;
 		case CEE_DIV_UN:
 		case OP_LDIV_UN:
-			amd64_alu_reg_reg (code, X86_XOR, AMD64_RDX, AMD64_RDX);
-			amd64_div_reg (code, ins->sreg2, FALSE);
-			break;
-		case CEE_REM:
-		case OP_LREM:
-			amd64_cdq (code);
-			amd64_div_reg (code, ins->sreg2, TRUE);
-			break;
 		case CEE_REM_UN:
 		case OP_LREM_UN:
-			amd64_alu_reg_reg (code, X86_XOR, AMD64_RDX, AMD64_RDX);
-			amd64_div_reg (code, ins->sreg2, FALSE);
+			if (ins->sreg2 == AMD64_RDX) {
+				amd64_mov_membase_reg (code, AMD64_RSP, -8, AMD64_RDX, 8);
+				amd64_alu_reg_reg (code, X86_XOR, AMD64_RDX, AMD64_RDX);
+				amd64_div_membase (code, AMD64_RSP, -8, FALSE);
+			} else {
+				amd64_alu_reg_reg (code, X86_XOR, AMD64_RDX, AMD64_RDX);
+				amd64_div_reg (code, ins->sreg2, FALSE);
+			}
+			break;
+		case OP_IDIV:
+		case OP_IREM:
+			if (ins->sreg2 == AMD64_RDX) {
+				amd64_mov_membase_reg (code, AMD64_RSP, -8, AMD64_RDX, 8);
+				amd64_cdq_size (code, 4);
+				amd64_div_membase_size (code, AMD64_RSP, -8, TRUE, 4);
+			} else {
+				amd64_cdq_size (code, 4);
+				amd64_div_reg_size (code, ins->sreg2, TRUE, 4);
+			}
+			break;
+		case OP_IDIV_UN:
+		case OP_IREM_UN:
+			if (ins->sreg2 == AMD64_RDX) {
+				amd64_mov_membase_reg (code, AMD64_RSP, -8, AMD64_RDX, 8);
+				amd64_alu_reg_reg (code, X86_XOR, AMD64_RDX, AMD64_RDX);
+				amd64_div_membase_size (code, AMD64_RSP, -8, FALSE, 4);
+			} else {
+				amd64_alu_reg_reg (code, X86_XOR, AMD64_RDX, AMD64_RDX);
+				amd64_div_reg_size (code, ins->sreg2, FALSE, 4);
+			}
 			break;
 		case OP_LMUL_OVF:
 			amd64_imul_reg_reg (code, ins->sreg1, ins->sreg2);
@@ -3510,22 +3543,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			EMIT_COND_SYSTEM_EXCEPTION (X86_CC_O, FALSE, "OverflowException");
 			break;
 		}
-		case OP_IDIV:
-			amd64_cdq_size (code, 4);
-			amd64_div_reg_size (code, ins->sreg2, TRUE, 4);
-			break;
-		case OP_IDIV_UN:
-			amd64_alu_reg_reg (code, X86_XOR, AMD64_RDX, AMD64_RDX);
-			amd64_div_reg_size (code, ins->sreg2, FALSE, 4);
-			break;
-		case OP_IREM:
-			amd64_cdq_size (code, 4);
-			amd64_div_reg_size (code, ins->sreg2, TRUE, 4);
-			break;
-		case OP_IREM_UN:
-			amd64_alu_reg_reg (code, X86_XOR, AMD64_RDX, AMD64_RDX);
-			amd64_div_reg_size (code, ins->sreg2, FALSE, 4);
-			break;
 		case OP_ICOMPARE:
 			amd64_alu_reg_reg_size (code, X86_CMP, ins->sreg1, ins->sreg2, 4);
 			break;
@@ -5424,10 +5441,15 @@ mono_arch_emit_exceptions (MonoCompile *cfg)
 
 			pos = cfg->native_code + patch_info->ip.i;
 
-			if (use_sse2)
-				*(guint32*)(pos + 4) = (guint8*)code - pos - 8;
-			else
+
+			if (use_sse2) {
+				if (IS_REX (pos [1]))
+					*(guint32*)(pos + 5) = (guint8*)code - pos - 9;
+				else
+					*(guint32*)(pos + 4) = (guint8*)code - pos - 8;
+			} else {
 				*(guint32*)(pos + 3) = (guint8*)code - pos - 7;
+			}
 
 			if (patch_info->type == MONO_PATCH_INFO_R8) {
 				*(double*)code = *(double*)patch_info->data.target;
@@ -5635,8 +5657,6 @@ mono_arch_is_inst_imm (gint64 imm)
 	return amd64_is_imm32 (imm);
 }
 
-#define IS_REX(inst) (((inst) >= 0x40) && ((inst) <= 0x4f))
-
 /*
  * Determine whenever the trap whose info is in SIGINFO is caused by
  * integer overflow.
@@ -5802,26 +5822,62 @@ mono_arch_get_vcall_slot_addr (guint8* code, gpointer *regs)
 	return (gpointer)(((guint64)(regs [reg])) + disp);
 }
 
-gpointer*
-mono_arch_get_delegate_method_ptr_addr (guint8* code, gpointer *regs)
+gpointer
+mono_arch_get_this_arg_from_call (MonoMethodSignature *sig, gssize *regs, guint8 *code)
 {
-	guint32 reg;
-	guint32 disp;
+	if (MONO_TYPE_ISSTRUCT (sig->ret))
+		return (gpointer)regs [AMD64_RSI];
+	else
+		return (gpointer)regs [AMD64_RDI];
+}
 
-	code -= 10;
+gpointer
+mono_arch_get_delegate_invoke_impl (MonoMethodSignature *sig, gboolean has_target)
+{
+	guint8 *code, *start;
+	MonoDomain *domain = mono_domain_get ();
+	int i;
 
-	if (IS_REX (code [0]) && (code [1] == 0x8b) && (code [3] == 0x48) && (code [4] == 0x8b) && (code [5] == 0x40) && (code [7] == 0x48) && (code [8] == 0xff) && (code [9] == 0xd0)) {
-		/* mov REG, %rax; mov <OFFSET>(%rax), %rax; call *%rax */
-		reg = amd64_rex_b (code [0]) + amd64_modrm_rm (code [2]);
-		disp = code [6];
+	/* FIXME: Support more cases */
+	if (MONO_TYPE_ISSTRUCT (sig->ret))
+		return NULL;
 
-		if (reg == AMD64_RAX)
+	if (has_target) {
+		mono_domain_lock (domain);
+		start = code = mono_code_manager_reserve (domain->code_mp, 64);
+		mono_domain_unlock (domain);
+
+		/* Replace the this argument with the target */
+		amd64_mov_reg_reg (code, AMD64_RAX, AMD64_RDI, 8);
+		amd64_mov_reg_membase (code, AMD64_RDI, AMD64_RAX, G_STRUCT_OFFSET (MonoDelegate, target), 8);
+		amd64_jump_membase (code, AMD64_RAX, G_STRUCT_OFFSET (MonoDelegate, method_ptr));
+
+		g_assert ((code - start) < 64);
+	} else {
+		for (i = 0; i < sig->param_count; ++i)
+			if (!mono_is_regsize_var (sig->params [i]))
+				return NULL;
+		if (sig->param_count > 4)
 			return NULL;
-		else
-			return (gpointer*)(((guint64)(regs [reg])) + disp);
+
+		mono_domain_lock (domain);
+		start = code = mono_code_manager_reserve (domain->code_mp, 64);
+		mono_domain_unlock (domain);
+
+		if (sig->param_count == 0) {
+			amd64_jump_membase (code, AMD64_RDI, G_STRUCT_OFFSET (MonoDelegate, method_ptr));
+		} else {
+			/* We have to shift the arguments left */
+			amd64_mov_reg_reg (code, AMD64_RAX, AMD64_RDI, 8);
+			for (i = 0; i < sig->param_count; ++i)
+				amd64_mov_reg_reg (code, param_regs [i], param_regs [i + 1], 8);
+
+			amd64_jump_membase (code, AMD64_RAX, G_STRUCT_OFFSET (MonoDelegate, method_ptr));
+		}
+		g_assert ((code - start) < 64);
 	}
 
-	return NULL;
+	return start;
 }
 
 /*

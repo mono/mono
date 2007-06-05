@@ -1,3 +1,15 @@
+2007-05-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* delegate.cs: Add more delegate tests.
+
+2007-05-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* delegate.cs: Add a multicast delegate test.
+
+2007-05-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* pinvoke2.cs libtest.c: Fix up asany in/out tests.
+
 2007-03-28  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile.am (test-bug-80307): Don't set PATH.

@@ -54,6 +54,176 @@
 
 	* linear-scan.c (mono_linear_scan): Update mono_jit_stats.regvars.
 
+Tue Jun 5 17:40:04 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: optimizee out the type check when storing null in a
+	reference array.
+
+2007-06-04  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c, driver.c: Changed MonoDomain.jit_code_hash to a
+	MonoInternalHashTable.
+
+Mon Jun 4 11:29:43 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* inssel.brg, mini.c, mini-ops.h: optimized Math.Mini/Max
+	signed integer methods.
+
+2007-06-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-x86.c (mono_arch_get_delegate_invoke_impl): Disable the static case 
+	permanently since the current approach doesn't work.
+
+2007-06-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* inssel.brg (stmt): Only call delegate->invoke_impl if 
+	MONO_ARCH_HAVE_CREATE_DELEGATE_TRAMPOLINE is defined.
+
+2007-06-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (mono_arch_output_basic_block): Unify div/rem opcodes and handle
+	the sreg2==rdx case.
+	
+	* mini-amd64.c cpu-amd64.md: Correct length of r4const instruction and take into
+	account if it contains a rex prefix.
+	(peephole_pass): Handle OP_FMOVE as well.
+
+2007-06-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-x86.c (mono_arch_get_delegate_invoke_impl): Disable the static case for now
+	as it causes regressions.
+
+2007-05-31  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-x86.c (mono_arch_get_delegate_invoke_impl): Implement support for the
+	static case as well.
+
+	* tramp-ia64.c (mono_arch_create_trampoline_code): Fix ia64 build.
+
+	* mini-x86.c (mono_arch_get_delegate_invoke_impl): New arch dependent function.
+	(mono_arch_get_this_arg_from_call): Ditto.
+
+	* tramp-x86.c (mono_arch_patch_delegate_trampoline): Removed.
+
+	* inssel.brg (mini_emit_virtual_call): Call delegate->Invoke through the delegate's
+	invoke_impl field.
+
+	* mini-amd64.c (mono_arch_get_delegate_invoke_impl): New arch dependent function.
+	(mono_arch_get_this_arg_from_call): Ditto.
+
+	* tramp-amd64.c (mono_arch_patch_delegate_trampoline): Removed.
+	
+	* mini-trampolines.c (mono_delegate_trampoline): Complete rewrite. On first call,
+	try to create optimized invoke code and use that for further invocations. 
+	Otherwise, use the original mono_marshal_get_delegate_invoke () implementation.
+
+	* mini-x86.h mini-ia64.h: Remove MONO_ARCH_HAS_CREATE_DELEGATE_TRAMPOLINE for now.
+
+2007-05-29  Rodrigo Kumpera  <kumpera@gmail.com>
+
+	* inssel.brg (mini_emit_virtual_call): Statically dispatch virtual calls to
+	sealed classes or methods.
+	*devirtualization.cs: tests for the new optimization
+
+2007-05-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* liveness.c (update_gen_kill_set): No need to set VOLATILE flags here, it is done
+	by the update_volatile () function.
+
+2007-05-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* driver.c (mono_main): Call g_thread_init () early since newer glib versions
+	require it.
+
+	* abcremoval.c (mono_perform_abc_removal): Avoid using alloca.
+
+2007-05-24  Jonathan Chambers  <joncham@gmail.com>
+
+	* mini.c: Add configure checks for header files.
+	* mini-x86.c: Add configure checks for header files.
+	* trace.c: Add configure checks for header files.
+	* aot-runtime.c: Add configure checks for header files.
+	* aot-compiler.c: Add configure checks for header files.
+	* driver.c: Add configure checks for header files.
+	* mini-codegen.c: Add configure checks for header files.
+	
+	Code is contributed under MIT/X11 license.
+
+2007-05-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-ia64.c (mono_arch_lowering_pass): Fix the handling of
+	icompare_imm -128 + op_iclt. Fixes #81703.
+
+2007-05-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-codegen.c (mono_local_regalloc): Fix long-shift-regalloc on amd64.
+
+2007-05-15  Massimiliano Mantione  <massi@ximian.com>
+
+	* inssel.brg: added "mini_emit_load_intf_bit_reg_vtable", and used it
+	inside "mini_emit_isninst_iface_cast" and "mini_emit_castclass_iface"
+	so that all isinst checks now use "interface_bitmap".
+
+2007-05-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* cpu-amd64.md (jmp): Fix a warning.
+
+	* inssel.brg (CEE_SWITCH): Hopefully fix #80738.
+
+	* basic.cs: Add new regression test.
+
+	* basic.cs: Remove test which is now in basic-long.cs.
+
+	* mini-ia64.c (mono_arch_output_basic_block): Sign extend in CEE_CONV_I8/CEE_CONV_I.
+
+	* basic-long.cs: Add new test.
+	
+2007-05-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-sparc.c (mono_spillvar_offset_float): Fix sparc build.
+
+2007-05-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* cpu-x86.md minix-86.c: Add a peephole_pass_1 () as on amd64.
+
+	* mini-x86.c (mono_arch_output_basic_block): Use mono_opcode_to_cond () in a few
+	places.
+	
+	* mini-x86.c (mono_arch_emit_exceptions): Decrease the size of the exception 
+	throwing code a bit.
+
+	* exceptions-x86.c (mono_arch_get_throw_corlib_exception): Decrease the size of 
+	the exception throwing code a bit.
+
+	* mini-x86.c (get_call_info): Allocate result from a mempool.
+
+2007-05-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (find_typespec_for_class): Fix the assert.
+
+	* mini.h (MONO_AOT_FILE_VERSION): Bump AOT file version.
+
+	* mini.h (MonoCompile): Add 'token_info_hash' field.
+
+	* mini.c: Save token->method associations during compilation so the AOT 
+	compiler can use it.
+	
+	* aot-compiler.c aot-runtime.c: Add support for compiling non-generic methods
+	which reference generic classes and methods.
+
+2007-05-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.h mini-<ARCH>.h: Get rid of MONO_ARCH_HAS_XP_LOCAL_REGALLOC.
+
+	* aot-compiler.c (compile_method): Fix a typo in a comment.
+
+	* aot-runtime.c (decode_cached_class_info): Skip generic types.
+
+	* aot-compiler.c: Add minimal support for AOTing generic code by skipping 
+	everything generic.
+
+	* mini.c (mono_method_to_ir): Disable AOT when calling helper_compile_generic_method.
+
 2007-05-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (decompose_opcode): Fix OP_ICONV_TO_I8.

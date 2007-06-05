@@ -379,6 +379,13 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
         (dest)->sreg1 = sr1; \
     } while (0)        
 
+#define NEW_BIALU(cfg,dest,op,dr,sr1,sr2) do { \
+        MONO_INST_NEW ((cfg), (dest), (op)); \
+        (dest)->dreg = (dr); \
+        (dest)->sreg1 = (sr1); \
+        (dest)->sreg2 = (sr2); \
+	} while (0)
+
 #define NEW_BIALU_IMM(cfg,dest,op,dr,sr,imm) do { \
         MONO_INST_NEW ((cfg), (dest), (op)); \
         (dest)->dreg = dr; \
@@ -630,6 +637,8 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
 #define EMIT_NEW_DUMMY_USE(cfg,dest,var) do { NEW_DUMMY_USE ((cfg), (dest), (var)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
 
 #define EMIT_NEW_UNALU(cfg,dest,op,dr,sr1) do { NEW_UNALU ((cfg), (dest), (op), (dr), (sr1)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
+
+#define EMIT_NEW_BIALU(cfg,dest,op,dr,sr1,sr2) do { NEW_BIALU ((cfg), (dest), (op), (dr), (sr1), (sr2)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
 
 #define EMIT_NEW_BIALU_IMM(cfg,dest,op,dr,sr,imm) do { NEW_BIALU_IMM ((cfg), (dest), (op), (dr), (sr), (imm)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
 
@@ -1810,6 +1819,17 @@ mono_compile_get_interface_var (MonoCompile *cfg, int slot, MonoInst *ins)
 	return res;
 }
 
+static void
+mono_save_token_info (MonoCompile *cfg, MonoImage *image, guint32 token, gpointer key)
+{
+	if (cfg->compile_aot) {
+		MonoJumpInfoToken *jump_info_token = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoJumpInfoToken));
+		jump_info_token->image = image;
+		jump_info_token->token = token;
+		g_hash_table_insert (cfg->token_info_hash, key, jump_info_token);
+	}
+}
+
 /*
  * This function is called to handle items that are left on the evaluation stack
  * at basic block boundaries. What happens is that we save the values to local variables
@@ -2675,6 +2695,34 @@ mono_emit_method_call (MonoCompile *cfg, MonoMethod *method, MonoMethodSignature
 			return (MonoInst*)call;
 		}
 
+#ifdef MONO_ARCH_HAVE_CREATE_DELEGATE_TRAMPOLINE
+		if ((method->klass->parent == mono_defaults.multicastdelegate_class) && (!strcmp (method->name, "Invoke"))) {
+			/* Make a call to delegate->invoke_impl */
+			call->inst.opcode = callvirt_to_call_membase (call->inst.opcode);
+			call->inst.inst_basereg = this_reg;
+			call->inst.inst_offset = G_STRUCT_OFFSET (MonoDelegate, invoke_impl);
+			MONO_ADD_INS (cfg->cbb, (MonoInst*)call);
+
+			return (MonoInst*)call;
+		}
+#endif
+	
+		if ((method->flags & METHOD_ATTRIBUTE_VIRTUAL) &&
+			((method->flags &  METHOD_ATTRIBUTE_FINAL) ||
+			 (method->klass && method->klass->flags & TYPE_ATTRIBUTE_SEALED))) {
+			/*
+			 * the method is virtual, but we can statically dispatch since either
+			 * it's class or the method itself are sealed.
+			 * But first we need to ensure it's not a null reference.
+			 */
+			MONO_EMIT_NEW_UNALU (cfg, OP_CHECK_THIS, -1, this_reg);
+
+			call->inst.opcode = callvirt_to_call (call->inst.opcode);
+			MONO_ADD_INS (cfg->cbb, (MonoInst*)call);
+
+			return (MonoInst*)call;
+		}
+
 		call->inst.opcode = callvirt_to_call_membase (call->inst.opcode);
 
 		/* Initialize method->slot */
@@ -3506,6 +3554,22 @@ mini_emit_ldelema_ins (MonoCompile *cfg, MonoMethod *cmethod, MonoInst **sp, uns
 
 	return addr;
 }
+ 
+static int
+is_signed_regsize_type (MonoType *type)
+{
+	switch (type->type) {
+	case MONO_TYPE_I1:
+	case MONO_TYPE_I2:
+	case MONO_TYPE_I4:
+#if SIZEOF_VOID_P == 8
+	/*case MONO_TYPE_I8: this requires different opcodes in inssel.brg */
+#endif
+		return TRUE;
+	default:
+		return FALSE;
+	}
+}
 
 static MonoInst*
 mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
@@ -3774,6 +3838,34 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 	                EMIT_NEW_ICONST (cfg, ins, 0);
 #endif
 			return ins;
+		}
+	} else if (cmethod->klass == mono_defaults.math_class) {
+		if (strcmp (cmethod->name, "Min") == 0) {
+			if (is_signed_regsize_type (fsig->params [0])) {
+				/* min (x,y) = y + (((x-y)>>31)&(x-y)); */
+				int diff = alloc_preg (cfg);
+				int shifted = alloc_preg (cfg);
+				int anded = alloc_preg (cfg);
+				int dreg = alloc_preg (cfg);
+				MONO_EMIT_NEW_BIALU (cfg, OP_ISUB, diff, args [0]->dreg, args [1]->dreg);
+				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ISHR_IMM, shifted, diff, (sizeof(void*)*8-1));
+				MONO_EMIT_NEW_BIALU (cfg, OP_IAND, anded, shifted, diff);
+				EMIT_NEW_BIALU (cfg, ins, OP_IADD, dreg, args [1]->dreg, anded);
+				return ins;
+			}
+		} else if (strcmp (cmethod->name, "Max") == 0) {
+			if (is_signed_regsize_type (fsig->params [0])) {
+				/* max (x,y) = x - (((x-y)>>31)&(x-y)); */
+				int diff = alloc_preg (cfg);
+				int shifted = alloc_preg (cfg);
+				int anded = alloc_preg (cfg);
+				int dreg = alloc_preg (cfg);
+				MONO_EMIT_NEW_BIALU (cfg, OP_ISUB, diff, args [0]->dreg, args [1]->dreg);
+				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ISHR_IMM, shifted, diff, (sizeof(void*)*8-1));
+				MONO_EMIT_NEW_BIALU (cfg, OP_IAND, anded, shifted, diff);
+				EMIT_NEW_BIALU (cfg, ins, OP_ISUB, dreg, args [0]->dreg, anded);
+				return ins;
+			}
 		}
 	}
 
@@ -6249,6 +6341,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					fsig = mono_method_get_signature_full (cmethod, image, token, generic_context);
 				}
 
+				mono_save_token_info (cfg, image, token, cmethod);
+
 				n = fsig->param_count + fsig->hasthis;
 
 				if (mono_use_security_manager) {
@@ -6331,8 +6425,10 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				/* FIXME: This should be a managed pointer */
 				this_arg_temp = mono_compile_create_var (cfg, &mono_defaults.int_class->byval_arg, OP_LOCAL);
 
+				/* Because of the PCONST below */
+				cfg->disable_aot = TRUE;
 				EMIT_NEW_TEMPLOAD (cfg, iargs [0], this_temp->inst_c0);
-				EMIT_NEW_PCONST (cfg, iargs [1], cmethod);
+				NEW_METHODCONST (cfg, iargs [1], cmethod);
 				EMIT_NEW_PCONST (cfg, iargs [2], mono_method_get_context (cmethod));
 				EMIT_NEW_TEMPLOADA (cfg, iargs [3], this_arg_temp->inst_c0);
 				addr = mono_emit_jit_icall (cfg, mono_helper_compile_generic_method, iargs);
@@ -7156,6 +7252,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			if (!cmethod)
 				goto load_error;
 			fsig = mono_method_get_signature (cmethod, image, token);
+
+			mono_save_token_info (cfg, image, token, cmethod);
 
 			if (!mono_class_init (cmethod->klass))
 				goto load_error;
@@ -10136,6 +10234,9 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - merge the stack merge stuff.
  * - merge the soft float support.
  * - merge r68207.
+ * - merge r78640.
+ * - merge the ia64 switch changes.
+ * - merge r77433.
  * - merge the mips conditional changes.
  * - get rid of duplicate functions like can_access_... from method-to-ir.c.
  * - use the op_ opcodes in the old JIT as well.
@@ -10149,7 +10250,7 @@ mono_spill_global_vars (MonoCompile *cfg)
  *   parts of the tree could be separated by other instructions, killing the tree
  *   arguments, or stores killing loads etc. Also, should we fold loads into other
  *   instructions if the result of the load is used multiple times ?
- * - LAST MERGE: 77034.
+ * - LAST MERGE: 78652.
  */
 
 /*

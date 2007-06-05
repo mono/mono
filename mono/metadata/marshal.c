@@ -416,27 +416,27 @@ static int
 cominterop_get_com_slot_for_method (MonoMethod* method)
 {
 	guint32 slot = method->slot;
-	GPtrArray *ifaces;
-	MonoClass *ic = NULL;
-	int i;
+ 	MonoClass *ic = method->klass;
 
-	ifaces = mono_class_get_implemented_interfaces (method->klass);
-	if (ifaces) {
-		int offset;
-		for (i = 0; i < ifaces->len; ++i) {
-			ic = g_ptr_array_index (ifaces, i);
-			offset = mono_class_interface_offset (method->klass, ic);
-			if (method->slot >= offset && method->slot < offset + ic->method.count) {
-				slot -= offset;
-				break;
+	/* if method is on a class, we need to look up interface method exists on */
+	if (!MONO_CLASS_IS_INTERFACE(method->klass)) {
+		GPtrArray *ifaces = mono_class_get_implemented_interfaces (method->klass);
+		if (ifaces) {
+			int i;
+			for (i = 0; i < ifaces->len; ++i) {
+				int offset;
+				ic = g_ptr_array_index (ifaces, i);
+				offset = mono_class_interface_offset (method->klass, ic);
+				if (method->slot >= offset && method->slot < offset + ic->method.count) {
+					slot -= offset;
+					break;
+				}
+				ic = NULL;
 			}
+			g_ptr_array_free (ifaces, TRUE);
 		}
-		g_ptr_array_free (ifaces, TRUE);
 	}
 
-	if (!ic)
-		ic = method->klass;
-	
 	g_assert (ic);
 	g_assert (MONO_CLASS_IS_INTERFACE (ic));
 
@@ -452,27 +452,26 @@ cominterop_get_com_slot_for_method (MonoMethod* method)
 static MonoReflectionType*
 cominterop_get_method_interface (MonoMethod* method)
 {
-	GPtrArray *ifaces;
 	MonoType* t = NULL;
-	MonoClass *ic = NULL;
-	int i;
 	MonoReflectionType* rt = NULL;
+	MonoClass *ic = method->klass;
 
-	ifaces = mono_class_get_implemented_interfaces (method->klass);
-	if (ifaces) {
-		int offset;
-		for (i = 0; i < ifaces->len; ++i) {
-			ic = g_ptr_array_index (ifaces, i);
-			offset = mono_class_interface_offset (method->klass, ic);
-			if (method->slot >= offset && method->slot < offset + ic->method.count)
-				break;
-			ic = NULL;
+	/* if method is on a class, we need to look up interface method exists on */
+	if (!MONO_CLASS_IS_INTERFACE(method->klass)) {
+		GPtrArray *ifaces = mono_class_get_implemented_interfaces (method->klass);
+		if (ifaces) {
+			int i;
+			for (i = 0; i < ifaces->len; ++i) {
+				int offset;
+				ic = g_ptr_array_index (ifaces, i);
+				offset = mono_class_interface_offset (method->klass, ic);
+				if (method->slot >= offset && method->slot < offset + ic->method.count)
+					break;
+				ic = NULL;
+			}
+			g_ptr_array_free (ifaces, TRUE);
 		}
-		g_ptr_array_free (ifaces, TRUE);
 	}
-
-	if (!ic)
-		ic = method->klass;
 
 	g_assert (ic);
 	g_assert (MONO_CLASS_IS_INTERFACE (ic));
@@ -1876,6 +1875,16 @@ emit_ptr_to_object_conv (MonoMethodBuilder *mb, MonoType *type, MonoMarshalConv 
 		mono_mb_emit_byte (mb, CEE_STIND_REF);		
 		break;		
 	case MONO_MARSHAL_CONV_STR_LPTSTR:
+		mono_mb_emit_ldloc (mb, 1);
+		mono_mb_emit_ldloc (mb, 0);
+		mono_mb_emit_byte (mb, CEE_LDIND_I);
+#ifdef PLATFORM_WIN32
+		mono_mb_emit_icall (mb, mono_string_from_utf16);
+#else
+		mono_mb_emit_icall (mb, mono_string_new_wrapper);
+#endif
+		mono_mb_emit_byte (mb, CEE_STIND_REF);	
+		break;
 	case MONO_MARSHAL_CONV_STR_LPSTR:
 		mono_mb_emit_ldloc (mb, 1);
 		mono_mb_emit_ldloc (mb, 0);
@@ -2060,6 +2069,11 @@ conv_to_icall (MonoMarshalConv conv)
 	case MONO_MARSHAL_CONV_LPSTR_STR:
 		return mono_string_new_wrapper;
 	case MONO_MARSHAL_CONV_STR_LPTSTR:
+#ifdef PLATFORM_WIN32
+		return mono_marshal_string_to_utf16;
+#else
+		return mono_string_to_lpstr;
+#endif
 	case MONO_MARSHAL_CONV_STR_LPSTR:
 		return mono_string_to_lpstr;
 	case MONO_MARSHAL_CONV_STR_BSTR:
@@ -2070,8 +2084,13 @@ conv_to_icall (MonoMarshalConv conv)
 	case MONO_MARSHAL_CONV_STR_ANSIBSTR:
 		return mono_string_to_ansibstr;
 	case MONO_MARSHAL_CONV_SB_LPSTR:
-	case MONO_MARSHAL_CONV_SB_LPTSTR:
 		return mono_string_builder_to_utf8;
+	case MONO_MARSHAL_CONV_SB_LPTSTR:
+#ifdef PLATFORM_WIN32
+		return mono_string_builder_to_utf16;
+#else
+		return mono_string_builder_to_utf8;
+#endif
 	case MONO_MARSHAL_CONV_SB_LPWSTR:
 		return mono_string_builder_to_utf16;
 	case MONO_MARSHAL_CONV_ARRAY_SAVEARRAY:
@@ -2083,8 +2102,13 @@ conv_to_icall (MonoMarshalConv conv)
 	case MONO_MARSHAL_CONV_FTN_DEL:
 		return mono_ftnptr_to_delegate;
 	case MONO_MARSHAL_CONV_LPSTR_SB:
-	case MONO_MARSHAL_CONV_LPTSTR_SB:
 		return mono_string_utf8_to_builder;
+	case MONO_MARSHAL_CONV_LPTSTR_SB:
+#ifdef PLATFORM_WIN32
+		return mono_string_utf16_to_builder;
+#else
+		return mono_string_utf8_to_builder;
+#endif
 	case MONO_MARSHAL_CONV_LPWSTR_SB:
 		return mono_string_utf16_to_builder;
 	case MONO_MARSHAL_FREE_ARRAY:
@@ -4558,7 +4582,7 @@ mono_marshal_get_delegate_invoke (MonoMethod *method)
 	MonoMethodBuilder *mb;
 	MonoMethod *res;
 	GHashTable *cache;
-	int pos0, pos1;
+	int pos0;
 	char *name;
 
 	g_assert (method && method->klass->parent == mono_defaults.multicastdelegate_class &&
@@ -4635,7 +4659,7 @@ mono_marshal_get_delegate_invoke (MonoMethod *method)
 	mono_mb_emit_byte (mb, CEE_LDIND_I );
 	mono_mb_emit_op (mb, CEE_CALLI, sig);
 
-	pos1 = mono_mb_emit_branch (mb, CEE_BR);
+	mono_mb_emit_byte (mb, CEE_RET);
 
 	/* else [target == null] call this->method_ptr static */
 	mono_mb_patch_branch (mb, pos0);
@@ -4647,8 +4671,6 @@ mono_marshal_get_delegate_invoke (MonoMethod *method)
 	mono_mb_emit_byte (mb, CEE_LDIND_I );
 	mono_mb_emit_op (mb, CEE_CALLI, static_sig);
 
-	/* return */
-	mono_mb_patch_branch (mb, pos1);
 	mono_mb_emit_byte (mb, CEE_RET);
 
 	res = mono_mb_create_and_cache (cache, sig,
@@ -10439,8 +10461,13 @@ mono_struct_delete_old (MonoClass *klass, char *ptr)
 		case MONO_MARSHAL_CONV_STR_LPWSTR:
 			/* We assume this field points inside a MonoString */
 			break;
-		case MONO_MARSHAL_CONV_STR_LPSTR:
 		case MONO_MARSHAL_CONV_STR_LPTSTR:
+#ifdef PLATFORM_WIN32
+			/* We assume this field points inside a MonoString 
+			 * on Win32 */
+			break;
+#endif
+		case MONO_MARSHAL_CONV_STR_LPSTR:
 		case MONO_MARSHAL_CONV_STR_BSTR:
 		case MONO_MARSHAL_CONV_STR_ANSIBSTR:
 		case MONO_MARSHAL_CONV_STR_TBSTR:
@@ -11210,6 +11237,45 @@ mono_marshal_get_generic_array_helper (MonoClass *class, MonoClass *iface, gchar
 	mono_mb_free (mb);
 
 	return res;
+}
+
+/*
+ * The mono_win32_compat_* functions are implementations of inline
+ * Windows kernel32 APIs, which are DllImport-able under MS.NET,
+ * although not exported by kernel32.
+ *
+ * We map the appropiate kernel32 entries to these functions using
+ * dllmaps declared in the global etc/mono/config.
+ */
+
+void
+mono_win32_compat_CopyMemory (gpointer dest, gconstpointer source, gsize length)
+{
+	if (!dest || !source)
+		return;
+
+	memcpy (dest, source, length);
+}
+
+void
+mono_win32_compat_FillMemory (gpointer dest, gsize length, guchar fill)
+{
+	memset (dest, fill, length);
+}
+
+void
+mono_win32_compat_MoveMemory (gpointer dest, gconstpointer source, gsize length)
+{
+	if (!dest || !source)
+		return;
+
+	memmove (dest, source, length);
+}
+
+void
+mono_win32_compat_ZeroMemory (gpointer dest, gsize length)
+{
+	memset (dest, 0, length);
 }
 
 /* Put COM Interop related stuff here */

@@ -323,6 +323,9 @@ struct _MonoClass {
 
 	MonoClassRuntimeInfo *runtime_info;
 
+	/* next element in the class_cache hash list (in MonoImage) */
+	MonoClass *next_class_cache;
+
 	/* Generic vtable. Initialized by a call to mono_class_setup_vtable () */
 	MonoMethod **vtable;	
 };
@@ -341,6 +344,7 @@ struct MonoVTable {
 	MonoDomain *domain;  /* each object/vtable belongs to exactly one domain */
         gpointer    data; /* to store static class data */
         gpointer    type; /* System.Type type for klass */
+	guint8     *interface_bitmap;
 	guint16     max_interface_id;
 	guint8      rank;
 	guint remote          : 1; /* class is remotely activated */
@@ -435,7 +439,7 @@ struct _MonoGenericContainer {
 		MonoClass *klass;
 		MonoMethod *method;
 	} owner;
-	int type_argc    : 6;
+	int type_argc    : 31;
 	/* If true, we're a generic method, otherwise a generic type definition. */
 	/* Invariant: parent != NULL => is_method */
 	int is_method    : 1;
@@ -548,7 +552,7 @@ extern MonoStats mono_stats MONO_INTERNAL;
 
 typedef gpointer (*MonoTrampoline)       (MonoMethod *method);
 typedef gpointer (*MonoRemotingTrampoline)       (MonoMethod *method, MonoRemotingTarget target);
-typedef gpointer (*MonoDelegateTrampoline)       (MonoMethod *method, gpointer addr);
+typedef gpointer (*MonoDelegateTrampoline)       (MonoClass *klass);
 
 typedef gpointer (*MonoLookupDynamicToken) (MonoImage *image, guint32 token, MonoClass **handle_class);
 
@@ -712,6 +716,8 @@ typedef struct {
 	MonoClass *idispatch_class;
 	MonoClass *safehandle_class;
 	MonoClass *handleref_class;
+	MonoClass *attribute_class;
+	MonoClass *customattribute_data_class;
 } MonoDefaults;
 
 extern MonoDefaults mono_defaults MONO_INTERNAL;

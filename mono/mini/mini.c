@@ -10,9 +10,13 @@
 
 #include <config.h>
 #include <signal.h>
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 #include <math.h>
+#ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
+#endif
 
 #ifdef PLATFORM_MACOSX
 #include <mach/mach.h>
@@ -2461,6 +2465,17 @@ mono_create_jump_table (MonoCompile *cfg, MonoInst *label, MonoBasicBlock **bbs,
 	cfg->patch_info = ji;
 }
 
+static void
+mono_save_token_info (MonoCompile *cfg, MonoImage *image, guint32 token, gpointer key)
+{
+	if (cfg->compile_aot) {
+		MonoJumpInfoToken *jump_info_token = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoJumpInfoToken));
+		jump_info_token->image = image;
+		jump_info_token->token = token;
+		g_hash_table_insert (cfg->token_info_hash, key, jump_info_token);
+	}
+}
+
 /*
  * When we add a tree of instructions, we need to ensure the instructions currently
  * on the stack are executed before (like, if we load a value from a local).
@@ -3531,6 +3546,22 @@ mono_find_jit_opcode_emulation (int opcode)
 		return NULL;
 }
 
+static int
+is_signed_regsize_type (MonoType *type)
+{
+	switch (type->type) {
+	case MONO_TYPE_I1:
+	case MONO_TYPE_I2:
+	case MONO_TYPE_I4:
+#if SIZEOF_VOID_P == 8
+	/*case MONO_TYPE_I8: this requires different opcodes in inssel.brg */
+#endif
+		return TRUE;
+	default:
+		return FALSE;
+	}
+}
+
 static MonoInst*
 mini_get_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
 {
@@ -3623,6 +3654,22 @@ mini_get_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSigna
 		store->inst_left = args [2];
 		store->inst_right = load;
 		return store;
+	} else if (cmethod->klass == mono_defaults.math_class) {
+		if (strcmp (cmethod->name, "Min") == 0) {
+			if (is_signed_regsize_type (fsig->params [0])) {
+				MONO_INST_NEW (cfg, ins, OP_MIN);
+				ins->inst_i0 = args [0];
+				ins->inst_i1 = args [1];
+				return ins;
+			}
+		} else if (strcmp (cmethod->name, "Max") == 0) {
+			if (is_signed_regsize_type (fsig->params [0])) {
+				MONO_INST_NEW (cfg, ins, OP_MAX);
+				ins->inst_i0 = args [0];
+				ins->inst_i1 = args [1];
+				return ins;
+			}
+		}
 	} else if (cmethod->klass->image == mono_defaults.corlib) {
 		if (cmethod->name [0] == 'B' && strcmp (cmethod->name, "Break") == 0
 				&& strcmp (cmethod->klass->name, "Debugger") == 0) {
@@ -4982,6 +5029,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					fsig = mono_method_get_signature_full (cmethod, image, token, generic_context);
 				}
 
+				mono_save_token_info (cfg, image, token, cmethod);
+
 				n = fsig->param_count + fsig->hasthis;
 
 				if (mono_use_security_manager) {
@@ -5072,8 +5121,10 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				this_arg_temp = mono_compile_create_var (cfg, &mono_defaults.int_class->byval_arg, OP_LOCAL);
 				this_arg_temp->cil_code = ip;
 
+				/* Because of the PCONST below */
+				cfg->disable_aot = TRUE;
 				NEW_TEMPLOAD (cfg, iargs [0], this_temp->inst_c0);
-				NEW_PCONST (cfg, iargs [1], cmethod);
+				NEW_METHODCONST (cfg, iargs [1], cmethod);
 				NEW_PCONST (cfg, iargs [2], mono_method_get_context (cmethod));
 				NEW_TEMPLOADA (cfg, iargs [3], this_arg_temp->inst_c0);
 				temp = mono_emit_jit_icall (cfg, bblock, mono_helper_compile_generic_method, iargs, ip);
@@ -5963,6 +6014,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			if (!cmethod)
 				goto load_error;
 			fsig = mono_method_get_signature (cmethod, image, token);
+
+			mono_save_token_info (cfg, image, token, cmethod);
 
 			if (!mono_class_init (cmethod->klass))
 				goto load_error;
@@ -7034,15 +7087,27 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			CHECK_TYPELOAD (klass);
 			mono_class_init (klass);
 			if (MONO_TYPE_IS_REFERENCE (&klass->byval_arg)) {
-				MonoMethod* helper = mono_marshal_get_stelemref ();
-				MonoInst *iargs [3];
-				handle_loaded_temps (cfg, bblock, stack_start, sp);
+				/* storing a NULL doesn't need any of the complex checks in stelemref */
+				if (sp [2]->opcode == OP_PCONST && sp [2]->inst_p0 == NULL) {
+					MonoInst *load;
+					NEW_LDELEMA (cfg, load, sp, mono_defaults.object_class);
+					load->cil_code = ip;
+					MONO_INST_NEW (cfg, ins, stelem_to_stind [*ip - CEE_STELEM_I]);
+					ins->cil_code = ip;
+					ins->inst_left = load;
+					ins->inst_right = sp [2];
+					MONO_ADD_INS (bblock, ins);
+				} else {
+					MonoMethod* helper = mono_marshal_get_stelemref ();
+					MonoInst *iargs [3];
+					handle_loaded_temps (cfg, bblock, stack_start, sp);
 
-				iargs [2] = sp [2];
-				iargs [1] = sp [1];
-				iargs [0] = sp [0];
-				
-				mono_emit_method_call_spilled (cfg, bblock, helper, mono_method_signature (helper), iargs, ip, NULL);
+					iargs [2] = sp [2];
+					iargs [1] = sp [1];
+					iargs [0] = sp [0];
+
+					mono_emit_method_call_spilled (cfg, bblock, helper, mono_method_signature (helper), iargs, ip, NULL);
+				}
 			} else {
 				NEW_LDELEMA (cfg, load, sp, klass);
 				load->cil_code = ip;
@@ -7076,24 +7141,26 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 			handle_loaded_temps (cfg, bblock, stack_start, sp);
 
-			iargs [2] = sp [2];
-			iargs [1] = sp [1];
-			iargs [0] = sp [0];
+			/* storing a NULL doesn't need any of the complex checks in stelemref */
+			if (sp [2]->opcode == OP_PCONST && sp [2]->inst_p0 == NULL) {
+				MonoInst *load;
+				NEW_LDELEMA (cfg, load, sp, mono_defaults.object_class);
+				load->cil_code = ip;
+				MONO_INST_NEW (cfg, ins, stelem_to_stind [*ip - CEE_STELEM_I]);
+				ins->cil_code = ip;
+				ins->inst_left = load;
+				ins->inst_right = sp [2];
+				MONO_ADD_INS (bblock, ins);
+			} else {
+				iargs [2] = sp [2];
+				iargs [1] = sp [1];
+				iargs [0] = sp [0];
 			
-			mono_emit_method_call_spilled (cfg, bblock, helper, mono_method_signature (helper), iargs, ip, NULL);
-
-			/*
-			MonoInst *group;
-			NEW_GROUP (cfg, group, sp [0], sp [1]);
-			MONO_INST_NEW (cfg, ins, CEE_STELEM_REF);
-			ins->cil_code = ip;
-			ins->inst_left = group;
-			ins->inst_right = sp [2];
-			MONO_ADD_INS (bblock, ins);
-			*/
+				mono_emit_method_call_spilled (cfg, bblock, helper, mono_method_signature (helper), iargs, ip, NULL);
+				inline_costs += 1;
+			}
 
 			++ip;
-			inline_costs += 1;
 			break;
 		}
 		case CEE_CKFINITE: {
@@ -8461,43 +8528,32 @@ mono_create_jit_trampoline_from_token (MonoImage *image, guint32 token)
 #endif
 
 static gpointer
-mono_create_delegate_trampoline (MonoMethod *method, gpointer addr)
+mono_create_delegate_trampoline (MonoClass *klass)
 {
 #ifdef MONO_ARCH_HAVE_CREATE_DELEGATE_TRAMPOLINE
+	MonoDomain *domain = mono_domain_get ();
 	gpointer code, ptr;
 	guint32 code_size;
-	MonoDomain *domain = mono_domain_get ();
-
-#ifndef __ia64__
-	code = mono_jit_find_compiled_method (domain, method);
-	if (code)
-		return code;
-#else
-	/* 
-	 * FIXME: We should return a function descriptor here but it is not stored
-	 * anywhere so it would be leaked.
-	 */
-#endif
 
 	mono_domain_lock (domain);
-	ptr = g_hash_table_lookup (domain->delegate_trampoline_hash, method);
+	ptr = g_hash_table_lookup (domain->delegate_trampoline_hash, klass);
 	mono_domain_unlock (domain);
 	if (ptr)
 		return ptr;
 
-	code = mono_arch_create_specific_trampoline (method, MONO_TRAMPOLINE_DELEGATE, domain, &code_size);
+    code = mono_arch_create_specific_trampoline (klass, MONO_TRAMPOLINE_DELEGATE, mono_domain_get (), &code_size);
 
 	ptr = mono_create_ftnptr (domain, code);
 
 	/* store trampoline address */
 	mono_domain_lock (domain);
 	g_hash_table_insert (domain->delegate_trampoline_hash,
-							  method, ptr);
+							  klass, ptr);
 	mono_domain_unlock (domain);
 
 	return ptr;
 #else
-	return addr;
+	return NULL;
 #endif
 }
 
@@ -9302,6 +9358,7 @@ mono_destroy_compile (MonoCompile *cfg)
 		g_hash_table_destroy (cfg->exvars);
 	mono_mempool_destroy (cfg->mempool);
 	g_list_free (cfg->ldstr_list);
+	g_hash_table_destroy (cfg->token_info_hash);
 
 	g_free (cfg->reverse_inst_list);
 
@@ -11068,6 +11125,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	cfg->verbose_level = mini_verbose;
 	cfg->compile_aot = compile_aot;
 	cfg->skip_visibility = method->skip_visibility;
+	cfg->token_info_hash = g_hash_table_new (NULL, NULL);
 	if (!header) {
 		cfg->exception_type = MONO_EXCEPTION_INVALID_PROGRAM;
 		cfg->exception_message = g_strdup_printf ("Missing or incorrect header for method %s", cfg->method->name);
@@ -11531,11 +11589,8 @@ static gpointer
 mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, int opt)
 {
 	MonoCompile *cfg;
-	GHashTable *jit_code_hash;
 	gpointer code = NULL;
 	MonoJitInfo *info;
-
-	jit_code_hash = target_domain->jit_code_hash;
 
 	method = mono_get_inflated_method (method);
 
@@ -11662,7 +11717,7 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 	/* Check if some other thread already did the job. In this case, we can
        discard the code this thread generated. */
 
-	if ((info = g_hash_table_lookup (target_domain->jit_code_hash, method))) {
+	if ((info = mono_internal_hash_table_lookup (&target_domain->jit_code_hash, method))) {
 		/* We can't use a domain specific method in another domain */
 		if ((target_domain == mono_domain_get ()) || info->domain_neutral) {
 			code = info->code_start;
@@ -11671,7 +11726,7 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 	}
 	
 	if (code == NULL) {
-		g_hash_table_insert (jit_code_hash, method, cfg->jit_info);
+		mono_internal_hash_table_insert (&target_domain->jit_code_hash, method, cfg->jit_info);
 		code = cfg->native_code;
 	}
 
@@ -11730,7 +11785,7 @@ mono_jit_compile_method_with_opt (MonoMethod *method, guint32 opt)
 
 	mono_domain_lock (target_domain);
 
-	if ((info = g_hash_table_lookup (target_domain->jit_code_hash, method))) {
+	if ((info = mono_internal_hash_table_lookup (&target_domain->jit_code_hash, method))) {
 		/* We can't use a domain specific method in another domain */
 		if (! ((domain != target_domain) && !info->domain_neutral)) {
 			mono_domain_unlock (target_domain);
@@ -11791,7 +11846,7 @@ mono_jit_free_method (MonoDomain *domain, MonoMethod *method)
 		return;
 	mono_domain_lock (domain);
 	g_hash_table_remove (domain->dynamic_code_hash, method);
-	g_hash_table_remove (domain->jit_code_hash, method);
+	mono_internal_hash_table_remove (&domain->jit_code_hash, method);
 	g_hash_table_remove (domain->jump_trampoline_hash, method);
 	mono_domain_unlock (domain);
 
@@ -11836,7 +11891,7 @@ mono_jit_find_compiled_method (MonoDomain *domain, MonoMethod *method)
 
 	mono_domain_lock (target_domain);
 
-	if ((info = g_hash_table_lookup (target_domain->jit_code_hash, method))) {
+	if ((info = mono_internal_hash_table_lookup (&target_domain->jit_code_hash, method))) {
 		/* We can't use a domain specific method in another domain */
 		if (! ((domain != target_domain) && !info->domain_neutral)) {
 			mono_domain_unlock (target_domain);

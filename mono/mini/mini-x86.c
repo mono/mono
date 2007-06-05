@@ -11,7 +11,9 @@
 #include "mini.h"
 #include <string.h>
 #include <math.h>
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 
 #include <mono/metadata/appdomain.h>
 #include <mono/metadata/debug-helpers.h>
@@ -889,7 +891,6 @@ mono_arch_create_vars (MonoCompile *cfg)
 
 	if (cinfo->ret.storage == ArgValuetypeInReg)
 		cfg->ret_var_is_local = TRUE;
-
 	if (cfg->new_ir && (cinfo->ret.storage != ArgValuetypeInReg) && MONO_TYPE_ISSTRUCT (sig->ret)) {
 		cfg->vret_addr = mono_compile_create_var (cfg, &mono_defaults.int_class->byval_arg, OP_ARG);
 	}
@@ -2072,7 +2073,19 @@ cc_signed_table [] = {
 	FALSE, FALSE, FALSE, FALSE
 };
 
-/*#include "cprop.c"*/
+/* Maps CMP_... constants to X86_CC_... constants */
+static const int
+cc_table [] = {
+	X86_CC_EQ, X86_CC_NE, X86_CC_LE, X86_CC_GE, X86_CC_LT, X86_CC_GT,
+	X86_CC_LE, X86_CC_GE, X86_CC_LT, X86_CC_GT
+};
+
+static const int
+cc_signed_table [] = {
+	TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,
+	FALSE, FALSE, FALSE, FALSE
+};
+
 void
 mono_arch_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 {	
@@ -4988,22 +5001,94 @@ mono_arch_get_vcall_slot_addr (guint8 *code, gpointer *regs)
 	return (gpointer*)(((gint32)(regs [reg])) + disp);
 }
 
-gpointer* 
-mono_arch_get_delegate_method_ptr_addr (guint8* code, gpointer *regs)
+gpointer
+mono_arch_get_this_arg_from_call (MonoMethodSignature *sig, gssize *regs, guint8 *code)
 {
-	guint8 reg = 0;
-	gint32 disp = 0;
+	guint32 esp = regs [X86_ESP];
+	CallInfo *cinfo;
+	gpointer res;
 
-	code -= 7;
-	if ((code [0] == 0x8b) && (x86_modrm_mod (code [1]) == 3) && (x86_modrm_reg (code [1]) == X86_EAX) && (code [2] == 0x8b) && (code [3] == 0x40) && (code [5] == 0xff) && (code [6] == 0xd0)) {
-		reg = x86_modrm_rm (code [1]);
-		disp = code [4];
+	cinfo = get_call_info (NULL, sig, FALSE);
 
-		if (reg == X86_EAX)
-			return NULL;
-		else
-			return (gpointer*)(((gint32)(regs [reg])) + disp);
+	/*
+	 * The stack looks like:
+	 * <other args>
+	 * <this=delegate>
+	 * <possible vtype return address>
+	 * <return addr>
+	 * <4 pointers pushed by mono_arch_create_trampoline_code ()>
+	 */
+	res = (((MonoObject**)esp) [5 + (cinfo->args [0].offset / 4)]);
+	g_free (cinfo);
+	return res;
+}
+
+gpointer
+mono_arch_get_delegate_invoke_impl (MonoMethodSignature *sig, gboolean has_target)
+{
+	guint8 *code, *start;
+	MonoDomain *domain = mono_domain_get ();
+
+	/* FIXME: Support more cases */
+	if (MONO_TYPE_ISSTRUCT (sig->ret))
+		return NULL;
+
+	/*
+	 * The stack contains:
+	 * <delegate>
+	 * <return addr>
+	 */
+
+	if (has_target) {
+		mono_domain_lock (domain);
+		start = code = mono_code_manager_reserve (domain->code_mp, 64);
+		mono_domain_unlock (domain);
+
+		/* Replace the this argument with the target */
+		x86_mov_reg_membase (code, X86_EAX, X86_ESP, 4, 4);
+		x86_mov_reg_membase (code, X86_ECX, X86_EAX, G_STRUCT_OFFSET (MonoDelegate, target), 4);
+		x86_mov_membase_reg (code, X86_ESP, 4, X86_ECX, 4);
+		x86_jump_membase (code, X86_EAX, G_STRUCT_OFFSET (MonoDelegate, method_ptr));
+
+		g_assert ((code - start) < 64);
+	} else {
+		if (sig->param_count == 0) {
+			mono_domain_lock (domain);
+			start = code = mono_code_manager_reserve (domain->code_mp, 32 + (sig->param_count * 8));
+			mono_domain_unlock (domain);
+		
+			x86_mov_reg_membase (code, X86_EAX, X86_ESP, 4, 4);
+			x86_jump_membase (code, X86_EAX, G_STRUCT_OFFSET (MonoDelegate, method_ptr));
+		} else {
+			/* 
+			 * The code below does not work in the presence of exceptions, since it 
+			 * creates a new frame.
+			 */
+			start = NULL;
+#if 0
+			for (i = 0; i < sig->param_count; ++i)
+				if (!mono_is_regsize_var (sig->params [i]))
+					return NULL;
+
+			mono_domain_lock (domain);
+			start = code = mono_code_manager_reserve (domain->code_mp, 32 + (sig->param_count * 8));
+			mono_domain_unlock (domain);
+
+			/* Load this == delegate */
+			x86_mov_reg_membase (code, X86_EAX, X86_ESP, 4, 4);
+
+			/* Push arguments in opposite order, taking changes in ESP into account */
+			for (i = 0; i < sig->param_count; ++i)
+				x86_push_membase (code, X86_ESP, 4 + (sig->param_count * 4));
+
+			/* Call the delegate */
+			x86_call_membase (code, X86_EAX, G_STRUCT_OFFSET (MonoDelegate, method_ptr));
+			if (sig->param_count > 0)
+				x86_alu_reg_imm (code, X86_ADD, X86_ESP, sig->param_count * 4);
+			x86_ret (code);
+#endif
+		}
 	}
 
-	return NULL;
+	return start;
 }

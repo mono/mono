@@ -35,7 +35,31 @@
 							<pattern>dd-MMM-yy</pattern>
 						</extraPatterns>
 					</dateFormatLength >
+					<dateFormatLength type="long">
+						<dateFormat >
+							<pattern>dddd, MMMM dd, yyyy</pattern>
+						</dateFormat>
+					</dateFormatLength >
+					<dateFormatLength type="year_month">
+						<dateFormat >
+							<pattern>MMMM, yyyy</pattern>
+						</dateFormat>
+					</dateFormatLength >
 				</dateFormats>
+				<timeFormats>
+					<timeFormatLength type="long">
+						<timeFormat >
+							<pattern>h:mm:ss tt</pattern>
+						</timeFormat>
+					</timeFormatLength >
+				</timeFormats>
+				<dateTimeFormats>
+					<dateTimeFormatLength >
+						<dateTimeFormat>
+							<pattern>{1} {0}</pattern>
+						</dateTimeFormat>
+					</dateTimeFormatLength >
+				</dateTimeFormats>
 			</calendar>
 		</calendars>
 	</dates>

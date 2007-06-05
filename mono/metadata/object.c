@@ -434,7 +434,7 @@ default_remoting_trampoline (MonoMethod *method, MonoRemotingTarget target)
 }
 
 static gpointer
-default_delegate_trampoline (MonoMethod *method, gpointer addr)
+default_delegate_trampoline (MonoClass *klass)
 {
 	g_assert_not_reached ();
 	return NULL;
@@ -1077,6 +1077,7 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *class)
 	}
 
 	vt->max_interface_id = class->max_interface_id;
+	vt->interface_bitmap = class->interface_bitmap;
 	
 	//printf ("Initializing VT for class %s (interface_offsets_count = %d)\n",
 	//		class->name, class->interface_offsets_count);
@@ -1261,6 +1262,7 @@ mono_class_proxy_vtable (MonoDomain *domain, MonoRemoteClass *remote_class, Mono
 	}
 
 	pvt->max_interface_id = max_interface_id;
+	pvt->interface_bitmap = class->interface_bitmap;
 
 	/* initialize interface offsets */
 	for (i = 0; i < class->interface_offsets_count; ++i) {
@@ -2390,6 +2392,9 @@ mono_runtime_exec_main (MonoMethod *method, MonoArray *args, MonoObject **exc)
 	MonoDomain *domain;
 	gpointer pa [1];
 	int rval;
+	MonoCustomAttrInfo* cinfo;
+	gboolean has_stathread_attribute;
+	MonoThread* thread = mono_thread_current ();
 
 	g_assert (args);
 
@@ -2408,6 +2413,26 @@ mono_runtime_exec_main (MonoMethod *method, MonoArray *args, MonoObject **exc)
 		MONO_OBJECT_SETREF (domain->setup, configuration_file, mono_string_new (domain, str));
 		g_free (str);
 	}
+
+	cinfo = mono_custom_attrs_from_method (method);
+	if (cinfo) {
+		static MonoClass *stathread_attribute = NULL;
+		if (!stathread_attribute)
+			stathread_attribute = mono_class_from_name (mono_defaults.corlib, "System", "STAThreadAttribute");
+		has_stathread_attribute = mono_custom_attrs_has_attr (cinfo, stathread_attribute);
+		if (!cinfo->cached)
+			mono_custom_attrs_free (cinfo);
+	} else {
+		has_stathread_attribute = FALSE;
+ 	}
+	if (has_stathread_attribute) {
+		thread->apartment_state = ThreadApartmentState_STA;
+	} else if (mono_get_runtime_info ()->framework_version [0] == '1') {
+		thread->apartment_state = ThreadApartmentState_Unknown;
+	} else {
+		thread->apartment_state = ThreadApartmentState_MTA;
+	}
+	mono_thread_init_apartment_state ();
 
 	/* FIXME: check signature of method */
 	if (mono_method_signature (method)->ret->type == MONO_TYPE_I4) {
@@ -4115,17 +4140,11 @@ mono_delegate_ctor (MonoObject *this, MonoObject *target, gpointer addr)
 		delegate->method_ptr = mono_compile_method (method);
 		MONO_OBJECT_SETREF (delegate, target, target);
 	} else {
-		if (method) {
-			/* 
-			 * Replace the original trampoline with a delegate trampoline
-			 * which will patch delegate->method_ptr with the address of the
-			 * compiled method.
-			 */
-			addr = arch_create_delegate_trampoline (method, addr);
-		}
 		delegate->method_ptr = addr;
 		MONO_OBJECT_SETREF (delegate, target, target);
 	}
+
+	delegate->invoke_impl = arch_create_delegate_trampoline (delegate->object.vtable->klass);
 }
 
 /**

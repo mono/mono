@@ -10,7 +10,9 @@
 
 #include "config.h"
 #include <sys/types.h>
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 #include <fcntl.h>
 #include <string.h>
 #ifndef PLATFORM_WIN32
@@ -235,9 +237,12 @@ decode_klass_info (MonoAotModule *module, guint8 *buf, guint8 **endbuf)
 	image = load_image (module, image_index);
 	if (!image)
 		return NULL;
-	if (mono_metadata_token_code (token) == 0) {
+	if (mono_metadata_token_table (token) == 0) {
 		klass = mono_class_get (image, MONO_TOKEN_TYPE_DEF + token);
+	} else if (mono_metadata_token_table (token) == MONO_TABLE_TYPESPEC) {
+		klass = mono_class_get (image, token);
 	} else {
+		g_assert (mono_metadata_token_table (token) == MONO_TABLE_TYPEDEF);
 		token = MONO_TOKEN_TYPE_DEF + decode_value (buf, &buf);
 		rank = decode_value (buf, &buf);
 		if (token == MONO_TOKEN_TYPE_DEF) {
@@ -288,6 +293,12 @@ decode_method_ref (MonoAotModule *module, guint32 *token, guint8 *buf, guint8 **
 	*endbuf = buf;
 	image_index = value >> 24;
 	*token = MONO_TOKEN_METHOD_DEF | (value & 0xffffff);
+
+	if (image_index == 255) {
+		/* Methodspec */
+		image_index = decode_value (buf, &buf);
+		*token = decode_value (buf, &buf);
+	}
 
 	image = load_image (module, image_index);
 	if (!image)
@@ -659,6 +670,9 @@ decode_cached_class_info (MonoAotModule *module, MonoCachedClassInfo *info, guin
 	guint32 flags;
 
 	info->vtable_size = decode_value (buf, &buf);
+	if (info->vtable_size == -1)
+		/* Generic type */
+		return FALSE;
 	flags = decode_value (buf, &buf);
 	info->ghcimpl = (flags >> 0) & 0x1;
 	info->has_finalize = (flags >> 1) & 0x1;
@@ -1096,18 +1110,14 @@ decode_patch_info (MonoAotModule *aot_module, MonoMemPool *mp, MonoJumpInfo *ji,
 	case MONO_PATCH_INFO_METHOD:
 	case MONO_PATCH_INFO_METHODCONST:
 	case MONO_PATCH_INFO_METHOD_JUMP: {
-		guint32 image_index, token, value;
+		guint32 token;
 
-		value = decode_value (p, &p);
-		image_index = value >> 24;
-		token = MONO_TOKEN_METHOD_DEF | (value & 0xffffff);
-
-		image = load_image (aot_module, image_index);
+		image = decode_method_ref (aot_module, &token, buf, &buf);
 		if (!image)
 			goto cleanup;
 
 #ifdef MONO_ARCH_HAVE_CREATE_TRAMPOLINE_FROM_TOKEN
-		if (ji->type == MONO_PATCH_INFO_METHOD) {
+		if ((ji->type == MONO_PATCH_INFO_METHOD) && (mono_metadata_token_table (token) == MONO_TABLE_METHOD)) {
 			ji->data.target = mono_create_jit_trampoline_from_token (image, token);
 			ji->type = MONO_PATCH_INFO_ABS;
 		}

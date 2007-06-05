@@ -1,3 +1,8 @@
+2007-06-04  Mark Probst  <mark.probst@gmail.com>
+
+	* interp.c, interp.h (RuntimeMethod): Due to the jit_code_hash
+	change in MonoDomain this had to be changed slightly, too.
+
 2006-05-09  Miguel de Icaza  <miguel@novell.com>
 
 	* interp.c (ves_exec_method_with_context): Pass a temporary to the

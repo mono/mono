@@ -58,7 +58,7 @@ dummy_use: len:0
 dummy_store: len:0
 not_reached: len:0
 break: len:2
-jmp: len:128
+jmp: len:120
 br: len:6
 
 beq: len:8
@@ -220,7 +220,7 @@ call_reg: dest:a src1:i len:64 clob:c
 call_membase: dest:a src1:b len:64 clob:c
 iconst: dest:i len:10
 i8const: dest:i len:18
-r4const: dest:f len:13
+r4const: dest:f len:14
 r8const: dest:f len:9
 store_membase_imm: dest:b len:15
 store_membase_reg: dest:b src1:i len:9

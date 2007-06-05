@@ -12,7 +12,9 @@
 #include <config.h>
 #include <glib.h>
 #include <string.h>
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 #include <errno.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -41,7 +43,7 @@
 #include <direct.h>
 #endif
 
-#define MONO_CORLIB_VERSION 56
+#define MONO_CORLIB_VERSION 57
 
 CRITICAL_SECTION mono_delegate_section;
 

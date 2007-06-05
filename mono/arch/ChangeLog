@@ -1,3 +1,7 @@
+2007-05-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* amd64/amd64-codegen.h (amd64_call_reg): Remove a got prefix which isn't needed.
+
 2007-04-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* alpha/alpha-codegen.h: More alpha port work from 

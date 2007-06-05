@@ -52,7 +52,7 @@
 #endif
 
 /* Version number of the AOT file format */
-#define MONO_AOT_FILE_VERSION "31"
+#define MONO_AOT_FILE_VERSION "32"
 
 #if 0
 #define mono_bitset_foreach_bit(set,b,n) \
@@ -168,9 +168,6 @@ struct MonoEdge {
 };
 
 struct MonoSpillInfo {
-#ifndef MONO_ARCH_HAS_XP_REGALLOC
-	MonoSpillInfo *next;
-#endif
 	int offset;
 };
 
@@ -672,6 +669,7 @@ typedef struct {
 	guint32          lmf_offset;
 	guint16          *intvars;
 	MonoProfileCoverageInfo *coverage_info;
+	GHashTable       *token_info_hash;
 	MonoCompileArch  arch;
 	guint32          exception_type;	/* MONO_EXCEPTION_* */
 	guint32          exception_data;
@@ -1083,7 +1081,7 @@ gpointer          mono_create_jit_trampoline (MonoMethod *method) MONO_INTERNAL;
 gpointer          mono_create_jit_trampoline_from_token (MonoImage *image, guint32 token) MONO_INTERNAL;
 MonoVTable*       mono_find_class_init_trampoline_by_addr (gconstpointer addr) MONO_INTERNAL;
 gpointer          mono_magic_trampoline (gssize *regs, guint8 *code, MonoMethod *m, guint8* tramp) MONO_INTERNAL;
-gpointer          mono_delegate_trampoline (gssize *regs, guint8 *code, MonoMethod *m, guint8* tramp) MONO_INTERNAL;
+gpointer          mono_delegate_trampoline (gssize *regs, guint8 *code, MonoClass *klass, guint8* tramp) MONO_INTERNAL;
 gpointer          mono_aot_trampoline (gssize *regs, guint8 *code, guint8 *token_info, 
 									   guint8* tramp) MONO_INTERNAL;
 gpointer          mono_aot_plt_trampoline (gssize *regs, guint8 *code, guint8 *token_info, 
@@ -1186,6 +1184,8 @@ void     mono_arch_patch_plt_entry              (guint8 *code, guint8 *addr) MON
 void     mono_arch_nullify_class_init_trampoline(guint8 *code, gssize *regs) MONO_INTERNAL;
 void     mono_arch_nullify_plt_entry            (guint8 *code) MONO_INTERNAL;
 void     mono_arch_patch_delegate_trampoline    (guint8 *code, guint8 *tramp, gssize *regs, guint8 *addr) MONO_INTERNAL;
+gpointer mono_arch_get_this_arg_from_call       (MonoMethodSignature *sig, gssize *regs, guint8 *code);
+gpointer mono_arch_get_delegate_invoke_impl     (MonoMethodSignature *sig, gboolean has_target);
 gpointer mono_arch_create_specific_trampoline   (gpointer arg1, MonoTrampolineType tramp_type, MonoDomain *domain, guint32 *code_len) MONO_INTERNAL;
 
 /* Exception handling */
