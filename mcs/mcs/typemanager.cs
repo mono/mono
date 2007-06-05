@@ -825,7 +825,7 @@ namespace Mono.CSharp {
 					for (int i = 0; i < args.Length; i++) {
 						if (i > 0)
 							sig.Append (',');
-						sig.Append (args [i].Name);
+						sig.Append (CSharpName (args [i]));
 					}
 					sig.Append ('>');
 				}
@@ -1476,16 +1476,15 @@ namespace Mono.CSharp {
 	{
 		MemberCache cache;
 
-#if GMCS_SOURCE && MS_COMPATIBLE
-		if (t.IsGenericType && !t.IsGenericTypeDefinition)
-			t = t.GetGenericTypeDefinition();
-#endif
-
 		//
 		// If this is a dynamic type, it's always in the `builder_to_declspace' hash table
 		// and we can ask the DeclSpace for the MemberCache.
 		//
 		if (t is TypeBuilder) {
+#if GMCS_SOURCE && MS_COMPATIBLE
+			if (t.IsGenericType && !t.IsGenericTypeDefinition)
+				t = t.GetGenericTypeDefinition ();
+#endif
 			DeclSpace decl = (DeclSpace) builder_to_declspace [t];
 			cache = decl.MemberCache;
 
@@ -3541,7 +3540,7 @@ public sealed class TypeHandle : IMemberContainer {
 	{
 		this.type = type;
 #if MS_COMPATIBLE && GMCS_SOURCE
-		if (type.IsGenericType)
+		if (type.IsGenericType && type is TypeBuilder)
 			this.type = this.type.GetGenericTypeDefinition ();
 #endif
 		full_name = type.FullName != null ? type.FullName : type.Name;

@@ -1,3 +1,9 @@
+2007-06-05  Marek Safar  <marek.safar@gmail.com>
+
+	* typemanager.cs (CSharpSignature): One more missing build-in types
+	replacement.
+	More tricks for non-mono runtime.
+
 2007-06-05  Raja R Harinath  <harinath@gmail.com>
 
 	* statement.cs (Block.CheckError136_InParents): Remove.
