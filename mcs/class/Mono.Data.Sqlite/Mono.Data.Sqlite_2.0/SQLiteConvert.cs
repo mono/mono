@@ -235,7 +235,24 @@ namespace Mono.Data.Sqlite
     /// <returns>A string containing the translated character(s)</returns>
     public virtual string UTF8ToString(IntPtr nativestring)
     {
-	    return Marshal.PtrToStringAuto (nativestring);
+      if (nativestring == IntPtr.Zero)
+        return null;
+    
+      // This assumes a single byte terminates the string.
+
+      int len = 0;
+      while (Marshal.ReadByte (nativestring, len) != 0)
+        checked {++len;}
+
+      unsafe { 
+        string s = new string ((sbyte*) nativestring, 0, len, _utf8);
+        len = s.Length;
+        while (len > 0 && s [len-1] == 0)
+          --len;
+        if (len == s.Length) 
+          return s;
+        return s.Substring (0, len);
+      }
     }
 
 

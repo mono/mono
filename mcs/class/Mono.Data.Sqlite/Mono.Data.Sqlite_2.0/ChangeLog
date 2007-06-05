@@ -1,3 +1,9 @@
+2007-06-03  Kamil Skalski  <nazgul@nemerle.org>
+
+	* SQLiteConvert.cs: Port function for converting native UTF8 string
+      into managed string from the old SqliteClient implementation.
+      Use it instead of PtrToStrAuto, which fails on Windows.
+
 2007-02-20  Marek Habersack  <grendello@gmail.com>
 
 	* SQLite3.cs: handle sqlite3_prepare_v2 absent from the library,
