@@ -1,6 +1,6 @@
 2007-06-06  Nagappan A  <anagappan@novell.com>
 
-	* MySQL_5.sql: Added more sql statements.
+	* MySQL_5.sql: Fixed EOL and extra spaces.
 
 2007-05-30  Nagappan A  <anagappan@novell.com>
 
