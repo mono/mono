@@ -398,7 +398,13 @@ namespace System.Web.UI
                 public virtual string TemplateSourceDirectory {
 			get {
 #if NET_2_0
-				return (_templateControl == null) ? String.Empty : _templateControl.TemplateSourceDirectory;
+				if (_templateControl != null)
+					return _templateControl.TemplateSourceDirectory;
+
+				// Arguably, a hack, but this is the easiest way of doing it. We must be sure that controls placed
+				// in an .ascx file get their source directory right, or otherwise ResolveClientUrl will return
+				// invalid paths in such situations.
+				return (_parent == null || !(_parent is UserControl)) ? String.Empty : _parent.TemplateSourceDirectory;
 #else
 				return (_parent == null) ? String.Empty : _parent.TemplateSourceDirectory;
 #endif

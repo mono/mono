@@ -1,3 +1,10 @@
+2007-06-06  Marek Habersack  <mhabersack@novell.com>
+
+	* Control.cs: more changes to the way TemplateSourceDirectory
+	works in the 2.0 profile. Take into account situations when a
+	control is placed in a UserControl (.ascx) and only then fall back
+	to the parent for its TemplateSourceDirectory.
+
 2007-06-05  Marek Habersack  <mhabersack@novell.com>
 
 	* Control.cs: TemplateSourceDirectory uses TemplateControl to
