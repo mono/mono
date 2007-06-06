@@ -38,4 +38,55 @@ namespace Monotests_Mono.Data.SqlExpressions
 			Assert.AreEqual (0, (int)table.Rows[0][2], "#1");
 		}
 	}
+	[TestFixture]
+	public class DataColumnCharTest
+	{
+		private static DataTable _dt = new DataTable();
+
+		[Test]
+		public void Test1 ()
+		{
+			_dt.Columns.Add(new DataColumn("a", typeof(char)));
+
+			AddData('1');
+			AddData('2');
+			AddData('3');
+			AddData('A');
+
+			Assert.AreEqual (true, FindRow("'A'"), "Test1-1 failed");
+			Assert.AreEqual (true, FindRow("65"), "Test1-2 failed");
+			Assert.AreEqual (true, FindRow("'1'"), "Test1-3 failed");
+		}
+
+		[Test]
+		[ExpectedException(typeof(FormatException))]
+		public void Test2 ()
+		{
+			FindRow("'65'");
+		}
+		[Test]
+		public void Test3 ()
+		{
+			Assert.AreEqual (false, FindRow ("1"), "Test3-1 failed");
+		}
+
+		private static bool FindRow(string f)
+		{
+			string filter = string.Format("a = {0}", f);
+
+			DataRow[] rows = _dt.Select(filter);
+
+			if (rows.Length == 0)
+				return false;
+			else
+				return true;
+		}
+
+		private static void AddData(char a)
+		{
+			DataRow row = _dt.NewRow();
+			row["a"] = a;
+			_dt.Rows.Add(row);
+		}
+	}
 }
