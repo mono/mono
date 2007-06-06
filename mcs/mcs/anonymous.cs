@@ -1723,7 +1723,6 @@ namespace Mono.CSharp {
 				return false;
 
 			return ResolveAnonymousDelegate (ec);
-			return true;
 		}
 
 		public MethodInfo GetMethodBuilder (EmitContext ec)

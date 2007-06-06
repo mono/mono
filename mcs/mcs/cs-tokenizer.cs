@@ -41,11 +41,14 @@ namespace Mono.CSharp
 		bool handle_constraints = false;
 		bool handle_typeof = false;
 		bool handle_var = false;
-		bool query_parsing;
 		Location current_location;
 		Location current_comment_location = Location.Null;
 		ArrayList escaped_identifiers = new ArrayList ();
 
+#if GMCS_SOURCE
+		bool query_parsing;
+#endif
+		
 		static bool IsLinqEnabled {
 			get {
 				return RootContext.Version == LanguageVersion.LINQ;
@@ -184,12 +187,6 @@ namespace Mono.CSharp
 			
 			set {
 				handle_var = value;
-			}
-		}
-
-		public bool QueryParsing {
-			set {
-				query_parsing = value;
 			}
 		}
 
@@ -584,22 +581,6 @@ namespace Mono.CSharp
 			return true;
 		}
 
-		bool parse_generic_dimension (out int dimension)
-		{
-			dimension = 1;
-
-		again:
-			int the_token = token ();
-			if (the_token == Token.OP_GENERICS_GT)
-				return true;
-			else if (the_token == Token.COMMA) {
-				dimension++;
-				goto again;
-			}
-
-			return false;
-		}
-
 		bool parse_less_than ()
 		{
 		start:
@@ -687,6 +668,28 @@ namespace Mono.CSharp
 			else
 				nullable_pos = -1;
 		}
+		
+		public bool QueryParsing {
+			set {
+				query_parsing = value;
+			}
+		}		
+		
+		bool parse_generic_dimension (out int dimension)
+		{
+			dimension = 1;
+
+		again:
+			int the_token = token ();
+			if (the_token == Token.OP_GENERICS_GT)
+				return true;
+			else if (the_token == Token.COMMA) {
+				dimension++;
+				goto again;
+			}
+
+			return false;
+		}		
 #endif
 		
 		public int peek_token ()

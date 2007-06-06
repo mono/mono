@@ -1011,12 +1011,12 @@ namespace Mono.CSharp {
 		public AssemblyBuilder Builder;
 		bool is_cls_compliant;
 		bool wrap_non_exception_throws;
-		bool has_extension_method;
 
 		public Attribute ClsCompliantAttribute;
 
 		ListDictionary declarative_security;
 #if GMCS_SOURCE
+		bool has_extension_method;		
 		public AssemblyName Name;
 		MethodInfo add_type_forwarder;
 		ListDictionary emitted_forwarders;
@@ -1033,7 +1033,11 @@ namespace Mono.CSharp {
 		}
 
 		public bool HasExtensionMethods {
-			set { has_extension_method = value; }
+			set {
+#if GMCS_SOURCE				
+				has_extension_method = value;
+#endif
+			}
 		}
 
 		public bool IsClsCompliant {

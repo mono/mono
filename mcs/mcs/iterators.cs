@@ -144,8 +144,10 @@ namespace Mono.CSharp {
 		TypeExpr enumerable_type;
 		TypeArguments generic_args;
 		TypeExpr generic_enumerator_type;
+#if GMCS_SOURCE		
 		TypeExpr generic_enumerable_type;
-
+#endif
+		
 		public IteratorHost (Iterator iterator)
 			: base (iterator.Container.Toplevel, iterator.Host, iterator.GenericMethod,
 				iterator.Location)

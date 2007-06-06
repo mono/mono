@@ -44,8 +44,6 @@ namespace Mono.CSharp
 		/// </summary>
 		Block      current_block;
 
-		Delegate   current_delegate;
-
 		AnonymousMethodExpression current_anonymous_method;
 
 		/// <summary>
@@ -4614,7 +4612,6 @@ fixed_statement
 		int top = list.Count;
 
 		start_block (lexer.Location);
-		Block assign_block = current_block;
 
 		for (int i = 0; i < top; i++){
 			Pair p = (Pair) list [i];

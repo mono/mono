@@ -5262,7 +5262,7 @@ namespace Mono.CSharp {
 		{
 #if GMCS_SOURCE
 			ILGenerator ig = ec.ig;
-			IMemoryLocation ml;
+//			IMemoryLocation ml;
 
 			MethodInfo ci = TypeManager.activator_create_instance.MakeGenericMethod (
 				new Type [] { type });
@@ -8703,7 +8703,6 @@ namespace Mono.CSharp {
 	{
 		ArrayList parameters;
 		TypeContainer parent;
-		Location loc;
 		TypeContainer anonymous_type;
 
 		public AnonymousType (ArrayList parameters, TypeContainer parent, Location loc)
@@ -8785,7 +8784,6 @@ namespace Mono.CSharp {
 		LocatedToken token;
 		string name;
 		Expression expression;
-		Type type;
 
 		public LocatedToken Token {
 			get { return token; }
@@ -8793,10 +8791,6 @@ namespace Mono.CSharp {
 
 		public string Name {
 			get { return name; }
-		}
-
-		public Type Type {
-			get { return type; }
 		}
 
 		public Expression Expression {
@@ -8807,6 +8801,11 @@ namespace Mono.CSharp {
 		{
 			AnonymousTypeParameter other = o as AnonymousTypeParameter;
 			return other != null && Name == other.Name && Type == other.Type;
+		}
+		
+		public override int GetHashCode ()
+		{
+			return name.GetHashCode ();
 		}
 
 		public override Expression DoResolve (EmitContext ec)
