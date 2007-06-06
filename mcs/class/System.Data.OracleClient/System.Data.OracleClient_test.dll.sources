@@ -2,6 +2,7 @@ System.Data.OracleClient/OraclePermissionAttributeTest.cs
 System.Data.OracleClient/OracleCommandTest.cs
 System.Data.OracleClient/OracleParameterTest.cs
 System.Data.OracleClient/OracleLobTest.cs
+System.Data.OracleClient/OracleParameterCollectionTest.cs
 System.Data.OracleClient.Oci/OciDefineHandleTest.cs
 System.Data.OracleClient.jvm/MonoTests.System.Data.Utils/ADONetTesterClass.cs
 System.Data.OracleClient.jvm/MonoTests.System.Data.Utils/ConnectedDataProvider.cs
