@@ -48,7 +48,6 @@ namespace System.Windows.Forms
 		private int splitter_width;
 		private int splitter_increment;
 		private Orientation orientation;
-		private bool binding_context_set;
 
 		private SplitterPanel panel1;
 		private bool panel1_collapsed;
@@ -137,7 +136,6 @@ namespace System.Windows.Forms
 			panel2_collapsed = false;
 			panel1_min_size = 25;
 			panel2_min_size = 25;
-			binding_context_set = false;
 
 			panel1 = new SplitterPanel (this);
 			panel2 = new SplitterPanel (this);
@@ -229,11 +227,8 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		public override BindingContext BindingContext {
-			get { return binding_context_set ? base.BindingContext : null; }
-			set {
-				binding_context_set = true;
-				base.BindingContext = value;
-			}
+			get { return base.BindingContext; }
+			set { base.BindingContext = value; }
 		}
 
 		// MSDN says default is Fixed3D, creating a new SplitContainer says otherwise.

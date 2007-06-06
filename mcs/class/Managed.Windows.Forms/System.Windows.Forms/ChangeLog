@@ -1,5 +1,10 @@
 2007-06-06  Jonathan Pobst  <monkey@jpobst.com>
 
+	* SplitContainer.cs: Apply patch from Neil Cawse <neilcawse@geotab.com>
+	to have BindingContext simply use base implementation.
+
+2007-06-06  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ColumnHeader.cs: corcompare fix.
 
 2007-06-06  Jonathan Pobst  <monkey@jpobst.com>
