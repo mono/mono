@@ -1,3 +1,8 @@
+2007-06-06  Wade Berrier  <wberrier@novell.com>
+
+	* atomic.h (InterlockedExchangePointer): cast to pointer to to silence
+	compiler warnings (autobuild fails the build on this type of warning)
+
 2007-05-21  Dick Porter  <dick@ximian.com>
 
 	* io-portability.c (_wapi_g_dir_open): Don't propagate any errors
