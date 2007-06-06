@@ -1,5 +1,10 @@
 2007-06-06  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Button.cs: corcompare fixes.
+	* ButtonBase.cs: corcompare fixes, add ButtonBaseAccessibleObject.State.
+
+2007-06-06  Jonathan Pobst  <monkey@jpobst.com>
+
 	* Button.cs: Override GetPreferredSizeCore.
 	* ButtonBase.cs: PerformLayout after changing properties that can affect
 	AutoSize.  Simplify some mouse/keyboard code.

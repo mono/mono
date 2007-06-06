@@ -51,7 +51,9 @@ namespace System.Windows.Forms {
 
 		#region Public Properties
 #if NET_2_0
+		[Browsable (true)]
 		[Localizable (true)]
+		[DefaultValue (AutoSizeMode.GrowOnly)]
 		public AutoSizeMode AutoSizeMode {
 			get { return base.GetAutoSizeMode (); }
 			set { base.SetAutoSizeMode (value); }

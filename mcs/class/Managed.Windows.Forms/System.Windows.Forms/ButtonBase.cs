@@ -248,6 +248,7 @@ namespace System.Windows.Forms {
 		[DefaultValue ("")]
 		[Editor ("System.Windows.Forms.Design.ImageIndexEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		[RefreshProperties (RefreshProperties.Repaint)]
+		[TypeConverter (typeof (ImageKeyConverter))]
 		public string ImageKey {
 			get { return this.image_key; }
 			set {
@@ -760,6 +761,12 @@ namespace System.Windows.Forms {
 			}
 			#endregion	// ButtonBaseAccessibleObject Constructors
 
+			#region Public Properties
+			public override AccessibleStates State {
+				get { return base.State; }
+			}
+			#endregion
+			
 			#region ButtonBaseAccessibleObject Methods
 			public override void DoDefaultAction ()
 			{
