@@ -28,6 +28,10 @@ using System.Collections;
 using System.ComponentModel;
 using System.Globalization;
 
+#if NET_2_0
+using System.Collections.Generic;
+#endif
+
 namespace System.Windows.Forms {
 	[Editor("System.Windows.Forms.Design.TreeNodeCollectionEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
 	public class TreeNodeCollection : IList, ICollection, IEnumerable {
@@ -434,7 +438,36 @@ namespace System.Windows.Forms {
 			nodes = nn;
 		}
 
+#if NET_2_0
+		public TreeNode[] Find (string key, bool searchAllChildren)
+		{
+			List<TreeNode> results = new List<TreeNode> (0);
+			Find (key, searchAllChildren, this, results);
+
+			return results.ToArray ();             
+		}
 		
+		private static void Find (string key, bool searchAllChildren, TreeNodeCollection nodes, List<TreeNode> results)
+		{
+			for (int i = 0; i < nodes.Count; i++) {
+				TreeNode thisNode = nodes [i];
+				
+				if (string.Compare (thisNode.Name, key, true, CultureInfo.InvariantCulture) == 0) 
+					results.Add (thisNode);
+
+			}
+			// Need to match the Microsoft order.
+
+			if (searchAllChildren){
+				for (int i = 0; i < nodes.Count; i++){
+					TreeNodeCollection childNodes = nodes [i].Nodes;
+					if (childNodes.Count > 0) {
+						Find (key, searchAllChildren, childNodes, results);
+					}
+				}
+			}
+		}
+#endif
 		internal class TreeNodeEnumerator : IEnumerator {
 
 			private TreeNodeCollection collection;
