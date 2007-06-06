@@ -57,15 +57,15 @@ namespace System.Data.OracleClient {
 		}
 
 		public bool IsFixedSize {
-			get { return false; }
+			get { return list.IsFixedSize; }
 		}
 
 		public bool IsReadOnly {
-			get { return false; }
+			get { return list.IsReadOnly; }
 		}
 
 		public bool IsSynchronized {
-			get { return false; }
+			get { return list.IsSynchronized; }
 		}
 
 		public OracleParameter this [string parameterName] {

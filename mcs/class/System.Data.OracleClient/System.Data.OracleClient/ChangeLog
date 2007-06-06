@@ -1,3 +1,15 @@
+2007-05-25 Nidhi Rawal <rawalnidhi_rawal@gmail.com>
+	* OracleDateTime.cs: Wrote the methods CompareTo (object) and Equals (object).
+	* OracleClientFactory.cs: Wrote methods CreatePermission (PermissionState) and CreateDataSourceEnumerator ().
+	* OracleString.cs: Wrote methods GreaterThan (OracleString, OracleString) and 
+	GreaterThanOrEqual (OracleString, OracleString).
+	* OracleDataAdapter.cs: Wrote the property UpdateBatchSize.
+
+2007-05-25 Amit Biswas <amit@amitbiswas.com>
+	* OracleParameterCollection.cs: Fixed the bugs in properties IsFixedSize, IsReadOnly and IsSynchronized.
+	* OracleTimeSpan.cs: Implemented methods CompareTo (object) and Equals (object).
+	* OracleMonthSpan.cs: Implemented methods CompareTo (object) and Equals (object).
+
 2007-03-29 Leszek Ciesielski <skolima@gmail.com>
 	* OracleConnection.cs: consecutive calls to Open() do not spawn
 	multiple connections

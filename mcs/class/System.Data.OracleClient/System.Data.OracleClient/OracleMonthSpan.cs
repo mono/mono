@@ -71,16 +71,28 @@ namespace System.Data.OracleClient {
 
 		#region Methods
 
-		[MonoTODO]
 		public int CompareTo (object obj)
 		{
-			throw new NotImplementedException ();
+			OracleMonthSpan o = (OracleMonthSpan) obj;
+			if (obj == null)
+				throw new NullReferenceException ("Object reference not set to an instance of an object");
+			else if (!(obj is OracleMonthSpan))
+				throw new ArgumentException ("Value is not a System.Data.OracleClient.OracleMonthSpan", obj.ToString ());
+			else if (o.IsNull && this.IsNull)
+				return 0;
+			else if (o.IsNull && !(this.IsNull))
+				return 1;
+			else
+				return value.CompareTo (o.Value);
 		}
 
-		[MonoTODO]
 		public override bool Equals (object value)
 		{
-			throw new NotImplementedException ();
+			if (value is OracleMonthSpan) {
+				OracleMonthSpan m = (OracleMonthSpan) value;
+				return this.value == m.value;
+			}
+			return false;
 		}
 
 		public static OracleBoolean Equals (OracleMonthSpan x, OracleMonthSpan y)

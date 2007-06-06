@@ -127,16 +127,32 @@ namespace System.Data.OracleClient {
 
 		#region Methods
 
-		[MonoTODO]
 		public int CompareTo (object obj)
 		{
-			throw new NotImplementedException ();
+			OracleDateTime o = (OracleDateTime) obj;
+			if (obj == null)
+				throw new NullReferenceException ("Object reference not set to an instance of an object");
+			else if (!(obj is OracleDateTime))
+				throw new ArgumentException ("Value is not a System.Data.OracleClient.OracleDateTime", obj.ToString ());
+			else if (o.IsNull && this.IsNull)
+				return 0;
+			else if (o.IsNull && !(this.IsNull))
+				return 1;
+			else
+				return value.CompareTo (o.Value);
 		}
 
-		[MonoTODO]
 		public override bool Equals (object value)
 		{
-			throw new NotImplementedException ();
+			if (value is OracleDateTime)
+			{
+				OracleDateTime d = (OracleDateTime) value;
+				if (!(this.IsNull) && !(d.IsNull))
+					return this.value == d.value;
+				else
+					throw new InvalidOperationException ("The value is null");
+			}
+			return false;
 		}
 
 		public static OracleBoolean Equals (OracleDateTime x, OracleDateTime y)

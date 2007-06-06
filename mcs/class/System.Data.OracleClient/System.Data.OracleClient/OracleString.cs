@@ -77,16 +77,18 @@ namespace System.Data.OracleClient
 				return value.CompareTo (((OracleString) obj).Value);
 		}
 
-		[MonoTODO]
 		public static OracleBoolean GreaterThan (OracleString x, OracleString y)
 		{
-			throw new NotImplementedException ();
+			if (x.IsNull || y.IsNull)
+				return OracleBoolean.Null;
+			return (x > y);
 		}
 
-		[MonoTODO]
 		public static OracleBoolean GreaterThanOrEqual (OracleString x, OracleString y)
 		{
-			throw new NotImplementedException ();
+			if (x.IsNull || y.IsNull)
+				return OracleBoolean.Null;
+			return (x  >= y);
 		}
 
 		public static OracleBoolean LessThan (OracleString x, OracleString y)

@@ -100,16 +100,32 @@ namespace System.Data.OracleClient {
 
 		#region Methods
 
-		[MonoTODO]
 		public int CompareTo (object obj)
 		{
-			throw new NotImplementedException ();
+			OracleTimeSpan o = (OracleTimeSpan) obj;
+			if (obj == null)
+				throw new NullReferenceException ("Object reference not set to an instance of an object");
+			else if (!(obj is OracleTimeSpan))
+				throw new ArgumentException ("Value is not a System.Data.OracleClient.OracleTimeSpan", obj.ToString ());
+			else if (o.IsNull && this.IsNull)
+				return 0;
+			else if (o.IsNull && !(this.IsNull))
+				return 1;
+			else
+				return value.CompareTo (o.Value);
 		}
 
-		[MonoTODO]
 		public override bool Equals (object value)
 		{
-			throw new NotImplementedException ();
+			if (value is OracleTimeSpan)
+			{
+				OracleTimeSpan t = (OracleTimeSpan) value;
+				if (!(this.IsNull) && !(t.IsNull))
+					return this.value == t.value;
+				else
+					throw new InvalidOperationException ("The value is null");
+			}
+			return false;
 		}
 
 		public static OracleBoolean Equals (OracleTimeSpan x, OracleTimeSpan y)

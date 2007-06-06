@@ -40,6 +40,9 @@ namespace System.Data.OracleClient {
 		OracleCommand insertCommand;
 		OracleCommand selectCommand;
 		OracleCommand updateCommand;
+#if NET_2_0
+		int updateBatchSize;
+#endif
 
 		#endregion
 
@@ -74,32 +77,37 @@ namespace System.Data.OracleClient {
 
 		[DefaultValue (null)]
 		[Editor ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, " + Consts.AssemblyMicrosoft_VSDesigner, typeof(UITypeEditor))]
-		public OracleCommand DeleteCommand {
+		public new OracleCommand DeleteCommand {
 			get { return deleteCommand; }
 			set { deleteCommand = value; }
 		}
 
 		[DefaultValue (null)]
 		[Editor ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, " + Consts.AssemblyMicrosoft_VSDesigner, typeof(UITypeEditor))]
-		public OracleCommand InsertCommand {
+		public new OracleCommand InsertCommand {
 			get { return insertCommand; }
 			set { insertCommand = value; }
 		}
 
 		[DefaultValue (null)]
 		[Editor ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, " + Consts.AssemblyMicrosoft_VSDesigner, typeof(UITypeEditor))]
-		public OracleCommand SelectCommand {
+		public new OracleCommand SelectCommand {
 			get { return selectCommand; }
 			set { selectCommand = value; }
 		}
 
 		[DefaultValue (null)]
 		[Editor ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, " + Consts.AssemblyMicrosoft_VSDesigner, typeof(UITypeEditor))]
-		public OracleCommand UpdateCommand {
+		public new OracleCommand UpdateCommand {
 			get { return updateCommand; }
 			set { updateCommand = value; }
 		}
-
+#if NET_2_0
+		public override int UpdateBatchSize {
+			get { return updateBatchSize; }
+			set { updateBatchSize = value; }
+		}
+#endif
 		IDbCommand IDbDataAdapter.DeleteCommand {
 			get { return DeleteCommand; }
 			set {

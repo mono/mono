@@ -65,13 +65,16 @@ namespace System.Data.OracleClient
 			return new OracleConnection ();
 		}
 
+		public override CodeAccessPermission CreatePermission (PermissionState state) {
+			return new OraclePermission (state);
+		}
+
 		public override DbDataAdapter CreateDataAdapter () {
 			return new OracleDataAdapter ();
 		}
 
-		[MonoTODO]
 		public override DbDataSourceEnumerator CreateDataSourceEnumerator () {
-			throw new NotImplementedException ();
+			return new OracleDataSourceEnumerator ();
 		}
 
 		public override DbParameter CreateParameter () {
