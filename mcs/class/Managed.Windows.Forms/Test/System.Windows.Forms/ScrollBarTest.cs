@@ -21,6 +21,10 @@ public class MyScrollBar : HScrollBar
 	    private ArrayList results = new ArrayList ();
      public MyScrollBar () : base ()
 	     {}
+	     
+#if NET_2_0
+		public Padding PublicDefaultMargin { get { return base.DefaultMargin; } }
+#endif
 
 	    protected override void OnBackColorChanged (EventArgs e)
 	     {
@@ -170,89 +174,89 @@ public class MyScrollBar : HScrollBar
 		    get {	return results; }
 	    }
 
-	    public void MoveMouse ()
-	     {
-		     Message m;
+	    //public void MoveMouse ()
+	    // {
+	    //         Message m;
 
-		     m = new Message ();
+	    //         m = new Message ();
 
-		     m.Msg = (int)WndMsg.WM_NCHITTEST;
-		     m.HWnd = this.Handle;
-		     m.WParam = (IntPtr)0x0;
-		     m.LParam = (IntPtr)0x1c604ea;
-		     this.WndProc(ref m);
+	    //         m.Msg = (int)WndMsg.WM_NCHITTEST;
+	    //         m.HWnd = this.Handle;
+	    //         m.WParam = (IntPtr)0x0;
+	    //         m.LParam = (IntPtr)0x1c604ea;
+	    //         this.WndProc(ref m);
 
-		     m.Msg = (int)WndMsg.WM_SETCURSOR;
-		     m.HWnd = this.Handle;
-		     m.WParam = (IntPtr)0x100448;
-		     m.LParam = (IntPtr)0x2000001;
-		     this.WndProc(ref m);
+	    //         m.Msg = (int)WndMsg.WM_SETCURSOR;
+	    //         m.HWnd = this.Handle;
+	    //         m.WParam = (IntPtr)0x100448;
+	    //         m.LParam = (IntPtr)0x2000001;
+	    //         this.WndProc(ref m);
 
-		     m.Msg = (int)WndMsg.WM_MOUSEFIRST;
-		     m.HWnd = this.Handle;
-		     m.WParam = (IntPtr)0x0;
-		     m.LParam = (IntPtr)0x14000b;
-		     this.WndProc(ref m);
+	    //         m.Msg = (int)WndMsg.WM_MOUSEFIRST;
+	    //         m.HWnd = this.Handle;
+	    //         m.WParam = (IntPtr)0x0;
+	    //         m.LParam = (IntPtr)0x14000b;
+	    //         this.WndProc(ref m);
 
-		     m.Msg = (int)WndMsg.WM_MOUSEHOVER;
-		     m.HWnd = this.Handle;
-		     m.WParam = (IntPtr)0x0;
-		     m.LParam = (IntPtr)0x14000b;
-		     this.WndProc(ref m);
-	     }
+	    //         m.Msg = (int)WndMsg.WM_MOUSEHOVER;
+	    //         m.HWnd = this.Handle;
+	    //         m.WParam = (IntPtr)0x0;
+	    //         m.LParam = (IntPtr)0x14000b;
+	    //         this.WndProc(ref m);
+	    // }
 
-	    public new void MouseClick()
-	     {
+	    //public new void MouseClick()
+	    // {
 
-		     Message m;
+	    //         Message m;
 
-		     m = new Message();
+	    //         m = new Message();
 
-		     m.Msg = (int)WndMsg.WM_LBUTTONDOWN;
-		     m.HWnd = this.Handle;
-		     m.WParam = (IntPtr)0x01;
-		     m.LParam = (IntPtr)0x9004f;
-		     this.WndProc(ref m);
+	    //         m.Msg = (int)WndMsg.WM_LBUTTONDOWN;
+	    //         m.HWnd = this.Handle;
+	    //         m.WParam = (IntPtr)0x01;
+	    //         m.LParam = (IntPtr)0x9004f;
+	    //         this.WndProc(ref m);
 
-		     m = new Message();
+	    //         m = new Message();
 
-		     m.Msg = (int)WndMsg.WM_LBUTTONUP;
-		     m.HWnd = this.Handle;
-		     m.WParam = (IntPtr)0x01;
-		     m.LParam = (IntPtr)0x9004f;
-		     this.WndProc(ref m);
-	     }
+	    //         m.Msg = (int)WndMsg.WM_LBUTTONUP;
+	    //         m.HWnd = this.Handle;
+	    //         m.WParam = (IntPtr)0x01;
+	    //         m.LParam = (IntPtr)0x9004f;
+	    //         this.WndProc(ref m);
+	    // }
 
-	    public new void MouseDoubleClick ()
-	     {
-		     MouseClick ();
-		     MouseClick ();
-	     }
-	    public void MouseRightDown()
-	     {
-		     Message m;
+	    //public new void MouseDoubleClick ()
+	    // {
+	    //         this.MouseClick ();
+	    //         this.MouseClick ();
+	    // }
+	    //public void MouseRightDown()
+	    // {
+	    //         Message m;
 
-		     m = new Message();
+	    //         m = new Message();
 
-		     m.Msg = (int)WndMsg.WM_RBUTTONDOWN;
-		     m.HWnd = this.Handle;
-		     m.WParam = (IntPtr)0x01;
-		     m.LParam = (IntPtr)0x9004f;
-		     this.WndProc(ref m);
-	     }
+	    //         m.Msg = (int)WndMsg.WM_RBUTTONDOWN;
+	    //         m.HWnd = this.Handle;
+	    //         m.WParam = (IntPtr)0x01;
+	    //         m.LParam = (IntPtr)0x9004f;
+	    //         this.WndProc(ref m);
+	    // }
 
-	    public void MouseRightUp()
-	     {
-		     Message m;
+	    //public void MouseRightUp()
+	    // {
+	    //         Message m;
 
-		     m = new Message();
+	    //         m = new Message();
 
-		     m.Msg = (int)WndMsg.WM_RBUTTONUP;
-		     m.HWnd = this.Handle;
-		     m.WParam = (IntPtr)0x01;
-		     m.LParam = (IntPtr)0x9004f;
-		     this.WndProc(ref m);
-	     }
+	    //         m.Msg = (int)WndMsg.WM_RBUTTONUP;
+	    //         m.HWnd = this.Handle;
+	    //         m.WParam = (IntPtr)0x01;
+	    //         m.LParam = (IntPtr)0x9004f;
+	    //         this.WndProc(ref m);
+	    // }
 
 	    public void ScrollNow ()
 	     {
@@ -371,6 +375,84 @@ public class MyScrollBar : HScrollBar
 		       Assert.AreEqual ("MonoTests.System.Windows.Forms.MyScrollBar, Minimum: 0, Maximum: 100, Value: 0",
 					myscrlbar.ToString (), "T5");
 	       }
+
+#if NET_2_0
+	   [Test]
+	   public void DefaultMarginTest ()
+	   {
+		   MyScrollBar s = new MyScrollBar ();
+		   Assert.AreEqual (new Padding (0), s.PublicDefaultMargin, "A1");
+	   }
+	   
+		[Test]
+		public void GetScaledBoundsTest ()
+		{
+			ScaleScrollBar c = new ScaleScrollBar ();
+			
+			Rectangle r = new Rectangle (10, 20, 30, 40);
+
+			Assert.AreEqual (new Rectangle (20, 10, 60, 40), c.PublicGetScaledBounds (r, new SizeF (2f, .5f), BoundsSpecified.All), "A1");
+			Assert.AreEqual (new Rectangle (20, 10, 30, 40), c.PublicGetScaledBounds (r, new SizeF (2f, .5f), BoundsSpecified.Location), "A2");
+			Assert.AreEqual (new Rectangle (10, 20, 60, 40), c.PublicGetScaledBounds (r, new SizeF (2f, .5f), BoundsSpecified.Size), "A3");
+			Assert.AreEqual (new Rectangle (10, 20, 30, 40), c.PublicGetScaledBounds (r, new SizeF (2f, .5f), BoundsSpecified.Height), "A4");
+			Assert.AreEqual (new Rectangle (20, 20, 30, 40), c.PublicGetScaledBounds (r, new SizeF (2f, .5f), BoundsSpecified.X), "A5");
+			Assert.AreEqual (new Rectangle (10, 20, 30, 40), c.PublicGetScaledBounds (r, new SizeF (2f, .5f), BoundsSpecified.None), "A6");
+		}
+		
+		private class ScaleScrollBar : ScrollBar
+		{
+			public Rectangle PublicGetScaledBounds (Rectangle bounds, SizeF factor, BoundsSpecified specified)
+			{
+				return base.GetScaledBounds (bounds, factor, specified);
+			}
+		}
+
+		[Test]
+		public void HScrollGetScaledBoundsTest ()
+		{
+			HScaleScrollBar c = new HScaleScrollBar ();
+
+			Rectangle r = new Rectangle (10, 20, 30, 40);
+
+			Assert.AreEqual (new Rectangle (20, 10, 60, 40), c.PublicGetScaledBounds (r, new SizeF (2f, .5f), BoundsSpecified.All), "A1");
+			Assert.AreEqual (new Rectangle (20, 10, 30, 40), c.PublicGetScaledBounds (r, new SizeF (2f, .5f), BoundsSpecified.Location), "A2");
+			Assert.AreEqual (new Rectangle (10, 20, 60, 40), c.PublicGetScaledBounds (r, new SizeF (2f, .5f), BoundsSpecified.Size), "A3");
+			Assert.AreEqual (new Rectangle (10, 20, 30, 40), c.PublicGetScaledBounds (r, new SizeF (2f, .5f), BoundsSpecified.Height), "A4");
+			Assert.AreEqual (new Rectangle (20, 20, 30, 40), c.PublicGetScaledBounds (r, new SizeF (2f, .5f), BoundsSpecified.X), "A5");
+			Assert.AreEqual (new Rectangle (10, 20, 30, 40), c.PublicGetScaledBounds (r, new SizeF (2f, .5f), BoundsSpecified.None), "A6");
+		}
+
+		private class HScaleScrollBar : HScrollBar
+		{
+			public Rectangle PublicGetScaledBounds (Rectangle bounds, SizeF factor, BoundsSpecified specified)
+			{
+				return base.GetScaledBounds (bounds, factor, specified);
+			}
+		}
+
+		[Test]
+		public void VScrollGetScaledBoundsTest ()
+		{
+			VScaleScrollBar c = new VScaleScrollBar ();
+
+			Rectangle r = new Rectangle (10, 20, 30, 40);
+
+			Assert.AreEqual (new Rectangle (20, 10, 30, 20), c.PublicGetScaledBounds (r, new SizeF (2f, .5f), BoundsSpecified.All), "A1");
+			Assert.AreEqual (new Rectangle (20, 10, 30, 40), c.PublicGetScaledBounds (r, new SizeF (2f, .5f), BoundsSpecified.Location), "A2");
+			Assert.AreEqual (new Rectangle (10, 20, 30, 20), c.PublicGetScaledBounds (r, new SizeF (2f, .5f), BoundsSpecified.Size), "A3");
+			Assert.AreEqual (new Rectangle (10, 20, 30, 20), c.PublicGetScaledBounds (r, new SizeF (2f, .5f), BoundsSpecified.Height), "A4");
+			Assert.AreEqual (new Rectangle (20, 20, 30, 40), c.PublicGetScaledBounds (r, new SizeF (2f, .5f), BoundsSpecified.X), "A5");
+			Assert.AreEqual (new Rectangle (10, 20, 30, 40), c.PublicGetScaledBounds (r, new SizeF (2f, .5f), BoundsSpecified.None), "A6");
+		}
+
+		private class VScaleScrollBar : VScrollBar
+		{
+			public Rectangle PublicGetScaledBounds (Rectangle bounds, SizeF factor, BoundsSpecified specified)
+			{
+				return base.GetScaledBounds (bounds, factor, specified);
+			}
+		}
+#endif
     }
 
    [TestFixture]
@@ -474,53 +556,53 @@ public class MyScrollBar : HScrollBar
 		       myform.Dispose ();
 	       }
 
-	    [Test]
-	    public void MouseDownTest ()
-	       {
-		       Form myform = new Form ();
-		       myform.ShowInTaskbar = false;
-		       myform.Visible = true;
-		       MyScrollBar myHscrlbar = new MyScrollBar ();
-		       myform.Controls.Add (myHscrlbar);
-		       myHscrlbar.MouseDown += new MouseEventHandler (ScrollBarMouse_EventHandler);
-		       myHscrlbar.MouseRightDown ();
+	    //[Test]
+	    //public void MouseDownTest ()
+	    //   {
+	    //           Form myform = new Form ();
+	    //           myform.ShowInTaskbar = false;
+	    //           myform.Visible = true;
+	    //           MyScrollBar myHscrlbar = new MyScrollBar ();
+	    //           myform.Controls.Add (myHscrlbar);
+	    //           myHscrlbar.MouseDown += new MouseEventHandler (ScrollBarMouse_EventHandler);
+	    //           myHscrlbar.MouseRightDown ();
 
-		       Assert.AreEqual (true, eventhandled, "M5");
-		       eventhandled = false;
-		       myform.Dispose ();
-	       }
+	    //           Assert.AreEqual (true, eventhandled, "M5");
+	    //           eventhandled = false;
+	    //           myform.Dispose ();
+	    //   }
 
-	    [Test]
-	    public void MouseMoveTest ()
-	       {
-		       Form myform = new Form ();
-		       myform.ShowInTaskbar = false;
-		       myform.Visible = true;
-		       MyScrollBar myHscrlbar = new MyScrollBar ();
-		       myform.Controls.Add (myHscrlbar);
-		       myHscrlbar.MouseMove += new MouseEventHandler (ScrollBarMouse_EventHandler);
-		       myHscrlbar.MoveMouse ();
+	    //[Test]
+	    //public void MouseMoveTest ()
+	    //   {
+	    //           Form myform = new Form ();
+	    //           myform.ShowInTaskbar = false;
+	    //           myform.Visible = true;
+	    //           MyScrollBar myHscrlbar = new MyScrollBar ();
+	    //           myform.Controls.Add (myHscrlbar);
+	    //           myHscrlbar.MouseMove += new MouseEventHandler (ScrollBarMouse_EventHandler);
+	    //           myHscrlbar.MoveMouse ();
 
-		       Assert.AreEqual (true, eventhandled, "M6");
-		       eventhandled = false;
-		       myform.Dispose ();
-	       }
+	    //           Assert.AreEqual (true, eventhandled, "M6");
+	    //           eventhandled = false;
+	    //           myform.Dispose ();
+	    //   }
 
-	    [Test]
-	    public void MouseUpTest ()
-	       {
-		       Form myform = new Form ();
-		       myform.ShowInTaskbar = false;
-		       myform.Visible = true;
-		       MyScrollBar myHscrlbar = new MyScrollBar ();
-		       myform.Controls.Add (myHscrlbar);
-		       myHscrlbar.MouseUp += new MouseEventHandler (ScrollBarMouse_EventHandler);
-		       myHscrlbar.MouseRightUp ();
+	    //[Test]
+	    //public void MouseUpTest ()
+	    //   {
+	    //           Form myform = new Form ();
+	    //           myform.ShowInTaskbar = false;
+	    //           myform.Visible = true;
+	    //           MyScrollBar myHscrlbar = new MyScrollBar ();
+	    //           myform.Controls.Add (myHscrlbar);
+	    //           myHscrlbar.MouseUp += new MouseEventHandler (ScrollBarMouse_EventHandler);
+	    //           myHscrlbar.MouseRightUp ();
 
-		       Assert.AreEqual (true, eventhandled, "M7");
-		       eventhandled = false;
-		       myform.Dispose ();
-	       }
+	    //           Assert.AreEqual (true, eventhandled, "M7");
+	    //           eventhandled = false;
+	    //           myform.Dispose ();
+	    //   }
 
 	    [Test]
 	    [Category ("NotWorking")]
@@ -711,43 +793,43 @@ public class MyVScrollBar : VScrollBar
 		       myform.Dispose ();
 	       }
 
-	    [Test, Ignore ("Need to send proper Click / DoubleClick")]
-	    public void ClickEventsOrder ()
-	       {
-		       string[] EventsWanted = {
-			       "OnHandleCreated",
-				 "OnBindingContextChanged",
-				 "OnBindingContextChanged"
-		       };
-		       Form myform = new Form ();
-		       myform.ShowInTaskbar = false;
-		       myform.Visible = true;
-		       MyScrollBar s = new MyScrollBar ();
-		       myform.Controls.Add (s);
-		       s.MouseClick ();
+	    //[Test, Ignore ("Need to send proper Click / DoubleClick")]
+	    //public void ClickEventsOrder ()
+	    //   {
+	    //           string[] EventsWanted = {
+	    //                   "OnHandleCreated",
+	    //                     "OnBindingContextChanged",
+	    //                     "OnBindingContextChanged"
+	    //           };
+	    //           Form myform = new Form ();
+	    //           myform.ShowInTaskbar = false;
+	    //           myform.Visible = true;
+	    //           MyScrollBar s = new MyScrollBar ();
+	    //           myform.Controls.Add (s);
+	    //           s.MouseClick ();
 
-		       Assert.AreEqual (EventsWanted, ArrayListToString (s.Results));
-		       myform.Dispose ();
-	       }
+	    //           Assert.AreEqual (EventsWanted, ArrayListToString (s.Results));
+	    //           myform.Dispose ();
+	    //   }
 
-	    [Test, Ignore ("Need to send proper Click / DoubleClick")]
-	    public void DoubleClickEventsOrder ()
-	       {
-		       string[] EventsWanted = {
-			       "OnHandleCreated",
-				 "OnBindingContextChanged",
-				 "OnBindingContextChanged"
-		       };
-		       Form myform = new Form ();
-		       myform.ShowInTaskbar = false;
-		       myform.Visible = true;
-		       MyScrollBar s = new MyScrollBar ();
-		       myform.Controls.Add (s);
-		       s.MouseDoubleClick ();
+	    //[Test, Ignore ("Need to send proper Click / DoubleClick")]
+	    //public void DoubleClickEventsOrder ()
+	    //   {
+	    //           string[] EventsWanted = {
+	    //                   "OnHandleCreated",
+	    //                     "OnBindingContextChanged",
+	    //                     "OnBindingContextChanged"
+	    //           };
+	    //           Form myform = new Form ();
+	    //           myform.ShowInTaskbar = false;
+	    //           myform.Visible = true;
+	    //           MyScrollBar s = new MyScrollBar ();
+	    //           myform.Controls.Add (s);
+	    //           s.MouseDoubleClick ();
 
-		       Assert.AreEqual (EventsWanted, ArrayListToString (s.Results));
-		       myform.Dispose ();
-	       }
+	    //           Assert.AreEqual (EventsWanted, ArrayListToString (s.Results));
+	    //           myform.Dispose ();
+	    //   }
 
 	    [Test]
 	    public void FontChangedEventsOrder ()
@@ -810,66 +892,66 @@ public class MyVScrollBar : VScrollBar
 		       myform.Dispose ();
 	       }
 
-	    [Test]
-	    public void MouseDownEventsOrder ()
-	       {
-		       string[] EventsWanted = {
-			       "OnHandleCreated",
-				 "OnBindingContextChanged",
-				 "OnBindingContextChanged",
-				 "OnMouseDown"
-		       };
-		       Form myform = new Form ();
-		       myform.ShowInTaskbar = false;
-		       myform.Visible = true;
-		       MyScrollBar s = new MyScrollBar ();
-		       myform.Controls.Add (s);
-		       s.MouseRightDown ();
+	    //[Test]
+	    //public void MouseDownEventsOrder ()
+	    //   {
+	    //           string[] EventsWanted = {
+	    //                   "OnHandleCreated",
+	    //                     "OnBindingContextChanged",
+	    //                     "OnBindingContextChanged",
+	    //                     "OnMouseDown"
+	    //           };
+	    //           Form myform = new Form ();
+	    //           myform.ShowInTaskbar = false;
+	    //           myform.Visible = true;
+	    //           MyScrollBar s = new MyScrollBar ();
+	    //           myform.Controls.Add (s);
+	    //           s.MouseRightDown ();
 
-		       Assert.AreEqual (EventsWanted, ArrayListToString (s.Results));
-		       myform.Dispose ();
-	       }
+	    //           Assert.AreEqual (EventsWanted, ArrayListToString (s.Results));
+	    //           myform.Dispose ();
+	    //   }
 
-	    [Test]
-	    public void MouseMoveEventsOrder ()
-	       {
-		       string[] EventsWanted = {
-			       "OnHandleCreated",
-				 "OnBindingContextChanged",
-				 "OnBindingContextChanged",
-				 "OnMouseMove",
-				 "OnMouseHover"
-		       };
-		       Form myform = new Form ();
-		       myform.ShowInTaskbar = false;
-		       myform.Visible = true;
-		       MyScrollBar s = new MyScrollBar ();
-		       myform.Controls.Add (s);
-		       s.MoveMouse ();
+	    //[Test]
+	    //public void MouseMoveEventsOrder ()
+	    //   {
+	    //           string[] EventsWanted = {
+	    //                   "OnHandleCreated",
+	    //                     "OnBindingContextChanged",
+	    //                     "OnBindingContextChanged",
+	    //                     "OnMouseMove",
+	    //                     "OnMouseHover"
+	    //           };
+	    //           Form myform = new Form ();
+	    //           myform.ShowInTaskbar = false;
+	    //           myform.Visible = true;
+	    //           MyScrollBar s = new MyScrollBar ();
+	    //           myform.Controls.Add (s);
+	    //           s.MoveMouse ();
 
-		       Assert.AreEqual (EventsWanted, ArrayListToString (s.Results));
-		       myform.Dispose ();
-	       }
+	    //           Assert.AreEqual (EventsWanted, ArrayListToString (s.Results));
+	    //           myform.Dispose ();
+	    //   }
 
-	    [Test]
-	    public void MouseUpEventsOrder ()
-	       {
-		       string[] EventsWanted = {
-			       "OnHandleCreated",
-				 "OnBindingContextChanged",
-				 "OnBindingContextChanged",
-				 "OnMouseUp"
-		       };
-		       Form myform = new Form ();
-		       myform.ShowInTaskbar = false;
-		       myform.Visible = true;
-		       MyScrollBar s = new MyScrollBar ();
-		       myform.Controls.Add (s);
-		       s.MouseRightUp ();
+	    //[Test]
+	    //public void MouseUpEventsOrder ()
+	    //   {
+	    //           string[] EventsWanted = {
+	    //                   "OnHandleCreated",
+	    //                     "OnBindingContextChanged",
+	    //                     "OnBindingContextChanged",
+	    //                     "OnMouseUp"
+	    //           };
+	    //           Form myform = new Form ();
+	    //           myform.ShowInTaskbar = false;
+	    //           myform.Visible = true;
+	    //           MyScrollBar s = new MyScrollBar ();
+	    //           myform.Controls.Add (s);
+	    //           s.MouseRightUp ();
 
-		       Assert.AreEqual (EventsWanted, ArrayListToString (s.Results));
-		       myform.Dispose ();
-	       }
+	    //           Assert.AreEqual (EventsWanted, ArrayListToString (s.Results));
+	    //           myform.Dispose ();
+	    //   }
 
 	    [Test]
 	    public void PaintEventsOrder ()
@@ -1090,108 +1172,108 @@ public class MyScrollBar2 : HScrollBar
 		    get {	return results; }
 	    }
 
-	    public void MoveMouse ()
-	     {
-		     Message m;
+	    //public void MoveMouse ()
+	    // {
+	    //         Message m;
 
-		     m = new Message ();
+	    //         m = new Message ();
 
-		     m.Msg = (int)WndMsg.WM_NCHITTEST;
-		     m.HWnd = this.Handle;
-		     m.WParam = (IntPtr)0x0;
-		     m.LParam = (IntPtr)0x1c604ea;
-		     this.WndProc(ref m);
+	    //         m.Msg = (int)WndMsg.WM_NCHITTEST;
+	    //         m.HWnd = this.Handle;
+	    //         m.WParam = (IntPtr)0x0;
+	    //         m.LParam = (IntPtr)0x1c604ea;
+	    //         this.WndProc(ref m);
 
-		     m.Msg = (int)WndMsg.WM_SETCURSOR;
-		     m.HWnd = this.Handle;
-		     m.WParam = (IntPtr)0x100448;
-		     m.LParam = (IntPtr)0x2000001;
-		     this.WndProc(ref m);
+	    //         m.Msg = (int)WndMsg.WM_SETCURSOR;
+	    //         m.HWnd = this.Handle;
+	    //         m.WParam = (IntPtr)0x100448;
+	    //         m.LParam = (IntPtr)0x2000001;
+	    //         this.WndProc(ref m);
 
-		     m.Msg = (int)WndMsg.WM_MOUSEFIRST;
-		     m.HWnd = this.Handle;
-		     m.WParam = (IntPtr)0x0;
-		     m.LParam = (IntPtr)0x14000b;
-		     this.WndProc(ref m);
+	    //         m.Msg = (int)WndMsg.WM_MOUSEFIRST;
+	    //         m.HWnd = this.Handle;
+	    //         m.WParam = (IntPtr)0x0;
+	    //         m.LParam = (IntPtr)0x14000b;
+	    //         this.WndProc(ref m);
 
-		     m.Msg = (int)WndMsg.WM_MOUSEHOVER;
-		     m.HWnd = this.Handle;
-		     m.WParam = (IntPtr)0x0;
-		     m.LParam = (IntPtr)0x14000b;
-		     this.WndProc(ref m);
-	     }
+	    //         m.Msg = (int)WndMsg.WM_MOUSEHOVER;
+	    //         m.HWnd = this.Handle;
+	    //         m.WParam = (IntPtr)0x0;
+	    //         m.LParam = (IntPtr)0x14000b;
+	    //         this.WndProc(ref m);
+	    // }
 
-	    public void MouseRightDown()
-	     {
-		     Message m;
+	    //public void MouseRightDown()
+	    // {
+	    //         Message m;
 
-		     m = new Message();
+	    //         m = new Message();
 
-		     m.Msg = (int)WndMsg.WM_RBUTTONDOWN;
-		     m.HWnd = this.Handle;
-		     m.WParam = (IntPtr)0x01;
-		     m.LParam = (IntPtr)0x9004f;
-		     this.WndProc(ref m);
-	     }
+	    //         m.Msg = (int)WndMsg.WM_RBUTTONDOWN;
+	    //         m.HWnd = this.Handle;
+	    //         m.WParam = (IntPtr)0x01;
+	    //         m.LParam = (IntPtr)0x9004f;
+	    //         this.WndProc(ref m);
+	    // }
 
-	    public new void MouseClick()
-	     {
-		     Message m;
+	    //public new void MouseClick()
+	    // {
+	    //         Message m;
 
-		     m = new Message();
+	    //         m = new Message();
 
-		     m.Msg = (int)WndMsg.WM_LBUTTONDOWN;
-		     m.HWnd = this.Handle;
-		     m.WParam = (IntPtr)0x01;
-		     m.LParam = (IntPtr)0x9004f;
-		     this.WndProc(ref m);
+	    //         m.Msg = (int)WndMsg.WM_LBUTTONDOWN;
+	    //         m.HWnd = this.Handle;
+	    //         m.WParam = (IntPtr)0x01;
+	    //         m.LParam = (IntPtr)0x9004f;
+	    //         this.WndProc(ref m);
 
-		     m = new Message();
+	    //         m = new Message();
 
-		     m.Msg = (int)WndMsg.WM_LBUTTONUP;
-		     m.HWnd = this.Handle;
-		     m.WParam = (IntPtr)0x01;
-		     m.LParam = (IntPtr)0x9004f;
-		     this.WndProc(ref m);
-	     }
+	    //         m.Msg = (int)WndMsg.WM_LBUTTONUP;
+	    //         m.HWnd = this.Handle;
+	    //         m.WParam = (IntPtr)0x01;
+	    //         m.LParam = (IntPtr)0x9004f;
+	    //         this.WndProc(ref m);
+	    // }
 
-	    public new void MouseDoubleClick ()
-	     {
-		     MouseClick ();
-		     MouseClick ();
-	     }
+	    //public new void MouseDoubleClick ()
+	    // {
+	    //         MouseClick ();
+	    //         MouseClick ();
+	    // }
 
-	    public void MouseRightUp()
-	     {
-		     Message m;
+	    //public void MouseRightUp()
+	    // {
+	    //         Message m;
 
-		     m = new Message();
+	    //         m = new Message();
 
-		     m.Msg = (int)WndMsg.WM_RBUTTONUP;
-		     m.HWnd = this.Handle;
-		     m.WParam = (IntPtr)0x01;
-		     m.LParam = (IntPtr)0x9004f;
-		     this.WndProc(ref m);
-	     }
+	    //         m.Msg = (int)WndMsg.WM_RBUTTONUP;
+	    //         m.HWnd = this.Handle;
+	    //         m.WParam = (IntPtr)0x01;
+	    //         m.LParam = (IntPtr)0x9004f;
+	    //         this.WndProc(ref m);
+	    // }
 
-	    public void ScrollNow ()
-	     {
-		     Message m;
+	public void ScrollNow ()
+	{
+		Message m;
 
-		     m = new Message ();
+		m = new Message ();
 
-		     m.Msg = 8468;
-		     m.HWnd = this.Handle;
-		     m.WParam = (IntPtr)0x1;
-		     m.LParam = (IntPtr)0x1a051a;
-		     this.WndProc(ref m);
+		m.Msg = 8468;
+		m.HWnd = this.Handle;
+		m.WParam = (IntPtr)0x1;
+		m.LParam = (IntPtr)0x1a051a;
+		this.WndProc (ref m);
 
-		     m.Msg = 233;
-		     m.HWnd = this.Handle;
-		     m.WParam = (IntPtr)0x1;
-		     m.LParam = (IntPtr)0x12eb34;
-		     this.WndProc(ref m);
-	     }
+		m.Msg = 233;
+		m.HWnd = this.Handle;
+		m.WParam = (IntPtr)0x1;
+		m.LParam = (IntPtr)0x12eb34;
+		this.WndProc (ref m);
+	}
     }
 
    [TestFixture]
@@ -1267,43 +1349,43 @@ public class MyScrollBar2 : HScrollBar
 		       myform.Dispose ();
 	       }
 
-	    [Test, Ignore ("Need to send proper Click / DoubleClick")]
-	    public void ClickEventsOrder ()
-	       {
-		       string[] EventsWanted = {
-			       "HandleCreated",
-				 "BindingContextChanged",
-				 "BindingContextChanged"
-		       };
-		       Form myform = new Form ();
-		       myform.ShowInTaskbar = false;
-		       myform.Visible = true;
-		       MyScrollBar2 s = new MyScrollBar2 ();
-		       myform.Controls.Add (s);
-		       s.MouseClick ();
+	    //[Test, Ignore ("Need to send proper Click / DoubleClick")]
+	    //public void ClickEventsOrder ()
+	    //   {
+	    //           string[] EventsWanted = {
+	    //                   "HandleCreated",
+	    //                     "BindingContextChanged",
+	    //                     "BindingContextChanged"
+	    //           };
+	    //           Form myform = new Form ();
+	    //           myform.ShowInTaskbar = false;
+	    //           myform.Visible = true;
+	    //           MyScrollBar2 s = new MyScrollBar2 ();
+	    //           myform.Controls.Add (s);
+	    //           s.MouseClick ();
 
-		       Assert.AreEqual (EventsWanted, ArrayListToString (s.Results));
-		       myform.Dispose ();
-	       }
+	    //           Assert.AreEqual (EventsWanted, ArrayListToString (s.Results));
+	    //           myform.Dispose ();
+	    //   }
 
-	    [Test, Ignore ("Need to send proper Click / DoubleClick")]
-	    public void DoubleClickEventsOrder ()
-	       {
-		       string[] EventsWanted = {
-			       "HandleCreated",
-				 "BindingContextChanged",
-				 "BindingContextChanged"
-		       };
-		       Form myform = new Form ();
-		       myform.ShowInTaskbar = false;
-		       myform.Visible = true;
-		       MyScrollBar2 s = new MyScrollBar2 ();
-		       myform.Controls.Add (s);
-		       s.MouseDoubleClick ();
+	    //[Test, Ignore ("Need to send proper Click / DoubleClick")]
+	    //public void DoubleClickEventsOrder ()
+	    //   {
+	    //           string[] EventsWanted = {
+	    //                   "HandleCreated",
+	    //                     "BindingContextChanged",
+	    //                     "BindingContextChanged"
+	    //           };
+	    //           Form myform = new Form ();
+	    //           myform.ShowInTaskbar = false;
+	    //           myform.Visible = true;
+	    //           MyScrollBar2 s = new MyScrollBar2 ();
+	    //           myform.Controls.Add (s);
+	    //           s.MouseDoubleClick ();
 
-		       Assert.AreEqual (EventsWanted, ArrayListToString (s.Results));
-		       myform.Dispose ();
-	       }
+	    //           Assert.AreEqual (EventsWanted, ArrayListToString (s.Results));
+	    //           myform.Dispose ();
+	    //   }
 
 	    [Test]
 	    public void FontChangedEventsOrder ()
@@ -1366,65 +1448,65 @@ public class MyScrollBar2 : HScrollBar
 		       myform.Dispose ();
 	       }
 
-	    [Test]
-	    public void MouseDownEventsOrder ()
-	       {
-		       string[] EventsWanted = {
-			       "HandleCreated",
-				 "BindingContextChanged",
-				 "BindingContextChanged",
-				 "MouseDown"
-		       };
-		       Form myform = new Form ();
-		       myform.ShowInTaskbar = false;
-		       myform.Visible = true;
-		       MyScrollBar2 s = new MyScrollBar2 ();
-		       myform.Controls.Add (s);
-		       s.MouseRightDown ();
+	    //[Test]
+	    //public void MouseDownEventsOrder ()
+	    //   {
+	    //           string[] EventsWanted = {
+	    //                   "HandleCreated",
+	    //                     "BindingContextChanged",
+	    //                     "BindingContextChanged",
+	    //                     "MouseDown"
+	    //           };
+	    //           Form myform = new Form ();
+	    //           myform.ShowInTaskbar = false;
+	    //           myform.Visible = true;
+	    //           MyScrollBar2 s = new MyScrollBar2 ();
+	    //           myform.Controls.Add (s);
+	    //           s.MouseRightDown ();
 
-		       Assert.AreEqual (EventsWanted, ArrayListToString (s.Results));
-		       myform.Dispose ();
-	       }
+	    //           Assert.AreEqual (EventsWanted, ArrayListToString (s.Results));
+	    //           myform.Dispose ();
+	    //   }
 
-	    [Test]
-	    public void MouseMoveEventsOrder ()
-	       {
-		       string[] EventsWanted = {
-			       "HandleCreated",
-				 "BindingContextChanged",
-				 "BindingContextChanged",
-				 "MouseMove"
-		       };
-		       Form myform = new Form ();
-		       myform.ShowInTaskbar = false;
-		       myform.Visible = true;
-		       MyScrollBar2 s = new MyScrollBar2 ();
-		       myform.Controls.Add (s);
-		       s.MoveMouse ();
+	    //[Test]
+	    //public void MouseMoveEventsOrder ()
+	    //   {
+	    //           string[] EventsWanted = {
+	    //                   "HandleCreated",
+	    //                     "BindingContextChanged",
+	    //                     "BindingContextChanged",
+	    //                     "MouseMove"
+	    //           };
+	    //           Form myform = new Form ();
+	    //           myform.ShowInTaskbar = false;
+	    //           myform.Visible = true;
+	    //           MyScrollBar2 s = new MyScrollBar2 ();
+	    //           myform.Controls.Add (s);
+	    //           s.MoveMouse ();
 
-		       Assert.AreEqual (EventsWanted, ArrayListToString (s.Results));
-		       myform.Dispose ();
-	       }
+	    //           Assert.AreEqual (EventsWanted, ArrayListToString (s.Results));
+	    //           myform.Dispose ();
+	    //   }
 
-	    [Test]
-	    public void MouseUpEventsOrder ()
-	       {
-		       string[] EventsWanted = {
-			       "HandleCreated",
-				 "BindingContextChanged",
-				 "BindingContextChanged",
-				 "MouseUp"
-		       };
-		       Form myform = new Form ();
-		       myform.ShowInTaskbar = false;
-		       myform.Visible = true;
-		       MyScrollBar2 s = new MyScrollBar2 ();
-		       myform.Controls.Add (s);
-		       s.MouseRightUp ();
+	    //[Test]
+	    //public void MouseUpEventsOrder ()
+	    //   {
+	    //           string[] EventsWanted = {
+	    //                   "HandleCreated",
+	    //                     "BindingContextChanged",
+	    //                     "BindingContextChanged",
+	    //                     "MouseUp"
+	    //           };
+	    //           Form myform = new Form ();
+	    //           myform.ShowInTaskbar = false;
+	    //           myform.Visible = true;
+	    //           MyScrollBar2 s = new MyScrollBar2 ();
+	    //           myform.Controls.Add (s);
+	    //           s.MouseRightUp ();
 
-		       Assert.AreEqual (EventsWanted, ArrayListToString (s.Results));
-		       myform.Dispose ();
-	       }
+	    //           Assert.AreEqual (EventsWanted, ArrayListToString (s.Results));
+	    //           myform.Dispose ();
+	    //   }
 
 	    [Test]
 	    public void PaintEventsOrder ()

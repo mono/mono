@@ -37,6 +37,10 @@ using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms
 {
+#if NET_2_0
+	[ComVisible (true)]
+	[ClassInterface (ClassInterfaceType.AutoDispatch)]
+#endif
 	[DefaultEvent ("Scroll")]
 	[DefaultProperty ("Value")]
 	public abstract class ScrollBar : Control
@@ -89,6 +93,14 @@ namespace System.Windows.Forms
 		}
 
 		#region events
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler AutoSizeChanged {
+			add { base.AutoSizeChanged += value; }
+			remove { base.AutoSizeChanged -= value; }
+		}
+#endif
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
@@ -103,6 +115,15 @@ namespace System.Windows.Forms
 			add { base.BackgroundImageChanged += value; }
 			remove { base.BackgroundImageChanged -= value; }
 		}
+
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler BackgroundImageLayoutChanged {
+			add { base.BackgroundImageLayoutChanged += value; }
+			remove { base.BackgroundImageLayoutChanged -= value; }
+		}
+#endif
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
@@ -138,6 +159,22 @@ namespace System.Windows.Forms
 			add { base.ImeModeChanged += value; }
 			remove { base.ImeModeChanged -= value; }
 		}
+
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event MouseEventHandler MouseClick {
+			add { base.MouseClick += value; }
+			remove { base.MouseClick -= value; }
+		}
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event MouseEventHandler MouseDoubleClick {
+			add { base.MouseDoubleClick += value; }
+			remove { base.MouseDoubleClick -= value; }
+		}
+#endif
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
@@ -245,6 +282,15 @@ namespace System.Windows.Forms
 		#endregion	// Internal & Private Properties
 
 		#region Public Properties
+#if NET_2_0
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public override bool AutoSize {
+			get { return base.AutoSize; }
+			set { base.AutoSize = value; }
+		}
+#endif
 
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[Browsable (false)]
@@ -272,10 +318,25 @@ namespace System.Windows.Forms
 			}
 		}
 
+#if NET_2_0
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[Browsable (false)]
+		public override ImageLayout BackgroundImageLayout {
+			get { return base.BackgroundImageLayout; }
+			set { base.BackgroundImageLayout = value; }
+		}
+#endif
+
 		protected override CreateParams CreateParams
 		{
 			get {	return base.CreateParams; }
 		}
+
+#if NET_2_0
+		protected override Padding DefaultMargin {
+			get { return Padding.Empty; }
+		}
+#endif
 
 		protected override ImeMode DefaultImeMode
 		{
@@ -510,7 +571,18 @@ namespace System.Windows.Forms
 		#endregion //Public Properties
 
 		#region Public Methods
-
+#if NET_2_0
+		protected override Rectangle GetScaledBounds (Rectangle bounds, SizeF factor, BoundsSpecified specified)
+		{
+			// Basically, we want to keep our small edge and scale the long edge
+			// ie: if we are vertical, don't scale our width
+			if (vert)
+				return base.GetScaledBounds (bounds, factor, (specified & BoundsSpecified.Height) | (specified & BoundsSpecified.Location));
+			else
+				return base.GetScaledBounds (bounds, factor, (specified & BoundsSpecified.Width) | (specified & BoundsSpecified.Location));
+		}
+#endif		
+		
 		protected override void OnEnabledChanged (EventArgs e)
 		{
 			base.OnEnabledChanged (e);
