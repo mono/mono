@@ -1,3 +1,13 @@
+2007-05-06  Rodrigo Kumpera  <kumpera@gmail.com>
+
+	* Makefile (run-test): Make it use pedump instead of mono for validation
+	* make_tests.sh: New tests
+	* invalid_stack_2_tet.il: New test
+	* make_ret_test.sh: New test script
+	* make_load_test.sh: New test script
+	* make_obj_store_test.sh: Test did not generate valid code for some cases
+	* make_store_test.sh: Test did not generate valid code for some cases
+
 2006-06-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile (run-test): Split 'test' target into a 'compile' and 'run-test' target.
