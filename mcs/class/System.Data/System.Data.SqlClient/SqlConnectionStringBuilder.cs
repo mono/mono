@@ -187,7 +187,8 @@ namespace System.Data.SqlClient
 			}
 		}
 
-		[EditorBrowsable (EditorBrowsableState.Never)]
+		[Editor ("Microsoft.VSDesigner.Data.Design.DBParametersEditor, " + Consts.AssemblyMicrosoft_VSDesigner,
+			 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		[DisplayNameAttribute ("AttachDbFilename")]
 		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		public string AttachDBFilename { 
@@ -229,7 +230,6 @@ namespace System.Data.SqlClient
 		}
 
 		[DisplayNameAttribute ("Data Source")]
-		[TypeConverterAttribute (typeof (string))]
 		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		public string DataSource { 
 			get { return _dataSource; }
@@ -260,7 +260,6 @@ namespace System.Data.SqlClient
 		}
 
 		[DisplayNameAttribute ("Failover Partner")]
-		[TypeConverterAttribute (typeof (string))]
 		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		public string FailoverPartner { 
 			get { return _failoverPartner; }
@@ -271,7 +270,6 @@ namespace System.Data.SqlClient
 		}
 
 		[DisplayNameAttribute ("Initial Catalog")]
-		[TypeConverterAttribute (typeof (string))]
 		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		public string InitialCatalog { 
 			get { return _initialCatalog; }
@@ -348,7 +346,6 @@ namespace System.Data.SqlClient
 		}
 
 		[DisplayNameAttribute ("Network Library")]
-		[TypeConverterAttribute (typeof (string))]
 		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		public string NetworkLibrary { 
 			get { return _networkLibrary; }

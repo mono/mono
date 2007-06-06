@@ -132,7 +132,6 @@ namespace System.Data.SqlClient {
 			get { return behavior; }
 		}
 
-		[DataCategory ("Data")]
 #if !NET_2_0
 		[DataSysDescription ("Command text to execute.")]
 #endif
@@ -169,7 +168,6 @@ namespace System.Data.SqlClient {
 			}
 		}
 
-		[DataCategory ("Data")]
 #if !NET_2_0
 		[DataSysDescription ("How to interpret the CommandText.")]
 #endif
@@ -201,7 +199,6 @@ namespace System.Data.SqlClient {
 			}
 		}
 
-		[DataCategory ("Behavior")]
 		[DefaultValue (null)]
 #if !NET_2_0
 		[DataSysDescription ("Connection used by the command.")]
@@ -236,7 +233,6 @@ namespace System.Data.SqlClient {
 			set { designTimeVisible = value; }
 		}
 
-		[DataCategory ("Data")]
 #if !NET_2_0
 		[DataSysDescription ("The parameters collection.")]
 #endif
@@ -285,7 +281,6 @@ namespace System.Data.SqlClient {
 			set { transaction = value; }
 		}	
 
-		[DataCategory ("Behavior")]
 #if !NET_2_0
 		[DataSysDescription ("When used by a DataAdapter.Update, how command results are applied to the current DataRow.")]
 #endif

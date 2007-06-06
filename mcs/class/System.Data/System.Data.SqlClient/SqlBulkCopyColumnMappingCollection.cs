@@ -39,42 +39,12 @@ namespace System.Data.SqlClient
 {
 	public sealed class SqlBulkCopyColumnMappingCollection : CollectionBase {
 
-		#region Fields
-
-		private SqlBulkCopyColumnMappingCollection _collection = new SqlBulkCopyColumnMappingCollection ();
-
-		#endregion
-	
-		#region Properties
-	
-		public new int Capacity {
-			get { return _collection.Capacity; }
-			set { _collection.Capacity = value; }
-		}
-
-		public new int Count {
-			get { return _collection.Count; }
-		}
-
-		public SqlBulkCopyColumnMapping this [int index] {
-			get { return _collection [index]; }
-		}
-
-		protected new ArrayList InnerList {
-			get { return _collection.InnerList; }
-		}
-
-		protected new IList List {
-			get { return _collection.List; }
-		}
-
-		#endregion
-	
 		#region Methods
 	
+		[MonoTODO]
 		public SqlBulkCopyColumnMapping Add (SqlBulkCopyColumnMapping bulkCopyColumnMapping)
 		{
-			return _collection.Add (bulkCopyColumnMapping);
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -108,33 +78,33 @@ namespace System.Data.SqlClient
 
 		public bool Contains (SqlBulkCopyColumnMapping value)
 		{
-			return _collection.Contains (value);
+			return List.Contains (value);
 		}
 
 		public int IndexOf (SqlBulkCopyColumnMapping value)
 		{
-			return _collection.IndexOf (value);
+			return List.IndexOf (value);
 		}
 
-		public int Insert (int index, SqlBulkCopyColumnMapping value)
+		public void Insert (int index, SqlBulkCopyColumnMapping value)
 		{
-			if (index < 0 || index > _collection.Count)
+			if (index < 0 || index > base.Count)
 				throw new ArgumentOutOfRangeException ("Index is out of range");
-			return _collection.Insert (index, value);
+			List.Insert (index, value);
 		}
 
-		public int Remove (SqlBulkCopyColumnMapping value)
+		public void Remove (SqlBulkCopyColumnMapping value)
 		{
-			return _collection.Remove (value);
+			List.Remove (value);
 		}
 
 		[MonoTODO]
-		public new int RemoveAt (int index)
+		public new void RemoveAt (int index)
 		{
-			if (index < 0 || index > _collection.Count)
+			if (index < 0 || index > base.Count)
 				throw new ArgumentOutOfRangeException ("Index is out of range");
 			// FIXME: Implement WriteToServer
-			return _collection.RemoveAt (index);
+			base.RemoveAt (index);
 		}
 
 		#endregion

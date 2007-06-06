@@ -126,7 +126,6 @@ namespace System.Data.SqlClient {
 
 		#region Properties
 
-		[DataCategory ("Data")]
 #if !NET_2_0
 		[DataSysDescription ("Information used to connect to a DataSource, such as 'Data Source=x;Initial Catalog=x;Integrated Security=SSPI'.")]
 #endif
@@ -277,22 +276,17 @@ namespace System.Data.SqlClient {
 
 		#region Events
 
-		[DataCategory ("InfoMessage")]
 #if !NET_2_0
 		[DataSysDescription ("Event triggered when messages arrive from the DataSource.")]
 #endif
 		public event SqlInfoMessageEventHandler InfoMessage;
 
-		[DataCategory ("StateChange")]
 #if !NET_2_0
 		[DataSysDescription ("Event triggered when the connection changes state.")]
-#endif
 		public 
-#if NET_2_0
-		override
 #endif // NET_2_0
-                event StateChangeEventHandler StateChange;
-		
+                new event StateChangeEventHandler StateChange;
+
 		#endregion // Events
 
 		#region Delegates

@@ -1,3 +1,14 @@
+2007-06-06  Nagappan A  <anagappan@novell.com>
+
+	* SqlCommand.cs, SqlConnectionStringBuilder.cs, SqlConnection.cs:
+	Fixed 1.0 and 2.0 extras, errors as stated in class status page.
+
+	* SqlDataAdapter.cs, SqlParameter.cs:Fixed 1.0 and 2.0 extras,
+	errors as stated in class status page.
+
+	* SqlBulkCopyColumnMappingCollection.cs: Fixed 1.0 and 2.0 extras,
+	errors as stated in class status page.
+
 2007-05-30  Nagappan A  <anagappan@novell.com>
 
 	* SqlParameter.cs (SqlParameter): Updated constructor to use the
