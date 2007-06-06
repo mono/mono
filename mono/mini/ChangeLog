@@ -1,3 +1,7 @@
+2007-06-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-ia64.c (mono_arch_output_basic_block): Really fix the build.
+
 2007-06-06  Mark Probst  <mark.probst@gmail.com>
 
 	* mini.c, driver.c: Changed MonoDomain.jit_code_hash to a
