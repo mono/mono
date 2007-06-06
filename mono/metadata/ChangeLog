@@ -1,3 +1,9 @@
+2007-06-06  Rodrigo Kumpera  <kumpera@gmail.com>
+
+	* pedump.c: pedump exists with 2 if assembly is not verifiable and 3 if invalid
+	* verify.h: new typedefs to returns the non-verifiable status
+	* verify.c: initial implementation of generics, stack merging and object compatibility check
+
 2007-06-06  Mark Probst  <mark.probst@gmail.com>
 
 	* class.c, image.c, class-internals.h (MonoImage): class_cache is
