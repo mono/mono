@@ -1,5 +1,11 @@
 2007-06-06  Mark Probst  <mark.probst@gmail.com>
 
+	* mini.c, driver.c: Changed MonoDomain.jit_code_hash to a
+	MonoInternalHashTable again (fixed bug in the internal hash table
+	code).
+
+2007-06-06  Mark Probst  <mark.probst@gmail.com>
+
 	* mini.c, driver.c: Reverted the MonoInternalHashTable changes.
 	Have to figure out what makes it crash the SWF regression.
 

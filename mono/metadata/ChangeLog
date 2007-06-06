@@ -1,5 +1,11 @@
 2007-06-06  Mark Probst  <mark.probst@gmail.com>
 
+	* domain.c, domain-internals.h (MonoDomain): jit_code_hash is a
+	MonoInternalHashTable again (fixed bug in internal hash table
+	code).
+
+2007-06-06  Mark Probst  <mark.probst@gmail.com>
+
 	* class.c, image.c, class-internals.h, domain.c,
 	domain-internals.h (MonoImage): Reverting MonoInternalHashTable
 	changes.  Have to figure out what makes them break the SWF
