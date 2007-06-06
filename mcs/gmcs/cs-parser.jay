@@ -5215,7 +5215,6 @@ fixed_statement
 		int top = list.Count;
 
 		start_block (lexer.Location);
-		Block assign_block = current_block;
 
 		for (int i = 0; i < top; i++){
 			Pair p = (Pair) list [i];
@@ -5378,7 +5377,7 @@ from_clause
 		LocatedToken lt = (LocatedToken) $3;
 
 		Expression type = (Expression)$2;
-		LocalInfo vi = current_block.AddVariable (type, lt.Value, lt.Location);
+		current_block.AddVariable (type, lt.Value, lt.Location);
 		$$ = new Linq.Cast (type, (Expression)$5, lt.Location);
 	  }
 	;

@@ -2553,7 +2553,7 @@ namespace Mono.CSharp {
 
 					Type [] types = new Type [p_delegate_parameter_count];
 
-					bool failure = false;
+					//bool failure = false;
 					for (int j = 0; j < p_delegate_parameter_count; j++){
 						Type p_pt = p_delegate_parameters.ParameterType (j);
 
@@ -2562,7 +2562,7 @@ namespace Mono.CSharp {
 							continue;
 						}
 
-						bool found = false;
+						//bool found = false;
 						for (int k = 0; k < method_generic_args.Length; k++){
 							if (method_generic_args [k] == p_pt){
 								types [j] = inferred_types [k];
