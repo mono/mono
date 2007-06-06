@@ -5355,7 +5355,7 @@ query_expression
 	: from_clause query_body
 	  {
 		lexer.QueryParsing = false;
-		$$ = new QueryExpression ((Expression)$1, (Expression)$2);
+		$$ = new Linq.QueryExpression (current_container, current_block, (Expression)$1, (Linq.AQueryClause)$2); 
 		end_block (lexer.Location);
 	  }
 	;
@@ -5377,8 +5377,9 @@ from_clause
 		start_block (lexer.Location);
 		LocatedToken lt = (LocatedToken) $3;
 
-		LocalInfo vi = current_block.AddVariable ((Expression)$2, lt.Value, lt.Location);
-		$$ = $5;
+		Expression type = (Expression)$2;
+		LocalInfo vi = current_block.AddVariable (type, lt.Value, lt.Location);
+		$$ = new Linq.Cast (type, (Expression)$5, lt.Location);
 	  }
 	;
 
@@ -5406,7 +5407,14 @@ join_clause_body
 query_body
 	: opt_from_let_where_clauses opt_orderby_clause SELECT expression opt_query_continuation
 	  {
-	    $$ = new Select (current_container, current_block, (Expression)$4, GetLocation ($3));
+		Linq.AQueryClause ret = new Linq.Select ((Expression)$4, GetLocation ($3));
+		
+		if ($1 != null) {
+			((Linq.AQueryClause)$1).Next = ret;
+			ret = (Linq.AQueryClause)$1;
+		}
+			
+		$$ = ret;
 	  }
 	| opt_from_let_where_clauses opt_orderby_clause group_clause opt_query_continuation
 	;
@@ -5433,6 +5441,9 @@ let_clause
 
 where_clause
 	: WHERE boolean_expression
+	  {
+		$$ = new Linq.Where ((Expression)$2, GetLocation ($1));
+	  }
 	;
 	
 opt_orderby_clause

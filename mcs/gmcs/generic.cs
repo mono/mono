@@ -1135,6 +1135,12 @@ namespace Mono.CSharp {
 			this.Location = loc;
 		}
 
+		public TypeArguments (Location loc, params Expression[] types)
+		{
+			this.Location = loc;
+			this.args = new ArrayList (types);
+		}
+		
 		public TypeArguments (int dimension, Location loc)
 		{
 			this.dimension = dimension;
