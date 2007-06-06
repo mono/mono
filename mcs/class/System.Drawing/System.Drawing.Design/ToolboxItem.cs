@@ -323,7 +323,7 @@ namespace System.Drawing.Design
 
 		protected virtual void OnComponentsCreating (ToolboxComponentsCreatingEventArgs args)
 		{
-			if (ComponentsCreated != null)
+			if (ComponentsCreating != null)
 				this.ComponentsCreating (this, args);
 		}
 
