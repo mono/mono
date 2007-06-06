@@ -1,5 +1,9 @@
 2007-06-06  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ColumnHeader.cs: corcompare fix.
+
+2007-06-06  Jonathan Pobst  <monkey@jpobst.com>
+
 	* Button.cs: corcompare fixes.
 	* ButtonBase.cs: corcompare fixes, add ButtonBaseAccessibleObject.State.
 

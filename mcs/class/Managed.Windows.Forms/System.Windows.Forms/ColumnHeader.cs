@@ -36,7 +36,7 @@ namespace System.Windows.Forms
 	[DesignTimeVisible (false)]
 	[ToolboxItem (false)]
 #if NET_2_0
-	// XXX [TypeConverter (typeof (ColumnHeaderConverter))]
+	[TypeConverter (typeof (ColumnHeaderConverter))]
 #endif
 	public class ColumnHeader : Component, ICloneable
 	{
