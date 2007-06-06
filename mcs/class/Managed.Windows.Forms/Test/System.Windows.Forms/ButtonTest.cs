@@ -80,6 +80,9 @@ namespace MonoTests.System.Windows.Forms
 		[Test]
 		public void BehaviorAutoSize ()
 		{
+			if (TestHelper.RunningOnUnix)
+				Assert.Ignore ("Depends on font measurements, corresponds to windows");
+				
 			Form f = new Form ();
 			f.ShowInTaskbar = false;
 			

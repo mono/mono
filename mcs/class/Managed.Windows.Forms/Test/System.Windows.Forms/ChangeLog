@@ -1,5 +1,9 @@
 2007-06-06  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ButtonTest.cs: BehaviorAutoSize is font dependent, only run on windows.
+
+2007-06-06  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ButtonBaseTest.cs: Add test for default values.
 	* ButtonTest.cs: Add test for default values, add test for AutoSize.
 
