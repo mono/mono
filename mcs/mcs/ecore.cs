@@ -2372,14 +2372,7 @@ namespace Mono.CSharp {
 		
 		public override void Emit (EmitContext ec)
 		{
-			//
-			// If this is ever reached, then we failed to
-			// find the name as a namespace
-			//
-
-			Error (103, "The name `" + Name +
-			       "' does not exist in the class `" +
-			       ec.DeclContainer.Name + "'");
+			throw new InternalErrorException ("The resolve phase was not executed");
 		}
 
 		public override string ToString ()

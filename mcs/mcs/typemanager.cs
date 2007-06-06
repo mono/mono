@@ -864,7 +864,7 @@ namespace Mono.CSharp {
 	///   Looks up a type, and aborts if it is not found.  This is used
 	///   by types required by the compiler
 	/// </summary>
-	static Type CoreLookupType (string namespaceName, string name)
+	public static Type CoreLookupType (string namespaceName, string name)
 	{
 		return CoreLookupType (namespaceName, name, false);
 	}
@@ -1356,8 +1356,6 @@ namespace Mono.CSharp {
 	}
 
 #if GMCS_SOURCE
-	public static MethodInfo enumerable_select;
-
 	static void InitSystemCore ()
 	{
 		if (RootContext.Version != LanguageVersion.LINQ)
@@ -1366,13 +1364,6 @@ namespace Mono.CSharp {
 		if (extension_attribute_type != null)
 			extension_attribute_attr = new CustomAttributeBuilder (
 				GetConstructor (extension_attribute_type, Type.EmptyTypes), new object[0]);
-
-		Type t = CoreLookupType ("System.Linq", "Enumerable");
-		MemberList select = TypeManager.FindMembers (t, MemberTypes.Method, BindingFlags.Static | BindingFlags.Public,
-			Type.FilterName, "Select");
-
-		// TODO: implement correct selection
-		enumerable_select = ((MethodInfo)select[0]);
 	}
 #endif
 

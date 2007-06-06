@@ -151,14 +151,18 @@ namespace Mono.CSharp {
 					}
 					continue;
 				}
-
+				
 				if (types[i].IsGenericType) {
-					Type[] gen_arguments = types[i].GetGenericTypeDefinition ().GetGenericArguments ();
-					for (int ii = 0; ii < gen_arguments.Length; ++ii) {
-						gen_arguments[ii] = argTypes[gen_arguments[ii].GenericParameterPosition];
+					Type[] gen_arguments_open = types[i].GetGenericTypeDefinition ().GetGenericArguments ();
+					Type[] gen_arguments = types[i].GetGenericArguments ();
+					for (int ii = 0; ii < gen_arguments_open.Length; ++ii) {
+						if (gen_arguments[ii].IsGenericParameter)
+							gen_arguments_open[ii] = argTypes[gen_arguments_open[ii].GenericParameterPosition];
+						else
+							gen_arguments_open[ii] = gen_arguments[ii];
 					}
 
-					types[i] = types[i].GetGenericTypeDefinition ().MakeGenericType (gen_arguments);
+					types[i] = types[i].GetGenericTypeDefinition ().MakeGenericType (gen_arguments_open);
 				}
 			}
 		}
