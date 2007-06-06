@@ -1,3 +1,9 @@
+2007-06-06  Wade Berrier  <wberrier@novell.com>
+
+	* cpu-s390x.md (shr_imm): Correct the length of shr_imm instruction.
+	(./class/lib/monolite/mcs.exe:25498): WARNING **: wrong maximal instruction 
+	length of instruction shr_imm (expected 8, got 10)
+
 2007-06-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-ia64.c (mono_arch_output_basic_block): Really fix the build.
