@@ -2299,7 +2299,7 @@ namespace System.Data {
 			//columns involved in the filter
 			if (columns.Length ==0 && filter != null) {
 				ArrayList list = new ArrayList ();
-				for (int i=0, j=0; i < Columns.Count; ++i) {
+				for (int i=0; i < Columns.Count; ++i) {
 					if (!filter.DependsOn (Columns [i]))
 						continue;
 					list.Add (Columns [i]);
