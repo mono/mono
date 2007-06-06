@@ -1,3 +1,11 @@
+2007-06-06  Nagappan A  <anagappan@novell.com>
+
+	* ColumnReference.cs (Unify): Return object as it is, if object
+	type is char. Fixes bug # 81625.
+
+	* Numeric.cs (IsNumeric): Return false if object type is
+	char. Fixes bug # 81625.
+
 2007-02-23  Nagappan A  <anagappan@novell.com>
 
 	* Comparison.cs (Compare): Extra space characters issue when using

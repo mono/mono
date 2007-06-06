@@ -195,7 +195,7 @@ namespace Mono.Data.SqlExpressions {
 			if (val == null || val == DBNull.Value)
 				return null;
 				
-			if (val is bool || val is string || val is DateTime || val is Guid)
+			if (val is bool || val is string || val is DateTime || val is Guid || val is char)
 				return val;
 			
 			if (val is Enum)
