@@ -1,3 +1,7 @@
+2007-06-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ConvertTest.cs : another bogus DateTime test.
+
 2007-06-05  David Ferguson <davecferguson@gmail.com>
 
 	* DateTimeTest.cs : Add test for DateTime.Parse() exceptions.

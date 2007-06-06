@@ -786,7 +786,11 @@ namespace MonoTests.System {
 				Fail();
 			}
 			catch (Exception e) {
+#if NET_2_0
+				AssertEquals("#G28", typeof(FormatException), e.GetType());
+#else
 				AssertEquals("#G28", typeof(ArgumentOutOfRangeException), e.GetType());
+#endif
 			}
 
 			try {
