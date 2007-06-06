@@ -79,12 +79,15 @@ namespace System.Windows.Forms {
 			}
 		}
 #if NET_2_0
-	    	public Point Location {
+	    	public
+#else
+		internal
+#endif
+	    	Point Location {
 		    	get {
 				return new Point (this.x, this.y);
 			}
 		}
-#endif
 		#endregion	// Public Instance Properties
 	}
 }

@@ -315,16 +315,16 @@ namespace System.Windows.Forms
 			DrawTextInternal (dc, text, font, bounds, foreColor, Color.Transparent, flags, useDrawString);
 		}
 
+		internal static Size MeasureTextInternal (string text, Font font, bool useMeasureString)
+		{
+			return MeasureTextInternal (Graphics.FromImage (measure_bitmap), text, font, Size.Empty, TextFormatFlags.Default, useMeasureString);
+		}
+
 #if NET_2_0
 		internal static void DrawTextInternal (IDeviceContext dc, string text, Font font, Point pt, Color foreColor, Color backColor, TextFormatFlags flags, bool useDrawString)
 		{
 			Size sz = MeasureTextInternal (dc, text, font, useDrawString);
 			DrawTextInternal (dc, text, font, new Rectangle (pt, sz), foreColor, backColor, flags, useDrawString);
-		}
-
-		internal static Size MeasureTextInternal (string text, Font font, bool useMeasureString)
-		{
-			return MeasureTextInternal (Graphics.FromImage (measure_bitmap), text, font, Size.Empty, TextFormatFlags.Default, useMeasureString);
 		}
 
 		internal static Size MeasureTextInternal (IDeviceContext dc, string text, Font font, bool useMeasureString)
@@ -405,7 +405,6 @@ namespace System.Windows.Forms
 			//        sf.FormatFlags |= StringFormatFlags.DirectionRightToLeft;
 			if ((flags & TextFormatFlags.NoClipping) == TextFormatFlags.NoClipping)
 				sf.FormatFlags |= StringFormatFlags.NoClip;
-			//sf.FormatFlags |= StringFormatFlags.NoClip;
 
 			if ((flags & TextFormatFlags.WordBreak) == 0)
 				sf.FormatFlags |= StringFormatFlags.LineLimit;

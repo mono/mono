@@ -2884,7 +2884,12 @@ namespace System.Windows.Forms
 				if (padding != value) {
 					padding = value;
 					OnPaddingChanged (EventArgs.Empty);
-					PerformLayout ();
+					
+					// Changing padding generally requires a new size
+					if (this.AutoSize && this.Parent != null)
+						parent.PerformLayout (this, "Padding");
+					else
+						PerformLayout (this, "Padding");
 				}
 			}
 		}

@@ -253,7 +253,7 @@ namespace System.Windows.Forms
 
 		public virtual void DrawFlatButtonText (Graphics g, Button button, Rectangle textBounds)
 		{
-			// No changes from Standard for image for this theme
+			// No changes from Standard for text for this theme
 			DrawButtonText (g, button, textBounds);
 		}
 		#endregion
@@ -311,7 +311,45 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Button Layout Calculations
-		public override void CalculateButtonTextAndImageLayout (Button button, out Rectangle textRectangle, out Rectangle imageRectangle)
+#if NET_2_0
+		public override Size CalculateButtonAutoSize (Button button)
+		{
+			Size ret_size = Size.Empty;
+			Size text_size = TextRenderer.MeasureTextInternal (button.Text, button.Font, button.UseCompatibleTextRendering);
+			Size image_size = button.Image == null ? Size.Empty : button.Image.Size;
+			
+			// Pad the text size
+			if (button.Text.Length != 0) {
+				text_size.Height += 4;
+				text_size.Width += 4;
+			}
+			
+			switch (button.TextImageRelation) {
+				case TextImageRelation.Overlay:
+					ret_size.Height = Math.Max (button.Text.Length == 0 ? 0 : text_size.Height, image_size.Height);
+					ret_size.Width = Math.Max (text_size.Width, image_size.Width);
+					break;
+				case TextImageRelation.ImageAboveText:
+				case TextImageRelation.TextAboveImage:
+					ret_size.Height = text_size.Height + image_size.Height;
+					ret_size.Width = Math.Max (text_size.Width, image_size.Width);
+					break;
+				case TextImageRelation.ImageBeforeText:
+				case TextImageRelation.TextBeforeImage:
+					ret_size.Height = Math.Max (text_size.Height, image_size.Height);
+					ret_size.Width = text_size.Width + image_size.Width;
+					break;
+			}
+
+			// Pad the result
+			ret_size.Height += (button.Padding.Vertical + 6);
+			ret_size.Width += (button.Padding.Horizontal + 6);
+			
+			return ret_size;
+		}
+#endif
+
+		public override void CalculateButtonTextAndImageLayout (ButtonBase button, out Rectangle textRectangle, out Rectangle imageRectangle)
 		{
 			Image image = button.Image;
 			string text = button.Text;

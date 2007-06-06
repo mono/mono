@@ -17,11 +17,31 @@ namespace MonoTests.System.Windows.Forms
 	public class ButtonTest
 	{
 		[Test]
-		public void FlatStyleTest ()
+		public void Constructor ()
 		{
-			Button B1 = new Button ();
-			Assert.AreEqual (FlatStyle.Standard, B1.FlatStyle, "#1");
+			Button b = new Button ();
+			
+			Assert.AreEqual (SystemColors.Control, b.BackColor, "A4");
+			Assert.AreEqual (FlatStyle.Standard, b.FlatStyle, "A6");
+			Assert.AreEqual (null, b.Image, "A7");
+			Assert.AreEqual (ContentAlignment.MiddleCenter, b.ImageAlign, "A8");
+			Assert.AreEqual (-1, b.ImageIndex, "A9");
+			Assert.AreEqual (null, b.ImageList, "A11");
+			Assert.AreEqual (ImeMode.Disable, b.ImeMode, "A12");
+			Assert.AreEqual (string.Empty, b.Text, "A13");
+			Assert.AreEqual (ContentAlignment.MiddleCenter, b.TextAlign, "A14");
+
+#if NET_2_0
+			Assert.AreEqual (false, b.AutoEllipsis, "A1");
+			Assert.AreEqual (false, b.AutoSize, "A2");
+			Assert.AreEqual (string.Empty, b.ImageKey, "A10");
+			Assert.AreEqual (TextImageRelation.Overlay, b.TextImageRelation, "A15");
+			Assert.AreEqual (true, b.UseCompatibleTextRendering, "A16");
+			Assert.AreEqual (true, b.UseMnemonic, "A17");
+			Assert.AreEqual (true, b.UseVisualStyleBackColor, "A18");
+#endif
 		}
+		
 #if NET_2_0
 		[Test]
 		public void FlatButtonAppearanceTest ()
@@ -55,6 +75,84 @@ namespace MonoTests.System.Windows.Forms
 			FlatButtonAppearance flatApp = B1.FlatAppearance;
 
 			flatApp.BorderSize = -1;
+		}
+
+		[Test]
+		public void BehaviorAutoSize ()
+		{
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+			
+			f.Show ();
+			
+			Image i = new Bitmap (20, 20);
+			String s = "My test string";
+			
+			Button b = new Button ();
+			Size s_size = TextRenderer.MeasureText (s, new Button ().Font);
+			
+			b.UseCompatibleTextRendering = false;
+			b.AutoSize = true;
+			b.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+			b.Text = s;
+			f.Controls.Add (b);
+			
+			// Text only
+			b.TextImageRelation = TextImageRelation.Overlay;
+			Assert.AreEqual (new Size (s_size.Width + 10, s_size.Height + 10), b.Size, "A1");
+			b.TextImageRelation = TextImageRelation.ImageAboveText;
+			Assert.AreEqual (new Size (s_size.Width + 10, s_size.Height + 10), b.Size, "A2");
+			b.TextImageRelation = TextImageRelation.ImageBeforeText;
+			Assert.AreEqual (new Size (s_size.Width + 10, s_size.Height + 10), b.Size, "A3");
+			b.TextImageRelation = TextImageRelation.TextAboveImage;
+			Assert.AreEqual (new Size (s_size.Width + 10, s_size.Height + 10), b.Size, "A4");
+			b.TextImageRelation = TextImageRelation.TextBeforeImage;
+			Assert.AreEqual (new Size (s_size.Width + 10, s_size.Height + 10), b.Size, "A5");
+			
+			// Text and Image
+			b.Image = i;
+			b.TextImageRelation = TextImageRelation.Overlay;
+			Assert.AreEqual (new Size (s_size.Width + 10, i.Height + 6), b.Size, "A6");
+			b.TextImageRelation = TextImageRelation.ImageAboveText;
+			Assert.AreEqual (new Size (s_size.Width + 10, s_size.Height + i.Height + 10), b.Size, "A7");
+			b.TextImageRelation = TextImageRelation.ImageBeforeText;
+			Assert.AreEqual (new Size (s_size.Width + i.Width + 10, i.Height + 6), b.Size, "A8");
+			b.TextImageRelation = TextImageRelation.TextAboveImage;
+			Assert.AreEqual (new Size (s_size.Width + 10, s_size.Height + i.Height + 10), b.Size, "A9");
+			b.TextImageRelation = TextImageRelation.TextBeforeImage;
+			Assert.AreEqual (new Size (s_size.Width + i.Width + 10, i.Height + 6), b.Size, "A10");
+
+			// Image only
+			b.Text = string.Empty;
+			b.TextImageRelation = TextImageRelation.Overlay;
+			Assert.AreEqual (new Size (i.Height + 6, i.Height + 6), b.Size, "A11");
+			b.TextImageRelation = TextImageRelation.ImageAboveText;
+			Assert.AreEqual (new Size (i.Height + 6, i.Height + 6), b.Size, "A12");
+			b.TextImageRelation = TextImageRelation.ImageBeforeText;
+			Assert.AreEqual (new Size (i.Height + 6, i.Height + 6), b.Size, "A13");
+			b.TextImageRelation = TextImageRelation.TextAboveImage;
+			Assert.AreEqual (new Size (i.Height + 6, i.Height + 6), b.Size, "A14");
+			b.TextImageRelation = TextImageRelation.TextBeforeImage;
+			Assert.AreEqual (new Size (i.Height + 6, i.Height + 6), b.Size, "A15");
+			
+			// Neither
+			b.Image = null;
+			b.TextImageRelation = TextImageRelation.Overlay;
+			Assert.AreEqual (new Size (6, 6), b.Size, "A16");
+			b.TextImageRelation = TextImageRelation.ImageAboveText;
+			Assert.AreEqual (new Size (6, 6), b.Size, "A17");
+			b.TextImageRelation = TextImageRelation.ImageBeforeText;
+			Assert.AreEqual (new Size (6, 6), b.Size, "A18");
+			b.TextImageRelation = TextImageRelation.TextAboveImage;
+			Assert.AreEqual (new Size (6, 6), b.Size, "A19");
+			b.TextImageRelation = TextImageRelation.TextBeforeImage;
+			Assert.AreEqual (new Size (6, 6), b.Size, "A20");
+			
+			// Padding
+			b.Padding = new Padding (5, 10, 15, 20);
+			Assert.AreEqual (new Size (6 + b.Padding.Horizontal, 6 + b.Padding.Vertical), b.Size, "A21");
+
+			f.Dispose ();
 		}
 
 		[Test]

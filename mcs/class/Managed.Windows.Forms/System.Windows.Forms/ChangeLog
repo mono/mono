@@ -1,3 +1,14 @@
+2007-06-06  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Button.cs: Override GetPreferredSizeCore.
+	* ButtonBase.cs: PerformLayout after changing properties that can affect
+	AutoSize.  Simplify some mouse/keyboard code.
+	* Control.cs: PerformLayout after changing Padding if AutoSize = true.
+	* MouseEventArgs.cs: Make Location internal for 1.1.
+	* TextRenderer.cs: Make MeasureTextInternal (string, Font, bool) internal for 1.1.
+	* Theme.cs: Add CalculateButtonAutoSize.
+	* ThemeWin32Classic.cs: Implement CalculateButtonAutoSize.
+
 2007-06-05  Miguel de Icaza  <miguel@novell.com>
 
 	* TreeNodeCollection.cs: Applied patch from Neil Cawse <neilcawse@geotab.com>

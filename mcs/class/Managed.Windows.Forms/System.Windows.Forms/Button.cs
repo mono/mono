@@ -192,6 +192,14 @@ namespace System.Windows.Forms {
 			else if (this.FlatStyle == FlatStyle.Popup)
 				ThemeEngine.Current.DrawPopupButton (pevent.Graphics, this, text_rectangle, image_rectangle, pevent.ClipRectangle);
 		}
+
+		internal override Size GetPreferredSizeCore (Size proposedSize)
+		{
+			if (this.AutoSize)
+				return ThemeEngine.Current.CalculateButtonAutoSize (this);
+				
+			return base.GetPreferredSizeCore (proposedSize);
+		}
 #endif
 		#endregion	// Internal methods
 	}

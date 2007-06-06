@@ -194,7 +194,13 @@ namespace System.Windows.Forms {
 					this.image_index = -1;
 					this.image_key = string.Empty;
 					this.image_list = null;
-					Invalidate();
+
+#if NET_2_0
+					if (this.AutoSize && this.Parent != null)
+						this.Parent.PerformLayout (this, "TextImageRelation");
+#endif
+
+					Invalidate ();
 				}
 			}
 		}
@@ -382,6 +388,12 @@ namespace System.Windows.Forms {
 
 				if (this.text_image_relation != value) {
 					this.text_image_relation = value;
+					
+#if NET_2_0
+					if (this.AutoSize && this.Parent != null)
+						this.Parent.PerformLayout (this, "TextImageRelation");
+#endif
+					
 					this.Invalidate ();
 				}
 			}
@@ -500,9 +512,8 @@ namespace System.Windows.Forms {
 		protected override void OnKeyDown (KeyEventArgs kevent)
 		{
 			if (kevent.KeyData == Keys.Space) {
-				enter_state = is_entered;
-				is_entered = true;
-				OnMouseDown (new MouseEventArgs (MouseButtons.Left, 1, 2, 2, 0));
+				is_pressed = true;
+				Invalidate ();
 				kevent.Handled = true;
 			}
 			
@@ -512,8 +523,9 @@ namespace System.Windows.Forms {
 		protected override void OnKeyUp (KeyEventArgs kevent)
 		{
 			if (kevent.KeyData == Keys.Space) {
-				OnMouseUp (new MouseEventArgs (MouseButtons.Left, 1, 2, 2, 0));
-				is_entered = enter_state;
+				is_pressed = false;
+				Invalidate ();
+				OnClick (EventArgs.Empty);
 				kevent.Handled = true;
 			}
 			
@@ -530,7 +542,6 @@ namespace System.Windows.Forms {
 		{
 			if ((mevent.Button & MouseButtons.Left) != 0) {
 				is_pressed = true;
-				this.Capture = true;
 				Invalidate ();
 			}
 
@@ -539,26 +550,24 @@ namespace System.Windows.Forms {
 
 		protected override void OnMouseEnter (EventArgs e)
 		{
+			is_entered = true;
 			Invalidate ();
 			base.OnMouseEnter (e);
 		}
 
 		protected override void OnMouseLeave (EventArgs e)
 		{
+			is_entered = false;
 			Invalidate ();
 			base.OnMouseLeave (e);
 		}
 
 		protected override void OnMouseMove (MouseEventArgs mevent) {
-			bool	inside = false;
-			bool	redraw = false;
+			bool inside = false;
+			bool redraw = false;
 
-			if (mevent.X >= 0 &&
-			    mevent.Y >= 0 &&
-			    mevent.X < this.ClientSize.Width &&
-			    mevent.Y <= this.ClientSize.Height) {
+			if (ClientRectangle.Contains (mevent.Location))
 				inside = true;
-			}
 
 			// If the button was pressed and we leave, release the button press and vice versa
 			if ((mevent.Button & MouseButtons.Left) != 0) {
@@ -569,35 +578,30 @@ namespace System.Windows.Forms {
 			}
 
 			if (is_entered != inside) {
-                        	is_entered = inside;
+				is_entered = inside;
 				redraw = true;
 			}
 
 			if (redraw)
 				Invalidate ();
 
-			base.OnMouseMove(mevent);
+			base.OnMouseMove (mevent);
 		}
 
 		protected override void OnMouseUp (MouseEventArgs mevent)
 		{
 			if (this.Capture && ((mevent.Button & MouseButtons.Left) != 0)) {
 				this.Capture = false;
-				
+
 				if (is_pressed) {
 					is_pressed = false;
 					Invalidate ();
-					Update ();
 				} else if ((this.flat_style == FlatStyle.Flat) || (this.flat_style == FlatStyle.Popup)) {
 					Invalidate ();
 				}
 
-				if (mevent.X >= 0 &&
-				    mevent.Y >= 0 &&
-				    mevent.X < this.ClientSize.Width &&
-				    mevent.Y <= this.ClientSize.Height) {
+				if (ClientRectangle.Contains (mevent.Location))
 					OnClick (EventArgs.Empty);
-				}
 			}
 			
 			base.OnMouseUp (mevent);
