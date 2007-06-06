@@ -35,6 +35,10 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
+#if NET_2_0
+	[ComVisible (true)]
+	[ClassInterface (ClassInterfaceType.AutoDispatch)]
+#endif
 	[DefaultEvent("SplitterMoved")]
 	[Designer("System.Windows.Forms.Design.SplitterDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[DefaultProperty("Dock")]
@@ -134,6 +138,15 @@ namespace System.Windows.Forms {
 				base.BackgroundImage = value;
 			}
 		}
+
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public override ImageLayout BackgroundImageLayout {
+			get { return base.BackgroundImageLayout; }
+			set { base.BackgroundImageLayout = value; }
+		}
+#endif
 
 		[DispId(-504)]
 		[DefaultValue (BorderStyle.None)]
@@ -324,6 +337,12 @@ namespace System.Windows.Forms {
 				return base.CreateParams;
 			}
 		}
+
+#if NET_2_0
+		protected override Cursor DefaultCursor {
+			get { return base.DefaultCursor; }
+		}
+#endif
 
 		protected override ImeMode DefaultImeMode {
 			get {
@@ -680,6 +699,17 @@ namespace System.Windows.Forms {
 			add { base.BackgroundImageChanged += value; }
 			remove { base.BackgroundImageChanged -= value; }
 		}
+
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler BackgroundImageLayoutChanged
+		{
+			add { base.BackgroundImageLayoutChanged += value; }
+			remove { base.BackgroundImageLayoutChanged -= value; }
+		}
+		
+#endif
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]

@@ -1,5 +1,9 @@
 2007-06-06  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Splitter.cs: Add 2.0 stuffs.
+
+2007-06-06  Jonathan Pobst  <monkey@jpobst.com>
+
 	* SplitContainer.cs: Apply patch from Neil Cawse <neilcawse@geotab.com>
 	to have BindingContext simply use base implementation.
 
