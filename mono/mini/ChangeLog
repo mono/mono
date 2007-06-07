@@ -1,5 +1,7 @@
 2007-06-07  Zoltan Varga  <vargaz@gmail.com>
 
+	* arrays.cs: Add new regression test.
+
 	* method-to-ir.c: Merge r78640.
 
 2007-06-05  Zoltan Varga  <vargaz@gmail.com>
