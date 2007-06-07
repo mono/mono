@@ -183,7 +183,7 @@ namespace MonoTests.System.Data
 						Assert.Fail ("#2 No test data");
 					// for null value, length in bytes should return 0
 					if (reader.Read ()) 
-						Assert.AreEqual (0, reader.GetBytes (0, 0, null, 0, 0), 
+						Assert.AreEqual (-1, reader.GetBytes (0, 0, null, 0, 0), 
 								 "#3 on null value, it should return -1");
 					else
 						Assert.Fail ("#4 No test data");
