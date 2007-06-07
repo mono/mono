@@ -544,14 +544,18 @@ namespace System.Data.Odbc
 #endif		
 		string QuoteIdentifier (string unquotedIdentifier)
 		{
+		  /*
 #if NET_2_0
 			throw new NotImplementedException ();
 #else
+		  */
 			if (unquotedIdentifier == null || unquotedIdentifier == String.Empty)
 				return unquotedIdentifier;
 			return String.Format ("{0}{1}{2}", QuotePrefix, 
 					      unquotedIdentifier, QuoteSuffix);
+			/*
 #endif			
+			*/
 		}
 
 #if NET_2_0

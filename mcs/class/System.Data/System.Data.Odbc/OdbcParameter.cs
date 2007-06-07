@@ -73,10 +73,10 @@ namespace System.Data.Odbc
 		{
 			_cbLengthInd = new NativeBuffer ();
 			ParameterName = String.Empty;
-			IsNullable = true;
+			IsNullable = false;
 			SourceColumn = String.Empty;
 			Direction = ParameterDirection.Input;
-			_typeMap = OdbcTypeConverter.GetTypeMap (OdbcType.VarChar);
+			_typeMap = OdbcTypeConverter.GetTypeMap (OdbcType.NVarChar);
 		}
 
 		public OdbcParameter (string name, object value) 
@@ -84,6 +84,7 @@ namespace System.Data.Odbc
 		{
 			this.ParameterName = name;
 			Value = value;
+			//FIXME: MS.net does not infer OdbcType from value unless a type is provided
 			_typeMap = OdbcTypeConverter.InferFromValue (value);
 			if (value != null && !value.GetType ().IsValueType) {
 				Type type = value.GetType ();

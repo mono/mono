@@ -4,6 +4,7 @@
 // Authors:
 //   Brian Ritchie (brianlritchie@hotmail.com) 
 //   Umadevi S (sumadevi@novell.com)
+//   Amit Biswas (amit@amitbiswas.com)
 //
 // Copyright (C) Brian Ritchie, 2002
 // Copyright (C) Novell,Inc 
@@ -51,6 +52,7 @@ namespace System.Data.Odbc
 		#region Fields
 
 		ArrayList list = new ArrayList ();
+		int nullParamCount = 1;
 
 		#endregion // Fields
 	
@@ -157,21 +159,26 @@ namespace System.Data.Odbc
 		override
 #endif
 		int Add (object value)
-                {
-                         if (!(value is OdbcParameter))
-                                throw new InvalidCastException ("The parameter was not an OdbcParameter.");
-                        Add ((OdbcParameter) value);
-                        return IndexOf (value);
-                }
+		{
+			if (!(value is OdbcParameter))
+				throw new InvalidCastException ("The parameter was not an OdbcParameter.");
+			Add ((OdbcParameter) value);
+			return IndexOf (value);
+		}
 
 		public OdbcParameter Add (OdbcParameter parameter)
 		{
 			if (parameter.Container != null)
-                                throw new ArgumentException ("The OdbcParameter specified in the value parameter is already added to this or another OdbcParameterCollection.");
-                                                                                                    
-                        parameter.Container = this;
-                        list.Add (parameter);
-	                return parameter;
+                                throw new ArgumentException ("The OdbcParameter specified in " +
+							     "the value parameter is already " +
+							     "added to this or another OdbcParameterCollection.");
+			if (parameter.ParameterName == null || parameter.ParameterName == "") {
+                        	parameter.ParameterName = "Parameter" + nullParamCount;
+				nullParamCount ++;
+			}
+			parameter.Container = this;
+			list.Add (parameter);
+			return parameter;
 		}
 
 		public OdbcParameter Add (string name, object value)
@@ -195,13 +202,10 @@ namespace System.Data.Odbc
 			return Add (new OdbcParameter (name, type, width, src_col));
 		}
 
-		internal void Bind(IntPtr hstmt)
+		internal void Bind (IntPtr hstmt)
 		{
-			for (int i=0;i<Count;i++)
-			{
-				this[i].Bind(hstmt,i+1);
-				
-			}
+			for (int i = 0; i < Count; i++)
+				this [i].Bind (hstmt, i + 1);
 		}
 
 		public 
@@ -222,21 +226,28 @@ namespace System.Data.Odbc
 #endif // NET_2_0
                 bool Contains (object value)
                 {
-                        if (!(value is OdbcParameter))
-                                throw new InvalidCastException ("The parameter was not an OdbcParameter.");
-                        return Contains (((OdbcParameter) value).ParameterName);
+			if (value == null)
+				//should not throw ArgumentNullException
+				return false;
+			if (!(value is OdbcParameter))
+				throw new InvalidCastException ("The parameter was not an OdbcParameter.");
+			return Contains (((OdbcParameter) value).ParameterName);
                 }
-                                                                                                    
+                                                                            
                 public
 #if NET_2_0
                 override
 #endif // NET_2_0
                 bool Contains (string value)
                 {
-                        foreach (OdbcParameter p in this)
-                                if (p.ParameterName.Equals (value))
-                                        return true;
-                        return false;
+			if (value == null || value == "")
+				//should not throw ArgumentNullException
+				return false;
+			string value_upper = value.ToUpper ();
+			foreach (OdbcParameter p in this)
+				if (p.ParameterName.ToUpper ().Equals (value_upper))
+					return true;
+			return false;
                 }
 
 		public
@@ -263,9 +274,11 @@ namespace System.Data.Odbc
 #endif // NET_2_0
                 int IndexOf (object value)
                 {
-                        if (!(value is OdbcParameter))
-                                throw new InvalidCastException ("The parameter was not an OdbcParameter.");
-                        return IndexOf (((OdbcParameter) value).ParameterName);
+			if (value == null)
+                		return -1;
+			if (!(value is OdbcParameter))
+				throw new InvalidCastException ("The parameter was not an OdbcParameter.");
+			return list.IndexOf (value);
                 }
                                                                                                     
                 public
@@ -274,8 +287,11 @@ namespace System.Data.Odbc
 #endif // NET_2_0
                 int IndexOf (string parameterName)
                 {
+			if (parameterName == null || parameterName == "")
+				return -1;
+			string parameterName_upper = parameterName.ToUpper ();
 			for (int i = 0; i < Count; i += 1)
-				if (this [i].ParameterName.Equals (parameterName))
+				if (this [i].ParameterName.ToUpper ().Equals (parameterName_upper))
 					return i;
 			return -1;             
                 }
@@ -286,7 +302,11 @@ namespace System.Data.Odbc
 #endif // NET_2_0
                 void Insert (int index, object value)
                 {
-                        list.Insert (index, value);
+                	if (value == null)
+				throw new ArgumentNullException ("value");
+			if (!(value is OdbcParameter))
+				throw new InvalidCastException ("The parameter was not an OdbcParameter.");
+			Insert (index, (OdbcParameter) value);
                 }
                                                                                                     
                 public
@@ -295,8 +315,11 @@ namespace System.Data.Odbc
 #endif // NET_2_0
                 void Remove (object value)
                 {
-                        ((OdbcParameter) value).Container = null;
-                        list.Remove (value);
+                	if (value == null)
+				throw new ArgumentNullException ("value");
+			if (!(value is OdbcParameter))
+				throw new InvalidCastException ("The parameter was not an OdbcParameter.");
+			Remove ((OdbcParameter) value);
                 }
                                                                                                     
                 public
@@ -305,8 +328,10 @@ namespace System.Data.Odbc
 #endif // NET_2_0
                 void RemoveAt (int index)
                 {
-                        this [index].Container = null;
-                        list.RemoveAt (index);
+                	if (index >= list.Count || index < 0)
+                		throw new IndexOutOfRangeException (String.Format ("Invalid index {0} for this OdbcParameterCollection with count = {1}", index, list.Count));
+			this [index].Container = null;
+			list.RemoveAt (index);
                 }
                                                                                                     
                 public
@@ -315,7 +340,7 @@ namespace System.Data.Odbc
 #endif // NET_2_0
                 void RemoveAt (string parameterName)
                 {
-                        RemoveAt (IndexOf (parameterName));
+			RemoveAt (IndexOf (parameterName));
                 }
 
 
@@ -344,12 +369,81 @@ namespace System.Data.Odbc
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+
 		public override void AddRange (Array values)
 		{
-			throw new NotImplementedException ();
+			if (values == null)
+				throw new ArgumentNullException ("values");
+			foreach (OdbcParameter p in values) {
+				if (p == null)
+					throw new ArgumentNullException ("values", "The OdbcParameterCollection only accepts non-null OdbcParameter type objects");
+			}	
+			// no need to check if parameter is already contained
+			foreach (OdbcParameter p in values)
+				Add (p);
 		}
-#endif
+
+		public void AddRange (OdbcParameter [] values)
+		{
+			AddRange ((Array)values);
+		}
+
+		public void Insert (int index, OdbcParameter value)
+		{
+			if (index > list.Count || index < 0)
+				throw new ArgumentOutOfRangeException ("index", "The index must be non-negative and less than or equal to size of the collection");
+			if (value == null)
+				throw new ArgumentNullException ("value");
+			if (value.Container != null)
+				throw new ArgumentException ("The OdbcParameter is already contained by another collection");
+			if (String.IsNullOrEmpty (value.ParameterName)) {
+				value.ParameterName = "Parameter" + nullParamCount;
+				nullParamCount ++;
+			}
+			value.Container = this;
+			list.Insert (index, value);
+		}
+
+		public OdbcParameter AddWithValue (string parameterName, Object value)
+		{
+			if (value == null)
+				return Add (new OdbcParameter (parameterName, OdbcType.NVarChar));
+			return Add (new OdbcParameter (parameterName, value));
+		}
+
+		public void Remove (OdbcParameter value)
+		{
+			if (value == null)
+				throw new ArgumentNullException ("value");
+			if (value.Container != this)
+				throw new ArgumentException ("values", "Attempted to remove an OdbcParameter that is not contained in this OdbcParameterCollection");
+			value.Container = null;
+			list.Remove (value);
+		}
+
+		public bool Contains (OdbcParameter value)
+		{
+			if (value == null)
+				//should not throw ArgumentNullException
+				return false;
+			if (value.Container != this)
+				return false;
+			return Contains (value.ParameterName);
+		}
+
+		public int IndexOf (OdbcParameter value)
+		{
+			if (value == null)
+				//should not throw ArgumentNullException
+				return -1;
+			return IndexOf ((Object) value);
+		}
+
+		public void CopyTo (OdbcParameter [] array, int index)
+		{
+			list.CopyTo (array, index);
+		}
+ #endif
 		#endregion // Methods
 
 	}

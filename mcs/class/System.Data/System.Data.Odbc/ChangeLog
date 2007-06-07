@@ -1,3 +1,23 @@
+2007-06-06  Amit Biswas <amit@amitbiswas.com>
+
+	* OdbcParameter.cs (OdbcParameter ()): Changed default values in the constructor
+	
+	* OdbcParameterCollection.cs (AddRange (Array values)): Implemented missing method
+	(Add): Corrected bug related to default parameter names
+	(Insert): Added check for valid index values
+	(Contains): Corrected bug for case sensitivity
+	(IndexOf): Corrected bug for case sensitivity
+	(IndexOf): Corrected bug in comparing parameter names
+	(Remove): Added check for non existing parameters
+	(AddRange (OdbcParameter): Implemented missing method
+	(AddRange (Array values): Implemented missing method
+	(Insert (int index, OdbcParameter value)): Implemented missing method
+	(Insert (int index, object value)): Implemented missing method
+	(AddWithValue (string parameterName, Object value)): Implemented missing method
+	(Remove (OdbcParameter value)): Implemented missing method
+	(Contains (OdbcParameter value)): Implemented missing method
+	(CopyTo (OdbcParameter [] array, int index)): Implemented missing method
+
 2007-05-30  Nagappan A  <anagappan@novell.com>
 
 	* OdbcDataReader.cs (GetValue): Adds nano seconds as tickcs from
