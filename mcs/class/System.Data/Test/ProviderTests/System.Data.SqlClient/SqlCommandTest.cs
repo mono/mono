@@ -370,13 +370,13 @@ namespace MonoTests.System.Data.SqlClient
 		[Test]
 		public void ExecuteReaderTest ()
 		{
-			SqlDataReader reader = null; 
+			//SqlDataReader reader = null; 
 			conn = new SqlConnection (connectionString);
 
 			// Test exception is thrown if conn is closed
 			cmd = new SqlCommand ("Select count(*) from numeric_family");
 			try {
-				reader = cmd.ExecuteReader ();
+				/*reader = */cmd.ExecuteReader ();
 			}catch (AssertionException e) {
 				throw e;
 			}catch (Exception e) {
@@ -393,7 +393,7 @@ namespace MonoTests.System.Data.SqlClient
 			// Test exception is thrown for Invalid Query
 			cmd = new SqlCommand ("InvalidQuery", conn);
 			try {
-				reader = cmd.ExecuteReader ();
+				/*reader = */cmd.ExecuteReader ();
 				Assert.Fail ("#1 Exception shud be thrown");
 			}catch (AssertionException e) {
 				throw e;
@@ -541,7 +541,11 @@ namespace MonoTests.System.Data.SqlClient
 
 			// Test InvalidOperation Exception is thrown if Parameter Type
 			// is not explicitly set
+#if NET_2_0
+			cmd.Parameters.AddWithValue ("@ID", 2);
+#else
 			cmd.Parameters.Add ("@ID", 2);
+#endif
 			try {
 				cmd.Prepare ();
 				Assert.Fail ("#1 Parameter Type shud be explicitly Set");
@@ -573,7 +577,7 @@ namespace MonoTests.System.Data.SqlClient
 				cmd.CommandType = CommandType.StoredProcedure;
 				cmd.CommandText = "ABFSDSFSF" ;
 				cmd.Prepare ();
-			}catch (Exception e) {
+			}catch {
 				Assert.Fail ("#7 Exception shud not be thrown for Stored Procs");
 			}
 			cmd.CommandType = CommandType.Text;	
@@ -769,7 +773,7 @@ namespace MonoTests.System.Data.SqlClient
 							connectionString + ";Pooling=false");
 			using (conn) {
 				conn.Open ();
-				int size = conn.PacketSize ; 
+				/*int size = conn.PacketSize ; */
 				SqlCommand cmd = conn.CreateCommand ();
 				// create a temp stored proc .. 
 				cmd.CommandText  = "Create Procedure #sp_tmp_long_params ";
@@ -897,14 +901,22 @@ namespace MonoTests.System.Data.SqlClient
 			Object TestPar = DBNull.Value;
 			cmd.Parameters.Add("@TestPar1", SqlDbType.Int);
 			cmd.Parameters["@TestPar1"].Value = TestPar;
-			cmd.Parameters.Add("@BirthDate", DateTime.Now);
+#if NET_2_0
+			cmd.Parameters.AddWithValue ("@BirthDate", DateTime.Now);
+#else
+			cmd.Parameters.Add ("@BirthDate", DateTime.Now);
+#endif
 			cmd.DesignTimeVisible = true;
 			cmd.CommandTimeout = 100;
 			Object clone1 = ((ICloneable)(cmd)).Clone();
 			SqlCommand cmd1 = (SqlCommand) clone1;
 			Assert.AreEqual(2, cmd1.Parameters.Count);
 			Assert.AreEqual(100, cmd1.CommandTimeout);
-			cmd1.Parameters.Add("@test", DateTime.Now);
+#if NET_2_0
+			cmd1.Parameters.AddWithValue ("@test", DateTime.Now);
+#else
+			cmd1.Parameters.Add ("@test", DateTime.Now);
+#endif
 			// to check that it is deep copy and not a shallow copy of the
 			// parameter collection
 			Assert.AreEqual(3, cmd1.Parameters.Count);
@@ -1381,7 +1393,7 @@ namespace MonoTests.System.Data.SqlClient
 				cmd.Connection = conn;
 				
 				try {
-					IAsyncResult result = cmd.BeginExecuteXmlReader ();
+					/*IAsyncResult result = */cmd.BeginExecuteXmlReader ();
 				} catch (InvalidOperationException) {
 					Assert.AreEqual (ConnectionManager.Singleton.ConnectionString, connectionString, "#1 Connection string has changed");
 					return;
@@ -1401,13 +1413,21 @@ namespace MonoTests.System.Data.SqlClient
 			Object TestPar = DBNull.Value;
 			cmd.Parameters.Add ("@TestPar1", SqlDbType.Int);
 			cmd.Parameters ["@TestPar1"].Value = TestPar;
+#if NET_2_0
+			cmd.Parameters.AddWithValue ("@BirthDate", DateTime.Now);
+#else
 			cmd.Parameters.Add ("@BirthDate", DateTime.Now);
+#endif
 			cmd.DesignTimeVisible = true;
 			cmd.CommandTimeout = 100;
 			SqlCommand cmd1 = cmd.Clone ();
 			Assert.AreEqual (2, cmd1.Parameters.Count);
 			Assert.AreEqual (100, cmd1.CommandTimeout);
+#if NET_2_0
+			cmd1.Parameters.AddWithValue ("@test", DateTime.Now);
+#else
 			cmd1.Parameters.Add ("@test", DateTime.Now);
+#endif
 			Assert.AreEqual (3, cmd1.Parameters.Count);
 			Assert.AreEqual (2, cmd.Parameters.Count);
 		}

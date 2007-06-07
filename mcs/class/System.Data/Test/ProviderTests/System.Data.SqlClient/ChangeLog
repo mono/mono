@@ -1,3 +1,7 @@
+2007-06-07  Nagappan A  <anagappan@novell.com>
+
+	* SqlCommandTest.cs: Fixes compilation warnings.
+
 2007-05-30  Nagappan A  <anagappan@novell.com>
 
 	* SqlCommandTest.cs (StoredProc_NoParameterTest)
