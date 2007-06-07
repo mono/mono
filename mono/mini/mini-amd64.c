@@ -2142,11 +2142,17 @@ peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 			/* reg = 0 -> XOR (reg, reg) */
 			/* XOR sets cflags on x86, so we cant do it always */
 			if (ins->inst_c0 == 0 && (!ins->next || (ins->next && INST_IGNORES_CFLAGS (ins->next->opcode)))) {
-				MonoInst *ins2;
-
-				ins->opcode = cfg->new_ir ? OP_LXOR : CEE_XOR;
+				ins->opcode = OP_LXOR;
 				ins->sreg1 = ins->dreg;
 				ins->sreg2 = ins->dreg;
+				/* Fall through */
+			}
+			else
+				break;
+		case CEE_XOR:
+		case OP_LXOR:
+			if ((ins->sreg1 == ins->sreg2) && (ins->sreg1 == ins->dreg)) {
+				MonoInst *ins2;
 
 				/* 
 				 * Replace STORE_MEMBASE_IMM 0 with STORE_MEMBASE_REG since 
@@ -2161,8 +2167,7 @@ peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 					} else if ((ins2->opcode == OP_STOREI1_MEMBASE_IMM) || (ins2->opcode == OP_STOREI2_MEMBASE_IMM) || (ins2->opcode == OP_STOREI8_MEMBASE_REG) || (ins2->opcode == OP_STORE_MEMBASE_REG)) {
 						/* Continue */
 					} else if (((ins2->opcode == OP_ICONST) || (ins2->opcode == OP_I8CONST)) && (ins2->dreg == ins->dreg) && (ins2->inst_c0 == 0)) {
-						ins2->opcode = OP_NOP;
-						ins2->dreg = ins2->sreg1 = -1;
+						NULLIFY_INS (ins2);
 						/* Continue */
 					} else {
 						break;
@@ -2178,6 +2183,30 @@ peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 			if ((ins->inst_imm == 1) && (ins->dreg == ins->sreg1))
 				ins->opcode = OP_X86_DEC_REG;
 			break;
+		case OP_MUL_IMM: 
+			/* remove unnecessary multiplication with 1 */
+			if (ins->inst_imm == 1) {
+				if (ins->dreg != ins->sreg1) {
+					ins->opcode = OP_MOVE;
+				} else {
+					last_ins->next = ins->next;
+					ins = ins->next;
+					continue;
+				}
+			}
+			break;
+		case OP_COMPARE_IMM:
+			/* OP_COMPARE_IMM (reg, 0) 
+			 * --> 
+			 * OP_AMD64_TEST_NULL (reg) 
+			 */
+			if (!ins->inst_imm)
+				ins->opcode = OP_AMD64_TEST_NULL;
+			break;
+		case OP_ICOMPARE_IMM:
+			if (!ins->inst_imm)
+				ins->opcode = OP_X86_TEST_NULL;
+			break;
 		case OP_AMD64_ICOMPARE_MEMBASE_IMM:
 			/* 
 			 * OP_STORE_MEMBASE_REG reg, offset(basereg)
@@ -2191,13 +2220,13 @@ peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 			if (last_ins && (last_ins->opcode == OP_STOREI4_MEMBASE_REG) &&
 			    ins->inst_basereg == last_ins->inst_destbasereg &&
 			    ins->inst_offset == last_ins->inst_offset) {
-				ins->opcode = OP_ICOMPARE_IMM;
-				ins->sreg1 = last_ins->sreg1;
+					ins->opcode = OP_ICOMPARE_IMM;
+					ins->sreg1 = last_ins->sreg1;
 
-				/* check if we can remove cmp reg,0 with test null */
-				if (!ins->inst_imm)
-					ins->opcode = OP_X86_TEST_NULL;
-			}
+					/* check if we can remove cmp reg,0 with test null */
+					if (!ins->inst_imm)
+						ins->opcode = OP_X86_TEST_NULL;
+				}
 
 			break;
 		case OP_LOAD_MEMBASE:
@@ -2271,7 +2300,6 @@ peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 #endif
 			}
 			break;
-		case OP_LOADU1_MEMBASE:
 		case OP_LOADI1_MEMBASE:
 			/* 
 			 * Note: if reg1 = reg2 the load op is removed
@@ -2296,7 +2324,6 @@ peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 				}
 			}
 			break;
-		case OP_LOADU2_MEMBASE:
 		case OP_LOADI2_MEMBASE:
 			/* 
 			 * Note: if reg1 = reg2 the load op is removed

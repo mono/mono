@@ -1,5 +1,7 @@
 2007-06-07  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-amd64.c (peephole_pass): Merge the peephole_pass () from HEAD.
+
 	* arrays.cs: Add new regression test.
 
 	* method-to-ir.c: Merge r78640.
