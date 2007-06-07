@@ -125,8 +125,15 @@ namespace MonoTests.System.Net.Mail
 		[Test]
 		public void To ()
 		{
-			Assert.AreEqual (msg.To.Count, 1);
-			Assert.AreEqual (msg.To[0].Address, "to@example.com");
+			Assert.AreEqual (msg.To.Count, 1, "#A1");
+			Assert.AreEqual (msg.To[0].Address, "to@example.com", "#A2");
+
+			msg = new MailMessage ();
+			msg.To.Add ("to@example.com");
+			msg.To.Add ("you@nowhere.com");
+			Assert.AreEqual (msg.To.Count, 2, "#B1");
+			Assert.AreEqual (msg.To[0].Address, "to@example.com", "#B2");
+			Assert.AreEqual (msg.To[1].Address, "you@nowhere.com", "#B3");
 		}
 	}
 }

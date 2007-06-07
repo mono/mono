@@ -1,3 +1,8 @@
+2007-06-07  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* MailMessageTest.cs: Improved test for To to verify bug #81817 is
+	fixed.
+
 2007-01-22  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* SmtpClient.cs: Added tests for default values.
