@@ -459,5 +459,50 @@ namespace MonoTests.System.Data
 				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
+		
+		[Test]
+		public void DefaultValuesTest ()
+		{
+			OdbcParameter p1 = new OdbcParameter();
+			Assert.AreEqual (OdbcType.NVarChar, p1.OdbcType, "#1 parameters without type are NVarChar by default");
+			Assert.AreEqual (String.Empty, p1.ParameterName, "#2 parameters have empty string as name");
+			Assert.AreEqual (false, p1.IsNullable, "#3 IsNullable is set to false by default");
+			Assert.AreEqual (String.Empty, p1.SourceColumn, "#4 SourceColumn is set to empty string by default");
+			Assert.AreEqual (ParameterDirection.Input, p1.Direction, "#5 ParameterDirection is input by default");
+			Assert.AreEqual (null, p1.Value, "#6 Parameter value must be null by default");
+			
+			OdbcParameter p2 = new OdbcParameter(null, 2);
+			Assert.AreEqual (OdbcType.NVarChar, p2.OdbcType, "#7 parameters without type are NVarChar by default");
+			Assert.AreEqual (String.Empty, p2.ParameterName, "#8 parameters have empty string as name");
+			Assert.AreEqual (false, p2.IsNullable, "#9 IsNullable is set to false by default");
+			Assert.AreEqual (String.Empty, p2.SourceColumn, "#10 SourceColumn is set to empty string by default");
+			Assert.AreEqual (ParameterDirection.Input, p2.Direction, "#11 ParameterDirection is input by default");
+			Assert.AreEqual (2, p2.Value, "#12 Parameter value must be 2");
+			
+			OdbcParameter p3 = new OdbcParameter("foo", 2);
+			Assert.AreEqual (OdbcType.NVarChar, p3.OdbcType, "#13 parameters without type are NVarChar by default");
+			Assert.AreEqual ("foo", p3.ParameterName, "#14 parameter must have foo as name");
+			Assert.AreEqual (false, p3.IsNullable, "#15 IsNullable is set to false by default");
+			Assert.AreEqual (String.Empty, p3.SourceColumn, "#16 SourceColumn is set to empty string by default");
+			Assert.AreEqual (ParameterDirection.Input, p3.Direction, "#17 ParameterDirection is input by default");
+			Assert.AreEqual (2, p3.Value, "#18 Parameter value must be 2");
+			
+			OdbcParameter p4 = new OdbcParameter("foo1", OdbcType.Int);
+			Assert.AreEqual (OdbcType.Int, p4.OdbcType, "#19 parameters without type are NVarChar by default");
+			Assert.AreEqual ("foo1", p4.ParameterName, "#20 parameter must have foo1 as name");
+			Assert.AreEqual (false, p4.IsNullable, "#21 IsNullable is set to false by default");
+			Assert.AreEqual (String.Empty, p4.SourceColumn, "#22 SourceColumn is set to empty string by default");
+			Assert.AreEqual (ParameterDirection.Input, p4.Direction, "#23 ParameterDirection is input by default");
+			Assert.AreEqual (null, p4.Value, "#24 Parameter value must be 2");		
+			
+			OdbcParameter p5 = new OdbcParameter("foo2", Convert.ToInt32(2));
+			Assert.AreEqual (OdbcType.NVarChar, p5.OdbcType, "#25 parameters without type are NVarChar by default");
+			Assert.AreEqual ("foo2", p5.ParameterName, "#26 parameter must have foo2 as name");
+			Assert.AreEqual (false, p5.IsNullable, "#27 IsNullable is set to false by default");
+			Assert.AreEqual (String.Empty, p5.SourceColumn, "#28 SourceColumn is set to empty string by default");
+			Assert.AreEqual (ParameterDirection.Input, p5.Direction, "#29 ParameterDirection is input by default");
+			Assert.AreEqual (2, p5.Value, "#30 Parameter value must be 2");	
+		}
 	}
 }
+

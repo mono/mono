@@ -1,3 +1,54 @@
+2007-06-07  Amit Biswas <amit@amitbiswas.com>
+
+	* OdbcDataReaderTest.cs (GetDataTypeNameTest): Test case to check the returned data type names
+	(GetDataTypeNameIndexOutOfRangeExceptionTest): Test for out of range exceptions
+	(GetOrdinalTest): Test case for returned ordinals
+	(GetOrdinalIndexOutOfRangeExceptionTest): Testing out of range index values
+	(GetFieldTypeTest): Test case for checking returned field types
+	(GetFieldTypeIndexOutOfRangeExceptionTest): Test case for checking out of range index values
+	(GetNameTest): Test for returned name 
+	(GetNameIndexOutOfRangeExceptionTest): Test for out of range index values
+		
+	* OdbcParameterTest.cs (DefaultValuesTest): Test for default OdbcParameter values
+	
+	* OdbcParameterCollectionTest.cs (InsertTest): Test for inserting parameters in parameter collection
+	(InsertNoOverwriteTest): Testing overwriting in Insert
+	(InsertNullTest): Testing insert for null values
+	(InsertEmptyTest): Testing insert for empty values
+	(InsertAlreadyContainedParameterTest): Test for existing parameters
+	(InsertArgumentGreaterThanCountTest): Testing out of range index values
+	(InsertNegativeArgumentTest): Test for negative arguments
+	(InsertNonOdbcParameterTest): Test to insert non Odbc Parameter values
+	(AddRangeTest): Test for adding a range of values to the parameter collection	
+	(AddRangeParameterAlreadyContainedTest): Test for adding already contained parameters
+	(AddRangeArgumentNullExceptionTest): Test for null arguments
+	(AddRangeParameterContainedInAnotherCollTest): Adding range of parameters contained in another collection
+	(AddRangeMultiDimensionalArrayTest): Test for checking support of multi-dimensional arrays
+	(AddRangeArrayValuesArgumentNullExceptionTest):  Test for null arguments in array values
+	(ContainsTest): Test for Contains
+	(ContainsNonOdbcParameterTest): Testing Contains for non-OdbcParameters
+	(ContainsCaseSensitivityTest) : Test for case sensitivity
+	(ContainsNotMineTest) : Testing Contains for parameters belonging to another collection
+	(IndexOfCaseSensitivityTest): Testing case sensitivity for IndexOf
+	(IndexOfNonOdbcParameterTest): Testing IndexOf for non-OdbcParameters
+	(CopyToTest): Test for CopyTo method
+	(CopyToArgumentExceptionTest):  Testing for invalid arguments
+	(CopyToMultiDimensionalArrayTest): Testing CopyTo for multi-dimensional arrays
+	(CopyToLowerBoundCheckTest):  Testing invalid index values
+	(DuplicateParameterNameTest): Testing support for duplicate parameter names
+	(RemoveTest): Test for Remove (OdbcParameter)	
+	(RemoveNullTest): Testing Remove for null values
+	(RemoveEmptyTest): Testing Remove for empty values
+	(RemoveNonOdbcParameterTest): Testing Remove for non Odbc Parameters
+	(RemoveNonExistingParameterTest): Testing Remove for non existing Parameters
+	(RemoveParameterContainedInAnotherCollTest): Removing parameters contained in another collection
+	(RemoveAtTest): Test for RemoveAt
+	(RemoveAtOutOfRangeIndexTest): Testing RemoveAt with invalid index
+	(RemoveAtNegativeIndexTest): Test for negative index
+	(RemoveAtBoundaryTest): Boundary check for RemoveAt
+	(AddWithValueTest): Testing AddWithValue with various parameters
+	(DefaultNamesAndValuesTest): Testing default names and values of parameters
+
 2006-12-20  Nagappan A  <anagappan@novell.com>
 
 	* OdbcCommandBuilderTest.cs (DefaultPropertiesTest): Removed
