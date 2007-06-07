@@ -1,4 +1,4 @@
-// CS0411: The type arguments for method `Test' cannot be inferred from the usage. Try specifying the type arguments explicitly
+// CS0411: The type arguments for method `X.Test<T>(Foo<T>)' cannot be inferred from the usage. Try specifying the type arguments explicitly
 // Line: 15
 using System;
 
