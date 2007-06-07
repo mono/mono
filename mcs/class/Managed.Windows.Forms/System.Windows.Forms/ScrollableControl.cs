@@ -632,6 +632,49 @@ namespace System.Windows.Forms {
 			base.ScaleCore(dx, dy);
 		}
 
+#if NET_2_0
+		protected override void ScaleControl (SizeF factor, BoundsSpecified specified)
+		{
+			base.ScaleControl (factor, specified);
+		}
+		
+		protected virtual Point ScrollToControl (Control activeControl)
+		{
+			int corner_x;
+			int corner_y;
+
+			Rectangle within = new Rectangle ();
+			within.Size = ClientSize;
+
+			if (vscrollbar.Visible)
+				within.Width -= vscrollbar.Width;
+
+			if (hscrollbar.Visible)
+				within.Height -= hscrollbar.Height;
+
+			// If the control is above the top or the left, move it down and right until it aligns 
+			// with the top/left.
+			// If the control is below the bottom or to the right, move it up/left until it aligns
+			// with the bottom/right, but do never move it further than the top/left side.
+			int x_diff = 0, y_diff = 0;
+			
+			if (activeControl.Top <= 0 || activeControl.Height >= within.Height)
+				y_diff = -activeControl.Top;
+			else if (activeControl.Bottom > within.Height)
+				y_diff = within.Height - activeControl.Bottom;
+
+			if (activeControl.Left <= 0 || activeControl.Width >= within.Width)
+				x_diff = -activeControl.Left;
+			else if (activeControl.Right > within.Width)
+				x_diff = within.Width - activeControl.Right;
+
+			corner_x = AutoScrollPosition.X + x_diff;
+			corner_y = AutoScrollPosition.Y + y_diff;
+			
+			return new Point (corner_x, corner_y);
+		}
+#endif
+
 		protected void SetDisplayRectLocation(int x, int y) {
 			// This method is weird. MS documents that the scrollbars are not
 			// updated. We need to move stuff, but leave the scrollbars as is
@@ -952,8 +995,9 @@ namespace System.Windows.Forms {
 			num_of_children = Controls.Count;
 
 			for (int i = 0; i < num_of_children; i++) {
-				Controls[i].Left -= XOffset;
-				Controls[i].Top -= YOffset;
+				Controls[i].Location = new Point (Controls[i].Left - XOffset, Controls[i].Top - YOffset);
+				//Controls[i].Left -= XOffset;
+				//Controls[i].Top -= YOffset;
 				// Is this faster? Controls[i].Location -= new Size(XOffset, YOffset);
 			}
 
@@ -977,6 +1021,11 @@ namespace System.Windows.Forms {
 				eh (this, se);
 		}
 
+		protected override void OnPaddingChanged (EventArgs e)
+		{
+			base.OnPaddingChanged (e);
+		}
+		
 		protected override void OnPaintBackground (PaintEventArgs e)
 		{
 			base.OnPaintBackground (e);

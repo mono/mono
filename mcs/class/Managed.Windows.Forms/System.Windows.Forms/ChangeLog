@@ -1,3 +1,7 @@
+2007-06-07  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ScrollableControl.cs: Add 2.0 stuffs.
+
 2007-06-06  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ScrollBar.cs: Add 2.0 stuffs.

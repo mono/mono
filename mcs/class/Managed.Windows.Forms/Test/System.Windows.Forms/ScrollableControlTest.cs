@@ -36,7 +36,7 @@ namespace MonoTests.System.Windows.Forms
 			TestHelper.RemoveWarning (h);
 		}
 		[Test]
-		public void AutoSize ()
+		public void AutoScroll ()
 		{
 			ScrollableControl sc = new ScrollableControl ();
 			Assert.IsFalse (sc.AutoScroll, "#A1");
@@ -94,5 +94,59 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (Size.Empty, sc.AutoScrollMinSize, "#J1");
 			Assert.IsTrue (sc.AutoScroll, "#J2");
 		}
+
+#if NET_2_0
+		[Test]
+		public void MethodScrollToControl ()
+		{
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+			f.Show ();
+			
+			PublicScrollableControl sc = new PublicScrollableControl ();
+			sc.Size = new Size (200, 200);
+			sc.AutoScroll = true;
+			
+			f.Controls.Add (sc);
+			
+			Button b = new Button ();
+			b.Top = 15;
+			sc.Controls.Add (b);
+			
+			Button b2 = new Button ();
+			b2.Top = 340;
+			sc.Controls.Add (b2);
+			
+			Button b3 = new Button ();
+			b3.Left = 280;
+			sc.Controls.Add (b3);
+
+			Assert.AreEqual (new Point (0, 0), sc.PublicScrollToControl (b), "A1");
+			Assert.AreEqual (new Point (0, -180), sc.PublicScrollToControl (b2), "A2");
+			Assert.AreEqual (new Point (-172, 0), sc.PublicScrollToControl (b3), "A3");
+
+			sc.AutoScrollPosition = new Point (50, 70);
+
+			Assert.AreEqual (new Point (0, -15), sc.PublicScrollToControl (b), "A4");
+			Assert.AreEqual (new Point (0, -180), sc.PublicScrollToControl (b2), "A5");
+			Assert.AreEqual (new Point (-172, 0), sc.PublicScrollToControl (b3), "A6");
+
+			sc.AutoScrollPosition = new Point (150, 150);
+
+			Assert.AreEqual (new Point (0, -15), sc.PublicScrollToControl (b), "A7");
+			Assert.AreEqual (new Point (0, -180), sc.PublicScrollToControl (b2), "A8");
+			Assert.AreEqual (new Point (-172, 0), sc.PublicScrollToControl (b3), "A9");
+			
+			f.Dispose ();
+		}
+		
+		private class PublicScrollableControl : ScrollableControl
+		{
+			public Point PublicScrollToControl (Control activeControl)
+			{
+				return base.ScrollToControl (activeControl);
+			}
+		}
+#endif
 	}
 }
