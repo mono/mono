@@ -3618,7 +3618,7 @@ namespace Mono.CSharp {
 							411, loc, "The type arguments for " +
 							"method `{0}' cannot be inferred from " +
 							"the usage. Try specifying the type " +
-							"arguments explicitly.", report_name);
+							"arguments explicitly", TypeManager.CSharpSignature (c));
 						return null;
 					}
 #endif

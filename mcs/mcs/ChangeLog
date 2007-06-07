@@ -1,3 +1,7 @@
+2007-06-07  Marek Safar  <marek.safar@gmail.com>
+
+	* ecore.cs (MethodGroupExpr.OverloadResolve): Print full method definition.
+
 2007-06-06  Marek Safar  <marek.safar@gmail.com>
 
 	* ecore.cs (SimpleName.Emit): Emitting unresolved simple name is
