@@ -181,13 +181,12 @@ namespace System.Windows.Forms.Layout
 					width = preferredsize.Width;
 					height = preferredsize.Height;
 				} else {
-					width = child.Width;
-					height = child.Height;
+					width = child.ExplicitBounds.Width;
+					height = child.ExplicitBounds.Height;
 					if (preferredsize.Width > width)
 						width = preferredsize.Width;
 					if (preferredsize.Height > height)
 						height = preferredsize.Height;
-						
 				}
 			
 				// Sanity
@@ -206,6 +205,49 @@ namespace System.Windows.Forms.Layout
 				child.SetBounds (left, top, width, height, BoundsSpecified.None);
 			}
 		}
+
+		void LayoutAutoSizeContainer (Control container)
+		{
+			int left;
+			int top;
+			int width;
+			int height;
+
+			if (!container.VisibleInternal || container.ControlLayoutType == Control.LayoutType.Dock || !container.AutoSize)
+				return;
+
+			left = container.Left;
+			top = container.Top;
+
+			Size preferredsize = container.PreferredSize;
+
+			if (container.GetAutoSizeMode () == AutoSizeMode.GrowAndShrink) {
+				width = preferredsize.Width;
+				height = preferredsize.Height;
+			} else {
+				width = container.ExplicitBounds.Width;
+				height = container.ExplicitBounds.Height;
+				if (preferredsize.Width > width)
+					width = preferredsize.Width;
+				if (preferredsize.Height > height)
+					height = preferredsize.Height;
+			}
+
+			// Sanity
+			if (width < container.MinimumSize.Width)
+				width = container.MinimumSize.Width;
+
+			if (height < container.MinimumSize.Height)
+				height = container.MinimumSize.Height;
+
+			if (container.MaximumSize.Width != 0 && width > container.MaximumSize.Width)
+				width = container.MaximumSize.Width;
+
+			if (container.MaximumSize.Height != 0 && height > container.MaximumSize.Height)
+				height = container.MaximumSize.Height;
+
+			container.SetBounds (left, top, width, height, BoundsSpecified.None);
+		}
 #endif
 
 		public override bool Layout (object container, LayoutEventArgs args)
@@ -218,6 +260,7 @@ namespace System.Windows.Forms.Layout
 			LayoutAnchoredChildren (parent, controls);
 #if NET_2_0
 			LayoutAutoSizedChildren (parent, controls);
+			LayoutAutoSizeContainer (parent);
 #endif
 
 			return false;

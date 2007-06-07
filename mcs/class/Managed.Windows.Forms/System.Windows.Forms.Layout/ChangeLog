@@ -1,3 +1,9 @@
+2007-06-07  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DefaultLayout.cs: When calculating autosize children, default to
+	ExplicitSize.  After laying out a container's children, if the container
+	is AutoSize, adjust its size if necessary.
+
 2007-05-23  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DefaultLayout.cs: Take parent's padding into account when docking
