@@ -1,5 +1,10 @@
 2007-06-07  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ScrollableControlTest.cs: ScrollToControl test is theme dependent due to
+	the width of scrollbars.
+
+2007-06-07  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ScrollableControlTest.cs: Add test for ScrollToControl.
 
 2007-06-06  Jonathan Pobst  <monkey@jpobst.com>

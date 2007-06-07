@@ -99,6 +99,9 @@ namespace MonoTests.System.Windows.Forms
 		[Test]
 		public void MethodScrollToControl ()
 		{
+			if (TestHelper.RunningOnUnix)
+				Assert.Ignore ("Depends of scrollbar width, values are for Windows");
+
 			Form f = new Form ();
 			f.ShowInTaskbar = false;
 			f.Show ();
