@@ -1,5 +1,13 @@
 2007-06-07  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Control.cs:
+	- When we remove a control, remove it from the collection before performing the layout.
+	- Setup an internal property for explicit_bounds.
+	- Don't let the UpdateBounds in CreateHandle overwrite our explicit bounds.
+	- Perform a layout when we set a new AutoSizeMode.
+
+2007-06-07  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ScrollableControl.cs: Add 2.0 stuffs.
 
 2007-06-06  Jonathan Pobst  <monkey@jpobst.com>

@@ -786,11 +786,11 @@ namespace System.Windows.Forms
 				if (value == null)
 					return;
 
-				owner.PerformLayout(value, "Parent");
-				owner.OnControlRemoved(new ControlEventArgs(value));
-
 				all_controls = null;
 				list.Remove(value);
+
+				owner.PerformLayout(value, "Parent");
+				owner.OnControlRemoved(new ControlEventArgs(value));
 
 				ContainerControl container = owner as ContainerControl;
 				if (container != null) { 
@@ -1185,6 +1185,7 @@ namespace System.Windows.Forms
 		
 		internal Size InternalClientSize { set { this.client_size = value; } }
 		internal virtual bool ActivateOnShow { get { return true; } }
+		internal Rectangle ExplicitBounds { get { return this.explicit_bounds; } }
 		#endregion	// Internal Properties
 
 		#region Private & Internal Methods
@@ -4157,7 +4158,10 @@ namespace System.Windows.Forms
 				if ((CreateParams.Style & (int)WindowStyles.WS_CHILD) != 0) {
 					XplatUI.SetBorderStyle(window.Handle, (FormBorderStyle)border_style);
 				}
-				UpdateBounds();
+
+				Rectangle save_bounds = explicit_bounds;
+				UpdateBounds ();
+				explicit_bounds = save_bounds;
 			}
 		}
 
@@ -4567,7 +4571,10 @@ namespace System.Windows.Forms
 #if NET_2_0
 		protected void SetAutoSizeMode (AutoSizeMode mode)
 		{
-			auto_size_mode = mode;
+			if (auto_size_mode != mode) {
+				auto_size_mode = mode;
+				PerformLayout (this, "AutoSizeMode");
+			}
 		}
 #endif
 		
