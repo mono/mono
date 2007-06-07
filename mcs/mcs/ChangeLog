@@ -1,3 +1,14 @@
+2007-06-07  Raja R Harinath  <harinath@gmail.com>
+
+	Fix #80477, cs0135-2.cs, cs0135-3.cs
+	* statement.cs (ToplevelBlock.ProcessParameters): Add parameter
+	names to the "known" variables list.
+	(Block.CheckInvariantMeaningInBlock): Handle the fact the
+	parameter names are also "known".
+	(Block.CheckError136): Remove.
+	(ExplicitBlock.CloneTo): New.  Set 'known_variables' in target to
+	null.
+
 2007-06-07  Marek Safar  <marek.safar@gmail.com>
 
 	* ecore.cs (MethodGroupExpr.OverloadResolve): Print full method definition.

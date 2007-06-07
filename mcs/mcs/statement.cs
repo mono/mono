@@ -1698,7 +1698,7 @@ namespace Mono.CSharp {
 			// an indirect check that depends on AddVariable doing its
 			// part in maintaining the invariant-meaning-in-block property.
 			//
-			if (e is LocalVariableReference || (e is Constant && b.GetLocalInfo (name) != null))
+			if (e is VariableReference || (e is Constant && b.GetLocalInfo (name) != null))
 				return true;
 
 			//
@@ -1708,69 +1708,6 @@ namespace Mono.CSharp {
 			Report.SymbolRelatedToPreviousError (loc, name);
 			Error_AlreadyDeclared (kvi.Location, name, "parent or current");
 			return false;
-		}
-
-		public bool CheckError136_InChildren (string name, Location loc)
-		{
-			if (!DoCheckError136_InChildren (name, loc))
-				return false;
-
-			Block b = this;
-			while (b != Explicit) {
-				if (!b.Parent.DoCheckError136_InChildren (name, loc))
-					return false;
-				b = b.Parent;
-			}
-
-			return true;
-		}
-
-		protected bool DoCheckError136_InChildren (string name, Location loc)
-		{
-			if (!DoCheckError136 (name, "child", loc))
-				return false;
-
-			if (AnonymousChildren != null) {
-				foreach (ToplevelBlock child in AnonymousChildren) {
-					if (!child.DoCheckError136_InChildren (name, loc))
-						return false;
-				}
-			}
-
-			if (children != null) {
-				foreach (Block child in children) {
-					if (!child.DoCheckError136_InChildren (name, loc))
-						return false;
-				}
-			}
-
-			return true;
-		}
-
-		public bool CheckError136 (string name, string scope, bool check_children, Location loc)
-		{
-			if (!DoCheckError136 (name, scope, loc))
-				return false;
-
-			if (check_children) {
-				if (!CheckError136_InChildren (name, loc))
-					return false;
-			}
-
-			return true;
-		}
-
-		protected bool DoCheckError136 (string name, string scope, Location loc)
-		{
-			int idx;
-			Parameter p = Toplevel.Parameters.GetParameterByName (name, out idx);
-			if (p != null) {
-				Report.SymbolRelatedToPreviousError (p.Location, name);
-				Error_AlreadyDeclared (loc, name, scope != null ? scope : "method argument");
-				return false;
-			}
-
-			return true;
 		}
 
 		public LocalInfo AddVariable (Expression type, string name, Location l)
@@ -1799,11 +1736,6 @@ namespace Mono.CSharp {
 				Error_AlreadyDeclared (l, name, "child");
 				return null;
 			}
-
-			// FIXME: Parameters should be tracked by KnownVariable
-			//        This ^%@$%@@#^#%* UGLY recursion needs to be stomped out
-			if (!CheckError136 (name, null, true, l))
-				return null;
 
 			vi = new LocalInfo (type, name, this, l);
 			Variables.Add (name, vi);
@@ -2368,6 +2300,13 @@ namespace Mono.CSharp {
 		{
 			return known_variables == null ? null : (IKnownVariable) known_variables [name];
 		}
+
+		protected override void CloneTo (CloneContext clonectx, Statement t)
+		{
+			ExplicitBlock target = (ExplicitBlock) t;
+			target.known_variables = null;
+			base.CloneTo (clonectx, t);
+		}
 	}
 
 	public class ToplevelParameterInfo : IKnownVariable {
@@ -2505,10 +2444,8 @@ namespace Mono.CSharp {
 			ToplevelBlock target = (ToplevelBlock) t;
 			base.CloneTo (clonectx, t);
 
-			if (this.parameters.Count == 0)
-				return;
-
-			target.parameter_info = new ToplevelParameterInfo [parameters.Count];
+			if (parameters.Count != 0)
+				target.parameter_info = new ToplevelParameterInfo [parameters.Count];
 			for (int i = 0; i < parameters.Count; ++i)
 				target.parameter_info [i] = new ToplevelParameterInfo (target, i);
 		}
@@ -2554,7 +2491,7 @@ namespace Mono.CSharp {
 					continue;
 				}
 
-				//AddKnownVariable (name, parameter_info [i]);
+				AddKnownVariable (name, parameter_info [i]);
 			}
 
 			// mark this block as "used" so that we create local declarations in a sub-block

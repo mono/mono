@@ -1,3 +1,8 @@
+2007-06-07  Raja R Harinath  <harinath@gmail.com>
+
+	* cs0135-2.cs, cs0135-3.cs: New tests for parameter name
+	conflicts.
+
 2007-05-22  Scott Peterson  <lunchtimemama@gmail.com>
 	* gcs0271.cs, gcs0272.cs: Test automatic properties
 	  for proper access control.
