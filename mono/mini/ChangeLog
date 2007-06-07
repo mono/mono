@@ -1,3 +1,10 @@
+2007-06-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (peephole_pass): Merge some small changes from the linear-ir 
+	branch.
+
+	* cpu-amd64.md: Add long_and/or/xor opcodes.
+
 2007-06-06  Wade Berrier  <wberrier@novell.com>
 
 	* cpu-s390x.md (shr_imm): Correct the length of shr_imm instruction.
