@@ -8109,7 +8109,9 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			if (sp [0]->type != STACK_OBJ)
 				UNVERIFIED;
 
-			if (MONO_TYPE_IS_REFERENCE (&klass->byval_arg)) {
+			/* storing a NULL doesn't need any of the complex checks in stelemref */
+			if (MONO_TYPE_IS_REFERENCE (&klass->byval_arg) && 
+				!(sp [2]->opcode == OP_PCONST && sp [2]->inst_p0 == NULL)) {
 				MonoMethod* helper = mono_marshal_get_stelemref ();
 				MonoInst *iargs [3];
 
@@ -10265,7 +10267,6 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - merge new GC changes in mini.c.
  * - merge the soft float support.
  * - merge r68207.
- * - merge r78640.
  * - merge the ia64 switch changes.
  * - merge the mips conditional changes.
  * - get rid of duplicate functions like can_access_... from method-to-ir.c.
