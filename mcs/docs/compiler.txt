@@ -476,6 +476,50 @@
 
 ** Statements
 
+*** Invariant meaning in a block
+
+	The seemingly small section in the standard entitled
+	"invariant meaning in a block" has several subtleties
+	involved, especially when we try to implement the semantics
+	efficiently.
+
+	Most of the semantics are trivial, and basically prevent local
+	variables from shadowing parameters and other local variables.
+	However, this notion is not limited to that, but affects all
+	simple name accesses within a block.  And therein lies the rub
+	-- instead of just worrying about the issue when we arrive at
+	variable declarations, we need to verify this property at
+	every use of a simple name within a block.
+
+	The key notion that helps us is to note the bi-directional
+	action of a variable declaration.  The declaration together
+	with anti-shadowing rules can maintain the IMiaB property for
+	the block containing the declaration and all nested sub
+	blocks.  But, the IMiaB property also forces all surrounding
+	blocks to avoid using the name.  We thus need to maintain a
+	blacklist of taboo names in all surrounding blocks -- and we
+	take the expedient of doing so simply: actually maintaining a
+	(superset of the) blacklist in each block datastructure, which
+	we call the 'known_variable' list.
+
+	Because we create the 'known_variable' list during the parse
+	process, by the time we do simple name resolution, all the
+	blacklists are fully populated.  So, we can just enforce the
+	rest of the IMiaB property by looking up a couple of lists.
+
+	This turns out to be quite efficient: when we used a block
+	tree walk, a testcase took 5-10mins, while with this simple
+	mildly-redundant data structure, the time taken for the same
+	testcase came down to a couple of seconds.
+
+	The IKnownVariable interface is a small wrinkle.  Firstly, the
+	IMiaB also applies to parameter names, especially those of
+	anonymous methods.  Secondly, we need more information than
+	just the name in the blacklist -- we need the location of the
+	name and where it's declared.  We use the IKnownVariable
+	interface to abstract out the parser information stored for
+	local variables and parameters.
+
 * The semantic analysis 
 
 	Hence, the compiler driver has to parse all the input files.
@@ -817,5 +861,3 @@
 	Once you have a full build of mcs, you can improve your
 	development time by just issuing make in the `mcs' directory or
 	using `make qh' in the gmcs directory.
-
-	   
