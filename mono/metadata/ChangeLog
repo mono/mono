@@ -1,5 +1,9 @@
 2007-06-08  Raja R Harinath  <rharinath@novell.com>
 
+	* class.c (get_shared_generic_class): Don't call
+	mono_get_shared_generic_inst.  Use the container's own
+	'class_inst'.
+
 	* metadata.c (mono_metadata_load_generic_params): Move
 	initialization of 'context' field here from ...
 	* class.c (mono_class_create_from_typedef): ... here, and ...
