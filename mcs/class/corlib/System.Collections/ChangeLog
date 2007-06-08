@@ -1,3 +1,8 @@
+2007-06-08  Ankit Jain  <jankit@novell.com>
+
+	* ArrayList.cs (Shift): Clear the unused part of the array when
+	removing elements.
+
 2006-12-29  Marek Safar  <marek.safar@gmail.com>
 
 	* BitArray.cs: Performance improvements.
