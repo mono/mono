@@ -95,6 +95,7 @@ System.Windows.Forms/NumericUpDownTest.cs
 System.Windows.Forms/PaddingTest.cs
 System.Windows.Forms/PaddingConverterTest.cs
 System.Windows.Forms/PaintEventArgsTest.cs
+System.Windows.Forms/PanelTest.cs
 System.Windows.Forms/PictureBoxTest.cs
 System.Windows.Forms/PrintDialogTest.cs
 System.Windows.Forms/ProgressBarTest.cs

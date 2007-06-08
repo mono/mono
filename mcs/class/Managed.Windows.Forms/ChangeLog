@@ -1,3 +1,7 @@
+2007-06-08  Jonathan Pobst  <monkey@jpobst.com>
+
+	* System.Windows.Forms_test.dll.sources: Add PanelTest.cs. 
+
 2007-06-06  Jonathan Pobst  <monkey@jpobst.com>
 
 	* System.Windows.Forms_test.dll.sources: Add ButtonBaseTest.cs. 

@@ -1,3 +1,7 @@
+2007-06-08  Jonathan Pobst  <monkey@jpobst.com>
+
+	* PanelTest.cs: Add.
+
 2007-06-07  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ScrollableControlTest.cs: ScrollToControl test is theme dependent due to

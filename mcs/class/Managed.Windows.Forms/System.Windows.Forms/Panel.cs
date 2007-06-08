@@ -50,6 +50,24 @@ namespace System.Windows.Forms {
 		#endregion	// Constructors & Destructors
 
 		#region Public Instance Properties
+#if NET_2_0
+		[Browsable (true)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Visible)]
+		public override bool AutoSize {
+			get { return base.AutoSize; }
+			set { base.AutoSize = value; }
+		}
+		
+		[Browsable (true)]
+		[DefaultValue (AutoSizeMode.GrowOnly)]
+		[Localizable (true)]
+		public virtual AutoSizeMode AutoSizeMode {
+			get { return base.GetAutoSizeMode (); }
+			set { base.SetAutoSizeMode (value); }
+		}
+#endif
+
 		[DefaultValue(BorderStyle.None)]
 		[DispId(-504)]
 		public BorderStyle BorderStyle {
@@ -109,6 +127,15 @@ namespace System.Windows.Forms {
 		#endregion	// Protected Instance Methods
 
 		#region Events
+#if NET_2_0
+		[Browsable (true)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
+		public new event EventHandler AutoSizeChanged {
+			add { base.AutoSizeChanged += value; }
+			remove { base.AutoSizeChanged -= value; }
+		}
+#endif
+
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public new event KeyEventHandler KeyDown {
@@ -136,6 +163,31 @@ namespace System.Windows.Forms {
 			add { base.TextChanged += value; }
 			remove { base.TextChanged -= value; }
 		}
+		#endregion
+
+		#region Internal Methods
+#if NET_2_0
+		internal override Size GetPreferredSizeCore (Size proposedSize)
+		{
+			Size retsize = Size.Empty;
+
+			foreach (Control child in Controls) {
+				if (child.Dock == DockStyle.Fill) {
+					if (child.Bounds.Right > retsize.Width)
+						retsize.Width = child.Bounds.Right;
+				} else if (child.Dock != DockStyle.Top && child.Dock != DockStyle.Bottom && (child.Anchor & AnchorStyles.Right) == 0 && (child.Bounds.Right + child.Margin.Right) > retsize.Width)
+					retsize.Width = child.Bounds.Right + child.Margin.Right;
+
+				if (child.Dock == DockStyle.Fill) {
+					if (child.Bounds.Bottom > retsize.Height)
+						retsize.Height = child.Bounds.Bottom;
+				} else if (child.Dock != DockStyle.Left && child.Dock != DockStyle.Right && (child.Anchor & AnchorStyles.Bottom) == 0 && (child.Bounds.Bottom + child.Margin.Bottom) > retsize.Height)
+					retsize.Height = child.Bounds.Bottom + child.Margin.Bottom;
+			}
+
+			return retsize;
+		}
+#endif
 		#endregion
 	}
 }
