@@ -1,5 +1,8 @@
 2007-06-08  Raja R Harinath  <rharinath@novell.com>
 
+	* reflection.c (mono_class_bind_generic_parameters): Replace
+	open-coded loop with mono_metadata_inflate_generic_inst.
+
 	* class.c (get_shared_generic_class): Don't call
 	mono_get_shared_generic_inst.  Use the container's own
 	'class_inst'.
