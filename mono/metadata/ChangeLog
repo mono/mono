@@ -1,5 +1,11 @@
 2007-06-08  Raja R Harinath  <rharinath@novell.com>
 
+	* class.c (get_shared_generic_class): Rename from
+	mono_get_shared_generic_class and make static.
+	(mono_get_shared_generic_inst): Move to metadata.c.
+	* loader.c (mono_get_shared_generic_method): Likewise.
+	* class-internals.h, metadata-internals.h: Update to changes.
+
 	Fix #81830
 	* class.c (mono_class_from_generic_parameter): Don't assume a
 	generic container owner exists.  Generic containers from monodis
