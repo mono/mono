@@ -1199,9 +1199,12 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		protected bool VerifyExplicitParameterCompatibility (Type delegate_type, ParameterData invoke_pd)
+		protected bool VerifyExplicitParameterCompatibility (Type delegate_type, ParameterData invoke_pd, bool showErrors)
 		{
 			if (Parameters.Count != invoke_pd.Count) {
+				if (!showErrors)
+					return false;
+				
 				Report.SymbolRelatedToPreviousError (delegate_type);
 				Report.Error (1593, loc, "Delegate `{0}' does not take `{1}' arguments",
 					      TypeManager.CSharpName (delegate_type), Parameters.Count.ToString ());
@@ -1212,6 +1215,9 @@ namespace Mono.CSharp {
 			for (int i = 0; i < Parameters.Count; ++i) {
 				Parameter.Modifier p_mod = invoke_pd.ParameterModifier (i);
 				if (Parameters.ParameterModifier (i) != p_mod && p_mod != Parameter.Modifier.PARAMS) {
+					if (!showErrors)
+						return false;
+					
 					if (p_mod == Parameter.Modifier.NONE)
 						Report.Error (1677, loc, "Parameter `{0}' should not be declared with the `{1}' keyword",
 							      (i + 1).ToString (), Parameter.GetModifierSignature (Parameters.ParameterModifier (i)));
@@ -1227,6 +1233,9 @@ namespace Mono.CSharp {
 					continue;
 				
 				if (invoke_pd.ParameterType (i) != Parameters.ParameterType (i)) {
+					if (!showErrors)
+						return false;
+					
 					Report.Error (1678, loc, "Parameter `{0}' is declared as type `{1}' but should be `{2}'",
 						      (i+1).ToString (),
 						      TypeManager.CSharpName (Parameters.ParameterType (i)),
@@ -1237,6 +1246,67 @@ namespace Mono.CSharp {
 			}
 			return true;
 		}
+
+#if GMCS_SOURCE		
+		// TODO: Merge with lambda DoCompatibleTest
+		// TODO: Need to sort out error reporting
+		public Expression InferTypeArguments (EmitContext ec, Type delegateType)
+		{
+			if (anonymous != null)
+				return anonymous.AnonymousDelegate;
+
+			if (!delegateType.ContainsGenericParameters)
+				throw new InternalErrorException ("No inference required");
+
+			// It looks like we cannot generate arguments during type inference
+			if (Parameters == null)
+				return null;
+
+			delegateType = delegateType.GetGenericTypeDefinition ();
+			
+			MethodGroupExpr invoke_mg = Delegate.GetInvokeMethod (
+				ec.ContainerType, delegateType, loc);
+			MethodInfo invoke_mb = (MethodInfo) invoke_mg.Methods [0];
+			ParameterData invoke_pd = TypeManager.GetParameterData (invoke_mb);			
+
+			if (!VerifyExplicitParameterCompatibility (delegateType, invoke_pd, false))
+				return null;
+
+			Type[] g_arguments = delegateType.GetGenericArguments ();
+			Type[] inferred_arguments = new Type [g_arguments.Length];
+			g_arguments.CopyTo (inferred_arguments, 0);
+
+			for (int i = 0; i < invoke_pd.Count; ++i) {
+				if (!invoke_pd.Types[i].IsGenericParameter)
+					continue;
+
+				inferred_arguments [invoke_pd.Types[i].GenericParameterPosition] = Parameters.Types[i];
+			}
+
+			int return_type_pos = -1;
+			if (TypeManager.IsGenericParameter (invoke_mb.ReturnType)) {
+					ec.InferReturnType = true;
+				return_type_pos = invoke_mb.ReturnType.GenericParameterPosition;
+			}
+
+			anonymous = new AnonymousMethod (
+				Parent != null ? Parent.AnonymousMethod : null, RootScope, Host,
+				GenericMethod, Parameters, Container, Block, invoke_mb.ReturnType,
+				delegateType, loc);
+
+			if (!anonymous.Resolve (ec))
+				return null;
+
+			if (return_type_pos != -1) {
+				inferred_arguments [return_type_pos] = anonymous.ReturnType;
+			}
+
+			anonymous.AnonymousDelegate.Type = delegateType.GetGenericTypeDefinition ().MakeGenericType (inferred_arguments);
+			anonymous.DelegateType = anonymous.AnonymousDelegate.Type;
+			
+			return anonymous.AnonymousDelegate;
+		}
+#endif
 		
 		//
 		// Returns true if this anonymous method can be implicitly
@@ -1246,11 +1316,10 @@ namespace Mono.CSharp {
 		{
 			if (anonymous != null)
 				return anonymous.AnonymousDelegate;
-
+			
 			if (CompatibleChecks (ec, delegate_type) == null)
 				return null;
 
-			
 			//
 			// At this point its the first time we know the return type that is 
 			// needed for the anonymous method.  We create the method here.
@@ -1260,31 +1329,6 @@ namespace Mono.CSharp {
 				ec.ContainerType, delegate_type, loc);
 			MethodInfo invoke_mb = (MethodInfo) invoke_mg.Methods [0];
 			ParameterData invoke_pd = TypeManager.GetParameterData (invoke_mb);
-
-#if GMCS_SOURCE
-			Type[] infered_arguments = null;
-			if (TypeManager.IsGenericType (delegate_type)) {
-
-				Type[] g_arguments = delegate_type.GetGenericArguments ();
-				infered_arguments = new Type[g_arguments.Length];
-				for (int i = 0; i < g_arguments.Length; ++i) {
-					infered_arguments [i] = g_arguments[i];
-				}
-
-				for (int i = 0; i < invoke_pd.Count; ++i) {
-					if (!invoke_pd.Types[i].IsGenericParameter)
-						continue;
-
-					infered_arguments [invoke_pd.Types[i].GenericParameterPosition] = Parameters.Types[i];
-				}
-			}
-
-			int return_type_pos = -1;
-			if (TypeManager.IsGenericParameter (invoke_mb.ReturnType)) {
-				ec.InferReturnType = true;
-				return_type_pos = invoke_mb.ReturnType.GenericParameterPosition;
-			}
-#endif
 
 			Parameters parameters;
 			if (Parameters == null) {
@@ -1312,7 +1356,7 @@ namespace Mono.CSharp {
 				if (!parameters.Resolve (ec))
 					return null;
 			} else {
-				if (!VerifyExplicitParameterCompatibility (delegate_type, invoke_pd))
+				if (!VerifyExplicitParameterCompatibility (delegate_type, invoke_pd, true))
 					return null;
 
 				parameters = Parameters;
@@ -1340,19 +1384,6 @@ namespace Mono.CSharp {
 			if (!anonymous.Resolve (ec))
 				return null;
 
-#if GMCS_SOURCE
-			if (return_type_pos != -1) {
-				if (infered_arguments == null)
-					infered_arguments = new Type [delegate_type.GetGenericArguments ().Length];
-
-				infered_arguments [return_type_pos] = anonymous.ReturnType;
-			}
-
-			if (infered_arguments != null & TypeManager.IsGenericType (delegate_type)) {
-				anonymous.AnonymousDelegate.Type = delegate_type.GetGenericTypeDefinition ().MakeGenericType (infered_arguments);
-				anonymous.DelegateType = anonymous.AnonymousDelegate.Type;
-			}
-#endif
 			return anonymous.AnonymousDelegate;
 		}
 

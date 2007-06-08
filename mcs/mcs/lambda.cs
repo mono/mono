@@ -124,7 +124,7 @@ namespace Mono.CSharp {
 				// in D has the same type and modifiers as the corresponding
 				// parameter in L.
 				//
-				if (!VerifyExplicitParameterCompatibility (delegate_type, invoke_pd))
+				if (!VerifyExplicitParameterCompatibility (delegate_type, invoke_pd, false))
 					return null;
 			} else {
 				//
