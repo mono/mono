@@ -45,7 +45,7 @@ namespace MonoTests.System.Data.Odbc
                 public void OdbcTypeTest ()
                 {
 			OdbcParameter param = new OdbcParameter ();
-			Assert.AreEqual (OdbcType.VarChar, param.OdbcType, "#1");
+			Assert.AreEqual (OdbcType.NVarChar, param.OdbcType, "#1");
 
 			// change test
 			param.OdbcType = OdbcType.Int;

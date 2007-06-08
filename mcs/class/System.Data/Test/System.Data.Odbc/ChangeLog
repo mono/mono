@@ -1,3 +1,8 @@
+2007-06-08  Nagappan A  <anagappan@novell.com>
+
+	* OdbcParameterTest.cs (OdbcTypeTest): The default data type of
+	OdbcParameter is changed to NVarChar.
+
 2005-10-08  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* OdbcParameterTest.cs (OdbcTypeTest): Disconnected Tests for
