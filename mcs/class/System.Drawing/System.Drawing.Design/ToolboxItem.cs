@@ -151,7 +151,7 @@ namespace System.Drawing.Design
 		{
 			OnComponentsCreating (new ToolboxComponentsCreatingEventArgs (host));
 			IComponent[] Comp = CreateComponentsCore (host);
-			OnComponentsCreated ( new ToolboxComponentsCreatedEventArgs (Comp));
+			OnComponentsCreated (new ToolboxComponentsCreatedEventArgs (Comp));
 			return Comp;
 		}
 
@@ -160,8 +160,6 @@ namespace System.Drawing.Design
 		{
 			if (host == null)
 				throw new ArgumentNullException("host");
-
-			OnComponentsCreating(new ToolboxComponentsCreatingEventArgs(host));
 			
 			IComponent[] components;
 			Type type = GetType(host, AssemblyName, TypeName, true);
@@ -170,30 +168,28 @@ namespace System.Drawing.Design
 			else
 				components = new IComponent[] { host.CreateComponent(type) };
 
-			OnComponentsCreated(new ToolboxComponentsCreatedEventArgs(components));
 			return components;
 		}
 
 #if NET_2_0
-		[MonoTODO] 
 		protected virtual IComponent[] CreateComponentsCore (IDesignerHost host, IDictionary defaultValues)
 		{
-			throw new NotImplementedException ();
+			IComponent[] components = CreateComponentsCore (host);
+			foreach (Component c in components) {
+				IComponentInitializer initializer = host.GetDesigner (c) as IComponentInitializer;
+				initializer.InitializeNewComponent (defaultValues);
+			}
+			return components;
 		} 
 
-		[MonoTODO] 
 		public IComponent[] CreateComponents (IDesignerHost host, IDictionary defaultValues)
 		{
-			throw new NotImplementedException ();
-		} 
+			OnComponentsCreating (new ToolboxComponentsCreatingEventArgs (host));
+			IComponent[] components = CreateComponentsCore (host,  defaultValues);
+			OnComponentsCreated (new ToolboxComponentsCreatedEventArgs (components));
 
-		[MonoNotSupported("")] 
-		public Type GetType (IDesignerHost host)
-		{
-			if (host == null)
-				return null;
-      			throw new NotImplementedException ();
-		}
+			return components;
+		} 
 
 		protected virtual object FilterPropertyValue (string propertyName, object value)
 		{
@@ -240,6 +236,11 @@ namespace System.Drawing.Design
 		{
 			// FIXME: other algorithm?
 			return string.Concat (TypeName, DisplayName).GetHashCode ();
+		}
+
+		public Type GetType (IDesignerHost host)
+		{
+			return GetType (host, this.AssemblyName,  this.TypeName,  false);
 		}
 
 		protected virtual Type GetType (IDesignerHost host, AssemblyName assemblyName, string typeName, bool reference)

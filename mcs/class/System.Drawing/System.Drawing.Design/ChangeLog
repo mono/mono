@@ -1,3 +1,8 @@
+2007-06-08  Ivan N. Zlatev <contact@i-nz.net>
+
+	* ToolboxItem.cs: Implement some 2.0 stuff.
+	Fix events not to get fired twice.
+
 2007-06-06  Alan McGovern <alan.mcgovern@gmail.com>
 
 	* ToolboxItem.cs: Fixed typo in event firing
