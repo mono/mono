@@ -652,7 +652,6 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test] // bug #81720
-		[Category ("NotWorking")]
 		public void IsBackGround ()
 		{
 			Thread t1 = new Thread (new ThreadStart (Start));
@@ -661,6 +660,9 @@ namespace MonoTests.System.Threading
 			t1.Start ();
 			t1.Join ();
 			Assert.AreEqual (ThreadState.Stopped, t1.ThreadState, "#A3");
+
+			// uncomment when bug #81658 is fixed
+			/*
 			try {
 				bool isBackGround = t1.IsBackground;
 				Assert.Fail ("#A4: " + isBackGround.ToString ());
@@ -669,6 +671,7 @@ namespace MonoTests.System.Threading
 				Assert.IsNull (ex.InnerException, "#A6");
 				Assert.IsNotNull (ex.Message, "#A7");
 			}
+			*/
 
 			Thread t2 = new Thread (new ThreadStart (Start));
 			Assert.AreEqual (ThreadState.Unstarted, t2.ThreadState, "#B1");
@@ -678,6 +681,8 @@ namespace MonoTests.System.Threading
 			t2.Start ();
 			t2.Join ();
 			Assert.AreEqual (ThreadState.Stopped, t2.ThreadState, "#B4");
+			// uncomment when bug #81658 is fixed
+			/*
 			try {
 				bool isBackGround = t2.IsBackground;
 				Assert.Fail ("#B5: " + isBackGround.ToString ());
@@ -686,6 +691,7 @@ namespace MonoTests.System.Threading
 				Assert.IsNull (ex.InnerException, "#B7");
 				Assert.IsNotNull (ex.Message, "#B8");
 			}
+			*/
 		}
 	}
 
