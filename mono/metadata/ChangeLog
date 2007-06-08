@@ -1,5 +1,10 @@
 2007-06-08  Raja R Harinath  <rharinath@novell.com>
 
+	* metadata.c (mono_metadata_load_generic_params): Move
+	initialization of 'context' field here from ...
+	* class.c (mono_class_create_from_typedef): ... here, and ...
+	* loader.c (mono_get_method_from_token): ... here.
+
 	* class.c (get_shared_generic_class): Rename from
 	mono_get_shared_generic_class and make static.
 	(mono_get_shared_generic_inst): Move to metadata.c.
