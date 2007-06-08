@@ -2682,8 +2682,7 @@ namespace Mono.CSharp {
 						continue;
 
 					AnonymousMethodExpression am = (AnonymousMethodExpression)a.Expr;
-
-					Expression e = am.Compatible (ec, dtype);
+					Expression e = am.InferTypeArguments (ec, dtype);
 					if (e == null)
 						return false;
 
