@@ -1,3 +1,7 @@
+2007-06-08  Marek Safar <marek.safar@gmail.com>
+
+	* Enumerable.cs: Fixed recursion in GroupBy.
+
 2007-03-24  Antonello Provenzano  <antonello@deveel.com>
 
 	* Enumerable.cs: Migrated from QueryExpression

@@ -846,7 +846,7 @@ namespace System.Linq
         public static IEnumerable<IGrouping<TKey, TElement>> GroupBy<TSource, TKey, TElement>(this IEnumerable<TSource> source,
             Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector)
         {
-            return GroupBy<TSource, TKey, TElement>(source, keySelector, elementSelector);
+            return GroupBy<TSource, TKey, TElement>(source, keySelector, elementSelector, null);
         }
 
 
