@@ -1,3 +1,10 @@
+2007-06-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* loader.c (mono_free_method): Free method->signature as well. Fixes #81832.
+
+	* marshal.c (mono_marshal_get_managed_wrapper): Allocate the signature using malloc
+	in the dynamic case.
+
 2007-06-08  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* threads.c: When cleaning up thread, reset the Background bit.
