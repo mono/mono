@@ -436,8 +436,9 @@ namespace System.Web.UI
 				}
 				
 				return _templateSourceDirectory;
-#endif
+#else
 				return (_parent == null) ? String.Empty : _parent.TemplateSourceDirectory;
+#endif
 			}
                 }
 #endif
