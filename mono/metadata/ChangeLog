@@ -1,3 +1,10 @@
+2007-06-08  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #81830
+	* class.c (mono_class_from_generic_parameter): Don't assume a
+	generic container owner exists.  Generic containers from monodis
+	don't have any.
+
 2007-06-06  Rodrigo Kumpera  <kumpera@gmail.com>
 
 	* pedump.c: pedump exists with 2 if assembly is not verifiable and 3 if invalid
