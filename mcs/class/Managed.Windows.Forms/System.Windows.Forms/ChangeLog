@@ -1,5 +1,9 @@
 2007-06-08  Jonathan Pobst  <monkey@jpobst.com>
 
+	* GroupBox.cs: Add 2.0 stuffs.
+
+2007-06-08  Jonathan Pobst  <monkey@jpobst.com>
+
 	* Panel.cs: Add autosize properties/event.
 
 2007-06-07  Jonathan Pobst  <monkey@jpobst.com>

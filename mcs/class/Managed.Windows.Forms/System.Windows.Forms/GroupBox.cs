@@ -49,7 +49,16 @@ namespace System.Windows.Forms
 		private Rectangle display_rectangle = new Rectangle ();
 
 		#region Events
-		[Browsable(false)]
+#if NET_2_0
+		[Browsable (true)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
+		public new event EventHandler AutoSizeChanged {
+			add { base.AutoSizeChanged += value; }
+			remove { base.AutoSizeChanged -= value; }
+		}
+#endif
+
+		[Browsable (false)]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public new event EventHandler Click {
 			add { base.Click += value; }
@@ -83,6 +92,22 @@ namespace System.Windows.Forms
 			add { base.KeyUp += value; }
 			remove { base.KeyUp -= value; }
 		}
+
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		public new event MouseEventHandler MouseClick {
+			add { base.MouseClick += value; }
+			remove { base.MouseClick -= value; }
+		}
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		public new event MouseEventHandler MouseDoubleClick {
+			add { base.MouseDoubleClick += value; }
+			remove { base.MouseDoubleClick -= value; }
+		}
+#endif
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -143,6 +168,24 @@ namespace System.Windows.Forms
 			get { return base.AllowDrop;  }
 			set { base.AllowDrop = value; }
 		}
+
+#if NET_2_0
+		[Browsable (true)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Visible)]
+		public override bool AutoSize {
+			get { return base.AutoSize; }
+			set { base.AutoSize = value; }
+		}
+
+		[Browsable (true)]
+		[DefaultValue (AutoSizeMode.GrowOnly)]
+		[Localizable (true)]
+		public AutoSizeMode AutoSizeMode {
+			get { return base.GetAutoSizeMode (); }
+			set { base.SetAutoSizeMode (value); }
+		}
+#endif
 
 		protected override CreateParams CreateParams {
 			get { return base.CreateParams; }
@@ -207,6 +250,13 @@ namespace System.Windows.Forms
 		#endregion //Public Properties
 
 		#region Public Methods
+#if NET_2_0
+		protected override AccessibleObject CreateAccessibilityInstance ()
+		{
+			return new GroupBoxAccessibleObject (this);
+		}
+#endif
+		
 		protected override void OnFontChanged (EventArgs e)
 		{
 			base.OnFontChanged (e);
@@ -231,6 +281,13 @@ namespace System.Windows.Forms
 			
 			return base.ProcessMnemonic (charCode);
 		}
+
+#if NET_2_0
+		protected override void ScaleControl (SizeF factor, BoundsSpecified specified)
+		{
+			base.ScaleControl (factor, specified);
+		}
+#endif
 
 		public override string ToString()
 		{
@@ -261,6 +318,45 @@ namespace System.Windows.Forms
 			get { return new Padding (3); }
 		}
 #endif
+		#endregion
+
+		#region Internal Methods
+#if NET_2_0
+		internal override Size GetPreferredSizeCore (Size proposedSize)
+		{
+			Size retsize = new Size (Padding.Left, Padding.Top);
+
+			foreach (Control child in Controls) {
+				if (child.Dock == DockStyle.Fill) {
+					if (child.Bounds.Right > retsize.Width)
+						retsize.Width = child.Bounds.Right;
+				} else if (child.Dock != DockStyle.Top && child.Dock != DockStyle.Bottom && (child.Anchor & AnchorStyles.Right) == 0 && (child.Bounds.Right + child.Margin.Right) > retsize.Width)
+					retsize.Width = child.Bounds.Right + child.Margin.Right;
+
+				if (child.Dock == DockStyle.Fill) {
+					if (child.Bounds.Bottom > retsize.Height)
+						retsize.Height = child.Bounds.Bottom;
+				} else if (child.Dock != DockStyle.Left && child.Dock != DockStyle.Right && (child.Anchor & AnchorStyles.Bottom) == 0 && (child.Bounds.Bottom + child.Margin.Bottom) > retsize.Height)
+					retsize.Height = child.Bounds.Bottom + child.Margin.Bottom;
+			}
+
+			retsize.Width += Padding.Right;
+			retsize.Height += Padding.Bottom;
+			
+			retsize.Height += this.Font.Height;
+			
+			return retsize;
+		}
+#endif
+		#endregion
+
+		#region Private Classes
+		private class GroupBoxAccessibleObject : Control.ControlAccessibleObject
+		{
+			public GroupBoxAccessibleObject (Control owner) : base (owner)
+			{
+			}
+		}
 		#endregion
 	}
 }

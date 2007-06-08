@@ -32,8 +32,9 @@ namespace MonoTests.System.Windows.Forms
 			
 #if NET_2_0
 			Assert.AreEqual (false, gb.AutoSize, "A6");
-			//Assert.AreEqual (AutoSizeMode.GrowOnly, gb.AutoSizeMode, "A7");
+			Assert.AreEqual (AutoSizeMode.GrowOnly, gb.AutoSizeMode, "A7");
 			Assert.AreEqual (true, gb.UseCompatibleTextRendering, "A8");
+			Assert.AreEqual ("System.Windows.Forms.GroupBox+GroupBoxAccessibleObject", gb.AccessibilityObject.GetType ().ToString (), "A9");
 #endif
 		}
 		
@@ -60,6 +61,34 @@ namespace MonoTests.System.Windows.Forms
 
 #if NET_2_0
 		[Test]
+		public void AutoSize ()
+		{
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+
+			GroupBox p = new GroupBox ();
+			p.AutoSize = true;
+			f.Controls.Add (p);
+
+			Button b = new Button ();
+			b.Size = new Size (200, 200);
+			b.Location = new Point (200, 200);
+			p.Controls.Add (b);
+
+			f.Show ();
+
+			Assert.AreEqual (new Size (406, 419), p.ClientSize, "A1");
+
+			p.Controls.Remove (b);
+			Assert.AreEqual (new Size (200, 100), p.ClientSize, "A2");
+
+			p.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+			Assert.AreEqual (new Size (6, 19), p.ClientSize, "A3");
+
+			f.Dispose ();
+		}
+
+		[Test]
 		public void PropertyDisplayRectangle ()
 		{
 			GroupBox gb = new GroupBox ();
@@ -77,6 +106,40 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (150, gb.DisplayRectangle.Width, "A3");
 			Assert.IsTrue (gb.DisplayRectangle.Top > gb.Padding.Top, "A4");
 			Assert.IsTrue (gb.DisplayRectangle.Height < (gb.Height - gb.Padding.Vertical), "A5");
+		}
+		
+		[Test]
+		public void MethodScaleControl ()
+		{
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+			
+			f.Show ();
+
+			PublicGroupBox gb = new PublicGroupBox ();
+			gb.Location = new Point (5, 10);
+			f.Controls.Add (gb);
+			
+			Assert.AreEqual (new Rectangle (5, 10, 200, 100), gb.Bounds, "A1");
+			
+			gb.PublicScaleControl (new SizeF (2.0f, 2.0f), BoundsSpecified.All);
+			Assert.AreEqual (new Rectangle (10, 20, 400, 200), gb.Bounds, "A2");
+
+			gb.PublicScaleControl (new SizeF (.5f, .5f), BoundsSpecified.Location);
+			Assert.AreEqual (new Rectangle (5, 10, 400, 200), gb.Bounds, "A3");
+
+			gb.PublicScaleControl (new SizeF (.5f, .5f), BoundsSpecified.Size);
+			Assert.AreEqual (new Rectangle (5, 10, 200, 100), gb.Bounds, "A4");
+			
+			f.Dispose ();
+		}
+		
+		private class PublicGroupBox : GroupBox
+		{
+			public void PublicScaleControl (SizeF factor, BoundsSpecified specified)
+			{
+				base.ScaleControl (factor, specified);
+			}
 		}
 #endif
 	}
