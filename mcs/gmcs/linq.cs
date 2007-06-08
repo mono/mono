@@ -76,10 +76,7 @@ namespace Mono.CSharp.Linq
 					MemberTypes.Method, BindingFlags.Static | BindingFlags.Public,
 					Type.FilterName, MethodName);
 
-				// TODO: implement correct selection
-				MethodInfo[] mi = new MethodInfo[] { (MethodInfo)ml[0] };
-
-				method_group = new MethodGroupExpr (mi, loc);
+				method_group = new MethodGroupExpr (ArrayList.Adapter (ml), loc);
 				methods.Add (MethodName, method_group);
 				return method_group;
 			}
@@ -117,15 +114,19 @@ namespace Mono.CSharp.Linq
 			ame.Block = new ToplevelBlock (parameters, loc);
 			ame.Block.AddStatement (new Return (expr, loc));
 
-			ArrayList args = new ArrayList (2);
-			args.Add (new Argument (from));
-			args.Add (new Argument (ame));
-
-			expr = new Invocation (MethodGroup, args);
+			expr = new Invocation (MethodGroup, CreateArguments (ame, from));
 			if (Next != null)
 				return Next.BuildQueryClause (ec, top, this, li);
 
 			return expr;
+		}
+			                       
+		protected virtual ArrayList CreateArguments (AnonymousMethodExpression ame, Expression from)
+		{
+			ArrayList args = new ArrayList (2);
+			args.Add (new Argument (from));
+			args.Add (new Argument (ame));
+			return args;
 		}
 	}
 
@@ -158,6 +159,37 @@ namespace Mono.CSharp.Linq
 		public override void Emit (EmitContext ec)
 		{
 			throw new NotSupportedException ();
+		}
+	}
+
+	public class GroupBy : AQueryClause
+	{
+		readonly Expression element_selector;
+		
+		public GroupBy (Expression elementSelector, Expression keySelector, Location loc)
+			: base (keySelector, loc)
+		{
+			this.element_selector = elementSelector;
+		}
+
+		protected override ArrayList CreateArguments (AnonymousMethodExpression ame, Expression from)
+		{
+			ArrayList args = base.CreateArguments (ame, from);
+			
+			// A query can be optimized when selector is not group by specific
+			if (!element_selector.Equals (from)) {
+				AnonymousMethodExpression am_element = new AnonymousMethodExpression (
+					null, null, ame.Host, ame.Parameters, ame.Container, loc);
+				am_element.Block = new ToplevelBlock (ame.Parameters, loc);
+				am_element.Block.AddStatement (new Return (element_selector, loc));
+				
+				args.Add (new Argument (am_element));
+			}
+			return args;
+		}
+
+		protected override string MethodName {
+			get { return "GroupBy"; }
 		}
 	}
 

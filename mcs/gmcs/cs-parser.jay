@@ -5416,6 +5416,10 @@ query_body
 		$$ = ret;
 	  }
 	| opt_from_let_where_clauses opt_orderby_clause group_clause opt_query_continuation
+	  {
+	  	Linq.AQueryClause ret = (Linq.AQueryClause)$3;
+	  	$$ = ret;
+	  }
 	;
 	
 opt_from_let_where_clauses
@@ -5468,6 +5472,9 @@ ordering
 	
 group_clause
 	: GROUP expression BY expression
+	  {
+	    $$ = new Linq.GroupBy ((Expression)$2, (Expression)$4, GetLocation ($1));
+	  }
 	;
 
 opt_query_continuation

@@ -1,5 +1,13 @@
 2007-06-08  Marek Safar  <marek.safar@gmail.com>
 
+	* cs-parser.jay: Uses newly defined GroupBy class.
+	
+	* linq.cs (GroupBy): Implemented.
+	(AQueryClause.BuildQueryClause): Refactored to allow customize query
+	method arguments.
+
+2007-06-08  Marek Safar  <marek.safar@gmail.com>
+
 	* generics.cs (InferTypeArguments): Uses AnonymousMethodExpression
 	InferTypeArguments.
 
