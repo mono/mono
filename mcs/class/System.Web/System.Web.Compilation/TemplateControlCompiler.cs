@@ -248,6 +248,15 @@ namespace System.Web.Compilation
 				}
 
 #if NET_2_0
+				if (builder.ParentTemplateBuilder is System.Web.UI.WebControls.ContentBuilderInternal) {
+					// __ctrl.TemplateControl = this;
+					assign = new CodeAssignStatement ();
+					assign.Left = new CodePropertyReferenceExpression (ctrlVar, "TemplateControl");;
+					assign.Right = thisRef;
+					
+					method.Statements.Add (assign);
+				}
+				
 				// _ctrl.SkinID = $value
 				// _ctrl.ApplyStyleSheetSkin (this);
 				//
@@ -338,13 +347,6 @@ namespace System.Web.Compilation
 
 					// this is the bit that causes the following stuff to end up in the else { }
 					builder.methodStatements = condStatement.FalseStatements;
-
-					// __ctrl.TemplateControl = this;
-					assign = new CodeAssignStatement ();
-					assign.Left = new CodePropertyReferenceExpression (ctrlVar, "TemplateControl");;
-					assign.Right = thisRef;
-
-					method.Statements.Add (assign);
 				}
 #endif
 			}
@@ -1440,60 +1442,8 @@ namespace System.Web.Compilation
 			}
 
 			CreateApplicationInstance ();
-			CreateTemplateSourceDirectory ();
 		}
-
-		void CreateTemplateSourceDirectory ()
-		{
-			CodeMemberProperty prop = new CodeMemberProperty ();
-			prop.Type = new CodeTypeReference (typeof (string));
-			prop.Name = "TemplateSourceDirectory";
-			prop.Attributes = MemberAttributes.Public | MemberAttributes.Override;
-
-#if NET_2_0
-			if (!(parser is MasterPageParser)) {
-#endif
-				// if ((this.TemplateControl != null))
-				//   return this.TemplateControl.TemplateSourceDirectory;
-				CodeFieldReferenceExpression parentField = new CodeFieldReferenceExpression ();
-				parentField.TargetObject = thisRef;
-#if NET_2_0
-				parentField.FieldName = "TemplateControl";
-#else
-				parentField.FieldName = "Parent";
-#endif
-				CodeFieldReferenceExpression tsdField = new CodeFieldReferenceExpression ();
-				tsdField.TargetObject = parentField;
-				tsdField.FieldName = "TemplateSourceDirectory";
-
-				CodeMethodReturnStatement parentRet = new CodeMethodReturnStatement (tsdField);
-				CodeConditionStatement condStatement = new CodeConditionStatement (
-					new CodeBinaryOperatorExpression (parentField,
-									  CodeBinaryOperatorType.IdentityInequality,
-									  new CodePrimitiveExpression (null)),
-					parentRet);
-			
-				prop.GetStatements.Add (condStatement);
-#if NET_2_0
-			}
-#endif
-
-			string tsd, bvd = parser.BaseVirtualDir;
-			int len = bvd.Length;
-			if (len >= 2 && bvd [0] == '~') {
-				if (bvd [1] == '/')
-				    tsd = bvd.Substring (1);
-				else
-				    tsd = '/' + bvd.Substring (1);
-			} else if (len >= 1 && bvd [0] != '/')
-				tsd = '/' + bvd;
-			else
-				tsd = bvd;
-			CodePrimitiveExpression expr = new CodePrimitiveExpression (tsd);
-			prop.GetStatements.Add (new CodeMethodReturnStatement (expr));
-			mainClass.Members.Add (prop);
-		}
-
+		
 		void CreateApplicationInstance ()
 		{
 			CodeMemberProperty prop = new CodeMemberProperty ();
@@ -1700,7 +1650,7 @@ namespace System.Web.Compilation
 
 				return new CodeCastExpression (tref, invoke);
 			}
-			
+
 			Console.WriteLine ("Unknown type: " + type + " value: " + str);
 
 			return new CodePrimitiveExpression (str);

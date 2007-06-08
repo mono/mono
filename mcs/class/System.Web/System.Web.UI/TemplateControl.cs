@@ -80,6 +80,9 @@ namespace System.Web.UI {
 		#region Constructor
 		protected TemplateControl ()
 		{
+#if NET_2_0
+			TemplateControl = this;
+#endif
 			Construct ();
 		}
 

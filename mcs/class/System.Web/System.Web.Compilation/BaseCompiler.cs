@@ -212,16 +212,16 @@ namespace System.Web.Compilation
 				return;
 			if (!baseType.IsSubclassOf (typeof (System.Web.UI.TemplateControl)))
 				return;
-			
+
 			string arvp = Path.Combine (parser.BaseVirtualDir, Path.GetFileName (parser.InputFile));
 			if (VirtualPathUtility.IsAbsolute (arvp))
 				arvp = "~" + arvp;
-			
+
 			CodeExpression cast = new CodeCastExpression (baseType, new CodeThisReferenceExpression ());
 			CodePropertyReferenceExpression arvpProp = new CodePropertyReferenceExpression (cast, "AppRelativeVirtualPath");
 			CodeAssignStatement arvpAssign = new CodeAssignStatement ();
 			arvpAssign.Left = arvpProp;
-			arvpAssign.Right = new CodePrimitiveExpression (arvp);
+			arvpAssign.Right = new CodePrimitiveExpression (VirtualPathUtility.RemoveTrailingSlash (arvp));
 			ctor.Statements.Add (arvpAssign);
 		}
 #endif

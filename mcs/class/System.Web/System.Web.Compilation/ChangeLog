@@ -1,3 +1,15 @@
+2007-06-09  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateControlCompiler.cs: TemplateControl is assigned for
+	controls that are placed within ContentPlaceHolder and not for the
+	ContentPlaceHolder itself.
+	No longer add the overriden version of TemplateSourceDirectory to
+	the generated source, all the work is now done in
+	Control.TemplateSourceDirectory.
+
+	* BaseCompiler.cs: AppRelativeVirtualPath shouldn't end with a
+	slash, for compatibility with MS.NET
+
 2007-06-05  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateControlCompiler.cs: TemplateSourceDirectory in the 2.0

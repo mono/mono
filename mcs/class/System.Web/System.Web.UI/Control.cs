@@ -109,6 +109,7 @@ namespace System.Web.UI
 #if NET_2_0
 		TemplateControl _templateControl;
 		bool _isChildControlStateCleared;
+		string _templateSourceDirectory;
 #endif
 		/*************/
 		int stateMask;
@@ -384,7 +385,13 @@ namespace System.Web.UI
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public TemplateControl TemplateControl {
-			get { return _templateControl; }
+			get {
+				if (_templateControl != null)
+					return _templateControl;
+				if (_parent != null)
+					return _parent.TemplateControl;
+				return null;
+			}
 			
 			[EditorBrowsable (EditorBrowsableState.Never)]
 			set { _templateControl = value; }
@@ -398,16 +405,39 @@ namespace System.Web.UI
                 public virtual string TemplateSourceDirectory {
 			get {
 #if NET_2_0
-				if (_templateControl != null)
-					return _templateControl.TemplateSourceDirectory;
+				if (_templateSourceDirectory == null) {
+					TemplateControl tc = TemplateControl;
 
-				// Arguably, a hack, but this is the easiest way of doing it. We must be sure that controls placed
-				// in an .ascx file get their source directory right, or otherwise ResolveClientUrl will return
-				// invalid paths in such situations.
-				return (_parent == null || !(_parent is UserControl)) ? String.Empty : _parent.TemplateSourceDirectory;
-#else
-				return (_parent == null) ? String.Empty : _parent.TemplateSourceDirectory;
+					if (tc == null) {
+						HttpContext ctx = Context;
+						if (ctx != null)
+							_templateSourceDirectory = VirtualPathUtility.GetDirectory (ctx.Request.CurrentExecutionFilePath);
+					} else if (tc != this)
+						_templateSourceDirectory = tc.TemplateSourceDirectory;
+					
+					if (_templateSourceDirectory == null && this is TemplateControl) {
+						string path = ((TemplateControl)this).AppRelativeVirtualPath;
+						
+						if (path != null) {
+							// Pretend our application virtual root is "/" even if it isn't - we just
+							// want to get an absolute url out of relative one, without the real
+							// application root prepended to it.
+							string ret = VirtualPathUtility.GetDirectory (VirtualPathUtility.ToAbsolute (path, "/"));
+							int len = ret.Length;
+							if (len <= 1)
+								return ret;
+							if (ret [--len] == '/')
+								_templateSourceDirectory = ret.Substring (0, len);
+						} else
+							_templateSourceDirectory = String.Empty;
+					}
+					if (_templateSourceDirectory == null)
+						_templateSourceDirectory = String.Empty;
+				}
+				
+				return _templateSourceDirectory;
 #endif
+				return (_parent == null) ? String.Empty : _parent.TemplateSourceDirectory;
 			}
                 }
 #endif
@@ -1258,13 +1288,13 @@ namespace System.Web.UI
 			HttpContext context = Context;
 			if (context != null && context.Request != null) {
 				string basePath = context.Request.CurrentExecutionFilePath;
-				if (basePath.Length > 1 && basePath [basePath.Length - 1] != '/') {
+
+				if (basePath.Length > 1 && basePath [basePath.Length - 1] != '/')
 					basePath = VirtualPathUtility.GetDirectory (basePath);
-				}
 				
 				if(VirtualPathUtility.IsAppRelative(relativeUrl))
 					return VirtualPathUtility.MakeRelative (basePath, relativeUrl);
-
+				
 				string templateSourceDirectory = TemplateSourceDirectory;
 				if (templateSourceDirectory == null || templateSourceDirectory.Length == 0)
 					return relativeUrl;
@@ -1273,7 +1303,7 @@ namespace System.Web.UI
 				
 				if (basePath.Length == templatePath.Length && String.CompareOrdinal (basePath, templatePath) == 0)
 					return relativeUrl;
-
+				
 				relativeUrl = VirtualPathUtility.Combine (templatePath, relativeUrl);
 				return VirtualPathUtility.MakeRelative (basePath, relativeUrl);
 			}

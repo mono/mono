@@ -336,7 +336,6 @@ namespace MonoTests.System.Web.UI
 		}
 
 		[Test]
-			[Category("NotWorking")]  //EnsureID is not implemented.
 		public void EnsureID ()
 		{
 			MyNC ctrl = new MyNC ();
@@ -652,9 +651,6 @@ namespace MonoTests.System.Web.UI
 		
 		[Test]
 		[Category ("NunitWeb")]
-#if !TARGET_JVM
-		[Category ("NotWorking")] // TemplateSourceDirectory does't work properly
-#endif
 		public void ResolveClientUrl2 ()
 		{
 			WebTest t = new WebTest ("ResolveUrl.aspx");
