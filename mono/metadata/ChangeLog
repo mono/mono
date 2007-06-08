@@ -1,3 +1,8 @@
+2007-06-08  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* threads.c: When cleaning up thread, reset the Background bit.
+	Fixes bug #81720.
+
 2007-06-08  Jonathan Chambers  <joncham@gmail.com>
 
        * metadata.c: Move variable declarations to top of scope.
