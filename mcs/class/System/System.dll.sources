@@ -235,6 +235,7 @@ System.ComponentModel.Design/HelpKeywordAttribute.cs
 System.ComponentModel.Design/HelpKeywordType.cs
 System.ComponentModel.Design/IComponentChangeService.cs
 System.ComponentModel.Design/IComponentDiscoveryService.cs
+System.ComponentModel.Design/IComponentInitializer.cs
 System.ComponentModel.Design/IDesigner.cs
 System.ComponentModel.Design/IDesignerEventService.cs
 System.ComponentModel.Design/IDesignerFilter.cs
