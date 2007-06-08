@@ -1,3 +1,7 @@
+2007-06-08  Marek Safar  <marek.safar@gmail.com>
+
+	* anonymous.cs (AnonymousContainer): Marked as compiler generated.
+
 2007-06-07  Raja R Harinath  <harinath@gmail.com>
 
 	Fix #80477, cs0135-2.cs, cs0135-3.cs

@@ -1434,7 +1434,7 @@ namespace Mono.CSharp {
 		{
 			this.ContainerAnonymousMethod = parent;
 			this.ReturnType = return_type;
-			this.ModFlags = mod;
+			this.ModFlags = mod | Modifiers.COMPILER_GENERATED;
 			this.Host = host;
 
 			this.container = container;
