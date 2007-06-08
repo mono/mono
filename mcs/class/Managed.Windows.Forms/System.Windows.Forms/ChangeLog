@@ -1,5 +1,9 @@
 2007-06-08  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ButtonBase.cs: ButtonBaseAccessibleObject.State should not be visible to 1.1.
+
+2007-06-08  Jonathan Pobst  <monkey@jpobst.com>
+
 	* GroupBox.cs: Add 2.0 stuffs.
 
 2007-06-08  Jonathan Pobst  <monkey@jpobst.com>

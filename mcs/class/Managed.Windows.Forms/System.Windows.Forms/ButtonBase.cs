@@ -762,9 +762,11 @@ namespace System.Windows.Forms {
 			#endregion	// ButtonBaseAccessibleObject Constructors
 
 			#region Public Properties
+#if NET_2_0
 			public override AccessibleStates State {
 				get { return base.State; }
 			}
+#endif
 			#endregion
 			
 			#region ButtonBaseAccessibleObject Methods
