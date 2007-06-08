@@ -854,6 +854,51 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (string.Empty, cmbbox.Text, "#S2");
 			Assert.AreEqual (-1, cmbbox.SelectedIndex, "#S3");
 		}
+
+#if NET_2_0
+		[Test]
+		public void MethodScaleControl ()
+		{
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+
+			f.Show ();
+
+			PublicComboBox gb = new PublicComboBox ();
+			gb.Location = new Point (5, 10);
+			f.Controls.Add (gb);
+
+			Assert.AreEqual (new Rectangle (5, 10, 121, 21), gb.Bounds, "A1");
+
+			gb.PublicScaleControl (new SizeF (2.0f, 2.0f), BoundsSpecified.All);
+			Assert.AreEqual (new Rectangle (10, 20, 238, 21), gb.Bounds, "A2");
+
+			gb.PublicScaleControl (new SizeF (.5f, .5f), BoundsSpecified.Location);
+			Assert.AreEqual (new Rectangle (5, 10, 238, 21), gb.Bounds, "A3");
+
+			gb.PublicScaleControl (new SizeF (.5f, .5f), BoundsSpecified.Size);
+			Assert.AreEqual (new Rectangle (5, 10, 121, 21), gb.Bounds, "A4");
+
+			gb.PublicScaleControl (new SizeF (3.5f, 3.5f), BoundsSpecified.Size);
+			Assert.AreEqual (new Rectangle (5, 10, 414, 21), gb.Bounds, "A5");
+
+			gb.PublicScaleControl (new SizeF (2.5f, 2.5f), BoundsSpecified.Size);
+			Assert.AreEqual (new Rectangle (5, 10, 1029, 21), gb.Bounds, "A6");
+
+			gb.PublicScaleControl (new SizeF (.2f, .2f), BoundsSpecified.Size);
+			Assert.AreEqual (new Rectangle (5, 10, 209, 21), gb.Bounds, "A7");
+
+			f.Dispose ();
+		}
+
+		private class PublicComboBox : ComboBox
+		{
+			public void PublicScaleControl (SizeF factor, BoundsSpecified specified)
+			{
+				base.ScaleControl (factor, specified);
+			}
+		}
+#endif
 	}
 
 	[TestFixture]

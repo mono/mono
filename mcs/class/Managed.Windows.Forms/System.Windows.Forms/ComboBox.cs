@@ -1221,6 +1221,35 @@ namespace System.Windows.Forms
 		}
 #endif
 
+#if NET_2_0
+		private float current_factor_width = 1f;
+		
+		// WTF? WTF? WTF????
+		// I am sure this is tied to something I missed that makes this make sense.
+		// Every time you double the size of the control, subtract 4 pixels from it
+		protected override void ScaleControl (SizeF factor, BoundsSpecified specified)
+		{
+			// Never change the ComboBox's height
+			specified &= ~BoundsSpecified.Height;
+
+			int width = ClientSize.Width;
+			
+			// Go back to the original (un-4-subtracted) size
+			if ((specified & BoundsSpecified.Width) == BoundsSpecified.Width)
+				width += -(int)(((current_factor_width) - 1f) * -4.0f);
+				
+			Rectangle new_bounds = GetScaledBounds (new Rectangle (Location, new Size (width, ClientSize.Height)), factor, specified);
+			
+			// Subtract 4 for every time the control is 'doubled'
+			if ((specified & BoundsSpecified.Width) == BoundsSpecified.Width) {
+				new_bounds.Width += (int)(((factor.Width * current_factor_width) - 1f) * -4.0f);
+				current_factor_width *= factor.Width;
+			}
+				
+			SetBounds (new_bounds.X, new_bounds.Y, new_bounds.Width, new_bounds.Height, specified);
+		}
+#endif
+
 		public void Select (int start, int length)
 		{
 			if (start < 0)

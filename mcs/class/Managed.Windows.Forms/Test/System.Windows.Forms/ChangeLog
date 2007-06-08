@@ -1,5 +1,9 @@
 2007-06-08  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ComboBoxTest.cs: Add test for ScaleControl.
+
+2007-06-08  Jonathan Pobst  <monkey@jpobst.com>
+
 	* GroupBoxTest.cs: Add some 2.0 tests.
 
 2007-06-08  Jonathan Pobst  <monkey@jpobst.com>
