@@ -1,5 +1,9 @@
 2007-06-08  Jonathan Pobst  <monkey@jpobst.com>
 
+	* GroupBoxTest.cs: Argh! I cannot freaking get this right.  Remove the "!".
+
+2007-06-08  Jonathan Pobst  <monkey@jpobst.com>
+
 	* GroupBoxTest.cs: Missed an if.
 
 2007-06-08  Jonathan Pobst  <monkey@jpobst.com>

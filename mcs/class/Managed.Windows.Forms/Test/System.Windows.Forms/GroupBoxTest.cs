@@ -63,7 +63,7 @@ namespace MonoTests.System.Windows.Forms
 		[Test]
 		public void AutoSize ()
 		{
-			if (!TestHelper.RunningOnUnix)
+			if (TestHelper.RunningOnUnix)
 				Assert.Ignore ("Dependent on font height and theme, values are for windows.");
 				
 			Form f = new Form ();
