@@ -1,5 +1,9 @@
 2007-06-08  Jonathan Pobst  <monkey@jpobst.com>
 
+	* GroupBoxTest.cs: AutoSize is theme dependent.
+
+2007-06-08  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ComboBoxTest.cs: Add test for ScaleControl.
 
 2007-06-08  Jonathan Pobst  <monkey@jpobst.com>
