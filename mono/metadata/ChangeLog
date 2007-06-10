@@ -1,3 +1,9 @@
+2007-06-10  Raja R Harinath  <harinath@gmail.com>
+
+	* reflection.c (mono_class_bind_generic_parameters): Only support
+	parameterizing generic type definitions.  Remove support for other
+	open types.
+
 2007-06-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* loader.c (mono_free_method): Free method->signature as well. Fixes #81832.
