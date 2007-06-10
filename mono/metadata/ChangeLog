@@ -1,5 +1,12 @@
 2007-06-10  Raja R Harinath  <harinath@gmail.com>
 
+	* reflection.c (mono_class_bind_generic_parameters): Take and
+	return a MonoClass*, not a MonoType*.  Add 'is_dynamic' parameter.
+	(mono_reflection_bind_generic_parameters): Use
+	'mono_class_bind_generic_parameters' rather than duplicate the code.
+	* class.c (mono_bounded_array_class_get): Update to changes.
+	* object-internals.h: Likewise.
+
 	* reflection.c (mono_class_bind_generic_parameters): Only support
 	parameterizing generic type definitions.  Remove support for other
 	open types.
