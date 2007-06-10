@@ -1,5 +1,13 @@
 2007-06-10  Raja R Harinath  <harinath@gmail.com>
 
+	* class.c (inflate_generic_type) [MONO_TYPE_CLASS]: Don't call
+	get_shared_generic_class.  Directly inflate the instance.
+	[MONO_TYPE_GENERICINST]: Inline inflate_generic_class.
+	(inflate_generic_class): Delete.
+	(get_shared_generic_class): Delete.  Move setting of
+	'cached_class' and 'cached_context' ...
+	* metadata.c (mono_metadata_lookup_generic_class): ... here.
+
 	* metadata.c (mono_metadata_lookup_generic_class): Change
 	signature to take the components of a MonoGenericClass rather than
 	an allocated MonoGenericClass.  Change semantics to be intern-like.
