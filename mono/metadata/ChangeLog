@@ -1,5 +1,14 @@
 2007-06-10  Raja R Harinath  <harinath@gmail.com>
 
+	* metadata.c (mono_metadata_lookup_generic_class): Change
+	signature to take the components of a MonoGenericClass rather than
+	an allocated MonoGenericClass.  Change semantics to be intern-like.
+	* reflection.c (mono_class_bind_generic_parameters): Update to
+	changes.  Make locking region tighter.
+	* class.c (inflate_generic_class): Update to changes.
+	(get_shared_generic_class): Likewise.
+	* metadata-internals.h: Likewise.
+
 	* reflection.c (mono_class_bind_generic_parameters): Take and
 	return a MonoClass*, not a MonoType*.  Add 'is_dynamic' parameter.
 	(mono_reflection_bind_generic_parameters): Use
