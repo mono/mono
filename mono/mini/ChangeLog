@@ -1,3 +1,8 @@
+2007-06-10  Sanghyeon Seo <sanxiyn@gmail.com>
+
+	* mini-exceptions.c: Generate a method profile leave event during
+	an exception to ensure that the profiler gets notified.
+
 2007-06-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-amd64.c (peephole_pass): Merge some small changes from the linear-ir 
