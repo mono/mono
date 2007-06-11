@@ -463,11 +463,7 @@ namespace Mono.CSharp {
 			if (namespaces.Contains (name))
 				return (Namespace) namespaces [name];
 
-			TypeExpr te = LookupType (name, loc);
-			if (te == null || !ds.CheckAccessLevel (te.Type))
-				return null;
-
-			return te;
+			return LookupType (name, loc);
 		}
 
 		public void RegisterExternalExtensionMethodClass (Type type)

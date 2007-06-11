@@ -2623,14 +2623,17 @@ namespace Mono.CSharp {
 
 				if (type != null)
 					return TypeManager.GetNestedType (type, substring);
-				else if (resolved != null) {
+				
+				if (resolved != null) {
 					resolved = (resolved as Namespace).Lookup (ec.DeclContainer, substring, Location.Null);
 					if (resolved is TypeExpr)
 						return resolved.Type;
-					else {
-						resolved.Error_UnexpectedKind (ec.DeclContainer, "type", loc);
-						return typeof (UnexpectedType);
-					}
+					
+					if (resolved == null)
+						return null;
+					
+					resolved.Error_UnexpectedKind (ec.DeclContainer, "type", loc);
+					return typeof (UnexpectedType);
 				}
 				else
 					return null;
@@ -2642,11 +2645,11 @@ namespace Mono.CSharp {
 		protected override TypeExpr DoResolveAsTypeStep (IResolveContext ec)
 		{
 			Type t = TypeLookup (ec, name);
-			if (t == null || !ec.DeclContainer.CheckAccessLevel (t)) {
+			if (t == null) {
 				NamespaceEntry.Error_NamespaceNotFound (loc, name);
 				return null;
 			}
-			else if (t == typeof(UnexpectedType))
+			if (t == typeof(UnexpectedType))
 				return null;
 			type = t;
 			return this;

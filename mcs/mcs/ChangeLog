@@ -1,3 +1,17 @@
+2007-06-11  Marek Safar  <marek.safar@gmail.com>
+
+	* class.cs (DefineBaseTypes): Base type can be undefined.
+	
+	* ecore.cs (TypeLookup): Minor refactoring.
+	(DoResolveAsTypeStep): Removed redundant check.
+
+	* namespace.cs (Lookup): Removed redundant check.
+		
+	* rootcontext.cs (BootstrapCorlib_ResolveType): Uses normal 
+	ResolveAsTypeTerminal step.
+	(BootstrapCorlib_*): Simplified.
+	(PopulateCoreType): Core types can be now external.
+
 2007-06-07  Marek Safar  <marek.safar@gmail.com>
 
 	* anonymous.cs (VerifyExplicitParameterCompatibility): Add flag to do

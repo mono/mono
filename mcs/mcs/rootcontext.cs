@@ -2,7 +2,9 @@
 // rootcontext.cs: keeps track of our tree representation, and assemblies loaded.
 //
 // Author: Miguel de Icaza (miguel@ximian.com)
-//         Ravi Pratap     (ravi@ximian.com)
+//            Ravi Pratap  (ravi@ximian.com)
+//            Marek Safar  (marek.safar@gmail.com)
+//
 //
 // Licensed under the terms of the GNU GPL
 //
@@ -170,44 +172,49 @@ namespace Mono.CSharp {
 					d.DefineType ();
 		}
 
-		static void Error_TypeConflict (string name, Location loc)
-		{
-			Report.Error (
-				520, loc, "`" + name + "' conflicts with a predefined type");
-		}
+		delegate bool VerifyBootstrapType (Type t);
 
-		static void Error_TypeConflict (string name)
+		static Type BootstrapCorlib_ResolveType (TypeContainer root, string name, VerifyBootstrapType typeVerifier)
 		{
-			Report.Error (
-				520, "`" + name + "' conflicts with a predefined type");
-		}
+			TypeLookupExpression tle = new TypeLookupExpression (name);
+			Report.DisableErrors ();
+			TypeExpr te = tle.ResolveAsTypeTerminal (root, false);
+			Report.EnableErrors ();
+			if (te == null) {
+				Report.Error (518, "The predefined type `{0}' is not defined or imported", name);
+				return null;
+			}
 
+			Type t = te.Type;
+			if (!typeVerifier (t)) {
+				MemberCore mc = root.GetDefinition (name);
+				Location loc = Location.Null;
+				if (mc != null) {
+					name = mc.GetSignatureForError ();
+					loc = mc.Location;
+				}
+
+				Report.Error (520, loc, "The predefined type `{0}' is not declared correctly", name);
+				return null;
+			}
+
+			AttributeTester.RegisterNonObsoleteType (t);
+			return t;
+		}
 		//
 		// Resolves a single class during the corlib bootstrap process
 		//
 		static Type BootstrapCorlib_ResolveClass (TypeContainer root, string name)
 		{
-			object o = root.GetDefinition (name);
-			if (o == null){
-				Report.Error (518, "The predefined type `" + name + "' is not defined or imported");
-				return null;
-			}
+			return BootstrapCorlib_ResolveType (root, name, IsClass);
+		}
 
-			if (!(o is Class)){
-				if (o is DeclSpace){
-					DeclSpace d = (DeclSpace) o;
-
-					Error_TypeConflict (name, d.Location);
-				} else
-					Error_TypeConflict (name);
-
-				return null;
-			}
-
-			Type t = ((DeclSpace) o).DefineType ();
-			if (t != null)
-				AttributeTester.RegisterNonObsoleteType (t);
-			return t;
+		static bool IsClass (Type t)
+		{
+			DeclSpace ds = TypeManager.LookupDeclSpace (t);
+			if (ds != null)
+				return ds is Class;
+			return t.IsClass;
 		}
 
 		//
@@ -215,51 +222,29 @@ namespace Mono.CSharp {
 		//
 		static void BootstrapCorlib_ResolveStruct (TypeContainer root, string name)
 		{
-			object o = root.GetDefinition (name);
-			if (o == null){
-				Report.Error (518, "The predefined type `" + name + "' is not defined or imported");
-				return;
-			}
+			BootstrapCorlib_ResolveType (root, name, IsStruct);
+		}
 
-			if (!(o is Struct)){
-				if (o is DeclSpace){
-					DeclSpace d = (DeclSpace) o;
-
-					Error_TypeConflict (name, d.Location);
-				} else
-					Error_TypeConflict (name);
-
-				return;
-			}
-
-			((DeclSpace) o).DefineType ();
+		static bool IsStruct (Type t)
+		{
+			DeclSpace ds = TypeManager.LookupDeclSpace (t);
+			if (ds != null)
+				return ds is Struct;
+			
+			return TypeManager.IsSubclassOf (t, TypeManager.value_type);			
 		}
 
 		//
-		// Resolves a struct during the corlib bootstrap process
+		// Resolves an interface during the corlib bootstrap process
 		//
 		static void BootstrapCorlib_ResolveInterface (TypeContainer root, string name)
 		{
-			object o = root.GetDefinition (name);
-			if (o == null){
-				Report.Error (518, "The predefined type `" + name + "' is not defined or imported");
-				return;
-			}
+			BootstrapCorlib_ResolveType (root, name, IsInterface);
+		}
 
-			if (!(o is Interface)){
-				if (o is DeclSpace){
-					DeclSpace d = (DeclSpace) o;
-
-					Error_TypeConflict (name, d.Location);
-				} else
-					Error_TypeConflict (name);
-
-				return;
-			}
-
-			Type t = ((DeclSpace) o).DefineType ();
-			if (t != null)
-				AttributeTester.RegisterNonObsoleteType (t);
+		static bool IsInterface (Type t)
+		{
+			return t.IsInterface;
 		}
 
 		//
@@ -267,20 +252,13 @@ namespace Mono.CSharp {
 		//
 		static void BootstrapCorlib_ResolveDelegate (TypeContainer root, string name)
 		{
-			object o = root.GetDefinition (name);
-			if (o == null){
-				Report.Error (518, "The predefined type `" + name + "' is not defined or imported");
-				return;
-			}
-
-			if (!(o is Delegate)){
-				Error_TypeConflict (name);
-				return;
-			}
-
-			((DeclSpace) o).DefineType ();
+			BootstrapCorlib_ResolveType (root, name, IsDelegate);
 		}
-		
+
+		static bool IsDelegate (Type t)
+		{
+			return TypeManager.IsDelegateType (t);
+		}
 
 		/// <summary>
 		///    Resolves the core types in the compiler when compiling with --nostdlib
@@ -421,13 +399,10 @@ namespace Mono.CSharp {
 #if GMCS_SOURCE
 			BootstrapCorlib_ResolveStruct (root, "System.Nullable`1");
 #endif
-			BootstrapCorlib_ResolveDelegate (root, "System.AsyncCallback");
+			TypeManager.delegate_type = BootstrapCorlib_ResolveClass (root, "System.Delegate");
+			BootstrapCorlib_ResolveClass (root, "System.MulticastDelegate");
 
-			// These will be defined indirectly during the previous ResolveDelegate.
-			// However make sure the rest of the checks happen.
-			string [] delegate_types = { "System.Delegate", "System.MulticastDelegate" };
-			foreach (string cname in delegate_types)
-				BootstrapCorlib_ResolveClass (root, cname);
+			BootstrapCorlib_ResolveDelegate (root, "System.AsyncCallback");
 		}
 			
 		// <summary>
@@ -497,6 +472,9 @@ namespace Mono.CSharp {
 		static public void PopulateCoreType (TypeContainer root, string name)
 		{
 			DeclSpace ds = (DeclSpace) root.GetDefinition (name);
+			// Core type was imported
+			if (ds == null)
+				return;
 
 			ds.DefineMembers ();
 			ds.Define ();

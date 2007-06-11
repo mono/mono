@@ -1119,7 +1119,7 @@ namespace Mono.CSharp {
 			if (!CheckRecursiveDefinition (this))
 				return false;
 
-			if (base_type != null) {
+			if (base_type != null && base_type.Type != null) {
 				TypeBuilder.SetParent (base_type.Type);
 
 				ObsoleteAttribute obsolete_attr = AttributeTester.GetObsoleteAttribute (base_type.Type);
@@ -1452,7 +1452,7 @@ namespace Mono.CSharp {
 
 			InTransit = tc;
 
-			if (base_type != null) {
+			if (base_type != null && base_type.Type != null) {
 				Type t = TypeManager.DropGenericTypeArguments (base_type.Type);
 				TypeContainer ptc = TypeManager.LookupTypeContainer (t);
 				if ((ptc != null) && !ptc.CheckRecursiveDefinition (this))
