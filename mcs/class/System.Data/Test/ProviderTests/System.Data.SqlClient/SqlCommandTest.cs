@@ -1405,6 +1405,29 @@ namespace MonoTests.System.Data.SqlClient
 		}
 		
 		[Test]
+		public void SqlCommandDisposeTest ()
+		{
+			IDataReader reader = null;
+			try {
+				conn = (SqlConnection) ConnectionManager.Singleton.Connection;
+				ConnectionManager.Singleton.OpenConnection ();
+
+				IDbCommand command = conn.CreateCommand ();
+				try {
+					string sql = "SELECT * FROM employee";
+					command.CommandText = sql;
+					reader = command.ExecuteReader();
+				} finally {
+					command.Dispose();
+				}
+				while (reader.Read());
+			} finally {
+				reader.Dispose();
+				ConnectionManager.Singleton.CloseConnection ();
+			}		
+		}
+		
+		[Test]
 		public void CloneObjTest ()
 		{
 			SqlCommand cmd = new SqlCommand();
