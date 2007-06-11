@@ -221,6 +221,85 @@ namespace MonoTests.System.Windows.Forms
 			((IList)listview.CheckedItems).Add (5);
 		}
 
+#if NET_2_0
+		[Test, ExpectedException (typeof (InvalidOperationException))]
+		public void CheckedItemCollectionTest_ContainsKey_ExceptionTest ()
+		{
+			ListView listview = new ListView ();
+			listview.VirtualMode = true;
+			listview.CheckedItems.ContainsKey (String.Empty);
+		}
+
+		[Test, ExpectedException (typeof (InvalidOperationException))]
+		public void CheckedItemCollectionTest_CopyTo_ExceptionTest ()
+		{
+			ListView listview = new ListView ();
+			listview.VirtualMode = true;
+			listview.CheckedItems.CopyTo (new ListViewItem [1], 0);
+		}
+
+		[Test, ExpectedException (typeof (InvalidOperationException))]
+		public void CheckedItemCollectionTest_GetEnumerator_ExceptionTest ()
+		{
+			ListView listview = new ListView ();
+			listview.VirtualMode = true;
+			listview.CheckedItems.GetEnumerator ();
+		}
+
+		[Test, ExpectedException (typeof (InvalidOperationException))]
+		public void CheckedItemCollectionTest_IndexOf_ExceptionTest ()
+		{
+			ListView listview = new ListView ();
+			listview.VirtualMode = true;
+			listview.CheckedItems.IndexOf (new ListViewItem ());
+		}
+
+		[Test, ExpectedException (typeof (InvalidOperationException))]
+		public void CheckedItemCollectionTest_IndexOfKey_ExceptionTest ()
+		{
+			ListView listview = new ListView ();
+			listview.VirtualMode = true;
+			listview.CheckedItems.IndexOfKey (String.Empty);
+		}
+#endif
+
+		[Test]
+		public void CheckedItemCollectionTest_Indexer_ExceptionTest ()
+		{
+			ListView listview = new ListView ();
+			ListViewItem item = null;
+
+			try {
+				item = listview.CheckedItems [-1];
+				Assert.Fail ("#A1");
+			} catch (ArgumentOutOfRangeException) {
+			}
+
+			try {
+				item = listview.CheckedItems [listview.CheckedItems.Count];
+				Assert.Fail ("#A2");
+			} catch (ArgumentOutOfRangeException) {
+			}
+
+#if NET_2_0
+			listview.VirtualMode = true;
+
+			try {
+				item = listview.CheckedItems [0];
+				Assert.Fail ("#A3");
+			} catch (InvalidOperationException) {
+			}
+
+			try {
+				item = listview.CheckedItems [String.Empty];
+				Assert.Fail ("#A4");
+			} catch (InvalidOperationException) {
+			}
+#endif
+			// Avoid mcs 168 warning
+			Assert.IsNull (item, "#A5");
+		}
+
 		[Test]
 		public void CheckedItemCollectionTest_Order ()
 		{
@@ -328,6 +407,50 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		public void SelectedIndexCollectionTest_AddTest_VirtualMode ()
+		{
+			ListView listview = new ListView ();
+			listview.VirtualListSize = 5;
+			listview.RetrieveVirtualItem += ListViewRetrieveVirtualItemHandler;
+			listview.VirtualMode = true;
+			CreateVirtualItems (5);
+
+			int n = listview.SelectedIndices.Add (0);
+			Assert.AreEqual (-1, n, "SelectedIndexCollectionTest_AddTest#1");
+			Assert.AreEqual (0, listview.SelectedIndices.Count, "SelectedIndexCollectionTest_AddTest#2");
+			Assert.AreEqual (false, listview.Items [0].Selected, "SelectedIndexCollectionTest_AddTest#3");
+
+			// Force to create the handle
+			// Selection state should remain empty
+			listview.CreateControl ();
+			Assert.AreEqual (0, listview.SelectedIndices.Count, "SelectedIndexCollectionTest_AddTest#4");
+			Assert.AreEqual (false, listview.Items [0].Selected, "SelectedIndexCollectionTest_AddTest#5");
+
+			n = listview.SelectedIndices.Add (0);
+			Assert.AreEqual (1, n, "SelectedIndexCollectionTest_AddTest#5");
+			Assert.AreEqual (1, listview.SelectedIndices.Count, "SelectedIndexCollectionTest_AddTest#6");
+			Assert.AreEqual (0, listview.SelectedIndices [0], "SelectedIndexCollectionTest_AddTest#7");
+			Assert.AreEqual (true, listview.Items [0].Selected, "SelectedIndexCollectionTest_AddTest#8");
+
+			// Make sure the collection keeps them sorted
+			listview.SelectedIndices.Add (4);
+			n = listview.SelectedIndices.Add (2);
+			Assert.AreEqual (3, n, "SelectedIndexCollectionTest_AddTest#9");
+			Assert.AreEqual (3, listview.SelectedIndices.Count, "SelectedIndexCollectionTest_AddTest#10");
+			Assert.AreEqual (0, listview.SelectedIndices [0], "SelectedIndexCollectionTest_AddTest#11");
+			Assert.AreEqual (2, listview.SelectedIndices [1], "SelectedIndexCollectionTest_AddTest#12");
+			Assert.AreEqual (4, listview.SelectedIndices [2], "SelectedIndexCollectionTest_AddTest#13");
+			Assert.AreEqual (true, listview.Items [0].Selected, "SelectedIndexCollectionTest_AddTest#14");
+			Assert.AreEqual (true, listview.Items [2].Selected, "SelectedIndexCollectionTest_AddTest#15");
+			Assert.AreEqual (true, listview.Items [4].Selected, "SelectedIndexCollectionTest_AddTest#16");
+
+			// Add the item twice
+			n = listview.SelectedIndices.Add (0);
+			Assert.AreEqual (3, n, "SelectedIndexCollectionTest_AddTest#17");
+			Assert.AreEqual (3, listview.SelectedIndices.Count, "SelectedIndexCollectionTest_AddTest#18");
+		}
+
+		[Test]
 		public void SelectedIndexCollectionTest_ClearTest ()
 		{
 			ListView listview = new ListView ();
@@ -358,6 +481,92 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		public void SelectedIndexCollectionTest_ClearTest_VirtualMode ()
+		{
+			ListView listview = new ListView ();
+			listview.VirtualListSize = 3;
+			listview.RetrieveVirtualItem += ListViewRetrieveVirtualItemHandler;
+			listview.VirtualMode = true;
+			CreateVirtualItems (3);
+
+			// Force to create the handle
+			listview.CreateControl ();
+
+			listview.SelectedIndices.Add (2);
+			listview.SelectedIndices.Add (0);
+
+			Assert.AreEqual (2, listview.SelectedIndices.Count, "SelectedIndexCollectionTest_ClearTest#1");
+			Assert.AreEqual (0, listview.SelectedIndices [0], "SelectedIndexCollectionTest_ClearTest#2");
+			Assert.AreEqual (2, listview.SelectedIndices [1], "SelectedIndexCollectionTest_ClearTest#3");
+			Assert.AreEqual (true, listview.Items [0].Selected, "SelectedIndexCollectionTest_ClearTest#4");
+			Assert.AreEqual (false, listview.Items [1].Selected, "SelectedIndexCollectionTest_ClearTest#5");
+			Assert.AreEqual (true, listview.Items [2].Selected, "SelectedIndexCollectionTest_ClearTest#6");
+
+			listview.SelectedIndices.Clear ();
+			Assert.AreEqual (0, listview.SelectedIndices.Count, "SelectedIndexCollectionTest_ClearTest#5");
+			Assert.AreEqual (false, listview.Items [0].Selected, "SelectedIndexCollectionTest_ClearTest#6");
+			Assert.AreEqual (false, listview.Items [1].Selected, "SelectedIndexCollectionTest_ClearTest#7");
+			Assert.AreEqual (false, listview.Items [2].Selected, "SelectedIndexCollectionTest_ClearTest#8");
+		}
+#endif
+
+		[Test]
+		public void SelectedIndexCollectionTest_IndexOfTest ()
+		{
+			ListView listview = new ListView ();
+			ListViewItem item1 = listview.Items.Add ("A");
+			ListViewItem item2 = listview.Items.Add ("B");
+			ListViewItem item3 = listview.Items.Add ("C");
+			ListViewItem item4 = listview.Items.Add ("D");
+
+			listview.SelectedIndices.Add (0);
+			listview.SelectedIndices.Add (3);
+			listview.SelectedIndices.Add (2);
+
+			Assert.AreEqual (0, listview.SelectedIndices.Count, "SelectedIndexCollectionTest_IndexOfTest#1");
+			Assert.AreEqual (-1, listview.SelectedIndices.IndexOf (item1.Index), "SelectedIndexCollectionTest_IndexOfTest#2");
+			Assert.AreEqual (-1, listview.SelectedIndices.IndexOf (item3.Index), "SelectedIndexCollectionTest_IndexOfTest#3");
+			Assert.AreEqual (-1, listview.SelectedIndices.IndexOf (item4.Index), "SelectedIndexCollectionTest_IndexOfTest#4");
+			Assert.AreEqual (-1, listview.SelectedIndices.IndexOf (item2.Index), "SelectedIndexCollectionTest_IndexOfTest#5");
+
+			// Force to create the control
+			listview.CreateControl ();
+
+			Assert.AreEqual (3, listview.SelectedIndices.Count, "SelectedIndexCollectionTest_IndexOfTest#6");
+			Assert.AreEqual (0, listview.SelectedIndices.IndexOf (item1.Index), "SelectedIndexCollectionTest_IndexOfTest#7");
+			Assert.AreEqual (1, listview.SelectedIndices.IndexOf (item3.Index), "SelectedIndexCollectionTest_IndexOfTest#8");
+			Assert.AreEqual (2, listview.SelectedIndices.IndexOf (item4.Index), "SelectedIndexCollectionTest_IndexOfTest#9");
+			Assert.AreEqual (-1, listview.SelectedIndices.IndexOf (item2.Index), "SelectedIndexCollectionTest_IndexOfTest#10");
+		}
+
+#if NET_2_0
+
+		[Test]
+		public void SelectedIndexCollectionTest_IndexOfTest_VirtualMode ()
+		{
+			ListView listview = new ListView ();
+			listview.VirtualListSize = 4;
+			listview.RetrieveVirtualItem += ListViewRetrieveVirtualItemHandler;
+			listview.VirtualMode = true;
+			CreateVirtualItems (4);
+
+			// Force to create the handle
+			listview.CreateControl ();
+
+			listview.SelectedIndices.Add (0);
+			listview.SelectedIndices.Add (3);
+			listview.SelectedIndices.Add (2);
+
+			Assert.AreEqual (3, listview.SelectedIndices.Count, "SelectedIndexCollectionTest_IndexOfTest#1");
+			Assert.AreEqual (0, listview.SelectedIndices.IndexOf (0), "SelectedIndexCollectionTest_IndexOfTest#2");
+			Assert.AreEqual (1, listview.SelectedIndices.IndexOf (2), "SelectedIndexCollectionTest_IndexOfTest#3");
+			Assert.AreEqual (2, listview.SelectedIndices.IndexOf (3), "SelectedIndexCollectionTest_IndexOfTest#4");
+			Assert.AreEqual (-1, listview.SelectedIndices.IndexOf (1), "SelectedIndexCollectionTest_IndexOfTest#5");
+			Assert.AreEqual (-1, listview.SelectedIndices.IndexOf (99), "SelectedIndexCollectionTest_IndexOfTest#6");
+			Assert.AreEqual (-1, listview.SelectedIndices.IndexOf (-1), "SelectedIndexCollectionTest_IndexOfTest#7");
+		}
+
+		[Test]
 		public void SelectedIndexCollectionTest_RemoveTest ()
 		{
 			ListView listview = new ListView ();
@@ -375,6 +584,51 @@ namespace MonoTests.System.Windows.Forms
 			listview.SelectedIndices.Remove (0);
 			Assert.AreEqual (0, listview.SelectedIndices.Count, "SelectedIndexCollectionTest_RemoveTest#3");
 			Assert.AreEqual (false, listview.Items [0].Selected, "SelectedIndexCollectionTest_RemoveTest#4");
+		}
+
+		[Test]
+		public void SelectedIndexCollectionTest_RemoveTest_VirtualMode ()
+		{
+			ListView listview = new ListView ();
+			listview.VirtualListSize = 5;
+			listview.RetrieveVirtualItem += ListViewRetrieveVirtualItemHandler;
+			listview.VirtualMode = true;
+			CreateVirtualItems (5);
+
+			// Force to create the handle
+			listview.CreateControl ();
+
+			listview.SelectedIndices.Add (0);
+			listview.SelectedIndices.Add (2);
+			listview.SelectedIndices.Add (4);
+
+			Assert.AreEqual (3, listview.SelectedIndices.Count, "SelectedIndexCollectionTest_RemoveTest#1");
+			Assert.AreEqual (true, listview.Items [0].Selected, "SelectedIndexCollectionTest_RemoveTest#2");
+			Assert.AreEqual (true, listview.Items [2].Selected, "SelectedIndexCollectionTest_RemoveTest#3");
+			Assert.AreEqual (true, listview.Items [4].Selected, "SelectedIndexCollectionTest_RemoveTest#4");
+			Assert.AreEqual (0, listview.SelectedIndices [0], "SelectedIndexCollectionTest_RemoveTest#5");
+			Assert.AreEqual (2, listview.SelectedIndices [1], "SelectedIndexCollectionTest_RemoveTest#6");
+			Assert.AreEqual (4, listview.SelectedIndices [2], "SelectedIndexCollectionTest_RemoveTest#7");
+
+			listview.SelectedIndices.Remove (2);
+			Assert.AreEqual (2, listview.SelectedIndices.Count, "SelectedIndexCollectionTest_RemoveTest#8");
+			Assert.AreEqual (false, listview.Items [2].Selected, "SelectedIndexCollectionTest_RemoveTest#9");
+			Assert.AreEqual (0, listview.SelectedIndices [0], "SelectedIndexCollectionTest_RemoveTest#10");
+			Assert.AreEqual (4, listview.SelectedIndices [1], "SelectedIndexCollectionTest_RemoveTest#11");
+
+			listview.SelectedIndices.Remove (0);
+			Assert.AreEqual (1, listview.SelectedIndices.Count, "SelectedIndexCollectionTest_RemoveTest#12");
+			Assert.AreEqual (false, listview.Items [0].Selected, "SelectedIndexCollectionTest_RemoveTest#13");
+			Assert.AreEqual (4, listview.SelectedIndices [0], "SelectedIndexCollectionTest_RemoveTest#14");
+
+			listview.SelectedIndices.Remove (4);
+			Assert.AreEqual (0, listview.SelectedIndices.Count, "SelectedIndexCollectionTest_RemoveTest#15");
+			Assert.AreEqual (false, listview.Items [4].Selected, "SelectedIndexCollectionTest_RemoveTest#16");
+
+			// Remove an already removed index
+			listview.SelectedIndices.Remove (0);
+			Assert.AreEqual (0, listview.SelectedIndices.Count, "SelectedIndexCollectionTest_RemoveTest#17");
+			Assert.AreEqual (false, listview.Items [0].Selected, "SelectedIndexCollectionTest_RemoveTest#18");
 		}
 #endif
 
@@ -418,6 +672,14 @@ namespace MonoTests.System.Windows.Forms
 				Assert.Fail ("SelectedIndexCollectionTest_Remove_ExceptionTest#2");
 			} catch (ArgumentOutOfRangeException) {
 			}
+
+			listview.VirtualMode = true;
+			listview.VirtualListSize = 1;
+			try {
+				listview.SelectedIndices.Remove (listview.VirtualListSize);
+				Assert.Fail ("SelectedIndexCollectionTest_Remove_ExceptionTest#3");
+			} catch (ArgumentOutOfRangeException) {
+			}
 		}
 
 		[Test]
@@ -433,6 +695,14 @@ namespace MonoTests.System.Windows.Forms
 			try {
 				listview.SelectedIndices.Add (listview.Items.Count);
 				Assert.Fail ("SelectedIndexCollectionTest_Add_ExceptionTest#2");
+			} catch (ArgumentOutOfRangeException) {
+			}
+
+			listview.VirtualMode = true;
+			listview.VirtualListSize = 1;
+			try {
+				listview.SelectedIndices.Add (listview.VirtualListSize);
+				Assert.Fail ("SelectedIndexCollectionTest_Add_ExceptionTest#3");
 			} catch (ArgumentOutOfRangeException) {
 			}
 		}
@@ -1479,7 +1749,14 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (si5, lvi.SubItems ["E name"], "#B1");
 		}
 
-		static ListViewItem [] items;
+		ListViewItem [] items;
+
+		void CreateVirtualItems (int count)
+		{
+			items = new ListViewItem [count];
+			for (int i = 0; i < count; i++)
+				items [i] = new ListViewItem ();
+		}
 
 		[Test]
 		public void ListViewItemCollectionTest_VirtualMode_Exceptions ()
@@ -1489,10 +1766,9 @@ namespace MonoTests.System.Windows.Forms
 			lvw.VirtualListSize = 1;
 			lvw.RetrieveVirtualItem += ListViewRetrieveVirtualItemHandler;
 
-			ListViewItem item = new ListViewItem ("Item 1");
+			CreateVirtualItems (1);
+			ListViewItem item = items [0];
 			item.Name = "A";
-			items = new ListViewItem [1];
-			items [0] = item;
 
 			try {
 				lvw.Items.Add ("Item 2");

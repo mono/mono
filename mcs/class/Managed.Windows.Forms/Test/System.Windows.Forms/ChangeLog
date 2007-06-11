@@ -1,3 +1,8 @@
+2007-06-11  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListViewCollectionsTest.cs: New tests for CheckedItemCollection and
+	SelectedIndexCollection when using VirtualMode.
+
 2007-06-08  Jonathan Pobst  <monkey@jpobst.com>
 
 	* GroupBoxTest.cs: Argh! I cannot freaking get this right.  Remove the "!".
