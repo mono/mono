@@ -575,6 +575,10 @@ namespace System.Data.SqlClient {
 			else
 				theServerName = theDataSource;
 
+			if ((idx = theServerName.IndexOf ("tcp:")) > -1) {
+				theServerName = theServerName.Substring (idx + 4);
+			}
+
 			return success;
 		}
 

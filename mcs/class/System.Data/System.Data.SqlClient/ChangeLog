@@ -1,5 +1,8 @@
 2007-06-11  Nagappan A  <anagappan@novell.com>
 
+	* SqlConnection.cs (ParseDataSource): Adds tcp support in
+	connection string. Fixes bug # 80975.
+
 	* SqlCommand.cs (Dispose): On disposing the command object, don't
 	dispose connection and transaction.
 
