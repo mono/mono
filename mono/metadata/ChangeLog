@@ -1,3 +1,14 @@
+2007-06-11  Raja R Harinath  <harinath@gmail.com>
+
+	MonoGenericMethod on a diet
+	* class-internals.h (_MonoMethodInflated::reflection_info): Move
+	here ...
+	(_MonoGenericMethod::reflection_info): ... from here.
+	* icall.c (ves_icall_MonoMethod_GetGenericMethodDefinition):
+	Update to changes.
+	* reflection.c (inflate_mono_method): Likewise.
+	(mono_reflection_bind_generic_method_parameters): Likewise.
+
 2007-06-11  Rodrigo Kumpera  <kumpera@gmail.com>
 
 	*verify.c: all debu printf statements are now guarded by VERIFY_DEBUG
