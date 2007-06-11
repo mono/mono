@@ -1,3 +1,8 @@
+2007-06-11  Nagappan A  <anagappan@novell.com>
+
+	* DataReaderTest.cs (GetBytesNullBufferTest): Odbc returns -1, but
+	SqlClient returns 0. Value has to be modified accordingly.
+
 2007-06-07  Nagappan A  <anagappan@novell.com>
 
 	* DataReaderTest.cs (GetBytesNullBufferTest): Modified the
