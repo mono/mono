@@ -1,3 +1,7 @@
+2007-06-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlTextReader.cs : ReadStartElement() has bogus error message.
+
 2007-05-31  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlTextWriter2.cs :

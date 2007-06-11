@@ -705,8 +705,8 @@ namespace System.Xml
 			}
 
 			if (name != Name) {
-				string error = String.Format ("The {0} tag from namespace {1} is expected.",
-							      Name, NamespaceURI);
+				string error = String.Format ("The expected element is {0} but found {1} instead",
+							      name, Name);
 				throw XmlError (error);
 			}
 
@@ -722,7 +722,7 @@ namespace System.Xml
 			}
 
 			if (localName != LocalName || NamespaceURI != namespaceName) {
-				string error = String.Format ("Expecting {0} tag from namespace {1}, got {2} and {3} instead",
+				string error = String.Format ("The expected element is {0} from namespace {1}, but found {2} from namespace {3} instead",
 							      localName, namespaceName,
 							      LocalName, NamespaceURI);
 				throw XmlError (error);
