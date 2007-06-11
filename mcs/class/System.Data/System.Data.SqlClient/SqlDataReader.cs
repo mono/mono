@@ -180,7 +180,6 @@ namespace System.Data.SqlClient {
 			while (NextResult ())
 				;
 			isClosed = true;
-			command.Connection.DataReader = null;
 			command.CloseDataReader (moreResults);
 		}
 
@@ -1150,19 +1149,14 @@ namespace System.Data.SqlClient {
 				readResultUsed = true;
 				return true;
 			}
-			
-			
 			return (ReadRecord ());
-
 		}
 
 		internal bool ReadRecord ()
 		{
-			
 			bool result = command.Tds.NextRow ();
 			
 			rowsRead += 1;
-			
 			return result;
 		}
 		

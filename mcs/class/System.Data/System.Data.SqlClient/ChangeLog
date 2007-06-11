@@ -1,3 +1,8 @@
+2007-06-11  Nagappan A  <anagappan@novell.com>
+
+	* SqlCommand.cs (Dispose): On disposing the command object, don't
+	dispose connection and transaction.
+
 2007-06-06  Nagappan A  <anagappan@novell.com>
 
 	* SqlCommand.cs, SqlConnectionStringBuilder.cs, SqlConnection.cs:

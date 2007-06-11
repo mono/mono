@@ -283,9 +283,8 @@ namespace System.Data.SqlClient {
 
 #if !NET_2_0
 		[DataSysDescription ("Event triggered when the connection changes state.")]
-		public 
 #endif // NET_2_0
-                new event StateChangeEventHandler StateChange;
+                public new event StateChangeEventHandler StateChange;
 
 		#endregion // Events
 

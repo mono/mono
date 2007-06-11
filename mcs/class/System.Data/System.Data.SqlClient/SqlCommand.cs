@@ -581,9 +581,8 @@ namespace System.Data.SqlClient {
 			if (disposed) return;
 			if (disposing) {
 				parameters.Clear();
-				transaction = null;
-				connection = null;
 			}
+			base.Dispose (disposing);
 			disposed = true;
 		}
 #endif
