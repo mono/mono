@@ -1,5 +1,10 @@
 2007-06-11  Rodrigo Kumpera  <kumpera@gmail.com>
 
+	*verify.c: all debu printf statements are now guarded by VERIFY_DEBUG
+	*verify.c: factored long ldarg forms to share code with short forms
+
+2007-06-11  Rodrigo Kumpera  <kumpera@gmail.com>
+
 	*verify.c: fixed code formating factored some duplicate code
 	into a new function
 
