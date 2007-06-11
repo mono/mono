@@ -1,3 +1,8 @@
+2007-06-11  Raja R Harinath  <harinath@gmail.com>
+
+	* class.c (mono_class_from_generic_parameter): Fix case similar to
+	bug #81830 handled below, but for method containers.
+
 2007-06-10  Raja R Harinath  <harinath@gmail.com>
 
 	* class.c (inflate_generic_type) [MONO_TYPE_CLASS]: Don't call
