@@ -1,3 +1,12 @@
+2007-06-11  Rodrigo Kumpera  <kumpera@gmail.com>
+
+	*verify.c: fixed code formating factored some duplicate code
+	into a new function
+
+	*verify.h: fixed binary incompatibility introduced earlier
+
+	*pedump.c: fixed formating
+
 2007-06-11  Raja R Harinath  <harinath@gmail.com>
 
 	Fix assertion when disassembling Mono.C5.dll
