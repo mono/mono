@@ -411,23 +411,42 @@ namespace System.Windows.Forms
 		}
 #endif
 
+		// When ListView uses VirtualMode, selection state info
+		// lives in the ListView, not in the item
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public bool Selected {
 			get { 
+#if NET_2_0
+				if (owner != null && owner.VirtualMode)
+					return owner.SelectedIndices.Contains (Index);
+#endif
+
 				return selected; 
 			}
 			set {
+#if NET_2_0
+				if (selected == value && owner != null && !owner.VirtualMode)
+#else
 				if (selected == value)
+#endif
 					return;
 
 				if (owner != null) {
 					if (value && !owner.MultiSelect)
-						owner.SelectedItems.Clear ();
-					selected = value;
+						owner.SelectedIndices.Clear ();
+#if NET_2_0
+					if (owner.VirtualMode)
+						if (value)
+							owner.SelectedIndices.InsertIndex (Index);
+						else
+							owner.SelectedIndices.RemoveIndex (Index);
+					else
+#endif
+						selected = value;
+						
 					// force re-population of list
 					owner.SelectedIndices.Reset ();
-					Layout ();
 					owner.OnSelectedIndexChanged ();
 				} else {
 					selected = value;

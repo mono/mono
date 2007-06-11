@@ -1866,7 +1866,7 @@ namespace System.Windows.Forms
 			}
 
 			BoxSelect box_select_mode = BoxSelect.None;
-			ArrayList prev_selection;
+			IList prev_selection;
 			Point box_select_start;
 
 			Rectangle box_select_rect;
@@ -2087,7 +2087,7 @@ namespace System.Windows.Forms
 					else
 						box_select_mode = BoxSelect.Normal;
 					box_select_start = pt; 
-					prev_selection = owner.SelectedIndices.List;
+					prev_selection = owner.SelectedIndices.List.Clone () as IList;
 				}
 			}
 
@@ -3481,6 +3481,10 @@ namespace System.Windows.Forms
 
 			public ListViewItem this [int index] {
 				get {
+#if NET_2_0
+					if (owner.VirtualMode)
+						throw new InvalidOperationException ();
+#endif
 					ArrayList checked_items = List;
 					if (index < 0 || index >= checked_items.Count)
 						throw new ArgumentOutOfRangeException ("index");
@@ -3532,6 +3536,10 @@ namespace System.Windows.Forms
 
 			public void CopyTo (Array dest, int index)
 			{
+#if NET_2_0
+				if (owner.VirtualMode)
+					throw new InvalidOperationException ();
+#endif
 				if (!owner.CheckBoxes)
 					return;
 				List.CopyTo (dest, index);
@@ -3539,6 +3547,10 @@ namespace System.Windows.Forms
 
 			public IEnumerator GetEnumerator ()
 			{
+#if NET_2_0
+				if (owner.VirtualMode)
+					throw new InvalidOperationException ();
+#endif
 				if (!owner.CheckBoxes)
 					return (new ListViewItem [0]).GetEnumerator ();
 				return List.GetEnumerator ();
@@ -3585,6 +3597,10 @@ namespace System.Windows.Forms
 
 			public int IndexOf (ListViewItem item)
 			{
+#if NET_2_0
+				if (owner.VirtualMode)
+					throw new InvalidOperationException ();
+#endif
 				if (!owner.CheckBoxes)
 					return -1;
 				return List.IndexOf (item);
@@ -3593,6 +3609,10 @@ namespace System.Windows.Forms
 #if NET_2_0
 			public virtual int IndexOfKey (string key)
 			{
+#if NET_2_0
+				if (owner.VirtualMode)
+					throw new InvalidOperationException ();
+#endif
 				if (key == null || key.Length == 0)
 					return -1;
 
@@ -4417,6 +4437,12 @@ namespace System.Windows.Forms
 			}
 		}	// ListViewItemCollection
 
+			
+		// In normal mode, the selection information resides in the Items,
+		// making SelectedIndexCollection.List read-only
+		//
+		// In virtual mode, SelectedIndexCollection directly saves the selection
+		// information, instead of getting it from Items, making List read-and-write
 		public class SelectedIndexCollection : IList, ICollection, IEnumerable
 		{
 			private readonly ListView owner;
@@ -4491,7 +4517,11 @@ namespace System.Windows.Forms
 				if (itemIndex < 0 || itemIndex >= owner.Items.Count)
 					throw new ArgumentOutOfRangeException ("index");
 
+				if (owner.virtual_mode && !owner.IsHandleCreated)
+					return -1;
+
 				owner.Items [itemIndex].Selected = true;
+
 				if (!owner.IsHandleCreated)
 					return 0;
 
@@ -4509,7 +4539,8 @@ namespace System.Windows.Forms
 				if (!owner.IsHandleCreated)
 					return;
 
-				foreach (int index in List)
+				int [] indexes = (int []) List.ToArray (typeof (int));
+				foreach (int index in indexes)
 					owner.Items [index].Selected = false;
 			}
 
@@ -4569,6 +4600,9 @@ namespace System.Windows.Forms
 
 			public int IndexOf (int selectedIndex)
 			{
+				if (!owner.IsHandleCreated)
+					return -1;
+
 				return List.IndexOf (selectedIndex);
 			}
 
@@ -4587,12 +4621,14 @@ namespace System.Windows.Forms
 				get {
 					if (list == null) {
 						list = new ArrayList ();
+#if NET_2_0
+						if (!owner.VirtualMode)
+#endif
 						for (int i = 0; i < owner.Items.Count; i++) {
 							if (owner.Items [i].Selected)
 								list.Add (i);
 						}
 					}
-
 					return list;
 				}
 			}
@@ -4600,6 +4636,9 @@ namespace System.Windows.Forms
 			internal void Reset ()
 			{
 				// force re-population of list
+#if NET_2_0
+				if (!owner.VirtualMode)
+#endif
 				list = null;
 			}
 
@@ -4607,6 +4646,36 @@ namespace System.Windows.Forms
 			{
 				Reset ();
 			}
+
+#if NET_2_0
+			internal void RemoveIndex (int index)
+			{
+				int idx = List.BinarySearch (index);
+				if (idx != -1)
+					List.RemoveAt (idx);
+			}
+
+			// actually store index in the collection
+			// also, keep the collection sorted, as .Net does
+			internal void InsertIndex (int index)
+			{
+				int iMin = 0;
+				int iMax = List.Count - 1;
+				while (iMin <= iMax) {
+					int iMid = (iMin + iMax) / 2;
+					int current_index = (int) List [iMid];
+
+					if (current_index == index)
+						return; // Already added
+					if (current_index > index)
+						iMax = iMid - 1;
+					else
+						iMin = iMid + 1;
+				}
+
+				List.Insert (iMin, index);
+			}
+#endif
 
 		}	// SelectedIndexCollection
 
