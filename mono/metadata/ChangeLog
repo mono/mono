@@ -1,5 +1,10 @@
 2007-06-11  Raja R Harinath  <harinath@gmail.com>
 
+	Fix assertion when disassembling Mono.C5.dll
+	* loader.c (method_from_methodspec): Avoid inflating a method
+	twice with the same context.  If the methodref is inflated, use
+	the declaring method instead.
+
 	* class.c (mono_class_from_generic_parameter): Fix case similar to
 	bug #81830 handled below, but for method containers.
 
