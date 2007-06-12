@@ -1,3 +1,7 @@
+2007-06-12  Marek Safar  <marek.safar@gmail.com>
+
+	* Consts.cs.in: Add NET_2_1 constants.
+	
 2007-06-01  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* MonoTODOAttribute.cs : fixed regression that those derived todo

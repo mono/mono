@@ -48,7 +48,13 @@ internal
 
 	public const string MonoVersion = "@MONO_VERSION@";
 
-#if NET_2_0 || BOOTSTRAP_NET_2_0
+#if NET_2_1
+	// Versions of .NET Framework 2.1 (SilverLight)
+	public const string FxVersion = "2.1.0.0";
+	public const string VsVersion = "9.0.0.0"; // TODO:
+	public const string FxFileVersion = "2.1.20416.10";
+	public const string VsFileVersion = "9.0.50727.42"; // TODO:
+#elif NET_2_0 || BOOTSTRAP_NET_2_0
 	// Versions of .NET Framework 2.0 RTM
 	public const string FxVersion = "2.0.0.0";
 	public const string VsVersion = "8.0.0.0";
