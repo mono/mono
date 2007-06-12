@@ -31,6 +31,8 @@ using System.ComponentModel.Design;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
+using System.IO;
+using System.Net;
 
 namespace System.Windows.Forms {
 	[DefaultProperty("Image")]
@@ -49,9 +51,12 @@ namespace System.Windows.Forms {
 		#region Fields
 		private Image	image;
 		private PictureBoxSizeMode size_mode;
-		//private bool	recalc;
 #if NET_2_0
+		private Image	error_image;
+		private string	image_location;
 		private Image	initial_image;
+		private bool	wait_on_load;
+		private WebClient image_download;
 #endif
 		private int	no_update;
 		#endregion	// Fields
@@ -71,6 +76,10 @@ namespace System.Windows.Forms {
 			SetStyle (ControlStyles.Selectable, false);
 			SetStyle (ControlStyles.SupportsTransparentBackColor, true);
 			HandleCreated += new EventHandler(PictureBox_HandleCreated);
+#if NET_2_0
+			initial_image = ResourceImageLoader.Get ("image-x-generic.png");
+			error_image = ResourceImageLoader.Get ("image-missing.png");
+#endif
 		}
 		#endregion	// Public Constructor
 
@@ -84,9 +93,18 @@ namespace System.Windows.Forms {
 				if (size_mode == value)
 					return;
 				size_mode = value;
+				
+#if NET_2_0
+				if (size_mode == PictureBoxSizeMode.AutoSize) {
+					AutoSize = true;
+					SetAutoSizeMode (AutoSizeMode.GrowAndShrink);
+				} else {
+					AutoSize = false;
+					SetAutoSizeMode (AutoSizeMode.GrowOnly);
+				}
+#endif
 				UpdateSize ();
 				if (no_update == 0) {
-					Redraw (true);
 					Invalidate ();
 				}
 
@@ -114,7 +132,6 @@ namespace System.Windows.Forms {
 						ImageAnimator.Animate (image, frame_handler);
 					}
 					if (no_update == 0) {
-						Redraw (true);
 						Invalidate ();
 					}
 				}
@@ -136,11 +153,33 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
+		[Localizable (true)]
+		[RefreshProperties (RefreshProperties.All)]
+		public Image ErrorImage {
+			get { return error_image; }
+			set { error_image = value; }
+		}
+		
 		[RefreshProperties (RefreshProperties.All)]
 		[Localizable(true)]
 		public Image InitialImage {
 			get { return initial_image; }
 			set { initial_image = value; }
+		}
+		
+		[Localizable (true)]
+		[DefaultValue (null)]
+		[RefreshProperties (RefreshProperties.All)]
+		public string ImageLocation {
+			get { return image_location; }
+			set { image_location = value; }
+		}
+		
+		[Localizable (true)]
+		[DefaultValue (false)]
+		public bool WaitOnLoad {
+			get { return wait_on_load; }
+			set { wait_on_load = value; }
 		}
 #endif
 
@@ -239,7 +278,6 @@ namespace System.Windows.Forms {
 		protected override void OnVisibleChanged (EventArgs e)
 		{
 			base.OnVisibleChanged (e);
-			Redraw (true);
 		}
 
 		protected virtual void OnSizeModeChanged (EventArgs e)
@@ -253,6 +291,34 @@ namespace System.Windows.Forms {
 		{
 			base.OnEnabledChanged (e);
 		}
+
+#if NET_2_0
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected override void OnHandleCreated (EventArgs e)
+		{
+			base.OnHandleCreated (e);
+		}
+
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected override void OnHandleDestroyed (EventArgs e)
+		{
+			base.OnHandleDestroyed (e);
+		}
+		
+		protected virtual void OnLoadCompleted (AsyncCompletedEventArgs e)
+		{
+			AsyncCompletedEventHandler eh = (AsyncCompletedEventHandler)(Events[LoadCompletedEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
+		
+		protected virtual void OnLoadProgressChanged (ProgressChangedEventArgs e)
+		{
+			ProgressChangedEventHandler eh = (ProgressChangedEventHandler)(Events[LoadProgressChangedEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
+#endif
 
 		protected override void OnParentChanged (EventArgs e)
 		{
@@ -271,6 +337,15 @@ namespace System.Windows.Forms {
 #endif
 		}
 
+#if NET_2_0
+		internal override Size GetPreferredSizeCore (Size proposedSize)
+		{
+			if (image == null)
+				return base.GetPreferredSizeCore (proposedSize);
+			else
+				return image.Size;
+		}
+#else
 		protected override void SetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified)
 		{
 			if (size_mode == PictureBoxSizeMode.AutoSize && image != null) {
@@ -279,6 +354,7 @@ namespace System.Windows.Forms {
 			}
 			base.SetBoundsCore (x, y, width, height, specified);
 		}
+#endif
 		#endregion	// Protected Instance Methods
 
 #if NET_2_0
@@ -292,13 +368,25 @@ namespace System.Windows.Forms {
 				no_update--;
 			}
 			if (no_update == 0) {
-				Redraw (true);
 				Invalidate ();
 			}
 		}
 		#endregion	// ISupportInitialize Interface
 #endif
 
+		#region Private Properties
+#if NET_2_0
+		private WebClient ImageDownload {
+			get { 
+				if (image_download == null)
+					image_download = new WebClient ();
+					
+				return image_download;
+			}
+		}
+#endif
+		#endregion
+		
 		#region	Private Methods
 		private void StopAnimation ()
 		{
@@ -312,13 +400,13 @@ namespace System.Windows.Forms {
 		{
 			if (image == null)
 				return;
+#if NET_2_0
+			if (Parent != null)
+				Parent.PerformLayout (this, "AutoSize");
+#else
 			if (size_mode == PictureBoxSizeMode.AutoSize)
 				ClientSize = image.Size; 
-		}
-
-		private void Redraw (bool recalc)
-		{
-			//this.recalc = recalc;
+#endif
 		}
 
 		private void OnAnimateImage (object sender, EventArgs e)
@@ -331,7 +419,6 @@ namespace System.Windows.Forms {
 		private void UpdateAnimatedImage (object sender, EventArgs e)
 		{
 			ImageAnimator.UpdateFrames (image);
-			Redraw (false);
 			Refresh ();
 		}
 
@@ -342,13 +429,83 @@ namespace System.Windows.Forms {
 				ImageAnimator.Animate (image, frame_handler);
 			}
 			if (no_update == 0) {
-				Redraw (true);
 				Invalidate ();
 			}
 		}
+		
+#if NET_2_0
+		void ImageDownload_DownloadDataCompleted (object sender, DownloadDataCompletedEventArgs e)
+		{
+			if (e.Error != null && !e.Cancelled)
+				Image = error_image;
+			else if (e.Error == null && !e.Cancelled)
+				using (MemoryStream ms = new MemoryStream (e.Result))
+					Image = Image.FromStream (ms);
+					
+			ImageDownload.DownloadProgressChanged -= new DownloadProgressChangedEventHandler (ImageDownload_DownloadProgressChanged);
+			ImageDownload.DownloadDataCompleted -= new DownloadDataCompletedEventHandler (ImageDownload_DownloadDataCompleted);
+			image_download = null;
+			
+			OnLoadCompleted (e);
+		}
+
+		private void ImageDownload_DownloadProgressChanged (object sender, DownloadProgressChangedEventArgs e)
+		{
+			OnLoadProgressChanged (new ProgressChangedEventArgs (e.ProgressPercentage, e.UserState));
+		}
+#endif
 		#endregion	// Private Methods
 
 		#region Public Instance Methods
+#if NET_2_0
+		public void CancelAsync ()
+		{
+			if (image_download != null)
+				image_download.CancelAsync ();
+		}
+		
+		public void Load ()
+		{
+			Load (image_location);
+		}
+		
+		public void Load (string url)
+		{
+			if (string.IsNullOrEmpty (url))
+				throw new InvalidOperationException ("ImageLocation not specified.");
+			
+			image_location = url;
+			
+			if (url.Contains ("://"))
+				using (Stream s = ImageDownload.OpenRead (url))
+					Image = Image.FromStream (s);
+			else
+				Image = Image.FromFile (url);
+		}
+		
+		public void LoadAsync ()
+		{
+			LoadAsync (image_location);
+		}
+		
+		public void LoadAsync (string url)
+		{
+			// If WaitOnLoad is true, do not do async
+			if (wait_on_load) {
+				Load (url);
+				return;
+			}
+			image_location = url;
+			Image = InitialImage;
+			
+			if (ImageDownload.IsBusy)
+				ImageDownload.CancelAsync ();
+
+			ImageDownload.DownloadProgressChanged += new DownloadProgressChangedEventHandler (ImageDownload_DownloadProgressChanged);
+			ImageDownload.DownloadDataCompleted += new DownloadDataCompletedEventHandler (ImageDownload_DownloadDataCompleted);
+			ImageDownload.DownloadDataAsync (new Uri (url));
+		}
+#endif
 		public override string ToString() {
 			return String.Format("{0}, SizeMode: {1}", base.ToString (), SizeMode);
 		}
@@ -417,6 +574,21 @@ namespace System.Windows.Forms {
 			add { base.Leave += value; }
 			remove { base.Leave -= value; }
 		}
+
+#if NET_2_0
+		static object LoadCompletedEvent = new object ();
+		static object LoadProgressChangedEvent = new object ();
+
+		public event AsyncCompletedEventHandler LoadCompleted {
+			add { Events.AddHandler (LoadCompletedEvent, value); }
+			remove { Events.RemoveHandler (LoadCompletedEvent, value); }
+		}
+
+		public event ProgressChangedEventHandler LoadProgressChanged {
+			add { Events.AddHandler (LoadProgressChangedEvent, value); }
+			remove { Events.RemoveHandler (LoadProgressChangedEvent, value); }
+		}
+#endif
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]

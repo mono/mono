@@ -1,3 +1,7 @@
+2007-06-12  Jonathan Pobst  <monkey@jpobst.com>
+
+	* PictureBoxTests.cs: Test for 2.0 field defaults.
+
 2007-06-12  Andreia Gaita  <avidigal@novell.com>
 	
 	* TabControlTest.cs: Add test for tabcontrol without tabs but with a font

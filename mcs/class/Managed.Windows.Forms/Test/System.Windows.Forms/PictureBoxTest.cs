@@ -58,7 +58,24 @@ namespace MonoTests.System.Windows.Forms
 			PictureBox myPicBox = new PictureBox ();
 			Assert.AreEqual ("System.Windows.Forms.PictureBox, SizeMode: Normal", myPicBox.ToString (), "#T1");
 		}
-		
+
+#if NET_2_0
+		[Test]
+		public void Defaults ()
+		{
+			PictureBox pb = new PictureBox ();
+			
+			Assert.IsNotNull (pb.ErrorImage, "A1");
+			Assert.AreEqual (null, pb.ImageLocation, "A2");
+			Assert.AreEqual (false, pb.WaitOnLoad, "A3");
+			
+			Assert.AreEqual (false, pb.AutoSize, "A4");
+			pb.SizeMode = PictureBoxSizeMode.AutoSize;
+			Assert.AreEqual (true, pb.AutoSize, "A5");
+			
+		}
+#endif
+
 		[TestFixture]
 		public class PictureBoxSizeModeEventClass
 		{

@@ -1,3 +1,7 @@
+2007-06-12  Jonathan Pobst  <monkey@jpobst.com>
+
+	* PictureBox.cs: Implement 2.0 stuffs.
+
 2007-06-12  Andreia Gaita  <avidigal@novell.com>
 	
 	* TabControl.cs: Check if there are tabpages before checking
