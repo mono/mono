@@ -1,5 +1,9 @@
 2007-06-12  Jonathan Pobst  <monkey@jpobst.com>
 
+	* TableLayoutTest.cs: Add test for bug #81843.
+
+2007-06-12  Jonathan Pobst  <monkey@jpobst.com>
+
 	* UpDownBaseTest.cs: Test for Min/Max size.
 
 2007-06-12  Jonathan Pobst  <monkey@jpobst.com>

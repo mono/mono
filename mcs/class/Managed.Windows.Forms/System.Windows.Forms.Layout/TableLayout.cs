@@ -261,9 +261,13 @@ namespace System.Windows.Forms.Layout
 						
 						if (c != null  && c != dummy_control)
 						{
-							if (c.Dock == DockStyle.Fill || ((c.Anchor & AnchorStyles.Left) == AnchorStyles.Left && (c.Anchor & AnchorStyles.Right) == AnchorStyles.Right))
+							if (c.Dock == DockStyle.Fill || ((c.Anchor & AnchorStyles.Left) == AnchorStyles.Left && (c.Anchor & AnchorStyles.Right) == AnchorStyles.Right)) {
+								if (c.ExplicitBounds.Width + c.Margin.Left + c.Margin.Right > max_width)
+									max_width = c.ExplicitBounds.Width + c.Margin.Left + c.Margin.Right;
+									
 								continue;
-							else if (settings.GetColumnSpan(c) > 1)
+							}
+							else if (settings.GetColumnSpan (c) > 1)
 								continue;
 							
 							if (c.Width + c.Margin.Left + c.Margin.Right > max_width)
@@ -335,8 +339,12 @@ namespace System.Windows.Forms.Layout
 						Control c = panel.actual_positions[i, index];
 
 						if (c != null && c != dummy_control) {
-							if (c.Dock == DockStyle.Fill || ((c.Anchor & AnchorStyles.Top) == AnchorStyles.Top && (c.Anchor & AnchorStyles.Bottom) == AnchorStyles.Bottom))
+							if (c.Dock == DockStyle.Fill || ((c.Anchor & AnchorStyles.Top) == AnchorStyles.Top && (c.Anchor & AnchorStyles.Bottom) == AnchorStyles.Bottom)) {
+								if (c.ExplicitBounds.Height + c.Margin.Top + c.Margin.Bottom > max_height)
+									max_height = c.ExplicitBounds.Height + c.Margin.Top + c.Margin.Bottom;
+
 								continue;
+							}
 							else if (settings.GetRowSpan (c) > 1)
 								continue;
 

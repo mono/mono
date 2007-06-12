@@ -859,6 +859,65 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (81, p.GetColumnWidths ()[0], "D3");
 			Assert.AreEqual (119, p.GetColumnWidths ()[1], "D4");
 		}
+		
+		[Test]
+		public void Bug81843 ()
+		{
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+			
+		        TableLayoutPanel tableLayoutPanel1;
+			Button button2;
+			TextBox textBox1;
+			Button button4;
+
+			tableLayoutPanel1 = new TableLayoutPanel ();
+			button2 = new Button ();
+			button4 = new Button ();
+			textBox1 = new TextBox ();
+			tableLayoutPanel1.SuspendLayout ();
+			f.SuspendLayout ();
+
+			tableLayoutPanel1.AutoSize = true;
+			tableLayoutPanel1.ColumnCount = 3;
+			tableLayoutPanel1.ColumnStyles.Add (new ColumnStyle ());
+			tableLayoutPanel1.ColumnStyles.Add (new ColumnStyle ());
+			tableLayoutPanel1.ColumnStyles.Add (new ColumnStyle ());
+			tableLayoutPanel1.Controls.Add (button2, 0, 1);
+			tableLayoutPanel1.Controls.Add (button4, 2, 1);
+			tableLayoutPanel1.Controls.Add (textBox1, 1, 0);
+			tableLayoutPanel1.Location = new Point (0, 0);
+			tableLayoutPanel1.RowCount = 2;
+			tableLayoutPanel1.RowStyles.Add (new RowStyle (SizeType.Percent, 50F));
+			tableLayoutPanel1.RowStyles.Add (new RowStyle (SizeType.Percent, 50F));
+			tableLayoutPanel1.Size = new Size (292, 287);
+
+			button2.Size = new Size (75, 23);
+			
+			button4.Size = new Size (75, 23);
+
+			textBox1.Dock = DockStyle.Fill;
+			textBox1.Location = new Point (84, 3);
+			textBox1.Multiline = true;
+			textBox1.Size = new Size (94, 137);
+
+			f.ClientSize = new Size (292, 312);
+			f.Controls.Add (tableLayoutPanel1);
+			f.Name = "Form1";
+			f.Text = "Form1";
+			tableLayoutPanel1.ResumeLayout (false);
+			tableLayoutPanel1.PerformLayout ();
+			f.ResumeLayout (false);
+			f.PerformLayout ();
+
+			f.Show ();
+
+			Assert.AreEqual (new Rectangle (3, 146, 75, 23), button2.Bounds, "A1");
+			Assert.AreEqual (new Rectangle (184, 146, 75, 23), button4.Bounds, "A2");
+			Assert.AreEqual (new Rectangle (84, 3, 94, 137), textBox1.Bounds, "A3");
+			
+			f.Dispose ();
+		}
 	}
 }
 #endif
