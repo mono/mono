@@ -156,7 +156,9 @@ namespace System.Windows.Forms {
 
 		#region Public Instance Properties
 
-#if NET_2_0		
+#if NET_2_0	
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public NumericUpDownAccelerationCollection Accelerations {
 			get {
 				if (accelerations == null)
@@ -238,6 +240,16 @@ namespace System.Windows.Forms {
 					Value = minimum;
 			}
 		}
+
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public new Padding Padding {
+			get { return Padding.Empty; }
+			set { }
+		}
+#endif
 
 		[Bindable(false)]
 		[Browsable(false)]
@@ -504,6 +516,15 @@ namespace System.Windows.Forms {
 		#endregion	// Protected Instance Methods
 
 		#region Events
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler PaddingChanged {
+			add { base.PaddingChanged += value; }
+			remove { base.PaddingChanged -= value; }
+		}
+#endif
+
 		static object ValueChangedEvent = new object ();
 
 		public event EventHandler ValueChanged {
