@@ -365,7 +365,7 @@ namespace Mono.CSharp {
 		public static void Error_TypeArgumentsCannotBeUsed(Type t, Location loc, string symbol)
 		{
 			Report.SymbolRelatedToPreviousError(t);
-			Report.Error(308, loc, "The non-generic {0} `{1}' cannot be used with the type argument(s)",
+			Report.Error(308, loc, "The non-generic {0} `{1}' cannot be used with the type arguments",
 				symbol, TypeManager.CSharpName(t));
 		}
 

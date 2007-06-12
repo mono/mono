@@ -1,5 +1,13 @@
 2007-06-12  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #81840
+	* ecore.cs (SimpleName.ResolveAsTypeStep): Look for non-generic type
+	when type matching fails.
+	
+	* namespace.cs: Tiny error message change.
+
+2007-06-12  Marek Safar  <marek.safar@gmail.com>
+
 	* decl.cs (CheckAbstractAndExtern): Moved to MemberCore for easier error
 	reporting. Added automatic property check.
 	

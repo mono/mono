@@ -2152,6 +2152,14 @@ namespace Mono.CSharp {
 				return null;
 			}
 
+			if (Arguments != null) {
+				FullNamedExpression retval = ec.DeclContainer.LookupNamespaceOrType (SimpleName.RemoveGenericArity (Name), loc, true);
+				if (retval != null) {
+					Namespace.Error_TypeArgumentsCannotBeUsed (retval.Type, loc, "type");
+					return null;
+				}
+			}
+						
 			NamespaceEntry.Error_NamespaceNotFound (loc, Name);
 			return null;
 		}
