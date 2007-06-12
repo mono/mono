@@ -9,7 +9,7 @@ LIB_MCS_FLAGS = -nowarn:618 \
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:169,219,1595
 
-ifeq (net_2_0,$(PROFILE))
+ifeq (2, $(FRAMEWORK_VERSION_MAJOR))
 LIB_MCS_FLAGS += -r:Mono.Security.dll -nowarn:414
 TEST_MCS_FLAGS += -nowarn:168,183,414
 endif
