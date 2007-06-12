@@ -1,3 +1,7 @@
+2007-06-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* pinvoke2.cs: Add test for instance delegates.
+
 2007-05-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* delegate.cs: Add more delegate tests.
