@@ -30,9 +30,15 @@
 using System;
 using System.Text;
 using System.Reflection;
+using System.ComponentModel;
+using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms
 {
+#if NET_2_0
+	[ComVisible (true)]
+	[ClassInterface (ClassInterfaceType.AutoDispatch)]
+#endif
 	public class ThreadExceptionDialog: Form
 	{
 		Exception e;
@@ -203,5 +209,22 @@ namespace System.Windows.Forms
 		{
 			Application.Exit ();
 		}
+
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public override bool AutoSize {
+			get { return base.AutoSize; }
+			set { base.AutoSize = value; }
+		}
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler AutoSizeChanged {
+			add { base.AutoSizeChanged += value; }
+			remove { base.AutoSizeChanged -= value; }
+		}
+#endif
 	}
 }
