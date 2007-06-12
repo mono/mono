@@ -1,4 +1,4 @@
-// CS0308: The type or namespace name `Stack`1' could not be found. Are you missing a using directive or an assembly reference?
+// CS0308: The non-generic type `Stack' cannot be used with the type arguments
 // Line: 9
 
 class Stack

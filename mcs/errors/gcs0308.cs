@@ -1,4 +1,4 @@
-// CS0308: The non-generic type `N1.A' cannot be used with the type argument(s)
+// CS0308: The non-generic type `N1.A' cannot be used with the type arguments
 // Line: 11
 namespace N1
 {

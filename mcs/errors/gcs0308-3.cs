@@ -1,4 +1,4 @@
-// CS0308: The type or namespace name `DateTime`1' could not be found. Are you missing a using directive or an assembly reference?
+// CS0308: The non-generic type `System.DateTime' cannot be used with the type arguments
 // Line: 8
 
 using System;
