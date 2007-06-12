@@ -1,3 +1,7 @@
+2007-06-11  Rodrigo Kumpera  <kumpera@gmail.com>
+
+	*pedump.c (main): return error code 4 if assembly cannot be loaded instead of segfaulting
+
 2007-06-11  Raja R Harinath  <harinath@gmail.com>
 
 	MonoGenericMethod on a diet
