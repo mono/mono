@@ -121,11 +121,17 @@ namespace System.Windows.Forms {
 							case Msg.WM_LBUTTONUP: {
 								owner.OnMouseUp (new MouseEventArgs(MouseButtons.Left, 1, Control.MousePosition.X, Control.MousePosition.Y, 0));
 								owner.OnClick (EventArgs.Empty);
+#if NET_2_0
+								owner.OnMouseClick (new MouseEventArgs (MouseButtons.Left, 1, Control.MousePosition.X, Control.MousePosition.Y, 0));
+#endif
 								return;
 							}
 
 							case Msg.WM_LBUTTONDBLCLK: {
 								owner.OnDoubleClick (EventArgs.Empty);
+#if NET_2_0
+								owner.OnMouseDoubleClick (new MouseEventArgs (MouseButtons.Left, 2, Control.MousePosition.X, Control.MousePosition.Y, 0));
+#endif
 								return;
 							}
 
@@ -142,11 +148,17 @@ namespace System.Windows.Forms {
 							case Msg.WM_RBUTTONUP: {
 								owner.OnMouseUp (new MouseEventArgs(MouseButtons.Right, 1, Control.MousePosition.X, Control.MousePosition.Y, 0));
 								owner.OnClick (EventArgs.Empty);
+#if NET_2_0
+								owner.OnMouseClick (new MouseEventArgs (MouseButtons.Left, 1, Control.MousePosition.X, Control.MousePosition.Y, 0));
+#endif
 								return;
 							}
 
 							case Msg.WM_RBUTTONDBLCLK: {
 								owner.OnDoubleClick (EventArgs.Empty);
+#if NET_2_0
+								owner.OnMouseDoubleClick (new MouseEventArgs (MouseButtons.Left, 2, Control.MousePosition.X, Control.MousePosition.Y, 0));
+#endif
 								return;
 							}
 #if NET_2_0							
@@ -214,11 +226,17 @@ namespace System.Windows.Forms {
 			private void HandleClick (object sender, EventArgs e)
 			{
 				owner.OnClick (e);
+#if NET_2_0
+				owner.OnMouseClick (new MouseEventArgs (MouseButtons.Left, 1, Control.MousePosition.X, Control.MousePosition.Y, 0));
+#endif
 			}
 
 			private void HandleDoubleClick (object sender, EventArgs e)
 			{
 				owner.OnDoubleClick (e);
+#if NET_2_0
+				owner.OnMouseDoubleClick (new MouseEventArgs (MouseButtons.Left, 2, Control.MousePosition.X, Control.MousePosition.Y, 0));
+#endif
 			}
 
 			private void HandleMouseDown (object sender, MouseEventArgs e)
@@ -457,6 +475,22 @@ namespace System.Windows.Forms {
 			if (eh != null)
 				eh (this, e);
 		}
+
+#if NET_2_0
+		private void OnMouseClick (MouseEventArgs e)
+		{
+			MouseEventHandler eh = (MouseEventHandler)(Events[MouseClickEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
+		
+		private void OnMouseDoubleClick (MouseEventArgs e)
+		{
+			MouseEventHandler eh = (MouseEventHandler)(Events[MouseDoubleClickEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
+#endif
 
 		private void OnMouseDown (MouseEventArgs e)
 		{
@@ -709,6 +743,7 @@ namespace System.Windows.Forms {
 		static object BalloonTipClosedEvent = new object ();
 		static object BalloonTipShownEvent = new object ();
 		static object MouseClickEvent = new object ();
+		static object MouseDoubleClickEvent = new object ();
 
 		[MWFCategory("Action")]
 		public event EventHandler BalloonTipClicked {
@@ -729,10 +764,15 @@ namespace System.Windows.Forms {
 		}
 
 		[MWFCategory("Action")]
-		[MonoNotSupported("This is not raised anywhere.")]
 		public event MouseEventHandler MouseClick {
 			add { Events.AddHandler (MouseClickEvent, value); }
 			remove { Events.RemoveHandler (MouseClickEvent, value); }
+		}
+
+		[MWFCategory ("Action")]
+		public event MouseEventHandler MouseDoubleClick {
+			add { Events.AddHandler (MouseDoubleClickEvent, value); }
+			remove { Events.RemoveHandler (MouseDoubleClickEvent, value); }
 		}
 #endif
 
