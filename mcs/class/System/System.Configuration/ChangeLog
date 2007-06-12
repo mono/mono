@@ -1,3 +1,8 @@
+2007-06-12  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* SettingValueElement.cs: fixed stub Properties property for
+	System.Configuration fixes
+
 2007-06-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CustomizableLocalFileSettingsProvider.cs : contribution for

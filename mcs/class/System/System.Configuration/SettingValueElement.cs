@@ -52,7 +52,7 @@ namespace System.Configuration
 		[MonoTODO]
 		protected override ConfigurationPropertyCollection Properties {
 			get {
-				throw new NotImplementedException ();
+				return base.Properties;
 			}
 		}
 #endif
