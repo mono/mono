@@ -447,6 +447,9 @@ namespace System.Windows.Forms
 						
 					// force re-population of list
 					owner.SelectedIndices.Reset ();
+#if NET_2_0
+					owner.OnItemSelectionChanged (new ListViewItemSelectionChangedEventArgs (this, Index, value));
+#endif
 					owner.OnSelectedIndexChanged ();
 				} else {
 					selected = value;

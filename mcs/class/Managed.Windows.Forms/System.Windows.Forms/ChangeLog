@@ -1,6 +1,11 @@
 2007-06-11  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs:
+	* ListViewItem.cs: Implement 2.0 ItemSelectionChanged event.
+
+2007-06-11  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListView.cs:
 	* ListViewItem.cs: In VirtualMode the selection information
 	resides in the ListView, rather than in the Items. Also, throw
 	InvalidOperationExceptions when VirtualMode is being used and

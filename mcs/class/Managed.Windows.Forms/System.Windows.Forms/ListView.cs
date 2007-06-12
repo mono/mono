@@ -129,6 +129,7 @@ namespace System.Windows.Forms
 		static object DrawSubItemEvent = new object();
 		static object ItemCheckedEvent = new object ();
 		static object ItemMouseHoverEvent = new object ();
+		static object ItemSelectionChangedEvent = new object ();
 		static object CacheVirtualItemsEvent = new object ();
 		static object RetrieveVirtualItemEvent = new object ();
 #endif
@@ -198,6 +199,11 @@ namespace System.Windows.Forms
 		public event ListViewItemMouseHoverEventHandler ItemMouseHover {
 			add { Events.AddHandler (ItemMouseHoverEvent, value); }
 			remove { Events.RemoveHandler (ItemMouseHoverEvent, value); }
+		}
+
+		public event ListViewItemSelectionChangedEventHandler ItemSelectionChanged {
+			add { Events.AddHandler (ItemSelectionChangedEvent, value); }
+			remove { Events.RemoveHandler (ItemSelectionChangedEvent, value); }
 		}
 #endif
 
@@ -2808,6 +2814,14 @@ namespace System.Windows.Forms
 		protected virtual void OnItemMouseHover (ListViewItemMouseHoverEventArgs args)
 		{
 			ListViewItemMouseHoverEventHandler eh = (ListViewItemMouseHoverEventHandler)(Events [ItemMouseHoverEvent]);
+			if (eh != null)
+				eh (this, args);
+		}
+
+		protected internal virtual void OnItemSelectionChanged (ListViewItemSelectionChangedEventArgs args)
+		{
+			ListViewItemSelectionChangedEventHandler eh = 
+				(ListViewItemSelectionChangedEventHandler) Events [ItemSelectionChangedEvent];
 			if (eh != null)
 				eh (this, args);
 		}
