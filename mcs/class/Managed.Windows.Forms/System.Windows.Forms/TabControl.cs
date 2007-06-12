@@ -961,7 +961,7 @@ namespace System.Windows.Forms {
 				SizeTab (page, i, row_width - scrollerWidth, ref xpos, ref ypos, spacing, 0, ref aux, true);
 			}
 
-			if (SelectedIndex != -1 && TabPages [SelectedIndex].Row != BottomRow)
+			if (SelectedIndex != -1 && TabPages.Count > SelectedIndex && TabPages[SelectedIndex].Row != BottomRow)
 				DropRow (TabPages [SelectedIndex].Row);
 		}
 

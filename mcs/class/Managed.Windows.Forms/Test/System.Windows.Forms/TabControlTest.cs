@@ -611,6 +611,17 @@ namespace MonoTests.System.Windows.Forms
 			form.Dispose ();
 		}
 
+		[Test] // bug #81802. should not throw an exception
+		public void NoTabPages2 ()
+		{
+			Form form = new Form ();
+			form.Font = new Font ("Tahoma", 8.25F, FontStyle.Regular, GraphicsUnit.Point, ((byte) (0)));
+			TabControl tab = new TabControl ();
+			form.Controls.Add (tab);
+			tab.Dispose ();
+			form.Dispose ();
+		}
+
 		private void SelectedIndexChanged (object sender, EventArgs e)
 		{
 			_selected_index_changed++;

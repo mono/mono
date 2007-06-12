@@ -1,3 +1,9 @@
+2007-06-12  Andreia Gaita  <avidigal@novell.com>
+	
+	* TabControl.cs: Check if there are tabpages before checking
+	the selected index - fix #81802 (font changes raise a ResizeTabs
+	call on controls.add, which blew up nicely with no tabpages)
+
 2007-06-11  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs:
