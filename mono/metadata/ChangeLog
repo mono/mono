@@ -1,3 +1,8 @@
+2007-06-12  Raja R Harinath  <rharinath@novell.com>
+
+	* verify.c (TYPE_MAX): Set it to 8 to match the dimensions of all
+	the tables.
+
 2007-06-11  Rodrigo Kumpera  <kumpera@gmail.com>
 
 	*pedump.c (main): return error code 4 if assembly cannot be loaded instead of segfaulting
