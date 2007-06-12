@@ -3349,7 +3349,11 @@ namespace Mono.CSharp {
 			
 			if (!fFoundDefault) {
 				ig.MarkLabel (lblDefault);
+				if (HaveUnwrap && !fFoundNull) {
+					ig.MarkLabel (null_target);
+				}
 			}
+			
 			ig.MarkLabel (lblEnd);
 		}
 		//

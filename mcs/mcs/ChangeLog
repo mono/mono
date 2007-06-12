@@ -1,5 +1,11 @@
 2007-06-12  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #81807
+	* statement.cs(Switch.TableSwitchEmit): Define null label when it's not
+	present inside switch statement and it is required by nullable check.
+
+2007-06-12  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #81840
 	* ecore.cs (SimpleName.ResolveAsTypeStep): Look for non-generic type
 	when type matching fails.
