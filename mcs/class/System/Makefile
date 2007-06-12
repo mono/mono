@@ -30,7 +30,7 @@ XML_DEP_FILE := $(wildcard ../lib/$(PROFILE)/$(XML_DEP))
 CYCLIC_DEPS := $(XML_DEP)
 CYCLIC_DEP_FILES := $(XML_DEP_FILE)
 
-ifeq (2.0, $(FRAMEWORK_VERSION))
+ifeq (2, $(FRAMEWORK_VERSION_MAJOR))
 # Happens on net_2_0_bootstrap and net_2_0 profiles
 SECURITY_DEP := Mono.Security.dll
 SECURITY_DEP_FILE := $(wildcard ../lib/$(PROFILE)/$(SECURITY_DEP))
