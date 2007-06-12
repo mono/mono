@@ -39,9 +39,8 @@ namespace System.Configuration
 		string source;
 		object val;
 		PropertyValueOrigin origin;
-		ConfigurationElement owner;
-		
-		ConfigurationProperty property;
+		readonly ConfigurationElement owner;
+		readonly ConfigurationProperty property;
 		
 		internal PropertyInformation (ConfigurationElement owner, ConfigurationProperty property)
 		{

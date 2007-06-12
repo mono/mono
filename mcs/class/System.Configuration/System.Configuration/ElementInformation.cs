@@ -33,14 +33,18 @@ namespace System.Configuration
 {
 	public sealed class ElementInformation
 	{
-		PropertyInformation propertyInfo;
-		ConfigurationElement owner;
-		PropertyInformationCollection properties;
+		readonly PropertyInformation propertyInfo;
+		readonly ConfigurationElement owner;
+		readonly PropertyInformationCollection properties;
 
 		internal ElementInformation (ConfigurationElement owner, PropertyInformation propertyInfo)
 		{
 			this.propertyInfo = propertyInfo;
 			this.owner = owner;
+
+			properties = new PropertyInformationCollection ();
+			foreach (ConfigurationProperty prop in owner.Properties)
+				properties.Add (new PropertyInformation (owner, prop));
 		}
 
 		[MonoTODO]
@@ -80,14 +84,7 @@ namespace System.Configuration
 		}
 		
 		public PropertyInformationCollection Properties {
-			get {
-				if (properties == null) {
-					properties = new PropertyInformationCollection ();
-					foreach (ConfigurationProperty prop in owner.Properties)
-						properties.Add (new PropertyInformation (owner, prop));
-				}
-				return properties; 
-			}
+			get { return properties; }
 		}
 		
 		internal void Reset (ElementInformation parentInfo)

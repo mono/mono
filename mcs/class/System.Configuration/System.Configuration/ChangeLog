@@ -1,3 +1,14 @@
+2007-06-12  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* ConfigurationElement.cs: refactored GetKeyProperties and
+	GetDefaultCollection methods, map should not be used here, Properties
+	will do instead. Refactored ElementMap class
+	* ConfigurationElementCollection.cs: fixed InitFromProperty, GetMap()
+	should not be called here
+	* ElementInformation.cs: fixed Properties, moved to ctor to be thread
+	safe
+	* PropertyInformation.cs: members assigned readonly modifier
+
 2007-05-30  Marek Habersack  <mhabersack@novell.com>
 
 	* SectionGroupInfo.cs: <location> elements are case-insensitive

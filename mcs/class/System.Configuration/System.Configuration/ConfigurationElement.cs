@@ -174,16 +174,13 @@ namespace System.Configuration
 		{
 			if (keyProps != null) return keyProps;
 			
-			if (map != null && map.Properties == Properties)
-				keyProps = map.KeyProperties;
-			else {
-				keyProps = new ConfigurationPropertyCollection ();
+			ConfigurationPropertyCollection tmpkeyProps = new ConfigurationPropertyCollection ();
 				foreach (ConfigurationProperty prop in Properties) {
 					if (prop.IsKey)
-						keyProps.Add (prop);
+					tmpkeyProps.Add (prop);
 				}
-			}
-			return keyProps;
+
+			return keyProps = tmpkeyProps;
 		}
 
 		internal ConfigurationElementCollection GetDefaultCollection ()
@@ -192,15 +189,10 @@ namespace System.Configuration
 
 			ConfigurationProperty defaultCollectionProp = null;
 
-			if (map != null && map.Properties == Properties) {
-				defaultCollectionProp = map.DefaultCollectionProperty;
-			}
-			else {
-				foreach (ConfigurationProperty prop in Properties) {
-					if (prop.IsDefaultCollection) {
-						defaultCollectionProp = prop;
-						break;
-					}
+			foreach (ConfigurationProperty prop in Properties) {
+				if (prop.IsDefaultCollection) {
+					defaultCollectionProp = prop;
+					break;
 				}
 			}
 
@@ -558,32 +550,45 @@ namespace System.Configuration
 	
 	internal class ElementMap
 	{
-		static Hashtable elementMaps = new Hashtable ();
-		
-		ConfigurationPropertyCollection properties;
-		ConfigurationPropertyCollection keyProperties;
-		ConfigurationProperty defaultCollectionProperty;
+#if TARGET_JVM
+		const string elementMapsKey = "ElementMap_elementMaps";
+		static Hashtable elementMaps
+		{
+			get
+			{
+				Hashtable tbl = (Hashtable) AppDomain.CurrentDomain.GetData (elementMapsKey);
+				if (tbl == null) {
+					lock (typeof (ElementMap)) {
+						tbl = (Hashtable) AppDomain.CurrentDomain.GetData (elementMapsKey);
+						if (tbl == null) {
+							tbl = Hashtable.Synchronized (new Hashtable ());
+							AppDomain.CurrentDomain.SetData (elementMapsKey, tbl);
+						}
+					}
+				}
+				return tbl;
+			}
+		}
+#else
+		static readonly Hashtable elementMaps = Hashtable.Synchronized (new Hashtable ());
+#endif
 
-		ConfigurationCollectionAttribute collectionAttribute;
-		
+		readonly ConfigurationPropertyCollection properties;
+		readonly ConfigurationCollectionAttribute collectionAttribute;
+
 		public static ElementMap GetMap (Type t)
 		{
-			lock (elementMaps) {
-				ElementMap map = elementMaps [t] as ElementMap;
-				if (map != null) return map;
-				map = new ElementMap (t);
-				elementMaps [t] = map;
-				return map;
-			}
+			ElementMap map = elementMaps [t] as ElementMap;
+			if (map != null) return map;
+			map = new ElementMap (t);
+			elementMaps [t] = map;
+			return map;
 		}
 		
 		public ElementMap (Type t)
 		{
-			ReflectProperties (t);
-		}
+			properties = new ConfigurationPropertyCollection ();
 		
-		protected void ReflectProperties (Type t)
-		{
 			collectionAttribute = Attribute.GetCustomAttribute (t, typeof(ConfigurationCollectionAttribute)) as ConfigurationCollectionAttribute;
 			
 			PropertyInfo[] props = t.GetProperties ();
@@ -599,56 +604,26 @@ namespace System.Configuration
 				TypeConverterAttribute convertAttr = (TypeConverterAttribute) Attribute.GetCustomAttribute (t, typeof (TypeConverterAttribute));
 				TypeConverter converter = convertAttr != null ? (TypeConverter) Activator.CreateInstance (Type.GetType (convertAttr.ConverterTypeName)) : null;
 				ConfigurationProperty cp = new ConfigurationProperty (name, prop.PropertyType, at.DefaultValue, converter, validator, at.Options);
-				
-				cp.CollectionAttribute = Attribute.GetCustomAttribute (prop, typeof(ConfigurationCollectionAttribute)) as ConfigurationCollectionAttribute;
-				
-				if (properties == null) properties = new ConfigurationPropertyCollection ();
+
+				cp.CollectionAttribute = Attribute.GetCustomAttribute (prop, typeof(ConfigurationCollectionAttribute)) as ConfigurationCollectionAttribute;				
 				properties.Add (cp);
 			}
+		}
+
+		public ConfigurationCollectionAttribute CollectionAttribute
+		{
+			get { return collectionAttribute; }
 		}
 		
 		public bool HasProperties
 		{
-			get { return properties != null && properties.Count > 0; }
+			get { return properties.Count > 0; }
 		}
 		
 		public ConfigurationPropertyCollection Properties
 		{
 			get {
-				if (properties == null) properties = new ConfigurationPropertyCollection ();
 				return properties;
-			}
-		}
-		
-		public ConfigurationPropertyCollection KeyProperties {
-			get {
-				if (keyProperties == null) {
-					keyProperties = new ConfigurationPropertyCollection ();
-					
-					if (properties != null)
-						foreach (ConfigurationProperty p in properties)
-							if (p.IsKey) keyProperties.Add (p);
-				}
-				return keyProperties;
-			}
-		}
-		
-		public ConfigurationCollectionAttribute CollectionAttribute {
-			get { return collectionAttribute; }
-		}
-		
-		public ConfigurationProperty DefaultCollectionProperty {
-			get {
-				if (defaultCollectionProperty == null) {
-					if (properties != null)
-						foreach (ConfigurationProperty p in properties) {
-							if (p.IsDefaultCollection) {
-								defaultCollectionProperty = p;
-								break;
-							}
-						}
-				}
-				return defaultCollectionProperty;
 			}
 		}
 	}

@@ -66,8 +66,10 @@ namespace System.Configuration
 		internal override void InitFromProperty (PropertyInformation propertyInfo)
 		{
 			ConfigurationCollectionAttribute colat = propertyInfo.Property.CollectionAttribute;
+	
 			if (colat == null)
-				colat = ElementMap.GetMap (GetType ()).CollectionAttribute;
+				colat = Attribute.GetCustomAttribute (propertyInfo.Type, typeof (ConfigurationCollectionAttribute)) as ConfigurationCollectionAttribute;
+
 			if (colat != null) {
 				addElementName = colat.AddItemName;
 				clearElementName = colat.ClearItemsName;
