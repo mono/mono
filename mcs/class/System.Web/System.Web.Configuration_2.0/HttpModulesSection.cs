@@ -41,7 +41,7 @@ namespace System.Web.Configuration
 		static ConfigurationPropertyCollection properties;
 		static ConfigurationProperty modulesProp;
 
-		public HttpModulesSection ()
+		static HttpModulesSection ()
 		{
 			properties = new ConfigurationPropertyCollection ();
 			modulesProp = new ConfigurationProperty ("", typeof (HttpModuleActionCollection), null,

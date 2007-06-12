@@ -1,3 +1,8 @@
+2007-06-12  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* CompilationSection.cs: TARGET_JVM on not supported features
+	* HttpModulesSection.cs: ctor should be static
+
 2007-06-03  Adar Wesley <adarw@mainsoft.com>
 
 	* ProfilePropertySettingsCollection.cs: added missing method 
