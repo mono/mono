@@ -1,5 +1,7 @@
 2007-06-12  Zoltan Varga  <vargaz@gmail.com>
 
+	* threads.c (mono_thread_get_stack_bounds): Fix memory leak.
+
 	* class.c (setup_interface_offsets): Allocate memory from the image mempool.
 
 2007-06-12  Raja R Harinath  <rharinath@novell.com>
