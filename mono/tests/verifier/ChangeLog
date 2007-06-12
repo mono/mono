@@ -1,3 +1,9 @@
+2007-05-12  Rodrigo Kumpera  <kumpera@gmail.com>
+
+	* make_tests.sh: New boolean branch tests
+	* make_bool_branch_test.sh: Test the stack value that boolean branches use (brfalse / brtrue)
+	* make_ret_test.sh: removed unused variable from sed expression
+
 2007-05-06  Rodrigo Kumpera  <kumpera@gmail.com>
 
 	* Makefile (run-test): Make it use pedump instead of mono for validation
