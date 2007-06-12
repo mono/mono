@@ -437,6 +437,16 @@ namespace System.Windows.Forms
 			}
 		}
 
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public new Padding Padding {
+			get { return Padding.Empty; }
+			set { }
+		}
+#endif
+
 		[Browsable(false)]
 		[DefaultValue(-1)]
 		public int SelectedIndex {
@@ -564,13 +574,28 @@ namespace System.Windows.Forms
 			}
 		}
 
+#if NET_2_0
+		protected override void OnTextBoxKeyPress (object source, KeyPressEventArgs e)
+		{
+			base.OnTextBoxKeyPress (source, e);
+		}
+#else
 		protected override void OnTextBoxKeyDown(object source, KeyEventArgs e) {
 			base.OnTextBoxKeyDown (source, e);
 		}
-
+#endif
 		#endregion	// Protected Instance Methods
 
 		#region Events
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler PaddingChanged {
+			add { base.PaddingChanged += value; }
+			remove { base.PaddingChanged -= value; }
+		}
+#endif
+
 		static object SelectedItemChangedEvent = new object ();
 		public event EventHandler SelectedItemChanged {
 			add { Events.AddHandler (SelectedItemChangedEvent, value); }
