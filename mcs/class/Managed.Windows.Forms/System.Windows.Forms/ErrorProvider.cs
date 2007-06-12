@@ -305,6 +305,7 @@ namespace System.Windows.Forms {
 		private ToolTip.ToolTipWindow	tooltip;
 
 #if NET_2_0
+		private bool right_to_left;
 		private object tag;
 #endif
 		#endregion	// Local Variables
@@ -419,6 +420,14 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
+		[MonoTODO ("RTL not supported")]
+		[Localizable (true)]
+		[DefaultValue (false)]
+		public virtual bool RightToLeft {
+			get { return right_to_left; }
+			set { right_to_left = value; }
+		}
+
 		[Localizable (false)]
 		[Bindable (true)]
 		[TypeConverter (typeof (StringConverter))]
@@ -450,6 +459,14 @@ namespace System.Windows.Forms {
 
 			return true;
 		}
+
+#if NET_2_0
+		public void Clear ()
+		{
+			foreach (ErrorProperty ep in controls.Values)
+				ep.Text = string.Empty;
+		}
+#endif
 
 		[Localizable(true)]
 		[DefaultValue("")]
@@ -490,6 +507,16 @@ namespace System.Windows.Forms {
 		protected override void Dispose(bool disposing) {
 			base.Dispose (disposing);
 		}
+
+#if NET_2_0
+		[EditorBrowsableAttribute (EditorBrowsableState.Advanced)]
+		protected virtual void OnRightToLeftChanged (EventArgs e)
+		{
+			EventHandler eh = (EventHandler)(Events[RightToLeftChangedEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
+#endif
 		#endregion	// Protected Instance Methods
 
 		#region Private Methods
@@ -512,5 +539,16 @@ namespace System.Windows.Forms {
 		{
 		}
 #endif
+
+		#region Public Events
+#if NET_2_0
+		static object RightToLeftChangedEvent = new object ();
+
+		public event EventHandler RightToLeftChanged {
+			add { Events.AddHandler (RightToLeftChangedEvent, value); }
+			remove { Events.RemoveHandler (RightToLeftChangedEvent, value); }
+		}
+#endif
+		#endregion
 	}
 }

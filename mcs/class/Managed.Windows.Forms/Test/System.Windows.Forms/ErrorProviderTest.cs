@@ -120,6 +120,29 @@ namespace MonoTests.System.Windows.Forms
 			md.Tag = s;
 			Assert.AreSame (s, md.Tag, "A2");
 		}
+
+		[Test]
+		public void MethodClear ()
+		{
+			Form myForm = new Form ();
+			myForm.ShowInTaskbar = false;
+			Label label1 = new Label ();
+			Label label2 = new Label ();
+			ErrorProvider myErrorProvider = new ErrorProvider ();
+
+			myErrorProvider.SetError (label1, "ErrorMsg1");
+			myErrorProvider.SetError (label2, "ErrorMsg2");
+			
+			Assert.AreEqual ("ErrorMsg1", myErrorProvider.GetError (label1), "#1");
+			Assert.AreEqual ("ErrorMsg2", myErrorProvider.GetError (label2), "#2");
+			
+			myErrorProvider.Clear ();
+
+			Assert.AreEqual (string.Empty, myErrorProvider.GetError (label1), "#3");
+			Assert.AreEqual (string.Empty, myErrorProvider.GetError (label2), "#4");
+			
+			myForm.Dispose ();
+		}
 #endif
 	}
 }

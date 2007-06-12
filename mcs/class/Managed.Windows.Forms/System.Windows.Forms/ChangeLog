@@ -1,5 +1,9 @@
 2007-06-12  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ErrorProvider.cs: Implement 2.0 stuffs.
+
+2007-06-12  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DomainUpDown.cs: Implement 2.0 stuffs.
 
 2007-06-12  Jonathan Pobst  <monkey@jpobst.com>
