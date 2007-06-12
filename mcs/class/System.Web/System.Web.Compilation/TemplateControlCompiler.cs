@@ -249,12 +249,21 @@ namespace System.Web.Compilation
 
 #if NET_2_0
 				if (builder.ParentTemplateBuilder is System.Web.UI.WebControls.ContentBuilderInternal) {
-					// __ctrl.TemplateControl = this;
-					assign = new CodeAssignStatement ();
-					assign.Left = new CodePropertyReferenceExpression (ctrlVar, "TemplateControl");;
-					assign.Right = thisRef;
-					
-					method.Statements.Add (assign);
+					PropertyInfo pi;
+
+					try {
+						pi = type.GetProperty ("TemplateControl");
+					} catch (Exception) {
+						pi = null;
+					}
+
+					if (pi != null && pi.CanWrite) {
+						// __ctrl.TemplateControl = this;
+						assign = new CodeAssignStatement ();
+						assign.Left = new CodePropertyReferenceExpression (ctrlVar, "TemplateControl");;
+						assign.Right = thisRef;
+						method.Statements.Add (assign);
+					}
 				}
 				
 				// _ctrl.SkinID = $value
