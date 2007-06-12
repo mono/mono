@@ -53,3 +53,5 @@
 -resource:resources/nav_next.png
 -resource:resources/nav_plus.png
 -resource:resources/nav_previous.png
+-resource:resources/image-missing.png
+-resource:resources/image-x-generic.png

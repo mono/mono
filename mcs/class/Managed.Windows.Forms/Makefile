@@ -73,7 +73,9 @@ IMAGES_RESOURCES = \
 	resources/nav_first.png			\
 	resources/nav_previous.png		\
 	resources/nav_next.png			\
-	resources/nav_plus.png
+	resources/nav_plus.png			\
+	resources/image-missing.png		\
+	resources/image-x-generic.png
 
 
 TEST_DISTFILES = \

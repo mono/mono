@@ -1,5 +1,10 @@
 2007-06-08  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Makefile, System.Windows.Forms.dll.resources: Added image-missing.png,
+	image-x-generic.png for PictureBox.
+
+2007-06-08  Jonathan Pobst  <monkey@jpobst.com>
+
 	* System.Windows.Forms_test.dll.sources: Add PanelTest.cs. 
 
 2007-06-06  Jonathan Pobst  <monkey@jpobst.com>
