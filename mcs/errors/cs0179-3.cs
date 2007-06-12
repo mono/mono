@@ -1,4 +1,4 @@
-// CS0179: `Bar.Foo' cannot declare a body because it is marked extern
+// CS0179: `Bar.Foo.set' cannot declare a body because it is marked extern
 // Line: 5
 
 class Bar {
