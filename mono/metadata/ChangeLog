@@ -1,3 +1,7 @@
+2007-06-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (setup_interface_offsets): Allocate memory from the image mempool.
+
 2007-06-12  Raja R Harinath  <rharinath@novell.com>
 
 	* verify.c (TYPE_MAX): Set it to 8 to match the dimensions of all
