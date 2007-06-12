@@ -3762,34 +3762,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public bool CheckAbstractAndExtern (bool has_block)
-		{
-			if (Parent.PartialContainer.Kind == Kind.Interface)
-				return true;
-
-			if (has_block) {
-				if ((ModFlags & Modifiers.EXTERN) != 0) {
-					Report.Error (179, Location, "`{0}' cannot declare a body because it is marked extern",
-						GetSignatureForError ());
-					return false;
-				}
-
-				if ((ModFlags & Modifiers.ABSTRACT) != 0) {
-					Report.Error (500, Location, "`{0}' cannot declare a body because it is marked abstract",
-						GetSignatureForError ());
-					return false;
-				}
-			} else {
-				if ((ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN)) == 0) {
-					Report.Error (501, Location, "`{0}' must declare a body because it is not marked abstract or extern",
-						GetSignatureForError ());
-					return false;
-				}
-			}
-
-			return true;
-		}
-
 		protected bool DefineParameters (Parameters parameters)
 		{
 			IResolveContext rc = GenericMethod == null ? this : (IResolveContext)ds;
@@ -6595,9 +6567,6 @@ namespace Mono.CSharp {
 
 			public virtual MethodBuilder Define (DeclSpace parent)
 			{
-				if (!method.CheckAbstractAndExtern (block != null))
-					return null;
-
 				TypeContainer container = parent.PartialContainer;
 
 				//
@@ -6622,6 +6591,7 @@ namespace Mono.CSharp {
 					flags |= (method.flags & (~MethodAttributes.MemberAccessMask));
 				}
 
+				CheckAbstractAndExtern (block != null);
 				return null;
 			}
 
@@ -7190,8 +7160,13 @@ namespace Mono.CSharp {
 
 			public override MethodBuilder Define (DeclSpace ds)
 			{
-				method.CheckAbstractAndExtern (block != null);
+				CheckAbstractAndExtern (block != null);
 				return base.Define (ds);
+			}
+			
+			public override string GetSignatureForError ()
+			{
+				return method.GetSignatureForError () + "." + prefix.Substring (0, prefix.Length - 1);
 			}
 
 			public override bool ResolveMembers ()
@@ -7424,12 +7399,14 @@ namespace Mono.CSharp {
 				: base (method, prefix)
 			{
 				this.method = method;
+				this.ModFlags = method.ModFlags;
 			}
 
 			protected AEventAccessor (Event method, Accessor accessor, string prefix)
 				: base (method, accessor, prefix)
 			{
 				this.method = method;
+				this.ModFlags = method.ModFlags;
 			}
 
 			public override Iterator Iterator {

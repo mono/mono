@@ -382,6 +382,39 @@ namespace Mono.CSharp {
 			member_name = new_name;
 			cached_name = null;
 		}
+		
+		protected bool CheckAbstractAndExtern (bool has_block)
+		{
+			if (Parent.PartialContainer.Kind == Kind.Interface)
+				return true;
+
+			if (has_block) {
+				if ((ModFlags & Modifiers.EXTERN) != 0) {
+					Report.Error (179, Location, "`{0}' cannot declare a body because it is marked extern",
+						GetSignatureForError ());
+					return false;
+				}
+
+				if ((ModFlags & Modifiers.ABSTRACT) != 0) {
+					Report.Error (500, Location, "`{0}' cannot declare a body because it is marked abstract",
+						GetSignatureForError ());
+					return false;
+				}
+			} else {
+				if ((ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN)) == 0) {
+					if (RootContext.Version >= LanguageVersion.LINQ && this is Property.PropertyMethod) {
+						Report.Error (840, Location, "`{0}' must have a body because it is not marked abstract or extern. The property can be automatically implemented when you define both accessors",
+						              GetSignatureForError ());
+					} else {
+						Report.Error (501, Location, "`{0}' must have a body because it is not marked abstract or extern",
+						              GetSignatureForError ());
+					}
+					return false;
+				}
+			}
+
+			return true;
+		}		
 
 		public abstract bool Define ();
 

@@ -1,3 +1,11 @@
+2007-06-12  Marek Safar  <marek.safar@gmail.com>
+
+	* decl.cs (CheckAbstractAndExtern): Moved to MemberCore for easier error
+	reporting. Added automatic property check.
+	
+	* class.cs: Updated after CheckAbstractAndExtern relocation.
+	(AEventPropertyAccessor.GetSignatureForError): Customized.
+	
 2007-06-11  Marek Safar  <marek.safar@gmail.com>
 
 	* class.cs (DefineBaseTypes): Base type can be undefined.
