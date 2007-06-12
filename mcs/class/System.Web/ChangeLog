@@ -1,3 +1,7 @@
+2007-06-12  Vladimir Krasnov  <vladimirk@mainsoft.com>
+	
+	* System.Web20.csproj: added CompilationSection.cs
+
 2007-05-15  Marek Habersack  <mhabersack@novell.com>
 
 	* System.Web.dll.sources: added
