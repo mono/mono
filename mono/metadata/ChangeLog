@@ -1,5 +1,10 @@
 2007-06-12  Zoltan Varga  <vargaz@gmail.com>
 
+	* loader.c (mono_free_method): Free header->locals and header->clauses.
+
+	* marshal.c (mono_mb_create_method): Make a copy of the locals as well in the
+	dynamic case.
+
 	* threads.c (mono_thread_get_stack_bounds): Fix memory leak.
 
 	* class.c (setup_interface_offsets): Allocate memory from the image mempool.
