@@ -508,7 +508,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (false, listview.Items [1].Selected, "SelectedIndexCollectionTest_ClearTest#7");
 			Assert.AreEqual (false, listview.Items [2].Selected, "SelectedIndexCollectionTest_ClearTest#8");
 		}
-#endif
 
 		[Test]
 		public void SelectedIndexCollectionTest_IndexOfTest ()
@@ -538,8 +537,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (2, listview.SelectedIndices.IndexOf (item4.Index), "SelectedIndexCollectionTest_IndexOfTest#9");
 			Assert.AreEqual (-1, listview.SelectedIndices.IndexOf (item2.Index), "SelectedIndexCollectionTest_IndexOfTest#10");
 		}
-
-#if NET_2_0
 
 		[Test]
 		public void SelectedIndexCollectionTest_IndexOfTest_VirtualMode ()

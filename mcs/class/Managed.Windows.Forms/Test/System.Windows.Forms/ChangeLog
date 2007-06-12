@@ -1,3 +1,8 @@
+2007-06-12  Raja R Harinath  <rharinath@novell.com>
+
+	* ListViewCollectionsTest.cs (SelectedIndexCollectionTest_IndexOfTest):
+	Move to NET_2_0 profile.
+
 2007-06-11  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListViewCollectionsTest.cs: New tests for CheckedItemCollection and
