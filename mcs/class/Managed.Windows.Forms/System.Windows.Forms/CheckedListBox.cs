@@ -310,11 +310,9 @@ namespace System.Windows.Forms
 		}
 
 #if NET_2_0
-		protected override void RefreshItem (int index)
+		protected override void RefreshItems ()
 		{
-			for (int i = 0; i < Items.Count; i++) {
-				RefreshItem (i);
-			}
+			base.RefreshItems ();
 		}
 #endif
 		public void SetItemChecked (int index, bool value)
