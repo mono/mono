@@ -120,6 +120,10 @@ ifndef PROFILE_SUBDIRS
 PROFILE_SUBDIRS = $(SUBDIRS)
 endif
 
+ifndef FRAMEWORK_VERSION_MAJOR
+FRAMEWORK_VERSION_MAJOR = $(basename $(FRAMEWORK_VERSION))
+endif
+
 %-recursive:
 	@set . $$MAKEFLAGS; final_exit=:; \
 	case $$2 in --unix) shift ;; esac; \
