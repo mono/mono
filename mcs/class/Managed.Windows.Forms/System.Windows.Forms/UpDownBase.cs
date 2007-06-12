@@ -409,6 +409,16 @@ namespace System.Windows.Forms
 			set { base.AutoScrollMinSize = value; }
 		}
 
+#if NET_2_0
+		[Browsable (true)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Visible)]
+		public override bool AutoSize {
+			get { return base.AutoSize; }
+			set { base.AutoSize = value; }
+		}
+#endif
+
 		public override Color BackColor {
 			get {
 				return base.BackColor;
@@ -433,6 +443,15 @@ namespace System.Windows.Forms
 			}
 		}
 
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public override ImageLayout BackgroundImageLayout {
+			get { return base.BackgroundImageLayout; }
+			set { base.BackgroundImageLayout = value; }
+		}
+#endif
 
 		[DefaultValue(BorderStyle.Fixed3D)]
 		[DispId(-504)]
@@ -451,6 +470,17 @@ namespace System.Windows.Forms
 				spnSpinner.ContextMenu = value;
 			}
 		}
+
+#if NET_2_0
+		public override ContextMenuStrip ContextMenuStrip {
+			get { return base.ContextMenuStrip; }
+			set {
+				base.ContextMenuStrip = value;
+				txtView.ContextMenuStrip = value;
+				spnSpinner.ContextMenuStrip = value;
+			}
+		}
+#endif
 
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -486,6 +516,18 @@ namespace System.Windows.Forms
 				_InterceptArrowKeys = value;
 			}
 		}
+
+#if NET_2_0
+		public override Size MaximumSize {
+			get { return base.MaximumSize; }
+			set { base.MaximumSize = new Size (value.Width, 0); }
+		}
+		
+		public override Size MinimumSize {
+			get { return base.MinimumSize; }
+			set { base.MinimumSize = new Size (value.Width, 0); }
+		}
+#endif
 
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -607,6 +649,7 @@ namespace System.Windows.Forms
 		#endregion	// Public Instance Methods
 
 		#region Protected Instance Methods
+#if !NET_2_0
 		protected override void Dispose (bool disposing)
 		{
 			if (disposing) {
@@ -618,6 +661,7 @@ namespace System.Windows.Forms
 			}
 			base.Dispose (disposing);
 		}
+#endif
 
 		protected virtual void OnChanged (object source, EventArgs e)
 		{
@@ -634,10 +678,29 @@ namespace System.Windows.Forms
 			base.OnHandleCreated (e);
 		}
 
+#if NET_2_0
+		protected override void OnHandleDestroyed (EventArgs e)
+		{
+			base.OnHandleDestroyed (e);
+		}
+#endif
+
 		protected override void OnLayout (LayoutEventArgs e)
 		{
 			base.OnLayout(e);
 		}
+
+#if NET_2_0
+		protected override void OnMouseDown (MouseEventArgs e)
+		{
+			base.OnMouseDown (e);
+		}
+
+		protected override void OnMouseUp (MouseEventArgs e)
+		{
+			base.OnMouseUp (e);
+		}
+#endif
 
 		protected override void OnMouseWheel (MouseEventArgs e)
 		{
@@ -646,6 +709,13 @@ namespace System.Windows.Forms
 			else if (e.Delta < 0)
 				DownButton();
 		}
+
+#if NET_2_0
+		protected override void OnPaint (PaintEventArgs e)
+		{
+			base.OnPaint (e);
+		}	
+#endif
 
 		protected virtual void OnTextBoxKeyDown (object source, KeyEventArgs e)
 		{
@@ -697,6 +767,7 @@ namespace System.Windows.Forms
 			OnTextChanged(e);
 		}
 
+#if !NET_2_0
 		protected override void SetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified)
 		{
 			base.SetBoundsCore(x, y, width, height, specified);
@@ -704,6 +775,7 @@ namespace System.Windows.Forms
 			if ((specified & BoundsSpecified.Size) != BoundsSpecified.None)
 				reseat_controls();
 		}
+#endif
 
 		protected abstract void UpdateEditText ();
 
@@ -735,6 +807,15 @@ namespace System.Windows.Forms
 		#endregion	// Protected Instance Methods
 
 		#region Events
+#if NET_2_0
+		[Browsable (true)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
+		public new event EventHandler AutoSizeChanged {
+			add { base.AutoSizeChanged += value; }
+			remove { base.AutoSizeChanged -= value; }
+		}
+#endif
+
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public new event EventHandler BackgroundImageChanged {
@@ -742,7 +823,16 @@ namespace System.Windows.Forms
 			remove { base.BackgroundImageChanged -= value; }
 		}
 
-		[Browsable(false)]
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler BackgroundImageLayoutChanged {
+			add { base.BackgroundImageLayoutChanged += value; }
+			remove { base.BackgroundImageLayoutChanged -= value; }
+		}
+#endif
+
+		[Browsable (false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public new event EventHandler MouseEnter {
 			add { base.MouseEnter += value; }

@@ -1,6 +1,10 @@
 2007-06-12  Jonathan Pobst  <monkey@jpobst.com>
 
-	* ErrorProvider.cs: Test for Clear method.
+	* UpDownBaseTest.cs: Test for Min/Max size.
+
+2007-06-12  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ErrorProviderTest.cs: Test for Clear method.
 
 2007-06-12  Jonathan Pobst  <monkey@jpobst.com>
 

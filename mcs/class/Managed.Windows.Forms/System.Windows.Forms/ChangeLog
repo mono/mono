@@ -1,5 +1,9 @@
 2007-06-12  Jonathan Pobst  <monkey@jpobst.com>
 
+	* UpDownBase.cs: Add 2.0 stuffs.
+
+2007-06-12  Jonathan Pobst  <monkey@jpobst.com>
+
 	* NumericUpDown.cs: Add 2.0 stuffs.
 
 2007-06-12  Jonathan Pobst  <monkey@jpobst.com>

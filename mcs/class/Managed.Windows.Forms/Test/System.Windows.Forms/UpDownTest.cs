@@ -1047,5 +1047,44 @@ namespace MonoTests.System.Windows.Forms
 
 			private readonly string _text;
 		}
+		
+#if NET_2_0
+		[Test]
+		public void Defaults ()
+		{
+			UpDownBase udb = new MockUpDown ();
+			
+			Assert.AreEqual (new Size (0, 0), udb.MaximumSize, "A1");
+			Assert.AreEqual (new Size (0, 0), udb.MinimumSize, "A2");
+			
+			udb.MaximumSize = new Size (100, 100);
+			udb.MinimumSize = new Size (100, 100);
+
+			Assert.AreEqual (new Size (100, 0), udb.MaximumSize, "A3");
+			Assert.AreEqual (new Size (100, 0), udb.MinimumSize, "A4");
+		}
+		
+		private class MockUpDown : UpDownBase
+		{
+			public MockUpDown () : base ()
+			{
+			}
+
+			public override void DownButton ()
+			{
+				throw new Exception ("The method or operation is not implemented.");
+			}
+
+			public override void UpButton ()
+			{
+				throw new Exception ("The method or operation is not implemented.");
+			}
+
+			protected override void UpdateEditText ()
+			{
+				throw new Exception ("The method or operation is not implemented.");
+			}
+		}
+#endif	
 	}
 }
