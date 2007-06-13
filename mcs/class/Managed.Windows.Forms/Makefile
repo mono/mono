@@ -105,7 +105,7 @@ SWF2k5.csproj: System.Windows.Forms.dll.sources System.Windows.Forms.dll.resourc
 
 include ../../build/library.make
 
-TEST_HARNESS_EXCLUDES = /exclude:Interactive,NotWorking,ValueAdd,CAS,InetAccess
+TEST_HARNESS_EXCLUDES = /exclude:Interactive,NotWorking,ValueAdd,CAS,InetAccess /labels
 TEST_HARNESS_EXCLUDES_ONDOTNET = /exclude:Interactive,NotDotNet,CAS
 
 $(the_lib): $(RESOURCES) SWF.csproj SWF2k5.csproj
