@@ -102,7 +102,12 @@ namespace System.Configuration
 #if (XML_DEP) && (CONFIGURATION_DEP)
 		protected override bool SerializeToXmlElement (XmlWriter writer, string elementName)
 		{
-			throw new NotImplementedException ();
+			if (node == null)
+				return false;
+			writer.WriteStartElement (elementName);
+			node.WriteTo (writer);
+			writer.WriteEndElement ();
+			return true;
 		}
 #endif
 

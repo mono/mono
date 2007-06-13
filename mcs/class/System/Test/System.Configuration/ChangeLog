@@ -1,3 +1,7 @@
+2007-06-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SettingElementTest.cs : test initial Value.
+
 2007-05-31  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ApplicationSettingsBaseTest.cs : NotWorking Providers().

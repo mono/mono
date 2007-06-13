@@ -40,6 +40,14 @@ namespace MonoTests.System.Configuration
 	public class SettingElementTest
 	{
 		[Test]
+		public void Initial ()
+		{
+			SettingElement el = new SettingElement ();
+			Assert.IsNotNull (el.Value, "#1");
+			Assert.IsNull (el.Value.ValueXml, "#2");
+		}
+
+		[Test]
 		public void CollectionAddNull ()
 		{
 			try {

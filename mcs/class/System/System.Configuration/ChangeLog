@@ -1,3 +1,10 @@
+2007-06-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SettingsContext.cs : add internal CurrentSettings property to
+	  make current ApplicationSettingsBase accessible.
+	* ApplicationSettingsBase.cs : use above.
+	* SettingValueElement.cs : implement SerializeToXmlElement().
+
 2007-06-12  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* SettingValueElement.cs: fixed stub Properties property for

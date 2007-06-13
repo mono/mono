@@ -107,6 +107,7 @@ namespace System.Configuration {
 		public override void Save()
 		{
 #if (CONFIGURATION_DEP)
+			Context.CurrentSettings = this;
 			/* ew.. this needs to be more efficient */
 			foreach (SettingsProvider provider in Providers) {
 				SettingsPropertyValueCollection cache = new SettingsPropertyValueCollection ();
@@ -119,6 +120,7 @@ namespace System.Configuration {
 				if (cache.Count > 0)
 					provider.SetPropertyValues (Context, cache);
 			}
+			Context.CurrentSettings = null;
 #endif
 		}
 
