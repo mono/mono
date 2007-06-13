@@ -196,6 +196,14 @@ namespace System.Windows.Forms {
 			ArrangeWindows ();
 		}
 #if NET_2_0
+		protected override void ScaleControl (SizeF factor, BoundsSpecified specified)
+		{
+			// Never change the MdiClient's location
+			specified &= ~BoundsSpecified.Location;
+
+			base.ScaleControl (factor, specified);
+		}
+		
 		[System.ComponentModel.EditorBrowsable (EditorBrowsableState.Never)]
 #endif
 		protected override void ScaleCore (float dx, float dy)

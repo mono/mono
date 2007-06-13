@@ -1,5 +1,12 @@
 2007-06-13  Jonathan Pobst  <monkey@jpobst.com>
 
+	* LayoutEventArgs.cs: Add 2.0 AffectedComponent.
+	* MdiClient.cs: Add 2.0 ScaleControl.
+	* NativeWindow.cs: Implement 2.0 interface IWin32Window.
+	* NumericUpDownAccelerationCollection.cs: Add [ListBinding].
+
+2007-06-13  Jonathan Pobst  <monkey@jpobst.com>
+
 	* Form.cs: Implement some scaling methods, stub some RTL methods,
 	corcompare work.
 

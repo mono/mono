@@ -37,7 +37,11 @@ using System.Diagnostics;
 
 namespace System.Windows.Forms
 {
-	public class NativeWindow : MarshalByRefObject {
+	public class NativeWindow : MarshalByRefObject
+#if NET_2_0
+		, IWin32Window
+#endif
+	{
 		internal IntPtr			window_handle;
 		static internal Hashtable	window_collection = new Hashtable();
 
@@ -165,11 +169,7 @@ namespace System.Windows.Forms
 			Message		m = new Message();
 			NativeWindow	window = null;
 
-#if debug
-			Console.WriteLine("NativeWindow.cs ({0}, {1}, {2}, {3}): result {4}", hWnd, msg, wParam, lParam, m.Result);
-#endif
-
-			try {
+			//try {
 				lock (window_collection) {
 					window = (NativeWindow)window_collection[hWnd];
 				}
@@ -194,15 +194,15 @@ namespace System.Windows.Forms
 				}
 				else
 					m.Result=XplatUI.DefWndProc(ref m);
-			}
-			catch (Exception ex) {
-#if !ExternalExceptionHandler				
-				if (window != null)
-					window.OnThreadException(ex);
-#else
-				throw;
-#endif
-			}
+//            }
+//            catch (Exception ex) {
+//#if !ExternalExceptionHandler				
+//                if (window != null)
+//                    window.OnThreadException(ex);
+//#else
+//                throw;
+//#endif
+//            }
 
 			#if debug
 				Console.WriteLine("NativeWindow.cs: Message {0}, result {1}", msg, m.Result);

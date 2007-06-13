@@ -26,10 +26,12 @@
 
 using System;
 using System.Collections;
+using System.ComponentModel;
 using System.Collections.Generic;
 
 namespace System.Windows.Forms
 {
+	[ListBindable (false)]
 	public class NumericUpDownAccelerationCollection : MarshalByRefObject, ICollection<NumericUpDownAcceleration>, 
 		IEnumerable<NumericUpDownAcceleration>, IEnumerable
 	{
