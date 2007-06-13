@@ -1,3 +1,9 @@
+2007-06-13  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #81748
+	* cs-tokenizer.cs,
+	* expression.cs: More checks for non ISO-1 features.
+
 2007-06-12  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #81807

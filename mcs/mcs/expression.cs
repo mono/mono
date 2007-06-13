@@ -6685,6 +6685,9 @@ namespace Mono.CSharp {
 
 		public QualifiedAliasMember (string alias, string identifier, Location l)
 		{
+			if (RootContext.Version == LanguageVersion.ISO_1)
+				Report.FeatureIsNotISO1 (l, "namespace alias qualifier");
+
 			this.alias = alias;
 			this.identifier = identifier;
 			loc = l;
