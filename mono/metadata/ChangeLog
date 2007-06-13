@@ -1,5 +1,9 @@
 2007-06-13  Rodrigo Kumpera  <kumpera@gmail.com>
 
+	* verify.c: Fixed pointer type handling, some code and message formating and two invalid assigments 
+
+2007-06-13  Rodrigo Kumpera  <kumpera@gmail.com>
+
 	* verify.c: method invocation is now validated, now we verify parameter types on stack.
 	Fixed overflow and underflow not aborting the verification process.
 
