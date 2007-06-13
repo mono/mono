@@ -1,3 +1,12 @@
+
+2007-06-13  Randolph Chung  <tausq@debian.org>
+
+	* atomic.h: Enable for all hppa targets.
+	* Makefile.am: rename hppa_atomic.s to hppa_atomic.S so the preprocessor
+	can handle the file.
+	* hppa_atomic.s: Renamed to ...
+	* hppa_atomic.S: ... and updated to work on both HPUX and Linux.
+
 2007-06-13  Dick Porter  <dick@ximian.com>
 
 	* handles.c (timedwait_signal_wait_cond): Alertable waits on
