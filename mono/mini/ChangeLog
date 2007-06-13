@@ -1,10 +1,16 @@
 
 2007-06-13  Randolph Chung  <tausq@debian.org>
 
+	* mini-ops.h: Reorder branch ops so that they match the order of the
+	corresponding CEE_* ops.  The code expects them this way.
+	Add new ops for HPPA target.
+	Contributed under the X11 license (http://bugzilla.ximian.com/show_bug.cgi?id=81866).
+
+2007-06-13  Randolph Chung  <tausq@debian.org>
+
 	* mini-exceptions.c: Handle cases where the stack grows towards
 	larger addresses.
 	Contributed under the X11 license (http://bugzilla.ximian.com/show_bug.cgi?id=81866).
-
 
 Wed Jun 13 19:13:23 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
