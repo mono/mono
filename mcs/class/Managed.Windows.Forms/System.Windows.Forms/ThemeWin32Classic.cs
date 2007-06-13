@@ -2822,7 +2822,7 @@ namespace System.Windows.Forms
 			Graphics gr = Graphics.FromImage (bmp);
 			Rectangle rect = new Rectangle (Point.Empty, size);
 			gr.FillRectangle (ResPool.GetSolidBrush (bg_color), rect);
-			CPDrawMenuGlyph (gr, rect, glyph, color);
+			CPDrawMenuGlyph (gr, rect, glyph, color, Color.Empty);
 			bmp.MakeTransparent (bg_color);
 			gr.Dispose ();
 			
@@ -6139,10 +6139,13 @@ namespace System.Windows.Forms
 		}
 
 
-		public override void CPDrawMenuGlyph (Graphics graphics, Rectangle rectangle, MenuGlyph glyph, Color color) {
+		public override void CPDrawMenuGlyph (Graphics graphics, Rectangle rectangle, MenuGlyph glyph, Color color, Color backColor) {
 			Rectangle	rect;
 			int			lineWidth;
 
+			if (backColor != Color.Empty)
+				graphics.FillRectangle (ResPool.GetSolidBrush (backColor), rectangle);
+				
 			Brush brush = ResPool.GetSolidBrush (color);
 
 			switch(glyph) {
@@ -6512,6 +6515,24 @@ namespace System.Windows.Forms
 				       format);
 			dc.DrawString (s, font, ResPool.GetSolidBrush (cpcolor.Dark), layoutRectangle, format);
 		}
+
+#if NET_2_0
+		public override void CPDrawStringDisabled (IDeviceContext dc, string s, Font font, Color color, Rectangle layoutRectangle, TextFormatFlags format)
+		{
+			CPColor cpcolor = ResPool.GetCPColor (color);
+
+			layoutRectangle.Offset (1, 1);
+			TextRenderer.DrawText (dc, s, font, layoutRectangle, cpcolor.LightLight, format);
+
+			layoutRectangle.Offset (-1, -1);
+			TextRenderer.DrawText (dc, s, font, layoutRectangle, cpcolor.Dark, format);
+		}
+
+		public override void CPDrawVisualStyleBorder (Graphics graphics, Rectangle bounds)
+		{
+			graphics.DrawRectangle (SystemPens.ControlDarkDark, bounds);
+		}
+#endif
 
 		private static void DrawBorderInternal (Graphics graphics, int startX, int startY, int endX, int endY,
 			int width, Color color, ButtonBorderStyle style, Border3DSide side) 

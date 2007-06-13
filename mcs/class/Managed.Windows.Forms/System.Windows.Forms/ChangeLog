@@ -1,3 +1,8 @@
+2007-06-13  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ControlPaint.cs, Theme.cs, ThemeWin32Classic.cs: Implement
+	ControlPaint 2.0 stuffs.
+
 2007-06-12  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ThreadExceptionDialog.cs: Add 2.0 stuffs.

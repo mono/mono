@@ -390,12 +390,26 @@ namespace System.Windows.Forms {
 
 		public static void DrawMenuGlyph(Graphics graphics, Rectangle rectangle, MenuGlyph glyph) {
 
-			ThemeEngine.Current.CPDrawMenuGlyph (graphics, rectangle, glyph, ThemeEngine.Current.ColorMenuText);
+			ThemeEngine.Current.CPDrawMenuGlyph (graphics, rectangle, glyph, ThemeEngine.Current.ColorMenuText, Color.Empty);
 		}
 
+#if NET_2_0
+		public static void DrawMenuGlyph (Graphics graphics, Rectangle rectangle, MenuGlyph glyph, Color foreColor, Color backColor)
+		{
+			ThemeEngine.Current.CPDrawMenuGlyph (graphics, rectangle, glyph, foreColor, backColor);
+		}
+#endif	
+	
 		public static void DrawMenuGlyph(Graphics graphics, int x, int y, int width, int height, MenuGlyph glyph) {
 			DrawMenuGlyph(graphics, new Rectangle(x, y, width, height), glyph);
 		}
+
+#if NET_2_0
+		public static void DrawMenuGlyph (Graphics graphics, int x, int y, int width, int height, MenuGlyph glyph, Color foreColor, Color backColor)
+		{
+			DrawMenuGlyph (graphics, new Rectangle (x, y, width, height), glyph, foreColor, backColor);
+		}
+#endif		
 
 		public static void DrawMixedCheckBox(Graphics graphics, Rectangle rectangle, ButtonState state) {
 			DrawCheckBox(graphics, rectangle, state);
@@ -458,6 +472,18 @@ namespace System.Windows.Forms {
 
 			ThemeEngine.Current.CPDrawStringDisabled (graphics, s, font, color, layoutRectangle, format);
 		}
+
+#if NET_2_0
+		public static void DrawStringDisabled (IDeviceContext dc, string s, Font font, Color color, Rectangle layoutRectangle, TextFormatFlags format)
+		{
+			ThemeEngine.Current.CPDrawStringDisabled (dc, s, font, color, layoutRectangle, format);
+		}
+		
+		public static void DrawVisualStyleBorder (Graphics graphics, Rectangle bounds)
+		{
+			ThemeEngine.Current.CPDrawVisualStyleBorder (graphics, bounds);
+		}
+#endif
 		#endregion	// Public Static Methods
 	}
 }

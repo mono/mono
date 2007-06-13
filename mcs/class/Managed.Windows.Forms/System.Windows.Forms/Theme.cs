@@ -1010,7 +1010,7 @@ namespace System.Windows.Forms
 		public abstract void CPDrawGrid (Graphics graphics, Rectangle area, Size pixelsBetweenDots, Color backColor);
 		public abstract void CPDrawImageDisabled (Graphics graphics, Image image, int x, int y, Color background);
 		public abstract void CPDrawLockedFrame (Graphics graphics, Rectangle rectangle, bool primary);
-		public abstract void CPDrawMenuGlyph (Graphics graphics, Rectangle rectangle, MenuGlyph glyph, Color color);
+		public abstract void CPDrawMenuGlyph (Graphics graphics, Rectangle rectangle, MenuGlyph glyph, Color color, Color backColor);
 		public abstract void CPDrawRadioButton (Graphics graphics, Rectangle rectangle, ButtonState state);
 		public abstract void CPDrawReversibleFrame (Rectangle rectangle, Color backColor, FrameStyle style);
 		public abstract void CPDrawReversibleLine (Point start, Point end, Color backColor);
@@ -1020,6 +1020,10 @@ namespace System.Windows.Forms
 		public abstract void CPDrawSizeGrip (Graphics graphics, Color backColor, Rectangle bounds);
 		public abstract void CPDrawStringDisabled (Graphics graphics, string s, Font font, Color color, RectangleF layoutRectangle,
 			StringFormat format);
+#if NET_2_0
+		public abstract void CPDrawStringDisabled (IDeviceContext dc, string s, Font font, Color color, Rectangle layoutRectangle, TextFormatFlags format);
+		public abstract void CPDrawVisualStyleBorder (Graphics graphics, Rectangle bounds);
+#endif
 		public abstract void CPDrawBorderStyle (Graphics dc, Rectangle area, BorderStyle border_style);
 		#endregion	// ControlPaint Methods
 	}
