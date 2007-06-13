@@ -1773,6 +1773,11 @@ namespace MonoTests.System.Windows.Forms
 			f.Show ();
 
 			Assert.AreEqual (new Size (403, 403), f.ClientSize, "A1");
+			
+			f.Controls.Remove (b);
+			Assert.AreEqual (new Size (403, 403), f.ClientSize, "A2");
+		
+			f.Dispose ();
 		}
 
 		[Test]
@@ -1817,6 +1822,66 @@ namespace MonoTests.System.Windows.Forms
 			f.Controls.Add (b);
 
 			Assert.AreEqual (new Size (203, 203), f.ClientSize, "A2");
+		}
+
+		[Test]
+		public void GetScaledBoundsTest ()
+		{
+			ScaleForm c = new ScaleForm ();
+
+			Rectangle r = new Rectangle (100, 200, 300, 400);
+
+			Assert.AreEqual (new Rectangle (100, 200, 584, 218), c.PublicGetScaledBounds (r, new SizeF (2f, .5f), BoundsSpecified.All), "A1");
+			Assert.AreEqual (new Rectangle (100, 200, 300, 400), c.PublicGetScaledBounds (r, new SizeF (2f, .5f), BoundsSpecified.Location), "A2");
+			Assert.AreEqual (new Rectangle (100, 200, 584, 218), c.PublicGetScaledBounds (r, new SizeF (2f, .5f), BoundsSpecified.Size), "A3");
+			Assert.AreEqual (new Rectangle (100, 200, 300, 218), c.PublicGetScaledBounds (r, new SizeF (2f, .5f), BoundsSpecified.Height), "A4");
+			Assert.AreEqual (new Rectangle (100, 200, 300, 400), c.PublicGetScaledBounds (r, new SizeF (2f, .5f), BoundsSpecified.X), "A5");
+			Assert.AreEqual (new Rectangle (100, 200, 300, 400), c.PublicGetScaledBounds (r, new SizeF (2f, .5f), BoundsSpecified.None), "A6");
+
+			Assert.AreEqual (new Rectangle (100, 200, 300, 400), c.PublicGetScaledBounds (r, new SizeF (1f, 1f), BoundsSpecified.All), "A6-2");
+			Assert.AreEqual (new Rectangle (100, 200, 584, 764), c.PublicGetScaledBounds (r, new SizeF (2f, 2f), BoundsSpecified.All), "A7");
+			Assert.AreEqual (new Rectangle (100, 200, 868, 1128), c.PublicGetScaledBounds (r, new SizeF (3f, 3f), BoundsSpecified.All), "A8");
+			Assert.AreEqual (new Rectangle (100, 200, 1152, 1492), c.PublicGetScaledBounds (r, new SizeF (4f, 4f), BoundsSpecified.All), "A9");
+			Assert.AreEqual (new Rectangle (100, 200, 158, 218), c.PublicGetScaledBounds (r, new SizeF (.5f, .5f), BoundsSpecified.All), "A10");
+		}
+
+		[Test]
+		public void MethodScaleControl ()
+		{
+			ScaleForm f = new ScaleForm ();
+			f.Location = new Point (5, 10);
+
+			Assert.AreEqual (new Rectangle (5, 10, 300, 300), f.Bounds, "A1");
+
+			f.PublicScaleControl (new SizeF (2.0f, 2.0f), BoundsSpecified.All);
+			Assert.AreEqual (new Rectangle (5, 10, 584, 564), f.Bounds, "A2");
+
+			f.PublicScaleControl (new SizeF (.5f, .5f), BoundsSpecified.Location);
+			Assert.AreEqual (new Rectangle (5, 10, 584, 564), f.Bounds, "A3");
+
+			f.PublicScaleControl (new SizeF (.5f, .5f), BoundsSpecified.Size);
+			Assert.AreEqual (new Rectangle (5, 10, 300, 300), f.Bounds, "A4");
+
+			f.PublicScaleControl (new SizeF (2.5f, 2.5f), BoundsSpecified.Size);
+			Assert.AreEqual (new Rectangle (5, 10, 726, 696), f.Bounds, "A5");
+
+			f.PublicScaleControl (new SizeF (.3f, .3f), BoundsSpecified.Size);
+			Assert.AreEqual (new Rectangle (5, 10, 229, 234), f.Bounds, "A6");
+
+			f.Dispose ();
+		}
+
+		private class ScaleForm : Form
+		{
+			public Rectangle PublicGetScaledBounds (Rectangle bounds, SizeF factor, BoundsSpecified specified)
+			{
+				return base.GetScaledBounds (bounds, factor, specified);
+			}
+
+			public void PublicScaleControl (SizeF factor, BoundsSpecified specified)
+			{
+				base.ScaleControl (factor, specified);
+			}
 		}
 #endif
 
