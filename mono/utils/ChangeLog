@@ -1,3 +1,8 @@
+2007-06-13  Mark Probst  <mark.probst@gmail.com>
+
+	* mono-codeman.c (mono_code_manager_reserve): Gather dynamic code
+	allocation stats.
+
 2007-06-06  Mark Probst  <mark.probst@gmail.com>
 
 	* mono-internal-hash.c: Fixed a bug in the remove entry code.

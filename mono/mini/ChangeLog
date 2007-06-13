@@ -1,3 +1,7 @@
+2007-06-13  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c (print_jit_stats): Output dynamic code allocation stats.
+
 2007-06-10  Sanghyeon Seo <sanxiyn@gmail.com>
 
 	* mini-exceptions.c: Generate a method profile leave event during

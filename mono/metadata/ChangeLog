@@ -1,3 +1,8 @@
+2007-06-13  Mark Probst  <mark.probst@gmail.com>
+
+	* class-internals.h (MonoStats): Added stats entries for dynamic
+	code allocations.
+
 2007-06-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* loader.c (mono_free_method): Free header->locals and header->clauses.
