@@ -262,7 +262,7 @@ namespace MonoTests.System.Xml
 			w.WriteEndElement ();
 			w.WriteEndElement ();
 			w.Close ();
-			AssertEquals ("#2", expected, sw.ToString ());
+			AssertEquals ("#2", expected, sw.ToString ().Replace ("\r\n", "\n"));
 		}
 	}
 }

@@ -1,3 +1,9 @@
+2007-06-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlNode.cs : InnerText is settable on XmlDocumentFragment (silly,
+	  but since XmlDocumentFragment does not override this property
+	  it must be handled here).
+
 2007-06-11  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlTextReader.cs : ReadStartElement() has bogus error message.

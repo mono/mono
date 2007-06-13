@@ -88,5 +88,15 @@ namespace MonoTests.System.Xml
 			AssertEquals ("child", fragment.FirstChild.NextSibling.FirstChild.Name);
 			AssertEquals ("baz", fragment.LastChild.Name);
 		}
+
+		[Test]
+		public void InnerText ()
+		{
+			document = new XmlDocument ();
+			fragment = document.CreateDocumentFragment ();
+			string text = "<foo /><bar><child /></bar><baz />";
+			fragment.InnerText = text;
+			AssertEquals (text, fragment.InnerText);
+		}
 	}
 }

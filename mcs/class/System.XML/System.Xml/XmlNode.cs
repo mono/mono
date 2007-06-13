@@ -149,7 +149,12 @@ namespace System.Xml
 				return builder == null ? String.Empty : builder.ToString ();
 			}
 
-			set { throw new InvalidOperationException ("This node is read only. Cannot be modified."); }
+			set {
+				if (! (this is XmlDocumentFragment))
+					throw new InvalidOperationException ("This node is read only. Cannot be modified.");
+				RemoveAll ();
+				AppendChild (OwnerDocument.CreateTextNode (value));
+			}
 		}
 
 		private void AppendChildValues (ref StringBuilder builder)
