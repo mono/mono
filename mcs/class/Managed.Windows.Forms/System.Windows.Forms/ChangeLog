@@ -1,5 +1,10 @@
 2007-06-13  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Control.cs: corcompare work.
+	* FlatButtonAppearance.cs, FolderBrowserDialog.cs: Add TypeConverters.
+
+2007-06-13  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ControlPaint.cs, Theme.cs, ThemeWin32Classic.cs: Implement
 	ControlPaint 2.0 stuffs.
 

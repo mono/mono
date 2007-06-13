@@ -3368,6 +3368,7 @@ namespace System.Windows.Forms
 		}
 
 #if NET_2_0
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected
 #else
 		internal
@@ -4190,7 +4191,8 @@ namespace System.Windows.Forms
 		{
 			return auto_size_mode;
 		}
-		
+
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected 
 #else
 		internal
@@ -4516,6 +4518,7 @@ namespace System.Windows.Forms
 		}
 
 #if NET_2_0
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected
 #else
 		internal

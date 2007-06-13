@@ -30,10 +30,12 @@ using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Globalization;
 
 namespace System.Windows.Forms
 {
 #if NET_2_0
+	[TypeConverter (typeof (FlatButtonAppearanceConverter))]
 	public 
 #endif
 	class FlatButtonAppearance
@@ -143,4 +145,42 @@ namespace System.Windows.Forms
 			}
 		}
 	}
+	
+#if NET_2_0
+	internal class FlatButtonAppearanceConverter : TypeConverter
+	{
+		public override object ConvertTo (ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType)
+		{
+			if ((value == null) || !(value is FlatButtonAppearance) || (destinationType != typeof (string)))
+				return base.ConvertTo (context, culture, value, destinationType);
+
+			if (culture == null)
+				culture = CultureInfo.CurrentCulture;
+				
+			FlatButtonAppearance fba = (FlatButtonAppearance)value;
+			
+			return string.Format ("{0}{5} {1}{5} {2}{5} {3}{5} {4}", fba.BorderColor.ToArgb (), fba.BorderSize.ToString (), fba.CheckedBackColor.ToArgb (), fba.MouseDownBackColor.ToArgb (), fba.MouseOverBackColor.ToArgb (), culture.TextInfo.ListSeparator);
+		}
+
+		public override object ConvertFrom (ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value)
+		{
+			if ((value == null) || !(value is String))
+				return base.ConvertFrom (context, culture, value);
+
+			if (culture == null)
+				culture = CultureInfo.CurrentCulture;
+
+			string[] parts = ((string)value).Split (culture.TextInfo.ListSeparator.ToCharArray ());
+
+			FlatButtonAppearance fba = new FlatButtonAppearance (null);
+			fba.BorderColor = Color.FromArgb (int.Parse (parts[0].Trim ()));
+			fba.BorderSize = int.Parse (parts[1].Trim ());
+			fba.CheckedBackColor = Color.FromArgb (int.Parse (parts[2].Trim ()));
+			fba.MouseDownBackColor = Color.FromArgb (int.Parse (parts[3].Trim ()));
+			fba.MouseOverBackColor = Color.FromArgb (int.Parse (parts[4].Trim ()));
+			
+			return fba;
+		}
+	}
+#endif
 }
