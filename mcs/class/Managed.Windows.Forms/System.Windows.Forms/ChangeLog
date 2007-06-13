@@ -1,5 +1,10 @@
 2007-06-13  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Form.cs: Implement some scaling methods, stub some RTL methods,
+	corcompare work.
+
+2007-06-13  Jonathan Pobst  <monkey@jpobst.com>
+
 	* Control.cs: corcompare work.
 	* FlatButtonAppearance.cs, FolderBrowserDialog.cs: Add TypeConverters.
 

@@ -43,6 +43,7 @@ namespace System.Windows.Forms {
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
 	[InitializationEvent ("Load")]
 	[ComVisible (true)]
+	[ToolboxItemFilter ("System.Windows.Forms.Control.TopLevel")]
 #endif
 	[ToolboxItem(false)]
 	public class Form : ContainerControl {
@@ -94,6 +95,7 @@ namespace System.Windows.Forms {
 #if NET_2_0
 		private MenuStrip		main_menu_strip;
 		private bool			show_icon = true;
+		private bool			right_to_left_layout;
 #endif
 		#endregion	// Local Variables
 
@@ -169,6 +171,40 @@ namespace System.Windows.Forms {
 			}
 
 			return retsize;
+		}
+
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected override Rectangle GetScaledBounds (Rectangle bounds, SizeF factor, BoundsSpecified specified)
+		{
+			// Never change the Form's location
+			specified &= ~BoundsSpecified.Location;
+
+			if ((specified & BoundsSpecified.Width) == BoundsSpecified.Width && !GetStyle (ControlStyles.FixedWidth))
+				bounds.Width = (int)Math.Round (bounds.Width * factor.Width);
+			if ((specified & BoundsSpecified.Height) == BoundsSpecified.Height && !GetStyle (ControlStyles.FixedHeight))
+				bounds.Height = (int)Math.Round (bounds.Height * factor.Height);
+
+			Size size = ClientSizeFromSize (bounds.Size);
+
+			if ((specified & BoundsSpecified.Width) == BoundsSpecified.Width && !GetStyle (ControlStyles.FixedWidth))
+				bounds.Width -= (int)((bounds.Width - size.Width) * (factor.Width - 1));
+			if ((specified & BoundsSpecified.Height) == BoundsSpecified.Height && !GetStyle (ControlStyles.FixedHeight))
+				bounds.Height -= (int)((bounds.Height - size.Height) * (factor.Height - 1));
+			
+			return bounds;
+		}
+
+		protected override bool ProcessMnemonic (char charCode)
+		{
+			return base.ProcessMnemonic (charCode);
+		}
+		
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected override void ScaleControl (SizeF factor, BoundsSpecified specified)
+		{
+			Rectangle new_bounds = GetScaledBounds (bounds, factor, specified);
+			
+			SetBounds (new_bounds.X, new_bounds.Y, new_bounds.Width, new_bounds.Height, specified);
 		}
 #endif
 
@@ -472,6 +508,9 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
+		[Browsable (true)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Visible)]
 		public override bool AutoSize {
 			get { return base.AutoSize; }
 			set { 
@@ -482,7 +521,9 @@ namespace System.Windows.Forms {
 			}
 		}
 		
+		[Browsable (true)]
 		[Localizable (true)]
+		[DefaultValue (AutoSizeMode.GrowOnly)]
 		public AutoSizeMode AutoSizeMode {
 			get { return base.GetAutoSizeMode (); }
 			set { 
@@ -1040,6 +1081,13 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
+		[Localizable (true)]
+		[DefaultValue (false)]
+		public virtual bool RightToLeftLayout {
+			get { return this.right_to_left_layout; }
+			set { this.right_to_left_layout = value; }
+		}
+		
 		[DefaultValue (true)]
 		public bool ShowIcon {
 			get { return this.show_icon; }
@@ -3053,6 +3101,14 @@ namespace System.Windows.Forms {
 		protected virtual void OnResizeEnd (EventArgs e)
 		{
 			EventHandler eh = (EventHandler) (Events [ResizeEndEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
+
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected virtual void OnRightToLeftLayoutChanged (EventArgs e)
+		{
+			EventHandler eh = (EventHandler)(Events[RightToLeftLayoutChangedEvent]);
 			if (eh != null)
 				eh (this, e);
 		}
