@@ -340,6 +340,8 @@ namespace System.Configuration {
 			section.ConfigHost = system.Host;
 			parentGroup.AddChild (section);
 			elementData [section] = sec;
+
+			sec.Initialize (this, section);
 		}
 		
 		internal void RemoveConfigInfo (ConfigInfo config)

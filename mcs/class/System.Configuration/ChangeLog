@@ -1,3 +1,8 @@
+2007-06-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Configuration_test.dll.sources :
+	  added ConfigurationSectionGroupTest.cs.
+
 2007-03-19  Vladimir Krasnov  <vladimirk@mainssft.com>
 
 	* System.Configuration.dll.sources, System.Configuration20.vmwcsproj: 

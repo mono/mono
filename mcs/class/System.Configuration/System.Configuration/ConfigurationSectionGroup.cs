@@ -34,7 +34,7 @@ namespace System.Configuration
 {
 	public class ConfigurationSectionGroup
 	{
-		bool require_declaration;
+		bool require_declaration, declared;
 		string name, type_name;
 
 		ConfigurationSectionCollection sections;
@@ -45,9 +45,22 @@ namespace System.Configuration
 		public ConfigurationSectionGroup ()
 		{
 		}
-		
+
+		Configuration Config {
+			get {
+				if (config == null)
+					throw new InvalidOperationException ("ConfigurationSectionGroup cannot be edited until it is added to a Configuration instance as its descendant");
+				return config;
+			}
+		}
+
+		bool initialized;
+
 		internal void Initialize (Configuration config, SectionGroupInfo group)
 		{
+			if (initialized)
+				throw new SystemException ("INTERNAL ERROR: this configuration section is being initialized twice: " + GetType ());
+			initialized = true;
 			this.config = config;
 			this.group = group;
 		}
@@ -68,9 +81,8 @@ namespace System.Configuration
 			ForceDeclaration (true);
 		}
 		
-		[MonoTODO]
 		public bool IsDeclared {
-			get { throw new NotImplementedException (); }
+			get { return declared; }
 		}
 
 		[MonoTODO]
@@ -89,14 +101,14 @@ namespace System.Configuration
 
 		public ConfigurationSectionGroupCollection SectionGroups {
 			get {
-				if (groups == null) groups = new ConfigurationSectionGroupCollection (config, group);
+				if (groups == null) groups = new ConfigurationSectionGroupCollection (Config, group);
 				return groups;
 			}
 		}
 
 		public ConfigurationSectionCollection Sections {
 			get {
-				if (sections == null) sections = new ConfigurationSectionCollection (config, group);
+				if (sections == null) sections = new ConfigurationSectionCollection (Config, group);
 				return sections;
 			}
 		}

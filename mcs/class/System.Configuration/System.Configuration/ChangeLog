@@ -1,3 +1,9 @@
+2007-06-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ConfigurationSectionGroup.cs
+	  Configuration.cs : ConfigurationSectionGroup must be initialized
+	  at least when being added to a collection.
+
 2007-06-12  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* ConfigurationElement.cs: refactored GetKeyProperties and
