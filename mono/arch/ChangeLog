@@ -1,3 +1,10 @@
+
+2007-06-13  Randolph Chung  <tausq@debian.org>
+
+	* hppa/hppa-codegen.h: Update with more instructions.
+	* hppa/tramp.c: Disable for linux since we don't support the
+	interpreter.
+
 2007-05-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* amd64/amd64-codegen.h (amd64_call_reg): Remove a got prefix which isn't needed.
