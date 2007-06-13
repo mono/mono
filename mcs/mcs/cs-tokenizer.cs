@@ -2372,14 +2372,15 @@ namespace Mono.CSharp
 
 				PopPosition ();
 
-				if (ok)
+				if (ok) {
+					if (RootContext.Version == LanguageVersion.ISO_1)
+						Report.FeatureIsNotISO1 (Location, "partial types");
+
 					return res;
+				}
 
 				if (next_token < Token.LAST_KEYWORD)
 					Report.Error (267, Location, "The `partial' modifier can be used only immediately before keyword `class', `struct', or `interface'");
-
-				if (RootContext.Version == LanguageVersion.ISO_1)
-					Report.FeatureIsNotISO1 (Location, "partial types");
 
 				val = new LocatedToken (Location, "partial");
 				return Token.IDENTIFIER;
