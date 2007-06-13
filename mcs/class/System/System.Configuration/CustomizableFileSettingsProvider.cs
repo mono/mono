@@ -29,6 +29,8 @@
 
 #if NET_2_0 && CONFIGURATION_DEP
 
+extern alias PrebuiltSystem;
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -36,6 +38,8 @@ using System.Configuration;
 using System.IO;
 using System.Reflection;
 using System.Xml;
+
+using NameValueCollection = PrebuiltSystem.System.Collections.Specialized.NameValueCollection;
 
 namespace System.Configuration
 {
@@ -82,14 +86,10 @@ namespace System.Configuration
 
 		private static UserConfigLocationOption userConfig = UserConfigLocationOption.Company_Product;
 
-		// FIXME: this must be enabled, but the compiler borks.
-		// (fix LocalFileSettingsProvider.Initialize() as well, when enabled.)
-		/*
-		public override void Initialize (string name, System.Collections.Specialized.NameValueCollection config)
+		public override void Initialize (string name, NameValueCollection config)
 		{
-//			base.Initialize (this.Name, config);
+			base.Initialize (name, config);
 		}
-		*/
 
 		// full path to roaming user.config
 		internal static string UserRoamingFullPath {
@@ -220,25 +220,62 @@ namespace System.Configuration
 			set { isCompany = value; }
 		}
 
+		private static string GetCompanyName ()
+		{
+			Assembly assembly = Assembly.GetEntryAssembly ();
+			if (assembly == null)
+				assembly = Assembly.GetCallingAssembly ();
+			if (assembly == null)
+				return string.Empty;
+				
+			AssemblyCompanyAttribute [] attrs = (AssemblyCompanyAttribute []) assembly.GetCustomAttributes (typeof (AssemblyCompanyAttribute), true);
+			
+			if ((attrs != null) && attrs.Length > 0) {
+				return attrs [0].Company;
+			}
+
+			return assembly.GetName ().Name;
+		}
+
+		private static string GetProductName ()
+		{
+			Assembly assembly = Assembly.GetEntryAssembly ();
+			if (assembly == null)
+				assembly = Assembly.GetCallingAssembly ();
+			if (assembly == null)
+				return string.Empty;
+				
+			AssemblyProductAttribute [] attrs = (AssemblyProductAttribute[]) assembly.GetCustomAttributes (typeof (AssemblyProductAttribute), true);
+			
+			if ((attrs != null) && attrs.Length > 0) {
+				return attrs [0].Product;
+			}
+
+			return assembly.GetName ().Name;
+		}
+
+		private static string GetProductVersion ()
+		{
+			Assembly assembly = Assembly.GetEntryAssembly ();
+			if (assembly == null)
+				assembly = Assembly.GetCallingAssembly ();
+			if (assembly == null)
+				return string.Empty;
+
+			return assembly.GetName ().Version.ToString ();
+		}
+
 		private static void CreateUserConfigPath ()
 		{
 			if (userDefine)
 				return;
 
-#if false // N/A in System.dll
 			if (ProductName == "")
-			{
-				ProductName = System.Windows.Forms.Application.ProductName;
-			}
+				ProductName = GetProductName ();
 			if (CompanyName == "")
-			{
-				CompanyName = System.Windows.Forms.Application.CompanyName;
-			}
+				CompanyName = GetCompanyName ();
 			if (ForceVersion == "")
-			{
-				ProductVersion = System.Windows.Forms.Application.ProductVersion.Split('.');
-			}
-#endif
+				ProductVersion = GetProductVersion ().Split('.');
 
 			// C:\Documents and Settings\(user)\Application Data
 			if (userRoamingBasePath == "")
@@ -473,7 +510,7 @@ namespace System.Configuration
 
 
 		public override string Name {
-			get { return this.ToString (); }
+			get { return base.Name; }
 		}
 
 		string app_name = String.Empty;//"OJK.CustomSetting.CustomizableLocalFileSettingsProvider";
@@ -486,12 +523,64 @@ namespace System.Configuration
 		private ExeConfigurationFileMap exeMapPrev = null;
 		private SettingsPropertyValueCollection values = null;
 
-		private void SaveProperties (ExeConfigurationFileMap exeMap, SettingsPropertyValueCollection collection, ConfigurationUserLevel level)
+		private void SaveProperties (ExeConfigurationFileMap exeMap, SettingsPropertyValueCollection collection, ConfigurationUserLevel level, SettingsContext context, bool checkUserLevel)
 		{
 			Configuration config = ConfigurationManager.OpenMappedExeConfiguration (exeMap, level);
 			
 			UserSettingsGroup userGroup = config.GetSectionGroup ("userSettings") as UserSettingsGroup;
 			bool isRoaming = (level == ConfigurationUserLevel.PerUserRoaming);
+
+#if true // my reimplementation
+
+			if (userGroup == null) {
+				userGroup = new UserSettingsGroup ();
+				config.SectionGroups.Add ("userSettings", userGroup);
+				ApplicationSettingsBase asb = context.CurrentSettings;
+				ClientSettingsSection cs = new ClientSettingsSection ();
+				userGroup.Sections.Add (asb.GetType ().FullName, cs);
+			}
+
+			bool hasChanges = false;
+
+			foreach (ConfigurationSection section in userGroup.Sections) {
+				ClientSettingsSection userSection = section as ClientSettingsSection;
+				if (userSection == null)
+					continue;
+
+				XmlDocument doc = new XmlDocument ();
+
+				foreach (SettingsPropertyValue value in collection) {
+					if (checkUserLevel && value.Property.Attributes.Contains (typeof (SettingsManageabilityAttribute)) != isRoaming)
+						continue;
+					hasChanges = true;
+					SettingElement element = userSection.Settings.Get (value.Name);
+					if (element == null) {
+						element = new SettingElement (value.Name, value.Property.SerializeAs);
+						userSection.Settings.Add (element);
+					}
+					if (element.Value.ValueXml == null)
+						element.Value.ValueXml = new XmlDocument ().CreateDocumentFragment ();
+					doc = element.Value.ValueXml.OwnerDocument;
+					switch (value.Property.SerializeAs) {
+					case SettingsSerializeAs.Xml:
+						element.Value.ValueXml.InnerXml = value.SerializedValue as string;
+						break;
+					case SettingsSerializeAs.String:
+						element.Value.ValueXml.InnerText = value.SerializedValue as string;
+						break;
+					case SettingsSerializeAs.Binary:
+						element.Value.ValueXml.InnerText = Convert.ToBase64String (value.SerializedValue as byte []);
+						break;
+					default:
+						throw new NotImplementedException ();
+					}
+				}
+			}
+			if (hasChanges)
+				config.Save (ConfigurationSaveMode.Minimal, true);
+
+#else // original impl. - likely buggy to miss some properties to save
+
 			foreach (ConfigurationSection configSection in userGroup.Sections)
 			{
 				ClientSettingsSection userSection = configSection as ClientSettingsSection;
@@ -525,30 +614,7 @@ namespace System.Configuration
 				}
 			}
 			config.Save (ConfigurationSaveMode.Minimal, true);
-		}
-
-		private void SavePropertiesNoRoaming (ExeConfigurationFileMap exeMap, SettingsPropertyValueCollection collection, ConfigurationUserLevel level)
-		{
-			Configuration config = ConfigurationManager.OpenMappedExeConfiguration (exeMap, level);
-			UserSettingsGroup userGroup = config.GetSectionGroup ("userSettings") as UserSettingsGroup;
-
-			bool isRoaming = (level == ConfigurationUserLevel.PerUserRoaming);
-			bool isExist = false;
-
-			foreach (ConfigurationSection configSection in userGroup.Sections)
-			{
-				ClientSettingsSection userSection = configSection as ClientSettingsSection;
-				if (userSection != null) {
-					foreach (SettingElement element in userSection.Settings)
-					{
-						isExist = true;
-						element.SerializeAs = SettingsSerializeAs.String;
-						element.Value.ValueXml.InnerText = (string) collection [element.Name].SerializedValue;
-					}
-				}
-			}
-			if (isExist)
-				config.Save (ConfigurationSaveMode.Minimal);
+#endif
 		}
 
 		private void LoadPropertyValue (SettingsPropertyCollection collection, SettingElement element, bool allowOverwrite)
@@ -563,7 +629,6 @@ namespace System.Configuration
 				values.Add (value);
 			} catch (ArgumentException) {
 				throw new ConfigurationErrorsException ();
-//			} catch (NullReferenceException) {
 			}
 		}
 
@@ -589,10 +654,10 @@ namespace System.Configuration
 
 			if (UserLocalFullPath == UserRoamingFullPath)
 			{
-				SavePropertiesNoRoaming (exeMapCurrent, collection, ConfigurationUserLevel.PerUserRoaming);
+				SaveProperties (exeMapCurrent, collection, ConfigurationUserLevel.PerUserRoaming, context, false);
 			} else {
-				SaveProperties (exeMapCurrent, collection, ConfigurationUserLevel.PerUserRoaming);
-				SaveProperties (exeMapCurrent, collection, ConfigurationUserLevel.PerUserRoamingAndLocal);
+				SaveProperties (exeMapCurrent, collection, ConfigurationUserLevel.PerUserRoaming, context, true);
+				SaveProperties (exeMapCurrent, collection, ConfigurationUserLevel.PerUserRoamingAndLocal, context, true);
 			}
 		}
 
@@ -607,6 +672,11 @@ namespace System.Configuration
 
 				LoadProperies (exeMapCurrent, collection, ConfigurationUserLevel.PerUserRoaming, "userSettings", true);
 				LoadProperies (exeMapCurrent, collection, ConfigurationUserLevel.PerUserRoamingAndLocal, "userSettings", true);
+
+				// create default values if not exist
+				foreach (SettingsProperty p in collection)
+					if (values [p.Name] == null)
+						values.Add (new SettingsPropertyValue (p));
 			}
 			return values;
 		}

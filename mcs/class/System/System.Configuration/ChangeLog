@@ -1,5 +1,19 @@
 2007-06-13  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* CustomizableLocalFileSettingsProvider.cs :
+	  - added extern alias to avoid reference and I could enable
+	    Initialize() again.
+	  - Copied default user config path stuff (Company/Product/Version)
+	    from MWF Application.cs.
+	  - SaveProperties() and SavePropertiesNoRoaming() are unified, and
+	    mostly rewritten to create userSettings, set value correctly, etc.
+	  - GetPropertyValues() should collect default values as well.
+
+	  It is not enabled yet, as Configuration.Save() seems to do wrong
+	  and could overwrite application exe.config.
+
+2007-06-13  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SettingsContext.cs : add internal CurrentSettings property to
 	  make current ApplicationSettingsBase accessible.
 	* ApplicationSettingsBase.cs : use above.
