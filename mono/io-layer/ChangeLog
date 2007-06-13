@@ -1,3 +1,20 @@
+2007-06-13  Dick Porter  <dick@ximian.com>
+
+	* handles.c (timedwait_signal_wait_cond): Alertable waits on
+	private handles are now interrupted by signalling the same
+	condition that would end the wait if the handle became signalled,
+	rather than polling.  (Shared handles still have to poll.)
+
+	* threads.c (_wapi_thread_queue_apc): Interrupt the thread if it's
+	waiting on a handle
+
+	* handles-private.h (_wapi_handle_current_thread_set_waiting_on):
+	Helper functions to inform the APC queuing functions when threads
+	are waiting for handles, and to interrupt the wait.
+
+	* wait.c (WaitForMultipleObjectsEx): Need to tell the handle
+	waiting functions if any of the handles in question are shared
+
 2007-06-06  Miguel de Icaza  <miguel@novell.com>
 
 	* processes.c (is_managed_binary): Fix for OSX.
