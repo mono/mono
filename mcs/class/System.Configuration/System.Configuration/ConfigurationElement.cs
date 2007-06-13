@@ -466,9 +466,8 @@ namespace System.Configuration
 					continue;
 				
 				ConfigurationElement val = (ConfigurationElement) prop.Value;
-				if (val != null && val.HasValues ()) {
+				if (val != null)
 					wroteData = val.SerializeToXmlElement (writer, prop.Name) || wroteData;
-				}
 			}
 			return wroteData;
 		}
@@ -476,6 +475,9 @@ namespace System.Configuration
 		protected internal virtual bool SerializeToXmlElement (
 				XmlWriter writer, string elementName)
 		{
+			if (!HasValues ())
+				return false;
+
 			if (elementName != null && elementName != "")
 				writer.WriteStartElement (elementName);
 			bool res = SerializeElement (writer, false);

@@ -1,5 +1,11 @@
 2007-06-13  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ConfigurationElement.cs : SerializeToXmlElement() should be
+	  called regardless of HasValues() return value, especially since
+	  it could be overriden (e.g. in SettingsValueElement).
+
+2007-06-13  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ConfigurationSectionGroup.cs
 	  Configuration.cs : ConfigurationSectionGroup must be initialized
 	  at least when being added to a collection.
