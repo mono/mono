@@ -554,8 +554,16 @@ type_declaration
 global_attributes
 	: attribute_sections
 {
-	if ($1 != null)
-		CodeGen.Assembly.AddAttributes (((Attributes)$1).Attrs);
+	if ($1 != null) {
+		Attributes attrs = (Attributes)$1;
+		if (global_attrs_enabled) {
+			CodeGen.Assembly.AddAttributes (attrs.Attrs);
+		} else {
+			foreach (Attribute a in attrs.Attrs) {
+				Report.Error (1730, a.Location, "Assembly and module attributes must precede all other elements except using clauses and extern alias declarations");
+			}
+		}
+	}
 
 	$$ = $1;
 }
@@ -707,7 +715,7 @@ attribute
 
 		if (current_attr_target == String.Empty)
 			$$ = null;
-		else if (current_attr_target == "assembly" || current_attr_target == "module")
+		else if (global_attrs_enabled && (current_attr_target == "assembly" || current_attr_target == "module"))
 			// FIXME: supply "nameEscaped" parameter here.
 			$$ = new GlobalAttribute (current_namespace, current_attr_target,
 						  left_expr, identifier, arguments, mname.Location, lexer.IsEscapedIdentifier (mname.Location));

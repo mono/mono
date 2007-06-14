@@ -1,3 +1,8 @@
+2007-06-14  Marek Safar  <marek.safar@gmail.com>
+
+	* cs-parser.jay: Assembly and module attributes must precede all other
+	elements except using clauses and extern alias declarations.
+
 2007-06-08  Marek Safar  <marek.safar@gmail.com>
 
 	* cs-parser.jay: Uses newly defined GroupBy class.
