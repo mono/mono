@@ -1,3 +1,7 @@
+2007-06-14  Rodrigo Kumpera  <kumpera@gmail.com>
+
+	* verify.c improved the handling of brtrue/brfalse, factored out common code
+
 2007-06-14  Raja R Harinath  <rharinath@novell.com>
 
 	Kill MonoGenericMethod.
