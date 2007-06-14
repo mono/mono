@@ -1,3 +1,10 @@
+2007-06-14  Jonathan Pobst  <monkey@jpobst.com>
+
+	* OSFeature.cs: Add IsPresent.
+	* PrintPreviewControl.cs: Add RightToLeft.
+	* SplitContainer.cs: Add AutoScrollOffset, ScaleControl.
+	* SplitterPanel.cs: Add AutoSizeMode.
+
 2007-06-13  Jonathan Pobst  <monkey@jpobst.com>
 
 	* LayoutEventArgs.cs: Add 2.0 AffectedComponent.

@@ -67,14 +67,14 @@ namespace System.Windows.Forms
 			set { base.AutoSize = value; }
 		}
 
-		//Uncomment once this has been implemented in ContainerControl.cs
-		//[Browsable (false)]
-		//[EditorBrowsable (EditorBrowsableState.Never)]
-		//[Localizable(false)]
-		//public override AutoSizeMode AutoSizeMode {
-		//        get { return base.AutoSizeMode; }
-		//        set { base.AutoSizeMode = value; }
-		//}
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[Localizable(false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public override AutoSizeMode AutoSizeMode {
+		        get { return base.AutoSizeMode; }
+		        set { base.AutoSizeMode = value; }
+		}
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]

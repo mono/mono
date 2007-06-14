@@ -184,13 +184,13 @@ namespace System.Windows.Forms
 			set { base.AutoScrollMinSize = value; }
 		}
 
-		//Uncomment once this has been implemented in Control.cs
-		//[Browsable (false)]
-		//[EditorBrowsable (EditorBrowsableState.Never)]
-		//public override Point AutoScrollOffset {
-		//        get { return base.AutoScrollOffset; }
-		//        set { base.AutoScrollOffset = value; }
-		//}
+		[Browsable (false)]
+		[DefaultValue ("{X=0,Y=0}")]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public override Point AutoScrollOffset {
+			get { return base.AutoScrollOffset; }
+			set { base.AutoScrollOffset = value; }
+		}
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
@@ -554,6 +554,12 @@ namespace System.Windows.Forms
 			return base.ProcessTabKey (forward);
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected override void ScaleControl (SizeF factor, BoundsSpecified specified)
+		{
+			base.ScaleControl (factor, specified);
+		}
+		
 		[MonoTODO ("Special focus semantics not implemented")]
 		protected override void Select (bool directed, bool forward)
 		{

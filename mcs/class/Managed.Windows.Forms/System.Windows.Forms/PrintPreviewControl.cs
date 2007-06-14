@@ -118,6 +118,16 @@ namespace System.Windows.Forms {
 				document = value;
 			}
 		}
+
+#if NET_2_0
+		[Localizable (true)]
+		[AmbientValue (RightToLeft.Inherit)]
+		public override RightToLeft RightToLeft {
+			get { return base.RightToLeft; }
+			set { base.RightToLeft = value; }
+		}
+#endif
+
 		[DefaultValue(1)]
 		public int Rows {
 			get { return rows; }

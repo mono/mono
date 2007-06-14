@@ -49,6 +49,72 @@ namespace System.Windows.Forms {
 				return  feature;
 			}
 		}
+		
+		[MonoTODO ("Currently returns false for all values.  Uncomment code once 2.0 SystemInformation is done")]
+		public static bool IsPresent (SystemParameter enumVal)
+		{
+			object o;
+			
+			//switch (enumVal) {
+				//case SystemParameter.DropShadow:
+				//        try {
+				//                o = SystemInformation.IsDropShadowEnabled;
+				//                return true;
+				//        } catch (Exception) { return false; }
+				//case SystemParameter.FlatMenu:
+				//        try {
+				//                o = SystemInformation.IsFlatMenuEnabled;
+				//                return true;
+				//        } catch (Exception) { return false; }
+				//case SystemParameter.FontSmoothingContrastMetric:
+				//        try {
+				//                o = SystemInformation.FontSmoothingContrast;
+				//                return true;
+				//        } catch (Exception) { return false; }
+				//case SystemParameter.FontSmoothingTypeMetric:
+				//        try {
+				//                o = SystemInformation.FontSmoothingType;
+				//                return true;
+				//        } catch (Exception) { return false; }
+				//case SystemParameter.MenuFadeEnabled:
+				//        try {
+				//                o = SystemInformation.IsMenuFadeEnabled;
+				//                return true;
+				//        } catch (Exception) { return false; }
+				//case SystemParameter.SelectionFade:
+				//        try {
+				//                o = SystemInformation.IsSelectionFadeEnabled;
+				//                return true;
+				//        } catch (Exception) { return false; }
+				//case SystemParameter.ToolTipAnimationMetric:
+				//        try {
+				//                o = SystemInformation.IsToolTipAnimationEnabled;
+				//                return true;
+				//        } catch (Exception) { return false; }
+				//case SystemParameter.UIEffects:
+				//        try {
+				//                o = SystemInformation.UIEffectsEnabled;
+				//                return true;
+				//        } catch (Exception) { return false; }
+				//case SystemParameter.CaretWidthMetric:
+				//        try {
+				//                o = SystemInformation.CaretWidthMetric;
+				//                return true;
+				//        } catch (Exception) { return false; }
+				//case SystemParameter.VerticalFocusThicknessMetric:
+				//        try {
+				//                o = SystemInformation.VerticalFocusThickness;
+				//                return true;
+				//        } catch (Exception) { return false; }
+				//case SystemParameter.HorizontalFocusThicknessMetric:
+				//        try {
+				//                o = SystemInformation.HorizontalFocusThickness;
+				//                return true;
+				//        } catch (Exception) { return false; }
+			//}
+			
+			return false;
+		}
 		#endregion	// Public Static Properties
 
 		#region Public Instance Methods
