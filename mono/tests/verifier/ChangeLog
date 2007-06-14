@@ -1,3 +1,11 @@
+2007-05-14  Rodrigo Kumpera  <kumpera@gmail.com>
+
+	*make_load_test.sh: Fixed the entrypoint to generate valid code
+	*make_ret_test.sh: Fixed the entrypoint to generate valid code. Removed invalid generics classes
+	*make_tests.sh: Fixed the testsuite to not generate wrong tests
+	*Makefile: split the clean step as it was failing due to the huge file list
+	 (it might need further tweaking as the testsuite grows)
+
 2007-05-12  Rodrigo Kumpera  <kumpera@gmail.com>
 
 	* make_tests.sh: New boolean branch tests
