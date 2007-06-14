@@ -95,7 +95,7 @@ namespace Mono.CSharp {
 		readonly bool nameEscaped;
 
 		// It can contain more onwers when the attribute is applied to multiple fiels.
-		Attributable[] owners;
+		protected Attributable[] owners;
 
 		static readonly AttributeUsageAttribute DefaultUsageAttribute = new AttributeUsageAttribute (AttributeTargets.All);
 		static Assembly orig_sec_assembly;
@@ -137,7 +137,7 @@ namespace Mono.CSharp {
 			att_cache = new PtrHashtable ();
 		}
 
-		public void AttachTo (Attributable owner)
+		public virtual void AttachTo (Attributable owner)
 		{
 			if (this.owners == null) {
 				this.owners = new Attributable[1] { owner };
@@ -1303,6 +1303,20 @@ namespace Mono.CSharp {
 			base (target, left_expr, identifier, args, loc, nameEscaped)
 		{
 			this.ns = ns;
+			this.owners = new Attributable[1];
+		}
+		
+		public override void AttachTo (Attributable owner)
+		{
+			if (ExplicitTarget == "assembly") {
+				owners [0] = CodeGen.Assembly;
+				return;
+			}
+			if (ExplicitTarget == "module") {
+				owners [0] = CodeGen.Module;
+				return;
+			}
+			throw new NotImplementedException ("Unknown global explicit target " + ExplicitTarget);
 		}
 
 		void Enter ()
@@ -1779,6 +1793,7 @@ namespace Mono.CSharp {
 		public static bool IsConditionalMethodExcluded (MethodBase mb)
 		{
 			mb = TypeManager.DropGenericMethodArguments (mb);
+			// TODO: Has to be fixed for partial methods
 			if ((mb is MethodBuilder) || (mb is ConstructorBuilder))
 				return false;
 

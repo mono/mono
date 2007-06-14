@@ -1,3 +1,15 @@
+2007-06-14  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bugs #81855 and #76274
+	* attribute.cs (AttachTo): Always set owner for global attributes to
+	prefined owner.
+	
+	* ecore.cs (Error_TypeDoesNotContainDefinition): A type location can be
+	usefull too.
+	
+	* cs-parser.jay: Assembly and module attributes must precede all other
+	elements except using clauses and extern alias declarations.
+
 2007-06-13  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #81748

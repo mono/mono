@@ -368,6 +368,7 @@ namespace Mono.CSharp {
 
 		public static void Error_TypeDoesNotContainDefinition (Location loc, Type type, string name)
 		{
+			Report.SymbolRelatedToPreviousError (type);
 			Report.Error (117, loc, "`{0}' does not contain a definition for `{1}'",
 				TypeManager.CSharpName (type), name);
 		}
