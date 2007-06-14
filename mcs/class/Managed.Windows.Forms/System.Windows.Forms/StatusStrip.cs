@@ -126,6 +126,11 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Protected Methods
+		protected override AccessibleObject CreateAccessibilityInstance ()
+		{
+			return new StatusStripAccessibleObject ();
+		}
+		
 		protected internal override ToolStripItem CreateDefaultItem (string text, Image image, EventHandler onClick)
 		{
 			if (text == "-")
@@ -289,6 +294,12 @@ namespace System.Windows.Forms
 		public new event EventHandler PaddingChanged {
 			add { base.PaddingChanged += value; }
 			remove { base.PaddingChanged -= value; }
+		}
+		#endregion
+
+		#region StatusStripAccessibleObject
+		private class StatusStripAccessibleObject : AccessibleObject
+		{
 		}
 		#endregion
 	}

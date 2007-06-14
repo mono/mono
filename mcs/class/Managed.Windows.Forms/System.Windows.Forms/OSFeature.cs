@@ -50,10 +50,11 @@ namespace System.Windows.Forms {
 			}
 		}
 		
+#if NET_2_0
 		[MonoTODO ("Currently returns false for all values.  Uncomment code once 2.0 SystemInformation is done")]
 		public static bool IsPresent (SystemParameter enumVal)
 		{
-			object o;
+			//object o;
 			
 			//switch (enumVal) {
 				//case SystemParameter.DropShadow:
@@ -115,6 +116,7 @@ namespace System.Windows.Forms {
 			
 			return false;
 		}
+#endif
 		#endregion	// Public Static Properties
 
 		#region Public Instance Methods

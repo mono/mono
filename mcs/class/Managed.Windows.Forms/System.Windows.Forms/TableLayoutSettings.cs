@@ -284,6 +284,25 @@ namespace System.Windows.Forms
 			info.AddValue ("SerializedString", text);
 		}
 		#endregion
+		
+		internal class StyleConverter : TypeConverter
+		{
+			public override object ConvertFrom (ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value)
+			{
+				if ((value == null) || !(value is String))
+					return base.ConvertFrom (context, culture, value);
+
+				return Enum.Parse (typeof (StyleConverter), (string)value, true);
+			}
+
+			public override object ConvertTo (ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType)
+			{
+				if ((value == null) || !(value is StyleConverter) || (destinationType != typeof (string)))
+					return base.ConvertTo (context, culture, value, destinationType);
+
+				return ((StyleConverter)value).ToString ();
+			}
+		}
 	}
 
 	internal struct ControlInfo

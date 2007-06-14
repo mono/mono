@@ -55,7 +55,7 @@ namespace System.Windows.Forms
 			is_visible = false;
 			this.DefaultDropDownDirection = ToolStripDropDownDirection.Right;
 			this.GripStyle = ToolStripGripStyle.Hidden;
-			this.TopLevel = true;
+			this.is_toplevel = true;
 		}
 		#endregion
 
@@ -447,6 +447,11 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Protected Methods
+		protected override AccessibleObject CreateAccessibilityInstance ()
+		{
+			return new ToolStripDropDownAccessibleObject ();
+		}
+		
 		protected override void CreateHandle ()
 		{
 			base.CreateHandle ();
@@ -583,6 +588,11 @@ namespace System.Windows.Forms
 			return base.ProcessMnemonic (charCode);
 		}
 
+		protected override void ScaleControl (SizeF factor, BoundsSpecified specified)
+		{
+			base.ScaleControl (factor, specified);
+		}
+		
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		protected override void ScaleCore (float dx, float dy)
 		{
@@ -902,6 +912,12 @@ namespace System.Windows.Forms
 
 				return null;
 			}
+		}
+		#endregion
+
+		#region ToolStripDropDownAccessibleObject
+		private class ToolStripDropDownAccessibleObject : AccessibleObject
+		{
 		}
 		#endregion
 	}

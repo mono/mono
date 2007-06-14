@@ -94,6 +94,15 @@ namespace System.Windows.Forms
 			set { base.AutoSize = value; }
 		}
 
+		[Browsable (false)]
+		[Localizable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public override AutoSizeMode AutoSizeMode {
+			get { return base.AutoSizeMode; }
+			set { base.AutoSizeMode = value; }
+		}
+		
 		public override Color BackColor {
 			get { return base.BackColor; }
 			set { base.BackColor = value; 

@@ -111,6 +111,17 @@ namespace System.Windows.Forms
 			
 			base.OnMouseDown (e);
 		}
+
+		protected override void OnMouseLeave (EventArgs e)
+		{
+			base.OnMouseLeave (e);
+		}
+
+		protected override void OnMouseUp (MouseEventArgs e)
+		{
+			base.OnMouseUp (e);
+		}
+		
 		protected override void OnPaint (PaintEventArgs e)
 		{
 			base.OnPaint (e);

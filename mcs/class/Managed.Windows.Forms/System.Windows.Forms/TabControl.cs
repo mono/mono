@@ -28,10 +28,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Drawing;
-
-#if NET_2_0
 using System.Runtime.InteropServices;
-#endif
 
 namespace System.Windows.Forms {
 #if NET_2_0
@@ -648,6 +645,7 @@ namespace System.Windows.Forms {
 			base.OnLeave (e);
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected virtual void OnRightToLeftLayoutChanged (EventArgs e)
 		{
 			EventHandler eh = (EventHandler) (Events[RightToLeftLayoutChangedEvent]);
@@ -655,6 +653,7 @@ namespace System.Windows.Forms {
 				eh (this, e);
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		protected override void ScaleCore (float dx, float dy)
 		{
 			base.ScaleCore (dx, dy);
@@ -1420,6 +1419,7 @@ namespace System.Windows.Forms {
 
 
 		#region Class TaControl.ControlCollection
+		[ComVisible (false)]
 		public new class ControlCollection : System.Windows.Forms.Control.ControlCollection {
 
 			private TabControl owner;

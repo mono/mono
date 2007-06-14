@@ -176,6 +176,19 @@ namespace System.Windows.Forms
 			set { base.ImageTransparentColor = value; }
 		}
 
+		public override RightToLeft RightToLeft {
+			get { return base.RightToLeft; }
+			set { base.RightToLeft = value; }
+		}
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public new bool RightToLeftAutoMirrorImage {
+			get { return base.RightToLeftAutoMirrorImage; }
+			set { base.RightToLeftAutoMirrorImage = value; }
+		}
+		
 		public override bool Selected {
 			get { return base.Selected; }
 		}
@@ -381,6 +394,11 @@ namespace System.Windows.Forms
 				eh (this, e);
 		}
 
+		protected internal override bool ProcessCmdKey (ref Message m, Keys keyData)
+		{
+			return base.ProcessCmdKey (ref m, keyData);
+		}
+		
 		protected internal override bool ProcessDialogKey (Keys keyData)
 		{
 			return base.ProcessDialogKey (keyData);

@@ -31,7 +31,7 @@ using System.ComponentModel;
 
 namespace System.Windows.Forms
 {
-	// XXX [TypeConverter (typeof (TableLayoutSettings.StyleConverter))]
+	[TypeConverter (typeof (TableLayoutSettings.StyleConverter))]
 	public abstract class TableLayoutStyle
 	{
 		private SizeType size_type;

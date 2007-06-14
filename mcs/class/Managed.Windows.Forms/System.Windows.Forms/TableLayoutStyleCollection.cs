@@ -31,8 +31,9 @@ using System.Collections;
 using System.Windows.Forms.Layout;
 
 namespace System.Windows.Forms {
-
-	public abstract class TableLayoutStyleCollection : IList, ICollection, IEnumerable {
+	[Editor ("System.Windows.Forms.Design.StyleCollectionEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
+	public abstract class TableLayoutStyleCollection : IList, ICollection, IEnumerable
+	{
 		ArrayList al = new ArrayList ();
 		TableLayoutPanel table;
 		
