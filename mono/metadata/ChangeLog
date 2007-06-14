@@ -1,5 +1,31 @@
 2007-06-14  Raja R Harinath  <rharinath@novell.com>
 
+	Kill MonoGenericMethod.
+	* class-internals.h (MonoGenericContext::method_inst): Rename from
+	'gmethod' and convert to a MonoGenericInst.
+	(MonoGenericMethod): Remove.
+	* metadata.h (MonoGenericMethod): Note that the name is obsolete.
+	* loader.c (method_from_methodspec): Update to changes.  Use a
+	MonoGenericContext as the key to the hashtable.
+	* metadata.c (mono_metadata_generic_context_equal): Rename from 
+	'mono_metadata_generic_method_equal' and take MonoGenericContext.
+	(mono_metadata_generic_context_hash): Likewise from
+	'mono_metadata_generic_method_hash'.  Change hash function.
+	(mono_metadata_load_generic_params): Update to changes.
+	(mono_get_shared_generic_method): Remove.
+	* metadata-internals.h (mono_get_shared_generic_method): Remove.
+	* class.c (inflate_generic_type) [MONO_TYPE_MVAR]: Update to changes.
+	(inflate_generic_context): Likewise.
+	(mono_class_inflate_generic_method_full): Likewise.
+	(setup_generic_array_ifaces): Likewise.
+	(mono_class_create_from_typespec): Likewise.
+	* reflection.c (encode_generic_method_sig): Take a MonoGenericContext.
+	(method_encode_methodspec): Update callsite.
+	(reflection_methodbuilder_to_mono_method): Update to changes.
+	(mono_reflection_bind_generic_method_parameters): Likewise.  Use a
+	MonoGenericContext as the key to the hashtable.
+	(inflate_mono_method): Update to changes.
+
 	* class-internals.h (MonoGenericMethod::container): Remove.
 	* class.c, loader.c, metadata.c, reflection.c: Update to changes.
 

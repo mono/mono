@@ -1,3 +1,7 @@
+2007-06-14  Raja R Harinath  <rharinath@novell.com>
+
+	* jit-icalls.c (mono_helper_compile_generic_method): Update to
+	removal of MonoGenericMethod.
 
 Thu Jun 14 12:42:04 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
