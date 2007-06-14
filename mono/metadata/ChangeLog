@@ -1,3 +1,9 @@
+
+Thu Jun 14 12:40:05 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* profiler-private.h, profiler.c, profiler.h: added API to profile
+	exception events.
+
 2007-06-13  Rodrigo Kumpera  <kumpera@gmail.com>
 
 	* verify.c: Fixed pointer type handling, some code and message formating and two invalid assigments 
