@@ -217,7 +217,6 @@ namespace Mono.CSharp
 				"   --stacktrace       Shows stack trace at error location\n" +
 				"   --timestamp        Displays time stamps of various compiler events\n" +
 				"   --expect-error X   Expect that error X will be encountered\n" +
-				"   -2                 Enables experimental C# features\n" +
 				"   -v                 Verbose parsing (for debugging the parser)\n" + 
 				"   --mcs-debug X      Sets MCS debugging level to X\n");
 		}
@@ -225,40 +224,42 @@ namespace Mono.CSharp
 		static void Usage ()
 		{
 			Console.WriteLine (
-				"Mono C# compiler, (C) 2001 - 2005 Novell, Inc.\n" +
+				"Mono C# compiler, (C) 2001 - 2007 Novell, Inc.\n" +
 				"mcs [options] source-files\n" +
 				"   --about            About the Mono C# compiler\n" +
-				"   -addmodule:MODULE  Adds the module to the generated assembly\n" + 
-				"   -checked[+|-]      Set default context to checked\n" +
+				"   -addmodule:M1[,Mn] Adds the module to the generated assembly\n" + 
+				"   -checked[+|-]      Sets default aritmetic overflow context\n" +
 				"   -codepage:ID       Sets code page to the one in ID (number, utf8, reset)\n" +
 				"   -clscheck[+|-]     Disables CLS Compliance verifications" + Environment.NewLine +
-				"   -define:S1[;S2]    Defines one or more symbols (short: /d:)\n" +
+				"   -define:S1[;S2]    Defines one or more conditional symbols (short: -d)\n" +
 				"   -debug[+|-], -g    Generate debugging information\n" + 
 				"   -delaysign[+|-]    Only insert the public key into the assembly (no signing)\n" +
-				"   -doc:FILE          XML Documentation file to generate\n" + 
-				"   -keycontainer:NAME The key pair container used to strongname the assembly\n" +
-				"   -keyfile:FILE      The strongname key file used to strongname the assembly\n" +
+				"   -doc:FILE          Process documentation comments to XML file\n" + 
+				"   -help              Lists all compiler options (short: -?)\n" + 
+				"   -keycontainer:NAME The key pair container used to sign the output assembly\n" +
+				"   -keyfile:FILE      The key file used to strongname the ouput assembly\n" +
 				"   -langversion:TEXT  Specifies language version modes: ISO-1 or Default\n" + 
-				"   -lib:PATH1,PATH2   Adds the paths to the assembly link path\n" +
-				"   -main:class        Specified the class that contains the entry point\n" +
+				"   -lib:PATH1[,PATHn] Specifies the location of referenced assemblies\n" +
+				"   -main:CLASS        Specifies the class with the Main method (short: -m)\n" +
 				"   -noconfig[+|-]     Disables implicit references to assemblies\n" +
-				"   -nostdlib[+|-]     Does not load core libraries\n" +
-				"   -nowarn:W1[,W2]    Disables one or more warnings\n" + 
-				"   -optimize[+|-]     Enables code optimalizations\n" + 
-				"   -out:FNAME         Specifies output file\n" +
+				"   -nostdlib[+|-]     Does not reference mscorlib.dll library\n" +
+				"   -nowarn:W1[,Wn]    Suppress one or more compiler warnings\n" + 
+				"   -optimize[+|-]     Enables advanced compiler optimizations (short: -o)\n" + 
+				"   -out:FILE          Specifies output assembly name\n" +
 				"   -pkg:P1[,Pn]       References packages P1..Pn\n" + 
-				"   -recurse:SPEC      Recursively compiles the files in SPEC ([dir]/file)\n" + 
-				"   -reference:ASS     References the specified assembly (-r:ASS)\n" +
-				"   -target:KIND       Specifies the target (KIND is one of: exe, winexe,\n" +
-				"                      library, module), (short: /t:)\n" +
-				"   -unsafe[+|-]       Allows unsafe code\n" +
-				"   -warnaserror[+|-]  Treat warnings as errors\n" +
-				"   -warn:LEVEL        Sets warning level (the highest is 4, the default is 2)\n" +
-				"   -help2             Show other help flags\n" + 
+				"   -recurse:SPEC      Recursively compiles files according to SPEC pattern\n" + 
+				"   -reference:A1[,An] Imports metadata from the specified assembly (short: -r)\n" +
+				"   -reference:ALIAS=A Imports metadata using specified extern alias (short: -r)\n" +				
+				"   -target:KIND       Specifies the format of the output assembly (short: -t)\n" +
+				"                      KIND can be one of: exe, winexe, library, module\n" +
+				"   -unsafe[+|-]       Allows to compile code which uses unsafe keyword\n" +
+				"   -warnaserror[+|-]  Treats all warnings as errors\n" +
+				"   -warn:0-4          Sets warning level, the default is 3 (short -w:)\n" +
+				"   -help2             Shows internal compiler options\n" + 
 				"\n" +
 				"Resources:\n" +
-				"   -linkresource:FILE[,ID] Links FILE as a resource\n" +
-				"   -resource:FILE[,ID]     Embed FILE as a resource\n" +
+				"   -linkresource:FILE[,ID] Links FILE as a resource (short: -linkres)\n" +
+				"   -resource:FILE[,ID]     Embed FILE as a resource (short: -res)\n" +
 				"   -win32res:FILE          Specifies Win32 resource file (.res)\n" +
 				"   -win32icon:FILE         Use this icon for the output\n" +
                                 "   @file                   Read response file for more options\n\n" +
@@ -273,11 +274,11 @@ namespace Mono.CSharp
 		static void About ()
 		{
 			Console.WriteLine (
-				"The Mono C# compiler is (C) 2001-2005, Novell, Inc.\n\n" +
+				"The Mono C# compiler is (C) 2001-2007, Novell, Inc.\n\n" +
 				"The compiler source code is released under the terms of the GNU GPL\n\n" +
 
 				"For more information on Mono, visit the project Web site\n" +
-				"   http://www.go-mono.com\n\n" +
+				"   http://www.mono-project.com\n\n" +
 
 				"The compiler was written by Miguel de Icaza, Ravi Pratap, Martin Baulig, Marek Safar, Raja R Harinath, Atushi Enomoto");
 			Environment.Exit (0);
