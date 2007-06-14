@@ -1,4 +1,14 @@
 
+2007-06-14  Randolph Chung  <tausq@debian.org>
+
+	* inssel.brg: Add rules for "chained" compare-branch operations so that
+	a single compare op can affect multiple branches.  Adjust cost for
+	OP_CEQ/OP_CGT/OP_CGT_UN/OP_CLT/OP_CLT_UN.
+	* inssel-long32.brg: Update rules to use compare-branch macros.  Adjust
+	cost for some rules so that they can more easily be overridden by
+	per-arch rules (with fixes from lupus).
+	Contributed under the X11 license (http://bugzilla.ximian.com/show_bug.cgi?id=81866).
+
 2007-06-13  Randolph Chung  <tausq@debian.org>
 
 	* mini-ops.h: Reorder branch ops so that they match the order of the
