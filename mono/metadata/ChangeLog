@@ -1,3 +1,7 @@
+2007-06-14  Raja R Harinath  <rharinath@novell.com>
+
+	* class-internals.h (MonoGenericMethod::container): Remove.
+	* class.c, loader.c, metadata.c, reflection.c: Update to changes.
 
 Thu Jun 14 12:40:05 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
