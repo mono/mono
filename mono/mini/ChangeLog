@@ -1,3 +1,7 @@
+2007-06-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-codegen.c (mono_opcode_to_type): Fix ia64 build.
+
 2007-06-14  Raja R Harinath  <rharinath@novell.com>
 
 	* jit-icalls.c (mono_helper_compile_generic_method): Update to
