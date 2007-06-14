@@ -1,6 +1,14 @@
 
 2007-06-14  Randolph Chung  <tausq@debian.org>
 
+	* Makefile.ma: Add hppa target.
+	* mini-arch.h: Include mini-hppa.h
+	* cpu-hppa.md, exceptions-hppa.c, inssel-hppa.brg, mini-hppa.c,
+	mini-hppa.h, tramp-hppa.c: New files for 32-bit HPPA port.
+	Contributed under the X11 license (http://bugzilla.ximian.com/show_bug.cgi?id=81866).
+
+2007-06-14  Randolph Chung  <tausq@debian.org>
+
 	* inssel.brg: Add rules for "chained" compare-branch operations so that
 	a single compare op can affect multiple branches.  Adjust cost for
 	OP_CEQ/OP_CGT/OP_CGT_UN/OP_CLT/OP_CLT_UN.
