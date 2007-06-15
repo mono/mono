@@ -1,3 +1,10 @@
+2007-06-15  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* DrawListViewItemEventArgs.cs:
+	* ListView.cs:
+	* ThemeWin32Classic.cs: Implement basic support for 2.0 OwnerDraw in
+	ListView.
+
 2007-06-15  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStripDropDownItemAccessibleObject.cs: Added.

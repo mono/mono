@@ -2258,8 +2258,15 @@ namespace System.Windows.Forms
 			int first = control.FirstVisibleIndex;	
 
 			for (int i = first; i <= control.LastVisibleIndex; i ++) {					
-				if (clip.IntersectsWith (control.Items[i].GetBounds (ItemBoundsPortion.Entire)))
-					DrawListViewItem (dc, control, control.Items [i]);
+				if (clip.IntersectsWith (control.Items[i].GetBounds (ItemBoundsPortion.Entire))) {
+#if NET_2_0
+					bool owner_draw = false;
+					if (control.OwnerDraw)
+						owner_draw = DrawListViewItemOwnerDraw (dc, control.Items [i], i);
+					if (!owner_draw)
+#endif
+						DrawListViewItem (dc, control, control.Items [i]);
+				}
 			}	
 			
 			// draw the gridlines
@@ -2364,6 +2371,23 @@ namespace System.Windows.Forms
 			dc.DrawString (col.Text, DefaultFont, ResPool.GetSolidBrush (color), rect, col.Format);
 			dc.DrawLine (ResPool.GetSizedPen (ColorHighlight, 2), target_x, 0, target_x, col.Rect.Height);
 		}
+
+#if NET_2_0
+		protected virtual bool DrawListViewItemOwnerDraw (Graphics dc, ListViewItem item, int index)
+		{
+			ListViewItemStates item_state = ListViewItemStates.ShowKeyboardCues;
+			if (item.Selected)
+				item_state |= ListViewItemStates.Selected;
+			if (item.Focused)
+				item_state |= ListViewItemStates.Focused;
+						
+			DrawListViewItemEventArgs args = new DrawListViewItemEventArgs (dc,
+					item, item.Bounds, index, item_state);
+			item.ListView.OnDrawItem (args);
+
+			return !args.DrawDefault;
+		}
+#endif
 
 		protected virtual void DrawListViewItem (Graphics dc, ListView control, ListViewItem item)
 		{				

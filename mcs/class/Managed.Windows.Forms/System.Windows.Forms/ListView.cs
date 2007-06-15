@@ -604,6 +604,10 @@ namespace System.Windows.Forms
 		[DefaultValue(false)]
 		public bool OwnerDraw {
 			get { return owner_draw; }
+			set { 
+				owner_draw = value;
+				Redraw (true);
+			}
 		}
 #endif
 

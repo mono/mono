@@ -75,7 +75,7 @@ namespace System.Windows.Forms
 
         #region Constructors
 
-        public DrawListViewItemEventArgs(Graphics graphics, ListViewItem item,
+        public DrawListViewItemEventArgs (Graphics graphics, ListViewItem item,
                                         Rectangle bounds, int itemIndex, ListViewItemStates state)
         {
             this.graphics = graphics;
@@ -90,28 +90,29 @@ namespace System.Windows.Forms
 
         #region Public Methods
 
-        public void DrawBackground()
+        public void DrawBackground ()
         {
-            throw new NotImplementedException();
+		graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (item.BackColor), bounds);
         }
 
-        public void DrawFocusRectangle()
+        public void DrawFocusRectangle ()
         {
-            throw new NotImplementedException();
+		if ((state & ListViewItemStates.Focused) != 0)
+			ThemeEngine.Current.CPDrawFocusRectangle (graphics, bounds, item.ListView.ForeColor, item.ListView.BackColor);
         }
 
-        public void DrawText()
+        public void DrawText ()
         {
-            throw new NotImplementedException();
+		DrawText (TextFormatFlags.Default);
         }
 
-        public void DrawText(TextFormatFlags flags)
+        public void DrawText (TextFormatFlags flags)
         {
-            throw new NotImplementedException();
+		TextRenderer.DrawText (graphics, item.Text, item.Font, bounds, item.ForeColor, flags);
         }
 
         #endregion Public Methods
     }
 }
 
-#endif
+#endif 
