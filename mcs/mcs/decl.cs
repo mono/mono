@@ -131,15 +131,6 @@ namespace Mono.CSharp {
 
 		public Expression GetTypeExpression ()
 		{
-#if GMCS_SOURCE
-			if (IsUnbound) {
-				if (!CheckUnbound (Location))
-					return null;
-
-				return new UnboundTypeExpression (this, Location);
-			}
-#endif
-
 			if (Left == null) {
 				if (TypeArguments != null)
 					return new SimpleName (Basename, TypeArguments, Location);
@@ -261,29 +252,6 @@ namespace Mono.CSharp {
 		public static string MakeName (string name, int count)
 		{
 			return name + "`" + count;
-		}
-
-		protected bool IsUnbound {
-			get {
-				if ((Left != null) && Left.IsUnbound)
-					return true;
-				else if (TypeArguments == null)
-					return false;
-				else
-					return TypeArguments.IsUnbound;
-			}
-		}
-
-		protected bool CheckUnbound (Location loc)
-		{
-			if ((Left != null) && !Left.CheckUnbound (loc))
-				return false;
-			if ((TypeArguments != null) && !TypeArguments.IsUnbound) {
-				Report.Error (1031, loc, "Type expected");
-				return false;
-			}
-
-			return true;
 		}
 	}
 

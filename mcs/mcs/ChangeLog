@@ -1,3 +1,7 @@
+2007-06-15  Marek Safar  <marek.safar@gmail.com>
+
+	* decl.cs (MemberName): Moved all Unbound stuff to parser.
+
 2007-06-14  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bugs #81855 and #76274
