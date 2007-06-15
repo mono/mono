@@ -1,3 +1,7 @@
+2007-06-15  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* System.Web_test.dll.sources: Added LosFormatterTest.cs.
+
 2007-06-12  Vladimir Krasnov  <vladimirk@mainsoft.com>
 	
 	* System.Web20.csproj: added CompilationSection.cs

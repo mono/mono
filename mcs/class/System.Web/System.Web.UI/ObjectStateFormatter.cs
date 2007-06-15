@@ -177,7 +177,7 @@ namespace System.Web.UI {
 			MemoryStream ms = new MemoryStream ();
 			Stream output = ms;
 #if NET_2_0
-			bool needEncryption = page.NeedViewStateEncryption;
+			bool needEncryption = page == null ? false : page.NeedViewStateEncryption;
 			if (needEncryption){
 				output = new CryptoStream (output, page.GetCryptoTransform (CryptoStreamMode.Write), CryptoStreamMode.Write);
 			}

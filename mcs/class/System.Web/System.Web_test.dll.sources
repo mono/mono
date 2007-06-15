@@ -355,6 +355,7 @@ System.Web.UI/HtmlTextWriterCas.cs
 System.Web.UI/ImageClickEventArgsCas.cs
 System.Web.UI/LiteralControlCas.cs
 System.Web.UI/LosFormatterCas.cs
+System.Web.UI/LosFormatterTest.cs
 System.Web.UI/ObjectConverterCas.cs
 System.Web.UI/ObjectTagBuilderCas.cs
 System.Web.UI/PageCas.cs
