@@ -50,7 +50,16 @@ namespace System.Windows.Forms {
 		#region Public Instance Properties
 #if NET_2_0
 		[Browsable (true)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Visible)]
+		public override bool AutoSize {
+			get { return base.AutoSize; }
+			set { base.AutoSize = value; }
+		}
+		
+		[Browsable (true)]
 		[LocalizableAttribute(true)] 
+		[DefaultValue (AutoSizeMode.GrowOnly)]
 		public AutoSizeMode AutoSizeMode {
 			get { return base.GetAutoSizeMode (); } 
 			set {
@@ -125,6 +134,15 @@ namespace System.Windows.Forms {
 		#region Events
 		static object LoadEvent = new object ();
 
+#if NET_2_0
+		[Browsable (true)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
+		public new event EventHandler AutoSizeChanged {
+			add { base.AutoSizeChanged += value; }
+			remove { base.AutoSizeChanged -= value; }
+		}
+#endif
+
 		public event EventHandler Load {
 			add { Events.AddHandler (LoadEvent, value); }
 			remove { Events.RemoveHandler (LoadEvent, value); }
@@ -151,6 +169,27 @@ namespace System.Windows.Forms {
 		public BorderStyle BorderStyle {
 			get { return InternalBorderStyle; }
 			set { InternalBorderStyle = value; }
+		}
+
+		internal override Size GetPreferredSizeCore (Size proposedSize)
+		{
+			Size retsize = Size.Empty;
+
+			foreach (Control child in Controls) {
+				if (child.Dock == DockStyle.Fill) {
+					if (child.Bounds.Right > retsize.Width)
+						retsize.Width = child.Bounds.Right;
+				} else if (child.Dock != DockStyle.Top && child.Dock != DockStyle.Bottom && (child.Anchor & AnchorStyles.Right) == 0 && (child.Bounds.Right + child.Margin.Right) > retsize.Width)
+					retsize.Width = child.Bounds.Right + child.Margin.Right;
+
+				if (child.Dock == DockStyle.Fill) {
+					if (child.Bounds.Bottom > retsize.Height)
+						retsize.Height = child.Bounds.Bottom;
+				} else if (child.Dock != DockStyle.Left && child.Dock != DockStyle.Right && (child.Anchor & AnchorStyles.Bottom) == 0 && (child.Bounds.Bottom + child.Margin.Bottom) > retsize.Height)
+					retsize.Height = child.Bounds.Bottom + child.Margin.Bottom;
+			}
+
+			return retsize;
 		}
 #endif
 	}
