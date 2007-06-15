@@ -1,3 +1,11 @@
+2007-06-15  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStripDropDownItemAccessibleObject.cs: Added.
+	* ToolStripDropDownItem.cs, ToolStripItem.cs, ToolStripMenuItem.cs,
+	ToolStripOverflow.cs, ToolStripOverflowButton.cs, ToolStripPanel.cs,
+	ToolStripProgressBar.cs, ToolStripSeparator.cs, ToolStripSplitButton.cs,
+	ToolStripTextBox.cs: corcompare work.
+
 2007-06-14  Jonathan Pobst  <monkey@jpobst.com>
 
 	* OSFeature.cs, StatusStrip.cs, TabControl.cs, TableLayoutSettings.cs,

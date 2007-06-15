@@ -199,6 +199,12 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Protected Methods
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected override AccessibleObject CreateAccessibilityInstance ()
+		{
+			return new ToolStripMenuItemAccessibleObject ();
+		}
+		
 		protected override ToolStripDropDown CreateDefaultDropDown ()
 		{
 			ToolStripDropDownMenu tsddm = new ToolStripDropDownMenu ();
@@ -446,6 +452,12 @@ namespace System.Windows.Forms
 		internal override void HandleClick (EventArgs e)
 		{
 			this.OnClick (e);
+		}
+		#endregion
+
+		#region ToolStripMenuItemAccessibleObject
+		private class ToolStripMenuItemAccessibleObject : AccessibleObject
+		{
 		}
 		#endregion
 	}

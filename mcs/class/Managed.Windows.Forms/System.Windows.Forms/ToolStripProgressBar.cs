@@ -88,6 +88,13 @@ namespace System.Windows.Forms
 			get { return (ProgressBar)base.Control; }
 		}
 
+		[Localizable (true)]
+		[DefaultValue (false)]
+		public virtual bool RightToLeftLayout {
+			get { return this.ProgressBar.RightToLeftLayout; }
+			set { this.ProgressBar.RightToLeftLayout = value; }
+		}
+		
 		[DefaultValue (10)]
 		public int Step {
 			get { return this.ProgressBar.Step; }
@@ -134,6 +141,10 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Protected Methods
+		protected virtual void OnRightToLeftLayoutChanged (EventArgs e)
+		{
+		}
+		
 		protected override void OnSubscribeControlEvents (Control control)
 		{
 			base.OnSubscribeControlEvents (control);
@@ -181,6 +192,11 @@ namespace System.Windows.Forms
 			remove { base.OwnerChanged -= value; }
 		}
 
+		public event EventHandler RightToLeftLayoutChanged {
+			add { ProgressBar.RightToLeftLayoutChanged += value; }
+			remove { ProgressBar.RightToLeftLayoutChanged -= value; }
+		}
+		
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler TextChanged {

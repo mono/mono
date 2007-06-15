@@ -30,6 +30,7 @@
 using System;
 using System.Drawing;
 using System.ComponentModel;
+using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms
 {
@@ -466,7 +467,7 @@ namespace System.Windows.Forms
 		[Localizable (true)]
 		[Browsable (false)]
 		[RelatedImageList ("Owner.ImageList")]
-		//[TypeConverter (typeof (NoneExcludedImageIndexConverter))]
+		[TypeConverter (typeof (NoneExcludedImageIndexConverter))]
 		[RefreshProperties (RefreshProperties.Repaint)]
 		[Editor ("System.Windows.Forms.Design.ToolStripImageIndexEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		public int ImageIndex {
@@ -489,6 +490,7 @@ namespace System.Windows.Forms
 		[Localizable (true)]
 		[Browsable (false)]
 		[RelatedImageList ("Owner.ImageList")]
+		[TypeConverter (typeof (ImageKeyConverter))]
 		[RefreshProperties (RefreshProperties.Repaint)]
 		[Editor ("System.Windows.Forms.Design.ToolStripImageIndexEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		public string ImageKey {
@@ -1618,9 +1620,10 @@ namespace System.Windows.Forms
 		internal int Bottom { get { return this.bounds.Bottom; } }
 		#endregion
 		
+		[ComVisible (true)]
 		public class ToolStripItemAccessibleObject : AccessibleObject
 		{
-			private ToolStripItem owner_item;
+			internal ToolStripItem owner_item;
 			
 			public ToolStripItemAccessibleObject (ToolStripItem ownerItem)
 			{
@@ -1708,5 +1711,11 @@ namespace System.Windows.Forms
 			#endregion
 		}
 	}
+
+	#region NoneExcludedImageIndexConverter Class
+	internal class NoneExcludedImageIndexConverter : ImageIndexConverter
+	{
+	}
+	#endregion
 }
 #endif

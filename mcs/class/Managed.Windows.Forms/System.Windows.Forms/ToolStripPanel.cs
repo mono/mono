@@ -341,6 +341,11 @@ namespace System.Windows.Forms
 			if (eh != null)
 				eh (this, e);
 		}
+
+		protected override void OnRightToLeftChanged (EventArgs e)
+		{
+			base.OnRightToLeftChanged (e);
+		}
 		#endregion
 		
 		#region Public Events
@@ -428,6 +433,7 @@ namespace System.Windows.Forms
 
 		#region Nested Classes
 		[ComVisible (false)]
+		[ListBindable (false)]
 		public class ToolStripPanelRowCollection : ArrangedElementCollection, IList, ICollection, IEnumerable
 		{
 			//private ToolStripPanel owner;

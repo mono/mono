@@ -63,6 +63,7 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Properties
+		[TypeConverter (typeof (ReferenceConverter))]
 		public ToolStripDropDown DropDown {
 			get {
 				if (this.drop_down == null) {
@@ -148,6 +149,11 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Protected Methods
+		protected override AccessibleObject CreateAccessibilityInstance ()
+		{
+			return new ToolStripDropDownItemAccessibleObject (this);
+		}
+		
 		protected virtual ToolStripDropDown CreateDefaultDropDown ()
 		{
 			ToolStripDropDown tsdd = new ToolStripDropDown ();
@@ -206,6 +212,11 @@ namespace System.Windows.Forms
 			base.OnFontChanged (e);
 		}
 
+		protected override void OnRightToLeftChanged (EventArgs e)
+		{
+			base.OnRightToLeftChanged (e);
+		}
+		
 		protected internal override bool ProcessCmdKey (ref Message m, Keys keyData)
 		{
 			if (this.HasDropDownItems)

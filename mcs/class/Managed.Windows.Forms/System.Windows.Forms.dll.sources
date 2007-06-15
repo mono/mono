@@ -670,6 +670,7 @@ System.Windows.Forms/ToolStripDropDownClosingEventArgs.cs
 System.Windows.Forms/ToolStripDropDownClosingEventHandler.cs
 System.Windows.Forms/ToolStripDropDownDirection.cs
 System.Windows.Forms/ToolStripDropDownItem.cs
+System.Windows.Forms/ToolStripDropDownItemAccessibleObject.cs
 System.Windows.Forms/ToolStripDropDownMenu.cs
 System.Windows.Forms/ToolStripGripDisplayStyle.cs
 System.Windows.Forms/ToolStripGripRenderEventArgs.cs

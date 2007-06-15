@@ -151,6 +151,14 @@ namespace System.Windows.Forms
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public new bool RightToLeftAutoMirrorImage {
+			get { return base.RightToLeftAutoMirrorImage; }
+			set { base.RightToLeftAutoMirrorImage = value; }
+		}
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public override string Text {
 			get { return base.Text; }
 			set { base.Text = value; }

@@ -75,6 +75,7 @@ namespace System.Windows.Forms
 		[Localizable (true)]
 		[EditorBrowsable (EditorBrowsableState.Always)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[Editor ("System.Windows.Forms.Design.ListControlStringCollectionEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		public AutoCompleteStringCollection AutoCompleteCustomSource {
 			get { return this.TextBox.AutoCompleteCustomSource; }
 			set { this.TextBox.AutoCompleteCustomSource = value; }

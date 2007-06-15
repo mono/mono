@@ -49,7 +49,12 @@ namespace System.Windows.Forms
 		#endregion
 		
 		#region Public Properties
-		public override System.Windows.Forms.Layout.LayoutEngine LayoutEngine {
+		// XXX - This probably adds ToolStripOverflowButton to the returned collection
+		public override ToolStripItemCollection Items {
+			get { return base.Items; }
+		}
+		
+		public override LayoutEngine LayoutEngine {
 			get {
 				if (this.layout_engine == null)
 					this.layout_engine = new FlowLayout ();
@@ -73,6 +78,11 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Protected Methods
+		protected override AccessibleObject CreateAccessibilityInstance ()
+		{
+			return new ToolStripOverflowAccessibleObject ();
+		}
+		
 		[MonoInternalNote ("This should stack in rows of ~3, but for now 1 column will work.")]
 		protected override void OnLayout (LayoutEventArgs e)
 		{
@@ -130,6 +140,12 @@ namespace System.Windows.Forms
 		#region Internal Methods
 		internal ToolStrip ParentToolStrip {
 			get { return (ToolStrip)this.OwnerItem.Parent; }
+		}
+		#endregion
+
+		#region ToolStripOverflowAccessibleObject Class
+		private class ToolStripOverflowAccessibleObject : AccessibleObject
+		{
 		}
 		#endregion
 	}

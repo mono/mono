@@ -56,6 +56,14 @@ namespace System.Windows.Forms
 				return this.DropDown.DisplayedItems.Count > 0; 
 			}
 		}
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public new bool RightToLeftAutoMirrorImage {
+			get { return base.RightToLeftAutoMirrorImage; }
+			set { base.RightToLeftAutoMirrorImage = value; }
+		}
 		#endregion
 
 		#region Protected Properties
@@ -72,6 +80,11 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Protected Methods
+		protected override AccessibleObject CreateAccessibilityInstance ()
+		{
+			return new ToolStripOverflowButtonAccessibleObject ();
+		}
+		
 		protected override ToolStripDropDown CreateDefaultDropDown ()
 		{
 			ToolStripDropDown tsdd = new ToolStripOverflow (this);
@@ -89,6 +102,12 @@ namespace System.Windows.Forms
 		protected internal override void SetBounds (Rectangle bounds)
 		{
 			base.SetBounds (bounds);
+		}
+		#endregion
+
+		#region ToolStripOverflowButtonAccessibleObject Class
+		private class ToolStripOverflowButtonAccessibleObject : AccessibleObject
+		{
 		}
 		#endregion
 	}

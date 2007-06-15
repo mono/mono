@@ -193,6 +193,11 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Protected Methods
+		protected override AccessibleObject CreateAccessibilityInstance ()
+		{
+			return new ToolStripSplitButtonAccessibleObject ();
+		}
+		
 		protected override ToolStripDropDown CreateDefaultDropDown ()
 		{
 			ToolStripDropDownMenu tsddm = new ToolStripDropDownMenu ();
@@ -281,6 +286,11 @@ namespace System.Windows.Forms
 			}
 		}
 
+		protected override void OnRightToLeftChanged (EventArgs e)
+		{
+			base.OnRightToLeftChanged (e);
+		}
+		
 		protected internal override bool ProcessDialogKey (Keys keyData)
 		{
 			if (this.Selected && keyData == Keys.Enter && this.DefaultItem != null) {
@@ -321,6 +331,12 @@ namespace System.Windows.Forms
 		public event EventHandler DefaultItemChanged {
 			add { Events.AddHandler (DefaultItemChangedEvent, value); }
 			remove {Events.RemoveHandler (DefaultItemChangedEvent, value); }
+		}
+		#endregion
+
+		#region ToolStripSplitButtonAccessibleObject Class
+		private class ToolStripSplitButtonAccessibleObject : AccessibleObject
+		{
 		}
 		#endregion
 	}
