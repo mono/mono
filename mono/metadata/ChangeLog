@@ -1,5 +1,22 @@
 2007-06-15  Raja R Harinath  <rharinath@novell.com>
 
+	Avoid allocating 'MonoGenericContext' on the heap.
+	* class-internals (_MonoMethodInflated::context): Make field
+	inline, not a pointer.
+	* loader.c (method_from_methodspec): Allocate 'new_context' on the
+	stack. 	Use the context embedded within the inflated method as the
+	hash key, rather than 'new_context'.
+	* class.c (inflate_generic_context): Simplify.  Return a struct
+	rather than allocating on the heap.
+	(mono_class_inflate_generic_method_full): Update to changes.  Now,
+	doesn't salt away a copy of the context -- simplifying the
+	lifetime rules of a 'MonoGenericContext *'.
+	(mono_method_get_context): Return pointer to embedded context.
+	(setup_generic_array_ifaces): Allocate temporary context on stack.
+	* reflection.c (inflate_mono_method): Likewise.
+	(mono_reflection_bind_generic_method_parameters): Likewise.
+	Use the context embedded within the inflated method as the hash key.
+
 	Avoid a source of allocation of 'MonoGenericContext'.
 	* class-internals.h (_MonoGenericClass::context): Combine 'inst'
 	and 'cached_context' fields into embedded 'MonoGenericContext' field.
