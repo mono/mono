@@ -1,3 +1,17 @@
+2007-06-15  Raja R Harinath  <rharinath@novell.com>
+
+	Avoid a source of allocation of 'MonoGenericContext'.
+	* class-internals.h (_MonoGenericClass::context): Combine 'inst'
+	and 'cached_context' fields into embedded 'MonoGenericContext' field.
+	* class.c: Update to changes.
+	(mono_generic_class_get_context): Simplify drastically.  Now just
+	returns a pointer to the field.
+	* metadata-internals.h (mono_metadata_generic_context_hash): Mark
+	argument as a const pointer.
+	(mono_metadata_generic_context_equal): Likewise.
+	* metadata.c, loader.c, icall.c, reflection.c, verify.c:
+	Update to changes.
+
 2007-06-14  Rodrigo Kumpera  <kumpera@gmail.com>
 
 	* verify.c improved the handling of brtrue/brfalse, factored out common code
