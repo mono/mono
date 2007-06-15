@@ -848,7 +848,7 @@ struct_declaration
 	  {
 		lexer.ConstraintsParsing = true;
 	  }
-	  member_name
+	  type_name
 	  { 
 		MemberName name = MakeName ((MemberName) $6);
 		push_current_class (new Struct (
@@ -1187,7 +1187,7 @@ open_parens
 method_header
 	: opt_attributes
 	  opt_modifiers
-	  type namespace_or_type_name
+	  type member_name
 	  open_parens opt_formal_parameter_list CLOSE_PARENS 
 	  {
 		lexer.ConstraintsParsing = true;
@@ -1226,7 +1226,7 @@ method_header
 	  }
 	| opt_attributes
 	  opt_modifiers
-	  VOID namespace_or_type_name
+	  VOID member_name
 	  open_parens opt_formal_parameter_list CLOSE_PARENS 
 	  {
 		lexer.ConstraintsParsing = true;
@@ -1265,7 +1265,7 @@ method_header
 	| opt_attributes
 	  opt_modifiers
 	  type 
-	  modifiers namespace_or_type_name open_parens opt_formal_parameter_list CLOSE_PARENS
+	  modifiers member_name open_parens opt_formal_parameter_list CLOSE_PARENS
 	  {
 		MemberName name = (MemberName) $5;
 		Report.Error (1585, name.Location, 
@@ -1664,7 +1664,7 @@ interface_declaration
 	  {
 		lexer.ConstraintsParsing = true;
 	  }
-	  member_name
+	  type_name
 	  {
 		MemberName name = MakeName ((MemberName) $6);
 
@@ -2788,7 +2788,7 @@ delegate_declaration
 	  {
 		lexer.ConstraintsParsing = true;
 	  }
-	  type member_name
+	  type type_name
 	  open_parens opt_formal_parameter_list CLOSE_PARENS
 	  {
 		MemberName name = MakeName ((MemberName) $6);
@@ -2836,7 +2836,11 @@ opt_nullable
 	;
 
 namespace_or_type_name
-	: member_name
+	: IDENTIFIER opt_type_argument_list
+	  {
+		LocatedToken lt = (LocatedToken) $1;
+		$$ = new MemberName (lt.Value, (TypeArguments) $2, lt.Location);
+	  }
 	| IDENTIFIER DOUBLE_COLON IDENTIFIER {
 		LocatedToken lt1 = (LocatedToken) $1;
 		LocatedToken lt2 = (LocatedToken) $3;
@@ -2849,55 +2853,86 @@ namespace_or_type_name
 	;
 
 member_name
-	: IDENTIFIER opt_type_argument_list {
+	: IDENTIFIER opt_type_parameter_list
+	  {
 		LocatedToken lt = (LocatedToken) $1;
 		$$ = new MemberName (lt.Value, (TypeArguments) $2, lt.Location);
 	  }
+	| namespace_or_type_name DOT IDENTIFIER opt_type_parameter_list 
+	  {
+		LocatedToken lt = (LocatedToken) $3;
+		$$ = new MemberName ((MemberName) $1, lt.Value, (TypeArguments) $4, lt.Location);
+	  }
 	;
+
+type_name
+	: IDENTIFIER opt_type_parameter_list
+	  {
+		LocatedToken lt = (LocatedToken) $1;
+		$$ = new MemberName (lt.Value, (TypeArguments)$2, lt.Location);	  
+	  }
+	;
+
+//
+// Generics arguments  (any type, without attributes)
+//
 
 opt_type_argument_list
 	: /* empty */ 		     { $$ = null; } 
 	| OP_GENERICS_LT type_arguments OP_GENERICS_GT
 	  {
+		if (RootContext.Version == LanguageVersion.ISO_1)
+			Report.FeatureIsNotISO1 (lexer.Location, "generics");	  
+	  
 		$$ = $2;
-		if (RootContext.Version == LanguageVersion.ISO_1)
-			Report.FeatureIsNotISO1 (lexer.Location, "generics");
 	  }
-	| GENERIC_DIMENSION
+	;
+
+//
+// Generics parameters (identifiers only, with attributes), used in type, method declarations
+//
+
+opt_type_parameter_list
+	: /* empty */ 		     { $$ = null; } 
+	| OP_GENERICS_LT type_arguments OP_GENERICS_GT
 	  {
-		$$ = new TypeArguments ((int) $1, lexer.Location);
 		if (RootContext.Version == LanguageVersion.ISO_1)
 			Report.FeatureIsNotISO1 (lexer.Location, "generics");
+	  
+		$$ = $2;
 	  }
 	;
 
 type_arguments
-	: opt_attributes type {
+	: type_argument
+	  {
 		TypeArguments type_args = new TypeArguments (lexer.Location);
-		if ($1 != null) {
-			SimpleName sn = $2 as SimpleName;
-			if (sn == null)
-				Report.Error (1031, lexer.Location, "Type expected");
-			else
-				$2 = new TypeParameterName (sn.Name, (Attributes) $1, lexer.Location);
-		}
-		type_args.Add ((Expression) $2);
-		$$ = type_args;
-  	  }
-	| type_arguments COMMA opt_attributes type {
-		TypeArguments type_args = (TypeArguments) $1;
-		if ($3 != null) {
-			SimpleName sn = $4 as SimpleName;
-			if (sn == null)
-				Report.Error (1031, lexer.Location, "Type expected");
-			else
-				$4 = new TypeParameterName (sn.Name, (Attributes) $3, lexer.Location);
-		}
-		type_args.Add ((Expression) $4);
+		type_args.Add ((Expression) $1);
 		$$ = type_args;
 	  }
+	| type_arguments COMMA type_argument
+	  {
+		TypeArguments type_args = (TypeArguments) $1;
+		type_args.Add ((Expression) $3);
+		$$ = type_args;
+	  }	  
 	;
 
+type_argument
+	: type
+	  {
+		$$ = $1;
+  	  }
+	| attribute_sections type
+  	  {
+		SimpleName sn = $2 as SimpleName;
+		if (sn == null)
+			Error_TypeExpected (GetLocation ($2));
+		else
+			$2 = new TypeParameterName (sn.Name, (Attributes) $1, lexer.Location);
+		$$ = $2;  	  
+  	  }
+ 	;
 	
 /* 
  * Before you think of adding a return_type, notice that we have been
@@ -3045,7 +3080,7 @@ primary_expression
 	  {
 		// 7.5.1: Literals
 	  }
- 	| member_name
+ 	| type_name
 	  {
 		MemberName mn = (MemberName) $1;
 		$$ = mn.GetTypeExpression ();
@@ -3669,7 +3704,7 @@ typeof_expression
 	  	pushed_current_array_type = current_array_type;
 	  	lexer.TypeOfParsing = true;
 	  }
-	  OPEN_PARENS type CLOSE_PARENS
+	  OPEN_PARENS typeof_type_expression CLOSE_PARENS
 	  {
 	  	lexer.TypeOfParsing = false;
 		Expression type = (Expression)$4;
@@ -3680,6 +3715,54 @@ typeof_expression
 		current_array_type = pushed_current_array_type;
 	  }
 	;
+	
+typeof_type_expression
+	: type
+	  {
+		$$ = $1;
+	  }
+	| unbound_type_name
+	  {
+		$$ = new UnboundTypeExpression ((MemberName)$1, lexer.Location);
+	  }
+	;
+	
+unbound_type_name
+	: IDENTIFIER GENERIC_DIMENSION
+	  {
+		if (RootContext.Version == LanguageVersion.ISO_1)
+			Report.FeatureIsNotISO1 (lexer.Location, "generics");
+	  
+		LocatedToken lt = (LocatedToken) $1;
+		TypeArguments ta = new TypeArguments ((int)$2, lt.Location);
+
+		$$ = new MemberName (lt.Value, ta, lt.Location);
+	  }
+	| IDENTIFIER DOUBLE_COLON IDENTIFIER GENERIC_DIMENSION
+	  {
+		LocatedToken lt = (LocatedToken) $1;
+		MemberName left = new MemberName (lt.Value, lt.Location);
+		lt = (LocatedToken) $3;
+		TypeArguments ta = new TypeArguments ((int)$4, lt.Location);
+		
+		$$ = new MemberName (left, lt.Value, ta, lt.Location);
+	  }
+	| unbound_type_name DOT IDENTIFIER GENERIC_DIMENSION
+	  {
+		LocatedToken lt = (LocatedToken) $3;
+		TypeArguments ta = new TypeArguments ((int)$4, lt.Location);
+		
+	  	$$ = new MemberName ((MemberName)$1, lt.Value, ta, lt.Location);
+	  }
+	| namespace_or_type_name DOT IDENTIFIER GENERIC_DIMENSION
+	  {
+		LocatedToken lt = (LocatedToken) $3;
+		TypeArguments ta = new TypeArguments ((int)$4, lt.Location);
+		
+	  	$$ = new MemberName ((MemberName)$1, lt.Value, ta, lt.Location);
+	  }
+	;
+
 
 sizeof_expression
 	: SIZEOF OPEN_PARENS type CLOSE_PARENS { 
@@ -4242,7 +4325,7 @@ class_declaration
 	  {
 		lexer.ConstraintsParsing = true;
 	  }
-	  member_name
+	  type_name
 	  {
 		MemberName name = MakeName ((MemberName) $6);
 		int mod_flags = (int) $2;
@@ -5625,6 +5708,11 @@ static void Error_DuplicateParameterModifier (Location loc, Parameter.Modifier m
 {
 	Report.Error (1107, loc, "Duplicate parameter modifier `{0}'",
   		Parameter.GetModifierSignature (mod));
+}
+
+static void Error_TypeExpected (Location loc)
+{
+	Report.Error (1031, loc, "Type expected");
 }
 
 void push_current_class (TypeContainer tc, object partial_token)

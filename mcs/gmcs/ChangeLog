@@ -1,3 +1,8 @@
+2007-06-15  Marek Safar  <marek.safar@gmail.com>
+
+	* cs-parser.jay: Correctly split generic arguments and generic
+	 parameters. Correctly implemented typeof of generic unbound types.
+
 2007-06-14  Marek Safar  <marek.safar@gmail.com>
 
 	* cs-parser.jay: Assembly and module attributes must precede all other
