@@ -1,4 +1,19 @@
 2007-06-14  Rodrigo Kumpera  <kumpera@gmail.com>
+	
+	* invalid_call_empty_stack.il: added assembly manifest (so it tests the right thing)
+	* invalid_ldsfld_nonstatic_fld.il: same
+	* invalid_dup_maxstack.il: same
+	* invalid_ldsfld_no_fld.il: same
+	* unverifiable_call_private.il: same
+	* invalid_backward_branch.il: same
+	* make_unary_test.sh: same
+	* invalid_ldloc_no_local.il: same
+	* make_obj_store_test.sh: added static field to have stsfld tests
+	* make_store_test.sh: fixed the entrypoint
+	* make_tests.sh: fixed tests to be faithfull to the spec
+
+2007-06-14  Rodrigo Kumpera  <kumpera@gmail.com>
+
 	*Changelog: fixed the dates of my commits
 
 2007-06-14  Rodrigo Kumpera  <kumpera@gmail.com>
