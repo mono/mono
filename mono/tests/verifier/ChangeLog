@@ -1,4 +1,11 @@
 2007-06-14  Rodrigo Kumpera  <kumpera@gmail.com>
+
+	* invalid_dup_maxstack.il: the test wasn't generating the failing condition
+	* make_tests.sh: fixed the generation of stack merge tests and a typo on the return coercion tests
+	* unverifiable_ldfld_initonly.il: add assembly manifest (so it tests the right thing)
+	* invalid_stack_2_ret.il: fix the entry point
+
+2007-06-14  Rodrigo Kumpera  <kumpera@gmail.com>
 	
 	* invalid_call_empty_stack.il: added assembly manifest (so it tests the right thing)
 	* invalid_ldsfld_nonstatic_fld.il: same
