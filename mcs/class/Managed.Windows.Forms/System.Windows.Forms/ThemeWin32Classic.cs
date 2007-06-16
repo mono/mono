@@ -2313,7 +2313,7 @@ namespace System.Windows.Forms
 				dc.DrawRectangle (ResPool.GetDashPen (ColorControlText, DashStyle.Dot), box_select_rect);
 
 		}
-		
+
 		public override void DrawListViewHeader (Graphics dc, Rectangle clip, ListView control)
 		{	
 			bool details = (control.View == View.Details);
@@ -2326,12 +2326,21 @@ namespace System.Windows.Forms
 					foreach (ColumnHeader col in control.Columns) {
 						Rectangle rect = col.Rect;
 						rect.X -= control.h_marker;
+
+#if NET_2_0
+						bool owner_draw = false;
+						if (control.OwnerDraw)
+							owner_draw = DrawListViewColumnHeaderOwnerDraw (dc, control, col, rect);
+						if (owner_draw)
+							continue;
+#endif
+
 						ButtonState state;
 						if (control.HeaderStyle == ColumnHeaderStyle.Clickable)
 							state = col.Pressed ? ButtonState.Pushed : ButtonState.Normal;
 						else
 							state = ButtonState.Flat;
-						this.CPDrawButton (dc, rect, state);
+						CPDrawButton (dc, rect, state);
 						rect.X += 8;
 						rect.Width -= 13;
 						if (rect.Width <= 0)
@@ -2373,6 +2382,19 @@ namespace System.Windows.Forms
 		}
 
 #if NET_2_0
+		protected virtual bool DrawListViewColumnHeaderOwnerDraw (Graphics dc, ListView control, ColumnHeader column, Rectangle bounds)
+		{
+			ListViewItemStates state = ListViewItemStates.ShowKeyboardCues;
+			if (column.Pressed)
+				state |= ListViewItemStates.Selected;
+
+			DrawListViewColumnHeaderEventArgs args = new DrawListViewColumnHeaderEventArgs (dc,
+					bounds, column.Index, column, state, SystemColors.ControlText, ThemeEngine.Current.ColorControl, DefaultFont);
+			control.OnDrawColumnHeader (args);
+
+			return !args.DrawDefault;
+		}
+
 		protected virtual bool DrawListViewItemOwnerDraw (Graphics dc, ListViewItem item, int index)
 		{
 			ListViewItemStates item_state = ListViewItemStates.ShowKeyboardCues;

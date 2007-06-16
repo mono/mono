@@ -26,6 +26,7 @@
 #if NET_2_0
 
 using System.Drawing;
+using System.Drawing.Drawing2D;
 
 namespace System.Windows.Forms
 {
@@ -109,19 +110,20 @@ namespace System.Windows.Forms
 
         #region Methods
 
-        public void DrawBackground()
+        public void DrawBackground ()
         {
-            throw new NotImplementedException();
+		// Always draw a non-pushed button
+		ThemeEngine.Current.CPDrawButton (graphics, bounds, ButtonState.Normal);
         }
 
-        public void DrawText()
+        public void DrawText ()
         {
-            throw new NotImplementedException();
+		DrawText (TextFormatFlags.Default);
         }
 
-        public void DrawText(TextFormatFlags flags)
+        public void DrawText (TextFormatFlags flags)
         {
-            throw new NotImplementedException();
+		TextRenderer.DrawText (graphics, header.Text, font, bounds, foreColor, flags);
         }
 
         #endregion Methods
