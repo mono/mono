@@ -1,3 +1,12 @@
+2007-06-16  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Fault.cs: In SOAP 1.1, the child elements of Fault may be unqualified.
+	Fixed FaultReader's ReadObject_Fault to only process either unqualified
+	elements or elements in the SOAP 1.1 namespace, hereby fixing part of
+	bug #81886 where an unqualified detail element was not processed. In 
+	FaultWriter, write unqualified detail element. Fixes second part of 
+	bug #81886.
+
 2007-05-11  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SoapServerType.cs : avoid IndexOutOfRange on reflecting 

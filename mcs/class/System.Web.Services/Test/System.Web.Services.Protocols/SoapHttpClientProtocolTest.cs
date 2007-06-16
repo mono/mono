@@ -27,15 +27,19 @@
 //
 
 using System;
+using System.IO;
 using System.Net;
+using System.Net.Sockets;
+using System.Text;
 using System.Web.Services;
 using System.Web.Services.Description;
 using System.Web.Services.Protocols;
+using System.Xml;
 using System.Xml.Serialization;
 
 using NUnit.Framework;
 
-namespace System.Web.Services.Protocols
+namespace MonoTests.System.Web.Services.Protocols
 {
 	[TestFixture]
 	public class SoapHttpClientProtocolTest
@@ -44,7 +48,7 @@ namespace System.Web.Services.Protocols
 		public void OutParametersTest ()
 		{
 			IPEndPoint localEP = new IPEndPoint (IPAddress.Loopback, 5000);
-			using (SocketResponder sr = new SocketResponder (localEP, new SocketRequestHandler (Response_OutParametersTest))) {
+			using (SocketResponder sr = new SocketResponder (localEP, new SocketRequestHandler (OutParametersResponse))) {
 				sr.Start ();
 
 				FooService service = new FooService ();
@@ -56,24 +60,161 @@ namespace System.Web.Services.Protocols
 				Assert.IsNull (e, "#A1");
 				Assert.AreEqual (0, a, "#A2");
 				Assert.IsFalse (b, "#A3");
+				service.Dispose ();
+
+				sr.Stop ();
 			}
 		}
 
-		static string Response_OutParametersTest ()
+		[Test] // bug #81886
+		public void FaultTest ()
 		{
-			return "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
-				"<soap:Body>" +
-				"<ReqResponse2 xmlns=\"urn:foo\">" +
-				"<Hits>ERERE</Hits>" +
-				"</ReqResponse2>" +
-				"</soap:Body>" +
+			IPEndPoint localEP = new IPEndPoint (IPAddress.Loopback, 5000);
+			using (SocketResponder sr = new SocketResponder (localEP, new SocketRequestHandler (FaultResponse_Qualified))) {
+				sr.Start ();
+
+				FooService service = new FooService ();
+				service.Url = "http://" + IPAddress.Loopback.ToString () + ":5000/";
+				try {
+					service.Run ();
+					Assert.Fail ("#A1");
+				} catch (SoapException ex) {
+					Assert.AreEqual ("Mono Web Service", ex.Actor, "#A2");
+					Assert.AreEqual (SoapException.ServerFaultCode, ex.Code, "#A3");
+					Assert.IsNotNull (ex.Detail, "#A4");
+					Assert.AreEqual ("detail", ex.Detail.LocalName, "#A5");
+					Assert.AreEqual ("http://schemas.xmlsoap.org/soap/envelope/", ex.Detail.NamespaceURI, "#A6");
+
+					XmlNamespaceManager nsMgr = new XmlNamespaceManager (ex.Detail.OwnerDocument.NameTable);
+					nsMgr.AddNamespace ("se", "http://www.mono-project/System");
+
+					XmlElement systemError = (XmlElement) ex.Detail.SelectSingleNode (
+						"se:systemerror", nsMgr);
+					Assert.IsNotNull (systemError, "#A7");
+					Assert.IsNull (ex.InnerException, "#A8");
+					Assert.AreEqual ("Failure processing request.", ex.Message, "#A9");
+				}
+				service.Dispose ();
+
+				sr.Stop ();
+			}
+
+			using (SocketResponder sr = new SocketResponder (localEP, new SocketRequestHandler (FaultResponse_Unqualified))) {
+				sr.Start ();
+
+				FooService service = new FooService ();
+				service.Url = "http://" + IPAddress.Loopback.ToString () + ":5000/";
+				try {
+					service.Run ();
+					Assert.Fail ("#B1");
+				} catch (SoapException ex) {
+					Assert.AreEqual ("Mono Web Service", ex.Actor, "#B2");
+					Assert.AreEqual (SoapException.ServerFaultCode, ex.Code, "#B3");
+					Assert.IsNotNull (ex.Detail, "#B4");
+					Assert.AreEqual ("detail", ex.Detail.LocalName, "#B5");
+					Assert.AreEqual (string.Empty, ex.Detail.NamespaceURI, "#B6");
+
+					XmlNamespaceManager nsMgr = new XmlNamespaceManager (ex.Detail.OwnerDocument.NameTable);
+					nsMgr.AddNamespace ("se", "http://www.mono-project/System");
+
+					XmlElement systemError = (XmlElement) ex.Detail.SelectSingleNode (
+						"se:systemerror", nsMgr);
+					Assert.IsNotNull (systemError, "#B7");
+					Assert.IsNull (ex.InnerException, "#B8");
+					Assert.AreEqual ("Failure processing request.", ex.Message, "#B9");
+				}
+				service.Dispose ();
+
+				sr.Stop ();
+			}
+		}
+
+		static byte [] FaultResponse_Qualified (Socket socket)
+		{
+			string responseContent =
+				"<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
+				"  <soap:Body>" +
+				"    <soap:Fault>" +
+				"      <soap:faultcode>soap:Server</soap:faultcode>" +
+				"      <soap:faultstring>Failure processing request.</soap:faultstring>" +
+				"      <soap:faultactor>Mono Web Service</soap:faultactor>" +
+				"      <soap:detail>" +
+				"        <se:systemerror xmlns:se=\"http://www.mono-project/System\">" +
+				"          <se:code>5000</se:code>" +
+				"          <se:description>Invalid credentials.</se:description>" +
+				"        </se:systemerror>" +
+				"      </soap:detail>" +
+				"    </soap:Fault>" +
+				"  </soap:Body>" +
 				"</soap:Envelope>";
+
+			StringWriter sw = new StringWriter ();
+			sw.WriteLine ("HTTP/1.1 200 OK");
+			sw.WriteLine ("Content-Type: text/xml");
+			sw.WriteLine ("Content-Length: " + responseContent.Length);
+			sw.WriteLine ();
+			sw.Write (responseContent);
+			sw.Flush ();
+
+			return Encoding.UTF8.GetBytes (sw.ToString ());
+		}
+
+		static byte [] FaultResponse_Unqualified (Socket socket)
+		{
+			string responseContent =
+				"<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
+				"  <soap:Body>" +
+				"    <soap:Fault>" +
+				"      <faultcode>soap:Server</faultcode>" +
+				"      <faultstring>Failure processing request.</faultstring>" +
+				"      <faultactor>Mono Web Service</faultactor>" +
+				"      <detail>" +
+				"        <se:systemerror xmlns:se=\"http://www.mono-project/System\">" +
+				"          <se:code>5000</se:code>" +
+				"          <se:description>Invalid credentials.</se:description>" +
+				"        </se:systemerror>" +
+				"      </detail>" +
+				"    </soap:Fault>" +
+				"  </soap:Body>" +
+				"</soap:Envelope>";
+
+			StringWriter sw = new StringWriter ();
+			sw.WriteLine ("HTTP/1.1 200 OK");
+			sw.WriteLine ("Content-Type: text/xml");
+			sw.WriteLine ("Content-Length: " + responseContent.Length);
+			sw.WriteLine ();
+			sw.Write (responseContent);
+			sw.Flush ();
+
+			return Encoding.UTF8.GetBytes (sw.ToString ());
+		}
+
+		static byte [] OutParametersResponse (Socket socket)
+		{
+			string responseContent =
+				"<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
+				"  <soap:Body>" +
+				"    <ReqResponse2 xmlns=\"urn:foo\">" +
+				"      <Hits>ERERE</Hits>" +
+				"    </ReqResponse2>" +
+				"  </soap:Body>" +
+				"</soap:Envelope>";
+
+			StringWriter sw = new StringWriter ();
+			sw.WriteLine ("HTTP/1.1 200 OK");
+			sw.WriteLine ("Content-Type: text/xml");
+			sw.WriteLine ("Content-Length: " + responseContent.Length);
+			sw.WriteLine ();
+			sw.Write (responseContent);
+			sw.Flush ();
+
+			return Encoding.UTF8.GetBytes (sw.ToString ());
 		}
 
 		[WebServiceBindingAttribute (Name = "Foo", Namespace = "urn:foo")]
 		public class FooService : SoapHttpClientProtocol
 		{
-			[SoapDocumentMethodAttribute ("", RequestElementName = "Req", RequestNamespace = "urn:foo", ResponseNamespace = "urn:foo", Use = SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+			[SoapDocumentMethodAttribute ("", RequestElementName = "Req", RequestNamespace = "urn:foo", ResponseNamespace = "urn:foo", Use = SoapBindingUse.Literal, ParameterStyle = SoapParameterStyle.Wrapped)]
 			[return: XmlElementAttribute ("Hits")]
 			public Elem [] Req ([XmlAttributeAttribute ()] string arg, [XmlAttributeAttribute ()] out int status, [XmlAttributeAttribute ()] [XmlIgnoreAttribute ()] out bool statusSpecified)
 			{
@@ -81,6 +222,14 @@ namespace System.Web.Services.Protocols
 				status = ((int) (results [1]));
 				statusSpecified = ((bool) (results [2]));
 				return ((Elem []) (results [0]));
+			}
+
+			[SoapDocumentMethodAttribute ("", RequestElementName = "Run", RequestNamespace = "urn:foo", ResponseNamespace = "urn:foo", Use = SoapBindingUse.Literal, ParameterStyle = SoapParameterStyle.Wrapped)]
+			[return: XmlElementAttribute ("Hits")]
+			public Elem Run ()
+			{
+				this.Invoke ("Run", new object [0]);
+				return new Elem ();
 			}
 		}
 

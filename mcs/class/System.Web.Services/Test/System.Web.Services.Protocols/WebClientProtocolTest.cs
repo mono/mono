@@ -32,7 +32,7 @@ using System.Net;
 using System.Web.Services;
 using System.Web.Services.Protocols;
 
-namespace System.Web.Services.Protocols
+namespace MonoTests.System.Web.Services.Protocols
 {
 	[TestFixture]
 	public class WebClientProtocolTest

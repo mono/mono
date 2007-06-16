@@ -20,7 +20,7 @@ using System.Web.Services.Protocols;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
-namespace MonoTests.System.Web.Services.Description
+namespace MonoTests.System.Web.Services.Protocol
 {
 	[TestFixture]
 	public class SoapServerTypeTest

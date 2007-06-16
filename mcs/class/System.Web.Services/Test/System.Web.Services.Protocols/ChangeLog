@@ -1,3 +1,12 @@
+2007-06-16  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* LogicalMethodInfoTest.cs: Fixed namespace.
+	* WebClientProtocolTest.cs: Fixed namespace.
+	* SoapHttpClientProtocolTest.cs: Fixed namespace. Added test for
+	bug #81886.
+	* SoapServerTypeTest.cs: Fixed namespace.
+	* SocketResponder.cs: Sync with copy in System assembly.
+
 2007-05-11  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SoapServerTypeTest.cs : make sure that SoapRpcServiceAttribute works.

@@ -105,7 +105,7 @@ namespace System.Web.Services.Protocols
 		public object ReadRoot_Fault ()
 		{
 			Reader.MoveToContent();
-			if (Reader.LocalName != "Fault" || Reader.NamespaceURI != "http://schemas.xmlsoap.org/soap/envelope/")
+			if (Reader.LocalName != "Fault" || Reader.NamespaceURI != WebServiceHelper.SoapEnvelopeNamespace)
 				throw CreateUnknownNodeException();
 			return ReadObject_Fault (true, true);
 		}
@@ -120,7 +120,7 @@ namespace System.Web.Services.Protocols
 				System.Xml.XmlQualifiedName t = GetXsiType();
 				if (t != null) 
 				{
-					if (t.Name != "Fault" || t.Namespace != "http://schemas.xmlsoap.org/soap/envelope/")
+					if (t.Name != "Fault" || t.Namespace != WebServiceHelper.SoapEnvelopeNamespace)
 						throw CreateUnknownTypeException(t);
 				}
 			}
@@ -151,29 +151,27 @@ namespace System.Web.Services.Protocols
 
 			while (Reader.NodeType != System.Xml.XmlNodeType.EndElement) 
 			{
-				if (Reader.NodeType == System.Xml.XmlNodeType.Element) 
-				{
-					if (Reader.LocalName == "faultcode" && Reader.NamespaceURI == "" && !b0) {
-						b0 = true;
-						ob.@faultcode = ReadElementQualifiedName ();
-					}
-					else if (Reader.LocalName == "faultstring" && Reader.NamespaceURI == "" && !b1) {
-						b1 = true;
-						ob.@faultstring = Reader.ReadElementString ();
-					}
-					else if (Reader.LocalName == "detail" && Reader.NamespaceURI == "http://schemas.xmlsoap.org/soap/envelope/" && !b3) {
-						b3 = true;
-						ob.@detail = ReadXmlNode (true);
-					}
-					else if (Reader.LocalName == "faultactor" && Reader.NamespaceURI == "" && !b2) {
-						b2 = true;
-						ob.@faultactor = Reader.ReadElementString ();
-					}
-					else {
+				if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
+					if (Reader.NamespaceURI == string.Empty || Reader.NamespaceURI == WebServiceHelper.SoapEnvelopeNamespace) {
+						if (Reader.LocalName == "faultcode" && !b0) {
+							b0 = true;
+							ob.@faultcode = ReadElementQualifiedName ();
+						} else if (Reader.LocalName == "faultstring" && !b1) {
+							b1 = true;
+							ob.@faultstring = Reader.ReadElementString ();
+						} else if (Reader.LocalName == "detail" && !b3) {
+							b3 = true;
+							ob.@detail = ReadXmlNode (false);
+						} else if (Reader.LocalName == "faultactor" && !b2) {
+							b2 = true;
+							ob.@faultactor = Reader.ReadElementString ();
+						} else {
+							UnknownNode (ob);
+						}
+					} else {
 						UnknownNode (ob);
 					}
-				}
-				else
+				} else
 					UnknownNode(ob);
 
 				Reader.MoveToContent();
@@ -200,7 +198,7 @@ namespace System.Web.Services.Protocols
 			WriteStartDocument ();
 			System.Web.Services.Protocols.Fault ob = (System.Web.Services.Protocols.Fault) o;
 			TopLevelElement ();
-			WriteObject_Fault (ob, "Fault", "http://schemas.xmlsoap.org/soap/envelope/", true, false, true);
+			WriteObject_Fault (ob, "Fault", WebServiceHelper.SoapEnvelopeNamespace, true, false, true);
 		}
 
 		void WriteObject_Fault (System.Web.Services.Protocols.Fault ob, string element, string namesp, bool isNullable, bool needType, bool writeWrappingElem)
@@ -216,12 +214,12 @@ namespace System.Web.Services.Protocols
 				WriteStartElement (element, namesp, ob);
 			}
 
-			if (needType) WriteXsiType("Fault", "http://schemas.xmlsoap.org/soap/envelope/");
+			if (needType) WriteXsiType ("Fault", WebServiceHelper.SoapEnvelopeNamespace);
 
 			WriteElementQualifiedName ("faultcode", "", ob.@faultcode);
 			WriteElementString ("faultstring", "", ob.@faultstring);
 			WriteElementString ("faultactor", "", ob.@faultactor);
-			WriteElementLiteral (ob.@detail, "detail", "http://schemas.xmlsoap.org/soap/envelope/", false, false);
+			WriteElementLiteral (ob.@detail, "detail", "", false, false);
 			if (writeWrappingElem) WriteEndElement (ob);
 		}
 
