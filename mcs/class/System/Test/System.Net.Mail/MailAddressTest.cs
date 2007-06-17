@@ -17,7 +17,7 @@ namespace MonoTests.System.Net.Mail
 	public class MailAddressTest
 	{
 		MailAddress address;
-		
+
 		[SetUp]
 		public void GetReady ()
 		{
@@ -25,39 +25,254 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
+		public void Constructor0 ()
+		{
+			address = new MailAddress (" foo@example.com ");
+			Assert.AreEqual ("foo@example.com", address.Address, "#A1");
+			Assert.AreEqual (string.Empty, address.DisplayName, "#A2");
+			Assert.AreEqual ("example.com", address.Host, "#A3");
+			Assert.AreEqual ("foo@example.com", address.ToString (), "#A4");
+			Assert.AreEqual ("foo", address.User, "#A5");
+
+			address = new MailAddress ("Mr. Foo Bar <foo@example.com>");
+			Assert.AreEqual ("foo@example.com", address.Address, "#B1");
+			Assert.AreEqual ("Mr. Foo Bar", address.DisplayName, "#B2");
+			Assert.AreEqual ("example.com", address.Host, "#B3");
+			Assert.AreEqual ("\"Mr. Foo Bar\" <foo@example.com>", address.ToString (), "#B4");
+			Assert.AreEqual ("foo", address.User, "#B5");
+
+			address = new MailAddress ("Mr. F@@ Bar <foo@example.com> Whatever@You@Want");
+			Assert.AreEqual ("foo@example.com", address.Address, "#C1");
+			Assert.AreEqual ("Mr. F@@ Bar", address.DisplayName, "#C2");
+			Assert.AreEqual ("example.com", address.Host, "#C3");
+			Assert.AreEqual ("\"Mr. F@@ Bar\" <foo@example.com>", address.ToString (), "#C4");
+			Assert.AreEqual ("foo", address.User, "#C5");
+
+			address = new MailAddress ("\"Mr. F@@ Bar\" <foo@example.com> Whatever@You@Want");
+			Assert.AreEqual ("foo@example.com", address.Address, "#D1");
+			Assert.AreEqual ("Mr. F@@ Bar", address.DisplayName, "#D2");
+			Assert.AreEqual ("example.com", address.Host, "#D3");
+			Assert.AreEqual ("\"Mr. F@@ Bar\" <foo@example.com>", address.ToString (), "#D4");
+			Assert.AreEqual ("foo", address.User, "#D5");
+
+			address = new MailAddress ("FooBar <foo@example.com>");
+			Assert.AreEqual ("foo@example.com", address.Address, "#E1");
+			Assert.AreEqual ("FooBar", address.DisplayName, "#E2");
+			Assert.AreEqual ("example.com", address.Host, "#E3");
+			Assert.AreEqual ("\"FooBar\" <foo@example.com>", address.ToString (), "#E4");
+			Assert.AreEqual ("foo", address.User, "#E5");
+
+			address = new MailAddress ("\"FooBar\"foo@example.com   ");
+			Assert.AreEqual ("foo@example.com", address.Address, "#F1");
+			Assert.AreEqual ("FooBar", address.DisplayName, "#F2");
+			Assert.AreEqual ("example.com", address.Host, "#F3");
+			Assert.AreEqual ("\"FooBar\" <foo@example.com>", address.ToString (), "#F4");
+			Assert.AreEqual ("foo", address.User, "#F5");
+
+			address = new MailAddress ("\"   FooBar   \"< foo@example.com >");
+			Assert.AreEqual ("foo@example.com", address.Address, "#G1");
+			Assert.AreEqual ("FooBar", address.DisplayName, "#G2");
+			Assert.AreEqual ("example.com", address.Host, "#G3");
+			Assert.AreEqual ("\"FooBar\" <foo@example.com>", address.ToString (), "#G4");
+			Assert.AreEqual ("foo", address.User, "#G5");
+
+			address = new MailAddress ("<foo@example.com>");
+			Assert.AreEqual ("foo@example.com", address.Address, "#H1");
+			Assert.AreEqual (string.Empty, address.DisplayName, "#H2");
+			Assert.AreEqual ("example.com", address.Host, "#H3");
+			Assert.AreEqual ("foo@example.com", address.ToString (), "#H4");
+			Assert.AreEqual ("foo", address.User, "#H5");
+
+			address = new MailAddress ("    <  foo@example.com  >");
+			Assert.AreEqual ("foo@example.com", address.Address, "#H1");
+			Assert.AreEqual (string.Empty, address.DisplayName, "#H2");
+			Assert.AreEqual ("example.com", address.Host, "#H3");
+			Assert.AreEqual ("foo@example.com", address.ToString (), "#H4");
+			Assert.AreEqual ("foo", address.User, "#H5");
+		}
+
+		[Test]
+		public void Constructor0_Address_Null ()
+		{
+			try {
+				new MailAddress ((string) null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("address", ex.ParamName, "#6");
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Constructor0_Address_Invalid ()
+		{
+			try {
+				new MailAddress ("Mr. Foo Bar");
+				Assert.Fail ("#A1");
+			} catch (FormatException ex) {
+				// The specified string is not in the form required for an
+				// e-mail address
+				Assert.AreEqual (typeof (FormatException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+			}
+
+			try {
+				new MailAddress ("foo@b@ar");
+				Assert.Fail ("#B1");
+			} catch (FormatException ex) {
+				// The specified string is not in the form required for an
+				// e-mail address
+				Assert.AreEqual (typeof (FormatException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+			}
+
+			try {
+				new MailAddress ("Mr. Foo Bar <foo@exa<mple.com");
+				Assert.Fail ("#C1");
+			} catch (FormatException ex) {
+				// The specified string is not in the form required for an
+				// e-mail address
+				Assert.AreEqual (typeof (FormatException), ex.GetType (), "#C2");
+				Assert.IsNull (ex.InnerException, "#C3");
+				Assert.IsNotNull (ex.Message, "#C4");
+			}
+
+			try {
+				new MailAddress ("Mr. Foo Bar <foo@example.com");
+				Assert.Fail ("#D1");
+			} catch (FormatException ex) {
+				// The specified string is not in the form required for an
+				// e-mail address
+				Assert.AreEqual (typeof (FormatException), ex.GetType (), "#D2");
+				Assert.IsNull (ex.InnerException, "#D3");
+				Assert.IsNotNull (ex.Message, "#D4");
+			}
+
+			try {
+				new MailAddress ("Mr. \"F@@ Bar\" <foo@example.com> Whatever@You@Want");
+				Assert.Fail ("#E1");
+			} catch (FormatException ex) {
+				// The specified string is not in the form required for an
+				// e-mail address
+				Assert.AreEqual (typeof (FormatException), ex.GetType (), "#E2");
+				Assert.IsNull (ex.InnerException, "#E3");
+				Assert.IsNotNull (ex.Message, "#E4");
+			}
+
+			try {
+				new MailAddress ("Mr. F@@ Bar <foo@example.com> What\"ever@You@Want");
+				Assert.Fail ("#F1");
+			} catch (FormatException ex) {
+				// The specified string is not in the form required for an
+				// e-mail address
+				Assert.AreEqual (typeof (FormatException), ex.GetType (), "#F2");
+				Assert.IsNull (ex.InnerException, "#F3");
+				Assert.IsNotNull (ex.Message, "#F4");
+			}
+
+			try {
+				new MailAddress ("\"MrFo@Bar\"");
+				Assert.Fail ("#G1");
+			} catch (FormatException ex) {
+				// The specified string is not in the form required for an
+				// e-mail address
+				Assert.AreEqual (typeof (FormatException), ex.GetType (), "#G2");
+				Assert.IsNull (ex.InnerException, "#G3");
+				Assert.IsNotNull (ex.Message, "#G4");
+			}
+
+			try {
+				new MailAddress ("\"MrFo@Bar\"<>");
+				Assert.Fail ("#H1");
+			} catch (FormatException ex) {
+				// The specified string is not in the form required for an
+				// e-mail address
+				Assert.AreEqual (typeof (FormatException), ex.GetType (), "#H2");
+				Assert.IsNull (ex.InnerException, "#H3");
+				Assert.IsNotNull (ex.Message, "#H4");
+			}
+		}
+
+		[Test]
+		public void Constructor1 ()
+		{
+			address = new MailAddress (" foo@example.com ", (string) null);
+			Assert.AreEqual ("foo@example.com", address.Address, "#A1");
+			Assert.AreEqual (string.Empty, address.DisplayName, "#A2");
+			Assert.AreEqual ("example.com", address.Host, "#A3");
+			Assert.AreEqual ("foo@example.com", address.ToString (), "#A4");
+			Assert.AreEqual ("foo", address.User, "#A5");
+
+			address = new MailAddress ("<foo@example.com> WhatEver", " Mr. Foo Bar ");
+			Assert.AreEqual ("foo@example.com", address.Address, "#B1");
+			Assert.AreEqual ("Mr. Foo Bar", address.DisplayName, "#B2");
+			Assert.AreEqual ("example.com", address.Host, "#B3");
+			Assert.AreEqual ("\"Mr. Foo Bar\" <foo@example.com>", address.ToString (), "#B4");
+			Assert.AreEqual ("foo", address.User, "#B5");
+
+			address = new MailAddress ("Mr. F@@ Bar <foo@example.com> Whatever", "BarFoo");
+			Assert.AreEqual ("foo@example.com", address.Address, "#C1");
+			Assert.AreEqual ("BarFoo", address.DisplayName, "#C2");
+			Assert.AreEqual ("example.com", address.Host, "#C3");
+			Assert.AreEqual ("\"BarFoo\" <foo@example.com>", address.ToString (), "#C4");
+			Assert.AreEqual ("foo", address.User, "#C5");
+
+			address = new MailAddress ("Mr. F@@ Bar <foo@example.com> Whatever", string.Empty);
+			Assert.AreEqual ("foo@example.com", address.Address, "#D1");
+			Assert.AreEqual (string.Empty, address.DisplayName, "#D2");
+			Assert.AreEqual ("example.com", address.Host, "#D3");
+			Assert.AreEqual ("foo@example.com", address.ToString (), "#D4");
+			Assert.AreEqual ("foo", address.User, "#D5");
+
+			address = new MailAddress ("Mr. F@@ Bar <foo@example.com> Whatever", (string) null);
+			Assert.AreEqual ("foo@example.com", address.Address, "#E1");
+			Assert.AreEqual ("Mr. F@@ Bar", address.DisplayName, "#E2");
+			Assert.AreEqual ("example.com", address.Host, "#E3");
+			Assert.AreEqual ("\"Mr. F@@ Bar\" <foo@example.com>", address.ToString (), "#E4");
+			Assert.AreEqual ("foo", address.User, "#E5");
+
+			address = new MailAddress ("Mr. F@@ Bar <foo@example.com> Whatever", " ");
+			Assert.AreEqual ("foo@example.com", address.Address, "#F1");
+			Assert.AreEqual (string.Empty, address.DisplayName, "#F2");
+			Assert.AreEqual ("example.com", address.Host, "#F3");
+			Assert.AreEqual ("foo@example.com", address.ToString (), "#F4");
+			Assert.AreEqual ("foo", address.User, "#F5");
+		}
+
+		[Test]
 		public void Address ()
 		{
-			Assert.IsTrue (address.Address == "foo@example.com");
+			Assert.AreEqual ("foo@example.com", address.Address);
 		}
 
 		[Test]
 		public void DisplayName ()
 		{
-			Assert.IsTrue (address.DisplayName == "Mr. Foo Bar");
-		}
-
-		[Test]
-		public void User ()
-		{
-			Assert.IsTrue (address.User == "foo");
+			Assert.AreEqual ("Mr. Foo Bar", address.DisplayName);
 		}
 
 		[Test]
 		public void Host ()
 		{
-			Assert.IsTrue (address.Host == "example.com");
+			Assert.AreEqual ("example.com", address.Host);
 		}
 
 		[Test]
-		public void SimpleToStringTest ()
+		public void User ()
 		{
-			Assert.IsTrue (new MailAddress ("foo@example.com").ToString () == "foo@example.com");
+			Assert.AreEqual ("foo", address.User);
 		}
 
 		[Test]
 		public void ToStringTest ()
 		{
-			Assert.IsTrue (address.ToString () == "\"Mr. Foo Bar\" <foo@example.com>");
+			Assert.AreEqual ("\"Mr. Foo Bar\" <foo@example.com>", address.ToString ());
 		}
 	}
 }

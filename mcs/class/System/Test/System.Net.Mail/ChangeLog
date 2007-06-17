@@ -1,3 +1,8 @@
+2007-06-17  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* MailAddressTest.cs: Added tests for ctors and specifying display
+	name as part of address.
+
 2007-06-07  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* MailMessageTest.cs: Improved test for To to verify bug #81817 is

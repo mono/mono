@@ -53,23 +53,58 @@ namespace System.Net.Mail {
 		{
 		}
 
-		public MailAddress (string address, string name, Encoding displayNameEncoding)
+		public MailAddress (string address, string displayName, Encoding displayNameEncoding)
 		{
-			this.address = address;
-			this.displayName = name;
+			if (address == null)
+				throw new ArgumentNullException ("address");
+
+			// either displayname is enclosed in quotes, and/or e-mail address
+			// is enclosed in less than / greater than characters
+			int quoteStart = address.IndexOf ('"');
+			if (quoteStart == 0) {
+				int quoteEnd = address.IndexOf ('"', quoteStart + 1);
+				if (quoteEnd == -1)
+					throw CreateFormatException ();
+				this.displayName = address.Substring (quoteStart + 1, quoteEnd - 1).Trim ();
+				address = address.Substring (quoteEnd + 1);
+			}
+
+			int addressStart = address.IndexOf ('<');
+			if (addressStart != -1) {
+				if (addressStart + 1 >= address.Length)
+					throw CreateFormatException ();
+				int addressEnd = address.IndexOf ('>', addressStart + 1);
+				if (addressEnd == -1)
+					throw CreateFormatException ();
+				if (this.displayName == null)
+					this.displayName = address.Substring (0, addressStart).Trim ();
+				address = address.Substring (++addressStart, addressEnd - addressStart);
+			}
+
+			// LAMESPEC: zero-length displayName should not override display name
+			// specified in address
+			// https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=283163
+			if (displayName != null)
+				this.displayName = displayName.Trim ();
+
+			this.address = address.Trim ();
 			//this.displayNameEncoding = displayNameEncoding;
 		}
 
 		#endregion // Constructors
 
-		#region Properties
+#region Properties
 
-		public string Address {	
+		public string Address {
 			get { return address; }
 		}
 
 		public string DisplayName {
-			get { return displayName; }
+			get {
+				if (displayName == null)
+					return string.Empty;
+				return displayName;
+			}
 		}
 
 		public string Host {
@@ -80,9 +115,9 @@ namespace System.Net.Mail {
 			get { return Address.Substring (0, address.IndexOf ("@")); }
 		}
 
-		#endregion // Properties
+#endregion // Properties
 
-		#region Methods
+#region Methods
 		
 		public override bool Equals (object obj)
 		{
@@ -118,7 +153,12 @@ namespace System.Net.Mail {
 			return sb.ToString ();
 		}
 
-		#endregion // Methods
+		private static FormatException CreateFormatException () {
+			return new FormatException ("The specified string is not in the "
+				+ "form required for an e-mail address.");
+		}
+
+#endregion // Methods
 	}
 }
 

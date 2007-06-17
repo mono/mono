@@ -1,3 +1,10 @@
+2007-06-17  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* MailAddress.cs: Throw ArgumentNullException if address is null.
+	Allow display name to be specified as part of the address. Fixes
+	bug #81854. Return zero-length string in DisplayName if no display 
+	name is set.
+
 2007-05-31  Jeffrey Stedfast  <fejj@gnome.org>
 
 	* SmtpClient.cs: Added an extensions parser to figure out if the
