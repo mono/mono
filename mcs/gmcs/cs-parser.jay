@@ -4696,9 +4696,28 @@ local_variable_declaration
 	  }
 	| VAR variable_declarators
 	  {
-	  	$$ = new DictionaryEntry (new VarExpr (lexer.Location), $2);
+	  	ArrayList decls = (ArrayList)$2;
+	  	if (decls.Count > 1) {
+	  		Location loc = ((VariableDeclaration)decls [1]).Location;
+	  		Report.Error (819, loc, "An implicitly typed local variable declaration cannot include multiple declarators");
+	  	}
+	  	
+		VariableDeclaration vd = (VariableDeclaration)decls [0];
+		if (vd.expression_or_array_initializer == null) {
+			Report.Error (818, vd.Location, "An implicitly typed local variable declarator must include an initializer");
+		}
+		
+		if (vd.expression_or_array_initializer is NullLiteral) {
+			Report.Error (815, vd.Location, "An implicitly typed local variable declaration cannot be initialized with `null'");
+		}
+
+		if (vd.expression_or_array_initializer is ArrayCreation) {
+			Report.Error (820, vd.Location, "An implicitly typed local variable declarator cannot use an array initializer");
+		}
+
+	  	$$ = new DictionaryEntry (new VarExpr (lexer.Location), decls);
 	  }
-        | local_variable_pointer_type opt_rank_specifier_or_nullable variable_declarators
+	| local_variable_pointer_type opt_rank_specifier_or_nullable variable_declarators
 	  {
 		if ($1 != null){
 			Expression t;
@@ -5305,6 +5324,9 @@ fixed_statement
 		Location l = (Location) $1;
 		int top = list.Count;
 
+		if (type is VarExpr)
+			Report.Error (821, GetLocation ($3), "A fixed statement cannot use an implicitly typed local variable");
+
 		start_block (lexer.Location);
 
 		for (int i = 0; i < top; i++){
@@ -5314,9 +5336,6 @@ fixed_statement
 			v = current_block.AddVariable (type, (string) p.First, l);
 			if (v == null)
 				continue;
-
-			if (type is VarExpr)
-				v.VariableType = typeof(VarExpr); // Kinda lame. Avoids a problem in the VariableMap ctor
 
 			v.SetReadOnlyContext (LocalInfo.ReadOnlyContext.Fixed);
 			v.Pinned = true;

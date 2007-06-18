@@ -1,3 +1,7 @@
+2007-06-18  Marek Safar  <marek.safar@gmail.com>
+
+	* cs-parser.jay: Add implicitly typed local variable checks.
+
 2007-06-15  Marek Safar  <marek.safar@gmail.com>
 
 	* cs-parser.jay: Correctly split generic arguments and generic
