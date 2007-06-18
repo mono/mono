@@ -110,24 +110,27 @@ namespace System.Windows.Forms
 
         #region Public Methods
 
-        public void DrawBackground()
+        public void DrawBackground ()
         {
-            throw new NotImplementedException();
+		graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (subItem.BackColor), bounds);
         }
 
-        public void DrawFocusRectangle(Rectangle bounds)
+        public void DrawFocusRectangle (Rectangle bounds)
         {
-            throw new NotImplementedException();
+		if ((itemState & ListViewItemStates.Focused) != 0) {
+			Rectangle rect = new Rectangle (bounds.X + 1, bounds.Y + 1, bounds.Width - 1, bounds.Height - 1);
+			ThemeEngine.Current.CPDrawFocusRectangle (graphics, rect, subItem.ForeColor, subItem.BackColor);
+		}
         }
 
-        public void DrawText()
+        public void DrawText ()
         {
-            throw new NotImplementedException();
+		DrawText (TextFormatFlags.Default);
         }
 
-        public void DrawText(TextFormatFlags flags)
+        public void DrawText (TextFormatFlags flags)
         {
-            throw new NotImplementedException();
+		TextRenderer.DrawText (graphics, subItem.Text, subItem.Font, bounds, subItem.ForeColor, flags);
         }
 
         #endregion Public Methods
