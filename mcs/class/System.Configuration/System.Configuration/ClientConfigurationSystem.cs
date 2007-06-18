@@ -39,9 +39,14 @@ namespace System.Configuration {
 		object IInternalConfigSystem.GetSection (string configKey)
 		{
 			Assembly a = Assembly.GetEntryAssembly();
-
-			Configuration cfg = ConfigurationManager.OpenExeConfigurationInternal (ConfigurationUserLevel.None, a, AppDomain.CurrentDomain.SetupInformation.ConfigurationFile);
-			if (cfg == null) return null;
+			string exePath = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;
+            
+			if (a == null && exePath == null)
+				exePath = "";
+            
+			Configuration cfg = ConfigurationManager.OpenExeConfigurationInternal (ConfigurationUserLevel.None, a, exePath);
+			if (cfg == null)
+				return null;
 
 			ConfigurationSection s = cfg.GetSection (configKey);
 			return s != null ? s.GetRuntimeObject () : null;

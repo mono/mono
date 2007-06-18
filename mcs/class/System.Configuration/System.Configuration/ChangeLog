@@ -1,3 +1,8 @@
+2007-06-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ClientConfigurationSystem.cs : do not asume GetEntryAssembly()
+	  returns non-null. Patch by Patrick Perry.
+
 2007-06-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ConfigurationElement.cs : SerializeToXmlElement() should be
