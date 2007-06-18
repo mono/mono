@@ -75,10 +75,13 @@ namespace System.Web.Configuration
 
 		protected override bool OnDeserializeUnrecognizedElement (string elementName, XmlReader reader) 
 		{
+			/* Disabled: pending investigation
+			 *
 			if (elementName == "clear" || elementName == "group") {
 				throw new ConfigurationErrorsException (String.Format ("{0} is not permitted here", elementName), reader);
 			}
-
+			*/
+			
 			return base.OnDeserializeUnrecognizedElement (elementName, reader);
 		}
 
