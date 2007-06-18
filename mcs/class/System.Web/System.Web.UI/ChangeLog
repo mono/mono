@@ -1,5 +1,9 @@
 2007-06-18 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* Control.cs: revised the changes from r79982. 	
+
+2007-06-18 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* Control.cs: optimized flow in ResolveClientUrl. 	
 
 2007-06-15  Gert Driesen  <drieseng@users.sourceforge.net>

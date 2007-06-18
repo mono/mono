@@ -1287,8 +1287,11 @@ namespace System.Web.UI
 				return relativeUrl;
 
 			HttpContext context = Context;
-			string templateSourceDirectory = TemplateSourceDirectory;
-			if (context != null && context.Request != null && templateSourceDirectory != null && templateSourceDirectory.Length > 0) {
+			if (context != null && context.Request != null) {
+				string templateSourceDirectory = TemplateSourceDirectory;
+				if (templateSourceDirectory == null || templateSourceDirectory.Length == 0)
+					return relativeUrl;
+				
 				string basePath = context.Request.CurrentExecutionFilePath;
 
 				if (basePath.Length > 1 && basePath [basePath.Length - 1] != '/')
