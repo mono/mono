@@ -1398,16 +1398,16 @@ namespace System.Windows.Forms
 						text_rect = AlignInRectangle (contentRectangle, this.text_size, this.text_align);
 					break;
 				case ToolStripItemDisplayStyle.Image:
-					if (this.Image != null)
+					if (this.Image != null && this.UseImageMargin)
 						image_rect = AlignInRectangle (contentRectangle, GetImageSize (), this.image_align);
 					break;
 				case ToolStripItemDisplayStyle.ImageAndText:
-					if (this.text != string.Empty && this.Image == null)
+					if (this.text != string.Empty && (this.Image == null || !this.UseImageMargin))
 						text_rect = AlignInRectangle (contentRectangle, this.text_size, this.text_align);
+					else if (this.text == string.Empty && (this.Image == null || !this.UseImageMargin))
+						break;
 					else if (this.text == string.Empty && this.Image != null)
 						image_rect = AlignInRectangle (contentRectangle, GetImageSize (), this.image_align);
-					else if (this.text == string.Empty && this.Image == null)
-						break;
 					else {
 						Rectangle text_area;
 						Rectangle image_area;
@@ -1579,6 +1579,34 @@ namespace System.Windows.Forms
 		internal virtual void SetPlacement (ToolStripItemPlacement placement)
 		{
 			this.placement = placement;
+		}
+
+		internal bool ShowMargin {
+			get {
+				if (!this.IsOnDropDown)
+					return true;
+
+				if (!(this.Owner is ToolStripDropDownMenu))
+					return true;
+
+				ToolStripDropDownMenu tsddm = (ToolStripDropDownMenu)this.Owner;
+
+				return tsddm.ShowCheckMargin || tsddm.ShowImageMargin;
+			}
+		}
+
+		internal bool UseImageMargin {
+			get {
+				if (!this.IsOnDropDown)
+					return true;
+
+				if (!(this.Owner is ToolStripDropDownMenu))
+					return true;
+
+				ToolStripDropDownMenu tsddm = (ToolStripDropDownMenu)this.Owner;
+
+				return tsddm.ShowImageMargin;
+			}
 		}
 
 		internal bool InternalVisible {

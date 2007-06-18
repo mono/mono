@@ -366,10 +366,14 @@ namespace System.Windows.Forms
 				}
 
 				Rectangle r3;
-				if (e.Item.IsOnDropDown)
-					r3 = new Rectangle (35, 3, e.Item.Width - 36, 1);
-				else
+				if (e.Item.IsOnDropDown) {
+					if (e.Item.UseImageMargin)
+						r3 = new Rectangle (35, 3, e.Item.Width - 36, 1);
+					else
+						r3 = new Rectangle (7, 3, e.Item.Width - 7, 1);
+				} else
 					r3 = new Rectangle (5, 3, e.Item.Width - 10, 1);
+					
 				e.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (this.ColorTable.SeparatorDark), r3);
 			}
 		}

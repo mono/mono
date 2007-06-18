@@ -1,5 +1,12 @@
 2007-06-18  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ToolStripDropDownMenu.cs, ToolStripItem.cs, ToolStripLabel.cs,
+	ToolStripMenuItem.cs, ToolStripProfessionalRenderer.cs: Respect the
+	ShowImageMargin setting, properly align text in a ToolStripLabel
+	hosted on a ToolStripDropDown.
+
+2007-06-18  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ToolStrip.cs, ToolStripContentPanel.cs, ToolStripDropDownMenu.cs,
 	ToolStripProfessionalRenderer.cs: Refactor and clean up some rendering code.
 

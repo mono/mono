@@ -185,7 +185,10 @@ namespace System.Windows.Forms
 				this.CalculateTextAndImageRectangles (out text_layout_rect, out image_layout_rect);
 
 				if (this.IsOnDropDown) {
-					text_layout_rect = new Rectangle (35, text_layout_rect.Top, text_layout_rect.Width, text_layout_rect.Height);
+					if (this.ShowMargin)
+						text_layout_rect = new Rectangle (35, text_layout_rect.Top, text_layout_rect.Width, text_layout_rect.Height);
+					else
+						text_layout_rect = new Rectangle (7, text_layout_rect.Top, text_layout_rect.Width, text_layout_rect.Height);
 					if (image_layout_rect != Rectangle.Empty)
 						image_layout_rect = new Rectangle (new Point (4, 3), base.GetImageSize ());
 				}

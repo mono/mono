@@ -97,7 +97,49 @@ namespace System.Windows.Forms
 
 		protected override void OnLayout (LayoutEventArgs e)
 		{
-			base.OnLayout (e);
+			// Find the widest menu item
+			int widest = 0;
+
+			foreach (ToolStripItem tsi in this.Items) {
+				if (!tsi.Available)
+					continue;
+
+				tsi.SetPlacement (ToolStripItemPlacement.Main);
+
+				if (tsi.GetPreferredSize (Size.Empty).Width > widest)
+					widest = tsi.GetPreferredSize (Size.Empty).Width;
+			}
+
+			int x = this.Padding.Left;
+			
+			if (show_check_margin || show_image_margin)
+				widest += 68 - this.Padding.Horizontal;
+			else
+				widest += 47 - this.Padding.Horizontal;
+			
+			int y = this.Padding.Top;
+
+			foreach (ToolStripItem tsi in this.Items) {
+				if (!tsi.Available)
+					continue;
+
+				y += tsi.Margin.Top;
+
+				int height = 0;
+
+				if (tsi is ToolStripSeparator)
+					height = 7;
+				else
+					height = 22;
+
+				tsi.SetBounds (new Rectangle (x, y, widest, height));
+				y += tsi.Height + tsi.Margin.Bottom;
+			}
+
+			this.Size = new Size (widest + this.Padding.Horizontal, y + this.Padding.Bottom);// + 2);
+			this.SetDisplayedItems ();
+			this.OnLayoutCompleted (EventArgs.Empty);
+			this.Invalidate ();
 		}
 		
 		protected override void OnPaintBackground (PaintEventArgs pevent)

@@ -317,44 +317,58 @@ namespace System.Windows.Forms
 		{
 			base.OnPaint (e);
 
-			if (this.Owner != null) {
-				Color font_color = this.Enabled ? this.ForeColor : SystemColors.GrayText;
-				Image draw_image = this.Enabled ? this.Image : ToolStripRenderer.CreateDisabledImage (this.Image);
+			// Can't render without an owner
+			if (this.Owner == null)
+				return;
+				
+			// If DropDown.ShowImageMargin is false, we don't display the image
+			Image draw_image = this.UseImageMargin ? this.Image : null;
+			
+			// Gray stuff out if we're disabled
+			Color font_color = this.Enabled ? this.ForeColor : SystemColors.GrayText;
+			draw_image = this.Enabled ? draw_image : ToolStripRenderer.CreateDisabledImage (draw_image);
+				
+			// Draw our background
+			this.Owner.Renderer.DrawMenuItemBackground (new ToolStripItemRenderEventArgs (e.Graphics, this));
 
-				this.Owner.Renderer.DrawMenuItemBackground (new System.Windows.Forms.ToolStripItemRenderEventArgs (e.Graphics, this));
+			// Figure out where our text and image go
+			Rectangle text_layout_rect;
+			Rectangle image_layout_rect;
 
-				Rectangle text_layout_rect;
-				Rectangle image_layout_rect;
+			this.CalculateTextAndImageRectangles (out text_layout_rect, out image_layout_rect);
 
-				this.CalculateTextAndImageRectangles (out text_layout_rect, out image_layout_rect);
-
-				if (this.IsOnDropDown) {
+			if (this.IsOnDropDown) {
+				if (!this.UseImageMargin) {
+					image_layout_rect = Rectangle.Empty;
+					text_layout_rect = new Rectangle (8, text_layout_rect.Top, text_layout_rect.Width, text_layout_rect.Height);
+				} else {
 					text_layout_rect = new Rectangle (35, text_layout_rect.Top, text_layout_rect.Width, text_layout_rect.Height);
+				
 					if (image_layout_rect != Rectangle.Empty)
 						image_layout_rect = new Rectangle (new Point (4, 3), base.GetImageSize ());
-
-					if (this.Checked)
-						this.Owner.Renderer.DrawItemCheck (new ToolStripItemImageRenderEventArgs (e.Graphics, this, new Rectangle (2, 1, 19, 19)));
 				}
-				if (text_layout_rect != Rectangle.Empty)
-					this.Owner.Renderer.DrawItemText (new System.Windows.Forms.ToolStripItemTextRenderEventArgs (e.Graphics, this, this.Text, text_layout_rect, font_color, this.Font, this.TextAlign));
 
-				string key_string = GetShortcutDisplayString ();
-				
-				if (!string.IsNullOrEmpty (key_string) && !this.HasDropDownItems) {
-					int offset = 15;
-					Size key_string_size = TextRenderer.MeasureText (key_string, this.Font);
-					Rectangle key_string_rect = new Rectangle (this.ContentRectangle.Right - key_string_size.Width - offset, text_layout_rect.Top, key_string_size.Width, text_layout_rect.Height);
-					this.Owner.Renderer.DrawItemText (new System.Windows.Forms.ToolStripItemTextRenderEventArgs (e.Graphics, this, key_string, key_string_rect, font_color, this.Font, this.TextAlign));
-				}
-					
-				if (image_layout_rect != Rectangle.Empty)
-					this.Owner.Renderer.DrawItemImage (new System.Windows.Forms.ToolStripItemImageRenderEventArgs (e.Graphics, this, draw_image, image_layout_rect));
-
-				if (this.IsOnDropDown && this.HasDropDownItems)
-					this.Owner.Renderer.DrawArrow (new ToolStripArrowRenderEventArgs (e.Graphics, this, new Rectangle (this.Bounds.Width - 17, 2, 10, 20), Color.Black, ArrowDirection.Right));
-				return;
+				if (this.Checked && this.ShowMargin)
+					this.Owner.Renderer.DrawItemCheck (new ToolStripItemImageRenderEventArgs (e.Graphics, this, new Rectangle (2, 1, 19, 19)));
 			}
+			if (text_layout_rect != Rectangle.Empty)
+				this.Owner.Renderer.DrawItemText (new ToolStripItemTextRenderEventArgs (e.Graphics, this, this.Text, text_layout_rect, font_color, this.Font, this.TextAlign));
+
+			string key_string = GetShortcutDisplayString ();
+			
+			if (!string.IsNullOrEmpty (key_string) && !this.HasDropDownItems) {
+				int offset = 15;
+				Size key_string_size = TextRenderer.MeasureText (key_string, this.Font);
+				Rectangle key_string_rect = new Rectangle (this.ContentRectangle.Right - key_string_size.Width - offset, text_layout_rect.Top, key_string_size.Width, text_layout_rect.Height);
+				this.Owner.Renderer.DrawItemText (new ToolStripItemTextRenderEventArgs (e.Graphics, this, key_string, key_string_rect, font_color, this.Font, this.TextAlign));
+			}
+				
+			if (image_layout_rect != Rectangle.Empty)
+				this.Owner.Renderer.DrawItemImage (new ToolStripItemImageRenderEventArgs (e.Graphics, this, draw_image, image_layout_rect));
+
+			if (this.IsOnDropDown && this.HasDropDownItems)
+				this.Owner.Renderer.DrawArrow (new ToolStripArrowRenderEventArgs (e.Graphics, this, new Rectangle (this.Bounds.Width - 17, 2, 10, 20), Color.Black, ArrowDirection.Right));
+			return;
 		}
 
 		protected internal override bool ProcessCmdKey (ref Message m, Keys keyData)
