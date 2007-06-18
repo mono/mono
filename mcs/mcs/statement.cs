@@ -3915,22 +3915,7 @@ namespace Mono.CSharp {
 				return false;
 			}
 			
-			TypeExpr texpr = null;
-			if (type is VarExpr) {
-				Unary u = ((Pair) declarators[0]).Second as Unary;
-				if (u == null)
-					return false;
-				
-				Expression e = u.Expr.Resolve (ec);
-				if (e == null || e.Type == null)
-					return false;
-				
-				Type t = TypeManager.GetPointerType (e.Type);
-				texpr = new TypeExpression (t, loc);
-			}
-			else
-				texpr = type.ResolveAsTypeTerminal (ec, false);
-
+			TypeExpr texpr = type.ResolveAsTypeTerminal (ec, false);
 			if (texpr == null)
 				return false;
 
@@ -3948,9 +3933,6 @@ namespace Mono.CSharp {
 				LocalInfo vi = (LocalInfo) p.First;
 				Expression e = (Expression) p.Second;
 				
-				if (type is VarExpr)
-					vi.VariableType = expr_type;
-
 				vi.VariableInfo.SetAssigned (ec);
 				vi.SetReadOnlyContext (LocalInfo.ReadOnlyContext.Fixed);
 

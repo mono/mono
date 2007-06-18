@@ -3598,6 +3598,7 @@ namespace Mono.CSharp {
 		{
 			if (local_info == null) {
 				local_info = Block.GetLocalInfo (Name);
+				type = local_info.VariableType;
 				is_readonly = local_info.ReadOnly;
 			}
 		}
@@ -3635,6 +3636,14 @@ namespace Mono.CSharp {
 		{
 			ResolveLocalInfo ();
 			local_info.Used = true;
+
+			if (type == null && local_info.Type is VarExpr) {
+				local_info.VariableType = TypeManager.object_type;
+				Report.Error (841, loc, "The variable `{0}' cannot be used in an initializer because it refers to itself",
+					local_info.Name);
+				return null;
+			}
+			
 			return DoResolveBase (ec);
 		}
 
@@ -3642,6 +3651,21 @@ namespace Mono.CSharp {
 		{
 			ResolveLocalInfo ();
 
+			// is out param
+			if (right_side == EmptyExpression.OutAccess)
+				local_info.Used = true;
+
+			// Infer implicitly typed local variable
+			if (type == null) {
+				VarExpr ve = local_info.Type as VarExpr;
+				if (ve != null) {
+					if (ve.Type != null)
+						throw new InternalErrorException ("Could not redefine implicitly typed local variable");
+
+					type = local_info.VariableType = right_side.Type;
+				}
+			}
+						
 			if (is_readonly) {
 				int code;
 				string msg;
@@ -3657,10 +3681,6 @@ namespace Mono.CSharp {
 				Report.Error (code, loc, msg, Name, local_info.GetReadOnlyContext ());
 				return null;
 			}
-
-			// is out param
-			if (right_side == EmptyExpression.OutAccess)
-				local_info.Used = true;
 
 			if (VariableInfo != null)
 				VariableInfo.SetAssigned (ec);

@@ -1,3 +1,15 @@
+2007-06-18  Marek Safar  <marek.safar@gmail.com>
+
+	* assign.cs: Removed implicitly typed local variable check.
+	
+	* expression.cs (LocalVariableReference.DoResolve): Add check for self
+	referencing implicitly typed local variable.
+	(LocalVariableReference.DoResolveLValue): Infer implicitly typed local
+	variable here.
+	
+	* statement.cs (Fixed): Removed unsupported implicitly typed local
+	variable code.
+
 2007-06-15  Marek Safar  <marek.safar@gmail.com>
 
 	* decl.cs (MemberName): Moved all Unbound stuff to parser.
