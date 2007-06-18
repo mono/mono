@@ -1287,7 +1287,8 @@ namespace System.Web.UI
 				return relativeUrl;
 
 			HttpContext context = Context;
-			if (context != null && context.Request != null) {
+			string templateSourceDirectory = TemplateSourceDirectory;
+			if (context != null && context.Request != null && templateSourceDirectory != null && templateSourceDirectory.Length > 0) {
 				string basePath = context.Request.CurrentExecutionFilePath;
 
 				if (basePath.Length > 1 && basePath [basePath.Length - 1] != '/')
@@ -1295,10 +1296,6 @@ namespace System.Web.UI
 				
 				if(VirtualPathUtility.IsAppRelative(relativeUrl))
 					return VirtualPathUtility.MakeRelative (basePath, relativeUrl);
-				
-				string templateSourceDirectory = TemplateSourceDirectory;
-				if (templateSourceDirectory == null || templateSourceDirectory.Length == 0)
-					return relativeUrl;
 				
 				string templatePath = VirtualPathUtility.AppendTrailingSlash (templateSourceDirectory);
 				
