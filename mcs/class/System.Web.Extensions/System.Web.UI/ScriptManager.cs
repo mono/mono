@@ -38,6 +38,7 @@ using System.Web.Handlers;
 using System.Reflection;
 using System.Web.Configuration;
 using System.Web.UI.HtmlControls;
+using System.IO;
 
 namespace System.Web.UI
 {
@@ -79,7 +80,6 @@ namespace System.Web.UI
 		bool _isInAsyncPostBack;
 		string _asyncPostBackSourceElementID;
 		ScriptMode _scriptMode = ScriptMode.Auto;
-		HtmlTextWriter _output;
 		
 		[DefaultValue (true)]
 		[Category ("Behavior")]
@@ -317,6 +317,8 @@ namespace System.Web.UI
 		{
 			_isInAsyncPostBack = true;
 			_asyncPostBackSourceElementID = postCollection [postDataKey];
+			if (!String.IsNullOrEmpty (_asyncPostBackSourceElementID))
+				_asyncPostBackSourceElementID = _asyncPostBackSourceElementID.Substring (postDataKey.Length + 1);
 			return false;
 		}
 
@@ -587,16 +589,183 @@ namespace System.Web.UI
 
 		#endregion
 
+		static void WriteCallbackOutput (HtmlTextWriter output, string type, string name, string value) {
+			output.Write ("{0}|{1}|{2}|{3}|", value.Length, type, name, value);
+		}
+
 		void RenderPageCallback (HtmlTextWriter output, Control container) {
 			Page page = (Page) container;
-			_output = output;
 
 			page.Form.SetRenderMethodDelegate (RenderFormCallback);
-			page.Form.RenderControl (output);
+			HtmlTextParser parser = new HtmlTextParser ();
+			page.Form.RenderControl (parser);
+
+			parser.WriteOutput (output);
+			WriteCallbackOutput (output, asyncPostBackControlIDs, null, AsyncPostBackSourceElementID);  
 		}
 
 		void RenderFormCallback (HtmlTextWriter output, Control container) {
 			HtmlForm form = (HtmlForm) container;
+			HtmlTextWriter writer = new HtmlTextWriter (new DropWriter ());
+			if (form.HasControls ()) {
+				for (int i = 0; i < form.Controls.Count; i++) {
+					form.Controls [i].RenderControl (writer);
+				}
+			}
+		}
+
+		class HtmlTextParser : HtmlTextWriter
+		{
+			public HtmlTextParser ()
+				: base (new TextParser ()) {
+
+			}
+
+			public void WriteOutput (HtmlTextWriter output) {
+				((TextParser) InnerWriter).WriteOutput (output);
+			}
+		}
+
+		class TextParser : TextWriter
+		{
+			int _state;
+			char _charState = (char) 255;
+			const char nullCharState = (char) 255;
+			StringBuilder _sb = new StringBuilder ();
+			List<Hashtable> _hiddenFields;
+			Hashtable _currentField;
+			string _currentAttribute;
+
+			public override Encoding Encoding {
+				get { return Encoding.UTF8; }
+			}
+
+			public override void Write (char value) {
+				switch (_state) {
+				case 0:
+					ParseBeginTag (value);
+					break;
+				case 1:
+					ParseAttributeName (value);
+					break;
+				case 2:
+					ParseAttributeValue (value);
+					break;
+				}
+			}
+
+			private void ParseAttributeValue (char value) {
+				switch (value) {
+				case '>':
+					ResetState ();
+					break;
+				case '"':
+					_currentField [_currentAttribute] = _sb.ToString ();
+					_state = 1;
+					_sb.Length = 0;
+					break;
+				default:
+					_sb.Append (value);
+					break;
+				}
+			}
+
+			private void ParseAttributeName (char value) {
+				switch (value) {
+				case '>':
+					ResetState ();
+					break;
+				case ' ':
+				case '=':
+					break;
+				case '"':
+					_currentAttribute = _sb.ToString ();
+					_state = 2;
+					_sb.Length = 0;
+					break;
+				default:
+					_sb.Append (value);
+					break;
+				}
+			}
+
+			void ParseBeginTag (char value) {
+				switch (_charState) {
+				case nullCharState:
+					if (value == '<')
+						_charState = value;
+					break;
+				case '<':
+					if (value == 'i')
+						_charState = value;
+					else
+						ResetState ();
+					break;
+				case 'i':
+					if (value == 'n')
+						_charState = value;
+					else
+						ResetState ();
+					break;
+				case 'n':
+					if (value == 'p')
+						_charState = value;
+					else
+						ResetState ();
+					break;
+				case 'p':
+					if (value == 'u')
+						_charState = value;
+					else
+						ResetState ();
+					break;
+				case 'u':
+					if (value == 't')
+						_charState = value;
+					else
+						ResetState ();
+					break;
+				case 't':
+					if (value == ' ') {
+						_state = 1;
+						_currentField = new Hashtable ();
+						if (_hiddenFields == null)
+							_hiddenFields = new List<Hashtable> ();
+						_hiddenFields.Add (_currentField);
+					}
+					else
+						ResetState ();
+					break;
+				}
+			}
+
+			private void ResetState () {
+				_charState = nullCharState;
+				_state = 0;
+				_sb.Length = 0;
+			}
+
+			public void WriteOutput (HtmlTextWriter output) {
+				if (_hiddenFields == null)
+					return;
+				
+				for (int i = 0; i < _hiddenFields.Count; i++) {
+					Hashtable field = _hiddenFields [i];
+					
+					string value = (string) field ["value"];
+					if (String.IsNullOrEmpty (value))
+						continue;
+
+					ScriptManager.WriteCallbackOutput (output, ScriptManager.hiddenField, (string) field ["name"], value);
+				}
+			}
+		}
+
+		class DropWriter : TextWriter
+		{
+			public override Encoding Encoding {
+				get { return Encoding.UTF8; }
+			}
 		}
 	}
 }
