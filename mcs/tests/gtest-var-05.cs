@@ -19,8 +19,8 @@ public class Test
 {
 	static int Main ()
 	{
-		using (var v = new MyClass("foo"), w = new MyClass("bar"))
-			if (v.GetType() != typeof (MyClass) || w.GetType() != typeof (MyClass))
+		using (var v = new MyClass("foo"))
+			if (v.GetType() != typeof (MyClass))
 				return 1;
 		
 		return 0;
