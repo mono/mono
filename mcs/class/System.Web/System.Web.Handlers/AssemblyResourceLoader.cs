@@ -33,26 +33,43 @@ using System.Reflection;
 using System.IO;
 
 namespace System.Web.Handlers {
+#if SYSTEM_WEB_EXTENSIONS
+	partial class ScriptResourceHandler
+	{
+		const string HandlerFileName = "ScriptResource.axd";
+#else
 	#if NET_2_0
 	public sealed
 	#else
 	internal // since this is in the .config file, we need to support it, since we dont have versoned support.
 	#endif
 	class AssemblyResourceLoader : IHttpHandler {		
+		const string HandlerFileName = "WebResource.axd";
+#endif
+#if NET_2_0
+		const char QueryParamSeparator = ';';
+#else
+		const char QueryParamSeparator = '&';
+#endif
 		internal static string GetResourceUrl (Type type, string resourceName)
 		{
-			string aname = type.Assembly == typeof(AssemblyResourceLoader).Assembly ? "s" : HttpUtility.UrlEncode (type.Assembly.GetName ().FullName);
-			string apath = type.Assembly.Location;
+			return GetResourceUrl (type.Assembly, resourceName);
+		}
+
+		internal static string GetResourceUrl (Assembly assembly, string resourceName)
+		{
+			string aname = assembly == typeof (AssemblyResourceLoader).Assembly ? "s" : HttpUtility.UrlEncode (assembly.GetName ().FullName);
+			string apath = assembly.Location;
 			string atime = String.Empty;
 
 #if TARGET_JVM
-			atime = String.Format ("{0}t={1}", HttpUtility.QueryParamSeparator, type.GetHashCode ());
+			atime = String.Format ("{0}t={1}", QueryParamSeparator, type.GetHashCode ());
 #else
 			if (apath != String.Empty)
-				atime = String.Format ("{0}t={1}", HttpUtility.QueryParamSeparator, File.GetLastWriteTimeUtc (apath).Ticks);
+				atime = String.Format ("{0}t={1}", QueryParamSeparator, File.GetLastWriteTimeUtc (apath).Ticks);
 #endif
-			string href = String.Format ("WebResource.axd?a={1}{0}r={2}{3}",
-						     HttpUtility.QueryParamSeparator, aname,
+			string href = String.Format ("{0}?a={2}{1}r={3}{4}", HandlerFileName,
+						     QueryParamSeparator, aname,
 						     HttpUtility.UrlEncode (resourceName), atime);
 			
 			if (HttpContext.Current != null && HttpContext.Current.Request != null) {
@@ -67,8 +84,12 @@ namespace System.Web.Handlers {
 		}
 
 	
+#if SYSTEM_WEB_EXTENSIONS
+		protected virtual void ProcessRequest (HttpContext context)
+#else
 		[MonoTODO ("Substitution not implemented")]
 		void System.Web.IHttpHandler.ProcessRequest (HttpContext context)
+#endif
 		{
 			string resourceName = context.Request.QueryString ["r"];
 			string asmName = context.Request.QueryString ["a"];
@@ -111,7 +132,9 @@ namespace System.Web.Handlers {
 			} while (c > 0);
 		}
 		
+#if !SYSTEM_WEB_EXTENSIONS
 		bool System.Web.IHttpHandler.IsReusable { get { return true; } }
+#endif
 	}
 }
 

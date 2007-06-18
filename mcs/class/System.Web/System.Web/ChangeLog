@@ -1,3 +1,13 @@
+2007-06-18 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* HttpUtility.cs: refactoring:
+	removed constants to another class.	
+
+2007-06-18 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* AssemblyResourceLoader.cs: refactoring:
+	make the code reusable in System.Web.Extenssions.	
+
 2007-05-31  Marek Habersack  <mhabersack@novell.com>
 
 	* SiteMapProvider.cs: implemented proper logic of authorizing
