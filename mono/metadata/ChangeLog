@@ -1,3 +1,10 @@
+
+Mon Jun 18 17:07:22 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* metadata.c, image.c, metadata-internals.h: part of the fixes needed
+	for bug #77596, 81858 and 80743 (generics data structures on domain
+	unload).
+
 2007-06-15  Raja R Harinath  <rharinath@novell.com>
 
 	Avoid allocating 'MonoGenericContext' on the heap.
