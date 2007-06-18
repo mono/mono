@@ -184,6 +184,12 @@ namespace System.Windows.Forms
 
 				this.CalculateTextAndImageRectangles (out text_layout_rect, out image_layout_rect);
 
+				if (this.IsOnDropDown) {
+					text_layout_rect = new Rectangle (35, text_layout_rect.Top, text_layout_rect.Width, text_layout_rect.Height);
+					if (image_layout_rect != Rectangle.Empty)
+						image_layout_rect = new Rectangle (new Point (4, 3), base.GetImageSize ());
+				}
+
 				if (image_layout_rect != Rectangle.Empty)
 					this.Owner.Renderer.DrawItemImage (new System.Windows.Forms.ToolStripItemImageRenderEventArgs (e.Graphics, this, draw_image, image_layout_rect));
 				if (text_layout_rect != Rectangle.Empty)
