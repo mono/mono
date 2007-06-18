@@ -33,6 +33,11 @@ using System.Text;
 using System.ComponentModel;
 using System.Security.Permissions;
 using System.Collections.Specialized;
+using System.Collections;
+using System.Web.Handlers;
+using System.Reflection;
+using System.Web.Configuration;
+using System.Web.UI.HtmlControls;
 
 namespace System.Web.UI
 {
@@ -45,6 +50,37 @@ namespace System.Web.UI
 	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class ScriptManager : Control, IPostBackDataHandler
 	{
+		// the keywords are used in fomatting async response
+		const string updatePanel = "updatePanel";
+		const string hiddenField = "hiddenField";
+		const string arrayDeclaration = "arrayDeclaration";
+		const string scriptBlock = "scriptBlock";
+		const string expando = "expando";
+		const string onSubmit = "onSubmit";
+		const string asyncPostBackControlIDs = "asyncPostBackControlIDs";
+		const string postBackControlIDs = "postBackControlIDs";
+		const string updatePanelIDs = "updatePanelIDs";
+		const string asyncPostBackTimeout = "asyncPostBackTimeout";
+		const string childUpdatePanelIDs = "childUpdatePanelIDs";
+		const string panelsToRefreshIDs = "panelsToRefreshIDs";
+		const string formAction = "formAction";
+		const string dataItem = "dataItem";
+		const string dataItemJson = "dataItemJson";
+		const string scriptDispose = "scriptDispose";
+		const string pageRedirect = "pageRedirect";
+		const string error = "error";
+		const string pageTitle = "pageTitle";
+		const string focus = "focus";
+
+		int _asyncPostBackTimeout = 90;
+		List<Control> _asyncPostBackControls;
+		List<Control> _postBackControls;
+		ScriptReferenceCollection _scripts;
+		bool _isInAsyncPostBack;
+		string _asyncPostBackSourceElementID;
+		ScriptMode _scriptMode = ScriptMode.Auto;
+		HtmlTextWriter _output;
+		
 		[DefaultValue (true)]
 		[Category ("Behavior")]
 		public bool AllowCustomErrorsRedirect {
@@ -70,7 +106,9 @@ namespace System.Web.UI
 		[Browsable (false)]
 		public string AsyncPostBackSourceElementID {
 			get {
-				throw new NotImplementedException ();
+				if(_asyncPostBackSourceElementID==null)
+					return String.Empty;
+				return _asyncPostBackSourceElementID;
 			}
 		}
 
@@ -78,10 +116,10 @@ namespace System.Web.UI
 		[Category ("Behavior")]
 		public int AsyncPostBackTimeout {
 			get {
-				throw new NotImplementedException ();
+				return _asyncPostBackTimeout;
 			}
 			set {
-				throw new NotImplementedException ();
+				_asyncPostBackTimeout = value;
 			}
 		}
 
@@ -143,14 +181,25 @@ namespace System.Web.UI
 		[Browsable (false)]
 		public bool IsDebuggingEnabled {
 			get {
-				throw new NotImplementedException ();
+				DeploymentSection deployment = (DeploymentSection) WebConfigurationManager.GetSection ("system.web/deployment");
+				if (deployment.Retail)
+					return false;
+
+				CompilationSection compilation = (CompilationSection) WebConfigurationManager.GetSection ("system.web/compilation");
+				if (!compilation.Debug && (ScriptMode == ScriptMode.Auto || ScriptMode == ScriptMode.Inherit))
+					return false;
+
+				if (ScriptMode == ScriptMode.Release)
+					return false;
+
+				return true;
 			}
 		}
 
 		[Browsable (false)]
 		public bool IsInAsyncPostBack {
 			get {
-				throw new NotImplementedException ();
+				return _isInAsyncPostBack;
 			}
 		}
 
@@ -179,10 +228,12 @@ namespace System.Web.UI
 		[Category ("Behavior")]
 		public ScriptMode ScriptMode {
 			get {
-				throw new NotImplementedException ();
+				return _scriptMode;
 			}
 			set {
-				throw new NotImplementedException ();
+				if (value == ScriptMode.Inherit)
+					value = ScriptMode.Auto;
+				_scriptMode = value;
 			}
 		}
 
@@ -202,7 +253,10 @@ namespace System.Web.UI
 		[MergableProperty (false)]
 		public ScriptReferenceCollection Scripts {
 			get {
-				throw new NotImplementedException ();
+				if (_scripts == null)
+					_scripts = new ScriptReferenceCollection ();
+
+				return _scripts;
 			}
 		}
 
@@ -247,12 +301,23 @@ namespace System.Web.UI
 
 		public static ScriptManager GetCurrent (Page page)
 		{
-			throw new NotImplementedException ();
+			HttpContext ctx = HttpContext.Current;
+			if (ctx == null)
+				return null;
+
+			return (ScriptManager) ctx.Items [page];
+		}
+		
+		static void SetCurrent (Page page, ScriptManager instance) {
+			HttpContext ctx = HttpContext.Current;
+			ctx.Items [page] = instance;
 		}
 
 		protected virtual bool LoadPostData (string postDataKey, NameValueCollection postCollection)
 		{
-			throw new NotImplementedException ();
+			_isInAsyncPostBack = true;
+			_asyncPostBackSourceElementID = postCollection [postDataKey];
+			return false;
 		}
 
 		protected internal virtual void OnAsyncPostBackError (AsyncPostBackErrorEventArgs e)
@@ -264,11 +329,45 @@ namespace System.Web.UI
 		protected override void OnInit (EventArgs e)
 		{
 			base.OnInit (e);
+
+			if (GetCurrent (Page) != null)
+				throw new InvalidOperationException ("Only one instance of a ScriptManager can be added to the page.");
+
+			SetCurrent (Page, this);
 		}
 
 		protected override void OnPreRender (EventArgs e)
 		{
 			base.OnPreRender (e);
+			
+			if (IsInAsyncPostBack) {
+				Page.SetRenderMethodDelegate (RenderPageCallback);
+			}
+			
+			// Register Scripts
+			foreach (ScriptReference script in GetScriptReferences ()) {
+				OnResolveScriptReference (new ScriptReferenceEventArgs (script));
+				RegisterScriptReference (script);
+			}
+
+			// Register startup script
+			RegisterStartupScript (this, typeof (ScriptManager), "Sys.Application.initialize();", "Sys.Application.initialize();", true);
+		}
+
+		IEnumerable GetScriptReferences () {
+			ScriptReference script;
+
+			script = new ScriptReference ("MicrosoftAjax.js", String.Empty);
+			yield return script;
+
+			script = new ScriptReference ("MicrosoftAjaxWebForms.js", String.Empty);
+			yield return script;
+
+			if (_scripts != null && _scripts.Count > 0) {
+				for (int i = 0; i < _scripts.Count; i++) {
+					yield return _scripts [i];
+				}
+			}
 		}
 
 		protected virtual void OnResolveScriptReference (ScriptReferenceEventArgs e)
@@ -294,7 +393,16 @@ namespace System.Web.UI
 
 		public void RegisterAsyncPostBackControl (Control control)
 		{
-			throw new NotImplementedException ();
+			if(control==null)
+				return;
+
+			if (_asyncPostBackControls == null)
+				_asyncPostBackControls = new List<Control> ();
+
+			if (_asyncPostBackControls.Contains (control))
+				return;
+
+			_asyncPostBackControls.Add (control);
 		}
 
 		public static void RegisterClientScriptBlock (Control control, Type type, string key, string script, bool addScriptTags)
@@ -309,22 +417,46 @@ namespace System.Web.UI
 
 		public static void RegisterClientScriptInclude (Control control, Type type, string key, string url)
 		{
-			throw new NotImplementedException ();
+			RegisterClientScriptInclude (control.Page, type, key, url);
 		}
 
 		public static void RegisterClientScriptInclude (Page page, Type type, string key, string url)
 		{
-			throw new NotImplementedException ();
+			page.ClientScript.RegisterClientScriptInclude (type, key, url);
 		}
 
 		public static void RegisterClientScriptResource (Control control, Type type, string resourceName)
 		{
-			throw new NotImplementedException ();
+			RegisterClientScriptResource (control.Page, type, resourceName);
 		}
 
 		public static void RegisterClientScriptResource (Page page, Type type, string resourceName)
 		{
-			throw new NotImplementedException ();
+			page.ClientScript.RegisterClientScriptResource (type, resourceName);
+		}
+
+		void RegisterScriptReference (ScriptReference script) {
+
+			// TODO: consider 'retail' attribute of the 'deployment' configuration element in Web.config, 
+			// IsDebuggingEnabled and ScriptMode properties to determine whether to render debug scripts.
+
+			string url;
+			if (!String.IsNullOrEmpty (script.Path)) {
+				url = script.Path;
+			}
+			else if (!String.IsNullOrEmpty (script.Name)) {
+				Assembly assembly;
+				if (String.IsNullOrEmpty (script.Assembly))
+					assembly = typeof (ScriptManager).Assembly;
+				else
+					assembly = Assembly.Load (script.Assembly);
+				url = ScriptResourceHandler.GetResourceUrl (assembly, script.Name);
+			}
+			else {
+				throw new InvalidOperationException ("Name and Path cannot both be empty.");
+			}
+
+			RegisterClientScriptInclude (this, typeof (ScriptManager), url, url);
 		}
 
 		public void RegisterDataItem (Control control, string dataItem)
@@ -369,7 +501,16 @@ namespace System.Web.UI
 
 		public void RegisterPostBackControl (Control control)
 		{
-			throw new NotImplementedException ();
+			if (control == null)
+				return;
+
+			if (_postBackControls == null)
+				_postBackControls = new List<Control> ();
+
+			if (_postBackControls.Contains (control))
+				return;
+
+			_postBackControls.Add (control);
 		}
 
 		public void RegisterScriptDescriptors (IExtenderControl extenderControl)
@@ -384,17 +525,42 @@ namespace System.Web.UI
 
 		public static void RegisterStartupScript (Control control, Type type, string key, string script, bool addScriptTags)
 		{
-			throw new NotImplementedException ();
+			RegisterStartupScript (control.Page, type, key, script, addScriptTags);
 		}
 
 		public static void RegisterStartupScript (Page page, Type type, string key, string script, bool addScriptTags)
 		{
-			throw new NotImplementedException ();
+			page.ClientScript.RegisterStartupScript (type, key, script, addScriptTags);
 		}
 
 		protected override void Render (HtmlTextWriter writer)
 		{
-			throw new NotImplementedException ();
+			// MSDN: This method is used by control developers to extend the ScriptManager control. 
+			// Notes to Inheritors: 
+			// When overriding this method, call the base Render(HtmlTextWriter) method 
+			// so that PageRequestManager is rendered on the page.
+			writer.WriteLine ("<script type=\"text/javascript\">");
+			writer.WriteLine ("//<![CDATA[");
+			writer.WriteLine ("Sys.WebForms.PageRequestManager._initialize('{0}', document.getElementById('{1}'));", UniqueID, Page.Form.ClientID);
+			writer.WriteLine ("Sys.WebForms.PageRequestManager.getInstance()._updateControls([{0}], [{1}], [{2}], {3});", null, FormatListIDs (_asyncPostBackControls), FormatListIDs (_postBackControls), AsyncPostBackTimeout);
+			writer.WriteLine ("//]]");
+			writer.WriteLine ("</script>");
+			base.Render (writer);
+		}
+
+		static string FormatListIDs(List<Control> list)
+		{
+			if (list == null || list.Count == 0)
+				return null;
+
+			StringBuilder sb = new StringBuilder ();
+			for (int i = 0; i < list.Count; i++) {
+				sb.AppendFormat ("'{0}',", list [i].UniqueID);
+			}
+			if (sb.Length > 0)
+				sb.Length--;
+
+			return sb.ToString ();
 		}
 
 		public void SetFocus (Control control)
@@ -420,5 +586,17 @@ namespace System.Web.UI
 		}
 
 		#endregion
+
+		void RenderPageCallback (HtmlTextWriter output, Control container) {
+			Page page = (Page) container;
+			_output = output;
+
+			page.Form.SetRenderMethodDelegate (RenderFormCallback);
+			page.Form.RenderControl (output);
+		}
+
+		void RenderFormCallback (HtmlTextWriter output, Control container) {
+			HtmlForm form = (HtmlForm) container;
+		}
 	}
 }

@@ -38,29 +38,34 @@ namespace System.Web.UI
 	[DefaultProperty ("Path")]
 	public class ScriptReference
 	{
+		string _path;
+		string _name;
+		string _assembly;
+		ScriptMode _scriptMode = ScriptMode.Auto;
+
 		public ScriptReference ()
 		{
-			throw new NotImplementedException ();
 		}
 
 		public ScriptReference (string path)
 		{
-			throw new NotImplementedException ();
+			_path = path;
 		}
 
 		public ScriptReference (string name, string assembly)
 		{
-			throw new NotImplementedException ();
+			_name = name;
+			_assembly = assembly;
 		}
 
 		[DefaultValue ("")]
 		[Category ("Behavior")]
 		public string Assembly {
 			get {
-				throw new NotImplementedException ();
+				return _assembly;
 			}
 			set {
-				throw new NotImplementedException ();
+				_assembly = value;
 			}
 		}
 
@@ -79,10 +84,10 @@ namespace System.Web.UI
 		[DefaultValue ("")]
 		public string Name {
 			get {
-				throw new NotImplementedException ();
+				return _name;
 			}
 			set {
-				throw new NotImplementedException ();
+				_name = value;
 			}
 		}
 
@@ -101,10 +106,10 @@ namespace System.Web.UI
 		[Category ("Behavior")]
 		public string Path {
 			get {
-				throw new NotImplementedException ();
+				return _path;
 			}
 			set {
-				throw new NotImplementedException ();
+				_path = value;
 			}
 		}
 
@@ -124,10 +129,10 @@ namespace System.Web.UI
 		[Category ("Behavior")]
 		public ScriptMode ScriptMode {
 			get {
-				throw new NotImplementedException ();
+				return _scriptMode;
 			}
 			set {
-				throw new NotImplementedException ();
+				_scriptMode = value;
 			}
 		}
 

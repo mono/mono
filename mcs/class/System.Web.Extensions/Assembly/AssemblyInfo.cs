@@ -58,3 +58,15 @@ using System.Security;
 
 [assembly: AllowPartiallyTrustedCallers ()]
 [assembly: TagPrefix ("System.Web.UI", "asp")]
+
+[assembly: WebResource ("MicrosoftAjax.js", "application/x-javascript")]
+[assembly: WebResource ("MicrosoftAjax.debug.js", "application/x-javascript")]
+[assembly: WebResource ("MicrosoftAjaxWebForms.js", "application/x-javascript")]
+[assembly: WebResource ("MicrosoftAjaxWebForms.debug.js", "application/x-javascript")]
+[assembly: WebResource ("MicrosoftAjaxTimer.js", "application/x-javascript")]
+[assembly: WebResource ("MicrosoftAjaxTimer.debug.js", "application/x-javascript")]
+
+[assembly: ScriptResource ("MicrosoftAjaxWebForms.js", "System.Web.Resources.ScriptLibrary.WebForms.Res", "Sys.WebForms.Res")]
+[assembly: ScriptResource ("MicrosoftAjaxWebForms.debug.js", "System.Web.Resources.ScriptLibrary.WebForms.Res.debug", "Sys.WebForms.Res")]
+[assembly: ScriptResource ("MicrosoftAjax.js", "System.Web.Resources.ScriptLibrary.Res", "Sys.Res")]
+[assembly: ScriptResource ("MicrosoftAjax.debug.js", "System.Web.Resources.ScriptLibrary.Res.debug", "Sys.Res")]

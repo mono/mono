@@ -36,7 +36,6 @@ namespace System.Web.Handlers
 	public class ScriptModule : IHttpModule
 	{
 		protected virtual void Init (HttpApplication context) {
-			throw new NotImplementedException ();
 		}
 
 		protected virtual void Dispose () {
