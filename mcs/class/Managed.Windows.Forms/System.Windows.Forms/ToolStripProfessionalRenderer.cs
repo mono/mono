@@ -207,6 +207,12 @@ namespace System.Windows.Forms
 		protected override void OnRenderImageMargin (ToolStripRenderEventArgs e)
 		{
 			base.OnRenderImageMargin (e);
+
+			if (!(e.ToolStrip is ToolStripOverflow)) {
+				Rectangle side_gradient = new Rectangle (1, 2, 24, e.ToolStrip.Height - 3);
+				using (LinearGradientBrush b = new LinearGradientBrush (side_gradient, this.ColorTable.ToolStripGradientBegin, this.ColorTable.ToolStripGradientEnd, LinearGradientMode.Horizontal))
+					e.Graphics.FillRectangle (b, side_gradient);
+			}
 		}
 
 		protected override void OnRenderItemCheck (ToolStripItemImageRenderEventArgs e)
@@ -402,15 +408,6 @@ namespace System.Windows.Forms
 		protected override void OnRenderToolStripBackground (ToolStripRenderEventArgs e)
 		{
 			base.OnRenderToolStripBackground (e);
-
-			if (e.ToolStrip is ToolStripDropDown) {
-				e.Graphics.Clear (this.ColorTable.ToolStripDropDownBackground);
-				if (!(e.ToolStrip is ToolStripOverflow)) {
-				Rectangle side_gradient = new Rectangle (1, 2, 24, e.ToolStrip.Height - 3);
-				using (LinearGradientBrush b = new LinearGradientBrush (side_gradient, this.ColorTable.ToolStripGradientBegin, this.ColorTable.ToolStripGradientEnd, LinearGradientMode.Horizontal))
-					e.Graphics.FillRectangle (b, side_gradient); }
-				return;
-			}
 
 			if (e.ToolStrip is MenuStrip || e.ToolStrip is StatusStrip) {
 				using (LinearGradientBrush b = new LinearGradientBrush (e.AffectedBounds, this.ColorTable.MenuStripGradientBegin, this.ColorTable.MenuStripGradientEnd, e.ToolStrip.Orientation == Orientation.Horizontal ? LinearGradientMode.Horizontal : LinearGradientMode.Vertical))

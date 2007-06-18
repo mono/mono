@@ -916,14 +916,10 @@ namespace System.Windows.Forms
 				e.Graphics.ResetTransform ();
 			}
 
-			Rectangle affected_bounds = new Rectangle (new Point (0, 0), this.Size);
-			Rectangle connected_area = Rectangle.Empty;
-
-			if (this is ToolStripDropDown && (this as ToolStripDropDown).OwnerItem != null && !(this as ToolStripDropDown).OwnerItem.IsOnDropDown)
-				connected_area = new Rectangle (1, 0, (this as ToolStripDropDown).OwnerItem.Width - 2, 2);
+			Rectangle affected_bounds = new Rectangle (Point.Empty, this.Size);
 
 			ToolStripRenderEventArgs pevent = new ToolStripRenderEventArgs (e.Graphics, this, affected_bounds, Color.Empty);
-			pevent.InternalConnectedArea = connected_area;
+			pevent.InternalConnectedArea = CalculateConnectedArea ();
 
 			this.Renderer.DrawToolStripBorder (pevent);
 		}
@@ -933,14 +929,8 @@ namespace System.Windows.Forms
 		{
 			base.OnPaintBackground (pevent);
 
-			Rectangle affected_bounds = new Rectangle (new Point (0, 0), this.Size);
-			Rectangle connected_area = Rectangle.Empty;
-
-			if (this is ToolStripDropDown && (this as ToolStripDropDown).OwnerItem != null && !(this as ToolStripDropDown).OwnerItem.IsOnDropDown)
-				connected_area = new Rectangle (1, 0, (this as ToolStripDropDown).OwnerItem.Width - 2, 2);
-			
-			ToolStripRenderEventArgs e = new ToolStripRenderEventArgs (pevent.Graphics, this, affected_bounds, Color.Empty);
-			e.InternalConnectedArea = connected_area;
+			Rectangle affected_bounds = new Rectangle (Point.Empty, this.Size);
+			ToolStripRenderEventArgs e = new ToolStripRenderEventArgs (pevent.Graphics, this, affected_bounds, SystemColors.Control);
 			
 			this.Renderer.DrawToolStripBackground (e);
 		}
@@ -1238,6 +1228,11 @@ namespace System.Windows.Forms
 		#endregion
 		
 		#region Private Methods
+		internal virtual Rectangle CalculateConnectedArea ()
+		{
+			return Rectangle.Empty;
+		}
+		
 		internal void ChangeSelection (ToolStripItem nextItem)
 		{
 			if (Application.KeyboardCapture != this)

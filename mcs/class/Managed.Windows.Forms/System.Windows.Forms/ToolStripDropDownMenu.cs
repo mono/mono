@@ -102,12 +102,30 @@ namespace System.Windows.Forms
 		
 		protected override void OnPaintBackground (PaintEventArgs pevent)
 		{
-			base.OnPaintBackground (pevent);
+			Rectangle affected_bounds = new Rectangle (Point.Empty, this.Size);
+
+			ToolStripRenderEventArgs e = new ToolStripRenderEventArgs (pevent.Graphics, this, affected_bounds, SystemColors.Control);
+			e.InternalConnectedArea = CalculateConnectedArea ();
+
+			this.Renderer.DrawToolStripBackground (e);
+			
+			if (this.ShowCheckMargin || this.ShowImageMargin)
+				this.Renderer.DrawImageMargin (e);
 		}
 
 		protected override void SetDisplayedItems ()
 		{
 			base.SetDisplayedItems ();
+		}
+		#endregion
+
+		#region Internal Methods
+		internal override Rectangle CalculateConnectedArea ()
+		{
+			if (this.OwnerItem != null && !this.OwnerItem.IsOnDropDown)
+				return new Rectangle (1, 0, this.OwnerItem.Width - 2, 2);
+
+			return base.CalculateConnectedArea ();
 		}
 		#endregion
 	}

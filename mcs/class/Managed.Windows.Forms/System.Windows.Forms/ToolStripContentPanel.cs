@@ -228,6 +228,8 @@ namespace System.Windows.Forms
 		protected override void OnPaintBackground (PaintEventArgs pevent)
 		{
 			base.OnPaintBackground (pevent);
+			
+			this.Renderer.DrawToolStripContentPanelBackground (new ToolStripContentPanelRenderEventArgs (pevent.Graphics, this));
 		}
 		
 		protected virtual void OnRendererChanged (EventArgs e)
