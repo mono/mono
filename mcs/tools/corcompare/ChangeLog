@@ -1,3 +1,7 @@
+2007-06-18  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* mono-api-info.cs: do not ignore overloaded operators.
+
 2007-06-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* mono-api-info.cs : fix silliness.
