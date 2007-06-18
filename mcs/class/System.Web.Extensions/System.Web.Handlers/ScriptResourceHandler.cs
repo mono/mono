@@ -33,14 +33,10 @@ using System.Text;
 
 namespace System.Web.Handlers
 {
-	public class ScriptResourceHandler : IHttpHandler
+	public partial class ScriptResourceHandler : IHttpHandler
 	{
 		protected virtual bool IsReusable {
 			get { return true; }
-		}
-
-		protected virtual void ProcessRequest (HttpContext context) {
-			throw new NotImplementedException ();
 		}
 
 		#region IHttpHandler Members
