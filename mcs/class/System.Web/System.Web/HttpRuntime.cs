@@ -279,6 +279,7 @@ namespace System.Web {
 			HttpContext.Current = context;
 
 			bool error = false;
+#if !TARGET_J2EE
 			if (firstRun) {
 				firstRun = false;
 				if (initialException != null) {
@@ -286,7 +287,8 @@ namespace System.Web {
 					error = true;
 				}
 			}
-			
+#endif
+
 			//
 			// Get application instance (create or reuse an instance of the correct class)
 			//
