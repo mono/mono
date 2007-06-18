@@ -1,3 +1,9 @@
+2007-06-18  Rodrigo Kumpera <kumpera@gmail.com>
+
+	*verify.c: produce meanfull error messages on verification error
+	*verify.c: fixed some cases of verification errors reported as validation errors
+	*pedump.c: fixed the error name array, now it shows validation errors properly
+	*verify.h: fixed the contant that should be used for verification errors
 
 Mon Jun 18 17:07:22 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
