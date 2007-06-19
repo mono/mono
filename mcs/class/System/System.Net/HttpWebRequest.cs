@@ -42,6 +42,10 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
 
+#if NET_2_0
+using System.Net.Cache;
+#endif
+
 namespace System.Net 
 {
 	[Serializable]
@@ -119,6 +123,9 @@ namespace System.Net
 			this.proxy = GlobalProxySelection.Select;
 		}		
 		
+#if NET_2_0
+		[Obsolete ("Serialization is obsoleted for this type", false)]
+#endif
 		protected HttpWebRequest (SerializationInfo serializationInfo, StreamingContext streamingContext) 
 		{
 			SerializationInfo info = serializationInfo;
@@ -167,6 +174,18 @@ namespace System.Net
 			get { return allowBuffering; }
 			set { allowBuffering = value; }
 		}
+
+#if NET_2_0
+		public DecompressionMethods AutomaticDecompression
+		{
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+#endif
 		
 		internal bool InternalAllowBuffering {
 			get {
@@ -183,6 +202,11 @@ namespace System.Net
 
 				return certificates;
 			}
+#if NET_2_0
+			set {
+				throw new NotImplementedException ();
+			}
+#endif
 		}
 		
 		public string Connection {
@@ -253,6 +277,28 @@ namespace System.Net
 			get { return credentials; }
 			set { credentials = value; }
 		}
+
+#if NET_2_0
+		public static RequestCachePolicy DefaultCachePolicy
+		{
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+		
+		public static int DefaultMaximumErrorResponseLength
+		{
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+#endif
 		
 		public string Expect {
 			get { return webHeaders ["Expect"]; }
@@ -471,6 +517,18 @@ namespace System.Net
 				webHeaders.RemoveAndAdd ("Transfer-Encoding", value);
 			}
 		}
+
+#if NET_2_0
+		public override bool UseDefaultCredentials
+		{
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+#endif
 		
 		public string UserAgent {
 			get { return webHeaders ["User-Agent"]; }
@@ -776,6 +834,15 @@ namespace System.Net
 		
 		void ISerializable.GetObjectData (SerializationInfo serializationInfo,
 		   				  StreamingContext streamingContext)
+		{
+			GetObjectData (serializationInfo, streamingContext);
+		}
+
+#if NET_2_0
+		protected override
+#endif
+		void GetObjectData (SerializationInfo serializationInfo,
+				    StreamingContext streamingContext)
 		{
 			SerializationInfo info = serializationInfo;
 

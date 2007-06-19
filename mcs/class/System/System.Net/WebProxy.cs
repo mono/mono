@@ -142,6 +142,9 @@ namespace System.Net
 #endif
 
 		// Methods
+#if NET_2_0
+		[Obsolete ("This method has been deprecated", false)]
+#endif
 		[MonoTODO("Can we get this info under windows from the system?")]
 		public static WebProxy GetDefaultProxy ()
 		{

@@ -130,6 +130,18 @@ namespace System.Net {
 			set { expires = value; }
 		}
 
+#if NET_2_0
+		public bool HttpOnly
+		{
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+#endif
+
 		public string Name {
 			get { return name; }
 			set { 

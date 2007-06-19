@@ -64,6 +64,9 @@ namespace System.Net
  			this.webHeaders = new WebHeaderCollection ();
 		}
 		
+#if NET_2_0
+		[Obsolete ("Serialization is obsoleted for this type", false)]
+#endif
 		protected FileWebRequest (SerializationInfo serializationInfo, StreamingContext streamingContext) 
 		{
 			SerializationInfo info = serializationInfo;
@@ -159,11 +162,33 @@ namespace System.Net
 				timeout = value;
 			}
 		}
+
+#if NET_2_0
+		public override bool UseDefaultCredentials
+		{
+			get {
+				throw new NotSupportedException ();
+			}
+			set {
+				throw new NotSupportedException ();
+			}
+		}
+#endif
 		
 		// Methods
 		
 		private delegate Stream GetRequestStreamCallback ();
 		private delegate WebResponse GetResponseCallback ();
+
+#if NET_2_0
+		/* LAMESPEC: Docs suggest this was present in 1.1 and
+		 * 1.0 profiles, but the masterinfos say otherwise
+		 */
+		public override void Abort ()
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 
 		public override IAsyncResult BeginGetRequestStream (AsyncCallback callback, object state) 
 		{
@@ -269,6 +294,14 @@ namespace System.Net
 		}
 		
 		void ISerializable.GetObjectData (SerializationInfo serializationInfo, StreamingContext streamingContext)
+		{
+			GetObjectData (serializationInfo, streamingContext);
+		}
+
+#if NET_2_0
+		protected override
+#endif
+		void GetObjectData (SerializationInfo serializationInfo, StreamingContext streamingContext)
 		{
 			SerializationInfo info = serializationInfo;
 			info.AddValue ("headers", webHeaders, typeof (WebHeaderCollection));

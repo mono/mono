@@ -41,6 +41,7 @@ using System.Text;
 #if NET_2_0
 using System.Collections.Generic;
 using System.Threading;
+using System.Net.Cache;
 #endif
 
 namespace System.Net 
@@ -103,6 +104,28 @@ namespace System.Net
 				}
 			}
 		}
+
+#if NET_2_0
+		public RequestCachePolicy CachePolicy
+		{
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+
+		public bool UseDefaultCredentials
+		{
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+#endif
 		
 		public ICredentials Credentials {
 			get { return credentials; }

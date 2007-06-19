@@ -74,6 +74,9 @@ namespace System.Net
 			}
 		}
 
+#if NET_2_0
+		[Obsolete ("Serialization is obsoleted for this type", false)]
+#endif
 		protected HttpWebResponse (SerializationInfo serializationInfo, StreamingContext streamingContext)
 		{
 			SerializationInfo info = serializationInfo;
@@ -166,6 +169,15 @@ namespace System.Net
 				return webHeaders; 
 			}
 		}
+
+#if NET_2_0
+		public override bool IsMutuallyAuthenticated
+		{
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+#endif
 		
 		public DateTime LastModified {
 			get {
@@ -262,6 +274,15 @@ namespace System.Net
 		void ISerializable.GetObjectData (SerializationInfo serializationInfo,
 		   				  StreamingContext streamingContext)
 		{
+			GetObjectData (serializationInfo, streamingContext);
+		}
+
+#if NET_2_0
+		protected override
+#endif
+		void GetObjectData (SerializationInfo serializationInfo,
+				    StreamingContext streamingContext)
+		{
 			SerializationInfo info = serializationInfo;
 
 			info.AddValue ("uri", uri);
@@ -272,8 +293,7 @@ namespace System.Net
 			info.AddValue ("cookieCollection", cookieCollection);
 			info.AddValue ("version", version);
 			info.AddValue ("statusCode", statusCode);
-		}		
-
+		}
 
 		// Cleaning up stuff
 

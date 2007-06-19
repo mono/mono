@@ -75,6 +75,18 @@ namespace System.Net
 		public Uri Address {
 			get { return uri; }
 		}
+
+#if NET_2_0
+		public BindIPEndPoint BindIPEndPointDelegate
+		{
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+#endif
 		
 		public X509Certificate Certificate {
 			get { return certificate; }
@@ -83,6 +95,18 @@ namespace System.Net
 		public X509Certificate ClientCertificate {
 			get { return clientCertificate; }
 		}
+
+#if NET_2_0
+		public int ConnectionLeaseTimeout
+		{
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+#endif
 		
 		public int ConnectionLimit {
 			get { return connectionLimit; }
@@ -126,6 +150,18 @@ namespace System.Net
 		public virtual Version ProtocolVersion {
 			get { return protocolVersion; }
 		}
+
+#if NET_2_0
+		public int ReceiveBufferSize
+		{
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+#endif
 		
 		public bool SupportsPipelining {
 			get { return HttpVersion.Version11.Equals (protocolVersion); }

@@ -187,6 +187,16 @@ namespace System.Net
 			return values;
 		}
 
+		public override string[] GetValues (int index)
+		{
+			string[] values = base.GetValues (index);
+			if (values == null || values.Length == 0) {
+				return(null);
+			}
+			
+			return(values);
+		}
+
 		/* Now i wonder why this is here...
 		static string [] GetMultipleValues (string [] values)
 		{
@@ -296,12 +306,53 @@ namespace System.Net
 		void ISerializable.GetObjectData (SerializationInfo serializationInfo,
 						  StreamingContext streamingContext)
 		{
+			GetObjectData (serializationInfo, streamingContext);
+		}
+
+		public override void GetObjectData (SerializationInfo serializationInfo, StreamingContext streamingContext)
+		{
 			int count = base.Count;
 			serializationInfo.AddValue ("Count", count);
 			for (int i = 0; i < count; i++) {
 				serializationInfo.AddValue (i.ToString (), GetKey (i));
 				serializationInfo.AddValue ((count + i).ToString (), Get (i));
 			}
+		}
+
+		public override string[] AllKeys
+		{
+			get {
+				return(base.AllKeys);
+			}
+		}
+		
+		public override int Count 
+		{
+			get {
+				return(base.Count);
+			}
+		}
+
+		public override KeysCollection Keys
+		{
+			get {
+				return(base.Keys);
+			}
+		}
+
+		public override string Get (int index)
+		{
+			return(base.Get (index));
+		}
+		
+		public override string Get (string name)
+		{
+			return(base.Get (name));
+		}
+		
+		public override string GetKey (int index)
+		{
+			return(base.GetKey (index));
 		}
 
 #if NET_2_0
@@ -425,6 +476,7 @@ namespace System.Net
 			}
 		}
 		
+		
 		public string this[HttpRequestHeader hrh]
 		{
 			get {
@@ -514,6 +566,17 @@ namespace System.Net
 			{
 				Add (ResponseHeaderToString (hrh), value);
 			}
+		}
+
+		public override void Clear ()
+		{
+			base.Clear ();
+		}
+
+
+		public override IEnumerator GetEnumerator ()
+		{
+			return(base.GetEnumerator ());
 		}
 #endif
 

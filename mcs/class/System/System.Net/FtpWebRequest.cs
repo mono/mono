@@ -14,6 +14,7 @@ using System.Text;
 using System.Threading;
 #if NET_2_0
 using System.Net.Cache;
+using System.Security.Cryptography.X509Certificates;
 #endif
 using System.Net;
 
@@ -21,8 +22,7 @@ using System.Net;
 
 namespace System.Net
 {
-	[Serializable]
-	public class FtpWebRequest : WebRequest
+	public sealed class FtpWebRequest : WebRequest
 	{
 		Uri requestUri;
 		ServicePoint servicePoint;
@@ -99,6 +99,28 @@ namespace System.Net
 			this.proxy = GlobalProxySelection.Select;
 		}
 
+#if NET_2_0
+		public X509CertificateCollection ClientCertificates
+		{
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+		
+		public override string ConnectionGroupName
+		{
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+#endif
+
 		public override string ContentType {
 			get {
 				throw new NotSupportedException ();
@@ -145,6 +167,18 @@ namespace System.Net
 			}
 		}
 
+#if NET_2_0
+		public static RequestCachePolicy DefaultCachePolicy
+		{
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+#endif
+
 		public bool EnableSsl {
 			get {
 				return enableSsl;
@@ -154,6 +188,18 @@ namespace System.Net
 				enableSsl = value;
 			}
 		}
+
+#if NET_2_0
+		public override WebHeaderCollection Headers
+		{
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+#endif
 
 		public bool KeepAlive {
 			get {
@@ -251,6 +297,18 @@ namespace System.Net
 				usePassive = value;
 			}
 		}
+
+#if NET_2_0
+		public override bool UseDefaultCredentials
+		{
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+#endif
 		
 		public bool UseBinary {
 			get {

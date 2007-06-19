@@ -31,7 +31,11 @@ using System.Collections;
 using System.Runtime.Serialization;
 
 namespace System.Net {
-	public class CredentialCache : ICredentials, IEnumerable {
+	public class CredentialCache : ICredentials, IEnumerable
+#if NET_2_0
+				     , ICredentialsByHost
+#endif
+	{
 		static NetworkCredential empty = new NetworkCredential ("", "", "");
 		Hashtable cache;
 

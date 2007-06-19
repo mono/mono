@@ -59,6 +59,22 @@ namespace System.Net
 		public virtual WebHeaderCollection Headers {		
 			get { throw new NotSupportedException (); }
 		}
+
+#if NET_2_0
+		public virtual bool IsFromCache
+		{
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+		
+		public virtual bool IsMutuallyAuthenticated
+		{
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+#endif
 		
 		public virtual Uri ResponseUri {		
 			get { throw new NotSupportedException (); }
@@ -92,6 +108,13 @@ namespace System.Net
 		   				  StreamingContext streamingContext)
 		{
 			throw new NotSupportedException ();
-		}		
+		}
+
+#if NET_2_0
+		protected virtual void GetObjectData (SerializationInfo serializationInfo, StreamingContext streamingContext)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 	}
 }

@@ -642,6 +642,7 @@ System.Net/CookieContainer.cs
 System.Net/Cookie.cs
 System.Net/CookieException.cs
 System.Net/CredentialCache.cs
+System.Net/DecompressionMethods.cs
 System.Net/DefaultCertificatePolicy.cs
 System.Net/DigestClient.cs
 System.Net/Dns.cs
@@ -690,6 +691,7 @@ System.Net/IPEndPoint.cs
 System.Net/IPHostEntry.cs
 System.Net/IPv6Address.cs
 System.Net/IWebProxy.cs
+System.Net/IWebProxyScript.cs
 System.Net/IWebRequestCreate.cs
 System.Net/ListenerAsyncResult.cs
 System.Net/ListenerPrefix.cs

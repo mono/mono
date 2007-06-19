@@ -58,6 +58,14 @@ namespace System.Net
 		{
 			base.GetObjectData (info, context);
 		}
+
+#if NET_2_0
+		public override void GetObjectData (SerializationInfo serializationInfo, StreamingContext streamingContext)
+		{
+			base.GetObjectData (serializationInfo,
+					    streamingContext);
+		}
+#endif
 	}
 }
 	

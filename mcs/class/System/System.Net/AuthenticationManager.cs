@@ -33,6 +33,7 @@ using System.Collections;
 using System.Configuration;
 #if NET_2_0
 using System.Net.Configuration;
+using System.Collections.Specialized;
 #endif
 
 namespace System.Net
@@ -72,6 +73,27 @@ namespace System.Net
 			}
 		}
 		
+#if NET_2_0
+		static ICredentialPolicy credential_policy = null;
+		
+		public static ICredentialPolicy CredentialPolicy
+		{
+			get {
+				return(credential_policy);
+							}
+			set {
+				credential_policy = value;
+			}
+		}
+		
+		public static StringDictionary CustomTargetNameDictionary
+		{
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+#endif
+
 		public static IEnumerator RegisteredModules {
 			get {
 				EnsureModules ();

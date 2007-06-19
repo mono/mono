@@ -75,5 +75,17 @@ namespace System.Net {
 			get { return module; }
 			set { module = value; }
 		}
+
+#if NET_2_0
+		public bool MutuallyAuthenticated
+		{
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+#endif		
 	}
 }

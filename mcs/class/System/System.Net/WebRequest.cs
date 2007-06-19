@@ -35,6 +35,8 @@ using System.Runtime.Serialization;
 using System.Globalization;
 #if NET_2_0
 using System.Net.Configuration;
+using System.Net.Security;
+using System.Net.Cache;
 #endif
 
 namespace System.Net 
@@ -75,6 +77,30 @@ namespace System.Net
 		}
 		
 		// Properties
+
+#if NET_2_0
+		private AuthenticationLevel authentication_level = AuthenticationLevel.MutualAuthRequested;
+		
+		public AuthenticationLevel AuthenticationLevel
+		{
+			get {
+				return(authentication_level);
+			}
+			set {
+				authentication_level = value;
+			}
+		}
+
+		public virtual RequestCachePolicy CachePolicy
+		{
+			get {
+				throw GetMustImplement ();
+			}
+			set {
+				throw GetMustImplement ();
+			}
+		}
+#endif
 		
 		public virtual string ConnectionGroupName { 
 			get { throw GetMustImplement (); }
@@ -95,6 +121,18 @@ namespace System.Net
 			get { throw GetMustImplement (); }
 			set { throw GetMustImplement (); }
 		}
+
+#if NET_2_0
+		public static RequestCachePolicy DefaultCachePolicy
+		{
+			get {
+				throw GetMustImplement ();
+			}
+			set {
+				throw GetMustImplement ();
+			}
+		}
+#endif
 		
 		public virtual WebHeaderCollection Headers { 
 			get { throw GetMustImplement (); }
@@ -126,6 +164,16 @@ namespace System.Net
 		}
 		
 #if NET_2_0
+		public virtual bool UseDefaultCredentials
+		{
+			get {
+				throw GetMustImplement ();
+			}
+			set {
+				throw GetMustImplement ();
+			}
+		}
+		
 		volatile static IWebProxy proxy;
 		static readonly object lockobj = new object ();
 		
@@ -254,6 +302,13 @@ namespace System.Net
 		{
 			throw new NotSupportedException ();
 		}
+
+#if NET_2_0
+		protected virtual void GetObjectData (SerializationInfo serializationInfo, StreamingContext streamingContext)
+		{
+			throw GetMustImplement ();
+		}
+#endif
 
 		public static bool RegisterPrefix (string prefix, IWebRequestCreate creator)
 		{

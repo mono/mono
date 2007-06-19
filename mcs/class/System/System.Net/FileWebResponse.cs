@@ -57,6 +57,9 @@ namespace System.Net
 			}
 		}
 		
+#if NET_2_0
+		[Obsolete ("Serialization is obsoleted for this type", false)]
+#endif
 		protected FileWebResponse (SerializationInfo serializationInfo, StreamingContext streamingContext)
 		{
 			SerializationInfo info = serializationInfo;
@@ -100,12 +103,20 @@ namespace System.Net
 
 		void ISerializable.GetObjectData (SerializationInfo serializationInfo, StreamingContext streamingContext)
 		{
+			GetObjectData (serializationInfo, streamingContext);
+		}
+
+#if NET_2_0
+		protected override
+#endif
+		void GetObjectData (SerializationInfo serializationInfo, StreamingContext streamingContext)
+		{
 			SerializationInfo info = serializationInfo;
 
 			info.AddValue ("responseUri", responseUri, typeof (Uri));
 			info.AddValue ("contentLength", contentLength);
 			info.AddValue ("webHeaders", webHeaders, typeof (WebHeaderCollection));
-		}		
+		}
 
 		public override Stream GetResponseStream()
 		{

@@ -33,6 +33,10 @@ using System.Configuration;
 using System.Net.Configuration;
 using System.Security.Cryptography.X509Certificates;
 
+#if NET_2_0
+using System.Net.Security;
+#endif
+
 //
 // notes:
 // A service point manager manages service points (duh!).
@@ -101,6 +105,10 @@ namespace System.Net
 		
 		// Properties
 		
+#if NET_2_0
+		[Obsolete ("Use ServerCertificateValidationCallback instead",
+			   false)]
+#endif
 		public static ICertificatePolicy CertificatePolicy {
 			get { return policy; }
 			set { policy = value; }
@@ -127,6 +135,28 @@ namespace System.Net
 				defaultConnectionLimit = value; 
 			}
 		}
+
+#if NET_2_0
+		public static int DnsRefreshTimeout
+		{
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+		
+		public static bool EnableDnsRoundRobin
+		{
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+#endif
 		
 		public static int MaxServicePointIdleTime {
 			get { 
@@ -162,6 +192,18 @@ namespace System.Net
 			get { return _securityProtocol; }
 			set { _securityProtocol = value; }
 		}
+
+#if NET_2_0
+		public static RemoteCertificateValidationCallback ServerCertificateValidationCallback
+		{
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+#endif
 
 #if NET_1_1
 		public static bool Expect100Continue {
