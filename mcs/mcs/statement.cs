@@ -4388,7 +4388,7 @@ namespace Mono.CSharp {
 		Type expr_type;
 		Expression [] resolved_vars;
 		Expression [] converted_vars;
-		ExpressionStatement [] assign;
+		Expression [] assign;
 		TemporaryVariable local_copy;
 		
 		public Using (object expression_or_block, Statement stmt, Location l)
@@ -4403,97 +4403,52 @@ namespace Mono.CSharp {
 		//
 		bool ResolveLocalVariableDecls (EmitContext ec)
 		{
-			int i = 0;
+			resolved_vars = new Expression[var_list.Count];
+			assign = new Expression [var_list.Count];
+			converted_vars = new Expression[var_list.Count];
 
-			TypeExpr texpr = null;
-			
-			if (expr is VarExpr) {
-				Expression e = ((Expression)((DictionaryEntry)var_list[0]).Value).Resolve (ec);
-				if (e == null || e.Type == null)
-					return false;
-				texpr = new TypeExpression (e.Type, loc);
-			}
-			else
-				texpr = expr.ResolveAsTypeTerminal (ec, false);
-
-			if (texpr == null)
-				return false;
-
-			expr_type = texpr.Type;
-
-			//
-			// The type must be an IDisposable or an implicit conversion
-			// must exist.
-			//
-			converted_vars = new Expression [var_list.Count];
-			resolved_vars = new Expression [var_list.Count];
-			assign = new ExpressionStatement [var_list.Count];
-
-			bool need_conv = !TypeManager.ImplementsInterface (
-				expr_type, TypeManager.idisposable_type);
-
-			foreach (DictionaryEntry e in var_list){
+			for (int i = 0; i < assign.Length; ++i) {
+				DictionaryEntry e = (DictionaryEntry) var_list [i];
 				Expression var = (Expression) e.Key;
-				
-				if (expr is VarExpr) {
-					LocalVariableReference l = var as LocalVariableReference;
-					((LocalInfo)l.Block.Variables[l.Name]).VariableType = expr_type;
-					((VarExpr)expr).Handled = true;
-				}
-
-				var = var.ResolveLValue (ec, new EmptyExpression (), loc);
-				if (var == null)
-					return false;
-
-				resolved_vars [i] = var;
-
-				if (!need_conv) {
-					i++;
-					continue;
-				}
-
-				converted_vars [i] = Convert.ImplicitConversion (
-					ec, var, TypeManager.idisposable_type, loc);
-
-				if (converted_vars [i] == null) {
-					Error_IsNotConvertibleToIDisposable ();
-					return false;
-				}
-
-				i++;
-			}
-
-			i = 0;
-			foreach (DictionaryEntry e in var_list){
-				Expression var = resolved_vars [i];
 				Expression new_expr = (Expression) e.Value;
-				Expression a;
 
-				a = new Assign (var, new_expr, loc);
+				Expression a = new Assign (var, new_expr, loc);
 				a = a.Resolve (ec);
 				if (a == null)
 					return false;
 
-				if (!need_conv)
+				resolved_vars [i] = var;
+				assign [i] = a;
+
+				if (TypeManager.ImplementsInterface (a.Type, TypeManager.idisposable_type)) {
 					converted_vars [i] = var;
-				assign [i] = (ExpressionStatement) a;
-				i++;
+					continue;
+				}
+
+				a = Convert.ImplicitConversion (ec, a, TypeManager.idisposable_type, var.Location);
+				if (a == null) {
+					Error_IsNotConvertibleToIDisposable (var);
+					return false;
+				}
+
+				converted_vars [i] = a;
 			}
 
 			return true;
 		}
 
-		void Error_IsNotConvertibleToIDisposable ()
+		static void Error_IsNotConvertibleToIDisposable (Expression expr)
 		{
-			Report.Error (1674, loc, "`{0}': type used in a using statement must be implicitly convertible to `System.IDisposable'",
-				TypeManager.CSharpName (expr_type));
+			Report.SymbolRelatedToPreviousError (expr.Type);
+			Report.Error (1674, expr.Location, "`{0}': type used in a using statement must be implicitly convertible to `System.IDisposable'",
+				expr.GetSignatureForError ());
 		}
 
 		bool ResolveExpression (EmitContext ec)
 		{
 			if (!TypeManager.ImplementsInterface (expr_type, TypeManager.idisposable_type)){
 				if (Convert.ImplicitConversion (ec, expr, TypeManager.idisposable_type, loc) == null) {
-					Error_IsNotConvertibleToIDisposable ();
+					Error_IsNotConvertibleToIDisposable (expr);
 					return false;
 				}
 			}
@@ -4513,7 +4468,7 @@ namespace Mono.CSharp {
 			int i = 0;
 
 			for (i = 0; i < assign.Length; i++) {
-				assign [i].EmitStatement (ec);
+				assign [i].Emit (ec);
 
 				if (emit_finally)
 					ig.BeginExceptionBlock ();
@@ -4737,57 +4692,10 @@ namespace Mono.CSharp {
 			if (expr == null)
 				return false;
 
-			if (type is VarExpr) {
-				Type element_type = null;
-				if (TypeManager.HasElementType (expr.Type))
-					element_type = TypeManager.GetElementType (expr.Type);
-				else {
-					MethodGroupExpr mg = Expression.MemberLookup (
-						ec.ContainerType, expr.Type, "GetEnumerator", MemberTypes.Method,
-						Expression.AllBindingFlags, loc) as MethodGroupExpr;
-					
-					if (mg == null)
-							return false;
-					
-					MethodInfo get_enumerator = null;
-					foreach (MethodInfo mi in mg.Methods) {
-						if (TypeManager.GetParameterData (mi).Count != 0)
-							continue;
-						if ((mi.Attributes & MethodAttributes.Public) != MethodAttributes.Public)
-							continue;
-						if (CollectionForeach.IsOverride (mi))
-							continue;
-						get_enumerator = mi;
-					}
-					
-					if (get_enumerator == null)
-						return false;
-					
-					PropertyInfo pi = TypeManager.GetProperty (get_enumerator.ReturnType, "Current");
-					
-					if (pi == null)
-						return false;
-						
-					element_type = pi.PropertyType;
-				}
-
-				type = new TypeLookupExpression (element_type.AssemblyQualifiedName);
-                
-				LocalVariableReference lv = variable as LocalVariableReference;
-				((LocalInfo)lv.Block.Variables[lv.Name]).VariableType = element_type;
-			}
-
-			Constant c = expr as Constant;
-			if (c != null && c.GetValue () == null) {
+			if (expr.Type == TypeManager.null_type) {
 				Report.Error (186, loc, "Use of null is not valid in this context");
 				return false;
 			}
-
-			TypeExpr texpr = type.ResolveAsTypeTerminal (ec, false);
-			if (texpr == null)
-				return false;
-
-			Type var_type = texpr.Type;
 
 			if (expr.eclass == ExprClass.MethodGroup || expr is AnonymousMethodExpression) {
 				Report.Error (446, expr.Location, "Foreach statement cannot operate on a `{0}'",
@@ -4809,13 +4717,12 @@ namespace Mono.CSharp {
 			}
 
 			if (expr.Type.IsArray) {
-				array = new ArrayForeach (var_type, variable, expr, statement, loc);
+				array = new ArrayForeach (type, variable, expr, statement, loc);
 				return array.Resolve (ec);
-			} else {
-				collection = new CollectionForeach (
-					var_type, variable, expr, statement, loc);
-				return collection.Resolve (ec);
 			}
+			
+			collection = new CollectionForeach (type, variable, expr, statement, loc);
+			return collection.Resolve (ec);
 		}
 
 		protected override void DoEmit (EmitContext ec)
@@ -4863,7 +4770,7 @@ namespace Mono.CSharp {
 			Expression variable, expr, conv;
 			Statement statement;
 			Type array_type;
-			Type var_type;
+			Expression var_type;
 			TemporaryVariable[] lengths;
 			ArrayCounter[] counter;
 			int rank;
@@ -4871,7 +4778,7 @@ namespace Mono.CSharp {
 			TemporaryVariable copy;
 			Expression access;
 
-			public ArrayForeach (Type var_type, Expression var,
+			public ArrayForeach (Expression var_type, Expression var,
 					     Expression expr, Statement stmt, Location l)
 			{
 				this.var_type = var_type;
@@ -4907,7 +4814,17 @@ namespace Mono.CSharp {
 				if (access == null)
 					return false;
 
-				conv = Convert.ExplicitConversion (ec, access, var_type, loc);
+				VarExpr ve = var_type as VarExpr;
+				if (ve != null) {
+					// Infer implicitly typed local variable from foreach array type
+					var_type = new TypeExpression (access.Type, ve.Location);
+				}
+
+				var_type = var_type.ResolveAsTypeTerminal (ec, false);
+				if (var_type == null)
+					return false;
+
+				conv = Convert.ExplicitConversion (ec, access, var_type.Type, loc);
 				if (conv == null)
 					return false;
 
@@ -4989,11 +4906,12 @@ namespace Mono.CSharp {
 			MethodGroupExpr get_enumerator;
 			PropertyExpr get_current;
 			MethodInfo move_next;
-			Type var_type, enumerator_type;
+			Expression var_type;
+			Type enumerator_type;
 			bool is_disposable;
 			bool enumerator_found;
 
-			public CollectionForeach (Type var_type, Expression var,
+			public CollectionForeach (Expression var_type, Expression var,
 						  Expression expr, Statement stmt, Location l)
 			{
 				this.var_type = var_type;
@@ -5293,6 +5211,16 @@ namespace Mono.CSharp {
 					return false;
 				}
 
+				VarExpr ve = var_type as VarExpr;
+				if (ve != null) {
+					// Infer implicitly typed local variable from foreach enumerable type
+					var_type = new TypeExpression (get_current.PropertyInfo.PropertyType, var_type.Location);
+				}
+
+				var_type = var_type.ResolveAsTypeTerminal (ec, false);
+				if (var_type == null)
+					return false;
+								
 				enumerator = new TemporaryVariable (enumerator_type, loc);
 				enumerator.Resolve (ec);
 
@@ -5313,7 +5241,7 @@ namespace Mono.CSharp {
 				get_current.InstanceExpression = enumerator;
 
 				Statement block = new CollectionForeachStatement (
-					var_type, variable, get_current, statement, loc);
+					var_type.Type, variable, get_current, statement, loc);
 
 				loop = new While (move_next_expr, block, loc);
 

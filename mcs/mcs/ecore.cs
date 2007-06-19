@@ -4978,7 +4978,6 @@ namespace Mono.CSharp {
 	
 	public sealed class VarExpr : Expression
 	{
-		public bool Handled;
 		public VarExpr (Location loc)
 		{
 			this.loc = loc;

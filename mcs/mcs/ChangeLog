@@ -1,3 +1,14 @@
+2007-06-19  Marek Safar  <marek.safar@gmail.com>
+
+	* ecore.cs (VarExpr): Removed Handled field.
+	
+	* statement.cs (Using.ResolveLocalVariableDecls): Refactored to use
+	build-in assign functionality.
+	(ForEach.Resolve): Removed all implicitly typed local variable code and
+	simplified.
+	(ArrayForeach.Resolve): Infer implicitly typed local variable here.
+	(CollectionForeach.Resolve): Infer implicitly typed local variable here.
+
 2007-06-18  Marek Safar  <marek.safar@gmail.com>
 
 	* assign.cs: Removed implicitly typed local variable check.
