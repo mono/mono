@@ -1,5 +1,11 @@
 2007-06-19  Raja R Harinath  <rharinath@novell.com>
 
+	* metadata.c (mono_metadata_lookup_generic_class): Protect cache
+	lookup/update with the loader lock.
+	* reflection.c (mono_class_bind_generic_parameters): No need to
+	protect mono_metadata_lookup_* with the loader lock.
+	* class.c (inflate_generic_type): Likewise.
+	
 	* metadata.c (ginst_in_image): Avoid mono_class_from_mono_type
 	on a generic instantiated type.
 
