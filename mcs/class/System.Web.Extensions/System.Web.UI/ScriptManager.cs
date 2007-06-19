@@ -360,9 +360,11 @@ namespace System.Web.UI
 			ScriptReference script;
 
 			script = new ScriptReference ("MicrosoftAjax.js", String.Empty);
+			script.NotifyScriptLoaded = false;
 			yield return script;
 
 			script = new ScriptReference ("MicrosoftAjaxWebForms.js", String.Empty);
+			script.NotifyScriptLoaded = false;
 			yield return script;
 
 			if (_scripts != null && _scripts.Count > 0) {
@@ -589,7 +591,11 @@ namespace System.Web.UI
 
 		#endregion
 
-		static void WriteCallbackOutput (HtmlTextWriter output, string type, string name, string value) {
+		static internal void WriteCallbackRedirect (TextWriter output, string redirectUrl) {
+			WriteCallbackOutput (output, pageRedirect, null, redirectUrl);
+		}
+
+		static void WriteCallbackOutput (TextWriter output, string type, string name, string value) {
 			output.Write ("{0}|{1}|{2}|{3}|", value.Length, type, name, value);
 		}
 

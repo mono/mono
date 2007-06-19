@@ -42,6 +42,7 @@ namespace System.Web.UI
 		string _name;
 		string _assembly;
 		ScriptMode _scriptMode = ScriptMode.Auto;
+		bool _notifyScriptLoaded = true;
 
 		public ScriptReference ()
 		{
@@ -58,8 +59,6 @@ namespace System.Web.UI
 			_assembly = assembly;
 		}
 
-		[DefaultValue ("")]
-		[Category ("Behavior")]
 		public string Assembly {
 			get {
 				return _assembly;
@@ -69,8 +68,6 @@ namespace System.Web.UI
 			}
 		}
 
-		[DefaultValue (false)]
-		[Category ("Behavior")]
 		public bool IgnoreScriptPath {
 			get {
 				throw new NotImplementedException ();
@@ -80,8 +77,6 @@ namespace System.Web.UI
 			}
 		}
 
-		[Category ("Behavior")]
-		[DefaultValue ("")]
 		public string Name {
 			get {
 				return _name;
@@ -91,19 +86,15 @@ namespace System.Web.UI
 			}
 		}
 
-		[Category ("Behavior")]
-		[DefaultValue (true)]
 		public bool NotifyScriptLoaded {
 			get {
-				throw new NotImplementedException ();
+				return _notifyScriptLoaded;
 			}
 			set {
-				throw new NotImplementedException ();
+				_notifyScriptLoaded = value;
 			}
 		}
 
-		[DefaultValue ("")]
-		[Category ("Behavior")]
 		public string Path {
 			get {
 				return _path;
@@ -113,10 +104,6 @@ namespace System.Web.UI
 			}
 		}
 
-		[Category ("Behavior")]
-		[DefaultValue ("")]
-		[MergableProperty (false)]
-		[TypeConverter (typeof (StringArrayConverter))]
 		public string [] ResourceUICultures {
 			get {
 				throw new NotImplementedException ();
@@ -126,7 +113,6 @@ namespace System.Web.UI
 			}
 		}
 
-		[Category ("Behavior")]
 		public ScriptMode ScriptMode {
 			get {
 				return _scriptMode;

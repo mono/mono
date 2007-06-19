@@ -30,12 +30,32 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Web.UI;
 
 namespace System.Web.Handlers
 {
 	public class ScriptModule : IHttpModule
 	{
 		protected virtual void Init (HttpApplication context) {
+			context.PreSendRequestHeaders += new EventHandler (PreSendRequestHeaders);
+			context.PostAcquireRequestState += new EventHandler (PostAcquireRequestState);
+			context.AuthenticateRequest += new EventHandler (AuthenticateRequest);
+		}
+
+		void AuthenticateRequest (object sender, EventArgs e) {
+		}
+
+		void PostAcquireRequestState (object sender, EventArgs e) {
+		}
+
+		void PreSendRequestHeaders (object sender, EventArgs e) {
+			HttpApplication app = (HttpApplication) sender;
+			HttpContext context = app.Context;
+			if (context.Request.Headers ["X-MicrosoftAjax"] == "Delta=true" && context.Response.StatusCode == 302) {
+				context.Response.StatusCode = 200;
+				context.Response.ClearContent ();
+				ScriptManager.WriteCallbackRedirect (context.Response.Output, context.Response.RedirectLocation);
+			}
 		}
 
 		protected virtual void Dispose () {
