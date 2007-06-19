@@ -77,6 +77,7 @@ namespace System.Web.UI
 		int _asyncPostBackTimeout = 90;
 		List<Control> _asyncPostBackControls;
 		List<Control> _postBackControls;
+		List<UpdatePanel> _updatePanels;
 		ScriptReferenceCollection _scripts;
 		bool _isInAsyncPostBack;
 		string _asyncPostBackSourceElementID;
@@ -518,6 +519,16 @@ namespace System.Web.UI
 			_postBackControls.Add (control);
 		}
 
+		internal void RegisterUpdatePanel (UpdatePanel updatePanel) {
+			if (_updatePanels == null)
+				_updatePanels = new List<UpdatePanel> ();
+
+			if (_updatePanels.Contains (updatePanel))
+				return;
+
+			_updatePanels.Add (updatePanel);
+		}
+
 		public void RegisterScriptDescriptors (IExtenderControl extenderControl)
 		{
 			throw new NotImplementedException ();
@@ -547,10 +558,24 @@ namespace System.Web.UI
 			writer.WriteLine ("<script type=\"text/javascript\">");
 			writer.WriteLine ("//<![CDATA[");
 			writer.WriteLine ("Sys.WebForms.PageRequestManager._initialize('{0}', document.getElementById('{1}'));", UniqueID, Page.Form.ClientID);
-			writer.WriteLine ("Sys.WebForms.PageRequestManager.getInstance()._updateControls([{0}], [{1}], [{2}], {3});", null, FormatListIDs (_asyncPostBackControls), FormatListIDs (_postBackControls), AsyncPostBackTimeout);
+			writer.WriteLine ("Sys.WebForms.PageRequestManager.getInstance()._updateControls([{0}], [{1}], [{2}], {3});", FormatUpdatePanelIDs (_updatePanels), FormatListIDs (_asyncPostBackControls), FormatListIDs (_postBackControls), AsyncPostBackTimeout);
 			writer.WriteLine ("//]]");
 			writer.WriteLine ("</script>");
 			base.Render (writer);
+		}
+
+		static string FormatUpdatePanelIDs (List<UpdatePanel> list) {
+			if (list == null || list.Count == 0)
+				return null;
+
+			StringBuilder sb = new StringBuilder ();
+			for (int i = 0; i < list.Count; i++) {
+				sb.AppendFormat ("'{0}{1}',", list [i].ChildrenAsTriggers ? "t" : "f", list [i].UniqueID);
+			}
+			if (sb.Length > 0)
+				sb.Length--;
+
+			return sb.ToString ();
 		}
 
 		static string FormatListIDs(List<Control> list)
@@ -604,7 +629,7 @@ namespace System.Web.UI
 			Page page = (Page) container;
 
 			page.Form.SetRenderMethodDelegate (RenderFormCallback);
-			HtmlTextParser parser = new HtmlTextParser ();
+			HtmlTextParser parser = new HtmlTextParser (output);
 			page.Form.RenderControl (parser);
 
 			parser.WriteOutput (output);
@@ -612,6 +637,22 @@ namespace System.Web.UI
 		}
 
 		void RenderFormCallback (HtmlTextWriter output, Control container) {
+			output = ((HtmlTextParser) output).ResponseOutput;
+			if (_updatePanels != null && _updatePanels.Count > 0) {
+				StringBuilder sb = new StringBuilder ();
+				HtmlTextWriter w = new HtmlTextWriter (new StringWriter (sb));
+				for (int i = 0; i < _updatePanels.Count; i++) {
+					UpdatePanel panel = _updatePanels [i];
+					if (panel.RequiresUpdate) {
+						panel.RenderChildrenInternal (w);
+						w.Flush ();
+						string panelOutput = sb.ToString ();
+						sb.Length = 0;
+						WriteCallbackOutput (output, updatePanel, panel.ClientID, panelOutput);
+					}
+				}
+			}
+			
 			HtmlForm form = (HtmlForm) container;
 			HtmlTextWriter writer = new HtmlTextWriter (new DropWriter ());
 			if (form.HasControls ()) {
@@ -623,9 +664,15 @@ namespace System.Web.UI
 
 		class HtmlTextParser : HtmlTextWriter
 		{
-			public HtmlTextParser ()
-				: base (new TextParser ()) {
+			HtmlTextWriter _responseOutput;
 
+			public HtmlTextWriter ResponseOutput {
+				get { return _responseOutput; }
+			}
+
+			public HtmlTextParser (HtmlTextWriter responseOutput)
+				: base (new TextParser ()) {
+				_responseOutput = responseOutput;
 			}
 
 			public void WriteOutput (HtmlTextWriter output) {

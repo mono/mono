@@ -43,14 +43,20 @@ namespace System.Web.UI
 	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class UpdatePanel : Control
 	{
+		ITemplate _contentTemplate;
+		Control _contentTemplateContainer;
+		UpdatePanelUpdateMode _updateMode = UpdatePanelUpdateMode.Always;
+		bool _childrenAsTriggers = true;
+		bool _requiresUpdate = false;
+
 		[Category ("Behavior")]
 		[DefaultValue (true)]
 		public bool ChildrenAsTriggers {
 			get {
-				throw new NotImplementedException ();
+				return _childrenAsTriggers;
 			}
 			set {
-				throw new NotImplementedException ();
+				_childrenAsTriggers = value;
 			}
 		}
 
@@ -59,17 +65,21 @@ namespace System.Web.UI
 		[Browsable (false)]
 		public ITemplate ContentTemplate {
 			get {
-				throw new NotImplementedException ();
+				return _contentTemplate;
 			}
 			set {
-				throw new NotImplementedException ();
+				_contentTemplate = value;
 			}
 		}
 
 		[Browsable (false)]
 		public Control ContentTemplateContainer {
 			get {
-				throw new NotImplementedException ();
+				if (_contentTemplateContainer == null) {
+					_contentTemplateContainer = CreateContentTemplateContainer ();
+					Controls.Add (_contentTemplateContainer);
+				}
+				return _contentTemplateContainer;
 			}
 		}
 
@@ -98,7 +108,16 @@ namespace System.Web.UI
 
 		protected internal virtual bool RequiresUpdate {
 			get {
-				throw new NotImplementedException ();
+				return UpdateMode == UpdatePanelUpdateMode.Always || _requiresUpdate;
+			}
+		}
+
+		ScriptManager ScriptManager {
+			get {
+				ScriptManager manager = ScriptManager.GetCurrent (Page);
+				if (manager == null)
+					throw new InvalidOperationException (String.Format ("The control with ID '{0}' requires a ScriptManager on the page. The ScriptManager must appear before any controls that need it.", ID));
+				return manager;
 			}
 		}
 
@@ -113,23 +132,33 @@ namespace System.Web.UI
 		}
 
 		[Category ("Behavior")]
+		[DefaultValueAttribute(UpdatePanelUpdateMode.Always)]
 		public UpdatePanelUpdateMode UpdateMode {
 			get {
-				throw new NotImplementedException ();
+				return _updateMode;
 			}
 			set {
-				throw new NotImplementedException ();
+				_updateMode = value;
 			}
 		}
 
 		protected virtual Control CreateContentTemplateContainer ()
 		{
-			throw new NotImplementedException ();
+			return new Control ();
 		}
 
+		[MonoTODO()]
 		protected override sealed ControlCollection CreateControlCollection ()
 		{
-			throw new NotImplementedException ();
+			// TODO: Because this method is protected and sealed, it is visible to classes that inherit 
+			// from the UpdatePanel class, but it cannot be overridden. This method overrides 
+			// the base implementation to return a specialized ControlCollection object that throws 
+			// an InvalidOperationException when the Add(Control), AddAt(Int32, Control), Clear(), 
+			// Remove(Control), or RemoveAt(Int32) method of the ControlCollection class is invoked. 
+			// To change the content of the UpdatePanel control, modify the child controls of 
+			// the ContentTemplateContainer property.
+
+			return base.CreateControlCollection();
 		}
 
 		protected internal virtual void Initialize ()
@@ -140,6 +169,11 @@ namespace System.Web.UI
 		protected override void OnInit (EventArgs e)
 		{
 			base.OnInit (e);
+
+			ScriptManager.RegisterUpdatePanel (this);
+
+			if (ContentTemplate != null)
+				ContentTemplate.InstantiateIn (ContentTemplateContainer);
 		}
 
 		protected override void OnLoad (EventArgs e)
@@ -150,6 +184,9 @@ namespace System.Web.UI
 		protected override void OnPreRender (EventArgs e)
 		{
 			base.OnPreRender (e);
+
+			if (UpdateMode == UpdatePanelUpdateMode.Always && !ChildrenAsTriggers)
+				throw new InvalidOperationException (String.Format ("ChildrenAsTriggers cannot be set to false when UpdateMode is set to Always on UpdatePanel '{0}'", ID));
 		}
 
 		protected override void OnUnload (EventArgs e)
@@ -159,15 +196,26 @@ namespace System.Web.UI
 
 		protected override void Render (HtmlTextWriter writer)
 		{
+			writer.AddAttribute (HtmlTextWriterAttribute.Id, ClientID);
+			writer.RenderBeginTag (HtmlTextWriterTag.Div);
+			RenderChildren (writer);
+			writer.RenderEndTag ();
 		}
 
 		protected override void RenderChildren (HtmlTextWriter writer)
 		{
+			if (ScriptManager.IsInAsyncPostBack)
+				return;
+			RenderChildrenInternal (writer);
+		}
+
+		internal void RenderChildrenInternal (HtmlTextWriter writer) {
+			base.RenderChildren (writer);
 		}
 
 		public void Update ()
 		{
-			throw new NotImplementedException ();
+			_requiresUpdate = true;
 		}
 	}
 }
