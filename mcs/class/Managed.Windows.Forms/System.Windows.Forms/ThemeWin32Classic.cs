@@ -2407,7 +2407,20 @@ namespace System.Windows.Forms
 					item, item.Bounds, index, item_state);
 			item.ListView.OnDrawItem (args);
 
-			return !args.DrawDefault;
+			if (args.DrawDefault)
+				return false;
+
+			for (int i = 0; i < item.SubItems.Count; i++) {
+				int count = Math.Min (item.ListView.Columns.Count, item.SubItems.Count);
+
+				// Do system drawing for subitems if no owner draw is done
+				for (int j = 0; j < count; j++)
+					if (!DrawListViewSubItemOwnerDraw (dc, item, item_state, j))
+						DrawListViewSubItem (dc, item.ListView, item, j);
+			}
+
+			return true;
+					
 		}
 #endif
 
@@ -2574,71 +2587,15 @@ namespace System.Windows.Forms
 					     control.Columns.Count : subItems.Count);
 
 				if (count > 0) {
-					ColumnHeader col;
-					ListViewItem.ListViewSubItem subItem;
-					Rectangle sub_item_rect = text_rect; 
-
-					// set the format for subitems
-					format.FormatFlags = StringFormatFlags.NoWrap;
-
 					// 0th subitem is the item already drawn
-					for (int index = 1; index < count; index++) {
-						subItem = subItems [index];
-						col = control.Columns [index];
-						format.Alignment = col.Format.Alignment;
-						sub_item_rect.X = col.Rect.X - control.h_marker;
-						sub_item_rect.Width = col.Wd;
-						Rectangle sub_item_text_rect = sub_item_rect;
-						sub_item_text_rect.X += 3;
-						sub_item_text_rect.Width -= 6;
-
-						SolidBrush sub_item_back_br = null;
-						SolidBrush sub_item_fore_br = null;
-						Font sub_item_font = null;
-
-						if (item.UseItemStyleForSubItems) {
-							sub_item_back_br = ResPool.GetSolidBrush (item.BackColor);
-							sub_item_fore_br = ResPool.GetSolidBrush (item.ForeColor);
-							sub_item_font = item.Font;
-						} else {
-							sub_item_back_br = ResPool.GetSolidBrush (subItem.BackColor);
-							sub_item_fore_br = ResPool.GetSolidBrush (subItem.ForeColor);
-							sub_item_font = subItem.Font;
-						}
-
-						int sub_item_text_width = (int) Math.Ceiling (control.DeviceContext.MeasureString (subItem.Text,
-								sub_item_font).Width);
-
-						format.Trimming = sub_item_text_width > sub_item_text_rect.Width ? StringTrimming.EllipsisCharacter :
-							StringTrimming.None;
-
-						if (item.Selected && (control.Focused || !control.HideSelection) && control.FullRowSelect) {
-							Brush bg, text;
-							if (control.Focused) {
-								bg = SystemBrushes.Highlight;
-								text = SystemBrushes.HighlightText;
-							} else {
-								bg = SystemBrushes.Control;
-								text = sub_item_fore_br;
-							}
-					
-							dc.FillRectangle (bg, sub_item_rect);
-							if (subItem.Text != null && subItem.Text.Length > 0)
-								dc.DrawString (subItem.Text, sub_item_font,
-									       text, sub_item_text_rect, format);
-						} else {
-							dc.FillRectangle (sub_item_back_br, sub_item_rect);
-							if (subItem.Text != null && subItem.Text.Length > 0)
-								dc.DrawString (subItem.Text, sub_item_font,
-									       sub_item_fore_br,
-									       sub_item_text_rect, format);
-						}
-					}
+					for (int index = 1; index < count; index++)
+						DrawListViewSubItem (dc, control, item, index);
 
 					// Fill in selection for remaining columns if Column.Count > SubItems.Count
+					ColumnHeader col;
+					Rectangle sub_item_rect = text_rect;
 					if (item.Selected && (control.Focused || !control.HideSelection) && control.FullRowSelect) {
-						for (int index = count; index < control.Columns.Count; index++)
-						{
+						for (int index = count; index < control.Columns.Count; index++) {
 							col = control.Columns [index];
 							sub_item_rect.X = col.Rect.X - control.h_marker;
 							sub_item_rect.Width = col.Wd;
@@ -2667,6 +2624,74 @@ namespace System.Windows.Forms
 
 			format.Dispose ();
 		}
+
+		protected virtual void DrawListViewSubItem (Graphics dc, ListView control, ListViewItem item, int index)
+		{
+			ListViewItem.ListViewSubItem subItem = item.SubItems [index];
+			ColumnHeader col = control.Columns [index];
+			StringFormat format = new StringFormat ();
+			format.Alignment = col.Format.Alignment;
+			format.FormatFlags = StringFormatFlags.NoWrap;
+			format.Trimming = StringTrimming.EllipsisCharacter;
+
+			Rectangle sub_item_rect = subItem.Bounds;
+			Rectangle sub_item_text_rect = sub_item_rect;
+			sub_item_text_rect.X += 3;
+			sub_item_text_rect.Width -= 6;
+						
+			SolidBrush sub_item_back_br = null;
+			SolidBrush sub_item_fore_br = null;
+			Font sub_item_font = null;
+						
+			if (item.UseItemStyleForSubItems) {
+				sub_item_back_br = ResPool.GetSolidBrush (item.BackColor);
+				sub_item_fore_br = ResPool.GetSolidBrush (item.ForeColor);
+				sub_item_font = item.Font;
+			} else {
+				sub_item_back_br = ResPool.GetSolidBrush (subItem.BackColor);
+				sub_item_fore_br = ResPool.GetSolidBrush (subItem.ForeColor);
+				sub_item_font = subItem.Font;
+			}
+						
+			if (item.Selected && (control.Focused || !control.HideSelection) && control.FullRowSelect) {
+				Brush bg, text;
+				if (control.Focused) {
+					bg = SystemBrushes.Highlight;
+					text = SystemBrushes.HighlightText;
+				} else {
+					bg = SystemBrushes.Control;
+					text = sub_item_fore_br;
+							
+				}
+							
+				dc.FillRectangle (bg, sub_item_rect);
+				if (subItem.Text != null && subItem.Text.Length > 0)
+					dc.DrawString (subItem.Text, sub_item_font,
+							text, sub_item_text_rect, format);
+			} else {
+				dc.FillRectangle (sub_item_back_br, sub_item_rect);
+				if (subItem.Text != null && subItem.Text.Length > 0)
+					dc.DrawString (subItem.Text, sub_item_font,
+							sub_item_fore_br,
+							sub_item_text_rect, format);
+			}
+
+			format.Dispose ();
+		}
+
+#if NET_2_0
+		protected virtual bool DrawListViewSubItemOwnerDraw (Graphics dc, ListViewItem item, ListViewItemStates state, int index)
+		{
+			ListView control = item.ListView;
+			ListViewItem.ListViewSubItem subitem = item.SubItems [index];
+
+			DrawListViewSubItemEventArgs args = new DrawListViewSubItemEventArgs (dc, subitem.Bounds, item, 
+					subitem, item.Index, index, control.Columns [index], state);
+			control.OnDrawSubItem (args);
+			
+			return !args.DrawDefault;
+		}
+#endif
 
 		// Sizing
 		public override Size ListViewCheckBoxSize {

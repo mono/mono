@@ -790,6 +790,13 @@ namespace System.Windows.Forms
 					item_rect.Width += owner.Columns [i].Wd;
 					bounds.Width += owner.Columns [i].Wd;
 				}
+
+				// Bounds for sub items
+				int n = Math.Min (owner.Columns.Count, sub_items.Count);
+				for (int i = 0; i < n; i++) {
+					Rectangle col_rect = owner.Columns [i].Rect;
+					sub_items [i].SetBounds (col_rect.X, 0, col_rect.Width, item_ht);
+				}
 				break;
 
 			case View.LargeIcon:
@@ -935,8 +942,8 @@ namespace System.Windows.Forms
 #if NET_2_0
 			private string name = String.Empty;
 			private object tag;
-			internal Rectangle bounds;
 #endif
+			internal Rectangle bounds;
 			
 			#region Public Constructors
 			public ListViewSubItem ()
@@ -976,7 +983,12 @@ namespace System.Windows.Forms
 			}
 
 #if NET_2_0
-			public Rectangle Bounds {
+			public 
+#else
+				
+			internal
+#endif
+			Rectangle Bounds {
 				get {
 					Rectangle retval = bounds;
 					if (owner != null) {
@@ -987,7 +999,6 @@ namespace System.Windows.Forms
 					return retval;
 				}
 			}
-#endif
 
 			[Localizable (true)]
 			public Font Font {
@@ -1087,7 +1098,6 @@ namespace System.Windows.Forms
 				owner.owner.Invalidate ();
 			}
 
-#if NET_2_0
 			internal int Height {
 				get {
 					return bounds.Height;
@@ -1098,7 +1108,6 @@ namespace System.Windows.Forms
 			{
 				bounds = new Rectangle (x, y, width, height);
 			}
-#endif
 			#endregion // Private Methods
 		}
 
