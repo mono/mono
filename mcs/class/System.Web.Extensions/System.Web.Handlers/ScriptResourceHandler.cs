@@ -50,5 +50,13 @@ namespace System.Web.Handlers
 		}
 
 		#endregion
+
+		// TODO: optimize
+		static string GetScriptStringLiteral (string value) {
+			string s = value;
+			s = s.Replace ("\\", "\\\\");
+			s = s.Replace ("\"", "\\\"");
+			return "\"" + s + "\"";
+		}
 	}
 }

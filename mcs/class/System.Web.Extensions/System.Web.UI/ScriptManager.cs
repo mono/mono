@@ -39,6 +39,7 @@ using System.Reflection;
 using System.Web.Configuration;
 using System.Web.UI.HtmlControls;
 using System.IO;
+using System.Globalization;
 
 namespace System.Web.UI
 {
@@ -454,7 +455,7 @@ namespace System.Web.UI
 					assembly = typeof (ScriptManager).Assembly;
 				else
 					assembly = Assembly.Load (script.Assembly);
-				url = ScriptResourceHandler.GetResourceUrl (assembly, script.Name);
+				url = ScriptResourceHandler.GetResourceUrl (assembly, script.Name, script.NotifyScriptLoaded);
 			}
 			else {
 				throw new InvalidOperationException ("Name and Path cannot both be empty.");

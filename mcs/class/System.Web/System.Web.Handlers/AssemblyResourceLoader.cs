@@ -31,6 +31,8 @@
 using System.Web.UI;
 using System.Reflection;
 using System.IO;
+using System.Resources;
+using System.Collections;
 
 namespace System.Web.Handlers {
 #if SYSTEM_WEB_EXTENSIONS
@@ -53,14 +55,18 @@ namespace System.Web.Handlers {
 #endif
 		internal static string GetResourceUrl (Type type, string resourceName)
 		{
-			return GetResourceUrl (type.Assembly, resourceName);
+			return GetResourceUrl (type.Assembly, resourceName, false);
 		}
 
-		internal static string GetResourceUrl (Assembly assembly, string resourceName)
+		internal static string GetResourceUrl (Assembly assembly, string resourceName, bool notifyScriptLoaded)
 		{
 			string aname = assembly == typeof (AssemblyResourceLoader).Assembly ? "s" : HttpUtility.UrlEncode (assembly.GetName ().FullName);
 			string apath = assembly.Location;
 			string atime = String.Empty;
+			string extra = String.Empty;
+#if SYSTEM_WEB_EXTENSIONS
+			extra = String.Format ("{0}n={1}", QueryParamSeparator, notifyScriptLoaded ? "t" : "f");
+#endif
 
 #if TARGET_JVM
 			atime = String.Format ("{0}t={1}", QueryParamSeparator, type.GetHashCode ());
@@ -68,15 +74,13 @@ namespace System.Web.Handlers {
 			if (apath != String.Empty)
 				atime = String.Format ("{0}t={1}", QueryParamSeparator, File.GetLastWriteTimeUtc (apath).Ticks);
 #endif
-			string href = String.Format ("{0}?a={2}{1}r={3}{4}", HandlerFileName,
+			string href = String.Format ("{0}?a={2}{1}r={3}{4}{5}", HandlerFileName,
 						     QueryParamSeparator, aname,
-						     HttpUtility.UrlEncode (resourceName), atime);
-			
-			if (HttpContext.Current != null && HttpContext.Current.Request != null) {
-				string appPath = HttpContext.Current.Request.ApplicationPath;
-				if (!appPath.EndsWith ("/"))
-					appPath += "/";
+							 HttpUtility.UrlEncode (resourceName), atime, extra);
 
+			HttpContext ctx = HttpContext.Current;
+			if (ctx != null && ctx.Request != null) {
+				string appPath = VirtualPathUtility.AppendTrailingSlash (ctx.Request.ApplicationPath);
 				href = appPath + href;
 			}
 			
@@ -94,9 +98,11 @@ namespace System.Web.Handlers {
 			string resourceName = context.Request.QueryString ["r"];
 			string asmName = context.Request.QueryString ["a"];
 			Assembly assembly;
-			
-			if (asmName == null || asmName == "s") assembly = GetType().Assembly;
-			else assembly = Assembly.Load (asmName);
+
+			if (asmName == null || asmName == "s")
+				assembly = typeof (AssemblyResourceLoader).Assembly;
+			else
+				assembly = Assembly.Load (asmName);
 			
 			bool found = false;
 			foreach (WebResourceAttribute wra in assembly.GetCustomAttributes (typeof (WebResourceAttribute), false)) {
@@ -130,6 +136,29 @@ namespace System.Web.Handlers {
 				c = s.Read (buf, 0, 1024);
 				output.Write (buf, 0, c);
 			} while (c > 0);
+#if SYSTEM_WEB_EXTENSIONS
+			TextWriter writer = context.Response.Output;
+			foreach (ScriptResourceAttribute sra in assembly.GetCustomAttributes (typeof (ScriptResourceAttribute), false)) {
+				if (sra.ScriptName == resourceName) {
+					writer.WriteLine ();
+					writer.WriteLine ("{0}={{", sra.TypeName);
+					ResourceManager res=new ResourceManager(sra.ScriptResourceName, assembly);
+					foreach (DictionaryEntry entry in res.GetResourceSet (Threading.Thread.CurrentThread.CurrentUICulture, true, true)) {
+						string value = entry.Value as string;
+						if (value != null)
+							writer.WriteLine ("{0}:{1},", GetScriptStringLiteral ((string) entry.Key), GetScriptStringLiteral (value));
+					}
+					writer.WriteLine ("};");
+					break;
+				}
+			}
+
+			bool notifyScriptLoaded = context.Request.QueryString ["n"] == "t";
+			if (notifyScriptLoaded) {
+				writer.WriteLine ();
+				writer.WriteLine ("if(typeof(Sys)!=='undefined')Sys.Application.notifyScriptLoaded();");
+			}
+#endif
 		}
 		
 #if !SYSTEM_WEB_EXTENSIONS
