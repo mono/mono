@@ -1,3 +1,8 @@
+2007-06-19  Rodrigo Kumpera  <kumpera@gmail.com>
+
+	*make_tests.sh: new ldfld tests (they check everything but visibility)
+	*make_field_test.sh: generated the new field tests
+
 2007-06-14  Rodrigo Kumpera  <kumpera@gmail.com>
 
 	* invalid_dup_maxstack.il: the test wasn't generating the failing condition
