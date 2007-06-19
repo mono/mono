@@ -318,9 +318,15 @@ namespace System.Web.UI
 		protected virtual bool LoadPostData (string postDataKey, NameValueCollection postCollection)
 		{
 			_isInAsyncPostBack = true;
-			_asyncPostBackSourceElementID = postCollection [postDataKey];
-			if (!String.IsNullOrEmpty (_asyncPostBackSourceElementID))
-				_asyncPostBackSourceElementID = _asyncPostBackSourceElementID.Substring (postDataKey.Length + 1);
+			string arg = postCollection [postDataKey];
+			if (!String.IsNullOrEmpty (arg)) {
+				string [] args = arg.Split ('|');
+				Control c = Page.FindControl (args [0]);
+				UpdatePanel up = c as UpdatePanel;
+				if (up != null && up.ChildrenAsTriggers)
+					up.Update ();
+				_asyncPostBackSourceElementID = args[1];
+			}
 			return false;
 		}
 
@@ -558,19 +564,19 @@ namespace System.Web.UI
 			writer.WriteLine ("<script type=\"text/javascript\">");
 			writer.WriteLine ("//<![CDATA[");
 			writer.WriteLine ("Sys.WebForms.PageRequestManager._initialize('{0}', document.getElementById('{1}'));", UniqueID, Page.Form.ClientID);
-			writer.WriteLine ("Sys.WebForms.PageRequestManager.getInstance()._updateControls([{0}], [{1}], [{2}], {3});", FormatUpdatePanelIDs (_updatePanels), FormatListIDs (_asyncPostBackControls), FormatListIDs (_postBackControls), AsyncPostBackTimeout);
+			writer.WriteLine ("Sys.WebForms.PageRequestManager.getInstance()._updateControls([{0}], [{1}], [{2}], {3});", FormatUpdatePanelIDs (_updatePanels, true), FormatListIDs (_asyncPostBackControls, true), FormatListIDs (_postBackControls, true), AsyncPostBackTimeout);
 			writer.WriteLine ("//]]");
 			writer.WriteLine ("</script>");
 			base.Render (writer);
 		}
 
-		static string FormatUpdatePanelIDs (List<UpdatePanel> list) {
+		static string FormatUpdatePanelIDs (List<UpdatePanel> list, bool useSingleQuote) {
 			if (list == null || list.Count == 0)
 				return null;
 
 			StringBuilder sb = new StringBuilder ();
 			for (int i = 0; i < list.Count; i++) {
-				sb.AppendFormat ("'{0}{1}',", list [i].ChildrenAsTriggers ? "t" : "f", list [i].UniqueID);
+				sb.AppendFormat ("{0}{1}{2}{0},", useSingleQuote ? "'" : String.Empty, list [i].ChildrenAsTriggers ? "t" : "f", list [i].UniqueID);
 			}
 			if (sb.Length > 0)
 				sb.Length--;
@@ -578,14 +584,14 @@ namespace System.Web.UI
 			return sb.ToString ();
 		}
 
-		static string FormatListIDs(List<Control> list)
+		static string FormatListIDs (List<Control> list, bool useSingleQuote)
 		{
 			if (list == null || list.Count == 0)
 				return null;
 
 			StringBuilder sb = new StringBuilder ();
 			for (int i = 0; i < list.Count; i++) {
-				sb.AppendFormat ("'{0}',", list [i].UniqueID);
+				sb.AppendFormat ("{0}{1}{0},", useSingleQuote ? "'" : String.Empty, list [i].UniqueID);
 			}
 			if (sb.Length > 0)
 				sb.Length--;
@@ -622,7 +628,7 @@ namespace System.Web.UI
 		}
 
 		static void WriteCallbackOutput (TextWriter output, string type, string name, string value) {
-			output.Write ("{0}|{1}|{2}|{3}|", value.Length, type, name, value);
+			output.Write ("{0}|{1}|{2}|{3}|", value == null ? 0 : value.Length, type, name, value);
 		}
 
 		void RenderPageCallback (HtmlTextWriter output, Control container) {
@@ -633,7 +639,11 @@ namespace System.Web.UI
 			page.Form.RenderControl (parser);
 
 			parser.WriteOutput (output);
-			WriteCallbackOutput (output, asyncPostBackControlIDs, null, AsyncPostBackSourceElementID);  
+			WriteCallbackOutput (output, asyncPostBackControlIDs, null, FormatListIDs (_asyncPostBackControls, false));
+			WriteCallbackOutput (output, postBackControlIDs, null, FormatListIDs (_postBackControls, false));
+			WriteCallbackOutput (output, updatePanelIDs, null, FormatUpdatePanelIDs (_updatePanels, false));
+			WriteCallbackOutput (output, asyncPostBackTimeout, null, AsyncPostBackTimeout.ToString());
+			WriteCallbackOutput (output, pageTitle, null, Page.Title);  
 		}
 
 		void RenderFormCallback (HtmlTextWriter output, Control container) {
@@ -643,12 +653,14 @@ namespace System.Web.UI
 				HtmlTextWriter w = new HtmlTextWriter (new StringWriter (sb));
 				for (int i = 0; i < _updatePanels.Count; i++) {
 					UpdatePanel panel = _updatePanels [i];
-					if (panel.RequiresUpdate) {
+					if (panel.Visible) {
 						panel.RenderChildrenInternal (w);
 						w.Flush ();
-						string panelOutput = sb.ToString ();
+						if (panel.RequiresUpdate) {
+							string panelOutput = sb.ToString ();
+							WriteCallbackOutput (output, updatePanel, panel.ClientID, panelOutput);
+						}
 						sb.Length = 0;
-						WriteCallbackOutput (output, updatePanel, panel.ClientID, panelOutput);
 					}
 				}
 			}
