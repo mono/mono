@@ -1,3 +1,8 @@
+2007-06-19  Raja R Harinath  <rharinath@novell.com>
+
+	* metadata.c (ginst_in_image): Avoid mono_class_from_mono_type
+	on a generic instantiated type.
+
 2007-06-18  Rodrigo Kumpera <kumpera@gmail.com>
 
 	*verify.c: produce meanfull error messages on verification error
