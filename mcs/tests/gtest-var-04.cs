@@ -7,10 +7,7 @@ public class Test
 {
 	static int Main ()
 	{
-		List<string> strings = new List<string> ();
-		strings.Add ("Foo");
-		strings.Add ("Bar");
-		strings.Add ("Baz");
+		string[] strings = new string[] { "Foo", "Bar", "Baz" };
 		
 		foreach (var v in strings)
 			if (v.GetType () != typeof (string))
