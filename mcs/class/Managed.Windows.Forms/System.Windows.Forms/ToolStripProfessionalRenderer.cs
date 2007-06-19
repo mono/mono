@@ -413,6 +413,11 @@ namespace System.Windows.Forms
 		{
 			base.OnRenderToolStripBackground (e);
 
+			if (e.ToolStrip is ToolStripDropDown) {
+				e.Graphics.Clear (this.ColorTable.ToolStripDropDownBackground);
+				return;
+			}
+			
 			if (e.ToolStrip is MenuStrip || e.ToolStrip is StatusStrip) {
 				using (LinearGradientBrush b = new LinearGradientBrush (e.AffectedBounds, this.ColorTable.MenuStripGradientBegin, this.ColorTable.MenuStripGradientEnd, e.ToolStrip.Orientation == Orientation.Horizontal ? LinearGradientMode.Horizontal : LinearGradientMode.Vertical))
 					e.Graphics.FillRectangle (b, e.AffectedBounds);

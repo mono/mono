@@ -1,3 +1,8 @@
+2007-06-19  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStripProfessionalRenderer.cs: Put back clearing a ToolStripDropDown's
+	background which got erased in my changes yesterday.
+
 2007-06-19  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListViewItem.cs: Actually set bounds for subitems in Details view
