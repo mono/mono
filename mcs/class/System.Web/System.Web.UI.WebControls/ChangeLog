@@ -1,5 +1,9 @@
 2007-06-20  Marek Habersack  <mhabersack@novell.com>
 
+	* WebControl.cs: if savedState is a Triplet, take the actual state
+	data from savedState.First. Also make sure that the data is a
+	Pair. Fixes bug #78533.
+
 	* DataSourceCacheManager.cs: use HttpContext.Current.InternalCache
 	to keep private entries.
 	* XmlDataSource.cs: as above
