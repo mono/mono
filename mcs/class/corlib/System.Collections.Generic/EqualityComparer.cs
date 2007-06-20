@@ -37,7 +37,7 @@ namespace System.Collections.Generic {
 		static EqualityComparer ()
 		{
 			if (typeof (IEquatable <T>).IsAssignableFrom (typeof (T)))
-				_default = (EqualityComparer <T>) Activator.CreateInstance (typeof (IEquatableOfTEqualityComparer <>).MakeGenericType (typeof (T)));
+				_default = (EqualityComparer <T>) Activator.CreateInstance (typeof (GenericEqualityComparer <>).MakeGenericType (typeof (T)));
 			else
 				_default = new DefaultComparer ();
 		}
@@ -83,7 +83,7 @@ namespace System.Collections.Generic {
 	}
 	
 	[Serializable]
-	class IEquatableOfTEqualityComparer <T> : EqualityComparer <T> where T : IEquatable <T> {
+	class GenericEqualityComparer <T> : EqualityComparer <T> where T : IEquatable <T> {
 
 		public override int GetHashCode (T obj)
 		{

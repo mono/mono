@@ -1,3 +1,14 @@
+2007-06-20  Juraj Skripsky <js@hotfeet.ch>
+
+   * Dictionary.cs: Optimize and add implementation notes. Use a "mini-heap"
+   to store the linked lists instead of the regular heap. Split arrays of
+   structs into separate arrays to make the GC's life simpler (see bug 81879
+   for details). Make class serialization compatible with MS.NET.
+
+   * EqualityComparer.cs: Rename IEquatableOfTEqualityComparer<T> to
+   GenericEqualityComparer<T> to fix binary serialization compatibility
+   with MS.
+
 2006-04-16  Jonathan Chambers  <joncham@gmail.com>
 
 	* List.cs: Clear entry in RemoveAt after removing item. 
