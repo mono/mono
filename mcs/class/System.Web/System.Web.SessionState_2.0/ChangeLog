@@ -1,3 +1,10 @@
+2007-06-20  Marek Habersack  <mhabersack@novell.com>
+
+	* SessionStateModule.cs: if session is abandoned and the handler
+	supports expiration, disable the handler's session expiration
+	callback and call SessionStateUtility.RaiseSessionEnd
+	directly. Fixes bug #81853.
+
 2007-04-30  Marek Habersack  <mhabersack@novell.com>
 
 	* SessionInProcHandler.cs: do not end session when setting and
