@@ -134,8 +134,11 @@ namespace Mono.CSharp {
 			if (Left == null) {
 				if (TypeArguments != null)
 					return new SimpleName (Basename, TypeArguments, Location);
-				else
-					return new SimpleName (Name, Location);
+				
+				if (RootContext.Version == LanguageVersion.LINQ && Name == "var")
+					return new VarExpr (Name, Location);
+				
+				return new SimpleName (Name, Location);
 			}
 
 			if (is_double_colon) {

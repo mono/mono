@@ -40,7 +40,6 @@ namespace Mono.CSharp
 		bool handle_assembly = false;
 		bool handle_constraints = false;
 		bool handle_typeof = false;
-		bool handle_var = false;
 		Location current_location;
 		Location current_comment_location = Location.Null;
 		ArrayList escaped_identifiers = new ArrayList ();
@@ -180,16 +179,6 @@ namespace Mono.CSharp
 			}
 		}
 		
-		public bool VarParsing {
-			get {
-				return handle_var;
-			}
-			
-			set {
-				handle_var = value;
-			}
-		}
-
 		public XmlCommentState doc_state {
 			get { return xml_doc_state; }
 			set {
@@ -428,7 +417,6 @@ namespace Mono.CSharp
 			AddKeyword ("partial", Token.PARTIAL);
 #if GMCS_SOURCE
 			AddKeyword ("where", Token.WHERE);
-			AddKeyword ("var", Token.VAR);
 #endif
 		}
 
@@ -505,8 +493,6 @@ namespace Mono.CSharp
 			}
 
 			if (!handle_constraints && res == Token.WHERE)
-				return -1;
-			if (res == Token.VAR && (RootContext.Version < LanguageVersion.LINQ || !handle_var || peek_token() != Token.IDENTIFIER))
 				return -1;
 #endif
 			return res;

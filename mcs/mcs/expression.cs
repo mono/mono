@@ -3659,10 +3659,8 @@ namespace Mono.CSharp {
 			if (type == null) {
 				VarExpr ve = local_info.Type as VarExpr;
 				if (ve != null) {
-					if (ve.Type != null)
-						throw new InternalErrorException ("Could not redefine implicitly typed local variable");
-
-					type = local_info.VariableType = right_side.Type;
+					ve.DoResolveLValue (ec, right_side);
+					type = local_info.VariableType = ve.Type;
 				}
 			}
 						
@@ -5696,6 +5694,11 @@ namespace Mono.CSharp {
 		//
 		bool LookupType (EmitContext ec)
 		{
+			if (requested_base_type == null) {
+				Report.Error (622, loc, "Can only use array initializer expressions to assign to array types. Try using a new expression instead");
+				return false;
+			}
+			
 			StringBuilder array_qualifier = new StringBuilder (rank);
 
 			//
@@ -6198,6 +6201,14 @@ namespace Mono.CSharp {
 			}
 		}
 	}
+	
+	public class ImplicitlyTypedArrayCreation : ArrayCreation
+	{
+		public ImplicitlyTypedArrayCreation (string rank, ArrayList initializers, Location loc)
+			: base (null, rank, initializers, loc)
+		{
+		}
+	}	
 	
 	public sealed class CompilerGeneratedThis : This
 	{

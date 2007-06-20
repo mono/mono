@@ -229,6 +229,15 @@ namespace Mono.CSharp {
 		}
 
 		//
+		// C# 3.0 introduced contextual keywords (var) which behaves like a type if type with
+		// same name exists or as a keyword when no type was found
+		// 
+		public virtual TypeExpr ResolveAsContextualType (IResolveContext rc, bool silent)
+		{
+			return ResolveAsTypeTerminal (rc, silent);
+		}		
+		
+		//
 		// This is used to resolve the expression as a type, a null
 		// value will be returned if the expression is not a type
 		// reference
@@ -4975,22 +4984,65 @@ namespace Mono.CSharp {
 			EmitLoadAddress (ec);
 		}
 	}
-	
-	public sealed class VarExpr : Expression
+
+	/// 
+	/// Handles `var' contextual keyword; var becomes a keyword only
+	/// if no type called var exists in a variable scope
+	/// 
+	public class VarExpr : SimpleName
 	{
-		public VarExpr (Location loc)
+		// Used for error reporting only
+		ArrayList initializer;
+
+		public VarExpr (string name, Location loc)
+			: base (name, loc)
 		{
-			this.loc = loc;
 		}
-		
-		public override Expression DoResolve (EmitContext ec)
+
+		public ArrayList VariableInitializer {
+			set {
+				this.initializer = value;
+			}
+		}
+
+		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
 		{
+			if (type != null)
+				throw new InternalErrorException ("An implicitly typed local variable could not be redefined");
+			
+			type = right_side.Type;
+			if (type == TypeManager.null_type || type == TypeManager.void_type) {
+				Report.Error (815, loc, "An implicitly typed local variable declaration cannot be initialized with `{0}'",
+				              TypeManager.CSharpName (type));
+				return null;
+			}
+			
+			return this;
+		}
+
+		public override TypeExpr ResolveAsContextualType (IResolveContext rc, bool silent)
+		{
+			TypeExpr te = base.ResolveAsContextualType (rc, true);
+			if (te != null)
+				return te;
+
+			if (initializer == null)
+				return null;
+			
+			// TODO: refactor, the error is reported too many times
+	  		if (initializer.Count > 1) {
+	  			Location loc = ((Mono.CSharp.CSharpParser.VariableDeclaration)initializer [1]).Location;
+	  			Report.Error (819, loc, "An implicitly typed local variable declaration cannot include multiple declarators");
+				return null;
+	  		}
+			  	
+			Expression variable_initializer = ((Mono.CSharp.CSharpParser.VariableDeclaration)initializer [0]).expression_or_array_initializer;
+			if (variable_initializer == null) {
+				Report.Error (818, loc, "An implicitly typed local variable declarator must include an initializer");
+				return null;
+			}
+			
 			return null;
 		}
-		
-		public override void Emit (EmitContext ec)
-		{
-		}
 	}
-	
 }	

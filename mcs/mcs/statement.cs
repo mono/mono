@@ -1243,7 +1243,7 @@ namespace Mono.CSharp {
 		public bool Resolve (EmitContext ec)
 		{
 			if (VariableType == null) {
-				TypeExpr texpr = Type.ResolveAsTypeTerminal (ec, false);
+				TypeExpr texpr = Type.ResolveAsContextualType (ec, false);
 				if (texpr == null)
 					return false;
 				

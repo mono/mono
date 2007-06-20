@@ -1,3 +1,19 @@
+2007-06-20  Marek Safar  <marek.safar@gmail.com>
+
+	* cs-tokenizer.cs: Removed var related stuff.
+	
+	* ecore.cs (Expression.ResolveAsContextualType): Introduced new method.
+	(VarExpr): Changed to derive from SimpleName. VarExpr now behaves as
+	a type and a keyword at same time.
+	
+	* decl.cs (MembeName.GetTypeExpression): Create VarExpr when type name
+	matches to "var".
+	
+	* expression.cs (ImplicitlyTypedArrayCreation): New empty class for
+	implicitly typed arrays, more changes will follow.
+	
+	* statement.cs (LocalInfo.Resolve): Resolve type as contextual type.
+	
 2007-06-19  Marek Safar  <marek.safar@gmail.com>
 
 	* ecore.cs (VarExpr): Removed Handled field.
