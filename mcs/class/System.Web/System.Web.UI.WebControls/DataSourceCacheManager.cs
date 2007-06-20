@@ -104,10 +104,9 @@ namespace System.Web.UI.WebControls
 
 		static Cache DataCache
 		{
-			get
-			{
+			get {
 				if (HttpContext.Current != null)
-					return HttpContext.Current.Cache;
+					return HttpContext.Current.InternalCache;
 
 				throw new InvalidOperationException ("HttpContext.Current is null.");
 			}

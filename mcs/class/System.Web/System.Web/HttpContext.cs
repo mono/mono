@@ -137,6 +137,12 @@ namespace System.Web {
 			}
 		}
 
+		internal Cache InternalCache {
+			get {
+				return HttpRuntime.InternalCache;
+			}
+		}
+		
 		//
 		// The "Current" property is set just after we have constructed it with 
 		// the 'HttpContext (HttpWorkerRequest)' constructor.

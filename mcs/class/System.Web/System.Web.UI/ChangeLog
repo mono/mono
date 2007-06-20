@@ -1,3 +1,8 @@
+2007-06-20  Marek Habersack  <mhabersack@novell.com>
+
+	* BasePartialCachingControl.cs: use HttpRuntime.InternalCache to
+	keep the private entries.
+
 2007-06-18 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* Control.cs: revised the changes from r79982. 	

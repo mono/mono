@@ -58,7 +58,7 @@ namespace System.Web.SessionState
 			if (session == null || session.IsReadOnly || !session._abandoned)
 				return;
 
-			HttpRuntime.Cache.Remove ("@@@InProc@" + session.SessionID);
+			HttpRuntime.InternalCache.Remove ("@@@InProc@" + session.SessionID);
 		}
 
 		public HttpSessionState UpdateContext (HttpContext context, SessionStateModule module,
@@ -67,7 +67,7 @@ namespace System.Web.SessionState
 			if (!required)
 				return null;
 
-			Cache cache = HttpRuntime.Cache;
+			Cache cache = HttpRuntime.InternalCache;
 			HttpSessionState state = null;
 			string id = SessionId.Lookup (context.Request, config.CookieLess);
 			
@@ -89,8 +89,8 @@ namespace System.Web.SessionState
 						read_only); //readonly
 
 			TimeSpan timeout = new TimeSpan (0, config.Timeout, 0);
-			cache.InsertPrivate ("@@@InProc@" + sessionID, state, null, Cache.NoAbsoluteExpiration,
-					timeout, CacheItemPriority.AboveNormal, removedCB);
+			cache.Insert ("@@@InProc@" + sessionID, state, null, Cache.NoAbsoluteExpiration,
+				      timeout, CacheItemPriority.AboveNormal, removedCB);
 
 			isNew = true;
 			return state;

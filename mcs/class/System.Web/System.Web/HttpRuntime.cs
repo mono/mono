@@ -105,6 +105,7 @@ namespace System.Web {
 		static TraceManager trace_manager;
 		static TimeoutManager timeout_manager;
 		static Cache cache;
+		static Cache internalCache;
 		static WaitCallback do_RealProcessRequest;
 		static Exception initialException;
 		static bool firstRun;
@@ -139,6 +140,7 @@ namespace System.Web {
 
 			timeout_manager = new TimeoutManager ();
 			cache = new Cache ();
+			internalCache = new Cache ();
 			do_RealProcessRequest = new WaitCallback (RealProcessRequest);
 		}
 
@@ -220,6 +222,12 @@ namespace System.Web {
 			}
 		}
 
+		internal static Cache InternalCache {
+			get {
+				return internalCache;
+			}
+		}
+		
 		public static string ClrInstallDirectory {
 			get {
 				string dirname = Path.GetDirectoryName (typeof (Object).Assembly.Location);
@@ -375,8 +383,6 @@ namespace System.Web {
 		static void ShutdownAppDomain (object args)
 		{
 			queue_manager.Dispose ();
-			// This will call Session_End if needed.
-			Cache.InvokePrivateCallbacks ();
 			// Kill our application.
 			HttpApplicationFactory.Dispose ();
 			ThreadPool.QueueUserWorkItem (new WaitCallback (DoUnload), null);

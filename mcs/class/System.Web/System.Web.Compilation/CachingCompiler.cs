@@ -51,24 +51,24 @@ namespace System.Web.Compilation
 		public static void InsertTypeFileDep (Type type, string filename)
 		{
 			CacheDependency dep = new CacheDependency (filename);
-			HttpRuntime.Cache.InsertPrivate (cacheTypePrefix + filename, type, dep);
+			HttpRuntime.InternalCache.Insert (cacheTypePrefix + filename, type, dep);
 		}
 
  		public static void InsertType (Type type, string filename)
  		{
  			string [] cacheKeys = new string [] { cachePrefix + filename };
 			CacheDependency dep = new CacheDependency (null, cacheKeys);
-			HttpRuntime.Cache.InsertPrivate (cacheTypePrefix + filename, type, dep);
+			HttpRuntime.InternalCache.Insert (cacheTypePrefix + filename, type, dep);
 		}
 
 		public static Type GetTypeFromCache (string filename)
 		{
-			return (Type) HttpRuntime.Cache [cacheTypePrefix + filename];
+			return (Type) HttpRuntime.InternalCache [cacheTypePrefix + filename];
 		}
 
 		public static CompilerResults Compile (BaseCompiler compiler)
 		{
-			Cache cache = HttpRuntime.Cache;
+			Cache cache = HttpRuntime.InternalCache;
 			string key = cachePrefix + compiler.Parser.InputFile;
 			CompilerResults results = (CompilerResults) cache [key];
 
@@ -96,7 +96,7 @@ namespace System.Web.Compilation
 #endif
 				results = comp.CompileAssemblyFromDom (compiler.CompilerParameters, compiler.Unit);
 				string [] deps = (string []) compiler.Parser.Dependencies.ToArray (typeof (string));
-				cache.InsertPrivate (key, results, new CacheDependency (deps));
+				cache.Insert (key, results, new CacheDependency (deps));
 			} finally {
 				Monitor.Exit (ticket);
 				if (acquired)
@@ -109,7 +109,7 @@ namespace System.Web.Compilation
 		public static CompilerResults Compile (WebServiceCompiler compiler)
 		{
 			string key = cachePrefix + compiler.Parser.PhysicalPath;
-			Cache cache = HttpRuntime.Cache;
+			Cache cache = HttpRuntime.InternalCache;
 			CompilerResults results = (CompilerResults) cache [key];
 			if (results != null)
 				return results;
@@ -131,7 +131,7 @@ namespace System.Web.Compilation
 #endif
 				results = compiler.Compiler.CompileAssemblyFromFile (options, compiler.InputFile);
 				string [] deps = (string []) parser.Dependencies.ToArray (typeof (string));
-				cache.InsertPrivate (key, results, new CacheDependency (deps));
+				cache.Insert (key, results, new CacheDependency (deps));
 			} finally {
 				Monitor.Exit (ticket);
 				if (acquired)
@@ -158,7 +158,7 @@ namespace System.Web.Compilation
 		public static CompilerResults Compile (string language, string key, string file,
 							ArrayList assemblies)
 		{
-			Cache cache = HttpRuntime.Cache;
+			Cache cache = HttpRuntime.InternalCache;
 			CompilerResults results = (CompilerResults) cache [cachePrefix + key];
 			if (results != null)
 				return results;
@@ -203,7 +203,7 @@ namespace System.Web.Compilation
 				}
 
 				string [] deps = (string []) realdeps.ToArray (typeof (string));
-				cache.InsertPrivate (cachePrefix + key, results, new CacheDependency (deps));
+				cache.Insert (cachePrefix + key, results, new CacheDependency (deps));
 			} finally {
 				Monitor.Exit (ticket);
 				if (acquired)

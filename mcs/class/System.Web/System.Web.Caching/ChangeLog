@@ -1,3 +1,14 @@
+2007-06-20  Marek Habersack  <mhabersack@novell.com>
+
+	* OutputCacheModule.cs: use Context.InternalCache.
+
+	* Cache.cs: 2.0 profile uses generic containers to keep the cache
+	entries.
+	Gotten rid of the InsertPrivate and InsertInternal methods. The
+	latter was moved to one of the Insert overloads.
+	Private entries are no longer handled specifically, because the
+	internal cache is now kept in a separate object.
+
 2007-05-03 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* AggregateCacheDependency.cs:

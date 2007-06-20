@@ -148,7 +148,7 @@ namespace System.Web.UI.WebControls {
 			get
 			{
 				if (HttpContext.Current != null)
-					return HttpContext.Current.Cache;
+					return HttpContext.Current.InternalCache;
 
 				return null;
 			}

@@ -115,7 +115,7 @@ namespace System.Web.UI
 #endif
 		override void Render (HtmlTextWriter output)
 		{
-			Cache cache = HttpRuntime.Cache;
+			Cache cache = HttpRuntime.InternalCache;
 			string key = CreateKey ();
 			string data = cache [key] as string;
 
@@ -137,10 +137,10 @@ namespace System.Web.UI
 				output.Write (text);
 			}
 
-			context.Cache.InsertPrivate (key, text, dependency,
-						DateTime.Now.AddSeconds (duration),
-						Cache.NoSlidingExpiration,
-						CacheItemPriority.Normal, null);
+			context.InternalCache.Insert (key, text, dependency,
+						      DateTime.Now.AddSeconds (duration),
+						      Cache.NoSlidingExpiration,
+						      CacheItemPriority.Normal, null);
 		}
 
 #if NET_2_0

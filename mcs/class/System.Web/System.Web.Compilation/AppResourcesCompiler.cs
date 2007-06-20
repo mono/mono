@@ -219,7 +219,7 @@ namespace System.Web.Compilation
 		{
 			Dictionary <string, Assembly> cache;
 
-			cache = HttpRuntime.Cache[cachePrefix] as Dictionary <string, Assembly>;
+			cache = HttpRuntime.InternalCache[cachePrefix] as Dictionary <string, Assembly>;
 			if (cache == null || !cache.ContainsKey (path))
 				return null;
 			return cache [path];
@@ -227,7 +227,7 @@ namespace System.Web.Compilation
 		
 		void AddAssemblyToCache (string path, Assembly asm)
 		{
-			Cache runtimeCache = HttpRuntime.Cache;
+			Cache runtimeCache = HttpRuntime.InternalCache;
 			Dictionary <string, Assembly> cache;
 			
 			cache = runtimeCache[cachePrefix] as Dictionary <string, Assembly>;

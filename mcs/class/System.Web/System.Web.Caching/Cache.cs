@@ -30,6 +30,9 @@
 using System.Threading;
 using System.Collections;
 using System.Security.Permissions;
+#if NET_2_0
+using System.Collections.Generic;
+#endif
 
 namespace System.Web.Caching
 {
@@ -37,7 +40,11 @@ namespace System.Web.Caching
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class Cache: IEnumerable
 	{
+#if NET_2_0
+		Dictionary <string, CacheItem> cache;
+#else
 		Hashtable cache;
+#endif
 		Timer timer;
 		bool needsTimer;
 		
@@ -46,7 +53,11 @@ namespace System.Web.Caching
 		
 		public Cache ()
 		{
+#if NET_2_0
+			cache = new Dictionary <string, CacheItem> ();
+#else
 			cache = new Hashtable ();
+#endif
 		}
 		
 		public int Count {
@@ -64,7 +75,13 @@ namespace System.Web.Caching
 				throw new ArgumentNullException ("key");
 
 			lock (cache) {
-				CacheItem it = (CacheItem) cache [key];
+				CacheItem it;
+
+#if NET_2_0
+				cache.TryGetValue (key, out it);
+#else
+				it = (CacheItem) cache [key];
+#endif
 				if (it != null)
 					return it.Value;
 				Insert (key, value, dependencies, absoluteExpiration, slidingExpiration, priority, onRemoveCallback);
@@ -75,10 +92,16 @@ namespace System.Web.Caching
 		public object Get (string key)
 		{
 			lock (cache) {
-				CacheItem it = (CacheItem) cache [key];
+				CacheItem it;
+#if NET_2_0
+				if (!cache.TryGetValue (key, out it))
+					return null;
+#else
+				it = (CacheItem) cache [key];
 				if (it == null)
 					return null;
-
+#endif
+				
 				if (it.Dependency != null && it.Dependency.HasChanged) {
 					Remove (it.Key, CacheItemRemovedReason.DependencyChanged);
 					return null;
@@ -112,21 +135,6 @@ namespace System.Web.Caching
 		
 		public void Insert (string key, object value, CacheDependency dependencies, DateTime absoluteExpiration, TimeSpan slidingExpiration, CacheItemPriority priority, CacheItemRemovedCallback onRemoveCallback)
 		{
-			InsertInternal (key, value, dependencies, absoluteExpiration, slidingExpiration, priority, onRemoveCallback, false);
-		}
-		
-		internal void InsertPrivate (string key, object value, CacheDependency dependencies)
-		{
-			InsertInternal (key, value, dependencies, NoAbsoluteExpiration, NoSlidingExpiration, CacheItemPriority.Normal, null, true);
-		}
-		
-		internal void InsertPrivate (string key, object value, CacheDependency dependencies, DateTime absoluteExpiration, TimeSpan slidingExpiration, CacheItemPriority priority, CacheItemRemovedCallback onRemoveCallback)
-		{
-			InsertInternal (key, value, dependencies, absoluteExpiration, slidingExpiration, priority, onRemoveCallback, true);
-		}
-		
-		void InsertInternal (string key, object value, CacheDependency dependency, DateTime absoluteExpiration, TimeSpan slidingExpiration, CacheItemPriority priority, CacheItemRemovedCallback onRemoveCallback, bool isprivate)
-		{
 			if (key == null)
 				throw new ArgumentNullException ("key");
 			if (value == null)
@@ -139,12 +147,11 @@ namespace System.Web.Caching
 			CacheItem ci = new CacheItem ();
 			ci.Value = value;
 			ci.Key = key;
-			ci.Private = isprivate;
 			
-			if (dependency != null) {
-				ci.Dependency = dependency;
-				dependency.DependencyChanged += new EventHandler (OnDependencyChanged);
-				dependency.SetCache (this);
+			if (dependencies != null) {
+				ci.Dependency = dependencies;
+				dependencies.DependencyChanged += new EventHandler (OnDependencyChanged);
+				dependencies.SetCache (this);
 			}
 			ci.SlidingExpiration = slidingExpiration;
 			if (slidingExpiration != NoSlidingExpiration)
@@ -173,7 +180,14 @@ namespace System.Web.Caching
 		object Remove (string key, CacheItemRemovedReason reason)
 		{
 			lock (cache) {
-				CacheItem it = (CacheItem) cache [key];
+				CacheItem it;
+
+#if NET_2_0
+				cache.TryGetValue (key, out it);
+#else
+				it = (CacheItem) cache [key];
+#endif
+				
 				if (it != null) {
 					if (it.Dependency != null) {
 #if NET_2_0
@@ -191,31 +205,8 @@ namespace System.Web.Caching
 						}
 					}
 					return it.Value;
-				}
-				else
+				} else
 					return null;
-			}
-		}
-
-		// Used when shutting down the application so that
-		// session_end events are sent for all sessions.
-		internal void InvokePrivateCallbacks ()
-		{
-			CacheItemRemovedReason reason = CacheItemRemovedReason.Removed;
-			lock (cache) {
-				foreach (string key in cache.Keys) {
-					CacheItem item = (CacheItem) cache [key];
-					if (item == null || false == item.Private)
-						continue;
-
-					if (item.OnRemoveCallback != null) {
-						try {
-							item.OnRemoveCallback (key, item.Value, reason);
-						} catch {
-							//TODO: anything to be done here?
-						}
-					}
-				}
 			}
 		}
 
@@ -224,8 +215,7 @@ namespace System.Web.Caching
 			ArrayList list = new ArrayList ();
 			lock (cache) {
 				foreach (CacheItem it in cache.Values)
-					if (!it.Private)
-						list.Add (it);
+					list.Add (it);
 			}
 			return new CacheItemEnumerator (list);
 		}
@@ -277,7 +267,12 @@ namespace System.Web.Caching
 		internal DateTime GetKeyLastChange (string key)
 		{
 			lock (cache) {
-				CacheItem it = (CacheItem) cache [key];
+				CacheItem it;
+#if NET_2_0
+				cache.TryGetValue (key, out it);
+#else
+				it = (CacheItem) cache [key];
+#endif
 				if (it == null) return DateTime.MaxValue;
 				return it.LastChange;
 			}
@@ -294,7 +289,6 @@ namespace System.Web.Caching
 		public CacheItemPriority Priority;
 		public CacheItemRemovedCallback OnRemoveCallback;
 		public DateTime LastChange;
-		public bool Private;
 	}
 		
 	class CacheItemEnumerator: IDictionaryEnumerator

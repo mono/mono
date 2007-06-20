@@ -1,3 +1,10 @@
+2007-06-20  Marek Habersack  <mhabersack@novell.com>
+
+	* AppResourcesCompiler.cs: use HttpRuntime.InternalCache to keep
+	private entries.
+	* CachingCompiler.cs: as above
+	* AspGenerator.cs: as above
+
 2007-06-13  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateControlCompiler.cs: make sure control has a writable

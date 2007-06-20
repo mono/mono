@@ -146,11 +146,11 @@ namespace System.Web.Caching {
 				string [] files = new string [] { path };
 				string [] keys = new string [0];
 				varyby = new CachedVaryBy (context.Response.Cache, vary_key);
-				context.Cache.InsertPrivate (vary_key, varyby,
-						new CacheDependency (files, keys),
-						Cache.NoAbsoluteExpiration,
-						Cache.NoSlidingExpiration,
-						CacheItemPriority.Normal, null);
+				context.InternalCache.Insert (vary_key, varyby,
+							      new CacheDependency (files, keys),
+							      Cache.NoAbsoluteExpiration,
+							      Cache.NoSlidingExpiration,
+							      CacheItemPriority.Normal, null);
 				lookup = false;
 			} 
 			
@@ -165,13 +165,13 @@ namespace System.Web.Caching {
 				string [] keys = new string [] { vary_key };
 				bool sliding = context.Response.Cache.Sliding;
 
-				context.Cache.InsertPrivate (key, c, new CacheDependency (files, keys),
-						(sliding ? Cache.NoAbsoluteExpiration :
-								context.Response.Cache.Expires),
-						(sliding ? TimeSpan.FromSeconds (
-							context.Response.Cache.Duration) :
-								Cache.NoSlidingExpiration),
-						CacheItemPriority.Normal, response_removed);
+				context.InternalCache.Insert (key, c, new CacheDependency (files, keys),
+							      (sliding ? Cache.NoAbsoluteExpiration :
+							       context.Response.Cache.Expires),
+							      (sliding ? TimeSpan.FromSeconds (
+								      context.Response.Cache.Duration) :
+							       Cache.NoSlidingExpiration),
+							      CacheItemPriority.Normal, response_removed);
 				c.VaryBy = varyby;
 				varyby.ItemList.Add (key);
 			} 

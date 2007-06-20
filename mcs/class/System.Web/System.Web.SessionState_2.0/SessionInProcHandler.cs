@@ -86,13 +86,13 @@ namespace System.Web.SessionState
 			if (item == null || String.IsNullOrEmpty (id))
 				return;
 
-			HttpRuntime.Cache.InsertPrivate (id,
-							 item,
-							 null,
-							 Cache.NoAbsoluteExpiration,
-							 TimeSpan.FromMinutes (timeout),
-							 CacheItemPriority.AboveNormal,
-							 removedCB);
+			HttpRuntime.InternalCache.Insert (id,
+							  item,
+							  null,
+							  Cache.NoAbsoluteExpiration,
+							  TimeSpan.FromMinutes (timeout),
+							  CacheItemPriority.AboveNormal,
+							  removedCB);
 		}
 		
 		public override void CreateUninitializedItem (HttpContext context, string id, int timeout)
@@ -128,7 +128,7 @@ namespace System.Web.SessionState
 			if (id == null)
 				return null;
 			
-			Cache cache = HttpRuntime.Cache;
+			Cache cache = HttpRuntime.InternalCache;
 			string CacheId = CachePrefix + id;
 			InProcSessionItem item = cache [CacheId] as InProcSessionItem;
 			
@@ -211,7 +211,7 @@ namespace System.Web.SessionState
 		{
 			EnsureGoodId (id, true);
 			string CacheId = CachePrefix + id;
-			InProcSessionItem item = HttpRuntime.Cache [CacheId] as InProcSessionItem;
+			InProcSessionItem item = HttpRuntime.InternalCache [CacheId] as InProcSessionItem;
 			
 			if (item == null || lockId == null || lockId.GetType() != typeof(Int32) || item.lockId != (Int32)lockId)
 				return;
@@ -234,7 +234,7 @@ namespace System.Web.SessionState
 		{
 			EnsureGoodId (id, true);
 			string CacheId = CachePrefix + id;
-			Cache cache = HttpRuntime.Cache;
+			Cache cache = HttpRuntime.InternalCache;
 			InProcSessionItem inProcItem = cache [CacheId] as InProcSessionItem;
 
 			if (inProcItem == null || lockId == null || lockId.GetType() != typeof(Int32) || inProcItem.lockId != (Int32)lockId)
@@ -255,7 +255,7 @@ namespace System.Web.SessionState
 		{
 			EnsureGoodId (id, true);
 			string CacheId = CachePrefix + id;
-			Cache cache = HttpRuntime.Cache;
+			Cache cache = HttpRuntime.InternalCache;
 			InProcSessionItem item = cache [CacheId] as InProcSessionItem;
 			
 			if (item == null)
@@ -282,7 +282,7 @@ namespace System.Web.SessionState
 		{
 			EnsureGoodId (id, true);
 			string CacheId = CachePrefix + id;
-			Cache cache = HttpRuntime.Cache;
+			Cache cache = HttpRuntime.InternalCache;
 			InProcSessionItem inProcItem = cache [CacheId] as InProcSessionItem;
 			
 			if (newItem || inProcItem == null) {

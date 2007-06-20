@@ -1,3 +1,9 @@
+2007-06-20  Marek Habersack  <mhabersack@novell.com>
+
+	* DataSourceCacheManager.cs: use HttpContext.Current.InternalCache
+	to keep private entries.
+	* XmlDataSource.cs: as above
+	
 2007-05-31  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* BaseValidator.cs: RegisterValidatorCommonScript, fixed type passed

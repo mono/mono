@@ -272,12 +272,12 @@ namespace System.Web.Compilation
 		internal static void AddTypeToCache (ArrayList dependencies, string inputFile, Type type)
 		{
 			CacheDependency cd = new CacheDependency ((string[])dependencies.ToArray (typeof (string)));
-			HttpRuntime.Cache.InsertPrivate ("@@Type" + inputFile, type, cd);
+			HttpRuntime.InternalCache.Insert ("@@Type" + inputFile, type, cd);
 		}
 		
 		public Type GetCompiledType ()
 		{
-			Type type = (Type) HttpRuntime.Cache.Get ("@@Type" + tparser.InputFile);
+			Type type = (Type) HttpRuntime.InternalCache.Get ("@@Type" + tparser.InputFile);
 			if (type != null) {
 				return type;
 			}

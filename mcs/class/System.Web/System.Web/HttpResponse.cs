@@ -811,7 +811,7 @@ namespace System.Web {
 			if (path [0] != '/')
 				throw new ArgumentException ("'" + path + "' is not an absolute virtual path.");
 
-			HttpRuntime.Cache.Remove (path);
+			HttpRuntime.InternalCache.Remove (path);
 		}
 
 		public void SetCookie (HttpCookie cookie)
