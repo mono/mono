@@ -116,6 +116,26 @@ namespace MonoTests.System.Web.UI.WebControls
 			}
 		}
 
+		public class DS : ObjectDataSource
+		{
+			public static List<string> GetList ()
+			{
+				List<string> list = new List<string> ();
+				list.Add ("Norway");
+				list.Add ("Sweden");
+				list.Add ("France");
+				list.Add ("Italy");
+				list.Add ("Israel");
+				list.Add ("Russia");
+				return list;
+			}
+
+			public void DoRaiseDataSourceChangedEvent (EventArgs e)
+			{
+				RaiseDataSourceChangedEvent (e);
+			}
+		}
+
 		public class PokerDetailsView: DetailsView 
 		{
 			public bool ensureDataBound=false;
@@ -402,14 +422,14 @@ namespace MonoTests.System.Web.UI.WebControls
 			myds.Add ("Item6");
 
 #if VISUAL_STUDIO
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.FooterTemplateTest.aspx",
-				"FooterTemplateTest.aspx");
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.DetailsViewTemplates.aspx",
-				"DetailsViewTemplates.aspx");
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.DetailsViewDataActions.aspx",
-				"DetailsViewDataActions.aspx");
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.DetailsViewProperties1.aspx",
-				"DetailsViewProperties1.aspx");
+                        WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.FooterTemplateTest.aspx",
+                                "FooterTemplateTest.aspx");
+                        WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.DetailsViewTemplates.aspx",
+                                "DetailsViewTemplates.aspx");
+                        WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.DetailsViewDataActions.aspx",
+                                "DetailsViewDataActions.aspx");
+                        WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.DetailsViewProperties1.aspx",
+                                "DetailsViewProperties1.aspx");
 #else
 			WebTest.CopyResource (GetType (), "FooterTemplateTest.aspx", "FooterTemplateTest.aspx");
 			WebTest.CopyResource (GetType (), "DetailsViewTemplates.aspx", "DetailsViewTemplates.aspx");
@@ -2376,6 +2396,60 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (5, newPageIndex, "FirstPageIndex");
 
 		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		[Category ("NotWorking")]
+		public void DetailsView_DataSourceChangedEvent ()
+		{
+			WebTest t = new WebTest ();
+			PageDelegates pd = new PageDelegates ();
+			pd.Load = DetailsView_Init;
+			pd.PreRenderComplete = DetailsView_Load;
+			t.Invoker = new PageInvoker (pd);
+			t.Run ();
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls["__EVENTTARGET"].Value = "";
+			fr.Controls["__EVENTARGUMENT"].Value = "";
+			t.Request = fr;
+			t.Run ();
+			if (t.UserData == null)
+				Assert.Fail ("DataSourceChangedEvent#1");
+			Assert.AreEqual ("Data_rebounded", t.UserData.ToString (), "DataSourceChangedEvent#2");
+		}
+
+		#region DetailsView_DataSourceChangedEvent
+		public static void DetailsView_Init (Page p)
+		{
+			PokerDetailsView dv = new PokerDetailsView ();
+			DS data = new DS ();
+			p.Controls.Add (dv);
+			p.Controls.Add (data);
+			data.TypeName = typeof (DS).AssemblyQualifiedName;
+			data.SelectMethod = "GetList";
+			data.ID = "Data";
+			dv.DataBinding += new EventHandler (data_DataBinding);
+			dv.DataSourceID = "Data";
+		}
+
+		public static void DetailsView_Load (Page p)
+		{
+			if (p.IsPostBack) {
+				DS data = (DS) p.FindControl ("Data");
+				if (data == null)
+					Assert.Fail ("Data soource control not created#1");
+				data.DoRaiseDataSourceChangedEvent (new EventArgs ());
+			}
+		}
+
+		public static void data_DataBinding (object sender, EventArgs e)
+		{
+			if (((WebControl) sender).Page.IsPostBack)
+				WebTest.CurrentTest.UserData = "Data_rebounded";
+		}
+		#endregion
 
 		[Test]
 		public void DetailsView_Events ()

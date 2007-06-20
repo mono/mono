@@ -28,7 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using NUnit.Framework;
+
 using System;
 using System.Collections;
 using System.Drawing;
@@ -38,8 +38,12 @@ using System.Globalization;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using NUnit.Framework;
 using MonoTests.stand_alone.WebHarness;
-
+#if NET_2_0
+using System.Collections.Generic;
+using MonoTests.SystemWeb.Framework;
+#endif
 
 namespace MonoTests.System.Web.UI.WebControls
 {
@@ -168,6 +172,82 @@ namespace MonoTests.System.Web.UI.WebControls
 			return matches == a1.Length;
 		}
 
+
+#if NET_2_0
+		public class DS : ObjectDataSource
+		{
+			public static List<string> GetList ()
+			{
+				List<string> list = new List<string> ();
+				list.Add ("Norway");
+				list.Add ("Sweden");
+				list.Add ("France");
+				list.Add ("Italy");
+				list.Add ("Israel");
+				list.Add ("Russia");
+				return list;
+			}
+
+			public void DoRaiseDataSourceChangedEvent (EventArgs e)
+			{
+				RaiseDataSourceChangedEvent (e);
+			}
+		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		[Category ("NotWorking")]
+		public void DropDownList_DataSourceChangedEvent ()
+		{
+			WebTest t = new WebTest ();
+			PageDelegates pd = new PageDelegates ();
+			pd.Load = DropDownList_Init;
+			pd.PreRenderComplete = DropDownList_Load;
+			t.Invoker = new PageInvoker (pd);
+			t.Run ();
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls["__EVENTTARGET"].Value = "";
+			fr.Controls["__EVENTARGUMENT"].Value = "";
+			t.Request = fr;
+			t.Run ();
+			if (t.UserData == null)
+				Assert.Fail ("DataSourceChangedEvent#1");
+			Assert.AreEqual ("Data_rebounded", t.UserData.ToString (), "DataSourceChangedEvent#2");
+		}
+
+		#region DropDownList_DataSourceChangedEvent
+		public static void DropDownList_Init (Page p)
+		{
+			DropDownListTestClass dl = new DropDownListTestClass ();
+			DS data = new DS ();
+			p.Controls.Add (dl);
+			p.Controls.Add (data);
+			data.TypeName = typeof (DS).AssemblyQualifiedName;
+			data.SelectMethod = "GetList";
+			data.ID = "Data";
+			dl.DataBinding += new EventHandler (data_DataBinding);
+			dl.DataSourceID = "Data";
+		}
+
+		public static void DropDownList_Load (Page p)
+		{
+			if (p.IsPostBack) {
+				DS data = (DS) p.FindControl ("Data");
+				if (data == null)
+					Assert.Fail ("Data soource control not created#1");
+				data.DoRaiseDataSourceChangedEvent (new EventArgs ());
+			}
+		}
+
+		public static void data_DataBinding (object sender, EventArgs e)
+		{
+			if (((WebControl) sender).Page.IsPostBack)
+				WebTest.CurrentTest.UserData = "Data_rebounded";
+		}
+		#endregion
+#endif
 		[Test]
 		public void DropDownList_Defaults ()
 		{

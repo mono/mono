@@ -1,3 +1,11 @@
+2007-06-20  yonik <yonik@mainsoft.com>
+
+     * DropDownListTest.cs;
+	 * FormViewTest.cs;	
+	 * DetailViewTest.cs;
+	 * GridViewTest.cs;    
+      Add new tests for DataSourceChanged event 
+
 2007-05-27 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* ObjectDataSourceViewTest.cs:

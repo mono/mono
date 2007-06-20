@@ -305,14 +305,30 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 	}
 
-	
-
-	
-
 	[Serializable]
 	[TestFixture]
 	public class GridViewTest
 	{
+		class DS : ObjectDataSource, IDataSource
+		{
+			public static List<string> GetList ()
+			{
+				List<string> list = new List<string> ();
+				list.Add ("Norway");
+				list.Add ("Sweden");
+				list.Add ("France");
+				list.Add ("Italy");
+				list.Add ("Israel");
+				list.Add ("Russia");
+				return list;
+			}
+
+			public void DoRaiseDataSourceChangedEvent (EventArgs e)
+			{
+				RaiseDataSourceChangedEvent (e);
+			}
+		}
+
 		public class DataSourceObject
 		{
 			public static List<string> GetList (string sortExpression, int startRowIndex, int maximumRows) {
@@ -397,7 +413,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		[TestFixtureSetUp]
 		public void GridViewInit ()
 		{
-			
+
 			myds.Add ("Norway");
 			myds.Add ("Sweden");
 			myds.Add ("France");
@@ -405,8 +421,8 @@ namespace MonoTests.System.Web.UI.WebControls
 			myds.Add ("Israel");
 			myds.Add ("Russia");
 #if VISUAL_STUDIO
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.GridViewUpdate.aspx", "GridViewUpdate.aspx");
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.NoEventValidation.aspx", "NoEventValidation.aspx");
+                        WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.GridViewUpdate.aspx", "GridViewUpdate.aspx");
+                        WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.NoEventValidation.aspx", "NoEventValidation.aspx");
 #else
 			WebTest.CopyResource (GetType (), "GridViewUpdate.aspx", "GridViewUpdate.aspx");
 			WebTest.CopyResource (GetType (), "NoEventValidation.aspx", "NoEventValidation.aspx");
@@ -1400,6 +1416,60 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			pageIndexChanged = true;
 		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		[Category ("NotWorking")]
+		public void GridView_DataSourceChangedEvent ()
+		{
+			WebTest t = new WebTest ();
+			PageDelegates pd = new PageDelegates ();
+			pd.Load = GridView_Init;
+			pd.PreRenderComplete = GridView_Load;
+			t.Invoker = new PageInvoker (pd);
+			t.Run ();
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls["__EVENTTARGET"].Value = "";
+			fr.Controls["__EVENTARGUMENT"].Value = "";
+			t.Request = fr;
+			t.Run ();
+			if (t.UserData == null)
+				Assert.Fail ("DataSourceChangedEvent#1");
+			Assert.AreEqual ("Data_rebounded", t.UserData.ToString (), "DataSourceChangedEvent#2");
+		}
+
+		#region GridView_DataSourceChangedEvent
+		public static void GridView_Init (Page p)
+		{
+			PokerGridView gv = new PokerGridView ();
+			DS data = new DS ();
+			p.Controls.Add (gv);
+			p.Controls.Add (data);
+			data.TypeName = typeof (DS).AssemblyQualifiedName;
+			data.SelectMethod = "GetList";
+			data.ID = "Data";
+			gv.DataBinding += new EventHandler (data_DataBinding);
+			gv.DataSourceID = "Data";
+		}
+
+		public static void GridView_Load (Page p)
+		{
+			if (p.IsPostBack) {
+				DS data = (DS) p.FindControl ("Data");
+				if (data == null)
+					Assert.Fail ("Data soource control not created#1");
+				data.DoRaiseDataSourceChangedEvent (new EventArgs ());
+			}
+		}
+
+		public static void data_DataBinding (object sender, EventArgs e)
+		{
+			if (((WebControl) sender).Page.IsPostBack)
+				WebTest.CurrentTest.UserData = "Data_rebounded";
+		}
+		#endregion
 
 		[Test]
 		public void GridView_PerformDataBiding ()

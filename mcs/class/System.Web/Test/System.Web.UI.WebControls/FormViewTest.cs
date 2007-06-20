@@ -50,6 +50,7 @@ using System.Reflection;
 using System.Threading;
 
 
+
 namespace MonoTests.System.Web.UI.WebControls
 {
 	[TestFixture]	
@@ -84,6 +85,26 @@ namespace MonoTests.System.Web.UI.WebControls
 				return GetList ().Count;
 			}
 		}
+
+		public class DS : ObjectDataSource
+		{
+			public static List<string> GetList ()
+			{
+				List<string> list = new List<string> ();
+				list.Add ("Norway");
+				list.Add ("Sweden");
+				list.Add ("France");
+				list.Add ("Italy");
+				list.Add ("Israel");
+				list.Add ("Russia");
+				return list;
+			}
+
+			public void DoRaiseDataSourceChangedEvent (EventArgs e)
+			{
+				RaiseDataSourceChangedEvent (e);
+			}
+		}
 		
 		public class Poker : FormView {
 			public bool isInitializePager=false;
@@ -91,7 +112,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			public bool controlHierarchy=false;
 			bool _onPageIndexChangingCalled = false;
 			bool _onPageIndexChangedCalled = false;
-			
+						
 			public Poker () {								
 				TrackViewState ();
 			}
@@ -151,6 +172,11 @@ namespace MonoTests.System.Web.UI.WebControls
 			{
 				base.ExtractRowValues (filedValues, includeKeys);
 				
+			}
+
+			public bool IsRequiresDataBinding ()
+			{
+				return base.RequiresDataBinding;
 			}
 
 			protected override void InitializePager (FormViewRow row, PagedDataSource pageData)
@@ -345,30 +371,31 @@ namespace MonoTests.System.Web.UI.WebControls
 		
 
 		ArrayList myds = new ArrayList ();	
-		[TestFixtureSetUp]
-		public void setup ()
-		{
-			TestMyData.InitData();  
-			myds.Add ("Item1");
-			myds.Add ("Item2");
-			myds.Add ("Item3");
-			myds.Add ("Item4");
-			myds.Add ("Item5");
-			myds.Add ("Item6");
+                [TestFixtureSetUp]
+                public void setup ()
+                {
+                        TestMyData.InitData();  
+                        myds.Add ("Item1");
+                        myds.Add ("Item2");
+                        myds.Add ("Item3");
+                        myds.Add ("Item4");
+                        myds.Add ("Item5");
+                        myds.Add ("Item6");
 #if VISUAL_STUDIO
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.FormView.aspx",
-				"FormView.aspx");
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.FormViewTest1.aspx",
-				"FormViewTest1.aspx");
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.FormViewInsertEditDelete.aspx",
-				"FormViewInsertEditDelete.aspx");
+                        WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.FormView.aspx",
+                                "FormView.aspx");
+                        WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.FormViewTest1.aspx",
+                                "FormViewTest1.aspx");
+                        WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.FormViewInsertEditDelete.aspx",
+                                "FormViewInsertEditDelete.aspx");
 #else
-			WebTest.CopyResource (GetType (), "FormView.aspx", "FormView.aspx");
-			WebTest.CopyResource (GetType (), "FormViewTest1.aspx", "FormViewTest1.aspx");
-			WebTest.CopyResource (GetType (), "FormViewInsertEditDelete.aspx", "FormViewInsertEditDelete.aspx");
+                        WebTest.CopyResource (GetType (), "FormView.aspx", "FormView.aspx");
+                        WebTest.CopyResource (GetType (), "FormViewTest1.aspx", "FormViewTest1.aspx");
+                        WebTest.CopyResource (GetType (), "FormViewInsertEditDelete.aspx", "FormViewInsertEditDelete.aspx");
 #endif
 
-		}
+               }
+		
 
 		[Test]
 		public void Defaults ()
@@ -1198,6 +1225,59 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		}
 
+		[Test]
+		[Category("NunitWeb")]
+		[Category ("NotWorking")]
+		public void FormView_DataSourceChangedEvent ()
+		{
+			WebTest t = new WebTest();
+			PageDelegates pd = new PageDelegates ();
+			pd.Load = FormView_Init;
+			pd.PreRenderComplete = FormView_Load;
+			t.Invoker = new PageInvoker (pd);
+			t.Run ();
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls["__EVENTTARGET"].Value = "";
+			fr.Controls["__EVENTARGUMENT"].Value = "";
+			t.Request = fr;
+			t.Run ();
+			if (t.UserData == null)
+				Assert.Fail ("DataSourceChangedEvent#1");
+			Assert.AreEqual ("Data_rebounded", t.UserData.ToString (), "DataSourceChangedEvent#2");
+		}
+
+		#region FormView_DataSourceChangedEvent
+		public static void FormView_Init(Page p)
+		{
+			Poker fv = new Poker ();
+			DS data = new DS ();
+			p.Controls.Add (fv);
+			p.Controls.Add (data);
+			data.TypeName = typeof (DS).AssemblyQualifiedName;
+			data.SelectMethod = "GetList";
+			data.ID = "Data";
+			fv.DataBinding += new EventHandler (data_DataBinding);
+			fv.DataSourceID = "Data";
+		}
+
+		public static void FormView_Load (Page p)
+		{
+			if (p.IsPostBack) {
+				DS data = (DS) p.FindControl ("Data") ;
+				if (data == null)
+					Assert.Fail ("Data soource control not created#1");
+				data.DoRaiseDataSourceChangedEvent (new EventArgs ());
+			}
+		}
+
+		public static void data_DataBinding (object sender, EventArgs e)
+		{
+			if (((WebControl) sender).Page.IsPostBack) 
+				WebTest.CurrentTest.UserData = "Data_rebounded";
+		}
+		#endregion
 
 		[Test]
 		public void FormView_Events ()
