@@ -1,7 +1,11 @@
+2007-06-20  Rodrigo Kumpera  <kumpera@gmail.com>
+
+	*make_tests.sh: new ldsfld tests, more call conv tests
+
 2007-06-19  Rodrigo Kumpera  <kumpera@gmail.com>
 
 	*make_tests.sh: new ldfld tests (they check everything but visibility)
-	*make_field_test.sh: generated the new field tests
+	*make_field_store_test.sh: generated the new field tests
 
 2007-06-14  Rodrigo Kumpera  <kumpera@gmail.com>
 
