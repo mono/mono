@@ -40,6 +40,7 @@ using System.Web.Configuration;
 using System.Web.UI.HtmlControls;
 using System.IO;
 using System.Globalization;
+using System.Threading;
 
 namespace System.Web.UI
 {
@@ -82,6 +83,8 @@ namespace System.Web.UI
 		bool _isInAsyncPostBack;
 		string _asyncPostBackSourceElementID;
 		ScriptMode _scriptMode = ScriptMode.Auto;
+		bool _enableScriptGlobalization;
+		bool _enableScriptLocalization;
 		
 		[DefaultValue (true)]
 		[Category ("Behavior")]
@@ -162,10 +165,10 @@ namespace System.Web.UI
 		[Category ("Behavior")]
 		public bool EnableScriptGlobalization {
 			get {
-				throw new NotImplementedException ();
+				return _enableScriptGlobalization;
 			}
 			set {
-				throw new NotImplementedException ();
+				_enableScriptGlobalization = value;
 			}
 		}
 
@@ -173,10 +176,10 @@ namespace System.Web.UI
 		[DefaultValue (false)]
 		public bool EnableScriptLocalization {
 			get {
-				throw new NotImplementedException ();
+				return _enableScriptLocalization;
 			}
 			set {
-				throw new NotImplementedException ();
+				_enableScriptLocalization = value;
 			}
 		}
 
@@ -354,6 +357,12 @@ namespace System.Web.UI
 			if (IsInAsyncPostBack) {
 				Page.SetRenderMethodDelegate (RenderPageCallback);
 			}
+
+			if (EnableScriptGlobalization) {
+				CultureInfo culture = Thread.CurrentThread.CurrentCulture;
+				string script = null; // TODO: Json serialization of culture
+				RegisterClientScriptBlock (this, typeof (ScriptManager), "ScriptGlobalization", script, true);
+			}
 			
 			// Register Scripts
 			foreach (ScriptReference script in GetScriptReferences ()) {
@@ -420,12 +429,12 @@ namespace System.Web.UI
 
 		public static void RegisterClientScriptBlock (Control control, Type type, string key, string script, bool addScriptTags)
 		{
-			throw new NotImplementedException ();
+			RegisterClientScriptBlock (control.Page, type, key, script, addScriptTags);
 		}
 
 		public static void RegisterClientScriptBlock (Page page, Type type, string key, string script, bool addScriptTags)
 		{
-			throw new NotImplementedException ();
+			page.ClientScript.RegisterClientScriptBlock (type, key, script, addScriptTags);
 		}
 
 		public static void RegisterClientScriptInclude (Control control, Type type, string key, string url)
