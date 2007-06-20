@@ -35,12 +35,12 @@ namespace System.Web.UI
 {
 	public class PostBackTrigger : UpdatePanelControlTrigger
 	{
-		public string ControlID {
+		public new string ControlID {
 			get {
-				throw new NotImplementedException ();
+				return base.ControlID;
 			}
 			set {
-				throw new NotImplementedException ();
+				base.ControlID = value;
 			}
 		}
 
@@ -49,11 +49,13 @@ namespace System.Web.UI
 		}
 
 		protected internal override void Initialize () {
-			throw new NotImplementedException ();
+			Control c = FindTargetControl (false);
+			ScriptManager sm = Owner.ScriptManager;
+			sm.RegisterPostBackControl (c);
 		}
 
 		public override string ToString () {
-			throw new NotImplementedException ();
+			return String.Format ("PostBack: {0}", ControlID);
 		}
 	}
 }
