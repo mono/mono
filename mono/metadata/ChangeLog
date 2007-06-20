@@ -1,3 +1,9 @@
+2007-06-20  Geoff Norton  <gnorton@customerdna.com>
+
+	* icall.c: The second argument to 
+	System.Reflection.MethodBase.GetMethodFromHandleInternalType
+	is a MonoType not a MonoClass.
+
 2007-06-20  Rodrigo Kumpera  <kumpera@gmail.com>
 
 	* verify.c: support for function pointers in the verifier
