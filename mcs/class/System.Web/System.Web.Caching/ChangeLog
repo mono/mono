@@ -8,6 +8,8 @@
 	latter was moved to one of the Insert overloads.
 	Private entries are no longer handled specifically, because the
 	internal cache is now kept in a separate object.
+	Iterate over the entries when filling the ArrayList in the 2.0
+	profile to avoid type cast exceptions.
 
 2007-05-03 Igor Zelmanovich <igorz@mainsoft.com>
 

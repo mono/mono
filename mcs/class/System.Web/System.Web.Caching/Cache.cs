@@ -214,8 +214,12 @@ namespace System.Web.Caching
 		{
 			ArrayList list = new ArrayList ();
 			lock (cache) {
+#if NET_2_0
 				foreach (CacheItem it in cache.Values)
 					list.Add (it);
+#else
+				list.AddRange (cache.Values);
+#endif
 			}
 			return new CacheItemEnumerator (list);
 		}
@@ -240,7 +244,12 @@ namespace System.Web.Caching
 			ArrayList list;
 			lock (cache) {
 				list = new ArrayList ();
+#if NET_2_0
+				foreach (CacheItem it in cache.Values)
+					list.Add (it);
+#else
 				list.AddRange (cache.Values);
+#endif
 				needsTimer = false;
 			}
 			
