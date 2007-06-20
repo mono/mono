@@ -41,3 +41,4 @@ cs0457.cs
 # Errors fixed in version 2.0 only
 cs1533.cs IGNORE
 
+gcs0820.cs # temporary disabled
