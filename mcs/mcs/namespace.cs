@@ -931,6 +931,8 @@ namespace Mono.CSharp {
 
 		static void Error_AmbiguousTypeReference (Location loc, string name, FullNamedExpression t1, FullNamedExpression t2)
 		{
+			Report.SymbolRelatedToPreviousError (t1.Type);
+			Report.SymbolRelatedToPreviousError (t2.Type);
 			Report.Error (104, loc, "`{0}' is an ambiguous reference between `{1}' and `{2}'",
 				name, t1.FullName, t2.FullName);
 		}

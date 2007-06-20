@@ -1,5 +1,10 @@
 2007-06-20  Marek Safar  <marek.safar@gmail.com>
 
+	* namespace.cs (NamespaceEntry.Error_AmbiguousTypeReference): Print
+	more error details.
+	
+2007-06-20  Marek Safar  <marek.safar@gmail.com>
+
 	* cs-tokenizer.cs: Removed var related stuff.
 	
 	* ecore.cs (Expression.ResolveAsContextualType): Introduced new method.
