@@ -1,3 +1,9 @@
+
+Wed Jun 20 10:22:15 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* assembly.c: removed Mono.Data.SqliteClient from the list of
+	forward-compatible assemblies as it breaks the ABI (bug #81899).
+
 2007-06-19  Raja R Harinath  <rharinath@novell.com>
 
 	* metadata.c (mono_metadata_lookup_generic_class): Protect cache
