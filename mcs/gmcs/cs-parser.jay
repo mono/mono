@@ -224,7 +224,6 @@ namespace Mono.CSharp
 /* C# keywords which are not really keywords */
 %token GET           "get"
 %token SET           "set"
-%token VAR
 
 %left LAST_KEYWORD
 
@@ -1136,7 +1135,6 @@ method_declaration
 		anonymous_host = (IAnonymousHost) $1;
 		if (RootContext.Documentation != null)
 			Lexer.doc_state = XmlCommentState.NotAllowed;
-		Lexer.VarParsing = true;
 	  }
 	  method_body
 	  {
@@ -1150,7 +1148,6 @@ method_declaration
 
 		if (RootContext.Documentation != null)
 			Lexer.doc_state = XmlCommentState.Allowed;
-		Lexer.VarParsing = false;
 	  }
 	;
 
@@ -2956,10 +2953,6 @@ type
 	  }
 	| array_type
 	| pointer_type
-	| VAR
-	  {
-	  	$$ = new VarExpr (lexer.Location);
-	  }
 	;
 
 pointer_type
@@ -3530,7 +3523,7 @@ array_creation_expression
 	  		$$ = null;
 	  	}
 	  	else
-	  		$$ = new ArrayCreation (new VarExpr((Location) $1), (string) $2, (ArrayList) $3, (Location) $1);
+	  		$$ = new ImplicitlyTypedArrayCreation ((string) $2, (ArrayList) $3, (Location) $1);
 	  }
 	| NEW error
 	  {
@@ -4689,33 +4682,14 @@ local_variable_pointer_type
 local_variable_declaration
 	: local_variable_type variable_declarators
 	  {
-		if ($1 != null)
+		if ($1 != null) {
+			VarExpr ve = $1 as VarExpr;
+			if (ve != null)
+				ve.VariableInitializer = (ArrayList)$2;
+				
 			$$ = new DictionaryEntry ($1, $2);
-		else
+		} else
 			$$ = null;
-	  }
-	| VAR variable_declarators
-	  {
-	  	ArrayList decls = (ArrayList)$2;
-	  	if (decls.Count > 1) {
-	  		Location loc = ((VariableDeclaration)decls [1]).Location;
-	  		Report.Error (819, loc, "An implicitly typed local variable declaration cannot include multiple declarators");
-	  	}
-	  	
-		VariableDeclaration vd = (VariableDeclaration)decls [0];
-		if (vd.expression_or_array_initializer == null) {
-			Report.Error (818, vd.Location, "An implicitly typed local variable declarator must include an initializer");
-		}
-		
-		if (vd.expression_or_array_initializer is NullLiteral) {
-			Report.Error (815, vd.Location, "An implicitly typed local variable declaration cannot be initialized with `null'");
-		}
-
-		if (vd.expression_or_array_initializer is ArrayCreation) {
-			Report.Error (820, vd.Location, "An implicitly typed local variable declarator cannot use an array initializer");
-		}
-
-	  	$$ = new DictionaryEntry (new VarExpr (lexer.Location), decls);
 	  }
 	| local_variable_pointer_type opt_rank_specifier_or_nullable variable_declarators
 	  {
@@ -5031,12 +5005,10 @@ foreach_statement
 
 		LocatedToken lt = (LocatedToken) $4;
 		Location l = lt.Location;
-		LocalInfo vi;
-
-		vi = foreach_block.AddVariable ((Expression) $3, lt.Value, l);
+		LocalInfo vi = foreach_block.AddVariable ((Expression) $3, lt.Value, l);
 		if (vi != null) {
 			vi.SetReadOnlyContext (LocalInfo.ReadOnlyContext.Foreach);
-
+			
 			// Get a writable reference to this read-only variable.
 			//
 			// Note that the $$ here refers to the value of _this_ code block,
@@ -5612,9 +5584,6 @@ public class VariableDeclaration {
 	{
 		this.identifier = lt.Value;
 		if (eoai is ArrayList) {
-			if (CSharpParser.current_array_type == null)
-				Report.Error (622, lt.Location,
-					"Can only use array initializer expressions to assign to array types. Try using a new expression instead.");
 			this.expression_or_array_initializer = new ArrayCreation (CSharpParser.current_array_type, "", (ArrayList)eoai, lt.Location);
 		} else {
 			this.expression_or_array_initializer = (Expression)eoai;

@@ -1,3 +1,9 @@
+2007-06-20  Marek Safar  <marek.safar@gmail.com>
+
+	* cs-parser.jay: Reworked var keyword handling. We cannot handle var as
+	static keyword because var becomes keyword only if no type with the var
+	name exists in the scope of variable which uses var declaration.
+	
 2007-06-18  Marek Safar  <marek.safar@gmail.com>
 
 	* cs-parser.jay: Add implicitly typed local variable checks.
