@@ -1325,9 +1325,16 @@ namespace System.Web {
 		
 		internal static Type LoadType (string typeName, bool throwOnMissing)
 		{
-			Type type = Type.GetType (typeName, throwOnMissing);
+			Type type = Type.GetType (typeName);
 			if (type != null)
 				return type;
+
+			Assembly [] assemblies = AppDomain.CurrentDomain.GetAssemblies ();
+			foreach (Assembly ass in assemblies) {
+				type = ass.GetType (typeName, false);
+				if (type != null)
+					return type;
+			}
 
 #if NET_2_0
 			IList tla = System.Web.Compilation.BuildManager.TopLevelAssemblies;
@@ -1335,13 +1342,11 @@ namespace System.Web {
 				foreach (Assembly asm in tla) {
 					if (asm == null)
 						continue;
-					type = asm.GetType (typeName, throwOnMissing);
+					type = asm.GetType (typeName, false);
 					if (type != null)
-						break;
+						return type;
 				}
 			}
-			if (type != null)
-				return type;
 #endif
 			
 			if (!Directory.Exists (PrivateBinPath))
@@ -1350,7 +1355,7 @@ namespace System.Web {
 			string[] binDlls = Directory.GetFiles(PrivateBinPath, "*.dll");
 			foreach (string s in binDlls) {
 				Assembly binA = Assembly.LoadFrom (s);
-				type = binA.GetType (typeName, throwOnMissing);
+				type = binA.GetType (typeName, false);
 				if (type == null)
 					continue;
 				

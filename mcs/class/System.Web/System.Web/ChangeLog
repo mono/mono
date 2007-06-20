@@ -1,3 +1,9 @@
+2007-06-20  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpApplication.cs: check all the loaded assemblies for the type
+	being looked up. Patch from Juraj Skripsky <juraj@hotfeet.ch>,
+	thanks! Fixes bug #81697.
+
 2007-06-18 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* HttpUtility.cs: refactoring:
