@@ -1,5 +1,9 @@
 2007-06-20  Rodrigo Kumpera  <kumpera@gmail.com>
 
+	* verify.c: support for function pointers in the verifier
+
+2007-06-20  Rodrigo Kumpera  <kumpera@gmail.com>
+
 	* verify.c: unmanaged pointer verification checks (loading unmanaged pointers is unverifiable)
 
 Wed Jun 20 10:22:15 CEST 2007 Paolo Molaro <lupus@ximian.com>
