@@ -69,7 +69,7 @@ namespace System.Web.Handlers {
 #endif
 
 #if TARGET_JVM
-			atime = String.Format ("{0}t={1}", QueryParamSeparator, type.GetHashCode ());
+			atime = String.Format ("{0}t={1}", QueryParamSeparator, assembly.GetHashCode ());
 #else
 			if (apath != String.Empty)
 				atime = String.Format ("{0}t={1}", QueryParamSeparator, File.GetLastWriteTimeUtc (apath).Ticks);

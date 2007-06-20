@@ -1,3 +1,7 @@
+2007-06-20  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* AssemblyResourceLoader.cs: GetResourceUrl, fixed typo
+
 2007-06-18 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* AssemblyResourceLoader.cs: refactoring:
