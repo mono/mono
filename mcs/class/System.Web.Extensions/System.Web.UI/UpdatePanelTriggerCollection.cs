@@ -37,6 +37,7 @@ namespace System.Web.UI
 	public class UpdatePanelTriggerCollection : Collection<UpdatePanelTrigger>
 	{
 		UpdatePanel _owner;
+
 		public UpdatePanelTriggerCollection (UpdatePanel owner)
 		{
 			_owner = owner;
@@ -50,22 +51,24 @@ namespace System.Web.UI
 
 		protected override void ClearItems ()
 		{
-			throw new NotImplementedException ();
+			base.ClearItems ();
 		}
 
 		protected override void InsertItem (int index, UpdatePanelTrigger item)
 		{
-			throw new NotImplementedException ();
+			base.InsertItem (index, item);
+			item.Owner = Owner;
 		}
 
 		protected override void RemoveItem (int index)
 		{
-			throw new NotImplementedException ();
+			base.RemoveItem (index);
 		}
 		
 		protected override void SetItem (int index, UpdatePanelTrigger item)
 		{
-			throw new NotImplementedException ();
+			base.SetItem (index, item);
+			item.Owner = Owner;
 		}
 	}
 }

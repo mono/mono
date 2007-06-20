@@ -48,6 +48,7 @@ namespace System.Web.UI
 		UpdatePanelUpdateMode _updateMode = UpdatePanelUpdateMode.Always;
 		bool _childrenAsTriggers = true;
 		bool _requiresUpdate = false;
+		UpdatePanelTriggerCollection _triggers;
 
 		[Category ("Behavior")]
 		[DefaultValue (true)]
@@ -112,7 +113,7 @@ namespace System.Web.UI
 			}
 		}
 
-		ScriptManager ScriptManager {
+		internal ScriptManager ScriptManager {
 			get {
 				ScriptManager manager = ScriptManager.GetCurrent (Page);
 				if (manager == null)
@@ -127,7 +128,9 @@ namespace System.Web.UI
 		[Category ("Behavior")]
 		public UpdatePanelTriggerCollection Triggers {
 			get {
-				throw new NotImplementedException ();
+				if (_triggers == null)
+					_triggers = new UpdatePanelTriggerCollection (this);
+				return _triggers;
 			}
 		}
 
@@ -163,7 +166,11 @@ namespace System.Web.UI
 
 		protected internal virtual void Initialize ()
 		{
-			throw new NotImplementedException ();
+			if (_triggers != null) {
+				for (int i = 0; i < _triggers.Count; i++) {
+					_triggers [i].Initialize ();
+				}
+			}
 		}
 
 		protected override void OnInit (EventArgs e)
@@ -179,6 +186,8 @@ namespace System.Web.UI
 		protected override void OnLoad (EventArgs e)
 		{
 			base.OnLoad (e);
+
+			Initialize ();
 		}
 
 		protected override void OnPreRender (EventArgs e)

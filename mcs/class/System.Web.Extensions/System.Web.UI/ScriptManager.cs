@@ -249,6 +249,7 @@ namespace System.Web.UI
 				throw new NotImplementedException ();
 			}
 		}
+
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[DefaultValue ("")]
 		[Category ("Behavior")]
@@ -674,9 +675,9 @@ namespace System.Web.UI
 			}
 		}
 
-		class HtmlTextParser : HtmlTextWriter
+		sealed class HtmlTextParser : HtmlTextWriter
 		{
-			HtmlTextWriter _responseOutput;
+			readonly HtmlTextWriter _responseOutput;
 
 			public HtmlTextWriter ResponseOutput {
 				get { return _responseOutput; }
@@ -692,7 +693,7 @@ namespace System.Web.UI
 			}
 		}
 
-		class TextParser : TextWriter
+		sealed class TextParser : TextWriter
 		{
 			int _state;
 			char _charState = (char) 255;
@@ -827,7 +828,7 @@ namespace System.Web.UI
 			}
 		}
 
-		class DropWriter : TextWriter
+		sealed class DropWriter : TextWriter
 		{
 			public override Encoding Encoding {
 				get { return Encoding.UTF8; }

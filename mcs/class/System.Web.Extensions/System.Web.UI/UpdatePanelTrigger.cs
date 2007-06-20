@@ -36,12 +36,17 @@ namespace System.Web.UI
 {
 	public abstract class UpdatePanelTrigger
 	{
+		UpdatePanel _owner;
+
 		protected UpdatePanelTrigger () { }
 
 		[Browsable (false)]
 		public UpdatePanel Owner {
 			get {
-				throw new NotImplementedException ();
+				return _owner;
+			}
+			internal set {
+				_owner = value;
 			}
 		}
 
@@ -49,7 +54,6 @@ namespace System.Web.UI
 		
 		protected internal virtual void Initialize ()
 		{
-			throw new NotImplementedException ();
 		}
 	}
 }

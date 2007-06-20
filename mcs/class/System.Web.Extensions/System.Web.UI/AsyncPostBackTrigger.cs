@@ -31,17 +31,22 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel;
+using System.Reflection;
 
 namespace System.Web.UI
 {
 	public class AsyncPostBackTrigger : UpdatePanelControlTrigger
 	{
-		public string ControlID {
+		static readonly MethodInfo _eventHandler = typeof (AsyncPostBackTrigger).GetMethod ("OnEvent");
+
+		string _eventName;
+
+		public new string ControlID {
 			get {
-				throw new NotImplementedException ();
+				return base.ControlID;
 			}
 			set {
-				throw new NotImplementedException ();
+				base.ControlID = value;
 			}
 		}
 
@@ -49,10 +54,12 @@ namespace System.Web.UI
 		[Category ("Behavior")]
 		public string EventName {
 			get {
-				throw new NotImplementedException ();
+				if (_eventName == null)
+					return String.Empty;
+				return _eventName;
 			}
 			set {
-				throw new NotImplementedException ();
+				_eventName = value;
 			}
 		}
 
@@ -61,15 +68,37 @@ namespace System.Web.UI
 		}
 
 		protected internal override void Initialize () {
-			throw new NotImplementedException ();
+			Control c = FindTargetControl (false);
+			ScriptManager sm = Owner.ScriptManager;
+			string eventName = EventName;
+			
+			if (String.IsNullOrEmpty (eventName)) {
+				object [] o = c.GetType ().GetCustomAttributes (typeof (DefaultEventAttribute), true);
+				if (o.Length == 0)
+					throw new InvalidOperationException (String.Format ("Control '{0}' has no default event defined", c.ID));
+				eventName = ((DefaultEventAttribute) o [0]).Name;
+			}
+
+			EventInfo evi = c.GetType ().GetEvent (eventName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
+			if (evi == null)
+				throw new InvalidOperationException (String.Format ("Could not find an event named '{0}' on associated control '{1}' for the trigger in UpdatePanel '{2}'.", eventName, c.ID, Owner.ID));
+
+			try {
+				evi.AddEventHandler (c, Delegate.CreateDelegate (evi.EventHandlerType, this, _eventHandler, true));
+			}
+			catch (ArgumentException) {
+				throw new InvalidOperationException (String.Format ("The event '{0}' in '{1}' for the control '{2}' does not match a standard event handler signature.", eventName, c.GetType (), c.ID));
+			}
+
+			sm.RegisterAsyncPostBackControl (c);
 		}
 
 		public void OnEvent (object sender, EventArgs e) {
-			throw new NotImplementedException ();
+			Owner.Update ();
 		}
 
 		public override string ToString () {
-			throw new NotImplementedException ();
+			return String.Format ("AsyncPostBack: {0}.{1}", ControlID, EventName);
 		}
 	}
 }

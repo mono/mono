@@ -36,6 +36,8 @@ namespace System.Web.UI
 {
 	public abstract class UpdatePanelControlTrigger : UpdatePanelTrigger
 	{
+		string _controlID;
+
 		protected UpdatePanelControlTrigger () { }
 
 		[IDReferenceProperty]
@@ -43,15 +45,31 @@ namespace System.Web.UI
 		[Category ("Behavior")]
 		public string ControlID {
 			get {
-				throw new NotImplementedException ();
+				if(_controlID==null)
+					return String.Empty;
+				return _controlID;
 			}
 			set {
-				throw new NotImplementedException ();
+				_controlID = value;
 			}
 		}
 
 		protected Control FindTargetControl (bool searchNamingContainers) {
-			throw new NotImplementedException ();
+			if (String.IsNullOrEmpty (ControlID))
+				throw new InvalidOperationException ();
+
+			Control nc = Owner.NamingContainer;
+			Control c = null;
+			do {
+				c = nc.FindControl (ControlID);
+				nc = nc.NamingContainer;
+			}
+			while (searchNamingContainers && c == null && nc != null);
+
+			if (c == null)
+				throw new InvalidOperationException ();
+
+			return c;
 		}
 	}
 }
