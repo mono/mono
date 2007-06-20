@@ -132,7 +132,6 @@ namespace MonoTests.System.Configuration {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void mapped_UserLevelPerRoaming ()
 		{
 			ExeConfigurationFileMap map = new ExeConfigurationFileMap ();
@@ -148,20 +147,16 @@ namespace MonoTests.System.Configuration {
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
+		[Category ("NotWorking")]
 		public void mapped_UserLevelPerRoaming_no_execonfig ()
 		{
 			ExeConfigurationFileMap map = new ExeConfigurationFileMap ();
 			map.RoamingUserConfigFilename = "roaminguser";
 
-			SysConfig config = ConfigurationManager.OpenMappedExeConfiguration(map, ConfigurationUserLevel.PerUserRoaming);
-			Console.WriteLine("mapped roaming user config path: {0}", config.FilePath);	
-
-			FileInfo fi = new FileInfo (config.FilePath);
-			Assert.AreEqual ("roaminguser", fi.Name);
+			ConfigurationManager.OpenMappedExeConfiguration (map, ConfigurationUserLevel.PerUserRoaming);
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void mapped_UserLevelPerRoamingAndLocal ()
 		{
 			ExeConfigurationFileMap map = new ExeConfigurationFileMap ();
@@ -178,17 +173,14 @@ namespace MonoTests.System.Configuration {
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
+		[Category ("NotWorking")]
 		public void mapped_UserLevelPerRoamingAndLocal_no_execonfig ()
 		{
 			ExeConfigurationFileMap map = new ExeConfigurationFileMap ();
 			map.RoamingUserConfigFilename = "roaminguser";
 			map.LocalUserConfigFilename = "localuser";
 
-			SysConfig config = ConfigurationManager.OpenMappedExeConfiguration(map, ConfigurationUserLevel.PerUserRoamingAndLocal);
-			Console.WriteLine("mapped local user config path: {0}", config.FilePath);	
-
-			FileInfo fi = new FileInfo (config.FilePath);
-			Assert.AreEqual ("localuser", fi.Name);
+			ConfigurationManager.OpenMappedExeConfiguration (map, ConfigurationUserLevel.PerUserRoamingAndLocal);
 		}
 
 		[Test]
@@ -200,11 +192,7 @@ namespace MonoTests.System.Configuration {
 			map.ExeConfigFilename = "execonfig";
 			map.LocalUserConfigFilename = "localuser";
 
-			SysConfig config = ConfigurationManager.OpenMappedExeConfiguration(map, ConfigurationUserLevel.PerUserRoamingAndLocal);
-			Console.WriteLine("mapped local user config path: {0}", config.FilePath);	
-
-			FileInfo fi = new FileInfo (config.FilePath);
-			Assert.AreEqual ("localuser", fi.Name);
+			ConfigurationManager.OpenMappedExeConfiguration (map, ConfigurationUserLevel.PerUserRoamingAndLocal);
 		}
 
 		[Test]

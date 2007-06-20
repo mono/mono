@@ -118,7 +118,7 @@ namespace System.Configuration {
 				break;
 			}
 
-			return ConfigurationFactory.Create (typeof(ExeConfigurationHost), map);
+			return ConfigurationFactory.Create (typeof(ExeConfigurationHost), map, userLevel);
 		}
 
 #if TARGET_JVM
@@ -137,7 +137,7 @@ namespace System.Configuration {
 		[MonoLimitation("ConfigurationUserLevel parameter is not supported.")]
 		public static Configuration OpenMappedExeConfiguration (ExeConfigurationFileMap fileMap, ConfigurationUserLevel userLevel)
 		{
-			return ConfigurationFactory.Create (typeof(ExeConfigurationHost), fileMap);
+			return ConfigurationFactory.Create (typeof(ExeConfigurationHost), fileMap, userLevel);
 		}
 
 		public static Configuration OpenMachineConfiguration ()

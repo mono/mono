@@ -1,3 +1,10 @@
+2007-06-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ConfigurationManager.cs : in OpenExeConfiguration() and
+	  OpenMappedExeConfiguration(), take userLevel into consideration.
+	* InternalConfigurationHost.cs : consider ConfigurationUserLevel and
+	  use correct config map file in InitForConfiguration().
+
 2007-06-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ClientConfigurationSystem.cs : do not asume GetEntryAssembly()

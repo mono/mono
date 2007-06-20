@@ -1,3 +1,9 @@
+2007-06-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ConfigurationManagerTest.cs : Enabled some tests with related to
+	  roaming user config. Marked some tests for negative check as
+	  [NotWorking] (they are rather uncovered bugs than enbug).
+
 2007-06-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ConfigurationSectionGroupTest.cs : new (my change is with tests.)

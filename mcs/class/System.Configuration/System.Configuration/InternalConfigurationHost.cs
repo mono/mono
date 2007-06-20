@@ -249,6 +249,7 @@ namespace System.Configuration
 	class ExeConfigurationHost: InternalConfigurationHost
 	{
 		ExeConfigurationFileMap map;
+		ConfigurationUserLevel level;
 		
 		public override void Init (IInternalConfigRoot root, params object[] hostInitParams)
 		{
@@ -260,33 +261,61 @@ namespace System.Configuration
 			switch (configPath) {
 				case "exe": return map.ExeConfigFilename; 
 				case "local": return map.LocalUserConfigFilename;
-				case "roaming": return map.LocalUserConfigFilename;
+				case "roaming": return map.RoamingUserConfigFilename;
 				case "machine": return map.MachineConfigFilename;
-				default: return map.ExeConfigFilename;
+				default://return map.ExeConfigFilename;
+				switch (level) {
+					case ConfigurationUserLevel.None:
+						return map.ExeConfigFilename; 
+					case ConfigurationUserLevel.PerUserRoaming:
+						return map.RoamingUserConfigFilename;
+					case ConfigurationUserLevel.PerUserRoamingAndLocal:
+						return map.LocalUserConfigFilename;
+					default:
+						return map.MachineConfigFilename;
+				}
 			}
 		}
 		
 		public override void InitForConfiguration (ref string locationSubPath, out string configPath, out string locationConfigPath, IInternalConfigRoot root, params object[] hostInitConfigurationParams)
 		{
 			map = (ExeConfigurationFileMap) hostInitConfigurationParams [0];
+
+			if (hostInitConfigurationParams.Length > 1 && 
+			    hostInitConfigurationParams [1] is ConfigurationUserLevel)
+				level = (ConfigurationUserLevel) hostInitConfigurationParams [1];
+			if (locationSubPath == null)
+				switch (level) {
+				case ConfigurationUserLevel.PerUserRoaming:
+					if (map.RoamingUserConfigFilename == null)
+						throw new ArgumentException ("RoamingUserConfigFilename must be set correctly");
+					locationSubPath = "roaming";
+					break;
+				case ConfigurationUserLevel.PerUserRoamingAndLocal:
+					if (map.LocalUserConfigFilename == null)
+						throw new ArgumentException ("LocalUserConfigFilename must be set correctly");
+					locationSubPath = "local";
+					break;
+				}
+
 			configPath = null;
 			string next = null;
 
 			locationConfigPath = null;
 
-			if ((locationSubPath == "exe" || locationSubPath == null) && map.ExeConfigFilename != null) {
+			if (locationSubPath == "exe" || locationSubPath == null && map.ExeConfigFilename != null) {
 				configPath = "exe";
 				next = "local";
 				locationConfigPath = map.ExeConfigFilename;
 			}
 			
-			if ((locationSubPath == "local" || configPath == null) && map.LocalUserConfigFilename != null) {
+			if (locationSubPath == "local" && map.LocalUserConfigFilename != null) {
 				configPath = "local";
 				next = "roaming";
 				locationConfigPath = map.LocalUserConfigFilename;
 			}
 			
-			if ((locationSubPath == "roaming" || configPath == null) && map.RoamingUserConfigFilename != null) {
+			if (locationSubPath == "roaming" && map.RoamingUserConfigFilename != null) {
 				configPath = "roaming";
 				next = "machine";
 				locationConfigPath = map.RoamingUserConfigFilename;
@@ -296,7 +325,6 @@ namespace System.Configuration
 				configPath = "machine";
 				next = null;
 			}
-
 			locationSubPath = next;
 		}
 	}
