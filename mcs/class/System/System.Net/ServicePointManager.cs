@@ -193,7 +193,7 @@ namespace System.Net
 			set { _securityProtocol = value; }
 		}
 
-#if NET_2_0
+#if NET_2_0 && SECURITY_DEP
 		public static RemoteCertificateValidationCallback ServerCertificateValidationCallback
 		{
 			get {

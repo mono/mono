@@ -1,3 +1,7 @@
+2007-06-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServicePointManager.cs : (bootstrap) build fix.
+
 2007-06-19  Dick Porter  <dick@ximian.com>
 
 	* AuthenticationManager.cs: 
