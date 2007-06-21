@@ -1,3 +1,9 @@
+2007-06-21  Raja R Harinath  <rharinath@novell.com>
+
+	* metadata.c (mono_metadata_lookup_generic_class): The fully open
+	generic type is not the same as the generic type definition.
+	* class.c (mono_generic_class_get_class): Likewise.
+
 2007-06-20  Geoff Norton  <gnorton@customerdna.com>
 
 	* icall.c: The second argument to 
