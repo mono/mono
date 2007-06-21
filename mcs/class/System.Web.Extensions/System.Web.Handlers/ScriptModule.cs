@@ -67,10 +67,17 @@ namespace System.Web.Handlers
 		void PreSendRequestHeaders (object sender, EventArgs e) {
 			HttpApplication app = (HttpApplication) sender;
 			HttpContext context = app.Context;
-			if (context.Request.Headers ["X-MicrosoftAjax"] == "Delta=true" && context.Response.StatusCode == 302) {
-				context.Response.StatusCode = 200;
-				context.Response.ClearContent ();
-				ScriptManager.WriteCallbackRedirect (context.Response.Output, context.Response.RedirectLocation);
+			if (context.Request.Headers ["X-MicrosoftAjax"] == "Delta=true"){
+				if (context.Error != null) {
+					context.Response.StatusCode = 200;
+					context.Response.ClearContent ();
+					ScriptManager.WriteCallbackException (context.Response.Output, context.Error);
+				}
+				else if (context.Response.StatusCode == 302) {
+					context.Response.StatusCode = 200;
+					context.Response.ClearContent ();
+					ScriptManager.WriteCallbackRedirect (context.Response.Output, context.Response.RedirectLocation);
+				}
 			}
 		}
 

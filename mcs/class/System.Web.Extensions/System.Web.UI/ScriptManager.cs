@@ -74,6 +74,9 @@ namespace System.Web.UI
 		const string error = "error";
 		const string pageTitle = "pageTitle";
 		const string focus = "focus";
+		const string scriptContentNoTags = "ScriptContentNoTags";
+		const string scriptContentWithTags = "ScriptContentWithTags";
+		const string scriptPath = "ScriptPath";
 
 		int _asyncPostBackTimeout = 90;
 		List<Control> _asyncPostBackControls;
@@ -86,7 +89,9 @@ namespace System.Web.UI
 		bool _enableScriptGlobalization;
 		bool _enableScriptLocalization;
 		string _scriptPath;
-		
+		ScriptEntry _clientScriptBlocks;
+		ScriptEntry _startupScriptBlocks;
+
 		[DefaultValue (true)]
 		[Category ("Behavior")]
 		public bool AllowCustomErrorsRedirect {
@@ -362,25 +367,26 @@ namespace System.Web.UI
 		protected override void OnPreRender (EventArgs e)
 		{
 			base.OnPreRender (e);
-			
+
 			if (IsInAsyncPostBack) {
 				Page.SetRenderMethodDelegate (RenderPageCallback);
 			}
+			else {
+				if (EnableScriptGlobalization) {
+					CultureInfo culture = Thread.CurrentThread.CurrentCulture;
+					string script = null; // TODO: Json serialization of culture
+					RegisterClientScriptBlock (this, typeof (ScriptManager), "ScriptGlobalization", script, true);
+				}
 
-			if (EnableScriptGlobalization) {
-				CultureInfo culture = Thread.CurrentThread.CurrentCulture;
-				string script = null; // TODO: Json serialization of culture
-				RegisterClientScriptBlock (this, typeof (ScriptManager), "ScriptGlobalization", script, true);
-			}
-			
-			// Register Scripts
-			foreach (ScriptReference script in GetScriptReferences ()) {
-				OnResolveScriptReference (new ScriptReferenceEventArgs (script));
-				RegisterScriptReference (script);
-			}
+				// Register Scripts
+				foreach (ScriptReference script in GetScriptReferences ()) {
+					OnResolveScriptReference (new ScriptReferenceEventArgs (script));
+					RegisterScriptReference (script);
+				}
 
-			// Register startup script
-			RegisterStartupScript (this, typeof (ScriptManager), "Sys.Application.initialize();", "Sys.Application.initialize();", true);
+				// Register startup script
+				RegisterStartupScript (this, typeof (ScriptManager), "Sys.Application.initialize();", "Sys.Application.initialize();", true);
+			}
 		}
 
 		IEnumerable GetScriptReferences () {
@@ -443,7 +449,11 @@ namespace System.Web.UI
 
 		public static void RegisterClientScriptBlock (Page page, Type type, string key, string script, bool addScriptTags)
 		{
-			page.ClientScript.RegisterClientScriptBlock (type, key, script, addScriptTags);
+			ScriptManager sm = GetCurrent (page);
+			if (sm.IsInAsyncPostBack)
+				RegisterScript (ref sm._clientScriptBlocks, type, key, script, addScriptTags);
+			else
+				page.ClientScript.RegisterClientScriptBlock (type, key, script, addScriptTags);
 		}
 
 		public static void RegisterClientScriptInclude (Control control, Type type, string key, string url)
@@ -594,7 +604,30 @@ namespace System.Web.UI
 
 		public static void RegisterStartupScript (Page page, Type type, string key, string script, bool addScriptTags)
 		{
-			page.ClientScript.RegisterStartupScript (type, key, script, addScriptTags);
+			ScriptManager sm = GetCurrent (page);
+			if (sm.IsInAsyncPostBack)
+				RegisterScript (ref sm._startupScriptBlocks, type, key, script, addScriptTags);
+			else
+				page.ClientScript.RegisterStartupScript (type, key, script, addScriptTags);
+		}
+
+		static void RegisterScript (ref ScriptEntry scriptList, Type type, string key, string script, bool addScriptTags) {
+			ScriptEntry last = null;
+			ScriptEntry entry = scriptList;
+
+			while (entry != null) {
+				if (entry.Type == type && entry.Key == key)
+					return;
+				last = entry;
+				entry = entry.Next;
+			}
+
+			entry = new ScriptEntry (type, key, script,addScriptTags);
+
+			if (last != null)
+				last.Next = entry;
+			else
+				scriptList = entry;
 		}
 
 		protected override void Render (HtmlTextWriter writer)
@@ -665,6 +698,11 @@ namespace System.Web.UI
 
 		#endregion
 
+		static internal void WriteCallbackException (TextWriter output, Exception ex) {
+			HttpException httpEx = ex as HttpException;
+			WriteCallbackOutput (output, error, httpEx == null ? "500" : httpEx.GetHttpCode ().ToString (), ex.GetBaseException ().Message);
+		}
+
 		static internal void WriteCallbackRedirect (TextWriter output, string redirectUrl) {
 			WriteCallbackOutput (output, pageRedirect, null, redirectUrl);
 		}
@@ -684,8 +722,28 @@ namespace System.Web.UI
 			WriteCallbackOutput (output, asyncPostBackControlIDs, null, FormatListIDs (_asyncPostBackControls, false));
 			WriteCallbackOutput (output, postBackControlIDs, null, FormatListIDs (_postBackControls, false));
 			WriteCallbackOutput (output, updatePanelIDs, null, FormatUpdatePanelIDs (_updatePanels, false));
-			WriteCallbackOutput (output, asyncPostBackTimeout, null, AsyncPostBackTimeout.ToString());
-			WriteCallbackOutput (output, pageTitle, null, Page.Title);  
+			WriteCallbackOutput (output, asyncPostBackTimeout, null, AsyncPostBackTimeout.ToString ());
+			WriteCallbackOutput (output, pageTitle, null, Page.Title);
+
+			WriteScriptBlocks (output, _clientScriptBlocks);
+			WriteScriptBlocks (output, _startupScriptBlocks);
+		}
+
+		void WriteScriptBlocks (HtmlTextWriter output, ScriptEntry scriptList) {
+			while (scriptList != null) {
+				if (scriptList.AddScriptTags)
+					WriteCallbackOutput (output, scriptBlock, scriptContentNoTags, scriptList.Script);
+				else {
+					string script = SerializeScriptBlock (scriptList);
+					WriteCallbackOutput (output, scriptBlock, scriptContentWithTags, script);
+				}
+				scriptList = scriptList.Next;
+			}
+		}
+
+		[MonoTODO()]
+		static string SerializeScriptBlock (ScriptEntry scriptList) {
+			throw new InvalidOperationException (String.Format ("The script tag registered for type '{0}' and key '{1}' has invalid characters outside of the script tags: {2}. Only properly formatted script tags can be registered.", scriptList.Type, scriptList.Key, scriptList.Script));
 		}
 
 		void RenderFormCallback (HtmlTextWriter output, Control container) {
@@ -873,6 +931,22 @@ namespace System.Web.UI
 		{
 			public override Encoding Encoding {
 				get { return Encoding.UTF8; }
+			}
+		}
+
+		sealed class ScriptEntry
+		{
+			readonly public Type Type;
+			readonly public string Key;
+			readonly public string Script;
+			readonly public bool AddScriptTags;
+			public ScriptEntry Next;
+
+			public ScriptEntry (Type type, string key, string script, bool addScriptTags) {
+				Key = key;
+				Type = type;
+				Script = script;
+				AddScriptTags = addScriptTags;
 			}
 		}
 	}
