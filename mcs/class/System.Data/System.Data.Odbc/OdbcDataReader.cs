@@ -705,7 +705,7 @@ namespace System.Data.Odbc
 							if (outsize < bufsize)
 								sb1.Append (System.Text.Encoding.Default.GetString(buffer,0,outsize));
 							else
-								sb1.Append (System.Text.Encoding.Default.GetString(buffer,0,bufsize));
+								sb1.Append (System.Text.Encoding.Default.GetString (buffer, 0, bufsize - 1));
 						}
 					} while (ret != OdbcReturn.NoData);
 					DataValue = sb1.ToString ();

@@ -1,3 +1,10 @@
+2007-06-21  Nagappan A  <anagappan@novell.com>
+
+	* OdbcDataReader.cs (GetValue): Patch for varchar longer than 255
+	characters, by Mads Bondo Dydensborg <mbd@dbc.dk>.
+
+	* OdbcConnection.cs: Fixed compiler warning.
+
 2007-06-06  Amit Biswas <amit@amitbiswas.com>
 
 	* OdbcParameter.cs (OdbcParameter ()): Changed default values in the constructor

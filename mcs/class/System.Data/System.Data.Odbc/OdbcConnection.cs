@@ -86,7 +86,11 @@ namespace System.Data.Odbc
 		[OdbcDescriptionAttribute ("Information used to connect to a Data Source")]	
 		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		[EditorAttribute ("Microsoft.VSDesigner.Data.Odbc.Design.OdbcConnectionStringEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
+#if NET_2_0
+                [SettingsBindableAttribute (true)]
+#else
                 [RecommendedAsConfigurableAttribute (true)]
+#endif
 		public 
 #if NET_2_0
 		override
