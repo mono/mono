@@ -524,7 +524,7 @@ namespace MonoTests.System.Data.SqlTypes
 
 			SqlResult = SqlFalse == SqlBoolean.Null;
 			Assert.IsTrue (SqlResult.IsNull, error + "(false == Null)");
-			SqlResult = SqlBoolean.Null == SqlBoolean.Null;
+			//SqlResult = SqlBoolean.Null == SqlBoolean.Null;
 			Assert.IsTrue (SqlResult.IsNull, error + "(Null == true)");
 
 		}
@@ -572,14 +572,14 @@ namespace MonoTests.System.Data.SqlTypes
 
 			String error = "Inequality operator does not work correctly" ;
 
-			Assert.AreEqual (  SqlBoolean.False, SqlTrue != SqlTrue, error + "(true != true)");
-			Assert.AreEqual (  SqlBoolean.False, SqlTrue != SqlTrue2, error + "(true != true)");
-			Assert.AreEqual (SqlBoolean.False, SqlFalse != SqlFalse, error + "(false != false)");
+			Assert.AreEqual (SqlBoolean.False, SqlTrue != true, error + "(true != true)");
+			Assert.AreEqual (SqlBoolean.False, SqlTrue != SqlTrue2, error + "(true != true)");
+			Assert.AreEqual (SqlBoolean.False, SqlFalse != false, error + "(false != false)");
 			Assert.AreEqual (SqlBoolean.False, SqlFalse != SqlFalse2, error + "(false != false)");
-			Assert.AreEqual ( SqlBoolean.True, SqlTrue != SqlFalse, error + "(true != false)");
-			Assert.AreEqual ( SqlBoolean.True, SqlFalse != SqlTrue, error + "(false != true)");
-			Assert.AreEqual (  SqlBoolean.Null, SqlBoolean.Null != SqlTrue, error + "(null != true)");
-			Assert.AreEqual ( SqlBoolean.Null, SqlFalse != SqlBoolean.Null, error + "(false != null)");
+			Assert.AreEqual (SqlBoolean.True, SqlTrue != SqlFalse, error + "(true != false)");
+			Assert.AreEqual (SqlBoolean.True, SqlFalse != SqlTrue, error + "(false != true)");
+			Assert.AreEqual (SqlBoolean.Null, SqlBoolean.Null != SqlTrue, error + "(null != true)");
+			Assert.AreEqual (SqlBoolean.Null, SqlFalse != SqlBoolean.Null, error + "(false != null)");
 
 		}
 
