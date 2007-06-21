@@ -4,10 +4,10 @@
 // file:	quicksearch.cs
 //
 // Authors:	Dan Lewis (dlewis@gmx.co.uk)
-//		Juraj Skripsky (juraj@hotfeet.ch)
+//	         Juraj Skripsky (juraj@hotfeet.ch)
 //
 // (c) 2002 Dan Lewis
-// (c) 2003 Juraj Skripsky
+// (c) 2007 Juraj Skripsky
 //
 
 //
@@ -160,44 +160,76 @@ namespace System.Text.RegularExpressions {
 			// private
 
 		private void SetupShiftTable () {
-			shift = new Hashtable ();
-			if (reverse)
-			{
-				for (int i = len ; i > 0; -- i) 
-				{
-					char c = str[i -1];
-					shift[GetChar(c)] = i;
-				}
-			}
-			else
-			{
-				for (int i = 0; i < len; ++ i) 
-				{
-					char c = str[i];
-					shift[GetChar(c)] = len - i;
-				}
+			bool needsExtendedTable = len > (byte.MaxValue - 1);
+
+			byte maxLowChar = 0;
+			for (int i = 0; i < len; i++) {
+				char cur = str [i];
+				if (cur <= (char)byte.MaxValue) {
+					if ((byte)cur > maxLowChar)
+						maxLowChar = (byte)cur;
+				} else
+					needsExtendedTable = true;
 			}
 			
+			shift = new byte [maxLowChar + 1];
+			if (needsExtendedTable)
+				shiftExtended = new Hashtable ();
+
+			for (int i = 0, j = len; i < len; i++, j--) {
+				char c = str [(!reverse ? i : j - 1)];
+				if (c < shift.Length) {
+					if (j < byte.MaxValue) {
+						shift [c] = (byte)j;
+						continue;
+					} else {
+						shift [c] = byte.MaxValue;
+					}
+				}
+				shiftExtended [c] = j;
+			}
 		}
 	    
 		private int GetShiftDistance (char c) {
-			if(shift == null)
+			if (shift == null)
 				return 1;
+				
+			c = GetChar (c);
+			if (c < shift.Length) {
+				int dist = shift [c];
+				if (dist == 0) {
+					return len + 1;
+				} else {
+					if (dist != byte.MaxValue)
+						return dist;
+				}
+			} else {
+				if (c < (char)byte.MaxValue)	
+					return len + 1;
+			}
 
-			object s = shift [GetChar (c)];
+			if (shiftExtended == null)
+				return len + 1;
+
+			object s = shiftExtended [c];
 			return (s != null ? (int)s : len + 1);
 		}
 
 		private char GetChar(char c) {
 			return (!ignore ? c : Char.ToLower(c));
 		}
-		
+
 		private string str;
 		private int len;
 		private bool ignore;
 		private bool reverse;
 
-		private Hashtable shift;
+		// shift[idx] contains value x  means 
+		//  x == 0             => shift dist. == len + 1
+		//  x == byte.Maxvalue => shift dist. >= 255, look it up in shiftExtended
+		//  otherwise          => shift dist. == x 
+		private byte[] shift;
+		private Hashtable shiftExtended;
 		private readonly static int THRESHOLD = 5;
 	}
 
