@@ -1,3 +1,8 @@
+2007-06-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* Delegate.cs: Applied patch from Robert Jordan (robertj@gmx.net). Keep
+	the dynamic method referenced by a delegate alive.
+
 2007-06-05  David Ferguson <davecferguson@gmail.com>
 
 	* DateTime.cs: Changed DateTime.Parse() to throw a FormatException

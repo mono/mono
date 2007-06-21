@@ -48,6 +48,7 @@ namespace System
 #endif
 	public abstract class Delegate : ICloneable, ISerializable
 	{
+		#region Sync with object-internals.h
 		private IntPtr method_ptr;
 		private IntPtr invoke_impl;
 		private object m_target;
@@ -55,6 +56,11 @@ namespace System
 		private string method_name;
 		private IntPtr delegate_trampoline;
 		private MethodInfo method_info;
+
+		// Keep a ref of the MethodInfo passed to CreateDelegate.
+		// Used to keep DynamicMethods alive.
+		private MethodInfo original_method_info;
+		#endregion
 
 		protected Delegate (object target, string method)
 		{
@@ -179,7 +185,9 @@ namespace System
 						return null;
 			}
 
-			return CreateDelegate_internal (type, null, method);
+			Delegate d = CreateDelegate_internal (type, null, method);
+			d.original_method_info = method;
+			return d;
 		}
 
 		public static Delegate CreateDelegate (Type type, MethodInfo method) {
@@ -202,7 +210,9 @@ namespace System
 			if (!type.IsSubclassOf (typeof (MulticastDelegate)))
 				throw new ArgumentException ("type is not a subclass of Multicastdelegate");
 
-			return CreateDelegate_internal (type, target, method);
+			Delegate d = CreateDelegate_internal (type, target, method);
+			d.original_method_info = method;
+			return d;
 
 		}
 
