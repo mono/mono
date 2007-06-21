@@ -1,3 +1,8 @@
+2007-06-21  Nagappan A  <anagappan@novell.com>
+
+	* OdbcDataReaderTest.cs (FindZeroInToStringTest): Test for varchar
+	longer than 255 characters, by Mads Bondo Dydensborg <mbd@dbc.dk>.
+
 2007-06-07  Amit Biswas <amit@amitbiswas.com>
 
 	* OdbcDataReaderTest.cs (GetDataTypeNameTest): Test case to check the returned data type names

@@ -29,6 +29,7 @@
 //
 
 using System;
+using System.Text;
 using System.Data;
 using System.Data.Common;
 using System.Data.Odbc;
@@ -93,6 +94,80 @@ namespace MonoTests.System.Data
 			}
 		}
 		
+		[Test]
+		public void FindZeroInToStringTest ()
+		{
+			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			IDataReader reader = null;
+			try {
+				ConnectionManager.Singleton.OpenConnection ();
+				IDbCommand OdbcCmd = conn.CreateCommand ();
+				OdbcCmd.CommandType = CommandType.Text;
+				OdbcCmd.CommandText = "Drop table foo";
+				try {
+					OdbcCmd.ExecuteNonQuery ();
+				} catch (OdbcException e) {
+					Assert.Fail ("Exception thrown: " + e.Message);
+				}
+				// Create table
+				OdbcCmd.CommandText = "Create table foo ( bar long varchar )";
+				OdbcCmd.ExecuteNonQuery();
+
+				// Insert a record into foo
+				OdbcCmd.CommandText = "Insert into foo (bar) values ( '"
+				  + "This string has more than 255 characters"
+				  + "This string has more than 255 characters"
+				  + "This string has more than 255 characters"
+				  + "This string has more than 255 characters"
+				  + "This string has more than 255 characters"
+				  + "This string has more than 255 characters"
+				  + "This string has more than 255 characters"
+				  + "This string has more than 255 characters"
+				  + "This string has more than 255 characters"
+				  + "This string has more than 255 characters"
+				  + "This string has more than 255 characters"
+				  + "This string has more than 255 characters"
+				  + "This string has more than 255 characters"
+				  + "This string has more than 255 characters"
+				  + "This string has more than 255 characters"
+				  + "This string has more than 255 characters"
+				  + "This string has more than 255 characters"
+				  + "This string has more than 255 characters"
+				  + "This string has more than 255 characters"
+				  + "This string has more than 255 characters"
+				  + "This string has more than 255 characters"
+				  + "This string has more than 255 characters"
+				  + "This string has more than 255 characters"
+				  + "This string has more than 255 characters"
+				  + "' )";
+				OdbcCmd.ExecuteNonQuery();
+    
+				// Now, get the record back - try and read it two different ways.
+				OdbcCmd.CommandText = "SELECT bar FROM foo" ;
+  
+				reader = OdbcCmd.ExecuteReader ();
+				string readAsString = "";
+				while (reader.Read ()) {
+					readAsString = reader[0].ToString();
+				}
+				reader.Close();
+				// Now, read it using GetBytes
+				reader = OdbcCmd.ExecuteReader ();
+				byte[] buffer = new byte [2048];
+				long total = 0;
+				while (reader.Read ()) {
+					total = reader.GetBytes (0, 0, buffer, 0, 2048);
+				}
+				reader.Close();
+				// Convert bytes read to string - look for binary zero - there is none (OK)
+				string readAsBytes = Encoding.Default.GetString (buffer, 0, (int) total);
+				Assert.AreEqual  (readAsBytes, readAsString, "#1 ReadAsString is not same as ReadAsBytes");
+			} finally {
+				if (reader != null)
+					reader.Close ();
+				ConnectionManager.Singleton.CloseConnection ();
+			}
+		}
 #if NET_2_0 
 		[Test]
 		public void GetDataTypeNameTest ()
