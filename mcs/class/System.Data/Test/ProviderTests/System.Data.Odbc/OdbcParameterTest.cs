@@ -238,9 +238,9 @@ namespace MonoTests.System.Data
 				OdbcParameter param = cmd.Parameters.Add ("type_blob", OdbcType.Image);
 				param.Value = new byte [] { 6, 6, 6, 6, 6, 6, 6, 6 };
 				cmd.ExecuteNonQuery ();
-				cmd.CommandText = "select count (*) from binary_family where id = 6000";
-				int count = (int) cmd.ExecuteScalar ();
-				Assert.AreEqual (1, count, "#1 value not matching");
+				cmd.CommandText = "select count(*) from binary_family where id = 6000";
+				Object count = cmd.ExecuteScalar ();
+				Assert.AreEqual (1, Int32.Parse ((string)count), "#1 value not matching");
 			} finally {
 				ConnectionManager.Singleton.CloseConnection ();
 				ConnectionManager.Singleton.OpenConnection ();
@@ -282,8 +282,9 @@ namespace MonoTests.System.Data
 				OdbcParameter param = cmd.Parameters.Add ("type_ntext", OdbcType.NText);
 				param.Value = "ntext";
 				cmd.ExecuteNonQuery ();
-				cmd.CommandText = "select count (*) from string_family where id = 6000";
-				Assert.AreEqual (1,(int) cmd.ExecuteScalar (), "#1 value not matching");
+				cmd.CommandText = "select count(*) from string_family where id = 6000";
+				Object count = cmd.ExecuteScalar ();
+				Assert.AreEqual (1, Int32.Parse ((string)count), "#1 value not matching");
 			} finally {
 				ConnectionManager.Singleton.CloseConnection ();
 				ConnectionManager.Singleton.OpenConnection ();
@@ -306,8 +307,9 @@ namespace MonoTests.System.Data
 				OdbcParameter param = cmd.Parameters.Add ("type_text", OdbcType.Text);
 				param.Value = "text";
 				cmd.ExecuteNonQuery ();
-				cmd.CommandText = "select count (*) from string_family where id = 6000";
-				Assert.AreEqual (1,(int) cmd.ExecuteScalar (), "#1 value not matching");
+				cmd.CommandText = "select count(*) from string_family where id = 6000";
+				Object count = cmd.ExecuteScalar ();
+				Assert.AreEqual (1, Int32.Parse ((string)count), "#1 value not matching");
 			} finally {
 				ConnectionManager.Singleton.CloseConnection ();
 				ConnectionManager.Singleton.OpenConnection ();

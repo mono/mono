@@ -1,5 +1,11 @@
 2007-06-21  Nagappan A  <anagappan@novell.com>
 
+	* OdbcConnectionStringBuilderTest.cs: Added base test-cases from
+	Nidhi Rawal (rawalnidhi_rawal@yahoo.com).
+
+	* OdbcParameterTest.cs (ImageParameterTest, NTextParameterTest)
+	(TextParameterTest): Fixed mysql syntax used.
+
 	* OdbcDataReaderTest.cs (FindZeroInToStringTest): Test for varchar
 	longer than 255 characters, by Mads Bondo Dydensborg <mbd@dbc.dk>.
 
