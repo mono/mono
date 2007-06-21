@@ -463,7 +463,7 @@ namespace System.Web.UI
 		{
 			ScriptManager sm = GetCurrent (page);
 			if (sm.IsInAsyncPostBack)
-				RegisterScript (ref sm._clientScriptBlocks, type, key, script, addScriptTags);
+				RegisterScript (ref sm._clientScriptBlocks, type, key, script, addScriptTags ? ScriptEntryType.ScriptContentNoTags : ScriptEntryType.ScriptContentWithTags);
 			else
 				page.ClientScript.RegisterClientScriptBlock (type, key, script, addScriptTags);
 		}
@@ -475,7 +475,11 @@ namespace System.Web.UI
 
 		public static void RegisterClientScriptInclude (Page page, Type type, string key, string url)
 		{
-			page.ClientScript.RegisterClientScriptInclude (type, key, url);
+			ScriptManager sm = GetCurrent (page);
+			if (sm.IsInAsyncPostBack)
+				RegisterScript (ref sm._clientScriptBlocks, type, key, url, ScriptEntryType.ScriptPath);
+			else
+				page.ClientScript.RegisterClientScriptInclude (type, key, url);
 		}
 
 		public static void RegisterClientScriptResource (Control control, Type type, string resourceName)
@@ -485,7 +489,7 @@ namespace System.Web.UI
 
 		public static void RegisterClientScriptResource (Page page, Type type, string resourceName)
 		{
-			page.ClientScript.RegisterClientScriptResource (type, resourceName);
+			RegisterClientScriptInclude (page, type, "resource-" + resourceName, ScriptResourceHandler.GetResourceUrl (type, resourceName));
 		}
 
 		void RegisterScriptReference (ScriptReference script) {
@@ -618,12 +622,12 @@ namespace System.Web.UI
 		{
 			ScriptManager sm = GetCurrent (page);
 			if (sm.IsInAsyncPostBack)
-				RegisterScript (ref sm._startupScriptBlocks, type, key, script, addScriptTags);
+				RegisterScript (ref sm._startupScriptBlocks, type, key, script, addScriptTags ? ScriptEntryType.ScriptContentNoTags : ScriptEntryType.ScriptContentWithTags);
 			else
 				page.ClientScript.RegisterStartupScript (type, key, script, addScriptTags);
 		}
 
-		static void RegisterScript (ref ScriptEntry scriptList, Type type, string key, string script, bool addScriptTags) {
+		static void RegisterScript (ref ScriptEntry scriptList, Type type, string key, string script, ScriptEntryType scriptEntryType) {
 			ScriptEntry last = null;
 			ScriptEntry entry = scriptList;
 
@@ -634,7 +638,7 @@ namespace System.Web.UI
 				entry = entry.Next;
 			}
 
-			entry = new ScriptEntry (type, key, script,addScriptTags);
+			entry = new ScriptEntry (type, key, script, scriptEntryType);
 
 			if (last != null)
 				last.Next = entry;
@@ -753,11 +757,17 @@ namespace System.Web.UI
 
 		void WriteScriptBlocks (HtmlTextWriter output, ScriptEntry scriptList) {
 			while (scriptList != null) {
-				if (scriptList.AddScriptTags)
+				switch (scriptList.ScriptEntryType) {
+				case ScriptEntryType.ScriptContentNoTags:
 					WriteCallbackOutput (output, scriptBlock, scriptContentNoTags, scriptList.Script);
-				else {
+					break;
+				case ScriptEntryType.ScriptContentWithTags:
 					string script = SerializeScriptBlock (scriptList);
 					WriteCallbackOutput (output, scriptBlock, scriptContentWithTags, script);
+					break;
+				case ScriptEntryType.ScriptPath:
+					WriteCallbackOutput (output, scriptBlock, scriptPath, scriptList.Script);
+					break;
 				}
 				scriptList = scriptList.Next;
 			}
@@ -961,15 +971,22 @@ namespace System.Web.UI
 			readonly public Type Type;
 			readonly public string Key;
 			readonly public string Script;
-			readonly public bool AddScriptTags;
+			readonly public ScriptEntryType ScriptEntryType;
 			public ScriptEntry Next;
 
-			public ScriptEntry (Type type, string key, string script, bool addScriptTags) {
+			public ScriptEntry (Type type, string key, string script, ScriptEntryType scriptEntryType) {
 				Key = key;
 				Type = type;
 				Script = script;
-				AddScriptTags = addScriptTags;
+				ScriptEntryType = scriptEntryType;
 			}
+		}
+
+		enum ScriptEntryType
+		{
+			ScriptContentNoTags,
+			ScriptContentWithTags,
+			ScriptPath
 		}
 
 		sealed class ArrayDeclaration
