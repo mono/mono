@@ -174,7 +174,7 @@ namespace System.Data.Common
 			if (keyword == null || keyword.Trim () == "")
 				throw new ArgumentException ("Keyword should not be emtpy");
 			if (value == null)
-				throw new ArgumentException ("Keyword not supported", keyword);
+				throw new ArgumentException ("Value should not be null");
                         if (ContainsKey (keyword)) {
                                 _dictionary [keyword] = value;
                         } else {
