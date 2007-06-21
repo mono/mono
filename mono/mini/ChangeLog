@@ -1,3 +1,13 @@
+2007-06-21  Martin Baulig  <martin@ximian.com>
+
+	* debug-mini.h: New file.
+
+	* debug-mini.c
+	(mono_debugger_insert_breakpoint_full): Moved here from
+	../metadata/mono-debug-debugger.c.
+	(mono_debugger_remove_breakpoint): Likewise.
+	(mono_debugger_breakpoint_callback): Likewise.
+
 2007-06-15  Raja R Harinath  <rharinath@novell.com>
 
 	* jit-icalls.c (mono_helper_compile_generic_method): Update to
