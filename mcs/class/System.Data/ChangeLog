@@ -1,3 +1,8 @@
+2007-06-21  Nagappan A  <anagappan@novell.com>
+
+	* System.Data.dll.sources: Added
+	System.Data.Odbc/OdbcConnectionStringBuilder.cs.
+
 2007-05-30  Nagappan A  <anagappan@novell.com>
 
 	* System.Data.dll.sources: Added SqlBulkCopy.cs,
