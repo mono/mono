@@ -114,8 +114,7 @@ namespace System.Web.Script.Serialization
 		}
 
 		public T Deserialize<T> (string input) {
-			JsonSerializer ser = new JsonSerializer (this);
-			return ConvertToType<T> (ser.Deserialize (new StringReader (input)));
+			return ConvertToType<T> (DeserializeObject(input));
 		}
 
 		static object Evaluate (object value) {
@@ -220,7 +219,8 @@ namespace System.Web.Script.Serialization
 		}
 
 		public object DeserializeObject (string input) {
-			throw new NotImplementedException ();
+			JsonSerializer ser = new JsonSerializer (this);
+			return ser.Deserialize (new StringReader (input));
 		}
 
 		public void RegisterConverters (IEnumerable<JavaScriptConverter> converters) {
