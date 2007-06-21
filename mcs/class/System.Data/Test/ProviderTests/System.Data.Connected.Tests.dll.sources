@@ -3,6 +3,7 @@ Common/DBHelper.cs
 Common/DataProvider.cs
 System.Data.Odbc/OdbcCommandBuilderTest.cs
 System.Data.Odbc/OdbcCommandTest.cs
+System.Data.Odbc/OdbcConnectionStringBuilderTest.cs
 System.Data.Odbc/OdbcDataReaderTest.cs
 System.Data.Odbc/OdbcDataAdapterTest.cs
 System.Data.Odbc/OdbcParameterTest.cs
