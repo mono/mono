@@ -1,3 +1,10 @@
+2007-06-21  Nagappan A  <anagappan@novell.com>
+
+	* OleDbConnection.cs: Fixed compiler warning.
+
+	* OleDbParameterCollection.cs (AddWithValue): Fixed compiler
+	warning.
+
 2007-02-20  Frederik Carlier <frederik.carlier@carlier-online.be>
 
 	* OleDbParameterCollection.cs: Added AddWithValue method.

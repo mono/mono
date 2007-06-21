@@ -166,7 +166,7 @@ namespace System.Data.OleDb
 #if NET_2_0
                 public OleDbParameter AddWithValue (string parameterName, object value)
                 {
-                        return Add (parameterName, value);
+			return Add (new OleDbParameter (parameterName, value));
 		}
 #endif // NET_2_0
 

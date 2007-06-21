@@ -75,7 +75,11 @@ namespace System.Data.OleDb
 		[DataSysDescriptionAttribute ("Information used to connect to a Data Source.")]
 #endif
 		[EditorAttribute ("Microsoft.VSDesigner.Data.ADO.Design.OleDbConnectionStringEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
+#if NET_2_0
+		[SettingsBindableAttribute (true)]
+#else
 		[RecommendedAsConfigurableAttribute (true)]
+#endif
 		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		public string ConnectionString {
 			get {
