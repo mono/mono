@@ -1,3 +1,8 @@
+2007-06-21  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TableLayout.cs: Take CellBorderStyle into account when laying
+	stuff out.  [Fixes bug #81884]
+
 2007-06-12  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TableLayout.cs: When we come across a Dock=Fill control, use the

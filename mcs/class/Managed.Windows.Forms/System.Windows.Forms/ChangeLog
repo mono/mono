@@ -1,3 +1,7 @@
+2007-06-21  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TableLayoutPanel.cs: Implement CellBorderStyle.  [Fixes bug #81884]
+
 2007-06-20  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ThemeWin32Classic.cs: In OwnerDraw mode draw subitems only for 

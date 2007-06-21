@@ -200,6 +200,8 @@ namespace System.Windows.Forms.Layout
 			panel.column_widths = new int[panel.actual_positions.GetLength (0)];
 			panel.row_heights = new int[panel.actual_positions.GetLength (1)];
 
+			int border_width = TableLayoutPanel.GetCellBorderWidth (panel.CellBorderStyle);
+				
 			Rectangle parentDisplayRectangle = panel.DisplayRectangle;
 
 			TableLayoutColumnStyleCollection col_styles = new TableLayoutColumnStyleCollection (panel);
@@ -232,7 +234,7 @@ namespace System.Windows.Forms.Layout
 				col_styles.RemoveAt (col_styles.Count - 1);
 				
 			// Figure up all the column widths
-			int total_width = parentDisplayRectangle.Width;
+			int total_width = parentDisplayRectangle.Width - (border_width * (columns + 1));
 			int index = 0;
 
 			// First assign all the Absolute sized columns..
@@ -314,7 +316,7 @@ namespace System.Windows.Forms.Layout
 				panel.column_widths[col_styles.Count - 1] += total_width;
 
 			// Figure up all the row heights
-			int total_height = parentDisplayRectangle.Height;
+			int total_height = parentDisplayRectangle.Height - (border_width * columns);
 			index = 0;
 
 			// First assign all the Absolute sized rows..
@@ -391,15 +393,17 @@ namespace System.Windows.Forms.Layout
 		private void LayoutControls (TableLayoutPanel panel)
 		{
 			TableLayoutSettings settings = panel.LayoutSettings;
+			
+			int border_width = TableLayoutPanel.GetCellBorderWidth (panel.CellBorderStyle);
 
 			int columns = panel.actual_positions.GetLength(0);
 			int rows = panel.actual_positions.GetLength(1);
-			
-			Point current_pos = new Point(0,0);
-			
+
+			Point current_pos = new Point (border_width, border_width);
+
 			for (int y = 0; y < rows; y++)
 			{
-				for (int x = 0; x < columns; x ++)
+				for (int x = 0; x < columns; x++)
 				{
 					Control c = panel.actual_positions[x,y];
 					
@@ -452,10 +456,10 @@ namespace System.Windows.Forms.Layout
 						c.SetBounds (new_x, new_y, new_width, new_height, BoundsSpecified.None);
 					}
 
-					current_pos.Offset (panel.column_widths[x], 0);
+					current_pos.Offset (panel.column_widths[x] + border_width, 0);
 				}
 
-				current_pos.Offset (-1 * current_pos.X, panel.row_heights[y]);
+				current_pos.Offset ((-1 * current_pos.X) + border_width, panel.row_heights[y] + border_width);
 			}
 		}
 	}

@@ -1,3 +1,7 @@
+2007-06-21  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TableLayoutTest.cs: Add test for CellBorderStyle.
+
 2007-06-12  Jonathan Pobst  <monkey@jpobst.com>
 
 	* FormTest.cs: Add tests for ScaleControl and GetScaledBounds.

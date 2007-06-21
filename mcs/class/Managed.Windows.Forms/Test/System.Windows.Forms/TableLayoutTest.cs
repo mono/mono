@@ -918,6 +918,126 @@ namespace MonoTests.System.Windows.Forms
 			
 			f.Dispose ();
 		}
+		
+		[Test]  // From bug #81884
+		public void CellBorderStyle ()
+		{
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+
+			TableLayoutPanel p = new TableLayoutPanel ();
+			p = new TableLayoutPanel ();
+			p.ColumnCount = 3;
+			p.ColumnStyles.Add (new ColumnStyle ());
+			p.ColumnStyles.Add (new ColumnStyle ());
+			p.ColumnStyles.Add (new ColumnStyle ());
+			p.Dock = DockStyle.Top;
+			p.Height = 200;
+			p.RowCount = 2;
+			p.RowStyles.Add (new RowStyle (SizeType.Percent, 50F));
+			p.RowStyles.Add (new RowStyle (SizeType.Percent, 50F));
+			f.Controls.Add (p);
+
+			Label _labelA = new Label ();
+			_labelA.Dock = DockStyle.Fill;
+			_labelA.Size = new Size (95, 20);
+			_labelA.Text = "A";
+			p.Controls.Add (_labelA, 0, 0);
+
+			Label _labelB = new Label ();
+			_labelB.Dock = DockStyle.Fill;
+			_labelB.Size = new Size (95, 20);
+			_labelB.Text = "B";
+			p.Controls.Add (_labelB, 1, 0);
+
+			Label _labelC = new Label ();
+			_labelC.Dock = DockStyle.Fill;
+			_labelC.Size = new Size (95, 20);
+			_labelC.Text = "C";
+			p.Controls.Add (_labelC, 2, 0);
+
+			Label _labelD = new Label ();
+			_labelD.Dock = DockStyle.Fill;
+			_labelD.Size = new Size (95, 20);
+			_labelD.Text = "D";
+			p.Controls.Add (_labelD, 0, 1);
+
+			Label _labelE = new Label ();
+			_labelE.Dock = DockStyle.Fill;
+			_labelE.Size = new Size (95, 20);
+			_labelE.Text = "E";
+			p.Controls.Add (_labelE, 1, 1);
+
+			Label _labelF = new Label ();
+			_labelF.Dock = DockStyle.Fill;
+			_labelF.Size = new Size (95, 20);
+			_labelF.Text = "F";
+			p.Controls.Add (_labelF, 2, 1);
+
+			_labelA.BackColor = Color.Red;
+			_labelB.BackColor = Color.Orange;
+			_labelC.BackColor = Color.Yellow;
+			_labelD.BackColor = Color.Green;
+			_labelE.BackColor = Color.Blue;
+			_labelF.BackColor = Color.Purple;
+
+			f.Show ();
+			// None
+			Assert.AreEqual (new Rectangle (3, 0, 95, 100), _labelA.Bounds, "A1");
+			Assert.AreEqual (new Rectangle (104, 0, 95, 100), _labelB.Bounds, "A2");
+			Assert.AreEqual (new Rectangle (205, 0, 95, 100), _labelC.Bounds, "A3");
+			Assert.AreEqual (new Rectangle (3, 100, 95, 100), _labelD.Bounds, "A4");
+			Assert.AreEqual (new Rectangle (104, 100, 95, 100), _labelE.Bounds, "A5");
+			Assert.AreEqual (new Rectangle (205, 100, 95, 100), _labelF.Bounds, "A6");
+			
+			p.CellBorderStyle = TableLayoutPanelCellBorderStyle.Single;
+			Assert.AreEqual (new Rectangle (4, 1, 95, 98), _labelA.Bounds, "A7");
+			Assert.AreEqual (new Rectangle (106, 1, 95, 98), _labelB.Bounds, "A8");
+			Assert.AreEqual (new Rectangle (208, 1, 95, 98), _labelC.Bounds, "A9");
+			Assert.AreEqual (new Rectangle (4, 100, 95, 99), _labelD.Bounds, "A10");
+			Assert.AreEqual (new Rectangle (106, 100, 95, 99), _labelE.Bounds, "A11");
+			Assert.AreEqual (new Rectangle (208, 100, 95, 99), _labelF.Bounds, "A12");
+
+			p.CellBorderStyle = TableLayoutPanelCellBorderStyle.Inset;
+			Assert.AreEqual (new Rectangle (5, 2, 95, 97), _labelA.Bounds, "A13");
+			Assert.AreEqual (new Rectangle (108, 2, 95, 97), _labelB.Bounds, "A14");
+			Assert.AreEqual (new Rectangle (211, 2, 95, 97), _labelC.Bounds, "A15");
+			Assert.AreEqual (new Rectangle (5, 101, 95, 97), _labelD.Bounds, "A16");
+			Assert.AreEqual (new Rectangle (108, 101, 95, 97), _labelE.Bounds, "A17");
+			Assert.AreEqual (new Rectangle (211, 101, 95, 97), _labelF.Bounds, "A18");
+
+			p.CellBorderStyle = TableLayoutPanelCellBorderStyle.InsetDouble;
+			Assert.AreEqual (new Rectangle (6, 3, 95, 95), _labelA.Bounds, "A19");
+			Assert.AreEqual (new Rectangle (110, 3, 95, 95), _labelB.Bounds, "A20");
+			Assert.AreEqual (new Rectangle (214, 3, 95, 95), _labelC.Bounds, "A21");
+			Assert.AreEqual (new Rectangle (6, 101, 95, 96), _labelD.Bounds, "A22");
+			Assert.AreEqual (new Rectangle (110, 101, 95, 96), _labelE.Bounds, "A23");
+			Assert.AreEqual (new Rectangle (214, 101, 95, 96), _labelF.Bounds, "A24");
+
+			p.CellBorderStyle = TableLayoutPanelCellBorderStyle.Outset;
+			Assert.AreEqual (new Rectangle (5, 2, 95, 97), _labelA.Bounds, "A25");
+			Assert.AreEqual (new Rectangle (108, 2, 95, 97), _labelB.Bounds, "A26");
+			Assert.AreEqual (new Rectangle (211, 2, 95, 97), _labelC.Bounds, "A27");
+			Assert.AreEqual (new Rectangle (5, 101, 95, 97), _labelD.Bounds, "A28");
+			Assert.AreEqual (new Rectangle (108, 101, 95, 97), _labelE.Bounds, "A29");
+			Assert.AreEqual (new Rectangle (211, 101, 95, 97), _labelF.Bounds, "A30");
+
+			p.CellBorderStyle = TableLayoutPanelCellBorderStyle.OutsetDouble;
+			Assert.AreEqual (new Rectangle (6, 3, 95, 95), _labelA.Bounds, "A31");
+			Assert.AreEqual (new Rectangle (110, 3, 95, 95), _labelB.Bounds, "A32");
+			Assert.AreEqual (new Rectangle (214, 3, 95, 95), _labelC.Bounds, "A33");
+			Assert.AreEqual (new Rectangle (6, 101, 95, 96), _labelD.Bounds, "A34");
+			Assert.AreEqual (new Rectangle (110, 101, 95, 96), _labelE.Bounds, "A35");
+			Assert.AreEqual (new Rectangle (214, 101, 95, 96), _labelF.Bounds, "A36");
+
+			p.CellBorderStyle = TableLayoutPanelCellBorderStyle.OutsetPartial;
+			Assert.AreEqual (new Rectangle (6, 3, 95, 95), _labelA.Bounds, "A37");
+			Assert.AreEqual (new Rectangle (110, 3, 95, 95), _labelB.Bounds, "A38");
+			Assert.AreEqual (new Rectangle (214, 3, 95, 95), _labelC.Bounds, "A39");
+			Assert.AreEqual (new Rectangle (6, 101, 95, 96), _labelD.Bounds, "A40");
+			Assert.AreEqual (new Rectangle (110, 101, 95, 96), _labelE.Bounds, "A41");
+			Assert.AreEqual (new Rectangle (214, 101, 95, 96), _labelF.Bounds, "A42");
+		}
 	}
 }
 #endif

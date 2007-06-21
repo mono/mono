@@ -28,6 +28,7 @@
 
 #if NET_2_0
 using System;
+using System.Drawing;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Windows.Forms.Layout;
@@ -80,7 +81,13 @@ namespace System.Windows.Forms
 		[DefaultValue (TableLayoutPanelCellBorderStyle.None)]
 		public TableLayoutPanelCellBorderStyle CellBorderStyle {
 			get { return this.cell_border_style; }
-			set { this.cell_border_style = value; }
+			set { 
+				if (this.cell_border_style != value) {
+					this.cell_border_style = value;
+					this.PerformLayout (this, "CellBorderStyle");
+					this.Invalidate ();
+				}
+			}
 		}
 
 		[Localizable (true)]
@@ -275,9 +282,216 @@ namespace System.Windows.Forms
 		protected override void OnPaintBackground (PaintEventArgs e)
 		{
 			base.OnPaintBackground (e);
+
+			DrawCellBorders (e);
+			
+			int border_width = GetCellBorderWidth (CellBorderStyle);
+
+			int x = border_width;
+			int y = border_width;
+			
+			for (int i = 0; i < column_widths.Length; i++) {
+				for (int j = 0; j < row_heights.Length; j++) {
+					this.OnCellPaint (new TableLayoutCellPaintEventArgs (e.Graphics, e.ClipRectangle, new Rectangle (x, y, column_widths[i] + border_width, row_heights[j] + border_width), i, j));
+					y += row_heights[j] + border_width;
+				}
+
+				x += column_widths[i] + border_width;
+				y = border_width;
+			}
 		}
 		#endregion
 
+		#region Internal Methods
+		internal static int GetCellBorderWidth (TableLayoutPanelCellBorderStyle style)
+		{
+			switch (style) {
+				case TableLayoutPanelCellBorderStyle.Single:
+					return 1;
+				case TableLayoutPanelCellBorderStyle.Inset:
+				case TableLayoutPanelCellBorderStyle.Outset:
+					return 2;
+				case TableLayoutPanelCellBorderStyle.InsetDouble:
+				case TableLayoutPanelCellBorderStyle.OutsetPartial:
+				case TableLayoutPanelCellBorderStyle.OutsetDouble:
+					return 3;
+			}
+			
+			return 0;
+		}
+		
+		private void DrawCellBorders (PaintEventArgs e)
+		{
+			Rectangle paint_here = this.Bounds;
+
+			switch (CellBorderStyle) {
+				case TableLayoutPanelCellBorderStyle.Single:
+					DrawSingleBorder (e.Graphics, this.Bounds);
+					break;
+				case TableLayoutPanelCellBorderStyle.Inset:
+					DrawInsetBorder (e.Graphics, this.Bounds);
+					break;
+				case TableLayoutPanelCellBorderStyle.InsetDouble:
+					DrawInsetDoubleBorder (e.Graphics, paint_here);
+					break;
+				case TableLayoutPanelCellBorderStyle.Outset:
+					DrawOutsetBorder (e.Graphics, this.Bounds);
+					break;
+				case TableLayoutPanelCellBorderStyle.OutsetDouble:
+				case TableLayoutPanelCellBorderStyle.OutsetPartial:
+					DrawOutsetDoubleBorder (e.Graphics, this.Bounds);
+					break;
+			}
+		}
+
+		private void DrawSingleBorder (Graphics g, Rectangle rect)
+		{
+			ControlPaint.DrawBorder (g, rect, SystemColors.ControlDark, ButtonBorderStyle.Solid);
+
+			int x = 0;
+			int y = 0;
+
+			for (int i = 0; i < column_widths.Length - 1; i++) {
+				x += column_widths[i] + 1;
+
+				g.DrawLine (SystemPens.ControlDark, new Point (x, 1), new Point (x, Bottom - 2));
+			}
+
+			for (int j = 0; j < row_heights.Length - 1; j++) {
+				y += row_heights[j] + 1;
+
+				g.DrawLine (SystemPens.ControlDark, new Point (1, y), new Point (Right - 2, y));
+			}
+		}
+
+		private void DrawInsetBorder (Graphics g, Rectangle rect)
+		{
+			ControlPaint.DrawBorder3D (g, rect, Border3DStyle.Etched);
+			
+			int x = 0;
+			int y = 0;
+
+			for (int i = 0; i < column_widths.Length - 1; i++) {
+				x += column_widths[i] + 2;
+
+				g.DrawLine (SystemPens.ControlDark, new Point (x, 1), new Point (x, Bottom - 3));
+				g.DrawLine (Pens.White, new Point (x + 1, 1), new Point (x + 1, Bottom - 3));
+			}
+
+			for (int j = 0; j < row_heights.Length - 1; j++) {
+				y += row_heights[j] + 2;
+
+				g.DrawLine (SystemPens.ControlDark, new Point (1, y), new Point (Right - 3, y));
+				g.DrawLine (Pens.White, new Point (1, y + 1), new Point (Right - 3, y + 1));
+			}
+		}
+
+		private void DrawOutsetBorder (Graphics g, Rectangle rect)
+		{
+			g.DrawRectangle (SystemPens.ControlDark, new Rectangle (rect.Left + 1, rect.Top + 1, rect.Width - 2, rect.Height - 2));
+			g.DrawRectangle (Pens.White, new Rectangle (rect.Left, rect.Top, rect.Width - 2, rect.Height - 2));
+
+			int x = 0;
+			int y = 0;
+
+			for (int i = 0; i < column_widths.Length - 1; i++) {
+				x += column_widths[i] + 2;
+
+				g.DrawLine (Pens.White, new Point (x, 1), new Point (x, Bottom - 3));
+				g.DrawLine (SystemPens.ControlDark, new Point (x + 1, 1), new Point (x + 1, Bottom - 3));
+			}
+
+			for (int j = 0; j < row_heights.Length - 1; j++) {
+				y += row_heights[j] + 2;
+
+				g.DrawLine (Pens.White, new Point (1, y), new Point (Right - 3, y));
+				g.DrawLine (SystemPens.ControlDark, new Point (1, y + 1), new Point (Right - 3, y + 1));
+			}
+		}
+
+		private void DrawOutsetDoubleBorder (Graphics g, Rectangle rect)
+		{
+			rect.Width -= 1;
+			rect.Height -= 1;
+			
+			g.DrawRectangle (SystemPens.ControlDark, new Rectangle (rect.Left + 2, rect.Top + 2, rect.Width - 2, rect.Height - 2));
+			g.DrawRectangle (Pens.White, new Rectangle (rect.Left, rect.Top, rect.Width - 2, rect.Height - 2));
+
+			int x = 0;
+			int y = 0;
+
+			for (int i = 0; i < column_widths.Length - 1; i++) {
+				x += column_widths[i] + 3;
+
+				g.DrawLine (Pens.White, new Point (x, 3), new Point (x, Bottom - 5));
+				g.DrawLine (SystemPens.ControlDark, new Point (x + 2, 3), new Point (x + 2, Bottom - 5));
+			}
+
+			for (int j = 0; j < row_heights.Length - 1; j++) {
+				y += row_heights[j] + 3;
+
+				g.DrawLine (Pens.White, new Point (3, y), new Point (Right - 4, y));
+				g.DrawLine (SystemPens.ControlDark, new Point (3, y + 2), new Point (Right - 4, y + 2));
+			}
+
+			x = 0;
+			y = 0;
+			
+			for (int i = 0; i < column_widths.Length - 1; i++) {
+				x += column_widths[i] + 3;
+
+				g.DrawLine (ThemeEngine.Current.ResPool.GetPen (BackColor), new Point (x + 1, 3), new Point (x + 1, Bottom - 5));
+			}
+
+			for (int j = 0; j < row_heights.Length - 1; j++) {
+				y += row_heights[j] + 3;
+
+				g.DrawLine (ThemeEngine.Current.ResPool.GetPen (BackColor), new Point (3, y + 1), new Point (Right - 4, y + 1));
+			}
+		}
+	
+		private void DrawInsetDoubleBorder (Graphics g, Rectangle rect)
+		{
+			rect.Width -= 1;
+			rect.Height -= 1;
+			
+			g.DrawRectangle (Pens.White, new Rectangle (rect.Left + 2, rect.Top + 2, rect.Width - 2, rect.Height - 2));
+			g.DrawRectangle (SystemPens.ControlDark, new Rectangle (rect.Left, rect.Top, rect.Width - 2, rect.Height - 2));
+
+			int x = 0;
+			int y = 0;
+
+			for (int i = 0; i < column_widths.Length - 1; i++) {
+				x += column_widths[i] + 3;
+
+				g.DrawLine (SystemPens.ControlDark, new Point (x, 3), new Point (x, Bottom - 5));
+				g.DrawLine (Pens.White, new Point (x + 2, 3), new Point (x + 2, Bottom - 5));
+			}
+
+			for (int j = 0; j < row_heights.Length - 1; j++) {
+				y += row_heights[j] + 3;
+
+				g.DrawLine (SystemPens.ControlDark, new Point (3, y), new Point (Right - 4, y));
+				g.DrawLine (Pens.White, new Point (3, y + 2), new Point (Right - 4, y + 2));
+			}
+
+			x = 0;
+			y = 0;
+			
+			for (int i = 0; i < column_widths.Length - 1; i++) {
+				x += column_widths[i] + 3;
+
+				g.DrawLine (ThemeEngine.Current.ResPool.GetPen (BackColor), new Point (x + 1, 3), new Point (x + 1, Bottom - 5));
+			}
+
+			for (int j = 0; j < row_heights.Length - 1; j++) {
+				y += row_heights[j] + 3;
+
+				g.DrawLine (ThemeEngine.Current.ResPool.GetPen (BackColor), new Point (3, y + 1), new Point (Right - 4, y + 1));
+			}
+		}
+		#endregion
+		
 		#region Public Events
 		static object CellPaintEvent = new object ();
 
