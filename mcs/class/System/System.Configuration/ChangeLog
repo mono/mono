@@ -1,3 +1,12 @@
+2007-06-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SettingValueElement.cs : implement Reset().
+	* CustomizableFileSettingsProvider.cs : fixed company name getter
+	  and product name getter.
+	  LoadPropertyValue() should expect null ValueXml.
+	* LocalFileSettingsProvider.cs : time to switch. With a bit of
+	  directory name difference, it should work.
+
 2007-06-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CustomizableLocalFileSettingsProvider.cs :

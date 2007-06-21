@@ -90,7 +90,7 @@ namespace System.Configuration
 
 		protected override void Reset (ConfigurationElement parentElement)
 		{
-			throw new NotImplementedException ();
+			node = null;
 		}
 
 		protected override void ResetModified ()

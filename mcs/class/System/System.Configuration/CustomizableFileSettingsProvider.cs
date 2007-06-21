@@ -37,6 +37,8 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Reflection;
+using System.Security.Cryptography;
+using System.Text;
 using System.Xml;
 
 using NameValueCollection = PrebuiltSystem.System.Collections.Specialized.NameValueCollection;
@@ -220,21 +222,26 @@ namespace System.Configuration
 			set { isCompany = value; }
 		}
 
+		// AssemblyCompanyAttribute->Namespace->"Program"
 		private static string GetCompanyName ()
 		{
 			Assembly assembly = Assembly.GetEntryAssembly ();
 			if (assembly == null)
 				assembly = Assembly.GetCallingAssembly ();
-			if (assembly == null)
-				return string.Empty;
-				
+
 			AssemblyCompanyAttribute [] attrs = (AssemblyCompanyAttribute []) assembly.GetCustomAttributes (typeof (AssemblyCompanyAttribute), true);
-			
+		
 			if ((attrs != null) && attrs.Length > 0) {
 				return attrs [0].Company;
 			}
 
-			return assembly.GetName ().Name;
+			MethodInfo entryPoint = assembly.EntryPoint;
+			Type entryType = entryPoint != null ? entryPoint.DeclaringType : null;
+			if (entryType != null && entryType.Namespace.Length > 0) {
+				int end = entryType.Namespace.IndexOf ('.');
+				return end < 0 ? entryType.Namespace : entryType.Namespace.Substring (0, end);
+			}
+			return "Program";
 		}
 
 		private static string GetProductName ()
@@ -242,16 +249,26 @@ namespace System.Configuration
 			Assembly assembly = Assembly.GetEntryAssembly ();
 			if (assembly == null)
 				assembly = Assembly.GetCallingAssembly ();
-			if (assembly == null)
-				return string.Empty;
-				
+
+#if true
+
+			byte [] pkt = assembly.GetName ().GetPublicKeyToken ();
+			byte [] hash = SHA1.Create ().ComputeHash (pkt != null ? pkt : Encoding.UTF8.GetBytes (assembly.EscapedCodeBase));
+			return String.Format ("{0}_{1}_{2}",
+				AppDomain.CurrentDomain.FriendlyName,
+				pkt != null ? "StrongName" : "Url",
+				// FIXME: it seems that something else is used
+				// here, to convert hash bytes to string.
+				Convert.ToBase64String (hash));
+
+#else // AssemblyProductAttribute-based code
 			AssemblyProductAttribute [] attrs = (AssemblyProductAttribute[]) assembly.GetCustomAttributes (typeof (AssemblyProductAttribute), true);
-			
+		
 			if ((attrs != null) && attrs.Length > 0) {
 				return attrs [0].Product;
 			}
-
 			return assembly.GetName ().Name;
+#endif
 		}
 
 		private static string GetProductVersion ()
@@ -619,9 +636,10 @@ namespace System.Configuration
 
 		private void LoadPropertyValue (SettingsPropertyCollection collection, SettingElement element, bool allowOverwrite)
 		{
-			SettingsPropertyValue value = new SettingsPropertyValue (collection [element.Name]);
+			SettingsProperty prop = collection [element.Name];
+			SettingsPropertyValue value = new SettingsPropertyValue (prop);
 			value.IsDirty = false;
-			value.SerializedValue = element.Value.ValueXml.InnerText;
+			value.SerializedValue = element.Value.ValueXml != null ? element.Value.ValueXml.InnerText : prop.DefaultValue;
 			try
 			{
 				if (allowOverwrite)

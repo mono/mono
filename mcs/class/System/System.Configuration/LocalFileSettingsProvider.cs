@@ -59,12 +59,7 @@ namespace System.Configuration
 		public override SettingsPropertyValueCollection GetPropertyValues (SettingsContext context,
 										   SettingsPropertyCollection properties)
 		{
-			SettingsPropertyValueCollection pv = new SettingsPropertyValueCollection ();
-			foreach (SettingsProperty prop in properties)
-				pv.Add (new SettingsPropertyValue (prop));
-			return pv;
-			// FIXME: enable this when the compiler issue is solved.
-			//return impl.GetPropertyValues (context, properties);
+			return impl.GetPropertyValues (context, properties);
 		}
 
 #if CONFIGURATION_DEP
@@ -76,8 +71,6 @@ namespace System.Configuration
 			if (values != null)
 				impl.ApplicationName = values ["applicationName"];
 
-			// FIXME: this must be enabled
-			//impl.Initialize (name, values);
 			base.Initialize (name, values);
 		}
 #endif
