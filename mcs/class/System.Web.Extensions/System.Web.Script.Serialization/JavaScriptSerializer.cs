@@ -80,8 +80,16 @@ namespace System.Web.Script.Serialization
 				return null;
 
 			if (obj is IDictionary<string, object>) {
-				if (type == null && !(obj is Dictionary<string, object>))
+				if (type == null)
 					obj = Evaluate ((IDictionary<string, object>) obj);
+				else {
+					JavaScriptConverter converter = GetConverter (type);
+					if (converter != null)
+						return converter.Deserialize (
+							Evaluate ((IDictionary<string, object>) obj),
+							type, this);
+				}
+
 				return Deserialize ((IDictionary<string, object>) obj, type);
 			}
 			if (obj is IEnumerable<object>)
@@ -127,7 +135,9 @@ namespace System.Web.Script.Serialization
 			return list;
 		}
 
-		static object Evaluate (IDictionary<string, object> dict) {
+		static IDictionary<string, object> Evaluate (IDictionary<string, object> dict) {
+			if (dict is Dictionary<string, object>)
+				return dict;
 			Dictionary<string, object> d = new Dictionary<string, object> (StringComparer.Ordinal);
 			foreach (KeyValuePair<string, object> entry in dict)
 				d.Add (entry.Key, Evaluate(entry.Value));
