@@ -91,6 +91,8 @@ namespace System.Web.UI
 		string _scriptPath;
 		ScriptEntry _clientScriptBlocks;
 		ScriptEntry _startupScriptBlocks;
+		ScriptEntry _scriptIncludes;
+		ScriptEntry _onSubmitStatements;
 		List<ArrayDeclaration> _arrayDeclarations;
 		Hashtable _hiddenFields;
 
@@ -478,7 +480,7 @@ namespace System.Web.UI
 		{
 			ScriptManager sm = GetCurrent (page);
 			if (sm.IsInAsyncPostBack)
-				RegisterScript (ref sm._clientScriptBlocks, type, key, url, ScriptEntryType.ScriptPath);
+				RegisterScript (ref sm._scriptIncludes, type, key, url, ScriptEntryType.ScriptPath);
 			else
 				page.ClientScript.RegisterClientScriptInclude (type, key, url);
 		}
@@ -600,7 +602,7 @@ namespace System.Web.UI
 		{
 			ScriptManager sm = GetCurrent (page);
 			if (sm.IsInAsyncPostBack)
-				RegisterScript (ref sm._clientScriptBlocks, type, key, script, ScriptEntryType.OnSubmit);
+				RegisterScript (ref sm._onSubmitStatements, type, key, script, ScriptEntryType.OnSubmit);
 			else
 				page.ClientScript.RegisterOnSubmitStatement (type, key, script);
 		}
@@ -658,7 +660,7 @@ namespace System.Web.UI
 			ScriptEntry entry = scriptList;
 
 			while (entry != null) {
-				if (entry.Type == type && entry.Key == key && entry.ScriptEntryType == scriptEntryType)
+				if (entry.Type == type && entry.Key == key)
 					return;
 				last = entry;
 				entry = entry.Next;
@@ -769,7 +771,9 @@ namespace System.Web.UI
 
 			WriteArrayDeclarations (output);
 			WriteScriptBlocks (output, _clientScriptBlocks);
+			WriteScriptBlocks (output, _scriptIncludes);
 			WriteScriptBlocks (output, _startupScriptBlocks);
+			WriteScriptBlocks (output, _onSubmitStatements);
 			WriteHiddenFields (output);
 		}
 
