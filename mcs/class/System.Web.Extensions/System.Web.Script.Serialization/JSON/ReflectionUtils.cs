@@ -252,11 +252,6 @@ namespace Newtonsoft.Json.Utilities
             }
         }
 
-		//public static List<MemberInfo> GetFieldsAndProperties<T>(BindingFlags bindingAttr)
-		//{
-		//    return GetFieldsAndProperties(typeof(T), bindingAttr);
-		//}
-
 		public static IEnumerable<MemberInfo> GetFieldsAndProperties (Type type, BindingFlags bindingAttr) {
 
 			MemberInfo [] members = type.GetFields (bindingAttr);
