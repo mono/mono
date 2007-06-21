@@ -85,6 +85,7 @@ namespace System.Web.UI
 		ScriptMode _scriptMode = ScriptMode.Auto;
 		bool _enableScriptGlobalization;
 		bool _enableScriptLocalization;
+		string _scriptPath;
 		
 		[DefaultValue (true)]
 		[Category ("Behavior")]
@@ -186,8 +187,7 @@ namespace System.Web.UI
 		[Browsable (false)]
 		public bool IsDebuggingEnabled {
 			get {
-				DeploymentSection deployment = (DeploymentSection) WebConfigurationManager.GetSection ("system.web/deployment");
-				if (deployment.Retail)
+				if (IsDeploymentRetail)
 					return false;
 
 				CompilationSection compilation = (CompilationSection) WebConfigurationManager.GetSection ("system.web/compilation");
@@ -198,6 +198,13 @@ namespace System.Web.UI
 					return false;
 
 				return true;
+			}
+		}
+
+		bool IsDeploymentRetail {
+			get {
+				DeploymentSection deployment = (DeploymentSection) WebConfigurationManager.GetSection ("system.web/deployment");
+				return deployment.Retail;
 			}
 		}
 
@@ -246,10 +253,12 @@ namespace System.Web.UI
 		[Category ("Behavior")]
 		public string ScriptPath {
 			get {
-				throw new NotImplementedException ();
+				if (_scriptPath == null)
+					return String.Empty;
+				return _scriptPath;
 			}
 			set {
-				throw new NotImplementedException ();
+				_scriptPath = value;
 			}
 		}
 
@@ -458,13 +467,11 @@ namespace System.Web.UI
 		}
 
 		void RegisterScriptReference (ScriptReference script) {
-
-			// TODO: consider 'retail' attribute of the 'deployment' configuration element in Web.config, 
-			// IsDebuggingEnabled and ScriptMode properties to determine whether to render debug scripts.
-
+			
+			bool isDebugMode = IsDeploymentRetail ? false : (script.ScriptModeInternal == ScriptMode.Inherit ? IsDebuggingEnabled : (script.ScriptModeInternal == ScriptMode.Debug));
 			string url;
 			if (!String.IsNullOrEmpty (script.Path)) {
-				url = script.Path;
+				url = GetScriptName (ResolveClientUrl (script.Path), isDebugMode, EnableScriptLocalization ? script.ResourceUICultures : null);
 			}
 			else if (!String.IsNullOrEmpty (script.Name)) {
 				Assembly assembly;
@@ -472,13 +479,38 @@ namespace System.Web.UI
 					assembly = typeof (ScriptManager).Assembly;
 				else
 					assembly = Assembly.Load (script.Assembly);
-				url = ScriptResourceHandler.GetResourceUrl (assembly, script.Name, script.NotifyScriptLoaded);
+				string name = GetScriptName (script.Name, isDebugMode, null);
+				if (script.IgnoreScriptPath || String.IsNullOrEmpty (ScriptPath))
+					url = ScriptResourceHandler.GetResourceUrl (assembly, name, script.NotifyScriptLoaded);
+				else {
+					AssemblyName an = assembly.GetName ();
+					url = ResolveClientUrl (String.Concat (VirtualPathUtility.AppendTrailingSlash (ScriptPath), an.Name, '/', an.Version, '/', name));
+				}
 			}
 			else {
 				throw new InvalidOperationException ("Name and Path cannot both be empty.");
 			}
 
 			RegisterClientScriptInclude (this, typeof (ScriptManager), url, url);
+		}
+
+		static string GetScriptName (string releaseName, bool isDebugMode, string [] supportedUICultures) {
+			if (!isDebugMode && (supportedUICultures == null || supportedUICultures.Length == 0))
+				return releaseName;
+
+			if (releaseName.Length < 3 || !releaseName.EndsWith (".js", StringComparison.OrdinalIgnoreCase))
+				throw new InvalidOperationException (String.Format ("'{0}' is not a valid script path.  The path must end in '.js'.", releaseName));
+
+			StringBuilder sb = new StringBuilder (releaseName);
+			sb.Length -= 3;
+			if (isDebugMode)
+				sb.Append (".debug");
+			string culture=Thread.CurrentThread.CurrentUICulture.Name;
+			if (supportedUICultures != null && Array.IndexOf<string> (supportedUICultures, culture) >= 0)
+				sb.AppendFormat (".{0}", culture);
+			sb.Append (".js");
+
+			return sb.ToString ();
 		}
 
 		public void RegisterDataItem (Control control, string dataItem)

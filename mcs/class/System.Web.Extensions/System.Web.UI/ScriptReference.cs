@@ -43,6 +43,8 @@ namespace System.Web.UI
 		string _assembly;
 		ScriptMode _scriptMode = ScriptMode.Auto;
 		bool _notifyScriptLoaded = true;
+		bool _ignoreScriptPath;
+		string [] _resourceUICultures;
 
 		public ScriptReference ()
 		{
@@ -70,10 +72,10 @@ namespace System.Web.UI
 
 		public bool IgnoreScriptPath {
 			get {
-				throw new NotImplementedException ();
+				return _ignoreScriptPath;
 			}
 			set {
-				throw new NotImplementedException ();
+				_ignoreScriptPath = value;
 			}
 		}
 
@@ -104,12 +106,13 @@ namespace System.Web.UI
 			}
 		}
 
+		[TypeConverter (typeof (StringArrayConverter))]
 		public string [] ResourceUICultures {
 			get {
-				throw new NotImplementedException ();
+				return _resourceUICultures;
 			}
 			set {
-				throw new NotImplementedException ();
+				_resourceUICultures = value;
 			}
 		}
 
@@ -119,6 +122,19 @@ namespace System.Web.UI
 			}
 			set {
 				_scriptMode = value;
+			}
+		}
+
+		internal ScriptMode ScriptModeInternal {
+			get {
+				if (ScriptMode == ScriptMode.Auto) {
+					if (!String.IsNullOrEmpty (Name))
+						return ScriptMode.Inherit;
+					else
+						return ScriptMode.Release;
+				}
+				else
+					return ScriptMode;
 			}
 		}
 
