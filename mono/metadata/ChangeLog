@@ -1,3 +1,10 @@
+2007-06-21  Dick Porter  <dick@ximian.com>
+
+	* file-io.h: 
+	* file-io.c (convert_share): Cope with FileShare.Delete.  Patch
+	from Wojtek Krawczyk <krawczyk.wojciech@gazeta.pl>, fixes bug
+	81767.
+
 2007-06-21  Raja R Harinath  <rharinath@novell.com>
 
 	* reflection.c (method_encode_methodspec): Add a tripwire.
