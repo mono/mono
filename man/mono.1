@@ -727,6 +727,10 @@ managed implementation (slow). If unset, mono will try to use FAM under
 Unix systems and native API calls on Windows, falling back to the
 managed implementation on error.
 .TP
+.I "MONO_NO_SMP"
+If set causes the mono process to be bound to a single processor. This may be
+useful when debugging or working around race conditions.
+.TP
 .I "MONO_PATH"
 Provides a search path to the runtime where to look for library
 files.   This is a tool convenient for debugging applications, but
