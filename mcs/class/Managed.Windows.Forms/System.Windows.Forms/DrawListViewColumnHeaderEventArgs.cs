@@ -118,12 +118,14 @@ namespace System.Windows.Forms
 
         public void DrawText ()
         {
-		DrawText (TextFormatFlags.Default);
+		DrawText (TextFormatFlags.EndEllipsis | TextFormatFlags.SingleLine);
         }
 
         public void DrawText (TextFormatFlags flags)
         {
-		TextRenderer.DrawText (graphics, header.Text, font, bounds, foreColor, flags);
+		// Text adjustments
+		Rectangle text_bounds = new Rectangle (bounds.X + 8, bounds.Y, bounds.Width - 13, bounds.Height);
+		TextRenderer.DrawText (graphics, header.Text, font, text_bounds, foreColor, flags);
         }
 
         #endregion Methods

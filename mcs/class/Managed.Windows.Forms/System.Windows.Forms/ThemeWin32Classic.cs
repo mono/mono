@@ -2410,17 +2410,17 @@ namespace System.Windows.Forms
 			if (args.DrawDefault)
 				return false;
 
-			for (int i = 0; i < item.SubItems.Count; i++) {
-				int count = Math.Min (item.ListView.Columns.Count, item.SubItems.Count);
-
-				// Do system drawing for subitems if no owner draw is done
-				for (int j = 0; j < count; j++)
-					if (!DrawListViewSubItemOwnerDraw (dc, item, item_state, j))
-						DrawListViewSubItem (dc, item.ListView, item, j);
-			}
+			if (item.ListView.View == View.Details)
+				for (int i = 0; i < item.SubItems.Count; i++) {
+					int count = Math.Min (item.ListView.Columns.Count, item.SubItems.Count);
+					
+					// Do system drawing for subitems if no owner draw is done
+					for (int j = 0; j < count; j++)
+						if (!DrawListViewSubItemOwnerDraw (dc, item, item_state, j))
+							DrawListViewSubItem (dc, item.ListView, item, j);
+				}
 
 			return true;
-					
 		}
 #endif
 
