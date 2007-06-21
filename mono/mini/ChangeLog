@@ -1,3 +1,9 @@
+
+Thu Jun 21 19:24:03 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* driver.c: check for the MONO_NO_SMP env var and bind to a single
+	processor if it is set.
+
 2007-06-21  Martin Baulig  <martin@ximian.com>
 
 	* debug-mini.h: New file.
