@@ -557,7 +557,16 @@ namespace System.Web.UI
 
 		public static void RegisterExpandoAttribute (Control control, string controlId, string attributeName, string attributeValue, bool encode)
 		{
-			throw new NotImplementedException ();
+			Page page = control.Page;
+			ScriptManager sm = GetCurrent (page);
+			if (sm.IsInAsyncPostBack)
+				sm.RegisterExpandoAttribute (controlId, attributeName, attributeValue, encode);
+			else
+				page.ClientScript.RegisterExpandoAttribute (controlId, attributeName, attributeValue, encode);
+		}
+
+		private void RegisterExpandoAttribute (string controlId, string attributeName, string attributeValue, bool encode) {
+			// seems MS do nothing.
 		}
 
 		public static void RegisterHiddenField (Control control, string hiddenFieldName, string hiddenFieldInitialValue)
@@ -584,12 +593,16 @@ namespace System.Web.UI
 
 		public static void RegisterOnSubmitStatement (Control control, Type type, string key, string script)
 		{
-			throw new NotImplementedException ();
+			RegisterOnSubmitStatement (control.Page, type, key, script);
 		}
 
 		public static void RegisterOnSubmitStatement (Page page, Type type, string key, string script)
 		{
-			throw new NotImplementedException ();
+			ScriptManager sm = GetCurrent (page);
+			if (sm.IsInAsyncPostBack)
+				RegisterScript (ref sm._clientScriptBlocks, type, key, script, ScriptEntryType.OnSubmit);
+			else
+				page.ClientScript.RegisterOnSubmitStatement (type, key, script);
 		}
 
 		public void RegisterPostBackControl (Control control)
@@ -645,7 +658,7 @@ namespace System.Web.UI
 			ScriptEntry entry = scriptList;
 
 			while (entry != null) {
-				if (entry.Type == type && entry.Key == key)
+				if (entry.Type == type && entry.Key == key && entry.ScriptEntryType == scriptEntryType)
 					return;
 				last = entry;
 				entry = entry.Next;
@@ -781,6 +794,9 @@ namespace System.Web.UI
 					break;
 				case ScriptEntryType.ScriptPath:
 					WriteCallbackOutput (output, scriptBlock, scriptPath, scriptList.Script);
+					break;
+				case ScriptEntryType.OnSubmit:
+					WriteCallbackOutput (output, onSubmit, null, scriptList.Script);
 					break;
 				}
 				scriptList = scriptList.Next;
@@ -1009,7 +1025,8 @@ namespace System.Web.UI
 		{
 			ScriptContentNoTags,
 			ScriptContentWithTags,
-			ScriptPath
+			ScriptPath,
+			OnSubmit
 		}
 
 		sealed class ArrayDeclaration
