@@ -423,5 +423,29 @@ namespace MonoTests.System.Drawing.Imaging {
 				ia.SetColorMatrices (global_color_matrix, global_color_matrix, ColorMatrixFlag.Default, (ColorAdjustType) Int32.MinValue);
 			}
 		}
+
+		[Test]
+		public void BigAlpha ()
+		{
+			ColorMatrix cm = new ColorMatrix (new float[][] {
+				new float[] 	{1,	0,	0, 	0, 	0}, //R
+				new float[] 	{0,	1,	0, 	0, 	0}, //G
+				new float[] 	{0,	0,	1, 	0, 	0}, //B
+				new float[] 	{0,	0,	0, 	253, 	0}, //A
+				new float[] 	{0,	0,	0, 	0, 	1}, //Translation
+			  });
+
+			using (Bitmap bmp = new Bitmap (1, 1)) {
+				bmp.SetPixel (0, 0, Color.White);
+				using (Bitmap b = new Bitmap (1, 1)) {
+					using (Graphics g = Graphics.FromImage (b)) {
+						ImageAttributes ia = new ImageAttributes ();
+						ia.SetColorMatrix (cm);
+						g.DrawImage (bmp, new Rectangle (0, 0, 1, 1), 0, 0, 1, 1, GraphicsUnit.Pixel, ia);
+						Assert.AreEqual (Color.FromArgb (3, 255, 255, 255), b.GetPixel (0,0), "0,0");
+					}
+				}
+			}
+		}
 	}
 }

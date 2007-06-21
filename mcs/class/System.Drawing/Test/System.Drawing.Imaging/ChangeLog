@@ -1,3 +1,8 @@
+2007-06-21  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* TestImageAttributes.cs: Add test case for big alpha value used in
+	a ColorMatrix.
+
 2007-05-30  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* GifCodecTest.cs: Add test case for interlaced GIF
