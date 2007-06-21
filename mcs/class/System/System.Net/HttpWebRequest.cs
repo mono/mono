@@ -176,13 +176,19 @@ namespace System.Net
 		}
 
 #if NET_2_0
+		static Exception GetMustImplement ()
+		{
+			return new NotImplementedException ();
+		}
+		
+		[MonoTODO]
 		public DecompressionMethods AutomaticDecompression
 		{
 			get {
-				throw new NotImplementedException ();
+				throw GetMustImplement ();
 			}
 			set {
-				throw new NotImplementedException ();
+				throw GetMustImplement ();
 			}
 		}
 #endif
@@ -203,8 +209,9 @@ namespace System.Net
 				return certificates;
 			}
 #if NET_2_0
+			[MonoTODO]
 			set {
-				throw new NotImplementedException ();
+				throw GetMustImplement ();
 			}
 #endif
 		}
@@ -279,23 +286,25 @@ namespace System.Net
 		}
 
 #if NET_2_0
+		[MonoTODO]
 		public static RequestCachePolicy DefaultCachePolicy
 		{
 			get {
-				throw new NotImplementedException ();
+				throw GetMustImplement ();
 			}
 			set {
-				throw new NotImplementedException ();
+				throw GetMustImplement ();
 			}
 		}
 		
+		[MonoTODO]
 		public static int DefaultMaximumErrorResponseLength
 		{
 			get {
-				throw new NotImplementedException ();
+				throw GetMustImplement ();
 			}
 			set {
-				throw new NotImplementedException ();
+				throw GetMustImplement ();
 			}
 		}
 #endif
@@ -519,13 +528,14 @@ namespace System.Net
 		}
 
 #if NET_2_0
+		[MonoTODO]
 		public override bool UseDefaultCredentials
 		{
 			get {
-				throw new NotImplementedException ();
+				throw GetMustImplement ();
 			}
 			set {
-				throw new NotImplementedException ();
+				throw GetMustImplement ();
 			}
 		}
 #endif

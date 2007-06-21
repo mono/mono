@@ -100,23 +100,30 @@ namespace System.Net
 		}
 
 #if NET_2_0
+		static Exception GetMustImplement ()
+		{
+			return new NotImplementedException ();
+		}
+		
+		[MonoTODO]
 		public X509CertificateCollection ClientCertificates
 		{
 			get {
-				throw new NotImplementedException ();
+				throw GetMustImplement ();
 			}
 			set {
-				throw new NotImplementedException ();
+				throw GetMustImplement ();
 			}
 		}
 		
+		[MonoTODO]
 		public override string ConnectionGroupName
 		{
 			get {
-				throw new NotImplementedException ();
+				throw GetMustImplement ();
 			}
 			set {
-				throw new NotImplementedException ();
+				throw GetMustImplement ();
 			}
 		}
 #endif
@@ -168,13 +175,14 @@ namespace System.Net
 		}
 
 #if NET_2_0
+		[MonoTODO]
 		public static RequestCachePolicy DefaultCachePolicy
 		{
 			get {
-				throw new NotImplementedException ();
+				throw GetMustImplement ();
 			}
 			set {
-				throw new NotImplementedException ();
+				throw GetMustImplement ();
 			}
 		}
 #endif
@@ -190,13 +198,14 @@ namespace System.Net
 		}
 
 #if NET_2_0
+		[MonoTODO]
 		public override WebHeaderCollection Headers
 		{
 			get {
-				throw new NotImplementedException ();
+				throw GetMustImplement ();
 			}
 			set {
-				throw new NotImplementedException ();
+				throw GetMustImplement ();
 			}
 		}
 #endif
@@ -299,13 +308,14 @@ namespace System.Net
 		}
 
 #if NET_2_0
+		[MonoTODO]
 		public override bool UseDefaultCredentials
 		{
 			get {
-				throw new NotImplementedException ();
+				throw GetMustImplement ();
 			}
 			set {
-				throw new NotImplementedException ();
+				throw GetMustImplement ();
 			}
 		}
 #endif

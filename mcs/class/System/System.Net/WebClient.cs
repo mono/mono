@@ -106,23 +106,30 @@ namespace System.Net
 		}
 
 #if NET_2_0
+		static Exception GetMustImplement ()
+		{
+			return new NotImplementedException ();
+		}
+		
+		[MonoTODO]
 		public RequestCachePolicy CachePolicy
 		{
 			get {
-				throw new NotImplementedException ();
+				throw GetMustImplement ();
 			}
 			set {
-				throw new NotImplementedException ();
+				throw GetMustImplement ();
 			}
 		}
 
+		[MonoTODO]
 		public bool UseDefaultCredentials
 		{
 			get {
-				throw new NotImplementedException ();
+				throw GetMustImplement ();
 			}
 			set {
-				throw new NotImplementedException ();
+				throw GetMustImplement ();
 			}
 		}
 #endif

@@ -1,3 +1,18 @@
+2007-06-21  Dick Porter  <dick@ximian.com>
+
+	* AuthenticationManager.cs: 
+	* FtpWebRequest.cs: 
+	* Cookie.cs: 
+	* ServicePoint.cs: 
+	* WebClient.cs: 
+	* Authorization.cs: 
+	* FileWebRequest.cs: 
+	* HttpWebRequest.cs: 
+	* WebResponse.cs: 
+	* ServicePointManager.cs: 
+	* HttpWebResponse.cs: Throw NotImplementedException indirectly, to
+	reduce noise in Moma reports.
+
 2007-06-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServicePointManager.cs : (bootstrap) build fix.

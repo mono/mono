@@ -61,17 +61,24 @@ namespace System.Net
 		}
 
 #if NET_2_0
+		static Exception GetMustImplement ()
+		{
+			return new NotImplementedException ();
+		}
+		
+		[MonoTODO]
 		public virtual bool IsFromCache
 		{
 			get {
-				throw new NotImplementedException ();
+				throw GetMustImplement ();
 			}
 		}
 		
+		[MonoTODO]
 		public virtual bool IsMutuallyAuthenticated
 		{
 			get {
-				throw new NotImplementedException ();
+				throw GetMustImplement ();
 			}
 		}
 #endif
@@ -111,9 +118,10 @@ namespace System.Net
 		}
 
 #if NET_2_0
+		[MonoTODO]
 		protected virtual void GetObjectData (SerializationInfo serializationInfo, StreamingContext streamingContext)
 		{
-			throw new NotImplementedException ();
+			throw GetMustImplement ();
 		}
 #endif
 	}

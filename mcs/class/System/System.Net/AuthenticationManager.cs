@@ -86,10 +86,16 @@ namespace System.Net
 			}
 		}
 		
+		static Exception GetMustImplement ()
+		{
+			return new NotImplementedException ();
+		}
+		
+		[MonoTODO]
 		public static StringDictionary CustomTargetNameDictionary
 		{
 			get {
-				throw new NotImplementedException ();
+				throw GetMustImplement ();
 			}
 		}
 #endif

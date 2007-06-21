@@ -77,13 +77,19 @@ namespace System.Net
 		}
 
 #if NET_2_0
+		static Exception GetMustImplement ()
+		{
+			return new NotImplementedException ();
+		}
+
+		[MonoTODO]
 		public BindIPEndPoint BindIPEndPointDelegate
 		{
 			get {
-				throw new NotImplementedException ();
+				throw GetMustImplement ();
 			}
 			set {
-				throw new NotImplementedException ();
+				throw GetMustImplement ();
 			}
 		}
 #endif
@@ -97,13 +103,14 @@ namespace System.Net
 		}
 
 #if NET_2_0
+		[MonoTODO]
 		public int ConnectionLeaseTimeout
 		{
 			get {
-				throw new NotImplementedException ();
+				throw GetMustImplement ();
 			}
 			set {
-				throw new NotImplementedException ();
+				throw GetMustImplement ();
 			}
 		}
 #endif
@@ -152,13 +159,14 @@ namespace System.Net
 		}
 
 #if NET_2_0
+		[MonoTODO]
 		public int ReceiveBufferSize
 		{
 			get {
-				throw new NotImplementedException ();
+				throw GetMustImplement ();
 			}
 			set {
-				throw new NotImplementedException ();
+				throw GetMustImplement ();
 			}
 		}
 #endif

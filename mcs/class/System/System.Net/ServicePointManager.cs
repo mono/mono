@@ -137,23 +137,30 @@ namespace System.Net
 		}
 
 #if NET_2_0
+		static Exception GetMustImplement ()
+		{
+			return new NotImplementedException ();
+		}
+		
+		[MonoTODO]
 		public static int DnsRefreshTimeout
 		{
 			get {
-				throw new NotImplementedException ();
+				throw GetMustImplement ();
 			}
 			set {
-				throw new NotImplementedException ();
+				throw GetMustImplement ();
 			}
 		}
 		
+		[MonoTODO]
 		public static bool EnableDnsRoundRobin
 		{
 			get {
-				throw new NotImplementedException ();
+				throw GetMustImplement ();
 			}
 			set {
-				throw new NotImplementedException ();
+				throw GetMustImplement ();
 			}
 		}
 #endif
@@ -194,13 +201,14 @@ namespace System.Net
 		}
 
 #if NET_2_0 && SECURITY_DEP
+		[MonoTODO]
 		public static RemoteCertificateValidationCallback ServerCertificateValidationCallback
 		{
 			get {
-				throw new NotImplementedException ();
+				throw GetMustImplement ();
 			}
 			set {
-				throw new NotImplementedException ();
+				throw GetMustImplement ();
 			}
 		}
 #endif

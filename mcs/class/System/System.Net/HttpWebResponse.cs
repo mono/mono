@@ -171,10 +171,16 @@ namespace System.Net
 		}
 
 #if NET_2_0
+		static Exception GetMustImplement ()
+		{
+			return new NotImplementedException ();
+		}
+		
+		[MonoTODO]
 		public override bool IsMutuallyAuthenticated
 		{
 			get {
-				throw new NotImplementedException ();
+				throw GetMustImplement ();
 			}
 		}
 #endif

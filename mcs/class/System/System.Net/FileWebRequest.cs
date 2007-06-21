@@ -181,12 +181,18 @@ namespace System.Net
 		private delegate WebResponse GetResponseCallback ();
 
 #if NET_2_0
+		static Exception GetMustImplement ()
+		{
+			return new NotImplementedException ();
+		}
+		
 		/* LAMESPEC: Docs suggest this was present in 1.1 and
 		 * 1.0 profiles, but the masterinfos say otherwise
 		 */
+		[MonoTODO]
 		public override void Abort ()
 		{
-			throw new NotImplementedException ();
+			throw GetMustImplement ();
 		}
 #endif
 
