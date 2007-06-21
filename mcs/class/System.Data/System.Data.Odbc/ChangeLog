@@ -1,5 +1,8 @@
 2007-06-21  Nagappan A  <anagappan@novell.com>
 
+	* OdbcConnectionStringBuilder.cs: Added new file with the basic
+	work of Nidhi Rawal (rawalnidhi_rawal@yahoo.com).
+
 	* OdbcDataReader.cs (GetValue): Patch for varchar longer than 255
 	characters, by Mads Bondo Dydensborg <mbd@dbc.dk>.
 
