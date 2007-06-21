@@ -1,3 +1,7 @@
+2007-06-21  Dick Porter  <dick@ximian.com>
+
+	* FileStream.cs: Fix FileShare test, fixing better bug 79250.
+
 2007-05-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* UnmanagedMemoryStream.cs : added Closed event for sys.Resources use.
