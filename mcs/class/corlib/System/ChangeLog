@@ -1,5 +1,7 @@
 2007-06-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* Environment.cs: Bump corlib version.
+
 	* Delegate.cs: Applied patch from Robert Jordan (robertj@gmx.net). Keep
 	the dynamic method referenced by a delegate alive.
 
