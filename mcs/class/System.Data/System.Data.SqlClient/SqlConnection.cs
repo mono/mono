@@ -131,9 +131,13 @@ namespace System.Data.SqlClient {
 #endif
 		[DefaultValue ("")]
 		[EditorAttribute ("Microsoft.VSDesigner.Data.SQL.Design.SqlConnectionStringEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
-		[RecommendedAsConfigurable (true)]	
+#if NET_2_0
+		[SettingsBindableAttribute (true)]
+#else
+		[RecommendedAsConfigurable (true)]
+#endif
 		[RefreshProperties (RefreshProperties.All)]
-		[MonoTODO("persist security info, encrypt, enlist and , attachdbfilename keyword not implemented")]
+		[MonoTODO("persist security info, encrypt, enlist keyword not implemented")]
 		public 
 #if NET_2_0
 		override
@@ -953,8 +957,11 @@ namespace System.Data.SqlClient {
 
 				if (Client.Available <= 0)
 					return -1; // Error
-
+#if NET_2_0
+				IPEndPoint endpoint = new IPEndPoint (Dns.GetHostEntry ("localhost").AddressList [0], 0);
+#else
 				IPEndPoint endpoint = new IPEndPoint (Dns.GetHostByName ("localhost").AddressList [0], 0);
+#endif
 				Byte [] rawrs;
 
 				rawrs = Receive (ref endpoint);

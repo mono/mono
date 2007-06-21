@@ -71,7 +71,6 @@ namespace System.Data.SqlClient {
 		}
 		}
 
-
 		#endregion // Properties
 	}
 }
