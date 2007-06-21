@@ -91,6 +91,7 @@ namespace System.Web.UI
 		string _scriptPath;
 		ScriptEntry _clientScriptBlocks;
 		ScriptEntry _startupScriptBlocks;
+		List<ArrayDeclaration> _arrayDeclarations;
 
 		[DefaultValue (true)]
 		[Category ("Behavior")]
@@ -420,12 +421,23 @@ namespace System.Web.UI
 
 		public static void RegisterArrayDeclaration (Control control, string arrayName, string arrayValue)
 		{
-			throw new NotImplementedException ();
+			RegisterArrayDeclaration (control.Page, arrayName, arrayValue);
 		}
 
 		public static void RegisterArrayDeclaration (Page page, string arrayName, string arrayValue)
 		{
-			throw new NotImplementedException ();
+			ScriptManager sm = GetCurrent (page);
+			if (sm.IsInAsyncPostBack)
+				sm.RegisterArrayDeclaration (arrayName, arrayValue);
+			else
+				page.ClientScript.RegisterArrayDeclaration (arrayName, arrayValue);
+		}
+
+		void RegisterArrayDeclaration (string arrayName, string arrayValue) {
+			if (_arrayDeclarations == null)
+				_arrayDeclarations = new List<ArrayDeclaration> ();
+
+			_arrayDeclarations.Add(new ArrayDeclaration(arrayName, arrayValue));
 		}
 
 		public void RegisterAsyncPostBackControl (Control control)
@@ -725,8 +737,18 @@ namespace System.Web.UI
 			WriteCallbackOutput (output, asyncPostBackTimeout, null, AsyncPostBackTimeout.ToString ());
 			WriteCallbackOutput (output, pageTitle, null, Page.Title);
 
+			WriteArrayDeclarations (output);
 			WriteScriptBlocks (output, _clientScriptBlocks);
 			WriteScriptBlocks (output, _startupScriptBlocks);
+		}
+
+		void WriteArrayDeclarations (HtmlTextWriter writer) {
+			if (_arrayDeclarations != null) {
+				for (int i = 0; i < _arrayDeclarations.Count; i++) {
+					ArrayDeclaration array = _arrayDeclarations [i];
+					WriteCallbackOutput (writer, arrayDeclaration, array.ArrayName, array.ArrayValue);
+				}
+			}
 		}
 
 		void WriteScriptBlocks (HtmlTextWriter output, ScriptEntry scriptList) {
@@ -947,6 +969,17 @@ namespace System.Web.UI
 				Type = type;
 				Script = script;
 				AddScriptTags = addScriptTags;
+			}
+		}
+
+		sealed class ArrayDeclaration
+		{
+			readonly public string ArrayName;
+			readonly public string ArrayValue;
+
+			public ArrayDeclaration (string arrayName, string arrayValue) {
+				ArrayName = arrayName;
+				ArrayValue = arrayValue;
 			}
 		}
 	}
