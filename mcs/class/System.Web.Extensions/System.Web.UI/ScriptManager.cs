@@ -92,6 +92,7 @@ namespace System.Web.UI
 		ScriptEntry _clientScriptBlocks;
 		ScriptEntry _startupScriptBlocks;
 		List<ArrayDeclaration> _arrayDeclarations;
+		Hashtable _hiddenFields;
 
 		[DefaultValue (true)]
 		[Category ("Behavior")]
@@ -561,12 +562,24 @@ namespace System.Web.UI
 
 		public static void RegisterHiddenField (Control control, string hiddenFieldName, string hiddenFieldInitialValue)
 		{
-			throw new NotImplementedException ();
+			RegisterHiddenField (control.Page, hiddenFieldName, hiddenFieldInitialValue);
 		}
 
 		public static void RegisterHiddenField (Page page, string hiddenFieldName, string hiddenFieldInitialValue)
 		{
-			throw new NotImplementedException ();
+			ScriptManager sm = GetCurrent (page);
+			if (sm.IsInAsyncPostBack)
+				sm.RegisterHiddenField (hiddenFieldName, hiddenFieldInitialValue);
+			else
+				page.ClientScript.RegisterHiddenField (hiddenFieldName, hiddenFieldInitialValue);
+		}
+
+		void RegisterHiddenField (string hiddenFieldName, string hiddenFieldInitialValue) {
+			if (_hiddenFields == null)
+				_hiddenFields = new Hashtable ();
+
+			if (!_hiddenFields.ContainsKey (hiddenFieldName))
+				_hiddenFields.Add (hiddenFieldName, hiddenFieldInitialValue);
 		}
 
 		public static void RegisterOnSubmitStatement (Control control, Type type, string key, string script)
@@ -744,6 +757,7 @@ namespace System.Web.UI
 			WriteArrayDeclarations (output);
 			WriteScriptBlocks (output, _clientScriptBlocks);
 			WriteScriptBlocks (output, _startupScriptBlocks);
+			WriteHiddenFields (output);
 		}
 
 		void WriteArrayDeclarations (HtmlTextWriter writer) {
@@ -770,6 +784,15 @@ namespace System.Web.UI
 					break;
 				}
 				scriptList = scriptList.Next;
+			}
+		}
+
+		void WriteHiddenFields (HtmlTextWriter output) {
+			if (_hiddenFields == null)
+				return;
+			foreach (string key in _hiddenFields.Keys) {
+				string value = _hiddenFields [key] as string;
+				WriteCallbackOutput (output, hiddenField, key, value);
 			}
 		}
 
