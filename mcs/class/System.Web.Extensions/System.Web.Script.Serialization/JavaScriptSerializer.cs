@@ -41,6 +41,8 @@ namespace System.Web.Script.Serialization
 {
 	public class JavaScriptSerializer
 	{
+		List<IEnumerable<JavaScriptConverter>> _converterList;
+
 		public JavaScriptSerializer () {
 		}
 
@@ -104,7 +106,7 @@ namespace System.Web.Script.Serialization
 		}
 
 		public T Deserialize<T> (string input) {
-			JsonSerializer ser = new JsonSerializer ();
+			JsonSerializer ser = new JsonSerializer (this);
 			return ConvertToType<T> (ser.Deserialize (new StringReader (input)));
 		}
 
@@ -212,7 +214,24 @@ namespace System.Web.Script.Serialization
 		}
 
 		public void RegisterConverters (IEnumerable<JavaScriptConverter> converters) {
-			throw new NotImplementedException ();
+			if (converters == null)
+				throw new ArgumentNullException ("converters");
+
+			if (_converterList == null)
+				_converterList = new List<IEnumerable<JavaScriptConverter>> ();
+			_converterList.Add (converters);
+		}
+
+		internal JavaScriptConverter GetConverter (Type type) {
+			if (_converterList != null)
+				for (int i = 0; i < _converterList.Count; i++) {
+					foreach (JavaScriptConverter converter in _converterList [i])
+						foreach (Type supportedType in converter.SupportedTypes)
+							if (supportedType == type)
+								return converter;
+				}
+
+			return null;
 		}
 
 		public string Serialize (object obj) {
@@ -222,7 +241,7 @@ namespace System.Web.Script.Serialization
 		}
 
 		public void Serialize (object obj, StringBuilder output) {
-			JsonSerializer ser = new JsonSerializer ();
+			JsonSerializer ser = new JsonSerializer (this);
 			ser.Serialize (new StringWriter (output), obj);
 		}
 	}

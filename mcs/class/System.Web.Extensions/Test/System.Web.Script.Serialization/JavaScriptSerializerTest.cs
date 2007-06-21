@@ -36,6 +36,8 @@ using System.Reflection;
 using System.Collections;
 using System.Drawing;
 using ComponentModel = System.ComponentModel;
+using System.Globalization;
+using System.Threading;
 
 
 namespace Tests.System.Web.Script.Serialization
@@ -334,7 +336,22 @@ namespace Tests.System.Web.Script.Serialization
 			ser.Deserialize<string> (null);
 		}
 
-		
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void TestDeserializeNullConverter () {
+			JavaScriptSerializer ser = new JavaScriptSerializer ();
+			ser.RegisterConverters (null);
+		}
+
+		[Test]
+		public void TestDeserializeConverter () {
+			JavaScriptSerializer ser = new JavaScriptSerializer ();
+			List<JavaScriptConverter> list = new List<JavaScriptConverter> ();
+			list.Add (new MyJavaScriptConverter ());
+			ser.RegisterConverters (list);
+			string result = ser.Serialize (new X [] { new X (), new X () });
+			Assert.AreEqual ("{\"0\":1,\"1\":2}", result);
+		}
 
 		[Test]
 		public void TestSerialize1 () {
@@ -371,8 +388,8 @@ namespace Tests.System.Web.Script.Serialization
 			public override IDictionary<string, object> Serialize (object obj, JavaScriptSerializer serializer) {
 				Array a = (Array) obj;
 				Dictionary<string, object> d = new Dictionary<string, object> ();
-				d.Add ("0", a.GetValue (0));
-				d.Add ("1", a.GetValue (1));
+				d.Add ("0", 1);
+				d.Add ("1", 2);
 				return d;
 				//throw new Exception ("The method or operation is not implemented.");
 			}

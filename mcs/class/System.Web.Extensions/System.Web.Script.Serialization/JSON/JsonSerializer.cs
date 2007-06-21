@@ -54,14 +54,8 @@ namespace Newtonsoft.Json
 	/// </summary>
 	sealed class JsonSerializer
 	{
-		sealed class LazyDictionary : IDictionary<string, object>
+		abstract class LazyDictionary : IDictionary<string, object>
 		{
-			readonly JsonReader _reader;
-			readonly JsonSerializer _serializer;
-			public LazyDictionary (JsonReader reader, JsonSerializer serializer) {
-				_reader = reader;
-				_serializer = serializer;
-			}
 			#region IDictionary<string,object> Members
 
 			void IDictionary<string, object>.Add (string key, object value) {
@@ -69,7 +63,7 @@ namespace Newtonsoft.Json
 			}
 
 			bool IDictionary<string, object>.ContainsKey (string key) {
-				throw new Exception ("The method or operation is not implemented.");
+				throw new NotSupportedException ();
 			}
 
 			ICollection<string> IDictionary<string, object>.Keys {
@@ -134,22 +128,56 @@ namespace Newtonsoft.Json
 			#region IEnumerable<KeyValuePair<string,object>> Members
 
 			IEnumerator<KeyValuePair<string, object>> IEnumerable<KeyValuePair<string, object>>.GetEnumerator () {
-				return _serializer.PopulateObject (_reader);
+				return GetEnumerator ();
 			}
+
+			protected abstract IEnumerator<KeyValuePair<string, object>> GetEnumerator ();
 
 			#endregion
 
 			#region IEnumerable Members
 
 			System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator () {
-				return ((IEnumerable<KeyValuePair<string,object>>)this).GetEnumerator();
+				return ((IEnumerable<KeyValuePair<string, object>>) this).GetEnumerator ();
 			}
 
 			#endregion
 		}
 
+		sealed class DeserializerLazyDictionary : LazyDictionary
+		{
+			readonly JsonReader _reader;
+			readonly JsonSerializer _serializer;
+			public DeserializerLazyDictionary (JsonReader reader, JsonSerializer serializer) {
+				_reader = reader;
+				_serializer = serializer;
+			}
+
+			protected override IEnumerator<KeyValuePair<string, object>> GetEnumerator () {
+				return _serializer.PopulateObject (_reader);
+			}
+		}
+
+		sealed class SerializerLazyDictionary : LazyDictionary
+		{
+			readonly object _source;
+
+			public SerializerLazyDictionary (object source) {
+				_source = source;
+			}
+
+			protected override IEnumerator<KeyValuePair<string, object>> GetEnumerator () {
+				foreach (MemberInfo member in ReflectionUtils.GetFieldsAndProperties (_source.GetType (), BindingFlags.Public | BindingFlags.Instance)) {
+					if (ReflectionUtils.CanReadMemberValue (member) && !member.IsDefined (typeof (ScriptIgnoreAttribute), true))
+						if (!ReflectionUtils.IsIndexedProperty (member))
+							yield return new KeyValuePair<string, object> (member.Name, ReflectionUtils.GetMemberValue (member, _source));
+				}
+			}
+		}
+
 		private ReferenceLoopHandling _referenceLoopHandling;
 		private int _level;
+		readonly JavaScriptSerializer _context;
 
 		/// <summary>
 		/// Get or set how reference loops (e.g. a class referencing itself) is handled.
@@ -170,8 +198,9 @@ namespace Newtonsoft.Json
 		/// <summary>
 		/// Initializes a new instance of the <see cref="JsonSerializer"/> class.
 		/// </summary>
-		public JsonSerializer()
+		public JsonSerializer(JavaScriptSerializer context)
 		{
+			_context = context;
 			_referenceLoopHandling = ReferenceLoopHandling.Error;
 		}
 
@@ -205,7 +234,7 @@ namespace Newtonsoft.Json
 			// depending upon whether an objectType was supplied
 			case JsonToken.StartObject:
 				//value = PopulateObject(reader/*, objectType*/);
-				value = new LazyDictionary (reader, this);
+				value = new DeserializerLazyDictionary (reader, this);
 				break;
 			case JsonToken.StartArray:
 				value = PopulateList (reader/*, objectType*/);
@@ -311,7 +340,17 @@ namespace Newtonsoft.Json
 				writer.WriteNull ();
 			}
 			else {
-				switch (Type.GetTypeCode (value.GetType ())) {
+				JavaScriptConverter jsconverter = _context.GetConverter (value.GetType ());
+				if (jsconverter != null) {
+					value = jsconverter.Serialize (value, _context);
+					if (value == null) {
+						writer.WriteNull ();
+						return;
+					}
+				}
+
+				Type valueType = value.GetType ();
+				switch (Type.GetTypeCode (valueType)) {
 				case TypeCode.String:
 					writer.WriteValue ((string) value);
 					break;
@@ -358,81 +397,63 @@ namespace Newtonsoft.Json
 					writer.WriteValue ((decimal) value);
 					break;
 				default:
-					if (value is IDictionary) {
-						SerializeDictionary (writer, (IDictionary) value);
+					
+
+					ThrowOnReferenceLoop (writer, value);
+					writer.SerializeStack.Push (value);
+					try {
+
+						if (value is IDictionary) {
+							SerializeDictionary (writer, (IDictionary) value);
+						}
+						else if (value is IEnumerable) {
+							SerializeEnumerable (writer, (IEnumerable) value);
+						}
+						else {
+							TypeConverter converter = TypeDescriptor.GetConverter (valueType);
+
+							// use the objectType's TypeConverter if it has one and can convert to a string
+							if (converter != null) {
+								if (!(converter is ComponentConverter) && converter.GetType () != typeof (TypeConverter)) {
+									if (converter.CanConvertTo (typeof (string))) {
+										writer.WriteValue (converter.ConvertToInvariantString (value));
+										return;
+									}
+								}
+							}
+
+							SerializeDictionary (writer, new SerializerLazyDictionary (value));
+						}
 					}
-					else if (value is IEnumerable) {
-						SerializeEnumerable (writer, (IEnumerable) value);
+					finally {
+
+						object x = writer.SerializeStack.Pop ();
+						if (x != value)
+							throw new InvalidOperationException ("Serialization stack is corrupted");
 					}
-					else
-						SerializeObject (writer, value);
+
 					break;
 				}
 			}
 		}
 
-		private void WriteMemberInfoProperty(JsonWriter writer, object value, MemberInfo member)
+		private void ThrowOnReferenceLoop (JsonWriter writer, object value)
 		{
-			if (!ReflectionUtils.IsIndexedProperty(member))
-			{
-				object memberValue = ReflectionUtils.GetMemberValue(member, value);
-
-				if (writer.SerializeStack.Contains(memberValue))
-				{
-					switch (_referenceLoopHandling)
-					{
-						case ReferenceLoopHandling.Error:
-							throw new JsonSerializationException("Self referencing loop");
-						case ReferenceLoopHandling.Ignore:
-							// return from method
-							return;
-						case ReferenceLoopHandling.Serialize:
-							// continue
-							break;
-						default:
-							throw new InvalidOperationException(string.Format("Unexpected ReferenceLoopHandling value: '{0}'", _referenceLoopHandling));
-					}
-				}
-
-				writer.WritePropertyName(member.Name);
-				SerializeValue(writer, memberValue);
+			switch (_referenceLoopHandling) {
+			case ReferenceLoopHandling.Error:
+				if (writer.SerializeStack.Contains (value))
+					throw new JsonSerializationException ("Self referencing loop");
+				break;
+			case ReferenceLoopHandling.Ignore:
+				// return from method
+				return;
+			case ReferenceLoopHandling.Serialize:
+				// continue
+				break;
+			default:
+				throw new InvalidOperationException (string.Format ("Unexpected ReferenceLoopHandling value: '{0}'", _referenceLoopHandling));
 			}
 		}
-
-		private void SerializeObject(JsonWriter writer, object value)
-		{
-			Type objectType = value.GetType();
-
-			TypeConverter converter = TypeDescriptor.GetConverter(objectType);
-
-			// use the objectType's TypeConverter if it has one and can convert to a string
-			if (converter != null) 
-				if (!(converter is ComponentConverter) && converter.GetType() != typeof(TypeConverter))
-			{
-				if (converter.CanConvertTo(typeof(string)))
-				{
-					writer.WriteValue(converter.ConvertToInvariantString(value));
-					return;
-				}
-			}
-
-			writer.SerializeStack.Push(value);
-
-			writer.WriteStartObject();
-
-			foreach (MemberInfo member in ReflectionUtils.GetFieldsAndProperties(objectType, BindingFlags.Public | BindingFlags.Instance))
-			{
-				if (ReflectionUtils.CanReadMemberValue (member) && !member.IsDefined (typeof (ScriptIgnoreAttribute), true))
-					WriteMemberInfoProperty(writer, value, member);
-			}
-
-			writer.WriteEndObject();
-
-			object x = writer.SerializeStack.Pop();
-			if (x != value)
-				throw new Exception ();
-		}
-
 
 		private void SerializeEnumerable (JsonWriter writer, IEnumerable values) {
 			writer.WriteStartArray ();
@@ -448,13 +469,25 @@ namespace Newtonsoft.Json
 			writer.WriteStartObject();
 
 			foreach (DictionaryEntry entry in values)
-			{
-				writer.WritePropertyName(entry.Key.ToString());
-				SerializeValue(writer, entry.Value);
-			}
+				SerializePair (writer, entry.Key.ToString (), entry.Value);
 
 			writer.WriteEndObject();
 		}
+
+		private void SerializeDictionary (JsonWriter writer, IDictionary<string, object> values) {
+			writer.WriteStartObject ();
+
+			foreach (KeyValuePair<string, object> entry in values)
+				SerializePair (writer, entry.Key, entry.Value);
+
+			writer.WriteEndObject ();
+		}
+
+		private void SerializePair (JsonWriter writer, string key, object value) {
+			writer.WritePropertyName (key);
+			SerializeValue (writer, value);
+		}
+
 		#endregion
 	}
 }
