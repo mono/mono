@@ -348,9 +348,11 @@ namespace Tests.System.Web.Script.Serialization
 			JavaScriptSerializer ser = new JavaScriptSerializer ();
 			List<JavaScriptConverter> list = new List<JavaScriptConverter> ();
 			list.Add (new MyJavaScriptConverter ());
+			list.Add (new CultureInfoConverter ());
 			ser.RegisterConverters (list);
 			string result = ser.Serialize (new X [] { new X (), new X () });
 			Assert.AreEqual ("{\"0\":1,\"1\":2}", result);
+			result = ser.Serialize (Thread.CurrentThread.CurrentCulture);
 		}
 
 		[Test]
@@ -398,6 +400,29 @@ namespace Tests.System.Web.Script.Serialization
 				get {
 					yield return typeof (X[]);
 				}
+			}
+		}
+
+		sealed class CultureInfoConverter : JavaScriptConverter
+		{
+			static readonly Type typeofCultureInfo = typeof (CultureInfo);
+			public override IEnumerable<Type> SupportedTypes {
+				get { yield return typeofCultureInfo; }
+			}
+
+			public override object Deserialize (IDictionary<string, object> dictionary, Type type, JavaScriptSerializer serializer) {
+				throw new NotSupportedException ();
+			}
+
+			public override IDictionary<string, object> Serialize (object obj, JavaScriptSerializer serializer) {
+				CultureInfo ci = (CultureInfo)obj;
+				if (ci == null)
+					return null;
+				Dictionary<string, object> d = new Dictionary<string, object> ();
+				d.Add ("name", ci.Name);
+				d.Add ("numberFormat", ci.NumberFormat);
+				d.Add ("dateTimeFormat", ci.DateTimeFormat);
+				return d;
 			}
 		}
 	}
