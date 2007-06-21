@@ -59,7 +59,7 @@ namespace System.Data.Common
 
                 private void Init ()
                 {
-                        _dictionary = new Dictionary<string, object> ();
+                        _dictionary = new Dictionary <string, object> (StringComparer.InvariantCultureIgnoreCase);
                 }
 
                 #endregion // Constructors
@@ -130,7 +130,7 @@ namespace System.Data.Common
                                 if (ContainsKey (keyword))
                                         return _dictionary [keyword];
                                 else
-                                        throw new ArgumentException ();
+                                        throw new ArgumentException ("Keyword does not exist");
                         }
                         set { Add (keyword, value); }
                 }
@@ -171,6 +171,10 @@ namespace System.Data.Common
 
                 public void Add (string keyword, object value)
                 {
+			if (keyword == null || keyword.Trim () == "")
+				throw new ArgumentException ("Keyword should not be emtpy");
+			if (value == null)
+				throw new ArgumentException ("Keyword not supported", keyword);
                         if (ContainsKey (keyword)) {
                                 _dictionary [keyword] = value;
                         } else {
@@ -209,6 +213,8 @@ namespace System.Data.Common
 
                 public virtual bool ContainsKey (string keyword)
                 {
+			if (keyword == null)
+				throw new ArgumentNullException ("Invalid argument", keyword);
                         return _dictionary.ContainsKey (keyword);
                 }
 

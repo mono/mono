@@ -1,3 +1,9 @@
+2007-06-21  Nagappan A  <anagappan@novell.com>
+
+	* DbConnectionStringBuilder.cs (Init): Modified the dictionary to
+	use StringComparer.InvariantCultureIgnoreCase.
+	(Add, ContainsKey): Checks whether argument is null or empty string.
+
 2007-05-08  Adar Wesley <adarw@mainsoft.com>
 
 	* DbProviderFactory.cs: minor refactoring for throwing exceptions
