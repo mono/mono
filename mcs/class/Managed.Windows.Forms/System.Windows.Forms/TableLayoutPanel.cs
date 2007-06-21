@@ -300,6 +300,17 @@ namespace System.Windows.Forms
 				y = border_width;
 			}
 		}
+
+		protected override void ScaleControl (SizeF factor, BoundsSpecified specified)
+		{
+			base.ScaleControl (factor, specified);
+		}
+		
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		protected override void ScaleCore (float dx, float dy)
+		{
+			base.ScaleCore (dx, dy);
+		}
 		#endregion
 
 		#region Internal Methods
