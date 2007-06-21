@@ -1,5 +1,10 @@
 2007-06-21  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ToolStripControlHost.cs: If our hosted control never got created,
+	don't try to dispose it.  [Fixes bug #81909]
+
+2007-06-21  Jonathan Pobst  <monkey@jpobst.com>
+
 	* TableLayoutPanel.cs: Implement ScaleCore, ScaleControl.
 
 2007-06-21  Jonathan Pobst  <monkey@jpobst.com>

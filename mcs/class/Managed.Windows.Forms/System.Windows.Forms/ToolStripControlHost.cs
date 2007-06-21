@@ -276,8 +276,8 @@ namespace System.Windows.Forms
 		protected override void Dispose (bool disposing)
 		{
 			base.Dispose (disposing);
-			
-			if (!control.IsDisposed)
+
+			if (control.Created && !control.IsDisposed)
 				control.Dispose ();
 		}
 		
