@@ -1,5 +1,7 @@
 2007-06-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* appdomain.c (MONO_CORLIB_VERSION): Bump corlib version.
+
 	* object-internals.h: Reflect changes in the layout of the managed Delegate
 	class.
 	
