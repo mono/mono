@@ -590,10 +590,14 @@ namespace System.Web {
 					form = new WebROCollection ();
 					files = new HttpFileCollection ();
 
-					if (IsContentType ("application/x-www-form-urlencoded", true))
-						LoadWwwForm ();
-					else if (IsContentType ("multipart/form-data", true))
+					if (IsContentType ("multipart/form-data", true))
 						LoadMultiPart ();
+					else if (
+#if TARGET_J2EE
+						Context.IsPortletRequest ||
+#endif
+						IsContentType ("application/x-www-form-urlencoded", true))
+						LoadWwwForm ();
 
 					form.Protect ();
 				}

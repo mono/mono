@@ -86,6 +86,13 @@ namespace System.Web.UI
 			}
 		}
 
+		internal bool IsGetBack {
+			get {
+				return IsPostBack && IsPortletRender &&
+					(0 == String.Compare (Request.HttpMethod, "GET", StringComparison.OrdinalIgnoreCase));
+			}
+		}
+
 		internal IPortletRenderResponse RenderResponse
 		{
 			get {

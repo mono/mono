@@ -66,7 +66,7 @@ namespace System.Web
 
 			for (java.util.Enumeration e = servletReq.getParameterNames(); e.hasMoreElements() ;) {
 				string key = (string) e.nextElement();
-				string [] qvalue = QueryString.GetValues (key);
+				string [] qvalue = Context.IsPortletRequest ? null : QueryString.GetValues (key);
 				string [] qfvalue = servletReq.getParameterValues (key);
 
 				for (int i = (qvalue != null) ? qvalue.Length : 0; i < qfvalue.Length; i++)

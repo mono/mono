@@ -1343,6 +1343,9 @@ public partial class Page : TemplateControl, IHttpHandler
 			LoadPageViewState ();
 			Trace.Write ("aspx.page", "End LoadViewState");
 			Trace.Write ("aspx.page", "Begin ProcessPostData");
+#if TARGET_J2EE
+			if (!IsGetBack)
+#endif
 			ProcessPostData (_requestValueCollection, false);
 			Trace.Write ("aspx.page", "End ProcessPostData");
 		}
@@ -1354,6 +1357,9 @@ public partial class Page : TemplateControl, IHttpHandler
 
 		LoadRecursive ();
 #if NET_2_0
+#if TARGET_J2EE
+		if (!IsGetBack)
+#endif
 		if (IsPostBack || IsCallback) {
 			_lifeCycle = PageLifeCycle.ControlEvents;
 #else
