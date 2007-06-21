@@ -40,45 +40,50 @@ namespace System.Web.UI
 	[NonVisualControl]
 	public class ScriptManagerProxy : Control
 	{
-		[DefaultValue ("")]
 		[Category ("Behavior")]
 		[MergableProperty (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		public AuthenticationServiceManager AuthenticationService {
 			get {
-				throw new NotImplementedException ();
+				return ScriptManager.AuthenticationService;
 			}
 		}
 
 		[MergableProperty (false)]
 		[Category ("Behavior")]
-		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		public ProfileServiceManager ProfileService {
 			get {
-				throw new NotImplementedException ();
+				return ScriptManager.ProfileService;
 			}
 		}
 
-		[DefaultValue ("")]
 		[Category ("Behavior")]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[MergableProperty (false)]
 		public ScriptReferenceCollection Scripts {
 			get {
-				throw new NotImplementedException ();
+				return ScriptManager.Scripts;
 			}
 		}
 
 		[MergableProperty (false)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[Category ("Behavior")]
-		[DefaultValue ("")]
 		public ServiceReferenceCollection Services {
 			get {
-				throw new NotImplementedException ();
+				return ScriptManager.Services;
+			}
+		}
+
+		ScriptManager ScriptManager {
+			get {
+				ScriptManager manager = ScriptManager.GetCurrent (Page);
+				if (manager == null)
+					throw new InvalidOperationException (String.Format ("The control with ID '{0}' requires a ScriptManager on the page. The ScriptManager must appear before any controls that need it.", ID));
+				return manager;
 			}
 		}
 
