@@ -1,5 +1,8 @@
 2007-06-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* object-internals.h: Reflect changes in the layout of the managed Delegate
+	class.
+	
 	* object-internals.h reflection.c icall-def.h: Applied patch from Robert
 	Jordan (robertj@gmx.net). Add a dtor to dynamic methods which frees up the
 	runtime memory used by the dynamic method. Fixes #77146.
