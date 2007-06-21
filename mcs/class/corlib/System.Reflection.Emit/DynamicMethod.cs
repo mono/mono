@@ -108,6 +108,9 @@ namespace System.Reflection.Emit {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern void create_dynamic_method (DynamicMethod m);
 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern void destroy_dynamic_method (DynamicMethod m);
+
 		private void CreateDynMethod () {
 			if (mhandle.Value == IntPtr.Zero) {
 				if (ilgen == null || (ILGenerator.Mono_GetCurrentOffset (ilgen) == 0))
@@ -134,6 +137,11 @@ namespace System.Reflection.Emit {
 
 				create_dynamic_method (this);
 			}
+		}
+
+		~DynamicMethod ()
+		{
+			destroy_dynamic_method (this);
 		}
 
 		[ComVisible (true)]

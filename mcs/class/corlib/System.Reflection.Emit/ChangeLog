@@ -1,3 +1,8 @@
+2007-06-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* DynamicMethod.cs: Applied patch from Robert Jordan (robertj@gmx.net). Add
+	a destructor which frees the runtime data for the method.
+
 2007-05-21  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TypeBuilder.cs: Changed HasElementTypeImpl to return false on 2.0
