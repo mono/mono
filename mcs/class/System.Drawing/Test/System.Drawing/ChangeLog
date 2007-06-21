@@ -1,3 +1,7 @@
+2007-06-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* GDIPlusTest.cs: Add test cases for GdipCreateCustomLineCap (#81829)
+
 2007-05-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Graphics.cs: Add more test cases for [Get|Release]Hdc[Internal] 

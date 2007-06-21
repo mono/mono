@@ -60,6 +60,25 @@ namespace MonoTests.System.Drawing {
 			public string lfFaceName = null;
 		}
 
+		// CustomLineCap
+
+		[Test]
+		public void CreateCustomLineCap ()
+		{
+			IntPtr cap;
+
+			IntPtr path;
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipCreatePath (FillMode.Alternate, out path), "GdipCreatePath");
+
+			// test invalid conditions for #81829
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipCreateCustomLineCap (IntPtr.Zero, path, LineCap.Flat, 1.0f, out cap), "GdipCreateCustomLineCap-FillPath-Null");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipDeleteCustomLineCap (cap), "GdipDeleteCustomLineCap-1");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipCreateCustomLineCap (path, IntPtr.Zero, LineCap.Flat, 1.0f, out cap), "GdipCreateCustomLineCap-StrokePath-Null");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipDeleteCustomLineCap (cap), "GdipDeleteCustomLineCap-2");
+
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipDeletePath (path), "GdipDeletePath");
+		}
+
 		// FontFamily
 		[Test]
 		public void DeleteFontFamily ()
