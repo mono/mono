@@ -1,5 +1,12 @@
 2007-06-22  Marek Safar  <marek.safar@gmail.com>
 
+	* ecore.cs (SimpleName.DoSimpleNameResolve): Better error reporting when
+	an uninitialized variable is used.
+	
+	* expression.cs (LocalVariableReference.DoResolve): Ditto.
+
+2007-06-22  Marek Safar  <marek.safar@gmail.com>
+
 	* ecore.cs (SimpleName.TypeOrNamespaceNotFound): Allow to override type
 	not found error handling.
 

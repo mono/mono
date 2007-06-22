@@ -375,6 +375,12 @@ namespace Mono.CSharp {
 				TypeManager.CSharpName (target));
 		}
 
+		protected void Error_VariableIsUsedBeforeItIsDeclared (string name)
+		{
+			Report.Error (841, loc, "The variable `{0}' cannot be used before it is declared",
+				name);
+		}
+
 		public static void Error_TypeDoesNotContainDefinition (Location loc, Type type, string name)
 		{
 			Report.SymbolRelatedToPreviousError (type);
@@ -2312,11 +2318,24 @@ namespace Mono.CSharp {
 			}
 
 			if (e == null) {
+				if (current_block != null) {
+					IKnownVariable ikv = current_block.Explicit.GetKnownVariable (Name);
+					if (ikv != null) {
+						LocalInfo li = ikv as LocalInfo;
+						// Supress CS0219 warning
+						if (li != null)
+							li.Used = true;
+
+						Error_VariableIsUsedBeforeItIsDeclared (Name);
+						return null;
+					}
+				}
+
 				if (almost_matched != null)
 					almostMatchedMembers = almost_matched;
 				if (almost_matched_type == null)
 					almost_matched_type = ec.ContainerType;
-				MemberLookupFailed (ec.ContainerType, null, almost_matched_type, ((SimpleName) this).Name, ec.DeclContainer.Name, true, loc);
+				MemberLookupFailed (ec.ContainerType, null, almost_matched_type, Name, ec.DeclContainer.Name, true, loc);
 				return null;
 			}
 

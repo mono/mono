@@ -3638,10 +3638,9 @@ namespace Mono.CSharp {
 			local_info.Used = true;
 
 			if (type == null && local_info.Type is VarExpr) {
-				local_info.VariableType = TypeManager.object_type;
-				Report.Error (841, loc, "The variable `{0}' cannot be used in an initializer because it refers to itself",
-					local_info.Name);
-				return null;
+			    local_info.VariableType = TypeManager.object_type;
+				Error_VariableIsUsedBeforeItIsDeclared (Name);
+			    return null;
 			}
 			
 			return DoResolveBase (ec);
