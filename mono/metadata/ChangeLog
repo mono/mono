@@ -1,3 +1,13 @@
+2007-06-22  Jonathan Chambers  <joncham@gmail.com>
+
+       * icall-def.h: Update System.__ComObject icalls
+       * marshal.c: Avoid managed transition (and object creation)
+       when looking up COM interface in RCW.
+       * marshal.h: Ditto.
+       
+       
+       Code is contributed under MIT/X11 license.
+
 2007-06-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (mono_marshal_get_runtime_invoke): Cache in the method image for now
