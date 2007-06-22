@@ -1,4 +1,4 @@
-// cs0103-3.cs: The name `y' does not exist in the context of `C'
+// CS0841: The variable `y' cannot be used before it is declared
 // Line: 8
 
 public class C
