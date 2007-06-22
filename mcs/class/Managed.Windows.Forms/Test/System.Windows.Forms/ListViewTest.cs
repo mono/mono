@@ -59,6 +59,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (false, mylistview.TopItem.Checked, "#30");
 #if NET_2_0
 			Assert.AreEqual (false, mylistview.ShowItemToolTips, "#31");
+			Assert.AreEqual (false, mylistview.HotTracking, "#31");
 #endif
 		}
 
@@ -436,6 +437,36 @@ namespace MonoTests.System.Windows.Forms
 				lvw.FindItemWithText ("bracket", false, lvw.Items.Count);
 				Assert.Fail ("#A5");
 			} catch (ArgumentOutOfRangeException) {
+			}
+		}
+
+		[Test]
+		public void HotTracking ()
+		{
+			ListView lvw = new ListView ();
+
+			lvw.HotTracking = true;
+			Assert.AreEqual (true, lvw.HotTracking, "#A1");
+			Assert.AreEqual (true, lvw.HoverSelection, "#A2");
+			Assert.AreEqual (ItemActivation.OneClick, lvw.Activation, "#A3");
+
+			// HoverSelection and Activation keep the previous value
+			lvw.HotTracking = false;
+			Assert.AreEqual (false, lvw.HotTracking, "#B1");
+			Assert.AreEqual (true, lvw.HoverSelection, "#B2");
+			Assert.AreEqual (ItemActivation.OneClick, lvw.Activation, "#B3");
+
+			lvw.HotTracking = true;
+			try {
+				lvw.HoverSelection = false;
+				Assert.Fail ("#C1");
+			} catch (ArgumentException) {
+			}
+
+			try {
+				lvw.Activation = ItemActivation.Standard;
+				Assert.Fail ("#C2");
+			} catch (ArgumentException) {
 			}
 		}
 
