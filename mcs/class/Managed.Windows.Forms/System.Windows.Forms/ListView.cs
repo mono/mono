@@ -103,6 +103,7 @@ namespace System.Windows.Forms
 		private ItemMatrixLocation [] items_matrix_location;
 		private Size item_size; // used for caching item size
 #if NET_2_0
+		private bool hot_tracking;
 		private bool show_item_tooltips;
 		private ToolTip item_tooltip;
 		private Size tile_size;
@@ -353,6 +354,10 @@ namespace System.Windows.Forms
 					throw new InvalidEnumArgumentException (string.Format
 						("Enum argument value '{0}' is not valid for Activation", value));
 				}
+#if NET_2_0
+				if (hot_tracking && value != ItemActivation.OneClick)
+					throw new ArgumentException ("When HotTracking is on, activation must be ItemActivation.OneClick");
+#endif
 				
 				activation = value;
 			}
@@ -537,10 +542,35 @@ namespace System.Windows.Forms
 			}
 		}
 
+#if NET_2_0
+		[DefaultValue (false)]
+		public bool HotTracking {
+			get {
+				return hot_tracking;
+			}
+			set {
+				if (hot_tracking == value)
+					return;
+				
+				hot_tracking = value;
+				if (hot_tracking) {
+					hover_selection = true;
+					activation = ItemActivation.OneClick;
+				}
+			}
+		}
+#endif
+
 		[DefaultValue (false)]
 		public bool HoverSelection {
 			get { return hover_selection; }
-			set { hover_selection = value; }
+			set { 
+#if NET_2_0
+				if (hot_tracking && value == false)
+					throw new ArgumentException ("When HotTracking is on, hover selection must be true");
+#endif
+				hover_selection = value; 
+			}
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
