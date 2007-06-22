@@ -1,3 +1,8 @@
+2007-06-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_marshal_get_runtime_invoke): Cache in the method image for now
+	to avoid crashes during assembly unloading.
+
 2007-06-22  Raja R Harinath  <rharinath@novell.com>
 
 	Fix MethodInfo.IsGenericMethodDefinition
