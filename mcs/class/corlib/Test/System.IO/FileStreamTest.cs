@@ -821,6 +821,39 @@ namespace MonoTests.System.IO
 			}
 		}
 
+#if NET_2_0
+		[Test] // bug #79250
+		public void FileShare_Delete ()
+		{
+			string fn = Path.Combine (TempFolder, "temp");
+			
+			using (Stream s = new FileStream (fn, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Delete)) {
+				s.Write (new byte [1] { 0x5 }, 0, 1);
+				File.Delete (fn);
+			}
+
+			using (Stream s = new FileStream (fn, FileMode.OpenOrCreate, FileAccess.Write, FileShare.ReadWrite | FileShare.Delete)) {
+				s.Write (new byte [1] { 0x5 }, 0, 1);
+				File.Delete (fn);
+			}
+
+			using (Stream s = new FileStream (fn, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Write | FileShare.Delete)) {
+				s.Write (new byte [1] { 0x5 }, 0, 1);
+				File.Delete (fn);
+			}
+
+			using (Stream s = new FileStream (fn, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Read | FileShare.Delete)) {
+				s.Write (new byte [1] { 0x5 }, 0, 1);
+				File.Delete (fn);
+			}
+
+			using (Stream s = new FileStream (fn, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Inheritable | FileShare.Delete)) {
+				s.Write (new byte [1] { 0x5 }, 0, 1);
+				File.Delete (fn);
+			}
+		}
+#endif
+
 		[Test]
 		public void Write ()
 		{
@@ -1555,7 +1588,8 @@ namespace MonoTests.System.IO
 
 #if NET_2_0
 		[Category("TargetJvmNotSupported")] // FileOptions.DeleteOnClose not supported for TARGET_JVM
-		[Test] public void DeleteOnClose ()
+		[Test]
+		public void DeleteOnClose ()
 		{
 			string path = TempFolder + DSC + "created.txt";
 			DeleteFile (path);
@@ -1569,4 +1603,3 @@ namespace MonoTests.System.IO
 #endif
 	}
 }
-

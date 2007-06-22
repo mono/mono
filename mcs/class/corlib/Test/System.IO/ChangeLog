@@ -1,3 +1,7 @@
+2007-06-22  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* FileStreamTest.cs: Added test for bug #79250.
+
 2007-05-25  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* UnmanagedMemoryStreamTest.cs: Added tests for CanRead, CanSeek,
