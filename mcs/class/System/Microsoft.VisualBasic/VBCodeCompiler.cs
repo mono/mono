@@ -187,23 +187,18 @@ namespace Microsoft.VisualBasic
 
 		static CompilerError CreateErrorFromString (string error_string)
 		{
-			// When IncludeDebugInformation is true, prevents the debug symbols stats from braeking this.
-			if (error_string.StartsWith ("WROTE SYMFILE") || error_string.StartsWith ("OffsetTable"))
-				return null;
-
 			CompilerError error = new CompilerError ();
-			Regex reg = new Regex (@"^(\s*(?<file>.*)\((?<line>\d*)(,(?<column>\d*))?\)\s+)*" +
-						@"(?<level>error|warning)\s*(?<number>.*):\s(?<message>.*)",
+			Regex reg = new Regex (@"^(\s*(?<file>.*)?\((?<line>\d*)(,(?<column>\d*))?\)\s+)?:\s*" +
+						@"(?<level>Error|Warning)?\s*(?<number>.*):\s(?<message>.*)",
 						RegexOptions.Compiled | RegexOptions.ExplicitCapture);
 
 			Match match = reg.Match (error_string);
 			if (!match.Success) {
-				error.ErrorText = error_string;
-				return error;
+				return null;
 			}
 
 			if (String.Empty != match.Result ("${file}"))
-				error.FileName = match.Result ("${file}");
+				error.FileName = match.Result ("${file}").Trim ();
 
 			if (String.Empty != match.Result ("${line}"))
 				error.Line = Int32.Parse (match.Result ("${line}"));
@@ -211,11 +206,12 @@ namespace Microsoft.VisualBasic
 			if (String.Empty != match.Result ("${column}"))
 				error.Column = Int32.Parse (match.Result ("${column}"));
 
-			if (match.Result ("${level}") == "warning")
+			if (match.Result ("${level}").Trim () == "Warning")
 				error.IsWarning = true;
 
 			error.ErrorNumber = match.Result ("${number}");
 			error.ErrorText = match.Result ("${message}");
+			
 			return error;
 		}
 
@@ -231,6 +227,13 @@ namespace Microsoft.VisualBasic
 
 		private CompilerResults CompileFromFileBatch (CompilerParameters options, string[] fileNames)
 		{
+			
+#if !NET_2_0
+			throw new NotSupportedException (
+@"Compilation of Visual Basic code is not supported for v1.0/v1.1 assemblies, please use the v2.0 assemblies.
+- If this is a web application, use xsp2/mod_mono_server2 instead of xsp/mono_mono_server (see http://www.mono-project.com/Mod_mono#ASP.NET_2_apps_do_not_work).
+- If this is a desktop application, use gmcs to compile your application instead of mcs.");	                                 
+#else
 			if (options == null) {
 				throw new ArgumentNullException ("options");
 			}
@@ -266,7 +269,7 @@ namespace Microsoft.VisualBasic
 			}
 
 			bool loadIt = true;
-			if (results.NativeCompilerReturnValue != 0) {
+			if (results.NativeCompilerReturnValue == 1) {
 				loadIt = false;
 				vbnc_output_lines = vbnc_output.Split (Environment.NewLine.ToCharArray ());
 				foreach (string error_line in vbnc_output_lines) {
@@ -276,6 +279,15 @@ namespace Microsoft.VisualBasic
 					}
 				}
 			}
+			
+			if ((loadIt == false && !results.Errors.HasErrors) // Failed, but no errors? Probably couldn't parse the compiler output correctly. 
+			    || (results.NativeCompilerReturnValue != 0 && results.NativeCompilerReturnValue != 1)) // Neither success (0), nor failure (1), so it crashed. 
+			{
+				// Show the entire output as one big error message.
+				loadIt = false;
+				CompilerError error = new CompilerError (string.Empty, 0, 0, "VBNC_CRASH", vbnc_output);
+				results.Errors.Add (error);
+			};
 
 			if (loadIt) {
 				if (options.GenerateInMemory) {
@@ -294,6 +306,7 @@ namespace Microsoft.VisualBasic
 			}
 
 			return results;
+#endif
 		}
 
 		private CompilerResults CompileFromDomBatch (CompilerParameters options, CodeCompileUnit[] ea)

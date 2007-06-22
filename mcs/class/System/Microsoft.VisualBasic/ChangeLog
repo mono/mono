@@ -1,3 +1,10 @@
+2007-06-22  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* VBCodeCompiler.cs: Throw a descriptive exception if we're trying to
+	  compile anything on the 1.0 profile. Correctly parse vbnc error
+	  messages (and don't return any messages if there weren't any
+	  errors/warnings). Fixes #81872.
+
 2007-05-21  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* VBCodeCompiler.cs: Make sure there are spaces between all options in the command line arguments..
