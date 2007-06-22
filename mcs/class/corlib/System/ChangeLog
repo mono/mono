@@ -1,3 +1,7 @@
+2007-06-22  Jonathan Chambers  <joncham@gmail.com>
+
+	* __ComObject.cs: Move interface lookup to unmanaged.
+
 2007-06-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* Environment.cs: Bump corlib version.

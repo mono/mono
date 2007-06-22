@@ -61,12 +61,6 @@ namespace System
 		internal static extern __ComObject CreateRCW (Type t);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private static extern void AddInterface (__ComObject co, Type t, IntPtr pItf);
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private static extern IntPtr FindInterface (__ComObject co, Type t);
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern void ReleaseInterfaces ();
 
 		~__ComObject ()
@@ -109,21 +103,12 @@ namespace System
 			throw new COMException ("Could not find base COM type for type " + t.ToString());
 		}
 
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal extern IntPtr GetInterfaceInternal (Type t, bool throwException);
+
 		internal IntPtr GetInterface (Type t, bool throwException) {
 			CheckIUnknown ();
-			IntPtr pItf = FindInterface (this, t);
-			if (pItf != IntPtr.Zero) {
-				return pItf;
-			}
-
-			Guid iid = t.GUID;
-			IntPtr ppv;
-			int hr = Marshal.QueryInterface (iunknown, ref iid, out ppv);
-			if (throwException)
-				Marshal.ThrowExceptionForHR (hr);
-			if (hr > 0 && ppv != IntPtr.Zero)
-				AddInterface (this, t, ppv);
-			return ppv;
+			return GetInterfaceInternal (t, throwException);
 		}
 
 		internal IntPtr GetInterface(Type t)

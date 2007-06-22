@@ -1,3 +1,8 @@
+2007-06-22  Jonathan Chambers  <joncham@gmail.com>
+
+	* __ComObject.cs (ThrowExceptionForHR): Implement/consolidate.
+	* __ComObject.cs (GetExceptionForHR): Implement/consolidate.
+
 2007-05-11  Jonathan Chambers  <joncham@gmail.com>
 
 	* Marshal.cs (SecureStringToBSTR): BSTR header is size in bytes,

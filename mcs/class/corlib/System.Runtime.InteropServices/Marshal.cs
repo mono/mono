@@ -1008,16 +1008,16 @@ namespace System.Runtime.InteropServices
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static void StructureToPtr (object structure, IntPtr ptr, bool fDeleteOld);
 
-		public static void ThrowExceptionForHR (int errorCode)
-		{
-			if (errorCode < 0)
-				throw new COMException ("", errorCode);
+		public static void ThrowExceptionForHR (int errorCode) {
+			Exception ex = GetExceptionForHR (errorCode);
+			if (ex != null)
+				throw ex;
 		}
 
-		[MonoTODO]
-		public static void ThrowExceptionForHR (int errorCode, IntPtr errorInfo)
-		{
-			throw new NotImplementedException ();
+		public static void ThrowExceptionForHR (int errorCode, IntPtr errorInfo) {
+			Exception ex = GetExceptionForHR (errorCode, errorInfo);
+			if (ex != null)
+				throw ex;
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -1109,22 +1109,30 @@ namespace System.Runtime.InteropServices
 		}
 
 #if NET_2_0
+		public
+#else
+		internal
+#endif
+		static Exception GetExceptionForHR (int errorCode) {
+			return GetExceptionForHR (errorCode, IntPtr.Zero);
+		}
+
+#if NET_2_0
+		public
+#else
+		internal
+#endif
+		static Exception GetExceptionForHR (int errorCode, IntPtr errorInfo) {
+			if (errorCode < 0)
+				return new COMException ("", errorCode);
+			return null;
+		}
+
+#if NET_2_0
 		public static int FinalReleaseComObject (object o)
 		{
 			while (ReleaseComObject (o) != 0);
 			return 0;
-		}
-
-		[MonoTODO]
-		public static Exception GetExceptionForHR (int errorCode)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public static Exception GetExceptionForHR (int errorCode, IntPtr errorInfo)
-		{
-			throw new NotImplementedException ();
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
