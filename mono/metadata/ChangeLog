@@ -1,3 +1,14 @@
+2007-06-22  Raja R Harinath  <rharinath@novell.com>
+
+	Fix MethodInfo.IsGenericMethodDefinition
+	* reflection.c (mono_reflection_bind_generic_method_parameters):
+	Rearrange code to ensure we always uses a generic method definition.
+	* class.c (mono_class_inflate_generic_method_full): Set
+	'generic_container' field only for generic method definitions.
+	* icall.c (ves_icall_MonoMethod_get_IsGenericMethodDefinition):
+	Use presense of 'generic_container' field as indication of being a
+	generic method definition.
+
 2007-06-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* appdomain.c (MONO_CORLIB_VERSION): Bump corlib version.
