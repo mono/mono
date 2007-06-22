@@ -376,6 +376,22 @@ namespace MonoTests.System.Reflection
 			Assert.IsTrue (typeof (A<int>.B).GetGenericTypeDefinition ().GetMethod ("Baz").ContainsGenericParameters);
 		}
 
+		[Test]
+		public void IsGenericMethodDefinition ()
+		{
+			MethodInfo m1 = typeof (A<>).GetMethod ("Foo");
+			Assert.IsTrue (m1.IsGenericMethod);
+			Assert.IsTrue (m1.IsGenericMethodDefinition);
+
+			MethodInfo m2 = typeof (A<int>).GetMethod ("Foo");
+			Assert.IsTrue (m2.IsGenericMethod);
+			Assert.IsTrue (m2.IsGenericMethodDefinition);
+
+			MethodInfo m3 = m2.MakeGenericMethod (typeof (int));
+			Assert.IsTrue (m3.IsGenericMethod);
+			Assert.IsFalse (m3.IsGenericMethodDefinition);
+		}
+
 		class GenericHelper<T>
 		{
 			public void Test (T t)
