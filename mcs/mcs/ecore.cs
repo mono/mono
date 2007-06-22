@@ -2139,10 +2139,16 @@ namespace Mono.CSharp {
 			if (silent || errors != Report.Errors)
 				return null;
 
+			Error_TypeOrNamespaceNotFound (ec);
+			return null;
+		}
+
+		protected virtual void Error_TypeOrNamespaceNotFound (IResolveContext ec)
+		{
 			MemberCore mc = ec.DeclContainer.GetDefinition (Name);
 			if (mc != null) {
 				Error_UnexpectedKind (ec.DeclContainer, "type", GetMemberType (mc), loc);
-				return null;
+				return;
 			}
 
 			string ns = ec.DeclContainer.NamespaceEntry.NS.Name;
@@ -2152,26 +2158,25 @@ namespace Mono.CSharp {
 				if (type != null) {
 					Report.SymbolRelatedToPreviousError (type);
 					Expression.ErrorIsInaccesible (loc, fullname);
-					return null;
+					return;
 				}
 			}
 
 			Type t = ec.DeclContainer.LookupAnyGeneric (Name);
 			if (t != null) {
 				Namespace.Error_InvalidNumberOfTypeArguments (t, loc);
-				return null;
+				return;
 			}
 
 			if (Arguments != null) {
 				FullNamedExpression retval = ec.DeclContainer.LookupNamespaceOrType (SimpleName.RemoveGenericArity (Name), loc, true);
 				if (retval != null) {
 					Namespace.Error_TypeArgumentsCannotBeUsed (retval.Type, loc, "type");
-					return null;
+					return;
 				}
 			}
 						
 			NamespaceEntry.Error_NamespaceNotFound (loc, Name);
-			return null;
 		}
 
 		// TODO: I am still not convinced about this. If someone else will need it
@@ -5018,6 +5023,16 @@ namespace Mono.CSharp {
 			}
 			
 			return this;
+		}
+
+		protected override void Error_TypeOrNamespaceNotFound (IResolveContext ec)
+		{
+			if (ec is FieldBase) {
+				Report.Error (825, loc, "The contextual keyword `var' may only appear within a local variable declaration");
+				return;
+			}
+
+			base.Error_TypeOrNamespaceNotFound (ec);
 		}
 
 		public override TypeExpr ResolveAsContextualType (IResolveContext rc, bool silent)

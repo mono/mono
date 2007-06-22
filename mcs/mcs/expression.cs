@@ -5472,23 +5472,15 @@ namespace Mono.CSharp {
 		// The list of Argument types.
 		// This is used to construct the `newarray' or constructor signature
 		//
-		ArrayList arguments;
-
-		//
-		// Method used to create the array object.
-		//
-		MethodBase new_method = null;
+		protected ArrayList arguments;
 		
-		Type array_element_type;
-		Type underlying_type;
-		bool is_one_dimensional = false;
-		bool is_builtin_type = false;
+		protected Type array_element_type;
 		bool expect_initializers = false;
 		int num_arguments = 0;
-		int dimensions = 0;
-		string rank;
+		protected int dimensions;
+		protected readonly string rank;
 
-		ArrayList array_data;
+		protected ArrayList array_data;
 
 		IDictionary bounds;
 
@@ -5601,22 +5593,15 @@ namespace Mono.CSharp {
 						return false;
 					}
 					
-					Expression tmp = (Expression) o;
-					tmp = tmp.Resolve (ec);
-					if (tmp == null)
-						return false;
-
-					Expression conv = Convert.ImplicitConversionRequired (
-						ec, tmp, underlying_type, loc);
-					
-					if (conv == null) 
-						return false;
+					Expression element = ResolveArrayElement (ec, (Expression) o);
+					if (element == null)
+						continue;
 
 					// Initializers with the default values can be ignored
-					Constant c = conv as Constant;
+					Constant c = element as Constant;
 					if (c != null) {
 						if (c.IsDefaultInitializer (array_element_type)) {
-							conv = null;
+							element = null;
 						}
 						else {
 							++const_initializers_count;
@@ -5625,7 +5610,7 @@ namespace Mono.CSharp {
 						only_constant_initializers = false;
 					}
 					
-					array_data.Add (conv);
+					array_data.Add (element);
 				}
 			}
 
@@ -5654,16 +5639,23 @@ namespace Mono.CSharp {
 			}
 
 		}
-		
-		bool ResolveInitializers (EmitContext ec)
+
+		protected virtual Expression ResolveArrayElement (EmitContext ec, Expression element)
+		{
+			element = element.Resolve (ec);
+			if (element == null)
+				return null;
+
+			return Convert.ImplicitConversionRequired (
+				ec, element, array_element_type, loc);
+		}
+
+		protected bool ResolveInitializers (EmitContext ec)
 		{
 			if (initializers == null) {
 				return !expect_initializers;
 			}
-			
-			if (underlying_type == null)
-				return false;
-			
+						
 			//
 			// We use this to store all the date values in the order in which we
 			// will need to store them in the byte blob later
@@ -5681,18 +5673,13 @@ namespace Mono.CSharp {
 				
 			UpdateIndices ();
 				
-			if (arguments.Count != dimensions) {
-				Error_IncorrectArrayInitializer ();
-				return false;
-			}
-
 			return true;
 		}
 
 		//
-		// Creates the type of the array
+		// Resolved the type of the array
 		//
-		bool LookupType (EmitContext ec)
+		bool ResolveArrayType (EmitContext ec)
 		{
 			if (requested_base_type == null) {
 				Report.Error (622, loc, "Can only use array initializer expressions to assign to array types. Try using a new expression instead");
@@ -5709,7 +5696,7 @@ namespace Mono.CSharp {
 				array_qualifier.Append ("[");
 				for (int i = num_arguments-1; i > 0; i--)
 					array_qualifier.Append (",");
-				array_qualifier.Append ("]");				
+				array_qualifier.Append ("]");
 			}
 
 			//
@@ -5722,35 +5709,23 @@ namespace Mono.CSharp {
 				return false;
 
 			type = array_type_expr.Type;
-			underlying_type = TypeManager.GetElementType (type);
+			array_element_type = TypeManager.GetElementType (type);
 			dimensions = type.GetArrayRank ();
 
 			return true;
 		}
-		
+
 		public override Expression DoResolve (EmitContext ec)
 		{
 			if (type != null)
 				return this;
 
-			if (requested_base_type is VarExpr) {
-				if (initializers == null || initializers.Count == 0) {
-					Console.WriteLine ("Initializers required"); // FIXME proper error
-					return null;
-				}
-				Expression e = ((Expression)initializers[0]).Resolve (ec);
-				if (e == null)
-					return null; // FIXME proper error
-				requested_base_type = new TypeExpression (e.Type, loc);
-			}
-
-			if (!LookupType (ec))
+			if (!ResolveArrayType (ec))
 				return null;
 			
-			array_element_type = TypeManager.GetElementType (type);
-			if (array_element_type.IsAbstract && array_element_type.IsSealed) {
-				Report.Error (719, loc, "`{0}': array elements cannot be of static type", TypeManager.CSharpName (array_element_type));
-				return null;
+			if ((array_element_type.Attributes & Class.StaticClassAttribute) == Class.StaticClassAttribute) {
+				Report.Error (719, loc, "`{0}': array elements cannot be of static type",
+					TypeManager.CSharpName (array_element_type));
 			}
 
 			//
@@ -5760,87 +5735,43 @@ namespace Mono.CSharp {
 			if (!ResolveInitializers (ec))
 				return null;
 
-			int arg_count;
-			if (arguments == null)
-				arg_count = 0;
-			else {
-				arg_count = arguments.Count;
-				foreach (Argument a in arguments){
-					if (!a.Resolve (ec, loc))
-						return null;
-
-					Expression real_arg = ExpressionToArrayArgument (ec, a.Expr, loc);
-					if (real_arg == null)
-						return null;
-
-					a.Expr = real_arg;
-				}
-			}
-			
-			if (arg_count == 1) {
-				is_one_dimensional = true;
-				eclass = ExprClass.Value;
-				return this;
+			if (arguments.Count != dimensions) {
+				Error_IncorrectArrayInitializer ();
 			}
 
-			is_builtin_type = TypeManager.IsBuiltinType (type);
-
-			if (is_builtin_type) {
-				Expression ml;
-				
-				ml = MemberLookup (ec.ContainerType, type, ".ctor", MemberTypes.Constructor,
-						   AllBindingFlags, loc);
-				
-				if (!(ml is MethodGroupExpr)) {
-					ml.Error_UnexpectedKind (ec.DeclContainer, "method group", loc);
+			foreach (Argument a in arguments){
+				if (!a.Resolve (ec, loc))
 					return null;
-				}
-				
-				if (ml == null) {
-					Error (-6, "New invocation: Can not find a constructor for " +
-						      "this argument list");
-					return null;
-				}
-				
-				new_method = ((MethodGroupExpr) ml).OverloadResolve (
-					ec, arguments, false, loc);
 
-				if (new_method == null) {
-					Error (-6, "New invocation: Can not find a constructor for " +
-						      "this argument list");
+				Expression real_arg = ExpressionToArrayArgument (ec, a.Expr, loc);
+				if (real_arg == null)
 					return null;
-				}
-				
-				eclass = ExprClass.Value;
-				return this;
-			} else {
-				ModuleBuilder mb = CodeGen.Module.Builder;
-				ArrayList args = new ArrayList ();
-				
-				if (arguments != null) {
-					for (int i = 0; i < arg_count; i++)
-						args.Add (TypeManager.int32_type);
-				}
-				
-				Type [] arg_types = null;
 
-				if (args.Count > 0)
-					arg_types = new Type [args.Count];
-				
-				args.CopyTo (arg_types, 0);
-				
-				new_method = mb.GetArrayMethod (type, ".ctor", CallingConventions.HasThis, null,
-							    arg_types);
-
-				if (new_method == null) {
-					Error (-6, "New invocation: Can not find a constructor for " +
-						      "this argument list");
-					return null;
-				}
-				
-				eclass = ExprClass.Value;
-				return this;
+				a.Expr = real_arg;
 			}
+							
+			eclass = ExprClass.Value;
+			return this;
+		}
+
+		MethodInfo GetArrayMethod (int arguments)
+		{
+			ModuleBuilder mb = CodeGen.Module.Builder;
+
+			Type[] arg_types = new Type[arguments];
+			for (int i = 0; i < arguments; i++)
+				arg_types[i] = TypeManager.int32_type;
+
+			MethodInfo mi = mb.GetArrayMethod (type, ".ctor", CallingConventions.HasThis, null,
+							arg_types);
+
+			if (mi == null) {
+				Report.Error (-6, "New invocation: Can not find a constructor for " +
+						  "this argument list");
+				return null;
+			}
+
+			return mi; 
 		}
 
 		byte [] MakeByteBlob ()
@@ -5850,12 +5781,12 @@ namespace Mono.CSharp {
 			byte [] element;
 			int count = array_data.Count;
 
-			if (underlying_type.IsEnum)
-				underlying_type = TypeManager.EnumToUnderlying (underlying_type);
+			if (array_element_type.IsEnum)
+				array_element_type = TypeManager.EnumToUnderlying (array_element_type);
 			
-			factor = GetTypeSize (underlying_type);
+			factor = GetTypeSize (array_element_type);
 			if (factor == 0)
-				throw new Exception ("unrecognized type in MakeByteBlob: " + underlying_type);
+				throw new Exception ("unrecognized type in MakeByteBlob: " + array_element_type);
 
 			data = new byte [(count * factor + 4) & ~3];
 			int idx = 0;
@@ -5873,7 +5804,7 @@ namespace Mono.CSharp {
 					continue;
 				}
 				
-				if (underlying_type == TypeManager.int64_type){
+				if (array_element_type == TypeManager.int64_type){
 					if (!(v is Expression)){
 						long val = (long) v;
 						
@@ -5882,7 +5813,7 @@ namespace Mono.CSharp {
 							val = (val >> 8);
 						}
 					}
-				} else if (underlying_type == TypeManager.uint64_type){
+				} else if (array_element_type == TypeManager.uint64_type){
 					if (!(v is Expression)){
 						ulong val = (ulong) v;
 
@@ -5891,7 +5822,7 @@ namespace Mono.CSharp {
 							val = (val >> 8);
 						}
 					}
-				} else if (underlying_type == TypeManager.float_type) {
+				} else if (array_element_type == TypeManager.float_type) {
 					if (!(v is Expression)){
 						element = BitConverter.GetBytes ((float) v);
 							
@@ -5900,7 +5831,7 @@ namespace Mono.CSharp {
 						if (!BitConverter.IsLittleEndian)
 							System.Array.Reverse (data, idx, 4);
 					}
-				} else if (underlying_type == TypeManager.double_type) {
+				} else if (array_element_type == TypeManager.double_type) {
 					if (!(v is Expression)){
 						element = BitConverter.GetBytes ((double) v);
 
@@ -5911,28 +5842,28 @@ namespace Mono.CSharp {
 						if (!BitConverter.IsLittleEndian)
 							System.Array.Reverse (data, idx, 8);
 					}
-				} else if (underlying_type == TypeManager.char_type){
+				} else if (array_element_type == TypeManager.char_type){
 					if (!(v is Expression)){
 						int val = (int) ((char) v);
 						
 						data [idx] = (byte) (val & 0xff);
 						data [idx+1] = (byte) (val >> 8);
 					}
-				} else if (underlying_type == TypeManager.short_type){
+				} else if (array_element_type == TypeManager.short_type){
 					if (!(v is Expression)){
 						int val = (int) ((short) v);
 					
 						data [idx] = (byte) (val & 0xff);
 						data [idx+1] = (byte) (val >> 8);
 					}
-				} else if (underlying_type == TypeManager.ushort_type){
+				} else if (array_element_type == TypeManager.ushort_type){
 					if (!(v is Expression)){
 						int val = (int) ((ushort) v);
 					
 						data [idx] = (byte) (val & 0xff);
 						data [idx+1] = (byte) (val >> 8);
 					}
-				} else if (underlying_type == TypeManager.int32_type) {
+				} else if (array_element_type == TypeManager.int32_type) {
 					if (!(v is Expression)){
 						int val = (int) v;
 					
@@ -5941,7 +5872,7 @@ namespace Mono.CSharp {
 						data [idx+2] = (byte) ((val >> 16) & 0xff);
 						data [idx+3] = (byte) (val >> 24);
 					}
-				} else if (underlying_type == TypeManager.uint32_type) {
+				} else if (array_element_type == TypeManager.uint32_type) {
 					if (!(v is Expression)){
 						uint val = (uint) v;
 					
@@ -5950,22 +5881,22 @@ namespace Mono.CSharp {
 						data [idx+2] = (byte) ((val >> 16) & 0xff);
 						data [idx+3] = (byte) (val >> 24);
 					}
-				} else if (underlying_type == TypeManager.sbyte_type) {
+				} else if (array_element_type == TypeManager.sbyte_type) {
 					if (!(v is Expression)){
 						sbyte val = (sbyte) v;
 						data [idx] = (byte) val;
 					}
-				} else if (underlying_type == TypeManager.byte_type) {
+				} else if (array_element_type == TypeManager.byte_type) {
 					if (!(v is Expression)){
 						byte val = (byte) v;
 						data [idx] = (byte) val;
 					}
-				} else if (underlying_type == TypeManager.bool_type) {
+				} else if (array_element_type == TypeManager.bool_type) {
 					if (!(v is Expression)){
 						bool val = (bool) v;
 						data [idx] = (byte) (val ? 1 : 0);
 					}
-				} else if (underlying_type == TypeManager.decimal_type){
+				} else if (array_element_type == TypeManager.decimal_type){
 					if (!(v is Expression)){
 						int [] bits = Decimal.GetBits ((decimal) v);
 						int p = idx;
@@ -5985,7 +5916,7 @@ namespace Mono.CSharp {
 						}
 					}
 				} else
-					throw new Exception ("Unrecognized type in MakeByteBlob: " + underlying_type);
+					throw new Exception ("Unrecognized type in MakeByteBlob: " + array_element_type);
 
                                 idx += factor;
 			}
@@ -6122,13 +6053,10 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 			
 			EmitArrayArguments (ec);
-			if (is_one_dimensional)
+			if (arguments.Count == 1)
 				ig.Emit (OpCodes.Newarr, array_element_type);
 			else {
-				if (is_builtin_type) 
-					ig.Emit (OpCodes.Newobj, (ConstructorInfo) new_method);
-				else 
-					ig.Emit (OpCodes.Newobj, (MethodInfo) new_method);
+				ig.Emit (OpCodes.Newobj, GetArrayMethod (arguments.Count));
 			}
 			
 			if (initializers == null)
@@ -6150,8 +6078,8 @@ namespace Mono.CSharp {
 
 		public override bool GetAttributableValue (Type valueType, out object value)
 		{
-			if (!is_one_dimensional){
-//				Report.Error (-211, Location, "attribute can not encode multi-dimensional arrays");
+			if (arguments.Count != 1) {
+				// Report.Error (-211, Location, "attribute can not encode multi-dimensional arrays");
 				return base.GetAttributableValue (null, out value);
 			}
 
@@ -6161,7 +6089,7 @@ namespace Mono.CSharp {
 					value = Array.CreateInstance (array_element_type, 0);
 					return true;
 				}
-//				Report.Error (-212, Location, "array should be initialized when passing it to an attribute");
+				// Report.Error (-212, Location, "array should be initialized when passing it to an attribute");
 				return base.GetAttributableValue (null, out value);
 			}
 			
@@ -6202,11 +6130,82 @@ namespace Mono.CSharp {
 		}
 	}
 	
+	//
+	// Represents an implicitly typed array epxression
+	//
 	public class ImplicitlyTypedArrayCreation : ArrayCreation
 	{
 		public ImplicitlyTypedArrayCreation (string rank, ArrayList initializers, Location loc)
 			: base (null, rank, initializers, loc)
 		{
+			if (rank.Length > 2) {
+				while (rank [++dimensions] == ',');
+			} else {
+				dimensions = 1;
+			}
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			if (type != null)
+				return this;
+
+			if (!ResolveInitializers (ec))
+				return null;
+
+			if (array_element_type == null || array_element_type == TypeManager.null_type ||
+				array_element_type == TypeManager.void_type || array_element_type == TypeManager.anonymous_method_type ||
+				arguments.Count != dimensions) {
+				Report.Error (826, loc, "The type of an implicitly typed array cannot be inferred from the initializer. Try specifying array type explicitly");
+				return null;
+			}
+
+			//
+			// At this point we found common base type for all initializer elements
+			// but we have to be sure that all static initializer elements are of
+			// same type
+			//
+			UnifyInitializerElement (ec);
+
+			type = TypeManager.GetConstructedType (array_element_type, rank);
+			eclass = ExprClass.Value;
+			return this;
+		}
+
+		//
+		// Converts static initializer only
+		//
+		void UnifyInitializerElement (EmitContext ec)
+		{
+			for (int i = 0; i < array_data.Count; ++i) {
+				Expression e = (Expression)array_data[i];
+				if (e != null)
+					array_data [i] = Convert.ImplicitConversionStandard (ec, e, array_element_type, Location.Null);
+			}
+		}
+
+		protected override Expression ResolveArrayElement (EmitContext ec, Expression element)
+		{
+			element = element.Resolve (ec);
+			if (element == null)
+				return null;
+			
+			if (array_element_type == null) {
+				array_element_type = element.Type;
+				return element;
+			}
+
+			if (Convert.ImplicitStandardConversionExists (element, array_element_type)) {
+				return element;
+			}
+
+			if (Convert.ImplicitStandardConversionExists (new TypeExpression (array_element_type, loc), element.Type)) {
+				array_element_type = element.Type;
+				return element;
+			}
+
+			element.Error_ValueCannotBeConverted (ec, element.Location, array_element_type, false);
+			return element;
 		}
 	}	
 	

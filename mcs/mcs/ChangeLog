@@ -1,3 +1,16 @@
+2007-06-22  Marek Safar  <marek.safar@gmail.com>
+
+	* ecore.cs (SimpleName.TypeOrNamespaceNotFound): Allow to override type
+	not found error handling.
+
+	* expression.cs (ArrayCreation): Removed redundant fields and little bit
+	simplified.
+	(ArrayCreation.ResolveArrayElement): To be ready to customization.
+	(ArrayCreation.DoResolve): Simplified.
+	(ImplicitlyTypedArrayCreation.DoResolve): Implicitly typed arrays have
+	its own resolve process.
+	(ImplicitlyTypedArrayCreation.ResolveArrayElement): Conversion magic.
+
 2007-06-20  Marek Safar  <marek.safar@gmail.com>
 
 	* namespace.cs (NamespaceEntry.Error_AmbiguousTypeReference): Print
