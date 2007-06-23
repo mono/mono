@@ -1,3 +1,10 @@
+2007-06-24  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #81938
+	* typemanager.cs (ChangeType): Fixed couple of char conversions.
+	
+	* constant.cs: Tide up an exception message.
+
 2007-06-22  Marek Safar  <marek.safar@gmail.com>
 
 	* ecore.cs (SimpleName.DoSimpleNameResolve): Better error reporting when

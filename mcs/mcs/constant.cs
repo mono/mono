@@ -98,8 +98,8 @@ namespace Mono.CSharp {
 				// We should always catch the error before this is ever
 				// reached, by calling Convert.ImplicitStandardConversionExists
 				//
-				throw new Exception (
-					String.Format ("LookupConstantValue: This should never be reached {0} {1}", Type, type));
+				throw new InternalErrorException ("Missing constant conversion between `{0}' and `{1}'",
+				  TypeManager.CSharpName (Type), TypeManager.CSharpName (type));
 			}
 
 			return CreateConstant (type, constant_value, loc);

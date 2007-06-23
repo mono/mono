@@ -2312,44 +2312,65 @@ namespace Mono.CSharp {
 		}
 		
 		//
+		// NOTE 1:
 		// We must use Type.Equals() here since `conversionType' is
 		// the TypeBuilder created version of a system type and not
 		// the system type itself.  You cannot use Type.GetTypeCode()
 		// on such a type - it'd always return TypeCode.Object.
 		//
+		// NOTE 2:
+		// We cannot rely on build-in type conversions as they are
+		// more limited than what C# supports.
+		// See char -> float/decimal/double conversion
+		//
+
 		error = false;
 		try {
 			if (conversionType.Equals (typeof (Boolean)))
 				return (object)(convert_value.ToBoolean (nf_provider));
-			else if (conversionType.Equals (typeof (Byte)))
+			if (conversionType.Equals (typeof (Byte)))
 				return (object)(convert_value.ToByte (nf_provider));
-			else if (conversionType.Equals (typeof (Char)))
+			if (conversionType.Equals (typeof (Char)))
 				return (object)(convert_value.ToChar (nf_provider));
-			else if (conversionType.Equals (typeof (DateTime)))
+			if (conversionType.Equals (typeof (DateTime)))
 				return (object)(convert_value.ToDateTime (nf_provider));
-			else if (conversionType.Equals (TypeManager.decimal_type)) // typeof (Decimal)))
-				return (object)(convert_value.ToDecimal (nf_provider));
-			else if (conversionType.Equals (typeof (Double)))
-				return (object)(convert_value.ToDouble (nf_provider));
-			else if (conversionType.Equals (typeof (Int16)))
+
+			if (conversionType.Equals (TypeManager.decimal_type)) {
+				if (convert_value.GetType () == TypeManager.char_type)
+					return (decimal)convert_value.ToInt32 (nf_provider);
+				return convert_value.ToDecimal (nf_provider);
+			}
+
+			if (conversionType.Equals (typeof (Double))) {
+				if (convert_value.GetType () == TypeManager.char_type)
+					return (double)convert_value.ToInt32 (nf_provider);
+				return convert_value.ToDouble (nf_provider);
+			}
+
+			if (conversionType.Equals (typeof (Int16)))
 				return (object)(convert_value.ToInt16 (nf_provider));
-			else if (conversionType.Equals (typeof (Int32)))
+			if (conversionType.Equals (typeof (Int32)))
 				return (object)(convert_value.ToInt32 (nf_provider));
-			else if (conversionType.Equals (typeof (Int64)))
+			if (conversionType.Equals (typeof (Int64)))
 				return (object)(convert_value.ToInt64 (nf_provider));
-			else if (conversionType.Equals (typeof (SByte)))
+			if (conversionType.Equals (typeof (SByte)))
 				return (object)(convert_value.ToSByte (nf_provider));
-			else if (conversionType.Equals (typeof (Single)))
-				return (object)(convert_value.ToSingle (nf_provider));
-			else if (conversionType.Equals (typeof (String)))
+
+			if (conversionType.Equals (typeof (Single))) {
+				if (convert_value.GetType () == TypeManager.char_type)
+					return (float)convert_value.ToInt32 (nf_provider);
+				return convert_value.ToSingle (nf_provider);
+			}
+
+			if (conversionType.Equals (typeof (String)))
 				return (object)(convert_value.ToString (nf_provider));
-			else if (conversionType.Equals (typeof (UInt16)))
+			if (conversionType.Equals (typeof (UInt16)))
 				return (object)(convert_value.ToUInt16 (nf_provider));
-			else if (conversionType.Equals (typeof (UInt32)))
+			if (conversionType.Equals (typeof (UInt32)))
 				return (object)(convert_value.ToUInt32 (nf_provider));
-			else if (conversionType.Equals (typeof (UInt64)))
+			if (conversionType.Equals (typeof (UInt64)))
 				return (object)(convert_value.ToUInt64 (nf_provider));
-			else if (conversionType.Equals (typeof (Object)))
+			if (conversionType.Equals (typeof (Object)))
 				return (object)(value);
 			else 
 				error = true;
