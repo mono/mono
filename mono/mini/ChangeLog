@@ -1,3 +1,8 @@
+2007-06-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (peephole_pass_1): Optimize away moves at the beginning of the bb as
+	well.
+	(peephole_pass): Likewise.
 
 Fri Jun 22 09:17:08 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
