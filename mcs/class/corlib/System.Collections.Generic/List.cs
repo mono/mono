@@ -209,7 +209,8 @@ namespace System.Collections.Generic {
 			int i = GetIndex(0, _size, match);
 			return (i != -1) ? _items [i] : default (T);
 		}
-		void CheckMatch (Predicate <T> match)
+		
+		static void CheckMatch (Predicate <T> match)
 		{
 			if (match == null)
 				throw new ArgumentNullException ("match");
@@ -217,7 +218,7 @@ namespace System.Collections.Generic {
 		
 		public List <T> FindAll (Predicate <T> match)
 		{
-			this.CheckMatch (match);
+			CheckMatch (match);
 			if (this._size <= 0x10000) // <= 8 * 1024 * 8 (8k in stack)
 				return this.FindAllStackBits (match);
 			else 
