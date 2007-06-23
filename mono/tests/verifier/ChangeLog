@@ -1,3 +1,20 @@
+2007-06-22  Rodrigo Kumpera  <kumpera@gmail.com>
+
+	* unverifiable_ldflda_other_class_on_simple_method.il: test for load field address in .ctor
+	* unverifiable_ldsflda_other_class_on_simple_method.il: same
+	* unverifiable_ldsflda_other_class_field_on_cctor.il: same
+	* unverifiable_ldflda_other_class_field_on_cctor.il: same
+	* unverifiable_ldsflda_owner_class_on_simple_method.il: same
+	* unverifiable_ldflda_owner_class_on_simple_method.il: same
+	* valid_ldflda_owned_field_on_cctor.il: same
+	* valid_ldsflda_owned_field_on_cctor.il: same
+	* valid_local_ref_ref_store.il: valid local store that was not covered before
+	* unverifiable_ptr_nop.il:  unmanaged pointer ops
+	* unverifiable_ptr_ldloc.il: same
+	* unverifiable_ptr_ldarg.il: same
+	* unverifiable_m_ptr_ldloc.il: same
+	* unverifiable_m_ptr_ldarg.il: same
+
 2007-06-20  Rodrigo Kumpera  <kumpera@gmail.com>
 
 	*make_tests.sh: new ldsfld tests, more call conv tests
