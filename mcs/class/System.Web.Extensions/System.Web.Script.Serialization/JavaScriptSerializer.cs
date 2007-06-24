@@ -42,12 +42,17 @@ namespace System.Web.Script.Serialization
 	public class JavaScriptSerializer
 	{
 		List<IEnumerable<JavaScriptConverter>> _converterList;
+		static JavaScriptSerializer _defaultSerializer = new JavaScriptSerializer ();
 
 		public JavaScriptSerializer () {
 		}
 
 		public JavaScriptSerializer (JavaScriptTypeResolver resolver) {
 			throw new NotImplementedException ();
+		}
+
+		internal static JavaScriptSerializer DefaultSerializer {
+			get { return _defaultSerializer; }
 		}
 
 		public int MaxJsonLength {
