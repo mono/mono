@@ -1,3 +1,7 @@
+2007-06-24  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* HttpHandlerAction.cs: fixed SplitPaths property to be thread safe
+
 2007-06-12  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* CompilationSection.cs: TARGET_JVM on not supported features

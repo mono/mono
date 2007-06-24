@@ -124,19 +124,19 @@ namespace System.Web.Configuration
 		string cached_verb = null;
 		string[] cached_verbs;
 
-		string cached_path = null;
 		FileMatchingInfo[] cached_files;
 
 		FileMatchingInfo[] SplitPaths ()
 		{
 			string [] paths = Path.Split (',');
-			cached_files = new FileMatchingInfo [paths.Length];
+
+			FileMatchingInfo [] tmpCachedFiles = new FileMatchingInfo [paths.Length];
 
 			int i = 0;
 			foreach (string s in paths)
-				cached_files [i++] = new FileMatchingInfo (s);
+				tmpCachedFiles [i++] = new FileMatchingInfo (s);
 
-			return cached_files;
+			return tmpCachedFiles;
 		}
 
 		string[] SplitVerbs ()
@@ -162,9 +162,8 @@ namespace System.Web.Configuration
 
 		FileMatchingInfo[] Paths {
 			get {
-				if (cached_path != Path) {
+				if (cached_files == null) {
 					cached_files = SplitPaths ();
-					cached_path = Path;
 				}
 
 				return cached_files;
