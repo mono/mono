@@ -11,28 +11,34 @@ using System;
 using System.Threading;
 using System.Globalization;
 
-namespace MonoTests.System {
-	
+namespace MonoTests.System
+{
 	[TestFixture]
 	public class SingleFormatterTest 
 	{
+		CultureInfo old_culture;
+
 		[SetUp]
-		public void GetReady() 
+		public void SetUp ()
 		{
-			CultureInfo EnUs = new CultureInfo ("en-us", false);
+			old_culture = Thread.CurrentThread.CurrentCulture;
+
+			CultureInfo EnUs = new CultureInfo ("en-US", false);
 			EnUs.NumberFormat.CurrencyNegativePattern = 0; // -1 = (1)
 			EnUs.NumberFormat.CurrencyDecimalSeparator = ".";
 			EnUs.NumberFormat.NumberGroupSeparator = ",";
 			EnUs.NumberFormat.NumberNegativePattern = 1; // -1 = -1
 			EnUs.NumberFormat.NumberDecimalDigits = 2;
 			
-			
 			//Set this culture for the current thread.
 			Thread.CurrentThread.CurrentCulture = EnUs;
 		}
 		
 		[TearDown]
-		public void Clean() {}
+		public void TearDown ()
+		{
+			Thread.CurrentThread.CurrentCulture = old_culture;
+		}
 		
 		[Test]
 		[ExpectedException(typeof(FormatException))]
@@ -60,7 +66,7 @@ namespace MonoTests.System {
 		
 		private void FormatStringTest(int TestNumber, float Number, string Format, string ExpectedResult)
 		{
-			Assertion.AssertEquals ("SngF #" + TestNumber, ExpectedResult, Number.ToString(Format));                                
+			Assertion.AssertEquals ("SngF #" + TestNumber, ExpectedResult, Number.ToString(Format));
 		}
 		
 		string GetPercent (string s)

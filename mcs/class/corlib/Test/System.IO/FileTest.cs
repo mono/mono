@@ -20,6 +20,7 @@ namespace MonoTests.System.IO
 	[TestFixture]
 	public class FileTest : Assertion
 	{
+		CultureInfo old_culture;
 		static string TempFolder = Path.Combine (Path.GetTempPath (), "MonoTests.System.IO.Tests");
 
 		[SetUp]
@@ -28,8 +29,8 @@ namespace MonoTests.System.IO
 			if (Directory.Exists (TempFolder))
 				Directory.Delete (TempFolder, true);
 			Directory.CreateDirectory (TempFolder);
-		
-                        Thread.CurrentThread.CurrentCulture = new CultureInfo ("EN-us");
+			old_culture = Thread.CurrentThread.CurrentCulture;
+			Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US", false);
 		}
 
 		[TearDown]
@@ -37,6 +38,7 @@ namespace MonoTests.System.IO
 		{
 			if (Directory.Exists (TempFolder))
 				Directory.Delete (TempFolder, true);
+			Thread.CurrentThread.CurrentCulture = old_culture;
 		}
 
 		[Test]
@@ -51,7 +53,7 @@ namespace MonoTests.System.IO
 				Assert ("empty filename should not exist", !File.Exists (""));
 				i++;
 				Assert ("whitespace filename should not exist", !File.Exists ("  \t\t  \t \n\t\n \n"));
-				i++;				
+				i++;
 				DeleteFile (path);
 				s = File.Create (path);
 				s.Close ();
@@ -83,28 +85,28 @@ namespace MonoTests.System.IO
 		[Test]
 		[ExpectedException(typeof (ArgumentNullException))]
 		public void CtorArgumentNullException1 ()
-		{	
+		{
 			FileStream stream = File.Create (null);
 		}
 
 		[Test]
 		[ExpectedException(typeof (ArgumentException))]
 		public void CtorArgumentException1 ()
-		{	
+		{
 			FileStream stream = File.Create ("");
 		}
 
 		[Test]
 		[ExpectedException(typeof (ArgumentException))]
 		public void CtorArgumentException2 ()
-		{	
+		{
 			FileStream stream = File.Create (" ");
 		}
 
 		[Test]
 		[ExpectedException(typeof (DirectoryNotFoundException))]
 		public void CtorDirectoryNotFoundException ()
-		{	
+		{
 			FileStream stream = null;
 			string path = TempFolder + Path.DirectorySeparatorChar + "directory_does_not_exist" + Path.DirectorySeparatorChar + "foo";
 			
@@ -214,7 +216,7 @@ namespace MonoTests.System.IO
 				File.Copy (TempFolder + Path.DirectorySeparatorChar + "AFile.txt", TempFolder + Path.DirectorySeparatorChar + "bar");
 			} finally {
 				DeleteFile (TempFolder + Path.DirectorySeparatorChar + "bar");
-				DeleteFile (TempFolder + Path.DirectorySeparatorChar + "AFile.txt");				
+				DeleteFile (TempFolder + Path.DirectorySeparatorChar + "AFile.txt");
 			}
 		}
 
@@ -249,7 +251,7 @@ namespace MonoTests.System.IO
 			}finally {
 				DeleteFile (path1);
 				DeleteFile (path2);
-			}			
+			}
 		}
 
 		[Test]
@@ -280,7 +282,7 @@ namespace MonoTests.System.IO
 			string path = TempFolder + Path.DirectorySeparatorChar + "directory_does_not_exist" + Path.DirectorySeparatorChar + "foo";
 			if (Directory.Exists (path))
 				Directory.Delete (path, true);
-			File.Delete (path);			
+			File.Delete (path);
 		}
 
 
@@ -292,14 +294,14 @@ namespace MonoTests.System.IO
 			try {
 				File.Create (foopath).Close ();
 
-                        	try {
-                                	File.Delete (foopath);
-	                       	} catch (Exception e) {
-        	                        Fail ("Unable to delete " + foopath + " e=" + e.ToString());
-                        	} 
+				try {
+					File.Delete (foopath);
+				} catch (Exception e) {
+					Fail ("Unable to delete " + foopath + " e=" + e.ToString());
+				} 
 				Assert ("File " + foopath + " should not exist after File.Delete", !File.Exists (foopath));
 			} finally {
-			        DeleteFile (foopath);
+				DeleteFile (foopath);
 			}
 		}
 
@@ -309,7 +311,7 @@ namespace MonoTests.System.IO
 		public void DeleteOpenStreamException ()
 		{
 			string path = TempFolder + Path.DirectorySeparatorChar + "DeleteOpenStreamException";
-			DeleteFile (path);			
+			DeleteFile (path);
 			FileStream stream = null;
 			try {
 				stream = new FileStream (path, FileMode.OpenOrCreate, FileAccess.ReadWrite);
@@ -325,7 +327,7 @@ namespace MonoTests.System.IO
 		[ExpectedException(typeof (ArgumentNullException))]
 		public void MoveException1 ()
 		{
-	                File.Move (null, "b");
+			File.Move (null, "b");
 		}
 
 		[Test]
@@ -339,36 +341,36 @@ namespace MonoTests.System.IO
 		[ExpectedException(typeof (ArgumentException))]
 		public void MoveException3 ()
 		{
-                	File.Move ("", "b");
+			File.Move ("", "b");
 		}
 
 		[Test]
 		[ExpectedException(typeof (ArgumentException))]
 		public void MoveException4 ()
 		{
-                	File.Move ("a", "");
+			File.Move ("a", "");
 		}
 
 		[Test]
 		[ExpectedException(typeof (ArgumentException))]
 		public void MoveException5 ()
 		{
-                        File.Move (" ", "b");			
+			File.Move (" ", "b");
 		}
 
 		[Test]
 		[ExpectedException(typeof (ArgumentException))]
 		public void MoveException6 ()
 		{
-                	File.Move ("a", " ");
+			File.Move ("a", " ");
 		}
 
 		[Test]
 		[ExpectedException(typeof (FileNotFoundException))]
 		public void MoveException7 ()
 		{
-                       	DeleteFile (TempFolder + Path.DirectorySeparatorChar + "doesnotexist");			
-                        File.Move (TempFolder + Path.DirectorySeparatorChar + "doesnotexist", "b");
+			DeleteFile (TempFolder + Path.DirectorySeparatorChar + "doesnotexist");
+			File.Move (TempFolder + Path.DirectorySeparatorChar + "doesnotexist", "b");
 		}
 
 		[Test]
@@ -376,12 +378,12 @@ namespace MonoTests.System.IO
 		public void MoveException8 ()
 		{
 			string path = TempFolder + Path.DirectorySeparatorChar + "foo";
-                        DeleteFile (path);
+			DeleteFile (path);
 			try {
 				File.Create (TempFolder + Path.DirectorySeparatorChar + "AFile.txt").Close ();
-                        	File.Copy(TempFolder + Path.DirectorySeparatorChar + "AFile.txt", path, true);
-                        	DeleteFile (TempFolder + Path.DirectorySeparatorChar + "doesnotexist" + Path.DirectorySeparatorChar + "b");
-                        	File.Move (TempFolder + Path.DirectorySeparatorChar + "foo", TempFolder + Path.DirectorySeparatorChar + "doesnotexist" + Path.DirectorySeparatorChar + "b");
+				File.Copy(TempFolder + Path.DirectorySeparatorChar + "AFile.txt", path, true);
+				DeleteFile (TempFolder + Path.DirectorySeparatorChar + "doesnotexist" + Path.DirectorySeparatorChar + "b");
+				File.Move (TempFolder + Path.DirectorySeparatorChar + "foo", TempFolder + Path.DirectorySeparatorChar + "doesnotexist" + Path.DirectorySeparatorChar + "b");
 			} finally {
 				DeleteFile (TempFolder + Path.DirectorySeparatorChar + "AFile.txt");
 				DeleteFile (path);
@@ -394,7 +396,7 @@ namespace MonoTests.System.IO
 		{
 			File.Create (TempFolder + Path.DirectorySeparatorChar + "foo").Close ();
 			try {
-                		File.Move (TempFolder + Path.DirectorySeparatorChar + "foo", TempFolder);		
+				File.Move (TempFolder + Path.DirectorySeparatorChar + "foo", TempFolder);
 			} finally {
 				DeleteFile (TempFolder + Path.DirectorySeparatorChar + "foo");
 			}
@@ -441,24 +443,24 @@ namespace MonoTests.System.IO
 		{
 			string path = "";
 			FileStream stream = null;
-                        try {
-                        	path = TempFolder + Path.DirectorySeparatorChar + "AFile.txt";
+			try {
+				path = TempFolder + Path.DirectorySeparatorChar + "AFile.txt";
 				if (!File.Exists (path))
 					stream = File.Create (path);
-                        	stream.Close ();
-                                stream = File.Open (path, FileMode.Open);
 				stream.Close ();
-                        } catch (Exception e) {
-                                Fail ("Unable to open " + TempFolder + Path.DirectorySeparatorChar + "AFile.txt: e=" + e.ToString());
-                        } finally {
-                        	if (stream != null)
-                        		stream.Close ();
-                        	DeleteFile (path);
-                        }
+				stream = File.Open (path, FileMode.Open);
+				stream.Close ();
+			} catch (Exception e) {
+				Fail ("Unable to open " + TempFolder + Path.DirectorySeparatorChar + "AFile.txt: e=" + e.ToString());
+			} finally {
+				if (stream != null)
+					stream.Close ();
+				DeleteFile (path);
+			}
 			
 			path = "";
 			stream = null;
-                        /* Exception tests */
+			/* Exception tests */
 			try {
 				path = TempFolder + Path.DirectorySeparatorChar + "filedoesnotexist";
 				stream = File.Open (path, FileMode.Open);
@@ -474,277 +476,271 @@ namespace MonoTests.System.IO
 			}
 		}
 
-                [Test]
-                public void Open () 
-                {
-                	string path = TempFolder + Path.DirectorySeparatorChar + "AFile.txt";
+		[Test]
+		public void Open () 
+		{
+			string path = TempFolder + Path.DirectorySeparatorChar + "AFile.txt";
 			if (!File.Exists (path))
 				File.Create (path).Close ();
 			FileStream stream = null;
-                	try {
-			
+			try {
 				stream = File.Open (path, FileMode.Open);
-                	
-                		Assertion.AssertEquals ("test#01", true, stream.CanRead);
-                		Assertion.AssertEquals ("test#02", true, stream.CanSeek);
-                		Assertion.AssertEquals ("test#03", true, stream.CanWrite);
-                		stream.Close ();
-                	
-                		stream = File.Open (path, FileMode.Open, FileAccess.Write);
-                		Assertion.AssertEquals ("test#04", false, stream.CanRead);
-                		Assertion.AssertEquals ("test#05", true, stream.CanSeek);
-                		Assertion.AssertEquals ("test#06", true, stream.CanWrite);
-                		stream.Close ();
-		                	
-                		stream = File.Open (path, FileMode.Open, FileAccess.Read);
-                		Assertion.AssertEquals ("test#04", true, stream.CanRead);
-                		Assertion.AssertEquals ("test#05", true, stream.CanSeek);
-                		Assertion.AssertEquals ("test#06", false, stream.CanWrite);
-                		stream.Close ();
-                		
-                	} finally {
-                		if (stream != null)
-                			stream.Close ();
-                		DeleteFile (path);
-                	}
-                }
-                
-                [Test]
-                [ExpectedException(typeof(ArgumentException))]
-                public void OpenException1 ()
-                {
-                	string path = TempFolder + Path.DirectorySeparatorChar + "AFile.txt";
-                	FileStream stream = null;
-                	// CreateNew + Read throws an exceptoin
-                	try {
-                		stream = File.Open (TempFolder + Path.DirectorySeparatorChar + "AFile.txt", FileMode.CreateNew, FileAccess.Read);
-                	} finally {
-                		if (stream != null)
-                			stream.Close ();
-                		DeleteFile (path);
-                	}
-                }
+				Assertion.AssertEquals ("test#01", true, stream.CanRead);
+				Assertion.AssertEquals ("test#02", true, stream.CanSeek);
+				Assertion.AssertEquals ("test#03", true, stream.CanWrite);
+				stream.Close ();
 
-                [Test]
-                [ExpectedException(typeof(ArgumentException))]
-                public void OpenException2 ()
-                {
-                	string path = TempFolder + Path.DirectorySeparatorChar + "AFile.txt";
-                	FileStream s = null;
-                	// Append + Read throws an exceptoin
+				stream = File.Open (path, FileMode.Open, FileAccess.Write);
+				Assertion.AssertEquals ("test#04", false, stream.CanRead);
+				Assertion.AssertEquals ("test#05", true, stream.CanSeek);
+				Assertion.AssertEquals ("test#06", true, stream.CanWrite);
+				stream.Close ();
+
+				stream = File.Open (path, FileMode.Open, FileAccess.Read);
+				Assertion.AssertEquals ("test#04", true, stream.CanRead);
+				Assertion.AssertEquals ("test#05", true, stream.CanSeek);
+				Assertion.AssertEquals ("test#06", false, stream.CanWrite);
+				stream.Close ();
+			} finally {
+				if (stream != null)
+					stream.Close ();
+				DeleteFile (path);
+			}
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]
+		public void OpenException1 ()
+		{
+			string path = TempFolder + Path.DirectorySeparatorChar + "AFile.txt";
+			FileStream stream = null;
+			// CreateNew + Read throws an exceptoin
+			try {
+				stream = File.Open (TempFolder + Path.DirectorySeparatorChar + "AFile.txt", FileMode.CreateNew, FileAccess.Read);
+			} finally {
+				if (stream != null)
+					stream.Close ();
+				DeleteFile (path);
+			}
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]
+		public void OpenException2 ()
+		{
+			string path = TempFolder + Path.DirectorySeparatorChar + "AFile.txt";
+			FileStream s = null;
+			// Append + Read throws an exceptoin
 			if (!File.Exists (path))
 				File.Create (path).Close ();
-                	try {
-                		s = File.Open (path, FileMode.Append, FileAccess.Read);
-                	} finally {
-                		if (s != null)
-                			s.Close ();
-                		DeleteFile (path);
-                	}
-                }
-                
-                [Test]
-                public void OpenRead ()
-                {
-                	string path = TempFolder + Path.DirectorySeparatorChar + "AFile.txt";
+			try {
+				s = File.Open (path, FileMode.Append, FileAccess.Read);
+			} finally {
+				if (s != null)
+					s.Close ();
+				DeleteFile (path);
+			}
+		}
+
+		[Test]
+		public void OpenRead ()
+		{
+			string path = TempFolder + Path.DirectorySeparatorChar + "AFile.txt";
 			if (!File.Exists (path))
 				File.Create (path).Close ();
-                	FileStream stream = null;
-                	
-                	try {
+			FileStream stream = null;
+			
+			try {
 				stream = File.OpenRead (path);
-                	
-                		Assertion.AssertEquals ("test#01", true, stream.CanRead);
-                		Assertion.AssertEquals ("test#02", true, stream.CanSeek);
-                		Assertion.AssertEquals ("test#03", false, stream.CanWrite);
-                		
-                	} finally {
-                		if (stream != null)
-                			stream.Close ();
-                		DeleteFile (path);
-                	}
-                }
+				Assertion.AssertEquals ("test#01", true, stream.CanRead);
+				Assertion.AssertEquals ("test#02", true, stream.CanSeek);
+				Assertion.AssertEquals ("test#03", false, stream.CanWrite);
+			} finally {
+				if (stream != null)
+					stream.Close ();
+				DeleteFile (path);
+			}
+		}
 
-                [Test]
-                public void OpenWrite ()
-                {
-                	string path = TempFolder + Path.DirectorySeparatorChar + "AFile.txt";
+		[Test]
+		public void OpenWrite ()
+		{
+			string path = TempFolder + Path.DirectorySeparatorChar + "AFile.txt";
 			if (!File.Exists (path))
 				File.Create (path).Close ();
-                	FileStream stream = null;
-                	
-                	try {
+			FileStream stream = null;
+
+			try {
 				stream = File.OpenWrite (path);
-                		Assertion.AssertEquals ("test#01", false, stream.CanRead);
-                		Assertion.AssertEquals ("test#02", true, stream.CanSeek);
-                		Assertion.AssertEquals ("test#03", true, stream.CanWrite);
-                		stream.Close ();                				                	
-                	} finally {
-                		if (stream != null)
-                			stream.Close ();
-                		DeleteFile (path);
-                	}
-                }
+				Assertion.AssertEquals ("test#01", false, stream.CanRead);
+				Assertion.AssertEquals ("test#02", true, stream.CanSeek);
+				Assertion.AssertEquals ("test#03", true, stream.CanWrite);
+				stream.Close ();
+			} finally {
+				if (stream != null)
+					stream.Close ();
+				DeleteFile (path);
+			}
+		}
 
 		[Test]
 		[Category("TargetJvmNotSupported")] // GetCreationTime not supported for TARGET_JVM
 		public void TestGetCreationTime ()
 		{
-                        string path = TempFolder + Path.DirectorySeparatorChar + "baz";
-                	DeleteFile (path);
-                	
-                	try {
+			string path = TempFolder + Path.DirectorySeparatorChar + "baz";
+			DeleteFile (path);
+
+			try {
 				File.Create (path).Close();
-                		DateTime time = File.GetCreationTime (path);
-                        	Assert ("GetCreationTime incorrect", (DateTime.Now - time).TotalSeconds < 10);
-                	} finally {
-                		DeleteFile (path);
-                	}
+				DateTime time = File.GetCreationTime (path);
+				Assert ("GetCreationTime incorrect", (DateTime.Now - time).TotalSeconds < 10);
+			} finally {
+				DeleteFile (path);
+			}
 		}
 
 		// Setting the creation time on Unix is not possible
-                [Test]
+		[Test]
 		[Category("TargetJvmNotSupported")] // GetCreationTime not supported for TARGET_JVM
-                public void CreationTime ()
-                {
+		public void CreationTime ()
+		{
 			int platform = (int) Environment.OSVersion.Platform;
 			if ((platform == 4) || (platform == 128))
 				return;
 
-                        string path = Path.GetTempFileName ();	
-                       	
-                       	try {
-                		File.SetCreationTime (path, new DateTime (2002, 4, 6, 4, 6, 4));
-                		DateTime time = File.GetCreationTime (path);
-                		Assertion.AssertEquals ("test#01", 2002, time.Year);
-                		Assertion.AssertEquals ("test#02", 4, time.Month);
-                		Assertion.AssertEquals ("test#03", 6, time.Day);
-                		Assertion.AssertEquals ("test#04", 4, time.Hour);
-                		Assertion.AssertEquals ("test#05", 4, time.Second);
-                	
-                		time = TimeZone.CurrentTimeZone.ToLocalTime (File.GetCreationTimeUtc (path));
-                		Assertion.AssertEquals ("test#06", 2002, time.Year);
-                		Assertion.AssertEquals ("test#07", 4, time.Month);
-                		Assertion.AssertEquals ("test#08", 6, time.Day);
-                		Assertion.AssertEquals ("test#09", 4, time.Hour);
-                		Assertion.AssertEquals ("test#10", 4, time.Second);                	
+			string path = Path.GetTempFileName ();
+			try {
+				File.SetCreationTime (path, new DateTime (2002, 4, 6, 4, 6, 4));
+				DateTime time = File.GetCreationTime (path);
+				Assertion.AssertEquals ("test#01", 2002, time.Year);
+				Assertion.AssertEquals ("test#02", 4, time.Month);
+				Assertion.AssertEquals ("test#03", 6, time.Day);
+				Assertion.AssertEquals ("test#04", 4, time.Hour);
+				Assertion.AssertEquals ("test#05", 4, time.Second);
 
-                		File.SetCreationTimeUtc (path, new DateTime (2002, 4, 6, 4, 6, 4));
-                		time = File.GetCreationTimeUtc (path);
-                		Assertion.AssertEquals ("test#11", 2002, time.Year);
-                		Assertion.AssertEquals ("test#12", 4, time.Month);
-                		Assertion.AssertEquals ("test#13", 6, time.Day);
-                		Assertion.AssertEquals ("test#14", 4, time.Hour);
-                		Assertion.AssertEquals ("test#15", 4, time.Second);
-                	
-                		time = TimeZone.CurrentTimeZone.ToUniversalTime (File.GetCreationTime (path));
-                		Assertion.AssertEquals ("test#16", 2002, time.Year);
-                		Assertion.AssertEquals ("test#17", 4, time.Month);
-                		Assertion.AssertEquals ("test#18", 6, time.Day);
-                		Assertion.AssertEquals ("test#19", 4, time.Hour);
-                		Assertion.AssertEquals ("test#20", 4, time.Second);
-                       	} finally {
-                       		DeleteFile (path);
-                       	}
-                }
+				time = TimeZone.CurrentTimeZone.ToLocalTime (File.GetCreationTimeUtc (path));
+				Assertion.AssertEquals ("test#06", 2002, time.Year);
+				Assertion.AssertEquals ("test#07", 4, time.Month);
+				Assertion.AssertEquals ("test#08", 6, time.Day);
+				Assertion.AssertEquals ("test#09", 4, time.Hour);
+				Assertion.AssertEquals ("test#10", 4, time.Second);
 
-                [Test]
-		[Category("TargetJvmNotSupported")] // GetLastAccessTime not supported for TARGET_JVM
-                public void LastAccessTime ()
-                {
-                        string path = TempFolder + Path.DirectorySeparatorChar + "lastAccessTime";                	
-                        if (File.Exists (path))
-                        	File.Delete (path);
-			FileStream stream = null;
-                	try {
-                       		stream = File.Create (path);
-                		stream.Close ();                	
-                	
-                		File.SetLastAccessTime (path, new DateTime (2002, 4, 6, 4, 6, 4));
-                		DateTime time = File.GetLastAccessTime (path);
-                		Assertion.AssertEquals ("test#01", 2002, time.Year);
-                		Assertion.AssertEquals ("test#02", 4, time.Month);
-                		Assertion.AssertEquals ("test#03", 6, time.Day);
-                		Assertion.AssertEquals ("test#04", 4, time.Hour);
-                		Assertion.AssertEquals ("test#05", 4, time.Second);
-                	
-                		time = TimeZone.CurrentTimeZone.ToLocalTime (File.GetLastAccessTimeUtc (path));
-                		Assertion.AssertEquals ("test#06", 2002, time.Year);
-                		Assertion.AssertEquals ("test#07", 4, time.Month);
-                		Assertion.AssertEquals ("test#08", 6, time.Day);
-                		Assertion.AssertEquals ("test#09", 4, time.Hour);
-                		Assertion.AssertEquals ("test#10", 4, time.Second);                	
-	
-        	        	File.SetLastAccessTimeUtc (path, new DateTime (2002, 4, 6, 4, 6, 4));
-                		time = File.GetLastAccessTimeUtc (path);
-                		Assertion.AssertEquals ("test#11", 2002, time.Year);
-                		Assertion.AssertEquals ("test#12", 4, time.Month);
-                		Assertion.AssertEquals ("test#13", 6, time.Day);
-                		Assertion.AssertEquals ("test#14", 4, time.Hour);
-                		Assertion.AssertEquals ("test#15", 4, time.Second);
-                	
-	                	time = TimeZone.CurrentTimeZone.ToUniversalTime (File.GetLastAccessTime (path));
-                		Assertion.AssertEquals ("test#16", 2002, time.Year);
-                		Assertion.AssertEquals ("test#17", 4, time.Month);
-                		Assertion.AssertEquals ("test#18", 6, time.Day);
-                		Assertion.AssertEquals ("test#19", 4, time.Hour);
-                		Assertion.AssertEquals ("test#20", 4, time.Second);
-                	} finally {
-                		if (stream != null)
-                			stream.Close ();
-                		DeleteFile (path);                			
-                	}
-                }
-                
-                [Test]
-                public void LastWriteTime ()
-                {
-                        string path = TempFolder + Path.DirectorySeparatorChar + "lastWriteTime";                	
-                        if (File.Exists (path))
-                        	File.Delete (path);
-                    	FileStream stream = null;
-                	try {
-                       		stream = File.Create (path);
-                		stream.Close ();                	
-                	
-                		File.SetLastWriteTime (path, new DateTime (2002, 4, 6, 4, 6, 4));
-                		DateTime time = File.GetLastWriteTime (path);
-                		Assertion.AssertEquals ("test#01", 2002, time.Year);
-                		Assertion.AssertEquals ("test#02", 4, time.Month);
-                		Assertion.AssertEquals ("test#03", 6, time.Day);
-                		Assertion.AssertEquals ("test#04", 4, time.Hour);
-                		Assertion.AssertEquals ("test#05", 4, time.Second);
-	                	
-                		time = TimeZone.CurrentTimeZone.ToLocalTime (File.GetLastWriteTimeUtc (path));
-                		Assertion.AssertEquals ("test#06", 2002, time.Year);
-                		Assertion.AssertEquals ("test#07", 4, time.Month);
-                		Assertion.AssertEquals ("test#08", 6, time.Day);
-                		Assertion.AssertEquals ("test#09", 4, time.Hour);
-                		Assertion.AssertEquals ("test#10", 4, time.Second);                	
-	
-                		File.SetLastWriteTimeUtc (path, new DateTime (2002, 4, 6, 4, 6, 4));
-                		time = File.GetLastWriteTimeUtc (path);
-                		Assertion.AssertEquals ("test#11", 2002, time.Year);
-                		Assertion.AssertEquals ("test#12", 4, time.Month);
-                		Assertion.AssertEquals ("test#13", 6, time.Day);
-                		Assertion.AssertEquals ("test#14", 4, time.Hour);
-                		Assertion.AssertEquals ("test#15", 4, time.Second);
-	                	
-                		time = TimeZone.CurrentTimeZone.ToUniversalTime (File.GetLastWriteTime (path));
-                		Assertion.AssertEquals ("test#16", 2002, time.Year);
-                		Assertion.AssertEquals ("test#17", 4, time.Month);
-                		Assertion.AssertEquals ("test#18", 6, time.Day);
-                		Assertion.AssertEquals ("test#19", 4, time.Hour);
-                		Assertion.AssertEquals ("test#20", 4, time.Second);
-                	} finally {
-                		if (stream != null)
-                			stream.Close ();
-                		DeleteFile (path);
-                	}
-                }
+				File.SetCreationTimeUtc (path, new DateTime (2002, 4, 6, 4, 6, 4));
+				time = File.GetCreationTimeUtc (path);
+				Assertion.AssertEquals ("test#11", 2002, time.Year);
+				Assertion.AssertEquals ("test#12", 4, time.Month);
+				Assertion.AssertEquals ("test#13", 6, time.Day);
+				Assertion.AssertEquals ("test#14", 4, time.Hour);
+				Assertion.AssertEquals ("test#15", 4, time.Second);
+
+				time = TimeZone.CurrentTimeZone.ToUniversalTime (File.GetCreationTime (path));
+				Assertion.AssertEquals ("test#16", 2002, time.Year);
+				Assertion.AssertEquals ("test#17", 4, time.Month);
+				Assertion.AssertEquals ("test#18", 6, time.Day);
+				Assertion.AssertEquals ("test#19", 4, time.Hour);
+				Assertion.AssertEquals ("test#20", 4, time.Second);
+			} finally {
+				DeleteFile (path);
+			}
+		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]	
+		[Category("TargetJvmNotSupported")] // GetLastAccessTime not supported for TARGET_JVM
+		public void LastAccessTime ()
+		{
+			string path = TempFolder + Path.DirectorySeparatorChar + "lastAccessTime";
+			if (File.Exists (path))
+				File.Delete (path);
+			FileStream stream = null;
+			try {
+				stream = File.Create (path);
+				stream.Close ();
+
+				File.SetLastAccessTime (path, new DateTime (2002, 4, 6, 4, 6, 4));
+				DateTime time = File.GetLastAccessTime (path);
+				Assertion.AssertEquals ("test#01", 2002, time.Year);
+				Assertion.AssertEquals ("test#02", 4, time.Month);
+				Assertion.AssertEquals ("test#03", 6, time.Day);
+				Assertion.AssertEquals ("test#04", 4, time.Hour);
+				Assertion.AssertEquals ("test#05", 4, time.Second);
+
+				time = TimeZone.CurrentTimeZone.ToLocalTime (File.GetLastAccessTimeUtc (path));
+				Assertion.AssertEquals ("test#06", 2002, time.Year);
+				Assertion.AssertEquals ("test#07", 4, time.Month);
+				Assertion.AssertEquals ("test#08", 6, time.Day);
+				Assertion.AssertEquals ("test#09", 4, time.Hour);
+				Assertion.AssertEquals ("test#10", 4, time.Second);
+
+				File.SetLastAccessTimeUtc (path, new DateTime (2002, 4, 6, 4, 6, 4));
+				time = File.GetLastAccessTimeUtc (path);
+				Assertion.AssertEquals ("test#11", 2002, time.Year);
+				Assertion.AssertEquals ("test#12", 4, time.Month);
+				Assertion.AssertEquals ("test#13", 6, time.Day);
+				Assertion.AssertEquals ("test#14", 4, time.Hour);
+				Assertion.AssertEquals ("test#15", 4, time.Second);
+
+				time = TimeZone.CurrentTimeZone.ToUniversalTime (File.GetLastAccessTime (path));
+				Assertion.AssertEquals ("test#16", 2002, time.Year);
+				Assertion.AssertEquals ("test#17", 4, time.Month);
+				Assertion.AssertEquals ("test#18", 6, time.Day);
+				Assertion.AssertEquals ("test#19", 4, time.Hour);
+				Assertion.AssertEquals ("test#20", 4, time.Second);
+			} finally {
+				if (stream != null)
+					stream.Close ();
+				DeleteFile (path);
+			}
+		}
+
+		[Test]
+		public void LastWriteTime ()
+		{
+			string path = TempFolder + Path.DirectorySeparatorChar + "lastWriteTime";
+			if (File.Exists (path))
+				File.Delete (path);
+			FileStream stream = null;
+			try {
+				stream = File.Create (path);
+				stream.Close ();
+
+				File.SetLastWriteTime (path, new DateTime (2002, 4, 6, 4, 6, 4));
+				DateTime time = File.GetLastWriteTime (path);
+				Assertion.AssertEquals ("test#01", 2002, time.Year);
+				Assertion.AssertEquals ("test#02", 4, time.Month);
+				Assertion.AssertEquals ("test#03", 6, time.Day);
+				Assertion.AssertEquals ("test#04", 4, time.Hour);
+				Assertion.AssertEquals ("test#05", 4, time.Second);
+
+				time = TimeZone.CurrentTimeZone.ToLocalTime (File.GetLastWriteTimeUtc (path));
+				Assertion.AssertEquals ("test#06", 2002, time.Year);
+				Assertion.AssertEquals ("test#07", 4, time.Month);
+				Assertion.AssertEquals ("test#08", 6, time.Day);
+				Assertion.AssertEquals ("test#09", 4, time.Hour);
+				Assertion.AssertEquals ("test#10", 4, time.Second);
+
+				File.SetLastWriteTimeUtc (path, new DateTime (2002, 4, 6, 4, 6, 4));
+				time = File.GetLastWriteTimeUtc (path);
+				Assertion.AssertEquals ("test#11", 2002, time.Year);
+				Assertion.AssertEquals ("test#12", 4, time.Month);
+				Assertion.AssertEquals ("test#13", 6, time.Day);
+				Assertion.AssertEquals ("test#14", 4, time.Hour);
+				Assertion.AssertEquals ("test#15", 4, time.Second);
+
+				time = TimeZone.CurrentTimeZone.ToUniversalTime (File.GetLastWriteTime (path));
+				Assertion.AssertEquals ("test#16", 2002, time.Year);
+				Assertion.AssertEquals ("test#17", 4, time.Month);
+				Assertion.AssertEquals ("test#18", 6, time.Day);
+				Assertion.AssertEquals ("test#19", 4, time.Hour);
+				Assertion.AssertEquals ("test#20", 4, time.Second);
+			} finally {
+				if (stream != null)
+					stream.Close ();
+				DeleteFile (path);
+			}
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentNullException))]
 		[Category("TargetJvmNotSupported")] // GetCreationTime not supported for TARGET_JVM
 		public void GetCreationTimeException1 ()
 		{
@@ -752,7 +748,7 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]	
+		[ExpectedException(typeof(ArgumentException))]
 		[Category("TargetJvmNotSupported")] // GetCreationTime not supported for TARGET_JVM
 		public void GetCreationTimeException2 ()
 		{
@@ -1219,7 +1215,7 @@ namespace MonoTests.System.IO
 //			string path = TempFolder + Path.DirectorySeparatorChar + "SetCreationTimeUtcArgumentOutOfRangeException1";
 //			DeleteFile (path);
 //			FileStream stream = null;
-//			try {				
+//			try {
 //				stream = File.Create (path);
 //				stream.Close ();
 //				File.SetCreationTimeUtc (path, new DateTime (1000, 12, 12, 11, 59, 59));
@@ -1596,9 +1592,8 @@ namespace MonoTests.System.IO
 		public void OpenAppend ()
 		{
 			string fn = Path.GetTempFileName ();
-			using (FileStream s = File.Open (fn, FileMode.Append))
-				;
-			
+			using (FileStream s = File.Open (fn, FileMode.Append)) {
+			}
 			DeleteFile (fn);
 		}
 
@@ -1627,7 +1622,7 @@ namespace MonoTests.System.IO
 			TestRWAT ("\r\n");
 			TestRWAT ("a\r");
 			TestRWAT ("a\n");
-			TestRWAT ("a\r\n");	
+			TestRWAT ("a\r\n");
 			TestRWAT ("a\ra");
 			TestRWAT ("a\na");
 			TestRWAT ("a\r\na");

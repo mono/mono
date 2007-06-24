@@ -11,15 +11,32 @@
 
 using System;
 using System.Globalization;
+using System.Threading;
+
 using NUnit.Framework;
 
-namespace MonoTests.System  {
-
+namespace MonoTests.System
+{
 	[TestFixture]
-	public class SingleTest : Assertion {
+	public class SingleTest : Assertion
+	{
+		CultureInfo old_culture;
+
+		[SetUp]
+		public void SetUp ()
+		{
+			old_culture = Thread.CurrentThread.CurrentCulture;
+			Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US", false);
+		}
+
+		[TearDown]
+		public void TearDown ()
+		{
+			Thread.CurrentThread.CurrentCulture = old_culture;
+		}
 
 		[Test]
-		public void Equals () 
+		public void Equals ()
 		{
 			Single s1 = 1f;
 			Single s2 = 1f;
@@ -40,8 +57,8 @@ namespace MonoTests.System  {
 		{
 			Assert ("PositiveInfinity",  Single.IsInfinity (Single.PositiveInfinity));
 			Assert ("NegativeInfinity", Single.IsInfinity (Single.NegativeInfinity));
-			Assert ("12", !Single.IsInfinity(12));		
-			Assert ("NaN", !Single.IsInfinity (Single.NaN));		
+			Assert ("12", !Single.IsInfinity(12));
+			Assert ("NaN", !Single.IsInfinity (Single.NaN));
 		}
 
 		[Test]
@@ -57,16 +74,16 @@ namespace MonoTests.System  {
 		public void IsNegativeInfinity ()
 		{
 			Assert ("IsNegativeInfinity", Single.IsNegativeInfinity (Single.NegativeInfinity));
-			Assert ("12", !Single.IsNegativeInfinity (12));		
-			Assert ("NaN", !Single.IsNegativeInfinity (Single.NaN));		
+			Assert ("12", !Single.IsNegativeInfinity (12));
+			Assert ("NaN", !Single.IsNegativeInfinity (Single.NaN));
 		}
 
 		[Test]
 		public void IsPositiveInfinity ()
 		{
 			Assert ("PositiveInfinity", Single.IsPositiveInfinity (Single.PositiveInfinity));
-			Assert ("12", !Single.IsPositiveInfinity (12));		
-			Assert ("NaN", !Single.IsPositiveInfinity (Single.NaN));		
+			Assert ("12", !Single.IsPositiveInfinity (12));
+			Assert ("NaN", !Single.IsPositiveInfinity (Single.NaN));
 		}
 
 		[Test]
@@ -81,16 +98,14 @@ namespace MonoTests.System  {
 			AssertEquals ("ToString(empty)", def, i.ToString (String.Empty));
 			AssertEquals ("ToString(null,null)", def, i.ToString (null, null));
 			AssertEquals ("ToString(empty,null)", def, i.ToString (String.Empty, null));
-
 			AssertEquals ("ToString(G)", "254.9", def);
 		}
 
 #if NET_2_0
-		[Test]
+		[Test] // bug #72221
 		[ExpectedException (typeof (ArgumentException))]
 		public void HexNumber_WithHexToParse ()
 		{
-			// from bug #72221
 			float f;
 			Single.TryParse ("0dead", NumberStyles.HexNumber, null, out f);
 		}

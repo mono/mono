@@ -1,3 +1,14 @@
+2007-06-24  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CultureInfo.cs: Added new private ctors that takes value for 
+	read-only bit as argument. In ContructInvariant, clone invariant 
+	NumberFormatInfo and DateTimeFormatInfo when we're not creating a
+	read-only CultureInfo, since they also should not be read-only.
+	Changes are required to allow a writable invariant CultureInfo to be
+	constructed. In GetCultures, use clone of InvariantCulture since it 
+	must be not be read-only. In GetCultureInfo, always construct
+	read-only CultureInfo's. Fixes part of bug #81930.
+
 2007-06-01  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Calendar.cs DateTimeFormatInfo.cs : 2.0 API fixes.

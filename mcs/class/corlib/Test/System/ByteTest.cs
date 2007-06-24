@@ -37,16 +37,17 @@ public class ByteTest : Assertion
 					"00255", "2.55000e+002", "255.00000",
 					"255", "255.00000", "25,500.00000 %", "000ff"};
 
+	private CultureInfo old_culture;
 	private NumberFormatInfo Nfi = NumberFormatInfo.InvariantInfo;
-	
-	public ByteTest() {}
 
 	[SetUp]
-	public void SetUp() 
+	public void SetUp ()
 	{
-                CultureInfo EnUs = new CultureInfo ("en-us", false);
+		old_culture = Thread.CurrentThread.CurrentCulture;
+
+		CultureInfo EnUs = new CultureInfo ("en-us", false);
 		EnUs.NumberFormat.NumberDecimalDigits = 2;
-                Thread.CurrentThread.CurrentCulture = EnUs;
+		Thread.CurrentThread.CurrentCulture = EnUs;
 
 		int cdd = NumberFormatInfo.CurrentInfo.CurrencyDecimalDigits;
 		string sep = NumberFormatInfo.CurrentInfo.CurrencyDecimalSeparator;
@@ -86,6 +87,12 @@ public class ByteTest : Assertion
 		Results2[5] = "255" + sep + "00000";
 		string gsep = NumberFormatInfo.CurrentInfo.NumberGroupSeparator;
 		Results2[6] = perPattern.Replace ("n","25" + gsep + "500" + sep + "00000");
+	}
+
+	[TearDown]
+	public void TearDown ()
+	{
+		Thread.CurrentThread.CurrentCulture = old_culture;
 	}
 
 	public void TestMinMax()

@@ -1,3 +1,10 @@
+2007-06-24  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CultureInfoTest.cs: Added exception tests when invoking NumberFormat
+	or DateTimeFormat on a neutral culture. Added tests for bug #81930.
+	No longer derive from deprecated Assertion class. Added tests for
+	GetCultureInfo (2.0).
+
 2007-06-01  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CalendarTest.cs : test for bug #81783 and AddYears() for leap year

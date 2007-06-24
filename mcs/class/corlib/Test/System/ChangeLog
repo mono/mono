@@ -1,3 +1,21 @@
+2007-06-24  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ArrayTest.cs: Added test for bug #81941.
+	* ByteTest.cs: Restore original CurrentCulture in teardown.
+	* DecimalFormatterTest.cs: Restore original CurrentCulture in teardown.
+	Code formatting.
+	* DecimalTest.cs: Code formatting.
+	* DoubleFormatterTest.cs: Test relies on specific culture, so set it 
+	up here. This worked before since the CurrentCulture was set in another
+	TestFixture, and the original one was not restored.
+	* FloatingPointFormatterTest.cs: Same.
+	* NumberFormatterTest.cs: Same. Removed stray tabs and fixes code
+	formatting.
+	* SingleFormatterTest.cs: Restore original culture on teardown. Code
+	formatting.
+	* SingleTest.cs: Same.
+	* StringComparerTest.cs: Restore original culture on teardown.
+
 2007-06-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ConvertTest.cs : another bogus DateTime test.

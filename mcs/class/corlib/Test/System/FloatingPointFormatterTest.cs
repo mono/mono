@@ -8,16 +8,33 @@
 // (C) 2004 Novell Inc.
 // 
 
-using NUnit.Framework;
 using System;
 using System.Globalization;
 using System.IO;
+using System.Threading;
+
+using NUnit.Framework;
 
 namespace MonoTests.System
 {
 	[TestFixture]
 	public class FloatingPointFormatterTest : Assertion
 	{
+		CultureInfo old_culture;
+
+		[SetUp]
+		public void SetUp ()
+		{
+			old_culture = Thread.CurrentThread.CurrentCulture;
+			Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US", false);
+		}
+
+		[TearDown]
+		public void TearDown ()
+		{
+			Thread.CurrentThread.CurrentCulture = old_culture;
+		}
+
 		[Test]
 		public void Format1 ()
 		{
@@ -68,5 +85,5 @@ namespace MonoTests.System
 			AssertEquals ("#2", "235 hoge", 234.56.ToString ("### 'hoge'", ci));
 			AssertEquals ("#3", "234 hoge.56", 234.56.ToString ("### 'hoge'.###", ci));
 		}
-        }
+	}
 }

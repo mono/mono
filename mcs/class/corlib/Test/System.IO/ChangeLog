@@ -1,3 +1,11 @@
+2007-06-24  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DirectoryTest.cs: Restore original CurrentCulture on teardown.
+	* FileSystemInfoTest.cs: Restore original CurrentCulture on teardown.
+	Removed stray tabs. Code formatting.
+	* FileTest.cs: Restore original CurrentCulture on teardown. Removed
+	stray tabs. Changes spaces to tabs.
+
 2007-06-22  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* FileStreamTest.cs: Added test for bug #79250.

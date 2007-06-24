@@ -2495,6 +2495,18 @@ public class ArrayTest : Assertion
 		Array.Sort (array, (IComparer) null);
 	}
 
+	[Test] // bug #81941
+	public void Sort ()
+	{
+		double [] a = new double [2] { 0.9, 0.3 };
+		uint [] b = new uint [2] { 4, 7 };
+		Array.Sort (a, b);
+		AssertEquals ("#1", 0.3, a [0]);
+		AssertEquals ("#2", 0.9, a [1]);
+		AssertEquals ("#3", 7, b [0]);
+		AssertEquals ("#4", 4, b [1]);
+	}
+
 	[Test]
 	public void ClearJaggedArray () 
 	{

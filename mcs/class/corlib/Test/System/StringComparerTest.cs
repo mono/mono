@@ -41,6 +41,20 @@ namespace MonoTests.System
 	[TestFixture]
 	public class StringComparerTest
 	{
+		private CultureInfo old_culture;
+
+		[SetUp]
+		public void SetUp ()
+		{
+			old_culture = Thread.CurrentThread.CurrentCulture;
+		}
+
+		[TearDown]
+		public void TearDown ()
+		{
+			Thread.CurrentThread.CurrentCulture = old_culture;
+		}
+
 		[Test]
 		public void Serialize_CurrentCulture ()
 		{

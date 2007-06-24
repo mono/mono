@@ -1,3 +1,7 @@
+2007-06-24  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ThreadTest.cs: Added tests for bug #81930.
+
 2007-06-08  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ThreadTest.cs: Enabled test for bug #81720.

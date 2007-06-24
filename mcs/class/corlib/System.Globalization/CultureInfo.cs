@@ -109,8 +109,7 @@ namespace System.Globalization
 
 		static CultureInfo ()
 		{
-			invariant_culture_info = new CultureInfo (InvariantCultureId, false);
-			invariant_culture_info.m_isReadOnly = true;
+			invariant_culture_info = new CultureInfo (InvariantCultureId, false, true);
 		}
 		
 		public static CultureInfo CreateSpecificCulture (string name)
@@ -308,9 +307,14 @@ namespace System.Globalization
 
 			CultureInfo [] infos = internal_get_cultures (neutral, specific, installed);
 			// The runtime returns a NULL in the first position of the array when
-			// 'neutral' is true. We fill it in with the InvariantCulture.
-			if (neutral && infos.Length > 0 && infos [0] == null)
-				infos [0] = InvariantCulture;
+			// 'neutral' is true. We fill it in with a clone of InvariantCulture
+			// since it must not be read-only
+			if (neutral && infos.Length > 0 && infos [0] == null) {
+				infos [0] = (CultureInfo) InvariantCulture.Clone ();
+#if ONLY_1_1
+				infos [0].m_useUserOverride = true;
+#endif
+			}
 
 			return infos;
 		}
@@ -370,7 +374,7 @@ namespace System.Globalization
 		public virtual bool IsNeutralCulture {
 			get {
 				if (!constructed) Construct ();
-				if (cultureID == 0x7f)
+				if (cultureID == InvariantCultureId)
 					return false;
 
 				return ((cultureID & 0xff00) == 0 || specific_lcid == 0);
@@ -528,18 +532,6 @@ namespace System.Globalization
 			return true;
 		}
 
-		static CultureInfo [] GetCultures (bool neutral, bool specific, bool installed)
-		{
-			CultureInfo [] cis = internal_get_cultures (neutral, specific, installed);
-
-			// The runtime returns a NULL in the first position of the array when
-			// 'neutral' is true. We fill it in with the InvariantCulture.
-			if (neutral && cis.Length > 0 && cis [0] == null)
-				cis [0] = InvariantCulture;
-
-			return cis;
-		}
-
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern bool construct_internal_locale_from_lcid (int lcid);
 
@@ -566,17 +558,19 @@ namespace System.Globalization
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static bool internal_is_lcid_neutral (int lcid, out bool is_neutral);
 
-		private unsafe void ConstructInvariant (bool use_user_override)
+		private unsafe void ConstructInvariant (bool read_only)
 		{
-			m_isReadOnly=false;
 			cultureID = InvariantCultureId;
-			this.m_useUserOverride=use_user_override;
 
 			/* NumberFormatInfo defaults to the invariant data */
 			numInfo=NumberFormatInfo.InvariantInfo;
-			
 			/* DateTimeFormatInfo defaults to the invariant data */
 			dateTimeInfo=DateTimeFormatInfo.InvariantInfo;
+
+			if (!read_only) {
+				numInfo = (NumberFormatInfo) numInfo.Clone ();
+				dateTimeInfo = (DateTimeFormatInfo) dateTimeInfo.Clone ();
+			}
 
 			textInfo=new TextInfo (this, cultureID, this.textinfo_data);
 
@@ -589,18 +583,25 @@ namespace System.Globalization
 			icu_name="en_US_POSIX";
 			win3lang="IVL";
 		}
-		
-		public CultureInfo (int culture, bool use_user_override)
+
+		public CultureInfo (int culture) : this (culture, true) {}
+
+		public CultureInfo (int culture, bool use_user_override) :
+			this (culture, use_user_override, false) {}
+
+		private CultureInfo (int culture, bool use_user_override, bool read_only)
 		{
 			if (culture < 0)
-				throw new ArgumentOutOfRangeException ("Positive number required.",
-						"culture");
+				throw new ArgumentOutOfRangeException ("culture", "Positive "
+					+ "number required.");
 
 			constructed = true;
-			
-			if(culture==0x007f) {
+			m_isReadOnly = read_only;
+			m_useUserOverride = use_user_override;
+
+			if (culture == InvariantCultureId) {
 				/* Short circuit the invariant culture */
-				ConstructInvariant (use_user_override);
+				ConstructInvariant (read_only);
 				return;
 			}
 
@@ -610,18 +611,23 @@ namespace System.Globalization
 							"supported culture.", culture), "culture");
 		}
 
-		public CultureInfo (int culture) : this (culture, false) {}
-		
-		public CultureInfo (string name, bool use_user_override)
+		public CultureInfo (string name) : this (name, true) {}
+
+		public CultureInfo (string name, bool use_user_override) :
+			this (name, use_user_override, false) {}
+
+		private CultureInfo (string name, bool use_user_override, bool read_only)
 		{
 			if (name == null)
-				throw new ArgumentNullException ();
+				throw new ArgumentNullException ("name");
 
 			constructed = true;
-			
-			if(name.Length==0) {
+			m_isReadOnly = read_only;
+			m_useUserOverride = use_user_override;
+
+			if (name.Length == 0) {
 				/* Short circuit the invariant culture */
-				ConstructInvariant (use_user_override);
+				ConstructInvariant (read_only);
 				return;
 			}
 
@@ -629,8 +635,6 @@ namespace System.Globalization
 				throw new ArgumentException ("Culture name " + name +
 						" is not supported.", "name");
 		}
-
-		public CultureInfo (string name) : this (name, true) {}
 
 		// This is used when creating by specific name and creating by
 		// current locale so we can initialize the object without
@@ -660,9 +664,7 @@ namespace System.Globalization
 					if (c != null)
 						return (CultureInfo) c;
 				}
-				c = new CultureInfo (culture);
-				c.m_isReadOnly = true;
-
+				c = new CultureInfo (culture, false, true);
 				insert_into_shared_tables (c);
 				return c;
 			}
@@ -681,10 +683,8 @@ namespace System.Globalization
 					if (c != null)
 						return (CultureInfo) c;
 				}
-				c = new CultureInfo (name);
-				c.m_isReadOnly = true;
+				c = new CultureInfo (name, false, true);
 				insert_into_shared_tables (c);
-
 				return c;
 			}
 		}

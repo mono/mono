@@ -10,11 +10,26 @@ using System;
 using System.Threading;
 using System.Globalization;
 
-namespace MonoTests.System {
-	
+namespace MonoTests.System 
+{
 	[TestFixture]
 	public class DoubleFormatterTest : Assertion
 	{
+		CultureInfo old_culture;
+
+		[SetUp]
+		public void SetUp ()
+		{
+			old_culture = Thread.CurrentThread.CurrentCulture;
+			Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US", false);
+		}
+
+		[TearDown]
+		public void TearDown ()
+		{
+			Thread.CurrentThread.CurrentCulture = old_culture;
+		}
+
 		[Test]
 		[ExpectedException(typeof(FormatException))]
 		public void TestToDecimal()

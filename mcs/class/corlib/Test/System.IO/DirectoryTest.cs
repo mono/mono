@@ -24,6 +24,7 @@ namespace MonoTests.System.IO
 [TestFixture]
 public class DirectoryTest
 {
+	CultureInfo old_culture;
 	string TempFolder = Path.Combine (Path.GetTempPath (), "MonoTests.System.IO.Tests");
 	static readonly char DSC = Path.DirectorySeparatorChar;
 
@@ -32,14 +33,15 @@ public class DirectoryTest
 	{
 		if (!Directory.Exists (TempFolder))
 			Directory.CreateDirectory (TempFolder);
-
-		Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US");
+		old_culture = Thread.CurrentThread.CurrentCulture;
+		Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US", false);
 	}
 	
 	[TearDown]
 	public void TearDown () {
 		if (Directory.Exists (TempFolder))
 			Directory.Delete (TempFolder, true);
+		Thread.CurrentThread.CurrentCulture = old_culture;
 	}
 
 	[Test]
