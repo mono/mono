@@ -1,3 +1,8 @@
+2007-06-24  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* CheckBox.cs: fixed Render, HasAttributes called instead
+	Attributes.Count
+
 2007-06-24 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* GridView.cs: fixed AllowPaging feature:

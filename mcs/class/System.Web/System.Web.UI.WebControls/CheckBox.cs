@@ -391,7 +391,7 @@ namespace System.Web.UI.WebControls {
 				need_span = true;
 			}
 
-			if (Attributes.Count > 0 && AddAttributesForSpan (w))
+			if (HasAttributes && AddAttributesForSpan (w))
 				need_span = true;
 
 			if (need_span)
