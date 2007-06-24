@@ -391,8 +391,13 @@ namespace System.Web.UI.WebControls {
 				need_span = true;
 			}
 
+#if NET_2_0
 			if (HasAttributes && AddAttributesForSpan (w))
 				need_span = true;
+#else
+			if (Attributes.Count > 0 && AddAttributesForSpan (w))
+				need_span = true;
+#endif
 
 			if (need_span)
 				w.RenderBeginTag (HtmlTextWriterTag.Span);
