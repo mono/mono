@@ -1297,7 +1297,7 @@ namespace System.Web.UI.WebControls
 				object obj = enumerator.Current;
 				
 				if (list.Count == 0) {
-					if (showPager && PagerSettings.Position == PagerPosition.Top || PagerSettings.Position == PagerPosition.TopAndBottom) {
+					if (showPager && (PagerSettings.Position == PagerPosition.Top || PagerSettings.Position == PagerPosition.TopAndBottom)) {
 						topPagerRow = CreatePagerRow (fields.Length, dataSource);
 						OnRowCreated (new GridViewRowEventArgs (topPagerRow));
 						ContainedTable.Rows.Add (topPagerRow);
@@ -1355,7 +1355,7 @@ namespace System.Web.UI.WebControls
 					OnRowDataBound (new GridViewRowEventArgs (footerRow));
 				}
 
-				if (showPager && PagerSettings.Position == PagerPosition.Bottom || PagerSettings.Position == PagerPosition.TopAndBottom) {
+				if (showPager && (PagerSettings.Position == PagerPosition.Bottom || PagerSettings.Position == PagerPosition.TopAndBottom)) {
 					bottomPagerRow = CreatePagerRow (fields.Length, dataSource);
 					OnRowCreated (new GridViewRowEventArgs (bottomPagerRow));
 					ContainedTable.Rows.Add (bottomPagerRow);

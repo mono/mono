@@ -1,3 +1,10 @@
+2007-06-24 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* GridView.cs: fixed AllowPaging feature:
+	When the AllowPaging is true the GridView control should automatically 
+	hide the pager row when the data source contains fewer than 2 records.	
+	patch Patch submitted by Dumitru Ban [dban@dako.ro]	
+
 2007-06-20  Marek Habersack  <mhabersack@novell.com>
 
 	* WebControl.cs: if savedState is a Triplet, take the actual state
