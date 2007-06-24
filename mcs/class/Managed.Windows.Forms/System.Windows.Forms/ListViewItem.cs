@@ -60,6 +60,9 @@ namespace System.Windows.Forms
 		Rectangle label_rect;
 		ListView owner;
 		Font font;
+#if NET_2_0
+		Font hot_font;			// cached font for hot tracking
+#endif
 		bool selected;
 
 		internal int row;
@@ -294,6 +297,9 @@ namespace System.Windows.Forms
 					return;
 
 				font = value; 
+#if NET_2_0
+				hot_font = null;
+#endif
 
 				if (owner != null)
 					Layout ();
@@ -711,6 +717,17 @@ namespace System.Windows.Forms
 				return result;
 			}
 		}
+
+#if NET_2_0
+		internal Font HotFont {
+			get {
+				if (hot_font == null)
+					hot_font = new Font (Font, Font.Style | FontStyle.Underline);
+
+				return hot_font;
+			}
+		}
+#endif
 
 		internal ListView Owner {
 			set {

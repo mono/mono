@@ -102,6 +102,7 @@ namespace System.Windows.Forms
 		private Point [] items_location;
 		private ItemMatrixLocation [] items_matrix_location;
 		private Size item_size; // used for caching item size
+		private int hot_item_index = -1;
 #if NET_2_0
 		private bool hot_tracking;
 		private bool show_item_tooltips;
@@ -329,6 +330,15 @@ namespace System.Windows.Forms
 			}
 			set {
 				item_size = value;
+			}
+		}
+
+		internal int HotItemIndex {
+			get {
+				return hot_item_index;
+			}
+			set {
+				hot_item_index = value;
 			}
 		}
 
@@ -2135,21 +2145,48 @@ namespace System.Windows.Forms
 			{
 				bool done = PerformBoxSelection (new Point (me.X, me.Y));
 
-				if (!done && hover_processed) {
-					Point pt = PointToClient (Control.MousePosition);
-					ListViewItem item = owner.GetItemAt (pt.X, pt.Y);
+				owner.OnMouseMove (owner.TranslateMouseEventArgs (me));
 
-					if (item != null && item != prev_hovered_item) {
-						hover_processed = false;
-						XplatUI.ResetMouseHover (Handle);
+				if (done)
+					return;
+				if (!hover_processed && owner.Activation != ItemActivation.OneClick
+#if NET_2_0
+						&& !owner.ShowItemToolTips
+#endif
+						)
+					return;
+
+				Point pt = PointToClient (Control.MousePosition);
+				ListViewItem item = owner.GetItemAt (pt.X, pt.Y);
+
+				if (hover_processed && item != null && item != prev_hovered_item) {
+					hover_processed = false;
+					XplatUI.ResetMouseHover (Handle);
+				}
+
+				// Need to invalidate the item in HotTracking to show/hide the underline style
+				if (owner.Activation == ItemActivation.OneClick) {
+					if (item == null && owner.HotItemIndex != -1) {
+#if NET_2_0
+						if (owner.HotTracking)
+							Invalidate (owner.Items [owner.HotItemIndex].Bounds); // Previous one
+#endif
+
+						Cursor = Cursors.Default;
+						owner.HotItemIndex = -1;
+					} else if (item != null && owner.HotItemIndex == -1) {
+#if NET_2_0
+						if (owner.HotTracking)
+							Invalidate (item.Bounds);
+#endif
+
+						Cursor = Cursors.Hand;
+						owner.HotItemIndex = item.Index;
 					}
 				}
 
 #if NET_2_0
-				if (!done && owner.ShowItemToolTips) {
-					Point pt = PointToClient (Control.MousePosition);
-					ListViewItem item = owner.GetItemAt (pt.X, pt.Y);
-
+				if (owner.ShowItemToolTips) {
 					if (item == null) {
 						owner.item_tooltip.Active = false;
 						prev_tooltip_item = null;
@@ -2161,7 +2198,6 @@ namespace System.Windows.Forms
 				}
 #endif
 
-				owner.OnMouseMove (owner.TranslateMouseEventArgs (me));
 			}
 
 

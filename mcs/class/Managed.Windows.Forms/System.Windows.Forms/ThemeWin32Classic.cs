@@ -2574,10 +2574,16 @@ namespace System.Windows.Forms
 #endif
 			
 			if (item.Text != null && item.Text.Length > 0) {
+				Font font = item.Font;
+#if NET_2_0
+				if (control.HotTracking && control.HotItemIndex == item.Index)
+					font = item.HotFont;
+#endif
+
 				if (item.Selected && control.Focused)
-					dc.DrawString (item.Text, item.Font, textBrush, highlight_rect, format);
+					dc.DrawString (item.Text, font, textBrush, highlight_rect, format);
 				else
-					dc.DrawString (item.Text, item.Font, textBrush, text_rect, format);
+					dc.DrawString (item.Text, font, textBrush, text_rect, format);
 			}
 
 			if (control.View == View.Details && control.Columns.Count > 0) {

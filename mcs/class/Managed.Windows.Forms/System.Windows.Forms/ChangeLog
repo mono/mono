@@ -1,5 +1,19 @@
 2007-06-22  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ListView.cs: In ItemControl.ItemsMouseMove, refactor
+	the code to retrieve the item at position only one time. Also
+	change cursor when Activation is ItemActivation.OneClick as well
+	as invalidate the item if HotTracking is true (to show/hide the
+	underline style). Add an internal HotItemIndex property to retrieve
+	the current hot item's index.
+	* ListViewItem.cs: Add an internal HotFont property to cache the
+	font used when HotTracking is true and the pointer moves within the
+	item's borders.
+	* ThemeWin32Classic.cs: When drawing the item's text, use Font or
+	HotFont depending on the hot state of the item.
+
+2007-06-22  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* ListView.cs: Implement 2.0 HotTracking property.
 
 2007-06-21  Jonathan Pobst  <monkey@jpobst.com>
