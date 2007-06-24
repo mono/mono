@@ -35,34 +35,52 @@ namespace System.Web.UI
 {
 	public class ScriptBehaviorDescriptor : ScriptComponentDescriptor
 	{
+		string _elementID;
+		string _name;
+
 		public ScriptBehaviorDescriptor (string type, string elementID)
 			: base (type) {
-			throw new NotImplementedException ();
+			if (String.IsNullOrEmpty (elementID))
+				throw new ArgumentException ("Value cannot be null or empty.", "elementID");
+			_elementID = elementID;
 		}
 
 		public override string ClientID {
 			get {
-				throw new NotImplementedException ();
+				string clientId = base.ClientID;
+				if (String.IsNullOrEmpty (clientId))
+					return String.Format ("{0}${1}", ElementID, Name);
+				return clientId;
 			}
 		}
 
 		public string ElementID {
 			get {
-				throw new NotImplementedException ();
+				return _elementID;
 			}
 		}
 
 		public string Name {
 			get {
-				throw new NotImplementedException ();
+				if (String.IsNullOrEmpty (_name))
+					_name = GetNameFromType (Type);
+				return _name;
 			}
 			set {
-				throw new NotImplementedException ();
+				_name = value;
 			}
 		}
 
+		static string GetNameFromType (string Type) {
+			int lastIndex = Type.LastIndexOf ('.') + 1;
+			if (lastIndex > 0 && lastIndex < Type.Length)
+				return Type.Substring (lastIndex);
+
+			return Type;
+		}
+
 		protected internal override string GetScript () {
-			throw new NotImplementedException ();
+			return String.Format ("$create({0}, {1}, {2}, {3}, $get(\"{4}\"));", Type, GetSerializedProperties (), GetSerializedEvents (), GetSerializedReferences (), ElementID);
 		}
 	}
 }

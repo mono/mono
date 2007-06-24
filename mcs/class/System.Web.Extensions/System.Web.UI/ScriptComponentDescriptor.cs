@@ -132,10 +132,10 @@ namespace System.Web.UI
 		}
 
 		protected internal override string GetScript () {
-			return String.Format ("$create({0}, {1}, {2}, {3});", Type, SerializeDictionary (_properties), SerializeDictionary (_events), SerializeDictionary (_references));
+			return String.Format ("$create({0}, {1}, {2}, {3});", Type, GetSerializedProperties (), GetSerializedEvents (), GetSerializedReferences ());
 		}
 
-		string SerializeDictionary (Dictionary<string, string> dictionary) {
+		internal static string SerializeDictionary (Dictionary<string, string> dictionary) {
 			if (dictionary == null || dictionary.Count == 0)
 				return "null";
 			StringBuilder sb = new StringBuilder ("{");
@@ -145,6 +145,18 @@ namespace System.Web.UI
 			sb.Length--;
 			sb.Append ("}");
 			return sb.ToString ();
+		}
+
+		internal string GetSerializedProperties () {
+			return SerializeDictionary (_properties);
+		}
+
+		internal string GetSerializedEvents () {
+			return SerializeDictionary (_events);
+		}
+
+		internal string GetSerializedReferences () {
+			return SerializeDictionary (_references);
 		}
 	}
 }
