@@ -1,3 +1,8 @@
+2007-06-24  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* ObjectStateFormatter.cs: WriterContext.RegisterCache, refactored out
+	parameter
+
 2007-06-20  Marek Habersack  <mhabersack@novell.com>
 
 	* BasePartialCachingControl.cs: use HttpRuntime.InternalCache to

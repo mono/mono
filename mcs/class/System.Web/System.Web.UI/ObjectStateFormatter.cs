@@ -256,8 +256,14 @@ namespace System.Web.UI {
 		class WriterContext {
 			Hashtable cache;
 			short nextKey = 0;
-			
-			public bool RegisterCache (object o, out short key)
+			short key = 0;
+
+			public short Key
+			{
+				get { return key; }
+			}
+
+			public bool RegisterCache (object o)
 			{
 				if (cache == null) {
 					cache = new Hashtable ();
@@ -472,10 +478,9 @@ namespace System.Web.UI {
 		class StringFormatter : ObjectFormatter {
 			protected override void Write (BinaryWriter w, object o, WriterContext ctx)
 			{
-				short key;
-				if (ctx.RegisterCache (o, out key)) {
+				if (ctx.RegisterCache (o)) {
 					w.Write (SecondaryId);
-					w.Write (key);
+					w.Write (ctx.Key);
 				} else {
 					w.Write (PrimaryId);
 					w.Write ((string)o);
@@ -837,10 +842,9 @@ namespace System.Web.UI {
 		class TypeFormatter : ObjectFormatter {
 			protected override void Write (BinaryWriter w, object o, WriterContext ctx)
 			{
-				short key;
-				if (ctx.RegisterCache (o, out key)) {
+				if (ctx.RegisterCache (o)) {
 					w.Write (SecondaryId);
-					w.Write (key);
+					w.Write (ctx.Key);
 				} else {
 					w.Write (PrimaryId);
 					w.Write (((Type) o).FullName);
