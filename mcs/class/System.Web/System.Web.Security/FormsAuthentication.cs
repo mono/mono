@@ -462,11 +462,17 @@ namespace System.Web.Security
 
 		static string GetHexString (byte [] bytes)
 		{
-			StringBuilder result = new StringBuilder (bytes.Length * 2);
-			foreach (byte b in bytes)
-				result.AppendFormat ("{0:X2}", (int) b);
-
-			return result.ToString ();
+			const int letterPart = 55;
+			const int numberPart = 48;
+			char [] result = new char [bytes.Length * 2];
+			for (int i = 0; i < bytes.Length; i++) {
+				int tmp = (int) bytes [i];
+				int second = tmp & 15;
+				int first = (tmp >> 4) & 15;
+				result [(i * 2)] = (char) (first > 9 ? letterPart + first : numberPart + first);
+				result [(i * 2) + 1] = (char) (second > 9 ? letterPart + second : numberPart + second);
+			}
+			return new string (result);
 		}
 
 		public static string HashPasswordForStoringInConfigFile (string password, string passwordFormat)

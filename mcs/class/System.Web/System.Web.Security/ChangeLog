@@ -1,3 +1,7 @@
+2007-06-24 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* FormsAuthentication.cs: improved performance of GetHexString()
+
 2007-05-17 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* SqlMembershipProvider.cs: fixed DeleteUser, fixed parameter name
