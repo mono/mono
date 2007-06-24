@@ -1137,7 +1137,9 @@ namespace System
 			if (array is double[])
 				return new Swapper (array.double_swapper);
 
-			return new Swapper (array.obj_swapper);
+			// gmcs refuses to compile this
+			//return new Swapper (array.generic_swapper<T>);
+			return new Swapper (array.slow_swapper);
 		}
 #endif
 
@@ -1365,6 +1367,15 @@ namespace System
 			array [i] = array [j];
 			array [j] = val;
 		}
+
+#if NET_2_0
+		void generic_swapper<T> (int i, int j) {
+			T[] array = this as T[];
+			T val = array [i];
+			array [i] = array [j];
+			array [j] = val;
+		}
+#endif
 
 		static int new_gap (int gap)
 		{
