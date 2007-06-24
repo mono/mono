@@ -1,3 +1,7 @@
+2007-06-24  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* HttpUtility.cs: fixed HtmlAttributeEncode, performance improvement
+
 2007-06-20  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpRuntime.cs: added new internal property, InternalCache, to

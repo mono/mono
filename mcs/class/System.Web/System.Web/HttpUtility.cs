@@ -339,7 +339,15 @@ namespace System.Web {
 			if (null == s) 
 				return null;
 	
-			if (s.IndexOf ('&') == -1 && s.IndexOf ('"') == -1 && s.IndexOf ('<') == -1)
+			bool needEncode = false;
+			for (int i = 0; i < s.Length; i++) {
+				if (s [i] == '&' || s [i] == '"' || s [i] == '<') {
+					needEncode = true;
+					break;
+				}
+			}
+
+			if (!needEncode)
 				return s;
 
 			StringBuilder output = new StringBuilder ();
