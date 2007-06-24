@@ -41,6 +41,7 @@ using System.Web.UI.HtmlControls;
 using System.IO;
 using System.Globalization;
 using System.Threading;
+using System.Web.Script.Serialization;
 
 namespace System.Web.UI
 {
@@ -77,6 +78,8 @@ namespace System.Web.UI
 		const string scriptContentNoTags = "ScriptContentNoTags";
 		const string scriptContentWithTags = "ScriptContentWithTags";
 		const string scriptPath = "ScriptPath";
+
+		static JavaScriptSerializer _cultureInfoSerializer;
 
 		int _asyncPostBackTimeout = 90;
 		List<Control> _asyncPostBackControls;
@@ -323,6 +326,11 @@ namespace System.Web.UI
 		[Category ("Action")]
 		public event EventHandler<ScriptReferenceEventArgs> ResolveScriptReference;
 
+		static ScriptManager () {
+			_cultureInfoSerializer = new JavaScriptSerializer ();
+			_cultureInfoSerializer.RegisterConverters (CultureInfoConverter.GetConverters ());
+		}
+
 		public static ScriptManager GetCurrent (Page page)
 		{
 			HttpContext ctx = HttpContext.Current;
@@ -378,7 +386,7 @@ namespace System.Web.UI
 			else {
 				if (EnableScriptGlobalization) {
 					CultureInfo culture = Thread.CurrentThread.CurrentCulture;
-					string script = null; // TODO: Json serialization of culture
+					string script = String.Format ("var __cultureInfo = '{0}';", _cultureInfoSerializer.Serialize (culture).Replace ("'", "\\u0027"));
 					RegisterClientScriptBlock (this, typeof (ScriptManager), "ScriptGlobalization", script, true);
 				}
 
@@ -393,7 +401,7 @@ namespace System.Web.UI
 			}
 		}
 
-		IEnumerable GetScriptReferences () {
+		IEnumerable<ScriptReference> GetScriptReferences () {
 			ScriptReference script;
 
 			script = new ScriptReference ("MicrosoftAjax.js", String.Empty);
@@ -633,7 +641,9 @@ namespace System.Web.UI
 
 		public void RegisterScriptDescriptors (IExtenderControl extenderControl)
 		{
-			throw new NotImplementedException ();
+			foreach (ScriptReference script in extenderControl.GetScriptReferences ()) {
+				RegisterScriptReference (script);
+			}
 		}
 
 		public void RegisterScriptDescriptors (IScriptControl scriptControl)
@@ -1041,6 +1051,34 @@ namespace System.Web.UI
 			public ArrayDeclaration (string arrayName, string arrayValue) {
 				ArrayName = arrayName;
 				ArrayValue = arrayValue;
+			}
+		}
+
+		sealed class CultureInfoConverter : JavaScriptConverter
+		{
+			private CultureInfoConverter () { }
+			static readonly Type typeofCultureInfo = typeof (CultureInfo);
+			static CultureInfoConverter _instance = new CultureInfoConverter ();
+
+			public static IEnumerable<JavaScriptConverter> GetConverters () { yield return _instance; }
+
+			public override IEnumerable<Type> SupportedTypes {
+				get { yield return typeofCultureInfo; }
+			}
+
+			public override object Deserialize (IDictionary<string, object> dictionary, Type type, JavaScriptSerializer serializer) {
+				throw new NotSupportedException ();
+			}
+
+			public override IDictionary<string, object> Serialize (object obj, JavaScriptSerializer serializer) {
+				CultureInfo ci = (CultureInfo) obj;
+				if (ci == null)
+					return null;
+				Dictionary<string, object> d = new Dictionary<string, object> (StringComparer.Ordinal);
+				d.Add ("name", ci.Name);
+				d.Add ("numberFormat", ci.NumberFormat);
+				d.Add ("dateTimeFormat", ci.DateTimeFormat);
+				return d;
 			}
 		}
 	}

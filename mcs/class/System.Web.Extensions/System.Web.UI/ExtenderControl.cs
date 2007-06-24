@@ -47,10 +47,13 @@ namespace System.Web.UI
 		[Category ("Behavior")]
 		public string TargetControlID {
 			get {
-				throw new NotImplementedException ();
+				object o = ViewState ["TargetControlID"];
+				if (o == null)
+					return String.Empty;
+				return (string) o;
 			}
 			set {
-				throw new NotImplementedException ();
+				ViewState ["TargetControlID"] = value;
 			}
 		}
 
@@ -59,10 +62,19 @@ namespace System.Web.UI
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override bool Visible {
 			get {
-				throw new NotImplementedException ();
+				return base.Visible;
 			}
 			set {
 				throw new NotImplementedException ();
+			}
+		}
+
+		ScriptManager ScriptManager {
+			get {
+				ScriptManager manager = ScriptManager.GetCurrent (Page);
+				if (manager == null)
+					throw new InvalidOperationException (String.Format ("The control with ID '{0}' requires a ScriptManager on the page. The ScriptManager must appear before any controls that need it.", ID));
+				return manager;
 			}
 		}
 
@@ -72,6 +84,29 @@ namespace System.Web.UI
 
 		protected override void OnPreRender (EventArgs e) {
 			base.OnPreRender (e);
+
+			if (!ScriptManager.IsInAsyncPostBack) {
+				ScriptManager.RegisterScriptDescriptors (this);
+
+				if (String.IsNullOrEmpty (TargetControlID))
+					throw new InvalidOperationException (String.Format ("The TargetControlID of '{0}' is not valid. The value cannot be null or empty.", ID));
+				Control c = FindControl (TargetControlID);
+				if (c == null)
+					throw new InvalidOperationException (String.Format ("The TargetControlID of '{0}' is not valid. A control with ID '{1}' could not be found.", ID, TargetControlID));
+
+				StringBuilder sb = null;
+				foreach (ScriptDescriptor scriptDescriptor in ((IExtenderControl) this).GetScriptDescriptors (c)) {
+					if (sb == null) {
+						sb = new StringBuilder ();
+						sb.AppendLine ();
+					}
+					sb.AppendLine ("Sys.Application.add_init(function() {");
+					sb.AppendLine (scriptDescriptor.GetScript ());
+					sb.AppendLine ("});");
+				}
+				if (sb != null)
+					ScriptManager.RegisterStartupScript (this, typeof (ExtenderControl), "ScriptDescriptors" + ClientID, sb.ToString (), true);
+			}
 		}
 
 		protected override void Render (HtmlTextWriter writer) {
