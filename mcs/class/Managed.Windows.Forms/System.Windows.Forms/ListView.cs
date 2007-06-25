@@ -3112,6 +3112,41 @@ namespace System.Windows.Forms
 		}
 
 #if NET_2_0
+		public ListViewHitTestInfo HitInfo (Point pt)
+		{
+			return HitInfo (pt.X, pt.Y);
+		}
+
+		public ListViewHitTestInfo HitInfo (int x, int y)
+		{
+			if (x < 0)
+				throw new ArgumentOutOfRangeException ("x");
+			if (y < 0)
+				throw new ArgumentOutOfRangeException ("y");
+
+			ListViewItem item = GetItemAt (x, y);
+			if (item == null)
+				return new ListViewHitTestInfo (null, null, ListViewHitTestLocations.None);
+
+			ListViewHitTestLocations locations = 0;
+			if (item.GetBounds (ItemBoundsPortion.Label).Contains (x, y))
+				locations |= ListViewHitTestLocations.Label;
+			else if (item.GetBounds (ItemBoundsPortion.Icon).Contains (x, y))
+				locations |= ListViewHitTestLocations.Image;
+			else if (item.CheckRectReal.Contains (x, y))
+				locations |= ListViewHitTestLocations.StateImage;
+
+			ListViewItem.ListViewSubItem subitem = null;
+			if (view == View.Details)
+				foreach (ListViewItem.ListViewSubItem si in item.SubItems)
+					if (si.Bounds.Contains (x, y)) {
+						subitem = si;
+						break;
+					}
+
+			return new ListViewHitTestInfo (item, subitem, locations);
+		}
+
 		public void RedrawItems (int startIndex, int endIndex, bool invalidateOnly)
 		{
 			if (startIndex < 0 || startIndex >= items.Count)
