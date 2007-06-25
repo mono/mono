@@ -1,3 +1,12 @@
+2007-06-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListViewItem.cs: Add a 2.0 bool Hot property, to tell whether the
+	item is under the pointer or not (sugar). Also remove the TODO
+	regarding to the cursor changes in OneClick activation.
+	* ThemeWin32Classic.cs: When HotTracking is true and we are drawing
+	the subitems use the parent's HotFont if UseItemStyleForSubItems is
+	true; otherwise don't show the underline style.
+
 2007-06-22  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: In ItemControl.ItemsMouseMove, refactor

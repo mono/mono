@@ -719,6 +719,12 @@ namespace System.Windows.Forms
 		}
 
 #if NET_2_0
+		internal bool Hot {
+			get {
+				return Index == owner.HotItemIndex;
+			}
+		}
+
 		internal Font HotFont {
 			get {
 				if (hot_font == null)

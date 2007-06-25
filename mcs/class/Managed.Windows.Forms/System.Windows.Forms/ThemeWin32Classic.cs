@@ -2576,7 +2576,7 @@ namespace System.Windows.Forms
 			if (item.Text != null && item.Text.Length > 0) {
 				Font font = item.Font;
 #if NET_2_0
-				if (control.HotTracking && control.HotItemIndex == item.Index)
+				if (control.HotTracking && item.Hot)
 					font = item.HotFont;
 #endif
 
@@ -2652,7 +2652,13 @@ namespace System.Windows.Forms
 			if (item.UseItemStyleForSubItems) {
 				sub_item_back_br = ResPool.GetSolidBrush (item.BackColor);
 				sub_item_fore_br = ResPool.GetSolidBrush (item.ForeColor);
-				sub_item_font = item.Font;
+#if NET_2_0
+				// Hot tracking for subitems only applies when UseStyle is true
+				if (control.HotTracking && item.Hot)
+					sub_item_font = item.HotFont;
+				else
+#endif
+					sub_item_font = item.Font;
 			} else {
 				sub_item_back_br = ResPool.GetSolidBrush (subItem.BackColor);
 				sub_item_fore_br = ResPool.GetSolidBrush (subItem.ForeColor);
