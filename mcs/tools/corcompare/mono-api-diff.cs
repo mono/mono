@@ -1685,6 +1685,23 @@ namespace Mono.AssemblyCompare
 			base.LoadExtraData (name, node);
 		}
 
+		public override string GetNodeKey (string name, XmlNode node)
+		{
+			// for explicit/implicit operators we need to include the return
+			// type in the key to allow matching; as a side-effect, differences
+			// in return types will be reported as extra/missing methods
+			//
+			// for regular methods we do not need to take into account the
+			// return type for matching methods; differences in return types
+			// will be reported as a warning on the method
+			if (name.StartsWith ("op_")) {
+				XmlAttribute xatt = node.Attributes ["returntype"];
+				string returnType = xatt != null ? xatt.Value + " " : string.Empty;
+				return returnType + name;
+			}
+			return name;
+		}
+
 		protected override void CompareToInner (string name, XmlNode parent, XMLNameGroup other)
 		{
 			// create backup of actual counters
