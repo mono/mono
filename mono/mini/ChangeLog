@@ -1,3 +1,9 @@
+2007-06-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* ssa.c (visit_inst): Add support for OP_BR. Fixes #81946.
+
+	* generic.2.cs: Add new test case.
+
 2007-06-25  Martin Baulig  <martin@ximian.com>
 
 	Merged the `debugger-dublin' branch.
