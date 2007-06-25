@@ -1,3 +1,29 @@
+2007-06-25  Martin Baulig  <martin@ximian.com>
+
+	Merged the `debugger-dublin' branch.
+
+	* debug-mini.c
+	(mono_debugger_insert_method_breakpoint): New public method.
+	(mono_debugger_remove_method_breakpoint): Likewise.
+	(mono_debugger_check_breakpoints): New static method.
+	(mono_debug_close_method): Call mono_debugger_check_breakpoints().
+
+	* debug-debugger.h (MonoDebuggerInfo):
+	Renamed (to keep backward compatibility in the vtable):
+	`insert_breakpoint' -> `old_insert_breakpoint'.
+	`remove_breakpoint' -> `old_remove_breakpoint'.
+	`create_string' -> `old_create_string'.
+	`lookup_class' -> `old_lookup_class'.
+	`lookup_type' -> removed; changed into a dummy field.
+	`lookup_assembly' -> `old_lookup_assembly'.
+	Added (same functionality, but different signature):
+	`create_string', `lookup_class', `lookup_assembly'
+	Added new:
+	`get_method_addr_or_bpt', `remove_method_breakpoint',
+	`runtime_class_init'.
+
+	* debug-debugger.c: Merged the `debugger-dublin' branch.
+
 2007-06-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-amd64.c (peephole_pass_1): Optimize away moves at the beginning of the bb as
