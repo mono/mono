@@ -1,3 +1,8 @@
+2007-06-25 Juraj Skripsky <js@hotfeet.ch>
+
+	* HttpRuntime.cs (ShutdownAppDomain): Re-introduce call to
+	"Cache.InvokePrivateCallbacks".
+
 2007-06-24  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* HttpUtility.cs: fixed HtmlAttributeEncode, performance improvement

@@ -210,6 +210,31 @@ namespace System.Web.Caching
 			}
 		}
 
+		// Used when shutting down the application so that
+		// session_end events are sent for all sessions.
+		internal void InvokePrivateCallbacks ()
+		{
+			CacheItemRemovedReason reason = CacheItemRemovedReason.Removed;
+			lock (cache) {
+				foreach (string key in cache.Keys) {
+					CacheItem item;
+#if NET_2_0
+					cache.TryGetValue (key, out item);
+#else
+					item = (CacheItem) cache [key];
+#endif
+
+					if (item != null && item.OnRemoveCallback != null) {
+						try {
+							item.OnRemoveCallback (key, item.Value, reason);
+						} catch {
+							//TODO: anything to be done here?
+						}
+					}
+				}
+			}
+		}
+
 		public IDictionaryEnumerator GetEnumerator ()
 		{
 			ArrayList list = new ArrayList ();

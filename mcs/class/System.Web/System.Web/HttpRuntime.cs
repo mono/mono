@@ -383,6 +383,8 @@ namespace System.Web {
 		static void ShutdownAppDomain (object args)
 		{
 			queue_manager.Dispose ();
+			// This will call Session_End if needed.
+			InternalCache.InvokePrivateCallbacks ();
 			// Kill our application.
 			HttpApplicationFactory.Dispose ();
 			ThreadPool.QueueUserWorkItem (new WaitCallback (DoUnload), null);
