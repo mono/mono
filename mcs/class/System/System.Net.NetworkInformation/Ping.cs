@@ -45,95 +45,95 @@ namespace System.Net.NetworkInformation {
 				PingCompleted (this, e);
 		}
 
-		[MonoTODO]
+		[MonoNotSupported("")]
 		public PingReply Send (IPAddress address)
 		{
 			return null;
 		}
 
-		[MonoTODO]
+		[MonoNotSupported("")]
 		public PingReply Send (IPAddress address, int timeout)
 		{
 			return null;
 		}
 
-		[MonoTODO]
+		[MonoNotSupported("")]
 		public PingReply Send (IPAddress address, int timeout, byte [] buffer)
 		{
 			return null;
 		}
 
-		[MonoTODO]
+		[MonoNotSupported("")]
 		public PingReply Send (IPAddress address, int timeout, byte [] buffer, PingOptions options)
 		{
 			return null;
 		}
 
-		[MonoTODO]
+		[MonoNotSupported("")]
 		public PingReply Send (string hostNameOrAddress)
 		{
 			return null;
 		}
 
-		[MonoTODO]
+		[MonoNotSupported("")]
 		public PingReply Send (string hostNameOrAddress, int timeout)
 		{
 			return null;
 		}
 
-		[MonoTODO]
+		[MonoNotSupported("")]
 		public PingReply Send (string hostNameOrAddress, int timeout, byte [] buffer)
 		{
 			return null;
 		}
 
-		[MonoTODO]
+		[MonoNotSupported("")]
 		public PingReply Send (string hostNameOrAddress, int timeout, byte [] buffer, PingOptions options)
 		{
 			return null;
 		}
 
-		[MonoTODO]
+		[MonoNotSupported("")]
 		public void SendAsync (IPAddress address, int timeout, byte [] buffer, object userToken)
 		{
 		}
 
-		[MonoTODO]
+		[MonoNotSupported("")]
 		public void SendAsync (IPAddress address, int timeout, byte [] buffer, PingOptions options, object userToken)
 		{
 		}
 
-		[MonoTODO]
+		[MonoNotSupported("")]
 		public void SendAsync (IPAddress address, int timeout, object userToken)
 		{
 		}
 
-		[MonoTODO]
+		[MonoNotSupported("")]
 		public void SendAsync (IPAddress address, object userToken)
 		{
 		}
 
-		[MonoTODO]
+		[MonoNotSupported("")]
 		public void SendAsync (string hostNameOrAddress, int timeout, byte [] buffer, object userToken)
 		{
 		}
 
-		[MonoTODO]
+		[MonoNotSupported("")]
 		public void SendAsync (string hostNameOrAddress, int timeout, byte [] buffer, PingOptions options, object userToken)
 		{
 		}
 
-		[MonoTODO]
+		[MonoNotSupported("")]
 		public void SendAsync (string hostNameOrAddress, int timeout, object userToken)
 		{
 		}
 
-		[MonoTODO]
+		[MonoNotSupported("")]
 		public void SendAsync (string hostNameOrAddress, object userToken)
 		{
 		}
 
-		[MonoTODO]
+		[MonoNotSupported("")]
 		public void SendAsyncCancel ()
 		{
 		}
