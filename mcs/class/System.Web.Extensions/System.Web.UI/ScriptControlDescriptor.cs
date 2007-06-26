@@ -37,27 +37,29 @@ namespace System.Web.UI
 	{
 		public ScriptControlDescriptor (string type, string elementID)
 			: base (type) {
-			throw new NotImplementedException ();
+			if (String.IsNullOrEmpty (elementID))
+				throw new ArgumentException ("Value cannot be null or empty.", "elementID");
+			ElementIDInternal = elementID;
 		}
 
 		public override string ClientID {
 			get {
-				throw new NotImplementedException ();
+				return ElementID;
 			}
 		}
 
 		public string ElementID {
 			get {
-				throw new NotImplementedException ();
+				return ElementIDInternal;
 			}
 		}
 
 		public override string ID {
 			get {
-				throw new NotImplementedException ();
+				return base.ID;
 			}
 			set {
-				throw new NotImplementedException ();
+				throw new InvalidOperationException ("The 'ID' property on ScriptControlDescriptor is not settable. The client ID of a script control is always equal to its element ID.");
 			}
 		}
 	}

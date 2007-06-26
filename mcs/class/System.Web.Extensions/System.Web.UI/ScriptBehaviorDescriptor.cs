@@ -35,14 +35,13 @@ namespace System.Web.UI
 {
 	public class ScriptBehaviorDescriptor : ScriptComponentDescriptor
 	{
-		string _elementID;
 		string _name;
 
 		public ScriptBehaviorDescriptor (string type, string elementID)
 			: base (type) {
 			if (String.IsNullOrEmpty (elementID))
 				throw new ArgumentException ("Value cannot be null or empty.", "elementID");
-			_elementID = elementID;
+			ElementIDInternal = elementID;
 		}
 
 		public override string ClientID {
@@ -56,7 +55,7 @@ namespace System.Web.UI
 
 		public string ElementID {
 			get {
-				return _elementID;
+				return ElementIDInternal;
 			}
 		}
 
@@ -80,7 +79,7 @@ namespace System.Web.UI
 		}
 
 		protected internal override string GetScript () {
-			return String.Format ("$create({0}, {1}, {2}, {3}, $get(\"{4}\"));", Type, GetSerializedProperties (), GetSerializedEvents (), GetSerializedReferences (), ElementID);
+			return base.GetScript ();
 		}
 	}
 }

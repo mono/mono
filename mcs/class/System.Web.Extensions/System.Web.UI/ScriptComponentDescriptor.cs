@@ -36,6 +36,7 @@ namespace System.Web.UI
 {
 	public class ScriptComponentDescriptor : ScriptDescriptor
 	{
+		string _elementID;
 		string _type;
 		string _id;
 		Dictionary<string, string> _properties;
@@ -51,6 +52,15 @@ namespace System.Web.UI
 		public virtual string ClientID {
 			get {
 				return ID;
+			}
+		}
+
+		internal string ElementIDInternal {
+			get {
+				return _elementID;
+			}
+			set {
+				_elementID = value;
 			}
 		}
 
@@ -132,7 +142,10 @@ namespace System.Web.UI
 		}
 
 		protected internal override string GetScript () {
-			return String.Format ("$create({0}, {1}, {2}, {3});", Type, GetSerializedProperties (), GetSerializedEvents (), GetSerializedReferences ());
+			if (String.IsNullOrEmpty (ElementIDInternal))
+				return String.Format ("$create({0}, {1}, {2}, {3});", Type, GetSerializedProperties (), GetSerializedEvents (), GetSerializedReferences ());
+			else
+				return String.Format ("$create({0}, {1}, {2}, {3}, $get(\"{4}\"));", Type, GetSerializedProperties (), GetSerializedEvents (), GetSerializedReferences (), ElementIDInternal);
 		}
 
 		internal static string SerializeDictionary (Dictionary<string, string> dictionary) {
@@ -147,15 +160,15 @@ namespace System.Web.UI
 			return sb.ToString ();
 		}
 
-		internal string GetSerializedProperties () {
+		string GetSerializedProperties () {
 			return SerializeDictionary (_properties);
 		}
 
-		internal string GetSerializedEvents () {
+		string GetSerializedEvents () {
 			return SerializeDictionary (_events);
 		}
 
-		internal string GetSerializedReferences () {
+		string GetSerializedReferences () {
 			return SerializeDictionary (_references);
 		}
 	}
