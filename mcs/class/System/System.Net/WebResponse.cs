@@ -106,11 +106,8 @@ namespace System.Net
 		{
 			Close ();
 		}
-#if TARGET_JVM //enable overrides for extenders
-		public virtual void GetObjectData
-#else
+
 		void ISerializable.GetObjectData
-#endif
 			(SerializationInfo serializationInfo,
 		   				  StreamingContext streamingContext)
 		{

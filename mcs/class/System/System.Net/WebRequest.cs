@@ -292,16 +292,14 @@ namespace System.Net
 			return new WebProxy ();
 		}
 #endif
-#if TARGET_JVM
-		public virtual void GetObjectData
-#else
+
 		void ISerializable.GetObjectData
-#endif
 		(SerializationInfo serializationInfo,
 		   				  StreamingContext streamingContext)
 		{
 			throw new NotSupportedException ();
 		}
+
 
 #if NET_2_0
 		protected virtual void GetObjectData (SerializationInfo serializationInfo, StreamingContext streamingContext)
