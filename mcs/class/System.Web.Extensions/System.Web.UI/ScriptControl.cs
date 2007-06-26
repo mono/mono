@@ -36,7 +36,20 @@ namespace System.Web.UI
 {
 	public abstract class ScriptControl : WebControl, IScriptControl
 	{
+		ScriptManager _scriptManager;
+
 		protected ScriptControl () { }
+
+		ScriptManager ScriptManager {
+			get {
+				if (_scriptManager == null) {
+					_scriptManager = ScriptManager.GetCurrent (Page);
+					if (_scriptManager == null)
+						throw new InvalidOperationException (String.Format ("The control with ID '{0}' requires a ScriptManager on the page. The ScriptManager must appear before any controls that need it.", ID));
+				}
+				return _scriptManager;
+			}
+		}
 
 		protected abstract IEnumerable<ScriptDescriptor> GetScriptDescriptors ();
 
@@ -44,9 +57,11 @@ namespace System.Web.UI
 
 		protected override void OnPreRender (EventArgs e) {
 			base.OnPreRender (e);
+			ScriptManager.RegisterScriptControl (this);
 		}
 
 		protected override void Render (HtmlTextWriter writer) {
+			ScriptManager.RegisterScriptDescriptors (this);
 		}
 
 		#region IScriptControl Members
