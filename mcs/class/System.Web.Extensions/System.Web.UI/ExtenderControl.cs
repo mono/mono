@@ -40,6 +40,8 @@ namespace System.Web.UI
 	[PersistChildren (false)]
 	public abstract class ExtenderControl : Control, IExtenderControl
 	{
+		ScriptManager _scriptManager;
+
 		protected ExtenderControl () { }
 
 		[DefaultValue ("")]
@@ -71,10 +73,12 @@ namespace System.Web.UI
 
 		ScriptManager ScriptManager {
 			get {
-				ScriptManager manager = ScriptManager.GetCurrent (Page);
-				if (manager == null)
-					throw new InvalidOperationException (String.Format ("The control with ID '{0}' requires a ScriptManager on the page. The ScriptManager must appear before any controls that need it.", ID));
-				return manager;
+				if (_scriptManager == null) {
+					_scriptManager = ScriptManager.GetCurrent (Page);
+					if (_scriptManager == null)
+						throw new InvalidOperationException (String.Format ("The control with ID '{0}' requires a ScriptManager on the page. The ScriptManager must appear before any controls that need it.", ID));
+				}
+				return _scriptManager;
 			}
 		}
 
@@ -85,31 +89,17 @@ namespace System.Web.UI
 		protected override void OnPreRender (EventArgs e) {
 			base.OnPreRender (e);
 
-			if (!ScriptManager.IsInAsyncPostBack) {
-				ScriptManager.RegisterScriptDescriptors (this);
+			if (String.IsNullOrEmpty (TargetControlID))
+				throw new InvalidOperationException (String.Format ("The TargetControlID of '{0}' is not valid. The value cannot be null or empty.", ID));
+			Control c = FindControl (TargetControlID);
+			if (c == null)
+				throw new InvalidOperationException (String.Format ("The TargetControlID of '{0}' is not valid. A control with ID '{1}' could not be found.", ID, TargetControlID));
 
-				if (String.IsNullOrEmpty (TargetControlID))
-					throw new InvalidOperationException (String.Format ("The TargetControlID of '{0}' is not valid. The value cannot be null or empty.", ID));
-				Control c = FindControl (TargetControlID);
-				if (c == null)
-					throw new InvalidOperationException (String.Format ("The TargetControlID of '{0}' is not valid. A control with ID '{1}' could not be found.", ID, TargetControlID));
-
-				StringBuilder sb = null;
-				foreach (ScriptDescriptor scriptDescriptor in ((IExtenderControl) this).GetScriptDescriptors (c)) {
-					if (sb == null) {
-						sb = new StringBuilder ();
-						sb.AppendLine ();
-					}
-					sb.AppendLine ("Sys.Application.add_init(function() {");
-					sb.AppendLine (scriptDescriptor.GetScript ());
-					sb.AppendLine ("});");
-				}
-				if (sb != null)
-					ScriptManager.RegisterStartupScript (this, typeof (ExtenderControl), "ScriptDescriptors" + ClientID, sb.ToString (), true);
-			}
+			ScriptManager.RegisterExtenderControl (this, c);
 		}
 
 		protected override void Render (HtmlTextWriter writer) {
+			ScriptManager.RegisterScriptDescriptors (this);
 		}
 
 		#region IExtenderControl Members

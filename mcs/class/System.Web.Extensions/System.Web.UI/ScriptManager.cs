@@ -98,6 +98,8 @@ namespace System.Web.UI
 		ScriptEntry _onSubmitStatements;
 		List<ArrayDeclaration> _arrayDeclarations;
 		Hashtable _hiddenFields;
+		List<IScriptControl> _registeredScriptControls;
+		Dictionary<IExtenderControl, Control> _registeredExtenderControls;
 
 		[DefaultValue (true)]
 		[Category ("Behavior")]
@@ -124,7 +126,7 @@ namespace System.Web.UI
 		[Browsable (false)]
 		public string AsyncPostBackSourceElementID {
 			get {
-				if(_asyncPostBackSourceElementID==null)
+				if (_asyncPostBackSourceElementID == null)
 					return String.Empty;
 				return _asyncPostBackSourceElementID;
 			}
@@ -331,22 +333,20 @@ namespace System.Web.UI
 			_cultureInfoSerializer.RegisterConverters (CultureInfoConverter.GetConverters ());
 		}
 
-		public static ScriptManager GetCurrent (Page page)
-		{
+		public static ScriptManager GetCurrent (Page page) {
 			HttpContext ctx = HttpContext.Current;
 			if (ctx == null)
 				return null;
 
 			return (ScriptManager) ctx.Items [page];
 		}
-		
+
 		static void SetCurrent (Page page, ScriptManager instance) {
 			HttpContext ctx = HttpContext.Current;
 			ctx.Items [page] = instance;
 		}
 
-		protected virtual bool LoadPostData (string postDataKey, NameValueCollection postCollection)
-		{
+		protected virtual bool LoadPostData (string postDataKey, NameValueCollection postCollection) {
 			_isInAsyncPostBack = true;
 			string arg = postCollection [postDataKey];
 			if (!String.IsNullOrEmpty (arg)) {
@@ -355,19 +355,17 @@ namespace System.Web.UI
 				UpdatePanel up = c as UpdatePanel;
 				if (up != null && up.ChildrenAsTriggers)
 					up.Update ();
-				_asyncPostBackSourceElementID = args[1];
+				_asyncPostBackSourceElementID = args [1];
 			}
 			return false;
 		}
 
-		protected internal virtual void OnAsyncPostBackError (AsyncPostBackErrorEventArgs e)
-		{
+		protected internal virtual void OnAsyncPostBackError (AsyncPostBackErrorEventArgs e) {
 			if (AsyncPostBackError != null)
 				AsyncPostBackError (this, e);
 		}
 
-		protected override void OnInit (EventArgs e)
-		{
+		protected override void OnInit (EventArgs e) {
 			base.OnInit (e);
 
 			if (GetCurrent (Page) != null)
@@ -376,28 +374,33 @@ namespace System.Web.UI
 			SetCurrent (Page, this);
 		}
 
-		protected override void OnPreRender (EventArgs e)
-		{
+		protected override void OnPreRender (EventArgs e) {
 			base.OnPreRender (e);
 
 			if (IsInAsyncPostBack) {
 				Page.SetRenderMethodDelegate (RenderPageCallback);
 			}
 			else {
+				Page.PreRenderComplete += new EventHandler (OnPreRenderComplete);
+
 				if (EnableScriptGlobalization) {
 					CultureInfo culture = Thread.CurrentThread.CurrentCulture;
 					string script = String.Format ("var __cultureInfo = '{0}';", _cultureInfoSerializer.Serialize (culture).Replace ("'", "\\u0027"));
 					RegisterClientScriptBlock (this, typeof (ScriptManager), "ScriptGlobalization", script, true);
 				}
 
-				// Register Scripts
-				foreach (ScriptReference script in GetScriptReferences ()) {
-					OnResolveScriptReference (new ScriptReferenceEventArgs (script));
-					RegisterScriptReference (script);
-				}
-
 				// Register startup script
-				RegisterStartupScript (this, typeof (ScriptManager), "Sys.Application.initialize();", "Sys.Application.initialize();", true);
+				StringBuilder sb = new StringBuilder ();
+				sb.AppendLine ("Sys.Application.initialize();");
+				RegisterStartupScript (this, typeof (ExtenderControl), "Sys.Application.initialize();", sb.ToString (), true);
+			}
+		}
+
+		void OnPreRenderComplete (object sender, EventArgs e) {
+			// Register Scripts
+			foreach (ScriptReference script in GetScriptReferences ()) {
+				OnResolveScriptReference (new ScriptReferenceEventArgs (script));
+				RegisterScriptReference (script);
 			}
 		}
 
@@ -417,26 +420,36 @@ namespace System.Web.UI
 					yield return _scripts [i];
 				}
 			}
+
+			if (_registeredScriptControls != null && _registeredScriptControls.Count > 0) {
+				for (int i = 0; i < _registeredScriptControls.Count; i++) {
+					foreach (ScriptReference s in _registeredScriptControls [i].GetScriptReferences ())
+						yield return s;
+				}
+			}
+
+			if (_registeredExtenderControls != null && _registeredExtenderControls.Count > 0) {
+				foreach (IExtenderControl ex in _registeredExtenderControls.Keys) {
+					foreach (ScriptReference s in ex.GetScriptReferences ())
+						yield return s;
+				}
+			}
 		}
 
-		protected virtual void OnResolveScriptReference (ScriptReferenceEventArgs e)
-		{
+		protected virtual void OnResolveScriptReference (ScriptReferenceEventArgs e) {
 			if (ResolveScriptReference != null)
 				ResolveScriptReference (this, e);
 		}
 
-		protected virtual void RaisePostDataChangedEvent ()
-		{
+		protected virtual void RaisePostDataChangedEvent () {
 			throw new NotImplementedException ();
 		}
 
-		public static void RegisterArrayDeclaration (Control control, string arrayName, string arrayValue)
-		{
+		public static void RegisterArrayDeclaration (Control control, string arrayName, string arrayValue) {
 			RegisterArrayDeclaration (control.Page, arrayName, arrayValue);
 		}
 
-		public static void RegisterArrayDeclaration (Page page, string arrayName, string arrayValue)
-		{
+		public static void RegisterArrayDeclaration (Page page, string arrayName, string arrayValue) {
 			ScriptManager sm = GetCurrent (page);
 			if (sm.IsInAsyncPostBack)
 				sm.RegisterArrayDeclaration (arrayName, arrayValue);
@@ -448,12 +461,11 @@ namespace System.Web.UI
 			if (_arrayDeclarations == null)
 				_arrayDeclarations = new List<ArrayDeclaration> ();
 
-			_arrayDeclarations.Add(new ArrayDeclaration(arrayName, arrayValue));
+			_arrayDeclarations.Add (new ArrayDeclaration (arrayName, arrayValue));
 		}
 
-		public void RegisterAsyncPostBackControl (Control control)
-		{
-			if(control==null)
+		public void RegisterAsyncPostBackControl (Control control) {
+			if (control == null)
 				return;
 
 			if (_asyncPostBackControls == null)
@@ -465,13 +477,11 @@ namespace System.Web.UI
 			_asyncPostBackControls.Add (control);
 		}
 
-		public static void RegisterClientScriptBlock (Control control, Type type, string key, string script, bool addScriptTags)
-		{
+		public static void RegisterClientScriptBlock (Control control, Type type, string key, string script, bool addScriptTags) {
 			RegisterClientScriptBlock (control.Page, type, key, script, addScriptTags);
 		}
 
-		public static void RegisterClientScriptBlock (Page page, Type type, string key, string script, bool addScriptTags)
-		{
+		public static void RegisterClientScriptBlock (Page page, Type type, string key, string script, bool addScriptTags) {
 			ScriptManager sm = GetCurrent (page);
 			if (sm.IsInAsyncPostBack)
 				RegisterScript (ref sm._clientScriptBlocks, type, key, script, addScriptTags ? ScriptEntryType.ScriptContentNoTags : ScriptEntryType.ScriptContentWithTags);
@@ -479,13 +489,11 @@ namespace System.Web.UI
 				page.ClientScript.RegisterClientScriptBlock (type, key, script, addScriptTags);
 		}
 
-		public static void RegisterClientScriptInclude (Control control, Type type, string key, string url)
-		{
+		public static void RegisterClientScriptInclude (Control control, Type type, string key, string url) {
 			RegisterClientScriptInclude (control.Page, type, key, url);
 		}
 
-		public static void RegisterClientScriptInclude (Page page, Type type, string key, string url)
-		{
+		public static void RegisterClientScriptInclude (Page page, Type type, string key, string url) {
 			ScriptManager sm = GetCurrent (page);
 			if (sm.IsInAsyncPostBack)
 				RegisterScript (ref sm._scriptIncludes, type, key, url, ScriptEntryType.ScriptPath);
@@ -493,18 +501,16 @@ namespace System.Web.UI
 				page.ClientScript.RegisterClientScriptInclude (type, key, url);
 		}
 
-		public static void RegisterClientScriptResource (Control control, Type type, string resourceName)
-		{
+		public static void RegisterClientScriptResource (Control control, Type type, string resourceName) {
 			RegisterClientScriptResource (control.Page, type, resourceName);
 		}
 
-		public static void RegisterClientScriptResource (Page page, Type type, string resourceName)
-		{
+		public static void RegisterClientScriptResource (Page page, Type type, string resourceName) {
 			RegisterClientScriptInclude (page, type, "resource-" + resourceName, ScriptResourceHandler.GetResourceUrl (type, resourceName));
 		}
 
 		void RegisterScriptReference (ScriptReference script) {
-			
+
 			bool isDebugMode = IsDeploymentRetail ? false : (script.ScriptModeInternal == ScriptMode.Inherit ? IsDebuggingEnabled : (script.ScriptModeInternal == ScriptMode.Debug));
 			string url;
 			if (!String.IsNullOrEmpty (script.Path)) {
@@ -542,7 +548,7 @@ namespace System.Web.UI
 			sb.Length -= 3;
 			if (isDebugMode)
 				sb.Append (".debug");
-			string culture=Thread.CurrentThread.CurrentUICulture.Name;
+			string culture = Thread.CurrentThread.CurrentUICulture.Name;
 			if (supportedUICultures != null && Array.IndexOf<string> (supportedUICultures, culture) >= 0)
 				sb.AppendFormat (".{0}", culture);
 			sb.Append (".js");
@@ -550,23 +556,19 @@ namespace System.Web.UI
 			return sb.ToString ();
 		}
 
-		public void RegisterDataItem (Control control, string dataItem)
-		{
+		public void RegisterDataItem (Control control, string dataItem) {
 			throw new NotImplementedException ();
 		}
 
-		public void RegisterDataItem (Control control, string dataItem, bool isJsonSerialized)
-		{
+		public void RegisterDataItem (Control control, string dataItem, bool isJsonSerialized) {
 			throw new NotImplementedException ();
 		}
 
-		public void RegisterDispose (Control control, string disposeScript)
-		{
+		public void RegisterDispose (Control control, string disposeScript) {
 			throw new NotImplementedException ();
 		}
 
-		public static void RegisterExpandoAttribute (Control control, string controlId, string attributeName, string attributeValue, bool encode)
-		{
+		public static void RegisterExpandoAttribute (Control control, string controlId, string attributeName, string attributeValue, bool encode) {
 			Page page = control.Page;
 			ScriptManager sm = GetCurrent (page);
 			if (sm.IsInAsyncPostBack)
@@ -579,13 +581,11 @@ namespace System.Web.UI
 			// seems MS do nothing.
 		}
 
-		public static void RegisterHiddenField (Control control, string hiddenFieldName, string hiddenFieldInitialValue)
-		{
+		public static void RegisterHiddenField (Control control, string hiddenFieldName, string hiddenFieldInitialValue) {
 			RegisterHiddenField (control.Page, hiddenFieldName, hiddenFieldInitialValue);
 		}
 
-		public static void RegisterHiddenField (Page page, string hiddenFieldName, string hiddenFieldInitialValue)
-		{
+		public static void RegisterHiddenField (Page page, string hiddenFieldName, string hiddenFieldInitialValue) {
 			ScriptManager sm = GetCurrent (page);
 			if (sm.IsInAsyncPostBack)
 				sm.RegisterHiddenField (hiddenFieldName, hiddenFieldInitialValue);
@@ -601,13 +601,11 @@ namespace System.Web.UI
 				_hiddenFields.Add (hiddenFieldName, hiddenFieldInitialValue);
 		}
 
-		public static void RegisterOnSubmitStatement (Control control, Type type, string key, string script)
-		{
+		public static void RegisterOnSubmitStatement (Control control, Type type, string key, string script) {
 			RegisterOnSubmitStatement (control.Page, type, key, script);
 		}
 
-		public static void RegisterOnSubmitStatement (Page page, Type type, string key, string script)
-		{
+		public static void RegisterOnSubmitStatement (Page page, Type type, string key, string script) {
 			ScriptManager sm = GetCurrent (page);
 			if (sm.IsInAsyncPostBack)
 				RegisterScript (ref sm._onSubmitStatements, type, key, script, ScriptEntryType.OnSubmit);
@@ -615,8 +613,7 @@ namespace System.Web.UI
 				page.ClientScript.RegisterOnSubmitStatement (type, key, script);
 		}
 
-		public void RegisterPostBackControl (Control control)
-		{
+		public void RegisterPostBackControl (Control control) {
 			if (control == null)
 				return;
 
@@ -639,30 +636,72 @@ namespace System.Web.UI
 			_updatePanels.Add (updatePanel);
 		}
 
-		public void RegisterScriptDescriptors (IExtenderControl extenderControl)
-		{
-			foreach (ScriptReference script in extenderControl.GetScriptReferences ()) {
-				RegisterScriptReference (script);
+		public void RegisterScriptDescriptors (IExtenderControl extenderControl) {
+			if (extenderControl == null)
+				return;
+
+			if (_registeredExtenderControls == null || !_registeredExtenderControls.ContainsKey (extenderControl))
+				return;
+
+			Control targetControl = _registeredExtenderControls [extenderControl];
+			RegisterScriptDescriptors (extenderControl.GetScriptDescriptors (targetControl));
+		}
+
+		public void RegisterScriptDescriptors (IScriptControl scriptControl) {
+			if (scriptControl == null)
+				return;
+
+			if (_registeredScriptControls == null || !_registeredScriptControls.Contains (scriptControl))
+				return;
+
+			RegisterScriptDescriptors (scriptControl.GetScriptDescriptors ());
+		}
+
+		void RegisterScriptDescriptors (IEnumerable<ScriptDescriptor> scriptDescriptors) {
+			StringBuilder sb = new StringBuilder ();
+			foreach (ScriptDescriptor scriptDescriptor in scriptDescriptors) {
+				sb.AppendLine ("Sys.Application.add_init(function() {");
+				sb.AppendLine (scriptDescriptor.GetScript ());
+				sb.AppendLine ("});");
 			}
+			string script = sb.ToString ();
+			RegisterStartupScript (this, typeof (ExtenderControl), script, script, true);
 		}
 
-		public void RegisterScriptDescriptors (IScriptControl scriptControl)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public static void RegisterStartupScript (Control control, Type type, string key, string script, bool addScriptTags)
-		{
+		public static void RegisterStartupScript (Control control, Type type, string key, string script, bool addScriptTags) {
 			RegisterStartupScript (control.Page, type, key, script, addScriptTags);
 		}
 
-		public static void RegisterStartupScript (Page page, Type type, string key, string script, bool addScriptTags)
-		{
+		public static void RegisterStartupScript (Page page, Type type, string key, string script, bool addScriptTags) {
 			ScriptManager sm = GetCurrent (page);
 			if (sm.IsInAsyncPostBack)
 				RegisterScript (ref sm._startupScriptBlocks, type, key, script, addScriptTags ? ScriptEntryType.ScriptContentNoTags : ScriptEntryType.ScriptContentWithTags);
 			else
 				page.ClientScript.RegisterStartupScript (type, key, script, addScriptTags);
+		}
+
+		public void RegisterScriptControl<TScriptControl> (TScriptControl scriptControl) where TScriptControl : Control, IScriptControl {
+			if (scriptControl == null)
+				throw new ArgumentNullException ("scriptControl");
+
+			if (_registeredScriptControls == null)
+				_registeredScriptControls = new List<IScriptControl> ();
+
+			if (!_registeredScriptControls.Contains (scriptControl))
+				_registeredScriptControls.Add (scriptControl);
+		}
+
+		public void RegisterExtenderControl<TExtenderControl> (TExtenderControl extenderControl, Control targetControl) where TExtenderControl : Control, IExtenderControl {
+			if (extenderControl == null)
+				throw new ArgumentNullException ("extenderControl");
+			if (targetControl == null)
+				throw new ArgumentNullException ("targetControl");
+
+			if (_registeredExtenderControls == null)
+				_registeredExtenderControls = new Dictionary<IExtenderControl, Control> ();
+
+			if (!_registeredExtenderControls.ContainsKey (extenderControl))
+				_registeredExtenderControls.Add (extenderControl, targetControl);
 		}
 
 		static void RegisterScript (ref ScriptEntry scriptList, Type type, string key, string script, ScriptEntryType scriptEntryType) {
@@ -684,8 +723,7 @@ namespace System.Web.UI
 				scriptList = entry;
 		}
 
-		protected override void Render (HtmlTextWriter writer)
-		{
+		protected override void Render (HtmlTextWriter writer) {
 			// MSDN: This method is used by control developers to extend the ScriptManager control. 
 			// Notes to Inheritors: 
 			// When overriding this method, call the base Render(HtmlTextWriter) method 
@@ -713,8 +751,7 @@ namespace System.Web.UI
 			return sb.ToString ();
 		}
 
-		static string FormatListIDs (List<Control> list, bool useSingleQuote)
-		{
+		static string FormatListIDs (List<Control> list, bool useSingleQuote) {
 			if (list == null || list.Count == 0)
 				return null;
 
@@ -728,25 +765,21 @@ namespace System.Web.UI
 			return sb.ToString ();
 		}
 
-		public void SetFocus (Control control)
-		{
+		public void SetFocus (Control control) {
 			throw new NotImplementedException ();
 		}
 
-		public void SetFocus (string clientID)
-		{
+		public void SetFocus (string clientID) {
 			throw new NotImplementedException ();
 		}
 
 		#region IPostBackDataHandler Members
 
-		bool IPostBackDataHandler.LoadPostData (string postDataKey, NameValueCollection postCollection)
-		{
+		bool IPostBackDataHandler.LoadPostData (string postDataKey, NameValueCollection postCollection) {
 			return LoadPostData (postDataKey, postCollection);
 		}
 
-		void IPostBackDataHandler.RaisePostDataChangedEvent ()
-		{
+		void IPostBackDataHandler.RaisePostDataChangedEvent () {
 			RaisePostDataChangedEvent ();
 		}
 
@@ -826,7 +859,7 @@ namespace System.Web.UI
 			}
 		}
 
-		[MonoTODO()]
+		[MonoTODO ()]
 		static string SerializeScriptBlock (ScriptEntry scriptList) {
 			throw new InvalidOperationException (String.Format ("The script tag registered for type '{0}' and key '{1}' has invalid characters outside of the script tags: {2}. Only properly formatted script tags can be registered.", scriptList.Type, scriptList.Key, scriptList.Script));
 		}
@@ -849,7 +882,7 @@ namespace System.Web.UI
 					}
 				}
 			}
-			
+
 			HtmlForm form = (HtmlForm) container;
 			HtmlTextWriter writer = new HtmlTextWriter (new DropWriter ());
 			if (form.HasControls ()) {
@@ -999,10 +1032,10 @@ namespace System.Web.UI
 			public void WriteOutput (HtmlTextWriter output) {
 				if (_hiddenFields == null)
 					return;
-				
+
 				for (int i = 0; i < _hiddenFields.Count; i++) {
 					Hashtable field = _hiddenFields [i];
-					
+
 					string value = (string) field ["value"];
 					if (String.IsNullOrEmpty (value))
 						continue;
