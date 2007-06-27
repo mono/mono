@@ -797,6 +797,7 @@ namespace System.Web.UI
 			WriteCallbackOutput (output, pageRedirect, null, redirectUrl);
 		}
 
+		// TODO: Optimize
 		static void WriteCallbackOutput (TextWriter output, string type, string name, string value) {
 			output.Write ("{0}|{1}|{2}|{3}|", value == null ? 0 : value.Length, type, name, value);
 		}
@@ -869,28 +870,19 @@ namespace System.Web.UI
 
 		void RenderFormCallback (HtmlTextWriter output, Control container) {
 			output = ((HtmlTextParser) output).ResponseOutput;
-			if (_updatePanels != null && _updatePanels.Count > 0) {
-				StringBuilder sb = new StringBuilder ();
-				HtmlTextWriter w = new HtmlTextWriter (new StringWriter (sb));
-				for (int i = 0; i < _updatePanels.Count; i++) {
-					UpdatePanel panel = _updatePanels [i];
-					if (panel.Visible) {
-						panel.RenderChildrenInternal (w);
-						w.Flush ();
-						if (panel.RequiresUpdate) {
-							string panelOutput = sb.ToString ();
-							WriteCallbackOutput (output, updatePanel, panel.ClientID, panelOutput);
-						}
-						sb.Length = 0;
-					}
-				}
-			}
-
 			HtmlForm form = (HtmlForm) container;
 			HtmlTextWriter writer = new HtmlTextWriter (new DropWriter ());
 			if (form.HasControls ()) {
 				for (int i = 0; i < form.Controls.Count; i++) {
 					form.Controls [i].RenderControl (writer);
+				}
+			}
+
+			if (_updatePanels != null && _updatePanels.Count > 0) {
+				for (int i = 0; i < _updatePanels.Count; i++) {
+					UpdatePanel panel = _updatePanels [i];
+					if (panel.Visible && panel.RequiresUpdate)
+						WriteCallbackOutput (output, updatePanel, panel.ClientID, panel.CallbackOutput);
 				}
 			}
 		}

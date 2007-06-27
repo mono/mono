@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel;
 using System.Security.Permissions;
+using System.IO;
 
 namespace System.Web.UI
 {
@@ -49,6 +50,13 @@ namespace System.Web.UI
 		bool _childrenAsTriggers = true;
 		bool _requiresUpdate = false;
 		UpdatePanelTriggerCollection _triggers;
+		string _callbackOutput;
+
+		internal string CallbackOutput {
+			get {
+				return _callbackOutput;
+			}
+		}
 
 		[Category ("Behavior")]
 		[DefaultValue (true)]
@@ -135,7 +143,7 @@ namespace System.Web.UI
 		}
 
 		[Category ("Behavior")]
-		[DefaultValueAttribute(UpdatePanelUpdateMode.Always)]
+		[DefaultValueAttribute (UpdatePanelUpdateMode.Always)]
 		public UpdatePanelUpdateMode UpdateMode {
 			get {
 				return _updateMode;
@@ -145,14 +153,12 @@ namespace System.Web.UI
 			}
 		}
 
-		protected virtual Control CreateContentTemplateContainer ()
-		{
+		protected virtual Control CreateContentTemplateContainer () {
 			return new Control ();
 		}
 
-		[MonoTODO()]
-		protected override sealed ControlCollection CreateControlCollection ()
-		{
+		[MonoTODO ()]
+		protected override sealed ControlCollection CreateControlCollection () {
 			// TODO: Because this method is protected and sealed, it is visible to classes that inherit 
 			// from the UpdatePanel class, but it cannot be overridden. This method overrides 
 			// the base implementation to return a specialized ControlCollection object that throws 
@@ -161,11 +167,10 @@ namespace System.Web.UI
 			// To change the content of the UpdatePanel control, modify the child controls of 
 			// the ContentTemplateContainer property.
 
-			return base.CreateControlCollection();
+			return base.CreateControlCollection ();
 		}
 
-		protected internal virtual void Initialize ()
-		{
+		protected internal virtual void Initialize () {
 			if (_triggers != null) {
 				for (int i = 0; i < _triggers.Count; i++) {
 					_triggers [i].Initialize ();
@@ -173,8 +178,7 @@ namespace System.Web.UI
 			}
 		}
 
-		protected override void OnInit (EventArgs e)
-		{
+		protected override void OnInit (EventArgs e) {
 			base.OnInit (e);
 
 			ScriptManager.RegisterUpdatePanel (this);
@@ -183,47 +187,46 @@ namespace System.Web.UI
 				ContentTemplate.InstantiateIn (ContentTemplateContainer);
 		}
 
-		protected override void OnLoad (EventArgs e)
-		{
+		protected override void OnLoad (EventArgs e) {
 			base.OnLoad (e);
 
 			Initialize ();
 		}
 
-		protected override void OnPreRender (EventArgs e)
-		{
+		protected override void OnPreRender (EventArgs e) {
 			base.OnPreRender (e);
 
 			if (UpdateMode == UpdatePanelUpdateMode.Always && !ChildrenAsTriggers)
 				throw new InvalidOperationException (String.Format ("ChildrenAsTriggers cannot be set to false when UpdateMode is set to Always on UpdatePanel '{0}'", ID));
 		}
 
-		protected override void OnUnload (EventArgs e)
-		{
+		protected override void OnUnload (EventArgs e) {
 			base.OnUnload (e);
 		}
 
-		protected override void Render (HtmlTextWriter writer)
-		{
+		protected override void Render (HtmlTextWriter writer) {
 			writer.AddAttribute (HtmlTextWriterAttribute.Id, ClientID);
 			writer.RenderBeginTag (HtmlTextWriterTag.Div);
 			RenderChildren (writer);
 			writer.RenderEndTag ();
 		}
 
-		protected override void RenderChildren (HtmlTextWriter writer)
-		{
-			if (ScriptManager.IsInAsyncPostBack)
-				return;
-			RenderChildrenInternal (writer);
+		protected override void RenderChildren (HtmlTextWriter writer) {
+			if (ScriptManager.IsInAsyncPostBack) {
+				if (_callbackOutput == null) {
+					StringBuilder sb = new StringBuilder ();
+					HtmlTextWriter w = new HtmlTextWriter (new StringWriter (sb));
+					base.RenderChildren (w);
+					w.Flush ();
+					_callbackOutput = sb.ToString ();
+				}
+				writer.Write (_callbackOutput);
+			}
+			else
+				base.RenderChildren (writer);
 		}
 
-		internal void RenderChildrenInternal (HtmlTextWriter writer) {
-			base.RenderChildren (writer);
-		}
-
-		public void Update ()
-		{
+		public void Update () {
 			_requiresUpdate = true;
 		}
 	}
