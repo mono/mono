@@ -40,15 +40,30 @@ namespace System.Web.UI
 	[Designer ("System.Web.UI.Design.UpdateProgressDesigner, System.Web.Extensions.Design, Version=1.0.61025.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35")]
 	public class UpdateProgress : Control, IScriptControl
 	{
+		ITemplate _progressTemplate;
+		ScriptManager _scriptManager;
+
 		[Category ("Behavior")]
 		[DefaultValue ("")]
 		[IDReferenceProperty (typeof (UpdatePanel))]
 		public string AssociatedUpdatePanelID {
 			get {
-				throw new NotImplementedException ();
+				string value = AssociatedUpdatePanelIDInternal;
+				if (value == null)
+					return String.Empty;
+				return value;
 			}
 			set {
-				throw new NotImplementedException ();
+				AssociatedUpdatePanelIDInternal = value;
+			}
+		}
+
+		public string AssociatedUpdatePanelIDInternal {
+			get {
+				return (string) ViewState ["AssociatedUpdatePanelID"];
+			}
+			set {
+				ViewState ["AssociatedUpdatePanelID"] = value;
 			}
 		}
 
@@ -56,10 +71,13 @@ namespace System.Web.UI
 		[DefaultValue (500)]
 		public int DisplayAfter {
 			get {
-				throw new NotImplementedException ();
+				object o = ViewState ["DisplayAfter"];
+				if (o == null)
+					return 500;
+				return (int) o;
 			}
 			set {
-				throw new NotImplementedException ();
+				ViewState ["DisplayAfter"] = value;
 			}
 		}
 
@@ -67,10 +85,13 @@ namespace System.Web.UI
 		[DefaultValue (true)]
 		public bool DynamicLayout {
 			get {
-				throw new NotImplementedException ();
+				object o = ViewState ["DynamicLayout"];
+				if (o == null)
+					return true;
+				return (bool) o;
 			}
 			set {
-				throw new NotImplementedException ();
+				ViewState ["DynamicLayout"] = value;
 			}
 		}
 
@@ -78,26 +99,61 @@ namespace System.Web.UI
 		[Browsable (false)]
 		public ITemplate ProgressTemplate {
 			get {
-				throw new NotImplementedException ();
+				return _progressTemplate;
 			}
 			set {
-				throw new NotImplementedException ();
+				_progressTemplate = value;
+			}
+		}
+
+		ScriptManager ScriptManager {
+			get {
+				if (_scriptManager == null) {
+					_scriptManager = ScriptManager.GetCurrent (Page);
+					if (_scriptManager == null)
+						throw new InvalidOperationException (String.Format ("The control with ID '{0}' requires a ScriptManager on the page. The ScriptManager must appear before any controls that need it.", ID));
+				}
+				return _scriptManager;
 			}
 		}
 
 		protected virtual IEnumerable<ScriptDescriptor> GetScriptDescriptors () {
-			throw new NotImplementedException ();
+			ScriptControlDescriptor descriptor = new ScriptControlDescriptor ("Sys.UI._UpdateProgress", this.ClientID);
+			descriptor.AddProperty ("associatedUpdatePanelId", AssociatedUpdatePanelIDInternal);
+			descriptor.AddProperty ("displayAfter", DisplayAfter);
+			descriptor.AddProperty ("dynamicLayout", DynamicLayout);
+			yield return descriptor;
 		}
 
 		protected virtual IEnumerable<ScriptReference> GetScriptReferences () {
-			throw new NotImplementedException ();
+			yield break;
 		}
 
 		protected override void OnPreRender (EventArgs e) {
 			base.OnPreRender (e);
+			ScriptManager.RegisterScriptControl (this);
+
+			if (_progressTemplate == null)
+				throw new InvalidOperationException (String.Format ("A ProgressTemplate must be specified on UpdateProgress control with ID '{0}'.", ID));
+
+			Control container = new Control ();
+			_progressTemplate.InstantiateIn (container);
+			Controls.Add (container);
 		}
 
 		protected override void Render (HtmlTextWriter writer) {
+			if (DynamicLayout)
+				writer.AddStyleAttribute (HtmlTextWriterStyle.Display, "none");
+			else {
+				writer.AddStyleAttribute (HtmlTextWriterStyle.Display, "block");
+				writer.AddStyleAttribute (HtmlTextWriterStyle.Visibility, "hidden");
+			}
+			writer.AddAttribute (HtmlTextWriterAttribute.Id, ClientID);
+			writer.RenderBeginTag (HtmlTextWriterTag.Div);
+			base.Render (writer);
+			writer.RenderEndTag ();
+
+			ScriptManager.RegisterScriptDescriptors (this);
 		}
 
 		#region IScriptControl Members
