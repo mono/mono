@@ -283,8 +283,11 @@ int
 Mono_Posix_Syscall_setgrent (void)
 {
 	errno = 0;
-	setgrent ();
-	return errno == 0 ? 0 : -1;
+	do {
+		setgrent ();
+	} while (errno == EINTR);
+	mph_return_if_val_in_list5(errno, EIO, EMFILE, ENFILE, ENOMEM, ERANGE);
+	return 0;
 }
 
 int

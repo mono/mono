@@ -1,3 +1,11 @@
+2007-06-27  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* grp.c, pwd.c: Only return failure if a documented errno is encountered.
+	  This fixes UnixUserInfo.GetLocalUsers() and UnixGroupInfo.GetLocalGroups()
+	  on systems missing the file /etc/default/nss (which generates ENOENT,
+	  which isn't documented, so therefore it's not a "real" error).
+	* mph.h: Add mph_return_if_val_in_list5().
+
 2007-03-28  Wade Berrier  <miguel@novell.com>
 
 	* supportw.c (SendMessageA/GetWindowLongA): Return values to fix some 

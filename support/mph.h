@@ -170,6 +170,13 @@ typedef gint64 suseconds_t;
 
 #define mph_return_if_time_t_overflow(var) mph_return_if_long_overflow(var)
 
+#define mph_return_if_val_in_list5(var,a,b,c,d,e) \
+	do {                                                            \
+		int v = (var);                                                \
+		if (v == a || v == b || v == c || v == d || v == e)           \
+			return -1;                                                  \
+	} while (0)
+
 /*
  * Helper function for functions which use ERANGE (such as getpwnam_r and
  * getgrnam_r).  These functions accept buffers which are dynamically
