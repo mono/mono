@@ -100,6 +100,9 @@ namespace System.Web.UI
 		Hashtable _hiddenFields;
 		List<IScriptControl> _registeredScriptControls;
 		Dictionary<IExtenderControl, Control> _registeredExtenderControls;
+		bool? _supportsPartialRendering;
+		bool _enablePartialRendering = true;
+		bool _init;
 
 		[DefaultValue (true)]
 		[Category ("Behavior")]
@@ -169,10 +172,12 @@ namespace System.Web.UI
 		[Category ("Behavior")]
 		public bool EnablePartialRendering {
 			get {
-				throw new NotImplementedException ();
+				return _enablePartialRendering;
 			}
 			set {
-				throw new NotImplementedException ();
+				if (_init)
+					throw new InvalidOperationException ();
+				_enablePartialRendering = value;
 			}
 		}
 
@@ -303,11 +308,25 @@ namespace System.Web.UI
 		[Browsable (false)]
 		public bool SupportsPartialRendering {
 			get {
-				throw new NotImplementedException ();
+				if (!_supportsPartialRendering.HasValue)
+					_supportsPartialRendering = CheckSupportsPartialRendering ();
+				return _supportsPartialRendering.Value;
 			}
 			set {
-				throw new NotImplementedException ();
+				if (_init)
+					throw new InvalidOperationException ();
+				if (!EnablePartialRendering && value)
+					throw new InvalidOperationException ("The SupportsPartialRendering property cannot be set when EnablePartialRendering is false.");
+
+				_supportsPartialRendering = value;
 			}
+		}
+
+		bool CheckSupportsPartialRendering () {
+			if (!EnablePartialRendering)
+				return false;
+			// TODO: consider browser capabilities
+			return true;
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Never)]
@@ -372,6 +391,8 @@ namespace System.Web.UI
 				throw new InvalidOperationException ("Only one instance of a ScriptManager can be added to the page.");
 
 			SetCurrent (Page, this);
+
+			_init = true;
 		}
 
 		protected override void OnPreRender (EventArgs e) {
@@ -731,12 +752,14 @@ namespace System.Web.UI
 			// Notes to Inheritors: 
 			// When overriding this method, call the base Render(HtmlTextWriter) method 
 			// so that PageRequestManager is rendered on the page.
-			writer.WriteLine ("<script type=\"text/javascript\">");
-			writer.WriteLine ("//<![CDATA[");
-			writer.WriteLine ("Sys.WebForms.PageRequestManager._initialize('{0}', document.getElementById('{1}'));", UniqueID, Page.Form.ClientID);
-			writer.WriteLine ("Sys.WebForms.PageRequestManager.getInstance()._updateControls([{0}], [{1}], [{2}], {3});", FormatUpdatePanelIDs (_updatePanels, true), FormatListIDs (_asyncPostBackControls, true), FormatListIDs (_postBackControls, true), AsyncPostBackTimeout);
-			writer.WriteLine ("//]]");
-			writer.WriteLine ("</script>");
+			if (SupportsPartialRendering) {
+				writer.WriteLine ("<script type=\"text/javascript\">");
+				writer.WriteLine ("//<![CDATA[");
+				writer.WriteLine ("Sys.WebForms.PageRequestManager._initialize('{0}', document.getElementById('{1}'));", UniqueID, Page.Form.ClientID);
+				writer.WriteLine ("Sys.WebForms.PageRequestManager.getInstance()._updateControls([{0}], [{1}], [{2}], {3});", FormatUpdatePanelIDs (_updatePanels, true), FormatListIDs (_asyncPostBackControls, true), FormatListIDs (_postBackControls, true), AsyncPostBackTimeout);
+				writer.WriteLine ("//]]");
+				writer.WriteLine ("</script>");
+			}
 			base.Render (writer);
 		}
 
