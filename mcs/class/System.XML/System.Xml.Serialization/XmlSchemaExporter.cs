@@ -517,7 +517,7 @@ namespace System.Xml.Serialization {
 						break;
 
 					case SchemaTypes.XmlSerializable:
-						selem.SchemaType = GetSchemaXmlSerializableType (einfo.MappedType as XmlSerializableMapping);
+						SetSchemaXmlSerializableType (einfo.MappedType as XmlSerializableMapping, selem);
 						ExportXmlSerializableSchema (currentSchema, einfo.MappedType as XmlSerializableMapping);
 						break;
 
@@ -599,8 +599,20 @@ namespace System.Xml.Serialization {
 			return stype;
 		}
 
-		XmlSchemaType GetSchemaXmlSerializableType (XmlSerializableMapping map)
+		void SetSchemaXmlSerializableType (XmlSerializableMapping map, XmlSchemaElement elem)
 		{
+#if NET_2_0
+			if (map.SchemaType != null) {
+				elem.SchemaType = map.SchemaType;
+				return;
+			}
+
+			if (map.SchemaTypeName != null) {
+				elem.SchemaTypeName = map.SchemaTypeName;
+				elem.Name = map.SchemaTypeName.Name;
+				return;
+			}
+#endif
 			XmlSchemaComplexType stype = new XmlSchemaComplexType ();
 			XmlSchemaSequence seq = new XmlSchemaSequence ();
 			if (map.Schema == null) {
@@ -614,7 +626,7 @@ namespace System.Xml.Serialization {
 				seq.Items.Add (any);
 			}
 			stype.Particle = seq;
-			return stype;
+			elem.SchemaType = stype;
 		}
 
 		XmlSchemaSimpleType GetSchemaSimpleListType (TypeData typeData)

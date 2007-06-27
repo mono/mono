@@ -34,6 +34,7 @@ using System;
 using System.Collections;
 using System.Globalization;
 using System.Xml.Schema;
+using System.Reflection;
 
 namespace System.Xml.Serialization
 {
@@ -101,11 +102,13 @@ namespace System.Xml.Serialization
 		internal string XmlType
 		{
 			get { return xmlType; }
+			set { xmlType = value; }
 		}
 
 		internal string XmlTypeNamespace
 		{
 			get { return xmlTypeNamespace; }
+			set { xmlTypeNamespace = value; }
 		}
 
 		internal ArrayList DerivedTypes
@@ -188,10 +191,45 @@ namespace System.Xml.Serialization
 	internal class XmlSerializableMapping : XmlTypeMapping
 	{
 		XmlSchema _schema;
+#if NET_2_0
+		XmlSchemaComplexType _schemaType;
+		XmlQualifiedName _schemaTypeName;
+#endif
 
 		internal XmlSerializableMapping(string elementName, string ns, TypeData typeData, string xmlType, string xmlTypeNamespace)
 			: base(elementName, ns, typeData, xmlType, xmlTypeNamespace)
 		{
+#if NET_2_0
+			XmlSchemaProviderAttribute schemaProvider = (XmlSchemaProviderAttribute) Attribute.GetCustomAttribute (typeData.Type, typeof (XmlSchemaProviderAttribute));
+
+			if (schemaProvider != null) {
+				string method = schemaProvider.MethodName;
+				MethodInfo mi = typeData.Type.GetMethod (method, BindingFlags.Static | BindingFlags.Public);
+				XmlSchemaSet xs = new XmlSchemaSet ();
+				object retVal = mi.Invoke (null, new object [] { xs });
+				if (retVal is XmlSchemaComplexType) {
+					_schemaType = (XmlSchemaComplexType) retVal;
+					if (_schemaType.Attributes.Count > 1) {
+						XmlTypeNamespace = ((XmlSchemaAttribute) _schemaType.Attributes [0]).FixedValue;
+						XmlType = ((XmlSchemaAttribute) _schemaType.Attributes [1]).FixedValue;
+					}
+				}
+				else if (retVal is XmlQualifiedName) {
+					_schemaTypeName = (XmlQualifiedName)retVal;
+					XmlTypeNamespace = _schemaTypeName.Namespace;
+					XmlType = _schemaTypeName.Name;
+				}
+				else
+					throw new InvalidOperationException (
+						String.Format ("Method {0}.{1}() specified by XmlSchemaProviderAttribute has invalid signature: return type must be compatible with System.Xml.XmlQualifiedName.", typeData.Type.Name, method));
+
+				XmlSchema [] schemas = new XmlSchema [xs.Count];
+				xs.CopyTo (schemas, 0);
+				_schema = schemas [0];
+
+				return;
+			}
+#endif
 			IXmlSerializable serializable = (IXmlSerializable)Activator.CreateInstance (typeData.Type, true);
 			_schema = serializable.GetSchema();
 			if (_schema != null) 
@@ -205,6 +243,16 @@ namespace System.Xml.Serialization
 		{
 			get { return _schema; }
 		}
+
+#if NET_2_0
+		internal XmlSchemaType SchemaType {
+			get { return _schemaType; }
+		}
+
+		internal XmlQualifiedName SchemaTypeName {
+			get { return _schemaTypeName; }
+		}
+#endif
 	}
  
 
