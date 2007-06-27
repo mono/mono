@@ -658,6 +658,9 @@ namespace System.Web.UI
 		}
 
 		void RegisterScriptDescriptors (IEnumerable<ScriptDescriptor> scriptDescriptors) {
+			if (IsInAsyncPostBack)
+				return;
+
 			StringBuilder sb = new StringBuilder ();
 			foreach (ScriptDescriptor scriptDescriptor in scriptDescriptors) {
 				sb.AppendLine ("Sys.Application.add_init(function() {");

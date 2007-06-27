@@ -41,14 +41,19 @@ namespace System.Web.UI
 	[DefaultEvent ("Tick")]
 	public class Timer : Control, IPostBackEventHandler, IScriptControl
 	{
+		ScriptManager _scriptManager;
+
 		[Category ("Behavior")]
 		[DefaultValue (true)]
 		public bool Enabled {
 			get {
-				throw new NotImplementedException ();
+				object o = ViewState ["Enabled"];
+				if (o == null)
+					return true;
+				return (bool) o;
 			}
 			set {
-				throw new NotImplementedException ();
+				ViewState ["Enabled"] = value;
 			}
 		}
 
@@ -56,10 +61,13 @@ namespace System.Web.UI
 		[Category ("Behavior")]
 		public int Interval {
 			get {
-				throw new NotImplementedException ();
+				object o = ViewState ["Interval"];
+				if (o == null)
+					return 60000;
+				return (int) o;
 			}
 			set {
-				throw new NotImplementedException ();
+				ViewState ["Interval"] = value;
 			}
 		}
 
@@ -68,10 +76,21 @@ namespace System.Web.UI
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override bool Visible {
 			get {
-				throw new NotImplementedException ();
+				return base.Visible;
 			}
 			set {
 				throw new NotImplementedException ();
+			}
+		}
+
+		ScriptManager ScriptManager {
+			get {
+				if (_scriptManager == null) {
+					_scriptManager = ScriptManager.GetCurrent (Page);
+					if (_scriptManager == null)
+						throw new InvalidOperationException (String.Format ("The control with ID '{0}' requires a ScriptManager on the page. The ScriptManager must appear before any controls that need it.", ID));
+				}
+				return _scriptManager;
 			}
 		}
 
@@ -79,15 +98,23 @@ namespace System.Web.UI
 		public event EventHandler<EventArgs> Tick;
 
 		protected virtual IEnumerable<ScriptDescriptor> GetScriptDescriptors () {
-			throw new NotImplementedException ();
+			ScriptControlDescriptor descriptor = new ScriptControlDescriptor ("Sys.UI._Timer", this.ClientID);
+			descriptor.AddProperty ("enabled", Enabled);
+			descriptor.AddProperty ("interval", Interval);
+			descriptor.AddProperty ("uniqueID", UniqueID);
+			yield return descriptor;
 		}
 
 		protected virtual IEnumerable<ScriptReference> GetScriptReferences () {
-			throw new NotImplementedException ();
+			ScriptReference script;
+			script = new ScriptReference ("MicrosoftAjaxTimer.js", String.Empty);
+			script.NotifyScriptLoaded = false;
+			yield return script;
 		}
 
 		protected override void OnPreRender (EventArgs e) {
 			base.OnPreRender (e);
+			ScriptManager.RegisterScriptControl (this);
 		}
 
 		protected virtual void OnTick (EventArgs e) {
@@ -96,10 +123,18 @@ namespace System.Web.UI
 		}
 
 		protected virtual void RaisePostBackEvent (string eventArgument) {
-			throw new NotImplementedException ();
+			OnTick (EventArgs.Empty);
 		}
 
 		protected override void Render (HtmlTextWriter writer) {
+			writer.AddStyleAttribute (HtmlTextWriterStyle.Display, "none");
+			writer.AddStyleAttribute (HtmlTextWriterStyle.Visibility, "hidden");
+			writer.AddAttribute (HtmlTextWriterAttribute.Id, ClientID);
+			writer.RenderBeginTag (HtmlTextWriterTag.Span);
+			base.Render (writer);
+			writer.RenderEndTag ();
+
+			ScriptManager.RegisterScriptDescriptors (this);
 		}
 
 		#region IPostBackEventHandler Members
