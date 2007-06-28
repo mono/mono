@@ -1,3 +1,11 @@
+2007-06-28  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* BaseHttpServlet.cs: fixed service(), it does not creates output
+	stream now
+	* ServletWorkerRequest.jvm.cs: fixed ctor, bool parameter can force using
+	printWriter, used OutputStreamWrapper as OutputStream
+	* added OutputStreamWrapper class
+
 2007-05-15  Eyal Alaluf  <eyala@mainsoft.com>
 
 	* IncludeHelperServlet.cs: Add System.Web.GH.IncludeHelperServlet for

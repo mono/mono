@@ -101,14 +101,10 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties REFS-JarPath-JavaEE="..\lib\JavaEE.jar" REFS-JarPath-rt="..\lib\rt.jar" REFS-JarPath-mscorlib="..\lib\mscorlib.jar" REFS-JarPath-system="..\lib\System.jar" REFS-JarPath-system-data="..\lib\System.Data.jar" REFS-JarPath-system-xml="..\lib\System.Xml.jar" REFS-JarPath-system-configuration="..\lib\System.Configuration.jar" REFS-JarPath-system-web="..\lib\System.Web.jar" REFS-JarPath-j2se-helpers="..\lib\J2SE.Helpers.jar" REFS-JarPath-j2ee-helpers="..\lib\J2EE.Helpers.jar" />
+      <UserProperties REFS-RefInfo-javaee="repository:JavaEE:tomcat:1.3" REFS-JarPath-j2ee-helpers="..\lib\J2EE.Helpers.jar" REFS-JarPath-j2se-helpers="..\lib\J2SE.Helpers.jar" REFS-JarPath-system-web="..\lib\System.Web.jar" REFS-JarPath-system-configuration="..\lib\System.Configuration.jar" REFS-JarPath-system-xml="..\lib\System.Xml.jar" REFS-JarPath-system-data="..\lib\System.Data.jar" REFS-JarPath-system="..\lib\System.jar" REFS-JarPath-mscorlib="..\lib\mscorlib.jar" REFS-JarPath-rt="..\lib\rt.jar" REFS-JarPath-JavaEE="" />
     </VisualStudio>
   </ProjectExtensions>
   <ItemGroup>
-    <Reference Include="JavaEE">
-      <HintPath>..\lib\JavaEE.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="J2EE.Helpers">
       <HintPath>..\lib\J2EE.Helpers.dll</HintPath>
       <Private>False</Private>
@@ -117,6 +113,7 @@
       <HintPath>..\lib\J2SE.Helpers.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="JavaEE, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="rt">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\rt.dll</HintPath>
@@ -138,6 +135,7 @@
     <Compile Include="Mainsoft.Web.Hosting\BaseHttpServlet.cs" />
     <Compile Include="Mainsoft.Web.Hosting\BaseStaticHttpServlet.cs" />
     <Compile Include="Mainsoft.Web.Hosting\IncludeHelperServlet.cs" />
+    <Compile Include="Mainsoft.Web.Hosting\OutputStreamWrapper.cs" />
     <Compile Include="Mainsoft.Web.Hosting\ServletWorkerRequest.jvm.cs" />
     <Compile Include="Mainsoft.Web.Profile\CloudscapeProfileProvider.cs" />
     <Compile Include="Mainsoft.Web.Profile\DerbyProfileHelper.cs" />

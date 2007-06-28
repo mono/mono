@@ -124,10 +124,10 @@ namespace Mainsoft.Web.Hosting
 				}
 			}
 			resp.setContentType("text/html");
-			service(req, resp, resp.getOutputStream());
+			service(req, resp, false);
 		}
 
-		public virtual void service(HttpServletRequest req, HttpServletResponse resp, java.io.OutputStream output)
+		public virtual void service(HttpServletRequest req, HttpServletResponse resp, bool alwaysUsePrintWriter)
 		{
 			try 
 			{
@@ -152,7 +152,7 @@ namespace Mainsoft.Web.Hosting
 				resp.setHeader("X-Powered-By", "ASP.NET");
 				resp.setHeader("X-AspNet-Version", "1.1.4322");
 
-				HttpWorkerRequest gwr = new ServletWorkerRequest(this, req, resp, output);
+				HttpWorkerRequest gwr = new ServletWorkerRequest (this, req, resp, alwaysUsePrintWriter);
 				CultureInfo culture = (CultureInfo) vmw.@internal.EnvironmentUtils.getCultureInfoFromLocale (req.getLocale ());
 				Thread currentTread = Thread.CurrentThread;
 				currentTread.CurrentCulture = culture;

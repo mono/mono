@@ -46,7 +46,7 @@ namespace Mainsoft.Web.Hosting {
 		readonly HttpServlet _HttpServlet;
 		readonly HttpServletRequest _HttpServletRequest;
 		readonly HttpServletResponse _HttpServletResponse;
-		java.io.OutputStream _OutputStream;
+		OutputStreamWrapper _OutputStream;
 
 		readonly string _requestUri;
 		readonly string _pathInfo;
@@ -96,11 +96,13 @@ namespace Mainsoft.Web.Hosting {
 				KnownServerVariableMap[knownServerVariableNames[i]] = (KnownServerVariable)i;
 		}
 
-		public ServletWorkerRequest (HttpServlet servlet, HttpServletRequest req, HttpServletResponse resp, java.io.OutputStream outputStream) {
+		public ServletWorkerRequest (HttpServlet servlet, HttpServletRequest req, HttpServletResponse resp, bool alwaysUsePrintWriter) {
 			_HttpServlet = servlet;
 			_HttpServletRequest = req;
 			_HttpServletResponse = resp;
-			_OutputStream = outputStream;
+
+			if (alwaysUsePrintWriter)
+				_OutputStream = new OutputStreamWrapper (resp.getWriter ());
 
 			string contextPath = req.getContextPath();
 			string servletPath = req.getServletPath ();
@@ -151,6 +153,8 @@ namespace Mainsoft.Web.Hosting {
 				return ServletRequest;
 			if (serviceType == typeof(HttpServletResponse))
 				return ServletResponse;
+			if (serviceType == typeof (java.io.Writer))
+				return CreateOutputStream (false);
 			return null;
 		}
 
@@ -388,9 +392,29 @@ namespace Mainsoft.Web.Hosting {
 			}
 		}
 
+		private OutputStreamWrapper CreateOutputStream (bool binary)
+		{
+			IPortletActionResponse resp = _HttpServletResponse as IPortletActionResponse;
+			if (resp != null)
+				return null; // no output stream while processAction
+
+			if (_OutputStream != null)
+				return _OutputStream;
+
+			if (_HttpServletResponse != null) {
+				if (binary)
+					_OutputStream = new OutputStreamWrapper (_HttpServletResponse.getOutputStream ());
+				else
+					_OutputStream = new OutputStreamWrapper (_HttpServletResponse.getWriter ());
+			}
+
+			return _OutputStream;
+		}
+
 		public override void SendResponseFromMemory (byte [] data, int length) {
-			IPortletActionResponse resp =_HttpServletResponse as IPortletActionResponse;
-			if (_OutputStream == null || resp != null && resp.isRedirected())
+			_OutputStream = CreateOutputStream (true);
+
+			if (_OutputStream == null)
 				return;
 
 			sbyte [] sdata = vmw.common.TypeUtils.ToSByteArray(data);
