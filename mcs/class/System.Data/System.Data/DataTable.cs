@@ -2015,10 +2015,9 @@ namespace System.Data {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public static XmlSchemaComplexType GetDataTableSchema (XmlSchemaSet schemaSet)
 		{
-			throw new NotImplementedException ();
+			return new XmlSchemaComplexType ();
 		}
 
 		public XmlReadMode ReadXml (Stream stream)

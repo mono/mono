@@ -650,10 +650,9 @@ namespace System.Data {
 		}
 
 #if NET_2_0
-		[MonoTODO]
 		public static XmlSchemaComplexType GetDataSetSchema (XmlSchemaSet schemaSet)
 		{
-			throw new NotImplementedException ();
+			return new XmlSchemaComplexType ();
 		}
 #endif
 		public bool HasChanges ()
