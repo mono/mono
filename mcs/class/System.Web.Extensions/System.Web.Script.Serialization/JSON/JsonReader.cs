@@ -166,11 +166,34 @@ namespace Newtonsoft.Json
 									_buffer.Append('\r');
 									break;
 								case 'u':
-									//_buffer.Append((char) Integer.parseInt(next(4), 16));
+									int value = 0;
+									for (int i =0; i < 4; i++) {
+										if (!MoveNext())
+											throw new JsonReaderException("Unterminated string. Expected delimiter: " + quote);
+
+										int intVal = (int)_currentChar;
+										int tmp;
+										if (intVal <= '9')
+											tmp = intVal - '0';
+										else if (intVal <= 'F')
+											tmp = intVal - ('A' - 10);
+										else
+											tmp = intVal - ('a' - 10);
+
+										if ((tmp >> 4) != 0)
+											throw new JsonReaderException("Unexpected character: " + _currentChar);
+
+										value <<= 4;
+										value |= tmp;
+									}
+
+									if (value > char.MaxValue)
+										_buffer.Append((char)(value >> 16));
+									_buffer.Append((char)(value & (int)char.MaxValue));
 									break;
-								case 'x':
+								//case 'x':
 									//_buffer.Append((char) Integer.parseInt(next(2), 16));
-									break;
+								//	break;
 								default:
 									_buffer.Append(_currentChar);
 									break;
