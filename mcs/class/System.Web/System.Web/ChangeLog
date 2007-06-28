@@ -1,3 +1,13 @@
+2007-06-28  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* HttpResponse.cs: fixed AddHeadersNoCache, removed content-length
+	header for TARGET_JVM
+	* HttpWorkerRequest.cs: made this class partial, moved TARGET_JVM stuff
+	to .jvm part
+	* HttpWriter.cs: fixed write methods, output_stream can write char[]
+	and string in TARGET_JVM
+	added HttpWorkerRequest.jvm.cs, HttpResponseStream.jvm.cs
+
 2007-06-25 Juraj Skripsky <js@hotfeet.ch>
 
 	* HttpRuntime.cs (ShutdownAppDomain): Re-introduce call to

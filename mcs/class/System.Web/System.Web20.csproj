@@ -1074,7 +1074,6 @@
     <Compile Include="System.Web\HttpRequestValidationException.cs" />
     <Compile Include="System.Web\HttpResponse.cs" />
     <Compile Include="System.Web\HttpResponseHeader.cs" />
-    <Compile Include="System.Web\HttpResponseStream.cs" />
     <Compile Include="System.Web\HttpResponseSubstitutionCallback.cs" />
     <Compile Include="System.Web\HttpRuntime.cs" />
     <Compile Include="System.Web\HttpServerUtility.cs" />
@@ -1223,9 +1222,11 @@
     <Compile Include="System.Web\HeadersCollection.cs" />
     <Compile Include="System.Web\HttpApplication.cs" />
     <Compile Include="System.Web\HttpParamsCollection.cs" />
+    <Compile Include="System.Web\HttpResponseStream.jvm.cs" />
     <Compile Include="System.Web\HttpStaticObjectsCollection.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="System.Web\HttpWorkerRequest.jvm.cs" />
     <Compile Include="System.Web\UplevelHelper.cs" />
   </ItemGroup>
   <ItemGroup>

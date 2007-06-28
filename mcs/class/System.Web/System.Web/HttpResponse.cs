@@ -604,9 +604,11 @@ namespace System.Web {
 					// If we are buffering and this is the last flush, not a middle-flush,
 					// we know the content-length.
 					//
+#if !TARGET_JVM
 					content_length = output_stream.total;
 					write_headers.Add (new KnownResponseHeader (HttpWorkerRequest.HeaderContentLength,
 									      content_length.ToString (CultureInfo.InvariantCulture)));
+#endif
 				} else {
 					//
 					// We are buffering, and this is a flush in the middle.

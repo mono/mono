@@ -41,7 +41,7 @@ namespace System.Web {
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	// attributes
 	[ComVisible (false)]
-	public abstract class HttpWorkerRequest {
+	public abstract partial class HttpWorkerRequest {
 
 		public delegate void EndOfSendNotification (HttpWorkerRequest wr, object extraData);
 
@@ -301,12 +301,7 @@ namespace System.Web {
 			throw new NotImplementedException ();
 		}
 
-#if TARGET_JVM
-		public virtual void SendResponseFromMemory (IntPtr data, int length)
-		{
-			throw new NotImplementedException("SendResponseFromMemory: unsafe buffers (IntPtr) are not supported");
-		}
-#else
+#if !TARGET_JVM
 		public virtual void SendResponseFromMemory (IntPtr data, int length)
 		{
 			if (data != IntPtr.Zero) {

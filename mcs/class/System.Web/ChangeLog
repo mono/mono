@@ -1,3 +1,8 @@
+2007-06-28  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* System.Web20.csproj: added HttpWorkerRequest.jvm.cs,
+	HttpResponseStream.jvm.cs to the project
+
 2007-06-15  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* System.Web_test.dll.sources: Added LosFormatterTest.cs.
