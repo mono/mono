@@ -822,12 +822,31 @@ namespace System.Web.UI
 		}
 
 		static internal void WriteCallbackPanel (TextWriter output, string clientID, StringBuilder panelOutput) {
-			WriteCallbackOutput (output, updatePanel, clientID, panelOutput.ToString ());
+			WriteCallbackOutput (output, updatePanel, clientID, panelOutput);
 		}
 
-		// TODO: Optimize
-		static void WriteCallbackOutput (TextWriter output, string type, string name, string value) {
-			output.Write ("{0}|{1}|{2}|{3}|", value == null ? 0 : value.Length, type, name, value);
+		static void WriteCallbackOutput (TextWriter output, string type, string name, object value) {
+			string str = value as string;
+			StringBuilder sb = value as StringBuilder;
+			int length = 0;
+			if (str != null)
+				length = str.Length;
+			else if (sb != null)
+				length = sb.Length;
+
+			//output.Write ("{0}|{1}|{2}|{3}|", value == null ? 0 : value.Length, type, name, value);
+			output.Write (length);
+			output.Write ('|');
+			output.Write (type);
+			output.Write ('|');
+			output.Write (name);
+			output.Write ('|');
+			for (int i = 0; i < length; i++)
+				if (str != null)
+					output.Write (str [i]);
+				else
+					output.Write (sb [i]);
+			output.Write ('|');
 		}
 
 		void RenderPageCallback (HtmlTextWriter output, Control container) {
