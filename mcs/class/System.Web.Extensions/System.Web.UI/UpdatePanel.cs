@@ -50,13 +50,6 @@ namespace System.Web.UI
 		bool _childrenAsTriggers = true;
 		bool _requiresUpdate = false;
 		UpdatePanelTriggerCollection _triggers;
-		string _callbackOutput;
-
-		internal string CallbackOutput {
-			get {
-				return _callbackOutput;
-			}
-		}
 
 		[Category ("Behavior")]
 		[DefaultValue (true)]
@@ -212,15 +205,16 @@ namespace System.Web.UI
 		}
 
 		protected override void RenderChildren (HtmlTextWriter writer) {
-			if (ScriptManager.IsInAsyncPostBack) {
-				if (_callbackOutput == null) {
-					StringBuilder sb = new StringBuilder ();
-					HtmlTextWriter w = new HtmlTextWriter (new StringWriter (sb));
-					base.RenderChildren (w);
-					w.Flush ();
-					_callbackOutput = sb.ToString ();
-				}
-				writer.Write (_callbackOutput);
+			if (ScriptManager.IsInAsyncPostBack && RequiresUpdate && writer is ScriptManager.AlternativeHtmlTextWriter) {
+				HtmlTextWriter responseOutput = ((ScriptManager.AlternativeHtmlTextWriter) writer).ResponseOutput;
+				StringBuilder sb = new StringBuilder ();
+				HtmlTextWriter w = new HtmlTextWriter (new StringWriter (sb));
+				base.RenderChildren (w);
+				w.Flush ();
+
+				ScriptManager.WriteCallbackPanel (responseOutput, ClientID, sb);
+				for (int i = 0; i < sb.Length; i++)
+					writer.Write (sb [i]);
 			}
 			else
 				base.RenderChildren (writer);

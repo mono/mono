@@ -820,6 +820,10 @@ namespace System.Web.UI
 			WriteCallbackOutput (output, pageRedirect, null, redirectUrl);
 		}
 
+		static internal void WriteCallbackPanel (TextWriter output, string clientID, StringBuilder panelOutput) {
+			WriteCallbackOutput (output, updatePanel, clientID, panelOutput.ToString ());
+		}
+
 		// TODO: Optimize
 		static void WriteCallbackOutput (TextWriter output, string type, string name, string value) {
 			output.Write ("{0}|{1}|{2}|{3}|", value == null ? 0 : value.Length, type, name, value);
@@ -832,7 +836,6 @@ namespace System.Web.UI
 			HtmlTextParser parser = new HtmlTextParser (output);
 			page.Form.RenderControl (parser);
 
-			parser.WriteOutput (output);
 			WriteCallbackOutput (output, asyncPostBackControlIDs, null, FormatListIDs (_asyncPostBackControls, false));
 			WriteCallbackOutput (output, postBackControlIDs, null, FormatListIDs (_postBackControls, false));
 			WriteCallbackOutput (output, updatePanelIDs, null, FormatUpdatePanelIDs (_updatePanels, false));
@@ -894,23 +897,15 @@ namespace System.Web.UI
 		void RenderFormCallback (HtmlTextWriter output, Control container) {
 			output = ((HtmlTextParser) output).ResponseOutput;
 			HtmlForm form = (HtmlForm) container;
-			HtmlTextWriter writer = new HtmlTextWriter (new DropWriter ());
+			HtmlTextWriter writer = new HtmlDropWriter (output);
 			if (form.HasControls ()) {
 				for (int i = 0; i < form.Controls.Count; i++) {
 					form.Controls [i].RenderControl (writer);
 				}
 			}
-
-			if (_updatePanels != null && _updatePanels.Count > 0) {
-				for (int i = 0; i < _updatePanels.Count; i++) {
-					UpdatePanel panel = _updatePanels [i];
-					if (panel.Visible && panel.RequiresUpdate)
-						WriteCallbackOutput (output, updatePanel, panel.ClientID, panel.CallbackOutput);
-				}
-			}
 		}
 
-		sealed class HtmlTextParser : HtmlTextWriter
+		internal class AlternativeHtmlTextWriter : HtmlTextWriter
 		{
 			readonly HtmlTextWriter _responseOutput;
 
@@ -918,13 +913,16 @@ namespace System.Web.UI
 				get { return _responseOutput; }
 			}
 
-			public HtmlTextParser (HtmlTextWriter responseOutput)
-				: base (new TextParser ()) {
+			public AlternativeHtmlTextWriter (TextWriter writer, HtmlTextWriter responseOutput)
+				: base (writer) {
 				_responseOutput = responseOutput;
 			}
+		}
 
-			public void WriteOutput (HtmlTextWriter output) {
-				((TextParser) InnerWriter).WriteOutput (output);
+		sealed class HtmlTextParser : AlternativeHtmlTextWriter
+		{
+			public HtmlTextParser (HtmlTextWriter responseOutput)
+				: base (new TextParser (responseOutput), responseOutput) {
 			}
 		}
 
@@ -934,12 +932,16 @@ namespace System.Web.UI
 			char _charState = (char) 255;
 			const char nullCharState = (char) 255;
 			StringBuilder _sb = new StringBuilder ();
-			List<Hashtable> _hiddenFields;
-			Hashtable _currentField;
+			Dictionary<string, string> _currentField;
 			string _currentAttribute;
+			readonly HtmlTextWriter _responseOutput;
 
 			public override Encoding Encoding {
 				get { return Encoding.UTF8; }
+			}
+
+			public TextParser (HtmlTextWriter responseOutput) {
+				_responseOutput = responseOutput;
 			}
 
 			public override void Write (char value) {
@@ -962,9 +964,10 @@ namespace System.Web.UI
 					ResetState ();
 					break;
 				case '"':
-					_currentField [_currentAttribute] = _sb.ToString ();
+					_currentField.Add (_currentAttribute, _sb.ToString ());
 					_state = 1;
 					_sb.Length = 0;
+					ProbeWriteOutput ();
 					break;
 				default:
 					_sb.Append (value);
@@ -1030,10 +1033,7 @@ namespace System.Web.UI
 				case 't':
 					if (value == ' ') {
 						_state = 1;
-						_currentField = new Hashtable ();
-						if (_hiddenFields == null)
-							_hiddenFields = new List<Hashtable> ();
-						_hiddenFields.Add (_currentField);
+						_currentField = new Dictionary<string, string> ();
 					}
 					else
 						ResetState ();
@@ -1047,19 +1047,24 @@ namespace System.Web.UI
 				_sb.Length = 0;
 			}
 
-			public void WriteOutput (HtmlTextWriter output) {
-				if (_hiddenFields == null)
+			private void ProbeWriteOutput () {
+				if (!_currentField.ContainsKey ("name"))
+					return;
+				if (!_currentField.ContainsKey ("value"))
 					return;
 
-				for (int i = 0; i < _hiddenFields.Count; i++) {
-					Hashtable field = _hiddenFields [i];
+				string value = _currentField ["value"];
+				if (String.IsNullOrEmpty (value))
+					return;
 
-					string value = (string) field ["value"];
-					if (String.IsNullOrEmpty (value))
-						continue;
+				ScriptManager.WriteCallbackOutput (_responseOutput, ScriptManager.hiddenField, _currentField ["name"], value);
+			}
+		}
 
-					ScriptManager.WriteCallbackOutput (output, ScriptManager.hiddenField, (string) field ["name"], value);
-				}
+		sealed class HtmlDropWriter : AlternativeHtmlTextWriter
+		{
+			public HtmlDropWriter (HtmlTextWriter responseOutput)
+				: base (new DropWriter (), responseOutput) {
 			}
 		}
 
