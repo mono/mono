@@ -418,10 +418,13 @@ namespace System.Web.UI
 
 		void OnPreRenderComplete (object sender, EventArgs e) {
 			// Register Scripts
+			List<ScriptReference> scripts = new List<ScriptReference> ();
 			foreach (ScriptReference script in GetScriptReferences ()) {
 				OnResolveScriptReference (new ScriptReferenceEventArgs (script));
-				RegisterScriptReference (script);
+				scripts.Add (script);
 			}
+			for (int i = 0; i < scripts.Count; i++)
+				RegisterScriptReference (scripts [i]);
 		}
 
 		IEnumerable<ScriptReference> GetScriptReferences () {
