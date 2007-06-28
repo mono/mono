@@ -57,11 +57,13 @@ namespace System.Web {
 		static QueueManager queue_manager { get { return _runtime._queue_manager; } }
 		static TraceManager trace_manager { get { return _runtime._trace_manager; } }
 		static Cache cache { get { return _runtime._cache; } }
+		static Cache internalCache { get { return _runtime._internalCache; } }
 		static WaitCallback do_RealProcessRequest;
 		
 		QueueManager _queue_manager;
 		TraceManager _trace_manager;
 		Cache _cache;
+		Cache _internalCache;
 
 		static HttpRuntime ()
 		{
@@ -74,6 +76,7 @@ namespace System.Web {
 			_queue_manager = new QueueManager ();
 			_trace_manager = new TraceManager ();
 			_cache = new Cache ();
+			_internalCache = new Cache();
 		}
 
 		static private HttpRuntime _runtimeInstance {
