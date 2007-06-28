@@ -1,3 +1,7 @@
+2007-06-28  Martin Baulig  <martin@ximian.com>
+
+	* debug-debugger.h (MonoDebuggerInfo): Added `debugger_version'.
+
 2007-06-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* ssa.c (visit_inst): Add support for OP_BR. Fixes #81946.
