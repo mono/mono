@@ -124,6 +124,17 @@ namespace Mono.Xml.Xsl
 		Hashtable outputs = new Hashtable ();
 		bool keyCompilationMode;	
 		string stylesheetVersion;
+		XsltDebuggerWrapper debugger;
+
+		public Compiler (object debugger)
+		{
+			if (debugger != null)
+				this.debugger = new XsltDebuggerWrapper (debugger);
+		}
+
+		public XsltDebuggerWrapper Debugger {
+			get { return debugger; }
+		}
 
 		public CompiledStylesheet Compile (XPathNavigator nav, XmlResolver res, Evidence evidence)
 		{

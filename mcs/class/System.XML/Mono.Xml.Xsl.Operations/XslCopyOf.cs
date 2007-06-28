@@ -42,6 +42,9 @@ namespace Mono.Xml.Xsl.Operations {
 		public XslCopyOf (Compiler c) : base (c) {}
 		protected override void Compile (Compiler c)
 		{
+			if (c.Debugger != null)
+				c.Debugger.DebugCompile (c.Input);
+
 			c.AssertAttribute ("select");
 			select = c.CompileExpression (c.GetAttribute ("select"));
 		}
@@ -127,6 +130,9 @@ namespace Mono.Xml.Xsl.Operations {
 	
 		public override void Evaluate (XslTransformProcessor p)
 		{
+			if (p.Debugger != null)
+				p.Debugger.DebugExecute (p, this.DebugInput);
+
 			object o = p.Evaluate (select);
 			XPathNodeIterator itr = o as XPathNodeIterator;
 			if (itr == null) {

@@ -133,6 +133,9 @@ namespace Mono.Xml.Xsl.Operations {
 		
 		protected override void Compile (Compiler c)
 		{
+			if (c.Debugger != null)
+				c.Debugger.DebugCompile (this.DebugInput);
+
 			this.var = new XslVariableInformation (c);
 		}
 		
@@ -163,6 +166,9 @@ namespace Mono.Xml.Xsl.Operations {
 			
 		public override void Evaluate (XslTransformProcessor p)
 		{
+			if (p.Debugger != null)
+				p.Debugger.DebugExecute (p, this.DebugInput);
+
 			Hashtable varInfo = p.globalVariableTable;
 			
 			if (varInfo.Contains (this)) {
@@ -210,6 +216,9 @@ namespace Mono.Xml.Xsl.Operations {
 		
 		public override void Evaluate (XslTransformProcessor p)
 		{	
+			if (p.Debugger != null)
+				p.Debugger.DebugExecute (p, this.DebugInput);
+
 			p.SetStackItem (slot, var.Evaluate (p));
 		}
 		
@@ -233,6 +242,9 @@ namespace Mono.Xml.Xsl.Operations {
 		
 		public override void Evaluate (XslTransformProcessor p)
 		{
+			if (p.Debugger != null)
+				p.Debugger.DebugExecute (p, this.DebugInput);
+
 			if (p.GetStackItem (slot) != null)
 				return; // evaluated already
 

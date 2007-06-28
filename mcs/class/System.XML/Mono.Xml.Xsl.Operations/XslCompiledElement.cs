@@ -44,6 +44,7 @@ namespace Mono.Xml.Xsl.Operations
 	{
 		int lineNumber;
 		int linePosition;
+		XPathNavigator debugInput;
 
 		// It does not automatically invoke Compile() in .ctor()
 		public XslCompiledElementBase (Compiler c)
@@ -53,6 +54,13 @@ namespace Mono.Xml.Xsl.Operations
 				lineNumber = li.LineNumber;
 				linePosition = li.LinePosition;
 			}
+			// store input only when the debugger is enabled
+			if (c.Debugger != null)
+				debugInput = c.Input.Clone ();
+		}
+
+		public XPathNavigator DebugInput {
+			get { return debugInput; }
 		}
 
 		public int LineNumber {

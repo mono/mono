@@ -1,3 +1,8 @@
+2007-06-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslCompiledTransform.cs XslTransform.cs : initial attempt to
+	  support external debugger.
+
 2006-11-30  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XslTransform.cs, XsltException.cs : added XSLT stack frame debug

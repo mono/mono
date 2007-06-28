@@ -46,6 +46,9 @@ namespace Mono.Xml.Xsl.Operations {
 		
 		protected override void Compile (Compiler c)
 		{
+			if (c.Debugger != null)
+				c.Debugger.DebugCompile (c.Input);
+
 			this.nsDecls = c.GetNamespacesToCopy ();
 			if (nsDecls.Count == 0)
 				nsDecls = null;
@@ -68,6 +71,9 @@ namespace Mono.Xml.Xsl.Operations {
 
 		public override void Evaluate (XslTransformProcessor p)
 		{
+			if (p.Debugger != null)
+				p.Debugger.DebugExecute (p, this.DebugInput);
+
 			switch (p.CurrentNode.NodeType)
 			{
 			case XPathNodeType.Root:

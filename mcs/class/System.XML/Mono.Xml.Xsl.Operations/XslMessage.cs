@@ -65,6 +65,9 @@ namespace Mono.Xml.Xsl.Operations
 		
 		protected override void Compile (Compiler c)
 		{
+			if (c.Debugger != null)
+				c.Debugger.DebugCompile (this.DebugInput);
+
 			terminate = c.ParseYesNoAttribute ("terminate", false);
 			
 			if (!c.Input.MoveToFirstChild ()) return;
@@ -74,6 +77,9 @@ namespace Mono.Xml.Xsl.Operations
 		
 		public override void Evaluate (XslTransformProcessor p)
 		{
+			if (p.Debugger != null)
+				p.Debugger.DebugExecute (p, this.DebugInput);
+
 			if (children != null)
 				output.Write (children.EvaluateAsString (p));
 			if (terminate)

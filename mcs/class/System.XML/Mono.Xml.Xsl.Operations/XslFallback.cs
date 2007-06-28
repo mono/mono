@@ -45,6 +45,9 @@ namespace Mono.Xml.Xsl.Operations {
 		
 		protected override void Compile (Compiler c)
 		{
+			if (c.Debugger != null)
+				c.Debugger.DebugCompile (c.Input);
+
 			if (!c.Input.MoveToFirstChild ()) return;
 			children = c.CompileTemplateContent ();
 			c.Input.MoveToParent ();
@@ -52,6 +55,9 @@ namespace Mono.Xml.Xsl.Operations {
 		
 		public override void Evaluate (XslTransformProcessor p)
 		{
+			if (p.Debugger != null)
+				p.Debugger.DebugExecute (p, this.DebugInput);
+
 			children.Evaluate (p);
 		}
 	}

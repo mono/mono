@@ -157,7 +157,7 @@ namespace System.Xml.Xsl
 				throw new XsltException ("No stylesheet was loaded.", null);
 
 			Outputter outputter = new GenericOutputter (output, s.Outputs, null);
-			new XslTransformProcessor (s).Process (input, outputter, args, resolver);
+			new XslTransformProcessor (s, null).Process (input, outputter, args, resolver);
 			output.Flush ();
 		}
 
@@ -173,7 +173,7 @@ namespace System.Xml.Xsl
 				throw new XsltException ("No stylesheet was loaded.", null);
 
 			Outputter outputter = new GenericOutputter(output, s.Outputs, output.Encoding);
-			new XslTransformProcessor (s).Process (input, outputter, args, null);
+			new XslTransformProcessor (s, null).Process (input, outputter, args, null);
 			outputter.Done ();
 			output.Flush ();
 		}
@@ -230,7 +230,7 @@ namespace System.Xml.Xsl
 		private void Load (XPathNavigator stylesheet,
 			XsltSettings settings, XmlResolver resolver)
 		{
-			s = new Compiler ().Compile (stylesheet, resolver, null);
+			s = new Compiler (null).Compile (stylesheet, resolver, null);
 		}
 
 		#endregion

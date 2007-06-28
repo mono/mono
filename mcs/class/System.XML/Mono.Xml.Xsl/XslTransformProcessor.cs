@@ -44,6 +44,8 @@ using QName = System.Xml.XmlQualifiedName;
 
 namespace Mono.Xml.Xsl {
 	internal class XslTransformProcessor {
+		XsltDebuggerWrapper debugger;
+		
 		CompiledStylesheet compiledStyle;
 		
 		XslStylesheet style;
@@ -61,11 +63,13 @@ namespace Mono.Xml.Xsl {
 		// Store the values of global params
 		internal Hashtable globalVariableTable = new Hashtable ();
 		
-		public XslTransformProcessor (CompiledStylesheet style)
+		public XslTransformProcessor (CompiledStylesheet style, object debugger)
 		{
 			this.XPathContext = new XsltCompiledContext (this);
 			this.compiledStyle = style;
 			this.style = style.Style;
+			if (debugger != null)
+				this.debugger = new XsltDebuggerWrapper (debugger);
 		}
 
 		public void Process (XPathNavigator root, Outputter outputtter, XsltArgumentList args, XmlResolver resolver)
@@ -108,7 +112,11 @@ namespace Mono.Xml.Xsl {
 			this.ApplyTemplates (root.Select (exp, this.XPathContext), QName.Empty, null);
 			this.PopOutput ();
 		}
-		
+
+		public XsltDebuggerWrapper Debugger {
+			get { return debugger; }
+		}
+
 		public CompiledStylesheet CompiledStyle { get { return compiledStyle; }}
 		public XsltArgumentList Arguments {get{return args;}}
 		

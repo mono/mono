@@ -41,10 +41,15 @@ namespace Mono.Xml.Xsl.Operations {
 		public XslApplyImports (Compiler c) : base (c) {}
 		protected override void Compile (Compiler c)
 		{
+			if (c.Debugger != null)
+				c.Debugger.DebugCompile (c.Input);
 		}
 		
 		public override void Evaluate (XslTransformProcessor p)
 		{
+			if (p.Debugger != null)
+				p.Debugger.DebugExecute (p, this.DebugInput);
+
 			p.ApplyImports ();
 		}
 	}

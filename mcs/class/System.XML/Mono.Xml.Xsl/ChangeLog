@@ -1,3 +1,9 @@
+2007-06-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	initial attempt to hook debuggers.
+	* XsltDebuggerWrapper.cs : new.
+	* XslTransformProcessor.cs Compiler.cs : use above.
+
 2007-01-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XslKey.cs : keep keytables per instance document and do not share

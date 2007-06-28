@@ -45,6 +45,9 @@ namespace Mono.Xml.Xsl.Operations {
 		
 		protected override void Compile (Compiler c)
 		{
+			if (c.Debugger != null)
+				c.Debugger.DebugCompile (c.Input);
+
 			if (!c.Input.MoveToFirstChild ())
 				throw new XsltCompileException ("Expecting non-empty element", null, c.Input);
 			
@@ -82,6 +85,9 @@ namespace Mono.Xml.Xsl.Operations {
 
 		public override void Evaluate (XslTransformProcessor p)
 		{
+			if (p.Debugger != null)
+				p.Debugger.DebugExecute (p, this.DebugInput);
+
 			int len = conditions.Count;
 			for (int i = 0; i < len; i++) {
 				if (((XslIf)conditions [i]).EvaluateIfTrue (p))

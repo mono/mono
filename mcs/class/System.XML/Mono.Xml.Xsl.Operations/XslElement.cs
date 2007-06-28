@@ -51,6 +51,9 @@ namespace Mono.Xml.Xsl.Operations {
 		public XslElement (Compiler c) : base (c) {}
 		protected override void Compile (Compiler c)
 		{
+			if (c.Debugger != null)
+				c.Debugger.DebugCompile (c.Input);
+
 			name = c.ParseAvtAttribute ("name");
 			ns = c.ParseAvtAttribute ("namespace");
 			nsDecls = c.GetNamespacesToCopy ();
@@ -92,6 +95,9 @@ namespace Mono.Xml.Xsl.Operations {
 		
 		public override void Evaluate (XslTransformProcessor p)
 		{
+			if (p.Debugger != null)
+				p.Debugger.DebugExecute (p, this.DebugInput);
+
 			string nm, nmsp, localName, prefix;
 			
 			localName = nm = calcName != null ? calcName : name.Evaluate (p);

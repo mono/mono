@@ -51,6 +51,9 @@ namespace Mono.Xml.Xsl.Operations {
 		
 		protected override void Compile (Compiler c)
 		{
+			if (c.Debugger != null)
+				c.Debugger.DebugCompile (c.Input);
+
 			XPathNavigator nav = c.Input.Clone ();
 			nsDecls = c.GetNamespacesToCopy ();
 			name = c.ParseAvtAttribute ("name");
@@ -94,6 +97,9 @@ namespace Mono.Xml.Xsl.Operations {
 
 		public override void Evaluate (XslTransformProcessor p)
 		{
+			if (p.Debugger != null)
+				p.Debugger.DebugExecute (p, this.DebugInput);
+
 			string nm, nmsp, prefix;
 			
 			nm = calcName != null ? calcName : name.Evaluate (p);

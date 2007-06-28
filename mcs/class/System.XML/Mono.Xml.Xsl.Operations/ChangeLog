@@ -1,3 +1,13 @@
+2007-06-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslText.cs XslMessage.cs XslVariable.cs XslNotSupportedOperation.cs
+	  XslNumber.cs XslElement.cs XslIf.cs XslCopyOf.cs XslFallback.cs
+	  XslValueOf.cs XslComment.cs XslAttribute.cs XslApplyImports.cs
+	  XslApplyTemplates.cs XslLiteralElement.cs XslCompiledElement.cs
+	  XslTemplateContent.cs XslForEach.cs XslCallTemplate.cs
+	  XslCopy.cs XslProcessingInstruction.cs XslChoose.cs :
+	  minimum required injection for debugger.
+
 2007-01-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XslMessage.cs : added MONO_XSLT_MESSAGE_OUTPUT environment

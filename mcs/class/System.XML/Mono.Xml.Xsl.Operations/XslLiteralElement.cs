@@ -81,6 +81,9 @@ namespace Mono.Xml.Xsl.Operations {
 		
 		protected override void Compile (Compiler c)
 		{
+			if (c.Debugger != null)
+				c.Debugger.DebugCompile (this.DebugInput);
+
 			prefix = c.Input.Prefix;
 			string alias = c.CurrentStylesheet.GetActualPrefix (prefix);
 			if (alias != prefix) {
@@ -114,6 +117,9 @@ namespace Mono.Xml.Xsl.Operations {
 
 		public override void Evaluate (XslTransformProcessor p)
 		{
+			if (p.Debugger != null)
+				p.Debugger.DebugExecute (p, this.DebugInput);
+
 			// Since namespace-alias might be determined after compilation
 			// of import-ing stylesheets, this must be determined later.
 			bool isCData = p.InsideCDataElement;

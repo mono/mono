@@ -51,6 +51,9 @@ namespace Mono.Xml.Xsl.Operations
 
 		protected override void Compile (Compiler c)
 		{
+			if (c.Debugger != null)
+				c.Debugger.DebugCompile (this.DebugInput);
+
 			name = c.Input.LocalName;
 			if (c.Input.MoveToFirstChild ()) {
 				do {
@@ -68,6 +71,9 @@ namespace Mono.Xml.Xsl.Operations
 
 		public override void Evaluate (XslTransformProcessor p)
 		{
+			if (p.Debugger != null)
+				p.Debugger.DebugExecute (p, this.DebugInput);
+
 			if (fallbacks != null) {
 				foreach (XslFallback f in fallbacks)
 					f.Evaluate (p);

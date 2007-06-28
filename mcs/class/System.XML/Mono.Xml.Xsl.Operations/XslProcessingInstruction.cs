@@ -47,6 +47,9 @@ namespace Mono.Xml.Xsl.Operations {
 		
 		protected override void Compile (Compiler c)
 		{
+			if (c.Debugger != null)
+				c.Debugger.DebugCompile (this.DebugInput);
+
 			name = c.ParseAvtAttribute ("name");
 
 			if (c.Input.MoveToFirstAttribute ()) {
@@ -65,6 +68,9 @@ namespace Mono.Xml.Xsl.Operations {
 
 		public override void Evaluate (XslTransformProcessor p)
 		{
+			if (p.Debugger != null)
+				p.Debugger.DebugExecute (p, this.DebugInput);
+
 			string actualName = name.Evaluate (p);
 			if (String.Compare (actualName, "xml", true, CultureInfo.InvariantCulture) == 0)
 				throw new XsltException ("Processing instruction name was evaluated to \"xml\"", null, p.CurrentNode);

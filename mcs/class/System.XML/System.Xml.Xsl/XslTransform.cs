@@ -61,6 +61,16 @@ namespace System.Xml.Xsl {
 			}
 		}
 
+		public XslTransform ()
+		{
+		}
+
+		internal XslTransform (object debugger)
+		{
+			this.debugger = debugger;
+		}
+
+		object debugger;
 		CompiledStylesheet s;
 		XmlResolver xmlResolver = new XmlUrlResolver ();
 
@@ -184,7 +194,7 @@ namespace System.Xml.Xsl {
 				throw new XsltException ("No stylesheet was loaded.", null);
 
 			Outputter outputter = new GenericOutputter (output, s.Outputs, null);
-			new XslTransformProcessor (s).Process (input, outputter, args, resolver);
+			new XslTransformProcessor (s, debugger).Process (input, outputter, args, resolver);
 			output.Flush ();
 		}
 
@@ -224,7 +234,7 @@ namespace System.Xml.Xsl {
 				throw new XsltException ("No stylesheet was loaded.", null);
 
 			Outputter outputter = new GenericOutputter(output, s.Outputs, output.Encoding);			
-			new XslTransformProcessor (s).Process (input, outputter, args, resolver);
+			new XslTransformProcessor (s, debugger).Process (input, outputter, args, resolver);
 			outputter.Done ();
 			output.Flush ();
 		}
@@ -342,7 +352,7 @@ namespace System.Xml.Xsl {
 		internal void Load (XPathNavigator stylesheet, XmlResolver resolver, Evidence evidence)
 #endif
 		{
-			s = new Compiler ().Compile (stylesheet, resolver, evidence);
+			s = new Compiler (debugger).Compile (stylesheet, resolver, evidence);
 		}
 
 #if NET_1_1

@@ -45,6 +45,9 @@ namespace Mono.Xml.Xsl.Operations {
 
 		protected override void Compile (Compiler c)
 		{
+			if (c.Debugger != null)
+				c.Debugger.DebugCompile (this.DebugInput);
+
 			c.AssertAttribute ("select");
 			select = c.CompileExpression (c.GetAttribute ("select"));
 			disableOutputEscaping = c.ParseYesNoAttribute ("disable-output-escaping", false);
@@ -54,6 +57,9 @@ namespace Mono.Xml.Xsl.Operations {
 		
 		public override void Evaluate (XslTransformProcessor p)
 		{
+			if (p.Debugger != null)
+				p.Debugger.DebugExecute (p, this.DebugInput);
+
 			if (!disableOutputEscaping)
 				p.Out.WriteString (p.EvaluateString (select));
 			else

@@ -74,6 +74,9 @@ namespace Mono.Xml.Xsl.Operations {
 
 		protected override void Compile (Compiler c)
 		{
+			if (c.Debugger != null)
+				c.Debugger.DebugCompile (this.DebugInput);
+
 			switch (c.GetAttribute ("level"))
 			{
 			case "single":
@@ -105,6 +108,9 @@ namespace Mono.Xml.Xsl.Operations {
 
 		public override void Evaluate (XslTransformProcessor p)
 		{
+			if (p.Debugger != null)
+				p.Debugger.DebugExecute (p, this.DebugInput);
+
 			string formatted = GetFormat (p);
 			if (formatted != String.Empty)
 				p.Out.WriteString (formatted);

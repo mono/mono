@@ -49,6 +49,9 @@ namespace Mono.Xml.Xsl.Operations {
 
 		protected override void Compile (Compiler c)
 		{
+			if (c.Debugger != null)
+				c.Debugger.DebugCompile (this.DebugInput);
+
 			this.text = c.Input.Value;
 			
 			if (c.Input.NodeType == XPathNodeType.Element)
@@ -58,6 +61,9 @@ namespace Mono.Xml.Xsl.Operations {
 
 		public override void Evaluate (XslTransformProcessor p)
 		{
+			if (p.Debugger != null)
+				p.Debugger.DebugExecute (p, this.DebugInput);
+
 			if (!disableOutputEscaping) {
 				if (isWhitespace)
 					p.Out.WriteWhitespace (text);
