@@ -103,6 +103,7 @@ namespace System.Web.UI
 		bool? _supportsPartialRendering;
 		bool _enablePartialRendering = true;
 		bool _init;
+		string _panelToRefreshID;
 
 		[DefaultValue (true)]
 		[Category ("Behavior")]
@@ -370,11 +371,9 @@ namespace System.Web.UI
 			string arg = postCollection [postDataKey];
 			if (!String.IsNullOrEmpty (arg)) {
 				string [] args = arg.Split ('|');
-				Control c = Page.FindControl (args [0]);
-				UpdatePanel up = c as UpdatePanel;
-				if (up != null && up.ChildrenAsTriggers)
-					up.Update ();
+				_panelToRefreshID = args [0];
 				_asyncPostBackSourceElementID = args [1];
+				return true;
 			}
 			return false;
 		}
@@ -463,7 +462,9 @@ namespace System.Web.UI
 		}
 
 		protected virtual void RaisePostDataChangedEvent () {
-			throw new NotImplementedException ();
+			UpdatePanel up = Page.FindControl (_panelToRefreshID) as UpdatePanel;
+			if (up != null && up.ChildrenAsTriggers)
+				up.Update ();
 		}
 
 		public static void RegisterArrayDeclaration (Control control, string arrayName, string arrayValue) {
