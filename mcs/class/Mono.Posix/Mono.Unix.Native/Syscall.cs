@@ -1053,6 +1053,7 @@ namespace Mono.Unix.Native {
 		}
 	}
 
+	[Map ("struct utimbuf")]
 	public struct Utimbuf
 #if NET_2_0
 		: IEquatable <Utimbuf>

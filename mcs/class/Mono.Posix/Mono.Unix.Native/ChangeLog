@@ -1,3 +1,9 @@
+2007-06-28  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* NativeConvert.generated.cs: Flush (add TryCopy() methods for Utimbuf).
+	* Syscall.cs: Map Utimbuf to `struct utimbuf'; needed so that Mono.Fuse can
+	  rely on Mono.Posix.dll for copying all native types.
+
 2006-11-14  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* MapAttribute.cs: Update (changes SuppressFlags to a string holding mask).

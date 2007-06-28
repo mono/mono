@@ -886,6 +886,22 @@ namespace Mono.Unix.Native {
 			return ToTimezone (source, out destination) == 0;
 		}
 
+		[DllImport (LIB, EntryPoint="Mono_Posix_FromUtimbuf")]
+		private static extern int FromUtimbuf (ref Utimbuf source, IntPtr destination);
+
+		public static bool TryCopy (ref Utimbuf source, IntPtr destination)
+		{
+			return FromUtimbuf (ref source, destination) == 0;
+		}
+
+		[DllImport (LIB, EntryPoint="Mono_Posix_ToUtimbuf")]
+		private static extern int ToUtimbuf (IntPtr source, out Utimbuf destination);
+
+		public static bool TryCopy (IntPtr source, out Utimbuf destination)
+		{
+			return ToUtimbuf (source, out destination) == 0;
+		}
+
 		[DllImport (LIB, EntryPoint="Mono_Posix_FromWaitOptions")]
 		private static extern int FromWaitOptions (WaitOptions value, out Int32 rval);
 
