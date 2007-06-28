@@ -186,37 +186,43 @@
                 ? CNM_MAXINT64                    \
                 : (g_assert_not_reached (), 0))
 
-#ifdef DEBUG
-#define _cnm_dump_(to_t,from)                                            \
-  printf ("# %s -> %s: min=%llx; max=%llx; value=%llx; lt=%i; l0=%i; gt=%i; e=%i\n", \
+#ifdef _CNM_DUMP
+#define _cnm_dump(to_t,from)                                             \
+  printf ("# %s -> %s: uns=%i; min=%llx; max=%llx; value=%llx; lt=%i; l0=%i; gt=%i; e=%i\n", \
     #from, #to_t,                                                        \
-    (gint64) (_cnm_integral_type_min(to_t)),                             \
+    (int) _cnm_integral_type_is_unsigned (to_t),                         \
+    (gint64) (_cnm_integral_type_min (to_t)),                            \
     (gint64) (_cnm_integral_type_max (to_t)),                            \
     (gint64) (from),                                                     \
-    (_cnm_integral_type_min (to_t) <= from),                             \
+    (((gint64) _cnm_integral_type_min (to_t)) <= (gint64) from),         \
     (from < 0),                                                          \
-    /* (_cnm_integral_type_max (to_t) >= from) */                        \
-    (from <= _cnm_integral_type_max (to_t)),                             \
-    ((_cnm_integral_type_min(to_t) >= from) &&                           \
-          ((from < 0) ? 1 : (from <= _cnm_integral_type_max(to_t))))     \
+    (((guint64) from) <= (guint64) _cnm_integral_type_max (to_t)),       \
+    !((int) _cnm_integral_type_is_unsigned (to_t)                        \
+      ? ((0 <= from) &&                                                  \
+         ((guint64) from <= (guint64) _cnm_integral_type_max (to_t)))    \
+      : ((gint64) _cnm_integral_type_min(to_t) <= (gint64) from &&       \
+         (guint64) from <= (guint64) _cnm_integral_type_max (to_t)))     \
   )
-#else
-#define _cnm_dump_(to_t, from) do {} while (0)
-#endif
+#else /* ndef _CNM_DUMP */
+#define _cnm_dump(to_t, from) do {} while (0)
+#endif /* def _CNM_DUMP */
 
 #ifdef DEBUG
 #define _cnm_return_val_if_overflow(to_t,from,val)  G_STMT_START {   \
-    gint64  sf = (gint64) from;                                      \
-    guint64 uf = (guint64) from;                                     \
-    if (!(_cnm_integral_type_min(to_t) <= sf &&                      \
-          ((from < 0) || (uf <= _cnm_integral_type_max(to_t))))) {   \
-      _cnm_dump_(to_t, from);                                        \
+    int     uns = _cnm_integral_type_is_unsigned (to_t);             \
+    gint64  min = (gint64)  _cnm_integral_type_min (to_t);           \
+    guint64 max = (guint64) _cnm_integral_type_max (to_t);           \
+    gint64  sf  = (gint64)  from;                                    \
+    guint64 uf  = (guint64) from;                                    \
+    if (!(uns ? ((0 <= from) && (uf <= max))                         \
+              : (min <= sf && (from < 0 || uf <= max)))) {           \
+      _cnm_dump(to_t, from);                                         \
       errno = EOVERFLOW;                                             \
       return (val);                                                  \
     }                                                                \
   } G_STMT_END
 #else /* !def DEBUG */
-/* don't do an overflow checking */
+/* don't do any overflow checking */
 #define _cnm_return_val_if_overflow(to_t,from,val)  G_STMT_START {   \
   } G_STMT_END
 #endif /* def DEBUG */
@@ -6769,6 +6775,40 @@ Mono_Posix_ToTimezone (struct timezone *from, struct Mono_Posix_Timezone *to)
 	return 0;
 }
 #endif /* ndef HAVE_STRUCT_TIMEZONE */
+
+
+#ifdef HAVE_STRUCT_UTIMBUF
+int
+Mono_Posix_FromUtimbuf (struct Mono_Posix_Utimbuf *from, struct utimbuf *to)
+{
+	_cnm_return_val_if_overflow (time_t, from->actime, -1);
+	_cnm_return_val_if_overflow (time_t, from->modtime, -1);
+
+	memset (to, 0, sizeof(*to));
+
+	to->actime  = from->actime;
+	to->modtime = from->modtime;
+
+	return 0;
+}
+#endif /* ndef HAVE_STRUCT_UTIMBUF */
+
+
+#ifdef HAVE_STRUCT_UTIMBUF
+int
+Mono_Posix_ToUtimbuf (struct utimbuf *from, struct Mono_Posix_Utimbuf *to)
+{
+	_cnm_return_val_if_overflow (gint64, from->actime, -1);
+	_cnm_return_val_if_overflow (gint64, from->modtime, -1);
+
+	memset (to, 0, sizeof(*to));
+
+	to->actime  = from->actime;
+	to->modtime = from->modtime;
+
+	return 0;
+}
+#endif /* ndef HAVE_STRUCT_UTIMBUF */
 
 
 int Mono_Posix_FromWaitOptions (int x, int *r)

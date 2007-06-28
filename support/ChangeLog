@@ -1,3 +1,12 @@
+2007-06-28  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* map.c, map.h: Refresh -- to add Utimbuf copy conversion functions.
+	  - Includes latest-and-greatest create-native-map output.
+	  - Mono's Reflection output has changed as well --
+	    FieldInfo.GetValue().ToString("x") is now "correct" for the underlying
+	    type, so `short' enums are 0x0000, etc.
+	  - Member sorting is now case-insensitive.
+
 2007-06-27  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* grp.c, pwd.c: Only return failure if a documented errno is encountered.
