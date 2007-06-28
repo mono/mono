@@ -207,25 +207,29 @@ namespace System.Xml.Serialization
 				MethodInfo mi = typeData.Type.GetMethod (method, BindingFlags.Static | BindingFlags.Public);
 				XmlSchemaSet xs = new XmlSchemaSet ();
 				object retVal = mi.Invoke (null, new object [] { xs });
+				_schemaTypeName = XmlQualifiedName.Empty;
+				if (retVal == null)
+					return;
+
 				if (retVal is XmlSchemaComplexType) {
 					_schemaType = (XmlSchemaComplexType) retVal;
-					if (_schemaType.Attributes.Count > 1) {
-						XmlTypeNamespace = ((XmlSchemaAttribute) _schemaType.Attributes [0]).FixedValue;
-						XmlType = ((XmlSchemaAttribute) _schemaType.Attributes [1]).FixedValue;
-					}
+					_schemaTypeName = _schemaType.QualifiedName;
 				}
 				else if (retVal is XmlQualifiedName) {
 					_schemaTypeName = (XmlQualifiedName)retVal;
-					XmlTypeNamespace = _schemaTypeName.Namespace;
-					XmlType = _schemaTypeName.Name;
 				}
 				else
 					throw new InvalidOperationException (
 						String.Format ("Method {0}.{1}() specified by XmlSchemaProviderAttribute has invalid signature: return type must be compatible with System.Xml.XmlQualifiedName.", typeData.Type.Name, method));
 
-				XmlSchema [] schemas = new XmlSchema [xs.Count];
-				xs.CopyTo (schemas, 0);
-				_schema = schemas [0];
+				XmlTypeNamespace = _schemaTypeName.Namespace;
+				XmlType = _schemaTypeName.Name;
+
+				if (!_schemaTypeName.IsEmpty && xs.Count > 0) {
+					XmlSchema [] schemas = new XmlSchema [xs.Count];
+					xs.CopyTo (schemas, 0);
+					_schema = schemas [0];
+				}
 
 				return;
 			}
