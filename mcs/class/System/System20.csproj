@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>System</AssemblyName>
-    <JDKName>1.5.0_05</JDKName>
+    <JDKName>1.6</JDKName>
     <GHProjectType>1</GHProjectType>
     <GHProjectKind>framework</GHProjectKind>
     <MergeExternal>..\lib\apache_http_client.jar</MergeExternal>
@@ -363,6 +363,8 @@
     <Compile Include="System.ComponentModel.Design\HelpKeywordAttribute.cs" />
     <Compile Include="System.ComponentModel.Design\HelpKeywordType.cs" />
     <Compile Include="System.ComponentModel.Design\IComponentChangeService.cs" />
+    <Compile Include="System.ComponentModel.Design\IComponentDiscoveryService.cs" />
+    <Compile Include="System.ComponentModel.Design\IComponentInitializer.cs" />
     <Compile Include="System.ComponentModel.Design\IDesigner.cs" />
     <Compile Include="System.ComponentModel.Design\IDesignerEventService.cs" />
     <Compile Include="System.ComponentModel.Design\IDesignerFilter.cs" />
@@ -566,6 +568,7 @@
     <Compile Include="System.Configuration\ConfigurationException.cs" />
     <Compile Include="System.Configuration\ConfigurationSettings.cs" />
     <Compile Include="System.Configuration\ConfigXmlDocument.cs" />
+    <Compile Include="System.Configuration\CustomizableFileSettingsProvider.cs" />
     <Compile Include="System.Configuration\DefaultSettingValueAttribute.cs" />
     <Compile Include="System.Configuration\DictionarySectionHandler.cs" />
     <Compile Include="System.Configuration\IApplicationSettingsProvider.cs" />

@@ -29,7 +29,9 @@
 
 #if NET_2_0 && CONFIGURATION_DEP
 
+#if !TARGET_JVM
 extern alias PrebuiltSystem;
+#endif
 
 using System;
 using System.Collections;
@@ -41,7 +43,11 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Xml;
 
+#if TARGET_JVM
+using NameValueCollection = System.Collections.Specialized.NameValueCollection;
+#else
 using NameValueCollection = PrebuiltSystem.System.Collections.Specialized.NameValueCollection;
+#endif
 
 namespace System.Configuration
 {
