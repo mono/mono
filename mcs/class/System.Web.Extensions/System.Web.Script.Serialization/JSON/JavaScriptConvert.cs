@@ -113,9 +113,11 @@ namespace Newtonsoft.Json
 		/// </summary>
 		/// <param name="value">The value to convert.</param>
 		/// <returns>A Json string representation of the <see cref="Char"/>.</returns>
-		public static string ToString(char value)
-		{
-			return value == '\0' ? Null : ToString (char.ToString (value));
+		public static void WriteChar (char value, TextWriter writer) {
+			if (value == '\0')
+				writer.Write(Null);
+			else
+				JavaScriptUtils.WriteEscapedJavaScriptChar (value, '"', true, writer);
 		}
 
 		/// <summary>
@@ -253,9 +255,9 @@ namespace Newtonsoft.Json
 		/// </summary>
 		/// <param name="value">The value to convert.</param>
 		/// <returns>A Json string representation of the <see cref="String"/>.</returns>
-		public static string ToString(string value)
+		public static void WriteString (string value, TextWriter writer)
 		{
-			return ToString(value, '"');
+			WriteString (value, '"', writer);
 		}
 
 		/// <summary>
@@ -264,9 +266,9 @@ namespace Newtonsoft.Json
 		/// <param name="value">The value to convert.</param>
 		/// <param name="delimter">The string delimiter character.</param>
 		/// <returns>A Json string representation of the <see cref="String"/>.</returns>
-		public static string ToString(string value, char delimter)
+		public static void WriteString (string value, char delimter, TextWriter writer)
 		{
-			return JavaScriptUtils.EscapeJavaScriptString(value, delimter, true);
+			JavaScriptUtils.WriteEscapedJavaScriptString(value, delimter, true, writer);
 		}
 	}
 }

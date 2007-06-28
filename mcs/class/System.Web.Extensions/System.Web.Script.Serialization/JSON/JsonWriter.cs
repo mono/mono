@@ -586,7 +586,8 @@ namespace Newtonsoft.Json
 		/// <param name="value">The <see cref="String"/> value to write.</param>
 		public void WriteValue(string value)
 		{
-			WriteValueInternal(JavaScriptConvert.ToString(value, _quoteChar), JsonToken.String);
+			AutoComplete (JsonToken.String);
+			JavaScriptConvert.WriteString(value, _quoteChar, _writer);
 		}
 
 		/// <summary>
@@ -676,7 +677,8 @@ namespace Newtonsoft.Json
 		/// <param name="value">The <see cref="Char"/> value to write.</param>
 		public void WriteValue(char value)
 		{
-			WriteValueInternal(JavaScriptConvert.ToString(value), JsonToken.Integer);
+			AutoComplete (JsonToken.Integer);
+			JavaScriptConvert.WriteChar (value, _writer);
 		}
 
 		/// <summary>

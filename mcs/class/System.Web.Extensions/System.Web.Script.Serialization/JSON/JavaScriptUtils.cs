@@ -30,106 +30,84 @@ namespace Newtonsoft.Json
 {
 	internal static class JavaScriptUtils
 	{
-		public static string EscapeJavaScriptString(string value)
-		{
-			return EscapeJavaScriptString(value, '"', true);
+		public static void WriteEscapedJavaScriptString (string value, TextWriter writer) {
+			WriteEscapedJavaScriptString (value, '"', true, writer);
 		}
 
-		public static string EscapeJavaScriptString(string value, char delimiter, bool appendDelimiters)
-		{
-			if (string.IsNullOrEmpty(value))
-			{
-				if (appendDelimiters)
-					return new string(delimiter, 2);
-				else
-					return string.Empty;
-			}
-
-			StringBuilder sb = null;
-			int lastWritePosition = 0;
-			int skipped = 0;
-
+		public static void WriteEscapedJavaScriptString (string value, char delimiter, bool appendDelimiters, TextWriter writer) {
 			// leading delimiter
 			if (appendDelimiters)
-			{
-				sb = new StringBuilder(value.Length + 5);
-				sb.Append(delimiter);
-			}
+				writer.Write (delimiter);
 
-			for (int i = 0; i < value.Length; i++)
-			{
-				char currentChar = value[i];
-				string escapedValue;
-
-				switch (currentChar)
-				{
-					case '\t':
-						escapedValue = @"\t";
-						break;
-					case '\n':
-						escapedValue = @"\n";
-						break;
-					case '\r':
-						escapedValue = @"\r";
-						break;
-					case '\f':
-						escapedValue = @"\f";
-						break;
-					case '\b':
-						escapedValue = @"\b";
-						break;
-					case '"':
-						// only escape if this charater is being used as the delimiter
-						escapedValue = (delimiter == '"') ? "\\\"" : null;
-						break;
-					case '\'':
-						// only escape if this charater is being used as the delimiter
-						escapedValue = (delimiter == '\'') ? @"\'" : null;
-						break;
-					case '\\':
-						escapedValue = @"\\";
-						break;
-					default:
-						escapedValue = null;
-						break;
-				}
-
-				// test if the char needs to be escaped or whether it can be skipped
-				if (escapedValue != null)
-				{
-					if (sb == null)
-						sb = new StringBuilder(value.Length + 5);
-
-					// write skipped text
-					if (skipped > 0)
-					{
-						sb.Append(value, lastWritePosition, skipped);
-						skipped = 0;
-					}
-
-					// write escaped value and note position
-					sb.Append(escapedValue);
-					lastWritePosition = i + 1;
-				}
-				else
-				{
-					skipped++;
-				}
-			}
-
-			// nothing was escaped. return initial string
-			if (sb == null)
-				return value;
-
-			// write any remaining skipped text
-			if (skipped > 0)
-				sb.Append(value, lastWritePosition, skipped);
+			if (!string.IsNullOrEmpty (value))
+				for (int i = 0; i < value.Length; i++)
+					WriteJavaScriptChar (value [i], delimiter, writer);
 
 			// trailing delimiter
 			if (appendDelimiters)
-				sb.Append(delimiter);
+				writer.Write (delimiter);
+		}
 
-			return sb.ToString();
+		public static void WriteEscapedJavaScriptChar (char value, char delimiter, bool appendDelimiters, TextWriter writer) {
+			// leading delimiter
+			if (appendDelimiters)
+				writer.Write (delimiter);
+
+			WriteJavaScriptChar (value, delimiter, writer);
+
+			// trailing delimiter
+			if (appendDelimiters)
+				writer.Write (delimiter);
+		}
+
+		public static void WriteJavaScriptChar (char value, char delimiter, TextWriter writer) {
+			switch (value) {
+			case '\t':
+				writer.Write (@"\t");
+				break;
+			case '\n':
+				writer.Write (@"\n");
+				break;
+			case '\r':
+				writer.Write (@"\r");
+				break;
+			case '\f':
+				writer.Write (@"\f");
+				break;
+			case '\b':
+				writer.Write (@"\b");
+				break;
+			case '<':
+				writer.Write (@"\u003c");
+				break;
+			case '>':
+				writer.Write (@"\u003e");
+				break;
+			case '"':
+				// only escape if this charater is being used as the delimiter
+				if (delimiter == '"')
+					writer.Write (@"\""");
+				else
+					writer.Write (value);
+				break;
+			case '\'':
+				writer.Write (@"\u0027");
+				break;
+			case '\\':
+				writer.Write (@"\\");
+				break;
+			default:
+				if (value > '\u001f')
+					writer.Write (value);
+				else {
+					writer.Write("\\u00");
+					int intVal = (int) value;
+					writer.Write ((char) ('0' + (intVal >> 4)));
+					intVal &= 0xf;
+					writer.Write ((char) (intVal < 10 ? '0' + intVal : 'a' + (intVal - 10)));
+				}
+				break;
+			}
 		}
 	}
 }
