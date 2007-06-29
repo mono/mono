@@ -864,7 +864,7 @@ namespace Mono.AssemblyCompare
 			for (int i = 0; i < count; i++) {
 				XMLClass xclass = nested [i];
 
-				node = document.CreateElement ("nestedclass", null);
+				node = document.CreateElement ("class", null);
 				newNodes.Add (node);
 				AddAttribute (node, "name", xclass.Name);
 				AddAttribute (node, "type", xclass.Type);
@@ -889,7 +889,7 @@ namespace Mono.AssemblyCompare
 					if (c == null || IsMonoTODOAttribute (c.Name))
 						continue;
 
-					node = document.CreateElement ("nestedclass", null);
+					node = document.CreateElement ("class", null);
 					newNodes.Add (node);
 					AddAttribute (node, "name", c.Name);
 					AddExtra (node);
