@@ -20,25 +20,22 @@ G_BEGIN_DECLS
 int
 Mono_Posix_Syscall_openlog (void* ident, int option, int facility)
 {
-	errno = 0;
 	openlog ((const char*) ident, option, facility);
-	return errno == 0 ? 0 : -1;
+	return 0;
 }
 
 int
 Mono_Posix_Syscall_closelog (void)
 {
-	errno = 0;
 	closelog ();
-	return errno == 0 ? 0 : -1;
+	return 0;
 }
 
 int
 Mono_Posix_Syscall_syslog (int priority, const char* message)
 {
-	errno = 0;
 	syslog (priority, message);
-	return errno == 0 ? 0 : -1;
+	return 0;
 }
 
 /* vararg version of syslog(3). */
@@ -47,14 +44,10 @@ Mono_Posix_Syscall_syslog2 (int priority, const char *format, ...)
 {
 	va_list ap;
 
-	errno = 0;
-
 	va_start (ap, format);
 	vsyslog (priority, format, ap);
 	va_end (ap);
 
-	if (errno != 0)
-		return -1;
 	return 0;
 }
 

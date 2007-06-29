@@ -293,9 +293,8 @@ Mono_Posix_Syscall_setgrent (void)
 int
 Mono_Posix_Syscall_endgrent (void)
 {
-	errno = 0;
 	endgrent();
-	return errno == 0 ? 0 : -1;
+	return 0;
 }
 
 

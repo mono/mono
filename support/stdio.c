@@ -148,9 +148,8 @@ Mono_Posix_Stdlib_setvbuf (void* stream, void *buf, int mode, mph_size_t size)
 int 
 Mono_Posix_Stdlib_setbuf (void* stream, void* buf)
 {
-	errno = 0;
 	setbuf (stream, buf);
-	return errno == 0 ? 0 : -1;
+	return 0;
 }
 
 gint32
@@ -189,25 +188,26 @@ Mono_Posix_Stdlib_fsetpos (void* stream, void *pos)
 int
 Mono_Posix_Stdlib_rewind (void* stream)
 {
-	errno = 0;
-	rewind (stream);
-	return errno == 0 ? 0 : -1;
+	do {
+		rewind (stream);
+	} while (errno == EINTR);
+	mph_return_if_val_in_list5(errno, EAGAIN, EBADF, EFBIG, EINVAL, EIO);
+	mph_return_if_val_in_list5(errno, ENOSPC, ENXIO, EOVERFLOW, EPIPE, ESPIPE);
+	return 0;
 }
 
 int
 Mono_Posix_Stdlib_clearerr (void* stream)
 {
-	errno = 0;
 	clearerr (((FILE*) stream));
-	return errno == 0 ? 0 : -1;
+	return 0;
 }
 
 int
 Mono_Posix_Stdlib_perror (const char* s)
 {
-	errno = 0;
 	perror (s);
-	return errno == 0 ? 0 : -1;
+	return 0;
 }
 
 #define MPH_FPOS_LENGTH (sizeof(fpos_t)*2)

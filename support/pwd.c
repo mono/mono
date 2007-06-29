@@ -249,7 +249,9 @@ Mono_Posix_Syscall_endpwent (void)
 {
 	errno = 0;
 	endpwent ();
-	return errno == 0 ? 0 : -1;
+	if (errno == EIO)
+		return -1;
+	return 0;
 }
 
 G_END_DECLS

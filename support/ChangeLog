@@ -1,3 +1,11 @@
+2007-06-29  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* dirent.c, grp.c, pwd.c, stdio.c, syslog.c, unistd.c: Following in the
+	  logic of the 2007-06-27 logic...  Only return failure if an actual
+	  DOCUMENTED error occurred.  For many of these functions, there are no
+	  docuemented errors, so they "can't fail," even if errno were set.
+	  All praise the POSIX standard?
+
 2007-06-28  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* map.c, map.h: Refresh -- to add Utimbuf copy conversion functions.
