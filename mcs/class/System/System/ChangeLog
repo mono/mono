@@ -1,3 +1,12 @@
+2007-06-30  Miguel de Icaza  <miguel@novell.com>
+
+	* Uri.cs (GetLeftPart): If the URI is relative this method throws
+	InvalidOperationException. 
+
+	(ToString): do not use GetLeftPart here, instead escape the path. 
+
+	(Parse): For relative uris, keep the string as the path.
+
 2007-06-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Uri.cs: Canonicalize is only obsolete from 2.0 onward. Fixed line

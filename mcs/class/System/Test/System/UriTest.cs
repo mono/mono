@@ -1176,6 +1176,40 @@ namespace MonoTests.System
 			Assert ("#5b", !uri3.Equals(uri4));
 		}
 
+		[ExpectedException(typeof(InvalidOperationException))]
+		[Test]
+		public void GetLeftPart_Partial1 ()
+		{
+			Uri u = new Uri ("foo", UriKind.Relative);
+			u.GetLeftPart (UriPartial.Scheme);
+		}
+
+		[ExpectedException(typeof(InvalidOperationException))]
+		[Test]
+		public void GetLeftPart_Partial2 ()
+		{
+			Uri u = new Uri ("foo", UriKind.Relative);
+			u.GetLeftPart (UriPartial.Authority);
+		}
+
+		[ExpectedException(typeof(InvalidOperationException))]
+		[Test]
+		public void GetLeftPart_Partial3 ()
+		{
+			Uri u = new Uri ("foo", UriKind.Relative);
+			u.GetLeftPart (UriPartial.Path);
+		}
+		
+		[Test]
+		public void TestPartialToString ()
+		{
+			AssertEquals ("#1", new Uri ("foo", UriKind.Relative).ToString (), "foo");
+			AssertEquals ("#2", new Uri ("foo#aa", UriKind.Relative).ToString (), "foo#aa");
+			AssertEquals ("#3", new Uri ("foo?aa", UriKind.Relative).ToString (), "foo?aa");
+			AssertEquals ("#4", new Uri ("foo#dingus?aa", UriKind.Relative).ToString (), "foo#dingus?aa");
+			AssertEquals ("#4", new Uri ("foo?dingus#aa", UriKind.Relative).ToString (), "foo?dingus#aa");
+		}
+		
 		[Test]
 		public void RelativeGetHashCodeTest()
 		{

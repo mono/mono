@@ -827,6 +827,7 @@ namespace System {
 		
 		public string GetLeftPart (UriPartial part) 
 		{
+			EnsureAbsoluteUri ();
 			int defaultPort;
 			switch (part) {				
 			case UriPartial.Scheme : 
@@ -847,7 +848,7 @@ namespace System {
 				if ((port != -1) && (port != defaultPort))
 					s.Append (':').Append (port);			 
 				return s.ToString ();				
-			case UriPartial.Path :			
+			case UriPartial.Path :
 				StringBuilder sb = new StringBuilder ();
 				sb.Append (scheme);
 				sb.Append (GetOpaqueWiseSchemeDelimiter ());
@@ -1006,7 +1007,13 @@ namespace System {
 			if (cachedToString != null) 
 				return cachedToString;
 
-			cachedToString = Unescape (GetLeftPart (UriPartial.Path), true);
+			if (isAbsoluteUri)
+				cachedToString = Unescape (GetLeftPart (UriPartial.Path), true);
+			else {
+				// Everything is contained in path in this case. 
+				cachedToString = Unescape (path);
+			}
+			
 			if (query.Length > 0) {
 				string q = query [0] == '?' ? '?' + Unescape (query.Substring (1), true) : Unescape (query, true);
 				cachedToString += q;
@@ -1259,9 +1266,11 @@ namespace System {
 					ParseAsUnixAbsoluteFilePath (uriString);
 				else if (uriString.Length >= 2 && uriString [0] == '\\' && uriString [1] == '\\')
 					ParseAsWindowsUNC (uriString);
-				else
+				else {
 					/* Relative path */
 					isAbsoluteUri = false;
+					path = uriString;
+				}
 				return;
 			} 
 			else if (pos == 1) {
