@@ -1,3 +1,7 @@
+2007-06-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* NetworkAccess.cs: Only mark as flags enum on 2.0.
+
 2007-06-21  Dick Porter  <dick@ximian.com>
 
 	* AuthenticationManager.cs: 
