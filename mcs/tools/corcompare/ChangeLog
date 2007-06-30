@@ -1,3 +1,9 @@
+2007-06-29  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* mono-api.xsl: Added support for nested classes.
+	* mono-api-diff.cs: Renamed element used for nested classes from
+	nestedclass to class to avoid duplicating templates in xsl.
+
 2007-06-25  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* mono-api-diff.cs: Fixed line endings. For overloaded operators we
