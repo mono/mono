@@ -1,3 +1,7 @@
+2007-06-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DbDataAdapter.cs: Marked ICloneable.Clone obsolete to match MS.
+
 2007-06-21  Nagappan A  <anagappan@novell.com>
 
 	* DbConnectionStringBuilder.cs (Init): Modified the dictionary to

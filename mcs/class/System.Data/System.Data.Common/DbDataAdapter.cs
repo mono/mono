@@ -512,6 +512,7 @@ namespace System.Data.Common {
 		}
 		
 		[MonoTODO]
+		[Obsolete ("use 'protected DbDataAdapter(DbDataAdapter)' ctor")]
 		object ICloneable.Clone ()
 		{
 			throw new NotImplementedException ();
