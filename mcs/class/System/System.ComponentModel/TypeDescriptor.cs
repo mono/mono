@@ -121,11 +121,7 @@ public sealed class TypeDescriptor
 	public static EventDescriptor CreateEvent (Type componentType,
 						   string name,
 						   Type type,
-#if NET_2_0
 						   params Attribute [] attributes)
-#else
-						   Attribute [] attributes)
-#endif
 	{
 		return new ReflectionEventDescriptor (componentType, name, type, attributes);
 	}
@@ -133,11 +129,7 @@ public sealed class TypeDescriptor
 	[ReflectionPermission (SecurityAction.LinkDemand, TypeInformation = true, MemberAccess = true)]
 	public static EventDescriptor CreateEvent (Type componentType,
 						   EventDescriptor oldEventDescriptor,
-#if NET_2_0
 						   params Attribute [] attributes)
-#else
-						   Attribute [] attributes)
-#endif
 	{
 		return new ReflectionEventDescriptor (componentType, oldEventDescriptor, attributes);
 	}
@@ -146,11 +138,7 @@ public sealed class TypeDescriptor
 	public static PropertyDescriptor CreateProperty (Type componentType,
 							 string name,
 							 Type type,
-#if NET_2_0
 							 params Attribute [] attributes)
-#else
-							 Attribute [] attributes)
-#endif
 	{
 		return new ReflectionPropertyDescriptor (componentType, name, type, attributes);
 	}
@@ -158,11 +146,7 @@ public sealed class TypeDescriptor
 	[ReflectionPermission (SecurityAction.LinkDemand, TypeInformation = true, MemberAccess = true)]
 	public static PropertyDescriptor CreateProperty (Type componentType,
 							 PropertyDescriptor oldPropertyDescriptor,
-#if NET_2_0
 							 params Attribute [] attributes)
-#else
-							 Attribute [] attributes)
-#endif
 	{
 		return new ReflectionPropertyDescriptor (componentType, oldPropertyDescriptor, attributes);
 	}
@@ -186,10 +170,10 @@ public sealed class TypeDescriptor
 	public static AttributeCollection GetAttributes (object component, bool noCustomTypeDesc)
 	{
 		if (component == null)
-		    return AttributeCollection.Empty;
+			return AttributeCollection.Empty;
 
 		if (noCustomTypeDesc == false && component is ICustomTypeDescriptor) {
-		    return ((ICustomTypeDescriptor) component).GetAttributes ();
+			return ((ICustomTypeDescriptor) component).GetAttributes ();
 		} else {
 			IComponent com = component as IComponent;
 			if (com != null && com.Site != null)
@@ -210,17 +194,17 @@ public sealed class TypeDescriptor
 	public static string GetClassName (object component, bool noCustomTypeDesc)
 	{
 		if (component == null)
-		    throw new ArgumentNullException ("component", "component cannot be null");
+			throw new ArgumentNullException ("component", "component cannot be null");
 
 		if (noCustomTypeDesc == false && component is ICustomTypeDescriptor) {
-		    String res = ((ICustomTypeDescriptor) component).GetClassName ();
+			String res = ((ICustomTypeDescriptor) component).GetClassName ();
 			if (res == null)
 				res = ((ICustomTypeDescriptor) component).GetComponentName ();
 			if (res == null)
 				res = component.GetType ().FullName;
 			return res;
 		} else {
-		    return component.GetType ().FullName;
+			return component.GetType ().FullName;
 		}
 	}
 
@@ -235,10 +219,10 @@ public sealed class TypeDescriptor
 	public static string GetComponentName (object component, bool noCustomTypeDesc)
 	{
 		if (component == null)
-		    throw new ArgumentNullException ("component", "component cannot be null");
+			throw new ArgumentNullException ("component", "component cannot be null");
 
 		if (noCustomTypeDesc == false && component is ICustomTypeDescriptor) {
-		    return ((ICustomTypeDescriptor) component).GetComponentName ();
+			return ((ICustomTypeDescriptor) component).GetComponentName ();
 		} else {
 			IComponent c = component as IComponent;
 			if (c != null && c.Site != null)

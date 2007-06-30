@@ -155,6 +155,11 @@ namespace System.ComponentModel
 			return properties.GetEnumerator ();
 		}
 
+		IEnumerator IEnumerable.GetEnumerator ()
+		{
+			return GetEnumerator ();
+		}
+
 		[MonoTODO]
 		IDictionaryEnumerator IDictionary.GetEnumerator ()
 		{

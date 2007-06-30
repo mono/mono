@@ -1,3 +1,10 @@
+2007-06-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* PropertyDescriptorCollection.cs: Added missing explicit interface
+	implementation of IEnumerable.GetEnumerator.
+	* TypeDescriptor.cs: Params modifier applies to 1.0 profile as well.
+	Spaces to tabs.
+
 2007-05-31  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* LookupBindingPropertiesAttribute.cs:
