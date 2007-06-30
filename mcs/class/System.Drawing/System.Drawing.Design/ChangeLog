@@ -1,3 +1,7 @@
+2007-06-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ToolboxItem.cs: GetType (IDesignerHost) is 2.0 only.
+
 2007-06-08  Ivan N. Zlatev <contact@i-nz.net>
 
 	* ToolboxItem.cs: Implement some 2.0 stuff.

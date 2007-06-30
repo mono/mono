@@ -238,10 +238,12 @@ namespace System.Drawing.Design
 			return string.Concat (TypeName, DisplayName).GetHashCode ();
 		}
 
+#if NET_2_0
 		public Type GetType (IDesignerHost host)
 		{
 			return GetType (host, this.AssemblyName,  this.TypeName,  false);
 		}
+#endif
 
 		protected virtual Type GetType (IDesignerHost host, AssemblyName assemblyName, string typeName, bool reference)
 		{
