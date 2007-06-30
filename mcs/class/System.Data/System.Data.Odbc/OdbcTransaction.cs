@@ -36,12 +36,10 @@ using System.Data;
 using System.Data.Common;
 #endif // NET_2_0
 
-
 namespace System.Data.Odbc
 {
-
 #if NET_2_0
-	public sealed class OdbcTransaction : DbTransaction
+	public sealed class OdbcTransaction : DbTransaction, IDisposable
 #else
 	public sealed class OdbcTransaction : MarshalByRefObject, IDbTransaction
 #endif // NET_2_0
@@ -90,7 +88,8 @@ namespace System.Data.Odbc
 #if NET_2_0
 		protected override
 #endif
-		void Dispose(bool disposing) {
+		void Dispose(bool disposing)
+		{
 			if (!disposed) {
 				if (disposing) {
 					Rollback();
@@ -99,14 +98,11 @@ namespace System.Data.Odbc
 			}
 		}
 
-#if !NET_2_0
-		public
-#endif
-		new void Dispose() {
+		void IDisposable.Dispose()
+		{
 			Dispose(true);
 			GC.SuppressFinalize(this);
 		}
-
 
 		#endregion Implementation of IDisposable
 
@@ -114,9 +110,9 @@ namespace System.Data.Odbc
 
 		public 
 #if NET_2_0
-                override
+		override
 #endif //NET_2_0
-                void Commit()
+		void Commit()
 		{
 			if (connection.transaction==this)
 			{
@@ -131,9 +127,9 @@ namespace System.Data.Odbc
 
 		public 
 #if NET_2_0
-                override
+		override
 #endif //NET_2_0
-                void Rollback()
+		void Rollback()
 		{
 			if (connection.transaction==this)
 			{
@@ -147,30 +143,27 @@ namespace System.Data.Odbc
 		}
 
 #if ONLY_1_1
-		IDbConnection IDbTransaction.Connection
-		{
-			get
-			{
+		IDbConnection IDbTransaction.Connection {
+			get {
 				return Connection;
 			}
 		}
 
 #endif // ONLY_1_1
 #if NET_2_0
-                protected override DbConnection DbConnection 
-                { 
-                        get {return Connection;}
-                }
+		protected override DbConnection DbConnection {
+			get {
+				return Connection;
+			}
+		}
 #endif // NET_2_0
 
 		public 
 #if NET_2_0
-                override
+		override
 #endif //NET_2_0
-                IsolationLevel IsolationLevel
-		{
-			get
-			{
+		IsolationLevel IsolationLevel {
+			get {
 				return isolationlevel;
 			}
 		}
@@ -179,16 +172,12 @@ namespace System.Data.Odbc
 
 		#region Public Instance Properties
 
-#if ONLY_1_1
-		public OdbcConnection Connection
-		{
-			get
-			{
+		public OdbcConnection Connection {
+			get {
 				return connection;
 			}
 		}
 
-#endif // ONLY_1_1
 		#endregion Public Instance Properties
 	}
 }

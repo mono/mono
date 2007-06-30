@@ -42,11 +42,11 @@ namespace System.Data.Odbc {
 	[DefaultEvent ("RowUpdated")]
 	[DesignerAttribute ("Microsoft.VSDesigner.Data.VS.OdbcDataAdapterDesigner, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.IDesigner")]
 	[ToolboxItemAttribute ("Microsoft.VSDesigner.Data.VS.OdbcDataAdapterToolboxItem, "+ Consts.AssemblyMicrosoft_VSDesigner)]
-	public sealed class OdbcDataAdapter : DbDataAdapter, IDbDataAdapter 
+	public sealed class OdbcDataAdapter : DbDataAdapter, IDbDataAdapter, ICloneable
 	{
 		#region Fields
 
-		bool disposed = false;	
+		bool disposed = false;
 		OdbcCommand deleteCommand;
 		OdbcCommand insertCommand;
 		OdbcCommand selectCommand;
@@ -56,8 +56,7 @@ namespace System.Data.Odbc {
 
 		#region Constructors
 		
-		public OdbcDataAdapter () 	
-			: this (new OdbcCommand ())
+		public OdbcDataAdapter () : this (new OdbcCommand ())
 		{
 		}
 
@@ -175,6 +174,7 @@ namespace System.Data.Odbc {
 			return new OdbcRowUpdatingEventArgs (dataRow, command, statementType, tableMapping);
 		}
 
+#if ONLY_1_1
 		protected override void Dispose (bool disposing)
 		{
 			if (!disposed) {
@@ -185,6 +185,7 @@ namespace System.Data.Odbc {
 				disposed = true;
 			}
 		}
+#endif
 
 		protected override void OnRowUpdated (RowUpdatedEventArgs value) 
 		{
@@ -196,6 +197,12 @@ namespace System.Data.Odbc {
 		{
 			if (RowUpdating != null)
 				RowUpdating (this, (OdbcRowUpdatingEventArgs) value);
+		}
+
+		[MonoTODO]
+		object ICloneable.Clone ()
+		{
+			throw new NotImplementedException ();
 		}
 
 		#endregion // Methods
