@@ -1,3 +1,7 @@
+2007-06-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Margins.cs: Overloaded operators are 2.0 only.
+
 2007-05-29  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Margins.cs: Implement missing == and != operators (MoMA reports them

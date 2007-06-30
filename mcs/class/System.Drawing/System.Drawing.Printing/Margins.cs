@@ -138,6 +138,7 @@ namespace System.Drawing.Printing
 			return String.Format (ret, left, right, top, bottom);
 		}
 
+#if NET_2_0
 		public static bool operator == (Margins m1, Margins m2)
 		{
 			// avoid recursion with == operator
@@ -153,5 +154,6 @@ namespace System.Drawing.Printing
 				return ((object)m2 != null);
 			return !m1.Equals (m2);
 		}
+#endif
 	}
 }
