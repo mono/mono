@@ -121,11 +121,11 @@ namespace System.Data {
 			// check if the reference is a null reference
 			if(table == null)
 				throw new ArgumentNullException("table");
-            
+
 			// check if the list already contains this tabe.
 			if(List.Contains(table))
 				throw new ArgumentException("DataTable already belongs to this DataSet.");
-           		
+
 			// check if table is part of another DataSet 
 			if (table.DataSet != null && table.DataSet != this.dataSet)
 				throw new ArgumentException ("DataTable already belongs to another DataSet");
@@ -223,14 +223,14 @@ namespace System.Data {
 #if NET_2_0
 		public bool Contains (string name, string tableNamespace) 
 		{
-			return (IndexOf (name, tableNamespace) != -1) ;
+			return (IndexOf (name, tableNamespace) != -1);
 		}
-#endif
 
 		public void CopyTo (DataTable [] array, int index)
 		{
 			CopyTo ((Array) array, index);
 		}
+#endif
 
 		public
 #if !NET_2_0
@@ -396,7 +396,7 @@ namespace System.Data {
 			while (Contains (Name + i))
 				i++;
 
-			Table.TableName = Name + i;			       
+			Table.TableName = Name + i;
 		}
 		
 		// check if a table can be removed from this collectiuon.
@@ -461,7 +461,7 @@ namespace System.Data {
 
 		#region Events
 
-		[ResDescriptionAttribute ("Occurs whenever this collection's membership changes.")]		
+		[ResDescriptionAttribute ("Occurs whenever this collection's membership changes.")]
 		public event CollectionChangeEventHandler CollectionChanged;
 
 		public event CollectionChangeEventHandler CollectionChanging;
