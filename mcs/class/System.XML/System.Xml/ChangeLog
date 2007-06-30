@@ -1,3 +1,7 @@
+2007-06-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* XmlTextReader.cs: Expose ProhibitDtd on 1.0 profile too.
+
 2007-06-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlNode.cs : InnerText is settable on XmlDocumentFragment (silly,

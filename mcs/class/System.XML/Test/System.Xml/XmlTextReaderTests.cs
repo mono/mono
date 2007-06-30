@@ -915,7 +915,6 @@ namespace MonoTests.System.Xml
 			AssertEquals (" value string", xvr.Value);
 		}
 
-#if NET_2_0
 		[Test]
 		[ExpectedException (typeof (XmlException))]
 		public void ProhibitDtd ()
@@ -926,6 +925,7 @@ namespace MonoTests.System.Xml
 				xtr.Read ();
 		}
 
+#if NET_2_0
 		[Test]
 		public void Settings ()
 		{

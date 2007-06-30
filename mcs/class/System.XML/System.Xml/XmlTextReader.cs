@@ -337,12 +337,10 @@ namespace System.Xml
 			get { return cursorToken.Prefix; }
 		}
 
-#if NET_2_0
 		public bool ProhibitDtd {
 			get { return prohibitDtd; }
 			set { prohibitDtd = value; }
 		}
-#endif
 
 		public override char QuoteChar {
 			get { return cursorToken.QuoteChar; }
