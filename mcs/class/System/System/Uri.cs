@@ -701,8 +701,9 @@ namespace System {
 			return true;
 		}
 
-		// Am making this obsolete in both 1.0 and 2.0, as it served no purpose in 1.0
+#if NET_2_0
 		[Obsolete("This method does nothing, it has been obsoleted")]
+#endif
 		protected virtual void Canonicalize ()
 		{
 			//
