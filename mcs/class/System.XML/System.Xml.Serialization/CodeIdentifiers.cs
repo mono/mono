@@ -50,7 +50,12 @@ namespace System.Xml.Serialization {
 		{
 		}
 
-		public CodeIdentifiers (bool caseSensitive)
+#if NET_2_0
+		public
+#else
+		private
+#endif
+		CodeIdentifiers (bool caseSensitive)
 		{
 #if NET_2_0
 			StringComparer c = caseSensitive ?

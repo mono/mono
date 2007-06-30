@@ -1,3 +1,8 @@
+2007-06-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CodeIdentifier.cs: Default ctor is public on 1.0 profile too.
+	* CodeIdentifiers.cs: Ctor taking bool is 2.0 only.
+
 2007-06-27  Konstantin Triger <kostat@mainsoft.com>
 
 	* XmlTypeMapping.cs, XmlSchemaExporter.cs: add partial support for
