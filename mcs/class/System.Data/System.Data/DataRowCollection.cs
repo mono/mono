@@ -78,18 +78,13 @@ namespace System.Data
 			}
 		}
 
-		public
 #if NET_2_0
-		override
-#else
-		new
-#endif
-		int Count
-		{
+		public override int Count {
 			get {
 				return List.Count;
 			}
 		}
+#endif
 
 #if !NET_2_0
 		/// <summary>

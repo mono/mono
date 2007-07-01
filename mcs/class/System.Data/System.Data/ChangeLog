@@ -1,5 +1,6 @@
 2007-07-01  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* DataRowCollection.cs: Only override Count on 2.0 profile.
 	* RelatedDataView.cs: Fixed line endings.
 	* XmlDataInferenceLoader.cs: Fixed line endings.
 
