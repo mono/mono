@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>System.Xml</RootNamespace>
     <AssemblyName>System.Xml</AssemblyName>
-    <JDKName>1.5.0_05</JDKName>
+    <JDKName>1.6</JDKName>
     <GHProjectType>1</GHProjectType>
     <GHProjectKind>framework</GHProjectKind>
     <Version>2.0</Version>
@@ -27,7 +27,7 @@
     <KeepIntermediate>false</KeepIntermediate>
     <GHProjectType>1</GHProjectType>
     <PreCompile>false</PreCompile>
-	<NoWarn>67,169,612,618,649,3021</NoWarn>
+    <NoWarn>67,169,612,618,649,3021</NoWarn>
     <AdditionalClassPath>
     </AdditionalClassPath>
     <ApplicationServerType>
@@ -79,7 +79,7 @@
     <KeepIntermediate>False</KeepIntermediate>
     <GHProjectType>1</GHProjectType>
     <PreCompile>false</PreCompile>
-	<NoWarn>67,169,612,618,649,3021</NoWarn>
+    <NoWarn>67,169,612,618,649,3021</NoWarn>
     <AdditionalClassPath>
     </AdditionalClassPath>
     <ApplicationServerType>
@@ -100,7 +100,7 @@
     <KeepIntermediate>False</KeepIntermediate>
     <GHProjectType>1</GHProjectType>
     <PreCompile>false</PreCompile>
-	<NoWarn>67,169,612,618,649,3021</NoWarn>
+    <NoWarn>67,169,612,618,649,3021</NoWarn>
     <AdditionalClassPath>
     </AdditionalClassPath>
     <ApplicationServerType>
@@ -121,7 +121,7 @@
     <KeepIntermediate>false</KeepIntermediate>
     <GHProjectType>1</GHProjectType>
     <PreCompile>false</PreCompile>
-	<NoWarn>67,169,612,618,649,3021</NoWarn>
+    <NoWarn>67,169,612,618,649,3021</NoWarn>
     <AdditionalClassPath>
     </AdditionalClassPath>
     <ApplicationServerType>
@@ -528,6 +528,7 @@
     <Compile Include="..\..\build\common\Consts.cs.in">
       <Link>Assembly\Consts.cs.in</Link>
     </Compile>
+    <Compile Include="Mono.Xml.Xsl\XsltDebuggerWrapper.cs" />
     <Compile Include="System.Xml\XmlTextReader.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -548,7 +549,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties REFS-JarPath-mscorlib="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\mscorlib.jar" REFS-JarPath-system="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\System.jar" REFS-JarPath-rt="..\lib\rt.jar" />
+      <UserProperties REFS-JarPath-rt="..\lib\rt.jar" REFS-JarPath-system="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\System.jar" REFS-JarPath-mscorlib="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\mscorlib.jar" />
     </VisualStudio>
   </ProjectExtensions>
   <PropertyGroup>
