@@ -205,7 +205,8 @@ namespace System.Web.UI
 		}
 
 		protected override void RenderChildren (HtmlTextWriter writer) {
-			if (ScriptManager.IsInAsyncPostBack && RequiresUpdate && writer is ScriptManager.AlternativeHtmlTextWriter) {
+			if (ScriptManager.IsInAsyncPostBack && RequiresUpdate && !ScriptManager.IsInPartialRendering) {
+				ScriptManager.IsInPartialRendering = true;
 				HtmlTextWriter responseOutput = ((ScriptManager.AlternativeHtmlTextWriter) writer).ResponseOutput;
 				StringBuilder sb = new StringBuilder ();
 				HtmlTextWriter w = new HtmlTextWriter (new StringWriter (sb));
@@ -215,6 +216,8 @@ namespace System.Web.UI
 				ScriptManager.WriteCallbackPanel (responseOutput, ClientID, sb);
 				for (int i = 0; i < sb.Length; i++)
 					writer.Write (sb [i]);
+
+				ScriptManager.IsInPartialRendering = false;
 			}
 			else
 				base.RenderChildren (writer);

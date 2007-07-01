@@ -87,6 +87,7 @@ namespace System.Web.UI
 		List<UpdatePanel> _updatePanels;
 		ScriptReferenceCollection _scripts;
 		bool _isInAsyncPostBack;
+		bool _isInPartialRendering;
 		string _asyncPostBackSourceElementID;
 		ScriptMode _scriptMode = ScriptMode.Auto;
 		bool _enableScriptGlobalization;
@@ -232,6 +233,15 @@ namespace System.Web.UI
 		public bool IsInAsyncPostBack {
 			get {
 				return _isInAsyncPostBack;
+			}
+		}
+
+		internal bool IsInPartialRendering {
+			get {
+				return _isInPartialRendering;
+			}
+			set {
+				_isInPartialRendering = value;
 			}
 		}
 
@@ -397,15 +407,15 @@ namespace System.Web.UI
 		protected override void OnPreRender (EventArgs e) {
 			base.OnPreRender (e);
 
+			Page.PreRenderComplete += new EventHandler (OnPreRenderComplete);
+
 			if (IsInAsyncPostBack) {
 				Page.SetRenderMethodDelegate (RenderPageCallback);
 			}
 			else {
-				Page.PreRenderComplete += new EventHandler (OnPreRenderComplete);
-
 				if (EnableScriptGlobalization) {
 					CultureInfo culture = Thread.CurrentThread.CurrentCulture;
-					string script = String.Format ("var __cultureInfo = '{0}';", _cultureInfoSerializer.Serialize (culture).Replace ("'", "\\u0027"));
+					string script = String.Format ("var __cultureInfo = '{0}';", _cultureInfoSerializer.Serialize (culture));
 					RegisterClientScriptBlock (this, typeof (ScriptManager), "ScriptGlobalization", script, true);
 				}
 
@@ -418,43 +428,59 @@ namespace System.Web.UI
 
 		void OnPreRenderComplete (object sender, EventArgs e) {
 			// Register Scripts
-			List<ScriptReference> scripts = new List<ScriptReference> ();
-			foreach (ScriptReference script in GetScriptReferences ()) {
-				OnResolveScriptReference (new ScriptReferenceEventArgs (script));
+			List<ScriptReferenceEntry> scripts = new List<ScriptReferenceEntry> ();
+			foreach (ScriptReferenceEntry script in GetScriptReferences ()) {
+				OnResolveScriptReference (new ScriptReferenceEventArgs (script.ScriptReference));
 				scripts.Add (script);
 			}
 			for (int i = 0; i < scripts.Count; i++)
-				RegisterScriptReference (scripts [i]);
+				if (!IsInAsyncPostBack || HasBeenRendered (scripts [i].Control))
+					RegisterScriptReference (scripts [i].ScriptReference);
 		}
 
-		IEnumerable<ScriptReference> GetScriptReferences () {
+		static bool HasBeenRendered (Control control) {
+			if(control==null)
+				return false;
+
+			UpdatePanel parent = control.Parent as UpdatePanel;
+			if (parent != null && parent.RequiresUpdate)
+				return true;
+
+			return HasBeenRendered (control.Parent);
+		}
+
+		IEnumerable<ScriptReferenceEntry> GetScriptReferences () {
 			ScriptReference script;
 
 			script = new ScriptReference ("MicrosoftAjax.js", String.Empty);
 			script.NotifyScriptLoaded = false;
-			yield return script;
+			yield return new ScriptReferenceEntry (this, script);
 
 			script = new ScriptReference ("MicrosoftAjaxWebForms.js", String.Empty);
 			script.NotifyScriptLoaded = false;
-			yield return script;
+			yield return new ScriptReferenceEntry (this, script);
 
 			if (_scripts != null && _scripts.Count > 0) {
 				for (int i = 0; i < _scripts.Count; i++) {
-					yield return _scripts [i];
+					yield return new ScriptReferenceEntry (this, _scripts [i]);
 				}
 			}
 
 			if (_registeredScriptControls != null && _registeredScriptControls.Count > 0) {
 				for (int i = 0; i < _registeredScriptControls.Count; i++) {
-					foreach (ScriptReference s in _registeredScriptControls [i].GetScriptReferences ())
-						yield return s;
+					IEnumerable<ScriptReference> scripts = _registeredScriptControls [i].GetScriptReferences ();
+					if (scripts != null)
+						foreach (ScriptReference s in scripts)
+							yield return new ScriptReferenceEntry ((Control) _registeredScriptControls [i], s);
 				}
 			}
 
 			if (_registeredExtenderControls != null && _registeredExtenderControls.Count > 0) {
 				foreach (IExtenderControl ex in _registeredExtenderControls.Keys) {
-					foreach (ScriptReference s in ex.GetScriptReferences ())
-						yield return s;
+					IEnumerable<ScriptReference> scripts = ex.GetScriptReferences ();
+					if (scripts != null)
+						foreach (ScriptReference s in scripts)
+							yield return new ScriptReferenceEntry ((Control) ex, s);
 				}
 			}
 		}
@@ -683,7 +709,9 @@ namespace System.Web.UI
 		}
 
 		void RegisterScriptDescriptors (IEnumerable<ScriptDescriptor> scriptDescriptors) {
-			if (IsInAsyncPostBack)
+			if (scriptDescriptors == null)
+				return;
+			if (IsInAsyncPostBack && !IsInPartialRendering)
 				return;
 
 			StringBuilder sb = new StringBuilder ();
@@ -1158,6 +1186,20 @@ namespace System.Web.UI
 				d.Add ("numberFormat", ci.NumberFormat);
 				d.Add ("dateTimeFormat", ci.DateTimeFormat);
 				return d;
+			}
+		}
+
+		sealed class ScriptReferenceEntry
+		{
+			public readonly Control _control;
+			public readonly ScriptReference _scriptReference;
+
+			public Control Control { get { return _control; } }
+			public ScriptReference ScriptReference { get { return _scriptReference; } }
+
+			public ScriptReferenceEntry (Control control, ScriptReference scriptReference) {
+				_control = control;
+				_scriptReference = scriptReference;
 			}
 		}
 	}
