@@ -166,12 +166,6 @@ namespace System.ComponentModel
 			throw new NotImplementedException ();
 		}
 
-#if TARGET_JVM
-		IEnumerator IEnumerable.GetEnumerator ()
-		{
-			return GetEnumerator ();
-		}
-#endif
 		public int IndexOf (PropertyDescriptor value)
 		{
 			return properties.IndexOf (value);
