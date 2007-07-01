@@ -45,7 +45,7 @@ namespace System.Data.OleDb
 		private ArrayList gdaResults;
 		private int currentResult;
 		private int currentRow;
-		private bool disposed = false;
+		private bool disposed;
 
 		#endregion
 
@@ -75,8 +75,7 @@ namespace System.Data.OleDb
 
 		public int FieldCount {
 			get {
-				if (currentResult < 0 ||
-				    currentResult >= gdaResults.Count)
+				if (currentResult < 0 || currentResult >= gdaResults.Count)
 					return 0;
 
 				return libgda.gda_data_model_get_n_columns (
@@ -209,7 +208,7 @@ namespace System.Data.OleDb
 				throw new InvalidCastException ();
 
 			value = libgda.gda_data_model_get_value_at ((IntPtr) gdaResults[currentResult],
-								    ordinal, currentRow);
+				ordinal, currentRow);
 			if (value == IntPtr.Zero)
 				throw new InvalidCastException ();
 			
@@ -240,7 +239,7 @@ namespace System.Data.OleDb
 
 			
 			attrs = libgda.gda_data_model_describe_column ((IntPtr) gdaResults[currentResult],
-								       index);
+				index);
 			if (attrs == IntPtr.Zero)
 				return "unknown";
 
@@ -259,7 +258,7 @@ namespace System.Data.OleDb
 				throw new InvalidCastException ();
 
 			value = libgda.gda_data_model_get_value_at ((IntPtr) gdaResults[currentResult],
-								    ordinal, currentRow);
+				ordinal, currentRow);
 			if (value == IntPtr.Zero)
 				throw new InvalidCastException ();
 			
@@ -279,11 +278,11 @@ namespace System.Data.OleDb
 				GdaTimestamp gdt;
 				
 				gdt = (GdaTimestamp) Marshal.PtrToStructure (libgda.gda_value_get_timestamp (value),
-									     typeof (GdaTimestamp));
+					typeof (GdaTimestamp));
 
 				return new DateTime ((int) gdt.year, (int) gdt.month, (int) gdt.day,
-						     (int) gdt.hour, (int) gdt.minute, (int) gdt.second,
-						     (int) gdt.fraction);
+					(int) gdt.hour, (int) gdt.minute, (int) gdt.second,
+					(int) gdt.fraction);
 			}
 
 			throw new InvalidCastException ();
@@ -352,7 +351,7 @@ namespace System.Data.OleDb
 				throw new InvalidCastException ();
 
 			value = libgda.gda_data_model_get_value_at ((IntPtr) gdaResults[currentResult],
-								    ordinal, currentRow);
+				ordinal, currentRow);
 			if (value == IntPtr.Zero)
 				throw new InvalidCastException ();
 			
@@ -375,7 +374,7 @@ namespace System.Data.OleDb
 				throw new InvalidCastException ();
 
 			value = libgda.gda_data_model_get_value_at ((IntPtr) gdaResults[currentResult],
-								    ordinal, currentRow);
+				ordinal, currentRow);
 			if (value == IntPtr.Zero)
 				throw new InvalidCastException ();
 			
@@ -392,7 +391,7 @@ namespace System.Data.OleDb
 				throw new InvalidCastException ();
 
 			value = libgda.gda_data_model_get_value_at ((IntPtr) gdaResults[currentResult],
-								    ordinal, currentRow);
+				ordinal, currentRow);
 			if (value == IntPtr.Zero)
 				throw new InvalidCastException ();
 			
@@ -409,7 +408,7 @@ namespace System.Data.OleDb
 				throw new InvalidCastException ();
 
 			value = libgda.gda_data_model_get_value_at ((IntPtr) gdaResults[currentResult],
-								    ordinal, currentRow);
+				ordinal, currentRow);
 			if (value == IntPtr.Zero)
 				throw new InvalidCastException ();
 			
@@ -508,7 +507,7 @@ namespace System.Data.OleDb
 					gdaType = libgda.gda_field_attributes_get_gdatype (attrs);
 					columnSize = libgda.gda_field_attributes_get_defined_size (attrs);
 					libgda.gda_field_attributes_free (attrs);
-										
+					
 					schemaRow["ColumnName"] = this.GetName(i);
 					schemaRow["ColumnOrdinal"] = i + 1;
 					
@@ -572,7 +571,7 @@ namespace System.Data.OleDb
 				throw new InvalidCastException ();
 
 			value = libgda.gda_data_model_get_value_at ((IntPtr) gdaResults[currentResult],
-								    ordinal, currentRow);
+				ordinal, currentRow);
 			if (value == IntPtr.Zero)
 				throw new InvalidCastException ();
 			
@@ -596,7 +595,7 @@ namespace System.Data.OleDb
 				throw new IndexOutOfRangeException ();
 
 			value = libgda.gda_data_model_get_value_at ((IntPtr) gdaResults[currentResult],
-								    ordinal, currentRow);
+				ordinal, currentRow);
 			if (value == IntPtr.Zero)
 				throw new IndexOutOfRangeException ();
 
@@ -643,7 +642,7 @@ namespace System.Data.OleDb
 				throw new IndexOutOfRangeException ();
 
 			value = libgda.gda_data_model_get_value_at ((IntPtr) gdaResults[currentResult],
-								    ordinal, currentRow);
+				ordinal, currentRow);
 			if (value == IntPtr.Zero)
 				throw new IndexOutOfRangeException ();
 
@@ -663,13 +662,11 @@ namespace System.Data.OleDb
 
 		public bool Read ()
 		{
-			if (currentResult < 0 ||
-			    currentResult >= gdaResults.Count)
+			if (currentResult < 0 || currentResult >= gdaResults.Count)
 				return false;
 
 			currentRow++;
-			if (currentRow <
-			    libgda.gda_data_model_get_n_rows ((IntPtr) gdaResults[currentResult]))
+			if (currentRow < libgda.gda_data_model_get_n_rows ((IntPtr) gdaResults[currentResult]))
 				return true;
 
 			return false;
@@ -697,7 +694,7 @@ namespace System.Data.OleDb
 				if (open)
 					Close ();
 
-				this.disposed = true;	
+				this.disposed = true;
 			}
 		}
 
@@ -710,6 +707,5 @@ namespace System.Data.OleDb
 		}
 
 		#endregion // Destructors
-
 	}
 }

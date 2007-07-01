@@ -1,6 +1,7 @@
 2007-07-01  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* OleDbCommand.cs: Code formatting.
+	* OleDbDataReader.cs: Code formatting.
 	* OleDbError.cs: Code formatting.
 	* OleDbErrorCollection.cs: Code formatting.
 	* OleDbException.cs: Code formatting.
