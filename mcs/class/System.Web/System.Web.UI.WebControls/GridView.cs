@@ -1263,8 +1263,8 @@ namespace System.Web.UI.WebControls
 				}
 			}
 
-			bool showPager = AllowPaging && (PageCount > 1);
-			
+			bool createPager = AllowPaging && (PageCount >= 1) && PagerSettings.Visible;
+
 			ArrayList list = new ArrayList ();
 			
 			// Creates the set of fields to show
@@ -1297,7 +1297,7 @@ namespace System.Web.UI.WebControls
 				object obj = enumerator.Current;
 				
 				if (list.Count == 0) {
-					if (showPager && (PagerSettings.Position == PagerPosition.Top || PagerSettings.Position == PagerPosition.TopAndBottom)) {
+					if (createPager && (PagerSettings.Position == PagerPosition.Top || PagerSettings.Position == PagerPosition.TopAndBottom)) {
 						topPagerRow = CreatePagerRow (fields.Length, dataSource);
 						OnRowCreated (new GridViewRowEventArgs (topPagerRow));
 						ContainedTable.Rows.Add (topPagerRow);
@@ -1305,6 +1305,8 @@ namespace System.Web.UI.WebControls
 							topPagerRow.DataBind ();
 							OnRowDataBound (new GridViewRowEventArgs (topPagerRow));
 						}
+						if (PageCount == 1)
+							topPagerRow.Visible = false;
 					}
 
 					GridViewRow headerRow = CreateRow (-1, -1, DataControlRowType.Header, DataControlRowState.Normal);
@@ -1355,7 +1357,7 @@ namespace System.Web.UI.WebControls
 					OnRowDataBound (new GridViewRowEventArgs (footerRow));
 				}
 
-				if (showPager && (PagerSettings.Position == PagerPosition.Bottom || PagerSettings.Position == PagerPosition.TopAndBottom)) {
+				if (createPager && (PagerSettings.Position == PagerPosition.Bottom || PagerSettings.Position == PagerPosition.TopAndBottom)) {
 					bottomPagerRow = CreatePagerRow (fields.Length, dataSource);
 					OnRowCreated (new GridViewRowEventArgs (bottomPagerRow));
 					ContainedTable.Rows.Add (bottomPagerRow);
@@ -1363,6 +1365,8 @@ namespace System.Web.UI.WebControls
 						bottomPagerRow.DataBind ();
 						OnRowDataBound (new GridViewRowEventArgs (bottomPagerRow));
 					}
+					if (PageCount == 1)
+						bottomPagerRow.Visible = false;
 				}
 			}
 

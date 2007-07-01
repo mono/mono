@@ -1,5 +1,11 @@
 2007-07-01 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* GridView.cs:
+	the Pager is created but unvisible for only one page. 
+	the Patch submitted by Dumitru Ban [dban@dako.ro]	
+
+2007-07-01 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* FormView.cs:
 	* DetailView.cs:
 	* GridView.cs:

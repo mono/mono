@@ -3086,6 +3086,83 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		public static void BuildTemplateMethod (Control c) { }
 
+		[Test]
+		[Category ("NunitWeb")]
+		public void GridView_Pager () {
+			PageDelegates delegates = new PageDelegates ();
+			delegates.Load = GridView_Pager_Load;
+			PageInvoker invoker = new PageInvoker (delegates);
+			WebTest t = new WebTest (invoker);
+			string html = t.Run ();
+		}
+
+		public static void GridView_Pager_Load (Page p) {
+			// TopAndBottom, PageCount = 1
+			PokerGridView grid = new PokerGridView ();
+			grid.PagerSettings.Position = PagerPosition.TopAndBottom;
+			grid.AllowPaging = true;
+			p.Form.Controls.Add (grid);
+
+			grid.DataSource = new string [] { "A", "B", "C" };
+			grid.DataBind ();
+
+			Assert.AreEqual (1, grid.PageCount, "#1#PageCount");
+
+			Assert.IsNotNull (grid.TopPagerRow, "#1#TopPagerRow");
+			Assert.AreEqual (false, grid.TopPagerRow.Visible, "#1#TopPagerRow.Visible");
+
+			Assert.IsNotNull (grid.BottomPagerRow, "#1#BottomPagerRow");
+			Assert.AreEqual (false, grid.BottomPagerRow.Visible, "#1#BottomPagerRow.Visible");
+
+			// Top, PageCount = 1
+			grid = new PokerGridView ();
+			grid.PagerSettings.Position = PagerPosition.Top;
+			grid.AllowPaging = true;
+			p.Form.Controls.Add (grid);
+
+			grid.DataSource = new string [] { "A", "B", "C" };
+			grid.DataBind ();
+
+			Assert.AreEqual (1, grid.PageCount, "#2#PageCount");
+
+			Assert.IsNotNull (grid.TopPagerRow, "#2#TopPagerRow");
+			Assert.AreEqual (false, grid.TopPagerRow.Visible, "#2#TopPagerRow.Visible");
+
+			Assert.IsNull (grid.BottomPagerRow, "#2#BottomPagerRow");
+
+			// Bottom, PageCount = 1
+			grid = new PokerGridView ();
+			grid.PagerSettings.Position = PagerPosition.Bottom;
+			grid.AllowPaging = true;
+			p.Form.Controls.Add (grid);
+
+			grid.DataSource = new string [] { "A", "B", "C" };
+			grid.DataBind ();
+
+			Assert.AreEqual (1, grid.PageCount, "#3#PageCount");
+
+			Assert.IsNull (grid.TopPagerRow, "#3#TopPagerRow");
+
+			Assert.IsNotNull (grid.BottomPagerRow, "#3#BottomPagerRow");
+			Assert.AreEqual (false, grid.BottomPagerRow.Visible, "#3#BottomPagerRow.Visible");
+
+			// PagerSettings.Visible = false, PageCount = 2
+			grid = new PokerGridView ();
+			grid.PagerSettings.Position = PagerPosition.TopAndBottom;
+			grid.PagerSettings.Visible = false;
+			grid.AllowPaging = true;
+			grid.PageSize = 2;
+			p.Form.Controls.Add (grid);
+
+			grid.DataSource = new string [] { "A", "B", "C" };
+			grid.DataBind ();
+
+			Assert.AreEqual (2, grid.PageCount, "#3#PageCount");
+
+			Assert.IsNull (grid.TopPagerRow, "#3#TopPagerRow");
+			Assert.IsNull (grid.BottomPagerRow, "#3#BottomPagerRow");
+		}
+
         [TestFixtureTearDown]
         public void TearDown()
         {
@@ -3342,6 +3419,7 @@ namespace MonoTests.System.Web.UI.WebControls
 }
 
 #endif
+
 
 
 
