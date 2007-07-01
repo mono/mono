@@ -1,3 +1,8 @@
+2007-07-01  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* OleDbParameter.cs: Code formatting.
+	* OleDbParameterCollection.cs: Code formatting.
+
 2007-06-21  Nagappan A  <anagappan@novell.com>
 
 	* OleDbConnection.cs: Fixed compiler warning.

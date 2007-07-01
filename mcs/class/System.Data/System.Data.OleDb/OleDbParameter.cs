@@ -55,8 +55,7 @@ namespace System.Data.OleDb
 		ParameterDirection direction;
 		OleDbType oleDbType;
 		DbType dbType;
-		OleDbParameterCollection container = null;		
-
+		OleDbParameterCollection container;
 		IntPtr gdaParameter;
 
 		#endregion
@@ -66,7 +65,6 @@ namespace System.Data.OleDb
 		public OleDbParameter ()
 		{
 			name = String.Empty;
-			value = null;
 			size = 0;
 			isNullable = true;
 			precision = 0;
@@ -102,7 +100,7 @@ namespace System.Data.OleDb
 			this.sourceColumn = srcColumn;
 		}
 		
-		[EditorBrowsableAttribute (EditorBrowsableState.Advanced)]		
+		[EditorBrowsableAttribute (EditorBrowsableState.Advanced)]
 		public OleDbParameter(string name, OleDbType dataType, int size, ParameterDirection direction, bool isNullable, byte precision, byte scale, string srcColumn, DataRowVersion srcVersion, object value)
 			: this (name, dataType, size, srcColumn)
 		{
@@ -148,7 +146,7 @@ namespace System.Data.OleDb
 		[DataSysDescriptionAttribute ("a design-time property used for strongly typed code-generation.")]
 #endif
 		[DesignOnlyAttribute (true)]
-                [EditorBrowsableAttribute (EditorBrowsableState.Advanced)]
+		[EditorBrowsableAttribute (EditorBrowsableState.Advanced)]
 		[DefaultValue (false)]
 		public bool IsNullable {
 			get { return isNullable; }
@@ -180,7 +178,7 @@ namespace System.Data.OleDb
 
 		[DefaultValue (0)]
 #if !NET_2_0
-                [DataSysDescriptionAttribute ("For decimal, numeric, varnumeric DBTypes.")]
+		[DataSysDescriptionAttribute ("For decimal, numeric, varnumeric DBTypes.")]
 #endif
 		[DataCategory ("DataCategory_Data")]
 		public byte Precision {
@@ -190,7 +188,7 @@ namespace System.Data.OleDb
 		
 		[DefaultValue (0)]
 #if !NET_2_0
-                [DataSysDescriptionAttribute ("For decimal, numeric, varnumeric DBTypes.")]
+		[DataSysDescriptionAttribute ("For decimal, numeric, varnumeric DBTypes.")]
 #endif
 		[DataCategory ("DataCategory_Data")]
 		public byte Scale {
@@ -201,7 +199,7 @@ namespace System.Data.OleDb
 
 		[DefaultValue (0)]
 #if !NET_2_0
-                [DataSysDescriptionAttribute ("Size of variable length data types (string & arrays).")]
+		[DataSysDescriptionAttribute ("Size of variable length data types (string & arrays).")]
 #endif
 		[DataCategory ("DataCategory_Data")]
 		public int Size {
@@ -211,7 +209,7 @@ namespace System.Data.OleDb
 
 		[DefaultValue ("")]
 #if !NET_2_0
-                [DataSysDescriptionAttribute ("When used by a DataAdapter.Update, the source column name that is used to find the DataSetColumn name in the ColumnMappings. This is to copy a value between the parameter and a datarow.")]
+		[DataSysDescriptionAttribute ("When used by a DataAdapter.Update, the source column name that is used to find the DataSetColumn name in the ColumnMappings. This is to copy a value between the parameter and a datarow.")]
 #endif
 		[DataCategory ("DataCategory_Data")]
 		public string SourceColumn {
@@ -221,7 +219,7 @@ namespace System.Data.OleDb
 		
 		[DefaultValue (DataRowVersion.Current)]
 #if !NET_2_0
-                [DataSysDescriptionAttribute ("When used by a DataAdapter.Update (UpdateCommand only), the version of the DataRow value that is used to update the data source.")]
+		[DataSysDescriptionAttribute ("When used by a DataAdapter.Update (UpdateCommand only), the version of the DataRow value that is used to update the data source.")]
 #endif
 		[DataCategory ("DataCategory_Data")]
 		public DataRowVersion SourceVersion {
@@ -231,7 +229,7 @@ namespace System.Data.OleDb
 		
 		[DefaultValue (null)]
 #if !NET_2_0
-                [DataSysDescriptionAttribute ("Value of the parameter.")]
+		[DataSysDescriptionAttribute ("Value of the parameter.")]
 #endif
 		[TypeConverter (typeof (StringConverter))]
 		[DataCategory ("DataCategory_Data")]
@@ -241,12 +239,11 @@ namespace System.Data.OleDb
 		}
 
 		// Used to ensure that only one collection can contain this
-                // parameter
-                internal OleDbParameterCollection Container {
-                        get { return container; }
-                        set { container = value; }
-                }
-
+		// parameter
+		internal OleDbParameterCollection Container {
+			get { return container; }
+			set { container = value; }
+		}
 
 		#endregion // Properties
 
