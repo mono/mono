@@ -55,9 +55,9 @@ using System.Xml;
 namespace System.Data.SqlClient {
 	[DefaultEvent ("InfoMessage")]
 #if NET_2_0
-	public sealed class SqlConnection : DbConnection, IDbConnection, ICloneable	
+	public sealed class SqlConnection : DbConnection, IDbConnection, ICloneable
 #else
-	public sealed class SqlConnection : Component, IDbConnection, ICloneable	                
+	public sealed class SqlConnection : Component, IDbConnection, ICloneable
 #endif // NET_2_0
 	{
 		#region Fields
@@ -110,17 +110,16 @@ namespace System.Data.SqlClient {
 	
 		public SqlConnection (string connectionString)
 		{
-                        Init (connectionString);
+			Init (connectionString);
 		}
 
-                private void Init (string connectionString)
-                {
-                        connectionTimeout       = 15; // default timeout
-                        dataSource              = ""; // default datasource
-                        packetSize              = 8192; // default packetsize
-                        ConnectionString        = connectionString;
-                }
-                
+		private void Init (string connectionString)
+		{
+			connectionTimeout       = 15; // default timeout
+			dataSource              = ""; // default datasource
+			packetSize              = 8192; // default packetsize
+			ConnectionString        = connectionString;
+		}
 
 		#endregion // Constructors
 
@@ -131,18 +130,14 @@ namespace System.Data.SqlClient {
 #endif
 		[DefaultValue ("")]
 		[EditorAttribute ("Microsoft.VSDesigner.Data.SQL.Design.SqlConnectionStringEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
-#if NET_2_0
-		[SettingsBindableAttribute (true)]
-#else
 		[RecommendedAsConfigurable (true)]
-#endif
 		[RefreshProperties (RefreshProperties.All)]
 		[MonoTODO("persist security info, encrypt, enlist keyword not implemented")]
 		public 
 #if NET_2_0
 		override
 #endif // NET_2_0
-                string ConnectionString	{
+		string ConnectionString {
 			get { return connectionString; }
 			set {
 				if (state == ConnectionState.Open)
@@ -159,7 +154,6 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		override
 #endif // NET_2_0
-                
 		int ConnectionTimeout {
 			get { return connectionTimeout; }
 		}
@@ -172,12 +166,12 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		override
 #endif // NET_2_0
-                string Database	{
-			get { 
-                                if (State == ConnectionState.Open)
-                                        return tds.Database; 
-                                return parms.Database ;
-                        }
+		string Database {
+			get {
+				if (State == ConnectionState.Open)
+					return tds.Database; 
+				return parms.Database ;
+			}
 		}
 		
 		internal SqlDataReader DataReader {
@@ -195,7 +189,7 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		override
 #endif // NET_2_0
-                string DataSource {
+		string DataSource {
 			get { return dataSource; }
 		}
 
@@ -204,7 +198,7 @@ namespace System.Data.SqlClient {
 #endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public int PacketSize {
-			get {	
+			get {
 				if (State == ConnectionState.Open) 
 					return ((Tds)tds).PacketSize ;
 				return packetSize; 
@@ -220,8 +214,8 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		override
 #endif // NET_2_0
-                string ServerVersion {
-			get { 
+		string ServerVersion {
+			get {
 				if (state == ConnectionState.Closed)
 					throw new InvalidOperationException ("Invalid Operation.The Connection is Closed");
 				else
@@ -238,7 +232,7 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		override
 #endif // NET_2_0
-                ConnectionState State {
+		ConnectionState State {
 			get { return state; }
 		}
 
@@ -287,8 +281,8 @@ namespace System.Data.SqlClient {
 
 #if !NET_2_0
 		[DataSysDescription ("Event triggered when the connection changes state.")]
-#endif // NET_2_0
-                public new event StateChangeEventHandler StateChange;
+		public new event StateChangeEventHandler StateChange;
+#endif
 
 		#endregion // Events
 
@@ -307,20 +301,19 @@ namespace System.Data.SqlClient {
 		#endregion // Delegates
 
 		#region Methods
-                
-                internal string GetConnStringKeyValue (params string [] keys)
-                {
-                        if (connStringParameters == null || connStringParameters.Count == 0)
-                                return "";
-                        foreach (string key in keys) {
-                                string value = connStringParameters [key];
-                                if (value != null)
-                                        return value;
-                        }
-                        
-                        return "";
-                }
-                
+
+		internal string GetConnStringKeyValue (params string [] keys)
+		{
+			if (connStringParameters == null || connStringParameters.Count == 0)
+				return "";
+			foreach (string key in keys) {
+				string value = connStringParameters [key];
+				if (value != null)
+					return value;
+			}
+
+			return "";
+		}
 
 		public new SqlTransaction BeginTransaction ()
 		{
@@ -393,7 +386,7 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		override
 #endif // NET_2_0
-                void Close () 
+		void Close () 
 		{
 			if (transaction != null && transaction.IsOpen)
 				transaction.Rollback ();
@@ -405,11 +398,11 @@ namespace System.Data.SqlClient {
 			}
 
 			if (pooling) {
-                                if(pool != null) pool.ReleaseConnection (tds);
+				if(pool != null) pool.ReleaseConnection (tds);
 			}else
-                                if(tds != null) tds.Disconnect ();
+				if(tds != null) tds.Disconnect ();
 
-			if(tds != null) {
+			if (tds != null) {
 				tds.TdsErrorMessage -= new TdsInternalErrorMessageEventHandler (ErrorHandler);
 				tds.TdsInfoMessage -= new TdsInternalInfoMessageEventHandler (MessageHandler);
 			}
@@ -453,8 +446,7 @@ namespace System.Data.SqlClient {
 		}
 
 		[MonoTODO ("Not sure what this means at present.")]
-		public 
-                void EnlistDistributedTransaction (ITransaction transaction)
+		public void EnlistDistributedTransaction (ITransaction transaction)
 		{
 			throw new NotImplementedException ();
 		}
@@ -464,15 +456,6 @@ namespace System.Data.SqlClient {
 			return new SqlConnection (ConnectionString);
 		}
 
-		IDbTransaction IDbConnection.BeginTransaction ()
-		{
-			return BeginTransaction ();
-		}
-
-		IDbTransaction IDbConnection.BeginTransaction (IsolationLevel iso)
-		{
-			return BeginTransaction (iso);
-		}
 #if NET_2_0
 		protected override DbTransaction BeginDbTransaction (IsolationLevel level)
 		{
@@ -483,24 +466,28 @@ namespace System.Data.SqlClient {
 		{
 			return CreateCommand ();
 		}
-#endif
+#else
+		IDbTransaction IDbConnection.BeginTransaction ()
+		{
+			return BeginTransaction ();
+		}
+
+		IDbTransaction IDbConnection.BeginTransaction (IsolationLevel iso)
+		{
+			return BeginTransaction (iso);
+		}
 
 		IDbCommand IDbConnection.CreateCommand ()
 		{
 			return CreateCommand ();
 		}
-
-		void IDisposable.Dispose ()
-		{
-			Dispose (true);
-			GC.SuppressFinalize (this);
-		}
+#endif
 
 		public 
 #if NET_2_0
 		override
 #endif // NET_2_0
-                void Open () 
+		void Open () 
 		{
 			string serverName = "";
 			if (state == ConnectionState.Open)
@@ -545,7 +532,7 @@ namespace System.Data.SqlClient {
 				tds.Reset ();
 			}
 
-                        disposed = false; // reset this, so using () would call Close ().
+			disposed = false; // reset this, so using () would call Close ().
 			ChangeState (ConnectionState.Open);
 		}
 
@@ -637,14 +624,14 @@ namespace System.Data.SqlClient {
 	
 		void SetConnectionString (string connectionString)
 		{
-                        NameValueCollection parameters = new NameValueCollection ();
-                        SetDefaultConnectionParameters (parameters);
+			NameValueCollection parameters = new NameValueCollection ();
+			SetDefaultConnectionParameters (parameters);
 
 			if ((connectionString == null) || (connectionString.Trim().Length == 0)) {
 				this.connectionString = connectionString;
 				this.connStringParameters = parameters;
 				return;
-                        }
+			}
 
 			connectionString += ";";
 
@@ -760,7 +747,7 @@ namespace System.Data.SqlClient {
 			parameters["WORKSTATION ID"] = Dns.GetHostName();
  #if NET_2_0
 			async = false;
-                	parameters ["ASYNCHRONOUS PROCESSING"] = "false";
+			parameters ["ASYNCHRONOUS PROCESSING"] = "false";
  #endif
 		}
 		
@@ -913,11 +900,13 @@ namespace System.Data.SqlClient {
 				InfoMessage (this, value);
 		}
 
+#if !NET_2_0
 		private new void OnStateChange (StateChangeEventArgs value)
 		{
 			if (StateChange != null)
 				StateChange (this, value);
 		}
+#endif
 
 		private sealed class SqlMonitorSocket : UdpClient 
 		{
@@ -940,7 +929,7 @@ namespace System.Data.SqlClient {
 				int SqlServerTcpPort;
 				Client.Blocking = false;
 				// send command to UDP 1434 (SQL Monitor) to get
-				// the TCP port to connect to the MS SQL server		
+				// the TCP port to connect to the MS SQL server
 				ASCIIEncoding enc = new ASCIIEncoding ();
 				Byte[] rawrq = new Byte [instance.Length + 1];
 				rawrq[0] = 4;
@@ -1588,17 +1577,17 @@ namespace System.Data.SqlClient {
 
 		#endregion // Fields  Net 2
 
-                #region Properties Net 2
+		#region Properties Net 2
 
 #if !NET_2_0
-                [DataSysDescription ("Enable Asynchronous processing, 'Asynchrouse Processing=true/false' in the ConnectionString.")]	
+		[DataSysDescription ("Enable Asynchronous processing, 'Asynchrouse Processing=true/false' in the ConnectionString.")]	
 #endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		internal bool AsyncProcessing  {
 			get { return async; }
 		}
 
-                #endregion // Properties Net 2
+		#endregion // Properties Net 2
 
 #endif // NET_2_0
 

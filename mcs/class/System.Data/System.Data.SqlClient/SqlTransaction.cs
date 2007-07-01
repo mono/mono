@@ -34,9 +34,10 @@ using System;
 using System.Data;
 using System.Data.Common;
 
-namespace System.Data.SqlClient {
+namespace System.Data.SqlClient
+{
 #if NET_2_0
-        public sealed class SqlTransaction : DbTransaction, IDbTransaction, IDisposable
+	public sealed class SqlTransaction : DbTransaction, IDbTransaction, IDisposable
 #else
 	public sealed class SqlTransaction : MarshalByRefObject, IDbTransaction, IDisposable
 #endif // NET_2_0
@@ -69,7 +70,7 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		new
 #endif // NET_2_0
-	 SqlConnection Connection {
+		SqlConnection Connection {
 			get { return connection; }
 		}
 
@@ -81,30 +82,31 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		override
 #endif // NET_2_0
-	 IsolationLevel IsolationLevel {
+		IsolationLevel IsolationLevel {
 			get { return isolationLevel; }
 		}
 		
-		IDbConnection IDbTransaction.Connection	{
+		IDbConnection IDbTransaction.Connection {
 			get { return Connection; }
 		}
 
 		#endregion // Properties
-               
+
 		#region Methods
 
 		public 
 #if NET_2_0
 		override
 #endif // NET_2_0
-	 void Commit ()
+		void Commit ()
 		{
 			if (!isOpen)
 				throw new InvalidOperationException ("The Transaction was not open.");
 			connection.Tds.Execute ("COMMIT TRANSACTION");
 			connection.Transaction = null;
 			isOpen = false;
-		}		
+		}
+
 #if NET_2_0
 		protected override
 #endif
@@ -119,15 +121,13 @@ namespace System.Data.SqlClient {
 			}
 		}
 
-		public
-#if NET_2_0
-		new
-#endif
-		void Dispose ()
+#if !NET_2_0
+		public void Dispose ()
 		{
 			Dispose (true);
 			GC.SuppressFinalize (this);
 		}
+#endif
 
 		public 
 #if NET_2_0
@@ -149,7 +149,6 @@ namespace System.Data.SqlClient {
 				connection.Transaction = null;
 				connection = null;
 			}
-				
 		}
 
 		public void Save (string savePointName)
@@ -158,11 +157,11 @@ namespace System.Data.SqlClient {
 				throw new InvalidOperationException ("The Transaction was not open.");
 			connection.Tds.Execute (String.Format ("SAVE TRANSACTION {0}", savePointName));
 		}
+
 #if NET_2_0
-                protected override DbConnection DbConnection
-                {
-                        get {return (DbConnection) Connection;}
-                }
+		protected override DbConnection DbConnection {
+			get { return Connection; }
+		}
 #endif // NET_2_0
 		#endregion // Methods
 	}

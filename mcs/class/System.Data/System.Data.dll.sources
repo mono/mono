@@ -273,7 +273,6 @@ Microsoft.SqlServer.Server/SqlTriggerAttribute.cs
 System.Data.SqlClient/SqlNotificationType.cs
 System.Data.SqlClient/SqlNotificationInfo.cs
 System.Data.SqlClient/SqlNotificationSource.cs
-System.Data.SqlClient/ISqlNotificationReceiver.cs
 System.Data.SqlClient/SqlAsyncState.cs
 System.Data.SqlClient/SqlAsyncResult.cs
 System.Data.SqlClient/SqlClientMetaDataCollectionNames.cs
@@ -301,13 +300,10 @@ System.Data.SqlClient/SqlTransaction.cs
 System.Data.SqlClient/SqlXmlTextReader.cs
 System.Data.SqlClient/SQLDebugging.cs
 System.Data.SqlClient/SqlClientFactory.cs
-System.Data.SqlClient/SqlDataSourceEnumerator.cs
 System.Data.SqlClient/SqlBulkCopy.cs
 System.Data.SqlClient/SqlBulkCopyOptions.cs
 System.Data.SqlClient/SqlBulkCopyColumnMapping.cs
 System.Data.SqlClient/SqlBulkCopyColumnMappingCollection.cs
-System.Data.SqlClient/SqlNotificationAuthType.cs
-System.Data.SqlClient/SqlNotificationTransports.cs
 System.Data.SqlClient/SqlRowsCopiedEventHandler.cs
 System.Data.SqlClient/SqlRowsCopiedEventArgs.cs
 System.Data.SqlClient/SqlNotificationEventArgs.cs

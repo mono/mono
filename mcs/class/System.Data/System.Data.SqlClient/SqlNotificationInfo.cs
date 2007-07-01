@@ -29,32 +29,32 @@
 //
 
 #if NET_2_0
-
 namespace System.Data.SqlClient
 {
 	/// <summary>
 	/// Provides additional infoatmion about the different notifications that can be 
 	/// received by the dependency event handler
 	/// </summary>
-	public enum SqlNotificationInfo {
-		
-		AlreadyChanged = -1,
+	public enum SqlNotificationInfo
+	{
+		AlreadyChanged = -2,
 		Alter = 5,
 		Delete = 3,
 		Drop = 4,
 		Error = 7,
+		Expired = 12,
 		Insert = 1,
 		Invalid = 9,
 		Isolation = 11,
 		Options = 10,
+		PreviousFire = 14,
 		Query = 8,
+		Resource = 13,
 		Restart = 6,
+		TemplateLimit = 15,
 		Truncate = 0,
+		Unknown = -1,
 		Update = 2
 	}
-
 }
-
-
 #endif
-

@@ -29,22 +29,17 @@
 //
 
 #if NET_2_0
-
 namespace System.Data.SqlClient
 {
 	/// <summary>
 	/// Describes the differnt notification types that can be received by the dependency
 	/// event handler.
 	/// </summary>
-	public enum SqlNotificationType {
-
+	public enum SqlNotificationType
+	{
 		Change = 0,
-		Subscribe = 1
-
+		Subscribe = 1,
+		Unknown = -1
 	}
-
 }
-
 #endif
-
-

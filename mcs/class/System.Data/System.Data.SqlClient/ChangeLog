@@ -1,3 +1,34 @@
+2007-07-01  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ISqlNotificationReceiver.cs: Removed.
+	* SqlClientFactory.cs: Use SqlDataSourceEnumerator from S.D.Sql and
+	marked method todo. Avoid unnessary casts. Code formatting.
+	* SqlCommand.cs: Explicit interface implementation of IDbCommand not
+	necessary on 2.0 profile. Fixes API mismatches. Avoid unnecessary
+	casts. Code formatting.
+	* SqlConnection.cs: Also use RecommendAsConfigurable instead of
+	SettingBindableAttribute on 2.0. Use StateChange event from base class
+	on 2.0. Only explicitly implement IDbConnection methods on 1.0, since
+	these are implemented by base class on 2.0 profile. Removed extra
+	explicit implementation of IDisposable since the base class implements
+	this. Code formatting.
+	* SqlDataAdapter.cs: Dispose (bool) override not necessary on 2.0
+	profile. Stubbed ICloneable.Clone. Fixes API mismatches.
+	* SqlDataReader.cs: On 2.0, IDisposable.Dispose is implemented by
+	DbDataReader. Only 1.0 profile, explicitly implemented IEnumerable
+	GetEnumerator. Code formatting.
+	* SqlDataSourceEnumerator.cs: Removed.
+	* SQLDebugging.cs: Marked sealed on 2.0. Code formatting.
+	* SqlNotificationAuthType.cs: Removed.
+	* SqlNotificationInfo.cs: Added missing fields. Code formatting.
+	* SqlNotificationSource.cs: Added missing fields. Code formatting.
+	* SqlNotificationTransports.cs: Removed.
+	* SqlNotificationType.cs: Added missing Unknown field. Code formatting.
+	* SqlParameter.cs: Removed Browsable and EditorBrowsable attributes
+	from Precision and Scale. Fixes API mismatches. Code formatting fixes.
+	* SqlTransaction.cs: On 2.0 profile, Dispose method is exposed by
+	base class. Fixes API mismatches. Code formatting fixes.
+
 2007-06-21  Nagappan A  <anagappan@novell.com>
 
 	* SqlConnection.cs: Fixed compiler warning.

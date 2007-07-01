@@ -28,74 +28,82 @@
 //
 
 #if NET_2_0
+using System.Data;
+using System.Data.Common;
+using System.Data.Sql;
+using System.Security;
+using System.Security.Permissions;
+
 namespace System.Data.SqlClient
 {
-        using System.Data;
-        using System.Data.Common;
-	using System.Security;
-	using System.Security.Permissions;
-        
-        public sealed class SqlClientFactory : DbProviderFactory
-        {
-                #region Fields
-			public static readonly SqlClientFactory Instance = new SqlClientFactory ();
-                #endregion //Fields
+	public sealed class SqlClientFactory : DbProviderFactory
+	{
+		#region Fields
 
-                #region Constructors
-                
-                private SqlClientFactory ()
-                {
-                        
-                }
-                #endregion //Constructors
+		public static readonly SqlClientFactory Instance = new SqlClientFactory ();
+		
+		#endregion //Fields
+
+		#region Constructors
+
+		private SqlClientFactory ()
+		{
+		}
+
+		#endregion //Constructors
 
 		#region Properties
+		
 		public override bool CanCreateDataSourceEnumerator {
 			get { return true; }
-		}               
-		#endregion //Properties
- 
-                #region public overrides
-                public override DbCommand CreateCommand ()
-                {
-                        return (DbCommand) new SqlCommand ();
-                }
-
-                public override DbCommandBuilder CreateCommandBuilder ()
-                {
-                        return (DbCommandBuilder) new SqlCommandBuilder ();
-                }
-
-                public override DbConnection CreateConnection ()
-                {
-                        return (DbConnection) new SqlConnection ();
-                }
+		}
 		
+		#endregion //Properties
+
+		#region public overrides
+
+		public override DbCommand CreateCommand ()
+		{
+			return new SqlCommand ();
+		}
+
+		public override DbCommandBuilder CreateCommandBuilder ()
+		{
+			return new SqlCommandBuilder ();
+		}
+
+		public override DbConnection CreateConnection ()
+		{
+			return new SqlConnection ();
+		}
+
 		public override DbConnectionStringBuilder CreateConnectionStringBuilder ()
 		{
-			return (DbConnectionStringBuilder) new SqlConnectionStringBuilder ();
+			return new SqlConnectionStringBuilder ();
 		}
-                
-                public override DbDataAdapter CreateDataAdapter ()
-                {
-                        return (DbDataAdapter) new SqlDataAdapter ();
-                }
-                
-                public override DbDataSourceEnumerator CreateDataSourceEnumerator ()
-                {
-                        return (DbDataSourceEnumerator) new SqlDataSourceEnumerator ();
-                }
-                
-                public override DbParameter CreateParameter ()
-                {
-                        return (DbParameter) new SqlParameter ();
-                }
+
+		public override DbDataAdapter CreateDataAdapter ()
+		{
+			return new SqlDataAdapter ();
+		}
+
+		[MonoTODO]
+		public override DbDataSourceEnumerator CreateDataSourceEnumerator ()
+		{
+				return SqlDataSourceEnumerator.Instance;
+		}
+
+		public override DbParameter CreateParameter ()
+		{
+			return new SqlParameter ();
+		}
 		
 		public override CodeAccessPermission CreatePermission (PermissionState state)
 		{
-			return (CodeAccessPermission) new SqlClientPermission(state);
+			return new SqlClientPermission(state);
 		}
-                #endregion // public overrides
-        }
+	
+		#endregion // public overrides
+	}
 }
 #endif // NET_2_0

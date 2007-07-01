@@ -29,28 +29,24 @@
 //
 
 #if NET_2_0
-
 namespace System.Data.SqlClient
 {
 	/// <summary>
 	/// Indicates the source of the notification received by the dependency event handler
 	/// </summary>
-	public enum SqlNotificationSource {
-
-		Client = -1,
+	public enum SqlNotificationSource
+	{
+		Client = -2,
 		Data = 0,
 		Database = 3,
 		Environment = 6,
 		Execution = 7,
 		Object = 2,
+		Owner = 8,
 		Statement = 5,
 		System = 4,
-		Timeout = 1
-
+		Timeout = 1,
+		Unknown = -1,
 	}
-
 }
-
 #endif
-
-

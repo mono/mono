@@ -41,12 +41,14 @@ using System.Data.Common;
 namespace System.Data.SqlClient {
 	[DefaultEvent ("RowUpdated")]
 	[DesignerAttribute ("Microsoft.VSDesigner.Data.VS.SqlDataAdapterDesigner, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.IDesigner")]
-	[ToolboxItemAttribute ("Microsoft.VSDesigner.Data.VS.SqlDataAdapterToolboxItem, "+ Consts.AssemblyMicrosoft_VSDesigner)] 
-	public sealed class SqlDataAdapter : DbDataAdapter, IDbDataAdapter 
+	[ToolboxItemAttribute ("Microsoft.VSDesigner.Data.VS.SqlDataAdapterToolboxItem, "+ Consts.AssemblyMicrosoft_VSDesigner)]
+	public sealed class SqlDataAdapter : DbDataAdapter, IDbDataAdapter, ICloneable
 	{
 		#region Fields
 
-		bool disposed = false;	
+#if !NET_2_0
+		bool disposed;
+#endif
 		SqlCommand deleteCommand;
 		SqlCommand insertCommand;
 		SqlCommand selectCommand;
@@ -58,7 +60,7 @@ namespace System.Data.SqlClient {
 
 		#region Constructors
 		
-		public SqlDataAdapter () 	
+		public SqlDataAdapter () 
 			: this (new SqlCommand ())
 		{
 		}
@@ -164,7 +166,6 @@ namespace System.Data.SqlClient {
 			}
 		}
 
-
 		ITableMappingCollection IDataAdapter.TableMappings {
 			get { return TableMappings; }
 		}
@@ -174,7 +175,7 @@ namespace System.Data.SqlClient {
 			get { return updateBatchSize; }
 			set { 
 				if (value < 0)
-					throw new ArgumentOutOfRangeException ();				
+					throw new ArgumentOutOfRangeException ();
 				updateBatchSize = value; 
 			}
 		}
@@ -195,6 +196,7 @@ namespace System.Data.SqlClient {
 			return new SqlRowUpdatingEventArgs (dataRow, command, statementType, tableMapping);
 		}
 
+#if !NET_2_0
 		protected override void Dispose (bool disposing)
 		{
 			if (!disposed) {
@@ -205,6 +207,7 @@ namespace System.Data.SqlClient {
 				disposed = true;
 			}
 		}
+#endif
 
 		protected override void OnRowUpdated (RowUpdatedEventArgs value) 
 		{
@@ -216,6 +219,12 @@ namespace System.Data.SqlClient {
 		{
 			if (RowUpdating != null)
 				RowUpdating (this, (SqlRowUpdatingEventArgs) value);
+		}
+
+		[MonoTODO]
+		object ICloneable.Clone()
+		{
+			throw new NotImplementedException ();
 		}
 
 		#endregion // Methods

@@ -57,7 +57,7 @@ namespace System.Data.SqlClient {
 	[DefaultEventAttribute ("RecordsAffected")]
 	public sealed class SqlCommand : DbCommand, IDbCommand, ICloneable
 #else
-        public sealed class SqlCommand : Component, IDbCommand, ICloneable
+	public sealed class SqlCommand : Component, IDbCommand, ICloneable
 #endif // NET_2_0
 	{
 		#region Fields
@@ -122,7 +122,7 @@ namespace System.Data.SqlClient {
 			this.commandTimeout = commandTimeout;
 			this.parameters = new SqlParameterCollection(this);
 			for (int i = 0;i < parameters.Count;i++)
-			      this.parameters.Add(((ICloneable)parameters[i]).Clone());	
+				this.parameters.Add(((ICloneable)parameters[i]).Clone());
 		}
 		#endregion // Constructors
 
@@ -140,9 +140,9 @@ namespace System.Data.SqlClient {
 		[RefreshProperties (RefreshProperties.All)]
 		public 
 #if NET_2_0
-                override 
+		override 
 #endif //NET_2_0
-                string CommandText {
+		string CommandText {
 			get { return commandText; }
 			set { 
 				if (value != commandText && preparedStatement != null)
@@ -157,10 +157,10 @@ namespace System.Data.SqlClient {
 #endif
 		public 
 #if NET_2_0
-                override
+		override
 #endif //NET_2_0
-                int CommandTimeout {
-			get { return commandTimeout;  }
+		int CommandTimeout {
+			get { return commandTimeout; }
 			set { 
 				if (value < 0)
 					throw new ArgumentException ("The property value assigned is less than 0.");
@@ -175,15 +175,15 @@ namespace System.Data.SqlClient {
 		[RefreshProperties (RefreshProperties.All)]
 		public 
 #if NET_2_0
-                override 
+		override 
 #endif //NET_2_0
-                CommandType CommandType	{
+		CommandType CommandType {
 			get { return commandType; }
 			set { 
 				if (value == CommandType.TableDirect)
 #if NET_2_0
 					throw new ArgumentOutOfRangeException ("CommandType.TableDirect is not supported " +
-									       "by the Mono SqlClient Data Provider.");
+						"by the Mono SqlClient Data Provider.");
 #else
 					throw new ArgumentException ("CommandType.TableDirect is not supported by the Mono SqlClient Data Provider.");
 #endif
@@ -191,7 +191,7 @@ namespace System.Data.SqlClient {
 				if (!Enum.IsDefined (typeof (CommandType), value))
 #if NET_2_0
 					throw new ArgumentOutOfRangeException (String.Format ("The CommandType enumeration value, {0}, is invalid",
-											      value));
+						value));
 #else
 					throw ExceptionHelper.InvalidEnumValueException ("CommandType", value);
 #endif
@@ -204,11 +204,11 @@ namespace System.Data.SqlClient {
 		[DataSysDescription ("Connection used by the command.")]
 #endif
 		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DbConnectionEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]		
-                public 
+		public 
 #if NET_2_0
-                new
+		new
 #endif //NET_2_0
-                SqlConnection Connection {
+		SqlConnection Connection {
 			get { return connection; }
 			set {
 				if (transaction != null && connection.Transaction != null && connection.Transaction.IsOpen)
@@ -226,9 +226,9 @@ namespace System.Data.SqlClient {
 #endif
 		public 
 #if NET_2_0
-                override
+		override
 #endif //NET_2_0
-                bool DesignTimeVisible {
+		bool DesignTimeVisible {
 			get { return designTimeVisible; } 
 			set { designTimeVisible = value; }
 		}
@@ -239,9 +239,9 @@ namespace System.Data.SqlClient {
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public 
 #if NET_2_0
-                new 
+		new 
 #endif //NET_2_0
-                SqlParameterCollection Parameters {
+		SqlParameterCollection Parameters {
 			get { return parameters; }
 		}
 
@@ -258,7 +258,7 @@ namespace System.Data.SqlClient {
 			}
 		}
 
-		IDataParameterCollection IDbCommand.Parameters	{
+		IDataParameterCollection IDbCommand.Parameters {
 			get { return Parameters; }
 		}
 
@@ -279,7 +279,7 @@ namespace System.Data.SqlClient {
 		public new SqlTransaction Transaction {
 			get { return transaction; }
 			set { transaction = value; }
-		}	
+		}
 
 #if !NET_2_0
 		[DataSysDescription ("When used by a DataAdapter.Update, how command results are applied to the current DataRow.")]
@@ -287,15 +287,15 @@ namespace System.Data.SqlClient {
 		[DefaultValue (UpdateRowSource.Both)]
 		public 
 #if NET_2_0
-                override
+		override
 #endif // NET_2_0
-                UpdateRowSource UpdatedRowSource	{
+		UpdateRowSource UpdatedRowSource	{
 			get { return updatedRowSource; }
 			set { 
 				if (!Enum.IsDefined (typeof (UpdateRowSource), value))
 #if NET_2_0
 					throw new ArgumentOutOfRangeException (String.Format ("The UpdateRowSource enumeration value, {0}, is invalid",
-											      value));
+						value));
 #else
 					throw ExceptionHelper.InvalidEnumValueException ("UpdateRowSource", value);
 #endif
@@ -314,7 +314,7 @@ namespace System.Data.SqlClient {
 		[DefaultValue (true)]
 		public bool NotificationAutoEnlist { 
 			get { return notificationAutoEnlist; } 
-			set { notificationAutoEnlist = value; }	
+			set { notificationAutoEnlist = value; }
 		}
 #endif
 		#endregion // Fields
@@ -323,9 +323,9 @@ namespace System.Data.SqlClient {
 
 		public 
 #if NET_2_0
-                override
+		override
 #endif // NET_2_0
-                void Cancel () 
+		void Cancel () 
 		{
 			if (Connection == null || Connection.Tds == null)
 				return;
@@ -335,8 +335,8 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		public SqlCommand Clone ()
 		{
-			return new SqlCommand (commandText, connection, transaction, commandType, updatedRowSource, designTimeVisible, commandTimeout,  parameters);
-		}		
+			return new SqlCommand (commandText, connection, transaction, commandType, updatedRowSource, designTimeVisible, commandTimeout, parameters);
+		}
 #endif // NET_2_0
 
 		internal void CloseDataReader (bool moreResults)
@@ -378,14 +378,14 @@ namespace System.Data.SqlClient {
 				reader.GetValues (dbValues);
 				parameters.Add (new SqlParameter (dbValues));
 			}
-			reader.Close ();	
+			reader.Close ();
 
 		}
 
 		private void Execute (CommandBehavior behavior, bool wantResults)
 		{
 			int index = 0;
-                        Connection.Tds.RecordsAffected = -1;
+			Connection.Tds.RecordsAffected = -1;
 			TdsMetaParameterCollection parms = Parameters.MetaParameters;
 			foreach (TdsMetaParameter param in parms) {
 				param.Validate (index++);
@@ -434,13 +434,13 @@ namespace System.Data.SqlClient {
 
 		public 
 #if NET_2_0
-                override
+		override
 #endif // NET_2_0
-                int ExecuteNonQuery ()
+		int ExecuteNonQuery ()
 		{
 			ValidateCommand ("ExecuteNonQuery");
 			int result = 0;
-                        behavior = CommandBehavior.Default;
+			behavior = CommandBehavior.Default;
 
 			try {
 				Execute (CommandBehavior.Default, false);
@@ -463,28 +463,27 @@ namespace System.Data.SqlClient {
 		{
 			ValidateCommand ("ExecuteReader");
 			try {
-                                this.behavior = behavior;
+				this.behavior = behavior;
 				if ((behavior & CommandBehavior.SequentialAccess) != 0)
 					Tds.SequentialAccess = true;
 				Execute (behavior, true);
-                                Connection.DataReader = new SqlDataReader (this);
-			}
-			catch (TdsTimeoutException e) {
-                                // if behavior is closeconnection, even if it throws exception
-                                // the connection has to be closed.
-                                if ((behavior & CommandBehavior.CloseConnection) != 0)
-                                        Connection.Close ();
-                                throw SqlException.FromTdsInternalException ((TdsInternalException) e);
+				Connection.DataReader = new SqlDataReader (this);
+			} catch (TdsTimeoutException e) {
+				// if behavior is closeconnection, even if it throws exception
+				// the connection has to be closed.
+				if ((behavior & CommandBehavior.CloseConnection) != 0)
+					Connection.Close ();
+				throw SqlException.FromTdsInternalException ((TdsInternalException) e);
 			} catch (SqlException) {
-                                // if behavior is closeconnection, even if it throws exception
-                                // the connection has to be closed.
-                                if ((behavior & CommandBehavior.CloseConnection) != 0)
-                                        Connection.Close ();
+				// if behavior is closeconnection, even if it throws exception
+				// the connection has to be closed.
+				if ((behavior & CommandBehavior.CloseConnection) != 0)
+					Connection.Close ();
 
-                                throw;
-                        }
+				throw;
+			}
 
-                        return Connection.DataReader;
+			return Connection.DataReader;
 		}
 
 		public 
@@ -522,11 +521,10 @@ namespace System.Data.SqlClient {
 		public XmlReader ExecuteXmlReader ()
 		{
 			ValidateCommand ("ExecuteXmlReader");
-                        behavior = CommandBehavior.Default;
-			try { 
+			behavior = CommandBehavior.Default;
+			try {
 				Execute (CommandBehavior.Default, true);
-			}
-			catch (TdsTimeoutException e) {
+			} catch (TdsTimeoutException e) {
 				throw SqlException.FromTdsInternalException ((TdsInternalException) e);
 			}
 
@@ -556,10 +554,11 @@ namespace System.Data.SqlClient {
 
 		object ICloneable.Clone ()
 		{
-			return new SqlCommand (commandText, connection, transaction, commandType, updatedRowSource, designTimeVisible, commandTimeout,  parameters);
+			return new SqlCommand (commandText, connection, transaction, commandType, updatedRowSource, designTimeVisible, commandTimeout, parameters);
 
 		}
 
+#if !NET_2_0
 		IDbDataParameter IDbCommand.CreateParameter ()
 		{
 			return CreateParameter ();
@@ -574,6 +573,7 @@ namespace System.Data.SqlClient {
 		{
 			return ExecuteReader (behavior);
 		}
+#endif
 
 #if NET_2_0
 		protected override void Dispose (bool disposing)
@@ -589,9 +589,9 @@ namespace System.Data.SqlClient {
 
 		public 
 #if NET_2_0
-                override
+		override
 #endif // NET_2_0
-                void Prepare ()
+		void Prepare ()
 		{
 			ValidateCommand ("Prepare");
 
@@ -601,7 +601,7 @@ namespace System.Data.SqlClient {
 			try {
 				foreach (SqlParameter param in Parameters)
 					param.CheckIfInitialized ();
-			}catch (Exception e) {
+			} catch (Exception e) {
 				throw new InvalidOperationException ("SqlCommand.Prepare requires " + e.Message);
 			}
 
@@ -642,54 +642,51 @@ namespace System.Data.SqlClient {
 			if (Connection.XmlReader != null)
 				throw new InvalidOperationException ("There is already an open XmlReader associated with this Connection which must be closed first.");
 #if NET_2_0
-                        if (method.StartsWith ("Begin") && !Connection.AsyncProcessing)
-                                throw new InvalidOperationException ("This Connection object is not " + 
-                                                                     "in Asynchronous mode. Use 'Asynchronous" +
-                                                                     " Processing = true' to set it.");
+			if (method.StartsWith ("Begin") && !Connection.AsyncProcessing)
+				throw new InvalidOperationException ("This Connection object is not " + 
+					"in Asynchronous mode. Use 'Asynchronous" +
+					" Processing = true' to set it.");
 #endif // NET_2_0
 		}
 
 #if NET_2_0
-                protected override DbParameter CreateDbParameter ()
-                {
-                        return (DbParameter) CreateParameter ();
-                }
+		protected override DbParameter CreateDbParameter ()
+		{
+			return CreateParameter ();
+		}
 
-                protected override DbDataReader ExecuteDbDataReader (CommandBehavior behavior)
-                {
-                        return (DbDataReader) ExecuteReader (behavior);
-                }
+		protected override DbDataReader ExecuteDbDataReader (CommandBehavior behavior)
+		{
+			return ExecuteReader (behavior);
+		}
 
-                protected override DbConnection DbConnection 
-                {
-                        get { return (DbConnection) Connection;  }
-                        set { Connection = (SqlConnection) value; }
-                }
-                
-                protected override DbParameterCollection DbParameterCollection
-                {
-                        get { return (DbParameterCollection) Parameters; }
-                }
+		protected override DbConnection DbConnection {
+			get { return Connection; }
+			set { Connection = (SqlConnection) value; }
+		}
 
-                protected override DbTransaction DbTransaction 
-                {
-                        get { return (DbTransaction) Transaction; }
-                        set { Transaction = (SqlTransaction) value; }
-                }
+		protected override DbParameterCollection DbParameterCollection {
+			get { return Parameters; }
+		}
+
+		protected override DbTransaction DbTransaction {
+			get { return Transaction; }
+			set { Transaction = (SqlTransaction) value; }
+		}
 #endif // NET_2_0
 
 		#endregion // Methods
 
 #if NET_2_0
-                #region Asynchronous Methods
+		#region Asynchronous Methods
 
-                internal IAsyncResult BeginExecuteInternal (CommandBehavior behavior, 
-                                                            bool wantResults,
-                                                            AsyncCallback callback, 
-                                                            object state)
-                {
-                        IAsyncResult ar = null;
-                        Connection.Tds.RecordsAffected = -1;
+		internal IAsyncResult BeginExecuteInternal (CommandBehavior behavior, 
+													bool wantResults,
+													AsyncCallback callback, 
+													object state)
+		{
+			IAsyncResult ar = null;
+			Connection.Tds.RecordsAffected = -1;
 			TdsMetaParameterCollection parms = Parameters.MetaParameters;
 			if (preparedStatement == null) {
 				bool schemaOnly = ((behavior & CommandBehavior.SchemaOnly) > 0);
@@ -711,177 +708,165 @@ namespace System.Data.SqlClient {
 
 				switch (CommandType) {
 				case CommandType.StoredProcedure:
-                                        string prolog = "";
-                                        string epilog = "";
+					string prolog = "";
+					string epilog = "";
 					if (keyInfo || schemaOnly)
 						prolog = sql1.ToString ();
-                                        if (keyInfo || schemaOnly)
+					if (keyInfo || schemaOnly)
 						epilog = sql2.ToString ();
-                                        Connection.Tds.BeginExecuteProcedure (prolog,
-                                                                              epilog,
-                                                                              CommandText,
-                                                                              !wantResults,
-                                                                              parms,
-                                                                              callback,
-                                                                              state);
-                                                                              
+					Connection.Tds.BeginExecuteProcedure (prolog,
+						epilog,
+						CommandText,
+						!wantResults,
+						parms,
+						callback,
+						state);
 					break;
 				case CommandType.Text:
 					string sql = String.Format ("{0}{1};{2}", sql1.ToString (), CommandText, sql2.ToString ());
-                                        if (wantResults)
-                                                ar = Connection.Tds.BeginExecuteQuery (sql, parms, 
-                                                                                       callback, state);
-                                        else
-                                                ar = Connection.Tds.BeginExecuteNonQuery (sql, parms, callback, state);
+					if (wantResults)
+						ar = Connection.Tds.BeginExecuteQuery (sql, parms, callback, state);
+					else
+						ar = Connection.Tds.BeginExecuteNonQuery (sql, parms, callback, state);
 					break;
 				}
 			}
 			else 
 				Connection.Tds.ExecPrepared (preparedStatement, parms, CommandTimeout, wantResults);
+			return ar;
+		}
 
-                        return ar;
+		internal void EndExecuteInternal (IAsyncResult ar)
+		{
+			SqlAsyncResult sqlResult = ( (SqlAsyncResult) ar);
+			Connection.Tds.WaitFor (sqlResult.InternalResult);
+			Connection.Tds.CheckAndThrowException (sqlResult.InternalResult);
+		}
 
-                }
+		public IAsyncResult BeginExecuteNonQuery ()
+		{
+			return BeginExecuteNonQuery (null, null);
+		}
 
-                internal void EndExecuteInternal (IAsyncResult ar)
-                {
-                        SqlAsyncResult sqlResult = ( (SqlAsyncResult) ar);
-                        Connection.Tds.WaitFor (sqlResult.InternalResult);
-                        Connection.Tds.CheckAndThrowException (sqlResult.InternalResult);
-                }
+		public IAsyncResult BeginExecuteNonQuery (AsyncCallback callback, object state)
+		{
+			ValidateCommand ("BeginExecuteNonQuery");
+			SqlAsyncResult ar = new SqlAsyncResult (callback, state);
+			ar.EndMethod = "EndExecuteNonQuery";
+			ar.InternalResult = BeginExecuteInternal (CommandBehavior.Default, false, ar.BubbleCallback, ar);
+			return ar;
+		}
 
-                public IAsyncResult BeginExecuteNonQuery ()
-                {
-                        return BeginExecuteNonQuery (null, null);
-                }
+		public int EndExecuteNonQuery (IAsyncResult ar)
+		{
+			ValidateAsyncResult (ar, "EndExecuteNonQuery");
+			EndExecuteInternal (ar);
 
-                public IAsyncResult BeginExecuteNonQuery (AsyncCallback callback, object state)
-                {
-                        ValidateCommand ("BeginExecuteNonQuery");
-                        SqlAsyncResult ar = new SqlAsyncResult (callback, state);
-                        ar.EndMethod = "EndExecuteNonQuery";
-                        ar.InternalResult = BeginExecuteInternal (CommandBehavior.Default, false, ar.BubbleCallback, ar);
-                        return ar;
-                }
-
-                public int EndExecuteNonQuery (IAsyncResult ar)
-                {
-                        ValidateAsyncResult (ar, "EndExecuteNonQuery");
-                        EndExecuteInternal (ar);
-                        
 			int ret = Connection.Tds.RecordsAffected;
 
-                        GetOutputParameters ();
-                        ( (SqlAsyncResult) ar).Ended = true;
-                        return ret;
-                }
+			GetOutputParameters ();
+			((SqlAsyncResult) ar).Ended = true;
+			return ret;
+		}
 
-                public IAsyncResult BeginExecuteReader ()
-                {
-                        return BeginExecuteReader (null, null, CommandBehavior.Default);
-                }
+		public IAsyncResult BeginExecuteReader ()
+		{
+			return BeginExecuteReader (null, null, CommandBehavior.Default);
+		}
 
-                public IAsyncResult BeginExecuteReader (CommandBehavior behavior)
-                {
-                        return BeginExecuteReader (null, null, behavior);
-                }
-                
-                public IAsyncResult BeginExecuteReader (AsyncCallback callback, object state)
-                {
-                        return BeginExecuteReader (callback, state, CommandBehavior.Default);
-                }
+		public IAsyncResult BeginExecuteReader (CommandBehavior behavior)
+		{
+			return BeginExecuteReader (null, null, behavior);
+		}
 
-                public IAsyncResult BeginExecuteReader (AsyncCallback callback, object state, CommandBehavior behavior)
-                {
-                        ValidateCommand ("BeginExecuteReader");
-                        this.behavior = behavior;
-                        SqlAsyncResult ar = new SqlAsyncResult (callback, state);
-                        ar.EndMethod = "EndExecuteReader";
-                        IAsyncResult tdsResult = BeginExecuteInternal (behavior, true, 
-                                                                       ar.BubbleCallback, state);
-                        ar.InternalResult = tdsResult;
-                        return ar;
-                }
+		public IAsyncResult BeginExecuteReader (AsyncCallback callback, object state)
+		{
+			return BeginExecuteReader (callback, state, CommandBehavior.Default);
+		}
 
-                public SqlDataReader EndExecuteReader (IAsyncResult ar)
-                {
-                        ValidateAsyncResult (ar, "EndExecuteReader");
-                        EndExecuteInternal (ar);
-                        SqlDataReader reader = null;
-                        try {
-                                reader = new SqlDataReader (this);
-			}
-			catch (TdsTimeoutException e) {
-                                // if behavior is closeconnection, even if it throws exception
-                                // the connection has to be closed.
-                                if ((behavior & CommandBehavior.CloseConnection) != 0)
-                                        Connection.Close ();
-                                throw SqlException.FromTdsInternalException ((TdsInternalException) e);
+		public IAsyncResult BeginExecuteReader (AsyncCallback callback, object state, CommandBehavior behavior)
+		{
+			ValidateCommand ("BeginExecuteReader");
+			this.behavior = behavior;
+			SqlAsyncResult ar = new SqlAsyncResult (callback, state);
+			ar.EndMethod = "EndExecuteReader";
+			IAsyncResult tdsResult = BeginExecuteInternal (behavior, true, 
+				ar.BubbleCallback, state);
+			ar.InternalResult = tdsResult;
+			return ar;
+		}
+
+		public SqlDataReader EndExecuteReader (IAsyncResult ar)
+		{
+			ValidateAsyncResult (ar, "EndExecuteReader");
+			EndExecuteInternal (ar);
+			SqlDataReader reader = null;
+			try {
+				reader = new SqlDataReader (this);
+			} catch (TdsTimeoutException e) {
+				// if behavior is closeconnection, even if it throws exception
+				// the connection has to be closed.
+				if ((behavior & CommandBehavior.CloseConnection) != 0)
+					Connection.Close ();
+				throw SqlException.FromTdsInternalException ((TdsInternalException) e);
 			} catch (SqlException) {
-                                // if behavior is closeconnection, even if it throws exception
-                                // the connection has to be closed.
-                                if ((behavior & CommandBehavior.CloseConnection) != 0)
-                                        Connection.Close ();
+				// if behavior is closeconnection, even if it throws exception
+				// the connection has to be closed.
+				if ((behavior & CommandBehavior.CloseConnection) != 0)
+					Connection.Close ();
+				throw;
+			}
 
-                                throw;
-                        }
+			((SqlAsyncResult) ar).Ended = true;
+			return reader;
+		}
 
-                        ( (SqlAsyncResult) ar).Ended = true;
-                        return reader;
-                }
+		public IAsyncResult BeginExecuteXmlReader (AsyncCallback callback, object state)
+		{
+			ValidateCommand ("BeginExecuteXmlReader");
+			SqlAsyncResult ar = new SqlAsyncResult (callback, state);
+			ar.EndMethod = "EndExecuteXmlReader";
+			ar.InternalResult = BeginExecuteInternal (behavior, true, 
+				ar.BubbleCallback, state);
+			return ar;
+		}
 
-                public IAsyncResult BeginExecuteXmlReader (AsyncCallback callback, object state)
-                {
-                        ValidateCommand ("BeginExecuteXmlReader");
-                        SqlAsyncResult ar = new SqlAsyncResult (callback, state);
-                        ar.EndMethod = "EndExecuteXmlReader";
-                        ar.InternalResult = BeginExecuteInternal (behavior, true, 
-                                                                       ar.BubbleCallback, state);
-                        return ar;
-                }
-                
 		public IAsyncResult BeginExecuteXmlReader ()
 		{
 			return BeginExecuteXmlReader (null, null);
 		}
 		
 
-                public XmlReader EndExecuteXmlReader (IAsyncResult ar)
-                {
-                        ValidateAsyncResult (ar, "EndExecuteXmlReader");
-                        EndExecuteInternal (ar);
-                        SqlDataReader reader = new SqlDataReader (this);
-                        SqlXmlTextReader textReader = new SqlXmlTextReader (reader);
-                        XmlReader xmlReader = new XmlTextReader (textReader);
-                        ( (SqlAsyncResult) ar).Ended = true;
-                        return xmlReader;
-                }
+		public XmlReader EndExecuteXmlReader (IAsyncResult ar)
+		{
+			ValidateAsyncResult (ar, "EndExecuteXmlReader");
+			EndExecuteInternal (ar);
+			SqlDataReader reader = new SqlDataReader (this);
+			SqlXmlTextReader textReader = new SqlXmlTextReader (reader);
+			XmlReader xmlReader = new XmlTextReader (textReader);
+			((SqlAsyncResult) ar).Ended = true;
+			return xmlReader;
+		}
 
+		internal void ValidateAsyncResult (IAsyncResult ar, string endMethod)
+		{
+			if (ar == null)
+				throw new ArgumentException ("result passed is null!");
+			if (! (ar is SqlAsyncResult))
+				throw new ArgumentException (String.Format ("cannot test validity of types {0}",
+					ar.GetType ()));
+			SqlAsyncResult result = (SqlAsyncResult) ar;
+			if (result.EndMethod != endMethod)
+				throw new InvalidOperationException (String.Format ("Mismatched {0} called for AsyncResult. " + 
+					"Expected call to {1} but {0} is called instead.",
+					endMethod, result.EndMethod));
+			if (result.Ended)
+				throw new InvalidOperationException (String.Format ("The method {0} cannot be called " + 
+					"more than once for the same AsyncResult.", endMethod));
+		}
 
-                internal void ValidateAsyncResult (IAsyncResult ar, string endMethod)
-                {
-                        if (ar == null)
-                                throw new ArgumentException ("result passed is null!");
-                        if (! (ar is SqlAsyncResult))
-                                throw new ArgumentException (String.Format ("cannot test validity of types {0}",
-                                                                            ar.GetType ()
-                                                                            ));
-                        SqlAsyncResult result = (SqlAsyncResult) ar;
-                        
-                        if (result.EndMethod != endMethod)
-                                throw new InvalidOperationException (String.Format ("Mismatched {0} called for AsyncResult. " + 
-                                                                                    "Expected call to {1} but {0} is called instead.",
-                                                                                    endMethod,
-                                                                                    result.EndMethod
-                                                                                    ));
-                        if (result.Ended)
-                                throw new InvalidOperationException (String.Format ("The method {0}  cannot be called " + 
-                                                                                    "more than once for the same AsyncResult.",
-                                                                                    endMethod));
+		#endregion // Asynchronous Methods
 
-                }
-
-                #endregion // Asynchronous Methods
 		public event StatementCompletedEventHandler StatementCompleted;
 #endif // NET_2_0
 	}

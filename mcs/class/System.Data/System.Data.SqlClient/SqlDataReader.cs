@@ -98,7 +98,7 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		override
 #endif // NET_2_0
-                int Depth {
+		int Depth {
 			get { return 0; }
 		}
 
@@ -106,7 +106,7 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		override
 #endif // NET_2_0
-                int FieldCount {
+		int FieldCount {
 			get { return fieldCount; }
 		}
 
@@ -114,7 +114,7 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		override
 #endif // NET_2_0
-                bool IsClosed {
+		bool IsClosed {
 			get { return isClosed; }
 		}
 
@@ -122,7 +122,7 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		override
 #endif // NET_2_0
-                object this [int i] {
+		object this [int i] {
 			get { return GetValue (i); }
 		}
 
@@ -130,7 +130,7 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		override
 #endif // NET_2_0
-                object this [string name] {
+		object this [string name] {
 			get { return GetValue (GetOrdinal (name)); }
 		}
 	
@@ -138,7 +138,7 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		override
 #endif // NET_2_0
-                int RecordsAffected {
+		int RecordsAffected {
 			get { 
 				return command.Tds.RecordsAffected; 
 			}
@@ -148,14 +148,14 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		override
 #endif // NET_2_0
-                bool HasRows {
+		bool HasRows {
 			get {
 				if (haveRead) 
 					return readResult;
 			
 				haveRead = true;
 				readResult = ReadRecord ();
-				return readResult;						
+				return readResult;
 			}
 		}
 #if NET_2_0
@@ -172,7 +172,7 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		override
 #endif // NET_2_0
-                void Close ()
+		void Close ()
 		{
 			if (IsClosed)
 				return;
@@ -237,7 +237,7 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		override
 #endif // NET_2_0
-                bool GetBoolean (int i)
+		bool GetBoolean (int i)
 		{
 			object value = GetValue (i);
 			if (!(value is bool)) {
@@ -251,7 +251,7 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		override
 #endif // NET_2_0
-                byte GetByte (int i)
+		byte GetByte (int i)
 		{
 			object value = GetValue (i);
 			if (!(value is byte)) {
@@ -265,7 +265,7 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		override
 #endif // NET_2_0
-                long GetBytes (int i, long dataIndex, byte[] buffer, int bufferIndex, int length)
+		long GetBytes (int i, long dataIndex, byte[] buffer, int bufferIndex, int length)
 		{
 			if ((command.CommandBehavior & CommandBehavior.SequentialAccess) != 0) {
 				long len = ((Tds)command.Tds).GetSequentialColumnValue (i, dataIndex, buffer, bufferIndex, length);
@@ -298,7 +298,7 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		override
 #endif // NET_2_0
-                char GetChar (int i)
+		char GetChar (int i)
 		{
 			object value = GetValue (i);
 			if (!(value is char)) {
@@ -312,7 +312,7 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		override
 #endif // NET_2_0
-                long GetChars (int i, long dataIndex, char[] buffer, int bufferIndex, int length)
+		long GetChars (int i, long dataIndex, char[] buffer, int bufferIndex, int length)
 		{
 			if ((command.CommandBehavior & CommandBehavior.SequentialAccess) != 0) {
 				Encoding encoding = null;
@@ -387,7 +387,7 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		override
 #endif // NET_2_0
-                string GetDataTypeName (int i)
+		string GetDataTypeName (int i)
 		{
 			if (i < 0 || i >= dataTypeNames.Count)
 				throw new IndexOutOfRangeException ();
@@ -398,7 +398,7 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		override
 #endif // NET_2_0
-                DateTime GetDateTime (int i)
+		DateTime GetDateTime (int i)
 		{
 			object value = GetValue (i);
 			if (!(value is DateTime)) {
@@ -412,7 +412,7 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		override
 #endif // NET_2_0
-                decimal GetDecimal (int i)
+		decimal GetDecimal (int i)
 		{
 			object value = GetValue (i);
 			if (!(value is decimal)) {
@@ -426,7 +426,7 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		override
 #endif // NET_2_0
-                double GetDouble (int i)
+		double GetDouble (int i)
 		{
 			object value = GetValue (i);
 			if (!(value is double)) {
@@ -440,7 +440,7 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		override
 #endif // NET_2_0
-                Type GetFieldType (int i)
+		Type GetFieldType (int i)
 		{
 			if (i < 0 || i >= schemaTable.Rows.Count)
 				throw new IndexOutOfRangeException ();
@@ -451,7 +451,7 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		override
 #endif // NET_2_0
-                float GetFloat (int i)
+		float GetFloat (int i)
 		{
 			object value = GetValue (i);
 			if (!(value is float)) {
@@ -465,7 +465,7 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		override
 #endif // NET_2_0
-                Guid GetGuid (int i)
+		Guid GetGuid (int i)
 		{
 			object value = GetValue (i);
 			if (!(value is Guid)) {
@@ -479,7 +479,7 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		override
 #endif // NET_2_0
-                short GetInt16 (int i)
+		short GetInt16 (int i)
 		{
 			object value = GetValue (i);
 			if (!(value is short)) {
@@ -493,7 +493,7 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		override
 #endif // NET_2_0
-                int GetInt32 (int i)
+		int GetInt32 (int i)
 		{
 			object value = GetValue (i);
 			if (!(value is int)) {
@@ -507,7 +507,7 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		override
 #endif // NET_2_0
-                long GetInt64 (int i)
+		long GetInt64 (int i)
 		{
 			object value = GetValue (i);
 			// TDS 7.0 returns bigint as decimal(19,0)
@@ -527,7 +527,7 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		override
 #endif // NET_2_0
-                string GetName (int i)
+		string GetName (int i)
 		{
 			return (string) schemaTable.Rows[i]["ColumnName"];
 		}
@@ -536,7 +536,7 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		override
 #endif // NET_2_0
-                int GetOrdinal (string name)
+		int GetOrdinal (string name)
 		{
 			foreach (DataRow schemaRow in schemaTable.Rows)
 				if (((string) schemaRow ["ColumnName"]).Equals (name))
@@ -551,7 +551,7 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		override
 #endif // NET_2_0
-                DataTable GetSchemaTable ()
+		DataTable GetSchemaTable ()
 		{
 			ValidateState ();
 
@@ -760,7 +760,7 @@ namespace System.Data.SqlClient {
 				fieldCount += 1;
 			}
 			return schemaTable;
-		}		
+		}
 
 		private static object GetSchemaValue (TdsDataColumn schema, object key)
 		{
@@ -1035,7 +1035,7 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		override
 #endif // NET_2_0
-                string GetString (int i)
+		string GetString (int i)
 		{
 			object value = GetValue (i);
 			if (!(value is string)) {
@@ -1049,7 +1049,7 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		override
 #endif // NET_2_0
-                object GetValue (int i)
+		object GetValue (int i)
 		{
 			if (i < 0 || i >= command.Tds.Columns.Count)
 				throw new IndexOutOfRangeException ();
@@ -1065,7 +1065,7 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		override
 #endif // NET_2_0
-                int GetValues (object[] values)
+		int GetValues (object[] values)
 		{
 			int len = values.Length;
 			int bigDecimalIndex = command.Tds.ColumnValues.BigDecimalIndex;
@@ -1080,17 +1080,19 @@ namespace System.Data.SqlClient {
 			return (len < FieldCount ? len : FieldCount);
 		}
 
+#if !NET_2_0
 		void IDisposable.Dispose ()
 		{
 			Dispose (true);
 			GC.SuppressFinalize (this);
 		}
-
-		public
-#if NET_2_0
-		override 
 #endif
-		IEnumerator GetEnumerator ()
+
+#if NET_2_0
+		public override IEnumerator GetEnumerator ()
+#else
+		IEnumerator IEnumerable.GetEnumerator ()
+#endif
 		{
 			return new DbEnumerator (this);
 		}
@@ -1099,7 +1101,7 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		override
 #endif // NET_2_0
-                bool IsDBNull (int i)
+		bool IsDBNull (int i)
 		{
 			return GetValue (i) == DBNull.Value;
 		}
@@ -1108,21 +1110,21 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		override
 #endif // NET_2_0
-                bool NextResult ()
+		bool NextResult ()
 		{
 			ValidateState ();
 
 			if ((command.CommandBehavior & CommandBehavior.SingleResult) != 0 && resultsRead > 0)
 				return false;
 
-                        moreResults = command.Tds.NextResult ();
+			moreResults = command.Tds.NextResult ();
 			if (!moreResults)
 				command.GetOutputParameters ();
-                        else {
-                                //new schema
-                                schemaTable = ConstructSchemaTable ();
-                                GetSchemaTable ();
-                        }
+			else {
+				//new schema
+				schemaTable = ConstructSchemaTable ();
+				GetSchemaTable ();
+			}
 
 			rowsRead = 0;
 			resultsRead += 1;
@@ -1133,7 +1135,7 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		override
 #endif // NET_2_0
-                bool Read ()
+		bool Read ()
 		{
 			ValidateState ();
 
@@ -1175,12 +1177,12 @@ namespace System.Data.SqlClient {
 
 		public override object GetProviderSpecificValue (int position)
 		{
-			return (GetSqlValue (position));                        
+			return (GetSqlValue (position));
 		}
-                
+
 		public override int GetProviderSpecificValues (object [] values)
 		{
-			return (GetSqlValues (values));                        
+			return (GetSqlValues (values));
 		}
 
 		public virtual SqlBytes GetSqlBytes (int i)
@@ -1189,7 +1191,7 @@ namespace System.Data.SqlClient {
 			//if (!(value is SqlBinary))
 			//	throw new InvalidCastException ("Type is " + value.GetType ().ToString ());
 			Byte[] val = (byte[])GetValue(i);
-			SqlBytes sb = new SqlBytes (val);			
+			SqlBytes sb = new SqlBytes (val);
 			return (sb);
 		}
 #endif // NET_2_0

@@ -1,3 +1,9 @@
+2007-07-01  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* System.Data.dll.sources: Removed ISqlNotificationReceiver.cs,
+	SqlDataSourceEnumerator.cs, SqlNotificationAuthType.cs,
+	SqlNotificationTransports.cs.
+
 2007-06-21  Nagappan A  <anagappan@novell.com>
 
 	* System.Data.dll.sources: Added

@@ -141,9 +141,9 @@ namespace System.Data.SqlClient {
 		// SqlParameter.  The value array comes from sp_procedure_params_rowset.
 		// This is in SqlCommand.DeriveParameters.
 		internal SqlParameter (object[] dbValues) 
-                        : this (dbValues [3].ToString (), String.Empty)
+			: this (dbValues [3].ToString (), String.Empty)
 		{
-                        Precision = 0;
+			Precision = 0;
 			Scale = 0;
 			Direction = ParameterDirection.Input;
 
@@ -162,12 +162,12 @@ namespace System.Data.SqlClient {
 			case 4:
 				Direction = ParameterDirection.ReturnValue;
 				break;
-                        default:
-                                Direction = ParameterDirection.Input;
-                                break;
+			default:
+				Direction = ParameterDirection.Input;
+				break;
 			}
 			IsNullable = (dbValues [8] != null && 
-                                      dbValues [8] != DBNull.Value) ? (bool) dbValues [8] : false;
+				dbValues [8] != DBNull.Value) ? (bool) dbValues [8] : false;
 
 			if (dbValues [12] != null && dbValues [12] != DBNull.Value)
 				Precision = (byte) ((short) dbValues [12]);
@@ -202,13 +202,13 @@ namespace System.Data.SqlClient {
 			}
 		}
 	
-#if ONLY_1_0 || ONLY_1_1	
+#if ONLY_1_0 || ONLY_1_1
 		[Browsable (false)]
 		[DataSysDescription ("The parameter generic type.")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[RefreshProperties (RefreshProperties.All)]
 		[DataCategory ("Data")]
-#endif		                                         
+#endif
 		public 
 #if NET_2_0
 		override
@@ -266,7 +266,7 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		override
 #endif // NET_2_0
-	 bool IsNullable	{
+		bool IsNullable {
 			get { return metaParameter.IsNullable; }
 			set { metaParameter.IsNullable = value; }
 		}
@@ -285,7 +285,7 @@ namespace System.Data.SqlClient {
 			set { offset = value; }
 		}
 	
-#if ONLY_1_0 || ONLY_1_1	
+#if ONLY_1_0 || ONLY_1_1
 		[DataSysDescription ("Name of the parameter, like '@p1'")]
 		[DefaultValue ("")]
 #endif
@@ -293,7 +293,7 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		override
 #endif // NET_2_0
-	 string ParameterName {
+		string ParameterName {
 			get { return metaParameter.ParameterName; }
 			set { metaParameter.ParameterName = value; }
 		}
@@ -302,8 +302,6 @@ namespace System.Data.SqlClient {
 #if ONLY_1_0 || ONLY_1_1
 		[DataCategory ("Data")]
 		[DataSysDescription ("For decimal, numeric, varnumeric DBTypes.")]
-		[Browsable (false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
 #endif
 		public byte Precision {
 			get { return metaParameter.Precision; }
@@ -314,10 +312,8 @@ namespace System.Data.SqlClient {
 #if ONLY_1_0 || ONLY_1_1
 		[DataCategory ("Data")]
 		[DataSysDescription ("For decimal, numeric, varnumeric DBTypes.")]
-		[Browsable (false)]
-                [EditorBrowsable (EditorBrowsableState.Never)]
 #endif
-                public byte Scale {
+		public byte Scale {
 			get { return metaParameter.Scale; }
 			set { metaParameter.Scale = value; }
 		}
@@ -327,11 +323,11 @@ namespace System.Data.SqlClient {
 		[DataSysDescription ("Size of variable length data types (string & arrays).")]
 		[DefaultValue (0)]
 #endif
-                public 
+		public 
 #if NET_2_0
 		override
 #endif // NET_2_0
-	 int Size {
+		int Size {
 			get { return metaParameter.Size; }
 			set { metaParameter.Size = value; }
 		}
@@ -345,7 +341,7 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		override
 #endif // NET_2_0
-	 string SourceColumn {
+		string SourceColumn {
 			get { return sourceColumn; }
 			set { sourceColumn = value; }
 		}
@@ -359,7 +355,7 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		override
 #endif // NET_2_0
-	 DataRowVersion SourceVersion {
+		DataRowVersion SourceVersion {
 			get { return sourceVersion; }
 			set { sourceVersion = value; }
 		}
@@ -381,19 +377,19 @@ namespace System.Data.SqlClient {
 			}
 		}
 
-	        [TypeConverterAttribute (typeof (StringConverter))]
+		[TypeConverterAttribute (typeof (StringConverter))]
 #if ONLY_1_0 || ONLY_1_1
 		[DataCategory ("Data")]
 		[DataSysDescription ("Value of the parameter.")]
 		[DefaultValue (null)]
 #else
-		[RefreshProperties (RefreshProperties.All)]		
+		[RefreshProperties (RefreshProperties.All)]
 #endif
 		public 
 #if NET_2_0
 		override
 #endif // NET_2_0
-	 object Value {
+		object Value {
 			get { return metaParameter.Value; }
 			set { 
 				if (!isTypeSet)
@@ -405,7 +401,7 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		[Browsable (false)]
 		public SqlCompareOptions CompareInfo{
-		 	get{ return compareInfo; } 
+			get{ return compareInfo; }
 			set{ compareInfo = value; }
 		}
 
@@ -428,19 +424,19 @@ namespace System.Data.SqlClient {
 		}
 
 		public string XmlSchemaCollectionDatabase {
-		 	get { return xmlSchemaCollectionDatabase; } 
+			get { return xmlSchemaCollectionDatabase; }
 			set { xmlSchemaCollectionDatabase = (value == null ? String.Empty : value); }
 		}
 
 		public string XmlSchemaCollectionName {
-		 	get { return xmlSchemaCollectionName; } 
+			get { return xmlSchemaCollectionName; }
 			set {
 				xmlSchemaCollectionName = (value == null ? String.Empty : value);
 			}
 		}
 
 		public string XmlSchemaCollectionOwningSchema {
-		 	get { return xmlSchemaCollectionOwningSchema; } 
+			get { return xmlSchemaCollectionOwningSchema; } 
 			set {
 				xmlSchemaCollectionOwningSchema = (value == null ? String.Empty : value);
 			}
@@ -525,7 +521,7 @@ namespace System.Data.SqlClient {
 				SetSqlDbType (SqlDbType.Variant); 
 				break;
 			default:
-				throw new ArgumentException (exception);				
+				throw new ArgumentException (exception);
 			}
 		}
 
@@ -915,11 +911,10 @@ namespace System.Data.SqlClient {
 		}
 
 #if NET_2_0
-		
-                public override void ResetDbType ()
-                {
-                        InferSqlType (metaParameter.Value);
-                }
+		public override void ResetDbType ()
+		{
+			InferSqlType (metaParameter.Value);
+		}
 
 		public void ResetSqlDbType ()
 		{
