@@ -1,5 +1,9 @@
 2007-07-01  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* OleDbCommand.cs: 2.0 API fixes. Build fix.
+
+2007-07-01  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* OleDbCommand.cs: Code formatting.
 	* OleDbDataReader.cs: Code formatting.
 	* OleDbError.cs: Code formatting.

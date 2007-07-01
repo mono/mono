@@ -45,6 +45,9 @@ namespace System.Data.OleDb
 	/// </summary>
 	[DesignerAttribute ("Microsoft.VSDesigner.Data.VS.OleDbCommandDesigner, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.IDesigner")]
 	[ToolboxItemAttribute ("System.Drawing.Design.ToolboxItem, "+ Consts.AssemblySystem_Drawing)]
+#if NET_2_0
+	[DefaultEvent( "RecordsAffected")]
+#endif
 	public sealed class OleDbCommand : 
 #if NET_2_0
 	DbCommand
@@ -75,11 +78,7 @@ namespace System.Data.OleDb
 			commandText = String.Empty;
 			timeout = 30; // default timeout per .NET
 			commandType = CommandType.Text;
-			connection ;
 			parameters = new OleDbParameterCollection ();
-			transaction;
-			designTimeVisible;
-			dataReader;
 			behavior = CommandBehavior.Default;
 			gdaCommand = IntPtr.Zero;
 		}
@@ -95,9 +94,8 @@ namespace System.Data.OleDb
 			Connection = connection;
 		}
 
-		public OleDbCommand (string cmdText,
-				     OleDbConnection connection,
-				     OleDbTransaction transaction) : this (cmdText, connection)
+		public OleDbCommand (string cmdText, OleDbConnection connection,
+			OleDbTransaction transaction) : this (cmdText, connection)
 		{
 			this.transaction = transaction;
 		}
@@ -122,15 +120,15 @@ namespace System.Data.OleDb
 			get {
 				return commandText;
 			}
-			set { 
+			set {
 				commandText = value;
 			}
 		}
 
 #if !NET_2_0
 		[DataSysDescriptionAttribute ("Time to wait for command to execute.")]
-#endif
 		[DefaultValue (30)]
+#endif
 		public
 #if NET_2_0
 		override
@@ -145,7 +143,7 @@ namespace System.Data.OleDb
 		}
 
 		[DataCategory ("Data")]
-                [DefaultValue ("Text")]
+		[DefaultValue ("Text")]
 #if !NET_2_0
 		[DataSysDescriptionAttribute ("How to interpret the CommandText.")]
 #endif
@@ -181,6 +179,9 @@ namespace System.Data.OleDb
 		[BrowsableAttribute (false)]
 		[DesignOnlyAttribute (true)]
 		[DefaultValue (true)]
+#if NET_2_0
+		[EditorBrowsable(EditorBrowsableState.Never)]
+#endif
 		public
 #if NET_2_0
 		override
@@ -248,13 +249,13 @@ namespace System.Data.OleDb
 			}
 		}
 
-		IDataParameterCollection IDbCommand.Parameters  {
+		IDataParameterCollection IDbCommand.Parameters {
 			get {
 				return Parameters;
 			}
 		}
 
-		IDbTransaction IDbCommand.Transaction  {
+		IDbTransaction IDbCommand.Transaction {
 			get {
 				return Transaction;
 			}
@@ -282,10 +283,12 @@ namespace System.Data.OleDb
 			return new OleDbParameter ();
 		}
 
+#if !NET_2_0
 		IDbDataParameter IDbCommand.CreateParameter ()
 		{
 			return CreateParameter ();
 		}
+#endif
 		
 		[MonoTODO]
 		protected override void Dispose (bool disposing)
@@ -380,7 +383,7 @@ namespace System.Data.OleDb
 						break;
 
 					glist_node = (GdaList) Marshal.PtrToStructure (glist_node.next,
-										       typeof (GdaList));
+						typeof (GdaList));
 				}
 				dataReader = new OleDbDataReader (this, results);
 				dataReader.NextResult ();
@@ -413,6 +416,14 @@ namespace System.Data.OleDb
 			reader.Close ();
 			return o;
 		}
+
+#if NET_2_0
+		[MonoTODO]
+		public OleDbCommand Clone ()
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 
 		[MonoTODO]
 		object ICloneable.Clone ()
