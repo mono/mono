@@ -1,3 +1,8 @@
+2007-07-01  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* RelatedDataView.cs: Fixed line endings.
+	* XmlDataInferenceLoader.cs: Fixed line endings.
+
 2007-06-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DataTableCollection.cs: CopyTo is 2.0 only. Removed extra tabs,
