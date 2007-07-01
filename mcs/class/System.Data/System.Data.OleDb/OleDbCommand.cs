@@ -71,15 +71,15 @@ namespace System.Data.OleDb
 		#region Constructors
 
 		public OleDbCommand ()
-	        {
+		{
 			commandText = String.Empty;
 			timeout = 30; // default timeout per .NET
 			commandType = CommandType.Text;
-			connection = null;
+			connection ;
 			parameters = new OleDbParameterCollection ();
-			transaction = null;
-			designTimeVisible = false;
-			dataReader = null;
+			transaction;
+			designTimeVisible;
+			dataReader;
 			behavior = CommandBehavior.Default;
 			gdaCommand = IntPtr.Zero;
 		}
@@ -109,15 +109,15 @@ namespace System.Data.OleDb
 		[DataCategory ("Data")]
 		[DefaultValue ("")]
 #if !NET_2_0
-                [DataSysDescriptionAttribute ("Command text to execute.")]
+		[DataSysDescriptionAttribute ("Command text to execute.")]
 #endif
-                [EditorAttribute ("Microsoft.VSDesigner.Data.ADO.Design.OleDbCommandTextEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
+		[EditorAttribute ("Microsoft.VSDesigner.Data.ADO.Design.OleDbCommandTextEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing)]
 		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		public 
 #if NET_2_0
 		override
 #endif
-		string CommandText 
+		string CommandText
 		{
 			get {
 				return commandText;
@@ -154,7 +154,7 @@ namespace System.Data.OleDb
 #if NET_2_0
 		override
 #endif
-		CommandType CommandType { 
+		CommandType CommandType {
 			get {
 				return commandType;
 			}
@@ -169,7 +169,7 @@ namespace System.Data.OleDb
 #endif
 		[DefaultValue (null)]
 		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DbConnectionEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
-		public new OleDbConnection Connection { 
+		public new OleDbConnection Connection {
 			get {
 				return connection;
 			}
@@ -185,7 +185,7 @@ namespace System.Data.OleDb
 #if NET_2_0
 		override
 #endif
-		bool DesignTimeVisible { 
+		bool DesignTimeVisible {
 			get {
 				return designTimeVisible;
 			}
@@ -204,7 +204,7 @@ namespace System.Data.OleDb
 				return parameters;
 			}
 		}
-		
+
 		[BrowsableAttribute (false)]
 #if !NET_2_0
 		[DataSysDescriptionAttribute ("The transaction used by the command.")]
@@ -228,7 +228,7 @@ namespace System.Data.OleDb
 #if NET_2_0
 		override
 #endif
-		UpdateRowSource UpdatedRowSource { 
+		UpdateRowSource UpdatedRowSource {
 			[MonoTODO]
 			get {
 				throw new NotImplementedException ();
@@ -319,6 +319,7 @@ namespace System.Data.OleDb
 
 			//libgda.gda_command_set_transaction 
 		}
+
 		public 
 #if NET_2_0
 		override
@@ -416,7 +417,7 @@ namespace System.Data.OleDb
 		[MonoTODO]
 		object ICloneable.Clone ()
 		{
-			throw new NotImplementedException ();	
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -426,7 +427,7 @@ namespace System.Data.OleDb
 #endif
 		void Prepare ()
 		{
-			throw new NotImplementedException ();	
+			throw new NotImplementedException ();
 		}
 
 		public void ResetCommandTimeout ()
@@ -438,13 +439,13 @@ namespace System.Data.OleDb
 		[MonoTODO]
 		protected override DbParameter CreateDbParameter ()
 		{
-			throw new NotImplementedException ();	
+			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
 		protected override DbDataReader ExecuteDbDataReader (CommandBehavior behavior)
 		{
-			throw new NotImplementedException ();	
+			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]

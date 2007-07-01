@@ -91,12 +91,10 @@ namespace System.Data.OleDb
 		public override string ToString ()
 		{
 			string toStr;
-                        String stackTrace;
-                        stackTrace = " <Stack Trace>";
-                        // FIXME: generate the correct SQL error string
+			String stackTrace = " <Stack Trace>";
+			// FIXME: generate the correct SQL error string
 			toStr = "OleDbError:" + message + stackTrace;
 			return toStr;
-
 		}
 
 		#endregion

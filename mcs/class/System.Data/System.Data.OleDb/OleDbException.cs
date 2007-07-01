@@ -45,7 +45,7 @@ namespace System.Data.OleDb
 	public sealed class OleDbException : ExternalException
 	{
 		private OleDbConnection connection;
-	 	
+
 		#region Constructors
 
 		internal OleDbException (OleDbConnection cnc)
@@ -56,8 +56,9 @@ namespace System.Data.OleDb
 		#endregion // Constructors
 		
 		#region Properties
+
 		[TypeConverterAttribute (typeof (OleDbException.ErrorCodeConverter))]
-		public override int ErrorCode {	
+		public override int ErrorCode {
 			get {
 				GdaList glist;
 				IntPtr errors;
@@ -97,7 +98,7 @@ namespace System.Data.OleDb
 			}
 		}
 
-		public override string Message {	
+		public override string Message {
 			get {
 				GdaList glist;
 				IntPtr errors;
@@ -119,7 +120,7 @@ namespace System.Data.OleDb
 			}
 		}
 
-		public override string Source {	
+		public override string Source {
 			get {
 				GdaList glist;
 				IntPtr errors;
