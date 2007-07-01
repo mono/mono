@@ -1,3 +1,10 @@
+2007-07-01 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* FormViewTest.cs:
+	* DetailViewTest.cs:
+	* GridViewTest.cs:
+	Added new tests
+
 2007-06-20  yonik <yonik@mainsoft.com>
 
      * DropDownListTest.cs;

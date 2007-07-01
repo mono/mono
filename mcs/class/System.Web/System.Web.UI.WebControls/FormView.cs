@@ -464,7 +464,7 @@ namespace System.Web.UI.WebControls
 		[Browsable (false)]
 		public virtual ITemplate EditItemTemplate {
 			get { return editItemTemplate; }
-			set { editItemTemplate = value; RequireBinding (); }
+			set { editItemTemplate = value; }
 		}
 
 		[WebCategoryAttribute ("Styles")]
@@ -505,7 +505,7 @@ namespace System.Web.UI.WebControls
 		[Browsable (false)]
 		public virtual ITemplate EmptyDataTemplate {
 			get { return emptyDataTemplate; }
-			set { emptyDataTemplate = value; RequireBinding (); }
+			set { emptyDataTemplate = value; }
 		}
 		
 		[LocalizableAttribute (true)]
@@ -538,7 +538,7 @@ namespace System.Web.UI.WebControls
 		[Browsable (false)]
 		public virtual ITemplate FooterTemplate {
 			get { return footerTemplate; }
-			set { footerTemplate = value; RequireBinding (); }
+			set { footerTemplate = value; }
 		}
 
 		[LocalizableAttribute (true)]
@@ -616,7 +616,7 @@ namespace System.Web.UI.WebControls
 		[Browsable (false)]
 		public virtual ITemplate HeaderTemplate {
 			get { return headerTemplate; }
-			set { headerTemplate = value; RequireBinding (); }
+			set { headerTemplate = value; }
 		}
 
 		[LocalizableAttribute (true)]
@@ -653,7 +653,7 @@ namespace System.Web.UI.WebControls
 		[Browsable (false)]
 		public virtual ITemplate InsertItemTemplate {
 			get { return insertItemTemplate; }
-			set { insertItemTemplate = value; RequireBinding (); }
+			set { insertItemTemplate = value; }
 		}
 
 		[WebCategoryAttribute ("Styles")]
@@ -678,7 +678,7 @@ namespace System.Web.UI.WebControls
 		[Browsable (false)]
 		public virtual ITemplate ItemTemplate {
 			get { return itemTemplate; }
-			set { itemTemplate = value; RequireBinding (); }
+			set { itemTemplate = value; }
 		}
 		
 		[BrowsableAttribute (false)]
@@ -746,7 +746,7 @@ namespace System.Web.UI.WebControls
 		[Browsable (false)]
 		public virtual ITemplate PagerTemplate {
 			get { return pagerTemplate; }
-			set { pagerTemplate = value; RequireBinding (); }
+			set { pagerTemplate = value; }
 		}
 		
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]

@@ -641,7 +641,7 @@ namespace System.Web.UI.WebControls
 		[Browsable (false)]
 		public virtual ITemplate EmptyDataTemplate {
 			get { return emptyDataTemplate; }
-			set { emptyDataTemplate = value; RequireBinding (); }
+			set { emptyDataTemplate = value; }
 		}
 		
 		[LocalizableAttribute (true)]
@@ -859,7 +859,7 @@ namespace System.Web.UI.WebControls
 		[Browsable (false)]
 		public virtual ITemplate PagerTemplate {
 			get { return pagerTemplate; }
-			set { pagerTemplate = value; RequireBinding (); }
+			set { pagerTemplate = value; }
 		}
 		
 		[DefaultValueAttribute ("")]

@@ -1,3 +1,10 @@
+2007-07-01 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* FormView.cs:
+	* DetailView.cs:
+	* GridView.cs:
+	does not requires data binding if any ITemplate property is set.
+
 2007-06-24  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* CheckBox.cs: fixed Render, HasAttributes called instead

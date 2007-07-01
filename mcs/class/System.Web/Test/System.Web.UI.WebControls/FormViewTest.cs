@@ -2497,6 +2497,49 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 			fv.Page = new Page ();
 			PostBackOptions options = ((IPostBackContainer) fv).GetPostBackOptions (null);
 		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		public void FormView_RequiresDataBinding () {
+			PageDelegates delegates = new PageDelegates ();
+			delegates.LoadComplete = FormView_RequiresDataBinding_LoadComplete;
+			PageInvoker invoker = new PageInvoker (delegates);
+			WebTest t = new WebTest (invoker);
+			t.Run ();
+		}
+
+		public static void FormView_RequiresDataBinding_LoadComplete (Page p) {
+			Poker view = new Poker ();
+			p.Form.Controls.Add (view);
+
+			view.DataSource = new string [] { "A", "B", "C" };
+			view.DataBind ();
+
+			Assert.AreEqual (false, view.GetRequiresDataBinding ());
+
+			view.PagerTemplate = new CompiledTemplateBuilder (BuildTemplateMethod);
+			Assert.AreEqual (false, view.GetRequiresDataBinding (), "PagerTemplate was set");
+
+			view.EmptyDataTemplate = new CompiledTemplateBuilder (BuildTemplateMethod);
+			Assert.AreEqual (false, view.GetRequiresDataBinding (), "EmptyDataTemplate was set");
+
+			view.HeaderTemplate = new CompiledTemplateBuilder (BuildTemplateMethod);
+			Assert.AreEqual (false, view.GetRequiresDataBinding (), "HeaderTemplate was set");
+
+			view.FooterTemplate = new CompiledTemplateBuilder (BuildTemplateMethod);
+			Assert.AreEqual (false, view.GetRequiresDataBinding (), "FooterTemplate was set");
+
+			view.EditItemTemplate = new CompiledTemplateBuilder (BuildTemplateMethod);
+			Assert.AreEqual (false, view.GetRequiresDataBinding (), "EditItemTemplate was set");
+
+			view.InsertItemTemplate = new CompiledTemplateBuilder (BuildTemplateMethod);
+			Assert.AreEqual (false, view.GetRequiresDataBinding (), "InsertItemTemplate was set");
+
+			view.ItemTemplate = new CompiledTemplateBuilder (BuildTemplateMethod);
+			Assert.AreEqual (false, view.GetRequiresDataBinding (), "ItemTemplate was set");
+		}
+
+		public static void BuildTemplateMethod (Control c) { }
 	}
 
 	public class TestMyData

@@ -2870,6 +2870,40 @@ namespace MonoTests.System.Web.UI.WebControls
 			dv.Page = new Page ();
 			PostBackOptions options = ((IPostBackContainer) dv).GetPostBackOptions (null);
 		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		public void DetailsView_RequiresDataBinding () {
+			PageDelegates delegates = new PageDelegates ();
+			delegates.LoadComplete = DetailsView_RequiresDataBinding_LoadComplete;
+			PageInvoker invoker = new PageInvoker (delegates);
+			WebTest t = new WebTest (invoker);
+			t.Run ();
+		}
+
+		public static void DetailsView_RequiresDataBinding_LoadComplete (Page p) {
+			PokerDetailsView view = new PokerDetailsView ();
+			p.Form.Controls.Add (view);
+
+			view.DataSource = new string [] { "A", "B", "C" };
+			view.DataBind ();
+
+			Assert.AreEqual (false, view.GetRequiresDataBinding ());
+
+			view.PagerTemplate = new CompiledTemplateBuilder (BuildTemplateMethod);
+			Assert.AreEqual (false, view.GetRequiresDataBinding (), "PagerTemplate was set");
+
+			view.EmptyDataTemplate = new CompiledTemplateBuilder (BuildTemplateMethod);
+			Assert.AreEqual (false, view.GetRequiresDataBinding (), "EmptyDataTemplate was set");
+
+			view.HeaderTemplate = new CompiledTemplateBuilder (BuildTemplateMethod);
+			Assert.AreEqual (false, view.GetRequiresDataBinding (), "HeaderTemplate was set");
+
+			view.FooterTemplate = new CompiledTemplateBuilder (BuildTemplateMethod);
+			Assert.AreEqual (false, view.GetRequiresDataBinding (), "FooterTemplate was set");
+		}
+
+		public static void BuildTemplateMethod (Control c) { }
 	}
 
 	public class DTemplate : ITemplate
@@ -3010,6 +3044,7 @@ namespace MonoTests.System.Web.UI.WebControls
 	}
 }
 #endif
+
 
 
 

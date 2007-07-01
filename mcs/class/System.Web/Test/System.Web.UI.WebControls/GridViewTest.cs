@@ -303,6 +303,10 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			RequiresDataBinding = value;
 		}
+
+		public bool GetRequiresDataBinding () {
+			return RequiresDataBinding;
+		}
 	}
 
 	[Serializable]
@@ -3054,6 +3058,34 @@ namespace MonoTests.System.Web.UI.WebControls
 			HtmlDiff.AssertAreEqual (original, pageHTML, "GridViewUpdate #3");
 		}
 
+		[Test]
+		[Category ("NunitWeb")]
+		public void GridView_RequiresDataBinding () {
+			PageDelegates delegates = new PageDelegates ();
+			delegates.LoadComplete = GridView_RequiresDataBinding_LoadComplete;
+			PageInvoker invoker = new PageInvoker (delegates);
+			WebTest t = new WebTest (invoker);
+			t.Run ();
+		}
+
+		public static void GridView_RequiresDataBinding_LoadComplete (Page p) {
+			PokerGridView grid = new PokerGridView ();
+			p.Form.Controls.Add (grid);
+
+			grid.DataSource = new string [] { "A", "B", "C" };
+			grid.DataBind ();
+
+			Assert.AreEqual (false, grid.GetRequiresDataBinding ());
+
+			grid.EmptyDataTemplate = new CompiledTemplateBuilder (BuildTemplateMethod);
+			Assert.AreEqual (false, grid.GetRequiresDataBinding (), "EmptyDataTemplate was set");
+
+			grid.PagerTemplate = new CompiledTemplateBuilder (BuildTemplateMethod);
+			Assert.AreEqual (false, grid.GetRequiresDataBinding (), "PagerTemplate was set");
+		}
+
+		public static void BuildTemplateMethod (Control c) { }
+
         [TestFixtureTearDown]
         public void TearDown()
         {
@@ -3310,6 +3342,7 @@ namespace MonoTests.System.Web.UI.WebControls
 }
 
 #endif
+
 
 
 

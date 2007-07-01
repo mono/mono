@@ -610,7 +610,7 @@ namespace System.Web.UI.WebControls
 		[Browsable (false)]
 		public virtual ITemplate EmptyDataTemplate {
 			get { return emptyDataTemplate; }
-			set { emptyDataTemplate = value; RequireBinding (); }
+			set { emptyDataTemplate = value; }
 		}
 		
 		[LocalizableAttribute (true)]
@@ -673,7 +673,7 @@ namespace System.Web.UI.WebControls
 		[Browsable (false)]
 		public virtual ITemplate FooterTemplate {
 			get { return footerTemplate; }
-			set { footerTemplate = value; RequireBinding (); }
+			set { footerTemplate = value; }
 		}
 
 		[LocalizableAttribute (true)]
@@ -751,7 +751,7 @@ namespace System.Web.UI.WebControls
 		[Browsable (false)]
 		public virtual ITemplate HeaderTemplate {
 			get { return headerTemplate; }
-			set { headerTemplate = value; RequireBinding (); }
+			set { headerTemplate = value; }
 		}
 
 		[LocalizableAttribute (true)]
@@ -865,7 +865,7 @@ namespace System.Web.UI.WebControls
 		[Browsable (false)]
 		public virtual ITemplate PagerTemplate {
 			get { return pagerTemplate; }
-			set { pagerTemplate = value; RequireBinding (); }
+			set { pagerTemplate = value; }
 		}
 		
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
