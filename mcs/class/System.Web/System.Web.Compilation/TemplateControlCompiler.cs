@@ -65,6 +65,7 @@ namespace System.Web.Compilation
 		
 #if NET_2_0
 		static Regex bindRegex = new Regex (@"Bind\s*\(""(.*?)""\)\s*%>", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+		static Regex bindRegexInValue = new Regex (@"Bind\s*\(""(.*?)""\)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 #endif
 
 		public TemplateControlCompiler (TemplateControlParser parser)
@@ -427,8 +428,11 @@ namespace System.Web.Compilation
 			bool need_if = false;
 			value = value.Trim ();
 			if (StrUtils.StartsWith (value, "Bind", true)) {
-				value = "Eval" + value.Substring (4);
-				need_if = true;
+				Match match = bindRegexInValue.Match (value);
+				if (match.Success) {
+					value = "Eval" + value.Substring (4);
+					need_if = true;
+				}
 			}
 #endif
 

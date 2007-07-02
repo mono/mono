@@ -1,3 +1,10 @@
+2007-07-02  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateControlCompiler.cs: don't use StartWith to see if a
+	variable's value is a bind expression, as it erroneously renames
+	all calls to methods starting with the string Bind. Use a regular
+	expression now instead. Fixes bug #81928.
+
 2007-06-20  Marek Habersack  <mhabersack@novell.com>
 
 	* AppResourcesCompiler.cs: use HttpRuntime.InternalCache to keep
