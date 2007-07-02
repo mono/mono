@@ -54,97 +54,7 @@ namespace Newtonsoft.Json
 	/// </summary>
 	sealed class JsonSerializer
 	{
-		abstract class LazyDictionary : IDictionary<string, object>
-		{
-			#region IDictionary<string,object> Members
-
-			void IDictionary<string, object>.Add (string key, object value) {
-				throw new NotSupportedException ();
-			}
-
-			bool IDictionary<string, object>.ContainsKey (string key) {
-				throw new NotSupportedException ();
-			}
-
-			ICollection<string> IDictionary<string, object>.Keys {
-				get { throw new NotSupportedException (); }
-			}
-
-			bool IDictionary<string, object>.Remove (string key) {
-				throw new NotSupportedException ();
-			}
-
-			bool IDictionary<string, object>.TryGetValue (string key, out object value) {
-				throw new NotSupportedException ();
-			}
-
-			ICollection<object> IDictionary<string, object>.Values {
-				get { throw new NotSupportedException (); }
-			}
-
-			object IDictionary<string, object>.this [string key] {
-				get {
-					throw new NotSupportedException ();
-				}
-				set {
-					throw new NotSupportedException ();
-				}
-			}
-
-			#endregion
-
-			#region ICollection<KeyValuePair<string,object>> Members
-
-			void ICollection<KeyValuePair<string, object>>.Add (KeyValuePair<string, object> item) {
-				throw new NotSupportedException ();
-			}
-
-			void ICollection<KeyValuePair<string, object>>.Clear () {
-				throw new NotSupportedException ();
-			}
-
-			bool ICollection<KeyValuePair<string, object>>.Contains (KeyValuePair<string, object> item) {
-				throw new NotSupportedException ();
-			}
-
-			void ICollection<KeyValuePair<string, object>>.CopyTo (KeyValuePair<string, object> [] array, int arrayIndex) {
-				throw new NotSupportedException ();
-			}
-
-			int ICollection<KeyValuePair<string, object>>.Count {
-				get { throw new NotSupportedException (); }
-			}
-
-			bool ICollection<KeyValuePair<string, object>>.IsReadOnly {
-				get { throw new NotSupportedException (); }
-			}
-
-			bool ICollection<KeyValuePair<string, object>>.Remove (KeyValuePair<string, object> item) {
-				throw new NotSupportedException ();
-			}
-
-			#endregion
-
-			#region IEnumerable<KeyValuePair<string,object>> Members
-
-			IEnumerator<KeyValuePair<string, object>> IEnumerable<KeyValuePair<string, object>>.GetEnumerator () {
-				return GetEnumerator ();
-			}
-
-			protected abstract IEnumerator<KeyValuePair<string, object>> GetEnumerator ();
-
-			#endregion
-
-			#region IEnumerable Members
-
-			System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator () {
-				return ((IEnumerable<KeyValuePair<string, object>>) this).GetEnumerator ();
-			}
-
-			#endregion
-		}
-
-		sealed class DeserializerLazyDictionary : LazyDictionary
+		sealed class DeserializerLazyDictionary : JavaScriptSerializer.LazyDictionary
 		{
 			readonly JsonReader _reader;
 			readonly JsonSerializer _serializer;
@@ -158,7 +68,7 @@ namespace Newtonsoft.Json
 			}
 		}
 
-		sealed class SerializerLazyDictionary : LazyDictionary
+		sealed class SerializerLazyDictionary : JavaScriptSerializer.LazyDictionary
 		{
 			readonly object _source;
 
@@ -172,6 +82,37 @@ namespace Newtonsoft.Json
 						if (!ReflectionUtils.IsIndexedProperty (member))
 							yield return new KeyValuePair<string, object> (member.Name, ReflectionUtils.GetMemberValue (member, _source));
 				}
+			}
+		}
+
+		sealed class GenericDictionaryLazyDictionary : JavaScriptSerializer.LazyDictionary
+		{
+			readonly object _source;
+			readonly PropertyInfo _piKeys;
+			readonly PropertyInfo _piValues;
+
+
+			public GenericDictionaryLazyDictionary (object source, Type dictType) {
+				_source = source;
+				_piKeys = dictType.GetProperty ("Keys");
+				_piValues = dictType.GetProperty ("Values");
+			}
+
+			protected override IEnumerator<KeyValuePair<string, object>> GetEnumerator () {
+				
+				IEnumerable eKeys = (IEnumerable) _piKeys.GetValue (_source, null);
+				IEnumerator eValues = ((IEnumerable) _piValues.GetValue (_source, null)).GetEnumerator();
+				foreach (object key in eKeys) {
+					string keyString = key == null ? null : key.ToString ();
+					if (!eValues.MoveNext ())
+						throw new IndexOutOfRangeException (keyString);
+
+
+					yield return new KeyValuePair<string, object> (keyString, eValues.Current);
+				}
+
+				if (eValues.MoveNext ())
+					throw new IndexOutOfRangeException (eValues.Current != null ? eValues.Current.ToString () : String.Empty);
 			}
 		}
 
@@ -402,10 +343,13 @@ namespace Newtonsoft.Json
 					ThrowOnReferenceLoop (writer, value);
 					writer.SerializeStack.Push (value);
 					try {
-
-						if (value is IDictionary) {
+						Type genDictType;
+						if (value is IDictionary)
 							SerializeDictionary (writer, (IDictionary) value);
-						}
+						else if (value is IDictionary<string, object>)
+							SerializeDictionary (writer, (IDictionary<string, object>) value);
+						else if ((genDictType = ReflectionUtils.GetGenericDictionary (valueType)) != null)
+							SerializeDictionary (writer, new GenericDictionaryLazyDictionary (value, genDictType));
 						else if (value is IEnumerable) {
 							SerializeEnumerable (writer, (IEnumerable) value);
 						}

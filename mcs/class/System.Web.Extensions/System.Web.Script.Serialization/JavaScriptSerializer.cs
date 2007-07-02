@@ -41,6 +41,96 @@ namespace System.Web.Script.Serialization
 {
 	public class JavaScriptSerializer
 	{
+		internal abstract class LazyDictionary : IDictionary<string, object>
+		{
+			#region IDictionary<string,object> Members
+
+			void IDictionary<string, object>.Add (string key, object value) {
+				throw new NotSupportedException ();
+			}
+
+			bool IDictionary<string, object>.ContainsKey (string key) {
+				throw new NotSupportedException ();
+			}
+
+			ICollection<string> IDictionary<string, object>.Keys {
+				get { throw new NotSupportedException (); }
+			}
+
+			bool IDictionary<string, object>.Remove (string key) {
+				throw new NotSupportedException ();
+			}
+
+			bool IDictionary<string, object>.TryGetValue (string key, out object value) {
+				throw new NotSupportedException ();
+			}
+
+			ICollection<object> IDictionary<string, object>.Values {
+				get { throw new NotSupportedException (); }
+			}
+
+			object IDictionary<string, object>.this [string key] {
+				get {
+					throw new NotSupportedException ();
+				}
+				set {
+					throw new NotSupportedException ();
+				}
+			}
+
+			#endregion
+
+			#region ICollection<KeyValuePair<string,object>> Members
+
+			void ICollection<KeyValuePair<string, object>>.Add (KeyValuePair<string, object> item) {
+				throw new NotSupportedException ();
+			}
+
+			void ICollection<KeyValuePair<string, object>>.Clear () {
+				throw new NotSupportedException ();
+			}
+
+			bool ICollection<KeyValuePair<string, object>>.Contains (KeyValuePair<string, object> item) {
+				throw new NotSupportedException ();
+			}
+
+			void ICollection<KeyValuePair<string, object>>.CopyTo (KeyValuePair<string, object> [] array, int arrayIndex) {
+				throw new NotSupportedException ();
+			}
+
+			int ICollection<KeyValuePair<string, object>>.Count {
+				get { throw new NotSupportedException (); }
+			}
+
+			bool ICollection<KeyValuePair<string, object>>.IsReadOnly {
+				get { throw new NotSupportedException (); }
+			}
+
+			bool ICollection<KeyValuePair<string, object>>.Remove (KeyValuePair<string, object> item) {
+				throw new NotSupportedException ();
+			}
+
+			#endregion
+
+			#region IEnumerable<KeyValuePair<string,object>> Members
+
+			IEnumerator<KeyValuePair<string, object>> IEnumerable<KeyValuePair<string, object>>.GetEnumerator () {
+				return GetEnumerator ();
+			}
+
+			protected abstract IEnumerator<KeyValuePair<string, object>> GetEnumerator ();
+
+			#endregion
+
+			#region IEnumerable Members
+
+			System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator () {
+				return ((IEnumerable<KeyValuePair<string, object>>) this).GetEnumerator ();
+			}
+
+			#endregion
+		}
+
 		List<IEnumerable<JavaScriptConverter>> _converterList;
 		static JavaScriptSerializer _defaultSerializer = new JavaScriptSerializer ();
 
@@ -80,7 +170,7 @@ namespace System.Web.Script.Serialization
 			return (T) ConvertToType (typeof (T), obj);
 		}
 
-		object ConvertToType (Type type, object obj) {
+		internal object ConvertToType (Type type, object obj) {
 			if (obj == null)
 				return null;
 
@@ -224,8 +314,12 @@ namespace System.Web.Script.Serialization
 		}
 
 		public object DeserializeObject (string input) {
+			return DeserializeObject (new StringReader (input));
+		}
+
+		internal object DeserializeObject (TextReader input) {
 			JsonSerializer ser = new JsonSerializer (this);
-			return ser.Deserialize (new StringReader (input));
+			return ser.Deserialize (input);
 		}
 
 		public void RegisterConverters (IEnumerable<JavaScriptConverter> converters) {
@@ -256,8 +350,12 @@ namespace System.Web.Script.Serialization
 		}
 
 		public void Serialize (object obj, StringBuilder output) {
+			Serialize (obj, new StringWriter (output));
+		}
+
+		internal void Serialize (object obj, TextWriter output) {
 			JsonSerializer ser = new JsonSerializer (this);
-			ser.Serialize (new StringWriter (output), obj);
+			ser.Serialize (output, obj);
 		}
 	}
 }

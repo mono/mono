@@ -107,13 +107,31 @@ namespace Newtonsoft.Json.Utilities
             if (type == null)
                 throw new ArgumentNullException("type");
 
-            if (type.IsGenericType && typeof(Dictionary<,>).IsAssignableFrom(type.GetGenericTypeDefinition()))
-                return type.GetGenericArguments()[1];
+			Type genDictType = GetGenericDictionary(type);
+
+			if (genDictType != null)
+				return genDictType.GetGenericArguments () [1];
             else if (typeof(IDictionary).IsAssignableFrom(type))
                 return null;
             else
                 throw new Exception("Bad type");
         }
+
+		static readonly Type GenericDictionaryType = typeof (IDictionary<,>);
+		public static Type GetGenericDictionary (Type type) {
+			if (type.IsGenericType && GenericDictionaryType.IsAssignableFrom (type.GetGenericTypeDefinition ()))
+				return type;
+
+			Type[] ifaces = type.GetInterfaces();
+			if (ifaces != null)
+				for (int i = 0; i < ifaces.Length; i++) {
+					Type current = GetGenericDictionary (ifaces [i]);
+					if (current != null)
+						return current;
+				}
+
+			return null;
+		}
 
         public static Type GetMemberUnderlyingType(MemberInfo member)
         {
