@@ -118,14 +118,14 @@ namespace MonoTests.System.Globalization
 		[Category ("NotWorking")]
 		public void GetYear2 ()
 		{
-			Assert.AreEqual (1999, cn.GetYear (new DateTime (2000, 2, 4, DateTimeKind.Utc).ToLocalTime ()), "#1");
-			Assert.AreEqual (2000, cn.GetYear (new DateTime (2000, 2, 5), DateTimeKind.Utc).ToLocalTime (), "#2");
-			Assert.AreEqual (11, jp.GetYear (new DateTime (2000, 2, 4), DateTimeKind.Utc).ToLocalTime (), "#3");
-			Assert.AreEqual (12, jp.GetYear (new DateTime (2000, 2, 5), DateTimeKind.Utc).ToLocalTime (), "#4");
-			Assert.AreEqual (88, tw.GetYear (new DateTime (2000, 2, 4), DateTimeKind.Utc).ToLocalTime (), "#5");
-			Assert.AreEqual (89, tw.GetYear (new DateTime (2000, 2, 5), DateTimeKind.Utc).ToLocalTime (), "#6");
-			Assert.AreEqual (1999, cn.GetYear (new DateTime (2000, 2, 4), DateTimeKind.Utc).ToLocalTime (), "#7");
-			Assert.AreEqual (2000, cn.GetYear (new DateTime (2000, 2, 5), DateTimeKind.Utc).ToLocalTime (), "#8");
+			Assert.AreEqual (1999, cn.GetYear (new DateTime (2000, 2, 4, 0, 0, 0, DateTimeKind.Utc).ToLocalTime ()), "#1");
+			Assert.AreEqual (2000, cn.GetYear (new DateTime (2000, 2, 5, 0, 0, 0, DateTimeKind.Utc).ToLocalTime ()), "#2");
+			Assert.AreEqual (11, jp.GetYear (new DateTime (2000, 2, 4, 0, 0, 0, DateTimeKind.Utc).ToLocalTime ()), "#3");
+			Assert.AreEqual (12, jp.GetYear (new DateTime (2000, 2, 5, 0, 0, 0, DateTimeKind.Utc).ToLocalTime ()), "#4");
+			Assert.AreEqual (88, tw.GetYear (new DateTime (2000, 2, 4, 0, 0, 0, DateTimeKind.Utc).ToLocalTime ()), "#5");
+			Assert.AreEqual (89, tw.GetYear (new DateTime (2000, 2, 5, 0, 0, 0, DateTimeKind.Utc).ToLocalTime ()), "#6");
+			Assert.AreEqual (1999, cn.GetYear (new DateTime (2000, 2, 4, 0, 0, 0, DateTimeKind.Utc).ToLocalTime ()), "#7");
+			Assert.AreEqual (2000, cn.GetYear (new DateTime (2000, 2, 5, 0, 0, 0, DateTimeKind.Utc).ToLocalTime ()), "#8");
 		}
 
 		bool [] leapYears = new bool [] {
