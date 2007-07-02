@@ -1,3 +1,8 @@
+2007-07-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (emit_marshal_string): Add support for unicode strings in
+	MARSHAL_ACTION_MANAGED_CONV_RESULT. Fixes #81990.
+
 2007-07-02 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c: field load/store are now verified, missing only access checks now
