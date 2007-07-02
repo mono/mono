@@ -60,6 +60,8 @@ namespace System.Windows.Forms {
 		private bool stripAmpersands;
 		private bool useAnimation;
 		private bool useFading;
+		private object tag;
+
 #endif
 
 		#endregion	// Local variables
@@ -328,6 +330,15 @@ namespace System.Windows.Forms {
 		public bool StripAmpersands {
 			get { return stripAmpersands; }
 			set { stripAmpersands = value; }
+		}
+
+		[Localizable (false)]
+		[Bindable (true)]
+		[TypeConverter (typeof (StringConverter))]
+		[DefaultValue (null)]
+		public object Tag {
+			get { return tag; }
+			set { tag = value; }
 		}
 
 		[Browsable (true)]
