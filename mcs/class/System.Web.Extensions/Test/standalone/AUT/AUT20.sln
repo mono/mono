@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AUT20.JavaEE", "AUT20.JavaEE.csproj", "{B3D044AF-8FF7-4106-9382-444DD7D4CEC6}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug_Java|Any CPU = Debug_Java|Any CPU
+		Debug|Any CPU = Debug|Any CPU
+		Release_Java|Any CPU = Release_Java|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B3D044AF-8FF7-4106-9382-444DD7D4CEC6}.Debug_Java|Any CPU.ActiveCfg = Debug_Java|Any CPU
+		{B3D044AF-8FF7-4106-9382-444DD7D4CEC6}.Debug_Java|Any CPU.Build.0 = Debug_Java|Any CPU
+		{B3D044AF-8FF7-4106-9382-444DD7D4CEC6}.Debug|Any CPU.ActiveCfg = Debug_Java|Any CPU
+		{B3D044AF-8FF7-4106-9382-444DD7D4CEC6}.Debug|Any CPU.Build.0 = Debug_Java|Any CPU
+		{B3D044AF-8FF7-4106-9382-444DD7D4CEC6}.Release_Java|Any CPU.ActiveCfg = Release_Java|Any CPU
+		{B3D044AF-8FF7-4106-9382-444DD7D4CEC6}.Release_Java|Any CPU.Build.0 = Release_Java|Any CPU
+		{B3D044AF-8FF7-4106-9382-444DD7D4CEC6}.Release|Any CPU.ActiveCfg = Release_Java|Any CPU
+		{B3D044AF-8FF7-4106-9382-444DD7D4CEC6}.Release|Any CPU.Build.0 = Release_Java|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
