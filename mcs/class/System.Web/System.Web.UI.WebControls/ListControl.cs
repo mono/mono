@@ -512,9 +512,10 @@ namespace System.Web.UI.WebControls {
 		internal ArrayList GetSelectedIndicesInternal ()
 		{
 			ArrayList selected = null;
-			if (items != null) {
+			int count;
+			
+			if (items != null && (count = items.Count) > 0) {
 				selected = new ArrayList ();
-				int count = Items.Count;
 				for (int i = 0; i < count; i++) {
 					if (items [i].Selected)
 						selected.Add (i);
@@ -535,7 +536,6 @@ namespace System.Web.UI.WebControls {
 				second = manager.SaveViewState ();
 
 			ArrayList selected = GetSelectedIndicesInternal ();
-
 			if (first == null && second == null && selected == null)
 				return null;
 

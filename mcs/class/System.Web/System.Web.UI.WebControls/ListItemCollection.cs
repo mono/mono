@@ -265,6 +265,9 @@ namespace System.Web.UI.WebControls {
 #endif
 
 			count = items.Count;
+			if (count == 0)
+				return null;
+			
 			text = new string[count];
 			value = new string[count];
 #if NET_2_0

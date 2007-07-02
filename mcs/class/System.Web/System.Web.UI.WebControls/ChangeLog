@@ -1,3 +1,15 @@
+2007-07-02  Marek Habersack  <mhabersack@novell.com>
+
+	* WebControl.cs: Revert r80368, as it wasn't the correct
+	fix. Fixes bug #81945.
+
+	* ListControl.cs: if there are no items in the collection, do not
+	return an empty ArrayList from GetSelectedIndicesInternal. Fixes
+	bug #81945 and properly fixes bug #78533.
+
+	* ListItemCollection.cs: if there are no items in collection,
+	return null.
+
 2007-07-01 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* GridView.cs:

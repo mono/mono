@@ -532,16 +532,7 @@ namespace System.Web.UI.WebControls {
 				return;
 			}
 
-			Pair pair;
-			if (savedState is Triplet) {
-				pair = ((Triplet)savedState).First as Pair;
-			} else
-				pair = savedState as Pair;
-
-			if (pair == null) {
-				base.LoadViewState (null);
-				return;
-			}
+			Pair pair = (Pair) savedState;
 			
 			base.LoadViewState (pair.First);
 			if (ViewState [System.Web.UI.WebControls.Style.BitStateKey] != null)
