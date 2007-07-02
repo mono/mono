@@ -62,6 +62,7 @@ namespace System.Web.UI
 
 		protected override void Render (HtmlTextWriter writer) {
 			ScriptManager.RegisterScriptDescriptors (this);
+			base.Render (writer);
 		}
 
 		#region IScriptControl Members
