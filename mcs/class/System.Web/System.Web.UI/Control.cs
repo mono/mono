@@ -109,8 +109,9 @@ namespace System.Web.UI
 #if NET_2_0
 		TemplateControl _templateControl;
 		bool _isChildControlStateCleared;
-		string _templateSourceDirectory;
 #endif
+		string _templateSourceDirectory;
+		
 		/*************/
 		int stateMask;
 		const int ENABLE_VIEWSTATE 	= 1;
@@ -437,7 +438,17 @@ namespace System.Web.UI
 				
 				return _templateSourceDirectory;
 #else
-				return (_parent == null) ? String.Empty : _parent.TemplateSourceDirectory;
+				if (_templateSourceDirectory == null) {
+					HttpContext ctx = HttpContext.Current;
+					HttpRequest req = ctx != null ? ctx.Request : null;
+					
+					_templateSourceDirectory = (_parent == null)
+						? req != null ? VirtualPathUtility.RemoveTrailingSlash (
+							VirtualPathUtility.GetDirectory (
+								HttpContext.Current.Request.CurrentExecutionFilePath)) : String.Empty
+						: _parent.TemplateSourceDirectory;
+				}
+				return _templateSourceDirectory;
 #endif
 			}
                 }

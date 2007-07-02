@@ -1,3 +1,8 @@
+2007-07-02  Marek Habersack  <mhabersack@novell.com>
+
+	* Control.cs: make sure TemplateSourceDirectory returns meaningful
+	results in the 1.1 profile. Fixes bug #81950.
+
 2007-06-24  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* ObjectStateFormatter.cs: WriterContext.RegisterCache, refactored out
