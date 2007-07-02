@@ -50,6 +50,7 @@ namespace System.Web.UI
 		bool _childrenAsTriggers = true;
 		bool _requiresUpdate = false;
 		UpdatePanelTriggerCollection _triggers;
+		UpdatePanelRenderMode _renderMode = UpdatePanelRenderMode.Block;
 
 		[Category ("Behavior")]
 		[DefaultValue (true)]
@@ -101,10 +102,10 @@ namespace System.Web.UI
 		[Category ("Layout")]
 		public UpdatePanelRenderMode RenderMode {
 			get {
-				throw new NotImplementedException ();
+				return _renderMode;
 			}
 			set {
-				throw new NotImplementedException ();
+				_renderMode = value;
 			}
 		}
 
@@ -199,7 +200,10 @@ namespace System.Web.UI
 
 		protected override void Render (HtmlTextWriter writer) {
 			writer.AddAttribute (HtmlTextWriterAttribute.Id, ClientID);
-			writer.RenderBeginTag (HtmlTextWriterTag.Div);
+			if (RenderMode == UpdatePanelRenderMode.Block)
+				writer.RenderBeginTag (HtmlTextWriterTag.Div);
+			else
+				writer.RenderBeginTag (HtmlTextWriterTag.Span);
 			RenderChildren (writer);
 			writer.RenderEndTag ();
 		}
