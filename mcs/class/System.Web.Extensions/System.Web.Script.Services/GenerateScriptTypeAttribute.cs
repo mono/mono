@@ -36,18 +36,21 @@ namespace System.Web.Script.Services
 	[AttributeUsage (AttributeTargets.Class | AttributeTargets.Method | AttributeTargets.Interface, AllowMultiple = true)]
 	public sealed class GenerateScriptTypeAttribute : Attribute
 	{
-		Type _type;
+		readonly Type _type;
+		string _typeId;
 
 		public GenerateScriptTypeAttribute (Type type) {
+			if (type == null)
+				throw new ArgumentNullException ("type");
 			_type = type;
 		}
 
 		public string ScriptTypeId {
 			get {
-				throw new NotImplementedException ();
+				return _typeId == null ? String.Empty : _typeId;
 			}
 			set {
-				throw new NotImplementedException ();
+				_typeId = value;
 			}
 		}
 
