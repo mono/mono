@@ -107,6 +107,7 @@ namespace System.Web.UI
 		bool _enablePartialRendering = true;
 		bool _init;
 		string _panelToRefreshID;
+		Dictionary<Control, DataItemEntry> _dataItems;
 
 		[DefaultValue (true)]
 		[Category ("Behavior")]
@@ -610,11 +611,22 @@ namespace System.Web.UI
 		}
 
 		public void RegisterDataItem (Control control, string dataItem) {
-			throw new NotImplementedException ();
+			RegisterDataItem (control, dataItem, false);
 		}
 
 		public void RegisterDataItem (Control control, string dataItem, bool isJsonSerialized) {
-			throw new NotImplementedException ();
+			if (!IsInAsyncPostBack)
+				throw new InvalidOperationException ("RegisterDataItem can only be called during an async postback.");
+			if (control == null)
+				throw new ArgumentNullException ("control");
+
+			if (_dataItems == null)
+				_dataItems = new Dictionary<Control, DataItemEntry> ();
+
+			if (_dataItems.ContainsKey (control))
+				throw new ArgumentException (String.Format ("'{0}' already has a data item registered.", control.ID), "control");
+
+			_dataItems.Add (control, new DataItemEntry (dataItem, isJsonSerialized));
 		}
 
 		public void RegisterDispose (Control control, string disposeScript) {
@@ -907,6 +919,12 @@ namespace System.Web.UI
 			WriteCallbackOutput (output, asyncPostBackTimeout, null, AsyncPostBackTimeout.ToString ());
 			WriteCallbackOutput (output, pageTitle, null, Page.Title);
 
+			if (_dataItems != null)
+				foreach (Control control in _dataItems.Keys) {
+					DataItemEntry entry = _dataItems [control];
+					WriteCallbackOutput (output, entry.IsJsonSerialized ? dataItemJson : dataItem, control.ClientID, entry.DataItem);
+				}
+			
 			WriteArrayDeclarations (output);
 			WriteScriptBlocks (output, _clientScriptBlocks);
 			WriteScriptBlocks (output, _scriptIncludes);
@@ -1205,8 +1223,8 @@ namespace System.Web.UI
 
 		sealed class ScriptReferenceEntry
 		{
-			public readonly Control _control;
-			public readonly ScriptReference _scriptReference;
+			readonly Control _control;
+			readonly ScriptReference _scriptReference;
 
 			public Control Control { get { return _control; } }
 			public ScriptReference ScriptReference { get { return _scriptReference; } }
@@ -1214,6 +1232,20 @@ namespace System.Web.UI
 			public ScriptReferenceEntry (Control control, ScriptReference scriptReference) {
 				_control = control;
 				_scriptReference = scriptReference;
+			}
+		}
+
+		sealed class DataItemEntry
+		{
+			readonly string _dataItem;
+			readonly bool _isJsonSerialized;
+
+			public string DataItem { get { return _dataItem; } }
+			public bool IsJsonSerialized { get { return _isJsonSerialized; } }
+
+			public DataItemEntry (string dataItem, bool isJsonSerialized) {
+				_dataItem = dataItem;
+				_isJsonSerialized = isJsonSerialized;
 			}
 		}
 	}
