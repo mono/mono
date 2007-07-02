@@ -1,3 +1,10 @@
+2007-07-02  Marek Habersack  <mhabersack@novell.com>
+
+	* CapabilitiesLoader.cs: provide default capability values for all
+	the 2.0+ capabilities which are not defined in our
+	browscap.ini. The default values have been assigned as per
+	MSDN. Fixes bug #81927
+
 2007-06-28  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* HttpResponse.cs: fixed AddHeadersNoCache, removed content-length
