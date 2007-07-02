@@ -65,6 +65,9 @@ using System.IO;
 /// on the mean tropical year, not the mean March equinoctial year.
 /// </para>
 /// </remarks>
+#if NET_2_0
+[Serializable]
+#endif
 public class PersianCalendar : Calendar {
 	/// <summary>
 	/// Constructor.
@@ -496,6 +499,13 @@ public class PersianCalendar : Calendar {
 		M_CheckDateTime(time);
 		return PersianEra;
 	}
+
+#if NET_2_0
+	public override int GetLeapMonth (int year, int era)
+	{
+		return 0;
+	}
+#endif
 
 	/// <summary>
 	/// Overridden. Gives the number of the month of the specified

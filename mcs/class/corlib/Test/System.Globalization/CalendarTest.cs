@@ -131,6 +131,12 @@ public class CalendarTest : TestCase {
 	private TaiwanCalendar tacal;
 	private KoreanCalendar kcal;
 	private ThaiBuddhistCalendar tbcal;
+#if NET_2_0
+	private ChineseLunisolarCalendar clcal;
+	private TaiwanLunisolarCalendar tlcal;
+	private JapaneseLunisolarCalendar jlcal;
+	private KoreanLunisolarCalendar klcal;
+#endif
 
 	protected override void SetUp() {
 		gcal = new GregorianCalendar();
@@ -144,6 +150,12 @@ public class CalendarTest : TestCase {
 		acal = new Calendar[] {
 			gcal, jucal, hical, hecal, jacal,
 			tacal, kcal, tbcal};
+#if NET_2_0
+		clcal = new ChineseLunisolarCalendar ();
+		tlcal = new TaiwanLunisolarCalendar ();
+		jlcal = new JapaneseLunisolarCalendar ();
+		klcal = new KoreanLunisolarCalendar ();
+#endif
 	}
 
 	private void RowCheck(params Date[] adate) {
@@ -450,6 +462,11 @@ public class CalendarTest : TestCase {
 		AssertEquals("B05 KoreanEra", 1, KoreanCalendar.KoreanEra);
 		AssertEquals("B06 ThaiBuddhistEra", 1,
 			ThaiBuddhistCalendar.ThaiBuddhistEra);
+#if NET_2_0
+		AssertEquals("CNLunisor", 1, ChineseLunisolarCalendar.ChineseEra);
+		AssertEquals("JPLunisor", 1, JapaneseLunisolarCalendar.JapaneseEra);
+		AssertEquals("KRLunisor", 1, KoreanLunisolarCalendar.GregorianEra);
+#endif
 	}
 
 	public void TestCurrentEra() {
@@ -484,6 +501,18 @@ public class CalendarTest : TestCase {
 				cal.Eras[0] != 29);
 		}
 	}
+
+#if NET_2_0
+	public void TestErasProperty2() {
+		AssertEquals("cn", 1, clcal.Eras.Length);
+		AssertEquals("tw", 1, tlcal.Eras.Length);
+		AssertEquals("jp", 2, jlcal.Eras.Length);
+		AssertEquals("kr", 1, klcal.Eras.Length);
+
+		AssertEquals("jp.1", 4, jlcal.Eras [0]);
+		AssertEquals("jp.2", 3, jlcal.Eras [1]);
+	}
+#endif
 
 	public void TestTwoDigitYearMax() {
 		AssertEquals("E01 TwoDigitYearMax GregorianCalendar",
@@ -561,6 +590,88 @@ public class CalendarTest : TestCase {
 		DateTime next = c.AddYears (d, 1);
 		AssertEquals ("next", 2, next.Month);
 	}
+
+#if NET_2_0
+	[Test]
+	[Category ("NotWorking")]
+	public void GetLeapMonth ()
+	{
+		GregorianCalendar gc = new GregorianCalendar ();
+		AssertEquals ("#1-1", 0, gc.GetLeapMonth (2007));
+		AssertEquals ("#1-2", 0, gc.GetLeapMonth (2008));
+		AssertEquals ("#1-3", 0, gc.GetLeapMonth (2100));
+		AssertEquals ("#1-4", 0, gc.GetLeapMonth (2000));
+
+		JulianCalendar jc = new JulianCalendar ();
+		AssertEquals ("#2-1", 0, jc.GetLeapMonth (2007));
+		AssertEquals ("#2-2", 0, jc.GetLeapMonth (2008));
+		AssertEquals ("#2-3", 0, jc.GetLeapMonth (2100));
+		AssertEquals ("#2-4", 0, jc.GetLeapMonth (2000));
+		AssertEquals ("#2-5", 0, jc.GetLeapMonth (2009));
+		AssertEquals ("#2-6", 0, jc.GetLeapMonth (2010));
+
+		HebrewCalendar hc = new HebrewCalendar ();
+		// 3rd, 6th, 8th, 11th 14th and 17th year in every 19 are leap.
+		// 5339 % 19 = 0.
+		AssertEquals ("#3-1", 0, hc.GetLeapMonth (5343));
+		AssertEquals ("#3-2", 0, hc.GetLeapMonth (5344));
+		AssertEquals ("#3-3", 7, hc.GetLeapMonth (5345));
+		AssertEquals ("#3-4", 0, hc.GetLeapMonth (5346));
+		AssertEquals ("#3-5", 7, hc.GetLeapMonth (5347));
+		AssertEquals ("#3-6", 0, hc.GetLeapMonth (5348));
+		AssertEquals ("#3-7", 0, hc.GetLeapMonth (5349));
+
+		ThaiBuddhistCalendar tc = new ThaiBuddhistCalendar ();
+		AssertEquals ("#4-1", 0, tc.GetLeapMonth (2520));
+		AssertEquals ("#4-2", 0, tc.GetLeapMonth (2521));
+		AssertEquals ("#4-3", 0, tc.GetLeapMonth (2522));
+		AssertEquals ("#4-4", 0, tc.GetLeapMonth (2523));
+
+		ChineseLunisolarCalendar cc = new ChineseLunisolarCalendar ();
+		AssertEquals ("#5-1", 0, cc.GetLeapMonth (2000));
+		AssertEquals ("#5-2", 5, cc.GetLeapMonth (2001));
+		AssertEquals ("#5-3", 0, cc.GetLeapMonth (2002));
+		AssertEquals ("#5-4", 0, cc.GetLeapMonth (2003));
+		AssertEquals ("#5-5", 3, cc.GetLeapMonth (2004));
+		AssertEquals ("#5-6", 0, cc.GetLeapMonth (2005));
+		AssertEquals ("#5-7", 8, cc.GetLeapMonth (2006));
+		AssertEquals ("#5-8", 0, cc.GetLeapMonth (2007));
+		AssertEquals ("#5-9", 0, cc.GetLeapMonth (2008));
+		AssertEquals ("#5-10", 6, cc.GetLeapMonth (2009));
+		AssertEquals ("#5-11", 0, cc.GetLeapMonth (2010));
+		AssertEquals ("#5-12", 0, cc.GetLeapMonth (2011));
+		AssertEquals ("#5-13", 5, cc.GetLeapMonth (2012));
+		AssertEquals ("#5-14", 0, cc.GetLeapMonth (2013));
+		AssertEquals ("#5-15", 10, cc.GetLeapMonth (2014));
+		AssertEquals ("#5-16", 0, cc.GetLeapMonth (2015));
+		AssertEquals ("#5-17", 0, cc.GetLeapMonth (2016));
+		AssertEquals ("#5-18", 7, cc.GetLeapMonth (2017));
+		AssertEquals ("#5-19", 0, cc.GetLeapMonth (2018));
+		AssertEquals ("#5-20", 0, cc.GetLeapMonth (2019));
+
+		KoreanLunisolarCalendar kc = new KoreanLunisolarCalendar ();
+		AssertEquals ("#6-1", 0, kc.GetLeapMonth (2000));
+		AssertEquals ("#6-2", 5, kc.GetLeapMonth (2001));
+		AssertEquals ("#6-3", 0, kc.GetLeapMonth (2002));
+		AssertEquals ("#6-4", 0, kc.GetLeapMonth (2003));
+		AssertEquals ("#6-5", 3, kc.GetLeapMonth (2004));
+		AssertEquals ("#6-6", 0, kc.GetLeapMonth (2005));
+		AssertEquals ("#6-7", 8, kc.GetLeapMonth (2006));
+		AssertEquals ("#6-8", 0, kc.GetLeapMonth (2007));
+		AssertEquals ("#6-9", 0, kc.GetLeapMonth (2008));
+		AssertEquals ("#6-10", 6, kc.GetLeapMonth (2009));
+		AssertEquals ("#6-11", 0, kc.GetLeapMonth (2010));
+		AssertEquals ("#6-12", 0, kc.GetLeapMonth (2011));
+		AssertEquals ("#6-13", 4, kc.GetLeapMonth (2012)); // off from cn by 1
+		AssertEquals ("#6-14", 0, kc.GetLeapMonth (2013));
+		AssertEquals ("#6-15", 10, kc.GetLeapMonth (2014));
+		AssertEquals ("#6-16", 0, kc.GetLeapMonth (2015));
+		AssertEquals ("#6-17", 0, kc.GetLeapMonth (2016));
+		AssertEquals ("#6-18", 6, kc.GetLeapMonth (2017)); // off from cn by 1
+		AssertEquals ("#6-19", 0, kc.GetLeapMonth (2018));
+		AssertEquals ("#6-20", 0, kc.GetLeapMonth (2019));
+	}
+#endif
 
 	/* UK TODO: breaks with current DateTime implementation.
 	 * I've a newer one that works, but that requires to much changes.

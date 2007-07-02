@@ -59,6 +59,7 @@ System.Globalization/CompareInfoTest.cs
 System.Globalization/CultureInfoTest.cs
 System.Globalization/DateTimeFormatInfoTest.cs
 System.Globalization/DaylightTimeTest.cs
+System.Globalization/EastAsianLunisolarCalendarTest.cs
 System.Globalization/IdnMappingTest.cs
 System.Globalization/RegionInfoTest.cs
 System.Globalization/TextInfoTest.cs

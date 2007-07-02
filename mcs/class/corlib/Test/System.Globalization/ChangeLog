@@ -1,3 +1,8 @@
+2007-07-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* EastAsianLunisolarCalendarTest.cs : new test, totally not-working.
+	* CalendarTest.cs : added couple of 2.0 tests. Some are not working.
+
 2007-06-24  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* CultureInfoTest.cs: Added exception tests when invoking NumberFormat

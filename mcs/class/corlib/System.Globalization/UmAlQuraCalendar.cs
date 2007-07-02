@@ -1,10 +1,11 @@
-// TaiwanCalendar.cs
+// UmAlQuraCalendar.cs
+//
+// Authors:
+//	Ulrich Kunitz
+//	Atsushi Enomoto <atsushi@ximian.com>
 //
 // (C) Ulrich Kunitz 2002
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,60 +27,79 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+//
+// This code is almost a copy of HijriCalendar, except that
+// - it does not support HijriAdjustment.
+// - HijriEra->UmAlQuraEra.
+//
+
+#if NET_2_0
+
 namespace System.Globalization {
 
 using System;
+using System.IO;
+
 
 /// <summary>
-/// This is the Japanese calendar. It differs from the Gregorian calendar
-/// only in the years.
+/// This is the Hijri calendar which might be called Islamic calendar. 
 /// </summary>
 /// <remarks>
-/// <para>The Japanese calendar support a single era starting at January 1,
-/// 1912</para>
+/// <para>The calendar supports only dates in the UmAlQuraEra starting with the 
+/// epoch.
+/// </para>
+/// <para>
+/// The epoch of the Hijri Calendar might be adjusted by the 
+/// <see cref="F:System.Globalization.HijriCalendar.AddHijriDate"/>
+/// property. See the discussion of the
+/// <see cref="F:CalendricalCalculations.HijriCalendar.epoch">
+/// epoch
+/// </see>
+/// of the Hijri calendar.
+/// </para>
 /// <para>The implementation uses the
 /// <see cref="N:CalendricalCalculations"/> namespace.
 /// </para>
 /// </remarks>
-#if NET_2_0
-[System.Runtime.InteropServices.ComVisible(true)]
-#endif
 [Serializable]
-[MonoTODO ("Serialization format not compatible with.NET")]
-public class TaiwanCalendar : Calendar {
+[MonoTODO ("Serialization format not compatible with .NET")]
+public class UmAlQuraCalendar : Calendar {
 	/// <summary>
-	/// Static protected field storing the
-	/// <see cref="T:CalendricalCalculations.GregorianEraHandler"/>.
+	/// Constructor.
 	/// </summary>
-	internal static readonly CCGregorianEraHandler M_EraHandler;
-
-	/// <summary>
-	/// Static constructor, who creates and initializes
-	/// <see cref="F:M_EraHandler"/>.
-	/// </summary>
-	static TaiwanCalendar() {
-		M_EraHandler = new CCGregorianEraHandler();
-		M_EraHandler.appendEra(1,
-			CCGregorianCalendar.fixed_from_dmy(1, 1, 1912));
+	public UmAlQuraCalendar() {
+		M_AbbrEraNames = new string[] {"A.H."};
+		M_EraNames = new string[] {"Anno Hegirae"};
+		if (twoDigitYearMax == 99)
+			twoDigitYearMax = 1451;
 	}
 
 	/// <summary>
-	/// Default constructor.
+	/// The era number for the Anno Hegirae (A.H.) era.
 	/// </summary>
-	public TaiwanCalendar() {
-		M_AbbrEraNames = new string[] {"T.C.E."};
-		M_EraNames =  new string[] {"Taiwan current era"};
-	}
+	public const int UmAlQuraEra = 1;
 
-	/// <value>Overridden. Gives the eras supported by the
+	/// <summary>
+	/// The minimum fixed day number supported by the Hijri calendar.
+	/// </summary>
+	internal static readonly int M_MinFixed =
+		CCHijriCalendar.fixed_from_dmy(1, 1, 1);
+	/// <summary>
+	/// The maximum fixed day number supported by the Hijri calendar.
+	/// </summary>
+	internal static readonly int M_MaxFixed =
+		CCGregorianCalendar.fixed_from_dmy(31, 12, 9999);
+
+	/// <value>Overridden. Gives the eras supported by the Gregorian
 	/// calendar as an array of integers.
 	/// </value>
 	public override int[] Eras {
 		get {
-			return (int[])M_EraHandler.Eras.Clone();
+			return new int[] { UmAlQuraEra }; 
 		}
 	}
 
+	// FIXME: [MonoTODO ("Add call into operating system")]
 	public override int TwoDigitYearMax 
 	{
 		get {
@@ -94,6 +114,66 @@ public class TaiwanCalendar : Calendar {
 	}
 
 	/// <summary>
+	/// Protected field storing the
+	/// <see cref="F:AddHijriDate"/>.
+	/// </summary>
+	internal int M_AddHijriDate = 0;
+
+	// TODO: I don't know currently, which sign to use with the parameter.
+	/// <value>An integer property representing the adjustment to the epoch
+	/// of the Hijri calendar. Not supported by .NET.
+	/// </value>
+	internal virtual int AddHijriDate {
+		get {
+			return M_AddHijriDate;
+		}
+		set {
+			CheckReadOnly ();
+			if (value < -3 && value > 3)
+				throw new ArgumentOutOfRangeException(
+					"AddHijriDate",
+					"Value should be between -3 and 3.");
+			M_AddHijriDate = value;
+		}
+	}
+	
+	/// <summary>
+	/// A protected method checking an
+	/// <see cref="F:AddHijriDate"/> adjusted fixed day number.
+	/// </summary>
+	/// <param name="param">A string giving the name of the parameter
+	/// to check.</param>
+	/// <param name="rdHijri">An integer giving the AddHijriDate adjusted
+	/// fixed day number.
+	/// </param>
+	/// <exception cref="T:System.ArgumentOutOfRangeException">
+	/// Exception is thrown, if the AddHijriDate adjusted fixed day
+	/// number is outside the supported range.
+	/// </exception>
+	internal void M_CheckFixedHijri(string param, int rdHijri) {
+		if (rdHijri < M_MinFixed || rdHijri > M_MaxFixed-AddHijriDate) {
+			StringWriter sw = new StringWriter();
+			int day, month, year;
+			CCHijriCalendar.dmy_from_fixed(out day, out month,
+				out year, M_MaxFixed-AddHijriDate);
+			if (AddHijriDate != 0) {
+				sw.Write("This HijriCalendar " +
+					"(AddHijriDate {0})" +
+					" allows dates from 1. 1. 1 to " +
+					"{1}. {2}. {3}.",
+					AddHijriDate,
+					day, month, year);
+			} else {
+				sw.Write("HijriCalendar allows dates from " +
+					"1.1.1 to {0}.{1}.{2}.",
+					day, month, year);
+			}
+			throw new ArgumentOutOfRangeException(param,
+				sw.ToString());
+		}
+	}
+
+	/// <summary>
 	/// A protected member checking a
 	/// <see cref="T:System.DateTime"/> value.
 	/// </summary>
@@ -103,25 +183,88 @@ public class TaiwanCalendar : Calendar {
 	/// </param>
 	/// <exception cref="T:System.ArgumentOutOfRangeException">
 	/// The exception is thrown if the
-	/// <see cref="T:System.DateTime"/> parameter is outside all
-	/// supported eras.
+	/// <see cref="T:System.DateTime"/> parameter is not in the supported 
+	/// range of the Hijri calendar.
 	/// </exception>
 	internal void M_CheckDateTime(DateTime time) {
-		M_EraHandler.CheckDateTime(time);
+		int rd = CCFixed.FromDateTime(time) - AddHijriDate;
+		M_CheckFixedHijri("time", rd);
+	}
+
+	/// <summary>
+	/// Protected member which computes the
+	/// <see cref="F:AddHijriDate"/>
+	/// adjusted fixed day number from a
+	/// <see cref="T:System.DateTime"/>.
+	/// </summary>
+	/// <param name="time">The
+	/// <see cref="T:System.DateTime"/>
+	/// to convert.
+	/// </param>
+	/// <returns>The
+	/// <see cref="F:AddHijriDate"/> adjusted fixed day number.
+	/// </returns>
+	internal int M_FromDateTime(DateTime time) {
+		return CCFixed.FromDateTime(time) - AddHijriDate;
+	}
+
+	/// <summary>
+	/// Protected member which converts the
+	/// <see cref="F:AddHijriDate"/>
+	/// adjusted fixed day number the a
+	/// <see cref="T:System.DateTime"/> value.
+	/// </summary>
+	/// <param name="rd">The
+	/// <see cref="F:AddHijriDate"/> adjusted fixed day number.
+	/// </param>
+	/// <returns>The converted
+	/// <see cref="T:System.DateTime"/> value.
+	/// </returns>
+	internal DateTime M_ToDateTime(int rd) {
+		return CCFixed.ToDateTime(rd+AddHijriDate);
+	}
+
+	/// <summary>
+	/// Protected member which converts the
+	/// <see cref="F:AddHijriDate"/>
+	/// adjusted fixed day number the a
+	/// <see cref="T:System.DateTime"/> value using a number
+	/// of time parameters.
+	/// </summary>
+	/// <param name="date">The
+	/// <see cref="F:AddHijriDate"/> adjusted fixed day number.
+	/// </param>
+	/// <param name="hour">An integer that specifies the hour.
+	/// </param>
+	/// <param name="minute">An integer that specifies the minute.
+	/// </param>
+	/// <param name="second">An integer that gives the second.
+	/// </param>
+	/// <param name="milliseconds">An integer that gives the
+	/// milliseconds.
+	/// </param>
+	/// <returns>The converted
+	/// <see cref="T:System.DateTime"/> value.
+	/// </returns>
+	internal DateTime M_ToDateTime(int date,
+		int hour, int minute, int second, int milliseconds)
+	{
+		return CCFixed.ToDateTime(date+AddHijriDate,
+			hour, minute, second, milliseconds);
 	}
 
 	/// <summary>
 	/// A protected method checking the era number.
 	/// </summary>
-	/// <param name="era">The era number as reference. It is set
-	/// to <see cref="F:CurrentEra"/>, if the input value is 0.</param>
+	/// <param name="era">The era number.</param>
 	/// <exception name="T:System.ArgumentException">
-	/// The exception is thrown if the era is not supported by the class.
+	/// The exception is thrown if the era is not equal
+	/// <see cref="F:UmAlQuraEra"/>.
 	/// </exception>
 	internal void M_CheckEra(ref int era) {
 		if (era == CurrentEra)
-			era = 1;
-		if (!M_EraHandler.ValidEra(era))
+			era = UmAlQuraEra;
+		if (era != UmAlQuraEra)
 			throw new ArgumentException("Era value was not valid.");
 	}
 
@@ -130,30 +273,18 @@ public class TaiwanCalendar : Calendar {
 	/// </summary>
 	/// <param name="year">An integer representing the calendar year.
 	/// </param>
-	/// <param name="era">The era number as reference.</param>
-	/// <exception name="T:System.ArgumentException">
-	/// The exception is thrown if the era is not supported by the class.
+	/// <param name="era">The era number.</param>
+	/// <exception cref="T:System.ArgumentException">
+	/// The exception is thrown if the era is not equal
+	/// <see cref="F:UmAlQuraEra"/>.
 	/// </exception>
 	/// <exception cref="T:System.ArgumentOutOfRangeException">
 	/// The exception is thrown if the calendar year is outside of
-	/// the supported range.
-	/// </exception>
-	internal int M_CheckYEG(int year, ref int era) {
-		M_CheckEra(ref era);
-		return M_EraHandler.GregorianYear(year, era);
-	}
-
-	/// <summary>
-	/// Checks whether the year is the era is valid, if era = CurrentEra
-	/// the right value is set.
-	/// </summary>
-	/// <param name="year">The year to check.</param>
-	/// <param name="era">The era to check.</Param>
-	/// <exception cref="T:ArgumentOutOfRangeException">
-	/// The exception will be thrown, if the year is not valid.
+	/// the allowed range.
 	/// </exception>
 	internal override void M_CheckYE(int year, ref int era) {
-		M_CheckYEG(year, ref era);
+		M_CheckEra(ref era);
+		M_ArgumentInRange("year", year, 1, 9666);
 	}
 
 	/// <summary>
@@ -164,20 +295,24 @@ public class TaiwanCalendar : Calendar {
 	/// </param>
 	/// <param name="month">An integer giving the calendar month.
 	/// </param>
-	/// <param name="era">The era number as reference.</param>
-	/// <exception name="T:System.ArgumentException">
-	/// The exception is thrown if the era is not supported by the class.
+	/// <param name="era">The era number.</param>
+	/// <exception cref="T:System.ArgumentException">
+	/// The exception is thrown if the era is not equal
+	/// <see cref="F:UmAlQuraEra"/>.
 	/// </exception>
 	/// <exception cref="T:System.ArgumentOutOfRangeException">
 	/// The exception is thrown if the calendar year or month is
-	/// outside of the supported range.
+	/// outside of the allowed range.
 	/// </exception>
-	internal int M_CheckYMEG(int year, int month, ref int era) {
-		int gregorianYear = M_CheckYEG(year, ref era);
+	internal void M_CheckYME(int year, int month, ref int era) {
+		M_CheckYE(year, ref era);
 		if (month < 1 || month > 12)
 			throw new ArgumentOutOfRangeException("month",
 				"Month must be between one and twelve.");
-		return gregorianYear;
+		if (year == 9666) {
+			int rd = CCHijriCalendar.fixed_from_dmy(1, month, year);
+			M_CheckFixedHijri("month", rd);
+		}
 	}
 
 	/// <summary>
@@ -190,26 +325,32 @@ public class TaiwanCalendar : Calendar {
 	/// </param>
 	/// <param name="day">An integer giving the calendar day.
 	/// </param>
-	/// <param name="era">The era number as reference.</param>
-	/// <exception name="T:System.ArgumentException">
-	/// The exception is thrown if the era is not supported by the class.
+	/// <param name="era">The era number.</param>
+	/// <exception cref="T:System.ArgumentException">
+	/// The exception is thrown if the era is not equal
+	/// <see cref="F:UmAlQuraEra"/>.
 	/// </exception>
 	/// <exception cref="T:System.ArgumentOutOfRangeException">
 	/// The exception is thrown if the calendar year, month, or day is
-	/// outside of the supported range.
+	/// outside of the allowed range.
 	/// </exception>
-	internal int M_CheckYMDEG(int year, int month, int day, ref int era)
+	internal void M_CheckYMDE(int year, int month, int day, ref int era)
 	{
-		int gregorianYear = M_CheckYMEG(year, month, ref era);
+		M_CheckYME(year, month, ref era);
 		M_ArgumentInRange("day", day, 1,
-			GetDaysInMonth(year, month, era));
-		return gregorianYear;
+			GetDaysInMonth(year, month, UmAlQuraEra));
+		if (year == 9666) {
+			int rd = CCHijriCalendar.fixed_from_dmy(day, month,
+				year);
+			M_CheckFixedHijri("day", rd);
+		}
 	}
 
 #if false
+	//
+	// The following routines are commented out as they do not appear on the .NET Framework 1.1
+	//
 
-	// Ifdefed out because this is not on the .NET Framework
-	
 	/// <summary>
 	/// Overridden. Adds days to a given date.
 	/// </summary>
@@ -223,8 +364,8 @@ public class TaiwanCalendar : Calendar {
 	/// DateTime.</returns>
 	/// <exception cref="T:System.ArgumentOutOfRangeException">
 	/// The exception is thrown if the
-	/// <see cref="T:System.DateTime"/> return value is outside all
-	/// supported eras.
+	/// <see cref="T:System.DateTime"/> return value is not in the
+	/// supported range of the Hijri calendar.
 	/// </exception>
 	public override DateTime AddDays(DateTime time, int days) {
 		DateTime t = base.AddDays(time, days);
@@ -245,8 +386,8 @@ public class TaiwanCalendar : Calendar {
 	/// DateTime.</returns>
 	/// <exception cref="T:System.ArgumentOutOfRangeException">
 	/// The exception is thrown if the
-	/// <see cref="T:System.DateTime"/> return value is outside all
-	/// supported eras.
+	/// <see cref="T:System.DateTime"/> return value is not in the
+	/// supported range of the Hijri calendar.
 	/// </exception>
 	public override DateTime AddHours(DateTime time, int hours) {
 		DateTime t = base.AddHours(time, hours);
@@ -270,8 +411,8 @@ public class TaiwanCalendar : Calendar {
 	/// DateTime.</returns>
 	/// <exception cref="T:System.ArgumentOutOfRangeException">
 	/// The exception is thrown if the
-	/// <see cref="T:System.DateTime"/> return value is outside all
-	/// supported eras.
+	/// <see cref="T:System.DateTime"/> return value is not in the
+	/// supported range of the Hijri calendar.
 	/// </exception>
 	public override DateTime AddMilliseconds(DateTime time,
 		double milliseconds)
@@ -294,8 +435,8 @@ public class TaiwanCalendar : Calendar {
 	/// DateTime.</returns>
 	/// <exception cref="T:System.ArgumentOutOfRangeException">
 	/// The exception is thrown if the
-	/// <see cref="T:System.DateTime"/> return value is outside all
-	/// supported eras.
+	/// <see cref="T:System.DateTime"/> return value is not in the
+	/// supported range of the Hijri calendar.
 	/// </exception>
 	public override DateTime AddMinutes(DateTime time, int minutes) {
 		DateTime t = base.AddMinutes(time, minutes);
@@ -316,15 +457,14 @@ public class TaiwanCalendar : Calendar {
 	/// DateTime.</returns>
 	/// <exception cref="T:System.ArgumentOutOfRangeException">
 	/// The exception is thrown if the
-	/// <see cref="T:System.DateTime"/> return value is outside all
-	/// supported eras.
+	/// <see cref="T:System.DateTime"/> return value is not in the
+	/// supported range of the Hijri calendar.
 	/// </exception>
 	public override DateTime AddSeconds(DateTime time, int seconds) {
 		DateTime t = base.AddSeconds(time, seconds);
 		M_CheckDateTime(t);
 		return t;
 	}
-
 
 	/// <summary>
 	/// Overridden. Adds weeks to a given date.
@@ -339,8 +479,8 @@ public class TaiwanCalendar : Calendar {
 	/// DateTime.</returns>
 	/// <exception cref="T:System.ArgumentOutOfRangeException">
 	/// The exception is thrown if the
-	/// <see cref="T:System.DateTime"/> return value is outside all
-	/// supported eras.
+	/// <see cref="T:System.DateTime"/> return value is not in the
+	/// supported range of the Hijri calendar.
 	/// </exception>
 	public override DateTime AddWeeks(DateTime time, int weeks) {
 		DateTime t = base.AddWeeks(time, weeks);
@@ -359,8 +499,8 @@ public class TaiwanCalendar : Calendar {
 	/// starting with 0.</returns>
 	/// <exception cref="T:System.ArgumentOutOfRangeException">
 	/// The exception is thrown if the
-	/// <see cref="T:System.DateTime"/> parameter is outside all
-	/// supported eras.
+	/// <see cref="T:System.DateTime"/> parameter is not in the
+	/// supported range of the Hijri calendar.
 	/// </exception>
 	public override int GetHour(DateTime time) {
 		M_CheckDateTime(time);
@@ -379,8 +519,8 @@ public class TaiwanCalendar : Calendar {
 	/// of the specified time, starting with 0.</returns>
 	/// <exception cref="T:System.ArgumentOutOfRangeException">
 	/// The exception is thrown if the
-	/// <see cref="T:System.DateTime"/> parameter is outside all
-	/// supported eras.
+	/// <see cref="T:System.DateTime"/> parameter is not in the
+	/// supported range of the Hijri calendar.
 	/// </exception>
 	public override double GetMilliseconds(DateTime time) {
 		M_CheckDateTime(time);
@@ -398,8 +538,8 @@ public class TaiwanCalendar : Calendar {
 	/// starting with 0.</returns>
 	/// <exception cref="T:System.ArgumentOutOfRangeException">
 	/// The exception is thrown if the
-	/// <see cref="T:System.DateTime"/> parameter is outside all
-	/// supported eras.
+	/// <see cref="T:System.DateTime"/> parameter is not in the
+	/// supported range of the Hijri calendar.
 	/// </exception>
 	public override int GetMinute(DateTime time) {
 		M_CheckDateTime(time);
@@ -417,8 +557,8 @@ public class TaiwanCalendar : Calendar {
 	/// starting with 0.</returns>
 	/// <exception cref="T:System.ArgumentOutOfRangeException">
 	/// The exception is thrown if the
-	/// <see cref="T:System.DateTime"/> parameter is outside all
-	/// supported eras.
+	/// <see cref="T:System.DateTime"/> parameter is not in the
+	/// supported range of the Hijri calendar.
 	/// </exception>
 	public override int GetSecond(DateTime time) {
 		M_CheckDateTime(time);
@@ -438,18 +578,25 @@ public class TaiwanCalendar : Calendar {
 	/// results from adding <paramref name="months"/> to the specified
 	/// DateTime.</returns>
 	/// <exception cref="T:System.ArgumentOutOfRangeException">
-	/// The exception is thrown if
-	/// <see cref="T:System.DateTime"/> return value is outside all
-	/// supported eras.
+	/// The exception is thrown if the
+	/// <see cref="T:System.DateTime"/> return value is not in the
+	/// supported range of the Hijri calendar.
 	/// </exception>
 	public override DateTime AddMonths(DateTime time, int months) {
-		DateTime t = CCGregorianCalendar.AddMonths(time, months);
-		M_CheckDateTime(t);
-		return t;
+		int rd = M_FromDateTime(time);
+		int day, month, year;
+		CCHijriCalendar.dmy_from_fixed(
+			out day, out month, out year, rd);
+		month += months;
+		year += CCMath.div_mod(out month, month, 12);
+		rd = CCHijriCalendar.fixed_from_dmy(day, month, year);
+		M_CheckFixedHijri("time", rd);
+		DateTime t = M_ToDateTime(rd);
+		return t.Add(time.TimeOfDay);
 	}
 
 	/// <summary>
-	/// Overridden. Adds years to a given date.
+	/// Overrideden. Adds years to a given date.
 	/// </summary>
 	/// <param name="time">The
 	/// <see cref="T:System.DateTime"/> to which to add
@@ -460,14 +607,20 @@ public class TaiwanCalendar : Calendar {
 	/// results from adding <paramref name="years"/> to the specified
 	/// DateTime.</returns>
 	/// <exception cref="T:System.ArgumentOutOfRangeException">
-	/// The exception is thrown if
-	/// <see cref="T:System.DateTime"/> return value is outside all
-	/// supported eras.
+	/// The exception is thrown if the
+	/// <see cref="T:System.DateTime"/> return value is not in the
+	/// supported range of the Hijri calendar.
 	/// </exception>
 	public override DateTime AddYears(DateTime time, int years) {
-		DateTime t = CCGregorianCalendar.AddYears(time, years);
-		M_CheckDateTime(t);
-		return t;
+		int rd = M_FromDateTime(time);
+		int day, month, year;
+		CCHijriCalendar.dmy_from_fixed(
+			out day, out month, out year, rd);
+		year += years;
+		rd = CCHijriCalendar.fixed_from_dmy(day, month, year);
+		M_CheckFixedHijri("time", rd);
+		DateTime t = M_ToDateTime(rd);
+		return t.Add(time.TimeOfDay);
 	}
 		
 	/// <summary>
@@ -482,12 +635,13 @@ public class TaiwanCalendar : Calendar {
 	/// </returns>
 	/// <exception cref="T:System.ArgumentOutOfRangeException">
 	/// The exception is thrown if the
-	/// <see cref="T:System.DateTime"/> parameter is outside all
-	/// supported eras.
+	/// <see cref="T:System.DateTime"/> parameter is not in the
+	/// supported range of the Hijri calendar.
 	/// </exception>
 	public override int GetDayOfMonth(DateTime time) {
-		M_CheckDateTime(time);
-		return CCGregorianCalendar.GetDayOfMonth(time);
+		int rd = M_FromDateTime(time);
+		M_CheckFixedHijri("time", rd);
+		return CCHijriCalendar.day_from_fixed(rd);
 	}
 
 	/// <summary>
@@ -501,12 +655,12 @@ public class TaiwanCalendar : Calendar {
 	/// </returns>
 	/// <exception cref="T:System.ArgumentOutOfRangeException">
 	/// The exception is thrown if the
-	/// <see cref="T:System.DateTime"/> parameter is outside all
-	/// supported eras.
+	/// <see cref="T:System.DateTime"/> parameter is not in the
+	/// supported range of the Hijri calendar.
 	/// </exception>
 	public override DayOfWeek GetDayOfWeek(DateTime time) {
-		M_CheckDateTime(time);
-		int rd = CCFixed.FromDateTime(time);
+		int rd = M_FromDateTime(time);
+		M_CheckFixedHijri("time", rd);
 		return (DayOfWeek)CCFixed.day_of_week(rd);
 	}
 
@@ -521,12 +675,15 @@ public class TaiwanCalendar : Calendar {
 	/// starting with 1.</returns>
 	/// <exception cref="T:System.ArgumentOutOfRangeException">
 	/// The exception is thrown if the
-	/// <see cref="T:System.DateTime"/> parameter is outside all
-	/// supported eras.
+	/// <see cref="T:System.DateTime"/> parameter is not in the
+	/// supported range of the Hijri calendar.
 	/// </exception>
 	public override int GetDayOfYear(DateTime time) {
-		M_CheckDateTime(time);
-		return CCGregorianCalendar.GetDayOfYear(time);
+		int rd = M_FromDateTime(time);
+		M_CheckFixedHijri("time", rd);
+		int year = CCHijriCalendar.year_from_fixed(rd);
+		int rd1_1 = CCHijriCalendar.fixed_from_dmy(1, 1, year);
+		return rd - rd1_1 + 1;
 	}
 
 	/// <summary>
@@ -537,7 +694,7 @@ public class TaiwanCalendar : Calendar {
 	/// </param>
 	/// <param name="month">An integer that gives the month, starting
 	/// with 1.</param>
-	/// <param name="era">An integer that gives the era of the specified
+	/// <param name="era">An intger that gives the era of the specified
 	/// year.</param>
 	/// <returns>An integer that gives the number of days of the
 	/// specified month.</returns>
@@ -547,8 +704,10 @@ public class TaiwanCalendar : Calendar {
 	/// the allowed range.
 	/// </exception>
 	public override int GetDaysInMonth(int year, int month, int era) {
-		int gregorianYear = M_CheckYMEG(year, month, ref era);
-		return CCGregorianCalendar.GetDaysInMonth(gregorianYear, month);
+		M_CheckYME(year, month, ref era);
+		int rd1 = CCHijriCalendar.fixed_from_dmy(1, month, year);
+		int rd2 = CCHijriCalendar.fixed_from_dmy(1, month+1, year);
+		return rd2 - rd1;
 	}
 
 	/// <summary>
@@ -563,12 +722,13 @@ public class TaiwanCalendar : Calendar {
 	/// specified year.</returns>
 	/// <exception cref="T:System.ArgumentOutOfRangeExceiption">
 	/// The exception is thrown, if
-	/// <paramref name="year"/> or <paramref name="era"/> are outside the
-	/// allowed range.
+	/// <paramref name="year"/> is outside the allowed range.
 	/// </exception>
 	public override int GetDaysInYear(int year, int era) {
-		int gregorianYear = M_CheckYEG(year, ref era);
-		return CCGregorianCalendar.GetDaysInYear(gregorianYear);
+		M_CheckYE(year, ref era);
+		int rd1 = CCHijriCalendar.fixed_from_dmy(1, 1, year);
+		int rd2 = CCHijriCalendar.fixed_from_dmy(1, 1, year+1);
+		return rd2 - rd1;
 	}
 		
 
@@ -583,16 +743,12 @@ public class TaiwanCalendar : Calendar {
 	/// </returns>
 	/// <exception cref="T:System.ArgumentOutOfRangeException">
 	/// The exception is thrown if the
-	/// <see cref="T:System.DateTime"/> parameter is outside all
-	/// supported eras.
+	/// <see cref="T:System.DateTime"/> parameter is not in the
+	/// supported range of the Hijri calendar.
 	/// </exception>
 	public override int GetEra(DateTime time) {
-		// M_CheckDateTime not needed, because EraYear does the
-		// right thing.
-		int rd = CCFixed.FromDateTime(time);
-		int era;
-		M_EraHandler.EraYear(out era, rd);
-		return era;
+		M_CheckDateTime(time);
+		return UmAlQuraEra;
 	}
 
 #if NET_2_0
@@ -614,12 +770,13 @@ public class TaiwanCalendar : Calendar {
 	/// starting with 1.</returns>
 	/// <exception cref="T:System.ArgumentOutOfRangeException">
 	/// The exception is thrown if the
-	/// <see cref="T:System.DateTime"/> parameter is outside all
-	/// supported eras.
+	/// <see cref="T:System.DateTime"/> parameter is not in the
+	/// supported range of the Hijri calendar.
 	/// </exception>
 	public override int GetMonth(DateTime time) {
-		M_CheckDateTime(time);
-		return CCGregorianCalendar.GetMonth(time);
+		int rd = M_FromDateTime(time);
+		M_CheckFixedHijri("time", rd);
+		return CCHijriCalendar.month_from_fixed(rd);
 	}
 
 	/// <summary>
@@ -636,7 +793,7 @@ public class TaiwanCalendar : Calendar {
 	/// The exception is thrown, if the year or the era are not valid.
 	/// </exception>
 	public override int GetMonthsInYear(int year, int era) {
-		M_CheckYEG(year, ref era);
+		M_CheckYE(year, ref era);
 		return 12;
 	}
 
@@ -652,15 +809,13 @@ public class TaiwanCalendar : Calendar {
 	/// starting with 1.</returns>
 	/// <exception cref="T:System.ArgumentOutOfRangeException">
 	/// The exception is thrown if the
-	/// <see cref="T:System.DateTime"/> parameter is outside all
-	/// supported eras.
+	/// <see cref="T:System.DateTime"/> parameter is not in the
+	/// supported range of the Hijri calendar.
 	/// </exception>
 	public override int GetYear(DateTime time) {
-		// M_CheckDateTime not needed, because EraYeat does the
-		// right thing.
-		int rd = CCFixed.FromDateTime(time);
-		int era;
-		return M_EraHandler.EraYear(out era, rd);
+		int rd = M_FromDateTime(time);
+		M_CheckFixedHijri("time", rd);
+		return CCHijriCalendar.year_from_fixed(rd);
 	}
 
 	/// <summary>
@@ -685,8 +840,8 @@ public class TaiwanCalendar : Calendar {
 	/// </exception>
 	public override bool IsLeapDay(int year, int month, int day, int era)
 	{
-		int gregorianYear = M_CheckYMDEG(year, month, day, ref era);
-		return CCGregorianCalendar.IsLeapDay(gregorianYear, month, day);
+		M_CheckYMDE(year, month, day, ref era);
+		return IsLeapYear(year) && month == 12 && day == 30;
 	}
 
 	/// <summary>
@@ -708,7 +863,7 @@ public class TaiwanCalendar : Calendar {
 	/// valid.
 	/// </exception>
 	public override bool IsLeapMonth(int year, int month, int era) {
-		M_CheckYMEG(year, month, ref era);
+		M_CheckYME(year, month, ref era);
 		return false;
 	}
 
@@ -729,8 +884,8 @@ public class TaiwanCalendar : Calendar {
 	/// valid.
 	/// </exception>
 	public override bool IsLeapYear(int year, int era) {
-		int gregorianYear = M_CheckYEG(year, ref era);
-		return CCGregorianCalendar.is_leap_year(gregorianYear);
+		M_CheckYE(year, ref era);
+		return CCHijriCalendar.is_leap_year(year);
 	}
 
 	/// <summary>
@@ -766,55 +921,42 @@ public class TaiwanCalendar : Calendar {
 		int hour, int minute, int second, int milliseconds,
 		int era)
 	{
-		int gregorianYear = M_CheckYMDEG(year, month, day, ref era);
+		M_CheckYMDE(year, month, day, ref era);
 		M_CheckHMSM(hour, minute, second, milliseconds);
-		return CCGregorianCalendar.ToDateTime(
-			gregorianYear, month, day,
+		int rd = CCHijriCalendar.fixed_from_dmy(day, month, year);
+		return M_ToDateTime(rd,
 			hour, minute, second, milliseconds);
 	}
 
-	/// <summary>
-	/// This functions returns simply the year for the Taiwan calendar.
-	/// </summary>
-	/// <param name="year">An integer that gives the year.
-	/// </param>
-	/// <returns>The same argument as the year.
-	/// </returns>
-	/// <exception cref="T:System.ArgumentOutOfRangeException">
-	/// The exception is thrown if the year is negative or the resulting 
-	/// year is invalid.
-	/// </exception>
-	public override int ToFourDigitYear(int year) {
-		if (year < 0)
-			throw new ArgumentOutOfRangeException(
-				"year", "Non-negative number required.");
-		int era = CurrentEra;
-		M_CheckYE(year, ref era);
-		return year;
+	[MonoTODO ("Not supported")]
+	public override int ToFourDigitYear(int year)
+	{
+		throw new NotImplementedException();
 	}
-#if NET_2_0
-	public override CalendarAlgorithmType AlgorithmType {
+
+	public override CalendarAlgorithmType AlgorithmType  {
 		get {
-			return CalendarAlgorithmType.SolarCalendar;
+			return CalendarAlgorithmType.LunarCalendar;
 		}
 	}
 
-	static DateTime TaiwanMin = new DateTime (1912, 1, 1, 0, 0, 0);
-	static DateTime TaiwanMax = new DateTime (9999, 12, 31, 11, 59, 59);
+	static DateTime Min = new DateTime (622, 7, 18, 0, 0, 0);
+	static DateTime Max = new DateTime (9999, 12, 31, 11, 59, 59);
 		
 	public override DateTime MinSupportedDateTime {
 		get {
-			return TaiwanMin;
+			return Min;
 		}
 	}
 
 	public override DateTime MaxSupportedDateTime {
 		get {
-			return TaiwanMax;
+			return Max;
 		}
 	}
-#endif
 	
-} // class TaiwanCalendar
+} // class HijriCalendar
 	
 } // namespace System.Globalization
+
+#endif

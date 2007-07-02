@@ -318,6 +318,13 @@ public class JulianCalendar : Calendar {
 		return JulianEra;
 	}
 
+#if NET_2_0
+	public override int GetLeapMonth (int year, int era)
+	{
+		return 0;
+	}
+#endif
+
 	/// <summary>
 	/// Overridden. Gives the number of the month of the specified
 	/// date.

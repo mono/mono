@@ -1846,6 +1846,150 @@ internal class CCHijriCalendar {
 	}
 } // class CCHijriCalendar
 
+internal class CCEastAsianLunisolarCalendar
+{
+	const int initial_epact = 29; // at 1900
+
+	public static int fixed_from_dmy (int day, int month, int year)
+	{
+		/*
+		int k = epoch - 1;
+		k += 354 * (year - 1);
+		k += CCMath.div (3+11*year, 30);
+		k += (int) Math.Ceiling(29.53 * (double)(month-1));
+		k += day;
+
+		return k;
+		*/
+		throw new Exception ("fixed_from_dmy");
+	}
+
+	public static int year_from_fixed (int date)
+	{
+		throw new Exception ("year_from_fixed");
+	}
+
+	public static void my_from_fixed(out int month, out int year, int date)
+	{
+		/*
+		year = year_from_fixed (date);
+
+		int m = 1+(int)System.Math.Ceiling(
+			((double)(date-29-fixed_from_dmy(1,1,year)))/29.5);
+
+		month = m < 12 ? m : 12;
+		*/
+		throw new Exception ("my_from_fixed");
+	}
+
+	public static void dmy_from_fixed(out int day, out int month,
+		out int year, int date)
+	{
+		/*
+		my_from_fixed (out month, out year, date);
+		day = date - fixed_from_dmy (1, month, year) + 1;
+		*/
+		throw new Exception ("dmy_from_fixed");
+	}
+
+	public static DateTime AddMonths (DateTime date, int months)
+	{
+		
+		throw new Exception ("AddMonths");
+	}
+
+	public static DateTime AddYears (DateTime date, int years)
+	{
+		throw new Exception ("AddYears");
+	}
+
+	public static int GetDayOfMonth (DateTime date)
+	{
+		throw new Exception ("GetDayOfMonth");
+	}
+
+	public static int GetDayOfYear (DateTime date)
+	{
+		throw new Exception ("GetDayOfYear");
+	}
+
+	public static int GetDaysInMonth (int gyear, int month)
+	{
+		throw new Exception ("GetDaysInMonth");
+	}
+
+	public static int GetDaysInYear (int year)
+	{
+		throw new Exception ("GetDaysInYear");
+	}
+
+	public static int GetMonth (DateTime date)
+	{
+		throw new Exception ("GetMonth");
+	}
+
+	static readonly int [] leap_month_calc = new int [] {
+		0, 2, 0, 2, 2, 4, 5, 6, 7, 8, 9, 10};
+
+	public static bool IsLeapMonth (int gyear, int month)
+	{
+		int goldenNumber = gyear % 19;
+
+		bool chu = false;
+		bool leap = false;
+		double s = 0;
+		for (int y = 0; y < goldenNumber; y++) {
+			for (int l = 0, m = 1; m <= month; m++) {
+				if (leap) {
+					l += 30;
+					leap = false;
+					if (y == goldenNumber && m == month)
+						return true;
+				} else {
+					l += chu ? 30 : 29;
+					chu = !chu;
+					s += 30.44;
+					if (s - l > 29)
+						leap = true;
+				}
+			}
+		}
+		return false;
+
+		throw new Exception ("IsLeapMonth");
+	}
+
+	public static bool IsLeapYear (int gyear)
+	{
+
+		// FIXME: it is still wrong.
+		int d = gyear % 19;
+		switch (d) {
+		case 0: case 3: case 6: case 9: case 11: case 14: case 17:
+			return true;
+		default:
+			return false;
+		}
+		/*
+		int goldenNumber = (gyear - 1900) % 19;
+		int epact = 29;
+		bool leap = false;
+		while (goldenNumber-- >= 0) {
+			epact += 11;
+			leap = epact > 30;
+			if (epact > 30)
+				epact -= 30;
+		}
+		return leap;
+		*/
+	}
+
+	public static DateTime ToDateTime (int year, int month, int day, int hour, int minute, int second, int millisecond)
+	{
+		throw new Exception ("ToDateTime");
+	}
+}
+
 /// <summary>
 /// A class that supports the Gregorian based calendars with other eras
 /// (e.g. <see cref="T:System.Gloablization.JapaneseCalendar"/>).
@@ -2145,5 +2289,127 @@ internal class CCGregorianEraHandler {
 		return _Eras.Contains((System.Object)era);
 	}
 } // class CCGregorianEraHandler
+
+
+// FIXME: remove this class. It should be identical to CCGregorianEraHandler
+[System.Serializable]
+internal class CCEastAsianLunisolarEraHandler
+{
+	[Serializable]
+	struct Era 
+	{
+		private int _nr; // era index
+
+		public int Nr {
+			get { return _nr; }
+		}
+
+		private int _start; // inclusive
+		private int _gregorianYearStart;
+		private int _end;   // inclusive
+		private int _maxYear;
+
+		public Era (int nr, int start, int end)
+		{
+			if (nr == 0)
+				throw new ArgumentException ("Era number shouldn't be zero.");
+			_nr = nr;
+			if (start > end)
+				throw new ArgumentException ("Era should start before end.");
+			_start = start;
+			_end = end;
+
+			_gregorianYearStart = CCGregorianCalendar.year_from_fixed (_start);
+			int gregorianYearEnd = CCGregorianCalendar.year_from_fixed (_end);
+			_maxYear = gregorianYearEnd - _gregorianYearStart + 1;
+		}
+
+		public int GregorianYear (int year) 
+		{
+			if (year < 1 || year > _maxYear)
+				throw new ArgumentOutOfRangeException ("year", String.Format ("Valid Values are between {0} and {1}, inclusive.", 1, _maxYear));
+			return year + _gregorianYearStart - 1;
+		}
+
+		public bool Covers (int date) {
+			return _start <= date && date <= _end;
+		}
+
+		public int EraYear (out int era, int date) {
+			if (!Covers (date))
+				throw new ArgumentOutOfRangeException ("date", "Time was out of Era range.");
+			int gregorianYear = CCGregorianCalendar.year_from_fixed (date);
+			era = _nr;
+			return gregorianYear - _gregorianYearStart + 1;
+		}
+	}
+
+	private SortedList _Eras;
+
+	public int [] Eras 
+	{
+		get {
+			int[] a = new int [_Eras.Count];
+			for (int i = 0; i < _Eras.Count; i++) {
+				Era e = (Era) _Eras.GetByIndex (i);
+				a[i] = e.Nr;
+			}
+			return a;
+		}
+	}
+
+	public CCEastAsianLunisolarEraHandler ()
+	{
+		_Eras = new SortedList ();
+	}
+
+	public void appendEra (int nr, int rd_start, int rd_end)
+	{
+		Era era = new Era (nr, rd_start, rd_end);
+		_Eras [nr] = era;
+	}
+
+	public void appendEra (int nr, int rd_start)
+	{
+		appendEra (nr, rd_start, CCFixed.FromDateTime (DateTime.MaxValue));
+	}
+
+	public int GregorianYear (int year, int era)
+	{
+		Era e = (Era) _Eras [era];
+		return e.GregorianYear (year);
+	}
+
+	public int EraYear (out int era, int date)
+	{
+		foreach (Era e in _Eras.Values)
+			if (e.Covers (date))
+				return e.EraYear (out era, date);
+
+		throw new ArgumentOutOfRangeException ("date", "Time value was out of era range.");
+	}
+
+	public void CheckDateTime (DateTime time)
+	{
+		int date = CCFixed.FromDateTime (time);
+
+		if (!ValidDate (date))
+			throw new ArgumentOutOfRangeException ("time", "Time value was out of era range.");
+	}
+		
+	public bool ValidDate (int date)
+	{
+		foreach (Era e in _Eras.Values) {
+			if (e.Covers (date))
+				return true;
+		}
+		return false;
+	}
+
+	public bool ValidEra (int era)
+	{
+		return _Eras.Contains (era);
+	}
+}
 
 } // namespace System.Globalization

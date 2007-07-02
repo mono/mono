@@ -164,18 +164,20 @@ public abstract class Calendar
 		return c;
 	}
 
-	[MonoTODO]
 	[ComVisible (false)]
 	public virtual int GetLeapMonth (int year)
 	{
-		throw new NotImplementedException ();
+		return GetLeapMonth (year, GetEra (ToDateTime (year, 1, 1, 0, 0, 0, 0)));
 	}
 
-	[MonoTODO]
 	[ComVisible (false)]
 	public virtual int GetLeapMonth (int year, int era)
 	{
-		throw new NotImplementedException ();
+		int max = GetMonthsInYear (year, era);
+		for (int i = 1; i <= max; i++)
+			if (IsLeapMonth (year, i, era))
+				return i;
+		return 0;
 	}
 #endif
 
