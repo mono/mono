@@ -35,7 +35,9 @@ using System.Data.Common;
 
 namespace System.Data.OleDb
 {
+#if !NET_2_0
 	[Serializable]
+#endif
 	public delegate void OleDbRowUpdatingEventHandler (
 		object sender,
 		OleDbRowUpdatingEventArgs e);

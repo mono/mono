@@ -1,3 +1,43 @@
+2007-07-02  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* OleDbConnection.cs: Derive from DbConnection on 2.0 profile, and
+	stubbed out where necessary. Fixed attributes for ConnectionString on
+	2.0 profile. Marked several members as override on 2.0 profile.
+	Do not hide StateChange event. Code formatting.
+	* OleDbCommandBuilder.cs: On 2.0, derive from DbCommandBuilder. Do not
+	include QuotePrefix and QuoteSuffix on 2.0. Stubbed out 2.0 members.
+	* OleDbDataAdapter.cs: On 2.0, derive from DbDataAdapter. Stubbed out
+	2.0 members. Do not not override Dispose on 2.0. Code formatting.
+	* OleDbDataReader.cs: Derive from DbDataReader on 2.0 profile. Marked
+	several members as override. Stubbed VisibleFieldCount. Added
+	EditorBrowsable attribute on GetData. Added GetDbDataReader on 2.0.
+	On 2.0, override GetEnumerator instead of explicit interface
+	implementation.
+	* OleDbErrorCollection.cs: Added 2.0 CopyTo overload.
+	* OleDbInfoMessageEventHandler.cs: Do not mark class serializable on
+	2.0 profile. Fixed API mismatch.
+	* OleDbParameter.cs: On 2.0, derive from DbParameter. Added new 2.0
+	ctor.  Override properties from base class and added
+	SourceColumnNullMapping property on 2.0. Implemented ResetDbType and
+	ResetOleDbType methods on 2.0.
+	* OleDbParameterCollection.cs: Derive from DbParameterCollection on
+	2.0 profile. Marked several members as override. Implemented AddRange,
+	CopyTo, IndexOf, Insert, Remove and RemoveAt methods introduced in
+	2.0 profile. Stubbed out GetParameter and SetParameter overloads.
+	* OleDbPermission.cs: Added missing BrowsableAttribute on Provider.
+	Code formatting.
+	* OleDbPermissionAttribute.cs: Added BrowsableAttribute on Provdider
+	(2.0 only).
+	* OleDbRowUpdatedEventHandler.cs:  Do not mark class serializable on
+	2.0 profile.
+	* OleDbRowUpdatingEventArgs.cs: Removed unused command field. Added
+	BaseCommand property on 2.0
+	* OleDbRowUpdatingEventHandler.cs: Do not mark class serializable on
+	2.0 profile. Fixed API mismatch.
+	* OleDbTransaction.cs: On 2.0, derive from DbTransaction. Added
+	DbConnection property and override Dispose (both 2.0 only). On 2.0,
+	Override Commit and Rollback. Code formatting.
+
 2007-07-01  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* OleDbCommand.cs: 2.0 API fixes. Build fix.

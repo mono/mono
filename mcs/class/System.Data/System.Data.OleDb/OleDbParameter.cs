@@ -40,7 +40,11 @@ using System.ComponentModel;
 namespace System.Data.OleDb
 {
 	[TypeConverterAttribute (typeof (OleDbParameterConverter))]
+#if NET_2_0
+	public sealed class OleDbParameter : DbParameter, IDbDataParameter, ICloneable
+#else
 	public sealed class OleDbParameter : MarshalByRefObject, IDbDataParameter, IDataParameter, ICloneable
+#endif
 	{
 		#region Fields
 
@@ -52,6 +56,9 @@ namespace System.Data.OleDb
 		byte scale;
 		DataRowVersion sourceVersion;
 		string sourceColumn;
+#if NET_2_0
+		bool sourceColumnNullMapping;
+#endif
 		ParameterDirection direction;
 		OleDbType oleDbType;
 		DbType dbType;
@@ -112,49 +119,79 @@ namespace System.Data.OleDb
 			this.value = value;
 		}
 
+#if NET_2_0
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		public OleDbParameter (string name, OleDbType dataType, int size, ParameterDirection direction, byte precision, byte scale, string srcColumn, DataRowVersion srcVersion, bool sourceColumnNullMapping, object value)
+			: this (name, dataType, size, srcColumn)
+		{
+			this.direction = direction;
+			this.precision = precision;
+			this.scale = scale;
+			this.sourceVersion = srcVersion;
+			this.sourceColumnNullMapping = sourceColumnNullMapping;
+			this.value = value;
+		}
+#endif
+
 		#endregion
 
 		#region Properties
 
-		[BrowsableAttribute (false)]
 #if !NET_2_0
+		[BrowsableAttribute (false)]
 		[DataSysDescriptionAttribute ("The parameter generic type.")]
-#endif
 		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
+#endif
 		[DataCategory ("DataCategory_Data")]
-		public DbType DbType {
+		public
+#if NET_2_0
+		override
+#endif
+		DbType DbType {
 			get { return dbType; }
-			set { 
+			set {
 				dbType = value;
 				oleDbType = DbTypeToOleDbType (value);
 			}
 		}
-		
-#if !NET_2_0
+
+#if NET_2_0
+		[RefreshProperties (RefreshProperties.All)]
+#else
 		[DataSysDescriptionAttribute ("Input, output, or bidirectional parameter.")]
-#endif
 		[DefaultValue (ParameterDirection.Input)]
+#endif
 		[DataCategory ("DataCategory_Data")]
-		public ParameterDirection Direction {
+		public
+#if NET_2_0
+		override
+#endif
+		ParameterDirection Direction {
 			get { return direction; }
 			set { direction = value; }
 		}
-		
-		[BrowsableAttribute (false)]
+
 #if !NET_2_0
+		[BrowsableAttribute (false)]
 		[DataSysDescriptionAttribute ("a design-time property used for strongly typed code-generation.")]
-#endif
 		[DesignOnlyAttribute (true)]
 		[EditorBrowsableAttribute (EditorBrowsableState.Advanced)]
 		[DefaultValue (false)]
-		public bool IsNullable {
+#endif
+		public
+#if NET_2_0
+		override
+#endif
+		bool IsNullable {
 			get { return isNullable; }
 			set { isNullable = value; }
 		}
 
+#if NET_2_0
+		[DbProviderSpecificTypeProperty (true)]
+#else
 		[DefaultValue (OleDbType.VarWChar)]
-#if !NET_2_0
 		[DataSysDescriptionAttribute ("The parameter native type.")]
 #endif
 		[RefreshPropertiesAttribute (RefreshProperties.All)]
@@ -166,12 +203,16 @@ namespace System.Data.OleDb
 				dbType = OleDbTypeToDbType (value);
 			}
 		}
-		
-		[DefaultValue ("")]
+
 #if !NET_2_0
+		[DefaultValue ("")]
 		[DataSysDescriptionAttribute ("Name of the parameter.")]
 #endif
-		public string ParameterName {
+		public
+#if NET_2_0
+		override
+#endif
+		string ParameterName {
 			get { return name; }
 			set { name = value; }
 		}
@@ -185,7 +226,7 @@ namespace System.Data.OleDb
 			get { return precision; }
 			set { precision = value; }
 		}
-		
+
 		[DefaultValue (0)]
 #if !NET_2_0
 		[DataSysDescriptionAttribute ("For decimal, numeric, varnumeric DBTypes.")]
@@ -195,45 +236,72 @@ namespace System.Data.OleDb
 			get { return scale; }
 			set { scale = value; }
 		}
-		
 
-		[DefaultValue (0)]
 #if !NET_2_0
+		[DefaultValue (0)]
 		[DataSysDescriptionAttribute ("Size of variable length data types (string & arrays).")]
 #endif
 		[DataCategory ("DataCategory_Data")]
-		public int Size {
+		public
+#if NET_2_0
+		override
+#endif
+		int Size {
 			get { return size; }
 			set { size = value; }
 		}
 
-		[DefaultValue ("")]
 #if !NET_2_0
+		[DefaultValue ("")]
 		[DataSysDescriptionAttribute ("When used by a DataAdapter.Update, the source column name that is used to find the DataSetColumn name in the ColumnMappings. This is to copy a value between the parameter and a datarow.")]
 #endif
 		[DataCategory ("DataCategory_Data")]
-		public string SourceColumn {
+		public
+#if NET_2_0
+		override
+#endif
+		string SourceColumn {
 			get { return sourceColumn; }
 			set { sourceColumn = value; }
 		}
-		
-		[DefaultValue (DataRowVersion.Current)]
+
+#if NET_2_0
+		public override bool SourceColumnNullMapping {
+			get {
+				return sourceColumnNullMapping;
+			} set {
+				sourceColumnNullMapping = value;
+			}
+		}
+#endif
+
 #if !NET_2_0
+		[DefaultValue (DataRowVersion.Current)]
 		[DataSysDescriptionAttribute ("When used by a DataAdapter.Update (UpdateCommand only), the version of the DataRow value that is used to update the data source.")]
 #endif
 		[DataCategory ("DataCategory_Data")]
-		public DataRowVersion SourceVersion {
+		public
+#if NET_2_0
+		override
+#endif
+		DataRowVersion SourceVersion {
 			get { return sourceVersion; }
 			set { sourceVersion = value; }
 		}
-		
+
+#if NET_2_0
+		[RefreshPropertiesAttribute (RefreshProperties.All)]
+#else
 		[DefaultValue (null)]
-#if !NET_2_0
 		[DataSysDescriptionAttribute ("Value of the parameter.")]
 #endif
 		[TypeConverter (typeof (StringConverter))]
 		[DataCategory ("DataCategory_Data")]
-		public object Value {
+		public
+#if NET_2_0
+		override
+#endif
+		object Value {
 			get { return value; }
 			set { this.value = value; }
 		}
@@ -262,6 +330,19 @@ namespace System.Data.OleDb
 		{
 			throw new NotImplementedException ();
 		}
+
+#if NET_2_0
+		public override void ResetDbType ()
+		{
+			ResetOleDbType ();
+		}
+
+		public void ResetOleDbType ()
+		{
+			oleDbType = GetOleDbType (Value);
+			dbType = OleDbTypeToDbType (oleDbType);
+		}
+#endif
 
 		public override string ToString ()
 		{

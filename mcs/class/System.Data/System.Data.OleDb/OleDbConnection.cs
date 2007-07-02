@@ -36,11 +36,18 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
 using System.EnterpriseServices;
+#if NET_2_0
+using System.Transactions;
+#endif
 
 namespace System.Data.OleDb
 {
-	[DefaultEvent ("InfoMessage")]	
+	[DefaultEvent ("InfoMessage")]
+#if NET_2_0
+	public sealed class OleDbConnection : DbConnection, ICloneable
+#else
 	public sealed class OleDbConnection : Component, ICloneable, IDbConnection
+#endif
 	{
 		#region Fields
 
@@ -75,13 +82,13 @@ namespace System.Data.OleDb
 		[DataSysDescriptionAttribute ("Information used to connect to a Data Source.")]
 #endif
 		[EditorAttribute ("Microsoft.VSDesigner.Data.ADO.Design.OleDbConnectionStringEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
-#if NET_2_0
-		[SettingsBindableAttribute (true)]
-#else
 		[RecommendedAsConfigurableAttribute (true)]
-#endif
 		[RefreshPropertiesAttribute (RefreshProperties.All)]
-		public string ConnectionString {
+		public
+#if NET_2_0
+		override
+#endif
+		string ConnectionString {
 			get {
 				return connectionString;
 			}
@@ -94,7 +101,11 @@ namespace System.Data.OleDb
 #if !NET_2_0
 		[DataSysDescriptionAttribute ("Current connection timeout value, 'Connect Timeout=X' in the ConnectionString.")]
 #endif
-		public int ConnectionTimeout {
+		public
+#if NET_2_0
+		override
+#endif
+		int ConnectionTimeout {
 			get {
 				return connectionTimeout;
 			}
@@ -102,12 +113,16 @@ namespace System.Data.OleDb
 
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 #if !NET_2_0
-                [DataSysDescriptionAttribute ("Current data source catalog value, 'Initial Catalog=X' in the connection string.")]
+		[DataSysDescriptionAttribute ("Current data source catalog value, 'Initial Catalog=X' in the connection string.")]
 #endif
-		public string Database { 
+		public
+#if NET_2_0
+		override
+#endif
+		string Database {
 			get {
 				if (gdaConnection != IntPtr.Zero
-				    && libgda.gda_connection_is_open (gdaConnection)) {
+					&& libgda.gda_connection_is_open (gdaConnection)) {
 					return libgda.gda_connection_get_database (gdaConnection);
 				}
 
@@ -115,14 +130,20 @@ namespace System.Data.OleDb
 			}
 		}
 
-	        [DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
-#if !NET_2_0
-                [DataSysDescriptionAttribute ("Current data source, 'Data Source=X' in the connection string.")]
+#if NET_2_0
+		[BrowsableAttribute (true)]
+#else
+		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
+		[DataSysDescriptionAttribute ("Current data source, 'Data Source=X' in the connection string.")]
 #endif
-	 	public string DataSource {
+		public
+#if NET_2_0
+		override
+#endif
+		string DataSource {
 			get {
 				if (gdaConnection != IntPtr.Zero
-				    && libgda.gda_connection_is_open (gdaConnection)) {
+					&& libgda.gda_connection_is_open (gdaConnection)) {
 					return libgda.gda_connection_get_dsn (gdaConnection);
 				}
 
@@ -131,13 +152,15 @@ namespace System.Data.OleDb
 		}
 
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
-#if !NET_2_0
-                [DataSysDescriptionAttribute ("Current OLE DB provider progid, 'Provider=X' in the connection string.")]
+#if NET_2_0
+		[BrowsableAttribute (true)]
+#else
+		[DataSysDescriptionAttribute ("Current OLE DB provider progid, 'Provider=X' in the connection string.")]
 #endif
 		public string Provider {
 			get {
 				if (gdaConnection != IntPtr.Zero
-				    && libgda.gda_connection_is_open (gdaConnection)) {
+					&& libgda.gda_connection_is_open (gdaConnection)) {
 					return libgda.gda_connection_get_provider (gdaConnection);
 				}
 
@@ -145,15 +168,19 @@ namespace System.Data.OleDb
 			}
 		}
 
-		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 #if !NET_2_0
-                [DataSysDescriptionAttribute ("Version of the product accessed by the OLE DB Provider.")]
-#endif
+		[DataSysDescriptionAttribute ("Version of the product accessed by the OLE DB Provider.")]
+		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		[BrowsableAttribute (false)]
-		public string ServerVersion {
+#endif
+		public
+#if NET_2_0
+		override
+#endif
+		string ServerVersion {
 			get {
 				if (gdaConnection != IntPtr.Zero
-				    && libgda.gda_connection_is_open (gdaConnection)) {
+					&& libgda.gda_connection_is_open (gdaConnection)) {
 					return libgda.gda_connection_get_server_version (gdaConnection);
 				}
 
@@ -163,11 +190,14 @@ namespace System.Data.OleDb
 
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 #if !NET_2_0
-                [DataSysDescriptionAttribute ("The ConnectionState indicating whether the connection is open or closed.")]
+		[DataSysDescriptionAttribute ("The ConnectionState indicating whether the connection is open or closed.")]
 #endif
-                [BrowsableAttribute (false)]
-		public ConnectionState State
-		{
+		[BrowsableAttribute (false)]
+		public
+#if NET_2_0
+		override
+#endif
+		ConnectionState State {
 			get {
 				if (gdaConnection != IntPtr.Zero) {
 					if (libgda.gda_connection_is_open (gdaConnection))
@@ -178,8 +208,7 @@ namespace System.Data.OleDb
 			}
 		}
 
-		internal IntPtr GdaConnection
-		{
+		internal IntPtr GdaConnection {
 			get {
 				return gdaConnection;
 			}
@@ -197,11 +226,6 @@ namespace System.Data.OleDb
 			return null;
 		}
 
-		IDbTransaction IDbConnection.BeginTransaction ()
-		{
-			return BeginTransaction ();
-		}
-		
 		public OleDbTransaction BeginTransaction (IsolationLevel level)
 		{
 			if (gdaConnection != IntPtr.Zero)
@@ -210,12 +234,38 @@ namespace System.Data.OleDb
 			return null;
 		}
 
+#if NET_2_0
+		protected override DbTransaction BeginDbTransaction(IsolationLevel isolationLevel)
+		{
+			return BeginTransaction (isolationLevel);
+		}
+
+		protected override DbCommand CreateDbCommand()
+		{
+			return CreateCommand ();
+		}
+#else
+		IDbTransaction IDbConnection.BeginTransaction ()
+		{
+			return BeginTransaction ();
+		}
+
 		IDbTransaction IDbConnection.BeginTransaction (IsolationLevel level)
 		{
 			return BeginTransaction (level);
 		}
 
-		public void ChangeDatabase (string name)
+		IDbCommand IDbConnection.CreateCommand ()
+		{
+			return CreateCommand ();
+		}
+#endif
+
+		public
+#if NET_2_0
+		override
+#endif
+		void ChangeDatabase (string name)
 		{
 			if (gdaConnection == IntPtr.Zero)
 				throw new ArgumentException ();
@@ -226,7 +276,11 @@ namespace System.Data.OleDb
 				throw new OleDbException (this);
 		}
 
-		public void Close ()
+		public
+#if NET_2_0
+		override
+#endif
+		void Close ()
 		{
 			if (State == ConnectionState.Open) {
 				libgda.gda_connection_close (gdaConnection);
@@ -260,12 +314,11 @@ namespace System.Data.OleDb
 			throw new NotImplementedException();
 		}
 
-		IDbCommand IDbConnection.CreateCommand ()
-		{
-			return CreateCommand ();
-		}
-
-		public void Open ()
+		public
+#if NET_2_0
+		override
+#endif
+		void Open ()
 		{
 			string provider = "Default";
 			string gdaCncStr = "";
@@ -277,8 +330,7 @@ namespace System.Data.OleDb
 				throw new InvalidOperationException ();
 
 			gdaConnection = libgda.gda_client_open_connection (libgda.GdaClient,
-                                                                          connectionString,
-                                                                          "", "", 0);
+				connectionString, "", "", 0);
 
 			if (gdaConnection==IntPtr.Zero)
 				throw new OleDbException (this);	
@@ -331,21 +383,54 @@ namespace System.Data.OleDb
 			throw new NotImplementedException ();
 		}
 
+#if NET_2_0
+		[MonoTODO]
+		public override void EnlistTransaction (Transaction transaction)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public override DataTable GetSchema ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public override DataTable GetSchema(string collectionName)
+		{
+			return GetSchema (collectionName, null);
+		}
+
+		[MonoTODO]
+		public override DataTable GetSchema (String collectionName, string [] restrictionValues)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		public void ResetState()
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+
 		#endregion
 
 		#region Events and Delegates
 
 #if !NET_2_0
-                [DataSysDescription ("Event triggered when messages arrive from the DataSource.")]
+		[DataSysDescription ("Event triggered when messages arrive from the DataSource.")]
 #endif
-                [DataCategory ("DataCategory_InfoMessage")]
+		[DataCategory ("DataCategory_InfoMessage")]
 		public event OleDbInfoMessageEventHandler InfoMessage;
 
 #if !NET_2_0
 		[DataSysDescription ("Event triggered when the connection changes state.")]
-#endif
-                [DataCategory ("DataCategory_StateChange")]
+		[DataCategory ("DataCategory_StateChange")]
 		public event StateChangeEventHandler StateChange;
+#endif
 
 		#endregion
 	}

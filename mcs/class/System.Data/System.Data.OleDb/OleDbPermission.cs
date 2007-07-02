@@ -35,11 +35,11 @@ using System.Data.Common;
 using System.Security;
 using System.Security.Permissions;
 
-namespace System.Data.OleDb {
-
+namespace System.Data.OleDb
+{
 	[Serializable]
-	public sealed class OleDbPermission : DBDataPermission {
-
+	public sealed class OleDbPermission : DBDataPermission
+	{
 		#region Fields
 
 		private string _provider;
@@ -49,7 +49,7 @@ namespace System.Data.OleDb {
 		#region Constructors
 
 #if NET_1_1
-                [Obsolete ("use OleDbPermission(PermissionState.None)", true)]
+		[Obsolete ("use OleDbPermission(PermissionState.None)", true)]
 #endif
 		public OleDbPermission ()
 			: base (PermissionState.None)
@@ -62,7 +62,7 @@ namespace System.Data.OleDb {
 		}
 
 #if NET_1_1
-                [Obsolete ("use OleDbPermission(PermissionState.None)", true)]
+		[Obsolete ("use OleDbPermission(PermissionState.None)", true)]
 #endif
 		public OleDbPermission (PermissionState state, bool allowBlankPassword)
 			: base (state)
@@ -88,6 +88,7 @@ namespace System.Data.OleDb {
 
 #if NET_2_0
 		[Obsolete ()]
+		[BrowsableAttribute (false)]
 		[EditorBrowsableAttribute (EditorBrowsableState.Never)]
 #endif
 		public string Provider {

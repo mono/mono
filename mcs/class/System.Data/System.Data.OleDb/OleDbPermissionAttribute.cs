@@ -63,6 +63,7 @@ namespace System.Data.OleDb {
 
 #if NET_2_0
 		[Obsolete ()]
+		[BrowsableAttribute (false)]
 		[EditorBrowsableAttribute (EditorBrowsableState.Never)]
 #endif
 		public string Provider {

@@ -39,20 +39,11 @@ namespace System.Data.OleDb
 {
 	public sealed class OleDbRowUpdatingEventArgs : RowUpdatingEventArgs
 	{
-
-		#region Fields
-
-		OleDbCommand command = null;
-
-		#endregion
-
 		#region Constructors
 
 		public OleDbRowUpdatingEventArgs (DataRow dataRow, IDbCommand command, StatementType statementType, DataTableMapping tableMapping)
 			: base (dataRow, command, statementType, tableMapping)
-
 		{
-			
 		}
 
 		#endregion
@@ -61,9 +52,19 @@ namespace System.Data.OleDb
 		
 		public new OleDbCommand Command {
 			get { return (OleDbCommand) base.Command; }
-                        set { base.Command = value; }
-
+			set { base.Command = value; }
 		}
+
+#if NET_2_0
+		protected override IDbCommand BaseCommand {
+			get {
+				return base.BaseCommand;
+			}
+			set {
+				base.BaseCommand = value;
+			}
+		}
+#endif
 
 		#endregion
 	}

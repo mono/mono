@@ -33,7 +33,11 @@ using System.Data.Common;
 
 namespace System.Data.OleDb
 {
+#if NET_2_0
+	public sealed class OleDbTransaction : DbTransaction, IDbTransaction
+#else
 	public sealed class OleDbTransaction : MarshalByRefObject, IDbTransaction, IDisposable
+#endif
 	{
 		#region Fields
 
@@ -99,13 +103,23 @@ namespace System.Data.OleDb
 			}
 		}
 
+#if NET_2_0
+		protected override DbConnection DbConnection {
+			get { return connection; }
+		}
+#endif
+
 		IDbConnection IDbTransaction.Connection {
 			get {
 				return connection;
 			}
 		}
 		
-		public IsolationLevel IsolationLevel {
+		public
+#if NET_2_0
+		override
+#endif
+		IsolationLevel IsolationLevel {
 			get {
 				switch (libgda.gda_transaction_get_isolation_level (gdaTransaction)) {
 				case GdaTransactionIsolation.ReadCommitted :
@@ -117,7 +131,6 @@ namespace System.Data.OleDb
 				case GdaTransactionIsolation.Serializable :
 					return IsolationLevel.Serializable;
 				}
-
 				return IsolationLevel.Unspecified;
 			}
 		}
@@ -126,7 +139,7 @@ namespace System.Data.OleDb
 
 		#region Methods
 
-		public OleDbTransaction Begin () 
+		public OleDbTransaction Begin ()
 		{
 			return new OleDbTransaction (connection, depth + 1);
 		}
@@ -136,10 +149,14 @@ namespace System.Data.OleDb
 			return new OleDbTransaction (connection, depth + 1, isolevel);
 		}
 
-		public void Commit ()
+		public
+#if NET_2_0
+		override
+#endif
+		void Commit ()
 		{
 			if (!libgda.gda_connection_commit_transaction (connection.GdaConnection,
-								       gdaTransaction))
+															gdaTransaction))
 				throw new InvalidOperationException ();
 		}
 
@@ -151,16 +168,26 @@ namespace System.Data.OleDb
 		}
 
 		[MonoTODO]
+#if NET_2_0
+		protected override void Dispose (bool disposing)
+		{
+			base.Dispose (disposing);
+		}
+#else
 		void IDisposable.Dispose ()
 		{
 			GC.SuppressFinalize (this);
-			throw new NotImplementedException ();
 		}
+#endif
 
-		public void Rollback ()
-	        {
+		public
+#if NET_2_0
+		override
+#endif
+		void Rollback ()
+		{
 			if (!libgda.gda_connection_rollback_transaction (connection.GdaConnection,
-									 gdaTransaction))
+																gdaTransaction))
 				throw new InvalidOperationException ();
 		}
 

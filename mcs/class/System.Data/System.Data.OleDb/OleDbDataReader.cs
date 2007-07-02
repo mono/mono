@@ -36,7 +36,11 @@ using System.Runtime.InteropServices;
 
 namespace System.Data.OleDb
 {
+#if NET_2_0
+	public sealed class OleDbDataReader : DbDataReader, IDisposable
+#else
 	public sealed class OleDbDataReader : MarshalByRefObject, IDataReader, IDisposable, IDataRecord, IEnumerable
+#endif
 	{
 		#region Fields
 		
@@ -67,13 +71,21 @@ namespace System.Data.OleDb
 
 		#region Properties
 
-		public int Depth {
+		public
+#if NET_2_0
+		override
+#endif
+		int Depth {
 			get {
 				return 0; // no nested selects supported
 			}
 		}
 
-		public int FieldCount {
+		public
+#if NET_2_0
+		override
+#endif
+		int FieldCount {
 			get {
 				if (currentResult < 0 || currentResult >= gdaResults.Count)
 					return 0;
@@ -83,13 +95,21 @@ namespace System.Data.OleDb
 			}
 		}
 
-		public bool IsClosed {
+		public
+#if NET_2_0
+		override
+#endif
+		bool IsClosed {
 			get {
 				return !open;
 			}
 		}
 
-		public object this[string name] {
+		public
+#if NET_2_0
+		override
+#endif
+		object this[string name] {
 			get {
 				int pos;
 
@@ -106,18 +126,25 @@ namespace System.Data.OleDb
 			}
 		}
 
-		public object this[int index] {
+		public
+#if NET_2_0
+		override
+#endif
+		object this[int index] {
 			get {
 				return (object) GetValue (index);
 			}
 		}
 
-		public int RecordsAffected {
+		public
+#if NET_2_0
+		override
+#endif
+		int RecordsAffected {
 			get {
 				int total_rows;
 				
-				if (currentResult < 0 ||
-				    currentResult >= gdaResults.Count)
+				if (currentResult < 0 || currentResult >= gdaResults.Count)
 					return 0;
 
 				total_rows = libgda.gda_data_model_get_n_rows (
@@ -134,17 +161,34 @@ namespace System.Data.OleDb
 		}
 		
 		[MonoTODO]
-		public bool HasRows {
+		public
+#if NET_2_0
+		override
+#endif
+		bool HasRows {
 			get {
 				throw new NotImplementedException ();
 			}
 		}
 
+#if NET_2_0
+		[MonoTODO]
+		public override int VisibleFieldCount {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+#endif
+
 		#endregion
 
 		#region Methods
 
-		public void Close ()
+		public
+#if NET_2_0
+		override
+#endif
+		void Close ()
 		{
 			for (int i = 0; i < gdaResults.Count; i++) {
 				IntPtr obj = (IntPtr) gdaResults[i];
@@ -159,7 +203,11 @@ namespace System.Data.OleDb
 			currentRow = -1;
 		}
 
-		public bool GetBoolean (int ordinal)
+		public
+#if NET_2_0
+		override
+#endif
+		bool GetBoolean (int ordinal)
 		{
 			IntPtr value;
 
@@ -176,7 +224,11 @@ namespace System.Data.OleDb
 			return libgda.gda_value_get_boolean (value);
 		}
 
-		public byte GetByte (int ordinal)
+		public
+#if NET_2_0
+		override
+#endif
+		byte GetByte (int ordinal)
 		{
 			IntPtr value;
 
@@ -194,13 +246,21 @@ namespace System.Data.OleDb
 		}
 
 		[MonoTODO]
-		public long GetBytes (int ordinal, long dataIndex, byte[] buffer, int bufferIndex, int length)
+		public
+#if NET_2_0
+		override
+#endif
+		long GetBytes (int ordinal, long dataIndex, byte[] buffer, int bufferIndex, int length)
 		{
 			throw new NotImplementedException ();
 		}
 		
 		[EditorBrowsableAttribute (EditorBrowsableState.Never)]
-		public char GetChar (int ordinal)
+		public
+#if NET_2_0
+		override
+#endif
+		char GetChar (int ordinal)
 		{
 			IntPtr value;
 
@@ -218,18 +278,36 @@ namespace System.Data.OleDb
 		}
 
 		[MonoTODO]
-		public long GetChars (int ordinal, long dataIndex, char[] buffer, int bufferIndex, int length)
+		public
+#if NET_2_0
+		override
+#endif
+		long GetChars (int ordinal, long dataIndex, char[] buffer, int bufferIndex, int length)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
+#if NET_2_0
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+#endif
 		public OleDbDataReader GetData (int ordinal)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public string GetDataTypeName (int index)
+#if NET_2_0
+		protected override DbDataReader GetDbDataReader (int ordinal)
+		{
+			return this.GetData (ordinal);
+		}
+#endif
+
+		public
+#if NET_2_0
+		override
+#endif
+		string GetDataTypeName (int index)
 		{
 			IntPtr attrs;
 			GdaValueType type;
@@ -249,7 +327,11 @@ namespace System.Data.OleDb
 			return libgda.gda_type_to_string (type);
 		}
 
-		public DateTime GetDateTime (int ordinal)
+		public
+#if NET_2_0
+		override
+#endif
+		DateTime GetDateTime (int ordinal)
 		{
 			IntPtr value;
 			DateTime dt;
@@ -289,12 +371,20 @@ namespace System.Data.OleDb
 		}
 
 		[MonoTODO]
-		public decimal GetDecimal (int ordinal)
+		public
+#if NET_2_0
+		override
+#endif
+		decimal GetDecimal (int ordinal)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public double GetDouble (int ordinal)
+		public
+#if NET_2_0
+		override
+#endif
+		double GetDouble (int ordinal)
 		{
 			IntPtr value;
 
@@ -312,7 +402,11 @@ namespace System.Data.OleDb
 		}
 
 		[MonoTODO]
-		public Type GetFieldType (int index)
+		public
+#if NET_2_0
+		override
+#endif
+		Type GetFieldType (int index)
 		{
 			IntPtr value;
 			GdaValueType type;
@@ -343,7 +437,11 @@ namespace System.Data.OleDb
 			return typeof(string); // default
 		}
 
-		public float GetFloat (int ordinal)
+		public
+#if NET_2_0
+		override
+#endif
+		float GetFloat (int ordinal)
 		{
 			IntPtr value;
 
@@ -361,12 +459,20 @@ namespace System.Data.OleDb
 		}
 
 		[MonoTODO]
-		public Guid GetGuid (int ordinal)
+		public
+#if NET_2_0
+		override
+#endif
+		Guid GetGuid (int ordinal)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public short GetInt16 (int ordinal)
+		public
+#if NET_2_0
+		override
+#endif
+		short GetInt16 (int ordinal)
 		{
 			IntPtr value;
 
@@ -383,7 +489,11 @@ namespace System.Data.OleDb
 			return (short) libgda.gda_value_get_smallint (value);
 		}
 
-		public int GetInt32 (int ordinal)
+		public
+#if NET_2_0
+		override
+#endif
+		int GetInt32 (int ordinal)
 		{
 			IntPtr value;
 
@@ -400,7 +510,11 @@ namespace System.Data.OleDb
 			return libgda.gda_value_get_integer (value);
 		}
 
-		public long GetInt64 (int ordinal)
+		public
+#if NET_2_0
+		override
+#endif
+		long GetInt64 (int ordinal)
 		{
 			IntPtr value;
 
@@ -417,7 +531,11 @@ namespace System.Data.OleDb
 			return libgda.gda_value_get_bigint (value);
 		}
 
-		public string GetName (int index)
+		public
+#if NET_2_0
+		override
+#endif
+		string GetName (int index)
 		{
 			if (currentResult == -1)
 				return null;
@@ -426,7 +544,11 @@ namespace System.Data.OleDb
 				(IntPtr) gdaResults[currentResult], index);
 		}
 
-		public int GetOrdinal (string name)
+		public
+#if NET_2_0
+		override
+#endif
+		int GetOrdinal (string name)
 		{
 			if (currentResult == -1)
 				throw new IndexOutOfRangeException ();
@@ -439,7 +561,11 @@ namespace System.Data.OleDb
 			throw new IndexOutOfRangeException ();
 		}
 
-		public DataTable GetSchemaTable ()
+		public
+#if NET_2_0
+		override
+#endif
+		DataTable GetSchemaTable ()
 		{
 			DataTable dataTableSchema = null;
 			// Only Results from SQL SELECT Queries 
@@ -489,7 +615,7 @@ namespace System.Data.OleDb
 				DataRow schemaRow;
 				DbType dbType;
 				Type typ;
-								
+
 				for (int i = 0; i < this.FieldCount; i += 1 ) {
 					
 					schemaRow = dataTableSchema.NewRow ();
@@ -563,7 +689,11 @@ namespace System.Data.OleDb
 			return dataTableSchema;
 		}
 
-		public string GetString (int ordinal)
+		public
+#if NET_2_0
+		override
+#endif
+		string GetString (int ordinal)
 		{
 			IntPtr value;
 
@@ -586,7 +716,11 @@ namespace System.Data.OleDb
 			throw new NotImplementedException ();
 		}
 
-		public object GetValue (int ordinal)
+		public
+#if NET_2_0
+		override
+#endif
+		object GetValue (int ordinal)
 		{
 			IntPtr value;
 			GdaValueType type;
@@ -618,23 +752,37 @@ namespace System.Data.OleDb
 		}
 
 		[MonoTODO]
-		public int GetValues (object[] values)
+		public
+#if NET_2_0
+		override
+#endif
+		int GetValues (object[] values)
 		{
 			throw new NotImplementedException ();
 		}
 
+#if !NET_2_0
 		[MonoTODO]
 		IDataReader IDataRecord.GetData (int ordinal)
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 
+#if NET_2_0
+		public override IEnumerator GetEnumerator()
+#else
 		IEnumerator IEnumerable.GetEnumerator ()
+#endif
 		{
-			return new DbEnumerator (this);
+			return new DbEnumerator(this);
 		}
 
-		public bool IsDBNull (int ordinal)
+		public
+#if NET_2_0
+		override
+#endif
+		bool IsDBNull (int ordinal)
 		{
 			IntPtr value;
 
@@ -649,7 +797,11 @@ namespace System.Data.OleDb
 			return libgda.gda_value_is_null (value);
 		}
 
-		public bool NextResult ()
+		public
+#if NET_2_0
+		override
+#endif
+		bool NextResult ()
 		{
 			int i = currentResult + 1;
 			if (i >= 0 && i < gdaResults.Count) {
@@ -660,7 +812,11 @@ namespace System.Data.OleDb
 			return false;
 		}
 
-		public bool Read ()
+		public
+#if NET_2_0
+		override
+#endif
+		bool Read ()
 		{
 			if (currentResult < 0 || currentResult >= gdaResults.Count)
 				return false;

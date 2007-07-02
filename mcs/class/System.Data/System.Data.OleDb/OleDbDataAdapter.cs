@@ -40,9 +40,9 @@ using System.Data.Common;
 namespace System.Data.OleDb
 {
 	[DefaultEvent ("RowUpdated")]
-        [DesignerAttribute ("Microsoft.VSDesigner.Data.VS.OleDbDataAdapterDesigner, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.IDesigner")]
-        [ToolboxItemAttribute ("Microsoft.VSDesigner.Data.VS.OleDbDataAdapterToolboxItem, "+ Consts.AssemblyMicrosoft_VSDesigner)]	
-	public sealed class OleDbDataAdapter : DbDataAdapter, IDbDataAdapter
+	[DesignerAttribute ("Microsoft.VSDesigner.Data.VS.OleDbDataAdapterDesigner, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.IDesigner")]
+	[ToolboxItemAttribute ("Microsoft.VSDesigner.Data.VS.OleDbDataAdapterToolboxItem, "+ Consts.AssemblyMicrosoft_VSDesigner)]
+	public sealed class OleDbDataAdapter : DbDataAdapter, IDbDataAdapter, ICloneable
 	{
 		#region Fields
 
@@ -89,7 +89,7 @@ namespace System.Data.OleDb
 #if !NET_2_0
 		[DataSysDescriptionAttribute ("Used during Update for deleted rows in DataSet.")]
 #endif
-		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
+		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing)]
 		public new OleDbCommand DeleteCommand {
 			get {
 				return deleteCommand;
@@ -102,9 +102,9 @@ namespace System.Data.OleDb
 		[DefaultValue (null)]
 		[DataCategory ("Update")]
 #if !NET_2_0
-                [DataSysDescriptionAttribute ("Used during Update for new rows in DataSet.")]
+		[DataSysDescriptionAttribute ("Used during Update for new rows in DataSet.")]
 #endif
-                [EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
+		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing)]
 		public new OleDbCommand InsertCommand {
 			get {
 				return insertCommand;
@@ -117,9 +117,9 @@ namespace System.Data.OleDb
 		[DefaultValue (null)]
 		[DataCategory ("Fill")]
 #if !NET_2_0
-                [DataSysDescriptionAttribute ("Used during Fill/FillSchema.")]
+		[DataSysDescriptionAttribute ("Used during Fill/FillSchema.")]
 #endif
-                [EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
+		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing)]
 		public new OleDbCommand SelectCommand {
 			get {
 				return selectCommand;
@@ -132,9 +132,9 @@ namespace System.Data.OleDb
 		[DefaultValue (null)]
 		[DataCategory ("Update")]
 #if !NET_2_0
-                [DataSysDescriptionAttribute ("Used during Update for modified rows in DataSet.")]
+		[DataSysDescriptionAttribute ("Used during Update for modified rows in DataSet.")]
 #endif
-                [EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
+		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing)]
 		public new OleDbCommand UpdateCommand {
 			get {
 				return updateCommand;
@@ -159,7 +159,7 @@ namespace System.Data.OleDb
 			get {
 				return InsertCommand;
 			}
-			set { 
+			set {
 				if (!(value is OleDbCommand))
 					throw new ArgumentException ();
 				InsertCommand = (OleDbCommand)value;
@@ -170,7 +170,7 @@ namespace System.Data.OleDb
 			get {
 				return SelectCommand;
 			}
-			set { 
+			set {
 				if (!(value is OleDbCommand))
 					throw new ArgumentException ();
 				SelectCommand = (OleDbCommand)value;
@@ -199,7 +199,7 @@ namespace System.Data.OleDb
 			get {
 				return UpdateCommand;
 			}
-			set { 
+			set {
 				if (!(value is OleDbCommand))
 					throw new ArgumentException ();
 				UpdateCommand = (OleDbCommand)value;
@@ -228,32 +228,48 @@ namespace System.Data.OleDb
 		protected override RowUpdatingEventArgs CreateRowUpdatingEvent (DataRow dataRow,
 										IDbCommand command,
 										StatementType statementType,
-										DataTableMapping tableMapping) 
+										DataTableMapping tableMapping)
 		{
 			return new OleDbRowUpdatingEventArgs (dataRow, command, statementType, tableMapping);
 		}
 
-		protected override void OnRowUpdated (RowUpdatedEventArgs value) 
+		protected override void OnRowUpdated (RowUpdatedEventArgs value)
 		{
 			if (RowUpdated != null)
 				RowUpdated (this, (OleDbRowUpdatedEventArgs) value);
 		}
 
-		protected override void OnRowUpdating (RowUpdatingEventArgs value) 
+		protected override void OnRowUpdating (RowUpdatingEventArgs value)
 		{
 			if (RowUpdating != null)
 				RowUpdating (this, (OleDbRowUpdatingEventArgs) value);
 		}
 		
 		[MonoTODO]
-		public int Fill(DataTable datatable, Object adoDBRecordSet) {
+		public int Fill(DataTable datatable, Object adoDBRecordSet)
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-                public int Fill(DataSet dataset, Object adoDBRecordSet, String srcTable) {
-                        throw new NotImplementedException ();
-                }
+		public int Fill(DataSet dataset, Object adoDBRecordSet, String srcTable)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		object ICloneable.Clone ()
+		{
+			throw new NotImplementedException ();
+		}
+
+#if !NET_2_0
+		[MonoTODO]
+		protected override void Dispose (bool disposing)
+		{
+			base.Dispose (disposing);
+		}
+#endif
 
 		#endregion // Methods
 
@@ -262,22 +278,15 @@ namespace System.Data.OleDb
 #if !NET_2_0
 		[DataSysDescription ("Event triggered before every DataRow during Update.")]
 #endif
-                [DataCategory ("DataCategory_Update")]
+		[DataCategory ("DataCategory_Update")]
 		public event OleDbRowUpdatedEventHandler RowUpdated;
 
 #if !NET_2_0
 		[DataSysDescription ("Event triggered after every DataRow during Update.")]
 #endif
-                [DataCategory ("DataCategory_Update")]
+		[DataCategory ("DataCategory_Update")]
 		public event OleDbRowUpdatingEventHandler RowUpdating;
 
 		#endregion // Events and Delegates
-
-		[MonoTODO]
-		protected override void Dispose (bool disposing)
-		{
-			base.Dispose (disposing);
-		}
-
 	}
 }
