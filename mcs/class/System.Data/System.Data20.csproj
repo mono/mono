@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>System.Data</RootNamespace>
     <AssemblyName>System.Data</AssemblyName>
-    <JDKName>1.5.0_05</JDKName>
+    <JDKName>1.6</JDKName>
     <GHProjectType>1</GHProjectType>
     <GHProjectKind>framework</GHProjectKind>
     <Version>2.0</Version>
@@ -202,6 +202,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="System.Data.OleDb.jvm\OleDbConnection.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="System.Data.OleDb.jvm\OleDbConvert.cs" />
     <Compile Include="System.Data.OleDb.jvm\OleDbDataAdapter.cs">
@@ -247,7 +248,6 @@
     <Compile Include="System.Data.ProviderBase.jvm\ReaderCache.cs" />
     <Compile Include="System.Data.ProviderBase.jvm\regex.cs" />
     <Compile Include="System.Data.SqlClient\SqlClientFactory.cs" />
-    <Compile Include="System.Data.SqlClient\SqlDataSourceEnumerator.cs" />
     <Compile Include="System.Data.SqlClient.jvm\ISqlNotificationReceiver.cs" />
     <Compile Include="System.Data.SqlClient.jvm\MetaType.cs" />
     <Compile Include="System.Data.SqlClient.jvm\SqlClientPermission.cs" />
@@ -466,6 +466,8 @@
     <Compile Include="System.Data.SqlClient\SqlRowUpdatedEventHandler.cs" />
     <Compile Include="System.Data.SqlClient\SqlRowUpdatingEventArgs.cs" />
     <Compile Include="System.Data.SqlClient\SqlRowUpdatingEventHandler.cs" />
+    <Compile Include="System.Data.Sql\SqlDataSourceEnumerator.cs" />
+    <Compile Include="System.Data.Sql\SqlNotificationRequest.cs" />
     <None Include="Mono.Data.SqlExpressions\Parser.jay" />
   </ItemGroup>
   <ItemGroup>
