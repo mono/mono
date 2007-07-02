@@ -209,19 +209,26 @@ namespace System.Web.UI
 		}
 
 		protected override void RenderChildren (HtmlTextWriter writer) {
-			if (ScriptManager.IsInAsyncPostBack && RequiresUpdate && !ScriptManager.IsInPartialRendering) {
-				ScriptManager.IsInPartialRendering = true;
-				HtmlTextWriter responseOutput = ((ScriptManager.AlternativeHtmlTextWriter) writer).ResponseOutput;
-				StringBuilder sb = new StringBuilder ();
-				HtmlTextWriter w = new HtmlTextWriter (new StringWriter (sb));
-				base.RenderChildren (w);
-				w.Flush ();
+			if (ScriptManager.IsInAsyncPostBack){
+				if (RequiresUpdate && !ScriptManager.IsInPartialRendering) {
+					ScriptManager.IsInPartialRendering = true;
+					HtmlTextWriter responseOutput = ((ScriptManager.AlternativeHtmlTextWriter) writer).ResponseOutput;
+					StringBuilder sb = new StringBuilder ();
+					HtmlTextWriter w = new HtmlTextWriter (new StringWriter (sb));
+					base.RenderChildren (w);
+					w.Flush ();
 
-				ScriptManager.WriteCallbackPanel (responseOutput, ClientID, sb);
-				for (int i = 0; i < sb.Length; i++)
-					writer.Write (sb [i]);
+					ScriptManager.WriteCallbackPanel (responseOutput, this, sb);
+					for (int i = 0; i < sb.Length; i++)
+						writer.Write (sb [i]);
 
-				ScriptManager.IsInPartialRendering = false;
+					ScriptManager.IsInPartialRendering = false;
+				}
+				else {
+					if (ScriptManager.IsInPartialRendering)
+						ScriptManager.RegisterChildUpdatePanel (this);
+					base.RenderChildren (writer);
+				}
 			}
 			else
 				base.RenderChildren (writer);

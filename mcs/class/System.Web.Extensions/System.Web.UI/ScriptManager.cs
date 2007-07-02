@@ -84,6 +84,8 @@ namespace System.Web.UI
 		int _asyncPostBackTimeout = 90;
 		List<Control> _asyncPostBackControls;
 		List<Control> _postBackControls;
+		List<UpdatePanel> _childUpdatePanels;
+		List<UpdatePanel> _panelsToRefresh;
 		List<UpdatePanel> _updatePanels;
 		ScriptReferenceCollection _scripts;
 		bool _isInAsyncPostBack;
@@ -809,7 +811,7 @@ namespace System.Web.UI
 			return sb.ToString ();
 		}
 
-		static string FormatListIDs (List<Control> list, bool useSingleQuote) {
+		static string FormatListIDs<T> (List<T> list, bool useSingleQuote) where T : Control {
 			if (list == null || list.Count == 0)
 				return null;
 
@@ -852,8 +854,18 @@ namespace System.Web.UI
 			WriteCallbackOutput (output, pageRedirect, null, redirectUrl);
 		}
 
-		static internal void WriteCallbackPanel (TextWriter output, string clientID, StringBuilder panelOutput) {
-			WriteCallbackOutput (output, updatePanel, clientID, panelOutput);
+		internal void WriteCallbackPanel (TextWriter output, UpdatePanel panel, StringBuilder panelOutput) {
+			if (_panelsToRefresh == null)
+				_panelsToRefresh = new List<UpdatePanel> ();
+			_panelsToRefresh.Add (panel);
+
+			WriteCallbackOutput (output, updatePanel, panel.ClientID, panelOutput);
+		}
+
+		internal void RegisterChildUpdatePanel (UpdatePanel updatePanel) {
+			if (_childUpdatePanels == null)
+				_childUpdatePanels = new List<UpdatePanel> ();
+			_childUpdatePanels.Add (updatePanel);
 		}
 
 		static void WriteCallbackOutput (TextWriter output, string type, string name, object value) {
@@ -890,6 +902,8 @@ namespace System.Web.UI
 			WriteCallbackOutput (output, asyncPostBackControlIDs, null, FormatListIDs (_asyncPostBackControls, false));
 			WriteCallbackOutput (output, postBackControlIDs, null, FormatListIDs (_postBackControls, false));
 			WriteCallbackOutput (output, updatePanelIDs, null, FormatUpdatePanelIDs (_updatePanels, false));
+			WriteCallbackOutput (output, childUpdatePanelIDs, null, FormatListIDs (_childUpdatePanels, false));
+			WriteCallbackOutput (output, panelsToRefreshIDs, null, FormatListIDs (_panelsToRefresh, false));
 			WriteCallbackOutput (output, asyncPostBackTimeout, null, AsyncPostBackTimeout.ToString ());
 			WriteCallbackOutput (output, pageTitle, null, Page.Title);
 
