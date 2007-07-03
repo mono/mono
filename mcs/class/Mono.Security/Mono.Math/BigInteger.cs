@@ -13,7 +13,7 @@
 // Copyright (c) 2002 Chew Keong TAN
 // All rights reserved.
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004, 2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -894,7 +894,7 @@ namespace Mono.Math {
 
 		public bool IsProbablePrime ()
 		{
-			if (this < smallPrimes [smallPrimes.Length - 1]) {
+			if (this <= smallPrimes [smallPrimes.Length - 1]) {
 				for (int p = 0; p < smallPrimes.Length; p++) {
 					if (this == smallPrimes [p])
 						return true;

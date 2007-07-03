@@ -1,3 +1,8 @@
+2007-07-03  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* BigInteger.cs: Fix check on IsProbablePrime not to exclude the last
+	element of the small primes. Patch by Kazuki (#81857).
+
 2004-12-03  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* BigInteger.cs: Fix issue #70169 in ModPow when modulus is a power of
