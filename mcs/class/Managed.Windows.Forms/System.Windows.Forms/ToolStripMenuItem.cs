@@ -324,8 +324,16 @@ namespace System.Windows.Forms
 			// If DropDown.ShowImageMargin is false, we don't display the image
 			Image draw_image = this.UseImageMargin ? this.Image : null;
 			
+			// Figure out our text color
+			Color font_color = this.ForeColor == SystemColors.ControlText ? SystemColors.MenuText : this.ForeColor;
+			
+			if ((this.Selected || this.Pressed) && this.IsOnDropDown && font_color == SystemColors.MenuText)
+				font_color = SystemColors.HighlightText;
+			
+			if (!this.Enabled && this.ForeColor == SystemColors.ControlText)
+				font_color = SystemColors.GrayText;
+			
 			// Gray stuff out if we're disabled
-			Color font_color = this.Enabled ? this.ForeColor : SystemColors.GrayText;
 			draw_image = this.Enabled ? draw_image : ToolStripRenderer.CreateDisabledImage (draw_image);
 				
 			// Draw our background

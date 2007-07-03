@@ -458,9 +458,11 @@ namespace System.Windows.Forms
 
 				if (value == ToolStripRenderMode.Custom && this.renderer == null)
 					throw new NotSupportedException ("Must set Renderer property before setting RenderMode to Custom");
-				if (value == ToolStripRenderMode.Professional || value == ToolStripRenderMode.System)
+				else if (value == ToolStripRenderMode.Professional)
 					this.Renderer = new ToolStripProfessionalRenderer ();
-
+				else if (value == ToolStripRenderMode.System)
+					this.Renderer = new ToolStripSystemRenderer ();
+					
 				this.render_mode = value;
 			}
 		}

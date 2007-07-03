@@ -1,3 +1,8 @@
+2007-07-03  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStripPainter.cs: Added. This is where we paint toolstrips
+	using the ToolStripSystemRenderer.
+
 2007-05-04  Andreia Gaita  <avidigal@novell.com>
 
 	* TabControlPainter.cs: Use ControlPaint static methods

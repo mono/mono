@@ -65,33 +65,7 @@ namespace System.Windows.Forms
 		#region Protected Methods
 		protected override void OnRenderArrow (ToolStripArrowRenderEventArgs e)
 		{
-			switch (e.Direction) {
-				case ArrowDirection.Down:
-					using (Pen p = new Pen (e.ArrowColor)) {
-						int x = e.ArrowRectangle.Left + (e.ArrowRectangle.Width / 2) - 3;
-						int y = e.ArrowRectangle.Top + (e.ArrowRectangle.Height / 2) - 2;
-
-						e.Graphics.DrawLine (p, x + 1, y, x + 5, y);
-						e.Graphics.DrawLine (p, x + 2, y + 1, x + 4, y + 1);
-						e.Graphics.DrawLine (p, x + 3, y + 1, x + 3, y + 2);
-					}
-					break;
-				case ArrowDirection.Left:
-					break;
-				case ArrowDirection.Right:
-					using (Pen p = new Pen (e.ArrowColor)) {
-						int x = e.ArrowRectangle.Left + (e.ArrowRectangle.Width / 2) - 3;
-						int y = e.ArrowRectangle.Top + (e.ArrowRectangle.Height / 2) - 4;
-
-						e.Graphics.DrawLine (p, x, y, x, y + 6);
-						e.Graphics.DrawLine (p, x + 1, y + 1, x + 1, y + 5);
-						e.Graphics.DrawLine (p, x + 2, y + 2, x + 2, y + 4);
-						e.Graphics.DrawLine (p, x + 2, y + 3, x + 3, y + 3);
-					}
-					break;
-				case ArrowDirection.Up:
-					break;
-			}
+			base.OnRenderArrow (e);
 		}
 
 		protected override void OnRenderButtonBackground (ToolStripItemRenderEventArgs e)
@@ -241,34 +215,11 @@ namespace System.Windows.Forms
 		protected override void OnRenderItemImage (ToolStripItemImageRenderEventArgs e)
 		{
 			base.OnRenderItemImage (e);
-
-			bool need_dispose = false;
-			Image i = e.Image;
-			
-			if (e.Item.RightToLeft == RightToLeft.Yes && e.Item.RightToLeftAutoMirrorImage == true) {
-				i = CreateMirrorImage (i);
-				need_dispose = true;
-			}
-				
-			
-			if (e.Item.ImageTransparentColor != Color.Empty) {
-				ImageAttributes ia = new ImageAttributes ();
-				ia.SetColorKey (e.Item.ImageTransparentColor, e.Item.ImageTransparentColor);
-				e.Graphics.DrawImage (i, e.ImageRectangle, 0, 0, i.Width, i.Height, GraphicsUnit.Pixel, ia);
-				ia.Dispose ();
-			}
-			else
-				e.Graphics.DrawImage (i, e.ImageRectangle);
-			
-			if (need_dispose)
-				i.Dispose ();
 		}
 
 		protected override void OnRenderItemText (ToolStripItemTextRenderEventArgs e)
 		{
 			base.OnRenderItemText (e);
-
-			TextRenderer.DrawText (e.Graphics, e.Text, e.TextFont, e.TextRectangle, e.TextColor, e.TextFormat);
 		}
 
 		protected override void OnRenderLabelBackground (ToolStripItemRenderEventArgs e)

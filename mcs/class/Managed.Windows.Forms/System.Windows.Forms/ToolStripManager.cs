@@ -72,7 +72,7 @@ namespace System.Windows.Forms
 						case ToolStripManagerRenderMode.Custom:
 							throw new NotSupportedException ();
 						case ToolStripManagerRenderMode.System:
-							ToolStripManager.Renderer = new ToolStripProfessionalRenderer ();
+							ToolStripManager.Renderer = new ToolStripSystemRenderer ();
 							break;
 						case ToolStripManagerRenderMode.Professional:
 							ToolStripManager.Renderer = new ToolStripProfessionalRenderer ();

@@ -1,3 +1,15 @@
+2007-07-03  Jonathan Pobst  <monkey@jpobst.com>
+
+	* StatusStrip.cs: The default renderer is System.
+	* ToolStrip.cs, ToolStripManager: Now that we have System renderer, use it 
+	if the user specifies it.
+	* ToolStripDropDown.cs: Don't reset our Renderer on changing OwnerItem
+	if we are ManagerRenderMode.
+	* ToolStripMenuItem.cs: Calculate our text color better.
+	* ToolStripRenderer.cs, ToolStripProfessionalRenderer.cs: Move some stuff
+	from Professional to the base class based off working with the System renderer.
+	* ToolStripSystemRenderer.cs: Added.
+
 2007-07-02  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: I'm so lame - the real name is HitTest, not HitInfo.

@@ -46,5 +46,16 @@ namespace System.Windows.Forms.Theming
 				return buttonPainter;
 			}
 		}
+
+#if NET_2_0
+		protected Default.ToolStripPainter toolStripPainter;
+		public virtual Default.ToolStripPainter ToolStripPainter {
+			get {
+				if (toolStripPainter == null)
+					toolStripPainter = new Default.ToolStripPainter ();
+				return toolStripPainter;
+			}
+		}
+#endif
 	}
 }

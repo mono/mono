@@ -1,3 +1,7 @@
+2007-07-03  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ThemeElementsDefault.cs: Add accessor for ToolStripPainter.
+
 2007-04-15  Andreia Gaita  <avidigal@novell.com>
 
 	* ThemeElements.cs: Load themes by reflection according to theme

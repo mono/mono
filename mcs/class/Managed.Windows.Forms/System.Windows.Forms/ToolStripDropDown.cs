@@ -226,7 +226,7 @@ namespace System.Windows.Forms
 			set { this.owner_item = value; 
 				
 				if (this.owner_item != null)
-					if (this.owner_item.Owner != null)
+					if (this.owner_item.Owner != null && this.owner_item.Owner.RenderMode != ToolStripRenderMode.ManagerRenderMode)
 						this.Renderer = this.owner_item.Owner.Renderer;
 			}
 		}
@@ -484,6 +484,8 @@ namespace System.Windows.Forms
 		protected override void OnHandleCreated (EventArgs e)
 		{
 			base.OnHandleCreated (e);
+
+			XplatUI.SetOwner (this.Handle, Application.MWFThread.Current.Context.MainForm.Handle);
 		}
 
 		protected override void OnItemClicked (ToolStripItemClickedEventArgs e)

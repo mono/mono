@@ -1,3 +1,7 @@
+2007-07-03  Jonathan Pobst  <monkey@jpobst.com>
+
+	* System.Windows.Forms.dll.sources: Add ToolStripSystemRenderer, ToolStripPainter.
+
 2007-06-15  Jonathan Pobst  <monkey@jpobst.com>
 
 	* System.Windows.Forms.dll.sources: Add ToolStripDropDownItemAccessibleObject.cs.

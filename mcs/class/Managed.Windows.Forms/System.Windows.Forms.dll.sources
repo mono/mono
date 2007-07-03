@@ -718,6 +718,7 @@ System.Windows.Forms/ToolStripSplitButton.cs
 System.Windows.Forms/ToolStripSplitStackLayout.cs
 System.Windows.Forms/ToolStripStatusLabel.cs
 System.Windows.Forms/ToolStripStatusLabelBorderSides.cs
+System.Windows.Forms/ToolStripSystemRenderer.cs
 System.Windows.Forms/ToolStripTextBox.cs
 System.Windows.Forms/ToolStripTextDirection.cs
 System.Windows.Forms/ToolTip.cs
@@ -796,6 +797,7 @@ System.Windows.Forms.Theming/ThemeElementsGtk.cs
 System.Windows.Forms.Theming/ThemeElementsNice.cs
 System.Windows.Forms.Theming/Default/ButtonPainter.cs
 System.Windows.Forms.Theming/Default/TabControlPainter.cs
+System.Windows.Forms.Theming/Default/ToolStripPainter.cs
 System.Windows.Forms.Theming/Nice/TabControlPainter.cs
 System.Windows.Forms.VisualStyles/BackgroundType.cs
 System.Windows.Forms.VisualStyles/BooleanProperty.cs

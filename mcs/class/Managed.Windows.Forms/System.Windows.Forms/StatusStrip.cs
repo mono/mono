@@ -47,6 +47,7 @@ namespace System.Windows.Forms
 			base.CanOverflow = false;
 			this.GripStyle = ToolStripGripStyle.Hidden;
 			base.LayoutStyle = ToolStripLayoutStyle.Table;
+			base.RenderMode = ToolStripRenderMode.System;
 			this.sizing_grip = true;
 			base.Stretch = true;
 		}

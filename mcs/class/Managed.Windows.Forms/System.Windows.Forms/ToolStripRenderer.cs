@@ -140,7 +140,30 @@ namespace System.Windows.Forms
 
 		protected virtual void OnRenderArrow (ToolStripArrowRenderEventArgs e)
 		{
-			ToolStripArrowRenderEventHandler eh = (ToolStripArrowRenderEventHandler)Events [RenderArrowEvent];
+			switch (e.Direction) {
+				case ArrowDirection.Down:
+					using (Pen p = new Pen (e.ArrowColor)) {
+						int x = e.ArrowRectangle.Left + (e.ArrowRectangle.Width / 2) - 3;
+						int y = e.ArrowRectangle.Top + (e.ArrowRectangle.Height / 2) - 2;
+
+						DrawDownArrow (e.Graphics, p, x, y);
+					}
+					break;
+				case ArrowDirection.Left:
+					break;
+				case ArrowDirection.Right:
+					using (Pen p = new Pen (e.ArrowColor)) {
+						int x = e.ArrowRectangle.Left + (e.ArrowRectangle.Width / 2) - 3;
+						int y = e.ArrowRectangle.Top + (e.ArrowRectangle.Height / 2) - 4;
+
+						DrawRightArrow (e.Graphics, p, x, y);
+					}
+					break;
+				case ArrowDirection.Up:
+					break;
+			}
+			
+			ToolStripArrowRenderEventHandler eh = (ToolStripArrowRenderEventHandler)Events[RenderArrowEvent];
 			if (eh != null)
 				eh (this, e);
 		}
@@ -195,6 +218,26 @@ namespace System.Windows.Forms
 
 		protected virtual void OnRenderItemImage (ToolStripItemImageRenderEventArgs e)
 		{
+			bool need_dispose = false;
+			Image i = e.Image;
+			
+			if (e.Item.RightToLeft == RightToLeft.Yes && e.Item.RightToLeftAutoMirrorImage == true) {
+				i = CreateMirrorImage (i);
+				need_dispose = true;
+			}
+				
+			if (e.Item.ImageTransparentColor != Color.Empty) {
+				ImageAttributes ia = new ImageAttributes ();
+				ia.SetColorKey (e.Item.ImageTransparentColor, e.Item.ImageTransparentColor);
+				e.Graphics.DrawImage (i, e.ImageRectangle, 0, 0, i.Width, i.Height, GraphicsUnit.Pixel, ia);
+				ia.Dispose ();
+			}
+			else
+				e.Graphics.DrawImage (i, e.ImageRectangle);
+			
+			if (need_dispose)
+				i.Dispose ();
+		
 			ToolStripItemImageRenderEventHandler eh = (ToolStripItemImageRenderEventHandler)Events [RenderItemImageEvent];
 			if (eh != null)
 				eh (this, e);
@@ -202,6 +245,8 @@ namespace System.Windows.Forms
 
 		protected virtual void OnRenderItemText (ToolStripItemTextRenderEventArgs e)
 		{
+			TextRenderer.DrawText (e.Graphics, e.Text, e.TextFont, e.TextRectangle, e.TextColor, e.TextFormat);
+		
 			ToolStripItemTextRenderEventHandler eh = (ToolStripItemTextRenderEventHandler)Events [RenderItemTextEvent];
 			if (eh != null)
 				eh (this, e);
@@ -461,6 +506,21 @@ namespace System.Windows.Forms
 			}
 		}
 
+		internal static void DrawRightArrow (Graphics g, Pen p, int x, int y)
+		{
+			g.DrawLine (p, x, y, x, y + 6);
+			g.DrawLine (p, x + 1, y + 1, x + 1, y + 5);
+			g.DrawLine (p, x + 2, y + 2, x + 2, y + 4);
+			g.DrawLine (p, x + 2, y + 3, x + 3, y + 3);
+		}
+
+		internal static void DrawDownArrow (Graphics g, Pen p, int x, int y)
+		{
+			g.DrawLine (p, x + 1, y, x + 5, y);
+			g.DrawLine (p, x + 2, y + 1, x + 4, y + 1);
+			g.DrawLine (p, x + 3, y + 1, x + 3, y + 2);
+		}
+
 		private void DrawSizingGrip (Graphics g, Rectangle rect)
 		{
 			DrawGripBox (g, rect.Right - 5, rect.Bottom - 5);
@@ -473,7 +533,7 @@ namespace System.Windows.Forms
 		
 		private void DrawGripBox (Graphics g, int x, int y)
 		{
-			g.DrawRectangle (ThemeEngine.Current.ResPool.GetPen (Color.White), x + 1, y + 1, 1, 1);
+			g.DrawRectangle (Pens.White, x + 1, y + 1, 1, 1);
 			g.DrawRectangle (ThemeEngine.Current.ResPool.GetPen (Color.FromArgb (172, 168, 153)), x, y, 1, 1);
 		}
 		#endregion
