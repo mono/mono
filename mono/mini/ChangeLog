@@ -1,3 +1,9 @@
+
+Tue Jul 3 19:42:16 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: the provided Min/Max optimizations are valid for unisgned
+	ints.
+
 2007-07-03  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* mini.c (can_access_method, can_access_field): methods moved to metadata/class.c and renamed to mono_method_can_access_method and mono_method_can_acesss_field
