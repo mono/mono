@@ -1,3 +1,7 @@
+2007-07-03  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* MarginsTest.cs: Remove operator tests before 2.0. Fix bots failures.
+
 2007-05-29  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* MarginsTest.cs: New. Unit tests for Margins.
