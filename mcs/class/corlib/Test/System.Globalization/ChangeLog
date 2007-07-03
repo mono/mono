@@ -1,3 +1,8 @@
+2007-07-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CalendarTest.cs, EastAsianLunisolarCalendarTest.cs :
+	  more tests needed mark as NotWorking.
+
 2007-07-02  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* EastAsianLunisolarCalenderTest.cs: Fixed build.

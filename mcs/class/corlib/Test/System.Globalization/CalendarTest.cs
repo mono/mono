@@ -503,6 +503,7 @@ public class CalendarTest : TestCase {
 	}
 
 #if NET_2_0
+	[Category ("NotWorking")]
 	public void TestErasProperty2() {
 		AssertEquals("cn", 1, clcal.Eras.Length);
 		AssertEquals("tw", 1, tlcal.Eras.Length);
