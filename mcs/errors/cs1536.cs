@@ -1,13 +1,10 @@
-// CS1536: Invalid parameter type 'void'
-// Line: 7
+// CS1536: Invalid parameter type `void'
+// Line: 8
+
 using System;
 
 class X
 {
 	void Test (void a)
 	{ }
-
-	static void Main ()
-	{
-	}
 }
