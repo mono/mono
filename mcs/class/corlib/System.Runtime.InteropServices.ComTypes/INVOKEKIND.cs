@@ -35,7 +35,6 @@ namespace System.Runtime.InteropServices.ComTypes
 {
 	[Flags]
 	[Serializable]
-	[ComVisible(false)]
 	public enum INVOKEKIND {
 		INVOKE_FUNC = 1,
 		INVOKE_PROPERTYGET = 2,

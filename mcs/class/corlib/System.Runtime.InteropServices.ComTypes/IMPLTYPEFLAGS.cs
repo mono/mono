@@ -33,7 +33,7 @@ using System;
 
 namespace System.Runtime.InteropServices.ComTypes
 {
-	[Flags, Serializable, ComVisible (false)]
+	[Flags, Serializable]
 	public enum IMPLTYPEFLAGS
 	{
 		IMPLTYPEFLAG_FDEFAULT = 1,

@@ -31,7 +31,6 @@
 #if NET_2_0
 namespace System.Runtime.InteropServices.ComTypes
 {
-	[ComVisible (false)]
 	[StructLayout (LayoutKind.Sequential)]
 	public struct BIND_OPTS
 	{

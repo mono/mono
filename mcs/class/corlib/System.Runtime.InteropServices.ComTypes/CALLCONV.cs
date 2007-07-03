@@ -32,7 +32,6 @@
 namespace System.Runtime.InteropServices.ComTypes
 {
 	[Serializable]
-	[ComVisible (false)]
 	public enum CALLCONV
 	{
 		CC_CDECL = 1,

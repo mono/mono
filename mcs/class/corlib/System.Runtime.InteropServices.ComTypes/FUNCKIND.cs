@@ -32,7 +32,6 @@
 namespace System.Runtime.InteropServices.ComTypes
 {
 	[Serializable]
-	[ComVisible (false)]
 	public enum FUNCKIND
 	{
 		FUNC_VIRTUAL = 0,

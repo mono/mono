@@ -33,7 +33,7 @@ using System;
 
 namespace System.Runtime.InteropServices.ComTypes
 {
-	[Serializable, ComVisible (false)]
+	[Serializable]
 	public enum SYSKIND
 	{
 		SYS_WIN16 = 0,

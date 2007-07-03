@@ -33,7 +33,7 @@ using System;
 
 namespace System.Runtime.InteropServices.ComTypes
 {
-	[Serializable, ComVisible (false), Flags]
+	[Serializable, Flags]
 	public enum TYPEFLAGS
 	{
 		TYPEFLAG_FAPPOBJECT = 1,

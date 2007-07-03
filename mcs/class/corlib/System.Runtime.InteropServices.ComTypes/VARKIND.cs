@@ -8,7 +8,7 @@
 #if NET_2_0
 namespace System.Runtime.InteropServices.ComTypes
 {
-	[ComVisible (false)]
+	[Serializable]
 	public enum VARKIND
 	{
 		VAR_PERINSTANCE = 0,

@@ -35,7 +35,6 @@ namespace System.Runtime.InteropServices.ComTypes
 {
 
 	[Serializable]
-	[ComVisible(false)]
 	public enum TYPEKIND { 
 		TKIND_ENUM = 0,
 		TKIND_RECORD = 1,

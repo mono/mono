@@ -35,7 +35,6 @@ namespace System.Runtime.InteropServices.ComTypes
 {
 
 	[Serializable]
-	[ComVisible(false)]
 	public enum DESCKIND {
 		DESCKIND_NONE = 0,
 		DESCKIND_FUNCDESC = 1,

@@ -33,7 +33,6 @@ using System;
 
 namespace System.Runtime.InteropServices.ComTypes
 {
-	[ComVisible(false)]
 	[StructLayout (LayoutKind.Explicit, CharSet = CharSet.Unicode)]
 	public struct BINDPTR {
 		[FieldOffset (0)] 

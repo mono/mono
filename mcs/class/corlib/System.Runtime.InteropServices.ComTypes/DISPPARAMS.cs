@@ -33,7 +33,6 @@ using System;
 
 namespace System.Runtime.InteropServices.ComTypes
 {
-	[ComVisible(false)]
 	[StructLayout (LayoutKind.Sequential, CharSet = CharSet.Unicode)]
 	public struct DISPPARAMS {
 		public IntPtr rgvarg;
