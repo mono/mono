@@ -6457,9 +6457,8 @@ namespace Mono.CSharp {
 
 			protected virtual void DefineParameters ()
 			{
-				parameters = new Parameters (
-					new Parameter[] { new Parameter (method.MemberType, "value", Parameter.Modifier.NONE, null, Location) },
-					new Type[] { method.MemberType });
+				parameters = Parameters.CreateFullyResolved (
+					new Parameter (method.MemberType, "value", Parameter.Modifier.NONE, null, Location));
 			}
 
 			public override MethodBuilder Define (DeclSpace parent)
@@ -7558,9 +7557,8 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			parameters = new Parameters (
-				new Parameter[] { new Parameter (MemberType, "value", Parameter.Modifier.NONE, null, Location) },
-				new Type[] { MemberType } );
+			parameters = Parameters.CreateFullyResolved (
+				new Parameter (MemberType, "value", Parameter.Modifier.NONE, null, Location));
 
 			if (!CheckBase ())
 				return false;

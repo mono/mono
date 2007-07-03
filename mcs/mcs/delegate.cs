@@ -297,7 +297,7 @@ namespace Mono.CSharp {
 					end_params [param] = p;
 					++param;
 				}
-				end_parameters = new Parameters (end_params, end_param_types);
+				end_parameters = Parameters.CreateFullyResolved (end_params, end_param_types);
 			}
 			else {
 				end_parameters = Parameters.EmptyReadOnlyParameters;

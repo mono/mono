@@ -1,5 +1,16 @@
 2007-07-03  Marek Safar  <marek.safar@gmail.com>
 
+	* lambda.cs: Simplified little bit.
+	
+	* parameter.cs: Introduced ImplicitLambdaParameter.
+	(Parameters.CreateFullyResolved): New factory instead of ctor.
+	
+	* anonymous.cs,
+	* class.cs,
+	* delegate.cs: Updated parameter creation.
+	
+2007-07-03  Marek Safar  <marek.safar@gmail.com>
+
 	*  ecore.cs (SimpleName.GetSignatureForError): Display correctly generic
 	arguments.
 	

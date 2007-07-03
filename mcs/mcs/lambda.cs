@@ -18,10 +18,9 @@ namespace Mono.CSharp {
 		bool explicit_parameters;
 
 		//
-		// The parameter list can either be:
-		//    null: no parameters
-		//    arraylist of Parameter (explicitly typed parameters)
-		//    arraylist of strings (implicitly typed parameters)
+		// The parameters can either be:
+		//    A list of Parameters (explicitly typed parameters)
+		//    An ImplicitLambdaParameter
 		//
 		public LambdaExpression (AnonymousMethodExpression parent,
 					 GenericMethod generic, TypeContainer host,
@@ -29,15 +28,7 @@ namespace Mono.CSharp {
 					 Location loc)
 			: base (parent, generic, host, parameters, container, loc)
 		{
-			explicit_parameters = (parameters != null && parameters.Count > 0 && parameters [0].TypeName != null);
-			if (parameters == null)
-				Parameters = Parameters.EmptyReadOnlyParameters;
-		}
-
-		public bool HasImplicitParameters {
-			get {
-				return !explicit_parameters;
-			}
+			explicit_parameters = parameters.FixedParameters [0].TypeName != null;
 		}
 
 		public bool HasExplicitParameters {
@@ -48,23 +39,17 @@ namespace Mono.CSharp {
 		
 		public override Expression DoResolve (EmitContext ec)
 		{
-			eclass = ExprClass.Value;
-			type = TypeManager.anonymous_method_type;
-
-			if (explicit_parameters){
+			//
+			// Only explicit parameters can be resolved at this point
+			//
+			if (explicit_parameters) {
 				if (!Parameters.Resolve (ec))
 					return null;
 			}
-			
-			// We will resolve parameters later, we do not
-			// have information at this point.
-			
-			return this;
-		}
 
-		public override void Emit (EmitContext ec)
-		{
-			base.Emit (ec);
+			eclass = ExprClass.Value;
+			type = TypeManager.anonymous_method_type;						
+			return this;
 		}
 
 		public override bool ImplicitStandardConversionExists (Type delegate_type)

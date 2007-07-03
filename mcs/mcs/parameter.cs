@@ -139,6 +139,14 @@ namespace Mono.CSharp {
 		}
 	}
 
+	public class ImplicitLambdaParameter : Parameter
+	{
+		public ImplicitLambdaParameter (string name, Location loc)
+			: base ((Type)null, name, Modifier.NONE, null, loc)
+		{
+		}
+	}
+
 	public class ParamsParameter : Parameter {
 		public ParamsParameter (Expression type, string name, Attributes attrs, Location loc):
 			base (type, name, Parameter.Modifier.PARAMS, attrs, loc)
@@ -312,7 +320,7 @@ namespace Mono.CSharp {
 
 			base.ApplyAttributeBuilder (a, cb);
 		}
-
+		
 		public virtual bool CheckAccessibility (InterfaceMemberBase member)
 		{
 			if (IsTypeParameter)
@@ -614,7 +622,7 @@ namespace Mono.CSharp {
 			types = new Type [0];
 		}
 
-		public Parameters (Parameter[] parameters, Type[] types)
+		private Parameters (Parameter[] parameters, Type[] types)
 		{
 			FixedParameters = parameters;
 			this.types = types;
@@ -634,6 +642,16 @@ namespace Mono.CSharp {
 			this (parameters)
 		{
 			HasArglist = has_arglist;
+		}
+		
+		public static Parameters CreateFullyResolved (Parameter p)
+		{
+			return new Parameters (new Parameter [] { p }, new Type [] { p.ParameterType });
+		}
+		
+		public static Parameters CreateFullyResolved (Parameter[] parameters, Type[] types)
+		{
+			return new Parameters (parameters, types);
 		}
 
 		/// <summary>

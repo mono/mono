@@ -118,7 +118,7 @@ namespace Mono.CSharp {
 				inflated_types [i] = it;
 				inflated_params [i] = new Parameter (it, p.Name, p.ModFlags, p.OptAttributes, p.Location);
 			}
-			return new Parameters (inflated_params, inflated_types);
+			return Parameters.CreateFullyResolved (inflated_params, inflated_types);
 		}
 
 		public TypeExpr InflateType (Type it)
