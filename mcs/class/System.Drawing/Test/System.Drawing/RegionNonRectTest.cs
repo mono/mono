@@ -716,5 +716,56 @@ namespace MonoTests.System.Drawing {
 			r1.Intersect (r2);
 			CompareSmallRegion (r1, self1, 7, 7);
 		}
+
+		[Test]
+		public void EmptyPathWithInfiniteRegion ()
+		{
+			GraphicsPath gp = new GraphicsPath ();
+			Region region = new Region ();
+			Assert.IsTrue (region.IsInfinite (graphic), "IsInfinite");
+
+			region.Union (gp);
+			Assert.IsTrue (region.IsInfinite (graphic), "Union-IsInfinite");
+
+			region.Xor (gp);
+			Assert.IsTrue (region.IsInfinite (graphic), "Xor-IsInfinite");
+
+			region.Exclude (gp);
+			Assert.IsTrue (region.IsInfinite (graphic), "Exclude-IsInfinite");
+
+			region.Intersect (gp);
+			Assert.IsTrue (region.IsEmpty (graphic), "Intersect-IsEmpty");
+
+			region.MakeInfinite ();
+			region.Complement (gp);
+			Assert.IsTrue (region.IsEmpty (graphic), "Complement-IsEmpty");
+		}
+
+		[Test]
+		public void EmptyRegionWithInfiniteRegion ()
+		{
+			Region empty = new Region ();
+			empty.MakeEmpty ();
+			Assert.IsTrue (empty.IsEmpty (graphic), "IsEmpty");
+
+			Region region = new Region ();
+			Assert.IsTrue (region.IsInfinite (graphic), "IsInfinite");
+
+			region.Union (empty);
+			Assert.IsTrue (region.IsInfinite (graphic), "Union-IsInfinite");
+
+			region.Xor (empty);
+			Assert.IsTrue (region.IsInfinite (graphic), "Xor-IsInfinite");
+
+			region.Exclude (empty);
+			Assert.IsTrue (region.IsInfinite (graphic), "Exclude-IsInfinite");
+
+			region.Intersect (empty);
+			Assert.IsTrue (region.IsEmpty (graphic), "Intersect-IsEmpty");
+
+			region.MakeInfinite ();
+			region.Complement (empty);
+			Assert.IsTrue (region.IsEmpty (graphic), "Complement-IsEmpty");
+		}
 	}
 }

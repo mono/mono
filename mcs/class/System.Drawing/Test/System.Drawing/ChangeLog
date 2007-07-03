@@ -1,3 +1,8 @@
+2007-07-03  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* RegionNonRectTest.cs: Add test cases for combining empty paths and 
+	regions with infinite regions.
+
 2007-06-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* GDIPlusTest.cs: Add test cases for GdipCreateCustomLineCap (#81829)
