@@ -26,26 +26,39 @@ namespace Mono.CSharp.Linq
 		public readonly TypeContainer Host;
 
 		AQueryClause query;
-		public Expression From;
+		Expression from;
 
 		public QueryExpression (TypeContainer host, Block block, Expression from, AQueryClause query)
 		{
 			this.Host = host;
 			this.Block = block;
-			this.From = from;
+			this.from = from;
 			this.query = query;
 		}
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			LocalInfo li = null;
-			foreach (LocalInfo li_temp in Block.Variables.Values)
-			{
-				li = li_temp;
-				break;
+			from = from.DoResolve (ec);
+			if (from == null)
+				return null;
+
+			ICollection values = Block.Variables.Values;
+			if (values.Count != 1)
+				throw new NotImplementedException ("Count != 1");
+
+			IEnumerator enumerator = values.GetEnumerator ();
+			enumerator.MoveNext ();
+			LocalInfo li = (LocalInfo)enumerator.Current;
+
+			VarExpr var = li.Type as VarExpr;
+			if (var != null) {
+				li.Type = var.ResolveLValue (ec, from, var.Location);
+				if (li.Type == null)
+					return null;
+				li.VariableType = li.Type.Type;
 			}
 
-			Expression e = query.BuildQueryClause (ec, this, From, li);
+			Expression e = query.BuildQueryClause (ec, this, from, li);
 			return e.Resolve (ec);
 		}
 
@@ -63,6 +76,7 @@ namespace Mono.CSharp.Linq
 
 		protected abstract string MethodName { get; }
 
+		// TODO: Linq methods are context specific
 		protected MethodGroupExpr MethodGroup {
 			get {
 				MethodGroupExpr method_group = (MethodGroupExpr)methods [MethodName];
@@ -106,6 +120,8 @@ namespace Mono.CSharp.Linq
 
 		public Expression BuildQueryClause (EmitContext ec, QueryExpression top, Expression from, LocalInfo li)
 		{
+			// TODO: An anonymous method is not enough to infer implicitly typed arguments,
+			// we need lambda expression here
 			Parameters parameters = new Parameters (new Parameter (li.Type, li.Name, Parameter.Modifier.NONE, null, loc));
 			AnonymousMethodExpression ame = new AnonymousMethodExpression (
 				null, null, top.Host,

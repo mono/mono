@@ -1,3 +1,11 @@
+2007-07-03  Marek Safar  <marek.safar@gmail.com>
+
+	* cs-parser.jay: Initialize implicit_value_parameter_type for interface
+	members too.
+	
+	* linq.cs (QueryExpression.DoResolve): Resolve implicitly typed query
+	variable.
+	
 2007-06-20  Marek Safar  <marek.safar@gmail.com>
 
 	* cs-parser.jay: Reworked var keyword handling. We cannot handle var as
