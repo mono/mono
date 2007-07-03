@@ -1187,7 +1187,8 @@ namespace Mono.Math {
 
 				uint mPrime = Montgomery.Inverse (mod.data [0]);
 
-				uint pos = (uint)exp.BitCount () - 2;
+				int bc = exp.BitCount () - 2;
+				uint pos = (bc > 1 ? (uint) bc : 1);
 
 				//
 				// We know that the first itr will make the val b
