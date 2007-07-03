@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004, 2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -89,6 +89,15 @@ namespace MonoTests.Mono.Math {
 				long expected = (long) myalias.Math.Pow (i, 10) % 32;
 				Assert.AreEqual (expected.ToString (), r.ToString (), i.ToString ());
 			}
+		}
+
+		[Test]
+		public void IsProbablePrime_Small ()
+		{
+			// last of the small prime tables
+			Assert.IsTrue (new BigInteger (5987).IsProbablePrime (), "5987");
+			// small value with exponent == 1
+			Assert.IsTrue (new BigInteger (65537).IsProbablePrime (), "65537");
 		}
 	}
 }

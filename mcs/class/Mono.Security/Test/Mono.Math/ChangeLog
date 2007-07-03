@@ -1,3 +1,8 @@
+2007-07-03  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* BigInteger.cs: Add test cases for small values with IsProbablePrime.
+	From bug #81857, subset from patch by Kazuki.
+
 2005-01-03  Nick Drochak  <ndrochak@gol.com>
 
 	* BigIntegerTest.cs: Make tests pass on MS DotNet
