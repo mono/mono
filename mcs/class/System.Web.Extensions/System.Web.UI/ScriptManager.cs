@@ -42,6 +42,7 @@ using System.IO;
 using System.Globalization;
 using System.Threading;
 using System.Web.Script.Serialization;
+using System.Web.Script.Services;
 
 namespace System.Web.UI
 {
@@ -108,6 +109,7 @@ namespace System.Web.UI
 		bool _init;
 		string _panelToRefreshID;
 		Dictionary<Control, DataItemEntry> _dataItems;
+		bool _enablePageMethods;
 
 		[DefaultValue (true)]
 		[Category ("Behavior")]
@@ -166,10 +168,10 @@ namespace System.Web.UI
 		[DefaultValue (false)]
 		public bool EnablePageMethods {
 			get {
-				throw new NotImplementedException ();
+				return _enablePageMethods;
 			}
 			set {
-				throw new NotImplementedException ();
+				_enablePageMethods = value;
 			}
 		}
 
@@ -421,9 +423,14 @@ namespace System.Web.UI
 					string script = String.Format ("var __cultureInfo = '{0}';", _cultureInfoSerializer.Serialize (culture));
 					RegisterClientScriptBlock (this, typeof (ScriptManager), "ScriptGlobalization", script, true);
 				}
+				if (EnablePageMethods) {
+					LogicalTypeInfo logicalTypeInfo = LogicalTypeInfo.GetLogicalTypeInfo (Page.GetType (), Page.Request.FilePath);
+					RegisterStartupScript (this, typeof (ScriptManager), "PageMethods", logicalTypeInfo.Proxy, true);
+				}
 
 				// Register startup script
 				StringBuilder sb = new StringBuilder ();
+				sb.AppendLine ();
 				sb.AppendLine ("Sys.Application.initialize();");
 				RegisterStartupScript (this, typeof (ExtenderControl), "Sys.Application.initialize();", sb.ToString (), true);
 			}

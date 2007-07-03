@@ -31,6 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Web.UI;
+using System.Web.Script.Services;
 
 namespace System.Web.Handlers
 {
@@ -62,12 +63,21 @@ namespace System.Web.Handlers
 			// the CompleteRequest method is called, bypassing all pipeline events and executing 
 			// the EndRequest method. This allows MS AJAX to be able to call a method on a page 
 			// instead of having to create a web service to call a method.
+			HttpApplication app = (HttpApplication) sender;
+			HttpContext context = app.Context;
+			HttpRequest request = context.Request;
+			string contentType = request.ContentType;
+			if (context.CurrentHandler is Page && !String.IsNullOrEmpty (contentType) && contentType.StartsWith ("application/json", StringComparison.OrdinalIgnoreCase)) {
+				RestHandler h = new RestHandler (((Page) context.CurrentHandler).GetType (), request.FilePath);
+				h.ProcessRequest (context);
+				app.CompleteRequest ();
+			}
 		}
 
 		void PreSendRequestHeaders (object sender, EventArgs e) {
 			HttpApplication app = (HttpApplication) sender;
 			HttpContext context = app.Context;
-			if (context.Request.Headers ["X-MicrosoftAjax"] == "Delta=true"){
+			if (context.Request.Headers ["X-MicrosoftAjax"] == "Delta=true") {
 				if (context.Error != null) {
 					context.Response.StatusCode = 200;
 					context.Response.ClearContent ();

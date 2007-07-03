@@ -173,8 +173,9 @@ return this._invoke({0}.get_path(), '{1}',{2},{{{3}}},succeededCallback,failedCa
 
 		private LogicalTypeInfo (Type t, string filePath) {
 			_type = t;
-
-			MethodInfo [] all_type_methods = _type.GetMethods (BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+			bool isPage = _type.IsSubclassOf (typeof (System.Web.UI.Page));
+			BindingFlags bindingAttr = isPage ? (BindingFlags.Static | BindingFlags.FlattenHierarchy | BindingFlags.Public) : (BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+			MethodInfo [] all_type_methods = _type.GetMethods (bindingAttr);
 			List<LogicalMethodInfo> logicalMethods = new List<LogicalMethodInfo> (all_type_methods.Length);
 			foreach (MethodInfo mi in all_type_methods) {
 				if (mi.IsPublic && 
@@ -201,21 +202,29 @@ return this._invoke({0}.get_path(), '{1}',{2},{{{3}}},succeededCallback,failedCa
 			for (int i = 0; i < logicalMethods.Count; i++)
 				_methodMap.Add (logicalMethods [i].MethodName, logicalMethods [i]);
 
-			string ns = t.Namespace;
-			string service = t.FullName;
+			string ns = isPage ? String.Empty : t.Namespace;
+			string service = isPage ? "PageMethods" : t.FullName;
 			
 			StringBuilder proxy = new StringBuilder ();
-			proxy.AppendFormat (
+			if (String.IsNullOrEmpty (ns))
+				proxy.AppendFormat (
+@"var {0}",
+	service);
+			else
+				proxy.AppendFormat (
 @"Type.registerNamespace('{0}');
-{1}=function() {{
-{1}.initializeBase(this);
+{1}",
+	ns, service);
+			proxy.AppendFormat (
+@"=function() {{
+{0}.initializeBase(this);
 this._timeout = 0;
 this._userContext = null;
 this._succeeded = null;
 this._failed = null;
 }}
-{1}.prototype={{",
-			ns, service);
+{0}.prototype={{",
+			service);
 
 			for (int i = 0; i < logicalMethods.Count; i++) {
 				if (i > 0)
