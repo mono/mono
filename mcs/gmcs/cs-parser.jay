@@ -4276,13 +4276,9 @@ lambda_expression_body
 lambda_expression
 	: IDENTIFIER ARROW 
 	  {
-		Parameter [] pars = new Parameter [1];
 		LocatedToken lt = (LocatedToken) $1;
-		pars [0] = new Parameter ((Type)null, lt.Value, Parameter.Modifier.NONE, null, lt.Location);
-
-		Parameters parameters = new Parameters (pars);
-
-		start_anonymous (true, parameters, (Location) $2);
+		Parameter p = new ImplicitLambdaParameter (lt.Value, lt.Location);
+		start_anonymous (true, new Parameters (p), (Location) $2);
 	  }
 	  lambda_expression_body
 	  {

@@ -1,5 +1,9 @@
 2007-07-03  Marek Safar  <marek.safar@gmail.com>
 
+	* cs-parser.jay: Switch to ImplicitLambdaParameter.
+
+2007-07-03  Marek Safar  <marek.safar@gmail.com>
+
 	* cs-parser.jay: Initialize implicit_value_parameter_type for interface
 	members too.
 	
