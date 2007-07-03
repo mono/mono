@@ -1,5 +1,12 @@
 2007-07-03  Marek Safar  <marek.safar@gmail.com>
 
+	*  ecore.cs (SimpleName.GetSignatureForError): Display correctly generic
+	arguments.
+	
+	* generic.cs: Synchronized with gmcs.
+	
+2007-07-03  Marek Safar  <marek.safar@gmail.com>
+
 	* class.cs (Indexer): Check return type as soon as possible.
 	
 	* cs-parser.jay: Initialize implicit_value_parameter_type for interface

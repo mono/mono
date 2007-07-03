@@ -2424,6 +2424,11 @@ namespace Mono.CSharp {
 
 		public override string GetSignatureForError ()
 		{
+			if (Arguments != null) {
+				return TypeManager.RemoveGenericArity (Name) + "<" +
+					Arguments.GetSignatureForError () + ">";
+			}
+
 			return Name;
 		}
 

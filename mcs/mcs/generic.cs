@@ -327,6 +327,11 @@ namespace Mono.CSharp
 		{
 			throw new NotImplementedException ();
 		}
+		
+		public string GetSignatureForError ()
+		{
+			throw new NotImplementedException ();
+		}
 
 		public TypeArguments Clone ()
 		{
