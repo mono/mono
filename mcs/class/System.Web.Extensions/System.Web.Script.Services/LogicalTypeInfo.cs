@@ -64,6 +64,8 @@ namespace System.Web.Script.Services
 				_methodName = !String.IsNullOrEmpty (wma.MessageName) ? wma.MessageName : method.Name;
 
 				_sma = (ScriptMethodAttribute) Attribute.GetCustomAttribute (method, typeof (ScriptMethodAttribute));
+				if (_sma == null)
+					_sma = ScriptMethodAttribute.Default;
 
 				_params = MethodInfo.GetParameters ();
 
@@ -176,16 +178,14 @@ return this._invoke({0}.get_path(), '{1}',{2},{{{3}}},succeededCallback,failedCa
 			List<LogicalMethodInfo> logicalMethods = new List<LogicalMethodInfo> (all_type_methods.Length);
 			foreach (MethodInfo mi in all_type_methods) {
 				if (mi.IsPublic && 
-					mi.GetCustomAttributes (typeof (WebMethodAttribute), false).Length > 0 &&
-					mi.GetCustomAttributes (typeof (ScriptMethodAttribute), false).Length > 0)
+					mi.GetCustomAttributes (typeof (WebMethodAttribute), false).Length > 0)
 					logicalMethods.Add (new LogicalMethodInfo (this, mi));
 				else {
 					foreach (Type ifaceType in _type.GetInterfaces ()) {
 						if (ifaceType.GetCustomAttributes (typeof (WebServiceBindingAttribute), false).Length > 0) {
 							MethodInfo found = FindInInterface (ifaceType, mi);
 							if (found != null) {
-								if (found.GetCustomAttributes (typeof (WebMethodAttribute), false).Length > 0 &&
-									found.GetCustomAttributes (typeof (ScriptMethodAttribute), false).Length > 0)
+								if (found.GetCustomAttributes (typeof (WebMethodAttribute), false).Length > 0)
 									logicalMethods.Add (new LogicalMethodInfo (this, found));
 
 								break;
