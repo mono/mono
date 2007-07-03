@@ -1,3 +1,13 @@
+2007-07-02  Jackson Harper  <jackson@ximian.com>
+
+	* xamlg.1:
+	* Makefile.am: Moved to more appropriate place.
+
+2007-07-02  Jackson Harper  <jackson@ximian.com>
+
+	* xamlg.1:
+	* Makefile.am: Add man page for xamlg.
+
 2007-04-26  Dick Porter  <dick@ximian.com>
 
 	* mono.1: Document MONO_DISABLE_SHM
