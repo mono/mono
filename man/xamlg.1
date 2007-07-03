@@ -1,0 +1,26 @@
+.TH "xamlg" 1
+.SH NAME
+xamlg \- Mono Xaml Class Generator
+.SH SYNOPSIS
+.B xamlg.exe [/lang:NAME] xamlfile[,outputfile]...
+.SH DESCRIPTION
+xamlg is a utility for generating partial classes from XAML.
+.PP
+xamlg will scan XAML files for x:Name'd elements and create
+memberfields for those elements.  This allows users to easily
+reference elements in a XAML file from their .NET code.
+.SH OPTIONS
+.TP
+.B @lang
+The language that the partial class should be created in.  Available
+options are CS for C Sharp or VB for Visual Basic.
+.TP
+.B -? | -help
+Display information about xamlg
+.PP
+.SH COPYRIGHT
+Copyright (C) 2007 Novell, Inc (http://www.novell.com)
+.SH MAILING LISTS
+Visit http://lists.ximian.com/mailman/listinfo/mono-devel-list for details.
+.SH WEB SITE
+Visit: http://www.mono-project.com for details
