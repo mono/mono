@@ -1,3 +1,8 @@
+2007-07-03 Roderigo Kumpera <rkumpera@novell.com>
+
+	*make_tests.sh: fixed two tests to produce valid results with .net
+	*make_field_test.sh: make fields public
+
 2007-06-22  Rodrigo Kumpera  <kumpera@gmail.com>
 
 	* unverifiable_ldflda_other_class_on_simple_method.il: test for load field address in .ctor
