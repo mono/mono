@@ -33,6 +33,7 @@ using System.Reflection;
 using System.IO;
 using System.Resources;
 using System.Collections;
+using System.Text.RegularExpressions;
 
 namespace System.Web.Handlers {
 #if SYSTEM_WEB_EXTENSIONS
@@ -103,39 +104,55 @@ namespace System.Web.Handlers {
 				assembly = typeof (AssemblyResourceLoader).Assembly;
 			else
 				assembly = Assembly.Load (asmName);
-			
-			bool found = false;
-			foreach (WebResourceAttribute wra in assembly.GetCustomAttributes (typeof (WebResourceAttribute), false)) {
-				if (wra.WebResource == resourceName) {
-					context.Response.ContentType = wra.ContentType;
 
-					/* tell the client they can cache resources for 1 year */
-					context.Response.ExpiresAbsolute = DateTime.Now.AddYears(1); 
-					context.Response.CacheControl = "public";
-					context.Response.Cache.VaryByParams ["r"] = true;
-					context.Response.Cache.VaryByParams ["t"] = true;
-
-					if (wra.PerformSubstitution)
-						throw new NotImplementedException ("Substitution not implemented");
-					
-					found = true;
+			WebResourceAttribute wra = null;
+			WebResourceAttribute [] attrs = (WebResourceAttribute []) assembly.GetCustomAttributes (typeof (WebResourceAttribute), false);
+			for (int i = 0; i < attrs.Length; i++) {
+				if (attrs [i].WebResource == resourceName) {
+					wra = attrs [i];
 					break;
 				}
 			}
-			if (!found)
+#if SYSTEM_WEB_EXTENSIONS
+			if (wra == null && resourceName.Length > 9 && resourceName.EndsWith (".debug.js", StringComparison.OrdinalIgnoreCase)) {
+				resourceName = String.Concat (resourceName.Substring (0, resourceName.Length - 9), ".js");
+				for (int i = 0; i < attrs.Length; i++) {
+					if (attrs [i].WebResource == resourceName) {
+						wra = attrs [i];
+						break;
+					}
+				}
+			}
+#endif
+			if (wra == null)
 				return;
 			
+			context.Response.ContentType = wra.ContentType;
+
+			/* tell the client they can cache resources for 1 year */
+			context.Response.ExpiresAbsolute = DateTime.Now.AddYears (1);
+			context.Response.CacheControl = "public";
+			context.Response.Cache.VaryByParams ["r"] = true;
+			context.Response.Cache.VaryByParams ["t"] = true;
+
 			Stream s = assembly.GetManifestResourceStream (resourceName);
 			if (s == null)
 				return;
-			
-			byte [] buf = new byte [1024];
-			Stream output = context.Response.OutputStream;
-			int c;
-			do {
-				c = s.Read (buf, 0, 1024);
-				output.Write (buf, 0, c);
-			} while (c > 0);
+
+			if (wra.PerformSubstitution) {
+				StreamReader r = new StreamReader (s);
+				TextWriter w = context.Response.Output;
+				new PerformSubstitutionHelper (assembly).PerformSubstitution (r, w);
+			}
+			else {
+				byte [] buf = new byte [1024];
+				Stream output = context.Response.OutputStream;
+				int c;
+				do {
+					c = s.Read (buf, 0, 1024);
+					output.Write (buf, 0, c);
+				} while (c > 0);
+			}
 #if SYSTEM_WEB_EXTENSIONS
 			TextWriter writer = context.Response.Output;
 			foreach (ScriptResourceAttribute sra in assembly.GetCustomAttributes (typeof (ScriptResourceAttribute), false)) {
@@ -159,6 +176,35 @@ namespace System.Web.Handlers {
 				writer.WriteLine ("if(typeof(Sys)!=='undefined')Sys.Application.notifyScriptLoaded();");
 			}
 #endif
+		}
+
+		sealed class PerformSubstitutionHelper
+		{
+			readonly Assembly _assembly;
+			static readonly Regex _regex = new Regex (@"\<%=[ ]+WebResource[ ]*\([ ]*""([\.\w]+)""[ ]*\)[ ]*%\>");
+
+			public PerformSubstitutionHelper (Assembly assembly) {
+				_assembly = assembly;
+			}
+
+			public void PerformSubstitution (TextReader reader, TextWriter writer) {
+				string line = reader.ReadLine ();
+				while (line != null) {
+					if (line.Length > 0 && _regex.IsMatch (line))
+						line = _regex.Replace (line, new MatchEvaluator (PerformSubstitutionReplace));
+					writer.WriteLine (line);
+					line = reader.ReadLine ();
+				}
+			}
+
+			string PerformSubstitutionReplace (Match m) {
+				string resourceName = m.Groups [1].Value;
+#if SYSTEM_WEB_EXTENSIONS
+				return ScriptResourceHandler.GetResourceUrl (_assembly, resourceName, false);
+#else
+				return AssemblyResourceLoader.GetResourceUrl (_assembly, resourceName, false);
+#endif
+			}
 		}
 		
 #if !SYSTEM_WEB_EXTENSIONS
