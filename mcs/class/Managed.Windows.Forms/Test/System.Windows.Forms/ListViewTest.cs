@@ -326,6 +326,65 @@ namespace MonoTests.System.Windows.Forms
 			form.Dispose ();
 		}
 
+#if NET_2_0
+		[Test]
+		public void TopItem ()
+		{
+			ListView lvw = CreateListView (View.List);
+
+			lvw.TopItem = null;
+			Assert.AreEqual (lvw.Items [0], lvw.TopItem, "#A1");
+
+			lvw.TopItem = new ListViewItem ();
+			Assert.AreEqual (lvw.Items [0], lvw.TopItem, "#A2");
+		}
+
+		[Test]
+		public void TopItem_Exceptions ()
+		{
+			ListView lvw = CreateListView (View.LargeIcon);
+			ListViewItem item = null;
+
+			try {
+				lvw.TopItem = lvw.Items [2];
+				Assert.Fail ("#A1");
+			} catch (InvalidOperationException) {
+			}
+
+			try {
+				item = lvw.TopItem;
+				Assert.Fail ("#A2");
+			} catch (InvalidOperationException) {
+			}
+
+			lvw.View = View.SmallIcon;
+			try {
+				lvw.TopItem = lvw.Items [2];
+				Assert.Fail ("#A3");
+			} catch (InvalidOperationException) {
+			}
+
+			try {
+				item = lvw.TopItem;
+				Assert.Fail ("#A4");
+			} catch (InvalidOperationException) {
+			}
+
+			lvw.View = View.Tile;
+			try {
+				lvw.TopItem = lvw.Items [2];
+				Assert.Fail ("#A5");
+			} catch (InvalidOperationException) {
+			}
+
+			try {
+				item = lvw.TopItem;
+				Assert.Fail ("#A6");
+			} catch (InvalidOperationException) {
+			}
+		}
+#endif
+
 		[Test]
 		public void Selected ()
 		{
