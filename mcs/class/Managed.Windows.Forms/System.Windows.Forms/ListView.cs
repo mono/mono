@@ -26,7 +26,6 @@
 //	Daniel Nauck (dna(at)mono-project(dot)de)
 //
 // TODO:
-//   - Feedback for item activation, change in cursor types as mouse moves.
 //   - Drag and drop
 
 
@@ -3112,12 +3111,12 @@ namespace System.Windows.Forms
 		}
 
 #if NET_2_0
-		public ListViewHitTestInfo HitInfo (Point pt)
+		public ListViewHitTestInfo HitTest (Point pt)
 		{
-			return HitInfo (pt.X, pt.Y);
+			return HitTest (pt.X, pt.Y);
 		}
 
-		public ListViewHitTestInfo HitInfo (int x, int y)
+		public ListViewHitTestInfo HitTest (int x, int y)
 		{
 			if (x < 0)
 				throw new ArgumentOutOfRangeException ("x");
