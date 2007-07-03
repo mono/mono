@@ -922,6 +922,9 @@ namespace MonoTests.System.Windows.Forms
 		[Test]  // From bug #81884
 		public void CellBorderStyle ()
 		{
+			if (TestHelper.RunningOnUnix)
+				Assert.Ignore ("Depends on WM, values correspond to windows");
+			
 			Form f = new Form ();
 			f.ShowInTaskbar = false;
 

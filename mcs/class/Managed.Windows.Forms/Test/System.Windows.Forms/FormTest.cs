@@ -1827,6 +1827,9 @@ namespace MonoTests.System.Windows.Forms
 		[Test]
 		public void GetScaledBoundsTest ()
 		{
+			if (TestHelper.RunningOnUnix)
+				Assert.Ignore ("Depends on WM decoration sizes, values correspond to windows");
+
 			ScaleForm c = new ScaleForm ();
 
 			Rectangle r = new Rectangle (100, 200, 300, 400);
@@ -1848,6 +1851,9 @@ namespace MonoTests.System.Windows.Forms
 		[Test]
 		public void MethodScaleControl ()
 		{
+			if (TestHelper.RunningOnUnix)
+				Assert.Ignore ("Depends on WM decoration sizes, values correspond to windows");
+			
 			ScaleForm f = new ScaleForm ();
 			f.Location = new Point (5, 10);
 

@@ -1,3 +1,8 @@
+2007-07-03  Jonathan Pobst  <monkey@jpobst.com>
+
+	* FormTest.cs, TableLayoutTest.cs: Mark some tests that depend on
+	WM decoration sizes as Ignore.
+
 2007-06-22  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListViewTest.cs: Add test for 2.0 HotTracking.
