@@ -894,18 +894,22 @@ namespace Mono.Math {
 
 		public bool IsProbablePrime ()
 		{
-			if (this <= smallPrimes [smallPrimes.Length - 1]) {
+			// can we use our small-prime table ?
+			if (this <= smallPrimes[smallPrimes.Length - 1]) {
 				for (int p = 0; p < smallPrimes.Length; p++) {
-					if (this == smallPrimes [p])
+					if (this == smallPrimes[p])
 						return true;
 				}
+				// the list is complete, so it's not a prime
+				return false;
 			}
-			else {
-				for (int p = 0; p < smallPrimes.Length; p++) {
-					if (this % smallPrimes [p] == 0)
-						return false;
-				}
+
+			// otherwise check if we can divide by one of the small primes
+			for (int p = 0; p < smallPrimes.Length; p++) {
+				if (this % smallPrimes[p] == 0)
+					return false;
 			}
+			// the last step is to confirm the "large" prime with the Miller-Rabin test
 			return PrimalityTests.RabinMillerTest (this, Prime.ConfidenceFactor.Medium);
 		}
 

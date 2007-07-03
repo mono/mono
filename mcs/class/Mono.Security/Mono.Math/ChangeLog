@@ -1,3 +1,8 @@
+2007-07-03  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* BigInteger.cs: Avoid Miller-Rabin test for small primes (we have a 
+	complete list of them) in IsProbablePrime.
+
 2007-07-03  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* BigInteger.cs: Fix possible IndexOutOfRangeException inside method
