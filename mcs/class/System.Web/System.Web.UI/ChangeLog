@@ -1,3 +1,11 @@
+2007-07-03  Marek Habersack  <mhabersack@novell.com>
+
+	* SimpleWebHandlerParser.cs: improve directive
+	pre-parsing. Directives can span multiple lines, they don't have
+	to start at the beginning of the line and any content can follow
+	them after the directive end. Also, do not trim the input since
+	that might affect program content. Fixes bug #81993.
+
 2007-07-02  Marek Habersack  <mhabersack@novell.com>
 
 	* Control.cs: make sure TemplateSourceDirectory returns meaningful

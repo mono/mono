@@ -119,16 +119,61 @@ namespace System.Web.UI
 		{
 			string line;
 			bool directiveFound = false;
+			bool inDirective = false;
+			StringBuilder directive = null;
 			StringBuilder content = new StringBuilder ();
+			int idxStart, idxEnd, length;			
+
 			using (StreamReader reader = new StreamReader (File.OpenRead (physPath))) {
 				while ((line = reader.ReadLine ()) != null && cachedType == null) {
-					string trimmed = line.Trim ();
-					if (!directiveFound && trimmed == String.Empty)
+					length = line.Length;
+					if (length == 0) {
+						content.Append ("\n");
 						continue;
+					}
 					
-					if (trimmed.StartsWith ("<")) {
-						ParseDirective (trimmed);
-						directiveFound = true;
+					idxStart = line.IndexOf ("<%");
+					if (idxStart > -1) {
+						idxEnd = line.IndexOf ("%>");						
+						if (idxStart > 0)
+							content.Append (line.Substring (0, idxStart));
+
+						if (directive == null)
+							directive = new StringBuilder ();
+						else
+							directive.Length = 0;
+						
+						if (idxEnd > -1) {
+							directiveFound = true;
+							inDirective = false;
+							directive.Append (line.Substring (idxStart, idxEnd - idxStart + 2));
+							if (idxEnd < length - 2)
+								content.Append (line.Substring (idxEnd + 2, length - idxEnd - 2));
+						} else {
+							inDirective = true;
+							directiveFound = false;
+							directive.Append (line.Substring (idxStart));
+							continue;
+						}
+					}
+
+					if (inDirective) {
+						int idx = line.IndexOf ("%>");
+						if (idx > -1) {
+							directive.Append (line.Substring (0, idx + 2));
+							if (idx < length)
+								content.Append (line.Substring (idx + 2) + "\n");
+							inDirective = false;
+							directiveFound = true;
+						} else {
+							directive.Append (line);
+							continue;
+						}
+					}
+					
+					if (directiveFound) {
+						ParseDirective (directive.ToString ());
+						directiveFound = false;
 						if (gotDefault) {
 							cachedType = CachingCompiler.GetTypeFromCache (physPath);
 							if (cachedType != null)
@@ -139,8 +184,8 @@ namespace System.Web.UI
 					}
 
 					content.Append (line + "\n");
-					content.Append (reader.ReadToEnd ());
 				}
+				directive = null;
 			}
 
 			if (!gotDefault)
