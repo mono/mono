@@ -7682,6 +7682,9 @@ namespace Mono.CSharp {
 				is_iface ? AllowedInterfaceModifiers : AllowedModifiers,
 				is_iface, name, attrs, define_set_first)
 		{
+			if (type == TypeManager.system_void_expr)
+				Report.Error (620, name.Location, "An indexer return type cannot be `void'");
+			
 			this.parameters = parameters;
 
 			if (get_block == null)
@@ -7748,11 +7751,6 @@ namespace Mono.CSharp {
 
 			if (!DefineParameters (parameters))
 				return false;
-
-			if (MemberType == TypeManager.void_type) {
-				Report.Error (620, Location, "Indexers cannot have void type");
-				return false;
-			}
 
 			if (OptAttributes != null) {
 				Attribute indexer_attr = OptAttributes.Search (TypeManager.indexer_name_type);

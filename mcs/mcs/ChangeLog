@@ -1,3 +1,19 @@
+2007-07-03  Marek Safar  <marek.safar@gmail.com>
+
+	* class.cs (Indexer): Check return type as soon as possible.
+	
+	* cs-parser.jay: Initialize implicit_value_parameter_type for interface
+	members too.
+	
+	* ecore.cs (VarExpr.DoResolveLValue): Set eclass value.
+	
+	* expression.cs (Invocation.Error_InvalidArguments): Show type only.
+	
+	* parameter.cs (Parameter): Use expression type when it is available.
+	
+	* support.cs (ReflectionParameters.ParameterDesc): Show an extension
+	method modifier for the first parameter only.
+
 2007-06-24  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #81938

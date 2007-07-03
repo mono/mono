@@ -5040,7 +5040,8 @@ namespace Mono.CSharp {
 				              TypeManager.CSharpName (type));
 				return null;
 			}
-			
+
+			eclass = ExprClass.Variable;
 			return this;
 		}
 

@@ -209,7 +209,7 @@ namespace Mono.CSharp {
 			if (params_idx == pos)
 				sb.Append ("params ");
 
-			if (ExtensionMethodType != null)
+			if (pos == 0 && ExtensionMethodType != null)
 				sb.Append ("this ");
 
 			sb.Append (TypeManager.CSharpName (partype).Replace ("&", ""));

@@ -241,12 +241,12 @@ namespace Mono.CSharp {
 #endif
 		
 		public Parameter (Expression type, string name, Modifier mod, Attributes attrs, Location loc)
-			: base (attrs)
+			: this (type.Type, name, mod, attrs, loc)
 		{
-			Name = name;
-			modFlags = mod;
+			if (type == TypeManager.system_void_expr)
+				Report.Error (1536, loc, "Invalid parameter type `void'");
+			
 			TypeName = type;
-			Location = loc;
 		}
 
 		public Parameter (Type type, string name, Modifier mod, Attributes attrs, Location loc)
@@ -332,10 +332,11 @@ namespace Mono.CSharp {
 		// </summary>
 		public virtual bool Resolve (IResolveContext ec)
 		{
+			// HACK: to resolve attributes correctly
+			this.resolve_context = ec;
+
 			if (parameter_type != null)
 				return true;
-
-			this.resolve_context = ec;
 
 			TypeExpr texpr = TypeName.ResolveAsTypeTerminal (ec, false);
 			if (texpr == null)
@@ -355,11 +356,6 @@ namespace Mono.CSharp {
 			if ((parameter_type.Attributes & Class.StaticClassAttribute) == Class.StaticClassAttribute) {
 				Report.Error (721, Location, "`{0}': static types cannot be used as parameters", 
 					texpr.GetSignatureForError ());
-				return false;
-			}
-
-			if (parameter_type == TypeManager.void_type){
-				Report.Error (1536, Location, "Invalid parameter type 'void'");
 				return false;
 			}
 
@@ -588,8 +584,7 @@ namespace Mono.CSharp {
 
 		public Parameter Clone ()
 		{
-			Parameter p = new Parameter (TypeName, Name, ModFlags, attributes, Location);
-			p.parameter_type = parameter_type;
+			Parameter p = new Parameter (parameter_type, Name, ModFlags, attributes, Location);
 			p.IsTypeParameter = IsTypeParameter;
 
 			return p;

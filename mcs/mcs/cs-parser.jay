@@ -1742,11 +1742,15 @@ interface_property_declaration
 	  opt_new
 	  type IDENTIFIER 
 	  OPEN_BRACE 
-	  { lexer.PropertyParsing = true; }
+	  {
+		lexer.PropertyParsing = true;
+		implicit_value_parameter_type = (Expression)$3;
+	  }
 	  accessor_declarations 
 	  {
 		has_get = has_set = false; 
 		lexer.PropertyParsing = false;
+		implicit_value_parameter_type = null;
 	  }
 	  CLOSE_BRACE
 	  {
@@ -1820,11 +1824,13 @@ interface_event_declaration
 	  }
 	| opt_attributes opt_new EVENT type IDENTIFIER OPEN_BRACE
 	  {
+		implicit_value_parameter_type = (Expression) $4;
 		lexer.EventParsing = true;
 	  }
 	  event_accessor_declarations
 	  {
 		lexer.EventParsing = false;
+		implicit_value_parameter_type = null;
 	  }
 	  CLOSE_BRACE {
 		Report.Error (69, (Location) $3, "Event in interface cannot have add or remove accessors");
@@ -1835,12 +1841,16 @@ interface_event_declaration
 interface_indexer_declaration 
 	: opt_attributes opt_new type THIS 
 	  OPEN_BRACKET formal_parameter_list CLOSE_BRACKET
-	  OPEN_BRACE 
-	  { lexer.PropertyParsing = true; }
+	  OPEN_BRACE
+	  {
+		lexer.PropertyParsing = true;
+		implicit_value_parameter_type = (Expression)$3;
+	  }
 	  accessor_declarations 
 	  { 
 		has_get = has_set = false;
  		lexer.PropertyParsing = false;
+ 		implicit_value_parameter_type = null;
 	  }
 	  CLOSE_BRACE
 	  {

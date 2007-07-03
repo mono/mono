@@ -4341,14 +4341,14 @@ namespace Mono.CSharp {
 						index, Parameter.GetModifierSignature (mod));
 			} else {
 				string p1 = Argument.FullDesc (a);
-				string p2 = expected_par.ParameterDesc (idx);
+				string p2 = TypeManager.CSharpName (expected_par.ParameterType (idx));
 
 				if (p1 == p2) {
 					Report.ExtraInformation (loc, "(equally named types possibly from different assemblies in previous ");
 					Report.SymbolRelatedToPreviousError (a.Expr.Type);
 					Report.SymbolRelatedToPreviousError (expected_par.ParameterType (idx));
 				}
-				Report.Error (1503, loc, "Argument {0}: Cannot convert from `{1}' to `{2}'", index, p1, p2);
+				Report.Error (1503, loc, "Argument {0}: Cannot convert type `{1}' to `{2}'", index, p1, p2);
 			}
 		}
 		
