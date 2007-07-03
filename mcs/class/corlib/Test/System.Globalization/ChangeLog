@@ -1,3 +1,8 @@
+2007-07-03  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CultureInfoTest.cs: Added extra info in order to troubleshoot
+	buildbot failure on redhat9-i386.
+
 2007-07-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CalendarTest.cs, EastAsianLunisolarCalendarTest.cs :
