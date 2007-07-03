@@ -824,6 +824,10 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public ListViewItem TopItem {
 			get {
+#if NET_2_0
+				if (view == View.LargeIcon || view == View.SmallIcon || view == View.Tile)
+					throw new InvalidOperationException ("Cannot get the top item in LargeIcon, SmallIcon or Tile view.");
+#endif
 				// there is no item
 				if (this.items.Count == 0)
 					return null;
@@ -843,7 +847,14 @@ namespace System.Windows.Forms
 			}
 #if NET_2_0
 			set {
-				throw new NotImplementedException ();
+				if (view == View.LargeIcon || view == View.SmallIcon || view == View.Tile)
+					throw new InvalidOperationException ("Cannot set the top item in LargeIcon, SmallIcon or Tile view.");
+
+				// .Net doesn't throw any exception in the cases below
+				if (value == null || value.ListView != this)
+					return;
+
+				EnsureVisible (value.Index);
 			}
 #endif
 		}
