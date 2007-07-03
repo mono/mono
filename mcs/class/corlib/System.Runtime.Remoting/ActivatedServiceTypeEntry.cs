@@ -36,6 +36,9 @@ using System.Runtime.Remoting.Contexts;
 
 namespace System.Runtime.Remoting {
 
+#if NET_2_0
+	[System.Runtime.InteropServices.ComVisible (true)]
+#endif
 	public class ActivatedServiceTypeEntry : TypeEntry
 	{
 		Type obj_type;

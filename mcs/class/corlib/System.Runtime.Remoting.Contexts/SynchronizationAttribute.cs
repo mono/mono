@@ -35,6 +35,9 @@ namespace System.Runtime.Remoting.Contexts
 {
 	[AttributeUsage(AttributeTargets.Class)]
 	[Serializable]
+#if NET_2_0
+	[System.Runtime.InteropServices.ComVisible (true)]
+#endif
 	public class SynchronizationAttribute: ContextAttribute, IContributeClientContextSink, IContributeServerContextSink
 	{
 		public const int NOT_SUPPORTED = 1;

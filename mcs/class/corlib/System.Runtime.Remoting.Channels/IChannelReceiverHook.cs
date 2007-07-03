@@ -32,6 +32,9 @@
 
 namespace System.Runtime.Remoting.Channels {
 
+#if NET_2_0
+	[System.Runtime.InteropServices.ComVisible (true)]
+#endif
 	public interface IChannelReceiverHook
 	{
 		string ChannelScheme { get; }

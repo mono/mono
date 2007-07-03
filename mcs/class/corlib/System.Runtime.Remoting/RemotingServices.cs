@@ -54,6 +54,9 @@ using System.Runtime.Serialization.Formatters;
 
 namespace System.Runtime.Remoting
 {
+#if NET_2_0
+	[System.Runtime.InteropServices.ComVisible (true)]
+#endif
 	public sealed class RemotingServices 
 	{
 		// Holds the identities of the objects, using uri as index

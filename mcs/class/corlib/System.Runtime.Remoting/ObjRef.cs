@@ -46,6 +46,9 @@ using System.Runtime.ConstrainedExecution;
 namespace System.Runtime.Remoting {
 
 	[Serializable]
+#if NET_2_0
+	[System.Runtime.InteropServices.ComVisible (true)]
+#endif
 	public class ObjRef : IObjectReference, ISerializable 
 	{
 		IChannelInfo channel_info;

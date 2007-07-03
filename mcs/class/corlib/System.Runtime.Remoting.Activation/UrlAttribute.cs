@@ -34,6 +34,9 @@ using System.Runtime.Remoting.Contexts;
 namespace System.Runtime.Remoting.Activation {
 
 	[Serializable]
+#if NET_2_0
+	[System.Runtime.InteropServices.ComVisible (true)]
+#endif
 	public sealed class UrlAttribute : ContextAttribute
 	{
 		string url;

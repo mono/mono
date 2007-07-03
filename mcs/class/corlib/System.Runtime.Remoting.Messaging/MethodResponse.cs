@@ -39,6 +39,9 @@ using System.Runtime.Serialization;
 namespace System.Runtime.Remoting.Messaging {
 
 	[Serializable] [CLSCompliant (false)]
+#if NET_2_0
+	[System.Runtime.InteropServices.ComVisible (true)]
+#endif
 	public class MethodResponse : IMethodReturnMessage, ISerializable, IInternalMessage, ISerializationRootObject
 	{
 		string _methodName;

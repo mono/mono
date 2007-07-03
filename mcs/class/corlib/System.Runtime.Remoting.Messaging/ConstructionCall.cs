@@ -40,6 +40,9 @@ using System.Runtime.Remoting.Proxies;
 namespace System.Runtime.Remoting.Messaging
 {
 	[Serializable] [CLSCompliant (false)]
+#if NET_2_0
+	[System.Runtime.InteropServices.ComVisible (true)]
+#endif
 	public class ConstructionCall: MethodCall, IConstructionCallMessage
 	{
 		IActivator _activator;

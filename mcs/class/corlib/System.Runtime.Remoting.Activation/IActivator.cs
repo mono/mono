@@ -32,6 +32,9 @@
 
 namespace System.Runtime.Remoting.Activation {
 
+#if NET_2_0
+	[System.Runtime.InteropServices.ComVisible (true)]
+#endif
 	public interface IActivator {
 		ActivatorLevel Level {
 			get;

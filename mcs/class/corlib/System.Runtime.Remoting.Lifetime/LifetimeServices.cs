@@ -35,6 +35,9 @@ using System;
 namespace System.Runtime.Remoting.Lifetime {
 
 	//LAMESPEC: MS docs don't say that this class is sealed.
+#if NET_2_0
+	[System.Runtime.InteropServices.ComVisible (true)]
+#endif
 	public sealed class LifetimeServices
 	{
 		private static TimeSpan _leaseManagerPollTime;

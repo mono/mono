@@ -34,6 +34,9 @@ using System;
 namespace System.Runtime.Remoting.Messaging {
 
 	[AttributeUsage (AttributeTargets.Method)]
+#if NET_2_0
+	[System.Runtime.InteropServices.ComVisible (true)]
+#endif
 	public class OneWayAttribute : Attribute
 	{
 		public OneWayAttribute ()

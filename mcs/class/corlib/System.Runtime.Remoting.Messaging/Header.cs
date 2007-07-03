@@ -35,6 +35,9 @@ using System.Collections;
 namespace System.Runtime.Remoting.Messaging {
 
 	[Serializable]
+#if NET_2_0
+	[System.Runtime.InteropServices.ComVisible (true)]
+#endif
 	public class Header {
 		public Header (string name, object value) :
 			this (name, value, true)

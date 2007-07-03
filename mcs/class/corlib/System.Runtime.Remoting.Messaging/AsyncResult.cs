@@ -36,6 +36,9 @@ using System.Runtime.CompilerServices;
 
 namespace System.Runtime.Remoting.Messaging {
 
+#if NET_2_0
+	[System.Runtime.InteropServices.ComVisible (true)]
+#endif
 public class AsyncResult : IAsyncResult, IMessageSink {
 
 	object async_state;

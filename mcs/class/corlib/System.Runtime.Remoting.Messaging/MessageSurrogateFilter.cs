@@ -31,6 +31,10 @@
 
 namespace System.Runtime.Remoting.Messaging {
 
+#if NET_2_0
+	[System.Runtime.InteropServices.ComVisible (true)]
+#else
 	[Serializable]
+#endif
 	public delegate bool MessageSurrogateFilter (string key, object value);
 }

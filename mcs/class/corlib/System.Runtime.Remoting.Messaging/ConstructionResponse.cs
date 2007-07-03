@@ -37,6 +37,9 @@ using System.Runtime.Serialization;
 namespace System.Runtime.Remoting.Messaging
 {
 	[Serializable] [CLSCompliant (false)]
+#if NET_2_0
+	[System.Runtime.InteropServices.ComVisible (true)]
+#endif
 	public class ConstructionResponse: MethodResponse, IConstructionReturnMessage
 	{
 		public ConstructionResponse (Header[] headers, IMethodCallMessage mcm)

@@ -37,6 +37,9 @@ using System.IO;
 
 namespace System.Runtime.Remoting.Messaging 
 {
+#if NET_2_0
+	[System.Runtime.InteropServices.ComVisible (true)]
+#endif
 	public class ReturnMessage : IMethodReturnMessage, IMethodMessage, IMessage, IInternalMessage 
 	{
 		object[] _outArgs;

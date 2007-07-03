@@ -33,6 +33,9 @@ using System.Runtime.Remoting;
 
 namespace System.Runtime.Remoting.Channels {
 
+#if NET_2_0
+	[System.Runtime.InteropServices.ComVisible (true)]
+#endif
 	public interface IServerChannelSinkStack : IServerResponseChannelSinkStack
 	{
 		object Pop (IServerChannelSink sink);

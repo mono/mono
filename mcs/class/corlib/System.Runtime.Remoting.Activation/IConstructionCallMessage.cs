@@ -35,6 +35,9 @@ using System.Runtime.Remoting.Messaging;
 
 namespace System.Runtime.Remoting.Activation {
 
+#if NET_2_0
+	[System.Runtime.InteropServices.ComVisible (true)]
+#endif
 	public interface IConstructionCallMessage : IMessage, IMethodCallMessage, IMethodMessage {
 		Type ActivationType {
 			get;
