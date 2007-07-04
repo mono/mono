@@ -1,3 +1,6 @@
+2007-07-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c: Fix warnings.
 
 Wed Jul 4 15:30:36 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
