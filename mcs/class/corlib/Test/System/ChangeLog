@@ -1,3 +1,9 @@
+2007-07-04  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* MathTest.cs: No longer use Assertion as base class, and changed
+	asserts accordingly. Numbered tests. Added test for bug #82001.
+	Code formatting. 
+
 2007-06-24  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ArrayTest.cs: Added test for bug #81941.

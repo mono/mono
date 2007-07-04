@@ -11,841 +11,941 @@
 using System;
 using NUnit.Framework;
 
-namespace MonoTests.System 
+namespace MonoTests.System
 {
-
-[TestFixture]
-public class MathTest : Assertion {
-
-	private static double double_epsilon = 
+	[TestFixture]
+	public class MathTest
+	{
+		private static double double_epsilon =
 #if TARGET_JVM
-	  1E-15;
+			1E-15;
 #else
-	double.Epsilon;
+			double.Epsilon;
 #endif
 
-	static double x = 0.1234;
-	static double y = 12.345;
+		static double x = 0.1234;
+		static double y = 12.345;
 
-	public void TestDecimalAbs() {
-		decimal a = -9.0M;
+		[Test]
+		public void TestDecimalAbs ()
+		{
+			decimal a = -9.0M;
 
-		Assert(9.0M == Math.Abs(a));
-		Assert(Decimal.MaxValue == Math.Abs(Decimal.MaxValue));
-		Assert(Decimal.MaxValue == Math.Abs(Decimal.MinValue));
-		Assert(Decimal.Zero == Math.Abs(Decimal.Zero));
-		Assert(Decimal.One == Math.Abs(Decimal.One));
-		Assert(Decimal.One == Math.Abs(Decimal.MinusOne));
-	}
-
-
-	public void TestDoubleAbs() {
-		double a = -9.0D;
-		Assert(9.0D == Math.Abs(a));
-		Assert(0.0D == Math.Abs(0.0D));
-		Assert(Double.MaxValue == Math.Abs(Double.MaxValue));
-		Assert(Double.MaxValue == Math.Abs(Double.MinValue));
-		Assert(Double.IsPositiveInfinity(Math.Abs(Double.PositiveInfinity)));
-		Assert(Double.IsPositiveInfinity(Math.Abs(Double.NegativeInfinity)));
-		Assert(Double.IsNaN(Math.Abs(Double.NaN)));
-	}
-
-	public void TestFloatAbs() {
-		float a = -9.0F;
-
-		Assert(9.0F == Math.Abs(a));
-		Assert(0.0F == Math.Abs(0.0F));
-		Assert(Single.MaxValue == Math.Abs(Single.MaxValue));
-		Assert(Single.MaxValue == Math.Abs(Single.MinValue));
-		Assert(Single.PositiveInfinity == Math.Abs(Single.PositiveInfinity));
-		Assert(Single.PositiveInfinity == Math.Abs(Single.NegativeInfinity));
-		Assert(Single.IsNaN(Math.Abs(Single.NaN)));
-	}
-
-	public void TestLongAbs() {
-		long a = -9L;
-		long b = Int64.MinValue;
-
-		Assert(9L == Math.Abs(a));
-		try {
-			Math.Abs(b);
-			Fail("Should raise System.OverflowException");
-		} catch(Exception e) {
-			Assert(typeof(OverflowException) == e.GetType());
+			Assert.IsTrue (9.0M == Math.Abs (a), "#1");
+			Assert.IsTrue (Decimal.MaxValue == Math.Abs (Decimal.MaxValue), "#2");
+			Assert.IsTrue (Decimal.MaxValue == Math.Abs (Decimal.MinValue), "#3");
+			Assert.IsTrue (Decimal.Zero == Math.Abs (Decimal.Zero), "#4");
+			Assert.IsTrue (Decimal.One == Math.Abs (Decimal.One), "#5");
+			Assert.IsTrue (Decimal.One == Math.Abs (Decimal.MinusOne), "#6");
 		}
-		Assert(Int64.MaxValue == Math.Abs(Int64.MaxValue));
-	}
 
-	public void TestIntAbs() {
-		int a = -9;
-		int b = Int32.MinValue;
+		[Test]
+		public void TestDoubleAbs ()
+		{
+			double a = -9.0D;
 
-		Assert(9 == Math.Abs(a));
-		try {
-			Math.Abs(b);
-			Fail("Should raise System.OverflowException");
-		} catch(Exception e) {
-			Assert(typeof(OverflowException) == e.GetType());
+			Assert.IsTrue (9.0D == Math.Abs (a), "#1");
+			Assert.IsTrue (0.0D == Math.Abs (0.0D), "#2");
+			Assert.IsTrue (Double.MaxValue == Math.Abs (Double.MaxValue), "#3");
+			Assert.IsTrue (Double.MaxValue == Math.Abs (Double.MinValue), "#4");
+			Assert.IsTrue (Double.IsPositiveInfinity (Math.Abs (Double.PositiveInfinity)), "#5");
+			Assert.IsTrue (Double.IsPositiveInfinity (Math.Abs (Double.NegativeInfinity)), "#6");
+			Assert.IsTrue (Double.IsNaN (Math.Abs (Double.NaN)), "#7");
 		}
-		Assert(Int32.MaxValue == Math.Abs(Int32.MaxValue));
-	}
 
-	public void TestSbyteAbs() {
-		sbyte a = -9;
-		sbyte b = SByte.MinValue;
+		[Test]
+		public void TestFloatAbs ()
+		{
+			float a = -9.0F;
 
-		Assert(9 == Math.Abs(a));
-		try {
-			Math.Abs(b);
-			Fail("Should raise System.OverflowException");
-		} catch(Exception e) {
-			Assert(typeof(OverflowException) == e.GetType());
+			Assert.IsTrue (9.0F == Math.Abs (a), "#1");
+			Assert.IsTrue (0.0F == Math.Abs (0.0F), "#2");
+			Assert.IsTrue (Single.MaxValue == Math.Abs (Single.MaxValue), "#3");
+			Assert.IsTrue (Single.MaxValue == Math.Abs (Single.MinValue), "#4");
+			Assert.IsTrue (Single.PositiveInfinity == Math.Abs (Single.PositiveInfinity), "#5");
+			Assert.IsTrue (Single.PositiveInfinity == Math.Abs (Single.NegativeInfinity), "#6");
+			Assert.IsTrue (Single.IsNaN (Math.Abs (Single.NaN)), "#7");
 		}
-		Assert(SByte.MaxValue == Math.Abs(SByte.MaxValue));
-	}
 
-	public void TestShortAbs() {
-		short a = -9;
-		short b = Int16.MinValue;
+		[Test]
+		public void TestLongAbs ()
+		{
+			long a = -9L;
+			long b = Int64.MinValue;
 
-		Assert(9 == Math.Abs(a));
-		try {
-			Math.Abs(b);
-			Fail("Should raise System.OverflowException");
-		} catch(Exception e) {
-			Assert(typeof(OverflowException) == e.GetType());
+			Assert.IsTrue (9L == Math.Abs (a), "#1");
+			try {
+				Math.Abs (b);
+				Assert.Fail ("#2");
+			} catch (Exception e) {
+				Assert.AreEqual (typeof (OverflowException), e.GetType (), "#3");
+			}
+			Assert.IsTrue (Int64.MaxValue == Math.Abs (Int64.MaxValue), "#4");
 		}
-		Assert(Int16.MaxValue == Math.Abs(Int16.MaxValue));
-	}
 
-	public void TestAcos() {
-		double a = Math.Acos(x);
-		double b = 1.4470809809523457;
+		[Test]
+		public void TestIntAbs ()
+		{
+			int a = -9;
+			int b = Int32.MinValue;
 
-		Assert(a.ToString("G99") + " != " + b.ToString("G99"), 
-		       (Math.Abs(a - b) <= double_epsilon));
-		Assert(double.IsNaN(Math.Acos(-1.01D)));
-		Assert(double.IsNaN(Math.Acos(1.01D)));
-		Assert(double.IsNaN(Math.Acos(Double.MinValue)));
-		Assert(double.IsNaN(Math.Acos(Double.MaxValue)));
-		Assert(double.IsNaN(Math.Acos(Double.NegativeInfinity)));
-		Assert(double.IsNaN(Math.Acos(Double.PositiveInfinity)));
-	}
-
-	public void TestAsin() {
-		double a = Math.Asin(x);
-		double b = 0.12371534584255098;
-
-		Assert(a.ToString("G99") + " != " + b.ToString("G99"), 
-		       (Math.Abs(a - b) <= double_epsilon));
-		Assert(double.IsNaN(Math.Asin(-1.01D)));
-		Assert(double.IsNaN(Math.Asin(1.01D)));
-		Assert(double.IsNaN(Math.Asin(Double.MinValue)));
-		Assert(double.IsNaN(Math.Asin(Double.MaxValue)));
-		Assert(double.IsNaN(Math.Asin(Double.NegativeInfinity)));
-		Assert(double.IsNaN(Math.Asin(Double.PositiveInfinity)));
-	}
-
-	public void TestAtan() {
-		double a = Math.Atan(x);
-		double b = 0.12277930094473837;
-		double c = 1.5707963267948966;
-		double d = -1.5707963267948966;
-
-		Assert("#1: " + a.ToString("G99") + " != " + b.ToString("G99"), 
-		       (Math.Abs(a - b) <= double_epsilon));
-		Assert("should return NaN", 
-		       double.IsNaN(Math.Atan(double.NaN)));
-		Assert("#2: " + Math.Atan(double.PositiveInfinity).ToString("G99")+" != "+c.ToString("G99"), 
-		       Math.Abs((double)Math.Atan(double.PositiveInfinity) - c) <= 0.0000000000000001);
-		Assert("#3: " + Math.Atan(double.NegativeInfinity).ToString("G99")+" != "+d.ToString("G99"),
-		       Math.Abs((double)Math.Atan(double.NegativeInfinity) - d) <= 0.0000000000000001);
-	}
-
-	public void TestAtan2() {
-		double a = Math.Atan2(x, y);
-		double b = 0.0099956168687207747;
-
-		Assert(a.ToString("G99") + " != " + b.ToString("G99"), 
-		       (Math.Abs(a - b) <= double_epsilon));
-		Assert(double.IsNaN(Math.Acos(-2D)));
-		Assert(double.IsNaN(Math.Acos(2D)));
-	}
-
-	// The following test is for methods that are in ECMA but they are
-	// not implemented in MS.NET. I leave them commented.
-	/*
-	public void TestBigMul () {
-		int a = int.MaxValue;
-		int b = int.MaxValue;
-
-		Assert(((long)a * (long)b) == Math.BigMul(a,b));
-	}
-	*/
-
-	public void TestCos() {
-		double a = Math.Cos(x);
-		double b = 0.99239587670489104;
-
-		Assert(a.ToString("G99") + " != " + b.ToString("G99"), 
-		       (Math.Abs(a - b) <= double_epsilon));
-		Assert(double.IsNaN(Math.Cos(Double.NaN)));
-		Assert(double.IsNaN(Math.Cos(Double.NegativeInfinity)));
-		Assert(double.IsNaN(Math.Cos(Double.PositiveInfinity)));
-	}
-
-	public void TestCosh() {
-		double a = Math.Cosh(x);
-		double b = 1.0076234465130722;
-
-		Assert(a.ToString("G99") + " != " + b.ToString("G99"), 
-		       (Math.Abs(a - b) <= double_epsilon));
-		Assert(Math.Cosh(double.NegativeInfinity) == double.PositiveInfinity);
-		Assert(Math.Cosh(double.PositiveInfinity) == double.PositiveInfinity);
-		Assert(double.IsNaN(Math.Cosh(double.NaN)));
-	}
-
-	// The following test is for methods that are in ECMA but they are
-	// not implemented in MS.NET. I leave them commented.
-	/*
-	public void TestIntDivRem () {
-		int a = 5;
-		int b = 2;
-		int div = 0, rem = 0;
-
-		div = Math.DivRem(a, b, out rem);
-
-		Assert(rem == 1);
-		Assert(div == 2);
-	}
-
-	public void TestLongDivRem () {
-		long a = 5;
-		long b = 2;
-		long div = 0, rem = 0;
-
-		div = Math.DivRem(a, b, out rem);
-
-		Assert(rem == 1);
-		Assert(div == 2);
-	}
-	*/
-
-	public void TestSin() {
-		double a = Math.Sin(x);
-		double b = 0.12308705821137626;
-
-		Assert(a.ToString("G99") + " != " + b.ToString("G99"), 
-		       (Math.Abs(a - b) <= double_epsilon));
-		Assert(double.IsNaN(Math.Sin(Double.NaN)));
-		Assert(double.IsNaN(Math.Sin(Double.NegativeInfinity)));
-		Assert(double.IsNaN(Math.Sin(Double.PositiveInfinity)));
-	}
-
-	public void TestSinh() {
-		double a = Math.Sinh(x);
-		double b = 0.12371341868561381;
-
-		Assert(a.ToString("G99") + " != " + b.ToString("G99"), 
-		       Math.Abs(a - b) <= 0.0000000000000001);
-		Assert(double.IsNaN(Math.Sinh(Double.NaN)));
-		Assert(double.IsNegativeInfinity(Math.Sinh(Double.NegativeInfinity)));
-		Assert(double.IsPositiveInfinity(Math.Sinh(Double.PositiveInfinity)));
-	}
-
-	public void TestTan() {
-		double a = Math.Tan(x);
-		double b = 0.12403019913793806;
-
-		Assert(a.ToString("G99") + " != " + b.ToString("G99"), 
-		       (Math.Abs(a - b) <= double_epsilon));
-		Assert(Double.IsNaN(Math.Tan(Double.NaN)));
-		Assert(Double.IsNaN(Math.Tan(Double.PositiveInfinity)));
-		Assert(Double.IsNaN(Math.Tan(Double.NegativeInfinity)));
-	}
-
-	public void TestTanh() {
-		double a = Math.Tanh(x);
-		double b = 0.12277743150353424;
-
-		Assert(a.ToString("G99") + " != " + b.ToString("G99"), 
-		       (Math.Abs(a - b) <= double_epsilon));
-		Assert("Tanh(NaN) should be NaN",
-			Double.IsNaN(Math.Tanh(Double.NaN)));
-		Assert("Tanh(+Infinity) should be 1",
-			1 == Math.Tanh(Double.PositiveInfinity));
-		Assert("Tanh(-Infinity) should be -1",
-			-1 == Math.Tanh(Double.NegativeInfinity));
-	}
-
-	public void TestSqrt() {
-		double a = Math.Sqrt(x);
-		double b = 0.35128336140500593;
-
-		Assert(a.ToString("G99") + " != " + b.ToString("G99"), 
-		       (Math.Abs(a - b) <= double_epsilon));
-		Assert(Double.IsNaN(Math.Sqrt(Double.NaN)));
-		Assert(Double.IsPositiveInfinity(Math.Sqrt(Double.PositiveInfinity)));
-		Assert(Double.IsNaN(Math.Sqrt(Double.NegativeInfinity)));
-	}
-
-	public void TestExp() {
-		double a = Math.Exp(x);
-		double b = 1.1313368651986859;
-
-		Assert(a.ToString("G99") + " != " + b.ToString("G99"), 
-		       (Math.Abs(a - b) <= double_epsilon));
-		Assert(double.IsNaN(Math.Exp(double.NaN)));
-		Assert(Math.Exp(double.NegativeInfinity) == 0);
-		Assert(Math.Exp(double.PositiveInfinity) == double.PositiveInfinity);
-	}
-
-	public void TestCeiling() {
-		int iTest = 1;
-		try {
-			double a = Math.Ceiling(1.5);
-			double b = 2;
-	
-			iTest++;
-			Assert(a.ToString("G99") + " != " + b.ToString("G99"), 
-			       (Math.Abs(a - b) <= double_epsilon));
-			iTest++;
-			Assert(Math.Ceiling(double.NegativeInfinity) == double.NegativeInfinity);
-			iTest++;
-			Assert(Math.Ceiling(double.PositiveInfinity) == double.PositiveInfinity);
-			iTest++;
-			Assert(double.IsNaN(Math.Ceiling(double.NaN)));
-
-			iTest++;
-			Assert(Double.MaxValue == Math.Ceiling(Double.MaxValue));
-
-			iTest++;
-			Assert(Double.MinValue == Math.Ceiling(Double.MinValue));
-		} catch (Exception e) {
-			Fail("Unexpected Exception at iTest=" + iTest + ": " + e);
+			Assert.IsTrue (9 == Math.Abs (a), "#1");
+			try {
+				Math.Abs (b);
+				Assert.Fail ("#2");
+			} catch (Exception e) {
+				Assert.AreEqual (typeof (OverflowException), e.GetType (), "#3");
+			}
+			Assert.IsTrue (Int32.MaxValue == Math.Abs (Int32.MaxValue), "#4");
 		}
-	}
+
+		[Test]
+		public void TestSbyteAbs ()
+		{
+			sbyte a = -9;
+			sbyte b = SByte.MinValue;
+
+			Assert.IsTrue (9 == Math.Abs (a), "#1");
+			try {
+				Math.Abs (b);
+				Assert.Fail ("#2");
+			} catch (Exception e) {
+				Assert.AreEqual (typeof (OverflowException), e.GetType (), "#3");
+			}
+			Assert.IsTrue (SByte.MaxValue == Math.Abs (SByte.MaxValue), "#4");
+		}
+
+		[Test]
+		public void TestShortAbs ()
+		{
+			short a = -9;
+			short b = Int16.MinValue;
+
+			Assert.IsTrue (9 == Math.Abs (a), "#1");
+			try {
+				Math.Abs (b);
+				Assert.Fail ("#2");
+			} catch (Exception e) {
+				Assert.AreEqual (typeof (OverflowException), e.GetType (), "#3");
+			}
+			Assert.IsTrue (Int16.MaxValue == Math.Abs (Int16.MaxValue), "#4");
+		}
+
+		[Test]
+		public void TestAcos ()
+		{
+			double a = Math.Acos (x);
+			double b = 1.4470809809523457;
+
+			Assert.IsTrue ((Math.Abs (a - b) <= double_epsilon), a.ToString ("G99")
+				+ " != " + b.ToString ("G99"));
+			Assert.IsTrue (double.IsNaN (Math.Acos (-1.01D)));
+			Assert.IsTrue (double.IsNaN (Math.Acos (1.01D)));
+			Assert.IsTrue (double.IsNaN (Math.Acos (Double.MinValue)));
+			Assert.IsTrue (double.IsNaN (Math.Acos (Double.MaxValue)));
+			Assert.IsTrue (double.IsNaN (Math.Acos (Double.NegativeInfinity)));
+			Assert.IsTrue (double.IsNaN (Math.Acos (Double.PositiveInfinity)));
+		}
+
+		[Test]
+		public void TestAsin ()
+		{
+			double a = Math.Asin (x);
+			double b = 0.12371534584255098;
+
+			Assert.IsTrue ((Math.Abs (a - b) <= double_epsilon), a.ToString ("G99")
+				+ " != " + b.ToString ("G99"));
+			Assert.IsTrue (double.IsNaN (Math.Asin (-1.01D)));
+			Assert.IsTrue (double.IsNaN (Math.Asin (1.01D)));
+			Assert.IsTrue (double.IsNaN (Math.Asin (Double.MinValue)));
+			Assert.IsTrue (double.IsNaN (Math.Asin (Double.MaxValue)));
+			Assert.IsTrue (double.IsNaN (Math.Asin (Double.NegativeInfinity)));
+			Assert.IsTrue (double.IsNaN (Math.Asin (Double.PositiveInfinity)));
+		}
+
+		[Test]
+		public void TestAtan ()
+		{
+			double a = Math.Atan (x);
+			double b = 0.12277930094473837;
+			double c = 1.5707963267948966;
+			double d = -1.5707963267948966;
+
+			Assert.IsTrue ((Math.Abs (a - b) <= double_epsilon), "#1: " + a.ToString ("G99")
+				+ " != " + b.ToString ("G99"));
+			Assert.IsTrue (double.IsNaN (Math.Atan (double.NaN)), "should return NaN");
+			Assert.IsTrue (Math.Abs ((double) Math.Atan (double.PositiveInfinity) - c) <= 0.0000000000000001,
+				"#2: " + Math.Atan (double.PositiveInfinity).ToString ("G99") + " != " + c.ToString ("G99"));
+			Assert.IsTrue (Math.Abs ((double) Math.Atan (double.NegativeInfinity) - d) <= 0.0000000000000001,
+				"#3: " + Math.Atan (double.NegativeInfinity).ToString ("G99") + " != " + d.ToString ("G99"));
+		}
+
+		[Test]
+		public void TestAtan2 ()
+		{
+			double a = Math.Atan2 (x, y);
+			double b = 0.0099956168687207747;
+
+			Assert.IsTrue ((Math.Abs (a - b) <= double_epsilon), a.ToString ("G99")
+				+ " != " + b.ToString ("G99"));
+			Assert.IsTrue (double.IsNaN (Math.Acos (-2D)));
+			Assert.IsTrue (double.IsNaN (Math.Acos (2D)));
+		}
+
+		// The following test is for methods that are in ECMA but they are
+		// not implemented in MS.NET. I leave them commented.
+		/*
+		public void TestBigMul () {
+			int a = int.MaxValue;
+			int b = int.MaxValue;
+
+			Assert(((long)a * (long)b) == Math.BigMul(a,b));
+		}
+		*/
+
+		[Test]
+		public void TestCos ()
+		{
+			double a = Math.Cos (x);
+			double b = 0.99239587670489104;
+
+			Assert.IsTrue ((Math.Abs (a - b) <= double_epsilon), a.ToString ("G99")
+				+ " != " + b.ToString ("G99"));
+			Assert.IsTrue (double.IsNaN (Math.Cos (Double.NaN)));
+			Assert.IsTrue (double.IsNaN (Math.Cos (Double.NegativeInfinity)));
+			Assert.IsTrue (double.IsNaN (Math.Cos (Double.PositiveInfinity)));
+		}
+
+		[Test]
+		public void TestCosh ()
+		{
+			double a = Math.Cosh (x);
+			double b = 1.0076234465130722;
+
+			Assert.IsTrue ((Math.Abs (a - b) <= double_epsilon), a.ToString ("G99")
+				+ " != " + b.ToString ("G99"));
+			Assert.IsTrue (Math.Cosh (double.NegativeInfinity) == double.PositiveInfinity);
+			Assert.IsTrue (Math.Cosh (double.PositiveInfinity) == double.PositiveInfinity);
+			Assert.IsTrue (double.IsNaN (Math.Cosh (double.NaN)));
+		}
+
+		// The following test is for methods that are in ECMA but they are
+		// not implemented in MS.NET. I leave them commented.
+		/*
+		public void TestIntDivRem () {
+			int a = 5;
+			int b = 2;
+			int div = 0, rem = 0;
+
+			div = Math.DivRem (a, b, out rem);
+
+			Assert.IsTrue (rem == 1);
+			Assert.IsTrue (div == 2);
+		}
+
+		public void TestLongDivRem () {
+			long a = 5;
+			long b = 2;
+			long div = 0, rem = 0;
+
+			div = Math.DivRem (a, b, out rem);
+
+			Assert.IsTrue (rem == 1);
+			Assert.IsTrue (div == 2);
+		}
+		*/
+
+		[Test]
+		public void TestSin ()
+		{
+			double a = Math.Sin (x);
+			double b = 0.12308705821137626;
+
+			Assert.IsTrue ((Math.Abs (a - b) <= double_epsilon), a.ToString ("G99")
+				+ " != " + b.ToString ("G99"));
+			Assert.IsTrue (double.IsNaN (Math.Sin (Double.NaN)));
+			Assert.IsTrue (double.IsNaN (Math.Sin (Double.NegativeInfinity)));
+			Assert.IsTrue (double.IsNaN (Math.Sin (Double.PositiveInfinity)));
+		}
+
+		[Test]
+		public void TestSinh ()
+		{
+			double a = Math.Sinh (x);
+			double b = 0.12371341868561381;
+
+			Assert.IsTrue (Math.Abs (a - b) <= 0.0000000000000001, a.ToString ("G99")
+				+ " != " + b.ToString ("G99"));
+			Assert.IsTrue (double.IsNaN (Math.Sinh (Double.NaN)));
+			Assert.IsTrue (double.IsNegativeInfinity (Math.Sinh (Double.NegativeInfinity)));
+			Assert.IsTrue (double.IsPositiveInfinity (Math.Sinh (Double.PositiveInfinity)));
+		}
+
+		[Test]
+		public void TestTan ()
+		{
+			double a = Math.Tan (x);
+			double b = 0.12403019913793806;
+
+			Assert.IsTrue ((Math.Abs (a - b) <= double_epsilon), a.ToString ("G99")
+				+ " != " + b.ToString ("G99"));
+			Assert.IsTrue (Double.IsNaN (Math.Tan (Double.NaN)));
+			Assert.IsTrue (Double.IsNaN (Math.Tan (Double.PositiveInfinity)));
+			Assert.IsTrue (Double.IsNaN (Math.Tan (Double.NegativeInfinity)));
+		}
+
+		[Test]
+		public void TestTanh ()
+		{
+			double a = Math.Tanh (x);
+			double b = 0.12277743150353424;
+
+			Assert.IsTrue ((Math.Abs (a - b) <= double_epsilon), a.ToString ("G99")
+				+ " != " + b.ToString ("G99"));
+			Assert.IsTrue (Double.IsNaN (Math.Tanh (Double.NaN)),
+				"Tanh(NaN) should be NaN");
+			Assert.IsTrue (1 == Math.Tanh (Double.PositiveInfinity),
+				"Tanh(+Infinity) should be 1");
+			Assert.IsTrue (-1 == Math.Tanh (Double.NegativeInfinity),
+				"Tanh(-Infinity) should be -1");
+		}
+
+		[Test]
+		public void TestSqrt ()
+		{
+			double a = Math.Sqrt (x);
+			double b = 0.35128336140500593;
+
+			Assert.IsTrue ((Math.Abs (a - b) <= double_epsilon), a.ToString ("G99")
+				+ " != " + b.ToString ("G99"));
+			Assert.IsTrue (Double.IsNaN (Math.Sqrt (Double.NaN)));
+			Assert.IsTrue (Double.IsPositiveInfinity (Math.Sqrt (Double.PositiveInfinity)));
+			Assert.IsTrue (Double.IsNaN (Math.Sqrt (Double.NegativeInfinity)));
+		}
+
+		[Test]
+		public void TestExp ()
+		{
+			double a = Math.Exp (x);
+			double b = 1.1313368651986859;
+
+			Assert.IsTrue ((Math.Abs (a - b) <= double_epsilon), a.ToString ("G99")
+				+ " != " + b.ToString ("G99"));
+			Assert.IsTrue (double.IsNaN (Math.Exp (double.NaN)));
+			Assert.IsTrue (Math.Exp (double.NegativeInfinity) == 0);
+			Assert.IsTrue (Math.Exp (double.PositiveInfinity) == double.PositiveInfinity);
+		}
+
+		[Test]
+		public void TestCeiling ()
+		{
+			int iTest = 1;
+			try {
+				double a = Math.Ceiling (1.5);
+				double b = 2;
+
+				iTest++;
+				Assert.IsTrue ((Math.Abs (a - b) <= double_epsilon), a.ToString ("G99")
+					+ " != " + b.ToString ("G99"));
+				iTest++;
+				Assert.IsTrue (Math.Ceiling (double.NegativeInfinity) == double.NegativeInfinity);
+				iTest++;
+				Assert.IsTrue (Math.Ceiling (double.PositiveInfinity) == double.PositiveInfinity);
+				iTest++;
+				Assert.IsTrue (double.IsNaN (Math.Ceiling (double.NaN)));
+
+				iTest++;
+				Assert.IsTrue (Double.MaxValue == Math.Ceiling (Double.MaxValue));
+
+				iTest++;
+				Assert.IsTrue (Double.MinValue == Math.Ceiling (Double.MinValue));
+			} catch (Exception e) {
+				Assert.Fail ("Unexpected Exception at iTest=" + iTest + ": " + e);
+			}
+		}
 
 #if NET_2_0
-	public void TestDecimalCeiling() {
-		int iTest = 1;
-		try {
+		[Test]
+		public void TestDecimalCeiling()
+		{
 			decimal a = Math.Ceiling(1.5M);
 			decimal b = 2M;
 
-			iTest++;
-			Assert(a == b);
-
-			iTest++;
-			Assert(Decimal.MaxValue == Math.Ceiling(Decimal.MaxValue));
-
-			iTest++;
-			Assert(Decimal.MinValue == Math.Ceiling(Decimal.MinValue));
-		} catch (Exception e) {
-			Fail("Unexpected Exception at iTest=" + iTest + ": " + e);
+			Assert.IsTrue (a == b, "#1");
+			Assert.IsTrue (Decimal.MaxValue == Math.Ceiling(Decimal.MaxValue), "#2");
+			Assert.IsTrue (Decimal.MinValue == Math.Ceiling(Decimal.MinValue), "#3");
 		}
-	}
 #endif
 
-	public void TestFloor() {
-		try {
-			double a = Math.Floor(1.5);
+		[Test]
+		public void TestFloor ()
+		{
+			double a = Math.Floor (1.5);
 			double b = 1;
 
-			Assert(a.ToString("G99") + " != " + b.ToString("G99"), 
-			       (Math.Abs(a - b) <= double_epsilon));
-			Assert(Math.Floor(double.NegativeInfinity) == double.NegativeInfinity);
-			Assert(Math.Floor(double.PositiveInfinity) == double.PositiveInfinity);
-			Assert(double.IsNaN(Math.Floor(double.NaN)));
+			Assert.IsTrue ((Math.Abs (a - b) <= double_epsilon), a.ToString ("G99")
+				+ " != " + b.ToString ("G99"));
+			Assert.IsTrue (Math.Floor (double.NegativeInfinity) == double.NegativeInfinity);
+			Assert.IsTrue (Math.Floor (double.PositiveInfinity) == double.PositiveInfinity);
+			Assert.IsTrue (double.IsNaN (Math.Floor (double.NaN)));
 
-			Assert(Double.MaxValue == Math.Floor(Double.MaxValue));
+			Assert.IsTrue (Double.MaxValue == Math.Floor (Double.MaxValue));
 
-			Assert(Double.MinValue == Math.Floor(Double.MinValue));
-		} catch (Exception e) {
-			Fail("Unexpected Exception: " + e.ToString());
+			Assert.IsTrue (Double.MinValue == Math.Floor (Double.MinValue));
 		}
-	}
 
-	public void TestIEEERemainder() {
-		double a = Math.IEEERemainder(y, x);
-		double b = 0.0050000000000007816;
+		[Test]
+		public void TestIEEERemainder ()
+		{
+			double a = Math.IEEERemainder (y, x);
+			double b = 0.0050000000000007816;
 
-		Assert(a.ToString("G99") + " != " + b.ToString("G99"), 
-		       (Math.Abs(a - b) <= double_epsilon));
+			Assert.IsTrue ((Math.Abs (a - b) <= double_epsilon), a.ToString ("G99")
+				+ " != " + b.ToString ("G99"));
 
-		Assert ("Positive 0", double.IsNaN (Math.IEEERemainder (y, 0)));
+			Assert.IsTrue (double.IsNaN (Math.IEEERemainder (y, 0)), "Positive 0");
 
-		// http://www.obtuse.com/resources/negative_zero.html
-		double n0 = BitConverter.Int64BitsToDouble (Int64.MinValue);
-		Assert ("Negative 0", double.IsNaN (Math.IEEERemainder (n0, 0)));
+			// http://www.obtuse.com/resources/negative_zero.html
+			double n0 = BitConverter.Int64BitsToDouble (Int64.MinValue);
+			Assert.IsTrue (double.IsNaN (Math.IEEERemainder (n0, 0)), "Negative 0");
 
-		// the "zero" remainder of negative number is negative
-		long result = BitConverter.DoubleToInt64Bits (Math.IEEERemainder (-1, 1));
-		AssertEquals ("Negative Dividend", Int64.MinValue, result);
-	}
+			// the "zero" remainder of negative number is negative
+			long result = BitConverter.DoubleToInt64Bits (Math.IEEERemainder (-1, 1));
+			Assert.AreEqual (Int64.MinValue, result, "Negative Dividend");
+		}
 
-	public void TestLog() {
-		double a = Math.Log(y);
-		double b = 2.513251122797143;
+		[Test]
+		public void TestLog ()
+		{
+			double a = Math.Log (y);
+			double b = 2.513251122797143;
 
-		Assert(a.ToString("G99") + " != " + b.ToString("G99"), 
-		       (Math.Abs(a - b) <= double_epsilon));
-		Assert(double.IsNaN(Math.Log(-1)));
-		Assert(double.IsNaN(Math.Log(double.NaN)));
-
-		// MS docs say this should be PositiveInfinity
-		Assert(Math.Log(0) == double.NegativeInfinity);
-		Assert(Math.Log(double.PositiveInfinity) == double.PositiveInfinity);
-	}
-
-	public void TestLog2() {
-		double a = Math.Log(x, y);
-		double b = -0.83251695325303621;
-
-		Assert(a + " != " + b + " because diff is " + Math.Abs(a - b), (Math.Abs(a - b) <= 1e-14));
-		Assert(double.IsNaN(Math.Log(-1, y)));
-		Assert(double.IsNaN(Math.Log(double.NaN, y)));
-		Assert(double.IsNaN(Math.Log(x, double.NaN)));
-		Assert(double.IsNaN(Math.Log(double.NegativeInfinity, y)));
-		Assert(double.IsNaN(Math.Log(x, double.NegativeInfinity)));
-		Assert(double.IsNaN(Math.Log(double.PositiveInfinity, double.PositiveInfinity)));
-
-		// MS docs say this should be PositiveInfinity
-		Assert(Math.Log(0, y) == double.NegativeInfinity);
-		Assert(Math.Log(double.PositiveInfinity, y) == double.PositiveInfinity);
-		Assert(Math.Log(x, double.PositiveInfinity) == 0);
-	}
-
- 	public void TestLog10() {
-		double a = Math.Log10(x);
-		double b = -0.90868484030277719;
-
-		Assert(a.ToString("G99") + " != " + b.ToString("G99"), 
-		       (Math.Abs(a - b) <= double_epsilon));
-		Assert(double.IsNaN(Math.Log10(-1)));
-		Assert(double.IsNaN(Math.Log10(double.NaN)));
-
-		// MS docs say this should be PositiveInfinity
-		Assert(Math.Log10(0) == double.NegativeInfinity);
-		Assert(Math.Log10(double.PositiveInfinity) == double.PositiveInfinity);
-
-	}	
-
- 	public void TestPow() {
-		int iTest = 1;
-
-		try {
-			double a = Math.Pow(y, x);
-			double b = 1.363609446060212;
-
-			Assert(a.ToString("G99") + " != " + b.ToString("G99"), (Math.Abs(a - b) <= double_epsilon));
-			iTest++;
-			Assert (double.IsNaN(Math.Pow(y, double.NaN)));
-			iTest++;
-			Assert (double.IsNaN(Math.Pow(double.NaN, x)));
-			iTest++;
-			Assert ("Math.Pow(double.NegativeInfinity, 1) should be NegativeInfinity", double.IsNegativeInfinity(Math.Pow(double.NegativeInfinity, 1)));
-			iTest++;
-			Assert ("Math.Pow(double.NegativeInfinity, 2) should be PositiveInfinity", double.IsPositiveInfinity(Math.Pow(double.NegativeInfinity, 2)));
-
-			// MS docs say this should be 0
-			iTest++;
-			Assert(double.IsNaN(Math.Pow(1, double.NegativeInfinity)));
-			iTest++;
-			AssertEquals ("Math.Pow(double.PositiveInfinity, double.NegativeInfinity)", (double)0, Math.Pow(double.PositiveInfinity, double.NegativeInfinity));
-			iTest++;
-			Assert ("Math.Pow(double.PositiveInfinity, 1) should be PositiveInfinity", double.IsPositiveInfinity(Math.Pow(double.PositiveInfinity, 1)));
+			Assert.IsTrue ((Math.Abs (a - b) <= double_epsilon), a.ToString ("G99")
+				+ " != " + b.ToString ("G99"));
+			Assert.IsTrue (double.IsNaN (Math.Log (-1)));
+			Assert.IsTrue (double.IsNaN (Math.Log (double.NaN)));
 
 			// MS docs say this should be PositiveInfinity
-			iTest++;
-			Assert ("Math.Pow(1, double.PositiveInfinity) should be NaN", double.IsNaN(Math.Pow(1, double.PositiveInfinity)));
-
-			iTest++;
-			Assert("Math.Pow(1, NaN) should be NaN",
-				Double.IsNaN(Math.Pow(1, Double.NaN)));
-#if !TARGET_JVM
-			iTest++;
-			Assert("Math.Pow(NaN, 0) should be NaN",
-				Double.IsNaN(Math.Pow(Double.NaN, 0)));
-#endif
-			iTest++;
-			Assert("Math.Pow(-1, MaxValue) should be 1.0",
-				1.0 == Math.Pow(-1, Double.MaxValue));
-
-			iTest++;
-			Assert("Math.Pow(-1, MinValue) should be 1.0",
-				1.0 == Math.Pow(-1, Double.MinValue));
-
-			iTest++;
-			Assert("Math.Pow(MinValue, MaxValue) should be +Infinity",
-				Double.IsPositiveInfinity(
-					Math.Pow(Double.MinValue, Double.MaxValue)));
-
-			iTest++;
-			Assert("Math.Pow(MinValue, MinValue) should be 0.0",
-				0.0 == Math.Pow(Double.MinValue, Double.MinValue));
-
-			//
-			// The following bugs were present because we tried to outsmart the C Pow:
-			//
-			double infinity = Double.PositiveInfinity;
-			Assert ("Math.Pow(0.5, Infinity) == 0.0",
-				Math.Pow(0.5, infinity) == 0.0);
-			Assert ("Math.Pow(0.5, -Infinity) == Infinity",
-				Math.Pow(0.5, -infinity) == infinity);
-			Assert ("Math.Pow(2, Infinity) == Infinity",
-				Math.Pow(2, infinity) == infinity);
-			Assert ("Math.Pow(2, -Infinity) == 0",
-				Math.Pow(2, -infinity) == 0.0);
-			Assert ("Math.Pow(Infinity, 0) == 1.0",
-				Math.Pow(infinity, 0) == 1.0);
-			Assert ("Math.Pow(-Infinity, 0) == 1.0",
-				Math.Pow(-infinity, 0) == 1.0);
-		} catch (Exception e) {
-			Fail ("Unexpected exception at iTest=" + iTest + ". e=" + e);
+			Assert.IsTrue (Math.Log (0) == double.NegativeInfinity);
+			Assert.IsTrue (Math.Log (double.PositiveInfinity) == double.PositiveInfinity);
 		}
-	}	
 
-	public void TestByteMax() {
-		byte a = 1;
-		byte b = 2;
+		[Test]
+		public void TestLog2 ()
+		{
+			double a = Math.Log (x, y);
+			double b = -0.83251695325303621;
 
-		Assert(b == Math.Max(a, b));
-		Assert(b == Math.Max(b, a));
-	}
+			Assert.IsTrue ((Math.Abs (a - b) <= 1e-14), a + " != " + b
+				+ " because diff is " + Math.Abs (a - b));
+			Assert.IsTrue (double.IsNaN (Math.Log (-1, y)));
+			Assert.IsTrue (double.IsNaN (Math.Log (double.NaN, y)));
+			Assert.IsTrue (double.IsNaN (Math.Log (x, double.NaN)));
+			Assert.IsTrue (double.IsNaN (Math.Log (double.NegativeInfinity, y)));
+			Assert.IsTrue (double.IsNaN (Math.Log (x, double.NegativeInfinity)));
+			Assert.IsTrue (double.IsNaN (Math.Log (double.PositiveInfinity, double.PositiveInfinity)));
 
-	public void TestDecimalMax() {
-		decimal a = 1.5M;
-		decimal b = 2.5M;
+			// MS docs say this should be PositiveInfinity
+			Assert.IsTrue (Math.Log (0, y) == double.NegativeInfinity);
+			Assert.IsTrue (Math.Log (double.PositiveInfinity, y) == double.PositiveInfinity);
+			Assert.IsTrue (Math.Log (x, double.PositiveInfinity) == 0);
+		}
 
-		Assert(b == Math.Max(a, b));
-		Assert(b == Math.Max(b, a));
-	}
+		[Test]
+		public void TestLog10 ()
+		{
+			double a = Math.Log10 (x);
+			double b = -0.90868484030277719;
 
-	public void TestDoubleMax() {
-		double a = 1.5D;
-		double b = 2.5D;
+			Assert.IsTrue ((Math.Abs (a - b) <= double_epsilon), a.ToString ("G99")
+				+ " != " + b.ToString ("G99"));
+			Assert.IsTrue (double.IsNaN (Math.Log10 (-1)));
+			Assert.IsTrue (double.IsNaN (Math.Log10 (double.NaN)));
 
-		Assert(b == Math.Max(a, b));
-		Assert(b == Math.Max(b, a));
+			// MS docs say this should be PositiveInfinity
+			Assert.IsTrue (Math.Log10 (0) == double.NegativeInfinity);
+			Assert.IsTrue (Math.Log10 (double.PositiveInfinity) == double.PositiveInfinity);
 
-		Assert("Max(NaN,NaN) should be NaN",
-			Double.IsNaN(Math.Max(Double.NaN, Double.NaN)));
-		Assert("Max(NaN,x) should be NaN",
-			Double.IsNaN(Math.Max(Double.NaN, a)));
-		Assert("Max(x,NaN) should be NaN",
-			Double.IsNaN(Math.Max(b, Double.NaN)));
-	}
+		}
 
-	public void TestFloatMax() {
-		float a = 1.5F;
-		float b = 2.5F;
+		[Test]
+		public void TestPow ()
+		{
+			int iTest = 1;
 
-		Assert(b == Math.Max(a, b));
-		Assert(b == Math.Max(b, a));
-		Assert("Max(NaN,NaN) should be NaN",
-			Single.IsNaN(Math.Max(Single.NaN, Single.NaN)));
-		Assert("Max(NaN,x) should be NaN",
-			Single.IsNaN(Math.Max(Single.NaN, a)));
-		Assert("Max(x,NaN) should be NaN",
-			Single.IsNaN(Math.Max(b, Single.NaN)));
-	}
+			try {
+				double a = Math.Pow (y, x);
+				double b = 1.363609446060212;
 
-	public void TestIntMax() {
-		int a = 1;
-		int b = 2;
+				Assert.IsTrue ((Math.Abs (a - b) <= double_epsilon), a.ToString ("G99") + " != " + b.ToString ("G99"));
+				iTest++;
+				Assert.IsTrue (double.IsNaN (Math.Pow (y, double.NaN)));
+				iTest++;
+				Assert.IsTrue (double.IsNaN (Math.Pow (double.NaN, x)));
+				iTest++;
+				Assert.IsTrue (double.IsNegativeInfinity (Math.Pow (double.NegativeInfinity, 1)),
+					"Math.Pow(double.NegativeInfinity, 1) should be NegativeInfinity");
+				iTest++;
+				Assert.IsTrue (double.IsPositiveInfinity (Math.Pow (double.NegativeInfinity, 2)),
+					"Math.Pow(double.NegativeInfinity, 2) should be PositiveInfinity");
 
-		Assert(b == Math.Max(a, b));
-		Assert(b == Math.Max(b, a));
-	}
+				// MS docs say this should be 0
+				iTest++;
+				Assert.IsTrue (double.IsNaN (Math.Pow (1, double.NegativeInfinity)));
+				iTest++;
+				Assert.AreEqual ((double) 0, Math.Pow (double.PositiveInfinity, double.NegativeInfinity),
+					"Math.Pow(double.PositiveInfinity, double.NegativeInfinity)");
+				iTest++;
+				Assert.IsTrue (double.IsPositiveInfinity (Math.Pow (double.PositiveInfinity, 1)),
+					"Math.Pow(double.PositiveInfinity, 1) should be PositiveInfinity");
 
-	public void TestLongMax() {
-		long a = 1L;
-		long b = 2L;
+				// MS docs say this should be PositiveInfinity
+				iTest++;
+				Assert.IsTrue (double.IsNaN (Math.Pow (1, double.PositiveInfinity)),
+					"Math.Pow(1, double.PositiveInfinity) should be NaN");
 
-		Assert(b == Math.Max(a, b));
-		Assert(b == Math.Max(b, a));
-	}
+				iTest++;
+				Assert.IsTrue (Double.IsNaN (Math.Pow (1, Double.NaN)),
+					"Math.Pow(1, NaN) should be NaN");
+#if !TARGET_JVM
+				iTest++;
+				Assert.IsTrue (Double.IsNaN (Math.Pow (Double.NaN, 0)),
+					"Math.Pow(NaN, 0) should be NaN");
+#endif
+				iTest++;
+				Assert.IsTrue (1.0 == Math.Pow (-1, Double.MaxValue),
+					"Math.Pow(-1, MaxValue) should be 1.0");
 
-	public void TestSbyteMax() {
-		sbyte a = 1;
-		sbyte b = 2;
+				iTest++;
+				Assert.IsTrue (1.0 == Math.Pow (-1, Double.MinValue),
+					"Math.Pow(-1, MinValue) should be 1.0");
 
-		Assert(b == Math.Max(a, b));
-		Assert(b == Math.Max(b, a));
-	}
+				iTest++;
+				Assert.IsTrue (Double.IsPositiveInfinity (Math.Pow (Double.MinValue,
+					Double.MaxValue)), "Math.Pow(MinValue, MaxValue) should be +Infinity");
 
-	public void TestShortMax() {
-		short a = 1;
-		short b = 2;
+				iTest++;
+				Assert.IsTrue (0.0 == Math.Pow (Double.MinValue, Double.MinValue),
+					"Math.Pow(MinValue, MinValue) should be 0.0");
 
-		Assert(b == Math.Max(a, b));
-		Assert(b == Math.Max(b, a));
-	}
+				//
+				// The following bugs were present because we tried to outsmart the C Pow:
+				//
+				double infinity = Double.PositiveInfinity;
+				Assert.IsTrue (Math.Pow (0.5, infinity) == 0.0,
+					"Math.Pow(0.5, Infinity) == 0.0");
+				Assert.IsTrue (Math.Pow (0.5, -infinity) == infinity,
+					"Math.Pow(0.5, -Infinity) == Infinity");
+				Assert.IsTrue (Math.Pow (2, infinity) == infinity,
+					"Math.Pow(2, Infinity) == Infinity");
+				Assert.IsTrue (Math.Pow (2, -infinity) == 0.0,
+					"Math.Pow(2, -Infinity) == 0");
+				Assert.IsTrue (Math.Pow (infinity, 0) == 1.0,
+					"Math.Pow(Infinity, 0) == 1.0");
+				Assert.IsTrue (Math.Pow (-infinity, 0) == 1.0,
+					"Math.Pow(-Infinity, 0) == 1.0");
+			} catch (Exception e) {
+				Assert.Fail ("Unexpected exception at iTest=" + iTest + ". e=" + e);
+			}
+		}
 
-	public void TestUintMax() {
-		uint a = 1U;
-		uint b = 2U;
+		[Test]
+		public void TestByteMax ()
+		{
+			byte a = 1;
+			byte b = 2;
 
-		Assert(b == Math.Max(a, b));
-		Assert(b == Math.Max(b, a));
-	}
+			Assert.IsTrue (b == Math.Max (a, b), "#1");
+			Assert.IsTrue (b == Math.Max (b, a), "#2");
+		}
 
-	public void TestUlongMax() {
-		ulong a = 1UL;
-		ulong b = 2UL;
+		[Test]
+		public void TestDecimalMax ()
+		{
+			decimal a = 1.5M;
+			decimal b = 2.5M;
 
-		Assert(b == Math.Max(a, b));
-		Assert(b == Math.Max(b, a));
-	}
+			Assert.IsTrue (b == Math.Max (a, b), "#1");
+			Assert.IsTrue (b == Math.Max (b, a), "#2");
+		}
 
-	public void TestUshortMax() {
-		ushort a = 1;
-		ushort b = 2;
+		[Test]
+		public void TestDoubleMax ()
+		{
+			double a = 1.5D;
+			double b = 2.5D;
 
-		Assert(b == Math.Max(a, b));
-		Assert(b == Math.Max(b, a));
-	}
+			Assert.IsTrue (b == Math.Max (a, b), "#1");
+			Assert.IsTrue (b == Math.Max (b, a), "#2");
 
-	public void TestByteMin() {
-		byte a = 1;
-		byte b = 2;
+			Assert.IsTrue (Double.IsNaN (Math.Max (Double.NaN, Double.NaN)), "#3");
+			Assert.IsTrue (Double.IsNaN (Math.Max (Double.NaN, a)), "#4");
+			Assert.IsTrue (Double.IsNaN (Math.Max (b, Double.NaN)), "#5");
+		}
 
-		Assert(a == Math.Min(a, b));
-		Assert(a == Math.Min(b, a));
-	}
+		[Test]
+		public void TestFloatMax ()
+		{
+			float a = 1.5F;
+			float b = 2.5F;
 
-	public void TestDecimalMin() {
-		decimal a = 1.5M;
-		decimal b = 2.5M;
+			Assert.IsTrue (b == Math.Max (a, b), "#1");
+			Assert.IsTrue (b == Math.Max (b, a), "#2");
+			Assert.IsTrue (Single.IsNaN (Math.Max (Single.NaN, Single.NaN)), "#3");
+			Assert.IsTrue (Single.IsNaN (Math.Max (Single.NaN, a)), "#4");
+			Assert.IsTrue (Single.IsNaN (Math.Max (b, Single.NaN)), "#5");
+		}
 
-		Assert(a == Math.Min(a, b));
-		Assert(a == Math.Min(b, a));
-	}
+		[Test]
+		public void TestIntMax ()
+		{
+			int a = 1;
+			int b = 2;
+			int c = 100;
+			int d = -2147483647;
 
-	public void TestDoubleMin() {
-		double a = 1.5D;
-		double b = 2.5D;
+			Assert.AreEqual (b, Math.Max (a, b), "#1");
+			Assert.AreEqual (b, Math.Max (b, a), "#2");
+			Assert.AreEqual (c, Math.Max (c, d), "#3");
+			Assert.AreEqual (c, Math.Max (d, c), "#4");
+		}
 
-		Assert(a == Math.Min(a, b));
-		Assert(a == Math.Min(b, a));
-		Assert("Min(NaN,NaN) should be NaN",
-			Double.IsNaN(Math.Min(Double.NaN, Double.NaN)));
-		Assert("Min(NaN,x) should be NaN",
-			Double.IsNaN(Math.Min(Double.NaN, a)));
-		Assert("Min(x,NaN) should be NaN",
-			Double.IsNaN(Math.Min(b, Double.NaN)));
-	}
+		[Test]
+		public void TestLongMax ()
+		{
+			long a = 1L;
+			long b = 2L;
 
-	public void TestFloatMin() {
-		float a = 1.5F;
-		float b = 2.5F;
+			Assert.IsTrue (b == Math.Max (a, b), "#1");
+			Assert.IsTrue (b == Math.Max (b, a), "#2");
+		}
 
-		Assert(a == Math.Min(a, b));
-		Assert(a == Math.Min(b, a));
-		Assert("Min(NaN,NaN) should be NaN",
-			Single.IsNaN(Math.Min(Single.NaN, Single.NaN)));
-		Assert("Min(NaN,x) should be NaN",
-			Single.IsNaN(Math.Min(Single.NaN, a)));
-		Assert("Min(x,NaN) should be NaN",
-			Single.IsNaN(Math.Min(b, Single.NaN)));
-	}
+		[Test]
+		public void TestSbyteMax ()
+		{
+			sbyte a = 1;
+			sbyte b = 2;
 
-	public void TestIntMin() {
-		int a = 1;
-		int b = 2;
+			Assert.IsTrue (b == Math.Max (a, b), "#1");
+			Assert.IsTrue (b == Math.Max (b, a), "#2");
+		}
 
-		Assert(a == Math.Min(a, b));
-		Assert(a == Math.Min(b, a));
-	}
+		[Test]
+		public void TestShortMax ()
+		{
+			short a = 1;
+			short b = 2;
 
-	public void TestLongMin() {
-		long a = 1L;
-		long b = 2L;
+			Assert.IsTrue (b == Math.Max (a, b), "#1");
+			Assert.IsTrue (b == Math.Max (b, a), "#2");
+		}
 
-		Assert(a == Math.Min(a, b));
-		Assert(a == Math.Min(b, a));
-	}
+		[Test]
+		public void TestUintMax ()
+		{
+			uint a = 1U;
+			uint b = 2U;
 
-	public void TestSbyteMin() {
-		sbyte a = 1;
-		sbyte b = 2;
+			Assert.IsTrue (b == Math.Max (a, b), "#1");
+			Assert.IsTrue (b == Math.Max (b, a), "#2");
+		}
 
-		Assert(a == Math.Min(a, b));
-		Assert(a == Math.Min(b, a));
-	}
+		[Test]
+		public void TestUlongMax ()
+		{
+			ulong a = 1UL;
+			ulong b = 2UL;
 
-	public void TestShortMin() {
-		short a = 1;
-		short b = 2;
+			Assert.IsTrue (b == Math.Max (a, b), "#1");
+			Assert.IsTrue (b == Math.Max (b, a), "#2");
+		}
 
-		Assert(a == Math.Min(a, b));
-		Assert(a == Math.Min(b, a));
-	}
+		[Test]
+		public void TestUshortMax ()
+		{
+			ushort a = 1;
+			ushort b = 2;
 
-	public void TestUintMin() {
-		uint a = 1U;
-		uint b = 2U;
+			Assert.IsTrue (b == Math.Max (a, b), "#1");
+			Assert.IsTrue (b == Math.Max (b, a), "#2");
+		}
 
-		Assert(a == Math.Min(a, b));
-		Assert(a == Math.Min(b, a));
-	}
+		[Test]
+		public void TestByteMin ()
+		{
+			byte a = 1;
+			byte b = 2;
 
-	public void TestUlongMin() {
-		ulong a = 1UL;
-		ulong b = 2UL;
+			Assert.IsTrue (a == Math.Min (a, b), "#1");
+			Assert.IsTrue (a == Math.Min (b, a), "#2");
+		}
 
-		Assert(a == Math.Min(a, b));
-		Assert(a == Math.Min(b, a));
-	}
+		[Test]
+		public void TestDecimalMin ()
+		{
+			decimal a = 1.5M;
+			decimal b = 2.5M;
 
-	public void TestUshortMin() {
-		ushort a = 1;
-		ushort b = 2;
+			Assert.IsTrue (a == Math.Min (a, b), "#1");
+			Assert.IsTrue (a == Math.Min (b, a), "#2");
+		}
 
-		Assert(a == Math.Min(a, b));
-		Assert(a == Math.Min(b, a));
-	}
+		[Test]
+		public void TestDoubleMin ()
+		{
+			double a = 1.5D;
+			double b = 2.5D;
 
-	public void TestDecimalRound() {
-		decimal a = 1.5M;
-		decimal b = 2.5M;
+			Assert.IsTrue (a == Math.Min (a, b), "#1");
+			Assert.IsTrue (a == Math.Min (b, a), "#2");
+			Assert.IsTrue (Double.IsNaN (Math.Min (Double.NaN, Double.NaN)), "#3");
+			Assert.IsTrue (Double.IsNaN (Math.Min (Double.NaN, a)), "#4");
+			Assert.IsTrue (Double.IsNaN (Math.Min (b, Double.NaN)), "#5");
+		}
 
-		Assert(Math.Round(a) + " != 2", Math.Round(a) == 2);
-		Assert(Math.Round(b) + " != 2", Math.Round(b) == 2);
-		Assert(Decimal.MaxValue == Math.Round(Decimal.MaxValue));
-		Assert(Decimal.MinValue == Math.Round(Decimal.MinValue));
-	}
+		[Test]
+		public void TestFloatMin ()
+		{
+			float a = 1.5F;
+			float b = 2.5F;
 
-	public void TestDecimalRound2() {
-		decimal a = 3.45M;
-		decimal b = 3.46M;
+			Assert.IsTrue (a == Math.Min (a, b), "#1");
+			Assert.IsTrue (a == Math.Min (b, a), "#2");
+			Assert.IsTrue (Single.IsNaN (Math.Min (Single.NaN, Single.NaN)), "#3");
+			Assert.IsTrue (Single.IsNaN (Math.Min (Single.NaN, a)), "#4");
+			Assert.IsTrue (Single.IsNaN (Math.Min (b, Single.NaN)), "#5");
+		}
 
-		AssertEquals ("Should round down", Math.Round(a, 1), 3.4M);
-		AssertEquals ("Should round up", Math.Round(b, 1), 3.5M);
-	}
+		[Test]
+		public void TestIntMin ()
+		{
+			int a = 1;
+			int b = 2;
 
-	public void TestDoubleRound() {
-		double a = 1.5D;
-		double b = 2.5D;
+			Assert.IsTrue (a == Math.Min (a, b), "#1");
+			Assert.IsTrue (a == Math.Min (b, a), "#2");
+		}
 
-		AssertEquals ("Should round up", Math.Round(a), 2D);
-		AssertEquals ("Should round down", Math.Round(b), 2D);
-		Assert(Double.MaxValue == Math.Round(Double.MaxValue));
-		Assert(Double.MinValue == Math.Round(Double.MinValue));
-	}
+		[Test]
+		public void TestLongMin ()
+		{
+			long a = 1L;
+			long b = 2L;
+
+			Assert.IsTrue (a == Math.Min (a, b), "#1");
+			Assert.IsTrue (a == Math.Min (b, a), "#2");
+		}
+
+		[Test]
+		public void TestSbyteMin ()
+		{
+			sbyte a = 1;
+			sbyte b = 2;
+
+			Assert.IsTrue (a == Math.Min (a, b), "#1");
+			Assert.IsTrue (a == Math.Min (b, a), "#2");
+		}
+
+		[Test]
+		public void TestShortMin ()
+		{
+			short a = 1;
+			short b = 2;
+
+			Assert.IsTrue (a == Math.Min (a, b), "#1");
+			Assert.IsTrue (a == Math.Min (b, a), "#2");
+		}
+
+		[Test]
+		public void TestUintMin ()
+		{
+			uint a = 1U;
+			uint b = 2U;
+
+			Assert.IsTrue (a == Math.Min (a, b), "#1");
+			Assert.IsTrue (a == Math.Min (b, a), "#2");
+		}
+
+		[Test]
+		public void TestUlongMin ()
+		{
+			ulong a = 1UL;
+			ulong b = 2UL;
+
+			Assert.IsTrue (a == Math.Min (a, b), "#1");
+			Assert.IsTrue (a == Math.Min (b, a), "#2");
+		}
+
+		[Test]
+		public void TestUshortMin ()
+		{
+			ushort a = 1;
+			ushort b = 2;
+
+			Assert.IsTrue (a == Math.Min (a, b), "#1");
+			Assert.IsTrue (a == Math.Min (b, a), "#2");
+		}
+
+		[Test]
+		public void TestDecimalRound ()
+		{
+			decimal a = 1.5M;
+			decimal b = 2.5M;
+
+			Assert.IsTrue (Math.Round (a) == 2, "#1");
+			Assert.IsTrue (Math.Round (b) == 2, "#2");
+			Assert.IsTrue (Decimal.MaxValue == Math.Round (Decimal.MaxValue), "#3");
+			Assert.IsTrue (Decimal.MinValue == Math.Round (Decimal.MinValue), "#4");
+		}
+
+		[Test]
+		public void TestDecimalRound2 ()
+		{
+			decimal a = 3.45M;
+			decimal b = 3.46M;
+
+			Assert.AreEqual (3.4M, Math.Round (a, 1), "#1");
+			Assert.AreEqual (3.5M, Math.Round (b, 1), "#2");
+		}
+
+		[Test]
+		public void TestDoubleRound ()
+		{
+			double a = 1.5D;
+			double b = 2.5D;
+
+			Assert.AreEqual (2D, Math.Round (a), "#1");
+			Assert.AreEqual (2D, Math.Round (b), "#2");
+			Assert.IsTrue (Double.MaxValue == Math.Round (Double.MaxValue), "#3");
+			Assert.IsTrue (Double.MinValue == Math.Round (Double.MinValue), "#4");
+		}
 
 #if NET_2_0
-	public void TestDoubleTruncate ()
-	{
-		double a = 1.2D;
-		double b = 2.8D;
-		double c = 0D;
+		[Test]
+		public void TestDoubleTruncate ()
+		{
+			double a = 1.2D;
+			double b = 2.8D;
+			double c = 0D;
 
-		AssertEquals ("Should truncate to 1", Math.Truncate (a), 1D);
-		AssertEquals ("Should truncate to 2", Math.Truncate (b), 2D);
+			Assert.AreEqual (1D, Math.Truncate (a), "#1");
+			Assert.AreEqual (2D, Math.Truncate (b), "#2");
 
-		AssertEquals ("Should truncate to -1", Math.Truncate (a * -1D), -1D);
-		AssertEquals ("Should truncate to -2", Math.Truncate (b * -1D), -2D);
+			Assert.AreEqual (-1D, Math.Truncate (a * -1D), "#3");
+			Assert.AreEqual (-2D, Math.Truncate (b * -1D), "#4");
 
-		AssertEquals ("Should return 0", Math.Truncate (c), 0D);
+			Assert.AreEqual (0D, Math.Truncate (c), "#5");
 
-		Assert (Double.MaxValue == Math.Truncate (Double.MaxValue));
-		Assert (Double.MinValue == Math.Truncate (Double.MinValue));
-	}
+			Assert.IsTrue (Double.MaxValue == Math.Truncate (Double.MaxValue), "#6");
+			Assert.IsTrue (Double.MinValue == Math.Truncate (Double.MinValue), "#7");
+		}
 
-	public void TestDecimalTruncate ()
-	{
-		decimal a = 1.2M;
-		decimal b = 2.8M;
-		decimal c = 0M;
+		[Test]
+		public void TestDecimalTruncate ()
+		{
+			decimal a = 1.2M;
+			decimal b = 2.8M;
+			decimal c = 0M;
 
-		AssertEquals ("Should truncate to 1", Math.Truncate (a), 1M);
-		AssertEquals ("Should truncate to 2", Math.Truncate (b), 2M);
+			Assert.AreEqual (1M, Math.Truncate (a), "#1");
+			Assert.AreEqual (2M, Math.Truncate (b), "#2");
 
-		AssertEquals ("Should truncate to -1", Math.Truncate (a * -1M), -1M);
-		AssertEquals ("Should truncate to -2", Math.Truncate (b * -1M), -2M);
+			Assert.AreEqual (-1M, Math.Truncate (a * -1M), "#3");
+			Assert.AreEqual (-2M, Math.Truncate (b * -1M), "#4");
 
-		AssertEquals ("Should return 0", Math.Truncate (c), 0M);
+			Assert.AreEqual (0M, Math.Truncate (c), "#5");
 
-		Assert (Decimal.MaxValue == Math.Truncate (Decimal.MaxValue));
-		Assert (Decimal.MinValue == Math.Truncate (Decimal.MinValue));
-	}
+			Assert.IsTrue (Decimal.MaxValue == Math.Truncate (Decimal.MaxValue), "#6");
+			Assert.IsTrue (Decimal.MinValue == Math.Truncate (Decimal.MinValue), "#7");
+		}
 #endif
 
-	public void TestDoubleRound2() {
-		double a = 3.45D;
-		double b = 3.46D;
+		[Test]
+		public void TestDoubleRound2 ()
+		{
+			double a = 3.45D;
+			double b = 3.46D;
 
-		AssertEquals ("Should round down", Math.Round(a, 1), 3.4D);
-		AssertEquals ("Should round up", Math.Round(b, 1), 3.5D);
+			Assert.AreEqual (3.4D, Math.Round (a, 1), "#1");
+			Assert.AreEqual (3.5D, Math.Round (b, 1), "#2");
+			Assert.AreEqual (-0.1, Math.Round (-0.123456789, 1), "#3");
+		}
 
-		AssertEquals (Math.Round (-0.123456789, 1), -0.1);
+		[Test]
+		public void TestDecimalSign ()
+		{
+			decimal a = -5M;
+			decimal b = 5M;
+
+			Assert.IsTrue (Math.Sign (a) == -1, "#1");
+			Assert.IsTrue (Math.Sign (b) == 1, "#2");
+			Assert.IsTrue (Math.Sign (0M) == 0, "#3");
+		}
+
+		[Test]
+		public void TestDoubleSign ()
+		{
+			double a = -5D;
+			double b = 5D;
+
+			Assert.IsTrue (Math.Sign (a) == -1, "#1");
+			Assert.IsTrue (Math.Sign (b) == 1, "#2");
+			Assert.IsTrue (Math.Sign (0D) == 0, "#3");
+		}
+
+		[Test]
+		public void TestFloatSign ()
+		{
+			float a = -5F;
+			float b = 5F;
+
+			Assert.IsTrue (Math.Sign (a) == -1, "#1");
+			Assert.IsTrue (Math.Sign (b) == 1, "#2");
+			Assert.IsTrue (Math.Sign (0F) == 0, "#3");
+		}
+
+		[Test]
+		public void TestIntSign ()
+		{
+			int a = -5;
+			int b = 5;
+
+			Assert.IsTrue (Math.Sign (a) == -1, "#1");
+			Assert.IsTrue (Math.Sign (b) == 1, "#2");
+			Assert.IsTrue (Math.Sign (0) == 0, "#3");
+		}
+
+		[Test]
+		public void TestLongSign ()
+		{
+			long a = -5L;
+			long b = 5L;
+
+			Assert.IsTrue (Math.Sign (a) == -1, "#1");
+			Assert.IsTrue (Math.Sign (b) == 1, "#2");
+			Assert.IsTrue (Math.Sign (0L) == 0, "#3");
+		}
+
+		[Test]
+		public void TestSbyteSign ()
+		{
+			sbyte a = -5;
+			sbyte b = 5;
+
+			Assert.IsTrue (Math.Sign (a) == -1, "#1");
+			Assert.IsTrue (Math.Sign (b) == 1, "#2");
+			Assert.IsTrue (Math.Sign (0) == 0, "#3");
+		}
+
+		[Test]
+		public void TestShortSign ()
+		{
+			short a = -5;
+			short b = 5;
+
+			Assert.IsTrue (Math.Sign (a) == -1, "#1");
+			Assert.IsTrue (Math.Sign (b) == 1, "#2");
+			Assert.IsTrue (Math.Sign (0) == 0, "#3");
+		}
 	}
-	
-	public void TestDecimalSign() {
-		decimal a = -5M;
-		decimal b = 5M;
-
-		Assert(Math.Sign(a) == -1);
-		Assert(Math.Sign(b) == 1);
-		Assert(Math.Sign(0M) == 0);
-	}
-
-	public void TestDoubleSign() {
-		double a = -5D;
-		double b = 5D;
-
-		Assert(Math.Sign(a) == -1);
-		Assert(Math.Sign(b) == 1);
-		Assert(Math.Sign(0D) == 0);
-	}
-
-	public void TestFloatSign() {
-		float a = -5F;
-		float b = 5F;
-
-		Assert(Math.Sign(a) == -1);
-		Assert(Math.Sign(b) == 1);
-		Assert(Math.Sign(0F) == 0);
-	}
-
-	public void TestIntSign() {
-		int a = -5;
-		int b = 5;
-
-		Assert(Math.Sign(a) == -1);
-		Assert(Math.Sign(b) == 1);
-		Assert(Math.Sign(0) == 0);
-	}
-
-	public void TestLongSign() {
-		long a = -5L;
-		long b = 5L;
-
-		Assert(Math.Sign(a) == -1);
-		Assert(Math.Sign(b) == 1);
-		Assert(Math.Sign(0L) == 0);
-	}
-
-	public void TestSbyteSign() {
-		sbyte a = -5;
-		sbyte b = 5;
-
-		Assert(Math.Sign(a) == -1);
-		Assert(Math.Sign(b) == 1);
-		Assert(Math.Sign(0) == 0);
-	}
-
-	public void TestShortSign() {
-		short a = -5;
-		short b = 5;
-
-		Assert(Math.Sign(a) == -1);
-		Assert(Math.Sign(b) == 1);
-		Assert(Math.Sign(0) == 0);
-	}
-
-}
-
 }
