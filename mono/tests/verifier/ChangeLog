@@ -1,4 +1,10 @@
-2007-07-03 Roderigo Kumpera <rkumpera@novell.com>
+2007-07-03 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_tests.sh: new access verification tests
+	* make_access_test.sh: create member access test
+	* make_nested_access_tests.sh: create nested member access test
+
+2007-07-03 Rodrigo Kumpera <rkumpera@novell.com>
 
 	*make_tests.sh: fixed two tests to produce valid results with .net
 	*make_field_test.sh: make fields public
