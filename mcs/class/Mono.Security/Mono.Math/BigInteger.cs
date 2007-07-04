@@ -1087,6 +1087,24 @@ namespace Mono.Math {
 				return diff;
 			}
 
+			public BigInteger Pow (BigInteger a, BigInteger k)
+			{
+				BigInteger b = new BigInteger (1);
+				if (k == 0)
+					return b;
+
+				BigInteger A = a;
+				if (k.TestBit (0))
+					b = a;
+
+				for (int i = 1; i < k.BitCount (); i++) {
+					A = Multiply (A, A);
+					if (k.TestBit (i))
+						b = Multiply (A, b);
+				}
+				return b;
+			}
+#if false
 			public BigInteger Pow (BigInteger b, BigInteger exp)
 			{
 				if ((mod.data [0] & 1) == 1) return OddPow (b, exp);
@@ -1157,7 +1175,7 @@ namespace Mono.Math {
 				Montgomery.Reduce (resultNum, mod, mPrime);
 				return resultNum;
 			}
-
+#endif
 			#region Pow Small Base
 
 			// TODO: Make tests for this, not really needed b/c prime stuff
@@ -1165,6 +1183,11 @@ namespace Mono.Math {
 #if !INSIDE_CORLIB
                         [CLSCompliant (false)]
 #endif 
+			public BigInteger Pow (uint b, BigInteger exp)
+			{
+				return Pow (new BigInteger (b), exp);
+			}
+#if false
 			public BigInteger Pow (uint b, BigInteger exp)
 			{
 //				if (b != 2) {
@@ -1526,7 +1549,8 @@ namespace Mono.Math {
 				resultNum = Montgomery.Reduce (resultNum, mod, mPrime);
 				return resultNum;
 			}
-*/			
+*/
+#endif
 			#endregion
 		}
 
