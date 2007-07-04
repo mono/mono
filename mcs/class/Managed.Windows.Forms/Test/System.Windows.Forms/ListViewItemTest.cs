@@ -308,6 +308,46 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		public void ListViewItemFocused ()
+		{
+			ListView lv = new ListView ();
+			ListViewItem item1 = lv.Items.Add ("A");
+			ListViewItem item2 = lv.Items.Add ("B");
+			ListViewItem item3 = lv.Items.Add ("C");
+
+			// Need to show form
+			Form form = new Form ();
+			lv.Parent = form;
+			form.Show ();
+
+			item1.Focused = true;
+			Assert.AreEqual (true, item1.Focused, "#A1");
+			Assert.AreEqual (false, item2.Focused, "#A2");
+			Assert.AreEqual (false, item3.Focused, "#A3");
+			Assert.AreEqual (item1, lv.FocusedItem, "#A4");
+
+			item2.Focused = true;
+			Assert.AreEqual (false, item1.Focused, "#B1");
+			Assert.AreEqual (true, item2.Focused, "#B2");
+			Assert.AreEqual (false, item3.Focused, "#B3");
+			Assert.AreEqual (item2, lv.FocusedItem, "#B4");
+
+			item3.Focused = true;
+			Assert.AreEqual (false, item1.Focused, "#C1");
+			Assert.AreEqual (false, item2.Focused, "#C2");
+			Assert.AreEqual (true, item3.Focused, "#C3");
+			Assert.AreEqual (item3, lv.FocusedItem, "#C4");
+
+			item3.Focused = false;
+			Assert.AreEqual (false, item1.Focused, "#D1");
+			Assert.AreEqual (false, item2.Focused, "#D2");
+			Assert.AreEqual (false, item3.Focused, "#D3");
+			Assert.AreEqual (null, lv.FocusedItem, "#D4");
+
+			form.Dispose ();
+		}
+
+		[Test]
 		public void ListViewItemUseItemStyleForSubItems ()
 		{
 			ListViewItem item = new ListViewItem ();

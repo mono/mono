@@ -1,5 +1,9 @@
 2007-07-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ListViewItemTest.cs: Add tests for Focused property.
+
+2007-07-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* ListViewTest.cs: Add tests for 2.0 FocusedItem property setter.
 
 2007-07-03  Carlos Alberto Cortez <calberto.cortez@gmail.com>
