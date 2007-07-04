@@ -480,7 +480,11 @@ namespace System.Windows.Forms
 			}
 #if NET_2_0
 			set {
-				throw new NotImplementedException ();
+				if (value == null || value.ListView != this || 
+						!IsHandleCreated || focused_item == value)
+					return;
+
+				SetFocusedItem (value);
 			}
 #endif
 		}
