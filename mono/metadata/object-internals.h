@@ -527,6 +527,7 @@ struct _MonoDelegate {
 	MonoString *method_name;
 	gpointer delegate_trampoline;
 	MonoReflectionMethod *method_info;
+	MonoReflectionMethod *original_method_info;
 };
 
 typedef struct _MonoMulticastDelegate MonoMulticastDelegate;
@@ -1072,11 +1073,12 @@ MonoReflectionType* mono_reflection_create_runtime_class  (MonoReflectionTypeBui
 void        mono_reflection_get_dynamic_overrides (MonoClass *klass, MonoMethod ***overrides, int *num_overrides) MONO_INTERNAL;
 
 void mono_reflection_create_dynamic_method (MonoReflectionDynamicMethod *m) MONO_INTERNAL;
+void mono_reflection_destroy_dynamic_method (MonoReflectionDynamicMethod *mb) MONO_INTERNAL;
 
 void        mono_reflection_initialize_generic_parameter (MonoReflectionGenericParam *gparam) MONO_INTERNAL;
 
-MonoType*
-mono_class_bind_generic_parameters (MonoType *type, int type_argc, MonoType **types) MONO_INTERNAL;
+MonoClass*
+mono_class_bind_generic_parameters (MonoClass *klass, int type_argc, MonoType **types, gboolean is_dynamic) MONO_INTERNAL;
 MonoType*
 mono_reflection_bind_generic_parameters (MonoReflectionType *type, int type_argc, MonoType **types) MONO_INTERNAL;
 MonoReflectionMethod*

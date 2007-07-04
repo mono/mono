@@ -1,3 +1,10 @@
+
+Wed Jul 4 17:46:19 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* darwin_stop_world.c: use a larger array for GC_mach_threads
+	(it'll need to be enlarged dynamically, but it's with the world
+	stopped, bug #81974).
+
 2007-05-09  Jonathan Chambers  <joncham@gmail.com>
 
 	* win32_threads.c: If SuspendThread fails, don't abort. Instead

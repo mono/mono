@@ -109,6 +109,12 @@ REQUIRES=$(
 	done
 )
 
+# Note about above:
+#  Use to do: system("rpm -q --whatprovides --queryformat \"%{NAME}\n\" ""\""req"'$libext'""\"")
+#  rpmlint prefers to have lib names instead of package names.  There was a reason I was using package names but it slips me now...
+#  Ah... now I remember... it's for noarch packs.  The noarch packages can be built on either 32 or 64 bit... so we have to depend
+#   on the package name instead.
+
 PROVIDES=$(
 	for i in "${monolist[@]}"; do
 		($bindir/monodis --assembly $i | awk '

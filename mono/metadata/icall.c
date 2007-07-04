@@ -1305,7 +1305,7 @@ ves_icall_System_Reflection_FieldInfo_GetUnmanagedMarshal (MonoReflectionField *
 	int i;
 
 	if (klass->generic_container ||
-	    (klass->generic_class && klass->generic_class->inst->is_open))
+	    (klass->generic_class && klass->generic_class->context.class_inst->is_open))
 		return NULL;
 
 	info = mono_marshal_load_type_info (klass);
@@ -1579,7 +1579,7 @@ ves_icall_FieldInfo_SetValueInternal (MonoReflectionField *field, MonoObject *ob
 			break;
 		case MONO_TYPE_GENERICINST: {
 			MonoGenericClass *gclass = cf->type->data.generic_class;
-			g_assert (!gclass->inst->is_open);
+			g_assert (!gclass->context.class_inst->is_open);
 
 			if (mono_class_is_nullable (mono_class_from_mono_type (cf->type))) {
 				MonoClass *nklass = mono_class_from_mono_type (cf->type);
@@ -1709,8 +1709,7 @@ ves_icall_Type_GetInterfaces (MonoReflectionType* type)
 
 	MONO_ARCH_SAVE_REGS;
 
-	/* open generic-instance classes can share their interface_id */
-	if (class->generic_class && class->generic_class->inst->is_open) {
+	if (class->generic_class && class->generic_class->context.class_inst->is_open) {
 		context = mono_class_get_context (class);
 		class = class->generic_class->container_class;
 	}
@@ -1745,7 +1744,7 @@ ves_icall_Type_GetInterfaces (MonoReflectionType* type)
 	for (i = 0; i < ifaces->len; ++i) {
 		MonoClass *ic = g_ptr_array_index (ifaces, i);
 		MonoType *ret = &ic->byval_arg;
-		if (context && ic->generic_class && ic->generic_class->inst->is_open)
+		if (context && ic->generic_class && ic->generic_class->context.class_inst->is_open)
 			ret = mono_class_inflate_generic_type (ret, context);
 		
 		mono_array_setref (intf, i, mono_type_get_object (domain, ret));
@@ -1987,7 +1986,7 @@ ves_icall_MonoType_GetGenericArguments (MonoReflectionType *type)
 			mono_array_setref (res, i, mono_type_get_object (mono_object_domain (type), &pklass->byval_arg));
 		}
 	} else if (klass->generic_class) {
-		MonoGenericInst *inst = klass->generic_class->inst;
+		MonoGenericInst *inst = klass->generic_class->context.class_inst;
 		res = mono_array_new (mono_object_domain (type), mono_defaults.monotype_class, inst->type_argc);
 		for (i = 0; i < inst->type_argc; ++i)
 			mono_array_setref (res, i, mono_type_get_object (mono_object_domain (type), inst->type_argv [i]));
@@ -2592,7 +2591,6 @@ ves_icall_MonoMethod_GetDllImportAttribute (MonoMethod *method)
 static MonoReflectionMethod *
 ves_icall_MonoMethod_GetGenericMethodDefinition (MonoReflectionMethod *method)
 {
-	MonoGenericContext *context;
 	MonoMethodInflated *imethod;
 
 	MONO_ARCH_SAVE_REGS;
@@ -2606,10 +2604,8 @@ ves_icall_MonoMethod_GetGenericMethodDefinition (MonoReflectionMethod *method)
 
 	imethod = (MonoMethodInflated *) method->method;
 
-	/* FIXME: should reflection_info be part of imethod? */
-	context = mono_method_get_context (method->method);
-	if (context->gmethod && context->gmethod->reflection_info)
-		return context->gmethod->reflection_info;
+	if (imethod->reflection_info)
+		return imethod->reflection_info;
 	else
 		return mono_method_get_object (
 			mono_object_domain (method), imethod->declaring, NULL);
@@ -2628,7 +2624,7 @@ ves_icall_MonoMethod_get_IsGenericMethodDefinition (MonoReflectionMethod *method
 {
 	MONO_ARCH_SAVE_REGS;
 
-	return !method->method->is_inflated &&
+	return method->method->generic_container &&
 		(mono_method_signature (method->method)->generic_param_count != 0);
 }
 
@@ -2643,14 +2639,14 @@ ves_icall_MonoMethod_GetGenericArguments (MonoReflectionMethod *method)
 	domain = mono_object_domain (method);
 
 	if (method->method->is_inflated) {
-		MonoGenericMethod *gmethod = mono_method_get_context (method->method)->gmethod;
+		MonoGenericInst *inst = mono_method_get_context (method->method)->method_inst;
 
-		if (gmethod) {
-			count = gmethod->inst->type_argc;
+		if (inst) {
+			count = inst->type_argc;
 			res = mono_array_new (domain, mono_defaults.monotype_class, count);
 
 			for (i = 0; i < count; i++)
-				mono_array_setref (res, i, mono_type_get_object (domain, gmethod->inst->type_argv [i]));
+				mono_array_setref (res, i, mono_type_get_object (domain, inst->type_argv [i]));
 
 			return res;
 		}
@@ -4385,10 +4381,13 @@ ves_icall_GetCurrentMethod (void)
 }
 
 static MonoReflectionMethod*
-ves_icall_System_Reflection_MethodBase_GetMethodFromHandleInternalType (MonoMethod *method, MonoClass *klass)
+ves_icall_System_Reflection_MethodBase_GetMethodFromHandleInternalType (MonoMethod *method, MonoType *type)
 {
 	/* FIXME check that method belongs to klass or a parent */
-	if (!klass)
+	MonoClass *klass;
+	if (type)
+		klass = mono_class_from_mono_type (type);
+	else
 		klass = method->klass;
 	return mono_method_get_object (mono_domain_get (), method, klass);
 }

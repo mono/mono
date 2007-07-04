@@ -11,6 +11,9 @@
 
 #include <config.h>
 #include <signal.h>
+#if HAVE_SCHED_SETAFFINITY
+#include <sched.h>
+#endif
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
@@ -695,6 +698,12 @@ mono_main (int argc, char* argv[])
 
 	setlocale (LC_ALL, "");
 
+#if HAVE_SCHED_SETAFFINITY
+	if (getenv ("MONO_NO_SMP")) {
+		unsigned long proc_mask = 1;
+		sched_setaffinity (getpid(), sizeof (unsigned long), &proc_mask);
+	}
+#endif
 	if (!g_thread_supported ())
 		g_thread_init (NULL);
 
@@ -993,6 +1002,8 @@ mono_main (int argc, char* argv[])
 		error = mono_check_corlib_version ();
 		if (error) {
 			fprintf (stderr, "Corlib not in sync with this runtime: %s\n", error);
+			fprintf (stderr, "Loaded from: %s\n",
+				mono_defaults.corlib? mono_image_get_filename (mono_defaults.corlib): "unknown");
 			fprintf (stderr, "Download a newer corlib or a newer runtime at http://www.go-mono.com/daily.\n");
 			exit (1);
 		}

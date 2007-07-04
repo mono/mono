@@ -72,9 +72,190 @@
 
 	* linear-scan.c (mono_linear_scan): Update mono_jit_stats.regvars.
 
+Wed Jul 4 15:30:36 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* optflags-def.h, mini-x86.c: added sse2 optimization flag and use it
+	to emit better double->int conversions.
+
+Tue Jul 3 19:42:16 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: the provided Min/Max optimizations are valid for unisgned
+	ints.
+
+2007-07-03  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini.c (can_access_method, can_access_field): methods moved to metadata/class.c and renamed to mono_method_can_access_method and mono_method_can_acesss_field
+
+2007-06-28  Miguel de Icaza  <miguel@novell.com>
+
+	* mini.c (mono_running_on_valgrind): Add support for reporting the
+	method and  its boundaries to valgrind.
+
+2007-06-28  Martin Baulig  <martin@ximian.com>
+
+	* debug-debugger.h (MonoDebuggerInfo): Added `debugger_version'.
+
+2007-06-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* ssa.c (visit_inst): Add support for OP_BR. Fixes #81946.
+
+	* generic.2.cs: Add new test case.
+
+2007-06-25  Martin Baulig  <martin@ximian.com>
+
+	Merged the `debugger-dublin' branch.
+
+	* debug-mini.c
+	(mono_debugger_insert_method_breakpoint): New public method.
+	(mono_debugger_remove_method_breakpoint): Likewise.
+	(mono_debugger_check_breakpoints): New static method.
+	(mono_debug_close_method): Call mono_debugger_check_breakpoints().
+
+	* debug-debugger.h (MonoDebuggerInfo):
+	Renamed (to keep backward compatibility in the vtable):
+	`insert_breakpoint' -> `old_insert_breakpoint'.
+	`remove_breakpoint' -> `old_remove_breakpoint'.
+	`create_string' -> `old_create_string'.
+	`lookup_class' -> `old_lookup_class'.
+	`lookup_type' -> removed; changed into a dummy field.
+	`lookup_assembly' -> `old_lookup_assembly'.
+	Added (same functionality, but different signature):
+	`create_string', `lookup_class', `lookup_assembly'
+	Added new:
+	`get_method_addr_or_bpt', `remove_method_breakpoint',
+	`runtime_class_init'.
+
+	* debug-debugger.c: Merged the `debugger-dublin' branch.
+
+2007-06-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (peephole_pass_1): Optimize away moves at the beginning of the bb as
+	well.
+	(peephole_pass): Likewise.
+
+Fri Jun 22 09:17:08 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* driver.c: hopefully make setaffinity work also for ancient
+	versions of linux.
+
+2007-06-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* driver.c : win32 build fix.
+
+Thu Jun 21 19:24:03 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* driver.c: check for the MONO_NO_SMP env var and bind to a single
+	processor if it is set.
+
+2007-06-21  Martin Baulig  <martin@ximian.com>
+
+	* debug-mini.h: New file.
+
+	* debug-mini.c
+	(mono_debugger_insert_breakpoint_full): Moved here from
+	../metadata/mono-debug-debugger.c.
+	(mono_debugger_remove_breakpoint): Likewise.
+	(mono_debugger_breakpoint_callback): Likewise.
+
+2007-06-15  Raja R Harinath  <rharinath@novell.com>
+
+	* jit-icalls.c (mono_helper_compile_generic_method): Update to
+	changes in MonoGenericClass.
+
+2007-06-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-codegen.c (mono_opcode_to_type): Fix ia64 build.
+
+2007-06-14  Raja R Harinath  <rharinath@novell.com>
+
+	* jit-icalls.c (mono_helper_compile_generic_method): Update to
+	removal of MonoGenericMethod.
+
+Thu Jun 14 12:42:04 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-exceptions.c: hooks for the exception events profiling API.
+
+2007-06-14  Randolph Chung  <tausq@debian.org>
+
+	* Makefile.ma: Add hppa target.
+	* mini-arch.h: Include mini-hppa.h
+	* cpu-hppa.md, exceptions-hppa.c, inssel-hppa.brg, mini-hppa.c,
+	mini-hppa.h, tramp-hppa.c: New files for 32-bit HPPA port.
+	Contributed under the X11 license (http://bugzilla.ximian.com/show_bug.cgi?id=81866).
+
+2007-06-14  Randolph Chung  <tausq@debian.org>
+
+	* inssel.brg: Add rules for "chained" compare-branch operations so that
+	a single compare op can affect multiple branches.  Adjust cost for
+	OP_CEQ/OP_CGT/OP_CGT_UN/OP_CLT/OP_CLT_UN.
+	* inssel-long32.brg: Update rules to use compare-branch macros.  Adjust
+	cost for some rules so that they can more easily be overridden by
+	per-arch rules (with fixes from lupus).
+	Contributed under the X11 license (http://bugzilla.ximian.com/show_bug.cgi?id=81866).
+
+2007-06-13  Randolph Chung  <tausq@debian.org>
+
+	* mini-ops.h: Reorder branch ops so that they match the order of the
+	corresponding CEE_* ops.  The code expects them this way.
+	Add new ops for HPPA target.
+	Contributed under the X11 license (http://bugzilla.ximian.com/show_bug.cgi?id=81866).
+
+2007-06-13  Randolph Chung  <tausq@debian.org>
+
+	* mini-exceptions.c: Handle cases where the stack grows towards
+	larger addresses.
+	Contributed under the X11 license (http://bugzilla.ximian.com/show_bug.cgi?id=81866).
+
+Wed Jun 13 19:13:23 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* jit-icalls.c, mini.h, mini.c: added virtual generic invoke
+	counter.
+	* driver.c: explain where a non-matching corlib is found.
+
+2007-06-13  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c (print_jit_stats): Output dynamic code allocation stats.
+
+2007-06-10  Sanghyeon Seo <sanxiyn@gmail.com>
+
+	* mini-exceptions.c: Generate a method profile leave event during
+	an exception to ensure that the profiler gets notified.
+
+2007-06-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (peephole_pass): Merge some small changes from the linear-ir 
+	branch.
+
+	* cpu-amd64.md: Add long_and/or/xor opcodes.
+
+2007-06-06  Wade Berrier  <wberrier@novell.com>
+
+	* cpu-s390x.md (shr_imm): Correct the length of shr_imm instruction.
+	(./class/lib/monolite/mcs.exe:25498): WARNING **: wrong maximal instruction 
+	length of instruction shr_imm (expected 8, got 10)
+
+2007-06-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-ia64.c (mono_arch_output_basic_block): Really fix the build.
+
+2007-06-06  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c, driver.c: Changed MonoDomain.jit_code_hash to a
+	MonoInternalHashTable again (fixed bug in the internal hash table
+	code).
+
+2007-06-06  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c, driver.c: Reverted the MonoInternalHashTable changes.
+	Have to figure out what makes it crash the SWF regression.
+
+2007-06-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-ia64.c (mono_arch_lowering_pass): Fix ia64 build.
+
 Tue Jun 5 17:40:04 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
-	* mini.c: optimizee out the type check when storing null in a
+	* mini.c: optimize out the type check when storing null in a
 	reference array.
 
 2007-06-04  Mark Probst  <mark.probst@gmail.com>

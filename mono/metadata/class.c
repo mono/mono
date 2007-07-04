@@ -284,6 +284,7 @@ mono_type_get_name_recurse (MonoType *type, GString *str, gboolean is_recursed,
 			break;
 		if (klass->generic_class) {
 			MonoGenericClass *gclass = klass->generic_class;
+			MonoGenericInst *inst = gclass->context.class_inst;
 			MonoTypeNameFormat nested_format;
 			int i;
 
@@ -294,16 +295,15 @@ mono_type_get_name_recurse (MonoType *type, GString *str, gboolean is_recursed,
 				g_string_append_c (str, '<');
 			else
 				g_string_append_c (str, '[');
-			for (i = 0; i < gclass->inst->type_argc; i++) {
-				MonoType *t = gclass->inst->type_argv [i];
+			for (i = 0; i < inst->type_argc; i++) {
+				MonoType *t = inst->type_argv [i];
 
 				if (i)
 					g_string_append_c (str, ',');
 				if ((nested_format == MONO_TYPE_NAME_FORMAT_ASSEMBLY_QUALIFIED) &&
 				    (t->type != MONO_TYPE_VAR) && (type->type != MONO_TYPE_MVAR))
 					g_string_append_c (str, '[');
-				mono_type_get_name_recurse (
-					gclass->inst->type_argv [i], str, FALSE, nested_format);
+				mono_type_get_name_recurse (inst->type_argv [i], str, FALSE, nested_format);
 				if ((nested_format == MONO_TYPE_NAME_FORMAT_ASSEMBLY_QUALIFIED) &&
 				    (t->type != MONO_TYPE_VAR) && (type->type != MONO_TYPE_MVAR))
 					g_string_append_c (str, ']');
@@ -401,7 +401,7 @@ mono_type_get_name (MonoType *type)
  * mono_type_get_underlying_type:
  * @type: a type
  *
- * Returns: the MonoType for the underlying interger type if @type
+ * Returns: the MonoType for the underlying integer type if @type
  * is an enum and byref is false, otherwise the type itself.
  */
 MonoType*
@@ -437,12 +437,13 @@ mono_class_is_open_constructed_type (MonoType *t)
 		return mono_class_is_open_constructed_type (t->data.type);
 	case MONO_TYPE_GENERICINST: {
 		MonoGenericClass *gclass = t->data.generic_class;
+		MonoGenericInst *inst = gclass->context.class_inst;
 		int i;
 
 		if (mono_class_is_open_constructed_type (&gclass->container_class->byval_arg))
 			return TRUE;
-		for (i = 0; i < gclass->inst->type_argc; i++)
-			if (mono_class_is_open_constructed_type (gclass->inst->type_argv [i]))
+		for (i = 0; i < inst->type_argc; i++)
+			if (mono_class_is_open_constructed_type (inst->type_argv [i]))
 				return TRUE;
 		return FALSE;
 	}
@@ -451,45 +452,13 @@ mono_class_is_open_constructed_type (MonoType *t)
 	}
 }
 
-static MonoGenericClass *
-inflate_generic_class (MonoGenericClass *ogclass, MonoGenericContext *context)
-{
-	MonoGenericClass *ngclass, *cached;
-	MonoGenericInst *ninst;
-
-	ninst = mono_metadata_inflate_generic_inst (ogclass->inst, context);
-	if (ninst == ogclass->inst)
-		return ogclass;
-
-	if (ogclass->is_dynamic) {
-		MonoDynamicGenericClass *dgclass = g_new0 (MonoDynamicGenericClass, 1);
-		ngclass = &dgclass->generic_class;
-		ngclass->is_dynamic = 1;
-	} else {
-		ngclass = g_new0 (MonoGenericClass, 1);
-	}
-
-	ngclass->container_class = ogclass->container_class;
-	ngclass->inst = ninst;
-
-	mono_loader_lock ();
-	cached = mono_metadata_lookup_generic_class (ngclass);
-	mono_loader_unlock ();
-	if (cached) {
-		g_free (ngclass);
-		return cached;
-	}
-
-	return ngclass;
-}
-
 static MonoType*
 inflate_generic_type (MonoType *type, MonoGenericContext *context)
 {
 	switch (type->type) {
 	case MONO_TYPE_MVAR: {
 		int num = type->data.generic_param->num;
-		MonoGenericInst *inst = context->gmethod ? context->gmethod->inst : NULL;
+		MonoGenericInst *inst = context->method_inst;
 		if (!inst || !inst->type_argv)
 			return NULL;
 		if (num >= inst->type_argc)
@@ -526,12 +495,18 @@ inflate_generic_type (MonoType *type, MonoGenericContext *context)
 	}
 	case MONO_TYPE_GENERICINST: {
 		MonoGenericClass *gclass = type->data.generic_class;
+		MonoGenericInst *inst;
 		MonoType *nt;
-		if (!gclass->inst->is_open)
+		if (!gclass->context.class_inst->is_open)
 			return NULL;
-		gclass = inflate_generic_class (gclass, context);
+
+		inst = mono_metadata_inflate_generic_inst (gclass->context.class_inst, context);
+		if (inst != gclass->context.class_inst)
+			gclass = mono_metadata_lookup_generic_class (gclass->container_class, inst, gclass->is_dynamic);
+
 		if (gclass == type->data.generic_class)
 			return NULL;
+
 		nt = dup_type (type, type);
 		nt->data.generic_class = gclass;
 		return nt;
@@ -539,14 +514,18 @@ inflate_generic_type (MonoType *type, MonoGenericContext *context)
 	case MONO_TYPE_CLASS:
 	case MONO_TYPE_VALUETYPE: {
 		MonoClass *klass = type->data.klass;
-		MonoGenericClass *gclass;
+		MonoGenericContainer *container = klass->generic_container;
+		MonoGenericInst *inst;
+		MonoGenericClass *gclass = NULL;
 		MonoType *nt;
 
-		if (!klass->generic_container)
+		if (!container)
 			return NULL;
-		gclass = inflate_generic_class (mono_get_shared_generic_class (klass->generic_container, klass->image->dynamic), context);
-		if (gclass->inst == klass->generic_container->context.class_inst)
-			return NULL;
+
+		/* We can't use context->class_inst directly, since it can have more elements */
+		inst = mono_metadata_inflate_generic_inst (container->context.class_inst, context);
+		gclass = mono_metadata_lookup_generic_class (klass, inst, klass->image->dynamic);
+
 		nt = dup_type (type, type);
 		nt->type = MONO_TYPE_GENERICINST;
 		nt->data.generic_class = gclass;
@@ -561,20 +540,7 @@ inflate_generic_type (MonoType *type, MonoGenericContext *context)
 MonoGenericContext *
 mono_generic_class_get_context (MonoGenericClass *gclass)
 {
-       MonoGenericContext *context = gclass->cached_context;
-       if (context) {
-	       g_assert (context->class_inst == gclass->inst);
-	       g_assert (!context->gmethod);
-	       return context;
-       }
-	
-       context = g_new0 (MonoGenericContext, 1);
-       context->class_inst = gclass->inst;
-
-       if (InterlockedCompareExchangePointer ((gpointer *)&gclass->cached_context, context, NULL))
-	       g_free (context);
-
-       return gclass->cached_context;
+	return &gclass->context;
 }
 
 MonoGenericContext *
@@ -604,34 +570,21 @@ mono_class_inflate_generic_type (MonoType *type, MonoGenericContext *context)
 	return inflated;
 }
 
-static MonoGenericContext *
+static MonoGenericContext
 inflate_generic_context (MonoGenericContext *context, MonoGenericContext *inflate_with)
 {
 	MonoGenericInst *class_inst = NULL;
-	MonoGenericMethod *gmethod = NULL;
-	MonoGenericContext *res;
+	MonoGenericInst *method_inst = NULL;
+	MonoGenericContext res;
 
 	if (context->class_inst)
 		class_inst = mono_metadata_inflate_generic_inst (context->class_inst, inflate_with);
 
-	if (context->gmethod) {
-		MonoGenericInst *ninst = mono_metadata_inflate_generic_inst (context->gmethod->inst, inflate_with);
-		if (class_inst == context->class_inst && ninst == context->gmethod->inst) {
-			gmethod = context->gmethod;
-		} else {
-			gmethod = g_new0 (MonoGenericMethod, 1);
-			gmethod->class_inst = class_inst;
-			gmethod->container = context->gmethod->container;
-			gmethod->inst = ninst;
-		}
-	}
+	if (context->method_inst)
+		method_inst = mono_metadata_inflate_generic_inst (context->method_inst, inflate_with);
 
-	if (class_inst == context->class_inst && gmethod == context->gmethod)
-		return context;
-
-	res = g_new0 (MonoGenericContext, 1);
-	res->class_inst = class_inst;
-	res->gmethod = gmethod;
+	res.class_inst = class_inst;
+	res.method_inst = method_inst;
 
 	return res;
 }
@@ -664,14 +617,19 @@ mono_class_inflate_generic_method_full (MonoMethod *method, MonoClass *klass_hin
 	MonoMethod *result;
 	MonoMethodInflated *iresult;
 	MonoMethodSignature *sig;
+	MonoGenericContext tmp_context;
 
-	/* The `method' has already been instantiated before -> we need to create a new context. */
+	/* The `method' has already been instantiated before => we need to peel out the instantiation and create a new context */
 	while (method->is_inflated) {
 		MonoGenericContext *method_context = mono_method_get_context (method);
 		MonoMethodInflated *imethod = (MonoMethodInflated *) method;
-		context = inflate_generic_context (method_context, context);
-		if (context == method_context)
+
+		tmp_context = inflate_generic_context (method_context, context);
+		context = &tmp_context;
+
+		if (mono_metadata_generic_context_equal (method_context, context))
 			return method;
+
 		method = imethod->declaring;
 	}
 
@@ -691,13 +649,14 @@ mono_class_inflate_generic_method_full (MonoMethod *method, MonoClass *klass_hin
 
 	result = (MonoMethod *) iresult;
 	result->is_inflated = 1;
+	/* result->generic_container = NULL; */
 	result->signature = NULL;
-	iresult->context = context;
+	iresult->context = *context;
 	iresult->declaring = method;
 
 	if (!klass_hint || !klass_hint->generic_class ||
 	    klass_hint->generic_class->container_class != method->klass ||
-	    klass_hint->generic_class->inst != context->class_inst)
+	    klass_hint->generic_class->context.class_inst != context->class_inst)
 		klass_hint = NULL;
 
 	if (method->klass->generic_container)
@@ -708,16 +667,10 @@ mono_class_inflate_generic_method_full (MonoMethod *method, MonoClass *klass_hin
 		result->klass = inflated ? mono_class_from_mono_type (inflated) : method->klass;
 	}
 
-	if (method->generic_container && !context->gmethod) {
-		MonoGenericMethod *gmethod = g_memdup (method->generic_container->context.gmethod, sizeof (*gmethod));
-		if (result->klass->generic_class)
-			gmethod->class_inst = result->klass->generic_class->inst;
-
-		context = g_new0 (MonoGenericContext, 1);
-		context->gmethod = gmethod;
-		context->class_inst = gmethod->class_inst;
-		iresult->context = context;
-	}
+	if (context->method_inst)
+		result->generic_container = NULL;
+	else if (method->generic_container)
+		iresult->context.method_inst = method->generic_container->context.method_inst;
 
 	return result;
 }
@@ -740,7 +693,7 @@ mono_method_get_context (MonoMethod *method)
 	if (!method->is_inflated)
 		return NULL;
 	imethod = (MonoMethodInflated *) method;
-	return imethod->context;
+	return &imethod->context;
 }
 
 /** 
@@ -1046,7 +999,7 @@ mono_class_layout_fields (MonoClass *class)
 	MonoClassField *field;
 
 	if (class->generic_container ||
-	    (class->generic_class && class->generic_class->inst->is_open))
+	    (class->generic_class && class->generic_class->context.class_inst->is_open))
 		return;
 
 	/*
@@ -1569,8 +1522,8 @@ mono_get_unique_iid (MonoClass *class)
 	if (mono_print_vtable) {
 		int generic_id;
 		char *type_name = mono_type_full_name (&class->byval_arg);
-		if (class->generic_class && !class->generic_class->inst->is_open) {
-			generic_id = class->generic_class->inst->id;
+		if (class->generic_class && !class->generic_class->context.class_inst->is_open) {
+			generic_id = class->generic_class->context.class_inst->id;
 			g_assert (generic_id != 0);
 		} else {
 			generic_id = 0;
@@ -1829,9 +1782,9 @@ setup_interface_offsets (MonoClass *class, int cur_slot)
 		}
 	}
 	class->interface_offsets_count = interface_offsets_count;
-	class->interfaces_packed = g_malloc (sizeof (MonoClass*) * interface_offsets_count);
-	class->interface_offsets_packed = g_malloc (sizeof (int) * interface_offsets_count);
-	class->interface_bitmap = g_malloc0 ((sizeof (guint8) * ((max_iid + 1) >> 3)) + (((max_iid + 1) & 7)? 1 :0));
+	class->interfaces_packed = mono_mempool_alloc (class->image->mempool, sizeof (MonoClass*) * interface_offsets_count);
+	class->interface_offsets_packed = mono_mempool_alloc (class->image->mempool, sizeof (int) * interface_offsets_count);
+	class->interface_bitmap = mono_mempool_alloc0 (class->image->mempool, (sizeof (guint8) * ((max_iid + 1) >> 3)) + (((max_iid + 1) & 7)? 1 :0));
 	for (interface_offsets_count = 0, i = 0; i <= max_iid; i++) {
 		if (interface_offsets_full [i] != -1) {
 			class->interface_bitmap [i >> 3] |= (1 << (i & 7));
@@ -2381,12 +2334,11 @@ g_list_prepend_mempool (GList* l, MonoMemPool* mp, gpointer datum)
 static void
 setup_generic_array_ifaces (MonoClass *class, MonoClass *iface, int pos)
 {
-	MonoGenericContext *context;
+	MonoGenericContext tmp_context;
 	int i;
 
-	context = g_new0 (MonoGenericContext, 1);
-	context->gmethod = g_new0 (MonoGenericMethod, 1);
-	context->gmethod->inst = iface->generic_class->inst;
+	tmp_context.class_inst = NULL;
+	tmp_context.method_inst = iface->generic_class->context.class_inst;
 
 	for (i = 0; i < class->parent->method.count; i++) {
 		MonoMethod *m = class->parent->methods [i];
@@ -2411,7 +2363,7 @@ setup_generic_array_ifaces (MonoClass *class, MonoClass *iface, int pos)
 		strcpy (name, iname);
 		strcpy (name + strlen (iname), mname);
 
-		inflated = mono_class_inflate_generic_method (m, context);
+		inflated = mono_class_inflate_generic_method (m, &tmp_context);
 		class->methods [pos++] = mono_marshal_get_generic_array_helper (class, iface, name, inflated);
 	}
 }
@@ -2971,66 +2923,6 @@ mono_class_setup_supertypes (MonoClass *class)
 	} else {
 		class->supertypes [0] = class;
 	}
-}	
-
-MonoGenericInst *
-mono_get_shared_generic_inst (MonoGenericContainer *container)
-{
-	MonoGenericInst *nginst;
-	int i;
-
-	nginst = g_new0 (MonoGenericInst, 1);
-	nginst->type_argc = container->type_argc;
-	nginst->type_argv = g_new0 (MonoType *, nginst->type_argc);
-	nginst->is_reference = 1;
-	nginst->is_open = 1;
-
-	for (i = 0; i < nginst->type_argc; i++) {
-		MonoType *t = g_new0 (MonoType, 1);
-
-		t->type = container->is_method ? MONO_TYPE_MVAR : MONO_TYPE_VAR;
-		t->data.generic_param = &container->type_params [i];
-
-		nginst->type_argv [i] = t;
-	}
-
-	return mono_metadata_lookup_generic_inst (nginst);
-}
-
-/*
- * In preparation for implementing shared code.
- */
-MonoGenericClass *
-mono_get_shared_generic_class (MonoGenericContainer *container, gboolean is_dynamic)
-{
-	MonoGenericClass *gclass;
-
-	g_assert (!container->is_method);
-
-	if (is_dynamic) {
-		MonoDynamicGenericClass *dgclass = g_new0 (MonoDynamicGenericClass, 1);
-		gclass = &dgclass->generic_class;
-		gclass->is_dynamic = 1;
-	} else {
-		gclass = g_new0 (MonoGenericClass, 1);
-	}
-
-	gclass->cached_context = &container->context;
-	gclass->container_class = container->owner.klass;
-	gclass->inst = mono_get_shared_generic_inst (container);
-
-	if (!is_dynamic) {
-		MonoGenericClass *cached = mono_metadata_lookup_generic_class (gclass);
-
-		if (cached) {
-			g_free (gclass);
-			return cached;
-		}
-	}
-
-	gclass->cached_class = container->owner.klass;
-
-	return gclass;
 }
 
 /**
@@ -3088,8 +2980,6 @@ mono_class_create_from_typedef (MonoImage *image, guint32 type_token)
 	if (class->generic_container) {
 		class->generic_container->owner.klass = class;
 		context = &class->generic_container->context;
-
-		context->class_inst = mono_get_shared_generic_inst (class->generic_container);
 	}
 
 	if (cols [MONO_TYPEDEF_EXTENDS]) {
@@ -3199,7 +3089,7 @@ MonoClass*
 mono_class_get_nullable_param (MonoClass *klass)
 {
        g_assert (mono_class_is_nullable (klass));
-       return mono_class_from_mono_type (klass->generic_class->inst->type_argv [0]);
+       return mono_class_from_mono_type (klass->generic_class->context.class_inst->type_argv [0]);
 }
 
 /*
@@ -3215,6 +3105,7 @@ mono_generic_class_get_class (MonoGenericClass *gclass)
 	mono_loader_lock ();
 	if (gclass->cached_class) {
 		mono_loader_unlock ();
+		g_assert (!gclass->cached_class->generic_container);
 		return gclass->cached_class;
 	}
 
@@ -3339,10 +3230,12 @@ mono_class_from_generic_parameter (MonoGenericParam *param, MonoImage *image, gb
 	if (!image && param->owner) {
 		if (is_mvar) {
 			MonoMethod *method = param->owner->owner.method;
-			image = method->klass ? method->klass->image : NULL;
+			image = (method && method->klass) ? method->klass->image : NULL;
 		} else {
 			MonoClass *klass = param->owner->owner.klass;
-			image = klass->image;
+			// FIXME: 'klass' should not be null
+			// 	  But, monodis creates GenericContainers without associating a owner to it
+			image = klass ? klass->image : NULL;
 		}
 	}
 
@@ -3535,7 +3428,7 @@ mono_class_create_from_typespec (MonoImage *image, guint32 type_spec, MonoGeneri
 	MonoType *t = mono_type_create_from_typespec (image, type_spec);
 	if (!t)
 		return NULL;
-	if (context && (context->class_inst || context->gmethod)) {
+	if (context && (context->class_inst || context->method_inst)) {
 		MonoType *inflated = inflate_generic_type (t, context);
 		if (inflated)
 			t = inflated;
@@ -3651,7 +3544,7 @@ mono_bounded_array_class_get (MonoClass *eclass, guint32 rank, gboolean bounded)
 		class->interfaces = g_new0 (MonoClass *, class->interface_count);
 
 		for (i = 0; i < class->interface_count; i++) {
-			MonoType *inflated, **args;
+			MonoType **args;
 			MonoClass *iface;
 
 			if (eclass->valuetype)
@@ -3673,10 +3566,8 @@ mono_bounded_array_class_get (MonoClass *eclass, guint32 rank, gboolean bounded)
 			args = g_new0 (MonoType *, 1);
 			args [0] = &iface->byval_arg;
 
-			inflated = mono_class_bind_generic_parameters (
-				&mono_defaults.generic_ilist_class->byval_arg, 1, args);
-
-			class->interfaces [i] = mono_class_from_mono_type (inflated);
+			class->interfaces [i] = mono_class_bind_generic_parameters (
+				mono_defaults.generic_ilist_class, 1, args, FALSE);
 		}
 	}
 
@@ -5589,4 +5480,112 @@ mono_class_get_exception_for_failure (MonoClass *klass)
 		return NULL;
 	}
 	}
+}
+
+static gboolean
+can_access_internals (MonoAssembly *accessing, MonoAssembly* accessed)
+{
+	GSList *tmp;
+	if (accessing == accessed)
+		return TRUE;
+	if (!accessed || !accessing)
+		return FALSE;
+	for (tmp = accessed->friend_assembly_names; tmp; tmp = tmp->next) {
+		MonoAssemblyName *friend = tmp->data;
+		/* Be conservative with checks */
+		if (!friend->name)
+			continue;
+		if (strcmp (accessing->aname.name, friend->name))
+			continue;
+		if (friend->public_key_token [0]) {
+			if (!accessing->aname.public_key_token [0])
+				continue;
+			if (strcmp ((char*)friend->public_key_token, (char*)accessing->aname.public_key_token))
+				continue;
+		}
+		return TRUE;
+	}
+	return FALSE;
+}
+
+/* FIXME: check visibility of type, too */
+static gboolean
+can_access_member (MonoClass *access_klass, MonoClass *member_klass, int access_level)
+{
+	if (access_klass->generic_class && member_klass->generic_class &&
+	    access_klass->generic_class->container_class && member_klass->generic_class->container_class) {
+		if (can_access_member (access_klass->generic_class->container_class,
+				       member_klass->generic_class->container_class, access_level))
+			return TRUE;
+	}
+
+	/* Partition I 8.5.3.2 */
+	/* the access level values are the same for fields and methods */
+	switch (access_level) {
+	case FIELD_ATTRIBUTE_COMPILER_CONTROLLED:
+		/* same compilation unit */
+		return access_klass->image == member_klass->image;
+	case FIELD_ATTRIBUTE_PRIVATE:
+		return access_klass == member_klass;
+	case FIELD_ATTRIBUTE_FAM_AND_ASSEM:
+		if (mono_class_has_parent (access_klass, member_klass) &&
+		    can_access_internals (access_klass->image->assembly, member_klass->image->assembly))
+			return TRUE;
+		return FALSE;
+	case FIELD_ATTRIBUTE_ASSEMBLY:
+		return can_access_internals (access_klass->image->assembly, member_klass->image->assembly);
+	case FIELD_ATTRIBUTE_FAMILY:
+		if (mono_class_has_parent (access_klass, member_klass))
+			return TRUE;
+		return FALSE;
+	case FIELD_ATTRIBUTE_FAM_OR_ASSEM:
+		if (mono_class_has_parent (access_klass, member_klass))
+			return TRUE;
+		return can_access_internals (access_klass->image->assembly, member_klass->image->assembly);
+	case FIELD_ATTRIBUTE_PUBLIC:
+		return TRUE;
+	}
+	return FALSE;
+}
+
+gboolean
+mono_method_can_access_field (MonoMethod *method, MonoClassField *field)
+{
+	/* FIXME: check all overlapping fields */
+	int can = can_access_member (method->klass, field->parent, field->type->attrs & FIELD_ATTRIBUTE_FIELD_ACCESS_MASK);
+	if (!can) {
+		MonoClass *nested = method->klass->nested_in;
+		while (nested) {
+			can = can_access_member (nested, field->parent, field->type->attrs & FIELD_ATTRIBUTE_FIELD_ACCESS_MASK);
+			if (can)
+				return TRUE;
+			nested = nested->nested_in;
+		}
+	}
+	return can;
+}
+
+gboolean
+mono_method_can_access_method (MonoMethod *method, MonoMethod *called)
+{
+	int can = can_access_member (method->klass, called->klass, called->flags & METHOD_ATTRIBUTE_MEMBER_ACCESS_MASK);
+	if (!can) {
+		MonoClass *nested = method->klass->nested_in;
+		while (nested) {
+			can = can_access_member (nested, called->klass, called->flags & METHOD_ATTRIBUTE_MEMBER_ACCESS_MASK);
+			if (can)
+				return TRUE;
+			nested = nested->nested_in;
+		}
+	}
+	/* 
+	 * FIXME:
+	 * with generics calls to explicit interface implementations can be expressed
+	 * directly: the method is private, but we must allow it. This may be opening
+	 * a hole or the generics code should handle this differently.
+	 * Maybe just ensure the interface type is public.
+	 */
+	if ((called->flags & METHOD_ATTRIBUTE_VIRTUAL) && (called->flags & METHOD_ATTRIBUTE_FINAL))
+		return TRUE;
+	return can;
 }

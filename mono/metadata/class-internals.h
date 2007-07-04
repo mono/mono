@@ -78,19 +78,6 @@ struct _MonoMethodPInvoke {
 	guint16 implmap_idx;  /* index into IMPLMAP */
 };
 
-/*
- * Inflated generic method.
- */
-struct _MonoMethodInflated {
-	union {
-		MonoMethod method;
-		MonoMethodNormal normal;
-		MonoMethodPInvoke pinvoke;
-	} method;
-	MonoGenericContext *context;	/* The current context. */
-	MonoMethod *declaring;		/* the generic method definition. */
-};
-
 typedef struct {
 	MonoType *generic_type;
 	gpointer reflection_info;
@@ -373,12 +360,39 @@ struct _MonoGenericInst {
 };
 
 /*
+ * The generic context: an instantiation of a set of class and method generic parameters.
+ *
+ * NOTE: Never allocate this directly on the heap.  It have to be either allocated on the stack,
+ *	 or embedded within other objects.  Don't store pointers to this, because it may be on the stack.
+ *	 If you really have to, ensure you store a pointer to the embedding object along with it.
+ */
+struct _MonoGenericContext {
+	/* The instantiation corresponding to the class generic parameters */
+	MonoGenericInst *class_inst;
+	/* The instantiation corresponding to the method generic parameters */
+	MonoGenericInst *method_inst;
+};
+
+/*
+ * Inflated generic method.
+ */
+struct _MonoMethodInflated {
+	union {
+		MonoMethod method;
+		MonoMethodNormal normal;
+		MonoMethodPInvoke pinvoke;
+	} method;
+	MonoMethod *declaring;		/* the generic method definition. */
+	MonoGenericContext context;	/* The current instantiation */
+	gpointer reflection_info;
+};
+
+/*
  * A particular instantiation of a generic type.
  */
 struct _MonoGenericClass {
-	MonoGenericInst *inst;		/* the instantiation */
 	MonoClass *container_class;	/* the generic type definition */
-	MonoGenericContext *cached_context;	/* if present, a "trivial" context that doesn't contain any method instantiation */
+	MonoGenericContext context;	/* a context that contains the type instantiation doesn't contain any method instantiation */
 	guint is_dynamic  : 1;		/* We're a MonoDynamicGenericClass */
 	MonoClass *cached_class;	/* if present, the MonoClass corresponding to the instantiation.  */
 };
@@ -400,26 +414,6 @@ struct _MonoDynamicGenericClass {
 	int count_events;
 	MonoEvent *events;
 	guint initialized;
-};
-
-/*
- * A particular instantiation of a generic method.
- */
-struct _MonoGenericMethod {
-	MonoGenericInst *inst;			/* the instantiation */
-	MonoGenericInst *class_inst;		/* if we're in a generic type, the instantiation of that type */
-	MonoGenericContainer *container;	/* type parameters */
-	gpointer reflection_info;
-};
-
-/*
- * The generic context: an instantiation of a set of class and method generic parameters.
- */
-struct _MonoGenericContext {
-	/* The instantiation corresponding to the class generic parameters */
-	MonoGenericInst *class_inst;
-	/* The current generic method */
-	MonoGenericMethod *gmethod;
 };
 
 /*
@@ -527,6 +521,9 @@ typedef struct {
 	gulong inflated_method_count_2;
 	gulong inflated_type_count;
 	gulong generics_metadata_size;
+	gulong dynamic_code_alloc_count;
+	gulong dynamic_code_bytes_count;
+	gulong dynamic_code_frees_count;
 	gboolean enabled;
 } MonoStats;
 
@@ -795,15 +792,6 @@ mono_find_jit_icall_by_name (const char *name) MONO_INTERNAL;
 
 MonoJitICallInfo *
 mono_find_jit_icall_by_addr (gconstpointer addr) MONO_INTERNAL;
-
-MonoGenericInst *
-mono_get_shared_generic_inst (MonoGenericContainer *container) MONO_INTERNAL;
-
-MonoGenericClass *
-mono_get_shared_generic_class (MonoGenericContainer *container, gboolean is_dynamic) MONO_INTERNAL;
-
-MonoGenericMethod *
-mono_get_shared_generic_method (MonoGenericContainer *container) MONO_INTERNAL;
 
 gboolean
 mono_class_set_failure (MonoClass *klass, guint32 ex_type, void *ex_data) MONO_INTERNAL;

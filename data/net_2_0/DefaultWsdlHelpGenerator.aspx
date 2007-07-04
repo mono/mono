@@ -1557,7 +1557,7 @@ public class HtmlSampleGenerator: SampleGenerator
 
 </script>
 
-<head>
+<head runat="server">
 	<link rel="alternate" type="text/xml" href="<%=Request.FilePath%>?disco"/>
 
 	<title><%=WebServiceName%> Web Service</title>

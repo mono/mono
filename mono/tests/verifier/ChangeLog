@@ -1,3 +1,89 @@
+2007-07-03 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_tests.sh: new access verification tests
+	* make_access_test.sh: create member access test
+	* make_nested_access_tests.sh: create nested member access test
+
+2007-07-03 Rodrigo Kumpera <rkumpera@novell.com>
+
+	*make_tests.sh: fixed two tests to produce valid results with .net
+	*make_field_test.sh: make fields public
+
+2007-06-22  Rodrigo Kumpera  <kumpera@gmail.com>
+
+	* unverifiable_ldflda_other_class_on_simple_method.il: test for load field address in .ctor
+	* unverifiable_ldsflda_other_class_on_simple_method.il: same
+	* unverifiable_ldsflda_other_class_field_on_cctor.il: same
+	* unverifiable_ldflda_other_class_field_on_cctor.il: same
+	* unverifiable_ldsflda_owner_class_on_simple_method.il: same
+	* unverifiable_ldflda_owner_class_on_simple_method.il: same
+	* valid_ldflda_owned_field_on_cctor.il: same
+	* valid_ldsflda_owned_field_on_cctor.il: same
+	* valid_local_ref_ref_store.il: valid local store that was not covered before
+	* unverifiable_ptr_nop.il:  unmanaged pointer ops
+	* unverifiable_ptr_ldloc.il: same
+	* unverifiable_ptr_ldarg.il: same
+	* unverifiable_m_ptr_ldloc.il: same
+	* unverifiable_m_ptr_ldarg.il: same
+
+2007-06-20  Rodrigo Kumpera  <kumpera@gmail.com>
+
+	*make_tests.sh: new ldsfld tests, more call conv tests
+
+2007-06-19  Rodrigo Kumpera  <kumpera@gmail.com>
+
+	*make_tests.sh: new ldfld tests (they check everything but visibility)
+	*make_field_store_test.sh: generated the new field tests
+
+2007-06-14  Rodrigo Kumpera  <kumpera@gmail.com>
+
+	* invalid_dup_maxstack.il: the test wasn't generating the failing condition
+	* make_tests.sh: fixed the generation of stack merge tests and a typo on the return coercion tests
+	* unverifiable_ldfld_initonly.il: add assembly manifest (so it tests the right thing)
+	* invalid_stack_2_ret.il: fix the entry point
+
+2007-06-14  Rodrigo Kumpera  <kumpera@gmail.com>
+	
+	* invalid_call_empty_stack.il: added assembly manifest (so it tests the right thing)
+	* invalid_ldsfld_nonstatic_fld.il: same
+	* invalid_dup_maxstack.il: same
+	* invalid_ldsfld_no_fld.il: same
+	* unverifiable_call_private.il: same
+	* invalid_backward_branch.il: same
+	* make_unary_test.sh: same
+	* invalid_ldloc_no_local.il: same
+	* make_obj_store_test.sh: added static field to have stsfld tests
+	* make_store_test.sh: fixed the entrypoint
+	* make_tests.sh: fixed tests to be faithfull to the spec
+
+2007-06-14  Rodrigo Kumpera  <kumpera@gmail.com>
+
+	*Changelog: fixed the dates of my commits
+
+2007-06-14  Rodrigo Kumpera  <kumpera@gmail.com>
+
+	*make_load_test.sh: Fixed the entrypoint to generate valid code
+	*make_ret_test.sh: Fixed the entrypoint to generate valid code. Removed invalid generics classes
+	*make_tests.sh: Fixed the testsuite to not generate wrong tests
+	*Makefile: split the clean step as it was failing due to the huge file list
+	 (it might need further tweaking as the testsuite grows)
+
+2007-06-12  Rodrigo Kumpera  <kumpera@gmail.com>
+
+	* make_tests.sh: New boolean branch tests
+	* make_bool_branch_test.sh: Test the stack value that boolean branches use (brfalse / brtrue)
+	* make_ret_test.sh: removed unused variable from sed expression
+
+2007-06-06  Rodrigo Kumpera  <kumpera@gmail.com>
+
+	* Makefile (run-test): Make it use pedump instead of mono for validation
+	* make_tests.sh: New tests
+	* invalid_stack_2_tet.il: New test
+	* make_ret_test.sh: New test script
+	* make_load_test.sh: New test script
+	* make_obj_store_test.sh: Test did not generate valid code for some cases
+	* make_store_test.sh: Test did not generate valid code for some cases
+
 2006-06-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile (run-test): Split 'test' target into a 'compile' and 'run-test' target.

@@ -280,13 +280,14 @@ void GC_push_all_stacks() {
 static mach_port_t GC_mach_handler_thread;
 static int GC_use_mach_handler_thread = 0;
 
-static struct GC_mach_thread GC_mach_threads[THREAD_TABLE_SZ];
+#define SUSPEND_THREADS_SIZE 2048
+static struct GC_mach_thread GC_mach_threads[SUSPEND_THREADS_SIZE];
 static int GC_mach_threads_count;
 
 void GC_stop_init() {
   int i;
 
-  for (i = 0; i < THREAD_TABLE_SZ; i++) {
+  for (i = 0; i < SUSPEND_THREADS_SIZE; i++) {
     GC_mach_threads[i].thread = 0;
     GC_mach_threads[i].already_suspended = 0;
   }

@@ -786,6 +786,8 @@ mono_helper_compile_generic_method (MonoObject *obj, MonoMethod *method, MonoGen
 	MonoMethod *vmethod, *inflated;
 	gpointer addr;
 
+	mono_jit_stats.generic_virtual_invocations++;
+
 	if (obj == NULL)
 		mono_raise_exception (mono_get_exception_null_reference ());
 	vmethod = mono_object_get_virtual_method (obj, method);
@@ -797,8 +799,8 @@ mono_helper_compile_generic_method (MonoObject *obj, MonoMethod *method, MonoGen
 	   the same context.
 	*/
 	g_assert (!vmethod->klass->generic_container);
-	g_assert (!vmethod->klass->generic_class || !vmethod->klass->generic_class->inst->is_open);
-	g_assert (!context->gmethod || !context->gmethod->inst->is_open);
+	g_assert (!vmethod->klass->generic_class || !vmethod->klass->generic_class->context.class_inst->is_open);
+	g_assert (!context->method_inst || !context->method_inst->is_open);
 	inflated = mono_class_inflate_generic_method (vmethod, context);
 	inflated = mono_get_inflated_method (inflated);
 	addr = mono_compile_method (inflated);

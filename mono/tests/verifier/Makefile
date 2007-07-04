@@ -3,11 +3,13 @@
 	ilasm -out:$@ $<
 
 compile-stamp: generate-stamp
-	for i in *.il; do ilasm $$i; done
+	for i in *.il; do ilasm2 $$i; done
 	touch compile-stamp
 
 clean:
-	rm -f *_generated.il *.exe *.dll generate-stamp compile-stamp
+	rm -f *_generated.il
+	rm -f *.exe *.dll
+	rm generate-stamp compile-stamp
 
 generate-stamp: make_tests.sh make_bin_test.sh make_exception_branch_test.sh make_obj_store_test.sh \
 		make_stack_0_pop_test.sh make_stack_0_test.sh make_stack_1_pop_test.sh \
@@ -19,20 +21,27 @@ test: compile-stamp run-test
 
 run-test:
 	@for i in *.exe; do \
-		echo -n $$i; \
-		mono $$i >/dev/null 2>/dev/null; \
-		RES=$$?; \
-		if [ $$RES = 1 ]; \
+		#echo $$i; \
+		TEST=`echo $$i | cut -d '.' -f 1`; \
+		RES=99; \
+		FIRST=`echo $$i | cut -d '_' -f 1`; \
+		if [ "$$FIRST" == "invalid" ]; \
 		then \
-			echo " OK"; \
+			RES=3; \
 		fi; \
-		if [ $$RES = 0 ]; \
+		if [ "$$FIRST" == "unverifiable" ]; \
 		then \
-			echo " NOT OK (silent success)"; \
+			RES=2; \
 		fi; \
-		if [ $$RES '>' 1 ]; \
+		if [ "$$FIRST" == "valid" ]; \
 		then \
-			echo " NOT OK (other failure)"; \
+			RES=0; \
+		fi; \
+		../../metadata/pedump --verify error,warn,cls,code $$TEST.exe >/dev/null 2>/dev/null;\
+		R=$$?; \
+		if [ $$R != $$RES ]; \
+		then \
+			echo "$$TEST failed expected $$RES but got $$R"; \
 		fi; \
 	done
 

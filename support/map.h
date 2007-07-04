@@ -493,11 +493,11 @@ int Mono_Posix_FromFilePermissions (unsigned int x, unsigned int *r);
 int Mono_Posix_ToFilePermissions (unsigned int x, unsigned int *r);
 
 enum Mono_Posix_LockType {
-	Mono_Posix_LockType_F_RDLCK       = 0x00000000,
+	Mono_Posix_LockType_F_RDLCK       = 0x0000,
 	#define Mono_Posix_LockType_F_RDLCK Mono_Posix_LockType_F_RDLCK
-	Mono_Posix_LockType_F_UNLCK       = 0x00000002,
+	Mono_Posix_LockType_F_UNLCK       = 0x0002,
 	#define Mono_Posix_LockType_F_UNLCK Mono_Posix_LockType_F_UNLCK
-	Mono_Posix_LockType_F_WRLCK       = 0x00000001,
+	Mono_Posix_LockType_F_WRLCK       = 0x0001,
 	#define Mono_Posix_LockType_F_WRLCK Mono_Posix_LockType_F_WRLCK
 };
 int Mono_Posix_FromLockType (short x, short *r);
@@ -576,32 +576,32 @@ int Mono_Posix_FromMmapProts (int x, int *r);
 int Mono_Posix_ToMmapProts (int x, int *r);
 
 enum Mono_Posix_MountFlags {
-	Mono_Posix_MountFlags_ST_APPEND            = 0x00000100,
+	Mono_Posix_MountFlags_ST_APPEND            = 0x0000000000000100,
 	#define Mono_Posix_MountFlags_ST_APPEND      Mono_Posix_MountFlags_ST_APPEND
-	Mono_Posix_MountFlags_ST_IMMUTABLE         = 0x00000200,
+	Mono_Posix_MountFlags_ST_IMMUTABLE         = 0x0000000000000200,
 	#define Mono_Posix_MountFlags_ST_IMMUTABLE   Mono_Posix_MountFlags_ST_IMMUTABLE
-	Mono_Posix_MountFlags_ST_MANDLOCK          = 0x00000040,
+	Mono_Posix_MountFlags_ST_MANDLOCK          = 0x0000000000000040,
 	#define Mono_Posix_MountFlags_ST_MANDLOCK    Mono_Posix_MountFlags_ST_MANDLOCK
-	Mono_Posix_MountFlags_ST_NOATIME           = 0x00000400,
+	Mono_Posix_MountFlags_ST_NOATIME           = 0x0000000000000400,
 	#define Mono_Posix_MountFlags_ST_NOATIME     Mono_Posix_MountFlags_ST_NOATIME
-	Mono_Posix_MountFlags_ST_NODEV             = 0x00000004,
+	Mono_Posix_MountFlags_ST_NODEV             = 0x0000000000000004,
 	#define Mono_Posix_MountFlags_ST_NODEV       Mono_Posix_MountFlags_ST_NODEV
-	Mono_Posix_MountFlags_ST_NODIRATIME        = 0x00000800,
+	Mono_Posix_MountFlags_ST_NODIRATIME        = 0x0000000000000800,
 	#define Mono_Posix_MountFlags_ST_NODIRATIME  Mono_Posix_MountFlags_ST_NODIRATIME
-	Mono_Posix_MountFlags_ST_NOSUID            = 0x00000002,
+	Mono_Posix_MountFlags_ST_NOSUID            = 0x0000000000000002,
 	#define Mono_Posix_MountFlags_ST_NOSUID      Mono_Posix_MountFlags_ST_NOSUID
-	Mono_Posix_MountFlags_ST_RDONLY            = 0x00000001,
+	Mono_Posix_MountFlags_ST_RDONLY            = 0x0000000000000001,
 	#define Mono_Posix_MountFlags_ST_RDONLY      Mono_Posix_MountFlags_ST_RDONLY
-	Mono_Posix_MountFlags_ST_SYNCHRONOUS       = 0x00000010,
+	Mono_Posix_MountFlags_ST_SYNCHRONOUS       = 0x0000000000000010,
 	#define Mono_Posix_MountFlags_ST_SYNCHRONOUS Mono_Posix_MountFlags_ST_SYNCHRONOUS
-	Mono_Posix_MountFlags_ST_WRITE             = 0x00000080,
+	Mono_Posix_MountFlags_ST_WRITE             = 0x0000000000000080,
 	#define Mono_Posix_MountFlags_ST_WRITE       Mono_Posix_MountFlags_ST_WRITE
 };
 int Mono_Posix_FromMountFlags (guint64 x, guint64 *r);
 int Mono_Posix_ToMountFlags (guint64 x, guint64 *r);
 
 enum Mono_Posix_MremapFlags {
-	Mono_Posix_MremapFlags_MREMAP_MAYMOVE       = 0x00000001,
+	Mono_Posix_MremapFlags_MREMAP_MAYMOVE       = 0x0000000000000001,
 	#define Mono_Posix_MremapFlags_MREMAP_MAYMOVE Mono_Posix_MremapFlags_MREMAP_MAYMOVE
 };
 int Mono_Posix_FromMremapFlags (guint64 x, guint64 *r);
@@ -701,25 +701,25 @@ int Mono_Posix_FromPathconfName (int x, int *r);
 int Mono_Posix_ToPathconfName (int x, int *r);
 
 enum Mono_Posix_PollEvents {
-	Mono_Posix_PollEvents_POLLERR          = 0x00000008,
+	Mono_Posix_PollEvents_POLLERR          = 0x0008,
 	#define Mono_Posix_PollEvents_POLLERR    Mono_Posix_PollEvents_POLLERR
-	Mono_Posix_PollEvents_POLLHUP          = 0x00000010,
+	Mono_Posix_PollEvents_POLLHUP          = 0x0010,
 	#define Mono_Posix_PollEvents_POLLHUP    Mono_Posix_PollEvents_POLLHUP
-	Mono_Posix_PollEvents_POLLIN           = 0x00000001,
+	Mono_Posix_PollEvents_POLLIN           = 0x0001,
 	#define Mono_Posix_PollEvents_POLLIN     Mono_Posix_PollEvents_POLLIN
-	Mono_Posix_PollEvents_POLLNVAL         = 0x00000020,
+	Mono_Posix_PollEvents_POLLNVAL         = 0x0020,
 	#define Mono_Posix_PollEvents_POLLNVAL   Mono_Posix_PollEvents_POLLNVAL
-	Mono_Posix_PollEvents_POLLOUT          = 0x00000004,
+	Mono_Posix_PollEvents_POLLOUT          = 0x0004,
 	#define Mono_Posix_PollEvents_POLLOUT    Mono_Posix_PollEvents_POLLOUT
-	Mono_Posix_PollEvents_POLLPRI          = 0x00000002,
+	Mono_Posix_PollEvents_POLLPRI          = 0x0002,
 	#define Mono_Posix_PollEvents_POLLPRI    Mono_Posix_PollEvents_POLLPRI
-	Mono_Posix_PollEvents_POLLRDBAND       = 0x00000080,
+	Mono_Posix_PollEvents_POLLRDBAND       = 0x0080,
 	#define Mono_Posix_PollEvents_POLLRDBAND Mono_Posix_PollEvents_POLLRDBAND
-	Mono_Posix_PollEvents_POLLRDNORM       = 0x00000040,
+	Mono_Posix_PollEvents_POLLRDNORM       = 0x0040,
 	#define Mono_Posix_PollEvents_POLLRDNORM Mono_Posix_PollEvents_POLLRDNORM
-	Mono_Posix_PollEvents_POLLWRBAND       = 0x00000200,
+	Mono_Posix_PollEvents_POLLWRBAND       = 0x0200,
 	#define Mono_Posix_PollEvents_POLLWRBAND Mono_Posix_PollEvents_POLLWRBAND
-	Mono_Posix_PollEvents_POLLWRNORM       = 0x00000100,
+	Mono_Posix_PollEvents_POLLWRNORM       = 0x0100,
 	#define Mono_Posix_PollEvents_POLLWRNORM Mono_Posix_PollEvents_POLLWRNORM
 };
 int Mono_Posix_FromPollEvents (short x, short *r);
@@ -758,17 +758,17 @@ int Mono_Posix_FromPosixMadviseAdvice (int x, int *r);
 int Mono_Posix_ToPosixMadviseAdvice (int x, int *r);
 
 enum Mono_Posix_SeekFlags {
-	Mono_Posix_SeekFlags_L_INCR         = 0x00000001,
+	Mono_Posix_SeekFlags_L_INCR         = 0x0001,
 	#define Mono_Posix_SeekFlags_L_INCR   Mono_Posix_SeekFlags_L_INCR
-	Mono_Posix_SeekFlags_L_SET          = 0x00000000,
+	Mono_Posix_SeekFlags_L_SET          = 0x0000,
 	#define Mono_Posix_SeekFlags_L_SET    Mono_Posix_SeekFlags_L_SET
-	Mono_Posix_SeekFlags_L_XTND         = 0x00000002,
+	Mono_Posix_SeekFlags_L_XTND         = 0x0002,
 	#define Mono_Posix_SeekFlags_L_XTND   Mono_Posix_SeekFlags_L_XTND
-	Mono_Posix_SeekFlags_SEEK_CUR       = 0x00000001,
+	Mono_Posix_SeekFlags_SEEK_CUR       = 0x0001,
 	#define Mono_Posix_SeekFlags_SEEK_CUR Mono_Posix_SeekFlags_SEEK_CUR
-	Mono_Posix_SeekFlags_SEEK_END       = 0x00000002,
+	Mono_Posix_SeekFlags_SEEK_END       = 0x0002,
 	#define Mono_Posix_SeekFlags_SEEK_END Mono_Posix_SeekFlags_SEEK_END
-	Mono_Posix_SeekFlags_SEEK_SET       = 0x00000000,
+	Mono_Posix_SeekFlags_SEEK_SET       = 0x0000,
 	#define Mono_Posix_SeekFlags_SEEK_SET Mono_Posix_SeekFlags_SEEK_SET
 };
 int Mono_Posix_FromSeekFlags (short x, short *r);
@@ -1364,14 +1364,14 @@ int Mono_Posix_ToXattrFlags (int x, int *r);
  * Managed Structure Declarations
  */
 
-struct Mono_Posix_Syscall__Dirent;
-struct Mono_Posix_Syscall__Fstab;
-struct Mono_Posix_Syscall__Group;
-struct Mono_Posix_Syscall__Passwd;
 struct Mono_Posix_Flock;
 struct Mono_Posix_Pollfd;
 struct Mono_Posix_Stat;
 struct Mono_Posix_Statvfs;
+struct Mono_Posix_Syscall__Dirent;
+struct Mono_Posix_Syscall__Fstab;
+struct Mono_Posix_Syscall__Group;
+struct Mono_Posix_Syscall__Passwd;
 struct Mono_Posix_Timeval;
 struct Mono_Posix_Timezone;
 struct Mono_Posix_Utimbuf;
@@ -1384,6 +1384,7 @@ struct pollfd;
 struct stat;
 struct timeval;
 struct timezone;
+struct utimbuf;
 
 /*
  * Delegate Declarations
@@ -1393,45 +1394,6 @@ struct timezone;
 /*
  * Structures
  */
-
-struct Mono_Posix_Syscall__Dirent {
-	guint64        d_ino;     /* ino_t */
-	gint64         d_off;     /* off_t */
-	unsigned short d_reclen;
-	unsigned char  d_type;
-	void*          d_name;
-};
-
-struct Mono_Posix_Syscall__Fstab {
-	void* fs_spec;
-	void* fs_file;
-	void* fs_vfstype;
-	void* fs_mntops;
-	void* fs_type;
-	int   fs_freq;
-	int   fs_passno;
-	void* _fs_buf_;
-};
-
-struct Mono_Posix_Syscall__Group {
-	void*        gr_name;
-	void*        gr_passwd;
-	unsigned int gr_gid;     /* gid_t */
-	int          _gr_nmem_;
-	void*        gr_mem;
-	void*        _gr_buf_;
-};
-
-struct Mono_Posix_Syscall__Passwd {
-	void*        pw_name;
-	void*        pw_passwd;
-	unsigned int pw_uid;     /* uid_t */
-	unsigned int pw_gid;     /* gid_t */
-	void*        pw_gecos;
-	void*        pw_dir;
-	void*        pw_shell;
-	void*        _pw_buf_;
-};
 
 struct Mono_Posix_Flock {
 	short  l_type;
@@ -1490,6 +1452,45 @@ struct Mono_Posix_Statvfs {
 	guint64 f_namemax;
 };
 
+struct Mono_Posix_Syscall__Dirent {
+	guint64        d_ino;     /* ino_t */
+	gint64         d_off;     /* off_t */
+	unsigned short d_reclen;
+	unsigned char  d_type;
+	void*          d_name;
+};
+
+struct Mono_Posix_Syscall__Fstab {
+	void* fs_spec;
+	void* fs_file;
+	void* fs_vfstype;
+	void* fs_mntops;
+	void* fs_type;
+	int   fs_freq;
+	int   fs_passno;
+	void* _fs_buf_;
+};
+
+struct Mono_Posix_Syscall__Group {
+	void*        gr_name;
+	void*        gr_passwd;
+	unsigned int gr_gid;     /* gid_t */
+	int          _gr_nmem_;
+	void*        gr_mem;
+	void*        _gr_buf_;
+};
+
+struct Mono_Posix_Syscall__Passwd {
+	void*        pw_name;
+	void*        pw_passwd;
+	unsigned int pw_uid;     /* uid_t */
+	unsigned int pw_gid;     /* gid_t */
+	void*        pw_gecos;
+	void*        pw_dir;
+	void*        pw_shell;
+	void*        _pw_buf_;
+};
+
 struct Mono_Posix_Timeval {
 	gint64 tv_sec;   /* time_t      */
 	gint64 tv_usec;  /* suseconds_t */
@@ -1517,6 +1518,12 @@ struct Mono_Posix_Utimbuf {
 	gint64 modtime;  /* time_t */
 };
 
+int
+Mono_Posix_FromUtimbuf (struct Mono_Posix_Utimbuf* from, struct utimbuf *to);
+int
+Mono_Posix_ToUtimbuf (struct utimbuf *from, struct Mono_Posix_Utimbuf* to);
+
+
 
 /*
  * Functions
@@ -1542,31 +1549,31 @@ int Mono_Posix_Stdlib_EOF (void);
 int Mono_Posix_Stdlib_EXIT_FAILURE (void);
 int Mono_Posix_Stdlib_EXIT_SUCCESS (void);
 int Mono_Posix_Stdlib_fgetpos (void* stream, void* pos);
+int Mono_Posix_Stdlib_FILENAME_MAX (void);
+int Mono_Posix_Stdlib_FOPEN_MAX (void);
 guint64 Mono_Posix_Stdlib_fread (unsigned char* ptr, guint64 size, guint64 nmemb, void* stream);
 int Mono_Posix_Stdlib_fseek (void* stream, gint64 offset, int origin);
 int Mono_Posix_Stdlib_fsetpos (void* stream, void* pos);
 gint64 Mono_Posix_Stdlib_ftell (void* stream);
 guint64 Mono_Posix_Stdlib_fwrite (unsigned char* ptr, guint64 size, guint64 nmemb, void* stream);
-int Mono_Posix_Stdlib_FILENAME_MAX (void);
-int Mono_Posix_Stdlib_FOPEN_MAX (void);
 void Mono_Posix_Stdlib_InvokeSignalHandler (int signum, void* handler);
 int Mono_Posix_Stdlib_L_tmpnam (void);
 void* Mono_Posix_Stdlib_malloc (guint64 size);
 int Mono_Posix_Stdlib_MB_CUR_MAX (void);
 int Mono_Posix_Stdlib_perror (const char* s);
+int Mono_Posix_Stdlib_RAND_MAX (void);
 void* Mono_Posix_Stdlib_realloc (void* ptr, guint64 size);
 int Mono_Posix_Stdlib_rewind (void* stream);
-int Mono_Posix_Stdlib_RAND_MAX (void);
 int Mono_Posix_Stdlib_setbuf (void* stream, void* buf);
+void Mono_Posix_Stdlib_SetLastError (int error);
 int Mono_Posix_Stdlib_setvbuf (void* stream, void* buf, int mode, guint64 size);
+void* Mono_Posix_Stdlib_SIG_DFL (void);
+void* Mono_Posix_Stdlib_SIG_ERR (void);
+void* Mono_Posix_Stdlib_SIG_IGN (void);
 void* Mono_Posix_Stdlib_stderr (void);
 void* Mono_Posix_Stdlib_stdin (void);
 void* Mono_Posix_Stdlib_stdout (void);
 guint64 Mono_Posix_Stdlib_strlen (void* s);
-void Mono_Posix_Stdlib_SetLastError (int error);
-void* Mono_Posix_Stdlib_SIG_DFL (void);
-void* Mono_Posix_Stdlib_SIG_ERR (void);
-void* Mono_Posix_Stdlib_SIG_IGN (void);
 int Mono_Posix_Stdlib_TMP_MAX (void);
 int Mono_Posix_Syscall_closelog (void);
 guint64 Mono_Posix_Syscall_confstr (int name, char* buf, guint64 len);
@@ -1609,6 +1616,8 @@ int Mono_Posix_Syscall_getpwuid (unsigned int uid, struct Mono_Posix_Syscall__Pa
 int Mono_Posix_Syscall_getpwuid_r (unsigned int uid, struct Mono_Posix_Syscall__Passwd* pwbuf, void** pwbufp);
 int Mono_Posix_Syscall_gettimeofday (struct Mono_Posix_Timeval* tv, void* ignore);
 gint64 Mono_Posix_Syscall_getxattr (const char* path, const char* name, unsigned char* value, guint64 size);
+int Mono_Posix_Syscall_L_ctermid (void);
+int Mono_Posix_Syscall_L_cuserid (void);
 gint64 Mono_Posix_Syscall_lgetxattr (const char* path, const char* name, unsigned char* value, guint64 size);
 gint64 Mono_Posix_Syscall_listxattr (const char* path, unsigned char* list, guint64 size);
 gint64 Mono_Posix_Syscall_llistxattr (const char* path, unsigned char* list, guint64 size);
@@ -1618,8 +1627,6 @@ gint64 Mono_Posix_Syscall_lseek (int fd, gint64 offset, int whence);
 int Mono_Posix_Syscall_lsetxattr (const char* path, const char* name, unsigned char* value, guint64 size, int flags);
 int Mono_Posix_Syscall_lstat (const char* file_name, struct Mono_Posix_Stat* buf);
 int Mono_Posix_Syscall_lutimes (const char* filename, struct Mono_Posix_Timeval* tvp);
-int Mono_Posix_Syscall_L_ctermid (void);
-int Mono_Posix_Syscall_L_cuserid (void);
 int Mono_Posix_Syscall_mincore (void* start, guint64 length, unsigned char* vec);
 int Mono_Posix_Syscall_mknod (const char* pathname, unsigned int mode, guint64 dev);
 int Mono_Posix_Syscall_mlock (void* start, guint64 len);
@@ -1673,11 +1680,11 @@ int Mono_Posix_Syscall_truncate (const char* path, gint64 length);
 int Mono_Posix_Syscall_ttyname_r (int fd, char* buf, guint64 buflen);
 int Mono_Posix_Syscall_utime (const char* filename, struct Mono_Posix_Utimbuf* buf, int use_buf);
 int Mono_Posix_Syscall_utimes (const char* filename, struct Mono_Posix_Timeval* tvp);
-gint64 Mono_Posix_Syscall_write (int fd, void* buf, guint64 count);
 int Mono_Posix_Syscall_WEXITSTATUS (int status);
 int Mono_Posix_Syscall_WIFEXITED (int status);
 int Mono_Posix_Syscall_WIFSIGNALED (int status);
 int Mono_Posix_Syscall_WIFSTOPPED (int status);
+gint64 Mono_Posix_Syscall_write (int fd, void* buf, guint64 count);
 int Mono_Posix_Syscall_WSTOPSIG (int status);
 int Mono_Posix_Syscall_WTERMSIG (int status);
 int Mono_Posix_ToStatvfs (void* source, struct Mono_Posix_Statvfs* destination);

@@ -319,13 +319,13 @@ dump_dotnet_iinfo (MonoImage *image)
 	dump_methoddef (image, iinfo->cli_cli_header.ch_entry_point);
 }
 
-static void
+static int
 dump_verify_info (MonoImage *image, int flags)
 {
 	GSList *errors, *tmp;
-	int count = 0;
+	int count = 0, verifiable = 0;
 	const char* desc [] = {
-		"Ok", "Error", "Warning", NULL, "CLS"
+		"Ok", "Error", "Warning", NULL, "CLS", NULL, NULL, NULL, "Not Verifiable"
 	};
 
 	errors = mono_image_verify_tables (image, flags);
@@ -344,7 +344,6 @@ dump_verify_info (MonoImage *image, int flags)
 
 		for (i = 0; i < m->rows; ++i) {
 			MonoMethod *method;
-
 			method = mono_get_method (image, MONO_TOKEN_METHOD_DEF | (i+1), NULL);
 			errors = mono_method_verify (method, flags);
 			if (errors) {
@@ -358,8 +357,14 @@ dump_verify_info (MonoImage *image, int flags)
 			for (tmp = errors; tmp; tmp = tmp->next) {
 				MonoVerifyInfo *info = tmp->data;
 				g_print ("%s: %s\n", desc [info->status], info->message);
-				if (info->status == MONO_VERIFY_ERROR)
+				if (info->status == MONO_VERIFY_ERROR) {
 					count++;
+					verifiable = 3;
+				}
+				if(info->status == MONO_VERIFY_NOT_VERIFIABLE) {
+					if (verifiable < 2)
+						verifiable = 2;	
+				}
 			}
 			mono_free_verify_list (errors);
 		}
@@ -367,6 +372,7 @@ dump_verify_info (MonoImage *image, int flags)
 
 	if (count)
 		g_print ("Error count: %d\n", count);
+	return verifiable;
 }
 
 static void
@@ -438,7 +444,13 @@ main (int argc, char *argv [])
 		}
 		mono_init (file);
 		assembly = mono_assembly_open (file, NULL);
-		dump_verify_info (assembly->image, f);
+
+		if (!assembly) {
+			g_print ("Could not open assembly %s\n", file);
+			return 4;
+		}
+
+		return dump_verify_info (assembly->image, f);
 	} else
 		mono_image_close (image);
 	

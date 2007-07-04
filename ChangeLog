@@ -1,3 +1,29 @@
+2007-06-28  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* configure.in: Add a check for `struct utimbuf'; needed by MonoPosixHelper.
+
+2007-06-15  Wade Berrier  <wberrier@novell.com>
+
+	* scripts/mono-find-requires.in: revert back to using package names
+	for .config file dep scanning.  This is because noarch packages can be
+	built on either 32 or 64 bit arches, depending on either a 32bit or 64bit
+	library, which is wrong.
+
+2007-06-13  Randolph Chung  <tausq@debian.org>
+
+	* configure.in: Add hppa-linux target.
+	Contributed under the X11 license (http://bugzilla.ximian.com/show_bug.cgi?id=81866).
+
+2007-06-13  Randolph Chung  <tausq@debian.org>
+
+	* configure.in: Add AM_PROG_AS, needed for handling assembly file
+	targets.
+
+2007-06-09  Wade Berrier  <wberrier@novell.com>
+
+	* scripts/mono-find-requires.in: use lib name instead of package name 
+	for deps found in .config files. suse's rpmlint prefers it that way.
+
 2007-05-29  Robert Jordan  <robertj@gmx.net>
 
 	* data/config.in: add mono_win32_compat entries.

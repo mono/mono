@@ -7555,6 +7555,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				link_bblock (cfg, bblock, tblock);
 				CHECK_BBLOCK (target, ip, tblock);
 				ins->inst_target_bb = tblock;
+				GET_BBLOCK (cfg, tblock, ip);
+				link_bblock (cfg, bblock, tblock);
 				if (sp != stack_start) {
 					handle_stack_args (cfg, stack_start, sp - stack_start);
 					sp = stack_start;
@@ -10279,7 +10281,7 @@ mono_spill_global_vars (MonoCompile *cfg)
  *   parts of the tree could be separated by other instructions, killing the tree
  *   arguments, or stores killing loads etc. Also, should we fold loads into other
  *   instructions if the result of the load is used multiple times ?
- * - LAST MERGE: 78652.
+ * - LAST MERGE: 81357.
  */
 
 /*

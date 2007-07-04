@@ -249,6 +249,7 @@ AM_CONDITIONAL(PLATFORM_WIN32, test x$platform_win32 = xyes)
 
 AC_CHECK_TOOL(CC, gcc, gcc)
 AC_PROG_CC
+AM_PROG_AS
 AM_PROG_CC_STDC
 AC_PROG_INSTALL
 AC_PROG_AWK
@@ -772,6 +773,8 @@ if test x$platform_win32 = xno; then
 	AC_CHECK_FUNCS(mkstemp)
 	AC_CHECK_FUNCS(mmap)
 	AC_CHECK_FUNCS(madvise)
+
+	AC_CHECK_FUNCS(sched_setaffinity)
 
 	dnl ******************************************************************
 	dnl *** Check for large file support                               ***
@@ -1393,6 +1396,9 @@ if test x$platform_win32 = xno; then
 		 #include <utime.h>])
 	AC_CHECK_TYPES([struct timezone], [AC_DEFINE(HAVE_STRUCT_TIMEZONE)], ,
 		[#include <sys/time.h>])
+	AC_CHECK_TYPES([struct utimbuf], [AC_DEFINE(HAVE_STRUCT_UTIMBUF)], ,
+		[#include <sys/types.h>
+		 #include <utime.h>])
 	AC_CHECK_MEMBERS(
 		[struct dirent.d_off, struct dirent.d_reclen, struct dirent.d_type],,, 
 		[#include <sys/types.h>
@@ -1703,10 +1709,11 @@ case "$host" in
 		;;
 	hppa*linux*)
 		TARGET=HPPA;
+		AC_DEFINE(MONO_ARCH_REGPARMS,1,[Architecture uses registers for Parameters])
 		arch_target=hppa; 
 		ACCESS_UNALIGNED="no"
-		INTERP_SUPPORTED=yes
-		interp_wanted=true
+		JIT_SUPPORTED=yes
+		jit_wanted=true
 		;;
 	macppc-*-openbsd* | powerpc-*-linux* | powerpc-*-openbsd* | \
         powerpc-*-sysv* | powerpc-*-darwin*)

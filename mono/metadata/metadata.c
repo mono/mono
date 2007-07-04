@@ -1406,7 +1406,7 @@ mono_generic_class_hash (gconstpointer data)
 	guint hash = mono_metadata_type_hash (&gclass->container_class->byval_arg);
 
 	hash *= 13;
-	hash += mono_generic_inst_hash (gclass->inst);
+	hash += mono_metadata_generic_context_hash (&gclass->context);
 
 	return hash;
 }
@@ -1451,6 +1451,9 @@ mono_metadata_cleanup (void)
 	g_hash_table_destroy (type_cache);
 	g_hash_table_destroy (generic_inst_cache);
 	g_hash_table_destroy (generic_class_cache);
+	type_cache = NULL;
+	generic_inst_cache = NULL;
+	generic_class_cache = NULL;
 }
 
 /**
@@ -1882,6 +1885,74 @@ mono_metadata_free_method_signature (MonoMethodSignature *sig)
 	}
 }
 
+/*static void
+dump_ginst (MonoGenericInst *ginst)
+{
+	int i;
+	char *name;
+
+	g_print ("Ginst: <");
+	for (i = 0; i < ginst->type_argc; ++i) {
+		if (i != 0)
+			g_print (", ");
+		name = mono_type_get_name (ginst->type_argv [i]);
+		g_print ("%s", name);
+		g_free (name);
+	}
+	g_print (">");
+}*/
+
+static gboolean gclass_in_image (gpointer key, gpointer value, gpointer data);
+
+static gboolean
+ginst_in_image (gpointer key, gpointer value, gpointer data)
+{
+	MonoImage *image = data;
+	MonoGenericInst *ginst = key;
+	MonoClass *klass;
+	int i;
+	for (i = 0; i < ginst->type_argc; ++i) {
+		MonoType *type = ginst->type_argv [i];
+
+		/* FIXME: Avoid a possible mono_class_inst inside mono_class_from_mono_type */
+		if (type->type == MONO_TYPE_GENERICINST) {
+			if (gclass_in_image (type->data.generic_class, NULL, image))
+				return TRUE;
+			continue;
+		}
+
+		klass = mono_class_from_mono_type (ginst->type_argv [i]);
+		if (klass->image == image) {
+			/*dump_ginst (ginst);
+			  g_print (" removed\n");*/
+			return TRUE;
+		}
+	}
+	return FALSE;
+}
+
+static gboolean
+gclass_in_image (gpointer key, gpointer value, gpointer data)
+{
+	MonoImage *image = data;
+	MonoGenericClass *gclass = key;
+
+	if (ginst_in_image (gclass->context.class_inst, NULL, image))
+		return TRUE;
+	if (gclass->container_class->image == image)
+		return TRUE;
+	return FALSE;
+}
+
+void
+mono_metadata_clean_for_image (MonoImage *image)
+{
+	mono_loader_lock ();
+	g_hash_table_foreach_remove (generic_inst_cache, ginst_in_image, image);
+	g_hash_table_foreach_remove (generic_class_cache, gclass_in_image, image);
+	mono_loader_unlock ();
+}
+
 /*
  * mono_metadata_lookup_generic_inst:
  *
@@ -1900,43 +1971,74 @@ mono_metadata_lookup_generic_inst (MonoGenericInst *ginst)
 	MonoGenericInst *cached;
 	int i;
 
+	/*dump_ginst (ginst);*/
+	mono_loader_lock ();
 	cached = g_hash_table_lookup (generic_inst_cache, ginst);
 	if (cached) {
 		for (i = 0; i < ginst->type_argc; i++)
 			mono_metadata_free_type (ginst->type_argv [i]);
 		g_free (ginst->type_argv);
 		g_free (ginst);
+		mono_loader_unlock ();
+		/*g_print (" found cached\n");*/
 		return cached;
 	}
 
 	ginst->id = ++next_generic_inst_id;
 	g_hash_table_insert (generic_inst_cache, ginst, ginst);
 
+	mono_loader_unlock ();
+	/*g_print (" inserted\n");*/
 	return ginst;
 }
 
 /*
  * mono_metadata_lookup_generic_class:
  *
- * Check whether the newly created generic class @gclass already exists
- * in the cache and return the cached value in this case.  Otherwise insert
- * it into the cache and return NULL.
- *
- * Returns: the previosly cached generic class or NULL if it has been newly
- *          inserted into the cache.
+ * Returns a MonoGenericClass with the given properties.
  *
  */
 MonoGenericClass *
-mono_metadata_lookup_generic_class (MonoGenericClass *gclass)
+mono_metadata_lookup_generic_class (MonoClass *container_class, MonoGenericInst *inst, gboolean is_dynamic)
 {
-	MonoGenericClass *cached;
+	MonoGenericClass *gclass;
 
-	cached = g_hash_table_lookup (generic_class_cache, gclass);
-	if (cached)
-		return cached;
+	MonoGenericClass helper;
+	helper.container_class = container_class;
+	helper.context.class_inst = inst;
+	helper.context.method_inst = NULL;
+	helper.is_dynamic = is_dynamic; /* We use this in a hash lookup, which does not attempt to downcast the pointer */
+	helper.cached_class = NULL;
+
+	mono_loader_lock ();
+
+	gclass = g_hash_table_lookup (generic_class_cache, &helper);
+
+	/* A tripwire just to keep us honest */
+	g_assert (!helper.cached_class);
+
+	if (gclass) {
+		mono_loader_unlock ();
+		return gclass;
+	}
+
+	if (is_dynamic) {
+		MonoDynamicGenericClass *dgclass = g_new0 (MonoDynamicGenericClass, 1);
+		gclass = &dgclass->generic_class;
+		gclass->is_dynamic = 1;
+	} else {
+		gclass = g_new0 (MonoGenericClass, 1);
+	}
+
+	gclass->container_class = container_class;
+	gclass->context.class_inst = inst;
+	gclass->context.method_inst = NULL;
 
 	g_hash_table_insert (generic_class_cache, gclass, gclass);
-	return NULL;
+
+	mono_loader_unlock ();
+
+	return gclass;
 }
 
 /*
@@ -2028,18 +2130,14 @@ do_mono_metadata_parse_generic_class (MonoType *type, MonoImage *m, MonoGenericC
 
 	count = mono_metadata_decode_value (ptr, &ptr);
 
-	gclass->inst = mono_metadata_parse_generic_inst (m, container, count, ptr, &ptr);
-	/* FIXME: this hack is needed to handle the incestuous relationship between metadata parsing and MonoClass. */
-	if (gclass->cached_context) {
-		g_free (gclass->cached_context);
-		gclass->cached_context = NULL;
-	}
+	gclass->context.class_inst = mono_metadata_parse_generic_inst (m, container, count, ptr, &ptr);
+	gclass->context.method_inst = NULL;
 
 	if (rptr)
 		*rptr = ptr;
 
 	/* If we failed to parse, return, the error has been flagged. */
-	if (gclass->inst == NULL)
+	if (gclass->context.class_inst == NULL)
 		return FALSE;
 	
 	/*
@@ -2067,8 +2165,7 @@ do_mono_metadata_parse_generic_class (MonoType *type, MonoImage *m, MonoGenericC
 
 		mono_stats.generic_instance_count++;
 		mono_stats.generics_metadata_size += sizeof (MonoGenericClass) +
-			sizeof (MonoGenericContext) +
-			gclass->inst->type_argc * sizeof (MonoType);
+			gclass->context.class_inst->type_argc * sizeof (MonoType);
 	}
 	return TRUE;
 }
@@ -3328,7 +3425,7 @@ mono_type_stack_size (MonoType *t, int *align)
 		MonoGenericClass *gclass = t->data.generic_class;
 		MonoClass *container_class = gclass->container_class;
 
-		g_assert (!gclass->inst->is_open);
+		g_assert (!gclass->context.class_inst->is_open);
 
 		if (container_class->valuetype) {
 			if (container_class->enumtype)
@@ -3372,32 +3469,37 @@ static gboolean
 _mono_metadata_generic_class_equal (const MonoGenericClass *g1, const MonoGenericClass *g2, gboolean signature_only)
 {
 	int i;
+	MonoGenericInst *i1 = g1->context.class_inst;
+	MonoGenericInst *i2 = g2->context.class_inst;
 
-	if ((g1->inst->type_argc != g2->inst->type_argc) || (g1->is_dynamic != g2->is_dynamic) ||
-	    (g1->inst->is_reference != g2->inst->is_reference))
+	if (i1->type_argc != i2->type_argc || g1->is_dynamic != g2->is_dynamic || i1->is_reference != i2->is_reference)
 		return FALSE;
 	if (!mono_metadata_class_equal (g1->container_class, g2->container_class, signature_only))
 		return FALSE;
-	for (i = 0; i < g1->inst->type_argc; ++i) {
-		if (!do_mono_metadata_type_equal (g1->inst->type_argv [i], g2->inst->type_argv [i], signature_only))
+	for (i = 0; i < i1->type_argc; ++i) {
+		if (!do_mono_metadata_type_equal (i1->type_argv [i], i2->type_argv [i], signature_only))
 			return FALSE;
 	}
 	return TRUE;
 }
 
 guint
-mono_metadata_generic_method_hash (MonoGenericMethod *gmethod)
+mono_metadata_generic_context_hash (const MonoGenericContext *context)
 {
-	return gmethod->inst->id;
+	/* FIXME: check if this seed is good enough */
+	guint hash = 0xc01dfee7;
+	if (context->class_inst)
+		hash = ((hash << 5) - hash) ^ context->class_inst->id;
+	if (context->method_inst)
+		hash = ((hash << 5) - hash) ^ context->method_inst->id;
+	return hash;
 }
 
 gboolean
-mono_metadata_generic_method_equal (MonoGenericMethod *g1, MonoGenericMethod *g2)
+mono_metadata_generic_context_equal (const MonoGenericContext *g1, const MonoGenericContext *g2)
 {
-	return (g1->container == g2->container) && (g1->class_inst == g2->class_inst) &&
-		(g1->inst == g2->inst);
+	return g1->class_inst == g2->class_inst && g1->method_inst == g2->method_inst;
 }
-
 
 /*
  * mono_metadata_type_hash:
@@ -4563,6 +4665,7 @@ mono_metadata_load_generic_params (MonoImage *image, guint32 token, MonoGenericC
 	guint32 i, owner = 0, n;
 	MonoGenericContainer *container;
 	MonoGenericParam *params;
+	MonoGenericContext *context;
 
 	if (!(i = mono_metadata_get_generic_param_row (image, token, &owner)))
 		return NULL;
@@ -4593,7 +4696,39 @@ mono_metadata_load_generic_params (MonoImage *image, guint32 token, MonoGenericC
 
 	g_assert (container->parent == NULL || container->is_method);
 
+	context = &container->context;
+	if (container->is_method) {
+		context->class_inst = container->parent ? container->parent->context.class_inst : NULL;
+		context->method_inst = mono_get_shared_generic_inst (container);
+	} else {
+		context->class_inst = mono_get_shared_generic_inst (container);
+	}
+
 	return container;
+}
+
+MonoGenericInst *
+mono_get_shared_generic_inst (MonoGenericContainer *container)
+{
+	MonoGenericInst *nginst;
+	int i;
+
+	nginst = g_new0 (MonoGenericInst, 1);
+	nginst->type_argc = container->type_argc;
+	nginst->type_argv = g_new0 (MonoType *, nginst->type_argc);
+	nginst->is_reference = 1;
+	nginst->is_open = 1;
+
+	for (i = 0; i < nginst->type_argc; i++) {
+		MonoType *t = g_new0 (MonoType, 1);
+
+		t->type = container->is_method ? MONO_TYPE_MVAR : MONO_TYPE_VAR;
+		t->data.generic_param = &container->type_params [i];
+
+		nginst->type_argv [i] = t;
+	}
+
+	return mono_metadata_lookup_generic_inst (nginst);
 }
 
 gboolean

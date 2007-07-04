@@ -1,3 +1,42 @@
+2007-06-22  Dick Porter  <dick@ximian.com>
+
+	* shared.c: The non-shared mutexes weren't being initialised properly
+	on macos.  Fixes bug 81929.
+
+2007-06-13  Randolph Chung  <tausq@debian.org>
+
+	* atomic.h: Enable for all hppa targets.
+	* Makefile.am: rename hppa_atomic.s to hppa_atomic.S so the preprocessor
+	can handle the file.
+	* hppa_atomic.s: Renamed to ...
+	* hppa_atomic.S: ... and updated to work on both HPUX and Linux.
+
+2007-06-13  Dick Porter  <dick@ximian.com>
+
+	* handles.c (timedwait_signal_wait_cond): Alertable waits on
+	private handles are now interrupted by signalling the same
+	condition that would end the wait if the handle became signalled,
+	rather than polling.  (Shared handles still have to poll.)
+
+	* threads.c (_wapi_thread_queue_apc): Interrupt the thread if it's
+	waiting on a handle
+
+	* handles-private.h (_wapi_handle_current_thread_set_waiting_on):
+	Helper functions to inform the APC queuing functions when threads
+	are waiting for handles, and to interrupt the wait.
+
+	* wait.c (WaitForMultipleObjectsEx): Need to tell the handle
+	waiting functions if any of the handles in question are shared
+
+2007-06-06  Miguel de Icaza  <miguel@novell.com>
+
+	* processes.c (is_managed_binary): Fix for OSX.
+
+2007-06-06  Wade Berrier  <wberrier@novell.com>
+
+	* atomic.h (InterlockedExchangePointer): cast to pointer to to silence
+	compiler warnings (autobuild fails the build on this type of warning)
+
 2007-05-21  Dick Porter  <dick@ximian.com>
 
 	* io-portability.c (_wapi_g_dir_open): Don't propagate any errors

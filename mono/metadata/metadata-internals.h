@@ -324,6 +324,9 @@ void
 mono_image_check_for_module_cctor (MonoImage *image) MONO_INTERNAL;
 
 void
+mono_metadata_clean_for_image (MonoImage *image) MONO_INTERNAL;
+
+void
 mono_metadata_cleanup (void);
 
 const char *   mono_meta_table_name              (int table) MONO_INTERNAL;
@@ -370,11 +373,11 @@ mono_metadata_parse_mh_full                 (MonoImage             *image,
 int* mono_metadata_get_param_attrs          (MonoImage *m, int def);
 
 guint
-mono_metadata_generic_method_hash           (MonoGenericMethod     *gmethod) MONO_INTERNAL;
+mono_metadata_generic_context_hash          (const MonoGenericContext *context) MONO_INTERNAL;
 
 gboolean
-mono_metadata_generic_method_equal          (MonoGenericMethod     *g1,
-					     MonoGenericMethod     *g2) MONO_INTERNAL;
+mono_metadata_generic_context_equal         (const MonoGenericContext *g1,
+					     const MonoGenericContext *g2) MONO_INTERNAL;
 
 MonoGenericInst *
 mono_metadata_parse_generic_inst            (MonoImage             *image,
@@ -387,7 +390,9 @@ MonoGenericInst *
 mono_metadata_lookup_generic_inst           (MonoGenericInst       *ginst) MONO_INTERNAL;
 
 MonoGenericClass *
-mono_metadata_lookup_generic_class          (MonoGenericClass      *gclass) MONO_INTERNAL;
+mono_metadata_lookup_generic_class          (MonoClass		   *gclass,
+					     MonoGenericInst	   *inst,
+					     gboolean		    is_dynamic) MONO_INTERNAL;
 
 MonoGenericInst *
 mono_metadata_inflate_generic_inst          (MonoGenericInst       *ginst,
@@ -410,6 +415,9 @@ void mono_unload_interface_ids (MonoBitSet *bitset) MONO_INTERNAL;
 
 
 MonoType *mono_metadata_type_dup_mp (MonoImage *image, const MonoType *original) MONO_INTERNAL;
+
+MonoGenericInst *
+mono_get_shared_generic_inst (MonoGenericContainer *container) MONO_INTERNAL;
 
 #endif /* __MONO_METADATA_INTERNALS_H__ */
 

@@ -823,9 +823,10 @@ static MonoMethod *
 method_from_methodspec (MonoImage *image, MonoGenericContext *context, guint32 idx)
 {
 	MonoMethod *method, *inflated;
+	MonoClass *klass;
 	MonoTableInfo *tables = image->tables;
-	MonoGenericContext *new_context = NULL;
-	MonoGenericMethod *gmethod;
+	MonoGenericContext new_context;
+	MonoGenericInst *inst;
 	MonoGenericContainer *container = NULL;
 	const char *ptr;
 	guint32 cols [MONO_METHODSPEC_SIZE];
@@ -875,19 +876,20 @@ method_from_methodspec (MonoImage *image, MonoGenericContext *context, guint32 i
 
 	method = mono_get_inflated_method (method);
 
+	klass = method->klass;
+
+	/* FIXME: Is this invalid metadata?  Should we throw an exception instead?  */
+	g_assert (!klass->generic_container);
+
+	if (klass->generic_class) {
+		g_assert (method->is_inflated);
+		method = ((MonoMethodInflated *) method)->declaring;
+	}
+
 	container = method->generic_container;
 	g_assert (container);
 
-	gmethod = g_new0 (MonoGenericMethod, 1);
-	if (method->klass->generic_class)
-		gmethod->class_inst = method->klass->generic_class->inst;
-	gmethod->container = container;
-
-	new_context = g_new0 (MonoGenericContext, 1);
-	new_context->gmethod = gmethod;
-	/* FIXME: Is this correct? */
-	if (container->parent)
-		new_context->class_inst = container->parent->context.class_inst;
+	new_context.class_inst = klass->generic_class ? klass->generic_class->context.class_inst : NULL;
 
 	/*
 	 * When parsing the methodspec signature, we're in the old context again:
@@ -910,29 +912,25 @@ method_from_methodspec (MonoImage *image, MonoGenericContext *context, guint32 i
 	 * ie. instantiate the method as `Foo.Hello<float>.
 	 */
 
-	gmethod->inst = mono_metadata_parse_generic_inst (image, NULL, param_count, ptr, &ptr);
+	inst = mono_metadata_parse_generic_inst (image, NULL, param_count, ptr, &ptr);
 
-	if (context && gmethod->inst->is_open)
-		gmethod->inst = mono_metadata_inflate_generic_inst (gmethod->inst, context);
+	if (context && inst->is_open)
+		inst = mono_metadata_inflate_generic_inst (inst, context);
+
+	new_context.method_inst = inst;
 
 	if (!container->method_hash)
 		container->method_hash = g_hash_table_new (
-			(GHashFunc)mono_metadata_generic_method_hash, (GEqualFunc)mono_metadata_generic_method_equal);
+			(GHashFunc)mono_metadata_generic_context_hash, (GEqualFunc)mono_metadata_generic_context_equal);
 
-	inflated = g_hash_table_lookup (container->method_hash, gmethod);
-	if (inflated) {
-		g_free (gmethod);
-		g_free (new_context);
+	inflated = g_hash_table_lookup (container->method_hash, &new_context);
+	if (inflated)
 		return inflated;
-	}
 
-	context = new_context;
+	mono_stats.generics_metadata_size += param_count * sizeof (MonoType);
 
-	mono_stats.generics_metadata_size += sizeof (MonoGenericMethod) +
-		sizeof (MonoGenericContext) + param_count * sizeof (MonoType);
-
-	inflated = mono_class_inflate_generic_method_full (method, method->klass, new_context);
-	g_hash_table_insert (container->method_hash, gmethod, inflated);
+	inflated = mono_class_inflate_generic_method_full (method, klass, &new_context);
+	g_hash_table_insert (container->method_hash, mono_method_get_context (inflated), inflated);
 
 	return inflated;
 }
@@ -1317,17 +1315,6 @@ mono_lookup_pinvoke_call (MonoMethod *method, const char **exc_class, const char
 	return piinfo->addr;
 }
 
-MonoGenericMethod *
-mono_get_shared_generic_method (MonoGenericContainer *container)
-{
-	MonoGenericMethod *gmethod = g_new0 (MonoGenericMethod, 1);
-	gmethod->container = container;
-	gmethod->class_inst = container->context.class_inst;
-	gmethod->inst = mono_get_shared_generic_inst (container);
-
-	return gmethod;
-}
-
 static MonoMethod *
 mono_get_method_from_token (MonoImage *image, guint32 token, MonoClass *klass,
 			    MonoGenericContext *context, gboolean *used_context)
@@ -1384,13 +1371,7 @@ mono_get_method_from_token (MonoImage *image, guint32 token, MonoClass *klass,
 	container = klass->generic_container;
 	generic_container = mono_metadata_load_generic_params (image, token, container);
 	if (generic_container) {
-		MonoGenericContext *context;
-
 		generic_container->owner.method = result;
-		context = &generic_container->context;
-		if (container)
-			context->class_inst = container->context.class_inst;
-		context->gmethod = mono_get_shared_generic_method (generic_container);
 
 		mono_metadata_load_generic_param_constraints (image, token, generic_container);
 
@@ -1550,21 +1531,20 @@ mono_free_method  (MonoMethod *method)
 	
 	if (method->dynamic) {
 		MonoMethodWrapper *mw = (MonoMethodWrapper*)method;
-		
+		int i;
+
 		g_free ((char*)method->name);
-		if (mw->method.header)
+		if (mw->method.header) {
 			g_free ((char*)mw->method.header->code);
+			for (i = 0; i < mw->method.header->num_locals; ++i)
+				g_free (mw->method.header->locals [i]);
+			g_free (mw->method.header->clauses);
+			g_free (mw->method.header);
+		}
 		g_free (mw->method_data);
-	}
-
-	if (method->dynamic && !(method->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) && ((MonoMethodNormal *)method)->header) {
-		/* FIXME: Ditto */
-		/* mono_metadata_free_mh (((MonoMethodNormal *)method)->header); */
-		g_free (((MonoMethodNormal*)method)->header);
-	}
-
-	if (method->dynamic)
+		g_free (method->signature);
 		g_free (method);
+	}
 }
 
 void

@@ -23,11 +23,9 @@ Mono_Posix_Syscall_seekdir (void *dir, mph_off_t offset)
 {
 	mph_return_if_off_t_overflow (offset);
 
-	errno = 0;
-
 	seekdir ((DIR*) dir, (off_t) offset);
 
-	return errno != 0;
+	return 0;
 }
 
 mph_off_t
@@ -94,9 +92,8 @@ Mono_Posix_Syscall_readdir_r (void *dirp, struct Mono_Posix_Syscall__Dirent *ent
 int
 Mono_Posix_Syscall_rewinddir (void* dir)
 {
-	errno = 0;
 	rewinddir (dir);
-	return errno == 0 ? 0 : -1;
+	return 0;
 }
 
 G_END_DECLS

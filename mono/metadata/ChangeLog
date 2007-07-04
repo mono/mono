@@ -1,3 +1,384 @@
+
+Wed Jul 4 11:53:57 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* object.c: cleaned up mono_runtime_invoke_array () and fixed handling
+	of byref generic inst types (bug #81997).
+
+2007-07-03  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c: moved methods mono_method_can_access_field and mono_method_can_access_method from mini/mini.c
+	* class.h: added declarations of mono_method_can_access_field() and mono_method_can_access_method()
+
+2007-07-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (emit_marshal_string): Add support for unicode strings in
+	MARSHAL_ACTION_MANAGED_CONV_RESULT. Fixes #81990.
+
+2007-07-02 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: field load/store are now verified, missing only access checks now
+
+2007-06-28  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.c (mono_debug_debugger_version): New public variable.
+
+2007-06-24  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* locales.c: When constructing DateTimeFormat or NumberFormat for
+	MonoCultureInfo, inherit readonly bit from MonoCultureInfo. The
+	MonoCultureInfo contructed from the current locale is always
+	read-only and has UseUserOverride set to true. All MonoCultureInfo
+	instances returned for GetCultures have both IsReadOnly and
+	UseUserOverride set to true. Fixes part of bug #81930.
+
+2007-06-22  Jonathan Chambers  <joncham@gmail.com>
+
+       * icall-def.h: Update System.__ComObject icalls
+       * marshal.c: Avoid managed transition (and object creation)
+       when looking up COM interface in RCW.
+       * marshal.h: Ditto.
+       
+       Code is contributed under MIT/X11 license.
+
+2007-06-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_marshal_get_runtime_invoke): Cache in the method image for now
+	to avoid crashes during assembly unloading.
+
+2007-06-22  Raja R Harinath  <rharinath@novell.com>
+
+	Fix MethodInfo.IsGenericMethodDefinition
+	* reflection.c (mono_reflection_bind_generic_method_parameters):
+	Rearrange code to ensure we always uses a generic method definition.
+	* class.c (mono_class_inflate_generic_method_full): Set
+	'generic_container' field only for generic method definitions.
+	* icall.c (ves_icall_MonoMethod_get_IsGenericMethodDefinition):
+	Use presense of 'generic_container' field as indication of being a
+	generic method definition.
+
+2007-06-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* appdomain.c (MONO_CORLIB_VERSION): Bump corlib version.
+
+	* object-internals.h: Reflect changes in the layout of the managed Delegate
+	class.
+	
+	* object-internals.h reflection.c icall-def.h: Applied patch from Robert
+	Jordan (robertj@gmx.net). Add a dtor to dynamic methods which frees up the
+	runtime memory used by the dynamic method. Fixes #77146.
+
+2007-06-21  Dick Porter  <dick@ximian.com>
+
+	* file-io.h: 
+	* file-io.c (convert_share): Cope with FileShare.Delete.  Patch
+	from Wojtek Krawczyk <krawczyk.wojciech@gazeta.pl>, fixes bug
+	81767.
+
+2007-06-21  Raja R Harinath  <rharinath@novell.com>
+
+	* reflection.c (method_encode_methodspec): Add a tripwire.
+	* class.c (inflate_generic_type): The fully open generic type is
+	not the same as the generic type definition.
+
+2007-06-21  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.h (MONO_DEBUGGER_VERSION): Bump to 59.
+
+	* mono-debug-debugger.h
+	(MonoDebuggerBreakpointInfo): Removed.
+	(mono_debugger_insert_breakpoint_full): Moved to ../mini/debug-mini.h.
+	(mono_debugger_remove_breakpoint): Likewise.
+	(mono_debugger_breakpoint_callback): Likewise.
+	(mono_debugger_start_add_type): Renamed into mono_debugger_add_type().
+
+2007-06-21  Raja R Harinath  <rharinath@novell.com>
+
+	* metadata.c (mono_metadata_lookup_generic_class): The fully open
+	generic type is not the same as the generic type definition.
+	* class.c (mono_generic_class_get_class): Likewise.
+
+2007-06-20  Geoff Norton  <gnorton@customerdna.com>
+
+	* icall.c: The second argument to 
+	System.Reflection.MethodBase.GetMethodFromHandleInternalType
+	is a MonoType not a MonoClass.
+
+2007-06-20  Rodrigo Kumpera  <kumpera@gmail.com>
+
+	* verify.c: support for function pointers in the verifier
+
+2007-06-20  Rodrigo Kumpera  <kumpera@gmail.com>
+
+	* verify.c: unmanaged pointer verification checks (loading unmanaged pointers is unverifiable)
+
+Wed Jun 20 10:22:15 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* assembly.c: removed Mono.Data.SqliteClient from the list of
+	forward-compatible assemblies as it breaks the ABI (bug #81899).
+
+2007-06-19  Raja R Harinath  <rharinath@novell.com>
+
+	* metadata.c (mono_metadata_lookup_generic_class): Protect cache
+	lookup/update with the loader lock.
+	* reflection.c (mono_class_bind_generic_parameters): No need to
+	protect mono_metadata_lookup_* with the loader lock.
+	* class.c (inflate_generic_type): Likewise.
+	
+	* metadata.c (ginst_in_image): Avoid mono_class_from_mono_type
+	on a generic instantiated type.
+
+2007-06-18  Rodrigo Kumpera <kumpera@gmail.com>
+
+	*verify.c: produce meanfull error messages on verification error
+	*verify.c: fixed some cases of verification errors reported as validation errors
+	*pedump.c: fixed the error name array, now it shows validation errors properly
+	*verify.h: fixed the contant that should be used for verification errors
+
+Mon Jun 18 17:07:22 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* metadata.c, image.c, metadata-internals.h: part of the fixes needed
+	for bug #77596, 81858 and 80743 (generics data structures on domain
+	unload).
+
+2007-06-15  Raja R Harinath  <rharinath@novell.com>
+
+	Avoid allocating 'MonoGenericContext' on the heap.
+	* class-internals (_MonoMethodInflated::context): Make field
+	inline, not a pointer.
+	* loader.c (method_from_methodspec): Allocate 'new_context' on the
+	stack. 	Use the context embedded within the inflated method as the
+	hash key, rather than 'new_context'.
+	* class.c (inflate_generic_context): Simplify.  Return a struct
+	rather than allocating on the heap.
+	(mono_class_inflate_generic_method_full): Update to changes.  Now,
+	doesn't salt away a copy of the context -- simplifying the
+	lifetime rules of a 'MonoGenericContext *'.
+	(mono_method_get_context): Return pointer to embedded context.
+	(setup_generic_array_ifaces): Allocate temporary context on stack.
+	* reflection.c (inflate_mono_method): Likewise.
+	(mono_reflection_bind_generic_method_parameters): Likewise.
+	Use the context embedded within the inflated method as the hash key.
+
+	Avoid a source of allocation of 'MonoGenericContext'.
+	* class-internals.h (_MonoGenericClass::context): Combine 'inst'
+	and 'cached_context' fields into embedded 'MonoGenericContext' field.
+	* class.c: Update to changes.
+	(mono_generic_class_get_context): Simplify drastically.  Now just
+	returns a pointer to the field.
+	* metadata-internals.h (mono_metadata_generic_context_hash): Mark
+	argument as a const pointer.
+	(mono_metadata_generic_context_equal): Likewise.
+	* metadata.c, loader.c, icall.c, reflection.c, verify.c:
+	Update to changes.
+
+2007-06-14  Rodrigo Kumpera  <kumpera@gmail.com>
+
+	* verify.c improved the handling of brtrue/brfalse, factored out common code
+
+2007-06-14  Raja R Harinath  <rharinath@novell.com>
+
+	Kill MonoGenericMethod.
+	* class-internals.h (MonoGenericContext::method_inst): Rename from
+	'gmethod' and convert to a MonoGenericInst.
+	(MonoGenericMethod): Remove.
+	* metadata.h (MonoGenericMethod): Note that the name is obsolete.
+	* loader.c (method_from_methodspec): Update to changes.  Use a
+	MonoGenericContext as the key to the hashtable.
+	* metadata.c (mono_metadata_generic_context_equal): Rename from 
+	'mono_metadata_generic_method_equal' and take MonoGenericContext.
+	(mono_metadata_generic_context_hash): Likewise from
+	'mono_metadata_generic_method_hash'.  Change hash function.
+	(mono_metadata_load_generic_params): Update to changes.
+	(mono_get_shared_generic_method): Remove.
+	* metadata-internals.h (mono_get_shared_generic_method): Remove.
+	* class.c (inflate_generic_type) [MONO_TYPE_MVAR]: Update to changes.
+	(inflate_generic_context): Likewise.
+	(mono_class_inflate_generic_method_full): Likewise.
+	(setup_generic_array_ifaces): Likewise.
+	(mono_class_create_from_typespec): Likewise.
+	* reflection.c (encode_generic_method_sig): Take a MonoGenericContext.
+	(method_encode_methodspec): Update callsite.
+	(reflection_methodbuilder_to_mono_method): Update to changes.
+	(mono_reflection_bind_generic_method_parameters): Likewise.  Use a
+	MonoGenericContext as the key to the hashtable.
+	(inflate_mono_method): Update to changes.
+
+	* class-internals.h (MonoGenericMethod::container): Remove.
+	* class.c, loader.c, metadata.c, reflection.c: Update to changes.
+
+Thu Jun 14 12:40:05 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* profiler-private.h, profiler.c, profiler.h: added API to profile
+	exception events.
+
+2007-06-13  Rodrigo Kumpera  <kumpera@gmail.com>
+
+	* verify.c: Fixed pointer type handling, some code and message formating and two invalid assigments 
+
+2007-06-13  Rodrigo Kumpera  <kumpera@gmail.com>
+
+	* verify.c: method invocation is now validated, now we verify parameter types on stack.
+	Fixed overflow and underflow not aborting the verification process.
+
+2007-06-13  Mark Probst  <mark.probst@gmail.com>
+
+	* class-internals.h (MonoStats): Added stats entries for dynamic
+	code allocations.
+
+2007-06-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* loader.c (mono_free_method): Free header->locals and header->clauses.
+
+	* marshal.c (mono_mb_create_method): Make a copy of the locals as well in the
+	dynamic case.
+
+	* threads.c (mono_thread_get_stack_bounds): Fix memory leak.
+
+	* class.c (setup_interface_offsets): Allocate memory from the image mempool.
+
+2007-06-12  Raja R Harinath  <rharinath@novell.com>
+
+	* verify.c (TYPE_MAX): Set it to 8 to match the dimensions of all
+	the tables.
+
+2007-06-11  Rodrigo Kumpera  <kumpera@gmail.com>
+
+	*pedump.c (main): return error code 4 if assembly cannot be loaded instead of segfaulting
+
+2007-06-11  Raja R Harinath  <harinath@gmail.com>
+
+	MonoGenericMethod on a diet
+	* class-internals.h (_MonoMethodInflated::reflection_info): Move
+	here ...
+	(_MonoGenericMethod::reflection_info): ... from here.
+	* icall.c (ves_icall_MonoMethod_GetGenericMethodDefinition):
+	Update to changes.
+	* reflection.c (inflate_mono_method): Likewise.
+	(mono_reflection_bind_generic_method_parameters): Likewise.
+
+2007-06-11  Rodrigo Kumpera  <kumpera@gmail.com>
+
+	*verify.c: all debu printf statements are now guarded by VERIFY_DEBUG
+	*verify.c: factored long ldarg forms to share code with short forms
+
+2007-06-11  Rodrigo Kumpera  <kumpera@gmail.com>
+
+	*verify.c: fixed code formating factored some duplicate code
+	into a new function
+
+	*verify.h: fixed binary incompatibility introduced earlier
+
+	*pedump.c: fixed formating
+
+2007-06-11  Raja R Harinath  <harinath@gmail.com>
+
+	Fix assertion when disassembling Mono.C5.dll
+	* loader.c (method_from_methodspec): Avoid inflating a method
+	twice with the same context.  If the methodref is inflated, use
+	the declaring method instead.
+
+	* class.c (mono_class_from_generic_parameter): Fix case similar to
+	bug #81830 handled below, but for method containers.
+
+2007-06-10  Raja R Harinath  <harinath@gmail.com>
+
+	* class.c (inflate_generic_type) [MONO_TYPE_CLASS]: Don't call
+	get_shared_generic_class.  Directly inflate the instance.
+	[MONO_TYPE_GENERICINST]: Inline inflate_generic_class.
+	(inflate_generic_class): Delete.
+	(get_shared_generic_class): Delete.  Move setting of
+	'cached_class' and 'cached_context' ...
+	* metadata.c (mono_metadata_lookup_generic_class): ... here.
+
+	* metadata.c (mono_metadata_lookup_generic_class): Change
+	signature to take the components of a MonoGenericClass rather than
+	an allocated MonoGenericClass.  Change semantics to be intern-like.
+	* reflection.c (mono_class_bind_generic_parameters): Update to
+	changes.  Make locking region tighter.
+	* class.c (inflate_generic_class): Update to changes.
+	(get_shared_generic_class): Likewise.
+	* metadata-internals.h: Likewise.
+
+	* reflection.c (mono_class_bind_generic_parameters): Take and
+	return a MonoClass*, not a MonoType*.  Add 'is_dynamic' parameter.
+	(mono_reflection_bind_generic_parameters): Use
+	'mono_class_bind_generic_parameters' rather than duplicate the code.
+	* class.c (mono_bounded_array_class_get): Update to changes.
+	* object-internals.h: Likewise.
+
+	* reflection.c (mono_class_bind_generic_parameters): Only support
+	parameterizing generic type definitions.  Remove support for other
+	open types.
+
+2007-06-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* loader.c (mono_free_method): Free method->signature as well. Fixes #81832.
+
+	* marshal.c (mono_marshal_get_managed_wrapper): Allocate the signature using malloc
+	in the dynamic case.
+
+2007-06-08  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* threads.c: When cleaning up thread, reset the Background bit.
+	Fixes bug #81720.
+
+2007-06-08  Jonathan Chambers  <joncham@gmail.com>
+
+       * metadata.c: Move variable declarations to top of scope.
+       * verify.c: Move variable declarations to top of scope.
+
+       Code is contributed under MIT/X11 license.
+
+2007-06-08  Raja R Harinath  <rharinath@novell.com>
+
+	* reflection.c (mono_class_bind_generic_parameters): Replace
+	open-coded loop with mono_metadata_inflate_generic_inst.
+
+	* class.c (get_shared_generic_class): Don't call
+	mono_get_shared_generic_inst.  Use the container's own
+	'class_inst'.
+
+	* metadata.c (mono_metadata_load_generic_params): Move
+	initialization of 'context' field here from ...
+	* class.c (mono_class_create_from_typedef): ... here, and ...
+	* loader.c (mono_get_method_from_token): ... here.
+
+	* class.c (get_shared_generic_class): Rename from
+	mono_get_shared_generic_class and make static.
+	(mono_get_shared_generic_inst): Move to metadata.c.
+	* loader.c (mono_get_shared_generic_method): Likewise.
+	* class-internals.h, metadata-internals.h: Update to changes.
+
+	Fix #81830
+	* class.c (mono_class_from_generic_parameter): Don't assume a
+	generic container owner exists.  Generic containers from monodis
+	don't have any.
+
+2007-06-06  Rodrigo Kumpera  <kumpera@gmail.com>
+
+	* pedump.c: pedump exists with 2 if assembly is not verifiable and 3 if invalid
+	* verify.h: new typedefs to returns the non-verifiable status
+	* verify.c: initial implementation of generics, stack merging and object compatibility check
+
+2007-06-06  Mark Probst  <mark.probst@gmail.com>
+
+	* class.c, image.c, class-internals.h (MonoImage): class_cache is
+	a MonoInternalHashTable again (fixed bug in internal hash table
+	code).
+
+2007-06-06  Mark Probst  <mark.probst@gmail.com>
+
+	* domain.c, domain-internals.h (MonoDomain): jit_code_hash is a
+	MonoInternalHashTable again (fixed bug in internal hash table
+	code).
+
+2007-06-06  Mark Probst  <mark.probst@gmail.com>
+
+	* class.c, image.c, class-internals.h, domain.c,
+	domain-internals.h (MonoImage): Reverting MonoInternalHashTable
+	changes.  Have to figure out what makes them break the SWF
+	regression.
+
 2007-06-04  Mark Probst  <mark.probst@gmail.com>
 
 	* class.c, image.c, class-internals.h (MonoImage): class_cache is

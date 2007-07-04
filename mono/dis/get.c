@@ -795,6 +795,12 @@ get_generic_param (MonoImage *m, MonoGenericContainer *container)
 
 		if (i > 0)
 			g_string_append (result, ",");
+		
+		flags = param->flags & GENERIC_PARAMETER_ATTRIBUTE_VARIANCE_MASK;
+		if ((flags & GENERIC_PARAMETER_ATTRIBUTE_COVARIANT) == GENERIC_PARAMETER_ATTRIBUTE_COVARIANT)
+			g_string_append (result, "+ ");
+		if ((flags & GENERIC_PARAMETER_ATTRIBUTE_CONTRAVARIANT) == GENERIC_PARAMETER_ATTRIBUTE_CONTRAVARIANT)
+			g_string_append (result, "- ");
 
 		flags = param->flags & GENERIC_PARAMETER_ATTRIBUTE_SPECIAL_CONSTRAINTS_MASK;
 		if ((flags & GENERIC_PARAMETER_ATTRIBUTE_REFERENCE_TYPE_CONSTRAINT) == GENERIC_PARAMETER_ATTRIBUTE_REFERENCE_TYPE_CONSTRAINT)
@@ -1079,14 +1085,15 @@ dis_stringify_object_with_class (MonoImage *m, MonoClass *c, gboolean prefix, gb
 
 	if (c->generic_class) {
 		MonoGenericClass *gclass = c->generic_class;
+		MonoGenericInst *inst = gclass->context.class_inst;
 		GString *str = g_string_new ("");
 		int i;
 
-		for (i = 0; i < gclass->inst->type_argc; i++){
-			char *t = dis_stringify_type (m, gclass->inst->type_argv [i], is_def);
+		for (i = 0; i < inst->type_argc; i++){
+			char *t = dis_stringify_type (m, inst->type_argv [i], is_def);
 
 			g_string_append (str, t);
-			if (i+1 != gclass->inst->type_argc)
+			if (i+1 != inst->type_argc)
 				g_string_append (str, ", ");
 			g_free (t);
 		}
@@ -1190,15 +1197,16 @@ dis_stringify_type (MonoImage *m, MonoType *type, gboolean is_def)
 		break;
 	case MONO_TYPE_GENERICINST: {
 		GString *str = g_string_new ("");
+		MonoGenericInst *inst;
 		int i;
 		char *generic_type = dis_stringify_type (
 			m, &type->data.generic_class->container_class->byval_arg, is_def);
-
-		for (i = 0; i < type->data.generic_class->inst->type_argc; i++){
-			char *t = dis_stringify_type (m, type->data.generic_class->inst->type_argv [i], is_def);
+		inst = type->data.generic_class->context.class_inst;
+		for (i = 0; i < inst->type_argc; i++){
+			char *t = dis_stringify_type (m, inst->type_argv [i], is_def);
 
 			g_string_append (str, t);
-			if (i+1 != type->data.generic_class->inst->type_argc)
+			if (i+1 != inst->type_argc)
 				g_string_append (str, ", ");
 			g_free (t);
 		}

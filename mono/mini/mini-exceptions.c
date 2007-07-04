@@ -28,6 +28,7 @@
 #include <mono/metadata/exception.h>
 #include <mono/metadata/gc-internal.h>
 #include <mono/metadata/mono-debug.h>
+#include <mono/metadata/profiler.h>
 
 #include "mini.h"
 #include "trace.h"
@@ -667,6 +668,7 @@ mono_handle_exception_internal (MonoContext *ctx, gpointer obj, gpointer origina
 		MonoContext ctx_cp = *ctx;
 		if (mono_trace_is_enabled ())
 			g_print ("EXCEPTION handling: %s\n", mono_object_class (obj)->name);
+		mono_profiler_exception_thrown (obj);
 		if (!mono_handle_exception_internal (&ctx_cp, obj, original_ip, TRUE, &first_filter_idx)) {
 			if (mono_break_on_exc)
 				G_BREAKPOINT ();
@@ -723,7 +725,11 @@ mono_handle_exception_internal (MonoContext *ctx, gpointer obj, gpointer origina
 				has_dynamic_methods = TRUE;
 
 			if (stack_overflow)
+#ifndef MONO_ARCH_STACK_GROWS_UP
 				free_stack = (guint8*)(MONO_CONTEXT_GET_SP (ctx)) - (guint8*)(MONO_CONTEXT_GET_SP (&initial_ctx));
+#else
+				free_stack = (guint8*)(MONO_CONTEXT_GET_SP (&initial_ctx)) - (guint8*)(MONO_CONTEXT_GET_SP (ctx));
+#endif
 			else
 				free_stack = 0xffffff;
 
@@ -791,6 +797,7 @@ mono_handle_exception_internal (MonoContext *ctx, gpointer obj, gpointer origina
 							}
 							if (mono_trace_is_enabled () && mono_trace_eval (ji->method))
 								g_print ("EXCEPTION: catch found at clause %d of %s\n", i, mono_method_full_name (ji->method, TRUE));
+							mono_profiler_exception_clause_handler (ji->method, ei->flags, i);
 							mono_debugger_handle_exception (ei->handler_start, MONO_CONTEXT_GET_SP (ctx), obj);
 							MONO_CONTEXT_SET_IP (ctx, ei->handler_start);
 							*(mono_get_lmf_addr ()) = lmf;
@@ -804,6 +811,7 @@ mono_handle_exception_internal (MonoContext *ctx, gpointer obj, gpointer origina
 						    (ei->flags == MONO_EXCEPTION_CLAUSE_FAULT)) {
 							if (mono_trace_is_enabled () && mono_trace_eval (ji->method))
 								g_print ("EXCEPTION: fault clause %d of %s\n", i, mono_method_full_name (ji->method, TRUE));
+							mono_profiler_exception_clause_handler (ji->method, ei->flags, i);
 							mono_debugger_handle_exception (ei->handler_start, MONO_CONTEXT_GET_SP (ctx), obj);
 							call_filter (ctx, ei->handler_start);
 						}
@@ -812,6 +820,7 @@ mono_handle_exception_internal (MonoContext *ctx, gpointer obj, gpointer origina
 						    (ei->flags == MONO_EXCEPTION_CLAUSE_FINALLY)) {
 							if (mono_trace_is_enabled () && mono_trace_eval (ji->method))
 								g_print ("EXCEPTION: finally clause %d of %s\n", i, mono_method_full_name (ji->method, TRUE));
+							mono_profiler_exception_clause_handler (ji->method, ei->flags, i);
 							mono_debugger_handle_exception (ei->handler_start, MONO_CONTEXT_GET_SP (ctx), obj);
 							call_filter (ctx, ei->handler_start);
 						}
@@ -819,6 +828,8 @@ mono_handle_exception_internal (MonoContext *ctx, gpointer obj, gpointer origina
 					}
 				}
 			}
+			if (!test_only)
+				mono_profiler_exception_method_leave (ji->method);
 		}
 
 		*ctx = new_ctx;
@@ -834,8 +845,13 @@ mono_handle_exception_internal (MonoContext *ctx, gpointer obj, gpointer origina
 					/* Switch back to normal stack */
 					if (stack_overflow) {
 						/* Free up some stack space */
+#ifndef MONO_ARCH_STACK_GROWS_UP
 						MONO_CONTEXT_SET_SP (&initial_ctx, (gssize)(MONO_CONTEXT_GET_SP (&initial_ctx)) + (64 * 1024));
 						g_assert ((gssize)MONO_CONTEXT_GET_SP (&initial_ctx) < (gssize)jit_tls->end_of_stack);
+#else
+						MONO_CONTEXT_SET_SP (&initial_ctx, (gssize)(MONO_CONTEXT_GET_SP (&initial_ctx)) - (64 * 1024));
+						g_assert ((gssize)MONO_CONTEXT_GET_SP (&initial_ctx) > (gssize)jit_tls->end_of_stack);
+#endif
 					}
 #ifdef MONO_CONTEXT_SET_FUNC
 					/* jit_tls->abort_func is a function descriptor on ia64 */

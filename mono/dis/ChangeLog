@@ -1,3 +1,13 @@
+2007-06-15  Raja R Harinath  <rharinath@novell.com>
+
+	* get.c (dis_stringify_object_with_class): Update to changes in
+	MonoGenericClass.
+	(dis_stringify_type): Likewise.
+
+2007-06-05  Rodrigo Kumpera  <kumpera@gmail.com>
+
+	* get.c: Support for variance related generics modifiers: <+T> and <-T>
+
 2007-03-22  Jb Evain  <jbevain@gmail.com>
 
 	* dump.c, dump.h, main.c: Implement dumping of Strings

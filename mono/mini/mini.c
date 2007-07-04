@@ -150,6 +150,8 @@ GHashTable *jit_icall_name_hash = NULL;
 
 static MonoDebugOptions debug_options;
 
+static int valgrind_register = 0;
+
 /*
  * Address of the trampoline code.  This is used by the debugger to check
  * whether a method is a trampoline.
@@ -160,9 +162,12 @@ gboolean
 mono_running_on_valgrind (void)
 {
 #ifdef HAVE_VALGRIND_MEMCHECK_H
-		if (RUNNING_ON_VALGRIND)
+		if (RUNNING_ON_VALGRIND){
+#ifdef VALGRIND_JIT_REGISTER_MAP
+			valgrind_register = TRUE;
+#endif
 			return TRUE;
-		else
+		} else
 			return FALSE;
 #else
 		return FALSE;
@@ -3562,6 +3567,22 @@ is_signed_regsize_type (MonoType *type)
 	}
 }
 
+static int
+is_unsigned_regsize_type (MonoType *type)
+{
+	switch (type->type) {
+	case MONO_TYPE_U1:
+	case MONO_TYPE_U2:
+	case MONO_TYPE_U4:
+#if SIZEOF_VOID_P == 8
+	/*case MONO_TYPE_U8: this requires different opcodes in inssel.brg */
+#endif
+		return TRUE;
+	default:
+		return FALSE;
+	}
+}
+
 static MonoInst*
 mini_get_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
 {
@@ -3656,14 +3677,14 @@ mini_get_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSigna
 		return store;
 	} else if (cmethod->klass == mono_defaults.math_class) {
 		if (strcmp (cmethod->name, "Min") == 0) {
-			if (is_signed_regsize_type (fsig->params [0])) {
+			if (is_unsigned_regsize_type (fsig->params [0])) {
 				MONO_INST_NEW (cfg, ins, OP_MIN);
 				ins->inst_i0 = args [0];
 				ins->inst_i1 = args [1];
 				return ins;
 			}
 		} else if (strcmp (cmethod->name, "Max") == 0) {
-			if (is_signed_regsize_type (fsig->params [0])) {
+			if (is_unsigned_regsize_type (fsig->params [0])) {
 				MONO_INST_NEW (cfg, ins, OP_MAX);
 				ins->inst_i0 = args [0];
 				ins->inst_i1 = args [1];
@@ -4097,114 +4118,6 @@ gboolean check_linkdemand (MonoCompile *cfg, MonoMethod *caller, MonoMethod *cal
 	}
 	
 	return FALSE;
-}
-
-static gboolean
-can_access_internals (MonoAssembly *accessing, MonoAssembly* accessed)
-{
-	GSList *tmp;
-	if (accessing == accessed)
-		return TRUE;
-	if (!accessed || !accessing)
-		return FALSE;
-	for (tmp = accessed->friend_assembly_names; tmp; tmp = tmp->next) {
-		MonoAssemblyName *friend = tmp->data;
-		/* Be conservative with checks */
-		if (!friend->name)
-			continue;
-		if (strcmp (accessing->aname.name, friend->name))
-			continue;
-		if (friend->public_key_token [0]) {
-			if (!accessing->aname.public_key_token [0])
-				continue;
-			if (strcmp ((char*)friend->public_key_token, (char*)accessing->aname.public_key_token))
-				continue;
-		}
-		return TRUE;
-	}
-	return FALSE;
-}
-
-/* FIXME: check visibility of type, too */
-static gboolean
-can_access_member (MonoClass *access_klass, MonoClass *member_klass, int access_level)
-{
-	if (access_klass->generic_class && member_klass->generic_class &&
-	    access_klass->generic_class->container_class && member_klass->generic_class->container_class) {
-		if (can_access_member (access_klass->generic_class->container_class,
-				       member_klass->generic_class->container_class, access_level))
-			return TRUE;
-	}
-
-	/* Partition I 8.5.3.2 */
-	/* the access level values are the same for fields and methods */
-	switch (access_level) {
-	case FIELD_ATTRIBUTE_COMPILER_CONTROLLED:
-		/* same compilation unit */
-		return access_klass->image == member_klass->image;
-	case FIELD_ATTRIBUTE_PRIVATE:
-		return access_klass == member_klass;
-	case FIELD_ATTRIBUTE_FAM_AND_ASSEM:
-		if (mono_class_has_parent (access_klass, member_klass) &&
-		    can_access_internals (access_klass->image->assembly, member_klass->image->assembly))
-			return TRUE;
-		return FALSE;
-	case FIELD_ATTRIBUTE_ASSEMBLY:
-		return can_access_internals (access_klass->image->assembly, member_klass->image->assembly);
-	case FIELD_ATTRIBUTE_FAMILY:
-		if (mono_class_has_parent (access_klass, member_klass))
-			return TRUE;
-		return FALSE;
-	case FIELD_ATTRIBUTE_FAM_OR_ASSEM:
-		if (mono_class_has_parent (access_klass, member_klass))
-			return TRUE;
-		return can_access_internals (access_klass->image->assembly, member_klass->image->assembly);
-	case FIELD_ATTRIBUTE_PUBLIC:
-		return TRUE;
-	}
-	return FALSE;
-}
-
-static gboolean
-can_access_field (MonoMethod *method, MonoClassField *field)
-{
-	/* FIXME: check all overlapping fields */
-	int can = can_access_member (method->klass, field->parent, field->type->attrs & FIELD_ATTRIBUTE_FIELD_ACCESS_MASK);
-	if (!can) {
-		MonoClass *nested = method->klass->nested_in;
-		while (nested) {
-			can = can_access_member (nested, field->parent, field->type->attrs & FIELD_ATTRIBUTE_FIELD_ACCESS_MASK);
-			if (can)
-				return TRUE;
-			nested = nested->nested_in;
-		}
-	}
-	return can;
-}
-
-static gboolean
-can_access_method (MonoMethod *method, MonoMethod *called)
-{
-	int can = can_access_member (method->klass, called->klass, called->flags & METHOD_ATTRIBUTE_MEMBER_ACCESS_MASK);
-	if (!can) {
-		MonoClass *nested = method->klass->nested_in;
-		while (nested) {
-			can = can_access_member (nested, called->klass, called->flags & METHOD_ATTRIBUTE_MEMBER_ACCESS_MASK);
-			if (can)
-				return TRUE;
-			nested = nested->nested_in;
-		}
-	}
-	/* 
-	 * FIXME:
-	 * with generics calls to explicit interface implementations can be expressed
-	 * directly: the method is private, but we must allow it. This may be opening
-	 * a hole or the generics code should handle this differently.
-	 * Maybe just ensure the interface type is public.
-	 */
-	if ((called->flags & METHOD_ATTRIBUTE_VIRTUAL) && (called->flags & METHOD_ATTRIBUTE_FINAL))
-		return TRUE;
-	return can;
 }
 
 /*
@@ -5008,7 +4921,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 				if (!cmethod)
 					goto load_error;
-				if (!dont_verify && !cfg->skip_visibility && !can_access_method (method, cil_method))
+				if (!dont_verify && !cfg->skip_visibility && !mono_method_can_access_method (method, cil_method))
 					UNVERIFIED;
 
 				if (!virtual && (cmethod->flags & METHOD_ATTRIBUTE_ABSTRACT))
@@ -6410,7 +6323,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			if (!field)
 				goto load_error;
 			mono_class_init (klass);
-			if (!dont_verify && !cfg->skip_visibility && !can_access_field (method, field))
+			if (!dont_verify && !cfg->skip_visibility && !mono_method_can_access_field (method, field))
 				UNVERIFIED;
 
 			foffset = klass->valuetype? field->offset - sizeof (MonoObject): field->offset;
@@ -10933,7 +10846,15 @@ mono_codegen (MonoCompile *cfg)
 			break;
 		}
 	}
-       
+
+#ifdef VALGRIND_JIT_REGISTER_MAP
+if (valgrind_register){
+		char* nm = mono_method_full_name (cfg->method, TRUE);
+		VALGRIND_JIT_REGISTER_MAP (nm, cfg->native_code, cfg->native_code + cfg->code_len);
+		g_free (nm);
+	}
+#endif
+ 
 	if (cfg->verbose_level > 0) {
 		char* nm = mono_method_full_name (cfg->method, TRUE);
 		g_print ("Method %s emitted at %p to %p (code length %d) [%s]\n", 
@@ -12898,6 +12819,11 @@ print_jit_stats (void)
 			 mono_stats.inflated_method_count);
 		g_print ("Inflated types:         %ld\n", mono_stats.inflated_type_count);
 		g_print ("Generics metadata size: %ld\n", mono_stats.generics_metadata_size);
+		g_print ("Generics virtual invokes: %ld\n", mono_jit_stats.generic_virtual_invocations);
+
+		g_print ("Dynamic code allocs:    %ld\n", mono_stats.dynamic_code_alloc_count);
+		g_print ("Dynamic code bytes:     %ld\n", mono_stats.dynamic_code_bytes_count);
+		g_print ("Dynamic code frees:     %ld\n", mono_stats.dynamic_code_frees_count);
 
 		if (mono_use_security_manager) {
 			g_print ("\nDecl security check   : %ld\n", mono_jit_stats.cas_declsec_check);

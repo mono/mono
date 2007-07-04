@@ -239,25 +239,22 @@ Mono_Posix_Syscall_swab (void *from, void *to, mph_ssize_t n)
 int
 Mono_Posix_Syscall_setusershell (void)
 {
-	errno = 0;
 	setusershell ();
-	return errno == 0 ? 0 : -1;
+	return 0;
 }
 
 int
 Mono_Posix_Syscall_endusershell (void)
 {
-	errno = 0;
 	endusershell ();
-	return errno == 0 ? 0 : -1;
+	return 0;
 }
 
 int
 Mono_Posix_Syscall_sync (void)
 {
-	errno = 0;
 	sync ();
-	return errno == 0 ? 0 : -1;
+	return 0;
 }
 
 

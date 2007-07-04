@@ -1135,6 +1135,8 @@ visit_inst (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, GList **cvars, 
 
 			visit_inst (cfg, bb, ins->next, cvars, bblist, carray);
 		}
+	} else if (ins->opcode == OP_BR) {
+		add_cprop_bb (cfg, ins->inst_target_bb, bblist);
 	} else if (MONO_IS_COND_BRANCH_OP (ins)) {
 		if (ins->flags & MONO_INST_CFOLD_TAKEN) {
 			add_cprop_bb (cfg, ins->inst_true_bb, bblist);
