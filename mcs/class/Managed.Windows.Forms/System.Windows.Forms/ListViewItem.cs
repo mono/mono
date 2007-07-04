@@ -272,12 +272,14 @@ namespace System.Windows.Forms
 				if (is_focused == value)
 					return;
 
-				is_focused = value; 
+				if (owner != null) {
+					if (owner.FocusedItem != null)
+						owner.FocusedItem.UpdateFocusedState (false);
 
-				Invalidate ();
-				if (owner != null)
-					Layout ();
-				Invalidate ();
+					owner.focused_item = value ? this : null;
+				}
+
+				UpdateFocusedState (value);
 			}
 		}
 
@@ -750,6 +752,16 @@ namespace System.Windows.Forms
 			this.index = index;
 		}
 #endif
+
+		void UpdateFocusedState (bool is_focused)
+		{
+			this.is_focused = is_focused;
+			if (owner != null) {
+				Invalidate ();
+				Layout ();
+				Invalidate ();
+			}
+		}
 
 		internal void Invalidate ()
 		{

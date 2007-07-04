@@ -2701,12 +2701,11 @@ namespace System.Windows.Forms
 		
 		private void SetFocusedItem (ListViewItem item)
 		{
-			if (focused_item != null)
-				focused_item.Focused = false;
-			
 			if (item != null)
 				item.Focused = true;
-				
+			else if (focused_item != null) // Previous focused item
+				focused_item.Focused = false;
+
 			focused_item = item;
 		}
 

@@ -1,5 +1,11 @@
 2007-07-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ListView.cs: Set ListView.focused_item from ListViewItem.Focused
+	property. Also, invalidate previous focused item in the mentioned
+	property (match .Net).
+
+2007-07-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* ListView.cs: Implement 2.0 FocusedItem property setter.
 
 2007-07-03  Carlos Alberto Cortez <calberto.cortez@gmail.com>
