@@ -1,4 +1,9 @@
 
+Wed Jul 4 15:29:07 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* x86/x86-codegen.h: added minimal sse instructions currently
+	needed by the JIT.
+
 2007-06-13  Randolph Chung  <tausq@debian.org>
 
 	* hppa/hppa-codegen.h: Update with more instructions.
