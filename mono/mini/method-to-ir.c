@@ -3586,16 +3586,16 @@ mini_emit_ldelema_ins (MonoCompile *cfg, MonoMethod *cmethod, MonoInst **sp, uns
 
 	return addr;
 }
- 
+
 static int
-is_signed_regsize_type (MonoType *type)
+is_unsigned_regsize_type (MonoType *type)
 {
 	switch (type->type) {
-	case MONO_TYPE_I1:
-	case MONO_TYPE_I2:
-	case MONO_TYPE_I4:
+	case MONO_TYPE_U1:
+	case MONO_TYPE_U2:
+	case MONO_TYPE_U4:
 #if SIZEOF_VOID_P == 8
-	/*case MONO_TYPE_I8: this requires different opcodes in inssel.brg */
+	/*case MONO_TYPE_U8: this requires different opcodes in inssel.brg */
 #endif
 		return TRUE;
 	default:
@@ -3873,7 +3873,7 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 		}
 	} else if (cmethod->klass == mono_defaults.math_class) {
 		if (strcmp (cmethod->name, "Min") == 0) {
-			if (is_signed_regsize_type (fsig->params [0])) {
+			if (is_unsigned_regsize_type (fsig->params [0])) {
 				/* min (x,y) = y + (((x-y)>>31)&(x-y)); */
 				int diff = alloc_preg (cfg);
 				int shifted = alloc_preg (cfg);
@@ -3886,7 +3886,7 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 				return ins;
 			}
 		} else if (strcmp (cmethod->name, "Max") == 0) {
-			if (is_signed_regsize_type (fsig->params [0])) {
+			if (is_unsigned_regsize_type (fsig->params [0])) {
 				/* max (x,y) = x - (((x-y)>>31)&(x-y)); */
 				int diff = alloc_preg (cfg);
 				int shifted = alloc_preg (cfg);
