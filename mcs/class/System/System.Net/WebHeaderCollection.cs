@@ -302,13 +302,13 @@ namespace System.Net
 				  
 			return sb.Append("\r\n").ToString();
 		}
-
+#if !TARGET_JVM
 		void ISerializable.GetObjectData (SerializationInfo serializationInfo,
 						  StreamingContext streamingContext)
 		{
 			GetObjectData (serializationInfo, streamingContext);
 		}
-
+#endif
 		public override void GetObjectData (SerializationInfo serializationInfo, StreamingContext streamingContext)
 		{
 			int count = base.Count;
