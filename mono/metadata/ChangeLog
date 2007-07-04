@@ -1,3 +1,9 @@
+
+Wed Jul 4 11:53:57 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* object.c: cleaned up mono_runtime_invoke_array () and fixed handling
+	of byref generic inst types (bug #81997).
+
 2007-07-03  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* class.c: moved methods mono_method_can_access_field and mono_method_can_access_method from mini/mini.c
