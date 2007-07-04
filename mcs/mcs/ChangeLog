@@ -1,3 +1,10 @@
+2007-07-04  Marek Safar  <marek.safar@gmail.com>
+
+	* ecore.cs (VarExpr.DoResolveLValue): More restriction checks.
+	
+	* anonymous.cs,
+	* lambda.cs: Add custom error message type.
+
 2007-07-03  Marek Safar  <marek.safar@gmail.com>
 
 	* lambda.cs: Simplified little bit.

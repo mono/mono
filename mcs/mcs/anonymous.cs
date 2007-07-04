@@ -1413,6 +1413,11 @@ namespace Mono.CSharp {
 			// nothing, as we only exist to not do anything.
 		}
 
+		public override string GetSignatureForError ()
+		{
+			return ExprClassName;
+		}
+		
 		public bool IsIterator {
 			get { return false; }
 		}

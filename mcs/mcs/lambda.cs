@@ -161,6 +161,11 @@ namespace Mono.CSharp {
 			return anonymous.AnonymousDelegate;
 		}
 		
+		public override string GetSignatureForError ()
+		{
+			return "lambda expression";
+		}
+
 		//
 		// TryBuild: tries to compile this LambdaExpression with the given
 		// types as the lambda expression parameter types.   
