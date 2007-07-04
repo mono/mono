@@ -27,12 +27,15 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 using System;
 using System.Collections;
 using System.Text;
 using System.Xml;
+#if !NET_2_1
 using System.Xml.Schema;
 using Mono.Xml.Schema;
+#endif
 
 namespace Mono.Xml
 {

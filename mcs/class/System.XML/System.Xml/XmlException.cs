@@ -116,6 +116,32 @@ namespace System.Xml
 			this.linePosition = linePosition;
 		}
 
+#if NET_2_1
+		internal XmlException (string message, int lineNumber, int linePosition,
+			object sourceObject, string sourceUri, Exception innerException)
+			: base (
+				GetMessage (message, sourceUri, lineNumber, linePosition, sourceObject),
+				innerException)
+		{
+			//hasLineInfo = true;
+			this.lineNumber		= lineNumber;
+			this.linePosition	= linePosition;
+			//this.sourceObj		= sourceObject;
+			this.sourceUri		= sourceUri;
+		}
+
+		private static string GetMessage (string message, string sourceUri, int lineNumber, int linePosition, object sourceObj)
+		{
+			string msg = "XmlSchema error: " + message;
+			if (lineNumber > 0)
+				msg += String.Format (CultureInfo.InvariantCulture, " XML {0} Line {1}, Position {2}.",
+					(sourceUri != null && sourceUri != "") ? "URI: " + sourceUri + " ." : "",
+					lineNumber,
+					linePosition);
+			return msg;
+		}
+#endif
+
 		#endregion
 
 		#region Properties

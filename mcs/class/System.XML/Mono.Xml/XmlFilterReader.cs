@@ -160,9 +160,11 @@ namespace Mono.Xml
 			get { return reader.NameTable; }
 		}
 
+#if !NET_2_1
 		public override IXmlSchemaInfo SchemaInfo {
 			get { return reader.SchemaInfo; }
 		}
+#endif
 
 		public override XmlReaderSettings Settings {
 			get { return settings; }

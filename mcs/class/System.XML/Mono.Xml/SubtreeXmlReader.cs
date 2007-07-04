@@ -124,9 +124,11 @@ namespace Mono.Xml
 			get { return initial ? ReadState.Initial : eof ? ReadState.EndOfFile : Reader.ReadState ; }
 		}
 
+#if !NET_2_1
 		public override IXmlSchemaInfo SchemaInfo {
 			get { return Reader.SchemaInfo; }
 		}
+#endif
 
 		public override XmlReaderSettings Settings {
 			get { return Reader.Settings; }

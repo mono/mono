@@ -35,10 +35,12 @@ using System.Collections;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+#if !NET_2_1
 using System.Xml.Schema; // only required for NET_2_0 (SchemaInfo)
 using System.Xml.Serialization; // only required for NET_2_0 (SchemaInfo)
-using Mono.Xml; // only required for NET_2_0
 using Mono.Xml.Schema; // only required for NET_2_0
+#endif
+using Mono.Xml; // only required for NET_2_0
 
 namespace System.Xml
 {
@@ -184,9 +186,11 @@ namespace System.Xml
 		public abstract ReadState ReadState { get; }
 
 #if NET_2_0
+#if !NET_2_1
 		public virtual IXmlSchemaInfo SchemaInfo {
 			get { return null; }
 		}
+#endif
 
 		public virtual XmlReaderSettings Settings {
 			get { return settings; }
@@ -400,6 +404,9 @@ namespace System.Xml
 
 		private static XmlReader CreateValidatingXmlReader (XmlReader reader, XmlReaderSettings settings)
 		{
+#if NET_2_1
+			return reader;
+#else
 			XmlValidatingReader xvr = null;
 			switch (settings.ValidationType) {
 			// Auto and XDR are obsoleted in 2.0 and therefore ignored.
@@ -425,10 +432,9 @@ namespace System.Xml
 			//	throw new NotImplementedException ();
 
 			return xvr != null ? xvr : reader;
-		}
 #endif
+		}
 
-#if NET_2_0
 		void IDisposable.Dispose ()
 		{
 			Dispose (false);
@@ -705,8 +711,8 @@ namespace System.Xml
 			}
 
 			if (name != Name) {
-				string error = String.Format ("The expected element is {0} but found {1} instead",
-							      name, Name);
+				string error = String.Format ("The {0} tag from namespace {1} is expected.",
+							      Name, NamespaceURI);
 				throw XmlError (error);
 			}
 
@@ -722,7 +728,7 @@ namespace System.Xml
 			}
 
 			if (localName != LocalName || NamespaceURI != namespaceName) {
-				string error = String.Format ("The expected element is {0} from namespace {1}, but found {2} from namespace {3} instead",
+				string error = String.Format ("Expecting {0} tag from namespace {1}, got {2} and {3} instead",
 							      localName, namespaceName,
 							      LocalName, NamespaceURI);
 				throw XmlError (error);

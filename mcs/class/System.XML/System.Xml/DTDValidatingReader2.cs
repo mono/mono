@@ -62,6 +62,8 @@ TODOs:
 
 */
 
+#if !NET_2_1_HACK
+
 using System;
 using System.Collections;
 #if NET_2_0
@@ -85,7 +87,10 @@ namespace Mono.Xml
 #if NET_2_0
 		IXmlNamespaceResolver,
 #endif
-		IHasXmlParserContext, IHasXmlSchemaInfo
+		IHasXmlParserContext
+#if !NET_2_1
+		, IHasXmlSchemaInfo
+#endif
 	{
 		public DTDValidatingReader (XmlReader reader)
 			: this (reader, null)
@@ -1260,3 +1265,5 @@ namespace Mono.Xml
 
 	}
 }
+
+#endif

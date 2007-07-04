@@ -35,7 +35,9 @@ using System.IO;
 using System.Net;
 using System.Xml.Schema;
 
+#if !NET_2_1
 using XsValidationFlags = System.Xml.Schema.XmlSchemaValidationFlags;
+#endif
 
 namespace System.Xml
 {
@@ -51,10 +53,12 @@ namespace System.Xml
 		private int linePositionOffset;
 		private bool prohibitDtd;
 		private XmlNameTable nameTable;
+#if !NET_2_1
 		private XmlSchemaSet schemas;
 		private bool schemasNeedsInitialization;
 		private XsValidationFlags validationFlags;
 		private ValidationType validationType;
+#endif
 		private XmlResolver xmlResolver;
 
 		public XmlReaderSettings ()
@@ -62,7 +66,9 @@ namespace System.Xml
 			Reset ();
 		}
 
+#if !NET_2_1
 		public event ValidationEventHandler ValidationEventHandler;
+#endif
 
 		public XmlReaderSettings Clone ()
 		{
@@ -80,12 +86,14 @@ namespace System.Xml
 			lineNumberOffset = 0;
 			linePositionOffset = 0;
 			prohibitDtd = true;
+#if !NET_2_1
 			schemas = null;
 			schemasNeedsInitialization = true;
 			validationFlags =
 				XsValidationFlags.ProcessIdentityConstraints |
 				XsValidationFlags.AllowXmlAttributes;
 			validationType = ValidationType.None;
+#endif
 			xmlResolver = new XmlUrlResolver ();
 		}
 
@@ -142,6 +150,7 @@ namespace System.Xml
 			set { nameTable = value; }
 		}
 
+#if !NET_2_1
 		public XmlSchemaSet Schemas {
 			get {
 				if (schemasNeedsInitialization) {
@@ -178,6 +187,7 @@ namespace System.Xml
 			get { return validationType; }
 			set { validationType = value; }
 		}
+#endif
 
 		public XmlResolver XmlResolver {
 			internal get { return xmlResolver; }

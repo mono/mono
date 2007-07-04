@@ -33,7 +33,7 @@
 using System;
 using System.IO;
 using System.Text;
-#if NET_2_0
+#if NET_2_0 && !NET_2_1
 using System.Xml.XPath;
 #endif
 
@@ -385,7 +385,7 @@ namespace System.Xml
 				WriteString (localName);
 		}
 
-#if NET_2_0
+#if NET_2_0 && !NET_2_1
 		[MonoTODO] // FIXME: test defattr handling
 		public virtual void WriteNode (XPathNavigator navigator, bool defattr)
 		{

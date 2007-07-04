@@ -34,7 +34,11 @@ using System.IO;
 using System.Text;
 using System.Xml;
 using System.Xml.Schema;
+#if NET_2_1
+using XmlSchemaException = System.Xml.XmlException;
+#else
 using Mono.Xml.Schema;
+#endif
 
 #if NET_2_0
 using XmlTextReaderImpl = Mono.Xml2.XmlTextReader;
@@ -141,6 +145,7 @@ namespace Mono.Xml
 			set { linePosition = value; }
 		}
 
+#if !NET_2_1
 		internal XmlSchema CreateXsdSchema ()
 		{
 			XmlSchema s = new XmlSchema ();
@@ -151,14 +156,19 @@ namespace Mono.Xml
 				s.Items.Add (el.CreateXsdElement ());
 			return s;
 		}
+#endif
 
 		public string ResolveEntity (string name)
 		{
 			DTDEntityDeclaration decl = EntityDecls [name] 
 				as DTDEntityDeclaration;
 			if (decl == null) {
+#if NET_2_1
+				AddError (new XmlSchemaException (String.Format ("Required entity was not found: {0}", name), null, this.LineNumber, this.LinePosition));
+#else
 				AddError (new XmlSchemaException ("Required entity was not found.",
 					this.LineNumber, this.LinePosition, null, this.BaseURI, null));
+#endif
 				return " ";
 			}
 			else
@@ -435,6 +445,7 @@ namespace Mono.Xml
 			return compiledAutomata;
 		}
 
+#if !NET_2_1
 		internal XmlSchemaParticle CreateXsdParticle ()
 		{
 			XmlSchemaParticle p = CreateXsdParticleCore ();
@@ -483,6 +494,7 @@ namespace Mono.Xml
 			}
 			return p;
 		}
+#endif
 
 		private DTDAutomata CompileInternal ()
 		{
@@ -626,12 +638,14 @@ namespace Mono.Xml
 			return new XmlException (this as IXmlLineInfo, BaseURI, message);
 		}
 
+#if !NET_2_1
 		public void SetLineInfo (XmlSchemaObject obj)
 		{
 			obj.SourceUri = BaseURI;
 			obj.LineNumber = LineNumber;
 			obj.LinePosition = LinePosition;
 		}
+#endif
 	}
 
 	internal class DTDElementDeclaration : DTDNode
@@ -681,6 +695,7 @@ namespace Mono.Xml
 			}
 		}
 
+#if !NET_2_1
 		internal XmlSchemaElement CreateXsdElement ()
 		{
 			XmlSchemaElement el = new XmlSchemaElement ();
@@ -732,6 +747,7 @@ namespace Mono.Xml
 			*/
 			return el;
 		}
+#endif
 	}
 
 	internal class DTDAttributeDefinition : DTDNode
@@ -825,6 +841,7 @@ namespace Mono.Xml
 			}
 		}
 
+#if !NET_2_1
 		internal XmlSchemaAttribute CreateXsdAttribute ()
 		{
 			XmlSchemaAttribute a = new XmlSchemaAttribute ();
@@ -885,6 +902,7 @@ namespace Mono.Xml
 				a.SchemaTypeName = qname;
 			return a;
 		}
+#endif
 
 		internal string ComputeDefaultValue ()
 		{
@@ -1212,8 +1230,12 @@ namespace Mono.Xml
 				}
 			}
 			if (start != 0)
+#if NET_2_1
+				Root.AddError (new XmlSchemaException (this, this.BaseURI, "Invalid reference character '&' is specified."));
+#else
 				Root.AddError (new XmlSchemaException ("Invalid reference character '&' is specified.",
 					this.LineNumber, this.LinePosition, null, this.BaseURI, null));
+#endif
 			scanned = true;
 			recursed = false;
 		}

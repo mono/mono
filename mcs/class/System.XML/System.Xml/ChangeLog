@@ -1,3 +1,13 @@
+2007-07-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DTDAutomata.cs DTDObjectModel.cs DTDReader.cs
+	  DTDValidatingReader2.cs XmlException.cs XmlReader.cs
+	  XmlReaderSettings.cs XmlWriter.cs :
+	  Make System.Xml.Core.dll build easier, using NET_2_1.
+
+	  DTD support is simply cut at this stage (as it largely depends on
+	  sys.xml.schema stuff).
+
 2007-06-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* XmlTextReader.cs: Expose ProhibitDtd on 1.0 profile too.

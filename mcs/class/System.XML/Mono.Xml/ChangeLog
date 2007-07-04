@@ -1,3 +1,8 @@
+2007-07-04  Atsushi Enomoto <atsushi@ximian.com>
+
+	* SubtreeXmlReader.cs XmlFilterReader.cs :
+	  exclude xsd stuff from NET_2_1 profile.
+
 2007-05-03  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlFilterReader.cs : do not close input when CloseInput is true.
