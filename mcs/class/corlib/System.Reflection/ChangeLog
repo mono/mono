@@ -8,7 +8,7 @@
 	* ExceptionHandlingClause.cs : ToString() stub.
 	* MethodBase.cs TypeDelegator.cs ModuleResolveEventHandler.cs
 	  TypeFilter.cs MemberFilter.cs
-	  FieldInfo.cs ParameterInfo.cs MethodInfo.cs DynamicMethod.cs :
+	  FieldInfo.cs ParameterInfo.cs MethodInfo.cs :
 	  miscellaneous cosmetic API fixes.
 
 Tue May 8 13:04:35 CEST 2007 Paolo Molaro <lupus@ximian.com>

@@ -233,12 +233,14 @@ namespace System.Reflection.Emit {
 			return retval;
 		}
 
+		/*
 		public override object Invoke (object obj, object[] parameters) {
 			CreateDynMethod ();
 			if (method == null)
 				method = new MonoMethod (mhandle);
 			return method.Invoke (obj, parameters);
 		}
+		*/
 
 		public override object Invoke (object obj, BindingFlags invokeAttr,
 									   Binder binder, object[] parameters,
