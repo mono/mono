@@ -1,5 +1,7 @@
-2007-07-04  Sebastien Pouliot  <sebastien@ximian.com> 
+2007-07-04  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* BigIntegerTest.cs: A few more ModPow test cases to corner the
+	small value bug (looks like a bad Barrett reduction).
 	* PrimeTestingTest.cs: Add test cases for "small" primes between
 	10 and 300 digits. 3 cases are failing for 20 digits primes.
 

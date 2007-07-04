@@ -92,6 +92,35 @@ namespace MonoTests.Mono.Math {
 		}
 
 		[Test]
+		public void ModPow_3 ()
+		{
+			BigInteger b = new BigInteger (2);
+			BigInteger m = new BigInteger (myalias.Int32.MaxValue);
+			// after 62 we start loosing double precision and result will differ
+			for (int i = 1; i < 62; i++) {
+				long expected = (long) myalias.Math.Pow (2, i) % myalias.Int32.MaxValue;
+				BigInteger e = new BigInteger (i);
+				BigInteger r = b.ModPow (e, m);
+				Assert.AreEqual (expected.ToString (), r.ToString (), i.ToString ());
+			}
+		}
+
+		[Test]
+		public void Bug81857 ()
+		{
+			BigInteger b = BigInteger.Parse ("18446744073709551616");
+			BigInteger exp = new BigInteger (2);
+			BigInteger mod = BigInteger.Parse ("48112959837082048697");
+			BigInteger expected = BigInteger.Parse ("4970597831480284165");
+
+			BigInteger manual = b * b % mod;
+			Assert.AreEqual (expected, manual, "b * b % mod");
+// fails (inside Barrett reduction)
+//			BigInteger actual = b.ModPow (exp, mod);
+//			Assert.AreEqual (expected, actual, "b.ModPow (exp, mod)");
+		}
+
+		[Test]
 		public void IsProbablePrime_Small ()
 		{
 			// last of the small prime tables
