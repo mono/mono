@@ -83,12 +83,15 @@ namespace System.Web.UI
 			if (evi == null)
 				throw new InvalidOperationException (String.Format ("Could not find an event named '{0}' on associated control '{1}' for the trigger in UpdatePanel '{2}'.", eventName, c.ID, Owner.ID));
 
+			Delegate d = null;
 			try {
-				evi.AddEventHandler (c, Delegate.CreateDelegate (evi.EventHandlerType, this, _eventHandler, true));
+				d = Delegate.CreateDelegate (evi.EventHandlerType, this, _eventHandler);
 			}
 			catch (ArgumentException) {
 				throw new InvalidOperationException (String.Format ("The event '{0}' in '{1}' for the control '{2}' does not match a standard event handler signature.", eventName, c.GetType (), c.ID));
 			}
+
+			evi.AddEventHandler (c, d);
 
 			sm.RegisterAsyncPostBackControl (c);
 		}
