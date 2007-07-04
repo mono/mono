@@ -500,6 +500,32 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		public void FocusedItem ()
+		{
+			ListView lvw = CreateListView (View.LargeIcon);
+			Form form = new Form ();
+			lvw.Parent = form;
+
+			// FocusedItem setter ignores the value until form is shown
+			lvw.FocusedItem = lvw.Items [2];
+			Assert.AreEqual (null, lvw.FocusedItem, "#A1");
+
+			// It's not enough to create the ListView control
+			form.Show ();
+
+			lvw.FocusedItem = lvw.Items [2];
+			Assert.AreEqual (lvw.Items [2], lvw.FocusedItem, "#A2");
+
+			lvw.FocusedItem = new ListViewItem ();
+			Assert.AreEqual (lvw.Items [2], lvw.FocusedItem, "#A3");
+
+			lvw.FocusedItem = null;
+			Assert.AreEqual (lvw.Items [2], lvw.FocusedItem, "#A4");
+
+			form.Dispose ();
+		}
+
+		[Test]
 		public void HotTracking ()
 		{
 			ListView lvw = new ListView ();
