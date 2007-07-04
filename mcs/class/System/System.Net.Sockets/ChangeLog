@@ -1,3 +1,8 @@
+2007-07-04  Dick Porter  <dick@ximian.com>
+
+	* Socket.cs: Don't set DontFragment by default for IPv6 sockets.
+	Fixes bug 81985.
+
 2007-05-16 Adar Wesley <adarw@mainsoft.com>
 
 	* Socket.jvm.cs: added missing methods EndDisconnect, IOControl,

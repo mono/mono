@@ -690,8 +690,8 @@ namespace System.Net.Sockets
 		{
 #if NET_2_0
 			try {
-				if (address_family == AddressFamily.InterNetwork ||
-				    address_family == AddressFamily.InterNetworkV6) {
+				if (address_family == AddressFamily.InterNetwork /* Need to test IPv6 further ||
+										   address_family == AddressFamily.InterNetworkV6 */) {
 					/* This is the default, but it
 					 * probably has nasty side
 					 * effects on Linux, as the
