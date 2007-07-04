@@ -1,5 +1,10 @@
 2007-07-04  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DTDValidatingReader2.cs :
+	  we can remove NET_2_1 from this unused code in SL.
+
+2007-07-04  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DTDAutomata.cs DTDObjectModel.cs DTDReader.cs
 	  DTDValidatingReader2.cs XmlException.cs XmlReader.cs
 	  XmlReaderSettings.cs XmlWriter.cs :

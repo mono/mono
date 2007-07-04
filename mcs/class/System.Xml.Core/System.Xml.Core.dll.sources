@@ -12,7 +12,6 @@ DummySystemXmlCore.cs
 ../System.XML/System.Xml/DTDAutomata.cs
 ../System.XML/System.Xml/DTDObjectModel.cs
 ../System.XML/System.Xml/DTDReader.cs
-../System.XML/System.Xml/DTDValidatingReader2.cs
 ../System.XML/System.Xml/EntityHandling.cs
 ../System.XML/System.Xml/EntityResolvingXmlReader.cs
 ../System.XML/System.Xml/Formatting.cs
