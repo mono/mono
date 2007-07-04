@@ -1,7 +1,12 @@
+2007-07-04  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* PrimeTestingTest.cs: Add test cases for "small" primes between
+	10 and 300 digits. 3 cases are failing for 20 digits primes.
+
 2007-07-03  Sebastien Pouliot  <sebastien@ximian.com> 
 
-	* BigInteger.cs: Add test cases for small values with IsProbablePrime.
-	From bug #81857, subset from patch by Kazuki.
+	* BigIntegerTest.cs: Add test cases for small values with 
+	IsProbablePrime. From bug #81857, subset from patch by Kazuki.
 
 2005-01-03  Nick Drochak  <ndrochak@gol.com>
 
