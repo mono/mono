@@ -433,5 +433,18 @@ namespace Tests.System.Web.Script.Serialization
 				return d;
 			}
 		}
+
+		[Test]
+		public void DeserializeObject () {
+			object o = new JavaScriptSerializer ().DeserializeObject ("{\"Numeric\":0,\"Array\":[true,false,0]}");
+			Assert.IsNotNull (o as Dictionary<string, object>, "type");
+			Dictionary<string, object> dictionary = (Dictionary<string, object>) o;
+			Assert.AreEqual (0, (int) dictionary ["Numeric"], "Numeric");
+			Assert.IsNotNull (dictionary ["Array"] as object [], "Array type");
+			object [] array = (object []) dictionary ["Array"];
+			Assert.AreEqual (true, (bool) array [0], "array [0]");
+			Assert.AreEqual (false, (bool) array [1], "array [1]");
+			Assert.AreEqual (0, (int) array [2], "array [2]");
+		}
 	}
 }

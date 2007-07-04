@@ -361,7 +361,7 @@ if (typeof({0}) === 'undefined') {{", gsta.Type.FullName);
 		}
 
 		public void Invoke (string method, TextReader reader, TextWriter writer) {
-			Invoke (method, (IDictionary<string, object>) JSSerializer.DeserializeObject (reader), writer);
+			Invoke (method, (IDictionary<string, object>) JSSerializer.DeserializeObjectInternal (reader), writer);
 		}
 
 		static internal LogicalTypeInfo GetLogicalTypeInfo (Type t, string filePath) {

@@ -209,7 +209,7 @@ namespace System.Web.Script.Serialization
 		}
 
 		public T Deserialize<T> (string input) {
-			return ConvertToType<T> (DeserializeObject(input));
+			return ConvertToType<T> (DeserializeObjectInternal(input));
 		}
 
 		static object Evaluate (object value) {
@@ -226,7 +226,7 @@ namespace System.Web.Script.Serialization
 			foreach (object value in e)
 				list.Add (Evaluate(value));
 
-			return list;
+			return list.ToArray ();
 		}
 
 		static IDictionary<string, object> Evaluate (IDictionary<string, object> dict) {
@@ -314,10 +314,14 @@ namespace System.Web.Script.Serialization
 		}
 
 		public object DeserializeObject (string input) {
-			return DeserializeObject (new StringReader (input));
+			return Evaluate (DeserializeObjectInternal (new StringReader (input)));
 		}
 
-		internal object DeserializeObject (TextReader input) {
+		internal object DeserializeObjectInternal (string input) {
+			return DeserializeObjectInternal (new StringReader (input));
+		}
+
+		internal object DeserializeObjectInternal (TextReader input) {
 			JsonSerializer ser = new JsonSerializer (this);
 			return ser.Deserialize (input);
 		}
