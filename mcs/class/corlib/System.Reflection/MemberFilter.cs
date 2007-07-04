@@ -28,6 +28,7 @@ using System.Runtime.InteropServices;
 namespace System.Reflection {
 #if NET_2_0
 	[ComVisible (true)]
+	[Serializable]
 #endif
 	public delegate bool MemberFilter( MemberInfo m, object filterCriteria);
 

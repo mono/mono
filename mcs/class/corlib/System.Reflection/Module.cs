@@ -324,6 +324,11 @@ namespace System.Reflection {
 				return FieldInfo.GetFieldFromHandle (new RuntimeFieldHandle (handle));
 		}
 
+		[MonoTODO]
+		public FieldInfo ResolveField (int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
+			throw new NotImplementedException ();
+		}
+
 		public MemberInfo ResolveMember (int metadataToken) {
 			ResolveTokenError error;
 
@@ -334,6 +339,11 @@ namespace System.Reflection {
 				return m;
 		}
 
+		[MonoTODO]
+		public MemberInfo ResolveMember (int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
+			throw new NotImplementedException ();
+		}
+
 		public MethodBase ResolveMethod (int metadataToken) {
 			ResolveTokenError error;
 
@@ -342,6 +352,11 @@ namespace System.Reflection {
 				throw resolve_token_exception (metadataToken, error, "MethodBase");
 			else
 				return MethodBase.GetMethodFromHandle (new RuntimeMethodHandle (handle));
+		}
+
+		[MonoTODO]
+		public MethodBase ResolveMethod (int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
+			throw new NotImplementedException ();
 		}
 
 		public string ResolveString (int metadataToken) {
@@ -362,6 +377,11 @@ namespace System.Reflection {
 				throw resolve_token_exception (metadataToken, error, "Type");
 			else
 				return Type.GetTypeFromHandle (new RuntimeTypeHandle (handle));
+		}
+
+		[MonoTODO]
+		public Type ResolveType (int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]

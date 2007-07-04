@@ -54,6 +54,7 @@ namespace System.Reflection {
 		private extern static MethodBase GetMethodFromHandleInternalType (IntPtr method_handle, IntPtr type_handle);
 
 #if NET_2_0
+		[ComVisible (false)]
 		public static MethodBase GetMethodFromHandle(RuntimeMethodHandle handle, RuntimeTypeHandle declaringType) {
 			return GetMethodFromHandleInternalType (handle.Value, declaringType.Value);
 		}
@@ -91,6 +92,12 @@ namespace System.Reflection {
 		public Object Invoke(Object obj, Object[] parameters) {
 			return Invoke (obj, 0, null, parameters, null);
 		}
+
+#if NET_2_0 || BOOTSTRAP_NET_2_0
+		Object _MethodBase.Invoke(Object obj, Object[] parameters) {
+			return Invoke (obj, parameters);
+		}
+#endif
 
 		public abstract Object Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture);
 

@@ -92,6 +92,12 @@ namespace System.Reflection {
 				return try_offset;
 			}
 		}
+
+		[MonoTODO]
+		public override string ToString ()
+		{
+			return base.ToString ();
+		}
 	}
 
 }

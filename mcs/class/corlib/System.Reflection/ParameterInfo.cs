@@ -169,7 +169,7 @@ namespace System.Reflection
 #else
 		internal
 #endif
-		virtual extern int MetadataToken {
+		extern int MetadataToken {
 			[MethodImplAttribute (MethodImplOptions.InternalCall)]
 			get;
 		}
@@ -219,19 +219,6 @@ namespace System.Reflection
 		}			
 
 #if NET_2_0 || BOOTSTRAP_NET_2_0
-		[Obsolete ("Use ParameterInfo.GetOptionalCustomModifiers().")]
-		public virtual Type[] OptionalCustomModifiers {
-			get {
-				return GetOptionalCustomModifiers ();
-			}
-		}
-
-		[Obsolete ("Use ParameterInfo.GetRequiredCustomModifiers().")]
-		public virtual Type[] RequiredCustomModifiers {
-			get {
-				return GetRequiredCustomModifiers ();
-			}
-		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		extern Type[] GetTypeModifiers (bool optional);

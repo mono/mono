@@ -54,7 +54,16 @@ namespace System.Reflection {
 #endif
 
 		public override MemberTypes MemberType { get {return MemberTypes.Method;} }
+
+#if NET_2_0
+		[MonoTODO]
+		public virtual Type ReturnType {
+			get { return null; }
+		}
+#else
 		public abstract Type ReturnType { get; }
+#endif
+
 		public abstract ICustomAttributeProvider ReturnTypeCustomAttributes { get; }
 
 		// FIXME: when this method is uncommented, corlib fails
@@ -89,6 +98,7 @@ namespace System.Reflection {
 		}
 
 #if NET_2_0 || BOOTSTRAP_NET_2_0
+		[ComVisible (true)]
 		public virtual MethodInfo GetGenericMethodDefinition ()
 		{
 			throw new NotSupportedException ();
@@ -101,6 +111,7 @@ namespace System.Reflection {
 
 		// GetGenericArguments, IsGenericMethod, IsGenericMethodDefinition
 		// and ContainsGenericParameters are implemented in the derived classes.
+		[ComVisible (true)]
 		public override Type [] GetGenericArguments () {
 			return Type.EmptyTypes;
 		}

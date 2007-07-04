@@ -255,30 +255,6 @@ namespace System.Reflection {
 		}
 
 #if NET_2_0 || BOOTSTRAP_NET_2_0
-		public override Type[] GetGenericArguments ()
-		{
-			throw new NotImplementedException ();
-		}
-
-
-		public override bool ContainsGenericParameters {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-
-		public override bool IsGenericParameter {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-
-		public override int GenericParameterPosition {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-
 		public override int MetadataToken {
 			get {
 				return typeImpl.MetadataToken;

@@ -391,7 +391,13 @@ namespace System {
 			}
 		}
 
+#if NET_2_0
+		public virtual RuntimeTypeHandle TypeHandle {
+			get { return default (RuntimeTypeHandle); }
+		}
+#else
 		public abstract RuntimeTypeHandle TypeHandle {get;}
+#endif
 
 #if NET_2_0
 		[ComVisible (true)]
@@ -1108,8 +1114,8 @@ namespace System {
 			throw new NotSupportedException ();
 		}
 
-		public abstract bool ContainsGenericParameters {
-			get;
+		public virtual bool ContainsGenericParameters {
+			get { return false; }
 		}
 
 		public virtual extern bool IsGenericTypeDefinition {

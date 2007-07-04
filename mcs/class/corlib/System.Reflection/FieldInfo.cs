@@ -157,6 +157,7 @@ namespace System.Reflection {
 		}
 
 #if NET_2_0
+		[ComVisible (false)]
 		public static FieldInfo GetFieldFromHandle (RuntimeFieldHandle handle, RuntimeTypeHandle declaringType)
 		{
 			return internal_from_handle_type (handle.Value, declaringType.Value);

@@ -33,6 +33,7 @@ namespace System.Reflection {
 
 #if NET_2_0
 	[ComVisible (true)]
+	[Serializable]
 #endif
 	public delegate bool TypeFilter (Type m, object filterCriteria);
 

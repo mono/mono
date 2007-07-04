@@ -30,6 +30,7 @@
 //
 
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
 
 namespace System.Reflection
 {
@@ -38,9 +39,19 @@ namespace System.Reflection
 	[Serializable]
 #endif
 	public sealed class Missing
+#if NET_2_0
+			: ISerializable
+#endif
 	{
 		public static readonly Missing Value = new Missing ();
 
 		internal Missing () {}
+
+#if NET_2_0
+		[MonoTODO]
+		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
+		{
+		}
+#endif
 	}
 }

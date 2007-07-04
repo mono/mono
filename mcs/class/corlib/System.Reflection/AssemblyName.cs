@@ -255,6 +255,14 @@ namespace System.Reflection {
 			}
 		}
 
+#if NET_2_0
+		[MonoTODO]
+		public static bool ReferenceMatchesDefinition (AssemblyName reference, AssemblyName definition)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+
 		public void SetPublicKey (byte[] publicKey) 
 		{
 			flags = AssemblyNameFlags.PublicKey;

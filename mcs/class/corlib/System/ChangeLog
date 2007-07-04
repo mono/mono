@@ -1,3 +1,8 @@
+2007-07-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Type.cs : 2.0 TypeHandle and ContainsGenericParameters are virtual
+	  (required fix for 2.0 reflection API fixes).
+
 2007-06-22  Jonathan Chambers  <joncham@gmail.com>
 
 	* __ComObject.cs: Move interface lookup to unmanaged.

@@ -70,6 +70,20 @@ namespace System.Reflection {
 
 			return val;
 		}
+
+		public override bool Equals (object obj)
+		{
+			if (!(obj is CustomAttributeTypedArgument))
+				return false;
+			CustomAttributeTypedArgument other = (CustomAttributeTypedArgument) obj;
+			return  other.argumentType == argumentType &&
+				value != null ? value.Equals (other.value) : (object) other.value == null;
+		}
+
+		public override int GetHashCode ()
+		{
+			return (argumentType.GetHashCode () << 16) + (value != null ? value.GetHashCode () : 0);
+		}
 	}
 
 }

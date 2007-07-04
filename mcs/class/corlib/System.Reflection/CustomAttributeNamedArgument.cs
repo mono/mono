@@ -62,6 +62,20 @@ namespace System.Reflection {
 		{
 			return memberInfo.Name + " = " + typedArgument.ToString ();
 		}
+
+		public override bool Equals (object obj)
+		{
+			if (!(obj is CustomAttributeNamedArgument))
+				return false;
+			CustomAttributeNamedArgument other = (CustomAttributeNamedArgument) obj;
+			return  other.memberInfo == memberInfo &&
+				typedArgument.Equals (other.typedArgument);
+		}
+
+		public override int GetHashCode ()
+		{
+			return (memberInfo.GetHashCode () << 16) + typedArgument.GetHashCode ();
+		}
 	}
 
 }

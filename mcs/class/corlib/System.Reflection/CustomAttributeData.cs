@@ -62,6 +62,7 @@ namespace System.Reflection {
 			}
 		}
 
+		[ComVisible (true)]
 		public IList<CustomAttributeTypedArgument> ConstructorArguments {
 			get {
 				return ctorArgs;
@@ -121,6 +122,41 @@ namespace System.Reflection {
 				retval [i] = (T) values [i];
 
 			return retval;
+		}
+
+		public override bool Equals (object obj)
+		{
+			CustomAttributeData other = obj as CustomAttributeData;
+			if (other == null || other.ctorInfo != ctorInfo ||
+			    other.ctorArgs.Count != ctorArgs.Count ||
+			    other.namedArgs.Count != namedArgs.Count)
+				return false;
+			for (int i = 0; i < ctorArgs.Count; i++)
+				if (ctorArgs [i].Equals (other.ctorArgs [i]))
+					return false;
+			for (int i = 0; i < namedArgs.Count; i++) {
+				bool matched = false;
+				for (int j = 0; j < other.namedArgs.Count; j++)
+					if (namedArgs [i].Equals (other.namedArgs [j])) {
+						matched = true;
+						break;
+					}
+				if (!matched)
+					return false;
+			}
+			return true;
+		}
+
+		public override int GetHashCode ()
+		{
+			int ret = ctorInfo.GetHashCode () << 16;
+			// argument order-dependent
+			for (int i = 0; i < ctorArgs.Count; i++)
+				ret += ret ^ 7 + ctorArgs [i].GetHashCode () << (i * 4);
+			// argument order-independent
+			for (int i = 0; i < namedArgs.Count; i++)
+				ret += (namedArgs [i].GetHashCode () << 5);
+			return ret;
 		}
 	}
 
