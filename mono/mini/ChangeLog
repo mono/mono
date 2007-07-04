@@ -1,4 +1,9 @@
 
+Wed Jul 4 15:30:36 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* optflags-def.h, mini-x86.c: added sse2 optimization flag and use it
+	to emit better double->int conversions.
+
 Tue Jul 3 19:42:16 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c: the provided Min/Max optimizations are valid for unisgned
