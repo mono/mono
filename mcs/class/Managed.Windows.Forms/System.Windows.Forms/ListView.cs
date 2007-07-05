@@ -133,6 +133,7 @@ namespace System.Windows.Forms
 		static object ItemSelectionChangedEvent = new object ();
 		static object CacheVirtualItemsEvent = new object ();
 		static object RetrieveVirtualItemEvent = new object ();
+		static object VirtualItemsSelectionRangeChangedEvent = new object ();
 #endif
 
 		public event LabelEditEventHandler AfterLabelEdit {
@@ -236,6 +237,11 @@ namespace System.Windows.Forms
 		public event RetrieveVirtualItemEventHandler RetrieveVirtualItem {
 			add { Events.AddHandler (RetrieveVirtualItemEvent, value); }
 			remove { Events.RemoveHandler (RetrieveVirtualItemEvent, value); }
+		}
+
+		public event ListViewVirtualItemsSelectionRangeChangedEventHandler VirtualItemsSelectionRangeChanged {
+			add { Events.AddHandler (VirtualItemsSelectionRangeChangedEvent, value); }
+			remove { Events.RemoveHandler (VirtualItemsSelectionRangeChangedEvent, value); }
 		}
 #endif
 
@@ -2132,6 +2138,15 @@ namespace System.Windows.Forms
 						clicked_item.Selected = true;
 					}
 
+#if NET_2_0
+					if (owner.VirtualMode && changed) {
+						// Broken event - It's not fired from Item.Selected also
+						ListViewVirtualItemsSelectionRangeChangedEventArgs args = 
+							new ListViewVirtualItemsSelectionRangeChangedEventArgs (0, owner.items.Count - 1, false);
+
+						owner.OnVirtualItemsSelectionRangeChanged (args);
+					}
+#endif
 					// Report clicks only if the item was clicked. On MS the
 					// clicks are only raised if you click an item
 					clicks = me.Clicks;
@@ -2940,6 +2955,14 @@ namespace System.Windows.Forms
 		protected virtual void OnRetrieveVirtualItem (RetrieveVirtualItemEventArgs args)
 		{
 			RetrieveVirtualItemEventHandler eh = (RetrieveVirtualItemEventHandler)Events [RetrieveVirtualItemEvent];
+			if (eh != null)
+				eh (this, args);
+		}
+
+		protected virtual void OnVirtualItemsSelectionRangeChanged (ListViewVirtualItemsSelectionRangeChangedEventArgs args)
+		{
+			ListViewVirtualItemsSelectionRangeChangedEventHandler eh = 
+				(ListViewVirtualItemsSelectionRangeChangedEventHandler) Events [VirtualItemsSelectionRangeChangedEvent];
 			if (eh != null)
 				eh (this, args);
 		}

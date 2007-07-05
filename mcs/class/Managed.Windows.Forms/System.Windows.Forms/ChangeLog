@@ -1,5 +1,10 @@
 2007-07-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ListView.cs: Implement the so-incredibly broken 2.0 
+	VirtualItemsSelectionRangeChanged event.
+
+2007-07-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* ListView.cs: When enter is pressed and selection is non empty,
 	an OnItemActivate event must be fired.
 
