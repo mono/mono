@@ -1,5 +1,7 @@
 2007-07-05  Zoltan Varga  <vargaz@gmail.com>
 
+	* profiler.c (mono_profiler_load): Fix an off-by-one error.
+
 	* marshal.c (emit_marshal_string): When returning a string from managed code,
 	allways make a copy even for unicode strings. Fixes #81990.
 
