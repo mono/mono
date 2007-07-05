@@ -1,5 +1,10 @@
 2007-07-05 Rodrigo Kumpera <rkumpera@novell.com>
 
+	* AssemblyRunner.cs: bug fix: handles missing fields corrently
+	* make_test.sh: correct some tests based on fixed AssemblyRunner
+	
+2007-07-05 Rodrigo Kumpera <rkumpera@novell.com>
+
 	* AssemblyRunner.cs: Allow running the test suite from the same VM instance
 	* make_tests.sh: improved the test-suite, now it works running under a VM, not just the verifier
 	* unverifiable_ldflda_other_class_on_simple_method.il: same
