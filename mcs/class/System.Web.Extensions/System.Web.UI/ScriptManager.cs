@@ -229,8 +229,12 @@ namespace System.Web.UI
 
 		bool IsDeploymentRetail {
 			get {
+#if TARGET_J2EE
+				return false;
+#else
 				DeploymentSection deployment = (DeploymentSection) WebConfigurationManager.GetSection ("system.web/deployment");
 				return deployment.Retail;
+#endif
 			}
 		}
 
