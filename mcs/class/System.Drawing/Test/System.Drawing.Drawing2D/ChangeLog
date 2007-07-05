@@ -1,3 +1,8 @@
+2007-07-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* GraphicsPathTest.cs: Added more test cases for Reverse, the complex
+	ones don't work yet (see #81859).
+
 2007-03-30  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* TestMatrix.cs: Allow a small delta when comparing floats. This 

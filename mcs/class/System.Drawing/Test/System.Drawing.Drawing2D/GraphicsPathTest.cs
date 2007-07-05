@@ -4,7 +4,7 @@
 // Authors:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2006-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -2449,13 +2449,145 @@ namespace MonoTests.System.Drawing.Drawing2D {
 			}
 		}
 
+		// Reverse simple test cases
+
+		private void Reverse (GraphicsPath gp)
+		{
+			PointF[] bp = gp.PathPoints;
+			byte[] bt = gp.PathTypes;
+
+			gp.Reverse ();
+			PointF[] ap = gp.PathPoints;
+			byte[] at = gp.PathTypes;
+
+			int count = gp.PointCount;
+			Assert.AreEqual (bp.Length, count, "PointCount");
+			for (int i = 0; i < count; i++) {
+				Assert.AreEqual (bp[i], ap[count - i - 1], "Point" + i.ToString ());
+				Assert.AreEqual (bt[i], at[i], "Type" + i.ToString ());
+			}
+		}
+
 		[Test]
 		public void Reverse_Arc ()
 		{
 			using (GraphicsPath gp = new GraphicsPath ()) {
 				gp.AddArc (1f, 1f, 2f, 2f, Pi4, Pi4);
+				Reverse (gp);
+			}
+		}
+
+		[Test]
+		public void Reverse_Bezier ()
+		{
+			using (GraphicsPath gp = new GraphicsPath ()) {
+				gp.AddBezier (1, 2, 3, 4, 5, 6, 7, 8);
+				Reverse (gp);
+			}
+		}
+
+		[Test]
+		public void Reverse_Beziers ()
+		{
+			using (GraphicsPath gp = new GraphicsPath ()) {
+				Point[] beziers = new Point[] { new Point (1,2), new Point (3,4), new Point (5,6),
+					new Point (7,8), new Point (9,10), new Point (11,12), new Point (13,14) };
+				gp.AddBeziers (beziers);
+				Reverse (gp);
+			}
+		}
+
+		[Test]
+		public void Reverse_ClosedCurve ()
+		{
+			using (GraphicsPath gp = new GraphicsPath ()) {
+				Point[] beziers = new Point[] { new Point (1,2), new Point (3,4), new Point (5,6),
+					new Point (7,8), new Point (9,10), new Point (11,12), new Point (13,14) };
+				gp.AddClosedCurve (beziers);
+				Reverse (gp);
+			}
+		}
+
+		[Test]
+		public void Reverse_Curve ()
+		{
+			using (GraphicsPath gp = new GraphicsPath ()) {
+				Point[] beziers = new Point[] { new Point (1,2), new Point (3,4), new Point (5,6),
+					new Point (7,8), new Point (9,10), new Point (11,12), new Point (13,14) };
+				gp.AddCurve (beziers);
+				Reverse (gp);
+			}
+		}
+
+		[Test]
+		public void Reverse_Ellipse ()
+		{
+			using (GraphicsPath gp = new GraphicsPath ()) {
+				gp.AddEllipse (1, 2, 3, 4);
+				Reverse (gp);
+			}
+		}
+
+		[Test]
+		public void Reverse_Line ()
+		{
+			using (GraphicsPath gp = new GraphicsPath ()) {
+				gp.AddLine (1, 2, 3, 4);
+				Reverse (gp);
+			}
+		}
+
+		[Test]
+		public void Reverse_Lines ()
+		{
+			using (GraphicsPath gp = new GraphicsPath ()) {
+				Point[] points = new Point[] { new Point (1,2), new Point (3,4), new Point (5,6),
+					new Point (7,8), new Point (9,10), new Point (11,12), new Point (13,14) };
+				gp.AddLines (points);
+				Reverse (gp);
+			}
+		}
+
+		[Test]
+		public void Reverse_Polygon ()
+		{
+			using (GraphicsPath gp = new GraphicsPath ()) {
+				Point[] points = new Point[] { new Point (1,2), new Point (3,4), new Point (5,6),
+					new Point (7,8), new Point (9,10), new Point (11,12), new Point (13,14) };
+				gp.AddPolygon (points);
+				Reverse (gp);
+			}
+		}
+
+		[Test]
+		public void Reverse_Rectangle ()
+		{
+			using (GraphicsPath gp = new GraphicsPath ()) {
+				gp.AddRectangle (new Rectangle (1,2,3,4));
+				Reverse (gp);
+			}
+		}
+
+		[Test]
+		public void Reverse_Rectangles ()
+		{
+			using (GraphicsPath gp = new GraphicsPath ()) {
+				Rectangle[] rects = new Rectangle[] { new Rectangle (1, 2, 3, 4), new Rectangle (5, 6, 7, 8) }; 
+				gp.AddRectangles (rects);
+				Reverse (gp);
+			}
+		}
+
+		// Reverse complex test cases
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Reverse_Pie ()
+		{
+			using (GraphicsPath gp = new GraphicsPath ()) {
+				gp.AddPie (1, 2, 3, 4, 10, 20);
 				PointF[] bp = gp.PathPoints;
-				byte[] bt = gp.PathTypes;
+				byte[] expected = new byte[] { 0, 3, 3, 3, 129 };
 
 				gp.Reverse ();
 				PointF[] ap = gp.PathPoints;
@@ -2465,8 +2597,64 @@ namespace MonoTests.System.Drawing.Drawing2D {
 				Assert.AreEqual (bp.Length, count, "PointCount");
 				for (int i = 0; i < count; i++) {
 					Assert.AreEqual (bp[i], ap[count - i - 1], "Point" + i.ToString ());
-					// PathTypes are NOT reversed
-					Assert.AreEqual (bt[i], at[i], "Type" + i.ToString ());
+					Assert.AreEqual (expected[i], at[i], "Type" + i.ToString ());
+				}
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Reverse_Path ()
+		{
+			using (GraphicsPath gp = new GraphicsPath ()) {
+				GraphicsPath path = new GraphicsPath ();
+				path.AddArc (1f, 1f, 2f, 2f, Pi4, Pi4);
+				path.AddLine (1, 2, 3, 4);
+				gp.AddPath (path, true);
+				PointF[] bp = gp.PathPoints;
+				byte[] expected = new byte[] { 0, 1, 1, 3, 3, 3 };
+
+				gp.Reverse ();
+				PointF[] ap = gp.PathPoints;
+				byte[] at = gp.PathTypes;
+
+				int count = gp.PointCount;
+				Assert.AreEqual (bp.Length, count, "PointCount");
+				for (int i = 0; i < count; i++) {
+					Assert.AreEqual (bp[i], ap[count - i - 1], "Point" + i.ToString ());
+					Assert.AreEqual (expected[i], at[i], "Type" + i.ToString ());
+				}
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Reverse_String ()
+		{
+			using (GraphicsPath gp = new GraphicsPath ()) {
+				FontFamily ff = GetFontFamily ();
+				gp.AddString ("Mono::", ff, 0, 10, new Point (10, 10), StringFormat.GenericDefault);
+				PointF[] bp = gp.PathPoints;
+				byte[] expected = new byte[] { 0,3,3,3,3,3,3,3,3,3,3,3,3,1,3,3,3,3,3,3,3,3,3,3,3,3,129,0,3,3,3,
+					3,3,3,3,3,3,3,3,3,1,3,3,3,3,3,3,3,3,3,3,3,3,161,0,3,3,3,3,3,3,3,3,3,3,3,3,1,3,3,3,3,3,
+					3,3,3,3,3,3,3,129,0,3,3,3,3,3,3,3,3,3,3,3,3,1,3,3,3,3,3,3,3,3,3,3,3,3,161,0,3,3,3,3,3,
+					3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,131,0,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,
+					163,0,3,3,3,3,3,3,3,3,3,3,3,3,1,1,1,3,3,3,3,3,3,3,3,3,3,3,3,1,3,3,3,3,3,3,3,3,3,3,3,3,
+					1,1,3,3,3,3,3,3,3,3,3,3,3,3,1,1,3,3,3,3,3,3,3,3,3,3,3,3,1,3,3,3,3,3,3,3,3,3,3,3,3,1,1,
+					3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,161,0,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,131,
+					0,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,163,0,1,1,1,3,3,3,3,3,3,3,3,3,3,3,3,1,
+					3,3,3,3,3,3,3,3,3,3,3,3,1,1,1,3,3,3,3,3,3,3,3,3,3,3,3,1,1,1,1,3,3,3,3,3,3,3,3,3,3,3,3,
+					1,1,1,3,3,3,3,3,3,3,3,3,3,3,3,1,3,3,3,3,3,3,3,3,3,3,3,3,1,1,1,1,129 };
+
+				gp.Reverse ();
+				PointF[] ap = gp.PathPoints;
+				byte[] at = gp.PathTypes;
+
+				int count = gp.PointCount;
+				Assert.AreEqual (bp.Length, count, "PointCount");
+				for (int i = 0; i < count; i++) {
+					Assert.AreEqual (bp[i], ap[count - i - 1], "Point" + i.ToString ());
+					Assert.AreEqual (expected[i], at[i], "Type" + i.ToString ());
 				}
 			}
 		}
