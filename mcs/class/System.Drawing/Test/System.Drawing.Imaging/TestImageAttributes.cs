@@ -424,27 +424,46 @@ namespace MonoTests.System.Drawing.Imaging {
 			}
 		}
 
-		[Test]
-		public void BigAlpha ()
+		private void Alpha (string prefix, int n, float a)
 		{
 			ColorMatrix cm = new ColorMatrix (new float[][] {
 				new float[] 	{1,	0,	0, 	0, 	0}, //R
 				new float[] 	{0,	1,	0, 	0, 	0}, //G
 				new float[] 	{0,	0,	1, 	0, 	0}, //B
-				new float[] 	{0,	0,	0, 	253, 	0}, //A
+				new float[] 	{0,	0,	0, 	a, 	0}, //A
 				new float[] 	{0,	0,	0, 	0, 	1}, //Translation
 			  });
 
-			using (Bitmap bmp = new Bitmap (1, 1)) {
+			using (Bitmap bmp = new Bitmap (1, 4)) {
 				bmp.SetPixel (0, 0, Color.White);
-				using (Bitmap b = new Bitmap (1, 1)) {
+				bmp.SetPixel (0, 1, Color.Red);
+				bmp.SetPixel (0, 2, Color.Lime);
+				bmp.SetPixel (0, 3, Color.Blue);
+				using (Bitmap b = new Bitmap (1, 4)) {
 					using (Graphics g = Graphics.FromImage (b)) {
 						ImageAttributes ia = new ImageAttributes ();
 						ia.SetColorMatrix (cm);
-						g.DrawImage (bmp, new Rectangle (0, 0, 1, 1), 0, 0, 1, 1, GraphicsUnit.Pixel, ia);
-						Assert.AreEqual (Color.FromArgb (3, 255, 255, 255), b.GetPixel (0,0), "0,0");
+						g.FillRectangle (Brushes.White, new Rectangle (0, 0, 1, 4));
+						g.DrawImage (bmp, new Rectangle (0, 0, 1, 4), 0, 0, 1, 4, GraphicsUnit.Pixel, ia);
+						Assert.AreEqual (Color.FromArgb (255, 255, 255, 255), b.GetPixel (0,0), prefix + "-0,0");
+						int val = 255 - n;
+						Assert.AreEqual (Color.FromArgb (255, 255, val, val), b.GetPixel (0, 1), prefix + "-0,1");
+						Assert.AreEqual (Color.FromArgb (255, val, 255, val), b.GetPixel (0, 2), prefix + "-0,2");
+						Assert.AreEqual (Color.FromArgb (255, val, val, 255), b.GetPixel (0, 3), prefix + "-0,3");
 					}
 				}
+			}
+		}
+
+		[Test]
+		public void ColorMatrixAlpha ()
+		{
+			for (int i = 0; i < 256; i++) {
+				Alpha (i.ToString (), i, (float) i / 255);
+				// generally color matrix are specified with values between [0..1]
+				Alpha ("small-" + i.ToString (), i, (float) i / 255);
+				// but GDI+ also accept value > 1
+				Alpha ("big-" + i.ToString (), i, 256 - i);
 			}
 		}
 	}

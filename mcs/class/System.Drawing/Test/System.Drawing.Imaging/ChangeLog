@@ -1,3 +1,8 @@
+2007-07-05  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* TestImageAttributes.cs: More complete test for small versus big 
+	alpha uses in matrices.
+
 2007-06-21  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* TestImageAttributes.cs: Add test case for big alpha value used in
