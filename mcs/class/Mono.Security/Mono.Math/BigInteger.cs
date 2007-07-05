@@ -1042,17 +1042,11 @@ namespace Mono.Math {
 			{
 				if (a == 0 || b == 0) return 0;
 
-				if (a.length >= mod.length << 1)
+				if (a > mod)
 					a %= mod;
 
-				if (b.length >= mod.length << 1)
+				if (b > mod)
 					b %= mod;
-
-				if (a.length >= mod.length)
-					BarrettReduction (a);
-
-				if (b.length >= mod.length)
-					BarrettReduction (b);
 
 				BigInteger ret = new BigInteger (a * b);
 				BarrettReduction (ret);
@@ -1086,7 +1080,7 @@ namespace Mono.Math {
 					diff = mod - diff;
 				return diff;
 			}
-
+#if true
 			public BigInteger Pow (BigInteger a, BigInteger k)
 			{
 				BigInteger b = new BigInteger (1);
@@ -1104,7 +1098,7 @@ namespace Mono.Math {
 				}
 				return b;
 			}
-#if false
+#else
 			public BigInteger Pow (BigInteger b, BigInteger exp)
 			{
 				if ((mod.data [0] & 1) == 1) return OddPow (b, exp);
@@ -1183,11 +1177,12 @@ namespace Mono.Math {
 #if !INSIDE_CORLIB
                         [CLSCompliant (false)]
 #endif 
+#if true
 			public BigInteger Pow (uint b, BigInteger exp)
 			{
 				return Pow (new BigInteger (b), exp);
 			}
-#if false
+#else
 			public BigInteger Pow (uint b, BigInteger exp)
 			{
 //				if (b != 2) {
@@ -1195,7 +1190,7 @@ namespace Mono.Math {
 						return OddPow (b, exp);
 					else
 						return EvenPow (b, exp);
-/* buggy in some cases (like the well tested primes)
+/* buggy in some cases (like the well tested primes) 
 				} else {
 					if ((mod.data [0] & 1) == 1)
 						return OddModTwoPow (exp);
@@ -1415,8 +1410,9 @@ namespace Mono.Math {
 
 				return resultNum;
 			}
-
-/* known to be buggy in some cases
+#endif
+/* known to be buggy in some cases */
+#if false
 			private unsafe BigInteger EvenModTwoPow (BigInteger exp)
 			{
 				exp.Normalize ();
@@ -1549,7 +1545,6 @@ namespace Mono.Math {
 				resultNum = Montgomery.Reduce (resultNum, mod, mPrime);
 				return resultNum;
 			}
-*/
 #endif
 			#endregion
 		}

@@ -1,3 +1,8 @@
+2007-07-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* BigInteger.cs: Reduce modulo steps in Multiply. Add #if/#else around
+	older, and commented, [Odd|Even]Pow methods.
+
 2007-07-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* BigInteger.cs: In some condition the optimized (4 variants) OddPow
