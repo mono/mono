@@ -48,11 +48,13 @@ namespace MonoTests.System.Reflection
 		public static extern void dllImportMethod ();
 #endif
 		[MethodImplAttribute(MethodImplOptions.PreserveSig)]
-		public void preserveSigMethod () {
+		public void preserveSigMethod ()
+		{
 		}
 
 		[MethodImplAttribute(MethodImplOptions.Synchronized)]
-		public void synchronizedMethod () {
+		public void synchronizedMethod ()
+		{
 		}
 
 #if NET_2_0
@@ -82,12 +84,14 @@ namespace MonoTests.System.Reflection
 		}
 
 		[return: MarshalAs (UnmanagedType.Interface)]
-		public void ReturnTypeMarshalAs () {
+		public void ReturnTypeMarshalAs ()
+		{
 		}
 
 		[Test]
 		[Category ("TargetJvmNotWorking")]
-		public void ReturnTypePseudoCustomAttributes () {
+		public void ReturnTypePseudoCustomAttributes ()
+		{
 			MethodInfo mi = typeof (MethodInfoTest).GetMethod ("ReturnTypeMarshalAs");
 
 			Assert.IsTrue (mi.ReturnTypeCustomAttributes.GetCustomAttributes (typeof (MarshalAsAttribute), true).Length == 1);
@@ -156,7 +160,8 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test] // bug #81538
-		public void InvokeThreadAbort () {
+		public void InvokeThreadAbort ()
+		{
 			MethodInfo method = typeof (MethodInfoTest).GetMethod ("AbortIt");
 			try {
 				method.Invoke (null, new object [0]);
@@ -176,7 +181,8 @@ namespace MonoTests.System.Reflection
 #endif
 		}
 
-		public static void AbortIt () {
+		public static void AbortIt ()
+		{
 			Thread.CurrentThread.Abort ();
 		}
 
@@ -204,25 +210,29 @@ namespace MonoTests.System.Reflection
 #if NET_2_0
 #if !TARGET_JVM // MethodBody is not supported for TARGET_JVM
 		[Test]
-		public void GetMethodBody_Abstract () {
+		public void GetMethodBody_Abstract ()
+		{
 			MethodBody mb = typeof (ICloneable).GetMethod ("Clone").GetMethodBody ();
 			Assert.IsNull (mb);
 		}
 
 		[Test]
-		public void GetMethodBody_Runtime () {
+		public void GetMethodBody_Runtime ()
+		{
 			MethodBody mb = typeof (AsyncCallback).GetMethod ("Invoke").GetMethodBody ();
 			Assert.IsNull (mb);
 		}
 
 		[Test]
-		public void GetMethodBody_Pinvoke () {
+		public void GetMethodBody_Pinvoke ()
+		{
 			MethodBody mb = typeof (MethodInfoTest).GetMethod ("dllImportMethod").GetMethodBody ();
 			Assert.IsNull (mb);
 		}
 
 		[Test]
-		public void GetMethodBody_Icall () {
+		public void GetMethodBody_Icall ()
+		{
 			foreach (MethodInfo mi in typeof (object).GetMethods (BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance))
 				if ((mi.GetMethodImplementationFlags () & MethodImplAttributes.InternalCall) != 0) {
 					MethodBody mb = mi.GetMethodBody ();
@@ -230,7 +240,8 @@ namespace MonoTests.System.Reflection
 				}
 		}
 
-		public static void locals_method () {
+		public static void locals_method ()
+		{
 			byte[] b = new byte [10];
 
 			unsafe {
@@ -241,7 +252,8 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
-		public void GetMethodBody () {
+		public void GetMethodBody ()
+		{
 			MethodBody mb = typeof (MethodInfoTest).GetMethod ("locals_method").GetMethodBody ();
 
 			Assert.IsTrue (mb.InitLocals, "#1");
@@ -260,12 +272,14 @@ namespace MonoTests.System.Reflection
 		}
 #endif // TARGET_JVM
 
-		public int return_parameter_test () {
+		public int return_parameter_test ()
+		{
 			return 0;
 		}
 
 		[Test]
-		public void ReturnParameter () {
+		public void ReturnParameter ()
+		{
 			ParameterInfo pi = typeof (MethodInfoTest).GetMethod ("return_parameter_test").ReturnParameter;
 
 			Assert.AreEqual (typeof (int), pi.ParameterType);
@@ -301,13 +315,37 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (21, kvp.Value);
 		}
 
-        public static KeyValuePair<T1, T2> Go <T1, T2> (KeyValuePair <T1, T2> kvp)
-        {
+		public static KeyValuePair<T1, T2> Go <T1, T2> (KeyValuePair <T1, T2> kvp)
+		{
 			return kvp;
-        }
+		}
+
+		[Test] // bug #81997
+		public void InvokeGenericInst ()
+		{
+			List<string> str = null;
+
+			object [] methodArgs = new object [] { str };
+			MethodInfo mi = typeof (MethodInfoTest).GetMethod ("GenericRefMethod");
+			mi.Invoke (null, methodArgs);
+			Assert.IsNotNull (methodArgs [0], "#A1");
+			Assert.IsNull (str, "#A2");
+			Assert.IsTrue (methodArgs [0] is List<string>, "#A3");
+
+			List<string> refStr = methodArgs [0] as List<string>;
+			Assert.IsNotNull (refStr, "#B1");
+			Assert.AreEqual (1, refStr.Count, "#B2");
+			Assert.AreEqual ("test", refStr [0], "#B3");
+		}
+
+		public static void GenericRefMethod (ref List<string> strArg)
+		{
+			strArg = new List<string> ();
+			strArg.Add ("test");
+		}
 
 		public void MakeGenericMethodArgsMismatchFoo<T> () {}
-	    
+
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void MakeGenericMethodArgsMismatch ()
@@ -330,7 +368,8 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (null, mi.Invoke (null, new object [] { null }), "#2");
 		}
 
-		public static void foo_generic<T> () {
+		public static void foo_generic<T> ()
+		{
 		}
 
 		[Test]
@@ -345,16 +384,20 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (false, mi3.IsGenericMethod, "#3");
 		}
 
-		class A<T> {
-
-			public static void Foo<T2> (T2 i) {
+		class A<T>
+		{
+			public static void Foo<T2> (T2 i)
+			{
 			}
 
-			public static void Bar () {
+			public static void Bar ()
+			{
 			}
 
-			public class B {
-				public static void Baz () {
+			public class B
+			{
+				public static void Baz ()
+				{
 				}
 			}
 		}

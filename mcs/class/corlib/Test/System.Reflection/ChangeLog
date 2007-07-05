@@ -1,3 +1,7 @@
+2007-07-05  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* MethodInfoTest.cs: Added test for bug #81997. Code formatting.
+
 2007-06-22  Raja R Harinath  <rharinath@novell.com>
 
 	* MethodInfoTest.cs (IsGenericMethodDefinition): New.
