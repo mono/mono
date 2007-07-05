@@ -909,8 +909,8 @@ namespace Mono.Math {
 				if (this % smallPrimes[p] == 0)
 					return false;
 			}
-			// the last step is to confirm the "large" prime with the Miller-Rabin test
-			return PrimalityTests.RabinMillerTest (this, Prime.ConfidenceFactor.Medium);
+			// the last step is to confirm the "large" prime with the SPP or Miller-Rabin test
+			return PrimalityTests.Test (this, Prime.ConfidenceFactor.Medium);
 		}
 
 		#endregion
@@ -1162,8 +1162,11 @@ namespace Mono.Math {
 						Montgomery.Reduce (resultNum, mod, mPrime);
 					}
 
-					Kernel.SquarePositive (tempNum, ref wkspace);
-					Montgomery.Reduce (tempNum, mod, mPrime);
+					// the value of tempNum is required in the last loop
+					if (pos < totalBits - 1) {
+						Kernel.SquarePositive (tempNum, ref wkspace);
+						Montgomery.Reduce (tempNum, mod, mPrime);
+					}
 				}
 
 				Montgomery.Reduce (resultNum, mod, mPrime);

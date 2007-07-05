@@ -1,3 +1,10 @@
+2007-07-05  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* BigInteger.cs: Call PrimalityTests.Test instead of the Rabin-Miller
+	test. This will select the best algorithm to use based on the prime
+	candidate. Applied #69999 optimization (even if this code is commented
+	right now) so this old issue can be closed.
+
 2007-07-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* BigInteger.cs: Reduce modulo steps in Multiply. Add #if/#else around
