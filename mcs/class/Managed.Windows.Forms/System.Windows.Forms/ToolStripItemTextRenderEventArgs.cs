@@ -48,7 +48,7 @@ namespace System.Windows.Forms
 			this.text_rectangle = textRectangle;
 			this.text_color = textColor;
 			this.text_font = textFont;
-			this.text_direction = ToolStripTextDirection.Horizontal;
+			this.text_direction = item.TextDirection;
 
 			switch (textAlign) {
 				case ContentAlignment.BottomCenter:

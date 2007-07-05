@@ -1,3 +1,9 @@
+2007-07-05  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStrip.cs, ToolStripControlHost.cs, ToolStripDropDown.cs,
+	ToolStripItem.cs, ToolStripItem.cs, ToolStripItemTextRenderEventArgs.cs,
+	ToolStripRenderer.cs, ToolStripSeparator.cs: Implement TextDirection.
+
 2007-07-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListViewItem.cs: Implement the small 2.0 GetSubItemAt method.

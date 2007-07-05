@@ -69,6 +69,7 @@ namespace System.Windows.Forms
 		private List<ToolStripItem> pre_merge_items;
 		private ToolStripRenderer renderer;
 		private ToolStripRenderMode render_mode;
+		private ToolStripTextDirection text_direction;
 		private Timer tooltip_timer;
 		private ToolTip.ToolTipWindow tooltip_window;
 		private bool show_item_tool_tips;
@@ -115,6 +116,7 @@ namespace System.Windows.Forms
 			this.render_mode = ToolStripRenderMode.ManagerRenderMode;
 			this.show_item_tool_tips = this.DefaultShowItemToolTips;
 			base.TabStop = false;
+			this.text_direction = ToolStripTextDirection.Horizontal;
 			this.ResumeLayout ();
 			DoAutoSize ();
 			
@@ -484,6 +486,23 @@ namespace System.Windows.Forms
 		public new bool TabStop {
 			get { return base.TabStop; }
 			set { base.TabStop = value; }
+		}
+
+		[DefaultValue (ToolStripTextDirection.Horizontal)]
+		public virtual ToolStripTextDirection TextDirection {
+			get { return this.text_direction; }
+			set {
+				if (!Enum.IsDefined (typeof (ToolStripTextDirection), value))
+					throw new InvalidEnumArgumentException (string.Format ("Enum argument value '{0}' is not valid for ToolStripTextDirection", value));
+
+				if (this.text_direction != value) {
+					this.text_direction = value;
+					
+					this.PerformLayout (this, "TextDirection");
+						
+					this.Invalidate ();
+				}
+			}
 		}
 
 		[Browsable (false)]

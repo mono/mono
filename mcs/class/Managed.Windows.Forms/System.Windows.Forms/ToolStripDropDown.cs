@@ -261,6 +261,13 @@ namespace System.Windows.Forms
 		}
 
 		[Browsable (false)]
+		[DefaultValue (ToolStripTextDirection.Horizontal)]
+		public override ToolStripTextDirection TextDirection {
+			get { return base.TextDirection; }
+			set { base.TextDirection = value; }
+		}
+
+		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public bool TopLevel {

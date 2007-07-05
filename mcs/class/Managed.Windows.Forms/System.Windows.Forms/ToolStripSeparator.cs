@@ -174,6 +174,14 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DefaultValue (ToolStripTextDirection.Horizontal)]
+		public override ToolStripTextDirection TextDirection {
+			get { return base.TextDirection; }
+			set { base.TextDirection = value; }
+		}
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public new TextImageRelation TextImageRelation {
 			get { return base.TextImageRelation; }
@@ -260,6 +268,10 @@ namespace System.Windows.Forms
 			add { base.TextChanged += value; }
 			remove { base.TextChanged -= value; }
 		}
+		#endregion
+
+		#region Internal Method/Properties
+		internal override ToolStripTextDirection DefaultTextDirection { get { return ToolStripTextDirection.Horizontal; } }
 		#endregion
 	}
 }

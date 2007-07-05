@@ -85,6 +85,7 @@ namespace System.Windows.Forms
 		private Object tag;
 		private string text;
 		private ContentAlignment text_align;
+		private ToolStripTextDirection text_direction;
 		private TextImageRelation text_image_relation;
 		private string tool_tip_text;
 		private bool visible;
@@ -136,6 +137,7 @@ namespace System.Windows.Forms
 			this.bounds.Size = this.DefaultSize;
 			this.text = text;
 			this.text_align = ContentAlignment.MiddleCenter;
+			this.text_direction = DefaultTextDirection;
 			this.text_image_relation = TextImageRelation.ImageBeforeText;
 			this.visible = true;
 
@@ -706,6 +708,20 @@ namespace System.Windows.Forms
 			}
 		}
 
+		public virtual ToolStripTextDirection TextDirection {
+			get { return this.text_direction; }
+			set {
+				if (!Enum.IsDefined (typeof (ToolStripTextDirection), value))
+					throw new InvalidEnumArgumentException (string.Format ("Enum argument value '{0}' is not valid for ToolStripTextDirection", value));
+				
+				if (this.text_direction != value) {
+					this.text_direction = value;
+					this.CalculateAutoSize ();
+					this.Invalidate ();
+				}
+			}	
+		}
+
 		[Localizable (true)]
 		[DefaultValue (TextImageRelation.ImageBeforeText)]
 		public TextImageRelation TextImageRelation {
@@ -829,6 +845,9 @@ namespace System.Windows.Forms
 
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public void ResetPadding () { this.padding = this.DefaultPadding; }
+
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public void ResetTextDirection () { this.TextDirection = this.DefaultTextDirection; }
 
 		public void Select ()
 		{
@@ -1298,6 +1317,12 @@ namespace System.Windows.Forms
 		{
 			this.text_size = TextRenderer.MeasureText (this.Text == null ? string.Empty: this.text, this.Font, Size.Empty, TextFormatFlags.HidePrefix);
 
+			// If our text is rotated, flip the width and height
+			ToolStripTextDirection direction = this.GetTextDirection ();
+			
+			if (direction == ToolStripTextDirection.Vertical270 || direction == ToolStripTextDirection.Vertical90)
+				this.text_size = new Size (this.text_size.Height, this.text_size.Width);
+			
 			if (!this.auto_size || this is ToolStripControlHost)
 				return;
 			//this.text_size.Width += 6;
@@ -1443,6 +1468,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		internal virtual ToolStripTextDirection DefaultTextDirection { get { return ToolStripTextDirection.Inherit; } }
+
 		internal virtual void Dismiss (ToolStripDropDownCloseReason reason)
 		{
 			if (is_selected) {
@@ -1450,7 +1477,19 @@ namespace System.Windows.Forms
 				this.Invalidate ();
 			}
 		}
-
+		
+		private ToolStripTextDirection GetTextDirection ()
+		{
+			if (this.TextDirection == ToolStripTextDirection.Inherit) {
+				if (this.Parent != null)
+					return this.Parent.TextDirection;
+				else
+					return ToolStripTextDirection.Horizontal;
+			}
+			
+			return this.TextDirection;
+		}
+		
 		internal virtual ToolStrip GetTopLevelToolStrip ()
 		{
 			if (this.Parent != null)

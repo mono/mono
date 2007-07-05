@@ -31,6 +31,7 @@ using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Drawing.Drawing2D;
 
 namespace System.Windows.Forms
 {
@@ -245,9 +246,40 @@ namespace System.Windows.Forms
 
 		protected virtual void OnRenderItemText (ToolStripItemTextRenderEventArgs e)
 		{
-			TextRenderer.DrawText (e.Graphics, e.Text, e.TextFont, e.TextRectangle, e.TextColor, e.TextFormat);
-		
-			ToolStripItemTextRenderEventHandler eh = (ToolStripItemTextRenderEventHandler)Events [RenderItemTextEvent];
+			if (e.TextDirection == ToolStripTextDirection.Vertical90) {
+				GraphicsState gs = e.Graphics.Save ();
+				PointF p = new PointF (e.Graphics.Transform.OffsetX, e.Graphics.Transform.OffsetY);
+				
+				e.Graphics.ResetTransform ();
+				e.Graphics.RotateTransform (90);
+				
+				RectangleF r = new RectangleF ((e.Item.Height - e.TextRectangle.Height) / 2, (e.TextRectangle.Width + p.X) * -1 - 18, e.TextRectangle.Height, e.TextRectangle.Width);
+				
+				StringFormat sf = new StringFormat ();
+				sf.Alignment = StringAlignment.Center;
+				
+				e.Graphics.DrawString (e.Text, e.TextFont, ThemeEngine.Current.ResPool.GetSolidBrush (e.TextColor), r, sf);
+				
+				e.Graphics.Restore (gs);
+			} else if (e.TextDirection == ToolStripTextDirection.Vertical270) {
+				GraphicsState gs = e.Graphics.Save ();
+				PointF p = new PointF (e.Graphics.Transform.OffsetX, e.Graphics.Transform.OffsetY);
+
+				e.Graphics.ResetTransform ();
+				e.Graphics.RotateTransform (270);
+
+				RectangleF r = new RectangleF (-e.TextRectangle.Height - (e.Item.Height - e.TextRectangle.Height) / 2, (e.TextRectangle.Width + p.X) + 4, e.TextRectangle.Height, e.TextRectangle.Width);
+
+				StringFormat sf = new StringFormat ();
+				sf.Alignment = StringAlignment.Center;
+
+				e.Graphics.DrawString (e.Text, e.TextFont, ThemeEngine.Current.ResPool.GetSolidBrush (e.TextColor), r, sf);
+
+				e.Graphics.Restore (gs);
+			} else
+				TextRenderer.DrawText (e.Graphics, e.Text, e.TextFont, e.TextRectangle, e.TextColor, e.TextFormat);
+
+			ToolStripItemTextRenderEventHandler eh = (ToolStripItemTextRenderEventHandler)Events[RenderItemTextEvent];
 			if (eh != null)
 				eh (this, e);
 		}

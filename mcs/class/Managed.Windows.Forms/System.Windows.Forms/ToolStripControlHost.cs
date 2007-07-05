@@ -224,6 +224,14 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DefaultValue (ToolStripTextDirection.Horizontal)]
+		public override ToolStripTextDirection TextDirection {
+			get { return base.TextDirection; }
+			set { base.TextDirection = value; }
+		}
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new TextImageRelation TextImageRelation {
 			get { return base.TextImageRelation; }
 			set { base.TextImageRelation = value; }
@@ -480,6 +488,8 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Private Methods
+		internal override ToolStripTextDirection DefaultTextDirection { get { return ToolStripTextDirection.Horizontal; } }
+
 		internal override void Dismiss (ToolStripDropDownCloseReason reason)
 		{
 			if (this.Selected)
