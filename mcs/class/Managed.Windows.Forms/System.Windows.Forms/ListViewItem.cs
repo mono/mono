@@ -267,7 +267,15 @@ namespace System.Windows.Forms
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public bool Focused {
-			get { return is_focused; }
+			get { 
+#if NET_2_0
+				// As well as selection state in VirtualMode,
+				// focus state is stored in the ListView
+				if (owner != null && owner.VirtualMode)
+					return Index == owner.focused_item_index;
+#endif
+				return is_focused; 
+			}
 			set { 	
 				if (is_focused == value)
 					return;
@@ -276,7 +284,7 @@ namespace System.Windows.Forms
 					if (owner.FocusedItem != null)
 						owner.FocusedItem.UpdateFocusedState (false);
 
-					owner.focused_item = value ? this : null;
+					owner.focused_item_index = value ? Index : -1;
 				}
 
 				UpdateFocusedState (value);

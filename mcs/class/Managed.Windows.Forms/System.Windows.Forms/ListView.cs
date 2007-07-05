@@ -62,7 +62,7 @@ namespace System.Windows.Forms
 		private readonly CheckedIndexCollection checked_indices;
 		private readonly CheckedListViewItemCollection checked_items;
 		private readonly ColumnHeaderCollection columns;
-		internal ListViewItem focused_item;
+		internal int focused_item_index = -1;
 		private bool full_row_select;
 		private bool grid_lines;
 		private ColumnHeaderStyle header_style = ColumnHeaderStyle.Clickable;
@@ -476,15 +476,18 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public ListViewItem FocusedItem {
 			get {
-				return focused_item;
+				if (focused_item_index == -1)
+					return null;
+
+				return items [focused_item_index];
 			}
 #if NET_2_0
 			set {
 				if (value == null || value.ListView != this || 
-						!IsHandleCreated || focused_item == value)
+						!IsHandleCreated)
 					return;
 
-				SetFocusedItem (value);
+				SetFocusedItem (value.Index);
 			}
 #endif
 		}
@@ -1617,7 +1620,7 @@ namespace System.Windows.Forms
 			while (true) {
 				if (CultureInfo.CurrentCulture.CompareInfo.IsPrefix (Items[i].Text, keysearch_text,
 					CompareOptions.IgnoreCase)) {
-					SetFocusedItem (Items [i]);
+					SetFocusedItem (i);
 					items [i].Selected = true;
 					EnsureVisible (i);
 					break;
@@ -1802,7 +1805,7 @@ namespace System.Windows.Forms
 				return false;
 
 			if (FocusedItem == null)
-				SetFocusedItem (Items [0]);
+				SetFocusedItem (0);
 
 			switch (key_data) {
 			case Keys.End:
@@ -1868,7 +1871,7 @@ namespace System.Windows.Forms
 			else if (!items [index].Selected)
 				items [index].Selected = true;
 
-			SetFocusedItem (items [index]);
+			SetFocusedItem (index);
 			EnsureVisible (index);
 		}
 
@@ -2104,7 +2107,7 @@ namespace System.Windows.Forms
 						} else if (over_text)
 							clicked_item = owner.items [i];
 						else
-							owner.SetFocusedItem (owner.Items [i]);
+							owner.SetFocusedItem (i);
 					} else
 						clicked_item = owner.items [i];
 
@@ -2115,7 +2118,7 @@ namespace System.Windows.Forms
 				if (clicked_item != null) {
 					bool changed = !clicked_item.Selected;
 					if (me.Button == MouseButtons.Left || (XplatUI.State.ModifierKeys == Keys.None && changed))
-						owner.SetFocusedItem (clicked_item);
+						owner.SetFocusedItem (clicked_item.Index);
 
 					if (owner.MultiSelect) {
 						bool reselect = (!owner.LabelEdit || changed);
@@ -2239,7 +2242,7 @@ namespace System.Windows.Forms
 					else
 						item.Selected = true;
 					
-					owner.SetFocusedItem (item);
+					owner.SetFocusedItem (item.Index);
 					Select (); // Make sure we have the focus, since MouseHover doesn't give it to us
 				}
 
@@ -2649,7 +2652,7 @@ namespace System.Windows.Forms
 				return;
 
 			if (FocusedItem == null)
-				SetFocusedItem (Items [0]);
+				SetFocusedItem (0);
 
 			ListViewItem focused_item = FocusedItem;
 
@@ -2699,14 +2702,14 @@ namespace System.Windows.Forms
 			CalculateListView (alignment);
 		}
 		
-		private void SetFocusedItem (ListViewItem item)
+		private void SetFocusedItem (int index)
 		{
-			if (item != null)
-				item.Focused = true;
-			else if (focused_item != null) // Previous focused item
-				focused_item.Focused = false;
+			if (index != -1)
+				items [index].Focused = true;
+			else if (focused_item_index != -1) // Previous focused item
+				items [focused_item_index].Focused = false;
 
-			focused_item = item;
+			focused_item_index = index;
 		}
 
 		private void HorizontalScroller (object sender, EventArgs e)
@@ -4294,7 +4297,7 @@ namespace System.Windows.Forms
 				if (owner != null && owner.VirtualMode)
 					throw new InvalidOperationException ();
 #endif
-				owner.SetFocusedItem (null);
+				owner.SetFocusedItem (-1);
 				owner.h_scroll.Value = owner.v_scroll.Value = 0;
 				foreach (ListViewItem item in list) {
 					owner.item_control.CancelEdit (item);
