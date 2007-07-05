@@ -1,3 +1,9 @@
+
+Thu Jul 5 20:12:52 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c: fixed memory corruption for localloc(0)
+	(bug #81852).
+
 2007-07-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c: Fix warnings.
