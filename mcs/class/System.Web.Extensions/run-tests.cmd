@@ -55,9 +55,12 @@ call %SELENIUM_HOME%\DeploySelenium.cmd "Tomcat" "%SELENIUM_HOME%\TomcatDeploy.c
 rem BUILD APPLICATION UNDER TEST
 rem ============================================
 if DEFINED SKIP_APP goto after_app
+echo Building %cd%\System.Web.Extensions.JavaEE.csproj
+msbuild System.Web.Extensions.JavaEE.csproj /p:Configuration=Debug_Java >>%BUILD_LOG% 2<&1
 pushd Test\standalone\AUT
-echo Building %cd%\AUT.csproj
-msbuild AUT.csproj /t:Deploy /p:Configuration=Debug_Java >>%BUILD_LOG% 2<&1
+echo Building %cd%\SystemWebExtensionsAUT.JavaEE.csproj
+del /F /Q bin_Java\deployedFiles bin_Java\outputFiles.list
+msbuild SystemWebExtensionsAUT.JavaEE.csproj /t:Deploy /p:Configuration=Debug_Java >>%BUILD_LOG% 2<&1
 popd
 :after_app
 
@@ -97,7 +100,7 @@ set ResultsAsHtml=%ResultsDir%\%SuiteName%Results.html
 
 echo Test suite: %SuiteName%
 echo Test suite: %SuiteName% >>%RUN_LOG% 2<&1
-"%Browser%" "%SeleniumURL%/core/TestRunner.html?test=%TestSuiteRelativePath%&auto=true&close=on&multiWindow=off&resultsUrl=%ResultsURL%/Default.ashx"
+"%Browser%" "%SeleniumURL%/core/TestRunner.html?test=%TestSuiteRelativePath%&auto=true&close=off&multiWindow=off&resultsUrl=%ResultsURL%/Default.ashx"
 
 if NOT %ResultsAsXML%=="" (
 	wget -O "%ResultsAsXML%" "%HTTPServer%%ResultsURL%/GetLastResults.ashx" >>%RUN_LOG% 2<&1
