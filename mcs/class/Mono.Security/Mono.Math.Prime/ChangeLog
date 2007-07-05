@@ -1,3 +1,8 @@
+2007-07-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PrimalityTests.cs: Last attempt half-failed. For the time being we
+	need the initial workaround :(
+
 2007-07-05  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* PrimalityTests.cs: Added Test method that select which algorithm, 
