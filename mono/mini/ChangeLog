@@ -1,3 +1,10 @@
+2007-07-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_codegen): Add an assert.
+
+	* mini-x86.c (mono_arch_emit_prolog): Allocate space for the profiler method enter/
+	leave code.
+	* mini-amd64.c (mono_arch_emit_prolog): Likewise.
 
 Thu Jul 5 20:12:52 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
@@ -5,7 +12,7 @@ Thu Jul 5 20:12:52 CEST 2007 Paolo Molaro <lupus@ximian.com>
 	(bug #81852).
 
 2007-07-05  Zoltan Varga  <vargaz@gmail.com>
-
+	
 	* mini.c: Fix warnings.
 
 Wed Jul 4 15:30:36 CEST 2007 Paolo Molaro <lupus@ximian.com>
