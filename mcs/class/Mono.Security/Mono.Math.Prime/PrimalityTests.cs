@@ -95,7 +95,7 @@ namespace Mono.Math.Prime {
 		/// <summary>
 		///     Probabilistic prime test based on Rabin-Miller's test
 		/// </summary>
-		/// <param name="bi" type="BigInteger.BigInteger">
+		/// <param name="n" type="BigInteger.BigInteger">
 		///     <para>
 		///         The number to test.
 		///     </para>
@@ -114,67 +114,51 @@ namespace Mono.Math.Prime {
 		///		False if "this" is definitely NOT prime.
 		///	</para>
 		/// </returns>
-		public static bool RabinMillerTest (BigInteger bi, ConfidenceFactor confidence)
+		public static bool RabinMillerTest (BigInteger n, ConfidenceFactor confidence)
 		{
-			int Rounds = GetSPPRounds (bi, confidence);
+			int bits = n.BitCount ();
+			int t = GetSPPRounds (bits, confidence);
 
-			// calculate values of s and t
-			BigInteger p_sub1 = bi - 1;
-			int s = p_sub1.LowestSetBit ();
+			// n - 1 == 2^s * r, r is odd
+			BigInteger n_minus_1 = n - 1;
+			int s = n_minus_1.LowestSetBit ();
+			BigInteger r = n_minus_1 >> s;
 
-			BigInteger t = p_sub1 >> s;
-
-			int bits = bi.BitCount ();
-			BigInteger a = null;
-			BigInteger.ModulusRing mr = new BigInteger.ModulusRing (bi);
+			BigInteger.ModulusRing mr = new BigInteger.ModulusRing (n);
 			
 			// Applying optimization from HAC section 4.50 (base == 2)
 			// not a really random base but an interesting (and speedy) one
-			BigInteger b = mr.Pow (2, t);
-			if (b != 1) {
-				bool result = false;
-				for (int j=0; j < s; j++) {
-					if (b == p_sub1) {         // a^((2^j)*t) mod p = p-1 for some 0 <= j <= s-1
-						result = true;
-						break;
-					}
-
-					b = (b * b) % bi;
-				}
-				if (!result)
-					return false;
-			}
+			BigInteger y = null;
+			// FIXME: sadly there a bug that makes this fails for "small" big integers
+			if (n.BitCount () > 100)
+				y = mr.Pow (2, r);
 
 			// still here ? start at round 1 (round 0 was a == 2)
-			for (int round = 1; round < Rounds; round++) {
-				while (true) {		           // generate a < n
-					a = BigInteger.GenerateRandom (bits);
+			for (int round = 0; round < t; round++) {
 
-					// make sure "a" is not 0 (and not 2 as we have already tested that)
-					if (a > 2 && a < bi)
-						break;
+				if ((round > 0) || (y == null)) {
+					BigInteger a = null;
+
+					// check for 2 <= a <= n - 2
+					// ...but we already did a == 2 previously as an optimization
+					do {
+						a = BigInteger.GenerateRandom (bits);
+					} while ((a <= 2) && (a >= n_minus_1));
+
+					y = mr.Pow (a, r);
 				}
 
-				if (a.GCD (bi) != 1)
-					return false;
+				if (y == 1)
+					continue;
 
-				b = mr.Pow (a, t);
+				for (int j = 0; ((j < s) && (y != n_minus_1)); j++) {
 
-				if (b == 1)
-					continue;              // a^t mod p = 1
-
-				bool result = false;
-				for (int j = 0; j < s; j++) {
-
-					if (b == p_sub1) {         // a^((2^j)*t) mod p = p-1 for some 0 <= j <= s-1
-						result = true;
-						break;
-					}
-
-					b = (b * b) % bi;
+					y = mr.Pow (y, 2);
+					if (y == 1)
+						return false;
 				}
 
-				if (!result)
+				if (y != n_minus_1)
 					return false;
 			}
 			return true;
