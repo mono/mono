@@ -678,6 +678,20 @@ namespace System.Windows.Forms
 			// FIXME: TODO
 		}
 
+#if NET_2_0
+		public ListViewSubItem GetSubItemAt (int x, int y)
+		{
+			if (owner != null && owner.View != View.Details)
+				return null;
+
+			foreach (ListViewSubItem sub_item in sub_items)
+				if (sub_item.Bounds.Contains (x, y))
+					return sub_item;
+
+			return null;
+		}
+#endif
+
 		public virtual void Remove ()
 		{
 			if (owner == null)

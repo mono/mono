@@ -1,5 +1,9 @@
 2007-07-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ListViewItem.cs: Implement the small 2.0 GetSubItemAt method.
+
+2007-07-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* ListView.cs: Implement the so-incredibly broken 2.0 
 	VirtualItemsSelectionRangeChanged event.
 
