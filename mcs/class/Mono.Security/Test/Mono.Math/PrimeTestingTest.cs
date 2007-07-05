@@ -263,16 +263,16 @@ namespace MonoTests.Mono.Math {
 		[Test]
 		public void IsProbablePrime_20_digits ()
 		{
-//			AssertPrime ("48112959837082048697");
+			AssertPrime ("48112959837082048697");
 			AssertPrime ("54673257461630679457");
 			AssertPrime ("29497513910652490397");
 			AssertPrime ("40206835204840513073");
 			AssertPrime (12764787846358441471);
 			AssertPrime ("71755440315342536873");
 			AssertPrime ("45095080578985454453");
-//			AssertPrime ("27542476619900900873");
+			AssertPrime ("27542476619900900873");
 			AssertPrime ("66405897020462343733");
-//			AssertPrime ("36413321723440003717");
+			AssertPrime ("36413321723440003717");
 		}
 
 		[Test]

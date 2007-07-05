@@ -1,3 +1,8 @@
+2007-07-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PrimeTestingTest.cs: Re-enable failing 20 digits primes (now that
+	we have a workaround for them).
+
 2007-07-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* BigIntegerTest.cs: A few more ModPow test cases to corner the
