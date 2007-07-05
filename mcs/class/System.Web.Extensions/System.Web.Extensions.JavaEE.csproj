@@ -1,40 +1,75 @@
 ﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug_Java</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{3D36DB5F-6DBC-4B95-8CA0-9B627357C7BD}</ProjectGuid>
+    <ProjectGuid>{39836A5C-64D0-4801-9493-DEF694338EF5}</ProjectGuid>
+    <ProjectTypeGuids>{F6B19D50-1E2E-4e87-ADFB-10393B439DE0};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>System.Web.Extensions</RootNamespace>
     <AssemblyName>System.Web.Extensions</AssemblyName>
+    <JDKName>1.6</JDKName>
+    <GHProjectType>1</GHProjectType>
+    <Version>2.0</Version>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <AdditionalClassPath>
+    </AdditionalClassPath>
+    <RootNamespace>System.Web.Extensions</RootNamespace>
+    <jarserver>ipa</jarserver>
+    <StartupObject>
+    </StartupObject>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_Java|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;SYSTEM_WEB_EXTENSIONS;NET_2_0;NET_1_1</DefineConstants>
+    <OutputPath>bin\Debug_Java\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;JAVA,NET_2_0,TARGET_JVM, TARGET_J2EE,SYSTEM_WEB_EXTENSIONS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <BaseAddress>4194304</BaseAddress>
+    <SkipValidation>false</SkipValidation>
+    <KeepIntermediate>false</KeepIntermediate>
+    <TargetPlatform>0</TargetPlatform>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release_Java|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE;SYSTEM_WEB_EXTENSIONS;NET_2_0;NET_1_1</DefineConstants>
+    <OutputPath>bin\Release_Java\</OutputPath>
+    <DefineConstants>TRACE;JAVA</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <BaseAddress>4194304</BaseAddress>
+    <SkipValidation>false</SkipValidation>
+    <KeepIntermediate>false</KeepIntermediate>
+    <TargetPlatform>0</TargetPlatform>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.csharp.targets" />
+  <Import Project="$(VMW_HOME)\bin\Mainsoft.Common.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties REFS-RefInfo-system-xml="repository:vmw:framework:2.0" REFS-JarPath-system-xml="" REFS-RefInfo-system-web-services="repository:vmw:framework:2.0" REFS-JarPath-system-web-services="" REFS-RefInfo-system-web="repository:vmw:framework:2.0" REFS-JarPath-system-web="" REFS-RefInfo-system-drawing="repository:vmw:framework:2.0" REFS-JarPath-system-drawing="" REFS-RefInfo-system-data="repository:vmw:framework:2.0" REFS-JarPath-system-data="" REFS-RefInfo-system-configuration="repository:vmw:framework:2.0" REFS-JarPath-system-configuration="" REFS-RefInfo-system="repository:vmw:framework:2.0" REFS-JarPath-system="" REFS-JarPath-rt="" REFS-RefInfo-rt="repository:jre:sun:1.6.0" />
+    </VisualStudio>
+  </ProjectExtensions>
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.configuration" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Web" />
-    <Reference Include="System.Web.Services" />
-    <Reference Include="System.Xml" />
+    <Reference Include="rt, Version=1.6.0.65535, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
+    <Reference Include="System.Configuration, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="System.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=x86" />
+    <Reference Include="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="System.Web, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=x86" />
+    <Reference Include="System.Web.Services, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="System.Xml, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\build\common\Consts.cs">
@@ -61,19 +96,15 @@
     <Compile Include="System.Web.Configuration\SystemWebExtensionsSectionGroup.cs" />
     <Compile Include="System.Web.Handlers\ScriptModule.cs" />
     <Compile Include="System.Web.Handlers\ScriptResourceHandler.cs" />
-    <Compile Include="System.Web.Script.Serialization\JSON\JavaScriptConstructor.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Web.Script.Serialization\JSON\JavaScriptConvert.cs" />
     <Compile Include="System.Web.Script.Serialization\JavaScriptConverter.cs" />
-    <Compile Include="System.Web.Script.Serialization\JSON\JavaScriptParameters.cs" />
     <Compile Include="System.Web.Script.Serialization\JavaScriptSerializer.cs" />
     <Compile Include="System.Web.Script.Serialization\JavaScriptTypeResolver.cs" />
+    <Compile Include="System.Web.Script.Serialization\JSON\JavaScriptConstructor.cs" />
+    <Compile Include="System.Web.Script.Serialization\JSON\JavaScriptConvert.cs" />
+    <Compile Include="System.Web.Script.Serialization\JSON\JavaScriptParameters.cs" />
     <Compile Include="System.Web.Script.Serialization\JSON\JavaScriptUtils.cs" />
     <Compile Include="System.Web.Script.Serialization\JSON\JsonReader.cs" />
-    <Compile Include="System.Web.Script.Serialization\JSON\JsonReaderException.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="System.Web.Script.Serialization\JSON\JsonReaderException.cs" />
     <Compile Include="System.Web.Script.Serialization\JSON\JsonSerializationException.cs" />
     <Compile Include="System.Web.Script.Serialization\JSON\JsonSerializer.cs" />
     <Compile Include="System.Web.Script.Serialization\JSON\JsonToken.cs" />
@@ -150,12 +181,4 @@
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>
