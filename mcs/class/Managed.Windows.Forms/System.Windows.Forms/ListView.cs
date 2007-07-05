@@ -1828,6 +1828,10 @@ namespace System.Windows.Forms
 			case Keys.Space:
 				ToggleItemsCheckState ();
 				break;
+			case Keys.Enter:
+				if (selected_indices.Count > 0)
+					OnItemActivate (EventArgs.Empty);
+				break;
 
 			default:
 				return false;
