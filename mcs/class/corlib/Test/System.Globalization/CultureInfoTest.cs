@@ -425,20 +425,22 @@ namespace MonoTests.System.Globalization
 		public void UseUserOverride_CurrentCulture ()
 		{
 			CultureInfo ci = CultureInfo.CurrentCulture;
-			Assert.IsTrue (ci.UseUserOverride, "#1:" + ci.DisplayName + "|" + ci.LCID);
+			bool expected = (ci.LCID != CultureInfo.InvariantCulture.LCID);
+			Assert.AreEqual (expected, ci.UseUserOverride, "#1");
 
 			ci = (CultureInfo) ci.Clone ();
-			Assert.IsTrue (ci.UseUserOverride, "#2");
+			Assert.AreEqual (expected, ci.UseUserOverride, "#2");
 		}
 
 		[Test]
 		public void UseUserOverride_CurrentUICulture ()
 		{
 			CultureInfo ci = CultureInfo.CurrentCulture;
-			Assert.IsTrue (ci.UseUserOverride, "#1:" + ci.DisplayName + "|" + ci.LCID);
+			bool expected = (ci.LCID != CultureInfo.InvariantCulture.LCID);
+			Assert.AreEqual (expected, ci.UseUserOverride, "#1");
 
 			ci = (CultureInfo) ci.Clone ();
-			Assert.IsTrue (ci.UseUserOverride, "#2");
+			Assert.AreEqual (expected, ci.UseUserOverride, "#2");
 		}
 
 #if NET_2_0

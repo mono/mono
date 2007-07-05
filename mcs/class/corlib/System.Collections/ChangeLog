@@ -1,3 +1,10 @@
+2007-07-05  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CaseInsensitiveHashCodeProvider.cs: In default ctor, do not save
+	TextInfo if current culture is invariant. Remoted private ctor.
+	In Default, always construct new instance since the current culture
+	may change.
+
 2007-06-08  Ankit Jain  <jankit@novell.com>
 
 	* ArrayList.cs (Shift): Clear the unused part of the array when

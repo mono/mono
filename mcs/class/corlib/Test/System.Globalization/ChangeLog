@@ -1,3 +1,8 @@
+2007-07-05  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CultureInfoTest.cs: Fixed UseUserOverride tests to pass on systems
+	where invariant culture is default locale.
+
 2007-07-03  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* CultureInfoTest.cs: Added extra info in order to troubleshoot

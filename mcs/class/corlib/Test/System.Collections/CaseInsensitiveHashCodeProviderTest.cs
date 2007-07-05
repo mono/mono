@@ -9,23 +9,53 @@ using System.Collections;
 using System.Globalization;
 using System.IO;
 using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Threading;
 
 using NUnit.Framework;
 
 namespace MonoTests.System.Collections {
 
 	[TestFixture]
-	public class CaseInsensitiveHashCodeProviderTest {
-
+	public class CaseInsensitiveHashCodeProviderTest
+	{
 		[Test]
-		public void DefaultInstance ()
+		public void Default ()
 		{
-			// Make sure the instance returned by Default
-			// is really a CaseInsensitiveHashCodeProvider.
-			Assert.IsTrue ((CaseInsensitiveHashCodeProvider.Default
-				as CaseInsensitiveHashCodeProvider) != null);
+			CaseInsensitiveHashCodeProvider cih = new CaseInsensitiveHashCodeProvider (
+				CultureInfo.CurrentCulture);
+			int h1 = cih.GetHashCode ("Test String");
+
+			cih = CaseInsensitiveHashCodeProvider.Default;
+			int h2 = cih.GetHashCode ("Test String");
+
+			Assert.AreEqual (h1, h2, "#1");
+
+			// Default always returns new instance
+			CaseInsensitiveHashCodeProvider cih1 = CaseInsensitiveHashCodeProvider.Default;
+			CaseInsensitiveHashCodeProvider cih2 = CaseInsensitiveHashCodeProvider.Default;
+			Assert.IsFalse (object.ReferenceEquals (cih1, cih2), "#2");
 		}
+
+#if NET_2_0
+		[Test]
+		public void DefaultInvariant ()
+		{
+			CaseInsensitiveHashCodeProvider cih = new CaseInsensitiveHashCodeProvider (
+				CultureInfo.InvariantCulture);
+			int h1 = cih.GetHashCode ("Test String");
+
+			cih = CaseInsensitiveHashCodeProvider.DefaultInvariant;
+			int h2 = cih.GetHashCode ("Test String");
+
+			Assert.AreEqual (h1, h2, "#1");
+
+			CaseInsensitiveHashCodeProvider cih1 = CaseInsensitiveHashCodeProvider.DefaultInvariant;
+			CaseInsensitiveHashCodeProvider cih2 = CaseInsensitiveHashCodeProvider.DefaultInvariant;
+			Assert.IsTrue (object.ReferenceEquals (cih1, cih2));
+		}
+#endif
 
 		[Test]
 		public void HashCode ()
@@ -45,23 +75,95 @@ namespace MonoTests.System.Collections {
 		}
 
 		[Test]
-		public void DefaultCtor ()
+		public void Constructor0_Serialization ()
 		{
 			CaseInsensitiveHashCodeProvider cihcp = new CaseInsensitiveHashCodeProvider ();
 			BinaryFormatter bf = new BinaryFormatter ();
 			MemoryStream ms = new MemoryStream ();
 			bf.Serialize (ms, cihcp);
-			byte[] def = ms.ToArray ();
+			byte[] ser1 = ms.ToArray ();
 
 			cihcp = new CaseInsensitiveHashCodeProvider (CultureInfo.CurrentCulture);
 			ms = new MemoryStream ();
 			bf.Serialize (ms, cihcp);
-			byte[] current = ms.ToArray ();
+			byte[] ser2 = ms.ToArray ();
 
-			Assert.AreEqual (def, current, "default=current");
+			cihcp = CaseInsensitiveHashCodeProvider.Default;
+			ms = new MemoryStream ();
+			bf.Serialize (ms, cihcp);
+			byte[] ser3 = ms.ToArray ();
+
+			Assert.AreEqual (ser1, ser2, "#1");
+			Assert.AreEqual (ser2, ser3, "#2");
 		}
 
-		private static byte[] serialized_en_us = new byte[] {
+		[Test]
+		public void Constructor1_Culture_Null ()
+		{
+			try {
+				new CaseInsensitiveHashCodeProvider ((CultureInfo) null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("culture", ex.ParamName, "#6");
+			}
+		}
+
+#if NET_2_0
+		[Test]
+		public void Constructor1_Serialization ()
+		{
+			CaseInsensitiveHashCodeProvider cihcp = new CaseInsensitiveHashCodeProvider (CultureInfo.InvariantCulture);
+			BinaryFormatter bf = new BinaryFormatter ();
+			MemoryStream ms = new MemoryStream ();
+			bf.Serialize (ms, cihcp);
+			byte[] ser1 = ms.ToArray ();
+
+			cihcp = CaseInsensitiveHashCodeProvider.DefaultInvariant;
+			ms = new MemoryStream ();
+			bf.Serialize (ms, cihcp);
+			byte[] ser2 = ms.ToArray ();
+
+			Assert.AreEqual (ser1, ser2, "#1");
+		}
+#endif
+
+		[Test]
+		public void SerializationRoundtrip ()
+		{
+			CaseInsensitiveHashCodeProvider enus = new CaseInsensitiveHashCodeProvider (new CultureInfo ("en-US"));
+			BinaryFormatter bf = new BinaryFormatter ();
+			MemoryStream ms = new MemoryStream ();
+			bf.Serialize (ms, enus);
+
+			ms.Position = 0;
+			CaseInsensitiveHashCodeProvider clone = (CaseInsensitiveHashCodeProvider) bf.Deserialize (ms);
+			Assert.AreEqual (enus.GetHashCode (String.Empty), clone.GetHashCode (String.Empty), "GetHashCode(string)");
+			Assert.AreEqual (enus.GetHashCode (Int32.MinValue), clone.GetHashCode (Int32.MinValue), "GetHashCode(int)");
+		}
+
+		[Test]
+		public void Deserialize ()
+		{
+#if TARGET_JVM
+			BinaryFormatter bf = (BinaryFormatter)vmw.@internal.remoting.BinaryFormatterUtils.CreateBinaryFormatter (false);
+#else
+			BinaryFormatter bf = new BinaryFormatter ();
+#endif // TARGET_JVM
+
+			MemoryStream ms = new MemoryStream (serialized_en_us);
+			CaseInsensitiveHashCodeProvider enus = (CaseInsensitiveHashCodeProvider) bf.Deserialize (ms);
+			Assert.IsNotNull (enus, "en-US");
+
+			ms = new MemoryStream (serialized_fr_ca);
+			CaseInsensitiveHashCodeProvider frca = (CaseInsensitiveHashCodeProvider) bf.Deserialize (ms);
+			Assert.IsNotNull (frca, "fr-CA");
+		}
+
+		private static byte [] serialized_en_us = new byte [] {
 #if NET_2_0
 			0x00, 0x01, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0x01, 
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x04, 0x01, 0x00, 0x00, 0x00, 0x32, 0x53, 0x79, 0x73, 
@@ -99,7 +201,7 @@ namespace MonoTests.System.Collections {
 #endif
 		};
 
-		private static byte[] serialized_fr_ca = new byte[] {
+		private static byte [] serialized_fr_ca = new byte [] {
 #if NET_2_0
 			0x00, 0x01, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0x01, 
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x04, 0x01, 0x00, 0x00, 0x00, 0x32, 0x53, 0x79, 0x73, 
@@ -136,37 +238,5 @@ namespace MonoTests.System.Collections {
 			0x08, 0x50, 0x00, 0x00, 0x00, 0x01, 0x0C, 0x0C, 0x00, 0x00, 0x0B
 #endif
 		};
-
-		[Test]
-		public void SerializationRoundtrip ()
-		{
-			CaseInsensitiveHashCodeProvider enus = new CaseInsensitiveHashCodeProvider (new CultureInfo ("en-US"));
-			BinaryFormatter bf = new BinaryFormatter ();
-			MemoryStream ms = new MemoryStream ();
-			bf.Serialize (ms, enus);
-
-			ms.Position = 0;
-			CaseInsensitiveHashCodeProvider clone = (CaseInsensitiveHashCodeProvider) bf.Deserialize (ms);
-			Assert.AreEqual (enus.GetHashCode (String.Empty), clone.GetHashCode (String.Empty), "GetHashCode(string)");
-			Assert.AreEqual (enus.GetHashCode (Int32.MinValue), clone.GetHashCode (Int32.MinValue), "GetHashCode(int)");
-		}
-
-		[Test]
-		public void Deserialize ()
-		{
-#if TARGET_JVM
-			BinaryFormatter bf = (BinaryFormatter)vmw.@internal.remoting.BinaryFormatterUtils.CreateBinaryFormatter (false);
-#else
-			BinaryFormatter bf = new BinaryFormatter ();
-#endif // TARGET_JVM
-
-			MemoryStream ms = new MemoryStream (serialized_en_us);
-			CaseInsensitiveHashCodeProvider enus = (CaseInsensitiveHashCodeProvider) bf.Deserialize (ms);
-			Assert.IsNotNull (enus, "en-US");
-
-			ms = new MemoryStream (serialized_fr_ca);
-			CaseInsensitiveHashCodeProvider frca = (CaseInsensitiveHashCodeProvider) bf.Deserialize (ms);
-			Assert.IsNotNull (frca, "fr-CA");
-		}
 	}
 }

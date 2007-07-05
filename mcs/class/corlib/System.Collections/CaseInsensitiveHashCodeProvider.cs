@@ -40,20 +40,17 @@ namespace System.Collections
 #endif
 	public class CaseInsensitiveHashCodeProvider : IHashCodeProvider
 	{
-		static readonly CaseInsensitiveHashCodeProvider singleton = new CaseInsensitiveHashCodeProvider ();
-		static readonly CaseInsensitiveHashCodeProvider singletonInvariant = new CaseInsensitiveHashCodeProvider (true);
+		static readonly CaseInsensitiveHashCodeProvider singletonInvariant = new CaseInsensitiveHashCodeProvider (
+			CultureInfo.InvariantCulture);
 
 		TextInfo m_text; // must match MS name for serialization
 
 		// Public instance constructor
 		public CaseInsensitiveHashCodeProvider ()
 		{
-			m_text = CultureInfo.CurrentCulture.TextInfo;
-		}
-
-		private CaseInsensitiveHashCodeProvider (bool invariant)
-		{
-			// leave m_text == null
+			CultureInfo culture = CultureInfo.CurrentCulture;
+			if (culture.LCID != CultureInfo.InvariantCulture.LCID)
+				m_text = CultureInfo.CurrentCulture.TextInfo;
 		}
 
 		public CaseInsensitiveHashCodeProvider (CultureInfo culture)
@@ -62,7 +59,6 @@ namespace System.Collections
  				throw new ArgumentNullException ("culture");
 			if (culture.LCID != CultureInfo.InvariantCulture.LCID)
 				m_text = culture.TextInfo;
-			// else leave m_text == null
 		}
 
 		//
@@ -71,7 +67,7 @@ namespace System.Collections
 
 		public static CaseInsensitiveHashCodeProvider Default {
 			get {
-				return singleton;
+				return new CaseInsensitiveHashCodeProvider ();
 			}
 		}
 
