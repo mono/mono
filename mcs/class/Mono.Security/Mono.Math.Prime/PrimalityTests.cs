@@ -92,6 +92,15 @@ namespace Mono.Math.Prime {
 			}
 		}
 
+		public static bool Test (BigInteger n, ConfidenceFactor confidence)
+		{
+			// Rabin-Miller fails with smaller primes (at least with our BigInteger code)
+			if (n.BitCount () < 100)
+				return SmallPrimeSppTest (n, confidence);
+			else
+				return RabinMillerTest (n, confidence);
+		}
+
 		/// <summary>
 		///     Probabilistic prime test based on Rabin-Miller's test
 		/// </summary>
@@ -128,10 +137,7 @@ namespace Mono.Math.Prime {
 			
 			// Applying optimization from HAC section 4.50 (base == 2)
 			// not a really random base but an interesting (and speedy) one
-			BigInteger y = null;
-			// FIXME: sadly there a bug that makes this fails for "small" big integers
-			if (n.BitCount () > 100)
-				y = mr.Pow (2, r);
+			BigInteger y = mr.Pow (2, r);
 
 			// still here ? start at round 1 (round 0 was a == 2)
 			for (int round = 0; round < t; round++) {
