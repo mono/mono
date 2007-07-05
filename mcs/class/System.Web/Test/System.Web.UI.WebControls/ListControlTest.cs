@@ -559,6 +559,20 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
+		// Tests Save/Load/Track ViewState
+		public void ViewStateNotNeeded ()
+		{
+			ListControlPoker a = new ListControlPoker ();
+
+			a.Items.Add ("a");
+			a.Items.Add ("b");
+			a.Items.Add ("c");
+
+			object state = a.SaveState ();
+			Assert.AreEqual (null, state, "A1");
+		}
+
+		[Test]
 		public void ViewStateContents ()
 		{
 			ListControlPoker p = new ListControlPoker ();

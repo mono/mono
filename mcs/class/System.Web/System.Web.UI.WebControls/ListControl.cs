@@ -170,8 +170,11 @@ namespace System.Web.UI.WebControls {
 		[WebCategory ("Misc")]
 		public virtual ListItemCollection Items {
 			get {
-				if (items == null)
+				if (items == null) {
 					items = new ListItemCollection ();
+					if (IsTrackingViewState)
+						((IStateManager) items).TrackViewState ();
+				}
 				return items;
 			}
 		}
@@ -536,7 +539,7 @@ namespace System.Web.UI.WebControls {
 				second = manager.SaveViewState ();
 
 			ArrayList selected = GetSelectedIndicesInternal ();
-			if (first == null && second == null && selected == null)
+			if (first == null && second == null && (selected == null || selected.Count == 0))
 				return null;
 
 			return new Triplet (first, second, selected);

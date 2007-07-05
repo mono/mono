@@ -1,3 +1,10 @@
+2007-07-05  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* ListControl.cs:
+	* ListItem.cs:
+	* ListItemCollection.cs: controls based on ListControl should not save
+	view state before than TrackViewState called
+
 2007-07-04  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* WebControl.cs: fixed AddDisplayStyleAttribute, returns if

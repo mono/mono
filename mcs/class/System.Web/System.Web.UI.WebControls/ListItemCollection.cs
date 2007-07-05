@@ -40,6 +40,7 @@ namespace System.Web.UI.WebControls {
 		#region Fields
 		private ArrayList	items;
 		private bool		tracking;
+		private bool		dirty;
 		#endregion	// Fields
 
 		#region Public Constructors
@@ -93,20 +94,38 @@ namespace System.Web.UI.WebControls {
 		#region Public Instance Methods
 		public void Add(ListItem item) {
 			items.Add(item);
+			if (tracking) {
+				item.TrackViewState ();
+				SetDirty ();
+			}
 		}
 
 		public void Add(string item) {
-			items.Add(new ListItem(item));
+			ListItem listItem = new ListItem (item);
+			items.Add (listItem);
+
+			if (tracking) {
+				listItem.TrackViewState ();
+				SetDirty ();
+			}
 		}
 
 		public void AddRange(ListItem[] items) {
 			for (int i = 0; i < items.Length; i++) {
 				Add(items[i]);
+
+				if (tracking) {
+					items [i].TrackViewState ();
+					SetDirty ();
+				}
 			}
 		}
 
 		public void Clear() {
 			items.Clear();
+
+			if (tracking)
+				SetDirty ();
 		}
 
 		public bool Contains(ListItem item) {
@@ -152,25 +171,46 @@ namespace System.Web.UI.WebControls {
 
 		public void Insert(int index, ListItem item) {
 			items.Insert(index, item);
+
+			if (tracking) {
+				item.TrackViewState ();
+				SetDirty ();
+			}
 		}
 
 		public void Insert(int index, string item) {
-			items.Insert(index, new ListItem(item));
+			ListItem listItem = new ListItem(item);
+			items.Insert (index, listItem);
+
+			if (tracking) {
+				listItem.TrackViewState ();
+				SetDirty ();
+			}
 		}
 
 		public void Remove(ListItem item) {
 			items.Remove(item);
+			
+			if (tracking)
+				SetDirty ();
 		}
 
 		public void Remove (string item)
 		{
 			for (int i = 0; i < items.Count; i++)
-				if (item == this [i].Value)
+				if (item == this [i].Value) {
 					items.RemoveAt (i);
+
+					if (tracking)
+						SetDirty ();
+				}
 		}
 
 		public void RemoveAt(int index) {
 			items.RemoveAt(index);
+
+			if (tracking)
+				SetDirty ();
 		}
 		#endregion	// Public Instance Methods
 
@@ -189,12 +229,21 @@ namespace System.Web.UI.WebControls {
 			set {
 				if ((index >= 0) && (index < items.Count)) {
 					items[index] = (ListItem)value;
+
+					if (tracking)
+						((ListItem) value).TrackViewState ();
 				}
 			}
 		}
 
 		int IList.Add(object value) {
-			return items.Add((ListItem)value);
+			int i = items.Add ((ListItem) value);
+
+			if (tracking) {
+				((IStateManager) value).TrackViewState ();
+				SetDirty ();
+			}
+			return i;
 		}
 
 		bool IList.Contains(object value) {
@@ -220,73 +269,41 @@ namespace System.Web.UI.WebControls {
 		}
 
 		void IStateManager.LoadViewState(object state) {
-			int	count;
-			string[] text;
-			string[] value;
-#if NET_2_0
-			bool [] enabled;
-#endif
 
-			if (state == null) {
+			if (state == null)
 				return;
-			}
-#if NET_2_0
-			Triplet stateObj;
-			stateObj = (Triplet) state;
-#else
-			Pair stateObj;
-			stateObj = (Pair) state;
-#endif
 
-			text = (string []) stateObj.First;
-			value = (string []) stateObj.Second;
-#if NET_2_0
-			enabled = (bool []) stateObj.Third;
-#endif
-
-			count = text.Length;
+			object [] stateObj = (object[]) state;
+			int count = stateObj.Length;
 
 			items = new ArrayList(count);
+
 			for (int i = 0; i < count; i++) {
-#if NET_2_0
-				items.Add(new ListItem(text[i], value[i], enabled[i]));
-#else
-				items.Add(new ListItem(text[i], value[i]));
-#endif
+				ListItem item = new ListItem ();
+				if (stateObj [i] != null)
+					item.LoadViewState (stateObj [i]);
+
+				items.Add (item);
 			}
 		}
 
 		object IStateManager.SaveViewState() {
 			int count;
-			string[] text;
-			string[] value;
-#if NET_2_0
-			bool [] enabled;
-#endif
-
 			count = items.Count;
 			if (count == 0)
 				return null;
-			
-			text = new string[count];
-			value = new string[count];
-#if NET_2_0
-			enabled = new bool [count];
-#endif
 
+			object [] state = new object [count];
 			for (int i = 0; i < count; i++) {
-				text[i] = ((ListItem)items[i]).Text;
-				value[i] = ((ListItem)items[i]).Value;
-#if NET_2_0
-				enabled [i] = ((ListItem) items [i]).Enabled;
-#endif
+				state [i] = ((IStateManager) items [i]).SaveViewState ();
+				if (state [i] != null)
+					dirty = true;
 			}
 
-#if NET_2_0
-			return new Triplet(text, value, enabled);
-#else
-			return new Pair(text, value);
-#endif
+			if (dirty)
+				return state;
+
+			return null;
 		}
 
 		void IStateManager.TrackViewState() {
@@ -297,5 +314,12 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 		#endregion	// Interface methods
+
+		private void SetDirty ()
+		{
+			dirty = true;
+			for (int i = 0; i < items.Count; i++)
+				((ListItem) items [i]).SetDirty ();
+		}
 	}
 }

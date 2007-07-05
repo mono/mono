@@ -47,8 +47,8 @@ namespace System.Web.UI.WebControls {
 #endif
 		public ListItem (string text, string value)
 		{
-			Text = text;
-			Value = value;
+			this.text = text;
+			this.value = value;
 		}
 	
 		public ListItem (string text) : this (text, null)
@@ -108,6 +108,9 @@ namespace System.Web.UI.WebControls {
 		
 		internal void LoadViewState (object state)
 		{
+			if (state == null)
+				return;
+
 			object [] states = (object []) state;
 
 			if (states [0] != null) sb = (StateBag) states[0];
@@ -125,6 +128,9 @@ namespace System.Web.UI.WebControls {
 
 		internal object SaveViewState ()
 		{
+			if (!dirty)
+				return null;
+
 #if NET_2_0
 			object [] state = new object [4];
 #else
@@ -205,6 +211,8 @@ namespace System.Web.UI.WebControls {
 		
 			set {
 				text = value;
+				if (tracking)
+					SetDirty ();
 			}
 		}
 
@@ -221,14 +229,26 @@ namespace System.Web.UI.WebControls {
 		
 			set {
 				this.value = value;
+				if (tracking)
+					SetDirty ();
 			}
+		}
+
+		internal void SetDirty ()
+		{
+			dirty = true;
 		}
 
 #if NET_2_0
 		public bool Enabled
 		{
 			get { return enabled; }
-			set { enabled = value; }
+			set
+			{
+				enabled = value;
+				if (tracking)
+					SetDirty ();
+			}
 		}
 
 		internal bool HasAttributes {
@@ -239,6 +259,7 @@ namespace System.Web.UI.WebControls {
 		string text;
 		string value;
 		bool selected;
+		bool dirty;
 #if NET_2_0
 		bool enabled = true;
 #endif
