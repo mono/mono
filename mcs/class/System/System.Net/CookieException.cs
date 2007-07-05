@@ -53,11 +53,13 @@ namespace System.Net
 		{			
 		}
 
+#if !TARGET_JVM
 		// Methods
 		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			base.GetObjectData (info, context);
 		}
+#endif
 
 #if NET_2_0
 		public override void GetObjectData (SerializationInfo serializationInfo, StreamingContext streamingContext)
