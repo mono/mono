@@ -1,5 +1,11 @@
 2007-07-05  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* CaseInsensitiveHashCodeProviderTest.cs: Reworked test for Default
+	instance to pass on both Mono and MS. Added separate tests that
+	verify the specific Mono and MS behavior.
+
+2007-07-05  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* CaseInsensitiveHashCodeProviderTest.cs: Improved test for
 	Default property to show the a new intance is constructed. Added test
 	for DefaultInvariant. Improved serialization tests. Added ctor test

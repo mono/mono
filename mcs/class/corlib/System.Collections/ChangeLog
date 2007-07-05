@@ -1,5 +1,10 @@
 2007-07-05  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* CaseInsensitiveHashCodeProvider.cs: Lazy init Default instance and
+	reconstruct it if CurrentCulture changes.
+
+2007-07-05  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* CaseInsensitiveHashCodeProvider.cs: In default ctor, do not save
 	TextInfo if current culture is invariant. Remoted private ctor.
 	In Default, always construct new instance since the current culture

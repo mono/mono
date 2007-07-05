@@ -42,6 +42,8 @@ namespace System.Collections
 	{
 		static readonly CaseInsensitiveHashCodeProvider singletonInvariant = new CaseInsensitiveHashCodeProvider (
 			CultureInfo.InvariantCulture);
+		static CaseInsensitiveHashCodeProvider singleton;
+		static readonly object sync = new object ();
 
 		TextInfo m_text; // must match MS name for serialization
 
@@ -67,7 +69,20 @@ namespace System.Collections
 
 		public static CaseInsensitiveHashCodeProvider Default {
 			get {
-				return new CaseInsensitiveHashCodeProvider ();
+				// MS actually constructs a new instance on each call, for
+				// performance reasons we're only constructing a new instance
+				// if the CurrentCulture changes
+				lock (sync) {
+					if (singleton == null) {
+						singleton = new CaseInsensitiveHashCodeProvider ();
+					} else if (singleton.m_text == null) {
+						if (CultureInfo.CurrentCulture.LCID != CultureInfo.InvariantCulture.LCID)
+							singleton = new CaseInsensitiveHashCodeProvider ();
+					} else if (singleton.m_text.LCID != CultureInfo.CurrentCulture.LCID) {
+						singleton = new CaseInsensitiveHashCodeProvider ();
+					}
+					return singleton;
+				}
 			}
 		}
 

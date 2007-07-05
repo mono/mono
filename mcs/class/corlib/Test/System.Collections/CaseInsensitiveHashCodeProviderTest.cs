@@ -15,11 +15,25 @@ using System.Threading;
 
 using NUnit.Framework;
 
-namespace MonoTests.System.Collections {
-
+namespace MonoTests.System.Collections
+{
 	[TestFixture]
 	public class CaseInsensitiveHashCodeProviderTest
 	{
+		private CultureInfo old_culture;
+
+		[SetUp]
+		public void SetUp ()
+		{
+			old_culture = Thread.CurrentThread.CurrentCulture;
+		}
+
+		[TearDown]
+		public void TearDown ()
+		{
+			Thread.CurrentThread.CurrentCulture = old_culture;
+		}
+
 		[Test]
 		public void Default ()
 		{
@@ -32,10 +46,31 @@ namespace MonoTests.System.Collections {
 
 			Assert.AreEqual (h1, h2, "#1");
 
-			// Default always returns new instance
+			Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US");
 			CaseInsensitiveHashCodeProvider cih1 = CaseInsensitiveHashCodeProvider.Default;
+			Thread.CurrentThread.CurrentCulture = new CultureInfo ("nl-BE");
 			CaseInsensitiveHashCodeProvider cih2 = CaseInsensitiveHashCodeProvider.Default;
 			Assert.IsFalse (object.ReferenceEquals (cih1, cih2), "#2");
+		}
+
+		[Test]
+		[Category ("NotDotNet")]
+		public void Default_Mono ()
+		{
+			// we return same instance if current culture did not change
+			CaseInsensitiveHashCodeProvider cih1 = CaseInsensitiveHashCodeProvider.Default;
+			CaseInsensitiveHashCodeProvider cih2 = CaseInsensitiveHashCodeProvider.Default;
+			Assert.IsTrue (object.ReferenceEquals (cih1, cih2));
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Default_MS ()
+		{
+			// MS always returns new instance
+			CaseInsensitiveHashCodeProvider cih1 = CaseInsensitiveHashCodeProvider.Default;
+			CaseInsensitiveHashCodeProvider cih2 = CaseInsensitiveHashCodeProvider.Default;
+			Assert.IsFalse (object.ReferenceEquals (cih1, cih2));
 		}
 
 #if NET_2_0
