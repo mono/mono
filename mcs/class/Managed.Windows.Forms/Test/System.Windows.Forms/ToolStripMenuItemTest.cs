@@ -53,8 +53,9 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (null, tsi.ShortcutKeyDisplayString, "A7");
 			Assert.AreEqual (Keys.None, tsi.ShortcutKeys, "A8");
 			Assert.AreEqual (true, tsi.ShowShortcutKeys, "A9");
-
-
+			Assert.AreEqual (SystemColors.ControlText, tsi.ForeColor, "A9-1");
+			
+			Assert.AreEqual ("System.Windows.Forms.ToolStripMenuItem+ToolStripMenuItemAccessibleObject", tsi.AccessibilityObject.GetType ().ToString (), "A10");
 			int count = 0;
 			EventHandler oc = new EventHandler (delegate (object sender, EventArgs e) { count++; });
 			Image i = new Bitmap (1, 1);
@@ -94,7 +95,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (2, count, "A24");
 			Assert.AreEqual ("Name", tsi.Name, "A25");
 		}
-		
+
 		[Test]
 		public void BehaviorKeyboardShortcuts ()
 		{

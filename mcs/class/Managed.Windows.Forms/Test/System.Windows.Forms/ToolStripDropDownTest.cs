@@ -54,9 +54,11 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (null, tsdd.OwnerItem, "A8");
 			Assert.AreEqual (null, tsdd.Region, "A9");
 			Assert.AreEqual (RightToLeft.No, tsdd.RightToLeft, "A10");
-			//Assert.AreEqual (ToolStripTextDirection.Horizontal, tsdd.TextDirection, "A11");
+			Assert.AreEqual (ToolStripTextDirection.Horizontal, tsdd.TextDirection, "A11");
 			Assert.AreEqual (true, tsdd.TopLevel, "A12");
 			Assert.AreEqual (false, tsdd.Visible, "A13");
+			
+			Assert.AreEqual ("System.Windows.Forms.ToolStripDropDown+ToolStripDropDownAccessibleObject", tsdd.AccessibilityObject.GetType ().ToString (), "A14");
 		}
 
 		[Test]

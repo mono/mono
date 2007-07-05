@@ -44,6 +44,7 @@ namespace MonoTests.System.Windows.Forms
 		{
 			MenuStrip ms = new MenuStrip ();
 
+			Assert.AreEqual (false, ms.CanSelect, "A0");
 			Assert.AreEqual (false, ms.CanOverflow, "A1");
 			Assert.AreEqual (ToolStripGripStyle.Hidden, ms.GripStyle, "A2");
 			Assert.AreEqual (null, ms.MdiWindowListItem, "A3");

@@ -1,3 +1,17 @@
+2007-07-05  Jonathan Pobst  <monkey@jpobst.com>
+
+	[Various tests from my local tree]
+	* ButtonBaseTest.cs: Test for default Accessibility.State.
+	* LabelTest.cs: Test for default Margin.
+	* MenuStripTest.cs: Test for CanSelect.
+	* ScrollBarTest.cs: Test for 2.0 ScrollBarEventArgs.
+	* SplitContainerTests.cs: Uncomment some Dock and Location asserts.
+	* StatusStripTest.cs: Tests for default RenderMode and AccessibilityObject.
+	* ToolStripDropDownTest.cs: Tests for default TextDirection and AccessibilityObject.
+	* ToolStripItemTest.cs: Test for default TextDirection, ProcessMnemonic.
+	* ToolStripMenuItemTest.cs: Test for default ForeColor and AccessibilityObject.
+	* UserControlTest.cs: Test for AutoSize behavior.
+
 2007-07-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListViewItemTest.cs: Add tests for Focused property.

@@ -1590,5 +1590,42 @@ public class MyScrollBar2 : HScrollBar
 		       myform.Dispose ();
 	       }
     }
+    
+#if NET_2_0
+    [TestFixture]
+    public class ScrollEventArgsTest
+    {
+	[Test]
+	public void Defaults ()
+	{
+		ScrollEventArgs e = new ScrollEventArgs (ScrollEventType.EndScroll, 5);
 
+		Assert.AreEqual (5, e.NewValue, "A1");
+		Assert.AreEqual (-1, e.OldValue, "A2");
+		Assert.AreEqual (ScrollOrientation.HorizontalScroll, e.ScrollOrientation, "A3");
+		Assert.AreEqual (ScrollEventType.EndScroll, e.Type, "A4");
+
+		e = new ScrollEventArgs (ScrollEventType.EndScroll, 5, 10);
+
+		Assert.AreEqual (10, e.NewValue, "A5");
+		Assert.AreEqual (5, e.OldValue, "A6");
+		Assert.AreEqual (ScrollOrientation.HorizontalScroll, e.ScrollOrientation, "A7");
+		Assert.AreEqual (ScrollEventType.EndScroll, e.Type, "A8");
+
+		e = new ScrollEventArgs (ScrollEventType.EndScroll, 5, ScrollOrientation.VerticalScroll);
+
+		Assert.AreEqual (5, e.NewValue, "A9");
+		Assert.AreEqual (-1, e.OldValue, "A10");
+		Assert.AreEqual (ScrollOrientation.VerticalScroll, e.ScrollOrientation, "A11");
+		Assert.AreEqual (ScrollEventType.EndScroll, e.Type, "A12");
+
+		e = new ScrollEventArgs (ScrollEventType.EndScroll, 5, 10, ScrollOrientation.VerticalScroll);
+
+		Assert.AreEqual (10, e.NewValue, "A13");
+		Assert.AreEqual (5, e.OldValue, "A14");
+		Assert.AreEqual (ScrollOrientation.VerticalScroll, e.ScrollOrientation, "A15");
+		Assert.AreEqual (ScrollEventType.EndScroll, e.Type, "A16");
+	}
+    }
+#endif
 }

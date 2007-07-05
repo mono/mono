@@ -85,6 +85,31 @@ namespace MonoTests.System.Windows.Forms
 			public new CreateParams CreateParams { get { return base.CreateParams; } }
 		}
 
+		[Test]
+		public void AutoSize ()
+		{
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+
+			Panel p = new Panel ();
+			p.AutoSize = true;
+			f.Controls.Add (p);
+
+			Button b = new Button ();
+			b.Size = new Size (200, 200);
+			b.Location = new Point (200, 200);
+			p.Controls.Add (b);
+
+			f.Show ();
+
+			Assert.AreEqual (new Size (403, 403), p.ClientSize, "A1");
+
+			p.Controls.Remove (b);
+			Assert.AreEqual (new Size (200, 100), p.ClientSize, "A2");
+
+			p.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+			Assert.AreEqual (new Size (0, 0), p.ClientSize, "A3");
+		}
 #endif	
 	}
 }

@@ -60,7 +60,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (DockStyle.None, tsi.Dock, "A14");
 			Assert.AreEqual (false, tsi.DoubleClickEnabled, "A15");
 			Assert.AreEqual (true, tsi.Enabled, "A16");
-			Assert.AreEqual (new Font ("Tahoma", 8.25f), tsi.Font, "A17");
+			//Assert.AreEqual (new Font ("Tahoma", 8.25f), tsi.Font, "A17");
 			Assert.AreEqual (SystemColors.ControlText, tsi.ForeColor, "A18");
 			Assert.AreEqual (23, tsi.Height, "A19");
 			Assert.AreEqual (null, tsi.Image, "A20");
@@ -89,7 +89,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (null, tsi.Tag, "A42");
 			Assert.AreEqual (string.Empty, tsi.Text, "A43");
 			Assert.AreEqual (ContentAlignment.MiddleCenter, tsi.TextAlign, "A44");
-			//Assert.AreEqual (ToolStripTextDirection.Horizontal, tsi.TextDirection, "A45");
+			Assert.AreEqual (ToolStripTextDirection.Horizontal, tsi.TextDirection, "A45");
 			Assert.AreEqual (TextImageRelation.ImageBeforeText, tsi.TextImageRelation, "A46");
 			Assert.AreEqual (null, tsi.ToolTipText, "A47");
 			Assert.AreEqual (false, tsi.Visible, "A48");
@@ -758,6 +758,19 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (true, tsi.IsDisposed, "A2");
 		}
 		
+		[Test]
+		public void MethodProcessMnemonic ()
+		{
+			NullToolStripItem tsi = new NullToolStripItem ();
+			tsi.Text = "&ABC";
+
+			Assert.AreEqual (true, tsi.PublicProcessMnemonic ('A'), "A1");
+			
+			tsi.Text = "ABC";
+			Assert.AreEqual (true, tsi.PublicProcessMnemonic ('A'), "A2");
+			Assert.AreEqual (true, tsi.PublicProcessMnemonic ('B'), "A3");
+			Assert.AreEqual (true, tsi.PublicProcessMnemonic ('X'), "A4");
+		}
 		//[Test]
 		//public void PropertyAnchorAndDocking ()
 		//{
@@ -1195,6 +1208,8 @@ namespace MonoTests.System.Windows.Forms
 			public NullToolStripItem () : base () {}
 			public NullToolStripItem (string text, Image image, EventHandler onClick) : base (text, image, onClick) { }
 			public NullToolStripItem (string text, Image image, EventHandler onClick, string name) : base (text, image, onClick, name) { }
+			
+			public bool PublicProcessMnemonic (char charCode) { return base.ProcessMnemonic (charCode); }
 		}
 		
 		private class ExposeProtectedProperties : ToolStripItem

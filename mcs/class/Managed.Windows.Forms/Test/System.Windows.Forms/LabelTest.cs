@@ -251,6 +251,14 @@ namespace MonoTests.System.Windows.Forms
 
 		   Assert.AreEqual ("System.Windows.Forms.Label, Text: My Label", l.ToString (), "T1");
 	   }
+	   
+#if NET_2_0
+	[Test]
+	public void LabelMargin ()
+	{
+		Assert.AreEqual (new Padding (3, 0, 3, 0), new Label ().Margin, "A1");
+	}
+#endif
    }
 
    [TestFixture]

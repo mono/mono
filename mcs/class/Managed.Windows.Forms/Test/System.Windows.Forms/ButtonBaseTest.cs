@@ -38,6 +38,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (true, b.UseCompatibleTextRendering, "A16");
 			Assert.AreEqual (true, b.UseMnemonic, "A17");
 			Assert.AreEqual (true, b.UseVisualStyleBackColor, "A18");
+			Assert.AreEqual (AccessibleStates.None, b.AccessibilityObject.State, "A19");
 #endif
 		}
 		

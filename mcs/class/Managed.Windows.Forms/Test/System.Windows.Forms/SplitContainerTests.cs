@@ -94,13 +94,13 @@ namespace MonoTests.System.Windows.Forms
 			p.BorderStyle = BorderStyle.FixedSingle;
 			Assert.AreEqual (BorderStyle.FixedSingle, p.BorderStyle, "D4-2");
 
-			//Assert.AreEqual (DockStyle.None, p.Dock, "D5");
-			//p.Dock = DockStyle.Left;
-			//Assert.AreEqual (DockStyle.Left, p.Dock, "D5-2");
+			Assert.AreEqual (DockStyle.None, p.Dock, "D5");
+			p.Dock = DockStyle.Left;
+			Assert.AreEqual (DockStyle.Left, p.Dock, "D5-2");
 
-			//Assert.AreEqual (new Point(0,0), p.Location, "D7");
-			//p.Location = new Point (10, 10);
-			//Assert.AreEqual (new Point (0, 0), p.Location, "D7-2");
+			Assert.AreEqual (new Point (0, 0), p.Location, "D7");
+			p.Location = new Point (10, 10);
+			Assert.AreEqual (new Point (0, 0), p.Location, "D7-2");
 
 			Assert.AreEqual (new Size (0, 0), p.MaximumSize, "D8");
 			p.MaximumSize = new Size (10, 10);
@@ -117,7 +117,7 @@ namespace MonoTests.System.Windows.Forms
 			// We set a new max/min size above, so let's start over with new controls
 			sc = new SplitContainer();
 			p = sc.Panel1;
-			
+
 			//Assert.AreEqual (new Size (50, 100), p.Size, "D12");
 			//p.Size = new Size (10, 10);
 			//Assert.AreEqual (new Size (50, 100), p.Size, "D12-2");
@@ -241,6 +241,46 @@ namespace MonoTests.System.Windows.Forms
 
 			sc.SplitterWidth = 10;
 			Assert.AreEqual (new Rectangle (50, 0, 10, 100), sc.SplitterRectangle, "M2");
+		}
+
+		[Test]
+		public void MethodScaleControl ()
+		{
+			Form f = new Form ();
+
+			PublicSplitContainer gb = new PublicSplitContainer ();
+			gb.Location = new Point (5, 10);
+			f.Controls.Add (gb);
+
+			Assert.AreEqual (new Rectangle (5, 10, 150, 100), gb.Bounds, "A1");
+
+			gb.PublicScaleControl (new SizeF (2.0f, 2.0f), BoundsSpecified.All);
+			Assert.AreEqual (new Rectangle (10, 20, 300, 200), gb.Bounds, "A2");
+
+			gb.PublicScaleControl (new SizeF (.5f, .5f), BoundsSpecified.Location);
+			Assert.AreEqual (new Rectangle (5, 10, 300, 200), gb.Bounds, "A3");
+
+			gb.PublicScaleControl (new SizeF (.5f, .5f), BoundsSpecified.Size);
+			Assert.AreEqual (new Rectangle (5, 10, 150, 100), gb.Bounds, "A4");
+
+			gb.PublicScaleControl (new SizeF (3.5f, 3.5f), BoundsSpecified.Size);
+			Assert.AreEqual (new Rectangle (5, 10, 525, 350), gb.Bounds, "A5");
+
+			gb.PublicScaleControl (new SizeF (2.5f, 2.5f), BoundsSpecified.Size);
+			Assert.AreEqual (new Rectangle (5, 10, 1312, 875), gb.Bounds, "A6");
+
+			gb.PublicScaleControl (new SizeF (.2f, .2f), BoundsSpecified.Size);
+			Assert.AreEqual (new Rectangle (5, 10, 262, 175), gb.Bounds, "A7");
+
+			f.Dispose ();
+		}
+
+		private class PublicSplitContainer : SplitContainer
+		{
+			public void PublicScaleControl (SizeF factor, BoundsSpecified specified)
+			{
+				base.ScaleControl (factor, specified);
+			}
 		}
 	}
 }

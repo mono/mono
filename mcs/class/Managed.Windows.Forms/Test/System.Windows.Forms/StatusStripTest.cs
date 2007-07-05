@@ -54,6 +54,9 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (new Rectangle (188, 0, 12, 22), ts.SizeGripBounds, "A8");
 			Assert.AreEqual (true, ts.SizingGrip, "A9");
 			Assert.AreEqual (true, ts.Stretch, "A10");
+			Assert.AreEqual (ToolStripRenderMode.System, ts.RenderMode, "A11");
+			
+			Assert.AreEqual ("System.Windows.Forms.StatusStrip+StatusStripAccessibleObject", ts.AccessibilityObject.GetType ().ToString ());
 		}
 
 		[Test]
