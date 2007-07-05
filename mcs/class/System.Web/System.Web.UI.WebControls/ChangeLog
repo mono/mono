@@ -1,3 +1,8 @@
+2007-07-04  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* WebControl.cs: fixed AddDisplayStyleAttribute, returns if
+	ControlStyle is not created
+
 2007-07-02  Marek Habersack  <mhabersack@novell.com>
 
 	* WebControl.cs: Revert r80368, as it wasn't the correct

@@ -481,6 +481,9 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 		internal void AddDisplayStyleAttribute (HtmlTextWriter writer)
 		{
+			if (!ControlStyleCreated)
+				return;
+
 			if (!ControlStyle.BorderWidth.IsEmpty ||
 			(ControlStyle.BorderStyle != BorderStyle.None && ControlStyle.BorderStyle != BorderStyle.NotSet) ||
 			!ControlStyle.Height.IsEmpty ||
