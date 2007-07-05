@@ -172,11 +172,6 @@
     <EmbeddedResource Include="MicrosoftAjaxLibrary\System.Web.Extensions\1.0.61025.0\MicrosoftAjaxWebForms.js">
       <LogicalName>MicrosoftAjaxWebForms.js</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="Res.resx">
-      <SubType>Designer</SubType>
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Res.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
