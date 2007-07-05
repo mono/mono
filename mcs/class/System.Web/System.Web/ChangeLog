@@ -1,3 +1,29 @@
+2007-07-05  Miguel de Icaza  <miguel@novell.com>
+
+	* HttpApplication.cs (AsyncRequestState.Complete): Add the
+	try/catch for the callback here to ensure that we only call
+	complete_event.Set once. 
+
+	(PipelineDone): This is where the core of the bug fix is: do not
+	call Complete() or call done.Set() (depending on the invocation
+	case) until we are actually done cleaning up the request.
+
+	The problem was that we signaled that we were done, but we had not
+	completed the shut down, so another thread could have been
+	scheduled on the same HttpApplication and had its variables be
+	modified as we completed the shutdown on the first thread. 
+
+	This fixes #81400 which was a very long standing bug.  
+
+	(Tick): Remove the pipeline check against null, this is not
+	necessary and it will help us find problems like this one in the
+	future.
+
+	Reverts patch r66072 which was a described as:
+
+		band-aid patch to help debugging hang running 2.0
+		tests.
+
 2007-07-02  Marek Habersack  <mhabersack@novell.com>
 
 	* CapabilitiesLoader.cs: provide default capability values for all

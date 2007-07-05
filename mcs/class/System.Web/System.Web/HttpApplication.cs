@@ -619,9 +619,6 @@ namespace System.Web {
 		//
 		void ProcessError (Exception e)
 		{
-			if (context == null)
-				context = HttpContext.Current;
-
 			bool first = context.Error == null;
 			context.AddError (e);
 			if (first){
@@ -653,8 +650,8 @@ namespace System.Web {
 		void Tick ()
 		{
 			try {
-				if (pipeline != null && pipeline.MoveNext ()){
-					if (pipeline == null || (bool)pipeline.Current)
+				if (pipeline.MoveNext ()){
+					if ((bool)pipeline.Current)
 						PipelineDone ();
 				}
 			} catch (ThreadAbortException taex) {
@@ -844,8 +841,6 @@ namespace System.Web {
 			} catch (Exception e) {
 				Console.WriteLine ("Internal error: OutputPage threw an exception " + e);
 			} finally {
-				if (context == null)
-					context = HttpContext.Current;
 				context.WorkerRequest.EndOfRequest();
 				if (factory != null && context.Handler != null){
 					factory.ReleaseHandler (context.Handler);
@@ -855,29 +850,18 @@ namespace System.Web {
 #if NET_2_0
 				context.PopHandler ();
 #endif
-				if (begin_iar != null){
-					try {
-						begin_iar.Complete ();
-					} catch {
-						//
-						// TODO: if this throws an error, we have no way of reporting it
-						// Not really too bad, since the only failure might be
-						// `HttpRuntime.request_processed'
-						//
-					} finally {
-						done.Set ();
-					}
-				} else {
-					done.Set ();
-				}
-				
 				// context = null; -> moved to PostDone
 				pipeline = null;
 				current_ai = null;
 			}
 			PostDone ();
-		}
 
+			if (begin_iar != null)
+				begin_iar.Complete ();
+			else
+				done.Set ();
+		}
+		
 		//
 		// Events fired as described in `Http Runtime Support, HttpModules,
 		// Handling Public Events'
@@ -1388,8 +1372,16 @@ namespace System.Web {
 		internal void Complete ()
 		{
 			completed = true;
-			if (cb != null)
-				cb (this);
+			try {
+				//
+				// TODO: if this throws an error, we have no way of reporting it
+				// Not really too bad, since the only failure might be
+				// `HttpRuntime.request_processed'.   
+				//
+				if (cb != null)
+					cb (this);
+			} catch {
+			}
 			
 			complete_event.Set ();
 		}
