@@ -4,17 +4,17 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{B3D044AF-8FF7-4106-9382-444DD7D4CEC6}</ProjectGuid>
+    <ProjectGuid>{ED1876F0-1796-408A-B6B9-1BAAB80FA083}</ProjectGuid>
     <ProjectTypeGuids>{F6B19D50-1E2E-4e87-ADFB-10393B439DE0};{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <AssemblyName>AUT</AssemblyName>
+    <AssemblyName>SystemWebExtensionsAUT</AssemblyName>
     <JDKName>1.6.0</JDKName>
     <GHProjectType>3</GHProjectType>
     <Version>2.0</Version>
     <AdditionalClassPath>
     </AdditionalClassPath>
-    <RootNamespace>AUT</RootNamespace>
+    <RootNamespace>SystemWebExtensionsAUT</RootNamespace>
     <jarserver>ipa</jarserver>
     <ApplicationServerType>tomcat</ApplicationServerType>
   </PropertyGroup>
@@ -67,13 +67,13 @@
           <UseIIS>True</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>0</DevelopmentServerPort>
-          <DevelopmentServerVPath>/AUT20</DevelopmentServerVPath>
+          <DevelopmentServerVPath>/SystemWebExtensionsAUT</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
         </WebProjectProperties>
       </FlavorProperties>
-      <UserProperties REFS-RefInfo-System-Web-Services="repository:vmw:framework:2.0" REFS-JarPath-System-Web-Services="..\..\..\..\..\..\..\..\Program Files\Mainsoft for Java EE\java_refs\framework\System.Web.Services.jar" REFS-RefInfo-System-Configuration="repository:vmw:framework:2.0" REFS-JarPath-System-Configuration="..\..\..\..\..\..\..\..\Program Files\Mainsoft for Java EE\java_refs\framework\System.Configuration.jar" REFS-RefInfo-System-Xml="repository:vmw:framework:2.0" REFS-JarPath-System-Xml="..\..\..\..\..\..\..\..\Program Files\Mainsoft for Java EE\java_refs\framework\System.Xml.jar" REFS-RefInfo-System-Web="repository:vmw:framework:2.0" REFS-JarPath-System-Web="..\..\..\..\..\..\..\..\Program Files\Mainsoft for Java EE\java_refs\framework\System.Web.jar;..\..\..\..\..\..\..\..\Program Files\Mainsoft for Java EE\java_refs\framework\J2EE.Helpers.jar;..\..\..\..\..\..\..\..\Program Files\Mainsoft for Java EE\java_refs\framework\J2SE.Helpers.jar;..\..\..\..\..\..\..\..\Program Files\Mainsoft for Java EE\java_refs\framework\Mainsoft.Web.jar;..\..\..\..\..\..\..\..\Program Files\Mainsoft for Java EE\java_refs\framework\Microsoft.VisualBasic.jar;..\..\..\..\..\..\..\..\Program Files\Mainsoft for Java EE\java_refs\framework\Novell.Directory.Ldap.jar;..\..\..\..\..\..\..\..\Program Files\Mainsoft for Java EE\java_refs\framework\System.Configuration.jar;..\..\..\..\..\..\..\..\Program Files\Mainsoft for Java EE\java_refs\framework\System.Data.OracleClient.jar;..\..\..\..\..\..\..\..\Program Files\Mainsoft for Java EE\java_refs\framework\System.Data.jar;..\..\..\..\..\..\..\..\Program Files\Mainsoft for Java EE\java_refs\framework\System.DirectoryServices.jar;..\..\..\..\..\..\..\..\Program Files\Mainsoft for Java EE\java_refs\framework\System.Drawing.jar;..\..\..\..\..\..\..\..\Program Files\Mainsoft for Java EE\java_refs\framework\System.Runtime.Remoting.jar;..\..\..\..\..\..\..\..\Program Files\Mainsoft for Java EE\java_refs\framework\System.Runtime.Serialization.Formatters.Soap.jar;..\..\..\..\..\..\..\..\Program Files\Mainsoft for Java EE\java_refs\framework\System.Web.Services.jar;..\..\..\..\..\..\..\..\Program Files\Mainsoft for Java EE\java_refs\framework\System.Xml.jar;..\..\..\..\..\..\..\..\Program Files\Mainsoft for Java EE\java_refs\framework\System.jar;..\..\..\..\..\..\..\..\Program Files\Mainsoft for Java EE\java_refs\framework\clibwrapper_jiio.jar;..\..\..\..\..\..\..\..\Program Files\Mainsoft for Java EE\java_refs\framework\jai_codec.jar;..\..\..\..\..\..\..\..\Program Files\Mainsoft for Java EE\java_refs\framework\jai_core.jar;..\..\..\..\..\..\..\..\Program Files\Mainsoft for Java EE\java_refs\framework\jai_imageio.jar;..\..\..\..\..\..\..\..\Program Files\Mainsoft for Java EE\java_refs\framework\mlibwrapper_jai.jar;..\..\..\..\..\..\..\..\Program Files\Mainsoft for Java EE\java_refs\framework\mscorlib.jar;..\..\..\..\..\..\..\..\Program Files\Mainsoft for Java EE\java_refs\framework\vmwutils.jar" REFS-RefInfo-System-Drawing="repository:vmw:framework:2.0" REFS-JarPath-System-Drawing="..\..\..\..\..\..\..\..\Program Files\Mainsoft for Java EE\java_refs\framework\System.Drawing.jar;..\..\..\..\..\..\..\..\Program Files\Mainsoft for Java EE\java_refs\framework\jai_imageio.jar;..\..\..\..\..\..\..\..\Program Files\Mainsoft for Java EE\java_refs\framework\jai_core.jar;..\..\..\..\..\..\..\..\Program Files\Mainsoft for Java EE\java_refs\framework\jai_codec.jar;..\..\..\..\..\..\..\..\Program Files\Mainsoft for Java EE\java_refs\framework\clibwrapper_jiio.jar;..\..\..\..\..\..\..\..\Program Files\Mainsoft for Java EE\java_refs\framework\mlibwrapper_jai.jar" REFS-RefInfo-System-Data="repository:vmw:framework:2.0" REFS-JarPath-System-Data="..\..\..\..\..\..\..\..\Program Files\Mainsoft for Java EE\java_refs\framework\System.Data.jar;..\..\..\..\..\..\..\..\Program Files\Mainsoft for Java EE\java_refs\jdbc\derby.jar;..\..\..\..\..\..\..\..\Program Files\Mainsoft for Java EE\java_refs\jdbc\ojdbc14.jar;..\..\..\..\..\..\..\..\Program Files\Mainsoft for Java EE\java_refs\jdbc\sqljdbc.jar" REFS-RefInfo-System="repository:vmw:framework:2.0" REFS-JarPath-System="..\..\..\..\..\..\..\..\Program Files\Mainsoft for Java EE\java_refs\framework\System.jar" REFS-JarPath-mainsoft-web-aspnetconfig="..\..\..\..\..\..\..\..\Program Files\Mainsoft for Java EE\java_refs\framework\Mainsoft.Web.AspnetConfig.jar" REFS-RefInfo-mainsoft-web-aspnetconfig="repository:vmw:framework:2.0" />
+      <UserProperties REFS-RefInfo-System-Web-Extensions="j2il:" REFS-JarPath-System-Web-Extensions="..\..\..\bin\Debug_Java\System.Web.Extensions.jar" REFS-RefInfo-system-web-mobile="repository:vmw:framework:2.0" REFS-JarPath-system-web-mobile="" REFS-RefInfo-system-enterpriseservices="repository:vmw:framework:2.0" REFS-JarPath-system-enterpriseservices="" REFS-RefInfo-system-web-services="repository:vmw:framework:2.0" REFS-JarPath-system-web-services="" REFS-RefInfo-system-configuration="repository:vmw:framework:2.0" REFS-JarPath-system-configuration="" REFS-RefInfo-system-xml="repository:vmw:framework:2.0" REFS-JarPath-system-xml="" REFS-RefInfo-system-web="repository:vmw:framework:2.0" REFS-JarPath-system-web="" REFS-RefInfo-system-drawing="repository:vmw:framework:2.0" REFS-JarPath-system-drawing="" REFS-RefInfo-system-data="repository:vmw:framework:2.0" REFS-JarPath-system-data="" REFS-RefInfo-system="repository:vmw:framework:2.0" REFS-JarPath-system="" REFS-JarPath-mainsoft-web-aspnetconfig="..\..\..\..\..\..\..\..\Program Files\Mainsoft for Java EE\java_refs\framework\WSAT\Mainsoft.Web.AspnetConfig.jar" REFS-RefInfo-mainsoft-web-aspnetconfig="repository:vmw:framework:2.0" />
     </VisualStudio>
   </ProjectExtensions>
   <ItemGroup>
@@ -82,15 +82,15 @@
     <Reference Include="System.Configuration, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=x86" />
     <Reference Include="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="System.EnterpriseServices, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=x86" />
     <Reference Include="System.Web, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=x86" />
+    <Reference Include="System.Web.Extensions, Version=1.0.61025.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Web.Mobile, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System.Web.Services, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System.Xml, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="CalendarInCalendarOut.aspx" />
-    <Content Include="WEB-INF\web.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="CancelPostback.js" />
     <Content Include="ClientPageLifecycleEvents.aspx" />
     <Content Include="NoScriptManager.aspx" />
@@ -100,6 +100,12 @@
     <Content Include="TwoUpdatePanels.aspx" />
     <Content Include="UpdateButtonInside.aspx" />
     <Content Include="UpdateButtonOutside.aspx" />
+    <Content Include="WEB-INF\web.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <Content Include="Web.config" />
   </ItemGroup>
 </Project>
