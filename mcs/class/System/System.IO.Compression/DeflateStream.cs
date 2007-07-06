@@ -48,7 +48,7 @@ namespace System.IO.Compression {
 		[DllImport("MonoPosixHelper")]
 		static extern IntPtr create_z_stream(CompressionMode compress, bool gzip);
 		[DllImport("MonoPosixHelper")]
-		static extern void free_z_stream(IntPtr z_stream);
+		static extern void free_z_stream(IntPtr z_stream, CompressionMode compress );
 		[DllImport("MonoPosixHelper")]
 		static extern void z_stream_set_next_in(IntPtr z_stream, IntPtr next_in);
 		[DllImport("MonoPosixHelper")]
@@ -124,7 +124,7 @@ namespace System.IO.Compression {
 				}
 			}
 
-			free_z_stream (z_stream);
+			free_z_stream (z_stream,mode);
 			z_stream = IntPtr.Zero;
 
 			if (!leaveOpen) {
