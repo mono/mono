@@ -433,6 +433,38 @@ namespace System {
 			return dir;
 		}
 
+		private static string ReadXdgUserDir (string config_dir, string home_dir, 
+			string key, string fallback)
+		{
+			string env_path = internalGetEnvironmentVariable (key);
+			if (env_path != null && env_path != String.Empty) {
+				return env_path;
+			}
+
+			string user_dirs_path = Path.Combine (config_dir, "user-dirs.dirs");
+
+			if (!File.Exists (user_dirs_path)) {
+				return Path.Combine (home_dir, fallback);
+			}
+
+			try {
+				using(StreamReader reader = new StreamReader (user_dirs_path)) {
+					string line;
+					while ((line = reader.ReadLine ()) != null) {
+						line = line.Trim ();
+						int delim_index = line.IndexOf ('=');
+						if (delim_index > 8 && line.Substring (0, delim_index) == key) {
+							return Path.Combine (home_dir, line.Substring (delim_index + 1));
+						}
+					}
+				}
+			} catch (FileNotFoundException) {
+			}
+
+			return Path.Combine (home_dir, fallback);
+		}
+
+
 		// the security runtime (and maybe other parts of corlib) needs the
 		// information to initialize themselves before permissions can be checked
 		internal static string InternalGetFolderPath (SpecialFolder folder)
@@ -473,10 +505,13 @@ namespace System {
 			case SpecialFolder.Desktop:
 #endif
 			case SpecialFolder.DesktopDirectory:
-				return Path.Combine (home, "Desktop");
+				return ReadXdgUserDir (config, home, "XDG_DESKTOP_DIR", "Desktop");
 
 			case SpecialFolder.MyMusic:
-				return Path.Combine (home, "Music");
+				return ReadXdgUserDir (config, home, "XDG_MUSIC_DIR", "Music");
+
+			case SpecialFolder.MyPictures:
+				return ReadXdgUserDir (config, home, "XDG_PICTURES_DIR", "Pictures");
 				
 			// these simply dont exist on Linux
 			// The spec says if a folder doesnt exist, we
@@ -486,7 +521,6 @@ namespace System {
 			case SpecialFolder.SendTo:
 			case SpecialFolder.StartMenu:
 			case SpecialFolder.Startup:
-			case SpecialFolder.MyPictures:
 			case SpecialFolder.Templates:
 			case SpecialFolder.Cookies:
 			case SpecialFolder.History:
