@@ -33,8 +33,15 @@ fi
 if test "x@reloc_libdir@" = "xlib64" ; then
         libext="()(64bit)"
 else
+	# (note, this works on ppc64 since we only have 32bit mono)
         libext=""
 fi
+
+# Exceptions:
+case `uname -m` in
+	# ia64 doesn't use lib64 for 'libdir' (sles 9 rpm used to provide both... no longer)
+	ia64)	libext="()(64bit)" ;;
+esac
 
 # set LD_LIBRARY_PATH to ensure that libmono.so is found
 export LD_LIBRARY_PATH=$libdir${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
