@@ -1,3 +1,18 @@
+2007-07-06  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (check_unmanaged_pointer_type): renamed to check_unverifiable_type
+	and added a verification  for TYPEDBYREF.
+	* verify.c (verify_stack_type_compatibility): fix handling of byref types,
+	make native int interchangeable with int32 and some small cleanup and formating.
+	* verify.c (push_arg): only ldarg on invalid argument is valid (but not verifiable) and
+	handle byref of byref.
+	* verify.c (push_local): handle byref of byref.
+	* verify.c (do_binop): invalid mix of values is unverifiable
+	* verify.c (do_invoke_method): fixed the handling of bad params on stack and
+	added visibility checks
+	* verify.c (field related method): added visibility checks
+	* verify.c (do_push_field): cannot take the address of a temporary valuetype field
+
 2007-07-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (mono_marshal_string_to_utf16_copy): Null terminate the
