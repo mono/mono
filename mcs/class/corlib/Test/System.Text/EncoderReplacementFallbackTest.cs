@@ -56,11 +56,17 @@ namespace MonoTests.System.Text
 		}
 
 		[Test]
-		[ExpectedException (typeof (NotSupportedException))]
 		public void DontChangeReadOnlyCodePageEncoderFallback ()
 		{
-			Encoding.GetEncoding (932).EncoderFallback =
-				new EncoderReplacementFallback ();
+			Encoding encoding = Encoding.GetEncoding (Encoding.Default.CodePage);
+			try {
+				encoding.EncoderFallback = new EncoderReplacementFallback ();
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException ex) {
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
 		}
 
 		[Test]

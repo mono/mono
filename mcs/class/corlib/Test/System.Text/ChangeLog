@@ -1,3 +1,12 @@
+2007-07-06  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DecoderReplacementFallbackTest.cs: Fixed DontChangeReadOnlyCodePage-
+	DecoderFallback test to pass on systems where codepage 932 is valid.
+	Assert that exception is thrown by DecoderFallback property.
+	* EncoderReplacementFallbackTest.cs: Fixed DontChangeReadOnlyCodePage-
+	EncoderFallback test to pass on systems where codepage 932 is valid.
+	Assert that exception is thrown by EncoderFallback property.
+
 2007-04-19  Marek Habersack  <mhabersack@novell.com>
 
 	* DecoderReplacementFallbackTest.cs: expect the correct
