@@ -1,5 +1,9 @@
 2007-07-06  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ListControl.cs: Add 2.0 stuffs.
+
+2007-07-06  Jonathan Pobst  <monkey@jpobst.com>
+
 	* Label.cs: Finish up 2.0 stuffs.  Replace calls to Refresh with Invalidate,
 	Refresh is overkill for just about every repaint request.
 

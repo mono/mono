@@ -38,6 +38,7 @@ namespace System.Windows.Forms
 #if NET_2_0
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
 	[ComVisible (true)]
+	[LookupBindingProperties ("DataSource", "DisplayMember", "ValueMember", "SelectedValue")]
 #endif
 	public abstract class ListControl : Control
 	{
@@ -46,6 +47,8 @@ namespace System.Windows.Forms
 		private string display_member;
 		private CurrencyManager data_manager;
 #if NET_2_0
+		private IFormatProvider format_info;
+		private string format_string = string.Empty;
 		private bool formatting_enabled;
 #endif
 
@@ -65,6 +68,12 @@ namespace System.Windows.Forms
 		#region Events
 		static object DataSourceChangedEvent = new object ();
 		static object DisplayMemberChangedEvent = new object ();
+#if NET_2_0
+		static object FormatEvent = new object ();
+		static object FormatInfoChangedEvent = new object ();
+		static object FormatStringChangedEvent = new object ();
+		static object FormattingEnabledChangedEvent = new object ();
+#endif
 		static object SelectedValueChangedEvent = new object ();
 		static object ValueMemberChangedEvent = new object ();
 
@@ -77,6 +86,30 @@ namespace System.Windows.Forms
 			add { Events.AddHandler (DisplayMemberChangedEvent, value); }
 			remove { Events.RemoveHandler (DisplayMemberChangedEvent, value); }
 		}
+
+#if NET_2_0
+		public event ListControlConvertEventHandler Format {
+			add { Events.AddHandler (FormatEvent, value); }
+			remove { Events.RemoveHandler (FormatEvent, value); }
+		}
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		public event EventHandler FormatInfoChanged {
+			add { Events.AddHandler (FormatInfoChangedEvent, value); }
+			remove { Events.RemoveHandler (FormatInfoChangedEvent, value); }
+		}
+		
+		public event EventHandler FormatStringChanged {
+			add { Events.AddHandler (FormatStringChangedEvent, value); }
+			remove { Events.RemoveHandler (FormatStringChangedEvent, value); }
+		}
+		
+		public event EventHandler FormattingEnabledChanged {
+			add { Events.AddHandler (FormattingEnabledChangedEvent, value); }
+			remove { Events.RemoveHandler (FormattingEnabledChangedEvent, value); }
+		}
+#endif
 
 		public event EventHandler SelectedValueChanged {
 			add { Events.AddHandler (SelectedValueChangedEvent, value); }
@@ -92,10 +125,41 @@ namespace System.Windows.Forms
 
 		#region .NET 2.0 Public Properties
 #if NET_2_0
+		[Browsable (false)]
+		[DefaultValue (null)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		public IFormatProvider FormatInfo {
+			get { return format_info; }
+			set {
+				if (format_info != value) {
+					format_info = value;
+					OnFormatInfoChanged (EventArgs.Empty);
+				}
+			}
+		}
+		
+		[DefaultValue ("")]
+		[MergableProperty (false)]
+		[Editor ("System.Windows.Forms.Design.FormatStringEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
+		public string FormatString {
+			get { return format_string; }
+			set {
+				if (format_string != value) {
+					format_string = value;
+					OnFormatStringChanged (EventArgs.Empty);
+				}
+			}
+		}
+		
 		[DefaultValue (false)]
 		public bool FormattingEnabled {
 			get { return formatting_enabled; }
-			set { formatting_enabled = value; }
+			set { 
+				if (formatting_enabled != value) {
+					formatting_enabled = value;
+					OnFormattingEnabledChanged (EventArgs.Empty);
+				}
+			}
 		}
 #endif
 		#endregion
@@ -258,11 +322,28 @@ namespace System.Windows.Forms
 
 		public string GetItemText (object item)
 		{
-			object fil = FilterItemOnProperty (item, DisplayMember);
-			if (fil != null)
-				return fil.ToString ();
+			object o = FilterItemOnProperty (item, DisplayMember);
+			
+			if (o == null)
+				o = item;
 
-			return item.ToString ();
+			string retval = o.ToString ();
+			
+#if NET_2_0
+			if (FormattingEnabled) {
+				ListControlConvertEventArgs e = new ListControlConvertEventArgs (retval, typeof (string), item);
+				OnFormat (e);
+				
+				// The user provided their own value
+				if (e.Value.ToString () != retval)
+					return e.Value.ToString ();
+					
+				if (o is IFormattable)
+					return ((IFormattable)o).ToString (string.IsNullOrEmpty (FormatString) ? null : FormatString, FormatInfo);
+			}
+#endif
+				
+			return retval;
 		}
 
 		protected CurrencyManager DataManager {
@@ -316,6 +397,36 @@ namespace System.Windows.Forms
 			if (eh != null)
 				eh (this, e);
 		}
+
+#if NET_2_0
+		protected virtual void OnFormat (ListControlConvertEventArgs e)
+		{
+			ListControlConvertEventHandler eh = (ListControlConvertEventHandler)(Events[FormatEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
+		
+		protected virtual void OnFormatInfoChanged (EventArgs e)
+		{
+			EventHandler eh = (EventHandler)(Events[FormatInfoChangedEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
+		
+		protected virtual void OnFormatStringChanged (EventArgs e)
+		{
+			EventHandler eh = (EventHandler)(Events[FormatStringChangedEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
+		
+		protected virtual void OnFormattingEnabledChanged (EventArgs e)
+		{
+			EventHandler eh = (EventHandler)(Events[FormattingEnabledChangedEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
+#endif
 
 		protected virtual void OnSelectedIndexChanged (EventArgs e)
 		{

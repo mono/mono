@@ -1,5 +1,9 @@
 2007-07-06  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ListControl.cs: Add test for Formatting behavior.
+
+2007-07-06  Jonathan Pobst  <monkey@jpobst.com>
+
 	* LabelTest.cs: Add test for Image[List|Index|Key].
 
 2007-07-06  Jonathan Pobst  <monkey@jpobst.com>

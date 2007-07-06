@@ -178,6 +178,32 @@ namespace MonoTests.System.Windows.Forms
 			ListControlChild lc = new ListControlChild ();
 			Assert.IsTrue (lc.allow_selection);
 		}
+		
+		[Test]
+		public void BehaviorFormatting ()
+		{
+			ListControl lc = new ListControlChild ();
+			DateTime dt = new DateTime (1, 2, 3, 4, 5, 6);
+
+			Assert.AreEqual (false, lc.FormattingEnabled, "A1");
+			Assert.AreEqual (null, lc.FormatInfo, "A2");
+			Assert.AreEqual (string.Empty, lc.FormatString, "A3");
+			
+			Assert.AreEqual ("2/3/0001 4:05:06 AM", lc.GetItemText (dt), "A4");
+			
+			lc.FormattingEnabled = true;
+			lc.FormatString = "MM/dd";
+
+			Assert.AreEqual ("02/03", lc.GetItemText (dt), "A5");
+
+			lc.Format += new ListControlConvertEventHandler (lc_Format);
+			Assert.AreEqual ("Monkey!", lc.GetItemText (dt), "A6");
+		}
+
+		void lc_Format (object sender, ListControlConvertEventArgs e)
+		{
+			e.Value = "Monkey!";
+		}
 #endif
 	}
 
