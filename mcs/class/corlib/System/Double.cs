@@ -274,7 +274,7 @@ namespace System {
 				if (sidx == len) {
 					if (!tryParse)
 						exc = Int32.GetFormatException ();
-					return true;
+					return false;
 				}
 			}
 

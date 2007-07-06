@@ -1,3 +1,8 @@
+2007-07-06  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Double.cs (Parse): Fix for whitespace only strings, it was returning zero 
+	instead of throwing FormatException. Fixes #81630 
+
 2007-07-06  Alan McGovern  <amcgovern@novell.com>
 
 	* DateTime.cs: If the format is null or empty, it should default to 'G'.
