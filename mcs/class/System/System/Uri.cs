@@ -1809,7 +1809,6 @@ namespace System {
 				}
 			}
 			if (!escape){
-				Console.WriteLine ("NO NEED TO ECAPE");
 				return stringToEscape;
 			}
 			
