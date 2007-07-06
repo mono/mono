@@ -1,3 +1,8 @@
+2007-07-06  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TypeBuilderTest.cs: Added tests for bug #82018. Added tests for
+	MakeArrayType (2.0).
+
 2007-05-21  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* MethodBuilderTest.cs: Split up GetCustomAttributes test and marked

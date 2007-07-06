@@ -701,6 +701,21 @@ namespace MonoTests.System.Reflection.Emit
 			}
 		}
 
+		[Test] // bug #82018
+		[Category ("NotWorking")]
+		public void CreateType_Enum_NoValue ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName (),
+				TypeAttributes.Sealed | TypeAttributes.Serializable,
+				typeof (Enum));
+			try {
+				tb.CreateType ();
+				Assert.Fail ("#B1");
+			} catch (TypeLoadException) {
+				// No instance Field in an Enum
+			}
+		}
+
 		[Test]
 		[Category ("NotWorking")]
 		public void TestCreateType ()
@@ -1974,50 +1989,128 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 #if NET_2_0
-	[Test]
-	public void GenericType ()
-	{
-		TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
-		tb.DefineGenericParameters ("T");
+		[Test]
+		public void GenericType ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
+			tb.DefineGenericParameters ("T");
 
-		Assert.IsTrue (tb.IsGenericType, "#A1");
-		Assert.IsTrue (tb.IsGenericTypeDefinition, "#A2");
-		Assert.IsTrue (tb.ContainsGenericParameters, "#A3");
-		Assert.IsFalse (tb.IsGenericParameter, "#A4");
+			Assert.IsTrue (tb.IsGenericType, "#A1");
+			Assert.IsTrue (tb.IsGenericTypeDefinition, "#A2");
+			Assert.IsTrue (tb.ContainsGenericParameters, "#A3");
+			Assert.IsFalse (tb.IsGenericParameter, "#A4");
 
-		Type[] args = tb.GetGenericArguments ();
-		Assert.IsFalse (args [0].IsGenericType, "#B1");
-		Assert.IsFalse (args [0].IsGenericTypeDefinition, "#B2");
-		Assert.IsTrue (args [0].ContainsGenericParameters, "#B3");
-		Assert.IsTrue (args [0].IsGenericParameter, "#B4");
-	}
+			Type[] args = tb.GetGenericArguments ();
+			Assert.IsFalse (args [0].IsGenericType, "#B1");
+			Assert.IsFalse (args [0].IsGenericTypeDefinition, "#B2");
+			Assert.IsTrue (args [0].ContainsGenericParameters, "#B3");
+			Assert.IsTrue (args [0].IsGenericParameter, "#B4");
+		}
 
-	[Test]
-	public void MakeGenericType ()
-	{
-		TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
-		tb.DefineGenericParameters ("T");
+		[Test]
+		public void MakeGenericType ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
+			tb.DefineGenericParameters ("T");
 
-		Type t1 = tb.MakeGenericType (typeof (int));
-		Assert.IsTrue (t1.IsGenericType, "#A1");
-		Assert.IsFalse (t1.IsGenericTypeDefinition, "#A2");
-		Assert.IsFalse (t1.ContainsGenericParameters, "#A3");
-		Assert.IsFalse (t1.IsGenericParameter, "#A4");
+			Type t1 = tb.MakeGenericType (typeof (int));
+			Assert.IsTrue (t1.IsGenericType, "#A1");
+			Assert.IsFalse (t1.IsGenericTypeDefinition, "#A2");
+			Assert.IsFalse (t1.ContainsGenericParameters, "#A3");
+			Assert.IsFalse (t1.IsGenericParameter, "#A4");
 
-		Type t2 = tb.MakeGenericType (typeof (List<>).GetGenericArguments ());
-		Assert.IsTrue (t2.IsGenericType, "#B1");
-		Assert.IsFalse (t2.IsGenericTypeDefinition, "#B2");
-		Assert.IsTrue (t2.ContainsGenericParameters, "#B3");
-		Assert.IsFalse (t2.IsGenericParameter, "#B4");
-	}
+			Type t2 = tb.MakeGenericType (typeof (List<>).GetGenericArguments ());
+			Assert.IsTrue (t2.IsGenericType, "#B1");
+			Assert.IsFalse (t2.IsGenericTypeDefinition, "#B2");
+			Assert.IsTrue (t2.ContainsGenericParameters, "#B3");
+			Assert.IsFalse (t2.IsGenericParameter, "#B4");
+		}
 
-	[Test]
-	[ExpectedException (typeof (InvalidOperationException))]
-	public void Fail_MakeGenericType ()
-	{
-		TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
-		tb.MakeGenericType (typeof (int));
-	}
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void Fail_MakeGenericType ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
+			tb.MakeGenericType (typeof (int));
+		}
+
+		[Test]
+		public void MakeArrayType_Complete ()
+		{
+			// reference type
+			TypeBuilder tb = module.DefineType (genTypeName (),
+				TypeAttributes.Sealed | TypeAttributes.Serializable,
+				typeof (ContextBoundObject));
+			Type emittedType = tb.CreateType ();
+			Type arrayType = tb.MakeArrayType ();
+			Assert.IsTrue (arrayType.IsArray, "#A1");
+			Assert.IsTrue (arrayType.HasElementType, "#A2");
+			Assert.AreEqual (tb, arrayType.GetElementType (), "#A3");
+			Assert.IsFalse (tb.HasElementType, "#A4");
+			Assert.IsTrue (tb.IsCreated (), "#A5");
+
+			// value type
+			tb = module.DefineType (genTypeName (),
+				TypeAttributes.Sealed | TypeAttributes.Serializable,
+				typeof (ValueType));
+			emittedType = tb.CreateType ();
+			arrayType = tb.MakeArrayType ();
+			Assert.IsTrue (arrayType.IsArray, "#B1");
+			Assert.IsTrue (arrayType.HasElementType, "#B2");
+			Assert.AreEqual (tb, arrayType.GetElementType (), "#B3");
+			Assert.IsFalse (tb.HasElementType, "#B4");
+			Assert.IsTrue (tb.IsCreated (), "#B5");
+
+			tb = module.DefineType (genTypeName (),
+				TypeAttributes.Sealed | TypeAttributes.Serializable,
+				typeof (Enum));
+			tb.DefineField ("value__", typeof (int), FieldAttributes.SpecialName |
+				FieldAttributes.Private | FieldAttributes.RTSpecialName);
+			emittedType = tb.CreateType ();
+			arrayType = tb.MakeArrayType ();
+			Assert.IsTrue (arrayType.IsArray, "#C1");
+			Assert.IsTrue (arrayType.HasElementType, "#C2");
+			Assert.AreEqual (tb, arrayType.GetElementType (), "#C3");
+			Assert.IsFalse (tb.HasElementType, "#C4");
+			Assert.IsTrue (tb.IsCreated (), "#C5");
+		}
+
+		[Test] // bug #82015
+		[Category ("NotWorking")]
+		public void MakeArrayType_Incomplete ()
+		{
+			// reference type
+			TypeBuilder tb = module.DefineType (genTypeName (),
+				TypeAttributes.Sealed | TypeAttributes.Serializable,
+				typeof (ContextBoundObject));
+			Type arrayType = tb.MakeArrayType ();
+			Assert.IsTrue (arrayType.IsArray, "#A1");
+			Assert.IsTrue (arrayType.HasElementType, "#A2");
+			Assert.AreEqual (tb, arrayType.GetElementType (), "#A3");
+			Assert.IsFalse (tb.HasElementType, "#A4");
+			Assert.IsFalse (tb.IsCreated (), "#A5");
+
+			// value type
+			tb = module.DefineType (genTypeName (),
+				TypeAttributes.Sealed | TypeAttributes.Serializable,
+				typeof (ValueType));
+			arrayType = tb.MakeArrayType ();
+			Assert.IsTrue (arrayType.IsArray, "#B1");
+			Assert.IsTrue (arrayType.HasElementType, "#B2");
+			Assert.AreEqual (tb, arrayType.GetElementType (), "#B3");
+			Assert.IsFalse (tb.HasElementType, "#B4");
+			Assert.IsFalse (tb.IsCreated (), "#B5");
+
+			// enum
+			tb = module.DefineType (genTypeName (),
+				TypeAttributes.Sealed | TypeAttributes.Serializable,
+				typeof (Enum));
+			arrayType = tb.MakeArrayType ();
+			Assert.IsTrue (arrayType.IsArray, "#C1");
+			Assert.IsTrue (arrayType.HasElementType, "#C2");
+			Assert.IsFalse (tb.HasElementType, "#C3");
+			Assert.IsFalse (tb.IsCreated (), "#C4");
+		}
 #endif
 	}
 }
