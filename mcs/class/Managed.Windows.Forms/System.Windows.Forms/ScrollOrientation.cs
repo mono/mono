@@ -27,13 +27,14 @@
 //
 
 
-#if NET_2_0
 namespace System.Windows.Forms
 {
-	public enum ScrollOrientation
+#if NET_2_0
+	public 
+#endif	
+	enum ScrollOrientation
 	{
 		HorizontalScroll = 0,
 		VerticalScroll = 1
 	}
 }
-#endif

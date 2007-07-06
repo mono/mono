@@ -34,13 +34,50 @@ namespace System.Windows.Forms {
 		#region Local Variables
 		private ScrollEventType	type;
 		private int		new_value;
+		private int		old_value;
+		private ScrollOrientation	scroll_orientation;
 		#endregion
 
 		#region Public Constructors
-		public ScrollEventArgs(ScrollEventType type, int newValue) {
-			this.type = type;
-			this.new_value = newValue;
+		public ScrollEventArgs(ScrollEventType type, int newValue) :
+			this (type, -1, newValue, ScrollOrientation.HorizontalScroll)
+		{
 		}
+
+#if NET_2_0
+		public
+#else
+		internal
+#endif
+		ScrollEventArgs (ScrollEventType type, int oldValue, int newValue) :
+			this (type, oldValue, newValue, ScrollOrientation.HorizontalScroll)
+		{
+		}
+
+#if NET_2_0
+		public
+#else
+		internal
+#endif
+		ScrollEventArgs (ScrollEventType type, int newValue, ScrollOrientation scroll) :
+			this (type, -1, newValue, scroll)
+		{
+		}
+
+
+#if NET_2_0
+		public
+#else
+		internal
+#endif
+		ScrollEventArgs (ScrollEventType type, int oldValue, int newValue, ScrollOrientation scroll)
+		{
+			this.new_value = newValue;
+			this.old_value = oldValue;
+			this.scroll_orientation = scroll;
+			this.type = type;
+		}
+		
 		#endregion	// Public Constructors
 
 		#region Public Instance Properties
@@ -54,6 +91,24 @@ namespace System.Windows.Forms {
 			}
 		}
 
+#if NET_2_0
+		public
+#else
+		internal
+#endif
+		int OldValue {
+			get { return old_value; }
+		}
+
+#if NET_2_0
+		public
+#else
+		internal
+#endif
+		ScrollOrientation ScrollOrientation {
+			get { return scroll_orientation; }
+		}
+		
 		public ScrollEventType Type {
 			get {
 				return type;

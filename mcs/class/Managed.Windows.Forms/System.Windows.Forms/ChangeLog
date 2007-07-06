@@ -1,3 +1,8 @@
+2007-07-06  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ScrollOrientation.cs: Make internal for 1.1.
+	* ScrollEventArgs.cs: Add 2.0 stuffs.
+
 2007-07-05  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStrip.cs, ToolStripControlHost.cs, ToolStripDropDown.cs,
