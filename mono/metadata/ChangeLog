@@ -1,3 +1,8 @@
+2007-07-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_marshal_string_to_utf16_copy): Null terminate the
+	string.
+
 2007-07-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* profiler.c (mono_profiler_load): Fix an off-by-one error.
