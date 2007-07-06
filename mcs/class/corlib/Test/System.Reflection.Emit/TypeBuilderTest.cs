@@ -576,11 +576,63 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
 		public void TestSetParentNull ()
 		{
-			TypeBuilder tb = module.DefineType (genTypeName ());
+			TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Class,
+				typeof (Attribute));
+#if NET_2_0
 			tb.SetParent (null);
+			Assert.AreEqual (typeof (object), tb.BaseType, "#A1");
+#else
+			try {
+				tb.SetParent (null);
+				Assert.Fail ("#A1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsNotNull (ex.ParamName, "#A5");
+				Assert.AreEqual ("parent", ex.ParamName, "#A6");
+			}
+#endif
+
+			tb = module.DefineType (genTypeName (), TypeAttributes.Interface |
+				TypeAttributes.Abstract);
+#if NET_2_0
+			tb.SetParent (null);
+			Assert.IsNull (tb.BaseType, "#B1");
+#else
+			try {
+				tb.SetParent (null);
+				Assert.Fail ("#B1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.IsNotNull (ex.ParamName, "#B5");
+				Assert.AreEqual ("parent", ex.ParamName, "#B6");
+			}
+#endif
+
+#if NET_2_0
+			tb = module.DefineType (genTypeName (), TypeAttributes.Interface |
+				TypeAttributes.Abstract, typeof (ICloneable));
+			Assert.AreEqual (typeof (ICloneable), tb.BaseType, "#C1");
+			tb.SetParent (null);
+			Assert.IsNull (tb.BaseType, "#C2");
+
+			tb = module.DefineType (genTypeName (), TypeAttributes.Interface,
+				typeof (IDisposable));
+			try {
+				tb.SetParent (null);
+				Assert.Fail ("#D1");
+			} catch (InvalidOperationException ex) {
+				// Interface must be declared abstract
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#D2");
+				Assert.IsNull (ex.InnerException, "#D3");
+				Assert.IsNotNull (ex.Message, "#D4");
+			}
+#endif
 		}
 
 		[Test]
@@ -588,7 +640,28 @@ namespace MonoTests.System.Reflection.Emit
 		{
 			TypeBuilder tb = module.DefineType (genTypeName ());
 			tb.SetParent (typeof (Attribute));
-			Assert.AreEqual (typeof (Attribute), tb.BaseType);
+			Assert.AreEqual (typeof (Attribute), tb.BaseType, "#1");
+
+			tb = module.DefineType (genTypeName (), TypeAttributes.Interface |
+				TypeAttributes.Abstract);
+			tb.SetParent (typeof (IDisposable));
+			Assert.AreEqual (typeof (IDisposable), tb.BaseType, "#2");
+
+			tb = module.DefineType (genTypeName ());
+			tb.SetParent (typeof (IDisposable));
+			Assert.AreEqual (typeof (IDisposable), tb.BaseType, "#3");
+
+#if NET_2_0
+			tb = module.DefineType (genTypeName (), TypeAttributes.Interface |
+				TypeAttributes.Abstract, typeof (IDisposable));
+			tb.SetParent (typeof (ICloneable));
+			Assert.AreEqual (typeof (ICloneable), tb.BaseType, "#4");
+
+			tb = module.DefineType (genTypeName (), TypeAttributes.Interface |
+				TypeAttributes.Abstract, typeof (IDisposable));
+			tb.SetParent (typeof (ICloneable));
+			Assert.AreEqual (typeof (ICloneable), tb.BaseType, "#5");
+#endif
 		}
 
 		[Test]

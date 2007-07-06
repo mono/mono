@@ -120,6 +120,10 @@ namespace System.Reflection.Emit {
 			this.class_size = type_size;
 			this.packing_size = packing_size;
 			this.nesting_type = nesting_type;
+
+			if (parent == null && (attr & TypeAttributes.Interface) != 0 && (attr & TypeAttributes.Abstract) == 0)
+				throw new InvalidOperationException ("Interface must be declared abstract.");
+
 			sep_index = name.LastIndexOf('.');
 			if (sep_index != -1) {
 				this.tname = name.Substring (sep_index + 1);
@@ -1371,16 +1375,33 @@ namespace System.Reflection.Emit {
 				return new TypeToken (0x02000000 | table_idx);
 			}
 		}
-		public void SetParent (Type parentType) {
+
+		public void SetParent (Type parent)
+		{
 			check_not_created ();
 
-			if (parentType == null && (attrs & TypeAttributes.Interface) == 0)
-				throw new ArgumentNullException ("parentType");
+#if NET_2_0
+			if (parent == null) {
+				if ((attrs & TypeAttributes.Interface) != 0) {
+					if ((attrs & TypeAttributes.Abstract) == 0)
+						throw new InvalidOperationException ("Interface must be declared abstract.");
+					this.parent = null;
+				} else {
+					this.parent = typeof (object);
+				}
+			} else {
+				this.parent = parent;
+			}
+#else
+			if (parent == null)
+				throw new ArgumentNullException ("parent");
+			this.parent = parent;
+#endif
 
-			parent = parentType;
 			// will just set the parent-related bits if called a second time
 			setup_internal_class (this);
 		}
+
 		internal int get_next_table_index (object obj, int table, bool inc) {
 			return pmodule.get_next_table_index (obj, table, inc);
 		}

@@ -1,5 +1,15 @@
 2007-07-06  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* TypeBuilder.cs: Throw InvalidOperationException when attempting to
+	construct non-abstract interface without base type. Modified SetParent
+	to match MS: in 2.0 profile, throw InvalidOperationException when 
+	parent is null and TypeBuilder is non-abstract interface. When
+	parent is null and TypeBuilder is not an interface, then set object
+	as parent. In 1.0 profile, throw ArgumentNullException when parent is
+	null.
+
+2007-07-06  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* TypeBuilder.cs: Implemented IsCOMObjectImpl.
 
 2007-07-04  Atsushi Enomoto  <atsushi@ximian.com>

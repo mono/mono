@@ -131,6 +131,50 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
+		public void TestDefineType_InterfaceNotAbstract ()
+		{
+			AssemblyName assemblyName = new AssemblyName ();
+			assemblyName.Name = "ModuleBuilderTest.DuplicateSymbolDocument";
+
+			AssemblyBuilder ab
+				= Thread.GetDomain ().DefineDynamicAssembly (
+					assemblyName, AssemblyBuilderAccess.RunAndSave, TempFolder);
+
+			ModuleBuilder mb = ab.DefineDynamicModule ("foo.dll", "foo.dll", true);
+
+			try {
+				mb.DefineType ("ITest1", TypeAttributes.Interface);
+				Assert.Fail ("#A1");
+			} catch (InvalidOperationException ex) {
+				// Interface must be declared abstract
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+			}
+
+			try {
+				mb.DefineType ("ITest2", TypeAttributes.Interface, (Type) null);
+				Assert.Fail ("#B1");
+			} catch (InvalidOperationException ex) {
+				// Interface must be declared abstract
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+			}
+
+			// fail on MS .NET 1.1
+#if NET_2_0
+			TypeBuilder tb = mb.DefineType ("ITest2", TypeAttributes.Interface,
+				typeof (object));
+			Assert.AreEqual (typeof (object), tb.BaseType, "#C1");
+
+			tb = mb.DefineType ("ITest3", TypeAttributes.Interface,
+				typeof (IDisposable));
+			Assert.AreEqual (typeof (IDisposable), tb.BaseType, "#D1");
+#endif
+		}
+
+		[Test]
 		public void DuplicateSymbolDocument ()
 		{
 			AssemblyName assemblyName = new AssemblyName ();
