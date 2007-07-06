@@ -1,3 +1,7 @@
+2007-07-06  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TypeBuilder.cs: Implemented IsCOMObjectImpl.
+
 2007-07-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DynamicMethod.cs : 2.0 API fix.

@@ -308,7 +308,6 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test] // bug #71304
-		[Category ("NotWorking")]
 		public void TestIsCOMObject ()
 		{
 			TypeBuilder tb = module.DefineType (genTypeName ());
@@ -354,9 +353,11 @@ namespace MonoTests.System.Reflection.Emit
 		[Test]
 		public void TestIsImport ()
 		{
-			// How can this be true ?
 			TypeBuilder tb = module.DefineType (genTypeName ());
-			Assert.IsFalse (tb.IsImport);
+			Assert.IsFalse (tb.IsImport, "#1");
+
+			tb = module.DefineType (genTypeName (), TypeAttributes.Import);
+			Assert.IsTrue (tb.IsImport, "#2");
 		}
 
 		[Test]

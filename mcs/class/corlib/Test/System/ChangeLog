@@ -1,3 +1,8 @@
+2007-07-06  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TypeTest.cs: Added tests for IsAbstract, IsCOMObject, IsImport,
+	IsInterface, IsPrimitive and IsValueType.
+
 2007-07-04  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* MathTest.cs: No longer use Assertion as base class, and changed

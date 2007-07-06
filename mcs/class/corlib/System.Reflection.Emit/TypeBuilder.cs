@@ -1170,9 +1170,11 @@ namespace System.Reflection.Emit {
 			// FIXME
 			return false;
 		}
-		protected override bool IsCOMObjectImpl () {
-			return false;
+		protected override bool IsCOMObjectImpl ()
+		{
+			return ((GetAttributeFlagsImpl () & TypeAttributes.Import) != 0);
 		}
+
 		protected override bool IsPointerImpl () {
 			// FIXME
 			return false;

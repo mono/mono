@@ -1,5 +1,10 @@
 2007-07-06  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* TypeBuilderTest.cs: Enabled test for IsCOMObject. Improved test
+	for IsImport.
+
+2007-07-06  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* TypeBuilderTest.cs: Added tests for bug #82018. Added tests for
 	MakeArrayType (2.0).
 

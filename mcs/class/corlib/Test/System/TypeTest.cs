@@ -10,6 +10,9 @@
 using NUnit.Framework;
 using System;
 using System.Collections;
+#if NET_2_0
+using System.Collections.Generic;
+#endif
 using System.IO;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -113,6 +116,26 @@ namespace MonoTests.System
 	[TestFixture]
 	public class TypeTest
 	{
+		private AssemblyBuilder assembly;
+		private ModuleBuilder module;
+		const string ASSEMBLY_NAME = "MonoTests.System.TypeTest";
+		static int typeIndexer = 0;
+
+		[SetUp]
+		public void SetUp ()
+		{
+			AssemblyName assemblyName = new AssemblyName ();
+			assemblyName.Name = ASSEMBLY_NAME;
+			assembly = AppDomain.CurrentDomain.DefineDynamicAssembly (
+					assemblyName, AssemblyBuilderAccess.RunAndSave, Path.GetTempPath ());
+			module = assembly.DefineDynamicModule ("module1");
+		}
+
+		private string genTypeName ()
+		{
+			return "t" + (typeIndexer++);
+		}
+
 		private void ByrefMethod (ref int i, ref Derived1 j, ref Base1 k) {
 		}
 
@@ -300,8 +323,73 @@ namespace MonoTests.System
 #endif
 
 		[Test]
+		public void IsAbstract ()
+		{
+			Assert.IsFalse (typeof (string).IsAbstract, "#1");
+			Assert.IsTrue (typeof (ICloneable).IsAbstract, "#2");
+			Assert.IsTrue (typeof (ValueType).IsAbstract, "#3");
+			Assert.IsTrue (typeof (Enum).IsAbstract, "#4");
+			Assert.IsFalse (typeof (TimeSpan).IsAbstract, "#5");
+			Assert.IsTrue (typeof (TextReader).IsAbstract, "#6");
+
+#if NET_2_0
+			// LAMESPEC:
+			// https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=286308
+			Type [] typeArgs = typeof (List<>).GetGenericArguments ();
+			Assert.IsFalse (typeArgs [0].IsAbstract, "#7");
+#endif
+		}
+
+		[Test]
+		public void IsCOMObject ()
+		{
+			Type type = typeof (string);
+			Assert.IsFalse (type.IsCOMObject, "#1");
+
+			TypeBuilder tb = module.DefineType (genTypeName ());
+			type = tb.CreateType ();
+			Assert.IsFalse (type.IsCOMObject, "#2");
+		}
+
+		[Test]
+		public void IsImport ()
+		{
+			Type type = typeof (string);
+			Assert.IsFalse (type.IsImport, "#1");
+
+			TypeBuilder tb = module.DefineType (genTypeName ());
+			type = tb.CreateType ();
+			Assert.IsFalse (type.IsImport, "#2");
+
+			tb = module.DefineType (genTypeName (), TypeAttributes.Import |
+				TypeAttributes.Interface | TypeAttributes.Abstract);
+			type = tb.CreateType ();
+			Assert.IsTrue (type.IsImport, "#3");
+		}
+
+		[Test]
+		public void IsInterface ()
+		{
+			Assert.IsFalse (typeof (string).IsInterface, "#1");
+			Assert.IsTrue (typeof (ICloneable).IsInterface, "#2");
+		}
+
+		[Test]
 		public void IsPrimitive () {
-			Assert.IsTrue (typeof (IntPtr).IsPrimitive);
+			Assert.IsTrue (typeof (IntPtr).IsPrimitive, "#1");
+			Assert.IsTrue (typeof (int).IsPrimitive, "#2");
+			Assert.IsFalse (typeof (string).IsPrimitive, "#2");
+		}
+
+		[Test]
+		public void IsValueType ()
+		{
+			Assert.IsTrue (typeof (int).IsValueType, "#1");
+			Assert.IsFalse (typeof (Enum).IsValueType, "#2");
+			Assert.IsFalse (typeof (ValueType).IsValueType, "#3");
+			Assert.IsTrue (typeof (AttributeTargets).IsValueType, "#4");
+			Assert.IsFalse (typeof (string).IsValueType, "#5");
+			Assert.IsTrue (typeof (TimeSpan).IsValueType, "#6");
 		}
 
 		[Test]
