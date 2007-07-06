@@ -1537,6 +1537,11 @@ namespace System.Windows.Forms
 			return -1;
 		}
 
+		internal override bool IsInputCharInternal (char charCode)
+		{
+			return true;
+		}
+
 		internal override ContextMenu ContextMenuInternal {
 			get {
 				return base.ContextMenuInternal;
