@@ -218,23 +218,26 @@ namespace MonoTests.System
 					Assert.IsNotNull (ex.Message, "#H4");
 				}
 			}
-
-			try {
-				Double.Parse (" ");
-				Assert.Fail ("#I1");
-			} catch (FormatException ex) {
-				Assert.AreEqual (typeof (FormatException), ex.GetType (), "#I2");
-				Assert.IsNull (ex.InnerException, "#I3");
-				Assert.IsNotNull (ex.Message, "#I4");
-			}
 		}
 
 		[Test] // bug #81630
-		[Category ("NotWorking")]
 		public void Parse_Whitespace ()
 		{
 			try {
 				double.Parse (" ");
+				Assert.Fail ("#1");
+			} catch (FormatException ex) {
+				Assert.AreEqual (typeof (FormatException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+		}
+
+		[Test] // //bug #81777
+		public void Parse_TrailingGarbage ()
+		{
+			try {
+				double.Parse ("22 foo");
 				Assert.Fail ("#1");
 			} catch (FormatException ex) {
 				Assert.AreEqual (typeof (FormatException), ex.GetType (), "#2");
