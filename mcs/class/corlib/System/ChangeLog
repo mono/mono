@@ -1,6 +1,12 @@
+2007-07-06  Alan McGovern  <amcgovern@novell.com>
+
+	* DateTime.cs: If the format is null or empty, it should default to 'G'.
+	Fixes bug 81778
+
 2007-07-06  Jonathan Chambers  <joncham@gmail.com>
 
 	* __ComObject.cs: Support ExtensibleClassFactory.
+
 
 2007-07-06  Aaron Bockover  <abockover@novell.com>
 

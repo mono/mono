@@ -2089,7 +2089,7 @@ namespace System
 		{
 			DateTimeFormatInfo dfi = DateTimeFormatInfo.GetInstance(fp);
 
-			if (format == null)
+			if (format == null || format == String.Empty)
 				format = "G";
 
 			bool useutc = false, use_invariant = false;
