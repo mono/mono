@@ -1,7 +1,11 @@
+2007-07-06  Jonathan Chambers  <joncham@gmail.com>
+
+	* ExtensibleClassFactory.cs: Fix ExtensibleClassFactory.
+
 2007-06-22  Jonathan Chambers  <joncham@gmail.com>
 
-	* __ComObject.cs (ThrowExceptionForHR): Implement/consolidate.
-	* __ComObject.cs (GetExceptionForHR): Implement/consolidate.
+	* Marshal.cs (ThrowExceptionForHR): Implement/consolidate.
+	* Marshal.cs (GetExceptionForHR): Implement/consolidate.
 
 2007-05-11  Jonathan Chambers  <joncham@gmail.com>
 

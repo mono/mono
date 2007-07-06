@@ -71,14 +71,28 @@ namespace System
 		public __ComObject ()
 		{
 			Type t = GetType ();
-			int hr = CoCreateInstance (GetCLSID (t), IntPtr.Zero, 0x1 | 0x4 | 0x10, IID_IUnknown, out iunknown);
-			Marshal.ThrowExceptionForHR (hr);
+			ObjectCreationDelegate ocd = ExtensibleClassFactory.GetObjectCreationCallback (t);
+			if (ocd != null) {
+				iunknown = ocd (IntPtr.Zero);
+				if (iunknown == IntPtr.Zero)
+					throw new COMException (string.Format("ObjectCreationDelegate for type {0} failed to return a valid COM object", t));
+			} else {
+				int hr = CoCreateInstance (GetCLSID (t), IntPtr.Zero, 0x1 | 0x4 | 0x10, IID_IUnknown, out iunknown);
+				Marshal.ThrowExceptionForHR (hr);
+			}
 		}
 
-		internal __ComObject (Type t)
-		{
-			int hr = CoCreateInstance (GetCLSID (t), IntPtr.Zero, 0x1 | 0x4 | 0x10, IID_IUnknown, out iunknown);
-			Marshal.ThrowExceptionForHR (hr);
+		internal __ComObject (Type t) {
+			ObjectCreationDelegate ocd = ExtensibleClassFactory.GetObjectCreationCallback (t);
+			if (ocd != null) {
+				iunknown = ocd (IntPtr.Zero);
+				if (iunknown == IntPtr.Zero)
+					throw new COMException (string.Format("ObjectCreationDelegate for type {0} failed to return a valid COM object", t));
+			}
+			else {
+				int hr = CoCreateInstance (GetCLSID (t), IntPtr.Zero, 0x1 | 0x4 | 0x10, IID_IUnknown, out iunknown);
+				Marshal.ThrowExceptionForHR (hr);
+			}
 		}
 
 		internal __ComObject (IntPtr pItf)

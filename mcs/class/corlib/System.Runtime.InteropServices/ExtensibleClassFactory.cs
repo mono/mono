@@ -31,8 +31,8 @@
 //
 
 using System.Diagnostics;
-using System.Threading;
 using System.Collections;
+using System.Reflection;
 
 namespace System.Runtime.InteropServices
 {
@@ -57,11 +57,20 @@ namespace System.Runtime.InteropServices
 			return hashtable[t] as ObjectCreationDelegate;
 		}
 
-		public static void RegisterObjectCreationCallback (ObjectCreationDelegate callback)
-		{
+		public static void RegisterObjectCreationCallback (ObjectCreationDelegate callback) {
+			int i = 1;
 			StackTrace trace = new StackTrace (false);
-			StackFrame frame = trace.GetFrame (0);
-			hashtable.Add (frame.GetMethod ().DeclaringType, callback);
+			while (i < trace.FrameCount) {
+				StackFrame frame = trace.GetFrame (i);
+				MethodBase m = frame.GetMethod ();
+				if (m.MemberType == MemberTypes.Constructor && m.IsStatic) {
+					hashtable.Add (m.DeclaringType, callback);
+					return;
+				}
+				i++;
+			}
+			throw new System.InvalidOperationException (
+				"RegisterObjectCreationCallback must be called from .cctor of class derived from ComImport type.");
 		}
 	}
 }
