@@ -83,6 +83,30 @@ namespace System.Media {
 			}
 			mstream.Position = 0;
 		}
+		
+		[MonoLimitation("Doesn't play a default sound if nothing is specified")]
+		bool LoadFromUri(string location)
+		{
+			Stream data = null;
+			if(string.IsNullOrEmpty(location)) {
+				// FIXME: Play a default sound
+				return false;
+			}
+
+			if(File.Exists(location))
+				data = new FileStream(location, FileMode.Open, FileAccess.Read, FileShare.Read);
+			else
+			{
+				System.Net.WebRequest request = System.Net.WebRequest.Create(location);
+				data = request.GetResponse().GetResponseStream();
+			}
+			
+			using(data)
+				LoadFromStream(data);
+			
+			return true;
+		}
+
 
 		public void Load ()
 		{
@@ -92,7 +116,7 @@ namespace System.Media {
 			if (audiostream != null) {
 				LoadFromStream (audiostream);
 			} else {
-				throw new NotImplementedException ("from uri");
+				LoadFromUri(sound_location);
 			}
 			load_completed = true;
 			AsyncCompletedEventArgs e = new AsyncCompletedEventArgs (null, false, this);
@@ -156,6 +180,7 @@ namespace System.Media {
 			async.BeginInvoke (AsyncFinished, async);
 		}
 
+		[MonoLimitation("Doesn't play a default sound if nothing is specified")]
 		public void PlaySync ()
 		{
 			Start ();

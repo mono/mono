@@ -1,3 +1,8 @@
+2007-01-22  Alan McGovern  <amcgovern@novell.com>
+
+	* SoundPlayer.cs: Added support for loading from the filesystem
+	and loading from a HTTP based source.
+
 2007-01-22  Miguel de Icaza  <miguel@novell.com>
 
 	* SoundPlayer.cs: Remove unused variables 
