@@ -1,3 +1,7 @@
+2007-07-06  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* DoubleTest.cs (Parse): Added test for whitespace only
+
 2007-07-06  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TypeTest.cs: Added tests for IsAbstract, IsCOMObject, IsImport,

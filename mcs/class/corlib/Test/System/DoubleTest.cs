@@ -218,6 +218,15 @@ namespace MonoTests.System
 					Assert.IsNotNull (ex.Message, "#H4");
 				}
 			}
+
+			try {
+				Double.Parse (" ");
+				Assert.Fail ("#I1");
+			} catch (FormatException ex) {
+				Assert.AreEqual (typeof (FormatException), ex.GetType (), "#I2");
+				Assert.IsNull (ex.InnerException, "#I3");
+				Assert.IsNotNull (ex.Message, "#I4");
+			}
 		}
 
 		[Test] // bug #81630
