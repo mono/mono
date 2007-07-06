@@ -1,5 +1,9 @@
 2007-07-06  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Label.cs: DefaultMargin for 2.0.
+
+2007-07-06  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ComboBox.cs: Override IsInputCharInternal and return true.  Fixes 
 	reported issue where other controls with mnemonics would steal strokes
 	from a selected ComboBox.

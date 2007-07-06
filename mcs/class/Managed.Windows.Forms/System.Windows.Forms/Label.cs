@@ -235,6 +235,12 @@ namespace System.Windows.Forms
 			get { return ImeMode.Disable;}
 		}
 
+#if NET_2_0
+		protected override Padding DefaultMargin {
+			get { return new Padding (3, 0, 3, 0); }
+		}
+#endif
+
 		protected override Size DefaultSize {
 			get {return ThemeEngine.Current.LabelDefaultSize;}
 		}
