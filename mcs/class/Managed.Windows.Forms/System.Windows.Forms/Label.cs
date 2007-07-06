@@ -55,6 +55,7 @@ namespace System.Windows.Forms
 		private FlatStyle flat_style;
 		private bool use_mnemonic;
 		private int image_index = -1;
+		private string image_key = string.Empty;
 		private ImageList image_list;
 		internal ContentAlignment image_align;
 		internal StringFormat string_format;
@@ -81,6 +82,15 @@ namespace System.Windows.Forms
 			add { base.BackgroundImageChanged += value; }
 			remove { base.BackgroundImageChanged -= value; }
 		}
+
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler BackgroundImageLayoutChanged {
+			add { base.BackgroundImageLayoutChanged += value; }
+			remove { base.BackgroundImageLayoutChanged -= value; }
+		}
+#endif
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
@@ -193,7 +203,7 @@ namespace System.Windows.Forms
 
 				autosize = value;
 				CalcAutoSize ();
-				Refresh ();
+				Invalidate ();
 
 				OnAutoSizeChanged (EventArgs.Empty);					
 			}
@@ -206,10 +216,19 @@ namespace System.Windows.Forms
 			get { return base.BackgroundImage; }
 			set {
 				base.BackgroundImage = value;
-				Refresh ();
+				Invalidate ();
 			}
 		}
 
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public override ImageLayout BackgroundImageLayout {
+			get { return base.BackgroundImageLayout; }
+			set { base.BackgroundImageLayout = value; }
+		}
+#endif
+	
 		[DefaultValue(BorderStyle.None)]
 		[DispId(-504)]
 		public virtual BorderStyle BorderStyle {
@@ -256,29 +275,41 @@ namespace System.Windows.Forms
 					return;
 
 				flat_style = value;
-				Refresh ();
+				Invalidate ();
 			}
 		}
 
 		[Localizable(true)]
 		public Image Image {
 			get {
-				if (image != null) {
-					return image;
-				}
-					
-				if (image_list != null && ImageIndex >= 0) {
-					return image_list.Images[ImageIndex];
-				}
-					
+				if (this.image != null)
+					return this.image;
+
+				if (this.image_index >= 0)
+					if (this.image_list != null)
+						return this.image_list.Images[this.image_index];
+
+#if NET_2_0
+				if (!string.IsNullOrEmpty (this.image_key))
+					if (this.image_list != null)
+						return this.image_list.Images[this.image_key];
+#endif
 				return null;
 			}
 			set {
-				if (image == value)
-					return;
+				if (this.image != value) {
+					this.image = value;
+					this.image_index = -1;
+					this.image_key = string.Empty;
+					this.image_list = null;
 
-				image = value;
-				Refresh ();
+#if NET_2_0
+					if (this.AutoSize && this.Parent != null)
+						this.Parent.PerformLayout (this, "Image");
+#endif
+
+					Invalidate ();
+				}
 			}
 		}
 
@@ -294,7 +325,7 @@ namespace System.Windows.Forms
 					return;
 
 				image_align = value;
-				Refresh ();
+				Invalidate ();
 			}
 		}
 
@@ -322,17 +353,33 @@ namespace System.Windows.Forms
 				if (value < -1)
 					throw new ArgumentException ();
 
-				if (image_index == value)
-					return;
-
-				image_index = value;
-
-				if (ImageList != null && image_index !=-1)
-					Image = null;
-
-				Refresh ();
+				if (this.image_index != value) {
+					this.image_index = value;
+					this.image = null;
+					this.image_key = string.Empty;
+					Invalidate ();
+				}
 			}
 		}
+
+#if NET_2_0
+		[Localizable (true)]
+		[DefaultValue ("")]
+		[Editor ("System.Windows.Forms.Design.ImageIndexEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
+		[RefreshProperties (RefreshProperties.Repaint)]
+		[TypeConverter (typeof (ImageKeyConverter))]
+		public string ImageKey {
+			get { return this.image_key; }
+			set {
+				if (this.image_key != value) {
+					this.image = null;
+					this.image_index = -1;
+					this.image_key = value;
+					this.Invalidate ();
+				}
+			}
+		}
+#endif
 
 		[DefaultValue(null)]
 #if NET_2_0
@@ -349,7 +396,7 @@ namespace System.Windows.Forms
 				if (image_list != null && image_index !=-1)
 					Image = null;
 
-				Refresh ();
+				Invalidate ();
 			}
 		}
 
@@ -479,7 +526,7 @@ namespace System.Windows.Forms
 					}
 
 					OnTextAlignChanged (EventArgs.Empty);
-						Refresh();
+					Invalidate ();
 				}
 			}
 		}
@@ -491,7 +538,7 @@ namespace System.Windows.Forms
 				if (use_mnemonic != value) {
 					use_mnemonic = value;
 					SetUseMnemonic (use_mnemonic);
-					Refresh ();
+					Invalidate ();
 				}
 			}
 		}
@@ -583,8 +630,15 @@ namespace System.Windows.Forms
 			base.OnFontChanged (e);
 			if (autosize)
 				CalcAutoSize();
-			Refresh ();
+			Invalidate ();
 		}
+
+#if NET_2_0
+		protected override void OnPaddingChanged (EventArgs e)
+		{
+			base.OnPaddingChanged (e);
+		}
+#endif
 
 		protected override void OnPaint (PaintEventArgs pevent)
 		{
@@ -598,6 +652,13 @@ namespace System.Windows.Forms
 				base.OnParentChanged (e);
 		}
 
+#if NET_2_0
+		protected override void OnRightToLeftChanged (EventArgs e)
+		{
+			base.OnRightToLeftChanged (e);
+		}
+#endif
+
 		protected virtual void OnTextAlignChanged (EventArgs e)
 		{
 			EventHandler eh = (EventHandler)(Events [TextAlignChangedEvent]);
@@ -610,7 +671,7 @@ namespace System.Windows.Forms
 			base.OnTextChanged (e);			
 			if (autosize)
 				CalcAutoSize ();
-			Refresh ();
+			Invalidate ();
 		}
 
 		protected override void OnVisibleChanged (EventArgs e)

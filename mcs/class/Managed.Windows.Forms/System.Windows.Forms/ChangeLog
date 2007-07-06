@@ -1,5 +1,10 @@
 2007-07-06  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Label.cs: Finish up 2.0 stuffs.  Replace calls to Refresh with Invalidate,
+	Refresh is overkill for just about every repaint request.
+
+2007-07-06  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ToolStripItem.cs: TextDirection getter handles looking up Inherit for us,
 	so remove my custom Get method and fix the property getter.
 

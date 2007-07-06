@@ -1,5 +1,9 @@
 2007-07-06  Jonathan Pobst  <monkey@jpobst.com>
 
+	* LabelTest.cs: Add test for Image[List|Index|Key].
+
+2007-07-06  Jonathan Pobst  <monkey@jpobst.com>
+
 	* TableLayoutTest.cs: I had marked CellBorderTest as WM dependent when it
 	failed on the buildbots.  I just realized it was actually failing due to
 	a Label change I hadn't committed, which has now been committed.
