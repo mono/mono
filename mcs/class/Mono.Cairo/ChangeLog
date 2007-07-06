@@ -1,3 +1,9 @@
+2007-05-26  John Luke  <john.luke@gmail.com>
+
+	* Mono.Cairo/Cairo.cs:
+	* Mono.Cairo/Context.cs: fix call to cairo_get_font_matrix,
+	reported by patperry@stanford.edu (Patrick Perry) in bug#81626
+
 2007-01-15  Alp Toker  <alp@atoker.com>
 
 	* Mono.Cairo/Surface.cs:

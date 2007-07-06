@@ -209,7 +209,7 @@ namespace Cairo
 		internal static extern IntPtr cairo_get_font_face (IntPtr cr);
 		
 		[DllImport (cairo)]
-		internal static extern Matrix cairo_get_font_matrix (IntPtr cr);
+		internal static extern void cairo_get_font_matrix (IntPtr cr, out Matrix matrix);
 		
 		[DllImport (cairo)]
 		internal static extern void cairo_get_font_options (IntPtr cr, IntPtr options);

@@ -692,7 +692,11 @@ namespace Cairo {
 		}
 		
 		public Matrix FontMatrix {
-			get { return CairoAPI.cairo_get_font_matrix (state); }
+			get {
+				Matrix m;
+				CairoAPI.cairo_get_font_matrix (state, out m);
+				return m;
+			}
 			set { CairoAPI.cairo_set_font_matrix (state, value); }
 		}
 
