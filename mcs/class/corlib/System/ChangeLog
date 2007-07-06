@@ -1,5 +1,10 @@
 2007-07-06  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* Double.cs (Parse): Fix for string ending in garbaga, it was just ignoring it
+	instead of throwing FormatException. Fixes #81777
+
+2007-07-06  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* Double.cs (Parse): Fix for whitespace only strings, it was returning zero 
 	instead of throwing FormatException. Fixes #81630 
 

@@ -448,7 +448,7 @@ namespace System {
 
 				case State_ConsumeWhiteSpace:
 					if (allow_trailing_white && Char.IsWhiteSpace (c)) {
-						state = State_Exit;
+						state = State_ConsumeWhiteSpace;
 						break;
 					}
 					
