@@ -1,5 +1,10 @@
 2007-07-06  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ToolStripItem.cs: TextDirection getter handles looking up Inherit for us,
+	so remove my custom Get method and fix the property getter.
+
+2007-07-06  Jonathan Pobst  <monkey@jpobst.com>
+
 	* Label.cs: DefaultMargin for 2.0.
 
 2007-07-06  Jonathan Pobst  <monkey@jpobst.com>

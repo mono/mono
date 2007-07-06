@@ -709,7 +709,16 @@ namespace System.Windows.Forms
 		}
 
 		public virtual ToolStripTextDirection TextDirection {
-			get { return this.text_direction; }
+			get {
+				if (this.text_direction == ToolStripTextDirection.Inherit) {
+					if (this.Parent != null)
+						return this.Parent.TextDirection;
+					else
+						return ToolStripTextDirection.Horizontal;
+				}
+
+				return this.text_direction;
+			}
 			set {
 				if (!Enum.IsDefined (typeof (ToolStripTextDirection), value))
 					throw new InvalidEnumArgumentException (string.Format ("Enum argument value '{0}' is not valid for ToolStripTextDirection", value));
@@ -1318,7 +1327,7 @@ namespace System.Windows.Forms
 			this.text_size = TextRenderer.MeasureText (this.Text == null ? string.Empty: this.text, this.Font, Size.Empty, TextFormatFlags.HidePrefix);
 
 			// If our text is rotated, flip the width and height
-			ToolStripTextDirection direction = this.GetTextDirection ();
+			ToolStripTextDirection direction = this.TextDirection;
 			
 			if (direction == ToolStripTextDirection.Vertical270 || direction == ToolStripTextDirection.Vertical90)
 				this.text_size = new Size (this.text_size.Height, this.text_size.Width);
@@ -1476,18 +1485,6 @@ namespace System.Windows.Forms
 				this.is_selected = false;
 				this.Invalidate ();
 			}
-		}
-		
-		private ToolStripTextDirection GetTextDirection ()
-		{
-			if (this.TextDirection == ToolStripTextDirection.Inherit) {
-				if (this.Parent != null)
-					return this.Parent.TextDirection;
-				else
-					return ToolStripTextDirection.Horizontal;
-			}
-			
-			return this.TextDirection;
 		}
 		
 		internal virtual ToolStrip GetTopLevelToolStrip ()
