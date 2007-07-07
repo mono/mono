@@ -1,3 +1,8 @@
+2007-07-06  William Holmes  <billholmes54@gmail.com>
+
+	* assembly.c: Added a continue statement in probe_for_partial_name when
+	 parse_assembly_directory_name fails.  Fixes : 82002
+
 2007-07-06  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (check_unmanaged_pointer_type): renamed to check_unverifiable_type
