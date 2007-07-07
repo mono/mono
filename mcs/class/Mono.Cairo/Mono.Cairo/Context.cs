@@ -337,7 +337,7 @@ namespace Cairo {
                         }
 			
 			get {
-				return new Pattern (NativeMethods.cairo_get_source (state));
+				return Pattern.Lookup (NativeMethods.cairo_get_source (state));
 			}
                 }
 
@@ -586,20 +586,7 @@ namespace Cairo {
 
 		public Pattern PopGroup ()
 		{
-			IntPtr pattern = NativeMethods.cairo_pop_group (state);
-			PatternType pt = NativeMethods.cairo_pattern_get_type (pattern);
-			switch (pt) {
-			case PatternType.Solid:
-				return new SolidPattern (pattern);
-			case PatternType.Surface:
-				return new SurfacePattern (pattern);
-			case PatternType.Linear:
-				return new LinearGradient (pattern);
-			case PatternType.Radial:
-				return new RadialGradient (pattern);
-			default:
-				return new Pattern (pattern);
-			}
+			return Pattern.Lookup (NativeMethods.cairo_pop_group (state));
 		}
 
 		public void PopGroupToSource ()

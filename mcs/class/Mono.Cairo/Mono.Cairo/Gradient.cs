@@ -37,8 +37,7 @@ namespace Cairo {
 		{
 		}
 
-		// FIXME: should be protected
-		public Gradient ()
+		protected Gradient ()
 		{
 		}
 		

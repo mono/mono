@@ -28,21 +28,58 @@
 //
 
 using System;
+using System.Collections;
 
 namespace Cairo {
    
-        public class Pattern
+        public class Pattern : IDisposable
         {
                 protected IntPtr pattern = IntPtr.Zero;
+
+		internal static Pattern Lookup (IntPtr pattern)
+		{
+			if (pattern == IntPtr.Zero)
+				return null;
+
+			object x = patterns [pattern];
+			if (x != null)
+				return (Pattern) x;
+			
+			PatternType pt = NativeMethods.cairo_pattern_get_type (pattern);
+			switch (pt) {
+			case PatternType.Solid:
+				return new SolidPattern (pattern);
+			case PatternType.Surface:
+				return new SurfacePattern (pattern);
+			case PatternType.Linear:
+				return new LinearGradient (pattern);
+			case PatternType.Radial:
+				return new RadialGradient (pattern);
+			default:
+				return new Pattern (pattern);
+			}
+		}
 		
                 protected Pattern ()
                 {
                 }
 
+		static Hashtable patterns = new Hashtable ();
+		
 		internal Pattern (IntPtr ptr)
-		{			
+		{
+			lock (patterns){
+				patterns [ptr] = this;
+			}
 			pattern = ptr;
-		}		
+		}
+
+		~Pattern ()
+		{
+			lock (patterns){
+				patterns.Remove (this);
+			}
+		}
 		
                 [Obsolete ("Use the SurfacePattern constructor")]
                 public Pattern (Surface surface)
@@ -55,6 +92,11 @@ namespace Cairo {
                         NativeMethods.cairo_pattern_reference (pattern);
                 }
 
+		public void Dispose ()
+		{
+			Destroy ();
+		}
+		
                 public void Destroy ()
                 {
                         NativeMethods.cairo_pattern_destroy (pattern);

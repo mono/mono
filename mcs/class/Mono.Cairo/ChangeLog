@@ -1,8 +1,15 @@
 2007-07-07  Miguel de Icaza  <miguel@novell.com>
 
+	* Mono.Cairo/Context.cs: Integrate Alp's patch for looking up
+	Patterns and add the unmanaged to managed mapping engine (as the
+	various patterns can be derived, we need to ensure unique
+	managed instances for the same object). 
+
 	* Mono.Cairo/Gradient.cs: Made Gradient protected, although it is
 	an API change, there was no way any existing instances would have
-	ever worked. 
+	ever worked.   
+
+	From Alp.
 
 	* Mono.Cairo/Context.cs: Fix leak of the surface if set with
 	Target .
