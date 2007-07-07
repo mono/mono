@@ -25,6 +25,7 @@
 ./Mono.Cairo/LineCap.cs
 ./Mono.Cairo/LineJoin.cs
 ./Mono.Cairo/Matrix.cs
+./Mono.Cairo/NativeMethods.cs
 ./Mono.Cairo/Operator.cs
 ./Mono.Cairo/Pattern.cs
 ./Mono.Cairo/PatternType.cs

@@ -1,5 +1,7 @@
 2007-07-07  Miguel de Icaza  <miguel@novell.com>
 
+	* NativeMethods.cs: Split the native methods into its own file. 
+
 	* Mono.Cairo/Context.cs: Integrate Alp's patch to not use ref in
 	the call to cairo_font_extents, but use out instead.
 
