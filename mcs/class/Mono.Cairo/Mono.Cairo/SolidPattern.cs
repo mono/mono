@@ -37,6 +37,21 @@ namespace Cairo {
 		{
 		}
 
+		public SolidPattern (Color color)
+		{
+			pattern = NativeMethods.cairo_pattern_create_rgba (color.R, color.G, color.B, color.A);
+		}
+
+		public SolidPattern (double r, double g, double b)
+		{
+			pattern = NativeMethods.cairo_pattern_create_rgb (r, g, b);
+		}
+
+		public SolidPattern (double r, double g, double b, double a)
+		{
+			NativeMethods.cairo_pattern_create_rgba (r, g, b, a);
+		}
+
 		public SolidPattern (Color color, bool solid)
 		{
 			if (solid)

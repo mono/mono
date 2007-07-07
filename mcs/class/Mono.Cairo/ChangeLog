@@ -1,7 +1,12 @@
 2007-07-07  Miguel de Icaza  <miguel@novell.com>
 
+	* Mono.Cairo/SolidPattern.cs: Add helper APIs based on Alp's patch
+	based on F-Spot code.
+
 	Integrated various patches from Alp Toker:
 	
+	* Mono.Cairo/FontFace.cs: Add to the build.
+
 	* Mono.Cairo/Context.cs: Add a number of methods that are
 	compatible with the public Cairo API, and add commented out
 	Obsoletes for the names that we had.
