@@ -76,9 +76,6 @@ namespace Cairo {
 
 		~Pattern ()
 		{
-			lock (patterns){
-				patterns.Remove (this);
-			}
 		}
 		
                 [Obsolete ("Use the SurfacePattern constructor")]
@@ -92,14 +89,27 @@ namespace Cairo {
                         NativeMethods.cairo_pattern_reference (pattern);
                 }
 
-		public void Dispose ()
+		void IDisposable.Dispose ()
 		{
-			Destroy ();
+			Dispose (true);
+		}
+
+		protected virtual void Dispose (bool disposing)
+		{
+			if (disposing)
+				Destroy ();
+			GC.SuppressFinalize (this);
 		}
 		
                 public void Destroy ()
                 {
-                        NativeMethods.cairo_pattern_destroy (pattern);
+			if (pattern != IntPtr.Zero){
+				NativeMethods.cairo_pattern_destroy (pattern);
+				pattern = IntPtr.Zero;
+			}
+			lock (patterns){
+				patterns.Remove (this);
+			}
                 }
 		
 		public Status Status

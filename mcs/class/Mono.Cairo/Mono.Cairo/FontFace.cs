@@ -54,11 +54,18 @@ namespace Cairo
 			// font_face here, the programmer must do this with IDisposable.Dispose
 
 			Console.Error.WriteLine ("Programmer forgot to call Dispose on the FontFace");
+			Dispose (false);
 		}
 
 		void IDisposable.Dispose ()
 		{
-			NativeMethods.cairo_font_face_destroy (handle);
+			Dispose (true);
+		}
+
+		protected virtual void Dispose (bool disposing)
+		{
+			if (disposing)
+				NativeMethods.cairo_font_face_destroy (handle);
 			handle = IntPtr.Zero;
 			GC.SuppressFinalize (this);
 		}
