@@ -1,3 +1,13 @@
+2007-07-07  Miguel de Icaza  <miguel@novell.com>
+
+	* Integrate Alp's patch to rename CairoAPI NativeMethod, in
+	accordance to 2.7.1 framework guidelines.
+
+	* Removed the ifdef CAIRO_1_2, the documentation already reflects
+	that things are only available on Cairo 1.2.   
+
+	* Add new API calls to query Cairo for its version
+
 2007-05-26  John Luke  <john.luke@gmail.com>
 
 	* Mono.Cairo/Cairo.cs:

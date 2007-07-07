@@ -38,7 +38,7 @@ namespace Cairo {
 
 		public PdfSurface (string filename, double width, double height)
 		{
-			surface = CairoAPI.cairo_pdf_surface_create (filename, width, height);
+			surface = NativeMethods.cairo_pdf_surface_create (filename, width, height);
 			lock (surfaces.SyncRoot){
 				surfaces [surface] = this;
 			}
@@ -46,7 +46,7 @@ namespace Cairo {
 
 		public void SetSize (double width, double height)
 		{
-			CairoAPI.cairo_pdf_surface_set_size (surface, width, height);
+			NativeMethods.cairo_pdf_surface_set_size (surface, width, height);
 		}
 	}
 }

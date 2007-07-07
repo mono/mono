@@ -66,7 +66,7 @@ namespace Cairo {
                 public void InitIdentity ()
                 {
                 	// this.Init(1,0,0,1,0,0);
-                	CairoAPI.cairo_matrix_init_identity (this);
+                	NativeMethods.cairo_matrix_init_identity (this);
                 }
 		
 		public void Init (double xx, double yx, double xy, double yy,
@@ -79,23 +79,23 @@ namespace Cairo {
 		public void InitTranslate (double tx, double ty)
 		{		
 			//this.Init (1, 0, 0, 1, tx, ty);
-			CairoAPI.cairo_matrix_init_translate (this, tx, ty);
+			NativeMethods.cairo_matrix_init_translate (this, tx, ty);
 		}		
 		  			       
 		public void Translate (double tx, double ty)
 		{
-			CairoAPI.cairo_matrix_translate (this, tx, ty);
+			NativeMethods.cairo_matrix_translate (this, tx, ty);
 		}
 		
                 public void InitScale (double sx, double sy)
                 {
 			//this.Init (sx, 0, 0, sy, 0, 0);
-                	CairoAPI.cairo_matrix_init_scale (this, sx, sy);
+                	NativeMethods.cairo_matrix_init_scale (this, sx, sy);
                 }		
 		
                 public void Scale (double sx, double sy)
                 {
-			CairoAPI.cairo_matrix_scale (this, sx, sy);
+			NativeMethods.cairo_matrix_scale (this, sx, sy);
                 }
 
                 public void InitRotate (double radians)
@@ -106,40 +106,40 @@ namespace Cairo {
                 	c = Math.Cos (radians);
                 	this.Init (c, s, -s, c, 0, 0);
                 	*/
-                	CairoAPI.cairo_matrix_init_rotate (this, radians);
+                	NativeMethods.cairo_matrix_init_rotate (this, radians);
                 }		
 		
                 public void Rotate (double radians)
                 {
-			CairoAPI.cairo_matrix_rotate (this, radians);
+			NativeMethods.cairo_matrix_rotate (this, radians);
                 }
 
                 public Cairo.Status Invert ()
                 {
-			return CairoAPI.cairo_matrix_invert (this);
+			return NativeMethods.cairo_matrix_invert (this);
                 }
 
 		public void Multiply (Matrix b)
 		{
 			Matrix a = (Matrix) this.Clone ();
-			CairoAPI.cairo_matrix_multiply (this, a, b);
+			NativeMethods.cairo_matrix_multiply (this, a, b);
 		}
 		
 		public static Matrix Multiply (Matrix a, Matrix b) {
 			Matrix result = new Matrix ();
-			CairoAPI.cairo_matrix_multiply (result, a, b);
+			NativeMethods.cairo_matrix_multiply (result, a, b);
 			return result;
 		}
 			
 		
                 public void TransformDistance (ref double dx, ref double dy)
 		{
-                        CairoAPI.cairo_matrix_transform_distance (this, ref dx, ref dy);
+                        NativeMethods.cairo_matrix_transform_distance (this, ref dx, ref dy);
                 }
 
                 public void TransformPoint (ref double x, ref double y)
                 {
-                        CairoAPI.cairo_matrix_transform_point (this, ref x, ref y);
+                        NativeMethods.cairo_matrix_transform_point (this, ref x, ref y);
 		}
 
 		public override String ToString ()

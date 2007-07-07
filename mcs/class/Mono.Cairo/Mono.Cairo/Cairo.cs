@@ -39,19 +39,19 @@ namespace Cairo
 	// sort these so it is easier to find what is missing
 	// http://www.cairographics.org/manual/ix01.html
 	// FIXME: this should be static and named NativeMethods
-	public static class CairoAPI
+	public static class NativeMethods
 	{
 		const string cairo = "libcairo-2.dll";
 		
 		static public int Version {
 			get {
-				return Cairo.CairoAPI.cairo_version ();
+				return Cairo.NativeMethods.cairo_version ();
 			}
 		}
 
 		static public string VersionString {
 			get {
-				IntPtr x = Cairo.CairoAPI.cairo_version_string ();
+				IntPtr x = Cairo.NativeMethods.cairo_version_string ();
 				return Marshal.PtrToStringAnsi (x);
 			}
 		}

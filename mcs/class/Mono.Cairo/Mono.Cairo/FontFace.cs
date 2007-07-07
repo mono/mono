@@ -17,7 +17,7 @@ namespace Cairo
 
 		public FontType FontType {
 			get {
-				return CairoAPI.cairo_font_face_get_type (handle);
+				return NativeMethods.cairo_font_face_get_type (handle);
 			}
 		}
 	}

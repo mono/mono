@@ -45,7 +45,7 @@ namespace Cairo {
 
 		public ImageSurface (Format format, int width, int height)
 		{
-			surface = CairoAPI.cairo_image_surface_create (format, width, height);
+			surface = NativeMethods.cairo_image_surface_create (format, width, height);
 			lock (surfaces.SyncRoot){
 				surfaces [surface] = this;
 			}
@@ -53,7 +53,7 @@ namespace Cairo {
 
 		public ImageSurface (ref byte[] data, Cairo.Format format, int width, int height, int stride)
 		{
-			surface = CairoAPI.cairo_image_surface_create_for_data (data, format, width, height, stride);
+			surface = NativeMethods.cairo_image_surface_create_for_data (data, format, width, height, stride);
 			lock (surfaces.SyncRoot){
 				surfaces [surface] = this;
 			}
@@ -61,23 +61,23 @@ namespace Cairo {
 		
 		public ImageSurface (string filename)
 		{
-			surface = CairoAPI.cairo_image_surface_create_from_png (filename);
+			surface = NativeMethods.cairo_image_surface_create_from_png (filename);
 			lock (surfaces.SyncRoot){
 				surfaces [surface] = this;
 			}
 		}
 		
 		public int Width {
-			get { return CairoAPI.cairo_image_surface_get_width (surface); }
+			get { return NativeMethods.cairo_image_surface_get_width (surface); }
 		}
 		
 		public int Height {
-			get { return CairoAPI.cairo_image_surface_get_height (surface); }
+			get { return NativeMethods.cairo_image_surface_get_height (surface); }
 		}
 		
 		public byte[] Data {
 			get {
-				IntPtr ptr = CairoAPI.cairo_image_surface_get_data (surface);
+				IntPtr ptr = NativeMethods.cairo_image_surface_get_data (surface);
 				int length = Height * Stride;
 				byte[] data = new byte[length];
 				Marshal.Copy (ptr, data, 0, length);
@@ -86,11 +86,11 @@ namespace Cairo {
 		}
 
 		public Format Format {
-			get { return CairoAPI.cairo_image_surface_get_format (surface); }
+			get { return NativeMethods.cairo_image_surface_get_format (surface); }
 		}
 
 		public int Stride {
-			get { return CairoAPI.cairo_image_surface_get_stride (surface); }
+			get { return NativeMethods.cairo_image_surface_get_stride (surface); }
 		}
 	}
 }

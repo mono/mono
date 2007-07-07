@@ -44,13 +44,13 @@ namespace Cairo {
 		
 		public Status AddColorStop (double offset, Cairo.Color c)
 		{
-			CairoAPI.cairo_pattern_add_color_stop_rgba (pattern, offset, c.R, c.G, c.B, c.A);
+			NativeMethods.cairo_pattern_add_color_stop_rgba (pattern, offset, c.R, c.G, c.B, c.A);
 			return Status;
 		}
 
 		public Status AddColorStopRgb (double offset, Cairo.Color c)
 		{
-			CairoAPI.cairo_pattern_add_color_stop_rgb (pattern, offset, c.R, c.G, c.B);
+			NativeMethods.cairo_pattern_add_color_stop_rgb (pattern, offset, c.R, c.G, c.B);
 			return Status;
 		}
 	}

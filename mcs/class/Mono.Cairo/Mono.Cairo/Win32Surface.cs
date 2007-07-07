@@ -38,7 +38,7 @@ namespace Cairo {
 		
 		public Win32Surface (IntPtr hdc)
 		{
-			surface = CairoAPI.cairo_win32_surface_create (hdc);
+			surface = NativeMethods.cairo_win32_surface_create (hdc);
 			lock (surfaces.SyncRoot) {
 				surfaces [surface] = this;
 			}

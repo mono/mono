@@ -38,7 +38,7 @@ namespace Cairo {
 
 		public PSSurface (string filename, double width, double height)
 		{
-			surface = CairoAPI.cairo_ps_surface_create (filename, width, height);
+			surface = NativeMethods.cairo_ps_surface_create (filename, width, height);
 			lock (surfaces.SyncRoot){
 				surfaces [surface] = this;
 			}
@@ -46,22 +46,22 @@ namespace Cairo {
 
 		public void BeginPageSetup ()
 		{
-			CairoAPI.cairo_ps_surface_begin_page_setup (surface);
+			NativeMethods.cairo_ps_surface_begin_page_setup (surface);
 		}
 
 		public void BeginSetup ()
 		{
-			CairoAPI.cairo_ps_surface_begin_setup (surface);
+			NativeMethods.cairo_ps_surface_begin_setup (surface);
 		}
 
 		public void DscComment (string comment)
 		{
-			CairoAPI.cairo_ps_surface_dsc_comment (surface, comment);
+			NativeMethods.cairo_ps_surface_dsc_comment (surface, comment);
 		}
 
 		public void SetSize (double width, double height)
 		{
-			CairoAPI.cairo_ps_surface_set_size (surface, width, height);
+			NativeMethods.cairo_ps_surface_set_size (surface, width, height);
 		}
 	}
 }

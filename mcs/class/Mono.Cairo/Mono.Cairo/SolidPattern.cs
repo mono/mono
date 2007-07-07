@@ -40,9 +40,9 @@ namespace Cairo {
 		public SolidPattern (Color color, bool solid)
 		{
 			if (solid)
-				pattern = CairoAPI.cairo_pattern_create_rgb (color.R, color.G, color.B);
+				pattern = NativeMethods.cairo_pattern_create_rgb (color.R, color.G, color.B);
 			else
-				pattern = CairoAPI.cairo_pattern_create_rgba (color.R, color.G, color.B, color.A);
+				pattern = NativeMethods.cairo_pattern_create_rgba (color.R, color.G, color.B, color.A);
 		}
 	}
 }

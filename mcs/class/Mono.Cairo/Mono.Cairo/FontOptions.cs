@@ -37,7 +37,7 @@ namespace Cairo
 
 		public FontOptions ()
 		{
-			handle = CairoAPI.cairo_font_options_create ();
+			handle = NativeMethods.cairo_font_options_create ();
 		}
 
 		~FontOptions ()
@@ -52,12 +52,12 @@ namespace Cairo
 
 		public FontOptions Copy ()
 		{
-			return new FontOptions (CairoAPI.cairo_font_options_copy (handle));
+			return new FontOptions (NativeMethods.cairo_font_options_copy (handle));
 		}
 
 		public void Destroy ()
 		{
-			CairoAPI.cairo_font_options_destroy (handle);
+			NativeMethods.cairo_font_options_destroy (handle);
 		}
 
 		public void Dispose ()
@@ -92,7 +92,7 @@ namespace Cairo
 
 		bool Equals (FontOptions options)
 		{
-			return options != null && CairoAPI.cairo_font_options_equal (Handle, options.Handle);
+			return options != null && NativeMethods.cairo_font_options_equal (Handle, options.Handle);
 		}
 
 		public IntPtr Handle {
@@ -101,38 +101,38 @@ namespace Cairo
 
 		public override int GetHashCode ()
 		{
-			return (int) CairoAPI.cairo_font_options_hash (handle);
+			return (int) NativeMethods.cairo_font_options_hash (handle);
 		}
 		
 		public void Merge (FontOptions other)
 		{
 			if (other == null)
 				throw new ArgumentNullException ("other");
-			CairoAPI.cairo_font_options_merge (handle, other.Handle);
+			NativeMethods.cairo_font_options_merge (handle, other.Handle);
 		}
 
 		public Antialias Antialias {
-			get { return CairoAPI.cairo_font_options_get_antialias (handle); }
-			set { CairoAPI.cairo_font_options_set_antialias (handle, value); }
+			get { return NativeMethods.cairo_font_options_get_antialias (handle); }
+			set { NativeMethods.cairo_font_options_set_antialias (handle, value); }
 		}
 
 		public HintMetrics HintMetrics {
-			get { return CairoAPI.cairo_font_options_get_hint_metrics (handle);}
-			set { CairoAPI.cairo_font_options_set_hint_metrics (handle, value); }
+			get { return NativeMethods.cairo_font_options_get_hint_metrics (handle);}
+			set { NativeMethods.cairo_font_options_set_hint_metrics (handle, value); }
 		}
 
 		public HintStyle HintStyle {
-			get { return CairoAPI.cairo_font_options_get_hint_style (handle);}
-			set { CairoAPI.cairo_font_options_set_hint_style (handle, value); }
+			get { return NativeMethods.cairo_font_options_get_hint_style (handle);}
+			set { NativeMethods.cairo_font_options_set_hint_style (handle, value); }
 		}
 
 		public Status Status {
-			get { return CairoAPI.cairo_font_options_status (handle); }
+			get { return NativeMethods.cairo_font_options_status (handle); }
 		}
 
 		public SubpixelOrder SubpixelOrder {
-			get { return CairoAPI.cairo_font_options_get_subpixel_order (handle);}
-			set { CairoAPI.cairo_font_options_set_subpixel_order (handle, value); }
+			get { return NativeMethods.cairo_font_options_get_subpixel_order (handle);}
+			set { NativeMethods.cairo_font_options_set_subpixel_order (handle, value); }
 		}
 	}
 }

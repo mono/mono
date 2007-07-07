@@ -37,7 +37,7 @@ namespace Cairo {
 
 		public GlitzSurface (IntPtr glitz_surface)
 		{
-			surface = CairoAPI.cairo_glitz_surface_create (glitz_surface);
+			surface = NativeMethods.cairo_glitz_surface_create (glitz_surface);
 			lock (surfaces.SyncRoot) {
 				surfaces [surface] = this;
 			}

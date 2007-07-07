@@ -54,7 +54,7 @@ namespace Cairo {
 				surfaces [ptr] = this;
 			}
 			if (!owns)
-				CairoAPI.cairo_surface_reference (ptr);
+				NativeMethods.cairo_surface_reference (ptr);
                 }
 
 		static internal Surface LookupExternalSurface (IntPtr p)
@@ -70,7 +70,7 @@ namespace Cairo {
 
 		static internal Surface LookupSurface (IntPtr surface)
 		{
-			SurfaceType st = CairoAPI.cairo_surface_get_type (surface);
+			SurfaceType st = NativeMethods.cairo_surface_get_type (surface);
 			switch (st) {
 			case SurfaceType.Image:
 				return new ImageSurface (surface, true);
@@ -101,7 +101,7 @@ namespace Cairo {
                 public static Cairo.Surface CreateForImage (
                         ref byte[] data, Cairo.Format format, int width, int height, int stride)
                 {
-                        IntPtr p = CairoAPI.cairo_image_surface_create_for_data (
+                        IntPtr p = NativeMethods.cairo_image_surface_create_for_data (
                                 data, format, width, height, stride);
                         
                         return new Cairo.Surface (p, true);
@@ -111,7 +111,7 @@ namespace Cairo {
                 public static Cairo.Surface CreateForImage (
                         Cairo.Format format, int width, int height)
                 {
-                        IntPtr p = CairoAPI.cairo_image_surface_create (
+                        IntPtr p = NativeMethods.cairo_image_surface_create (
                                 format, width, height);
 
                         return new Cairo.Surface (p, true);
@@ -121,7 +121,7 @@ namespace Cairo {
                 public Cairo.Surface CreateSimilar (
                         Cairo.Content content, int width, int height)
                 {
-                        IntPtr p = CairoAPI.cairo_surface_create_similar (
+                        IntPtr p = NativeMethods.cairo_surface_create_similar (
                                 this.Handle, content, width, height);
 
                         return new Cairo.Surface (p, true);
@@ -135,8 +135,8 @@ namespace Cairo {
 		//[Obsolete ("Use Context.SetSource() followed by Context.Paint()")]
 		public void Show (Context gr, double x, double y) 
 		{
-			CairoAPI.cairo_set_source_surface (gr.Handle, surface, x, y);
-			CairoAPI.cairo_paint (gr.Handle);
+			NativeMethods.cairo_set_source_surface (gr.Handle, surface, x, y);
+			NativeMethods.cairo_paint (gr.Handle);
 		}
 
 		void IDisposable.Dispose ()
@@ -153,29 +153,29 @@ namespace Cairo {
 			lock (surfaces.SyncRoot)
 				surfaces.Remove (surface);
 
-			CairoAPI.cairo_surface_destroy (surface);
+			NativeMethods.cairo_surface_destroy (surface);
 			surface = (IntPtr) 0;
 		}
 		
 		public Status Finish ()
 		{
-			CairoAPI.cairo_surface_finish (surface);
+			NativeMethods.cairo_surface_finish (surface);
 			return Status;
 		}
 		
 		public void Flush ()
 		{
-			CairoAPI.cairo_surface_flush (surface);
+			NativeMethods.cairo_surface_flush (surface);
 		}
 		
 		public void MarkDirty ()
 		{
-			CairoAPI.cairo_surface_mark_dirty (Handle);
+			NativeMethods.cairo_surface_mark_dirty (Handle);
 		}
 		
 		public void MarkDirty (Rectangle rectangle)
 		{
-			CairoAPI.cairo_surface_mark_dirty_rectangle (Handle, (int)rectangle.X, (int)rectangle.Y, (int)rectangle.Width, (int)rectangle.Height);
+			NativeMethods.cairo_surface_mark_dirty_rectangle (Handle, (int)rectangle.X, (int)rectangle.Y, (int)rectangle.Width, (int)rectangle.Height);
 		}
 		
                 public IntPtr Handle {
@@ -187,12 +187,12 @@ namespace Cairo {
 		public PointD DeviceOffset {
 			get {
 				double x, y;
-				CairoAPI.cairo_surface_get_device_offset (surface, out x, out y);
+				NativeMethods.cairo_surface_get_device_offset (surface, out x, out y);
 				return new PointD (x, y);
 			}
 
 			set {
-				CairoAPI.cairo_surface_set_device_offset (surface, value.X, value.Y);
+				NativeMethods.cairo_surface_set_device_offset (surface, value.X, value.Y);
 			}
 		}
 		
@@ -203,12 +203,12 @@ namespace Cairo {
 
 		public void SetFallbackResolution (double x, double y)
 		{
-			CairoAPI.cairo_surface_set_fallback_resolution (surface, x, y);
+			NativeMethods.cairo_surface_set_fallback_resolution (surface, x, y);
 		}
 
 		public void WriteToPng (string filename)
 		{
-			CairoAPI.cairo_surface_write_to_png (surface, filename);
+			NativeMethods.cairo_surface_write_to_png (surface, filename);
 		}
 		
 		[Obsolete ("Use Handle instead.")]
@@ -219,15 +219,15 @@ namespace Cairo {
                 }
 		
 		public Status Status {
-			get { return CairoAPI.cairo_surface_status (surface); }
+			get { return NativeMethods.cairo_surface_status (surface); }
 		}
 
 		public Content Content {
-			get { return CairoAPI.cairo_surface_get_content (surface); }
+			get { return NativeMethods.cairo_surface_get_content (surface); }
 		}
 
 		public SurfaceType SurfaceType {
-			get { return CairoAPI.cairo_surface_get_type (surface); }
+			get { return NativeMethods.cairo_surface_get_type (surface); }
 		}
         }
 }

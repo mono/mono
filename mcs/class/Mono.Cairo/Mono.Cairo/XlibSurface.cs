@@ -40,7 +40,7 @@ namespace Cairo {
 	{
 		public XlibSurface (IntPtr display, IntPtr drawable, IntPtr visual, int width, int height)
 		{
-			surface = CairoAPI.cairo_xlib_surface_create (display, drawable, visual, width, height);
+			surface = NativeMethods.cairo_xlib_surface_create (display, drawable, visual, width, height);
 			lock (surfaces.SyncRoot){
 				surfaces [surface] = this;
 			}
@@ -54,46 +54,46 @@ namespace Cairo {
 		{
 			IntPtr	ptr;
 
-			ptr = CairoAPI.cairo_xlib_surface_create_for_bitmap (display, bitmap, screen, width, height);
+			ptr = NativeMethods.cairo_xlib_surface_create_for_bitmap (display, bitmap, screen, width, height);
 			return new XlibSurface(ptr, true);
 		}
 
 		public void SetDrawable (IntPtr drawable, int width, int height)
 		{
-			CairoAPI.cairo_xlib_surface_set_drawable (surface, drawable, width, height);
+			NativeMethods.cairo_xlib_surface_set_drawable (surface, drawable, width, height);
 		}
 
 		public void SetSize (int width, int height)
 		{
-			CairoAPI.cairo_xlib_surface_set_size (surface, width, height);
+			NativeMethods.cairo_xlib_surface_set_size (surface, width, height);
 		}
 
 		public int Depth {
-			get { return CairoAPI.cairo_xlib_surface_get_depth (surface); }
+			get { return NativeMethods.cairo_xlib_surface_get_depth (surface); }
 		}
 		
 		public IntPtr Display {
-			get { return CairoAPI.cairo_xlib_surface_get_display (surface); }
+			get { return NativeMethods.cairo_xlib_surface_get_display (surface); }
 		}
 
 		public IntPtr Drawable {
-			get { return CairoAPI.cairo_xlib_surface_get_drawable (surface); }
+			get { return NativeMethods.cairo_xlib_surface_get_drawable (surface); }
 		}
 
 		public int Height {
-			get { return CairoAPI.cairo_xlib_surface_get_height (surface); }
+			get { return NativeMethods.cairo_xlib_surface_get_height (surface); }
 		}
 
 		public IntPtr Screen {
-			get { return CairoAPI.cairo_xlib_surface_get_screen (surface); }
+			get { return NativeMethods.cairo_xlib_surface_get_screen (surface); }
 		}
 
 		public IntPtr Visual {
-			get { return CairoAPI.cairo_xlib_surface_get_visual (surface); }
+			get { return NativeMethods.cairo_xlib_surface_get_visual (surface); }
 		}
 
 		public int Width {
-			get { return CairoAPI.cairo_xlib_surface_get_width (surface); }
+			get { return NativeMethods.cairo_xlib_surface_get_width (surface); }
 		}
 
 	}

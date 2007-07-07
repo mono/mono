@@ -39,17 +39,17 @@ namespace Cairo {
 
 		public SurfacePattern (Surface surface)
 		{
-			pattern = CairoAPI.cairo_pattern_create_for_surface (surface.Handle);
+			pattern = NativeMethods.cairo_pattern_create_for_surface (surface.Handle);
 		}
 
 		public Extend Extend {
-			set { CairoAPI.cairo_pattern_set_extend (pattern, value); }
-			get { return CairoAPI.cairo_pattern_get_extend (pattern); }
+			set { NativeMethods.cairo_pattern_set_extend (pattern, value); }
+			get { return NativeMethods.cairo_pattern_get_extend (pattern); }
 		}
 
 		public Filter Filter {
-			set { CairoAPI.cairo_pattern_set_filter (pattern, value); }
-			get { return CairoAPI.cairo_pattern_get_filter (pattern); }
+			set { NativeMethods.cairo_pattern_set_filter (pattern, value); }
+			get { return NativeMethods.cairo_pattern_get_filter (pattern); }
 		}
 	}
 }
