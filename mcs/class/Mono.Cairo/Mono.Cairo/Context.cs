@@ -391,6 +391,11 @@ namespace Cairo {
 			NativeMethods.cairo_set_source_surface (state, source.Handle, x, y);
 		}
 
+		public void SetSource (Surface source)
+		{
+			NativeMethods.cairo_set_source_surface (state, source.Handle, 0, 0);
+		}
+		
 #region Path methods
                 
                 public void NewPath ()
