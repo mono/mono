@@ -10,6 +10,7 @@
 ./Mono.Cairo/FillRule.cs
 ./Mono.Cairo/Filter.cs
 ./Mono.Cairo/FontExtents.cs
+./Mono.Cairo/FontFace.cs
 ./Mono.Cairo/FontOptions.cs
 ./Mono.Cairo/FontSlant.cs
 ./Mono.Cairo/FontType.cs

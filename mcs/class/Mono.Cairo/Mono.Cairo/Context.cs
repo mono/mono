@@ -256,8 +256,8 @@ namespace Cairo {
                 public Cairo.Color Color {
 			set { 
 				NativeMethods.cairo_set_source_rgba (state, value.R, 
-							  value.G, value.B,
-							  value.A);
+								     value.G, value.B,
+								     value.A);
 			}			
                 }
 
@@ -369,16 +369,14 @@ namespace Cairo {
                         }
                 }
 
-		[Obsolete ("Use Color property")]
 		public void SetSourceRGB (double r, double g, double b)
 		{
-			Color = new Color (r, g, b);
+			NativeMethods.cairo_set_source_rgb (state, r, g, b);
 		}
 
-		[Obsolete ("Use Color property")]
 		public void SetSourceRGBA (double r, double g, double b, double a)
 		{
-			Color = new Color (r, g, b, a);
+			NativeMethods.cairo_set_source_rgba (state, r, g, b, a);
 		}
 
 		//[Obsolete ("Use SetSource method (with double parameters)")]
@@ -511,9 +509,9 @@ namespace Cairo {
 					NativeMethods.cairo_mask (state, pattern.Pointer);
 				}
 
-				public void MaskSurface (Surface surface, double x, double y)
+				public void MaskSurface (Surface surface, double surface_x, double surface_y)
 				{
-					NativeMethods.cairo_mask_surface (state, surface.Handle, x, y);
+					NativeMethods.cairo_mask_surface (state, surface.Handle, surface_x, surface_y);
 				}
 
                 public void Stroke ()
@@ -637,24 +635,49 @@ namespace Cairo {
 			NativeMethods.cairo_transform (state, m);
 		}
                 	
-
-		//FIXME: obsolete these methods
+#region Methods that will become obsolete in the long term, after 1.2.5 becomes wildly available
+		
+		//[Obsolete("Use UserToDevice instead")]
 		public void TransformPoint (ref double x, ref double y)
 		{
                 	NativeMethods.cairo_user_to_device (state, ref x, ref y);
 		}
 		
+		//[Obsolete("Use UserToDeviceDistance instead")]
                 public void TransformDistance (ref double dx, ref double dy) 
 		{
 			NativeMethods.cairo_user_to_device_distance (state, ref dx, ref dy);
 		}
 			
+		//[Obsolete("Use InverseTransformPoint instead")]
 		public void InverseTransformPoint (ref double x, ref double y)
 		{
 			NativeMethods.cairo_device_to_user (state, ref x, ref y);
 		}
 
+		//[Obsolete("Use DeviceToUserDistance instead")]
 		public void InverseTransformDistance (ref double dx, ref double dy)
+		{
+			NativeMethods.cairo_device_to_user_distance (state, ref dx, ref dy);
+		}
+#endregion
+		
+		public void UserToDevice (ref double x, ref double y)
+		{
+                	NativeMethods.cairo_user_to_device (state, ref x, ref y);
+		}
+		
+                public void UserToDeviceDistance (ref double dx, ref double dy) 
+		{
+			NativeMethods.cairo_user_to_device_distance (state, ref dx, ref dy);
+		}
+			
+		public void DeviceToUser (ref double x, ref double y)
+		{
+			NativeMethods.cairo_device_to_user (state, ref x, ref y);
+		}
+
+		public void DeviceToUserDistance (ref double dx, ref double dy)
 		{
 			NativeMethods.cairo_device_to_user_distance (state, ref dx, ref dy);
 		}
@@ -793,6 +816,16 @@ namespace Cairo {
 		public void FontFace (string family, FontSlant slant, FontWeight weight)
 		{
 			SelectFontFace (family, slant, weight);
+		}
+
+		public FontFace ContextFontFace {
+			get {
+				return Cairo.FontFace.Lookup (NativeMethods.cairo_get_font_face (state));
+			}
+
+			set {
+				NativeMethods.cairo_set_font_face (state, value == null ? IntPtr.Zero : value.Handle);
+			}
 		}
 		
 		public void SelectFontFace (string family, FontSlant slant, FontWeight weight)

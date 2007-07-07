@@ -1,5 +1,24 @@
 2007-07-07  Miguel de Icaza  <miguel@novell.com>
 
+	Integrated various patches from Alp Toker:
+	
+	* Mono.Cairo/Context.cs: Add a number of methods that are
+	compatible with the public Cairo API, and add commented out
+	Obsoletes for the names that we had.
+
+	(MaskSurface): More descriptive parameters
+
+	(SetSourceRGB, SetSourceRGBA): Removed [Obsoletes] from as those
+	are the public Cairo names.   Use the API directly without
+	creating a helper Color.
+
+	(FontFace): New property.
+
+	* Mono.Cairo/FontFace.cs: Partial integration of Alp's work for
+	FontFace.   There are two differences: no support for owns flag,
+	and no automatic unreffing on the finalizer thread.   Instead we
+	display an error message. 
+
 	* NativeMethods.cs: Split the native methods into its own file. 
 
 	* Mono.Cairo/Context.cs: Integrate Alp's patch to not use ref in
