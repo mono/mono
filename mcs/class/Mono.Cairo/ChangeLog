@@ -1,7 +1,9 @@
 2007-07-07  Miguel de Icaza  <miguel@novell.com>
 
-	* Mono.Cairo/Context.cs: From Alp Toker: new SetSourceOveload with
-	no x, y parameters.
+	* Mono.Cairo/Context.cs: Fix leak of the surface if set with
+	Target .
+
+	From Alp Toker: new SetSourceOveload with no x, y parameters.
 
 	From Alp Toker: Add new API call IdentityMatrix.
 

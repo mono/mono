@@ -361,6 +361,9 @@ namespace Cairo {
 
                 public Cairo.Surface Target {
                         set {
+				if (state != IntPtr.Zero)
+					NativeMethods.cairo_destroy (state);
+				
 				state = NativeMethods.cairo_create (value.Handle);
                         }
 
