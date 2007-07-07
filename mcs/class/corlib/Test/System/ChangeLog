@@ -1,3 +1,9 @@
+2007-07-07  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DateTimeTest.cs: Added test for bug #81778. Enabled test for bug
+	#47720. Added tests for ParseExact argument checks. No longer derive
+	from deprecated Assertion class. Code formatting.
+
 2007-07-06  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* DoubleTest.cs : Added test Parse_TrailingGarbage, for strings with garbage at the end

@@ -1,3 +1,9 @@
+2007-07-07  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DateTime.cs: In ParseExact, throw ArgumentNullException if format
+	is null; throw FormatException if formats array is empty or if one of
+	items is null or a zero-length string.
+
 2007-07-06  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* Double.cs (Parse): Fix for string ending in garbaga, it was just ignoring it

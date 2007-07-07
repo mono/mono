@@ -1536,9 +1536,10 @@ namespace System
 		public static DateTime ParseExact (string s, string format,
 						   IFormatProvider fp, DateTimeStyles style)
 		{
-			string[] formats;
+			if (format == null)
+				throw new ArgumentNullException ("format");
 
-			formats = new string [1];
+			string [] formats = new string [1];
 			formats[0] = format;
 
 			return ParseExact (s, formats, fp, style);
@@ -1551,9 +1552,17 @@ namespace System
 			DateTimeFormatInfo dfi = DateTimeFormatInfo.GetInstance (fp);
 
 			if (s == null)
-				throw new ArgumentNullException (Locale.GetText ("s is null"));
-			if (formats == null || formats.Length == 0)
-				throw new ArgumentNullException (Locale.GetText ("format is null"));
+				throw new ArgumentNullException ("s");
+			if (formats == null)
+				throw new ArgumentNullException ("formats");
+			if (formats.Length == 0)
+				throw new FormatException ("Format specifier was invalid.");
+
+			for (int i = 0; i < formats.Length; i++) {
+				string format = formats [i];
+				if (format == null || format.Length == 0)
+					throw new FormatException ("Format specifier was invalid.");
+			}
 
 			DateTime result;
 			bool longYear = false;
@@ -1629,7 +1638,7 @@ namespace System
 		}
 		
 		public TimeSpan Subtract(DateTime dt)
-		{   
+		{
 			return new TimeSpan(ticks.Ticks) - dt.ticks;
 		}
 
@@ -2085,7 +2094,6 @@ namespace System
 		}
 
 		public string ToString (string format, IFormatProvider fp)
-
 		{
 			DateTimeFormatInfo dfi = DateTimeFormatInfo.GetInstance(fp);
 
