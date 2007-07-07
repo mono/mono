@@ -43,47 +43,50 @@ using System.Security;
 using System.Security.Permissions;
 using System.Diagnostics.SymbolStore;
 
-namespace System.Reflection.Emit {
+namespace System.Reflection.Emit
+{
 #if NET_2_0
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_TypeBuilder))]
 #endif
 	[ClassInterface (ClassInterfaceType.None)]
-	public sealed class TypeBuilder : Type, _TypeBuilder {
-	#region Sync with reflection.h
-	private string tname;
-	private string nspace;
-	private Type parent;
-	private Type nesting_type;
-	private Type[] interfaces;
-	private int num_methods;
-	private MethodBuilder[] methods;
-	private ConstructorBuilder[] ctors;
-	private PropertyBuilder[] properties;
-	private int num_fields;
-	private FieldBuilder[] fields;
-	private EventBuilder[] events;
-	private CustomAttributeBuilder[] cattrs;
-	internal TypeBuilder[] subtypes;
-	internal TypeAttributes attrs;
-	private int table_idx;
-	private ModuleBuilder pmodule;
-	private int class_size;
-	private PackingSize packing_size;
-	private IntPtr generic_container;
+	public sealed class TypeBuilder : Type, _TypeBuilder
+	{
+		#region Sync with reflection.h
+		private string tname;
+		private string nspace;
+		private Type parent;
+		private Type nesting_type;
+		private Type[] interfaces;
+		private int num_methods;
+		private MethodBuilder[] methods;
+		private ConstructorBuilder[] ctors;
+		private PropertyBuilder[] properties;
+		private int num_fields;
+		private FieldBuilder[] fields;
+		private EventBuilder[] events;
+		private CustomAttributeBuilder[] cattrs;
+		internal TypeBuilder[] subtypes;
+		internal TypeAttributes attrs;
+		private int table_idx;
+		private ModuleBuilder pmodule;
+		private int class_size;
+		private PackingSize packing_size;
+		private IntPtr generic_container;
 #if NET_2_0 || BOOTSTRAP_NET_2_0
-	private	GenericTypeParameterBuilder[] generic_params;
+		private GenericTypeParameterBuilder[] generic_params;
 #else
-        private Object generic_params; /* so offsets don't change */
+		private Object generic_params; /* so offsets don't change */
 #endif
-	private RefEmitPermissionSet[] permissions;	
-	private Type created;
-	#endregion
-	string fullname;
+		private RefEmitPermissionSet[] permissions;
+		private Type created;
+		#endregion
+		string fullname;
 
 	public const int UnspecifiedTypeSize = 0;
 
-		protected override TypeAttributes GetAttributeFlagsImpl () {
+		protected override TypeAttributes GetAttributeFlagsImpl ()
+		{
 			return attrs;
 		}
 		
@@ -102,7 +105,8 @@ namespace System.Reflection.Emit {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern EventInfo get_event_info (EventBuilder eb);
 
-		internal TypeBuilder (ModuleBuilder mb, TypeAttributes attr) {
+		internal TypeBuilder (ModuleBuilder mb, TypeAttributes attr)
+		{
 			this.parent = null;
 			this.attrs = attr;
 			this.class_size = UnspecifiedTypeSize;
@@ -113,7 +117,8 @@ namespace System.Reflection.Emit {
 			setup_internal_class (this);
 		}
 
-		internal TypeBuilder (ModuleBuilder mb, string name, TypeAttributes attr, Type parent, Type[] interfaces, PackingSize packing_size, int type_size, Type nesting_type) {
+		internal TypeBuilder (ModuleBuilder mb, string name, TypeAttributes attr, Type parent, Type[] interfaces, PackingSize packing_size, int type_size, Type nesting_type)
+		{
 			int sep_index;
 			this.parent = parent;
 			this.attrs = attr;
@@ -153,12 +158,16 @@ namespace System.Reflection.Emit {
 				return fullname + ", " + Assembly.GetName().FullName;
 			}
 		}
+
 		public override Type BaseType {
 			get {
 				return parent;
 			}
 		}
-		public override Type DeclaringType {get {return nesting_type;}}
+
+		public override Type DeclaringType {
+			get { return nesting_type; }
+		}
 
 /*		public override bool IsSubclassOf (Type c)
 		{
@@ -182,7 +191,8 @@ namespace System.Reflection.Emit {
 			}
 		}
 
-		string GetFullName () {
+		string GetFullName ()
+		{
 			if (nesting_type != null)
 				return String.Concat (nesting_type.FullName, "+", tname);
 			if ((nspace != null) && (nspace.Length > 0))
@@ -206,21 +216,29 @@ namespace System.Reflection.Emit {
 		public override Module Module {
 			get {return pmodule;}
 		}
+
 		public override string Name {
 			get {return tname;}
 		}
+
 		public override string Namespace {
 			get {return nspace;}
 		}
+
 		public PackingSize PackingSize {
 			get {return packing_size;}
 		}
+
 		public int Size {
 			get { return class_size; }
 		}
-		public override Type ReflectedType {get {return nesting_type;}}
 
-		public void AddDeclarativeSecurity( SecurityAction action, PermissionSet pset) {
+		public override Type ReflectedType {
+			get { return nesting_type; }
+		}
+
+		public void AddDeclarativeSecurity (SecurityAction action, PermissionSet pset)
+		{
 			if (pset == null)
 				throw new ArgumentNullException ("pset");
 			if ((action == SecurityAction.RequestMinimum) ||
@@ -250,7 +268,8 @@ namespace System.Reflection.Emit {
 #if NET_2_0
 		[ComVisible (true)]
 #endif
-		public void AddInterfaceImplementation( Type interfaceType) {
+		public void AddInterfaceImplementation (Type interfaceType)
+		{
 			if (interfaceType == null)
 				throw new ArgumentNullException ("interfaceType");
 			check_not_created ();
@@ -284,7 +303,7 @@ namespace System.Reflection.Emit {
 			ConstructorBuilder found = null;
 			int count = 0;
 			
-			foreach (ConstructorBuilder cb in ctors){
+			foreach (ConstructorBuilder cb in ctors) {
 				if (callConvention != CallingConventions.Any && cb.CallingConvention != callConvention)
 					continue;
 				found = cb;
@@ -293,7 +312,7 @@ namespace System.Reflection.Emit {
 
 			if (count == 0)
 				return null;
-			if (types == null){
+			if (types == null) {
 				if (count > 1)
 					throw new AmbiguousMatchException ();
 				return found;
@@ -311,10 +330,11 @@ namespace System.Reflection.Emit {
 			}
 			if (binder == null)
 				binder = Binder.DefaultBinder;
-			return (ConstructorInfo)binder.SelectMethod (bindingAttr, match, types, modifiers);
+			return (ConstructorInfo) binder.SelectMethod (bindingAttr, match,
+				types, modifiers);
 		}
 
-		public override bool IsDefined( Type attributeType, bool inherit)
+		public override bool IsDefined (Type attributeType, bool inherit)
 		{
 			/*
 			 * MS throws NotSupported here, but we can't because some corlib
@@ -337,15 +357,19 @@ namespace System.Reflection.Emit {
 			return created.GetCustomAttributes (attributeType, inherit);
 		}
 
-		public TypeBuilder DefineNestedType (string name) {
-			return DefineNestedType (name, TypeAttributes.NestedPrivate, pmodule.assemblyb.corlib_object_type, null);
+		public TypeBuilder DefineNestedType (string name)
+		{
+			return DefineNestedType (name, TypeAttributes.NestedPrivate,
+				pmodule.assemblyb.corlib_object_type, null);
 		}
 
-		public TypeBuilder DefineNestedType (string name, TypeAttributes attr) {
+		public TypeBuilder DefineNestedType (string name, TypeAttributes attr)
+		{
 			return DefineNestedType (name, attr, pmodule.assemblyb.corlib_object_type, null);
 		}
 
-		public TypeBuilder DefineNestedType (string name, TypeAttributes attr, Type parent) {
+		public TypeBuilder DefineNestedType (string name, TypeAttributes attr, Type parent)
+		{
 			return DefineNestedType (name, attr, parent, null);
 		}
 
@@ -382,22 +406,26 @@ namespace System.Reflection.Emit {
 #if NET_2_0
 		[ComVisible (true)]
 #endif
-		public TypeBuilder DefineNestedType (string name, TypeAttributes attr, Type parent, Type[] interfaces) {
+		public TypeBuilder DefineNestedType (string name, TypeAttributes attr, Type parent, Type[] interfaces)
+		{
 			return DefineNestedType (name, attr, parent, interfaces, PackingSize.Unspecified, UnspecifiedTypeSize);
 		}
 
-		public TypeBuilder DefineNestedType (string name, TypeAttributes attr, Type parent, int typesize) {
+		public TypeBuilder DefineNestedType (string name, TypeAttributes attr, Type parent, int typesize)
+		{
 			return DefineNestedType (name, attr, parent, null, PackingSize.Unspecified, typesize);
 		}
 
-		public TypeBuilder DefineNestedType (string name, TypeAttributes attr, Type parent, PackingSize packsize) {
+		public TypeBuilder DefineNestedType (string name, TypeAttributes attr, Type parent, PackingSize packsize)
+		{
 			return DefineNestedType (name, attr, parent, null, packsize, UnspecifiedTypeSize);
 		}
 
 #if NET_2_0
 		[ComVisible (true)]
 #endif
-		public ConstructorBuilder DefineConstructor (MethodAttributes attributes, CallingConventions callingConvention, Type[] parameterTypes) {
+		public ConstructorBuilder DefineConstructor (MethodAttributes attributes, CallingConventions callingConvention, Type[] parameterTypes)
+		{
 			return DefineConstructor (attributes, callingConvention, parameterTypes, null, null);
 		}
 
@@ -412,7 +440,9 @@ namespace System.Reflection.Emit {
 		ConstructorBuilder DefineConstructor (MethodAttributes attributes, CallingConventions callingConvention, Type[] parameterTypes, Type[][] requiredCustomModifiers, Type[][] optionalCustomModifiers)
 		{
 			check_not_created ();
-			ConstructorBuilder cb = new ConstructorBuilder (this, attributes, callingConvention, parameterTypes, requiredCustomModifiers, optionalCustomModifiers);
+			ConstructorBuilder cb = new ConstructorBuilder (this, attributes,
+				callingConvention, parameterTypes, requiredCustomModifiers,
+				optionalCustomModifiers);
 			if (ctors != null) {
 				ConstructorBuilder[] new_ctors = new ConstructorBuilder [ctors.Length+1];
 				System.Array.Copy (ctors, new_ctors, ctors.Length);
@@ -457,7 +487,8 @@ namespace System.Reflection.Emit {
 			return cb;
 		}
 
-		private void append_method (MethodBuilder mb) {
+		private void append_method (MethodBuilder mb)
+		{
 			if (methods != null) {
 				if (methods.Length == num_methods) {
 					MethodBuilder[] new_methods = new MethodBuilder [methods.Length * 2];
@@ -471,12 +502,16 @@ namespace System.Reflection.Emit {
 			num_methods ++;
 		}
 
-		public MethodBuilder DefineMethod( string name, MethodAttributes attributes, Type returnType, Type[] parameterTypes) {
-			return DefineMethod (name, attributes, CallingConventions.Standard, returnType, parameterTypes);
+		public MethodBuilder DefineMethod (string name, MethodAttributes attributes, Type returnType, Type[] parameterTypes)
+		{
+			return DefineMethod (name, attributes, CallingConventions.Standard,
+				returnType, parameterTypes);
 		}
 
-		public MethodBuilder DefineMethod( string name, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type[] parameterTypes) {
-			return DefineMethod (name, attributes, callingConvention, returnType, null, null, parameterTypes, null, null);
+		public MethodBuilder DefineMethod (string name, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type[] parameterTypes)
+		{
+			return DefineMethod (name, attributes, callingConvention, returnType,
+				null, null, parameterTypes, null, null);
 		}
 
 #if NET_2_0 || BOOTSTRAP_NET_2_0
@@ -484,7 +519,8 @@ namespace System.Reflection.Emit {
 #else
 		internal
 #endif
-		MethodBuilder DefineMethod( string name, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type[] returnTypeRequiredCustomModifiers, Type[] returnTypeOptionalCustomModifiers, Type[] parameterTypes, Type[][] parameterTypeRequiredCustomModifiers, Type[][] parameterTypeOptionalCustomModifiers) {
+		MethodBuilder DefineMethod (string name, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type[] returnTypeRequiredCustomModifiers, Type[] returnTypeOptionalCustomModifiers, Type[] parameterTypes, Type[][] parameterTypeRequiredCustomModifiers, Type[][] parameterTypeOptionalCustomModifiers)
+		{
 			check_name ("name", name);
 			check_not_created ();
 			if (IsInterface && (
@@ -495,13 +531,21 @@ namespace System.Reflection.Emit {
 
 			if (returnType == null)
 				returnType = pmodule.assemblyb.corlib_void_type;
-			MethodBuilder res = new MethodBuilder (this, name, attributes, callingConvention, returnType, returnTypeRequiredCustomModifiers, returnTypeOptionalCustomModifiers, parameterTypes, parameterTypeRequiredCustomModifiers, parameterTypeOptionalCustomModifiers);
+			MethodBuilder res = new MethodBuilder (this, name, attributes, 
+				callingConvention, returnType,
+				returnTypeRequiredCustomModifiers,
+				returnTypeOptionalCustomModifiers, parameterTypes,
+				parameterTypeRequiredCustomModifiers,
+				parameterTypeOptionalCustomModifiers);
 			append_method (res);
 			return res;
 		}
 
-		public MethodBuilder DefinePInvokeMethod (string name, string dllName, string entryName, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type[] parameterTypes, CallingConvention nativeCallConv, CharSet nativeCharSet) {
-			return DefinePInvokeMethod (name, dllName, entryName, attributes, callingConvention, returnType, null, null, parameterTypes, null, null, nativeCallConv, nativeCharSet);
+		public MethodBuilder DefinePInvokeMethod (string name, string dllName, string entryName, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type[] parameterTypes, CallingConvention nativeCallConv, CharSet nativeCharSet)
+		{
+			return DefinePInvokeMethod (name, dllName, entryName, attributes,
+				callingConvention, returnType, null, null, parameterTypes,
+				null, null, nativeCallConv, nativeCharSet);
 		}
 
 #if NET_2_0 || BOOTSTRAP_NET_2_0
@@ -521,7 +565,8 @@ namespace System.Reflection.Emit {
 						Type[][] parameterTypeRequiredCustomModifiers, 
 						Type[][] parameterTypeOptionalCustomModifiers, 
 						CallingConvention nativeCallConv, 
-						CharSet nativeCharSet) {
+						CharSet nativeCharSet)
+		{
 			check_name ("name", name);
 			check_name ("dllName", dllName);
 			check_name ("entryName", entryName);
@@ -557,16 +602,19 @@ namespace System.Reflection.Emit {
 		}
 
 #if NET_2_0 || BOOTSTRAP_NET_2_0
-		public MethodBuilder DefineMethod (string name, MethodAttributes attributes) {
+		public MethodBuilder DefineMethod (string name, MethodAttributes attributes)
+		{
 			return DefineMethod (name, attributes, CallingConventions.Standard);
 		}
 
-		public MethodBuilder DefineMethod (string name, MethodAttributes attributes, CallingConventions callConv) {
+		public MethodBuilder DefineMethod (string name, MethodAttributes attributes, CallingConventions callConv)
+		{
 			return DefineMethod (name, attributes, callConv, null, null);
 		}
 #endif
 
-		public void DefineMethodOverride( MethodInfo methodInfoBody, MethodInfo methodInfoDeclaration) {
+		public void DefineMethodOverride (MethodInfo methodInfoBody, MethodInfo methodInfoDeclaration)
+		{
 			if (methodInfoBody == null)
 				throw new ArgumentNullException ("methodInfoBody");
 			if (methodInfoDeclaration == null)
@@ -579,7 +627,8 @@ namespace System.Reflection.Emit {
 			}
 		}
 
-		public FieldBuilder DefineField( string fieldName, Type type, FieldAttributes attributes) {
+		public FieldBuilder DefineField (string fieldName, Type type, FieldAttributes attributes)
+		{
 			return DefineField (fieldName, type, null, null, attributes);
 		}
 
@@ -588,7 +637,8 @@ namespace System.Reflection.Emit {
 #else
 		internal
 #endif
-	    FieldBuilder DefineField (string fieldName, Type type, Type[] requiredCustomAttributes, Type[] optionalCustomAttributes, FieldAttributes attributes) {
+		FieldBuilder DefineField (string fieldName, Type type, Type[] requiredCustomAttributes, Type[] optionalCustomAttributes, FieldAttributes attributes)
+		{
 			check_name ("fieldName", fieldName);
 			if (type == typeof (void))
 				throw new ArgumentException ("type",  "Bad field type in defining field.");
@@ -612,7 +662,8 @@ namespace System.Reflection.Emit {
 			return res;
 		}
 
-		public PropertyBuilder DefineProperty( string name, PropertyAttributes attributes, Type returnType, Type[] parameterTypes) {
+		public PropertyBuilder DefineProperty (string name, PropertyAttributes attributes, Type returnType, Type[] parameterTypes)
+		{
 			return DefineProperty (name, attributes, returnType, null, null, parameterTypes, null, null);
 		}
 
@@ -621,7 +672,8 @@ namespace System.Reflection.Emit {
 #else
 		internal
 #endif
-		PropertyBuilder DefineProperty (string name, PropertyAttributes attributes, Type returnType, Type[] returnTypeRequiredCustomModifiers, Type[] returnTypeOptionalCustomModifiers, Type[] parameterTypes, Type[][] parameterTypeRequiredCustomModifiers, Type[][] parameterTypeOptionalCustomModifiers) {
+		PropertyBuilder DefineProperty (string name, PropertyAttributes attributes, Type returnType, Type[] returnTypeRequiredCustomModifiers, Type[] returnTypeOptionalCustomModifiers, Type[] parameterTypes, Type[][] parameterTypeRequiredCustomModifiers, Type[][] parameterTypeOptionalCustomModifiers)
+		{
 			check_name ("name", name);
 			if (parameterTypes != null)
 				foreach (Type param in parameterTypes)
@@ -646,14 +698,19 @@ namespace System.Reflection.Emit {
 #if NET_2_0
 		[ComVisible (true)]
 #endif
-		public ConstructorBuilder DefineTypeInitializer() {
-			return DefineConstructor (MethodAttributes.Public | MethodAttributes.Static | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName, CallingConventions.Standard, null);
+		public ConstructorBuilder DefineTypeInitializer()
+		{
+			return DefineConstructor (MethodAttributes.Public |
+				MethodAttributes.Static | MethodAttributes.SpecialName |
+				MethodAttributes.RTSpecialName, CallingConventions.Standard,
+				null);
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern Type create_runtime_class (TypeBuilder tb);
 
-		private bool is_nested_in (Type t) {
+		private bool is_nested_in (Type t)
+		{
 			while (t != null) {
 				if (t == this)
 					return true;
@@ -663,7 +720,8 @@ namespace System.Reflection.Emit {
 			return false;
 		}
 		
-		public Type CreateType() {
+		public Type CreateType()
+		{
 			/* handle nesting_type */
 			if (created != null)
 				return created;
@@ -781,12 +839,14 @@ namespace System.Reflection.Emit {
 			return result;
 		}
 
-		public override Type GetElementType () { 
+		public override Type GetElementType ()
+		{
 			check_created ();
 			return created.GetElementType ();
 		}
 
-		public override EventInfo GetEvent (string name, BindingFlags bindingAttr) {
+		public override EventInfo GetEvent (string name, BindingFlags bindingAttr)
+		{
 			check_created ();
 			return created.GetEvent (name, bindingAttr);
 		}
@@ -797,7 +857,8 @@ namespace System.Reflection.Emit {
 			return GetEvents (DefaultBindingFlags);
 		}
 
-		public override EventInfo[] GetEvents (BindingFlags bindingAttr) {
+		public override EventInfo[] GetEvents (BindingFlags bindingAttr)
+		{
 			/* FIXME: mcs calls this
 			   check_created ();
 			*/
@@ -854,7 +915,8 @@ namespace System.Reflection.Emit {
 			return result;
 		}
 
-		public override FieldInfo GetField( string name, BindingFlags bindingAttr) {
+		public override FieldInfo GetField (string name, BindingFlags bindingAttr)
+		{
 			if (created != null)
 				return created.GetField (name, bindingAttr);
 
@@ -895,7 +957,8 @@ namespace System.Reflection.Emit {
 			return null;
 		}
 
-		public override FieldInfo[] GetFields (BindingFlags bindingAttr) {
+		public override FieldInfo[] GetFields (BindingFlags bindingAttr)
+		{
 			if (created != null)
 				return created.GetFields (bindingAttr);
 
@@ -936,12 +999,14 @@ namespace System.Reflection.Emit {
 			return result;
 		}
 
-		public override Type GetInterface (string name, bool ignoreCase) {
+		public override Type GetInterface (string name, bool ignoreCase)
+		{
 			check_created ();
 			return created.GetInterface (name, ignoreCase);
 		}
 		
-		public override Type[] GetInterfaces () {
+		public override Type[] GetInterfaces ()
+		{
 			if (interfaces != null) {
 				Type[] ret = new Type [interfaces.Length];
 				interfaces.CopyTo (ret, 0);
@@ -952,17 +1017,20 @@ namespace System.Reflection.Emit {
 		}
 
 		public override MemberInfo[] GetMember (string name, MemberTypes type,
-												BindingFlags bindingAttr) {
+												BindingFlags bindingAttr)
+		{
 			check_created ();
 			return created.GetMember (name, type, bindingAttr);
 		}
 
-		public override MemberInfo[] GetMembers (BindingFlags bindingAttr) {
+		public override MemberInfo[] GetMembers (BindingFlags bindingAttr)
+		{
 			check_created ();
 			return created.GetMembers (bindingAttr);
 		}
 
-		private MethodInfo[] GetMethodsByName (string name, BindingFlags bindingAttr, bool ignoreCase, Type reflected_type) {
+		private MethodInfo[] GetMethodsByName (string name, BindingFlags bindingAttr, bool ignoreCase, Type reflected_type)
+		{
 			MethodInfo[] candidates;
 			if (((bindingAttr & BindingFlags.DeclaredOnly) == 0) && (parent != null)) {
 				MethodInfo[] parent_methods = parent.GetMethods (bindingAttr);
@@ -1020,7 +1088,8 @@ namespace System.Reflection.Emit {
 			return result;
 		}
 
-		public override MethodInfo[] GetMethods (BindingFlags bindingAttr) {
+		public override MethodInfo[] GetMethods (BindingFlags bindingAttr)
+		{
 			return GetMethodsByName (null, bindingAttr, false, this);
 		}
 
@@ -1073,12 +1142,14 @@ namespace System.Reflection.Emit {
 			return (MethodInfo)binder.SelectMethod (bindingAttr, match, types, modifiers);
 		}
 
-		public override Type GetNestedType( string name, BindingFlags bindingAttr) {
+		public override Type GetNestedType (string name, BindingFlags bindingAttr)
+		{
 			check_created ();
 			return created.GetNestedType (name, bindingAttr);
 		}
 
-		public override Type[] GetNestedTypes (BindingFlags bindingAttr) {
+		public override Type[] GetNestedTypes (BindingFlags bindingAttr)
+		{
 			bool match;
 			ArrayList result = new ArrayList ();
 
@@ -1102,7 +1173,8 @@ namespace System.Reflection.Emit {
 			return r;
 		}
 
-		public override PropertyInfo[] GetProperties( BindingFlags bindingAttr) {
+		public override PropertyInfo[] GetProperties (BindingFlags bindingAttr)
+		{
 			if (properties == null)
 				return new PropertyInfo [0];
 			ArrayList l = new ArrayList ();
@@ -1144,7 +1216,8 @@ namespace System.Reflection.Emit {
 			return result;
 		}
 		
-		protected override PropertyInfo GetPropertyImpl( string name, BindingFlags bindingAttr, Binder binder, Type returnType, Type[] types, ParameterModifier[] modifiers) {
+		protected override PropertyInfo GetPropertyImpl (string name, BindingFlags bindingAttr, Binder binder, Type returnType, Type[] types, ParameterModifier[] modifiers)
+		{
 			throw not_supported ();
 		}
 
@@ -1160,7 +1233,8 @@ namespace System.Reflection.Emit {
 			return created.HasElementType;
 		}
 
-		public override object InvokeMember( string name, BindingFlags invokeAttr, Binder binder, object target, object[] args, ParameterModifier[] modifiers, CultureInfo culture, string[] namedParameters) {
+		public override object InvokeMember (string name, BindingFlags invokeAttr, Binder binder, object target, object[] args, ParameterModifier[] modifiers, CultureInfo culture, string[] namedParameters)
+		{
 			check_created ();
 			return created.InvokeMember (name, invokeAttr, binder, target, args, modifiers, culture, namedParameters);
 		}
@@ -1170,37 +1244,45 @@ namespace System.Reflection.Emit {
 			return Type.IsArrayImpl (this);
 		}
 
-		protected override bool IsByRefImpl () {
+		protected override bool IsByRefImpl ()
+		{
 			// FIXME
 			return false;
 		}
+
 		protected override bool IsCOMObjectImpl ()
 		{
 			return ((GetAttributeFlagsImpl () & TypeAttributes.Import) != 0);
 		}
 
-		protected override bool IsPointerImpl () {
+		protected override bool IsPointerImpl ()
+		{
 			// FIXME
 			return false;
 		}
-		protected override bool IsPrimitiveImpl () {
+
+		protected override bool IsPrimitiveImpl ()
+		{
 			// FIXME
 			return false;
 		}
-		protected override bool IsValueTypeImpl () {
+
+		protected override bool IsValueTypeImpl ()
+		{
 			return ((type_is_subtype_of (this, pmodule.assemblyb.corlib_value_type, false) || type_is_subtype_of (this, typeof(System.ValueType), false)) &&
 				this != pmodule.assemblyb.corlib_value_type &&
 				this != pmodule.assemblyb.corlib_enum_type);
 		}
 		
-		public override RuntimeTypeHandle TypeHandle { 
-			get { 
+		public override RuntimeTypeHandle TypeHandle {
+			get {
 				check_created ();
 				return created.TypeHandle;
-			} 
+			}
 		}
 
-		public void SetCustomAttribute( CustomAttributeBuilder customBuilder) {
+		public void SetCustomAttribute (CustomAttributeBuilder customBuilder)
+		{
 			if (customBuilder == null)
 				throw new ArgumentNullException ("customBuilder");
 
@@ -1314,11 +1396,13 @@ namespace System.Reflection.Emit {
 #if NET_2_0
 		[ComVisible (true)]
 #endif
-		public void SetCustomAttribute( ConstructorInfo con, byte[] binaryAttribute) {
+		public void SetCustomAttribute (ConstructorInfo con, byte[] binaryAttribute)
+		{
 			SetCustomAttribute (new CustomAttributeBuilder (con, binaryAttribute));
 		}
 
-		public EventBuilder DefineEvent( string name, EventAttributes attributes, Type eventtype) {
+		public EventBuilder DefineEvent (string name, EventAttributes attributes, Type eventtype)
+		{
 			check_name ("name", name);
 			if (eventtype == null)
 				throw new ArgumentNullException ("eventtype");
@@ -1337,7 +1421,7 @@ namespace System.Reflection.Emit {
 			return res;
 		}
 
-		public FieldBuilder DefineInitializedData( string name, byte[] data, FieldAttributes attributes) {
+		public FieldBuilder DefineInitializedData (string name, byte[] data, FieldAttributes attributes) {
 			if (data == null)
 				throw new ArgumentNullException ("data");
 			if ((data.Length == 0) || (data.Length > 0x3f0000))
@@ -1351,7 +1435,7 @@ namespace System.Reflection.Emit {
 
 		static int UnmanagedDataCount = 0;
 		
-		public FieldBuilder DefineUninitializedData( string name, int size, FieldAttributes attributes)
+		public FieldBuilder DefineUninitializedData (string name, int size, FieldAttributes attributes)
  		{
 			check_name ("name", name);
 			if ((size <= 0) || (size > 0x3f0000))
@@ -1492,7 +1576,8 @@ namespace System.Reflection.Emit {
 		}
 
 #if NET_2_0 || BOOTSTRAP_NET_2_0
-		public bool IsCreated () {
+		public bool IsCreated ()
+		{
 			return is_created;
 		}
 
@@ -1556,52 +1641,52 @@ namespace System.Reflection.Emit {
 			return generic_params;
 		}
 
-                public static ConstructorInfo GetConstructor (Type instanciated, ConstructorInfo ctor)
-                {
+		public static ConstructorInfo GetConstructor (Type instanciated, ConstructorInfo ctor)
+		{
 			ConstructorInfo res = instanciated.GetConstructor (ctor);
 			if (res == null)
 				throw new System.Exception ("constructor not found");
 			else
 				return res;
-                }
+		}
 
-                public static MethodInfo GetMethod (Type instanciated, MethodInfo meth)
-                {
+		public static MethodInfo GetMethod (Type instanciated, MethodInfo meth)
+		{
 			MethodInfo res = instanciated.GetMethod (meth);
 			if (res == null)
 				throw new System.Exception ("method not found");
 			else
 				return res;
-                }
+		}
 
-                public static FieldInfo GetField (Type instanciated, FieldInfo fld)
-                {
+		public static FieldInfo GetField (Type instanciated, FieldInfo fld)
+		{
 			FieldInfo res = instanciated.GetField (fld);
 			if (res == null)
 				throw new System.Exception ("field not found");
 			else
 				return res;
-                }
+		}
 #endif
 
-                void _TypeBuilder.GetIDsOfNames([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
-                {
-                        throw new NotImplementedException ();
-                }
+		void _TypeBuilder.GetIDsOfNames([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
+		{
+			throw new NotImplementedException ();
+		}
 
-                void _TypeBuilder.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
-                {
-                        throw new NotImplementedException ();
-                }
+		void _TypeBuilder.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
+		{
+			throw new NotImplementedException ();
+		}
 
-                void _TypeBuilder.GetTypeInfoCount (out uint pcTInfo)
-                {
-                        throw new NotImplementedException ();
-                }
+		void _TypeBuilder.GetTypeInfoCount (out uint pcTInfo)
+		{
+			throw new NotImplementedException ();
+		}
 
-                void _TypeBuilder.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
-                {
-                        throw new NotImplementedException ();
-                }
+		void _TypeBuilder.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }

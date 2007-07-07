@@ -1,3 +1,8 @@
+2007-07-07  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* MethodBuilder.cs: Code formatting. Spaces to tabs.
+	* TypeBuilder.cs: Same.
+
 2007-07-06  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TypeBuilder.cs: Throw InvalidOperationException when attempting to

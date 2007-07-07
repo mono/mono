@@ -40,13 +40,15 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Diagnostics.SymbolStore;
 
-namespace System.Reflection.Emit {
+namespace System.Reflection.Emit
+{
 #if NET_2_0
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_MethodBuilder))]
 #endif
 	[ClassInterface (ClassInterfaceType.None)]
-	public sealed class MethodBuilder : MethodInfo, _MethodBuilder {
+	public sealed class MethodBuilder : MethodInfo, _MethodBuilder
+	{
 		private RuntimeMethodHandle mhandle;
 		private Type rtype;
 		private Type[] parameters;
@@ -69,7 +71,7 @@ namespace System.Reflection.Emit {
 		private bool init_locals = true;
 		private IntPtr generic_container;
 #if NET_2_0 || BOOTSTRAP_NET_2_0
-		private	GenericTypeParameterBuilder[] generic_params;
+		private GenericTypeParameterBuilder[] generic_params;
 #else
 		private Object generic_params; /* so offsets are the same */
 #endif
@@ -79,7 +81,8 @@ namespace System.Reflection.Emit {
 		private Type[][] paramModOpt;
 		private RefEmitPermissionSet[] permissions;
 
-		internal MethodBuilder (TypeBuilder tb, string name, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type[] returnModReq, Type[] returnModOpt, Type[] parameterTypes, Type[][] paramModReq, Type[][] paramModOpt) {
+		internal MethodBuilder (TypeBuilder tb, string name, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type[] returnModReq, Type[] returnModOpt, Type[] parameterTypes, Type[][] paramModReq, Type[][] paramModOpt)
+		{
 			this.name = name;
 			this.attrs = attributes;
 			this.call_conv = callingConvention;
@@ -102,13 +105,13 @@ namespace System.Reflection.Emit {
 			}
 			type = tb;
 			table_idx = get_next_table_index (this, 0x06, true);
-			//Console.WriteLine ("index for "+name+" set to "+table_idx.ToString());
 		}
 
 		internal MethodBuilder (TypeBuilder tb, string name, MethodAttributes attributes, 
 								CallingConventions callingConvention, Type returnType, Type[] returnModReq, Type[] returnModOpt, Type[] parameterTypes, Type[][] paramModReq, Type[][] paramModOpt, 
 			String dllName, String entryName, CallingConvention nativeCConv, CharSet nativeCharset) 
-			: this (tb, name, attributes, callingConvention, returnType, returnModReq, returnModOpt, parameterTypes, paramModReq, paramModOpt) {
+			: this (tb, name, attributes, callingConvention, returnType, returnModReq, returnModOpt, parameterTypes, paramModReq, paramModOpt)
+		{
 			pi_dll = dllName;
 			pi_entry = entryName;
 			native_cc = nativeCConv;
@@ -130,16 +133,31 @@ namespace System.Reflection.Emit {
 			}
 		}
 
-		public override Type ReturnType {get {return rtype;}}
-		public override Type ReflectedType {get {return type;}}
-		public override Type DeclaringType {get {return type;}}
-		public override string Name {get {return name;}}
-		public override MethodAttributes Attributes {get {return attrs;}}
-		public override ICustomAttributeProvider ReturnTypeCustomAttributes {
-			get {return null;}
+		public override Type ReturnType {
+			get { return rtype; }
 		}
 
-		public override CallingConventions CallingConvention { 
+		public override Type ReflectedType {
+			get { return type; }
+		}
+
+		public override Type DeclaringType {
+			get { return type; }
+		}
+
+		public override string Name {
+			get { return name; }
+		}
+
+		public override MethodAttributes Attributes {
+			get { return attrs; }
+		}
+
+		public override ICustomAttributeProvider ReturnTypeCustomAttributes {
+			get { return null; }
+		}
+
+		public override CallingConventions CallingConvention {
 			get { return call_conv; }
 		}
 
@@ -178,17 +196,23 @@ namespace System.Reflection.Emit {
 			}
 		}
 
-		public MethodToken GetToken() {
+		public MethodToken GetToken()
+		{
 			return new MethodToken(0x06000000 | table_idx);
 		}
 		
-		public override MethodInfo GetBaseDefinition() {
+		public override MethodInfo GetBaseDefinition()
+		{
 			return this;
 		}
-		public override MethodImplAttributes GetMethodImplementationFlags() {
+
+		public override MethodImplAttributes GetMethodImplementationFlags()
+		{
 			return iattrs;
 		}
-		public override ParameterInfo[] GetParameters() {
+
+		public override ParameterInfo[] GetParameters()
+		{
 			if (!type.is_created)
 				throw NotSupported ();
 			if (parameters == null)
@@ -209,11 +233,13 @@ namespace System.Reflection.Emit {
 			return parameters.Length;
 		}
 
-		public Module GetModule () {
+		public Module GetModule ()
+		{
 			return type.Module;
 		}
 
-		public void CreateMethodBody( byte[] il, int count) {
+		public void CreateMethodBody (byte[] il, int count)
+		{
 			if ((il != null) && ((count < 0) || (count > il.Length)))
 				throw new ArgumentOutOfRangeException ("Index was out of range.  Must be non-negative and less than the size of the collection.");
 
@@ -228,13 +254,18 @@ namespace System.Reflection.Emit {
 			}
 		}
 
-		public override Object Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture) {
+		public override Object Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+		{
 			throw NotSupported ();
 		}
-		public override bool IsDefined (Type attribute_type, bool inherit) {
+
+		public override bool IsDefined (Type attribute_type, bool inherit)
+		{
 			throw NotSupported ();
 		}
-		public override object[] GetCustomAttributes( bool inherit) {
+
+		public override object[] GetCustomAttributes (bool inherit)
+		{
 			/*
 			 * On MS.NET, this always returns not_supported, but we can't do this
 			 * since there would be no way to obtain custom attributes of 
@@ -246,18 +277,21 @@ namespace System.Reflection.Emit {
 				throw NotSupported ();
 		}
 
-		public override object[] GetCustomAttributes( Type attributeType, bool inherit) {
+		public override object[] GetCustomAttributes (Type attributeType, bool inherit)
+		{
 			if (type.is_created)
 				return MonoCustomAttrs.GetCustomAttributes (this, attributeType, inherit);
 			else
 				throw NotSupported ();
 		}
 
-		public ILGenerator GetILGenerator () {
+		public ILGenerator GetILGenerator ()
+		{
 			return GetILGenerator (64);
 		}
 
-		public ILGenerator GetILGenerator (int size) {
+		public ILGenerator GetILGenerator (int size)
+		{
 			if (((iattrs & MethodImplAttributes.CodeTypeMask) != 
 				 MethodImplAttributes.IL) ||
 				((iattrs & MethodImplAttributes.ManagedMask) != 
@@ -286,7 +320,8 @@ namespace System.Reflection.Emit {
 			return pb;
 		}
 
-		internal void fixup () {
+		internal void fixup ()
+		{
 			if (((attrs & (MethodAttributes.Abstract | MethodAttributes.PinvokeImpl)) == 0) && ((iattrs & (MethodImplAttributes.Runtime | MethodImplAttributes.InternalCall)) == 0)) {
 #if NET_2_0
 				// do not allow zero length method body on MS.NET 2.0 (and higher)
@@ -313,7 +348,7 @@ namespace System.Reflection.Emit {
 			}
 		}
 
-		public void SetCustomAttribute( CustomAttributeBuilder customBuilder)
+		public void SetCustomAttribute (CustomAttributeBuilder customBuilder)
 		{
 			if (customBuilder == null)
 				throw new ArgumentNullException ("customBuilder");
@@ -404,19 +439,23 @@ namespace System.Reflection.Emit {
 #if NET_2_0
 		[ComVisible (true)]
 #endif
-		public void SetCustomAttribute( ConstructorInfo con, byte[] binaryAttribute) {
+		public void SetCustomAttribute (ConstructorInfo con, byte[] binaryAttribute)
+		{
 			if (con == null)
 				throw new ArgumentNullException ("con");
 			if (binaryAttribute == null)
 				throw new ArgumentNullException ("binaryAttribute");
 			SetCustomAttribute (new CustomAttributeBuilder (con, binaryAttribute));
 		}
-		public void SetImplementationFlags( MethodImplAttributes attributes) {
+
+		public void SetImplementationFlags (MethodImplAttributes attributes)
+		{
 			RejectIfCreated ();
 			iattrs = attributes;
 		}
 
-		public void AddDeclarativeSecurity( SecurityAction action, PermissionSet pset) {
+		public void AddDeclarativeSecurity (SecurityAction action, PermissionSet pset)
+		{
 			if (pset == null)
 				throw new ArgumentNullException ("pset");
 			if ((action == SecurityAction.RequestMinimum) ||
@@ -475,20 +514,24 @@ namespace System.Reflection.Emit {
 			return name.GetHashCode ();
 		}
 
-		internal override int get_next_table_index (object obj, int table, bool inc) {
+		internal override int get_next_table_index (object obj, int table, bool inc)
+		{
 			return type.get_next_table_index (obj, table, inc);
 		}
 
-		internal void set_override (MethodInfo mdecl) {
+		internal void set_override (MethodInfo mdecl)
+		{
 			override_method = mdecl;
 		}
 
-		private void RejectIfCreated () {
+		private void RejectIfCreated ()
+		{
 			if (type.is_created)
 				throw new InvalidOperationException ("Type definition of the method is complete.");
 		}
 
-		private Exception NotSupported () {
+		private Exception NotSupported ()
+		{
 			return new NotSupportedException ("The invoked member is not supported in a dynamic module.");
 		}
 
@@ -589,26 +632,24 @@ namespace System.Reflection.Emit {
 		}
 #endif
 
-                void _MethodBuilder.GetIDsOfNames([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
-                {
-                        throw new NotImplementedException ();
-                }
+		void _MethodBuilder.GetIDsOfNames([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
+		{
+			throw new NotImplementedException ();
+		}
 
-                void _MethodBuilder.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
-                {
-                        throw new NotImplementedException ();
-                }
+		void _MethodBuilder.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
+		{
+			throw new NotImplementedException ();
+		}
 
-                void _MethodBuilder.GetTypeInfoCount (out uint pcTInfo)
-                {
-                        throw new NotImplementedException ();
-                }
+		void _MethodBuilder.GetTypeInfoCount (out uint pcTInfo)
+		{
+			throw new NotImplementedException ();
+		}
 
-                void _MethodBuilder.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
-                {
-                        throw new NotImplementedException ();
-                }
-
+		void _MethodBuilder.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }
-
