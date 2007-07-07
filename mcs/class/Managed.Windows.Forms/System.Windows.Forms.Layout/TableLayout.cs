@@ -443,7 +443,7 @@ namespace System.Windows.Forms.Layout
 						else if (c.Dock == DockStyle.Right || (c.Anchor & AnchorStyles.Right) == AnchorStyles.Right)
 							new_x = (current_pos.X + column_width) - new_width - c.Margin.Right;
 						else	// (center control)
-							new_x = ((current_pos.X + column_width - c.Margin.Left - c.Margin.Right) / 2) + c.Margin.Left - (new_width / 2);
+							new_x = (current_pos.X + (column_width - c.Margin.Left - c.Margin.Right) / 2) + c.Margin.Left - (new_width / 2);
 
 						// Figure out the top location of the control
 						if (c.Dock == DockStyle.Top || c.Dock == DockStyle.Fill || (c.Anchor & AnchorStyles.Top) == AnchorStyles.Top)
@@ -451,7 +451,7 @@ namespace System.Windows.Forms.Layout
 						else if (c.Dock == DockStyle.Bottom || (c.Anchor & AnchorStyles.Bottom) == AnchorStyles.Bottom)
 							new_y = (current_pos.Y + column_height) - new_height - c.Margin.Bottom;
 						else	// (center control)
-							new_y = ((current_pos.Y + column_height - c.Margin.Top - c.Margin.Bottom) / 2) + c.Margin.Top - (new_height / 2);
+							new_y = (current_pos.Y + (column_height - c.Margin.Top - c.Margin.Bottom) / 2) + c.Margin.Top - (new_height / 2);
 
 						c.SetBounds (new_x, new_y, new_width, new_height, BoundsSpecified.None);
 					}

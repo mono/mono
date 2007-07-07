@@ -1038,6 +1038,55 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (new Rectangle (110, 101, 95, 96), _labelE.Bounds, "A41");
 			Assert.AreEqual (new Rectangle (214, 101, 95, 96), _labelF.Bounds, "A42");
 		}
+
+		[Test]
+		public void Bug81936 ()
+		{
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+
+			TableLayoutPanel tableLayoutPanel1;
+			Label button2;
+			Label button4;
+
+			tableLayoutPanel1 = new TableLayoutPanel ();
+			button2 = new Label ();
+			button4 = new Label ();
+			button2.Text = "Test1";
+			button4.Text = "Test2";
+			button2.Anchor = AnchorStyles.Left;
+			button4.Anchor = AnchorStyles.Left;
+			button2.Height = 14;
+			button4.Height = 14;
+			tableLayoutPanel1.SuspendLayout ();
+			f.SuspendLayout ();
+
+			tableLayoutPanel1.ColumnCount = 1;
+			tableLayoutPanel1.ColumnStyles.Add (new ColumnStyle ());
+			tableLayoutPanel1.Controls.Add (button2, 0, 0);
+			tableLayoutPanel1.Controls.Add (button4, 0, 1);
+			tableLayoutPanel1.Location = new Point (0, 0);
+			tableLayoutPanel1.RowCount = 2;
+			tableLayoutPanel1.RowStyles.Add (new RowStyle (SizeType.Absolute, 28F));
+			tableLayoutPanel1.RowStyles.Add (new RowStyle (SizeType.Absolute, 28F));
+			tableLayoutPanel1.Size = new Size (292, 56);
+
+			f.ClientSize = new Size (292, 312);
+			f.Controls.Add (tableLayoutPanel1);
+			f.Name = "Form1";
+			f.Text = "Form1";
+			tableLayoutPanel1.ResumeLayout (false);
+			tableLayoutPanel1.PerformLayout ();
+			f.ResumeLayout (false);
+			f.PerformLayout ();
+
+			f.Show ();
+
+			Assert.AreEqual (new Rectangle (3, 7, 100, 14), button2.Bounds, "A1");
+			Assert.AreEqual (new Rectangle (3, 35, 100, 14), button4.Bounds, "A2");
+
+			f.Dispose ();
+		}
 	}
 }
 #endif
