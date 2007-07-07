@@ -472,9 +472,7 @@ namespace System.Windows.Forms
 
 		internal void BindDataItems ()
 		{
-			if (data_manager != null) {
-				SetItemsCore (data_manager.List);
-			}
+			SetItemsCore (data_manager != null ? data_manager.List : new object [0]);
 		}
 
 		private void ConnectToDataSource ()

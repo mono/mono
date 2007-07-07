@@ -1,3 +1,9 @@
+2007-07-07  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListControl.cs: When DataSource is set to null, pass an empty
+	array of object to SetItemsCore. This is done to clean the items
+	in the ListContol children. Fixes #81788.
+
 2007-07-06  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ListControl.cs: Add 2.0 stuffs.
