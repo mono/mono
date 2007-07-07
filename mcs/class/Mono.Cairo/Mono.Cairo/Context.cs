@@ -700,6 +700,11 @@ namespace Cairo {
 			NativeMethods.cairo_set_font_size (state, scale);
 		}
 
+		public void IdentityMatrix ()
+		{
+			NativeMethods.cairo_identity_matrix (state);
+		}
+		
 		[Obsolete ("Use SetFontSize() instead.")]
 		public void FontSetSize (double scale)
 		{

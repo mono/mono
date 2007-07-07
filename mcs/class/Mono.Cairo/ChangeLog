@@ -1,5 +1,8 @@
 2007-07-07  Miguel de Icaza  <miguel@novell.com>
 
+	* Mono.Cairo/Context.cs: From Alp Toker: Add new API call
+	IdentityMatrix. 
+
 	* Mono.Cairo/Surface.cs: Integrate another cleanup from Alp.
 
 	* Mono.Cairo/SolidPattern.cs: Add helper APIs based on Alp's patch
