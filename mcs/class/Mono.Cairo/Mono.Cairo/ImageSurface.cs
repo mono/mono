@@ -58,6 +58,14 @@ namespace Cairo {
 				surfaces [surface] = this;
 			}
 		}
+
+		public ImageSurface (IntPtr data, Cairo.Format format, int width, int height, int stride)
+		{
+			surface = NativeMethods.cairo_image_surface_create_for_data (data, format, width, height, stride);
+			lock (surfaces.SyncRoot){
+				surfaces [surface] = this;
+			}
+		}
 		
 		public ImageSurface (string filename)
 		{
@@ -82,6 +90,12 @@ namespace Cairo {
 				byte[] data = new byte[length];
 				Marshal.Copy (ptr, data, 0, length);
 				return data;
+			}
+		}
+
+		public IntPtr DataPtr {
+			get {
+				return NativeMethods.cairo_image_surface_get_data (surface);
 			}
 		}
 

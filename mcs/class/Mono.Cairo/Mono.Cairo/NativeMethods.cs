@@ -256,6 +256,9 @@ namespace Cairo
 		
 		[DllImport (cairo)]
 		internal static extern IntPtr cairo_image_surface_create_for_data (byte[] data, Cairo.Format format, int width, int height, int stride);
+
+		[DllImport (cairo)]
+		internal static extern IntPtr cairo_image_surface_create_for_data (IntPtr data, Cairo.Format format, int width, int height, int stride);
 		
 		[DllImport (cairo)]
 		internal static extern IntPtr cairo_image_surface_create_from_png  (string filename);
@@ -550,10 +553,10 @@ namespace Cairo
 
 #if CAIRO_1_4
 		[DllImport (cairo)]
-		internal static extern Status cairo_get_dash (IntPtr cr, IntPtr dashes, out double offset);
+		internal static extern void cairo_get_dash (IntPtr cr, IntPtr dashes, out double offset);
 
 		[DllImport (cairo)]
-		internal static extern Status cairo_get_dash_count (IntPtr cr, out int count);
+		internal static extern int cairo_get_dash_count (IntPtr cr);
 #endif
 		
 		[DllImport (cairo)]
@@ -633,7 +636,7 @@ namespace Cairo
 		internal static extern void cairo_rectangle_list_destroy (IntPtr rectangle_list);
 
 		[DllImport (cairo)]
-		internal static extern IntPtr cairo_copy_clip_rectangles (IntPtr cr);
+		internal static extern IntPtr cairo_copy_clip_rectangle_list (IntPtr cr);
 #endif
 
 		// Surface
