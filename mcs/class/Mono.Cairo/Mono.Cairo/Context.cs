@@ -778,9 +778,8 @@ namespace Cairo {
 
                 public FontExtents FontExtents {
                         get {
-				
-                                FontExtents f_extents = new FontExtents();
-                                NativeMethods.cairo_font_extents (state, ref f_extents);
+                                FontExtents f_extents;
+                                NativeMethods.cairo_font_extents (state, out f_extents);
                                 return f_extents;
                         }
                 }

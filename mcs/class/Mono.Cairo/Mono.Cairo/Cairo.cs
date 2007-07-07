@@ -120,7 +120,7 @@ namespace Cairo
 		internal static extern void cairo_fill_preserve (IntPtr cr);
 		
 		[DllImport (cairo)]
-		internal static extern void cairo_font_extents (IntPtr cr, ref FontExtents extents);
+		internal static extern void cairo_font_extents (IntPtr cr, out FontExtents extents);
 		
 		// FontFace
 		[DllImport (cairo)]

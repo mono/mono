@@ -1,5 +1,8 @@
 2007-07-07  Miguel de Icaza  <miguel@novell.com>
 
+	* Mono.Cairo/Context.cs: Integrate Alp's patch to not use ref in
+	the call to cairo_font_extents, but use out instead.
+
 	* Integrate Alp's patch to rename CairoAPI NativeMethod, in
 	accordance to 2.7.1 framework guidelines.
 
