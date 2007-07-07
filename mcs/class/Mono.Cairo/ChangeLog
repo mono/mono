@@ -1,5 +1,9 @@
 2007-07-07  Miguel de Icaza  <miguel@novell.com>
 
+	* Mono.Cairo/Gradient.cs: Made Gradient protected, although it is
+	an API change, there was no way any existing instances would have
+	ever worked. 
+
 	* Mono.Cairo/Context.cs: Fix leak of the surface if set with
 	Target .
 
