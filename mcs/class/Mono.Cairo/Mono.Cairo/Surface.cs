@@ -74,7 +74,7 @@ namespace Cairo {
 			switch (st) {
 			case SurfaceType.Image:
 				return new ImageSurface (surface, true);
-			case SurfaceType.XLib:
+			case SurfaceType.Xlib:
 				return new XlibSurface (surface, true);
 			case SurfaceType.Xcb:
 				return new XcbSurface (surface, true);

@@ -36,7 +36,7 @@ namespace Cairo {
 		Image,
 		Pdf,
 		PS,
-		XLib,
+		Xlib,
 		Xcb,
 		Glitz,
 		Quartz,
