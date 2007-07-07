@@ -39,14 +39,24 @@ namespace Cairo
 	// sort these so it is easier to find what is missing
 	// http://www.cairographics.org/manual/ix01.html
 	// FIXME: this should be static and named NativeMethods
-	internal sealed class CairoAPI
+	public static class CairoAPI
 	{
 		const string cairo = "libcairo-2.dll";
 		
-		private CairoAPI ()
-		{
+		static public int Version {
+			get {
+				return Cairo.CairoAPI.cairo_version ();
+			}
 		}
-		
+
+		static public string VersionString {
+			get {
+				IntPtr x = Cairo.CairoAPI.cairo_version_string ();
+				return Marshal.PtrToStringAnsi (x);
+			}
+		}
+
+#region Internal APIs
 		//[DllImport (cairo)]
 		//internal static extern void cairo_append_path (IntPtr cr, Path path);
 		
@@ -116,10 +126,8 @@ namespace Cairo
 		[DllImport (cairo)]
 		internal static extern void cairo_font_face_destroy (IntPtr font_face);
 
-#if CAIRO_1_2		
 		[DllImport (cairo)]
 		internal static extern FontType cairo_font_face_get_type (IntPtr font_face);
-#endif
 
 		//[DllImport (cairo)]
 		//internal static extern void cairo_font_face_get_user_data (IntPtr font_face);
@@ -417,10 +425,8 @@ namespace Cairo
 		[DllImport (cairo)]
 		internal static extern void cairo_pattern_get_matrix (IntPtr pattern, Matrix matrix);
 
-#if CAIRO_1_2
 		[DllImport (cairo)]
 		internal static extern PatternType cairo_pattern_get_type (IntPtr pattern);
-#endif
 		
 		[DllImport (cairo)]
 		internal static extern IntPtr cairo_pattern_reference (IntPtr pattern);
@@ -520,7 +526,6 @@ namespace Cairo
 		[DllImport (cairo)]
 		internal static extern void cairo_scaled_font_extents (IntPtr scaled_font, out TextExtents extents);
 
-#if CAIRO_1_2		
 		[DllImport (cairo)]
 		internal static extern void cairo_scaled_font_get_ctm (IntPtr scaled_font, out Matrix matrix);
 
@@ -535,7 +540,6 @@ namespace Cairo
 
 		[DllImport (cairo)]
 		internal static extern FontType cairo_scaled_font_get_type (IntPtr scaled_font);
-#endif
 
 		[DllImport (cairo)]
 		internal static extern void cairo_scaled_font_glyph_extents (IntPtr scaled_font, IntPtr glyphs, int num_glyphs, out TextExtents extents);
@@ -546,10 +550,8 @@ namespace Cairo
 		[DllImport (cairo)]
 		internal static extern Status cairo_scaled_font_status (IntPtr scaled_font);
 
-#if CAIRO_1_2		
 		[DllImport (cairo)]
 		internal static extern void cairo_scaled_font_text_extents (IntPtr scaled_font, string utf8, out TextExtents extents);
-#endif
 		
 		[DllImport (cairo)]
 		internal static extern void cairo_select_font_face (IntPtr cr, string family, FontSlant slant, FontWeight weight);
@@ -670,10 +672,8 @@ namespace Cairo
 		[DllImport (cairo)]
 		internal static extern void cairo_surface_get_font_options (IntPtr surface, IntPtr FontOptions);
 
-#if CAIRO_1_2
 		[DllImport (cairo)]
 		internal static extern SurfaceType cairo_surface_get_type (IntPtr surface);
-#endif
 		
 		[DllImport (cairo)]
 		internal static extern void cairo_surface_mark_dirty (IntPtr surface);
@@ -705,10 +705,8 @@ namespace Cairo
 		//[DllImport (cairo)]
 		//internal static extern IntPtr cairo_svg_surface_create_for_stream (double width, double height);
 		
-#if CAIRO_1_2
 		[DllImport (cairo)]
 		internal static extern IntPtr cairo_svg_surface_restrict_to_version (IntPtr surface, SvgVersion version);
-#endif
 		
 		[DllImport (cairo)]
 		internal static extern void cairo_text_extents (IntPtr cr, string utf8, out TextExtents extents);
@@ -803,5 +801,6 @@ namespace Cairo
 		
 		[DllImport (cairo)]
 		internal static extern void cairo_xlib_surface_set_size (IntPtr surface, int width, int height);
+#endregion
 	}
 }

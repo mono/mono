@@ -40,8 +40,6 @@ namespace Cairo
 		None,
 		Repeat,
 		Reflect,
-#if CAIRO_1_2
 		Pad,
-#endif
 	}
 }

@@ -399,12 +399,10 @@ namespace Cairo {
                         CairoAPI.cairo_new_path (state);
                 }
 
-#if CAIRO_1_2
 		public void NewSubPath ()
 		{
 			CairoAPI.cairo_new_sub_path (state);
 		}
-#endif
         
                 public void MoveTo (PointD p)
                 {
@@ -579,7 +577,6 @@ namespace Cairo {
 			return CairoAPI.cairo_in_fill (state, x, y);
 		}
 
-#if CAIRO_1_2
 		public Pattern PopGroup ()
 		{
 			IntPtr pattern = CairoAPI.cairo_pop_group (state);
@@ -619,7 +616,6 @@ namespace Cairo {
 				return Surface.LookupSurface (surface);
 			}
 		}
-#endif
 
                 public void Rotate (double angle)
                 {

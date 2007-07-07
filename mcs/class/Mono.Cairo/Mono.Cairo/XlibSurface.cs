@@ -68,7 +68,6 @@ namespace Cairo {
 			CairoAPI.cairo_xlib_surface_set_size (surface, width, height);
 		}
 
-#if CAIRO_1_2
 		public int Depth {
 			get { return CairoAPI.cairo_xlib_surface_get_depth (surface); }
 		}
@@ -96,6 +95,6 @@ namespace Cairo {
 		public int Width {
 			get { return CairoAPI.cairo_xlib_surface_get_width (surface); }
 		}
-#endif
+
 	}
 }

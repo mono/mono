@@ -15,11 +15,11 @@ namespace Cairo
 			get { return handle; }
 		}
 
-#if CAIRO_1_2
 		public FontType FontType {
-			get { return CairoAPI.cairo_font_face_get_type (handle); }
+			get {
+				return CairoAPI.cairo_font_face_get_type (handle);
+			}
 		}
-#endif
 	}
 }
 

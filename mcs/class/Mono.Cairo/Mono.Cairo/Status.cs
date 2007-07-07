@@ -57,12 +57,8 @@ namespace Cairo
 		InvalidVisual,
 		FileNotFound,
 		InvalidDash,
-#if CAIRO_1_2
 		InvalidDscComment,
-#endif
-#if CAIRO_1_4
 		InvalidIndex,
 		ClipNotRepresentable,
-#endif
 	}
 }

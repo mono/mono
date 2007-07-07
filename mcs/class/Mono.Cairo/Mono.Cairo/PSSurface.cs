@@ -26,8 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if CAIRO_1_2
-
 using System;
 
 namespace Cairo {
@@ -67,5 +65,3 @@ namespace Cairo {
 		}
 	}
 }
-
-#endif

@@ -75,7 +75,6 @@ namespace Cairo {
 			get { return CairoAPI.cairo_image_surface_get_height (surface); }
 		}
 		
-#if CAIRO_1_2
 		public byte[] Data {
 			get {
 				IntPtr ptr = CairoAPI.cairo_image_surface_get_data (surface);
@@ -93,6 +92,5 @@ namespace Cairo {
 		public int Stride {
 			get { return CairoAPI.cairo_image_surface_get_stride (surface); }
 		}
-#endif
 	}
 }

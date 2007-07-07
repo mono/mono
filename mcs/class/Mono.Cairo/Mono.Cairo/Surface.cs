@@ -68,37 +68,35 @@ namespace Cairo {
 			}
 		}		
 
-#if CAIRO_1_2
 		static internal Surface LookupSurface (IntPtr surface)
 		{
-				SurfaceType st = CairoAPI.cairo_surface_get_type (surface);
-				switch (st) {
-					case SurfaceType.Image:
-						return new ImageSurface (surface, true);
-					case SurfaceType.XLib:
-						return new XlibSurface (surface, true);
-					case SurfaceType.Xcb:
-						return new XcbSurface (surface, true);
-					case SurfaceType.Glitz:
-						return new GlitzSurface (surface, true);
-					case SurfaceType.Win32:
-						return new Win32Surface (surface, true);
-//#if CAIRO_1_2
-					case SurfaceType.Pdf:
-						return new PdfSurface (surface, true);
-					case SurfaceType.PS:
-						return new PSSurface (surface, true);
-					case SurfaceType.DirectFB:
-						return new DirectFBSurface (surface, true);
-					case SurfaceType.Svg:
-						return new SvgSurface (surface, true);
-//#endif
-					default:
-						return Surface.LookupExternalSurface (surface);
-				}
-		}
-#endif
+			SurfaceType st = CairoAPI.cairo_surface_get_type (surface);
+			switch (st) {
+			case SurfaceType.Image:
+				return new ImageSurface (surface, true);
+			case SurfaceType.XLib:
+				return new XlibSurface (surface, true);
+			case SurfaceType.Xcb:
+				return new XcbSurface (surface, true);
+			case SurfaceType.Glitz:
+				return new GlitzSurface (surface, true);
+			case SurfaceType.Win32:
+				return new Win32Surface (surface, true);
 
+			case SurfaceType.Pdf:
+				return new PdfSurface (surface, true);
+			case SurfaceType.PS:
+				return new PSSurface (surface, true);
+			case SurfaceType.DirectFB:
+				return new DirectFBSurface (surface, true);
+			case SurfaceType.Svg:
+				return new SvgSurface (surface, true);
+
+			default:
+				return Surface.LookupExternalSurface (surface);
+			}
+		}
+		
 		[Obsolete ("Use an ImageSurface constructor instead.")]
                 public static Cairo.Surface CreateForImage (
                         ref byte[] data, Cairo.Format format, int width, int height, int stride)
@@ -187,13 +185,12 @@ namespace Cairo {
                 }
 
 		public PointD DeviceOffset {
-#if CAIRO_1_2
 			get {
 				double x, y;
 				CairoAPI.cairo_surface_get_device_offset (surface, out x, out y);
 				return new PointD (x, y);
 			}
-#endif
+
 			set {
 				CairoAPI.cairo_surface_set_device_offset (surface, value.X, value.Y);
 			}
@@ -204,12 +201,10 @@ namespace Cairo {
 			Dispose (true);
 		}
 
-#if CAIRO_1_2
 		public void SetFallbackResolution (double x, double y)
 		{
 			CairoAPI.cairo_surface_set_fallback_resolution (surface, x, y);
 		}
-#endif
 
 		public void WriteToPng (string filename)
 		{
@@ -227,7 +222,6 @@ namespace Cairo {
 			get { return CairoAPI.cairo_surface_status (surface); }
 		}
 
-#if CAIRO_1_2
 		public Content Content {
 			get { return CairoAPI.cairo_surface_get_content (surface); }
 		}
@@ -235,6 +229,5 @@ namespace Cairo {
 		public SurfaceType SurfaceType {
 			get { return CairoAPI.cairo_surface_get_type (surface); }
 		}
-#endif
         }
 }

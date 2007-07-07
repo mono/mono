@@ -38,9 +38,7 @@ namespace Cairo
 		Rgb24	= 1,
 		A8	= 2,
 		A1	= 3,
-#if CAIRO_1_2
 		Rgb16565 = 4,
-#endif
 
 		//[Obsolete ("Use Argb32")]
 		ARGB32 = Argb32,
