@@ -203,7 +203,7 @@ namespace Cairo {
                 protected virtual void Dispose (bool disposing)
                 {
 			if (!disposing){
-				//Console.WriteLine ("Cairo.Context: called from thread");
+				Console.Error.WriteLine ("Cairo.Context: called from finalization thread, programmer is missing a call to Dispose");
 				return;
 			}
 			
