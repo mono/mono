@@ -18,9 +18,10 @@ public class Test
 		var a3 = new[] { new Test (), null }; 
 		var a4 = new[,] { { 1, 2, 3 }, { 4, 5, 6 } };
 		var a5 = new[] { default (object) };
+		var a6 = new[] { new [] { 1, 2, 3 }, new [] { 4, 5, 6 } };
 		
 		const byte b = 100;
-		var a6 = new[] { b, 10, b, 999, b };
+		var a7 = new[] { b, 10, b, 999, b };
 		
 		return 0;
 	}
