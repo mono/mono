@@ -1,5 +1,7 @@
 2007-07-07  Miguel de Icaza  <miguel@novell.com>
 
+	* Mono.Cairo/Surface.cs: Integrate another cleanup from Alp.
+
 	* Mono.Cairo/SolidPattern.cs: Add helper APIs based on Alp's patch
 	based on F-Spot code.
 

@@ -147,14 +147,14 @@ namespace Cairo {
 
 		protected virtual void Dispose (bool disposing)
 		{
-			if (surface == (IntPtr) 0)
+			if (surface == IntPtr.Zero)
 				return;
 			
 			lock (surfaces.SyncRoot)
 				surfaces.Remove (surface);
 
 			NativeMethods.cairo_surface_destroy (surface);
-			surface = (IntPtr) 0;
+			surface = IntPtr.Zero;
 		}
 		
 		public Status Finish ()
