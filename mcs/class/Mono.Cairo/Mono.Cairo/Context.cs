@@ -255,9 +255,7 @@ namespace Cairo {
                 //FIXME: obsolete this property
                 public Cairo.Color Color {
 			set { 
-				NativeMethods.cairo_set_source_rgba (state, value.R, 
-								     value.G, value.B,
-								     value.A);
+				NativeMethods.cairo_set_source_rgba (state, value.R, value.G, value.B, value.A);
 			}			
                 }
 
@@ -269,7 +267,10 @@ namespace Cairo {
                 }		
 
                 public double Tolerance {
-						get { return NativeMethods.cairo_get_tolerance (state); }
+			get {
+				return NativeMethods.cairo_get_tolerance (state);
+			}
+
                         set {
                                 NativeMethods.cairo_set_tolerance (state, value);
                         }
@@ -404,28 +405,28 @@ namespace Cairo {
         
                 public void MoveTo (PointD p)
                 {
-						MoveTo (p.X, p.Y);
+			MoveTo (p.X, p.Y);
                 }
 
-				public void MoveTo (double x, double y)
-				{
+		public void MoveTo (double x, double y)
+		{
                         NativeMethods.cairo_move_to (state, x, y);
-				}
+		}
                 
                 public void LineTo (PointD p)
-				{
-						LineTo (p.X, p.Y);
-				}
-
-				public void LineTo (double x, double y)
+		{
+			LineTo (p.X, p.Y);
+		}
+		
+		public void LineTo (double x, double y)
                 {
                         NativeMethods.cairo_line_to (state, x, y);
                 }
 
                 public void CurveTo (PointD p1, PointD p2, PointD p3)
-				{
-						CurveTo (p1.X, p1.Y, p2.X, p2.Y, p3.X, p3.Y);
-				}
+		{
+			CurveTo (p1.X, p1.Y, p2.X, p2.Y, p3.X, p3.Y);
+		}
 				
                 public void CurveTo (double x1, double y1, double x2, double y2, double x3, double y3)
                 {
@@ -433,25 +434,25 @@ namespace Cairo {
                 }
 
                 public void RelMoveTo (Distance d)
-				{
-						RelMoveTo (d.Dx, d.Dy);
-				}
-				
+		{
+			RelMoveTo (d.Dx, d.Dy);
+		}
+		
                 public void RelMoveTo (double dx, double dy)
                 {
                         NativeMethods.cairo_rel_move_to (state, dx, dy);
                 }
-
+		
                 public void RelLineTo (Distance d)
                 {
-						RelLineTo (d.Dx, d.Dy);
+			RelLineTo (d.Dx, d.Dy);
                 }
-
+		
                 public void RelLineTo (double dx, double dy)
-				{
+		{
                         NativeMethods.cairo_rel_line_to (state, dx, dy);
-				}
-
+		}
+		
                 public void RelCurveTo (Distance d1, Distance d2, Distance d3)
 		{
 			RelCurveTo (d1.Dx, d1.Dy, d2.Dx, d2.Dy, d3.Dx, d3.Dy);
@@ -494,26 +495,26 @@ namespace Cairo {
 #endregion
 
 #region Painting Methods
-				public void Paint ()
-				{
-					NativeMethods.cairo_paint (state);
-				}
-
-				public void PaintWithAlpha (double alpha)
-				{
-					NativeMethods.cairo_paint_with_alpha (state, alpha);
-				}
-
-				public void Mask (Pattern pattern)
-				{
-					NativeMethods.cairo_mask (state, pattern.Pointer);
-				}
-
-				public void MaskSurface (Surface surface, double surface_x, double surface_y)
-				{
-					NativeMethods.cairo_mask_surface (state, surface.Handle, surface_x, surface_y);
-				}
-
+		public void Paint ()
+		{
+			NativeMethods.cairo_paint (state);
+		}
+		
+		public void PaintWithAlpha (double alpha)
+		{
+			NativeMethods.cairo_paint_with_alpha (state, alpha);
+		}
+		
+		public void Mask (Pattern pattern)
+		{
+			NativeMethods.cairo_mask (state, pattern.Pointer);
+		}
+		
+		public void MaskSurface (Surface surface, double surface_x, double surface_y)
+		{
+			NativeMethods.cairo_mask_surface (state, surface.Handle, surface_x, surface_y);
+		}
+		
                 public void Stroke ()
                 {
                         NativeMethods.cairo_stroke (state);
@@ -555,11 +556,11 @@ namespace Cairo {
                         NativeMethods.cairo_clip (state);
                 }
 
-				public void ClipPreserve ()
-				{
-					NativeMethods.cairo_clip_preserve (state);
-				}
-
+		public void ClipPreserve ()
+		{
+			NativeMethods.cairo_clip_preserve (state);
+		}
+		
 		public void ResetClip ()
 		{
 			NativeMethods.cairo_reset_clip (state);
@@ -580,16 +581,16 @@ namespace Cairo {
 			IntPtr pattern = NativeMethods.cairo_pop_group (state);
 			PatternType pt = NativeMethods.cairo_pattern_get_type (pattern);
 			switch (pt) {
-				case PatternType.Solid:
-					return new SolidPattern (pattern);
-				case PatternType.Surface:
-					return new SurfacePattern (pattern);
-				case PatternType.Linear:
-					return new LinearGradient (pattern);
-				case PatternType.Radial:
-					return new RadialGradient (pattern);
-				default:
-					return new Pattern (pattern);
+			case PatternType.Solid:
+				return new SolidPattern (pattern);
+			case PatternType.Surface:
+				return new SurfacePattern (pattern);
+			case PatternType.Linear:
+				return new LinearGradient (pattern);
+			case PatternType.Radial:
+				return new RadialGradient (pattern);
+			default:
+				return new Pattern (pattern);
 			}
 		}
 
