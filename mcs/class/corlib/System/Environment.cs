@@ -38,9 +38,13 @@ using System.Runtime.CompilerServices;
 using System.Security;
 using System.Security.Permissions;
 using System.Text;
+using System.Runtime.InteropServices;
 
 namespace System {
 
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 #if NET_2_0
 	public static class Environment {
 #else

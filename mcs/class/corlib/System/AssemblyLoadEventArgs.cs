@@ -31,9 +31,13 @@
 //
 
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace System 
 {
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public class AssemblyLoadEventArgs: EventArgs
 	{
 		private Assembly m_loadedAssembly;

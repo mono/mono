@@ -1,3 +1,9 @@
+2007-07-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* *.cs: Add missing ComVisible attributes.
+
+	* Delegate.cs: Add missing 2.0 CreateDelegate () methods.
+
 2007-07-07  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DateTime.cs: In ParseExact, throw ArgumentNullException if format
@@ -29,7 +35,6 @@
 	* Environment.cs (InternalGetFolderPath): Try reading some
 	paths from ~/.config/user-dirs.dirs (XDG user dirs spec);
 	always return something for MyPictures
-
 
 2007-07-04  Atsushi Enomoto  <atsushi@ximian.com>
 

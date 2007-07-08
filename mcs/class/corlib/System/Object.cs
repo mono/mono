@@ -42,6 +42,9 @@ namespace System {
 
 	[Serializable]
 	[ClassInterface (ClassInterfaceType.AutoDual)]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public class Object {
 
 		// <summary>

@@ -32,10 +32,14 @@
 //
 
 using System.Runtime.Serialization;
+using System.Runtime.InteropServices;
 
 namespace System
 {
 	[Serializable]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public class CannotUnloadAppDomainException : SystemException
 	{
 		const int Result = unchecked ((int)0x80131015);

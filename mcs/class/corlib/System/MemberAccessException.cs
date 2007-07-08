@@ -29,10 +29,14 @@
 //
 
 using System.Runtime.Serialization;
+using System.Runtime.InteropServices;
 
 namespace System
 {
 	[Serializable]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public class MemberAccessException : SystemException
 	{
 		const int Result = unchecked ((int)0x8013151A);

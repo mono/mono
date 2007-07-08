@@ -29,9 +29,13 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+using System.Runtime.InteropServices;
 
 namespace System
 {
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 #if NET_2_0
 	[AttributeUsage (AttributeTargets.Field, Inherited=false)]
 #else

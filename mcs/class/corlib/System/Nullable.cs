@@ -34,9 +34,13 @@ using System.Reflection;
 using System.Collections.Generic;
 #endif
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 #if NET_2_0
 namespace System {
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public static class Nullable {
 		public static int Compare<T> (Nullable<T> left, Nullable<T> right) where T: struct
 		{

@@ -34,10 +34,14 @@ using System.Collections;
 #if NET_2_0
 using System.Collections.Generic;
 #endif
+using System.Runtime.InteropServices;
 
 namespace System
 {
 	[Serializable]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public sealed class CharEnumerator : IEnumerator, ICloneable
 #if NET_2_0
 	, IEnumerator <char>

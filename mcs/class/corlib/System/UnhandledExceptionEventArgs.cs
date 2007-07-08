@@ -33,10 +33,14 @@
 #if NET_2_0
 using System.Runtime.ConstrainedExecution;
 #endif
+using System.Runtime.InteropServices;
 
 namespace System 
 {
 	[Serializable]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public class UnhandledExceptionEventArgs : EventArgs
 	{
 		private object exception;

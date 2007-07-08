@@ -32,8 +32,12 @@
 //
 
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace System {
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public 
 #if NET_2_0
 		static

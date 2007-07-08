@@ -36,6 +36,7 @@
 using System.Collections;
 using System.Globalization;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace System
 {
@@ -76,6 +77,9 @@ namespace System
 	};
 
 	[Serializable]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public abstract class Enum : ValueType, IComparable, IConvertible, IFormattable
 	{
 		protected Enum ()

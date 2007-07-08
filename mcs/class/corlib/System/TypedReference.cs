@@ -31,10 +31,14 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Security.Permissions;
+using System.Runtime.InteropServices;
 
 namespace System 
 {
 	[CLSCompliant (false)]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public struct TypedReference 
 	{
 		RuntimeTypeHandle type;

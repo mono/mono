@@ -32,9 +32,13 @@
 
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace System 
 {
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public sealed class LocalDataStoreSlot
 	{
 		internal int slot;

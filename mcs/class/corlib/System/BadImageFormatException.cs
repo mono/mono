@@ -32,11 +32,15 @@
 using System.Globalization;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace System
 {
 	[Serializable]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public class BadImageFormatException : SystemException
 	{
 		const int Result = unchecked ((int)0x8007000B);

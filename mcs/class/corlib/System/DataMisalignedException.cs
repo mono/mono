@@ -26,12 +26,16 @@
 //
 
 using System.Runtime.Serialization;
+using System.Runtime.InteropServices;
 
 #if NET_2_0
 
 namespace System
 {
 	[Serializable]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public sealed class DataMisalignedException : SystemException
 	{
 		const int Result = unchecked ((int)0x80131541);

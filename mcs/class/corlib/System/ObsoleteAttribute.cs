@@ -29,6 +29,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+using System.Runtime.InteropServices;
 
 namespace System
 {
@@ -39,6 +40,9 @@ namespace System
 		AttributeTargets.Interface | AttributeTargets.Delegate,
 		Inherited=false)]
 	[Serializable]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public sealed class ObsoleteAttribute : Attribute
 	{
 		private string _message;

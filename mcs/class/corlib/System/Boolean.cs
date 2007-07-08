@@ -41,6 +41,7 @@
 //
 
 using System.Globalization;
+using System.Runtime.InteropServices;
 
 namespace System
 {
@@ -48,6 +49,9 @@ namespace System
 	/// Represents the boolean values of logical true and false.
 	/// </summary>
 	[Serializable]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public struct Boolean : IComparable, IConvertible
 #if NET_2_0
 		, IComparable <bool>, IEquatable <bool>

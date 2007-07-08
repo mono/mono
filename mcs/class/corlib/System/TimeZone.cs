@@ -43,10 +43,14 @@ using System.Collections;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
+using System.Runtime.InteropServices;
 
 namespace System
 {
 	[Serializable]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public abstract class TimeZone
 	{
 		// Fields

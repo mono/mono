@@ -33,10 +33,14 @@
 //
 
 using System.Runtime.Serialization;
+using System.Runtime.InteropServices;
 
 namespace System
 {
 	[Serializable]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public sealed class DBNull : ISerializable, IConvertible
 	{
 		// Fields

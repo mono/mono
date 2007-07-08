@@ -32,10 +32,14 @@
 using System.Threading;
 using System.Runtime.Remoting;
 using System.Security.Permissions;
+using System.Runtime.InteropServices;
 
 namespace System
 {
 	[Serializable]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public abstract class MarshalByRefObject
 	{
 		[NonSerialized]
