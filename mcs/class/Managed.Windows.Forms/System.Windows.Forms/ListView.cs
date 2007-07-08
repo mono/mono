@@ -1523,13 +1523,13 @@ namespace System.Windows.Forms
 			}
 
 			item_control.Visible = true;
-			item_control.Location = new Point (0, header_control.Height);
+			item_control.Location = Point.Empty;
 			item_control.Width = ClientRectangle.Width;
 
 			int item_height = GetDetailsItemHeight ();
 			ItemSize = new Size (0, item_height); // We only cache Height for details view
 
-			int y = 0; 
+			int y = header_control.Height;
 			if (items.Count > 0) {
 				for (int i = 0; i < items.Count; i++) {
 					SetItemLocation (i, 0, y, 0, 0);

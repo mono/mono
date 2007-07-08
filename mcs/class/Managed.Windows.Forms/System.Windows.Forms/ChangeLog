@@ -1,5 +1,13 @@
 2007-07-07  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ListView.cs: In Details view, set the location of item_control
+	in the (0,0) position (and the header_control is thus on the
+	item_control). This way the Bounds of the Items are relative to the
+	ListView control (before this, they had a Bounds value without the
+	header_control offset, which wasn't matching .Net). Fixes #82004.
+
+2007-07-07  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* ListControl.cs: When DataSource is set to null, pass an empty
 	array of object to SetItemsCore. This is done to clean the items
 	in the ListContol children. Fixes #81788.
