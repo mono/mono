@@ -283,6 +283,9 @@ namespace System.Windows.Forms
 		{
 			base.OnPaintBackground (e);
 
+			if (column_widths == null || row_heights == null)
+				return;
+				
 			DrawCellBorders (e);
 			
 			int border_width = GetCellBorderWidth (CellBorderStyle);

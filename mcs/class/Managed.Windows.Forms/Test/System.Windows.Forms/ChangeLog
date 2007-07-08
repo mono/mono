@@ -1,3 +1,8 @@
+2007-07-08  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TableLayoutTest.cs: Simplify and enable Gert's test for bug
+	#82040.  Add a test for bug #82041.
+
 2007-07-08  Gert Driesen  <drieseng@users.souceforge.net>
 
 	* TableLayoutTest.cs: Added test for bug #82040.

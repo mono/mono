@@ -1089,7 +1089,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test] // bug #82040
-		[Category ("NotWorking")]
 		public void ShowNoChildren ()
 		{
 			Form form = new Form ();
@@ -1101,16 +1100,28 @@ namespace MonoTests.System.Windows.Forms
 			tableLayoutPanel.RowCount = 11;
 			form.Controls.Add (tableLayoutPanel);
 
-			Timer timer = new Timer ();
-			timer.Interval = 100;
-			timer.Tick += delegate (object sender, EventArgs e) {
-				form.Close ();
-			};
+			form.Show ();
+			form.Refresh ();
+			form.Dispose ();
+		}
 
-			form.Load += delegate (object sender, EventArgs e) {
-				timer.Enabled = true;
-			};
-			form.ShowDialog ();
+		[Test] // bug #82041
+		public void DontCallResumeLayout ()
+		{
+			Form form = new Form ();
+			form.ShowInTaskbar = false;
+
+			TableLayoutPanel tableLayoutPanel = new TableLayoutPanel ();
+			form.Controls.Add (tableLayoutPanel);
+			tableLayoutPanel.SuspendLayout ();
+			tableLayoutPanel.ColumnCount = 3;
+			tableLayoutPanel.Dock = DockStyle.Fill;
+			tableLayoutPanel.RowCount = 11;
+			tableLayoutPanel.Controls.Add (new Button ());
+
+			form.Show ();
+			form.Refresh ();
+			form.Dispose ();
 		}
 	}
 }

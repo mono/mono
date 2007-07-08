@@ -1,3 +1,9 @@
+2007-07-08  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TableLayoutPanel.cs: Add a null check so we don't NRE trying to
+	paint cell borders if we haven't calculated where they go yet.
+	[Fixes bugs #82040 and #82041]
+
 2007-07-07  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: In Details view, set the location of item_control
