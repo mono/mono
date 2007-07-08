@@ -51,7 +51,7 @@ using System.Timers;
 
 namespace System.Net.Sockets 
 {
-	public class Socket : IDisposable 
+	public class Socket : IDisposable
 	{
 		enum SocketOperation {
 			Accept,
@@ -69,7 +69,7 @@ namespace System.Net.Sockets
 		}
 
 		[StructLayout (LayoutKind.Sequential)]
-		private sealed class SocketAsyncResult: IAsyncResult 
+		private sealed class SocketAsyncResult: IAsyncResult
 		{
 			/* Same structure in the runtime */
 			public Socket Sock;
@@ -123,9 +123,8 @@ namespace System.Net.Sockets
 					throw delayedException;
 				}
 
-				if (error != 0) {
+				if (error != 0)
 					throw new SocketException (error);
-				}
 			}
 
 			void CompleteAllOnDispose (Queue queue)
@@ -295,12 +294,11 @@ namespace System.Net.Sockets
 #if NET_2_0
 					SocketException ex = delayedException as SocketException;
 					
-					if (ex != null) {
+					if (ex != null)
 						return(ex.SocketErrorCode);
-					}
-					if (error != 0) {
+
+					if (error != 0)
 						return((SocketError)error);
-					}
 #endif
 					return(SocketError.Success);
 				}
@@ -546,7 +544,7 @@ namespace System.Net.Sockets
 		/* When true, the socket was connected at the time of
 		 * the last IO operation
 		 */
-		private bool connected=false;
+		private bool connected;
 		/* true if we called Close_internal */
 		private bool closed;
 		internal bool disposed;
@@ -559,9 +557,9 @@ namespace System.Net.Sockets
 		private static Type unixendpointtype=null;
 
 #if NET_2_0
-		private bool isbound = false;
-		private bool islistening = false;
-		private bool useoverlappedIO = false;
+		private bool isbound;
+		private bool islistening;
+		private bool useoverlappedIO;
 #endif
 		
 
@@ -631,9 +629,8 @@ namespace System.Net.Sockets
 				}
 
 				if (currentList != null) {
-					if (currentList == checkWrite &&
-					    sock.connected == false) {
-						if ((int)sock.GetSocketOption (SocketOptionLevel.Socket, SocketOptionName.Error) == 0) {
+					if (currentList == checkWrite && !sock.connected) {
+						if ((int) sock.GetSocketOption (SocketOptionLevel.Socket, SocketOptionName.Error) == 0) {
 							sock.connected = true;
 						}
 					}
@@ -643,7 +640,8 @@ namespace System.Net.Sockets
 			}
 		}
 
-		static Socket() {
+		static Socket()
+		{
 			Assembly ass;
 			
 			try {
@@ -670,7 +668,8 @@ namespace System.Net.Sockets
 		// private constructor used by Accept, which already
 		// has a socket handle to use
 		private Socket(AddressFamily family, SocketType type,
-			       ProtocolType proto, IntPtr sock) {
+			       ProtocolType proto, IntPtr sock)
+		{
 			address_family=family;
 			socket_type=type;
 			protocol_type=proto;
@@ -710,23 +709,23 @@ namespace System.Net.Sockets
 #endif
 		}
 		
-		public Socket(AddressFamily family, SocketType type,
-			      ProtocolType proto) {
+		public Socket(AddressFamily family, SocketType type, ProtocolType proto)
+		{
 			address_family=family;
 			socket_type=type;
 			protocol_type=proto;
 			
 			int error;
 			
-			socket=Socket_internal(family, type, proto, out error);
-			if (error != 0) {
+			socket = Socket_internal (family, type, proto, out error);
+			if (error != 0)
 				throw new SocketException (error);
-			}
 
 			SocketDefaults ();
 		}
 
 #if NET_2_0
+		[MonoTODO]
 		public Socket (SocketInformation socketInformation)
 		{
 			throw new NotImplementedException ("SocketInformation not figured out yet");
@@ -740,9 +739,8 @@ namespace System.Net.Sockets
 			
 			int error;
 			socket = Socket_internal (address_family, socket_type, protocol_type, out error);
-			if (error != 0) {
+			if (error != 0)
 				throw new SocketException (error);
-			}
 
 			SocketDefaults ();
 		}
@@ -753,13 +751,13 @@ namespace System.Net.Sockets
 				return(address_family);
 			}
 		}
+
 #if !TARGET_JVM
 		// Returns the amount of data waiting to be read on socket
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static int Available_internal(IntPtr socket,
-							     out int error);
+		private extern static int Available_internal(IntPtr socket, out int error);
 #endif
-		
+
 		public int Available {
 			get {
 				if (disposed && closed)
@@ -769,19 +767,20 @@ namespace System.Net.Sockets
 				
 				ret = Available_internal(socket, out error);
 
-				if (error != 0) {
+				if (error != 0)
 					throw new SocketException (error);
-				}
 
 				return(ret);
 			}
 		}
+
 #if !TARGET_JVM
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static void Blocking_internal(IntPtr socket,
 							     bool block,
 							     out int error);
 #endif
+
 		public bool Blocking {
 			get {
 				return(blocking);
@@ -792,11 +791,10 @@ namespace System.Net.Sockets
 
 				int error;
 				
-				Blocking_internal(socket, value, out error);
+				Blocking_internal (socket, value, out error);
 
-				if (error != 0) {
+				if (error != 0)
 					throw new SocketException (error);
-				}
 				
 				blocking=value;
 			}
@@ -809,8 +807,7 @@ namespace System.Net.Sockets
 		}
 
 #if NET_2_0
-		public bool DontFragment
-		{
+		public bool DontFragment {
 			get {
 				if (disposed && closed) {
 					throw new ObjectDisposedException (GetType ().ToString ());
@@ -843,8 +840,7 @@ namespace System.Net.Sockets
 			}
 		}
 
-		public bool EnableBroadcast
-		{
+		public bool EnableBroadcast {
 			get {
 				if (disposed && closed) {
 					throw new ObjectDisposedException (GetType ().ToString ());
@@ -869,8 +865,7 @@ namespace System.Net.Sockets
 			}
 		}
 		
-		public bool ExclusiveAddressUse
-		{
+		public bool ExclusiveAddressUse {
 			get {
 				if (disposed && closed) {
 					throw new ObjectDisposedException (GetType ().ToString ());
@@ -890,15 +885,13 @@ namespace System.Net.Sockets
 			}
 		}
 		
-		public bool IsBound 
-		{
+		public bool IsBound {
 			get {
 				return(isbound);
 			}
 		}
 		
-		public LingerOption LingerState
-		{
+		public LingerOption LingerState {
 			get {
 				if (disposed && closed) {
 					throw new ObjectDisposedException (GetType ().ToString ());
@@ -917,8 +910,7 @@ namespace System.Net.Sockets
 			}
 		}
 		
-		public bool MulticastLoopback
-		{
+		public bool MulticastLoopback {
 			get {
 				if (disposed && closed) {
 					throw new ObjectDisposedException (GetType ().ToString ());
@@ -979,8 +971,7 @@ namespace System.Net.Sockets
 			}
 		}
 		
-		public static bool OSSupportsIPv6
-		{
+		public static bool OSSupportsIPv6 {
 			get {
 				NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces ();
 				
@@ -995,8 +986,7 @@ namespace System.Net.Sockets
 			}
 		}
 		
-		public int ReceiveBufferSize
-		{
+		public int ReceiveBufferSize {
 			get {
 				if (disposed && closed) {
 					throw new ObjectDisposedException (GetType ().ToString ());
@@ -1015,8 +1005,7 @@ namespace System.Net.Sockets
 			}
 		}
 
-		public int SendBufferSize
-		{
+		public int SendBufferSize {
 			get {
 				if (disposed && closed) {
 					throw new ObjectDisposedException (GetType ().ToString ());
@@ -1037,8 +1026,7 @@ namespace System.Net.Sockets
 			}
 		}
 		
-		public short Ttl
-		{
+		public short Ttl {
 			get {
 				if (disposed && closed) {
 					throw new ObjectDisposedException (GetType ().ToString ());
@@ -1071,9 +1059,8 @@ namespace System.Net.Sockets
 			}
 		}
 		
-		/* This doesn't do anything on Mono yet */
-		public bool UseOnlyOverlappedIO
-		{
+		[MonoTODO ("This doesn't do anything on Mono yet")]
+		public bool UseOnlyOverlappedIO {
 			get {
 				return(useoverlappedIO);
 			}
@@ -1082,7 +1069,7 @@ namespace System.Net.Sockets
 			}
 		}
 #endif
-		
+
 		public IntPtr Handle {
 			get {
 				return(socket);
@@ -1093,12 +1080,13 @@ namespace System.Net.Sockets
 		{
 			return new NotImplementedException (msg);
 		}
-		
+
 #if !TARGET_JVM
 		// Returns the local endpoint details in addr and port
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static SocketAddress LocalEndPoint_internal(IntPtr socket, out int error);
 #endif
+
 		// Wish:  support non-IP endpoints.
 		public EndPoint LocalEndPoint {
 			get {
@@ -1110,11 +1098,10 @@ namespace System.Net.Sockets
 				
 				sa=LocalEndPoint_internal(socket, out error);
 
-				if (error != 0) {
+				if (error != 0)
 					throw new SocketException (error);
-				}
 
-				if(sa.Family==AddressFamily.InterNetwork || sa.Family==AddressFamily.InterNetworkV6) {
+				if (sa.Family==AddressFamily.InterNetwork || sa.Family==AddressFamily.InterNetworkV6) {
 					// Stupidly, EndPoint.Create() is an
 					// instance method
 					return new IPEndPoint(0, 0).Create(sa);
@@ -1149,9 +1136,8 @@ namespace System.Net.Sockets
 				
 				sa=RemoteEndPoint_internal(socket, out error);
 
-				if (error != 0) {
+				if (error != 0)
 					throw new SocketException (error);
-				}
 
 				if(sa.Family==AddressFamily.InterNetwork || sa.Family==AddressFamily.InterNetworkV6 ) {
 					// Stupidly, EndPoint.Create() is an
@@ -1192,31 +1178,28 @@ namespace System.Net.Sockets
 #if NET_2_0
 		public int SendTimeout {
 			get {
-				if (disposed && closed) {
+				if (disposed && closed)
 					throw new ObjectDisposedException (GetType ().ToString ());
-				}
 
 				return (int)GetSocketOption(
 					SocketOptionLevel.Socket,
 					SocketOptionName.SendTimeout);
 			}
 			set {
-				if (disposed && closed) {
+				if (disposed && closed)
 					throw new ObjectDisposedException (GetType ().ToString ());
-				}
-				if (value < -1) {
+
+				if (value < -1)
 					throw new ArgumentOutOfRangeException ("value", "The value specified for a set operation is less than -1");
-				}
-				
+
 				/* According to the MSDN docs we
 				 * should adjust values between 1 and
 				 * 499 to 500, but the MS runtime
 				 * doesn't do this.
 				 */
-				if (value == -1) {
+				if (value == -1)
 					value = 0;
-				}
-				
+
 				SetSocketOption(
 					SocketOptionLevel.Socket,
 					SocketOptionName.SendTimeout, value);
@@ -1225,22 +1208,20 @@ namespace System.Net.Sockets
 
 		public int ReceiveTimeout {
 			get {
-				if (disposed && closed) {
+				if (disposed && closed)
 					throw new ObjectDisposedException (GetType ().ToString ());
-				}
 
 				return (int)GetSocketOption(
 					SocketOptionLevel.Socket,
 					SocketOptionName.ReceiveTimeout);
 			}
 			set {
-				if (disposed && closed) {
+				if (disposed && closed)
 					throw new ObjectDisposedException (GetType ().ToString ());
-				}
-				if (value < -1) {
+
+				if (value < -1)
 					throw new ArgumentOutOfRangeException ("value", "The value specified for a set operation is less than -1");
-				}
-				
+
 				if (value == -1) {
 					value = 0;
 				}
@@ -1253,27 +1234,23 @@ namespace System.Net.Sockets
 
 		public bool NoDelay {
 			get {
-				if (disposed && closed) {
+				if (disposed && closed)
 					throw new ObjectDisposedException (GetType ().ToString ());
-				}
 
-				if (protocol_type == ProtocolType.Udp) {
+				if (protocol_type == ProtocolType.Udp)
 					throw new SocketException ((int)SocketError.ProtocolOption);
-				}
-				
+
 				return (int)(GetSocketOption (
 					SocketOptionLevel.Tcp,
 					SocketOptionName.NoDelay)) != 0;
 			}
 
 			set {
-				if (disposed && closed) {
+				if (disposed && closed)
 					throw new ObjectDisposedException (GetType ().ToString ());
-				}
 
-				if (protocol_type == ProtocolType.Udp) {
+				if (protocol_type == ProtocolType.Udp)
 					throw new SocketException ((int)SocketError.ProtocolOption);
-				}
 
 				SetSocketOption (
 					SocketOptionLevel.Tcp,
@@ -1282,21 +1259,20 @@ namespace System.Net.Sockets
 		}
 #endif
 
-		internal static void CheckProtocolSupport()
+		internal static void CheckProtocolSupport ()
 		{
 			if(ipv4Supported == -1) {
-				try  {
+				try {
 					Socket tmp = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 					tmp.Close();
 
 					ipv4Supported = 1;
-				}
-				catch {
+				} catch {
 					ipv4Supported = 0;
 				}
 			}
 
-			if(ipv6Supported == -1) {
+			if (ipv6Supported == -1) {
 #if NET_2_0 && CONFIGURATION_DEP
 				SettingsSection config;
 				config = (SettingsSection) System.Configuration.ConfigurationManager.GetSection ("system.net/settings");
@@ -1304,26 +1280,23 @@ namespace System.Net.Sockets
 					ipv6Supported = config.Ipv6.Enabled ? -1 : 0;
 #else
 				NetConfig config = (NetConfig)System.Configuration.ConfigurationSettings.GetConfig("system.net/settings");
-
-				if(config != null)
-					ipv6Supported = config.ipv6Enabled?-1:0;
+				if (config != null)
+					ipv6Supported = config.ipv6Enabled ? -1 : 0;
 #endif
-				if(ipv6Supported != 0) {
+				if (ipv6Supported != 0) {
 					try {
 						Socket tmp = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
 						tmp.Close();
 
 						ipv6Supported = 1;
-					}
-					catch { }
+					} catch { }
 				}
 			}
 		}
 
 		// Creates a new system socket, returning the handle
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static IntPtr Accept_internal(IntPtr sock,
-							     out int error);
+		private extern static IntPtr Accept_internal(IntPtr sock, out int error);
 
 		Thread blocking_thread;
 		public Socket Accept() {
@@ -1344,13 +1317,11 @@ namespace System.Net.Sockets
 				blocking_thread = null;
 			}
 
-			if (error != 0) {
+			if (error != 0)
 				throw new SocketException (error);
-			}
 			
-			Socket accepted = new Socket(this.AddressFamily,
-						     this.SocketType,
-						     this.ProtocolType, sock);
+			Socket accepted = new Socket(this.AddressFamily, this.SocketType,
+				this.ProtocolType, sock);
 
 			accepted.Blocking = this.Blocking;
 			return(accepted);
@@ -1358,9 +1329,8 @@ namespace System.Net.Sockets
 
 		private void Accept (Socket acceptSocket)
 		{
-			if (disposed && closed) {
+			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
-			}
 			
 			int error = 0;
 			IntPtr sock = (IntPtr)(-1);
@@ -1377,9 +1347,8 @@ namespace System.Net.Sockets
 				blocking_thread = null;
 			}
 			
-			if (error != 0) {
+			if (error != 0)
 				throw new SocketException (error);
-			}
 			
 			acceptSocket.address_family = this.AddressFamily;
 			acceptSocket.socket_type = this.SocketType;
@@ -1396,15 +1365,13 @@ namespace System.Net.Sockets
 		public IAsyncResult BeginAccept(AsyncCallback callback,
 						object state)
 		{
-
 			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 
 #if NET_2_0
 			/* FIXME: check the 1.1 docs for this too */
-			if (!isbound || !islistening) {
+			if (!isbound || !islistening)
 				throw new InvalidOperationException ();
-			}
 #endif
 
 			SocketAsyncResult req = new SocketAsyncResult (this, state, callback, SocketOperation.Accept);
@@ -1419,13 +1386,12 @@ namespace System.Net.Sockets
 						 AsyncCallback callback,
 						 object state)
 		{
-			if (disposed && closed) {
+			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
-			}
-			if (receiveSize < 0) {
+
+			if (receiveSize < 0)
 				throw new ArgumentOutOfRangeException ("receiveSize", "receiveSize is less than zero");
-			}
-			
+
 			SocketAsyncResult req = new SocketAsyncResult (this, state, callback, SocketOperation.AcceptReceive);
 			Worker worker = new Worker (req);
 			SocketAsyncCall sac = new SocketAsyncCall (worker.AcceptReceive);
@@ -1444,29 +1410,26 @@ namespace System.Net.Sockets
 						 AsyncCallback callback,
 						 object state)
 		{
-			if (disposed && closed) {
+			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
-			}
-			if (receiveSize < 0) {
+
+			if (receiveSize < 0)
 				throw new ArgumentOutOfRangeException ("receiveSize", "receiveSize is less than zero");
-			}
+
 			if (acceptSocket != null) {
-				if (acceptSocket.disposed && acceptSocket.closed) {
+				if (acceptSocket.disposed && acceptSocket.closed)
 					throw new ObjectDisposedException (acceptSocket.GetType ().ToString ());
-				}
-				
-				if (acceptSocket.IsBound) {
+
+				if (acceptSocket.IsBound)
 					throw new InvalidOperationException ();
-				}
-				
+
 				/* For some reason the MS runtime
 				 * barfs if the new socket is not TCP,
 				 * even though it's just about to blow
 				 * away all those parameters
 				 */
-				if (acceptSocket.ProtocolType != ProtocolType.Tcp) {
+				if (acceptSocket.ProtocolType != ProtocolType.Tcp)
 					throw new SocketException ((int)SocketError.InvalidArgument);
-				}
 			}
 			
 			SocketAsyncResult req = new SocketAsyncResult (this, state, callback, SocketOperation.AcceptReceive);
@@ -1537,18 +1500,17 @@ namespace System.Net.Sockets
 						  AsyncCallback callback,
 						  object state)
 		{
-			if (disposed && closed) {
+			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
-			}
-			if (address == null) {
+
+			if (address == null)
 				throw new ArgumentNullException ("address");
-			}
-			if (address.ToString ().Length == 0) {
+
+			if (address.ToString ().Length == 0)
 				throw new ArgumentException ("The length of the IP address is zero");
-			}
-			if (islistening) {
+
+			if (islistening)
 				throw new InvalidOperationException ();
-			}
 
 			IPEndPoint iep = new IPEndPoint (address, port);
 			return(BeginConnect (iep, callback, state));
@@ -1559,19 +1521,18 @@ namespace System.Net.Sockets
 						  AsyncCallback callback,
 						  object state)
 		{
-			if (disposed && closed) {
+			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
-			}
-			if (addresses == null) {
+
+			if (addresses == null)
 				throw new ArgumentNullException ("addresses");
-			}
+
 			if (this.AddressFamily != AddressFamily.InterNetwork &&
-			    this.AddressFamily != AddressFamily.InterNetworkV6) {
+				this.AddressFamily != AddressFamily.InterNetworkV6)
 				throw new NotSupportedException ("This method is only valid for addresses in the InterNetwork or InterNetworkV6 families");
-			}
-			if (islistening) {
+
+			if (islistening)
 				throw new InvalidOperationException ();
-			}
 
 			SocketAsyncResult req = new SocketAsyncResult (this, state, callback, SocketOperation.Connect);
 			req.Addresses = addresses;
@@ -1589,33 +1550,30 @@ namespace System.Net.Sockets
 						  AsyncCallback callback,
 						  object state)
 		{
-			if (disposed && closed) {
+			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
-			}
-			if (host == null) {
+
+			if (host == null)
 				throw new ArgumentNullException ("host");
-			}
+
 			if (address_family != AddressFamily.InterNetwork &&
-			    address_family != AddressFamily.InterNetworkV6) {
+				address_family != AddressFamily.InterNetworkV6)
 				throw new NotSupportedException ("This method is valid only for sockets in the InterNetwork and InterNetworkV6 families");
-			}
-			if (islistening) {
+
+			if (islistening)
 				throw new InvalidOperationException ();
-			}
-			
+
 			IPHostEntry hostent = Dns.GetHostEntry (host);
-			return(BeginConnect (hostent.AddressList, port,
-					     callback, state));
+			return (BeginConnect (hostent.AddressList, port, callback, state));
 		}
 
 		public IAsyncResult BeginDisconnect (bool reuseSocket,
 						     AsyncCallback callback,
 						     object state)
 		{
-			if (disposed && closed) {
+			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
-			}
-			
+
 			SocketAsyncResult req = new SocketAsyncResult (this, state, callback, SocketOperation.Disconnect);
 			req.ReuseSocket = reuseSocket;
 			
@@ -1677,8 +1635,7 @@ namespace System.Net.Sockets
 			 * just have to set it to Success.
 			 */
 			error = SocketError.Success;
-			return(BeginReceive (buffer, offset, size, flags,
-					     callback, state));
+			return (BeginReceive (buffer, offset, size, flags, callback, state));
 		}
 
 		[CLSCompliant (false)]
@@ -1687,13 +1644,12 @@ namespace System.Net.Sockets
 						  AsyncCallback callback,
 						  object state)
 		{
-			if (disposed && closed) {
+			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
-			}
-			if (buffers == null) {
+
+			if (buffers == null)
 				throw new ArgumentNullException ("buffers");
-			}
-			
+
 			SocketAsyncResult req;
 			lock(readQ) {
 				req = new SocketAsyncResult (this, state, callback, SocketOperation.Receive);
@@ -1721,8 +1677,7 @@ namespace System.Net.Sockets
 			 * above
 			 */
 			errorCode = SocketError.Success;
-			return(BeginReceive (buffers, socketFlags, callback,
-					     state));
+			return (BeginReceive (buffers, socketFlags, callback, state));
 		}
 #endif
 
@@ -1766,31 +1721,27 @@ namespace System.Net.Sockets
 		}
 
 #if NET_2_0
+		[MonoTODO]
 		public IAsyncResult BeginReceiveMessageFrom (
 			byte[] buffer, int offset, int size,
 			SocketFlags socketFlags, ref EndPoint remoteEP,
 			AsyncCallback callback, object state)
 		{
-			if (disposed && closed) {
+			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
-			}
-			
-			if (buffer == null) {
+
+			if (buffer == null)
 				throw new ArgumentNullException ("buffer");
-			}
-			
-			if (remoteEP == null) {
+
+			if (remoteEP == null)
 				throw new ArgumentNullException ("remoteEP");
-			}
-			
-			if (offset < 0 || offset > buffer.Length) {
+
+			if (offset < 0 || offset > buffer.Length)
 				throw new ArgumentOutOfRangeException ("offset");
-			}
-			
-			if (size < 0 || offset + size > buffer.Length) {
+
+			if (size < 0 || offset + size > buffer.Length)
 				throw new ArgumentOutOfRangeException ("size");
-			}
-			
+
 			throw new NotImplementedException ();
 		}
 #endif
@@ -1815,9 +1766,8 @@ namespace System.Net.Sockets
 
 #if NET_2_0
 			/* TODO: Check this exception in the 1.1 profile */
-			if (connected == false) {
+			if (!connected)
 				throw new SocketException ((int)SocketError.NotConnected);
-			}
 #endif
 
 			SocketAsyncResult req;
@@ -1845,15 +1795,15 @@ namespace System.Net.Sockets
 					       AsyncCallback callback,
 					       object state)
 		{
-			if (connected == false) {
+			if (!connected) {
 				errorCode = SocketError.NotConnected;
 				throw new SocketException ((int)errorCode);
 			}
 			
 			errorCode = SocketError.Success;
 			
-			return(BeginSend (buffer, offset, size, socketFlags,
-					  callback, state));
+			return (BeginSend (buffer, offset, size, socketFlags, callback,
+				state));
 		}
 
 		public IAsyncResult BeginSend (IList<ArraySegment<byte>> buffers,
@@ -1861,19 +1811,17 @@ namespace System.Net.Sockets
 					       AsyncCallback callback,
 					       object state)
 		{
-			if (disposed && closed) {
+			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
-			}
-			if (buffers == null) {
-				throw new ArgumentNullException ("buffers");
-			}
 
-			if (connected == false) {
+			if (buffers == null)
+				throw new ArgumentNullException ("buffers");
+
+			if (!connected)
 				throw new SocketException ((int)SocketError.NotConnected);
-			}
 
 			SocketAsyncResult req;
-			lock(writeQ) {
+			lock (writeQ) {
 				req = new SocketAsyncResult (this, state, callback, SocketOperation.Send);
 				req.Buffers = buffers;
 				req.SockFlags = socketFlags;
@@ -1895,35 +1843,33 @@ namespace System.Net.Sockets
 					       AsyncCallback callback,
 					       object state)
 		{
-			if (connected == false) {
+			if (!connected) {
 				errorCode = SocketError.NotConnected;
 				throw new SocketException ((int)errorCode);
 			}
 			
 			errorCode = SocketError.Success;
-			return(BeginSend (buffers, socketFlags, callback,
-					  state));
+			return (BeginSend (buffers, socketFlags, callback, state));
 		}
 
+		[MonoTODO ("Not implemented")]
 		public IAsyncResult BeginSendFile (string fileName,
 						   AsyncCallback callback,
 						   object state)
 		{
-			if (disposed && closed) {
+			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
-			}
-			
-			if (connected == false) {
-				throw new NotSupportedException ();
-			}
 
-			if (!File.Exists (fileName)) {
+			if (!connected)
+				throw new NotSupportedException ();
+
+			if (!File.Exists (fileName))
 				throw new FileNotFoundException ();
-			}
-			
+
 			throw new NotImplementedException ();
 		}
-		
+
+		[MonoTODO ("Not implemented")]
 		public IAsyncResult BeginSendFile (string fileName,
 						   byte[] preBuffer,
 						   byte[] postBuffer,
@@ -1931,21 +1877,18 @@ namespace System.Net.Sockets
 						   AsyncCallback callback,
 						   object state)
 		{
-			if (disposed && closed) {
+			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
-			}
-			
-			if (connected == false) {
+
+			if (!connected)
 				throw new NotSupportedException ();
-			}
-			
-			if (!File.Exists (fileName)) {
+
+			if (!File.Exists (fileName))
 				throw new FileNotFoundException ();
-			}
-			
+
 			throw new NotImplementedException ();
 		}
-#endif		
+#endif
 
 		public IAsyncResult BeginSendTo(byte[] buffer, int offset,
 						int size,
@@ -1996,30 +1939,26 @@ namespace System.Net.Sockets
 			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 
-			if(local_end==null) {
+			if (local_end == null)
 				throw new ArgumentNullException("local_end");
-			}
 			
 			int error;
 			
-			Bind_internal(socket, local_end.Serialize(),
-				      out error);
-			if (error != 0) {
+			Bind_internal(socket, local_end.Serialize(), out error);
+			if (error != 0)
 				throw new SocketException (error);
-			}
 #if NET_2_0
-			if (error == 0) {
+			if (error == 0)
 				isbound = true;
-			}
 #endif
 		}
 
 		// Closes the socket
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static void Close_internal(IntPtr socket,
-							  out int error);
+		private extern static void Close_internal(IntPtr socket, out int error);
 		
-		public void Close() {
+		public void Close()
+		{
 			((IDisposable) this).Dispose ();
 		}
 
@@ -2049,9 +1988,8 @@ namespace System.Net.Sockets
 			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 
-			if(remote_end==null) {
+			if (remote_end == null)
 				throw new ArgumentNullException("remote_end");
-			}
 
 			if (remote_end is IPEndPoint) {
 				IPEndPoint ep = (IPEndPoint) remote_end;
@@ -2061,9 +1999,8 @@ namespace System.Net.Sockets
 
 #if NET_2_0
 			/* TODO: check this for the 1.1 profile too */
-			if (islistening) {
+			if (islistening)
 				throw new InvalidOperationException ();
-			}
 #endif
 
 			SocketAddress serial = remote_end.Serialize ();
@@ -2081,10 +2018,9 @@ namespace System.Net.Sockets
 				blocking_thread = null;
 			}
 
-			if (error != 0) {
+			if (error != 0)
 				throw new SocketException (error);
-			}
-			
+
 			connected=true;
 
 #if NET_2_0
@@ -2100,22 +2036,21 @@ namespace System.Net.Sockets
 		
 		public void Connect (IPAddress[] addresses, int port)
 		{
-			if (disposed && closed) {
+			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
-			}
-			if (addresses == null) {
+
+			if (addresses == null)
 				throw new ArgumentNullException ("addresses");
-			}
+
 			if (this.AddressFamily != AddressFamily.InterNetwork &&
-			    this.AddressFamily != AddressFamily.InterNetworkV6) {
+				this.AddressFamily != AddressFamily.InterNetworkV6)
 				throw new NotSupportedException ("This method is only valid for addresses in the InterNetwork or InterNetworkV6 families");
-			}
-			if (islistening) {
+
+			if (islistening)
 				throw new InvalidOperationException ();
-			}
-			
+
 			/* FIXME: do non-blocking sockets Poll here? */
-			foreach(IPAddress address in addresses) {
+			foreach (IPAddress address in addresses) {
 				IPEndPoint iep = new IPEndPoint (address,
 								 port);
 				SocketAddress serial = iep.Serialize ();
@@ -2158,9 +2093,8 @@ namespace System.Net.Sockets
 		 */
 		public void Disconnect (bool reuseSocket)
 		{
-			if (disposed && closed) {
+			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
-			}
 
 			int error = 0;
 			
@@ -2194,7 +2128,8 @@ namespace System.Net.Sockets
 		}
 #endif
 		
-		public Socket EndAccept(IAsyncResult result) {
+		public Socket EndAccept (IAsyncResult result)
+		{
 			int bytes;
 			byte[] buffer;
 			
@@ -2219,23 +2154,19 @@ namespace System.Net.Sockets
 		Socket EndAccept (out byte[] buffer, out int bytesTransferred,
 				  IAsyncResult asyncResult)
 		{
-			if (disposed && closed) {
+			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
-			}
-			
-			if (asyncResult == null) {
+
+			if (asyncResult == null)
 				throw new ArgumentNullException ("asyncResult");
-			}
 			
 			SocketAsyncResult req = asyncResult as SocketAsyncResult;
-			if (req == null) {
+			if (req == null)
 				throw new ArgumentException ("Invalid IAsyncResult", "asyncResult");
-			}
-			
-			if (!asyncResult.IsCompleted) {
+
+			if (!asyncResult.IsCompleted)
 				asyncResult.AsyncWaitHandle.WaitOne ();
-			}
-			
+
 			req.CheckIfThrowDelayedException ();
 			
 			buffer = req.Buffer;
@@ -2244,7 +2175,8 @@ namespace System.Net.Sockets
 			return(req.Socket);
 		}
 
-		public void EndConnect(IAsyncResult result) {
+		public void EndConnect (IAsyncResult result)
+		{
 			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 
@@ -2264,31 +2196,28 @@ namespace System.Net.Sockets
 #if NET_2_0
 		public void EndDisconnect (IAsyncResult asyncResult)
 		{
-			if (disposed && closed) {
+			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
-			}
-			if (asyncResult == null) {
+
+			if (asyncResult == null)
 				throw new ArgumentNullException ("asyncResult");
-			}
-			
+
 			SocketAsyncResult req = asyncResult as SocketAsyncResult;
-			if (req == null) {
+			if (req == null)
 				throw new ArgumentException ("Invalid IAsyncResult", "asyncResult");
-			}
-			
-			if (!asyncResult.IsCompleted) {
+
+			if (!asyncResult.IsCompleted)
 				asyncResult.AsyncWaitHandle.WaitOne ();
-			}
-			
+
 			req.CheckIfThrowDelayedException ();
 		}
 #endif
 
-		public int EndReceive(IAsyncResult result)
+		public int EndReceive (IAsyncResult result)
 		{
 			SocketError error;
 			
-			return(EndReceive (result, out error));
+			return (EndReceive (result, out error));
 		}
 
 #if NET_2_0
@@ -2296,33 +2225,29 @@ namespace System.Net.Sockets
 #else
 		private
 #endif
-		int EndReceive (IAsyncResult asyncResult,
-				       out SocketError errorCode)
+		int EndReceive (IAsyncResult asyncResult, out SocketError errorCode)
 		{
-			if (disposed && closed) {
+			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
-			}
-			if (asyncResult == null) {
+
+			if (asyncResult == null)
 				throw new ArgumentNullException ("asyncResult");
-			}
-			
+
 			SocketAsyncResult req = asyncResult as SocketAsyncResult;
-			if (req == null) {
+			if (req == null)
 				throw new ArgumentException ("Invalid IAsyncResult", "asyncResult");
-			}
-			
-			if (!asyncResult.IsCompleted) {
+
+			if (!asyncResult.IsCompleted)
 				asyncResult.AsyncWaitHandle.WaitOne ();
-			}
-			
+
 			errorCode = req.ErrorCode;
 			req.CheckIfThrowDelayedException ();
 			
 			return(req.Total);
 		}
 
-		public int EndReceiveFrom(IAsyncResult result,
-					  ref EndPoint end_point) {
+		public int EndReceiveFrom(IAsyncResult result, ref EndPoint end_point)
+		{
 			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 
@@ -2342,33 +2267,30 @@ namespace System.Net.Sockets
 		}
 
 #if NET_2_0
+		[MonoTODO]
 		public int EndReceiveMessageFrom (IAsyncResult asyncResult,
 						  ref SocketFlags socketFlags,
 						  ref EndPoint endPoint,
 						  out IPPacketInformation ipPacketInformation)
 		{
-			if (disposed && closed) {
+			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
-			}
-			
-			if (asyncResult == null) {
+
+			if (asyncResult == null)
 				throw new ArgumentNullException ("asyncResult");
-			}
-			
-			if (endPoint == null) {
+
+			if (endPoint == null)
 				throw new ArgumentNullException ("endPoint");
-			}
-			
+
 			SocketAsyncResult req = asyncResult as SocketAsyncResult;
-			if (req == null) {
+			if (req == null)
 				throw new ArgumentException ("Invalid IAsyncResult", "asyncResult");
-			}
-			
+
 			throw new NotImplementedException ();
 		}
 #endif
 
-		public int EndSend(IAsyncResult result)
+		public int EndSend (IAsyncResult result)
 		{
 			SocketError error;
 			
@@ -2380,25 +2302,21 @@ namespace System.Net.Sockets
 #else
 		private
 #endif
-		int EndSend (IAsyncResult asyncResult,
-			     out SocketError errorCode)
+		int EndSend (IAsyncResult asyncResult, out SocketError errorCode)
 		{
-			if (disposed && closed) {
+			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
-			}
-			if (asyncResult == null) {
+
+			if (asyncResult == null)
 				throw new ArgumentNullException ("asyncResult");
-			}
 			
 			SocketAsyncResult req = asyncResult as SocketAsyncResult;
-			if (req == null) {
+			if (req == null)
 				throw new ArgumentException ("Invalid IAsyncResult", "result");
-			}
 
-			if (!asyncResult.IsCompleted) {
+			if (!asyncResult.IsCompleted)
 				asyncResult.AsyncWaitHandle.WaitOne ();
-			}
-			
+
 			errorCode = req.ErrorCode;
 			req.CheckIfThrowDelayedException ();
 			
@@ -2406,26 +2324,25 @@ namespace System.Net.Sockets
 		}
 
 #if NET_2_0
+		[MonoTODO]
 		public void EndSendFile (IAsyncResult asyncResult)
 		{
-			if (disposed && closed) {
+			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
-			}
-			
-			if (asyncResult == null) {
+
+			if (asyncResult == null)
 				throw new ArgumentNullException ("asyncResult");
-			}
-			
+
 			SocketAsyncResult req = asyncResult as SocketAsyncResult;
-			if (req == null) {
+			if (req == null)
 				throw new ArgumentException ("Invalid IAsyncResult", "asyncResult");
-			}
-			
+
 			throw new NotImplementedException ();
 		}
 #endif
 
-		public int EndSendTo(IAsyncResult result) {
+		public int EndSendTo (IAsyncResult result)
+		{
 			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 
@@ -2444,9 +2361,14 @@ namespace System.Net.Sockets
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static void GetSocketOption_obj_internal(IntPtr socket, SocketOptionLevel level, SocketOptionName name, out object obj_val, out int error);
+		private extern static void GetSocketOption_obj_internal(IntPtr socket,
+			SocketOptionLevel level, SocketOptionName name, out object obj_val,
+			out int error);
+
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static void GetSocketOption_arr_internal(IntPtr socket, SocketOptionLevel level, SocketOptionName name, ref byte[] byte_val, out int error);
+		private extern static void GetSocketOption_arr_internal(IntPtr socket,
+			SocketOptionLevel level, SocketOptionName name, ref byte[] byte_val,
+			out int error);
 
 		public object GetSocketOption (SocketOptionLevel level, SocketOptionName name)
 		{
@@ -2456,14 +2378,12 @@ namespace System.Net.Sockets
 			object obj_val;
 			int error;
 			
-			GetSocketOption_obj_internal(socket, level, name,
-						     out obj_val, out error);
-
-			if (error != 0) {
+			GetSocketOption_obj_internal(socket, level, name, out obj_val,
+				out error);
+			if (error != 0)
 				throw new SocketException (error);
-			}
 			
-			if(name==SocketOptionName.Linger) {
+			if (name == SocketOptionName.Linger) {
 				return((LingerOption)obj_val);
 			} else if (name==SocketOptionName.AddMembership ||
 				   name==SocketOptionName.DropMembership) {
@@ -2482,12 +2402,10 @@ namespace System.Net.Sockets
 
 			int error;
 			
-			GetSocketOption_arr_internal(socket, level, name,
-						     ref opt_value, out error);
-
-			if (error != 0) {
+			GetSocketOption_arr_internal(socket, level, name, ref opt_value,
+				out error);
+			if (error != 0)
 				throw new SocketException (error);
-			}
 		}
 
 		public byte [] GetSocketOption (SocketOptionLevel level, SocketOptionName name, int length)
@@ -2498,12 +2416,10 @@ namespace System.Net.Sockets
 			byte[] byte_val=new byte[length];
 			int error;
 			
-			GetSocketOption_arr_internal(socket, level, name,
-						     ref byte_val, out error);
-
-			if (error != 0) {
+			GetSocketOption_arr_internal(socket, level, name, ref byte_val,
+				out error);
+			if (error != 0)
 				throw new SocketException (error);
-			}
 
 			return(byte_val);
 		}
@@ -2513,9 +2429,8 @@ namespace System.Net.Sockets
 		// FIONBIO and SIOCATMARK. Anything else will depend on the
 		// system.
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static int WSAIoctl (IntPtr sock, int ioctl_code,
-					    byte [] input, byte [] output,
-					    out int error);
+		extern static int WSAIoctl (IntPtr sock, int ioctl_code, byte [] input,
+			byte [] output, out int error);
 
 		public int IOControl (int ioctl_code, byte [] in_value, byte [] out_value)
 		{
@@ -2523,12 +2438,11 @@ namespace System.Net.Sockets
 				throw new ObjectDisposedException (GetType ().ToString ());
 
 			int error;
-			int result = WSAIoctl (socket, ioctl_code, in_value,
-					       out_value, out error);
+			int result = WSAIoctl (socket, ioctl_code, in_value, out_value,
+				out error);
 
-			if (error != 0) {
+			if (error != 0)
 				throw new SocketException (error);
-			}
 			
 			if (result == -1)
 				throw new InvalidOperationException ("Must use Blocking property instead.");
@@ -2550,9 +2464,8 @@ namespace System.Net.Sockets
 #endif
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static void Listen_internal(IntPtr sock,
-							   int backlog,
-							   out int error);
+		private extern static void Listen_internal(IntPtr sock, int backlog,
+			out int error);
 
 		public void Listen (int backlog)
 		{
@@ -2563,18 +2476,16 @@ namespace System.Net.Sockets
 			/* TODO: check if this should be thrown in the
 			 * 1.1 profile too
 			 */
-			if (!isbound) {
+			if (!isbound)
 				throw new SocketException ((int)SocketError.InvalidArgument);
-			}
 #endif
 
 			int error;
 			
 			Listen_internal(socket, backlog, out error);
 
-			if (error != 0) {
+			if (error != 0)
 				throw new SocketException (error);
-			}
 
 #if NET_2_0
 			islistening = true;
@@ -2599,9 +2510,7 @@ namespace System.Net.Sockets
 			if (error != 0)
 				throw new SocketException (error);
 
-			if (mode == SelectMode.SelectWrite &&
-			    result == true &&
-			    connected == false) {
+			if (mode == SelectMode.SelectWrite && result && !connected) {
 				/* Update the connected state; for
 				 * non-blocking Connect()s this is
 				 * when we can find out that the
@@ -2619,8 +2528,7 @@ namespace System.Net.Sockets
 		 * also needs to check the socket error status, but
 		 * getsockopt(..., SO_ERROR) clears the error.
 		 */
-		private bool Poll (int time_us, SelectMode mode,
-				   out int socket_error)
+		private bool Poll (int time_us, SelectMode mode, out int socket_error)
 		{
 			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
@@ -2637,7 +2545,7 @@ namespace System.Net.Sockets
 
 			socket_error = (int)GetSocketOption (SocketOptionLevel.Socket, SocketOptionName.Error);
 			
-			if (mode == SelectMode.SelectWrite && result == true) {
+			if (mode == SelectMode.SelectWrite && result) {
 				/* Update the connected state; for
 				 * non-blocking Connect()s this is
 				 * when we can find out that the
@@ -2832,7 +2740,6 @@ namespace System.Net.Sockets
 			if (remote_end == null)
 				throw new ArgumentNullException ("remote_end");
 
-
 			return ReceiveFrom_nochecks (buf, 0, buf.Length, flags, ref remote_end);
 		}
 
@@ -2853,7 +2760,6 @@ namespace System.Net.Sockets
 
 			return ReceiveFrom_nochecks (buf, 0, size, flags, ref remote_end);
 		}
-
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static int RecvFrom_internal(IntPtr sock,
@@ -2924,32 +2830,28 @@ namespace System.Net.Sockets
 		}
 
 #if NET_2_0
+		[MonoTODO ("Not implemented")]
 		public int ReceiveMessageFrom (byte[] buffer, int offset,
 					       int size,
 					       ref SocketFlags socketFlags,
 					       ref EndPoint remoteEP,
 					       out IPPacketInformation ipPacketInformation)
 		{
-			if (disposed && closed) {
+			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
-			}
-			
-			if (buffer == null) {
-				throw new ArgumentNullException ("buffer");
-			}
 
-			if (remoteEP == null) {
+			if (buffer == null)
+				throw new ArgumentNullException ("buffer");
+
+			if (remoteEP == null)
 				throw new ArgumentNullException ("remoteEP");
-			}
-			
-			if (offset < 0 || offset > buffer.Length) {
+
+			if (offset < 0 || offset > buffer.Length)
 				throw new ArgumentOutOfRangeException ("offset");
-			}
-			
-			if (size < 0 || offset + size > buffer.Length) {
+
+			if (size < 0 || offset + size > buffer.Length)
 				throw new ArgumentOutOfRangeException ("size");
-			}
-			
+
 			/* FIXME: figure out how we get hold of the
 			 * IPPacketInformation
 			 */
@@ -3111,46 +3013,40 @@ namespace System.Net.Sockets
 		}
 
 #if NET_2_0
+		[MonoTODO ("Not implemented")]
 		public void SendFile (string fileName)
 		{
-			if (disposed && closed) {
+			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
-			}
 
-			if (!connected) {
+			if (!connected)
 				throw new NotSupportedException ();
-			}
-			
-			if (blocking == false) {
+
+			if (!blocking)
 				throw new InvalidOperationException ();
-			}
-			
-			if (!File.Exists (fileName)) {
+
+			if (!File.Exists (fileName))
 				throw new FileNotFoundException ();
-			}
-			
+
 			/* FIXME: Implement TransmitFile */
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO ("Not implemented")]
 		public void SendFile (string fileName, byte[] preBuffer, byte[] postBuffer, TransmitFileOptions flags)
 		{
-			if (disposed && closed) {
+			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
-			}
-			
-			if (!connected) {
-				throw new NotSupportedException ();
-			}
 
-			if (blocking == false) {
+			if (!connected)
+				throw new NotSupportedException ();
+
+			if (!blocking)
 				throw new InvalidOperationException ();
-			}
-			
-			if (!File.Exists (fileName)) {
+
+			if (!File.Exists (fileName))
 				throw new FileNotFoundException ();
-			}
-			
+
 			/* FIXME: Implement TransmitFile */
 			throw new NotImplementedException ();
 		}
@@ -3273,9 +3169,8 @@ namespace System.Net.Sockets
 			SetSocketOption_internal(socket, level, name, null,
 						 opt_value, 0, out error);
 
-			if (error != 0) {
+			if (error != 0)
 				throw new SocketException (error);
-			}
 		}
 
 		public void SetSocketOption (SocketOptionLevel level, SocketOptionName name, int opt_value)
@@ -3288,9 +3183,8 @@ namespace System.Net.Sockets
 			SetSocketOption_internal(socket, level, name, null,
 						 null, opt_value, out error);
 
-			if (error != 0) {
+			if (error != 0)
 				throw new SocketException (error);
-			}
 		}
 
 		public void SetSocketOption (SocketOptionLevel level, SocketOptionName name, object opt_value)
@@ -3299,9 +3193,8 @@ namespace System.Net.Sockets
 			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 
-			if(opt_value==null) {
+			if (opt_value == null)
 				throw new ArgumentNullException("opt_value");
-			}
 			
 			int error;
 			/* From MS documentation on SetSocketOption: "For an
@@ -3351,15 +3244,14 @@ namespace System.Net.Sockets
 
 			int error;
 			
-			Shutdown_internal(socket, how, out error);
+			Shutdown_internal (socket, how, out error);
 
-			if (error != 0) {
+			if (error != 0)
 				throw new SocketException (error);
-			}
 		}
 
 		public override int GetHashCode ()
-		{ 
+		{
 			return (int) socket; 
 		}
 
@@ -3393,8 +3285,7 @@ namespace System.Net.Sockets
 		}
 		
 		~Socket () {
-			Dispose(false);
+			Dispose (false);
 		}
 	}
 }
-
