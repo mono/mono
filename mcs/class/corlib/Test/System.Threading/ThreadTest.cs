@@ -790,63 +790,6 @@ namespace MonoTests.System.Threading
 		}
 	}
 
-	[TestFixture]
-	public class ThreadCultureTest
-	{
-		CultureInfo old_culture;
-		CultureInfo old_ui_culture;
-
-		[SetUp]
-		public void Setup ()
-		{
-			old_culture = Thread.CurrentThread.CurrentCulture;
-			old_ui_culture = Thread.CurrentThread.CurrentUICulture;
-		}
-
-		[TearDown]
-		public void TearDown ()
-		{
-			Thread.CurrentThread.CurrentCulture = old_culture;
-			Thread.CurrentThread.CurrentUICulture = old_ui_culture;
-		}
-
-		[Test] // bug #81930
-		public void CurrentCulture_IsReadOnly ()
-		{
-			CultureInfo ci;
-
-			ci = Thread.CurrentThread.CurrentCulture;
-			Assert.IsTrue (ci.IsReadOnly, "#A1");
-			Assert.IsTrue (ci.NumberFormat.IsReadOnly, "#A2");
-			Assert.IsTrue (ci.DateTimeFormat.IsReadOnly, "#A3");
-
-			Thread.CurrentThread.CurrentCulture = new CultureInfo ("nl-BE");
-
-			ci = Thread.CurrentThread.CurrentCulture;
-			Assert.IsFalse (ci.IsReadOnly, "#B1");
-			Assert.IsFalse (ci.NumberFormat.IsReadOnly, "#B2");
-			Assert.IsFalse (ci.DateTimeFormat.IsReadOnly, "#B3");
-		}
-
-		[Test] // bug #81930
-		public void CurrentUICulture_IsReadOnly ()
-		{
-			CultureInfo ci;
-
-			ci = Thread.CurrentThread.CurrentUICulture;
-			Assert.IsTrue (ci.IsReadOnly, "#A1");
-			Assert.IsTrue (ci.NumberFormat.IsReadOnly, "#A2");
-			Assert.IsTrue (ci.DateTimeFormat.IsReadOnly, "#A3");
-
-			Thread.CurrentThread.CurrentUICulture = new CultureInfo ("nl-BE");
-
-			ci = Thread.CurrentThread.CurrentUICulture;
-			Assert.IsFalse (ci.IsReadOnly, "#B1");
-			Assert.IsFalse (ci.NumberFormat.IsReadOnly, "#B2");
-			Assert.IsFalse (ci.DateTimeFormat.IsReadOnly, "#B3");
-		}
-	}
-
 	public class TestUtil
 	{
 		public static void WaitForNotAlive (Thread t, string s)

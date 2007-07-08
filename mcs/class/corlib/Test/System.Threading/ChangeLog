@@ -1,3 +1,9 @@
+2007-07-08  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ThreadTest.cs: Removed tests for bug #81930, since other tests can
+	break these by changing the CurrentCulture or CurrentUICulture.
+	Instead I've added a standalone test for this (in the gert module).
+
 2007-06-24  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ThreadTest.cs: Added tests for bug #81930.
