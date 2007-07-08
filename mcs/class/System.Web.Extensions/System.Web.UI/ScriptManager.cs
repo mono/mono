@@ -440,6 +440,8 @@ namespace System.Web.UI
 				sb.AppendLine ();
 				sb.AppendLine ("Sys.Application.initialize();");
 				RegisterStartupScript (this, typeof (ExtenderControl), "Sys.Application.initialize();", sb.ToString (), true);
+
+				Page.ClientScript.GetPostBackEventReference (this, null);
 			}
 		}
 
