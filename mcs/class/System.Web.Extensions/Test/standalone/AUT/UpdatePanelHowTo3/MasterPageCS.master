@@ -1,0 +1,67 @@
+<!-- <Snippet3> -->
+<%@ Master Language="C#" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<script runat="server">
+
+    public Int32 Offset
+    {
+        get
+        {
+            return (Int32)(ViewState["Offset"] ?? 0);
+        }
+        set
+        {
+            ViewState["Offset"] = value;
+        }
+    }
+    protected void MasterButton_Click(object sender, EventArgs e)
+    {
+        switch (((Control)sender).ID)
+        {
+            case "IncrementButton":
+                this.Offset = this.Offset + 1;
+                break;
+            case "DecrementButton":
+                this.Offset = this.Offset - 1;
+                break;       
+        }
+        
+        ((UpdatePanel)ContentPlaceHolder1.FindControl("UpdatePanel1")).Update();
+        Calendar cal = ((Calendar)ContentPlaceHolder1.FindControl("Calendar1"));
+        DateTime newDateTime = DateTime.Today.Add(new TimeSpan(Offset, 0, 0, 0));
+        cal.SelectedDate = newDateTime;
+    }
+
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        ScriptManager1.RegisterAsyncPostBackControl(DecrementButton);
+        ScriptManager1.RegisterAsyncPostBackControl(IncrementButton);
+    }
+</script>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head id="Head1" runat="server">
+    <title>Master Page Example</title>
+</head>
+<body>
+    <form id="form1" runat="server">
+        <div>
+            <!-- <Snippet1> -->
+            <asp:ScriptManager ID="ScriptManager1" runat="server" />
+            <!-- </Snippet1> -->
+            <asp:Panel ID="MasterPanel1" runat="server" GroupingText="Master Page Content">
+               Change the selected date: 
+               <asp:Button ID="DecrementButton" runat="server" Text="-" OnClick="MasterButton_Click" />
+               <asp:Button ID="IncrementButton" runat="server" Text="+" OnClick="MasterButton_Click" />
+            </asp:Panel>
+            <!-- <Snippet2> -->
+            <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
+            </asp:ContentPlaceHolder>
+            <!-- </Snippet2> -->
+        </div>
+    </form>
+</body>
+</html>
+<!-- </Snippet3> -->

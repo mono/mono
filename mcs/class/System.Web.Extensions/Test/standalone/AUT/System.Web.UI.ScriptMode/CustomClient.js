@@ -1,0 +1,2 @@
+// JScript File
+alert('hi');
