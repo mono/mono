@@ -230,7 +230,12 @@ namespace System
 			return CreateDelegate(type, target, method, false);
 		}
 
- 		public static Delegate CreateDelegate (Type type, Type target, string method)
+#if NET_2_0
+ 		public 
+#else
+		internal
+#endif
+		static Delegate CreateDelegate (Type type, Type target, string method, bool ignoreCase, bool throwOnBindFailure)
 		{
 			if (type == null)
 				throw new ArgumentNullException ("type");
@@ -255,13 +260,29 @@ namespace System
 			 * or if it lives in the same assembly...
 			 */
 			BindingFlags flags = BindingFlags.ExactBinding | BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic;
+			if (ignoreCase)
+				flags |= BindingFlags.IgnoreCase;
 			MethodInfo info = target.GetMethod (method, flags, null, delargtypes, new ParameterModifier [0]);
 
-			if (info == null)
-				throw new ArgumentException ("Couldn't bind to method.");
+			if (info == null) {
+				if (throwOnBindFailure)
+					throw new ArgumentException ("Couldn't bind to method.");
+				else
+					return null;
+			}
 
 			return CreateDelegate_internal (type, null, info);
 		}
+
+ 		public static Delegate CreateDelegate (Type type, Type target, string method) {
+			return CreateDelegate (type, target, method, false, true);
+		}
+
+#if NET_2_0
+ 		public static Delegate CreateDelegate (Type type, Type target, string method, bool ignoreCase) {
+			return CreateDelegate (type, target, method, ignoreCase, true);
+		}
+#endif
 
 #if NET_2_0
 		public
