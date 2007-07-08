@@ -1,3 +1,10 @@
+2007-07-08  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DirectoryCas.cs: Changed Move to MoveDirectory to match the
+	method in DirectoryTest. Fixed line endings.
+	* DirectoryTest.cs: Added test for bug #81912. Added tests for Move
+	argument checks.
+
 2007-06-24  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DirectoryTest.cs: Restore original CurrentCulture on teardown.

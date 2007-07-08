@@ -91,7 +91,7 @@ namespace MonoCasTests.System.IO {
 			dt.CreateDirectory ();
 			dt.Delete ();
 			dt.Exists ();
-			dt.Move ();
+			dt.MoveDirectory ();
 			dt.LastAccessTime ();
 			dt.LastWriteTime ();
 			dt.GetDirectories ();

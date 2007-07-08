@@ -1,3 +1,9 @@
+2007-07-08  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Directory.cs: Renamed Move arguments to match MS. Allow Move to be
+	used to move files, patch by Robert Jordan. Fixes bug #81912. Spaces
+	to tabs.
+
 2007-06-21  Dick Porter  <dick@ximian.com>
 
 	* FileStream.cs: Fix FileShare test, fixing better bug 79250.

@@ -24,7 +24,6 @@ namespace MonoTests.System.IO
 [TestFixture]
 public class DirectoryTest
 {
-	CultureInfo old_culture;
 	string TempFolder = Path.Combine (Path.GetTempPath (), "MonoTests.System.IO.Tests");
 	static readonly char DSC = Path.DirectorySeparatorChar;
 
@@ -33,15 +32,14 @@ public class DirectoryTest
 	{
 		if (!Directory.Exists (TempFolder))
 			Directory.CreateDirectory (TempFolder);
-		old_culture = Thread.CurrentThread.CurrentCulture;
-		Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US", false);
+
+		Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US");
 	}
 	
 	[TearDown]
 	public void TearDown () {
 		if (Directory.Exists (TempFolder))
 			Directory.Delete (TempFolder, true);
-		Thread.CurrentThread.CurrentCulture = old_culture;
 	}
 
 	[Test]
@@ -614,7 +612,89 @@ public class DirectoryTest
 	}
 
 	[Test]
-	public void Move ()
+	public void Move_DestDirName_Empty ()
+	{
+		try {
+			Directory.Move (TempFolder, string.Empty);
+			Assert.Fail ("#A1");
+		} catch (ArgumentException ex) {
+			// Empty file name is not legal
+			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+			Assert.IsNull (ex.InnerException, "#A3");
+			Assert.IsNotNull (ex.Message, "#A4");
+			Assert.IsNotNull (ex.ParamName, "#A5");
+			Assert.AreEqual ("destDirName", ex.ParamName, "#A6");
+		}
+
+		try {
+			Directory.Move (TempFolder, "             ");
+			Assert.Fail ("#B1");
+		} catch (ArgumentException ex) {
+			// The path is not of a legal form
+			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+			Assert.IsNull (ex.InnerException, "#B3");
+			Assert.IsNotNull (ex.Message, "#B4");
+		}
+	}
+
+	[Test]
+	public void Move_DestDirName_Null ()
+	{
+		try {
+			Directory.Move (TempFolder, (string) null);
+			Assert.Fail ("#1");
+		} catch (ArgumentNullException ex) {
+			Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
+			Assert.IsNotNull (ex.ParamName, "#5");
+			Assert.AreEqual ("destDirName", ex.ParamName, "#6");
+		}
+	}
+
+	[Test]
+	public void Move_SourceDirName_Empty ()
+	{
+		try {
+			Directory.Move (string.Empty, TempFolder);
+			Assert.Fail ("#A1");
+		} catch (ArgumentException ex) {
+			// Empty file name is not legal
+			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+			Assert.IsNull (ex.InnerException, "#A3");
+			Assert.IsNotNull (ex.Message, "#A4");
+			Assert.IsNotNull (ex.ParamName, "#A5");
+			Assert.AreEqual ("sourceDirName", ex.ParamName, "#A6");
+		}
+
+		try {
+			Directory.Move ("             ", TempFolder);
+			Assert.Fail ("#B1");
+		} catch (ArgumentException ex) {
+			// The path is not of a legal form
+			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+			Assert.IsNull (ex.InnerException, "#B3");
+			Assert.IsNotNull (ex.Message, "#B4");
+		}
+	}
+
+	[Test]
+	public void Move_SourceDirName_Null ()
+	{
+		try {
+			Directory.Move ((string) null, TempFolder);
+			Assert.Fail ("#1");
+		} catch (ArgumentNullException ex) {
+			Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
+			Assert.IsNotNull (ex.ParamName, "#5");
+			Assert.AreEqual ("sourceDirName", ex.ParamName, "#6");
+		}
+	}
+
+	[Test]
+	public void MoveDirectory ()
 	{
 		string path = TempFolder + DSC + "DirectoryTest.Test.9";
 		string path2 = TempFolder + DSC + "DirectoryTest.Test.10";
@@ -635,10 +715,10 @@ public class DirectoryTest
 				Directory.Delete (path2 + DSC + "dir", true);
 		}
 	}
-	
+
 	[Test]
-	[ExpectedException(typeof(IOException))]
-	public void MoveException1 ()
+	[ExpectedException (typeof (IOException))]
+	public void MoveDirectory_Same ()
 	{
 		string path = TempFolder + DSC + "DirectoryTest.Test.8";
 		DeleteDirectory (path);
@@ -650,28 +730,96 @@ public class DirectoryTest
 	}
 
 	[Test]
-	[ExpectedException(typeof(ArgumentException))]
-	public void MoveException2 ()
+	public void MoveFile ()
 	{
-		string path = TempFolder + DSC + "DirectoryTest.Test.11";
-		DeleteDirectory (path);
-		try {
-			Directory.Move ("", path);
-		} finally {
-			DeleteDirectory (path);
+		string tempFile1 = Path.Combine (TempFolder, "temp1.txt");
+		string tempFile2 = Path.Combine (TempFolder, "temp2.txt");
+
+		using (StreamWriter sw = File.CreateText (tempFile1)) {
+			sw.Write ("temp1");
+		}
+		Assert.IsFalse (File.Exists (tempFile2), "#1");
+		Directory.Move (tempFile1, tempFile2);
+		Assert.IsFalse (File.Exists (tempFile1), "#2");
+		Assert.IsTrue (File.Exists (tempFile2), "#3");
+		using (StreamReader sr = File.OpenText (tempFile2)) {
+			Assert.AreEqual ("temp1", sr.ReadToEnd (), "#4");
 		}
 	}
 
 	[Test]
-	[ExpectedException(typeof(ArgumentException))]
-	public void MoveException3 ()
+	public void MoveFile_DestDir_Exists ()
 	{
-		string path = TempFolder + DSC + "DirectoryTest.Test.12";
-		DeleteDirectory (path);
+		string tempFile = Path.Combine (TempFolder, "temp1.txt");
+		string tempDir = Path.Combine (TempFolder, "temp2");
+
+		using (StreamWriter sw = File.CreateText (tempFile)) {
+			sw.Write ("temp1");
+		}
+		Directory.CreateDirectory (tempDir);
+
 		try {
-			Directory.Move ("             ", path);
-		} finally {
-			DeleteDirectory (path);
+			Directory.Move (tempFile, tempDir);
+			Assert.Fail ("#A1");
+		} catch (IOException ex) {
+			// Cannot create a file when that file already exists
+			Assert.AreEqual (typeof (IOException), ex.GetType (), "#A2");
+			Assert.IsNull (ex.InnerException, "#A3");
+			Assert.IsNotNull (ex.Message, "#A4");
+		}
+
+		Assert.IsTrue (File.Exists (tempFile), "#B1");
+		Assert.IsFalse (File.Exists (tempDir), "#B2");
+		Assert.IsTrue (Directory.Exists (tempDir), "#B3");
+	}
+
+	[Test]
+	public void MoveFile_DestFile_Exists ()
+	{
+		string tempFile1 = Path.Combine (TempFolder, "temp1.txt");
+		string tempFile2 = Path.Combine (TempFolder, "temp2.txt");
+
+		using (StreamWriter sw = File.CreateText (tempFile1)) {
+			sw.Write ("temp1");
+		}
+		using (StreamWriter sw = File.CreateText (tempFile2)) {
+			sw.Write ("temp2");
+		}
+
+		try {
+			Directory.Move (tempFile1, tempFile2);
+			Assert.Fail ("#A1");
+		} catch (IOException ex) {
+			// Cannot create a file when that file already exists
+			Assert.AreEqual (typeof (IOException), ex.GetType (), "#A2");
+			Assert.IsNull (ex.InnerException, "#A3");
+			Assert.IsNotNull (ex.Message, "#A4");
+		}
+
+		Assert.IsTrue (File.Exists (tempFile1), "#B1");
+		using (StreamReader sr = File.OpenText (tempFile1)) {
+			Assert.AreEqual ("temp1", sr.ReadToEnd (), "#B2");
+		}
+
+		Assert.IsTrue (File.Exists (tempFile2), "#C1");
+		using (StreamReader sr = File.OpenText (tempFile2)) {
+			Assert.AreEqual ("temp2", sr.ReadToEnd (), "#C2");
+		}
+	}
+
+	[Test]
+	public void MoveFile_Same ()
+	{
+		string tempFile = Path.Combine (TempFolder, "temp.txt");
+
+		try {
+			Directory.Move (tempFile, tempFile);
+			Assert.Fail ("#1");
+		} catch (IOException ex) {
+			// Source and destination path must be different
+			Assert.AreEqual (typeof (IOException), ex.GetType (), "#2");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
 		}
 	}
 
@@ -710,7 +858,7 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(IOException))]
-	public void MoveException6 ()
+	public void MoveDirectory_Dest_SubDir ()
 	{
 		string path = TempFolder + DSC + "DirectoryTest.Test.15";
 		DeleteDirectory (path);
@@ -724,8 +872,8 @@ public class DirectoryTest
 	}
 
 	[Test]
-	[ExpectedException(typeof(IOException))]
-	public void MoveException7 ()
+	[ExpectedException (typeof (IOException))]
+	public void MoveDirectory_Dest_Exists ()
 	{
 		string path = TempFolder + DSC + "DirectoryTest.Test.16";
 		string path2 = TempFolder + DSC + "DirectoryTest.Test.17";

@@ -155,8 +155,7 @@ namespace System.IO
 				 */
 				success = MonoIO.DeleteFile (path, out error);
 			} else {
-				success = MonoIO.RemoveDirectory (path,
-								  out error);
+				success = MonoIO.RemoveDirectory (path, out error);
 			}
 			
 			if (!success) {
@@ -230,12 +229,12 @@ namespace System.IO
 		{
 			return File.GetLastAccessTime (path);
 		}
-		
+
 		public static DateTime GetLastAccessTimeUtc (string path)
 		{
 			return GetLastAccessTime (path).ToUniversalTime ();
 		}
-		      
+
 		public static DateTime GetLastWriteTime (string path)
 		{
 			return File.GetLastWriteTime (path);
@@ -349,15 +348,15 @@ namespace System.IO
 		static bool IsRootDirectory (string path)
 		{
 			// Unix
-		       if (Path.DirectorySeparatorChar == '/' && path == "/")
-			       return true;
+			if (Path.DirectorySeparatorChar == '/' && path == "/")
+				return true;
 
-		       // Windows
-		       if (Path.DirectorySeparatorChar == '\\')
-			       if (path.Length == 3 && path.EndsWith (":\\"))
-				       return true;
+			// Windows
+			if (Path.DirectorySeparatorChar == '\\')
+				if (path.Length == 3 && path.EndsWith (":\\"))
+					return true;
 
-		       return false;
+			return false;
 		}
 
 		public static DirectoryInfo GetParent (string path)
@@ -380,31 +379,31 @@ namespace System.IO
 			return new DirectoryInfo (parent_name);
 		}
 
-		public static void Move (string src, string dest)
+		public static void Move (string sourceDirName, string destDirName)
 		{
-			if (src == null)
-				throw new ArgumentNullException ("src");
+			if (sourceDirName == null)
+				throw new ArgumentNullException ("sourceDirName");
 
-			if (dest == null)
-				throw new ArgumentNullException ("dest");
+			if (destDirName == null)
+				throw new ArgumentNullException ("destDirName");
 
-			if (src.Trim () == "" || src.IndexOfAny (Path.InvalidPathChars) != -1)
-				throw new ArgumentException ("Invalid source directory name: " + src, "src");
+			if (sourceDirName.Trim () == "" || sourceDirName.IndexOfAny (Path.InvalidPathChars) != -1)
+				throw new ArgumentException ("Invalid source directory name: " + sourceDirName, "sourceDirName");
 
-			if (dest.Trim () == "" || dest.IndexOfAny (Path.InvalidPathChars) != -1)
-				throw new ArgumentException ("Invalid target directory name: " + dest, "dest");
+			if (destDirName.Trim () == "" || destDirName.IndexOfAny (Path.InvalidPathChars) != -1)
+				throw new ArgumentException ("Invalid target directory name: " + destDirName, "destDirName");
 
-			if (src == dest)
-				throw new IOException ("Source directory cannot be same as a target directory.");
+			if (sourceDirName == destDirName)
+				throw new IOException ("Source and destination path must be different.");
 
-			if (Exists (dest))
-				throw new IOException (dest + " already exists.");
+			if (Exists (destDirName))
+				throw new IOException (destDirName + " already exists.");
 
-			if (!Exists (src))
-				throw new DirectoryNotFoundException (src + " does not exist");
+			if (!Exists (sourceDirName) && !File.Exists (sourceDirName))
+				throw new DirectoryNotFoundException (sourceDirName + " does not exist");
 
 			MonoIOError error;
-			if (!MonoIO.MoveFile (src, dest, out error))
+			if (!MonoIO.MoveFile (sourceDirName, destDirName, out error))
 				throw MonoIO.GetException (error);
 		}
 
@@ -545,4 +544,3 @@ namespace System.IO
 #endif
 	}
 }
-
