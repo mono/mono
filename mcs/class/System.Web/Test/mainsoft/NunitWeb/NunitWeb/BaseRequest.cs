@@ -175,7 +175,6 @@ namespace MonoTests.SystemWeb.Framework
 			r.StatusCode = ((HttpWebResponse)response).StatusCode;
 			r.StatusDescription = ((HttpWebResponse) response).StatusDescription;
 				
-			byte [] b = new byte [response.ContentLength];
 			using (Stream s = response.GetResponseStream ()) {
 				StreamReader sr = new StreamReader(s);
 				r.Body = sr.ReadToEnd ();
