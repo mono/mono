@@ -72,16 +72,16 @@
     <Reference Include="System.Xml, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\build\common\Consts.cs">
+    <Compile Include="..\..\..\build\common\Consts.cs">
       <Link>Assembly\Consts.cs</Link>
     </Compile>
-    <Compile Include="..\..\build\common\Locale.cs">
+    <Compile Include="..\..\..\build\common\Locale.cs">
       <Link>Assembly\Locale.cs</Link>
     </Compile>
-    <Compile Include="..\..\build\common\MonoTODOAttribute.cs">
+    <Compile Include="..\..\..\build\common\MonoTODOAttribute.cs">
       <Link>Assembly\MonoTODOAttribute.cs</Link>
     </Compile>
-    <Compile Include="..\System.Web\System.Web.Handlers\AssemblyResourceLoader.cs">
+    <Compile Include="..\..\System.Web\System.Web.Handlers\AssemblyResourceLoader.cs">
       <Link>System.Web.Handlers\AssemblyResourceLoader.cs</Link>
     </Compile>
     <Compile Include="Assembly\AssemblyInfo.cs" />
@@ -154,22 +154,28 @@
     <Compile Include="System.Web.UI\UpdateProgress.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="MicrosoftAjaxLibrary\System.Web.Extensions\1.0.61025.0\MicrosoftAjax.debug.js">
+    <EmbeddedResource Include="..\MicrosoftAjaxLibrary\System.Web.Extensions\1.0.61025.0\MicrosoftAjax.debug.js">
+      <Link>Resources\MicrosoftAjax.debug.js</Link>
       <LogicalName>MicrosoftAjax.debug.js</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="MicrosoftAjaxLibrary\System.Web.Extensions\1.0.61025.0\MicrosoftAjax.js">
+    <EmbeddedResource Include="..\MicrosoftAjaxLibrary\System.Web.Extensions\1.0.61025.0\MicrosoftAjax.js">
+      <Link>Resources\MicrosoftAjax.js</Link>
       <LogicalName>MicrosoftAjax.js</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="MicrosoftAjaxLibrary\System.Web.Extensions\1.0.61025.0\MicrosoftAjaxTimer.debug.js">
+    <EmbeddedResource Include="..\MicrosoftAjaxLibrary\System.Web.Extensions\1.0.61025.0\MicrosoftAjaxTimer.debug.js">
+      <Link>Resources\MicrosoftAjaxTimer.debug.js</Link>
       <LogicalName>MicrosoftAjaxTimer.debug.js</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="MicrosoftAjaxLibrary\System.Web.Extensions\1.0.61025.0\MicrosoftAjaxTimer.js">
+    <EmbeddedResource Include="..\MicrosoftAjaxLibrary\System.Web.Extensions\1.0.61025.0\MicrosoftAjaxTimer.js">
+      <Link>Resources\MicrosoftAjaxTimer.js</Link>
       <LogicalName>MicrosoftAjaxTimer.js</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="MicrosoftAjaxLibrary\System.Web.Extensions\1.0.61025.0\MicrosoftAjaxWebForms.debug.js">
+    <EmbeddedResource Include="..\MicrosoftAjaxLibrary\System.Web.Extensions\1.0.61025.0\MicrosoftAjaxWebForms.debug.js">
+      <Link>Resources\MicrosoftAjaxWebForms.debug.js</Link>
       <LogicalName>MicrosoftAjaxWebForms.debug.js</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="MicrosoftAjaxLibrary\System.Web.Extensions\1.0.61025.0\MicrosoftAjaxWebForms.js">
+    <EmbeddedResource Include="..\MicrosoftAjaxLibrary\System.Web.Extensions\1.0.61025.0\MicrosoftAjaxWebForms.js">
+      <Link>Resources\MicrosoftAjaxWebForms.js</Link>
       <LogicalName>MicrosoftAjaxWebForms.js</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
