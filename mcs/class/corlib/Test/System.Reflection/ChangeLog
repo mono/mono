@@ -1,3 +1,7 @@
+2007-07-09  Mark Probst  <mark.probst@gmail.com>
+
+	* AssemblyTest.cs: Enabled test for bug 78465.
+
 2007-07-05  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* MethodInfoTest.cs: Added test for bug #81997. Code formatting.

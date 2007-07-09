@@ -341,7 +341,6 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void bug78465 ()
 		{
 			string assemblyFileName = Path.Combine (
