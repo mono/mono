@@ -181,6 +181,31 @@ namespace System.Globalization
 				}
 			}
 		}
+
+		// For specific cultures it basically returns LCID.
+		// For neutral cultures it is mapped to the default(?) specific
+		// culture, where the LCID of the specific culture seems to be
+		// n + 1024 by default. zh-CHS is the only exception which is 
+		// mapped to 2052, not 1028 (zh-CHT is mapped to 1028 instead).
+		// There are very few exceptions, here I simply list them here.
+		// It is Windows-specific property anyways, so no worthy of
+		// trying to do some complex things with locale-builder.
+		public virtual int KeyboardLayoutId {
+			get {
+				switch (LCID) {
+				case 4: // zh-CHS (neutral)
+					return 2052;
+				case 1034: // es-ES Spanish 2
+					return 3082;
+				case 31748: // zh-CHT (neutral)
+					return 1028;
+				case 31770: // sr (neutral)
+					return 2074;
+				default:
+					return LCID < 1024 ? LCID + 1024 : LCID;
+				}
+			}
+		}
 #endif
 
 		public virtual int LCID {
