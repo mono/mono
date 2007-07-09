@@ -1,3 +1,8 @@
+2007-07-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* LockCookie.cs, AsyncFlowControl.cs :
+	  added missing operator == and !=.
+
 2007-05-22  Jonathan Chambers  <joncham@gmail.com>
 
 	* Thread.cs: Use & to check ThreadState rather than ==.

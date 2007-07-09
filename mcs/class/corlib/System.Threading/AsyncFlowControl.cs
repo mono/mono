@@ -101,5 +101,15 @@ namespace System.Threading {
 				return(false);
 			}
 		}
+
+		public static bool operator == (AsyncFlowControl obj1, AsyncFlowControl obj2)
+		{
+			return obj1.Equals (obj2);
+		}
+
+		public static bool operator != (AsyncFlowControl obj1, AsyncFlowControl obj2)
+		{
+			return !obj1.Equals (obj2);
+		}
 	}
 }
