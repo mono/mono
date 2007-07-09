@@ -59,6 +59,14 @@ namespace System
 			}
 		}
 
+		public int MDStreamVersion { 
+			get {
+				if (value == IntPtr.Zero)
+					throw new ArgumentNullException (String.Empty, "Invalid handle");
+				return Module.GetMDStreamVersion (value);
+			}
+		}
+
 		internal void GetPEKind (out PortableExecutableKinds peKind, out ImageFileMachine machine)
 		{
 			if (value == IntPtr.Zero)
@@ -138,6 +146,16 @@ namespace System
 		public override int GetHashCode ()
 		{
 			return value.GetHashCode ();
+		}
+
+		public static bool operator == (ModuleHandle a, ModuleHandle b)
+		{
+			return Equals (a, b);
+		}
+
+		public static bool operator != (ModuleHandle a, ModuleHandle b)
+		{
+			return !Equals (a, b);
 		}
 	}
 }

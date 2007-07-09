@@ -1,3 +1,7 @@
+2007-07-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* ModuleHandle.cs: Add missing 2.0 stuff.
+
 2007-07-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* *.cs: Add missing ComVisible attributes.
