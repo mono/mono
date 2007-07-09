@@ -1,3 +1,10 @@
+
+Mon Jul 9 11:34:17 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* filewatcher.c: patch from Thong Nguyen <tum@veridicus.com> to
+	not use mono_dl_build_path() with a full library name: makes
+	fallbacks to libgaim and libfam work.
+
 2007-07-06  William Holmes  <billholmes54@gmail.com>
 
 	* assembly.c: Added a continue statement in probe_for_partial_name when
