@@ -1,5 +1,9 @@
 2007-07-09  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* CultureInfo.cs : 1.x build fix.
+
+2007-07-09  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* CultureInfo.cs : implemented GetConsoleFallbackUICulture and
 	  CultureTypes (it is awful indeed). Fix ComVisibles.
 	  implemented InstalledUICulture, as what matches the best I think is
