@@ -1,3 +1,7 @@
+2007-07-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall-def.h icall.c: Remove Module:get_MDStreamVersion icall and add a new
+	GetMDStreamVersion icall instead.
 
 Mon Jul 9 11:34:17 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
