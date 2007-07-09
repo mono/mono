@@ -64,6 +64,7 @@ namespace System.Windows.Forms
 
 		[DefaultValue (null)]
 		[MergableProperty (false)]
+		[TypeConverter (typeof (MdiWindowListItemConverter))]
 		public ToolStripMenuItem MdiWindowListItem {
 			get { return this.mdi_window_list_item; }
 			set { 
@@ -95,6 +96,11 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Protected Methods
+		protected override AccessibleObject CreateAccessibilityInstance ()
+		{
+			return new MenuStripAccessibleObject ();
+		}
+		
 		protected internal override ToolStripItem CreateDefaultItem (string text, Image image, EventHandler onClick)
 		{
 			return new ToolStripMenuItem (text, image, onClick);
@@ -314,6 +320,19 @@ namespace System.Windows.Forms
 					this.mdi_window_list_item.DropDownItems.Add (tsi);
 		}
 		#endregion
+
+		#region MenuStripAccessibleObject
+		private class MenuStripAccessibleObject : AccessibleObject
+		{
+		}
+		#endregion
+
 	}
+	
+	#region MdiWindowListItemConverter
+	internal class MdiWindowListItemConverter : TypeConverter
+	{
+	}
+	#endregion
 }
 #endif
