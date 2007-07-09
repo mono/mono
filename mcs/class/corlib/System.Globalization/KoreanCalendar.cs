@@ -359,6 +359,13 @@ public class KoreanCalendar : Calendar {
 		return 12;
 	}
 
+#if NET_2_0
+	public override int GetWeekOfYear (DateTime date, CalendarWeekRule rule, DayOfWeek firstDayOfWeek)
+	{
+		return base.GetWeekOfYear (date, rule, firstDayOfWeek);
+	}
+#endif
+
 	/// <summary>
 	/// Overridden. Gives the number of the year of the specified
 	/// date.

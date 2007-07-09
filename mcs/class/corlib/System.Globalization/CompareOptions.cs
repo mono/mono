@@ -38,6 +38,7 @@ namespace System.Globalization {
 
 #if NET_2_0
 	[System.Runtime.InteropServices.ComVisible(true)]
+	[System.Serializable]
 #endif
 	[Flags]
 	public enum CompareOptions {

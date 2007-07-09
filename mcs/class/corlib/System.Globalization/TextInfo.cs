@@ -45,6 +45,9 @@ namespace System.Globalization {
 	[Serializable]
 	[MonoTODO ("IDeserializationCallback isn't implemented.")]
 	public class TextInfo: IDeserializationCallback
+#if NET_2_0
+		, ICloneable
+#endif
 	{
 		[StructLayout (LayoutKind.Sequential)]
 		struct Data {

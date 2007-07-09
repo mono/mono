@@ -41,6 +41,7 @@ namespace System.Globalization {
 	[Flags]
 #if NET_2_0
 	[System.Runtime.InteropServices.ComVisible(true)]
+	[System.Serializable]
 #endif
 	public enum CultureTypes {
 		NeutralCultures = 1,

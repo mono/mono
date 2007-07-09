@@ -33,7 +33,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 
 namespace System.Globalization
 {
@@ -42,6 +41,7 @@ namespace System.Globalization
 	/// </summary>
 #if NET_2_0
 	[System.Runtime.InteropServices.ComVisible(true)]
+	[System.Serializable]
 #endif
 	public enum CalendarWeekRule
 	{

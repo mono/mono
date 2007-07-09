@@ -1,3 +1,12 @@
+2007-07-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TextInfo.cs : ICloneable.
+	* GregorianCalendarTypes.cs CompareOptions.cs CultureTypes.cs
+	  CalendarWeekRule.cs UnicodeCategory.cs : [Serializable].
+	* ThaiBuddhistCalendar.cs GregorianCalendar.cs KoreanCalendar.cs
+	  TaiwanCalendar.cs JapaneseCalendar.cs :
+	  GetWeekOfYear() (base could be simply used). Removed unused code.
+
 2007-07-02  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* UmAlQuraCalendar.cs
