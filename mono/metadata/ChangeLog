@@ -1,3 +1,10 @@
+
+Mon Jul 9 16:21:43 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* class-internals.h, object.c: cleanup patch from massi: use
+	MonoVTable->interface_bitmap since the vtable interfaces offset array
+	is going away.
+
 2007-07-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* icall-def.h icall.c: Remove Module:get_MDStreamVersion icall and add a new
