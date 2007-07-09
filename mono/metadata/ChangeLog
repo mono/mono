@@ -1,5 +1,10 @@
 2007-07-09  Mark Probst  <mark.probst@gmail.com>
 
+	* class.c (mono_class_init): If a class is already inited but has
+	an exception_type set, return FALSE, not TRUE.  Fixes: 82050.
+
+2007-07-09  Mark Probst  <mark.probst@gmail.com>
+
 	* class.c: Properly handle the case of an unimplemented interface
 	method.  Fixes: 81673.
 
