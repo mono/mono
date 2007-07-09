@@ -167,6 +167,16 @@ namespace System.Windows.Forms
 		{
 			return string.Format ("{{Start={0}, Length={1}}}", this.start.ToString (), this.length.ToString ());
 		}
+		
+		public static bool operator == (LinkArea l1, LinkArea l2)
+		{
+			return (l1.Length == l2.Length) && (l1.Start == l2.Start);
+		}
+		
+		public static bool operator != (LinkArea l1, LinkArea l2)
+		{
+			return !(l1 == l2);
+		}
 #endif
 		#endregion //Methods
 		
