@@ -34,6 +34,7 @@ namespace System.Reflection.Emit
 {
 #if NET_2_0
 	[ComVisible (true)]
+	[Serializable]
 #endif
   [Flags]
   public enum AssemblyBuilderAccess

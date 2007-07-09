@@ -38,6 +38,7 @@ namespace System.Reflection.Emit {
 #endif
 #if NET_2_0
 	[ComVisible (true)]
+	[Serializable]
 #endif
 	public enum PackingSize {
 

@@ -76,6 +76,16 @@ namespace System.Reflection.Emit {
 		{
 			return (this.tokValue == obj.tokValue);
 		}
+
+		public static bool operator == (EventToken a, EventToken b)
+		{
+			return Equals (a, b);
+		}
+
+		public static bool operator != (EventToken a, EventToken b)
+		{
+			return !Equals (a, b);
+		}
 #endif
 
 		/// <summary>

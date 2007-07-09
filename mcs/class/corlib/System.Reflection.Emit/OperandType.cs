@@ -34,6 +34,7 @@ namespace System.Reflection.Emit {
 	/// </summary>
 #if NET_2_0
 	[ComVisible (true)]
+	[Serializable]
 #endif
 	public enum OperandType {
 

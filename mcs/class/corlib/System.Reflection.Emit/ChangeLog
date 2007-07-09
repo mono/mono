@@ -1,3 +1,10 @@
+2007-07-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* OpCodeType.cs EventToken.cs FieldToken.cs SignatureToken.cs PackingSize.cs
+	StringToken.cs AssemblyBuilderAccess.cs FlowControl.cs MethodToken.cs
+	ParameterToken.cs TypeToken.cs PropertyToken.cs OperandType.cs PEFileKinds.cs
+	StackBehaviour.cs: 2.0 updates.
+	
 2007-07-07  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* MethodBuilder.cs: Code formatting. Spaces to tabs.
