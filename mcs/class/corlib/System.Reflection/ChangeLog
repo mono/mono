@@ -1,3 +1,8 @@
+2007-07-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CustomAttributeNamedArgument.cs, CustomAttributeTypedArgument.cs:
+	  added missing operator == and !=.
+
 2007-07-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CustomAttributeNamedArgument.cs CustomAttributeTypedArgument.cs
