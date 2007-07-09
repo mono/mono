@@ -48,7 +48,11 @@ namespace System.Windows.Forms {
 
 		#region RadioButtonAccessibleObject Subclass
 		[ComVisible(true)]
+#if NET_2_0
+		public class RadioButtonAccessibleObject : ButtonBaseAccessibleObject {
+#else
 		public class RadioButtonAccessibleObject : ControlAccessibleObject {
+#endif
 			#region RadioButtonAccessibleObject Local Variables
 			private new RadioButton	owner;
 			#endregion	// RadioButtonAccessibleObject Local Variables

@@ -1,5 +1,10 @@
 2007-07-09  Jonathan Pobst  <monkey@jpobst.com>
 
+	* AccessibleObject.cs, RadioButton.cs: Fix some base classes
+	that changed between 1.1 and 2.0.
+
+2007-07-09  Jonathan Pobst  <monkey@jpobst.com>
+
 	* PowerStatus.cs: Added.  This is just a data class, it is filled
 	in by SystemInformation.
 
