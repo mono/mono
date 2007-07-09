@@ -1,3 +1,8 @@
+2007-07-06  Alan McGovern  <amcgovern@novell.com>
+
+	* Uri.cs : The URI string should be whitespace trimmed before
+	parsing. The original string is untouched. Fixes #81960.
+
 2007-07-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* UriIdnScope.cs : new file (for net_2_1 profile).

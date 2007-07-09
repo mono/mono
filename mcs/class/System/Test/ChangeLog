@@ -1,5 +1,10 @@
 2007-07-06  Alan McGovern  <amcgovern@novell.com>
 
+	* UriTest.cs : Added test to check that whitespace
+	is trimmed correctly before parsing a Uri.
+
+2007-07-06  Alan McGovern  <amcgovern@novell.com>
+
 	* SoundPlayerTest.cs : added SoundPlayerTest.cs
 
 2007-05-19  Atsushi Enomoto  <atsushi@ximian.com>

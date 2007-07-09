@@ -1247,6 +1247,7 @@ namespace System {
 			if (uriString == null)
 				throw new ArgumentNullException ("uriString");
 
+			uriString = uriString.Trim();
 			int len = uriString.Length;
 			if (len <= 1) 
 				throw new UriFormatException ();

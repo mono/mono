@@ -32,7 +32,7 @@ namespace MonoTests.System
 		public void Constructors ()
 		{
 			Uri uri = null;
-			
+
 			/*
 			uri = new Uri ("http://www.ximian.com/foo" + ((char) 0xa9) + "/bar/index.cgi?a=1&b=" + ((char) 0xa9) + "left#fragm?ent2");
 			Print (uri);
@@ -66,7 +66,10 @@ namespace MonoTests.System
 			uri = new Uri ("http://www.contoso.com:1234");
 			Print (uri);
 			*/
-			
+
+			uri = new Uri("  \r  \n http://test.com\r\n \r\r  ");
+			AssertEquals ("#k0", "http://test.com/", uri.ToString());
+
 			uri = new Uri ("http://contoso.com?subject=uri");
 			AssertEquals ("#k1", "/", uri.AbsolutePath);
 			AssertEquals ("#k2", "http://contoso.com/?subject=uri", uri.AbsoluteUri);
