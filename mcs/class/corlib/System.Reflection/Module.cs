@@ -107,10 +107,16 @@ namespace System.Reflection {
 			get;
 		}
 
-		public extern int MDStreamVersion {
-			[MethodImplAttribute (MethodImplOptions.InternalCall)]
-			get;
+		public int MDStreamVersion {
+			get {
+				if (_impl == IntPtr.Zero)
+					throw new NotSupportedException ();
+				return GetMDStreamVersion (_impl);
+			}
 		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern int GetMDStreamVersion (IntPtr module_handle);
 #endif
 	
 		public virtual Type[] FindTypes(TypeFilter filter, object filterCriteria) 

@@ -1,3 +1,7 @@
+2007-07-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* Module.cs: Add new internal method GetMDStreamVersion ().
+
 2007-07-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CustomAttributeNamedArgument.cs, CustomAttributeTypedArgument.cs:
