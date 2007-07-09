@@ -1,5 +1,10 @@
 2007-07-09  Jonathan Pobst  <monkey@jpobst.com>
 
+	* PowerStatus.cs: Added.  This is just a data class, it is filled
+	in by SystemInformation.
+
+2007-07-09  Jonathan Pobst  <monkey@jpobst.com>
+
 	* Message.cs: Add op_Equality and op_Inequality.
 
 2007-07-09  Jonathan Pobst  <monkey@jpobst.com>

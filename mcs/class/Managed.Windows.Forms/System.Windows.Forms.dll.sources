@@ -508,6 +508,7 @@ System.Windows.Forms/PopupEventArgs.cs
 System.Windows.Forms/PopupEventHandler.cs
 System.Windows.Forms/PowerLineStatus.cs
 System.Windows.Forms/PowerState.cs
+System.Windows.Forms/PowerStatus.cs
 System.Windows.Forms/PreProcessControlState.cs
 System.Windows.Forms/PreviewKeyDownEventArgs.cs
 System.Windows.Forms/PreviewKeyDownEventHandler.cs
