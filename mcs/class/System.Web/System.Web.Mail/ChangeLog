@@ -1,3 +1,9 @@
+
+Mon Jul 9 13:04:37 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* SmtpClient.cs: fixed Vladimir's refactoring that broke
+	loading Mono.Security.
+
 2006-08-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* MailAddress.cs: allow the space before '<' to be omitted.

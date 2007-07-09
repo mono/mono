@@ -75,7 +75,7 @@ namespace System.Web.Mail {
 		// Load Mono.Security.dll
 		Assembly a;
 		try {
-			a = Assembly.Load("Consts.AssemblyMono_Security");
+			a = Assembly.Load(Consts.AssemblyMono_Security);
 		}
 		catch(System.IO.FileNotFoundException) {
 			throw new SmtpException( "Cannot load Mono.Security.dll" );
