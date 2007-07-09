@@ -100,14 +100,14 @@ namespace System
 			return value.GetHashCode ();
 		}
 
-		public static bool operator == (RuntimeTypeHandle left, RuntimeTypeHandle right)
+		public static bool operator == (RuntimeTypeHandle left, Object right)
 		{
-			return left.Equals (right);
+			return (right != null) && (right is RuntimeTypeHandle) && left.Equals ((RuntimeTypeHandle)right);
 		}
 
-		public static bool operator != (RuntimeTypeHandle left, RuntimeTypeHandle right)
+		public static bool operator != (RuntimeTypeHandle left, Object right)
 		{
-			return !left.Equals (right);
+			return (right == null) || !(right is RuntimeTypeHandle) || !left.Equals ((RuntimeTypeHandle)right);
 		}
 
 		public static bool operator == (Object left, RuntimeTypeHandle right)
