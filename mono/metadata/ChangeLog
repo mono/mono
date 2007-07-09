@@ -1,3 +1,7 @@
+2007-07-09  Mark Probst  <mark.probst@gmail.com>
+
+	* class.c: Properly handle the case of an unimplemented interface
+	method.  Fixes: 81673.
 
 Mon Jul 9 16:21:43 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
