@@ -1,5 +1,9 @@
 2007-07-09  Jonathan Pobst  <monkey@jpobst.com>
 
+	* MessageTest.cs: Add tests for op_Equality and op_Inequality.
+
+2007-07-09  Jonathan Pobst  <monkey@jpobst.com>
+
 	* LinkAreaTest.cs: Add tests for op_Equality and op_Inequality.
 
 2007-07-09  Jonathan Pobst  <monkey@jpobst.com>

@@ -1,5 +1,9 @@
 2007-07-09  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Message.cs: Add op_Equality and op_Inequality.
+
+2007-07-09  Jonathan Pobst  <monkey@jpobst.com>
+
 	* MenuStrip.cs: Finish corcompare work.
 
 2007-07-09  Jonathan Pobst  <monkey@jpobst.com>
