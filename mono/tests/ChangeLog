@@ -1,3 +1,8 @@
+2007-07-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* libtest.c (mono_test_marshal_return_unicode_string_delegate): 
+	Add a missing return.
+
 2007-07-09  Mark Probst  <mark.probst@gmail.com>
 
 	* Makefile.am (test-bug-81673), bug-81673.cs,
