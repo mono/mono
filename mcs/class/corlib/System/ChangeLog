@@ -1,3 +1,8 @@
+2007-07-10  Alan McGovern <amcgovern@novell.com>
+
+	* Guid.cs: All whitespace should be trimmed from before and
+	after a string passed into the Guid constructor. Fixes #81958
+
 2007-07-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* RuntimeTypeHandle.cs: Fix signatures of == and != operators.

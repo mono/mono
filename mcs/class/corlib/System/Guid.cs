@@ -281,7 +281,7 @@ namespace System {
 		public Guid (string g)
 		{
 			CheckNull (g);
-	
+			g = g.Trim();
 			GuidParser p = new GuidParser (g);
 			Guid guid = p.Parse();
 	

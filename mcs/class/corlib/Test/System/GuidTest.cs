@@ -53,13 +53,14 @@ namespace MonoTests.System {
 			Guid g2 = new Guid ("{00010203-0405-0607-0809-0A0B0C0D0E0F}"); 
 			Guid g3 = new Guid ("{0x00010203,0x0405,0x0607,{0x08,0x09,0x0a,0x0b,0x0c,0x0d,0x0e,0x0f}}");
 			Guid g4 = new Guid ("(00010203-0405-0607-0809-0A0B0C0D0E0F)");
-
+			Guid g5 = new Guid ("\n  \r  \n 00010203-0405-0607-0809-0a0b0c0d0e0f \r\n");
 			string expected = "00010203-0405-0607-0809-0a0b0c0d0e0f";
 			Assert.AreEqual (expected, g0.ToString (), "A0");
 			Assert.AreEqual (expected, g1.ToString (), "A1");
 			Assert.AreEqual (expected, g2.ToString (), "A2");
 			Assert.AreEqual (expected, g3.ToString (), "A3");
 			Assert.AreEqual (expected, g4.ToString (), "A4");
+			Assert.AreEqual (expected, g5.ToString (), "A5");
 		}
 
 		[Test]
