@@ -48,7 +48,7 @@
 namespace System.Globalization {
 
 #if NET_2_0
-	[System.Runtime.InteropServices.ComVisible(false)]
+	[System.Runtime.InteropServices.ComVisible(true)]
 #endif
 	[Serializable]
 	public sealed class NumberFormatInfo : ICloneable, IFormatProvider {

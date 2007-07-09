@@ -29,6 +29,7 @@
 namespace System.Globalization {
 
 using System;
+using System.Runtime.InteropServices;
 
 /// <summary>
 /// This is the Japanese calendar. It differs from the Gregorian calendar
@@ -376,6 +377,7 @@ public class TaiwanCalendar : Calendar {
 	}
 
 #if NET_2_0
+	[ComVisible (false)]
 	public override int GetLeapMonth (int year, int era)
 	{
 		return 0;
@@ -421,6 +423,7 @@ public class TaiwanCalendar : Calendar {
 	}
 
 #if NET_2_0
+	[ComVisible (false)]
 	public override int GetWeekOfYear (DateTime date, CalendarWeekRule rule, DayOfWeek firstDayOfWeek)
 	{
 		return base.GetWeekOfYear (date, rule, firstDayOfWeek);
@@ -580,6 +583,7 @@ public class TaiwanCalendar : Calendar {
 		return year;
 	}
 #if NET_2_0
+	[ComVisible (false)]
 	public override CalendarAlgorithmType AlgorithmType {
 		get {
 			return CalendarAlgorithmType.SolarCalendar;
@@ -589,12 +593,14 @@ public class TaiwanCalendar : Calendar {
 	static DateTime TaiwanMin = new DateTime (1912, 1, 1, 0, 0, 0);
 	static DateTime TaiwanMax = new DateTime (9999, 12, 31, 11, 59, 59);
 		
+	[ComVisible (false)]
 	public override DateTime MinSupportedDateTime {
 		get {
 			return TaiwanMin;
 		}
 	}
 
+	[ComVisible (false)]
 	public override DateTime MaxSupportedDateTime {
 		get {
 			return TaiwanMax;

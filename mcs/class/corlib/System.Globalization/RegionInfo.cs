@@ -136,6 +136,7 @@ namespace System.Globalization
 		}
 
 #if NET_2_0
+		[System.Runtime.InteropServices.ComVisible(false)]
 		public virtual int GeoId {
 			get { return regionId; }
 		}
@@ -164,6 +165,7 @@ namespace System.Globalization
 		}
 
 		[MonoTODO ("Not implemented")]
+		[System.Runtime.InteropServices.ComVisible(false)]
 		public virtual string CurrencyNativeName {
 			get { throw new NotImplementedException (); }
 		}

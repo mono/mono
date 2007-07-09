@@ -30,6 +30,7 @@ namespace System.Globalization {
 
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 
 /// <summary>
 /// This is the Hebrew calendar.
@@ -43,6 +44,9 @@ using System.IO;
 /// </para>
 /// </remarks>
 [Serializable]
+#if NET_2_0
+[ComVisible (true)]
+#endif
 [MonoTODO ("Serialization format not compatible with.NET")]
 public class HebrewCalendar : Calendar {
 	/// <summary>

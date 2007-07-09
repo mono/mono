@@ -35,6 +35,7 @@ namespace System.Globalization {
 
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 
 /// <summary>
 /// This is the Persian calendar of Iran, also known as the Iranian
@@ -702,6 +703,28 @@ public class PersianCalendar : Calendar {
 			return baseCentury + year - 100;
 	}
 
+#if NET_2_0
+	public override CalendarAlgorithmType AlgorithmType {
+		get {
+			return CalendarAlgorithmType.SolarCalendar;
+		}
+	}
+
+	static DateTime PersianMin = new DateTime (622, 3, 21, 0, 0, 0);
+	static DateTime PersianMax = new DateTime (9999, 12, 31, 11, 59, 59);
+		
+	public override DateTime MinSupportedDateTime {
+		get {
+			return PersianMin;
+		}
+	}
+
+	public override DateTime MaxSupportedDateTime {
+		get {
+			return PersianMax;
+		}
+	}
+#endif
 } // class PersianCalendar
 	
 } // namespace System.Globalization

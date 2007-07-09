@@ -1,5 +1,15 @@
 2007-07-09  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* CompareInfo.cs : Name.
+	* PersianCalendar.cs : missing members.
+	* NumberFormatInfo.cs HijriCalendar.cs CultureInfo.cs TextInfo.cs
+	  HebrewCalendar.cs ThaiBuddhistCalendar.cs GregorianCalendar.cs
+	  KoreanCalendar.cs JulianCalendar.cs TaiwanCalendar.cs
+	  JapaneseCalendar.cs DaylightTime.cs EastAsianLunisolarCalendar.cs
+	  RegionInfo.cs TextElementEnumerator.cs : ComVisible cleanup.
+
+2007-07-09  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* TextInfo.cs : ICloneable.
 	* GregorianCalendarTypes.cs CompareOptions.cs CultureTypes.cs
 	  CalendarWeekRule.cs UnicodeCategory.cs : [Serializable].

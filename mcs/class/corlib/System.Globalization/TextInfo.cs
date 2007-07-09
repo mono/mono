@@ -43,6 +43,9 @@ using System.Text;
 namespace System.Globalization {
 
 	[Serializable]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	[MonoTODO ("IDeserializationCallback isn't implemented.")]
 	public class TextInfo: IDeserializationCallback
 #if NET_2_0
@@ -148,6 +151,7 @@ namespace System.Globalization {
 					m_listSeparator = ((char) data.list_sep).ToString ();
 				return m_listSeparator;
 			}
+			[ComVisible (false)]
 			set { m_listSeparator = value; }
 #else
 			get {
@@ -490,6 +494,7 @@ namespace System.Globalization {
 		}
 
 #if NET_2_0
+		[ComVisible (false)]
 		static public TextInfo ReadOnly (TextInfo textInfo)
 		{
 			if (textInfo == null)
@@ -509,7 +514,8 @@ namespace System.Globalization {
 
 #if NET_2_0
 		/* IClonable */
-		public object Clone ()
+		[ComVisible (false)]
+		public virtual object Clone ()
 		{
 			return new TextInfo (this);
 		}

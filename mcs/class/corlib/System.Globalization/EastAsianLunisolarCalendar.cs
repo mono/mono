@@ -37,6 +37,7 @@ namespace System.Globalization {
 using System;
 
 [Serializable]
+[System.Runtime.InteropServices.ComVisible (true)]
 public abstract class EastAsianLunisolarCalendar : Calendar {
 	// FIXME: This is ok and it does not have to be something like 
 	// CCEastAsianLunisolarEraHandler since it does not depend on

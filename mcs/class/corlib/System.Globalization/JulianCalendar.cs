@@ -29,6 +29,7 @@
 namespace System.Globalization {
 
 using System;
+using System.Runtime.InteropServices;
 
 /// <summary>
 /// This is the Julian calendar.
@@ -42,6 +43,9 @@ using System;
 /// </para>
 /// </remarks>
 [Serializable]
+#if NET_2_0
+[ComVisible (true)]
+#endif
 [MonoTODO ("Serialization format not compatible with .NET")]
 public class JulianCalendar : Calendar {
 	/// <summary>
@@ -319,6 +323,7 @@ public class JulianCalendar : Calendar {
 	}
 
 #if NET_2_0
+	[ComVisible (false)]
 	public override int GetLeapMonth (int year, int era)
 	{
 		return 0;
@@ -490,6 +495,7 @@ public class JulianCalendar : Calendar {
 	}
 
 #if NET_2_0
+	[ComVisible (false)]
 	public override CalendarAlgorithmType AlgorithmType {
 		get {
 			return CalendarAlgorithmType.SolarCalendar;
@@ -499,12 +505,14 @@ public class JulianCalendar : Calendar {
 	static DateTime JulianMin = new DateTime (1, 1, 1, 0, 0, 0);
 	static DateTime JulianMax = new DateTime (9999, 12, 31, 11, 59, 59);
 		
+	[ComVisible (false)]
 	public override DateTime MinSupportedDateTime {
 		get {
 			return JulianMin;
 		}
 	}
 
+	[ComVisible (false)]
 	public override DateTime MaxSupportedDateTime {
 		get {
 			return JulianMax;

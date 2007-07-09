@@ -34,10 +34,14 @@
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using Mono.Globalization.Unicode;
 
 namespace System.Globalization
 {
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	[Serializable]
 	public class CompareInfo : IDeserializationCallback
 	{
@@ -816,11 +820,13 @@ namespace System.Globalization
 		}
 
 #if NET_2_0
+		[ComVisible (false)]
 		public static bool IsSortable (char c)
 		{
 			return MSCompatUnicodeTable.IsSortable (c);
 		}
 
+		[ComVisible (false)]
 		public static bool IsSortable (string s)
 		{
 			return MSCompatUnicodeTable.IsSortable (s);
@@ -858,5 +864,12 @@ namespace System.Globalization
 				return(culture);
 			}
 		}
+
+#if NET_2_0
+		[ComVisible (false)]
+		public virtual string Name {
+			get { return icu_name; }
+		}
+#endif
 	}
 }

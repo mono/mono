@@ -33,9 +33,13 @@
 using System.Collections;
 using System.Threading;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace System.Globalization
 {
+#if NET_2_0
+	[System.Runtime.InteropServices.ComVisible (true)]
+#endif
 	[Serializable]
 	public class CultureInfo : ICloneable, IFormatProvider
 	{

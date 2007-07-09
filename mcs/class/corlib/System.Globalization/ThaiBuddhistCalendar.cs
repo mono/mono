@@ -29,6 +29,7 @@
 namespace System.Globalization {
 
 using System;
+using System.Runtime.InteropServices;
 
 /// <summary>
 /// This is the ThaiBudhist calendar. It differs from the Gegorian calendar
@@ -40,6 +41,9 @@ using System;
 /// </para>
 /// </remarks>
 [Serializable]
+#if NET_2_0
+[ComVisible (true)]
+#endif
 [MonoTODO ("Serialization format not compatible with.NET")]
 public class ThaiBuddhistCalendar : Calendar {
 	/// <summary>
@@ -321,6 +325,7 @@ public class ThaiBuddhistCalendar : Calendar {
 	}
 
 #if NET_2_0
+	[ComVisible (false)]
 	public override int GetLeapMonth (int year, int era)
 	{
 		return 0;
@@ -360,6 +365,7 @@ public class ThaiBuddhistCalendar : Calendar {
 	}
 
 #if NET_2_0
+	[ComVisible (false)]
 	public override int GetWeekOfYear (DateTime date, CalendarWeekRule rule, DayOfWeek firstDayOfWeek)
 	{
 		return base.GetWeekOfYear (date, rule, firstDayOfWeek);
@@ -499,6 +505,7 @@ public class ThaiBuddhistCalendar : Calendar {
 	}
 	
 #if NET_2_0
+	[ComVisible (false)]
 	public override CalendarAlgorithmType AlgorithmType {
 		get {
 			return CalendarAlgorithmType.SolarCalendar;
@@ -508,12 +515,14 @@ public class ThaiBuddhistCalendar : Calendar {
 	static DateTime ThaiMin = new DateTime (1, 1, 1, 0, 0, 0);
 	static DateTime ThaiMax = new DateTime (9999, 12, 31, 11, 59, 59);
 		
+	[ComVisible (false)]
 	public override DateTime MinSupportedDateTime {
 		get {
 			return ThaiMin;
 		}
 	}
 
+	[ComVisible (false)]
 	public override DateTime MaxSupportedDateTime {
 		get {
 			return ThaiMax;

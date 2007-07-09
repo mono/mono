@@ -30,6 +30,7 @@ namespace System.Globalization {
 
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 
 
 /// <summary>
@@ -53,6 +54,9 @@ using System.IO;
 /// </para>
 /// </remarks>
 [Serializable]
+#if NET_2_0
+[ComVisible (true)]
+#endif
 [MonoTODO ("Serialization format not compatible with .NET")]
 public class HijriCalendar : Calendar {
 	/// <summary>
@@ -755,6 +759,7 @@ public class HijriCalendar : Calendar {
 	}
 
 #if NET_2_0
+	[ComVisible (false)]
 	public override int GetLeapMonth (int year, int era)
 	{
 		return 0;
@@ -938,6 +943,7 @@ public class HijriCalendar : Calendar {
 	}
 
 #if NET_2_0
+	[ComVisible (false)]
 	public override CalendarAlgorithmType AlgorithmType  {
 		get {
 			return CalendarAlgorithmType.LunarCalendar;
@@ -947,12 +953,14 @@ public class HijriCalendar : Calendar {
 	static DateTime Min = new DateTime (622, 7, 18, 0, 0, 0);
 	static DateTime Max = new DateTime (9999, 12, 31, 11, 59, 59);
 		
+	[ComVisible (false)]
 	public override DateTime MinSupportedDateTime {
 		get {
 			return Min;
 		}
 	}
 
+	[ComVisible (false)]
 	public override DateTime MaxSupportedDateTime {
 		get {
 			return Max;
