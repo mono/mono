@@ -166,6 +166,23 @@ namespace System.Globalization
 			get { return territory; }
 		}
 
+#if NET_2_0
+		public virtual string IetfLanguageTag {
+			// There could be more consistent way to implement
+			// it, but right now it works just fine with this...
+			get {
+				switch (Name) {
+				case "zh-CHS":
+					return "zh-Hans";
+				case "zh-CHT":
+					return "zh-Hant";
+				default:
+					return Name;
+				}
+			}
+		}
+#endif
+
 		public virtual int LCID {
 			get {
 				return cultureID;
@@ -701,6 +718,20 @@ namespace System.Globalization
 				throw new ArgumentNullException ("null");
 
 			return GetCultureInfo (name);
+		}
+
+		public static CultureInfo GetCultureInfoByIetfLanguageTag (string name)
+		{
+			// There could be more consistent way to implement
+			// it, but right now it works just fine with this...
+			switch (name) {
+			case "zh-Hans":
+				return GetCultureInfo ("zh-CHS");
+			case "zh-Hant":
+				return GetCultureInfo ("zh-CHT");
+			default:
+				return GetCultureInfo (name);
+			}
 		}
 #endif
 

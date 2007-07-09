@@ -1,5 +1,10 @@
 2007-07-09  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* CultureInfo.cs :
+	  hacked IetfLanguageTag and GetCultureInfoByIetfLanguageTag().
+
+2007-07-09  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* CompareInfo.cs : Name.
 	* PersianCalendar.cs : missing members.
 	* NumberFormatInfo.cs HijriCalendar.cs CultureInfo.cs TextInfo.cs
