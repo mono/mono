@@ -92,6 +92,9 @@ namespace System.Windows.Forms
 		private Rectangle items_area;
 		private int focused_item = -1;		
 		private ObjectCollection items;
+#if NET_2_0
+		private Padding padding;
+#endif
 
 		public ListBox ()
 		{
@@ -149,6 +152,13 @@ namespace System.Windows.Forms
 		}
 
 #if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler BackgroundImageLayoutChanged {
+			add { base.BackgroundImageLayoutChanged += value; }
+			remove { base.BackgroundImageLayoutChanged -= value; }
+		}
+
 		[Browsable (true)]
 		[EditorBrowsable (EditorBrowsableState.Always)]
 #else
@@ -169,6 +179,22 @@ namespace System.Windows.Forms
 			add { Events.AddHandler (MeasureItemEvent, value); }
 			remove { Events.RemoveHandler (MeasureItemEvent, value); }
 		}
+
+#if NET_2_0
+		[Browsable (true)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
+		public new event MouseEventHandler MouseClick {
+			add { base.MouseClick += value; }
+			remove { base.MouseClick -= value; }
+		}
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler PaddingChanged {
+			add { base.PaddingChanged += value; }
+			remove { base.PaddingChanged -= value; }
+		}
+#endif
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
@@ -211,6 +237,15 @@ namespace System.Windows.Forms
 				base.Refresh ();
 			}
 		}
+
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public override ImageLayout BackgroundImageLayout {
+			get { return base.BackgroundImageLayout; }
+			set { base.BackgroundImageLayout = value; }
+		}
+#endif
 
 		[DefaultValue (BorderStyle.Fixed3D)]
 		[DispId(-504)]
@@ -274,6 +309,13 @@ namespace System.Windows.Forms
 				base.Refresh ();
     			}
 		}
+
+#if NET_2_0
+		public override Font Font {
+			get { return base.Font; }
+			set { base.Font = value; }
+		}
+#endif
 
 		public override Color ForeColor {
 			get { return base.ForeColor; }
@@ -378,6 +420,16 @@ namespace System.Windows.Forms
 				LayoutListBox ();
 			}
 		}
+
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public new Padding Padding {
+			get { return padding; }
+			set { padding = value; }
+		}
+#endif
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -760,6 +812,35 @@ namespace System.Windows.Forms
 			return rect;
 		}
 
+#if NET_2_0
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected override Rectangle GetScaledBounds (Rectangle bounds, SizeF factor, BoundsSpecified specified)
+		{
+			// For some reason, it always uses the control's Height instead of
+			// the Height passed in
+			bounds.Height = this.bounds.Height;
+
+			if ((specified & BoundsSpecified.X) == BoundsSpecified.X)
+				bounds.X = (int)Math.Round (bounds.Left * factor.Width);
+			if ((specified & BoundsSpecified.Y) == BoundsSpecified.Y)
+				bounds.Y = (int)Math.Round (bounds.Top * factor.Height);
+			
+			if ((specified & BoundsSpecified.Width) == BoundsSpecified.Width && !GetStyle (ControlStyles.FixedWidth))
+				bounds.Width = (int)Math.Round (bounds.Width * factor.Width);
+			if ((specified & BoundsSpecified.Height) == BoundsSpecified.Height && !GetStyle (ControlStyles.FixedHeight))
+				bounds.Height = (int)Math.Round (bounds.Height * factor.Height);
+
+			Size size = ClientSizeFromSize (bounds.Size);
+
+			if ((specified & BoundsSpecified.Width) == BoundsSpecified.Width && !GetStyle (ControlStyles.FixedWidth))
+				bounds.Width -= (int)((bounds.Width - size.Width) * (factor.Width - 1));
+			if ((specified & BoundsSpecified.Height) == BoundsSpecified.Height && !GetStyle (ControlStyles.FixedHeight))
+				bounds.Height -= (int)((bounds.Height - size.Height) * (factor.Height - 1));
+
+			return bounds;
+		}
+#endif
+
 		public bool GetSelected (int index)
 		{
 			if (index < 0 || index >= Items.Count)
@@ -923,6 +1004,16 @@ namespace System.Windows.Forms
 			for (int i = 0; i < Items.Count; i++) {
 				RefreshItem (i);
 			}
+		}
+
+		public override void ResetBackColor ()
+		{
+			base.ResetBackColor ();
+		}
+
+		public override void ResetForeColor ()
+		{
+			base.ResetForeColor ();
 		}
 #endif
 		

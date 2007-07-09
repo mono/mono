@@ -1,5 +1,9 @@
 2007-07-09  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ListBox.cs: First set of 2.0 stuffs.
+
+2007-07-09  Jonathan Pobst  <monkey@jpobst.com>
+
 	* Control.cs: Make an internal Height property we can override
 	without messing up the public API.
 	* ListBox.cs: Override HeightInternal to always return the size
