@@ -1,3 +1,7 @@
+2007-07-09  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c (inline_method): Reset cfg->exception_type if the
+	inlining is aborted.  Fixes: 82049.
 
 Mon Jul 9 17:26:47 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
