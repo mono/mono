@@ -1131,6 +1131,19 @@ namespace System.Windows.Forms
 			return item_rect;
 		}
 
+		internal override int HeightInternal {
+			get { 
+				if (requested_height > -1)
+					return requested_height;
+				else
+					return bounds.Height;
+			}
+			set {
+				base.HeightInternal = value;
+				requested_height = value;
+			}
+		}
+
 		// Value Changed
 		private void HorizontalScrollEvent (object sender, EventArgs e)
 		{
@@ -1850,7 +1863,7 @@ namespace System.Windows.Forms
 			if (requested_height == -1)
 				return;
 
-			SetBounds(bounds.X, bounds.Y, bounds.Width, requested_height, BoundsSpecified.Height);
+			SetBounds(bounds.X, bounds.Y, bounds.Width, requested_height, BoundsSpecified.None);
 		}
 
 		private void UpdateScrollBars ()

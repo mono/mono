@@ -348,6 +348,19 @@ namespace MonoTests.System.Windows.Forms
 			listBox.SelectedValue = null;
 			Assert.AreEqual (listBox.SelectedIndex, 2);
 		}
+		
+		[Test]	// Bug #80466
+		public void ListBoxHeight ()
+		{
+			ListBox l = new ListBox ();
+			
+			for (int h = 0; h < 100; h++) {
+				l.Height = h;
+				
+				if (l.Height != h)
+					Assert.Fail ("Set ListBox height of {0}, got back {1}.  Should be the same.", h, l.Height);
+			}
+		}
 
 		//
 		// Events

@@ -2720,15 +2720,15 @@ namespace System.Windows.Forms
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int Height {
-			get {
-				return this.bounds.Height;
-			}
-
-			set {
-				SetBounds(bounds.X, bounds.Y, bounds.Width, value, BoundsSpecified.Height);
-			}
+			get { return HeightInternal; }
+			set { HeightInternal = value; }
 		}
 
+		internal virtual int HeightInternal {
+			get { return this.bounds.Height; }
+			set { SetBounds(bounds.X, bounds.Y, bounds.Width, value, BoundsSpecified.Height); }
+		}
+		
 		[AmbientValue(ImeMode.Inherit)]
 		[Localizable(true)]
 		[MWFCategory("Behavior")]

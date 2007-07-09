@@ -1,3 +1,10 @@
+2007-07-09  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Control.cs: Make an internal Height property we can override
+	without messing up the public API.
+	* ListBox.cs: Override HeightInternal to always return the size
+	the user set.  [Fixes bug #80466]
+
 2007-07-08  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TableLayoutPanel.cs: Add a null check so we don't NRE trying to

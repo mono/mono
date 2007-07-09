@@ -1,3 +1,7 @@
+2007-07-09  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ListBoxTest.cs: Add test for bug #80466.
+
 2007-07-08  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TableLayoutTest.cs: Simplify and enable Gert's test for bug
