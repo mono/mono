@@ -672,6 +672,19 @@ public class CalendarTest : TestCase {
 		AssertEquals ("#6-19", 0, kc.GetLeapMonth (2018));
 		AssertEquals ("#6-20", 0, kc.GetLeapMonth (2019));
 	}
+
+	[Test]
+	public void GetWeekOfYear ()
+	{
+		GregorianCalendar gc = new GregorianCalendar ();
+		AssertEquals ("#1", 1, gc.GetWeekOfYear (new DateTime (2007, 1, 1), CalendarWeekRule.FirstDay, DayOfWeek.Sunday));
+		//AssertEquals ("#2", 1, gc.GetWeekOfYear (new DateTime (2000, 1, 1), CalendarWeekRule.FirstDay, DayOfWeek.Sunday));
+		AssertEquals ("#2", 3, gc.GetWeekOfYear (new DateTime (2000, 1, 10), CalendarWeekRule.FirstDay, DayOfWeek.Sunday));
+		AssertEquals ("#3", 2, gc.GetWeekOfYear (new DateTime (2000, 1, 10), CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Sunday));
+		AssertEquals ("#4", 2, gc.GetWeekOfYear (new DateTime (2000, 1, 10), CalendarWeekRule.FirstFullWeek, DayOfWeek.Sunday));
+		AssertEquals ("#5", 52, gc.GetWeekOfYear (new DateTime (2000, 1, 1), CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Sunday));
+		AssertEquals ("#6", 52, gc.GetWeekOfYear (new DateTime (2000, 1, 1), CalendarWeekRule.FirstFullWeek, DayOfWeek.Sunday));
+	}
 #endif
 
 	/* UK TODO: breaks with current DateTime implementation.

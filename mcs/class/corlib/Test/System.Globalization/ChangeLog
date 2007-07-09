@@ -1,3 +1,7 @@
+2007-07-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CalendarTest.cs : added GetWeekOfYear() test.
+
 2007-07-05  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* CultureInfoTest.cs: Fixed UseUserOverride tests to pass on systems
