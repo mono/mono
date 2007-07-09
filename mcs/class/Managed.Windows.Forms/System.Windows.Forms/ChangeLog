@@ -1,5 +1,9 @@
 2007-07-09  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Application.cs: Add MessageLoopCallback delegate.
+
+2007-07-09  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ListBox.cs: First set of 2.0 stuffs.
 
 2007-07-09  Jonathan Pobst  <monkey@jpobst.com>

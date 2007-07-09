@@ -822,6 +822,12 @@ namespace System.Windows.Forms {
 #endif
 		#endregion	// Events
 
+		#region Public Delegates
+#if NET_2_0
+		public delegate bool MessageLoopCallback ();
+#endif
+		#endregion
+		
 		#region Internal Properties
 #if NET_2_0
 		internal static ToolStrip KeyboardCapture {
