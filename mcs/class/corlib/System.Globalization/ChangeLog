@@ -1,5 +1,12 @@
 2007-07-09  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* CultureInfo.cs : implemented GetConsoleFallbackUICulture and
+	  CultureTypes (it is awful indeed). Fix ComVisibles.
+	  implemented InstalledUICulture, as what matches the best I think is
+	  the one for BootstrapCultureID.
+
+2007-07-09  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* CultureInfo.cs : another hack, KeyboardLayoutId.
 
 2007-07-09  Atsushi Enomoto  <atsushi@ximian.com>

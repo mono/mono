@@ -167,7 +167,52 @@ namespace System.Globalization
 		}
 
 #if NET_2_0
-		public virtual string IetfLanguageTag {
+		// FIXME: It is implemented, but would be hell slow.
+		[ComVisible (false)]
+		public CultureTypes CultureTypes {
+			get {
+				CultureTypes ret = (CultureTypes) 0;
+				foreach (CultureTypes v in Enum.GetValues (typeof (CultureTypes)))
+					if (Array.IndexOf (GetCultures (v), this) >= 0)
+						ret |= v;
+				return ret;
+			}
+		}
+
+		[ComVisible (false)]
+		public CultureInfo GetConsoleFallbackUICulture ()
+		{
+			// as documented in MSDN ...
+			switch (Name) {
+			case "ar": case "ar-BH": case "ar-EG": case "ar-IQ":
+			case "ar-JO": case "ar-KW": case "ar-LB": case "ar-LY":
+			case "ar-QA": case "ar-SA": case "ar-SY": case "ar-AE":
+			case "ar-YE":
+			case "dv": case "dv-MV":
+			case "fa": case "fa-IR":
+			case "gu": case "gu-IN":
+			case "he": case "he-IL":
+			case "hi": case "hi-IN":
+			case "kn": case "kn-IN":
+			case "kok": case "kok-IN":
+			case "mr": case "mr-IN":
+			case "pa": case "pa-IN":
+			case "sa": case "sa-IN":
+			case "syr": case "syr-SY":
+			case "ta": case "ta-IN":
+			case "te": case "te-IN":
+			case "th": case "th-TH":
+			case "ur": case "ur-PK":
+			case "vi": case "vi-VN":
+				return GetCultureInfo ("en");
+			case "ar-DZ": case "ar-MA": case "ar-TN":
+				return GetCultureInfo ("fr");
+			}
+			return (CultureTypes & CultureTypes.WindowsOnlyCultures) != 0 ? CultureInfo.InvariantCulture : this;
+		}
+
+		[ComVisible (false)]
+		public string IetfLanguageTag {
 			// There could be more consistent way to implement
 			// it, but right now it works just fine with this...
 			get {
@@ -190,6 +235,7 @@ namespace System.Globalization
 		// There are very few exceptions, here I simply list them here.
 		// It is Windows-specific property anyways, so no worthy of
 		// trying to do some complex things with locale-builder.
+		[ComVisible (false)]
 		public virtual int KeyboardLayoutId {
 			get {
 				switch (LCID) {
@@ -514,12 +560,9 @@ namespace System.Globalization
 			}
 		}
 
-		[MonoTODO ("Always returns null")]
 		public static CultureInfo InstalledUICulture
 		{
-			get {
-				return(null);
-			}
+			get { return CultureInfo.GetCultureInfo (BootstrapCultureID); }
 		}
 		public bool IsReadOnly 
 		{
