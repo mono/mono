@@ -93,7 +93,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 
 			grid_textbox.Visible = false;
 			grid_textbox.Font = this.Font;
-			grid_textbox.BackColor = this.BackColor;
+			grid_textbox.BackColor = SystemColors.Window;
 			// Not working at all, used to??
 			grid_textbox.Validating += new CancelEventHandler(TextBoxValidating);
 			grid_textbox.ToggleValue+=new EventHandler(grid_textbox_ToggleValue);
@@ -958,6 +958,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			}
 				
 			grid_textbox.ReadOnly = grid_textbox.ReadOnly || forItem.PropertyDescriptor.IsReadOnly;
+			grid_textbox.ForeColor = grid_textbox.ReadOnly ? SystemColors.InactiveCaption : SystemColors.WindowText;
 
 			int xloc = SplitterLocation + 1 + (paintsValue ? 27 : 0);
 			grid_textbox.SetBounds (xloc,
@@ -1038,6 +1039,8 @@ namespace System.Windows.Forms.PropertyGridInternal {
 		private void DropDownControl(Control control, bool block) {
 			Object	queue_id;
 
+			Form owner = FindForm ();
+
 			dropdown_form.Size = control.Size;
 			control.Dock = DockStyle.Fill;
 			dropdown_form.Controls.Clear();
@@ -1045,7 +1048,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			dropdown_form.Location = PointToScreen(new Point(SplitterLocation,grid_textbox.Location.Y+row_height));
 			dropdown_form.Width = ClientRectangle.Width - SplitterLocation - (vbar.Visible ? vbar.Width : 0);
 
-			FindForm ().AddOwnedForm (dropdown_form);
+			owner.AddOwnedForm (dropdown_form);
 
 			dropdown_form.Show();
 

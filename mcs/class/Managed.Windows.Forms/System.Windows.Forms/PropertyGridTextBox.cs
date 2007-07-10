@@ -100,6 +100,29 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			}
 		}
 
+		public new Color ForeColor {
+			get {
+				return base.ForeColor;
+			}
+			set {
+				textbox.ForeColor = value;
+				dropdown_button.ForeColor = value;
+				dialog_button.ForeColor = value;
+				base.ForeColor = value;
+			}
+		}
+
+		public new Color BackColor {
+			get {
+				return base.BackColor;
+			}
+			set {
+				textbox.BackColor = value;
+				dropdown_button.BackColor = value;
+				dialog_button.BackColor = value;
+				base.BackColor = value;
+			}
+		}
 		public bool ReadOnly {
 			get {
 				return textbox.ReadOnly;

@@ -1,3 +1,11 @@
+2007-07-10  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	[ Fixes #79761]
+	
+	* PropertyGridTextBox.cs: Propagate any color changes to all contained
+	  controls.
+	* PropertyGridView.cs: A few color fixes.
+
 2007-07-10  Jackson Harper  <jackson@ximian.com>
 
 	* TextControl.cs: Remove some old unused text formatting stuff.
