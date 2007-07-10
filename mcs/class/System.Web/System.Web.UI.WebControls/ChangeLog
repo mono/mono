@@ -1,3 +1,7 @@
+2007-07-10  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* ListItemCollection.cs: optimized SetDirty method
+
 2007-07-05  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* ListControl.cs:

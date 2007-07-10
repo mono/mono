@@ -41,6 +41,7 @@ namespace System.Web.UI.WebControls {
 		private ArrayList	items;
 		private bool		tracking;
 		private bool		dirty;
+		int lastDirty = 0;
 		#endregion	// Fields
 
 		#region Public Constructors
@@ -174,6 +175,7 @@ namespace System.Web.UI.WebControls {
 
 			if (tracking) {
 				item.TrackViewState ();
+				lastDirty = index;
 				SetDirty ();
 			}
 		}
@@ -184,6 +186,7 @@ namespace System.Web.UI.WebControls {
 
 			if (tracking) {
 				listItem.TrackViewState ();
+				lastDirty = index;
 				SetDirty ();
 			}
 		}
@@ -318,8 +321,10 @@ namespace System.Web.UI.WebControls {
 		private void SetDirty ()
 		{
 			dirty = true;
-			for (int i = 0; i < items.Count; i++)
+			for (int i = lastDirty; i < items.Count; i++)
 				((ListItem) items [i]).SetDirty ();
+
+			lastDirty = items.Count;
 		}
 	}
 }
