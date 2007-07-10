@@ -96,7 +96,7 @@
     function OnTestInstanceOfClick() {
         var aPerson = GetTestEmployee();
         if (Demo.Employee.isInstanceOfType(aPerson)) {
-            alert(aPerson.getName() + ' is an Employee instance.\r\nTitle property: ' + aPerson.getTitle());
+            alert(aPerson.getName() + ' is an Employee instance.\nTitle property: ' + aPerson.getTitle());
         }
 
         return false;

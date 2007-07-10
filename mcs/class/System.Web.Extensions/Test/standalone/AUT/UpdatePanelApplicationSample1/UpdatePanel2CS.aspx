@@ -89,7 +89,7 @@
         <asp:ScriptManager ID="ScriptManager1" runat="server" />
         <p>
         <strong>Latest News</strong>
-        Due to overwhelming response, we have added two extra shows on 
+         Due to overwhelming response, we have added two extra shows on 
          <asp:LinkButton ID="ExtraShow1" runat="server" OnClick="ExtraShow_Click"/> and 
          <asp:LinkButton ID="ExtraShow2" runat="server" OnClick="ExtraShow_Click"/>.
          Don't forget curtain time is at 7:00pm sharp. No late arrivals.
@@ -105,7 +105,7 @@
                     <legend>Check Ticket Availability</legend>Date
                     <asp:TextBox runat="server" ID="ChosenDate" OnTextChanged="ChosenDate_TextChanged" />
                     <asp:ImageButton runat="server" ID="ShowDatePickerPopOut" OnClick="ShowDatePickerPopOut_Click"
-                        ImageUrl="../images/calendar.gif" AlternateText="Choose a date."
+                        ImageUrl="images/calendar.gif" AlternateText="Choose a date."
                         Height="20px" Width="20px" />
                     <asp:Panel ID="DatePickerPopOut" CssClass="PopUpCalendarStyle"
                         Visible="false" runat="server">

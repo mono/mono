@@ -85,8 +85,8 @@
                 <fieldset id="FieldSet1" class="FieldSetStyle" runat="server">
                     <legend>Check Ticket Availability</legend>Date
                     <asp:TextBox runat="server" ID="ChosenDate" OnTextChanged="ChosenDate_TextChanged" />
-                    <asp:ImageButton runat="server" ID="ShowDatePickerPopOut" OnClick="ShowDatePickerPopOut_Click"
-                        ImageUrl="../images/calendar.gif" AlternateText="Choose a date."
+                    <asp:ImageButton runat="server" ID="ShowDatePickerPopOut"  OnClick="ShowDatePickerPopOut_Click"
+                        ImageUrl="images/calendar.gif" AlternateText="Choose a date."
                         Height="20px" Width="20px" />
                     <asp:Panel ID="DatePickerPopOut" CssClass="PopUpCalendarStyle"
                         Visible="false" runat="server">

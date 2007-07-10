@@ -67,7 +67,8 @@ Demo.Employee.prototype = {
         this._title = title;
     },
     toString: function() {
-        return Demo.Employee.callBaseMethod(this, 'toString') + '\r\n' + this.getTitle() + '\r\n' + this.getTeam();
+        //return Demo.Employee.callBaseMethod(this, 'toString') + '\r\n' + this.getTitle() + '\r\n' + this.getTeam();
+        return Demo.Employee.callBaseMethod(this, 'toString') + '\n' + this.getTitle() + '\n' + this.getTeam();
     }
 }
 Demo.Employee.registerClass('Demo.Employee', Demo.Person);
