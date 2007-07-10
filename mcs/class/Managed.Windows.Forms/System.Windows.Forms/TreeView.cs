@@ -1537,7 +1537,7 @@ namespace System.Windows.Forms {
 			int middle = y + (ActualItemHeight / 2);
 
 			if (full_row_select) {
-				Rectangle r = new Rectangle (1, y + 2, ViewportRectangle.Width - 2, ActualItemHeight);
+				Rectangle r = new Rectangle (1, y, ViewportRectangle.Width - 2, ActualItemHeight);
 				DrawSelectionAndFocus (node, dc, r);
 			}
 
@@ -1915,6 +1915,11 @@ namespace System.Windows.Forms {
 							Bloat (prev_highlighted_node.Bounds));
 				} else {
 					invalid = Bloat (prev_highlighted_node.Bounds);
+				}
+
+				if (full_row_select || draw_mode != TreeViewDrawMode.Normal) {
+					invalid.X = 0;
+					invalid.Width = ViewportRectangle.Width;
 				}
 
 				Invalidate (invalid);
