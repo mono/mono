@@ -4590,9 +4590,9 @@ namespace Mono.CSharp {
 	}
 
 	public abstract class ConstructorInitializer {
-		ArrayList argument_list;
-		protected ConstructorInfo base_constructor;
-		Location loc;
+		readonly ArrayList argument_list;
+		MethodGroupExpr base_constructor_group;
+		readonly Location loc;
 		
 		public ConstructorInitializer (ArrayList argument_list, Location loc)
 		{
@@ -4608,9 +4608,7 @@ namespace Mono.CSharp {
 
 		public bool Resolve (ConstructorBuilder caller_builder, Block block, EmitContext ec)
 		{
-			Expression base_constructor_group;
 			Type t;
-			bool error = false;
 
 			ec.CurrentBlock = block;
 
@@ -4648,54 +4646,55 @@ namespace Mono.CSharp {
 			base_constructor_group = Expression.MemberLookup (
 				ec.ContainerType, t, ".ctor", MemberTypes.Constructor,
 				BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly,
-				loc);
+				loc) as MethodGroupExpr;
 			
-			if (base_constructor_group == null){
-				error = true;
+			bool error_non_public = false;
+			if (base_constructor_group == null) {
+				error_non_public = true;
 				base_constructor_group = Expression.MemberLookup (
-					t, null, t, ".ctor", MemberTypes.Constructor,
-					BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly,
-					loc);
+				    ec.ContainerType, t, ".ctor", MemberTypes.Constructor,
+				    BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly,
+				    loc) as MethodGroupExpr;
+				
+				// TODO: because of MemberLookup is so broken. It does not return private members
+				// even if you ask for them.
+				if (base_constructor_group == null) {
+					Expression.MemberLookupFailed (ec.ContainerType, t, t, ".ctor", null, true, loc);
+					return false;
+				}					
 			}
 
-			int errors = Report.Errors;
-			if (base_constructor_group != null)
-				base_constructor = (ConstructorInfo)
-					((MethodGroupExpr) base_constructor_group).OverloadResolve (
-					ec, argument_list,
-					false, loc);
+			base_constructor_group = base_constructor_group.OverloadResolve (
+				ec, argument_list, false, loc);
 			
-			if (base_constructor == null) {
-				if (errors == Report.Errors)
-					Invocation.Error_WrongNumArguments (loc, TypeManager.CSharpSignature (caller_builder),
-						argument_list == null ? 0 : argument_list.Count);
+			if (base_constructor_group == null)
 				return false;
-			}
 
-			if (error) {
-				Report.SymbolRelatedToPreviousError (base_constructor);
-				Expression.ErrorIsInaccesible (loc, TypeManager.CSharpSignature (base_constructor));
-				base_constructor = null;
-				return false;
-			}
+			ConstructorInfo base_ctor = (ConstructorInfo)base_constructor_group;
 			
-			if (base_constructor == caller_builder){
+			if (base_ctor == caller_builder){
 				Report.Error (516, loc, "Constructor `{0}' cannot call itself", TypeManager.CSharpSignature (caller_builder));
-				return false;
 			}
+			
+			if (error_non_public) {
+				Report.SymbolRelatedToPreviousError (base_ctor);
+				Expression.ErrorIsInaccesible (loc, TypeManager.CSharpSignature (base_ctor));
+			}			
 			
 			return true;
 		}
 
-		public virtual void Emit (EmitContext ec)
+		public void Emit (EmitContext ec)
 		{
-			if (base_constructor != null){
-				ec.Mark (loc, false);
-				if (ec.IsStatic)
-					Invocation.EmitCall (ec, true, true, null, base_constructor, argument_list, loc);
-				else
-					Invocation.EmitCall (ec, true, false, ec.GetThis (loc), base_constructor, argument_list, loc);
-			}
+			// It can be null for static initializers
+			if (base_constructor_group == null)
+				return;
+			
+			ec.Mark (loc, false);
+			if (!ec.IsStatic)
+				base_constructor_group.InstanceExpression = ec.GetThis (loc);
+			
+			base_constructor_group.EmitCall (ec, argument_list);
 		}
 	}
 

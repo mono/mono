@@ -960,7 +960,7 @@ namespace Mono.CSharp {
 			// Invocation on delegates call the virtual Invoke member
 			// so we are always `instance' calls
 			//
-			Invocation.EmitCall (ec, false, false, InstanceExpr, method, Arguments, loc);
+			Invocation.EmitCall (ec, false, InstanceExpr, method, Arguments, loc);
 		}
 
 		public override void EmitStatement (EmitContext ec)

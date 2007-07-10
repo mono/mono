@@ -419,20 +419,21 @@ namespace Mono.CSharp {
 				}
 			}
 
-			Expression mg = Expression.MemberLookup (ec.ContainerType,
+			MethodGroupExpr mg = Expression.MemberLookup (ec.ContainerType,
 				Type, ".ctor", MemberTypes.Constructor,
 				BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly,
-				Location);
+				Location) as MethodGroupExpr;
 
 			if (mg == null)
 				return null;
 
-			MethodBase constructor = ((MethodGroupExpr)mg).OverloadResolve (
-				ec, PosArguments, false, Location);
-
-			if (constructor == null)
+			mg = mg.OverloadResolve (ec, PosArguments, false, Location);
+			if (mg == null)
 				return null;
+			
+			ConstructorInfo constructor = (ConstructorInfo)mg;
 
+			// TODO: move to OverloadResolve
 			ObsoleteAttribute oa = AttributeTester.GetMethodObsoleteAttribute (constructor);
 			if (oa != null && !Owner.ResolveContext.IsInObsoleteScope) {
 				AttributeTester.Report_ObsoleteMessage (oa, mg.GetSignatureForError (), mg.Location);
@@ -440,7 +441,7 @@ namespace Mono.CSharp {
 
 			if (PosArguments == null) {
 				pos_values = EmptyObject;
-				return (ConstructorInfo)constructor;
+				return constructor;
 			}
 
 			ParameterData pd = TypeManager.GetParameterData (constructor);

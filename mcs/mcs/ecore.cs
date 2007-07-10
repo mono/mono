@@ -846,7 +846,7 @@ namespace Mono.CSharp {
 			}
 
 			MemberList ml = TypeManager.FindMembers (queried_type, MemberTypes.Constructor,
-								 BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly, null, null);
+								 BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly, null, null);
 			if (name == ".ctor" && ml.Count == 0)
 			{
 				Report.Error (143, loc, "The type `{0}' has no constructors defined", TypeManager.CSharpName (queried_type));
@@ -877,27 +877,26 @@ namespace Mono.CSharp {
 
 		static Expression GetOperatorTrueOrFalse (EmitContext ec, Expression e, bool is_true, Location loc)
 		{
-			MethodBase method;
-			Expression operator_group;
+			MethodGroupExpr operator_group;
 
 #if GMCS_SOURCE
 			if (TypeManager.IsNullableType (e.Type))
 				return new Nullable.OperatorTrueOrFalse (e, is_true, loc).Resolve (ec);
 #endif
 
-			operator_group = MethodLookup (ec.ContainerType, e.Type, is_true ? "op_True" : "op_False", loc);
+			operator_group = MethodLookup (ec.ContainerType, e.Type, is_true ? "op_True" : "op_False", loc) as MethodGroupExpr;
 			if (operator_group == null)
 				return null;
 
-			ArrayList arguments = new ArrayList ();
+			ArrayList arguments = new ArrayList (1);
 			arguments.Add (new Argument (e, Argument.AType.Expression));
-			method = ((MethodGroupExpr) operator_group).OverloadResolve (
+			operator_group = operator_group.OverloadResolve (
 				ec, arguments, false, loc);
 
-			if (method == null)
+			if (operator_group == null)
 				return null;
 
-			return new StaticCallExpr ((MethodInfo) method, arguments, loc);
+			return new StaticCallExpr ((MethodInfo) operator_group, arguments, loc);
 		}
 
 		/// <summary>
@@ -2209,9 +2208,11 @@ namespace Mono.CSharp {
 		{
 			if (in_transit)
 				return null;
-			in_transit = true;
 
+			in_transit = true;			
 			Expression e = DoSimpleNameResolve (ec, right_side, intermediate);
+			in_transit = false;
+
 			if (e == null)
 				return null;
 
@@ -2905,7 +2906,6 @@ namespace Mono.CSharp {
 
 				if (!IsStatic) {
 					SimpleName.Error_ObjectRefRequired (ec, loc, GetSignatureForError ());
-					return null;
 				}
 
 				return this;
@@ -2956,7 +2956,8 @@ namespace Mono.CSharp {
 	/// 
 	public class ExtensionMethodGroupExpr : MethodGroupExpr
 	{
-		NamespaceEntry namespaceEntry;
+		readonly NamespaceEntry namespaceEntry;
+		public Expression ExtensionExpression;
 
 		public ExtensionMethodGroupExpr (ArrayList list, NamespaceEntry n, Type extensionType, Location l)
 			: base (list, l)
@@ -2977,45 +2978,71 @@ namespace Mono.CSharp {
 			get { return namespaceEntry == null; }
 		}
 
-		public override MethodBase OverloadExtensionResolve (EmitContext ec, ref ArrayList arguments, ref MethodGroupExpr mg,
-			Expression expr, Location loc)
+		public override void EmitArguments (EmitContext ec, ArrayList arguments)
+		{
+			if (arguments == null)
+				arguments = new ArrayList (1);			
+			arguments.Insert (0, new Argument (ExtensionExpression));
+			base.EmitArguments (ec, arguments);
+		}
+
+		public override void EmitCall (EmitContext ec, ArrayList arguments)
 		{
 			if (arguments == null)
 				arguments = new ArrayList (1);
+			arguments.Insert (0, new Argument (ExtensionExpression));
+			base.EmitCall (ec, arguments);
+		}
 
-			Expression extension_argument = ((MemberAccess)expr).Expr;
-			if ((extension_argument.eclass & (ExprClass.Value | ExprClass.Variable)) == 0)
+		public override MethodGroupExpr OverloadResolve (EmitContext ec, ArrayList arguments, bool may_fail, Location loc)
+		{
+			if ((ExtensionExpression.eclass & (ExprClass.Value | ExprClass.Variable)) == 0)
+				return base.OverloadResolve (ec, arguments, may_fail, loc);
+
+			if (arguments == null)
+				arguments = new ArrayList (1);
+
+			arguments.Insert (0, new Argument (ExtensionExpression));
+			MethodGroupExpr mg = ResolveOverloadExtensions (ec, arguments, namespaceEntry, loc);
+
+			// Restore original arguments
+			arguments.RemoveAt (0);
+
+			if (mg != null)
+				return mg;
+			
+			if (!may_fail)
+				return base.OverloadResolve (ec, arguments, may_fail, loc);
+
+			return null;
+		}
+
+		MethodGroupExpr ResolveOverloadExtensions (EmitContext ec, ArrayList arguments, NamespaceEntry ns, Location loc)
+		{
+			// Use normal resolve rules
+			MethodGroupExpr mg = base.OverloadResolve (ec, arguments, true, loc);
+			if (mg != null)
+				return mg;
+
+			// Search continues
+			ExtensionMethodGroupExpr e = ns.LookupExtensionMethod (type, null, Name);
+			if (e == null)
 				return null;
 
-			Argument a = new Argument (extension_argument);
-			a.Resolve (ec, loc);
-			arguments.Insert (0, a);
-
-			mg = this;
-			do {
-				MethodBase method = mg.OverloadResolve (ec, arguments, true, loc);
-				if (method != null)
-					return method;
-
-				ExtensionMethodGroupExpr e = namespaceEntry.LookupExtensionMethod (type, null, Name);
-				if (e == null)
-					return mg.OverloadResolve (ec, arguments, false, loc);
-
-				mg = e;
-				namespaceEntry = e.namespaceEntry;
-			} while (true);
-		}
+			e.ExtensionExpression = ExtensionExpression;
+			return e.ResolveOverloadExtensions (ec, arguments, e.namespaceEntry, loc);
+		}		
 	}
 
 	/// <summary>
-	///   MethodGroup Expression.
-	///  
-	///   This is a fully resolved expression that evaluates to a type
+	///   MethodGroupExpr represents a group of method candidates which
+	///   can be resolved to the best method overload
 	/// </summary>
 	public class MethodGroupExpr : MemberExpr {
-		public MethodBase [] Methods;
-		bool has_type_arguments = false;
- 		bool identical_type_name = false;
+		public readonly MethodBase [] Methods;
+		MethodBase best_candidate;
+		bool has_type_arguments;
+ 		bool identical_type_name;
 		bool is_base;
 		
 		public MethodGroupExpr (MemberInfo [] mi, Location l)
@@ -3090,6 +3117,9 @@ namespace Mono.CSharp {
 
 		public override string GetSignatureForError ()
 		{
+			if (best_candidate != null)
+				return TypeManager.CSharpSignature (best_candidate);
+			
 			return TypeManager.CSharpSignature (Methods [0]);
 		}
 
@@ -3117,6 +3147,16 @@ namespace Mono.CSharp {
 
 				return false;
 			}
+		}
+		
+		public static explicit operator ConstructorInfo (MethodGroupExpr mg)
+		{
+			return (ConstructorInfo)mg.best_candidate;
+		}
+
+		public static explicit operator MethodInfo (MethodGroupExpr mg)
+		{
+			return (MethodInfo)mg.best_candidate;
 		}
 
 		/// <summary>
@@ -3360,9 +3400,6 @@ namespace Mono.CSharp {
 		
 		override public Expression DoResolve (EmitContext ec)
 		{
-			if (!IsInstance)
-				InstanceExpression = null;
-
 			if (InstanceExpression != null) {
 				InstanceExpression = InstanceExpression.DoResolve (ec);
 				if (InstanceExpression == null)
@@ -3381,6 +3418,16 @@ namespace Mono.CSharp {
 		override public void Emit (EmitContext ec)
 		{
 			ReportUsageError ();
+		}
+		
+		public virtual void EmitArguments (EmitContext ec, ArrayList arguments)
+		{
+			Invocation.EmitArguments (ec, best_candidate, arguments, false, null);  
+		}
+		
+		public virtual void EmitCall (EmitContext ec, ArrayList arguments)
+		{
+			Invocation.EmitCall (ec, IsBase, InstanceExpression, best_candidate, arguments, loc);			
 		}
 
 		public static bool IsAncestralType (Type first_type, Type second_type)
@@ -3414,6 +3461,51 @@ namespace Mono.CSharp {
 
 			return true;
 		}
+		
+		public static MethodGroupExpr MakeUnionSet (Expression mg1, Expression mg2, Location loc)
+		{
+			MemberInfo [] miset;
+			MethodGroupExpr union;
+
+			if (mg1 == null) {
+				if (mg2 == null)
+					return null;
+				return (MethodGroupExpr) mg2;
+			} else {
+				if (mg2 == null)
+					return (MethodGroupExpr) mg1;
+			}
+			
+			MethodGroupExpr left_set = null, right_set = null;
+			int length1 = 0, length2 = 0;
+			
+			left_set = (MethodGroupExpr) mg1;
+			length1 = left_set.Methods.Length;
+			
+			right_set = (MethodGroupExpr) mg2;
+			length2 = right_set.Methods.Length;
+			
+			ArrayList common = new ArrayList ();
+
+			foreach (MethodBase r in right_set.Methods){
+				if (TypeManager.ArrayContainsMethod (left_set.Methods, r))
+					common.Add (r);
+			}
+
+			miset = new MemberInfo [length1 + length2 - common.Count];
+			left_set.Methods.CopyTo (miset, 0);
+			
+			int k = length1;
+
+			foreach (MethodBase r in right_set.Methods) {
+				if (!common.Contains (r))
+					miset [k++] = r;
+			}
+
+			union = new MethodGroupExpr (miset, loc);
+			
+			return union;
+		}		
 
 		static Type MoreSpecific (Type p, Type q)
 		{
@@ -3458,26 +3550,6 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		public virtual MethodBase OverloadExtensionResolve (EmitContext ec, ref ArrayList arguments, ref MethodGroupExpr mg,
-			Expression expr, Location loc)
-		{
-			MethodBase method = OverloadResolve (ec, arguments, true, loc);
-			if (method != null) {
-				mg = this;
-				return method;
-			}
-
-			MemberAccess mexpr = expr as MemberAccess;
-			if (mexpr != null) {
-				ExtensionMethodGroupExpr emg = ec.DeclContainer.LookupExtensionMethod (mexpr.Expr.Type, Name);
-				if (emg != null) {
-					return OverloadExtensionResolve (ec, ref arguments, ref mg, expr, loc);
-				}
-			}
-
-			return OverloadResolve (ec, arguments, false, loc);
-		}
-
 		/// <summary>
 		///   Find the Applicable Function Members (7.4.2.1)
 		///
@@ -3494,10 +3566,9 @@ namespace Mono.CSharp {
 		///            that is the best match of me on Arguments.
 		///
 		/// </summary>
-		public virtual MethodBase OverloadResolve (EmitContext ec, ArrayList Arguments,
+		public virtual MethodGroupExpr OverloadResolve (EmitContext ec, ArrayList Arguments,
 			bool may_fail, Location loc)
 		{
-			MethodBase method = null;
 			bool method_params = false;
 			Type applicable_type = null;
 			int arg_count = 0;
@@ -3734,20 +3805,20 @@ namespace Mono.CSharp {
 			// Now we actually find the best method
 			//
 
-			method = (MethodBase) candidates [0];
-			method_params = candidate_to_form != null && candidate_to_form.Contains (method);
+			best_candidate = (MethodBase) candidates [0];
+			method_params = candidate_to_form != null && candidate_to_form.Contains (best_candidate);
 			for (int ix = 1; ix < candidate_top; ix++) {
 				MethodBase candidate = (MethodBase) candidates [ix];
 
-				if (candidate == method)
+				if (candidate == best_candidate)
 					continue;
 
 				bool cand_params = candidate_to_form != null && candidate_to_form.Contains (candidate);
 
 				if (BetterFunction (ec, Arguments, arg_count, 
 					candidate, cand_params,
-					method, method_params)) {
-					method = candidate;
+					best_candidate, method_params)) {
+					best_candidate = candidate;
 					method_params = cand_params;
 				}
 			}
@@ -3759,12 +3830,12 @@ namespace Mono.CSharp {
 			for (int ix = 0; ix < candidate_top; ix++) {
 				MethodBase candidate = (MethodBase) candidates [ix];
 
-				if (candidate == method)
+				if (candidate == best_candidate)
 					continue;
 
 				bool cand_params = candidate_to_form != null && candidate_to_form.Contains (candidate);
 				if (!BetterFunction (ec, Arguments, arg_count,
-					method, method_params,
+					best_candidate, method_params,
 					candidate, cand_params)) 
 				{
 					if (!may_fail)
@@ -3774,24 +3845,24 @@ namespace Mono.CSharp {
 			}
 
 			if (ambiguous != null) {
-				Report.SymbolRelatedToPreviousError (method);
+				Report.SymbolRelatedToPreviousError (best_candidate);
 				Report.Error (121, loc, "The call is ambiguous between the following methods or properties: `{0}' and `{1}'",
-					TypeManager.CSharpSignature (ambiguous), TypeManager.CSharpSignature (method));
-				return method;
+					TypeManager.CSharpSignature (ambiguous), TypeManager.CSharpSignature (best_candidate));
+				return this;
 			}
 
 			//
 			// If the method is a virtual function, pick an override closer to the LHS type.
 			//
-			if (!IsBase && method.IsVirtual) {
-				if (TypeManager.IsOverride (method))
+			if (!IsBase && best_candidate.IsVirtual) {
+				if (TypeManager.IsOverride (best_candidate))
 					throw new InternalErrorException (
-						"Should not happen.  An 'override' method took part in overload resolution: " + method);
+						"Should not happen.  An 'override' method took part in overload resolution: " + best_candidate);
 
 				if (candidate_overrides != null)
 					foreach (MethodBase candidate in candidate_overrides) {
-						if (IsOverride (candidate, method))
-							method = candidate;
+						if (IsOverride (candidate, best_candidate))
+							best_candidate = candidate;
 					}
 			}
 
@@ -3801,17 +3872,17 @@ namespace Mono.CSharp {
 			// necessary etc. and return if everything is
 			// all right
 			//
-			if (!Invocation.VerifyArgumentsCompat (ec, Arguments, arg_count, method,
+			if (!Invocation.VerifyArgumentsCompat (ec, Arguments, arg_count, best_candidate,
 				method_params, null, may_fail, loc))
 				return null;
 
-			if (method == null)
+			if (best_candidate == null)
 				return null;
 
-			MethodBase the_method = TypeManager.DropGenericMethodArguments (method);
+			MethodBase the_method = TypeManager.DropGenericMethodArguments (best_candidate);
 #if GMCS_SOURCE
 			if (the_method.IsGenericMethodDefinition &&
-			    !ConstraintChecker.CheckConstraints (ec, the_method, method, loc))
+			    !ConstraintChecker.CheckConstraints (ec, the_method, best_candidate, loc))
 				return null;
 #endif
 
@@ -3819,46 +3890,9 @@ namespace Mono.CSharp {
 			if (data != null)
 				data.SetMemberIsUsed ();
 
-			return method;
-		}
-
-
-		bool RemoveMethods (bool keep_static)
-		{
-			ArrayList smethods = new ArrayList ();
-
-			foreach (MethodBase mb in Methods){
-				if (mb.IsStatic == keep_static)
-					smethods.Add (mb);
-			}
-
-			if (smethods.Count == 0)
-				return false;
-
-			Methods = new MethodBase [smethods.Count];
-			smethods.CopyTo (Methods, 0);
-
-			return true;
+			return this;
 		}
 		
-		/// <summary>
-		///   Removes any instance methods from the MethodGroup, returns
-		///   false if the resulting set is empty.
-		/// </summary>
-		public bool RemoveInstanceMethods ()
-		{
-			return RemoveMethods (true);
-		}
-
-		/// <summary>
-		///   Removes any static methods from the MethodGroup, returns
-		///   false if the resulting set is empty.
-		/// </summary>
-		public bool RemoveStaticMethods ()
-		{
-			return RemoveMethods (false);
-		}
-
 		public Expression ResolveGeneric (EmitContext ec, TypeArguments args)
 		{
 #if GMCS_SOURCE
@@ -4726,7 +4760,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			Invocation.EmitCall (ec, IsBase, IsStatic, InstanceExpression, getter, null, loc, prepared, false);
+			Invocation.EmitCall (ec, IsBase, InstanceExpression, getter, null, loc, prepared, false);
 			
 			if (leave_copy) {
 				ec.ig.Emit (OpCodes.Dup);
@@ -4767,7 +4801,7 @@ namespace Mono.CSharp {
 			ArrayList args = new ArrayList (1);
 			args.Add (new Argument (my_source, Argument.AType.Expression));
 			
-			Invocation.EmitCall (ec, IsBase, IsStatic, InstanceExpression, setter, args, loc, false, prepared);
+			Invocation.EmitCall (ec, IsBase, InstanceExpression, setter, args, loc, false, prepared);
 			
 			if (temp != null) {
 				temp.Emit (ec);
@@ -4937,10 +4971,10 @@ namespace Mono.CSharp {
 			
 			if (source_del.IsAddition)
 				Invocation.EmitCall (
-					ec, false, IsStatic, InstanceExpression, add_accessor, args, loc);
+					ec, false, InstanceExpression, add_accessor, args, loc);
 			else
 				Invocation.EmitCall (
-					ec, false, IsStatic, InstanceExpression, remove_accessor, args, loc);
+					ec, false, InstanceExpression, remove_accessor, args, loc);
 		}
 	}
 

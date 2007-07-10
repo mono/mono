@@ -1,3 +1,35 @@
+2007-07-10  Marek Safar  <marek.safar@gmail.com>
+
+	* attribute.cs (Attribute.ResolveConstructor): Uses method group.
+	
+	* class.cs (ConstructorInitializer.Resolve): Use and keep method group
+	instead of method. Re-use standard error handling.
+	(ConstructorInitializer.Emit): Simplified.
+	
+	* delegate.cs: Updated after Invocation.EmitCall change.
+	
+	* ecore.cs (GetOperatorTrueOrFalse): Uses MethodGroupExpr only.
+	(SimpleName.SimpleNameResolve): Set and reset in_transit flag correctly.
+	(ExtensionMethodGroupExpr): Refactored to use same OverloadResolve
+	method and don't permanently changing input arguments.
+	(MethodGroupExpr): Introduced resolved best_candidate, when method group
+	is resolved it has one of the candidates is the best one which is later
+	used to emit. Removed a few unused method.
+	(MethodGroupExpr.MakeUnionSet): Moved from Invocation, it belongs here.
+
+	* expression.cs (StaticCallExpr.MakeSimpleCall): Uses method group.
+	(Binary.ResolveOperator): Ditto.
+	(ConditionalLogicalOperator.DoResolve): Ditto.
+	(Invocation): Uses method group.
+	(Invocation.DoResolve): Simplified.
+	(Invocation.EmitCall): Removed useless is_static.
+	(Invocation.Emit): Delegate to method group.
+	(Invocation.EmitStatement): Simplified.
+	(New): Uses method group.
+	(MemberAccess.DoResolve): Don't destroy original expression.
+	
+	* statement.cs (ForEach.Resolve): Use null for no method arguments.
+	
 2007-07-04  Marek Safar  <marek.safar@gmail.com>
 
 	* ecore.cs (VarExpr.DoResolveLValue): More restriction checks.

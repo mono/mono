@@ -5224,7 +5224,7 @@ namespace Mono.CSharp {
 				enumerator = new TemporaryVariable (enumerator_type, loc);
 				enumerator.Resolve (ec);
 
-				init = new Invocation (get_enumerator, new ArrayList ());
+				init = new Invocation (get_enumerator, null);
 				init = init.Resolve (ec);
 				if (init == null)
 					return false;
@@ -5235,7 +5235,7 @@ namespace Mono.CSharp {
 					MethodGroupExpr mg = new MethodGroupExpr (mi, loc);
 					mg.InstanceExpression = enumerator;
 
-					move_next_expr = new Invocation (mg, new ArrayList ());
+					move_next_expr = new Invocation (mg, null);
 				}
 
 				get_current.InstanceExpression = enumerator;
