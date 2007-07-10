@@ -1,3 +1,8 @@
+2007-07-10  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* TypeDescriptor.cs: Implemented AddEditorTable, and check the editor
+	  table in GetEditor if no editor can be found using attributes.
+
 2007-06-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* PropertyDescriptorCollection.cs: Added missing explicit interface

@@ -46,6 +46,7 @@ public sealed class TypeDescriptor
 	private static IComNativeDescriptorHandler descriptorHandler;
 	private static Hashtable componentTable = new Hashtable ();
 	private static Hashtable typeTable = new Hashtable ();
+	private static Hashtable editors;
 
 	private TypeDescriptor ()
 	{
@@ -93,13 +94,15 @@ public sealed class TypeDescriptor
 	}
 #endif
 
-	[MonoTODO]
 #if NET_2_0
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 #endif
 	public static void AddEditorTable (Type editorBaseType, Hashtable table)
 	{
-		throw new NotImplementedException ();
+		if (editors == null)
+			editors = new Hashtable ();
+			
+		editors [editorBaseType] = table;
 	}
 
 	public static IDesigner CreateDesigner(IComponent component, Type designerBaseType)
@@ -437,35 +440,85 @@ public sealed class TypeDescriptor
 				return GetTypeInfo (component.GetType()).GetDefaultProperty ();
 		}
 	}
+		
+	private static object CreateEditor (Type t, Type componentType)
+	{
+		if (t == null) 
+			return null;
+
+		Exception exc = null;
+		try {
+			return Activator.CreateInstance (t);
+		} catch (MissingMethodException e) {
+			exc = e;
+		}
+
+		try {
+			return Activator.CreateInstance (t, new object [] {componentType});
+		} catch (MissingMethodException e) {
+			throw exc;
+		}
+	}
+		
+	private static object FindEditorInTable (Type componentType, Type editorBaseType, Hashtable table)
+	{
+		object value = null;
+		object editor = null;
+		Type ct = componentType;
+		
+		if (componentType == null || editorBaseType == null || table == null)
+				return null;
+			
+		while (ct != null) {						
+			value = table [ct];
+			if (value != null)
+				break;			
+			ct = ct.BaseType;
+		}
+		
+		if (value == null) {
+			foreach (Type iface in componentType.GetInterfaces ()) {
+				value = table [iface];
+				if (value != null) 
+						break;
+			}
+		}
+				
+		if (value == null)
+				return null;
+				
+		if (value is string) {
+			editor = CreateEditor (Type.GetType ((string) value), componentType);
+		} else if (value is Type) {
+			editor = CreateEditor ((Type) value, componentType);
+		} else if (value.GetType ().IsSubclassOf (editorBaseType)) {
+			editor = value;
+		}
+		
+		if (editor != null) 
+			table [componentType] = editor;
+		
+		return editor;
+	}
 
 	public static object GetEditor (Type componentType, Type editorBaseType)
 	{
 		Type t = null;
 		object [] atts = componentType.GetCustomAttributes (typeof(EditorAttribute), true);
-		if (atts == null || atts.Length == 0)
-			return null;
-		
-		
-		foreach (EditorAttribute ea in atts)
-		{
-			t = GetTypeFromName (null, ea.EditorTypeName);
-			if (t.IsSubclassOf(editorBaseType))
-				break;
+		if (atts != null && atts.Length != 0) {
+			foreach (EditorAttribute ea in atts)
+			{
+				t = GetTypeFromName (null, ea.EditorTypeName);
+				if (t.IsSubclassOf(editorBaseType))
+					break;
+			}
 		}
-
-		if (t != null) {
-			Exception exc = null;
-			try {
-				return Activator.CreateInstance (t);
-			} catch (MissingMethodException e) {
-				exc = e;
-			}
-
-			try {
-				return Activator.CreateInstance (t, new object [] {componentType});
-			} catch (MissingMethodException e) {
-				throw exc;
-			}
+		
+		if (t != null)
+			return CreateEditor (t, componentType);
+			
+		if (t == null && editors != null) {
+				return FindEditorInTable (componentType, editorBaseType, editors [editorBaseType] as Hashtable);
 		}
 
 		return null;    // No editor specified
