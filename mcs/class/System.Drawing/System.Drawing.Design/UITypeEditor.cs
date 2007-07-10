@@ -31,6 +31,7 @@
 
 using System.ComponentModel;
 using System.Security.Permissions;
+using System.Collections;
 
 namespace System.Drawing.Design
 {
@@ -38,6 +39,17 @@ namespace System.Drawing.Design
 	[PermissionSet (SecurityAction.InheritanceDemand, Unrestricted = true)]
 	public class UITypeEditor {
 
+		static UITypeEditor ()
+		{
+			Hashtable editors = new Hashtable ();
+			editors [typeof (Array)] = "System.ComponentModel.Design.ArrayEditor, " + Consts.AssemblySystem_Design;
+			editors [typeof (byte [])] = "System.ComponentModel.Design.BinaryEditor, " + Consts.AssemblySystem_Design;
+			editors [typeof (DateTime)] = "System.ComponentModel.Design.DateTimeEditor, " + Consts.AssemblySystem_Design;
+			editors [typeof (IList)] = "System.ComponentModel.Design.CollectionEditor, " + Consts.AssemblySystem_Design;
+			editors [typeof (ICollection)] = "System.ComponentModel.Design.CollectionEditor, " + Consts.AssemblySystem_Design;
+			TypeDescriptor.AddEditorTable (typeof (UITypeEditor), editors);
+		}
+		
 		public UITypeEditor()
 		{
 		}
