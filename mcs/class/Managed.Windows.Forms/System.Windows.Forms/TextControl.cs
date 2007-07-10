@@ -64,15 +64,6 @@ namespace System.Windows.Forms {
 		Line		// Selection=Line under caret
 	}
 
-	internal class FontDefinition {
-		internal String		face;
-		internal int		size;
-		internal FontStyle	add_style;
-		internal FontStyle	remove_style;
-		internal Color		color;
-		internal Font		font_obj;
-	}
-
 	[Flags]
 	internal enum FormatSpecified {
 		None,
@@ -3943,34 +3934,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		/// <summary>Re-format areas of the document in specified font and color</summary>
-		/// <param name="start_pos">1-based start position on start_line</param>
-		/// <param name="end_pos">1-based end position on end_line </param>
-		/// <param name="font">Font specifying attributes</param>
-		/// <param name="color">Color (or NULL) to apply</param>
-		/// <param name="apply">Attributes from font and color to apply</param>
-		internal void FormatText(Line start_line, int start_pos, Line end_line, int end_pos, FontDefinition attributes) {
-			Line    l;
-
-			// First, format the first line
-			if (start_line != end_line) {
-				// First line
-				LineTag.FormatText(start_line, start_pos, start_line.text.Length - start_pos + 1, attributes);
-
-				// Format last line
-				LineTag.FormatText(end_line, 1, end_pos - 1, attributes);
-
-				// Now all the lines inbetween
-				for (int i = start_line.line_no + 1; i < end_line.line_no; i++) {
-					l = GetLine(i);
-					LineTag.FormatText(l, 1, l.text.Length, attributes);
-				}
-			} else {
-				// Special case, single line
-				LineTag.FormatText(start_line, start_pos, end_pos - start_pos, attributes);
-			}
-		}
-
 		internal void RecalculateAlignments ()
 		{
 			Line	line;
@@ -4678,49 +4641,6 @@ namespace System.Windows.Forms {
 			back_color = other.back_color;
 		}
 
-		///<summary>Create new font and brush from existing font and given new attributes. Returns true if fontheight changes</summary>
-		internal static bool GenerateTextFormat(Font font_from, SolidBrush color_from, FontDefinition attributes, out Font new_font, out SolidBrush new_color) {
-			float		size;
-			string		face;
-			FontStyle	style;
-			GraphicsUnit	unit;
-
-			if (attributes.font_obj == null) {
-				size = font_from.SizeInPoints;
-				unit = font_from.Unit;
-				face = font_from.Name;
-				style = font_from.Style;
-
-				if (attributes.face != null) {
-					face = attributes.face;
-				}
-				
-				if (attributes.size != 0) {
-					size = attributes.size;
-				}
-
-				style |= attributes.add_style;
-				style &= ~attributes.remove_style;
-
-				// Create new font
-				new_font = new Font(face, size, style, unit);
-			} else {
-				new_font = attributes.font_obj;
-			}
-
-			// Create 'new' color brush
-			if (attributes.color != Color.Empty) {
-				new_color = new SolidBrush(attributes.color);
-			} else {
-				new_color = color_from;
-			}
-
-			if (new_font.Height == font_from.Height) {
-				return false;
-			}
-			return true;
-		}
-
 		/// <summary>Applies 'font' and 'brush' to characters starting at 'start' for 'length' chars; 
 		/// Removes any previous tags overlapping the same area; 
 		/// returns true if lineheight has changed</summary>
@@ -4787,67 +4707,6 @@ namespace System.Windows.Forms {
 			}
 			// Console.WriteLine ("setting format:   {0}  {1}   new color {2}", color.Color, specified, tag.color.Color);
 		}
-
-		/// <summary>Applies font attributes specified to characters starting at 'start' for 'length' chars; 
-		/// Breaks tags at start and end point, keeping middle tags with altered attributes.
-		/// Returns true if lineheight has changed</summary>
-		/// <param name="start">1-based character position on line</param>
-		internal static bool FormatText(Line line, int start, int length, FontDefinition attributes) {
-			LineTag	tag;
-			LineTag	start_tag;
-			LineTag	end_tag;
-			bool	retval = false;		// Assume line-height doesn't change
-
-			line.recalc = true;		// This forces recalculation of the line in RecalculateDocument
-
-			// A little sanity, not sure if it's needed, might be able to remove for speed
-			if (length > line.text.Length) {
-				length = line.text.Length;
-			}
-
-			tag = line.tags;
-
-			// Common special case
-			if ((start == 1) && (length == tag.length)) {
-				tag.ascent = 0;
-				GenerateTextFormat(tag.font, tag.color, attributes, out tag.font, out tag.color);
-				return retval;
-			}
-
-			start_tag = FindTag(line, start);
-			
-			if (start_tag == null) {
-				if (length == 0) {
-					// We are 'starting' after all valid tags; create a new tag with the right attributes
-					start_tag = FindTag(line, line.TextLengthWithoutEnding () - 1);
-					start_tag.next = new LineTag(line, line.TextLengthWithoutEnding () + 1);
-					start_tag.next.CopyFormattingFrom (start_tag);
-					start_tag.next.previous = start_tag;
-					start_tag = start_tag.next;
-				} else {
-					throw new Exception(String.Format("Could not find start_tag in document at line {0} position {1}", line.line_no, start));
-				}
-			} else {
-				start_tag = start_tag.Break(start);
-			}
-
-			end_tag = FindTag(line, start + length);
-			if (end_tag != null) {
-				end_tag = end_tag.Break(start + length);
-			}
-
-			// start_tag or end_tag might be null; we're cool with that
-			// we now walk from start_tag to end_tag, applying new attributes
-			tag = start_tag;
-			while ((tag != null) && tag != end_tag) {
-				if (LineTag.GenerateTextFormat(tag.font, tag.color, attributes, out tag.font, out tag.color)) {
-					retval = true;
-				}
-				tag = tag.next;
-			}
-			return retval;
-		}
-
 
 		/// <summary>Finds the tag that describes the character at position 'pos' on 'line'</summary>
 		internal static LineTag FindTag(Line line, int pos) {
