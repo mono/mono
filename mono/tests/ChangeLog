@@ -1,3 +1,7 @@
+2007-07-10  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Makefile.am, bug-82020.il: Test for bug #82020
+
 2007-07-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* libtest.c (mono_test_marshal_return_unicode_string_delegate): 
