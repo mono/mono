@@ -32,17 +32,98 @@
 //
 
 using System.Collections;
+using System.Runtime.InteropServices;
 
 namespace System.Globalization {
 
 	[Serializable]
 #if NET_2_0
-	[System.Runtime.InteropServices.ComVisible(true)]
+	[ComVisible(true)]
 #endif
 	public class StringInfo {
 		public StringInfo()
 		{
 		}
+
+#if NET_2_0
+		string s;
+		int length;
+
+		public StringInfo(string str)
+		{
+			if (str == null)
+				throw new ArgumentNullException ("str");
+			String = str;
+		}
+
+		[ComVisible (false)]
+		public override bool Equals (object obj)
+		{
+			StringInfo other = obj as StringInfo;
+			return other != null && s == other.s;
+		}
+
+		[ComVisible (false)]
+		public override int GetHashCode ()
+		{
+			return s.GetHashCode ();
+		}
+
+		public int LengthInTextElements {
+			get {
+				if (length < 0) {
+					length = 0;
+					for (int idx = 0; idx < s.Length; length++)
+						idx += GetNextTextElementLength (s, idx);
+				}
+				return length;
+			}
+		}
+
+		public string String {
+			get { return s; }
+			set {
+				if (value == null)
+					throw new ArgumentNullException ("value");
+				length = -1;
+				s = value;
+			}
+		}
+
+		public string SubstringByTextElements (int startingTextElement)
+		{
+			if (startingTextElement < 0 || s.Length == 0)
+				throw new ArgumentOutOfRangeException ("startingTextElement");
+			int idx = 0;
+			for (int i = 0; i < startingTextElement; i++) {
+				if (idx >= s.Length)
+					throw new ArgumentOutOfRangeException ("startingTextElement");
+				idx += GetNextTextElementLength (s, idx);
+			}
+			return s.Substring (idx);
+		}
+
+		public string SubstringByTextElements (int startingTextElement, int lengthInTextElements)
+		{
+			if (startingTextElement < 0 || s.Length == 0)
+				throw new ArgumentOutOfRangeException ("startingTextElement");
+			if (lengthInTextElements < 0)
+				throw new ArgumentOutOfRangeException ("lengthInTextElements");
+			int idx = 0;
+			for (int i = 0; i < startingTextElement; i++) {
+				if (idx >= s.Length)
+					throw new ArgumentOutOfRangeException ("startingTextElement");
+				idx += GetNextTextElementLength (s, idx);
+			}
+			int start = idx;
+			for (int i = 0; i < lengthInTextElements; i++) {
+				if (idx >= s.Length)
+					throw new ArgumentOutOfRangeException ("lengthInTextElements");
+				idx += GetNextTextElementLength (s, idx);
+			}
+			return s.Substring (start, idx - start);
+		}
+#endif
 
 		public static string GetNextTextElement(string str)
 		{
@@ -54,13 +135,24 @@ namespace System.Globalization {
 
 		public static string GetNextTextElement(string str, int index)
 		{
+			int len = GetNextTextElementLength (str, index);
+			return len != 1 ? str.Substring (index, len) : new string (str [index], 1);
+		}
+		
+		static int GetNextTextElementLength(string str, int index)
+		{
 			if(str == null) {
 				throw new ArgumentNullException("string is null");
 			}
 
-			if(index < 0 || index >= str.Length) {
+#if NET_2_0
+			if(index >= str.Length)
+				return 0;
+			if(index < 0)
+#else
+			if(index < 0 || index >= str.Length)
+#endif
 				throw new ArgumentOutOfRangeException ("Index is not valid");
-			}
 
 			/* Find the next base character, surrogate
 			 * pair or combining character sequence
@@ -78,14 +170,14 @@ namespace System.Globalization {
 					    str[index + 1] >= 0xDC00 &&
 					    str[index + 1] <= 0xDFFF) {
 						/* A valid surrogate pair */
-						return(str.Substring (index, 2));
+						return 2;
 					} else {
 						/* High surrogate on its own */
-						return(new String (ch, 1));
+						return 1;
 					}
 				} else {
 					/* Low surrogate on its own */
-					return(new String (ch, 1));
+					return 1;
 				}
 			} else {
 				/* Look for a base character, which
@@ -97,7 +189,7 @@ namespace System.Globalization {
 				    cat == UnicodeCategory.SpacingCombiningMark ||
 				    cat == UnicodeCategory.EnclosingMark) {
 					/* Not a base character */
-					return(new String (ch, 1));
+					return 1;
 				}
 				
 				int count = 1;
@@ -113,7 +205,7 @@ namespace System.Globalization {
 					count++;
 				}
 
-				return(str.Substring (index, count));
+				return count;
 			}
 		}
 

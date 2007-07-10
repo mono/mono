@@ -1,5 +1,9 @@
 2007-07-10  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* StringInfoTest.cs : new test.
+
+2007-07-10  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* CalendarTest.cs : enabled ToFourDigitYear() test from 5 years ago.
 	  and added some more ToFourDigitYear() tests.
 
