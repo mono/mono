@@ -437,6 +437,10 @@ namespace System {
 			return new AssemblyBuilder (name, null, access, true);
 		}
 
+	    	//
+		// AppDomain.DoCallBack works because AppDomain is a MarshalByRefObject
+		// so, when you call AppDomain.DoCallBack, that's a remote call
+		//
 		public void DoCallBack (CrossAppDomainDelegate theDelegate)
 		{
 			if (theDelegate != null)
