@@ -9,5 +9,5 @@ Demo.Color.prototype =
     Green:  0x00FF00,
     White:  0xFFFFFF 
 }
-Demo.Color.registerClass("Demo.Color");
+Demo.Color.registerEnum("Demo.Color");
 

@@ -16,10 +16,10 @@
 
         <select id="ColorPicker" 
             onchange="ChangeColor(options[selectedIndex].value)">
-            <option value="Red" label="Red" />
-            <option value="Blue" label="Blue" />
-            <option value="Green" label="Green" />
-            <option value="White" label="White" />
+            <option value="Red" label="Red">Red</option>
+            <option value="Blue" label="Blue">Blue</option>
+            <option value="Green" label="Green">Green</option>
+            <option value="White" label="White">White</option>
         </select>
         
     </div>
