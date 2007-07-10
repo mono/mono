@@ -1,3 +1,9 @@
+
+Tue Jul 10 13:07:24 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am: fix svn invocation to get the svn revision to be
+	independent of the local language (build fix).
+
 2007-07-09  Mark Probst  <mark.probst@gmail.com>
 
 	* mini.c (inline_method): Reset cfg->exception_type if the
