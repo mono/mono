@@ -1,3 +1,7 @@
+2007-07-10  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (mono_class_create_from_typedef): Fix for bug #82022
+
 2007-07-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (mono_marshal_string_to_utf16_copy): Fix allocation size.
