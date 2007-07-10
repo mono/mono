@@ -351,8 +351,9 @@ namespace System.Web {
 				return s;
 
 			StringBuilder output = new StringBuilder ();
-			foreach (char c in s) 
-				switch (c) {
+			int len = s.Length;
+			for (int i = 0; i < len; i++)
+				switch (s [i]) {
 				case '&' : 
 					output.Append ("&amp;");
 					break;
@@ -363,7 +364,7 @@ namespace System.Web {
 					output.Append ("&lt;");
 					break;
 				default:
-					output.Append (c);
+					output.Append (s [i]);
 					break;
 				}
 	
@@ -910,10 +911,23 @@ namespace System.Web {
 			if (s == null)
 				return null;
 
+			bool needEncode = false;
+			for (int i = 0; i < s.Length; i++) {
+				char c = s [i];
+				if (c == '&' || c == '"' || c == '<' || c == '>' || c > 159) {
+					needEncode = true;
+					break;
+				}
+			}
+
+			if (!needEncode)
+				return s;
+
 			StringBuilder output = new StringBuilder ();
 			
-			foreach (char c in s) 
-				switch (c) {
+			int len = s.Length;
+			for (int i = 0; i < len; i++) 
+				switch (s [i]) {
 				case '&' :
 					output.Append ("&amp;");
 					break;
@@ -930,12 +944,12 @@ namespace System.Web {
 					// MS starts encoding with &# from 160 and stops at 255.
 					// We don't do that. One reason is the 65308/65310 unicode
 					// characters that look like '<' and '>'.
-					if (c > 159) {
+					if (s [i] > 159) {
 						output.Append ("&#");
-						output.Append (((int) c).ToString (CultureInfo.InvariantCulture));
+						output.Append (((int) s [i]).ToString (CultureInfo.InvariantCulture));
 						output.Append (";");
 					} else {
-						output.Append (c);
+						output.Append (s [i]);
 					}
 					break;
 				}
