@@ -1,3 +1,11 @@
+
+Tue Jul 10 16:49:01 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* class-internals.h, object-internals.h, object.c: IMT-based
+	interface invocation core from Massimiliano Mantione
+	(massi@ximian.com) with a reworked arch-specific interface,
+	bsearch implementation and a few bugfixes and memory savings by me.
+
 2007-07-10  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* class.c (mono_class_create_from_typedef): mono would segfault if 
