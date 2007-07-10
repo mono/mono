@@ -1,3 +1,8 @@
+2007-07-10  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* ArrayEditor.cs, MultilineStringEditor.cs, CollectionEditor.cs,
+	  DateTimeEditor.cs: Implemented (patch by Andreas Nahr).
+
 2006-11-30  Marek Habersack  <grendello@gmail.com>
 
 	* ComponentDesigner.cs: Add a missing 'verbs' variable and set the

@@ -3,8 +3,10 @@
 //
 // Authors:
 //      Martin Willemoes Hansen (mwh@sysrq.dk)
-//
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+// 
 // (C) 2003 Martin Willemoes Hansen
+// (C) 2007 Andreas Nahr
 //
 
 //
@@ -28,9 +30,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+
+using System;
+using System.Reflection;
+using System.Collections;
+using System.ComponentModel;
+using System.Drawing.Design;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
-using System.Drawing.Design;
 
 namespace System.ComponentModel.Design
 {
@@ -38,221 +45,640 @@ namespace System.ComponentModel.Design
 	{
 		protected abstract class CollectionForm : Form
 		{
-			[MonoTODO]
+			private CollectionEditor editor;
+			private object editValue;
+
 			public CollectionForm (CollectionEditor editor)
 			{
+				this.editor = editor;
 			}
 
-			public object EditValue {
-				[MonoTODO]
-				get { throw new NotImplementedException(); } 
-
-				[MonoTODO]
-				set { throw new NotImplementedException(); }
+			protected Type CollectionItemType
+			{
+				get { return editor.CollectionItemType; }
 			}
 
-			public override ISite Site {
-				[MonoTODO]
-				get { throw new NotImplementedException(); } 
-
-				[MonoTODO]
-				set { throw new NotImplementedException(); }
+			protected Type CollectionType
+			{
+				get { return editor.CollectionType; }
 			}
 
-			protected Type CollectionItemType {
-				[MonoTODO]
-				get { throw new NotImplementedException(); }
-			}
-			
-			protected Type CollectionType {
-				[MonoTODO]
-				get { throw new NotImplementedException(); }
+			protected ITypeDescriptorContext Context
+			{
+				get { return editor.Context; }
 			}
 
-			protected ITypeDescriptorContext Context {
-				[MonoTODO]
-				get { throw new NotImplementedException(); }
+			public object EditValue
+			{
+				get { return editValue; }
+				set
+				{
+					editValue = value;
+					OnEditValueChanged ();
+				}
 			}
 
-			protected override ImeMode DefaultImeMode {
-				[MonoTODO]
-				get { throw new NotImplementedException(); }
+			protected object[] Items
+			{
+				get { return editor.GetItems (editValue); }
+				set { editor.SetItems (editValue, value); }
 			}
 
-			protected object[] Items {
-				[MonoTODO]
-				get { throw new NotImplementedException(); } 
-
-				[MonoTODO]
-				set { throw new NotImplementedException(); }
+			protected Type[] NewItemTypes
+			{
+				get { return editor.NewItemTypes; }
 			}
 
-			protected Type[] NewItemTypes {
-				[MonoTODO]
-				get { throw new NotImplementedException(); }
-			}
-
-			[MonoTODO]
 			protected bool CanRemoveInstance (object value)
 			{
-				throw new NotImplementedException();
+				return editor.CanRemoveInstance (value);
 			}
 
-			[MonoTODO]
-			protected virtual bool CanSelectMultipleInstances()
+			protected virtual bool CanSelectMultipleInstances ()
 			{
-				throw new NotImplementedException();
+				return editor.CanSelectMultipleInstances ();
 			}
 
-			[MonoTODO]
 			protected object CreateInstance (Type itemType)
 			{
-				throw new NotImplementedException();
+				return editor.CreateInstance (itemType);
 			}
 
-			[MonoTODO]
 			protected void DestroyInstance (object instance)
 			{
-				throw new NotImplementedException();
+				editor.DestroyInstance (instance);
 			}
 
-			[MonoTODO]
 			protected virtual void DisplayError (Exception e)
 			{
-				throw new NotImplementedException();
+				MessageBox.Show (e.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
 			}
 
-			[MonoTODO]
 			protected override object GetService (Type serviceType)
 			{
-				throw new NotImplementedException();
+				return editor.GetService (serviceType);
 			}
 
-			protected abstract void OnEditValueChanged();
+			protected abstract void OnEditValueChanged ();
 
-			[MonoTODO]
-			protected internal virtual DialogResult ShowEditorDialog (
-						   IWindowsFormsEditorService edSvc)
+			protected internal virtual DialogResult ShowEditorDialog (IWindowsFormsEditorService edSvc)
 			{
-				throw new NotImplementedException();
-			}
-
-			[MonoTODO]
-			~CollectionForm ()
-			{
+				return edSvc.ShowDialog (this);
 			}
 		}
 
-		[MonoTODO("Low-priority: designers are no-ops on Mono")]
+		private class ConcreteCollectionForm : CollectionForm
+		{
+			internal class ObjectContainerConverter : TypeConverter
+			{
+				private class ObjectContainerPropertyDescriptor : TypeConverter.SimplePropertyDescriptor
+				{
+					private AttributeCollection attributes;
+
+					public ObjectContainerPropertyDescriptor (Type componentType, Type propertyType)
+						: base (componentType, "Value", propertyType)
+					{
+						CategoryAttribute cat = new CategoryAttribute (propertyType.Name);
+						attributes = new AttributeCollection (new Attribute[] { cat });
+					}
+
+					public override object GetValue (object component)
+					{
+						ObjectContainer container = (ObjectContainer)component;
+						return container.Object;
+					}
+
+					public override void SetValue (object component, object value)
+					{
+						ObjectContainer container = (ObjectContainer)component;
+						container.Object = value;
+					}
+
+					public override AttributeCollection Attributes
+					{
+						get { return attributes; }
+					}
+				}
+
+				public override PropertyDescriptorCollection GetProperties (ITypeDescriptorContext context, object value, Attribute[] attributes)
+				{
+					ObjectContainer container = (ObjectContainer)value;
+					ObjectContainerPropertyDescriptor desc = new ObjectContainerPropertyDescriptor (value.GetType (), container.editor.CollectionItemType);
+					PropertyDescriptor[] properties = new PropertyDescriptor[] { desc };
+					PropertyDescriptorCollection pc = new PropertyDescriptorCollection (properties);
+					return pc;
+				}
+
+				public override bool GetPropertiesSupported (ITypeDescriptorContext context)
+				{
+					return true;
+				}
+			}
+
+			[TypeConverter (typeof (ObjectContainerConverter))]
+			private class ObjectContainer
+			{
+				internal string Name;
+				internal object Object;
+				internal CollectionEditor editor;
+
+				public ObjectContainer (string name, object obj, CollectionEditor editor)
+				{
+					this.Name = name;
+					this.Object = obj;
+					this.editor = editor;
+				}
+
+				public override string ToString ()
+				{
+					return Name;
+				}
+			}
+
+			private class UpdateableListbox : ListBox
+			{
+				public void DoRefreshItem (int index)
+				{
+					base.RefreshItem (index);
+				}
+			}
+
+			private CollectionEditor editor;
+
+			private System.Windows.Forms.Label labelMember;
+			private System.Windows.Forms.Label labelProperty;
+			private UpdateableListbox itemsList;
+			private System.Windows.Forms.PropertyGrid itemDisplay;
+			private System.Windows.Forms.Button doClose;
+			private System.Windows.Forms.Button moveUp;
+			private System.Windows.Forms.Button moveDown;
+			private System.Windows.Forms.Button doAdd;
+			private System.Windows.Forms.Button doRemove;
+			private System.Windows.Forms.Button doCancel;
+			private System.Windows.Forms.ComboBox addType;
+
+			public ConcreteCollectionForm (CollectionEditor editor)
+				: base (editor)
+			{
+				this.editor = editor;
+
+				this.labelMember = new System.Windows.Forms.Label ();
+				this.labelProperty = new System.Windows.Forms.Label ();
+				this.itemsList = new UpdateableListbox ();
+				this.itemDisplay = new System.Windows.Forms.PropertyGrid ();
+				this.doClose = new System.Windows.Forms.Button ();
+				this.moveUp = new System.Windows.Forms.Button ();
+				this.moveDown = new System.Windows.Forms.Button ();
+				this.doAdd = new System.Windows.Forms.Button ();
+				this.doRemove = new System.Windows.Forms.Button ();
+				this.doCancel = new System.Windows.Forms.Button ();
+				this.addType = new System.Windows.Forms.ComboBox ();
+				this.SuspendLayout ();
+				// 
+				// labelMember
+				// 
+				this.labelMember.Location = new System.Drawing.Point (12, 9);
+				this.labelMember.Size = new System.Drawing.Size (55, 13);
+				this.labelMember.Text = "Members:";
+				// 
+				// labelProperty
+				// 
+				this.labelProperty.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+							| System.Windows.Forms.AnchorStyles.Right)));
+				this.labelProperty.Location = new System.Drawing.Point (172, 9);
+				this.labelProperty.Size = new System.Drawing.Size (347, 13);
+				this.labelProperty.Text = "Properties:";
+				// 
+				// itemsList
+				// 
+				this.itemsList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+							| System.Windows.Forms.AnchorStyles.Left)));
+				this.itemsList.HorizontalScrollbar = true;
+				this.itemsList.Location = new System.Drawing.Point (12, 25);
+				this.itemsList.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+				this.itemsList.Size = new System.Drawing.Size (120, 290);
+				this.itemsList.TabIndex = 0;
+				this.itemsList.SelectedIndexChanged += new System.EventHandler (this.itemsList_SelectedIndexChanged);
+				// 
+				// itemDisplay
+				// 
+				this.itemDisplay.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+							| System.Windows.Forms.AnchorStyles.Left)
+							| System.Windows.Forms.AnchorStyles.Right)));
+				this.itemDisplay.HelpVisible = false;
+				this.itemDisplay.Location = new System.Drawing.Point (175, 25);
+				this.itemDisplay.Size = new System.Drawing.Size (344, 314);
+				this.itemDisplay.TabIndex = 6;
+				this.itemDisplay.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler (this.itemDisplay_PropertyValueChanged);
+				// 
+				// doClose
+				// 
+				this.doClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+				this.doClose.Location = new System.Drawing.Point (341, 345);
+				this.doClose.Size = new System.Drawing.Size (86, 26);
+				this.doClose.TabIndex = 7;
+				this.doClose.Text = "OK";
+				this.doClose.Click += new System.EventHandler (this.doClose_Click);
+				// 
+				// moveUp
+				// 
+				this.moveUp.Location = new System.Drawing.Point (138, 25);
+				this.moveUp.Size = new System.Drawing.Size (31, 28);
+				this.moveUp.TabIndex = 4;
+				this.moveUp.Text = "Up";
+				this.moveUp.Click += new System.EventHandler (this.moveUp_Click);
+				// 
+				// moveDown
+				// 
+				this.moveDown.Location = new System.Drawing.Point (138, 59);
+				this.moveDown.Size = new System.Drawing.Size (31, 28);
+				this.moveDown.TabIndex = 5;
+				this.moveDown.Text = "Dn";
+				this.moveDown.Click += new System.EventHandler (this.moveDown_Click);
+				// 
+				// doAdd
+				// 
+				this.doAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+				this.doAdd.Location = new System.Drawing.Point (12, 346);
+				this.doAdd.Size = new System.Drawing.Size (59, 25);
+				this.doAdd.TabIndex = 1;
+				this.doAdd.Text = "Add";
+				this.doAdd.Click += new System.EventHandler (this.doAdd_Click);
+				// 
+				// doRemove
+				// 
+				this.doRemove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+				this.doRemove.Location = new System.Drawing.Point (77, 346);
+				this.doRemove.Size = new System.Drawing.Size (55, 25);
+				this.doRemove.TabIndex = 2;
+				this.doRemove.Text = "Remove";
+				this.doRemove.Click += new System.EventHandler (this.doRemove_Click);
+				// 
+				// doCancel
+				// 
+				this.doCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+				this.doCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+				this.doCancel.Location = new System.Drawing.Point (433, 345);
+				this.doCancel.Size = new System.Drawing.Size (86, 26);
+				this.doCancel.TabIndex = 8;
+				this.doCancel.Text = "Cancel";
+				this.doCancel.Click += new System.EventHandler (this.doCancel_Click);
+				// 
+				// addType
+				// 
+				this.addType.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+				this.addType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+				this.addType.Location = new System.Drawing.Point (12, 319);
+				this.addType.Size = new System.Drawing.Size (120, 21);
+				this.addType.TabIndex = 3;
+				// 
+				// DesignerForm
+				// 
+				this.AcceptButton = this.doClose;
+				this.CancelButton = this.doCancel;
+				this.ClientSize = new System.Drawing.Size (531, 381);
+				this.ControlBox = false;
+				this.Controls.Add (this.addType);
+				this.Controls.Add (this.doCancel);
+				this.Controls.Add (this.doRemove);
+				this.Controls.Add (this.doAdd);
+				this.Controls.Add (this.moveDown);
+				this.Controls.Add (this.moveUp);
+				this.Controls.Add (this.doClose);
+				this.Controls.Add (this.itemDisplay);
+				this.Controls.Add (this.itemsList);
+				this.Controls.Add (this.labelProperty);
+				this.Controls.Add (this.labelMember);
+				this.HelpButton = true;
+				this.MaximizeBox = false;
+				this.MinimizeBox = false;
+				this.MinimumSize = new System.Drawing.Size (400, 300);
+				this.ShowInTaskbar = false;
+				this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+				this.ResumeLayout (false);
+
+#if NET_2_0
+				if (editor.CollectionType.IsGenericType)
+					this.Text = editor.CollectionItemType.Name + " Collection Editor";
+				else
+					this.Text = editor.CollectionType.Name + " Collection Editor";
+#else
+				this.Text = editor.CollectionType.Name + " Collection Editor";
+#endif
+				foreach (Type type in editor.NewItemTypes)
+					addType.Items.Add (type.Name);
+				if (addType.Items.Count > 0)
+					addType.SelectedIndex = 0;
+			}
+
+			private void AddItems ()
+			{
+				foreach (object o in editor.GetItems (EditValue))
+				{
+					this.itemsList.Items.Add (new ObjectContainer (editor.GetDisplayText (o), o, editor));
+				}
+				if (itemsList.Items.Count > 0)
+					itemsList.SelectedIndex = 0;
+			}
+
+			private void doClose_Click (object sender, EventArgs e)
+			{
+				object[] items = new object[itemsList.Items.Count];
+				for (int i = 0; i < itemsList.Items.Count; i++)
+					items[i] = ((ObjectContainer)itemsList.Items[i]).Object;
+				EditValue = editor.SetItems (EditValue, items);
+				this.Close ();
+			}
+
+			private void doCancel_Click (object sender, EventArgs e)
+			{
+				editor.CancelChanges ();
+				this.Close ();
+			}
+
+			private void itemsList_SelectedIndexChanged (object sender, EventArgs e)
+			{
+				if (itemsList.SelectedIndex <= 0 || itemsList.SelectedItems.Count > 1)
+					moveUp.Enabled = false;
+				else
+					moveUp.Enabled = true;
+				if (itemsList.SelectedIndex > itemsList.Items.Count - 2 || itemsList.SelectedItems.Count > 1)
+					moveDown.Enabled = false;
+				else
+					moveDown.Enabled = true;
+
+				if (itemsList.SelectedIndex == -1)
+					return;
+
+				if (itemsList.SelectedItems.Count == 1)
+				{
+					ObjectContainer o = (ObjectContainer)itemsList.SelectedItem;
+					if (Type.GetTypeCode (o.Object.GetType ()) != TypeCode.Object)
+						itemDisplay.SelectedObject = o;
+					else
+						itemDisplay.SelectedObject = o.Object;
+				}
+				else
+				{
+					object[] items = new object[itemsList.SelectedItems.Count];
+					for (int i = 0; i < itemsList.SelectedItems.Count; i++)
+					{
+						ObjectContainer o = (ObjectContainer)itemsList.SelectedItem;
+						if (Type.GetTypeCode (o.Object.GetType ()) != TypeCode.Object)
+							items[i] = ((ObjectContainer)itemsList.SelectedItems[i]);
+						else
+							items[i] = ((ObjectContainer)itemsList.SelectedItems[i]).Object;
+					}
+					itemDisplay.SelectedObjects = items;
+				}
+				labelProperty.Text = ((ObjectContainer)itemsList.SelectedItem).Name + " properties:";
+			}
+
+			private void itemDisplay_PropertyValueChanged (object sender, EventArgs e)
+			{
+				int[] indices = new int[itemsList.SelectedIndices.Count];
+				itemsList.SelectedIndices.CopyTo (indices, 0);
+				for (int i = 0; i < indices.Length; i++)
+				{
+					ObjectContainer o = (ObjectContainer)itemsList.Items [indices[i]];
+					o.Name = editor.GetDisplayText (o.Object);
+					itemsList.DoRefreshItem (indices[i]);
+				}
+				for (int i = 0; i < indices.Length; i++)
+					itemsList.SetSelected (indices[i], true);
+			}
+
+			private void moveUp_Click (object sender, EventArgs e)
+			{
+				if (itemsList.SelectedIndex <= 0)
+					return;
+
+				object selected = itemsList.SelectedItem;
+				int index = itemsList.SelectedIndex;
+				itemsList.Items.RemoveAt (index);
+				itemsList.Items.Insert (index - 1, selected);
+				itemsList.SelectedIndex = index - 1;
+			}
+
+			private void moveDown_Click (object sender, EventArgs e)
+			{
+				if (itemsList.SelectedIndex > itemsList.Items.Count - 2)
+					return;
+
+				object selected = itemsList.SelectedItem;
+				int index = itemsList.SelectedIndex;
+				itemsList.Items.RemoveAt (index);
+				itemsList.Items.Insert (index + 1, selected);
+				itemsList.SelectedIndex = index + 1;
+			}
+
+			private void doAdd_Click (object sender, EventArgs e)
+			{
+				object o;
+				try
+				{
+					o = editor.CreateInstance (editor.NewItemTypes[addType.SelectedIndex]);
+				}
+				catch (Exception ex)
+				{
+					DisplayError (ex);
+					return;
+				}
+				itemsList.Items.Add (new ObjectContainer (editor.GetDisplayText (o), o, editor));
+			}
+
+			private void doRemove_Click (object sender, EventArgs e)
+			{
+				if (itemsList.SelectedIndex != -1)
+					itemsList.Items.RemoveAt (itemsList.SelectedIndex);
+			}
+
+			protected override void OnEditValueChanged ()
+			{
+				AddItems ();
+			}
+		}
+
+		private Type type;
+		private Type collectionItemType;
+		private Type[] newItemTypes;
+		private ITypeDescriptorContext context;
+		private IServiceProvider provider;
+		private IWindowsFormsEditorService editorService;
+
 		public CollectionEditor (Type type)
 		{
+			this.type = type;
+			this.collectionItemType = CreateCollectionItemType ();
+			this.newItemTypes = CreateNewItemTypes ();
 		}
 
-		[MonoTODO]
-		public override object EditValue (ITypeDescriptorContext context,
-						  IServiceProvider provider,
-						  object value)
+		protected Type CollectionItemType
 		{
-			throw new NotImplementedException();
+			get { return collectionItemType; }
 		}
 
-		[MonoTODO]
-		public override UITypeEditorEditStyle GetEditStyle (
-						      ITypeDescriptorContext context)
+		protected Type CollectionType
 		{
-			throw new NotImplementedException();
+			get { return type; }
 		}
 
-		protected Type CollectionItemType {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
+		protected ITypeDescriptorContext Context
+		{
+			get { return context; }
 		}
 
-		protected Type CollectionType {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
+		protected virtual string HelpTopic
+		{
+			get { return "CollectionEditor"; }
 		}
 
-		protected ITypeDescriptorContext Context {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
-		}
-		
-		protected virtual string HelpTopic {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
+		protected Type[] NewItemTypes
+		{
+			get { return newItemTypes; }
 		}
 
-		protected Type[] NewItemTypes {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
+		protected virtual void CancelChanges ()
+		{
 		}
 
-		[MonoTODO]
 		protected virtual bool CanRemoveInstance (object value)
 		{
-			throw new NotImplementedException();
+			return true;
 		}
 
-		[MonoTODO]
-		protected virtual bool CanSelectMultipleInstances()
+		protected virtual bool CanSelectMultipleInstances ()
 		{
-			throw new NotImplementedException();
+			return true;
 		}
 
-		[MonoTODO]
-		protected virtual CollectionForm CreateCollectionForm()
+		protected virtual CollectionEditor.CollectionForm CreateCollectionForm ()
 		{
-			throw new NotImplementedException();
+			return new ConcreteCollectionForm (this);
 		}
 
-		[MonoTODO]
-		protected virtual Type CreateCollectionItemType()
+		protected virtual Type CreateCollectionItemType ()
 		{
-			throw new NotImplementedException();
+			PropertyInfo info = type.GetProperty ("Item");
+			return info.PropertyType;
 		}
-
-		[MonoTODO]
+		
+		[MonoLimitation ("Only implemented for the 2.0 profile")]
 		protected virtual object CreateInstance (Type itemType)
 		{
-			throw new NotImplementedException();
+#if NET_2_0
+			return TypeDescriptor.CreateInstance (provider, itemType, null, null);
+#else
+			throw new NotImplementedException ();
+#endif
 		}
-
-		[MonoTODO]
-		protected virtual Type[] CreateNewItemTypes()
+		
+		protected virtual Type[] CreateNewItemTypes ()
 		{
-			throw new NotImplementedException();
+			return new Type[] { collectionItemType };
 		}
 
-		[MonoTODO]
 		protected virtual void DestroyInstance (object instance)
 		{
-			throw new NotImplementedException();
+			//FIXME: I've got NO clue what this does and the documentation isn't helpfull either
 		}
 
-		[MonoTODO]
+		public override object EditValue (ITypeDescriptorContext context, IServiceProvider provider, object value)
+		{
+			this.context = context;
+			this.provider = provider;
+
+			if (context != null && provider != null)
+			{
+				editorService = (IWindowsFormsEditorService)provider.GetService (typeof (IWindowsFormsEditorService));
+				if (editorService != null)
+				{
+					CollectionForm editorForm = CreateCollectionForm ();
+					editorForm.EditValue = value;
+
+					editorForm.ShowEditorDialog (editorService);
+
+					return editorForm.EditValue;
+				}
+			}
+			return base.EditValue (context, provider, value);
+		}
+
+		protected virtual string GetDisplayText (object value)
+		{
+			if (value == null)
+				return string.Empty;
+
+			PropertyInfo nameProperty = value.GetType ().GetProperty ("Name");
+			if (nameProperty != null)
+			{
+				string data = (nameProperty.GetValue (value, null)) as string;
+				if (data != null)
+					if (data.Length != 0)
+						return data;
+			}
+
+			if (Type.GetTypeCode (value.GetType ()) == TypeCode.Object)
+				return value.GetType ().Name;
+			else
+				return value.ToString ();
+		}
+
+		public override UITypeEditorEditStyle GetEditStyle (ITypeDescriptorContext context)
+		{
+			return UITypeEditorEditStyle.Modal;
+		}
+
 		protected virtual object[] GetItems (object editValue)
 		{
-			throw new NotImplementedException();
+			if (editValue == null)
+				return null;
+			ICollection collection = editValue as ICollection;
+			if (collection == null)
+				return new object[0];
+
+			object[] result = new object[collection.Count];
+			collection.CopyTo (result, 0);
+			return result;
 		}
 
-		[MonoTODO]
+		protected virtual IList GetObjectsFromInstance (object instance)
+		{
+			ArrayList list = new ArrayList ();
+			list.Add (instance);
+			return list;
+		}
+
 		protected object GetService (Type serviceType)
 		{
-			throw new NotImplementedException();
+			return context.GetService (serviceType);
 		}
 
-		[MonoTODO]
-		protected virtual object SetItems (object editValue,
-						   object[] value)
+		protected virtual object SetItems (object editValue, object[] value)
 		{
-			throw new NotImplementedException();
+			IList list;
+
+			if (editValue == null)
+				return null;
+
+			if (!(editValue is IList))
+				list = new ArrayList ();
+			else
+			{
+				list = editValue as IList;
+				list.Clear ();
+			}
+
+			foreach (object o in value)
+				list.Add (o);
+
+			return list;
 		}
 
-		[MonoTODO]
-		protected virtual void ShowHelp()
+		protected virtual void ShowHelp ()
 		{
-			throw new NotImplementedException();
+			//TODO: Fixme Add parent and URL
+			Help.ShowHelp (null, "", HelpTopic);
 		}
 	}
 }

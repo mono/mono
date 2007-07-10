@@ -2,8 +2,10 @@
 // System.ComponentModel.Design.ArrayEditor
 //
 // Authors:
-//      Martin Willemoes Hansen (mwh@sysrq.dk)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//   Martin Willemoes Hansen (mwh@sysrq.dk)
 //
+// (C) 2007 Andreas Nahr
 // (C) 2003 Martin Willemoes Hansen
 //
 
@@ -28,31 +30,44 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+
+using System;
+using System.Reflection;
+
 namespace System.ComponentModel.Design
 {
 	public class ArrayEditor : CollectionEditor
 	{
-		[MonoTODO]
 		public ArrayEditor (Type type) : base (type)
 		{
 		}
 
-		[MonoTODO]
 		protected override Type CreateCollectionItemType()
 		{
-			throw new NotImplementedException();
+			return CollectionType.GetElementType ();
 		}
 
-		[MonoTODO]
 		protected override object[] GetItems (object editValue)
 		{
-			throw new NotImplementedException();
+			if (editValue == null)
+				return null;
+			if (!(editValue is Array))
+				return new object[0];
+
+			Array editArray = (Array)editValue;
+			object[] result = new object[editArray.Length];
+			editArray.CopyTo (result, 0);
+			return result;
 		}
 
-		[MonoTODO]
 		protected override object SetItems (object editValue, object[] value)
 		{
-			throw new NotImplementedException();
+			if (editValue == null)
+				return null;
+
+			Array result = Array.CreateInstance (CollectionItemType, value.Length);
+			value.CopyTo (result, 0);
+			return result;
 		}
 	}
 }

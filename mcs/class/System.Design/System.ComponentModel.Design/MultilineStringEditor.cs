@@ -1,13 +1,11 @@
 //
-// System.ComponentModel.Design.DateTimeEditor
-//
-// Authors:
+// System.ComponentModel.Design.MultilineStringEditor.cs
+// 
+// Author:
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
-//   Gert Driesen (drieseng@users.sourceforge.net)
-//
-// (C) 2004 Novell
+// 
 // (C) 2007 Andreas Nahr
-//
+// 
 
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -30,7 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-
+#if NET_2_0
 using System;
 using System.ComponentModel;
 using System.Drawing.Design;
@@ -39,24 +37,28 @@ using System.Windows.Forms.Design;
 
 namespace System.ComponentModel.Design
 {
-	public class DateTimeEditor : UITypeEditor
+	public sealed class MultilineStringEditor : UITypeEditor
 	{
-		private class EditorControl : MonthCalendar
+		private class EditorControl : TextBox
 		{
 			public EditorControl ()
 			{
-				MaxSelectionCount = 1;
+				Multiline = true;
+				AcceptsReturn = true;
+				Height = 250;
+				ScrollBars = ScrollBars.Both;
+				WordWrap = false;
+				BorderStyle = BorderStyle.None;
 			}
 		}
 
 		private IWindowsFormsEditorService editorService;
 		private EditorControl control = new EditorControl ();
-		private DateTime editContent;
+		private string editContent;
 
-		public DateTimeEditor ()
+		public MultilineStringEditor ()
 		{
-			control.LostFocus += new EventHandler (changeHandler);
-			control.DateSelected += new DateRangeEventHandler (control_DateSelected);
+			control.LostFocus += new EventHandler (control_LostFocus);
 		}
 
 		public override object EditValue (ITypeDescriptorContext context, IServiceProvider provider, object value)
@@ -66,37 +68,35 @@ namespace System.ComponentModel.Design
 				editorService = (IWindowsFormsEditorService)provider.GetService (typeof (IWindowsFormsEditorService));
 				if (editorService != null)
 				{
-					if (!(value is DateTime))
+					if (!(value is string))
 						return value;
 
-					editContent = (DateTime)value;
-					if (editContent > control.MaxDate || editContent < control.MinDate)
-						editContent = DateTime.Today;
-
-					control.SelectionStart = editContent;
+					editContent = value as string;
+					if (editContent == null)
+						editContent = String.Empty;
+					control.Text = editContent;
 
 					editorService.DropDownControl (control);
-
 					return editContent;
 				}
 			}
 			return base.EditValue (context, provider, value);
 		}
 
-		void changeHandler (object sender, EventArgs e)
+		void control_LostFocus (object sender, EventArgs e)
 		{
-			editContent = control.SelectionStart;
-		}
-
-		void control_DateSelected (object sender, DateRangeEventArgs e)
-		{
-			editContent = e.Start;
-			editorService.CloseDropDown ();
+			editContent = control.Text;
 		}
 
 		public override UITypeEditorEditStyle GetEditStyle (ITypeDescriptorContext context)
 		{
 			return UITypeEditorEditStyle.DropDown;
 		}
+
+		public override bool GetPaintValueSupported (ITypeDescriptorContext context)
+		{
+			return false;
+		}
 	}
 }
+#endif
