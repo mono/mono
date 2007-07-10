@@ -1,4 +1,10 @@
 
+Tue Jul 10 17:33:12 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* inssel.brg, mini.c, mini.h, mini-trampolines.c:
+	arch-independent IMT JIT code from Massimiliano
+	Mantione (massi@ximian.com) with small cleanups from me.
+
 Tue Jul 10 13:07:24 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* Makefile.am: fix svn invocation to get the svn revision to be
