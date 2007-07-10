@@ -28,8 +28,11 @@
 
 
 #if NET_2_0
+using System.ComponentModel;
+
 namespace System.Windows.Forms
 {
+	[TypeConverter (typeof (TableLayoutPanelCellPositionTypeConverter))]
 	public struct TableLayoutPanelCellPosition {
 		int column, row;
 
@@ -88,6 +91,10 @@ namespace System.Windows.Forms
 			TableLayoutPanelCellPosition o = (TableLayoutPanelCellPosition) other;
 			return o.column == column && o.row == row;
 		}
+	}
+	
+	internal class TableLayoutPanelCellPositionTypeConverter : TypeConverter
+	{
 	}
 }
 #endif
