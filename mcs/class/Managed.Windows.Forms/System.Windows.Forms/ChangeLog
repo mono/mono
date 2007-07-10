@@ -1,3 +1,8 @@
+2007-07-10  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ListBox.cs: Add IntegerCollection and Add, Clear, Remove
+	to existing collections.
+
 2007-07-09  Jonathan Pobst  <monkey@jpobst.com>
 
 	* AccessibleObject.cs, RadioButton.cs: Fix some base classes

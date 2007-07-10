@@ -35,6 +35,10 @@ using System.ComponentModel.Design.Serialization;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
+#if NET_2_0
+using System.Collections.Generic;
+#endif
+
 namespace System.Windows.Forms
 {
 	[DefaultProperty("Items")]
@@ -2047,6 +2051,168 @@ namespace System.Windows.Forms
 
 		#endregion Private Methods
 
+#if NET_2_0
+		public class IntegerCollection : IList, ICollection, IEnumerable
+		{
+			private ListBox owner;
+			private List<int> list;
+			
+			#region Public Constructor
+			public IntegerCollection (ListBox owner)
+			{
+				this.owner = owner;
+				list = new List<int> ();
+			}
+			#endregion
+
+			#region Public Properties
+			[Browsable (false)]
+			public int Count {
+				get { return list.Count; }
+			}
+			
+			public int this [int index] {
+				get { return list[index]; }
+				set { list[index] = value; }
+			}
+			#endregion
+
+			#region Public Methods
+			public int Add (int item)
+			{
+				// This collection does not allow duplicates
+				if (!list.Contains (item)) {
+					list.Add (item);
+					list.Sort ();
+				}
+				
+				return list.IndexOf (item);
+			}
+			
+			public void AddRange (int[] items)
+			{
+				foreach (int i in items)
+					if (!list.Contains (i))
+						list.Add (i);
+						
+				list.Sort ();
+			}
+			
+			public void AddRange (IntegerCollection value)
+			{
+				foreach (int i in value)
+					if (!list.Contains (i))
+						list.Add (i);
+
+				list.Sort ();
+			}
+			
+			public void Clear ()
+			{
+				list.Clear ();
+			}
+			
+			public bool Contains (int item)
+			{
+				return list.Contains (item);
+			}
+			
+			public void CopyTo (Array destination, int index)
+			{
+				list.CopyTo ((int[])destination, index);
+			}
+			
+			public int IndexOf (int item)
+			{
+				return list.IndexOf (item);
+			}
+			
+			public void Remove (int item)
+			{
+				list.Remove (item);
+				list.Sort ();
+			}
+			
+			public void RemoveAt (int index)
+			{
+				list.RemoveAt (index);
+				list.Sort ();
+			}
+			#endregion
+
+			#region IEnumerable Members
+			IEnumerator IEnumerable.GetEnumerator ()
+			{
+				return list.GetEnumerator ();
+			}
+			#endregion
+
+			#region IList Members
+			int IList.Add (object value)
+			{
+				return Add ((int)value);
+			}
+
+			void IList.Clear ()
+			{
+				Clear ();
+			}
+
+			bool IList.Contains (object value)
+			{
+				return Contains ((int)value);
+			}
+
+			int IList.IndexOf (object value)
+			{
+				return IndexOf ((int)value);
+			}
+
+			void IList.Insert (int index, object value)
+			{
+				throw new Exception ("The method or operation is not implemented.");
+			}
+
+			bool IList.IsFixedSize
+			{
+				get { return false; }
+			}
+
+			bool IList.IsReadOnly
+			{
+				get { return false; }
+			}
+
+			void IList.Remove (object value)
+			{
+				Remove ((int)value);
+			}
+
+			void IList.RemoveAt (int index)
+			{
+				RemoveAt (index);
+			}
+
+			object IList.this[int index] {
+				get { return this[index]; }
+				set { this[index] = (int)value; }
+			}
+			#endregion
+
+			#region ICollection Members
+			bool ICollection.IsSynchronized
+			{
+				get { throw new Exception ("The method or operation is not implemented."); }
+			}
+
+			object ICollection.SyncRoot
+			{
+				get { throw new Exception ("The method or operation is not implemented."); }
+			}
+			#endregion
+		}
+#endif
+
 		[ListBindable (false)]
 		public class ObjectCollection : IList, ICollection, IEnumerable
 		{
@@ -2299,6 +2465,24 @@ namespace System.Windows.Forms
 			#endregion Public Properties
 
 			#region Public Methods
+#if NET_2_0
+			public void Add (int index)
+			{
+				object item = owner.items[index];
+				
+				if (!owner.selection.Contains (item)) {
+					owner.selection.Add (item);
+					owner.CollectionChanged ();
+				}
+			}
+
+			public void Clear ()
+			{
+				owner.selection.Clear ();
+				owner.CollectionChanged ();
+			}
+#endif
+
 			public bool Contains (int selectedIndex)
 			{
 				foreach (object o in owner.selection)
@@ -2322,6 +2506,19 @@ namespace System.Windows.Forms
 					indices.Add (owner.Items.IndexOf (o));
 				return indices.GetEnumerator ();
 			}
+
+#if NET_2_0
+			public void Remove (int index)
+			{
+				object value = owner.items[index];
+				
+				if (value == null)
+					return;
+
+				owner.selection.Remove (value);
+				owner.CollectionChanged ();
+			}
+#endif
 
 			int IList.Add (object obj)
 			{
@@ -2418,6 +2615,22 @@ namespace System.Windows.Forms
 			#endregion Public Properties
 
 			#region Public Methods
+#if NET_2_0
+			public void Add (object item)
+			{
+				if (!owner.selection.Contains (item)) {
+					owner.selection.Add (item);
+					owner.CollectionChanged ();
+				}
+			}
+
+			public void Clear ()
+			{
+				owner.selection.Clear ();
+				owner.CollectionChanged ();
+			}
+#endif
+
 			public bool Contains (object selectedObject)
 			{
 				return owner.selection.Contains (selectedObject);
@@ -2427,6 +2640,17 @@ namespace System.Windows.Forms
 			{
 				owner.selection.CopyTo (dest, index);
 			}
+
+#if NET_2_0
+			public void Remove (object value)
+			{
+				if (value == null)
+					return;
+
+				owner.selection.Remove (value);
+				owner.CollectionChanged ();
+			}
+#endif
 
 			int IList.Add (object value)
 			{
