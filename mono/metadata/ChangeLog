@@ -1,6 +1,8 @@
 2007-07-10  Rodrigo Kumpera  <rkumpera@novell.com>
 
-	* class.c (mono_class_create_from_typedef): Fix for bug #82022
+	* class.c (mono_class_create_from_typedef): mono would segfault if 
+	an enum did not have a __value field. It now throws a TypeLoadException
+	for such cases. Fix bug #82022
 
 2007-07-10  Zoltan Varga  <vargaz@gmail.com>
 
