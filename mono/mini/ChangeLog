@@ -1,3 +1,6 @@
+2007-07-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c (decode_patch_info): Fix reading of MONO_PATCH_INFO_METHOD.
 
 Tue Jul 10 17:50:58 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
