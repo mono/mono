@@ -1,3 +1,11 @@
+
+Tue Jul 10 17:50:58 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-x86.c, mini-x86.h, tramp-x86.c: x86 arch-specific changes
+	of the IMT implementation, partially from massi, with my
+	implementation of the bsearch sequence. Disabled by default until
+	the AOT code is implemented.
+
 2007-07-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* cpu-x86.md: The source argument of sext_i1/i2 must by a byte reg.
