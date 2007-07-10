@@ -687,9 +687,6 @@ public class CalendarTest : TestCase {
 	}
 #endif
 
-	/* UK TODO: breaks with current DateTime implementation.
-	 * I've a newer one that works, but that requires to much changes.
-	 * for now.
 	public void TestToFourDigitYear() {
 		foreach (Calendar cal in acal) {
 			bool working = true;
@@ -742,7 +739,52 @@ public class CalendarTest : TestCase {
 				cal), exception);
 		}
 	}
-	*/
+
+	[Test]
+	public void TestToFourDigitYear2 ()
+	{
+		GregorianCalendar gc = new GregorianCalendar ();
+		AssertEquals ("#1-1", 2029, gc.ToFourDigitYear (29));
+		AssertEquals ("#1-2", 1930, gc.ToFourDigitYear (30));
+		AssertEquals ("#1-3", 2029, gc.ToFourDigitYear (2029));
+		AssertEquals ("#1-4", 2030, gc.ToFourDigitYear (2030));
+
+		HebrewCalendar hbc = new HebrewCalendar ();
+		AssertEquals ("#2-1", 5790, hbc.ToFourDigitYear (90));
+		AssertEquals ("#2-2", 5691, hbc.ToFourDigitYear (91));
+		AssertEquals ("#2-3", 5790, hbc.ToFourDigitYear (5790));
+		AssertEquals ("#2-4", 5691, hbc.ToFourDigitYear (5691));
+		AssertEquals ("#2-5", 5999, hbc.ToFourDigitYear (5999));
+		// LAMESPEC: .NET fails to throw an exception unlike documented
+		/*
+		try {
+			hbc.ToFourDigitYear (6000);
+			Fail ("#2-6");
+		} catch (ArgumentOutOfRangeException) {
+		}
+		*/
+
+		ThaiBuddhistCalendar tc = new ThaiBuddhistCalendar ();
+		AssertEquals ("#3-1", 2572, tc.ToFourDigitYear (72));
+		AssertEquals ("#3-2", 2473, tc.ToFourDigitYear (73));
+		AssertEquals ("#3-3", 2572, tc.ToFourDigitYear (2572));
+		AssertEquals ("#3-4", 2573, tc.ToFourDigitYear (2573));
+		AssertEquals ("#3-5", 9999, tc.ToFourDigitYear (9999));
+		// LAMESPEC: .NET fails to throw an exception unlike documented
+		/*
+		try {
+			tc.ToFourDigitYear (10000);
+			Fail ("#3-6");
+		} catch (ArgumentOutOfRangeException) {
+		}
+		*/
+
+		KoreanCalendar kc = new KoreanCalendar ();
+		AssertEquals ("#4-1", 4362, kc.ToFourDigitYear (62));
+		AssertEquals ("#4-2", 4263, kc.ToFourDigitYear (63));
+		AssertEquals ("#4-3", 4362, kc.ToFourDigitYear (4362));
+		AssertEquals ("#4-4", 4363, kc.ToFourDigitYear (4363));
+	}
 
 	// TODO: more tests :-)
 } // class CalendarTest

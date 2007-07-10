@@ -481,10 +481,9 @@ public class GregorianCalendar : Calendar {
 			hour, minute, second, milliseconds);
 	}
 
-	[MonoTODO ("Not supported")]
 	public override int ToFourDigitYear(int year)
 	{
-		throw new NotImplementedException();
+		return base.ToFourDigitYear (year);
 	}
 					
 	/// <summary>

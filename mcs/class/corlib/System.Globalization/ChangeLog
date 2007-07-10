@@ -1,3 +1,10 @@
+2007-07-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HijriCalendar.cs ThaiBuddhistCalendar.cs HebrewCalendar.cs
+	  GregorianCalendar.cs KoreanCalendar.cs JulianCalendar.cs :
+	  implemented ToFourDigitYear(), actually base implementation mostly
+	  works as is.
+
 2007-07-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CultureInfo.cs : 1.x build fix.

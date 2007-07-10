@@ -692,11 +692,13 @@ public class HebrewCalendar : Calendar {
 
 	public override int ToFourDigitYear (int year)
 	{
-		M_ArgumentInRange ("year", year, 0, 99);
+		M_ArgumentInRange ("year", year, 0, M_MaxYear - 1);
 		
 		int baseExtra = this.twoDigitYearMax % 100;
 		int baseCentury = this.twoDigitYearMax - baseExtra;
 		
+		if (year >= 100)
+			return year;
 		if (year <= baseExtra)
 			return baseCentury + year;
 		else
