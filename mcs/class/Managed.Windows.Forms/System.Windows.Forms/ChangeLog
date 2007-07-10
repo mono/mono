@@ -1,3 +1,8 @@
+2007-07-10  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* PropertyGridView.cs: Fix for #81800, makes text show up on initial
+	  display of properties again.
+
 2007-07-10  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ListBox.cs: Add IntegerCollection and Add, Clear, Remove
