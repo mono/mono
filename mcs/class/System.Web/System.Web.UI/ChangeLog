@@ -1,3 +1,7 @@
+2007-06-24  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* ObjectStateFormatter.cs: optimized loops in array formatters
+
 2007-07-03  Marek Habersack  <mhabersack@novell.com>
 
 	* SimpleWebHandlerParser.cs: improve directive

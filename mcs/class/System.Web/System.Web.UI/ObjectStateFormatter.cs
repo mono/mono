@@ -693,8 +693,8 @@ namespace System.Web.UI {
 				
 				w.Write (PrimaryId);
 				Write7BitEncodedInt (w, l.Count);
-				foreach (object i in l)
-					WriteObject (w, i, ctx);
+				for (int i = 0; i < l.Count; i++)
+					WriteObject (w, l [i], ctx);
 			}
 			
 			protected override object Read (byte token, BinaryReader r, ReaderContext ctx)
@@ -753,8 +753,8 @@ namespace System.Web.UI {
 				
 				w.Write (PrimaryId);
 				Write7BitEncodedInt (w, val.Length);
-				foreach (object i in val)
-					WriteObject (w, i, ctx);
+				for (int i = 0; i < val.Length; i++)
+					WriteObject (w, val [i], ctx);
 			}
 			
 			protected override object Read (byte token, BinaryReader r, ReaderContext ctx)
@@ -893,8 +893,8 @@ namespace System.Web.UI {
 				WriteObject (w, val.GetType ().GetElementType (), ctx);
 				
 				Write7BitEncodedInt (w, val.Length);
-				foreach (object i in val)
-					WriteObject (w, i, ctx);
+				for (int i = 0; i < val.Length; i++)
+					WriteObject (w, val.GetValue (i), ctx);
 			}
 			
 			protected override object Read (byte token, BinaryReader r, ReaderContext ctx)
