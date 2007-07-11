@@ -566,6 +566,8 @@ namespace System.Windows.Forms {
 					return ToString (ResizeRequestEvent);
 				case XEventName.ConfigureNotify:
 					return ToString (ConfigureEvent);
+				case XEventName.MotionNotify:
+					return ToString (MotionEvent);
 				default:
 					return type.ToString ();
 			}

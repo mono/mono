@@ -1,5 +1,13 @@
 2007-07-11  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* PropertyGridTextBox.cs: Add a method that sends any forwarded
+	  mousedowns to the contained textbox.
+	* X11Structs.cs: More ToString implementation.
+	* PropertyGridView.cs: Forward any mousedowns to the textbox, fixes
+	  #81791.
+
+2007-07-11  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* PropertyGridView.cs: Add a null-check, fixes a few tests.
 
 2007-07-10  Jonathan Pobst  <monkey@jpobst.com>

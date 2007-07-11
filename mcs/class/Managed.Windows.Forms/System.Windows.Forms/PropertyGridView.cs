@@ -263,6 +263,8 @@ namespace System.Windows.Forms.PropertyGridInternal {
 						}
 					}
 					this.property_grid.SelectedGridItem = foundItem;
+					
+					grid_textbox.SendMouseDown (grid_textbox.PointToClient (PointToScreen (e.Location)));
 				}
 				
 				base.OnMouseDown (e);

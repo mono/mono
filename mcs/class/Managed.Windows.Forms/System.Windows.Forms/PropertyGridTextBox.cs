@@ -29,10 +29,24 @@ using System;
 using System.Drawing;
 
 namespace System.Windows.Forms.PropertyGridInternal {
+	internal class PGTextBox : TextBox {
+		internal bool SwallowCapture = false;
+		
+		internal override bool InternalCapture	{
+			get {
+				return base.InternalCapture;
+			}
+			set {
+				if (!SwallowCapture)
+					base.InternalCapture = value;
+			}
+		}
+	}
+	
 	internal class PropertyGridTextBox : System.Windows.Forms.UserControl {
 		#region Private Members
 
-		private TextBox textbox;
+		private PGTextBox textbox;
 		private Button dialog_button;
 		private Button dropdown_button;
 
@@ -42,7 +56,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 		public PropertyGridTextBox() {
 			dialog_button = new Button();
 			dropdown_button = new Button();
-			textbox = new TextBox();
+			textbox = new PGTextBox ();
 
 			SuspendLayout();
 
@@ -190,6 +204,27 @@ namespace System.Windows.Forms.PropertyGridInternal {
 		}
 
 		#endregion Private Helper Methods
+
+		internal void SendMouseDown (Point location)
+		{
+			if (Visible) {
+				XplatUI.SendMessage (Handle, Msg.WM_LBUTTONDOWN, new IntPtr ((int) MsgButtons.MK_LBUTTON), Control.MakeParam (location.X, location.Y));
+					
+				if (textbox.Visible) {
+					Point pnt = textbox.PointToClient (PointToScreen (location));
+
+					//
+					// Here we have a little problem:
+					//	The actual click that causes this function to be called, will generate a MOUSE_MOVE message in XplatUIX11 (sent to the PropertyGrid itself)
+					//	This manual button-down message will cause an implicit grab to be taken.
+					//	Then when the MOUSE_MOVE is processed, the message will be sent to the textbox, since it has a grab.
+					// So here's the solution: swallow the implicit grab.
+					textbox.SwallowCapture = true;
+					XplatUI.SendMessage (textbox.Handle, Msg.WM_LBUTTONDOWN, new IntPtr ((int)MsgButtons.MK_LBUTTON), Control.MakeParam (pnt.X, pnt.Y));
+					textbox.SwallowCapture = false;
+				}
+			}
+		}	
 
 		private void textbox_DoubleClick(object sender, EventArgs e) {
 			EventHandler eh = (EventHandler)(Events [ToggleValueEvent]);
