@@ -391,10 +391,9 @@ namespace System.Xml
 
 			reader = CreateValidatingXmlReader (reader, settings);
 
-			if (reader.Settings != null &&
-			    (settings.IgnoreComments ||
+			if ( settings.IgnoreComments ||
 			     settings.IgnoreProcessingInstructions ||
-			     settings.IgnoreWhitespace))
+			     settings.IgnoreWhitespace)
 				return new XmlFilterReader (reader, settings);
 			else {
 				reader.settings = settings;

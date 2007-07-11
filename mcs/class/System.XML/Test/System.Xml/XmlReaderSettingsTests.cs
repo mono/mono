@@ -401,6 +401,18 @@ namespace MonoTests.System.Xml
 				return new MemoryStream (Encoding.UTF8.GetBytes ("<!ENTITY alpha \"bravo\">"));
 			}
 		}
+
+		[Test]
+		public void IgnoreComments () // Bug #82062.
+		{
+			string xml = "<root><!-- ignore --></root>";
+			XmlReaderSettings s = new XmlReaderSettings ();
+			s.IgnoreComments = true;
+			XmlReader r = XmlReader.Create (new StringReader (xml), s);
+			r.Read ();
+			r.Read ();
+			AssertEquals (String.Empty, r.Value); // should not be at the comment node.
+		}
 	}
 }
 #endif
