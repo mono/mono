@@ -1,6 +1,13 @@
 2007-07-11  Igor Zelmanovich <igorz@mainsoft.com>
 
 	* ReflectionPropertyDescriptor: fixed ShouldSerializeValue:
+	MSDN: If this method cannot find a DefaultValueAttribute or 
+	a ShouldSerializeMyProperty method, it cannot create optimizations 
+	and it returns true.
+
+2007-07-11  Igor Zelmanovich <igorz@mainsoft.com>
+
+	* ReflectionPropertyDescriptor: fixed ShouldSerializeValue:
 	avoid NullReferenceException.
 
 2007-07-10  Rolf Bjarne Kvinge <RKvinge@novell.com> 

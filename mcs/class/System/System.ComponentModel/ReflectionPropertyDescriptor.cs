@@ -243,8 +243,9 @@ namespace System.ComponentModel
 				MethodInfo mi = FindPropertyMethod (component, "ShouldSerialize");
 				if (mi != null)
 					return (bool) mi.Invoke (component, null);
-
-				return false;
+				// MSDN: If this method cannot find a DefaultValueAttribute or a ShouldSerializeMyProperty method, 
+				// it cannot create optimizations and it returns true. 
+				return true;
 			}
 		}
 	}
