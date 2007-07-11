@@ -1002,6 +1002,10 @@ namespace System.Windows.Forms.PropertyGridInternal {
 		private void SelectedGridItemChanged(object sender, SelectedGridItemChangedEventArgs e) {
 			if (e.OldSelection != null)
 				InvalidateGridItemLabel (e.OldSelection);
+				
+			if (e.NewSelection == null)
+				return;
+			
 			InvalidateGridItemLabel (e.NewSelection);
 
 			EnsureItemIsVisible (e.NewSelection);
