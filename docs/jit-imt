@@ -1,0 +1,94 @@
+
+The mono JIT can use an IMT-style invocation system to call interface methods.
+This considerably reduces the runtime memory usage when many interface types
+are loaded, because the old system required an array in MonoVTable indexed
+by the interface id, which grows linearly as more interfaces are loaded.
+
+IMT instead uses a fixed-size table and hashes each method in the implemented
+interfaces to a slot in the IMT table. To be able to resolve collisions, at each
+callsite we store the interface MonoMethod in a well-known register and the
+IMT table will contain a snippet of code that uses it to jumpt to the
+proper vtable slot. The interface invocation sequence becomes (in pseud-ocode):
+
+	mov magic_reg, interface_monomethod
+	call vtable [imt_slot]
+
+The IMT table is stored at negative addresses in the vtable, like the old
+interface array used to be.
+
+In case of collisions in the IMT slot, the JIT performs a linear search if
+the colliding methods are few or a binary search otherwise.
+To make this easier for each JIT port, a sort of internal representation
+of the code is created: this is an array of MonoIMTCheckItem structures
+built in a way to allow easy generation of a bsearch, when the list of colliding
+methods becomes large.
+
+Each item in the array represents either a direct check for a method to be invoked
+of a bisection check in the bsearch algorithm.
+
+struct _MonoIMTCheckItem {
+	MonoMethod       *method;
+	int               check_target_idx;
+	int               vtable_slot;
+	guint8           *jmp_code;
+	guint8           *code_target;
+	guint8            is_equals;
+	guint8            compare_done;
+	guint8            chunk_size;
+	guint8            short_branch;
+};
+
+For a direct check, the is_equals value is non-zero and the emitted code
+should be equivalent to:
+	if (magic_reg != item->method)
+		jump_to_item (array [item->check_target_idx]);
+	jump_to_vtable (item->vtable_slot);
+
+Note that if item->check_target_idx is 0, the jump should be omitted
+since this is the end of a linear sequence (you might want to insert a jump to
+a breakpoint, tough, for debugging).
+
+For a bisect check the code is even simpler:
+
+	if (magic_reg >= item->method)
+		jump_to_item (array [item->check_target_idx]);
+
+In this case item->check_target_idx is always non-zero.
+Note that in both cases item->method becomes an immediate constant in the
+jitted code.
+
+The other fields in the structure are there to provide to the backend
+common storage for data needed during emission.
+As each item's code is emitted, the start of it is stored in the code_target
+field. At the same time when a conditional branch is inserted, its address
+is stored in jmp_code: this way with a single forward pass on the array at
+the end of the emission phase the branches can be patched to point to the
+proper target item's code.
+
+chunk_size can be used to store the size of the code generated for the item: this
+can be used to optimize the short/long branch instructions, together with
+info stored in short_branch.
+
+The compare_done field can be used to avoid doing an additional compare
+in a is_equals item for the same MonoMethod that was just compare in a
+bisecting item. Suppose we have 4 methods colliding in a slot, A, B, C and D.
+The generated code will look like (M is the method to call):
+
+	compare (C, M)
+	goto upper_sequence if bigger_equals
+	/* linear sequence */
+	compare (M, A)
+	goto B_found if not_equals
+	jump to A's slot
+B_found:
+	jump to B's slot
+
+upper_sequence:
+	/* we just did a compare against C, no need to compare again */
+	goto D_found if not_equals
+	jump to C's slot
+D_found:
+	jump to D's slot
+
+This optimization is of course valid for architectures with flags registers.
+
