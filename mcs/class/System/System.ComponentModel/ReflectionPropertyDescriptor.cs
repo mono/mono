@@ -235,8 +235,8 @@ namespace System.ComponentModel
 			DefaultValueAttribute attrib = ((DefaultValueAttribute) Attributes[typeof (DefaultValueAttribute)]);
 			if (attrib != null) {
 				object current = GetValue (component);
-				if ((attrib.Value == null || current == null) && attrib.Value != current)
-					return true;
+				if (attrib.Value == null || current == null)
+					return attrib.Value != current;
 				return !attrib.Value.Equals (current);
 			}
 			else {
