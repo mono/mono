@@ -1,3 +1,11 @@
+
+Wed Jul 11 14:47:07 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* object.c: forgot commit of mono_class_setup_methods () to access
+	iface->methods.
+	* object-internals.h: added a few more handy fields to
+	MonoIMTCheckItem.
+
 2007-07-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* object.c (build_imt): Call mono_class_setup_methods () before accessing 
