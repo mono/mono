@@ -97,12 +97,19 @@ net_2_0_dirs := \
 	Microsoft.Build.Engine		\
 	Microsoft.Build.Tasks
 
+net_2_1_dirs := \
+	corlib			\
+	System			\
+	System.Xml.Core	\
+	System.Core		\
+
 default_SUBDIRS := $(common_dirs) $(default_dirs)
 net_2_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs)
+net_2_1_SUBDIRS := $(net_2_1_dirs)
 
 include ../build/rules.make
 
-SUBDIRS = $(common_dirs) $(default_dirs) $(net_2_0_dirs)
+SUBDIRS = $(common_dirs) $(default_dirs) $(net_2_0_dirs) $(net_2_1_dirs)
 
 # These libraries below are either unimplemented or don't compile, but
 # I wrote makefiles for them.
