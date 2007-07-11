@@ -1,5 +1,11 @@
 2007-07-11  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* XplatUIX11.cs: Fix #80822 again (DefWndProc can be reached before
+	  XplatUI.CreateWindow returns, in which case the hwnd isn't assigned
+	  to the control yet).
+
+2007-07-11  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* PropertyGridTextBox.cs: Add a method that sends any forwarded
 	  mousedowns to the contained textbox.
 	* X11Structs.cs: More ToString implementation.

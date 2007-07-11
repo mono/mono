@@ -3074,14 +3074,17 @@ namespace System.Windows.Forms {
 
 						// Add all the stuff X is supposed to draw.
 						Control ctrl = Control.FromHandle (hwnd.Handle);
-						Hwnd.Borders rect = Hwnd.GetBorders (ctrl.GetCreateParams (), null);
 						
-						ncp.rgrc1.top += rect.top;
-						ncp.rgrc1.bottom -= rect.bottom;
-						ncp.rgrc1.left += rect.left;
-						ncp.rgrc1.right -= rect.right;
-						
-						Marshal.StructureToPtr (ncp, msg.LParam, true);
+						if (ctrl != null) {
+							Hwnd.Borders rect = Hwnd.GetBorders (ctrl.GetCreateParams (), null);
+							
+							ncp.rgrc1.top += rect.top;
+							ncp.rgrc1.bottom -= rect.bottom;
+							ncp.rgrc1.left += rect.left;
+							ncp.rgrc1.right -= rect.right;
+							
+							Marshal.StructureToPtr (ncp, msg.LParam, true);
+						}
 					}
 
 					return IntPtr.Zero;
