@@ -1,3 +1,9 @@
+
+Wed Jul 11 12:41:32 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-trampolines.c: implement AOT IMT support.
+	* mini-x86.h: enable IMT support for wider testing.
+
 2007-07-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* inssel.brg (emit_imt_argument): Add aot support here.
