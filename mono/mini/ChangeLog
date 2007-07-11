@@ -1,5 +1,7 @@
 2007-07-11  Zoltan Varga  <vargaz@gmail.com>
 
+	* trace.c (mono_trace_enter_method): Decode MonoType too.
+
 	* mini-amd64.c (mono_arch_get_vcall_slot_addr): Handle signed displacements too.
 
 	* mini.h mini-x86.h mini-trampolines.c: Change the signature of mono_arch_find_imt_method () to pass the calling code address too.
