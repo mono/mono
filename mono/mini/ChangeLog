@@ -1,4 +1,10 @@
 
+Wed Jul 11 18:21:30 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-x86.c: adjusted mono_arch_get_vcall_slot_addr () to
+	understand the new IMT-base interface invocation (thanks to
+	Daniel Nauck for the report and the remote debugging session).
+
 Wed Jul 11 14:54:39 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* mini-x86.c: size and speed optimizations for the IMT bsearch.
