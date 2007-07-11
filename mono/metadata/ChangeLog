@@ -1,4 +1,10 @@
+2007-07-11  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* class.c, class-internal.h: added mono_type_is_valid_enum_basetype and
+	mono_class_is_valid_enum, they are used to valide a enum when loading.
+	* reflection.c: used new functions to throw TypeLoadException when and
+	invalid enum is build with TypeBuilder. Fixes #82018
+  
 Wed Jul 11 14:47:07 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* object.c: forgot commit of mono_class_setup_methods () to access
