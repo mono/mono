@@ -1,3 +1,7 @@
+2007-07-11  Ankit Jain  <jankit@novell.com>
+
+	* System_test.dll.sources: Add ProcessStartInfoTest.cs.
+
 2007-06-12  Marek Safar <marek.safar@gmail.com>
 
 	* Makefile: Check only major framework version to do 2.x build.

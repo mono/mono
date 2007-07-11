@@ -1,3 +1,8 @@
+2007-07-11  Ankit Jain  <jankit@novell.com>
+
+	* ProcessStartInfo.cs (WorkingDirectory.set): Don't set
+	working_directory to null.
+
 2007-05-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TraceSourceInfo.cs : new class for storing configuration data.

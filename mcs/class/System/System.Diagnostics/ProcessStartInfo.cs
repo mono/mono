@@ -232,7 +232,7 @@ namespace System.Diagnostics
 				return(working_directory);
 			}
 			set {
-				working_directory = value;
+				working_directory = value == null ? String.Empty : value;
 			}
 		}
 	}
