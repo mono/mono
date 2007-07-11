@@ -60,7 +60,7 @@ scripts_2_0 = \
 	sgen			\
 	xbuild
 
-scripts_2_1 = slmcs
+scripts_2_1 = smcs
 scripts_service = mono-service mono-service2
 scripts_nunit = nunit-console nunit-console2
 scripts_rpmhelpers = mono-find-provides mono-find-requires
@@ -124,8 +124,8 @@ nunit-console2: script.in Makefile
 	$(REWRITE2_DEBUG) -e 's,@''exe_name@,nunit-console,g' $(srcdir)/script.in > $@.tmp
 	mv $@.tmp $@
 
-slmcs: slmcs.in Makefile
-	$(REWRITE2_1) -e "s,@""exe_name@,gmcs,g" $(srcdir)/slmcs.in > $@.tmp
+smcs: smcs.in Makefile
+	$(REWRITE2_1) -e "s,@""exe_name@,gmcs,g" $(srcdir)/smcs.in > $@.tmp
 	mv $@.tmp $@
 
 $(scripts_1_0): script.in Makefile
