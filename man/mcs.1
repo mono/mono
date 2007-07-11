@@ -1,6 +1,6 @@
 .TH mcs 1 "6 January 2001"
 .SH NAME 
-mcs, gmcs \- Mono C# Compiler (1.0 and 2.0)
+mcs, gmcs, smcs \- Mono C# Compiler (1.0, 2.0, 2.1)
 .SH SYNOPSIS
 .B mcs 
 [option] [source-files]
@@ -14,10 +14,16 @@ prepending the @ symbol to the response file name.
 The 
 .I mcs
 compiler is used to compile against the 1.x profile and implements
-C# 1.0 and 2.0 with the exception of generics and nullable types.  The
+C# 1.0 and 2.0 with the exception of generics and nullable types.
+.PP
+The
 .I gmcs
-compiler is used to compile against the 2.x profile and implements
+compiler is used to compile against the 2.0 profile and implements
 the complete C# 2.0 specification including generics.
+.PP
+The
+.I smcs
+compiler is used to compile against the 2.1 profile.
 .PP
 The Mono C# compiler accepts the same command line options that the
 Microsoft C# compiler does.  Those options can start with a slash or a
