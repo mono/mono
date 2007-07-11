@@ -1,3 +1,8 @@
+
+Wed Jul 11 14:54:39 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-x86.c: size and speed optimizations for the IMT bsearch.
+
 2007-07-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile.am (aotcheck): Make this actually use the AOTed code.
