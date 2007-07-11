@@ -36,3 +36,5 @@ using System.Web.UI;
 [assembly: AssemblyFileVersion ("1.0.0.0")]
 
 [assembly: WebResource("SystemWebExtensionsAUT.System.Web.UI.ScriptReference.UpdatePanelAnimation.js", "application/x-javascript")]
+[assembly: WebResource("SystemWebExtensionsAUT.DynamicScriptReferencesHowTo.Scripts.Scripts.js","application/x-javascript")]
+[assembly: WebResource("SystemWebExtensionsAUT.DynamicScriptReferencesHowTo.Scripts.Scripts.debug.js", "application/x-javascript")]
