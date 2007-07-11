@@ -74,6 +74,7 @@ DISTCLEANFILES = $(pkgconfig_DATA) $(scripts_rpmhelpers)
 EXTRA_DIST =                   \
 	script.in              \
 	script_umask.in        \
+	smcs.in			\
 	mono-service.in        \
 	mono-nunit.pc.in       \
 	mono-find-provides.in  \
