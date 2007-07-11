@@ -21,10 +21,12 @@
                 sb.append(titleTagEnd);
                 sb.append(headTagEnd);
                 // Displays: "The result: <head><title>A Title</title></head>"
-                alert("The result" + sb.toString()); 
+                // alert("The result" + sb.toString()); 
+                result = sb.toString();
             }
-
+            
             var title = "A Title";
+            var result;
             buildAString(title);
             
         </script>
