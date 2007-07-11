@@ -2,6 +2,7 @@ bin_SCRIPTS = \
 	$(scripts_1_0)		\
 	$(scripts_1_0_umask)	\
 	$(scripts_2_0)		\
+	$(scripts_2_1)		\
 	$(scripts_service)	\
 	$(scripts_nunit)	\
 	$(scripts_rpmhelpers)
@@ -59,6 +60,7 @@ scripts_2_0 = \
 	sgen			\
 	xbuild
 
+scripts_2_1 = slmcs
 scripts_service = mono-service mono-service2
 scripts_nunit = nunit-console nunit-console2
 scripts_rpmhelpers = mono-find-provides mono-find-requires
@@ -66,7 +68,7 @@ scripts_rpmhelpers = mono-find-provides mono-find-requires
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA= mono-nunit.pc
 
-CLEANFILES = $(scripts_1_0) $(scripts_1_0_umask) $(scripts_2_0) gmcs mono-service mono-service2
+CLEANFILES = $(scripts_1_0) $(scripts_1_0_umask) $(scripts_2_0) $(scripts_2_1) gmcs mono-service mono-service2
 DISTCLEANFILES = $(pkgconfig_DATA) $(scripts_rpmhelpers)
 
 EXTRA_DIST =                   \
@@ -102,6 +104,7 @@ REWRITE_DEBUG = $(REWRITE_COMMON) -e 's,@''mono_interp@,$(mono_interp) --debug,g
 
 REWRITE1 = $(REWRITE) -e 's,@''framework_version@,1.0,g'
 REWRITE2 = $(REWRITE) -e 's,@''framework_version@,2.0,g'
+REWRITE2_1 = $(REWRITE) -e 's,@''framework_version@,2.1,g'
 REWRITE1_DEBUG = $(REWRITE_DEBUG) -e 's,@''framework_version@,1.0,g'
 REWRITE2_DEBUG = $(REWRITE_DEBUG) -e 's,@''framework_version@,2.0,g'
 
@@ -119,6 +122,10 @@ nunit-console: script.in Makefile
 
 nunit-console2: script.in Makefile
 	$(REWRITE2_DEBUG) -e 's,@''exe_name@,nunit-console,g' $(srcdir)/script.in > $@.tmp
+	mv $@.tmp $@
+
+slmcs: slmcs.in Makefile
+	$(REWRITE2_1) -e "s,@""exe_name@,gmcs,g" $(srcdir)/slmcs.in > $@.tmp
 	mv $@.tmp $@
 
 $(scripts_1_0): script.in Makefile
