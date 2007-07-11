@@ -1,6 +1,6 @@
 .TH mcs 1 "6 January 2001"
 .SH NAME 
-mcs, gmcs, smcs \- Mono C# Compiler (1.0, 2.0, 2.1)
+mcs, gmcs, smcs \- Mono C# Compiler (1.0, 2.0, Moonlight)
 .SH SYNOPSIS
 .B mcs 
 [option] [source-files]
@@ -23,7 +23,12 @@ the complete C# 2.0 specification including generics.
 .PP
 The
 .I smcs
-compiler is used to compile against the 2.1 profile.
+compiler is used to compile against the Silverlight/Moonlight profile.
+This profile is designed to be used for creating Silverlight/Moonlight
+applications that will run on a web browser.   The API exposed by this
+profile is a small subset of the 2.0 API (even if it is commonly
+referred as the 2.1 API, this API is a small subset of 2.0 with a few
+extensions).
 .PP
 The Mono C# compiler accepts the same command line options that the
 Microsoft C# compiler does.  Those options can start with a slash or a
@@ -210,9 +215,11 @@ compile the code.
 .Sp
 This is typically used with third party components, like this:
 .nf
+
 		$ mcs -pkg:gtk-sharp demo.cs
 .fi
-.TP
+.RS
+.ne 8
 .TP
 .I \-pkg:dotnet
 This will instruct the compiler to reference the System.* libraries
@@ -220,9 +227,32 @@ available on a typical dotnet framework installation, notice that this
 does not include all of the Mono libraries, only the System.* ones.  This
 is a convenient shortcut for those porting code.
 .TP
-.TP
 .I \-pkg:olive
-Use this to reference the "Olive" libraries (the 3.0 and 3.5 extended libraries).
+Use this to reference the "Olive" libraries (the 3.0 and 3.5 extended
+libraries).
+.TP
+.I \-pkg:silver
+References the assemblies for creating Moonlight/Silverlight
+applications.  This is automatically used when using the 
+.I smcs 
+compiler, but it is here when developers want to use it with the
+.I gmcs
+compiler.
+.TP
+.I \-pkg:silverdesktop
+Use this option to create Moonlight/Silverlight applications that
+target the desktop.   This option allows developers to consume the
+Silverlight APIs with the full 2.0 profile API available to them,
+unlike 
+.I smcs 
+it gives full access to all the APIs that are part of Mono.  The only
+downside is that applications created with silverdesktop will not run
+on the browser.   Typically these applications will be launched
+with the 
+.I mopen
+command line tool.
+.ne
+.RE
 .TP
 .I -resource:RESOURCE[,ID]
 Embeds to the given resource file.  The optional ID can be used to
@@ -319,17 +349,15 @@ Note that the effect of defining TRACE and DEBUG is a global setting,
 even if they are only defined in a single file.
 .PP
 .SH DEBUGGING SUPPORT
-When use the "--debug" or "-g" flag, MCS will create an assembler file
-FILE-debug.s containing debugging information where FILE is the name of
-the generated assembly. You need to run this file through the assembler
-to get a object file FILE-debug.o.  See mono's "--dwarf-plus" argument
-for details on how to use this file.
+When using the "-debug" flag, MCS will generate a file with the
+extension .mdb that contains the debugging information for the
+generated assembly.  This file is consumed by the Mono debugger (mdb).
 .SH NOTES
 During compilation the MCS compiler defines the __MonoCS__ symbol,
 this can be used by pre-processor instructions to compile Mono C#
 compiler specific code.   Please note that this symbol is only to test
 for the compiler, and is not useful to distinguish compilation or
-deployment platforms.
+deployment platforms.  
 .SH AUTHORS
 The Mono C# Compiler was written by Miguel de Icaza, Ravi Pratap,
 Martin Baulig, Marek Safar and Raja Harinath.  The development was
@@ -341,7 +369,7 @@ Please read the accompanying `COPYING' file for details.  Alternative
 licensing for the compiler is available from Novell.
 .PP
 .SH SEE ALSO
-mono(1), mint(1), sn(1)
+mdb(1), mono(1), mopen(1), mint(1), sn(1)
 .PP
 .SH BUGS
 To report bugs in the compiler, you must file them on our bug tracking
