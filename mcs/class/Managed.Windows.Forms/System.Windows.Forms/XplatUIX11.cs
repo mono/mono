@@ -5234,7 +5234,7 @@ namespace System.Windows.Forms {
 			XGetWMNormalHints(DisplayHandle, hwnd.whole_window, ref hints, out dummy);
 			if ((min != Size.Empty) && (min.Width > 0) && (min.Height > 0)) {
 				if (cp != null)
-					min = TranslateWindowSizeToXWindowSize (cp);
+					min = TranslateWindowSizeToXWindowSize (cp, min);
 				hints.flags = (IntPtr)((int)hints.flags | (int)XSizeHintsFlags.PMinSize);
 				hints.min_width = min.Width;
 				hints.min_height = min.Height;
@@ -5242,7 +5242,7 @@ namespace System.Windows.Forms {
 
 			if ((max != Size.Empty) && (max.Width > 0) && (max.Height > 0)) {
 				if (cp != null)
-					max = TranslateWindowSizeToXWindowSize (cp);
+					max = TranslateWindowSizeToXWindowSize (cp, max);
 				hints.flags = (IntPtr)((int)hints.flags | (int)XSizeHintsFlags.PMaxSize);
 				hints.max_width = max.Width;
 				hints.max_height = max.Height;

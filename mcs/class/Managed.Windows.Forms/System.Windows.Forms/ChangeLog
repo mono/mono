@@ -1,5 +1,10 @@
 2007-07-11  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* XplatUIX11.cs: Translate min/max size according to the actual min/max
+	  size, and not the current size. Fixes #81798.
+
+2007-07-11  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* XplatUIX11.cs: Fix #80822 again (DefWndProc can be reached before
 	  XplatUI.CreateWindow returns, in which case the hwnd isn't assigned
 	  to the control yet).
