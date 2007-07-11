@@ -1,3 +1,7 @@
+2007-07-11  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* TypeBuilderTest.cs: Added tests for enum creation. These tests are related to bugs #82018 and #82075
+
 2007-07-06  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TypeBuilderTest.cs: Improved tests for SetParent.

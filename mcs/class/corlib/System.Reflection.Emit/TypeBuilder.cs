@@ -82,6 +82,7 @@ namespace System.Reflection.Emit
 		private Type created;
 		#endregion
 		string fullname;
+		bool createTypeCalled;
 
 	public const int UnspecifiedTypeSize = 0;
 
@@ -723,7 +724,7 @@ namespace System.Reflection.Emit
 		public Type CreateType()
 		{
 			/* handle nesting_type */
-			if (created != null)
+			if (createTypeCalled)
 				return created;
 
 			if (!IsInterface && (parent == null) && (this != pmodule.assemblyb.corlib_object_type) && (FullName != "<Module>")) {
@@ -757,6 +758,9 @@ namespace System.Reflection.Emit
 			if ((parent != null) && parent.IsSealed)
 				throw new TypeLoadException ("Could not load type '" + FullName + "' from assembly '" + Assembly + "' because the parent type is sealed.");
 
+			if (parent == pmodule.assemblyb.corlib_enum_type && methods != null)
+				throw new TypeLoadException ("Could not load type '" + FullName + "' from assembly '" + Assembly + "' because it is an enum with methods.");
+
 			if (methods != null) {
 				for (int i = 0; i < num_methods; ++i)
 					((MethodBuilder)(methods[i])).fixup ();
@@ -773,7 +777,8 @@ namespace System.Reflection.Emit
 				foreach (ConstructorBuilder ctor in ctors) 
 					ctor.fixup ();
 			}
-			
+
+			createTypeCalled = true;
 			created = create_runtime_class (this);
 			if (created != null)
 				return created;
