@@ -23,12 +23,18 @@ cs-parser.cs: cs-parser.jay $(topdir)/jay/skeleton.cs
 
 include ../build/executable.make
 
-ifeq (net_2_0, $(PROFILE))
+VALID_PROFILE := $(filter net_2_0_bootstrap net_2_0 net_2_1, $(PROFILE))
+ifdef VALID_PROFILE
 # Utility rule to make debugging somewhat easier.
 all-local: gmcs.exe
 gmcs.exe: $(PROGRAM)
 	cp -p $< $@
 	test ! -f $<.mdb || cp -p $<.mdb $@.mdb
+endif
+
+ifeq (net_2_1, $(PROFILE))
+install-local:
+	ln -s $(mono_libdir)/mono/2.0/gmcs.exe $(mono_libdir)/mono/2.1
 endif
 
 clean-local: clean-net_2_0_bootstrap
