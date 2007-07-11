@@ -1,3 +1,9 @@
+2007-07-11 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* AssemblyResourceLoader.cs:
+	for System.Web.Extensions only:
+	ScriptResourceName may include ".resource" suffix.
+
 2007-07-03 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* AssemblyResourceLoader.cs:

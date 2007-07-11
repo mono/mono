@@ -157,10 +157,30 @@ namespace System.Web.Handlers {
 			TextWriter writer = context.Response.Output;
 			foreach (ScriptResourceAttribute sra in assembly.GetCustomAttributes (typeof (ScriptResourceAttribute), false)) {
 				if (sra.ScriptName == resourceName) {
+					string scriptResourceName = sra.ScriptResourceName;
+					ResourceSet rset = null;
+					try {
+						rset = new ResourceManager (scriptResourceName, assembly).GetResourceSet (Threading.Thread.CurrentThread.CurrentUICulture, true, true);
+					}
+					catch (MissingManifestResourceException) {
+#if TARGET_JVM // GetResourceSet does not throw  MissingManifestResourceException if ressource is not exists
+					}
+					if (rset == null) {
+#endif
+						if (scriptResourceName.EndsWith (".resources")) {
+							scriptResourceName = scriptResourceName.Substring (0, scriptResourceName.Length - 10);
+							rset = new ResourceManager (scriptResourceName, assembly).GetResourceSet (Threading.Thread.CurrentThread.CurrentUICulture, true, true);
+						}
+#if !TARGET_JVM
+						else
+							throw;
+#endif
+					}
+					if (rset == null)
+						break;
 					writer.WriteLine ();
 					writer.WriteLine ("{0}={{", sra.TypeName);
-					ResourceManager res=new ResourceManager(sra.ScriptResourceName, assembly);
-					foreach (DictionaryEntry entry in res.GetResourceSet (Threading.Thread.CurrentThread.CurrentUICulture, true, true)) {
+					foreach (DictionaryEntry entry in rset) {
 						string value = entry.Value as string;
 						if (value != null)
 							writer.WriteLine ("{0}:{1},", GetScriptStringLiteral ((string) entry.Key), GetScriptStringLiteral (value));
