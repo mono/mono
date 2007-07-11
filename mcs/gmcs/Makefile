@@ -34,6 +34,7 @@ endif
 
 ifeq (net_2_1, $(PROFILE))
 install-local:
+	rm -f $(mono_libdir)/mono/2.1/gmcs.exe
 	ln -s $(mono_libdir)/mono/2.0/gmcs.exe $(mono_libdir)/mono/2.1
 endif
 
