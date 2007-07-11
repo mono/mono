@@ -1,4 +1,11 @@
+2007-07-11  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-amd64.c (mono_arch_get_vcall_slot_addr): Handle signed displacements too.
+
+	* mini.h mini-x86.h mini-trampolines.c: Change the signature of mono_arch_find_imt_method () to pass the calling code address too.
+
+	* mini-amd64.c: Add preliminary IMT implementation.
+	
 Wed Jul 11 18:21:30 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* mini-x86.c: adjusted mono_arch_get_vcall_slot_addr () to
