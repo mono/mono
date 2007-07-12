@@ -949,7 +949,7 @@ SkipCRLF:
 
 					picture.Data.Seek (0, SeekOrigin.Begin);
 
-					char c = (char) rtf.major;
+					//char c = (char) rtf.major;
 
 					uint digitValue1;
 					uint digitValue2;
