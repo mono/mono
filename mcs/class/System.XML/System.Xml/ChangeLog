@@ -1,3 +1,8 @@
+2007-07-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlWriter.cs : in WriteNode(XPathNavigator,bool), default namespace
+	  is broken. Fixed bug #82051.
+
 2007-07-11  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlReader.cs : looks like I introduced extra Settings check at

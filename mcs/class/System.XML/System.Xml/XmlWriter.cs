@@ -393,12 +393,19 @@ namespace System.Xml
 				throw new ArgumentNullException ("navigator");
 			switch (navigator.NodeType) {
 			case XPathNodeType.Attribute:
-			case XPathNodeType.Namespace:
 				if (defattr || navigator.SchemaInfo == null ||
 				    !navigator.SchemaInfo.IsDefault)
 					WriteAttributeString (navigator.Prefix, 
 						navigator.LocalName,
 						navigator.NamespaceURI,
+						navigator.Value);
+				break;
+			case XPathNodeType.Namespace:
+				if (defattr || navigator.SchemaInfo == null ||
+				    !navigator.SchemaInfo.IsDefault)
+					WriteAttributeString (navigator.Prefix, 
+						navigator.LocalName == String.Empty ? "xmlns" : navigator.LocalName,
+						"http://www.w3.org/2000/xmlns/",
 						navigator.Value);
 				break;
 			case XPathNodeType.Text:

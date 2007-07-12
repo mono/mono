@@ -441,6 +441,20 @@ namespace MonoTests.System.Xml
 			nav.MoveToNext ();
 			AssertType.AreEqual ("<!-- comment -->", WriteSubtree (nav), "#4");
 		}
+
+		[Test]
+		public void WriteNodeXPathNavigator ()
+		{
+			string xml = "<A xmlns='urn:x'><B xmlns='urn:y' /></A>";
+			XPathNavigator nav = new XPathDocument (new StringReader(xml)).CreateNavigator ();
+			XmlWriterSettings s = new XmlWriterSettings ();
+			s.OmitXmlDeclaration = true;
+			StringWriter sw = new StringWriter ();
+			XmlWriter w = XmlWriter.Create (sw, s);
+			w.WriteNode (nav, false);
+			w.Close ();
+			AssertType.AreEqual ("<A xmlns=\"urn:x\"><B xmlns=\"urn:y\" /></A>", sw.ToString ());
+		}
 #endif
 
 	}
