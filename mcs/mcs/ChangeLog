@@ -1,3 +1,9 @@
+2007-07-12  Miguel de Icaza  <miguel@novell.com>
+
+	* statement.cs (Using.EmitLocalVariableDecls): We were leaving
+	values on the stack on the call to Emit.   Use EmitStatement if
+	possible, or using Emit + Pop if not possible.   Fixes #82064
+
 2007-07-12  Raja R Harinath  <rharinath@novell.com>
 
 	* expression.cs (Invocation.IsApplicable): Reorganize slightly to

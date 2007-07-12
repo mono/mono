@@ -4468,7 +4468,14 @@ namespace Mono.CSharp {
 			int i = 0;
 
 			for (i = 0; i < assign.Length; i++) {
-				assign [i].Emit (ec);
+				ExpressionStatement es = assign [i] as ExpressionStatement;
+
+				if (es != null)
+					es.EmitStatement (ec);
+				else {
+					assign [i].Emit (ec);
+					ig.Emit (OpCodes.Pop);
+				}
 
 				if (emit_finally)
 					ig.BeginExceptionBlock ();
