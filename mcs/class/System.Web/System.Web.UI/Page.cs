@@ -1420,6 +1420,7 @@ public partial class Page : TemplateControl, IHttpHandler
 
 #if NET_2_0
 		_lifeCycle = PageLifeCycle.Render;
+		scriptManager.ResetEventValidationState ();
 #endif
 		
 		//--

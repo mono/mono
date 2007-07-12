@@ -1,3 +1,9 @@
+2007-07-12  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* ClientScriptManager.cs: refactored event validation data structure
+	* Page.cs: fixed InternalProcessRequest, event validation list should
+	be cleared before render
+
 2007-06-24  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* ObjectStateFormatter.cs: optimized loops in array formatters

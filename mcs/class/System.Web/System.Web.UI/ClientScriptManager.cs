@@ -59,7 +59,8 @@ namespace System.Web.UI
 		ScriptEntry scriptIncludes;
 		Page page;
 #if NET_2_0
-		List <int> eventValidationValues;
+		int [] eventValidationValues;
+		int eventValidationPos = 0;
 		Hashtable expandoAttributes;
 		bool _hasRegisteredForEventValidationOnCallback;
 #endif
@@ -421,7 +422,26 @@ namespace System.Web.UI
 
 			list.Add (attributeName, encode ? StrUtils.EscapeQuotesAndBackslashes (attributeValue) : attributeValue);
 		}
-		
+
+		private void EnsureEventValidationArray ()
+		{
+			if (eventValidationValues == null)
+				eventValidationValues = new int [64];
+
+			int len = eventValidationValues.Length;
+
+			if (eventValidationPos >= len) {
+				int [] tmp = new int [len * 2];
+				Array.Copy (eventValidationValues, tmp, len);
+				eventValidationValues = tmp;
+			}
+		}
+
+		internal void ResetEventValidationState ()
+		{
+			eventValidationPos = 0;
+		}
+
 		// Implemented following the description in http://odetocode.com/Blogs/scott/archive/2006/03/20/3145.aspx
 		private int CalculateEventHash (string uniqueId, string argument)
 		{
@@ -451,13 +471,14 @@ namespace System.Web.UI
 				_hasRegisteredForEventValidationOnCallback = true;
 			else if (page.LifeCycle < PageLifeCycle.Render)
 				throw new InvalidOperationException ("RegisterForEventValidation may only be called from the Render method");
-			if (eventValidationValues == null)
-				eventValidationValues = new List <int> ();
 
+			EnsureEventValidationArray ();
 			
 			int hash = CalculateEventHash (uniqueId, argument);
-			if (eventValidationValues.BinarySearch (hash) < 0)
-				eventValidationValues.Add (hash);
+			for (int i = 0; i < eventValidationPos; i++)
+				if (eventValidationValues [i] == hash)
+					return;
+			eventValidationValues [eventValidationPos++] = hash;
 		}
 
 		public void ValidateEvent (string uniqueId)
@@ -475,9 +496,9 @@ namespace System.Web.UI
 				goto bad;
 			
 			int hash = CalculateEventHash (uniqueId, argument);
-			if (eventValidationValues.BinarySearch (hash) < 0)
-				goto bad;
-			return;
+			for (int i = 0; i < eventValidationValues.Length; i++)
+				if (eventValidationValues [i] == hash)
+					return;
 			
 			bad:
 			throw new ArgumentException ("Invalid postback or callback argument. Event validation is enabled using <pages enableEventValidation=\"true\"/> in configuration or <%@ Page EnableEventValidation=\"true\" %> in a page. For security purposes, this feature verifies that arguments to postback or callback events originate from the server control that originally rendered them. If the data is valid and expected, use the ClientScriptManager.RegisterForEventValidation method in order to register the postback or callback data for validation.");
@@ -497,15 +518,8 @@ namespace System.Web.UI
 			if (!page.EnableEventValidation || fieldValue == null || fieldValue.Length == 0)
 				return;
 			IStateFormatter fmt = page.GetFormatter ();
-			int [] eventValues = (int []) fmt.Deserialize (fieldValue);
-#if TARGET_JVM // FIXME: No support yet for passing 'int[]' as 'T[]'
-			eventValidationValues = new List<int> (eventValues.Length);
-			for (int i = 0; i < eventValues.Length; i++)
-				eventValidationValues.Add(eventValues[i]);
-#else
-			eventValidationValues = new List<int> (eventValues);
-#endif
-			eventValidationValues.Sort ();
+			eventValidationValues = (int []) fmt.Deserialize (fieldValue);
+			eventValidationPos = eventValidationValues.Length;
 		}
 		
 		internal void SaveEventValidationState ()
@@ -522,19 +536,15 @@ namespace System.Web.UI
 
 		internal string GetEventValidationStateFormatted ()
 		{
-			if (eventValidationValues == null || eventValidationValues.Count == 0)
+			if (eventValidationValues == null || eventValidationValues.Length == 0)
 				return null;
 
 			if(page.IsCallback && !_hasRegisteredForEventValidationOnCallback)
 				return null;
 
 			IStateFormatter fmt = page.GetFormatter ();
-			int [] array = new int [eventValidationValues.Count];
-#if TARGET_JVM // FIXME: No support yet for passing 'int[]' as 'T[]'
-			((ICollection)eventValidationValues).CopyTo (array, 0);
-#else
-			eventValidationValues.CopyTo (array);
-#endif
+			int [] array = new int [eventValidationPos];
+			Array.Copy (eventValidationValues, array, eventValidationPos);
 			return fmt.Serialize (array);
 		}
 
