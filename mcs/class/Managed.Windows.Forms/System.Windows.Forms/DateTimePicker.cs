@@ -1823,8 +1823,10 @@ namespace System.Windows.Forms {
 					return " ";
 				else if (format.Length == 1)
 					return date.ToString ("%" + format);
-				else
+				else if (format.Length > 1)
 					return date.ToString (format);
+				else
+					return string.Empty;
 			}
 		}
 		
