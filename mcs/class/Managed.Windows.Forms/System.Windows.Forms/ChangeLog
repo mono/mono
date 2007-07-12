@@ -1,3 +1,8 @@
+2007-07-12  Jonathan Pobst  <monkey@jpobst.com>
+
+	* FlatButtonAppearance.cs: Throw NotSupportedException for a
+	Transparent BorderColor.
+
 2007-07-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* DataGridView.cs, TextControl.cs, ProgressBar.cs, PrintDialog.cs,

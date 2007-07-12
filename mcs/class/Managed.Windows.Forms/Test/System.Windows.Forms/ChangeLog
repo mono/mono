@@ -1,3 +1,7 @@
+2007-07-12  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ButtonTest.cs: Add test showing a NSE if Flat BorderSize is 0.
+
 2007-07-09  Jonathan Pobst  <monkey@jpobst.com>
 
 	* MessageTest.cs: Add tests for op_Equality and op_Inequality.

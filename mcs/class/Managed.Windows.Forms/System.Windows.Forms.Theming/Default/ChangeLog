@@ -1,3 +1,9 @@
+2007-07-12  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ButtonPainter.cs: For Flat button, if BorderSize is 0, don't
+	draw the rectangle.  Setting the pen's width to 1 isn't good
+	enough, it still draws the border.  [Fixes bug #82081]
+
 2007-07-03  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStripPainter.cs: Added. This is where we paint toolstrips

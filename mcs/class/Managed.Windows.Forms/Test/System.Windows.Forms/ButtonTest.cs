@@ -78,6 +78,16 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		[ExpectedException (typeof (NotSupportedException))]
+		public void FlatButtonAppearanceBorderColor ()
+		{
+			Button B1 = new Button ();
+			FlatButtonAppearance flatApp = B1.FlatAppearance;
+
+			flatApp.BorderColor = Color.Transparent;
+		}
+
+		[Test]
 		public void BehaviorAutoSize ()
 		{
 			if (TestHelper.RunningOnUnix)

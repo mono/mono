@@ -126,11 +126,13 @@ namespace System.Windows.Forms.Theming.Default
 				pen = is_themecolor ? SystemPens.ControlDarkDark : ResPool.GetSizedPen (cpcolor.DarkDark, appearance.BorderSize);
 			else
 				pen = ResPool.GetSizedPen (appearance.BorderColor, appearance.BorderSize);
-				
-			bounds.Width -= 1;
-			bounds.Height -= 1;
-			g.DrawRectangle (pen, bounds);
 
+				bounds.Width -= 1;
+				bounds.Height -= 1;
+				
+			if (appearance.BorderSize > 0)
+				g.DrawRectangle (pen, bounds);
+			
 			if (state == ButtonThemeState.Default || state == ButtonThemeState.Pressed) {
 				bounds.Inflate (-1, -1);
 				g.DrawRectangle (pen, bounds);

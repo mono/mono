@@ -63,6 +63,9 @@ namespace System.Windows.Forms
 				if(borderColor == value)
 					return;
 
+				if (value == Color.Transparent)
+					throw new NotSupportedException ("Cannot have a Transparent border.");
+					
 				borderColor = value;
 				
 				if(owner != null)
