@@ -1,5 +1,8 @@
 2007-07-12  Miguel de Icaza  <miguel@novell.com>
 
+	* ecore.cs (FieldExpr.AddressOf): Do not stop processing here,
+	report the warning and continue 
+
 	* statement.cs (Using.EmitLocalVariableDecls): We were leaving
 	values on the stack on the call to Emit.   Use EmitStatement if
 	possible, or using Emit + Pop if not possible.   Fixes #82064
