@@ -645,7 +645,7 @@ namespace System.Windows.Forms
 				}
 			}
 
-			Font font;
+			new Font font;
 
 			public CollatePreview () 
 			{

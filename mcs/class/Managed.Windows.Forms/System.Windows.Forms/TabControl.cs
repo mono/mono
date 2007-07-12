@@ -57,8 +57,9 @@ namespace System.Windows.Forms {
 		private ButtonState right_slider_state;
 		private ButtonState left_slider_state;
 		private int slider_pos = 0;
-
+#if NET_2_0
 		private bool rightToLeftLayout;
+#endif		
 		#endregion	// Fields
 
 		#region Public Constructors
@@ -1278,7 +1279,7 @@ namespace System.Windows.Forms {
 			this.Controls.SetChildIndex (value, index);
 			Redraw ();
 		}
-
+#if NET_2_0
 		private void InsertTab (int index, TabPage value)
 		{
 			if (!tab_pages.Contains (value)) {
@@ -1287,7 +1288,7 @@ namespace System.Windows.Forms {
 			this.Controls.SetChildIndex (value, index);
 			Redraw ();
 		}
-
+#endif
 		internal void Redraw ()
 		{
 			if (!IsHandleCreated)

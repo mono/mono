@@ -553,21 +553,64 @@ namespace System.Windows.Forms {
 		public override string ToString() {
 			switch (type)
 			{
+				case XEventName.ButtonPress:
+				case XEventName.ButtonRelease:
+					return ToString (ButtonEvent);
+				case XEventName.CirculateNotify:
+				case XEventName.CirculateRequest:
+					return ToString (CirculateEvent);
+				case XEventName.ClientMessage:
+					return ToString (ClientMessageEvent);
+				case XEventName.ColormapNotify:
+					return ToString (ColormapEvent);
+				case XEventName.ConfigureNotify:
+					return ToString (ConfigureEvent);
+				case XEventName.ConfigureRequest:
+					return ToString (ConfigureRequestEvent);
+				case XEventName.CreateNotify:
+					return ToString (CreateWindowEvent);
+				case XEventName.DestroyNotify:
+					return ToString (DestroyWindowEvent);
 				case XEventName.Expose:
 					return ToString (ExposeEvent);
 				case XEventName.FocusIn:
 				case XEventName.FocusOut:
 					return ToString (FocusChangeEvent);
+				case XEventName.GraphicsExpose:
+					return ToString (GraphicsExposeEvent);
+				case XEventName.GravityNotify:
+					return ToString (GravityEvent);
+				case XEventName.KeymapNotify:
+					return ToString (KeymapEvent);
+				case XEventName.MapNotify:
+					return ToString (MapEvent);
+				case XEventName.MappingNotify:
+					return ToString (MappingEvent);
+				case XEventName.MapRequest:
+					return ToString (MapRequestEvent);
+				case XEventName.MotionNotify:
+					return ToString (MotionEvent);
 				case XEventName.NoExpose:
 					return ToString (NoExposeEvent);
 				case XEventName.PropertyNotify:
 					return ToString (PropertyEvent);
+				case XEventName.ReparentNotify:
+					return ToString (ReparentEvent);
 				case XEventName.ResizeRequest:
 					return ToString (ResizeRequestEvent);
-				case XEventName.ConfigureNotify:
-					return ToString (ConfigureEvent);
-				case XEventName.MotionNotify:
-					return ToString (MotionEvent);
+				case XEventName.SelectionClear:
+					return ToString (SelectionClearEvent);
+				case XEventName.SelectionNotify:
+					return ToString (SelectionEvent);
+				case XEventName.SelectionRequest:
+					return ToString (SelectionRequestEvent);
+				case XEventName.UnmapNotify:
+					return ToString (UnmapEvent);
+				case XEventName.VisibilityNotify:
+					return ToString (VisibilityEvent);
+				case XEventName.EnterNotify:
+				case XEventName.LeaveNotify:
+					return ToString (CrossingEvent);
 				default:
 					return type.ToString ();
 			}
@@ -709,6 +752,11 @@ namespace System.Windows.Forms {
 		DontPropagate	= 4096,
 		ColorMap	= 8192,
 		Cursor		= 16384
+	}
+	
+	internal enum SendEventValues {
+		PointerWindow = 0,
+		InputFocus = 1
 	}
 
 	internal enum CreateWindowArgs {
@@ -1597,6 +1645,12 @@ namespace System.Windows.Forms {
 		public int yhot;       /* hot spot y (must be inside image) */
 		public int delay;       /* hot spot y (must be inside image) */
 		public IntPtr pixels;    /* pointer to pixels */
+
+		public override string ToString ()
+		{
+			return string.Format ("XCursorImage (version: {0}, size: {1}, width: {2}, height: {3}, xhot: {4}, yhot: {5}, delay: {6}, pixels: {7}", 
+				version, size, width, height, xhot, yhot, delay, pixels);
+		}
 	} ;
 
 	[StructLayout (LayoutKind.Sequential)]

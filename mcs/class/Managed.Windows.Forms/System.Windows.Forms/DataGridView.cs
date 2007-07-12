@@ -1320,10 +1320,10 @@ namespace System.Windows.Forms {
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler BackgroundImageLayoutChanged; /* XXX {
+		public new event EventHandler BackgroundImageLayoutChanged  {
 			add { base.BackgroundImageLayoutChanged += value; }
 			remove { base.BackgroundImageLayoutChanged -= value; }
-		} */
+		}
 
 		public event EventHandler BorderStyleChanged {
 			add { Events.AddHandler (BorderStyleChangedEvent, value); }

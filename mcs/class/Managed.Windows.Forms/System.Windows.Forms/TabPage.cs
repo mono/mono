@@ -37,7 +37,9 @@ namespace System.Windows.Forms {
 	public class TabPage : Panel {
 		#region Fields
 		private int imageIndex = -1;
+#if NET_2_0
 		private string imageKey;
+#endif
 		private string tooltip_text = String.Empty;
 		private Rectangle tab_bounds;
 		private int row;

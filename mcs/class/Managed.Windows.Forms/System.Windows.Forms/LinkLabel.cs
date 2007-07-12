@@ -253,7 +253,7 @@ namespace System.Windows.Forms
 #if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public FlatStyle FlatStyle {
+		public new FlatStyle FlatStyle {
 			get { return base.FlatStyle; }
 			set {
 				if (base.FlatStyle == value)
@@ -264,7 +264,7 @@ namespace System.Windows.Forms
 		}
 
 		[RefreshProperties (RefreshProperties.Repaint)]
-		public Padding Padding {
+		public new Padding Padding {
 			get { return base.Padding; }
 			set {
 				if (base.Padding == value)

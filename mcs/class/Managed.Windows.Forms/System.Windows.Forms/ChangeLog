@@ -1,3 +1,15 @@
+2007-07-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* DataGridView.cs, TextControl.cs, ProgressBar.cs, PrintDialog.cs,
+	  MessageBox.cs, ButtonBase.cs, PageSetupDialog.cs, NumericUpDown.cs,
+	  X11Dnd.cs, Binding.cs, DataGrid.cs, AxHost.cs,
+	  LinkLabelLinkClickedEventArgs.cs, TextRenderer.cs, Label.cs,
+	  LinkLabel.cs, TreeNode.cs, BindingSource.cs, TabPage.cs,
+	  TextBoxBase.cs, BindingNavigator.cs, Application.cs,
+	  ToolStripPanel.cs, TabControl.cs, ThemeClearlooks.cs, TreeView.cs:
+	  Remove warnings.
+	* X11Structs.cs: Remove warnings, add ToString implementations.
+
 2007-07-11  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* XplatUIX11.cs: Translate min/max size according to the actual min/max

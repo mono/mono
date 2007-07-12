@@ -345,12 +345,12 @@ namespace System.Windows.Forms {
 
 		private bool tracking = false;
 		private bool dropped = false;
-		private X11Keyboard keyboard;
+		//private X11Keyboard keyboard;
 
 		public X11Dnd (IntPtr display, X11Keyboard keyboard)
 		{
 			this.display = display;
-			this.keyboard = keyboard;
+			//this.keyboard = keyboard;
 
 			Init ();
 		}

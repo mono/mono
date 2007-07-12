@@ -2339,7 +2339,7 @@ namespace System.Windows.Forms {
 		
 		internal void InsertPicture (Line line, int pos, RTF.Picture picture)
 		{
-			LineTag next_tag;
+			//LineTag next_tag;
 			LineTag tag;
 			int len;
 
@@ -2352,7 +2352,7 @@ namespace System.Windows.Forms {
 
 			tag = LineTag.FindTag (line, pos);
 			picture_tag.CopyFormattingFrom (tag);
-			next_tag = tag.Break (pos + 1);
+			/*next_tag = */tag.Break (pos + 1);
 			picture_tag.previous = tag;
 			picture_tag.next = tag.next;
 			tag.next = picture_tag;
@@ -4841,8 +4841,8 @@ namespace System.Windows.Forms {
 		private Stack		undo_actions;
 		private Stack		redo_actions;
 
-		private int		caret_line;
-		private int		caret_pos;
+		//private int		caret_line;
+		//private int		caret_pos;
 
 		// When performing an action, we lock the queue, so that the action can't be undone
 		private bool locked;

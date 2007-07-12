@@ -932,7 +932,7 @@ namespace System.Windows.Forms {
 			if (eh != null)
 				eh (this, e);
 		}
-#if NET_1_1
+#if ONLY_1_1
 		protected virtual void OnAutoSizeChanged(EventArgs e) {
 			EventHandler eh = (EventHandler)(Events [AutoSizeChangedEvent]);
 			if (eh != null)

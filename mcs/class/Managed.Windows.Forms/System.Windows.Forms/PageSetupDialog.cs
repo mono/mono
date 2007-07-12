@@ -845,7 +845,7 @@ namespace System.Windows.Forms {
 
 			System.Text.StringBuilder sb;
 			float displayHeight;
-			Font font;
+			new Font font;
 
 			public bool Landscape
 			{
@@ -859,7 +859,7 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			public float Height {
+			public new float Height {
 				get { return displayHeight; }
 				set { 
 					if (displayHeight != value) {

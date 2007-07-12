@@ -139,9 +139,9 @@ namespace System.Windows.Forms {
 		private static string			safe_caption_format	= "{1} - {0} - {2}";
 		private static ArrayList		message_filters		= new ArrayList();
 		private static FormCollection		forms			= new FormCollection ();
-		private static bool			use_wait_cursor		= false;
 
 #if NET_2_0
+		private static bool use_wait_cursor = false;
 		private static ToolStrip keyboard_capture;
 		private static VisualStyleState visual_style_state = VisualStyleState.ClientAndNonClientAreasEnabled;
 #endif

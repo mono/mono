@@ -42,7 +42,7 @@ namespace System.Windows.Forms {
 		ISite site;
 
 		IList list;
-		bool list_defaulted;
+		//bool list_defaulted;
 
 		object datasource;
 		string datamember;
@@ -122,7 +122,7 @@ namespace System.Windows.Forms {
 
 			if (datasource == null) {
 				l = new BindingList<object>();
-				list_defaulted = true;
+//				list_defaulted = true;
 			}
 			else if (datasource is IList) {
 				l = (IList)datasource;

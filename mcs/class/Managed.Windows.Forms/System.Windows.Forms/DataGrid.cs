@@ -2592,7 +2592,7 @@ namespace System.Windows.Forms
 			using (Graphics g = base.CreateGraphics ()) {
 				GridColumnStylesCollection columns = CurrentTableStyle.GridColumnStyles;
 				int colCount = columns.Count;
-				int rowCount = source.Count;
+				//int rowCount = source.Count;
 				int height = 0;
 				for (int i = 0; i < colCount; i++) {
 					object val = columns[i].GetColumnValueAtRow (source, row);

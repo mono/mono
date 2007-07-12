@@ -159,6 +159,22 @@ namespace System.Windows.Forms
 				help_param = param;
 			}
 			
+			internal string HelpFilePath {
+				get { return help_file_path; }
+			}
+			
+			internal string HelpKeyword {
+				get { return help_keyword; }
+			}
+			
+			internal HelpNavigator HelpNavigator {
+				get { return help_navigator; }
+			}
+			
+			internal object HelpParam {
+				get { return help_param; }
+			}
+			
 			public DialogResult RunDialog ()
 			{
 				this.StartPosition = FormStartPosition.CenterScreen;

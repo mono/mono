@@ -47,14 +47,16 @@ namespace System.Windows.Forms {
 		internal ContentAlignment	text_alignment;
 		private bool			is_default;
 		internal bool			is_pressed;
-		private bool			enter_state;
+//		private bool			enter_state;
 		internal StringFormat		text_format;
 		internal bool 			paint_as_acceptbutton;
 		
 		// Properties are 2.0, but variables used in 1.1 for common drawing code
 		private bool			auto_ellipsis;
 		private FlatButtonAppearance	flat_button_appearance;
+#if NET_2_0		
 		private string			image_key;
+#endif
 		private TextImageRelation	text_image_relation;
 		private TextFormatFlags		text_format_flags;
 		private bool			use_mnemonic;
@@ -192,7 +194,9 @@ namespace System.Windows.Forms {
 				if (this.image != value) {
 					this.image = value;
 					this.image_index = -1;
+#if NET_2_0
 					this.image_key = string.Empty;
+#endif
 					this.image_list = null;
 
 #if NET_2_0
@@ -237,7 +241,9 @@ namespace System.Windows.Forms {
 				if (this.image_index != value) {
 					this.image_index = value;
 					this.image = null;
+#if NET_2_0
 					this.image_key = string.Empty;
+#endif
 					Invalidate ();
 				}
 			}

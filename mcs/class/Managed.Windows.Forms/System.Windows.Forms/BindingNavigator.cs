@@ -45,7 +45,7 @@ namespace System.Windows.Forms
 
 		private ToolStripItem addNewItem = null;
 		private BindingSource bindingSource = null;
-		private bool changingText = false;
+		//private bool changingText = false;
 		private ToolStripItem countItem = null;
 		private string countItemFormat = Locale.GetText("of {0}");
 		private ToolStripItem deleteItem = null;
@@ -318,7 +318,7 @@ namespace System.Windows.Forms
 			{
 				bool isNull = (bindingSource == null);
 				initFlag = true;
-				changingText = true;
+				//changingText = true;
 
 				if (addNewItem != null)
 					addNewItem.Enabled = isNull ? addNewItem.Enabled : this.bindingSource.AllowNew;
@@ -346,7 +346,7 @@ namespace System.Windows.Forms
 			}
 			finally
 			{
-				changingText = false;
+				//changingText = false;
 				initFlag = false;
 			}
 		}
@@ -444,7 +444,7 @@ namespace System.Windows.Forms
 			OnRefreshItems();
 		}
 
-		private void OnPositionTextChanged(object sender, EventArgs e)
+		/*private void OnPositionTextChanged(object sender, EventArgs e)
 		{
 			if (changingText)
 				return;
@@ -479,7 +479,7 @@ namespace System.Windows.Forms
 				changingText = false;
 				OnRefreshItems();
 			}
-		}
+		}*/
 
 		#endregion
 	}

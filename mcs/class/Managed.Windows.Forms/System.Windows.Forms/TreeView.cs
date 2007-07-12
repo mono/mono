@@ -667,18 +667,11 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
-		public
-#else
-		private
-#endif
-		void Sort ()
+		public	void Sort ()
 		{
-#if NET_2_0
 			Sort (Nodes.Count >= 2 ? tree_view_node_sorter : null);
-#else
-			Sort (null);
-#endif
 		}
+#endif
 
 		void Sort (IComparer sorter) 
 		{
@@ -1726,10 +1719,10 @@ namespace System.Windows.Forms {
 			XplatUI.ScrollWindow (Handle, ViewportRectangle, 0, y_move, false);
 		}
 
-		private void SetVScrollTop (TreeNode new_top)
+		/*private void SetVScrollTop (TreeNode new_top)
 		{
 			vbar.Value = new_top.visible_order - VisibleCount;
-		}
+		}*/
 
 		private void HScrollBarValueChanged(object sender, EventArgs e)
 		{

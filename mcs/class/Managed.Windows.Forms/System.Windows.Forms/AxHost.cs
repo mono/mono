@@ -600,13 +600,13 @@ namespace System.Windows.Forms {
 
 #if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public void DrawToBitmap (Bitmap bitmap, Rectangle targetBounds)
+		public new void DrawToBitmap (Bitmap bitmap, Rectangle targetBounds)
 		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
-		protected virtual Rectangle GetScaledBounds (Rectangle bounds, SizeF factor, BoundsSpecified specified)
+		protected new virtual Rectangle GetScaledBounds (Rectangle bounds, SizeF factor, BoundsSpecified specified)
 		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}

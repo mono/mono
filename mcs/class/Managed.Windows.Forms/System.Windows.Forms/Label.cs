@@ -55,7 +55,9 @@ namespace System.Windows.Forms
 		private FlatStyle flat_style;
 		private bool use_mnemonic;
 		private int image_index = -1;
+#if NET_2_0
 		private string image_key = string.Empty;
+#endif
 		private ImageList image_list;
 		internal ContentAlignment image_align;
 		internal StringFormat string_format;
@@ -300,7 +302,9 @@ namespace System.Windows.Forms
 				if (this.image != value) {
 					this.image = value;
 					this.image_index = -1;
+#if NET_2_0
 					this.image_key = string.Empty;
+#endif
 					this.image_list = null;
 
 #if NET_2_0
@@ -356,7 +360,9 @@ namespace System.Windows.Forms
 				if (this.image_index != value) {
 					this.image_index = value;
 					this.image = null;
+#if NET_2_0
 					this.image_key = string.Empty;
+#endif
 					Invalidate ();
 				}
 			}

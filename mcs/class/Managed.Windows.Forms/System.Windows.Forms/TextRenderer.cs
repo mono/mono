@@ -411,7 +411,7 @@ namespace System.Windows.Forms
 
 			return sf;
 		}
-
+#if NET_2_0
 		private static Rectangle PadRectangle (Rectangle r, TextFormatFlags flags)
 		{
 			if ((flags & TextFormatFlags.NoPadding) == 0 && (flags & TextFormatFlags.Right) == 0 && (flags & TextFormatFlags.HorizontalCenter) == 0) {
@@ -434,7 +434,7 @@ namespace System.Windows.Forms
 
 			return r;
 		}
-
+#endif
 		private static Rectangle PadDrawStringRectangle (Rectangle r, TextFormatFlags flags)
 		{
 			if ((flags & TextFormatFlags.NoPadding) == 0 && (flags & TextFormatFlags.Right) == 0 && (flags & TextFormatFlags.HorizontalCenter) == 0) {

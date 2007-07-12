@@ -419,7 +419,7 @@ namespace System.Windows.Forms
 			this.rows.Add (new_row);
 			new_row.OnControlAdded (control, 0);
 		}
-		
+		/*
 		private Region FindBackgroundRegion ()
 		{
 			Region r = new Region (this.Bounds);
@@ -429,6 +429,7 @@ namespace System.Windows.Forms
 
 			return r;
 		}
+		*/
 		#endregion
 
 		#region Nested Classes

@@ -43,8 +43,10 @@ namespace System.Windows.Forms {
 		private string text;
 		private int image_index = -1;
 		private int selected_image_index = -1;
-        private string image_key = String.Empty;
-        private string selected_image_key = String.Empty;
+#if NET_2_0
+		private string image_key = String.Empty;
+		private string selected_image_key = String.Empty;
+#endif
         internal TreeNodeCollection nodes;
 		internal TreeViewAction check_reason = TreeViewAction.Unknown;
 

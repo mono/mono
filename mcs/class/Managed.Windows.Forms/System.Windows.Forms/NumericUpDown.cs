@@ -57,8 +57,8 @@ namespace System.Windows.Forms {
 
 #if NET_2_0
 		NumericUpDownAccelerationCollection accelerations;
-		private long buttonPressedTicks;
-		private bool isSpinning;
+//		private long buttonPressedTicks;
+		//private bool isSpinning;
 #endif
 		#endregion	// Local Variables
 
@@ -502,14 +502,14 @@ namespace System.Windows.Forms {
 
 		protected override void OnKeyUp (KeyEventArgs e)
 		{
-			isSpinning = false;
+//			isSpinning = false;
 			base.OnKeyUp (e);
 		}
 
 		protected override void OnKeyDown (KeyEventArgs e)
 		{
-			buttonPressedTicks = DateTime.Now.Ticks;
-			isSpinning = true;
+//			buttonPressedTicks = DateTime.Now.Ticks;
+//			isSpinning = true;
 			base.OnKeyDown (e);
 		}
 #endif

@@ -65,7 +65,9 @@ namespace System.Windows.Forms
 
 		#region events
 
+#if NET_2_0
 		static object RightToLeftLayoutChangedEvent = new object ();
+#endif
 			
 #if ONLY_1_1
 		[Browsable (false)]

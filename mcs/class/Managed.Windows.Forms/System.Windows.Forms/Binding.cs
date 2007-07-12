@@ -113,6 +113,9 @@ namespace System.Windows.Forms {
 		}
 		#endregion	// Protected Instance Methods
 
+		internal string DataMember {
+			get { return data_member; }
+		}
 		
 		internal void SetControl (Control control)
 		{
