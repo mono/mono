@@ -441,7 +441,7 @@ public sealed class TypeDescriptor
 		}
 	}
 		
-	private static object CreateEditor (Type t, Type componentType)
+	internal static object CreateEditor (Type t, Type componentType)
 	{
 		if (t == null) 
 			return null;
@@ -505,6 +505,7 @@ public sealed class TypeDescriptor
 	{
 		Type t = null;
 		object [] atts = componentType.GetCustomAttributes (typeof(EditorAttribute), true);
+		
 		if (atts != null && atts.Length != 0) {
 			foreach (EditorAttribute ea in atts)
 			{
@@ -835,7 +836,7 @@ public sealed class TypeDescriptor
 		}
 	}
 	
-	static Type GetTypeFromName (IComponent component, string typeName)
+	internal static Type GetTypeFromName (IComponent component, string typeName)
 	{
 		if (component != null && component.Site != null) {
 			ITypeResolutionService resver = (ITypeResolutionService) component.Site.GetService (typeof(ITypeResolutionService));

@@ -1,5 +1,12 @@
 2007-07-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* PropertyDescriptor.cs: GetEditor: We have to check the property
+	  itself for attributes as well, not only the property type.
+	* TypeDescriptor.cs: Make a couple of methods internal so that
+	  PropertyDescriptor can use them.
+
+2007-07-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* TypeDescriptor.cs: GetEditor: Make sure the static constructor of the
 	  editors basetype is called, since that's where we're initializing
 	  the editor table.

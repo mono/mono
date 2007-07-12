@@ -247,6 +247,25 @@ namespace System.ComponentModel
 
 		public virtual object GetEditor(Type editorBaseType)
 		{
+			Type t = null;
+			Attribute [] atts = AttributeArray;
+			
+			if (atts != null && atts.Length != 0) {
+				foreach (Attribute a in atts) {
+					EditorAttribute ea = a as EditorAttribute;
+					
+					if (ea == null)
+						continue;
+					
+					t = TypeDescriptor.GetTypeFromName (null, ea.EditorTypeName);
+					if (t.IsSubclassOf(editorBaseType))
+						break;
+				}
+			}
+
+			if (t != null)
+				return TypeDescriptor.CreateEditor (t, PropertyType);
+
 			return TypeDescriptor.GetEditor (PropertyType, editorBaseType);
 		}
 
