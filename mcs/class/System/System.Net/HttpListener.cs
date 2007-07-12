@@ -217,7 +217,11 @@ namespace System.Net {
 					wait_queue.RemoveAt (idx);
 			}
 
-			return ares.GetContext (); // This will throw on error.
+			HttpListenerContext context = ares.GetContext ();
+			if (auth_schemes != AuthenticationSchemes.Anonymous) {
+				context.ParseAuthentication ();
+			}
+			return context; // This will throw on error.
 		}
 
 		public HttpListenerContext GetContext ()

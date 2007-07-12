@@ -1,3 +1,9 @@
+2007-07-12  Geoff Norton  <gnorton@customerdna.com>
+
+	* HttpListenerContext.cs: 
+	* HttpListener.cs: Handle HttpListener AuthenticationSchemes
+	Only Basic authentication is included for now.
+
 2007-06-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* NetworkAccess.cs: Only mark as flags enum on 2.0.
