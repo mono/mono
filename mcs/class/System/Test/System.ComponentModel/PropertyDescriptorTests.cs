@@ -11,6 +11,8 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Globalization;
+using System.Drawing.Design;
+using System.ComponentModel.Design;
 
 using NUnit.Framework;
 
@@ -336,6 +338,36 @@ namespace MonoTests.System.ComponentModel
 			Assert.AreEqual ("Explicit", p1.DisplayName, "#1");
 #endif
 			Assert.AreEqual ("Implicit", p2.DisplayName, "#2");
+		}
+
+		[Test]
+		public void GetEditorTest ()
+		{
+			PropertyDescriptorCollection col;
+			PropertyDescriptor pd;
+			UITypeEditor ed;
+
+			col = TypeDescriptor.GetProperties (typeof (GetEditor_test));
+			pd = col [0];
+			ed = pd.GetEditor (typeof (UITypeEditor)) as UITypeEditor;
+
+			Assert.IsNotNull (ed, "#01");
+			Assert.AreEqual (ed.GetType ().Name, "UIEditor", "#02");
+		
+		}
+
+		class GetEditor_test 
+		{
+			[Editor (typeof (UIEditor), typeof (UITypeEditor))]
+			public string Property {
+				get { return "abc"; }
+				set { }
+			}
+		}
+
+		class UIEditor : UITypeEditor
+		{
+			
 		}
 	}
 }
