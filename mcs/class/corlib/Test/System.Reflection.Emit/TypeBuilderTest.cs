@@ -436,7 +436,6 @@ namespace MonoTests.System.Reflection.Emit
 			}
 		}
 
-
 		[Test]
 		public void TestEnumWithBadTypeValueFieldBuildFails ()
 		{
@@ -2532,6 +2531,24 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.IsFalse (tb.HasElementType, "#C3");
 			Assert.IsFalse (tb.IsCreated (), "#C4");
 		}
+
+		[Test]
+		public void TestMakeArrayTypeWorksWithIncompleteEnum () //bug 82015
+		{
+			AssemblyName name = new AssemblyName();
+			name.Name = "foo";
+
+			AssemblyBuilder asm = AppDomain.CurrentDomain.DefineDynamicAssembly(name,
+				AssemblyBuilderAccess.Run|AssemblyBuilderAccess.Save);
+			ModuleBuilder module = asm.DefineDynamicModule("foo.dll", "foo.dll", true);
+
+			TypeBuilder builder = module.DefineType("FooEnum",
+				TypeAttributes.Sealed|TypeAttributes.Serializable,
+				typeof(Enum));
+
+			Assert.IsNotNull (builder.MakeArrayType ());
+		}
+
 #endif
 	}
 }
