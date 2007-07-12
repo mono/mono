@@ -1,3 +1,9 @@
+
+Thu Jul 12 12:18:22 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-x86.c: fixed offsets for IMT call sequence.
+	* mini-x86.h: enable IMT again.
+
 2007-07-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* trace.c (mono_trace_enter_method): Decode MonoType too.
