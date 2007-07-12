@@ -1,3 +1,9 @@
+2007-07-12  Raja R Harinath  <rharinath@novell.com>
+
+	* class-internals.h (_MonoGenericInst::is_reference): Remove bogus
+	field.
+	* metadata.c, reflection.c: Update to changes.
+
 2007-07-11  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* class.c, class-internal.h: added mono_type_is_valid_enum_basetype and
