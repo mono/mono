@@ -496,7 +496,7 @@ namespace System.Web
 
 			while (count > 0) {
 				if (cur_bucket.FreeSpace == 0)
-					AppendBucket (new CharBucket ());
+					AppendBucket (new ByteBucket ());
 
 				int len = count;
 				int freeSpace = cur_bucket.FreeSpace;
