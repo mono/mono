@@ -138,12 +138,7 @@ namespace System.Web.Hosting {
 		{
 			if (virtualPath == null || virtualPath == "")
 				throw new ArgumentNullException ("virtualPath");
-
-			if (UrlUtils.IsRelativeUrl (virtualPath)) {
-				string msg = String.Format ("The relative virtual path '{0}', is not allowed here.", virtualPath);
-				throw new ArgumentException (msg);
-			}
-
+			
 			HttpContext context = HttpContext.Current;
 			if (context == null)
 				return null;
