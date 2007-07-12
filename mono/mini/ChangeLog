@@ -1,3 +1,7 @@
+2007-07-12  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c (check_linkdemand, mono_method_to_ir): Abort compilation
+	as soon as check_linkdemand sets an exception_type.
 
 Thu Jul 12 12:18:22 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
