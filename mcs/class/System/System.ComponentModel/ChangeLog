@@ -1,3 +1,9 @@
+2007-07-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* TypeDescriptor.cs: GetEditor: Make sure the static constructor of the
+	  editors basetype is called, since that's where we're initializing
+	  the editor table.
+
 2007-07-11  Igor Zelmanovich <igorz@mainsoft.com>
 
 	* ReflectionPropertyDescriptor: fixed ShouldSerializeValue:

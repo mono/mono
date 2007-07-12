@@ -517,8 +517,15 @@ public sealed class TypeDescriptor
 		if (t != null)
 			return CreateEditor (t, componentType);
 			
-		if (t == null && editors != null) {
+		if (t == null) {
+			// Make sure the editorBaseType's static constructor has been called,
+			// since that's where we're putting the initialization of its editor table.
+			
+			System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor (editorBaseType.TypeHandle);
+				
+			if (editors != null) {
 				return FindEditorInTable (componentType, editorBaseType, editors [editorBaseType] as Hashtable);
+			}
 		}
 
 		return null;    // No editor specified
