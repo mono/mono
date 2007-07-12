@@ -3,7 +3,7 @@
     <ProjectType>Local</ProjectType>
     <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{5E6430B2-6B9F-4E76-802E-20207EF80391}</ProjectGuid>
+    <ProjectGuid>{AAA78FAB-1DD4-4ACE-A3C1-819C0E31DFFE}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ApplicationIcon>
@@ -41,8 +41,7 @@
     <DebugSymbols>true</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
     <NoStdLib>false</NoStdLib>
-    <NoWarn>
-    </NoWarn>
+    <NoWarn>612,618,3021</NoWarn>
     <Optimize>false</Optimize>
     <RegisterForComInterop>false</RegisterForComInterop>
     <RemoveIntegerChecks>false</RemoveIntegerChecks>
@@ -64,8 +63,7 @@
     <DebugSymbols>false</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
     <NoStdLib>false</NoStdLib>
-    <NoWarn>
-    </NoWarn>
+    <NoWarn>612,618,3021</NoWarn>
     <Optimize>false</Optimize>
     <RegisterForComInterop>false</RegisterForComInterop>
     <RemoveIntegerChecks>false</RemoveIntegerChecks>
@@ -81,14 +79,13 @@
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
-    <DefineConstants>NET_1_1</DefineConstants>
+    <DefineConstants>NET_1_1 ONLY_1_1</DefineConstants>
     <DocumentationFile>
     </DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
     <NoStdLib>false</NoStdLib>
-    <NoWarn>
-    </NoWarn>
+    <NoWarn>612,618,3021</NoWarn>
     <Optimize>false</Optimize>
     <RegisterForComInterop>false</RegisterForComInterop>
     <RemoveIntegerChecks>false</RemoveIntegerChecks>
@@ -104,14 +101,13 @@
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
-    <DefineConstants>NET_1_1</DefineConstants>
+    <DefineConstants>NET_1_1 ONLY_1_1</DefineConstants>
     <DocumentationFile>
     </DocumentationFile>
     <DebugSymbols>false</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
     <NoStdLib>false</NoStdLib>
-    <NoWarn>
-    </NoWarn>
+    <NoWarn>612,618,3021</NoWarn>
     <Optimize>false</Optimize>
     <RegisterForComInterop>false</RegisterForComInterop>
     <RemoveIntegerChecks>false</RemoveIntegerChecks>
@@ -150,8 +146,12 @@
     <Compile Include="System.Resources\ResXResourceReader.cs" />
     <Compile Include="System.Resources\ResXResourceSet.cs" />
     <Compile Include="System.Resources\ResXResourceWriter.cs" />
-    <Compile Include="System.Windows.Forms.Design\ComponentEditorForm.cs" />
-    <Compile Include="System.Windows.Forms.Design\ComponentEditorPage.cs" />
+    <Compile Include="System.Windows.Forms.Design\ComponentEditorForm.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Forms.Design\ComponentEditorPage.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="System.Windows.Forms.Design\EventsTab.cs" />
     <Compile Include="System.Windows.Forms.Design\IUIService.cs" />
     <Compile Include="System.Windows.Forms.Design\IWindowsFormsEditorService.cs" />
@@ -225,7 +225,9 @@
     <Compile Include="System.Windows.Forms\BorderStyle.cs" />
     <Compile Include="System.Windows.Forms\BoundsSpecified.cs" />
     <Compile Include="System.Windows.Forms\Button.cs" />
-    <Compile Include="System.Windows.Forms\ButtonBase.cs" />
+    <Compile Include="System.Windows.Forms\ButtonBase.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="System.Windows.Forms\ButtonBorderStyle.cs" />
     <Compile Include="System.Windows.Forms\ButtonRenderer.cs" />
     <Compile Include="System.Windows.Forms\ButtonState.cs" />
@@ -283,12 +285,16 @@
     <Compile Include="System.Windows.Forms\DataGrid.cs" />
     <Compile Include="System.Windows.Forms\DataGridBoolColumn.cs" />
     <Compile Include="System.Windows.Forms\DataGridCell.cs" />
-    <Compile Include="System.Windows.Forms\DataGridColumnStyle.cs" />
+    <Compile Include="System.Windows.Forms\DataGridColumnStyle.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="System.Windows.Forms\DataGridLineStyle.cs" />
     <Compile Include="System.Windows.Forms\DataGridParentRowsLabelStyle.cs" />
     <Compile Include="System.Windows.Forms\DataGridPreferredColumnWidthTypeConverter.cs" />
     <Compile Include="System.Windows.Forms\DataGridTableStyle.cs" />
-    <Compile Include="System.Windows.Forms\DataGridTextBox.cs" />
+    <Compile Include="System.Windows.Forms\DataGridTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="System.Windows.Forms\DataGridTextBoxColumn.cs" />
     <Compile Include="System.Windows.Forms\DataGridView.cs" />
     <Compile Include="System.Windows.Forms\DataGridViewAdvancedBorderStyle.cs" />
@@ -452,9 +458,13 @@
     <Compile Include="System.Windows.Forms\ErrorIconAlignment.cs" />
     <Compile Include="System.Windows.Forms\ErrorProvider.cs" />
     <Compile Include="System.Windows.Forms\FeatureSupport.cs" />
-    <Compile Include="System.Windows.Forms\FileDialog.cs" />
+    <Compile Include="System.Windows.Forms\FileDialog.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="System.Windows.Forms\FixedPanel.cs" />
-    <Compile Include="System.Windows.Forms\FixedSizeTextBox.cs" />
+    <Compile Include="System.Windows.Forms\FixedSizeTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="System.Windows.Forms\FlatButtonAppearance.cs" />
     <Compile Include="System.Windows.Forms\FlatStyle.cs" />
     <Compile Include="System.Windows.Forms\FlowDirection.cs" />
@@ -462,7 +472,9 @@
     <Compile Include="System.Windows.Forms\FlowLayoutSettings.cs" />
     <Compile Include="System.Windows.Forms\FolderBrowserDialog.cs" />
     <Compile Include="System.Windows.Forms\FontDialog.cs" />
-    <Compile Include="System.Windows.Forms\Form.cs" />
+    <Compile Include="System.Windows.Forms\Form.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="System.Windows.Forms\FormBorderStyle.cs" />
     <Compile Include="System.Windows.Forms\FormClosedEventArgs.cs" />
     <Compile Include="System.Windows.Forms\FormClosedEventHandler.cs" />
@@ -483,7 +495,9 @@
     <Compile Include="System.Windows.Forms\GridItemType.cs" />
     <Compile Include="System.Windows.Forms\GridTableStylesCollection.cs" />
     <Compile Include="System.Windows.Forms\GridTablesFactory.cs" />
-    <Compile Include="System.Windows.Forms\GroupBox.cs" />
+    <Compile Include="System.Windows.Forms\GroupBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="System.Windows.Forms\GroupBoxRenderer.cs" />
     <Compile Include="System.Windows.Forms\HScrollBar.cs" />
     <Compile Include="System.Windows.Forms\HandledMouseEventArgs.cs" />
@@ -518,12 +532,16 @@
     <Compile Include="System.Windows.Forms\ImageIndexConverter.cs" />
     <Compile Include="System.Windows.Forms\ImageKeyConverter.cs" />
     <Compile Include="System.Windows.Forms\ImageLayout.cs" />
-    <Compile Include="System.Windows.Forms\ImageList.cs" />
+    <Compile Include="System.Windows.Forms\ImageList.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="System.Windows.Forms\ImageListConverter.cs" />
     <Compile Include="System.Windows.Forms\ImageListStreamer.cs" />
     <Compile Include="System.Windows.Forms\ImeMode.cs" />
     <Compile Include="System.Windows.Forms\ImplicitHScrollBar.cs" />
-    <Compile Include="System.Windows.Forms\ImplicitVScrollBar.cs" />
+    <Compile Include="System.Windows.Forms\ImplicitVScrollBar.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="System.Windows.Forms\InputLanguage.cs" />
     <Compile Include="System.Windows.Forms\InputLanguageChangedEventArgs.cs" />
     <Compile Include="System.Windows.Forms\InputLanguageChangedEventHandler.cs" />
@@ -554,7 +572,9 @@
     <Compile Include="System.Windows.Forms\Label.cs" />
     <Compile Include="System.Windows.Forms\LabelEditEventArgs.cs" />
     <Compile Include="System.Windows.Forms\LabelEditEventHandler.cs" />
-    <Compile Include="System.Windows.Forms\LabelEditTextBox.cs" />
+    <Compile Include="System.Windows.Forms\LabelEditTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="System.Windows.Forms\LayoutEngine.cs" />
     <Compile Include="System.Windows.Forms\LayoutEventArgs.cs" />
     <Compile Include="System.Windows.Forms\LayoutEventHandler.cs" />
@@ -601,8 +621,12 @@
     <Compile Include="System.Windows.Forms\MdiWindowManager.cs" />
     <Compile Include="System.Windows.Forms\MeasureItemEventArgs.cs" />
     <Compile Include="System.Windows.Forms\MeasureItemEventHandler.cs" />
-    <Compile Include="System.Windows.Forms\Menu.cs" />
-    <Compile Include="System.Windows.Forms\MenuAPI.cs" />
+    <Compile Include="System.Windows.Forms\Menu.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Forms\MenuAPI.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="System.Windows.Forms\MenuGlyph.cs" />
     <Compile Include="System.Windows.Forms\MenuItem.cs" />
     <Compile Include="System.Windows.Forms\MenuMerge.cs" />
@@ -626,7 +650,9 @@
     <Compile Include="System.Windows.Forms\NavigateEventHandler.cs" />
     <Compile Include="System.Windows.Forms\NodeLabelEditEventArgs.cs" />
     <Compile Include="System.Windows.Forms\NodeLabelEditEventHandler.cs" />
-    <Compile Include="System.Windows.Forms\NotifyIcon.cs" />
+    <Compile Include="System.Windows.Forms\NotifyIcon.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="System.Windows.Forms\NumericTextBox.cs" />
     <Compile Include="System.Windows.Forms\NumericUpDown.cs" />
     <Compile Include="System.Windows.Forms\NumericUpDownAcceleration.cs" />
@@ -643,13 +669,18 @@
     <Compile Include="System.Windows.Forms\PageSetupDialog.cs" />
     <Compile Include="System.Windows.Forms\PaintEventArgs.cs" />
     <Compile Include="System.Windows.Forms\PaintEventHandler.cs" />
-    <Compile Include="System.Windows.Forms\Panel.cs" />
-    <Compile Include="System.Windows.Forms\PictureBox.cs" />
+    <Compile Include="System.Windows.Forms\Panel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Forms\PictureBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="System.Windows.Forms\PictureBoxSizeMode.cs" />
     <Compile Include="System.Windows.Forms\PopupEventArgs.cs" />
     <Compile Include="System.Windows.Forms\PopupEventHandler.cs" />
     <Compile Include="System.Windows.Forms\PowerLineStatus.cs" />
     <Compile Include="System.Windows.Forms\PowerState.cs" />
+    <Compile Include="System.Windows.Forms\PowerStatus.cs" />
     <Compile Include="System.Windows.Forms\PreProcessControlState.cs" />
     <Compile Include="System.Windows.Forms\PreviewKeyDownEventArgs.cs" />
     <Compile Include="System.Windows.Forms\PreviewKeyDownEventHandler.cs" />
@@ -666,7 +697,9 @@
     <Compile Include="System.Windows.Forms\PropertyGrid.cs" />
     <Compile Include="System.Windows.Forms\PropertyGridCommands.cs" />
     <Compile Include="System.Windows.Forms\PropertyGridTextBox.cs" />
-    <Compile Include="System.Windows.Forms\PropertyGridView.cs" />
+    <Compile Include="System.Windows.Forms\PropertyGridView.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="System.Windows.Forms\PropertyManager.cs" />
     <Compile Include="System.Windows.Forms\PropertySort.cs" />
     <Compile Include="System.Windows.Forms\PropertyTabChangedEventArgs.cs" />
@@ -769,8 +802,12 @@
     <Compile Include="System.Windows.Forms\TableLayoutSettings.cs" />
     <Compile Include="System.Windows.Forms\TableLayoutStyle.cs" />
     <Compile Include="System.Windows.Forms\TableLayoutStyleCollection.cs" />
-    <Compile Include="System.Windows.Forms\TextBox.cs" />
-    <Compile Include="System.Windows.Forms\TextBoxBase.cs" />
+    <Compile Include="System.Windows.Forms\TextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Forms\TextBoxBase.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="System.Windows.Forms\TextBoxRenderer.cs" />
     <Compile Include="System.Windows.Forms\TextControl.cs" />
     <Compile Include="System.Windows.Forms\TextDataFormat.cs" />
@@ -788,7 +825,9 @@
     <Compile Include="System.Windows.Forms\Timer.cs" />
     <Compile Include="System.Windows.Forms\ToolBar.cs" />
     <Compile Include="System.Windows.Forms\ToolBarAppearance.cs" />
-    <Compile Include="System.Windows.Forms\ToolBarButton.cs" />
+    <Compile Include="System.Windows.Forms\ToolBarButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="System.Windows.Forms\ToolBarButtonClickEventArgs.cs" />
     <Compile Include="System.Windows.Forms\ToolBarButtonClickEventHandler.cs" />
     <Compile Include="System.Windows.Forms\ToolBarButtonStyle.cs" />
@@ -812,6 +851,7 @@
     <Compile Include="System.Windows.Forms\ToolStripDropDownClosingEventHandler.cs" />
     <Compile Include="System.Windows.Forms\ToolStripDropDownDirection.cs" />
     <Compile Include="System.Windows.Forms\ToolStripDropDownItem.cs" />
+    <Compile Include="System.Windows.Forms\ToolStripDropDownItemAccessibleObject.cs" />
     <Compile Include="System.Windows.Forms\ToolStripDropDownMenu.cs" />
     <Compile Include="System.Windows.Forms\ToolStripGripDisplayStyle.cs" />
     <Compile Include="System.Windows.Forms\ToolStripGripRenderEventArgs.cs" />
@@ -859,9 +899,12 @@
     <Compile Include="System.Windows.Forms\ToolStripSplitStackLayout.cs" />
     <Compile Include="System.Windows.Forms\ToolStripStatusLabel.cs" />
     <Compile Include="System.Windows.Forms\ToolStripStatusLabelBorderSides.cs" />
+    <Compile Include="System.Windows.Forms\ToolStripSystemRenderer.cs" />
     <Compile Include="System.Windows.Forms\ToolStripTextBox.cs" />
     <Compile Include="System.Windows.Forms\ToolStripTextDirection.cs" />
-    <Compile Include="System.Windows.Forms\ToolTip.cs" />
+    <Compile Include="System.Windows.Forms\ToolTip.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="System.Windows.Forms\ToolTipIcon.cs" />
     <Compile Include="System.Windows.Forms\ToolWindowManager.cs" />
     <Compile Include="System.Windows.Forms\TrackBar.cs" />
@@ -874,7 +917,9 @@
     <Compile Include="System.Windows.Forms\TreeNodeMouseHoverEventArgs.cs" />
     <Compile Include="System.Windows.Forms\TreeNodeMouseHoverEventHandler.cs" />
     <Compile Include="System.Windows.Forms\TreeNodeStates.cs" />
-    <Compile Include="System.Windows.Forms\TreeView.cs" />
+    <Compile Include="System.Windows.Forms\TreeView.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="System.Windows.Forms\TreeViewAction.cs" />
     <Compile Include="System.Windows.Forms\TreeViewCancelEventArgs.cs" />
     <Compile Include="System.Windows.Forms\TreeViewCancelEventHandler.cs" />
@@ -894,7 +939,9 @@
     <Compile Include="System.Windows.Forms\UpDownBase.cs" />
     <Compile Include="System.Windows.Forms\UpDownEventArgs.cs" />
     <Compile Include="System.Windows.Forms\UpDownEventHandler.cs" />
-    <Compile Include="System.Windows.Forms\UserControl.cs" />
+    <Compile Include="System.Windows.Forms\UserControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="System.Windows.Forms\VScrollBar.cs" />
     <Compile Include="System.Windows.Forms\ValidationConstraints.cs" />
     <Compile Include="System.Windows.Forms\View.cs" />
@@ -937,6 +984,7 @@
     <Compile Include="System.Windows.Forms.Theming\ThemeElementsNice.cs" />
     <Compile Include="System.Windows.Forms.Theming\Default\ButtonPainter.cs" />
     <Compile Include="System.Windows.Forms.Theming\Default\TabControlPainter.cs" />
+    <Compile Include="System.Windows.Forms.Theming\Default\ToolStripPainter.cs" />
     <Compile Include="System.Windows.Forms.Theming\Nice\TabControlPainter.cs" />
     <Compile Include="System.Windows.Forms.VisualStyles\BackgroundType.cs" />
     <Compile Include="System.Windows.Forms.VisualStyles\BooleanProperty.cs" />
@@ -1170,6 +1218,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="resources\nav_previous.png">
       <LogicalName>nav_previous.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\image-missing.png">
+      <LogicalName>image-missing.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\image-x-generic.png">
+      <LogicalName>image-x-generic.png</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

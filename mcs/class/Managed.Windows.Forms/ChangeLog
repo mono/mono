@@ -1,5 +1,11 @@
 2007-07-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* build-csproj2k5-tests: Remove warnings.
+	* SWF2k5.csproj, SWF2k5-tests.csproj: Updated.
+	* build-csproj2k5: Ignore obsolete warnings in VS as well.
+
+2007-07-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Makefile: Ignore obsolete warnings.
 
 2007-07-09  Jonathan Pobst  <monkey@jpobst.com>

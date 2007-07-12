@@ -160,7 +160,6 @@ SWFhead()
     <Reference Include="System.Xml">
       <Name>System.Xml</Name>
     </Reference>
-    <Reference Include="Mono.Posix" Condition="'\$(Configuration)' == 'DebugXBuild'"/>
   </ItemGroup>
 EOF
 }
@@ -194,9 +193,11 @@ echo "  <ItemGroup>"
 cat $Source | while read SRC; do
 # Don't do AssemblyInfo, it's got signing requests and such that we don't want
 if [ "x$SRC" != "xAssembly/AssemblyInfo.cs" ] ; then
+SRC=`echo Test/$SRC`
+SRC=`echo $SRC | sed 's/Test\/..\/..\/..\/build\///'`
 SRC=`echo $SRC | tr '/' '\\\\'`
 cat <<EOF
-    <Compile Include="Test/$SRC" />
+    <Compile Include="$SRC" />
 EOF
 fi
 done
