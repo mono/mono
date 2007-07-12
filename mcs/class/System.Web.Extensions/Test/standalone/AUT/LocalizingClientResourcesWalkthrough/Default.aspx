@@ -33,7 +33,7 @@
         <br /><br />
         <asp:ScriptManager ID="ScriptManager1" EnableScriptLocalization="true" runat="server">
         <Scripts>
-            <asp:ScriptReference Assembly="LocalizingScriptResources" Name="LocalizingScriptResources.CheckAnswer.js" />
+            <asp:ScriptReference Assembly="SystemWebExtensionsAUT" Name="SystemWebExtensionsAUT.LocalizingClientResourcesWalkthrough.CheckAnswer.js" />
         </Scripts>
         </asp:ScriptManager>
         <div>

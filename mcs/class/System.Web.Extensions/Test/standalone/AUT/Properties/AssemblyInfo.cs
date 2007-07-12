@@ -38,3 +38,4 @@ using System.Web.UI;
 [assembly: WebResource("SystemWebExtensionsAUT.System.Web.UI.ScriptReference.UpdatePanelAnimation.js", "application/x-javascript")]
 [assembly: WebResource("SystemWebExtensionsAUT.DynamicScriptReferencesHowTo.Scripts.Scripts.js","application/x-javascript")]
 [assembly: WebResource("SystemWebExtensionsAUT.DynamicScriptReferencesHowTo.Scripts.Scripts.debug.js", "application/x-javascript")]
+[assembly: WebResource("SystemWebExtensionsAUT.LocalizingClientResourcesWalkthrough.CheckAnswer.js", "application/x-javascript")]
