@@ -38,6 +38,11 @@ namespace System.Windows.Forms
 		{
 		}
 
+#if NET_2_0
+		[MonoInternalNote ("Determine if we need an X11 implementation or if defaults are good.")]
+		public static int ActiveWindowTrackingDelay { get { return XplatUI.ActiveWindowTrackingDelay; } }
+#endif
+
 		public static ArrangeDirection ArrangeDirection {
 			get {
 				return ThemeEngine.Current.ArrangeDirection;
@@ -61,6 +66,11 @@ namespace System.Windows.Forms
 				return ThemeEngine.Current.Border3DSize;
 			}
 		}
+		
+#if NET_2_0
+		[MonoInternalNote ("Determine if we need an X11 implementation or if defaults are good.")]
+		public static int BorderMultiplierFactor { get { return ThemeEngine.Current.BorderMultiplierFactor; } }
+#endif
 
 		public static Size BorderSize {
 			get {
@@ -79,6 +89,13 @@ namespace System.Windows.Forms
 				return ThemeEngine.Current.CaptionHeight;
 			}
 		}
+
+#if NET_2_0
+		[MonoInternalNote ("Determine if we need an X11 implementation or if defaults are good.")]
+		public static int CaretBlinkTime { get { return XplatUI.CaretBlinkTime; } }
+		[MonoInternalNote ("Determine if we need an X11 implementation or if defaults are good.")]
+		public static int CaretWidth { get { return XplatUI.CaretWidth; } }
+#endif
 
 		public static string ComputerName {
 			get {
@@ -134,6 +151,13 @@ namespace System.Windows.Forms
 			}
 		}
 
+#if NET_2_0
+		[MonoInternalNote ("Determine if we need an X11 implementation or if defaults are good.")]
+		public static int FontSmoothingContrast { get { return XplatUI.FontSmoothingContrast; } }
+		[MonoInternalNote ("Determine if we need an X11 implementation or if defaults are good.")]
+		public static int FontSmoothingType { get { return XplatUI.FontSmoothingType; } }
+#endif
+
 		public static Size FrameBorderSize {
 			get {
 				return ThemeEngine.Current.FrameBorderSize;
@@ -145,6 +169,13 @@ namespace System.Windows.Forms
 				return false;
 			}
 		}
+
+#if NET_2_0
+		[MonoInternalNote ("Determine if we need an X11 implementation or if defaults are good.")]
+		public static int HorizontalFocusThickness { get { return ThemeEngine.Current.HorizontalFocusThickness; } }
+		[MonoInternalNote ("Determine if we need an X11 implementation or if defaults are good.")]
+		public static int HorizontalResizeBorderThickness { get { return XplatUI.HorizontalResizeBorderThickness; } }
+#endif
 
 		public static int HorizontalScrollBarArrowWidth {
 			get {
@@ -189,6 +220,87 @@ namespace System.Windows.Forms
 				return ThemeEngine.Current.IconSpacingSize;
 			}
 		}
+
+#if NET_2_0
+		[MonoInternalNote ("Determine if we need an X11 implementation or if defaults are good.")]
+		public static bool IsActiveWindowTrackingEnabled {
+			get { return XplatUI.IsActiveWindowTrackingEnabled; }
+		}
+
+		[MonoInternalNote ("Determine if we need an X11 implementation or if defaults are good.")]
+		public static bool IsComboBoxAnimationEnabled {
+			get { return XplatUI.IsComboBoxAnimationEnabled; }
+		}
+
+		[MonoInternalNote ("Determine if we need an X11 implementation or if defaults are good.")]
+		public static bool IsDropShadowEnabled {
+			get { return XplatUI.IsDropShadowEnabled; }
+		}
+
+		public static bool IsFlatMenuEnabled {
+			get { return false; }
+		}
+
+		[MonoInternalNote ("Determine if we need an X11 implementation or if defaults are good.")]
+		public static bool IsFontSmoothingEnabled {
+			get { return XplatUI.IsFontSmoothingEnabled; }
+		}
+
+		[MonoInternalNote ("Determine if we need an X11 implementation or if defaults are good.")]
+		public static bool IsHotTrackingEnabled {
+			get { return XplatUI.IsHotTrackingEnabled; }
+		}
+
+		[MonoInternalNote ("Determine if we need an X11 implementation or if defaults are good.")]
+		public static bool IsIconTitleWrappingEnabled {
+			get { return XplatUI.IsIconTitleWrappingEnabled; }
+		}
+
+		[MonoInternalNote ("Determine if we need an X11 implementation or if defaults are good.")]
+		public static bool IsKeyboardPreferred {
+			get { return XplatUI.IsKeyboardPreferred; }
+		}
+
+		[MonoInternalNote ("Determine if we need an X11 implementation or if defaults are good.")]
+		public static bool IsListBoxSmoothScrollingEnabled {
+			get { return XplatUI.IsListBoxSmoothScrollingEnabled; }
+		}
+
+		[MonoInternalNote ("Determine if we need an X11 implementation or if defaults are good.")]
+		public static bool IsMenuAnimationEnabled {
+			get { return XplatUI.IsMenuAnimationEnabled; }
+		}
+
+		[MonoInternalNote ("Determine if we need an X11 implementation or if defaults are good.")]
+		public static bool IsMenuFadeEnabled {
+			get { return XplatUI.IsMenuFadeEnabled; }
+		}
+
+		[MonoInternalNote ("Determine if we need an X11 implementation or if defaults are good.")]
+		public static bool IsMinimizeRestoreAnimationEnabled {
+			get { return XplatUI.IsMinimizeRestoreAnimationEnabled; }
+		}
+
+		[MonoInternalNote ("Determine if we need an X11 implementation or if defaults are good.")]
+		public static bool IsSelectionFadeEnabled {
+			get { return XplatUI.IsSelectionFadeEnabled; }
+		}
+
+		[MonoInternalNote ("Determine if we need an X11 implementation or if defaults are good.")]
+		public static bool IsSnapToDefaultEnabled {
+			get { return XplatUI.IsSnapToDefaultEnabled; }
+		}
+
+		[MonoInternalNote ("Determine if we need an X11 implementation or if defaults are good.")]
+		public static bool IsTitleBarGradientEnabled {
+			get { return XplatUI.IsTitleBarGradientEnabled; }
+		}
+
+		[MonoInternalNote ("Determine if we need an X11 implementation or if defaults are good.")]
+		public static bool IsToolTipAnimationEnabled {
+			get { return XplatUI.IsToolTipAnimationEnabled; }
+		}
+#endif
 
 		public static int KanjiWindowHeight {
 			get {
@@ -235,6 +347,13 @@ namespace System.Windows.Forms
 			}
 		}
 
+#if NET_2_0
+		[MonoInternalNote ("Determine if we need an X11 implementation or if defaults are good.")]
+		public static Size MenuBarButtonSize {
+			get { return ThemeEngine.Current.MenuBarButtonSize; }
+		}
+#endif
+
 		public static Size MenuButtonSize {
 			get {
 				return ThemeEngine.Current.MenuButtonSize;
@@ -261,6 +380,11 @@ namespace System.Windows.Forms
 				return ThemeEngine.Current.MenuHeight;
 			}
 		}
+
+#if NET_2_0
+		[MonoInternalNote ("Determine if we need an X11 implementation or if defaults are good.")]
+		public static int MenuShowDelay { get { return XplatUI.MenuShowDelay; } }
+#endif
 
 		public static bool MidEastEnabled {
 			get {
@@ -329,6 +453,11 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[MonoInternalNote ("Determine if we need an X11 implementation or if defaults are good.")]
+		public static int MouseSpeed {
+			get { return XplatUI.MouseSpeed; }
+		}
+		
 		public static int MouseWheelScrollDelta {
 			get {
 				return XplatUI.MouseWheelScrollDelta;
@@ -373,6 +502,18 @@ namespace System.Windows.Forms
 			}
 		}
 
+#if NET_2_0
+		[MonoInternalNote ("Determine if we need an X11 implementation or if defaults are good.")]
+		public static LeftRightAlignment PopupMenuAlignment {
+			get { return XplatUI.PopupMenuAlignment; }
+		}
+		
+		[MonoTODO ("Only implemented for Win32.")]
+		public static PowerStatus PowerStatus {
+			get { return XplatUI.PowerStatus; }
+		}
+#endif
+
 		public static Size PrimaryMonitorMaximizedWindowSize {
 			get {
 				return new Size(WorkingArea.Width, WorkingArea.Height);
@@ -391,6 +532,12 @@ namespace System.Windows.Forms
 			}
 		}
 
+#if NET_2_0
+		public static ScreenOrientation ScreenOrientation {
+			get { return ScreenOrientation.Angle0; }
+		}
+#endif
+
 		public static bool Secure {
 			get {
 				return true;
@@ -402,6 +549,18 @@ namespace System.Windows.Forms
 				return false;
 			}
 		}
+
+#if NET_2_0
+		[MonoInternalNote ("Determine if we need an X11 implementation or if defaults are good.")]
+		public static int SizingBorderWidth {
+			get { return XplatUI.SizingBorderWidth; }
+		}
+
+		[MonoInternalNote ("Determine if we need an X11 implementation or if defaults are good.")]
+		public static Size SmallCaptionButtonSize {
+			get { return XplatUI.SmallCaptionButtonSize; }
+		}
+#endif
 
 		public static Size SmallIconSize {
 			get {
@@ -429,6 +588,13 @@ namespace System.Windows.Forms
 			}
 		}
 
+#if NET_2_0
+		[MonoInternalNote ("Determine if we need an X11 implementation or if defaults are good.")]
+		public static bool UIEffectsEnabled {
+			get { return XplatUI.UIEffectsEnabled; }
+		}
+#endif
+
 		public static string UserDomainName {
 			get {
 				return Environment.UserDomainName;
@@ -446,6 +612,13 @@ namespace System.Windows.Forms
 				return Environment.UserName;
 			}
 		}
+
+#if NET_2_0
+		[MonoInternalNote ("Determine if we need an X11 implementation or if defaults are good.")]
+		public static int VerticalFocusThickness { get { return ThemeEngine.Current.VerticalFocusThickness; } }
+		[MonoInternalNote ("Determine if we need an X11 implementation or if defaults are good.")]
+		public static int VerticalResizeBorderThickness { get { return XplatUI.VerticalResizeBorderThickness; } }
+#endif
 
 		public static int VerticalScrollBarArrowHeight {
 			get {

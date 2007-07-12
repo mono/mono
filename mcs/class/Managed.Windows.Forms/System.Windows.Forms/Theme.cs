@@ -396,6 +396,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		public virtual int BorderMultiplierFactor { get { return 1; } }
+		
 		public virtual Size BorderSizableSize {
 			get {
 				return new Size (3, 3);
@@ -456,6 +458,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		public virtual int HorizontalFocusThickness { get { return 1; } }
+		
 		public virtual int HorizontalScrollBarArrowWidth {
 			get {
 				return 16;
@@ -484,6 +488,10 @@ namespace System.Windows.Forms
 			get {
 				return XplatUI.MenuAccessKeysUnderlined;
 			}
+		}
+		
+		public virtual Size MenuBarButtonSize {
+			get { return XplatUI.MenuBarButtonSize; }
 		}
 		
 		public virtual Size MenuButtonSize {
@@ -533,6 +541,8 @@ namespace System.Windows.Forms
 				return 16;
 			}
 		}
+
+		public virtual int VerticalFocusThickness { get { return 1; } }
 
 		public virtual int VerticalScrollBarArrowHeight {
 			get {

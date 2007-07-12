@@ -38,6 +38,8 @@ namespace System.Windows.Forms {
 
 
 		#region XplatUI Driver Properties
+		internal virtual int ActiveWindowTrackingDelay { get { return 0; } }
+
 		internal virtual Color ForeColor {
 			get {
 				return ThemeEngine.Current.DefaultWindowForeColor;
@@ -68,6 +70,9 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal virtual int CaretBlinkTime { get { return 530; } }
+		internal virtual int CaretWidth { get { return 10; } }
+		
 		internal virtual Size DoubleClickSize {
 			get {
 				return new Size (4, 4);
@@ -92,6 +97,27 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal virtual int FontSmoothingContrast { get { return 1400; } }
+		internal virtual int FontSmoothingType { get { return 1; } }
+		internal virtual int HorizontalResizeBorderThickness { get { return 8; } }
+		internal virtual bool IsActiveWindowTrackingEnabled { get { return false; } }
+		internal virtual bool IsComboBoxAnimationEnabled { get { return false; } }
+		internal virtual bool IsDropShadowEnabled { get { return false; } }
+		internal virtual bool IsFontSmoothingEnabled { get { return true; } }
+		internal virtual bool IsHotTrackingEnabled { get { return false; } }
+		internal virtual bool IsIconTitleWrappingEnabled { get { return true; } }
+		internal virtual bool IsKeyboardPreferred { get { return false; } }
+		internal virtual bool IsListBoxSmoothScrollingEnabled { get { return true; } }
+		internal virtual bool IsMenuAnimationEnabled { get { return false; } }
+		internal virtual bool IsMenuFadeEnabled { get { return true; } }
+		internal virtual bool IsMinimizeRestoreAnimationEnabled { get { return false; } }
+		internal virtual bool IsSelectionFadeEnabled { get { return false; } }
+		internal virtual bool IsSnapToDefaultEnabled { get { return false; } }
+		internal virtual bool IsTitleBarGradientEnabled { get { return false; } }
+		internal virtual bool IsToolTipAnimationEnabled { get { return false; } }
+		internal virtual Size MenuBarButtonSize { get { return new Size (19, 19); } }
+		internal virtual int MenuShowDelay { get { return 0; } }
+		
 		internal virtual Keys ModifierKeys {
 			get {
 				return Keys.None;
@@ -116,6 +142,10 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal virtual int MouseSpeed {
+			get { return 10; }
+		}
+		
 		internal virtual int MouseWheelScrollDelta {
 			get {
 				return 120;
@@ -134,6 +164,28 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal virtual LeftRightAlignment PopupMenuAlignment {
+			get { return LeftRightAlignment.Left; }
+		}
+		
+#if NET_2_0
+		internal virtual PowerStatus PowerStatus {
+			get { throw new NotImplementedException ("Has not been implemented yet for this platform."); }
+		}
+#endif
+
+		internal virtual int SizingBorderWidth {
+			get { return 4; }
+		}
+		
+		internal virtual Size SmallCaptionButtonSize {
+			get { return new Size (17, 17); }
+		}
+		
+		internal virtual bool UIEffectsEnabled {
+			get { return false; }
+		}
+		
 		internal virtual bool DropTarget {
 			get {
 				return false;
@@ -154,6 +206,8 @@ namespace System.Windows.Forms {
 				return true;
 			}
 		}
+
+		internal virtual int VerticalResizeBorderThickness { get { return 8; } }
 
 		internal virtual int VerticalScrollBarWidth {
 			get {

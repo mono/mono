@@ -105,6 +105,8 @@ namespace System.Windows.Forms {
 		#endregion	// Constructor & Destructor
 
 		#region Public Static Properties
+		public static int ActiveWindowTrackingDelay { get { return driver.ActiveWindowTrackingDelay; } }
+
 		internal static string DefaultClassName {
 			get {
 				return default_class_name;
@@ -139,6 +141,9 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		public static int CaretBlinkTime { get { return driver.CaretBlinkTime; } }
+		public static int CaretWidth { get { return driver.CaretWidth; } }
+		
 		static public Size CursorSize {
 			get {
 				return driver.CursorSize;
@@ -175,12 +180,17 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		public static int FontSmoothingContrast { get { return driver.FontSmoothingContrast; } }
+		public static int FontSmoothingType { get { return driver.FontSmoothingType; } }
+
 		public static Size FrameBorderSize {
 			get {
 				return driver.FrameBorderSize;
 			}
 		}
 
+		public static int HorizontalResizeBorderThickness { get { return driver.HorizontalResizeBorderThickness; } }
+		
 		static public int HorizontalScrollBarHeight {
 			get {
 				return driver.HorizontalScrollBarHeight;
@@ -193,6 +203,22 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		public static bool IsActiveWindowTrackingEnabled { get { return driver.IsActiveWindowTrackingEnabled; } }
+		public static bool IsComboBoxAnimationEnabled { get { return driver.IsComboBoxAnimationEnabled; } }
+		public static bool IsDropShadowEnabled { get { return driver.IsDropShadowEnabled; } }
+		public static bool IsFontSmoothingEnabled { get { return driver.IsFontSmoothingEnabled; } }
+		public static bool IsHotTrackingEnabled { get { return driver.IsHotTrackingEnabled; } }
+		public static bool IsIconTitleWrappingEnabled { get { return driver.IsIconTitleWrappingEnabled; } }
+		public static bool IsKeyboardPreferred { get { return driver.IsKeyboardPreferred; } }
+		public static bool IsListBoxSmoothScrollingEnabled { get { return driver.IsListBoxSmoothScrollingEnabled; } }
+		public static bool IsMenuAnimationEnabled { get { return driver.IsMenuAnimationEnabled; } }
+		public static bool IsMenuFadeEnabled { get { return driver.IsMenuFadeEnabled; } }
+		public static bool IsMinimizeRestoreAnimationEnabled { get { return driver.IsMinimizeRestoreAnimationEnabled; } }
+		public static bool IsSelectionFadeEnabled { get	{ return driver.IsSelectionFadeEnabled; } }
+		public static bool IsSnapToDefaultEnabled { get { return driver.IsSnapToDefaultEnabled; } }
+		public static bool IsTitleBarGradientEnabled { get { return driver.IsTitleBarGradientEnabled; } }
+		public static bool IsToolTipAnimationEnabled { get { return driver.IsToolTipAnimationEnabled; } }
+		
 		static public int KeyboardSpeed {
 			get {
 				return driver.KeyboardSpeed;
@@ -217,6 +243,9 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		static public Size MenuBarButtonSize { get { return driver.MenuBarButtonSize; } }
+		static public int MenuShowDelay { get { return driver.MenuShowDelay; } }
+		
 		static public Size MinimizedWindowSize {
 			get {
 				return driver.MinimizedWindowSize;
@@ -241,6 +270,10 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		public static int MouseSpeed {
+			get { return driver.MouseSpeed; }
+		}
+		
 		static public Size SmallIconSize {
 			get {
 				return driver.SmallIconSize;
@@ -289,11 +322,35 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		public static LeftRightAlignment PopupMenuAlignment {
+			get { return driver.PopupMenuAlignment; }
+		}
+		
+#if NET_2_0
+		public static PowerStatus PowerStatus {
+			get { return driver.PowerStatus; }
+		}
+#endif
+
+		public static int SizingBorderWidth {
+			get { return driver.SizingBorderWidth; }
+		}
+		
+		public static Size SmallCaptionButtonSize {
+			get { return driver.SmallCaptionButtonSize; }
+		}
+		
+		public static bool UIEffectsEnabled {
+			get { return driver.UIEffectsEnabled; }
+		}
+		
 		static public bool UserClipWontExposeParent {
 			get {
 				return driver.UserClipWontExposeParent;
 			}
 		}
+
+		public static int VerticalResizeBorderThickness { get { return driver.VerticalResizeBorderThickness; } }
 
 		static public int VerticalScrollBarWidth {
 			get {

@@ -145,14 +145,37 @@ namespace System.Windows.Forms {
 		}
 
 		internal enum SPIAction {
+			SPI_GETACTIVEWINDOWTRACKING = 0x1000,
+			SPI_GETACTIVEWNDTRKTIMEOUT = 0x2002,
+			SPI_GETANIMATION = 0x0048,
+			SPI_GETCARETWIDTH = 0x2006,
+			SPI_GETCOMBOBOXANIMATION = 0x1004,
 			SPI_GETDRAGFULLWINDOWS	= 0x0026,
-			SPI_GETKEYBOARDSPEED	= 0x000A,
+			SPI_GETDROPSHADOW = 0x1024,
+			SPI_GETFONTSMOOTHING = 0x004A,
+			SPI_GETFONTSMOOTHINGCONTRAST = 0x200C,
+			SPI_GETFONTSMOOTHINGTYPE = 0x200A,
+			SPI_GETGRADIENTCAPTIONS = 0x1008,
+			SPI_GETHOTTRACKING = 0x100E,
+			SPI_GETICONTITLEWRAP = 0x0019,
+			SPI_GETKEYBOARDSPEED = 0x000A,
 			SPI_GETKEYBOARDDELAY	= 0x0016,
 			SPI_GETKEYBOARDCUES		= 0x100A,
-			SPI_GETWORKAREA		= 0x0030,
+			SPI_GETKEYBOARDPREF = 0x0044,
+			SPI_GETLISTBOXSMOOTHSCROLLING = 0x1006,
+			SPI_GETMENUANIMATION = 0x1002,
+			SPI_GETMENUDROPALIGNMENT = 0x001B,
+			SPI_GETMENUFADE = 0x1012,
+			SPI_GETMENUSHOWDELAY = 0x006A,
+			SPI_GETMOUSESPEED = 0x0070,
+			SPI_GETSELECTIONFADE = 0x1014,
+			SPI_GETSNAPTODEFBUTTON = 0x005F,
+			SPI_GETTOOLTIPANIMATION = 0x1016,
+			SPI_GETWORKAREA = 0x0030,
 			SPI_GETMOUSEHOVERWIDTH	= 0x0062,
 			SPI_GETMOUSEHOVERHEIGHT	= 0x0064,
 			SPI_GETMOUSEHOVERTIME	= 0x0066,
+			SPI_GETUIEFFECTS = 0x103E,
 			SPI_GETWHEELSCROLLLINES = 0x0068
 		}
 
@@ -267,7 +290,12 @@ namespace System.Windows.Forms {
 			internal HARDWAREINPUT hi;
 		}
 
-
+		[StructLayout (LayoutKind.Sequential)]
+		public struct ANIMATIONINFO {
+			internal uint cbSize;
+			internal int iMinAnimate;
+		}
+		
 		internal enum InputFlags {
 			KEYEVENTF_EXTENDEDKEY	= 0x0001,
 			KEYEVENTF_KEYUP			= 0x0002,
@@ -765,7 +793,30 @@ namespace System.Windows.Forms {
 			LWA_ALPHA			= 0x2,
 		}
 
-		
+		public enum ACLineStatus : byte {
+			Offline = 0,
+			Online = 1,
+			Unknown = 255
+		}
+
+		public enum BatteryFlag : byte {
+			High = 1,
+			Low = 2,
+			Critical = 4,
+			Charging = 8,
+			NoSystemBattery = 128,
+			Unknown = 255
+		}
+
+		[StructLayout (LayoutKind.Sequential)]
+		public class SYSTEMPOWERSTATUS {
+			public ACLineStatus _ACLineStatus;
+			public BatteryFlag _BatteryFlag;
+			public Byte _BatteryLifePercent;
+			public Byte _Reserved1;
+			public Int32 _BatteryLifeTime;
+			public Int32 _BatteryFullLifeTime;
+		}
 		#endregion
 
 		#region Constructor & Destructor
@@ -984,9 +1035,189 @@ namespace System.Windows.Forms {
 
 			return dup;
 		}
+		
+		private int GetSystemParametersInfoInt (SPIAction spi)
+		{
+			int value = 0;
+			
+			Win32SystemParametersInfo (spi, 0, ref value, 0);
+			
+			return value;
+		}
+
+		private bool GetSystemParametersInfoBool (SPIAction spi)
+		{
+			bool value = false;
+			
+			Win32SystemParametersInfo (spi, 0, ref value, 0);
+
+			return value;
+		}
 		#endregion	// Private Support Methods
 
 		#region Static Properties
+		internal override int ActiveWindowTrackingDelay {
+			get { return GetSystemParametersInfoInt (SPIAction.SPI_GETACTIVEWNDTRKTIMEOUT); }
+		}
+
+		internal override int CaretWidth {
+			get { 
+				// Supported on 2k, XP, 2k3 +
+				if (Environment.OSVersion.Version.Major < 5)
+					throw new NotSupportedException ();
+					
+				return GetSystemParametersInfoInt (SPIAction.SPI_GETCARETWIDTH);
+			}
+		}
+
+		internal override int FontSmoothingContrast {
+			get {
+				// Supported on XP, 2k3 +
+				if (Environment.OSVersion.Version.Major < 5 || (Environment.OSVersion.Version.Major == 5 && Environment.OSVersion.Version.Minor == 0))
+					throw new NotSupportedException ();
+					
+				return GetSystemParametersInfoInt (SPIAction.SPI_GETFONTSMOOTHINGCONTRAST);
+			}
+		}
+
+		internal override int FontSmoothingType {
+			get {
+				// Supported on XP, 2k3 +
+				if (Environment.OSVersion.Version.Major < 5 || (Environment.OSVersion.Version.Major == 5 && Environment.OSVersion.Version.Minor == 0))
+					throw new NotSupportedException ();
+
+				return GetSystemParametersInfoInt (SPIAction.SPI_GETFONTSMOOTHINGTYPE);
+			}
+		}
+
+		internal override int HorizontalResizeBorderThickness {
+			get { return Win32GetSystemMetrics (SystemMetrics.SM_CXSIZEFRAME); }
+		}
+
+		internal override bool IsActiveWindowTrackingEnabled {
+			get { return GetSystemParametersInfoBool (SPIAction.SPI_GETACTIVEWINDOWTRACKING); }
+		}
+
+		internal override bool IsComboBoxAnimationEnabled {
+			get { return GetSystemParametersInfoBool (SPIAction.SPI_GETCOMBOBOXANIMATION); }
+		}
+
+		internal override bool IsDropShadowEnabled {
+			get {
+				// Supported on XP, 2k3 +
+				if (Environment.OSVersion.Version.Major < 5 || (Environment.OSVersion.Version.Major == 5 && Environment.OSVersion.Version.Minor == 0))
+					throw new NotSupportedException ();
+
+				return GetSystemParametersInfoBool (SPIAction.SPI_GETDROPSHADOW);
+			}
+		}
+
+		internal override bool IsFontSmoothingEnabled {
+			get { return GetSystemParametersInfoBool (SPIAction.SPI_GETFONTSMOOTHING); }
+		}
+
+		internal override bool IsHotTrackingEnabled {
+			get { return GetSystemParametersInfoBool (SPIAction.SPI_GETHOTTRACKING); }
+		}
+
+		internal override bool IsIconTitleWrappingEnabled {
+			get { return GetSystemParametersInfoBool (SPIAction.SPI_GETICONTITLEWRAP); }
+		}
+
+		internal override bool IsKeyboardPreferred {
+			get { return GetSystemParametersInfoBool (SPIAction.SPI_GETKEYBOARDPREF); }
+		}
+
+		internal override bool IsListBoxSmoothScrollingEnabled {
+			get { return GetSystemParametersInfoBool (SPIAction.SPI_GETLISTBOXSMOOTHSCROLLING); }
+		}
+
+		internal override bool IsMenuAnimationEnabled {
+			get { return GetSystemParametersInfoBool (SPIAction.SPI_GETMENUANIMATION); }
+		}
+
+		internal override bool IsMenuFadeEnabled {
+			get { return GetSystemParametersInfoBool (SPIAction.SPI_GETMENUFADE); }
+		}
+
+		internal override bool IsMinimizeRestoreAnimationEnabled {
+			get {
+				ANIMATIONINFO ai = new ANIMATIONINFO ();
+				ai.cbSize = (uint)Marshal.SizeOf (ai);
+				
+				Win32SystemParametersInfo (SPIAction.SPI_GETANIMATION, 0, ref ai, 0);
+				return ai.iMinAnimate == 0 ? false : true;
+			}
+		}
+
+		internal override bool IsSelectionFadeEnabled {
+			get { return GetSystemParametersInfoBool (SPIAction.SPI_GETSELECTIONFADE); }
+		}
+
+		internal override bool IsSnapToDefaultEnabled {
+			get { return GetSystemParametersInfoBool (SPIAction.SPI_GETSNAPTODEFBUTTON); }
+		}
+
+		internal override bool IsTitleBarGradientEnabled {
+			get { return GetSystemParametersInfoBool (SPIAction.SPI_GETGRADIENTCAPTIONS); }
+		}
+
+		internal override bool IsToolTipAnimationEnabled {
+			get { return GetSystemParametersInfoBool (SPIAction.SPI_GETTOOLTIPANIMATION); }
+		}
+
+		internal override Size MenuBarButtonSize {
+			get {
+				return new Size (Win32GetSystemMetrics (SystemMetrics.SM_CXMENUSIZE),
+					Win32GetSystemMetrics (SystemMetrics.SM_CYMENUSIZE));
+			}
+		}
+
+		internal override int MenuShowDelay {
+			get { return GetSystemParametersInfoInt (SPIAction.SPI_GETMENUSHOWDELAY); }
+		}
+
+		internal override int MouseSpeed {
+			get { return GetSystemParametersInfoInt (SPIAction.SPI_GETMOUSESPEED); }
+		}
+
+		internal override LeftRightAlignment PopupMenuAlignment {
+			get { return GetSystemParametersInfoBool (SPIAction.SPI_GETMENUDROPALIGNMENT) == true ? LeftRightAlignment.Left : LeftRightAlignment.Right; }
+		}
+
+#if NET_2_0
+		internal override PowerStatus PowerStatus {
+			get {
+				SYSTEMPOWERSTATUS p = new SYSTEMPOWERSTATUS ();
+				
+				Win32GetSystemPowerStatus (p);
+				
+				PowerStatus ps = new PowerStatus ((BatteryChargeStatus)p._BatteryFlag, p._BatteryFullLifeTime, (float)p._BatteryLifePercent / 255f, p._BatteryLifeTime, (PowerLineStatus)p._ACLineStatus);
+				
+				return ps;
+			}
+		}
+#endif
+
+		internal override int SizingBorderWidth {
+			get { return Win32GetSystemMetrics (SystemMetrics.SM_CXSIZEFRAME); }
+		}
+
+		internal override Size SmallCaptionButtonSize {
+			get {
+				return new Size (Win32GetSystemMetrics (SystemMetrics.SM_CXSMSIZE),
+					Win32GetSystemMetrics (SystemMetrics.SM_CYSMSIZE));
+			}
+		}
+
+		internal override bool UIEffectsEnabled {
+			get { return GetSystemParametersInfoBool (SPIAction.SPI_GETUIEFFECTS); }
+		}
+
+		internal override int VerticalResizeBorderThickness {
+			get { return Win32GetSystemMetrics (SystemMetrics.SM_CYSIZEFRAME); }
+		}
+
 		internal override void RaiseIdle (EventArgs e)
 		{
 			if (Idle != null)
@@ -3191,8 +3422,14 @@ namespace System.Windows.Forms {
 		//[DllImport ("user32.dll", EntryPoint="SystemParametersInfoW", CharSet=CharSet.Unicode, CallingConvention=CallingConvention.StdCall)]
 		//private extern static bool Win32SystemParametersInfo(SPIAction uiAction, uint uiParam, ref uint value, uint fWinIni);
 
-		[DllImport ("user32.dll", EntryPoint="SystemParametersInfoW", CharSet=CharSet.Unicode, CallingConvention=CallingConvention.StdCall)]
-		private extern static bool Win32SystemParametersInfo(SPIAction uiAction, uint uiParam, ref int value, uint fWinIni);
+		[DllImport ("user32.dll", EntryPoint = "SystemParametersInfoW", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]
+		private extern static bool Win32SystemParametersInfo (SPIAction uiAction, uint uiParam, ref int value, uint fWinIni);
+
+		[DllImport ("user32.dll", EntryPoint = "SystemParametersInfoW", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]
+		private extern static bool Win32SystemParametersInfo (SPIAction uiAction, uint uiParam, ref bool value, uint fWinIni);
+
+		[DllImport ("user32.dll", EntryPoint = "SystemParametersInfoW", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]
+		private extern static bool Win32SystemParametersInfo (SPIAction uiAction, uint uiParam, ref ANIMATIONINFO value, uint fWinIni);
 
 		[DllImport ("user32.dll", EntryPoint="OpenClipboard", CallingConvention=CallingConvention.StdCall)]
 		private extern static bool Win32OpenClipboard(IntPtr hwnd);
@@ -3296,6 +3533,9 @@ namespace System.Windows.Forms {
 
 		[DllImport ("gdi32.dll", EntryPoint="CreateCompatibleBitmap", CallingConvention=CallingConvention.StdCall)]
 		internal static extern IntPtr Win32CreateCompatibleBitmap (IntPtr hdc, int nWidth, int nHeight);
+
+		[DllImport ("kernel32.dll", EntryPoint = "GetSystemPowerStatus", CallingConvention = CallingConvention.StdCall)]
+		internal static extern Boolean Win32GetSystemPowerStatus (SYSTEMPOWERSTATUS sps);
 		#endregion
 	}
 }
