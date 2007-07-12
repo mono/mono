@@ -1,3 +1,8 @@
+2007-07-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* CollectionEditor.cs: Implement CreateInstance for 1.1 profile (patch
+	  by Andreas Nahr).
+
 2007-07-10  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* ArrayEditor.cs, MultilineStringEditor.cs, CollectionEditor.cs,

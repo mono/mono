@@ -563,13 +563,12 @@ namespace System.ComponentModel.Design
 			return info.PropertyType;
 		}
 		
-		[MonoLimitation ("Only implemented for the 2.0 profile")]
 		protected virtual object CreateInstance (Type itemType)
 		{
 #if NET_2_0
 			return TypeDescriptor.CreateInstance (provider, itemType, null, null);
 #else
-			throw new NotImplementedException ();
+			return Activator.CreateInstance (itemType);
 #endif
 		}
 		
