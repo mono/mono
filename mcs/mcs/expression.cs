@@ -4231,25 +4231,22 @@ namespace Mono.CSharp {
 					return false;
 
 				Type pt = pd.ParameterType (i);
+
+				if (TypeManager.IsEqual (pt, a.Type))
+					continue;
+
+				if (a_mod != Parameter.Modifier.NONE)
+					return false;
+
+				// FIXME: Kill this abomination (EmitContext.TempEc)
 				EmitContext prevec = EmitContext.TempEc;
 				EmitContext.TempEc = ec;
-
 				try {
-					if (a_mod == Parameter.Modifier.NONE) {
-						// It is already done in ImplicitConversion need to measure the performance, it causes problem in MWF
-						if (TypeManager.IsEqual (a.Type, pt))
-						  continue;
-
-						if (!Convert.ImplicitConversionExists (ec, a.Expr, pt))
-							return false;
-						continue;
-					}
+					if (!Convert.ImplicitConversionExists (ec, a.Expr, pt))
+						return false;
 				} finally {
 					EmitContext.TempEc = prevec;
 				}
-					
-				if (pt != a.Type)
-					return false;
 			}
 
 			return true;

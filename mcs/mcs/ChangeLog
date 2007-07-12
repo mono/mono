@@ -1,3 +1,8 @@
+2007-07-12  Raja R Harinath  <rharinath@novell.com>
+
+	* expression.cs (Invocation.IsApplicable): Reorganize slightly to
+	avoid try...finally in some cases.
+
 2007-07-10  Marek Safar  <marek.safar@gmail.com>
 
 	* attribute.cs (Attribute.ResolveConstructor): Uses method group.
