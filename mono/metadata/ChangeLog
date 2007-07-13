@@ -1,3 +1,7 @@
+2007-07-13  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* culture-info-table.h: Forgot to update after r78304.
+
 2007-07-13  Raja R Harinath  <rharinath@novell.com>
 
 	* class.c (mono_class_is_open_constructed_type)
