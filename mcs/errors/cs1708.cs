@@ -1,4 +1,4 @@
-// cs1708.cs: Fixed size buffers can only be accessed through locals or fields
+// CS1708: `S.array': Fixed size buffers can only be accessed through locals or fields
 // Line: 27
 // Compiler options: -unsafe
 
