@@ -1,15 +1,15 @@
-using System;
-using System.IO;
+// Compiler options: -unsafe
 
-namespace XmlnsAttributeSample
+public class aClass
 {
-    public class XmlnsAttribTester
-    {
-        static public void Main (string [] args)
-        {
-            using (StringWriter stringWriter = new StringWriter ())
-            {
-            }
-        }
-    }
+	public unsafe struct foo_t
+	{
+		public fixed char b[16];
+	}
+	
+	public static unsafe void Main(string[] args)
+	{
+		foo_t bar;
+		char* oo = bar.b;
+	}
 }
