@@ -1,5 +1,20 @@
 2007-07-13  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #81917
+	* attribute.cs (AttributeTester.GetFixedBuffer): More robust testing.
+	
+	* class.cs (FixedField): Check whether field is in unsafe scope.
+
+	* ecore.cs (FieldExpr.DoResolve): Create fixed buffer expression here.
+	(FieldExpr.Emit): Fixed buffers cannot be volatile.
+
+	* expression.cs (ElementAccess.Resolve): Move fixed buffers resolve to
+	FieldExpr.
+	
+	* statement.cs (Fixed.Resolve): Simplified fixed buffers.
+		
+2007-07-13  Marek Safar  <marek.safar@gmail.com>
+
 	* cs-tokenizer.cs, class.cs, decl.cs, driver.cs, namespace.cs,
 	rootcontext.cs, expression.cs, statement.cs: Updated to use WarningLevel
 	from Report class.

@@ -5879,6 +5879,9 @@ namespace Mono.CSharp {
 			if (RootContext.Version == LanguageVersion.ISO_1)
 				Report.FeatureIsNotISO1 (loc, "fixed size buffers");
 
+			if ((mod & Modifiers.VOLATILE) != 0)
+				Modifiers.Error_InvalidModifier (loc, Modifiers.Name (Modifiers.VOLATILE));
+
 			this.size_expr = size_expr;
 		}
 
@@ -5892,8 +5895,10 @@ namespace Mono.CSharp {
 			if (Parent.PartialContainer.Kind != Kind.Struct) {
 				Report.Error (1642, Location, "`{0}': Fixed size buffer fields may only be members of structs",
 					GetSignatureForError ());
-				return false;
 			}
+
+			if (!Parent.IsInUnsafeScope)
+				Expression.UnsafeError (Location);
 
 			if (!base.Define ())
 				return false;

@@ -7174,22 +7174,6 @@ namespace Mono.CSharp {
 			if (t.IsPointer)
 				return MakePointerAccess (ec, t);
 
-			FieldExpr fe = Expr as FieldExpr;
-			if (fe != null) {
-				IFixedBuffer ff = AttributeTester.GetFixedBuffer (fe.FieldInfo);
-				if (ff != null) {
-					if (!(fe.InstanceExpression is LocalVariableReference) && 
-						!(fe.InstanceExpression is This)) {
-						Report.Error (1708, loc, "Fixed size buffers can only be accessed through locals or fields");
-						return null;
-					}
-					if (!ec.InFixedInitializer && ec.ContainerType.IsValueType) {
-						Error (1666, "You cannot use fixed size buffers contained in unfixed expressions. Try using the fixed statement");
-						return null;
-					}
-					return MakePointerAccess (ec, ff.ElementType);
-				}
-			}
 			return (new IndexerAccess (this, loc)).DoResolveLValue (ec, right_side);
 		}
 		

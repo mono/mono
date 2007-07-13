@@ -4043,22 +4043,10 @@ namespace Mono.CSharp {
 				}
 
 				// Case 4: fixed buffer
-				FieldExpr fe = e as FieldExpr;
-				if (fe != null) {
-					IFixedBuffer ff = AttributeTester.GetFixedBuffer (fe.FieldInfo);
-					if (ff != null) {
-						Expression fixed_buffer_ptr = new FixedBufferPtr (fe, ff.ElementType, loc);
-					
-						Expression converted = Convert.ImplicitConversionRequired (
-							ec, fixed_buffer_ptr, vi.VariableType, loc);
-						if (converted == null)
-							return false;
-
-						data [i] = new ExpressionEmitter (converted, vi);
-						i++;
-
-						continue;
-					}
+				FixedBufferPtr fixed_buffer_ptr = e as FixedBufferPtr;
+				if (fixed_buffer_ptr != null) {
+					data [i++] = new ExpressionEmitter (fixed_buffer_ptr, vi);
+					continue;
 				}
 
 				//

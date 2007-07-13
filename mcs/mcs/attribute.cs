@@ -1607,11 +1607,14 @@ namespace Mono.CSharp {
 			if (fb != null) {
 				return fb as IFixedBuffer;
 			}
+			
+			if (TypeManager.GetConstant (fi) != null)
+				return null;
 
 #if NET_2_0
 			object o = fixed_buffer_cache [fi];
 			if (o == null) {
-				if (System.Attribute.GetCustomAttribute (fi, TypeManager.fixed_buffer_attr_type) == null) {
+				if (!fi.IsDefined (TypeManager.fixed_buffer_attr_type, false)) {
 					fixed_buffer_cache.Add (fi, FALSE);
 					return null;
 				}

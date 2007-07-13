@@ -4060,7 +4060,6 @@ namespace Mono.CSharp {
 			
 			if (t.IsPointer && !ec.InUnsafe) {
 				UnsafeError (loc);
-				return null;
 			}
 
 			return base.ResolveMemberAccess (ec, left, loc, original);
@@ -4130,7 +4129,23 @@ namespace Mono.CSharp {
 					}
 				}
 			}
-			
+
+			IFixedBuffer fb = AttributeTester.GetFixedBuffer (FieldInfo);
+			if (fb != null) {
+				if (!ec.InFixedInitializer && ec.ContainerType.IsValueType) {
+					Report.Error (1666, loc, "You cannot use fixed size buffers contained in unfixed expressions. Try using the fixed statement");
+				}
+
+				if (!(InstanceExpression is LocalVariableReference) &&
+					!(InstanceExpression is This)) {
+					Report.SymbolRelatedToPreviousError (FieldInfo);
+					Report.Error (1708, loc, "`{0}': Fixed size buffers can only be accessed through locals or fields",
+						TypeManager.GetFullNameSignature (FieldInfo));
+				}
+				
+				return new FixedBufferPtr (this, fb.ElementType, loc).Resolve (ec);
+			}
+
 			// If the instance expression is a local variable or parameter.
 			IVariable var = InstanceExpression as IVariable;
 			if ((var == null) || (var.VariableInfo == null))
@@ -4292,16 +4307,14 @@ namespace Mono.CSharp {
 				if (!prepared)
 					EmitInstance (ec, false);
 
-				if (is_volatile)
-					ig.Emit (OpCodes.Volatile);
-
 				IFixedBuffer ff = AttributeTester.GetFixedBuffer (FieldInfo);
-				if (ff != null)
-				{
+				if (ff != null) {
 					ig.Emit (OpCodes.Ldflda, FieldInfo);
 					ig.Emit (OpCodes.Ldflda, ff.Element);
-				}
-				else {
+				} else {
+					if (is_volatile)
+						ig.Emit (OpCodes.Volatile);
+
 					ig.Emit (OpCodes.Ldfld, FieldInfo);
 				}
 			}
