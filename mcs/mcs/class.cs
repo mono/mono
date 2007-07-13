@@ -247,7 +247,7 @@ namespace Mono.CSharp {
 						oe.op.GetSignatureForError (), s);
 				}
 
- 				if (has_equality_or_inequality && (RootContext.WarningLevel > 2)) {
+ 				if (has_equality_or_inequality && Report.WarningLevel > 2) {
  					if (container.Methods == null || !container.HasEquals)
  						Report.Warning (660, 2, container.Location, "`{0}' defines operator == or operator != but does not override Object.Equals(object o)", container.GetSignatureForError ());
  
@@ -598,9 +598,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			if (Kind == Kind.Struct &&
-			    first_nonstatic_field.Parent != field.Parent &&
-			    RootContext.WarningLevel >= 3) {
+			if (Kind == Kind.Struct && first_nonstatic_field.Parent != field.Parent) {
 				Report.SymbolRelatedToPreviousError (first_nonstatic_field.Parent);
 				Report.Warning (282, 3, field.Location,
 					"struct instance field `{0}' found in different declaration from instance field `{1}'",
@@ -1516,7 +1514,7 @@ namespace Mono.CSharp {
 			if (!IsTopLevel) {
 				MemberInfo conflict_symbol = Parent.PartialContainer.FindBaseMemberWithSameName (Basename, false);
 				if (conflict_symbol == null) {
-					if ((RootContext.WarningLevel >= 4) && ((ModFlags & Modifiers.NEW) != 0))
+					if ((ModFlags & Modifiers.NEW) != 0)
 						Report.Warning (109, 4, Location, "The member `{0}' does not hide an inherited member. The new keyword is not required", GetSignatureForError ());
 				} else {
 					if ((ModFlags & Modifiers.NEW) == 0) {
@@ -2188,7 +2186,7 @@ namespace Mono.CSharp {
 			//
 			// Check for internal or private fields that were never assigned
 			//
-			if (RootContext.WarningLevel >= 3) {
+			if (Report.WarningLevel >= 3) {
 				CheckMemberUsage (properties, "property");
 				CheckMemberUsage (methods, "method");
 				CheckMemberUsage (constants, "constant");
@@ -2216,7 +2214,7 @@ namespace Mono.CSharp {
 						//
 						// Only report 649 on level 4
 						//
-						if (RootContext.WarningLevel < 4)
+						if (Report.WarningLevel < 4)
 							continue;
 						
 						if ((f.caching_flags & Flags.IsAssigned) != 0)
@@ -2744,7 +2742,7 @@ namespace Mono.CSharp {
 		{
 			base.VerifyMembers ();
 
-			if ((events != null) && (RootContext.WarningLevel >= 3)) {
+			if ((events != null) && Report.WarningLevel >= 3) {
 				foreach (Event e in events){
 					if ((e.ModFlags & Modifiers.Accessibility) != Modifiers.PRIVATE)
 						continue;
@@ -3622,7 +3620,7 @@ namespace Mono.CSharp {
 			}
 
 			if (conflict_symbol == null) {
-				if ((RootContext.WarningLevel >= 4) && ((ModFlags & Modifiers.NEW) != 0)) {
+				if ((ModFlags & Modifiers.NEW) != 0) {
 					Report.Warning (109, 4, Location, "The member `{0}' does not hide an inherited member. The new keyword is not required", GetSignatureForError ());
 				}
 				return true;
@@ -4862,7 +4860,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if ((RootContext.WarningLevel >= 4) && ((Parent.ModFlags & Modifiers.SEALED) != 0 && (ModFlags & Modifiers.PROTECTED) != 0)) {
+			if ((Parent.ModFlags & Modifiers.SEALED) != 0 && (ModFlags & Modifiers.PROTECTED) != 0) {
 				Report.Warning (628, 4, Location, "`{0}': new protected member declared in sealed class", GetSignatureForError ());
 			}
 			
@@ -5552,7 +5550,7 @@ namespace Mono.CSharp {
   				return false;
    			}
    
-  			if ((RootContext.WarningLevel >= 4) &&
+  			if (Report.WarningLevel >= 4 &&
 			    ((Parent.ModFlags & Modifiers.SEALED) != 0) &&
 			    ((ModFlags & Modifiers.PROTECTED) != 0) &&
 			    ((ModFlags & Modifiers.OVERRIDE) == 0) && (Name != "Finalize")) {
@@ -6017,19 +6015,6 @@ namespace Mono.CSharp {
 		{
 			if (!base.Define ())
 				return false;
-
-			if (RootContext.WarningLevel > 1){
-				Type ptype = Parent.TypeBuilder.BaseType;
-
-				// ptype is only null for System.Object while compiling corlib.
-				if (ptype != null){
-					TypeContainer.FindMembers (
-						ptype, MemberTypes.Method,
-						BindingFlags.Public |
-						BindingFlags.Static | BindingFlags.Instance,
-						System.Type.FilterName, Name);
-				}
-			}
 
 			if ((ModFlags & Modifiers.VOLATILE) != 0){
 				if (!MemberType.IsClass){

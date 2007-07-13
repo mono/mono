@@ -2016,7 +2016,7 @@ namespace Mono.CSharp {
 		{
 			string name;
 
-			if ((variables != null) && (RootContext.WarningLevel >= 3)) {
+			if ((variables != null) && (Report.WarningLevel >= 3)) {
 				foreach (DictionaryEntry de in variables){
 					LocalInfo vi = (LocalInfo) de.Value;
 
@@ -2152,7 +2152,7 @@ namespace Mono.CSharp {
 			if (this == Toplevel && !Toplevel.IsThisAssigned (ec) && !vector.IsUnreachable)
 				ok = false;
 
-			if ((labels != null) && (RootContext.WarningLevel >= 2)) {
+			if ((labels != null) && (Report.WarningLevel >= 2)) {
 				foreach (LabeledStatement label in labels.Values)
 					if (!label.HasBeenReferenced)
 						Report.Warning (164, 2, label.loc,
@@ -2165,8 +2165,7 @@ namespace Mono.CSharp {
 				flags |= Flags.HasRet;
 
 			if (ok && (errors == Report.Errors)) {
-				if (RootContext.WarningLevel >= 3)
-					UsageWarning (vector);
+				UsageWarning (vector);
 			}
 
 			return ok;

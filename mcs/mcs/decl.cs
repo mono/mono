@@ -564,7 +564,7 @@ namespace Mono.CSharp {
 		protected virtual bool VerifyClsCompliance ()
 		{
 			if (!IsClsComplianceRequired ()) {
-				if (HasClsCompliantAttribute && RootContext.WarningLevel >= 2) {
+				if (HasClsCompliantAttribute && Report.WarningLevel >= 2) {
 					if (!IsExposedFromAssembly ())
 						Report.Warning (3019, 2, Location, "CLS compliance checking will not be performed on `{0}' because it is not visible from outside this assembly", GetSignatureForError ());
 					if (!CodeGen.Assembly.IsClsCompliant)

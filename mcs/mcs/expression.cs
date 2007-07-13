@@ -1947,7 +1947,7 @@ namespace Mono.CSharp {
 					}
 
 					if (left_to_right && left_operators != null &&
-					    RootContext.WarningLevel >= 2) {
+					    Report.WarningLevel >= 2) {
 						ArrayList args = new ArrayList (2);
 						args.Add (new Argument (left, Argument.AType.Expression));
 						args.Add (new Argument (left, Argument.AType.Expression));
@@ -1956,7 +1956,7 @@ namespace Mono.CSharp {
 					}
 
 					if (right_to_left && right_operators != null &&
-					    RootContext.WarningLevel >= 2) {
+					    Report.WarningLevel >= 2) {
 						ArrayList args = new ArrayList (2);
 						args.Add (new Argument (right, Argument.AType.Expression));
 						args.Add (new Argument (right, Argument.AType.Expression));

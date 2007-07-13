@@ -1,5 +1,11 @@
 2007-07-13  Marek Safar  <marek.safar@gmail.com>
 
+	* cs-tokenizer.cs, class.cs, decl.cs, driver.cs, namespace.cs,
+	rootcontext.cs, expression.cs, statement.cs: Updated to use WarningLevel
+	from Report class.
+
+2007-07-13  Marek Safar  <marek.safar@gmail.com>
+
 	* ecore.cs (FieldExpr.AddressOf): Less confusing warning message.
 	
 2007-07-13  Marek Safar  <marek.safar@gmail.com>

@@ -65,8 +65,6 @@ namespace Mono.CSharp {
 		
 		static TypeBuilder impl_details_class;
 
-		public static int WarningLevel;
-
 		public static Target Target;
 		public static string TargetExt;
 
@@ -107,7 +105,7 @@ namespace Mono.CSharp {
 			root = new RootTypes ();
 			type_container_resolve_order = new ArrayList ();
 			EntryPoint = null;
-			Report.WarningLevel = WarningLevel = 3;
+			Report.WarningLevel = 3;
 			Checked = false;
 			Unsafe = false;
 			StdLib = true;

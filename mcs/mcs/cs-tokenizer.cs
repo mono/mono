@@ -1205,7 +1205,7 @@ namespace Mono.CSharp
 						break;
 
 					case 'l':
-						if (!is_unsigned && (RootContext.WarningLevel >= 4)){
+						if (!is_unsigned){
 							//
 							// if we have not seen anything in between
 							// report this error
