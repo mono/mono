@@ -1,3 +1,7 @@
+2007-07-13  Jonathan Pobst  <monkey@jpobst.com>
+
+	* OSFeature.cs: Enable IsPresent.
+
 2007-07-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Control.cs: Don't do anything in WmShowWindow if the control has been
