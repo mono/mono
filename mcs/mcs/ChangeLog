@@ -1,3 +1,9 @@
+
+Fri Jul 13 11:19:28 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* iterators.cs: reverted Miguel's latest change (r81925) as it
+	breaks the build in System.
+
 2007-07-13  Miguel de Icaza  <miguel@novell.com>
 
 	* iterators.cs (Yield.CheckContext): Check for the iterator type

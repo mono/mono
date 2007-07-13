@@ -47,26 +47,11 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			Type ignored_type;
-			bool ignored_is_enumerable;
-
-			if (ec.IsConstructor){
-				Report.Error (1624, loc, "Can not use iterators inside constructors");
-				return false;
-			}
-			
-			if (!Iterator.CheckType (ec.ReturnType, out ignored_type, out ignored_is_enumerable)){
-				Report.Error (1624, loc,
-					      "Can not use iterator block because `{0}' is not an iterator interface type",
-					      TypeManager.CSharpName (ec.ReturnType));
-				return false;
-			}
-			
 			//
 			// We can't use `ec.InUnsafe' here because it's allowed to have an iterator
 			// inside an unsafe class.  See test-martin-29.cs for an example.
 			//
-			if (ec.CurrentAnonymousMethod != null && ec.CurrentAnonymousMethod.IsIterator == false) {
+			if (!ec.CurrentAnonymousMethod.IsIterator) {
 				Report.Error (1621, loc,
 					      "The yield statement cannot be used inside " +
 					      "anonymous method blocks");
@@ -1027,7 +1012,7 @@ namespace Mono.CSharp {
 					     iterator_type, is_enumerable);
 		}
 
-		internal static bool CheckType (Type ret, out Type original_iterator_type, out bool is_enumerable)
+		static bool CheckType (Type ret, out Type original_iterator_type, out bool is_enumerable)
 		{
 			original_iterator_type = null;
 			is_enumerable = false;
