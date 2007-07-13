@@ -1,3 +1,7 @@
+2007-07-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Form.cs: Make the fix for #80775 windows-only (fixes #81957).
+
 2007-07-12  Jonathan Pobst  <monkey@jpobst.com>
 
 	* SystemInformation.cs, Theme.cs, XplatUI.cs, XplatUIDriver.cs,

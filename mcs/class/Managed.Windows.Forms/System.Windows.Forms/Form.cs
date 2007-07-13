@@ -1417,6 +1417,7 @@ namespace System.Windows.Forms {
 					cp.ExStyle |= (int)WindowExStyles.WS_EX_CONTEXTHELP;
 				}
 
+				// bug 80775:
 				//don't set WS_VISIBLE if we're changing visibility. We can't create forms visible, 
 				//since we have to set the owner before making the form visible 
 				//(otherwise Win32 will do strange things with task bar icons). 
@@ -1424,7 +1425,12 @@ namespace System.Windows.Forms {
 				//so is_changing_visible_state is the only way of determining if we're 
 				//in the process of creating the form due to setting Visible=true.
 				//This works because SetVisibleCore explicitly makes the form visibile afterwards anyways.
-				if ((VisibleInternal && is_changing_visible_state == 0) || this.IsRecreating)
+				// bug 81957:
+				//only do this when on Windows, since X behaves weirdly otherwise
+				//modal windows appear below their parent/owner/ancestor.
+				//(confirmed on several window managers, so it's not a wm bug).
+				bool is_unix = ((int) Environment.OSVersion.Platform) == 128 || ((int) Environment.OSVersion.Platform == 4);
+				if ((VisibleInternal && (is_changing_visible_state == 0 || is_unix)) || this.IsRecreating)
 					cp.Style |= (int)WindowStyles.WS_VISIBLE;
 
 				if (opacity < 1.0 || TransparencyKey != Color.Empty) {
