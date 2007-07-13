@@ -1,3 +1,10 @@
+2007-07-13  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.c: patch from Thong Nguyen to fix atribute resolution.
+	  It adds a rootimage parameter to mono_reflection_get_type_internal,
+	  adds new function mono_reflection_get_type_with_rootimage and use
+	  the rootimage to resolve the types instead of the current image
+
 2007-07-13  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* culture-info-table.h: Forgot to update after r78304.
