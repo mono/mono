@@ -1,3 +1,13 @@
+2007-07-13  Miguel de Icaza  <miguel@novell.com>
+
+	* iterators.cs (Yield.CheckContext): Check for the iterator type
+	also here as we can call into Yield even in codepaths that are not
+	directly checked by
+	(MethodOrOperator is the only path that was checked).
+
+	In addition to the standard check, use a more specific check for
+	constructors to report a more verbose error. 
+
 2007-07-12  Miguel de Icaza  <miguel@novell.com>
 
 	* ecore.cs (FieldExpr.AddressOf): Do not stop processing here,
