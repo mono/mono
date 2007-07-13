@@ -1,4 +1,4 @@
-// cs0420-2.cs: `XX.j': A volatile fields cannot be passed using a ref or out parameter
+// cs0420-2.cs: `XX.j': A volatile fields passed using a ref or out parameter might be problematic: routine does not know about volatile
 // Line: 14
 // Compiler options: -unsafe /warnaserror /warn:1
 
