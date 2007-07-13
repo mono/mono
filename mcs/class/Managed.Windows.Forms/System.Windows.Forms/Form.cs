@@ -1871,7 +1871,7 @@ namespace System.Windows.Forms {
 					if (MdiParent != null) {
 						foreach (Form form in MdiParent.MdiChildren) {
 							wm = form.window_manager as MdiWindowManager;
-							if (wm != null) {
+							if (wm != null && form != this) {
 								// This will only raise deactivate once, and only if activate has
 								// already been raised.
 								wm.RaiseDeactivate ();

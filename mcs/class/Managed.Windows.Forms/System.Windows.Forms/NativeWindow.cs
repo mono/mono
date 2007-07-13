@@ -187,10 +187,12 @@ namespace System.Windows.Forms
 					// WndProc, install their own WM_CREATE block, and look at
 					// this.Handle, and it needs to be set.  Otherwise, we end up
 					// recursively creating windows and emitting WM_CREATE.
-					if (WindowCreating.window_handle == IntPtr.Zero)
-						WindowCreating.AssignHandle (hWnd);
+					window = WindowCreating;
+					WindowCreating = null;
+					if (window.window_handle == IntPtr.Zero)
+						window.AssignHandle (hWnd);
 
-					WindowCreating.WndProc (ref m);
+					window.WndProc (ref m);
 				}
 				else
 					m.Result=XplatUI.DefWndProc(ref m);

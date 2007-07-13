@@ -5328,6 +5328,9 @@ namespace System.Windows.Forms
 		}
 
 		private void WmShowWindow (ref Message m) {
+			if (IsDisposed)
+				return;
+						
 			if (m.WParam.ToInt32() != 0) {
 				if (m.LParam.ToInt32 () == 0) {
 					CreateControl ();

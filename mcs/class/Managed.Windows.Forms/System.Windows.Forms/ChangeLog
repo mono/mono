@@ -1,5 +1,20 @@
 2007-07-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Control.cs: Don't do anything in WmShowWindow if the control has been
+	  disposed. We can get WM_SHOWWINDOW after a control is disposed: a
+	  control is created, put on a form, the control is disposed (the
+	  form is never shown), and then we get a MapNotify, triggering a
+	  WM_SHOWWINDOW.
+	* Form.cs: Exclude the current form when sending Deactivate to all
+	  MdiChildren.
+	* NativeWindow.cs: Set WindowCreating to null as soon as possible,
+	  there was a race condition because assigning the handle raises
+	  events, we can get more messages, therefore trying to assign the
+	  handle again, which would fail if any of those event handlers
+	  closed/disposed the control.
+
+2007-07-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Form.cs: Make the fix for #80775 windows-only (fixes #81957).
 
 2007-07-12  Jonathan Pobst  <monkey@jpobst.com>
