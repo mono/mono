@@ -1,3 +1,10 @@
+2007-07-13	William Holmes <billholmes54@gmail.com> 
+
+	* Control.cs: Changing logic in FindFlatForward and 
+	  FindFlatBackward to handle multiple Controls with 
+	  the same TabIndex.  
+	  This fixes bug 81687.
+
 2007-07-13  Jonathan Pobst  <monkey@jpobst.com>
 
 	* OSFeature.cs: Enable IsPresent.

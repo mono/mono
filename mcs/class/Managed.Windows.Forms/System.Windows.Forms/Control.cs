@@ -1544,9 +1544,11 @@ namespace System.Windows.Forms
 			Control	found;
 			int	index;
 			int	end;
+			bool hit;
 
 			found = null;
 			end = container.child_controls.Count;
+			hit = false;
 
 			if (start != null) {
 				index = start.tab_index;
@@ -1554,18 +1556,14 @@ namespace System.Windows.Forms
 				index = -1;
 			}
 
-			for (int i = 0, pos = -1; i < end; i++) {
+			for (int i = 0; i < end; i++) {
 				if (start == container.child_controls[i]) {
-					pos = i;
+					hit = true;
 					continue;
 				}
 
-				if (found == null) {
-					if (container.child_controls[i].tab_index > index || (pos > -1 && pos < i && container.child_controls[i].tab_index == index)) {
-						found = container.child_controls[i];
-					}
-				} else if (found.tab_index > container.child_controls[i].tab_index) {
-					if (container.child_controls[i].tab_index > index) {
+				if (found == null || found.tab_index > container.child_controls[i].tab_index) {
+					if (container.child_controls[i].tab_index > index || (hit && container.child_controls[i].tab_index == index)) {
 						found = container.child_controls[i];
 					}
 				}
@@ -1602,25 +1600,18 @@ namespace System.Windows.Forms
 			Control	found;
 			int	index;
 			int	end;
+			bool hit;
 
 			found = null;
 			end = container.child_controls.Count;
+			hit = false;
 
 			if (start != null) {
 				index = start.tab_index;
 			} else {
-				// FIXME: Possible speed-up: Keep the highest taborder index in the container
-				index = -1;
-				for (int i = 0; i < end; i++) {
-					if (container.child_controls[i].tab_index > index) {
-						index = container.child_controls[i].tab_index;
-					}
-				}
-				index++;
+				index = int.MaxValue;
 			}
 
-			bool hit = false;
-					
 			for (int i = end - 1; i >= 0; i--) {
 				if (start == container.child_controls[i]) {
 					hit = true;
