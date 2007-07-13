@@ -1,3 +1,10 @@
+
+Fri Jul 13 12:46:15 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* handles-private.h, handles.c, thread-private.h, threads.c,
+	uglify.h, wait.c: temporarily revert the alertable wait changes
+	(r79386) until the deadlock issues are fixed.
+
 2007-06-22  Dick Porter  <dick@ximian.com>
 
 	* shared.c: The non-shared mutexes weren't being initialised properly
