@@ -1,3 +1,8 @@
+2007-07-13  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* PropertyDescriptorTests.cs: Added tests for Igor's fixes for
+	ShouldSerializeValue.
+
 2007-07-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* PropertyDescriptorTests.cs: Added GetEditorTest.

@@ -118,6 +118,38 @@ namespace MonoTests.System.ComponentModel
 			}
 		}
 
+		class ShouldSerialize_Null_Default
+		{
+			[DefaultValue (null)]
+			public string Prop {
+				get { return _prop; }
+				set { _prop = value; }
+			}
+
+			public bool SerializeProp {
+				get { return _serializeProp; }
+				set { _serializeProp = value; }
+			}
+
+			public bool ShouldSerializeProp ()
+			{
+				return _serializeProp;
+			}
+
+			private string _prop;
+			private bool _serializeProp;
+		}
+
+		class ShouldSerialize_No_Default
+		{
+			public string Prop {
+				get { return _prop; }
+				set { _prop = value; }
+			}
+
+			private string _prop;
+		}
+
 		class NoSerializeOrResetProp_test
 		{
 			public int Prop {
@@ -231,6 +263,32 @@ namespace MonoTests.System.ComponentModel
 			ShouldSerialize_protected_test test = new ShouldSerialize_protected_test ();
 
 			Assert.IsFalse (p.ShouldSerializeValue (test), "1");
+		}
+
+		[Test]
+		public void ShouldSerializeTest_No_Default ()
+		{
+			PropertyDescriptor p = TypeDescriptor.GetProperties (typeof (ShouldSerialize_No_Default)) ["Prop"];
+			ShouldSerialize_No_Default test = new ShouldSerialize_No_Default ();
+
+			Assert.IsTrue (p.ShouldSerializeValue (test), "#1");
+			test.Prop = "whatever";
+			Assert.IsTrue (p.ShouldSerializeValue (test), "#2");
+		}
+
+		[Test]
+		public void ShouldSerializeTest_Null_Default ()
+		{
+			PropertyDescriptor p = TypeDescriptor.GetProperties (typeof (ShouldSerialize_Null_Default)) ["Prop"];
+			ShouldSerialize_Null_Default test = new ShouldSerialize_Null_Default ();
+
+			Assert.IsFalse (p.ShouldSerializeValue (test), "#1");
+			test.SerializeProp = true;
+			Assert.IsFalse (p.ShouldSerializeValue (test), "#2");
+			test.Prop = "whatever";
+			Assert.IsTrue (p.ShouldSerializeValue (test), "#3");
+			test.SerializeProp = false;
+			Assert.IsTrue (p.ShouldSerializeValue (test), "#4");
 		}
 
 		[Test]
