@@ -4370,7 +4370,7 @@ namespace Mono.CSharp {
 			FieldBase f = TypeManager.GetField (FieldInfo);
 			if (f != null){
 				if ((f.ModFlags & Modifiers.VOLATILE) != 0){
-					Report.Warning (420, 1, loc, "`{0}': A volatile fields passed using a ref or out parameter might be problematic: routine does not know about volatile",
+					Report.Warning (420, 1, loc, "`{0}': A volatile field references will not be treated as volatile", 
 							f.GetSignatureForError ());
 				}
 					

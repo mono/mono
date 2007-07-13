@@ -1,5 +1,9 @@
 2007-07-13  Marek Safar  <marek.safar@gmail.com>
 
+	* ecore.cs (FieldExpr.AddressOf): Less confusing warning message.
+	
+2007-07-13  Marek Safar  <marek.safar@gmail.com>
+
 	* anonymous.cs (AnonymousMethodExpression): Parameters are r/o.
 	(AnonymousContainer.ResolveNoDefine): Another ec to aec flag conversion.
 	
