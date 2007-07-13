@@ -697,7 +697,7 @@ namespace Mono.CSharp
 				Report.Error (1900, "Warning level must be in the range 0-4");
 				return;
 			}
-			RootContext.WarningLevel = level;
+			Report.WarningLevel = RootContext.WarningLevel = level;
 		}
 
 		static void SetupV2 ()

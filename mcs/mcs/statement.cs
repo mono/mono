@@ -93,9 +93,9 @@ namespace Mono.CSharp {
 		// 
 		protected virtual void CloneTo (CloneContext clonectx, Statement target)
 		{
-			throw new Exception (String.Format ("Statement.CloneTo not implemented for {0}", this.GetType ()));
+			throw new InternalErrorException ("{0} does not implement Statement.CloneTo", this.GetType ());
 		}
-		
+
 		public Statement Clone (CloneContext clonectx)
 		{
 			Statement s = (Statement) this.MemberwiseClone ();
@@ -141,6 +141,18 @@ namespace Mono.CSharp {
 			}
 
 			return result;
+		}
+
+		///
+		/// Remaps block to cloned copy if one exists.
+		///
+		public Block RemapBlockCopy (Block from)
+		{
+			Block mapped_to = (Block)block_map[from];
+			if (mapped_to == null)
+				return from;
+
+			return mapped_to;
 		}
 
 		public void AddVariableMap (LocalInfo from, LocalInfo to)
@@ -697,7 +709,8 @@ namespace Mono.CSharp {
 	///   Implements the return statement
 	/// </summary>
 	public class Return : Statement {
-		public Expression Expr;
+		Expression Expr;
+		bool unwind_protect;
 		
 		public Return (Expression expr, Location l)
 		{
@@ -705,18 +718,15 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
-		bool unwind_protect;
-
 		public override bool Resolve (EmitContext ec)
 		{
 			AnonymousContainer am = ec.CurrentAnonymousMethod;
 			if ((am != null) && am.IsIterator && ec.InIterator) {
 				Report.Error (1622, loc, "Cannot return a value from iterators. Use the yield return " +
 					      "statement to return a value, or yield break to end the iteration");
-				return false;
 			}
-
-			if (ec.ReturnType == null){
+			
+			if (ec.ReturnType == null && !ec.InferReturnType){
 				if (Expr != null){
 					if (am != null){
 						Report.Error (1662, loc,
@@ -750,12 +760,11 @@ namespace Mono.CSharp {
 				}
 			}
 
-			int errors = Report.Errors;
 			unwind_protect = ec.CurrentBranching.AddReturnOrigin (ec.CurrentBranching.CurrentUsageVector, loc);
 			if (unwind_protect)
 				ec.NeedReturnLabel ();
 			ec.CurrentBranching.CurrentUsageVector.Goto ();
-			return errors == Report.Errors;
+			return true;
 		}
 		
 		protected override void DoEmit (EmitContext ec)
@@ -1491,6 +1500,11 @@ namespace Mono.CSharp {
 		protected static int id;
 
 		int this_id;
+
+		int assignable_slots;
+		protected ScopeInfo scope_info;
+		bool unreachable_shown;
+		bool unreachable;
 		
 		public Block (Block parent)
 			: this (parent, (Flags) 0, Location.Null, Location.Null)
@@ -1852,7 +1866,6 @@ namespace Mono.CSharp {
 			flags |= Flags.IsDestructor;
 		}
 
-		int assignable_slots;
 		public int AssignableSlots {
 			get {
 				if ((flags & Flags.VariablesInitialized) == 0)
@@ -1860,8 +1873,6 @@ namespace Mono.CSharp {
 				return assignable_slots;
 			}
 		}
-
-		protected ScopeInfo scope_info;
 
 		public ScopeInfo ScopeInfo {
 			get { return scope_info; }
@@ -2024,9 +2035,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		bool unreachable_shown;
-		bool unreachable;
-
 		private void CheckPossibleMistakenEmptyStatement (Statement s)
 		{
 			Statement body;
@@ -2078,7 +2086,7 @@ namespace Mono.CSharp {
 			for (current_statement = 0; current_statement < statements.Count; current_statement++) {
 				Statement s = (Statement) statements [current_statement];
 				// Check possible empty statement (CS0642)
-				if (RootContext.WarningLevel >= 3 &&
+				if (Report.WarningLevel >= 3 &&
 					current_statement + 1 < statements.Count &&
 						statements [current_statement + 1] is Block)
 					CheckPossibleMistakenEmptyStatement (s);
@@ -2108,6 +2116,9 @@ namespace Mono.CSharp {
 				//
 
 				if (!s.Resolve (ec)) {
+					if (ec.IsInProbingMode)
+						return false;
+
 					ok = false;
 					statements [current_statement] = EmptyStatement.Value;
 					continue;
@@ -2231,12 +2242,11 @@ namespace Mono.CSharp {
 
 			clonectx.AddBlockMap (this, target);
 
-			target.Toplevel = (ToplevelBlock) clonectx.LookupBlock (Toplevel);
+			//target.Toplevel = (ToplevelBlock) clonectx.LookupBlock (Toplevel);
 			target.Explicit = (ExplicitBlock) clonectx.LookupBlock (Explicit);
-			if (Parent != null)
-				target.Parent = clonectx.LookupBlock (Parent);
+			target.Parent = clonectx.RemapBlockCopy (Parent);
 			
-			target.statements = new ArrayList ();
+			target.statements = new ArrayList (statements.Count);
 			if (target.children != null){
 				target.children = new ArrayList ();
 				foreach (Block b in children){
@@ -2344,6 +2354,8 @@ namespace Mono.CSharp {
 		FlowBranchingToplevel top_level_branching;
 		AnonymousContainer anonymous_container;
 		RootScopeInfo root_scope;
+		Parameters parameters;
+		ToplevelParameterInfo[] parameter_info;
 
 		public bool HasVarargs {
 			get { return (flags & Flags.HasVarargs) != 0; }
@@ -2357,7 +2369,6 @@ namespace Mono.CSharp {
 		//
 		// The parameters for the block.
 		//
-		Parameters parameters;
 		public Parameters Parameters {
 			get { return parameters; }
 		}
@@ -2467,7 +2478,6 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		ToplevelParameterInfo [] parameter_info;
 		void ProcessParameters ()
 		{
 			int n = parameters.Count;
@@ -2719,7 +2729,7 @@ namespace Mono.CSharp {
 			Block block = new ExplicitBlock (this, StartLocation, EndLocation);
 			foreach (Statement stmt in statements)
 				block.AddStatement (stmt);
-			statements = new ArrayList ();
+			statements.Clear ();
 			statements.Add (new MoveNextStatement (iterator, block));
 		}
 

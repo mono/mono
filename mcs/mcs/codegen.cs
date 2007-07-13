@@ -265,7 +265,12 @@ namespace Mono.CSharp {
 			///   Whether control flow analysis is disabled on structs
 			///   (only meaningful when DoFlowAnalysis is set)
 			/// </summary>
-			OmitStructFlowAnalysis = 1 << 6
+			OmitStructFlowAnalysis = 1 << 6,
+
+			///
+			/// Indicates the current context is in probing mode, no errors are reported. 
+			///
+			ProbingMode = 1	<<	7
 		}
 
 		Flags flags;
@@ -495,21 +500,39 @@ namespace Mono.CSharp {
 		public struct FlagsHandle : IDisposable
 		{
 			EmitContext ec;
-			Flags invmask, oldval;
+			readonly Flags invmask, oldval;
+
+			public FlagsHandle (EmitContext ec, Flags flagsToSet)
+				: this (ec, flagsToSet, flagsToSet)
+			{
+			}
+
 			internal FlagsHandle (EmitContext ec, Flags mask, Flags val)
 			{
 				this.ec = ec;
 				invmask = ~mask;
 				oldval = ec.flags & mask;
 				ec.flags = (ec.flags & invmask) | (val & mask);
+
+				if ((mask & Flags.ProbingMode) != 0)
+					Report.DisableReporting ();
 			}
+
 			public void Dispose ()
 			{
+				if ((invmask & Flags.ProbingMode) == 0)
+					Report.EnableReporting ();
+
 				ec.flags = (ec.flags & invmask) | oldval;
 			}
 		}
 
 		// Temporarily set all the given flags to the given value.  Should be used in an 'using' statement
+		public FlagsHandle Set (Flags flagsToSet)
+		{
+			return new FlagsHandle (this, flagsToSet);
+		}
+
 		public FlagsHandle With (Flags bits, bool enable)
 		{
 			return new FlagsHandle (this, bits, enable ? bits : 0);
@@ -524,7 +547,14 @@ namespace Mono.CSharp {
 		}
 
 		public bool IsInObsoleteScope {
-			get { return ResolveContext.IsInObsoleteScope; }
+			get {
+				// Disables obsolete checks when probing is on
+				return IsInProbingMode || ResolveContext.IsInObsoleteScope;
+			}
+		}
+
+		public bool IsInProbingMode {
+			get { return (flags & Flags.ProbingMode) != 0; }
 		}
 
 		public bool IsInUnsafeScope {

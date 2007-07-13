@@ -136,9 +136,9 @@ namespace Mono.CSharp {
 			Indirection, AddressOf,  TOP
 		}
 
-		public Operator Oper;
+		public readonly Operator Oper;
 		public Expression Expr;
-		
+
 		public Unary (Operator op, Expression expr, Location loc)
 		{
 			this.Oper = op;
@@ -588,7 +588,7 @@ namespace Mono.CSharp {
 			}
 			else
 				Expr = Expr.Resolve (ec);
-			
+
 			if (Expr == null)
 				return null;
 
@@ -1377,7 +1377,6 @@ namespace Mono.CSharp {
 
 		public Expression Expr {
 			get { return expr; }
-			set { expr = value; }
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -1446,7 +1445,7 @@ namespace Mono.CSharp {
 			TOP
 		}
 
-		Operator oper;
+		readonly Operator oper;
 		Expression left, right;
 
 		// This must be kept in sync with Operator!!!
@@ -1488,30 +1487,8 @@ namespace Mono.CSharp {
 			get {
 				return oper;
 			}
-			set {
-				oper = value;
-			}
 		}
 		
-		public Expression Left {
-			get {
-				return left;
-			}
-			set {
-				left = value;
-			}
-		}
-
-		public Expression Right {
-			get {
-				return right;
-			}
-			set {
-				right = value;
-			}
-		}
-
-
 		/// <summary>
 		///   Returns a stringified representation of the Operator
 		/// </summary>
@@ -1891,9 +1868,7 @@ namespace Mono.CSharp {
 					Unary right_unary = (Unary) right;
 
 					if (right_unary.Oper == Unary.Operator.UnaryNegation){
-						oper = Operator.Subtraction;
-						right = right_unary.Expr;
-						r = right.Type;
+						return new Binary (Operator.Subtraction, left, right).Resolve (ec);
 					}
 				}
 			}
@@ -3719,8 +3694,9 @@ namespace Mono.CSharp {
 	///   representation.
 	/// </summary>
 	public class ParameterReference : VariableReference, IVariable {
-		ToplevelParameterInfo pi;
-		ToplevelBlock referenced;
+		readonly ToplevelParameterInfo pi;
+		readonly ToplevelBlock referenced;
+		Variable variable;
 
 		public bool is_ref, is_out;
 
@@ -3740,8 +3716,6 @@ namespace Mono.CSharp {
 			get { return pi.Parameter; }
 		}
 
-		Variable variable;
-		
 		public ParameterReference (ToplevelBlock referenced, ToplevelParameterInfo pi, Location loc)
 		{
 			this.pi = pi;
@@ -3807,12 +3781,11 @@ namespace Mono.CSharp {
 			is_out = (mod & Parameter.Modifier.OUT) == Parameter.Modifier.OUT;
 			eclass = ExprClass.Variable;
 
-			ToplevelBlock declared = pi.Block;
-
 			AnonymousContainer am = ec.CurrentAnonymousMethod;
 			if (am == null)
 				return true;
 
+			ToplevelBlock declared = pi.Block;
 			if (is_ref && declared != referenced) {
 				Report.Error (1628, Location,
 					      "Cannot use ref or out parameter `{0}' inside an " +
@@ -3823,9 +3796,12 @@ namespace Mono.CSharp {
 			if (!am.IsIterator && declared == referenced)
 				return true;
 
-			ScopeInfo scope = declared.CreateScopeInfo ();
-			variable = scope.AddParameter (par, pi.Index);
-			type = variable.Type;
+			// Don't capture aruments when the probing is on
+			if (!ec.IsInProbingMode) {
+				ScopeInfo scope = declared.CreateScopeInfo ();
+				variable = scope.AddParameter (par, pi.Index);
+				type = variable.Type;
+			}
 			return true;
 		}
 
@@ -4810,13 +4786,13 @@ namespace Mono.CSharp {
 		{
 			Invocation target = (Invocation) t;
 
-			if (Arguments != null){
-				target.Arguments = new ArrayList ();
+			if (Arguments != null) {
+				target.Arguments = new ArrayList (Arguments.Count);
 				foreach (Argument a in Arguments)
 					target.Arguments.Add (a.Clone (clonectx));
 			}
 
-			expr = expr.Clone (clonectx);
+			target.expr = expr.Clone (clonectx);
 		}
 	}
 
@@ -6379,7 +6355,7 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class Arglist : Expression
 	{
-		public Argument[] Arguments;
+		Argument[] Arguments;
 
 		public Arglist (Location loc)
 			: this (Argument.Empty, loc)
@@ -6554,7 +6530,7 @@ namespace Mono.CSharp {
 	///   Implements the sizeof expression
 	/// </summary>
 	public class SizeOf : Expression {
-		public Expression QueriedType;
+		readonly Expression QueriedType;
 		Type type_queried;
 		
 		public SizeOf (Expression queried_type, Location l)
@@ -6617,9 +6593,6 @@ namespace Mono.CSharp {
 
 		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
-			SizeOf target = (SizeOf) t;
-
-			target.QueriedType = QueriedType.Clone (clonectx);
 		}
 	}
 
@@ -6720,6 +6693,7 @@ namespace Mono.CSharp {
 	public class MemberAccess : Expression {
 		public readonly string Identifier;
 		Expression expr;
+		readonly TypeArguments args;
 
 		public MemberAccess (Expression expr, string id)
 			: this (expr, id, expr.Location)
@@ -6738,8 +6712,6 @@ namespace Mono.CSharp {
 		{
 			this.args = args;
 		}
-
-		TypeArguments args;
 
 		protected string LookupIdentifier {
 			get { return MemberName.MakeName (Identifier, args); }
@@ -6812,8 +6784,9 @@ namespace Mono.CSharp {
 					return ex_method_lookup.DoResolve (ec);
 				}
 
-				MemberLookupFailed (
-					ec.ContainerType, expr_type, expr_type, Identifier, null, true, loc);
+				if (!ec.IsInProbingMode)
+					MemberLookupFailed (
+						ec.ContainerType, expr_type, expr_type, Identifier, null, true, loc);
 				return null;
 			}
 
@@ -7127,9 +7100,6 @@ namespace Mono.CSharp {
 		{
 			Expr = Expr.Resolve (ec);
 
-			if (Expr == null) 
-				return false;
-
 			if (Arguments == null)
 				return false;
 
@@ -7138,7 +7108,7 @@ namespace Mono.CSharp {
 					return false;
 			}
 
-			return true;
+			return Expr != null;
 		}
 
 		Expression MakePointerAccess (EmitContext ec, Type t)
@@ -7180,7 +7150,7 @@ namespace Mono.CSharp {
 			if (t.IsArray)
 				return (new ArrayAccess (this, loc)).Resolve (ec);
 			if (t.IsPointer)
-				return MakePointerAccess (ec, Expr.Type);
+				return MakePointerAccess (ec, t);
 
 			FieldExpr fe = Expr as FieldExpr;
 			if (fe != null) {
@@ -7202,7 +7172,7 @@ namespace Mono.CSharp {
 				return (new ArrayAccess (this, loc)).DoResolveLValue (ec, right_side);
 
 			if (t.IsPointer)
-				return MakePointerAccess (ec, Expr.Type);
+				return MakePointerAccess (ec, t);
 
 			FieldExpr fe = Expr as FieldExpr;
 			if (fe != null) {
@@ -7233,7 +7203,7 @@ namespace Mono.CSharp {
 			ElementAccess target = (ElementAccess) t;
 
 			target.Expr = Expr.Clone (clonectx);
-			target.Arguments = new ArrayList ();
+			target.Arguments = new ArrayList (Arguments.Count);
 			foreach (Argument a in Arguments)
 				target.Arguments.Add (a.Clone (clonectx));
 		}

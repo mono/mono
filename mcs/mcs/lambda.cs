@@ -52,23 +52,22 @@ namespace Mono.CSharp {
 			return this;
 		}
 
+		//
+		// Returns true if the body of lambda expression can be implicitly
+		// converted to the delegate of type `delegate_type'
+		//
 		public override bool ImplicitStandardConversionExists (Type delegate_type)
 		{
 			EmitContext ec = EmitContext.TempEc;
 
-			bool result;
+			using (ec.Set (EmitContext.Flags.ProbingMode)) {
+				bool r = DoImplicitStandardConversion (ec, delegate_type) != null;
 
-			try {
-				Report.DisableErrors ();
-				result = DoCompatibleTest (ec, delegate_type, true) != null;
-			} finally {
-				Report.EnableErrors ();
+				// Ignore the result
+				anonymous = null;
+
+				return r;
 			}
-			
-			// Ignore the result
-			anonymous = null;
-
-			return result;
 		}
 		
 		//
@@ -77,14 +76,14 @@ namespace Mono.CSharp {
 		//
 		public override Expression Compatible (EmitContext ec, Type delegate_type)
 		{
-			return DoCompatibleTest (ec, delegate_type, false);
-		}
-
-		Expression DoCompatibleTest (EmitContext ec, Type delegate_type, bool clone)
-		{
 			if (anonymous != null)
 				return anonymous.AnonymousDelegate;
 
+			return DoImplicitStandardConversion (ec, delegate_type);
+		}
+
+		Expression DoImplicitStandardConversion (EmitContext ec, Type delegate_type)
+		{
 			if (CompatibleChecks (ec, delegate_type) == null)
 				return null;
 
@@ -113,26 +112,26 @@ namespace Mono.CSharp {
 					return null;
 			} else {
 				//
-				// If L has an implicitly typed parameter list, D has no ref or
-				// out parameters
+				// If L has an implicitly typed parameter list
 				//
-				// Note: We currently do nothing, because the preview does not
-				// follow the above rule.
+				for (int i = 0; i < invoke_pd.Count; i++) {
+					// D has no ref or out parameters
+					if ((invoke_pd.ParameterModifier (i) & Parameter.Modifier.ISBYREF) != 0)
+						return null;
 
-				//
-				// each parameter of L is given the type of the corresponding parameter in D
-				//
-
-				for (int i = 0; i < invoke_pd.Count; i++)
-					Parameters [i].TypeName = new TypeExpression (
-						invoke_pd.ParameterType (i),
-						Parameters [i].Location);
+					//
+					// Makes implicit parameters explicit
+					// Set each parameter of L is given the type of the corresponding parameter in D
+					//
+					Parameters[i].ParameterType = invoke_pd.Types[i];
+					
+				}
 			}
 
-			return CoreCompatibilityTest (ec, clone, invoke_mb.ReturnType, delegate_type);
+			return CoreCompatibilityTest (ec, invoke_mb.ReturnType, delegate_type);
 		}
 
-		Expression CoreCompatibilityTest (EmitContext ec, bool clone, Type return_type, Type delegate_type)
+		Expression CoreCompatibilityTest (EmitContext ec, Type return_type, Type delegate_type)
 		{
 			//
 			// The return type of the delegate must be compatible with 
@@ -141,15 +140,15 @@ namespace Mono.CSharp {
 			// to be the delegate type return type.
 			//
 
-			ToplevelBlock b = clone ? (ToplevelBlock) Block.PerformClone () : Block;
-			
+			ToplevelBlock b = ec.IsInProbingMode ? (ToplevelBlock) Block.PerformClone () : Block;
+
 			anonymous = new AnonymousMethod (
 				Parent != null ? Parent.AnonymousMethod : null, RootScope, Host,
 				GenericMethod, Parameters, Container, b, return_type,
 				delegate_type, loc);
 
 			bool r;
-			if (clone)
+			if (ec.IsInProbingMode)
 				r = anonymous.ResolveNoDefine (ec);
 			else
 				r = anonymous.Resolve (ec);
@@ -179,12 +178,12 @@ namespace Mono.CSharp {
 			for (int i = 0; i < types.Length; i++)
 				Parameters [i].TypeName = new TypeExpression (types [i], Parameters [i].Location);
 
+			// TODO: temporary hack
+			ec.InferReturnType = true;
+			
 			Expression e;
-			try {
-				Report.DisableErrors ();
-				e = CoreCompatibilityTest (ec, true, null, null);
-			} finally {
-				Report.EnableErrors ();
+			using (ec.Set (EmitContext.Flags.ProbingMode)) {
+				e = CoreCompatibilityTest (ec, null, null);
 			}
 			
 			if (e == null)
@@ -198,71 +197,12 @@ namespace Mono.CSharp {
 	// This is a return statement that is prepended lambda expression bodies that happen
 	// to be expressions.  Depending on the return type of the delegate this will behave
 	// as either { expr (); return (); } or { return expr (); }
-	//
-	public class ContextualReturn : Statement {
-		public Expression Expr;
-		
-		public ContextualReturn (Expression e)
+
+	public class ContextualReturn : Return
+	{
+		public ContextualReturn (Expression expr)
+			: base (expr, expr.Location)
 		{
-			Expr = e;
-			loc = Expr.Location;
-		}
-
-		bool unwind_protect;
-
-		public override bool Resolve (EmitContext ec)
-		{
-			AnonymousContainer am = ec.CurrentAnonymousMethod;
-			if ((am != null) && am.IsIterator && ec.InIterator) {
-				Report.Error (1622, loc, "Cannot return a value from iterators. Use the yield return " +
-					      "statement to return a value, or yield break to end the iteration");
-				return false;
-			}
-
-			Expr = Expr.Resolve (ec);
-			if (Expr == null)
-				return false;
-
-			if (ec.ReturnType == null){
-				ec.ReturnType = Expr.Type;
-			} else {
-				if (Expr.Type != ec.ReturnType) {
-					Expression nExpr = Convert.ImplicitConversionRequired (
-						ec, Expr, ec.ReturnType, loc);
-					if (nExpr == null){
-						Report.Error (1662, loc, "Could not implicitly convert from {0} to {1}",
-							      TypeManager.CSharpName (Expr.Type),
-							      TypeManager.CSharpName (ec.ReturnType));
-						return false;
-					}
-					Expr = nExpr;
-				}
-			}
-
-			int errors = Report.Errors;
-			unwind_protect = ec.CurrentBranching.AddReturnOrigin (ec.CurrentBranching.CurrentUsageVector, loc);
-			if (unwind_protect)
-				ec.NeedReturnLabel ();
-			ec.CurrentBranching.CurrentUsageVector.Goto ();
-			return errors == Report.Errors;
-		}
-		
-		protected override void DoEmit (EmitContext ec)
-		{
-			Expr.Emit (ec);
-
-			if (unwind_protect){
-				ec.ig.Emit (OpCodes.Stloc, ec.TemporaryReturn ());
-				ec.ig.Emit (OpCodes.Leave, ec.ReturnLabel);
-			} 
-			ec.ig.Emit (OpCodes.Ret);
-		}
-
-		protected override void CloneTo (CloneContext clonectx, Statement t)
-		{
-			ContextualReturn cr = (ContextualReturn) t;
-
-			cr.Expr = Expr.Clone (clonectx);
 		}
 	}
 }

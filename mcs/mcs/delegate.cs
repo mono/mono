@@ -888,8 +888,8 @@ namespace Mono.CSharp {
 
 	public class DelegateInvocation : ExpressionStatement {
 
-		public Expression InstanceExpr;
-		public ArrayList  Arguments;
+		readonly Expression InstanceExpr;
+		readonly ArrayList  Arguments;
 
 		MethodBase method;
 		

@@ -184,7 +184,12 @@ namespace Mono.CSharp {
 		protected readonly RootScopeInfo RootScope;
 		new public readonly DeclSpace Parent;
 		public readonly int ID = ++next_id;
-		public Block ScopeBlock;
+		public readonly Block ScopeBlock;
+		protected ScopeInitializer scope_initializer;
+
+		readonly Hashtable locals = new Hashtable ();
+		readonly Hashtable captured_scopes = new Hashtable ();
+		Hashtable captured_params;
 
 		static int next_id;
 
@@ -250,12 +255,6 @@ namespace Mono.CSharp {
 
 			Report.Debug (128, "NEW ROOT SCOPE", this, toplevel, loc);
 		}
-
-		protected ScopeInitializer scope_initializer;
-
-		Hashtable locals = new Hashtable ();
-		Hashtable captured_scopes = new Hashtable ();
-		Hashtable captured_params;
 
 		protected CapturedScope[] CapturedScopes {
 			get {
@@ -388,13 +387,6 @@ namespace Mono.CSharp {
 				return (Variable) captured_params [par];
 			else
 				return null;
-		}
-
-		public bool IsParameterCaptured (string name)
-		{			
-			if (captured_params != null)
-				return captured_params [name] != null;
-			return false;
 		}
 
 		public Variable AddParameter (Parameter par, int idx)
@@ -1069,7 +1061,7 @@ namespace Mono.CSharp {
 	{
 		public readonly AnonymousMethodExpression Parent;
 		public readonly TypeContainer Host;
-		public Parameters Parameters;
+		public readonly Parameters Parameters;
 
 		public ToplevelBlock Block;
 		protected AnonymousMethod anonymous;
@@ -1417,7 +1409,7 @@ namespace Mono.CSharp {
 		{
 			return ExprClassName;
 		}
-		
+
 		public bool IsIterator {
 			get { return false; }
 		}
@@ -1428,7 +1420,6 @@ namespace Mono.CSharp {
 
 			target.Block = (ToplevelBlock) clonectx.LookupBlock (Block);
 			target.container = clonectx.LookupBlock (Block);
-			target.Parameters = Parameters.Clone ();
 		}
 	}
 
@@ -1527,14 +1518,20 @@ namespace Mono.CSharp {
 			aec.IsStatic = ec.IsStatic;
 			aec.InferReturnType = ec.InferReturnType;
 
+			IDisposable aec_dispose = null;
+			if (ec.IsInProbingMode)
+				aec_dispose = aec.Set (EmitContext.Flags.ProbingMode);
+
 			Report.Debug (64, "RESOLVE ANONYMOUS METHOD #1", this, Location, ec, aec,
 				      RootScope, Parameters, Block);
 
 			bool unreachable;
-			if (!aec.ResolveTopBlock (ec, Block, Parameters, null, out unreachable))
-				return false;
+			bool res = aec.ResolveTopBlock (ec, Block, Parameters, null, out unreachable);
 
-			return true;
+			if (aec_dispose != null)
+				aec_dispose.Dispose ();
+
+			return res;
 		}
 
 		public virtual bool Resolve (EmitContext ec)
@@ -1859,7 +1856,7 @@ namespace Mono.CSharp {
 
 			constructor_method = ((MethodGroupExpr) ml).Methods [0];
 #if MS_COMPATIBLE
-			if (type.IsGenericType)
+			if (type.IsGenericType && type is TypeBuilder)
 				constructor_method = TypeBuilder.GetConstructor (type, (ConstructorInfo)constructor_method);
 #endif
 			

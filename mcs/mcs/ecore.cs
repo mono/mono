@@ -412,8 +412,7 @@ namespace Mono.CSharp {
 						return ResolveFlags.VariableOrValue;
 
 					default:
-						throw new Exception ("Expression " + GetType () +
-							" ExprClass is Invalid after resolve");
+						throw new InternalErrorException (loc.ToString () + " " +  GetType () + " ExprClass is Invalid after resolve");
 				}
 			}
 		}
@@ -1969,7 +1968,7 @@ namespace Mono.CSharp {
 	///   of a dotted-name.
 	/// </summary>
 	public class SimpleName : Expression {
-		public string Name;
+		public readonly string Name;
 		public readonly TypeArguments Arguments;
 		bool in_transit;
 
@@ -2209,7 +2208,7 @@ namespace Mono.CSharp {
 			if (in_transit)
 				return null;
 
-			in_transit = true;			
+			in_transit = true;
 			Expression e = DoSimpleNameResolve (ec, right_side, intermediate);
 			in_transit = false;
 
@@ -3684,6 +3683,9 @@ namespace Mono.CSharp {
 			int candidate_top = candidates.Count;
 
 			if (applicable_type == null) {
+				if (ec.IsInProbingMode)
+					return null;
+
 				//
 				// Okay so we have failed to find anything so we
 				// return by providing info about the closest match
@@ -3926,9 +3928,12 @@ namespace Mono.CSharp {
 #if MS_COMPATIBLE
 				// MS implementation throws NotSupportedException for GetParameters
 				// on unbaked generic method
-				Parameters p = ((Parameters)TypeManager.GetParameterData (mi)).Clone ();
-				p.InflateTypes (gen_params, atypes);
-				TypeManager.RegisterMethod (mi, p);
+				Parameters p = TypeManager.GetParameterData (mi) as Parameters;
+				if (p != null) {
+					p = p.Clone ();
+					p.InflateTypes (gen_params, atypes);
+					TypeManager.RegisterMethod (mi, p);
+				}
 #endif
 			}
 

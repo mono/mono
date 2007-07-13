@@ -107,7 +107,7 @@ namespace Mono.CSharp {
 			root = new RootTypes ();
 			type_container_resolve_order = new ArrayList ();
 			EntryPoint = null;
-			WarningLevel = 3;
+			Report.WarningLevel = WarningLevel = 3;
 			Checked = false;
 			Unsafe = false;
 			StdLib = true;
@@ -177,9 +177,9 @@ namespace Mono.CSharp {
 		static Type BootstrapCorlib_ResolveType (TypeContainer root, string name, VerifyBootstrapType typeVerifier)
 		{
 			TypeLookupExpression tle = new TypeLookupExpression (name);
-			Report.DisableErrors ();
+			Report.DisableReporting ();
 			TypeExpr te = tle.ResolveAsTypeTerminal (root, false);
-			Report.EnableErrors ();
+			Report.EnableReporting ();
 			if (te == null) {
 				Report.Error (518, "The predefined type `{0}' is not defined or imported", name);
 				return null;

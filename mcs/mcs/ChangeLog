@@ -1,3 +1,39 @@
+2007-07-13  Marek Safar  <marek.safar@gmail.com>
+
+	* anonymous.cs (AnonymousMethodExpression): Parameters are r/o.
+	(AnonymousContainer.ResolveNoDefine): Another ec to aec flag conversion.
+	
+	* codegen.cs(EmitContext): Add ProbingMode flag.
+	
+	* delegate.cs (DelegateInvocation): Set few instance variables as r/o.
+	
+	* driver.cs: For now set both warning values.
+	
+	* ecore.cs (SimpleName): Name is readonly.
+	(MethodGroup.OverloadResolve): One quick path for probing.
+	
+	* expression.cs (Unary): Set Oper r/o.
+	(Binary): Set Oper r/o.
+	(ParameterReference): Set few instance variables as r/o.
+	(ParameterReference.DoResolveBase): Don't capture aruments when 
+	the probing is on.
+	(Invocation.CloneTo): Fixed typo, looks easy, yeah.
+	(Arglist): arguments are private.
+	(SizeOf): type is private and r/o.
+	(MemberAccess): arguments are private.
+
+	* report.cs: Enhanced reporting on/off capabilities.
+	
+	* lambda.cs: Uses ec.IsInProbingMode.
+	(ContextualReturn): Derives from return.
+	
+	* rootcontext.cs: For now set both warning values.
+	
+	* statement.cs (CloneContext.RemapBlockCopy): Remaps block to cloned
+	copy if one exists.
+	(Return.Resolve): Don't die immediately.
+	(Block.Resolve): Speed-up probing.
+	(Block.CloneTo): Clone only child blocks.
 
 Fri Jul 13 11:19:28 CEST 2007 Paolo Molaro <lupus@ximian.com>
 

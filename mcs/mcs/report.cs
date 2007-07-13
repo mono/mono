@@ -42,6 +42,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		static public bool WarningsAreErrors;
 
+
 		/// <summary>  
 		///   Whether to dump a stack trace on errors. 
 		/// </summary>
@@ -69,8 +70,12 @@ namespace Mono.CSharp {
 		// error stack contains elements, warnings and errors are not
 		// reported to the user.  This is used by the Lambda expression
 		// support to compile the code with various parameter values.
+		// A stack because of `Report.Errors == errors;'
 		//
 		static Stack error_stack;
+		static bool reporting_disabled;
+		
+		static int warning_level;
 		
 		/// <summary>
 		/// List of symbols related to reported error/warning. You have to fill it before error/warning is reported.
@@ -111,18 +116,23 @@ namespace Mono.CSharp {
 			WarningsAreErrors = false;
 			warning_ignore_table = null;
 			warning_regions_table = null;
+			reporting_disabled = false;
 		}
 
-		public static void DisableErrors ()
+		public static void DisableReporting ()
 		{
 			if (error_stack == null)
 				error_stack = new Stack ();
 			error_stack.Push (Errors);
+			reporting_disabled = true;
 		}
 
-		public static void EnableErrors ()
+		public static void EnableReporting ()
 		{
 			Errors = (int) error_stack.Pop ();
+			if (error_stack.Count == 0) {
+				reporting_disabled = false;
+			}
 		}
 		
 		abstract class AbstractMessage {
@@ -138,9 +148,9 @@ namespace Mono.CSharp {
 
 			public abstract string MessageType { get; }
 
-			public virtual void Print (int code, string location, string text)
+			public virtual void Print (int code, Location location, string text)
 			{
-				if (error_stack != null && error_stack.Count != 0){
+				if (reporting_disabled) {
 					//
 					// This line is useful when debugging the inner working of
 					// Lambdas when various compilation attempts are done.
@@ -153,8 +163,8 @@ namespace Mono.CSharp {
 					code = 8000-code;
 
 				StringBuilder msg = new StringBuilder ();
-				if (location.Length != 0) {
-					msg.Append (location);
+				if (!location.IsNull) {
+					msg.Append (location.ToString ());
 					msg.Append (' ');
 				}
 				msg.AppendFormat ("{0} CS{1:0000}: {2}", MessageType, code, text);
@@ -175,15 +185,9 @@ namespace Mono.CSharp {
 
 				Check (code);
 			}
-
-			public virtual void Print (int code, Location location, string text)
-			{
-				Print (code, location.IsNull ? "" : location.ToString (), text);
-			}
 		}
 
 		sealed class WarningMessage : AbstractMessage {
-			Location loc = Location.Null;
 			readonly int Level;
 
 			public WarningMessage (int level)
@@ -195,9 +199,9 @@ namespace Mono.CSharp {
 				get { return true; }
 			}
 
-			bool IsEnabled (int code)
+			bool IsEnabled (int code, Location loc)
 			{
-				if (RootContext.WarningLevel < Level)
+				if (WarningLevel < Level)
 					return false;
 
 				if (warning_ignore_table != null) {
@@ -206,7 +210,7 @@ namespace Mono.CSharp {
 					}
 				}
 
-				if (warning_regions_table == null || loc.Equals (Location.Null))
+				if (warning_regions_table == null || loc.IsNull)
 					return true;
 
 				WarningRegions regions = (WarningRegions)warning_regions_table [loc.Name];
@@ -216,9 +220,9 @@ namespace Mono.CSharp {
 				return regions.IsWarningEnabled (code, loc.Row);
 			}
 
-			public override void Print(int code, string location, string text)
+			public override void Print (int code, Location location, string text)
 			{
-				if (!IsEnabled (code)) {
+				if (!IsEnabled (code, location)) {
 					extra_information.Clear ();
 					return;
 				}
@@ -232,12 +236,6 @@ namespace Mono.CSharp {
 				base.Print (code, location, text);
 			}
 
-			public override void Print(int code, Location location, string text)
-			{
-				loc = location;
-				base.Print (code, location, text);
-			}
-
 			public override string MessageType {
 				get {
 					return "warning";
@@ -247,7 +245,7 @@ namespace Mono.CSharp {
 
 		sealed class ErrorMessage : AbstractMessage {
 
-			public override void Print(int code, string location, string text)
+			public override void Print(int code, Location location, string text)
 			{
 				Errors++;
 				base.Print (code, location, text);
@@ -345,6 +343,9 @@ namespace Mono.CSharp {
 
 		static public void SymbolRelatedToPreviousError (MemberInfo mi)
 		{
+			if (reporting_disabled)
+				return;
+
 			Type dt = TypeManager.DropGenericTypeArguments (mi.DeclaringType);
 			DeclSpace temp_ds = TypeManager.LookupDeclSpace (dt);
 			if (temp_ds == null) {
@@ -370,6 +371,9 @@ namespace Mono.CSharp {
 
 		static public void SymbolRelatedToPreviousError (Type type)
 		{
+			if (reporting_disabled)
+				return;
+
 			type = TypeManager.DropGenericTypeArguments (type);
 
 			if (TypeManager.IsGenericParameter (type)) {
@@ -397,6 +401,9 @@ namespace Mono.CSharp {
 
 		public static void ExtraInformation (Location loc, string msg)
 		{
+			if (reporting_disabled)
+				return;
+
 			extra_information.Add (String.Format ("{0} {1}", loc, msg));
 		}
 
@@ -511,6 +518,18 @@ namespace Mono.CSharp {
 			}
 			get {
 				return expected_error;
+			}
+		}
+		
+		public static int WarningLevel {
+			get {
+				if (reporting_disabled)
+					return 0;
+				
+				return warning_level;
+			}
+			set {
+				warning_level = value;
 			}
 		}
 
