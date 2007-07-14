@@ -1,5 +1,8 @@
 2007-07-14  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-exceptions.c (mono_jit_walk_stack_from_ctx): Use MONO_CONTEXT_GET_SP ()
+	here too. Fixes #82095.
+
 	* mini-amd64.c (mono_arch_build_imt_thunk): Add support for non-32bit MonoMethod
 	addresses.
 
