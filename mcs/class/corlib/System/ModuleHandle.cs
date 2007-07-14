@@ -110,6 +110,27 @@ namespace System
 				return new RuntimeTypeHandle (res);
 		}
 
+		[MonoTODO]
+		public RuntimeTypeHandle ResolveTypeHandle (int typeToken,
+													RuntimeTypeHandle[] typeInstantiationContext,
+													RuntimeTypeHandle[] methodInstantiationContext) {
+			throw new NotImplementedException ();
+		}			
+
+		[MonoTODO]
+		public RuntimeMethodHandle ResolveMethodHandle (int methodToken,
+														RuntimeTypeHandle[] typeInstantiationContext,
+														RuntimeTypeHandle[] methodInstantiationContext) {
+			throw new NotImplementedException ();
+		}			
+
+		[MonoTODO]
+		public RuntimeFieldHandle ResolveFieldHandle (int fieldToken,
+													  RuntimeTypeHandle[] typeInstantiationContext,
+													  RuntimeTypeHandle[] methodInstantiationContext) {
+			throw new NotImplementedException ();
+		}			
+
 		public RuntimeFieldHandle GetRuntimeFieldHandleFromMetadataToken (int fieldToken) {
 			return ResolveFieldHandle (fieldToken);
 		}
