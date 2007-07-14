@@ -1,3 +1,10 @@
+2007-07-14  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* default.build: Fix relative path to key. Avoid use of ugly foreach
+	contruct. Spaces to tabs.
+	* Mono.Cecil.csproj: Fix relative path to key.
+	* standalone.make: Fix relative path to key and config.make.
+
 2007-07-03  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil/BaseAssemblyResolver.cs:

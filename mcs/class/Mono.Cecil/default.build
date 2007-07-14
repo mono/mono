@@ -1,44 +1,39 @@
 <?xml version="1.0"?>
 <project name="Cecil" default="cecil" basedir=".">
 
-    <property name="debug" value="false" />
+	<property name="debug" value="false" />
 	<property name="optimize" value="true" />
-    <property name="build.dir" value="bin" />
-	<property name="keyfile" value="../../mcs/class/mono.snk" />
+	<property name="build.dir" value="bin" />
+	<property name="keyfile" value="../mono.snk" />
 
 	<!-- allow properties to be customized in external file" -->
 	<include buildfile="build.properties" if="${file::exists('build.properties')}" />
 
-    <fileset id="all-files">
-        <include name="./**/*.cs" />
-        <exclude name="CodeGen/**/*.*" />
-    </fileset>
+	<fileset id="all-files">
+		<include name="./**/*.cs" />
+		<exclude name="CodeGen/**/*.*" />
+	</fileset>
 
-    <target name="clean">
-        <foreach item="Folder" property="f">
-            <in>
-                <items>
-                    <include name="**/bin" />
-                    <include name="**/obj" />
-                    <include name="${build.dir}" />
-                </items>
-            </in>
-            <do>
-                <delete dir="${f}" failonerror="false"/>
-            </do>
-        </foreach>
-    </target>
+	<target name="clean">
+		<delete failonerror="false">
+			<fileset>
+				<include name="**/bin/**" />
+				<include name="**/obj/**" />
+				<include name="${build.dir}/**" />
+			</fileset>
+		</delete>
+	</target>
 
-    <target name="init">
-        <mkdir dir="${build.dir}" />
-    </target>
+	<target name="init">
+		<mkdir dir="${build.dir}" />
+	</target>
 
-    <target name="cecil" depends="init">
-        <csc output="${build.dir}/Mono.Cecil.dll"
-             target="library" debug="${debug}" unsafe="false" optimize="${optimize}" keyfile="${keyfile}">
-            <sources refid="all-files"/>
-        </csc>
-    </target>
+	<target name="cecil" depends="init">
+		<csc output="${build.dir}/Mono.Cecil.dll"
+			target="library" debug="${debug}" unsafe="false" optimize="${optimize}" keyfile="${keyfile}">
+			<sources refid="all-files"/>
+		</csc>
+	</target>
 
 	<target name="compactframework" depends="init" description="compiles cecil to run on the CompactFramework 1.0">
 		<property name="compactframework.defines" value="CF_1_0" />
@@ -66,8 +61,7 @@
 		</csc>
 	</target>
 
-    <target name="codegen">
-        <exec program="ruby" commandline="cecil-gen.rb" workingdir="CodeGen" />
-    </target>
-
+	<target name="codegen">
+		<exec program="ruby" commandline="cecil-gen.rb" workingdir="CodeGen" />
+	</target>
 </project>
