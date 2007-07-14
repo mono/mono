@@ -1,5 +1,12 @@
 2007-07-14  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-amd64.c (mono_arch_build_imt_thunk): Add support for non-32bit MonoMethod
+	addresses.
+
+	* mini-amd64.c (mono_arch_get_vcall_slot_addr): Add a couple asserts.
+
+	* mini-amd64.h: Enable IMT for amd64.
+	
 	* mini-amd64.c (mono_arch_build_imt_thunk): Optimize IMT thunk size.
 
 2007-07-12  Zoltan Varga  <vargaz@gmail.com>
