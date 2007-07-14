@@ -1,3 +1,8 @@
+2007-07-14 Gonzalo Paniagua Javier <gonzalo.mono@gmail.com>
+
+	* WebConnectionStream.cs: implement the CanTimeout for 2.0. Fixes
+	bug #81504.
+
 2007-07-12  Geoff Norton  <gnorton@customerdna.com>
 
 	* HttpListenerContext.cs: 

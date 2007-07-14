@@ -101,6 +101,11 @@ namespace System.Net
 			if (sendChunked)
 				pending = new ManualResetEvent (true);
 		}
+#if NET_2_0
+		public override bool CanTimeout {
+			get { return true; }
+		}
+#endif
 
 		internal bool CompleteRequestWritten {
 			get { return complete_request_written; }
