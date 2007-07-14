@@ -76,59 +76,67 @@ namespace System
 
 		public RuntimeFieldHandle ResolveFieldHandle (int fieldToken)
 		{
-			ResolveTokenError error;
-			if (value == IntPtr.Zero)
-				throw new ArgumentNullException (String.Empty, "Invalid handle");
-			IntPtr res = Module.ResolveFieldToken (value, fieldToken, out error);
-			if (res == IntPtr.Zero)
-				throw new Exception (String.Format ("Could not load field '0x{0:x}' from assembly '0x{1:x}'", fieldToken, value.ToInt64 ()));
-			else
-				return new RuntimeFieldHandle (res);
+			return ResolveFieldHandle (fieldToken, null, null);
 		}
 
 		public RuntimeMethodHandle ResolveMethodHandle (int methodToken)
 		{
-			ResolveTokenError error;
-			if (value == IntPtr.Zero)
-				throw new ArgumentNullException (String.Empty, "Invalid handle");
-			IntPtr res = Module.ResolveMethodToken (value, methodToken, out error);
-			if (res == IntPtr.Zero)
-				throw new Exception (String.Format ("Could not load method '0x{0:x}' from assembly '0x{1:x}'", methodToken, value.ToInt64 ()));
-			else
-				return new RuntimeMethodHandle (res);
+			return ResolveMethodHandle (methodToken, null, null);
 		}
 
 		public RuntimeTypeHandle ResolveTypeHandle (int typeToken)
 		{
+			return ResolveTypeHandle (typeToken, null, null);
+		}
+
+		private IntPtr[] ptrs_from_handles (RuntimeTypeHandle[] handles) {
+			if (handles == null)
+				return null;
+			else {
+				IntPtr[] res = new IntPtr [handles.Length];
+				for (int i = 0; i < handles.Length; ++i)
+					res [i] = handles [i].Value;
+				return res;
+			}
+		}
+				
+		public RuntimeTypeHandle ResolveTypeHandle (int typeToken,
+													RuntimeTypeHandle[] typeInstantiationContext,
+													RuntimeTypeHandle[] methodInstantiationContext) {
 			ResolveTokenError error;
 			if (value == IntPtr.Zero)
 				throw new ArgumentNullException (String.Empty, "Invalid handle");
-			IntPtr res = Module.ResolveTypeToken (value, typeToken, out error);
+			IntPtr res = Module.ResolveTypeToken (value, typeToken, ptrs_from_handles (typeInstantiationContext), ptrs_from_handles (methodInstantiationContext), out error);
 			if (res == IntPtr.Zero)
 				throw new TypeLoadException (String.Format ("Could not load type '0x{0:x}' from assembly '0x{1:x}'", typeToken, value.ToInt64 ()));
 			else
 				return new RuntimeTypeHandle (res);
-		}
-
-		[MonoTODO]
-		public RuntimeTypeHandle ResolveTypeHandle (int typeToken,
-													RuntimeTypeHandle[] typeInstantiationContext,
-													RuntimeTypeHandle[] methodInstantiationContext) {
-			throw new NotImplementedException ();
 		}			
 
-		[MonoTODO]
 		public RuntimeMethodHandle ResolveMethodHandle (int methodToken,
 														RuntimeTypeHandle[] typeInstantiationContext,
 														RuntimeTypeHandle[] methodInstantiationContext) {
-			throw new NotImplementedException ();
+			ResolveTokenError error;
+			if (value == IntPtr.Zero)
+				throw new ArgumentNullException (String.Empty, "Invalid handle");
+			IntPtr res = Module.ResolveMethodToken (value, methodToken, ptrs_from_handles (typeInstantiationContext), ptrs_from_handles (methodInstantiationContext), out error);
+			if (res == IntPtr.Zero)
+				throw new Exception (String.Format ("Could not load method '0x{0:x}' from assembly '0x{1:x}'", methodToken, value.ToInt64 ()));
+			else
+				return new RuntimeMethodHandle (res);
 		}			
 
-		[MonoTODO]
 		public RuntimeFieldHandle ResolveFieldHandle (int fieldToken,
 													  RuntimeTypeHandle[] typeInstantiationContext,
 													  RuntimeTypeHandle[] methodInstantiationContext) {
-			throw new NotImplementedException ();
+			ResolveTokenError error;
+			if (value == IntPtr.Zero)
+				throw new ArgumentNullException (String.Empty, "Invalid handle");
+			IntPtr res = Module.ResolveFieldToken (value, fieldToken, ptrs_from_handles (typeInstantiationContext), ptrs_from_handles (methodInstantiationContext), out error);
+			if (res == IntPtr.Zero)
+				throw new Exception (String.Format ("Could not load field '0x{0:x}' from assembly '0x{1:x}'", fieldToken, value.ToInt64 ()));
+			else
+				return new RuntimeFieldHandle (res);
 		}			
 
 		public RuntimeFieldHandle GetRuntimeFieldHandleFromMetadataToken (int fieldToken) {

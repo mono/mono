@@ -1,5 +1,7 @@
 2007-07-14  Zoltan Varga  <vargaz@gmail.com>
 
+	* ModuleHandle.cs: Implement the generic versions of the ResolveXXXHandle () methods.
+	
 	* ModuleHandle.cs: Add stubs for generic ResolveXXXHandle () methods.
 
 2007-07-10  Alan McGovern <amcgovern@novell.com>
