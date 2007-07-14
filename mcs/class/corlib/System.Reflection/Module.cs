@@ -320,49 +320,61 @@ namespace System.Reflection {
 				return new ArgumentException (String.Format ("Token 0x{0:x} is not a valid {1} token in the scope of module {2}", metadataToken, tokenType, name), "metadataToken");
 		}
 
+		private IntPtr[] ptrs_from_types (Type[] types) {
+			if (types == null)
+				return null;
+			else {
+				IntPtr[] res = new IntPtr [types.Length];
+				for (int i = 0; i < types.Length; ++i) {
+					if (types [i] == null)
+						throw new ArgumentException ();
+					res [i] = types [i].TypeHandle.Value;
+				}
+				return res;
+			}
+		}
+
 		public FieldInfo ResolveField (int metadataToken) {
+			return ResolveField (metadataToken, null, null);
+		}
+
+		public FieldInfo ResolveField (int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
 			ResolveTokenError error;
 
-			IntPtr handle = ResolveFieldToken (_impl, metadataToken, out error);
+			IntPtr handle = ResolveFieldToken (_impl, metadataToken, ptrs_from_types (genericTypeArguments), ptrs_from_types (genericMethodArguments), out error);
 			if (handle == IntPtr.Zero)
 				throw resolve_token_exception (metadataToken, error, "Field");
 			else
 				return FieldInfo.GetFieldFromHandle (new RuntimeFieldHandle (handle));
 		}
 
-		[MonoTODO]
-		public FieldInfo ResolveField (int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
-			throw new NotImplementedException ();
+		public MemberInfo ResolveMember (int metadataToken) {
+			return ResolveMember (metadataToken, null, null);
 		}
 
-		public MemberInfo ResolveMember (int metadataToken) {
+		public MemberInfo ResolveMember (int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
+
 			ResolveTokenError error;
 
-			MemberInfo m = ResolveMemberToken (_impl, metadataToken, out error);
+			MemberInfo m = ResolveMemberToken (_impl, metadataToken, ptrs_from_types (genericTypeArguments), ptrs_from_types (genericMethodArguments), out error);
 			if (m == null)
 				throw resolve_token_exception (metadataToken, error, "MemberInfo");
 			else
 				return m;
 		}
 
-		[MonoTODO]
-		public MemberInfo ResolveMember (int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
-			throw new NotImplementedException ();
+		public MethodBase ResolveMethod (int metadataToken) {
+			return ResolveMethod (metadataToken, null, null);
 		}
 
-		public MethodBase ResolveMethod (int metadataToken) {
+		public MethodBase ResolveMethod (int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
 			ResolveTokenError error;
 
-			IntPtr handle = ResolveMethodToken (_impl, metadataToken, out error);
+			IntPtr handle = ResolveMethodToken (_impl, metadataToken, ptrs_from_types (genericTypeArguments), ptrs_from_types (genericMethodArguments), out error);
 			if (handle == IntPtr.Zero)
 				throw resolve_token_exception (metadataToken, error, "MethodBase");
 			else
 				return MethodBase.GetMethodFromHandle (new RuntimeMethodHandle (handle));
-		}
-
-		[MonoTODO]
-		public MethodBase ResolveMethod (int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
-			throw new NotImplementedException ();
 		}
 
 		public string ResolveString (int metadataToken) {
@@ -376,18 +388,17 @@ namespace System.Reflection {
 		}
 
 		public Type ResolveType (int metadataToken) {
+			return ResolveType (metadataToken, null, null);
+		}
+
+		public Type ResolveType (int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
 			ResolveTokenError error;
 
-			IntPtr handle = ResolveTypeToken (_impl, metadataToken, out error);
+			IntPtr handle = ResolveTypeToken (_impl, metadataToken, ptrs_from_types (genericTypeArguments), ptrs_from_types (genericMethodArguments), out error);
 			if (handle == IntPtr.Zero)
 				throw resolve_token_exception (metadataToken, error, "Type");
 			else
 				return Type.GetTypeFromHandle (new RuntimeTypeHandle (handle));
-		}
-
-		[MonoTODO]
-		public Type ResolveType (int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
-			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -400,7 +411,7 @@ namespace System.Reflection {
 		{
 			ResolveTokenError error;
 
-			IntPtr handle = ResolveTypeToken (module._impl, token, out error);
+			IntPtr handle = ResolveTypeToken (module._impl, token, null, null, out error);
 			if (handle == IntPtr.Zero)
 				return null;
 			else
@@ -436,19 +447,19 @@ namespace System.Reflection {
 		private extern Type GetGlobalType ();
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern IntPtr ResolveTypeToken (IntPtr module, int token, out ResolveTokenError error);
+		internal static extern IntPtr ResolveTypeToken (IntPtr module, int token, IntPtr[] type_args, IntPtr[] method_args, out ResolveTokenError error);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern IntPtr ResolveMethodToken (IntPtr module, int token, out ResolveTokenError error);
+		internal static extern IntPtr ResolveMethodToken (IntPtr module, int token, IntPtr[] type_args, IntPtr[] method_args, out ResolveTokenError error);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern IntPtr ResolveFieldToken (IntPtr module, int token, out ResolveTokenError error);
+		internal static extern IntPtr ResolveFieldToken (IntPtr module, int token, IntPtr[] type_args, IntPtr[] method_args, out ResolveTokenError error);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern string ResolveStringToken (IntPtr module, int token, out ResolveTokenError error);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern MemberInfo ResolveMemberToken (IntPtr module, int token, out ResolveTokenError error);
+		internal static extern MemberInfo ResolveMemberToken (IntPtr module, int token, IntPtr[] type_args, IntPtr[] method_args, out ResolveTokenError error);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern void GetPEKind (IntPtr module, out PortableExecutableKinds peKind, out ImageFileMachine machine);
