@@ -1,5 +1,9 @@
 2007-07-14  Zoltan Varga  <vargaz@gmail.com>
 
+	* icall.c (ves_icall_System_Reflection_Module_ResolveMethodToken): 
+	Implement generics support.
+	(ves_icall_System_Reflection_Module_ResolveFieldToken): Ditto.
+
 	* icall.c (ves_icall_System_Reflection_Module_ResolveTypeToken): Add new
 	type_args and method_args arguments.
 	(ves_icall_System_Reflection_Module_ResolveMethodToken): Ditto.
