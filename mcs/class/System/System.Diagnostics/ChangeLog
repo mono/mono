@@ -1,3 +1,8 @@
+2007-07-14 Gonzalo Paniagua Javier <gonzalo.mono@gmail.com>
+
+	* Process.cs: don't send empty lines that are not in the input. Fixes
+	bug #79529.
+
 2007-07-11  Ankit Jain  <jankit@novell.com>
 
 	* ProcessStartInfo.cs (WorkingDirectory.set): Don't set

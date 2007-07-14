@@ -1267,11 +1267,12 @@ namespace System.Diagnostics {
 				}
 
 				string end = strs [len - 1];
-				if (last || end == "") {
-					if (err_out)
+				if (last || (len == 1 && end == "")) {
+					if (err_out) {
 						process.OnOutputDataReceived (end);
-					else
+					} else {
 						process.OnErrorDataReceived (end);
+					}
 				} else {
 					sb.Append (end);
 				}
