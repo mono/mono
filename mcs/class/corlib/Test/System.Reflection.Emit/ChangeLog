@@ -1,3 +1,10 @@
+2007-07-14  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TypeBuilderTest.cs: Modified enum tests to use already constructed
+	AssemblyBuilder and ModuleBuilder. Fixed some compiler warnings.
+	Removed duplicate test for bug #82018. Added some IsCreated tests after
+	TypeLoadException, but comment them out for now (see bug #82101).
+
 2007-07-12  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* TypeBuilderTest.cs: Added test for MakeArrayType with incomplete enum type. Related to bug #82015

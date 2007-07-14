@@ -242,181 +242,169 @@ namespace MonoTests.System.Reflection.Emit
 #endif
 		}
 
-		[Test]
-		public void TestEnumWithoutValueFieldThrowsException () //bug 82018
+		[Test] //bug 82018
+		public void TestEnumWithoutValueFieldThrowsException ()
 		{
-			AssemblyName name = new AssemblyName ();
-			name.Name = "foo";
-
-			AssemblyBuilder asm = AppDomain.CurrentDomain.DefineDynamicAssembly (name,
-				AssemblyBuilderAccess.Run | AssemblyBuilderAccess.Save);
-			ModuleBuilder module = asm.DefineDynamicModule ("foo.dll", "foo.dll", true);
-
-			TypeBuilder tb = module.DefineType ("FooEnum1",
+			TypeBuilder tb = module.DefineType (genTypeName (),
 				TypeAttributes.Sealed | TypeAttributes.Serializable,
 				typeof (Enum));
 
 			try {
 				tb.CreateType ();
 				Assert.Fail ("#1: must throw TypeLoadException");
-			} catch (TypeLoadException e) {
+			} catch (TypeLoadException) {
 			}
+
+#if NET_2_0
+			//Assert.IsTrue (tb.IsCreated (), "#2");
+#endif
 		}
 
-		[Test]
-		public void TestCreateTypeReturnsNullOnSecondCallForBadType () //bug 82018
+		[Test] // bug 82018
+#if ONLY_1_1
+		[Category ("NotWorking")] // we do not throw IOE when repeatedly invoking CreateType
+#endif
+		public void TestCreateTypeReturnsNullOnSecondCallForBadType ()
 		{
-			AssemblyName name = new AssemblyName ();
-			name.Name = "foo";
-
-			AssemblyBuilder asm = AppDomain.CurrentDomain.DefineDynamicAssembly (name,
-				AssemblyBuilderAccess.Run | AssemblyBuilderAccess.Save);
-			ModuleBuilder module = asm.DefineDynamicModule ("foo.dll", "foo.dll", true);
-
-			TypeBuilder tb = module.DefineType ("FooEnum2",
+			TypeBuilder tb = module.DefineType (genTypeName (),
 				TypeAttributes.Sealed | TypeAttributes.Serializable,
 				typeof (Enum));
 
 			try {
 				tb.CreateType ();
-				Assert.Fail ("#1: must throw TypeLoadException");
-			} catch (TypeLoadException e) {
+				Assert.Fail ("#A1");
+			} catch (TypeLoadException ex) {
+				Assert.AreEqual (typeof (TypeLoadException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
 			}
 
-			Assert.IsNull (tb.CreateType ());			
+#if NET_2_0
+			//Assert.IsTrue (tb.IsCreated (), "#B1");
+			Assert.IsNull (tb.CreateType (), "#B2");
+			//Assert.IsTrue (tb.IsCreated (), "#B3");
+#else
+			try {
+				tb.CreateType ();
+				Assert.Fail ("#B1");
+			} catch (InvalidOperationException ex) {
+				// Unable to change after type has been created
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+			}
+#endif
 		}
 
 		[Test]
 		public void TestEnumWithEmptyInterfaceBuildsOk ()
 		{
-			AssemblyName name = new AssemblyName ();
-			name.Name = "foo";
-
-			AssemblyBuilder asm = AppDomain.CurrentDomain.DefineDynamicAssembly (name,
-				AssemblyBuilderAccess.Run | AssemblyBuilderAccess.Save);
-			ModuleBuilder module = asm.DefineDynamicModule ("foo.dll", "foo.dll", true);
-
-			TypeBuilder tb = module.DefineType ("FooEnum3",
+			TypeBuilder tb = module.DefineType (genTypeName (),
 				TypeAttributes.Sealed | TypeAttributes.Serializable,
 				typeof (Enum));
 			tb.DefineField ("value__", typeof (int), FieldAttributes.SpecialName |
 				FieldAttributes.Private | FieldAttributes.RTSpecialName);
 
-			tb.AddInterfaceImplementation ( typeof (EmptyInterface));
+			tb.AddInterfaceImplementation (typeof (EmptyInterface));
 
 			try {
 				tb.CreateType ();
-			} catch (TypeLoadException e) {
+			} catch (TypeLoadException) {
 				Assert.Fail ("#1: must build enum type ok");
 			}
+
+#if NET_2_0
+			Assert.IsTrue (tb.IsCreated (), "#2");
+#endif
 		}
 
 		[Test]
 		[Category ("NotWorking")]
 		public void TestEnumWithNonEmptyInterfaceBuildsFails ()
 		{
-			AssemblyName name = new AssemblyName ();
-			name.Name = "foo";
-
-			AssemblyBuilder asm = AppDomain.CurrentDomain.DefineDynamicAssembly (name,
-				AssemblyBuilderAccess.Run | AssemblyBuilderAccess.Save);
-			ModuleBuilder module = asm.DefineDynamicModule ("foo.dll", "foo.dll", true);
-
-			TypeBuilder tb = module.DefineType ("FooEnum4",
+			TypeBuilder tb = module.DefineType (genTypeName (),
 				TypeAttributes.Sealed | TypeAttributes.Serializable,
 				typeof (Enum));
 			tb.DefineField ("value__", typeof (int), FieldAttributes.SpecialName |
 				FieldAttributes.Private | FieldAttributes.RTSpecialName);
 
-			tb.AddInterfaceImplementation ( typeof (OneMethodInterface));
+			tb.AddInterfaceImplementation (typeof (OneMethodInterface));
 
 			try {
 				tb.CreateType ();
 				Assert.Fail ("#1: type doesn't have all interface methods");
-			} catch (TypeLoadException e) {
+			} catch (TypeLoadException) {
 			}
+
+#if NET_2_0
+			Assert.IsTrue (tb.IsCreated (), "#2");
+#endif
 		}
 
 		[Test]
 		[Category ("NotWorking")]
 		public void TestTypeDontImplementInterfaceMethodBuildsFails ()
 		{
-			AssemblyName name = new AssemblyName ();
-			name.Name = "foo";
-
-			AssemblyBuilder asm = AppDomain.CurrentDomain.DefineDynamicAssembly (name,
-				AssemblyBuilderAccess.Run | AssemblyBuilderAccess.Save);
-			ModuleBuilder module = asm.DefineDynamicModule ("foo.dll", "foo.dll", true);
-
-			TypeBuilder tb = module.DefineType ("FooEnum4",
+			TypeBuilder tb = module.DefineType (genTypeName (),
 				TypeAttributes.Sealed | TypeAttributes.Serializable,
 				typeof (object));
 
-			tb.AddInterfaceImplementation ( typeof (OneMethodInterface));
+			tb.AddInterfaceImplementation (typeof (OneMethodInterface));
 
 			try {
 				tb.CreateType ();
 				Assert.Fail ("#1: type doesn't have all interface methods");
-			} catch (TypeLoadException e) {
+			} catch (TypeLoadException) {
 			}
+
+#if NET_2_0
+			Assert.IsTrue (tb.IsCreated (), "#2");
+#endif
 		}
 
 		[Test]
 		public void TestEnumWithSequentialLayoutBuildsFails ()
 		{
-			AssemblyName name = new AssemblyName ();
-			name.Name = "foo";
-
-			AssemblyBuilder asm = AppDomain.CurrentDomain.DefineDynamicAssembly (name,
-				AssemblyBuilderAccess.Run | AssemblyBuilderAccess.Save);
-			ModuleBuilder module = asm.DefineDynamicModule ("foo.dll", "foo.dll", true);
-
-			TypeBuilder tb = module.DefineType ("FooEnum5",
-			TypeAttributes.Sealed | TypeAttributes.Serializable | TypeAttributes.SequentialLayout,
-				typeof (Enum));
+			TypeBuilder tb = module.DefineType (genTypeName (),
+				TypeAttributes.Sealed | TypeAttributes.Serializable |
+				TypeAttributes.SequentialLayout, typeof (Enum));
 			tb.DefineField ("value__", typeof (int), FieldAttributes.SpecialName |
 				FieldAttributes.Private | FieldAttributes.RTSpecialName);
 
 			try {
 				tb.CreateType ();
 				Assert.Fail ("#1: type doesn't have all interface methods");
-			} catch (TypeLoadException e) {
+			} catch (TypeLoadException) {
 			}
+
+#if NET_2_0
+			//Assert.IsTrue (tb.IsCreated (), "#2");
+#endif
 		}
 
 		[Test]
 		public void TestEnumWithExplicitLayoutBuildsFails ()
 		{
-			AssemblyName name = new AssemblyName ();
-			name.Name = "foo";
-
-			AssemblyBuilder asm = AppDomain.CurrentDomain.DefineDynamicAssembly (name,
-				AssemblyBuilderAccess.Run | AssemblyBuilderAccess.Save);
-			ModuleBuilder module = asm.DefineDynamicModule ("foo.dll", "foo.dll", true);
-
-			TypeBuilder tb = module.DefineType ("FooEnum6",
-			TypeAttributes.Sealed | TypeAttributes.Serializable | TypeAttributes.ExplicitLayout,
-				typeof (Enum));
+			TypeBuilder tb = module.DefineType (genTypeName (),
+				TypeAttributes.Sealed | TypeAttributes.Serializable |
+				TypeAttributes.ExplicitLayout, typeof (Enum));
 			tb.DefineField ("value__", typeof (int), FieldAttributes.SpecialName |
 				FieldAttributes.Private | FieldAttributes.RTSpecialName);
 
 			try {
 				tb.CreateType ();
 				Assert.Fail ("#1: type doesn't have all interface methods");
-			} catch (TypeLoadException e) {
+			} catch (TypeLoadException) {
 			}
+
+#if NET_2_0
+			//Assert.IsTrue (tb.IsCreated (), "#2");
+#endif
 		}
 
 		[Test]
 		public void TestEnumWithMethodsBuildFails ()
 		{
-			AssemblyName name = new AssemblyName ();
-			name.Name = "foo";
-
-			AssemblyBuilder asm = AppDomain.CurrentDomain.DefineDynamicAssembly (name,
-				AssemblyBuilderAccess.Run | AssemblyBuilderAccess.Save);
-			ModuleBuilder module = asm.DefineDynamicModule ("foo.dll", "foo.dll", true);
-
 			TypeBuilder tb = module.DefineType ("FooEnum7",
 				TypeAttributes.Sealed | TypeAttributes.Serializable,
 				typeof (Enum));
@@ -432,8 +420,12 @@ namespace MonoTests.System.Reflection.Emit
 			try {
 				tb.CreateType ();
 				Assert.Fail ("#1: enum has method");
-			} catch (TypeLoadException e) {
+			} catch (TypeLoadException) {
 			}
+
+#if NET_2_0
+			//Assert.IsTrue (tb.IsCreated (), "#2");
+#endif
 		}
 
 		[Test]
@@ -446,14 +438,7 @@ namespace MonoTests.System.Reflection.Emit
 			};
 
 			foreach (Type type in badTypes) {
-				AssemblyName name = new AssemblyName ();
-				name.Name = "foo";
-
-				AssemblyBuilder asm = AppDomain.CurrentDomain.DefineDynamicAssembly (name,
-					AssemblyBuilderAccess.Run | AssemblyBuilderAccess.Save);
-				ModuleBuilder module = asm.DefineDynamicModule ("foo.dll", "foo.dll", true);
-
-				TypeBuilder tb = module.DefineType ("FooEnum8",
+				TypeBuilder tb = module.DefineType (genTypeName (),
 					TypeAttributes.Sealed | TypeAttributes.Serializable,
 					typeof (Enum));
 				tb.DefineField ("value__", type, FieldAttributes.SpecialName |
@@ -461,9 +446,13 @@ namespace MonoTests.System.Reflection.Emit
 
 				try {
 					tb.CreateType ();
-					Assert.Fail ("enum using bad type: " + type);
-				} catch (TypeLoadException e) {
+					Assert.Fail ("#1: enum using bad type: " + type);
+				} catch (TypeLoadException) {
 				}
+
+#if NET_2_0
+				//Assert.IsTrue (tb.IsCreated (), "#2");
+#endif
 			}
 		}
 
@@ -479,14 +468,7 @@ namespace MonoTests.System.Reflection.Emit
 			};
 
 			foreach (Type type in goodTypes) {
-				AssemblyName name = new AssemblyName ();
-				name.Name = "foo";
-
-				AssemblyBuilder asm = AppDomain.CurrentDomain.DefineDynamicAssembly (name,
-					AssemblyBuilderAccess.Run | AssemblyBuilderAccess.Save);
-				ModuleBuilder module = asm.DefineDynamicModule ("foo.dll", "foo.dll", true);
-
-				TypeBuilder tb = module.DefineType ("FooEnum9",
+				TypeBuilder tb = module.DefineType (genTypeName (),
 					TypeAttributes.Sealed | TypeAttributes.Serializable,
 					typeof (Enum));
 				tb.DefineField ("value__", type, FieldAttributes.SpecialName |
@@ -494,8 +476,8 @@ namespace MonoTests.System.Reflection.Emit
 
 				try {
 					tb.CreateType ();
-				} catch (TypeLoadException e) {
-					Assert.Fail ("enum using good type: " + type);
+				} catch (TypeLoadException) {
+					Assert.Fail ("#1: enum using good type: " + type);
 				}
 			}
 		}
@@ -503,15 +485,8 @@ namespace MonoTests.System.Reflection.Emit
 		[Test]
 		public void TestEnumWithMultipleValueFieldsBuildFals ()
 		{
-			AssemblyName name = new AssemblyName ();
-			name.Name = "foo";
-
-			AssemblyBuilder asm = AppDomain.CurrentDomain.DefineDynamicAssembly (name,
-				AssemblyBuilderAccess.Run | AssemblyBuilderAccess.Save);
-			ModuleBuilder module = asm.DefineDynamicModule ("foo.dll", "foo.dll", true);
-
-			TypeBuilder tb = module.DefineType ("FooEnum10",
-			TypeAttributes.Sealed | TypeAttributes.Serializable,
+			TypeBuilder tb = module.DefineType (genTypeName (),
+				TypeAttributes.Sealed | TypeAttributes.Serializable,
 				typeof (Enum));
 			tb.DefineField ("value__", typeof (int), FieldAttributes.SpecialName |
 				FieldAttributes.Private | FieldAttributes.RTSpecialName);
@@ -521,61 +496,51 @@ namespace MonoTests.System.Reflection.Emit
 			try {
 				tb.CreateType ();
 				Assert.Fail ("#1: invalid enum type");
-			} catch (TypeLoadException e) {
+			} catch (TypeLoadException) {
 			}
+
+#if NET_2_0
+			//Assert.IsTrue (tb.IsCreated (), "#2");
+#endif
 		}
 
 		[Test]
 		[Category ("NotWorking")]
 		public void TestEnumWithEmptyInterfaceCanBeCasted ()
 		{
-			AssemblyName name = new AssemblyName ();
-			name.Name = "foo";
-
-			AssemblyBuilder asm = AppDomain.CurrentDomain.DefineDynamicAssembly (name,
-				AssemblyBuilderAccess.Run | AssemblyBuilderAccess.Save);
-			ModuleBuilder module = asm.DefineDynamicModule ("foo.dll", "foo.dll", true);
-
-			TypeBuilder tb = module.DefineType ("FooEnum11",
-			TypeAttributes.Sealed | TypeAttributes.Serializable,
+			TypeBuilder tb = module.DefineType (genTypeName (),
+				TypeAttributes.Sealed | TypeAttributes.Serializable,
 				typeof (Enum));
 			tb.DefineField ("value__", typeof (int), FieldAttributes.SpecialName |
 				FieldAttributes.Private | FieldAttributes.RTSpecialName);
-
-			tb.AddInterfaceImplementation ( typeof (EmptyInterface));
+			tb.AddInterfaceImplementation (typeof (EmptyInterface));
 
 			try {
 				tb.CreateType ();
-			} catch (TypeLoadException e) {
+			} catch (TypeLoadException) {
 				Assert.Fail ("#1: must build enum type ok");
 			}
 
 			try {
 				EmptyInterface obj = (EmptyInterface) Activator.CreateInstance (tb);
-			} catch (TypeLoadException e) {
-				Assert.Fail ("#2: must cast enum to interface");
+				Assert.IsNotNull (obj, "#2");
+			} catch (TypeLoadException) {
+				Assert.Fail ("#3: must cast enum to interface");
 			}
 		}
 
 		[Test]
 		public void TestEnumWithValueFieldBuildOk ()
 		{
-			AssemblyName name = new AssemblyName ();
-			name.Name = "foo";
-
-			AssemblyBuilder asm = AppDomain.CurrentDomain.DefineDynamicAssembly (name,
-				AssemblyBuilderAccess.Run | AssemblyBuilderAccess.Save);
-			ModuleBuilder module = asm.DefineDynamicModule ("foo.dll", "foo.dll", true);
-
-			TypeBuilder tb = module.DefineType ("FooEnum12",
-			TypeAttributes.Sealed | TypeAttributes.Serializable,
+			TypeBuilder tb = module.DefineType (genTypeName (),
+				TypeAttributes.Sealed | TypeAttributes.Serializable,
 				typeof (Enum));
 			tb.DefineField ("value__", typeof (int), FieldAttributes.SpecialName |
 				FieldAttributes.Private | FieldAttributes.RTSpecialName);
 
 			try {
 				tb.CreateType ();
-			} catch (TypeLoadException e) {
+			} catch (TypeLoadException) {
 				Assert.Fail ("#1: must build enum type ok");
 			}
 		}
@@ -1121,35 +1086,38 @@ namespace MonoTests.System.Reflection.Emit
 			}
 		}
 
-		[Test] // bug #82018
-		[Category ("NotWorking")]
-		public void CreateType_Enum_NoValue ()
+		[Test]
+#if ONLY_1_1
+		[Category ("NotWorking")] // we allow CreateType to be invoked multiple times
+#endif
+		public void TestCreateType_Created ()
 		{
-			TypeBuilder tb = module.DefineType (genTypeName (),
-				TypeAttributes.Sealed | TypeAttributes.Serializable,
-				typeof (Enum));
+			TypeBuilder tb = module.DefineType (genTypeName ());
+#if NET_2_0
+			Assert.IsFalse (tb.IsCreated (), "#A1");
+#endif
+			Type emittedType1 = tb.CreateType ();
+#if NET_2_0
+			Assert.IsTrue (tb.IsCreated (), "#A2");
+#endif
+			Assert.IsNotNull (emittedType1, "#A3");
+
+#if NET_2_0
+			Type emittedType2 = tb.CreateType ();
+			Assert.IsNotNull (emittedType2, "#B1");
+			Assert.IsTrue (tb.IsCreated (), "#B2");
+			Assert.AreSame (emittedType1, emittedType2, "#B3");
+#else
 			try {
 				tb.CreateType ();
 				Assert.Fail ("#B1");
-			} catch (TypeLoadException) {
-				// No instance Field in an Enum
+			} catch (InvalidOperationException ex) {
+				// Unable to change after type has been created
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
 			}
-		}
-
-		[Test]
-		[Category ("NotWorking")]
-		public void TestCreateType ()
-		{
-			// TODO: LOTS OF TEST SHOULD GO THERE
-			TypeBuilder tb = module.DefineType (genTypeName ());
-			tb.CreateType ();
-
-			// Can not be called on a created type
-			try {
-				tb.CreateType ();
-				Assert.Fail ();
-			} catch (InvalidOperationException) {
-			}
+#endif
 		}
 
 		[Test]
@@ -2243,7 +2211,6 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[ExpectedException (typeof (TypeLoadException))]
 		[Category ("NotWorking")]
 		public void DefineEnumThrowIfTypeBuilderCalledBeforeEnumBuilder ()
 		{
@@ -2252,8 +2219,24 @@ namespace MonoTests.System.Reflection.Emit
 			EnumBuilder enumBuilder = module.DefineEnum (genTypeName (),
 														 TypeAttributes.Public, typeof (int));
 			typeBuilder.DefineField ("myField", enumBuilder, FieldAttributes.Private);
-			typeBuilder.CreateType ();
-			enumBuilder.CreateType ();
+			try {
+				typeBuilder.CreateType ();
+				Assert.Fail ("#1");
+			} catch (TypeLoadException) {
+			}
+#if NET_2_0
+			Assert.IsTrue (typeBuilder.IsCreated (), "#2");
+			Assert.IsNull (typeBuilder.CreateType (), "#3");
+#else
+			try {
+				typeBuilder.CreateType ();
+			} catch (InvalidOperationException ex) {
+				// Unable to change after type has been created
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+			}
+#endif
 		}
 
 		[Test]
@@ -2496,7 +2479,6 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test] // bug #82015
-		[Category ("NotWorking")]
 		public void MakeArrayType_Incomplete ()
 		{
 			// reference type
@@ -2531,24 +2513,6 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.IsFalse (tb.HasElementType, "#C3");
 			Assert.IsFalse (tb.IsCreated (), "#C4");
 		}
-
-		[Test]
-		public void TestMakeArrayTypeWorksWithIncompleteEnum () //bug 82015
-		{
-			AssemblyName name = new AssemblyName();
-			name.Name = "foo";
-
-			AssemblyBuilder asm = AppDomain.CurrentDomain.DefineDynamicAssembly(name,
-				AssemblyBuilderAccess.Run|AssemblyBuilderAccess.Save);
-			ModuleBuilder module = asm.DefineDynamicModule("foo.dll", "foo.dll", true);
-
-			TypeBuilder builder = module.DefineType("FooEnum",
-				TypeAttributes.Sealed|TypeAttributes.Serializable,
-				typeof(Enum));
-
-			Assert.IsNotNull (builder.MakeArrayType ());
-		}
-
 #endif
 	}
 }
