@@ -1,3 +1,7 @@
+2007-07-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (ves_icall_System_Reflection_Module_ResolveSignature): New icall.
+
 2007-07-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* icall.c (ves_icall_System_Reflection_Module_ResolveMethodToken): 
