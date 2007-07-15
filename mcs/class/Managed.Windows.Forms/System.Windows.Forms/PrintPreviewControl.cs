@@ -92,23 +92,16 @@ namespace System.Windows.Forms {
 		public bool AutoZoom {
 			get { return autozoom; }
 			set {
-				if (autozoom != value) {
-					InvalidatePreview ();
-					Invalidate ();
-				}
 				autozoom = value;
+				InvalidateLayout ();
 			}
 		}
 		[DefaultValue(1)]
 		public int Columns {
 			get { return columns; }
 			set {
-				if (columns != value) {
-					columns = value;
-					if (AutoZoom)
-						InvalidatePreview ();
-					Invalidate ();
-				}
+				columns = value;
+				InvalidateLayout ();
 			}
 		}
 		[DefaultValue(null)]
@@ -132,12 +125,8 @@ namespace System.Windows.Forms {
 		public int Rows {
 			get { return rows; }
 			set {
-				if (rows != value) {
-					rows = value;
-					if (AutoZoom)
-						InvalidatePreview ();
-					Invalidate ();
-				}
+				rows = value;
+				InvalidateLayout ();
 			}
 		}
 		[DefaultValue(0)]
@@ -152,10 +141,12 @@ namespace System.Windows.Forms {
 						value = 1;
 				}
 
-				if (startPage != value)
-					Invalidate ();
+				int start = StartPage;
 				startPage = value;
-				OnStartPageChanged (EventArgs.Empty);
+				if (start != startPage) {
+					InvalidateLayout ();
+					OnStartPageChanged (EventArgs.Empty);
+				}
 			}
 		}
 
@@ -180,13 +171,11 @@ namespace System.Windows.Forms {
 		public double Zoom {
 			get { return zoom; }
 			set {
-				if (zoom < 0.0)
+				if (value <= 0)
 					throw new ArgumentException ("zoom");
-				if (zoom != value) {
-					InvalidatePreview ();
-					Invalidate ();
-				}
+				autozoom = false;
 				zoom = value;
+				InvalidateLayout ();				
 			}
 		}
 		#endregion // Public Instance Properties
@@ -243,13 +232,7 @@ namespace System.Windows.Forms {
 				}
 				page_infos = null;
 			}
-			if (image_cache != null) {
-				for (int i = 0; i < image_cache.Length; i++) {
-					if (image_cache[i] !=null)
-						image_cache[i].Dispose();
-				}
-				image_cache = null;
-			}
+			InvalidateLayout();
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Never)]
@@ -285,17 +268,8 @@ namespace System.Windows.Forms {
 
 		protected override void OnResize(EventArgs e)
 		{
+			InvalidateLayout ();
 			base.OnResize (e);
-			if (AutoZoom) {
-				if (page_infos != null && page_infos.Length > 0) {
-					Size new_size = ThemeEngine.Current.PrintPreviewControlGetPageSize (this);
-					if (new_size.Width != image_size.Width && new_size.Height != image_size.Height)
-						image_cache = null;
-				}
-			}
-
-			UpdateScrollBars ();
-			Invalidate ();
 		}
 
 		protected virtual void OnStartPageChanged(EventArgs e)
@@ -415,6 +389,17 @@ namespace System.Windows.Forms {
 			}
 
 			ResumeLayout (false);
+		}
+
+		private void InvalidateLayout() {
+			if (image_cache != null) {
+				for (int i = 0; i < image_cache.Length; i++) {
+					if (image_cache[i] !=null)
+						image_cache[i].Dispose();
+				}
+				image_cache = null;
+			}
+			Invalidate ();
 		}
 	}
 }
