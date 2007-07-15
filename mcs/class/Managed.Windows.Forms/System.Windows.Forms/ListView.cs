@@ -1856,12 +1856,10 @@ namespace System.Windows.Forms
 				return;
 
 			if (SelectedIndices.Count > 0) {
-				BeginUpdate ();
 				for (int i = 0; i < SelectedIndices.Count; i++) {
 					ListViewItem item = Items [SelectedIndices [i]];
 					item.Checked = !item.Checked;
 				}
-				EndUpdate ();
 				return;
 			} 
 			
