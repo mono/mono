@@ -1,3 +1,7 @@
+2007-07-15 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* Calendar.cs: fixed: correct 'id' attribute is rendered.
+
 2007-07-10  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* ListItemCollection.cs: optimized SetDirty method

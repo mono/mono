@@ -791,19 +791,17 @@ namespace System.Web.UI.WebControls {
 #endif		
 		override void Render (HtmlTextWriter writer)
 		{
-			Table table = new Table ();
-			table.CellSpacing = CellSpacing;
-			table.CellPadding = CellPadding;
-			table.BorderWidth = 1;
+			TableStyle ts = new TableStyle ();
+			ts.CellSpacing = CellSpacing;
+			ts.CellPadding = CellPadding;
+			ts.BorderWidth = 1;
 			if (ControlStyleCreated)
-				table.ControlStyle.CopyFrom (ControlStyle);
-			table.CopyBaseAttributes (this);
-			table.ID = ID;
-
+				ts.CopyFrom (ControlStyle);
 			if (ShowGridLines)
-				table.GridLines = GridLines.Both;
-
-			table.RenderBeginTag (writer);
+				ts.GridLines = GridLines.Both;
+			ts.AddAttributesToRender (writer);
+			writer.AddAttribute (HtmlTextWriterAttribute.Id, ClientID);
+			writer.RenderBeginTag (HtmlTextWriterTag.Table);
 
 #if NET_2_0
 			if (Caption != "")
@@ -818,7 +816,7 @@ namespace System.Web.UI.WebControls {
 
 			WriteDays (writer);
 
-			table.RenderEndTag (writer);
+			writer.RenderEndTag ();
 		}
 
 		protected override object SaveViewState ()
