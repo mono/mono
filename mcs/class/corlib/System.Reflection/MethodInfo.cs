@@ -56,7 +56,6 @@ namespace System.Reflection {
 		public override MemberTypes MemberType { get {return MemberTypes.Method;} }
 
 #if NET_2_0
-		[MonoTODO]
 		public virtual Type ReturnType {
 			get { return null; }
 		}

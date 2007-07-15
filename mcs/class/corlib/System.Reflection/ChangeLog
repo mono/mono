@@ -1,5 +1,7 @@
 2007-07-15  Zoltan Varga  <vargaz@gmail.com>
 
+	* MethodInfo.cs: Remove an unneccesary MonoTODO.
+
 	* Module.cs: Implement ResolveSignature.
 
 2007-07-14  Zoltan Varga  <vargaz@gmail.com>
