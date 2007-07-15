@@ -1,3 +1,8 @@
+2007-07-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (mono_arch_build_imt_thunk): Remove the non-32bit MonoMethod
+	assert. Should fix #82103.
+
 2007-07-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-exceptions.c (mono_jit_walk_stack_from_ctx): Use MONO_CONTEXT_GET_SP ()
