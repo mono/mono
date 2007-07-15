@@ -152,7 +152,7 @@ function WebForm_DoPostback (id, par, url, apb, pval, tf, csubm, vg, currForm)
 		currForm.__doPostBack (id, par);
 }
 
-function WebForm_DoCallback (id, arg, callback, ctx, errorCallback, currForm)
+function WebForm_DoCallback (id, arg, callback, ctx, errorCallback, useAsync, currForm)
 {
 	currForm = WebForm_GetFormFromCtrl (id, currForm);
 	var qs = WebForm_getFormData (currForm) + "__CALLBACKTARGET=" + id + "&__CALLBACKARGUMENT=" + encodeURIComponent(arg);
