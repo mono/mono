@@ -58,7 +58,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
-		[Category("InetAccess")] 
+		[Category("InetAccess")]
 #if TARGET_JVM
 		[Ignore ("NMA - wrong cookies number returned")]
 #endif
@@ -68,21 +68,20 @@ namespace MonoTests.System.Net
 			Assertion.AssertNotNull ("req:If Modified Since: ", req.IfModifiedSince);
 
 			req.UserAgent = "MonoClient v1.0";
-			Assertion.AssertEquals ("req Header 1", "User-Agent", req.Headers.GetKey (0));
-			Assertion.AssertEquals ("req Header 2", "MonoClient v1.0", req.Headers.Get (0));
+			Assert.AreEqual ("User-Agent", req.Headers.GetKey (0), "#A1");
+			Assert.AreEqual ("MonoClient v1.0", req.Headers.Get (0), "#A2");
 
 			HttpWebResponse res = (HttpWebResponse) req.GetResponse ();
-			Assertion.AssertEquals ("res:HttpStatusCode: ", "OK", res.StatusCode.ToString ());
-			Assertion.AssertEquals ("res:HttpStatusDescription: ", "OK", res.StatusDescription);
-			
-			Assertion.AssertEquals ("res Header 1", "text/html", res.Headers.Get ("Content-Type"));
-			Assertion.AssertNotNull ("Last Modified: ", res.LastModified);
-			
-			Assertion.AssertEquals ("res:", 0, res.Cookies.Count);
-				
+			Assert.AreEqual ("OK", res.StatusCode.ToString (), "#B1");
+			Assert.AreEqual ("OK", res.StatusDescription, "#B2");
+
+			Assert.AreEqual ("text/html; charset=ISO-8859-1", res.Headers.Get ("Content-Type"), "#C1");
+			Assert.IsNotNull (res.LastModified, "#C2");
+			Assert.AreEqual (0, res.Cookies.Count, "#C3");
+
 			res.Close ();
 		}
-		
+
 		[Test]
 		public void AddRange ()
 		{
@@ -122,6 +121,7 @@ namespace MonoTests.System.Net
 				Assertion.AssertEquals ("#04", true, object.ReferenceEquals (one, two));
 			}
 		}
+
 #if !TARGET_JVM //NotWorking
 		[Test]
 		public void SslClientBlock ()
@@ -384,16 +384,43 @@ namespace MonoTests.System.Net
 
 				try {
 					req.GetResponse ();
-					Assert.Fail ("#1");
+					Assert.Fail ("#A1");
 				} catch (WebException ex) {
-					Assert.AreEqual (typeof (WebException), ex.GetType (), "#2");
-					Assert.IsNull (ex.InnerException, "#3");
-					Assert.AreEqual (WebExceptionStatus.ProtocolError, ex.Status, "#4");
+					Assert.AreEqual (typeof (WebException), ex.GetType (), "#A2");
+#if NET_2_0
+					Assert.IsNotNull (ex.InnerException, "#A3");
+					Assert.AreEqual (WebExceptionStatus.ReceiveFailure, ex.Status, "#A4");
+					Assert.AreEqual (typeof (IOException), ex.InnerException.GetType (), "#A5");
+					
+					// Unable to read data from the transport connection:
+					// A connection attempt failed because the connected party
+					// did not properly respond after a period of time, or
+					// established connection failed because connected host has
+					// failed to respond
+					IOException ioe = (IOException) ex.InnerException;
+					Assert.IsNotNull (ioe.InnerException, "#A6");
+					Assert.IsNotNull (ioe.Message, "#A7");
+					Assert.AreEqual (typeof (SocketException), ioe.InnerException.GetType (), "#A8");
+
+					// A connection attempt failed because the connected party
+					// did not properly respond after a period of time, or
+					// established connection failed because connected host has
+					// failed to respond
+					SocketException soe = (SocketException) ioe.InnerException;
+					Assert.IsNull (soe.InnerException, "#A9");
+					Assert.IsNotNull (soe.Message, "#A10");
 
 					HttpWebResponse webResponse = ex.Response as HttpWebResponse;
-					Assert.IsNotNull (webResponse, "#5");
-					Assert.AreEqual ("POST", webResponse.Method, "#6");
+					Assert.IsNull (webResponse, "#A11");
+#else
+					Assert.IsNull (ex.InnerException, "#A3");
+					Assert.AreEqual (WebExceptionStatus.ProtocolError, ex.Status, "#A4");
+
+					HttpWebResponse webResponse = ex.Response as HttpWebResponse;
+					Assert.IsNotNull (webResponse, "#A5");
+					Assert.AreEqual ("POST", webResponse.Method, "#A6");
 					webResponse.Close ();
+#endif
 				}
 
 				responder.Stop ();
@@ -411,15 +438,15 @@ namespace MonoTests.System.Net
 
 				try {
 					req.GetResponse ();
-					Assert.Fail ("#1");
+					Assert.Fail ("#B1");
 				} catch (WebException ex) {
-					Assert.AreEqual (typeof (WebException), ex.GetType (), "#2");
-					Assert.IsNull (ex.InnerException, "#3");
-					Assert.AreEqual (WebExceptionStatus.ProtocolError, ex.Status, "#4");
+					Assert.AreEqual (typeof (WebException), ex.GetType (), "#B2");
+					Assert.IsNull (ex.InnerException, "#B3");
+					Assert.AreEqual (WebExceptionStatus.ProtocolError, ex.Status, "#B4");
 
 					HttpWebResponse webResponse = ex.Response as HttpWebResponse;
-					Assert.IsNotNull (webResponse, "#5");
-					Assert.AreEqual ("GET", webResponse.Method, "#6");
+					Assert.IsNotNull (webResponse, "#B5");
+					Assert.AreEqual ("GET", webResponse.Method, "#B6");
 					webResponse.Close ();
 				}
 
@@ -427,7 +454,36 @@ namespace MonoTests.System.Net
 			}
 		}
 
-		private static byte [] EchoRequestHandler (Socket socket)
+#if NET_2_0
+		[Test] // bug #81504
+		public void Stream_CanTimeout ()
+		{
+			IPEndPoint localEP = new IPEndPoint (IPAddress.Loopback, 8764);
+			string url = "http://" + localEP.ToString () + "/original/";
+
+			// allow autoredirect
+			using (SocketResponder responder = new SocketResponder (localEP, new SocketRequestHandler (RedirectRequestHandler))) {
+				responder.Start ();
+
+				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
+				req.Method = "POST";
+				req.Timeout = 2000;
+				req.ReadWriteTimeout = 2000;
+				req.KeepAlive = false;
+				Stream rs = req.GetRequestStream ();
+				Assert.IsTrue (rs.CanTimeout, "#1");
+				rs.Close ();
+				using (HttpWebResponse resp = (HttpWebResponse) req.GetResponse ()) {
+					Stream os = resp.GetResponseStream ();
+					Assert.IsTrue (os.CanTimeout, "#2");
+					os.Close ();
+				}
+				responder.Stop ();
+			}
+		}
+#endif
+
+		static byte [] EchoRequestHandler (Socket socket)
 		{
 			MemoryStream ms = new MemoryStream ();
 			byte [] buffer = new byte [4096];
@@ -712,4 +768,3 @@ namespace MonoTests.System.Net
 #endif
 	}
 }
-

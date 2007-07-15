@@ -1,3 +1,9 @@
+2007-07-15  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* HttpWebRequestTest.cs: Remove usage of deprecated Assertion class.
+	Fixed Sync test.  Fixed InternalServerError to pass on .NET 2.0, and
+	renumbered tests. Added test for bug #81504.
+
 2007-05-18  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* HttpWebRequestTest.cs: Added test for exception thrown on read
