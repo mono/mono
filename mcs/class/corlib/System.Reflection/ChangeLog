@@ -1,5 +1,7 @@
 2007-07-15  Zoltan Varga  <vargaz@gmail.com>
 
+	* FieldInfo.cs: Implement GetOptional/RequiredCustomModifiers ().
+
 	* MethodInfo.cs: Remove an unneccesary MonoTODO.
 
 	* Module.cs: Implement ResolveSignature.

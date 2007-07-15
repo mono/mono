@@ -232,14 +232,21 @@ namespace System.Reflection {
 		}
 
 #if NET_2_0 || BOOTSTRAP_NET_2_0
-		[MonoTODO("Not implemented")]
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern Type[] GetTypeModifiers (bool optional);
+
 		public virtual Type[] GetOptionalCustomModifiers () {
-			throw new NotImplementedException ();
+			Type[] types = GetTypeModifiers (true);
+			if (types == null)
+				return Type.EmptyTypes;
+			return types;
 		}
 
-		[MonoTODO("Not implemented")]
 		public virtual Type[] GetRequiredCustomModifiers () {
-			throw new NotImplementedException ();
+			Type[] types = GetTypeModifiers (false);
+			if (types == null)
+				return Type.EmptyTypes;
+			return types;
 		}
 
 		public virtual object GetRawConstantValue ()
