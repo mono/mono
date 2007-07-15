@@ -401,9 +401,14 @@ namespace System.Reflection {
 				return Type.GetTypeFromHandle (new RuntimeTypeHandle (handle));
 		}
 
-		[MonoTODO]
 		public byte[] ResolveSignature (int metadataToken) {
-			throw new NotImplementedException ();
+			ResolveTokenError error;
+
+		    byte[] res = ResolveSignature (_impl, metadataToken, out error);
+			if (res == null)
+				throw resolve_token_exception (metadataToken, error, "signature");
+			else
+				return res;
 		}
 #endif
 
@@ -460,6 +465,9 @@ namespace System.Reflection {
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern MemberInfo ResolveMemberToken (IntPtr module, int token, IntPtr[] type_args, IntPtr[] method_args, out ResolveTokenError error);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern byte[] ResolveSignature (IntPtr module, int metadataToken, out ResolveTokenError error);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern void GetPEKind (IntPtr module, out PortableExecutableKinds peKind, out ImageFileMachine machine);
