@@ -399,8 +399,12 @@ namespace System.Web.UI.WebControls {
 									 "\n" + 
 									 "function ValidatorOnSubmit() {\n" + 
 									 "        if (Page_ValidationActive) {\n" + 
+#if NET_2_0
+									 "                return ValidatorCommonOnSubmit();\n" +
+#else		
 									 "                if (!ValidatorCommonOnSubmit())\n" +
 									 "                        return Page_ClientValidate ();\n" +
+#endif		
 									 "        }\n" + 
 									 "        return true;\n" + 
 									 "}\n" + 
