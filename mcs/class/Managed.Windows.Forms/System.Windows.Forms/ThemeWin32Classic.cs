@@ -2268,6 +2268,17 @@ namespace System.Windows.Forms
 						DrawListViewItem (dc, control, control.Items [i]);
 				}
 			}	
+
+#if NET_2_0
+			// draw group headers
+			if (control.View != View.List) {
+				for (int i = 0; i < control.Groups.Count; i++) {
+					ListViewGroup group = control.Groups [i];
+					if (group.Items.Count > 0 && clip.IntersectsWith (group.Bounds))
+						DrawListViewGroupHeader (dc, control, group);
+				}
+			}
+#endif
 			
 			// draw the gridlines
 			if (details && control.GridLines) {
@@ -2703,6 +2714,43 @@ namespace System.Windows.Forms
 			
 			return !args.DrawDefault;
 		}
+
+		protected virtual void DrawListViewGroupHeader (Graphics dc, ListView control, ListViewGroup group)
+		{
+			Rectangle text_bounds = group.Bounds;
+			Rectangle header_bounds = group.Bounds;
+			text_bounds.Offset (8, 0);
+			text_bounds.Inflate (-8, 0);
+			Size text_size = control.text_size;
+
+			Font font = new Font (control.Font, control.Font.Style | FontStyle.Bold);
+			Brush brush = new LinearGradientBrush (new Point (header_bounds.Left, 0), new Point (header_bounds.Left + ListViewGroupLineWidth, 0), 
+					SystemColors.Desktop, Color.White);
+			Pen pen = new Pen (brush);
+
+			StringFormat sformat = new StringFormat ();
+			switch (group.HeaderAlignment) {
+				case HorizontalAlignment.Left:
+					sformat.Alignment = StringAlignment.Near;
+					break;
+				case HorizontalAlignment.Center:
+					sformat.Alignment = StringAlignment.Center;
+					break;
+				case HorizontalAlignment.Right:
+					sformat.Alignment = StringAlignment.Far;
+					break;
+			}
+
+			sformat.LineAlignment = StringAlignment.Near;
+			dc.DrawString (group.Header, font, SystemBrushes.ControlText, text_bounds, sformat);
+			dc.DrawLine (pen, header_bounds.Left, header_bounds.Top + text_size.Height, header_bounds.Left + ListViewGroupLineWidth, 
+					header_bounds.Top + text_size.Height);
+
+			sformat.Dispose ();
+			font.Dispose ();
+			pen.Dispose ();
+			brush.Dispose ();
+		}
 #endif
 
 		// Sizing
@@ -2736,6 +2784,10 @@ namespace System.Windows.Forms
 
 		public override int ListViewGroupHeight { 
 			get { return 20; }
+		}
+
+		public int ListViewGroupLineWidth {
+			get { return 200; }
 		}
 
 		public override int ListViewTileWidthFactor {

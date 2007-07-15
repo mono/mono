@@ -1459,17 +1459,68 @@ namespace System.Windows.Forms
 			layout_ht = rows * (sz.Height + y_spacing) - y_spacing;
 			layout_wd = cols * (sz.Width + x_spacing) - x_spacing;
 			item_index_matrix = new int [rows, cols];
-			int row = 0;
-			int col = 0;
-			for (int i = 0; i < items.Count; i++) {
-				int x = col * (sz.Width + x_spacing);
-				int y = row * (sz.Height + y_spacing);
-				SetItemLocation (i, x, y, row, col);
-				item_index_matrix [row, col] = i;
+
+			int current_item = 0;
+			int current_y = 0;
 #if NET_2_0
-				if (!virtual_mode) // Virtual mode sets Layout until draw time
+			if (groups.Count > 0 && view != View.List)
+				LayoutIconsGroups (left_aligned, x_spacing, y_spacing);
+			else
 #endif
-					items [i].Layout ();
+				LayoutIconsSection (items, left_aligned, ref current_y, new Size (x_spacing, y_spacing), ref current_item);
+
+			item_control.Size = new Size (layout_wd, layout_ht);
+		}
+
+#if NET_2_0
+		void LayoutIconsGroups (bool left_aligned, int x_spacing, int y_spacing)
+		{
+			int header_spacing = 10;
+			int header_height = text_size.Height + 10;
+			Rectangle client_area = ClientRectangle;
+
+			int current_item = 0;
+			int current_y = 0;
+
+			for (int i = 0; i < groups.Count; i++) {
+				ListViewGroup group = groups [i];
+				if (group.Items.Count == 0)
+					continue;
+					
+				group.Bounds = new Rectangle (0, current_y, client_area.Width - v_scroll.Width, header_height);
+				current_y += header_height;
+
+				LayoutIconsSection (group.Items, left_aligned, ref current_y, new Size (x_spacing, y_spacing),
+						ref current_item);
+					
+				current_y += header_spacing;
+			}
+				
+			layout_ht = current_y; // Adjust with the header heights
+		}
+#endif
+
+		void LayoutIconsSection (ListView.ListViewItemCollection items_collection, bool left_aligned, ref int y_origin, 
+				Size item_spacing, ref int current_item)
+		{
+			int x, y = 0;
+			int row = 0, col = 0;
+			int x_spacing = item_spacing.Width;
+			int y_spacing = item_spacing.Height;
+			Size item_size = ItemSize;
+
+			for (int i = 0; i < items_collection.Count; i++) {
+				ListViewItem item = items_collection [i];
+				x = col * (item_size.Width + x_spacing);
+				y = row * (item_size.Height + y_spacing) + y_origin;
+
+				SetItemLocation (current_item, x, y, row, col);
+				item_index_matrix [row, col] = current_item;
+				current_item++;
+#if NET_2_0
+				if (!virtual_mode)
+#endif
+					item.Layout ();
 
 				if (left_aligned) {
 					if (++row == rows) {
@@ -1484,7 +1535,8 @@ namespace System.Windows.Forms
 				}
 			}
 
-			item_control.Size = new Size (layout_wd, layout_ht);
+			// Return the lower bounds of the icons section
+			y_origin = y + item_size.Height;
 		}
 
 		void LayoutHeader ()
@@ -4143,7 +4195,7 @@ namespace System.Windows.Forms
 		public class ListViewItemCollection : IList, ICollection, IEnumerable
 		{
 			private readonly ArrayList list;
-			private readonly ListView owner;
+			private ListView owner;
 
 			#region Public Constructor
 			public ListViewItemCollection (ListView owner)
@@ -4545,6 +4597,15 @@ namespace System.Windows.Forms
 #endif
 
 			#endregion	// Public Methods
+
+			internal ListView Owner {
+				get {
+					return owner;
+				}
+				set {
+					owner = value;
+				}
+			}
 
 			void AddItem (ListViewItem value)
 			{

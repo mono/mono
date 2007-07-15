@@ -1,5 +1,18 @@
 2007-07-15  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ListView.cs: Implement initial support for Groups. Split some of the
+	LayoutIcons code to render a partial list of the items (needed by
+	items contained in ListViewGroup instances). Let the
+	ListViewItemsCollection.ListView property be modifiable (needed when
+	using Groups, too).
+	* ListViewGroup.cs: Use a Bounds property rather than a Location
+	one. Also invalidate the bounds when they get changed.
+	* ThemeWin32Classic.cs: When drawing items, also draw the group header
+	if ListView.Groups.Count is bigger than 0. Add a DrawListViewGroupHeader
+	method as well.
+
+2007-07-15  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* ListView.cs: When space gets pressed and CheckBoxes is true, 
 	don't invoke the Begin and EndUpdate methods. We are generating 
 	a redraw of the entire control without need to do so.
