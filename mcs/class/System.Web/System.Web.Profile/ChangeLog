@@ -1,3 +1,7 @@
+2007-07-16  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* ProfileBase.cs: fixed typo bug in InitProperties
+
 2007-05-21  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* ProfileModule.cs: OnLeave checks if Profile was accessed during a

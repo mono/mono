@@ -77,7 +77,7 @@ namespace System.Web.Profile
 
 				for (int s = 0; s < ppsc.Count; s++) {
 					SettingsProperty settingsProperty = CreateSettingsPropery (pgs, ppsc [s]);
-					ValidateProperty (settingsProperty, ppsc [i].ElementInformation);
+					ValidateProperty (settingsProperty, ppsc [s].ElementInformation);
 					properties.Add (settingsProperty);
 				}
 			}
