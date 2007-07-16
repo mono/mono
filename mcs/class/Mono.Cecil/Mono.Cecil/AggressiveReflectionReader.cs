@@ -274,6 +274,9 @@ namespace Mono.Cecil {
 				DeclSecurityRow dsRow = dsTable [i];
 				SecurityDeclaration dec = BuildSecurityDeclaration (dsRow);
 
+				if (dsRow.Parent.RID == 0)
+					continue;
+
 				IHasSecurity owner = null;
 				switch (dsRow.Parent.TokenType) {
 				case TokenType.Assembly :
@@ -300,6 +303,10 @@ namespace Mono.Cecil {
 			for (int i = 0; i < caTable.Rows.Count; i++) {
 				CustomAttributeRow caRow = caTable [i];
 				MethodReference ctor;
+
+				if (caRow.Type.RID == 0)
+					continue;
+
 				if (caRow.Type.TokenType == TokenType.Method)
 					ctor = GetMethodDefAt (caRow.Type.RID);
 				else

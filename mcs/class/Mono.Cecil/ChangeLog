@@ -1,5 +1,8 @@
 2007-07-17  Jb Evain  <jbevain@novell.com>
 
+	* Mono.Cecil/AggressiveReflectionReader.cs:
+		Add some gards against zeroed tokens.
+
 	* Mono.Cecil.Metadata/Utilities.cs:
 		Return zero instead of throwing on invalid tags.
 		Allow Cecil to read assemblies partially broken
