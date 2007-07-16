@@ -1,3 +1,9 @@
+
+Mon Jul 16 19:36:16 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c, class.c, icall.c, loader.c: mono_get_inflated_method () is
+	obsolete, removed.
+
 2007-07-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* icall.c (ves_icall_System_Reflection_FieldInfo_GetTypeModifiers): New icall.
