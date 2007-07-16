@@ -28,6 +28,9 @@
 
 using System;
 using System.Collections;
+#if NET_2_0
+using System.ComponentModel;
+#endif
 using System.IO;
 using System.Data;
 using System.Windows.Forms;
@@ -38,6 +41,14 @@ namespace MonoTests.System.Windows.Forms
 	[TestFixture]
 	public class ListControlTest
 	{
+		private int dataSourceChanged;
+
+		[SetUp]
+		public void SetUp ()
+		{
+			dataSourceChanged = 0;
+		}
+
 		[Test]
 		// Bug 80794
 		public void DataBindingsTest ()
@@ -171,7 +182,137 @@ namespace MonoTests.System.Windows.Forms
 			lc.DataSource = new object ();
 		}
 
+		[Test]
+		public void DataSource1 ()
+		{
+			ArrayList list1 = new ArrayList ();
+			list1.Add ("item 1");
+			ArrayList list2 = new ArrayList ();
+
+			ListControlChild lc = new ListControlChild ();
+			lc.DataSourceChanged += new EventHandler (ListControl_DataSourceChanged);
+			lc.DataSource = list1;
+			Assert.AreEqual (1, dataSourceChanged, "#A1");
+			Assert.AreSame (list1, lc.DataSource, "#A2");
+
+			Form form = new Form ();
+			form.Controls.Add (lc);
+
+			Assert.AreEqual (1, dataSourceChanged, "#B1");
+			Assert.AreSame (list1, lc.DataSource, "#B2");
+			lc.DataSource = list1;
+			Assert.AreEqual (1, dataSourceChanged, "#B3");
+			Assert.AreSame (list1, lc.DataSource, "#B4");
+			lc.DataSource = list2;
+			Assert.AreEqual (2, dataSourceChanged, "#B5");
+			Assert.AreSame (list2, lc.DataSource, "#B6");
+			lc.DataSource = null;
+			Assert.AreEqual (3, dataSourceChanged, "#B7");
+			Assert.IsNull (lc.DataSource, "#B8");
+
+			list1.Add ("whatever");
+			list2.Add ("whatever");
+			list1.Clear ();
+			list2.Clear ();
+
+			form.Dispose ();
+		}
+
+		[Test]
+		public void DataSource2 ()
+		{
+			ArrayList list1 = new ArrayList ();
+			list1.Add ("item 1");
+			ArrayList list2 = new ArrayList ();
+
+			ListControlChild lc = new ListControlChild ();
+			lc.DataSourceChanged += new EventHandler (ListControl_DataSourceChanged);
+
+			Form form = new Form ();
+			form.Controls.Add (lc);
+
+			Assert.AreEqual (0, dataSourceChanged, "#1");
+			Assert.IsNull (lc.DataSource, "#2");
+			lc.DataSource = list1;
+			Assert.AreEqual (1, dataSourceChanged, "#3");
+			Assert.AreSame (list1, lc.DataSource, "#4");
+			lc.DataSource = list2;
+			Assert.AreEqual (2, dataSourceChanged, "#5");
+			Assert.AreSame (list2, lc.DataSource, "#6");
+			lc.DataSource = null;
+			Assert.AreEqual (3, dataSourceChanged, "#7");
+			Assert.IsNull (lc.DataSource, "#8");
+
+			list1.Add ("whatever");
+			list2.Add ("whatever");
+			list1.Clear ();
+			list2.Clear ();
+
+			form.Dispose ();
+		}
+
 #if NET_2_0
+		[Test] // bug #81771
+		public void DataSource_BindingList1 ()
+		{
+			BindingList<string> list1 = new BindingList<string> ();
+			list1.Add ("item 1");
+			BindingList<string> list2 = new BindingList<string> ();
+
+			ListControlChild lc = new ListControlChild ();
+			lc.DataSourceChanged += new EventHandler (ListControl_DataSourceChanged);
+			lc.DataSource = list1;
+			Assert.AreEqual (1, dataSourceChanged, "#A1");
+			Assert.AreSame (list1, lc.DataSource, "#A2");
+
+			Form form = new Form ();
+			form.Controls.Add (lc);
+
+			Assert.AreEqual (1, dataSourceChanged, "#B1");
+			Assert.AreSame (list1, lc.DataSource, "#B2");
+			lc.DataSource = list2;
+			Assert.AreEqual (2, dataSourceChanged, "#B3");
+			Assert.AreSame (list2, lc.DataSource, "#B4");
+			lc.DataSource = null;
+			Assert.AreEqual (3, dataSourceChanged, "#B5");
+			Assert.IsNull (lc.DataSource, "#B6");
+
+			list1.Add ("item");
+			list1.Clear ();
+
+			form.Dispose ();
+		}
+
+		[Test] // bug #81771
+		public void DataSource_BindingList2 ()
+		{
+			BindingList<string> list1 = new BindingList<string> ();
+			list1.Add ("item 1");
+			BindingList<string> list2 = new BindingList<string> ();
+
+			ListControlChild lc = new ListControlChild ();
+			lc.DataSourceChanged += new EventHandler (ListControl_DataSourceChanged);
+
+			Form form = new Form ();
+			form.Controls.Add (lc);
+
+			Assert.AreEqual (0, dataSourceChanged, "#1");
+			Assert.IsNull (lc.DataSource, "#2");
+			lc.DataSource = list1;
+			Assert.AreEqual (1, dataSourceChanged, "#3");
+			Assert.AreSame (list1, lc.DataSource, "#4");
+			lc.DataSource = list2;
+			Assert.AreEqual (2, dataSourceChanged, "#5");
+			Assert.AreSame (list2, lc.DataSource, "#6");
+			lc.DataSource = null;
+			Assert.AreEqual (3, dataSourceChanged, "#7");
+			Assert.IsNull (lc.DataSource, "#8");
+			list1.Add ("item");
+			list1.Clear ();
+
+			form.Dispose ();
+		}
+
 		[Test]
 		public void AllowSelection ()
 		{
@@ -205,38 +346,43 @@ namespace MonoTests.System.Windows.Forms
 			e.Value = "Monkey!";
 		}
 #endif
-	}
 
-	public class ListControlChild : ListControl
-	{
-		public override int SelectedIndex {
-			get {
-				return -1;
-			}
-			set {
-			}
+		void ListControl_DataSourceChanged (object sender, EventArgs e)
+		{
+			dataSourceChanged++;
 		}
+
+		public class ListControlChild : ListControl
+		{
+			public override int SelectedIndex {
+				get {
+					return -1;
+				}
+				set {
+				}
+			}
 
 #if NET_2_0
-		public bool allow_selection {
-			get { return base.AllowSelection; }
-		}
+			public bool allow_selection {
+				get { return base.AllowSelection; }
+			}
 #endif
 
-		public object FilterItem (object obj, string field)
-		{
-			return FilterItemOnProperty (obj, field);
-		}
+			public object FilterItem (object obj, string field)
+			{
+				return FilterItemOnProperty (obj, field);
+			}
 
-		protected override void RefreshItem (int index)
-		{
-		}
+			protected override void RefreshItem (int index)
+			{
+			}
 
-		protected override void SetItemsCore (IList items)
-		{
+			protected override void SetItemsCore (IList items)
+			{
+			}
 		}
 	}
-		
+
 	public class MockItem
 	{
 		public MockItem (string text, int value)
@@ -244,18 +390,16 @@ namespace MonoTests.System.Windows.Forms
 			_text = text;
 			_value = value;
 		}
-			
+
 		public string Text {
 			get { return _text; }
 		}
-			
+
 		public int Value {
 			get { return _value; }
 		}
-			
+
 		private readonly string _text;
 		private readonly int _value;
-		
 	}
 }
-

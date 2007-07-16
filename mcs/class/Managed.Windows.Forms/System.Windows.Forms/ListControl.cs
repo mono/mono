@@ -53,11 +53,9 @@ namespace System.Windows.Forms
 #endif
 
 		protected ListControl ()
-		{			
-			data_source = null;
+		{
 			value_member = new BindingMemberInfo (string.Empty);
 			display_member = string.Empty;
-			data_manager = null;
 			SetStyle (ControlStyles.StandardClick | ControlStyles.UserPaint
 #if NET_2_0
 				| ControlStyles.UseTextForAccessibility
@@ -183,7 +181,7 @@ namespace System.Windows.Forms
 					display_member = String.Empty;
 				else if (!(value is IList || value is IListSource))
 					throw new Exception ("Complex DataBinding accepts as a data source " +
-							     "either an IList or an IListSource");
+						"either an IList or an IListSource");
 
 				data_source = value;
 				ConnectToDataSource ();
@@ -223,9 +221,8 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public object SelectedValue {
 			get {
-				if (data_manager == null) {
+				if (data_manager == null)
 					return null;
-				}				
 				
 				object item = data_manager [SelectedIndex];
 				object fil = FilterItemOnProperty (item, ValueMember);
@@ -242,39 +239,35 @@ namespace System.Windows.Forms
 				}
 
 				if (data_manager != null) {
-					
 					PropertyDescriptorCollection col = data_manager.GetItemProperties ();
 					PropertyDescriptor prop = col.Find (ValueMember, true);
-										
+					
 					for (int i = 0; i < data_manager.Count; i++) {
 						if (value.Equals (prop.GetValue (data_manager [i]))) {
-						 	SelectedIndex = i;
-						 	return;
+							SelectedIndex = i;
+							return;
 						}
 					}
 					SelectedIndex = -1;
-					
 				}
 			}
 		}
 
 		[DefaultValue("")]
 		[Editor("System.Windows.Forms.Design.DataMemberFieldEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
-		public string ValueMember  {
+		public string ValueMember {
 			get { return value_member.BindingMember; }
 			set {
 				BindingMemberInfo new_value = new BindingMemberInfo (value);
 				
-				if (value_member.Equals (new_value)) {
+				if (value_member.Equals (new_value))
 					return;
-				}
 				
 				value_member = new_value;
 				
-				if (display_member == string.Empty) {
+				if (display_member == string.Empty)
 					DisplayMember = value_member.BindingMember;
-				}
-				
+
 				ConnectToDataSource ();
 				OnValueMemberChanged (EventArgs.Empty);
 			}
@@ -461,7 +454,6 @@ namespace System.Windows.Forms
 
 		protected virtual void SetItemCore (int index,	object value)
 		{
-
 		}
 
 		protected abstract void SetItemsCore (IList items);
@@ -477,24 +469,25 @@ namespace System.Windows.Forms
 
 		private void ConnectToDataSource ()
 		{
-			if (data_source == null) {
-				if (data_manager != null) { // Disconnect handlers from previous manager
+			if (BindingContext == null)
+				return;
+
+			CurrencyManager newDataMgr;
+			if (data_source != null)
+				newDataMgr = (CurrencyManager) BindingContext [data_source];
+			if (newDataMgr != data_manager) {
+				if (data_manager != null) {
+					// Disconnect handlers from previous manager
 					data_manager.PositionChanged -= new EventHandler (OnPositionChanged);
 					data_manager.ItemChanged -= new ItemChangedEventHandler (OnItemChanged);
-				} 
-
-				data_manager = null;
-				return;
+				}
+				if (newDataMgr != null) {
+					newDataMgr.PositionChanged += new EventHandler (OnPositionChanged);
+					newDataMgr.ItemChanged += new ItemChangedEventHandler (OnItemChanged);
+				}
+				data_manager = newDataMgr;
 			}
-
-			if (BindingContext == null) {
-				return;
-			}
-			
-			data_manager = (CurrencyManager) BindingContext [data_source];
-			data_manager.PositionChanged += new EventHandler (OnPositionChanged);
-			data_manager.ItemChanged += new ItemChangedEventHandler (OnItemChanged);
-		}		
+		}
 
 		private void OnItemChanged (object sender, ItemChangedEventArgs e)
 		{
@@ -513,6 +506,4 @@ namespace System.Windows.Forms
 
 		#endregion Private Methods
 	}
-
 }
-

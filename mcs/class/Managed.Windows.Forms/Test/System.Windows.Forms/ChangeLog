@@ -1,6 +1,12 @@
+2007-07-16  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ComboBoxTest.cs: Added test for bug #82069.
+	* ListControlTest.cs: Added tests for bug #81771.
+
 2007-07-12  Jonathan Pobst  <monkey@jpobst.com>
 
-	* ButtonTest.cs: Add test showing a NSE if Flat BorderColor is transparent.
+	* ButtonTest.cs: Add test showing a NSE if Flat BorderColor is 
+	transparent.
 
 2007-07-09  Jonathan Pobst  <monkey@jpobst.com>
 

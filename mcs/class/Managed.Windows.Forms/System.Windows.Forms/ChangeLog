@@ -1,3 +1,8 @@
+2007-07-16  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ListControl.cs: When changing CurrencyManager, disconnect event
+	handlers from previous one. Fixes bug #81771. Code formatting.
+
 2007-07-15  Andreia Gaita <avidigal@novell.com>
 
 	* PrintPreviewControl.cs: Remove extraneous Invalidate calls. Separate
@@ -25,7 +30,7 @@
 	don't invoke the Begin and EndUpdate methods. We are generating 
 	a redraw of the entire control without need to do so.
 
-2007-07-13	William Holmes <billholmes54@gmail.com> 
+2007-07-13  William Holmes <billholmes54@gmail.com> 
 
 	* Control.cs: Changing logic in FindFlatForward and 
 	  FindFlatBackward to handle multiple Controls with 

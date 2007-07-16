@@ -117,6 +117,27 @@ namespace MonoTests.System.Windows.Forms
 				Assert.AreEqual ("SUCCESS", cb.Text, "#02");
 			}
 		}
+
+		[Test] // bug #82069
+		public void DataBindingTest2 ()
+		{
+			ComboBox cmb = new ComboBox ();
+			cmb.Items.Add (new MockItem ("Foo", 9));
+			cmb.Items.Add (new MockItem ("Bar", 6));
+			cmb.ValueMember = "Value";
+			cmb.DisplayMember = "Text";
+
+			Form form = new Form ();
+			form.Controls.Add (cmb);
+			form.Show ();
+
+			cmb.SelectedIndex = 0;
+			Assert.AreEqual ("Foo", cmb.Text, "#1");
+			cmb.SelectedIndex = 1;
+			Assert.AreEqual ("Bar", cmb.Text, "#2");
+
+			form.Dispose ();
+		}
 		
 		[Test]
 		public void ComboBoxPropertyTest ()
@@ -1077,5 +1098,4 @@ namespace MonoTests.System.Windows.Forms
 			}
 		}
 	}
-
 }
