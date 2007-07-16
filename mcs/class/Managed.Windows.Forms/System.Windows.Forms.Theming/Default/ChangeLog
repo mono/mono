@@ -1,5 +1,10 @@
 2007-07-16  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ButtonPainter.cs: For flat buttons, draw mouse highlight when
+	button is focused.  Remove random extra rectangle.
+
+2007-07-16  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ButtonPainter.cs: For Flat button, if no mouse over / press
 	backcolor is specified, calculate one from the normal backcolor.
 

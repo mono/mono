@@ -1,5 +1,10 @@
 2007-07-16  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ThemeWin32Classic.cs: Allow a Flat button to be Focused and Entered.
+	Darken the focus color.
+
+2007-07-16  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ListBox.cs: When measuring items, if it's a CheckedListBox, add room
 	for the checkbox.
 	* ThemeWin32Classic.cs: Make the checkbox bigger in a CheckedListBox and use

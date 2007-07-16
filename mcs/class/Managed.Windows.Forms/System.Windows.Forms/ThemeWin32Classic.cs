@@ -227,8 +227,12 @@ namespace System.Windows.Forms
 		{
 			if (button.Pressed)
 				ThemeElements.DrawFlatButton (g, button.ClientRectangle, ButtonThemeState.Pressed, button.BackColor, button.ForeColor, button.FlatAppearance);
-			else if (button.InternalSelected)
-				ThemeElements.DrawFlatButton (g, button.ClientRectangle, ButtonThemeState.Default, button.BackColor, button.ForeColor, button.FlatAppearance);
+			else if (button.InternalSelected) {
+				if (button.Entered) 
+					ThemeElements.DrawFlatButton (g, button.ClientRectangle, ButtonThemeState.Default | ButtonThemeState.Entered, button.BackColor, button.ForeColor, button.FlatAppearance);
+				else
+					ThemeElements.DrawFlatButton (g, button.ClientRectangle, ButtonThemeState.Default, button.BackColor, button.ForeColor, button.FlatAppearance);
+			}
 			else if (button.Entered)
 				ThemeElements.DrawFlatButton (g, button.ClientRectangle, ButtonThemeState.Entered, button.BackColor, button.ForeColor, button.FlatAppearance);
 			else if (!button.Enabled)
@@ -240,7 +244,7 @@ namespace System.Windows.Forms
 		public virtual void DrawFlatButtonFocus (Graphics g, Button button)
 		{
 			if (!button.Pressed) {
-				Color focus_color = ControlPaint.Light(button.BackColor);
+				Color focus_color = ControlPaint.Dark (button.BackColor);
 				g.DrawRectangle (ResPool.GetPen (focus_color), new Rectangle (button.ClientRectangle.Left + 4, button.ClientRectangle.Top + 4, button.ClientRectangle.Width - 9, button.ClientRectangle.Height - 9));
 			}
 		}
