@@ -1,3 +1,10 @@
+2007-07-17  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil.Metadata/Utilities.cs:
+		Return zero instead of throwing on invalid tags.
+		Allow Cecil to read assemblies partially broken
+		by some obfuscators.
+
 2007-07-14  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* default.build: Fix relative path to key. Avoid use of ugly foreach

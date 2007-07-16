@@ -96,10 +96,10 @@ namespace Mono.Cecil.Metadata {
 					return new MetadataToken (TokenType.<%=name%>, rid);
 <%	}
 %>				default :
-					throw new MetadataFormatException("Non valid tag for <%=ci.name%>");
+					return MetadataToken.Zero;
 				}
 <% } %>			default :
-				throw new MetadataFormatException ("Non valid CodedIndex");
+				return MetadataToken.Zero;
 			}
 		}
 
