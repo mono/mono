@@ -472,7 +472,7 @@ namespace System.Windows.Forms
 			if (BindingContext == null)
 				return;
 
-			CurrencyManager newDataMgr;
+			CurrencyManager newDataMgr = null;
 			if (data_source != null)
 				newDataMgr = (CurrencyManager) BindingContext [data_source];
 			if (newDataMgr != data_manager) {
