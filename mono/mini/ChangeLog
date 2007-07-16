@@ -1,3 +1,9 @@
+
+Mon Jul 16 19:31:21 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c, jit-icalls.c: mono_get_inflated_method() is obsolete,
+	removed.
+
 2007-07-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-amd64.c (mono_arch_build_imt_thunk): Remove the non-32bit MonoMethod
