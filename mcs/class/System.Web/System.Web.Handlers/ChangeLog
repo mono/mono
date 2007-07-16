@@ -1,3 +1,8 @@
+2007-07-16 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* AssemblyResourceLoader.cs:
+	fixed RegEx used for PerformSubstitution feature.
+
 2007-07-11 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* AssemblyResourceLoader.cs:

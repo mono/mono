@@ -201,7 +201,7 @@ namespace System.Web.Handlers {
 		sealed class PerformSubstitutionHelper
 		{
 			readonly Assembly _assembly;
-			static readonly Regex _regex = new Regex (@"\<%=[ ]+WebResource[ ]*\([ ]*""([\.\w]+)""[ ]*\)[ ]*%\>");
+			static readonly Regex _regex = new Regex (@"\<%=[ ]*WebResource[ ]*\([ ]*""([^""]+)""[ ]*\)[ ]*%\>");
 
 			public PerformSubstitutionHelper (Assembly assembly) {
 				_assembly = assembly;
