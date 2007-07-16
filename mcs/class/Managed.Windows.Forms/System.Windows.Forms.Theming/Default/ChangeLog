@@ -1,3 +1,8 @@
+2007-07-16  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ButtonPainter.cs: For Flat button, if no mouse over / press
+	backcolor is specified, calculate one from the normal backcolor.
+
 2007-07-12  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ButtonPainter.cs: For Flat button, if BorderSize is 0, don't

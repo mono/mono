@@ -111,10 +111,14 @@ namespace System.Windows.Forms.Theming.Default
 				case ButtonThemeState.Entered:
 					if (appearance.MouseOverBackColor != Color.Empty)
 						g.FillRectangle (ResPool.GetSolidBrush (appearance.MouseOverBackColor), bounds);
+					else
+						g.FillRectangle (ResPool.GetSolidBrush (ChangeIntensity (backColor, .9F)), bounds);
 					break;
 				case ButtonThemeState.Pressed:
 					if (appearance.MouseDownBackColor != Color.Empty)
 						g.FillRectangle (ResPool.GetSolidBrush (appearance.MouseDownBackColor), bounds);
+					else
+						g.FillRectangle (ResPool.GetSolidBrush (ChangeIntensity (backColor, .95F)), bounds);
 					break;
 				case ButtonThemeState.Default:
 					if (appearance.CheckedBackColor != Color.Empty)
@@ -175,5 +179,15 @@ namespace System.Windows.Forms.Theming.Default
 		}
 		#endregion
 		#endregion
+		
+		private static Color ChangeIntensity (Color baseColor, float percent)
+		{
+			int H, I, S;
+
+			ControlPaint.Color2HBS (baseColor, out H, out I, out S);
+			int NewIntensity = Math.Min (255, (int)(I * percent));
+
+			return ControlPaint.HBS2Color (H, NewIntensity, S);			
+		}
 	}
 }
