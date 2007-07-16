@@ -394,12 +394,12 @@ namespace System.Resources
 				reader.BaseStream.Seek(data_offset+dataSectionOffset, SeekOrigin.Begin);
 				int type_index=Read7BitEncodedInt();
 
+				if (type_index == -1)
+					return null;
 #if NET_2_0
 				if (resource_ver == 2)
 					return ReadValueVer2 (type_index);
 #endif
-				if (type_index == -1)
-					return null;
 
 				return ReadValueVer1 (types[type_index]);
 			}

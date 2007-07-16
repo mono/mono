@@ -1,3 +1,8 @@
+2007-07-16  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* ResourceReader.cs (ResourceValue): Put the null resource check
+	  before the resource version 2 check, this fixes bug #81757
+
 2007-05-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ResourceWriter.cs : fix for runtime serialization type index.
