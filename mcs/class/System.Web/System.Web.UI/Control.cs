@@ -1088,8 +1088,11 @@ namespace System.Web.UI
                                 _renderMethodDelegate (writer, this);
 			} else if (_controls != null) {
 				int len = _controls.Count;
+				Control c;
 				for (int i = 0; i < len; i++) {
-					Control c = _controls [i];
+					c = _controls [i];
+					if (c == null)
+						continue;
 #if NET_2_0
 					if (c.Adapter != null)
 						c.RenderControl (writer, c.Adapter);

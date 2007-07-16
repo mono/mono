@@ -49,6 +49,8 @@ namespace System.Web.UI.HtmlControls
 				return typeof (HtmlTitle);
 			if (String.Compare (tagName, "link", true, CultureInfo.InvariantCulture) == 0)
 				return typeof (HtmlLink);
+			if (String.Compare (tagName, "meta", true, CultureInfo.InvariantCulture) == 0)
+				return typeof (HtmlMeta);
 			return null;
 		}
 	}

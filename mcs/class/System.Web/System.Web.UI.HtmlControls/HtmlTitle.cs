@@ -64,7 +64,10 @@ namespace System.Web.UI.HtmlControls
 		protected internal override void Render (HtmlTextWriter writer)
 		{
 			writer.RenderBeginTag (HtmlTextWriterTag.Title);
-			writer.Write (text);
+			if (HasControls () || HasRenderMethodDelegate ())
+				RenderChildren (writer);
+			else
+				writer.Write (text);
 			writer.RenderEndTag ();
 		}
 	}

@@ -1,3 +1,11 @@
+2007-07-16  Marek Habersack  <mhabersack@novell.com>
+
+	* HtmlHeadBuilder.cs: the <meta> tag should be supported as well.
+
+	* HtmlTitle.cs: if the tag has any children, or the render method
+	delegate has been defined, render the children. Output the
+	contents of Text otherwise. Fixes bug #82102
+
 2007-05-08  Marek Habersack  <mhabersack@novell.com>
 
 	* HtmlInputButton.cs: button of type 'reset' does not invoke
