@@ -110,6 +110,7 @@ namespace System.Web.UI
 		string _panelToRefreshID;
 		Dictionary<Control, DataItemEntry> _dataItems;
 		bool _enablePageMethods;
+		string _controlIDToFocus;
 
 		[DefaultValue (true)]
 		[Category ("Behavior")]
@@ -441,7 +442,12 @@ namespace System.Web.UI
 				sb.AppendLine ("Sys.Application.initialize();");
 				RegisterStartupScript (this, typeof (ExtenderControl), "Sys.Application.initialize();", sb.ToString (), true);
 
+#if TARGET_DOTNET
+				// to cause webform client script being included
+				Page.ClientScript.GetPostBackEventReference (new PostBackOptions (this, null, null, false, false, false, true, true, null));
+#else
 				Page.ClientScript.GetPostBackEventReference (this, null);
+#endif
 			}
 		}
 
@@ -458,7 +464,7 @@ namespace System.Web.UI
 		}
 
 		static bool HasBeenRendered (Control control) {
-			if(control==null)
+			if (control == null)
 				return false;
 
 			UpdatePanel parent = control.Parent as UpdatePanel;
@@ -576,7 +582,7 @@ namespace System.Web.UI
 		}
 
 		public static void RegisterClientScriptResource (Page page, Type type, string resourceName) {
-			RegisterClientScriptInclude (page, type, "resource-" + resourceName, ScriptResourceHandler.GetResourceUrl (type, resourceName));
+			RegisterClientScriptInclude (page, type, "resource-" + resourceName, ScriptResourceHandler.GetResourceUrl (type.Assembly, resourceName, true));
 		}
 
 		void RegisterScriptReference (ScriptReference script) {
@@ -854,11 +860,33 @@ namespace System.Web.UI
 		}
 
 		public void SetFocus (Control control) {
-			throw new NotImplementedException ();
+			if (control == null)
+				throw new ArgumentNullException ("control");
+
+			if (IsInAsyncPostBack) {
+				EnsureFocusClientScript ();
+				_controlIDToFocus = control.ClientID;
+			}
+			else
+				Page.SetFocus (control);
 		}
 
 		public void SetFocus (string clientID) {
-			throw new NotImplementedException ();
+			if (String.IsNullOrEmpty (clientID))
+				throw new ArgumentNullException ("control");
+
+			if (IsInAsyncPostBack) {
+				EnsureFocusClientScript ();
+				_controlIDToFocus = clientID;
+			}
+			else
+				Page.SetFocus (clientID);
+		}
+
+		void EnsureFocusClientScript () {
+#if	TARGET_DOTNET
+			RegisterClientScriptResource (this, typeof (ClientScriptManager), "Focus.js");
+#endif
 		}
 
 		#region IPostBackDataHandler Members
@@ -940,13 +968,16 @@ namespace System.Web.UI
 					DataItemEntry entry = _dataItems [control];
 					WriteCallbackOutput (output, entry.IsJsonSerialized ? dataItemJson : dataItem, control.ClientID, entry.DataItem);
 				}
-			
+
 			WriteArrayDeclarations (output);
 			WriteScriptBlocks (output, _clientScriptBlocks);
 			WriteScriptBlocks (output, _scriptIncludes);
 			WriteScriptBlocks (output, _startupScriptBlocks);
 			WriteScriptBlocks (output, _onSubmitStatements);
 			WriteHiddenFields (output);
+
+			if (!String.IsNullOrEmpty (_controlIDToFocus))
+				WriteCallbackOutput (output, focus, null, _controlIDToFocus);
 		}
 
 		void WriteArrayDeclarations (HtmlTextWriter writer) {
