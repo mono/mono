@@ -1,3 +1,14 @@
+2007-07-16  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ListBox.cs: When measuring items, if it's a CheckedListBox, add room
+	for the checkbox.
+	* ThemeWin32Classic.cs: Make the checkbox bigger in a CheckedListBox and use
+	X, Y instead of a rect for drawing text.
+	- For ControlPaint.DrawCheckBox, center the check a little better when the
+	checkbox is odd width.  When drawing a flat checkbox, use a white background
+	when state != inactive.
+	[Fixes bugs #82097, 82100]
+
 2007-07-16  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ListControl.cs: When changing CurrencyManager, disconnect event

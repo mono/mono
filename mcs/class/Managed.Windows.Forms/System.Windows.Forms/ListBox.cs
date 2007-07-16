@@ -813,6 +813,9 @@ namespace System.Windows.Forms
 				}				
 			}
 
+			if (this is CheckedListBox)
+				rect.Width += 15;
+				
 			return rect;
 		}
 
@@ -1149,8 +1152,13 @@ namespace System.Windows.Forms
 				width = 0;
 				for (int i = 0; i < Items.Count; i++) {
 					SizeF sz = DeviceContext.MeasureString (GetItemText (Items[i]), Font);
-					if ((int) sz.Width > width)
-						width = (int) sz.Width;
+					int t = (int)sz.Width;
+					
+					if (this is CheckedListBox)
+						t += 15;
+						
+					if (t > width)
+						width = t;
 				}
 				break;
 			}

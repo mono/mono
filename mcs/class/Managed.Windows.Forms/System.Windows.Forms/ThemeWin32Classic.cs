@@ -1224,14 +1224,14 @@ namespace System.Windows.Forms
 			if (ctrl.ThreeDCheckBoxes == false)
 				state |= ButtonState.Flat;
 
-			Rectangle checkbox_rect = new Rectangle (2, (item_rect.Height - 11) / 2, 11, 11);
+			Rectangle checkbox_rect = new Rectangle (2, (item_rect.Height - 11) / 2, 13, 13);
 			ControlPaint.DrawCheckBox (e.Graphics,
 				item_rect.X + checkbox_rect.X, item_rect.Y + checkbox_rect.Y,
 				checkbox_rect.Width, checkbox_rect.Height,
 				state);
 
-			item_rect.X += checkbox_rect.Width + checkbox_rect.X * 2;
-			item_rect.Width -= checkbox_rect.Width + checkbox_rect.X * 2;
+			item_rect.X += checkbox_rect.Right;
+			item_rect.Width -= checkbox_rect.Right;
 			
 			/* Draw text*/
 			if ((e.State & DrawItemState.Selected) == DrawItemState.Selected) {
@@ -1248,7 +1248,7 @@ namespace System.Windows.Forms
 
 			e.Graphics.DrawString (ctrl.GetItemText (ctrl.Items[e.Index]), e.Font,
 				ResPool.GetSolidBrush (fore_color),
-				item_rect, ctrl.StringFormat);
+				item_rect.X, item_rect.Y, ctrl.StringFormat);
 					
 			if ((e.State & DrawItemState.Focus) == DrawItemState.Focus) {
 				CPDrawFocusRectangle (e.Graphics, item_rect,
@@ -5926,7 +5926,10 @@ namespace System.Windows.Forms
 				cb_rect.Width -= 2;
 				cb_rect.Height -= 2;
 				
-				dc.FillRectangle (SystemBrushes.ControlLight, cb_rect.X, cb_rect.Y, cb_rect.Width - 1, cb_rect.Height - 1);
+				if ((state & ButtonState.Inactive) == ButtonState.Inactive)
+					dc.FillRectangle (SystemBrushes.ControlLight, cb_rect.X, cb_rect.Y, cb_rect.Width - 1, cb_rect.Height - 1);
+				else
+					dc.FillRectangle (Brushes.White, cb_rect.X, cb_rect.Y, cb_rect.Width - 1, cb_rect.Height - 1);
 				dc.DrawRectangle (SystemPens.ControlDark, cb_rect.X, cb_rect.Y, cb_rect.Width - 1, cb_rect.Height - 1);
 			} else {
 				cb_rect.Width -= 1;
@@ -5978,7 +5981,7 @@ namespace System.Windows.Forms
 					int lineWidth = Math.Max (3, check_size / 3);
 					int Scale = Math.Max (1, check_size / 9);
 					
-					Rectangle rect = new Rectangle (cb_rect.X + (cb_rect.Width / 2) - (check_size / 2) - 1, cb_rect.Y + (cb_rect.Height / 2) - (check_size / 2) - 1, 
+					Rectangle rect = new Rectangle (cb_rect.X + (cb_rect.Width / 2) - (int)Math.Ceiling ((float)check_size / 2) - 1, cb_rect.Y + (cb_rect.Height / 2) - (check_size / 2) - 1, 
 									check_size, check_size);
 					
 					for (int i = 0; i < lineWidth; i++) {
