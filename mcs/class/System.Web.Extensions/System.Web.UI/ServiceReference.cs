@@ -37,24 +37,26 @@ namespace System.Web.UI
 	[DefaultProperty ("Path")]
 	public class ServiceReference
 	{
+		bool _inlineScript;
+		string _path;
+
 		public ServiceReference ()
 		{
-			throw new NotImplementedException ();
 		}
 
 		public ServiceReference (string path)
 		{
-			throw new NotImplementedException ();
+			_path = path;
 		}
 
 		[DefaultValue (false)]
 		[Category ("Behavior")]
 		public bool InlineScript {
 			get {
-				throw new NotImplementedException ();
+				return _inlineScript;
 			}
 			set {
-				throw new NotImplementedException ();
+				_inlineScript = value;
 			}
 		}
 
@@ -62,10 +64,12 @@ namespace System.Web.UI
 		[Category ("Behavior")]
 		public string Path {
 			get {
-				throw new NotImplementedException ();
+				if(String.IsNullOrEmpty(_path))
+					return String.Empty;
+				return _path;
 			}
 			set {
-				throw new NotImplementedException ();
+				_path = value;
 			}
 		}
 

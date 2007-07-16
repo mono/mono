@@ -89,6 +89,7 @@ namespace System.Web.UI
 		List<UpdatePanel> _panelsToRefresh;
 		List<UpdatePanel> _updatePanels;
 		ScriptReferenceCollection _scripts;
+		ServiceReferenceCollection _services;
 		bool _isInAsyncPostBack;
 		bool _isInPartialRendering;
 		string _asyncPostBackSourceElementID;
@@ -324,7 +325,10 @@ namespace System.Web.UI
 		[Category ("Behavior")]
 		public ServiceReferenceCollection Services {
 			get {
-				throw new NotImplementedException ();
+				if (_services == null)
+					_services = new ServiceReferenceCollection ();
+
+				return _services;
 			}
 		}
 
@@ -461,6 +465,11 @@ namespace System.Web.UI
 			for (int i = 0; i < scripts.Count; i++)
 				if (!IsInAsyncPostBack || HasBeenRendered (scripts [i].Control))
 					RegisterScriptReference (scripts [i].ScriptReference);
+
+			// Register services
+			for (int i = 0; i < _services.Count; i++) {
+				RegisterServiceReference (_services [i]);
+			}
 		}
 
 		static bool HasBeenRendered (Control control) {
@@ -630,6 +639,18 @@ namespace System.Web.UI
 			sb.Append (".js");
 
 			return sb.ToString ();
+		}
+
+		void RegisterServiceReference (ServiceReference serviceReference) {
+			if (serviceReference.InlineScript) {
+				string url = ResolveUrl (serviceReference.Path);
+				LogicalTypeInfo logicalTypeInfo = LogicalTypeInfo.GetLogicalTypeInfo (WebServiceParser.GetCompiledType (url, Context), url);
+				RegisterClientScriptBlock (this, typeof (ScriptManager), url, logicalTypeInfo.Proxy, true);
+			}
+			else {
+				string url = String.Concat (ResolveClientUrl (serviceReference.Path), "/js");
+				RegisterClientScriptInclude (this, typeof (ScriptManager), url, url);
+			}
 		}
 
 		public void RegisterDataItem (Control control, string dataItem) {
