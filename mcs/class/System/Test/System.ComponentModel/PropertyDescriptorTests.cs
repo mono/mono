@@ -150,6 +150,113 @@ namespace MonoTests.System.ComponentModel
 			private string _prop;
 		}
 
+		class ShouldSerialize_ReadOnly
+		{
+			[ReadOnly (true)]
+			[DefaultValue ("ok")]
+			public string Prop1 {
+				get { return _prop1; }
+				set { _prop1 = value; }
+			}
+
+			[ReadOnly (false)]
+			public string Prop2 {
+				get { return _prop2; }
+				set { _prop2 = value; }
+			}
+
+			[ReadOnly (true)]
+			public string Prop3 {
+				get { return _prop3; }
+				set { _prop3 = value; }
+			}
+
+			[ReadOnly (false)]
+			public string Prop4 {
+				get { return _prop4; }
+				set { _prop4 = value; }
+			}
+
+			public string Prop5 {
+				get { return _prop5; }
+			}
+
+			[DefaultValue ("bad")]
+			public string Prop6 {
+				get { return _prop6; }
+			}
+
+			[ReadOnly (true)]
+			[DefaultValue ("good")]
+			public string Prop7 {
+				get { return _prop7; }
+				set { _prop7 = value; }
+			}
+
+			public bool SerializeProp3 {
+				get { return _serializeProp3; }
+				set { _serializeProp3 = value; }
+			}
+
+			public bool SerializeProp4 {
+				get { return _serializeProp4; }
+				set { _serializeProp4 = value; }
+			}
+
+			public bool SerializeProp5 {
+				get { return _serializeProp5; }
+				set { _serializeProp5 = value; }
+			}
+
+			public bool SerializeProp6 {
+				get { return _serializeProp6; }
+				set { _serializeProp6 = value; }
+			}
+
+			public bool SerializeProp7 {
+				get { return _serializeProp7; }
+				set { _serializeProp7 = value; }
+			}
+
+			public bool ShouldSerializeProp3 ()
+			{
+				return _serializeProp3;
+			}
+
+			public bool ShouldSerializeProp4 ()
+			{
+				return _serializeProp4;
+			}
+
+			public bool ShouldSerializeProp5 ()
+			{
+				return _serializeProp5;
+			}
+
+			public bool ShouldSerializeProp6 ()
+			{
+				return _serializeProp6;
+			}
+
+			public bool ShouldSerializeProp7 ()
+			{
+				return _serializeProp7;
+			}
+
+			private string _prop1;
+			private string _prop2;
+			private string _prop3;
+			private string _prop4;
+			private string _prop5 = "good";
+			private string _prop6 = "bad";
+			private string _prop7;
+			private bool _serializeProp3;
+			private bool _serializeProp4;
+			private bool _serializeProp5;
+			private bool _serializeProp6;
+			private bool _serializeProp7;
+		}
+
 		class NoSerializeOrResetProp_test
 		{
 			public int Prop {
@@ -289,6 +396,58 @@ namespace MonoTests.System.ComponentModel
 			Assert.IsTrue (p.ShouldSerializeValue (test), "#3");
 			test.SerializeProp = false;
 			Assert.IsTrue (p.ShouldSerializeValue (test), "#4");
+		}
+
+		[Test]
+		public void ShouldSerializeTest_ReadOnly ()
+		{
+			PropertyDescriptorCollection properties = TypeDescriptor.GetProperties (
+				typeof (ShouldSerialize_ReadOnly));
+			ShouldSerialize_ReadOnly test = new ShouldSerialize_ReadOnly ();
+
+			PropertyDescriptor prop1PD = properties ["Prop1"];
+			PropertyDescriptor prop2PD = properties ["Prop2"];
+			PropertyDescriptor prop3PD = properties ["Prop3"];
+			PropertyDescriptor prop4PD = properties ["Prop4"];
+			PropertyDescriptor prop5PD = properties ["Prop5"];
+			PropertyDescriptor prop6PD = properties ["Prop6"];
+			PropertyDescriptor prop7PD = properties ["Prop7"];
+
+			Assert.IsFalse (prop1PD.ShouldSerializeValue (test), "#A1");
+			Assert.IsTrue (prop2PD.ShouldSerializeValue (test), "#A2");
+			Assert.IsFalse (prop3PD.ShouldSerializeValue (test), "#A3");
+			Assert.IsFalse (prop4PD.ShouldSerializeValue (test), "#A4");
+			Assert.IsFalse (prop5PD.ShouldSerializeValue (test), "#A5");
+			Assert.IsFalse (prop6PD.ShouldSerializeValue (test), "#A6");
+			Assert.IsFalse (prop7PD.ShouldSerializeValue (test), "#A7");
+
+			test.Prop1 = "whatever";
+			Assert.IsFalse (prop1PD.ShouldSerializeValue (test), "#B1");
+			test.Prop2 = "whatever";
+			Assert.IsTrue (prop2PD.ShouldSerializeValue (test), "#B2");
+			test.Prop3 = "whatever";
+			Assert.IsFalse (prop3PD.ShouldSerializeValue (test), "#B3");
+			test.Prop4 = "whatever";
+			Assert.IsFalse (prop4PD.ShouldSerializeValue (test), "#B4");
+			test.Prop7 = "whatever";
+			Assert.IsFalse (prop7PD.ShouldSerializeValue (test), "#B5");
+
+			test.Prop1 = "ok";
+			Assert.IsFalse (prop1PD.ShouldSerializeValue (test), "#C1");
+			test.SerializeProp3 = true;
+			Assert.IsTrue (prop3PD.ShouldSerializeValue (test), "#C2");
+			test.SerializeProp4 = true;
+			Assert.IsTrue (prop4PD.ShouldSerializeValue (test), "#C3");
+			test.SerializeProp5 = true;
+			Assert.IsTrue (prop5PD.ShouldSerializeValue (test), "#C4");
+			test.SerializeProp6 = true;
+			Assert.IsTrue (prop6PD.ShouldSerializeValue (test), "#C5");
+			test.Prop7 = "good";
+			Assert.IsFalse (prop7PD.ShouldSerializeValue (test), "#C6");
+			test.SerializeProp7 = true;
+			Assert.IsTrue (prop7PD.ShouldSerializeValue (test), "#C7");
+			test.Prop7 = "good";
+			Assert.IsTrue (prop7PD.ShouldSerializeValue (test), "#C8");
 		}
 
 		[Test]

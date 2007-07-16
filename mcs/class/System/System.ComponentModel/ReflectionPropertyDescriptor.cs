@@ -71,15 +71,12 @@ namespace System.ComponentModel
 			return _member;
 		}
 
-		public override Type ComponentType
-		{
+		public override Type ComponentType {
 			get { return _componentType; }
 		}
 
-		public override bool IsReadOnly
-		{
-			get
-			{
+		public override bool IsReadOnly {
+			get {
 				bool attr_ro = false;
 
 				ReadOnlyAttribute attrib = ((ReadOnlyAttribute) Attributes[typeof (ReadOnlyAttribute)]);
@@ -90,17 +87,15 @@ namespace System.ComponentModel
 			}
 		}
 
-		public override Type PropertyType
-		{
-			get
-			{
+		public override Type PropertyType {
+			get {
 				return GetPropertyInfo ().PropertyType;
 			}
 		}
 
 		public override object GetValue (object component)
 		{
-			component = MemberDescriptor.GetInvokee (_componentType, component);			
+			component = MemberDescriptor.GetInvokee (_componentType, component);
 			return GetPropertyInfo ().GetValue (component, null);
 		}
 
@@ -231,7 +226,14 @@ namespace System.ComponentModel
 		public override bool ShouldSerializeValue (object component)
 		{
 			component = MemberDescriptor.GetInvokee (_componentType, component);
-			
+
+			if (IsReadOnly) {
+				MethodInfo mi = FindPropertyMethod (component, "ShouldSerialize");
+				if (mi != null)
+					return (bool) mi.Invoke (component, null);
+				return false;
+			}
+
 			DefaultValueAttribute attrib = ((DefaultValueAttribute) Attributes[typeof (DefaultValueAttribute)]);
 			if (attrib != null) {
 				object current = GetValue (component);
@@ -250,4 +252,3 @@ namespace System.ComponentModel
 		}
 	}
 }
-

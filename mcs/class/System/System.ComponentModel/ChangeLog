@@ -1,3 +1,9 @@
+2007-07-16  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ReflectionPropertyDescriptor.cs: For read-only properties,
+	ShouldSerializeValue must only take into account the return value
+	of the ShouldSerialize method. Code formatting.
+
 2007-07-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* PropertyDescriptor.cs: GetEditor: We have to check the property
