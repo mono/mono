@@ -152,6 +152,29 @@ namespace MonoTests.System.Resources
 			reader.Close ();
 		}
 
+#if NET_2_0
+		[Test] // bug #81757
+		public void ReadNullResource ()
+		{
+			MemoryStream stream = new MemoryStream ();
+			object value = null;
+			ResourceWriter rw = new ResourceWriter (stream);
+			rw.AddResource ("NullTest", value);
+			rw.Generate ();
+			stream.Position = 0;
+
+			using (ResourceReader rr = new ResourceReader (stream)) {
+				int entryCount = 0;
+				foreach (DictionaryEntry de in rr) {
+					Assert.AreEqual ("NullTest", de.Key, "#1");
+					Assert.IsNull (de.Value, "#2");
+					Assert.AreEqual (0, entryCount, "#3");
+					entryCount++;
+				}
+			}
+		}
+#endif
+
 		[Test] // bug #79976
 		public void ByteArray ()
 		{

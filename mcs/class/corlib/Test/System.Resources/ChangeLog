@@ -1,3 +1,7 @@
+2007-07-16  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* ResourceReaderTest.cs:  new test, related to 2.0 bug of #81757
+
 2007-05-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ResourceWriterTest.cs : new test, contains one for bug #81759.
