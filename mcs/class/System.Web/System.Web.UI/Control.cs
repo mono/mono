@@ -755,6 +755,7 @@ namespace System.Web.UI
 		{
 			if (Page == null)
 				return;
+			if(String.IsNullOrEmpty(ID))
 			ID = NamingContainer.GetDefaultName ();
 		}
 

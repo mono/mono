@@ -1,3 +1,8 @@
+2007-07-16 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* Control.cs: fixed EnsureID.
+	ID is not assigned, if already was set.
+
 2007-07-12  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* ClientScriptManager.cs: refactored event validation data structure
