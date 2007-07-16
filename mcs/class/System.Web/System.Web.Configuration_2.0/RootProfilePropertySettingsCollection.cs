@@ -85,6 +85,17 @@ namespace System.Web.Configuration
 		public ProfileGroupSettingsCollection GroupSettings {
 			get { return (ProfileGroupSettingsCollection) base [""]; }
 		}
+
+		protected override void Reset (ConfigurationElement parentElement)
+		{
+			base.Reset (parentElement);
+
+			RootProfilePropertySettingsCollection root = (RootProfilePropertySettingsCollection) parentElement;
+			if (root == null)
+				return;
+
+			GroupSettings.ResetInternal (root.GroupSettings);
+		}
 	}
 }
 

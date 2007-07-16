@@ -115,6 +115,10 @@ namespace System.Web.Configuration
 			get { return (ProfileGroupSettings) BaseGet (name); }
 		}
 
+		internal void ResetInternal (ConfigurationElement parentElement)
+		{
+			Reset (parentElement);
+		}
 	}
 
 }

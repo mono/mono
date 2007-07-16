@@ -1,3 +1,10 @@
+2007-07-16  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* ProfileGroupSettingsCollection.cs: added ResetInternal internal
+	method
+	* RootProfilePropertySettingsCollection.cs: added Reset method
+	override to reset GroupSettings collection
+
 2007-06-24  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* HttpHandlerAction.cs: fixed SplitPaths property to be thread safe
