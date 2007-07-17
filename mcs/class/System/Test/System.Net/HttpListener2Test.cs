@@ -28,6 +28,7 @@
 //
 #if NET_2_0
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
@@ -399,6 +400,122 @@ namespace MonoTests.System.Net {
 			listener.Close ();
 			Assert.IsTrue (response.StartsWith ("HTTP/1.1 200"));
 			Assert.IsTrue (-1 != response.IndexOf ("Transfer-Encoding: chunked"));
+		}
+
+		void SendCookie ()
+		{
+			NetworkStream ns = CreateNS (9000);
+			Send (ns, "GET /SendCookie/ HTTP/1.1\r\nHost: 127.0.0.1\r\n"+
+				"Cookie:$Version=\"1\"; "+
+				"Cookie1=Value1; $Path=\"/\"; "+
+				"CookieM=ValueM; $Path=\"/p2\"; $Domain=\"test\"; $Port=\"99\";"+
+				"Cookie2=Value2; $Path=\"/foo\";"+
+				"\r\n"+
+				"\r\n");
+			ns.Flush ();
+			Thread.Sleep (200);
+			ns.Close();
+		}
+
+		[Test]
+		public void ReceiveCookiesFromClient ()
+		{
+			HttpListener listener = CreateAndStartListener ("http://127.0.0.1:9000/SendCookie/");
+			Thread clientThread = new Thread (new ThreadStart (SendCookie));
+			clientThread.Start ();
+
+			HttpListenerContext context = listener.GetContext();
+			HttpListenerRequest request = context.Request;
+
+			Assert.AreEqual (3, request.Cookies.Count, "#1");
+			foreach (Cookie c in request.Cookies) {
+				if (c.Name == "Cookie1") {
+					Assert.AreEqual ("Value1", c.Value, "#2");
+					Assert.AreEqual ("\"/\"", c.Path, "#3");
+					Assert.AreEqual (0, c.Port.Length, "#4");
+					Assert.AreEqual (0, c.Domain.Length, "#5");
+				} else if (c.Name == "CookieM") {
+					Assert.AreEqual ("ValueM", c.Value, "#6");
+					Assert.AreEqual ("\"/p2\"", c.Path, "#7");
+					Assert.AreEqual ("\"99\"", c.Port, "#8");
+					Assert.AreEqual ("\"test\"", c.Domain, "#9");
+				} else if (c.Name == "Cookie2") {
+					Assert.AreEqual ("Value2", c.Value, "#10");
+					Assert.AreEqual ("\"/foo\"", c.Path, "#11");
+					Assert.AreEqual (0, c.Port.Length, "#12");
+					Assert.AreEqual (0, c.Domain.Length, "#13");
+				} else
+					Assert.Fail ("Invalid cookie name " + c.Name);
+			}
+
+			listener.Close ();
+		}
+
+		private object _lock = new Object();
+		private string cookieResponse;
+
+		void ReceiveCookie () {
+			lock (_lock) {
+				NetworkStream ns = CreateNS (9000);
+				Send (ns, "GET /ReceiveCookie/ HTTP/1.1\r\nHost: 127.0.0.1\r\n\r\n");
+				cookieResponse = Receive (ns, 512);
+				FileStream fs = new FileStream ("/home/rodrigo/dump", FileMode.OpenOrCreate, FileAccess.ReadWrite);
+				StreamWriter sw = new StreamWriter (fs);
+				sw.WriteLine ("cookies: "+cookieResponse);
+				sw.Close ();
+			}
+		}
+
+		[Test]
+		public void SendCookiestoClient ()
+		{
+			HttpListener listener = CreateAndStartListener ("http://127.0.0.1:9000/ReceiveCookie/");
+			Thread clientThread = new Thread (new ThreadStart (ReceiveCookie));
+			clientThread.Start ();
+
+			HttpListenerContext context = listener.GetContext();
+			HttpListenerRequest request = context.Request;
+			HttpListenerResponse response = context.Response;
+
+			Cookie cookie = new Cookie ();
+			cookie.Name = "Name0";
+			cookie.Value = "Value0";
+			cookie.Domain = "blue";
+			cookie.Path = "/path/";
+			cookie.Port = "\"80\"";
+			cookie.Version = 1;
+			response.Cookies.Add (cookie);
+
+			string responseString = "<HTML><BODY>----</BODY></HTML>";
+			byte[] buffer = Encoding.UTF8.GetBytes(responseString);
+			response.ContentLength64 = buffer.Length;
+			Stream output = response.OutputStream;
+			output.Write(buffer, 0, buffer.Length);
+			output.Flush ();
+			response.Close();
+			
+			lock (_lock) {
+				bool foundCookie = false;
+				foreach (String str in cookieResponse.Split ('\n')) {
+					if (!str.StartsWith ("Set-Cookie2"))
+						continue;
+					Dictionary<string, String> dic = new Dictionary<string, String>();
+					foreach (String p in str.Substring (str.IndexOf (":") + 1).Split (';')) {
+						String[] parts = p.Split('=');
+						dic.Add (parts [0].Trim (), parts [1].Trim ());
+					}
+					Assert.AreEqual ("Value0", dic ["Name0"], "#1");
+					Assert.AreEqual ("blue", dic ["Domain"], "#2");
+					Assert.AreEqual ("\"/path/\"", dic ["Path"], "#3");
+					Assert.AreEqual ("\"80\"", dic ["Port"], "#4");
+					Assert.AreEqual ("1", dic ["Version"], "#5");
+					foundCookie = true;
+					break;
+				}
+				Assert.IsTrue (foundCookie, "#6");
+			}
+
+			listener.Close ();
 		}
 	}
 

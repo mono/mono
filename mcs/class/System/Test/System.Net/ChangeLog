@@ -1,3 +1,7 @@
+2006-07-17  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* HttpListener2Test.cs: Tests for cookie receiving and sending, related to bug #81627
+
 2007-07-17  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* HttpWebRequestTest.cs: Fixed and enabled InternalServerError test.
