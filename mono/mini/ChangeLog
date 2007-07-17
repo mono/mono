@@ -1,5 +1,8 @@
 2007-07-17  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-amd64.c (mono_arch_find_imt_method): Handle mov reg,IMM64 case. Fixes
+	#82117.
+	
 	* mini-amd64.c (mono_arch_find_imt_method): Add some debug code to help find out
 	the cause of an assertion.
 
