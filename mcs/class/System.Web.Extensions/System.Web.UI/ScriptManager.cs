@@ -112,15 +112,16 @@ namespace System.Web.UI
 		Dictionary<Control, DataItemEntry> _dataItems;
 		bool _enablePageMethods;
 		string _controlIDToFocus;
+		bool _allowCustomErrorsRedirect = true;
 
 		[DefaultValue (true)]
 		[Category ("Behavior")]
 		public bool AllowCustomErrorsRedirect {
 			get {
-				throw new NotImplementedException ();
+				return _allowCustomErrorsRedirect;
 			}
 			set {
-				throw new NotImplementedException ();
+				_allowCustomErrorsRedirect = value;
 			}
 		}
 
@@ -467,8 +468,10 @@ namespace System.Web.UI
 					RegisterScriptReference (scripts [i].ScriptReference);
 
 			// Register services
-			for (int i = 0; i < _services.Count; i++) {
-				RegisterServiceReference (_services [i]);
+			if (_services != null && _services.Count > 0) {
+				for (int i = 0; i < _services.Count; i++) {
+					RegisterServiceReference (_services [i]);
+				}
 			}
 		}
 
@@ -922,9 +925,9 @@ namespace System.Web.UI
 
 		#endregion
 
-		static internal void WriteCallbackException (TextWriter output, Exception ex) {
+		static internal void WriteCallbackException (TextWriter output, Exception ex, bool writeMessage) {
 			HttpException httpEx = ex as HttpException;
-			WriteCallbackOutput (output, error, httpEx == null ? "500" : httpEx.GetHttpCode ().ToString (), ex.GetBaseException ().Message);
+			WriteCallbackOutput (output, error, httpEx == null ? "500" : httpEx.GetHttpCode ().ToString (), writeMessage ? ex.GetBaseException ().Message : null);
 		}
 
 		static internal void WriteCallbackRedirect (TextWriter output, string redirectUrl) {
