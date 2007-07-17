@@ -1,3 +1,7 @@
+2007-07-18  Jb Evain  <jbevain@novell.com>
+
+	* InstrTable.cs: add brzero alias.
+
 2007-01-10  Ankit Jain  <jankit@novell.com>
 
 	* BaseClassRef.cs (Clone): Move to ..
