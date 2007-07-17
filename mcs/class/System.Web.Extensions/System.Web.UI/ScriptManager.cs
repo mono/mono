@@ -421,8 +421,13 @@ namespace System.Web.UI
 				throw new InvalidOperationException ("Only one instance of a ScriptManager can be added to the page.");
 
 			SetCurrent (Page, this);
-
+			Page.Error += new EventHandler (OnPageError);
 			_init = true;
+		}
+
+		void OnPageError (object sender, EventArgs e) {
+			if (IsInAsyncPostBack)
+				OnAsyncPostBackError (new AsyncPostBackErrorEventArgs (Context.Error));
 		}
 
 		protected override void OnPreRender (EventArgs e) {
@@ -932,7 +937,7 @@ namespace System.Web.UI
 			HttpException httpEx = ex as HttpException;
 			string message = AsyncPostBackErrorMessage;
 			if (String.IsNullOrEmpty (message) && writeMessage)
-				message = ex.GetBaseException ().Message;
+				message = ex.Message;
 			WriteCallbackOutput (output, error, httpEx == null ? "500" : httpEx.GetHttpCode ().ToString (), message);
 		}
 
