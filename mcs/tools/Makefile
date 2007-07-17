@@ -1,7 +1,7 @@
 thisdir = tools
 SUBDIRS = \
 	al cilc corcompare culevel ictool mono-xsd security wsdl genxs sqlsharp		\
-	disco soapsuds browsercaps-updater monop gacutil	\
+	disco soapsuds browsercaps-updater monop gacutil linker	\
 	resgen macpack mkbundle dtd2rng dtd2xsd mjs prj2make mono-service \
 	mono-shlib-cop compiler-tester mono-xmltool installvst
 

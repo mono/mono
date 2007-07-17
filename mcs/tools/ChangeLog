@@ -1,3 +1,7 @@
+2007-07-17  Jb Evain  <jbevain@novell.com>
+
+	* Makefile: integrate the linker in the build.
+
 2007-04-18  Marek Habersack  <mhabersack@novell.com>
 
 	* culevel/CompileUplevel.cs: fix two dumb mistakes that prevented
