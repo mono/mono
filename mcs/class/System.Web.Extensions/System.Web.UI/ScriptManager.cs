@@ -114,6 +114,7 @@ namespace System.Web.UI
 		string _controlIDToFocus;
 		bool _allowCustomErrorsRedirect = true;
 		string _asyncPostBackErrorMessage;
+		List<DisposeScriptEntry> _disposeScripts;
 
 		[DefaultValue (true)]
 		[Category ("Behavior")]
@@ -452,6 +453,15 @@ namespace System.Web.UI
 				// Register startup script
 				StringBuilder sb = new StringBuilder ();
 				sb.AppendLine ();
+				if (_disposeScripts != null && _disposeScripts.Count > 0)
+					for (int i = 0; i < _disposeScripts.Count; i++) {
+						DisposeScriptEntry entry = _disposeScripts [i];
+						sb.Append ("Sys.WebForms.PageRequestManager.getInstance()._registerDisposeScript(\"");
+						sb.Append (entry.UpdatePanel.ClientID);
+						sb.Append ("\", ");
+						sb.Append (JavaScriptSerializer.DefaultSerializer.Serialize (entry.Script)); //JavaScriptSerializer.Serialize used escape script literal 
+						sb.AppendLine (");");
+					}
 				sb.AppendLine ("Sys.Application.initialize();");
 				RegisterStartupScript (this, typeof (ExtenderControl), "Sys.Application.initialize();", sb.ToString (), true);
 
@@ -684,7 +694,29 @@ namespace System.Web.UI
 		}
 
 		public void RegisterDispose (Control control, string disposeScript) {
-			throw new NotImplementedException ();
+			if (control == null)
+				throw new ArgumentNullException ("control");
+			if (disposeScript == null)
+				throw new ArgumentNullException ("disposeScript");
+
+			UpdatePanel updatePanel = GetUpdatePanel (control);
+			if (updatePanel == null)
+				return;
+
+			if (_disposeScripts == null)
+				_disposeScripts = new List<DisposeScriptEntry> ();
+			_disposeScripts.Add (new DisposeScriptEntry (updatePanel, disposeScript));
+		}
+
+		static UpdatePanel GetUpdatePanel (Control control) {
+			if (control == null)
+				return null;
+
+			UpdatePanel parent = control.Parent as UpdatePanel;
+			if (parent != null)
+				return parent;
+
+			return GetUpdatePanel (control.Parent);
 		}
 
 		public static void RegisterExpandoAttribute (Control control, string controlId, string attributeName, string attributeValue, bool encode) {
@@ -1013,6 +1045,13 @@ namespace System.Web.UI
 
 			if (!String.IsNullOrEmpty (_controlIDToFocus))
 				WriteCallbackOutput (output, focus, null, _controlIDToFocus);
+
+			if (_disposeScripts != null)
+				for (int i = 0; i < _disposeScripts.Count; i++) {
+					DisposeScriptEntry entry = _disposeScripts [i];
+					if ((_panelsToRefresh != null && _panelsToRefresh.IndexOf (entry.UpdatePanel) >= 0) || (_childUpdatePanels != null && _childUpdatePanels.IndexOf (entry.UpdatePanel) >= 0))
+						WriteCallbackOutput (output, scriptDispose, entry.UpdatePanel.ClientID, entry.Script);
+				}
 		}
 
 		void WriteArrayDeclarations (HtmlTextWriter writer) {
@@ -1328,6 +1367,20 @@ namespace System.Web.UI
 			public DataItemEntry (string dataItem, bool isJsonSerialized) {
 				_dataItem = dataItem;
 				_isJsonSerialized = isJsonSerialized;
+			}
+		}
+
+		sealed class DisposeScriptEntry
+		{
+			readonly UpdatePanel _updatePanel;
+			readonly string _script;
+
+			public UpdatePanel UpdatePanel { get { return _updatePanel; } }
+			public string Script { get { return _script; } }
+
+			public DisposeScriptEntry (UpdatePanel updatePanel, string script) {
+				_updatePanel = updatePanel;
+				_script = script;
 			}
 		}
 	}
