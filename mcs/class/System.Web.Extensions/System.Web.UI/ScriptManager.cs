@@ -43,6 +43,7 @@ using System.Globalization;
 using System.Threading;
 using System.Web.Script.Serialization;
 using System.Web.Script.Services;
+using System.Xml;
 
 namespace System.Web.UI
 {
@@ -983,6 +984,10 @@ namespace System.Web.UI
 		#endregion
 
 		internal void WriteCallbackException (TextWriter output, Exception ex, bool writeMessage) {
+#if TARGET_DOTNET
+			if (ex is HttpUnhandledException)
+				ex = ex.InnerException;
+#endif
 			HttpException httpEx = ex as HttpException;
 			string message = AsyncPostBackErrorMessage;
 			if (String.IsNullOrEmpty (message) && writeMessage)
@@ -1110,8 +1115,29 @@ namespace System.Web.UI
 			}
 		}
 
-		[MonoTODO ()]
 		static string SerializeScriptBlock (ScriptEntry scriptList) {
+			try {
+				XmlTextReader reader = new XmlTextReader (new StringReader (scriptList.Script));
+				while (reader.Read ()) {
+					switch (reader.NodeType) {
+					case XmlNodeType.Element:
+						if (String.Compare ("script", reader.Name, StringComparison.OrdinalIgnoreCase) == 0) {
+							Dictionary<string, string> dic = new Dictionary<string, string> ();
+							while (reader.MoveToNextAttribute ()) {
+								dic.Add (reader.Name, reader.Value);
+							}
+							reader.MoveToContent ();
+							dic.Add ("text", reader.ReadInnerXml ());
+							return JavaScriptSerializer.DefaultSerializer.Serialize (dic);
+						}
+						break;
+					default:
+						continue;
+					}
+				}
+			}
+			catch {
+			}
 			throw new InvalidOperationException (String.Format ("The script tag registered for type '{0}' and key '{1}' has invalid characters outside of the script tags: {2}. Only properly formatted script tags can be registered.", scriptList.Type, scriptList.Key, scriptList.Script));
 		}
 
