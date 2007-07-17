@@ -115,6 +115,8 @@ namespace System.Web.UI
 		bool _allowCustomErrorsRedirect = true;
 		string _asyncPostBackErrorMessage;
 		List<DisposeScriptEntry> _disposeScripts;
+		List<ScriptReferenceEntry> _scriptToRegister;
+		bool _loadScriptsBeforeUI = true;
 
 		[DefaultValue (true)]
 		[Category ("Behavior")]
@@ -265,10 +267,10 @@ namespace System.Web.UI
 		[DefaultValue (true)]
 		public bool LoadScriptsBeforeUI {
 			get {
-				throw new NotImplementedException ();
+				return _loadScriptsBeforeUI;
 			}
 			set {
-				throw new NotImplementedException ();
+				_loadScriptsBeforeUI = value;
 			}
 		}
 
@@ -450,10 +452,10 @@ namespace System.Web.UI
 					RegisterStartupScript (this, typeof (ScriptManager), "PageMethods", logicalTypeInfo.Proxy, true);
 				}
 
-				// Register startup script
-				StringBuilder sb = new StringBuilder ();
-				sb.AppendLine ();
-				if (_disposeScripts != null && _disposeScripts.Count > 0)
+				// Register dispose script
+				if (_disposeScripts != null && _disposeScripts.Count > 0) {
+					StringBuilder sb = new StringBuilder ();
+					sb.AppendLine ();
 					for (int i = 0; i < _disposeScripts.Count; i++) {
 						DisposeScriptEntry entry = _disposeScripts [i];
 						sb.Append ("Sys.WebForms.PageRequestManager.getInstance()._registerDisposeScript(\"");
@@ -462,8 +464,8 @@ namespace System.Web.UI
 						sb.Append (JavaScriptSerializer.DefaultSerializer.Serialize (entry.Script)); //JavaScriptSerializer.Serialize used escape script literal 
 						sb.AppendLine (");");
 					}
-				sb.AppendLine ("Sys.Application.initialize();");
-				RegisterStartupScript (this, typeof (ExtenderControl), "Sys.Application.initialize();", sb.ToString (), true);
+					RegisterStartupScript (this, typeof (ExtenderControl), "disposeScripts;", sb.ToString (), true);
+				}
 
 #if TARGET_DOTNET
 				// to cause webform client script being included
@@ -475,21 +477,33 @@ namespace System.Web.UI
 		}
 
 		void OnPreRenderComplete (object sender, EventArgs e) {
-			// Register Scripts
-			List<ScriptReferenceEntry> scripts = new List<ScriptReferenceEntry> ();
+			// Resolve Scripts
 			foreach (ScriptReferenceEntry script in GetScriptReferences ()) {
 				OnResolveScriptReference (new ScriptReferenceEventArgs (script.ScriptReference));
-				scripts.Add (script);
-			}
-			for (int i = 0; i < scripts.Count; i++)
-				if (!IsInAsyncPostBack || HasBeenRendered (scripts [i].Control))
-					RegisterScriptReference (scripts [i].ScriptReference);
-
-			// Register services
-			if (_services != null && _services.Count > 0) {
-				for (int i = 0; i < _services.Count; i++) {
-					RegisterServiceReference (_services [i]);
+				if (!IsInAsyncPostBack || HasBeenRendered (script.Control)) {
+					if (_scriptToRegister == null)
+						_scriptToRegister = new List<ScriptReferenceEntry> ();
+					_scriptToRegister.Add (script);
 				}
+			}
+
+			// Register Scripts
+			if (_scriptToRegister != null)
+				for (int i = 0; i < _scriptToRegister.Count; i++)
+					RegisterScriptReference (_scriptToRegister [i].ScriptReference, _scriptToRegister [i].LoadScriptsBeforeUI);
+
+			if (!IsInAsyncPostBack) {
+				// Register services
+				if (_services != null && _services.Count > 0) {
+					for (int i = 0; i < _services.Count; i++) {
+						RegisterServiceReference (_services [i]);
+					}
+				}
+				// Register startup script
+				StringBuilder sb = new StringBuilder ();
+				sb.AppendLine ();
+				sb.AppendLine ("Sys.Application.initialize();");
+				RegisterStartupScript (this, typeof (ExtenderControl), "Sys.Application.initialize();", sb.ToString (), true);
 			}
 		}
 
@@ -509,15 +523,15 @@ namespace System.Web.UI
 
 			script = new ScriptReference ("MicrosoftAjax.js", String.Empty);
 			script.NotifyScriptLoaded = false;
-			yield return new ScriptReferenceEntry (this, script);
+			yield return new ScriptReferenceEntry (this, script, true);
 
 			script = new ScriptReference ("MicrosoftAjaxWebForms.js", String.Empty);
 			script.NotifyScriptLoaded = false;
-			yield return new ScriptReferenceEntry (this, script);
+			yield return new ScriptReferenceEntry (this, script, true);
 
 			if (_scripts != null && _scripts.Count > 0) {
 				for (int i = 0; i < _scripts.Count; i++) {
-					yield return new ScriptReferenceEntry (this, _scripts [i]);
+					yield return new ScriptReferenceEntry (this, _scripts [i], LoadScriptsBeforeUI);
 				}
 			}
 
@@ -526,7 +540,7 @@ namespace System.Web.UI
 					IEnumerable<ScriptReference> scripts = _registeredScriptControls [i].GetScriptReferences ();
 					if (scripts != null)
 						foreach (ScriptReference s in scripts)
-							yield return new ScriptReferenceEntry ((Control) _registeredScriptControls [i], s);
+							yield return new ScriptReferenceEntry ((Control) _registeredScriptControls [i], s, LoadScriptsBeforeUI);
 				}
 			}
 
@@ -535,7 +549,7 @@ namespace System.Web.UI
 					IEnumerable<ScriptReference> scripts = ex.GetScriptReferences ();
 					if (scripts != null)
 						foreach (ScriptReference s in scripts)
-							yield return new ScriptReferenceEntry ((Control) ex, s);
+							yield return new ScriptReferenceEntry ((Control) ex, s, LoadScriptsBeforeUI);
 				}
 			}
 		}
@@ -615,7 +629,7 @@ namespace System.Web.UI
 			RegisterClientScriptInclude (page, type, "resource-" + resourceName, ScriptResourceHandler.GetResourceUrl (type.Assembly, resourceName, true));
 		}
 
-		void RegisterScriptReference (ScriptReference script) {
+		void RegisterScriptReference (ScriptReference script, bool loadScriptsBeforeUI) {
 
 			bool isDebugMode = IsDeploymentRetail ? false : (script.ScriptModeInternal == ScriptMode.Inherit ? IsDebuggingEnabled : (script.ScriptModeInternal == ScriptMode.Debug));
 			string url;
@@ -640,7 +654,10 @@ namespace System.Web.UI
 				throw new InvalidOperationException ("Name and Path cannot both be empty.");
 			}
 
-			RegisterClientScriptInclude (this, typeof (ScriptManager), url, url);
+			if (loadScriptsBeforeUI)
+				RegisterClientScriptInclude (this, typeof (ScriptManager), url, url);
+			else
+				RegisterStartupScript (this, typeof (ScriptManager), url, String.Format ("<script src=\"{0}\" type=\"text/javascript\"></script>", url), false);
 		}
 
 		static string GetScriptName (string releaseName, bool isDebugMode, string [] supportedUICultures) {
@@ -1346,13 +1363,16 @@ namespace System.Web.UI
 		{
 			readonly Control _control;
 			readonly ScriptReference _scriptReference;
+			readonly bool _loadBeforeUI;
 
 			public Control Control { get { return _control; } }
 			public ScriptReference ScriptReference { get { return _scriptReference; } }
+			public bool LoadScriptsBeforeUI { get { return _loadBeforeUI; } }
 
-			public ScriptReferenceEntry (Control control, ScriptReference scriptReference) {
+			public ScriptReferenceEntry (Control control, ScriptReference scriptReference, bool loadBeforeUI) {
 				_control = control;
 				_scriptReference = scriptReference;
+				_loadBeforeUI = loadBeforeUI;
 			}
 		}
 
