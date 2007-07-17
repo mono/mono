@@ -1236,7 +1236,7 @@ namespace System.Windows.Forms
 			
 			// Go back to the original (un-4-subtracted) size
 			if ((specified & BoundsSpecified.Width) == BoundsSpecified.Width)
-				width += -(int)(((current_factor_width) - 1f) * -4.0f);
+				width += (int)(((current_factor_width) - 1f) * 4.0f);
 				
 			Rectangle new_bounds = GetScaledBounds (new Rectangle (Location, new Size (width, ClientSize.Height)), factor, specified);
 			
