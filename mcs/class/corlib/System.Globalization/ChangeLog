@@ -1,3 +1,9 @@
+2007-07-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CalendricalCalculations.cs, JulianCalendar.cs :
+	  true fix for bug #81783. GetMonths() should consider month part
+	  going beyond 12.
+
 2007-07-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* StringInfo.cs : implemented 2.0 members.

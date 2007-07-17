@@ -672,6 +672,7 @@ internal class CCGregorianCalendar {
 		int day, month, year;
 		dmy_from_fixed(out day, out month, out year, rd);
 		month += months;
+		year += CCMath.div_mod(out month, month, 12);
 		int maxday = GetDaysInMonth (year, month);
 		if (day > maxday)
 			day = maxday;

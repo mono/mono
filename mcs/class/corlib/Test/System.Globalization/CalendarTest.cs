@@ -579,6 +579,12 @@ public class CalendarTest : TestCase {
 		AssertEquals ("prev", 4, prev.Month);
 		DateTime next = c.AddMonths (d, 1);
 		AssertEquals ("next", 6, next.Month);
+
+		d = new DateTime (2003, 12, 5);
+		prev = c.AddMonths (d, -13);
+		AssertEquals ("prev2", new DateTime (2002, 11, 5), prev);
+		next = c.AddMonths (d, 6);
+		AssertEquals ("next2", new DateTime (2004, 6, 5), next);
 	}
 
 	[Test]

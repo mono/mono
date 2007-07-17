@@ -1,3 +1,8 @@
+2007-07-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CalendarTest.cs : true test for bug #81783 (overflown month in
+	  AddMonths().)
+
 2007-07-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* StringInfoTest.cs : new test.

@@ -190,6 +190,7 @@ public class JulianCalendar : Calendar {
 		CCJulianCalendar.dmy_from_fixed(
 			out day, out month, out year, rd);
 		month += months;
+		year += CCMath.div_mod(out month, month, 12);
 		rd = CCJulianCalendar.fixed_from_dmy(day, month, year);
 		DateTime t = CCFixed.ToDateTime(rd);
 		return t.Add(time.TimeOfDay);
