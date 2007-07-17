@@ -78,18 +78,19 @@ namespace System.Web.Handlers
 			HttpApplication app = (HttpApplication) sender;
 			HttpContext context = app.Context;
 			if (context.Request.Headers ["X-MicrosoftAjax"] == "Delta=true") {
+				ScriptManager sm = ScriptManager.GetCurrent ((Page) context.CurrentHandler);
 				if (context.Response.StatusCode == 302) {
 					context.Response.StatusCode = 200;
 					context.Response.ClearContent ();
-					if (context.Error == null || ScriptManager.GetCurrent ((Page) context.CurrentHandler).AllowCustomErrorsRedirect)
+					if (context.Error == null || sm.AllowCustomErrorsRedirect)
 						ScriptManager.WriteCallbackRedirect (context.Response.Output, context.Response.RedirectLocation);
 					else
-						ScriptManager.WriteCallbackException (context.Response.Output, context.Error, false);
+						sm.WriteCallbackException (context.Response.Output, context.Error, false);
 				}
 				else if (context.Error != null) {
 					context.Response.StatusCode = 200;
 					context.Response.ClearContent ();
-					ScriptManager.WriteCallbackException (context.Response.Output, context.Error, true);
+					sm.WriteCallbackException (context.Response.Output, context.Error, true);
 				}
 			}
 		}

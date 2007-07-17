@@ -113,6 +113,7 @@ namespace System.Web.UI
 		bool _enablePageMethods;
 		string _controlIDToFocus;
 		bool _allowCustomErrorsRedirect = true;
+		string _asyncPostBackErrorMessage;
 
 		[DefaultValue (true)]
 		[Category ("Behavior")]
@@ -129,10 +130,12 @@ namespace System.Web.UI
 		[DefaultValue ("")]
 		public string AsyncPostBackErrorMessage {
 			get {
-				throw new NotImplementedException ();
+				if (String.IsNullOrEmpty (_asyncPostBackErrorMessage))
+					return String.Empty;
+				return _asyncPostBackErrorMessage;
 			}
 			set {
-				throw new NotImplementedException ();
+				_asyncPostBackErrorMessage = value;
 			}
 		}
 
@@ -925,9 +928,12 @@ namespace System.Web.UI
 
 		#endregion
 
-		static internal void WriteCallbackException (TextWriter output, Exception ex, bool writeMessage) {
+		internal void WriteCallbackException (TextWriter output, Exception ex, bool writeMessage) {
 			HttpException httpEx = ex as HttpException;
-			WriteCallbackOutput (output, error, httpEx == null ? "500" : httpEx.GetHttpCode ().ToString (), writeMessage ? ex.GetBaseException ().Message : null);
+			string message = AsyncPostBackErrorMessage;
+			if (String.IsNullOrEmpty (message) && writeMessage)
+				message = ex.GetBaseException ().Message;
+			WriteCallbackOutput (output, error, httpEx == null ? "500" : httpEx.GetHttpCode ().ToString (), message);
 		}
 
 		static internal void WriteCallbackRedirect (TextWriter output, string redirectUrl) {
