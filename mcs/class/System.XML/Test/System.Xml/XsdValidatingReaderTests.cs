@@ -394,5 +394,42 @@ namespace MonoTests.System.Xml
 			AssertEquals (String.Empty, r.Prefix);
 		}
 #endif
+
+		[Test]
+#if NET_2_0
+		// annoyance
+		[ExpectedException (typeof (XmlSchemaValidationException))]
+#else
+		[ExpectedException (typeof (XmlSchemaException))]
+#endif
+		public void Bug82099 ()
+		{
+			string xsd = @"
+<xsd:schema xmlns:xsd='http://www.w3.org/2001/XMLSchema'>
+  <xsd:element name='Customer' type='CustomerType' />
+  <xsd:complexType name='CustomerType'>
+    <xsd:attribute name='name' type='xsd:string' />
+  </xsd:complexType>
+</xsd:schema>";
+			XmlSchema schema = XmlSchema.Read (new StringReader (xsd), null);
+
+			string xml = "<Customer name='Bob'> </Customer>";
+
+#if NET_2_0
+			XmlReaderSettings settings = new XmlReaderSettings ();
+			settings.Schemas.Add (schema);
+			settings.ValidationType = ValidationType.Schema;
+
+			XmlReader reader = XmlReader.Create (new StringReader (xml), settings);
+			
+#else
+			XmlValidatingReader reader = new XmlValidatingReader (xml, XmlNodeType.Document, null);
+			reader.Schemas.Add (schema);
+			reader.ValidationType = ValidationType.Schema;
+#endif
+			reader.Read ();
+			reader.Read ();
+			reader.Read ();
+		}
 	}
 }

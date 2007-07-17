@@ -468,7 +468,7 @@ namespace Mono.Xml.Schema
 			if (Context.IsInvalid)
 				HandleError ("Invalid start element: " + reader.NamespaceURI + ":" + reader.LocalName);
 
-			Context.SetElement (state.CurrentElement);
+			Context.PushCurrentElement (state.CurrentElement);
 		}
 
 		private void ValidateEndElementParticle ()
@@ -478,6 +478,7 @@ namespace Mono.Xml.Schema
 					HandleError ("Invalid end element: " + reader.Name);
 				}
 			}
+			Context.PopCurrentElement ();
 			state.PopContext ();
 		}
 
@@ -765,7 +766,7 @@ namespace Mono.Xml.Schema
 			// [Schema Validity Assessment (Element) 1.1]
 			if (Context.Element == null) {
 				state.CurrentElement = FindElement (reader.LocalName, reader.NamespaceURI);
-				Context.SetElement (state.CurrentElement);
+				Context.PushCurrentElement (state.CurrentElement);
 			}
 			if (Context.Element != null) {
 				if (Context.XsiType == null) {
@@ -997,9 +998,9 @@ namespace Mono.Xml.Schema
 
 		private void AssessEndElementSchemaValidity ()
 		{
-			ValidateEndElementParticle ();	// validate against childrens' state.
-
 			ValidateEndSimpleContent ();
+
+			ValidateEndElementParticle ();	// validate against childrens' state.
 
 			// 3.3.4 Assess ElementLocallyValidElement 5: value constraints.
 			// 3.3.4 Assess ElementLocallyValidType 3.1.3. = StringValid(3.14.4)
@@ -1622,14 +1623,15 @@ namespace Mono.Xml.Schema
 			case XmlNodeType.SignificantWhitespace:
 			case XmlNodeType.Whitespace:
 			case XmlNodeType.Text:
-				// FIXME: does this check make sense?
 				ComplexType ct = Context.ActualType as ComplexType;
-				if (ct != null && storedCharacters.Length > 0) {
+				if (ct != null) {
 					switch (ct.ContentType) {
 					case XmlSchemaContentType.ElementOnly:
-					case XmlSchemaContentType.Empty:
 						if (reader.NodeType != XmlNodeType.Whitespace)
-							HandleError ("Not allowed character content was found.");
+							HandleError ("Not allowed character content is found (current content model is element-only).");
+						break;
+					case XmlSchemaContentType.Empty:
+						HandleError ("Not allowed character content is found (current element content model is empty).");
 						break;
 					}
 				}
@@ -1690,14 +1692,32 @@ namespace Mono.Xml.Schema
 		{
 		}
 
-		// Some of them might be missing (See the spec section 5.3, and also 3.3.4).
-		public XsElement Element;
-		public object XsiType; // xsi:type
+		object xsi_type;
+		public object XsiType { get { return xsi_type; } set { xsi_type = value; } } // xsi:type
 		internal XsdValidationState State;
+		Stack element_stack = new Stack ();
+
+		// Some of them might be missing (See the spec section 5.3, and also 3.3.4).
+		public XsElement Element {
+			get { return element_stack.Count > 0 ? element_stack.Peek () as XsElement : null; }
+		}
+
+		public void PushCurrentElement (XsElement element)
+		{
+			element_stack.Push (element);
+		}
+
+		public void PopCurrentElement ()
+		{
+			element_stack.Pop ();
+		}
 
 		// Note that it represents current element's type.
 		public object ActualType {
 			get {
+				// FIXME: actually this should also be stacked
+				if (element_stack.Count == 0)
+					return null;
 				if (XsiType != null)
 					return XsiType;
 				else
@@ -1738,11 +1758,6 @@ namespace Mono.Xml.Schema
 		public bool EvaluateEndElement ()
 		{
 			return State.EvaluateEndElement ();
-		}
-
-		public void SetElement (XsElement element)
-		{
-			Element = element;
 		}
 	}
 

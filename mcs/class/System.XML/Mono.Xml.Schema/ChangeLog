@@ -1,3 +1,10 @@
+2007-07-17  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XsdValidatingReader.cs : Process empty and element-only contents
+	  differently along with the spec 3.4.4 Element Locally Valid (Complex 
+	  Type) 2.3 (and 2.1 respectively). Itchy specification indeed.
+	  This demanded not a few internal changes. Fixed bug #82099.
+
 2007-04-27  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchemaValidatingReader.cs : nsResolver field must be initialized.

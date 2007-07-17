@@ -496,11 +496,14 @@ namespace System.Xml.Schema
 				return;
 
 			ComplexType ct = Context.ActualType as ComplexType;
-			if (ct != null && storedCharacters.Length > 0) {
+			if (ct != null) {
 				switch (ct.ContentType) {
-				case XmlSchemaContentType.ElementOnly:
 				case XmlSchemaContentType.Empty:
 					HandleError ("Not allowed character content was found.");
+					break;
+				case XmlSchemaContentType.ElementOnly:
+					if (storedCharacters.Length > 0)
+						HandleError ("Not allowed character content was found.");
 					break;
 				}
 			}
@@ -513,15 +516,10 @@ namespace System.Xml.Schema
 			ValidateWhitespace (delegate () { return value; });
 		}
 
-		// TextDeriv...?
-		[MonoTODO]
+		// TextDeriv. It should do the same as ValidateText() in our actual implementation (whitespaces are conditioned).
 		public void ValidateWhitespace (XmlValueGetter getter)
 		{
-			CheckState (Transition.Content);
-			if (schemas.Count == 0)
-				return;
-
-//			throw new NotImplementedException ();
+			ValidateText (getter);
 		}
 
 		#endregion
@@ -611,7 +609,7 @@ namespace System.Xml.Schema
 			if (Context.IsInvalid)
 				HandleError ("Invalid start element: " + ns + ":" + localName);
 
-			Context.SetElement (state.CurrentElement);
+			Context.PushCurrentElement (state.CurrentElement);
 		}
 
 		private void AssessOpenStartElementSchemaValidity (
@@ -628,7 +626,7 @@ namespace System.Xml.Schema
 			// [Schema Validity Assessment (Element) 1.1]
 			if (Context.Element == null) {
 				state.CurrentElement = FindElement (localName, ns);
-				Context.SetElement (state.CurrentElement);
+				Context.PushCurrentElement (state.CurrentElement);
 			}
 
 #region Key Constraints
@@ -832,9 +830,9 @@ namespace System.Xml.Schema
 		private object AssessEndElementSchemaValidity (
 			XmlSchemaInfo info)
 		{
-			ValidateEndElementParticle ();	// validate against childrens' state.
-
 			object ret = ValidateEndSimpleContent (info);
+
+			ValidateEndElementParticle ();	// validate against childrens' state.
 
 			// 3.3.4 Assess ElementLocallyValidElement 5: value constraints.
 			// 3.3.4 Assess ElementLocallyValidType 3.1.3. = StringValid(3.14.4)
@@ -858,6 +856,7 @@ namespace System.Xml.Schema
 					HandleError ("Invalid end element. There are still required content items.");
 				}
 			}
+			Context.PopCurrentElement ();
 			state.PopContext ();
 		}
 

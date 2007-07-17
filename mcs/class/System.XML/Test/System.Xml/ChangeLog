@@ -1,3 +1,7 @@
+2007-07-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XsdValidatingReaderTests.cs : added test for bug #82099.
+
 2007-07-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlWriterTests.cs : added test for bug #82051.
