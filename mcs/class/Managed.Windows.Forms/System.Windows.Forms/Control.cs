@@ -136,10 +136,6 @@ namespace System.Windows.Forms
 
 		// double buffering
 		DoubleBuffer            backbuffer;
-		
-		// to implement DeviceContext without depending on double buffering
-		Bitmap bmp;
-		Graphics bmp_g;
 
 		ControlBindingsCollection data_bindings;
 
@@ -1079,15 +1075,6 @@ namespace System.Windows.Forms
 
 				DisposeBackBuffer ();
 
-				if (bmp != null) {
-					bmp.Dispose ();
-					bmp = null;
-				}
-				if (bmp_g != null) {
-					bmp_g.Dispose ();
-					bmp_g = null;
-				}
-				
 				if (this.InvokeRequired) {
 					if (Application.MessageLoop && IsHandleCreated) {
 						this.BeginInvokeInternal(new MethodInvoker(DestroyHandle), null);
@@ -1260,13 +1247,7 @@ namespace System.Windows.Forms
 		}
 
 		internal Graphics DeviceContext {
-			get {
-				if (bmp_g == null) {
-					bmp = new Bitmap(1, 1, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-					bmp_g = Graphics.FromImage (bmp);
-				}
-				return bmp_g;
-			}
+			get { return Hwnd.bmp_g; }
 		}
 		
 		private Control FindControlToInvokeOn ()

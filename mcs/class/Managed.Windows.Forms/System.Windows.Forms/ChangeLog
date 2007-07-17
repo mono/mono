@@ -1,5 +1,11 @@
 2007-07-17  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Control.cs: Remove per-control 1x1 Bitmap and Graphics context used
+	for DeviceContext.  Instead, use the static one available in Hwnd.
+	Informal tests show this saves about 500k on formtest.exe.
+
+2007-07-17  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ContainerControl.cs: Implement 2.0 AutoScaling.
 
 2007-07-17  Rolf Bjarne Kvinge <RKvinge@novell.com> 
