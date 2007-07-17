@@ -1,3 +1,8 @@
+2007-07-17  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* HttpWebRequestTest.cs: Fixed and enabled InternalServerError test.
+	Added test for response without Content-Length.
+
 2007-07-15  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* HttpWebRequestTest.cs: Remove usage of deprecated Assertion class.

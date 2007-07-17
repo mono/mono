@@ -387,8 +387,73 @@ namespace MonoTests.System.Net
 					Assert.Fail ("#A1");
 				} catch (WebException ex) {
 					Assert.AreEqual (typeof (WebException), ex.GetType (), "#A2");
+					Assert.IsNull (ex.InnerException, "#A3");
+					Assert.IsNotNull (ex.Message, "#A4");
+					Assert.AreEqual (WebExceptionStatus.ProtocolError, ex.Status, "#A5");
+
+					HttpWebResponse webResponse = ex.Response as HttpWebResponse;
+					Assert.IsNotNull (webResponse, "#A6");
+					Assert.AreEqual ("POST", webResponse.Method, "#A7");
+					webResponse.Close ();
+				}
+
+				responder.Stop ();
+			}
+
+			// GET
+			using (SocketResponder responder = new SocketResponder (localEP, new SocketRequestHandler (InternalErrorHandler))) {
+				responder.Start ();
+
+				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
+				req.Method = "GET";
+				req.Timeout = 2000;
+				req.ReadWriteTimeout = 2000;
+				req.KeepAlive = false;
+
+				try {
+					req.GetResponse ();
+					Assert.Fail ("#B1");
+				} catch (WebException ex) {
+					Assert.AreEqual (typeof (WebException), ex.GetType (), "#B2");
+					Assert.IsNull (ex.InnerException, "#B3");
+					Assert.AreEqual (WebExceptionStatus.ProtocolError, ex.Status, "#B4");
+
+					HttpWebResponse webResponse = ex.Response as HttpWebResponse;
+					Assert.IsNotNull (webResponse, "#B5");
+					Assert.AreEqual ("GET", webResponse.Method, "#B6");
+					webResponse.Close ();
+				}
+
+				responder.Stop ();
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")] // we report a timeout
+		public void NoContentLength ()
+		{
+			IPEndPoint localEP = new IPEndPoint (IPAddress.Loopback, 8764);
+			string url = "http://" + localEP.ToString () + "/original/";
+
+			// POST
+			using (SocketResponder responder = new SocketResponder (localEP, new SocketRequestHandler (NoContentLengthHandler))) {
+				responder.Start ();
+
+				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
+				req.Method = "POST";
+				req.Timeout = 2000;
+				req.ReadWriteTimeout = 2000;
+				req.KeepAlive = false;
+				Stream rs = req.GetRequestStream ();
+				rs.Close ();
+
+				try {
+					req.GetResponse ();
+					Assert.Fail ("#A1");
+				} catch (WebException ex) {
+					Assert.AreEqual (typeof (WebException), ex.GetType (), "#A2");
 #if NET_2_0
-					Assert.IsNotNull (ex.InnerException, "#A3");
+					//Assert.IsNotNull (ex.InnerException, "#A3");
 					Assert.AreEqual (WebExceptionStatus.ReceiveFailure, ex.Status, "#A4");
 					Assert.AreEqual (typeof (IOException), ex.InnerException.GetType (), "#A5");
 					
@@ -427,7 +492,7 @@ namespace MonoTests.System.Net
 			}
 
 			// GET
-			using (SocketResponder responder = new SocketResponder (localEP, new SocketRequestHandler (InternalErrorHandler))) {
+			using (SocketResponder responder = new SocketResponder (localEP, new SocketRequestHandler (NoContentLengthHandler))) {
 				responder.Start ();
 
 				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
@@ -555,6 +620,17 @@ namespace MonoTests.System.Net
 		}
 
 		static byte [] InternalErrorHandler (Socket socket)
+		{
+			StringWriter sw = new StringWriter ();
+			sw.WriteLine ("HTTP/1.1 500 Too Lazy");
+			sw.WriteLine ("Content-Length: 0");
+			sw.WriteLine ();
+			sw.Flush ();
+
+			return Encoding.UTF8.GetBytes (sw.ToString ());
+		}
+
+		static byte [] NoContentLengthHandler (Socket socket)
 		{
 			StringWriter sw = new StringWriter ();
 			sw.WriteLine ("HTTP/1.1 500 Too Lazy");
