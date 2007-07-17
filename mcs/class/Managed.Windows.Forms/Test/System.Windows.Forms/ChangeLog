@@ -1,3 +1,9 @@
+2007-07-17  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ContainerControlTest.cs: Add test for 2.0 AutoScaling.  It's
+	marked NotWorking because it depends on fonts and DPI, but it
+	can still be used to compare to .NET.
+
 2007-07-16  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ComboBoxTest.cs: Added test for bug #82069.

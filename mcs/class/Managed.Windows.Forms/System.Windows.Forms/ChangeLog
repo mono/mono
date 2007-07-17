@@ -1,3 +1,7 @@
+2007-07-17  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ContainerControl.cs: Implement 2.0 AutoScaling.
+
 2007-07-17  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* ComboBox.cs: Work around bug #82120 (bug in mcs).

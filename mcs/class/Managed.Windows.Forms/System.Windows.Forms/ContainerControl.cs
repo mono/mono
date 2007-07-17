@@ -241,7 +241,12 @@ namespace System.Windows.Forms {
 			}
 
 			set {
-				auto_scale_dimensions = value;
+				if (auto_scale_dimensions != value) {
+					auto_scale_dimensions = value;
+					
+					if (AutoScaleFactor != new SizeF (1, 1))
+						PerformAutoScale ();
+				}
 			}
 		}
 
@@ -256,7 +261,6 @@ namespace System.Windows.Forms {
 		}
 
 
-		[MonoTODO("Call scaling method")]
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -268,7 +272,7 @@ namespace System.Windows.Forms {
 				if (auto_scale_mode != value) {
 					auto_scale_mode = value;
 
-					// Trigger scaling
+					auto_scale_dimensions = CurrentAutoScaleDimensions;
 				}
 			}
 		}
@@ -289,30 +293,19 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
-		[MonoTODO("Revisit when System.Drawing.GDI.WindowsGraphics.GetTextMetrics is done or come up with other cross-plat avg. font width calc method")]
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public SizeF CurrentAutoScaleDimensions {
 			get {
 				switch(auto_scale_mode) {
-					case AutoScaleMode.Dpi: {
-						Bitmap		bmp;
-						Graphics	g;
-						SizeF		size;
+					case AutoScaleMode.Dpi:
+						return new SizeF (Hwnd.bmp_g.DpiX, Hwnd.bmp_g.DpiY);
 
-						bmp = new Bitmap(1, 1, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-						g = Graphics.FromImage(bmp);
-						size = new SizeF(g.DpiX, g.DpiY);
-						g.Dispose();
-						bmp.Dispose();
-						return size;
-					}
-
-					case AutoScaleMode.Font: {
-						// http://msdn2.microsoft.com/en-us/library/system.windows.forms.containercontrol.currentautoscaledimensions(VS.80).aspx
-						// Implement System.Drawing.GDI.WindowsGraphics.GetTextMetrics first...
-						break;
-					}
+					case AutoScaleMode.Font:
+						Size s = TextRenderer.MeasureText ("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890", Font);
+						int width = (int)((float)s.Width / 62f);
+						
+						return new SizeF (width, s.Height);
 				}
 
 				return auto_scale_dimensions;
@@ -349,6 +342,17 @@ namespace System.Windows.Forms {
 		#endregion	// Public Instance Methods
 
 		#region Public Instance Methods
+#if NET_2_0
+		public void PerformAutoScale ()
+		{
+			SuspendLayout ();
+			Scale (AutoScaleFactor);
+			ResumeLayout (false);
+			
+			auto_scale_dimensions = CurrentAutoScaleDimensions;
+		}
+#endif
+
 		[MonoTODO]
 		static bool ValidateWarned;
 		public bool Validate() {
@@ -555,6 +559,9 @@ namespace System.Windows.Forms {
 		protected override void OnFontChanged (EventArgs e)
 		{
 			base.OnFontChanged (e);
+			
+			if (AutoScaleMode == AutoScaleMode.Font)
+				PerformAutoScale ();
 		}
 
 		protected override void OnLayout (LayoutEventArgs levent)

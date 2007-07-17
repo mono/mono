@@ -32,6 +32,7 @@ using System.Security.Permissions;
 using System.Windows.Forms;
 using System.Collections;
 using NUnit.Framework;
+using System.Drawing;
 
 namespace MonoTests.System.Windows.Forms {
 
@@ -293,5 +294,44 @@ namespace MonoTests.System.Windows.Forms {
 				return base.ProcessMnemonic (charCode);
 			}
 		}
+
+#if NET_2_0
+		[Test]
+		[Category ("NotWorking")]  // Depends on fonts *AND* DPI, how useless is that? (Values are Vista/96DPI)
+		public void AutoScaling ()
+		{
+			ContainerControl c = new ContainerControl ();
+			c.ClientSize = new Size (100, 100);
+
+			Assert.AreEqual (new SizeF (0, 0), c.CurrentAutoScaleDimensions, "A1");
+			Assert.AreEqual (new SizeF (0, 0), c.AutoScaleDimensions, "A2");
+			Assert.AreEqual (new Size (100, 100), c.ClientSize, "A3");
+
+			c.AutoScaleMode = AutoScaleMode.Dpi;
+			Assert.AreEqual (new SizeF (96, 96), c.CurrentAutoScaleDimensions, "A4");
+			Assert.AreEqual (new SizeF (96, 96), c.AutoScaleDimensions, "A5");
+			Assert.AreEqual (new Size (100, 100), c.ClientSize, "A6");
+
+			c.AutoScaleMode = AutoScaleMode.Font;
+			Assert.AreEqual (new SizeF (6, 13), c.CurrentAutoScaleDimensions, "A7");
+			Assert.AreEqual (new SizeF (6, 13), c.AutoScaleDimensions, "A8");
+			Assert.AreEqual (new Size (100, 100), c.ClientSize, "A9");
+
+			c.Font = new Font ("Arial", 15);
+			Assert.AreEqual (new SizeF (11, 23), c.CurrentAutoScaleDimensions, "A10");
+			Assert.AreEqual (new SizeF (11, 23), c.AutoScaleDimensions, "A11");
+			Assert.AreEqual (new Size (183, 177), c.ClientSize, "A12");
+
+			c.Font = new Font ("Tahoma", 12);
+			Assert.AreEqual (new SizeF (9, 19), c.CurrentAutoScaleDimensions, "A13");
+			Assert.AreEqual (new SizeF (9, 19), c.AutoScaleDimensions, "A14");
+			Assert.AreEqual (new Size (150, 146), c.ClientSize, "A15");
+
+			c.Font = new Font ("Times New Roman", 14);
+			Assert.AreEqual (new SizeF (10, 21), c.CurrentAutoScaleDimensions, "A16");
+			Assert.AreEqual (new SizeF (10, 21), c.AutoScaleDimensions, "A17");
+			Assert.AreEqual (new Size (167, 161), c.ClientSize, "A18");
+		}
+#endif
 	}
 }
