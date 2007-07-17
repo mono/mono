@@ -1,3 +1,7 @@
+2007-07-11  Alan McGovern  <amcgovern@novell.com>
+
+	* Uri.cs: Fix for #78781 applied.
+
 2007-07-11  Ankit Jain  <jankit@novell.com>
 
 	* System_test.dll.sources: Add ProcessStartInfoTest.cs.

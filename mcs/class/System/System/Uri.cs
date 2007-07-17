@@ -1384,7 +1384,7 @@ namespace System {
 				pos = -1;
 			if (pos != -1 && pos != endpos - 1) {
 				string portStr = uriString.Substring(pos + 1, endpos - (pos + 1));
-				if (portStr.Length > 1 && portStr[portStr.Length - 1] != ']') {
+				if (portStr.Length > 0 && portStr[portStr.Length - 1] != ']') {
 					try {
 #if NET_2_0
 						port = (int) UInt16.Parse (portStr, CultureInfo.InvariantCulture);

@@ -107,6 +107,9 @@ namespace MonoTests.System
 			AssertEquals ("#m15", "mailto", uri.Scheme);
 			AssertEquals ("#m16", false, uri.UserEscaped);
 			AssertEquals ("#m17", "user:pwd", uri.UserInfo);
+
+			uri = new Uri("myscheme://127.0.0.1:5");
+			AssertEquals("#c1", "myscheme://127.0.0.1:5/", uri.ToString());
 			
 			uri = new Uri (@"\\myserver\mydir\mysubdir\myfile.ext");
 			AssertEquals ("#n1", "/mydir/mysubdir/myfile.ext", uri.AbsolutePath);
