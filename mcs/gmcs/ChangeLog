@@ -1,3 +1,9 @@
+2007-07-17  Marek Safar  <marek.safar@gmail.com>
+
+	* cs-parser.jay: Correct placeholder for implicit linq parameter.
+	
+	* linq: Add ImplicitArgument.
+
 2007-07-03  Marek Safar  <marek.safar@gmail.com>
 
 	* cs-parser.jay: Switch to ImplicitLambdaParameter.

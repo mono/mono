@@ -232,4 +232,23 @@ namespace Mono.CSharp.Linq
 			get { return "Where"; }
 		}
 	}
+	
+	public class ImplicitArgument : Expression
+	{
+		public static ImplicitArgument Instance = new ImplicitArgument ();
+
+		private ImplicitArgument ()
+		{
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			throw new NotImplementedException ();
+		}
+	}
 }
