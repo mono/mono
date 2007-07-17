@@ -27,6 +27,7 @@ scripts_1_0 = \
 	mjs			\
 	mkbundle		\
 	monop			\
+	monolinker		\
 	mono-api-diff 		\
 	mono-api-info 		\
 	mono-shlib-cop 		\
