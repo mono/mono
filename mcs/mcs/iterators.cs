@@ -807,6 +807,10 @@ namespace Mono.CSharp {
 			point.Define (ig);
 		}
 
+		public override string ContainerType {
+			get { return "iterator"; }
+		}
+
 		public override bool IsIterator {
 			get { return true; }
 		}

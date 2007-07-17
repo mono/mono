@@ -218,9 +218,9 @@ namespace Mono.CSharp {
 		//
 		// Resolves a struct during the corlib bootstrap process
 		//
-		static void BootstrapCorlib_ResolveStruct (TypeContainer root, string name)
+		static Type BootstrapCorlib_ResolveStruct (TypeContainer root, string name)
 		{
-			BootstrapCorlib_ResolveType (root, name, IsStruct);
+			return BootstrapCorlib_ResolveType (root, name, IsStruct);
 		}
 
 		static bool IsStruct (Type t)
@@ -314,7 +314,7 @@ namespace Mono.CSharp {
 				"System.Int32",   "System.UInt32",
 				"System.Int64",   "System.UInt64",
 			};
-
+			
 			foreach (string cname in structs_first_stage)
 				BootstrapCorlib_ResolveStruct (root, cname);
 
@@ -326,7 +326,7 @@ namespace Mono.CSharp {
 
 			string [] structs_second_stage = {
 				"System.Single",  "System.Double",
-				"System.Char",    "System.Boolean",
+				"System.Char",
 				"System.Decimal", "System.Void",
 				"System.RuntimeFieldHandle",
 				"System.RuntimeArgumentHandle",
@@ -335,6 +335,8 @@ namespace Mono.CSharp {
 				"System.TypedReference",
 				"System.ArgIterator"
 			};
+			
+			TypeManager.bool_type = BootstrapCorlib_ResolveStruct (root, "System.Boolean");
 			
 			foreach (string cname in structs_second_stage)
 				BootstrapCorlib_ResolveStruct (root, cname);

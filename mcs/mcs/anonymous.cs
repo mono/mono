@@ -27,7 +27,7 @@ namespace Mono.CSharp {
 
 		private static MemberName MakeProxyName (GenericMethod generic, Location loc)
 		{
-			string name = MakeName ("CompilerGenerated");
+			string name = MakeName (null, "CompilerGenerated");
 			if (generic != null) {
 				TypeArguments args = new TypeArguments (loc);
 				foreach (TypeParameter tparam in generic.CurrentTypeParameters)
@@ -37,9 +37,9 @@ namespace Mono.CSharp {
 				return new MemberName (name, loc);
 		}
 
-		public static string MakeName (string prefix)
+		public static string MakeName (string host, string prefix)
 		{
-			return "<>c__" + prefix + next_index++;
+			return "<" + host + ">c__" + prefix + next_index++;
 		}
 
 		protected CompilerGeneratedClass (DeclSpace parent, GenericMethod generic,
@@ -1477,6 +1477,10 @@ namespace Mono.CSharp {
 			get { return method; }
 		}
 
+		public abstract string ContainerType {
+			get; 
+		}
+
 		public abstract RootScopeInfo RootScope {
 			get;
 		}
@@ -1602,6 +1606,25 @@ namespace Mono.CSharp {
 		}
 	}
 
+	public class LambdaMethod : AnonymousMethod
+	{
+		public LambdaMethod (AnonymousMethod parent, RootScopeInfo root_scope,
+					DeclSpace host, GenericMethod generic,
+					Parameters parameters, Block container,
+					ToplevelBlock block, Type return_type, Type delegate_type,
+					Location loc)
+			: base (parent, root_scope, host, generic, parameters, container, block,
+				return_type, delegate_type, loc)
+		{
+		}
+
+		public override string ContainerType {
+			get {
+				return "lambda expression";
+			}
+		}
+	}
+
 	public class AnonymousMethod : AnonymousContainer
 	{
 		public Type DelegateType;
@@ -1625,6 +1648,10 @@ namespace Mono.CSharp {
 		{
 			this.DelegateType = delegate_type;
 			this.root_scope = root_scope;
+		}
+
+		public override string ContainerType {
+			get { return "anonymous method"; }
 		}
 
 		public override RootScopeInfo RootScope {
@@ -1653,7 +1680,8 @@ namespace Mono.CSharp {
 		//
 		protected override Method DoCreateMethodHost (EmitContext ec)
 		{
-			string name = CompilerGeneratedClass.MakeName ("AnonymousMethod");
+			MemberCore mc = ec.ResolveContext as MemberCore;
+			string name = CompilerGeneratedClass.MakeName (mc.Name, null);
 			MemberName member_name;
 
 			Report.Debug (128, "CREATE METHOD HOST #0", RootScope);

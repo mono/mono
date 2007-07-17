@@ -1,3 +1,22 @@
+2007-07-17  Marek Safar  <marek.safar@gmail.com>
+
+	* anonymous.cs (MakeName): Include host name for easier debugging.
+	(LambdaMethod): New class for lambda spcecific stuff.
+	
+	* attribute.cs: Set EmitContext return type.
+
+	* class.cs: Set EmitContext return type.
+	
+	* codegen.cs (EmitContext): Return type cannot be null to stop messing
+	with null/void meaning.
+	
+	* iterators.cs (ContainerType): Implemented.
+	
+	* rootcontext.cs: Set value of TypeManager.bool_type at early stage.
+	
+	* statement.cs (Return): Updated to lambda expressions.
+	(Block.CloneTo): Parent can be null.
+		
 2007-07-13  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #81917

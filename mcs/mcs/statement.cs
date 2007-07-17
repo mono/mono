@@ -717,49 +717,61 @@ namespace Mono.CSharp {
 			Expr = expr;
 			loc = l;
 		}
-
-		public override bool Resolve (EmitContext ec)
+		
+		bool DoResolve (EmitContext ec)
 		{
+			if (Expr == null) {
+				if (ec.ReturnType == TypeManager.void_type)
+					return true;
+				
+				Error (126, "An object of a type convertible to `{0}' is required " +
+					   "for the return statement",
+					   TypeManager.CSharpName (ec.ReturnType));
+				return false;
+			}
+
 			AnonymousContainer am = ec.CurrentAnonymousMethod;
 			if ((am != null) && am.IsIterator && ec.InIterator) {
 				Report.Error (1622, loc, "Cannot return a value from iterators. Use the yield return " +
-					      "statement to return a value, or yield break to end the iteration");
+						  "statement to return a value, or yield break to end the iteration");
 			}
+
+			if (am == null && ec.ReturnType == TypeManager.void_type) {
+				MemberCore mc = ec.ResolveContext as MemberCore;
+				Report.Error (127, loc, "`{0}': A return keyword must not be followed by any expression when method returns void",
+					mc.GetSignatureForError ());
+			}
+
+			Expr = Expr.Resolve (ec);
+			if (Expr == null)
+				return false;
+
+			if (Expr.Type != ec.ReturnType) {
+				if (ec.InferReturnType) {
+					ec.ReturnType = Expr.Type;
+				} else {
+					Expr = Convert.ImplicitConversionRequired (
+						ec, Expr, ec.ReturnType, loc);
+
+					if (Expr == null) {
+						if (am != null) {
+							Report.Error (1662, loc,
+								"Cannot convert `{0}' to delegate type `D' because some of the return types in the block are not implicitly convertible to the delegate return type",
+								am.ContainerType, am.GetSignatureForError ());
+						}
+						return false;
+					}
+				}
+			}
+
+			return true;			
+		}
+
+		public override bool Resolve (EmitContext ec)
+		{
+			if (!DoResolve (ec))
+				return false;
 			
-			if (ec.ReturnType == null && !ec.InferReturnType){
-				if (Expr != null){
-					if (am != null){
-						Report.Error (1662, loc,
-							"Cannot convert anonymous method block to delegate type `{0}' because some of the return types in the block are not implicitly convertible to the delegate return type",
-							am.GetSignatureForError ());
-					}
-					Error (127, "A return keyword must not be followed by any expression when method returns void");
-					return false;
-				}
-			} else {
-				if (Expr == null){
-					Error (126, "An object of a type convertible to `{0}' is required " +
-					       "for the return statement",
-					       TypeManager.CSharpName (ec.ReturnType));
-					return false;
-				}
-
-				Expr = Expr.Resolve (ec);
-				if (Expr == null)
-					return false;
-
-				if (Expr.Type != ec.ReturnType) {
-					if (ec.InferReturnType) {
-						ec.ReturnType = Expr.Type;
-					} else {
-						Expr = Convert.ImplicitConversionRequired (
-							ec, Expr, ec.ReturnType, loc);
-						if (Expr == null)
-							return false;
-					}
-				}
-			}
-
 			unwind_protect = ec.CurrentBranching.AddReturnOrigin (ec.CurrentBranching.CurrentUsageVector, loc);
 			if (unwind_protect)
 				ec.NeedReturnLabel ();
@@ -2243,7 +2255,8 @@ namespace Mono.CSharp {
 
 			//target.Toplevel = (ToplevelBlock) clonectx.LookupBlock (Toplevel);
 			target.Explicit = (ExplicitBlock) clonectx.LookupBlock (Explicit);
-			target.Parent = clonectx.RemapBlockCopy (Parent);
+			if (Parent != null)
+				target.Parent = clonectx.RemapBlockCopy (Parent);
 			
 			target.statements = new ArrayList (statements.Count);
 			if (target.children != null){

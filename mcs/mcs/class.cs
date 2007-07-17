@@ -2802,7 +2802,7 @@ namespace Mono.CSharp {
 					FieldInitializer fi = (FieldInitializer)initialized_fields[i];
 
 					EmitContext ec = new EmitContext (fi.TypeContainer, fi.TypeContainer,
-						Location, null, null, ModFlags);
+						Location, null, TypeManager.void_type, ModFlags);
 					ec.IsFieldInitializer = true;
 
 					fi.ResolveStatement (ec);
@@ -2819,7 +2819,7 @@ namespace Mono.CSharp {
 
 				foreach (FieldInitializer fi in initialized_static_fields) {
 					EmitContext ec = new EmitContext (fi.TypeContainer, fi.TypeContainer,
-						Location, null, null, ModFlags);
+						Location, null, TypeManager.void_type, ModFlags);
 					ec.IsStatic = true;
 					ec.IsFieldInitializer = true;
 
@@ -5094,7 +5094,7 @@ namespace Mono.CSharp {
 		public EmitContext CreateEmitContext (DeclSpace ds, ILGenerator ig)
 		{
 			ILGenerator ig_ = ConstructorBuilder.GetILGenerator ();
-			return new EmitContext (this, Parent, Location, ig_, null, ModFlags, true);
+			return new EmitContext (this, Parent, Location, ig_, TypeManager.void_type, ModFlags, true);
 		}
 
 		public bool IsExcluded()
@@ -5909,7 +5909,7 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			EmitContext ec = new EmitContext (this, Parent, Location, null, null, ModFlags);
+			EmitContext ec = new EmitContext (this, Parent, Location, null, TypeManager.void_type, ModFlags);
 			Constant c = size_expr.ResolveAsConstant (ec, this);
 			if (c == null)
 				return false;
@@ -6897,7 +6897,7 @@ namespace Mono.CSharp {
 			Field field = new Field (
 				Parent, Type,
 				Modifiers.COMPILER_GENERATED | Modifiers.PRIVATE | (ModFlags & Modifiers.STATIC),
-				CompilerGeneratedClass.MakeName ("CompilerGeneratedField"),
+				CompilerGeneratedClass.MakeName (null, "CompilerGeneratedField"),
 				null, Location);
 			((TypeContainer)Parent).AddField (field);
 

@@ -423,6 +423,8 @@ namespace Mono.CSharp {
 				flags |= Flags.CheckState;
 			flags |= Flags.ConstantCheckState;
 
+			if (return_type == null)
+				throw new ArgumentNullException ("return_type");
 #if GMCS_SOURCE
 			if ((return_type is TypeBuilder) && return_type.IsGenericTypeDefinition)
 				throw new InternalErrorException ();
@@ -748,7 +750,7 @@ namespace Mono.CSharp {
 			}
 #endif
 
-			if (return_type != null && !unreachable) {
+			if (return_type != TypeManager.void_type && !unreachable) {
 				if (CurrentAnonymousMethod == null) {
 					Report.Error (161, md.Location, "`{0}': not all code paths return a value", md.GetSignatureForError ());
 					return false;
@@ -768,8 +770,7 @@ namespace Mono.CSharp {
 
 		public Type ReturnType {
 			set {
-				return_type = value == TypeManager.void_type ?
-					null : value;
+				return_type = value;
 			}
 			get {
 				return return_type;
@@ -807,7 +808,7 @@ namespace Mono.CSharp {
 				if ((block != null) && block.IsDestructor) {
 					// Nothing to do; S.R.E automatically emits a leave.
 				} else if (HasReturnLabel || (!unreachable && !in_iterator)) {
-					if (return_type != null)
+					if (return_type != TypeManager.void_type)
 						ig.Emit (OpCodes.Ldloc, TemporaryReturn ());
 					ig.Emit (OpCodes.Ret);
 				}

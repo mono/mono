@@ -142,7 +142,7 @@ namespace Mono.CSharp {
 
 			ToplevelBlock b = ec.IsInProbingMode ? (ToplevelBlock) Block.PerformClone () : Block;
 
-			anonymous = new AnonymousMethod (
+			anonymous = new LambdaMethod (
 				Parent != null ? Parent.AnonymousMethod : null, RootScope, Host,
 				GenericMethod, Parameters, Container, b, return_type,
 				delegate_type, loc);
@@ -183,7 +183,7 @@ namespace Mono.CSharp {
 			
 			Expression e;
 			using (ec.Set (EmitContext.Flags.ProbingMode)) {
-				e = CoreCompatibilityTest (ec, null, null);
+				e = CoreCompatibilityTest (ec, typeof (LambdaExpression), null);
 			}
 			
 			if (e == null)
