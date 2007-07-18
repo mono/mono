@@ -296,6 +296,30 @@ namespace System.Net {
 			return result.ToString ();
 		}
 
+		internal string ToClientString () 
+		{
+			if (name.Length == 0) 
+				return String.Empty;
+
+			StringBuilder result = new StringBuilder (64);
+	
+			if (version > 0) 
+				result.Append ("Version=").Append (version).Append (";");
+				
+			result.Append (name).Append ("=").Append (val);
+
+			if (path != null && path.Length != 0)
+				result.Append (";Path=").Append (QuotedString (path));
+				
+			if (domain != null && domain.Length != 0)
+				result.Append (";Domain=").Append (QuotedString (domain));			
+	
+			if (port != null && port.Length != 0)
+				result.Append (";Port=").Append (port);	
+						
+			return result.ToString ();
+		}
+
 		// See par 3.6 of RFC 2616
   	    	string QuotedString (string value)
 	    	{

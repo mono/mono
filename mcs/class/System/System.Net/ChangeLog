@@ -1,3 +1,9 @@
+2007-07-17  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* HttpListenerRequest.cs: Support for Cookie decoding.
+	* HttpListenerResponse.cs: Support for encoding cookies on the response sent to the client
+	* Cookie.cs: new internal method to encode the Cookie in a proper form to sent to clients
+
 2007-07-14 Gonzalo Paniagua Javier <gonzalo.mono@gmail.com>
 
 	* WebConnectionStream.cs: implement the CanTimeout for 2.0. Fixes

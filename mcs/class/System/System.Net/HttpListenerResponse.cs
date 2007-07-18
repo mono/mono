@@ -315,7 +315,7 @@ namespace System.Net {
 			if (cookie == null)
 				throw new ArgumentNullException ("cookie");
 			
-			cookies.Add (cookie);
+			Cookies.Add (cookie);
 		}
 
 		public void AppendHeader (string name, string value)
@@ -398,7 +398,6 @@ namespace System.Net {
 		internal void SendHeaders (bool closing)
 		{
 			//TODO: When do we send KeepAlive?
-			//TODO: send cookies
 			MemoryStream ms = new MemoryStream ();
 			Encoding encoding = content_encoding;
 			if (encoding == null)
@@ -466,6 +465,18 @@ namespace System.Net {
 
 			if (location != null)
 				headers.SetInternal ("Location", location);
+
+			if (cookies != null) {
+				bool firstDone = false;
+				StringBuilder cookieSB = new StringBuilder ();
+				foreach (Cookie cookie in cookies) {
+					if (firstDone)
+						cookieSB.Append (",");
+					firstDone = true;
+					cookieSB.Append (cookie.ToClientString ());
+				}
+				headers.SetInternal("Set-Cookie2", cookieSB.ToString ());
+			}
 
 			StreamWriter writer = new StreamWriter (ms, encoding);
 			writer.Write ("HTTP/{0} {1} {2}\r\n", version, status_code, status_description);
