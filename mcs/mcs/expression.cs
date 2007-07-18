@@ -1868,7 +1868,7 @@ namespace Mono.CSharp {
 					Unary right_unary = (Unary) right;
 
 					if (right_unary.Oper == Unary.Operator.UnaryNegation){
-						return new Binary (Operator.Subtraction, left, right).Resolve (ec);
+						return new Binary (Operator.Subtraction, left, right_unary.Expr).Resolve (ec);
 					}
 				}
 			}

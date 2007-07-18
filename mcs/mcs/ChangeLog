@@ -1,3 +1,9 @@
+2007-07-18  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #82120
+	* expression.cs (Binary.ResolveOperator): When converting
+	'a + (-	b)' to 'a - b', ensure that the unary '-' is discarded.
+
 2007-07-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* doc.cs : when T: or whatever x: is specified, it does not really
