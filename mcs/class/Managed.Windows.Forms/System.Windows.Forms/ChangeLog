@@ -1,5 +1,10 @@
 2007-07-18  Jonathan Pobst  <monkey@jpobst.com>
 
+	* CheckBox.cs: Chain TextAlign to base implementation instead of
+	maintaining another one.
+
+2007-07-18  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ButtonBase.cs: Fix an incorrect string constant.
 
 2007-07-18  Jonathan Pobst  <monkey@jpobst.com>

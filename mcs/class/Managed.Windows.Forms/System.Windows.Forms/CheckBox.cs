@@ -112,7 +112,7 @@ namespace System.Windows.Forms {
 			appearance = Appearance.Normal;
 			auto_check = true;
 			check_alignment = ContentAlignment.MiddleLeft;
-			text_alignment = ContentAlignment.MiddleLeft;
+			TextAlign = ContentAlignment.MiddleLeft;
 			SetStyle(ControlStyles.StandardDoubleClick, false);
 		}
 		#endregion	// Public Constructors
@@ -226,16 +226,8 @@ namespace System.Windows.Forms {
 		[DefaultValue(ContentAlignment.MiddleLeft)]
 		[Localizable(true)]
 		public override ContentAlignment TextAlign {
-			get {
-				return text_alignment;
-			}
-
-			set {
-				if (value != text_alignment) {
-					text_alignment = value;
-					Invalidate();
-				}
-			}
+			get { return base.TextAlign; }
+			set { base.TextAlign = value; }
 		}
 
 
