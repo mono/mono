@@ -1,5 +1,9 @@
 2007-07-18  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ButtonBase.cs: Fix an incorrect string constant.
+
+2007-07-18  Jonathan Pobst  <monkey@jpobst.com>
+
 	* TextRenderer.cs: Use the static Graphics context in Hwnd instead
 	of creating one for measuring strings.
 

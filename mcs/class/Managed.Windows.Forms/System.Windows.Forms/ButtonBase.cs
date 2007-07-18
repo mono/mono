@@ -201,7 +201,7 @@ namespace System.Windows.Forms {
 
 #if NET_2_0
 					if (this.AutoSize && this.Parent != null)
-						this.Parent.PerformLayout (this, "TextImageRelation");
+						this.Parent.PerformLayout (this, "Image");
 #endif
 
 					Invalidate ();
