@@ -40,6 +40,8 @@ namespace System.Web.UI
 	[DefaultProperty ("Path")]
 	public class ProfileServiceManager
 	{
+		string _path;
+
 		[DefaultValue ("")]
 		[NotifyParentProperty (true)]
 		[Category ("Behavior")]
@@ -58,10 +60,12 @@ namespace System.Web.UI
 		[DefaultValue ("")]
 		public string Path {
 			get {
-				throw new NotImplementedException ();
+				if (_path == null)
+					return String.Empty;
+				return _path;
 			}
 			set {
-				throw new NotImplementedException ();
+				_path = value;
 			}
 		}
 	}

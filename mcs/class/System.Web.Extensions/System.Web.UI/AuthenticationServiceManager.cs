@@ -37,15 +37,19 @@ namespace System.Web.UI
 	[DefaultProperty ("Path")]
 	public class AuthenticationServiceManager
 	{
+		string _path;
+
 		[Category ("Behavior")]
 		[NotifyParentProperty (true)]
 		[DefaultValue ("")]
 		public string Path {
 			get {
-				throw new NotImplementedException ();
+				if (_path == null)
+					return String.Empty;
+				return _path;
 			}
 			set {
-				throw new NotImplementedException ();
+				_path = value;
 			}
 		}
 	}

@@ -118,6 +118,8 @@ namespace System.Web.UI
 		List<DisposeScriptEntry> _disposeScripts;
 		List<ScriptReferenceEntry> _scriptToRegister;
 		bool _loadScriptsBeforeUI = true;
+		AuthenticationServiceManager _authenticationService;
+		ProfileServiceManager _profileService;
 
 		[DefaultValue (true)]
 		[Category ("Behavior")]
@@ -170,7 +172,9 @@ namespace System.Web.UI
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		public AuthenticationServiceManager AuthenticationService {
 			get {
-				throw new NotImplementedException ();
+				if (_authenticationService == null)
+					_authenticationService = new AuthenticationServiceManager ();
+				return _authenticationService;
 			}
 		}
 
@@ -282,7 +286,9 @@ namespace System.Web.UI
 		[MergableProperty (false)]
 		public ProfileServiceManager ProfileService {
 			get {
-				throw new NotImplementedException ();
+				if (_profileService == null)
+					_profileService = new ProfileServiceManager ();
+				return _profileService;
 			}
 		}
 
@@ -448,10 +454,6 @@ namespace System.Web.UI
 					string script = String.Format ("var __cultureInfo = '{0}';", _cultureInfoSerializer.Serialize (culture));
 					RegisterClientScriptBlock (this, typeof (ScriptManager), "ScriptGlobalization", script, true);
 				}
-				if (EnablePageMethods) {
-					LogicalTypeInfo logicalTypeInfo = LogicalTypeInfo.GetLogicalTypeInfo (Page.GetType (), Page.Request.FilePath);
-					RegisterStartupScript (this, typeof (ScriptManager), "PageMethods", logicalTypeInfo.Proxy, true);
-				}
 
 				// Register dispose script
 				if (_disposeScripts != null && _disposeScripts.Count > 0) {
@@ -479,14 +481,46 @@ namespace System.Web.UI
 
 		void OnPreRenderComplete (object sender, EventArgs e) {
 			// Resolve Scripts
+			ScriptReference ajaxScript = new ScriptReference ("MicrosoftAjax.js", String.Empty);
+			ajaxScript.NotifyScriptLoaded = false;
+			OnResolveScriptReference (new ScriptReferenceEventArgs (ajaxScript));
+
+			ScriptReference ajaxWebFormsScript = new ScriptReference ("MicrosoftAjaxWebForms.js", String.Empty);
+			ajaxWebFormsScript.NotifyScriptLoaded = false;
+			OnResolveScriptReference (new ScriptReferenceEventArgs (ajaxWebFormsScript));
+
 			foreach (ScriptReferenceEntry script in GetScriptReferences ()) {
 				OnResolveScriptReference (new ScriptReferenceEventArgs (script.ScriptReference));
-				if (!IsInAsyncPostBack || HasBeenRendered (script.Control)) {
+				if (!IsInAsyncPostBack || (script.Control != this && HasBeenRendered (script.Control))) {
 					if (_scriptToRegister == null)
 						_scriptToRegister = new List<ScriptReferenceEntry> ();
 					_scriptToRegister.Add (script);
 				}
 			}
+
+			// Register Ajax framework script.
+			RegisterScriptReference (ajaxScript, true);
+
+			if (!IsInAsyncPostBack) {
+				StringBuilder sb = new StringBuilder ();
+				sb.AppendLine ("if (typeof(Sys) === 'undefined') throw new Error('ASP.NET Ajax client-side framework failed to load.');");
+
+				ScriptingProfileServiceSection profileService = (ScriptingProfileServiceSection) WebConfigurationManager.GetSection ("system.web.extensions/scripting/webServices/profileService");
+				if (profileService.Enabled)
+					sb.AppendLine ("Sys.Services._ProfileService.DefaultWebServicePath = '" + ResolveClientUrl ("~/Profile_JSON_AppService.axd") + "';");
+				if (_profileService != null && !String.IsNullOrEmpty (_profileService.Path))
+					sb.AppendLine ("Sys.Services.ProfileService.set_path('" + ResolveUrl (_profileService.Path) + "');");
+
+				ScriptingAuthenticationServiceSection authenticationService = (ScriptingAuthenticationServiceSection) WebConfigurationManager.GetSection ("system.web.extensions/scripting/webServices/authenticationService");
+				if (authenticationService.Enabled)
+					sb.AppendLine ("Sys.Services._AuthenticationService.DefaultWebServicePath = '" + ResolveClientUrl ("~/Authentication_JSON_AppService.axd") + "';");
+				if (_authenticationService != null && !String.IsNullOrEmpty (_authenticationService.Path))
+					sb.AppendLine ("Sys.Services.AuthenticationService.set_path('" + ResolveUrl (_authenticationService.Path) + "');");
+
+				RegisterClientScriptBlock (this, typeof (ScriptManager), "Framework", sb.ToString (), true);
+			}
+
+			RegisterScriptReference (ajaxWebFormsScript, true);
 
 			// Register Scripts
 			if (_scriptToRegister != null)
@@ -500,11 +534,14 @@ namespace System.Web.UI
 						RegisterServiceReference (_services [i]);
 					}
 				}
+
+				if (EnablePageMethods) {
+					LogicalTypeInfo logicalTypeInfo = LogicalTypeInfo.GetLogicalTypeInfo (Page.GetType (), Page.Request.FilePath);
+					RegisterClientScriptBlock (this, typeof (ScriptManager), "PageMethods", logicalTypeInfo.Proxy, true);
+				}
+
 				// Register startup script
-				StringBuilder sb = new StringBuilder ();
-				sb.AppendLine ();
-				sb.AppendLine ("Sys.Application.initialize();");
-				RegisterStartupScript (this, typeof (ExtenderControl), "Sys.Application.initialize();", sb.ToString (), true);
+				RegisterStartupScript (this, typeof (ExtenderControl), "Sys.Application.initialize();", "Sys.Application.initialize();\n", true);
 			}
 		}
 
@@ -520,16 +557,6 @@ namespace System.Web.UI
 		}
 
 		IEnumerable<ScriptReferenceEntry> GetScriptReferences () {
-			ScriptReference script;
-
-			script = new ScriptReference ("MicrosoftAjax.js", String.Empty);
-			script.NotifyScriptLoaded = false;
-			yield return new ScriptReferenceEntry (this, script, true);
-
-			script = new ScriptReference ("MicrosoftAjaxWebForms.js", String.Empty);
-			script.NotifyScriptLoaded = false;
-			yield return new ScriptReferenceEntry (this, script, true);
-
 			if (_scripts != null && _scripts.Count > 0) {
 				for (int i = 0; i < _scripts.Count; i++) {
 					yield return new ScriptReferenceEntry (this, _scripts [i], LoadScriptsBeforeUI);
