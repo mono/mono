@@ -132,14 +132,21 @@ namespace Mono.Cecil {
 			m_properties = new PropertyDefinition [propsTable.Rows.Count];
 			for (int i = 0; i < pmapTable.Rows.Count; i++) {
 				PropertyMapRow pmapRow = pmapTable [i];
+				if (pmapRow.Parent == 0)
+					continue;
+
 				TypeDefinition owner = GetTypeDefAt (pmapRow.Parent);
+
 				GenericContext context = new GenericContext (owner);
 
-				int start = (int) pmapRow.PropertyList, end;
+				int start = (int) pmapRow.PropertyList, last = propsTable.Rows.Count + 1, end;
 				if (i < pmapTable.Rows.Count - 1)
 					end = (int) pmapTable [i + 1].PropertyList;
 				else
-					end = propsTable.Rows.Count + 1;
+					end = last;
+
+				if (end > last)
+					end = last;
 
 				for (int j = start; j < end; j++) {
 					PropertyRow prow = propsTable [j - 1];
@@ -171,14 +178,20 @@ namespace Mono.Cecil {
 			m_events = new EventDefinition [evtTable.Rows.Count];
 			for (int i = 0; i < emapTable.Rows.Count; i++) {
 				EventMapRow emapRow = emapTable [i];
+				if (emapRow.Parent == 0)
+					continue;
+
 				TypeDefinition owner = GetTypeDefAt (emapRow.Parent);
 				GenericContext context = new GenericContext (owner);
 
-				int start = (int) emapRow.EventList, end;
+				int start = (int) emapRow.EventList, last = evtTable.Rows.Count + 1, end;
 				if (i < (emapTable.Rows.Count - 1))
 					end = (int) emapTable [i + 1].EventList;
 				else
-					end = evtTable.Rows.Count + 1;
+					end = last;
+
+				if (end > last)
+					end = last;
 
 				for (int j = start; j < end; j++) {
 					EventRow erow = evtTable [j - 1];

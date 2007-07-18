@@ -1,3 +1,10 @@
+2007-07-18  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil/AggressiveReflectionReader.cs:
+		Deal with out of range properties.
+	* Mono.Cecil.Metadata/StringsHeap.cs:
+		Deal with out of range string indexes.
+
 2007-07-17  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil/AggressiveReflectionReader.cs:

@@ -29,7 +29,6 @@
 namespace Mono.Cecil.Metadata {
 
 	using System.Collections;
-	using System.IO;
 	using System.Text;
 
 	public class StringsHeap : MetadataHeap {
@@ -55,6 +54,9 @@ namespace Mono.Cecil.Metadata {
 
 		string ReadStringAt (uint index)
 		{
+			if (index > Data.Length - 1)
+				return string.Empty;
+
 			int length = 0;
 			for (int i = (int) index; i < Data.Length; i++) {
 				if (Data [i] == 0)
