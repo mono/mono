@@ -40,7 +40,7 @@ namespace Mono.CSharp
 		bool handle_assembly = false;
 		bool handle_constraints = false;
 		bool handle_typeof = false;
-		bool next_parens_can_be_lambda;
+		bool lambda_arguments_parsing;
 		Location current_location;
 		Location current_comment_location = Location.Null;
 		ArrayList escaped_identifiers = new ArrayList ();
@@ -558,22 +558,17 @@ namespace Mono.CSharp
 		//
 		bool IsLambdaOpenParens ()
 		{
-			int tokens = 0;
 			int ntoken;
-			while ((ntoken = token ()) != Token.EOF) {
+			while ((ntoken = xtoken ()) != Token.EOF) {
 				switch (ntoken) {
 					case Token.CLOSE_PARENS:
-						return tokens == 0 || token () == Token.ARROW;
-
-					case Token.COMMA:
-						return true;
+						return xtoken () == Token.ARROW;
 
 					case Token.STAR:
 					case Token.SEMICOLON:
 					case Token.OPEN_PARENS:
 						return false;
 				}
-				++tokens;
 			}
 
 			Error_TokenExpected (")");
@@ -716,142 +711,7 @@ namespace Mono.CSharp
 			
 			return the_token;
 		}
-		
-		bool parse_namespace_or_typename (int next)
-		{
-			if (next == -1)
-				next = peek_token ();
-			while (next == Token.IDENTIFIER){
-				token ();
-			  again:
-				next = peek_token ();
-				if (next == Token.DOT || next == Token.DOUBLE_COLON){
-					token ();
-					next = peek_token ();
-					continue;
-				}
-				if (next == Token.OP_GENERICS_LT){
-					token ();
-					if (!parse_less_than ())
-						return false;
-					goto again;
-				}
-				return true;
-			}
-
-			return false;
-		}
-
-		bool is_simple_type (int token)
-		{
-			return  (token == Token.BOOL ||
-				 token == Token.DECIMAL ||
-				 token == Token.SBYTE ||
-				 token == Token.BYTE ||
-				 token == Token.SHORT ||
-				 token == Token.USHORT ||
-				 token == Token.INT ||
-				 token == Token.UINT ||
-				 token == Token.LONG ||
-				 token == Token.ULONG ||
-				 token == Token.CHAR ||
-				 token == Token.FLOAT ||
-				 token == Token.DOUBLE);
-		}
-
-		bool is_builtin_reference_type (int token)
-		{
-			return (token == Token.OBJECT || token == Token.STRING);
-		}
-
-		bool parse_opt_rank (int next)
-		{
-			while (true){
-				if (next != Token.OPEN_BRACKET)
-					return true;
-
-				token ();
-				while (true){
-					next = token ();
-					if (next == Token.CLOSE_BRACKET){
-						next = peek_token ();
-						break;
-					}
-					if (next == Token.COMMA)
-						continue;
 					
-					return false;
-				}
-			}
-		}
-			
-		bool parse_type ()
-		{
-			int next = peek_token ();
-			
-			if (is_simple_type (next)){
-				token ();
-				next = peek_token ();
-				if (next == Token.INTERR)
-					token ();
-				return parse_opt_rank (peek_token ());
-			}
-			if (parse_namespace_or_typename (next)){
-				next = peek_token ();
-				if (next == Token.INTERR)
-					token ();
-				return parse_opt_rank (peek_token ());
-			} else if (is_builtin_reference_type (next)){
-				token ();
-				return parse_opt_rank (peek_token ());
-			}
-			
-			return false;
-		}
-		
-		//
-		// Invoked after '(' has been seen and tries to parse:
-		// type identifier [, type identifier]*
-		//
-		// if this is the case, instead of returning an
-		// OPEN_PARENS token we return a special token that
-		// triggers lambda parsing.
-		//
-		// This is needed because we can not introduce the
-		// explicitly_typed_lambda_parameter_list after a '(' in the
-		// grammar without introducing reduce/reduce conflicts.
-		//
-		// We need to parse a type and if it is followed by an
-		// identifier, we know it has to be parsed as a lambda
-		// expression.  
-		//
-		// the type expression can be prefixed with `ref' or `out'
-		//
-		public bool parse_lambda_parameters ()
-		{
-			while (true){
-				int next = peek_token ();
-
-				if (next == Token.REF || next == Token.OUT)
-					token ();
-						 
-				if (parse_type ()){
-					next = peek_token ();
-					if (next == Token.IDENTIFIER){
-						token ();
-						next = peek_token ();
-						if (next == Token.COMMA){
-							token ();
-							continue;
-						}
-						if (next == Token.CLOSE_PARENS)
-							return true;
-					}
-				}
-				return false;
-			}
-		}
-
 		int parsing_generic_less_than = 0;
 		
 		int is_punct (char c, ref bool doread)
@@ -876,11 +736,12 @@ namespace Mono.CSharp
 			case ']':
 				return Token.CLOSE_BRACKET;
 			case '(':
-				if (next_parens_can_be_lambda) {
-					next_parens_can_be_lambda = false;
+				if (IsLinqEnabled && !lambda_arguments_parsing) {
+					lambda_arguments_parsing = true;
 					PushPosition ();
 					bool lambda_start = IsLambdaOpenParens ();
 					PopPosition ();
+					lambda_arguments_parsing = false;
 					if (lambda_start)
 						return Token.OPEN_PARENS_LAMBDA;
 				}
@@ -1040,12 +901,6 @@ namespace Mono.CSharp
 					doread = true;
 					val = Location;
 					return Token.ARROW;
-				}
-
-				if (IsLinqEnabled) {
-					PushPosition ();
-					next_parens_can_be_lambda = xtoken () == Token.OPEN_PARENS;
-					PopPosition ();
 				}
 
 				return Token.ASSIGN;
