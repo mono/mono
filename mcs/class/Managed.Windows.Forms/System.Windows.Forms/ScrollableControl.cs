@@ -904,12 +904,12 @@ namespace System.Windows.Forms {
 			
 			SuspendLayout ();
 
-			hscrollbar.Bounds = hscroll_bounds;
+			hscrollbar.SetBounds (hscroll_bounds.X, hscroll_bounds.Y, hscroll_bounds.Width,	hscroll_bounds.Height, BoundsSpecified.None);
 			hscrollbar.Visible = hscroll_visible;
 			if (hscrollbar.Visible)
 				XplatUI.SetZOrder (hscrollbar.Handle, IntPtr.Zero, true, false);
 
-			vscrollbar.Bounds = vscroll_bounds;
+			vscrollbar.SetBounds (vscroll_bounds.X, vscroll_bounds.Y, vscroll_bounds.Width, vscroll_bounds.Height, BoundsSpecified.None);
 			vscrollbar.Visible = vscroll_visible;
 			if (vscrollbar.Visible)
 				XplatUI.SetZOrder (vscrollbar.Handle, IntPtr.Zero, true, false);
