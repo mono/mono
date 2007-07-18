@@ -1,3 +1,7 @@
+2007-07-18  William Holmes  <billholmes54@gmail.com>
+
+        * filewatcher.c : removed unused variable 'filename' in 
+	  ves_icall_System_IO_FSW_SupportsFSW
 
 Mon Jul 16 19:36:16 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
