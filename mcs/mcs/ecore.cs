@@ -822,8 +822,8 @@ namespace Mono.CSharp {
 					return;
 
 				if (class_name != null)
-					Report.Error (103, loc, "The name `{0}' does not exist in the context of `{1}'",
-						name, class_name);
+					Report.Error (103, loc, "The name `{0}' does not exist in the current context",
+						name);
 				else
 					Error_TypeDoesNotContainDefinition (loc, queried_type, name);
 				return;

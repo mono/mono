@@ -28,15 +28,39 @@ namespace Mono.CSharp {
 					 Location loc)
 			: base (parent, generic, host, parameters, container, loc)
 		{
-			explicit_parameters = parameters.FixedParameters [0].TypeName != null;
+			if (parameters.FixedParameters.Length > 0)
+				explicit_parameters = parameters.FixedParameters [0].TypeName != null;
 		}
 
-		public bool HasExplicitParameters {
+		public override bool HasExplicitParameters {
 			get {
 				return explicit_parameters;
 			}
 		}
-		
+
+		protected override Parameters CreateParameters (EmitContext ec, Type delegateType, ParameterData delegateParameters)
+		{
+			Parameters p = base.CreateParameters (ec, delegateType, delegateParameters);
+			if (explicit_parameters)
+				return p;
+
+			//
+			// If L has an implicitly typed parameter list
+			//
+			for (int i = 0; i < delegateParameters.Count; i++) {
+				// D has no ref or out parameters
+				//if ((invoke_pd.ParameterModifier (i) & Parameter.Modifier.ISBYREF) != 0)
+				//	return null;
+
+				//
+				// Makes implicit parameters explicit
+				// Set each parameter of L is given the type of the corresponding parameter in D
+				//
+				p[i].ParameterType = delegateParameters.Types[i];
+			}
+			return p;
+		}
+
 		public override Expression DoResolve (EmitContext ec)
 		{
 			//
@@ -61,7 +85,7 @@ namespace Mono.CSharp {
 			EmitContext ec = EmitContext.TempEc;
 
 			using (ec.Set (EmitContext.Flags.ProbingMode)) {
-				bool r = DoImplicitStandardConversion (ec, delegate_type) != null;
+				bool r = Compatible (ec, delegate_type) != null;
 
 				// Ignore the result
 				anonymous = null;
@@ -69,83 +93,18 @@ namespace Mono.CSharp {
 				return r;
 			}
 		}
-		
+
 		//
-		// Returns true if this anonymous method can be implicitly
-		// converted to the delegate type `delegate_type'
+		// Resolves a body of lambda expression.
 		//
-		public override Expression Compatible (EmitContext ec, Type delegate_type)
+		protected override Expression ResolveMethod (EmitContext ec, Parameters parameters, Type returnType, Type delegateType)
 		{
-			if (anonymous != null)
-				return anonymous.AnonymousDelegate;
-
-			return DoImplicitStandardConversion (ec, delegate_type);
-		}
-
-		Expression DoImplicitStandardConversion (EmitContext ec, Type delegate_type)
-		{
-			if (CompatibleChecks (ec, delegate_type) == null)
-				return null;
-
-			MethodGroupExpr invoke_mg = Delegate.GetInvokeMethod (
-				ec.ContainerType, delegate_type, loc);
-			MethodInfo invoke_mb = (MethodInfo) invoke_mg.Methods [0];
-			ParameterData invoke_pd = TypeManager.GetParameterData (invoke_mb);
-
-			//
-			// The lambda expression is compatible with the delegate type,
-			// provided that:
-			//
-
-			//
-			// D and L have the same number of arguments.
-			if (Parameters.Count != invoke_pd.Count)
-				return null;
-
-			if (explicit_parameters){
-				//
-				// If L has an explicitly typed parameter list, each parameter
-				// in D has the same type and modifiers as the corresponding
-				// parameter in L.
-				//
-				if (!VerifyExplicitParameterCompatibility (delegate_type, invoke_pd, false))
-					return null;
-			} else {
-				//
-				// If L has an implicitly typed parameter list
-				//
-				for (int i = 0; i < invoke_pd.Count; i++) {
-					// D has no ref or out parameters
-					if ((invoke_pd.ParameterModifier (i) & Parameter.Modifier.ISBYREF) != 0)
-						return null;
-
-					//
-					// Makes implicit parameters explicit
-					// Set each parameter of L is given the type of the corresponding parameter in D
-					//
-					Parameters[i].ParameterType = invoke_pd.Types[i];
-					
-				}
-			}
-
-			return CoreCompatibilityTest (ec, invoke_mb.ReturnType, delegate_type);
-		}
-
-		Expression CoreCompatibilityTest (EmitContext ec, Type return_type, Type delegate_type)
-		{
-			//
-			// The return type of the delegate must be compatible with 
-			// the anonymous type.   Instead of doing a pass to examine the block
-			// we satisfy the rule by setting the return type on the EmitContext
-			// to be the delegate type return type.
-			//
-
 			ToplevelBlock b = ec.IsInProbingMode ? (ToplevelBlock) Block.PerformClone () : Block;
 
 			anonymous = new LambdaMethod (
 				Parent != null ? Parent.AnonymousMethod : null, RootScope, Host,
-				GenericMethod, Parameters, Container, b, return_type,
-				delegate_type, loc);
+				GenericMethod, Parameters, Container, b, returnType,
+				delegateType, loc);
 
 			bool r;
 			if (ec.IsInProbingMode)
@@ -183,7 +142,7 @@ namespace Mono.CSharp {
 			
 			Expression e;
 			using (ec.Set (EmitContext.Flags.ProbingMode)) {
-				e = CoreCompatibilityTest (ec, typeof (LambdaExpression), null);
+				e = ResolveMethod (ec, Parameters, typeof (LambdaExpression), null);
 			}
 			
 			if (e == null)

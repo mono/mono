@@ -1145,11 +1145,10 @@ namespace Mono.CSharp {
 			}
 		}
 
-		void Error_ParameterMismatch (Type t)
-		{
-			Report.Error (1661, loc, "Anonymous method could not be converted to delegate `" +
-				      "{0}' since there is a parameter mismatch",
-				      TypeManager.CSharpName (t));
+		public virtual bool HasExplicitParameters {
+			get {
+				return true;
+			}
 		}
 
 		public virtual bool ImplicitStandardConversionExists (Type delegate_type)
@@ -1191,7 +1190,7 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		protected bool VerifyExplicitParameterCompatibility (Type delegate_type, ParameterData invoke_pd, bool showErrors)
+		protected bool VerifyParameterCompatibility (Type delegate_type, ParameterData invoke_pd, bool showErrors)
 		{
 			if (Parameters.Count != invoke_pd.Count) {
 				if (!showErrors)
@@ -1200,10 +1199,13 @@ namespace Mono.CSharp {
 				Report.SymbolRelatedToPreviousError (delegate_type);
 				Report.Error (1593, loc, "Delegate `{0}' does not take `{1}' arguments",
 					      TypeManager.CSharpName (delegate_type), Parameters.Count.ToString ());
-				Error_ParameterMismatch (delegate_type);
 				return false;
 			}
-			
+
+			if (!HasExplicitParameters)
+				return true;
+
+			bool error = false;
 			for (int i = 0; i < Parameters.Count; ++i) {
 				Parameter.Modifier p_mod = invoke_pd.ParameterModifier (i);
 				if (Parameters.ParameterModifier (i) != p_mod && p_mod != Parameter.Modifier.PARAMS) {
@@ -1216,8 +1218,8 @@ namespace Mono.CSharp {
 					else
 						Report.Error (1676, loc, "Parameter `{0}' must be declared with the `{1}' keyword",
 							      (i+1).ToString (), Parameter.GetModifierSignature (p_mod));
-					Error_ParameterMismatch (delegate_type);
-					return false;
+					error = true;
+					continue;
 				}
 
 				// We assume that generic parameters are always inflated
@@ -1232,11 +1234,11 @@ namespace Mono.CSharp {
 						      (i+1).ToString (),
 						      TypeManager.CSharpName (Parameters.ParameterType (i)),
 						      TypeManager.CSharpName (invoke_pd.ParameterType (i)));
-					Error_ParameterMismatch (delegate_type);
-					return false;
+					error = true;
 				}
 			}
-			return true;
+
+			return !error;
 		}
 
 #if GMCS_SOURCE		
@@ -1261,7 +1263,7 @@ namespace Mono.CSharp {
 			MethodInfo invoke_mb = (MethodInfo) invoke_mg.Methods [0];
 			ParameterData invoke_pd = TypeManager.GetParameterData (invoke_mb);			
 
-			if (!VerifyExplicitParameterCompatibility (delegateType, invoke_pd, false))
+			if (!VerifyParameterCompatibility (delegateType, invoke_pd, false))
 				return null;
 
 			Type[] g_arguments = delegateType.GetGenericArguments ();
@@ -1322,37 +1324,9 @@ namespace Mono.CSharp {
 			MethodInfo invoke_mb = (MethodInfo) invoke_mg.Methods [0];
 			ParameterData invoke_pd = TypeManager.GetParameterData (invoke_mb);
 
-			Parameters parameters;
-			if (Parameters == null) {
-				//
-				// We provide a set of inaccessible parameters
-				//
-				Parameter [] fixedpars = new Parameter [invoke_pd.Count];
-								
-				for (int i = 0; i < invoke_pd.Count; i++) {
-					Parameter.Modifier i_mod = invoke_pd.ParameterModifier (i);
-					if ((i_mod & Parameter.Modifier.OUTMASK) != 0) {
-						Report.Error (1688, loc, "Cannot convert anonymous " +
-							      "method block without a parameter list " +
-							      "to delegate type `{0}' because it has " +
-							      "one or more `out' parameters.",
-							      TypeManager.CSharpName (delegate_type));
-						return null;
-					}
-					fixedpars [i] = new Parameter (
-						invoke_pd.ParameterType (i), "+" + (++next_index),
-						invoke_pd.ParameterModifier (i), null, loc);
-				}
-								
-				parameters = new Parameters (fixedpars);
-				if (!parameters.Resolve (ec))
-					return null;
-			} else {
-				if (!VerifyExplicitParameterCompatibility (delegate_type, invoke_pd, true))
-					return null;
-
-				parameters = Parameters;
-			}
+			Parameters parameters = CreateParameters (ec, delegate_type, invoke_pd);
+			if (parameters == null)
+				return null;
 
 			//
 			// Second: the return type of the delegate must be compatible with 
@@ -1368,15 +1342,46 @@ namespace Mono.CSharp {
 				      Container, Block, invoke_mb.ReturnType, delegate_type,
 				      TypeManager.IsGenericType (delegate_type), loc);
 
-			anonymous = new AnonymousMethod (
-				Parent != null ? Parent.AnonymousMethod : null, RootScope, Host,
-				GenericMethod, parameters, Container, Block, invoke_mb.ReturnType,
-				delegate_type, loc);
+			return ResolveMethod (ec, parameters, invoke_mb.ReturnType, delegate_type);
+		}
 
-			if (!anonymous.Resolve (ec))
+		protected virtual Parameters CreateParameters (EmitContext ec, Type delegateType, ParameterData delegateParameters)
+		{
+			if (Parameters == null) {
+				//
+				// We provide a set of inaccessible parameters
+				//
+				Parameter[] fixedpars = new Parameter[delegateParameters.Count];
+
+				for (int i = 0; i < delegateParameters.Count; i++) {
+					Parameter.Modifier i_mod = delegateParameters.ParameterModifier (i);
+					if ((i_mod & Parameter.Modifier.OUTMASK) != 0) {
+						Report.Error (1688, loc, "Cannot convert anonymous " +
+								  "method block without a parameter list " +
+								  "to delegate type `{0}' because it has " +
+								  "one or more `out' parameters.",
+								  TypeManager.CSharpName (delegateType));
+						return null;
+					}
+					fixedpars[i] = new Parameter (
+						delegateParameters.ParameterType (i), "+" + (++next_index),
+						delegateParameters.ParameterModifier (i), null, loc);
+				}
+
+				Parameters parameters = new Parameters (fixedpars);
+				if (!parameters.Resolve (ec))
+					return null;
+				return parameters;
+			}
+
+			if (!VerifyParameterCompatibility (delegateType, delegateParameters, true)) {
+				Report.Error (1661, loc,
+					"Cannot convert `{0}' to delegate type `{1}' since there is a parameter mismatch",
+					GetSignatureForError (), TypeManager.CSharpName (delegateType));
 				return null;
+			}
 
-			return anonymous.AnonymousDelegate;
+			return Parameters;
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -1412,6 +1417,19 @@ namespace Mono.CSharp {
 
 		public bool IsIterator {
 			get { return false; }
+		}
+
+		protected virtual Expression ResolveMethod (EmitContext ec, Parameters parameters, Type returnType, Type delegateType)
+		{
+			anonymous = new AnonymousMethod (
+				Parent != null ? Parent.AnonymousMethod : null, RootScope, Host,
+				GenericMethod, parameters, Container, Block, returnType,
+				delegateType, loc);
+
+			if (!anonymous.Resolve (ec))
+				return null;
+
+			return anonymous.AnonymousDelegate;
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Expression t)

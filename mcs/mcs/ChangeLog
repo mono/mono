@@ -1,3 +1,21 @@
+2007-07-18  Marek Safar  <marek.safar@gmail.com>
+
+	* anonymous.cs (AnonymouseMethodExpression): Refactored to work with
+	LambdaExpression better.
+	
+	* cs-tokenizer.cs: Changed a way how we detect lambda parameters.
+	
+	* driver.cs (LambdaTypeParseTest): Removed, tested method is gone.
+	
+	* ecore.cs (Expression.MemberLookupFailed): Don't show currect context
+	as it can be generated.
+	
+	* expression.cs (Invocation.Error_InvalidArguments): Show correct
+	modifiers.
+	
+	* lambda.cs (LambdaExpression): Refactored to share same code with
+	AnonymousMethodExpression.
+	
 2007-07-17  Marek Safar  <marek.safar@gmail.com>
 
 	* anonymous.cs (MakeName): Include host name for easier debugging.

@@ -40,6 +40,7 @@ namespace Mono.CSharp
 		bool handle_assembly = false;
 		bool handle_constraints = false;
 		bool handle_typeof = false;
+		bool next_parens_can_be_lambda;
 		Location current_location;
 		Location current_comment_location = Location.Null;
 		ArrayList escaped_identifiers = new ArrayList ();
@@ -552,6 +553,33 @@ namespace Mono.CSharp
 			return keyword_strings [s] != null;
 		}
 
+		//
+		// Tests whether '(' is beggining of lambda parameters
+		//
+		bool IsLambdaOpenParens ()
+		{
+			int tokens = 0;
+			int ntoken;
+			while ((ntoken = token ()) != Token.EOF) {
+				switch (ntoken) {
+					case Token.CLOSE_PARENS:
+						return tokens == 0 || token () == Token.ARROW;
+
+					case Token.COMMA:
+						return true;
+
+					case Token.STAR:
+					case Token.SEMICOLON:
+					case Token.OPEN_PARENS:
+						return false;
+				}
+				++tokens;
+			}
+
+			Error_TokenExpected (")");
+			return false;
+		}
+
 		public static bool IsValidIdentifier (string s)
 		{
 			if (s == null || s.Length == 0)
@@ -848,17 +876,15 @@ namespace Mono.CSharp
 			case ']':
 				return Token.CLOSE_BRACKET;
 			case '(':
-				if (IsLinqEnabled){
+				if (next_parens_can_be_lambda) {
+					next_parens_can_be_lambda = false;
 					PushPosition ();
-					bool have_lambda_parameter = parse_lambda_parameters ();
+					bool lambda_start = IsLambdaOpenParens ();
 					PopPosition ();
-					
-					if (have_lambda_parameter)
+					if (lambda_start)
 						return Token.OPEN_PARENS_LAMBDA;
-					else
-						return Token.OPEN_PARENS;
-				} else
-					return Token.OPEN_PARENS;
+				}
+				return Token.OPEN_PARENS;
 			case ')': {
 				if (deambiguate_close_parens == 0)
 					return Token.CLOSE_PARENS;
@@ -1015,6 +1041,13 @@ namespace Mono.CSharp
 					val = Location;
 					return Token.ARROW;
 				}
+
+				if (IsLinqEnabled) {
+					PushPosition ();
+					next_parens_can_be_lambda = xtoken () == Token.OPEN_PARENS;
+					PopPosition ();
+				}
+
 				return Token.ASSIGN;
 			}
 
@@ -2077,6 +2110,11 @@ namespace Mono.CSharp
 			Report.Error (
 				1028, Location,
 				"Unexpected processor directive (" + extra + ")");
+		}
+
+		void Error_TokenExpected (string token)
+		{
+			Report.Error (1026, Location, "Expecting `{0}'", token);
 		}
 
 		void Error_TokensSeen ()

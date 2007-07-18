@@ -712,39 +712,6 @@ namespace Mono.CSharp
 			Console.WriteLine ("Mono C# compiler version {0}", version);
 			Environment.Exit (0);
 		}
-
-		//
-		// This is to test the tokenizer internal parser that is used to deambiguate
-		// '(' type identifier from '(' type others so that we are able to parse
-		// without introducing reduce/reduce conflicts in the grammar.
-		// 
-		static void LambdaTypeParseTest (string fname)
-		{
-			bool fail = false;
-
-			using (FileStream fs = File.OpenRead (fname)){
-				StreamReader r = new StreamReader (fs, encoding);
-				string line;
-				
-				while ((line = r.ReadLine ())!= null){
-					if (line [0] == '!')
-						continue;
-					bool must_pass = line [0] == '+';
-					StringReader test = new StringReader (line.Substring (1));
-					SeekableStreamReader reader = new SeekableStreamReader (test);
-					SourceFile file = new SourceFile (fname, fname, 0);
-					
-					Tokenizer lexer = new Tokenizer (reader, file, defines);
-					bool res = lexer.parse_lambda_parameters ();
-					
-					Console.WriteLine ("{3} ({1}=={2}): {0}", line.Substring (1), res, must_pass, res == must_pass);
-					if (res != must_pass)
-						fail = true;
-				}
-			}
-			Console.WriteLine ("fail={0}", fail);
-			Environment.Exit (fail ? 1 : 0);
-		}
 		
 		//
 		// Currently handles the Unix-like command line options, but will be
@@ -1010,14 +977,6 @@ namespace Mono.CSharp
 			case "--noconfig":
 				Report.Warning (-29, 1, "Compatibility: Use -noconfig option instead of --noconfig");
 				load_default_config = false;
-				return true;
-
-			case "--typetest":
-				if ((i + 1) >= args.Length){
-					Report.Error (5, "--typetest requires a filename argument");
-					Environment.Exit (1);
-				}
-				LambdaTypeParseTest (args [++i]);
 				return true;
 			}
 
