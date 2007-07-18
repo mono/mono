@@ -49,8 +49,7 @@ namespace System.Windows.Forms
 		#region Public Constructors
 		public ToolStripContentPanel () : base ()
 		{
-			this.renderer = null;
-			this.render_mode = ToolStripRenderMode.ManagerRenderMode;
+			this.RenderMode = ToolStripRenderMode.System;
 		}
 		#endregion
 
@@ -186,9 +185,11 @@ namespace System.Windows.Forms
 
 				if (value == ToolStripRenderMode.Custom && this.renderer == null)
 					throw new NotSupportedException ("Must set Renderer property before setting RenderMode to Custom");
-				if (value == ToolStripRenderMode.Professional || value == ToolStripRenderMode.System)
+				else if (value == ToolStripRenderMode.Professional)
 					this.renderer = new ToolStripProfessionalRenderer ();
-
+				else if (value == ToolStripRenderMode.System)
+					this.renderer = new ToolStripSystemRenderer ();
+					
 				this.render_mode = value;
 			}
 		}

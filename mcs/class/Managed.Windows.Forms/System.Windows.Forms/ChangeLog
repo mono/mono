@@ -1,5 +1,10 @@
 2007-07-18  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ToolStripContentPanel.cs: Support System renderer.
+	* ToolStripControlHost.cs: Set RightToLeft to default to No.
+
+2007-07-18  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ScrollableControl.cs: Don't mess up the user's explicit bounds.
 
 2007-07-18  Jonathan Pobst  <monkey@jpobst.com>

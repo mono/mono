@@ -43,6 +43,7 @@ namespace System.Windows.Forms
 			if (c == null)
 				throw new ArgumentNullException ("c");
 
+			this.RightToLeft = RightToLeft.No;
 			this.control = c;
 			this.control_align = ContentAlignment.MiddleCenter;
 			this.control.TabStop = false;
