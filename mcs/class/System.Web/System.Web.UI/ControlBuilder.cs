@@ -180,21 +180,32 @@ namespace System.Web.UI {
 		internal
 #endif
 		Type BindingContainerType {
-			get {
-				if (parentBuilder == null)
+			get {				
+				if (parentBuilder == null) {
+#if NET_2_0
+					Type bt = Parser.BaseType;
+					if (bt != null)
+						return bt;
+#endif
+
 					return typeof (Control);
-					
+				}
+
 				if (parentBuilder is TemplateBuilder && ((TemplateBuilder)parentBuilder).ContainerType != null)
 					return ((TemplateBuilder)parentBuilder).ContainerType;
-
+				
 				Type ptype = parentBuilder.ControlType;
 				if (ptype == null)
 					return parentBuilder.BindingContainerType;
-
+				
 				if (!typeof (INamingContainer).IsAssignableFrom (ptype))
 					return parentBuilder.BindingContainerType;
 
+#if NET_2_0
+				return typeof (Control);
+#else
 				return ptype;
+#endif
 			}
 		}
 

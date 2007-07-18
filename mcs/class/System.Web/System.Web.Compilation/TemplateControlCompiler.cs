@@ -435,9 +435,8 @@ namespace System.Web.Compilation
 				}
 			}
 #endif
-
 			method = CreateDBMethod (dbMethodName, GetContainerType (builder), builder.ControlType);
-
+			
 			CodeVariableReferenceExpression targetExpr = new CodeVariableReferenceExpression ("target");
 
 			// This should be a CodePropertyReferenceExpression for properties... but it works anyway
@@ -1149,7 +1148,9 @@ namespace System.Web.Compilation
 			TemplateBuilder tb = builder as TemplateBuilder;
 			if (tb != null && tb.ContainerType != null)
 				return tb.ContainerType;
-
+#if NET_2_0
+			return builder.BindingContainerType;
+#else
 			Type type = builder.BindingContainerType;
 
 			PropertyInfo prop = type.GetProperty ("Items", noCaseFlags & ~BindingFlags.NonPublic);
@@ -1165,6 +1166,7 @@ namespace System.Web.Compilation
 				return type;
 
 			return prop.PropertyType;
+#endif
 		}
 		
 		CodeMemberMethod CreateDBMethod (string name, Type container, Type target)
