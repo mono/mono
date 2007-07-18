@@ -221,12 +221,13 @@ namespace System.Threading
 			[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 			[SecurityPermission (SecurityAction.InheritanceDemand, UnmanagedCode = true)]
 			set {
-				//
-				// Notice, from the 2.x documentation:
-				//    Assigning a new value to the Handle property, will not release
-				//    the previous handle, this could lead to a leak
-				//
-				safe_wait_handle = new SafeWaitHandle (value, false);
+				if (safe_wait_handle != null)
+					safe_wait_handle.Close ();
+
+				if (value == InvalidHandle)
+					safe_wait_handle = null;
+				else
+					safe_wait_handle = new SafeWaitHandle (value, true);
 			}
 		}
 		
@@ -261,8 +262,8 @@ namespace System.Threading
 			[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 			set {
 				if (safe_wait_handle != null)
-					safe_wait_handle.Close ();
-				
+					safe_wait_handle.Dispose ();
+
 				safe_wait_handle = value;
 			}
 		}

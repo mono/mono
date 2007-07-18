@@ -1,3 +1,15 @@
+2007-07-18  Miguel de Icaza  <miguel@novell.com>
+
+	* WaitHandle.cs (Handle): in the 2.0 profile, explicitly dispose
+	the old SafeWaitHandle, do not wait for the finalizer to run;
+
+	Take ownership of the handle;   The docs did not say that
+	assigning to this value would lead to a leak, the docs said that
+	in the 1.0 and 1.1 profiles assigning to this property might lead
+	to a leak.   My mistake. 
+
+	Fixes: 82134
+	
 2007-07-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* LockCookie.cs, AsyncFlowControl.cs :
