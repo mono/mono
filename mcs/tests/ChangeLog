@@ -1,3 +1,7 @@
+2007-07-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* gtest-xml-3.cs, gtest-xml-3-ref.xml : new /doc test for bug #79706.
+
 2007-07-18  Raja R Harinath  <rharinath@novell.com>
 
 	* test-576.cs: New test for #82120.

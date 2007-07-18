@@ -1,3 +1,9 @@
+2007-07-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* doc.cs : generic method arguments are written as ``x while generic
+	  type arguments are `x. Combined with the previous change, fixed bug
+	  #79706.
+
 2007-07-18  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #82120

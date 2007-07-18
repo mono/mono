@@ -867,7 +867,9 @@ namespace Mono.CSharp {
 				StringBuilder psb = new StringBuilder ();
 				foreach (Parameter p in plist) {
 					psb.Append (psb.Length != 0 ? "," : "(");
-					psb.Append (GetSignatureForDoc (p.ExternalType ()));
+					psb.Append (GetSignatureForDoc (p.ParameterType));
+					if ((p.ModFlags & Parameter.Modifier.ISBYREF) != 0)
+						psb.Append ('@');
 				}
 				paramSpec = psb.ToString ();
 			}
@@ -876,6 +878,10 @@ namespace Mono.CSharp {
 				paramSpec += ")";
 
 			string name = mc is Constructor ? "#ctor" : mc.Name;
+#if GMCS_SOURCE
+			if (mc.MemberName.IsGeneric)
+				name += "``" + mc.MemberName.TypeArguments.Count;
+#endif
 			string suffix = String.Empty;
 			Operator op = mc as Operator;
 			if (op != null) {
@@ -891,8 +897,23 @@ namespace Mono.CSharp {
 
 		static string GetSignatureForDoc (Type type)
 		{
+#if GMCS_SOURCE
 			if (TypeManager.IsGenericParameter (type))
-				return "`" + TypeManager.GenericParameterPosition (type);
+				return (type.DeclaringMethod != null ? "``" : "`") + TypeManager.GenericParameterPosition (type);
+
+			if (TypeManager.IsGenericType (type)) {
+				string g = type.Namespace;
+				if (g != null && g.Length > 0)
+					g += '.';
+				int idx = type.Name.LastIndexOf ('`');
+				g += (idx < 0 ? type.Name : type.Name.Substring (0, idx)) + '{';
+				int argpos = 0;
+				foreach (Type t in type.GetGenericArguments ())
+					g += (argpos++ > 0 ? "," : String.Empty) + GetSignatureForDoc (t);
+				g += '}';
+				return g;
+			}
+#endif
 
 			string name = type.FullName != null ? type.FullName : type.Name;
 			return name.Replace ("+", ".").Replace ('&', '@');
