@@ -1,3 +1,7 @@
+2007-07-18  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ListControl.cs: Fix test that is failing on i586.
+
 2007-07-17  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ContainerControlTest.cs: Add test for 2.0 AutoScaling.  It's

@@ -330,7 +330,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (null, lc.FormatInfo, "A2");
 			Assert.AreEqual (string.Empty, lc.FormatString, "A3");
 			
-			Assert.AreEqual ("2/3/0001 4:05:06 AM", lc.GetItemText (dt), "A4");
+			Assert.AreEqual (dt.ToString (), lc.GetItemText (dt), "A4");
 			
 			lc.FormattingEnabled = true;
 			lc.FormatString = "MM/dd";
