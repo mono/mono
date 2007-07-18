@@ -520,6 +520,9 @@ namespace System.Windows.Forms
 		protected virtual bool DefaultShowItemToolTips { get { return true; } }
 		protected override Size DefaultSize { get { return new Size (100, 25); } }
 		protected internal virtual ToolStripItemCollection DisplayedItems { get { return this.displayed_items; } }
+		protected internal virtual Size MaxItemSize {
+			get { return new Size (Width - (GripStyle == ToolStripGripStyle.Hidden ? 1 : 8), Height); }
+		}
 		#endregion
 
 		#region Public Methods
@@ -1242,7 +1245,7 @@ namespace System.Windows.Forms
 						Application.KeyboardCapture = null;
 					
 					// Redraw for mnemonic underlines
-					this.Refresh ();
+					this.Invalidate ();
 				}
 			}
 		}

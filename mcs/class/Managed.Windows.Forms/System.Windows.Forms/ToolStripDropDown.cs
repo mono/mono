@@ -315,9 +315,9 @@ namespace System.Windows.Forms
 			get { return true; }
 		}
 
-		//protected internal override Size MaxItemSize {
-		//        get {  return new Size (Screen.PrimaryScreen.Bounds.Width - 2, Screen.PrimaryScreen.Bounds.Height - 34); }
-		//}
+		protected internal override Size MaxItemSize {
+			get { return new Size (Screen.PrimaryScreen.Bounds.Width - 2, Screen.PrimaryScreen.Bounds.Height - 34); }
+		}
 
 		protected virtual bool TopMost {
 			get { return true; }

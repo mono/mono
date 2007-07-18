@@ -1,3 +1,8 @@
+2007-07-18  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStrip.cs, ToolStripDropDown.cs, ToolStripDropDownMenu.cs: 
+	Implement MaxItemSize.
+
 2007-07-17  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Control.cs: Remove per-control 1x1 Bitmap and Graphics context used

@@ -82,6 +82,10 @@ namespace System.Windows.Forms
 		protected override Padding DefaultPadding {
 			get { return base.DefaultPadding; }
 		}
+
+		protected internal override Size MaxItemSize {
+			get { return Size; }
+		}
 		#endregion
 
 		#region Protected Methods
