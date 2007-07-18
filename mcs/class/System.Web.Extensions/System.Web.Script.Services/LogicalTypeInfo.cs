@@ -105,8 +105,8 @@ namespace System.Web.Script.Services
 			public ScriptMethodAttribute ScriptMethod { get { return _sma; } }
 			public MethodInfo MethodInfo { get { return _methodInfo; } }
 
-			public void GenerateMethod (StringBuilder proxy, bool isPrototype) {
-				string service = MethodInfo.DeclaringType.FullName;
+			public void GenerateMethod (StringBuilder proxy, bool isPrototype, bool isPage) {
+				string service = isPage ? "PageMethods" : MethodInfo.DeclaringType.FullName;
 
 				string useHttpGet = ScriptMethod.UseHttpGet ? "true" : "false";
 				string paramMap = GenerateParameters (true);
@@ -229,7 +229,7 @@ this._failed = null;
 			for (int i = 0; i < logicalMethods.Count; i++) {
 				if (i > 0)
 					proxy.Append (',');
-				logicalMethods [i].GenerateMethod (proxy, true);
+				logicalMethods [i].GenerateMethod (proxy, true, isPage);
 			}
 
 			proxy.AppendFormat (
@@ -250,7 +250,7 @@ this._failed = null;
 			service, filePath);
 
 			for (int i = 0; i < logicalMethods.Count; i++)
-				logicalMethods[i].GenerateMethod (proxy, false);
+				logicalMethods [i].GenerateMethod (proxy, false, isPage);
 
 			bool gtc = false;
 
@@ -268,6 +268,7 @@ this._failed = null;
 				}
 			}
 
+			proxy.AppendLine ();
 			_proxy = proxy.ToString ();
 		}
 
