@@ -178,50 +178,8 @@ namespace Mono.Cecil.Cil {
 					instr.Operand = m_root.Streams.UserStringsHeap [GetRid (br.ReadInt32 ())];
 					break;
 				case OperandType.InlineField :
-					MetadataToken field = new MetadataToken (br.ReadInt32 ());
-					switch (field.TokenType) {
-					case TokenType.Field:
-						instr.Operand = m_reflectReader.GetFieldDefAt (field.RID);
-						break;
-					case TokenType.MemberRef:
-						instr.Operand = m_reflectReader.GetMemberRefAt (field.RID, context);
-						break;
-					default:
-						throw new ReflectionException ("Wrong token for InlineField Operand: " + field);
-					}
-					break;
 				case OperandType.InlineMethod :
-					MetadataToken meth = new MetadataToken (br.ReadInt32 ());
-					switch (meth.TokenType) {
-					case TokenType.Method:
-						instr.Operand = m_reflectReader.GetMethodDefAt (meth.RID);
-						break;
-					case TokenType.MemberRef:
-						instr.Operand = m_reflectReader.GetMemberRefAt (meth.RID, context);
-						break;
-					case TokenType.MethodSpec:
-						instr.Operand = m_reflectReader.GetMethodSpecAt (meth.RID, context);
-						break;
-					default:
-						throw new ReflectionException ("Wrong token for InlineMethod Operand: " + meth);
-					}
-					break;
 				case OperandType.InlineType :
-					MetadataToken type = new MetadataToken (br.ReadInt32 ());
-					switch (type.TokenType) {
-					case TokenType.TypeDef:
-						instr.Operand = m_reflectReader.GetTypeDefAt (type.RID);
-						break;
-					case TokenType.TypeRef:
-						instr.Operand = m_reflectReader.GetTypeRefAt (type.RID);
-						break;
-					case TokenType.TypeSpec:
-						instr.Operand = m_reflectReader.GetTypeSpecAt (type.RID, context);
-						break;
-					default:
-						throw new ReflectionException ("Wrong token for InlineType Operand: " + type);
-					}
-					break;
 				case OperandType.InlineTok :
 					MetadataToken token = new MetadataToken (br.ReadInt32 ());
 					switch (token.TokenType) {
@@ -247,7 +205,7 @@ namespace Mono.Cecil.Cil {
 						instr.Operand = m_reflectReader.GetMemberRefAt (token.RID, context);
 						break;
 					default:
-						throw new ReflectionException ("Wrong token following ldtoken: " + token);
+						throw new ReflectionException ("Wrong token: " + token);
 					}
 					break;
 				}

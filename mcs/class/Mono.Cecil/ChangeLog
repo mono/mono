@@ -1,5 +1,10 @@
 2007-07-18  Jb Evain  <jbevain@novell.com>
 
+	* Mono.Cecil.Cil/CodeReader.cs
+	  Mono.Cecil.Cil/CodeWriter.cs:
+		Deal with non-sense instructions that some
+		obfuscators emit.
+
 	* Mono.Cecil/AggressiveReflectionReader.cs:
 		Deal with out of range properties.
 	* Mono.Cecil.Metadata/StringsHeap.cs:
