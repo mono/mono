@@ -1,4 +1,4 @@
-// cs0103-4.cs: The name `de' does not exist in the context of `global::'
+// CS0103: The name `de' does not exist in the current context
 // Line: 4
 
 [assembly: System.Reflection.AssemblyCulture(de)]

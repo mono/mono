@@ -1,4 +1,4 @@
-// cs1661.cs: Anonymous method could not be converted to delegate `D' since there is a parameter mismatch
+// CS1661: Cannot convert `anonymous method' to delegate type `D' since there is a parameter mismatch
 // Line: 9
 
 delegate void D (int x);
