@@ -1006,7 +1006,7 @@ public partial class Page : TemplateControl, IHttpHandler
 #endif
 		writer.WriteLine ();
 		
-		ClientScript.WriteBeginScriptBlock (writer);
+		ClientScriptManager.WriteBeginScriptBlock (writer);
 
 #if ONLY_1_1
 		RenderClientScriptFormDeclaration (writer, formUniqueID);
@@ -1027,7 +1027,7 @@ public partial class Page : TemplateControl, IHttpHandler
 		writer.WriteLine ("\tcurrForm.submit();");
 		writer.WriteLine ("}");
 		
-		ClientScript.WriteEndScriptBlock (writer);
+		ClientScriptManager.WriteEndScriptBlock (writer);
 	}
 
 	void RenderClientScriptFormDeclaration (HtmlTextWriter writer, string formUniqueID)
@@ -1050,9 +1050,9 @@ public partial class Page : TemplateControl, IHttpHandler
 		writer.WriteLine ();
 
 #if NET_2_0
-		ClientScript.WriteBeginScriptBlock (writer);
+		ClientScriptManager.WriteBeginScriptBlock (writer);
 		RenderClientScriptFormDeclaration (writer, formUniqueID);
-		ClientScript.WriteEndScriptBlock (writer);
+		ClientScriptManager.WriteEndScriptBlock (writer);
 #endif
 
 		if (handleViewState)
@@ -1063,7 +1063,9 @@ public partial class Page : TemplateControl, IHttpHandler
 			RenderPostBackScript (writer, formUniqueID);
 			postBackScriptRendered = true;
 		}
-		scriptManager.WriteClientScriptIncludes (writer);
+#if NET_2_0
+		scriptManager.WriteWebFormClientScript (writer);
+#endif
 		scriptManager.WriteClientScriptBlocks (writer);
 	}
 
@@ -1079,17 +1081,18 @@ public partial class Page : TemplateControl, IHttpHandler
 
 	internal void OnFormPostRender (HtmlTextWriter writer, string formUniqueID)
 	{
-		if (!postBackScriptRendered && requiresPostBackScript)
-			RenderPostBackScript (writer, formUniqueID);
-
-		scriptManager.WriteArrayDeclares (writer);
-		
 #if NET_2_0
 		scriptManager.SaveEventValidationState ();
 		scriptManager.WriteExpandoAttributes (writer);
 #endif
 		scriptManager.WriteHiddenFields (writer);
-		scriptManager.WriteClientScriptIncludes (writer);
+		if (!postBackScriptRendered && requiresPostBackScript)
+			RenderPostBackScript (writer, formUniqueID);
+#if NET_2_0
+		scriptManager.WriteWebFormClientScript (writer);
+#endif
+
+		scriptManager.WriteArrayDeclares (writer);
 		scriptManager.WriteStartupScriptBlocks (writer);
 		renderingForm = false;
 		postBackScriptRendered = false;

@@ -56,7 +56,6 @@ namespace System.Web.UI
 		ScriptEntry startupScriptBlocks;
 		internal Hashtable hiddenFields;
 		ScriptEntry submitStatements;
-		ScriptEntry scriptIncludes;
 		Page page;
 #if NET_2_0
 		int [] eventValidationValues;
@@ -180,11 +179,22 @@ namespace System.Web.UI
 
 		internal void RegisterWebFormClientScript ()
 		{
-			if (IsClientScriptIncludeRegistered (typeof (Page), "webform"))
+			if (_webFormClientScriptRequired)
 				return;
 
-			RegisterClientScriptInclude (typeof (Page), "webform", GetWebResourceUrl (typeof (Page), "webform.js"));
 			page.RequiresPostBackScript ();
+			_webFormClientScriptRequired = true;
+		}
+
+		bool _webFormClientScriptRendered;
+		bool _webFormClientScriptRequired;
+
+		internal void WriteWebFormClientScript (HtmlTextWriter writer) {
+			if (!_webFormClientScriptRendered && _webFormClientScriptRequired) {
+				writer.WriteLine ();
+				WriteClientScriptInclude (writer, GetWebResourceUrl (typeof (Page), "webform.js"));
+				_webFormClientScriptRendered = true;
+			}
 		}
 		
 		public string GetCallbackEventReference (Control control, string argument, string clientCallback, string context)
@@ -264,12 +274,12 @@ namespace System.Web.UI
 		
 		public bool IsClientScriptIncludeRegistered (string key)
 		{
-			return IsScriptRegistered (scriptIncludes, GetType(), key);
+			return IsClientScriptIncludeRegistered (GetType (), key);
 		}
 	
 		public bool IsClientScriptIncludeRegistered (Type type, string key)
 		{
-			return IsScriptRegistered (scriptIncludes, type, key);
+			return IsScriptRegistered (clientScriptBlocks, type, "include-" + key);
 		}
 		
 		bool IsScriptRegistered (ScriptEntry scriptList, Type type, string key)
@@ -292,8 +302,13 @@ namespace System.Web.UI
 	
 			((ArrayList) registeredArrayDeclares[arrayName]).Add(arrayValue);
 		}
-	
+
 		void RegisterScript (ref ScriptEntry scriptList, Type type, string key, string script, bool addScriptTags)
+		{
+			RegisterScript (ref scriptList, type, key, script, addScriptTags ? ScriptEntryFormat.AddScriptTag : ScriptEntryFormat.None);
+		}
+
+		void RegisterScript (ref ScriptEntry scriptList, Type type, string key, string script, ScriptEntryFormat format)
 		{
 			ScriptEntry last = null;
 			ScriptEntry entry = scriptList;
@@ -304,16 +319,8 @@ namespace System.Web.UI
 				last = entry;
 				entry = entry.Next;
 			}
-			
-			if (addScriptTags) {
-				script = "<script type=\"text/javascript\"" +
-#if !NET_2_0
-					"language=\"javascript\"" +
-#endif
-					">\n<!--\n" + script + "\n// -->\n</script>";
-			}
 
-			entry = new ScriptEntry (type, key, script);
+			entry = new ScriptEntry (type, key, script, format);
 			
 			if (last != null) last.Next = entry;
 			else scriptList = entry;
@@ -389,13 +396,13 @@ namespace System.Web.UI
 			if (url == null || url.Length == 0)
 				throw new ArgumentException ("url");
 
-			RegisterScript (ref scriptIncludes, type, key, url, false);
+			RegisterScript (ref clientScriptBlocks, type, "include-" + key, url, ScriptEntryFormat.Include);
 		}
 
 #if NET_2_0
 		public void RegisterClientScriptResource (Type type, string resourceName)
 		{
-			RegisterScript (ref scriptIncludes, type, "resource-" + resourceName, GetWebResourceUrl (type, resourceName), false);
+			RegisterScript (ref clientScriptBlocks, type, "resource-" + resourceName, GetWebResourceUrl (type, resourceName), ScriptEntryFormat.Include);
 		}
 
 		public void RegisterExpandoAttribute (string controlId, string attributeName, string attributeValue)
@@ -506,9 +513,44 @@ namespace System.Web.UI
 #endif
 		void WriteScripts (HtmlTextWriter writer, ScriptEntry scriptList)
 		{
+			if (scriptList == null)
+				return;
+
+			writer.WriteLine ();
+
 			while (scriptList != null) {
-				writer.WriteLine (scriptList.Script);
+				switch (scriptList.Format) {
+				case ScriptEntryFormat.AddScriptTag:
+					EnsureBeginScriptBlock (writer);
+					writer.Write (scriptList.Script);
+					break;
+				case ScriptEntryFormat.Include:
+					EnsureEndScriptBlock (writer);
+					WriteClientScriptInclude (writer, scriptList.Script);
+					break;
+				default:
+					EnsureEndScriptBlock (writer);
+					writer.WriteLine (scriptList.Script);
+					break;
+				}
 				scriptList = scriptList.Next;
+			}
+			EnsureEndScriptBlock (writer);
+		}
+
+		bool _scriptTagOpened;
+
+		void EnsureBeginScriptBlock (HtmlTextWriter writer) {
+			if (!_scriptTagOpened) {
+				WriteBeginScriptBlock (writer);
+				_scriptTagOpened = true;
+			}
+		}
+
+		void EnsureEndScriptBlock (HtmlTextWriter writer) {
+			if (_scriptTagOpened) {
+				WriteEndScriptBlock (writer);
+				_scriptTagOpened = false;
 			}
 		}
 
@@ -573,7 +615,7 @@ namespace System.Web.UI
 		}
 
 #endif
-		internal void WriteBeginScriptBlock (HtmlTextWriter writer)
+		internal static void WriteBeginScriptBlock (HtmlTextWriter writer)
 		{
 			writer.WriteLine ("<script"+
 #if !NET_2_0
@@ -583,7 +625,7 @@ namespace System.Web.UI
 			writer.WriteLine ("<!--");
 		}
 
-		internal void WriteEndScriptBlock (HtmlTextWriter writer)
+		internal static void WriteEndScriptBlock (HtmlTextWriter writer)
 		{
 			writer.WriteLine ("// -->");
 			writer.WriteLine ("</script>");
@@ -603,32 +645,24 @@ namespace System.Web.UI
 			hiddenFields = null;
 		}
 		
-		internal void WriteClientScriptIncludes (HtmlTextWriter writer)
-		{
-			ScriptEntry entry = scriptIncludes;
-			while (entry != null) {
-				if (!entry.Rendered) {
+		internal void WriteClientScriptInclude (HtmlTextWriter writer, string path) {
 #if TARGET_J2EE
 					if (!page.IsPortletRender)
 #endif
-						writer.WriteLine ("\n<script src=\"{0}\" type=\"text/javascript\"></script>", entry.Script);
+						writer.WriteLine ("<script src=\"{0}\" type=\"text/javascript\"></script>", path);
 #if TARGET_J2EE
 					else {
 						string scriptKey = "inc_" + entry.Key.GetHashCode ().ToString ("X");
-						writer.WriteLine ("\n<script type=\"text/javascript\">");
+						writer.WriteLine ("<script type=\"text/javascript\">");
 						writer.WriteLine ("<!--");
 						writer.WriteLine ("if (document.{0} == null) {{", scriptKey);
 						writer.WriteLine ("\tdocument.{0} = true", scriptKey);
-						writer.WriteLine ("\tdocument.write('<script src=\"{0}\" type=\"text/javascript\"><\\/script>'); }}", entry.Script);
+						writer.WriteLine ("\tdocument.write('<script src=\"{0}\" type=\"text/javascript\"><\\/script>'); }}", path);
 						writer.WriteLine ("// -->");
 						writer.WriteLine ("</script>");
 					}
 #endif
-					entry.Rendered = true;
-				}
-				entry = entry.Next;
-			}
-		}
+					}
 		
 		internal void WriteClientScriptBlocks (HtmlTextWriter writer)
 		{
@@ -745,21 +779,28 @@ return true;
 				return ob.ToString ();
 			}
 		}
-		
-		class ScriptEntry
+
+		sealed class ScriptEntry
 		{
-			public Type Type;
-			public string Key;
-			public string Script;
+			public readonly Type Type;
+			public readonly string Key;
+			public readonly string Script;
+			public readonly ScriptEntryFormat Format;
 			public ScriptEntry Next;
-			public bool Rendered;
-			 
-			public ScriptEntry (Type type, string key, string script)
-			{
+
+			public ScriptEntry (Type type, string key, string script, ScriptEntryFormat format) {
 				Key = key;
 				Type = type;
 				Script = script;
+				Format = format;
 			}
+		}
+
+		enum ScriptEntryFormat
+		{
+			None,
+			AddScriptTag,
+			Include,
 		}
 
 #if NET_2_0
