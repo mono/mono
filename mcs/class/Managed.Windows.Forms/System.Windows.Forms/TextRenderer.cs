@@ -38,8 +38,6 @@ namespace System.Windows.Forms
 #endif
 	class TextRenderer
 	{
-		private static Bitmap measure_bitmap = new Bitmap (1, 1);
-
 		private TextRenderer ()
 		{
 		}
@@ -88,7 +86,7 @@ namespace System.Windows.Forms
 
 		public static Size MeasureText (string text, Font font)
 		{
-			return MeasureTextInternal (Graphics.FromImage (measure_bitmap), text, font, Size.Empty, TextFormatFlags.Default, false);
+			return MeasureTextInternal (Hwnd.bmp_g, text, font, Size.Empty, TextFormatFlags.Default, false);
 		}
 
 		public static Size MeasureText (IDeviceContext dc, string text, Font font)
@@ -98,7 +96,7 @@ namespace System.Windows.Forms
 
 		public static Size MeasureText (string text, Font font, Size proposedSize)
 		{
-			return MeasureTextInternal (Graphics.FromImage (measure_bitmap), text, font, proposedSize, TextFormatFlags.Default, false);
+			return MeasureTextInternal (Hwnd.bmp_g, text, font, proposedSize, TextFormatFlags.Default, false);
 		}
 
 		public static Size MeasureText (IDeviceContext dc, string text, Font font, Size proposedSize)
@@ -108,7 +106,7 @@ namespace System.Windows.Forms
 
 		public static Size MeasureText (string text, Font font, Size proposedSize, TextFormatFlags flags)
 		{
-			return MeasureTextInternal (Graphics.FromImage (measure_bitmap), text, font, proposedSize, flags, false);
+			return MeasureTextInternal (Hwnd.bmp_g, text, font, proposedSize, flags, false);
 		}
 
 		public static Size MeasureText (IDeviceContext dc, string text, Font font, Size proposedSize, TextFormatFlags flags)
@@ -265,10 +263,9 @@ namespace System.Windows.Forms
 			}
 			else {
 #endif
-				Graphics g = Graphics.FromImage (measure_bitmap);
 				StringFormat sf = FlagsToStringFormat (flags);
 
-				Size retval = g.MeasureString (text, font, Int32.MaxValue, sf).ToSize ();
+				Size retval = Hwnd.bmp_g.MeasureString (text, font, Int32.MaxValue, sf).ToSize ();
 
 				if (retval.Width > 0 && (flags & TextFormatFlags.NoPadding) == 0)
 					retval.Width += 9;
@@ -317,7 +314,7 @@ namespace System.Windows.Forms
 
 		internal static Size MeasureTextInternal (string text, Font font, bool useMeasureString)
 		{
-			return MeasureTextInternal (Graphics.FromImage (measure_bitmap), text, font, Size.Empty, TextFormatFlags.Default, useMeasureString);
+			return MeasureTextInternal (Hwnd.bmp_g, text, font, Size.Empty, TextFormatFlags.Default, useMeasureString);
 		}
 
 #if NET_2_0
@@ -334,7 +331,7 @@ namespace System.Windows.Forms
 
 		internal static Size MeasureTextInternal (string text, Font font, Size proposedSize, bool useMeasureString)
 		{
-			return MeasureTextInternal (Graphics.FromImage (measure_bitmap), text, font, proposedSize, TextFormatFlags.Default, useMeasureString);
+			return MeasureTextInternal (Hwnd.bmp_g, text, font, proposedSize, TextFormatFlags.Default, useMeasureString);
 		}
 
 		internal static Size MeasureTextInternal (IDeviceContext dc, string text, Font font, Size proposedSize, bool useMeasureString)
@@ -345,7 +342,7 @@ namespace System.Windows.Forms
 #endif
 		internal static Size MeasureTextInternal (string text, Font font, Size proposedSize, TextFormatFlags flags, bool useMeasureString)
 		{
-			return MeasureTextInternal (Graphics.FromImage (measure_bitmap), text, font, proposedSize, flags, useMeasureString);
+			return MeasureTextInternal (Hwnd.bmp_g, text, font, proposedSize, flags, useMeasureString);
 		}
 #endregion
 

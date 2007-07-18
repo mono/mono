@@ -1,5 +1,10 @@
 2007-07-18  Jonathan Pobst  <monkey@jpobst.com>
 
+	* TextRenderer.cs: Use the static Graphics context in Hwnd instead
+	of creating one for measuring strings.
+
+2007-07-18  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ToolStrip.cs, ToolStripDropDown.cs, ToolStripDropDownMenu.cs: 
 	Implement MaxItemSize.
 
