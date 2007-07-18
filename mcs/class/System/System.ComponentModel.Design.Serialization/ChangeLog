@@ -1,3 +1,7 @@
+2007-07-18  Ivan N. Zlatev <contact@i-nz.net>
+	
+	* InstanceDescriptor.cs: Fix a NRE.
+
 2007-05-15  Adar Wesley <adarw@mainsoft.com>
 
 	* ContextStack.cs: added missing method Append.

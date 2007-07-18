@@ -97,7 +97,7 @@ namespace System.ComponentModel.Design.Serialization {
 				if (arguments == null) // null counts as no arguments
 					if (PIM.GetParameters().Length != 0)
 						throw new ArgumentException ("Invalid number of arguments for this property", "arguments");
-				if (arguments.Count != PIM.GetParameters().Length)
+				if (arguments != null && arguments.Count != PIM.GetParameters().Length)
 					throw new ArgumentException ("Invalid number of arguments for this property", "arguments");
 				return true;
 			}
