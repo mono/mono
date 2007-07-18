@@ -4194,40 +4194,28 @@ assignment_expression
 	  }
 	;
 
-implicitly_typed_lambda_parameter_list
-	: IDENTIFIER { 
-		LocatedToken lt = (LocatedToken) $1;
-		ArrayList a = new ArrayList (4); 
-
-		a.Add (new Parameter ((Expression)null, lt.Value, Parameter.Modifier.NONE, null, lt.Location));
-		$$ = a;
-	  } 
-	| implicitly_typed_lambda_parameter_list COMMA IDENTIFIER {
-		LocatedToken lt = (LocatedToken) $3;
-		ArrayList a = (ArrayList) $1;
-		a.Add (new Parameter ((Expression)null, lt.Value, Parameter.Modifier.NONE, null, lt.Location));
-		$$ = a;
-	  }
-	;
-
-explicitly_typed_lambda_parameter_list
-	: explicitly_typed_lambda_parameter
+lambda_parameter_list
+	: lambda_parameter
 	  {
 		ArrayList pars = new ArrayList (4);
 		pars.Add ($1);
 
 		$$ = pars;
 	  }
-	| explicitly_typed_lambda_parameter_list COMMA explicitly_typed_lambda_parameter
+	| lambda_parameter_list COMMA lambda_parameter
 	  {
 		ArrayList pars = (ArrayList) $1;
-		pars.Add ($3);
-
+		Parameter p = (Parameter)$3;
+		if (pars[0].GetType () != p.GetType ()) {
+			Report.Error (748, p.Location, "All lambda parameters must be typed either explicitly or implicitly");
+		}
+		
+		pars.Add (p);
 		$$ = pars;
 	  }
 	;
 
-explicitly_typed_lambda_parameter
+lambda_parameter
 	: parameter_modifier type IDENTIFIER
 	  {
 		LocatedToken lt = (LocatedToken) $3;
@@ -4240,21 +4228,18 @@ explicitly_typed_lambda_parameter
 
 		$$ = new Parameter ((Expression) $1, lt.Value, Parameter.Modifier.NONE, null, lt.Location);
 	  }
-	;
-
-lambda_parameter_list
-	: implicitly_typed_lambda_parameter_list { $$ = $1; }
-	| explicitly_typed_lambda_parameter_list { $$ = $1; }
+	| IDENTIFIER
+	  {
+	  	LocatedToken lt = (LocatedToken) $1;
+		$$ = new ImplicitLambdaParameter (lt.Value, lt.Location);
+	  }
 	;
 
 opt_lambda_parameter_list
-	: /* empty */			{ $$ = null; }
+	: /* empty */			{ $$ = Parameters.EmptyReadOnlyParameters; }
 	| lambda_parameter_list		{ 
 		ArrayList pars_list = (ArrayList) $1;
-
-		Parameter [] pars = new Parameter [pars_list.Count];
-		pars_list.CopyTo (pars);
-		$$ = new Parameters (pars);
+		$$ = new Parameters ((Parameter[])pars_list.ToArray (typeof (Parameter)));
 	  }
 	;
 
@@ -5453,7 +5438,7 @@ from_clause
 		start_block (lexer.Location);
 		LocatedToken lt = (LocatedToken) $2;
 		
-		current_block.AddVariable (new VarExpr ("var", lt.Location), lt.Value, lt.Location);
+		current_block.AddVariable (Linq.ImplicitArgument.Instance, lt.Value, lt.Location);
 		$$ = $4;
 	  }
 	| FROM type IDENTIFIER IN expression opt_join_clauses
