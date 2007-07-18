@@ -1,3 +1,8 @@
+2007-07-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* doc.cs : when T: or whatever x: is specified, it does not really
+	  check the doc comment's syntax correctness. Fixed bug #82006.
+
 2007-07-18  Marek Safar  <marek.safar@gmail.com>
 
 	* anonymous.cs (AnonymouseMethodExpression): Refactored to work with

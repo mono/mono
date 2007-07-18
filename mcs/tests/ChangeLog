@@ -1,3 +1,7 @@
+2007-07-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* gtest-xml-2.cs, gtest-xml-2-ref.xml : new /doc test for bug #82006.
+
 2007-05-22  Scott Peterson  <lunchtimemama@gmail.com>
 	
 	* gtest-autoproperty-01.cs: Test for instance automatic properties (C# 3.0)

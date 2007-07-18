@@ -635,12 +635,19 @@ namespace Mono.CSharp {
 			string name; // method invokation "(...)" are removed
 			string parameters; // method parameter list
 
-			// strip 'T:' 'M:' 'F:' 'P:' 'E:' etc.
-			// Here, MS ignores its member kind. No idea why.
+			// When it found '?:' ('T:' 'M:' 'F:' 'P:' 'E:' etc.),
+			// MS ignores not only its member kind, but also
+			// the entire syntax correctness. Nor it also does
+			// type fullname resolution i.e. "T:List(int)" is kept
+			// as T:List(int), not
+			// T:System.Collections.Generic.List&lt;System.Int32&gt;
 			if (cref.Length > 2 && cref [1] == ':')
-				signature = cref.Substring (2).Trim (wsChars);
+				return;
 			else
 				signature = cref;
+
+			// Also note that without "T:" any generic type 
+			// indication fails.
 
 			int parens_pos = signature.IndexOf ('(');
 			int brace_pos = parens_pos >= 0 ? -1 :
