@@ -56,7 +56,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (false, tsi.Focused, "A9");
 			Assert.AreEqual (t.Font, tsi.Font, "A10");
 			Assert.AreEqual (SystemColors.ControlText, tsi.ForeColor, "A11");
-			//Assert.AreEqual (RightToLeft.No, tsi.RightToLeft, "A12");
+			Assert.AreEqual (RightToLeft.No, tsi.RightToLeft, "A12");
 			Assert.AreEqual (false, tsi.Selected, "A13");
 			Assert.AreEqual (null, tsi.Site, "A14");
 			Assert.AreEqual (new Size (0, 0), tsi.Size, "A15");
@@ -230,20 +230,20 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (SystemColors.WindowText, tsi.ForeColor, "B5");
 		}
 
-		//[Test]
-		//public void PropertyRightToLeft ()
-		//{
-		//        ToolStripControlHost tsi = new ToolStripControlHost (new Control ());
-		//        EventWatcher ew = new EventWatcher (tsi);
+		[Test]
+		public void PropertyRightToLeft ()
+		{
+			ToolStripControlHost tsi = new ToolStripControlHost (new Control ());
+			EventWatcher ew = new EventWatcher (tsi);
 
-		//        tsi.RightToLeft = RightToLeft.Yes;
-		//        Assert.AreEqual (RightToLeft.Yes, tsi.RightToLeft, "B1");
-		//        Assert.AreEqual (string.Empty, ew.ToString (), "B2");
+			tsi.RightToLeft = RightToLeft.Yes;
+			Assert.AreEqual (RightToLeft.Yes, tsi.RightToLeft, "B1");
+			Assert.AreEqual (string.Empty, ew.ToString (), "B2");
 
-		//        ew.Clear ();
-		//        tsi.RightToLeft = RightToLeft.Yes;
-		//        Assert.AreEqual (string.Empty, ew.ToString (), "B3");
-		//}
+			ew.Clear ();
+			tsi.RightToLeft = RightToLeft.Yes;
+			Assert.AreEqual (string.Empty, ew.ToString (), "B3");
+		}
 
 		[Test]
 		public void PropertySite ()

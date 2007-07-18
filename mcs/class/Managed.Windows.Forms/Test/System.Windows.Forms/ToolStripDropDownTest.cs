@@ -138,7 +138,7 @@ namespace MonoTests.System.Windows.Forms
 			public new DockStyle DefaultDock { get { return base.DefaultDock; } }
 			public new Padding DefaultPadding { get { return base.DefaultPadding; } }
 			public new bool DefaultShowItemToolTips { get { return base.DefaultShowItemToolTips; } }
-			//public new Size MaxItemSize { get { return base.MaxItemSize; } }
+			public new Size MaxItemSize { get { return base.MaxItemSize; } }
 			public new bool TopMost { get { return base.TopMost; } }
 			public LayoutSettings PublicCreateLayoutSettings (ToolStripLayoutStyle style) { return base.CreateLayoutSettings (style); }
 		}

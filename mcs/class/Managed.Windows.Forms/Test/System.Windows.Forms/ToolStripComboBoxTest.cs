@@ -103,7 +103,6 @@ namespace MonoTests.System.Windows.Forms
 		//}
 
 		[Test]
-		[Ignore ("Need DropDownHeight implemented in 2.0 ComboBox")]
 		public void PropertyDropDownHeight ()
 		{
 			ToolStripComboBox tsi = new ToolStripComboBox ();

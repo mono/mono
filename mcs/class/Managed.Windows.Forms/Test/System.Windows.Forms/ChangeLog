@@ -1,5 +1,12 @@
 2007-07-18  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ListBoxTest.cs, MenuStripTest.cs, ToolStripComboBoxTest.cs,
+	ToolStripContentPanelTest.cs, ToolStripControlHostTest.cs,
+	ToolStripDropDownTest.cs, ToolStripProgressBarTest.cs,
+	ToolStripTest.cs: Sync up some local test additions.
+
+2007-07-18  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ListControl.cs: Fix test that is failing on i586.
 
 2007-07-17  Jonathan Pobst  <monkey@jpobst.com>

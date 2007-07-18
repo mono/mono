@@ -44,8 +44,8 @@ namespace MonoTests.System.Windows.Forms
 			ToolStripContentPanel tsp = new ToolStripContentPanel ();
 
 			Assert.AreEqual (SystemColors.Control, tsp.BackColor, "A1");
-			//Assert.AreEqual ("System.Windows.Forms.ToolStripSystemRenderer", tsp.Renderer.ToString (), "A2");
-			//Assert.AreEqual (ToolStripRenderMode.System, tsp.RenderMode, "A3");
+			Assert.AreEqual ("System.Windows.Forms.ToolStripSystemRenderer", tsp.Renderer.ToString (), "A2");
+			Assert.AreEqual (ToolStripRenderMode.System, tsp.RenderMode, "A3");
 		}
 
 		[Test]

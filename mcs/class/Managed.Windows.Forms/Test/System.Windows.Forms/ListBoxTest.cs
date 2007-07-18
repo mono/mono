@@ -362,6 +362,41 @@ namespace MonoTests.System.Windows.Forms
 			}
 		}
 
+#if NET_2_0
+		[Test]
+		public void GetScaledBoundsTest ()
+		{
+			ScaleListBox c = new ScaleListBox ();
+
+			Rectangle r = new Rectangle (100, 200, 300, 400);
+
+			Assert.AreEqual (new Rectangle (200, 100, 596, 50), c.PublicGetScaledBounds (r, new SizeF (2f, .5f), BoundsSpecified.All), "A1");
+			Assert.AreEqual (new Rectangle (200, 100, 300, 96), c.PublicGetScaledBounds (r, new SizeF (2f, .5f), BoundsSpecified.Location), "A2");
+			Assert.AreEqual (new Rectangle (100, 200, 596, 50), c.PublicGetScaledBounds (r, new SizeF (2f, .5f), BoundsSpecified.Size), "A3");
+			Assert.AreEqual (new Rectangle (100, 200, 300, 50), c.PublicGetScaledBounds (r, new SizeF (2f, .5f), BoundsSpecified.Height), "A4");
+			Assert.AreEqual (new Rectangle (200, 200, 300, 96), c.PublicGetScaledBounds (r, new SizeF (2f, .5f), BoundsSpecified.X), "A5");
+			Assert.AreEqual (new Rectangle (100, 200, 300, 96), c.PublicGetScaledBounds (r, new SizeF (2f, .5f), BoundsSpecified.None), "A6");
+
+			Assert.AreEqual (new Rectangle (100, 200, 300, 96), c.PublicGetScaledBounds (r, new SizeF (1f, 1f), BoundsSpecified.All), "A6-2");
+			Assert.AreEqual (new Rectangle (200, 400, 596, 188), c.PublicGetScaledBounds (r, new SizeF (2f, 2f), BoundsSpecified.All), "A7");
+			Assert.AreEqual (new Rectangle (300, 600, 892, 280), c.PublicGetScaledBounds (r, new SizeF (3f, 3f), BoundsSpecified.All), "A8");
+			Assert.AreEqual (new Rectangle (400, 800, 1188, 372), c.PublicGetScaledBounds (r, new SizeF (4f, 4f), BoundsSpecified.All), "A9");
+			Assert.AreEqual (new Rectangle (50, 100, 152, 50), c.PublicGetScaledBounds (r, new SizeF (.5f, .5f), BoundsSpecified.All), "A10");
+		}
+
+		private class ScaleListBox : ListBox
+		{
+			public Rectangle PublicGetScaledBounds (Rectangle bounds, SizeF factor, BoundsSpecified specified)
+			{
+				return base.GetScaledBounds (bounds, factor, specified);
+			}
+
+			public void PublicScaleControl (SizeF factor, BoundsSpecified specified)
+			{
+				base.ScaleControl (factor, specified);
+			}
+		}
+#endif
 		//
 		// Events
 		//

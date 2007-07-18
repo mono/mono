@@ -48,15 +48,16 @@ namespace MonoTests.System.Windows.Forms
 
 			Assert.AreEqual (false, ts.AllowDrop, "A1");
 			//Assert.AreEqual (false, ts.AllowItemReorder, "A2");
-			//Assert.AreEqual (true, ts.AllowMerge, "A3");
+			Assert.AreEqual (true, ts.AllowMerge, "A3");
 			Assert.AreEqual (AnchorStyles.Top | AnchorStyles.Left, ts.Anchor, "A4");
 			Assert.AreEqual (true, ts.AutoSize, "A5");
 			Assert.AreEqual (SystemColors.Control, ts.BackColor, "A6");
 			Assert.AreEqual (null, ts.BindingContext, "A7");
-			//Assert.AreEqual (true, ts.CanOverflow, "A8");
+			Assert.AreEqual (false, ts.CanSelect, "A7-1");
+			Assert.AreEqual (true, ts.CanOverflow, "A8");
 			Assert.AreEqual (false, ts.CausesValidation, "A9");
 			Assert.AreEqual (Cursors.Default, ts.Cursor, "A10");
-			//Assert.AreEqual (ToolStripDropDownDirection.BelowRight, ts.DefaultDropDownDirection, "A11");
+			Assert.AreEqual (ToolStripDropDownDirection.BelowRight, ts.DefaultDropDownDirection, "A11");
 			Assert.AreEqual (new Rectangle (7, 0, 92, 25), ts.DisplayRectangle, "A12");
 			Assert.AreEqual (DockStyle.Top, ts.Dock, "A13");
 			Assert.AreEqual (new Font ("Tahoma", 8.25f), ts.Font, "A14");
@@ -74,13 +75,13 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (null, ts.LayoutSettings, "A26");
 			Assert.AreEqual (ToolStripLayoutStyle.HorizontalStackWithOverflow, ts.LayoutStyle, "A27");
 			Assert.AreEqual (Orientation.Horizontal, ts.Orientation, "A28");
-			//Assert.AreEqual ("System.Windows.Forms.ToolStripOverflowButton", ts.OverflowButton.ToString (), "A29");
+			Assert.AreEqual ("System.Windows.Forms.ToolStripOverflowButton", ts.OverflowButton.GetType ().ToString (), "A29");
 			Assert.AreEqual ("System.Windows.Forms.ToolStripProfessionalRenderer", ts.Renderer.ToString (), "A30");
 			Assert.AreEqual (ToolStripRenderMode.ManagerRenderMode, ts.RenderMode, "A31");
 			Assert.AreEqual (true, ts.ShowItemToolTips, "A32");
 			Assert.AreEqual (false, ts.Stretch, "A33");
 			Assert.AreEqual (false, ts.TabStop, "A34");
-			//Assert.AreEqual (ToolStripTextDirection.Horizontal, ts.TextDirection, "A35");
+			Assert.AreEqual (ToolStripTextDirection.Horizontal, ts.TextDirection, "A35");
 			
 			ts = new ToolStrip (new ToolStripButton (), new ToolStripSeparator (), new ToolStripButton ());
 			Assert.AreEqual (3, ts.Items.Count, "A36");
@@ -123,7 +124,13 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (new Padding (0,0,1,0), epp.DefaultPadding, "C4");
 			Assert.AreEqual (true, epp.DefaultShowItemToolTips, "C5");
 			Assert.AreEqual (new Size (100, 25), epp.DefaultSize, "C6");
-			//Assert.AreEqual (new Size (92, 25), epp.MaxItemSize, "C7");
+			Assert.AreEqual (new Size (92, 25), epp.MaxItemSize, "C7");
+			
+			epp.Size = new Size (300, 100);
+			Assert.AreEqual (new Size (292, 100), epp.MaxItemSize, "C8");
+			
+			epp.GripStyle = ToolStripGripStyle.Hidden;
+			Assert.AreEqual (new Size (299, 100), epp.MaxItemSize, "C9");
 		}
 		
 		[Test]
@@ -170,16 +177,16 @@ namespace MonoTests.System.Windows.Forms
 		//        ts.AllowDrop = true;
 		//}
 
-		//[Test]
-		//public void PropertyAllowMerge ()
-		//{
-		//        ToolStrip ts = new ToolStrip ();
-		//        EventWatcher ew = new EventWatcher (ts);
+		[Test]
+		public void PropertyAllowMerge ()
+		{
+			ToolStrip ts = new ToolStrip ();
+			EventWatcher ew = new EventWatcher (ts);
 
-		//        ts.AllowMerge = false;
-		//        Assert.AreEqual (false, ts.AllowMerge, "B1");
-		//        Assert.AreEqual (string.Empty, ew.ToString (), "B2");
-		//}
+			ts.AllowMerge = false;
+			Assert.AreEqual (false, ts.AllowMerge, "B1");
+			Assert.AreEqual (string.Empty, ew.ToString (), "B2");
+		}
 
 		[Test]
 		public void PropertyAnchorAndDocking ()
@@ -543,15 +550,15 @@ namespace MonoTests.System.Windows.Forms
 		//        Assert.AreEqual ("LayoutCompleted", ew.ToString (), "B3");
 		//}
 
-		//[Test]
-		//[ExpectedException (typeof (InvalidEnumArgumentException))]
-		//public void PropertyTextDirectionIEAE ()
-		//{
-		//        ToolStrip ts = new ToolStrip ();
-		//        EventWatcher ew = new EventWatcher (ts);
+		[Test]
+		[ExpectedException (typeof (InvalidEnumArgumentException))]
+		public void PropertyTextDirectionIEAE ()
+		{
+			ToolStrip ts = new ToolStrip ();
+			EventWatcher ew = new EventWatcher (ts);
 
-		//        ts.TextDirection = (ToolStripTextDirection) 42;
-		//}
+			ts.TextDirection = (ToolStripTextDirection)42;
+		}
 
 		[Test]
 		[NUnit.Framework.Category ("NotWorking")]
@@ -667,6 +674,24 @@ namespace MonoTests.System.Windows.Forms
 		}
 		
 		[Test]
+		public void MethodResetMinimumSize ()
+		{
+			ToolStrip ts = new ToolStrip ();
+			ts.Size = new Size (600, 600);
+			
+			Assert.AreEqual (new Size (0, 0), ts.MinimumSize, "M0");
+			
+			ts.MinimumSize = new Size (400, 400);
+
+			Assert.AreEqual (new Size (600, 600), ts.Size, "M1");
+			Assert.AreEqual (new Size (400, 400), ts.MinimumSize, "M2");
+			
+			ts.ResetMinimumSize ();
+			Assert.AreEqual (new Size (600, 600), ts.Size, "M3");
+			Assert.AreEqual (new Size (-1, -1), ts.MinimumSize, "M4");
+		}
+		
+		[Test]
 		public void TestToolStrip ()
 		{
 			ToolStrip ts = new ToolStrip ();
@@ -777,7 +802,7 @@ namespace MonoTests.System.Windows.Forms
 			public new Padding DefaultPadding { get { return base.DefaultPadding; } }
 			public new bool DefaultShowItemToolTips { get { return base.DefaultShowItemToolTips; } }
 			public new Size DefaultSize { get { return base.DefaultSize; } }
-			//public new Size MaxItemSize { get { return base.MaxItemSize; } }
+			public new Size MaxItemSize { get { return base.MaxItemSize; } }
 			
 			public ControlStyles GetControlStyles ()
 			{

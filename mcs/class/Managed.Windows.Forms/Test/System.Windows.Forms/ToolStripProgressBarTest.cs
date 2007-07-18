@@ -48,7 +48,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (100, tsi.Maximum, "A2");
 			Assert.AreEqual (0, tsi.Minimum, "A3");
 			Assert.AreEqual ("System.Windows.Forms.ProgressBar", tsi.ProgressBar.GetType ().ToString (), "A4");
-			//Assert.AreEqual (false, tsi.RightToLeftLayout, "A5");
+			Assert.AreEqual (false, tsi.RightToLeftLayout, "A5");
 			Assert.AreEqual (10, tsi.Step, "A6");
 			Assert.AreEqual (ProgressBarStyle.Blocks, tsi.Style, "A7");
 			Assert.AreEqual (string.Empty, tsi.Text, "A8");
@@ -113,20 +113,20 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (string.Empty, ew.ToString (), "B3");
 		}
 
-		//[Test]
-		//public void PropertyRightToLeft ()
-		//{
-		//        ToolStripProgressBar tsi = new ToolStripProgressBar ();
-		//        EventWatcher ew = new EventWatcher (tsi);
+		[Test]
+		public void PropertyRightToLeft ()
+		{
+			ToolStripProgressBar tsi = new ToolStripProgressBar ();
+			EventWatcher ew = new EventWatcher (tsi);
 
-		//        tsi.RightToLeftLayout = true;
-		//        Assert.AreEqual (true, tsi.RightToLeftLayout, "B1");
-		//        Assert.AreEqual ("RightToLeftLayoutChanged", ew.ToString (), "B2");
+			tsi.RightToLeftLayout = true;
+			Assert.AreEqual (true, tsi.RightToLeftLayout, "B1");
+			Assert.AreEqual ("RightToLeftLayoutChanged", ew.ToString (), "B2");
 
-		//        ew.Clear ();
-		//        tsi.RightToLeftLayout = true;
-		//        Assert.AreEqual (string.Empty, ew.ToString (), "B3");
-		//}
+			ew.Clear ();
+			tsi.RightToLeftLayout = true;
+			Assert.AreEqual (string.Empty, ew.ToString (), "B3");
+		}
 
 
 		[Test]
@@ -299,7 +299,7 @@ namespace MonoTests.System.Windows.Forms
 			
 			public EventWatcher (ToolStripProgressBar tsi)
 			{
-				//tsi.RightToLeftLayoutChanged += new EventHandler (delegate (Object obj, EventArgs e) { events += ("RightToLeftLayoutChanged;"); });
+				tsi.RightToLeftLayoutChanged += new EventHandler (delegate (Object obj, EventArgs e) { events += ("RightToLeftLayoutChanged;"); });
 			}
 
 			public override string ToString ()

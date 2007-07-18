@@ -51,6 +51,8 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (false, ms.ShowItemToolTips, "A4");
 			Assert.AreEqual (true, ms.Stretch, "A5");
 			Assert.AreEqual (ToolStripLayoutStyle.HorizontalStackWithOverflow, ms.LayoutStyle, "A6");
+			
+			Assert.AreEqual ("System.Windows.Forms.MenuStrip+MenuStripAccessibleObject", ms.AccessibilityObject.GetType ().ToString (), "A7");
 		}
 
 		[Test]
