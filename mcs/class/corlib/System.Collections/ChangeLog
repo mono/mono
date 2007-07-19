@@ -1,3 +1,8 @@
+2007-07-19  Juraj Skripsky  <js@hotfeet.ch>
+
+	* ArrayList.cs (ArrayList.Adapter): If the given list already is an
+	ArrayList, just return it directly.
+
 2007-07-05  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* CaseInsensitiveHashCodeProvider.cs: Lazy init Default instance and

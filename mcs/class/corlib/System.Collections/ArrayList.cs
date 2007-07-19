@@ -3251,14 +3251,16 @@ namespace System.Collections
 				throw new ArgumentNullException("list");
 			}
 
-			if (list.IsSynchronized) 
-			{
-				return ArrayList.Synchronized(new ArrayListAdapter(list));
-			}
+			ArrayList arrayList = list as ArrayList;
+			if (arrayList != null)
+				return arrayList;
+			else
+				arrayList = new ArrayListAdapter(list);
+
+			if (list.IsSynchronized)
+				return ArrayList.Synchronized(arrayList);
 			else 
-			{
-				return new ArrayListAdapter(list);
-			}
+				return arrayList;
 		}
 
 		public static ArrayList Synchronized(ArrayList arrayList) 
