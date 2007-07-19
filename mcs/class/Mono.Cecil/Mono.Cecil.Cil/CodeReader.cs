@@ -331,10 +331,6 @@ namespace Mono.Cecil.Cil {
 						p, context));
 			}
 
-			MethodRefSig refSig = ms as MethodRefSig;
-			if (refSig != null && refSig.Sentinel >= 0)
-				ReflectionReader.CreateSentinel (cs, refSig.Sentinel);
-
 			return cs;
 		}
 

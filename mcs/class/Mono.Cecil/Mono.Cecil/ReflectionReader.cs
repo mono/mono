@@ -234,10 +234,6 @@ namespace Mono.Cecil {
 						methref.Parameters.Add (pdef);
 					}
 
-					MethodDefSig mdsig = ms as MethodDefSig;
-					if (mdsig != null && mdsig.Sentinel > -1)
-						CreateSentinel (methref, mdsig.Sentinel);
-
 					member = methref;
 				}
 				break;
@@ -1020,10 +1016,6 @@ namespace Mono.Cecil {
 							p, context));
 				}
 
-				MethodRefSig refSig = funcptr.Method as MethodRefSig;
-				if (refSig != null && refSig.Sentinel >= 0)
-					CreateSentinel (fnptr, refSig.Sentinel);
-
 				return fnptr;
 			case ElementType.Var:
 				VAR var = t as VAR;
@@ -1050,19 +1042,12 @@ namespace Mono.Cecil {
 						ginst.Signature.Types [i], context));
 
 				return instance;
+			case ElementType.Sentinel:
+				return new SentinelType ();
 			default:
 				break;
 			}
 			return null;
-		}
-
-		public static void CreateSentinel (IMethodSignature meth, int sentinel)
-		{
-			if (sentinel < 0 || sentinel >= meth.Parameters.Count)
-				throw new ArgumentException ("Invalid sentinel");
-
-			ParameterDefinition param = meth.Parameters [sentinel];
-			param.ParameterType = new SentinelType ();
 		}
 
 		TypeReference GetGenericArg (GenericArg arg, GenericContext context)

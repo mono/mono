@@ -1,6 +1,11 @@
 2007-07-19  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil/ReflectionReader.cs
+	  Mono.Cecil.Cil/CodeReader.cs
+	  Mono.Cecil.Signature/SignatureReader.cs:
+		Better handling of the sentil in the varargs methods.
+
+	* Mono.Cecil/ReflectionReader.cs
 	  Mono.Cecil/SentinelType.cs
 	  Mono.Cecil.Cil/CodeWriter.cs:
 	  Mono.Cecil.Signatures/SignatureReader.cs:
