@@ -1,3 +1,11 @@
+2007-07-18  Miguel de Icaza  <miguel@novell.com>
+
+	* SafeHandle.cs: Harden this, do not call ReleaseHandle if the
+	handle is invalid.
+
+	* CriticalHandle.cs: Harden this, do not call ReleaseHandle if the
+	handle is invalid. 
+
 2007-07-06  Jonathan Chambers  <joncham@gmail.com>
 
 	* ExtensibleClassFactory.cs: Fix ExtensibleClassFactory.

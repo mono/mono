@@ -82,7 +82,7 @@ namespace System.Runtime.InteropServices
 				newcount = current-1;
 			} while (Interlocked.CompareExchange (ref refcount, newcount, current) != current);
 
-			if (newcount == 0 && owns_handle){
+			if (newcount == 0 && owns_handle && !IsInvalid){
 				ReleaseHandle ();
 				handle = invalid_handle_value;
 			}
@@ -143,7 +143,7 @@ namespace System.Runtime.InteropServices
 				newcount = current-1;
 			} while (Interlocked.CompareExchange (ref refcount, newcount, current) != current);
 
-			if (newcount == 0 && owns_handle){
+			if (newcount == 0 && owns_handle && !IsInvalid){
 				ReleaseHandle ();
 				handle = invalid_handle_value;
 			}
@@ -204,7 +204,7 @@ namespace System.Runtime.InteropServices
 
 		~SafeHandle ()
 		{
-			if (owns_handle){
+			if (owns_handle && !IsInvalid){
 				ReleaseHandle ();
 				handle = invalid_handle_value;
 			}

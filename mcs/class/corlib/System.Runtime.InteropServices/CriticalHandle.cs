@@ -52,8 +52,8 @@ namespace System.Runtime.InteropServices
 			if (IsInvalid)
 				return;
 
-			if (disposing == true){
-				if (ReleaseHandle ()) {
+			if (disposing == true && !IsInvalid){
+				if (!ReleaseHandle ()) {
 					GC.SuppressFinalize (this);
 				} else {
 					// Failed in release...
