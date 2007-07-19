@@ -1,3 +1,11 @@
+2007-07-19  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil/ReflectionReader.cs
+	  Mono.Cecil/SentinelType.cs
+	  Mono.Cecil.Cil/CodeWriter.cs:
+	  Mono.Cecil.Signatures/SignatureReader.cs:
+		Fix handling of varargs methods.
+
 2007-07-18  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil.Cil/CodeReader.cs

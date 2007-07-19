@@ -163,10 +163,10 @@ namespace Mono.Cecil.Signatures {
 			int start, callconv;
 			Utilities.ReadCompressedInteger (m_blobData, (int) index, out start);
 			callconv = m_blobData [start];
+			if ((callconv & 0x5) == 0x5 || (callconv & 0x10) == 0x10) // vararg || generic?
+				return GetMethodDefSig (index);
 			if ((callconv & 0x6) != 0) // field ?
 				return GetFieldSig (index);
-			if ((callconv & 0x10) != 0) // generic ?
-				return GetMethodDefSig (index);
 
 			switch (tt) {
 			case TokenType.TypeDef :
@@ -266,7 +266,9 @@ namespace Mono.Cecil.Signatures {
 
 			methodDef.ParamCount = Utilities.ReadCompressedInteger (data, start, out start);
 			methodDef.RetType = ReadRetType (data, start, out start);
-			methodDef.Parameters = ReadParameters (methodDef.ParamCount, data, start);
+			int sentpos;
+			methodDef.Parameters = ReadParameters (methodDef.ParamCount, data, start, out sentpos);
+			methodDef.Sentinel = sentpos;
 		}
 
 		void ReadMethodRefSig (MethodRefSig methodRef, byte [] data, int pos, out int start)

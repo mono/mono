@@ -452,7 +452,7 @@ namespace Mono.Cecil.Cil {
 		static void ComputeMaxStack (InstructionCollection instructions)
 		{
 			InstructionCollection ehs = new InstructionCollection (null);
-			foreach (ExceptionHandler eh in instructions.Container.ExceptionHandlers)
+			foreach (ExceptionHandler eh in instructions.Container.ExceptionHandlers) {
 				switch (eh.Type) {
 				case ExceptionHandlerType.Catch :
 					ehs.Add (eh.HandlerStart);
@@ -461,6 +461,7 @@ namespace Mono.Cecil.Cil {
 					ehs.Add (eh.FilterStart);
 					break;
 				}
+			}
 
 			int max = 0, current = 0;
 			foreach (Instruction instr in instructions) {

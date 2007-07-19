@@ -28,9 +28,9 @@
 
 namespace Mono.Cecil {
 
-	public sealed class SentinelType : TypeSpecification {
+	public sealed class SentinelType : TypeReference {
 
-		public SentinelType (TypeReference type) : base (type)
+		public SentinelType () : base ("...", null)
 		{
 		}
 	}

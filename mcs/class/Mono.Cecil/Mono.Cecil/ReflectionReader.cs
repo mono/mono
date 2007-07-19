@@ -233,6 +233,11 @@ namespace Mono.Cecil {
 						pdef.Method = methref;
 						methref.Parameters.Add (pdef);
 					}
+
+					MethodDefSig mdsig = ms as MethodDefSig;
+					if (mdsig != null && mdsig.Sentinel > -1)
+						CreateSentinel (methref, mdsig.Sentinel);
+
 					member = methref;
 				}
 				break;
@@ -1057,7 +1062,7 @@ namespace Mono.Cecil {
 				throw new ArgumentException ("Invalid sentinel");
 
 			ParameterDefinition param = meth.Parameters [sentinel];
-			param.ParameterType = new SentinelType (param.ParameterType);
+			param.ParameterType = new SentinelType ();
 		}
 
 		TypeReference GetGenericArg (GenericArg arg, GenericContext context)
