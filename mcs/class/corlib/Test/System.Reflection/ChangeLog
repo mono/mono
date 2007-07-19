@@ -1,5 +1,9 @@
 2007-07-19  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* MethodInfoTest.cs : fix incorrect parameter type output.
+
+2007-07-19  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* MethodInfoTest.cs : added ToString() test for generic return type.
 
 2007-07-09  Mark Probst  <mark.probst@gmail.com>

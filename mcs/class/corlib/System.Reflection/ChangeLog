@@ -1,5 +1,9 @@
 2007-07-19  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* MonoMethod.cs : parameter types should be fixed as well.
+
+2007-07-19  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* MonoMethod.cs : ToString() did not show correct return type when
 	  it is generic.
 

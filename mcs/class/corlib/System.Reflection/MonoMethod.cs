@@ -267,11 +267,10 @@ namespace System.Reflection {
 				bool byref = pt.IsByRef;
 				if (byref)
 					pt = pt.GetElementType ();
-				if (pt.IsClass && pt.Namespace != String.Empty) {
-					sb.Append (pt.Namespace);
-					sb.Append (".");
-				}
-				sb.Append (pt.Name);
+				if (pt.IsClass)
+					sb.Append (pt.ToString ());
+				else
+					sb.Append (pt.Name);
 				if (byref)
 					sb.Append (" ByRef");
 			}

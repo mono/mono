@@ -197,7 +197,7 @@ namespace MonoTests.System.Reflection
 		[Test]
 		public void ToStringGenericMethod ()
 		{
-			Assert.AreEqual ("System.Collections.ObjectModel.ReadOnlyCollection`1[T] AsReadOnly[T](.T[])",
+			Assert.AreEqual ("System.Collections.ObjectModel.ReadOnlyCollection`1[T] AsReadOnly[T](T[])",
 				typeof (Array).GetMethod ("AsReadOnly").ToString ());
 		}
 #endif
