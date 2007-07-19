@@ -443,7 +443,6 @@ namespace System {
 		//
 		public void DoCallBack (CrossAppDomainDelegate theDelegate)
 		{
-			Console.WriteLine ("corlib: Callback is happening on domain: {0}", CurrentDomain.FriendlyName);
 			if (theDelegate != null)
 				theDelegate ();
 		}
