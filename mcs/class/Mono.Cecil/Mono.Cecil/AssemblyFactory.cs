@@ -132,6 +132,7 @@ namespace Mono.Cecil {
 				file, FileMode.Create, FileAccess.Write, FileShare.None)) {
 
 				SaveAssembly (asm, fs);
+				asm.MainModule.Image.SetFileInfo (new FileInfo (file));
 			}
 		}
 

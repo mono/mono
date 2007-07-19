@@ -172,6 +172,11 @@ namespace Mono.Cecil.Binary {
 			m_debugHeader.SetDefaultValues ();
 		}
 
+		internal void SetFileInfo (FileInfo file)
+		{
+			m_img = file;
+		}
+
 		public void Accept (IBinaryVisitor visitor)
 		{
 			visitor.VisitImage (this);

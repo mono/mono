@@ -1,5 +1,12 @@
 2007-07-19  Jb Evain  <jbevain@novell.com>
 
+	* Mono.Cecil/AssemblyFactory.cs
+	  Mono.Cecil.Binary/Image.cs:
+		Update the fileinfo after writing an assembly
+		to a file.
+
+2007-07-19  Jb Evain  <jbevain@novell.com>
+
 	* Mono.Cecil/ReflectionReader.cs
 	  Mono.Cecil.Cil/CodeReader.cs
 	  Mono.Cecil.Signature/SignatureReader.cs:
