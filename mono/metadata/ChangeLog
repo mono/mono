@@ -1,5 +1,9 @@
 2007-07-19  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c: used function from private branch, reverted to the one in class.h 
+
+2007-07-19  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c: a typo slipped in and the code wont compile
 
 2007-07-19  Rodrigo Kumpera  <rkumpera@novell.com>
