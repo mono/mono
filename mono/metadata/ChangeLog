@@ -1,3 +1,12 @@
+2007-07-19  Mark Probst  <mark.probst@gmail.com>
+
+	* class.c, loader.c, class-internals.h: Removed the
+	MonoLoaderErrorKind enum and replaced it with the MONO_EXCEPTION_
+	defines.
+
+	* icall.c: Better error checking in some internal reflection
+	methods.
+
 2007-07-18  William Holmes  <billholmes54@gmail.com>
 
         * filewatcher.c : removed unused variable 'filename' in 

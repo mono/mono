@@ -1,3 +1,8 @@
+2007-07-19  Mark Probst  <mark.probst@gmail.com>
+
+	* Makefile.am (test-bug-81691), bug-81691.cs, bug-81691-a.cs,
+	bug-81691-b.cs: Test for bug #81691.
+
 2007-07-11  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile.am (bug-81673.exe): Look for bug-81673.cs in $(srcdir).
