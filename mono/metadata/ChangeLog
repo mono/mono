@@ -1,3 +1,11 @@
+2007-07-19  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: several stack merge issues fixed, reference comparisons now
+	check the type size. strict type check now works correctly.
+	added more uses of IS_MANAGED_POINTER macro.
+	fixed issues pointed by running the test suite against .net.
+	
+
 2007-07-19  Mark Probst  <mark.probst@gmail.com>
 
 	* class.c, loader.c, class-internals.h: Removed the
