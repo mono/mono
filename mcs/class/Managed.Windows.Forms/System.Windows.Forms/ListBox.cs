@@ -97,7 +97,9 @@ namespace System.Windows.Forms
 		private int focused_item = -1;		
 		private ObjectCollection items;
 #if NET_2_0
+		private IntegerCollection custom_tab_offsets;
 		private Padding padding;
+		private bool use_custom_tab_offsets;
 #endif
 
 		public ListBox ()
@@ -141,6 +143,10 @@ namespace System.Windows.Forms
 			LostFocus += new EventHandler (OnLostFocus);
 			
 			SetStyle (ControlStyles.UserPaint, false);
+
+#if NET_2_0
+			custom_tab_offsets = new IntegerCollection (this);
+#endif
 		}
 
 		#region Events
@@ -283,6 +289,14 @@ namespace System.Windows.Forms
 		protected override CreateParams CreateParams {
 			get { return base.CreateParams;}
 		}
+
+#if NET_2_0
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		public IntegerCollection CustomTabOffsets {
+			get { return custom_tab_offsets; }
+		}
+#endif
 
 		protected override Size DefaultSize {
 			get { return new Size (120, 96); }
@@ -637,6 +651,19 @@ namespace System.Windows.Forms
 			}
 		}
 
+#if NET_2_0
+		[Browsable (false)]
+		[DefaultValue (false)]
+		public bool UseCustomTabOffsets {
+			get { return use_custom_tab_offsets; }
+			set { 
+				if (use_custom_tab_offsets != value) {
+					use_custom_tab_offsets = value;
+					CalculateTabStops ();
+				}
+			 }
+		}
+#endif
 		[DefaultValue (true)]
 		public bool UseTabStops {
 			get { return use_tabstops; }
@@ -645,12 +672,9 @@ namespace System.Windows.Forms
 				if (use_tabstops == value)
 					return;
 
-    				use_tabstops = value;    				
-				if (use_tabstops)
-					StringFormat.SetTabStops (0, new float [] {(float)(Font.Height * 3.7)});
-				else
-					StringFormat.SetTabStops (0, new float [0]);
-				base.Refresh ();
+    				use_tabstops = value;
+    				
+				CalculateTabStops ();
     			}
 		}
 
@@ -1111,6 +1135,25 @@ namespace System.Windows.Forms
 		#endregion Public Methods
 
 		#region Private Methods
+
+		private void CalculateTabStops ()
+		{
+			if (use_tabstops) {
+#if NET_2_0
+				if (use_custom_tab_offsets) {
+					float[] f = new float[custom_tab_offsets.Count];
+					custom_tab_offsets.CopyTo (f, 0);
+					StringFormat.SetTabStops (0, f);
+				}
+				else
+#endif
+					StringFormat.SetTabStops (0, new float[] { (float)(Font.Height * 3.7) });
+			}	
+			else
+				StringFormat.SetTabStops (0, new float[0]);
+				
+			this.Invalidate ();
+		}
 
 		private Size canvas_size;
 
@@ -1934,8 +1977,7 @@ namespace System.Windows.Forms
 						string_format.Alignment = StringAlignment.Far;
 					else
 						string_format.Alignment = StringAlignment.Near;
-					if (use_tabstops)
-						string_format.SetTabStops (0, new float [] {(float)(Font.Height * 3.7)});
+					CalculateTabStops ();
 				}
 				return string_format;
 			}
@@ -2081,7 +2123,7 @@ namespace System.Windows.Forms
 			
 			public int this [int index] {
 				get { return list[index]; }
-				set { list[index] = value; }
+				set { list[index] = value; owner.CalculateTabStops (); }
 			}
 			#endregion
 
@@ -2092,6 +2134,7 @@ namespace System.Windows.Forms
 				if (!list.Contains (item)) {
 					list.Add (item);
 					list.Sort ();
+					owner.CalculateTabStops ();
 				}
 				
 				return list.IndexOf (item);
@@ -2118,6 +2161,7 @@ namespace System.Windows.Forms
 			public void Clear ()
 			{
 				list.Clear ();
+				owner.CalculateTabStops ();
 			}
 			
 			public bool Contains (int item)
@@ -2127,7 +2171,8 @@ namespace System.Windows.Forms
 			
 			public void CopyTo (Array destination, int index)
 			{
-				list.CopyTo ((int[])destination, index);
+				for (int i = index; i < list.Count; i++)
+					destination.SetValue (list[i], i);
 			}
 			
 			public int IndexOf (int item)
@@ -2139,12 +2184,14 @@ namespace System.Windows.Forms
 			{
 				list.Remove (item);
 				list.Sort ();
+				owner.CalculateTabStops ();
 			}
 			
 			public void RemoveAt (int index)
 			{
 				list.RemoveAt (index);
 				list.Sort ();
+				owner.CalculateTabStops ();
 			}
 			#endregion
 
