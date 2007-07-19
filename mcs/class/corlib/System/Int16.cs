@@ -136,7 +136,19 @@ namespace System {
 				c = s [i];
 
 				if (c >= '0' && c <= '9'){
-					val = checked ((short) (val * 10 + (c - '0') * sign));
+					byte d = (byte) (c - '0');
+
+					if (tryParse){
+						val = (short) (val * 10 + d * sign);
+
+						if (sign == 1){
+							if (val < 0)
+								return false;
+						} else if (val > 0)
+							return false;
+					} else
+						val = checked ((short) (val * 10 + d * sign));
+				    
 					digits_seen = true;
 				} else {
 					if (Char.IsWhiteSpace (c)){

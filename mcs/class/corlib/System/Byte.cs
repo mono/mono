@@ -96,96 +96,6 @@ namespace System
 		}
 #endif
 
-		internal static bool Parse (string s, bool tryParse, out byte result, out Exception exc)
-		{
-			byte val = 0;
-			int len;
-			int i;
-			bool digits_seen = false;
-			bool negative = false;
-
-			result = 0;
-			exc = null;
-
-			if (s == null) {
-				if (!tryParse)
-					exc = new ArgumentNullException ("s");
-				return false;
-			}
-
-			len = s.Length;
-
-			// look for the first non-whitespace character
-			char c;
-			for (i = 0; i < len; i++){
-				c = s [i];
-				if (!Char.IsWhiteSpace (c))
-					break;
-			}
-
-			// if it's all whitespace, then throw exception
-			if (i == len) {
-				if (!tryParse)
-					exc = Int32.GetFormatException ();
-				return false;
-			}
-
-			// look for the optional '+' sign
-			if (s [i] == '+')
-				i++;
-			else if (s [i] == '-') {
-				negative = true;
-				i++;
-			}
-
-			// we should just have numerals followed by whitespace now
-			for (; i < len; i++){
-				c = s [i];
-
-				if (c >= '0' && c <= '9'){
-					// shift left and accumulate every time we find a numeral
-					byte d = (byte) (c - '0');
-
-					val = checked ((byte) (val * 10 + d));
-					digits_seen = true;
-				} else {
-					// after the last numeral, only whitespace is allowed
-					if (Char.IsWhiteSpace (c)){
-						for (i++; i < len; i++){
-							if (!Char.IsWhiteSpace (s [i])) {
-								if (!tryParse)
-									exc = Int32.GetFormatException ();
-								return false;
-							}
-						}
-						break;
-					} else {
-						if (!tryParse)
-							exc = Int32.GetFormatException ();
-						return false;
-					}
-				}
-			}
-
-			// -0 is legal but other negative values are not
-			if (negative && (val > 0)) {
-				if (!tryParse)
-					exc = new OverflowException (
-					    Locale.GetText ("Negative number"));
-				return false;
-			}
-
-			// if all we had was a '+' sign, then throw exception
-			if (!digits_seen) {
-				if (!tryParse)
-					exc = Int32.GetFormatException ();
-				return false;
-			}
-
-			result = val;
-			return true;
-		}
-
 		public static byte Parse (string s, IFormatProvider provider)
 		{
 			return Parse (s, NumberStyles.Integer, provider);
@@ -199,33 +109,21 @@ namespace System
 		public static byte Parse (string s, NumberStyles style, IFormatProvider provider)
 		{
 			uint tmpResult = UInt32.Parse (s, style, provider);
-			if (tmpResult > Byte.MaxValue || tmpResult < Byte.MinValue)
-				throw new OverflowException (Locale.GetText ("Value too large or too small."));
+			if (tmpResult > Byte.MaxValue)
+				throw new OverflowException (Locale.GetText ("Value too large."));
 
 			return (byte) tmpResult;
 		}
 
 		public static byte Parse (string s) 
 		{
-			Exception exc;
-			byte res;
-
-			if (!Parse (s, false, out res, out exc))
-				throw exc;
-
-			return res;
+			return Parse (s, NumberStyles.Integer, null);
 		}
 
 #if NET_2_0
 		public static bool TryParse (string s, out byte result) 
 		{
-			Exception exc;
-			if (!Parse (s, true, out result, out exc)) {
-				result = 0;
-				return false;
-			}
-
-			return true;
+			return TryParse (s, NumberStyles.Integer, null, out result);
 		}
 
 		public static bool TryParse (string s, NumberStyles style, IFormatProvider provider, out byte result) 
@@ -236,7 +134,7 @@ namespace System
 			if (!UInt32.TryParse (s, style, provider, out tmpResult))
 				return false;
 				
-			if (tmpResult > Byte.MaxValue || tmpResult < Byte.MinValue)
+			if (tmpResult > Byte.MaxValue)
 				return false;
 				
 			result = (byte)tmpResult;

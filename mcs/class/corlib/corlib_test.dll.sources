@@ -17,6 +17,7 @@ System/CharEnumeratorTest.cs
 System/CharTest.cs
 System/DelegateTest.cs
 System/ModuleHandleTest.cs
+System/IntegerTryParse.cs
 System.Collections/ArrayListTest.cs
 System.Collections/BitArrayTest.cs
 System.Collections/CaseInsensitiveComparerTest.cs

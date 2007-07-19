@@ -140,7 +140,14 @@ namespace System
 				if (c >= '0' && c <= '9') {
 					uint d = (uint) (c - '0');
 
-					val = checked (val * 10 + d);
+					if (tryParse){
+						ulong v = ((ulong)val) * 10 + d;
+
+						if (v > MaxValue)
+							return false;
+						val = (uint) v;
+					} else
+						val = checked (val * 10 + d);
 					digits_seen = true;
 				}
 				else {
@@ -311,7 +318,14 @@ namespace System
 					else
 						digitValue = (uint) (hexDigit - 'A' + 10);
 
-					number = checked (number * 16 + digitValue);
+					if (tryParse){
+						ulong l = number * 16 + digitValue;
+
+						if (l > MaxValue)
+							return false;
+						number = (uint) l;
+					} else
+						number = checked (number * 16 + digitValue);
 				}
 				else if (decimalPointFound) {
 					nDigits++;

@@ -139,7 +139,16 @@ namespace System {
 				c = s [i];
 
 				if (c >= '0' && c <= '9'){
-					val = checked (val * 10 + (c - '0') * sign);
+					if (tryParse){
+						val = val * 10 + (c - '0') * sign;
+					
+						if (sign == 1){
+							if (val < 0)
+								return false;
+						} else if (val > 0)
+							return false;
+					} else
+						val = checked (val * 10 + (c - '0') * sign);
 					digits_seen = true;
 				} else {
 					if (Char.IsWhiteSpace (c)){
@@ -320,7 +329,15 @@ namespace System {
 						digitValue = (int) (hexDigit - 'A' + 10);
 
 					ulong unumber = (ulong)number;
-					number = (long)checked(unumber * 16ul + (ulong)digitValue);
+					
+					// IMPROVME: We could avoid catching OverflowException
+					try {
+						number = (long)checked(unumber * 16ul + (ulong)digitValue);
+					} catch (OverflowException e){
+						if (!tryParse)
+							exc = e;
+						return false;
+					}
 				}
 				else if (decimalPointFound) {
 					nDigits++;
@@ -411,8 +428,15 @@ namespace System {
 			}
 
 			
-			if (!negative && !AllowHexSpecifier)
-				number = checked (-number);
+			if (!negative && !AllowHexSpecifier){
+				try {
+					number = checked (-number);
+				} catch (OverflowException e){
+					if (!tryParse)
+						exc = e;
+					return false;
+				}
+			}
 
 			result = number;
 			return true;

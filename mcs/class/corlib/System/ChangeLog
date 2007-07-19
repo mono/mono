@@ -1,3 +1,16 @@
+2007-06-06  Miguel de Icaza  <miguel@novell.com>
+
+	* Int16.cs, UInt64.cs, SByte.cs, UInt16.cs, Byte.cs, Int32.cs,
+	Int64.cs, UInt32.cs: Fix for 81775.
+
+	I removed Parse from a Byte.cs and UInt16.cs as in various cases
+	they still depended on UInt32.cs for parsing, there is no reason
+	to keep all of this code duplicated (UInt64 is a different case
+	though). 
+
+	I was hoping for some feedback on whether my tests are correct,
+	but so far no takers.
+
 2007-07-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* ModuleHandle.cs: Implement the generic versions of the ResolveXXXHandle () methods.

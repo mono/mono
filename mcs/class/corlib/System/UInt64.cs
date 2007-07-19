@@ -247,7 +247,16 @@ namespace System
 					else
 						digitValue = (ulong) (hexDigit - 'A' + 10);
 
-					number = checked (number * 16 + digitValue);
+					if (tryParse){
+						// Any number above 32 will do 
+						bool can_overflow = number > 0xffff;
+
+						number = number * 16 + digitValue;
+
+						if (can_overflow && number < 16)
+							return false;
+					} else
+						number = checked (number * 16 + digitValue);
 				}
 				else if (decimalPointFound) {
 					nDigits++;

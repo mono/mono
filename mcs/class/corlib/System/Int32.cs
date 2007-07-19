@@ -143,13 +143,19 @@ namespace System {
 				}
 				
 				if (c >= '0' && c <= '9'){
-					try {
+					byte d = (byte) (c - '0');
+						
+					if (tryParse){
+						val = val * 10 + d * sign;
+						if (sign == 1){
+							if (val < 0)
+								return false;
+						} else if (val > 0)
+							return false;
+					} else {
 						val = checked (val * 10 + (c - '0') * sign);
-						digits_seen = true;
-					} catch (OverflowException e) {
-						exc = e;
-						return false;
 					}
+					digits_seen = true;
 				} else {
 					if (Char.IsWhiteSpace (c)){
 						for (i++; i < len; i++){
@@ -443,11 +449,13 @@ namespace System {
 						digitValue = (int) (hexDigit - 'A' + 10);
 
 					uint unumber = (uint)number;
-					try {
+					if (tryParse){
+						if ((unumber & 0xf0000000) != 0)
+							return false;
+						
+						number = (int) (unumber * 16u + (uint) digitValue);
+					} else {
 						number = (int)checked (unumber * 16u + (uint)digitValue);
-					} catch (OverflowException e) {
-						exc = e;
-						return false;
 					}
 				}
 				else if (decimalPointFound) {
@@ -534,9 +542,17 @@ namespace System {
 				return false;
 			}
 			
-			if (!negative && !AllowHexSpecifier)
-				number = checked (-number);
+			if (!negative && !AllowHexSpecifier){
+				if (tryParse){
+					long lval = -number;
 
+					if (lval < MinValue || lval > MaxValue)
+						return false;
+					number = (int) lval;
+				} else
+					number = checked (-number);
+			}
+			
 			result = number;
 
 			return true;

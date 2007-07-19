@@ -137,7 +137,14 @@ namespace System
 				c = s [i];
 
 				if (c >= '0' && c <= '9') {
-					ival = checked (ival * 10 - (int) (c - '0'));
+					if (tryParse){
+						int intval = ival * 10 - (int) (c - '0');
+
+						if (intval < MinValue)
+							return false;
+						ival = (sbyte) intval;
+					} else
+						ival = checked (ival * 10 - (int) (c - '0'));
 					digits_seen = true;
 				} else {
 					if (Char.IsWhiteSpace (c)) {
