@@ -1,3 +1,8 @@
+2007-07-19  Juraj Skripsky  <js@hotfeet.ch>
+
+	* FileSystemWatcher.ch (RaiseEvent): Invoke delegate directly, we don't
+	need the extra control provided by using GetInvocationList().
+
 2006-11-01  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* ErrorEventHandler.cs: Remove [Serializable] in NET_2_0.

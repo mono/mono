@@ -371,19 +371,16 @@ namespace System.IO {
 				return;
 
 			if (synchronizingObject == null) {
-				Delegate [] delegates = ev.GetInvocationList ();
-				if (evtype == EventType.RenameEvent) {
-					foreach (RenamedEventHandler d in delegates){
-						d.BeginInvoke (this, (RenamedEventArgs) arg, null, null);
-					}
-				} else if (evtype == EventType.ErrorEvent) {
-					foreach (ErrorEventHandler d in delegates){
-						d.BeginInvoke (this, (ErrorEventArgs) arg, null, null);
-					}
-				} else {
-					foreach (FileSystemEventHandler d in delegates){
-						d.BeginInvoke (this, (FileSystemEventArgs) arg, null, null);
-					}
+				switch (evtype) {
+				case EventType.RenameEvent:
+					((RenamedEventHandler)ev).BeginInvoke (this, (RenamedEventArgs) arg, null, null);
+					break;
+				case EventType.ErrorEvent:
+					((ErrorEventHandler)ev).BeginInvoke (this, (ErrorEventArgs) arg, null, null);
+					break;
+				case EventType.FileSystemEvent:
+					((FileSystemEventHandler)ev).BeginInvoke (this, (FileSystemEventArgs) arg, null, null);
+					break;
 				}
 				return;
 			}
