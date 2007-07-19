@@ -1,3 +1,7 @@
+2007-07-19 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_test.sh: added reference compatibility tests
+
 2007-07-05 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* AssemblyRunner.cs: bug fix: handles missing fields corrently
