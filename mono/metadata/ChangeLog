@@ -1,3 +1,10 @@
+2007-07-19  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: now all code use IS_MANAGED_POINTER and UNMASK_TYPE macros.
+	disabled box instruction as it is doing the wrong thing
+	improved stack dump messages, now it is easier to debug type related issues
+
+
 2007-07-19  Juraj Skripsky  <js@hotfeet.ch>
 
 	* icall.c (ves_icall_System_MonoType_getFullName): Fix a leak. 
