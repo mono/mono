@@ -1,3 +1,10 @@
+2007-07-19  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: changed MONO_TYPE_TYPEDBYREF stack type from 
+	TYPE_COMPLEX to TYPE_PTR, it did not make any sense to be
+	grouped with class and valuetype. This change will simply 
+	the code as it should be handled just like unmanaged pointers.
+
 2007-07-19  Mark Probst  <mark.probst@gmail.com>
 
 	* class.c (concat_two_strings_with_zero): Fixed a silly bug.
