@@ -137,7 +137,7 @@ namespace Mono.Cecil.Signatures {
 				Write (methodDef.GenericParameterCount);
 			Write (methodDef.ParamCount);
 			Write (methodDef.RetType);
-			Write (methodDef.Parameters);
+			Write (methodDef.Parameters, methodDef.Sentinel);
 		}
 
 		public override void VisitMethodRefSig (MethodRefSig methodRef)
@@ -145,7 +145,7 @@ namespace Mono.Cecil.Signatures {
 			m_sigWriter.Write (methodRef.CallingConvention);
 			Write (methodRef.ParamCount);
 			Write (methodRef.RetType);
-			Write (methodRef.Parameters);
+			Write (methodRef.Parameters, methodRef.Sentinel);
 		}
 
 		public override void VisitFieldSig (FieldSig field)
@@ -199,6 +199,16 @@ namespace Mono.Cecil.Signatures {
 				Write (retType.Type);
 			} else
 				Write (retType.Type);
+		}
+
+		void Write (Param [] parameters, int sentinel)
+		{
+			for (int i = 0; i < parameters.Length; i++) {
+				if (i == sentinel)
+					Write (ElementType.Sentinel);
+
+				Write (parameters [i]);
+			}
 		}
 
 		void Write (Param [] parameters)

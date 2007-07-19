@@ -110,13 +110,19 @@ namespace Mono.Cecil {
 
 		public override string ToString ()
 		{
+			int sentinel = GetSentinel ();
+
 			StringBuilder sb = new StringBuilder ();
 			sb.Append (m_returnType.ReturnType.FullName);
 			sb.Append (" ");
 			sb.Append (base.ToString ());
 			sb.Append ("(");
 			for (int i = 0; i < this.Parameters.Count; i++) {
+				if (i == sentinel)
+					sb.Append ("...,");
+
 				sb.Append (this.Parameters [i].ParameterType.FullName);
+
 				if (i < this.Parameters.Count - 1)
 					sb.Append (",");
 			}

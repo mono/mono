@@ -401,8 +401,10 @@ namespace Mono.Cecil.Signatures {
 				int curs = start;
 				int flag = Utilities.ReadCompressedInteger (data, start, out start);
 
-				if (flag == (int) ElementType.Sentinel)
+				if (flag == (int) ElementType.Sentinel) {
 					sentinelpos = i;
+					curs = start;
+				}
 
 				ret [i] = ReadParameter (data, curs, out start);
 			}

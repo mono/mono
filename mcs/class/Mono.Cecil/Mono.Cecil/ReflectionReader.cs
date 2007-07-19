@@ -210,45 +210,14 @@ namespace Mono.Cecil {
 					string name = m_root.Streams.StringsHeap [mrefRow.Name];
 					MethodSig ms = (MethodSig) sig;
 
-					MethodReference methref = new MethodReference (
-						name, ms.HasThis, ms.ExplicitThis, ms.MethCallConv);
-					methref.DeclaringType = declaringType;
-
-					if (sig is MethodDefSig) {
-						int arity = (sig as MethodDefSig).GenericParameterCount;
-						for (int i = 0; i < arity; i++)
-							methref.GenericParameters.Add (new GenericParameter (i, methref));
-					}
-
-					if (methref.GenericParameters.Count > 0)
-						nc.Method = methref;
-
-					methref.ReturnType = GetMethodReturnType (ms, nc);
-
-					methref.ReturnType.Method = methref;
-					for (int j = 0; j < ms.ParamCount; j++) {
-						Param p = ms.Parameters [j];
-						ParameterDefinition pdef = BuildParameterDefinition (
-							string.Concat ("A_", j), j, new ParameterAttributes (), p, nc);
-						pdef.Method = methref;
-						methref.Parameters.Add (pdef);
-					}
-
-					member = methref;
+					member = CreateMethodReferenceFromSig (ms, name, declaringType, nc);
 				}
 				break;
 			case TokenType.Method :
 				// really not sure about this
 				MethodDefinition methdef = GetMethodDefAt (mrefRow.Class.RID);
-				MethodReference methRef = new MethodReference (
-					methdef.Name, methdef.HasThis,
-					methdef.ExplicitThis, methdef.CallingConvention);
 
-				methRef.DeclaringType = methdef.DeclaringType;
-				methRef.ReturnType = methdef.ReturnType;
-				foreach (ParameterDefinition param in methdef.Parameters)
-					methRef.Parameters.Add (param);
-				member = methRef;
+				member = CreateMethodReferenceFromSig ((MethodSig) sig, methdef.Name, methdef.DeclaringType, new GenericContext ());
 				break;
 			case TokenType.ModuleRef :
 				break; // TODO, implement that, or not
@@ -259,6 +228,51 @@ namespace Mono.Cecil {
 			m_memberRefs [index] = member;
 
 			return member;
+		}
+
+		MethodReference CreateMethodReferenceFromSig (MethodSig ms, string name, TypeReference declaringType, GenericContext context)
+		{
+			MethodReference methref = new MethodReference (
+				name, ms.HasThis, ms.ExplicitThis, ms.MethCallConv);
+			methref.DeclaringType = declaringType;
+
+			if (ms is MethodDefSig) {
+				int arity = (ms as MethodDefSig).GenericParameterCount;
+				for (int i = 0; i < arity; i++)
+					methref.GenericParameters.Add (new GenericParameter (i, methref));
+			}
+
+			if (methref.GenericParameters.Count > 0)
+				context.Method = methref;
+
+			methref.ReturnType = GetMethodReturnType (ms, context);
+
+			methref.ReturnType.Method = methref;
+			for (int j = 0; j < ms.ParamCount; j++) {
+				Param p = ms.Parameters [j];
+				ParameterDefinition pdef = BuildParameterDefinition (j, p, context);
+				pdef.Method = methref;
+				methref.Parameters.Add (pdef);
+			}
+
+			CreateSentinelIfNeeded (methref, ms);
+
+			return methref;
+		}
+
+		public static void CreateSentinelIfNeeded (IMethodSignature meth, MethodSig signature)
+		{
+			MethodDefSig sig = signature as MethodDefSig;
+			if (sig == null)
+				return;
+
+			int sentinel = sig.Sentinel;
+
+			if (sig.Sentinel < 0 || sig.Sentinel >= meth.Parameters.Count)
+				return;
+
+			ParameterDefinition param = meth.Parameters [sentinel];
+			param.ParameterType = new SentinelType (param.ParameterType);
 		}
 
 		public PropertyDefinition GetPropertyDefAt (uint rid)
@@ -711,9 +725,7 @@ namespace Mono.Cecil {
 							pdef.MetadataToken = MetadataToken.FromMetadataRow (TokenType.Param, pointer);
 							m_parameters [pointer] = pdef;
 						} else
-							pdef = BuildParameterDefinition (
-								string.Concat ("A_", mdef.IsStatic ? k : k + 1),
-								k + 1, (ParameterAttributes) 0, psig, context);
+							pdef = BuildParameterDefinition (k + 1, psig, context);
 
 						pdef.Method = mdef;
 						mdef.Parameters.Add (pdef);
@@ -835,25 +847,40 @@ namespace Mono.Cecil {
 			return cattr;
 		}
 
-		public ParameterDefinition BuildParameterDefinition (string name, int sequence,
-			ParameterAttributes attrs, Param psig, GenericContext context)
+		void CompleteParameter (ParameterDefinition parameter, Param signature, GenericContext context)
 		{
-			ParameterDefinition ret = new ParameterDefinition (name, sequence, attrs, null);
 			TypeReference paramType;
 
-			if (psig.ByRef)
-				paramType = new ReferenceType (GetTypeRefFromSig (psig.Type, context));
-			else if (psig.TypedByRef)
+			if (signature.ByRef)
+				paramType = new ReferenceType (GetTypeRefFromSig (signature.Type, context));
+			else if (signature.TypedByRef)
 				paramType = SearchCoreType (Constants.TypedReference);
 			else
-				paramType = GetTypeRefFromSig (psig.Type, context);
+				paramType = GetTypeRefFromSig (signature.Type, context);
 
-			if (psig.CustomMods.Length > 0)
-				paramType = GetModifierType (psig.CustomMods, paramType);
+			if (signature.CustomMods.Length > 0)
+				paramType = GetModifierType (signature.CustomMods, paramType);
 
-			ret.ParameterType = paramType;
+			parameter.ParameterType = paramType;
+		}
 
-			return ret;
+		public ParameterDefinition BuildParameterDefinition (int sequence, Param psig, GenericContext context)
+		{
+			ParameterDefinition parameter = new ParameterDefinition (null);
+			parameter.Sequence = sequence;
+
+			CompleteParameter (parameter, psig, context);
+
+			return parameter;
+		}
+
+		public ParameterDefinition BuildParameterDefinition (string name, int sequence, ParameterAttributes attrs, Param psig, GenericContext context)
+		{
+			ParameterDefinition parameter = new ParameterDefinition (name, sequence, attrs, null);
+
+			CompleteParameter (parameter, psig, context);
+
+			return parameter;
 		}
 
 		protected SecurityDeclaration BuildSecurityDeclaration (DeclSecurityRow dsRow)
@@ -1010,11 +1037,10 @@ namespace Mono.Cecil {
 
 				for (int i = 0; i < funcptr.Method.ParamCount; i++) {
 					Param p = funcptr.Method.Parameters [i];
-					fnptr.Parameters.Add (BuildParameterDefinition (
-							string.Concat ("A_", i),
-							i, (ParameterAttributes) 0,
-							p, context));
+					fnptr.Parameters.Add (BuildParameterDefinition (i, p, context));
 				}
+
+				CreateSentinelIfNeeded (fnptr, funcptr.Method);
 
 				return fnptr;
 			case ElementType.Var:
@@ -1042,8 +1068,6 @@ namespace Mono.Cecil {
 						ginst.Signature.Types [i], context));
 
 				return instance;
-			case ElementType.Sentinel:
-				return new SentinelType ();
 			default:
 				break;
 			}

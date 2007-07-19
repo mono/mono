@@ -325,11 +325,10 @@ namespace Mono.Cecil.Cil {
 
 			for (int i = 0; i < ms.ParamCount; i++) {
 				Param p = ms.Parameters [i];
-				cs.Parameters.Add (m_reflectReader.BuildParameterDefinition (
-						string.Concat ("A_", i),
-						i, (ParameterAttributes) 0,
-						p, context));
+				cs.Parameters.Add (m_reflectReader.BuildParameterDefinition (i, p, context));
 			}
+
+			ReflectionReader.CreateSentinelIfNeeded (cs, ms);
 
 			return cs;
 		}
