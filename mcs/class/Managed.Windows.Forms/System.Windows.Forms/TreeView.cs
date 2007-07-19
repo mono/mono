@@ -33,7 +33,9 @@ using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
 #if NET_2_0
+	[ComVisible (true)]
 	[Docking (DockingBehavior.Ask)]
+	[ClassInterface (ClassInterfaceType.AutoDispatch)]
 #endif
 	[DefaultProperty("Nodes")]
 	[DefaultEvent("AfterSelect")]
@@ -61,6 +63,7 @@ namespace System.Windows.Forms {
 
 #if NET_2_0
 		private string image_key;
+		private bool right_to_left_layout;
 		private string selected_image_key;
 #endif
 		private bool full_row_select;
@@ -232,7 +235,7 @@ namespace System.Windows.Forms {
 		[DefaultValue (-1)]
 		[RelatedImageList ("ImageList")]
 		[RefreshProperties (RefreshProperties.Repaint)]
-		//[TypeConverter (typeof (NoneExcludedImageIndexConverter))]
+		[TypeConverter (typeof (NoneExcludedImageIndexConverter))]
 #else
 		[DefaultValue (0)]
 		[TypeConverter (typeof (TreeViewImageIndexConverter))]
@@ -323,11 +326,35 @@ namespace System.Windows.Forms {
 			get { return nodes; }
 		}
 
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public new Padding Padding {
+			get { return base.Padding; }
+			set { base.Padding = value; }
+		}
+#endif
+
 		[DefaultValue("\\")]
 		public string PathSeparator {
 			get { return path_separator; }
 			set { path_separator = value; }
 		}
+
+#if NET_2_0
+		[Localizable (true)]
+		[DefaultValue (false)]
+		public virtual bool RightToLeftLayout {
+			get { return right_to_left_layout; }
+			set { 
+				if (right_to_left_layout != value) {
+					right_to_left_layout = value;
+					OnRightToLeftLayoutChanged (EventArgs.Empty);	
+				}
+			}
+		}
+#endif
 
 		[DefaultValue(true)]
 		public bool Scrollable {
@@ -343,7 +370,7 @@ namespace System.Windows.Forms {
 #if NET_2_0
 		[DefaultValue (-1)]
 		[RelatedImageList ("ImageList")]
-		//[TypeConverter (typeof (NoneExcludedImageIndexConverter))]
+		[TypeConverter (typeof (NoneExcludedImageIndexConverter))]
 #else
 		[DefaultValue (0)]
 		[TypeConverter (typeof (TreeViewImageIndexConverter))]
@@ -582,6 +609,7 @@ namespace System.Windows.Forms {
 		[DefaultValue ("")]
 		[RelatedImageList ("ImageList")]
 		[RefreshProperties (RefreshProperties.Repaint)]
+		[TypeConverter (typeof (ImageKeyConverter))]
 		[Editor ("System.Windows.Forms.Design.ImageIndexEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		public string ImageKey {
 			get { return image_key; }
@@ -598,6 +626,7 @@ namespace System.Windows.Forms {
 		[DefaultValue ("")]
 		[RelatedImageList ("ImageList")]
 		[RefreshProperties (RefreshProperties.Repaint)]
+		[TypeConverter (typeof (ImageKeyConverter))]
 		[Editor ("System.Windows.Forms.Design.ImageIndexEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		public string SelectedImageKey {
 			get { return selected_image_key; }
@@ -938,6 +967,13 @@ namespace System.Windows.Forms {
 			DrawTreeNodeEventHandler eh = (DrawTreeNodeEventHandler)(Events[DrawNodeEvent]);
 			if (eh != null)
 				eh(this, e);
+		}
+		
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected virtual void OnRightToLeftLayoutChanged (EventArgs e) {
+			EventHandler eh = (EventHandler)(Events[RightToLeftLayoutChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 #endif
 
@@ -1992,6 +2028,7 @@ namespace System.Windows.Forms {
 		static object DrawNodeEvent = new object ();
 		static object NodeMouseClickEvent = new object ();
 		static object NodeMouseDoubleClickEvent = new object();
+		static object RightToLeftLayoutChangedEvent = new object ();
 #endif
 
 		public event ItemDragEventHandler ItemDrag {
@@ -2065,6 +2102,11 @@ namespace System.Windows.Forms {
 			add { Events.AddHandler (NodeMouseDoubleClickEvent, value); }
 			remove { Events.RemoveHandler (NodeMouseDoubleClickEvent, value); }
 		}
+		
+		public event EventHandler RightToLeftLayoutChanged {
+			add { Events.AddHandler (RightToLeftLayoutChangedEvent, value); }
+			remove { Events.RemoveHandler (RightToLeftLayoutChangedEvent, value); }
+		}
 #endif
 
 		[Browsable (false)]
@@ -2073,6 +2115,22 @@ namespace System.Windows.Forms {
 			add { base.BackgroundImageChanged += value; }
 			remove { base.BackgroundImageChanged -= value; }
 		}
+
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler BackgroundImageLayoutChanged {
+			add { base.BackgroundImageLayoutChanged += value; }
+			remove { base.BackgroundImageLayoutChanged -= value; }
+		}
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler PaddingChanged {
+			add { base.PaddingChanged += value; }
+			remove { base.PaddingChanged -= value; }
+		}
+#endif
 
 		[EditorBrowsable (EditorBrowsableState.Never)]	
 		[Browsable (false)]

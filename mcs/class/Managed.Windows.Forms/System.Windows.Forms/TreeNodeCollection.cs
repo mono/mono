@@ -101,6 +101,18 @@ namespace System.Windows.Forms {
 			}
 		}
 
+#if NET_2_0
+		public virtual TreeNode this [string key] {
+			get {
+				for (int i = 0; i < count; i++)
+					if (string.Compare (key, nodes[i].Name, true) == 0)
+						return nodes[i];
+						
+				return null;
+			}
+		}
+#endif
+
 		public virtual TreeNode Add (string text)
 		{
 			TreeNode res = new TreeNode (text);
@@ -208,7 +220,7 @@ namespace System.Windows.Forms {
 			return (Array.BinarySearch (nodes, node) > 0);
 		}
 #if NET_2_0
-		public bool ContainsKey (string key)
+		public virtual bool ContainsKey (string key)
 		{
 			for (int i = 0; i < count; i++) {
 				if (string.Compare (nodes [i].Name, key, true, CultureInfo.InvariantCulture) == 0)
@@ -234,13 +246,20 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
-		public int IndexOfKey (string key)
+		public virtual int IndexOfKey (string key)
 		{
 			for (int i = 0; i < count; i++) {
 				if (string.Compare (nodes [i].Name, key, true, CultureInfo.InvariantCulture) == 0)
 					return i;
 			}
 			return -1;
+		}
+		
+		public virtual TreeNode Insert (int index, string text)
+		{
+			TreeNode node = new TreeNode (text);
+			Insert (index, node);
+			return node;
 		}
 #endif
 
@@ -255,6 +274,52 @@ namespace System.Windows.Forms {
 
 			SetupNode (node);
 		}
+
+#if NET_2_0
+		public virtual TreeNode Insert (int index, string key, string text)
+		{
+			TreeNode node = new TreeNode (text);
+			node.Name = key;
+			Insert (index, node);
+			return node;
+		}
+
+		public virtual TreeNode Insert (int index, string key, string text, int imageIndex)
+		{
+			TreeNode node = new TreeNode (text);
+			node.Name = key;
+			node.ImageIndex = imageIndex;
+			Insert (index, node);
+			return node;
+		}
+
+		public virtual TreeNode Insert (int index, string key, string text, string imageKey)
+		{
+			TreeNode node = new TreeNode (text);
+			node.Name = key;
+			node.ImageKey = imageKey;
+			Insert (index, node);
+			return node;
+		}
+
+		public virtual TreeNode Insert (int index, string key, string text, int imageIndex, int selectedImageIndex)
+		{
+			TreeNode node = new TreeNode (text, imageIndex, selectedImageIndex);
+			node.Name = key;
+			Insert (index, node);
+			return node;
+		}
+
+		public virtual TreeNode Insert (int index, string key, string text, string imageKey, string selectedImageKey)
+		{
+			TreeNode node = new TreeNode (text);
+			node.Name = key;
+			node.ImageKey = imageKey;
+			node.SelectedImageKey = selectedImageKey;
+			Insert (index, node);
+			return node;
+		}
+#endif
 
 		public void Remove (TreeNode node)
 		{
@@ -319,6 +384,16 @@ namespace System.Windows.Forms {
 				tree_view.UpdateBelow (parent);
 			}
 		}
+
+#if NET_2_0
+		public virtual void RemoveByKey (string key)
+		{
+			TreeNode node = this[key];
+			
+			if (node != null)
+				Remove (node);
+		}
+#endif
 
 		private TreeNode GetPrevNode (TreeNode node)
 		{

@@ -1,3 +1,9 @@
+2007-07-19  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TreeNode.cs: Add some corcompare attributes.
+	* TreeNodeCollection.cs: Implement 2.0 stuffs.
+	* TreeView.cs: Implement some 2.0 stuffs.
+
 2007-07-18  Andreia Gaita  <avidigal@novell.com>
 
 	* WebBrowser.cs, WebBrowserBase.cs: add some more MonoTODOs now

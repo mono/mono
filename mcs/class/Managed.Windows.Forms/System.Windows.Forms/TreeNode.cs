@@ -343,6 +343,7 @@ namespace System.Windows.Forms {
 		[Localizable(true)]
 		[DefaultValue ("")]
 		[RelatedImageList ("TreeView.ImageList")]
+		[TypeConverter (typeof (TreeViewImageKeyConverter))]
 		[RefreshProperties (RefreshProperties.Repaint)]
 		[Editor ("System.Windows.Forms.Design.ImageIndexEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		public string ImageKey {
@@ -564,6 +565,7 @@ namespace System.Windows.Forms {
 		[Localizable (true)]
 		[DefaultValue ("")]
 		[RelatedImageList ("TreeView.ImageList")]
+		[TypeConverter (typeof (TreeViewImageKeyConverter))]
 		[RefreshProperties (RefreshProperties.Repaint)]
 		[Editor ("System.Windows.Forms.Design.ImageIndexEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		public string SelectedImageKey {
