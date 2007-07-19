@@ -49,7 +49,7 @@ namespace Microsoft.Win32.SafeHandles {
 		{
 			MonoIOError error;
 			
-			MonoIO.Close (DangerousGetHandle (), out error);
+			MonoIO.Close (handle, out error);
 
 			return error == MonoIOError.ERROR_SUCCESS;
 		}

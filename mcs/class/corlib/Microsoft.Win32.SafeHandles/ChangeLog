@@ -1,3 +1,10 @@
+2007-07-18  Miguel de Icaza  <miguel@novell.com>
+
+	* SafeWaitHandle.cs: Do not call DangerousGetHandle here as it
+	throws ObjectDisposedException when the refcount reaches zero. 
+
+	* SafeFileHandle.cs: Same.
+
 2007-05-12  Jonathan Chambers  <joncham@gmail.com>
 
 	* SafeWaitHandle.cs: Add internal empty

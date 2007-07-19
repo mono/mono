@@ -45,7 +45,7 @@ namespace Microsoft.Win32.SafeHandles {
 
 		protected override bool ReleaseHandle ()
 		{
-			NativeEventCalls.CloseEvent_internal (DangerousGetHandle ());
+			NativeEventCalls.CloseEvent_internal (handle);
 			return true;
 		}
 
