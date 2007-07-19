@@ -1,3 +1,8 @@
+2007-07-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MonoMethod.cs : ToString() did not show correct return type when
+	  it is generic.
+
 2007-07-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* FieldInfo.cs: Implement GetOptional/RequiredCustomModifiers ().

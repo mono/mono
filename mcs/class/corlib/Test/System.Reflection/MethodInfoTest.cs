@@ -193,6 +193,15 @@ namespace MonoTests.System.Reflection
 				this.GetType ().GetMethod ("HeyHey").ToString ());
 		}
 
+#if NET_2_0
+		[Test]
+		public void ToStringGenericMethod ()
+		{
+			Assert.AreEqual ("System.Collections.ObjectModel.ReadOnlyCollection`1[T] AsReadOnly[T](.T[])",
+				typeof (Array).GetMethod ("AsReadOnly").ToString ());
+		}
+#endif
+
 		class GBD_A         { public virtual     void f () {} }
 		class GBD_B : GBD_A { public override    void f () {} }
 		class GBD_C : GBD_B { public override    void f () {} }

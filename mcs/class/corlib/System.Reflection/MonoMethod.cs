@@ -240,11 +240,10 @@ namespace System.Reflection {
 
 		public override string ToString () {
 			StringBuilder sb = new StringBuilder ();
-			if (ReturnType.IsClass && ReturnType.Namespace != String.Empty) {
-				sb.Append (ReturnType.Namespace);
-				sb.Append (".");
-			}
-			sb.Append (ReturnType.Name);
+			if (ReturnType.IsClass)
+				sb.Append (ReturnType.ToString ());
+			else
+				sb.Append (ReturnType.Name);
 			sb.Append (" ");
 			sb.Append (Name);
 #if NET_2_0 || BOOTSTRAP_NET_2_0
