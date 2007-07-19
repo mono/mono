@@ -39,12 +39,14 @@ namespace System.Windows.Forms
     public abstract class WebBrowserBase : Control
 	{
 		#region Public Properties
+		[MonoTODO ("Stub, not implemented")]
 		[Browsable (false)] 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public Object ActiveXInstance {
 			get { throw new NotImplementedException (); }
 		}
 
+		[MonoTODO ("Stub, not implemented")]
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public override bool AllowDrop {

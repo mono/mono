@@ -52,107 +52,129 @@ namespace System.Windows.Forms
 
 		#region Public Properties
 
+		[MonoTODO ("Stub, not implemented")]
 		[DefaultValue(true)]
 		public bool AllowNavigation {
 			get { return allowNavigation; }
 			set { allowNavigation = value; } 
 		}
 
+		[MonoTODO ("Stub, not implemented")]
 		[DefaultValue (true)]
 		public bool AllowWebBrowserDrop {
 			get { return allowWebBrowserDrop; }
 			set { allowWebBrowserDrop = value; }
 		}
 
+		[MonoTODO ("Stub, not implemented")]
 		[DefaultValue (true)]
 		public bool CanGoBack {
 			get { return canGoBack; }
 		}
 
+		[MonoTODO ("Stub, not implemented")]
 		[DefaultValue (true)]
 		public bool CanGoForward {
 			get { return canGoForward; }
 		}
 
+		[MonoTODO ("Stub, not implemented")]
 		public HtmlDocument Document {
 			get { throw new NotImplementedException (); }
 		}
 
+		[MonoTODO ("Stub, not implemented")]
 		public Stream DocumentStream {
 			get { return null; }
 			set { throw new NotSupportedException (); }
 		}
-		
+
+		[MonoTODO ("Stub, not implemented")]
 		public string DocumentText {
 			get { return String.Empty; }
 			set { throw new NotSupportedException (); }
 		}
 
+		[MonoTODO ("Stub, not implemented")]
 		public string DocumentTitle {
 			get { return String.Empty; }
 			set { throw new NotSupportedException (); }
 		}
 
+		[MonoTODO ("Stub, not implemented")]
 		public string DocumentType {
 			get { return String.Empty; }
 			set { throw new NotSupportedException (); }
 		}
 
+		[MonoTODO ("Stub, not implemented")]
 		public WebBrowserEncryptionLevel EncryptionLevel {
 			get { return WebBrowserEncryptionLevel.Unknown; }
 		}
 
+		[MonoTODO ("Stub, not implemented")]
 		public override bool Focused {
 			get { return base.Focused; }
 		}
 
+		[MonoTODO ("Stub, not implemented")]
 		public bool IsBusy {
 			get { return false; }
 		}
 
+		[MonoTODO ("Stub, not implemented")]
 		public bool IsOffline {
 			get { return true; }
 		}
 
+		[MonoTODO ("Stub, not implemented")]
 		public bool IsWebBrowserContextMenuEnabled { 
 			get { return isWebBrowserContextMenuEnabled; } 
 			set { isWebBrowserContextMenuEnabled = value; } 
 		}
 
+		[MonoTODO ("Stub, not implemented")]
 		public object ObjectForScripting {
 			get { return objectForScripting; }
 			set { objectForScripting = value; }
 		}
 
+		[MonoTODO ("Stub, not implemented")]
 		public WebBrowserReadyState ReadyState { 
 			get { return WebBrowserReadyState.Uninitialized; }
 		}
 
+		[MonoTODO ("Stub, not implemented")]
 		public bool ScriptErrorsSuppressed {
 			get { return scriptErrorsSuppressed; }
 			set { scriptErrorsSuppressed = value; }
 		}
 
+		[MonoTODO ("Stub, not implemented")]
 		public bool ScrollBarsEnabled {
 			get { return scrollBarsEnabled; }
 			set { scrollBarsEnabled = value; }
 		}
 
+		[MonoTODO ("Stub, not implemented")]
 		public virtual string StatusText {
 			get { return statusText; }
 			set { statusText = value; }
 		}
 
+		[MonoTODO ("Stub, not implemented")]
 		[BindableAttribute(true)] 
 		public Uri Url {
 			get { return null; }
 			set { throw new NotSupportedException (); }
 		}
-		
+
+		[MonoTODO ("Stub, not implemented")]
 		public Version Version {
 			get { return null; }
 		}
 
+		[MonoTODO ("Stub, not implemented")]
 		public bool WebBrowserShortcutsEnabled {
 			get { return webBrowserShortcutsEnabled; }
 			set { webBrowserShortcutsEnabled = value; }
@@ -160,6 +182,7 @@ namespace System.Windows.Forms
 
 		#endregion
 
+		[MonoTODO ("Stub, not implemented")]
 		public WebBrowser ()
 		{
 		}
@@ -275,36 +298,43 @@ namespace System.Windows.Forms
 
 
 		#region Protected Overridden Methods
+		[MonoTODO ("Stub, not implemented")]
 		protected override void AttachInterfaces (object nativeActiveXObject)
 		{
 			base.AttachInterfaces (nativeActiveXObject);
 		}
 
+		[MonoTODO ("Stub, not implemented")]
 		protected override void CreateSink ()
 		{
 			base.CreateSink ();
 		}
 
+		[MonoTODO ("Stub, not implemented")]
 		protected override WebBrowserSiteBase CreateWebBrowserSiteBase ()
 		{
 			return base.CreateWebBrowserSiteBase ();
 		}
 
+		[MonoTODO ("Stub, not implemented")]
 		protected override void DetachInterfaces ()
 		{
 			base.DetachInterfaces ();
 		}
 
+		[MonoTODO ("Stub, not implemented")]
 		protected override void DetachSink ()
 		{
 			base.DetachSink ();
 		}
 
+		[MonoTODO ("Stub, not implemented")]
 		protected override void Dispose (bool disposing)
 		{
 			base.Dispose (disposing);
 		}
 
+		[MonoTODO ("Stub, not implemented")]
 		protected override void WndProc (ref Message m)
 		{
 			base.WndProc (ref m);
@@ -460,8 +490,10 @@ namespace System.Windows.Forms
 		#endregion
 
 
+		[MonoTODO ("Stub, not implemented")]
 		protected class WebBrowserSite : WebBrowserSiteBase
 		{
+			[MonoTODO ("Stub, not implemented")]
 			public WebBrowserSite (WebBrowser host)
 				: base ()
 			{
