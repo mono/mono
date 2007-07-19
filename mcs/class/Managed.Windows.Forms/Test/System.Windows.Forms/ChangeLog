@@ -1,5 +1,9 @@
 2007-07-18  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ToolStripTest.cs: One of my notworking tests slipped out.
+
+2007-07-18  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ListBoxTest.cs, MenuStripTest.cs, ToolStripComboBoxTest.cs,
 	ToolStripContentPanelTest.cs, ToolStripControlHostTest.cs,
 	ToolStripDropDownTest.cs, ToolStripProgressBarTest.cs,

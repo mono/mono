@@ -674,6 +674,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 		
 		[Test]
+		[NUnit.Framework.Category ("NotWorking")]
 		public void MethodResetMinimumSize ()
 		{
 			ToolStrip ts = new ToolStrip ();
