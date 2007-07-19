@@ -1,3 +1,7 @@
+2007-07-19  Mark Probst  <mark.probst@gmail.com>
+
+	* class.c (concat_two_strings_with_zero): Fixed a silly bug.
+
 2007-07-19  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c: several stack merge issues fixed, reference comparisons now
