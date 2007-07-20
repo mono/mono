@@ -1,5 +1,9 @@
 2007-07-20  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* AppDomainSetup.cs : fix serialization regression.
+
+2007-07-20  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* AppDomainSetup.cs :
 	  MonoTODO AppDomainInitializer as its implementation is wrong.
 

@@ -34,6 +34,7 @@
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Security;
 
 #if NET_2_0
 using System.Runtime.Hosting;
@@ -68,14 +69,15 @@ namespace System
 		// those fields also exist in the runtime, so we need dummies in 1.x profile too.
 #if NET_2_0
 		private ActivationArguments _activationArguments;
-		ApplicationTrust application_trust;
 		AppDomainInitializer domain_initializer;
+		[NonSerialized]
+		ApplicationTrust application_trust;
 #else
 		object _activationArguments;
-		object application_trust; // always null
 		object domain_initializer; // always null
 #endif
 		string [] domain_initializer_args;
+		SecurityElement application_trust_xml;
 		bool disallow_appbase_probe;
 		byte [] configuration_bytes;
 
@@ -104,7 +106,7 @@ namespace System
 			_activationArguments = setup._activationArguments;
 			domain_initializer = setup.domain_initializer;
 			domain_initializer_args = setup.domain_initializer_args;
-			application_trust = setup.application_trust;
+			application_trust_xml = setup.application_trust_xml;
 			disallow_appbase_probe = setup.disallow_appbase_probe;
 			configuration_bytes = setup.configuration_bytes;
 //#endif
@@ -313,8 +315,22 @@ namespace System
 
 		[MonoNotSupported ("This property exists but not considered.")]
 		public ApplicationTrust ApplicationTrust {
-			get { return application_trust; }
-			set { application_trust = value; }
+			get {
+				if (application_trust_xml == null)
+					return null;
+				if (application_trust == null)
+					application_trust = new ApplicationTrust ();
+				return application_trust;
+			}
+			set {
+				application_trust = value;
+				if (value != null) {
+					application_trust_xml = value.ToXml ();
+					application_trust.FromXml (application_trust_xml);
+				}
+				else
+					application_trust_xml = null;
+			}
 		}
 
 		[MonoNotSupported ("This property exists but not considered.")]
