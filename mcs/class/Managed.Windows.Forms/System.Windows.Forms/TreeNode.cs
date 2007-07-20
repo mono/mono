@@ -44,6 +44,8 @@ namespace System.Windows.Forms {
 		private int image_index = -1;
 		private int selected_image_index = -1;
 #if NET_2_0
+		private ContextMenu context_menu;
+		private ContextMenuStrip context_menu_strip;
 		private string image_key = String.Empty;
 		private string selected_image_key = String.Empty;
 		private int state_image_index = -1;
@@ -282,6 +284,18 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
+		[DefaultValue (null)]
+		public virtual ContextMenu ContextMenu {
+			get { return context_menu; }
+			set { context_menu = value; }
+		}
+		
+		[DefaultValue (null)]
+		public virtual ContextMenuStrip ContextMenuStrip {
+			get { return context_menu_strip; }
+			set { context_menu_strip = value; }
+		}
+		
 		[Browsable (false)]
 #endif
 		public TreeNode FirstNode {
@@ -446,6 +460,11 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
+		[Browsable (false)]
+		public int Level {
+			get { return IndentLevel; }
+		}
+		
 		public string Name
 		{
 			get { return this.name; }

@@ -1067,6 +1067,13 @@ namespace System.Windows.Forms {
 								2, val & 0xffff,
 								(val>>16) & 0xffff, 0));
 					break;
+#if NET_2_0
+				case Msg.WM_CONTEXTMENU:
+					if (WmContextMenu (ref m))
+						return;
+						
+					break;
+#endif
 			}
 			base.WndProc (ref m);
 		}
@@ -2046,6 +2053,44 @@ namespace System.Windows.Forms {
 					(r.Top > top + height) || (r.Bottom < top));
 		}
 
+#if NET_2_0
+		// Return true if message was handled, false to send it to base
+		private bool WmContextMenu (ref Message m)
+		{
+			Point pt;
+			TreeNode tn;
+			
+			pt = new Point (LowOrder ((int)m.LParam.ToInt32 ()), HighOrder ((int)m.LParam.ToInt32 ()));
+
+			// This means it's a keyboard menu request
+			if (pt.X == -1 || pt.Y == -1) {
+				tn = SelectedNode;
+				
+				if (tn == null)
+					return false;
+				
+				pt = new Point (tn.Bounds.Left, tn.Bounds.Top + (tn.Bounds.Height / 2));
+			} else {
+				pt = PointToClient (pt);
+				
+				tn = GetNodeAt (pt);
+
+				if (tn == null)
+					return false;
+			}
+			
+			// At this point, we have a valid TreeNode
+			if (tn.ContextMenu != null) {
+				tn.ContextMenu.Show (this, pt);
+				return true;
+			} else if (tn.ContextMenuStrip != null) {
+				tn.ContextMenuStrip.Show (this, pt);
+				return true;
+			}
+			
+			return true;
+		}
+#endif
 		#endregion	// Internal & Private Methods and Properties
 
 		#region Events
