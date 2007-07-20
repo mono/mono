@@ -46,6 +46,8 @@ namespace System.Windows.Forms {
 #if NET_2_0
 		private string image_key = String.Empty;
 		private string selected_image_key = String.Empty;
+		private int state_image_index = -1;
+		private string state_image_key = String.Empty;
 #endif
         internal TreeNodeCollection nodes;
 		internal TreeViewAction check_reason = TreeViewAction.Unknown;
@@ -218,6 +220,10 @@ namespace System.Windows.Forms {
 			int indent_level = IndentLevel;
 			int roots = (TreeView.ShowRootLines ? 1 : 0);
 			int cb = (TreeView.CheckBoxes ? 19 : 0);
+#if NET_2_0
+			if (!TreeView.CheckBoxes && StateImage != null)
+				cb = 19;
+#endif
 			int imgs = (TreeView.ImageList != null ?  TreeView.ImageList.ImageSize.Width + 3 : 0);
 			return ((indent_level + roots) * TreeView.Indent) + cb + imgs - TreeView.hbar_offset;
 		}
@@ -230,7 +236,11 @@ namespace System.Windows.Forms {
 
 		internal int GetImageX ()
 		{
+#if NET_2_0
+			return GetLinesX () + (TreeView.CheckBoxes || StateImage != null ? 19 : 0);
+#else
 			return GetLinesX () + (TreeView.CheckBoxes ? 19 : 0);
+#endif
 		}
 
 		// In theory we should be able to track this instead of computing
@@ -571,6 +581,40 @@ namespace System.Windows.Forms {
 		public string SelectedImageKey {
 			get { return selected_image_key; }
 			set { selected_image_key = value; }
+		}
+
+		[Localizable (true)]
+		[DefaultValue (-1)]
+		[RelatedImageList ("TreeView.StateImageList")]
+		[TypeConverter (typeof (NoneExcludedImageIndexConverter))]
+		[RefreshProperties (RefreshProperties.Repaint)]
+		[Editor ("System.Windows.Forms.Design.ImageIndexEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
+		public int StateImageIndex {
+			get { return state_image_index; }
+			set {
+				if (state_image_index != value) {
+					state_image_index = value;
+					state_image_key = string.Empty;
+					InvalidateWidth ();				
+				}
+			}
+		}
+
+		[Localizable (true)]
+		[DefaultValue ("")]
+		[RelatedImageList ("TreeView.StateImageList")]
+		[TypeConverter (typeof (ImageKeyConverter))]
+		[RefreshProperties (RefreshProperties.Repaint)]
+		[Editor ("System.Windows.Forms.Design.ImageIndexEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
+		public string StateImageKey {
+			get { return state_image_key; }
+			set {
+				if (state_image_key != value) {
+					state_image_key = value;
+					state_image_index = -1;
+					InvalidateWidth ();
+				}
+			}
 		}
 #endif
 
@@ -942,6 +986,21 @@ namespace System.Windows.Forms {
 				return true;
 			}
 		}
+
+#if NET_2_0
+		internal Image StateImage {
+			get {
+				if (TreeView != null) {
+					if (state_image_index >= 0)
+						return TreeView.StateImageList.Images[state_image_index];
+					if (state_image_key != string.Empty)
+						return TreeView.StateImageList.Images[state_image_key];				
+				}
+				
+				return null;
+			}
+		}
+#endif
 		#endregion	// Internal & Private Methods and Properties
 
 	}

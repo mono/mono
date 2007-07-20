@@ -65,6 +65,7 @@ namespace System.Windows.Forms {
 		private string image_key;
 		private bool right_to_left_layout;
 		private string selected_image_key;
+		private ImageList state_image_list;
 #endif
 		private bool full_row_select;
 		private bool hot_tracking;
@@ -516,6 +517,17 @@ namespace System.Windows.Forms {
 #endif
 			}
 		}
+
+#if NET_2_0
+		[DefaultValue (null)]
+		public ImageList StateImageList {
+			get { return state_image_list; }
+			set { 
+				state_image_list = value;
+				Invalidate ();
+			}
+		}
+#endif
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
@@ -1343,6 +1355,19 @@ namespace System.Windows.Forms {
 			}
 		}
 
+#if NET_2_0
+		private void DrawNodeState (TreeNode node, Graphics dc, int x, int y)
+		{
+			if (node.Checked) {
+				if (StateImageList.Images[1] != null)
+					dc.DrawImage (StateImageList.Images[1], new Rectangle (x, y, 16, 16));
+			} else {
+				if (StateImageList.Images[0] != null)
+					dc.DrawImage (StateImageList.Images[0], new Rectangle (x, y, 16, 16));
+			}
+		}
+#endif
+
 		private void DrawNodeCheckBox (TreeNode node, Graphics dc, int x, int middle)
 		{
 			Pen pen = ThemeEngine.Current.ResPool.GetSizedPen(Color.Black, 2);
@@ -1574,8 +1599,19 @@ namespace System.Windows.Forms {
 				if ((show_root_lines || node.Parent != null) && show_plus_minus && child_count > 0)
 					DrawNodePlusMinus (node, dc, node.GetLinesX () - Indent + 5, middle);
 
+#if NET_2_0
+				if (checkboxes && state_image_list == null)
+					DrawNodeCheckBox (node, dc, CheckBoxLeft (node) - 3, middle);
+
+				if (checkboxes && state_image_list != null)
+					DrawNodeState (node, dc, CheckBoxLeft (node) - 3, y);
+
+				if (!checkboxes && node.StateImage != null)
+					dc.DrawImage (node.StateImage, new Rectangle (CheckBoxLeft (node) - 3, y, 16, 16));
+#else
 				if (checkboxes)
 					DrawNodeCheckBox (node, dc, CheckBoxLeft (node) - 3, middle);
+#endif
 
 				if (show_lines)
 					DrawNodeLines (node, dc, clip, dash, node.GetLinesX (), y, middle);
