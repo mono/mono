@@ -23,6 +23,79 @@ namespace MonoTests.System.Windows.Forms
 	[TestFixture]
 	public class FormTest
 	{
+		[Test] // bug 81969
+		public void StartPositionClosedForm ()
+		{
+			using (Form form = new Form ()) {
+				form.StartPosition = FormStartPosition.CenterParent;
+				form.Load += new EventHandler (CenterDisposedForm_Load);
+				form.Show ();
+			}
+
+			using (Form form = new Form ()) {
+				form.StartPosition = FormStartPosition.CenterScreen;
+				form.Load += new EventHandler (CenterDisposedForm_Load);
+				form.Show ();
+			}
+
+
+			using (Form form = new Form ()) {
+				form.StartPosition = FormStartPosition.Manual;
+				form.Load += new EventHandler (CenterDisposedForm_Load);
+				form.Show ();
+			}
+
+
+			using (Form form = new Form ()) {
+				form.StartPosition = FormStartPosition.WindowsDefaultBounds;
+				form.Load += new EventHandler (CenterDisposedForm_Load);
+				form.Show ();
+			}
+
+			using (Form form = new Form ()) {
+				form.StartPosition = FormStartPosition.WindowsDefaultLocation;
+				form.Load += new EventHandler (CenterDisposedForm_Load);
+				form.Show ();
+			}
+		}
+		
+		
+		[Test] 
+		[ExpectedException (typeof (ObjectDisposedException))]
+		public void CenterToParentDisposedForm ()
+		{
+			using (FormHandleTest.ProtectedMethodsForm form = new FormHandleTest.ProtectedMethodsForm ()) {
+				form.Dispose ();
+				form.PublicCenterToParent ();
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ObjectDisposedException))]
+		public void CenterToScreenDisposedForm ()
+		{
+			using (FormHandleTest.ProtectedMethodsForm form = new FormHandleTest.ProtectedMethodsForm ()) {
+				form.Dispose ();
+				form.PublicCenterToScreen ();
+			}
+		}
+
+		[Test]
+		public void SetStartPositionDisposedForm ()
+		{
+			using (FormHandleTest.ProtectedMethodsForm form = new FormHandleTest.ProtectedMethodsForm ()) {
+				form.Dispose ();
+				form.StartPosition = FormStartPosition.WindowsDefaultLocation;
+			}
+		}
+
+		private void CenterDisposedForm_Load (object sender, EventArgs e)
+		{
+			((Form) sender).Close ();
+		}
+		
+		
+		
 		[Test]
 		public void ShowDialogCloseTest ()
 		{

@@ -900,7 +900,7 @@ namespace MonoTests.System.Windows.Forms
 			c.Invoke (new InvokeDelegate (InvokeMethod));
 		}
 
-		private class ProtectedPropertyForm : Form
+		public class ProtectedPropertyForm : Form
 		{
 #if NET_2_0
 			public SizeF PublicAutoScaleFactor { get { return base.AutoScaleFactor; } } 
@@ -1163,7 +1163,7 @@ namespace MonoTests.System.Windows.Forms
 			c.Dispose ();
 		}
 
-		private class ProtectedMethodsForm : Form
+		public class ProtectedMethodsForm : Form
 		{
 			public void PublicAccessibilityNotifyClients (AccessibleEvents accEvent, int childID) { base.AccessibilityNotifyClients (accEvent, childID); }
 			public void PublicActivateMdiChild (Form form) { base.ActivateMdiChild (form); }

@@ -1,5 +1,11 @@
 2007-07-20  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* FormHandleTest.cs: Make a couple of classes public, so that other
+	  tests can use them.
+	* FormTest.cs: Added tests for #81969.
+
+2007-07-20  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* ComboBoxTests.cs, ComboBoxTest.cs: Unified ComboBoxTest.cs and
 	  ComboBoxTests.cs, deleted ComboBoxTests.cs
 
