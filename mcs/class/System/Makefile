@@ -68,12 +68,14 @@ endif
 
 MISSING_DEPS := $(filter-out $(notdir $(CYCLIC_DEP_FILES)), $(CYCLIC_DEPS))
 ifdef MISSING_DEPS
+ifneq (net_2_1, $(PROFILE))
 NO_SIGN_ASSEMBLY = yes
 NO_INSTALL = yes
 all-local: echo-warning
 .PHONY: echo-warning
 echo-warning:
 	@echo "** Warning: System.dll built without parts that depend on: $(MISSING_DEPS)"
+endif
 endif
 
 include ../../build/library.make
