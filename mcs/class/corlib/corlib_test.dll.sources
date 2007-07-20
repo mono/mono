@@ -346,6 +346,7 @@ System/EnvironmentCas.cs
 System/ExceptionCas.cs
 System/MarshalByRefObjectCas.cs
 System/RuntimeMethodHandleCas.cs
+System/RuntimeMethodHandleTest.cs
 System/TypedReferenceCas.cs
 System.Diagnostics/StackFrameCas.cs
 System.Diagnostics/StackTraceCas.cs

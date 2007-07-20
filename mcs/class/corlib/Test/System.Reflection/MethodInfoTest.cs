@@ -287,6 +287,20 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
+		public void GetMethodFromHandle_Generic ()
+		{
+			MethodHandleTest<int> test = new MethodHandleTest<int> ();
+			RuntimeMethodHandle mh = test.GetType ().GetProperty ("MyList")
+				.GetGetMethod ().MethodHandle;
+			MethodBase mb = MethodInfo.GetMethodFromHandle (mh,
+				typeof (MethodHandleTest<int>).TypeHandle);
+			Assert.IsNotNull (mb, "#1");
+			List<int> list = (List<int>) mb.Invoke (test, null);
+			Assert.IsNotNull (list, "#2");
+			Assert.AreEqual (1, list.Count, "#3");
+		}
+
+		[Test]
 		public void ReturnParameter ()
 		{
 			ParameterInfo pi = typeof (MethodInfoTest).GetMethod ("return_parameter_test").ReturnParameter;
@@ -501,6 +515,20 @@ namespace MonoTests.System.Reflection
 		{
 		}
 	}
+
+	public class MethodHandleTest<T>
+	{
+		private List<T> _myList = new List<T> ();
+
+		public MethodHandleTest ()
+		{
+			_myList.Add (default (T));
+		}
+
+		public List<T> MyList {
+			get { return _myList; }
+			set { _myList = value; }
+		}
+	}
 #endif
 }
-

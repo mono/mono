@@ -1,3 +1,7 @@
+2007-07-20  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* MethodInfoTest.cs: Added GetMethodFromHandle test for generic type.
+
 2007-07-20  Raja R Harinath  <rharinath@novell.com>
 
 	* MethodInfoTest.cs (GetGenericMethodDefinition): New.  Based on
