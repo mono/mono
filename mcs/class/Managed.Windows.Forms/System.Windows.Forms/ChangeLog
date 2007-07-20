@@ -1,3 +1,23 @@
+2007-07-20  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* PropertyGrid.cs: PropertyToolBar: Redraw the entire toolbar when it's
+	  resized, fixes part of #79829 (vertical lines in toolbar).
+	  PropertyGrid: Refactored Populate* to something that's easier to
+	  follow at least for me, as well as splitting it up into several new
+	  methods, required to update only subitems when something has
+	  changed by a popup editor or listbox. Don't use events to check
+	  when any values are changed, since the events are unreliable (we're
+	  changing the objects the events are registered with, and if the
+	  event handling requires the objects to be immutable (objects stored
+	  in hashtables for instance), the events will never be raised).
+	* PropertyGridView.cs: Call PropertyGrid.PropertyValueChangedInternal
+	  everytime we change a value, since events are unreliable.
+	  DropDownButtonClicked: For the same reason don't compare objects to
+	  check if it has changed or not, it would require all objects to
+	  derive Equals. Fix dialog location on windows, MS is doing weird
+	  things when creating parented forms.
+	* GridEntry.cs: Add a SelectedObject setter.
+
 2007-07-19  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TreeNode.cs: Add some corcompare attributes.

@@ -742,8 +742,8 @@ namespace System.Windows.Forms.PropertyGridInternal {
 							Console.WriteLine("No converter for type {0}",desc.PropertyType);
 						}
 					}
-					catch (Exception) {
-						Console.WriteLine("Error converting string");
+					catch (Exception ex) {
+						Console.WriteLine("Error converting string: " + ex.Message);
 					}
 				}
 			}
@@ -812,6 +812,8 @@ namespace System.Windows.Forms.PropertyGridInternal {
 				object target = property_grid.GetTarget (property_grid.SelectedGridItem, i);
 				desc.SetValue(target, newVal);
 			}
+
+			property_grid.PropertyValueChangedInternal ();
 		}
 
 		private void DropDownButtonClicked (object sender, EventArgs e) {
@@ -863,9 +865,8 @@ namespace System.Windows.Forms.PropertyGridInternal {
 				(ITypeDescriptorContext)property_grid.SelectedGridItem,
 				service_container,
 				initial_value);
-			if (!Object.Equals (value, initial_value)) {
-				SetPropertyValue (value);
-			}
+
+			SetPropertyValue (value);
 		}
 		
 		private void DialogButtonClicked(object sender, EventArgs e) {
@@ -1047,17 +1048,23 @@ namespace System.Windows.Forms.PropertyGridInternal {
 
 			Form owner = FindForm ();
 
+			Point location;
 			dropdown_form.Size = control.Size;
 			control.Dock = DockStyle.Fill;
 			dropdown_form.Controls.Clear();
 			dropdown_form.Controls.Add(control);
-			dropdown_form.Location = PointToScreen(new Point(SplitterLocation,grid_textbox.Location.Y+row_height));
+			dropdown_form.Location = PointToScreen (new Point (SplitterLocation, grid_textbox.Location.Y + row_height));
+			location = dropdown_form.Location;
+
 			dropdown_form.Width = ClientRectangle.Width - SplitterLocation - (vbar.Visible ? vbar.Width : 0);
 
 			owner.AddOwnedForm (dropdown_form);
 
 			dropdown_form.Show();
 
+			if (dropdown_form.Location != location) {
+				dropdown_form.Location = location;
+			}
 			if (block) {
 				System.Windows.Forms.MSG msg = new MSG();
 				queue_id = XplatUI.StartLoop(Thread.CurrentThread);
@@ -1076,6 +1083,8 @@ namespace System.Windows.Forms.PropertyGridInternal {
 					XplatUI.TranslateMessage(ref msg);
 					XplatUI.DispatchMessage(ref msg);
 				}
+
+				property_grid.PropertyValueChangedInternal ();
 			}
 		}
 

@@ -523,24 +523,13 @@ namespace System.Windows.Forms {
 						this.help_description_label.Text = selected_grid_item.PropertyDescriptor.Description;
 
 					current_property_value = value.Value;
-					if (oldItem != null && oldItem.PropertyDescriptor != null) {
-						for (int i = 0; i < ((GridEntry)oldItem).SelectedObjects.Length; i++) {
-							object target = GetTarget (oldItem, i);
-							oldItem.PropertyDescriptor.RemoveValueChanged (target, new EventHandler (HandlePropertyValueChanged));
-						}
-					}
-					if (selected_grid_item.PropertyDescriptor != null) {
-						for (int i = 0; i < ((GridEntry)selected_grid_item).SelectedObjects.Length; i++) {
-							object target = GetTarget (selected_grid_item, i);
-							selected_grid_item.PropertyDescriptor.AddValueChanged (target, new EventHandler (HandlePropertyValueChanged));
-						}
-					}
 				}
 			}
 		}
 
-		private void HandlePropertyValueChanged(object sender, EventArgs e) {
-			OnPropertyValueChanged(new PropertyValueChangedEventArgs( selected_grid_item, current_property_value));
+		internal void PropertyValueChangedInternal () {
+			OnPropertyValueChanged (new PropertyValueChangedEventArgs (selected_grid_item, current_property_value));
+			PopulateSubGridItemsFromProperties (SelectedGridItem as GridEntry);
 		}
 
 		[DefaultValue(null)]
@@ -1185,15 +1174,42 @@ namespace System.Windows.Forms {
 				root_grid_item = new RootGridEntry (property_grid_view,
 								    selected_objects.Length > 1 ? selected_objects : selected_objects[0]);
 									   
-				PopulateMergedGridItems (selected_objects, root_grid_item.GridItems, true, root_grid_item);
+				PopulateMergedGridItems (selected_objects, true, root_grid_item as GridEntry);
 			} else {
 				root_grid_item = null;
 			}
 		}
 
-		private void PopulateMergedGridItems (object[] objs, GridItemCollection grid_item_coll, bool recurse, GridItem parent_grid_item)
+		private bool IsPropertyVisible (PropertyDescriptor property, bool mergable)
+		{
+			if (property == null)
+				return false;
+				
+			if (!property.IsBrowsable)
+				return false;
+				
+			if (mergable) {
+				MergablePropertyAttribute attrib = property.Attributes [typeof (MergablePropertyAttribute)] as MergablePropertyAttribute;
+				if (attrib != null && !attrib.AllowMerge)
+					return false;
+			}
+			
+			EditorBrowsableAttribute browsable = property.Attributes [typeof (EditorBrowsableAttribute)] as EditorBrowsableAttribute;
+			if (browsable != null && (browsable.State == EditorBrowsableState.Advanced || browsable.State == EditorBrowsableState.Never)) {
+				return false;
+			}
+			
+			return true;
+		}
+
+		private void PopulateMergedGridItems (object [] objs, bool recurse, GridEntry parent_grid_item)
 		{
 			ArrayList intersection = null;
+
+			if (parent_grid_item == null)
+				return;
+
+			GridItemCollection grid_item_coll = parent_grid_item.GridItems;
 
 			for (int i = 0; i < objs.Length; i ++) {
 				if (objs [i] == null)
@@ -1206,9 +1222,11 @@ namespace System.Windows.Forms {
 				   since that type lacks an override for IsDefaultAttribute, and for some reason the
 				   BrowsableAttribute.Yes filter wasn't working */
 				PropertyDescriptorCollection properties = null;
+				ICustomTypeDescriptor descriptor;
 
-				if (typeof (ICustomTypeDescriptor).IsAssignableFrom (type)) {
-					properties = ((ICustomTypeDescriptor)objs[i]).GetProperties ();
+				descriptor = objs [i] as ICustomTypeDescriptor;
+				if (descriptor != null) {
+					properties = descriptor.GetProperties ();
 				}
 				if (properties == null) {
 					TypeConverter cvt = TypeDescriptor.GetConverter (objs[i]);
@@ -1220,70 +1238,101 @@ namespace System.Windows.Forms {
 
 				foreach (PropertyDescriptor p in (i == 0 ? (ICollection)properties : (ICollection)intersection)) {
 					PropertyDescriptor property = (i == 0 ? p : properties [p.Name]);
-					if (property == null) {
-						/* since the property doesn't exist in at least one of the other types, 
-						   exclude it */
-					}
-					else if (!property.IsBrowsable
-					    || (objs.Length > 1 && property.Attributes.Contains (MergablePropertyAttribute.No))
-					    || property.Attributes.Contains (new EditorBrowsableAttribute (EditorBrowsableState.Never))
-					    || property.Attributes.Contains (new EditorBrowsableAttribute (EditorBrowsableState.Advanced))) {
-						/* if the property isn't supposed to be displayed in the merged view,
-						   excluded it */
-					}
-					else {
-						Type p_type = p.ComponentType;
-						Type property_type = property.ComponentType;
+					
+					if (!IsPropertyVisible (property, objs.Length > 1))
+						continue;
+						
+					Type p_type = p.ComponentType;
+					Type property_type = property.ComponentType;
 
-						if (p_type.IsAssignableFrom (type))
-							new_intersection.Add (p);
-						else if (property_type.IsAssignableFrom (p_type))
-							new_intersection.Add (property);
-					}
+					if (p_type.IsAssignableFrom (type))
+						new_intersection.Add (p);
+					else if (property_type.IsAssignableFrom (p_type))
+						new_intersection.Add (property);
 				}
 
 				intersection = new_intersection;
 			}
 
 			if (intersection != null && intersection.Count > 0)
-				PopulateGridItemsFromProperties (objs, intersection, grid_item_coll, recurse, parent_grid_item);
+				PopulateGridItemsFromProperties (objs, intersection, recurse, parent_grid_item);
 		}
 
-		private void PopulateGridItemsFromProperties (object[] objs, ArrayList properties,
-							      GridItemCollection grid_item_coll, bool recurse, GridItem parent_grid_item) {
+		private void PopulateGridItemsFromProperties (object[] objs, ArrayList properties, bool recurse, GridEntry parent_grid_item)
+		{
+			
+			GridItemCollection grid_item_coll = parent_grid_item.GridItems;
+
 			foreach (PropertyDescriptor property in properties) {
-
-				GridEntry grid_entry = new GridEntry (property_grid_view, objs, property);
+				GridEntry grid_entry;
+				grid_entry = grid_item_coll [property.Name] as GridEntry;
+				if (grid_entry == null) {
+					grid_entry = new GridEntry (property_grid_view, objs, property);
+				} else {
+					grid_entry.SelectedObjects = objs;
+				}
+					
 				grid_entry.SetParent (parent_grid_item);
+				
+				bool categorized = false, show = true;
+					
 				if (property_sort == PropertySort.Alphabetical || /* XXX */property_sort == PropertySort.NoSort || !recurse) {
-					if (grid_item_coll[property.Name] == null) {
-						grid_item_coll.Add(property.Name,grid_entry);
-						grid_entry.SetParent ((GridEntry)parent_grid_item);
+					categorized = false;
+				} else if (property_sort == PropertySort.Categorized || property_sort == PropertySort.CategorizedAlphabetical) {
+					categorized = parent_grid_item == root_grid_item;
+				} else {
+					show = false;
+				}
+				
+				
+				if (show) {
+					if (categorized) {
+						string category = property.Category;
+						CategoryGridEntry cat_item = grid_item_coll [category] as CategoryGridEntry;
+						if (cat_item == null) {
+							cat_item = new CategoryGridEntry (property_grid_view, category);
+							cat_item.SetParent (parent_grid_item);
+							grid_item_coll.Add (category, cat_item);
+						}
+						if (cat_item.GridItems [property.Name] == null) {
+							cat_item.GridItems.Add (property.Name, grid_entry);
+							grid_entry.SetParent (cat_item);
+						}
+					} else {
+						if (grid_item_coll [property.Name] == null) {
+							grid_item_coll.Add (property.Name, grid_entry);
+							grid_entry.SetParent (parent_grid_item);
+						}
 					}
 				}
-				else if (property_sort == PropertySort.Categorized || property_sort == PropertySort.CategorizedAlphabetical) {
 
-					string category = property.Category;
-					CategoryGridEntry cat_item = grid_item_coll[category] as CategoryGridEntry;
-					if (cat_item == null) {
-						cat_item = new CategoryGridEntry (property_grid_view, category);
-						cat_item.SetParent (parent_grid_item);
-						grid_item_coll.Add (category, cat_item);
-					}
-					if (cat_item.GridItems[property.Name] == null) {
-						cat_item.GridItems.Add(property.Name,grid_entry);
-						grid_entry.SetParent (cat_item);
-					}
-				}
-
-				if (recurse && property.Converter != null && property.Converter.GetPropertiesSupported()) {
-					object[] subobjs = new object[objs.Length];
-					for (int i = 0; i < objs.Length; i ++)
-						subobjs[i] = property.GetValue (objs[i]);
-					PopulateMergedGridItems (subobjs, grid_entry.GridItems, false, grid_entry);
+				if (recurse) {
+					PopulateSubGridItemsFromProperties (grid_entry);
 				}
 				grid_entry.Expanded = false;
 			}
+		}
+
+		private void PopulateSubGridItemsFromProperties (GridEntry grid_entry)
+		{
+			if (grid_entry == null)
+				return;
+
+			if (grid_entry.SelectedObjects == null)
+				return;
+
+			PropertyDescriptor property = grid_entry.PropertyDescriptor;
+
+			if (property.Converter == null || !property.Converter.GetPropertiesSupported ())
+				return;
+
+			object [] objs = grid_entry.SelectedObjects;
+			object [] subobjs = new object [objs.Length];
+			
+			for (int i = 0; i < objs.Length; i++)
+				subobjs [i] = property.GetValue (objs [i]);
+			
+			PopulateMergedGridItems (subobjs, true, grid_entry);
 		}
 
 		private void help_panel_Paint(object sender, PaintEventArgs e) {
@@ -1352,7 +1401,13 @@ namespace System.Windows.Forms {
 		
 		// needed! this little helper makes it possible to draw a different toolbar border
 		// and toolbar backcolor in ThemeWin32Classic
-		internal class PropertyToolBar : ToolBar {}
+		internal class PropertyToolBar : ToolBar 
+		{
+			public PropertyToolBar ()
+			{
+				SetStyle (ControlStyles.ResizeRedraw, true);
+			}
+		}
 
 
 		[MonoTODO ("not sure what this class does, but it's listed as a type converter for a property in this class, and this causes problems if it's not present")]

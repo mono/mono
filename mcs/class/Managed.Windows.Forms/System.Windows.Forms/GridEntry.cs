@@ -203,6 +203,9 @@ namespace System.Windows.Forms.PropertyGridInternal
 			get {
 				return selected_objects;
 			}
+			set {
+				selected_objects = value;
+			}
 		}
 
 		internal override int Top {
