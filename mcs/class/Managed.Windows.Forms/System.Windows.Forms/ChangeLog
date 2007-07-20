@@ -1,5 +1,11 @@
 2007-07-20  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* PropertyGrid.cs, PropertyGridView.cs: Implemented 2.0 methods and
+	  properties. Had to change ToolBar into ToolStrip, which required a
+	  few #ifs.
+
+2007-07-20  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* PropertyGrid.cs: PropertyToolBar: Redraw the entire toolbar when it's
 	  resized, fixes part of #79829 (vertical lines in toolbar).
 	  PropertyGrid: Refactored Populate* to something that's easier to

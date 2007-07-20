@@ -67,12 +67,17 @@ namespace System.Windows.Forms {
 		private PropertyTab selected_tab;
 
 		private ImageList toolbar_imagelist;
-		private ToolBarButton categorized_toolbarbutton;
-		private ToolBarButton alphabetic_toolbarbutton;
+		private PropertyToolBarButton categorized_toolbarbutton;
+		private PropertyToolBarButton alphabetic_toolbarbutton;
+#if NET_2_0
+		private ToolStripSeparator separator_toolbarbutton;
+#else
 		private ToolBarButton separator_toolbarbutton;
-		private ToolBarButton propertypages_toolbarbutton;
+#endif
+		private PropertyToolBarButton propertypages_toolbarbutton;
 
-		internal ToolBar toolbar;
+		internal PropertyToolBar toolbar;
+
 		internal PropertyGridView property_grid_view;
 		internal Splitter splitter;
 		internal Panel help_panel;
@@ -82,6 +87,12 @@ namespace System.Windows.Forms {
 		private MenuItem description_menuitem;
 		private object current_property_value;
 
+		private Color category_fore_color;
+#if NET_2_0
+		private Color commands_active_link_color;
+		private Color commands_disabled_link_color;
+		private Color commands_link_color;
+#endif
 		#endregion	// Private Members
 		
 		#region Contructors
@@ -90,7 +101,7 @@ namespace System.Windows.Forms {
 			property_tabs = new PropertyTabCollection();
 
 			line_color = SystemColors.ScrollBar;
-			line_color = SystemColors.ScrollBar;
+			category_fore_color = line_color;
 			browsable_attributes = new AttributeCollection(new Attribute[] {});
 			commands_visible_if_available = false;
 			property_sort = PropertySort.Categorized;
@@ -130,10 +141,14 @@ namespace System.Windows.Forms {
 
 			toolbar = new PropertyToolBar();
 			toolbar.Dock = DockStyle.Top;
-			categorized_toolbarbutton = new ToolBarButton();
-			alphabetic_toolbarbutton = new ToolBarButton();
-			separator_toolbarbutton = new ToolBarButton();
-			propertypages_toolbarbutton = new ToolBarButton();
+			categorized_toolbarbutton = new PropertyToolBarButton ();
+			alphabetic_toolbarbutton = new PropertyToolBarButton ();
+#if NET_2_0
+			separator_toolbarbutton = new ToolStripSeparator ();
+#else
+			separator_toolbarbutton = new ToolBarButton ();
+#endif
+			propertypages_toolbarbutton = new PropertyToolBarButton ();
 			ContextMenu context_menu = new ContextMenu();
 
 			toolbar_imagelist = new ImageList();
@@ -146,18 +161,29 @@ namespace System.Windows.Forms {
 
 			toolbar.Appearance = ToolBarAppearance.Flat;
 			toolbar.AutoSize = false;
-			toolbar.Buttons.AddRange(new ToolBarButton[] {categorized_toolbarbutton,
-								      alphabetic_toolbarbutton,
-								      separator_toolbarbutton,
-								      propertypages_toolbarbutton});
 			
-			toolbar.ButtonSize = new System.Drawing.Size(20, 20);
 			toolbar.ImageList = toolbar_imagelist;
 			toolbar.Location = new System.Drawing.Point(0, 0);
 			toolbar.ShowToolTips = true;
 			toolbar.Size = new System.Drawing.Size(256, 27);
 			toolbar.TabIndex = 0;
+#if NET_2_0
+			toolbar.Items.AddRange (new ToolStripItem [] {categorized_toolbarbutton,
+								      alphabetic_toolbarbutton,
+								      separator_toolbarbutton,
+								      propertypages_toolbarbutton});
+			//toolbar.ButtonSize = new System.Drawing.Size (20, 20);
+			toolbar.ItemClicked += new ToolStripItemClickedEventHandler (toolbar_ButtonClick);
+#else
+			toolbar.Buttons.AddRange(new ToolBarButton [] {categorized_toolbarbutton,
+								      alphabetic_toolbarbutton,
+								      separator_toolbarbutton,
+								      propertypages_toolbarbutton});
+			toolbar.ButtonSize = new System.Drawing.Size(20, 20);
 			toolbar.ButtonClick += new ToolBarButtonClickEventHandler(toolbar_ButtonClick);
+			
+			separator_toolbarbutton.Style = ToolBarButtonStyle.Separator;
+#endif
 
 			categorized_toolbarbutton.ImageIndex = 0;
 			categorized_toolbarbutton.Style = ToolBarButtonStyle.ToggleButton;
@@ -166,8 +192,6 @@ namespace System.Windows.Forms {
 			alphabetic_toolbarbutton.ImageIndex = 1;
 			alphabetic_toolbarbutton.Style = ToolBarButtonStyle.ToggleButton;
 			alphabetic_toolbarbutton.ToolTipText = Locale.GetText ("Alphabetic");
-
-			separator_toolbarbutton.Style = ToolBarButtonStyle.Separator;
 
 			propertypages_toolbarbutton.Enabled = false;
 			propertypages_toolbarbutton.ImageIndex = 2;
@@ -196,6 +220,7 @@ namespace System.Windows.Forms {
 			this.Size = new System.Drawing.Size(256, 400);
 
 			UpdateToolBarButtons();
+			
 		}
 		#endregion	// Constructors
 
@@ -268,6 +293,23 @@ namespace System.Windows.Forms {
 				return can_show_commands;
 			}
 		}
+#if NET_2_0
+		[DefaultValue(typeof(Color), "ControlText")]
+		public
+#else
+		internal
+#endif
+		Color CategoryForeColor {
+			get {
+				return category_fore_color;
+			}
+			set {
+				if (category_fore_color != value) {
+					category_fore_color = value;
+					Invalidate ();
+				}
+			}
+		}
 
 		public Color CommandsBackColor {
 			get {
@@ -294,9 +336,38 @@ namespace System.Windows.Forms {
 				commands_fore_color = value;
 			}
 		}
+#if NET_2_0
+		public Color CommandsActiveLinkColor {
+			get {
+				return commands_active_link_color;
+			}
+			set {
+				commands_active_link_color = value;
+			}
+		}
+		
+		public Color CommandsDisabledLinkColor {
+			get {
+				return commands_disabled_link_color;
+			}
+			set {
+				commands_disabled_link_color = value;
+			}
+		}
+
+		public Color CommandsLinkColor {
+			get {
+				return commands_link_color;
+			}
+			set {
+				commands_link_color = value;
+			}
+		}
+#endif
 
 		[BrowsableAttribute (false)]
 		[EditorBrowsableAttribute(EditorBrowsableState.Advanced)]
+		[MonoTODO ("Commands are not implemented yet.")]
 		public virtual bool CommandsVisible {
 			get {
 				return commands_visible;
@@ -512,7 +583,6 @@ namespace System.Windows.Forms {
 					return;
 				}
 
-				GridItem oldItem = selected_grid_item;
 				selected_grid_item = value;
 				if (selected_grid_item == null) {
 					help_title_label.Text = string.Empty;
@@ -609,6 +679,18 @@ namespace System.Windows.Forms {
 			}
 		}
 
+#if NET_2_0
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public override string Text {
+			get {
+				return base.Text;
+			}
+			set {
+				base.Text = value;
+			}
+		}
+ #endif
 
 		[DefaultValue(true)]
 		public virtual bool ToolbarVisible {
@@ -624,6 +706,23 @@ namespace System.Windows.Forms {
 				toolbar.Visible = value;
 			}
 		}
+		
+#if NET_2_0
+		protected ToolStripRenderer ToolStripRenderer {
+			get {
+				if (toolbar != null) {
+					return toolbar.Renderer;
+				}
+				return null;
+			}
+			set {
+				if (toolbar != null) {
+					toolbar.Renderer = value;
+				}
+			}
+		}
+ 
+#endif
 
 #if NET_2_0
 		[DefaultValue ("Color [Window]")]
@@ -658,6 +757,19 @@ namespace System.Windows.Forms {
 				property_grid_view.ForeColor = value;
 			}
 		}
+#if NET_2_0
+
+		[DefaultValue (false)]
+		public bool UseCompatibleTextRendering {
+			get {
+
+				return use_compatible_text_rendering;
+			}
+			set {
+				use_compatible_text_rendering = value;
+			}
+		}
+#endif
 
 		#endregion	// Public Instance Properties
 
@@ -1135,15 +1247,29 @@ namespace System.Windows.Forms {
 		}
 
 
+#if NET_2_0
+		private void toolbar_ButtonClick (object sender, ToolStripItemClickedEventArgs e)
+		{
+			toolbar_Clicked (e.ClickedItem as PropertyToolBarButton);
+		}
+#else
 		private void toolbar_ButtonClick (object sender, ToolBarButtonClickEventArgs e) {
-			if (e.Button == alphabetic_toolbarbutton) {
+			toolbar_Clicked (e.Button as PropertyToolBarButton);
+		}
+#endif
+
+		private void toolbar_Clicked (PropertyToolBarButton button)
+		{
+			if (button == null) 
+				return;
+				
+			if (button == alphabetic_toolbarbutton) {
 				this.PropertySort = PropertySort.Alphabetical;
-			}
-			else if (e.Button == categorized_toolbarbutton) {
+			} else if (button == categorized_toolbarbutton) {
 				this.PropertySort = PropertySort.Categorized;
 			}
 		}
-
+		
 		internal void UpdateToolBarButtons () {
 			if (PropertySort == PropertySort.Alphabetical) {
 				categorized_toolbarbutton.Pushed = false;
@@ -1208,8 +1334,6 @@ namespace System.Windows.Forms {
 
 			if (parent_grid_item == null)
 				return;
-
-			GridItemCollection grid_item_coll = parent_grid_item.GridItems;
 
 			for (int i = 0; i < objs.Length; i ++) {
 				if (objs [i] == null)
@@ -1354,21 +1478,7 @@ namespace System.Windows.Forms {
 		}
 		#endregion	// Private Helper Methods
 
-
-#if NET_2_0
-
-		[DefaultValue (false)]
-		public bool UseCompatibleTextRendering {
-			get {
-				return use_compatible_text_rendering;
-			}
-
-			set {
-				use_compatible_text_rendering = value;
-			}
-		}
-#endif
-		
+#region Internal helper classes
 		// as we can not change the color for BorderStyle.FixedSingle and we need the correct
 		// ClientRectangle so that the ScrollBar doesn't draw over the border we need this class
 		internal class BorderHelperControl : Control {
@@ -1399,14 +1509,72 @@ namespace System.Windows.Forms {
 			}
 		}
 		
+		internal class PropertyToolBarButton : 
+#if NET_2_0
+		ToolStripButton
+#else
+		ToolBarButton
+#endif
+		{
+		
+#if NET_2_0
+		public bool Pushed {
+			get { return base.Checked; }
+			set { base.Checked = value; }
+		}
+		
+		public ToolBarButtonStyle Style {
+			get { return ToolBarButtonStyle.PushButton; }
+			set { }
+		}
+#endif
+		}
+		
 		// needed! this little helper makes it possible to draw a different toolbar border
 		// and toolbar backcolor in ThemeWin32Classic
-		internal class PropertyToolBar : ToolBar 
+		internal class PropertyToolBar : 
+#if NET_2_0
+		ToolStrip
+#else
+		ToolBar 
+#endif
 		{
+		
+#if NET_2_0
+			bool flat;
+#endif
 			public PropertyToolBar ()
 			{
 				SetStyle (ControlStyles.ResizeRedraw, true);
+#if NET_2_0
+				GripStyle = ToolStripGripStyle.Hidden;
+#endif
 			}
+#if NET_2_0
+			public bool ShowToolTips {
+				get { return base.ShowItemToolTips; }
+				set { base.ShowItemToolTips = value; }
+			}
+			
+			public ToolBarAppearance Appearance {
+				get { return flat ? ToolBarAppearance.Flat : ToolBarAppearance.Normal; }
+				set { 
+					if (value == Appearance)
+						return;
+						
+					switch (value) {
+					case ToolBarAppearance.Flat:
+						Renderer = new ToolStripSystemRenderer ();
+						break;
+					case ToolBarAppearance.Normal:
+						ProfessionalColorTable table = new ProfessionalColorTable ();
+						table.UseSystemColors = true;
+						Renderer = new ToolStripProfessionalRenderer (table);
+						break;
+					}
+				}
+			}
+#endif
 		}
 
 
@@ -1414,5 +1582,6 @@ namespace System.Windows.Forms {
 		internal class SelectedObjectConverter : TypeConverter
 		{
 		}
+#endregion
 	}
 }
