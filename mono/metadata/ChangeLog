@@ -1,4 +1,12 @@
 2007-07-20  Atsushi Enomoto  <atsushi@ximian.com>
+	and Raja R Harinath  <rharinath@novell.com>
+
+	* icall.c (ves_icall_MonoMethod_get_IsGenericMethodDefinition):
+	Simplify slightly.
+	(ves_icall_MonoMethod_GetGenericMethodDefinition): Update
+	property for testing if a method is a generic method definition.
+
+2007-07-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* domain-internals.h : added 2.0 member fields to MonoAppDomainSetup.
 
