@@ -1,5 +1,10 @@
 2007-07-20  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Form.cs: Don't try to position the form after loading if the form was
+	  disposed. Fixes #81969.
+
+2007-07-20  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* PropertyGrid.cs, PropertyGridView.cs: Implemented 2.0 methods and
 	  properties. Had to change ToolBar into ToolStrip, which required a
 	  few #ifs.

@@ -2803,7 +2803,7 @@ namespace System.Windows.Forms {
 
 			OnLoad (e);
 
-			if (!IsMdiChild) {
+			if (!IsMdiChild && !IsDisposed) {
 				switch (StartPosition) {
 					case FormStartPosition.CenterScreen:
 						this.CenterToScreen ();
