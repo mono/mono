@@ -63,6 +63,7 @@ namespace System.Windows.Forms {
 
 #if NET_2_0
 		private string image_key;
+		private TreeNode mouse_click_node;
 		private bool right_to_left_layout;
 		private string selected_image_key;
 		private ImageList state_image_list;
@@ -966,6 +967,22 @@ namespace System.Windows.Forms {
 			if ((e.KeyData & Keys.KeyCode) == Keys.Space)
 				e.Handled = true;
 		}
+
+#if NET_2_0
+		protected virtual void OnNodeMouseClick (TreeNodeMouseClickEventArgs e)
+		{
+			TreeNodeMouseClickEventHandler eh = (TreeNodeMouseClickEventHandler)(Events[NodeMouseClickEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
+
+		protected virtual void OnNodeMouseDoubleClick (TreeNodeMouseClickEventArgs e)
+		{
+			TreeNodeMouseClickEventHandler eh = (TreeNodeMouseClickEventHandler)(Events[NodeMouseDoubleClickEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
+#endif
 
 		protected virtual void OnItemDrag (ItemDragEventArgs e)
 		{
@@ -1926,6 +1943,10 @@ namespace System.Windows.Forms {
 			if (node == null)
 				return;
 
+#if NET_2_0
+			mouse_click_node = node;
+#endif
+
 			if (show_plus_minus && IsPlusMinusArea (node, e.X)) {
 				node.Toggle ();
 				return;
@@ -1956,6 +1977,18 @@ namespace System.Windows.Forms {
 		}
 
 		private void MouseUpHandler (object sender, MouseEventArgs e) {
+#if NET_2_0
+			TreeNode node = GetNodeAt (e.Y);
+			
+			if (node != null && node == mouse_click_node) {
+				if (e.Clicks == 2)
+					OnNodeMouseDoubleClick (new TreeNodeMouseClickEventArgs (node, e.Button, e.Clicks, e.X, e.Y));
+				else
+					OnNodeMouseClick (new TreeNodeMouseClickEventArgs (node, e.Button, e.Clicks, e.X, e.Y));
+			}
+			
+			mouse_click_node = null;
+#endif
 
 			drag_begin_x = -1;
 			drag_begin_y = -1;

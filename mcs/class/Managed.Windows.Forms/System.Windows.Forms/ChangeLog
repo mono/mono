@@ -1,5 +1,9 @@
 2007-07-20  Jonathan Pobst  <monkey@jpobst.com>
 
+	* TreeView.cs: Implement OnNodeMouseClick and OnNodeMouseDoubleClick.
+
+2007-07-20  Jonathan Pobst  <monkey@jpobst.com>
+
 	* TreeNode.cs: Implement ContextMenu, ContextMenuStrip, and Level.
 	* TreeView.cs: Use the node's contextmenu[strip] if applicable.
 
