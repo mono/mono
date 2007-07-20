@@ -63,10 +63,14 @@ namespace System.Windows.Forms {
 
 #if NET_2_0
 		private string image_key;
+		private bool is_hovering;
 		private TreeNode mouse_click_node;
 		private bool right_to_left_layout;
 		private string selected_image_key;
+		private bool show_node_tool_tips;
 		private ImageList state_image_list;
+		private TreeNode tooltip_currently_showing;
+		private ToolTip.ToolTipWindow tooltip_window;
 #endif
 		private bool full_row_select;
 		private bool hot_tracking;
@@ -469,6 +473,14 @@ namespace System.Windows.Forms {
 				Invalidate ();
 			}
 		}
+
+#if NET_2_0
+		[DefaultValue (false)]
+		public bool ShowNodeToolTips {
+			get { return show_node_tool_tips; }
+			set { show_node_tool_tips = value; }
+		}
+#endif
 
 		[DefaultValue(true)]
 		public bool ShowPlusMinus {
@@ -969,6 +981,28 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
+		protected override void OnMouseHover (EventArgs e)
+		{
+			base.OnMouseHover (e);
+			
+			is_hovering = true;
+
+			TreeNode tn = GetNodeAt (PointToClient (MousePosition));
+
+			if (tn != null)
+				MouseEnteredItem (tn);
+		}
+
+		protected override void OnMouseLeave (EventArgs e)
+		{
+			base.OnMouseLeave (e);
+			
+			is_hovering = false;
+			
+			if (tooltip_currently_showing != null)
+				MouseLeftItem (tooltip_currently_showing);
+		}
+		
 		protected virtual void OnNodeMouseClick (TreeNodeMouseClickEventArgs e)
 		{
 			TreeNodeMouseClickEventHandler eh = (TreeNodeMouseClickEventHandler)(Events[NodeMouseClickEvent]);
@@ -979,6 +1013,13 @@ namespace System.Windows.Forms {
 		protected virtual void OnNodeMouseDoubleClick (TreeNodeMouseClickEventArgs e)
 		{
 			TreeNodeMouseClickEventHandler eh = (TreeNodeMouseClickEventHandler)(Events[NodeMouseDoubleClickEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
+		
+		protected virtual void OnNodeMouseHover (TreeNodeMouseHoverEventArgs e)
+		{
+			TreeNodeMouseHoverEventHandler eh = (TreeNodeMouseHoverEventHandler)(Events[NodeMouseHoverEvent]);
 			if (eh != null)
 				eh (this, e);
 		}
@@ -2035,7 +2076,19 @@ namespace System.Windows.Forms {
 		}
 
 		private void MouseMoveHandler (object sender, MouseEventArgs e) {
-
+#if NET_2_0
+			// XXX - This should use HitTest and only fire when we are over
+			// the important parts of a node, not things like gridlines or
+			// whitespace
+			TreeNode tn = GetNodeAt (e.Location);
+			
+			if (tn != tooltip_currently_showing)
+				MouseLeftItem (tooltip_currently_showing);
+				
+			if (tn != null && tn != tooltip_currently_showing)
+				MouseEnteredItem (tn);
+#endif
+			
 			if (e.Button == MouseButtons.Left || e.Button == MouseButtons.Right) {
 				if (drag_begin_x == -1 && drag_begin_y == -1) {
 					drag_begin_x = e.X;
@@ -2124,6 +2177,39 @@ namespace System.Windows.Forms {
 			return true;
 		}
 #endif
+
+		#region Stuff for ToolTips
+#if NET_2_0
+		private void MouseEnteredItem (TreeNode item)
+		{
+			tooltip_currently_showing = item;
+			
+			if (!is_hovering)
+				return;
+
+			if (ShowNodeToolTips && !string.IsNullOrEmpty (tooltip_currently_showing.ToolTipText))
+				ToolTipWindow.Present (this, tooltip_currently_showing.ToolTipText);
+
+			OnNodeMouseHover (new TreeNodeMouseHoverEventArgs (tooltip_currently_showing));
+		}
+
+		private void MouseLeftItem (TreeNode item)
+		{
+			ToolTipWindow.Hide ();
+			tooltip_currently_showing = null;
+		}
+
+		private ToolTip.ToolTipWindow ToolTipWindow {
+			get {
+				if (tooltip_window == null)
+					tooltip_window = new ToolTip.ToolTipWindow ();
+
+				return tooltip_window;
+			}
+		}
+#endif
+		#endregion
+		
 		#endregion	// Internal & Private Methods and Properties
 
 		#region Events
@@ -2142,6 +2228,7 @@ namespace System.Windows.Forms {
 		static object DrawNodeEvent = new object ();
 		static object NodeMouseClickEvent = new object ();
 		static object NodeMouseDoubleClickEvent = new object();
+		static object NodeMouseHoverEvent = new object ();
 		static object RightToLeftLayoutChangedEvent = new object ();
 #endif
 
@@ -2215,6 +2302,11 @@ namespace System.Windows.Forms {
 		public event TreeNodeMouseClickEventHandler NodeMouseDoubleClick {
 			add { Events.AddHandler (NodeMouseDoubleClickEvent, value); }
 			remove { Events.RemoveHandler (NodeMouseDoubleClickEvent, value); }
+		}
+		
+		public event TreeNodeMouseHoverEventHandler NodeMouseHover {
+			add { Events.AddHandler (NodeMouseHoverEvent, value); }
+			remove { Events.RemoveHandler (NodeMouseHoverEvent, value); }
 		}
 		
 		public event EventHandler RightToLeftLayoutChanged {

@@ -50,6 +50,7 @@ namespace System.Windows.Forms {
 		private string selected_image_key = String.Empty;
 		private int state_image_index = -1;
 		private string state_image_key = String.Empty;
+		private string tool_tip_text = String.Empty;
 #endif
         internal TreeNodeCollection nodes;
 		internal TreeViewAction check_reason = TreeViewAction.Unknown;
@@ -662,6 +663,13 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
+		[DefaultValue ("")]
+		[Localizable (false)]
+		public string ToolTipText {
+			get { return tool_tip_text; }
+			set { tool_tip_text = value; }
+		}
+		
 		[Browsable (false)]
 #endif
 		public TreeView TreeView {

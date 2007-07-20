@@ -1,5 +1,10 @@
 2007-07-20  Jonathan Pobst  <monkey@jpobst.com>
 
+	* TreeNode.cs: Implement ToolTipText.
+	* TreeView.cs: Implement tooltips, NodeMouse* events.
+
+2007-07-20  Jonathan Pobst  <monkey@jpobst.com>
+
 	* TreeView.cs: Implement OnNodeMouseClick and OnNodeMouseDoubleClick.
 
 2007-07-20  Jonathan Pobst  <monkey@jpobst.com>
