@@ -21,10 +21,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 // Copyright (c) 2005 Novell, Inc. (http://www.novell.com)
+// Copyright (c) 2006 Matt Hargett
 //
 // Authors:
 //   	Ritvik Mayank <mritvik@novell.com>
 //	Jordi Mas i Hernandez <jordi@ximian.com>
+//      Matt Hargett  <matt@use.net>
 
 using System;
 using System.Data;
@@ -38,6 +40,7 @@ using System.Threading;
 using System.Windows.Forms;
 
 using NUnit.Framework;
+using CategoryAttribute=NUnit.Framework.CategoryAttribute;
 
 namespace MonoTests.System.Windows.Forms
 {
@@ -57,7 +60,218 @@ namespace MonoTests.System.Windows.Forms
 		{
 			Thread.CurrentThread.CurrentCulture = _originalCulture;
 		}
-		
+
+		[Test] // bug 81610
+		[Category ("NotWorking")]
+		public void InitialBoundValue ()
+		{
+			ComboBox comboBox1;
+			using (Form f = new Form ()) {
+				f.ShowInTaskbar = false;
+
+				DataTable t = new DataTable ();
+				t.Columns.Add ("displaymember");
+				t.Columns.Add ("valuemember");
+				t.Rows.Add (new object [] {"lower", "a"});
+				t.Rows.Add (new object [] {"upper", "A"});
+
+				// This test seems to prove that the SelectedItem is updated when:
+				// - We have a parent
+				// - We're setting either DisplayMember, ValueMember or DataSource.
+
+				comboBox1 = new ComboBox ();
+				comboBox1.DisplayMember = "displaymember";
+				comboBox1.ValueMember = "valuemember";
+				comboBox1.DataSource = t;
+				comboBox1.DataBindings.Add ("SelectedValue", new InitialBoundValue_dummy (), "controlsrc");
+				f.Controls.Add (comboBox1);
+				Assert.AreEqual (string.Empty, comboBox1.Text,	"#??");
+				
+				comboBox1 = new ComboBox ();
+				f.Controls.AddRange (new Control [] { comboBox1 });
+				comboBox1.DisplayMember = "displaymember";
+				Assert.AreEqual (string.Empty, comboBox1.Text, "#A02-1");
+				comboBox1.ValueMember = "valuemember";
+				Assert.AreEqual (string.Empty, comboBox1.Text, "#A02-1");
+				comboBox1.DataSource = t;
+				Assert.AreEqual ("lower", comboBox1.Text, "#A02");
+				comboBox1.DataBindings.Add ("SelectedValue", new InitialBoundValue_dummy (), "controlsrc");
+				Assert.AreEqual ("lower", comboBox1.Text, "#A03");
+
+				comboBox1 = new ComboBox ();
+				comboBox1.DisplayMember = "displaymember";
+				comboBox1.ValueMember = "valuemember";
+				comboBox1.DataSource = t;
+				Assert.AreEqual (string.Empty, comboBox1.Text, "#A01");
+				comboBox1.DataBindings.Add ("SelectedValue", new InitialBoundValue_dummy (), "controlsrc");
+				Assert.AreEqual (string.Empty, comboBox1.Text, "#A04");
+				f.Controls.AddRange (new Control [] { comboBox1 });
+				Assert.AreEqual (string.Empty, comboBox1.Text, "#A04");
+
+				comboBox1 = new ComboBox ();
+				f.Controls.AddRange (new Control [] { comboBox1 });
+				comboBox1.DisplayMember = "displaymember";
+				comboBox1.ValueMember = "valuemember";
+				Assert.AreEqual (string.Empty, comboBox1.Text, "#A02");
+				comboBox1.DataBindings.Add ("SelectedValue", new InitialBoundValue_dummy (), "controlsrc");
+				Assert.AreEqual (string.Empty, comboBox1.Text, "#A02-1");
+				comboBox1.DataSource = t;
+				Assert.AreEqual ("lower", comboBox1.Text, "#A03");
+
+				comboBox1 = new ComboBox ();
+				f.Controls.AddRange (new Control [] { comboBox1 });
+				comboBox1.DataSource = t;
+				Assert.AreEqual ("System.Data.DataRowView", comboBox1.Text, "#A03");
+				comboBox1.DisplayMember = "displaymember";
+				Assert.AreEqual ("lower", comboBox1.Text, "#A03");
+				comboBox1.ValueMember = "valuemember";
+				Assert.AreEqual ("lower", comboBox1.Text, "#A02");
+				comboBox1.DataBindings.Add ("SelectedValue", new InitialBoundValue_dummy (), "controlsrc");
+				Assert.AreEqual ("lower", comboBox1.Text, "#A02-1");
+
+
+				comboBox1 = new ComboBox ();
+				comboBox1.DisplayMember = "displaymember";
+				comboBox1.ValueMember = "valuemember";
+				Assert.AreEqual ("", comboBox1.Text, "#A02");
+				comboBox1.DataBindings.Add ("SelectedValue", new InitialBoundValue_dummy (), "controlsrc");
+				Assert.AreEqual (string.Empty, comboBox1.Text, "#A02-1");
+				comboBox1.DataSource = t;
+				Assert.AreEqual (string.Empty, comboBox1.Text, "#A03");
+				f.Controls.AddRange (new Control [] { comboBox1 });
+				Assert.AreEqual (string.Empty, comboBox1.Text, "#A03");
+
+				comboBox1 = new ComboBox ();
+				comboBox1.DataSource = t;
+				Assert.AreEqual ("", comboBox1.Text, "#A03");
+				comboBox1.DisplayMember = "displaymember";
+				Assert.AreEqual ("", comboBox1.Text, "#A03");
+				comboBox1.ValueMember = "valuemember";
+				Assert.AreEqual ("", comboBox1.Text, "#A02");
+				comboBox1.DataBindings.Add ("SelectedValue", new InitialBoundValue_dummy (), "controlsrc");
+				Assert.AreEqual ("", comboBox1.Text, "#A02-1");
+				f.Controls.AddRange (new Control [] { comboBox1 });
+				Assert.AreEqual ("", comboBox1.Text, "#A02-1");
+
+
+				comboBox1 = new ComboBox ();
+				f.Controls.AddRange (new Control [] { comboBox1 });
+				comboBox1.DisplayMember = "displaymember";
+				Assert.AreEqual ("", comboBox1.Text, "#A03");
+				comboBox1.ValueMember = "valuemember";
+				Assert.AreEqual ("", comboBox1.Text, "#A03");
+				comboBox1.DataSource = t;
+				Assert.AreEqual ("lower", comboBox1.Text, "#A03");
+				comboBox1.DataBindings.Add ("SelectedValue", new InitialBoundValue_dummy (), "controlsrc");
+				Assert.AreEqual ("lower", comboBox1.Text, "#A03");
+
+				comboBox1 = new ComboBox ();
+				f.Controls.AddRange (new Control [] { comboBox1 });
+				comboBox1.DisplayMember = "displaymember";
+				Assert.AreEqual ("", comboBox1.Text, "#A03");
+				comboBox1.ValueMember = "valuemember";
+				Assert.AreEqual ("", comboBox1.Text, "#A03");
+				comboBox1.DataBindings.Add ("SelectedValue", new InitialBoundValue_dummy (), "controlsrc");
+				Assert.AreEqual ("", comboBox1.Text, "#A03");
+				comboBox1.DataSource = t;
+				Assert.AreEqual ("lower", comboBox1.Text, "#A03");
+								
+				comboBox1 = new ComboBox ();
+				f.Controls.AddRange (new Control [] { comboBox1 });
+				comboBox1.ValueMember = "valuemember";
+				Assert.AreEqual ("", comboBox1.Text, "#A03");
+				comboBox1.DataSource = t;
+				Assert.AreEqual ("a", comboBox1.Text, "#A03");
+				comboBox1.DataBindings.Add ("SelectedValue", new InitialBoundValue_dummy (), "controlsrc");
+				Assert.AreEqual ("a", comboBox1.Text, "#A03");
+				comboBox1.DisplayMember = "displaymember";
+				Assert.AreEqual ("lower", comboBox1.Text, "#A03");
+
+				comboBox1 = new ComboBox ();
+				comboBox1.DataSource = t;
+				Assert.AreEqual ("", comboBox1.Text, "#A03");
+				comboBox1.DisplayMember = "displaymember";
+				Assert.AreEqual ("", comboBox1.Text, "#A03");
+				comboBox1.ValueMember = "valuemember";
+				Assert.AreEqual ("", comboBox1.Text, "#A03");
+				f.Controls.AddRange (new Control [] { comboBox1 });
+				Assert.AreEqual ("lower", comboBox1.Text, "#A03");
+				InitialBoundValue_dummy e = new InitialBoundValue_dummy ();
+				e.controlsrc = "c";
+				comboBox1.DataBindings.Add ("SelectedValue", e, "controlsrc");
+				Assert.AreEqual ("", comboBox1.Text, "#A03");
+				f.Show ();
+				Assert.AreEqual ("", comboBox1.Text, "#A03");
+				
+				// The real failing test
+				comboBox1 = new ComboBox ();
+				comboBox1.DisplayMember = "displaymember";
+				Assert.AreEqual ("", comboBox1.Text, "#A03");
+				comboBox1.ValueMember = "valuemember";
+				Assert.AreEqual ("", comboBox1.Text, "#A03");
+				comboBox1.DataSource = t;
+				Assert.AreEqual ("", comboBox1.Text, "#A03");
+				comboBox1.DataBindings.Add ("SelectedValue", new InitialBoundValue_dummy (), "controlsrc");
+				Assert.AreEqual ("", comboBox1.Text, "#A03");
+				f.Controls.AddRange (new Control [] { comboBox1 });
+				Assert.AreEqual ("", comboBox1.Text, "#A03");
+				f.Show ();
+				Assert.AreEqual ("", comboBox1.Text, "#A03");
+
+				Assert.AreEqual ("", comboBox1.Text, "#bug");
+
+				string table =
+@"<?xml version=""1.0"" standalone=""yes""?>
+<DOK>
+<DOK>
+<klient>287</klient>
+</DOK>
+</DOK>
+";
+				string lookup =
+	@"<?xml version=""1.0"" standalone=""yes""?>
+<klient>
+<klient>
+<nimi>FAILED</nimi>
+<kood>316</kood>
+</klient>
+<klient>
+<nimi>SUCCESS</nimi>
+<kood>287</kood>
+</klient>
+</klient>";
+
+				using (Form frm = new Form ()) {
+					frm.ShowInTaskbar = false;
+					DataSet dsTable = new DataSet ();
+					dsTable.ReadXml (new StringReader (table));
+					DataSet dsLookup = new DataSet ();
+					dsLookup.ReadXml (new StringReader (lookup));
+					ComboBox cb = new ComboBox ();
+					cb.DataSource = dsLookup.Tables [0];
+					cb.DisplayMember = "nimi";
+					cb.ValueMember = "kood";
+					InitialBoundValue_dummy d = new InitialBoundValue_dummy();
+					d.controlsrc = "287";
+					cb.DataBindings.Add ("SelectedValue", d, "controlsrc");
+					frm.Controls.Add (cb);
+					Assert.AreEqual ("", cb.Text, "#01");
+					frm.Show ();
+					Assert.AreEqual ("SUCCESS", cb.Text, "#02");
+				}
+			}
+		}
+
+		class InitialBoundValue_dummy
+		{
+			string t;
+			public string controlsrc
+			{
+				get { return t; }
+				set { t = value; }
+			}
+		}
+
 		[Test]
 		public void ContextMenuTest ()
 		{
@@ -896,10 +1110,10 @@ namespace MonoTests.System.Windows.Forms
 
 			gb.PublicScaleControl (new SizeF (.5f, .5f), BoundsSpecified.Location);
 			Assert.AreEqual (new Rectangle (5, 10, 238, 21), gb.Bounds, "A3");
-
+Console.WriteLine ("STARTING");
 			gb.PublicScaleControl (new SizeF (.5f, .5f), BoundsSpecified.Size);
 			Assert.AreEqual (new Rectangle (5, 10, 121, 21), gb.Bounds, "A4");
-
+			Console.WriteLine ("DONE");
 			gb.PublicScaleControl (new SizeF (3.5f, 3.5f), BoundsSpecified.Size);
 			Assert.AreEqual (new Rectangle (5, 10, 414, 21), gb.Bounds, "A5");
 
@@ -1095,6 +1309,146 @@ namespace MonoTests.System.Windows.Forms
 				Assert.IsNotNull (ex.Message, "#4");
 				Assert.IsNotNull (ex.ParamName, "#5");
 				Assert.AreEqual ("value", ex.ParamName, "#6");
+			}
+		}
+	}
+	[TestFixture]
+	public class ComboBoxTests
+	{
+		ComboBox comboBox;
+		bool textChanged, layoutUpdated;
+
+		[SetUp]
+		public void SetUp ()
+		{
+			comboBox = new ComboBox ();
+			textChanged = false;
+			layoutUpdated = false;
+			comboBox.TextChanged += new EventHandler (textChangedEventHandler);
+			comboBox.Layout += new LayoutEventHandler (layoutEventHandler);
+		}
+
+		private void textChangedEventHandler (object sender, EventArgs e)
+		{
+			textChanged = true;
+		}
+
+		private void layoutEventHandler (object sender, LayoutEventArgs e)
+		{
+			layoutUpdated = true;
+		}
+
+		[Test]
+		public void InitialPropertyValues ()
+		{
+
+			Assert.AreEqual (String.Empty, comboBox.Text);
+			Assert.AreEqual (-1, comboBox.SelectedIndex);
+			Assert.IsNull (comboBox.SelectedItem);
+			Assert.AreEqual (121, comboBox.Size.Width);
+			//Note: it is environment dependent
+			//Assert.AreEqual(20, comboBox.Size.Height);
+			Assert.IsFalse (textChanged);
+			Assert.IsFalse (layoutUpdated);
+		}
+
+		[Test]
+		public void SetNegativeOneSelectedIndex ()
+		{
+			comboBox.SelectedIndex = -1;
+			Assert.AreEqual (String.Empty, comboBox.Text);
+			Assert.IsFalse (textChanged);
+		}
+
+		[Test]
+		public void SetDifferentText ()
+		{
+			comboBox.Text = "foooooooooooooooooooooooooo";
+			Assert.IsTrue (textChanged);
+			Assert.IsFalse (layoutUpdated);
+		}
+
+		[Test]
+		public void SetSameText ()
+		{
+			comboBox.Text = String.Empty;
+			Assert.IsFalse (textChanged);
+			Assert.IsFalse (layoutUpdated);
+		}
+
+		[Test] // bug #79812
+		public void Add_Item_NonString ()
+		{
+			comboBox.Sorted = true;
+			comboBox.Items.Add (new Person ("B"));
+			comboBox.Items.Add (new Person ("A"));
+			comboBox.Items.Add (new Person ("C"));
+			Assert.AreEqual (string.Empty, comboBox.Text, "#1");
+			comboBox.SelectedIndex = 0;
+			Assert.AreEqual ("A", comboBox.Text, "#2");
+			comboBox.SelectedIndex = 2;
+			Assert.AreEqual ("C", comboBox.Text, "#3");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void SelectedText ()
+		{
+			Form form = new Form ();
+			form.ShowInTaskbar = false;
+			form.Visible = false;
+			form.Controls.Add (comboBox);
+
+			comboBox.Items.Add ("Bar");
+			comboBox.Items.Add ("Foo");
+			Assert.AreEqual (-1, comboBox.SelectedIndex, "#A1");
+			Assert.AreEqual (string.Empty, comboBox.SelectedText, "#A2");
+			comboBox.SelectedIndex = 0;
+			Assert.AreEqual (0, comboBox.SelectedIndex, "#B1");
+			Assert.AreEqual (string.Empty, comboBox.SelectedText, "#B2");
+			form.Show ();
+			Assert.AreEqual (0, comboBox.SelectedIndex, "#C1");
+			Assert.AreEqual ("Bar", comboBox.SelectedText, "#C2");
+			comboBox.SelectedIndex = 1;
+			Assert.AreEqual (1, comboBox.SelectedIndex, "#D1");
+			Assert.AreEqual (string.Empty, comboBox.SelectedText, "#D2");
+			comboBox.SelectedText = "Ba";
+			Assert.AreEqual (-1, comboBox.SelectedIndex, "#E1");
+			Assert.AreEqual (string.Empty, comboBox.SelectedText, "#E2");
+			comboBox.SelectedText = "Bar";
+			Assert.AreEqual (-1, comboBox.SelectedIndex, "#F1");
+			Assert.AreEqual (string.Empty, comboBox.SelectedText, "#F2");
+			comboBox.SelectedText = "doesnotexist";
+			Assert.AreEqual (-1, comboBox.SelectedIndex, "#G1");
+			Assert.AreEqual (string.Empty, comboBox.SelectedText, "#G2");
+			comboBox.SelectedIndex = 0;
+			Assert.AreEqual (0, comboBox.SelectedIndex, "#H1");
+			Assert.AreEqual (string.Empty, comboBox.SelectedText, "#H2");
+			comboBox.SelectedText = "Foo";
+			Assert.AreEqual (-1, comboBox.SelectedIndex, "#I1");
+			Assert.AreEqual (string.Empty, comboBox.SelectedText, "#I2");
+		}
+
+		public class Person
+		{
+			private readonly string _name;
+
+			public Person (string name)
+			{
+				_name = name;
+			}
+
+			public string Name
+			{
+				get
+				{
+					return _name;
+				}
+			}
+
+			public override string ToString ()
+			{
+				return Name;
 			}
 		}
 	}

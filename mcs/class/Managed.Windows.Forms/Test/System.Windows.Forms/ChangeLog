@@ -1,3 +1,8 @@
+2007-07-20  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* ComboBoxTests.cs, ComboBoxTest.cs: Unified ComboBoxTest.cs and
+	  ComboBoxTests.cs, deleted ComboBoxTests.cs
+
 2007-07-18  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStripTest.cs: One of my notworking tests slipped out.

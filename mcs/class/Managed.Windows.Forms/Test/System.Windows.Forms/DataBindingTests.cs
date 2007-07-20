@@ -43,60 +43,60 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 
 		protected void CurrentChanged (object sender, EventArgs args)
 		{
-			Console.WriteLine (Environment.StackTrace);
+			//Console.WriteLine (Environment.StackTrace);
 			event_log += String.Format ("{0}: CurrentChanged\n", event_num++);
 		}
 		protected void PositionChanged (object sender, EventArgs args)
 		{
-			Console.WriteLine (Environment.StackTrace);
+			//Console.WriteLine (Environment.StackTrace);
 			event_log += String.Format ("{0}: PositionChanged (to {1})\n", event_num++, ((CurrencyManager)sender).Position);
 		}
 		protected void ItemChanged (object sender, ItemChangedEventArgs args)
 		{
-			Console.WriteLine (Environment.StackTrace);
+			//Console.WriteLine (Environment.StackTrace);
 			event_log += String.Format ("{0}: ItemChanged (index = {1})\n", event_num++, args.Index);
 		}
 		protected void ListChanged (object sender, ListChangedEventArgs args)
 		{
-			Console.WriteLine (Environment.StackTrace);
+			//Console.WriteLine (Environment.StackTrace);
 			event_log += String.Format ("{0}: ListChanged ({1}, {2}, {3})\n", event_num++, args.ListChangedType, args.OldIndex, args.NewIndex);
 		}
 		protected void MetaDataChanged (object sender, EventArgs args)
 		{
-			Console.WriteLine (Environment.StackTrace);
+			//Console.WriteLine (Environment.StackTrace);
 			event_log += String.Format ("{0}: MetaDataChanged\n", event_num++);
 		}
 #if NET_2_0
 		protected void BindingComplete (object sender, BindingCompleteEventArgs args)
 		{
-			Console.WriteLine (Environment.StackTrace);
+			//Console.WriteLine (Environment.StackTrace);
 			event_log += String.Format ("{0}: BindingComplete\n", event_num++);
 		}
 		protected void CurrentItemChanged (object sender, EventArgs args)
 		{
-			Console.WriteLine (Environment.StackTrace);
+			//Console.WriteLine (Environment.StackTrace);
 			event_log += String.Format ("{0}: CurrentItemChanged\n", event_num++);
 		}
 		protected void DataError (object sender, BindingManagerDataErrorEventArgs args)
 		{
-			Console.WriteLine (Environment.StackTrace);
+			//Console.WriteLine (Environment.StackTrace);
 			event_log += String.Format ("{0}: DataError\n", event_num++);
 		}
 #endif
 		protected void Format (object sender, ConvertEventArgs args)
 		{
-			Console.WriteLine (Environment.StackTrace);
+			//Console.WriteLine (Environment.StackTrace);
 			event_log += String.Format ("{0}: Binding.Format\n", event_num++);
 		}
 		protected void Parse (object sender, ConvertEventArgs args)
 		{
-			Console.WriteLine (Environment.StackTrace);
+			//Console.WriteLine (Environment.StackTrace);
 			event_log += String.Format ("{0}: Binding.Parse\n", event_num++);
 		}
 
 		void TextChanged (object sender, EventArgs e)
 		{
-			Console.WriteLine (Environment.StackTrace);
+			//Console.WriteLine (Environment.StackTrace);
 			event_log += String.Format ("{0}: TextChanged\n", event_num++);
 		}
 
