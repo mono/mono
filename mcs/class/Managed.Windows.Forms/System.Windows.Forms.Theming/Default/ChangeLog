@@ -1,3 +1,8 @@
+2007-07-20  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStripPainter.cs: Patch from Rolf.  We weren't painting a
+	Checked button as sunken.  [Fixes bug #82151]
+
 2007-07-16  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ButtonPainter.cs: For flat buttons, draw mouse highlight when

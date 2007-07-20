@@ -44,7 +44,9 @@ namespace System.Windows.Forms.Theming.Default
 
 			Rectangle paint_here = new Rectangle (0, 0, e.Item.Width, e.Item.Height);
 			
-			if (e.Item.Pressed)
+			ToolStripButton tsb = e.Item as ToolStripButton;
+			
+			if (e.Item.Pressed || (tsb != null && tsb.Checked))
 				ControlPaint.DrawBorder3D (e.Graphics, paint_here, Border3DStyle.SunkenOuter);
 			else if (e.Item.Selected)
 				ControlPaint.DrawBorder3D (e.Graphics, paint_here, Border3DStyle.RaisedInner);
