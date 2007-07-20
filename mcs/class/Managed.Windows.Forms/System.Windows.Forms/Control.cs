@@ -2049,7 +2049,7 @@ namespace System.Windows.Forms
 
 #if NET_2_0
 		[Browsable (false)]
-		[DefaultValue ("{X=0,Y=0}")]
+		[DefaultValue (typeof (Point), "0, 0")]
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public virtual Point AutoScrollOffset {
 			get {
@@ -2102,6 +2102,11 @@ namespace System.Windows.Forms
 			}
 		}
 
+		internal bool ShouldSerializeMaximumSize ()
+		{
+			return this.MaximumSize != DefaultMaximumSize;
+		}
+
 		public virtual Size MinimumSize {
 			get {
 				return minimum_size;
@@ -2112,6 +2117,11 @@ namespace System.Windows.Forms
 					Size = PreferredSize;
 				}
 			}
+		}
+
+		internal bool ShouldSerializeMinimumSize ()
+		{
+			return this.MinimumSize != DefaultMinimumSize;
 		}
 #endif // NET_2_0
 
@@ -2142,6 +2152,11 @@ namespace System.Windows.Forms
 					Invalidate();
 				}
 			}
+		}
+
+		internal bool ShouldSerializeBackColor ()
+		{
+			return this.BackColor != DefaultBackColor;
 		}
 
 		[Localizable(true)]
@@ -2460,6 +2475,10 @@ namespace System.Windows.Forms
 			}
 		}
 
+		internal bool ShouldSerializeCursor ()
+		{
+			return this.Cursor != Cursors.Default;
+		}
 
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
 		[ParenthesizePropertyName(true)]
@@ -2596,6 +2615,11 @@ namespace System.Windows.Forms
 			}
 		}
 
+		internal bool ShouldSerializeEnabled ()
+		{
+			return this.Enabled != true;
+		}
+
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -2635,6 +2659,11 @@ namespace System.Windows.Forms
 			}
 		}
 
+		internal bool ShouldSerializeFont ()
+		{
+			return !this.Font.Equals (DefaultFont);
+		}
+
 		[DispId(-513)]
 		[MWFCategory("Appearance")]
 		public virtual Color ForeColor {
@@ -2655,6 +2684,11 @@ namespace System.Windows.Forms
 					OnForeColorChanged(EventArgs.Empty);
 				}
 			}
+		}
+
+		internal bool ShouldSerializeForeColor ()
+		{
+			return this.ForeColor != DefaultForeColor;
 		}
 
 		[DispId(-515)]
@@ -2722,6 +2756,11 @@ namespace System.Windows.Forms
 					OnImeModeChanged(EventArgs.Empty);
 				}
 			}
+		}
+
+		internal bool ShouldSerializeImeMode ()
+		{
+			return this.ImeMode != ImeMode.NoControl;
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -2822,6 +2861,11 @@ namespace System.Windows.Forms
 			}
 		}
 
+		internal bool ShouldSerializeLocation ()
+		{
+			return this.Location != new Point (0, 0);
+		}
+
 #if NET_2_0
 		[Localizable (true)]
 		public Padding Margin {
@@ -2832,6 +2876,11 @@ namespace System.Windows.Forms
 					OnMarginChanged (EventArgs.Empty);
 				}
 			}
+		}
+
+		internal bool ShouldSerializeMargin ()
+		{
+			return this.Margin != DefaultMargin;
 		}
 #endif
 
@@ -2865,6 +2914,11 @@ namespace System.Windows.Forms
 						PerformLayout (this, "Padding");
 				}
 			}
+		}
+
+		internal bool ShouldSerializePadding ()
+		{
+			return this.Padding != DefaultPadding;
 		}
 #endif
 
@@ -2996,6 +3050,11 @@ namespace System.Windows.Forms
 			}
 		}
 
+		internal bool ShouldSerializeRightToLeft ()
+		{
+			return this.RightToLeft != RightToLeft.No;
+		}
+
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public override ISite Site {
 			get {
@@ -3017,6 +3076,11 @@ namespace System.Windows.Forms
 			}
 		}
 
+		internal bool ShouldSerializeSite ()
+		{
+			return false;
+		}
+
 		[Localizable(true)]
 		[MWFCategory("Layout")]
 		public Size Size {
@@ -3027,6 +3091,11 @@ namespace System.Windows.Forms
 			set {
 				SetBounds(bounds.X, bounds.Y, value.Width, value.Height, BoundsSpecified.Size);
 			}
+		}
+
+		internal virtual bool ShouldSerializeSize ()
+		{
+			return this.Size != DefaultSize;
 		}
 
 		[Localizable(true)]
@@ -3101,7 +3170,7 @@ namespace System.Windows.Forms
 				}
 			}
 		}
-		
+
 		internal virtual void UpdateWindowText ()
 		{
 			if (!IsHandleCreated) {
@@ -3175,6 +3244,11 @@ namespace System.Windows.Forms
 						parent.PerformLayout (this, "Visible");
 				}
 			}
+		}
+
+		internal bool ShouldSerializeVisible ()
+		{
+			return this.Visible != true;
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Always)]

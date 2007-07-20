@@ -334,6 +334,11 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal bool ShouldSerializeAutoScrollMargin ()
+		{
+			return this.AutoScrollMargin != new Size (0, 0);
+		}
+
 		[Localizable(true)]
 		[MWFCategory("Layout")]
 		public Size AutoScrollMinSize {
@@ -347,6 +352,11 @@ namespace System.Windows.Forms {
 					AutoScroll = true;
 				}
 			}
+		}
+
+		internal bool ShouldSerializeAutoScrollMinSize ()
+		{
+			return this.AutoScrollMinSize != new Size (0, 0);
 		}
 
 		[Browsable(false)]

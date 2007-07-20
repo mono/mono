@@ -209,6 +209,11 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal bool ShouldSerializeImage ()
+		{
+			return this.Image != null;
+		}
+
 		[Localizable(true)]
 		[DefaultValue(ContentAlignment.MiddleCenter)]
 		[MWFDescription("Sets the alignment of the image to be displayed on button face"), MWFCategory("Appearance")]

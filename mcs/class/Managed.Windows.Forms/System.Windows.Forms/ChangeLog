@@ -1,3 +1,9 @@
+2007-07-20  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* Control.cs, Form.cs, ContainerControl.cs,
+	ScrollableControl.cs, ButtonBase.cs:  Added ShouldSerialize
+	for misc properties.
+
 2007-07-20  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TreeNode.cs: Implement StateImageIndex and StateImageKey.

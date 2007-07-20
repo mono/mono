@@ -507,6 +507,11 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal bool ShouldSerializeAutoScroll ()
+		{
+			return this.AutoScroll != false;
+		}
+
 #if NET_2_0
 		[Browsable (true)]
 		[EditorBrowsable (EditorBrowsableState.Always)]
@@ -519,6 +524,11 @@ namespace System.Windows.Forms {
 					PerformLayout (this, "AutoSize");
 				}
 			}
+		}
+
+		internal bool ShouldSerializeAutoSize ()
+		{
+			return this.AutoSize != false;
 		}
 		
 		[Browsable (true)]
@@ -693,6 +703,11 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal bool ShouldSerializeIcon ()
+		{
+			return this.Icon != default_icon;
+		}
+
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public bool IsMdiChild {
@@ -786,7 +801,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[DefaultValue("{Width=0, Height=0}")]
+		[DefaultValue(typeof (Size),"0, 0")]
 		[Localizable(true)]
 		[RefreshProperties(RefreshProperties.Repaint)]
 		[MWFCategory("Layout")]
@@ -1221,6 +1236,11 @@ namespace System.Windows.Forms {
 				if (IsHandleCreated && (XplatUI.SupportsTransparency () & TransparencySupport.Set) != 0)
 					XplatUI.SetWindowTransparency(Handle, Opacity, transparency_key);
 			}
+		}
+
+		internal bool ShouldSerializeTransparencyKey ()
+		{
+			return this.TransparencyKey != Color.Empty;
 		}
 
 		[DefaultValue(FormWindowState.Normal)]

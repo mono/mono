@@ -588,6 +588,11 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal bool ShouldSerializeAutoValidate ()
+		{
+			return this.AutoValidate != AutoValidate.Inherit;
+		}
+
 		static object OnValidateChanged = new object ();
 
 		protected virtual void OnAutoValidateChanged (EventArgs e)
