@@ -1,3 +1,9 @@
+2007-07-20 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_test.sh: added more visibility tests
+	* Makefile: changed again the clean target to work with the larger number of tests
+	* make_self_nested_test.sh: new visibility tests
+
 2007-07-19 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* make_test.sh: added reference compatibility tests
