@@ -1,3 +1,9 @@
+2007-07-21  Marek Habersack  <grendello@gmail.com>
+
+	* appdomain.c (get_shadow_assembly_location): append the current
+	ticks value to the path. Avoids overwriting the same assemblies by
+	several threads at the same time.
+
 2007-07-20  Atsushi Enomoto  <atsushi@ximian.com>
 	and Raja R Harinath  <rharinath@novell.com>
 
