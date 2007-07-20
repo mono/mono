@@ -299,11 +299,13 @@ namespace System
 			set { _activationArguments = value; }
 		}
 
+		[MonoLimitation ("it needs to be invoked within the created domain")]
 		public AppDomainInitializer AppDomainInitializer {
 			get { return domain_initializer; }
 			set { domain_initializer = value; }
 		}
 
+		[MonoLimitation ("it needs to be used to invoke the initializer within the created domain")]
 		public string [] AppDomainInitializerArguments {
 			get { return domain_initializer_args; }
 			set { domain_initializer_args = value; }

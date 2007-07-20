@@ -1,5 +1,10 @@
 2007-07-20  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* AppDomainSetup.cs :
+	  MonoTODO AppDomainInitializer as its implementation is wrong.
+
+2007-07-20  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* AppDomainSetup.cs : added missing 2.0 members.
 	* AppDomain.cs : support AppDomainInitializer.
 
