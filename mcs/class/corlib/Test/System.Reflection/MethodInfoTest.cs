@@ -444,6 +444,46 @@ namespace MonoTests.System.Reflection
 			Assert.IsFalse (m3.IsGenericMethodDefinition);
 		}
 
+		[Test]
+		public void GetGenericMethodDefinition ()
+		{
+			MethodInfo mi1 = typeof (MyList<>).GetMethod ("ConvertAll");
+			MethodInfo mi2 = typeof (MyList<int>).GetMethod ("ConvertAll");
+
+			Assert.AreEqual ("MonoTests.System.Reflection.MethodInfoTest+Foo`2[T,TOutput]",
+					 mi1.GetParameters () [0].ParameterType.ToString ());
+			Assert.AreEqual ("MonoTests.System.Reflection.MethodInfoTest+Foo`2[System.Int32,TOutput]",
+					 mi2.GetParameters () [0].ParameterType.ToString ());
+			Assert.IsTrue (mi1.IsGenericMethod);
+			Assert.IsTrue (mi1.IsGenericMethodDefinition);
+			Assert.IsTrue (mi2.IsGenericMethod);
+			Assert.IsTrue (mi2.IsGenericMethodDefinition);
+
+			MethodInfo mi3 = mi2.GetGenericMethodDefinition ();
+
+			Assert.IsTrue (mi3.IsGenericMethod);
+			Assert.IsTrue (mi3.IsGenericMethodDefinition);
+
+			// ensure it's the same object, not just equal
+			Assert.IsTrue (mi2 == mi3);
+		}
+
+		public class MyList<T>
+		{
+			public TOutput ConvertAll<TOutput> (Foo<T,TOutput> arg)
+			{
+				return default (TOutput);
+			}
+			public T ConvertAll2 (MyList<T> arg)
+			{
+				return default (T);
+			}
+		}
+
+		public class Foo<T,TOutput>
+		{
+		}
+
 		class GenericHelper<T>
 		{
 			public void Test (T t)

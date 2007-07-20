@@ -1,3 +1,8 @@
+2007-07-20  Raja R Harinath  <rharinath@novell.com>
+
+	* MethodInfoTest.cs (GetGenericMethodDefinition): New.  Based on
+	Atsushi's testcase in #78068.
+
 2007-07-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* MethodInfoTest.cs : fix incorrect parameter type output.
