@@ -1,3 +1,7 @@
+2007-07-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* AppDomainSetupTest.cs : added test for AppDomainInitializer.
+
 2007-07-07  Alan McGovern  <amcgovern@novell.com>
 
 	* GuidTest.cs: Added test to make sure whitespace is trimmed correctly

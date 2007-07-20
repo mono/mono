@@ -1,3 +1,8 @@
+2007-07-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* AppDomainSetup.cs : added missing 2.0 members.
+	* AppDomain.cs : support AppDomainInitializer.
+
 2007-06-06  Miguel de Icaza  <miguel@novell.com>
 
 	* Int16.cs, UInt64.cs, SByte.cs, UInt16.cs, Byte.cs, Int32.cs,

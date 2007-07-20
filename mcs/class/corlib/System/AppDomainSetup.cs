@@ -37,6 +37,7 @@ using System.Runtime.InteropServices;
 
 #if NET_2_0
 using System.Runtime.Hosting;
+using System.Security.Policy;
 #endif
 
 namespace System
@@ -63,9 +64,20 @@ namespace System
 		private LoaderOptimization loader_optimization;
 		bool disallow_binding_redirects;
 		bool disallow_code_downloads;
+
+		// those fields also exist in the runtime, so we need dummies in 1.x profile too.
 #if NET_2_0
 		private ActivationArguments _activationArguments;
+		ApplicationTrust application_trust;
+		AppDomainInitializer domain_initializer;
+#else
+		object _activationArguments;
+		object application_trust; // always null
+		object domain_initializer; // always null
 #endif
+		string [] domain_initializer_args;
+		bool disallow_appbase_probe;
+		byte [] configuration_bytes;
 
 		public AppDomainSetup ()
 		{
@@ -88,6 +100,14 @@ namespace System
 			loader_optimization = setup.loader_optimization;
 			disallow_binding_redirects = setup.disallow_binding_redirects;
 			disallow_code_downloads = setup.disallow_code_downloads;
+//#if NET_2_0
+			_activationArguments = setup._activationArguments;
+			domain_initializer = setup.domain_initializer;
+			domain_initializer_args = setup.domain_initializer_args;
+			application_trust = setup.application_trust;
+			disallow_appbase_probe = setup.disallow_appbase_probe;
+			configuration_bytes = setup.configuration_bytes;
+//#endif
 		}
 
 #if NET_2_0
@@ -127,7 +147,7 @@ namespace System
 
 			return appBase;
 		}
-		
+
 		public string ApplicationBase {
 			get { return GetAppBase (application_base); }
 			set { application_base = value; } 
@@ -277,6 +297,40 @@ namespace System
 		public ActivationArguments ActivationArguments {
 			get { return _activationArguments; }
 			set { _activationArguments = value; }
+		}
+
+		public AppDomainInitializer AppDomainInitializer {
+			get { return domain_initializer; }
+			set { domain_initializer = value; }
+		}
+
+		public string [] AppDomainInitializerArguments {
+			get { return domain_initializer_args; }
+			set { domain_initializer_args = value; }
+		}
+
+		[MonoNotSupported ("This property exists but not considered.")]
+		public ApplicationTrust ApplicationTrust {
+			get { return application_trust; }
+			set { application_trust = value; }
+		}
+
+		[MonoNotSupported ("This property exists but not considered.")]
+		public bool DisallowApplicationBaseProbing {
+			get { return disallow_appbase_probe; }
+			set { disallow_appbase_probe = value; }
+		}
+
+		[MonoNotSupported ("This method exists but not considered.")]
+		public byte [] GetConfigurationBytes ()
+		{
+			return configuration_bytes != null ? configuration_bytes.Clone () as byte [] : null;
+		}
+
+		[MonoNotSupported ("This method exists but not considered.")]
+		public void SetConfigurationBytes (byte [] bytes)
+		{
+			configuration_bytes = bytes;
 		}
 #endif
 	}

@@ -202,5 +202,35 @@ namespace MonoTests.System
 				Assert.AreEqual (Path.GetFullPath ("la?lala"), setup.ApplicationBase);
 			}
 		}
+
+#if NET_2_0
+		static bool app_domain_initialized;
+
+		[Test]
+		public void AppDomainInitializer1 ()
+		{
+			AppDomainSetup s = new AppDomainSetup ();
+			s.AppDomainInitializer = AppDomainInitialized1;
+			s.AppDomainInitializerArguments = new string [] {"A", "B"};
+			AppDomain.CreateDomain ("MyDomain", null, s);
+			Assert.IsTrue (app_domain_initialized, "#1");
+		}
+
+		static void AppDomainInitialized1 (string [] args)
+		{
+			Assert.AreEqual ("A", args [0], "#x1");
+			Assert.AreEqual ("B", args [1], "#x2");
+			app_domain_initialized = true;
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void AppDomainInitializerNonStaticMethod ()
+		{
+			AppDomainSetup s = new AppDomainSetup ();
+			s.AppDomainInitializer = delegate (string [] args) {};
+			AppDomain.CreateDomain ("MyDomain", null, s);
+		}
+#endif
 	}
 }

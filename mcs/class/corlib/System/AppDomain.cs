@@ -750,6 +750,14 @@ namespace System {
 			else
 				ad._evidence = new Evidence (securityInfo);	// copy
 
+#if NET_2_0
+			if (info.AppDomainInitializer != null) {
+				if ((info.AppDomainInitializer.Method.Attributes & MethodAttributes.Static) == 0)
+					throw new ArgumentException ("Non-static methods cannot be invoked as an appdomain initializer");
+				info.AppDomainInitializer (info.AppDomainInitializerArguments);
+			}
+#endif
+
 			return ad;
 		}
 
