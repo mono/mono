@@ -1,3 +1,9 @@
+2007-07-20  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* System.Windows.Forms_test.dll.sources: Unified ComboBoxTest.cs and
+	  ComboBoxTests.cs, deleted ComboBoxTests.cs
+	* SWF2k5-tests.csproj: Updated.
+
 2007-07-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* build-csproj2k5-tests: Remove warnings.

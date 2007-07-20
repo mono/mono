@@ -35,7 +35,7 @@
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
-    <DefineConstants>NET_1_1</DefineConstants>
+    <DefineConstants>NET_1_1 ONLY_1_1 __MonoCS__</DefineConstants>
     <DocumentationFile>
     </DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
@@ -58,7 +58,7 @@
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
-    <DefineConstants>NET_2_0</DefineConstants>
+    <DefineConstants>NET_2_0 __MonoCS__</DefineConstants>
     <DocumentationFile>
     </DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
@@ -81,7 +81,7 @@
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
-    <DefineConstants>NET_1_1</DefineConstants>
+    <DefineConstants>NET_1_1 ONLY_1_1 __MonoCS__</DefineConstants>
     <DocumentationFile>
     </DocumentationFile>
     <DebugSymbols>false</DebugSymbols>
@@ -104,7 +104,7 @@
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
-    <DefineConstants>NET_2_0</DefineConstants>
+    <DefineConstants>NET_2_0 __MonoCS__</DefineConstants>
     <DocumentationFile>
     </DocumentationFile>
     <DebugSymbols>false</DebugSymbols>
@@ -168,7 +168,6 @@
     <Compile Include="Test\System.Windows.Forms\ColumnHeaderTest.cs" />
     <Compile Include="Test\System.Windows.Forms\ColumnStyleTest.cs" />
     <Compile Include="Test\System.Windows.Forms\ComboBoxTest.cs" />
-    <Compile Include="Test\System.Windows.Forms\ComboBoxTests.cs" />
     <Compile Include="Test\System.Windows.Forms\Common.cs" />
     <Compile Include="Test\System.Windows.Forms\CommonDialogsTest.cs" />
     <Compile Include="Test\System.Windows.Forms\ContainerControlTest.cs" />

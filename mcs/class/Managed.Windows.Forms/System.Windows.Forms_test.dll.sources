@@ -18,7 +18,6 @@ System.Windows.Forms/ColumnClickEventArgsTest.cs
 System.Windows.Forms/ColumnHeaderTest.cs
 System.Windows.Forms/ColumnStyleTest.cs
 System.Windows.Forms/ComboBoxTest.cs
-System.Windows.Forms/ComboBoxTests.cs
 System.Windows.Forms/Common.cs
 System.Windows.Forms/CommonDialogsTest.cs
 System.Windows.Forms/ContainerControlTest.cs
