@@ -1,3 +1,7 @@
+2007-07-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* domain-internals.h : added 2.0 member fields to MonoAppDomainSetup.
+
 2007-07-19  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c: used function from private branch, reverted to the one in class.h 
