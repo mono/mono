@@ -1536,17 +1536,13 @@ namespace System.Windows.Forms {
 		{
 			Form	active;
 
-			// The docs say activate only activates if our app is already active
 			if (IsHandleCreated) {
 				if (IsMdiChild) {
 					MdiParent.ActivateMdiChild (this);
 				} else if (IsMdiContainer) {
 					mdi_container.SendFocusToActiveChild ();
 				} else {
-					active = ActiveForm;
-					if ((active != null) && (this != active)) {
-						XplatUI.Activate(window.Handle);
-					}
+					XplatUI.Activate(window.Handle);
 				}
 			}
 		}
