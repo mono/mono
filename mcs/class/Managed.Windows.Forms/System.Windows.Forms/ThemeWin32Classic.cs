@@ -4572,7 +4572,7 @@ namespace System.Windows.Forms
 				format.Alignment = StringAlignment.Center;
 			else
 				format.Alignment = StringAlignment.Near;
-
+#if !NET_2_0
 			if (control is PropertyGrid.PropertyToolBar) {
 				dc.FillRectangle (ResPool.GetSolidBrush(control.BackColor), clip_rectangle);
 				
@@ -4592,7 +4592,7 @@ namespace System.Windows.Forms
 					dc.DrawLine (SystemPens.ControlDark, clip_rectangle.Right - 1, 1, clip_rectangle.Right - 1, control.Bottom - 1);
 				}
 			} else {
-
+#endif
 				if (control.Appearance == ToolBarAppearance.Flat && control.Parent != null) {
 					if (control.Parent.BackgroundImage != null) {
 						using (TextureBrush b = new TextureBrush (control.Parent.BackgroundImage, WrapMode.Tile))
@@ -4610,7 +4610,9 @@ namespace System.Windows.Forms
 					}
 					dc.DrawLine (SystemPens.ControlLightLight, clip_rectangle.X, 1, clip_rectangle.Right, 1);
 				}
+#if !NET_2_0
 			}
+#endif
 
 			foreach (ToolBarItem item in control.items)
 				if (item.Button.Visible && clip_rectangle.IntersectsWith (item.Rectangle))

@@ -5,6 +5,11 @@
 
 2007-07-20  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Form.cs: Don't check if the current form is the active form before
+	  activating it. Fixes #81904.
+
+2007-07-20  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* TreeView.cs: Apply patch from Tyron (tmm@aon.at). Fixes #81847.
 
 2007-07-20  Rolf Bjarne Kvinge <RKvinge@novell.com> 
