@@ -1,3 +1,8 @@
+2007-07-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* create-mscompat-collation-table.cs : I wonder how long its build
+	  has been broken ...
+
 2007-03-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SimpleCollator.cs : disable QuickCheckPossible(), which is

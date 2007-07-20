@@ -3030,7 +3030,7 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			//
 
 			string hangulSequence =
-			+ "\u1100=\u11A8 > \u1101=\u11A9 >"
+			  "\u1100=\u11A8 > \u1101=\u11A9 >"
 			+ "\u11C3, \u11AA, \u11C4, \u1102=\u11AB >"
 			+ "<{\u1113 \u1116}, \u3165,"
 				+ "\u11C5, \u11C6=\u3166,, \u11C7, \u11C8,"
