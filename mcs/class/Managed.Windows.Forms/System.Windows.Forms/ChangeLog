@@ -1,5 +1,9 @@
 2007-07-20  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* TreeView.cs: Apply patch from Tyron (tmm@aon.at). Fixes #81847.
+
+2007-07-20  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Form.cs: Don't try to position the form after loading if the form was
 	  disposed. Fixes #81969.
 

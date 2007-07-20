@@ -1483,7 +1483,7 @@ namespace System.Windows.Forms {
 			edit_text_box.Focus ();
 			edit_text_box.SelectAll ();
 
-			edit_args = new NodeLabelEditEventArgs (edit_node);
+			edit_args = new NodeLabelEditEventArgs (node);
 			OnBeforeLabelEdit (edit_args);
 
 			if (edit_args.CancelEdit)
