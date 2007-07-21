@@ -221,11 +221,8 @@ namespace System.Threading
 			[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 			[SecurityPermission (SecurityAction.InheritanceDemand, UnmanagedCode = true)]
 			set {
-				if (safe_wait_handle != null)
-					safe_wait_handle.Close ();
-
 				if (value == InvalidHandle)
-					safe_wait_handle = null;
+					safe_wait_handle = new SafeWaitHandle (InvalidHandle, false);
 				else
 					safe_wait_handle = new SafeWaitHandle (value, true);
 			}
@@ -241,7 +238,7 @@ namespace System.Threading
 
 				//
 				// This is only the case if the handle was never properly initialized
-				// most likely a but in the derived class
+				// most likely a bug in the derived class
 				//
 				if (safe_wait_handle == null)
 					return;
@@ -261,19 +258,21 @@ namespace System.Threading
 
 			[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 			set {
-				if (safe_wait_handle != null)
-					safe_wait_handle.Dispose ();
-
-				safe_wait_handle = value;
+				if (value == null)
+					safe_wait_handle = new SafeWaitHandle (InvalidHandle, false);
+				else
+					safe_wait_handle = value;
 			}
 		}
 
+		[MonoTODO]
 		public static bool SignalAndWait (WaitHandle toSignal,
 						  WaitHandle toWaitOn)
 		{
 			throw new NotImplementedException ();
 		}
 		
+		[MonoTODO]
 		public static bool SignalAndWait (WaitHandle toSignal,
 						  WaitHandle toWaitOn,
 						  int millisecondsTimeout,
@@ -282,6 +281,7 @@ namespace System.Threading
 			throw new NotImplementedException ();
 		}
 		
+		[MonoTODO]
 		public static bool SignalAndWait (WaitHandle toSignal,
 						  WaitHandle toWaitOn,
 						  TimeSpan timeout,
@@ -422,7 +422,7 @@ namespace System.Threading
 		}
 #endif
 
-		protected static readonly IntPtr InvalidHandle = IntPtr.Zero;
+		protected static readonly IntPtr InvalidHandle = (IntPtr) (-1);
 		bool disposed = false;
 
 		void IDisposable.Dispose() {

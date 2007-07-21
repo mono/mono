@@ -1,3 +1,8 @@
+2007-07-21  Miguel de Icaza  <miguel@novell.com>
+
+	* AutoResetEventTest.cs: Integrated test based on Gert's email
+	(only the first chunk).
+
 2007-07-08  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ThreadTest.cs: Removed tests for bug #81930, since other tests can
