@@ -1,3 +1,9 @@
+2007-07-21  Gert Driesen  <drieseng@users.souceforge.net>
+
+	* DisplayNameAttribute.cs: To match MS, do not change null DisplayName
+	to a zero-length string. Modified IsDefaultAttribute to take into
+	account null DisplayName.
+
 2007-07-16  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ReflectionPropertyDescriptor.cs: For read-only properties,

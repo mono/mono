@@ -29,7 +29,7 @@
 #if NET_2_0
 namespace System.ComponentModel
 {
-	[AttributeUsageAttribute(AttributeTargets.Class|AttributeTargets.Method|AttributeTargets.Property|AttributeTargets.Event)]
+	[AttributeUsageAttribute (AttributeTargets.Class | AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Event)]
 	public class DisplayNameAttribute : Attribute
 	{
 		public static readonly DisplayNameAttribute Default = new DisplayNameAttribute ();
@@ -43,12 +43,14 @@ namespace System.ComponentModel
 
 		public DisplayNameAttribute (string displayName)
 		{
-			this.attributeDisplayName = displayName != null ? displayName : String.Empty;
+			this.attributeDisplayName = displayName;
 		}
 
 		public override bool IsDefaultAttribute ()
 		{
-			return attributeDisplayName.Length == 0;
+			if (attributeDisplayName != null)
+				return attributeDisplayName.Length == 0;
+			return false;
 		}
 
 		public override int GetHashCode ()
@@ -74,7 +76,7 @@ namespace System.ComponentModel
 		
 		protected string DisplayNameValue {
 			get { return attributeDisplayName; }
-			set { attributeDisplayName = value != null ? value : String.Empty; }
+			set { attributeDisplayName = value; }
 		}
 	}
 }

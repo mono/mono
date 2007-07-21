@@ -1,3 +1,9 @@
+2007-07-21  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DisplayNameAttribute.cs: Added ctor tests. Fixed tests to pass on
+	MS (now that our implementation matches that of MS). Added tests
+	for Default, GetHashCode and Equals.
+
 2007-07-16  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* PropertyDescriptorTests.cs: Added test for ShouldSerializeValue

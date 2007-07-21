@@ -1,16 +1,19 @@
 //
-// System.ComponentModel.DisplayNameAttributeTests test cases
+// System.ComponentModel.DisplayNameAttribute test cases
 //
 // Authors:
 //      Marek Habersack (grendello@gmail.com)
+//      Gert Driesen (drieseng@users.sourceforge.net
 //
 // (c) 2006 Marek Habersack
 //
+
 #if NET_2_0
-using NUnit.Framework;
 using System;
 using System.ComponentModel;
 using System.Reflection;
+
+using NUnit.Framework;
 
 namespace MonoTests.System.ComponentModel 
 {
@@ -100,6 +103,81 @@ namespace MonoTests.System.ComponentModel
 		}
 		
 		[Test]
+		public void Constructor0 ()
+		{
+			DisplayNameAttribute dn = new DisplayNameAttribute ();
+			Assert.IsNotNull (dn.DisplayName, "#1");
+			Assert.AreEqual (string.Empty, dn.DisplayName, "#2");
+			Assert.IsTrue (dn.IsDefaultAttribute (), "#3");
+		}
+
+		[Test]
+		public void Constructor1 ()
+		{
+			DisplayNameAttribute dn = new DisplayNameAttribute (string.Empty);
+			Assert.IsNotNull (dn.DisplayName, "#A1");
+			Assert.AreEqual (string.Empty, dn.DisplayName, "#A2");
+			Assert.IsTrue (dn.IsDefaultAttribute (), "#A3");
+
+			dn = new DisplayNameAttribute (null);
+			Assert.IsNull (dn.DisplayName, "#B1");
+			Assert.IsFalse (dn.IsDefaultAttribute (), "#B2");
+
+			dn = new DisplayNameAttribute ("category");
+			Assert.IsNotNull (dn.DisplayName, "#C1");
+			Assert.AreEqual ("category", dn.DisplayName, "#C2");
+			Assert.IsFalse (dn.IsDefaultAttribute (), "#C3");
+		}
+
+		[Test]
+		public void Default ()
+		{
+			DisplayNameAttribute dn = DisplayNameAttribute.Default;
+			Assert.IsNotNull (dn.DisplayName, "#1");
+			Assert.AreEqual (string.Empty, dn.DisplayName, "#2");
+			Assert.IsTrue (dn.IsDefaultAttribute (), "#3");
+		}
+
+		[Test]
+		public void Equals ()
+		{
+			DisplayNameAttribute dn = new DisplayNameAttribute ();
+			Assert.IsTrue (dn.Equals (DisplayNameAttribute.Default), "#A1");
+			Assert.IsTrue (dn.Equals (new DisplayNameAttribute (string.Empty)), "#A2");
+			Assert.IsFalse (dn.Equals (new DisplayNameAttribute ("category")), "#A3");
+			Assert.IsFalse (dn.Equals (new DisplayNameAttribute (null)), "#A4");
+			Assert.IsFalse (dn.Equals (null), "#A5");
+			Assert.IsTrue (dn.Equals (dn), "#A6");
+			Assert.IsFalse (dn.Equals (55), "#A7");
+
+			dn = new DisplayNameAttribute ("category");
+			Assert.IsFalse (dn.Equals (DisplayNameAttribute.Default), "#B1");
+			Assert.IsFalse (dn.Equals (new DisplayNameAttribute (string.Empty)), "#B2");
+			Assert.IsTrue (dn.Equals (new DisplayNameAttribute ("category")), "#B3");
+			Assert.IsFalse (dn.Equals (new DisplayNameAttribute (null)), "#B4");
+			Assert.IsFalse (dn.Equals (null), "#B5");
+			Assert.IsTrue (dn.Equals (dn), "#B6");
+			Assert.IsFalse (dn.Equals (55), "#B7");
+		}
+
+		[Test]
+		public void GetHashCodeTest ()
+		{
+			DisplayNameAttribute dn = new DisplayNameAttribute ();
+			Assert.AreEqual (string.Empty.GetHashCode (), dn.GetHashCode (), "#A1");
+			dn = new DisplayNameAttribute ("A");
+			Assert.AreEqual ("A".GetHashCode (), dn.GetHashCode (), "#A2");
+
+			// https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=288534
+			dn = new DisplayNameAttribute (null);
+			try {
+				dn.GetHashCode ();
+				Assert.Fail ("#B1");
+			} catch (NullReferenceException) {
+			}
+		}
+
+		[Test]
 		public void TestEmptyName ()
 		{
 			Type tc1t = tc1.GetType ();
@@ -145,18 +223,15 @@ namespace MonoTests.System.ComponentModel
 			Type tc3t = tc3.GetType ();
 			DisplayNameAttribute dn = GetAttribute (tc3t);
 			Assert.IsNotNull (dn, "#1_1");
-			Assert.IsFalse (dn.DisplayName == null, "#1_2");
-			Assert.AreEqual (dn.DisplayName, "", "#1_3");
+			Assert.IsNull (dn.DisplayName, "#1_2");
 			
 			dn = GetAttribute (tc3t, "Property3", MemberTypes.Property);
 			Assert.IsNotNull (dn, "#2_1");
-			Assert.IsFalse (dn.DisplayName == null, "#2_2");
-			Assert.AreEqual (dn.DisplayName, "", "#2_3");
+			Assert.IsNull (dn.DisplayName, "#2_2");
 			
 			dn = GetAttribute (tc3t, "Method3", MemberTypes.Method);
 			Assert.IsNotNull (dn, "#3_1");
-			Assert.IsFalse (dn.DisplayName == null, "#3_2");
-			Assert.AreEqual (dn.DisplayName, "", "#3_3");
+			Assert.IsNull (dn.DisplayName, "#3_2");
 		}
 		
 		[Test]
@@ -191,17 +266,16 @@ namespace MonoTests.System.ComponentModel
 			Type tc3t = tc3.GetType ();
 			dn = GetAttribute (tc3t);
 			Assert.IsNotNull (dn, "#3_1");
-			Assert.IsTrue (dn.IsDefaultAttribute (), "#3_2");
+			Assert.IsFalse (dn.IsDefaultAttribute (), "#3_2");
 
 			dn = GetAttribute (tc3t, "Property3", MemberTypes.Property);
 			Assert.IsNotNull (dn, "#3_3");
-			Assert.IsTrue (dn.IsDefaultAttribute (), "#3_4");
+			Assert.IsFalse (dn.IsDefaultAttribute (), "#3_4");
 
 			dn = GetAttribute (tc3t, "Method3", MemberTypes.Method);
 			Assert.IsNotNull (dn, "#3_5");
-			Assert.IsTrue (dn.IsDefaultAttribute (), "#3_6");
+			Assert.IsFalse (dn.IsDefaultAttribute (), "#3_6");
 		}
 	}
 }
 #endif
-
