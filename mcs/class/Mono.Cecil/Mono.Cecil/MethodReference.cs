@@ -118,13 +118,13 @@ namespace Mono.Cecil {
 			sb.Append (base.ToString ());
 			sb.Append ("(");
 			for (int i = 0; i < this.Parameters.Count; i++) {
+				if (i > 0)
+					sb.Append (",");
+
 				if (i == sentinel)
 					sb.Append ("...,");
 
 				sb.Append (this.Parameters [i].ParameterType.FullName);
-
-				if (i < this.Parameters.Count - 1)
-					sb.Append (",");
 			}
 			sb.Append (")");
 			return sb.ToString ();

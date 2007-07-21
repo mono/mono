@@ -75,6 +75,7 @@ namespace Mono.Cecil {
 
 		public override string FullName {
 			get {
+				int sentinel = GetSentinel ();
 				StringBuilder sb = new StringBuilder ();
 				sb.Append (m_function.Name);
 				sb.Append (" ");
@@ -83,6 +84,10 @@ namespace Mono.Cecil {
 				for (int i = 0; i < m_function.Parameters.Count; i++) {
 					if (i > 0)
 						sb.Append (",");
+
+					if (i == sentinel)
+						sb.Append ("...,");
+
 					sb.Append (m_function.Parameters [i].ParameterType.FullName);
 				}
 				sb.Append (")");
