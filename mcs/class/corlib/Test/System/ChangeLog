@@ -1,3 +1,13 @@
+2007-07-21  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* BitConverterTest.cs: Remove use of deprecated Assertion class. 
+	Improved existing tests to verify throws exception. Create separate
+	tests for null argument checking. Added tests for empty byte array.
+
+2007-07-20  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* RuntimeMethodHandleTest.cs: Added operator and Equals tests.
+
 2007-07-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* AppDomainSetupTest.cs : added test for AppDomainInitializer.

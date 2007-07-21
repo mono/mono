@@ -1,3 +1,11 @@
+2007-07-21  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* BitConverter.cs: Fixed exceptions to match MS. Fixed invalid use
+	of ArgumentOutOfRangeException and ArgumentException ctors that take
+	both parameter name and message. In ToString throws ArgumentException
+	instead of ArgumentOutOfRangeException when length is negative, and
+	return zero-length string when length is 0.
+
 2007-07-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* AppDomainSetup.cs : fix serialization regression.

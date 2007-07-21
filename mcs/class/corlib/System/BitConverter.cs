@@ -4,7 +4,6 @@
 // Author:
 //   Matt Kimball (matt@kimball.net)
 //
-
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
@@ -30,15 +29,16 @@
 
 using System.Text;
 
-namespace System {
+namespace System
+{
 	public
 #if NET_2_0
-		static
+	static
 #else
-		sealed
+	sealed
 #endif
-	class BitConverter {
-
+	class BitConverter
+	{
 #if !NET_2_0
 		private BitConverter ()
 		{
@@ -47,7 +47,6 @@ namespace System {
 
 		static readonly bool SwappedWordsInDouble = DoubleWordsAreSwapped ();
 		public static readonly bool IsLittleEndian = AmILittleEndian ();
-
 
 		static unsafe bool AmILittleEndian ()
 		{
@@ -166,22 +165,26 @@ namespace System {
 
 		unsafe static void PutBytes (byte *dst, byte[] src, int start_index, int count)
 		{
-			if (src == null) {
-				throw new ArgumentNullException ("value"); // gets called from methods with value params
-			}
+			if (src == null)
+#if NET_2_0
+				throw new ArgumentNullException ("value");
+#else
+				throw new ArgumentNullException ("byteArray");
+#endif
 
-			if (start_index < 0)
-				throw new ArgumentOutOfRangeException ("startIndex < 0");
+			if (start_index < 0 || (start_index > src.Length - 1))
+				throw new ArgumentOutOfRangeException ("startIndex", "Index was"
+					+ " out of range. Must be non-negative and less than the"
+					+ " size of the collection.");
 
 			// avoid integer overflow (with large pos/neg start_index values)
-			if (src.Length - count < start_index) {
-				throw new ArgumentOutOfRangeException (Locale.GetText (
-					"Value is too big to return the requested type."), "startIndex");
-			}
+			if (src.Length - count < start_index)
+				throw new ArgumentException ("Destination array is not long"
+					+ " enough to copy all the items in the collection."
+					+ " Check array index and length.");
 
-			for (int i = 0; i < count; i++) {
+			for (int i = 0; i < count; i++)
 				dst[i] = src[i + start_index];
-			}
 		}
 
 		unsafe public static bool ToBoolean (byte[] value, int startIndex)
@@ -189,13 +192,10 @@ namespace System {
 			if (value == null) 
 				throw new ArgumentNullException ("value");
 
-			if (startIndex < 0)
-				throw new ArgumentOutOfRangeException ("startIndex < 0");
-
-			// avoid integer overflow (with large pos/neg start_index values)
-			if (value.Length - 1 < startIndex) 
-				throw new ArgumentOutOfRangeException (Locale.GetText (
-					"Value is too big to return the requested type."), "startIndex");
+			if (startIndex < 0 || (startIndex > value.Length - 1))
+				throw new ArgumentOutOfRangeException ("startIndex", "Index was"
+					+ " out of range. Must be non-negative and less than the"
+					+ " size of the collection.");
 
 			if (value [startIndex] != 0)
 				return true;
@@ -287,14 +287,17 @@ namespace System {
 				if (value == null)
 					throw new ArgumentNullException ("value");
 
-				if (startIndex < 0)
-					throw new ArgumentOutOfRangeException ("startIndex < 0");
+				if (startIndex < 0 || (startIndex > value.Length - 1))
+					throw new ArgumentOutOfRangeException ("startIndex", "Index was"
+						+ " out of range. Must be non-negative and less than the"
+						+ " size of the collection.");
 
 				// avoid integer overflow (with large pos/neg start_index values)
-				if (value.Length - 8 < startIndex) {
-					throw new ArgumentOutOfRangeException (Locale.GetText (
-						"Value is too big to return the requested type."), "startIndex");
-				}
+				if (value.Length - 8 < startIndex)
+					throw new ArgumentException ("Destination array is not long"
+						+ " enough to copy all the items in the collection."
+						+ " Check array index and length.");
+
 				p [0] = value [startIndex + 4];
 				p [1] = value [startIndex + 5];
 				p [2] = value [startIndex + 6];
@@ -321,14 +324,17 @@ namespace System {
 				if (value == null)
 					throw new ArgumentNullException ("value");
 
-				if (startIndex < 0)
-					throw new ArgumentOutOfRangeException ("startIndex < 0");
+				if (startIndex < 0 || (startIndex > value.Length - 1))
+					throw new ArgumentOutOfRangeException ("startIndex", "Index was"
+						+ " out of range. Must be non-negative and less than the"
+						+ " size of the collection.");
 
 				// avoid integer overflow (with large pos/neg start_index values)
-				if (value.Length - 8 < startIndex) {
-					throw new ArgumentOutOfRangeException (Locale.GetText (
-						"Value is too big to return the requested type."), "startIndex");
-				}
+				if (value.Length - 8 < startIndex)
+					throw new ArgumentException ("Destination array is not long"
+						+ " enough to copy all the items in the collection."
+						+ " Check array index and length.");
+
 				p [0] = value [startIndex + 4];
 				p [1] = value [startIndex + 5];
 				p [2] = value [startIndex + 6];
@@ -339,20 +345,22 @@ namespace System {
 				p [7] = value [startIndex + 3];
 
 				return ret;
-			}
-			else if (!IsLittleEndian) {
+			} else if (!IsLittleEndian) {
 				byte* p = (byte*)&ret;
 				if (value == null)
 					throw new ArgumentNullException ("value");
 
-				if (startIndex < 0)
-					throw new ArgumentOutOfRangeException ("startIndex < 0");
+				if (startIndex < 0 || (startIndex > value.Length - 1))
+					throw new ArgumentOutOfRangeException ("startIndex", "Index was"
+						+ " out of range. Must be non-negative and less than the"
+						+ " size of the collection.");
 
 				// avoid integer overflow (with large pos/neg start_index values)
-				if (value.Length - 8 < startIndex) {
-					throw new ArgumentOutOfRangeException (Locale.GetText (
-						"Value is too big to return the requested type."), "startIndex");
-				}
+				if (value.Length - 8 < startIndex)
+					throw new ArgumentException ("Destination array is not long"
+						+ " enough to copy all the items in the collection."
+						+ " Check array index and length.");
+
 				p [0] = value [startIndex + 7];
 				p [1] = value [startIndex + 6];
 				p [2] = value [startIndex + 5];
@@ -363,7 +371,7 @@ namespace System {
 				p [7] = value [startIndex + 0];
 
 				return ret;
-			}				
+			}
 
 			PutBytes ((byte *) &ret, value, startIndex, 8);
 
@@ -372,9 +380,8 @@ namespace System {
 		
 		public static string ToString (byte[] value)
 		{
-			if (value == null) {
+			if (value == null)
 				throw new ArgumentNullException ("value");
-			}
 
 			return ToString (value, 0, value.Length);
 		}
@@ -383,33 +390,40 @@ namespace System {
 		{
 			if (value == null)
 				throw new ArgumentNullException ("value");
-			if (startIndex < 0 || startIndex > value.Length - 1) 
-				throw new ArgumentOutOfRangeException ("startIndex");
 
 			return ToString (value, startIndex, value.Length - startIndex);
 		}
 
 		public static string ToString (byte[] value, int startIndex, int length)
 		{
-			if (value == null) {
-				throw new ArgumentNullException ("value");
-			}
+			if (value == null)
+				throw new ArgumentNullException ("byteArray");
 
 			// The 4th and last clause (start_index >= value.Length)
 			// was added as a small fix to a very obscure bug.
 			// It makes a small difference when start_index is
 			// outside the range and length==0. 
-			if (startIndex < 0 || length < 0 || startIndex >= value.Length) {
+			if (startIndex < 0 || startIndex >= value.Length) {
 #if NET_2_0
 				// special (but valid) case (e.g. new byte [0])
 				if ((startIndex == 0) && (value.Length == 0))
 					return String.Empty;
 #endif
-				throw new ArgumentOutOfRangeException ("startIndex");
+				throw new ArgumentOutOfRangeException ("startIndex", "Index was"
+					+ " out of range. Must be non-negative and less than the"
+					+ " size of the collection.");
 			}
+
+			if (length < 0)
+				throw new ArgumentOutOfRangeException ("length",
+					"Value must be positive.");
+
 			// note: re-ordered to avoid possible integer overflow
 			if (startIndex > value.Length - length)
 				throw new ArgumentException ("startIndex + length > value.Length");
+
+			if (length == 0)
+				return string.Empty;
 
 			StringBuilder builder = new StringBuilder(length * 3 - 1);
 			int end = startIndex + length;
