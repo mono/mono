@@ -1,3 +1,13 @@
+2007-07-21  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil/TypeReference.cs
+	  Mono.Cecil/TypeSpecification.cs:
+		Add a new GetOriginalType () method.
+
+	* Mono.Cecil/MethodReference.cs
+	  Mono.Cecil/MethodSpecification.cs:
+		Add a new GetOriginalMethod () method.
+
 2007-07-19  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil/AssemblyFactory.cs

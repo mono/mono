@@ -77,5 +77,10 @@ namespace Mono.Cecil {
 		{
 			m_elementMethod = elemMethod;
 		}
+
+		public override MethodReference GetOriginalMethod()
+		{
+			return m_elementMethod.GetOriginalMethod ();
+		}
 	}
 }

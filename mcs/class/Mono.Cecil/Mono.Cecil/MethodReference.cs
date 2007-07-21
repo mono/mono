@@ -99,6 +99,11 @@ namespace Mono.Cecil {
 			this.ReturnType.ReturnType = returnType;
 		}
 
+		public virtual MethodReference GetOriginalMethod ()
+		{
+			return this;
+		}
+
 		public int GetSentinel ()
 		{
 			for (int i = 0; i < Parameters.Count; i++)

@@ -66,5 +66,10 @@ namespace Mono.Cecil {
 		{
 			m_elementType = elementType;
 		}
+
+		public override TypeReference GetOriginalType ()
+		{
+			return m_elementType.GetOriginalType ();
+		}
 	}
 }

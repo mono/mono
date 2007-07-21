@@ -126,6 +126,11 @@ namespace Mono.Cecil {
 			this.IsValueType = valueType;
 		}
 
+		public virtual TypeReference GetOriginalType ()
+		{
+			return this;
+		}
+
 		internal void AttachToScope (IMetadataScope scope)
 		{
 			m_scope = scope;
