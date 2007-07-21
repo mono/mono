@@ -1,3 +1,10 @@
+2007-07-21  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* InstanceDescriptor.cs: Allow null members. Fixed exception messages.
+	For properties, do not perform argument check. Fixed Invoke to return
+	null when member is null or when member is not ctor, method, field or
+	property (eg. a type). Removed obsolete HasThis method.
+
 2007-07-18  Ivan N. Zlatev <contact@i-nz.net>
 	
 	* InstanceDescriptor.cs: Fix a NRE.

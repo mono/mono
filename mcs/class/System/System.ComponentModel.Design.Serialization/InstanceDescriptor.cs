@@ -33,8 +33,8 @@ using System.Collections;
 using System.Reflection;
 using System.Security.Permissions;
 
-namespace System.ComponentModel.Design.Serialization {
-
+namespace System.ComponentModel.Design.Serialization
+{
 	[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
 	public sealed class InstanceDescriptor {
 
@@ -50,24 +50,27 @@ namespace System.ComponentModel.Design.Serialization {
 		public InstanceDescriptor(MemberInfo member, ICollection arguments, bool isComplete)
 		{
 			this.isComplete = isComplete;
-			if ((member != null) && !IsMemberValid (member, arguments))
-				throw new ArgumentException ("Only Constructor, Method, Field or Property members allowed", "member");
+			ValidateMember (member, arguments);
 			this.member = member;
 			this.arguments = arguments;
 		}
 
-		private bool IsMemberValid (MemberInfo member, ICollection arguments)
+		private void ValidateMember (MemberInfo member, ICollection arguments)
 		{
+			if (member == null)
+				return;
+
 			switch (member.MemberType) {
-			// According to docs only these types are allowed
+			// According to docs only these types are allowed, but the docs do
+			// state what happens for other types
 			case MemberTypes.Constructor:
 				ConstructorInfo CI = (ConstructorInfo) member;
 				if (arguments == null) // null counts as no arguments
 					if (CI.GetParameters().Length != 0)
-						throw new ArgumentException ("Invalid number of arguments for this constructor", "arguments");
+						throw new ArgumentException ("Invalid number of arguments for this constructor");
 				if (arguments.Count != CI.GetParameters().Length)
-					throw new ArgumentException ("Invalid number of arguments for this constructor", "arguments");
-				return true;
+					throw new ArgumentException ("Invalid number of arguments for this constructor");
+				break;
 			case MemberTypes.Method:
 				MethodInfo MI = (MethodInfo) member;
 				if (!MI.IsStatic)
@@ -76,32 +79,24 @@ namespace System.ComponentModel.Design.Serialization {
 					if (MI.GetParameters().Length != 0)
 						throw new ArgumentException ("Invalid number of arguments for this method", "arguments");
 				if (arguments.Count != MI.GetParameters().Length)
-					throw new ArgumentException ("Invalid number of arguments for this method", "arguments");
-				return true;
+					throw new ArgumentException ("Invalid number of arguments for this method");
+				break;
 			case MemberTypes.Field:
 				FieldInfo FI = (FieldInfo) member;
 				if (!FI.IsStatic)
-					throw new ArgumentException ("InstanceDescriptor only describes static (VB.Net: shared) members", "member");
-				if (arguments == null) // null counts as no arguments
-					return true;
-				if (arguments.Count == 0)
-					throw new ArgumentException ("Field members do not take any arguments", "arguments");
-				return true;
+					throw new ArgumentException ("Parameter must be static");
+				if (arguments != null && arguments.Count != 0) // null counts as no arguments
+					throw new ArgumentException ("Field members do not take any arguments");
+				break;
 			case MemberTypes.Property:
 				PropertyInfo PI = (PropertyInfo) member;
 				if (!(PI.CanRead))
-					throw new ArgumentException ("That property cannot be read", "member");
+					throw new ArgumentException ("Parameter must be readable");
 				MethodInfo PIM = PI.GetGetMethod();
 				if (!PIM.IsStatic)
-					throw new ArgumentException ("InstanceDescriptor only describes static (VB.Net: shared) members", "member");
-				if (arguments == null) // null counts as no arguments
-					if (PIM.GetParameters().Length != 0)
-						throw new ArgumentException ("Invalid number of arguments for this property", "arguments");
-				if (arguments != null && arguments.Count != PIM.GetParameters().Length)
-					throw new ArgumentException ("Invalid number of arguments for this property", "arguments");
-				return true;
+					throw new ArgumentException ("Parameter must be static");
+				break;
 			}
-			return false;
 		}
 
 		public ICollection Arguments {
@@ -121,36 +116,17 @@ namespace System.ComponentModel.Design.Serialization {
 			get { return member; }
 		}
 
-		private bool HasThis ()
-		{
-			if (member is ConstructorInfo)
-				return false;
-			MethodInfo mi = (member as MethodInfo);
-			if (mi != null)
-				return !mi.IsStatic;
-			FieldInfo fi = (member as FieldInfo);
-			if (fi != null)
-				return !fi.IsStatic;
-			PropertyInfo pi = (member as PropertyInfo);
-			if (pi != null)
-				return !pi.GetGetMethod ().IsStatic;
-			return true;
-		}
-
 		public object Invoke()
 		{
+			if (member == null)
+				return null;
+
 			object[] parsearguments;
 			if (arguments == null)
 				parsearguments = new object[0];
-			else if (HasThis ()) {
-				parsearguments = new object[arguments.Count - 1];
+			else {
+				parsearguments = new object[arguments.Count];
 				arguments.CopyTo (parsearguments, 0);
-			} else {
-				parsearguments = (arguments as object[]);
-				if (parsearguments == null) {
-					parsearguments = new object[arguments.Count];
-					arguments.CopyTo (parsearguments, 0);
-				}
 			}
 
 			//MemberInfo member;
