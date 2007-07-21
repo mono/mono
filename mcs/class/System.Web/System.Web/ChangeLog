@@ -1,3 +1,8 @@
+2007-07-21  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpRuntime.cs: clean up the dynamic base directory on domain
+	shutdown.
+
 2007-07-10  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* HttpUtility.cs: optimized HtmlEncode and HtmlAttributeEncode methods

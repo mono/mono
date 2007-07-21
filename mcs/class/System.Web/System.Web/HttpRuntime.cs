@@ -393,16 +393,18 @@ namespace System.Web {
 			ThreadPool.QueueUserWorkItem (new WaitCallback (DoUnload), null);
 		}
 
-#if TARGET_J2EE // No unload support for appdomains under Grasshopper
 		static void DoUnload (object state)
 		{
-		}
+			if (Environment.GetEnvironmentVariable ("MONO_ASPNET_NODELETE") == null)
+				System.Web.Hosting.ApplicationHost.ClearDynamicBaseDirectory (
+					AppDomain.CurrentDomain.SetupInformation.DynamicBase
+				);
+#if TARGET_J2EE
+			// No unload support for appdomains under Grasshopper
 #else
-		static void DoUnload (object state)
-		{
 			AppDomain.Unload (AppDomain.CurrentDomain);
-		}
 #endif
+		}
 
                 static string content503 = "<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">\n" +
 			"<html><head>\n<title>503 Server Unavailable</title>\n</head><body>\n" +

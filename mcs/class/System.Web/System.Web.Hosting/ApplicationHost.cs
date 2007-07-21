@@ -61,7 +61,7 @@ namespace System.Web.Hosting {
 		static object create_dir = new object ();
 #endif
 
-		static bool ClearDynamicBaseDirectory (string directory)
+		internal static bool ClearDynamicBaseDirectory (string directory)
 		{
 			string[] entries = null;
 			
