@@ -29,7 +29,6 @@
 //
 
 #if NET_2_0
-
 namespace System.Data.SqlClient
 {
 	/// <summary>
@@ -41,8 +40,8 @@ namespace System.Data.SqlClient
 
 	#region Fields
 	
-	int sourceOrdinal = 0;
-	int destinationOrdinal = 0;
+	int sourceOrdinal = -1;
+	int destinationOrdinal = -1;
 	string sourceColumn = null;
 	string destinationColumn = null;
 
@@ -50,28 +49,27 @@ namespace System.Data.SqlClient
 
 	#region Constructors
 	
-	public SqlBulkCopyColumnMapping(){
-	
+	public SqlBulkCopyColumnMapping() {
 	}
 	
 	public SqlBulkCopyColumnMapping(int sourceColumnOrdinal, int destinationOrdinal){
-		this.sourceOrdinal = sourceColumnOrdinal;
-		this.destinationOrdinal = destinationOrdinal;
+		SourceOrdinal = sourceColumnOrdinal;
+		DestinationOrdinal = destinationOrdinal;
 	}
 
 	public SqlBulkCopyColumnMapping(int sourceColumnOrdinal, string destinationColumn){
-		this.sourceOrdinal = sourceColumnOrdinal;
-		this.destinationColumn = destinationColumn;	
+		SourceOrdinal = sourceColumnOrdinal;
+		DestinationColumn = destinationColumn;	
 	}
 
 	public SqlBulkCopyColumnMapping(string sourceColumn, int destinationOrdinal){
-		this.sourceColumn = sourceColumn;		
-		this.destinationOrdinal = destinationOrdinal;
+		SourceColumn = sourceColumn;		
+		DestinationOrdinal = destinationOrdinal;
 	}
 
 	public SqlBulkCopyColumnMapping(string sourceColumn, string destinationColumn){
-		this.sourceColumn = sourceColumn;
-		this.destinationColumn = destinationColumn;
+		SourceColumn = sourceColumn;
+		DestinationColumn = destinationColumn;
 	}
 
 	# endregion //Constructors	
@@ -104,9 +102,7 @@ namespace System.Data.SqlClient
                         this.sourceOrdinal = -1;
                         this.sourceColumn = value;
                 }
-                                                                                                    
         }
-
 
 	public int DestinationOrdinal {
                 get {
@@ -115,11 +111,10 @@ namespace System.Data.SqlClient
                 set {
                         // ms: whenever the ordinal is set, the name is null
                         if (value < 0)
-				throw new ArgumentOutOfRangeException();
+				throw new IndexOutOfRangeException ();
                         this.destinationColumn = null;
 			this.destinationOrdinal =  value;
                 }
-                                                                                                    
         }
 	
 	public int SourceOrdinal {
@@ -129,19 +124,15 @@ namespace System.Data.SqlClient
                 set {
                         // ms: whenever the ordinal is set, the name is null
                         if (value < 0)
-                                throw new ArgumentOutOfRangeException();
+                                throw new IndexOutOfRangeException ();
                         this.sourceColumn = null;
                         this.sourceOrdinal =  value;
                 }
-                                                                                                    
         }
 
 	#endregion //Properties	
-	
-	}
 
+	}
 }
 
-
 #endif
-

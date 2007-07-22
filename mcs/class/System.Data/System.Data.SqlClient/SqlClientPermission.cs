@@ -85,8 +85,7 @@ namespace System.Data.SqlClient {
 			return new SqlClientPermission (this);
 		}
 
-#if ONLY_1_1
-		[MonoTODO ("overridden for what ? additional validations ???")]
+#if NET_1_1
 		public override void Add (string connectionString, string restrictions, KeyRestrictionBehavior behavior)
 		{
 			base.Add (connectionString, restrictions, behavior);

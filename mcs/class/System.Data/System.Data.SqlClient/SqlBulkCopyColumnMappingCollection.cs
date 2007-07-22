@@ -39,41 +39,56 @@ namespace System.Data.SqlClient
 {
 	public sealed class SqlBulkCopyColumnMappingCollection : CollectionBase {
 
+		public SqlBulkCopyColumnMapping this [int value] {
+			get {
+				if (value < 0 || value > base.Count)
+					throw new ArgumentOutOfRangeException ("Index is out of range");
+				return (SqlBulkCopyColumnMapping) base.List [value];
+			}
+		}
+	
 		#region Methods
 	
-		[MonoTODO]
 		public SqlBulkCopyColumnMapping Add (SqlBulkCopyColumnMapping bulkCopyColumnMapping)
 		{
-			throw new NotImplementedException ();
+			if (bulkCopyColumnMapping == null)
+				throw new ArgumentNullException ("bulkCopyColumnMapping");
+			List.Add (bulkCopyColumnMapping);
+			return bulkCopyColumnMapping;
+
 		}
 
-		[MonoTODO]
 		public SqlBulkCopyColumnMapping Add (int sourceColumnIndex, int destinationColumnIndex)
 		{
-			throw new NotImplementedException ();
+			SqlBulkCopyColumnMapping columnMapping = new SqlBulkCopyColumnMapping (sourceColumnIndex,
+											       destinationColumnIndex);
+			return Add (columnMapping);
 		}
 
-		[MonoTODO]
 		public SqlBulkCopyColumnMapping Add (int sourceColumnIndex, string destinationColumn)
 		{
-			throw new NotImplementedException ();
+			SqlBulkCopyColumnMapping columnMapping = new SqlBulkCopyColumnMapping (sourceColumnIndex,
+											       destinationColumn);
+			return Add (columnMapping);
 		}
 
-		[MonoTODO]
 		public SqlBulkCopyColumnMapping Add (string sourceColumn, int destinationColumnIndex)
 		{
-			throw new NotImplementedException ();
+			SqlBulkCopyColumnMapping columnMapping = new SqlBulkCopyColumnMapping (sourceColumn,
+											       destinationColumnIndex);
+			return Add (columnMapping);
 		}
 
-		[MonoTODO]
 		public SqlBulkCopyColumnMapping Add (string sourceColumn, string destinationColumn)
 		{
-			throw new NotImplementedException ();
+			SqlBulkCopyColumnMapping columnMapping = new SqlBulkCopyColumnMapping (sourceColumn,
+											       destinationColumn);
+			return Add (columnMapping);
 		}
 
 		public new void Clear ()
 		{
-			throw new NotImplementedException ();
+			List.Clear ();
 		}
 
 		public bool Contains (SqlBulkCopyColumnMapping value)
@@ -84,6 +99,19 @@ namespace System.Data.SqlClient
 		public int IndexOf (SqlBulkCopyColumnMapping value)
 		{
 			return List.IndexOf (value);
+		}
+
+		public void CopyTo (SqlBulkCopyColumnMapping [] array, int index)
+		{
+			if (index < 0 || index > base.Count)
+				throw new ArgumentOutOfRangeException ("Index is out of range");
+			if (array == null)
+				throw new ArgumentNullException ("array");
+			int len = base.Count;
+			if (len - index > array.Length)
+				len = array.Length;
+			for (int i = index, j = 0; i < base.Count; i++, j++)
+				array [j] = (SqlBulkCopyColumnMapping) List [i];
 		}
 
 		public void Insert (int index, SqlBulkCopyColumnMapping value)
@@ -98,12 +126,10 @@ namespace System.Data.SqlClient
 			List.Remove (value);
 		}
 
-		[MonoTODO]
 		public new void RemoveAt (int index)
 		{
 			if (index < 0 || index > base.Count)
 				throw new ArgumentOutOfRangeException ("Index is out of range");
-			// FIXME: Implement WriteToServer
 			base.RemoveAt (index);
 		}
 

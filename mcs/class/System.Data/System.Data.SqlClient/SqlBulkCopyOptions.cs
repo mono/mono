@@ -47,9 +47,7 @@ namespace System.Data.SqlClient
 		TableLock = 4,
 		UseInternalTransaction = 32
 	}
-
 }
-
 
 #endif
 

@@ -505,7 +505,7 @@ namespace System.Data.SqlClient {
 
 				if (Connection.Tds.NextResult () && Connection.Tds.NextRow ())
 					result = Connection.Tds.ColumnValues[0];
-					
+
 				if (commandType == CommandType.StoredProcedure) {
 					Connection.Tds.SkipToEnd ();
 					GetOutputParameters ();

@@ -702,7 +702,7 @@ namespace System.Data.SqlClient {
 		// When the SqlDbType is set, we also set the DbType, as well as the SQL Server
 		// string representation of the type name.  If the SqlDbType is not convertible
 		// to a DbType, throw an exception.
-		private void SetSqlDbType (SqlDbType type)
+		internal void SetSqlDbType (SqlDbType type)
 		{
 			string exception = String.Format ("No mapping exists from SqlDbType {0} to a known DbType.", type);
 
@@ -860,7 +860,7 @@ namespace System.Data.SqlClient {
 			return value;
 		}
 
-		private object ConvertToFrameworkType (object value)
+		internal object ConvertToFrameworkType (object value)
 		{
 			if (value == null || value == DBNull.Value)
 				return value;

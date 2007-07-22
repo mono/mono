@@ -162,6 +162,14 @@ namespace System.Data.SqlClient {
 		public override int VisibleFieldCount { 
 			get { return visibleFieldCount; }
 		}
+
+		protected SqlConnection Connection { 
+			get { return command.Connection; }
+		}
+
+		protected bool IsCommandBehaviour (CommandBehavior condition) { 
+			return condition == command.CommandBehavior;
+		}
 #endif
 
 		#endregion // Properties
@@ -219,7 +227,7 @@ namespace System.Data.SqlClient {
 			return schemaTable;
 		}
 #if NET_2_0
-		protected override
+		protected new
 #endif
 		void Dispose (bool disposing) 
 		{
@@ -931,6 +939,19 @@ namespace System.Data.SqlClient {
 			return (SqlString) value;
 		}
 
+#if NET_2_0
+		[EditorBrowsableAttribute (EditorBrowsableState.Never)]
+		public virtual SqlXml GetSqlXml (int i)
+		{
+			object value = GetSqlValue (i);
+			if (!(value is SqlXml)) {
+				if (value is DBNull) throw new SqlNullValueException ();
+				throw new InvalidCastException ("Type is " + value.GetType ().ToString ());
+			}
+			return (SqlXml) value;
+		}
+#endif // NET_2_0
+
 		public
 #if NET_2_0
 		virtual
@@ -1005,6 +1026,12 @@ namespace System.Data.SqlClient {
 				if (value == DBNull.Value)
 					return SqlByte.Null;
 				return (SqlByte) ((byte) value);
+#if NET_2_0
+			case SqlDbType.Xml:
+				if (value == DBNull.Value)
+					return SqlByte.Null;
+				return (SqlXml) value;
+#endif
 			}
 
 			throw new InvalidOperationException ("The type of this column is unknown.");

@@ -1,3 +1,34 @@
+2007-07-22  Nagappan A  <anagappan@novell.com>
+
+	* SqlBulkCopy.cs (NotifyAfter): Implemented 2.0 property.
+	(GetColumnMetaData, GenerateColumnMetaData):
+	(ValidateColumnMapping): Implemented private method's to generate
+	and validate SqlBulkCopy headers.
+	(BulkCopyToServer): Private method to actually do the bulk copy
+	processing.
+	(WriteToServer): Implemented 2.0 missing overloaded methods.
+	(IDisposable.Dispose): Implemented 2.0 missing method.
+
+	* SqlBulkCopyColumnMappingCollection.cs (Add, CopyTo): Implemented
+	missing API.
+	(Item): Implemented missing property.
+
+	* SqlBulkCopyColumnMapping.cs: Modified the implementation of
+	Constructors to use property.
+
+	* SqlDataReader.cs (GetSqlXml, IsCommandBehaviour): Added 2.0
+	missing method.
+	(Connection): Added missing property.
+
+	* SqlParameter.cs (SetSqlDbType, ConvertToFrameworkType): Modified
+	method as internal from private.
+
+	* SqlConnection.cs: Fixed 2.0 missing feature.
+
+	* SqlException.cs: Fixed 2.0 missing feature.
+
+	* SqlClientPermission.cs: Fixed 2.0 missing feature.
+
 2007-07-01  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ISqlNotificationReceiver.cs: Removed.
