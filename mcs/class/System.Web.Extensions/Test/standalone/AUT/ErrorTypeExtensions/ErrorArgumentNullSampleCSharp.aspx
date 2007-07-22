@@ -10,7 +10,7 @@
     <form id="form1" runat="server">
         <asp:ScriptManager runat="server" ID="ScriptManager01">
             <Scripts>
-               <asp:ScriptReference Path="ErrorSampleJS.js" />
+               <asp:ScriptReference Name="ErrorSampleJS.js" Assembly="ErrorSample" />
             </Scripts>
         </asp:ScriptManager>
     </form>

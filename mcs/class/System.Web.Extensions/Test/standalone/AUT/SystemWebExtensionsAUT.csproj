@@ -62,21 +62,6 @@
     <Content Include="CustomEvents\Default.aspx" />
     <Content Include="CustomEvents\Question.js" />
     <Content Include="CustomEvents\Section.js" />
-    <Content Include="DynamicScriptReferencesHowTo_Done\DynamicScriptReferences1.aspx" />
-    <Content Include="EnhancingJavaScript_Done\Enumeration.aspx" />
-    <Content Include="EnhancingJavaScript_Done\Enumeration.js" />
-    <Content Include="EnhancingJavaScript_Done\Inheritance.aspx" />
-    <Content Include="EnhancingJavaScript_Done\Inheritance.js" />
-    <Content Include="EnhancingJavaScript_Done\Interface.aspx" />
-    <Content Include="EnhancingJavaScript_Done\Interface.js" />
-    <Content Include="EnhancingJavaScript_Done\Namespace.aspx" />
-    <Content Include="EnhancingJavaScript_Done\Namespace.js" />
-    <Content Include="EnhancingJavaScript_Done\Reflection.aspx" />
-    <Content Include="ErrorTypeExtensions_Done\ErrorArgumentNullSampleCSharp.aspx" />
-    <Content Include="ErrorTypeExtensions_Done\ErrorCreateSampleCSharp.aspx" />
-    <EmbeddedResource Include="LocalizingClientResourcesWalkthrough_Done\CheckAnswer.js" />
-    <Content Include="LocalizingClientResourcesWalkthrough_Done\Default.aspx" />
-    <Content Include="LocalizingDateTutorial1_Done\localeFormat.aspx" />
     <Content Include="NoScriptManager.aspx" />
     <Content Include="StopAsynchronousPostback.aspx" />
     <Content Include="TwoPanelsProgress.aspx" />
@@ -93,7 +78,7 @@
     <Compile Include="IScriptControlTutorial1\SampleTextBox.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="LocalizingClientResourcesWalkthrough_Done\ClientVerification.cs" />
+    <Compile Include="LocalizingClientResourcesWalkthrough\ClientVerification.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="System.Web.Configuration\ConfigSectionSample.cs" />
     <Compile Include="System.Web.Script.Serialization.ScriptIgnoreAttribute\ScriptIgnoreSample.cs" />
@@ -140,27 +125,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="LocalizingClientResourcesWalkthrough_Done\VerificationResources.it.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="LocalizingClientResourcesWalkthrough_Done\VerificationResources.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="LocalizingDateTutorial1_Done\web.config" />
-    <Content Include="LocalizingDateTutorial2_Done\localeFormat.aspx" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="LocalizingDateTutorial2_Done\web.config" />
-    <Content Include="LocalizingDateTutorial3_Done\localeFormat.aspx" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="LocalizingDateTutorial3_Done\web.config" />
-    <Content Include="LocalizingDateTutorial4_Done\localeFormat.aspx" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="LocalizingDateTutorial4_Done\web.config" />
     <Content Include="MyAuthenticationService\MyAuthenticationService.asmx" />
     <Content Include="MyProfileService\MyProfileService.asmx" />
     <Content Include="NumberTypeExtensions_NotForUse\NumberParseSampleCSharp.aspx" />
@@ -168,9 +132,6 @@
     <Content Include="PageRequestManagerOverview1\TicketExampleCS.aspx" />
     <Content Include="PartialPageRenderingOverview\PartialPageRenderingOverviewCS.aspx" />
     <Content Include="PartialPageRenderingOverview\PartialPageRenderingOverviewSyntaxCS.aspx" />
-    <Content Include="ResourcesInScriptFile_Done\Default.aspx" />
-    <Content Include="ResourcesInScriptFile_Done\scripts\CheckAnswer.it-IT.js" />
-    <Content Include="ResourcesInScriptFile_Done\scripts\CheckAnswer.js" />
     <Content Include="SampleAJAXApplication\Employees.aspx" />
     <Content Include="StringBuilder\js\JavaScript\StringBuilderOverviewSample.aspx" />
     <Content Include="Sys.Application\Default.aspx" />
@@ -304,6 +265,12 @@
     <Content Include="System.Web.UI.ScriptReferenceEventArgs\Default.aspx" />
     <Content Include="System.Web.UI.ScriptReferenceEventArgs\scripts\CustomScript.js" />
     <Content Include="System.Web.UI.ScriptReference\Default.aspx" />
+    <EmbeddedResource Include="LocalizingClientResourcesWalkthrough\VerificationResources.it.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LocalizingClientResourcesWalkthrough\VerificationResources.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="System.Web.UI.ScriptReference\UpdatePanelAnimation.js" />
     <Content Include="System.Web.UI.UpdatePanel.Constructor\UpdatePanelConstructorCS.aspx" />
     <Content Include="System.Web.UI.UpdatePanel.ContentTemplate\UpdatePanelContentTemplateCS.aspx" />
@@ -610,13 +577,28 @@
     <Content Include="UpdatePanelWalkthrough3\NorthwindTradersContentPageCS.aspx" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="DynamicScriptReferencesHowTo_Done\Scripts\Scripts.js" />
-    <Content Include="DynamicScriptReferencesHowTo_Done\DynamicScriptReferences2.aspx" />
-    <EmbeddedResource Include="DynamicScriptReferencesHowTo_Done\Scripts\Scripts.debug.js" />
+    <Content Include="DynamicScriptReferencesHowTo\DynamicScriptReferences1.aspx" />
+    <Content Include="DynamicScriptReferencesHowTo\DynamicScriptReferences2.aspx" />
+    <EmbeddedResource Include="DynamicScriptReferencesHowTo\Scripts\Scripts.debug.js" />
+    <EmbeddedResource Include="DynamicScriptReferencesHowTo\Scripts\Scripts.js" />
+    <Content Include="EnhancingJavaScript\Enumeration.aspx" />
+    <Content Include="EnhancingJavaScript\Enumeration.js" />
+    <Content Include="EnhancingJavaScript\Inheritance.aspx" />
+    <Content Include="EnhancingJavaScript\Inheritance.js" />
+    <Content Include="EnhancingJavaScript\Interface.aspx" />
+    <Content Include="EnhancingJavaScript\Interface.js" />
+    <Content Include="EnhancingJavaScript\Namespace.aspx" />
+    <Content Include="EnhancingJavaScript\Namespace.js" />
+    <Content Include="EnhancingJavaScript\Reflection.aspx" />
+    <Content Include="ErrorTypeExtensions\ErrorArgumentNullSampleCSharp.aspx" />
+    <Content Include="ErrorTypeExtensions\ErrorCreateSampleCSharp.aspx" />
     <Content Include="ExtenderControlTutorial1\Default.aspx" />
     <Content Include="ExtenderControlTutorial1\FocusBehavior.js" />
     <Content Include="IScriptControlTutorial1\Default.aspx" />
     <Content Include="IScriptControlTutorial1\SampleTextBox.js" />
+    <EmbeddedResource Include="LocalizingClientResourcesWalkthrough\CheckAnswer.js" />
+    <Content Include="LocalizingClientResourcesWalkthrough\Default.aspx" />
+    <Content Include="LocalizingDateTutorial1\localeFormat.aspx" />
     <Content Include="UpdatePanelUserControlTutorial1\Default.aspx" />
     <Content Include="UpdatePanelWalkthrough3\DeclarativeMasterPageCS.master" />
     <Content Include="UpdatePanelWalkthrough3\NorthwindTradersMasterPageCS.master" />
@@ -627,6 +609,24 @@
     <Content Include="UpdateProgressTutorialIntro11\default.aspx" />
     <Content Include="UpdateProgressTutorialIntro6\default.aspx" />
     <Content Include="UpdateProgressTutorialIntro7\default.aspx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="LocalizingDateTutorial1\web.config" />
+    <Content Include="LocalizingDateTutorial2\localeFormat.aspx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="LocalizingDateTutorial2\web.config" />
+    <Content Include="LocalizingDateTutorial3\localeFormat.aspx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="LocalizingDateTutorial3\web.config" />
+    <Content Include="LocalizingDateTutorial4\localeFormat.aspx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="LocalizingDateTutorial4\web.config" />
+    <Content Include="ResourcesInScriptFile\Default.aspx" />
+    <Content Include="ResourcesInScriptFile\scripts\CheckAnswer.it-IT.js" />
+    <Content Include="ResourcesInScriptFile\scripts\CheckAnswer.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_GlobalResources\" />

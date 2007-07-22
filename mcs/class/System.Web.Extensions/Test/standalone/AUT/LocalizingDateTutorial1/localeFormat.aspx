@@ -25,7 +25,8 @@
 <script type="text/javascript">
     Sys.UI.DomEvent.addHandler($get("Button1"), "click", formatDate);
     function formatDate() {
-      var d = new Date();
+      // Thursday, 14 January 2010 00:10:00
+      var d = new Date(2010, 0, 14, 0, 10); 
       try {
         $get('Label1').innerHTML = d.localeFormat("dddd, dd MMMM yyyy HH:mm:ss");
       }
