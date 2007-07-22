@@ -380,6 +380,11 @@ namespace System.Data {
 			get { 
 				return _table; 
 			}
+#if NET_2_0
+			internal set {
+				_table = value;
+			}
+#endif
 		}
 
 		/// <summary>

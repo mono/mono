@@ -720,6 +720,11 @@ namespace System.Data {
 			get {
 				return _table;
 			}
+#if NET_2_0
+			internal set {
+				_table = value;
+			}
+#endif
 		}
 
 		[DataCategory ("Data")]
@@ -868,20 +873,20 @@ namespace System.Data {
 			return ColumnName;
 		}
 
-		internal void SetTable(DataTable table) {
-			if(_table!=null) { // serves as double check while adding to a table
-                    throw new ArgumentException("The column already belongs to a different table");
-            }
-            _table = table;
-            // this will get called by DataTable
-            // and DataColumnCollection
-            if(_unique) {
-                // if the DataColumn is marked as Unique and then
-	            // added to a DataTable , then a UniqueConstraint
-        	    // should be created
-                UniqueConstraint uc = new UniqueConstraint(this);
-                _table.Constraints.Add(uc);
-            }
+		internal void SetTable (DataTable table) {
+			if(_table != null) { // serves as double check while adding to a table
+				throw new ArgumentException ("The column already belongs to a different table");
+			}
+			_table = table;
+			// this will get called by DataTable
+			// and DataColumnCollection
+			if(_unique) {
+				// if the DataColumn is marked as Unique and then
+				// added to a DataTable , then a UniqueConstraint
+				// should be created
+				UniqueConstraint uc = new UniqueConstraint(this);
+				_table.Constraints.Add (uc);
+			}
 
 			// allocate space in the column data container 
 			DataContainer.Capacity = _table.RecordCache.CurrentCapacity;
