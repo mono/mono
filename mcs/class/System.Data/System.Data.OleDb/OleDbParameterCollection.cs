@@ -80,14 +80,14 @@ namespace System.Data.OleDb
 		
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public OleDbParameter this[int index] {
+		public new OleDbParameter this[int index] {
 			get { return (OleDbParameter) list[index]; }
 			set { list[index] = value; }
 		}
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public OleDbParameter this[string parameterName] {
+		public new OleDbParameter this[string parameterName] {
 			get {
 				foreach (OleDbParameter p in list)
 					if (p.ParameterName.Equals (parameterName))

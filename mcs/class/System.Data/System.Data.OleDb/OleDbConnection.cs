@@ -78,11 +78,15 @@ namespace System.Data.OleDb
 		
 		[DataCategory ("Data")]
 		[DefaultValue ("")]
-#if !NET_2_0
+#if NET_1_0 || ONLY_1_1
 		[DataSysDescriptionAttribute ("Information used to connect to a Data Source.")]
 #endif
 		[EditorAttribute ("Microsoft.VSDesigner.Data.ADO.Design.OleDbConnectionStringEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
-		[RecommendedAsConfigurableAttribute (true)]
+#if NET_2_0
+		[SettingsBindableAttribute (true)]
+#else
+		[RecommendedAsConfigurable (true)]
+#endif
 		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		public
 #if NET_2_0
@@ -218,7 +222,7 @@ namespace System.Data.OleDb
 	
 		#region Methods
 	
-		public OleDbTransaction BeginTransaction ()
+		public new OleDbTransaction BeginTransaction ()
 		{
 			if (gdaConnection != IntPtr.Zero)
 				return new OleDbTransaction (this);
@@ -226,7 +230,7 @@ namespace System.Data.OleDb
 			return null;
 		}
 
-		public OleDbTransaction BeginTransaction (IsolationLevel level)
+		public new OleDbTransaction BeginTransaction (IsolationLevel level)
 		{
 			if (gdaConnection != IntPtr.Zero)
 				return new OleDbTransaction (this, level);
@@ -288,7 +292,7 @@ namespace System.Data.OleDb
 			}
 		}
 
-		public OleDbCommand CreateCommand ()
+		public new OleDbCommand CreateCommand ()
 		{
 			if (State == ConnectionState.Open)
 				return new OleDbCommand (null, this);

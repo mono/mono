@@ -82,7 +82,7 @@ namespace System.Data.OleDb
 		[DataSysDescriptionAttribute ("The DataAdapter for which to automatically generate OleDbCommands")]
 #endif
 		[DefaultValue (null)]
-		public OleDbDataAdapter DataAdapter {
+		public new OleDbDataAdapter DataAdapter {
 			get {
 				return adapter;
 			}
@@ -143,28 +143,28 @@ namespace System.Data.OleDb
 #endif
 
 		[MonoTODO]
-		public OleDbCommand GetDeleteCommand ()
+		public new OleDbCommand GetDeleteCommand ()
 		{
 			throw new NotImplementedException ();
 		}
 
 #if NET_2_0
 		[MonoTODO]
-		public OleDbCommand GetDeleteCommand (bool useColumnsForParameterNames)
+		public new OleDbCommand GetDeleteCommand (bool useColumnsForParameterNames)
 		{
 			throw new NotImplementedException ();
 		}
 #endif
 
 		[MonoTODO]
-		public OleDbCommand GetInsertCommand ()
+		public new OleDbCommand GetInsertCommand ()
 		{
 			throw new NotImplementedException ();
 		}
 
 #if NET_2_0
 		[MonoTODO]
-		public OleDbCommand GetInsertCommand (bool useColumnsForParameterNames)
+		public new OleDbCommand GetInsertCommand (bool useColumnsForParameterNames)
 		{
 			throw new NotImplementedException ();
 		}
@@ -188,14 +188,14 @@ namespace System.Data.OleDb
 #endif
 
 		[MonoTODO]
-		public OleDbCommand GetUpdateCommand ()
+		public new OleDbCommand GetUpdateCommand ()
 		{
 			throw new NotImplementedException ();
 		}
 
 #if NET_2_0
 		[MonoTODO]
-		public OleDbCommand GetUpdateCommand (bool useColumnsForParameterNames)
+		public new OleDbCommand GetUpdateCommand (bool useColumnsForParameterNames)
 		{
 			throw new NotImplementedException ();
 		}

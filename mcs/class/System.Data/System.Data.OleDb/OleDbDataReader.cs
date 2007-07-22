@@ -291,7 +291,7 @@ namespace System.Data.OleDb
 #if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 #endif
-		public OleDbDataReader GetData (int ordinal)
+		public new OleDbDataReader GetData (int ordinal)
 		{
 			throw new NotImplementedException ();
 		}
@@ -832,7 +832,7 @@ namespace System.Data.OleDb
 
 		#region Destructors
 
-		private void Dispose (bool disposing)
+		private new void Dispose (bool disposing)
 		{
 			if (!this.disposed) {
 				if (disposing) {

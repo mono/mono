@@ -97,7 +97,7 @@ namespace System.Data.OleDb
 
 		#region Properties
 
-		public OleDbConnection Connection {
+		public new OleDbConnection Connection {
 			get {
 				return connection;
 			}
