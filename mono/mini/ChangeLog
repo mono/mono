@@ -1,5 +1,11 @@
 2007-07-22  Zoltan Varga  <vargaz@gmail.com>
 
+	* exceptions-x86.c (mono_arch_find_jit_info): Handle the lmf->method == NULL
+	case.
+
+	* tramp-x86.c (mono_arch_create_trampoline_code): Only set lmf->method for
+	trampolines taking a method argument.
+
 	* mini-x86.h (MonoLMF): Add an 'esp' field plus comments.
 
 	* mini-x86.c (mono_arch_emit_prolog): Update after changes to the LMF structure.
