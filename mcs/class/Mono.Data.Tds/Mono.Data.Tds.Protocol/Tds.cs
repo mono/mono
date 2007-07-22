@@ -422,6 +422,26 @@ namespace Mono.Data.Tds.Protocol {
 			throw new NotSupportedException ();
 		}
 
+		internal void ExecBulkCopyMetaData (int timeout, bool wantResults)
+		{
+			moreResults = true;
+			Comm.SendPacket ();
+
+			CheckForData (timeout);
+			if (!wantResults) 
+				SkipToEnd ();
+		}
+
+		internal void ExecBulkCopy (int timeout, bool wantResults)
+		{
+			moreResults = true;
+			Comm.SendPacket ();
+
+			CheckForData (timeout);
+			if (!wantResults) 
+				SkipToEnd ();
+		}
+
 		protected void ExecuteQuery (string sql, int timeout, bool wantResults)
 		{
 			InitExec ();
@@ -1046,6 +1066,16 @@ namespace Mono.Data.Tds.Protocol {
 			return result;
 		}
 
+                internal bool IsBlobType (TdsColumnType columnType)
+		{
+			return (columnType == TdsColumnType.Text || columnType == TdsColumnType.Image || columnType == TdsColumnType.NText);
+		}
+
+                internal bool IsLargeType (TdsColumnType columnType)
+		{
+			return ((byte) columnType > 128);
+		}
+
 		internal static bool IsFixedSizeColumn (TdsColumnType columnType)
 		{
 			switch (columnType) {
@@ -1239,7 +1269,6 @@ namespace Mono.Data.Tds.Protocol {
 			Comm.Skip (1);
 
 			int rowCount = comm.GetTdsInt ();
-
 			bool validRowCount = IsValidRowCount (status,op);
 			moreResults = ((status & 0x01) != 0);
 			bool cancelled = ((status & 0x20) != 0);

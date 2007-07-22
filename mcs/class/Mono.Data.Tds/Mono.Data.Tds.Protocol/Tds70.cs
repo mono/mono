@@ -415,7 +415,6 @@ namespace Mono.Data.Tds.Protocol {
 			CheckForData (timeout);
 			if (!wantResults) 
 				SkipToEnd ();
-
 		}
 
 		private void WriteParameterInfo (TdsMetaParameter param)
@@ -517,16 +516,6 @@ namespace Mono.Data.Tds.Protocol {
 			ExecuteQuery (sql, timeout, wantResults);
 		}
 
-                private bool IsBlobType (TdsColumnType columnType)
-		{
-			return (columnType == TdsColumnType.Text || columnType == TdsColumnType.Image || columnType == TdsColumnType.NText);
-		}
-
-                private bool IsLargeType (TdsColumnType columnType)
-		{
-			return ((byte) columnType > 128);
-		}
-
 		private string FormatParameter (TdsMetaParameter parameter)
 		{
 			string includeAt = "@";
@@ -626,7 +615,7 @@ namespace Mono.Data.Tds.Protocol {
 					flagData[j] = Comm.GetByte ();
 
 				bool nullable = (flagData[2] & 0x01) > 0;
-				bool caseSensitive = (flagData[2] & 0x02) > 0;
+				//bool caseSensitive = (flagData[2] & 0x02) > 0;
 				bool writable = (flagData[2] & 0x0c) > 0;
 				bool autoIncrement = (flagData[2] & 0x10) > 0;
 				bool isIdentity = (flagData[2] & 0x10) > 0;

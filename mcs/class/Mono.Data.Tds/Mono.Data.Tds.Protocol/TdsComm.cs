@@ -91,7 +91,11 @@ namespace Mono.Data.Tds.Protocol {
 			
 			try {
 				socket = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-				IPHostEntry hostEntry = Dns.Resolve (dataSource);
+#if NET_2_0
+				IPHostEntry hostEntry = Dns.GetHostEntry (this.dataSource);
+#else
+				IPHostEntry hostEntry = Dns.Resolve (this.dataSource);
+#endif
 				endPoint = new IPEndPoint (hostEntry.AddressList [0], port);
 
 				// This replaces the code below for now
@@ -345,7 +349,6 @@ namespace Mono.Data.Tds.Protocol {
 				// out of data, read another physical packet.
 				GetPhysicalPacket ();
 			}
-
 			result = inBuffer[inBufferIndex++];
 			return result;
 		}
@@ -432,8 +435,9 @@ namespace Mono.Data.Tds.Protocol {
 		public int GetTdsInt ()
 		{
 			byte[] input = new byte[4];
-			for (int i = 0; i < 4; i += 1)
+			for (int i = 0; i < 4; i += 1) {
 				input[i] = GetByte ();
+			}
 			if(!BitConverter.IsLittleEndian)
 				return (BitConverter.ToInt32 (Swap (input), 0));
 			else
@@ -473,7 +477,6 @@ namespace Mono.Data.Tds.Protocol {
 
 			// figure out how many bytes are remaining in this packet.
 			int len = Ntohs (tmpBuf, 2) - 8;
-
 			if (len >= inBuffer.Length) 
 				inBuffer = new byte[len];
 
@@ -492,7 +495,6 @@ namespace Mono.Data.Tds.Protocol {
 			while (nread < length) {
 				nread += stream.Read (inBuffer, nread, length - nread);
 			}
-
 			packetsReceived++;
 
 			// adjust the bookkeeping info about the incoming buffer

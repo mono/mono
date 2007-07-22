@@ -238,9 +238,9 @@ namespace Mono.Data.Tds.Protocol {
 					bytesRead += 1;
 				}
 				bool nullable = (flagData[2] & 0x01) > 0;
-				bool caseSensitive = (flagData[2] & 0x02) > 0;
+				//bool caseSensitive = (flagData[2] & 0x02) > 0;
 				bool writable = (flagData[2] & 0x0c) > 0;
-				bool autoIncrement = (flagData[2] & 0x10) > 0;
+				//bool autoIncrement = (flagData[2] & 0x10) > 0;
 
 				string tableName = String.Empty;
 				TdsColumnType columnType = (TdsColumnType) Comm.GetByte ();

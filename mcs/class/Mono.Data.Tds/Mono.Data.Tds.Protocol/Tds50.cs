@@ -256,7 +256,7 @@ namespace Mono.Data.Tds.Protocol {
 
 			// length of tds packets
 			// 557-563
-			tmp = Comm.Append (PacketSize.ToString (), 6, pad);
+			tmp = Comm.Append (this.packetSize.ToString (), 6, pad);
 			Comm.Append ((byte) (tmp.Length < 6 ? tmp.Length : 6));
 
 			Comm.Append (empty, 8, pad);
@@ -438,7 +438,7 @@ namespace Mono.Data.Tds.Protocol {
 				idBuilder.Append ((char) (rand.Next (26) + 65));
 			string id = idBuilder.ToString ();
 
-			StringBuilder declare = new StringBuilder ();
+			//StringBuilder declare = new StringBuilder ();
 
 		
 			sql = String.Format ("create proc {0} as\n{1}", id, sql);
@@ -465,7 +465,7 @@ namespace Mono.Data.Tds.Protocol {
 		{
 			isSelectQuery = true; 
 			TdsDataColumnCollection result = new TdsDataColumnCollection ();
-			int totalLength = Comm.GetTdsShort ();	
+			/*int totalLength = */Comm.GetTdsShort ();	
 			int count = Comm.GetTdsShort ();
 			for (int i = 0; i < count; i += 1) {
 				string columnName = Comm.GetString (Comm.GetByte ());
