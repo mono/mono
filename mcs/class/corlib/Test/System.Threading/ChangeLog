@@ -1,3 +1,10 @@
+2007-07-22  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* AutoResetEventTest.cs: Added test for verifying effect of assigning
+	new SafeWaitHandle on the previous one. Use meaningful names for
+	tests. Avoid unref warning. Removed usage of deprecated Assertion
+	class. Spaces to tabs.
+
 2007-07-21  Miguel de Icaza  <miguel@novell.com>
 
 	* AutoResetEventTest.cs: Integrated test based on Gert's email
