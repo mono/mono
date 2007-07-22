@@ -1,3 +1,7 @@
+2007-07-22  Nagappan A  <anagappan@novell.com>
+
+	* SqlTransactionTest.cs: Added exception handling.
+
 2007-06-11  Nagappan A  <anagappan@novell.com>
 
 	* SqlCommandTest.cs (SqlCommandDisposeTest): Added new test case

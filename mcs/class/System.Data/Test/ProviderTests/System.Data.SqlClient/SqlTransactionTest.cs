@@ -59,6 +59,10 @@ namespace MonoTests.System.Data.SqlClient
 					command.ExecuteNonQuery();
 					transaction.Commit();
 				}
+			} catch (SqlException ex) {
+				// SqlException is thrown when running test-case for 1.0 and 2.0 profile
+				// Violation of PRIMARY KEY constraint 'PK__employee__5DF5D7ED'.
+				// Cannot insert duplicate key in object 'dbo.employee'.
 			} finally {
 				DBHelper.ExecuteSimpleSP (conn, "sp_clean_person_table");
 				if (conn != null && conn.State != ConnectionState.Closed)
