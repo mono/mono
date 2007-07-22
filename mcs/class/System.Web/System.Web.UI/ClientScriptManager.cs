@@ -652,7 +652,7 @@ namespace System.Web.UI
 						writer.WriteLine ("<script src=\"{0}\" type=\"text/javascript\"></script>", path);
 #if TARGET_J2EE
 					else {
-						string scriptKey = "inc_" + entry.Key.GetHashCode ().ToString ("X");
+						string scriptKey = "inc_" + path.GetHashCode ().ToString ("X");
 						writer.WriteLine ("<script type=\"text/javascript\">");
 						writer.WriteLine ("<!--");
 						writer.WriteLine ("if (document.{0} == null) {{", scriptKey);
