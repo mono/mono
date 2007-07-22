@@ -1,3 +1,8 @@
+2007-07-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* loader.c (mono_method_get_param_token): Make this work on generic methods.
+	Return 0x8000000 for return parameters. Fixes #82161.
+
 2007-07-21  Marek Habersack  <grendello@gmail.com>
 
 	* appdomain.c (get_shadow_assembly_location): append the current
