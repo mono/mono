@@ -259,12 +259,15 @@ namespace System.Data.Common {
 			return Fill (dataSet, 0, 0, srcTable, ((IDbDataAdapter) this).SelectCommand, _behavior);
 		}
 
-#if !NET_2_0
-		protected virtual int Fill (DataTable dataTable, IDataReader dataReader) 
+#if NET_1_0
+		protected
+#else
+		internal
+#endif
+		virtual new int Fill (DataTable dataTable, IDataReader dataReader) 
 		{
 			return base.FillInternal (dataTable, dataReader);
 		}
-#endif
 
 		protected virtual int Fill (DataTable dataTable, IDbCommand command, CommandBehavior behavior) 
 		{

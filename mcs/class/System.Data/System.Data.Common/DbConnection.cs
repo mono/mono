@@ -50,8 +50,11 @@ namespace System.Data.Common {
 		#endregion // Constructors
 
 		#region Properties
-
+#if NET_2_0
+		[SettingsBindableAttribute (true)]
+#else
 		[RecommendedAsConfigurable (true)]
+#endif
 		[RefreshProperties (RefreshProperties.All)]
 		[DefaultValue ("")]
 		public abstract string ConnectionString { get; set; }

@@ -1,3 +1,9 @@
+2007-07-22  Nagappan A  <anagappan@novell.com>
+
+	* DbConnection.cs: 2.0 missing features.
+
+	* DbDataAdapter.cs: 2.0 missing features.
+
 2007-06-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DbDataAdapter.cs: Marked ICloneable.Clone obsolete to match MS.
