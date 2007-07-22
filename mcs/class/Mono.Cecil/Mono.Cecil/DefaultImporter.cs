@@ -197,9 +197,7 @@ namespace Mono.Cecil {
 				mr.CallingConvention);
 			meth.DeclaringType = ImportTypeReference (mr.DeclaringType, context);
 
-			TypeReference contextType = meth.DeclaringType;
-			while (contextType is TypeSpecification)
-				contextType = (contextType as TypeSpecification).ElementType;
+			TypeReference contextType = meth.DeclaringType.GetOriginalType ();
 
 			context.GenericContext.Method = meth;
 			context.GenericContext.Type = contextType;

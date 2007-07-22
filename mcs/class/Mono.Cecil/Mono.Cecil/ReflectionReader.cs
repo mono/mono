@@ -1154,8 +1154,7 @@ namespace Mono.Cecil {
 				size = 8;
 				break;
 			default:
-				while (fieldType is TypeSpecification)
-					fieldType = ((TypeSpecification) fieldType).ElementType;
+				fieldType = fieldType.GetOriginalType ();
 
 				TypeDefinition fieldTypeDef = fieldType as TypeDefinition;
 
