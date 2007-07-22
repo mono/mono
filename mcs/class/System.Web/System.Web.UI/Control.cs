@@ -177,11 +177,16 @@ namespace System.Web.UI
 		public string AppRelativeTemplateSourceDirectory 
 		{
 			get {
-				if (_appRelativeTemplateSourceDirectory != null && !(this is MasterPage))
+				if (_appRelativeTemplateSourceDirectory != null)
 					return _appRelativeTemplateSourceDirectory;
 
-				if (Parent != null)
-					return Parent.AppRelativeTemplateSourceDirectory;
+				Control tc = TemplateControl;
+				if (tc != null)
+					return tc.AppRelativeTemplateSourceDirectory;
+
+				Control parent = Parent;
+				if (parent != null)
+					return parent.AppRelativeTemplateSourceDirectory;
 
 				return "~/";
 			}
@@ -387,16 +392,22 @@ namespace System.Web.UI
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public TemplateControl TemplateControl {
 			get {
-				if (_templateControl != null)
-					return _templateControl;
-				if (_parent != null)
-					return _parent.TemplateControl;
-				return null;
+				return TemplateControlInternal;
 			}
 			
 			[EditorBrowsable (EditorBrowsableState.Never)]
 			set { _templateControl = value; }
 		}
+
+			internal virtual TemplateControl TemplateControlInternal {
+				get {
+					if (_templateControl != null)
+						return _templateControl;
+					if (_parent != null)
+						return _parent.TemplateControl;
+					return null;
+				}
+			}
 #endif		
 
 #if !TARGET_J2EE

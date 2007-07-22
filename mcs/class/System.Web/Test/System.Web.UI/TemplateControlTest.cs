@@ -265,6 +265,14 @@ namespace MonoTests.System.Web.UI.WebControls
 			// The SetStringResourcePointer method is not intended 
 			// for use from within your code. 
 		}
+
+		[Test]
+		public void TemplateControl_TemplateControl ()
+		{
+			Assert.IsNull (new Control ().TemplateControl);
+			PokerTemplateControl t = new PokerTemplateControl ();
+			Assert.AreEqual (t, t.TemplateControl);
+		}
 		
 		[Test]
 		public void TemplateControl_WriteUTF8ResourceString ()

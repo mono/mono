@@ -517,6 +517,10 @@ namespace System.Web.UI {
 			}
 		}
 
+		internal override TemplateControl TemplateControlInternal {
+			get { return this; }
+		}
+
 		protected internal object Eval (string expression)
 		{
 			return DataBinder.Eval (Page.GetDataItem (), expression);

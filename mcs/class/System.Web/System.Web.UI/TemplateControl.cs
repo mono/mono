@@ -325,6 +325,10 @@ namespace System.Web.UI {
 			
 			return converter.ConvertFrom (localObject);
 		}
+
+		internal override TemplateControl TemplateControlInternal {
+			get { return this; }
+		}
 #endif
 		
 		[EditorBrowsable (EditorBrowsableState.Never)]
