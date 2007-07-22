@@ -1,3 +1,9 @@
+2007-07-22  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* HttpServerUtility.cs: fixed Execute, SetCurrentExePath should be 
+	called after ApplicationInstance.GetHandler call in case of GetHandler
+	fails for some reason
+
 2007-07-21  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpRuntime.cs: clean up the dynamic base directory on domain
