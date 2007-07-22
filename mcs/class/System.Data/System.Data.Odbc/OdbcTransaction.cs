@@ -172,7 +172,7 @@ namespace System.Data.Odbc
 
 		#region Public Instance Properties
 
-		public OdbcConnection Connection {
+		public new OdbcConnection Connection {
 			get {
 				return connection;
 			}

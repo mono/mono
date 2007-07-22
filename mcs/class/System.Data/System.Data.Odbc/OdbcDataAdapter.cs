@@ -46,7 +46,9 @@ namespace System.Data.Odbc {
 	{
 		#region Fields
 
+#if ONLY_1_1
 		bool disposed = false;
+#endif
 		OdbcCommand deleteCommand;
 		OdbcCommand insertCommand;
 		OdbcCommand selectCommand;

@@ -1,3 +1,9 @@
+2007-07-22  Nagappan A  <anagappan@novell.com>
+
+	* OdbcDataAdapter.cs: Fixed compilation warning.
+
+	* OdbcTransaction.cs: Fixed compilation warning.
+
 2007-06-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* OdbcDataAdapter.cs: Only override Dispose on 1.0 profile. Added
