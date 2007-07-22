@@ -11,6 +11,7 @@ Mono.Data.Tds.Protocol/Tds50.cs
 Mono.Data.Tds.Protocol/Tds70.cs
 Mono.Data.Tds.Protocol/Tds80.cs
 Mono.Data.Tds.Protocol/TdsBigDecimal.cs
+Mono.Data.Tds.Protocol/TdsBulkCopy.cs
 Mono.Data.Tds.Protocol/TdsColumnStatus.cs
 Mono.Data.Tds.Protocol/TdsColumnType.cs
 Mono.Data.Tds.Protocol/TdsComm.cs

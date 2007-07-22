@@ -1,3 +1,8 @@
+2007-07-22  Nagappan A  <anagappan@novell.com>
+
+	* Mono.Data.Tds.dll.sources: Added
+	Mono.Data.Tds.Protocol/TdsBulkCopy.cs.
+
 2005-09-21 Senganal T  <tsenganal@novell.com>
 
 	* Mono.Data.Tds.Protocol/Tds.cs: 
