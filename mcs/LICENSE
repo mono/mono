@@ -20,7 +20,7 @@ The Mono code is licensed under various different licenses.
 		applications with them).
 
 		Third party libraries include: ByteFX.Data,
-		ICSharpCode.SharpZipLib, Npgsql.
+		ICSharpCode.SharpZipLib, Npgsql, MicrosoftAjaxLibrary.
 
 		The Microsoft.JScript assembly is covered by the
 		MIT X11 and the Mozilla MPL license as it contains
