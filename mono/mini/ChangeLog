@@ -1,3 +1,13 @@
+2007-07-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-x86.h (MonoLMF): Add an 'esp' field plus comments.
+
+	* mini-x86.c (mono_arch_emit_prolog): Update after changes to the LMF structure.
+	* tramp-x86.c (mono_arch_create_trampoline_code): Ditto.
+
+	* exceptions-x86.c (mono_arch_get_jit_info): Properly clean up the stack after
+	JIT compilation throws an exception. Fixes #82050.
+
 2007-07-19  Mark Probst  <mark.probst@gmail.com>
 
 	* mini.c: Removed the MonoLoaderErrorKind enum and replaced it
