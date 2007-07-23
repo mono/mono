@@ -1,6 +1,7 @@
 2007-07-23  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
-	* CurrencyManagerTest.cs: More tests.
+	* DataGridViewTest.cs: More tests.
+	* CurrencyManagerTest.cs: Remove CWL's.
 
 2007-07-23  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
