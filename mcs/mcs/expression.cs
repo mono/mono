@@ -1693,32 +1693,68 @@ namespace Mono.CSharp {
 				"cast the {0} hand side to type `{1}'.", side, TypeManager.CSharpName (type));
 		}
 
+		static void Warning_Constant_Result (Location loc, bool result, Type type)
+		{
+			Report.Warning (472, 2, loc, "Your code is *very* likely incorrect;   " +
+					"The result of comparing `{0}' against null is always {1};  " +
+					"mcs supports this to be compatible with the broken CSC behavior",
+					TypeManager.CSharpName (type), result); 
+		}
+			
 		Expression ResolveOperator (EmitContext ec)
 		{
 			Type l = left.Type;
 			Type r = right.Type;
 
 			if (oper == Operator.Equality || oper == Operator.Inequality){
-				if (TypeManager.IsGenericParameter (l) && (right is NullLiteral)) {
-					if (l.BaseType == TypeManager.value_type) {
-						Error_OperatorCannotBeApplied ();
-						return null;
-					}
+				if (right is NullLiteral){
+					if (TypeManager.IsGenericParameter (l)){
+						if (l.BaseType == TypeManager.value_type) {
+							Error_OperatorCannotBeApplied ();
+							return null;
+						}
+						
+						left = new BoxedCast (left, TypeManager.object_type);
+						Type = TypeManager.bool_type;
+						return this;
+					} 
 
-					left = new BoxedCast (left, TypeManager.object_type);
-					Type = TypeManager.bool_type;
-					return this;
+					//
+					// CSC 2 has this behavior, it allows structs to be compared
+					// with the null literal *outside* of a generics context and
+					// inlines that as true or false.
+					//
+					// This is, in my opinion, completely wrong.
+					//
+					if (RootContext.Version != LanguageVersion.ISO_1 && l.IsValueType){
+						Warning_Constant_Result (loc, oper == Operator.Inequality, l);
+						return new BoolLiteral (oper == Operator.Inequality, loc);
+					}
 				}
 
-				if (TypeManager.IsGenericParameter (r) && (left is NullLiteral)) {
-					if (r.BaseType == TypeManager.value_type) {
-						Error_OperatorCannotBeApplied ();
-						return null;
+				if (left is NullLiteral){
+					if (TypeManager.IsGenericParameter (r)){
+						if (r.BaseType == TypeManager.value_type) {
+							Error_OperatorCannotBeApplied ();
+							return null;
+						}
+						
+						right = new BoxedCast (right, TypeManager.object_type);
+						Type = TypeManager.bool_type;
+						return this;
 					}
 
-					right = new BoxedCast (right, TypeManager.object_type);
-					Type = TypeManager.bool_type;
-					return this;
+					//
+					// CSC 2 has this behavior, it allows structs to be compared
+					// with the null literal *outside* of a generics context and
+					// inlines that as true or false.
+					//
+					// This is, in my opinion, completely wrong.
+					//
+					if (RootContext.Version != LanguageVersion.ISO_1 && r.IsValueType){
+						Warning_Constant_Result (loc, oper == Operator.Inequality, r);
+						return new BoolLiteral (oper == Operator.Inequality, loc);
+					}
 				}
 
 				//

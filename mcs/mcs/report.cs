@@ -438,7 +438,7 @@ namespace Mono.CSharp {
 			w.Print (code, loc, String.Format (format, arg1, arg2));
 		}
 
-		static public void Warning (int code, int level, Location loc, string format, params string[] args)
+		static public void Warning (int code, int level, Location loc, string format, params object[] args)
 		{
 			WarningMessage w = new WarningMessage (level);
 			w.Print (code, loc, String.Format (format, args));
@@ -479,7 +479,7 @@ namespace Mono.CSharp {
 			new ErrorMessage ().Print (code, loc, String.Format (format, arg1, arg2));
 		}
 
-		static public void Error (int code, Location loc, string format, params string[] args)
+		static public void Error (int code, Location loc, string format, params object[] args)
 		{
 			Error (code, loc, String.Format (format, args));
 		}

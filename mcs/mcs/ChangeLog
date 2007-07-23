@@ -1,3 +1,30 @@
+2007-07-23  Miguel de Icaza  <miguel@novell.com>
+
+	* expression.cs (Binary): Add support for the brain-dead CSC 2.x
+	feature that allows structs to be compared against null and inline
+	the result as true or false.
+
+	Notice that the same code is not permitted inside a generic block
+	of code that would do:
+
+	class Foo<T> where T : struct {
+	    bool Eval (T x)
+	    {
+	         return x == null;
+	    }
+	}
+
+	It is only allowed if the type of T is not bound (no where
+	clause).   In my opinion, this CSC 2 behavior is broken but people
+	seem to be using it (IronRuby does, a few bug reports on bugzilla
+	have it and some people have complained about it).
+
+	All of the users that depend on this behavior have code that is
+	very likely broken. 
+	
+	* report.cs (Warning, Error): make these take object arguments,
+	not strings, as that allows us to take advantage of Format.
+
 2007-07-20  William Holmes  <billholmes54@gmail.com>
 
 	* decl.cs: Changed MemberName.CountTypeArguments to also check the 
