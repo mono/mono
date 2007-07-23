@@ -1,3 +1,8 @@
+
+Mon Jul 23 09:29:34 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-arm.h, mini-arm.c: arm EABI fixes.
+
 2007-07-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* exceptions-x86.c (mono_arch_find_jit_info): Handle the lmf->method == NULL
