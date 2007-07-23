@@ -1011,22 +1011,21 @@ public partial class Page : TemplateControl, IHttpHandler
 #if ONLY_1_1
 		RenderClientScriptFormDeclaration (writer, formUniqueID);
 #endif
+		writer.WriteLine ("window._form = {0};", theForm);
 		writer.WriteLine ("function __doPostBack(eventTarget, eventArgument) {");
-		writer.WriteLine ("\tvar currForm = {0};", theForm);
 #if NET_2_0
-		writer.WriteLine ("\tcurrForm.__doPostBack(eventTarget, eventArgument);");
-		writer.WriteLine ("}");
-		writer.WriteLine ("{0}.__doPostBack = function (eventTarget, eventArgument) {{", theForm);
-		writer.WriteLine ("\tvar currForm = this;");
-		writer.WriteLine ("\tif(currForm.onsubmit && currForm.onsubmit() == false) return;");
+		writer.WriteLine ("\tif(this._form.onsubmit && this._form.onsubmit() == false) return;");
 #else
 		writer.WriteLine ("\tif(document.ValidatorOnSubmit && !ValidatorOnSubmit()) return;");
 #endif
-		writer.WriteLine ("\tcurrForm.{0}.value = eventTarget;", postEventSourceID);
-		writer.WriteLine ("\tcurrForm.{0}.value = eventArgument;", postEventArgumentID);
-		writer.WriteLine ("\tcurrForm.submit();");
+		writer.WriteLine ("\tthis._form.{0}.value = eventTarget;", postEventSourceID);
+		writer.WriteLine ("\tthis._form.{0}.value = eventArgument;", postEventArgumentID);
+		writer.WriteLine ("\tthis._form.submit();");
 		writer.WriteLine ("}");
-		
+#if NET_2_0
+		writer.WriteLine ("{0}._form = {0};", theForm);
+		writer.WriteLine ("{0}.__doPostBack = __doPostBack;", theForm);
+#endif
 		ClientScriptManager.WriteEndScriptBlock (writer);
 	}
 

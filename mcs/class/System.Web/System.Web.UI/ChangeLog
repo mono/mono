@@ -1,3 +1,9 @@
+2007-07-28 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* Page.cs: refactoring:	__doPostBack client script
+	It is a part of adapting System.Web to work whith 
+	System.Web.Extensions (AJAX).
+
 2007-07-23 Konstantin Triger <kostat@mainsoft.com>
 
 	* Control.cs: calculate AppRelativeTemplateSourceDirectory from HttpContext
