@@ -1,3 +1,11 @@
+2007-07-23  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* DataGridViewLinkColumn.cs, DataGridViewRowCollection.cs,
+	  DataGridViewImageColumn.cs, DataGridViewSelectedCellCollection.cs,
+	  DataGridViewComboBoxCell.cs, DataGridViewLinkCell.cs,
+	  DataGridViewSelectedColumnCollection.cs,
+	  DataGridViewSelectedRowCollection.cs: Corcompare work.
+
 2007-07-23  Jonathan Pobst  <monkey@jpobst.com>
 
 	* PrintDialog.cs: Stub UseEXDialog.  I chose to stub this because

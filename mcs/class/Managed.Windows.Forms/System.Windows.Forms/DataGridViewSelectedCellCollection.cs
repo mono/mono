@@ -60,6 +60,11 @@ namespace System.Windows.Forms {
 		{
 			throw new NotSupportedException();
 		}
+		
+		void IList.Clear ()
+		{
+			Clear ();
+		}
 
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public void Clear ()

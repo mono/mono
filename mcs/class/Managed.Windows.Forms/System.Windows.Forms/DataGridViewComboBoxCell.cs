@@ -289,7 +289,7 @@ namespace System.Windows.Forms {
 				list.AddRange(value.list);
 			}
 
-			public void AddRange (object[] items) {
+			public void AddRange (params object[] items) {
 				list.AddRange(items);
 			}
 
@@ -328,6 +328,12 @@ namespace System.Windows.Forms {
 
 			public void RemoveAt (int index) {
 				list.RemoveAt(index);
+			}
+
+
+			int IList.Add (object value)
+			{
+				return Add (value);
 			}
 
 		}

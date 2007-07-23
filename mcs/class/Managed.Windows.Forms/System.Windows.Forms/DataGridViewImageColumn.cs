@@ -93,6 +93,7 @@ namespace System.Windows.Forms {
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public bool ValuesAreIcons {
 			get { return valuesAreIcons; }
+			set { valuesAreIcons = value; }
 		}
 
 		public override object Clone ()

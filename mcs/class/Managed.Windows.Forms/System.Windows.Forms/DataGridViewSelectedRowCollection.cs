@@ -56,6 +56,11 @@ namespace System.Windows.Forms {
 			throw new NotSupportedException("Can't add elements to this collection.");
 		}
 
+		void IList.Clear ()
+		{
+			Clear ();
+		}
+
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public void Clear ()
 		{

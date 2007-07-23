@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
 using System.Security.Permissions;
+using System.ComponentModel;
 
 namespace System.Windows.Forms
 {
@@ -230,6 +231,7 @@ namespace System.Windows.Forms
 			set { activeLinkColor = value; }
 		}
 
+		[DefaultValue (LinkBehavior.SystemDefault)]
 		public LinkBehavior LinkBehavior {
 			get { return linkBehavior; }
 			set { linkBehavior = value; }
@@ -242,10 +244,12 @@ namespace System.Windows.Forms
 			get { return linkVisited; }
 			set { linkVisited = value; }
 		}
+		[DefaultValue (true)]
 		public bool TrackVisitedState {
 			get { return trackVisitedState; }
 			set { trackVisitedState = value; }
 		}
+		[DefaultValue (false)]
 		public bool UseColumnTextForLinkValue {
 			get { return useColumnTextForLinkValue; }
 			set { useColumnTextForLinkValue = value; }

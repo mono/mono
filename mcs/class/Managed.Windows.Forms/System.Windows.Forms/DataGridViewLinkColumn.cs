@@ -28,6 +28,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 using System.Drawing;
 
@@ -88,12 +89,15 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
 		public override DataGridViewCell CellTemplate {
 			get { return base.CellTemplate; }
 			set { base.CellTemplate = value as DataGridViewLinkCell; }
 		}
 
 
+		[DefaultValue (LinkBehavior.SystemDefault)]
 		public LinkBehavior LinkBehavior {
 			get	{
 				DataGridViewLinkCell template = CellTemplate as DataGridViewLinkCell;
@@ -144,6 +148,7 @@ namespace System.Windows.Forms
 			}
 		}
 		[MonoTODO]
+		[DefaultValue ((string) null)]
 		public string Text {
 			get {
 				DataGridViewLinkCell template = CellTemplate as DataGridViewLinkCell;
@@ -165,6 +170,7 @@ namespace System.Windows.Forms
 		}
 
 		//When TrackVisitedState is true, the VisitedLinkColor property value is used to display links that have already been visited.
+		[DefaultValue (true)]
 		public bool TrackVisitedState {
 			get {
 				DataGridViewLinkCell template = CellTemplate as DataGridViewLinkCell;
@@ -190,6 +196,7 @@ namespace System.Windows.Forms
 		}
 
 		// true if the Text property value is displayed as the link text; false if the cell FormattedValue property value is displayed as the link text. The default is false.
+		[DefaultValue (false)]
 		public bool UseColumnTextForLinkValue {
 			get {
 				DataGridViewLinkCell template = CellTemplate as DataGridViewLinkCell;

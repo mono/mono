@@ -55,6 +55,11 @@ namespace System.Windows.Forms {
 			get { return list.Count; }
 		}
 
+		int ICollection.Count
+		{
+			get { return Count; }
+		}
+
 		bool IList.IsFixedSize {
 			get { return list.IsFixedSize; }
 		}
