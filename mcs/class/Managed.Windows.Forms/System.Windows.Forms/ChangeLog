@@ -1,5 +1,10 @@
 2007-07-23  Jonathan Pobst  <monkey@jpobst.com>
 
+	* PrintDialog.cs: Stub UseEXDialog.  I chose to stub this because
+	it is autoset by VS2005 designer and the effect is barely noticeable.
+
+2007-07-23  Jonathan Pobst  <monkey@jpobst.com>
+
 	* TreeView.cs: Implement HitTest.
 
 2007-07-23  Rolf Bjarne Kvinge <RKvinge@novell.com> 

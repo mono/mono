@@ -76,6 +76,9 @@ namespace System.Windows.Forms
 		private Label label_where;
 		private Label label_comment;
 		private CollatePreview collate;
+#if NET_2_0
+		private bool use_ex_dialog;
+#endif
 
 		public PrintDialog ()
 		{
@@ -223,6 +226,15 @@ namespace System.Windows.Forms
 				ShowHelpButton ();
 			}
 		}
+
+#if NET_2_0
+		[MonoTODO ("Stub, not implemented")]
+		[DefaultValue (false)]
+		public bool UseEXDialog {
+			get { return use_ex_dialog; }
+			set { use_ex_dialog = value; }
+		}
+#endif
 
 		protected override bool RunDialog (IntPtr hwnd)
 		{
