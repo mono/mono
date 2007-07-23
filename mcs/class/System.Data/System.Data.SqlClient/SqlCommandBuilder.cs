@@ -491,7 +491,7 @@ namespace System.Data.SqlClient {
 			command.DeriveParameters ();
 		}
 
-		protected override void Dispose (bool disposing)
+		protected new void Dispose (bool disposing)
 		{
 			if (!disposed) {
 				if (disposing) {
@@ -636,7 +636,7 @@ namespace System.Data.SqlClient {
 
 		public
 #if NET_2_0
-		override
+		new
 #endif
 		void RefreshSchema () 
 		{
@@ -649,32 +649,36 @@ namespace System.Data.SqlClient {
 		}
 
 #if NET_2_0
-                [MonoTODO]
                 protected override void ApplyParameterInfo (DbParameter dbParameter,
 							    DataRow row,
 							    StatementType statementType,
 							    bool whereClause)
                 {
-                        throw new NotImplementedException ();
+			SqlParameter parameter = (SqlParameter) dbParameter;
+			parameter.Size = int.Parse (row ["ColumnSize"].ToString ());
+			if (row ["NumericPrecision"] != DBNull.Value) {
+				parameter.Precision = byte.Parse (row ["NumericPrecision"].ToString ());
+			}
+			if (row ["NumericScale"] != DBNull.Value) {
+				parameter.Scale = byte.Parse (row ["NumericScale"].ToString ());
+			}
+			parameter.SqlDbType = (SqlDbType) row ["ProviderType"];
                 }
 
-                [MonoTODO]
                 protected override string GetParameterName (int position)
                 {
-                        throw new NotImplementedException ();                        
+			return String.Format("@p{0}", position);
                 }
 
-                [MonoTODO]
                 protected override string GetParameterName (string parameterName)
                 {
-                        throw new NotImplementedException ();                        
+			return String.Format("@{0}", parameterName);                       
                 }
                 
 
-                [MonoTODO]
                 protected override string GetParameterPlaceholder (int position)
                 {
-                        throw new NotImplementedException ();                        
+			return GetParameterName (position);
                 }
                 
 #endif // NET_2_0

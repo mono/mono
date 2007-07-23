@@ -1,3 +1,8 @@
+2007-07-23  Nagappan A  <anagappan@novell.com>
+
+	* SqlCommandBuilder.cs (ApplyParameterInfo, GetParameterName):
+	(GetParameterPlaceholder): Implemented 2.0 missing APIs.
+
 2007-07-22  Nagappan A  <anagappan@novell.com>
 
 	* SqlBulkCopy.cs (NotifyAfter): Implemented 2.0 property.
