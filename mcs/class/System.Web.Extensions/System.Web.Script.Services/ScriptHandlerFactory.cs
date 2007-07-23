@@ -47,7 +47,7 @@ namespace System.Web.Script.Services
 			HttpRequest request = context.Request;
 			string contentType = request.ContentType;
 			if (!String.IsNullOrEmpty (contentType) && contentType.StartsWith ("application/json", StringComparison.OrdinalIgnoreCase))
-				return new RestHandler (WebServiceParser.GetCompiledType (url, context), url);
+				return RestHandler.GetHandler (context, WebServiceParser.GetCompiledType (url, context), url);
 			if (request.PathInfo.StartsWith ("/js", StringComparison.OrdinalIgnoreCase))
 				return new ClientProxyHandler (WebServiceParser.GetCompiledType (url, context), url);
 

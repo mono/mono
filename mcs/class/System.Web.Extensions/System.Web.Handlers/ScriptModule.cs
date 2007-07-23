@@ -68,7 +68,7 @@ namespace System.Web.Handlers
 			HttpRequest request = context.Request;
 			string contentType = request.ContentType;
 			if (context.CurrentHandler is Page && !String.IsNullOrEmpty (contentType) && contentType.StartsWith ("application/json", StringComparison.OrdinalIgnoreCase)) {
-				RestHandler h = new RestHandler (((Page) context.CurrentHandler).GetType (), request.FilePath);
+				IHttpHandler h = RestHandler.GetHandler(context, ((Page) context.CurrentHandler).GetType (), request.FilePath);
 				h.ProcessRequest (context);
 				app.CompleteRequest ();
 			}

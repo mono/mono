@@ -33,11 +33,40 @@ using System.Text;
 using System.Web.Script.Serialization;
 using System.Collections.Specialized;
 using System.IO;
+using System.Web.SessionState;
 
 namespace System.Web.Script.Services
 {
-	class RestHandler : IHttpHandler
+	sealed class RestHandler : IHttpHandler
 	{
+		#region SessionWrappers
+
+		class SessionWrapperHandler : IHttpHandler, IRequiresSessionState
+		{
+			readonly IHttpHandler _handler;
+
+			public SessionWrapperHandler (IHttpHandler handler) {
+				_handler = handler;
+			}
+
+			public bool IsReusable {
+				get { return _handler.IsReusable; }
+			}
+
+			public void ProcessRequest (HttpContext context) {
+				_handler.ProcessRequest (context);
+			}
+		}
+
+		sealed class ReadOnlySessionWrapperHandler : SessionWrapperHandler, IReadOnlySessionState
+		{
+			public ReadOnlySessionWrapperHandler (IHttpHandler handler) : base (handler) { }
+		}
+
+		#endregion
+
+		#region NameValueCollectionDictionary
+
 		sealed class NameValueCollectionDictionary : JavaScriptSerializer.LazyDictionary
 		{
 			readonly NameValueCollection _nmc;
@@ -50,9 +79,42 @@ namespace System.Web.Script.Services
 			}
 		}
 
-		readonly LogicalTypeInfo _logicalTypeInfo;
-		public RestHandler (Type type, string filePath) {
-			_logicalTypeInfo = LogicalTypeInfo.GetLogicalTypeInfo (type, filePath);
+		#endregion
+
+		readonly LogicalTypeInfo.LogicalMethodInfo _logicalMethodInfo;
+
+		private RestHandler (HttpContext context, Type type, string filePath) {
+			LogicalTypeInfo logicalTypeInfo = LogicalTypeInfo.GetLogicalTypeInfo (type, filePath);
+			HttpRequest request = context.Request;
+			if (logicalTypeInfo == null || request.PathInfo.Length < 2)
+				ThrowInvalidOperationException (request.PathInfo);
+
+			_logicalMethodInfo = logicalTypeInfo [request.PathInfo.Substring (1)];
+			if (_logicalMethodInfo == null)
+				ThrowInvalidOperationException (request.PathInfo);
+		}
+
+		static void ThrowInvalidOperationException (string pathInfo) {
+			throw new InvalidOperationException (
+					string.Format ("Request format is unrecognized unexpectedly ending in '{0}'.", pathInfo));
+		}
+
+		static readonly Type IRequiresSessionStateType = typeof (IRequiresSessionState);
+		static readonly Type IReadOnlySessionStateType = typeof (IReadOnlySessionState);
+		public static IHttpHandler GetHandler (HttpContext context, Type type, string filePath) {
+			RestHandler handler = new RestHandler (context, type, filePath);
+			LogicalTypeInfo.LogicalMethodInfo mi = handler._logicalMethodInfo;
+			if (mi.MethodInfo.IsStatic) {
+				if (IRequiresSessionStateType.IsAssignableFrom (type))
+					return IReadOnlySessionStateType.IsAssignableFrom (type) ?
+						new ReadOnlySessionWrapperHandler (handler) : new SessionWrapperHandler (handler);
+			}
+			else
+				if (mi.WebMethod.EnableSession)
+					return new SessionWrapperHandler (handler);
+
+			return handler;
+
 		}
 		#region IHttpHandler Members
 
@@ -63,53 +125,20 @@ namespace System.Web.Script.Services
 		public void ProcessRequest (HttpContext context) {
 			HttpRequest request = context.Request;
 			HttpResponse response = context.Response;
-			response.ContentType = "application/json";
-			string method = request.PathInfo.Substring(1);
-			if ("GET".Equals (request.RequestType, StringComparison.OrdinalIgnoreCase))
-				_logicalTypeInfo.Invoke (method,
-					new NameValueCollectionDictionary (request.QueryString),
-					response.Output);
-			else
-				_logicalTypeInfo.Invoke(method,
-					new StreamReader(request.InputStream, request.ContentEncoding),
-					response.Output);
+			response.ContentType = 
+				_logicalMethodInfo.ScriptMethod.ResponseFormat == ResponseFormat.Json ?
+				"application/json" : "text/xml";
+			response.Cache.SetCacheability (HttpCacheability.Private);
+			response.Cache.SetMaxAge (TimeSpan.Zero);
+
+			IDictionary<string, object> @params =
+				"GET".Equals (request.RequestType, StringComparison.OrdinalIgnoreCase)
+				? new NameValueCollectionDictionary (request.QueryString) :
+				(IDictionary<string, object>) JavaScriptSerializer.DefaultSerializer.DeserializeObjectInternal
+				(new StreamReader (request.InputStream, request.ContentEncoding));
+
+			_logicalMethodInfo.Invoke (@params, response.Output);
 		}
-		/*
-		static Encoding GetContentEncoding (string cts, out string content_type) {
-			string encoding;
-
-			if (cts == null)
-				cts = "";
-
-			encoding = "utf-8";
-			int start = 0;
-			int idx = cts.IndexOf (';');
-			if (idx == -1)
-				content_type = cts;
-			else
-				content_type = cts.Substring (0, idx);
-
-			content_type = content_type.Trim ();
-			for (start = idx + 1; idx != -1; ) {
-				idx = cts.IndexOf (';', start);
-				string body;
-				if (idx == -1)
-					body = cts.Substring (start);
-				else {
-					body = cts.Substring (start, idx - start);
-					start = idx + 1;
-				}
-				body = body.Trim ();
-				if (String.CompareOrdinal (body, 0, "charset=", 0, 8) == 0) {
-					encoding = body.Substring (8);
-					encoding = encoding.TrimStart (trimChars).TrimEnd (trimChars);
-				}
-			}
-
-			return Encoding.GetEncoding (encoding);
-		}*/
-
-		static readonly char [] trimChars = { '"', '\'' };
 
 		#endregion
 	}

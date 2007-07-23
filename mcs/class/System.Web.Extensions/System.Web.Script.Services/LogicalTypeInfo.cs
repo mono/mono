@@ -43,12 +43,12 @@ namespace System.Web.Script.Services
 	{
 		#region LogicalMethodInfo
 
-		sealed class LogicalMethodInfo
+		public sealed class LogicalMethodInfo
 		{
 			readonly LogicalTypeInfo _typeInfo;
 			readonly MethodInfo _methodInfo;
 
-			readonly string _methodName;
+			readonly WebMethodAttribute _wma;
 
 			readonly ScriptMethodAttribute _sma;
 
@@ -60,8 +60,7 @@ namespace System.Web.Script.Services
 				_typeInfo = typeInfo;
 				_methodInfo = method;
 
-				WebMethodAttribute wma = (WebMethodAttribute) Attribute.GetCustomAttribute (method, typeof (WebMethodAttribute));
-				_methodName = !String.IsNullOrEmpty (wma.MessageName) ? wma.MessageName : method.Name;
+				_wma = (WebMethodAttribute) Attribute.GetCustomAttribute (method, typeof (WebMethodAttribute));
 
 				_sma = (ScriptMethodAttribute) Attribute.GetCustomAttribute (method, typeof (ScriptMethodAttribute));
 				if (_sma == null)
@@ -100,10 +99,11 @@ namespace System.Web.Script.Services
 			}
 
 			bool HasParameters { get { return _params != null && _params.Length > 0; } }
-			public string MethodName { get { return _methodName; } }
+			public string MethodName { get { return String.IsNullOrEmpty (WebMethod.MessageName) ? MethodInfo.Name : WebMethod.MessageName; } }
 
 			public ScriptMethodAttribute ScriptMethod { get { return _sma; } }
 			public MethodInfo MethodInfo { get { return _methodInfo; } }
+			public WebMethodAttribute WebMethod { get { return _wma; } }
 
 			public void GenerateMethod (StringBuilder proxy, bool isPrototype, bool isPage) {
 				string service = isPage ? "PageMethods" : MethodInfo.DeclaringType.FullName;
@@ -357,12 +357,9 @@ if (typeof({0}) === 'undefined') {{", gsta.Type.FullName);
 		}
 
 		public string Proxy { get { return _proxy; } }
-		public void Invoke (string method, IDictionary<string, object> @params, TextWriter writer) {
-			((LogicalMethodInfo) _methodMap [method]).Invoke (@params, writer);
-		}
 
-		public void Invoke (string method, TextReader reader, TextWriter writer) {
-			Invoke (method, (IDictionary<string, object>) JSSerializer.DeserializeObjectInternal (reader), writer);
+		public LogicalMethodInfo this [string method] {
+			get { return (LogicalMethodInfo) _methodMap [method]; }
 		}
 
 		static internal LogicalTypeInfo GetLogicalTypeInfo (Type t, string filePath) {
