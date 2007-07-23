@@ -237,10 +237,12 @@ namespace Mono.CSharp {
 
 		public int CountTypeArguments {
 			get {
-				if (TypeArguments == null)
-					return 0;
-				else
+				if (TypeArguments != null)
 					return TypeArguments.Count;
+				else if (Left != null)
+					return Left.CountTypeArguments; 
+				else
+					return 0;
 			}
 		}
 

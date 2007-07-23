@@ -1,3 +1,12 @@
+2007-07-20  William Holmes  <billholmes54@gmail.com>
+
+	* decl.cs: Changed MemberName.CountTypeArguments to also check the 
+	  Left member variable for the Count.
+	* doc.cs: Changed DocUtil.GetMethodDocCommentName to call 
+	  MemberName.CountTypeArguments to avoid a NRE. 
+
+	This code is contributed under the MIT X11 license
+
 2007-07-18  Marek Safar  <marek.safar@gmail.com>
 
 	* cs-tokenizer.cs: Improved lambda parsing and removed old code.

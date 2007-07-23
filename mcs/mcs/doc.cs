@@ -878,9 +878,9 @@ namespace Mono.CSharp {
 				paramSpec += ")";
 
 			string name = mc is Constructor ? "#ctor" : mc.Name;
-#if GMCS_SOURCE
+#if GMCS_SOURCE						    
 			if (mc.MemberName.IsGeneric)
-				name += "``" + mc.MemberName.TypeArguments.Count;
+				name += "``" + mc.MemberName.CountTypeArguments;
 #endif
 			string suffix = String.Empty;
 			Operator op = mc as Operator;
