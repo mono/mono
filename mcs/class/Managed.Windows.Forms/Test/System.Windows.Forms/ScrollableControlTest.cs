@@ -19,6 +19,133 @@ namespace MonoTests.System.Windows.Forms
 	public class ScrollableControlTest
 	{
 		[Test]
+		public void AutoScrollPositionTest ()
+		{
+			ScrollableControl sc;
+
+			sc = new ScrollableControl ();
+			sc.AutoScroll = true;
+			
+			sc.AutoScrollPosition = new Point (-25, -50);
+			Assert.AreEqual (Point.Empty, sc.AutoScrollPosition, "#01");
+
+			sc.AutoScrollPosition = new Point (2500, 5000);
+			Assert.AreEqual (Point.Empty, sc.AutoScrollPosition, "#02");
+			
+			sc.AutoScrollPosition = new Point (25, 50);
+			Assert.AreEqual (Point.Empty, sc.AutoScrollPosition, "#03");
+			
+			object o = sc.Handle;
+
+			sc.AutoScrollPosition = new Point (-25, -50);
+			Assert.AreEqual (Point.Empty, sc.AutoScrollPosition, "#04");
+
+			sc.AutoScrollPosition = new Point (2500, 5000);
+			Assert.AreEqual (Point.Empty, sc.AutoScrollPosition, "#05");
+
+			sc.AutoScrollPosition = new Point (25, 50);
+			Assert.AreEqual (Point.Empty, sc.AutoScrollPosition, "#06");
+			
+			sc.Size = new Size (200, 400);
+			sc.Location = new Point (20, 40);
+
+			sc.AutoScrollPosition = new Point (-25, -50);
+			Assert.AreEqual (Point.Empty, sc.AutoScrollPosition, "#07");
+
+			sc.AutoScrollPosition = new Point (2500, 5000);
+			Assert.AreEqual (Point.Empty, sc.AutoScrollPosition, "#08");
+
+			sc.AutoScrollPosition = new Point (25, 50);
+			Assert.AreEqual (Point.Empty, sc.AutoScrollPosition, "#09");
+			
+			
+			Control c1, c2;
+			c1 = new Control ();
+			c1.Location = new Point (-100, -200);
+			c1.Size = new Size (10, 10);
+			sc.Controls.Add (c1);
+
+			c2 = new Control ();
+			c2.Location = new Point (400, 800);
+			c2.Size = new Size (10, 10);
+			sc.Controls.Add (c2);
+
+			Assert.AreEqual (new Rectangle (0, 0, 410, 810), sc.DisplayRectangle, "#10");
+			
+			sc.ScrollControlIntoView (c2);
+
+			Assert.AreEqual (new Point (-226, -426), sc.AutoScrollPosition, "#11");
+			Assert.AreEqual (new Rectangle (-226, -426, 410, 810), sc.DisplayRectangle, "#12");
+			Assert.AreEqual (new Point (-326, -626), c1.Location, "#13");
+			Assert.AreEqual (new Point (174, 374), c2.Location, "#14");
+			
+			sc.AutoScrollPosition = new Point (-25, -50);
+			Assert.AreEqual (Point.Empty, sc.AutoScrollPosition, "#01");
+			Assert.AreEqual (new Rectangle (0, 0, 410, 810), sc.DisplayRectangle, "#15");
+			Assert.AreEqual (new Point (-100, -200), c1.Location, "#16");
+			Assert.AreEqual (new Point (400, 800), c2.Location, "#17");
+
+			sc.AutoScrollPosition = new Point (2500, 5000);
+			Assert.AreEqual (new Point (-226, -426), sc.AutoScrollPosition, "#18");
+			Assert.AreEqual (new Rectangle (-226, -426, 410, 810), sc.DisplayRectangle, "#19");
+			Assert.AreEqual (new Point (-326, -626), c1.Location, "#20");
+			Assert.AreEqual (new Point (174, 374), c2.Location, "#21");
+
+			sc.AutoScrollPosition = new Point (25, 50);
+			Assert.AreEqual (new Point (-25, -50), sc.AutoScrollPosition, "#22");
+			Assert.AreEqual (new Rectangle (-25, -50, 410, 810), sc.DisplayRectangle, "#23");
+			Assert.AreEqual (new Point (-125, -250), c1.Location, "#24");
+			Assert.AreEqual (new Point (375, 750), c2.Location, "#25");
+			
+			sc.ScrollControlIntoView (c1);
+
+
+			Assert.AreEqual (Point.Empty, sc.AutoScrollPosition, "#26");
+			Assert.AreEqual (new Rectangle (0, 0, 410, 810), sc.DisplayRectangle, "#27");
+			Assert.AreEqual (new Point (-100, -200), c1.Location, "#28");
+			Assert.AreEqual (new Point (400, 800), c2.Location, "#29");
+
+			sc.AutoScrollPosition = new Point (2500, 5000);
+			Assert.AreEqual (new Point (-226, -426), sc.AutoScrollPosition, "#30");
+			Assert.AreEqual (new Rectangle (-226, -426, 410, 810), sc.DisplayRectangle, "#31");
+			Assert.AreEqual (new Point (-326, -626), c1.Location, "#32");
+			Assert.AreEqual (new Point (174, 374), c2.Location, "#33");
+
+			sc.AutoScrollPosition = new Point (25, 50);
+			Assert.AreEqual (new Point (-25, -50), sc.AutoScrollPosition, "#34");
+			Assert.AreEqual (new Rectangle (-25, -50, 410, 810), sc.DisplayRectangle, "#35");
+			Assert.AreEqual (new Point (-125, -250), c1.Location, "#36");
+			Assert.AreEqual (new Point (375, 750), c2.Location, "#37");
+			
+			sc.ScrollControlIntoView (c2);
+
+			Assert.AreEqual (new Point (-226, -426), sc.AutoScrollPosition, "#38");
+			Assert.AreEqual (new Rectangle (-226, -426, 410, 810), sc.DisplayRectangle, "#39");
+			Assert.AreEqual (new Point (-326, -626), c1.Location, "#40");
+			Assert.AreEqual (new Point (174, 374), c2.Location, "#41");
+
+			sc.AutoScrollPosition = new Point (-25, -50);
+			Assert.AreEqual (Point.Empty, sc.AutoScrollPosition, "#42");
+			Assert.AreEqual (new Rectangle (0, 0, 410, 810), sc.DisplayRectangle, "#43");
+			Assert.AreEqual (new Point (-100, -200), c1.Location, "#44");
+			Assert.AreEqual (new Point (400, 800), c2.Location, "#45");
+
+			sc.AutoScrollPosition = new Point (2500, 5000);
+			Assert.AreEqual (new Point (-226, -426), sc.AutoScrollPosition, "#46");
+			Assert.AreEqual (new Rectangle (-226, -426, 410, 810), sc.DisplayRectangle, "#47");
+			Assert.AreEqual (new Point (-326, -626), c1.Location, "#48");
+			Assert.AreEqual (new Point (174, 374), c2.Location, "#49");
+
+			sc.AutoScrollPosition = new Point (25, 50);
+			Assert.AreEqual (new Point (-25, -50), sc.AutoScrollPosition, "#50");
+			Assert.AreEqual (new Rectangle (-25, -50, 410, 810), sc.DisplayRectangle, "#51");
+			Assert.AreEqual (new Point (-125, -250), c1.Location, "#52");
+			Assert.AreEqual (new Point (375, 750), c2.Location, "#53");
+			
+			
+		}
+		
+		[Test]
 		public void ResizeAnchoredTest ()
 		{
 			ScrollableControl sc = new ScrollableControl ();

@@ -1,3 +1,7 @@
+2007-07-23  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* ScrollableControlTest.cs: Added AutoScrollPositiontest
+
 2007-07-20  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* FormHandleTest.cs: Make a couple of classes public, so that other
