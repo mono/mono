@@ -1,2 +1,2 @@
 #!/bin/sh
-MONO_PATH="@mono_instdir@/@framework_version@/:$MONO_PATH" exec @bindir@/@mono_interp@ $MONO_OPTIONS @mono_instdir@/@framework_version@/@exe_name@.exe "$@"
+MONO_PATH="@mono_instdir@/@framework_version@/:$MONO_PATH" exec @bindir@/@mono_interp@ $MONO_OPTIONS @mono_instdir@/@framework_version@/@exe_name@.exe -pkg:silver "$@"
