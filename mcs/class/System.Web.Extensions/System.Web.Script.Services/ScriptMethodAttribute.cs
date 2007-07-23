@@ -39,15 +39,7 @@ namespace System.Web.Script.Services
 		ResponseFormat _responseFormat = ResponseFormat.Json;
 		bool _useHttpGet;
 		bool _xmlSerializeString;
-		static ScriptMethodAttribute _default;
-
-		internal static ScriptMethodAttribute Default {
-			get { return _default; }
-		}
-
-		static ScriptMethodAttribute () {
-			_default = new ScriptMethodAttribute ();
-		}
+		internal static readonly ScriptMethodAttribute Default = new ScriptMethodAttribute ();
 
 		public ResponseFormat ResponseFormat {
 			get { return _responseFormat; }
