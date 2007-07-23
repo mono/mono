@@ -213,7 +213,10 @@ namespace System.Xml.Serialization
 
 				if (retVal is XmlSchemaComplexType) {
 					_schemaType = (XmlSchemaComplexType) retVal;
-					_schemaTypeName = _schemaType.QualifiedName;
+					if (!_schemaType.QualifiedName.IsEmpty)
+						_schemaTypeName = _schemaType.QualifiedName;
+					else
+						_schemaTypeName = new XmlQualifiedName (xmlType, xmlTypeNamespace);
 				}
 				else if (retVal is XmlQualifiedName) {
 					_schemaTypeName = (XmlQualifiedName)retVal;

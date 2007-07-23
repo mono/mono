@@ -602,12 +602,12 @@ namespace System.Xml.Serialization {
 		void SetSchemaXmlSerializableType (XmlSerializableMapping map, XmlSchemaElement elem)
 		{
 #if NET_2_0
-			if (map.SchemaType != null) {
+			if (map.SchemaType != null && map.Schema != null) {
 				elem.SchemaType = map.SchemaType;
 				return;
 			}
 
-			if (map.SchemaTypeName != null) {
+			if (map.SchemaType == null && map.SchemaTypeName != null) {
 				elem.SchemaTypeName = map.SchemaTypeName;
 				elem.Name = map.SchemaTypeName.Name;
 				return;

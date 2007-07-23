@@ -1,3 +1,10 @@
+2007-07-23  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* XmlTypeMapping.cs: fixed XmlSerializableMapping ctor, corrected when
+	qualified name is empty
+	* XmlSchemaExporter.cs: fixed SetSchemaXmlSerializableType when schema
+	provider method returns null schema
+
 2007-06-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* CodeIdentifier.cs: Default ctor is public on 1.0 profile too.
