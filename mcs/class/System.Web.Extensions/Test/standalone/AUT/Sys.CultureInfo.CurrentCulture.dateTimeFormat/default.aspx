@@ -1,6 +1,15 @@
 <%@ Page Language="C#" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+<script runat="server">
+   
+    protected void Button1_Click(object sender, EventArgs e)
+    {
+        System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.CreateSpecificCulture("he-IL");
+    }
+</script>
+
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head id="Head1" runat="server">
     <title>Example</title>
@@ -12,6 +21,7 @@
             <h3>dateTimeFormat.[FormatType] field of Sys.CultureInfo.CurrentCulture object</h3>
             <asp:Label ID="Label1" runat="server" Text="Label"></asp:Label>
             <asp:Label ID="Label2" runat="server" Text="Label"></asp:Label>
+            <asp:Button ID="Button1" runat="server" Text="Culture Changer" OnClick="Button1_Click" />
         </div>
     </form>
 </body>
