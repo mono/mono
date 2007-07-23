@@ -1,5 +1,9 @@
 2007-07-23  Raja R Harinath  <rharinath@novell.com>
 
+	* reflection.c (reflection_methodbuilder_to_mono_method): Use
+	mono_metadata_type_dup.
+	* marshal.c (mono_mb_create_method): Likewise.
+
 	* metadata.c (mono_metadata_type_dup): Rename from
 	mono_metadata_type_dup_mp.  Take an optional mempool instead of a
 	MonoImage.  Handle a few more cases, esp. when no mempool is given.
