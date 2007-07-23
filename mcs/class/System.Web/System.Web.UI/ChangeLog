@@ -1,6 +1,12 @@
+2007-07-23 Konstantin Triger <kostat@mainsoft.com>
+
+	* Control.cs: calculate AppRelativeTemplateSourceDirectory from HttpContext
+		when control is not in control collection.
+
 2007-07-22 Konstantin Triger <kostat@mainsoft.com>
 
-	* Control.cs, TemplateControl.cs: base AppRelativeTemplateSourceDirectory property
+	* Control.cs,
+		TemplateControl.cs: base AppRelativeTemplateSourceDirectory property
 		on TemplateControl; implement special behavior of Control.TemplateControl for
 		TemplateControl instances.
 

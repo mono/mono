@@ -188,6 +188,11 @@ namespace System.Web.UI
 				if (parent != null)
 					return parent.AppRelativeTemplateSourceDirectory;
 
+				HttpContext context = Context;
+				if (context != null)
+					return VirtualPathUtility.ToAppRelative (
+						VirtualPathUtility.GetDirectory (context.Request.FilePath));
+
 				return "~/";
 			}
 			[EditorBrowsable (EditorBrowsableState.Never)]
