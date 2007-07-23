@@ -648,14 +648,14 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 		{
 			current_changed = ++event_num;
 			Console.WriteLine ("current_changed = {0}", current_changed);
-			Console.WriteLine (Environment.StackTrace);
+			//Console.WriteLine (Environment.StackTrace);
 			event_log += String.Format ("{0}: CurrentChanged\n", current_changed);
 		}
 		void PositionChanged (object sender, EventArgs args)
 		{
 			position_changed = ++event_num;
 			Console.WriteLine ("position_changed = {0}", position_changed);
-			Console.WriteLine (Environment.StackTrace);
+			//Console.WriteLine (Environment.StackTrace);
 			event_log += String.Format ("{0}: PositionChanged (to {1})\n", position_changed, ((CurrencyManager)sender).Position);
 		}
 		void ItemChanged (object sender, ItemChangedEventArgs args)
@@ -663,20 +663,20 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 			item_changed = ++event_num;
 			item_changed_args = args;
 			Console.WriteLine ("item_changed = {0}, index = {1}", item_changed, args.Index);
-			Console.WriteLine (Environment.StackTrace);
+			//Console.WriteLine (Environment.StackTrace);
 			event_log += String.Format ("{0}: ItemChanged (index = {1})\n", item_changed, args.Index);
 		}
 		void ListChanged (object sender, ListChangedEventArgs args)
 		{
 			Console.WriteLine ("ListChanged ({0},{1},{2})", args.ListChangedType, args.OldIndex, args.NewIndex);
-			Console.WriteLine (Environment.StackTrace);
+			//Console.WriteLine (Environment.StackTrace);
 			event_log += String.Format (" : ListChanged ({0}, {1}, {2})\n", args.ListChangedType, args.OldIndex, args.NewIndex);
 		}
 		void MetaDataChanged (object sender, EventArgs args)
 		{
 			metadata_changed = ++event_num;
 			Console.WriteLine ("metadata_changed = {0}", metadata_changed);
-			Console.WriteLine (Environment.StackTrace);
+			//Console.WriteLine (Environment.StackTrace);
 			event_log += String.Format ("{0}: MetaDataChanged\n", metadata_changed);
 		}
 

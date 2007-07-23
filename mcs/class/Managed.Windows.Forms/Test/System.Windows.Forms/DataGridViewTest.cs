@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2005,2006 Novell, Inc. (http://www.novell.com)
+// Copyright (c) 2005, 2006, 2007 Novell, Inc. (http://www.novell.com)
 //
 // Author:
 //	Pedro Martínez Juliá <pedromj@gmail.com>
@@ -147,6 +147,15 @@ namespace MonoTests.System.Windows.Forms {
 
 		#endregion
 
+		[Test]
+		public void ControlsTest ()
+		{
+			using (DataGridView grid = new DataGridView ()) {
+				Assert.AreEqual ("DataGridViewControlCollection", grid.Controls.GetType ().Name, "#01");
+				Assert.AreEqual (2, grid.Controls.Count, "#02");
+			}
+		}
+	
 		[Test]
 		[ExpectedException(typeof(ArgumentException))]
 		public void TestBackgroundColorArgumentException () {
@@ -375,6 +384,112 @@ namespace MonoTests.System.Windows.Forms {
 			}
 		}
 	}
+	
+	[TestFixture]
+	public class DataGridViewControlCollectionTest
+	{
+		
+		public void TestClear ()
+		{
+			using (DataGridView dgv = new DataGridView ()) {
+				DataGridView.DataGridViewControlCollection controls = (DataGridView.DataGridViewControlCollection) dgv.Controls;
+				Control c1 = new Control ();
+				Control c2 = new Control ();
+				Control c3 = new Control ();
+				Assert.AreEqual (2, controls.Count, "#02");
+				controls.Add (c1);
+				controls.Add (c2);
+				controls.Add (c3);
+				Assert.AreEqual (5, controls.Count, "#02");
+				controls.Clear ();
+				Assert.AreEqual (3, controls.Count, "#03");
+				Assert.AreSame (c2, controls [2], "#04");
+			}
+
+			// Maybe MS should start writing unit-tests?
+
+			using (DataGridView dgv = new DataGridView ()) {
+				DataGridView.DataGridViewControlCollection controls = (DataGridView.DataGridViewControlCollection)dgv.Controls;
+				Control [] c = new Control [20];
+				for (int i = 0; i < c.Length; i++) {
+					c [i] = new Control ();
+					c [i].Text = "#" + i.ToString ();
+				}
+				
+				Assert.AreEqual (2, controls.Count, "#02");
+				controls.AddRange (c);
+				Assert.AreEqual (22, controls.Count, "#02");
+				controls.Clear ();
+				Assert.AreEqual (12, controls.Count, "#03");
+				
+				for (int i = 0; i < c.Length; i += 2) {
+					Assert.AreSame (c [i+1], controls [ (i / 2) + 2], "#A" + i.ToString ());
+				}
+			}
+		}
+
+
+		public void TestCopyTo ()
+		{
+			using (DataGridView dgv = new DataGridView ()) {
+				DataGridView.DataGridViewControlCollection controls = (DataGridView.DataGridViewControlCollection)dgv.Controls;
+				Control c1 = new Control ();
+				Control c2 = new Control ();
+				Control c3 = new Control ();
+				Control [] copy = new Control [10];
+				Assert.AreEqual (2, controls.Count, "#01");
+				controls.AddRange (new Control [] { c1, c2, c3 });
+				Assert.AreEqual (5, controls.Count, "#01-b");
+				controls.CopyTo (copy, 0);
+				Assert.AreEqual (5, controls.Count, "#02");
+				Assert.AreEqual (10, copy.Length, "#03");
+				for (int i = 0; i < copy.Length; i++) {
+					if (i >= 5)
+						Assert.IsNull (copy [i], "#A" + i.ToString ());
+					else
+						Assert.IsNotNull (copy [i], "#B" + i.ToString ());
+				}
+			
+			}
+		}
+
+		[ExpectedException (typeof (NotSupportedException))]
+		public void TestInsert ()
+		{
+			using (DataGridView dgv = new DataGridView ()) {
+				DataGridView.DataGridViewControlCollection controls = (DataGridView.DataGridViewControlCollection)dgv.Controls;
+				controls.Insert (1, new Control ());
+			}
+		}
+
+
+		public void TestRemove ()
+		{
+			using (DataGridView dgv = new DataGridView ()) {
+				DataGridView.DataGridViewControlCollection controls = (DataGridView.DataGridViewControlCollection)dgv.Controls;
+				Control c1 = new Control ();
+				Control c2 = new Control ();
+				Control c3 = new Control ();
+				Control [] copy = new Control [10];
+				
+				controls.AddRange (new Control [] {c1, c2, c3});
+				
+				controls.Remove (c2);
+				Assert.AreEqual (4, controls.Count, "#01");
+				controls.Remove (c2);
+				Assert.AreEqual (4, controls.Count, "#02");
+				controls.Remove (c1);
+				Assert.AreEqual (3, controls.Count, "#03");
+				controls.Remove (c3);
+				Assert.AreEqual (2, controls.Count, "#04");
+				
+				controls.Remove (controls [0]);
+				controls.Remove (controls [1]);
+				Assert.AreEqual (2, controls.Count, "#05");
+			}
+		}
+	}
+		
 }
 
 #endif
