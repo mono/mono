@@ -805,6 +805,34 @@ namespace System.Windows.Forms {
 			return root_node.GetNodeCount (include_subtrees);
 		}
 
+#if NET_2_0
+		public TreeViewHitTestInfo HitTest (Point pt)
+		{
+			return HitTest (pt.X, pt.Y);
+		}
+		
+		public TreeViewHitTestInfo HitTest (int x, int y)
+		{
+			TreeNode n = GetNodeAt (y);
+			
+			if (n == null)
+				return new TreeViewHitTestInfo (null, TreeViewHitTestLocations.None);
+				
+			if (IsTextArea (n, x))
+				return new TreeViewHitTestInfo (n, TreeViewHitTestLocations.Label);
+			else if (IsPlusMinusArea (n, x))
+				return new TreeViewHitTestInfo (n, TreeViewHitTestLocations.PlusMinus);
+			else if (checkboxes && IsCheckboxArea (n, x))
+			        return new TreeViewHitTestInfo (n, TreeViewHitTestLocations.StateImage);
+			else if (x > n.Bounds.Right)
+				return new TreeViewHitTestInfo (n, TreeViewHitTestLocations.RightOfLabel);
+			else if (IsImage (n, x))
+				return new TreeViewHitTestInfo (n, TreeViewHitTestLocations.Image);
+			else
+				return new TreeViewHitTestInfo (null, TreeViewHitTestLocations.Indent);
+		}
+#endif
+
 		public override string ToString () {
 			int count = Nodes.Count;
 			if (count <= 0)
@@ -1228,6 +1256,21 @@ namespace System.Windows.Forms {
 			return (x > l && x < l + 10);
 		}
 
+		private bool IsImage (TreeNode node, int x)
+		{
+			if (ImageList == null)
+				return false;
+				
+			int l = node.Bounds.Left;
+
+			l -= ImageList.ImageSize.Width + 5;
+			
+			if (x >= l && x <= (l + ImageList.ImageSize.Width + 5))
+				return true;
+				
+			return false;
+		}
+		
 		private int CheckBoxLeft (TreeNode node)
 		{
 			int l = node.Bounds.Left + 5;

@@ -1,3 +1,7 @@
+2007-07-23  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TreeView.cs: Implement HitTest.
+
 2007-07-23  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* DataGridViewTextBoxCell.cs: Use DGV.EditControlInternal instead of
