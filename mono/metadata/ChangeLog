@@ -1,3 +1,9 @@
+2007-07-23  Raja R Harinath  <rharinath@novell.com>
+
+	* metadata.c (mono_metadata_type_dup): Rename from
+	mono_metadata_type_dup_mp.  Take an optional mempool instead of a
+	MonoImage.  Handle a few more cases, esp. when no mempool is given.
+	* marshal.c, metadata-internals.h: Update to changes.
 
 Mon Jul 23 11:43:31 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
