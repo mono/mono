@@ -1,3 +1,8 @@
+2007-07-23  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* System.Windows.Forms_test.dll.sources: Added
+	  ArrangedElementCollectionTest.cs
+
 2007-07-20  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* System.Windows.Forms_test.dll.sources: Unified ComboBoxTest.cs and

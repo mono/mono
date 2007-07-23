@@ -152,6 +152,7 @@ System.Windows.Forms/UpDownTest.cs
 System.Windows.Forms/UserControlTest.cs
 System.Windows.Forms/VScrollPropertiesTest.cs
 System.Windows.Forms.Layout/TableLayoutSettingsTypeConverterTest.cs
+System.Windows.Forms.Layout/ArrangedElementCollectionTest.cs
 System.Resources/CompatTest.cs
 System.Resources/CultureTest.cs
 System.Resources/ResXDataNodeTest.cs
