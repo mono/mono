@@ -1,3 +1,10 @@
+
+Mon Jul 23 19:43:14 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* class.c, metadata.c, class-internals.h: introduce yet another
+	generics global cache for inflated methods (fixes 98% of the perf
+	issue in bug #81806).
+
 2007-07-23  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #81035 -- avoid allocating MonoGenericInsts willy-nilly
