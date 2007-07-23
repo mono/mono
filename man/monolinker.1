@@ -29,12 +29,12 @@ others. It will walk through all the code that it is given to it, and
 remove all the unused methods and classes.  This is done using a mark
 and sweep operation on all the code that it is referenced.
 .PP
-The generated output from the monolinker can be later processed by the 
+The generated output from the monolinker can be later processed by the
 .I mkbundle
 tool to generate small native self-contained executables.
 .PP
 Do not confuse this with the Assembly Linker (al) which creates
-assemblies from manifests, modules and resource files. 
+assemblies from manifests, modules and resource files.
 .SH OPTIONS
 .TP
 .I "-d search_directory"
@@ -74,18 +74,21 @@ specify one of the following actions:
 .RS
 .ne 8
 .TP
-.I skip 
+.I skip
 This instructs the linker to skip them and do nothing with them.
 .TP
-.I copy 
+.I copy
 This instructs the linker to copy them to the output directory,
 .TP
-.I link 
+.I link
 This instructs the linker to apply the linking process and reduce
 their size.
 .ne
 .RE
 .Sp
+.TP "-p action assembly"
+.I
+Specify per assembly which action to apply.
 .TP
 .I "-x descriptor"
 Use an XML descriptor as a source for the linker.
@@ -165,8 +168,8 @@ namespace Foo {
 .fi
 .Sp
 If you compile this custom against monolinker to a Foo.dll assembly, you
-can use the 
-.I -s 
+can use the
+.I -s
 switch as follows.   To add the FooStep at the end of the pipeline:
 .Sp
 .nf
