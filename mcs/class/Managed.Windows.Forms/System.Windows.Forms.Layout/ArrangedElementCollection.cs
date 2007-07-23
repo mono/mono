@@ -113,7 +113,7 @@ namespace System.Windows.Forms.Layout
 
 		void IList.Insert (int index, object value)
 		{
-			Insert (index, value);
+			throw new NotSupportedException ();
 		}
 
 		internal void Insert (int index, object value)
