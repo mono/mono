@@ -4,7 +4,20 @@
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <script runat="server">
+    
+    protected void Button1_Click(object sender, EventArgs e)
+    {
+        Label1.Text = "Test";
+    }
 
+    protected override void OnPreRender(EventArgs e)
+    {
+        if (IsPostBack)
+        {
+            Label2.Text = "Posted Back";
+            Label3.Text = "Static text changed";    
+        }
+    }
 </script>
 
 <html xmlns="http://www.w3.org/1999/xhtml" >
@@ -17,9 +30,12 @@
       <asp:ScriptManager ID="ScriptManager1" runat="server" />
       <asp:UpdatePanel ID="UpdatePanel1" runat="server">
           <ContentTemplate>
-              <!-- Place updatable markup and controls here. -->
+              <asp:Button ID="Button1" runat="server" Text="Button" OnClick="Button1_Click"  /> <br />
+              <asp:Label ID="Label1" runat="server"></asp:Label> <br />
+              <asp:Label ID="Label2" runat="server"></asp:Label> <br />
           </ContentTemplate>
       </asp:UpdatePanel>
+      <asp:Label ID="Label3" runat="server">Text from static page area</asp:Label>
     </div>
     </form>
 </body>
