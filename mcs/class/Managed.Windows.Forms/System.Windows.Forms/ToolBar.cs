@@ -207,7 +207,13 @@ namespace System.Windows.Forms
 #endif
 		[DefaultValue (true)]
 		[Localizable (true)]
-		public override bool AutoSize {
+		public 
+#if NET_2_0
+		override
+#else
+		new
+#endif
+		bool AutoSize {
 			get { return autosize; }
 			set {
 				if (value == autosize)
