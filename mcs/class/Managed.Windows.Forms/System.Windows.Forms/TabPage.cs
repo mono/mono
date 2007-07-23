@@ -27,8 +27,13 @@ using System;
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Drawing;
+using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
+#if NET_2_0
+	[ComVisible (true)]
+	[ClassInterface (ClassInterfaceType.AutoDispatch)]
+#endif
 	[DefaultEvent("Click")]
 	[DesignTimeVisible(false)]
 	[DefaultProperty("Text")]
@@ -65,6 +70,44 @@ namespace System.Windows.Forms {
 
 		#region .NET 2.0 Public Instance Properties
 #if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public override bool AutoSize {
+			get { return base.AutoSize; }
+			set { base.AutoSize = value; }
+		}
+
+		[Browsable (false)]
+		[Localizable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public override AutoSizeMode AutoSizeMode {
+			get { return base.AutoSizeMode; }
+			set { base.AutoSizeMode = value; }
+		}
+
+		[Browsable (false)]
+		[DefaultValue ("{Width=0, Height=0}")]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public override Size MaximumSize {
+			get { return base.MaximumSize; }
+			set { base.MaximumSize = value; }
+		}
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public override Size MinimumSize {
+			get { return base.MinimumSize; }
+			set { base.MinimumSize = value; }
+		}
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new Size PreferredSize {
+			get { return base.PreferredSize; }
+		}
+		
 		[DefaultValue (false)]
 		public bool UseVisualStyleBackColor {
 			get { return use_visual_style_back_color; }
@@ -118,9 +161,9 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
+		[Localizable (true)]
 		[RefreshProperties (RefreshProperties.Repaint)]
 		[DefaultValue ("")]
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Editor ("System.Windows.Forms.Design.ImageIndexEditor, " + Consts.AssemblySystem_Design,
 			 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		[TypeConverter (typeof (ImageKeyConverter))]
@@ -270,10 +313,24 @@ namespace System.Windows.Forms {
 		{
 			base.OnLeave (e);
 		}
+
+		protected override void OnPaintBackground (PaintEventArgs e)
+		{
+			base.OnPaintBackground (e);
+		}
 #endif
 		#endregion	// Protected Instance Methods
 
 		#region Events
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler AutoSizeChanged {
+			add { base.AutoSizeChanged += value; }
+			remove { base.AutoSizeChanged -= value; }
+		}
+#endif
+
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public new event EventHandler DockChanged {
@@ -288,6 +345,15 @@ namespace System.Windows.Forms {
 			remove { base.EnabledChanged -= value; }
 		}
 
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler LocationChanged {
+			add { base.LocationChanged += value; }
+			remove { base.LocationChanged -= value; }
+		}
+#endif
+
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public new event EventHandler TabIndexChanged {
@@ -301,6 +367,15 @@ namespace System.Windows.Forms {
 			add { base.TabStopChanged += value; }
 			remove { base.TabStopChanged -= value; }
 		}
+
+#if NET_2_0
+		[Browsable (true)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
+		public new event EventHandler TextChanged {
+			add { base.TextChanged += value; }
+			remove { base.TextChanged -= value; }
+		}
+#endif
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
@@ -325,6 +400,9 @@ namespace System.Windows.Forms {
 		}
 #endif
 		#region Class TabPageControlCollection
+#if NET_2_0
+		[ComVisible (false)]
+#endif
 		public class TabPageControlCollection : ControlCollection {
 
 			//private TabPage owner;

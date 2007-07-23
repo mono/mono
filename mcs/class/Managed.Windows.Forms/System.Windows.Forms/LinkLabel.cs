@@ -88,6 +88,15 @@ namespace System.Windows.Forms
 			add { Events.AddHandler (LinkClickedEvent, value); }
 			remove { Events.RemoveHandler (LinkClickedEvent, value); }
 		}
+
+#if NET_2_0
+		[Browsable (true)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
+		public new event EventHandler TabStopChanged {
+			add { base.TabStopChanged += value; }
+			remove { base.TabStopChanged -= value; }
+		}
+#endif
 		#endregion // Events
 
 		public LinkLabel ()
@@ -303,6 +312,13 @@ namespace System.Windows.Forms
 			CreateLinkPieces ();			
 		}
 
+#if NET_2_0
+		protected override void OnAutoSizeChanged (EventArgs e)
+		{
+			base.OnAutoSizeChanged (e);
+		}
+#endif
+
 		protected override void OnEnabledChanged (EventArgs e)
 		{
 			base.OnEnabledChanged (e);
@@ -397,6 +413,13 @@ namespace System.Windows.Forms
 			base.OnMouseLeave (e);
 			UpdateHover (null);
 		}
+
+#if NET_2_0
+		protected override void OnPaddingChanged (EventArgs e)
+		{
+			base.OnPaddingChanged (e);
+		}
+#endif
 
 		private void UpdateHover (Link link)
 		{
@@ -747,6 +770,7 @@ namespace System.Windows.Forms
 				set { this.description = value; }
 			}
 			
+			[DefaultValue ("")]
 			public string Name {
 				get { return this.name; }
 				set { this.name = value; }
@@ -754,6 +778,8 @@ namespace System.Windows.Forms
 			
 			[Bindable (true)]
 			[Localizable (false)]
+			[DefaultValue (null)]
+			[TypeConverter (typeof (StringConverter))]
 			public Object Tag {
 				get { return this.tag; }
 				set { this.tag = value; }
@@ -919,6 +945,19 @@ namespace System.Windows.Forms
 			}
 
 #if NET_2_0
+			public virtual Link this[string key] {
+				get {
+					if (string.IsNullOrEmpty (key))
+						return null;
+						
+					foreach (Link l in collection)
+						if (string.Compare (l.Name, key, true) == 0)
+							return l;
+							
+					return null;
+				}
+			}
+			
 			public
 #else
 			internal
@@ -977,6 +1016,13 @@ namespace System.Windows.Forms
 				return collection.Contains (link);
 			}
 
+#if NET_2_0
+			public virtual bool ContainsKey (string key)
+			{
+				return !(this[key] == null);
+			}
+#endif
+
 			public IEnumerator GetEnumerator ()
 			{
 				return collection.GetEnumerator ();
@@ -987,12 +1033,33 @@ namespace System.Windows.Forms
 				return collection.IndexOf (link);
 			}
 
+#if NET_2_0
+			public virtual int IndexOfKey (string key)
+			{
+				if (string.IsNullOrEmpty (key))
+					return -1;
+					
+				return IndexOf (this[key]);
+			}
+			
+			public bool LinksAdded {
+				get { return !IsDefault; }
+			}
+#endif
+
 			public void Remove (LinkLabel.Link value)
 			{
 				collection.Remove (value);
 				owner.sorted_links = null;
 				owner.CreateLinkPieces ();
 			}
+
+#if NET_2_0
+			public virtual void RemoveByKey (string key)
+			{	
+				Remove (this[key]);
+			}
+#endif
 
 			public void RemoveAt (int index)
 			{

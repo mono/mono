@@ -37,6 +37,11 @@ using System.Runtime.InteropServices;
 using System.Collections;
 
 namespace System.Windows.Forms {
+#if NET_2_0
+	[ComVisible (true)]
+	[DefaultBindingProperty ("Text")]
+	[ClassInterface (ClassInterfaceType.AutoDispatch)]
+#endif
 	[DefaultEvent("TextChanged")]
 	[Designer("System.Windows.Forms.Design.TextBoxBaseDesigner, " + Consts.AssemblySystem_Design)]
 	public abstract class TextBoxBase : Control {
@@ -204,6 +209,10 @@ namespace System.Windows.Forms {
 			}
 		}
 
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+#endif
 		[DefaultValue(true)]
 		[Localizable(true)]
 		[RefreshProperties(RefreshProperties.Repaint)]
@@ -319,6 +328,9 @@ namespace System.Windows.Forms {
 			}
 		}
 
+#if NET_2_0
+		[MergableProperty (false)]
+#endif
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[Editor("System.Windows.Forms.Design.StringArrayEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
 		[Localizable(true)]
@@ -469,6 +481,9 @@ namespace System.Windows.Forms {
 			}
 		}
 
+#if NET_2_0
+		[RefreshProperties (RefreshProperties.Repaint)]	
+#endif
 		[DefaultValue(false)]
 		[MWFCategory("Behavior")]
 		public bool ReadOnly {
@@ -569,12 +584,15 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
+		[DefaultValue (true)]
 		public virtual bool ShortcutsEnabled {
 			get { return shortcuts_enabled; }
 			set { shortcuts_enabled = value; }
 		}
-#endif
 
+		[Editor ("System.ComponentModel.Design.MultilineStringEditor, " + Consts.AssemblySystem_Design,
+			 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
+#endif
 		[Localizable(true)]
 		public override string Text {
 			get {
@@ -651,11 +669,21 @@ namespace System.Windows.Forms {
 			}
 		}
 #if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override ImageLayout BackgroundImageLayout {
 			get { return base.BackgroundImageLayout; } 
 			set { base.BackgroundImageLayout = value; }
 		}
 
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public new Padding Padding {
+			get { return base.Padding; }
+			set { base.Padding = value; }
+		}
+		
 		protected override Cursor DefaultCursor {
 			get { return Cursors.IBeam; }
 		}
@@ -677,6 +705,7 @@ namespace System.Windows.Forms {
 
 #if NET_2_0
 		// Currently our double buffering breaks our scrolling, so don't let people enable this
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		protected override bool DoubleBuffered {
 			get { return false; }
 			set { }
@@ -982,6 +1011,13 @@ namespace System.Windows.Forms {
 			if (eh != null)
 				eh (this, e);
 		}
+
+#if NET_2_0
+		protected override void OnPaddingChanged (EventArgs e)
+		{
+			base.OnPaddingChanged (e);
+		}
+#endif
 
 		protected virtual void OnReadOnlyChanged(EventArgs e) {
 			EventHandler eh = (EventHandler)(Events [ReadOnlyChangedEvent]);
@@ -1467,6 +1503,8 @@ namespace System.Windows.Forms {
 			remove { Events.RemoveHandler (AcceptsTabChangedEvent, value); }
 		}
 
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler AutoSizeChanged {
 			add { Events.AddHandler (AutoSizeChangedEvent, value); }
 			remove { Events.RemoveHandler (AutoSizeChangedEvent, value); }
@@ -1513,8 +1551,36 @@ namespace System.Windows.Forms {
 			add { base.BackgroundImageChanged += value; }
 			remove { base.BackgroundImageChanged -= value; }
 		}
+
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler BackgroundImageLayoutChanged {
+			add { base.BackgroundImageLayoutChanged += value; }
+			remove { base.BackgroundImageLayoutChanged -= value; }
+		}
+
+		[Browsable (true)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
+		public new event MouseEventHandler MouseClick {
+			add { base.MouseClick += value; }
+			remove { base.MouseClick -= value; }
+		}
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public new event EventHandler PaddingChanged {
+			add { base.PaddingChanged += value; }
+			remove { base.PaddingChanged -= value; }
+		}
+
+		[Browsable (true)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
+#else
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
+#endif
 		public new event EventHandler Click {
 			add { base.Click += value; }
 			remove { base.Click -= value; }

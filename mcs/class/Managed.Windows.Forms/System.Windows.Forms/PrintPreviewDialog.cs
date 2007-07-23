@@ -402,7 +402,24 @@ namespace System.Windows.Forms {
 			get { return base.AutoScrollMinSize; }
 			set { base.AutoScrollMinSize = value; }
 		}
- 
+
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public override bool AutoSize {
+			get { return base.AutoSize; }
+			set { base.AutoSize = value; }
+		}
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public override AutoValidate AutoValidate {
+			get { return base.AutoValidate; }
+			set { base.AutoValidate = value; }
+		}
+#endif
+
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override Color BackColor {
@@ -426,7 +443,16 @@ namespace System.Windows.Forms {
 				base.BackgroundImage = value;
 			}
 		}
- 
+
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public override ImageLayout BackgroundImageLayout {
+			get { return base.BackgroundImageLayout; }
+			set { base.BackgroundImageLayout = value; }
+		}
+#endif
+
 		// new property so we can set EditorBrowsable to never.
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
@@ -454,7 +480,16 @@ namespace System.Windows.Forms {
 				base.ContextMenu = value;
 			}
 		}
- 
+
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public override ContextMenuStrip ContextMenuStrip {
+			get { return base.ContextMenuStrip; }
+			set { base.ContextMenuStrip = value; }
+		}
+#endif
+
 		// new property so we can set EditorBrowsable to never.
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
@@ -481,7 +516,13 @@ namespace System.Windows.Forms {
 		public new ControlBindingsCollection DataBindings {
 			get { return base.DataBindings; }
 		}
- 
+
+#if NET_2_0
+		protected override Size DefaultMinimumSize {
+			get { return new Size (370, 300); }
+		}
+#endif
+
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override DockStyle Dock {
@@ -600,7 +641,16 @@ namespace System.Windows.Forms {
 			get { return base.Location; }
 			set { base.Location = value; }
 		}
- 
+
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new Padding Margin {
+			get { return base.Margin; }
+			set { base.Margin = value; }
+		}
+#endif
+
 		// new property so we can set EditorBrowsable to never.
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
@@ -652,6 +702,15 @@ namespace System.Windows.Forms {
 			get { return base.Opacity; }
 			set { base.Opacity = value; }
 		}
+
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new Padding Padding {
+			get { return base.Padding; }
+			set { base.Padding = value; }
+		}
+#endif
  
 		[Browsable(false)]
 #if !NET_2_0
@@ -672,7 +731,16 @@ namespace System.Windows.Forms {
 				base.RightToLeft = value;
 			}
 		}
- 
+
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public override bool RightToLeftLayout {
+			get { return base.RightToLeftLayout; }
+			set { base.RightToLeftLayout = value; }
+		}
+#endif
+
 		// new property so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[DefaultValue(false)]
@@ -762,6 +830,15 @@ namespace System.Windows.Forms {
 			}
 		}
 
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new bool UseWaitCursor {
+			get { return base.UseWaitCursor; }
+			set { base.UseWaitCursor = value; }
+		}
+#endif
+
 		// new property so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
@@ -792,6 +869,22 @@ namespace System.Windows.Forms {
 			base.OnClosing (e);
 		}
 
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler AutoSizeChanged {
+			add { base.AutoSizeChanged += value; }
+			remove { base.AutoSizeChanged -= value; }
+		}
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler AutoValidateChanged {
+			add { base.AutoValidateChanged += value; }
+			remove { base.AutoValidateChanged -= value; }
+		}
+#endif
+
 		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
@@ -807,7 +900,16 @@ namespace System.Windows.Forms {
 			add { base.BackgroundImageChanged += value; }
 			remove { base.BackgroundImageChanged -= value; }
 		}
- 
+
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler BackgroundImageLayoutChanged {
+			add { base.BackgroundImageLayoutChanged += value; }
+			remove { base.BackgroundImageLayoutChanged -= value; }
+		}
+#endif
+
 		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
@@ -823,7 +925,16 @@ namespace System.Windows.Forms {
 			add { base.ContextMenuChanged += value; }
 			remove { base.ContextMenuChanged -= value; }
 		}
- 
+
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler ContextMenuStripChanged {
+			add { base.ContextMenuStripChanged += value; }
+			remove { base.ContextMenuStripChanged -= value; }
+		}
+#endif
+
 		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
@@ -879,7 +990,16 @@ namespace System.Windows.Forms {
 			add { base.LocationChanged += value; }
 			remove { base.LocationChanged -= value; }
 		}
- 
+
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler MarginChanged {
+			add { base.MarginChanged += value; }
+			remove { base.MarginChanged -= value; }
+		}
+#endif
+
 		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
@@ -895,7 +1015,16 @@ namespace System.Windows.Forms {
 			add { base.MinimumSizeChanged += value; }
 			remove { base.MinimumSizeChanged -= value; }
 		}
- 
+
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler PaddingChanged {
+			add { base.PaddingChanged += value; }
+			remove { base.PaddingChanged -= value; }
+		}
+#endif
+
 		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
@@ -903,7 +1032,16 @@ namespace System.Windows.Forms {
 			add { base.RightToLeftChanged += value; }
 			remove { base.RightToLeftChanged -= value; }
 		}
- 
+
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler RightToLeftLayoutChanged {
+			add { base.RightToLeftLayoutChanged += value; }
+			remove { base.RightToLeftLayoutChanged -= value; }
+		}
+#endif
+
 		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]

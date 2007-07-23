@@ -36,7 +36,11 @@ using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms
-{	
+{
+#if NET_2_0
+	[ComVisible (true)]
+	[ClassInterface (ClassInterfaceType.AutoDispatch)]
+#endif
 	[DefaultEvent ("ButtonClick")]
 	[DefaultProperty ("Buttons")]
 	[Designer ("System.Windows.Forms.Design.ToolBarDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
@@ -53,6 +57,15 @@ namespace System.Windows.Forms
 		static object ButtonClickEvent = new object ();
 		static object ButtonDropDownEvent = new object ();
 
+#if NET_2_0
+		[Browsable (true)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
+		public new event EventHandler AutoSizeChanged {
+			add { base.AutoSizeChanged += value; }
+			remove { base.AutoSizeChanged -= value; }
+		}
+#endif
+
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler BackColorChanged {
@@ -66,6 +79,15 @@ namespace System.Windows.Forms
 			add { base.BackgroundImageChanged += value; }
 			remove { base.BackgroundImageChanged -= value; }
 		}
+
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler BackgroundImageLayoutChanged {
+			add { base.BackgroundImageLayoutChanged += value; }
+			remove { base.BackgroundImageLayoutChanged -= value; }
+		}
+#endif
 
 		public event ToolBarButtonClickEventHandler ButtonClick {
 			add { Events.AddHandler (ButtonClickEvent, value); }
@@ -150,6 +172,14 @@ namespace System.Windows.Forms
 		protected override Size DefaultSize {
 			get { return ThemeEngine.Current.ToolBarDefaultSize; }
 		}
+
+#if NET_2_0
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		protected override bool DoubleBuffered {
+			get { return base.DoubleBuffered; }
+			set { base.DoubleBuffered = value; }
+		}
+#endif
 		#endregion
 
 		ToolBarAppearance appearance = ToolBarAppearance.Normal;
@@ -177,7 +207,7 @@ namespace System.Windows.Forms
 #endif
 		[DefaultValue (true)]
 		[Localizable (true)]
-		public new bool AutoSize {
+		public override bool AutoSize {
 			get { return autosize; }
 			set {
 				if (value == autosize)
@@ -210,6 +240,15 @@ namespace System.Windows.Forms
 			get { return base.BackgroundImage; }
 			set { base.BackgroundImage = value; }
 		}
+
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public override ImageLayout BackgroundImageLayout {
+			get { return base.BackgroundImageLayout; }
+			set { base.BackgroundImageLayout = value; }
+		}
+#endif
 
 		[DefaultValue (BorderStyle.None)]
 		[DispIdAttribute (-504)]
@@ -1055,6 +1094,21 @@ namespace System.Windows.Forms
 				}
 			}
 
+#if NET_2_0
+			public virtual ToolBarButton this[string key] {
+				get {
+					if (string.IsNullOrEmpty (key))
+						return null;
+						
+					foreach (ToolBarButton b in list)
+						if (string.Compare (b.Name, key, true) == 0)
+							return b;
+							
+					return null;
+				}
+			}
+#endif
+
 			bool ICollection.IsSynchronized {
 				get { return list.IsSynchronized; }
 			}
@@ -1118,6 +1172,13 @@ namespace System.Windows.Forms
 				return list.Contains (button);
 			}
 
+#if NET_2_0
+			public virtual bool ContainsKey (string key)
+			{
+				return !(this[key] == null);
+			}
+#endif
+
 			public IEnumerator GetEnumerator ()
 			{
 				return list.GetEnumerator ();
@@ -1178,6 +1239,13 @@ namespace System.Windows.Forms
 				return list.IndexOf (button);
 			}
 
+#if NET_2_0
+			public virtual int IndexOfKey (string key)
+			{
+				return IndexOf (this[key]);
+			}
+#endif
+
 			public void Insert (int index, ToolBarButton button)
 			{
 				list.Insert (index, button);
@@ -1195,6 +1263,13 @@ namespace System.Windows.Forms
 				list.RemoveAt (index);
 				owner.Redraw (true);
 			}
+
+#if NET_2_0
+			public virtual void RemoveByKey (string key)
+			{
+				Remove (this[key]);
+			}
+#endif
 			#endregion methods
 		}
 		

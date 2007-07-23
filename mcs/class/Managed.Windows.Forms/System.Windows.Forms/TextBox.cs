@@ -38,6 +38,8 @@ namespace System.Windows.Forms {
 
 #if NET_2_0
 	[ComVisible(true)]
+	[ClassInterface (ClassInterfaceType.AutoDispatch)]
+	[Designer ("System.Windows.Forms.Design.TextBoxDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 #endif
 	public class TextBox : TextBoxBase {
 		#region Variables
@@ -129,6 +131,8 @@ namespace System.Windows.Forms {
 		[Browsable (true)]
 		[EditorBrowsable (EditorBrowsableState.Always)]
 		[Localizable (true)]
+		[Editor ("System.Windows.Forms.Design.ListControlStringCollectionEditor, " + Consts.AssemblySystem_Design,
+		 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public AutoCompleteStringCollection AutoCompleteCustomSource { 
 			get {
 				if(auto_complete_custom_source == null) {
@@ -172,6 +176,7 @@ namespace System.Windows.Forms {
 		[Browsable (true)]
 		[EditorBrowsable (EditorBrowsableState.Always)]
 		[DefaultValue (AutoCompleteSource.None)]
+		[TypeConverter (typeof (TextBoxAutoCompleteSourceConverter))]
 		public AutoCompleteSource AutoCompleteSource {
 			get { return auto_complete_source; }
 			set {
@@ -186,6 +191,7 @@ namespace System.Windows.Forms {
 		}
 
 		[DefaultValue(false)]
+		[RefreshProperties (RefreshProperties.Repaint)]
 		public bool UseSystemPasswordChar {
 			get {
 				return use_system_password_char;
@@ -228,6 +234,7 @@ namespace System.Windows.Forms {
 		[Localizable(true)]
 		[DefaultValue('\0')]
 		[MWFCategory("Behavior")]
+		[RefreshProperties (RefreshProperties.Repaint)]
 		public char PasswordChar {
 			get {
 #if NET_2_0
@@ -271,6 +278,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
+#if ONLY_1_1
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public override int SelectionLength {
@@ -281,7 +289,7 @@ namespace System.Windows.Forms {
 				base.SelectionLength = value;
 			}
 		}
-
+#endif
 
 		public override string Text {
 			get {
@@ -341,12 +349,13 @@ namespace System.Windows.Forms {
 			}
 		}
 
+#if ONLY_1_1
 		protected override ImeMode DefaultImeMode {
 			get {
 				return base.DefaultImeMode;
 			}
 		}
-
+#endif
 #if NET_2_0
 		protected override void Dispose (bool disposing)
 		{
@@ -369,9 +378,11 @@ namespace System.Windows.Forms {
 			base.OnHandleCreated (e);
 		}
 
+#if ONLY_1_1
 		protected override void OnMouseUp(MouseEventArgs e) {
 			base.OnMouseUp (e);
 		}
+#endif
 
 		protected virtual void OnTextAlignChanged(EventArgs e) {
 			EventHandler eh = (EventHandler)(Events [TextAlignChangedEvent]);
@@ -478,10 +489,26 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		protected override void OnBackColorChanged (EventArgs e)
+		{
+			base.OnBackColorChanged (e);
+		}
+		
 		protected override void OnFontChanged (EventArgs e)
 		{
 			base.OnFontChanged (e);
 		}
+
+		protected override void OnHandleDestroyed (EventArgs e)
+		{
+			base.OnHandleDestroyed (e);
+		}
 #endif
 	}
+	
+#if NET_2_0
+	internal class TextBoxAutoCompleteSourceConverter : TypeConverter
+	{
+	}
+#endif
 }

@@ -1,3 +1,8 @@
+2007-07-23  Jonathan Pobst  <monkey@jpobst.com>
+
+	* LinkLabel.cs, PrintPreviewDialog.cs, TabPage.cs, TextBox.cs,
+	TextBoxBase.cs, ToolBar.cs: 2.0 corcompare work.
+
 2007-07-23  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* DataGridViewLinkColumn.cs, DataGridViewRowCollection.cs,
