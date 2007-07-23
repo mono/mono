@@ -37,16 +37,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\build\common\Consts.cs">
+    <Compile Include="..\..\build\common\Consts.cs">
       <Link>Assembly\Consts.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\build\common\Locale.cs">
+    <Compile Include="..\..\build\common\Locale.cs">
       <Link>Assembly\Locale.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\build\common\MonoTODOAttribute.cs">
+    <Compile Include="..\..\build\common\MonoTODOAttribute.cs">
       <Link>Assembly\MonoTODOAttribute.cs</Link>
     </Compile>
-    <Compile Include="..\..\System.Web\System.Web.Handlers\AssemblyResourceLoader.cs">
+    <Compile Include="..\System.Web\System.Web.Handlers\AssemblyResourceLoader.cs">
       <Link>System.Web.Handlers\AssemblyResourceLoader.cs</Link>
     </Compile>
     <Compile Include="Assembly\AssemblyInfo.cs" />
