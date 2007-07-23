@@ -28,6 +28,7 @@
 ./Mono.Cairo/Matrix.cs
 ./Mono.Cairo/NativeMethods.cs
 ./Mono.Cairo/Operator.cs
+./Mono.Cairo/Path.cs
 ./Mono.Cairo/Pattern.cs
 ./Mono.Cairo/PatternType.cs
 ./Mono.Cairo/PdfSurface.cs

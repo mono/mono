@@ -72,11 +72,14 @@ namespace Cairo
 		[DllImport (cairo)]
 		internal static extern void cairo_copy_page (IntPtr cr);
 		
-		//[DllImport (cairo)]
-		//internal static extern Path cairo_copy_path (IntPtr cr);
+		[DllImport (cairo)]
+		internal static extern IntPtr cairo_copy_path (IntPtr cr);
 		
-		//[DllImport (cairo)]
-		//internal static extern Path cairo_copy_path_flat (IntPtr cr);
+		[DllImport (cairo)]
+		internal static extern IntPtr cairo_copy_path_flat (IntPtr cr);
+
+		[DllImport (cairo)]
+		internal static extern IntPtr cairo_append_path (IntPtr cr, IntPtr path);
 		
 		[DllImport (cairo)]
 		internal static extern IntPtr cairo_create (IntPtr target);

@@ -500,6 +500,22 @@ namespace Cairo {
                 {
                         NativeMethods.cairo_close_path (state);
                 }
+
+	        public Path CopyPath ()
+		{
+			return new Path (NativeMethods.cairo_copy_path (state));
+		}
+
+		public Path CopyPathFlat ()
+		{
+			return new Path (NativeMethods.cairo_copy_path_flat (state));
+		}
+
+		public void AppendPath (Path path)
+		{
+			NativeMethods.cairo_append_path (state, path.handle);
+		}
+		
 #endregion
 
 #region Painting Methods
