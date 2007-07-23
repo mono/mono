@@ -1,5 +1,18 @@
 2007-07-23  Raja R Harinath  <rharinath@novell.com>
 
+	Fix #81035 -- avoid allocating MonoGenericInsts willy-nilly
+	* metadata.c (mono_metadata_lookup_generic_inst): Kill.
+	(mono_metadata_get_generic_inst): New.  Given a list of MonoType*,
+	return a MonoGenericInst containing (a copy) of those types.
+	(mono_metadata_inflate_generic_inst): Update to changes.
+	(mono_metadata_parse_generic_inst): Likewise.
+	(mono_get_shared_generic_inst): Likewise.
+	* reflection.c (mono_class_bind_generic_parameters): Likewise.
+	(mono_reflection_bind_generic_method_parameters): Likewise.
+	* metadata-internals.h: Likewise.
+	* icall.c (free_generic_context): Kill.
+	(init_generic_context_from_args): Use mono_metadata_get_generic_inst.
+
 	* reflection.c (reflection_methodbuilder_to_mono_method): Use
 	mono_metadata_type_dup.
 	* marshal.c (mono_mb_create_method): Likewise.
