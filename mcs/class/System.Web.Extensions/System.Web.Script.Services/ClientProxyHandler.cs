@@ -48,8 +48,9 @@ namespace System.Web.Script.Services
 		public void ProcessRequest (HttpContext context) {
 			HttpResponse response = context.Response;
 			response.ContentType = "application/x-javascript";
-			response.AppendHeader ("Cache-Control", "private");
-			//TODO: add Last-Modified
+			response.Cache.SetExpires (DateTime.Now.AddYears (1));
+			response.Cache.SetValidUntilExpires (true);
+			response.Cache.SetCacheability (HttpCacheability.ServerAndPrivate);
 			response.Output.Write (_logicalTypeInfo.Proxy);
 		}
 
