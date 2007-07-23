@@ -1,3 +1,9 @@
+2007-07-23  Raja R Harinath  <rharinath@novell.com>
+
+	Fix 'make warnings'.
+	* Makefile (LIBRARY_PACKAGE): Set to none.
+	(install-local): Remove.
+
 2007-07-21  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil/TypeReference.cs

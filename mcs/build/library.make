@@ -158,11 +158,15 @@ LIBRARY_PACKAGE = $(FRAMEWORK_VERSION)
 endif
 endif
 
+ifneq (none, $(LIBRARY_PACKAGE))
+package_flag = /package $(LIBRARY_PACKAGE)
+endif
+
 install-local: $(gacutil)
-	$(GACUTIL) /i $(the_lib) /f $(gacdir_flag) /root $(GACROOT) /package $(LIBRARY_PACKAGE)
+	$(GACUTIL) /i $(the_lib) /f $(gacdir_flag) /root $(GACROOT) $(package_flag)
 
 uninstall-local: $(gacutil)
-	-$(GACUTIL) /u $(LIBRARY_NAME:.dll=) $(gacdir_flag) /root $(GACROOT) /package $(LIBRARY_PACKAGE)
+	-$(GACUTIL) /u $(LIBRARY_NAME:.dll=) $(gacdir_flag) /root $(GACROOT) $(package_flag)
 
 endif
 endif
