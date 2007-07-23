@@ -1,3 +1,8 @@
+
+Mon Jul 23 11:43:31 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: fixed a small leak for array classes and removed warning.
+
 2007-07-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* loader.c (mono_method_get_param_token): Make this work on generic methods.
