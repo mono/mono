@@ -1,5 +1,15 @@
 2007-07-23  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* DataGridViewTextBoxCell.cs: Use DGV.EditControlInternal instead of
+	  manually adding and removing the control from the Controls
+	  collecftion.
+	* DataGridView.cs: Implement DataGridViewControlCollection. Add an
+	  EditingControlInternal property that tracks the editing control.
+	  Always keeping the scrollbars in the Controls collection, as MS
+	  testing confirms is the right behaviour.
+
+2007-07-23  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* ScrollableControl.cs: Fix implementation of AutoScrollPosition
 	  according to MSDN and new test.
 

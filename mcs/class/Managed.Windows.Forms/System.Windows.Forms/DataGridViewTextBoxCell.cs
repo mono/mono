@@ -80,9 +80,9 @@ namespace System.Windows.Forms {
 			if (DataGridView == null) {
 				throw new InvalidOperationException("There is no associated DataGridView.");
 			}
-			if (DataGridView.Controls.Contains(editingControl)) {
-				DataGridView.Controls.Remove(editingControl);
-			}
+			
+			DataGridView.EditingControlInternal = null;
+			
 			Console.WriteLine("Detached: ({0}, {1});", RowIndex, ColumnIndex);
 		}
 
@@ -91,9 +91,9 @@ namespace System.Windows.Forms {
 			if (DataGridView == null) {
 				throw new InvalidOperationException("There is no associated DataGridView.");
 			}
-			if (!DataGridView.Controls.Contains(editingControl)) {
-				DataGridView.Controls.Add(editingControl);
-			}
+			
+			DataGridView.EditingControlInternal = editingControl;
+			
 			editingControl.EditingControlDataGridView = DataGridView;
 			editingControl.MaxLength = maxInputLength;
 			if (initialFormattedValue == null || (string) initialFormattedValue == "") {

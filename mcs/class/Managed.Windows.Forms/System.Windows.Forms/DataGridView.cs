@@ -114,7 +114,8 @@ namespace System.Windows.Forms {
 		private bool virtualMode;
 		private HScrollBar horizontalScrollBar;
 		private VScrollBar verticalScrollBar;
-
+		private Control editingControl;
+		
 		internal int gridWidth;
 		internal int gridHeight;
 
@@ -184,10 +185,12 @@ namespace System.Windows.Forms {
 			horizontalScrollBar.Dock = DockStyle.Bottom;
 			horizontalScrollBar.Scroll += OnHScrollBarScroll;
 			horizontalScrollBar.Visible = false;
+			Controls.Add (horizontalScrollBar);
 			verticalScrollBar = new VScrollBar();
 			verticalScrollBar.Dock = DockStyle.Right;
 			verticalScrollBar.Scroll += OnVScrollBarScroll;
 			verticalScrollBar.Visible = false;
+			Controls.Add (verticalScrollBar);
 		}
 
 		void ISupportInitialize.BeginInit ()
@@ -1123,6 +1126,25 @@ namespace System.Windows.Forms {
 		public bool VirtualMode {
 			get { return virtualMode; }
 			set { virtualMode = value; }
+		}
+
+		internal Control EditingControlInternal {
+			get { 
+				return editingControl; 
+			}
+			set {
+				if (value == editingControl)
+					return;
+
+				if (editingControl != null) {
+					// Can't use Controls.RemoveAt (editingControls), because that method
+					// is overriden to not remove the editing control.
+					Controls.RemoveAt (Controls.IndexOf (editingControl));
+				}
+				
+				if (value != null)
+					Controls.Add (editingControl);
+			}
 		}
 
 		static object AllowUserToAddRowsChangedEvent = new object ();
@@ -2331,7 +2353,7 @@ namespace System.Windows.Forms {
 
 		protected override Control.ControlCollection CreateControlsInstance ()
 		{
-			return base.CreateControlsInstance(); //new Control.ControlCollection(this);
+			return new DataGridViewControlCollection (this);
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
@@ -3206,18 +3228,6 @@ namespace System.Windows.Forms {
 					verticalScrollBar.SmallChange = verticalScrollBar.Maximum / 20;
 				}
 			}
-			if (horizontalScrollBar.Visible && !this.Controls.Contains(horizontalScrollBar)) {
-				this.Controls.Add(horizontalScrollBar);
-			}
-			else if (!horizontalScrollBar.Visible && this.Controls.Contains(horizontalScrollBar)) {
-				this.Controls.Remove(horizontalScrollBar);
-			}
-			if (verticalScrollBar.Visible && !this.Controls.Contains(verticalScrollBar)) {
-				this.Controls.Add(verticalScrollBar);
-			}
-			else if (!verticalScrollBar.Visible && this.Controls.Contains(verticalScrollBar)) {
-				this.Controls.Remove(verticalScrollBar);
-			}
 		}
 
 		protected virtual void OnReadOnlyChanged (EventArgs e) {
@@ -3785,6 +3795,52 @@ namespace System.Windows.Forms {
 				return GetType().Name;
 			}
 
+		}
+
+		public class DataGridViewControlCollection : Control.ControlCollection
+		{
+			private new DataGridView owner;
+			
+			public DataGridViewControlCollection (DataGridView owner) : base (owner)
+			{
+				this.owner = owner;
+			}
+			
+			public override void Clear ()
+			{
+				// 
+				// This is severely buggy, just as MS' implementation is.
+				//
+				for (int i = 0; i < Count; i++) {
+					Remove (this [i]);
+				}
+			}
+			
+			public void CopyTo (Control [] array, int index)
+			{
+				base.CopyTo (array, index);
+			}
+			
+			public void Insert (int index, Control value)
+			{
+				throw new NotSupportedException ();
+			}
+
+			public override void Remove (Control value)
+			{
+				if (value == owner.horizontalScrollBar)
+					return;
+				
+				if (value == owner.verticalScrollBar)
+					return;
+					
+				if (value == owner.editingControl)
+					return;
+			
+				base.Remove (value);
+			}
+			
+			
 		}
 
 		[ComVisibleAttribute(true)]
