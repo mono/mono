@@ -363,32 +363,40 @@ namespace System.Windows.Forms {
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public Point AutoScrollPosition {
 			get {
-				return new Point(-scroll_position.X, -scroll_position.Y);
+				return DisplayRectangle.Location;
 			}
 
 			set {
-				if ((value.X != scroll_position.X) || (value.Y != scroll_position.Y)) {
+				if (value != AutoScrollPosition) {
 					int	shift_x;
 					int	shift_y;
 
 					shift_x = 0;
 					shift_y = 0;
 					if (hscrollbar.VisibleInternal) {
+						int max = hscrollbar.Maximum - hscrollbar.LargeChange + 1;
+						value.X = value.X < hscrollbar.Minimum ? hscrollbar.Minimum : value.X;
+						value.X = value.X > max ? max : value.X;
 						shift_x = value.X - scroll_position.X;
 					}
 
 					if (vscrollbar.VisibleInternal) {
+						int max = vscrollbar.Maximum - vscrollbar.LargeChange + 1;
+						value.Y = value.Y < vscrollbar.Minimum ? vscrollbar.Minimum : value.Y;
+						value.Y = value.Y > max ? max : value.Y;
 						shift_y = value.Y - scroll_position.Y;
 					}
 
 					ScrollWindow(shift_x, shift_y);
 
 					if (hscrollbar.VisibleInternal) {
-						hscrollbar.Value = scroll_position.X;
+						if (scroll_position.X >= hscrollbar.Minimum && scroll_position.X <= hscrollbar.Maximum)
+							hscrollbar.Value = scroll_position.X;
 					}
 
 					if (vscrollbar.VisibleInternal) {
-						vscrollbar.Value = scroll_position.Y;
+						if (scroll_position.Y >= vscrollbar.Minimum && scroll_position.Y <= vscrollbar.Maximum)
+							vscrollbar.Value = scroll_position.Y;
 					}
 
 				}
