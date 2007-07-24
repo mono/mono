@@ -1,3 +1,8 @@
+2007-07-24 Gonzalo Paniagua Javier <gonzalo.mono@gmail.com>
+
+	* Process.cs: use the default encoding or the windows input/output
+	encodings for the process input/output/error streams. Bug #80838 fixed.
+
 2007-07-14 Gonzalo Paniagua Javier <gonzalo.mono@gmail.com>
 
 	* Process.cs: don't send empty lines that are not in the input. Fixes
