@@ -81,8 +81,6 @@ namespace System.Web.UI
 		const string scriptContentWithTags = "ScriptContentWithTags";
 		const string scriptPath = "ScriptPath";
 
-		static JavaScriptSerializer _cultureInfoSerializer;
-
 		int _asyncPostBackTimeout = 90;
 		List<Control> _asyncPostBackControls;
 		List<Control> _postBackControls;
@@ -389,11 +387,6 @@ namespace System.Web.UI
 		[Category ("Action")]
 		public event EventHandler<ScriptReferenceEventArgs> ResolveScriptReference;
 
-		static ScriptManager () {
-			_cultureInfoSerializer = new JavaScriptSerializer ();
-			_cultureInfoSerializer.RegisterConverters (CultureInfoConverter.GetConverters ());
-		}
-
 		public static ScriptManager GetCurrent (Page page) {
 			HttpContext ctx = HttpContext.Current;
 			if (ctx == null)
@@ -451,7 +444,7 @@ namespace System.Web.UI
 			else {
 				if (EnableScriptGlobalization) {
 					CultureInfo culture = Thread.CurrentThread.CurrentCulture;
-					string script = String.Format ("var __cultureInfo = '{0}';", _cultureInfoSerializer.Serialize (culture));
+					string script = String.Format ("var __cultureInfo = '{0}';", JavaScriptSerializer.DefaultSerializer.Serialize (new CultureInfoSerializer (culture)));
 					RegisterClientScriptBlock (this, typeof (ScriptManager), "ScriptGlobalization", script, true);
 				}
 
@@ -1384,31 +1377,18 @@ namespace System.Web.UI
 			}
 		}
 
-		sealed class CultureInfoConverter : JavaScriptConverter
+		sealed class CultureInfoSerializer : JavaScriptSerializer.LazyDictionary
 		{
-			private CultureInfoConverter () { }
-			static readonly Type typeofCultureInfo = typeof (CultureInfo);
-			static CultureInfoConverter _instance = new CultureInfoConverter ();
-
-			public static IEnumerable<JavaScriptConverter> GetConverters () { yield return _instance; }
-
-			public override IEnumerable<Type> SupportedTypes {
-				get { yield return typeofCultureInfo; }
-			}
-
-			public override object Deserialize (IDictionary<string, object> dictionary, Type type, JavaScriptSerializer serializer) {
-				throw new NotSupportedException ();
-			}
-
-			public override IDictionary<string, object> Serialize (object obj, JavaScriptSerializer serializer) {
-				CultureInfo ci = (CultureInfo) obj;
+			readonly CultureInfo _ci;
+			public CultureInfoSerializer (CultureInfo ci) {
 				if (ci == null)
-					return null;
-				Dictionary<string, object> d = new Dictionary<string, object> (StringComparer.Ordinal);
-				d.Add ("name", ci.Name);
-				d.Add ("numberFormat", ci.NumberFormat);
-				d.Add ("dateTimeFormat", ci.DateTimeFormat);
-				return d;
+					throw new ArgumentNullException ("ci");
+				_ci = ci;
+			}
+			protected override IEnumerator<KeyValuePair<string, object>> GetEnumerator () {
+				yield return new KeyValuePair<string, object> ("name", _ci.Name);
+				yield return new KeyValuePair<string, object> ("numberFormat", _ci.NumberFormat);
+				yield return new KeyValuePair<string, object> ("dateTimeFormat", _ci.DateTimeFormat);
 			}
 		}
 
