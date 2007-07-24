@@ -1,4 +1,10 @@
 
+Tue Jul 24 15:15:19 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* loader.c, class-internals.h, reflection.c: removed the per-method
+	generics hashtable: we use the global one through the call of
+	mono_class_inflate_generic_method ().
+
 Mon Jul 23 19:43:14 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* class.c, metadata.c, class-internals.h: introduce yet another
