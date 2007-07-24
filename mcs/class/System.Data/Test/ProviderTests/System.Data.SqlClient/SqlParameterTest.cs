@@ -115,6 +115,65 @@ namespace MonoTests.System.Data.SqlClient
 
 		}
 
+		//testcase for #82170
+		[Test]
+		public void ParameterSizeTest ()
+		{
+			SqlConnection conn = new SqlConnection (ConnectionManager.Singleton.ConnectionString);
+			conn.Open ();
+			string longstring = new String('x', 20480);
+			SqlCommand cmd;
+			SqlParameter prm;
+			cmd = new SqlCommand ("create table #text1 (ID int not null, Val1 ntext)", conn);
+			cmd.ExecuteNonQuery ();
+			cmd.CommandText = "INSERT INTO #text1(ID,Val1) VALUES (@ID,@Val1)";
+			prm = new SqlParameter ();
+			prm.ParameterName = "@ID";
+			prm.Value = 1;
+			cmd.Parameters.Add (prm);
+
+			prm = new SqlParameter ();
+			prm.ParameterName = "@Val1";
+			prm.Value = longstring;
+			prm.SqlDbType = SqlDbType.NText; // Comment and enjoy the truncation
+			cmd.Parameters.Add (prm);
+			cmd.ExecuteNonQuery ();
+			cmd = new SqlCommand ("select datalength(Val1) from #text1", conn);
+			Assert.AreEqual (20480 * 2, cmd.ExecuteScalar (), "#1");
+
+			cmd.CommandText = "INSERT INTO #text1(ID,Val1) VALUES (@ID,@Val1)";
+			prm = new SqlParameter ();
+			prm.ParameterName = "@ID";
+			prm.Value = 1;
+			cmd.Parameters.Add (prm);
+
+			prm = new SqlParameter ();
+			prm.ParameterName = "@Val1";
+			prm.Value = longstring;
+			//prm.SqlDbType = SqlDbType.NText;
+			cmd.Parameters.Add (prm);
+			cmd.ExecuteNonQuery ();
+			cmd = new SqlCommand ("select datalength(Val1) from #text1", conn);
+			Assert.AreEqual (20480 * 2, cmd.ExecuteScalar (), "#2");
+
+			cmd.CommandText = "INSERT INTO #text1(ID,Val1) VALUES (@ID,@Val1)";
+			prm = new SqlParameter ();
+			prm.ParameterName = "@ID";
+			prm.Value = 1;
+			cmd.Parameters.Add (prm);
+
+			prm = new SqlParameter ();
+			prm.ParameterName = "@Val1";
+			prm.Value = longstring;
+			prm.SqlDbType = SqlDbType.VarChar;
+			cmd.Parameters.Add (prm);
+			cmd.ExecuteNonQuery ();
+			cmd = new SqlCommand ("select datalength(Val1) from #text1", conn);
+			Assert.AreEqual (20480 * 2, cmd.ExecuteScalar (), "#3");
+			cmd = new SqlCommand ("drop table #text1", conn);
+			cmd.ExecuteNonQuery ();
+			conn.Close ();
+		}
 #if NET_2_0
 		[Test]
 		public void ResetSqlDbTypeTest ()

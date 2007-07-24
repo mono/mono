@@ -1,3 +1,8 @@
+2007-07-24  Nagappan A  <anagappan@novell.com>
+
+	* SqlParameterTest.cs (ParameterSizeTest): Fixes Large strings
+	truncated with SqlClient - Bug # 82170.
+
 2007-07-22  Nagappan A  <anagappan@novell.com>
 
 	* SqlTransactionTest.cs: Added exception handling.
