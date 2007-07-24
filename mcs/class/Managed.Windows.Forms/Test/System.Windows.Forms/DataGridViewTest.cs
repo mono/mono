@@ -53,6 +53,20 @@ namespace MonoTests.System.Windows.Forms {
 		}
 
 		[Test]
+		public void bug_81918 ()
+		{
+			using (DataGridView dgv = new DataGridView ()) {
+				DataGridViewColumn col = new DataGridViewComboBoxColumn ();
+				
+				dgv.Columns.Add (col);
+				
+				dgv.Rows.Add ("a");
+				
+				DataGridViewComboBoxCell cell = (DataGridViewComboBoxCell) dgv [0, 0];
+			}
+		}
+
+		[Test]
 		public void TestDefaultValues () {
 			DataGridView grid = new DataGridView ();
 			Assert.AreEqual (true, grid.AllowUserToAddRows, "#A1");

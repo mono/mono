@@ -45,6 +45,45 @@ namespace MonoTests.System.Windows.Forms
 			columnChanged = 0;
 		}
 
+		[Test]
+		public void InitialValues ()
+		{
+			DataGridViewColumn dvc = new DataGridViewColumn  ();
+			Assert.AreEqual (DataGridViewAutoSizeColumnMode.NotSet, dvc.AutoSizeMode, "#A dvc.AutoSizeMode");
+			Assert.IsNull (dvc.CellTemplate, "#A dvc.CellTemplate");
+			Assert.IsNull (dvc.CellType, "#A dvc.CellType");
+			Assert.IsNull (dvc.ContextMenuStrip, "#A dvc.ContextMenuStrip");
+			Assert.IsNull (dvc.DataGridView, "#A dvc.DataGridView");
+			Assert.AreEqual (@"", dvc.DataPropertyName, "#A dvc.DataPropertyName");
+			Assert.IsNotNull (dvc.DefaultCellStyle, "#A dvc.DefaultCellStyle");
+			Assert.IsNotNull (dvc.DefaultHeaderCellType, "#A dvc.DefaultHeaderCellType");
+			Assert.AreEqual (false, dvc.Displayed, "#A dvc.Displayed");
+			Assert.AreEqual (-1, dvc.DisplayIndex, "#A dvc.DisplayIndex");
+			Assert.AreEqual (0, dvc.DividerWidth, "#A dvc.DividerWidth");
+			Assert.AreEqual (100, dvc.FillWeight, "#A dvc.FillWeight");
+			Assert.AreEqual (false, dvc.Frozen, "#A dvc.Frozen");
+			Assert.AreEqual (true, dvc.HasDefaultCellStyle, "#A dvc.HasDefaultCellStyle");
+			Assert.IsNotNull (dvc.HeaderCell, "#A dvc.HeaderCell");
+			Assert.AreEqual (@"", dvc.HeaderText, "#A dvc.HeaderText");
+			Assert.AreEqual (-1, dvc.Index, "#A dvc.Index");
+			Assert.AreEqual (DataGridViewAutoSizeColumnMode.NotSet, dvc.InheritedAutoSizeMode, "#A dvc.InheritedAutoSizeMode");
+			Assert.IsNotNull (dvc.InheritedStyle, "#A dvc.InheritedStyle");
+			Assert.AreEqual (false, dvc.IsDataBound, "#A dvc.IsDataBound");
+			Assert.AreEqual (5, dvc.MinimumWidth, "#A dvc.MinimumWidth");
+			Assert.AreEqual (@"", dvc.Name, "#A dvc.Name");
+			Assert.AreEqual (false, dvc.ReadOnly, "#A dvc.ReadOnly");
+			Assert.AreEqual (DataGridViewTriState.NotSet, dvc.Resizable, "#A dvc.Resizable");
+			Assert.AreEqual (false, dvc.Selected, "#A dvc.Selected");
+			Assert.IsNull (dvc.Site, "#A dvc.Site");
+			Assert.AreEqual (DataGridViewColumnSortMode.NotSortable, dvc.SortMode, "#A dvc.SortMode");
+			Assert.AreEqual (DataGridViewElementStates.Visible, dvc.State, "#A dvc.State");
+			Assert.IsNull (dvc.Tag, "#A dvc.Tag");
+			Assert.AreEqual (@"", dvc.ToolTipText, "#A dvc.ToolTipText");
+			Assert.IsNull (dvc.ValueType, "#A dvc.ValueType");
+			Assert.AreEqual (true, dvc.Visible, "#A dvc.Visible");
+			Assert.AreEqual (100, dvc.Width, "#A dvc.Width");
+		}
+
 		[Test] // bug #80746
 		public void HeaderText_NotBound ()
 		{

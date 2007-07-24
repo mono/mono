@@ -1,3 +1,11 @@
+2007-07-24  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* DataGridViewColumnCollectionTest.cs,
+	  DataGridViewTextBoxColumnTest.cs, DataGridViewBandTest.cs,
+	  DataGridViewCommon.cs, DataGridViewComboBoxCellTest.cs: Added.
+	* DataGridViewColumnTest.cs: Added InitialValues.
+	* DataGridViewTest.cs: More tests.
+
 2007-07-23  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* DataGridViewTest.cs: More tests.
