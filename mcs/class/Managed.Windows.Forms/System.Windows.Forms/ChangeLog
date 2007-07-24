@@ -1,3 +1,7 @@
+2007-07-24  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Menu.cs: Add some missing methods to MenuItemCollection.
+
 2007-07-24  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* DataGridView.cs: Added RowTemplateFull, creates a row from the templates in the columns.

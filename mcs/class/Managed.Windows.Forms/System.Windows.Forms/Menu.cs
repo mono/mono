@@ -32,6 +32,9 @@ using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Reflection;
 using System.Runtime.InteropServices;
+#if NET_2_0
+using System.Collections.Generic;
+#endif
 
 namespace System.Windows.Forms
 {
@@ -375,6 +378,21 @@ namespace System.Windows.Forms
 				}
 			}
 
+#if NET_2_0
+			public virtual MenuItem this [string key] {
+				get {
+					if (string.IsNullOrEmpty (key))
+						return null;
+						
+					foreach (MenuItem m in items)
+						if (string.Compare (m.Name, key, true) == 0)
+							return m;
+							
+					return null;
+				}
+			}
+#endif
+
 			object IList.this[int index] {
 				get { return items[index]; }
 				set { throw new NotSupportedException (); }
@@ -501,10 +519,37 @@ namespace System.Windows.Forms
 				return items.Contains (value);
 			}
 
+#if NET_2_0
+			public virtual bool ContainsKey (string key)
+			{
+				return !(this[key] == null);
+			}
+#endif
+
 			public void CopyTo (Array dest, int index)
 			{
 				items.CopyTo (dest, index);
 			}
+
+#if NET_2_0
+			public MenuItem[] Find (string key, bool searchAllChildren)
+			{
+				if (string.IsNullOrEmpty (key))
+					throw new ArgumentNullException ("key");
+					
+				List<MenuItem> list = new List<MenuItem> ();
+				
+				foreach (MenuItem m in items)
+					if (string.Compare (m.Name, key, true) == 0)
+						list.Add (m);
+				
+				if (searchAllChildren)
+					foreach (MenuItem m in items)
+						list.AddRange (m.MenuItems.Find (key, true));
+						
+				return list.ToArray ();
+			}
+#endif
 
 			public IEnumerator GetEnumerator ()
 			{
@@ -541,6 +586,16 @@ namespace System.Windows.Forms
 				return items.IndexOf (value);
 			}
 
+#if NET_2_0
+			public virtual int IndexOfKey (string key)
+			{
+				if (string.IsNullOrEmpty (key))
+					return -1;
+					
+				return IndexOf (this[key]);
+			}
+#endif
+
 			public virtual void Remove (MenuItem item)
 			{
 				RemoveAt (item.Index);
@@ -563,6 +618,12 @@ namespace System.Windows.Forms
 				owner.OnMenuChanged (EventArgs.Empty);
 			}
 
+#if NET_2_0
+			public virtual void RemoveByKey (string key)
+			{
+				Remove (this[key]);
+			}
+#endif
 			#endregion Public Methods
 
 			#region Private Methods
