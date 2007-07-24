@@ -1,3 +1,21 @@
+2007-07-25  Marek Habersack  <mhabersack@novell.com>
+
+	* appdomain.c (get_shadow_assembly_location): do not use TickCount
+	to create unique shadow copy target directories, use the domain's
+	serial number instead. Each domain gets a unique target directory
+	that way.
+
+	* domain.c (mono_domain_create): added code to increment domain
+	shadow copy serial number and cache the value in the current
+	domain structure.
+
+	* domain-internals.h (struct _MonoDomain): added a new field -
+	shadow_serial to hold the serial number used in generation of
+	shadow-copy directories. This is to make sure that the directory
+	name is unique for each and every domain created. We avoid a race
+	condition with overriding assemblies already in use by other app
+	domains.
+
 2007-07-24  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* class.c (mono_bounded_array_class_get): fixed memory leak when 
