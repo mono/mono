@@ -2,42 +2,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head id="Head1" runat="server">
     <title>Untitled Page</title>
-<script language="javascript" type="text/javascript">
-function btnAssert_onclick() {
-    var n;
-    // Insert code intended to set n to a positive integer.
-    if (false) n = 3;
-    // Assert if n is not greater than 0.
-    Sys.Debug.assert(n > 0, "n must be set to a positive integer.");
-}
 
-function btnFail_onclick() {
-    var n;
-    // Insert code intended to set n to a numeric value.
-    if (false) n = 3;
-    // Fail if n is not numeric.
-    if (isNaN(n)) Sys.Debug.fail("The value of n must be a number.");
-}
-
-function btnTrace_onclick() {
-    v = form1.text1.value;
-    Sys.Debug.trace("Name set to " + "\"" + v + "\".");
-    alert("Hello " + v + ".");
-}
-
-function btnDump_onclick() {
-    Sys.Debug.traceDump(form1.text1, "Name textbox");
-    alert("Hello " + form1.text1.value + ".");
-}
-
-function btnClear_onclick() {
-    Sys.Debug.clearTrace()
-    alert("Trace console cleared.");
-}
-</script>
 </head>
 <body>
-<form id="form1" runat="server">
+<form id="form1" name="form1" runat="server">
     <h2>Sys.Debug Methods Test Page</h2>
     <asp:ScriptManager ID="ScriptManager1" 
         runat="server" />
@@ -67,5 +35,38 @@ function btnClear_onclick() {
     <textarea id='TraceConsole' rows="10" cols="50" 
         title="TraceConsole"></textarea>
 </form>
+<script language="javascript" type="text/javascript">
+function btnAssert_onclick() {
+    var n;
+    // Insert code intended to set n to a positive integer.
+    if (false) n = 3;
+    // Assert if n is not greater than 0.
+    Sys.Debug.assert(n > 0, "n must be set to a positive integer.");
+}
+
+function btnFail_onclick() {
+    var n;
+    // Insert code intended to set n to a numeric value.
+    if (false) n = 3;
+    // Fail if n is not numeric.
+    if (isNaN(n)) Sys.Debug.fail("The value of n must be a number.");
+}
+
+function btnTrace_onclick() {
+    v = theForm.text1.value;
+    Sys.Debug.trace("Name set to " + "\"" + v + "\".");
+    alert("Hello " + v + ".");
+}
+
+function btnDump_onclick() {
+    Sys.Debug.traceDump(theForm.text1, "Name textbox");
+    alert("Hello " + theForm.text1.value + ".");
+}
+
+function btnClear_onclick() {
+    Sys.Debug.clearTrace()
+    alert("Trace console cleared.");
+}
+</script>
 </body>
 </html>
