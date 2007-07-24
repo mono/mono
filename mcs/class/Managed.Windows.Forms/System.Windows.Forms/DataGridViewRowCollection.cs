@@ -152,7 +152,8 @@ namespace System.Windows.Forms {
 			if (dataGridView.VirtualMode) {
 				throw new InvalidOperationException("DataGridView is in virtual mode.");
 			}
-			DataGridViewRow row = new DataGridViewRow();
+			DataGridViewRow row = (DataGridViewRow)dataGridView.RowTemplateFull;
+			
 			int result = Add(row);
 			row.SetValues(values);
 			return result;

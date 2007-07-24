@@ -39,7 +39,7 @@ namespace System.Windows.Forms {
 		private bool frozen = false;
 		private int index = -1;
 		private bool readOnly = false;
-		private DataGridViewTriState resizable = DataGridViewTriState.True;
+		private DataGridViewTriState resizable = DataGridViewTriState.NotSet;
 		private bool selected = false;
 		private object tag = null;
 		private bool visible = true;
@@ -49,6 +49,7 @@ namespace System.Windows.Forms {
 
 		internal DataGridViewBand ()
 		{
+			defaultHeaderCellType = typeof (DataGridViewHeaderCell);
 		}
 
 		~DataGridViewBand ()
@@ -119,7 +120,11 @@ namespace System.Windows.Forms {
 
 		[Browsable (true)]
 		public virtual DataGridViewTriState Resizable {
-			get { return resizable; }
+			get { 
+				if (resizable == DataGridViewTriState.NotSet && DataGridView != null) {
+					return DataGridView.AllowUserToResizeColumns ? DataGridViewTriState.True : DataGridViewTriState.False;
+				}
+				return resizable; }
 			set { resizable = value; }
 		}
 

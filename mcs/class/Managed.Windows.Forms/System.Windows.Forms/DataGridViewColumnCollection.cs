@@ -80,7 +80,7 @@ namespace System.Windows.Forms {
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public virtual int Add (string columnName, string headerText) {
-			DataGridViewColumn col = new DataGridViewColumn();
+			DataGridViewColumn col = new DataGridViewTextBoxColumn();
 			col.Name = columnName;
 			col.HeaderText = headerText;
 			return Add(col);

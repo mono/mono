@@ -38,7 +38,7 @@ namespace System.Windows.Forms {
 
 		public DataGridViewElement () {
 			dataGridView = null;
-			state = DataGridViewElementStates.None;
+			state = DataGridViewElementStates.Visible;
 		}
 
 		[Browsable (false)]

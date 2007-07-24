@@ -978,6 +978,18 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal DataGridViewRow RowTemplateFull {
+			get {
+				DataGridViewRow row = (DataGridViewRow) RowTemplate.Clone ();
+				
+				for (int i = row.Cells.Count; i < Columns.Count; i++) {
+					row.Cells.Add ((DataGridViewCell) columns [i].CellTemplate.Clone ());
+				}
+				
+				return row;
+			}
+		}
+
 		[DefaultValue (ScrollBars.Both)]
 		[Localizable (true)]
 		public ScrollBars ScrollBars {

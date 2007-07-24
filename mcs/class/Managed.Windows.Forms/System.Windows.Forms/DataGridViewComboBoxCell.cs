@@ -46,6 +46,8 @@ namespace System.Windows.Forms {
 		private bool sorted;
 		private string valueMember;
 
+		private ComboBox editingControl;
+
 		public DataGridViewComboBoxCell () : base() {
 			autoComplete = true;
 			dataSource = null;
@@ -177,11 +179,15 @@ namespace System.Windows.Forms {
 		}
 
 		public override void DetachEditingControl () {
-			throw new NotImplementedException();
+			this.DataGridView.EditingControlInternal = null;
 		}
 
 		public override void InitializeEditingControl (int rowIndex, object initialFormattedValue, DataGridViewCellStyle dataGridViewCellStyle) {
-			throw new NotImplementedException();
+			if (editingControl == null) {
+				editingControl = new ComboBox ();
+				editingControl.Text = initialFormattedValue == null ? string.Empty : initialFormattedValue.ToString ();
+			}
+			this.DataGridView.EditingControlInternal = editingControl;			
 		}
 
 		public override bool KeyEntersEditMode (KeyEventArgs e) {
@@ -193,7 +199,7 @@ namespace System.Windows.Forms {
 		}
 
 		public override string ToString () {
-			throw new NotImplementedException();
+			return string.Format ("DataGridViewComboBoxCell {{ ColumnIndex={0}, RowIndex={1} }}", ColumnIndex, RowIndex);
 		}
 
 		protected override Rectangle GetContentBounds (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex) {
@@ -213,31 +219,32 @@ namespace System.Windows.Forms {
 		}
 
 		protected override void OnDataGridViewChanged () {
-			throw new NotImplementedException();
+			// Here we're supposed to do something with DataSource, etc, according to MSDN.
+			base.OnDataGridViewChanged ();
 		}
 
 		protected override void OnEnter (int rowIndex, bool throughMouseClick) {
-			throw new NotImplementedException();
+			base.OnEnter (rowIndex, throughMouseClick);
 		}
 
 		protected override void OnLeave (int rowIndex, bool throughMouseClick) {
-			throw new NotImplementedException();
+			base.OnLeave (rowIndex, throughMouseClick);
 		}
 
 		protected override void OnMouseClick (DataGridViewCellMouseEventArgs e) {
-			throw new NotImplementedException();
+			base.OnMouseClick (e);
 		}
 
 		protected override void OnMouseEnter (int rowIndex) {
-			throw new NotImplementedException();
+			base.OnMouseEnter (rowIndex);
 		}
 
 		protected override void OnMouseLeave (int rowIndex) {
-			throw new NotImplementedException();
+			base.OnMouseLeave (rowIndex);
 		}
 
 		protected override void OnMouseMove (DataGridViewCellMouseEventArgs e) {
-			throw new NotImplementedException();
+			base.OnMouseMove (e);
 		}
 
 		protected override void Paint (Graphics graphics, Rectangle clipBounds, Rectangle cellBounds, int rowIndex, DataGridViewElementStates elementeState, object value, object formattedValue, string errorText, DataGridViewCellStyle cellStyle, DataGridViewAdvancedBorderStyle advancedBorderStyle, DataGridViewPaintParts paintParts) {

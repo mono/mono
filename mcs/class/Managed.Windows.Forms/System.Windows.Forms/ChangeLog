@@ -2,6 +2,10 @@
 
 	* Control.cs: Minor 1.1 corcompare fix.
 
+2007-07-24  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Control.cs: Minor 1.1 corcompare fix.
+
 2007-07-23  Jonathan Pobst  <monkey@jpobst.com>
 
 	* LinkLabel.cs, PrintPreviewDialog.cs, TabPage.cs, TextBox.cs,

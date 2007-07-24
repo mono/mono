@@ -47,12 +47,10 @@ namespace System.Windows.Forms {
 		private float fillWeight;
 		private bool frozen;
 		private DataGridViewColumnHeaderCell headerCell;
-		private DataGridViewAutoSizeColumnMode inheritedAutoSizeMode;
 		private bool isDataBound;
 		private int minimumWidth = 5;
 		private string name = "";
 		private bool readOnly;
-		private DataGridViewTriState resizable = DataGridViewTriState.True;
 		private ISite site;
 		private DataGridViewColumnSortMode sortMode;
 		private string toolTipText;
@@ -70,6 +68,9 @@ namespace System.Windows.Forms {
 			headerCell.SetColumnIndex(Index);
 			headerCell.Value = string.Empty;
 			displayIndex = -1;
+			dataPropertyName = string.Empty;
+			fillWeight = 100.0F;
+			sortMode = DataGridViewColumnSortMode.NotSortable;
 		}
 
 		public DataGridViewColumn (DataGridViewCell cellTemplate) : this () {
@@ -240,7 +241,30 @@ Example */
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DataGridViewAutoSizeColumnMode InheritedAutoSizeMode {
-			get { return inheritedAutoSizeMode; }
+			get {
+				if (this.DataGridView == null)
+					return this.autoSizeMode;
+				
+				if (this.autoSizeMode != DataGridViewAutoSizeColumnMode.NotSet)
+					return this.autoSizeMode;
+				
+				switch (this.DataGridView.AutoSizeColumnsMode) {
+				case DataGridViewAutoSizeColumnsMode.AllCells:
+					return DataGridViewAutoSizeColumnMode.AllCells;
+				case DataGridViewAutoSizeColumnsMode.AllCellsExceptHeader:
+					return DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
+				case DataGridViewAutoSizeColumnsMode.ColumnHeader:
+					return DataGridViewAutoSizeColumnMode.ColumnHeader;
+				case DataGridViewAutoSizeColumnsMode.DisplayedCells:
+					return DataGridViewAutoSizeColumnMode.DisplayedCells;
+				case DataGridViewAutoSizeColumnsMode.DisplayedCellsExceptHeader:
+					return DataGridViewAutoSizeColumnMode.DisplayedCellsExceptHeader;
+				case DataGridViewAutoSizeColumnsMode.Fill:
+					return DataGridViewAutoSizeColumnMode.Fill;
+				default:
+					return DataGridViewAutoSizeColumnMode.None;
+				}				
+			}
 		}
 
 		[Browsable (false)]
@@ -311,8 +335,8 @@ Example */
 		}
 
 		public override DataGridViewTriState Resizable {
-			get { return resizable; }
-			set { resizable = value; }
+			get { return base.Resizable; }
+			set { base.Resizable = value; }
 		}
 
 		[Browsable (false)]
@@ -339,7 +363,10 @@ Example */
 		[DefaultValue ("")]
 		[Localizable (true)]
 		public string ToolTipText {
-			get { return toolTipText; }
+			get {
+				if (toolTipText == null)
+					return string.Empty;
+				return toolTipText; }
 			set {
 				if (toolTipText != value) {
 					toolTipText = value;

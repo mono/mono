@@ -34,13 +34,12 @@ namespace System.Windows.Forms {
 	public class DataGridViewTextBoxColumn : DataGridViewColumn {
 
 		private int maxInputLength;
-		private DataGridViewColumnSortMode sortMode;
 
 		public DataGridViewTextBoxColumn ()
 		{
 			base.CellTemplate = new DataGridViewTextBoxCell();
 			maxInputLength = 32767;
-			sortMode = DataGridViewColumnSortMode.Automatic;
+			base.SortMode = DataGridViewColumnSortMode.Automatic;
 		}
 
 		[Browsable (false)]
@@ -63,18 +62,18 @@ namespace System.Windows.Forms {
 
 		[DefaultValue (DataGridViewColumnSortMode.Automatic)]
 		public new DataGridViewColumnSortMode SortMode {
-			get { return sortMode; }
+			get { return base.SortMode; }
 			set {
 				if (DataGridView != null && DataGridView.SelectionMode == DataGridViewSelectionMode.FullRowSelect && value != DataGridViewColumnSortMode.NotSortable) {
 					throw new InvalidOperationException("Value conflicts with DataGridView.SelectionMode.");
 				}
-				sortMode = value;
+				base.SortMode = value;
 			}
 		}
 
 		public override string ToString ()
 		{
-			return GetType().Name;
+			return string.Format ("DataGridViewTextBoxColumn {{ Name={0}, Index={1} }}", Name, Index);
 		}
 
 
