@@ -409,11 +409,8 @@ namespace System.Data.SqlTypes
 		{
 			 if (x.IsNull || y.IsNull)
                                 return SqlString.Null;
-
-			if (( x == null) || (y == null))
-                                return SqlString.Null;
-			
-			return new SqlString (x.Value + y.Value);
+			else
+				return new SqlString (x.Value + y.Value);
 		}
 
 		// Equality

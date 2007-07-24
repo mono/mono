@@ -75,7 +75,7 @@ namespace System.Data.SqlTypes
 
 		public SqlChars (SqlString value)
 		{
-			if (value == null) {
+			if (value.IsNull) {
 				notNull = false;
 				buffer = null;
 			} else {

@@ -78,7 +78,7 @@ namespace System.Data.SqlTypes
 
 		public SqlBytes (SqlBinary value)
 		{
-			if (value == null) {
+			if (value.IsNull) {
 				notNull = false;
 				buffer = null;
 			}

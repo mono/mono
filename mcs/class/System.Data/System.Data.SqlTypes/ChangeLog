@@ -1,3 +1,11 @@
+2007-07-24  Nagappan A  <anagappan@novell.com>
+
+	* SqlString.cs: Fixed compilation warning.
+
+	* SqlBytes.cs: Fixed compilation warning.
+
+	* SqlChars.cs: Fixed compilation warning.
+
 2007-05-10  Adar Wesley <adarw@mainsoft.com>
 
 	* SqlBoolean.cs: fixed typo in method names GreaterThanOrEquals,
