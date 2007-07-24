@@ -1,4 +1,8 @@
-2007-07-28 Igor Zelmanovich <igorz@mainsoft.com>
+2007-07-24 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* ClientScriptManager.cs: fixed: GetCallbackEventReference method.
+		
+2007-07-23 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* Page.cs: refactoring:	__doPostBack client script
 	It is a part of adapting System.Web to work whith 

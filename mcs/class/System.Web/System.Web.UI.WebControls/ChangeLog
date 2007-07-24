@@ -1,3 +1,10 @@
+2007-07-24 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* TreeView.cs: refactoring:
+	* TreeView.js:
+	used ClientScriptManager.GetCallbackEventReference API instead calling 
+	WebForm_DoCallback explicit.
+		
 2007-07-15 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* BaseValidator.cs: for NET_2_0: fixed client side validation.

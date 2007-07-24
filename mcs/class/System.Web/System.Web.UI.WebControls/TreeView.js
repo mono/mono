@@ -8,7 +8,7 @@ function TreeView_ToggleExpand (treeId, nodeId) {
 	var expand = node.style.display == "none";
 	
 	if (tree.populateFromClient && expand && node.populated != true && (node.innerHTML.length == 0 || node.hasError)) {
-		WebForm_DoCallback (tree.uid, nodeId, TreeView_PopulateCallback, treeId + " " + nodeId, TreeView_PopulateCallback, false, tree.form)
+		tree.PopulateNode (nodeId);
 		return;
 	}
 	

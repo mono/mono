@@ -214,14 +214,14 @@ namespace System.Web.UI
 			if(!(control is ICallbackEventHandler))
 				throw new InvalidOperationException ("The control must implement the ICallbackEventHandler interface and provide a RaiseCallbackEvent method.");
 
-			return GetCallbackEventReference (control.UniqueID, argument, clientCallback, context, clientErrorCallback, useAsync);
+			return GetCallbackEventReference ("'" + control.UniqueID + "'", argument, clientCallback, context, clientErrorCallback, useAsync);
 		}
 
 		public string GetCallbackEventReference (string target, string argument, string clientCallback, string context, string clientErrorCallback, bool useAsync)
 		{
 			RegisterWebFormClientScript ();
 			
-			return string.Format ("WebForm_DoCallback('{0}',{1},{2},{3},{4},{5},{6})", target, argument, clientCallback, context, ((clientErrorCallback == null) ? "null" : clientErrorCallback), (useAsync ? "true" : "false"), page.theForm);
+			return string.Format ("WebForm_DoCallback({0},{1},{2},{3},{4},{5},{6})", target, argument, clientCallback, context, ((clientErrorCallback == null) ? "null" : clientErrorCallback), (useAsync ? "true" : "false"), page.theForm);
 		}
 #endif
 		

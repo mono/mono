@@ -1052,6 +1052,7 @@ namespace System.Web.UI.WebControls
 			
 			string ctree = ClientID + "_data";
 			string script = string.Format ("var {0} = new Object ();\n", ctree);
+			script += string.Format ("{0}.treeId = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (ClientID));
 			script += string.Format ("{0}.uid = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (UniqueID));
 			script += string.Format ("{0}.showImage = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (ShowExpandCollapse));
 			
@@ -1069,6 +1070,7 @@ namespace System.Web.UI.WebControls
 
 			if (Page != null) {
 				script += string.Format ("{0}.form = {1};\n", ctree, Page.theForm);
+				script += string.Format ("{0}.PopulateNode = function(nodeId) {{ {1}; }};\n", ctree, Page.ClientScript.GetCallbackEventReference ("this.uid", "nodeId", "TreeView_PopulateCallback", "this.treeId + \" \" + nodeId", "TreeView_PopulateCallback", false));
 				script += string.Format ("{0}.populateFromClient = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (PopulateNodesFromClient));
 				script += string.Format ("{0}.expandAlt = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (GetNodeImageToolTip (true, null)));
 				script += string.Format ("{0}.collapseAlt = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (GetNodeImageToolTip (false, null)));
