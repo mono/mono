@@ -1,4 +1,8 @@
 
+Tue Jul 24 21:16:17 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-codegen.c: work around a possible gcc bug on arm.
+
 Tue Jul 24 17:20:19 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* driver.c, mini-x86.h, mini-amd64.h: print a nice error
