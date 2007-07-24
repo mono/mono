@@ -1,6 +1,13 @@
 2007-07-24  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
-	* Control.cs: Minor 1.1 corcompare fix.
+	* DataGridView.cs: Added RowTemplateFull, creates a row from the templates in the columns.
+	* DataGridViewBand.cs: DefaultHeaderCellType: initialize correctly. Resizable: if not set, check DGV.
+	* DataGridViewColumn.cs: InheritedAutoSizeMode: if not set, check DGV. Resizable: delegate to base class. ToolTipText: Never return null. Initialize a few other properties correctly.
+	* DataGridViewColumnCollection.cs: Add: Default column is a TextBoxColumn.
+	* DataGridViewComboBoxCell.cs: Started implementing this, lots left still.
+	* DataGridViewElement.cs: State defaults to Visible.
+	* DataGridViewRowCollection.cs: Add: creates the new row based on a template.
+	* DataGridViewTextBoxColumn.cs: SortMode: delegate to base class, but initialize to Automatic. ToString: implement correctly.
 
 2007-07-24  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
