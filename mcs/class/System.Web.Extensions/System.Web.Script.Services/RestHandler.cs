@@ -34,6 +34,7 @@ using System.Web.Script.Serialization;
 using System.Collections.Specialized;
 using System.IO;
 using System.Web.SessionState;
+using System.Reflection;
 
 namespace System.Web.Script.Services
 {
@@ -76,6 +77,23 @@ namespace System.Web.Script.Services
 			protected override IEnumerator<KeyValuePair<string, object>> GetEnumerator () {
 				for (int i = 0, max = _nmc.Count; i < max; i++)
 					yield return new KeyValuePair<string, object> (_nmc.GetKey (i), _nmc.Get (i));
+			}
+		}
+
+		#endregion
+
+		#region ExceptionSerializer
+
+		sealed class ExceptionSerializer : JavaScriptSerializer.LazyDictionary
+		{
+			readonly Exception _e;
+			public ExceptionSerializer (Exception e) {
+				_e = e;
+			}
+			protected override IEnumerator<KeyValuePair<string, object>> GetEnumerator () {
+				yield return new KeyValuePair<string, object> ("Message", _e.Message);
+				yield return new KeyValuePair<string, object> ("StackTrace", _e.StackTrace);
+				yield return new KeyValuePair<string, object> ("ExceptionType", _e.GetType ().FullName);
 			}
 		}
 
@@ -125,7 +143,7 @@ namespace System.Web.Script.Services
 		public void ProcessRequest (HttpContext context) {
 			HttpRequest request = context.Request;
 			HttpResponse response = context.Response;
-			response.ContentType = 
+			response.ContentType =
 				_logicalMethodInfo.ScriptMethod.ResponseFormat == ResponseFormat.Json ?
 				"application/json" : "text/xml";
 			response.Cache.SetCacheability (HttpCacheability.Private);
@@ -136,8 +154,17 @@ namespace System.Web.Script.Services
 				? new NameValueCollectionDictionary (request.QueryString) :
 				(IDictionary<string, object>) JavaScriptSerializer.DefaultSerializer.DeserializeObjectInternal
 				(new StreamReader (request.InputStream, request.ContentEncoding));
-
-			_logicalMethodInfo.Invoke (@params, response.Output);
+			
+			try {
+				_logicalMethodInfo.Invoke (@params, response.Output);
+			}
+			catch (TargetInvocationException e) {
+				response.AddHeader ("jsonerror", "true");
+				response.ContentType = "application/json";
+				response.StatusCode = 500;
+				JavaScriptSerializer.DefaultSerializer.Serialize (new ExceptionSerializer (e.GetBaseException ()), response.Output);
+				response.End ();
+			}
 		}
 
 		#endregion
