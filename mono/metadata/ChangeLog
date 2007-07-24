@@ -1,3 +1,8 @@
+2007-07-24  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (mono_bounded_array_class_get): fixed memory leak when 
+	binding generic parameters.
+
 2007-07-24  Raja R Harinath  <rharinath@novell.com>
 
 	* metadata.c (do_mono_metadata_parse_generic_class): Use
