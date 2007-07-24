@@ -440,9 +440,11 @@ namespace System.Windows.Forms
 			#endregion
 
 			#region	ControlCollection Public Instance Properties
+#if NET_2_0
 			int ICollection.Count {
 				get { return Count; }
 			}
+#endif
 
 
 #if !NET_2_0
