@@ -1,3 +1,8 @@
+2007-07-24  Nagappan A  <anagappan@novell.com>
+
+	* TdsMetaParameter.cs (Prepare): Fixes Large strings truncated
+	with SqlClient - Bug # 82170.
+
 2007-05-30  Nagappan A  <anagappan@novell.com>
 
 	* TdsMetaParameter.cs (GetActualSize): Multiply length by 2, if

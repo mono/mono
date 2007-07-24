@@ -172,10 +172,10 @@ namespace Mono.Data.Tds {
 					if (size <= 0)
 						size = 1;
 				}
-				result.Append (String.Format ("({0})", size));
+				result.Append (size > 8000 ? "(max)" : String.Format ("({0})", size));
 				break;
 			case "nvarchar":
-				result.Append (String.Format ("({0})", Size > 0 ? Size : 4000));
+				result.Append (Size > 0 ? (Size > 8000 ? "(max)" : String.Format ("({0})", Size)) : "(4000)");
 				break;
 			case "char":
 			case "nchar":
