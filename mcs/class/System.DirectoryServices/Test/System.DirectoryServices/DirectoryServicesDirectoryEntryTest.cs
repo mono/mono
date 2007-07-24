@@ -1207,7 +1207,7 @@ namespace MonoTests.System.DirectoryServices
 			de = new DirectoryEntry(configuration.ConnectionString);
 
 			Assert.AreEqual(de.Properties.Count,3);
-			Assert.AreEqual(((PropertyValueCollection)de.Properties["dc"]).Value,"mainsoft");
+			Assert.AreEqual(((PropertyValueCollection)de.Properties["dc"]).Value,"example");
 			Assert.AreEqual(((PropertyValueCollection)de.Properties["description"]).Value,null);
 
 			
@@ -1217,7 +1217,7 @@ namespace MonoTests.System.DirectoryServices
 									configuration.AuthenticationType);
 
 			Assert.AreEqual(de.Properties.Count,3);
-			Assert.AreEqual(((PropertyValueCollection)de.Properties["dc"]).Value,"mainsoft");
+			Assert.AreEqual(((PropertyValueCollection)de.Properties["dc"]).Value,"example");
 			Assert.AreEqual(((PropertyValueCollection)de.Properties["description"]).Value,null);
 
 			// ensure that properties are not accessible after removing an entry from the server

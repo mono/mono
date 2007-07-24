@@ -1,3 +1,10 @@
+2007-07-25	Yaacov Akiba Slama
+
+	* Test/krb5.conf.example,
+	Test/System.DirectoryServices/DirectoryServicesDirectoryEntryTest.cs,
+	App.config, Secure.config: run-tests.bat succeeds again with a
+	kerberos/openldap/sasl server configured with the realm EXAMPLE.COM.
+
 2006-10-03	Boris Kirzner <borisk@mainsoft.com>
 
 	* run-tests.bat: enable secure tests for TARGET_JVM.
