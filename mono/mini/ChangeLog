@@ -1,4 +1,9 @@
 
+Tue Jul 24 17:20:19 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* driver.c, mini-x86.h, mini-amd64.h: print a nice error
+	message for platforms that don't support AOT compilation.
+
 Mon Jul 23 10:29:29 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* mini.h, mini.c, driver.c: temporary smcs hack.
