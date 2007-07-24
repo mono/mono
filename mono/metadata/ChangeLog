@@ -1,3 +1,8 @@
+2007-07-24  Raja R Harinath  <rharinath@novell.com>
+
+	* metadata.c (do_mono_metadata_parse_generic_class): Use
+	mono_metadata_lookup_generic_class.  Don't g_assert on a metadata
+	error.
 
 Tue Jul 24 15:15:19 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
