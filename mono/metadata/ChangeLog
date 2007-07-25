@@ -1,3 +1,8 @@
+
+Wed Jul 25 18:06:33 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* object.c: properly setup interface_bitmap in proxy vtables.
+
 2007-07-25  Marek Habersack  <mhabersack@novell.com>
 
 	* appdomain.c (get_shadow_assembly_location): do not use TickCount
