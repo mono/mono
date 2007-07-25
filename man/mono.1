@@ -153,18 +153,36 @@ running a 1.1 program on a 2.0 version:
          mono --runtime=v2.0.50727 program.exe
 .fi
 .TP
-.I "--security"
-Activate the security manager (experimental feature in 1.1). This allows 
-mono to support declarative security attributes (e.g. execution of, CAS 
-or non-CAS, security demands). The security manager is OFF by default 
-(experimental).
+.I "--security", "--security=mode"
+Activate the security manager, a currently experimental feature in
+Mono and it is OFF by default.  
+.RS
+.ne 8
+.PP
+Using security without parameters is equivalent as calling it with the
+"cas" parameter.  
+.PP
+The following modes are supported:
+.TP
+.I cas
+This allows mono to support declarative security attributes,
+e.g. execution of Code Access Security (CAS) or non-CAS demands.
+.TP 
+.I core-clr
+Enables the core-clr security system, typically used for
+Moonlight/Silverlight applications.  It provides a much simpler
+security system than CAS, see http://www.mono-project.com/Moonlight
+for more details and links to the descriptions of this new system. 
+.ne
+.RE
 .TP
 .I "--server"
 Configures the virtual machine to be better suited for server
-operations.  
+operations (currently, a no-op).
 .TP
 .I "-V", "--version"
-Prints JIT version information.
+Prints JIT version information (system configuration, release number
+and branch names if available). 
 
 
 .SH DEVELOPMENT OPTIONS
