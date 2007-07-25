@@ -1,3 +1,11 @@
+2007-07-25  Jonathan Chambers  <joncham@gmail.com>
+
+	* Makefile.am: Added transparentproxy.cs.
+	* transparentproxy.cs: Add tests for transparentproxy
+	interface/casting.
+	
+	Code is contributed under MIT/X11 license.
+
 2007-07-20  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile.am (bug-81691.exe): Create it in the builddir.
