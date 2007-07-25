@@ -20,9 +20,8 @@ namespace Samples.AspNet
         [WebMethod]
         public string GetServerTime()
         {
-            return String.Format("The server time is {0}.", 
-                DateTime.Now);
-          
+           return String.Format("The server time is {0}.", 
+               new DateTime(2007,1,1)); 
         }
         
     }
