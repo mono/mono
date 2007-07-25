@@ -1,4 +1,4 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug_Java</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -16,7 +16,6 @@
     <AdditionalClassPath>
     </AdditionalClassPath>
     <RootNamespace>System.Web.Extensions</RootNamespace>
-    <jarserver>ipa</jarserver>
     <StartupObject>
     </StartupObject>
   </PropertyGroup>
@@ -38,7 +37,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release_Java\</OutputPath>
-    <DefineConstants>TRACE;JAVA</DefineConstants>
+    <DefineConstants>TRACE;JAVA,NET_2_0,TARGET_JVM, TARGET_J2EE,SYSTEM_WEB_EXTENSIONS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <BaseAddress>4194304</BaseAddress>
@@ -58,11 +57,14 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties REFS-RefInfo-system-xml="repository:vmw:framework:2.0" REFS-JarPath-system-xml="" REFS-RefInfo-system-web-services="repository:vmw:framework:2.0" REFS-JarPath-system-web-services="" REFS-RefInfo-system-web="repository:vmw:framework:2.0" REFS-JarPath-system-web="" REFS-RefInfo-system-drawing="repository:vmw:framework:2.0" REFS-JarPath-system-drawing="" REFS-RefInfo-system-data="repository:vmw:framework:2.0" REFS-JarPath-system-data="" REFS-RefInfo-system-configuration="repository:vmw:framework:2.0" REFS-JarPath-system-configuration="" REFS-RefInfo-system="repository:vmw:framework:2.0" REFS-JarPath-system="" REFS-JarPath-rt="" REFS-RefInfo-rt="repository:jre:sun:1.6.0" />
+		<UserProperties REFS-RefInfo-rt="repository:jre:sun:1.6.0" REFS-JarPath-rt="" REFS-JarPath-system="" REFS-RefInfo-system="repository:vmw:framework:2.0" REFS-JarPath-system-configuration="" REFS-RefInfo-system-configuration="repository:vmw:framework:2.0" REFS-JarPath-system-data="" REFS-RefInfo-system-data="repository:vmw:framework:2.0" REFS-JarPath-system-drawing="" REFS-RefInfo-system-drawing="repository:vmw:framework:2.0" REFS-JarPath-system-web="" REFS-RefInfo-system-web="repository:vmw:framework:2.0" REFS-JarPath-system-web-services="" REFS-RefInfo-system-web-services="repository:vmw:framework:2.0" REFS-JarPath-system-xml="" REFS-RefInfo-system-xml="repository:vmw:framework:2.0" />
     </VisualStudio>
   </ProjectExtensions>
   <ItemGroup>
-    <Reference Include="rt, Version=1.6.0.65535, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="J2SE.Helpers">
+		<Private>False</Private>
+		<HintPath>..\lib\J2SE.Helpers.dll</HintPath>
+    </Reference>
     <Reference Include="System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
     <Reference Include="System.Configuration, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=x86" />
