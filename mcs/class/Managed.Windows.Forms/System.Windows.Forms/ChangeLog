@@ -1,3 +1,9 @@
+2007-07-25  Jonathan Pobst  <monkey@jpobst.com>
+	[Backport to 1-2-5]
+	* UpDownBase.cs: We cannot override SetBoundsCore for 2.0, which was relayout-ing
+	the children controls.  Instead, we will just set up the proper docking for the
+	children controls so we don't have to worry about it.  [Fixes bug #82188]
+
 2007-07-24  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Menu.cs: Add some missing methods to MenuItemCollection.
