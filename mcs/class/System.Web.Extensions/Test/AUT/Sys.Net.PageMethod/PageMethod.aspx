@@ -56,7 +56,7 @@
                 <td>Write current date and time in session state:</td>
                 <td>
                     <input type="Button" 
-                        onclick="SetSessionValue('SessionValue', Date())" 
+                        onclick="SetSessionValue('SessionValue', 'test value')" 
                         value="Write" />
                 </td>
             </tr>
