@@ -1,3 +1,8 @@
+2007-07-25  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XsdValidatingReader.cs : reject more whitespaces in empty model
+	  element.
+
 2007-07-17  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XsdValidatingReader.cs : Process empty and element-only contents

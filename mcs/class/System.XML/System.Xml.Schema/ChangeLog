@@ -1,3 +1,8 @@
+2007-07-25  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchemaValidator.cs : do not reject whitespaces in elementOnly
+	  content model. Fixed bug #82183.
+
 2007-07-17  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchemaValidator.cs : dependent changes to 

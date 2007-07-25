@@ -908,9 +908,12 @@ namespace System.Xml.Schema
 					dt = ct.Datatype;
 					switch (ct.ContentType) {
 					case XmlSchemaContentType.ElementOnly:
+						if (value.Length > 0 && !XmlChar.IsWhitespace (value))
+							HandleError ("Character content not allowed in an elementOnly model.");
+						break;
 					case XmlSchemaContentType.Empty:
 						if (value.Length > 0)
-							HandleError ("Character content not allowed.");
+							HandleError ("Character content not allowed in an empty model.");
 						break;
 					}
 				}

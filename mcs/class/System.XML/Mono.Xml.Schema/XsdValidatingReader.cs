@@ -526,8 +526,11 @@ namespace Mono.Xml.Schema
 					dt = ct.Datatype;
 					switch (ct.ContentType) {
 					case XmlSchemaContentType.ElementOnly:
-					case XmlSchemaContentType.Empty:
 						if (value.Length > 0 && !XmlChar.IsWhitespace (value))
+							HandleError ("Character content not allowed.");
+						break;
+					case XmlSchemaContentType.Empty:
+						if (value.Length > 0)
 							HandleError ("Character content not allowed.");
 						break;
 					}
