@@ -1,3 +1,8 @@
+2007-07-25  Jonathan Pobst  <monkey@jpobst.com>
+
+	* LabelTest.cs: Test showing that changing the width or height when
+	autosize = true has no effect.
+
 2007-07-24  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* DataGridViewColumnCollectionTest.cs,

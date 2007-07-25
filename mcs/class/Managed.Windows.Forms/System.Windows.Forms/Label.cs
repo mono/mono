@@ -203,6 +203,10 @@ namespace System.Windows.Forms
 				if (autosize == value)
 					return;
 
+#if NET_2_0
+				base.SetAutoSizeMode (AutoSizeMode.GrowAndShrink);
+				base.AutoSize = value;
+#endif
 				autosize = value;
 				CalcAutoSize ();
 				Invalidate ();
@@ -730,8 +734,9 @@ namespace System.Windows.Forms
 			if (!AutoSize)
 				return;
 
-		 	Width =  PreferredWidth;
-		 	Height =  PreferredHeight;			 	
+			Size s = InternalGetPreferredSize (Size.Empty);
+			
+			SetBounds (Left, Top, s.Width, s.Height, BoundsSpecified.None);
 		}
 
 		private void OnHandleCreatedLB (Object o, EventArgs e)

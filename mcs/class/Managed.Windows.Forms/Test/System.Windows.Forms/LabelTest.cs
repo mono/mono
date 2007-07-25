@@ -254,6 +254,28 @@ namespace MonoTests.System.Windows.Forms
 	   
 #if NET_2_0
 	[Test]
+	public void AutoSizeExplicitSize ()
+	{
+		Form f = new Form ();
+		f.ShowInTaskbar = false;
+		
+		Label l = new Label ();
+		l.Size = new Size (5, 5);
+		l.AutoSize = true;
+		l.Text = "My Label";
+
+		f.Controls.Add (l);
+		
+		Size s = l.Size;
+
+		l.Width = 10;
+		Assert.AreEqual (s, l.Size, "A1");
+
+		l.Height = 10;
+		Assert.AreEqual (s, l.Size, "A2");
+	}
+	   
+	[Test]
 	public void LabelMargin ()
 	{
 		Assert.AreEqual (new Padding (3, 0, 3, 0), new Label ().Margin, "A1");

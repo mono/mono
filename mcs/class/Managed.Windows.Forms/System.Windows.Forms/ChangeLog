@@ -1,3 +1,10 @@
+2007-07-25  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Label.cs: If AutoSize = true and a width or height is set, ignore it and
+	redo the autosize.  VS2005 defaults to setting the AutoSize, and then setting
+	an explicit size based on the design-time size of the text.  Since our fonts
+	may not match this explicit size, we tend to cut off the ends of people's labels.
+
 2007-07-24  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Menu.cs: Add some missing methods to MenuItemCollection.
