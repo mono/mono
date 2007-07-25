@@ -1,3 +1,8 @@
+2007-07-25  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c, mini.h, driver.c (mono_main): Added command-line flag
+	(which doesn't do anything yet) for activating Core CLR
+	(Silverlight) security.
 
 Tue Jul 24 21:16:17 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
