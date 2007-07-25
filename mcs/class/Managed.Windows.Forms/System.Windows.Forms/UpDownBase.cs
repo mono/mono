@@ -316,9 +316,14 @@ namespace System.Windows.Forms
 			txtView.Location = new System.Drawing.Point(17, 17);
 			txtView.TabIndex = TabIndex;
 
+			spnSpinner.Width = 16;
+			spnSpinner.Dock = DockStyle.Right;
+			
+			txtView.Dock = DockStyle.Fill;
+			
 			SuspendLayout ();
-			Controls.Add (spnSpinner);
 			Controls.Add (txtView);
+			Controls.Add (spnSpinner);
 			ResumeLayout ();
 
 			Height = PreferredHeight;
@@ -332,8 +337,6 @@ namespace System.Windows.Forms
 			txtView.Resize += new EventHandler(OnTextBoxResize);
 			txtView.TextChanged += new EventHandler(OnTextBoxTextChanged);
 
-			txtView.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-
 			// So the child controls don't get auto selected when the updown is selected
 			auto_select_child = false;
 			SetStyle(ControlStyles.FixedHeight, true);
@@ -346,27 +349,6 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Private Methods
-		void reseat_controls()
-		{
-			int text_displacement = 0;
-
-			int spinner_width = 16;
-			//int spinner_width = ClientSize.Height;
-
-			if (_UpDownAlign == LeftRightAlignment.Left) {
-				spnSpinner.Bounds = new Rectangle(0, 0, spinner_width, ClientSize.Height);
-				text_displacement = spnSpinner.Width;
-
-				spnSpinner.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
-			} else {
-				spnSpinner.Bounds = new Rectangle(ClientSize.Width - spinner_width, 0, spinner_width, ClientSize.Height);
-
-				spnSpinner.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
-			}
-			
-			txtView.Bounds = new Rectangle(text_displacement, 0, ClientSize.Width - spinner_width, Height);
-		}
-
 		private void TabIndexChangedHandler (object sender, EventArgs e)
 		{
 			txtView.TabIndex = TabIndex;
@@ -599,9 +581,14 @@ namespace System.Windows.Forms
 				return _UpDownAlign;
 			}
 			set {
-				_UpDownAlign = value;
-
-				reseat_controls();
+				if (_UpDownAlign != value) {
+					_UpDownAlign = value;
+					
+					if (value == LeftRightAlignment.Left)
+						spnSpinner.Dock = DockStyle.Left;
+					else
+						spnSpinner.Dock = DockStyle.Right;
+				}
 			}
 		}
 		#endregion	// Public Instance Properties
@@ -771,9 +758,6 @@ namespace System.Windows.Forms
 		protected override void SetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified)
 		{
 			base.SetBoundsCore(x, y, width, height, specified);
-
-			if ((specified & BoundsSpecified.Size) != BoundsSpecified.None)
-				reseat_controls();
 		}
 #endif
 

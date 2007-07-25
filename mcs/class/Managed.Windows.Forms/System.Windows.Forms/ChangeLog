@@ -1,5 +1,11 @@
 2007-07-25  Jonathan Pobst  <monkey@jpobst.com>
 
+	* UpDownBase.cs: We cannot override SetBoundsCore for 2.0, which was relayout-ing
+	the children controls.  Instead, we will just set up the proper docking for the
+	children controls so we don't have to worry about it.  [Fixes bug #82188]
+
+2007-07-25  Jonathan Pobst  <monkey@jpobst.com>
+
 	* TreeView.cs, NodeLabelEditEventArgs.cs, LabelEditTextBox.cs: Support edit
 	canceling and correct Before/AfterLabelEdit properties as layed out in bug
 	81847.  [Fixes bug #81847]
