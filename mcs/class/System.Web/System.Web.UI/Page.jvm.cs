@@ -78,6 +78,10 @@ namespace System.Web.UI
 				return "theForm" + PortletNamespace;
 			}
 		}
+		
+		internal bool IsMultiForm {
+			get { return IsPortletRender; }
+		}
 
 		internal bool IsPortletRender
 		{

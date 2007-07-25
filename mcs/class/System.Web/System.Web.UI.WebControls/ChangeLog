@@ -1,5 +1,10 @@
 2007-07-24 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* BaseValidator.cs: All client scripts are rendered 
+	according IsMultiForm property.
+
+2007-07-24 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* TreeView.cs: refactoring:
 	* TreeView.js:
 	used ClientScriptManager.GetCallbackEventReference API instead calling 

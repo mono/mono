@@ -26,37 +26,30 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-var have_validation_summaries = false;
+function WebFormValidation_Initialize(webForm) {
 
-function HaveRegexp ()
+webForm.have_validation_summaries = false;
+
+webForm.HaveRegexp = function ()
 {
   if (window.RegExp)
     return true;
   return false;
 }
 
-function SetValidatorContext (currForm)
+webForm.ValidatorOnLoad = function  ()
 {
-	if (currForm.Page_Validators && (Page_Validators != currForm.Page_Validators)) {
-		Page_Validators = currForm.Page_Validators;
-		Page_ValidationSummaries = currForm.Page_ValidationSummaries;
-		ValidatorOnLoad ();
-	}
-}
-
-function ValidatorOnLoad ()
-{
-	if (typeof (Page_ValidationSummaries) != 'undefined' && Page_ValidationSummaries != null) {
-		have_validation_summaries = true;
-		  for (var v = 0; v < Page_ValidationSummaries.length; v++) {
-		    var vs = Page_ValidationSummaries [v];
+	if (typeof (this.Page_ValidationSummaries) != 'undefined' && this.Page_ValidationSummaries != null) {
+		this.have_validation_summaries = true;
+		  for (var v = 0; v < this.Page_ValidationSummaries.length; v++) {
+		    var vs = this.Page_ValidationSummaries [v];
 		    if (vs.getAttribute ("validationgroup") == null)
 			    vs.setAttribute ("validationgroup", "");
 	    }
 	}
 
-	for (var v = 0; v < Page_Validators.length; v++) {
-		var vo = Page_Validators [v];
+	for (var v = 0; v < this.Page_Validators.length; v++) {
+		var vo = this.Page_Validators [v];
 
 		if (vo.getAttribute ("isvalid") == null)
 			vo.setAttribute ("isvalid", "true");
@@ -68,20 +61,20 @@ function ValidatorOnLoad ()
 			vo.setAttribute ("validationgroup", "");
 	}
 
-	Page_ValidationActive = true;
+	this.Page_ValidationActive = true;
 }
 
-var validation_result = true;
+webForm.validation_result = true;
 
-function ValidationSummaryOnSubmit (group)
+webForm.ValidationSummaryOnSubmit = function (group)
 {
 	/* handle validation summaries here */
-	if (validation_result == false && have_validation_summaries) {
+	if (this.validation_result == false && this.have_validation_summaries) {
 
-	  for (var vi = 0; vi < Page_ValidationSummaries.length; vi++) {
-			var vs = Page_ValidationSummaries[vi];
+	  for (var vi = 0; vi < this.Page_ValidationSummaries.length; vi++) {
+			var vs = this.Page_ValidationSummaries[vi];
 		    
-		    if(IsValidationGroupMatch(vs, group)) {
+		    if(this.IsValidationGroupMatch(vs, group)) {
 
 			    var header = vs.getAttribute ("headertext");
 			    if (header == null)
@@ -115,11 +108,11 @@ function ValidationSummaryOnSubmit (group)
 
 				    html += header;
 				    html += list_pre;
-						for (var v = 0; v < Page_Validators.length; v++) {
-				      var vo = Page_Validators [v];
+						for (var v = 0; v < this.Page_Validators.length; v++) {
+				      var vo = this.Page_Validators [v];
 
 					    if (vo.getAttribute ("isvalid").toLowerCase() == "false") {
-						    var text = ValidatorGetErrorMessage (vo);
+						    var text = this.ValidatorGetErrorMessage (vo);
 						    if (text != null && text != "") {
 							    html += item_pre + text + item_post;
 						    }
@@ -135,11 +128,11 @@ function ValidationSummaryOnSubmit (group)
 			    if (attr != null && attr.toLowerCase() == "true") {
 				    var v_contents = "";
 
-						for (var v = 0; v < Page_Validators.length; v++) {
-				      var vo = Page_Validators [v];
+						for (var v = 0; v < this.Page_Validators.length; v++) {
+				      var vo = this.Page_Validators [v];
 
 					    if (vo.getAttribute ("isvalid").toLowerCase() == "false") {
-						    var text = ValidatorGetErrorMessage (vo);
+						    var text = this.ValidatorGetErrorMessage (vo);
 						    if (text != null && text != "") {
 							    v_contents += "-" + text + "\n";
 						    }
@@ -157,16 +150,16 @@ function ValidationSummaryOnSubmit (group)
 	}
 }
 
-function ValidatorCommonOnSubmit ()
+webForm.ValidatorCommonOnSubmit = function ()
 {
-	rv = validation_result;
-	validation_result = true;
+	var rv = this.validation_result;
+	this.validation_result = true;
 	return rv;
 }
 
-function ValidatorGetValue (controlname)
+webForm.ValidatorGetValue = function (controlname)
 {
-	var el = GetElement (controlname);
+	var el = this.GetElement (controlname);
 
 	/* if the element has a 'value' attribute, return it */
 	if (typeof (el.value) != 'undefined' && el.value != null) {
@@ -179,22 +172,22 @@ function ValidatorGetValue (controlname)
 		return el.options[el.selectedIndex].value;
 	}
 	
-	return ValidatorGetValueRecursive(el);
+	return this.ValidatorGetValueRecursive(el);
 }
 
-function ValidatorGetValueRecursive(el)
+webForm.ValidatorGetValueRecursive = function (el)
 {
 	if (typeof(el.value) == "string") {
 		if (el.type != "radio" || el.checked == true) return el.value;
 	}
 	for (var i = 0; i<el.childNodes.length; i++) {
-		var val = ValidatorGetValueRecursive(el.childNodes[i]);
+		var val = this.ValidatorGetValueRecursive(el.childNodes[i]);
 		if (val != "") return val;
 	}
 	return "";
 }
 
-function ValidatorTrim (s)
+webForm.ValidatorTrim = function (s)
 {
 	s = s.replace (/^\s+/g, "");
 	s = s.replace (/\s+$/g, "");
@@ -202,47 +195,47 @@ function ValidatorTrim (s)
 	return s;
 }
 
-function Page_ClientValidate(group)
+webForm.Page_ClientValidate = function (group)
 {
-	validation_result = true;
+	this.validation_result = true;
 
 	/* clear out the existing text from all our summaries */
-	if (have_validation_summaries) {
-	  for (var vi = 0; vi < Page_ValidationSummaries.length; vi++) {
-			var vs = Page_ValidationSummaries[vi];
+	if (this.have_validation_summaries) {
+	  for (var vi = 0; vi < this.Page_ValidationSummaries.length; vi++) {
+			var vs = this.Page_ValidationSummaries[vi];
 			vs.style.display = "none";
 			vs.innerHTML = "";
 		}
 	}
 	
 	var invalidControlHasBeenFocused = false;
-	for (var v = 0; v < Page_Validators.length; v++) {
-		var vo = Page_Validators [v];
+	for (var v = 0; v < this.Page_Validators.length; v++) {
+		var vo = this.Page_Validators [v];
 		var evalfunc = this[vo.getAttribute ("evaluationfunction")];
 		var result = false;
 
-		if (vo.getAttribute ("enabled").toLowerCase() == "false" || !IsValidationGroupMatch(vo, group)) {
+		if (vo.getAttribute ("enabled").toLowerCase() == "false" || !this.IsValidationGroupMatch(vo, group)) {
 			result = true;
-			ValidatorSucceeded (vo);
+			this.ValidatorSucceeded (vo);
 		}
 		else {
-			result = evalfunc (vo);
+			result = evalfunc.call (this, vo);
 		}
 
 		if (!result) {
-			validation_result = false;
+			this.validation_result = false;
 			if (!invalidControlHasBeenFocused && typeof(vo.focusOnError) == "string" && vo.focusOnError == "t") {
-				invalidControlHasBeenFocused = ValidatorSetFocus(vo);
+				invalidControlHasBeenFocused = this.ValidatorSetFocus(vo);
 			}
 		}
 		
 		vo.setAttribute("isvalid", result ? "true" : "false");
 	}
-    ValidationSummaryOnSubmit(group);
-	return validation_result;
+    this.ValidationSummaryOnSubmit(group);
+	return this.validation_result;
 }
 
-function IsValidationGroupMatch(vo, group) {
+webForm.IsValidationGroupMatch = function (vo, group) {
     var valGroup = vo.getAttribute ("validationgroup");
     if ((typeof(group) == "undefined") || (group == null)) {
         return (valGroup == "");
@@ -250,13 +243,13 @@ function IsValidationGroupMatch(vo, group) {
     return (valGroup == group);
 }
 
-function ValidatorSetFocus(val) {
-    var ctrl = GetElement(val.getAttribute ("controltovalidate"));
+webForm.ValidatorSetFocus = function (val) {
+    var ctrl = this.GetElement(val.getAttribute ("controltovalidate"));
 	if ((typeof(ctrl) != "undefined") && (ctrl != null) &&
 		((ctrl.tagName.toLowerCase() != "input") || (ctrl.type.toLowerCase() != "hidden")) &&
 		(typeof(ctrl.disabled) == "undefined" || ctrl.disabled == null || ctrl.disabled == false) &&
 		(typeof(ctrl.visible) == "undefined" || ctrl.visible == null || ctrl.visible != false) &&
-		(IsInVisibleContainer(ctrl))) {
+		(this.IsInVisibleContainer(ctrl))) {
 		if (ctrl.tagName.toLowerCase() == "table") {
 			var inputElements = ctrl.getElementsByTagName("input");
 			var lastInputElement  = inputElements[inputElements.length -1];
@@ -272,14 +265,14 @@ function ValidatorSetFocus(val) {
     return false;
 }
 
-function IsInVisibleContainer(ctrl) {
+webForm.IsInVisibleContainer = function (ctrl) {
 	if (typeof(ctrl.style) != "undefined" && 
 		((typeof(ctrl.style.display) != "undefined" &&	ctrl.style.display == "none") ||
 		(typeof(ctrl.style.visibility) != "undefined" && ctrl.style.visibility == "hidden"))) {
 		return false;
 	}
 	else if (typeof(ctrl.parentNode) != "undefined" && ctrl.parentNode != null && ctrl.parentNode != ctrl) {
-		return IsInVisibleContainer(ctrl.parentNode);
+		return this.IsInVisibleContainer(ctrl.parentNode);
 	}
 	return true;
 }
@@ -287,7 +280,7 @@ function IsInVisibleContainer(ctrl) {
 /*******************/
 /* type converters */
 
-function ToInteger (s, validator)
+webForm.ToInteger = function  (s, validator)
 {
 	if ((v = parseInt(s, 10)) != s - 0)
 		return null;
@@ -295,12 +288,12 @@ function ToInteger (s, validator)
 		return v;
 }
 
-function ToString (s, validator)
+webForm.ToString = function (s, validator)
 {
 	return s;
 }
 
-function ToDouble (s, validator)
+webForm.ToDouble = function (s, validator)
 {
 	if ((v = parseFloat(s)) != s - 0)
 		return null;
@@ -308,9 +301,9 @@ function ToDouble (s, validator)
 		return v;
 }
 
-function ToDate (s, validator)
+webForm.ToDate = function (s, validator)
 {
-    if (!HaveRegexp ())
+    if (!this.HaveRegexp ())
         return null;
     var m, day, month, year;
     var yearFirstExp = new RegExp("^\\s*((\\d{4})|(\\d{2}))([-/]|\\. ?)(\\d{1,2})\\4(\\d{1,2})\\s*$");
@@ -318,7 +311,7 @@ function ToDate (s, validator)
     if (m != null && (m[2].length == 4 || validator.dateorder == "ymd")) {
         day = m[6];
         month = m[5];
-        year = (m[2].length == 4) ? m[2] : GetFullYear(parseInt(m[3], 10), validator.cutoffyear)
+        year = (m[2].length == 4) ? m[2] : this.GetFullYear(parseInt(m[3], 10), validator.cutoffyear)
     }
     else {
         if (validator.dateorder == "ymd") return null;
@@ -333,16 +326,16 @@ function ToDate (s, validator)
             day = m[1];
             month = m[3];
         }
-        year = (m[5].length == 4) ? m[5] : GetFullYear(parseInt(m[6], 10), validator.cutoffyear)
+        year = (m[5].length == 4) ? m[5] : this.GetFullYear(parseInt(m[6], 10), validator.cutoffyear)
     }
     month -= 1;
     var date = new Date(year, month, day);
     return (typeof(date) == "object" && year == date.getFullYear() && month == date.getMonth() && day == date.getDate()) ? date.valueOf() : null;
 }
 
-function ToCurrency (s, validator)
+webForm.ToCurrency = function (s, validator)
 {
-  if (!HaveRegexp ())
+  if (!this.HaveRegexp ())
     return null;
   
 	var hasDigits = (validator.digits > 0);
@@ -368,7 +361,7 @@ function ToCurrency (s, validator)
 	return (isNaN(num) ? null : num);
 }
 
-function GetFullYear(year, maxYear)
+webForm.GetFullYear = function (year, maxYear)
 {
     var twoDigitMaxYear = maxYear % 100;
     var centure = maxYear - twoDigitMaxYear;
@@ -378,7 +371,7 @@ function GetFullYear(year, maxYear)
 /*******************/
 /* validators	  */
 
-function CompareValidatorEvaluateIsValid (validator)
+webForm.CompareValidatorEvaluateIsValid = function (validator)
 {
 	var ControlToCompare = validator.getAttribute ("controltocompare");
 	var ValueToCompare = validator.getAttribute ("valuetocompare");
@@ -386,22 +379,22 @@ function CompareValidatorEvaluateIsValid (validator)
 	var ControlToValidate = validator.getAttribute ("controltovalidate");
 	var DataType = validator.getAttribute ("datatype");
 
-	var ctrl_value = ValidatorTrim (ValidatorGetValue (ControlToValidate));
+	var ctrl_value = this.ValidatorTrim (this.ValidatorGetValue (ControlToValidate));
 	if (ctrl_value == "") {
-		ValidatorSucceeded (validator);
+		this.ValidatorSucceeded (validator);
 		return true;
 	}
-	var compare = (ControlToCompare != null && ControlToCompare != "") ? ValidatorTrim (ValidatorGetValue (ControlToCompare)) : ValueToCompare;
+	var compare = (ControlToCompare != null && ControlToCompare != "") ? this.ValidatorTrim (this.ValidatorGetValue (ControlToCompare)) : ValueToCompare;
 
-	var left = Convert (ctrl_value, DataType, validator);
+	var left = this.Convert (ctrl_value, DataType, validator);
  	if (left == null) {
-		ValidatorFailed (validator);
+		this.ValidatorFailed (validator);
 		return false;
 	}
       
-	var right = compare != null ? Convert (compare, DataType, validator) : null;
+	var right = compare != null ? this.Convert (compare, DataType, validator) : null;
 	if (right == null) {
-		ValidatorSucceeded (validator);
+		this.ValidatorSucceeded (validator);
 		 return true;
 	}
 
@@ -427,100 +420,100 @@ function CompareValidatorEvaluateIsValid (validator)
 	}
 
 	if (result == false) {
-		ValidatorFailed (validator);
+		this.ValidatorFailed (validator);
 		return false;
 	}
 	else {
-		ValidatorSucceeded (validator);
+		this.ValidatorSucceeded (validator);
 		return true;
 	}
 }
 
-function RangeValidatorEvaluateIsValid (validator)
+webForm.RangeValidatorEvaluateIsValid = function (validator)
 {
 	var ControlToValidate = validator.getAttribute ("controltovalidate");
 	var DataType = validator.getAttribute ("datatype");
 
-	var ctrl_value = ValidatorTrim (ValidatorGetValue (ControlToValidate));
+	var ctrl_value = this.ValidatorTrim (this.ValidatorGetValue (ControlToValidate));
 
 	if (ctrl_value == "") {
-		ValidatorSucceeded (validator);
+		this.ValidatorSucceeded (validator);
 		return true;
 	}
 
-	var MinimumValue = Convert (validator.getAttribute ("minimumvalue"), DataType, validator);
-	var MaximumValue = Convert (validator.getAttribute ("maximumvalue"), DataType, validator);
-	var val = Convert (ctrl_value, DataType, validator);
+	var MinimumValue = this.Convert (validator.getAttribute ("minimumvalue"), DataType, validator);
+	var MaximumValue = this.Convert (validator.getAttribute ("maximumvalue"), DataType, validator);
+	var val = this.Convert (ctrl_value, DataType, validator);
 	if (val == null || val < MinimumValue || val > MaximumValue) {
-		ValidatorFailed (validator);
+		this.ValidatorFailed (validator);
 		return false;
 	}
 	else {
-		ValidatorSucceeded (validator);
+		this.ValidatorSucceeded (validator);
 		return true;
 	}
 }
 
-function RegularExpressionValidatorEvaluateIsValid (validator)
+webForm.RegularExpressionValidatorEvaluateIsValid = function (validator)
 {
 	var ValidationExpression = validator.getAttribute ("validationexpression");
 	var ControlToValidate = validator.getAttribute ("controltovalidate");
 
-	var ctrl_value = ValidatorTrim (ValidatorGetValue (ControlToValidate));
+	var ctrl_value = this.ValidatorTrim (this.ValidatorGetValue (ControlToValidate));
 
 	if (ctrl_value == "") {
-		ValidatorSucceeded (validator);
+		this.ValidatorSucceeded (validator);
 		return true;
 	}
 
-  if (!HaveRegexp ())
+  if (!this.HaveRegexp ())
     return false;
   
 	var r = new RegExp (ValidationExpression);
 	match = r.exec (ctrl_value);
 	if (match == null || match[0] == "") {
-		ValidatorFailed (validator);
+		this.ValidatorFailed (validator);
 		return false;
 	}
 	else {
-		ValidatorSucceeded (validator);
+		this.ValidatorSucceeded (validator);
 		return true;
 	}
 }
 
-function RequiredFieldValidatorEvaluateIsValid (validator)
+webForm.RequiredFieldValidatorEvaluateIsValid = function (validator)
 {
 	var InitialValue = validator.getAttribute ("initialvalue");
 	var ControlToValidate = validator.getAttribute ("controltovalidate");
 
-	var ctrl_value = ValidatorTrim (ValidatorGetValue (ControlToValidate));
+	var ctrl_value = this.ValidatorTrim (this.ValidatorGetValue (ControlToValidate));
 
-	if (ctrl_value == ValidatorTrim (InitialValue)) {
-		ValidatorFailed (validator);
+	if (ctrl_value == this.ValidatorTrim (InitialValue)) {
+		this.ValidatorFailed (validator);
 		return false;
 	}
 	else {
-		ValidatorSucceeded (validator);
+		this.ValidatorSucceeded (validator);
 		return true;
 	}
 }
 
-function CustomValidatorEvaluateIsValid (validator)
+webForm.CustomValidatorEvaluateIsValid = function (validator)
 {
 	var InitialValue = validator.getAttribute ("initialvalue");
 	var ControlToValidate = validator.getAttribute ("controltovalidate");
 
 	if (!ControlToValidate) {
-		ValidatorSucceeded (validator);
+		this.ValidatorSucceeded (validator);
 		return true;
 	}
 
 	var evaluationfunc = validator.getAttribute ("clientvalidationfunction");
 
-	var ctrl_value = ValidatorTrim (ValidatorGetValue (ControlToValidate));
+	var ctrl_value = this.ValidatorTrim (this.ValidatorGetValue (ControlToValidate));
 	
     if ((ctrl_value.length == 0) && ((typeof(validator.validateemptytext) != "string") || (validator.validateemptytext != "true"))) {
-		ValidatorSucceeded (validator);
+		this.ValidatorSucceeded (validator);
 		return true;
 	}
 
@@ -533,11 +526,11 @@ function CustomValidatorEvaluateIsValid (validator)
 	}
 
 	if (result) {
-		ValidatorSucceeded (validator);
+		this.ValidatorSucceeded (validator);
 		return true;
 	}
 	else {
-		ValidatorFailed (validator);
+		this.ValidatorFailed (validator);
 		return false;
 	}
 }
@@ -545,16 +538,16 @@ function CustomValidatorEvaluateIsValid (validator)
 /*********************/
 /* utility functions */
 
-function Convert (s, ty, validator)
+webForm.Convert = function (s, ty, validator)
 {
 	var cvt = this ["To" + ty];
 	if (typeof (cvt) == 'function')
-		return cvt (s, validator);
+		return cvt.call (this, s, validator);
 	else
 		return null;
 }
 
-function ValidatorUpdateDisplay (v, valid)
+webForm.ValidatorUpdateDisplay = function (v, valid)
 {
 	var display = v.getAttribute ("display");
 
@@ -569,7 +562,7 @@ function ValidatorUpdateDisplay (v, valid)
 	}
 }
 
-function ValidatorGetErrorMessage (v)
+webForm.ValidatorGetErrorMessage = function  (v)
 {
 	var text = v.getAttribute ("errormessage");
 	if (text == null || text == "")
@@ -579,7 +572,7 @@ function ValidatorGetErrorMessage (v)
 	return text;
 }
 
-function ValidatorGetText (v)
+webForm.ValidatorGetText = function  (v)
 {
 	var text = v.getAttribute ("text");	
 	if (text == null || text == "")
@@ -589,19 +582,20 @@ function ValidatorGetText (v)
 	return text;
 }
 
-function ValidatorFailed (v)
+webForm.ValidatorFailed = function  (v)
 {
-	ValidatorUpdateDisplay (v, false);
+	this.ValidatorUpdateDisplay (v, false);
 }
 
-function ValidatorSucceeded (v)
+webForm.ValidatorSucceeded = function  (v)
 {
-	ValidatorUpdateDisplay (v, true);
+	this.ValidatorUpdateDisplay (v, true);
 }
 
-function GetElement(id)
+webForm.GetElement = function (id)
 {
 	var x = document.getElementById ? document.getElementById (id) :
 					  ((document.all) ? document.all [id] : null);
 	return x;
+}
 }

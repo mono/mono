@@ -470,6 +470,10 @@ public partial class Page : TemplateControl, IHttpHandler
 			return "theForm";
 		}
 	}
+	
+	internal bool IsMultiForm {
+		get { return false; }
+	}
 #endif
 
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -1011,8 +1015,14 @@ public partial class Page : TemplateControl, IHttpHandler
 #if ONLY_1_1
 		RenderClientScriptFormDeclaration (writer, formUniqueID);
 #endif
-		writer.WriteLine ("window._form = {0};", theForm);
-		writer.WriteLine ("function __doPostBack(eventTarget, eventArgument) {");
+		if (IsMultiForm) {
+			writer.WriteLine ("{0}._form = {0};", theForm);
+			writer.Write (theForm + ".");
+		}
+		else {
+			writer.WriteLine ("window._form = {0};", theForm);
+		}
+		writer.WriteLine ("__doPostBack = function (eventTarget, eventArgument) {");
 #if NET_2_0
 		writer.WriteLine ("\tif(this._form.onsubmit && this._form.onsubmit() == false) return;");
 #else
@@ -1022,10 +1032,6 @@ public partial class Page : TemplateControl, IHttpHandler
 		writer.WriteLine ("\tthis._form.{0}.value = eventArgument;", postEventArgumentID);
 		writer.WriteLine ("\tthis._form.submit();");
 		writer.WriteLine ("}");
-#if NET_2_0
-		writer.WriteLine ("{0}._form = {0};", theForm);
-		writer.WriteLine ("{0}.__doPostBack = __doPostBack;", theForm);
-#endif
 		ClientScriptManager.WriteEndScriptBlock (writer);
 	}
 
@@ -1033,7 +1039,7 @@ public partial class Page : TemplateControl, IHttpHandler
 	{
 		writer.WriteLine ("\tvar {0};\n\tif (document.getElementById) {{ {0} = document.getElementById ('{1}'); }}", theForm, formUniqueID);
 		writer.WriteLine ("\telse {{ {0} = document.{1}; }}", theForm, formUniqueID);
-		writer.WriteLine ("\t{0}.isAspForm = true;", theForm);
+		writer.WriteLine ("\t{0}._instanceVariableName = '{0}';", theForm);
 #if TARGET_J2EE
 		string serverUrl = Context.ServletResponse.encodeURL (Request.RawUrl);
 		writer.WriteLine ("\t{0}.serverURL = {1};", theForm, ClientScriptManager.GetScriptLiteral (serverUrl));

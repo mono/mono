@@ -101,11 +101,10 @@ namespace System.Web.UI
 				throw new ArgumentNullException ("control");
 			
 			page.RequiresPostBackScript ();
-#if NET_2_0
+		if(page.IsMultiForm)
 			return String.Format ("{0}.__doPostBack('{1}','{2}')", page.theForm, control.UniqueID, argument);
-#else
+		else
 			return String.Format ("__doPostBack('{0}','{1}')", control.UniqueID, argument);
-#endif
 		}
 
 #if NET_2_0
@@ -155,6 +154,8 @@ namespace System.Web.UI
 				RegisterHiddenField (Page.LastFocusID, String.Empty);
 
 			string prefix = options.RequiresJavaScriptProtocol ? "javascript:" : "";
+			if (page.IsMultiForm)
+				prefix += page.theForm + ".";
 #if TARGET_J2EE
 			// Allow the page to transform ActionUrl to a portlet action url
 			if (actionUrl != null && page.PortletNamespace != null) {
@@ -163,7 +164,7 @@ namespace System.Web.UI
 			}
 #endif
 
-			return String.Format ("{0}WebForm_DoPostback({1},{2},{3},{4},{5},{6},{7},{8},{9})", 
+			return String.Format ("{0}WebForm_DoPostback({1},{2},{3},{4},{5},{6},{7},{8})", 
 					prefix,
 					ClientScriptManager.GetScriptLiteral (options.TargetControl.UniqueID), 
 					ClientScriptManager.GetScriptLiteral (options.Argument),
@@ -172,8 +173,7 @@ namespace System.Web.UI
 					ClientScriptManager.GetScriptLiteral (options.PerformValidation),
 					ClientScriptManager.GetScriptLiteral (options.TrackFocus),
 					ClientScriptManager.GetScriptLiteral (options.ClientSubmit),
-					ClientScriptManager.GetScriptLiteral (options.ValidationGroup),
-					page.theForm
+					ClientScriptManager.GetScriptLiteral (options.ValidationGroup)
 				);
 		}
 
@@ -193,6 +193,9 @@ namespace System.Web.UI
 			if (!_webFormClientScriptRendered && _webFormClientScriptRequired) {
 				writer.WriteLine ();
 				WriteClientScriptInclude (writer, GetWebResourceUrl (typeof (Page), "webform.js"));
+				WriteBeginScriptBlock (writer);
+				writer.WriteLine ("WebForm_Initialize({0});", page.IsMultiForm ? page.theForm : "window");
+				WriteEndScriptBlock (writer);
 				_webFormClientScriptRendered = true;
 			}
 		}
@@ -221,7 +224,7 @@ namespace System.Web.UI
 		{
 			RegisterWebFormClientScript ();
 			
-			return string.Format ("WebForm_DoCallback({0},{1},{2},{3},{4},{5},{6})", target, argument, clientCallback, context, ((clientErrorCallback == null) ? "null" : clientErrorCallback), (useAsync ? "true" : "false"), page.theForm);
+			return string.Format ("{6}WebForm_DoCallback({0},{1},{2},{3},{4},{5})", target, ((argument == null) ? "null" : argument), clientCallback, ((context == null) ? "null" : context), ((clientErrorCallback == null) ? "null" : clientErrorCallback), (useAsync ? "true" : "false"), (page.IsMultiForm ? page.theForm + "." : null));
 		}
 #endif
 		
@@ -646,11 +649,8 @@ namespace System.Web.UI
 		}
 		
 		internal void WriteClientScriptInclude (HtmlTextWriter writer, string path) {
-#if TARGET_J2EE
-					if (!page.IsPortletRender)
-#endif
+					if (!page.IsMultiForm)
 						writer.WriteLine ("<script src=\"{0}\" type=\"text/javascript\"></script>", path);
-#if TARGET_J2EE
 					else {
 						string scriptKey = "inc_" + path.GetHashCode ().ToString ("X");
 						writer.WriteLine ("<script type=\"text/javascript\">");
@@ -661,8 +661,7 @@ namespace System.Web.UI
 						writer.WriteLine ("// -->");
 						writer.WriteLine ("</script>");
 					}
-#endif
-					}
+		}
 		
 		internal void WriteClientScriptBlocks (HtmlTextWriter writer)
 		{
@@ -681,7 +680,10 @@ namespace System.Web.UI
 				WriteBeginScriptBlock (writer);
 				IDictionaryEnumerator arrayEnum = registeredArrayDeclares.GetEnumerator();
 				while (arrayEnum.MoveNext()) {
-					writer.Write("\tvar ");
+					if (page.IsMultiForm)
+						writer.Write ("\t" + page.theForm + ".");
+					else
+						writer.Write ("\tvar ");
 					writer.Write(arrayEnum.Key);
 					writer.Write(" =  new Array(");
 					IEnumerator arrayListEnum = ((ArrayList) arrayEnum.Value).GetEnumerator();
@@ -694,16 +696,6 @@ namespace System.Web.UI
 						writer.Write(arrayListEnum.Current);
 					}
 					writer.WriteLine(");");
-#if TARGET_J2EE
-					// in addition, add a form array declaration
-					if (page.IsPortletRender) {
-						writer.Write ("\t" + page.theForm + ".");
-						writer.Write (arrayEnum.Key);
-						writer.Write (" = ");
-						writer.Write (arrayEnum.Key);
-						writer.WriteLine (";");
-					}
-#endif
 				}
 				WriteEndScriptBlock (writer);
 				writer.WriteLine ();
@@ -712,23 +704,17 @@ namespace System.Web.UI
 
 #if NET_2_0
 		internal string GetClientValidationEvent (string validationGroup) {
-			string eventScript = "if (typeof(Page_ClientValidate) == 'function') Page_ClientValidate('" + validationGroup + "');";
-#if TARGET_J2EE
-			if (page.IsPortletRender)
-				return "if (typeof(SetValidatorContext) == 'function') SetValidatorContext ('" + page.theForm + "'); " + eventScript;
-#endif
-			return eventScript;
+			if (page.IsMultiForm)
+				return "if (typeof(" + page.theForm + ".Page_ClientValidate) == 'function') " + page.theForm + ".Page_ClientValidate('" + validationGroup + "');";
+			return "if (typeof(Page_ClientValidate) == 'function') Page_ClientValidate('" + validationGroup + "');";
 		}
 #endif
 
 		internal string GetClientValidationEvent ()
 		{
-			string eventScript = "if (typeof(Page_ClientValidate) == 'function') Page_ClientValidate();";
-#if TARGET_J2EE
-			if (page.IsPortletRender)
-				return "if (typeof(SetValidatorContext) == 'function') SetValidatorContext ('" + page.theForm + "'); " + eventScript;
-#endif
-			return eventScript;
+			if (page.IsMultiForm)
+				return "if (typeof(" + page.theForm + ".Page_ClientValidate) == 'function') " + page.theForm + ".Page_ClientValidate();";
+			return "if (typeof(Page_ClientValidate) == 'function') Page_ClientValidate();";
 		}
 
 
@@ -747,16 +733,17 @@ namespace System.Web.UI
 				entry = entry.Next;
 			}
 #if NET_2_0
-			RegisterClientScriptBlock ("HtmlForm-OnSubmitStatemen",
-@"<script type=""text/javascript"">
-<!--
-" + page.theForm + @".WebForm_OnSubmit = function () {
+			RegisterClientScriptBlock (GetType(), "HtmlForm-OnSubmitStatemen",
+@"
+" + (page.IsMultiForm ? page.theForm + "." : null) + @"WebForm_OnSubmit = function () {
 " + sb.ToString () + @"
 return true;
 }
-// -->
-</script>");
-			return "javascript:return this.WebForm_OnSubmit();";
+", true);
+			if (page.IsMultiForm)
+				return "javascript:return this.WebForm_OnSubmit();";
+			else
+				return "javascript:return WebForm_OnSubmit();";
 
 #else
 			return sb.ToString ();

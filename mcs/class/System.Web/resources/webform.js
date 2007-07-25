@@ -28,18 +28,19 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+function WebForm_Initialize(webForm) {
 
-function WebForm_AutoFocus (id)
+webForm.WebForm_AutoFocus = function (id)
 {
-	var x = WebForm_GetElementById (id);
+	var x = this.WebForm_GetElementById (id);
 
-	if (x && (!WebForm_CanFocus(x))) {
-		x = WebForm_FindFirstFocusableChild(x);
+	if (x && (!this.WebForm_CanFocus(x))) {
+		x = this.WebForm_FindFirstFocusableChild(x);
 	}
 	if (x) { x.focus(); }
 }
 
-function WebForm_CanFocus(element) {
+webForm.WebForm_CanFocus = function (element) {
 	if (!element || !(element.tagName) || element.disabled) {
 		return false;
 	}
@@ -54,7 +55,7 @@ function WebForm_CanFocus(element) {
 			tagName == "a");
 }
 
-function WebForm_FindFirstFocusableChild(element) {
+webForm.WebForm_FindFirstFocusableChild = function (element) {
 	if (!element || !(element.tagName)) {
 		return null;
 	}
@@ -66,12 +67,12 @@ function WebForm_FindFirstFocusableChild(element) {
 	if (children) {
 		for (var i = 0; i < children.length; i++) {
 			try {
-				if (WebForm_CanFocus(children[i])) {
+				if (this.WebForm_CanFocus(children[i])) {
 					return children[i];
 				}
 				else {
-					var focused = WebForm_FindFirstFocusableChild(children[i]);
-					if (WebForm_CanFocus(focused)) {
+					var focused = this.WebForm_FindFirstFocusableChild(children[i]);
+					if (this.WebForm_CanFocus(focused)) {
 						return focused;
 					}
 				}
@@ -82,88 +83,81 @@ function WebForm_FindFirstFocusableChild(element) {
 	return null;
 }
 
-function WebForm_ReEnableControls (currForm)
+webForm.WebForm_ReEnableControls = function  ()
 {
-	if (typeof(currForm.__enabledControlArray) != 'undefined' && currForm.__enabledControlArray != null)
-		__enabledControlArray = currForm.__enabledControlArray;
+	if (typeof(this._form.__enabledControlArray) != 'undefined' && this._form.__enabledControlArray != null)
+		__enabledControlArray = this._form.__enabledControlArray;
 	
 	if (typeof(__enabledControlArray) == 'undefined' || __enabledControlArray == null)
 		return false;
 	
-	currForm.__disabledControlArray = new Array();
+	this._form.__disabledControlArray = new Array();
 	for (var i = 0; i < __enabledControlArray.length; i++) {
-		var c = WebForm_GetElementById (__enabledControlArray[i]);
+		var c = this.WebForm_GetElementById (__enabledControlArray[i]);
 		if ((typeof(c) != "undefined") && (c != null) && (c.disabled == true)) {
 			c.disabled = false;
-			currForm.__disabledControlArray[currForm.__disabledControlArray.length] = c;
+			this._form.__disabledControlArray[this._form.__disabledControlArray.length] = c;
 		}
 	}
-	__currForm = currForm
-	setTimeout("WebForm_ReDisableControls (__currForm)", 0);
+	setTimeout((this._instanceVariableName ? this._instanceVariableName + "." : "") + "WebForm_ReDisableControls ()", 0);
 	return true;
 }
 
-function WebForm_ReDisableControls (currForm)
+webForm.WebForm_ReDisableControls = function  ()
 {
-	for (var i = 0; i < currForm.__disabledControlArray.length; i++) {
-		currForm.__disabledControlArray[i].disabled = true;
+	for (var i = 0; i < this._form.__disabledControlArray.length; i++) {
+		this._form.__disabledControlArray[i].disabled = true;
 	}
 }
 
 // This function is only used in the context of TARGET_J2EE for portlets
-function PortalWebForm_DoPostback (id, par, url, apb, pval, tf, csubm, vg, currForm)
+webForm.PortalWebForm_DoPostback = function  (id, par, url, apb, pval, tf, csubm, vg)
 {
 	if (url != null) {
-		currForm = WebForm_GetFormFromCtrl (id, currForm);
 		if (url.indexOf ("vmw.action.page=") == 0) {
-			currForm.__NEXTVMWACTIONPAGE.value = url.substring ("vmw.action.page=".length);
-			url = currForm.action;
+			this._form.__NEXTVMWACTIONPAGE.value = url.substring ("vmw.action.page=".length);
+			url = this._form.action;
 		}
 		else if (url.indexOf ("vmw.render.page=") == 0)
 		{
-			currForm.__NEXTVMWRENDERPAGE.value = url.substring ("vmw.render.page=".length);
-			currForm.submit ();
+			this._form.__NEXTVMWRENDERPAGE.value = url.substring ("vmw.render.page=".length);
+			this._form.submit ();
 			return;
 		}
 	}
-	return WebForm_DoPostback (id, par, url, apb, pval, tf, csubm, vg, currForm);
+	return this.WebForm_DoPostback (id, par, url, apb, pval, tf, csubm, vg);
 }
-function WebForm_DoPostback (id, par, url, apb, pval, tf, csubm, vg, currForm)
+webForm.WebForm_DoPostback = function  (id, par, url, apb, pval, tf, csubm, vg)
 {
-	currForm = WebForm_GetFormFromCtrl (id, currForm);
-
-	if (typeof(SetValidatorContext) == "function") 
-		SetValidatorContext (currForm);
-
 	var validationResult = true;
-	if (pval && typeof(Page_ClientValidate) == "function")
-		validationResult =  Page_ClientValidate(vg);
+	if (pval && typeof(this.Page_ClientValidate) == "function")
+		validationResult =  this.Page_ClientValidate(vg);
 
 	if (validationResult) {
 		if ((typeof(url) != "undefined") && (url != null) && (url.length > 0))
-			currForm.action = url;
+			this._form.action = url;
 		if (tf) {
-			var lastFocus = currForm.elements["__LASTFOCUS"];
+			var lastFocus = this._form.elements["__LASTFOCUS"];
 			if ((typeof(lastFocus) != "undefined") && (lastFocus != null))
 				lastFocus.value = id;
 		}
 	}		
 	if (csubm)
-		currForm.__doPostBack (id, par);
+		this._form.__doPostBack (id, par);
 }
 
-function WebForm_DoCallback (id, arg, callback, ctx, errorCallback, useAsync, currForm)
+webForm.WebForm_DoCallback = function (id, arg, callback, ctx, errorCallback, useAsync)
 {
-	currForm = WebForm_GetFormFromCtrl (id, currForm);
-	var qs = WebForm_getFormData (currForm) + "__CALLBACKTARGET=" + id + "&__CALLBACKARGUMENT=" + encodeURIComponent(arg);
+	var qs = this.WebForm_getFormData () + "__CALLBACKTARGET=" + id + "&__CALLBACKARGUMENT=" + encodeURIComponent(arg);
   
-  if (currForm["__EVENTVALIDATION"])
-    qs += "&__EVENTVALIDATION=" + encodeURIComponent(currForm["__EVENTVALIDATION"].value);
+  if (this._form["__EVENTVALIDATION"])
+    qs += "&__EVENTVALIDATION=" + encodeURIComponent(this._form["__EVENTVALIDATION"].value);
   
-	WebForm_httpPost (currForm.serverURL || document.URL, qs, function (httpPost) { WebForm_ClientCallback (httpPost, ctx, callback, errorCallback, currForm); });
+	var This = this;
+	this.WebForm_httpPost (this._form.serverURL || document.URL, qs, function (httpPost) { This.WebForm_ClientCallback (httpPost, ctx, callback, errorCallback); });
 }
 
-function WebForm_ClientCallback (httpPost, ctx, callback, errorCallback, currForm)
+webForm.WebForm_ClientCallback = function (httpPost, ctx, callback, errorCallback)
 {
 	var doc = httpPost.responseText;
 	if (doc.charAt(0) == "e") {
@@ -176,13 +170,13 @@ function WebForm_ClientCallback (httpPost, ctx, callback, errorCallback, currFor
 			if (!isNaN(validationFieldLength)) {
 				var validationField = doc.substring(separatorIndex + 1, separatorIndex + validationFieldLength + 1);
 				if (validationField != "") {
-					var validationFieldElement = currForm["__EVENTVALIDATION"];
+					var validationFieldElement = this._form["__EVENTVALIDATION"];
 					if (!validationFieldElement) {
 						validationFieldElement = document.createElement("INPUT");
 						validationFieldElement.type = "hidden";
 						validationFieldElement.name = "__EVENTVALIDATION";
-            validationFieldElement.id = validationFieldElement.name;
-						currForm.appendChild(validationFieldElement);
+						validationFieldElement.id = validationFieldElement.name;
+						this._form.appendChild(validationFieldElement);
 					}
 					validationFieldElement.value = validationField;
 				}
@@ -196,12 +190,12 @@ function WebForm_ClientCallback (httpPost, ctx, callback, errorCallback, currFor
 	}
 }
 
-function WebForm_getFormData (currForm)
+webForm.WebForm_getFormData = function ()
 {
 	var qs = "";
-	var len = currForm.elements.length;
+	var len = this._form.elements.length;
 	for (n=0; n<len; n++) {
-		var elem = currForm.elements [n];
+		var elem = this._form.elements [n];
 		var tagName = elem.tagName.toLowerCase();
 		if (tagName == "input") {
 			var type = elem.type;
@@ -226,23 +220,22 @@ function WebForm_getFormData (currForm)
 	return qs;
 }
 
-var axName = null;
-function WebForm_httpPost (url, data, callback)
+webForm.WebForm_httpPost = function (url, data, callback)
 {
 	var httpPost = null;
 	
 	if (typeof XMLHttpRequest != "undefined") {
 		httpPost = new XMLHttpRequest ();
 	} else {
-		if (axName != null)
-			httpPost = new ActiveXObject (axName);
+		if (this.axName != null)
+			httpPost = new ActiveXObject (this.axName);
 		else {
 			var clsnames = new Array ("MSXML", "MSXML2", "MSXML3", "Microsoft");
 			for (n = 0; n < clsnames.length && httpPost == null; n++) {
-				axName = clsnames [n] + ".XMLHTTP";
+				this.axName = clsnames [n] + ".XMLHTTP";
 				try {
-					httpPost = new ActiveXObject (axName);
-				} catch (e) { axName = null; }
+					httpPost = new ActiveXObject (this.axName);
+				} catch (e) { this.axName = null; }
 			}
 			if (httpPost == null)
 				throw new Error ("XMLHTTP object could not be created.");
@@ -255,29 +248,14 @@ function WebForm_httpPost (url, data, callback)
 	setTimeout (function () { httpPost.send (data); }, 10);
 }
 
-function WebForm_GetFormFromCtrl (id, currForm)
-{
-	if (currForm)
-		return currForm;
-
-	// We need to translate the id from ASPX UniqueID to its ClientID.
-	var ctrl = WebForm_GetElementById (id.replace(/\$/g, "_"));
-	while (ctrl != null) {
-		if (ctrl.isAspForm)
-			return ctrl;
-		ctrl = ctrl.parentNode;
-	}
-	return theForm;
-}
-
-function WebForm_GetElementById (id)
+webForm.WebForm_GetElementById = function (id)
 {
 	return document.getElementById ? document.getElementById (id) :
 	       document.all ? document.all [id] :
 		   document [id];
 }
 
-function WebForm_FireDefaultButton(event, target)
+webForm.WebForm_FireDefaultButton = function (event, target)
 {
 	if (event.keyCode != 13) {
 		return true;
@@ -285,7 +263,7 @@ function WebForm_FireDefaultButton(event, target)
 	if(event.srcElement && (event.srcElement.tagName.toLowerCase() == "textarea")) {
 		return true;
 	}
-	var defaultButton = WebForm_GetElementById(target);
+	var defaultButton = this.WebForm_GetElementById(target);
 	if (defaultButton && typeof(defaultButton.click) != "undefined") {
 		defaultButton.click();
 		event.cancelBubble = true;
@@ -294,7 +272,7 @@ function WebForm_FireDefaultButton(event, target)
 	return true;
 }
 
-function WebForm_SaveScrollPositionSubmit()
+webForm.WebForm_SaveScrollPositionSubmit = function ()
 {
 	var pos = WebForm_GetElementPosition(this);
 	this.elements['__SCROLLPOSITIONX'].value = WebForm_GetScrollX() - pos.x;
@@ -305,7 +283,7 @@ function WebForm_SaveScrollPositionSubmit()
 	return true;
 }
 
-function WebForm_SaveScrollPositionOnSubmit()
+webForm.WebForm_SaveScrollPositionOnSubmit = function ()
 {
 	var pos = WebForm_GetElementPosition(this);
 	this.elements['__SCROLLPOSITIONX'].value = WebForm_GetScrollX() - pos.x;
@@ -316,7 +294,7 @@ function WebForm_SaveScrollPositionOnSubmit()
 	return true;
 }
 
-function WebForm_RestoreScrollPosition(currForm)
+webForm.WebForm_RestoreScrollPosition = function (currForm)
 {
 	currForm = currForm || theForm;
 	var pos = WebForm_GetElementPosition(currForm);
@@ -331,7 +309,7 @@ function WebForm_RestoreScrollPosition(currForm)
 	return true;
 }
 
-function WebForm_GetScrollX() {
+webForm.WebForm_GetScrollX = function () {
     if (window.pageXOffset) {
         return window.pageXOffset;
     }
@@ -344,7 +322,7 @@ function WebForm_GetScrollX() {
     return 0;
 }
 
-function WebForm_GetScrollY() {
+webForm.WebForm_GetScrollY = function () {
     if (window.pageYOffset) {
         return window.pageYOffset;
     }
@@ -357,7 +335,7 @@ function WebForm_GetScrollY() {
     return 0;
 }
 
-function WebForm_GetElementPosition(element)
+webForm.WebForm_GetElementPosition = function (element)
 {
 	var result = new Object();
 	result.x = 0;
@@ -376,5 +354,5 @@ function WebForm_GetElementPosition(element)
 	result.height = element.offsetHeight;
 	return result;
 }
-
+}
 

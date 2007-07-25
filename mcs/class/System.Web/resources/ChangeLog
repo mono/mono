@@ -1,3 +1,11 @@
+2007-07-24 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* webform.js:
+	* WebUIValidation_2.0.js:
+	refactoring: provide possibility to define relevant functions in different 
+	scopes. (global=window or form element). thus providing a solution for 
+	multi form environment.		
+
 2007-05-16  Marek Habersack  <mhabersack@novell.com>
 
 	* webform.js: in WebForm_ClientCallback set the id of the

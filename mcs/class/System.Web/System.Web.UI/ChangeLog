@@ -1,5 +1,14 @@
 2007-07-24 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* ClientScriptManager.cs:
+	* Page.cs:
+	* Page.jvm.cs:
+	added new internal property IsMultiForm which returns false under
+	!TARGET_J2EE (Portal). All client scripts are rendered 
+	according this property.	
+		
+2007-07-24 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* ClientScriptManager.cs: fixed: GetCallbackEventReference method.
 		
 2007-07-23 Igor Zelmanovich <igorz@mainsoft.com>
