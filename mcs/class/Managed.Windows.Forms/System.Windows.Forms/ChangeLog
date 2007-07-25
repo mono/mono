@@ -1,5 +1,11 @@
 2007-07-25  Jonathan Pobst  <monkey@jpobst.com>
 
+	* TreeView.cs, NodeLabelEditEventArgs.cs, LabelEditTextBox.cs: Support edit
+	canceling and correct Before/AfterLabelEdit properties as layed out in bug
+	81847.  [Fixes bug #81847]
+
+2007-07-25  Jonathan Pobst  <monkey@jpobst.com>
+
 	* Label.cs: If AutoSize = true and a width or height is set, ignore it and
 	redo the autosize.  VS2005 defaults to setting the AutoSize, and then setting
 	an explicit size based on the design-time size of the text.  Since our fonts

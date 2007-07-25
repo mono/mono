@@ -1604,7 +1604,9 @@ namespace System.Windows.Forms {
 			if (edit_text_box == null) {
 				edit_text_box = new LabelEditTextBox ();
 				edit_text_box.BorderStyle = BorderStyle.FixedSingle;
+				edit_text_box.EditingCancelled += new EventHandler (LabelEditCancelled);
 				edit_text_box.EditingFinished += new EventHandler (LabelEditFinished);
+				edit_text_box.TextChanged += new EventHandler (LabelTextChanged);
 				Controls.Add (edit_text_box);
 			}
 
@@ -1619,10 +1621,24 @@ namespace System.Windows.Forms {
 			edit_args = new NodeLabelEditEventArgs (node);
 			OnBeforeLabelEdit (edit_args);
 
-			if (edit_args.CancelEdit)
-				EndEdit (node);
-			
 			edit_node = node;
+			
+			if (edit_args.CancelEdit) {
+				edit_node = null;
+				EndEdit (node);
+			}			
+		}
+
+		private void LabelEditCancelled (object sender, EventArgs e)
+		{
+			edit_args.SetLabel (null);
+			EndEdit (edit_node);
+		}
+
+		private void LabelTextChanged (object sender, EventArgs e)
+		{
+			if (edit_args != null)
+				edit_args.SetLabel (edit_text_box.Text);
 		}
 
 		internal void EndEdit (TreeNode node)
@@ -1632,17 +1648,14 @@ namespace System.Windows.Forms {
 			}
 
 			if (edit_node != null && edit_node == node) {
+				
 				OnAfterLabelEdit (edit_args);
 
 				if (!edit_args.CancelEdit) {
 					if (edit_args.Label != null)
 						edit_node.Text = edit_args.Label;
-					else
-						edit_node.Text = edit_text_box.Text;
 				}
-
 			}
-
 			
 			edit_node = null;
 			UpdateNode (node);

@@ -55,6 +55,11 @@ namespace System.Windows.Forms {
 		public string Label {
 			get { return label; }
 		}
+
+		internal void SetLabel (string label)
+		{
+			this.label = label;
+		}
 	}
 
 }

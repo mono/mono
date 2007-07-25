@@ -42,6 +42,8 @@ namespace System.Windows.Forms {
 				switch (key_data & Keys.KeyCode) {
 				case Keys.Enter:
 					return true;
+				case Keys.Escape:
+					return true;
 				}
 			}
 			return base.IsInputKey (key_data);
@@ -49,9 +51,20 @@ namespace System.Windows.Forms {
 
 		protected override void OnKeyDown (KeyEventArgs e)
 		{
-			if (e.KeyCode == Keys.Return && Visible) {
-				this.Visible = false;
-				OnEditingFinished (e);
+			if (!Visible)
+				return;
+
+			switch (e.KeyCode) {
+				case Keys.Return:
+					Visible = false;
+					e.Handled = true;
+					OnEditingFinished (e);
+					break;
+				case Keys.Escape:
+					Visible = false;
+					e.Handled = true;
+					OnEditingCancelled (e);
+					break;
 			}
 		}
 
@@ -62,11 +75,24 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		protected void OnEditingCancelled (EventArgs e)
+		{
+			EventHandler eh = (EventHandler)(Events[EditingCancelledEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
+
 		protected void OnEditingFinished (EventArgs e)
 		{
 			EventHandler eh = (EventHandler)(Events [EditingFinishedEvent]);
 			if (eh != null)
 				eh (this, e);
+		}
+
+		static object EditingCancelledEvent = new object ();
+		public event EventHandler EditingCancelled {
+			add { Events.AddHandler (EditingCancelledEvent, value); }
+			remove { Events.RemoveHandler (EditingCancelledEvent, value); }
 		}
 
 		static object EditingFinishedEvent = new object ();
