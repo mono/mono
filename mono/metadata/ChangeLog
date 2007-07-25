@@ -1,3 +1,8 @@
+
+Wed Jul 25 18:06:33 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* object.c: properly setup interface_bitmap in proxy vtables.
+
 2007-07-24  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* class.c (mono_bounded_array_class_get): fixed memory leak when 
