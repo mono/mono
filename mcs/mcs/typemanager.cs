@@ -1054,6 +1054,8 @@ namespace Mono.CSharp {
 		in_attribute_type    = CoreLookupType ("System.Runtime.InteropServices", "InAttribute");
 		out_attribute_type   = CoreLookupType ("System.Runtime.InteropServices", "OutAttribute");
 #if NET_2_0
+		internals_visible_attr_type = CoreLookupType ("System.Runtime.CompilerServices", "InternalsVisibleToAttribute");
+
 		// this can fail if the user doesn't have an -r:System.dll
 		default_parameter_value_attribute_type = CoreLookupType ("System.Runtime.InteropServices", "DefaultParameterValueAttribute", true);
 #endif
@@ -1094,7 +1096,6 @@ namespace Mono.CSharp {
 		compiler_generated_attr_type = CoreLookupType ("System.Runtime.CompilerServices", "CompilerGeneratedAttribute");
 		fixed_buffer_attr_type = CoreLookupType ("System.Runtime.CompilerServices", "FixedBufferAttribute");
 		default_charset_type = CoreLookupType ("System.Runtime.InteropServices", "DefaultCharSetAttribute");
-		internals_visible_attr_type = CoreLookupType ("System.Runtime.CompilerServices", "InternalsVisibleToAttribute");
 		runtime_compatibility_attr_type = CoreLookupType ("System.Runtime.CompilerServices", "RuntimeCompatibilityAttribute");
 		type_forwarder_attr_type = CoreLookupType ("System.Runtime.CompilerServices", "TypeForwardedToAttribute");
 

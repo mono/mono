@@ -1,3 +1,13 @@
+2007-07-26  Jb Evain  <jbevain@novell.com>
+
+	* typemanager.cs (TypeManager.InitCoreTypes): Move the resolution
+	of the type InternalsVisibleToAttribute before the first call
+	to CoreLookupType which is allowed to fail (third boolean parameter
+	to true). Because, during the resolution for a type that is not
+	immediately found, we try to check if the type is not defined in
+	a friend assembly, and to do so, we need the
+	InternalVisibleToAttribute.
+
 2007-07-23  Miguel de Icaza  <miguel@novell.com>
 
 	* expression.cs (Binary): Add support for the brain-dead CSC 2.x
