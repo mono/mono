@@ -1,5 +1,10 @@
 2007-07-26  Jb Evain  <jbevain@novell.com>
 
+	* typemanager.cs (TypeManager.InitCoreTypes): System.ArgIterator,
+	System.Runtime.CompilerServices.RequiredAttributeAttribute and
+	System.Runtime.CompilerServices.TypeForwardedToAttribute are internal
+	in .net 2.1.
+
 	* typemanager.cs (TypeManager.InitCoreTypes): Move the resolution
 	of the type InternalsVisibleToAttribute before the first call
 	to CoreLookupType which is allowed to fail (third boolean parameter

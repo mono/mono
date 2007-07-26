@@ -1054,13 +1054,14 @@ namespace Mono.CSharp {
 		in_attribute_type    = CoreLookupType ("System.Runtime.InteropServices", "InAttribute");
 		out_attribute_type   = CoreLookupType ("System.Runtime.InteropServices", "OutAttribute");
 #if NET_2_0
+		// needed before any call susceptible to fail, as it is used during resolution
 		internals_visible_attr_type = CoreLookupType ("System.Runtime.CompilerServices", "InternalsVisibleToAttribute");
 
 		// this can fail if the user doesn't have an -r:System.dll
 		default_parameter_value_attribute_type = CoreLookupType ("System.Runtime.InteropServices", "DefaultParameterValueAttribute", true);
 #endif
 		typed_reference_type = CoreLookupType ("System", "TypedReference");
-		arg_iterator_type    = CoreLookupType ("System", "ArgIterator");
+		arg_iterator_type    = CoreLookupType ("System", "ArgIterator", true);
 		mbr_type             = CoreLookupType ("System", "MarshalByRefObject");
 		decimal_constant_attribute_type = CoreLookupType ("System.Runtime.CompilerServices", "DecimalConstantAttribute");
 
@@ -1083,7 +1084,7 @@ namespace Mono.CSharp {
 		struct_layout_attribute_type = CoreLookupType ("System.Runtime.InteropServices", "StructLayoutAttribute");
 		field_offset_attribute_type = CoreLookupType ("System.Runtime.InteropServices", "FieldOffsetAttribute");
 		security_attr_type = CoreLookupType ("System.Security.Permissions", "SecurityAttribute");
-		required_attr_type = CoreLookupType ("System.Runtime.CompilerServices", "RequiredAttributeAttribute");
+		required_attr_type = CoreLookupType ("System.Runtime.CompilerServices", "RequiredAttributeAttribute", true);
 		guid_attr_type = CoreLookupType ("System.Runtime.InteropServices", "GuidAttribute");
 		assembly_culture_attribute_type = CoreLookupType ("System.Reflection", "AssemblyCultureAttribute");
 		comimport_attr_type = CoreLookupType ("System.Runtime.InteropServices", "ComImportAttribute");
@@ -1097,7 +1098,7 @@ namespace Mono.CSharp {
 		fixed_buffer_attr_type = CoreLookupType ("System.Runtime.CompilerServices", "FixedBufferAttribute");
 		default_charset_type = CoreLookupType ("System.Runtime.InteropServices", "DefaultCharSetAttribute");
 		runtime_compatibility_attr_type = CoreLookupType ("System.Runtime.CompilerServices", "RuntimeCompatibilityAttribute");
-		type_forwarder_attr_type = CoreLookupType ("System.Runtime.CompilerServices", "TypeForwardedToAttribute");
+		type_forwarder_attr_type = CoreLookupType ("System.Runtime.CompilerServices", "TypeForwardedToAttribute", true);
 
 		//
 		// C# 3.0
