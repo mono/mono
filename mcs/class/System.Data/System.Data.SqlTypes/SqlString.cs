@@ -92,7 +92,10 @@ namespace System.Data.SqlTypes
 		{
 			this.value = data;
 			lcid = CultureInfo.CurrentCulture.LCID;
-			notNull = true;
+			if (value != null)
+				notNull = true;
+			else
+				notNull = false;
 			this.compareOptions = SqlCompareOptions.IgnoreCase |
 				SqlCompareOptions.IgnoreKanaType |
 				SqlCompareOptions.IgnoreWidth;
@@ -103,7 +106,10 @@ namespace System.Data.SqlTypes
 		{
 			this.value = data;
 			this.lcid = lcid;
-			notNull = true;
+			if (value != null)
+				notNull = true;
+			else
+				notNull = false;
 			this.compareOptions = SqlCompareOptions.IgnoreCase |
 				SqlCompareOptions.IgnoreKanaType |
 				SqlCompareOptions.IgnoreWidth;
@@ -120,7 +126,10 @@ namespace System.Data.SqlTypes
 			this.value = data;
 			this.lcid = lcid;
 			this.compareOptions = compareOptions;
-			notNull = true;
+			if (value != null)
+				notNull = true;
+			else
+				notNull = false;
 		}
 
 		// init with locale id, compare options, array of bytes data,
@@ -131,7 +140,10 @@ namespace System.Data.SqlTypes
 			this.value = encoding.GetString (data);
 			this.lcid = lcid;
 			this.compareOptions = compareOptions;
-			notNull = true;
+			if (value != null)
+				notNull = true;
+			else
+				notNull = false;
 		}
 
 		// init with locale id, compare options, array of bytes data,
@@ -150,7 +162,10 @@ namespace System.Data.SqlTypes
 			this.value = encoding.GetString (data, index, count);
 			this.lcid = lcid;
 			this.compareOptions = compareOptions;
-			notNull = true;
+			if (value != null)
+				notNull = true;
+			else
+				notNull = false;
 		}
 
 		#endregion // Constructors
@@ -569,18 +584,17 @@ namespace System.Data.SqlTypes
 			return new SqlString (x);
 		}
 
-		#if NET_2_0
+#if NET_2_0
                 public static SqlString Add (SqlString x, SqlString y)
                 {
-                  	return ( x + y);
-                                                                                                    
+                  	return (x + y);
                 }
 
 		public int CompareTo (SqlString value)
                 {
                 	return CompareSqlString (value);
                 }
-                #endif
+#endif
 
 
 

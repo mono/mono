@@ -1,3 +1,8 @@
+2007-07-26  Nagappan A  <anagappan@novell.com>
+
+	* SqlString.cs: notNull private member is now updated properly in
+	the constructure, based on the argument being passed.
+
 2007-07-24  Nagappan A  <anagappan@novell.com>
 
 	* SqlString.cs: Fixed compilation warning.
