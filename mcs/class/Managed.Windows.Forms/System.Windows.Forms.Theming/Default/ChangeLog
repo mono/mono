@@ -1,3 +1,8 @@
+2007-07-26  Everaldo Canuto  <ecanuto@novell.com>
+
+	* TabControlPainter.cs: Uses str_rect to draw text since it take in account
+	the image size. Fixes #81836.
+
 2007-07-20  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStripPainter.cs: Patch from Rolf.  We weren't painting a

@@ -424,10 +424,10 @@ namespace System.Windows.Forms.Theming.Default
 						str_rect.Width -= tab.ImageList.ImageSize.Width + 2;
 					}
 					dc.DrawString (page.Text, page.Font,
-						SystemBrushes.ControlText, 
-						bounds.Left + tab.Padding.X - 2, // drawstring adds some extra unwanted leading spaces, so trimming
-						bounds.Top + tab.Padding.Y,
+						SystemBrushes.ControlText,
+						str_rect, 
 						defaultFormatting);
+
 				}
 			} else if (page.Text != null) {
 				DrawItemState state = DrawItemState.None;
