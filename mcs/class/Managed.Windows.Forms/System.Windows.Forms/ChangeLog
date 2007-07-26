@@ -1,3 +1,27 @@
+2007-07-26  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* DataGridViewElement.cs: Initialize state.
+	* DataGridView.cs: Forward a few Mouse events to cells. Add
+	  GetRowInternal and GetCellInternal that doesn't unshare rows.
+	  Implement GetCellDisplayRectangle. HitTest: if the row is shared,
+	  don't use the index, but look it up. Add
+	  DataGridViewControlCollection.RemoveInternal to remove controls
+	  that Remove won't remove (scrollbars, edit control).
+	* DataGridViewColumn.cs: Initialize State correctly.
+	* DataGridViewColumnHeaderCell.cs, DataGridViewComboBoxCell.cs,
+	  DataGridViewHeaderCell.cs, DataGridViewRowHeaderCell.cs: Started
+	  implementing this.
+	* DataGridViewRowCollection.cs: Implemented shared rows.
+	* DataGridViewRow.cs: Throw exceptions as MS do.
+	* DataGridViewCell.cs: A few properties are implemented by a
+	  Get<Property> method, so move implementation there and remove the
+	  NIEX in the method. Add a bunch of OnXInternal that DataGridView
+	  calls when necessary.
+	* DataGridViewComboBoxEditingControl.cs: Remove a few NIEX'es that just
+	  complicates matters.
+	* DataGridViewCellCollection.cs: Add a GetCellInternal that doesn't
+	  unshare any rows.
+
 2007-07-25  Jonathan Pobst  <monkey@jpobst.com>
 
 	* UpDownBase.cs: We cannot override SetBoundsCore for 2.0, which was relayout-ing

@@ -75,24 +75,24 @@ namespace System.Windows.Forms {
 		}
 
 		public virtual void ApplyCellStyleToEditingControl (DataGridViewCellStyle dataGridViewCellStyle) {
-			throw new NotImplementedException();
+			
 		}
 
 		public virtual bool EditingControlWantsInputKey (Keys keyData, bool dataGridViewWantsInputKey) {
 			// true if the specified key is a regular key that should be handled by the editing control; otherwise, false
-			throw new NotImplementedException();
+			return base.IsInputKey (keyData);
 		}
 
 		public virtual object GetEditingControlFormattedValue (DataGridViewDataErrorContexts context) {
-			throw new NotImplementedException();
+			return Text;
 		}
 
 		public virtual void PrepareEditingControlForEdit (bool selectAll) {
-			throw new NotImplementedException();
+			
 		}
 
 		protected override void OnSelectedIndexChanged (EventArgs e) {
-			throw new NotImplementedException();
+			base.OnSelectedIndexChanged (e);
 		}
 
 	}

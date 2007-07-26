@@ -71,6 +71,7 @@ namespace System.Windows.Forms {
 			dataPropertyName = string.Empty;
 			fillWeight = 100.0F;
 			sortMode = DataGridViewColumnSortMode.NotSortable;
+			SetState (DataGridViewElementStates.Visible);
 		}
 
 		public DataGridViewColumn (DataGridViewCell cellTemplate) : this () {
@@ -212,7 +213,9 @@ Example */
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DataGridViewColumnHeaderCell HeaderCell {
-			get { return headerCell; }
+			get {
+				return headerCell;
+			}
 			set {
 				if (headerCell != value) {
 					headerCell = value;

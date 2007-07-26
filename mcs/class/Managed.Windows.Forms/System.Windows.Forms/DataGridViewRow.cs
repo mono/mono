@@ -51,6 +51,8 @@ namespace System.Windows.Forms {
 			minimumHeight = 3;
 			height = -1;
 			headerCell = new DataGridViewRowHeaderCell();
+			accessibilityObject = new AccessibleObject ();
+			SetState (DataGridViewElementStates.Visible);
 		}
 
 		[Browsable (false)]
@@ -66,7 +68,12 @@ namespace System.Windows.Forms {
 
 		[DefaultValue (null)]
 		public override ContextMenuStrip ContextMenuStrip {
-			get { return contextMenuStrip; }
+			get {
+				if (IsShared)
+					throw new InvalidOperationException ("Operation cannot be performed on a shared row.");
+					
+				return contextMenuStrip;
+			}
 			set {
 				if (contextMenuStrip != value) {
 					contextMenuStrip = value;
@@ -100,7 +107,12 @@ namespace System.Windows.Forms {
 
 		[Browsable (false)]
 		public override bool Displayed {
-			get { return base.Displayed; }
+			get {
+				if (IsShared)
+					throw new InvalidOperationException ("Getting the Displayed property of a shared row is not a valid operation.");
+					
+				return base.Displayed;
+			}
 		}
 
 		[DefaultValue (0)]
@@ -113,7 +125,12 @@ namespace System.Windows.Forms {
 		[DefaultValue ("")]
 		[NotifyParentProperty (true)]
 		public string ErrorText {
-			get { return errorText; }
+			get {
+				if (IsShared)
+					throw new InvalidOperationException ("Operation cannot be performed on a shared row.");
+					
+				return errorText == null ? string.Empty : errorText;
+			}
 			set {
 				if (errorText != value) {
 					errorText = value;
@@ -126,7 +143,12 @@ namespace System.Windows.Forms {
 
 		[Browsable (false)]
 		public override bool Frozen {
-			get { return base.Frozen; }
+			get {
+				if (IsShared)
+					throw new InvalidOperationException ("Getting the Frozen property of a shared row is not a valid operation.");
+					
+				return base.Frozen;
+			}
 			set { base.Frozen = value; }
 		}
 
@@ -152,7 +174,7 @@ namespace System.Windows.Forms {
 					if (DefaultCellStyle != null && DefaultCellStyle.Font != null) {
 						return DefaultCellStyle.Font.Height + 9;
 					}
-					if (InheritedStyle != null && InheritedStyle.Font != null) {
+					if (Index >= 0 && InheritedStyle != null && InheritedStyle.Font != null) {
 						return InheritedStyle.Font.Height + 9;
 					}
 					return System.Windows.Forms.Control.DefaultFont.Height + 9;
@@ -174,6 +196,9 @@ namespace System.Windows.Forms {
 
 		public override DataGridViewCellStyle InheritedStyle {
 			get {
+				if (Index == -1)
+					throw new InvalidOperationException ("Getting the InheritedStyle property of a shared row is not a valid operation.");
+					
 				if (DataGridView == null) {
 					return DefaultCellStyle;
 				}
@@ -194,10 +219,16 @@ namespace System.Windows.Forms {
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public bool IsNewRow {
 			get {
-				if (DataGridView != null && DataGridView.Rows[DataGridView.Rows.Count - 1] == this) {
+				if (DataGridView != null && DataGridView.Rows[DataGridView.Rows.Count - 1] == this && DataGridView.NewRowIndex == Index) {
 					return true;
 				}
 				return false;
+			}
+		}
+
+		internal bool IsShared {
+			get {
+				return Index == -1 && DataGridView != null;
 			}
 		}
 
@@ -222,24 +253,31 @@ namespace System.Windows.Forms {
 		[DefaultValue (false)]
 		[NotifyParentProperty (true)]
 		public override bool ReadOnly {
-			get { return base.ReadOnly; }
+			get {
+				if (IsShared)
+					throw new InvalidOperationException ("Getting the ReadOnly property of a shared row is not a valid operation.");
+					
+				return base.ReadOnly;
+			}
 			set { base.ReadOnly = value; }
 		}
 
 		[NotifyParentProperty (true)]
 		public override DataGridViewTriState Resizable {
-			get { return base.Resizable; }
+			get {
+				if (IsShared)
+					throw new InvalidOperationException ("Getting the Resizable property of a shared row is not a valid operation.");
+					
+				return base.Resizable;
+			}
 			set { base.Resizable = value; }
 		}
 
 		public override bool Selected {
 			get {
-				if (Index == -1) {
-					throw new InvalidOperationException("The row is a shared row.");
-				}
-				if (DataGridView == null) {
-					throw new InvalidOperationException("The row has not been added to a DataGridView control.");
-				}
+				if (IsShared)
+					throw new InvalidOperationException ("Getting the Selected property of a shared row is not a valid operation.");
+					
 				return base.Selected;
 			}
 			set {
@@ -257,12 +295,22 @@ namespace System.Windows.Forms {
 		}
 
 		public override DataGridViewElementStates State {
-			get { return base.State; }
+			get {
+				if (IsShared)
+					throw new InvalidOperationException ("Getting the State property of a shared row is not a valid operation.");
+					
+				return base.State;
+			}
 		}
 
 		[Browsable (false)]
 		public override bool Visible {
-			get { return base.Visible; }
+			get {
+				if (IsShared)
+					throw new InvalidOperationException ("Getting the Visible property of a shared row is not a valid operation.");
+					
+				return base.Visible;
+			}
 			set {
 				if (IsNewRow && value == false) {
 					throw new InvalidOperationException("Cant make invisible a new row.");
@@ -403,6 +451,8 @@ namespace System.Windows.Forms {
 		{
 			base.SetDataGridView(dataGridView);
 			headerCell.SetDataGridView(dataGridView);
+			foreach (DataGridViewCell cell in cells)
+				cell.SetDataGridView (dataGridView);
 		}
 
 		internal override void SetState (DataGridViewElementStates state)

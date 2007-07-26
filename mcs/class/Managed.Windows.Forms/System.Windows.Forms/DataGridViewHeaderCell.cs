@@ -112,7 +112,7 @@ namespace System.Windows.Forms {
 
 		protected override object GetValue (int rowIndex)
 		{
-			throw new NotImplementedException();
+			return base.GetValue (rowIndex);
 		}
 
 		protected override bool MouseDownUnsharesRow (DataGridViewCellMouseEventArgs e)

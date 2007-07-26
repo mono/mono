@@ -54,6 +54,11 @@ namespace System.Windows.Forms {
 			set { Insert(index, value); }
 		}
 
+		internal DataGridViewCell GetCellInternal (int colIndex)
+		{
+			return (DataGridViewCell) base.List [colIndex];
+		}
+		
 		public DataGridViewCell this [string columnName] {
 			get {
 				foreach (DataGridViewCell cell in base.List) {

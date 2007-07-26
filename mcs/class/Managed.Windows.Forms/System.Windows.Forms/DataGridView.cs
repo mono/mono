@@ -648,10 +648,7 @@ namespace System.Windows.Forms {
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public Control EditingControl {
 			get {
-				if (currentCell == null || !currentCell.IsInEditMode) {
-					return null;
-				}
-				return (Control) Activator.CreateInstance(currentCell.EditType);
+				return editingControl;
 			}
 		}
 
@@ -1149,13 +1146,20 @@ namespace System.Windows.Forms {
 					return;
 
 				if (editingControl != null) {
-					// Can't use Controls.RemoveAt (editingControls), because that method
+					// Can't use Controls.Remove (editingControls), because that method
 					// is overriden to not remove the editing control.
-					Controls.RemoveAt (Controls.IndexOf (editingControl));
+					DataGridView.DataGridViewControlCollection ctrls = Controls as DataGridView.DataGridViewControlCollection;
+					if (ctrls != null) {
+						ctrls.RemoveInternal (editingControl);
+					} else {
+						Controls.Remove (editingControl);
+					}
 				}
 				
 				if (value != null)
-					Controls.Add (editingControl);
+					Controls.Add (value);
+
+				editingControl = value;
 			}
 		}
 
@@ -2080,11 +2084,48 @@ namespace System.Windows.Forms {
 			return result;
 		}
 
+		internal DataGridViewRow GetRowInternal (int rowIndex)
+		{
+			return Rows.SharedRow (rowIndex);
+		}
+
+		internal DataGridViewCell GetCellInternal (int colIndex, int rowIndex)
+		{
+			return GetRowInternal (rowIndex).Cells.GetCellInternal (colIndex);
+		}
+
 		public Rectangle GetCellDisplayRectangle (int columnIndex, int rowIndex, bool cutOverflow) {
 			if (columnIndex < 0 || columnIndex >= columns.Count) {
 				throw new ArgumentOutOfRangeException("Column index is out of range.");
 			}
-			throw new NotImplementedException();
+			
+			int x = 0, y = 0, w = 0, h = 0;
+			
+			if (ColumnHeadersVisible)
+				y = ColumnHeadersHeight;
+			
+			if (RowHeadersVisible)
+				x = RowHeadersWidth;
+				
+			for (int i = 0; i < Columns.Count; i++) {
+				if (i == columnIndex) {
+					w = columns [i].Width;
+					break;
+				}
+					
+				x += columns [i].Width;
+			}
+			
+			for (int i = 0; i < Rows.Count; i++) {
+				if (i == rowIndex) {
+					h = rows [i].Height;
+					break;
+				}
+				
+				y += rows [i].Height;
+			}
+			
+			return new Rectangle (x, y, w, h);
 		}
 
 		public virtual DataObject GetClipboardContent () {
@@ -2101,6 +2142,7 @@ namespace System.Windows.Forms {
 
 		public HitTestInfo HitTest (int x, int y) {
 			///////////////////////////////////////////////////////
+			//Console.WriteLine ("HitTest ({0}, {1})", x, y);
 			x += horizontalScrollingOffset;
 			y += verticalScrollingOffset;
 			int rowIndex = -1;
@@ -2113,6 +2155,9 @@ namespace System.Windows.Forms {
 					totalHeight += row.Height;
 					if (y <= totalHeight) {
 						rowIndex = row.Index;
+						if (rowIndex == -1) {
+							rowIndex = rows.SharedRowIndexOf (row);
+						}
 						break;
 					}
 					totalHeight++; // sumar el ancho de las lineas...
@@ -2503,6 +2548,10 @@ namespace System.Windows.Forms {
 
 		protected virtual void OnCellClick (DataGridViewCellEventArgs e)
 		{
+			DataGridViewCell cell = GetCellInternal (e.ColumnIndex, e.RowIndex);
+
+			cell.OnClickInternal (e);
+	
 			DataGridViewCellEventHandler eh = (DataGridViewCellEventHandler)(Events [CellClickEvent]);
 			if (eh != null)
 				eh (this, e);
@@ -2510,6 +2559,10 @@ namespace System.Windows.Forms {
 
 		protected virtual void OnCellContentClick (DataGridViewCellEventArgs e)
 		{
+			DataGridViewCell cell = GetCellInternal (e.ColumnIndex, e.RowIndex);
+
+			cell.OnContentClickInternal (e);
+			
 			DataGridViewCellEventHandler eh = (DataGridViewCellEventHandler)(Events [CellContentClickEvent]);
 			if (eh != null)
 				eh (this, e);
@@ -2517,6 +2570,10 @@ namespace System.Windows.Forms {
 
 		protected virtual void OnCellContentDoubleClick (DataGridViewCellEventArgs e)
 		{
+			DataGridViewCell cell = GetCellInternal (e.ColumnIndex, e.RowIndex);
+
+			cell.OnContentDoubleClickInternal (e);
+			
 			DataGridViewCellEventHandler eh = (DataGridViewCellEventHandler)(Events [CellContentDoubleClickEvent]);
 			if (eh != null)
 				eh (this, e);
@@ -2538,6 +2595,9 @@ namespace System.Windows.Forms {
 
 		protected virtual void OnCellDoubleClick (DataGridViewCellEventArgs e)
 		{
+			DataGridViewCell cell = GetCellInternal (e.ColumnIndex, e.RowIndex);
+
+			cell.OnDoubleClickInternal (e);
 			DataGridViewCellEventHandler eh = (DataGridViewCellEventHandler)(Events [CellDoubleClickEvent]);
 			if (eh != null)
 				eh (this, e);
@@ -2587,6 +2647,10 @@ namespace System.Windows.Forms {
 
 		protected virtual void OnCellMouseClick (DataGridViewCellMouseEventArgs e)
 		{
+			DataGridViewCell cell = GetCellInternal (e.ColumnIndex, e.RowIndex);
+
+			cell.OnMouseClickInternal (e);
+			
 			DataGridViewCellMouseEventHandler eh = (DataGridViewCellMouseEventHandler)(Events [CellMouseClickEvent]);
 			if (eh != null)
 				eh (this, e);
@@ -2594,6 +2658,10 @@ namespace System.Windows.Forms {
 
 		protected virtual void OnCellMouseDoubleClick (DataGridViewCellMouseEventArgs e)
 		{
+			DataGridViewCell cell = GetCellInternal (e.ColumnIndex, e.RowIndex);
+
+			cell.OnMouseDoubleClickInternal (e);
+			
 			DataGridViewCellMouseEventHandler eh = (DataGridViewCellMouseEventHandler)(Events [CellMouseDoubleClickEvent]);
 			if (eh != null)
 				eh (this, e);
@@ -2601,6 +2669,11 @@ namespace System.Windows.Forms {
 
 		protected virtual void OnCellMouseDown (DataGridViewCellMouseEventArgs e)
 		{
+
+			DataGridViewCell cell = GetCellInternal (e.ColumnIndex, e.RowIndex);
+
+			cell.OnMouseDownInternal (e);
+			
 			DataGridViewCellMouseEventHandler eh = (DataGridViewCellMouseEventHandler)(Events [CellMouseDownEvent]);
 			if (eh != null)
 				eh (this, e);
@@ -2608,6 +2681,10 @@ namespace System.Windows.Forms {
 
 		protected virtual void OnCellMouseEnter (DataGridViewCellEventArgs e)
 		{
+			DataGridViewCell cell = GetCellInternal (e.ColumnIndex, e.RowIndex);
+
+			cell.OnMouseEnterInternal (e.RowIndex);
+			
 			DataGridViewCellEventHandler eh = (DataGridViewCellEventHandler)(Events [CellMouseEnterEvent]);
 			if (eh != null)
 				eh (this, e);
@@ -2615,6 +2692,10 @@ namespace System.Windows.Forms {
 
 		protected virtual void OnCellMouseLeave (DataGridViewCellEventArgs e)
 		{
+			DataGridViewCell cell = GetCellInternal (e.ColumnIndex, e.RowIndex);
+
+			cell.OnMouseLeaveInternal (e.RowIndex);
+			
 			DataGridViewCellEventHandler eh = (DataGridViewCellEventHandler)(Events [CellMouseLeaveEvent]);
 			if (eh != null)
 				eh (this, e);
@@ -2622,6 +2703,10 @@ namespace System.Windows.Forms {
 
 		protected virtual void OnCellMouseMove (DataGridViewCellMouseEventArgs e)
 		{
+			DataGridViewCell cell = GetCellInternal (e.ColumnIndex, e.RowIndex);
+			
+			cell.OnMouseMoveInternal (e);
+		
 			DataGridViewCellMouseEventHandler eh = (DataGridViewCellMouseEventHandler)(Events [CellMouseMoveEvent]);
 			if (eh != null)
 				eh (this, e);
@@ -2629,6 +2714,10 @@ namespace System.Windows.Forms {
 
 		protected virtual void OnCellMouseUp (DataGridViewCellMouseEventArgs e)
 		{
+			DataGridViewCell cell = GetCellInternal (e.ColumnIndex, e.RowIndex);
+
+			cell.OnMouseUpInternal (e);
+			
 			DataGridViewCellMouseEventHandler eh = (DataGridViewCellMouseEventHandler)(Events [CellMouseUpEvent]);
 			if (eh != null)
 				eh (this, e);
@@ -3020,6 +3109,16 @@ namespace System.Windows.Forms {
 		{
 			base.OnMouseClick(e);
 			//Console.WriteLine("Mouse: Clicks: {0}; Delta: {1}; X: {2}; Y: {3};", e.Clicks, e.Delta, e.X, e.Y);
+			HitTestInfo hit = HitTest (e.X, e.Y);
+
+			switch (hit.Type) 
+			{
+			case DataGridViewHitTestType.Cell:
+				Rectangle display = GetCellDisplayRectangle (hit.ColumnIndex, hit.RowIndex, false);
+				OnCellMouseClick (new DataGridViewCellMouseEventArgs (hit.ColumnIndex, hit.RowIndex, e.X - display.X, e.Y - display.Y, e));
+				break;
+			
+			}
 		}
 
 		protected override void OnMouseDoubleClick (MouseEventArgs e)
@@ -3036,6 +3135,8 @@ namespace System.Windows.Forms {
 			if (hitTest.RowIndex < 0 || hitTest.ColumnIndex < 0) {
 				return;
 			}
+			Rectangle cellBounds = GetCellDisplayRectangle (hitTest.ColumnIndex, hitTest.RowIndex, false);
+			OnCellMouseDown (new DataGridViewCellMouseEventArgs (hitTest.ColumnIndex, hitTest.RowIndex, e.X - cellBounds.X, e.Y - cellBounds.Y, e));
 			OnCellClick(new DataGridViewCellEventArgs(hitTest.ColumnIndex, hitTest.RowIndex));
 			DataGridViewRow row = rows[hitTest.RowIndex];
 			DataGridViewCell cell = row.Cells[hitTest.ColumnIndex];
@@ -3089,6 +3190,25 @@ namespace System.Windows.Forms {
 		protected override void OnMouseMove (MouseEventArgs e)
 		{
 			base.OnMouseMove(e);
+			HitTestInfo hit = this.HitTest (e.X, e.Y);
+			
+			switch (hit.Type)
+			{
+			case DataGridViewHitTestType.Cell:
+				Rectangle display = GetCellDisplayRectangle (hit.ColumnIndex, hit.RowIndex, false);
+				OnCellMouseMove (new DataGridViewCellMouseEventArgs (hit.ColumnIndex, hit.RowIndex, e.X - display.X, e.Y - display.Y, e));
+				break;
+			case DataGridViewHitTestType.ColumnHeader:
+			case DataGridViewHitTestType.RowHeader:
+			case DataGridViewHitTestType.TopLeftHeader:
+			
+			case DataGridViewHitTestType.HorizontalScrollBar:
+			case DataGridViewHitTestType.VerticalScrollBar:
+			
+			
+			case DataGridViewHitTestType.None:
+				break;
+			}
 		}
 
 		protected override void OnMouseUp (MouseEventArgs e)
@@ -3168,19 +3288,40 @@ namespace System.Windows.Forms {
 						if (cell.ColumnIndex == col.Index) {
 							bounds.Width = col.Width;
 							cell.SetSize(new Size(bounds.Width, bounds.Height));
-							DataGridViewCellStyle style = cell.InheritedStyle;
-							if (cell == currentCell && cell.IsInEditMode) {
-								cell.InitializeEditingControl(cell.RowIndex, cell.FormattedValue, style);
-								cell.PositionEditingControl(true, true, bounds, e.ClipRectangle, style, false, false, (columns[currentCell.ColumnIndex].DisplayIndex == 0), (currentCell.RowIndex == 0));
+							DataGridViewCellStyle style;
+							if (cell.RowIndex == -1) {
+								style = DefaultCellStyle;
+							} else {
+								style = cell.InheritedStyle;
 							}
-							else {
+							if (cell == currentCell && cell.IsInEditMode) {
+								Type editType = cell.EditType;
+								if (editType != null) {
+									bool isCorrectType = EditingControlInternal != null && EditingControlInternal.GetType () == editType;
+									if (EditingControlInternal != null && !isCorrectType) {
+										EditingControlInternal = null;
+									}
+									if (EditingControlInternal == null)
+										EditingControlInternal = (Control) Activator.CreateInstance (editType);
+									cell.InitializeEditingControl(cell.RowIndex, cell.FormattedValue, style);
+									cell.PositionEditingControl(true, true, bounds, e.ClipRectangle, style, false, false, (columns[currentCell.ColumnIndex].DisplayIndex == 0), (currentCell.RowIndex == 0));
+									EditingControl.Visible = true;
+								}
+							} else {
+								object value, formattedValue; string errorText;
+								if (cell.RowIndex == -1) {
+									// TODO: Look up value if databound.
+									value = null; formattedValue = null; errorText = null;
+								} else {
+									value = cell.Value; formattedValue = cell.FormattedValue; errorText = cell.ErrorText;
+								}
 								DataGridViewAdvancedBorderStyle intermediateBorderStyle = (DataGridViewAdvancedBorderStyle) ((ICloneable)this.AdvancedCellBorderStyle).Clone();
 								DataGridViewAdvancedBorderStyle borderStyle = cell.AdjustCellBorderStyle(this.AdvancedCellBorderStyle, intermediateBorderStyle, true, true, j == 0, cell.RowIndex == 0);
-								OnCellFormatting(new DataGridViewCellFormattingEventArgs(cell.ColumnIndex, cell.RowIndex, cell.Value, cell.FormattedValueType, style));
-								DataGridViewCellPaintingEventArgs args = new DataGridViewCellPaintingEventArgs (this, e.Graphics, e.ClipRectangle, bounds, cell.RowIndex, cell.ColumnIndex, cell.State, cell.Value, cell.FormattedValue, cell.ErrorText, style, borderStyle, DataGridViewPaintParts.All);
+								OnCellFormatting(new DataGridViewCellFormattingEventArgs(cell.ColumnIndex, cell.RowIndex, value, cell.FormattedValueType, style));
+								DataGridViewCellPaintingEventArgs args = new DataGridViewCellPaintingEventArgs (this, e.Graphics, e.ClipRectangle, bounds, cell.RowIndex, cell.ColumnIndex, cell.State, value, formattedValue, errorText, style, borderStyle, DataGridViewPaintParts.All);
 								OnCellPainting(args);
 								if (!args.Handled) {
-									cell.InternalPaint(e.Graphics, e.ClipRectangle, bounds, cell.RowIndex, cell.State, cell.Value, cell.FormattedValue, cell.ErrorText, style, borderStyle, DataGridViewPaintParts.All);
+									cell.InternalPaint(e.Graphics, e.ClipRectangle, bounds, cell.RowIndex, cell.State, value, formattedValue, errorText, style, borderStyle, DataGridViewPaintParts.All);
 								}
 							}
 							bounds.X += bounds.Width;
@@ -3849,6 +3990,11 @@ namespace System.Windows.Forms {
 				if (value == owner.editingControl)
 					return;
 			
+				base.Remove (value);
+			}
+			
+			internal void RemoveInternal (Control value)
+			{
 				base.Remove (value);
 			}
 			

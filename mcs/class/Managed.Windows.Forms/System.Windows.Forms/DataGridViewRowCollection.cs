@@ -48,7 +48,7 @@ namespace System.Windows.Forms {
 				throw new ArgumentException("DataGridView is null.");
 			}
 			this.dataGridView = dataGridView;
-			list = new ArrayList();
+			list = new ArrayList ();
 		}
 
 		public int Count {
@@ -81,8 +81,16 @@ namespace System.Windows.Forms {
 
 		public DataGridViewRow this [int index] {
 			get {
-				// Accessing a System.Windows.Forms.DataGridViewRow with this indexer causes the row to become unshared. To keep the row shared, use the System.Windows.Forms.DataGridViewRowCollection.SharedRow method. For more information, see Best Practices for Scaling the Windows Forms DataGridView Control.
-				return (DataGridViewRow) list[index];
+				// Accessing a System.Windows.Forms.DataGridViewRow with this indexer causes the row to become unshared. 
+				// To keep the row shared, use the System.Windows.Forms.DataGridViewRowCollection.SharedRow method. 
+				// For more information, see Best Practices for Scaling the Windows Forms DataGridView Control.
+				DataGridViewRow row = (DataGridViewRow) list [index];
+				if (row.Index == -1) {
+					row = (DataGridViewRow) row.Clone ();
+					row.SetIndex (index);
+					list [index] = row;
+				}
+				return row;
 			}
 		}
 
@@ -103,23 +111,54 @@ namespace System.Windows.Forms {
 			return Add(o as DataGridViewRow);
 		}
 
-		public virtual int Add (DataGridViewRow dataGridViewRow)
+		internal int AddInternal (DataGridViewRow dataGridViewRow, bool sharable)
 		{
 			if (dataGridView.DataSource != null) {
-				throw new InvalidOperationException("DataSource of DataGridView is not null.");
+				throw new InvalidOperationException ("DataSource of DataGridView is not null.");
 			}
 			if (dataGridView.Columns.Count == 0) {
-				throw new InvalidOperationException("DataGridView has no columns.");
+				throw new InvalidOperationException ("DataGridView has no columns.");
 			}
-			dataGridViewRow.SetIndex(list.Count);
-			dataGridViewRow.SetDataGridView(dataGridView);
-			int result = list.Add(dataGridViewRow);
-			OnCollectionChanged(new CollectionChangeEventArgs(CollectionChangeAction.Add, dataGridViewRow));
+			int result = list.Add (dataGridViewRow);
+			if (sharable && CanBeShared (dataGridViewRow)) {
+				dataGridViewRow.SetIndex (-1);
+			} else {
+				dataGridViewRow.SetIndex (list.Count);
+			}
+			dataGridViewRow.SetDataGridView (dataGridView);
+
+			for (int i = 0; i < dataGridViewRow.Cells.Count; i++) {
+				dataGridViewRow.Cells [i].SetOwningColumn (dataGridView.Columns [i]);
+			}
+
+			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Add, dataGridViewRow));
 			if (raiseEvent) {
-				DataGridView.OnRowsAdded(new DataGridViewRowsAddedEventArgs(result, 1));
+				DataGridView.OnRowsAdded (new DataGridViewRowsAddedEventArgs (result, 1));
 			}
 			return result;
 		}
+
+		public virtual int Add (DataGridViewRow dataGridViewRow)
+		{
+			return AddInternal (dataGridViewRow, true);
+		}
+		
+		private bool CanBeShared (DataGridViewRow row)
+		{
+			foreach (DataGridViewCell cell in row.Cells) {
+				if (cell.Value != null)
+					return false;
+				
+				if (cell.ToolTipText != string.Empty)
+					return false;
+					
+				if (cell.ContextMenuStrip != null)
+					return false;
+			}	
+			
+			return true;
+		}
+		
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public virtual int Add (int count)
@@ -154,7 +193,7 @@ namespace System.Windows.Forms {
 			}
 			DataGridViewRow row = (DataGridViewRow)dataGridView.RowTemplateFull;
 			
-			int result = Add(row);
+			int result = AddInternal (row, false);
 			row.SetValues(values);
 			return result;
 		}
@@ -426,6 +465,11 @@ namespace System.Windows.Forms {
 		public DataGridViewRow SharedRow (int rowIndex)
 		{
 			return (DataGridViewRow) list[rowIndex];
+		}
+
+		internal int SharedRowIndexOf (DataGridViewRow row)
+		{
+			return list.IndexOf (row);
 		}
 
 		protected DataGridView DataGridView {

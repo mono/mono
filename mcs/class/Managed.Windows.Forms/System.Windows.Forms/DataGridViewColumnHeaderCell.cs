@@ -35,7 +35,8 @@ namespace System.Windows.Forms {
 	public class DataGridViewColumnHeaderCell : DataGridViewHeaderCell {
 
 		private SortOrder sortGlyphDirection = SortOrder.None;
-
+		private object header_text;
+		
 		public DataGridViewColumnHeaderCell () {
 		}
 
@@ -60,7 +61,16 @@ namespace System.Windows.Forms {
 		}
 
 		public override DataGridViewCellStyle GetInheritedStyle (DataGridViewCellStyle inheritedCellStyle, int rowIndex, bool includeColors) {
-			throw new NotImplementedException();
+			
+			DataGridViewCellStyle result;
+			
+			if (HasStyle) {
+				result = Style;
+			} else {
+				result = DataGridView.ColumnHeadersDefaultCellStyle;
+			}
+			
+			return result;			
 		}
 
 		public override string ToString () {
@@ -85,7 +95,13 @@ namespace System.Windows.Forms {
 		}
 
 		protected override object GetValue (int rowIndex) {
-			throw new NotImplementedException();
+			if (header_text != null)
+				return header_text;
+				
+			if (OwningColumn != null)
+				return OwningColumn.Name;
+			
+			return null;
 		}
 
 		protected override void Paint (Graphics graphics, Rectangle clipBounds, Rectangle cellBounds, int rowIndex, DataGridViewElementStates dataGridViewElementState, object value, object formattedValue, string errorText, DataGridViewCellStyle cellStyle, DataGridViewAdvancedBorderStyle advancedBorderStyle, DataGridViewPaintParts paintParts) {
@@ -95,7 +111,8 @@ namespace System.Windows.Forms {
 		}
 
 		protected override bool SetValue (int rowIndex, object value) {
-			throw new NotImplementedException();
+			header_text = value;
+			return true;
 		}
 
 		protected class DataGridViewColumnHeaderCellAccessibleObject : DataGridViewCellAccessibleObject {

@@ -46,7 +46,7 @@ namespace System.Windows.Forms {
 		private bool sorted;
 		private string valueMember;
 
-		private ComboBox editingControl;
+		private DataGridViewComboBoxEditingControl editingControl;
 
 		public DataGridViewComboBoxCell () : base() {
 			autoComplete = true;
@@ -183,11 +183,28 @@ namespace System.Windows.Forms {
 		}
 
 		public override void InitializeEditingControl (int rowIndex, object initialFormattedValue, DataGridViewCellStyle dataGridViewCellStyle) {
-			if (editingControl == null) {
-				editingControl = new ComboBox ();
-				editingControl.Text = initialFormattedValue == null ? string.Empty : initialFormattedValue.ToString ();
-			}
-			this.DataGridView.EditingControlInternal = editingControl;			
+			base.InitializeEditingControl (rowIndex, initialFormattedValue, dataGridViewCellStyle);
+			
+			editingControl = DataGridView.EditingControl as DataGridViewComboBoxEditingControl;
+			
+			if (editingControl == null)
+				return;
+			
+			// A simple way to check if the control has
+			// been initialized already.
+			if (editingControl.Items.Count > 0)
+				return;
+			
+			editingControl.DropDownStyle = ComboBoxStyle.DropDownList;
+			editingControl.Text = initialFormattedValue == null ? string.Empty : initialFormattedValue.ToString ();
+			editingControl.SelectedIndexChanged += new EventHandler (editingControl_SelectedIndexChanged);
+			editingControl.Items.Clear ();
+			editingControl.Items.AddRange (this.Items);		
+		}
+
+		void editingControl_SelectedIndexChanged (object sender, EventArgs e)
+		{
+			Value = editingControl.SelectedItem;
 		}
 
 		public override bool KeyEntersEditMode (KeyEventArgs e) {
@@ -244,11 +261,48 @@ namespace System.Windows.Forms {
 		}
 
 		protected override void OnMouseMove (DataGridViewCellMouseEventArgs e) {
+			//Console.WriteLine ("MouseMove (Location: {0}", e.Location);
 			base.OnMouseMove (e);
 		}
 
-		protected override void Paint (Graphics graphics, Rectangle clipBounds, Rectangle cellBounds, int rowIndex, DataGridViewElementStates elementeState, object value, object formattedValue, string errorText, DataGridViewCellStyle cellStyle, DataGridViewAdvancedBorderStyle advancedBorderStyle, DataGridViewPaintParts paintParts) {
-			throw new NotImplementedException();
+		protected override void Paint (Graphics graphics, Rectangle clipBounds, Rectangle cellBounds, 
+				int rowIndex, DataGridViewElementStates elementeState, object value, 
+				object formattedValue, string errorText, DataGridViewCellStyle cellStyle, DataGridViewAdvancedBorderStyle advancedBorderStyle, 
+				DataGridViewPaintParts paintParts) {
+			
+			
+			Rectangle button_area, text_area;
+			text_area = cellBounds;
+			button_area = CalculateButtonArea (cellBounds);
+			
+			graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (cellStyle.BackColor), cellBounds);
+			ThemeEngine.Current.CPDrawComboButton (graphics, button_area, ButtonState.Normal);
+			
+			string text;
+			if (formattedValue == null)
+				text = string.Empty;
+			else {
+				text = formattedValue.ToString ();
+			}
+			
+			graphics.DrawString (text, cellStyle.Font, ThemeEngine.Current.ResPool.GetSolidBrush (cellStyle.ForeColor), text_area, StringFormat.GenericTypographic);
+		}
+
+		private Rectangle CalculateButtonArea (Rectangle cellBounds)
+		{
+			Rectangle button_area, text_area;
+			int border = ThemeEngine.Current.Border3DSize.Width;
+			const int button_width = 16;
+
+			text_area = cellBounds;
+
+			button_area = cellBounds;
+			button_area.X = text_area.Right - button_width - border;
+			button_area.Y = text_area.Y + border;
+			button_area.Width = button_width;
+			button_area.Height = text_area.Height - 2 * border;
+			
+			return button_area;
 		}
 
 		[ListBindable (false)]
