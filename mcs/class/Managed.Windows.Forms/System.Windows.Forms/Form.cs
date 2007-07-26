@@ -1707,9 +1707,13 @@ namespace System.Windows.Forms {
 				// Cannot use Activate(), it has a check for the current active window...
 				XplatUI.Activate(owner.window.Handle);
 			}
-
+			
 			if (IsHandleCreated) {
-				DestroyHandle ();
+				// All CommonDialogs assume the form is still alive after a ShowDialog,
+				// so don't destroy the handle in this case. Fix for #82187.
+				if (!(this is CommonDialog.DialogForm)) {
+					DestroyHandle ();
+				}
 			}
 
 			if (DialogResult == DialogResult.None) {

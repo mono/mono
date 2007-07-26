@@ -1,3 +1,8 @@
+2007-07-26  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+	[Backport to 1-2-5]
+	* Form.cs: ShowDialog: don't destroy handles if the dialog is a common
+	  dialog. Fixes #82187.
+
 2007-07-25  Jonathan Pobst  <monkey@jpobst.com>
 	[Backport to 1-2-5]
 	* UpDownBase.cs: We cannot override SetBoundsCore for 2.0, which was relayout-ing
