@@ -99,7 +99,6 @@ namespace System.Data.Common {
 		protected abstract DbCommand CreateDbCommand ();
 
 #if NET_2_0 && !TARGET_JVM
-		[MonoTODO]
 		public virtual void EnlistTransaction (Transaction transaction)
 		{
 			throw new NotSupportedException ();                        

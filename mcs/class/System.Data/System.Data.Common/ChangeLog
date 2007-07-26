@@ -1,3 +1,7 @@
+2007-07-26  Nagappan A  <anagappan@novell.com>
+
+	* DbConnection.cs: Removed bogus TODO.
+
 2007-07-22  Nagappan A  <anagappan@novell.com>
 
 	* DbConnection.cs: 2.0 missing features.
