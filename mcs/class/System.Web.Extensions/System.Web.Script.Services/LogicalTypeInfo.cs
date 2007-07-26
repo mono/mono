@@ -112,13 +112,18 @@ namespace System.Web.Script.Services
 				string paramMap = GenerateParameters (true);
 				string paramList = GenerateParameters (false);
 
-				if (isPrototype)
+				if (isPrototype){
+#if TARGET_J2EE
+					string pathInfo = MethodName + ".invoke";
+#else
+					string pathInfo = MethodName;
+#endif
 					proxy.AppendFormat (
 @"
 {1}:function({4}succeededCallback, failedCallback, userContext) {{
-return this._invoke({0}.get_path(), '{1}',{2},{{{3}}},succeededCallback,failedCallback,userContext); }}",
-					service, MethodName, useHttpGet, paramMap, paramList);
-
+return this._invoke({0}.get_path(), '{5}',{2},{{{3}}},succeededCallback,failedCallback,userContext); }}",
+					service, MethodName, useHttpGet, paramMap, paramList, pathInfo);
+				}
 				else
 					proxy.AppendFormat (
 @"
@@ -261,7 +266,9 @@ this._failed = null;
 
 				for (int j = 0; j < gstas.Length; j++) {
 					if (!gtc && !gstas [j].Type.IsEnum) {
-						proxy.Append (@"var gtc = Sys.Net.WebServiceProxy._generateTypedConstructor;");
+						proxy.Append (
+@"
+var gtc = Sys.Net.WebServiceProxy._generateTypedConstructor;");
 						gtc = true;
 					}
 					GenerateScript (proxy, gstas [j]);

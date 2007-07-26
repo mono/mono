@@ -706,7 +706,12 @@ namespace System.Web.UI
 				RegisterClientScriptBlock (this, typeof (ScriptManager), url, logicalTypeInfo.Proxy, true);
 			}
 			else {
-				string url = String.Concat (ResolveClientUrl (serviceReference.Path), "/js");
+#if TARGET_J2EE
+				string pathInfo = "/js.invoke";
+#else
+				string pathInfo = "/js";
+#endif
+				string url = String.Concat (ResolveClientUrl (serviceReference.Path), pathInfo);
 				RegisterClientScriptInclude (this, typeof (ScriptManager), url, url);
 			}
 		}
