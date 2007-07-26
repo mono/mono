@@ -1,3 +1,7 @@
+2007-07-25  Jb Evain  <jbevain@novell.com>
+
+	* smcs: add a project of its own for the 2.1 compiler.
+
 2007-07-11  Jb Evain  <jbevain@novell.com>
 
 	* Makefile: work on the 2.1 profile.
