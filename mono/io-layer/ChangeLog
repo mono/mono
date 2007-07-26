@@ -1,3 +1,20 @@
+2007-07-26  Dick Porter  <dick@ximian.com>
+
+	* handles-private.h: 
+	* thread-private.h: 
+	* handles.h: 
+	* critical-sections.c: 
+	* handles.c: 
+	* critical-section-private.h:
+	* error.h: 
+	* threads.c: 
+	* error.c: Clean up TLS and pthreads structures.  Finishes off bug
+	78739.
+
+	* collection.c (collection_thread): Exit the collection thread if
+	the io-layer has been cleaned up.
+
+	* mono-mutex.h (mono_mutexattr_destroy): Add this define too
 
 Mon Jul 23 10:40:35 CEST 2007 Paolo Molaro <lupus@ximian.com>
 

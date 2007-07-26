@@ -1,3 +1,8 @@
+2007-07-26  Dick Porter  <dick@ximian.com>
+
+	* appdomain.c (mono_runtime_cleanup): Invoke io-layer cleanup
+	routine on non-windows platforms, as I've not managed to think of
+	a non-kludgy way of doing this.  Finishes off bug 78739.
 
 Wed Jul 25 18:06:33 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
