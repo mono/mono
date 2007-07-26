@@ -21,6 +21,10 @@ CLEAN_FILES = y.output *.exe *.mdb
 cs-parser.cs: cs-parser.jay $(topdir)/jay/skeleton.cs
 	$(topdir)/jay/jay -ctv < $(topdir)/jay/skeleton.cs $< > jay-tmp.out && mv jay-tmp.out $@
 
+ifeq (net_2_1, $(PROFILE))
+NO_INSTALL = yes
+endif
+
 include ../build/executable.make
 
 VALID_PROFILE := $(filter net_2_0_bootstrap net_2_0 net_2_1, $(PROFILE))
@@ -30,13 +34,6 @@ all-local: gmcs.exe
 gmcs.exe: $(PROGRAM)
 	cp -p $< $@
 	test ! -f $<.mdb || cp -p $<.mdb $@.mdb
-endif
-
-ifeq (net_2_1, $(PROFILE))
-install-local:
-	-mkdir $(mono_libdir)/mono/2.1/
-	rm -f $(mono_libdir)/mono/2.1/gmcs.exe
-	ln -s $(mono_libdir)/mono/2.0/gmcs.exe $(mono_libdir)/mono/2.1
 endif
 
 clean-local: clean-net_2_0_bootstrap

@@ -1,3 +1,7 @@
+2007-07-25  Jb Evain  <jbevain@novell.com>
+
+	* Makefile: don't install on net_2_1.
+
 2007-07-18  Marek Safar  <marek.safar@gmail.com>
 
 	* cs-parser.jay: Use ImplicitLambdaParameter everywhere.
