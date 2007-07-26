@@ -3983,5 +3983,34 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (10, dt.Rows.Count, "Table");
 			Assert.AreEqual (2, dv.Count, "View");
 		}
+
+		[Test]
+		public void Bug82109 ()
+		{
+			DataTable tbl = new DataTable ();
+			tbl.Columns.Add ("data", typeof (DateTime));
+			DataRow row = tbl.NewRow ();
+			row ["Data"] = new DateTime (2007, 7, 1);
+			tbl.Rows.Add (row);
+
+			CultureInfo currentCulture = Thread.CurrentThread.CurrentCulture;
+			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+			Select (tbl);
+
+			Thread.CurrentThread.CurrentCulture = new CultureInfo ("it-IT");
+			Select (tbl);
+
+			Thread.CurrentThread.CurrentCulture = new CultureInfo ("fr-FR");
+			Select (tbl);
+			Thread.CurrentThread.CurrentCulture = currentCulture;
+		}
+		private static void Select (DataTable tbl)
+		{
+			tbl.Locale = CultureInfo.InvariantCulture;
+			string filter = string.Format ("Data = '{0}'", new DateTime (2007, 7,
+										     1).ToString (CultureInfo.InvariantCulture));
+			DataRow [] rows = tbl.Select (filter);
+			Assert.AreEqual (1, rows.Length, "Incorrect number of rows found");
+		}
 	}
 }

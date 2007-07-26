@@ -1,3 +1,8 @@
+2007-07-26  Nagappan A  <anagappan@novell.com>
+
+	* DataTableTest.cs (Bug82109): Should always parse the object of
+	type DateTime in InvariantCulture CultureInfo, Fixes Bug # 82109.
+
 2007-05-18  Chris Toshok  <toshok@ximian.com>
 
 	* DataViewTest.cs (DefaultColumnNameAddListChangedTest): new test
