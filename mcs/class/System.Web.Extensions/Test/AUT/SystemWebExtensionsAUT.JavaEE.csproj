@@ -73,7 +73,7 @@
           <NTLMAuthentication>False</NTLMAuthentication>
         </WebProjectProperties>
       </FlavorProperties>
-      <UserProperties REFS-RefInfo-System-Web-Extensions="j2il:" REFS-JarPath-System-Web-Extensions="..\..\..\bin\Debug_Java\System.Web.Extensions.jar" REFS-RefInfo-system-web-mobile="repository:vmw:framework:2.0" REFS-JarPath-system-web-mobile="" REFS-RefInfo-system-enterpriseservices="repository:vmw:framework:2.0" REFS-JarPath-system-enterpriseservices="" REFS-RefInfo-system-web-services="repository:vmw:framework:2.0" REFS-JarPath-system-web-services="" REFS-RefInfo-system-configuration="repository:vmw:framework:2.0" REFS-JarPath-system-configuration="" REFS-RefInfo-system-xml="repository:vmw:framework:2.0" REFS-JarPath-system-xml="" REFS-RefInfo-system-web="repository:vmw:framework:2.0" REFS-JarPath-system-web="" REFS-RefInfo-system-drawing="repository:vmw:framework:2.0" REFS-JarPath-system-drawing="" REFS-RefInfo-system-data="repository:vmw:framework:2.0" REFS-JarPath-system-data="" REFS-RefInfo-system="repository:vmw:framework:2.0" REFS-JarPath-system="" REFS-JarPath-mainsoft-web-aspnetconfig="..\..\..\..\..\..\..\..\Program Files\Mainsoft for Java EE\java_refs\framework\WSAT\Mainsoft.Web.AspnetConfig.jar" REFS-RefInfo-mainsoft-web-aspnetconfig="repository:vmw:framework:2.0" />
+      <UserProperties REFS-RefInfo-System-Web-Extensions="repository:vmw:framework:2.0" REFS-JarPath-System-Web-Extensions="" REFS-RefInfo-system-web-mobile="repository:vmw:framework:2.0" REFS-JarPath-system-web-mobile="" REFS-RefInfo-system-enterpriseservices="repository:vmw:framework:2.0" REFS-JarPath-system-enterpriseservices="" REFS-RefInfo-system-web-services="repository:vmw:framework:2.0" REFS-JarPath-system-web-services="" REFS-RefInfo-system-configuration="repository:vmw:framework:2.0" REFS-JarPath-system-configuration="" REFS-RefInfo-system-xml="repository:vmw:framework:2.0" REFS-JarPath-system-xml="" REFS-RefInfo-system-web="repository:vmw:framework:2.0" REFS-JarPath-system-web="" REFS-RefInfo-system-drawing="repository:vmw:framework:2.0" REFS-JarPath-system-drawing="" REFS-RefInfo-system-data="repository:vmw:framework:2.0" REFS-JarPath-system-data="" REFS-RefInfo-system="repository:vmw:framework:2.0" REFS-JarPath-system="" REFS-JarPath-mainsoft-web-aspnetconfig="..\..\..\..\..\..\..\..\Program Files\Mainsoft for Java EE\java_refs\framework\WSAT\Mainsoft.Web.AspnetConfig.jar" REFS-RefInfo-mainsoft-web-aspnetconfig="repository:vmw:framework:2.0" />
     </VisualStudio>
   </ProjectExtensions>
   <ItemGroup>
@@ -110,7 +110,6 @@
     <Content Include="CustomEvents\Default.aspx" />
     <Content Include="CustomEvents\Question.js" />
     <Content Include="CustomEvents\Section.js" />
-    <Content Include="DynamicScriptReferencesHowTo\Default.aspx" />
     <Content Include="EnhancingJavaScript\Enumeration.aspx" />
     <Content Include="EnhancingJavaScript\Enumeration.js" />
     <Content Include="EnhancingJavaScript\Inheritance.aspx" />
@@ -641,6 +640,14 @@
     <Content Include="UpdatePanelTutorialCustom\images\wheel_large.gif" />
     <Content Include="UpdatePanelTutorialCustom\ShowProducts.aspx" />
     <Content Include="UpdatePanelTutorialIntro1\default.aspx" />
+    <Content Include="UpdatePanelTutorialIntro2\default.aspx" />
+    <Content Include="UpdatePanelTutorialIntro3\default.aspx" />
+    <Content Include="UpdatePanelTutorialIntro4\default.aspx" />
+    <Content Include="UpdatePanelTutorialIntro5\default.aspx" />
+    <Content Include="UpdatePanelTutorialIntro8\default.aspx" />
+    <Content Include="UpdatePanelTutorialIntro9\default.aspx" />
+    <Content Include="UpdatePanelTutorialNested\NestedPanels.aspx" />
+    <Content Include="UpdatePanelTutorialSibling\DataEntry.aspx" />
     <Content Include="UpdatePanelUserControlTutorial1\Default.aspx" />
     <Content Include="UpdatePanelUserControlTutorial1\EmployeeInfo.ascx" />
     <Content Include="UpdatePanelUserControlTutorial1\EmployeeList.ascx" />
@@ -669,5 +676,68 @@
     <EmbeddedResource Include="LocalizingClientResourcesWalkthrough\VerificationResources.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="DynamicScriptReferencesHowTo\DynamicScriptReferences1.aspx" />
+    <Content Include="DynamicScriptReferencesHowTo\DynamicScriptReferences2.aspx" />
+    <Content Include="DynamicScriptReferencesHowTo\Scripts\Scripts.debug.js" />
+    <Content Include="DynamicScriptReferencesHowTo\Scripts\Scripts.js" />
+    <Content Include="Selenium\QuickStarts\DynamicScriptReferencesHowTo\DynamicScriptReferences1.html" />
+    <Content Include="Selenium\QuickStarts\DynamicScriptReferencesHowTo\DynamicScriptReferences2.html" />
+    <Content Include="Selenium\QuickStarts\EnhancingJavaScript\Enumeration.html" />
+    <Content Include="Selenium\QuickStarts\EnhancingJavaScript\Inheritance.html" />
+    <Content Include="Selenium\QuickStarts\EnhancingJavaScript\Interface.html" />
+    <Content Include="Selenium\QuickStarts\EnhancingJavaScript\Namespace.html" />
+    <Content Include="Selenium\QuickStarts\EnhancingJavaScript\Reflection.html" />
+    <Content Include="Selenium\QuickStarts\ErrorTypeExtensions\ErrorArgumentNullSampleCSharp.html" />
+    <Content Include="Selenium\QuickStarts\ErrorTypeExtensions\ErrorCreateSampleCSharp.html" />
+    <Content Include="Selenium\QuickStarts\ExtenderControlTutorial1\Default.html" />
+    <Content Include="Selenium\QuickStarts\IScriptControlTutorial1\Default.html" />
+    <Content Include="Selenium\QuickStarts\LocalizingClientResourcesWalkthrough\Default.html" />
+    <Content Include="Selenium\QuickStarts\LocalizingDateTutorial1\localeFormat.html" />
+    <Content Include="Selenium\QuickStarts\LocalizingDateTutorial2\localeFormat.html" />
+    <Content Include="Selenium\QuickStarts\LocalizingDateTutorial3\localeFormat.html" />
+    <Content Include="Selenium\QuickStarts\LocalizingDateTutorial4\localeFormat.html" />
+    <Content Include="Selenium\QuickStarts\PartialPageRenderingOverview\PartialPageRenderingOverviewCS.html" />
+    <Content Include="Selenium\QuickStarts\PartialPageRenderingOverview\PartialPageRenderingOverviewSyntaxCS.html" />
+    <Content Include="Selenium\QuickStarts\QuickStartTestSuite.html" />
+    <Content Include="Selenium\QuickStarts\ResourcesInScriptFile\Default.html" />
+    <Content Include="Selenium\QuickStarts\StringBuilder\StringBuilderOverviewSample.html" />
+    <Content Include="Selenium\QuickStarts\Sys.Application\Default.html" />
+    <Content Include="Selenium\QuickStarts\Sys.CultureInfo.CurrentCulture.dateTimeFormat\Default.html" />
+    <Content Include="Selenium\QuickStarts\Sys.CultureInfo.CurrentCulture.numberFormat\Default.html" />
+    <Content Include="Selenium\QuickStarts\Sys.Debug\Default.html" />
+    <Content Include="Selenium\QuickStarts\Sys.EventHandlerList\Default.html" />
+    <Content Include="Selenium\QuickStarts\Sys.Net.CallWebServiceMethods\CallWebServiceMethods.html" />
+    <Content Include="Selenium\QuickStarts\Sys.Net.ConnectingEndPoints\ConnectingEndPoints.html" />
+    <Content Include="Selenium\QuickStarts\Sys.Net.ErrorHandlingTutorial\WebServiceMethodError.html" />
+    <Content Include="Selenium\QuickStarts\Sys.Net.ExchangeComplexTypes\Default.html" />
+    <Content Include="Selenium\QuickStarts\Sys.Net.JsonSerialization\ClientDeserializeServerSerialize.html" />
+    <Content Include="Selenium\QuickStarts\Sys.Net.JsonSerialization\ClientSerializeServerDeserialize.html" />
+    <Content Include="Selenium\QuickStarts\Sys.Net.MultipleCallers\multiplecallers.html" />
+    <Content Include="Selenium\QuickStarts\Sys.Net.PageMethod\PageMethod.html" />
+    <Content Include="Selenium\QuickStarts\Sys.Net.PassComplexType\Default.html" />
+    <Content Include="Selenium\QuickStarts\Sys.Net.ReturnComplexType\Default.html" />
+    <Content Include="Selenium\QuickStarts\Sys.Net.ServerSupport\Default.html" />
+    <Content Include="Selenium\QuickStarts\Sys.Net.ServerTime\ServerTime.html" />
+    <Content Include="Selenium\QuickStarts\Sys.Net.SimpleWebService\SimpleWebService.html" />
+    <Content Include="Selenium\QuickStarts\Sys.Net.UsingProxyClass\default.html" />
+    <Content Include="Selenium\QuickStarts\Sys.Net.WebRequestManager\WebRequestManager.html" />
+    <Content Include="Selenium\QuickStarts\Sys.Net.WebRequest\webrequest.html" />
+    <Content Include="Selenium\QuickStarts\Sys.Net.WebServiceGenerics\default.html" />
+    <Content Include="Selenium\QuickStarts\Sys.Net.WebServiceProxy\WebServiceProxy.html" />
+    <Content Include="Selenium\QuickStarts\Sys.Net.XmlHttpExecutor\XmlHttpExecutor.html" />
+    <Content Include="Selenium\Sys.WebForms\PageRequestManager\PageRequestManagerTestSuite.html" />
+    <Content Include="Selenium\Sys.WebForms\PageRequestManager\TestClientPageLifecycleEvents.html" />
+    <Content Include="Selenium\Sys.WebForms\PageRequestManager\TestStopAsynchronousPostback.html" />
+    <Content Include="Selenium\System.Web.UI\UpdatePanel\CallCloseExplorer.html" />
+    <Content Include="Selenium\System.Web.UI\UpdatePanel\TestCalendarInCalendarOut.html" />
+    <Content Include="Selenium\System.Web.UI\UpdatePanel\TestNoScriptManager.html" />
+    <Content Include="Selenium\System.Web.UI\UpdatePanel\TestTwoScriptManagers.html" />
+    <Content Include="Selenium\System.Web.UI\UpdatePanel\TestUpdateButtonInside.html" />
+    <Content Include="Selenium\System.Web.UI\UpdatePanel\TestUpdateButtonOutside.html" />
+    <Content Include="Selenium\System.Web.UI\UpdatePanel\UpdatePanelTestSuite.html" />
+    <Content Include="UpdatePanelTutorialIntro8\MasterPage.master" />
+    <Content Include="UpdatePanelTutorialIntro9\MasterPage.master" />
   </ItemGroup>
 </Project>

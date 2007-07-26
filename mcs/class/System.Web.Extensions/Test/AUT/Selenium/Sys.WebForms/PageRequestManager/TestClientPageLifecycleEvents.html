@@ -1,6 +1,6 @@
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>TestClientPageLifecycleEvents</title>
 </head>
 <body>
@@ -20,7 +20,7 @@
 </tr>
 <tr>
 	<td>storeText</td>
-	<td>document.form1.elements[3]</td>
+	<td>LastUpdate</td>
 	<td>LastUpdateString</td>
 </tr>
 <tr>
@@ -39,13 +39,8 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyText</td>
-	<td>document.form1.elements[3]</td>
-	<td>*Last Update:*</td>
-</tr>
-<tr>
-	<td>verifyNotText</td>
-	<td>document.form1.elements[3]</td>
+	<td>waitForNotText</td>
+	<td>LastUpdate</td>
 	<td>${LastUpdateString}</td>
 </tr>
 <tr>
@@ -59,7 +54,7 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyText</td>
+	<td>waitForText</td>
 	<td>div1</td>
 	<td>exact:InitializeRequest:BeginRequest:PageLoading:PageLoaded:EndRequest:</td>
 </tr>
@@ -84,7 +79,7 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyText</td>
+	<td>waitForText</td>
 	<td>div1</td>
 	<td>exact:InitializeRequest:InitializeRequest:BeginRequest:BeginRequest:PageLoading:PageLoading:PageLoaded:PageLoaded:EndRequest:EndRequest:</td>
 </tr>
@@ -109,7 +104,7 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyText</td>
+	<td>waitForText</td>
 	<td>div1</td>
 	<td>exact:InitializeRequest:BeginRequest:PageLoading:PageLoaded:EndRequest:</td>
 </tr>
@@ -134,7 +129,7 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyText</td>
+	<td>waitForText</td>
 	<td>div1</td>
 	<td>No Events</td>
 </tr>

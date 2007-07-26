@@ -14,7 +14,7 @@
             <ContentTemplate>
                 <fieldset>
                     <legend>Update Panel1</legend>
-                    Last Update: <%= System.DateTime.Now.ToString() %>
+                    Last Update: <div id="LastUpdate"><%= System.DateTime.Now.ToString() %></div>
                     <br />
                     <asp:Button ID="Button1" Text="Update" runat="server" />
                 </fieldset>
