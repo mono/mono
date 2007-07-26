@@ -127,7 +127,7 @@ nunit-console2: script.in Makefile
 	mv $@.tmp $@
 
 smcs: smcs.in Makefile
-	$(REWRITE2_1) -e "s,@""exe_name@,gmcs,g" $(srcdir)/smcs.in > $@.tmp
+	$(REWRITE2_1) -e "s,@""exe_name@,smcs,g" $(srcdir)/smcs.in > $@.tmp
 	mv $@.tmp $@
 
 $(scripts_1_0): script.in Makefile
