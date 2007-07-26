@@ -1,3 +1,8 @@
+2007-07-26  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* ListItemCollection.cs: fixed LoadViewState, items restored from
+	viewstate were not saved, fixes bug #82192
+
 2007-07-24 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* BaseValidator.cs: All client scripts are rendered 

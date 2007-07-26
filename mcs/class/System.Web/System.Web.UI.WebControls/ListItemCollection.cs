@@ -286,7 +286,7 @@ namespace System.Web.UI.WebControls {
 				if (stateObj [i] != null)
 					item.LoadViewState (stateObj [i]);
 
-				items.Add (item);
+				Add (item);
 			}
 		}
 
