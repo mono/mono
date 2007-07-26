@@ -1,3 +1,8 @@
+2007-07-26  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Makefile.am: Added enum_types.il.
+	* enum_types.il: Test for all valid primitive types an enum basefield can have.
+
 2007-07-25  Jonathan Chambers  <joncham@gmail.com>
 
 	* Makefile.am: Added transparentproxy.cs.
