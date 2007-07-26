@@ -114,14 +114,6 @@ namespace System.Xml.Serialization
 				return;
 			}
 
-			if (ob.GetType ().IsArray && typeof (XmlNode).IsAssignableFrom (ob.GetType ().GetElementType ())) {
-				Writer.WriteStartElement (element, namesp);
-				foreach (XmlNode node in (IEnumerable) ob)
-					node.WriteTo (Writer);
-				Writer.WriteEndElement ();
-				return;
-			}
-
 			if (typeMap.TypeData.SchemaType == SchemaTypes.XmlSerializable)
 			{
 				WriteSerializable ((IXmlSerializable)ob, element, namesp, isNullable);
@@ -132,7 +124,15 @@ namespace System.Xml.Serialization
 
 			if (map == null) 
 			{
-				WriteTypedPrimitive (element, namesp, ob, true);
+				// bug #81539
+				if (ob.GetType ().IsArray && typeof (XmlNode).IsAssignableFrom (ob.GetType ().GetElementType ())) {
+					Writer.WriteStartElement (element, namesp);
+					foreach (XmlNode node in (IEnumerable) ob)
+						node.WriteTo (Writer);
+					Writer.WriteEndElement ();
+				}
+				else
+					WriteTypedPrimitive (element, namesp, ob, true);
 				return;
 			}
 

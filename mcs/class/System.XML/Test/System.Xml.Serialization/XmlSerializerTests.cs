@@ -1808,6 +1808,23 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
+		public void TestSerializeXmlNodeArray2 ()
+		{
+			XmlDocument doc = new XmlDocument ();
+			Serialize (new XmlNode[] { doc.CreateElement ("elem1"), doc.CreateElement ("elem2") }, typeof (XmlNode []));
+			Assert.AreEqual (Infoset (String.Format ("<ArrayOfXmlNode xmlns:xsd='{0}' xmlns:xsi='{1}'><XmlNode><elem1/></XmlNode><XmlNode><elem2/></XmlNode></ArrayOfXmlNode>", XmlSchema.Namespace, XmlSchema.InstanceNamespace)), WriterText);
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		[Category ("NotWorking")]
+		public void TestSerializeXmlNodeArrayIncludesAttribute ()
+		{
+			XmlDocument doc = new XmlDocument ();
+			Serialize (new XmlNode[] { doc.CreateAttribute ("at"), doc.CreateElement ("elem1"), doc.CreateElement ("elem2") }, typeof (XmlNode []));
+		}
+
+		[Test]
 		public void TestSerializeXmlElementArray ()
 		{
 			XmlDocument doc = new XmlDocument ();

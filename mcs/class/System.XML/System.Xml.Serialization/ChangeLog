@@ -1,3 +1,8 @@
+2007-07-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSerializationWriterInterpreter.cs : looks like XmlNode[]
+	  serialization is a complicated mess. bug #81539.
+
 2007-07-23  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* XmlTypeMapping.cs: fixed XmlSerializableMapping ctor, corrected when
