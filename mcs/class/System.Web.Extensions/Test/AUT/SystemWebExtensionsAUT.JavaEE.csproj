@@ -233,10 +233,6 @@
     <Content Include="StringBuilder\js\JavaScript\StringBuilderOverviewSample.aspx" />
     <Content Include="Sys.Application\Default.aspx" />
     <Content Include="Sys.Application\HighVis.js" />
-    <Content Include="Sys.Application\HoverButton.JS" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Sys.Application\Web.config" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="System.Web.UI.ScriptReference.Path\Default.aspx" />
@@ -680,8 +676,8 @@
   <ItemGroup>
     <Content Include="DynamicScriptReferencesHowTo\DynamicScriptReferences1.aspx" />
     <Content Include="DynamicScriptReferencesHowTo\DynamicScriptReferences2.aspx" />
-    <Content Include="DynamicScriptReferencesHowTo\Scripts\Scripts.debug.js" />
-    <Content Include="DynamicScriptReferencesHowTo\Scripts\Scripts.js" />
+    <EmbeddedResource Include="DynamicScriptReferencesHowTo\Scripts\Scripts.debug.js" />
+    <EmbeddedResource Include="DynamicScriptReferencesHowTo\Scripts\Scripts.js" />
     <Content Include="Selenium\QuickStarts\DynamicScriptReferencesHowTo\DynamicScriptReferences1.html" />
     <Content Include="Selenium\QuickStarts\DynamicScriptReferencesHowTo\DynamicScriptReferences2.html" />
     <Content Include="Selenium\QuickStarts\EnhancingJavaScript\Enumeration.html" />
@@ -727,6 +723,8 @@
     <Content Include="Selenium\QuickStarts\Sys.Net.WebServiceGenerics\default.html" />
     <Content Include="Selenium\QuickStarts\Sys.Net.WebServiceProxy\WebServiceProxy.html" />
     <Content Include="Selenium\QuickStarts\Sys.Net.XmlHttpExecutor\XmlHttpExecutor.html" />
+    <Content Include="Selenium\QuickStarts\Sys.UI.DomElement\default.html" />
+    <Content Include="Selenium\QuickStarts\Sys.UI.DomEvent\default.html" />
     <Content Include="Selenium\Sys.WebForms\PageRequestManager\PageRequestManagerTestSuite.html" />
     <Content Include="Selenium\Sys.WebForms\PageRequestManager\TestClientPageLifecycleEvents.html" />
     <Content Include="Selenium\Sys.WebForms\PageRequestManager\TestStopAsynchronousPostback.html" />
@@ -737,6 +735,7 @@
     <Content Include="Selenium\System.Web.UI\UpdatePanel\TestUpdateButtonInside.html" />
     <Content Include="Selenium\System.Web.UI\UpdatePanel\TestUpdateButtonOutside.html" />
     <Content Include="Selenium\System.Web.UI\UpdatePanel\UpdatePanelTestSuite.html" />
+    <Content Include="Sys.Application\HoverButton.js" />
     <Content Include="UpdatePanelTutorialIntro8\MasterPage.master" />
     <Content Include="UpdatePanelTutorialIntro9\MasterPage.master" />
   </ItemGroup>

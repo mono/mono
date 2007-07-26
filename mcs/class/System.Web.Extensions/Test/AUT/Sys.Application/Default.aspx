@@ -101,7 +101,8 @@ function listComponents() {
         var type = Object.getType(c[i]).getName();
         s += 'Item ' + i + ': id=' + id + ', type=' + type + '.<br />';
     }
-    div1.innerHTML = s;
+    //div1.innerHTML = s;
+    alert(s);
 }
     </script>
 
