@@ -85,6 +85,269 @@ namespace MonoTests.System.Windows.Forms {
 			Assert.AreEqual (40, row.MinimumHeight, "#D1");
 			Assert.AreEqual (40, row.Height, "#D2");
 		}
+		
+		
+		
+
+		[Test]
+		public void AddRow_Changes ()
+		{
+
+			using (DataGridView dgv = new DataGridView ()) {
+				DataGridViewColumn col = new DataGridViewComboBoxColumn ();
+				DataGridViewRow row = new DataGridViewRow ();
+				DataGridViewCell cell = new DataGridViewComboBoxCell ();
+				
+				Assert.IsNotNull (row.AccessibilityObject, "#A row.AccessibilityObject");
+				Assert.IsNotNull (row.Cells, "#A row.Cells");
+				Assert.IsNull (row.ContextMenuStrip, "#A row.ContextMenuStrip");
+				Assert.IsNull (row.DataBoundItem, "#A row.DataBoundItem");
+				Assert.IsNull (row.DataGridView, "#A row.DataGridView");
+				Assert.IsNotNull (row.DefaultCellStyle, "#A row.DefaultCellStyle");
+				Assert.IsNotNull (row.DefaultHeaderCellType, "#A row.DefaultHeaderCellType");
+				Assert.AreEqual (false, row.Displayed, "#A row.Displayed");
+				Assert.AreEqual (0, row.DividerHeight, "#A row.DividerHeight");
+				Assert.AreEqual (@"", row.ErrorText, "#A row.ErrorText");
+				Assert.AreEqual (false, row.Frozen, "#A row.Frozen");
+				Assert.AreEqual (true, row.HasDefaultCellStyle, "#A row.HasDefaultCellStyle");
+				Assert.IsNotNull (row.HeaderCell, "#A row.HeaderCell");
+				Assert.AreEqual (22, row.Height, "#A row.Height");
+				Assert.AreEqual (-1, row.Index, "#A row.Index");
+				try {
+					object zxf = row.InheritedStyle;
+					TestHelper.RemoveWarning (zxf);
+					Assert.Fail ("Expected 'System.InvalidOperationException', but no exception was thrown.", "#A row.InheritedStyle");
+				} catch (InvalidOperationException ex) {
+					Assert.AreEqual (@"Getting the InheritedStyle property of a shared row is not a valid operation.", ex.Message);
+				} catch (Exception ex) {
+					Assert.Fail ("Expected 'System.InvalidOperationException', got '" + ex.GetType ().FullName + "'.", "#A row.InheritedStyle");
+				}
+				Assert.AreEqual (false, row.IsNewRow, "#A row.IsNewRow");
+				Assert.AreEqual (3, row.MinimumHeight, "#A row.MinimumHeight");
+				Assert.AreEqual (false, row.ReadOnly, "#A row.ReadOnly");
+				Assert.AreEqual (DataGridViewTriState.NotSet, row.Resizable, "#A row.Resizable");
+				Assert.AreEqual (false, row.Selected, "#A row.Selected");
+				Assert.AreEqual (DataGridViewElementStates.Visible, row.State, "#A row.State");
+				Assert.IsNull (row.Tag, "#A row.Tag");
+				Assert.AreEqual (true, row.Visible, "#A row.Visible");
+
+				row.Cells.Add (cell);
+
+				Assert.IsNotNull (row.AccessibilityObject, "#B row.AccessibilityObject");
+				Assert.IsNotNull (row.Cells, "#B row.Cells");
+				Assert.IsNull (row.ContextMenuStrip, "#B row.ContextMenuStrip");
+				Assert.IsNull (row.DataBoundItem, "#B row.DataBoundItem");
+				Assert.IsNull (row.DataGridView, "#B row.DataGridView");
+				Assert.IsNotNull (row.DefaultCellStyle, "#B row.DefaultCellStyle");
+				Assert.IsNotNull (row.DefaultHeaderCellType, "#B row.DefaultHeaderCellType");
+				Assert.AreEqual (false, row.Displayed, "#B row.Displayed");
+				Assert.AreEqual (0, row.DividerHeight, "#B row.DividerHeight");
+				Assert.AreEqual (@"", row.ErrorText, "#B row.ErrorText");
+				Assert.AreEqual (false, row.Frozen, "#B row.Frozen");
+				Assert.AreEqual (true, row.HasDefaultCellStyle, "#B row.HasDefaultCellStyle");
+				Assert.IsNotNull (row.HeaderCell, "#B row.HeaderCell");
+				Assert.AreEqual (22, row.Height, "#B row.Height");
+				Assert.AreEqual (-1, row.Index, "#B row.Index");
+				try {
+					object zxf = row.InheritedStyle;
+					TestHelper.RemoveWarning (zxf);
+					Assert.Fail ("Expected 'System.InvalidOperationException', but no exception was thrown.", "#B row.InheritedStyle");
+				} catch (InvalidOperationException ex) {
+					Assert.AreEqual (@"Getting the InheritedStyle property of a shared row is not a valid operation.", ex.Message);
+				} catch (Exception ex) {
+					Assert.Fail ("Expected 'System.InvalidOperationException', got '" + ex.GetType ().FullName + "'.", "#B row.InheritedStyle");
+				}
+				Assert.AreEqual (false, row.IsNewRow, "#B row.IsNewRow");
+				Assert.AreEqual (3, row.MinimumHeight, "#B row.MinimumHeight");
+				Assert.AreEqual (false, row.ReadOnly, "#B row.ReadOnly");
+				Assert.AreEqual (DataGridViewTriState.NotSet, row.Resizable, "#B row.Resizable");
+				Assert.AreEqual (false, row.Selected, "#B row.Selected");
+				Assert.AreEqual (DataGridViewElementStates.Visible, row.State, "#B row.State");
+				Assert.IsNull (row.Tag, "#B row.Tag");
+				Assert.AreEqual (true, row.Visible, "#B row.Visible");
+				
+				dgv.Columns.Add (col);
+				
+				Assert.IsNotNull (row.AccessibilityObject, "#C row.AccessibilityObject");
+				Assert.IsNotNull (row.Cells, "#C row.Cells");
+				Assert.IsNull (row.ContextMenuStrip, "#C row.ContextMenuStrip");
+				Assert.IsNull (row.DataBoundItem, "#C row.DataBoundItem");
+				Assert.IsNull (row.DataGridView, "#C row.DataGridView");
+				Assert.IsNotNull (row.DefaultCellStyle, "#C row.DefaultCellStyle");
+				Assert.IsNotNull (row.DefaultHeaderCellType, "#C row.DefaultHeaderCellType");
+				Assert.AreEqual (false, row.Displayed, "#C row.Displayed");
+				Assert.AreEqual (0, row.DividerHeight, "#C row.DividerHeight");
+				Assert.AreEqual (@"", row.ErrorText, "#C row.ErrorText");
+				Assert.AreEqual (false, row.Frozen, "#C row.Frozen");
+				Assert.AreEqual (true, row.HasDefaultCellStyle, "#C row.HasDefaultCellStyle");
+				Assert.IsNotNull (row.HeaderCell, "#C row.HeaderCell");
+				Assert.AreEqual (22, row.Height, "#C row.Height");
+				Assert.AreEqual (-1, row.Index, "#C row.Index");
+				try {
+					object zxf = row.InheritedStyle;
+					TestHelper.RemoveWarning (zxf);
+					Assert.Fail ("Expected 'System.InvalidOperationException', but no exception was thrown.", "#C row.InheritedStyle");
+				} catch (InvalidOperationException ex) {
+					Assert.AreEqual (@"Getting the InheritedStyle property of a shared row is not a valid operation.", ex.Message);
+				} catch (Exception ex) {
+					Assert.Fail ("Expected 'System.InvalidOperationException', got '" + ex.GetType ().FullName + "'.", "#C row.InheritedStyle");
+				}
+				Assert.AreEqual (false, row.IsNewRow, "#C row.IsNewRow");
+				Assert.AreEqual (3, row.MinimumHeight, "#C row.MinimumHeight");
+				Assert.AreEqual (false, row.ReadOnly, "#C row.ReadOnly");
+				Assert.AreEqual (DataGridViewTriState.NotSet, row.Resizable, "#C row.Resizable");
+				Assert.AreEqual (false, row.Selected, "#C row.Selected");
+				Assert.AreEqual (DataGridViewElementStates.Visible, row.State, "#C row.State");
+				Assert.IsNull (row.Tag, "#C row.Tag");
+				Assert.AreEqual (true, row.Visible, "#C row.Visible");
+				
+				dgv.Rows.Add (row);
+
+				Assert.IsNotNull (row.AccessibilityObject, "#D row.AccessibilityObject");
+				Assert.IsNotNull (row.Cells, "#D row.Cells");
+				try {
+					object zxf = row.ContextMenuStrip;
+					TestHelper.RemoveWarning (zxf);
+					Assert.Fail ("Expected 'System.InvalidOperationException', but no exception was thrown.", "#D row.ContextMenuStrip");
+				} catch (InvalidOperationException ex) {
+					Assert.AreEqual (@"Operation cannot be performed on a shared row.", ex.Message);
+				} catch (Exception ex) {
+					Assert.Fail ("Expected 'System.InvalidOperationException', got '" + ex.GetType ().FullName + "'.", "#D row.ContextMenuStrip");
+				}
+				Assert.IsNull (row.DataBoundItem, "#D row.DataBoundItem");
+				Assert.IsNotNull (row.DataGridView, "#D row.DataGridView");
+				Assert.IsNotNull (row.DefaultCellStyle, "#D row.DefaultCellStyle");
+				Assert.IsNotNull (row.DefaultHeaderCellType, "#D row.DefaultHeaderCellType");
+				try {
+					object zxf = row.Displayed;
+					TestHelper.RemoveWarning (zxf);
+					Assert.Fail ("Expected 'System.InvalidOperationException', but no exception was thrown.", "#D row.Displayed");
+				} catch (InvalidOperationException ex) {
+					Assert.AreEqual (@"Getting the Displayed property of a shared row is not a valid operation.", ex.Message);
+				} catch (Exception ex) {
+					Assert.Fail ("Expected 'System.InvalidOperationException', got '" + ex.GetType ().FullName + "'.", "#D row.Displayed");
+				}
+				Assert.AreEqual (0, row.DividerHeight, "#D row.DividerHeight");
+				try {
+					object zxf = row.ErrorText;
+					TestHelper.RemoveWarning (zxf);
+					Assert.Fail ("Expected 'System.InvalidOperationException', but no exception was thrown.", "#D row.ErrorText");
+				} catch (InvalidOperationException ex) {
+					Assert.AreEqual (@"Operation cannot be performed on a shared row.", ex.Message);
+				} catch (Exception ex) {
+					Assert.Fail ("Expected 'System.InvalidOperationException', got '" + ex.GetType ().FullName + "'.", "#D row.ErrorText");
+				}
+				try {
+					object zxf = row.Frozen;
+					TestHelper.RemoveWarning (zxf);
+					Assert.Fail ("Expected 'System.InvalidOperationException', but no exception was thrown.", "#D row.Frozen");
+				} catch (InvalidOperationException ex) {
+					Assert.AreEqual (@"Getting the Frozen property of a shared row is not a valid operation.", ex.Message);
+				} catch (Exception ex) {
+					Assert.Fail ("Expected 'System.InvalidOperationException', got '" + ex.GetType ().FullName + "'.", "#D row.Frozen");
+				}
+				Assert.AreEqual (true, row.HasDefaultCellStyle, "#D row.HasDefaultCellStyle");
+				Assert.IsNotNull (row.HeaderCell, "#D row.HeaderCell");
+				Assert.AreEqual (22, row.Height, "#D row.Height");
+				Assert.AreEqual (-1, row.Index, "#D row.Index");
+				try {
+					object zxf = row.InheritedStyle;
+					TestHelper.RemoveWarning (zxf);
+					Assert.Fail ("Expected 'System.InvalidOperationException', but no exception was thrown.", "#D row.InheritedStyle");
+				} catch (InvalidOperationException ex) {
+					Assert.AreEqual (@"Getting the InheritedStyle property of a shared row is not a valid operation.", ex.Message);
+				} catch (Exception ex) {
+					Assert.Fail ("Expected 'System.InvalidOperationException', got '" + ex.GetType ().FullName + "'.", "#D row.InheritedStyle");
+				}
+				Assert.AreEqual (false, row.IsNewRow, "#D row.IsNewRow");
+				Assert.AreEqual (3, row.MinimumHeight, "#D row.MinimumHeight");
+				try {
+					object zxf = row.ReadOnly;
+					TestHelper.RemoveWarning (zxf);
+					Assert.Fail ("Expected 'System.InvalidOperationException', but no exception was thrown.", "#D row.ReadOnly");
+				} catch (InvalidOperationException ex) {
+					Assert.AreEqual (@"Getting the ReadOnly property of a shared row is not a valid operation.", ex.Message);
+				} catch (Exception ex) {
+					Assert.Fail ("Expected 'System.InvalidOperationException', got '" + ex.GetType ().FullName + "'.", "#D row.ReadOnly");
+				}
+				try {
+					object zxf = row.Resizable;
+					TestHelper.RemoveWarning (zxf);
+					Assert.Fail ("Expected 'System.InvalidOperationException', but no exception was thrown.", "#D row.Resizable");
+				} catch (InvalidOperationException ex) {
+					Assert.AreEqual (@"Getting the Resizable property of a shared row is not a valid operation.", ex.Message);
+				} catch (Exception ex) {
+					Assert.Fail ("Expected 'System.InvalidOperationException', got '" + ex.GetType ().FullName + "'.", "#D row.Resizable");
+				}
+				try {
+					object zxf = row.Selected;
+					TestHelper.RemoveWarning (zxf);
+					Assert.Fail ("Expected 'System.InvalidOperationException', but no exception was thrown.", "#D row.Selected");
+				} catch (InvalidOperationException ex) {
+					Assert.AreEqual (@"Getting the Selected property of a shared row is not a valid operation.", ex.Message);
+				} catch (Exception ex) {
+					Assert.Fail ("Expected 'System.InvalidOperationException', got '" + ex.GetType ().FullName + "'.", "#D row.Selected");
+				}
+				try {
+					object zxf = row.State;
+					TestHelper.RemoveWarning (zxf);
+					Assert.Fail ("Expected 'System.InvalidOperationException', but no exception was thrown.", "#D row.State");
+				} catch (InvalidOperationException ex) {
+					Assert.AreEqual (@"Getting the State property of a shared row is not a valid operation.", ex.Message);
+				} catch (Exception ex) {
+					Assert.Fail ("Expected 'System.InvalidOperationException', got '" + ex.GetType ().FullName + "'.", "#D row.State");
+				}
+				Assert.IsNull (row.Tag, "#D row.Tag");
+				try {
+					object zxf = row.Visible;
+					TestHelper.RemoveWarning (zxf);
+					Assert.Fail ("Expected 'System.InvalidOperationException', but no exception was thrown.", "#D row.Visible");
+				} catch (InvalidOperationException ex) {
+					Assert.AreEqual (@"Getting the Visible property of a shared row is not a valid operation.", ex.Message);
+				} catch (Exception ex) {
+					Assert.Fail ("Expected 'System.InvalidOperationException', got '" + ex.GetType ().FullName + "'.", "#D row.Visible");
+				}
+			}
+		}
+		
+		[Test]
+		public void InitialValues ()
+		{
+			DataGridViewRow row = new DataGridViewRow ();
+
+			Assert.IsNotNull (row.AccessibilityObject, "#A row.AccessibilityObject");
+			Assert.IsNotNull (row.Cells, "#A row.Cells");
+			Assert.IsNull (row.ContextMenuStrip, "#A row.ContextMenuStrip");
+			Assert.IsNull (row.DataBoundItem, "#A row.DataBoundItem");
+			Assert.IsNull (row.DataGridView, "#A row.DataGridView");
+			Assert.IsNotNull (row.DefaultCellStyle, "#A row.DefaultCellStyle");
+			Assert.IsNotNull (row.DefaultHeaderCellType, "#A row.DefaultHeaderCellType");
+			Assert.AreEqual (false, row.Displayed, "#A row.Displayed");
+			Assert.AreEqual (0, row.DividerHeight, "#A row.DividerHeight");
+			Assert.AreEqual (@"", row.ErrorText, "#A row.ErrorText");
+			Assert.AreEqual (false, row.Frozen, "#A row.Frozen");
+			Assert.AreEqual (true, row.HasDefaultCellStyle, "#A row.HasDefaultCellStyle");
+			Assert.IsNotNull (row.HeaderCell, "#A row.HeaderCell");
+			Assert.AreEqual (22, row.Height, "#A row.Height");
+			Assert.AreEqual (-1, row.Index, "#A row.Index");
+			try {
+				object zxf = row.InheritedStyle;
+				TestHelper.RemoveWarning (zxf);
+				Assert.Fail ("Expected 'System.InvalidOperationException', but no exception was thrown.", "#A row.InheritedStyle");
+			} catch (InvalidOperationException ex) {
+				Assert.AreEqual (@"Getting the InheritedStyle property of a shared row is not a valid operation.", ex.Message);
+			} catch (Exception ex) {
+				Assert.Fail ("Expected 'System.InvalidOperationException', got '" + ex.GetType ().FullName + "'.", "#A row.InheritedStyle");
+			}
+			Assert.AreEqual (false, row.IsNewRow, "#A row.IsNewRow");
+			Assert.AreEqual (3, row.MinimumHeight, "#A row.MinimumHeight");
+			Assert.AreEqual (false, row.ReadOnly, "#A row.ReadOnly");
+			Assert.AreEqual (DataGridViewTriState.NotSet, row.Resizable, "#A row.Resizable");
+			Assert.AreEqual (false, row.Selected, "#A row.Selected");
+			Assert.AreEqual (DataGridViewElementStates.Visible, row.State, "#A row.State");
+			Assert.IsNull (row.Tag, "#A row.Tag");
+			Assert.AreEqual (true, row.Visible, "#A row.Visible");
+		}
 	}
 }
 #endif

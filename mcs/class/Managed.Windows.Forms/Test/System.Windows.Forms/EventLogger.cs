@@ -18,11 +18,28 @@ using System.Reflection.Emit;
 
 namespace MonoTests.System.Windows.Forms
 {
-	class EventLogger
+	public class EventLogger
 	{
-		private ArrayList log;
+		public class EventLog : ArrayList
+		{
+			public bool PrintAdds = false;
+			
+			new public int Add (object obj)
+			{
+				if (PrintAdds)
+					Console.WriteLine ("{1} EventLog: {0}", obj, DateTime.Now.ToLongTimeString ());
+				return base.Add (obj);
+			}
+		}
+	
+		private EventLog log;
 		private object instance;
-		
+
+		public bool PrintAdds {
+			get { return log.PrintAdds; }
+			set { log.PrintAdds = value; }
+		}
+
 		// Tests if all the names in Names are in log with the order given in Names.
 		public bool ContainsEventsOrdered (params string [] Names) 
 		{
@@ -95,8 +112,8 @@ namespace MonoTests.System.Windows.Forms
 			if (item == null) {
 				throw new ArgumentNullException ("item");
 			}
-		
-			log = new ArrayList ();
+
+			log = new EventLog ();
 			
 			Type itemType = item.GetType ();
 			AssemblyName name = new AssemblyName ();
@@ -104,7 +121,7 @@ namespace MonoTests.System.Windows.Forms
 			AssemblyBuilder assembly = AppDomain.CurrentDomain.DefineDynamicAssembly (name, AssemblyBuilderAccess.RunAndSave);
 			ModuleBuilder module = assembly.DefineDynamicModule ("EventLoggerAssembly", "EventLoggerAssembly.dll");
 			
-			Type ListType = typeof (ArrayList);
+			Type ListType = log.GetType ();
 			
 			TypeBuilder logType = module.DefineType ("Logger");
 			FieldBuilder logField = logType.DefineField ("log", ListType, FieldAttributes.Public);

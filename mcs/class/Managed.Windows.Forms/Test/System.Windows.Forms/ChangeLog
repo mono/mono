@@ -1,3 +1,13 @@
+2007-07-26  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* DataGridViewRowTest.cs: Added AddRow_Changes, InitialValues.
+	* EventLogger.cs: Create a EventLog class, can print to the console
+	  events as they are raised.
+	* DataGridViewCellTest.cs: Added AddRow_Changes.
+	* TestHelper.cs: Add DumpObject, can be used to dump an object's values
+	  in a Assert.X (values) form.
+	* FormTest.cs: Added ChildFocused test (NotWorking).
+
 2007-07-25  Jonathan Pobst  <monkey@jpobst.com>
 
 	* LabelTest.cs: Test showing that changing the width or height when

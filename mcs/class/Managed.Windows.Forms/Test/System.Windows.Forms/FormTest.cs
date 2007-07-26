@@ -1803,6 +1803,36 @@ namespace MonoTests.System.Windows.Forms
 			}
 		}
 
+		[Category ("NotWorking")]
+		[Test]
+		public void ChildFocused ()
+		{
+			using (Form f = new TimeBombedForm ()) {
+				TreeView tv = new TreeView ();
+				EventLogger log = new EventLogger (tv);
+				tv.GotFocus += new EventHandler (tv_GotFocus);
+				f.Activated += new EventHandler (f_Activated);
+				f.Controls.Add (tv);
+				Console.WriteLine ("****************** STARTING ************************");
+				f.Show ();
+				Console.WriteLine ("****************** ENDED ************************");
+				
+				Console.WriteLine (log.EventsJoined ());
+				Assert.IsTrue (log.EventRaised ("GotFocus"), "#01");
+			}
+		}
+
+		void f_Activated (object sender, EventArgs e)
+		{
+			Console.WriteLine ("         ACTIVATED");
+			Console.WriteLine (Environment.StackTrace);
+		}
+
+		void tv_GotFocus (object sender, EventArgs e)
+		{
+			Console.WriteLine (Environment.StackTrace);
+		}
+
 		[Test]  // Bug #80773
 		public void DontSetOwnerOnShowDialogException ()
 		{

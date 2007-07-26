@@ -14,11 +14,182 @@ using System.Drawing;
 using System.Reflection;
 using System.Collections;
 using NUnit.Framework;
+using System.IO;
+using System.Diagnostics;
 
 namespace MonoTests.System.Windows.Forms
 {
 	public class TestHelper
 	{
+
+		public static void DumpObject (object obj, string objName)
+		{
+			DumpObject (obj, obj.GetType (), objName, "#", int.MaxValue);
+		}
+
+		public static void DumpObject (object obj, string objName, int maxrecursive)
+		{
+			DumpObject (obj, obj.GetType (), objName, "#", maxrecursive);
+		}
+
+		public static void DumpObject (object obj, Type objType, string objName, string prefix, int maxrecursive)
+		{
+			using (StringWriter writer = new StringWriter ()) {
+				DumpObject (obj, objType, objName, writer, 0, prefix, new ArrayList (), maxrecursive, 0);
+				Debug.WriteLine (writer.ToString ());
+				//return writer.ToString ();
+			}
+		}
+		
+		public static void DumpObject (object obj, Type objType, string objName, StringWriter writer, int tabs, string prefix, ArrayList done, int maxrecursive, int level)
+		{
+			if (obj == null)
+				return;
+
+			for (int j = 0; j < done.Count; j++) {
+				if (!(obj.GetType ().IsClass || obj.GetType ().IsInterface))
+					continue;
+				if (done [j] == obj)
+					return;
+			}
+			if (obj.GetType ().IsClass || obj.GetType ().IsInterface)
+				done.Add (obj);
+			
+			
+			PropertyInfo [] properties = objType.GetProperties (BindingFlags.Public | BindingFlags.Instance);
+			FieldInfo [] fields = objType.GetFields (BindingFlags.Public | BindingFlags.Instance);
+			
+			Hashtable values = new Hashtable ();
+			Hashtable members = new Hashtable ();
+			
+			foreach (PropertyInfo property in properties) {
+				MethodInfo getter;
+				object value;
+				
+				getter = property.GetGetMethod ();
+				
+				if (getter == null)
+					continue;
+					
+				if (getter.GetParameters ().Length > 0)
+					continue;
+				
+				try {	
+					value = getter.Invoke (obj, new object [] {});
+				} catch (TargetInvocationException ex) {
+					if (ex.InnerException != null) {
+						value = ex.InnerException;
+					} else {
+						value = ex;
+					}
+				} catch (Exception ex) {
+					value = ex;
+				}
+				members.Add (property.Name, property);
+				values.Add (property.Name, value);
+			}
+
+			foreach (FieldInfo field in fields) {
+				object value;
+				
+				try {
+					value = field.GetValue (obj);
+				} catch (TargetInvocationException ex) {
+					if (ex.InnerException != null) {
+						value = ex.InnerException;
+					} else {
+						value = ex;
+					}
+				} catch (Exception ex) {
+					value = ex;
+				}
+
+				members.Add (field.Name, field);
+				values.Add (field.Name, value);
+			}
+			
+			string [] sorted = new string [values.Count];
+			int i = 0;
+			foreach (DictionaryEntry entry in values) {
+				sorted [i++] = (string) entry.Key;
+			}
+			Array.Sort (sorted);
+
+			string showName = objName;
+			for (int j = 0; j < sorted.Length; j++) {
+				string name = sorted [j];
+				object value = values [name];
+				string message = prefix + showName + "." + name;
+				string tab = new string ('\t', tabs);
+				
+				if (value == null) {
+					writer.WriteLine ("{0}Assert.IsNull ({1}.{2}, \"{3}\");", tab, showName, name, message);
+					continue;
+				}
+				
+				string code;
+				
+				switch (Type.GetTypeCode (value.GetType ())) {
+				case TypeCode.Boolean:
+					code = ((bool) value) ? "true" : "false"; break;
+				case TypeCode.Byte:
+				case TypeCode.Decimal:
+				case TypeCode.Double:
+				case TypeCode.Int16:
+				case TypeCode.Int32:
+				case TypeCode.Int64:
+				case TypeCode.SByte:
+				case TypeCode.Single:
+				case TypeCode.UInt16:
+				case TypeCode.UInt32:
+				case TypeCode.UInt64:
+					if (value.GetType ().IsEnum) {
+						string [] flags = value.ToString ().Split (',');
+						for (int k = 0; k < flags.Length; k++)
+							flags [k] = value.GetType ().Name + "." + flags [k].Trim ();
+						code = string.Join (" | ", flags);
+					} else {
+						code = value.ToString (); 
+					}
+					break;
+				case TypeCode.Char:
+					code = "'" + ((char) value).ToString () + "'"; break;
+				case TypeCode.DateTime:
+					code = "new System.DateTime (" + ((DateTime) value).Ticks + ")"; break;
+				case TypeCode.DBNull:
+					code = "System.DBNull.Value" ; break;
+				case TypeCode.Object:
+					code = null;
+					if (value is Exception) {
+						writer.WriteLine (tab + "try {");
+						writer.WriteLine (tab + "\tobject zxf = {0}.{1};", showName, name);
+						writer.WriteLine (tab + "\tTestHelper.RemoveWarning (zxf);");
+						writer.WriteLine (tab + "\tAssert.Fail (\"Expected '{0}', but no exception was thrown.\", \"{1}\");", value.GetType ().FullName, message);
+						writer.WriteLine (tab + "}} catch ({0} ex) {{", value.GetType ().Name);
+						writer.WriteLine (tab + "\tAssert.AreEqual (@\"{0}\", ex.Message);", ((Exception) value).Message.Replace ("\"", "\"\""));
+						writer.WriteLine (tab + "} catch (Exception ex) {");
+						writer.WriteLine (tab + "\tAssert.Fail (\"Expected '{0}', got '\" + ex.GetType ().FullName + \"'.\", \"{1}\");", value.GetType ().FullName, message);
+						writer.WriteLine (tab + "}");
+					} else {
+						if (maxrecursive > level) {
+							DumpObject (value, ((MemberInfo)members [name]).DeclaringType, showName + "." + name, writer, tabs, prefix, done, maxrecursive, level + 1);
+						} else {
+							writer.WriteLine ("{0}Assert.IsNotNull ({1}.{2}, \"{3}\");", tab, showName, name, message);
+						}
+					}
+					break;
+				case TypeCode.String:
+					code = "@\"" + ((string) value).Replace ("\"", "\"\"") + "\""; break;
+				default:
+					code = null; break;
+				}
+				if (code == null)
+					continue;
+
+				writer.WriteLine ("{0}Assert.AreEqual ({4}, {1}.{2}, \"{3}\");", tab, showName, name, message, code);
+			}
+		}
+		
 		public TestHelper()
 		{
 		}
