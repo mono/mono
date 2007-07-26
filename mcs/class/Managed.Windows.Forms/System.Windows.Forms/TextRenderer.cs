@@ -50,8 +50,10 @@ namespace System.Windows.Forms
 #endif
 	class TextRenderer
 	{
-		private static Bitmap static_bitmap = new Bitmap (1, 1, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-		private static Graphics static_graphics = Graphics.FromImage (static_bitmap);
+		[ThreadStatic]
+		private static Bitmap static_bitmap;
+		[ThreadStatic]
+		private static Graphics static_graphics;
 
 		private TextRenderer ()
 		{
@@ -101,8 +103,7 @@ namespace System.Windows.Forms
 
 		public static Size MeasureText (string text, Font font)
 		{
-			lock (static_graphics)
-				return MeasureTextInternal (static_graphics, text, font, Size.Empty, TextFormatFlags.Default, false);
+			return MeasureTextInternal (StaticGraphics, text, font, Size.Empty, TextFormatFlags.Default, false);
 		}
 
 		public static Size MeasureText (IDeviceContext dc, string text, Font font)
@@ -112,8 +113,7 @@ namespace System.Windows.Forms
 
 		public static Size MeasureText (string text, Font font, Size proposedSize)
 		{
-			lock (static_graphics)
-				return MeasureTextInternal (static_graphics, text, font, proposedSize, TextFormatFlags.Default, false);
+			return MeasureTextInternal (StaticGraphics, text, font, proposedSize, TextFormatFlags.Default, false);
 		}
 
 		public static Size MeasureText (IDeviceContext dc, string text, Font font, Size proposedSize)
@@ -123,8 +123,7 @@ namespace System.Windows.Forms
 
 		public static Size MeasureText (string text, Font font, Size proposedSize, TextFormatFlags flags)
 		{
-			lock (static_graphics)
-				return MeasureTextInternal (static_graphics, text, font, proposedSize, flags, false);
+			return MeasureTextInternal (StaticGraphics, text, font, proposedSize, flags, false);
 		}
 
 		public static Size MeasureText (IDeviceContext dc, string text, Font font, Size proposedSize, TextFormatFlags flags)
@@ -341,8 +340,7 @@ namespace System.Windows.Forms
 
 		internal static Size MeasureTextInternal (string text, Font font, bool useMeasureString)
 		{
-			lock (static_graphics)
-				return MeasureTextInternal (static_graphics, text, font, Size.Empty, TextFormatFlags.Default, useMeasureString);
+			return MeasureTextInternal (StaticGraphics, text, font, Size.Empty, TextFormatFlags.Default, useMeasureString);
 		}
 
 #if NET_2_0
@@ -359,8 +357,7 @@ namespace System.Windows.Forms
 
 		internal static Size MeasureTextInternal (string text, Font font, Size proposedSize, bool useMeasureString)
 		{
-			lock (static_graphics)
-				return MeasureTextInternal (static_graphics, text, font, proposedSize, TextFormatFlags.Default, useMeasureString);
+			return MeasureTextInternal (StaticGraphics, text, font, proposedSize, TextFormatFlags.Default, useMeasureString);
 		}
 
 		internal static Size MeasureTextInternal (IDeviceContext dc, string text, Font font, Size proposedSize, bool useMeasureString)
@@ -371,64 +368,72 @@ namespace System.Windows.Forms
 #endif
 		internal static Size MeasureTextInternal (string text, Font font, Size proposedSize, TextFormatFlags flags, bool useMeasureString)
 		{
-			lock (static_graphics)
-				return MeasureTextInternal (static_graphics, text, font, proposedSize, flags, useMeasureString);
+			return MeasureTextInternal (StaticGraphics, text, font, proposedSize, flags, useMeasureString);
 		}
 #endregion
 
 		#region Thread-Safe Static Graphics Methods
 		internal static SizeF MeasureString (string text, Font font)
 		{
-			lock (static_graphics)
-				return static_graphics.MeasureString (text, font);
+			return StaticGraphics.MeasureString (text, font);
 		}
 
 		internal static SizeF MeasureString (string text, Font font, int width)
 		{
-			lock (static_graphics)
-				return static_graphics.MeasureString (text, font, width);
+			return StaticGraphics.MeasureString (text, font, width);
 		}
 
 		internal static SizeF MeasureString (string text, Font font, SizeF layoutArea)
 		{
-			lock (static_graphics)
-				return static_graphics.MeasureString (text, font, layoutArea);
+			return StaticGraphics.MeasureString (text, font, layoutArea);
 		}
 
 		internal static SizeF MeasureString (string text, Font font, int width, StringFormat format)
 		{
-			lock (static_graphics)
-				return static_graphics.MeasureString (text, font, width, format);
+			return StaticGraphics.MeasureString (text, font, width, format);
 		}
 
 		internal static SizeF MeasureString (string text, Font font, PointF origin, StringFormat stringFormat)
 		{
-			lock (static_graphics)
-				return static_graphics.MeasureString (text, font, origin, stringFormat);
+			return StaticGraphics.MeasureString (text, font, origin, stringFormat);
 		}
 
 		internal static SizeF MeasureString (string text, Font font, SizeF layoutArea, StringFormat stringFormat)
 		{
-			lock (static_graphics)
-				return static_graphics.MeasureString (text, font, layoutArea, stringFormat);
+			return StaticGraphics.MeasureString (text, font, layoutArea, stringFormat);
 		}
 
 		internal static SizeF MeasureString (string text, Font font, SizeF layoutArea, StringFormat stringFormat, out int charactersFitted, out int linesFilled)
 		{
-			lock (static_graphics)
-				return static_graphics.MeasureString (text, font, layoutArea, stringFormat, out charactersFitted, out linesFilled);
+			return StaticGraphics.MeasureString (text, font, layoutArea, stringFormat, out charactersFitted, out linesFilled);
 		}
 
 		internal static Region[] MeasureCharacterRanges (string text, Font font, RectangleF layoutRect, StringFormat stringFormat)
 		{
-			lock (static_graphics)
-				return static_graphics.MeasureCharacterRanges (text, font, layoutRect, stringFormat);
+			return StaticGraphics.MeasureCharacterRanges (text, font, layoutRect, stringFormat);
 		}
 		
 		internal static SizeF GetDpi ()
 		{
-			lock (static_graphics)
-				return new SizeF (static_graphics.DpiX, static_graphics.DpiY);
+			return new SizeF (StaticGraphics.DpiX, StaticGraphics.DpiY);
+		}
+		
+		internal static Bitmap StaticBitmap {
+			get {
+				if (static_bitmap == null)
+					static_bitmap = new Bitmap (1, 1, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+				
+				return static_bitmap;
+			}
+		}
+		
+		internal static Graphics StaticGraphics {
+			get {
+				if (static_graphics == null)
+					static_graphics = Graphics.FromImage (StaticBitmap);
+					
+				return static_graphics;
+			}
 		}
 		#endregion
 		
