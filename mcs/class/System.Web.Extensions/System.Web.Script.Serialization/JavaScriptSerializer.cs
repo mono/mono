@@ -36,6 +36,8 @@ using System.Collections;
 using System.Reflection;
 using Newtonsoft.Json.Utilities;
 using System.ComponentModel;
+using System.Configuration;
+using System.Web.Configuration;
 
 namespace System.Web.Script.Serialization
 {
@@ -132,9 +134,20 @@ namespace System.Web.Script.Serialization
 		}
 
 		List<IEnumerable<JavaScriptConverter>> _converterList;
+		int _maxJsonLength;
+		int _recursionLimit;
 		static JavaScriptSerializer _defaultSerializer = new JavaScriptSerializer ();
 
 		public JavaScriptSerializer () {
+			ScriptingJsonSerializationSection section = (ScriptingJsonSerializationSection) ConfigurationManager.GetSection ("system.web.extensions/scripting/webServices/jsonSerialization");
+			if (section == null) {
+				_maxJsonLength = 102400;
+				_recursionLimit = 100;
+			}
+			else {
+				_maxJsonLength = section.MaxJsonLength;
+				_recursionLimit = section.RecursionLimit;
+			}
 		}
 
 		public JavaScriptSerializer (JavaScriptTypeResolver resolver) {
@@ -145,21 +158,22 @@ namespace System.Web.Script.Serialization
 			get { return _defaultSerializer; }
 		}
 
+		//TODO: use it!
 		public int MaxJsonLength {
 			get {
-				throw new NotImplementedException ();
+				return _maxJsonLength;
 			}
 			set {
-				throw new NotImplementedException ();
+				_maxJsonLength = value;
 			}
 		}
 		
 		public int RecursionLimit {
 			get {
-				throw new NotImplementedException ();
+				return _recursionLimit;
 			}
 			set {
-				throw new NotImplementedException ();
+				_recursionLimit = value;
 			}
 		}
 

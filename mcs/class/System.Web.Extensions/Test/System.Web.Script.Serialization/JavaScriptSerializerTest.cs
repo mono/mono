@@ -239,7 +239,7 @@ namespace Tests.System.Web.Script.Serialization
 		[Test]
 		public void TestDefaults () {
 			JavaScriptSerializer ser = new JavaScriptSerializer ();
-			Assert.AreEqual (2097152, ser.MaxJsonLength);
+			Assert.AreEqual (102400, ser.MaxJsonLength);
 			Assert.AreEqual (100, ser.RecursionLimit);
 			//List<JavaScriptConverter> l = new List<JavaScriptConverter> ();
 			//l.Add (new MyJavaScriptConverter ());
