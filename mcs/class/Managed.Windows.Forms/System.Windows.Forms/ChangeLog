@@ -1,5 +1,10 @@
 2007-07-26  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Form.cs: ShowDialog: don't destroy handles if the dialog is a common
+	  dialog. Fixes #82187.
+
+2007-07-26  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* DataGridViewElement.cs: Initialize state.
 	* DataGridView.cs: Forward a few Mouse events to cells. Add
 	  GetRowInternal and GetCellInternal that doesn't unshare rows.
