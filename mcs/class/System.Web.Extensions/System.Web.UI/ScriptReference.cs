@@ -81,7 +81,7 @@ namespace System.Web.UI
 
 		public string Name {
 			get {
-				return _name;
+				return _name != null ? _name : String.Empty;
 			}
 			set {
 				_name = value;
@@ -99,7 +99,7 @@ namespace System.Web.UI
 
 		public string Path {
 			get {
-				return _path;
+				return _path != null ? _path : String.Empty;
 			}
 			set {
 				_path = value;
@@ -140,7 +140,7 @@ namespace System.Web.UI
 
 		public override string ToString ()
 		{
-			throw new NotImplementedException ();
+			return Name.Length > 0 ? Name : Path;
 		}
 	}
 }

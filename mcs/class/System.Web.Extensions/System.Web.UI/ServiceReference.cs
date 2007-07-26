@@ -64,9 +64,7 @@ namespace System.Web.UI
 		[Category ("Behavior")]
 		public string Path {
 			get {
-				if(String.IsNullOrEmpty(_path))
-					return String.Empty;
-				return _path;
+				return _path != null ? _path : String.Empty;
 			}
 			set {
 				_path = value;
@@ -75,7 +73,7 @@ namespace System.Web.UI
 
 		public override string ToString ()
 		{
-			throw new NotImplementedException ();
+			return Path;
 		}
 	}
 }
