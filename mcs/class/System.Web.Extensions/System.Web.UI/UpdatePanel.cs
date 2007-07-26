@@ -222,8 +222,6 @@ namespace System.Web.UI
 					w.Flush ();
 
 					ScriptManager.WriteCallbackPanel (responseOutput, this, sb);
-					for (int i = 0; i < sb.Length; i++)
-						writer.Write (sb [i]);
 
 					ScriptManager.IsInPartialRendering = false;
 				}
