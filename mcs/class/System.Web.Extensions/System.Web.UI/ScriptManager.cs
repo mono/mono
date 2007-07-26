@@ -81,6 +81,8 @@ namespace System.Web.UI
 		const string scriptContentWithTags = "ScriptContentWithTags";
 		const string scriptPath = "ScriptPath";
 
+		static readonly object ScriptManagerKey = new object ();
+
 		int _asyncPostBackTimeout = 90;
 		List<Control> _asyncPostBackControls;
 		List<Control> _postBackControls;
@@ -388,16 +390,13 @@ namespace System.Web.UI
 		public event EventHandler<ScriptReferenceEventArgs> ResolveScriptReference;
 
 		public static ScriptManager GetCurrent (Page page) {
-			HttpContext ctx = HttpContext.Current;
-			if (ctx == null)
-				return null;
-
-			return (ScriptManager) ctx.Items [page];
+			if (page == null)
+				throw new ArgumentNullException("page");
+			return (ScriptManager) page.Items [ScriptManagerKey];
 		}
 
 		static void SetCurrent (Page page, ScriptManager instance) {
-			HttpContext ctx = HttpContext.Current;
-			ctx.Items [page] = instance;
+			page.Items [ScriptManagerKey] = instance;
 		}
 
 		protected virtual bool LoadPostData (string postDataKey, NameValueCollection postCollection) {
