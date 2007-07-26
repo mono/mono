@@ -954,6 +954,11 @@ namespace Mono.CSharp {
 	/// </summary>
 	public static ConstructorInfo GetConstructor (Type t, Type [] args)
 	{
+		return GetConstructor (t, args, true);
+	}
+
+	public static ConstructorInfo GetConstructor (Type t, Type [] args, bool report_errors)
+	{
 		MemberList list;
 		Signature sig;
 
@@ -967,13 +972,15 @@ namespace Mono.CSharp {
 				    instance_and_static | BindingFlags.Public | BindingFlags.DeclaredOnly,
 				    signature_filter, sig);
 		if (list.Count == 0){
-			Report.Error (-19, "Can not find the core constructor for type `" + t.Name + "'");
+			if (report_errors)
+				Report.Error (-19, "Can not find the core constructor for type `" + t.Name + "'");
 			return null;
 		}
 
 		ConstructorInfo ci = list [0] as ConstructorInfo;
 		if (ci == null){
-			Report.Error (-19, "Can not find the core constructor for type `" + t.Name + "'");
+			if (report_errors)
+				Report.Error (-19, "Can not find the core constructor for type `" + t.Name + "'");
 			return null;
 		}
 
@@ -1319,7 +1326,8 @@ namespace Mono.CSharp {
 		cons_param_array_attribute = GetConstructor (param_array_type, Type.EmptyTypes);
 
 		Type[] short_arg = { short_type };
-		struct_layout_attribute_ctor = GetConstructor (struct_layout_attribute_type, short_arg);
+		// fails for .net 2.1
+		struct_layout_attribute_ctor = GetConstructor (struct_layout_attribute_type, short_arg, false);
 
 		decimal_constant_attribute_ctor = GetConstructor (decimal_constant_attribute_type, new Type []
 			{ byte_type, byte_type, uint32_type, uint32_type, uint32_type } );

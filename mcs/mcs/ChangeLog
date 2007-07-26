@@ -1,5 +1,10 @@
 2007-07-26  Jb Evain  <jbevain@novell.com>
 
+	* typemanager.cs (TypeManager.GetConstructor): Add a method overload
+	which takes a boolean 'report_errors', similar to the GetMethod.
+	(InitCodeHelpers): StructLayoutAttribute.ctor(int16) is not visible
+	in .net 2.1, do not report errors here.
+
 	* typemanager.cs (TypeManager.InitCoreTypes): System.ArgIterator,
 	System.Runtime.CompilerServices.RequiredAttributeAttribute and
 	System.Runtime.CompilerServices.TypeForwardedToAttribute are internal
