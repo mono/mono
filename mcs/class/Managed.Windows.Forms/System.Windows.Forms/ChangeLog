@@ -1,3 +1,11 @@
+2007-07-26  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListView.cs: When doing the layout calculations, don't calculate
+	scroll bars before handle is created. This is unnecessary and also
+	calculating them before handle creation item causes a number of random
+	bugs (which begin to appear after Chris' big patch for handle creation
+	fixes). 
+
 2007-07-26  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TextRenderer.cs: Create thread-safe versions of Graphics.MeasureString
