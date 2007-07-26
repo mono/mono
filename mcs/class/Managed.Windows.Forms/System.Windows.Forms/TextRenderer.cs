@@ -26,6 +26,18 @@
 //	Jonathan Pobst (monkey@jpobst.com)
 //
 
+// This has become a monster class for all things text measuring and drawing.
+//
+// The public API is MeasureText/DrawText, which uses GDI on Win32, and
+// GDI+ on other platforms.
+//
+// There is an internal API MeasureTextInternal/DrawTextInternal, which allows
+// you to pass a flag of whether to use GDI or GDI+.  This is used mainly for
+// controls that have the UseCompatibleTextRendering flag.
+//
+// There are also thread-safe versions of MeasureString/MeasureCharacterRanges
+// for things that want to measure strings without having a Graphics object.
+
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -38,6 +50,9 @@ namespace System.Windows.Forms
 #endif
 	class TextRenderer
 	{
+		private static Bitmap static_bitmap = new Bitmap (1, 1, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+		private static Graphics static_graphics = Graphics.FromImage (static_bitmap);
+
 		private TextRenderer ()
 		{
 		}
@@ -86,7 +101,8 @@ namespace System.Windows.Forms
 
 		public static Size MeasureText (string text, Font font)
 		{
-			return MeasureTextInternal (Hwnd.bmp_g, text, font, Size.Empty, TextFormatFlags.Default, false);
+			lock (static_graphics)
+				return MeasureTextInternal (static_graphics, text, font, Size.Empty, TextFormatFlags.Default, false);
 		}
 
 		public static Size MeasureText (IDeviceContext dc, string text, Font font)
@@ -96,7 +112,8 @@ namespace System.Windows.Forms
 
 		public static Size MeasureText (string text, Font font, Size proposedSize)
 		{
-			return MeasureTextInternal (Hwnd.bmp_g, text, font, proposedSize, TextFormatFlags.Default, false);
+			lock (static_graphics)
+				return MeasureTextInternal (static_graphics, text, font, proposedSize, TextFormatFlags.Default, false);
 		}
 
 		public static Size MeasureText (IDeviceContext dc, string text, Font font, Size proposedSize)
@@ -106,7 +123,8 @@ namespace System.Windows.Forms
 
 		public static Size MeasureText (string text, Font font, Size proposedSize, TextFormatFlags flags)
 		{
-			return MeasureTextInternal (Hwnd.bmp_g, text, font, proposedSize, flags, false);
+			lock (static_graphics)
+				return MeasureTextInternal (static_graphics, text, font, proposedSize, flags, false);
 		}
 
 		public static Size MeasureText (IDeviceContext dc, string text, Font font, Size proposedSize, TextFormatFlags flags)
@@ -265,7 +283,16 @@ namespace System.Windows.Forms
 #endif
 				StringFormat sf = FlagsToStringFormat (flags);
 
-				Size retval = Hwnd.bmp_g.MeasureString (text, font, Int32.MaxValue, sf).ToSize ();
+				Size retval;
+				
+#if NET_2_0
+				if (dc is Graphics)
+					retval = (dc as Graphics).MeasureString (text, font, Int32.MaxValue, sf).ToSize ();
+				else
+					retval = TextRenderer.MeasureString (text, font, Int32.MaxValue, sf).ToSize ();
+#else
+				retval = dc.MeasureString (text, font, Int32.MaxValue, sf).ToSize ();
+#endif
 
 				if (retval.Width > 0 && (flags & TextFormatFlags.NoPadding) == 0)
 					retval.Width += 9;
@@ -314,7 +341,8 @@ namespace System.Windows.Forms
 
 		internal static Size MeasureTextInternal (string text, Font font, bool useMeasureString)
 		{
-			return MeasureTextInternal (Hwnd.bmp_g, text, font, Size.Empty, TextFormatFlags.Default, useMeasureString);
+			lock (static_graphics)
+				return MeasureTextInternal (static_graphics, text, font, Size.Empty, TextFormatFlags.Default, useMeasureString);
 		}
 
 #if NET_2_0
@@ -331,7 +359,8 @@ namespace System.Windows.Forms
 
 		internal static Size MeasureTextInternal (string text, Font font, Size proposedSize, bool useMeasureString)
 		{
-			return MeasureTextInternal (Hwnd.bmp_g, text, font, proposedSize, TextFormatFlags.Default, useMeasureString);
+			lock (static_graphics)
+				return MeasureTextInternal (static_graphics, text, font, proposedSize, TextFormatFlags.Default, useMeasureString);
 		}
 
 		internal static Size MeasureTextInternal (IDeviceContext dc, string text, Font font, Size proposedSize, bool useMeasureString)
@@ -342,10 +371,67 @@ namespace System.Windows.Forms
 #endif
 		internal static Size MeasureTextInternal (string text, Font font, Size proposedSize, TextFormatFlags flags, bool useMeasureString)
 		{
-			return MeasureTextInternal (Hwnd.bmp_g, text, font, proposedSize, flags, useMeasureString);
+			lock (static_graphics)
+				return MeasureTextInternal (static_graphics, text, font, proposedSize, flags, useMeasureString);
 		}
 #endregion
 
+		#region Thread-Safe Static Graphics Methods
+		internal static SizeF MeasureString (string text, Font font)
+		{
+			lock (static_graphics)
+				return static_graphics.MeasureString (text, font);
+		}
+
+		internal static SizeF MeasureString (string text, Font font, int width)
+		{
+			lock (static_graphics)
+				return static_graphics.MeasureString (text, font, width);
+		}
+
+		internal static SizeF MeasureString (string text, Font font, SizeF layoutArea)
+		{
+			lock (static_graphics)
+				return static_graphics.MeasureString (text, font, layoutArea);
+		}
+
+		internal static SizeF MeasureString (string text, Font font, int width, StringFormat format)
+		{
+			lock (static_graphics)
+				return static_graphics.MeasureString (text, font, width, format);
+		}
+
+		internal static SizeF MeasureString (string text, Font font, PointF origin, StringFormat stringFormat)
+		{
+			lock (static_graphics)
+				return static_graphics.MeasureString (text, font, origin, stringFormat);
+		}
+
+		internal static SizeF MeasureString (string text, Font font, SizeF layoutArea, StringFormat stringFormat)
+		{
+			lock (static_graphics)
+				return static_graphics.MeasureString (text, font, layoutArea, stringFormat);
+		}
+
+		internal static SizeF MeasureString (string text, Font font, SizeF layoutArea, StringFormat stringFormat, out int charactersFitted, out int linesFilled)
+		{
+			lock (static_graphics)
+				return static_graphics.MeasureString (text, font, layoutArea, stringFormat, out charactersFitted, out linesFilled);
+		}
+
+		internal static Region[] MeasureCharacterRanges (string text, Font font, RectangleF layoutRect, StringFormat stringFormat)
+		{
+			lock (static_graphics)
+				return static_graphics.MeasureCharacterRanges (text, font, layoutRect, stringFormat);
+		}
+		
+		internal static SizeF GetDpi ()
+		{
+			lock (static_graphics)
+				return new SizeF (static_graphics.DpiX, static_graphics.DpiY);
+		}
+		#endregion
+		
 #region Private Methods
 		private static StringFormat FlagsToStringFormat (TextFormatFlags flags)
 		{

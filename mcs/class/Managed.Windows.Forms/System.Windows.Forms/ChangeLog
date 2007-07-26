@@ -1,3 +1,9 @@
+2007-07-26  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TextRenderer.cs: Create thread-safe versions of Graphics.MeasureString
+	for things that don't have a Graphics object.  Currently, things just use
+	the static Hwnd.bmp_g which is not thread safe.
+
 2007-07-26  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Form.cs: ShowDialog: don't destroy handles if the dialog is a common
