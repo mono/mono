@@ -51,6 +51,7 @@ namespace System.Web.UI
 		bool _requiresUpdate = false;
 		UpdatePanelTriggerCollection _triggers;
 		UpdatePanelRenderMode _renderMode = UpdatePanelRenderMode.Block;
+		ScriptManager _scriptManager;
 
 		[Category ("Behavior")]
 		[DefaultValue (true)]
@@ -95,7 +96,7 @@ namespace System.Web.UI
 		[Browsable (false)]
 		public bool IsInPartialRendering {
 			get {
-				throw new NotImplementedException ();
+				return ScriptManager.IsInPartialRendering;
 			}
 		}
 
@@ -117,10 +118,12 @@ namespace System.Web.UI
 
 		internal ScriptManager ScriptManager {
 			get {
-				ScriptManager manager = ScriptManager.GetCurrent (Page);
-				if (manager == null)
-					throw new InvalidOperationException (String.Format ("The control with ID '{0}' requires a ScriptManager on the page. The ScriptManager must appear before any controls that need it.", ID));
-				return manager;
+				if (_scriptManager == null) {
+					_scriptManager = ScriptManager.GetCurrent (Page);
+					if (_scriptManager == null)
+						throw new InvalidOperationException (String.Format ("The control with ID '{0}' requires a ScriptManager on the page. The ScriptManager must appear before any controls that need it.", ID));
+				}
+				return _scriptManager;
 			}
 		}
 
