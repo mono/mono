@@ -1,5 +1,10 @@
 2007-07-26  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* DataGridViewRowTest.cs: Comment out a few asserts that probably are
+	  DPI dependent.
+
+2007-07-26  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* DataGridViewRowTest.cs: Added AddRow_Changes, InitialValues.
 	* EventLogger.cs: Create a EventLog class, can print to the console
 	  events as they are raised.
