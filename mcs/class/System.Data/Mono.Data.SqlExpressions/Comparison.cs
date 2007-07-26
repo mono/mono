@@ -32,6 +32,8 @@
 
 using System;
 using System.Data;
+using System.Threading;
+using System.Globalization;
 
 namespace Mono.Data.SqlExpressions {
 	internal class Comparison : BinaryOpExpression {
@@ -94,7 +96,12 @@ namespace Mono.Data.SqlExpressions {
 					o2 = ((string) o2).ToLower ();
 				}
 			}
-			
+
+			if (o1 is DateTime && o2 is string && Thread.CurrentThread.CurrentCulture != CultureInfo.InvariantCulture) {
+				// DateTime is always CultureInfo.InvariantCulture
+				o2 = (IComparable) DateTime.Parse ((string)o2, CultureInfo.InvariantCulture);
+			}
+
 			if (o1.GetType () != o2.GetType ())
 				o2 = (IComparable)Convert.ChangeType (o2, o1.GetType ());
 
