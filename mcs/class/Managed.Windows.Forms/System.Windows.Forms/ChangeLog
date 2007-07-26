@@ -1,5 +1,12 @@
 2007-07-26  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ComboBox.cs, ContainerControl.cs, DataGrid.cs, FontDialog.cs, Label.cs,
+	LinkLabel.cs, ListBox.cs, ListView.cs, ListViewItem.cs, MessageBox.cs,
+	MonthCalender.cs, StatusBar.cs, ThemeClearlooks.cs, ThemeWin32Class.cs,
+	ToolBar.cs, TreeView.cs: First pass at using thread-safe string measuring.
+
+2007-07-26  Jonathan Pobst  <monkey@jpobst.com>
+
 	* TextRenderer.cs: Use [ThreadStatic] instead of locks to improve
 	performance of thread-safe Graphic methods.  (Thanks rolf!)
 

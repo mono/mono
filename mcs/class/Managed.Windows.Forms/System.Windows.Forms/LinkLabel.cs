@@ -670,7 +670,7 @@ namespace System.Windows.Forms
 
 			string_format.SetMeasurableCharacterRanges (ranges);
 
-			Region[] regions = DeviceContext.MeasureCharacterRanges (Text,
+			Region[] regions = TextRenderer.MeasureCharacterRanges (Text,
 										 ThemeEngine.Current.GetLinkFont (this),
 										 ClientRectangle,
 										 string_format);

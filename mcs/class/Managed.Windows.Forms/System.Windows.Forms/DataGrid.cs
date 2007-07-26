@@ -1086,7 +1086,7 @@ namespace System.Windows.Forms
 			}
 			string relation_text = relation_builder.ToString ();
 
-			SizeF measured_area = DeviceContext.MeasureString (relation_text, LinkFont);
+			SizeF measured_area = TextRenderer.MeasureString (relation_text, LinkFont);
 
 			rows[row].relation_area = new Rectangle (cells_area.X + 1,
 								 0, /* updated as needed at the usage sites for relation_area */

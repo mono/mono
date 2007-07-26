@@ -424,7 +424,7 @@ namespace System.Windows.Forms
 			if (Text == string.Empty) {
 				size = new Size (0, Font.Height);
 			} else {
-				size = Size.Ceiling (DeviceContext.MeasureString (Text, Font, req_witdthsize, string_format));
+				size = Size.Ceiling (TextRenderer.MeasureString (Text, Font, req_witdthsize, string_format));
 				size.Width += 3;
 			}
 

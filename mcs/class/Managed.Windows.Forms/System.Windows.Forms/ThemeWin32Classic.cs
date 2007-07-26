@@ -4833,7 +4833,7 @@ namespace System.Windows.Forms
 		{
 			SizeF	sizef;
 
-			sizef = tt.DeviceContext.MeasureString(text, tt.Font, SizeF.Empty, tt.string_format);
+			sizef = TextRenderer.MeasureString (text, tt.Font, SizeF.Empty, tt.string_format);
 			return new Size((int)sizef.Width+8, (int)sizef.Height+3);	// Need space for the border
 		}
 		#endregion	// ToolTip
@@ -4927,8 +4927,8 @@ namespace System.Windows.Forms
 			Rectangle deskrect = Screen.GetWorkingArea (control);
 			SizeF maxsize = new SizeF (250, 200);
 
-			SizeF titlesize = control.DeviceContext.MeasureString (control.Title, control.Font, maxsize, control.Format);
-			SizeF textsize = control.DeviceContext.MeasureString (control.Text, control.Font, maxsize, control.Format);
+			SizeF titlesize = TextRenderer.MeasureString (control.Title, control.Font, maxsize, control.Format);
+			SizeF textsize = TextRenderer.MeasureString (control.Text, control.Font, maxsize, control.Format);
 			
 			if (titlesize.Height < balloon_iconsize)
 				titlesize.Height = balloon_iconsize;

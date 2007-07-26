@@ -299,7 +299,7 @@ namespace System.Windows.Forms {
 			get {
 				switch(auto_scale_mode) {
 					case AutoScaleMode.Dpi:
-						return new SizeF (Hwnd.bmp_g.DpiX, Hwnd.bmp_g.DpiY);
+						return TextRenderer.GetDpi ();
 
 					case AutoScaleMode.Font:
 						Size s = TextRenderer.MeasureText ("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890", Font);

@@ -523,7 +523,7 @@ namespace System.Windows.Forms
 		public int ItemHeight {
 			get {
 				if (item_height == -1) {
-					SizeF sz = DeviceContext.MeasureString ("The quick brown Fox", Font);
+					SizeF sz = TextRenderer.MeasureString ("The quick brown Fox", Font);
 					item_height = (int) sz.Height;
 				}
 				return item_height;
@@ -1018,7 +1018,7 @@ namespace System.Windows.Forms
 				textbox_ctrl.Font = Font;
 			
 			if (!item_height_specified) {
-				SizeF sz = DeviceContext.MeasureString ("The quick brown Fox", Font);
+				SizeF sz = TextRenderer.MeasureString ("The quick brown Fox", Font);
 				item_height = (int) sz.Height;
 			}
 

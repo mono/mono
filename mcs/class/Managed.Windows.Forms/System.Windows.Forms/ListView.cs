@@ -1034,7 +1034,7 @@ namespace System.Windows.Forms
 			ColumnHeader col = this.columns [index];
 
 			if (col.Width == -2) { // autosize = max(items, columnheader)
-				Size size = Size.Ceiling (this.DeviceContext.MeasureString
+				Size size = Size.Ceiling (TextRenderer.MeasureString
 					(col.Text, this.Font));
 				size.Width += text_padding;
 				ret_size = BiggestItem (index);
@@ -1047,7 +1047,7 @@ namespace System.Windows.Forms
 				if (ret_size.IsEmpty) {
 					ret_size.Width = ThemeEngine.Current.ListViewEmptyColumnWidth;
 					if (col.Text.Length > 0)
-						ret_size.Height = Size.Ceiling (this.DeviceContext.MeasureString
+						ret_size.Height = Size.Ceiling (TextRenderer.MeasureString
 										(col.Text, this.Font)).Height;
 					else
 						ret_size.Height = this.Font.Height;
@@ -1075,7 +1075,7 @@ namespace System.Windows.Forms
 			// VirtualMode uses the first item text size
 			if (virtual_mode && items.Count > 0) {
 				ListViewItem item = items [0];
-				ret_size = Size.Ceiling (DeviceContext.MeasureString (item.SubItems [col].Text,
+				ret_size = Size.Ceiling (TextRenderer.MeasureString (item.SubItems[col].Text,
 							Font));
 			} else {
 #endif
@@ -1086,7 +1086,7 @@ namespace System.Windows.Forms
 					if (col >= item.SubItems.Count)
 						continue;
 
-					temp = Size.Ceiling (DeviceContext.MeasureString
+					temp = Size.Ceiling (TextRenderer.MeasureString
 								(item.SubItems [col].Text, Font));
 					if (temp.Width > ret_size.Width)
 						ret_size = temp;
@@ -2438,7 +2438,7 @@ namespace System.Windows.Forms
 					case View.Details:
 						edit_text_box.TextAlign = HorizontalAlignment.Left;
 						edit_text_box.Bounds = item.GetBounds (ItemBoundsPortion.Label);
-						SizeF sizef = DeviceContext.MeasureString (item.Text, item.Font);
+						SizeF sizef = TextRenderer.MeasureString (item.Text, item.Font);
 						edit_text_box.Width = (int)sizef.Width + 4;
 						edit_text_box.MaxWidth = owner.ClientRectangle.Width - edit_text_box.Bounds.X;
 						edit_text_box.WordWrap = false;
@@ -2447,7 +2447,7 @@ namespace System.Windows.Forms
 					case View.LargeIcon:
 						edit_text_box.TextAlign = HorizontalAlignment.Center;
 						edit_text_box.Bounds = item.GetBounds (ItemBoundsPortion.Label);
-						sizef = DeviceContext.MeasureString (item.Text, item.Font);
+						sizef = TextRenderer.MeasureString (item.Text, item.Font);
 						edit_text_box.Width = (int)sizef.Width + 4;
 						edit_text_box.MaxWidth = item.GetBounds(ItemBoundsPortion.Entire).Width;
 						edit_text_box.MaxHeight = owner.ClientRectangle.Height - edit_text_box.Bounds.Y;
@@ -2542,7 +2542,7 @@ namespace System.Windows.Forms
 			public ListViewLabelEditTextBox ()
 			{
 				min_height = DefaultSize.Height;
-				text_size_one_char = DeviceContext.MeasureString ("B", Font);
+				text_size_one_char = TextRenderer.MeasureString ("B", Font);
 			}
 			
 			public int MaxWidth {
@@ -2579,13 +2579,13 @@ namespace System.Windows.Forms
 				}
 				set {
 					base.Font = value;
-					text_size_one_char = DeviceContext.MeasureString ("B", Font);
+					text_size_one_char = TextRenderer.MeasureString ("B", Font);
 				}
 			}
 			
 			protected override void OnTextChanged (EventArgs e)
 			{
-				SizeF text_size = DeviceContext.MeasureString (Text, Font);
+				SizeF text_size = TextRenderer.MeasureString (Text, Font);
 				
 				int new_width = (int)text_size.Width + 8;
 				

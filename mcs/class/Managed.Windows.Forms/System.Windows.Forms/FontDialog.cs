@@ -1210,7 +1210,7 @@ namespace System.Windows.Forms
 
 			Font f = new Font (family.Name, 10, fs);
 
-			if (Hwnd.bmp_g.MeasureString ("i", f).Width == Hwnd.bmp_g.MeasureString ("w", f).Width)
+			if (TextRenderer.MeasureString ("i", f).Width == TextRenderer.MeasureString ("w", f).Width)
 				return true;
 				
 			return false;

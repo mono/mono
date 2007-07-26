@@ -342,7 +342,7 @@ namespace System.Windows.Forms {
 					continue;
 				}
 				if (p.AutoSize == StatusBarPanelAutoSize.Contents) {
-					int len = (int) (DeviceContext.MeasureString (p.Text, Font).Width + 0.5F);
+					int len = (int)(TextRenderer.MeasureString (p.Text, Font).Width + 0.5F);
 					p.SetWidth (len + 8);
 					taken += p.Width;
 					taken += gap;

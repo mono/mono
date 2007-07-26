@@ -394,7 +394,7 @@ namespace System.Windows.Forms
 		public virtual int ItemHeight {
 			get {
 				if (item_height == -1) {
-					SizeF sz = DeviceContext.MeasureString ("The quick brown Fox", Font);
+					SizeF sz = TextRenderer.MeasureString ("The quick brown Fox", Font);
 					item_height = (int) sz.Height;
 				}
 				return item_height;
@@ -957,7 +957,7 @@ namespace System.Windows.Forms
 			if (explicit_item_height) {
 				base.Refresh ();
 			} else {
-				SizeF sz = DeviceContext.MeasureString ("The quick brown Fox", Font);
+				SizeF sz = TextRenderer.MeasureString ("The quick brown Fox", Font);
 				item_height = (int) sz.Height;
 				if (IntegralHeight)
 					UpdateListBoxBounds ();
@@ -1194,7 +1194,7 @@ namespace System.Windows.Forms
 				height = Items.Count * ItemHeight;
 				width = 0;
 				for (int i = 0; i < Items.Count; i++) {
-					SizeF sz = DeviceContext.MeasureString (GetItemText (Items[i]), Font);
+					SizeF sz = TextRenderer.MeasureString (GetItemText (Items[i]), Font);
 					int t = (int)sz.Width;
 					
 					if (this is CheckedListBox)

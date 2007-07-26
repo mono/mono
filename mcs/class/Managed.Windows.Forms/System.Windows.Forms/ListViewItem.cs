@@ -833,7 +833,7 @@ namespace System.Windows.Forms
 				else
 					label_rect.Width = text_size.Width;
 
-				SizeF text_sz = owner.DeviceContext.MeasureString (Text, Font);
+				SizeF text_sz = TextRenderer.MeasureString (Text, Font);
 				text_bounds = label_rect;
 				text_bounds.Width = (int) text_sz.Width;
 
@@ -859,13 +859,13 @@ namespace System.Windows.Forms
 			case View.LargeIcon:
 				label_rect = icon_rect = Rectangle.Empty;
 
-				SizeF sz = owner.DeviceContext.MeasureString (Text, Font);
+				SizeF sz = TextRenderer.MeasureString (Text, Font);
 				if ((int) sz.Width > text_size.Width) {
 					if (Focused && owner.InternalContainsFocus) {
 						int text_width = text_size.Width;
 						StringFormat format = new StringFormat ();
 						format.Alignment = StringAlignment.Center;
-						sz = owner.DeviceContext.MeasureString (Text, Font, text_width, format);
+						sz = TextRenderer.MeasureString (Text, Font, text_width, format);
 						text_size.Height = (int) sz.Height;
 					} else
 						text_size.Height = 2 * (int) sz.Height;
@@ -930,7 +930,7 @@ namespace System.Windows.Forms
 				}
 
 				int separation = 2;
-				SizeF tsize = owner.DeviceContext.MeasureString (Text, Font);
+				SizeF tsize = TextRenderer.MeasureString (Text, Font);
 
 				// Set initial values for subitem's layout
 				int total_height = (int)Math.Ceiling (tsize.Height);
@@ -943,7 +943,7 @@ namespace System.Windows.Forms
 					if (sub_item.Text == null || sub_item.Text.Length == 0)
 						continue;
 
-					tsize = owner.DeviceContext.MeasureString (sub_item.Text, sub_item.Font);
+					tsize = TextRenderer.MeasureString (sub_item.Text, sub_item.Font);
 				
 					int width = (int)Math.Ceiling (tsize.Width);
 				

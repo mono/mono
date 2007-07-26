@@ -1633,10 +1633,9 @@ namespace System.Windows.Forms {
 
 		// returns the rectangle for themonth name
 		internal Rectangle GetMonthNameRectangle (Rectangle title_rect, int calendar_index) {
-			Graphics g = this.DeviceContext;
 			DateTime this_month = this.current_month.AddMonths (calendar_index);
-			Size title_text_size = g.MeasureString (this_month.ToString ("MMMM yyyy"), this.Font).ToSize ();
-			Size month_size = g.MeasureString (this_month.ToString ("MMMM"), this.Font).ToSize ();
+			Size title_text_size = TextRenderer.MeasureString (this_month.ToString ("MMMM yyyy"), this.Font).ToSize ();
+			Size month_size = TextRenderer.MeasureString (this_month.ToString ("MMMM"), this.Font).ToSize ();
 			// return only the month name part of that
 			return new Rectangle (
 				new Point (
@@ -1647,10 +1646,9 @@ namespace System.Windows.Forms {
 
 		internal void GetYearNameRectangles (Rectangle title_rect, int calendar_index, out Rectangle year_rect, out Rectangle up_rect, out Rectangle down_rect)
 		{
-			Graphics g = this.DeviceContext;
 			DateTime this_month = this.current_month.AddMonths (calendar_index);
-			SizeF title_text_size = g.MeasureString (this_month.ToString ("MMMM yyyy"), this.bold_font, int.MaxValue, centered_format);
-			SizeF year_size = g.MeasureString (this_month.ToString ("yyyy"), this.bold_font, int.MaxValue, centered_format);
+			SizeF title_text_size = TextRenderer.MeasureString (this_month.ToString ("MMMM yyyy"), this.bold_font, int.MaxValue, centered_format);
+			SizeF year_size = TextRenderer.MeasureString (this_month.ToString ("yyyy"), this.bold_font, int.MaxValue, centered_format);
 			// find out how much space the title took
 			RectangleF text_rect = new RectangleF (
 				new PointF (

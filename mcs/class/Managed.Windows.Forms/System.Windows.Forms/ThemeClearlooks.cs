@@ -3394,8 +3394,8 @@ namespace System.Windows.Forms {
 			Rectangle deskrect = Screen.GetWorkingArea (control);
 			SizeF maxsize = new SizeF (250, 200);
 
-			SizeF titlesize = control.DeviceContext.MeasureString (control.Title, control.Font, maxsize, control.Format);
-			SizeF textsize = control.DeviceContext.MeasureString (control.Text, control.Font, maxsize, control.Format);
+			SizeF titlesize = TextRenderer.MeasureString (control.Title, control.Font, maxsize, control.Format);
+			SizeF textsize = TextRenderer.MeasureString (control.Text, control.Font, maxsize, control.Format);
 			
 			if (textsize.Height < balloon_iconsize)
 				textsize.Height = balloon_iconsize;

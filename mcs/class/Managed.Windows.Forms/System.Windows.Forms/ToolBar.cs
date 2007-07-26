@@ -925,7 +925,7 @@ namespace System.Windows.Forms
 
 			Size size = Size.Empty;
 			if (longest_text != null && longest_text.Length > 0) {
-				SizeF sz = DeviceContext.MeasureString (longest_text, Font);
+				SizeF sz = TextRenderer.MeasureString (longest_text, Font);
 				if (sz != SizeF.Empty)
 					size = new Size ((int) Math.Ceiling (sz.Width) + 2 * text_padding, (int) Math.Ceiling (sz.Height));
 			}
@@ -1362,7 +1362,7 @@ namespace System.Windows.Forms
 				StringFormat text_format = new StringFormat ();
 				text_format.HotkeyPrefix = HotkeyPrefix.Hide;
 
-				SizeF sz = toolbar.DeviceContext.MeasureString (button.Text, toolbar.Font, SizeF.Empty, text_format);
+				SizeF sz = TextRenderer.MeasureString (button.Text, toolbar.Font, SizeF.Empty, text_format);
 				if (sz == SizeF.Empty)
 					return Size.Empty;
 				return new Size ((int) Math.Ceiling (sz.Width) + 2 * ToolBar.text_padding, (int) Math.Ceiling (sz.Height));
