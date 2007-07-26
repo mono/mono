@@ -1,3 +1,8 @@
+
+Thu Jul 26 20:12:12 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c, mini-exceptions.c: cleanup the sigaltstack code.
+
 2007-07-25  Mark Probst  <mark.probst@gmail.com>
 
 	* mini.c, mini.h, driver.c (mono_main): Added command-line flag
