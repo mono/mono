@@ -1,3 +1,8 @@
+2007-07-27  Everaldo Canuto  <ecanuto@novell.com>
+
+	* FileDialog.cs: Check for valid filterIndex on button open/save. 
+	Fixes #82184.
+
 2007-07-27  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: Update some layout calculations in details view

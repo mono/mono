@@ -921,6 +921,9 @@ namespace System.Windows.Forms
 						string filter_exentsion = String.Empty;
 
 						if (fileFilter != null) {
+							if (filterIndex > fileFilter.FilterArrayList.Count)
+								filterIndex = fileTypeComboBox.SelectedIndex + 1;
+
 							FilterStruct filterstruct = (FilterStruct) fileFilter.FilterArrayList [filterIndex - 1];
 
 							for (int i = 0; i < filterstruct.filters.Count; i++) {
