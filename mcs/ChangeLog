@@ -1,3 +1,7 @@
+2007-07-27  Jb Evain  <jbevain@novell.com>
+
+	* Makefile: integrate the tuner in the build.
+
 2007-07-26  Jb Evain  <jbevain@novell.com>
 
 	* smcs: add a project of its own for the 2.1 compiler.
