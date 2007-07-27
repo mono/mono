@@ -1,3 +1,8 @@
+2007-07-27  Mark Probst  <mark.probst@gmail.com>
+
+	* threads.c, threads.h, class-internals.h, object-internals.h:
+	Hazard pointers, to be used by lock-free parallel algorithms.
+
 2007-07-26  Dick Porter  <dick@ximian.com>
 
 	* appdomain.c (mono_runtime_cleanup): Invoke io-layer cleanup

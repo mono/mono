@@ -1,3 +1,7 @@
+2007-07-27  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c (print_jit_stats): Output hazard pointer stats.
+
 2007-07-26  Mark Probst  <mark.probst@gmail.com>
 
 	* driver.c, mini.c: Replaced security mode flags with a single
