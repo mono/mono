@@ -1,3 +1,7 @@
+2007-07-27  Jb Evain  <jbevain@novell.com>
+
+	* profiles/net_2_1: use smcs to compile the .net 2.1 assemblies.
+
 2007-07-23  Raja R Harinath  <rharinath@novell.com>
 
 	* library.make (install-local) [GAC]: If LIBRARY_PACKAGE is set to
