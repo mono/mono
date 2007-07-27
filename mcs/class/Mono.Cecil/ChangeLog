@@ -1,3 +1,11 @@
+2007-07-27  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil/AssemblyFactory.cs
+	  Mono.Cecil/TargetRuntime.cs
+	  Mono.Cecil/StructureReader.cs
+	  Mono.Cecil.Metadata/MetadataWriter.cs:
+		Add support for the NET_2_1 target runtime.
+
 2007-07-23  Raja R Harinath  <rharinath@novell.com>
 
 	Fix 'make warnings'.

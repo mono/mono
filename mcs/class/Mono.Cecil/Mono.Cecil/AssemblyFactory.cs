@@ -95,8 +95,10 @@ namespace Mono.Cecil {
 			Version corlib = typeof (object).Assembly.GetName ().Version;
 			if (corlib.Major == 1)
 				return corlib.Minor == 0 ? TargetRuntime.NET_1_0 : TargetRuntime.NET_1_1;
-			else // if (corlib.Major == 2)
-				return TargetRuntime.NET_2_0;
+			else if (corlib.Major == 2 && corlib.Minor == 1)
+				return TargetRuntime.NET_2_1;
+
+			return TargetRuntime.NET_2_0;
 		}
 
 		public static AssemblyDefinition DefineAssembly (string name, AssemblyKind kind)

@@ -95,15 +95,26 @@ namespace Mono.Cecil {
 			asm.MetadataToken = new MetadataToken (TokenType.Assembly, 1);
 			m_asmDef = asm;
 
-			switch (m_img.MetadataRoot.Header.Version) {
+			string version = m_img.MetadataRoot.Header.Version;
+
+			switch (version) {
 			case "v1.0.3705" :
 				asm.Runtime = TargetRuntime.NET_1_0;
 				break;
 			case "v1.1.4322" :
 				asm.Runtime = TargetRuntime.NET_1_1;
 				break;
-			default :
+			case "v2.0.50727" :
 				asm.Runtime = TargetRuntime.NET_2_0;
+				break;
+			case "v2.1.20416" :
+				asm.Runtime = TargetRuntime.NET_2_1;
+				break;
+			default:
+				if (version.StartsWith ("v1"))
+					asm.Runtime = TargetRuntime.NET_1_1;
+				else
+					asm.Runtime = TargetRuntime.NET_2_0;
 				break;
 			}
 
