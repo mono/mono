@@ -1,3 +1,8 @@
+2007-07-27  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListView.cs: Update some layout calculations in details view
+	and clean the code in a pair of assignations.
+
 2007-07-26  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ComboBox.cs, ContainerControl.cs, DataGrid.cs, FontDialog.cs, Label.cs,

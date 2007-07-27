@@ -1178,10 +1178,9 @@ namespace System.Windows.Forms
 			if (!scrollable) {
 				h_scroll.Visible = false;
 				v_scroll.Visible = false;
-				item_control.Location = new Point (0, header_control.Height);
-				item_control.Height = ClientRectangle.Width - header_control.Height;
-				item_control.Width = ClientRectangle.Width;
-				header_control.Width = ClientRectangle.Width;
+				item_control.Height = client_area.Height;
+				item_control.Width = client_area.Width;
+				header_control.Width = client_area.Width;
 				return;
 			}
 
@@ -1208,7 +1207,7 @@ namespace System.Windows.Forms
 				v_scroll.Visible = false;
 			}
 
-			item_control.Height = ClientRectangle.Height - header_control.Height;
+			item_control.Height = client_area.Height;
 
 			if (h_scroll.is_visible) {
 				h_scroll.Location = new Point (client_area.X, client_area.Bottom - h_scroll.Height);
@@ -1231,8 +1230,8 @@ namespace System.Windows.Forms
 			}
 
 			if (header_control.is_visible)
-				header_control.Width = ClientRectangle.Width;
-			item_control.Width = ClientRectangle.Width;
+				header_control.Width = client_area.Width;
+			item_control.Width = client_area.Width;
 
 			if (v_scroll.is_visible) {
 				v_scroll.Location = new Point (client_area.Right - v_scroll.Width, client_area.Y);
@@ -1553,12 +1552,15 @@ namespace System.Windows.Forms
 				x += col.Wd;
 			}
 
+			layout_wd = x;
+
 			if (x < ClientRectangle.Width)
 				x = ClientRectangle.Width;
 
 			if (header_style == ColumnHeaderStyle.None) {
 				header_control.Visible = false;
 				header_control.Size = Size.Empty;
+				layout_wd = ClientRectangle.Width;
 			} else {
 				header_control.Width = x;
 				header_control.Height = columns.Count > 0 ? columns [0].Ht : Font.Height + 5;
@@ -1601,8 +1603,7 @@ namespace System.Windows.Forms
 					y += 2;
 			}
 
-			layout_wd = Math.Max (header_control.Width, item_control.Width);
-			layout_ht = y + header_control.Height;
+			layout_ht = y;
 		}
 
 		private void AdjustItemsPositionArray (int count)
