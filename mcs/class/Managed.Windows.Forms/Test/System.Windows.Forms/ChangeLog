@@ -1,3 +1,8 @@
+2007-07-27  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* DataGridViewRowTest.cs: Comment out more asserts that probably are
+	  DPI dependent.
+
 2007-07-26  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* DataGridViewRowTest.cs: Comment out a few asserts that probably are
