@@ -1,3 +1,7 @@
+2007-07-27  Mark Probst  <mark.probst@gmail.com>
+
+	* mono-membar.h: Memory barriers.
+
 2007-06-13  Mark Probst  <mark.probst@gmail.com>
 
 	* mono-codeman.c (mono_code_manager_reserve): Gather dynamic code
