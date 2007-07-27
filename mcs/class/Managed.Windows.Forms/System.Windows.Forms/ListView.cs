@@ -2812,6 +2812,11 @@ namespace System.Windows.Forms
 			if (v_marker != v_scroll.Value) {
 				int pixels = v_marker - v_scroll.Value;
 				Rectangle area = item_control.ClientRectangle;
+				if (header_control.Visible) {
+					area.Y += header_control.Height;
+					area.Height -= header_control.Height;
+				}
+
 				v_marker = v_scroll.Value;
 				XplatUI.ScrollWindow (item_control.Handle, area, 0, pixels, false);
 			}
