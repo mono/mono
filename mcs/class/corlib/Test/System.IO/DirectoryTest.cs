@@ -276,7 +276,7 @@ public class DirectoryTest
 	[Test]
 	[Category("TargetJvmNotSupported")] // GetCreationTime not supported for TARGET_JVM
 	[ExpectedException(typeof(ArgumentNullException))]
-    public void GetCreationTimeException1 ()
+	public void GetCreationTimeException1 ()
 	{
 		Directory.GetCreationTime (null as string);
 	}
@@ -1495,6 +1495,65 @@ public class DirectoryTest
 			if (File.Exists (DirPath))
 				File.Delete (DirPath);
 		}
+	}
+
+	[Test] // bug #82212
+	[Category ("NotWorking")]
+	public void GetFiles_Pattern ()
+	{
+		string [] files = Directory.GetFiles (TempFolder, "*.*");
+		Assert.IsNotNull (files, "#A1");
+		Assert.AreEqual (0, files.Length, "#A2");
+
+		string tempFile1 = Path.Combine (TempFolder, "tempFile1");
+		File.Create (tempFile1).Close ();
+
+		files = Directory.GetFiles (TempFolder, "*.*");
+		Assert.IsNotNull (files, "#B1");
+		Assert.AreEqual (1, files.Length, "#B2");
+		Assert.AreEqual (tempFile1, files [0], "#B3");
+
+		string tempFile2 = Path.Combine (TempFolder, "FileTemp2.tmp");
+		File.Create (tempFile2).Close ();
+
+		files = Directory.GetFiles (TempFolder, "*.*");
+		Assert.IsNotNull (files, "#C1");
+		Assert.AreEqual (2, files.Length, "#C2");
+
+		files = Directory.GetFiles (TempFolder, "temp*.*");
+		Assert.IsNotNull (files, "#D1");
+		Assert.AreEqual (1, files.Length, "#D2");
+		Assert.AreEqual (tempFile1, files [0], "#D3");
+
+		string tempFile3 = Path.Combine (TempFolder, "tempFile3.txt");
+		File.Create (tempFile3).Close ();
+
+		files = Directory.GetFiles (TempFolder, "*File*.*");
+		Assert.IsNotNull (files, "#E1");
+		Assert.AreEqual (3, files.Length, "#E2");
+
+		files = Directory.GetFiles (TempFolder, "*File*.tmp");
+		Assert.IsNotNull (files, "#F1");
+		Assert.AreEqual (1, files.Length, "#F2");
+		Assert.AreEqual (tempFile2, files [0], "#F3");
+
+		files = Directory.GetFiles (TempFolder, "*tempFile*");
+		Assert.IsNotNull (files, "#G1");
+		Assert.AreEqual (2, files.Length, "#G2");
+
+		files = Directory.GetFiles (TempFolder, "*tempFile1");
+		Assert.IsNotNull (files, "#H1");
+		Assert.AreEqual (1, files.Length, "#H2");
+		Assert.AreEqual (tempFile1, files [0], "#H3");
+
+		files = Directory.GetFiles (TempFolder, "*.txt");
+		Assert.IsNotNull (files, "#I1");
+		Assert.AreEqual (1, files.Length, "#I2");
+		Assert.AreEqual (tempFile3, files [0], "#I3");
+
+		files = Directory.GetFiles (TempFolder, "*.t*");
+		Assert.IsNotNull (files, "#J1");
+		Assert.AreEqual (2, files.Length, "#J2");
 	}
 
 	[Test]

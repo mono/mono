@@ -1,3 +1,7 @@
+2007-07-28  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DirectoryTest.cs: Added test for bug #82212.
+
 2007-07-08  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DirectoryCas.cs: Changed Move to MoveDirectory to match the
