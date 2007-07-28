@@ -1,3 +1,9 @@
+2007-07-28  Miguel de Icaza  <miguel@novell.com>
+
+	* IdentityReference.cs, SecurityIdentifier.cs, NTAccount.cs: Do
+	not recurse infinitely as reported by Jesse Jones, the problem was
+	the comparison to null.
+
 2006-12-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* NTAccount.cs: Implement == and != operators (MoMA reports).

@@ -101,18 +101,18 @@ namespace System.Security.Principal {
 
 		public static bool operator == (NTAccount left, NTAccount right)
 		{
-			if (left == null)
-				return (right == null);
-			if (right == null)
+			if (((object)left) == null)
+				return (((object)right) == null);
+			if (((object)right) == null)
 				return false;
 			return (left.Value == right.Value);
 		}
 
 		public static bool operator != (NTAccount left, NTAccount right)
 		{
-			if (left == null)
-				return (right != null);
-			if (right == null)
+			if (((object)left) == null)
+				return (((object)right) != null);
+			if (((object)right) == null)
 				return true;
 			return (left.Value != right.Value);
 		}

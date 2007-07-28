@@ -1,3 +1,31 @@
+2007-07-21  Miguel de Icaza  <miguel@novell.com>
+
+	* WaitHandle.cs (Handle): It turns out that we should never create
+	new SafeWaitHandles, as applications will assume that a
+	SafeWaitHandle pulled from this will be the same after a Handle
+	update (from Gert's test):
+
+	
+                AutoResetEvent are1 = new AutoResetEvent (false);
+                AutoResetEvent are2 = new AutoResetEvent (false);
+                SafeWaitHandle swh1 = are1.SafeWaitHandle;
+                Console.WriteLine ("#A1:" + !swh1.IsClosed);
+                Console.WriteLine ("#A2:" + !swh1.IsInvalid);
+                IntPtr dummyHandle = (IntPtr) 2;
+                are1.Handle = dummyHandle;
+                Console.WriteLine ("#A3:" + (are1.Handle == dummyHandle));
+                Console.WriteLine ("#A4:" + !swh1.IsClosed);
+                Console.WriteLine ("#A5:" + !swh1.IsClosed);
+                Console.WriteLine ("#A6:" + !swh1.IsInvalid);
+                Console.WriteLine ("#A7:" + !are1.SafeWaitHandle.IsClosed);
+                Console.WriteLine ("#A8:" +
+	        !are1.SafeWaitHandle.IsInvalid);
+
+	We would return in A4, A5, A6 true, even when we have set the
+	Handle ourselves. 
+
+	* 
+
 2007-07-18  Miguel de Icaza  <miguel@novell.com>
 
 	* WaitHandle.cs (Handle): in the 2.0 profile, explicitly dispose
