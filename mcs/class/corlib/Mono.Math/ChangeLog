@@ -1,3 +1,8 @@
+2007-07-28  Miguel de Icaza  <miguel@novell.com>
+
+	* BigInteger.cs: Do not cast inside Equals,instead use the as
+	operator, as reported by Jesse Jones.
+
 2004-12-03  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* BigInteger.cs: Fix issue #70169 in ModPow when modulus is a power of
