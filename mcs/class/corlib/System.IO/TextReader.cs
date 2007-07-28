@@ -58,8 +58,12 @@ namespace System.IO {
 			Dispose(true);
 		}
 
-		protected virtual void Dispose( bool disposing )
+		protected virtual void Dispose (bool disposing)
 		{
+			if (disposing){
+				// If we are explicitly disposed, we can avoid finalization.
+				GC.SuppressFinalize (this);
+			}
 			return;
 		}
 		

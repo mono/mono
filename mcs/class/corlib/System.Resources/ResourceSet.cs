@@ -96,6 +96,9 @@ namespace System.Resources
 		public void Dispose()
 		{
 			Dispose (true);
+
+			// If we are explicitly disposed, we can avoid finalization.
+			GC.SuppressFinalize (this);
 		}
 
 		protected virtual void Dispose (bool disposing)

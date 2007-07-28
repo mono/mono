@@ -150,6 +150,8 @@ namespace System.Resources
 				if(stream!=null) {
 					stream.Close();
 				}
+				// If we are explicitly disposed, we can avoid finalization.
+				GC.SuppressFinalize (this);
 			}
 			resources=null;
 			stream=null;

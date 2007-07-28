@@ -68,6 +68,10 @@ namespace System.Security.Principal {
 			if (!undo) {
 				Undo ();
 			}
+			if (disposing){
+				// If we are explicitly disposed, we can avoid finalization.
+				GC.SuppressFinalize (this);
+			}
 		}
 #else
 		~WindowsImpersonationContext ()
