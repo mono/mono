@@ -80,8 +80,10 @@ namespace System
 			if (!base.Equals (o))
 				return false;
 
-			MulticastDelegate d = (MulticastDelegate) o;
-
+			MulticastDelegate d = o as MulticastDelegate;
+			if (d == null)
+				return false;
+			
 			if (this.prev == null) {
 				if (d.prev == null)
 					return true;
