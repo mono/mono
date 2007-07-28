@@ -237,6 +237,9 @@ namespace System.Text {
 
 		public bool Equals (StringBuilder sb) 
 		{
+			if (((object)sb) == null)
+				return false;
+			
 			if (_length == sb.Length && _str == sb._str )
 				return true;
 

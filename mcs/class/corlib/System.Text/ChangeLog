@@ -1,3 +1,7 @@
+2007-07-28  Miguel de Icaza  <miguel@novell.com>
+
+	* StringBuilder.cs (Text): Check for null, from Jesse Jones.
+
 2007-05-03  Dick Porter  <dick@ximian.com>
 
 	* Encoding.cs: 
