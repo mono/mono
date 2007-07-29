@@ -1,3 +1,7 @@
+2007-07-29  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* TypeStubManager.cs: fixed BindingInfo.ctor, reverted to ONLY_1_1
+
 2007-06-16  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Fault.cs: In SOAP 1.1, the child elements of Fault may be unqualified.
