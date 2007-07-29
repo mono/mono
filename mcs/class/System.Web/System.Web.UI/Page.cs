@@ -1043,6 +1043,7 @@ public partial class Page : TemplateControl, IHttpHandler
 #if TARGET_J2EE
 		string serverUrl = Context.ServletResponse.encodeURL (Request.RawUrl);
 		writer.WriteLine ("\t{0}.serverURL = {1};", theForm, ClientScriptManager.GetScriptLiteral (serverUrl));
+		writer.WriteLine ("\twindow.TARGET_J2EE = true;");
 #endif
 	}
 
