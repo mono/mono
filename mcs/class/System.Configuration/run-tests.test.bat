@@ -118,7 +118,7 @@ REM ********************************************************
 @echo Running fixture "%RUNNING_FIXTURE%"
 REM ********************************************************
 
-copy %BACK_TO_ROOT_DIR%Test\bin\%PROJECT_CONFIGURATION%\%TEST_ASSEMBLY% .
+copy Test\bin\%PROJECT_CONFIGURATION%\%TEST_ASSEMBLY% .
 
 @echo on
 "%JAVA_HOME%\bin\java" -Xmx1024M -cp %CLASSPATH% NUnit.Console.ConsoleUi %TEST_ASSEMBLY% /fixture=%RUNNING_FIXTURE%  %NUNIT_OPTIONS% /xml=%GH_OUTPUT_XML% >>%RUN_LOG% 2<&1
