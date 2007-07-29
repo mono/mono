@@ -1,6 +1,6 @@
 #! -*- makefile -*-
 
-INTERNAL_SMCS = $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/smcs/smcs.exe
+INTERNAL_SMCS = $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/net_2_1/smcs.exe
 
 BOOTSTRAP_PROFILE = net_2_1
 BOOTSTRAP_MCS = MONO_PATH="$(topdir)/class/lib/net_2_1$(PLATFORM_PATH_SEPARATOR)$(topdir)/class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(INTERNAL_SMCS)
