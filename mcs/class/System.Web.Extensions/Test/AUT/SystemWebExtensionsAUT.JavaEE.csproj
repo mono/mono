@@ -73,7 +73,7 @@
           <NTLMAuthentication>False</NTLMAuthentication>
         </WebProjectProperties>
       </FlavorProperties>
-      <UserProperties REFS-RefInfo-System-Web-Extensions="repository:vmw:framework:2.0" REFS-JarPath-System-Web-Extensions="" REFS-RefInfo-system-web-mobile="repository:vmw:framework:2.0" REFS-JarPath-system-web-mobile="" REFS-RefInfo-system-enterpriseservices="repository:vmw:framework:2.0" REFS-JarPath-system-enterpriseservices="" REFS-RefInfo-system-web-services="repository:vmw:framework:2.0" REFS-JarPath-system-web-services="" REFS-RefInfo-system-configuration="repository:vmw:framework:2.0" REFS-JarPath-system-configuration="" REFS-RefInfo-system-xml="repository:vmw:framework:2.0" REFS-JarPath-system-xml="" REFS-RefInfo-system-web="repository:vmw:framework:2.0" REFS-JarPath-system-web="" REFS-RefInfo-system-drawing="repository:vmw:framework:2.0" REFS-JarPath-system-drawing="" REFS-RefInfo-system-data="repository:vmw:framework:2.0" REFS-JarPath-system-data="" REFS-RefInfo-system="repository:vmw:framework:2.0" REFS-JarPath-system="" REFS-JarPath-mainsoft-web-aspnetconfig="..\..\..\..\..\..\..\..\Program Files\Mainsoft for Java EE\java_refs\framework\WSAT\Mainsoft.Web.AspnetConfig.jar" REFS-RefInfo-mainsoft-web-aspnetconfig="repository:vmw:framework:2.0" />
+      <UserProperties REFS-RefInfo-mainsoft-web-aspnetconfig="repository:vmw:framework:2.0" REFS-JarPath-mainsoft-web-aspnetconfig="..\..\..\..\..\..\..\..\Program Files\Mainsoft for Java EE\java_refs\framework\WSAT\Mainsoft.Web.AspnetConfig.jar" REFS-JarPath-system="" REFS-RefInfo-system="repository:vmw:framework:2.0" REFS-JarPath-system-data="" REFS-RefInfo-system-data="repository:vmw:framework:2.0" REFS-JarPath-system-drawing="" REFS-RefInfo-system-drawing="repository:vmw:framework:2.0" REFS-JarPath-system-web="" REFS-RefInfo-system-web="repository:vmw:framework:2.0" REFS-JarPath-system-xml="" REFS-RefInfo-system-xml="repository:vmw:framework:2.0" REFS-JarPath-system-configuration="" REFS-RefInfo-system-configuration="repository:vmw:framework:2.0" REFS-JarPath-system-web-services="" REFS-RefInfo-system-web-services="repository:vmw:framework:2.0" REFS-JarPath-system-enterpriseservices="" REFS-RefInfo-system-enterpriseservices="repository:vmw:framework:2.0" REFS-JarPath-system-web-mobile="" REFS-RefInfo-system-web-mobile="repository:vmw:framework:2.0" REFS-JarPath-System-Web-Extensions="" REFS-RefInfo-System-Web-Extensions="repository:vmw:framework:2.0" />
     </VisualStudio>
   </ProjectExtensions>
   <ItemGroup>
@@ -724,6 +724,8 @@
     <Content Include="Selenium\QuickStarts\Sys.Net.WebServiceProxy\WebServiceProxy.html" />
     <Content Include="Selenium\QuickStarts\Sys.Net.XmlHttpExecutor\XmlHttpExecutor.html" />
     <Content Include="Selenium\QuickStarts\Sys.UI.DomElement\default.html" />
+    <Content Include="Selenium\QuickStarts\Sys.UI.DomEvent.addHandlers\default.html" />
+    <Content Include="Selenium\QuickStarts\Sys.UI.DomEvent2\default.html" />
     <Content Include="Selenium\QuickStarts\Sys.UI.DomEvent\default.html" />
     <Content Include="Selenium\Sys.WebForms\PageRequestManager\PageRequestManagerTestSuite.html" />
     <Content Include="Selenium\Sys.WebForms\PageRequestManager\TestClientPageLifecycleEvents.html" />

@@ -57,7 +57,7 @@
         <!-- Display current color object. -->
         <span style="background-color:Yellow">Color:</span>
         <span id="ResultId"></span>
-          
+          <br /><input id="ok" />
     </body>
     
 </html>

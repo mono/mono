@@ -76,6 +76,7 @@ function SucceededCallback(result, userContext, methodName)
                     selectObject.options[i].selected = true;
                i++;
             }
+            $get("ok").value="ok";
             break;
         }
         default:
