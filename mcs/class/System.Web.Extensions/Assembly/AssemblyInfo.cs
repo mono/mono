@@ -66,5 +66,8 @@ using System.Security;
 [assembly: WebResource ("MicrosoftAjaxTimer.js", "application/x-javascript")]
 [assembly: WebResource ("MicrosoftAjaxTimer.debug.js", "application/x-javascript")]
 
-[assembly: AssemblyDelaySign (true)]
-[assembly: AssemblyKeyFile ("../winfx.pub")]
+//
+// This is needed only in the 3.5 profile, which we do not build in mcs yet
+//
+//[assembly: AssemblyDelaySign (true)]
+//[assembly: AssemblyKeyFile ("../winfx.pub")]
