@@ -50,7 +50,7 @@ namespace System.Web.Script.Services
 			response.ContentType = "application/x-javascript";
 			response.Cache.SetExpires (DateTime.Now.AddYears (1));
 			response.Cache.SetValidUntilExpires (true);
-			response.Cache.SetCacheability (HttpCacheability.ServerAndPrivate);
+			response.Cache.SetCacheability (HttpCacheability.Private);
 			response.Output.Write (_logicalTypeInfo.Proxy);
 		}
 
