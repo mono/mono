@@ -36,7 +36,7 @@ namespace System.Web.Configuration
 {
 	public sealed class ScriptingJsonSerializationSection : ConfigurationSection
 	{
-		[ConfigurationPropertyAttribute ("converters", IsKey = true, DefaultValue = "")]
+		[ConfigurationPropertyAttribute ("converters", IsKey = true)]
 		public ConvertersCollection Converters {
 			get {
 				return (ConvertersCollection) base ["converters"];

@@ -238,6 +238,22 @@ this._failed = null;
 			}
 
 			proxy.AppendFormat (
+#if NET_3_5
+@"}}
+{0}.registerClass('{0}',Sys.Net.WebServiceProxy);
+{0}._staticInstance = new {0}();
+{0}.set_path = function(value) {{ {0}._staticInstance.set_path(value); }}
+{0}.get_path = function() {{ return {0}._staticInstance.get_path(); }}
+{0}.set_timeout = function(value) {{ {0}._staticInstance.set_timeout(value); }}
+{0}.get_timeout = function() {{ return {0}._staticInstance.get_timeout(); }}
+{0}.set_defaultUserContext = function(value) {{ {0}._staticInstance.set_userContext(value); }}
+{0}.get_defaultUserContext = function() {{ return {0}._staticInstance.get_userContext(); }}
+{0}.set_defaultSucceededCallback = function(value) {{ {0}._staticInstance.set_succeeded(value); }}
+{0}.get_defaultSucceededCallback = function() {{ return {0}._staticInstance.get_succeeded(); }}
+{0}.set_defaultFailedCallback = function(value) {{ {0}._staticInstance.set_failed(value); }}
+{0}.get_defaultFailedCallback = function() {{ return {0}._staticInstance.get_failed(); }}
+{0}.set_path(""{1}"");",
+#else
 @"}}
 {0}.registerClass('{0}',Sys.Net.WebServiceProxy);
 {0}._staticInstance = new {0}();
@@ -252,6 +268,7 @@ this._failed = null;
 {0}.set_defaultFailedCallback = function(value) {{ {0}._staticInstance._failed = value; }}
 {0}.get_defaultFailedCallback = function() {{ return {0}._staticInstance._failed; }}
 {0}.set_path(""{1}"");",
+#endif
 			service, filePath);
 
 			for (int i = 0; i < logicalMethods.Count; i++)
