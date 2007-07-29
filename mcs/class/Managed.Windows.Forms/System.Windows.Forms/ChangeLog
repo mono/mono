@@ -1,3 +1,21 @@
+2007-07-29  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* FileDialog.cs: Accept any FilterIndex value, and store it
+	unmodified. When FilterIndex is less than 1, or greater than number
+	of filters, then default to first filter. Only add filter extension to
+	file if user did not specifiy an extension. When type of dialog is
+	OpenFileDialog and DefaultExt is set, then only use filter extension
+	if: CheckFileExists is true and no file wih the default extension
+	exists, or CheckFileExists is false, and user specified file does not
+	exist. When CheckFileExists is true, then add first extension of 
+	selected filter that matches existing file. Perform checks for
+	existing file, overwrite and create after extension has been added to
+	file name. When CheckFileExists is true and type is SaveFileDialog,
+	then only consider first filter extension if DefaultExt is set.
+	When CheckFileExists is true, then ignore DefaultExt if file with that
+	extension does not exist. Also perform check for existing file when
+	type is SaveFileDialog. Changed some field to constants.
+
 2007-07-27  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: Take into account the region used by header

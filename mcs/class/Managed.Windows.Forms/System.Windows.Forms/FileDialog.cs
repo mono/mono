@@ -63,7 +63,6 @@ namespace System.Windows.Forms
 		private string[] fileNames;
 		private string filter = "";
 		private int filterIndex = 1;
-		private int setFilterIndex = 1;
 		private string initialDirectory;
 		private bool restoreDirectory;
 		private bool showHelp;
@@ -107,21 +106,21 @@ namespace System.Windows.Forms
 		internal bool createPrompt;
 		internal bool overwritePrompt = true;
 		
-		internal FileFilter fileFilter;
+		private FileFilter fileFilter;
 		
 		private string lastFolder = String.Empty;
 		
 		private MWFVFS vfs;
 		
-		private readonly string filedialog_string = "FileDialog";
-		private readonly string lastfolder_string = "LastFolder";
-		private readonly string width_string = "Width";
-		private readonly string height_string = "Height";
-		private readonly string filenames_string = "FileNames";
-		private readonly string x_string = "X";
-		private readonly string y_string = "Y";
+		private const string filedialog_string = "FileDialog";
+		private const string lastfolder_string = "LastFolder";
+		private const string width_string = "Width";
+		private const string height_string = "Height";
+		private const string filenames_string = "FileNames";
+		private const string x_string = "X";
+		private const string y_string = "Y";
 		
-		private bool disable_form_closed_event = false;
+		private bool disable_form_closed_event;
 		
 		internal FileDialog ()
 		{
@@ -546,18 +545,10 @@ namespace System.Windows.Forms
 		[DefaultValue(1)]
 		public int FilterIndex {
 			get {
-				return setFilterIndex;
+				return filterIndex;
 			}
-			
 			set {
-				setFilterIndex = value;
-				
-				if (value < 1)
-					filterIndex = 1;
-				else
-					filterIndex = value;
-				
-				SelectFilter ();
+				filterIndex = value;
 			}
 		}
 		
@@ -728,6 +719,8 @@ namespace System.Windows.Forms
 			else
 				fileName = string.Empty;
 
+			SelectFilter ();
+
 			form.Refresh ();
 
 			SetFileAndDirectory (fileName);
@@ -789,15 +782,21 @@ namespace System.Windows.Forms
 
 		private void SelectFilter ()
 		{
-			if (mwfFileView.FilterArrayList == null || filterIndex > mwfFileView.FilterArrayList.Count)
-				return;
-			
+			int filter_to_select = (filterIndex - 1);
+
+			if (mwfFileView.FilterArrayList == null || mwfFileView.FilterArrayList.Count == 0) {
+				filter_to_select = -1;
+			} else {
+				if (filter_to_select < 0 || filter_to_select >= mwfFileView.FilterArrayList.Count)
+					filter_to_select = 0;
+			}
+
 			do_not_call_OnSelectedIndexChangedFileTypeComboBox = true;
 			fileTypeComboBox.BeginUpdate ();
-			fileTypeComboBox.SelectedIndex = filterIndex - 1;
+			fileTypeComboBox.SelectedIndex = filter_to_select;
 			fileTypeComboBox.EndUpdate ();
 			do_not_call_OnSelectedIndexChangedFileTypeComboBox = false;
-			mwfFileView.FilterIndex = filterIndex;
+			mwfFileView.FilterIndex = filter_to_select + 1;
 		}
 
 		private void SetFileAndDirectory (string fname)
@@ -889,15 +888,37 @@ namespace System.Windows.Forms
 					}
 				}
 
-				if (fileDialogType == FileDialogType.OpenFileDialog) {
-					if (checkFileExists) {
-						if (!File.Exists (internalfullfilename)) {
-							string message = "\"" + internalfullfilename + "\" doesn't exist. Please verify that you have entered the correct file name.";
-							MessageBox.Show (message, openSaveButton.Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-							return;
+				if (addExtension) {
+					string current_extension = Path.GetExtension (fileName);
+					if (current_extension.Length == 0) {
+						string filter_extension = string.Empty;
+
+						if (AddFilterExtension (internalfullfilename))
+							filter_extension = GetExtension (internalfullfilename);
+
+						if (filter_extension.Length == 0 && DefaultExt.Length > 0) {
+							filter_extension = "." + DefaultExt;
+
+							if (checkFileExists) {
+								// ignore DefaultExt if file not exist
+								if (!File.Exists (internalfullfilename + filter_extension))
+									filter_extension = string.Empty;
+							}
 						}
+
+						internalfullfilename += filter_extension;
 					}
-				} else {
+				}
+
+				if (checkFileExists) {
+					if (!File.Exists (internalfullfilename)) {
+						string message = "\"" + internalfullfilename + "\" doesn't exist. Please verify that you have entered the correct file name.";
+						MessageBox.Show (message, openSaveButton.Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+						return;
+					}
+				}
+
+				if (fileDialogType == FileDialogType.SaveFileDialog) {
 					if (overwritePrompt) {
 						if (File.Exists (internalfullfilename)) {
 							string message = "\"" + internalfullfilename + "\" exists. Overwrite ?";
@@ -914,53 +935,6 @@ namespace System.Windows.Forms
 							if (dr == DialogResult.Cancel)
 								return;
 						}
-					}
-
-					if (addExtension) {
-						string extension_to_use = String.Empty;
-						string filter_exentsion = String.Empty;
-
-						if (fileFilter != null) {
-							if (filterIndex > fileFilter.FilterArrayList.Count)
-								filterIndex = fileTypeComboBox.SelectedIndex + 1;
-
-							FilterStruct filterstruct = (FilterStruct) fileFilter.FilterArrayList [filterIndex - 1];
-
-							for (int i = 0; i < filterstruct.filters.Count; i++) {
-								string extension = filterstruct.filters [i];
-
-								if (extension.StartsWith ("*"))
-									extension = extension.Remove (0, 1);
-
-								if (extension.IndexOf ('*') != -1)
-									continue;
-
-#if NET_2_0
-								if (!supportMultiDottedExtensions) {
-#endif
-									int lastdot = extension.LastIndexOf('.');
-									if (lastdot > 0) {
-										if (extension.LastIndexOf('.', lastdot - 1) != -1) {
-											extension = extension.Remove(0, lastdot);
-										}
-									}
-#if NET_2_0
-								}
-#endif
-
-								filter_exentsion = extension;
-								break;
-							}
-						}
-
-						if (filter_exentsion != String.Empty)
-							extension_to_use = filter_exentsion;
-						else
-							if (DefaultExt.Length > 0)
-								extension_to_use = "." + DefaultExt;
-
-						if (!internalfullfilename.EndsWith (extension_to_use))
-							internalfullfilename += extension_to_use;
 					}
 				}
 
@@ -1007,7 +981,8 @@ namespace System.Windows.Forms
 				lastFolder = mwfFileView.CurrentFolder;
 			}
 
-			setFilterIndex = filterIndex;
+			// update value of FilterIndex with user-selected filter
+			filterIndex = fileTypeComboBox.SelectedIndex + 1;
 
 			CancelEventArgs cancelEventArgs = new CancelEventArgs ();
 
@@ -1017,7 +992,96 @@ namespace System.Windows.Forms
 
 			form.DialogResult = DialogResult.OK;
 		}
-		
+
+		bool AddFilterExtension (string fileName)
+		{
+			if (fileDialogType == FileDialogType.OpenFileDialog) {
+				if (DefaultExt.Length == 0)
+					return true;
+
+				if (checkFileExists) {
+					// if CheckFileExists is true, only add filter extension if
+					// file with DefaultExt does not exist
+					string fullFileName = fileName + "." + DefaultExt;
+					return !File.Exists (fullFileName);
+				} else {
+					// if CheckFileExists is false, only add filter extension
+					// if specified file does not exist
+					return !File.Exists (fileName);
+				}
+			}
+
+			return true;
+		}
+
+		string GetExtension (string fileName)
+		{
+			string filter_extension = String.Empty;
+
+			if (fileFilter == null || fileTypeComboBox.SelectedIndex == -1)
+				return filter_extension;
+
+			FilterStruct filterstruct = (FilterStruct) fileFilter.FilterArrayList
+				[fileTypeComboBox.SelectedIndex];
+
+			for (int i = 0; i < filterstruct.filters.Count; i++) {
+				string extension = filterstruct.filters [i];
+
+				if (extension.StartsWith ("*"))
+					extension = extension.Remove (0, 1);
+
+				if (extension.IndexOf ('*') != -1)
+					continue;
+
+#if NET_2_0
+				if (!supportMultiDottedExtensions) {
+#endif
+					int lastdot = extension.LastIndexOf('.');
+					if (lastdot > 0) {
+						if (extension.LastIndexOf('.', lastdot - 1) != -1) {
+							extension = extension.Remove(0, lastdot);
+						}
+					}
+#if NET_2_0
+				}
+#endif
+
+				if (!checkFileExists) {
+					filter_extension = extension;
+					break;
+				}
+
+				if (fileDialogType == FileDialogType.SaveFileDialog) {
+					// when DefaultExt is set, only consider first filter
+					// extension (and do not check if file exists)
+					if (DefaultExt.Length > 0) {
+						filter_extension = extension;
+						break;
+					}
+				}
+
+				// MSDN: If the CheckFileExists property is true,
+				// the dialog box adds the first extension from the
+				// current file filter that matches an existing file
+				string fullfilename = fileName + extension;
+				if (File.Exists (fullfilename)) {
+					filter_extension = extension;
+					break;
+				} else {
+					if (fileDialogType == FileDialogType.SaveFileDialog) {
+						// when DefaultExt is set, only consider first filter
+						// extension
+						if (DefaultExt.Length > 0) {
+							filter_extension = extension;
+							break;
+						}
+					}
+				}
+			}
+
+			return filter_extension;
+		}
+
 		void OnClickCancelButton (object sender, EventArgs e)
 		{
 			if (restoreDirectory)
@@ -1057,9 +1121,7 @@ namespace System.Windows.Forms
 				return;
 			}
 			
-			filterIndex = fileTypeComboBox.SelectedIndex + 1;
-			
-			mwfFileView.FilterIndex = filterIndex;
+			mwfFileView.FilterIndex = fileTypeComboBox.SelectedIndex + 1;
 		}
 		
 		void OnSelectedFileChangedFileView (object sender, EventArgs e)
@@ -1129,14 +1191,9 @@ namespace System.Windows.Forms
 				fileTypeComboBox.Items.Add (fs.filterName);
 			}
 			
-			if (filters.Count > 0 && FilterIndex <= filters.Count)
-				fileTypeComboBox.SelectedIndex = filterIndex - 1;
-			
 			fileTypeComboBox.EndUpdate ();
 			
 			mwfFileView.FilterArrayList = filters;
-			
-			mwfFileView.FilterIndex = filterIndex;
 		}
 		
 		private void ResizeAndRelocateForHelpOrReadOnly ()
@@ -2092,8 +2149,8 @@ namespace System.Windows.Forms
 	}
 	#endregion
 	
-	#region MWFFileView		
-	// MWFFileView
+	#region MWFFileView
+
 	internal class MWFFileView : ListView
 	{
 		private ArrayList filterArrayList;
@@ -4562,7 +4619,7 @@ namespace System.Windows.Forms
 					full_file_name = filename;
 
 				Open (full_file_name);
-			}				
+			}
 			
 			~MWFConfigInstance ()
 			{
