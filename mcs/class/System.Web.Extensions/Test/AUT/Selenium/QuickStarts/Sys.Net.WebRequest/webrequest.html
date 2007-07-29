@@ -24,8 +24,8 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyTextPresent</td>
-	<td>&lt;head&gt; &lt;title&gt;Hello Page&lt;/title&gt; &lt;/head&gt; &lt;body&gt; &lt;p&gt; ...hello there. Congratulations, you got here via a GET Web Request! &lt;/p&gt; &lt;/body&gt;</td>
+	<td>waitForTextPresent</td>
+	<td>...hello there. Congratulations, you got here via a GET Web Request!</td>
 	<td></td>
 </tr>
 <tr>
@@ -34,8 +34,13 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyTextPresent</td>
-	<td>&lt;div&gt; &lt;h1&gt;WebRequestPost Target&lt;/h1&gt; &lt;p&gt; &lt;input name="LabelID" type="text" value="Hello! Do you hear me?" id="LabelID" /&gt; &lt;/p&gt; ... Yes I hear you. &lt;/div&gt;</td>
+	<td>waitForTextPresent</td>
+	<td>&lt;input id="LabelID" type="text" value="Hello! Do you hear me?" name="LabelID" /&gt;</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForTextPresent</td>
+	<td>... Yes I hear you. </td>
 	<td></td>
 </tr>
 <tr>
@@ -54,8 +59,8 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyTextPresent</td>
-	<td>&lt;head&gt; &lt;title&gt;Hello Page&lt;/title&gt; &lt;/head&gt; &lt;body&gt; &lt;p&gt; ...hello there. Congratulations, you got here via a GET Web Request! &lt;/p&gt; &lt;/body&gt;</td>
+	<td>waitForTextPresent</td>
+	<td>...hello there. Congratulations, you got here via a GET Web Request!</td>
 	<td></td>
 </tr>
 <tr>
@@ -80,7 +85,7 @@
 </tr>
 <tr>
 	<td>assertAlert</td>
-	<td>Resolved Url: http://localhost/SystemWebExtensionsAUT/Sys.Net.WebRequest/getTarget.htm</td>
+	<td>Resolved Url: http://*/SystemWebExtensionsAUT/Sys.Net.WebRequest/getTarget.htm</td>
 	<td></td>
 </tr>
 <tr>

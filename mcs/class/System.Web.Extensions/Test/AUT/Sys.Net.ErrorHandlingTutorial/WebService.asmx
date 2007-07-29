@@ -19,7 +19,11 @@ namespace Samples.AspNet
         public string Div(int a, int b)
         {
 
-            int division = a / b;
+			if (b == 0)
+				throw new DivideByZeroException ("Attempted to divide by zero.");
+            
+			int division = a / b;
+
             string result =
                 String.Format("The division result is {0}.",
                     division.ToString());

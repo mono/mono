@@ -36,7 +36,8 @@ function AbortWebRequest()
     var execAborted = 
         executor.get_aborted();
   
-    alert("Executor aborted: " + execAborted);  
+    //alert("Executor aborted: " + execAborted);  
+    $get("alert2").value = "Executor aborted: " + execAborted;
 }
 
 // This function executes a Web request.
@@ -68,7 +69,8 @@ function ExecuteWebRequest()
     
     var started = executor.get_started();
   
-    alert("Executor started: " + started);
+    //alert("Executor started: " + started);
+    $get("alert2").value = "Executor started: " + started;
 }
 
 
@@ -84,7 +86,8 @@ function OnCompleted(executor, eventArgs)
         // Get the Web request instance.
         var webReq = executor.get_webRequest();
         // Display request Url.
-        alert(webReq.get_url());
+        //alert(webReq.get_url());
+        $get("alert1").value = webReq.get_url();
 
        // Clear the previous results. 
        resultElementId.innerHTML = "";
@@ -128,9 +131,10 @@ function OnCompleted(executor, eventArgs)
         if (executor.get_timedOut())
             alert("Timed Out");
         else
-            if (executor.get_aborted())
-                alert("Aborted");
-    
+            if (executor.get_aborted()) {
+                //alert("Aborted");
+                $get("alert1").value = "Aborted";
+			}
     }
 
 }

@@ -64,6 +64,9 @@
         <hr />
        
         <div id="ResultId" style="background-color:Aqua;"></div>
+        
+        <input id="alert1" />
+        <input id="alert2" />
    
     </body>
     

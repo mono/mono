@@ -26,7 +26,6 @@
             <asp:ScriptManager runat="server" ID="scriptManager">
                 <Services>
                     <asp:ServiceReference Path="WebService.asmx" />
-                    <asp:ServiceReference Path="WebService2.asmx" />
                 </Services>
                 <Scripts>
                     <asp:ScriptReference Path="generics.js" />
