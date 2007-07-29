@@ -1258,6 +1258,7 @@ namespace MonoTests.System.Drawing {
 			Assert ("IsSystemColor", !color.IsSystemColor);
 		}
 
+#if !TARGET_JVM
 		private void Compare (KnownColor kc, GetSysColorIndex index)
 		{
 			// we get BGR than needs to be converted into ARGB
@@ -1307,6 +1308,7 @@ namespace MonoTests.System.Drawing {
 			Compare (KnownColor.MenuHighlight, GetSysColorIndex.COLOR_MENUHIGHLIGHT);
 #endif
 		}
+#endif // TARGET_JVM
 	}
 }
 

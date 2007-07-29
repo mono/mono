@@ -144,6 +144,7 @@ namespace MonoTests.System.Drawing.Imaging {
 			}
 		}
 
+#if !TARGET_JVM
 		[Test]
 		public void Bitmap8bbpIndexedGreyscaleData ()
 		{
@@ -205,6 +206,7 @@ namespace MonoTests.System.Drawing.Imaging {
 				}
 			}
 		}
+#endif
 
 		/* Checks bitmap features on a known 24-bits bitmap */
 		[Test]
