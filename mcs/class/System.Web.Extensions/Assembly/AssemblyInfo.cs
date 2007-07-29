@@ -65,3 +65,6 @@ using System.Security;
 [assembly: WebResource ("MicrosoftAjaxWebForms.debug.js", "application/x-javascript")]
 [assembly: WebResource ("MicrosoftAjaxTimer.js", "application/x-javascript")]
 [assembly: WebResource ("MicrosoftAjaxTimer.debug.js", "application/x-javascript")]
+
+[assembly: AssemblyDelaySign (true)]
+[assembly: AssemblyKeyFile ("../winfx.pub")]

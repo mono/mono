@@ -5,15 +5,16 @@ include ../../build/rules.make
 LIBRARY = System.Web.Extensions.dll
 
 RESOURCE_FILES= \
-	..\MicrosoftAjaxLibrary\System.Web.Extensions\1.0.61025.0\MicrosoftAjax.debug.js	\
-	..\MicrosoftAjaxLibrary\System.Web.Extensions\1.0.61025.0\MicrosoftAjax.js		\
-	..\MicrosoftAjaxLibrary\System.Web.Extensions\1.0.61025.0\MicrosoftAjaxTimer.debug.js	\
-	..\MicrosoftAjaxLibrary\System.Web.Extensions\1.0.61025.0\MicrosoftAjaxTimer.js		\
-	..\MicrosoftAjaxLibrary\System.Web.Extensions\1.0.61025.0\MicrosoftAjaxWebForms.debug.js\
-	..\MicrosoftAjaxLibrary\System.Web.Extensions\1.0.61025.0\MicrosoftAjaxWebForms.js
+	../MicrosoftAjaxLibrary/System.Web.Extensions/1.0.61025.0/MicrosoftAjax.debug.js	\
+	../MicrosoftAjaxLibrary/System.Web.Extensions/1.0.61025.0/MicrosoftAjax.js		\
+	../MicrosoftAjaxLibrary/System.Web.Extensions/1.0.61025.0/MicrosoftAjaxTimer.debug.js	\
+	../MicrosoftAjaxLibrary/System.Web.Extensions/1.0.61025.0/MicrosoftAjaxTimer.js		\
+	../MicrosoftAjaxLibrary/System.Web.Extensions/1.0.61025.0/MicrosoftAjaxWebForms.debug.js\
+	../MicrosoftAjaxLibrary/System.Web.Extensions/1.0.61025.0/MicrosoftAjaxWebForms.js
 
 LIB_MCS_FLAGS = \
 	-unsafe \
+	-define:SYSTEM_WEB_EXTENSIONS	\
 	-r:$(corlib)	 		\
 	-r:System.dll 			\
 	-r:System.Drawing.dll 		\
