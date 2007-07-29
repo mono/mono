@@ -1851,6 +1851,15 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (Infoset ("<anyType><elem1/><elem2/></anyType>"), WriterText);
 		}
 #endif
+		[Test]
+		public void TestSerializeXmlDocument ()
+		{
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml (@"<?xml version=""1.0"" encoding=""utf-8"" ?><root/>");
+			Serialize (doc, typeof (XmlDocument));
+			Assert.AreEqual ("<?xml version='1.0' encoding='utf-16'?><root />",
+				sw.GetStringBuilder ().ToString ());
+		}
 
 		[Test]
 		public void TestSerializeXmlElement ()

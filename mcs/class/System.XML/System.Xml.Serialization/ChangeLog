@@ -1,3 +1,8 @@
+2007-07-29  Konstantin Triger <kostat@mainsoft.com>
+
+	* XmlSerializationWriter.cs: do not output xml declaration while
+		serializing XmlDocument.
+
 2007-07-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlSerializationWriterInterpreter.cs : looks like XmlNode[]

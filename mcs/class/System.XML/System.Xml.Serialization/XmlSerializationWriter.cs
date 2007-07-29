@@ -297,6 +297,14 @@ namespace System.Xml.Serialization
 			Writer.WriteAttributeString (prefix, localName, ns, value);
 		}
 
+		void WriteXmlNode (XmlNode node)
+		{
+			if (node is XmlDocument)
+				node = ((XmlDocument) node).DocumentElement;
+
+			node.WriteTo (Writer);
+		}
+
 		protected void WriteElementEncoded (XmlNode node, string name, string ns, bool isNullable, bool any)
 		{
 			if (name != string.Empty)
@@ -309,12 +317,12 @@ namespace System.Xml.Serialization
 				else
 				{
 					Writer.WriteStartElement (name, ns);
-					node.WriteTo (Writer);
+					WriteXmlNode (node);
 					Writer.WriteEndElement ();
 				}
 			}
 			else
-				node.WriteTo (Writer);
+				WriteXmlNode(node);
 		}
 
 		protected void WriteElementLiteral (XmlNode node, string name, string ns, bool isNullable, bool any)
@@ -329,12 +337,12 @@ namespace System.Xml.Serialization
 				else
 				{
 					Writer.WriteStartElement (name, ns);
-					node.WriteTo (Writer);
+					WriteXmlNode (node);
 					Writer.WriteEndElement ();
 				}
 			}
 			else
-				node.WriteTo (Writer);
+				WriteXmlNode (node);
 		}
 
 		protected void WriteElementQualifiedName (string localName, XmlQualifiedName value)
