@@ -36,6 +36,7 @@ using System.Collections;
 using System.Web.Script.Serialization;
 using System.IO;
 using System.Xml.Serialization;
+using System.Xml;
 
 namespace System.Web.Script.Services
 {
@@ -92,8 +93,11 @@ namespace System.Web.Script.Services
 
 				object target = MethodInfo.IsStatic ? null : Activator.CreateInstance (_typeInfo._type);
 				object result = MethodInfo.Invoke (target, pp);
-				if (_xmlSer != null)
-					_xmlSer.Serialize (writer, result);
+				if (_xmlSer != null) {
+					XmlTextWriter xwriter = new XmlTextWriter (writer);
+					xwriter.Formatting = Formatting.None;
+					_xmlSer.Serialize (xwriter, result);
+				}
 				else
 					LogicalTypeInfo.JSSerializer.Serialize (result, writer);
 			}
