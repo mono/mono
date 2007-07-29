@@ -119,7 +119,7 @@ REM ********************************************************
 @echo Running fixture "%RUNNING_FIXTURE%"
 REM ********************************************************
 
-copy %BACK_TO_ROOT_DIR%Test\bin\%PROJECT_CONFIGURATION%\%TEST_ASSEMBLY% .
+copy Test\bin\%PROJECT_CONFIGURATION%\%TEST_ASSEMBLY% .
 copy %APP_CONFIG_FILE% nunit-console.exe.config
 
 set TMPDIR=%TMP%
