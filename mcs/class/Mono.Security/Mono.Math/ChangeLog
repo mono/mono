@@ -1,3 +1,7 @@
+2007-07-30  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* BigInteger.cs: Applied Miguel's r82915 patch for Equals.
+
 2007-07-05  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* BigInteger.cs: Call PrimalityTests.Test instead of the Rabin-Miller

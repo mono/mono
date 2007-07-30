@@ -862,10 +862,16 @@ namespace Mono.Math {
 
 		public override bool Equals (object o)
 		{
-			if (o == null) return false;
-			if (o is int) return (int)o >= 0 && this == (uint)o;
+			if (o == null)
+				return false;
+			if (o is int)
+				return (int)o >= 0 && this == (uint)o;
 
-			return Kernel.Compare (this, (BigInteger)o) == 0;
+			BigInteger bi = o as BigInteger;
+			if (bi == null)
+				return false;
+			
+			return Kernel.Compare (this, bi) == 0;
 		}
 
 		#endregion
