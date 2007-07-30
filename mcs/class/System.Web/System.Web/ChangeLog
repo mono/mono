@@ -1,3 +1,7 @@
+2007-07-30  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* HttpResponseStream.jvm.cs: optimized CharBucket
+
 2007-07-22  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* HttpServerUtility.cs: fixed Execute, SetCurrentExePath should be 

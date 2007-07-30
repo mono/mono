@@ -152,7 +152,7 @@ namespace System.Web
 
 		class CharBucket : Bucket
 		{
-			const int _preferredLength = 16 * 1024;
+			const int _preferredLength = 8 * 1024;
 
 			int _position = 0;
 			int _freeSpace = _preferredLength;
@@ -182,8 +182,8 @@ namespace System.Web
 				if (count > _freeSpace)
 					throw new InvalidOperationException ("Out of bucket space");
 
-				for (int i = offset; i < offset + count; i++)
-					buffer [_position++] = buf [i];
+				buf.CopyTo (offset, buffer, _position, count);
+				_position += count;
 
 				_freeSpace = _preferredLength - _position;
 				return count;
@@ -194,7 +194,11 @@ namespace System.Web
 				if (count > _freeSpace)
 					throw new InvalidOperationException ("Out of bucket space");
 
-				Array.Copy (buf, offset, buffer, _position, count);
+				if (count == 1)
+					buffer [_position] = buf [offset];
+				else
+					Array.Copy (buf, offset, buffer, _position, count);
+
 				_position += count;
 				_freeSpace = _preferredLength - _position;
 				return count;
