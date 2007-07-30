@@ -1,3 +1,8 @@
+2007-07-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TextureBrushTest.cs: Added test cases for textures using alpha 
+	values (fix #81828).
+
 2007-07-30  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* TestGraphics.cs: Added test cases for [Draw|Fill]Path (#82202)

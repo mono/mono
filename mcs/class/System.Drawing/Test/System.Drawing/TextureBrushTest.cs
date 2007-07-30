@@ -4,7 +4,7 @@
 // Authors:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2006-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -459,6 +459,59 @@ namespace MonoTests.System.Drawing {
 		{
 			TextureBrush t = new TextureBrush (image);
 			t.TranslateTransform (1, 1, (MatrixOrder) Int32.MinValue);
+		}
+
+		private void Alpha_81828 (WrapMode mode, bool equals)
+		{
+			using (Bitmap bm = new Bitmap (2, 1)) {
+				using (Graphics g = Graphics.FromImage (bm)) {
+					Color t = Color.FromArgb (128, Color.White);
+					g.Clear (Color.Green);
+					g.FillRectangle (new SolidBrush (t), 0, 0, 1, 1);
+					using (Bitmap bm_for_brush = new Bitmap (1, 1)) {
+						bm_for_brush.SetPixel (0, 0, t);
+						using (TextureBrush tb = new TextureBrush (bm_for_brush, mode)) {
+							g.FillRectangle (tb, 1, 0, 1, 1);
+						}
+					}
+					Color c1 = bm.GetPixel (0, 0);
+					Color c2 = bm.GetPixel (1, 0);
+					if (equals)
+						Assert.AreEqual (c1, c2);
+					else
+						Assert.AreEqual (-16744448, c2.ToArgb (), "Green");
+				}
+			}
+		}
+
+		[Test]
+		public void Alpha_81828_Clamp ()
+		{
+			Alpha_81828 (WrapMode.Clamp, false);
+		}
+
+		[Test]
+		public void Alpha_81828_Tile ()
+		{
+			Alpha_81828 (WrapMode.Tile, true);
+		}
+
+		[Test]
+		public void Alpha_81828_TileFlipX ()
+		{
+			Alpha_81828 (WrapMode.TileFlipX, true);
+		}
+
+		[Test]
+		public void Alpha_81828_TileFlipY ()
+		{
+			Alpha_81828 (WrapMode.TileFlipY, true);
+		}
+
+		[Test]
+		public void Alpha_81828_TileFlipXY ()
+		{
+			Alpha_81828 (WrapMode.TileFlipXY, true);
 		}
 	}
 }
