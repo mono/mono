@@ -93,6 +93,7 @@ default_dirs := FirebirdSql.Data.Firebird
 
 net_2_0_dirs := \
 	System.Core			\
+	System.Web.Extensions		\
 	Microsoft.Build.Framework	\
 	Microsoft.Build.Utilities	\
 	Microsoft.Build.Engine		\
