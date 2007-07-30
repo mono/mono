@@ -38,6 +38,7 @@ using System.Drawing;
 using ComponentModel = System.ComponentModel;
 using System.Globalization;
 using System.Threading;
+using System.Text.RegularExpressions;
 
 
 namespace Tests.System.Web.Script.Serialization
@@ -49,14 +50,14 @@ namespace Tests.System.Web.Script.Serialization
 		{
 			//public DateTime dt;
 			//public DateTime dt1;
-			public DateTime dt2;
+			//public DateTime dt2;
 			public bool bb;
 			//Hashtable hash;
 
 			public void Init() {
 				//dt = DateTime.MaxValue;
 				//dt1 = DateTime.MinValue;
-				dt2 = new DateTime ((DateTime.Now.Ticks / 10000) * 10000);
+				//dt2 = new DateTime ((DateTime.Now.Ticks / 10000) * 10000);
 				bb = true;
 				//hash = new Hashtable ();
 				//hash.Add ("mykey", 1);
@@ -387,6 +388,22 @@ namespace Tests.System.Web.Script.Serialization
 		public void TestSerialize2 () {
 			JavaScriptSerializer ser = new JavaScriptSerializer ();
 			ser.Serialize ("aaa", null);
+		}
+
+		static readonly long InitialJavaScriptDateTicks = new DateTime (1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).Ticks;
+
+		[Test]
+		public void TestSerializeDate () {
+			JavaScriptSerializer ser = new JavaScriptSerializer ();
+			DateTime now = new DateTime (633213894056010000L);
+
+			string actual = ser.Serialize (now);
+			DateTime dateTime = now.ToUniversalTime ();
+			long javaScriptTicks = (dateTime.Ticks - InitialJavaScriptDateTicks) / (long) 10000;
+
+			object dd = ser.DeserializeObject (@"""\/Datte(" + javaScriptTicks + @")\/""");
+			Assert.AreEqual (@"""\/Date(" + javaScriptTicks + @")\/""", actual);
+			Assert.AreEqual (now.ToUniversalTime(), ser.DeserializeObject (actual));
 		}
 
 		class MyJavaScriptConverter : JavaScriptConverter

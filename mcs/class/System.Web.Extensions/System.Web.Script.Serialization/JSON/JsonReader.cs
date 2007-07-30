@@ -520,6 +520,19 @@ namespace Newtonsoft.Json
 					case '"':
 					case '\'':
 						ParseString(_currentChar);
+						string value = (string)Value;
+						try {
+							if (value != null && value.Length > 8 &&
+								value.StartsWith (@"/Date(", StringComparison.Ordinal) &&
+								value.EndsWith (@")/", StringComparison.Ordinal)) {
+								long javaScriptTicks = Convert.ToInt64 (value.Substring (6, value.Length - 8));
+
+								DateTime date = JavaScriptConvert.ConvertJavaScriptTicksToDateTime (javaScriptTicks);
+
+								SetToken (JsonToken.Date, date);
+							}
+						}
+						catch { /* if failed - leave string */ }
 						return true;
 					case 't':
 						ParseTrue();

@@ -65,8 +65,8 @@ namespace Newtonsoft.Json
 			Null = "null";
 			Undefined = "undefined";
 
-			InitialJavaScriptDateTicks = (new DateTime(1970, 1, 1)).Ticks;
-			MinimumJavaScriptDate = new DateTime(100, 1, 1);
+			InitialJavaScriptDateTicks = new DateTime (1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).Ticks;
+			MinimumJavaScriptDate = new DateTime (100, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 		}
 
 		/// <summary>
@@ -78,11 +78,13 @@ namespace Newtonsoft.Json
 		{
 			long javaScriptTicks = ConvertDateTimeToJavaScriptTicks(value);
 
-			return "new Date(" + javaScriptTicks + ")";
+			return @"""\/Date(" + javaScriptTicks + @")\/""";
 		}
 
 		internal static long ConvertDateTimeToJavaScriptTicks(DateTime dateTime)
 		{
+			dateTime = dateTime.ToUniversalTime ();
+
 			if (dateTime < MinimumJavaScriptDate)
 				dateTime = MinimumJavaScriptDate;
 
@@ -93,9 +95,7 @@ namespace Newtonsoft.Json
 
 		internal static DateTime ConvertJavaScriptTicksToDateTime(long javaScriptTicks)
 		{
-			DateTime dateTime = new DateTime((javaScriptTicks * 10000) + InitialJavaScriptDateTicks);
-
-			return dateTime;
+			return new DateTime((javaScriptTicks * 10000) + InitialJavaScriptDateTicks, DateTimeKind.Utc);
 		}
 
 		/// <summary>
