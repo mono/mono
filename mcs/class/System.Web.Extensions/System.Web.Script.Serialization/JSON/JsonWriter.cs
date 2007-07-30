@@ -24,6 +24,7 @@ using System.IO;
 using System.Xml;
 using Newtonsoft.Json.Utilities;
 using System.Collections;
+using System.Web.Extensions.System.Web.Script.Serialization.JSON;
 
 namespace Newtonsoft.Json
 {
@@ -125,11 +126,9 @@ namespace Newtonsoft.Json
 		internal sealed class Stack
 		{
 			readonly ArrayList _list;
-			readonly JsonWriter _writer;
 
 			public Stack (JsonWriter writer) {
 				_list = new ArrayList ();
-				_writer = writer;
 			}
 
 			public void Push (object value) {
@@ -254,12 +253,14 @@ namespace Newtonsoft.Json
 		/// Creates an instance of the <c>JsonWriter</c> class using the specified <see cref="TextWriter"/>. 
 		/// </summary>
 		/// <param name="textWriter">The <c>TextWriter</c> to write to.</param>
-		public JsonWriter(TextWriter textWriter)
+		public JsonWriter(TextWriter textWriter, int maxJsonLength)
 		{
 			if (textWriter == null)
 				throw new ArgumentNullException("textWriter");
 
-			_writer = textWriter;
+			CountingTextWriter countingWriter = new CountingTextWriter (textWriter);
+			countingWriter.MaxJsonLength = (maxJsonLength > 0)? maxJsonLength : 0;
+			_writer = countingWriter;
 			_quoteChar = '"';
 			_quoteName = true;
 			_indentChar = ' ';

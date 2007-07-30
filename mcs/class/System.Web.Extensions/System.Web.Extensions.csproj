@@ -61,6 +61,7 @@
     <Compile Include="System.Web.Configuration\SystemWebExtensionsSectionGroup.cs" />
     <Compile Include="System.Web.Handlers\ScriptModule.cs" />
     <Compile Include="System.Web.Handlers\ScriptResourceHandler.cs" />
+    <Compile Include="System.Web.Script.Serialization\JSON\CountingTextWriter.cs" />
     <Compile Include="System.Web.Script.Serialization\JSON\JavaScriptConstructor.cs">
       <SubType>Code</SubType>
     </Compile>

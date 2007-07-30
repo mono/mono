@@ -46,6 +46,7 @@ namespace Tests.System.Web.Script.Serialization
 	[TestFixture]
 	public class JavaScriptSerializerTest
 	{
+#pragma warning disable 659
 		class bug
 		{
 			//public DateTime dt;
@@ -237,6 +238,21 @@ namespace Tests.System.Web.Script.Serialization
 				return true;
 			}
 		}
+
+		class YY
+		{
+			public YY () 
+			{
+				Y1 = new Y ();
+				Y2 = new Y ();
+			}
+
+			public Y Y1;
+			public Y Y2;
+		}
+
+#pragma warning restore 659
+
 		[Test]
 		public void TestDefaults () {
 			JavaScriptSerializer ser = new JavaScriptSerializer ();
@@ -462,6 +478,112 @@ namespace Tests.System.Web.Script.Serialization
 			Assert.AreEqual (true, (bool) array [0], "array [0]");
 			Assert.AreEqual (false, (bool) array [1], "array [1]");
 			Assert.AreEqual (0, (int) array [2], "array [2]");
+		}
+
+		[Test]
+		public void MaxJsonLengthDeserializeObject () 
+		{
+			JavaScriptSerializer ser = new JavaScriptSerializer ();
+			ser.MaxJsonLength = 16;
+			object o = ser.DeserializeObject ("{s:'1234567890'}");
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]
+		public void MaxJsonLengthDeserializeObjectToLong () 
+		{
+			JavaScriptSerializer ser = new JavaScriptSerializer ();
+			ser.MaxJsonLength = 15;
+			object o = ser.DeserializeObject ("{s:'1234567890'}");
+		}
+
+		[Test]
+		public void MaxJsonLengthSerialize () 
+		{
+			JavaScriptSerializer ser = new JavaScriptSerializer ();
+			ser.MaxJsonLength = 9;
+			Y y = new Y ();
+			string s = ser.Serialize (y);
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException), "Maximum length exceeded.")]
+		public void MaxJsonLengthSerializeToLong () 
+		{
+			JavaScriptSerializer ser = new JavaScriptSerializer ();
+			ser.MaxJsonLength = 8;
+			Y y = new Y ();
+			string s = ser.Serialize (y);
+		}
+
+		[Test]
+		public void RecursionLimitDeserialize1 () 
+		{
+			JavaScriptSerializer ser = new JavaScriptSerializer ();
+			ser.RecursionLimit = 3;
+			YY yy = ser.Deserialize<YY> ("{\"Y1\":{\"BB\":10},\"Y2\":{\"BB\":10}}");
+		}
+
+		[Test]
+		public void RecursionLimitDeserialize2 () 
+		{
+			JavaScriptSerializer ser = new JavaScriptSerializer ();
+			ser.RecursionLimit = 2;
+			YY yy = ser.Deserialize<YY> ("{\"Y1\":{},\"Y2\":{}}");
+		}
+
+		[Test]
+		public void RecursionLimitDeserialize3 () 
+		{
+			JavaScriptSerializer ser = new JavaScriptSerializer ();
+			ser.RecursionLimit = 1;
+			object o = ser.DeserializeObject ("\"xxx\"");
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]
+		public void RecursionLimitDeserializeToDeap () 
+		{
+			JavaScriptSerializer ser = new JavaScriptSerializer ();
+			ser.RecursionLimit = 2;
+			YY yy = ser.Deserialize<YY> ("{\"Y1\":{\"BB\":10},\"Y2\":{\"BB\":10}}");
+		}
+
+		[Test]
+		public void RecursionLimitSerialize () 
+		{
+			JavaScriptSerializer ser = new JavaScriptSerializer ();
+			ser.RecursionLimit = 3;
+			YY yy = new YY();
+			string s = ser.Serialize (yy);
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]
+		public void RecursionLimitSerializeToDeap () 
+		{
+			JavaScriptSerializer ser = new JavaScriptSerializer ();
+			ser.RecursionLimit = 2;
+			YY yy = new YY ();
+			string s = ser.Serialize (yy);
+		}
+
+		[Test]
+		public void RecursionLimitSerialize2 () 
+		{
+			JavaScriptSerializer ser = new JavaScriptSerializer ();
+			ser.RecursionLimit = 2;
+			YY yy = new YY ();
+			StringBuilder b = new StringBuilder ();
+			bool caughtException = false;
+			try {
+				ser.Serialize (yy, b);
+			}
+			catch {
+				caughtException = true;
+			}
+			Assert.IsTrue (caughtException, "RecursionLimitSerialize2 Expected an exception!");
+			Assert.AreEqual ("{\"Y1\":{\"BB\":", b.ToString (), "RecursionLimitSerialize2");
 		}
 	}
 }

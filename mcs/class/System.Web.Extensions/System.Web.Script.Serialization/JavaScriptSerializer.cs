@@ -158,7 +158,6 @@ namespace System.Web.Script.Serialization
 			get { return _defaultSerializer; }
 		}
 
-		//TODO: use it!
 		public int MaxJsonLength {
 			get {
 				return _maxJsonLength;
@@ -212,13 +211,13 @@ namespace System.Web.Script.Serialization
 				return obj;
 
 			TypeConverter c = TypeDescriptor.GetConverter (type);
-			if (c.CanConvertFrom(sourceType)) {
+			if (c.CanConvertFrom (sourceType)) {
 				if (obj is string)
-					return c.ConvertFromInvariantString((string)obj);
+					return c.ConvertFromInvariantString ((string) obj);
 
 				return c.ConvertFrom (obj);
 			}
-			
+
 			return Convert.ChangeType (obj, type);
 		}
 
@@ -337,6 +336,8 @@ namespace System.Web.Script.Serialization
 
 		internal object DeserializeObjectInternal (TextReader input) {
 			JsonSerializer ser = new JsonSerializer (this);
+			ser.MaxJsonLength = MaxJsonLength;
+			ser.RecursionLimit = RecursionLimit;
 			return ser.Deserialize (input);
 		}
 
@@ -373,6 +374,8 @@ namespace System.Web.Script.Serialization
 
 		internal void Serialize (object obj, TextWriter output) {
 			JsonSerializer ser = new JsonSerializer (this);
+			ser.MaxJsonLength = MaxJsonLength;
+			ser.RecursionLimit = RecursionLimit;
 			ser.Serialize (output, obj);
 		}
 	}

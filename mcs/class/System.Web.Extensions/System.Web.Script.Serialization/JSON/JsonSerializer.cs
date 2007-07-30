@@ -116,9 +116,22 @@ namespace Newtonsoft.Json
 			}
 		}
 
+		private int _maxJsonLength;
+		private int _recursionLimit;
+		private int _currentRecursionCounter;
 		private ReferenceLoopHandling _referenceLoopHandling;
-		private int _level;
 		readonly JavaScriptSerializer _context;
+
+		public int MaxJsonLength 
+		{
+			get { return _maxJsonLength; }
+			set { _maxJsonLength = value; }
+		}
+
+		public int RecursionLimit {
+			get { return _recursionLimit; }
+			set { _recursionLimit = value; }
+		}
 
 		/// <summary>
 		/// Get or set how reference loops (e.g. a class referencing itself) is handled.
@@ -147,7 +160,7 @@ namespace Newtonsoft.Json
 
 		#region Deserialize
 		public object Deserialize (TextReader reader) {
-			return Deserialize (new JsonReader (reader));
+			return Deserialize (new JsonReader (reader, MaxJsonLength, RecursionLimit));
 		}
 
 		/// <summary>
@@ -166,7 +179,9 @@ namespace Newtonsoft.Json
 		}
 
 		private object GetObject (JsonReader reader/*, Type objectType*/) {
-			_level++;
+			if (RecursionLimit > 0 && reader.CurrentRecursionLevel >= RecursionLimit) {
+				throw new ArgumentException ("RecursionLimit exceeded.");
+			}
 
 			object value;
 
@@ -199,8 +214,6 @@ namespace Newtonsoft.Json
 				throw new JsonSerializationException ("Unexpected token whil deserializing object: " + reader.TokenType);
 			}
 
-			_level--;
-
 			return value;
 		}
 
@@ -227,7 +240,8 @@ namespace Newtonsoft.Json
 
 		private IEnumerator<KeyValuePair<string, object>> PopulateObject (JsonReader reader/*, Type objectType*/)
 		{
-			while (reader.Read())
+			reader.IncrementRecursionLevel ();
+			while (reader.Read ())
 			{
 				switch (reader.TokenType)
 				{
@@ -239,6 +253,7 @@ namespace Newtonsoft.Json
 						yield return new KeyValuePair<string, object> (memberName, GetObject (reader));
 						break;
 					case JsonToken.EndObject:
+						reader.DecrementRecursionLevel ();
 						yield break;
 					default:
 						throw new JsonSerializationException("Unexpected token when deserializing object: " + reader.TokenType);
@@ -258,7 +273,7 @@ namespace Newtonsoft.Json
 		/// <param name="value">The <see cref="Object"/> to serialize.</param>
 		public void Serialize(TextWriter textWriter, object value)
 		{
-			Serialize(new JsonWriter(textWriter), value);
+			Serialize(new JsonWriter(textWriter, MaxJsonLength), value);
 		}
 
 		/// <summary>
@@ -276,6 +291,10 @@ namespace Newtonsoft.Json
 		private void SerializeValue(JsonWriter writer, object value)
 		{
 			//JsonConverter converter;
+			_currentRecursionCounter++;
+			if (RecursionLimit > 0 && _currentRecursionCounter > RecursionLimit) {
+				throw new ArgumentException ("RecursionLimit exceeded.");
+			}
 
 			if (value == null) {
 				writer.WriteNull ();
@@ -361,6 +380,7 @@ namespace Newtonsoft.Json
 								if (!(converter is ComponentConverter) && converter.GetType () != typeof (TypeConverter)) {
 									if (converter.CanConvertTo (typeof (string))) {
 										writer.WriteValue (converter.ConvertToInvariantString (value));
+										_currentRecursionCounter--;
 										return;
 									}
 								}
@@ -379,6 +399,8 @@ namespace Newtonsoft.Json
 					break;
 				}
 			}
+
+			_currentRecursionCounter--;
 		}
 
 		private void ThrowOnReferenceLoop (JsonWriter writer, object value)

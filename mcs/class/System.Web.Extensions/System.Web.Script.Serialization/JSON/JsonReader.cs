@@ -50,6 +50,9 @@ namespace Newtonsoft.Json
 
 		private TextReader _reader;
 		private char _currentChar;
+		private int _maxJsonLength;
+		private int _recursionLimit;
+		private int _countCharsRead;
 
 		// current Token data
 		private JsonToken _token;
@@ -59,6 +62,7 @@ namespace Newtonsoft.Json
 		private StringBuilder _buffer;
 		//private StringBuilder _testBuffer;
 		private State _currentState;
+		private int _currentRecursionLevel;
 
 		private int _top;
 		private List<JsonType> _stack;
@@ -95,16 +99,36 @@ namespace Newtonsoft.Json
 			get { return _valueType; }
 		}
 
+		public int CurrentReadPosition {
+			get { return _countCharsRead; }
+		}
+
+		public int CurrentRecursionLevel {
+			get { return _currentRecursionLevel; }
+		}
+
+		internal void IncrementRecursionLevel () 
+		{
+			_currentRecursionLevel++;
+		}
+
+		internal void DecrementRecursionLevel () 
+		{
+			_currentRecursionLevel--;
+		}
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="JsonReader"/> class with the specified <see cref="TextReader"/>.
 		/// </summary>
 		/// <param name="reader">The <c>TextReader</c> containing the XML data to read.</param>
-		public JsonReader(TextReader reader)
+		public JsonReader(TextReader reader, int maxJsonLength, int recursionLimit)
 		{
 			if (reader == null)
 				throw new ArgumentNullException("reader");
 
 			_reader = reader;
+			_maxJsonLength = (maxJsonLength > 0)? maxJsonLength : 0;
+			_recursionLimit = (recursionLimit > 0) ? recursionLimit : 0;
 			_buffer = new StringBuilder(4096);
 			//_testBuffer = new StringBuilder();
 			_currentState = State.Start;
@@ -235,6 +259,10 @@ namespace Newtonsoft.Json
 
 			if (value != -1)
 			{
+				_countCharsRead++;
+				if (_maxJsonLength > 0 && _countCharsRead > _maxJsonLength) {
+					throw new ArgumentException ("Maximum length exceeded.");
+				}
 				_currentChar = (char) value;
 				//_testBuffer.Append(_currentChar);
 				return true;
