@@ -38,6 +38,8 @@ Demo.HighVis.prototype = {
             document.body.style.backgroundColor = "white"; 
             document.body.style.fontSize = "x-large";
             this.name = "Standard";
+            $get('backgroundColor').value = "white"; 
+            $get('fontSize').value = "x-large";
         }
         this.innerHTML = "Set to " + this.name + " Visibility mode";
     }                

@@ -66,6 +66,7 @@ function pageLoad() {
 function doSomethingOnHover() {
     var hoverMessage = "The mouse is over the button.";
     $get('HoverLabel').innerHTML = hoverMessage;
+    $get('hoverTrace').value = hoverMessage;
 }
 
 function doSomethingOnUnHover() {
@@ -111,6 +112,8 @@ function listComponents() {
     <div id="HoverLabel">
     </div>
     <br />
+    <input id="hoverTrace">
+    <br />
     <button type="button" id="Button2"> </button> 
     <br /> 
     This text will change appearance when you click the button above.
@@ -122,6 +125,8 @@ function listComponents() {
     <div id="div2"></div>
     <div id="div3">
     </div>
+    <input id="backgroundColor" />
+    <input id="fontSize" />
 </form>
 
 </body>
