@@ -307,6 +307,9 @@ namespace System.Web.SessionState
 			if (handler == null)
 				return;
 
+			if (container != null)
+				OnReleaseRequestState (o, args);
+
 			HttpApplication application = o as HttpApplication;
 			if (application == null)
 				return;
