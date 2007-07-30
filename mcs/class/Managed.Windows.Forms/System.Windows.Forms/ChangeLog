@@ -1,3 +1,9 @@
+2007-07-30  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStripDropDown.cs: When we do Show, start with the 
+	DefaultDropDownDirection, but if our popup menu is going to off-screen,
+	modify the direction to keep it on screen.  [Fixes bug #82210]
+
 2007-07-29  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* FileDialog.cs: Accept any FilterIndex value, and store it

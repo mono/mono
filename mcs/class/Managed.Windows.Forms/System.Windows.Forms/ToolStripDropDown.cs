@@ -368,27 +368,12 @@ namespace System.Windows.Forms
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new void Show ()
 		{
-			CancelEventArgs e = new CancelEventArgs ();
-			this.OnOpening (e);
-			
-			if (e.Cancel)
-				return;
-
-			// The tracker lets us know when the form is clicked or loses focus
-			ToolStripManager.AppClicked += new EventHandler (ToolStripMenuTracker_AppClicked);
-			ToolStripManager.AppFocusChange += new EventHandler (ToolStripMenuTracker_AppFocusChange);
-
-			base.Show ();
-			
-			ToolStripManager.SetActiveToolStrip (this);
-			
-			this.OnOpened (EventArgs.Empty);
+			Show (Location, DefaultDropDownDirection);
 		}
 		
 		public void Show (Point screenLocation)
 		{
-			this.Location = screenLocation;
-			Show ();
+			Show (screenLocation, DefaultDropDownDirection);
 		}
 		
 		public void Show (Control control, Point position)
@@ -396,14 +381,12 @@ namespace System.Windows.Forms
 			if (control == null)
 				throw new ArgumentNullException ("control");
 				
-			this.Location = control.PointToScreen (position);
-			Show ();
+			Show (control.PointToScreen (position), DefaultDropDownDirection);
 		}
 		
 		public void Show (int x, int y)
 		{
-			this.Location = new Point (x, y);
-			Show ();
+			Show (new Point (x, y), DefaultDropDownDirection);
 		}
 		
 		public void Show (Point position, ToolStripDropDownDirection direction)
@@ -412,6 +395,70 @@ namespace System.Windows.Forms
 			
 			Point show_point = position;
 
+			Screen s = Screen.FromPoint (position);
+			Point max_screen = new Point (s.Bounds.Right, s.Bounds.Bottom);
+			
+			if (this is ContextMenuStrip) {
+				// If we are going to go offscreen, adjust our direction so we don't...
+				// X direction
+				switch (direction) {
+					case ToolStripDropDownDirection.AboveLeft:
+						if (show_point.X - this.Width < 0)
+							direction = ToolStripDropDownDirection.AboveRight;
+						break;
+					case ToolStripDropDownDirection.BelowLeft:
+						if (show_point.X - this.Width < 0)
+							direction = ToolStripDropDownDirection.BelowRight;
+						break;
+					case ToolStripDropDownDirection.Left:
+						if (show_point.X - this.Width < 0)
+							direction = ToolStripDropDownDirection.Right;
+						break;
+					case ToolStripDropDownDirection.AboveRight:
+						if (show_point.X + this.Width > max_screen.X)
+							direction = ToolStripDropDownDirection.AboveLeft;
+						break;
+					case ToolStripDropDownDirection.BelowRight:
+					case ToolStripDropDownDirection.Default:
+						if (show_point.X + this.Width > max_screen.X)
+							direction = ToolStripDropDownDirection.BelowLeft;
+						break;
+					case ToolStripDropDownDirection.Right:
+						if (show_point.X + this.Width > max_screen.X)
+							direction = ToolStripDropDownDirection.Left;
+						break;
+				}
+
+				// Y direction
+				switch (direction) {
+					case ToolStripDropDownDirection.AboveLeft:
+						if (show_point.Y - this.Height < 0)
+							direction = ToolStripDropDownDirection.BelowLeft;
+						break;
+					case ToolStripDropDownDirection.AboveRight:
+						if (show_point.Y - this.Height < 0)
+							direction = ToolStripDropDownDirection.BelowRight;
+						break;
+					case ToolStripDropDownDirection.BelowLeft:
+						if (show_point.Y + this.Height > max_screen.Y)
+							direction = ToolStripDropDownDirection.AboveLeft;
+						break;
+					case ToolStripDropDownDirection.BelowRight:
+					case ToolStripDropDownDirection.Default:
+						if (show_point.Y + this.Height > max_screen.Y)
+							direction = ToolStripDropDownDirection.AboveRight;
+						break;
+					case ToolStripDropDownDirection.Left:
+						if (show_point.Y + this.Height > max_screen.Y)
+							direction = ToolStripDropDownDirection.AboveLeft;
+						break;
+					case ToolStripDropDownDirection.Right:
+						if (show_point.Y + this.Height > max_screen.Y)
+							direction = ToolStripDropDownDirection.AboveRight;
+						break;
+				}
+			}
+		
 			switch (direction) {
 				case ToolStripDropDownDirection.AboveLeft:
 					show_point.Y -= this.Height;
@@ -432,8 +479,22 @@ namespace System.Windows.Forms
 			
 			if (this.Location != show_point)
 				this.Location = show_point;
-				
-			Show ();
+
+			CancelEventArgs e = new CancelEventArgs ();
+			this.OnOpening (e);
+
+			if (e.Cancel)
+				return;
+
+			// The tracker lets us know when the form is clicked or loses focus
+			ToolStripManager.AppClicked += new EventHandler (ToolStripMenuTracker_AppClicked);
+			ToolStripManager.AppFocusChange += new EventHandler (ToolStripMenuTracker_AppFocusChange);
+
+			base.Show ();
+
+			ToolStripManager.SetActiveToolStrip (this);
+
+			this.OnOpened (EventArgs.Empty);
 		}
 		
 		public void Show (Control control, int x, int y)
