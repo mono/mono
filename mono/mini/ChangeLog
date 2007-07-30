@@ -1,4 +1,9 @@
 
+Mon Jul 30 17:29:56 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* exceptions-x86.c, mini-x86.h, mini.h: new code to handle
+	stack overflows on the alt stack.
+
 Mon Jul 30 11:50:06 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* exceptions-ppc.c: cleanup preparing for altstack support.
