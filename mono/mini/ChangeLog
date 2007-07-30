@@ -1,4 +1,8 @@
 
+Mon Jul 30 11:50:06 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* exceptions-ppc.c: cleanup preparing for altstack support.
+
 Mon Jul 30 11:31:24 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* exceptions-arm.c: cleanup preparing for altstack support.
