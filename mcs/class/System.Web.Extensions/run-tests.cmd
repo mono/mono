@@ -12,14 +12,18 @@ if "%1" == "skip_app" (
 if "%1" == "skip_tests" (
 	set SKIP_TESTS="True"
 )
-shift
+shift /1
 goto loop
 :break
 
 rem SETUP ENVIRONMENT FOR RUNNING SELENIUM TESTS
 rem ============================================
-set VMW_HOME=C:\Program Files\Mainsoft for Java EE
-set SELENIUM_HOME=C:\Mainsoft\runtime\Tools\selenium
+if "%VMW_HOME%" == "" set VMW_HOME=C:\Program Files\Mainsoft for Java EE
+
+if NOT "%SELENIUM_HOME%" == "" goto after_set_SELENIUM_HOME
+set SELENIUM_HOME=%~dp0
+set SELENIUM_HOME=%SELENIUM_HOME:class\System.Web.Extensions=selenium%
+:after_set_SELENIUM_HOME
 
 set Browser=C:\Program Files\Internet Explorer\iexplore.exe
 set HTTPServer=http://localhost:8090
@@ -49,15 +53,13 @@ rem DEPLOY SELENIUM WITH TESTS TO SERVER
 rem ====================================
 if DEFINED SKIP_SELENIUM goto after_selenium
 echo Deploying Selenium
-call %SELENIUM_HOME%\DeploySelenium.cmd "Tomcat" "%SELENIUM_HOME%\TomcatDeploy.cmd" "http://admin:admin@localhost:8090" "Test\standalone\Sys.WebForms" "Test\standalone\System.Web.UI" >>%BUILD_LOG% 2<&1
+call %SELENIUM_HOME%\DeploySelenium.cmd "Tomcat" "%SELENIUM_HOME%\TomcatDeploy.cmd" "http://admin:admin@localhost:8090" >>%BUILD_LOG% 2<&1
 :after_selenium
 
 rem BUILD APPLICATION UNDER TEST
 rem ============================================
 if DEFINED SKIP_APP goto after_app
-echo Building %cd%\System.Web.Extensions.JavaEE.csproj
-msbuild System.Web.Extensions.JavaEE.csproj /p:Configuration=Debug_Java >>%BUILD_LOG% 2<&1
-pushd Test\standalone\AUT
+pushd Test\AUT
 echo Building %cd%\SystemWebExtensionsAUT.JavaEE.csproj
 del /F /Q bin_Java\deployedFiles bin_Java\outputFiles.list
 msbuild SystemWebExtensionsAUT.JavaEE.csproj /t:Deploy /p:Configuration=Debug_Java >>%BUILD_LOG% 2<&1
@@ -77,8 +79,9 @@ wget -O "%ResultsDir%\selenium-test.css" "%HTTPServer%%ResultsURL%/selenium-test
 rem RUN THE TEST SUITES ONE AFTER THE OTHER
 rem ============================================
 
-call :executeTestSuite ../MainsoftTests/System.Web.UI/UpdatePanel/UpdatePanelTestSuite.html
-call :executeTestSuite ../MainsoftTests/Sys.WebForms/PageRequestManager/PageRequestManagerTestSuite.html
+call :executeTestSuite /SystemWebExtensionsAUT/Selenium/System.Web.UI/UpdatePanel/UpdatePanelTestSuite.html
+call :executeTestSuite /SystemWebExtensionsAUT/Selenium/Sys.WebForms/PageRequestManager/PageRequestManagerTestSuite.html
+call :executeTestSuite /SystemWebExtensionsAUT/Selenium/QuickStarts/QuickStartTestSuite.html
 
 
 rem ADD MORE TEST SUITES ABOVE THIS LINE
@@ -100,7 +103,7 @@ set ResultsAsHtml=%ResultsDir%\%SuiteName%Results.html
 
 echo Test suite: %SuiteName%
 echo Test suite: %SuiteName% >>%RUN_LOG% 2<&1
-"%Browser%" "%SeleniumURL%/core/TestRunner.html?test=%TestSuiteRelativePath%&auto=true&close=off&multiWindow=off&resultsUrl=%ResultsURL%/Default.ashx"
+"%Browser%" "%SeleniumURL%/core/TestRunner.html?test=%TestSuiteRelativePath%&auto=true&close=on&multiWindow=off&resultsUrl=%ResultsURL%/Default.ashx"
 
 if NOT %ResultsAsXML%=="" (
 	wget -O "%ResultsAsXML%" "%HTTPServer%%ResultsURL%/GetLastResults.ashx" >>%RUN_LOG% 2<&1
