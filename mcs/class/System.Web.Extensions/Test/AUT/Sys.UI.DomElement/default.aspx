@@ -20,7 +20,7 @@
 </head>
 <body>
     <form id="form1" runat="server">
-        <asp:ScriptManager ID="ScriptManager1" runat="server" EnableScriptGlobalization="true" />
+        <asp:ScriptManager ID="ScriptManager1" runat="server" />
         <asp:UpdatePanel ID="UpdatePanel1" runat="server" ChildrenAsTriggers="False" UpdateMode="Conditional">
             <ContentTemplate>
                 <asp:Panel ID="Panel1" runat="server" GroupingText="Update Panel">

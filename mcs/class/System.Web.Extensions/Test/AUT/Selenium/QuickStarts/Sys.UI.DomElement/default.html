@@ -14,43 +14,43 @@
 	<td>color: White; background-color: Black; width: 102px; position: absolute; left: 100px; top: 111px;</td>
 </tr>
 <tr>
-	<td>verifyAttribute</td>
-	<td>//span[contains(@id,'Label1')]@style</td>
-	<td>color: White; background-color: Black; width: 102px; position: absolute; left: 100px; top: 111px;</td>
-</tr>
-<tr>
 	<td>verifyTextPresent</td>
-	<td>Label1 bounds x = 22</td>
+	<td>Label1 bounds x =</td>
 	<td></td>
 </tr>
 <tr>
 	<td>verifyTextPresent</td>
-	<td>Label1 bounds y = 111</td>
+	<td>Label1 bounds y =</td>
 	<td></td>
 </tr>
 <tr>
 	<td>verifyTextPresent</td>
-	<td>Label1 bounds width = 48</td>
+	<td>Label1 bounds width =</td>
 	<td></td>
 </tr>
 <tr>
 	<td>verifyTextPresent</td>
-	<td>Label1 bounds height = 18</td>
+	<td>Label1 bounds height =</td>
 	<td></td>
 </tr>
 <tr>
 	<td>verifyTextPresent</td>
-	<td>Before move - Label1 location (x,y) = (22,111)</td>
+	<td>Before move - Label1 location (x,y) =</td>
 	<td></td>
 </tr>
 <tr>
 	<td>verifyTextPresent</td>
-	<td>After move - Label1 location (x,y) = (100,111)</td>
+	<td>After move - Label1 location (x,y) =</td>
 	<td></td>
 </tr>
 <tr>
 	<td>verifyAttribute</td>
 	<td>//input[contains(@id,'Button2')]@class</td>
+	<td>blueBackgroundColor</td>
+</tr>
+<tr>
+	<td>verifyEval</td>
+	<td>this.browserbot.findElement("Button2").className</td>
 	<td>blueBackgroundColor</td>
 </tr>
 <tr>
@@ -60,12 +60,17 @@
 </tr>
 <tr>
 	<td>verifyEval</td>
-	<td>this.browserbot.findElement("Button2").class</td>
-	<td>null</td>
+	<td>this.browserbot.findElement("Button2").className</td>
+	<td></td>
 </tr>
 <tr>
 	<td>verifyAttribute</td>
 	<td>//input[contains(@id,'Button1')]@class</td>
+	<td>redBackgroundColor</td>
+</tr>
+<tr>
+	<td>verifyEval</td>
+	<td>this.browserbot.findElement("Button1").className</td>
 	<td>redBackgroundColor</td>
 </tr>
 <tr>
@@ -75,8 +80,18 @@
 </tr>
 <tr>
 	<td>verifyEval</td>
-	<td>this.browserbot.findElement("Button1").class</td>
-	<td>null</td>
+	<td>this.browserbot.findElement("Button1").className</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>Button1</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyEval</td>
+	<td>this.browserbot.findElement("Button1").className</td>
+	<td>redBackgroundColor</td>
 </tr>
 
 </tbody></table>
