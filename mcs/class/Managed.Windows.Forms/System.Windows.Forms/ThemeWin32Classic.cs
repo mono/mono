@@ -2275,7 +2275,7 @@ namespace System.Windows.Forms
 
 #if NET_2_0
 			// draw group headers
-			if (control.View != View.List) {
+			if (control.ShowGroups && control.View != View.List) {
 				for (int i = 0; i < control.Groups.Count; i++) {
 					ListViewGroup group = control.Groups [i];
 					if (group.Items.Count > 0 && clip.IntersectsWith (group.Bounds))

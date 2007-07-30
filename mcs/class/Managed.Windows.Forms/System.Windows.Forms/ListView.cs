@@ -1432,6 +1432,49 @@ namespace System.Windows.Forms
 		int cols;
 		int[,] item_index_matrix;
 
+		void CalculateRowsAndCols (Size item_size, bool left_aligned, int x_spacing, int y_spacing)
+		{
+			Rectangle area = ClientRectangle;
+#if NET_2_0
+			if (show_groups && groups.Count > 0 && view != View.List) {
+				// When groups are used the alignment is always top-aligned
+				rows = 0;
+				cols = 0;
+
+				for (int i = 0; i < groups.Count; i++) {
+					ListViewGroup group = groups [i];
+					group.starting_row = rows;
+
+					int group_cols = (int) Math.Floor ((double)(area.Width - v_scroll.Width + x_spacing) / (double)(item_size.Width + x_spacing));
+					if (group_cols <= 0)
+						group_cols = 1;
+					int group_rows = (int) Math.Ceiling ((double)group.Items.Count / (double)group_cols);
+
+					cols = Math.Max (group_cols, cols);
+					rows += group_rows;
+				}
+			} 
+			else {
+#endif
+				// Simple matrix if no groups are used
+				if (left_aligned) {
+					rows = (int) Math.Floor ((double)(area.Height - h_scroll.Height + y_spacing) / (double)(item_size.Height + y_spacing));
+					if (rows <= 0)
+						rows = 1;
+					cols = (int) Math.Ceiling ((double)items.Count / (double)rows);
+				} else {
+					cols = (int) Math.Floor ((double)(area.Width - v_scroll.Width + x_spacing) / (double)(item_size.Width + x_spacing));
+					if (cols <= 0)
+						cols = 1;
+					rows = (int) Math.Ceiling ((double)items.Count / (double)cols);
+				}
+#if NET_2_0
+			}
+#endif
+
+			item_index_matrix = new int [rows, cols];
+		}
+
 		void LayoutIcons (Size item_size, bool left_aligned, int x_spacing, int y_spacing)
 		{
 			header_control.Visible = false;
@@ -1444,32 +1487,21 @@ namespace System.Windows.Forms
 				return;
 
 			Size sz = item_size;
-			Rectangle area = ClientRectangle;
 
-			if (left_aligned) {
-				rows = (int) Math.Floor ((double)(area.Height - h_scroll.Height + y_spacing) / (double)(sz.Height + y_spacing));
-				if (rows <= 0)
-					rows = 1;
-				cols = (int) Math.Ceiling ((double)items.Count / (double)rows);
-			} else {
-				cols = (int) Math.Floor ((double)(area.Width - v_scroll.Width + x_spacing) / (double)(sz.Width + x_spacing));
-				if (cols <= 0)
-					cols = 1;
-				rows = (int) Math.Ceiling ((double)items.Count / (double)cols);
-			}
+			CalculateRowsAndCols (sz, left_aligned, x_spacing, y_spacing);
 
 			layout_ht = rows * (sz.Height + y_spacing) - y_spacing;
 			layout_wd = cols * (sz.Width + x_spacing) - x_spacing;
-			item_index_matrix = new int [rows, cols];
 
 			int current_item = 0;
 			int current_y = 0;
 #if NET_2_0
-			if (groups.Count > 0 && view != View.List)
+			if (show_groups && groups.Count > 0 && view != View.List)
 				LayoutIconsGroups (left_aligned, x_spacing, y_spacing);
 			else
 #endif
-				LayoutIconsSection (items, left_aligned, ref current_y, new Size (x_spacing, y_spacing), ref current_item);
+				// Layout the entire ListView as a single section
+				LayoutIconsSection (items, left_aligned, 0, ref current_y, new Size (x_spacing, y_spacing), ref current_item);
 
 			item_control.Size = new Size (layout_wd, layout_ht);
 		}
@@ -1492,7 +1524,7 @@ namespace System.Windows.Forms
 				group.Bounds = new Rectangle (0, current_y, client_area.Width - v_scroll.Width, header_height);
 				current_y += header_height;
 
-				LayoutIconsSection (group.Items, left_aligned, ref current_y, new Size (x_spacing, y_spacing),
+				LayoutIconsSection (group.Items, left_aligned, group.starting_row, ref current_y, new Size (x_spacing, y_spacing),
 						ref current_item);
 					
 				current_y += header_spacing;
@@ -1502,9 +1534,11 @@ namespace System.Windows.Forms
 		}
 #endif
 
-		void LayoutIconsSection (ListView.ListViewItemCollection items_collection, bool left_aligned, ref int y_origin, 
+		void LayoutIconsSection (ListView.ListViewItemCollection items_collection, bool left_aligned, int current_global_row, ref int y_origin, 
 				Size item_spacing, ref int current_item)
 		{
+			// current_global_row is the global one, and
+			// row is the local one for the current group
 			int x, y = 0;
 			int row = 0, col = 0;
 			int x_spacing = item_spacing.Width;
@@ -1516,8 +1550,8 @@ namespace System.Windows.Forms
 				x = col * (item_size.Width + x_spacing);
 				y = row * (item_size.Height + y_spacing) + y_origin;
 
-				SetItemLocation (current_item, x, y, row, col);
-				item_index_matrix [row, col] = current_item;
+				SetItemLocation (current_item, x, y, current_global_row, col);
+				item_index_matrix [current_global_row, col] = current_item;
 				current_item++;
 #if NET_2_0
 				if (!virtual_mode)
@@ -1525,14 +1559,17 @@ namespace System.Windows.Forms
 					item.Layout ();
 
 				if (left_aligned) {
-					if (++row == rows) {
-						row = 0;
+					current_global_row++;
+					row++;
+					if (row == rows) {
+						current_global_row = row = 0;
 						col++;
 					}
 				} else {
 					if (++col == cols) {
 						col = 0;
 						row++;
+						current_global_row++;
 					}
 				}
 			}
@@ -1765,6 +1802,11 @@ namespace System.Windows.Forms
 			case Keys.Up:
 				if (row == 0)
 					return -1;
+				while (item_index_matrix [row - 1, col] == 0 && row != 1) {
+					col--;
+					if (col < 0)
+						return -1;
+				}
 				return item_index_matrix [row - 1, col];
 
 			case Keys.Down:

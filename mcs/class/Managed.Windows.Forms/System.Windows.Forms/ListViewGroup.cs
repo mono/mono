@@ -48,6 +48,7 @@ namespace System.Windows.Forms
 		private ListView.ListViewItemCollection items = null;
 		private object tag = null;
 		private Rectangle bounds = Rectangle.Empty;
+		internal int starting_row;	// At which row the group starts
 
 		#region ListViewGroup constructors
 

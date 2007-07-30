@@ -1,3 +1,17 @@
+2007-07-30  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListView.cs: Add support for navigating items in Groups mode, by
+	creating a big matrix containing all rows and cols of all groups. When
+	are in other mode than Details, pressing Up should have a similar
+	behaviour as that one of Down (moving to the next available column if
+	current one doesn't have an item in the requested row). Also, don't
+	proceed to use groups if ShowGroups is false.
+	* ListViewGroup.cs: Add an internal int field to store the starting
+	row of the group (used by the big matrix used for navigating the
+	ListView).
+	* ThemeWin32Classic.cs: Don't draw headers if ListView.ShowGroups is
+	false.
+
 2007-07-30  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStripDropDown.cs: When we do Show, start with the 
