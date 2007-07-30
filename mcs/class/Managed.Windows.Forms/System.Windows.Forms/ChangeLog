@@ -1,3 +1,11 @@
+2007-07-30  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TextBoxBase.cs: TextBoxBase reports itself at AutoSize, but doesn't
+	actually do auto-sizing.  Override the internal GetPreferredSizeCore 
+	so we can provide an implementation that returns the current width
+	and preferred height.  Allows anchor = right to work with TextBox 2.0.
+	[Fixes bug #82233]
+
 2007-07-30  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: Add support for navigating items in Groups mode, by

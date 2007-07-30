@@ -151,6 +151,8 @@ namespace System.Windows.Forms {
 			SetStyle(ControlStyles.UserPaint | ControlStyles.StandardClick, false);
 #if NET_2_0
 			SetStyle(ControlStyles.UseTextForAccessibility, false);
+			
+			base.SetAutoSizeMode (AutoSizeMode.GrowAndShrink);
 #endif
 
 			canvas_width = ClientSize.Width;
@@ -173,6 +175,13 @@ namespace System.Windows.Forms {
 				return s.ToUpper();
 			}
 		}
+
+#if NET_2_0
+		internal override Size GetPreferredSizeCore (Size proposedSize)
+		{
+			return new Size (Width, PreferredHeight);
+		}
+#endif
 
 		internal override void HandleClick(int clicks, MouseEventArgs me) {
 			// MS seems to fire the click event in spite of the styles they set
