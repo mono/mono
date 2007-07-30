@@ -1,3 +1,8 @@
+
+Mon Jul 30 11:31:24 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* exceptions-arm.c: cleanup preparing for altstack support.
+
 2007-07-27  Mark Probst  <mark.probst@gmail.com>
 
 	* mini.c (print_jit_stats): Output hazard pointer stats.
