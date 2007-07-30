@@ -9,7 +9,7 @@
     <form id="form1" runat="server">
         <asp:ScriptManager runat="server" ID="ScriptManager01">
             <Scripts>
-               <asp:ScriptReference Path="ErrorCreateJS.js" Name="ErrorCreate" />
+               <asp:ScriptReference Name="ErrorCreate" />
             </Scripts>
         </asp:ScriptManager>
     </form>
