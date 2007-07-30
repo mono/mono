@@ -1,4 +1,11 @@
 
+Mon Jul 30 17:38:13 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-alpha.h, mini-ia64.h, mini-sparc.h: disable the altstack
+	signal handling support until it has been ported to the new mechanism.
+	* mini.c: fixed stack overflow detection and use the new
+	architecture code  to handle signals on the altstack.
+
 Mon Jul 30 17:33:02 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* exceptions-amd64.c, mini-amd64.h: amd64 code to handle
