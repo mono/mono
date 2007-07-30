@@ -1,3 +1,8 @@
+2007-07-30 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* HttpResponseTest.cs: Test_Response, TestResponse_Chunked marked as
+	NotWorking in GH
+
 2007-04-23 Joshua Tauberer <jit@occams.info>
 
 	* HttpRequestTest.cs: Added test EmptyQueryValueParams.

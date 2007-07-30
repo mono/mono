@@ -177,6 +177,9 @@ namespace MonoTests.System.Web {
 			return c;
 		}
 
+#if TARGET_JVM
+		[Category ("NotWorking")] // char output stream in gh make this test fail
+#endif
 		[Category ("NotDotNet")] //This test cannot be runned on .net with no web context ....
 		[Test] public void Test_Response ()
 		{
@@ -198,6 +201,9 @@ namespace MonoTests.System.Web {
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Category ("NotWorking")] // char output stream in gh make this test fail
+#endif
 		[Category ("NotDotNet")]  //This test cannot be runned on .net with no web context ....
 		public void TestResponse_Chunked ()
 		{
