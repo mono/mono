@@ -117,16 +117,11 @@ namespace System.Web.Script.Services
 				string paramList = GenerateParameters (false);
 
 				if (isPrototype){
-#if TARGET_J2EE
-					string pathInfo = MethodName + ".invoke";
-#else
-					string pathInfo = MethodName;
-#endif
 					proxy.AppendFormat (
 @"
 {1}:function({4}succeededCallback, failedCallback, userContext) {{
-return this._invoke({0}.get_path(), '{5}',{2},{{{3}}},succeededCallback,failedCallback,userContext); }}",
-					service, MethodName, useHttpGet, paramMap, paramList, pathInfo);
+return this._invoke({0}.get_path(), '{1}',{2},{{{3}}},succeededCallback,failedCallback,userContext); }}",
+					service, MethodName, useHttpGet, paramMap, paramList);
 				}
 				else
 					proxy.AppendFormat (

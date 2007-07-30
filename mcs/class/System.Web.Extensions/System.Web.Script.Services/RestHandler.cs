@@ -76,7 +76,7 @@ namespace System.Web.Script.Services
 			}
 			protected override IEnumerator<KeyValuePair<string, object>> GetEnumerator () {
 				for (int i = 0, max = _nmc.Count; i < max; i++)
-					yield return new KeyValuePair<string, object> (_nmc.GetKey (i), _nmc.Get (i));
+					yield return new KeyValuePair<string, object> (_nmc.GetKey (i), JavaScriptSerializer.DefaultSerializer.DeserializeObjectInternal (_nmc.Get (i)));
 			}
 		}
 
@@ -104,13 +104,47 @@ namespace System.Web.Script.Services
 		private RestHandler (HttpContext context, Type type, string filePath) {
 			LogicalTypeInfo logicalTypeInfo = LogicalTypeInfo.GetLogicalTypeInfo (type, filePath);
 			HttpRequest request = context.Request;
-			if (logicalTypeInfo == null || request.PathInfo.Length < 2)
-				ThrowInvalidOperationException (request.PathInfo);
+#if TARGET_J2EE
+			string methodName = GetContextAction (request.ContentType);
+#else
+			string methodName = request.PathInfo.Substring (1);
+#endif
+			if (logicalTypeInfo == null || String.IsNullOrEmpty(methodName))
+				ThrowInvalidOperationException (methodName);
 
-			_logicalMethodInfo = logicalTypeInfo [request.PathInfo.Substring (1)];
+			_logicalMethodInfo = logicalTypeInfo [methodName];
 			if (_logicalMethodInfo == null)
-				ThrowInvalidOperationException (request.PathInfo);
+				ThrowInvalidOperationException (methodName);
 		}
+
+#if TARGET_J2EE
+		static readonly char [] trimChars = { '"', '\'' };
+		static string GetContextAction (string cts) {
+			if (cts == null || cts.Length == 0)
+				return null;
+
+			int start = 0;
+			int idx = cts.IndexOf (';');
+			for (start = idx + 1; idx != -1; ) {
+				idx = cts.IndexOf (';', start);
+				string body;
+				if (idx == -1)
+					body = cts.Substring (start);
+				else {
+					body = cts.Substring (start, idx - start);
+					start = idx + 1;
+				}
+				body = body.Trim ();
+				string actionEq = "action=";
+				if (String.CompareOrdinal (body, 0, actionEq, 0, actionEq.Length) == 0) {
+					string action = body.Substring (actionEq.Length);
+					return action.Trim (trimChars);
+				}
+			}
+
+			return null;
+		}
+#endif
 
 		static void ThrowInvalidOperationException (string pathInfo) {
 			throw new InvalidOperationException (
