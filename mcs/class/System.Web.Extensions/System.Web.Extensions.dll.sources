@@ -10,6 +10,7 @@
 ./System.Web.Script.Serialization/SimpleTypeResolver.cs
 ./System.Web.Script.Serialization/JavaScriptConverter.cs
 ./System.Web.Script.Serialization/JavaScriptSerializer.cs
+./System.Web.Script.Serialization/JSON/CountingTextWriter.cs
 ./System.Web.Script.Serialization/JSON/JsonReaderException.cs
 ./System.Web.Script.Serialization/JSON/ReflectionUtils.cs
 ./System.Web.Script.Serialization/JSON/JavaScriptConstructor.cs
