@@ -1,3 +1,7 @@
+2007-07-30  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* TestGraphics.cs: Added test cases for [Draw|Fill]Path (#82202)
+
 2007-07-03  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* RegionNonRectTest.cs: Add test cases for combining empty paths and 

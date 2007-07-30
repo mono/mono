@@ -3391,6 +3391,112 @@ namespace MonoTests.System.Drawing {
 			}
 		}
 #endif
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void DrawPath_Pen_Null ()
+		{
+			using (Bitmap bmp = new Bitmap (20, 20)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					using (GraphicsPath path = new GraphicsPath ()) {
+						g.DrawPath (null, path);
+					}
+				}
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void DrawPath_Path_Null ()
+		{
+			using (Bitmap bmp = new Bitmap (20, 20)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					g.DrawPath (Pens.Black, null);
+				}
+			}
+		}
+
+		[Test]
+		public void DrawPath_82202 ()
+		{
+			// based on test case from bug #82202
+			using (Bitmap bmp = new Bitmap (20, 20)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					using (GraphicsPath path = new GraphicsPath ()) {
+						int d = 5;
+						Rectangle baserect = new Rectangle (0, 0, 19, 19);
+						Rectangle arcrect = new Rectangle (baserect.Location, new Size (d, d));
+
+						path.AddArc (arcrect, 180, 90);
+						arcrect.X = baserect.Right - d;
+						path.AddArc (arcrect, 270, 90);
+						arcrect.Y = baserect.Bottom - d;
+						path.AddArc (arcrect, 0, 90);
+						arcrect.X = baserect.Left;
+						path.AddArc (arcrect, 90, 90);
+						path.CloseFigure ();
+						g.Clear (Color.White);
+						g.DrawPath (Pens.SteelBlue, path);
+
+						Assert.AreEqual (-12156236, bmp.GetPixel (0, 9).ToArgb (), "0,9");
+						Assert.AreEqual (-1, bmp.GetPixel (1, 9).ToArgb (), "1,9");
+					}
+				}
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void FillPath_Brush_Null ()
+		{
+			using (Bitmap bmp = new Bitmap (20, 20)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					using (GraphicsPath path = new GraphicsPath ()) {
+						g.FillPath (null, path);
+					}
+				}
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void FillPath_Path_Null ()
+		{
+			using (Bitmap bmp = new Bitmap (20, 20)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					g.FillPath (Brushes.Black, null);
+				}
+			}
+		}
+
+		[Test]
+		public void FillPath_82202 ()
+		{
+			// based on test case from bug #82202
+			using (Bitmap bmp = new Bitmap (20, 20)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					using (GraphicsPath path = new GraphicsPath ()) {
+						int d = 5;
+						Rectangle baserect = new Rectangle (0, 0, 19, 19);
+						Rectangle arcrect = new Rectangle (baserect.Location, new Size (d, d));
+
+						path.AddArc (arcrect, 180, 90);
+						arcrect.X = baserect.Right - d;
+						path.AddArc (arcrect, 270, 90);
+						arcrect.Y = baserect.Bottom - d;
+						path.AddArc (arcrect, 0, 90);
+						arcrect.X = baserect.Left;
+						path.AddArc (arcrect, 90, 90);
+						path.CloseFigure ();
+						g.Clear (Color.White);
+						g.FillPath (Brushes.SteelBlue, path);
+
+						Assert.AreEqual (-12156236, bmp.GetPixel (0, 9).ToArgb (), "0,9");
+						Assert.AreEqual (-12156236, bmp.GetPixel (1, 9).ToArgb (), "1,9");
+					}
+				}
+			}
+		}
 	}
 
 	[TestFixture]
