@@ -73,6 +73,8 @@
      
     <hr/>
   
+    <span style="background-color:Yellow" id="ValueId"></span>
+    <br />
     <span style="background-color:Aqua" id="ResultId"></span>
        
 </body>

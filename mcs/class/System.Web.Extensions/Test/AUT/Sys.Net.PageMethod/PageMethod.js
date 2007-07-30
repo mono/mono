@@ -1,11 +1,13 @@
 // PageMethods.js
 
 var displayElement;
+var valueElement;
 
 // Initializes global variables and session state.
 function pageLoad()
 {
     displayElement = $get("ResultId");
+    valueElement = $get("ValueId");
     PageMethods.SetSessionValue("SessionValue", Date(), 
         OnSucceeded, OnFailed);
 }
@@ -32,6 +34,10 @@ function OnSucceeded(result, userContext, methodName)
     {
         displayElement.innerHTML = "Current session state value: " + 
             result;
+    }
+    else
+    {
+		valueElement.innerHTML = "Session state value was sent: "+result;
     }
 }
 
