@@ -1,4 +1,9 @@
 
+Mon Jul 30 17:43:13 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* exceptions-ppc.c, mini-ppc.h: arch-specific stack overflow
+	exception handling.
+
 Mon Jul 30 17:38:13 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* mini-alpha.h, mini-ia64.h, mini-sparc.h: disable the altstack
