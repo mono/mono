@@ -100,10 +100,11 @@ namespace System.Web.UI
 		internal IPortletRenderResponse RenderResponse
 		{
 			get {
-				if (!_renderResponseInit) {
-					_renderResponse = Context.ServletResponse as IPortletRenderResponse;
-					_renderResponseInit = true;
-				}
+				if (!_renderResponseInit)
+					if (Context != null) {
+						_renderResponse = Context.ServletResponse as IPortletRenderResponse;
+						_renderResponseInit = true;
+					}
 				return _renderResponse;
 			}
 		}
