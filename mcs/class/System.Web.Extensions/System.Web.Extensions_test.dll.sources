@@ -1,5 +1,5 @@
-Test/System.Web.Script.Serialization/JavaScriptSerializerTest.cs
-Test/System.Web.UI/ScriptBehaviorDescriptorTest.cs
-Test/System.Web.UI/ScriptComponentDescriptorTest.cs
-Test/System.Web.UI/ScriptControlDescriptorTest.cs
-Test/System.Web.UI/UpdateProgressTest.cs
+System.Web.Script.Serialization/JavaScriptSerializerTest.cs
+System.Web.UI/ScriptBehaviorDescriptorTest.cs
+System.Web.UI/ScriptComponentDescriptorTest.cs
+System.Web.UI/ScriptControlDescriptorTest.cs
+System.Web.UI/UpdateProgressTest.cs
