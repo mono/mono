@@ -1,5 +1,11 @@
 2007-07-31  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 	[Backport to 1-2-5]
+	* ListView.cs: Take into account the region used by header
+	control when doing the vertical scroll (this way we invalidate
+	the precise area, and don't get any dirty one).
+
+2007-07-31  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+	[Backport to 1-2-5]
 	* ListView.cs: Update some layout calculations in details view
 	and clean the code in a pair of assignations.
 
