@@ -75,5 +75,41 @@ namespace MonoTests.System.Data.Odbc
 				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
+		[Test]
+		public void InsertUtf8Test ()
+		{
+			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			try {
+				ConnectionManager.Singleton.OpenConnection ();
+				DoExecuteNonQuery ((OdbcConnection) conn,
+						   "CREATE TABLE odbc_ins_utf8_test(ival int not null, sval varchar(20))");
+				Assert.AreEqual (DoExecuteNonQuery ((OdbcConnection) conn,
+								    "INSERT INTO odbc_ins_utf8_test(ival, sval) VALUES (1, 'English')"),
+						 1);
+				Assert.AreEqual (DoExecuteNonQuery ((OdbcConnection) conn,
+								    "INSERT INTO odbc_ins_utf8_test(ival, sval) VALUES (2, 'Français')"),
+						 1);
+				Assert.AreEqual (DoExecuteNonQuery ((OdbcConnection) conn,
+								    "INSERT INTO odbc_ins_utf8_test(ival, sval) VALUES (3, 'Español')"),
+						 1);
+				Assert.AreEqual (DoExecuteScalar   ((OdbcConnection) conn,
+								    "SELECT COUNT(*) FROM odbc_ins_utf8_test WHERE sval " +
+								    "IN('English', 'Français', 'Español')"),
+						 3);
+			} finally {
+				DoExecuteNonQuery ((OdbcConnection) conn, "DROP TABLE odbc_ins_utf8_test");
+				ConnectionManager.Singleton.CloseConnection ();
+			}
+		}
+		private int DoExecuteNonQuery (OdbcConnection conn, string sql) {
+			OdbcCommand cmd = new OdbcCommand (sql, conn);
+			return cmd.ExecuteNonQuery ();
+		}
+
+		private int DoExecuteScalar (OdbcConnection conn, string sql) {
+			OdbcCommand cmd = new OdbcCommand (sql, conn);
+			object value = cmd.ExecuteScalar ();
+			return (int) Convert.ChangeType (value, typeof (int));
+		}
 	}
 }

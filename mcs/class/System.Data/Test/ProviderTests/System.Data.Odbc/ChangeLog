@@ -1,3 +1,10 @@
+2007-07-31  Nagappan A  <anagappan@novell.com>
+
+	* OdbcDataAdapterTest.cs (InsertUtf8Test): Thanks to
+	amc1999@gmail.com (amc) for providing this test case. Fixes bug #
+	82191. ODBC command UTF8 error. SQL failed with UTF8 symbols in
+	query.
+
 2007-06-21  Nagappan A  <anagappan@novell.com>
 
 	* OdbcConnectionStringBuilderTest.cs: Added base test-cases from
