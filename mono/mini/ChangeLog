@@ -1,3 +1,12 @@
+
+Tue Jul 31 17:34:42 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c, mini.h, mini-exceptions.c: added a bit of documentation
+	on the stack overflow handling and made the managed stack overflows
+	catchable in most cases using soft guard pages.
+	* exceptions-x86.c: added code to restore the protection in the soft
+	guard pages at the end of exception handling.
+
 2007-07-31  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (SIG_HANDLER_SIGNATURE): Fix a warning.
