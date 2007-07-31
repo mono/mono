@@ -127,7 +127,7 @@ namespace Newtonsoft.Json
 		/// <returns>A Json string representation of the <see cref="Enum"/>.</returns>
 		public static string ToString(Enum value)
 		{
-			return value.ToString (CultureInfo.InvariantCulture);
+			return value.ToString ();
 		}
 
 		/// <summary>
