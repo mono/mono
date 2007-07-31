@@ -1,3 +1,10 @@
+2007-07-31  William Holmes  <billholmes54@gmail.com>
+
+        * metadata.c Changed mono_type_create_from_typespec to not insert
+          the type into the has map until after
+          do_mono_metadata_parse_type has completed.
+        Fixes Bug #82194
+        Code is contributed under MIT/X11 license.
 
 Wed Jul 25 18:06:33 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
