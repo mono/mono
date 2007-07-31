@@ -1,3 +1,11 @@
+2007-07-31  William Holmes  <billholmes54@gmail.com>
+
+	* metadata.c Changed mono_type_create_from_typespec to not insert
+	  the type into the has map until after
+	  do_mono_metadata_parse_type has completed.
+	Fixes Bug #82194
+	Code is contributed under MIT/X11 license.
+
 2007-07-31  Zoltan Varga  <vargaz@gmail.com>
 
 	* icall.c (ves_icall_Type_GetMethodsByName): Avoid a crash when called on a
