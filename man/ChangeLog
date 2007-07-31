@@ -1,3 +1,8 @@
+2007-08-31  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* permview.1: add documentation for the -xml option now available
+	with the Cecil-enabled version of permview.
+
 2007-07-17  Jb Evain <jbevain@novell.com>
 
 	* monolinker.1: add monolinker man page.
