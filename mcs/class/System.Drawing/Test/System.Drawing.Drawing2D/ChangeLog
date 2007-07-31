@@ -1,4 +1,9 @@
-2007-07-05  Sebastien Pouliot  <sebastien@ximian.com>
+2007-07-31  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* GraphicsPathTest.cs: Added more test cases for Reverse based on the
+	C test cases provided in #81859.
+
+2007-07-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* GraphicsPathTest.cs: Added more test cases for Reverse, the complex
 	ones don't work yet (see #81859).

@@ -2538,6 +2538,16 @@ namespace MonoTests.System.Drawing.Drawing2D {
 		}
 
 		[Test]
+		public void Reverse_Line_Closed ()
+		{
+			using (GraphicsPath gp = new GraphicsPath ()) {
+				gp.AddLine (1, 2, 3, 4);
+				gp.CloseFigure ();
+				Reverse (gp);
+			}
+		}
+
+		[Test]
 		public void Reverse_Lines ()
 		{
 			using (GraphicsPath gp = new GraphicsPath ()) {
@@ -2581,7 +2591,7 @@ namespace MonoTests.System.Drawing.Drawing2D {
 		// Reverse complex test cases
 
 		[Test]
-		[Category ("NotWorking")]
+		[Category ("NotWorking")] // the output differs from GDI+ and libgdiplus
 		public void Reverse_Pie ()
 		{
 			using (GraphicsPath gp = new GraphicsPath ()) {
@@ -2592,7 +2602,6 @@ namespace MonoTests.System.Drawing.Drawing2D {
 				gp.Reverse ();
 				PointF[] ap = gp.PathPoints;
 				byte[] at = gp.PathTypes;
-
 				int count = gp.PointCount;
 				Assert.AreEqual (bp.Length, count, "PointCount");
 				for (int i = 0; i < count; i++) {
@@ -2603,7 +2612,6 @@ namespace MonoTests.System.Drawing.Drawing2D {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Reverse_Path ()
 		{
 			using (GraphicsPath gp = new GraphicsPath ()) {
@@ -2628,7 +2636,29 @@ namespace MonoTests.System.Drawing.Drawing2D {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		public void Reverse_Path_2 ()
+		{
+			using (GraphicsPath gp = new GraphicsPath ()) {
+				gp.AddEllipse (50, 51, 50, 100);
+				gp.AddRectangle (new Rectangle (200, 201, 60, 61));
+				PointF[] bp = gp.PathPoints;
+				byte[] expected = new byte[] { 0, 1, 1, 129, 0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 131 };
+
+				gp.Reverse ();
+				PointF[] ap = gp.PathPoints;
+				byte[] at = gp.PathTypes;
+
+				int count = gp.PointCount;
+				Assert.AreEqual (bp.Length, count, "PointCount");
+				for (int i = 0; i < count; i++) {
+					Assert.AreEqual (bp[i], ap[count - i - 1], "Point" + i.ToString ());
+					Assert.AreEqual (expected[i], at[i], "Type" + i.ToString ());
+				}
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")] // the output differs from GDI+ and libgdiplus
 		public void Reverse_String ()
 		{
 			using (GraphicsPath gp = new GraphicsPath ()) {
@@ -2645,6 +2675,78 @@ namespace MonoTests.System.Drawing.Drawing2D {
 					0,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,163,0,1,1,1,3,3,3,3,3,3,3,3,3,3,3,3,1,
 					3,3,3,3,3,3,3,3,3,3,3,3,1,1,1,3,3,3,3,3,3,3,3,3,3,3,3,1,1,1,1,3,3,3,3,3,3,3,3,3,3,3,3,
 					1,1,1,3,3,3,3,3,3,3,3,3,3,3,3,1,3,3,3,3,3,3,3,3,3,3,3,3,1,1,1,1,129 };
+
+				gp.Reverse ();
+				PointF[] ap = gp.PathPoints;
+				byte[] at = gp.PathTypes;
+
+				int count = gp.PointCount;
+				Assert.AreEqual (bp.Length, count, "PointCount");
+				for (int i = 0; i < count; i++) {
+					Assert.AreEqual (bp[i], ap[count - i - 1], "Point" + i.ToString ());
+					Assert.AreEqual (expected[i], at[i], "Type" + i.ToString ());
+				}
+			}
+		}
+
+		[Test]
+		public void Reverse_Marker ()
+		{
+			using (GraphicsPath gp = new GraphicsPath ()) {
+				gp.AddRectangle (new Rectangle (200, 201, 60, 61));
+				gp.SetMarkers ();
+				PointF[] bp = gp.PathPoints;
+				byte[] expected = new byte[] { 0, 1, 1, 129 };
+
+				gp.Reverse ();
+				PointF[] ap = gp.PathPoints;
+				byte[] at = gp.PathTypes;
+
+				int count = gp.PointCount;
+				Assert.AreEqual (bp.Length, count, "PointCount");
+				for (int i = 0; i < count; i++) {
+					Assert.AreEqual (bp[i], ap[count - i - 1], "Point" + i.ToString ());
+					Assert.AreEqual (expected[i], at[i], "Type" + i.ToString ());
+				}
+			}
+		}
+
+		[Test]
+		public void Reverse_Subpath_Marker ()
+		{
+			using (GraphicsPath gp = new GraphicsPath ()) {
+				gp.AddLine (0, 1, 2, 3);
+				gp.SetMarkers ();
+				gp.CloseFigure ();
+				gp.AddBezier (5, 6, 7, 8, 9, 10, 11, 12);
+				gp.CloseFigure ();
+				PointF[] bp = gp.PathPoints;
+				byte[] expected = new byte[] { 0, 3, 3, 163, 0, 129 };
+
+				gp.Reverse ();
+				PointF[] ap = gp.PathPoints;
+				byte[] at = gp.PathTypes;
+
+				int count = gp.PointCount;
+				Assert.AreEqual (bp.Length, count, "PointCount");
+				for (int i = 0; i < count; i++) {
+					Assert.AreEqual (bp[i], ap[count - i - 1], "Point" + i.ToString ());
+					Assert.AreEqual (expected[i], at[i], "Type" + i.ToString ());
+				}
+			}
+		}
+
+		[Test]
+		public void Reverse_Subpath_Marker_2 ()
+		{
+			using (GraphicsPath gp = new GraphicsPath ()) {
+				gp.AddLine (0, 1, 2, 3);
+				gp.SetMarkers ();
+				gp.StartFigure ();
+				gp.AddLine (20, 21, 22, 23);
+				gp.AddBezier (5, 6, 7, 8, 9, 10, 11, 12);
+				PointF[] bp = gp.PathPoints;
+				byte[] expected = new byte[] { 0, 3, 3, 3, 1, 33, 0, 1 };
 
 				gp.Reverse ();
 				PointF[] ap = gp.PathPoints;
