@@ -85,7 +85,7 @@ namespace System.Web.UI.HtmlControls{
 			if (attr != null){
 				if (attr.Length != 0){
 					try{
-						attr = ResolveUrl(attr);
+						attr = ResolveClientUrl(attr);
 					}
 					catch (Exception) {
 						throw new HttpException(attribName + " property had malformed url");
