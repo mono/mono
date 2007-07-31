@@ -32,14 +32,14 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 
-namespace System.Web.Extensions.System.Web.Script.Serialization.JSON
+namespace System.Web.Script.Serialization
 {
-	class CountingTextWriter : TextWriter
+	sealed class CountingTextWriter : TextWriter
 	{
-		public CountingTextWriter (TextWriter writer)
-			: base () 
+		public CountingTextWriter (TextWriter writer, int maxJsonLength)
 		{
 			realWriter = writer;
+			this.maxJsonLength = maxJsonLength;
 		}
 
 		public override void Close () 
@@ -77,15 +77,10 @@ namespace System.Web.Extensions.System.Web.Script.Serialization.JSON
 
 		public int MaxJsonLength {
 			get { return maxJsonLength; }
-			set { maxJsonLength = value; }
 		}
 
-		public int WrittenChars {
-			get { return writtenChars; }
-		}
-
-		private TextWriter realWriter;
-		private int maxJsonLength;
+		readonly private TextWriter realWriter;
+		readonly private int maxJsonLength;
 		private int writtenChars;
 	}
 }

@@ -24,7 +24,7 @@ using System.IO;
 using System.Xml;
 using Newtonsoft.Json.Utilities;
 using System.Collections;
-using System.Web.Extensions.System.Web.Script.Serialization.JSON;
+using System.Web.Script.Serialization;
 
 namespace Newtonsoft.Json
 {
@@ -258,9 +258,10 @@ namespace Newtonsoft.Json
 			if (textWriter == null)
 				throw new ArgumentNullException("textWriter");
 
-			CountingTextWriter countingWriter = new CountingTextWriter (textWriter);
-			countingWriter.MaxJsonLength = (maxJsonLength > 0)? maxJsonLength : 0;
-			_writer = countingWriter;
+			if (maxJsonLength > 0)
+				textWriter = new CountingTextWriter (textWriter, maxJsonLength);
+
+			_writer = textWriter;
 			_quoteChar = '"';
 			_quoteName = true;
 			_indentChar = ' ';
