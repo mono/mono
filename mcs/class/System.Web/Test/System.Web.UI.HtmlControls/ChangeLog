@@ -1,3 +1,8 @@
+2007-07-31 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* HtmlImageTest.cs: fixed RenderAttributes, moved to webtest since src
+	attribute must be resolved
+
 2007-01-04 Adar Wesley <adarw@mainsoft.com>
 
 	* HtmlSelectTest.cs: updated tests to use HtmlDiff

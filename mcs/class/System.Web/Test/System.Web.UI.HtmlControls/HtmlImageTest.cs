@@ -33,6 +33,8 @@ using System.Web.UI;
 using System.Web.UI.HtmlControls;
 
 using NUnit.Framework;
+using MonoTests.SystemWeb.Framework;
+using MonoTests.stand_alone.WebHarness; 
 
 namespace MonoTests.System.Web.UI.HtmlControls {
 
@@ -110,7 +112,13 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 		}
 
 		[Test]
+		[Category ("NunitWeb")]
 		public void RenderAttributes ()
+		{
+			new WebTest (PageInvoker.CreateOnLoad (new PageDelegate (DoRenderAttributes))).Run ();
+		}
+
+		public static void DoRenderAttributes (Page p)
 		{
 			TestHtmlImage img = new TestHtmlImage ();
 
