@@ -60,5 +60,8 @@ dist-local: dist-default
 sn.exe $(topdir)/class/lib/$(PROFILE)/sn.exe: $(SN_SOURCES)
 	$(CSCOMPILE) /out:$@ $(SN_SOURCES)
 
+permview.exe: permview.cs
+	$(CSCOMPILE) $^ $(HELPER_SOURCES) -r:Mono.Cecil.dll
+
 %.exe: %.cs $(HELPER_SOURCES)
 	$(CSCOMPILE) $^

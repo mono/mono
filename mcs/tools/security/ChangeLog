@@ -1,3 +1,9 @@
+2007-07-31  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AssemblyInfo.cs: Update copyright notices.
+	* Makefile: Build the *full*, Cecil-enabled, permview.
+	* permview.cs: Updated from Cecil repository.
+
 2007-04-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* signcode.cs: Fix individual/commercial mixup (#81462).

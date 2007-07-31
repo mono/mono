@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2007 Novell, Inc (http://www.novell.com)
 //
 
 using System;
@@ -13,24 +13,34 @@ using System.IO;
 using System.Reflection;
 using System.Security;
 using System.Security.Permissions;
+using System.Text;
+
+using Mono.Cecil;
 
 [assembly: AssemblyTitle ("Mono PermView")]
 [assembly: AssemblyDescription ("Managed Permission Viewer for .NET assemblies")]
 
 namespace Mono.Tools {
 
-	// There is no "managed way" to get this information using Fx 1.0/1.1
-	// so we must reflect inside Mono's corlib to find it. This also means
-	// that this won't work under MS runtime. Hopefully this will change
-	// with Fx 2.0 and Mono's PermView 2.0 should be working on both runtime.
+	class SecurityElementComparer : IComparer {
 
-	// Notes:
-	// * Oct CTP started to return declarative security attributes with 
-	//   GetCustomAttributes, so this wont work with beta1 or previous 2.0 CTP
-	// * Dec/Nov CTP (and probably Oct CTP too) are bugged and always report 
-	//   LinkDemand as the SecurityAction (reported as FDBK19290)
+		public int Compare (object x, object y)
+		{
+			SecurityElement sx = (x as SecurityElement);
+			SecurityElement sy = (y as SecurityElement);
+			if (sx == null)
+				return (sy == null) ? 0 : -1;
+			else if (sy == null)
+				return 1;
+
+			// compare by name (type name, method name, action name)
+			return String.Compare (sx.Attribute ("Name"), sy.Attribute ("Name"));
+		}
+	}
 
 	class PermView {
+
+		private const string NotSpecified = "\tNot specified.";
 
 		static private void Help () 
 		{
@@ -38,215 +48,13 @@ namespace Mono.Tools {
 			Console.WriteLine ("where options are:");
 			Console.WriteLine (" -output filename  Output information into specified file.");
 			Console.WriteLine (" -decl             Show declarative security attributes on classes and methods.");
+			Console.WriteLine (" -xml              Output in XML format");
 			Console.WriteLine (" -help             Show help informations (this text)");
 			Console.WriteLine ();
 		}
 
 		static bool declarative = false;
-
-		static void ShowPermissionSet (TextWriter tw, string header, PermissionSet ps)
-		{
-			if (header != null)
-				tw.WriteLine (header);
-
-			if ((ps == null) || ((ps.Count == 0) && !ps.IsUnrestricted ())) {
-				tw.WriteLine ("\tNone");
-			} else {
-				tw.WriteLine (ps.ToString ());
-			}
-
-			tw.WriteLine ();
-		}
-
-#if NET_2_0
-		static PermissionSet GetPermissionSet (SecurityAttribute sa)
-		{
-			PermissionSet ps = null;
-			if (sa is PermissionSetAttribute) {
-				ps = (sa as PermissionSetAttribute).CreatePermissionSet ();
-			} else {
-				ps = new PermissionSet (PermissionState.None);
-				IPermission p = sa.CreatePermission ();
-				ps.AddPermission (p);
-			}
-			return ps;
-		}
-#else
-		static PermissionSet GetPermissionSet (Assembly a, string name)
-		{
-			FieldInfo fi = typeof (Assembly).GetField (name, BindingFlags.Instance | BindingFlags.NonPublic);
-			if (fi == null)
-				throw new NotSupportedException ("Wrong runtime ?");
-			return (PermissionSet) fi.GetValue (a);
-		}
-#endif
-
-		static bool ProcessAssemblyOnly (TextWriter tw, Assembly a) 
-		{
-#if NET_2_0
-			// This should work for all 2.0 runtime - unless we hit a bug :-(
-			object[] attrs = a.GetCustomAttributes (false);
-			foreach (object attr in attrs) {
-				if (attr is SecurityAttribute) {
-					SecurityAttribute sa = (attr as SecurityAttribute);
-					switch (sa.Action) {
-					case SecurityAction.RequestMinimum:
-						ShowPermissionSet (tw, "Minimum Permission Set:", GetPermissionSet (sa));
-						break;
-					case SecurityAction.RequestOptional:
-						ShowPermissionSet (tw, "Optional Permission Set:", GetPermissionSet (sa));
-						break;
-					case SecurityAction.RequestRefuse:
-						ShowPermissionSet (tw, "Refused Permission Set:", GetPermissionSet (sa));
-						break;
-					default:
-						// Bug in VS.NET 2005 Nov CTP - Every action is a LinkDemand :(
-						string msg = String.Format ("ERROR {0} Permission Set:", sa.Action);
-						ShowPermissionSet (tw, msg, GetPermissionSet (sa));
-						break;
-					}
-				}
-			}
-#else
-			// Note: This will only work using the Mono runtime as we P/Invoke
-			// into Mono's corlib to get the required informations.
-
-			Type t = typeof (Assembly);
-
-			// Minimum, Optional and Refuse permission set are only evaluated
-			// on demand (delayed as much as possible). A call Resolve will
-			// trigger their retrieval from the assembly metadata
-			MethodInfo resolve = t.GetMethod ("Resolve", BindingFlags.Instance | BindingFlags.NonPublic);
-			if (resolve == null)
-				return false;
-			resolve.Invoke (a, null);
-
-			ShowPermissionSet (tw, "Minimal Permission Set:", GetPermissionSet (a, "_minimum"));
-			ShowPermissionSet (tw, "Optional Permission Set:", GetPermissionSet (a, "_optional"));
-			ShowPermissionSet (tw, "Refused Permission Set:", GetPermissionSet (a, "_refuse"));
-#endif
-			return true;
-		}
-
-/*		static SecurityAction[] actions = {
-			SecurityAction.LinkDemand,
-			SecurityAction.InheritanceDemand,
-			SecurityAction.Demand,
-			(SecurityAction) 13, 				// Hack for NonCasDemand
-			(SecurityAction) 14, 				// Hack for NonCasLinkDemand
-			(SecurityAction) 15, 				// Hack for NonCasInheritanceDemand
-			SecurityAction.Assert,
-			SecurityAction.Deny,
-			SecurityAction.PermitOnly,
-		};
-
-		static MethodInfo method_getdeclsec;
-
-		static PermissionSet GetDeclarativeSecurity (MethodInfo mi, SecurityAction action)
-		{
-			if (method_getdeclsec == null) {
-				Type t = typeof (Int32).Assembly.GetType ("System.Reflection.MonoMethod");
-				method_getdeclsec = t.GetMethod ("GetDeclarativeSecurity", BindingFlags.Instance | BindingFlags.Public);
-			}
-			return (PermissionSet) method_getdeclsec.Invoke (mi, new object [1] { action });
-		}
-*/
-		static void ProcessMethod (TextWriter tw, MethodInfo mi) 
-		{
-			// no need to process methods without security informations
-			if ((mi.Attributes & MethodAttributes.HasSecurity) == MethodAttributes.HasSecurity) {
-#if NET_2_0
-				object[] attrs = mi.GetCustomAttributes (false);
-				foreach (object attr in attrs) {
-					if (attr is SecurityAttribute) {
-						SecurityAttribute sa = (attr as SecurityAttribute);
-						tw.WriteLine ("Method {0} {1} Permission Set", mi, sa.Action);
-						ShowPermissionSet (tw, null, GetPermissionSet (sa));
-					}
-				}
-#else
-/*				foreach (SecurityAction action in actions) {
-					PermissionSet ps = GetDeclarativeSecurity (mi, action);
-					if (ps != null) {
-						tw.WriteLine ("Method {0} {1} Permission Set", mi, action);
-						ShowPermissionSet (tw, null, ps);
-					}
-				}*/
-#endif
-			}
-		}
-
-		static BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance |
-			BindingFlags.Static | BindingFlags.GetProperty | BindingFlags.SetProperty;
-
-		static void ProcessType (TextWriter tw, Type t) 
-		{
-			// no need to process types without security informations
-			if ((t.Attributes & TypeAttributes.HasSecurity) == TypeAttributes.HasSecurity) {
-#if NET_2_0
-				object[] attrs = t.GetCustomAttributes (false);
-				foreach (object attr in attrs) {
-					if (attr is SecurityAttribute) {
-						SecurityAttribute sa = (attr as SecurityAttribute);
-						tw.WriteLine ("Class {0} {1} Permission Set", t, sa.Action);
-						ShowPermissionSet (tw, null, GetPermissionSet (sa));
-					}
-				}
-#else
-				tw.WriteLine ("Class {0} 'SecurityAction' Permission Set", t);
-				// SecurityAction
-				ShowPermissionSet (tw, null, null);
-#endif
-			}
-		}
-
-		static bool ProcessAssemblyComplete (TextWriter tw, Assembly a) 
-		{
-#if NET_2_0
-			string header = "Assembly {0} Permission Set";
-			object [] attrs = a.GetCustomAttributes (false);
-			foreach (object attr in attrs) {
-				if (attr is SecurityAttribute) {
-					SecurityAttribute sa = (attr as SecurityAttribute);
-					// Bug in VS.NET 2005 Nov CTP - Evrything action is a LinkDemand
-					ShowPermissionSet (tw, String.Format (header, sa.Action.ToString ()), GetPermissionSet (sa));
-				}
-			}
-#else
-			tw.WriteLine ("Currently unsupported");
-			return false;
-/*			Type t = typeof (Assembly);
-			FieldInfo fi = t.GetField ("_minimum", BindingFlags.Instance | BindingFlags.NonPublic);
-			if (fi == null)
-				return false;
-			PermissionSet ps = (PermissionSet) fi.GetValue (a);
-			if (ps != null)
-				ShowPermissionSet (tw, "Assembly RequestMinimum Permission Set:", ps);
-			
-			fi = t.GetField ("_optional", BindingFlags.Instance | BindingFlags.NonPublic);
-			if (fi == null)
-				return false;
-			ps = (PermissionSet) fi.GetValue (a);
-			if (ps != null)
-				ShowPermissionSet (tw, "Assembly RequestOptional Permission Set:", ps);
-
-			fi = t.GetField ("_refuse", BindingFlags.Instance | BindingFlags.NonPublic);
-			if (fi == null)
-				return false;
-			ps = (PermissionSet) fi.GetValue (a);
-			if (ps != null)
-				ShowPermissionSet (tw, "Assembly RequestRefuse Permission Set:", ps);*/
-#endif
-/*			Type [] types = a.GetTypes ();
-			foreach (Type type in types) {
-				ProcessType (tw, type);
-				foreach (MethodInfo mi in type.GetMethods (flags)) {
-					ProcessMethod (tw, mi);
-				}
-			}
-
-			return true;*/
-		}
+		static bool xmloutput = false;
 
 		static TextWriter ProcessOptions (string[] args)
 		{
@@ -263,6 +71,11 @@ namespace Mono.Tools {
 				case "--OUTPUT":
 					tw = (TextWriter) new StreamWriter (args [++i]);
 					break;
+				case "/XML":
+				case "-XML":
+				case "--XML":
+					xmloutput = true;
+					break;
 				case "/HELP":
 				case "/H":
 				case "-HELP":
@@ -276,6 +89,170 @@ namespace Mono.Tools {
 				}
 			}
 			return tw;
+		}
+
+		static bool ProcessAssemblyOnly (TextWriter tw, AssemblyDefinition ad) 
+		{
+			bool result = true;
+			string minimal = NotSpecified + Environment.NewLine;
+			string optional = NotSpecified + Environment.NewLine;
+			string refused = NotSpecified + Environment.NewLine;
+
+			foreach (SecurityDeclaration decl in ad.SecurityDeclarations) {
+				switch (decl.Action) {
+				case Mono.Cecil.SecurityAction.RequestMinimum:
+					minimal = decl.PermissionSet.ToString ();
+					break;
+				case Mono.Cecil.SecurityAction.RequestOptional:
+					optional = decl.PermissionSet.ToString ();
+					break;
+				case Mono.Cecil.SecurityAction.RequestRefuse:
+					refused = decl.PermissionSet.ToString ();
+					break;
+				default:
+					tw.WriteLine ("Invalid assembly level declaration {0}{1}{2}",
+						decl.Action, Environment.NewLine, decl.PermissionSet);
+					result = false;
+					break;
+				}
+			}
+
+			tw.WriteLine ("Minimal Permission Set:");
+			tw.WriteLine (minimal);
+			tw.WriteLine ("Optional Permission Set:");
+			tw.WriteLine (optional);
+			tw.WriteLine ("Refused Permission Set:");
+			tw.WriteLine (refused);
+			return result;
+		}
+
+		static void ShowSecurity (TextWriter tw, string header, SecurityDeclarationCollection declarations)
+		{
+			foreach (SecurityDeclaration declsec in declarations) {
+				tw.WriteLine ("{0} {1} Permission Set:{2}{3}", header,
+					declsec.Action, Environment.NewLine, declsec.PermissionSet);
+			}
+		}
+
+		static bool ProcessAssemblyComplete (TextWriter tw, AssemblyDefinition ad)
+		{
+			if (ad.SecurityDeclarations.Count > 0) {
+				ShowSecurity (tw, "Assembly", ad.SecurityDeclarations);
+			}
+
+			foreach (ModuleDefinition module in ad.Modules) {
+
+				foreach (TypeDefinition type in module.Types) {
+
+					if (type.SecurityDeclarations.Count > 0) {
+						ShowSecurity (tw, "Class " + type.ToString (), ad.SecurityDeclarations);
+					}
+
+					foreach (MethodDefinition method in type.Methods) {
+						if (method.SecurityDeclarations.Count > 0) {
+							ShowSecurity (tw, "Method " + method.ToString (), method.SecurityDeclarations);
+						}
+					}
+				}
+			}
+			return true;
+		}
+
+		static void AddAttribute (SecurityElement se, string attr, string value)
+		{
+			value = value.Replace ("&", "&amp;");
+			se.AddAttribute (attr, value);
+		}
+
+		static SecurityElement AddSecurityXml (SecurityDeclarationCollection declarations)
+		{
+			ArrayList list = new ArrayList ();
+			foreach (SecurityDeclaration declsec in declarations) {
+				SecurityElement child = new SecurityElement ("Action");
+				AddAttribute (child, "Name", declsec.Action.ToString ());
+				child.AddChild (declsec.PermissionSet.ToXml ());
+				list.Add (child);
+			}
+			// sort actions
+			list.Sort (Comparer);
+
+			SecurityElement se = new SecurityElement ("Actions");
+			foreach (SecurityElement child in list) {
+				se.AddChild (child);
+			}
+			return se;
+		}
+
+		static SecurityElementComparer comparer;
+		static IComparer Comparer {
+			get {
+				if (comparer == null)
+					comparer = new SecurityElementComparer ();
+				return comparer;
+			}
+		}
+
+		static bool ProcessAssemblyXml (TextWriter tw, AssemblyDefinition ad)
+		{
+			SecurityElement se = new SecurityElement ("Assembly");
+			se.AddAttribute ("Name", ad.Name.FullName);
+
+			if (ad.SecurityDeclarations.Count > 0) {
+				se.AddChild (AddSecurityXml (ad.SecurityDeclarations));
+			}
+
+			ArrayList tlist = new ArrayList ();
+			ArrayList mlist = new ArrayList ();
+
+			foreach (ModuleDefinition module in ad.Modules) {
+
+				foreach (TypeDefinition type in module.Types) {
+
+					SecurityElement klass = new SecurityElement ("Class");
+					SecurityElement methods = new SecurityElement ("Methods");
+
+					SecurityElement typelem = null;
+					if (type.SecurityDeclarations.Count > 0) {
+						typelem = AddSecurityXml (type.SecurityDeclarations);
+					}
+
+					if (mlist.Count > 0)
+						mlist.Clear ();
+
+					foreach (MethodDefinition method in type.Methods) {
+						if (method.SecurityDeclarations.Count > 0) {
+							SecurityElement meth = new SecurityElement ("Method");
+							AddAttribute (meth, "Name", method.ToString ());
+							meth.AddChild (AddSecurityXml (method.SecurityDeclarations));
+							mlist.Add (meth);
+						}
+					}
+
+					// sort methods
+					mlist.Sort (Comparer);
+					foreach (SecurityElement method in mlist) {
+						methods.AddChild (method);
+					}
+
+					if ((typelem != null) || ((methods.Children != null) && (methods.Children.Count > 0))) {
+						AddAttribute (klass, "Name", type.ToString ());
+						if (typelem != null)
+							klass.AddChild (typelem);
+						if ((methods.Children != null) && (methods.Children.Count > 0))
+							klass.AddChild (methods);
+						tlist.Add (klass);
+					}
+				}
+
+				// sort types
+				tlist.Sort (Comparer);
+				foreach (SecurityElement type in tlist) {
+					se.AddChild (type);
+				}
+			}
+
+			tw.WriteLine (se.ToString ());
+			return true;
 		}
 
 		[STAThread]
@@ -293,13 +270,23 @@ namespace Mono.Tools {
 					return 0;
 
 				string assemblyName = args [args.Length - 1];
-				Assembly a = Assembly.LoadFile (Path.GetFullPath (assemblyName));
-				if (a != null) {
-					bool complete = (declarative ?
-						ProcessAssemblyComplete (tw, a) :
-						ProcessAssemblyOnly (tw, a));
+				AssemblyDefinition ad = AssemblyFactory.GetAssembly (assemblyName);
+				if (ad != null) {
+					bool complete = false;
+					
+					if (declarative) {
+						// full output (assembly+classes+methods)
+						complete = ProcessAssemblyComplete (tw, ad);
+					} else if (xmloutput) {
+						// full output in XML (for easier diffs after c14n)
+						complete = ProcessAssemblyXml (tw, ad);
+					} else {
+						// default (assembly only)
+						complete = ProcessAssemblyOnly (tw, ad);
+					}
+
 					if (!complete) {
-						Console.Error.WriteLine ("Couldn't reflect informations. Wrong runtime ?");
+						Console.Error.WriteLine ("Couldn't reflect informations.");
 						return 1;
 					}
 				} else {
