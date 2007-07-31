@@ -350,6 +350,20 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
+		public void InterfaceTransactionTest ()
+		{
+			conn = new SqlConnection (connectionString);
+			conn.Open ();
+			IDbCommand idbCommand = new SqlCommand ("use [mono-test]", conn);
+			idbCommand.Connection = null;
+			Assert.AreEqual (null, idbCommand.Connection, "Connection should be null");
+			idbCommand.Transaction = null;
+			Assert.AreEqual (null, idbCommand.Transaction, "Transaction should be null");
+
+			conn.Close ();
+		}
+
+		[Test]
 		public void BeginTransactionTest()
 		{
 			conn = new SqlConnection (connectionString);

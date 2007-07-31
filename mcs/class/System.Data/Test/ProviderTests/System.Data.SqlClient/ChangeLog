@@ -1,3 +1,9 @@
+2007-07-31  Nagappan A  <anagappan@novell.com>
+
+	* SqlConnectionTest.cs (InterfaceTransactionTest): Fixes bug
+	82189. SqlConnection throws an exception if Connection or
+	Transaction is set to null on IDbCommand interface.
+
 2007-07-24  Nagappan A  <anagappan@novell.com>
 
 	* SqlParameterTest.cs (ParameterSizeTest): Fixes Large strings
