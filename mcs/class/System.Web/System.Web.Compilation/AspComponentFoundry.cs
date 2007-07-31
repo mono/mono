@@ -64,12 +64,34 @@ namespace System.Web.Compilation
 		}
 
 		public Type GetComponentType (string foundryName, string tag)
-		{
-			Foundry foundry = foundries [foundryName] as Foundry;
-			if (foundry == null)
+		{			
+			object o = foundries [foundryName];
+			if (o == null)
 				return null;
 
-			return foundry.GetType (tag);
+			if (o is Foundry)
+				return ((Foundry)o).GetType (tag);
+
+			Queue qf = o as Queue;
+			if (qf == null)
+				return null;
+
+			Type t;
+			Exception e = null;
+			foreach (Foundry f in qf) {
+				try {
+					t = f.GetType (tag);
+					if (t != null)
+						return t;
+				} catch (Exception ex) {
+					e = ex;
+				}
+			}
+
+			if (e != null)
+				throw e;
+			
+			return null;
 		}
 
 		public void RegisterFoundry (string foundryName,
@@ -141,17 +163,36 @@ namespace System.Web.Compilation
 		void InternalRegister (string foundryName, Foundry foundry)
 		{
 			object f = foundries [foundryName];
+			Foundry newFoundry = null;
+			
 			if (f is CompoundFoundry) {
 				((CompoundFoundry) f).Add (foundry);
+				return;
 			} else if (f == null || (f is AssemblyFoundry && foundry is AssemblyFoundry)) {
-				// If more than 1 namespace/assembly specified, the last one is used.
-				foundries [foundryName] = foundry;
+				newFoundry = foundry;
 			} else if (f != null) {
 				CompoundFoundry compound = new CompoundFoundry (foundryName);
 				compound.Add ((Foundry) f);
 				compound.Add (foundry);
-				foundries [foundryName] = compound;
+				newFoundry = foundry;
 			}
+
+			if (newFoundry == null)
+				return;
+
+			if (f == null) {
+				foundries [foundryName] = newFoundry;
+				return;
+			}
+
+			Queue lf = f as Queue;
+			if (lf == null) {
+				lf = new Queue (2);
+				lf.Enqueue (f);
+				foundries [foundryName] = lf;
+			}
+			
+			lf.Enqueue (newFoundry);
 		}
 
 		public bool LookupFoundry (string foundryName)

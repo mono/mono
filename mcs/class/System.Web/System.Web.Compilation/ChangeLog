@@ -1,3 +1,9 @@
+2007-07-31  Marek Habersack  <mhabersack@novell.com>
+
+	* AspComponentFoundry.cs: do not overwrite previously registered
+	foundries when a new one is registered with the same prefix. Fixes
+	bug #82216
+
 2007-07-18  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateControlCompiler.cs: on the 2.0 profile, GetContainerType
