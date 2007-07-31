@@ -1,5 +1,10 @@
 2007-07-31  Jonathan Pobst  <monkey@jpobst.com>
 
+	* TextBoxBase.cs: Use Control.ExplicitBounds instead of explicit_bounds,
+	which is internal.
+
+2007-07-31  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ToolStrip.cs: Stub out drag and drop methods, fix some corcompare stuff,
 	hide GetPreferredSize from public API.
 	* ToolStripDropDown.cs: Override AllowItemReorder, fix AccessibleObject.
