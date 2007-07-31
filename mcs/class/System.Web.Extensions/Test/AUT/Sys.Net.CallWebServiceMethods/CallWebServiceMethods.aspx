@@ -44,7 +44,7 @@
                             <!-- Getting no retun value from 
                             the Web service. --> 
                             <button id="Button1"  
-                                onclick="GetNoReturn()">No Return</button>
+                                onclick="GetNoReturn(); return false;">No Return</button>
                         </td>
                     </tr>
                     

@@ -14,7 +14,7 @@ function AbortWebRequest()
     wRequest =  new Sys.Net.WebRequest();
     
     // Set the request Url.  
-    wRequest.set_url("getTarget.htm");
+    wRequest.set_url("getTarget.aspx");
     
     // Clear the results area.
     resultElementId.innerHTML = "";
@@ -149,7 +149,8 @@ function OnSucceededXml(executor, eventArgs)
     {
        
         if (document.all)
-            resultElementId.innerText += executor.get_xml().xml;
+            resultElementId.innerText += "First node: " + 
+                executor.get_xml().documentElement.nodeName;
         else
             // Firefox 
             resultElementId.textContent += "First node: " + 

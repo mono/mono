@@ -738,6 +738,7 @@
     <Content Include="Selenium\System.Web.UI\UpdatePanel\TestUpdateButtonOutside.html" />
     <Content Include="Selenium\System.Web.UI\UpdatePanel\UpdatePanelTestSuite.html" />
     <Content Include="Sys.Application\HoverButton.js" />
+    <Content Include="Sys.Net.XmlHttpExecutor\getTarget.aspx" />
     <Content Include="UpdatePanelTutorialIntro8\MasterPage.master" />
     <Content Include="UpdatePanelTutorialIntro9\MasterPage.master" />
   </ItemGroup>

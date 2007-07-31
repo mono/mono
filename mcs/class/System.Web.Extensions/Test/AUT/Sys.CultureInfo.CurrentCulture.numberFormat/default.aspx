@@ -20,6 +20,7 @@
             <asp:Label ID="Label1" runat="server" Text="Label"></asp:Label>
             <asp:Label ID="Label2" runat="server" Text="Label"></asp:Label>
             <asp:Button ID="Button1" runat="server" Text="Culture Changer" OnClick="Button1_Click" />
+            <br /><input id="TextBox" />
         </div>
     </form>
 </body>
@@ -43,6 +44,7 @@
                    'NativeDigits', 'DigitSubstitution'];
 
     var result = 'Culture Name: ' + cultureName;
+    var result2 = 'Culture Name: ' + cultureName;
     for (var i = 0, l = myArray.length; i < l; i++) {
         var arrayVal = myArray[i];
         if (typeof(arrayVal) !== 'undefined') {
@@ -51,6 +53,7 @@
     }
     var resultHeader = "<tr><td><b>FormatType</b></td><td><b>FormatValue</b></td></tr>"
     $get('Label1').innerHTML = "<table border=1>" + resultHeader + result + "</table>";
+    $get('TextBox').value=result2 + ' CurrencySymbol: ' + nfObject.CurrencySymbol;
  
     var n = 99.987;
     $get('Label2').innerHTML = "<p/><h3>numberFormat Example: </h3>" + 
