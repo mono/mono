@@ -170,7 +170,23 @@ namespace System.Windows.Forms
 			return false;
 		}
 
-		[MonoTODO ("Only supports one level of merging, cannot merge the same ToolStrip multiple times")]
+		[MonoTODO ("Not implemented")]
+		public static void LoadSettings (Form targetForm)
+		{
+			if (targetForm == null)
+				throw new ArgumentNullException ("targetForm");
+		}
+
+		[MonoTODO ("Not implemented")]
+		public static void LoadSettings (Form targetForm, string key)
+		{
+			if (targetForm == null)
+				throw new ArgumentNullException ("targetForm");
+			if (string.IsNullOrEmpty (key))
+				throw new ArgumentNullException ("key");
+		}
+		
+		[MonoLimitation ("Only supports one level of merging, cannot merge the same ToolStrip multiple times")]
 		public static bool Merge (ToolStrip sourceToolStrip, string targetName)
 		{
 			if (string.IsNullOrEmpty (targetName))
@@ -179,7 +195,7 @@ namespace System.Windows.Forms
 			return Merge (sourceToolStrip, FindToolStrip (targetName));
 		}
 		
-		[MonoTODO ("Only supports one level of merging, cannot merge the same ToolStrip multiple times")]
+		[MonoLimitation ("Only supports one level of merging, cannot merge the same ToolStrip multiple times")]
 		public static bool Merge (ToolStrip sourceToolStrip, ToolStrip targetToolStrip)
 		{
 			// Check for exceptions
@@ -383,6 +399,20 @@ namespace System.Windows.Forms
 			targetToolStrip.CurrentlyMergedWith = null;
 
 			return true;
+		}
+
+		public static void SaveSettings (Form sourceForm)
+		{
+			if (sourceForm == null)
+				throw new ArgumentNullException ("sourceForm");
+		}
+
+		public static void SaveSettings (Form sourceForm, string key)
+		{
+			if (sourceForm == null)
+				throw new ArgumentNullException ("sourceForm");
+			if (string.IsNullOrEmpty (key))
+				throw new ArgumentNullException ("key");
 		}
 		#endregion
 		

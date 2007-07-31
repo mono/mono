@@ -56,7 +56,7 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Properties
-		public virtual Rectangle Bounds {
+		public Rectangle Bounds {
 			get { return this.bounds; }
 		}
 
@@ -186,7 +186,7 @@ namespace System.Windows.Forms
 				if (ts.Stretch)
 					ts.Width = this.bounds.Width - ts.Margin.Horizontal - this.Padding.Horizontal;
 				else
-					ts.Width = ts.GetPreferredSize (Size.Empty).Width;
+					ts.Width = ts.GetToolStripPreferredSize (Size.Empty).Width;
 					
 				position.X += ts.Margin.Left;
 				ts.Location = position;

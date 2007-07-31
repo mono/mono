@@ -1,5 +1,18 @@
 2007-07-31  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ToolStrip.cs: Stub out drag and drop methods, fix some corcompare stuff,
+	hide GetPreferredSize from public API.
+	* ToolStripDropDown.cs: Override AllowItemReorder, fix AccessibleObject.
+	* ToolStripItem.cs: Stub out drag and drop methods and events.
+	* ToolStripManager.cs: Stub out Save/LoadSettings.
+	* ToolStripOverflow.cs: Use renamed ToolStrip.GetPreferredSize.
+	* ToolStripPanel.cs: Fix corcompare error.
+	* ToolStripPanelRow.cs: Use renamed ToolStrip.GetPreferredSize.
+	* ToolStripSplitButton.cs: Fix AccessibleObject stuff.
+	* ToolStripSplitStackLayout.cs: Use renamed ToolStrip.GetPreferredSize.
+
+2007-07-31  Jonathan Pobst  <monkey@jpobst.com>
+
 	* TextBoxBase.cs: In our new GetPreferredSizeCore, return the explicit
 	bounds height instead of PreferredHeight.  Puts things back the way 
 	they were for height while still fixing the width.  Fixes broken unit

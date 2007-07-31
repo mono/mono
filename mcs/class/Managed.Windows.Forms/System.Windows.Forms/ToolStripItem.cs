@@ -807,6 +807,13 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Methods
+		[MonoTODO ("Stub")]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		public DragDropEffects DoDragDrop (Object data, DragDropEffects allowedEffects)
+		{
+			return allowedEffects;
+		}
+		
 		public ToolStrip GetCurrentParent ()
 		{ 
 			return this.parent; 
@@ -856,7 +863,10 @@ namespace System.Windows.Forms
 		public void ResetPadding () { this.padding = this.DefaultPadding; }
 
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public void ResetTextDirection () { this.TextDirection = this.DefaultTextDirection; }
+		public virtual void ResetRightToLeft () { this.right_to_left = RightToLeft.Inherit; }
+		
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public virtual void ResetTextDirection () { this.TextDirection = this.DefaultTextDirection; }
 
 		public void Select ()
 		{
@@ -943,24 +953,36 @@ namespace System.Windows.Forms
 				OnClick (e);
 		}
 
-		void IDropTarget.OnDragDrop (DragEventArgs e)
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected virtual void OnDragDrop (DragEventArgs dragEvent)
 		{
-			// XXX
+			DragEventHandler eh = (DragEventHandler)(Events[DragDropEvent]);
+			if (eh != null)
+				eh (this, dragEvent);
 		}
 
-		void IDropTarget.OnDragEnter (DragEventArgs e)
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected virtual void OnDragEnter (DragEventArgs dragEvent)
 		{
-			// XXX
+			DragEventHandler eh = (DragEventHandler)(Events[DragEnterEvent]);
+			if (eh != null)
+				eh (this, dragEvent);
 		}
 
-		void IDropTarget.OnDragLeave (EventArgs e)
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected virtual void OnDragLeave (EventArgs e)
 		{
-			// XXX
+			EventHandler eh = (EventHandler)(Events[DragLeaveEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
-		void IDropTarget.OnDragOver (DragEventArgs e)
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected virtual void OnDragOver (DragEventArgs dragEvent)
 		{
-			// XXX
+			DragEventHandler eh = (DragEventHandler)(Events[DragOverEvent]);
+			if (eh != null)
+				eh (this, dragEvent);
 		}
 
 		protected virtual void OnEnabledChanged (EventArgs e)
@@ -981,6 +1003,14 @@ namespace System.Windows.Forms
 			EventHandler eh = (EventHandler)(Events [ForeColorChangedEvent]);
 			if (eh != null)
 				eh (this, e);
+		}
+
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected virtual void OnGiveFeedback (GiveFeedbackEventArgs giveFeedbackEvent)
+		{
+			GiveFeedbackEventHandler eh = (GiveFeedbackEventHandler)(Events[GiveFeedbackEvent]);
+			if (eh != null)
+				eh (this, giveFeedbackEvent);
 		}
 
 		protected virtual void OnLayout (LayoutEventArgs e)
@@ -1120,6 +1150,14 @@ namespace System.Windows.Forms
 		{
 			this.OnRightToLeftChanged (e);
 		}
+
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected virtual void OnQueryContinueDrag (QueryContinueDragEventArgs queryContinueDragEvent)
+		{
+			QueryContinueDragEventHandler eh = (QueryContinueDragEventHandler)(Events[QueryContinueDragEvent]);
+			if (eh != null)
+				eh (this, queryContinueDragEvent);
+		}
 		
 		protected virtual void OnRightToLeftChanged (EventArgs e)
 		{
@@ -1188,8 +1226,13 @@ namespace System.Windows.Forms
 		static object ClickEvent = new object ();
 		static object DisplayStyleChangedEvent = new object ();
 		static object DoubleClickEvent = new object ();
+		static object DragDropEvent = new object ();
+		static object DragEnterEvent = new object ();
+		static object DragLeaveEvent = new object ();
+		static object DragOverEvent = new object ();
 		static object EnabledChangedEvent = new object ();
 		static object ForeColorChangedEvent = new object ();
+		static object GiveFeedbackEvent = new object ();
 		static object LocationChangedEvent = new object ();
 		static object MouseDownEvent = new object ();
 		static object MouseEnterEvent = new object ();
@@ -1199,6 +1242,8 @@ namespace System.Windows.Forms
 		static object MouseUpEvent = new object ();
 		static object OwnerChangedEvent = new object ();
 		static object PaintEvent = new object ();
+		static object QueryAccessibilityHelpEvent = new object ();
+		static object QueryContinueDragEvent = new object ();
 		static object RightToLeftChangedEvent = new object ();
 		static object TextChangedEvent = new object ();
 		static object VisibleChangedEvent = new object ();
@@ -1229,6 +1274,38 @@ namespace System.Windows.Forms
 			remove {Events.RemoveHandler (DoubleClickEvent, value); }
 		}
 
+		[MonoTODO ("Not raised")]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		public event DragEventHandler DragDrop {
+			add { Events.AddHandler (DragDropEvent, value); }
+			remove { Events.RemoveHandler (DragDropEvent, value); }
+		}
+
+		[MonoTODO ("Not raised")]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		public event DragEventHandler DragEnter {
+			add { Events.AddHandler (DragEnterEvent, value); }
+			remove { Events.RemoveHandler (DragEnterEvent, value); }
+		}
+
+		[MonoTODO ("Not raised")]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		public event EventHandler DragLeave {
+			add { Events.AddHandler (DragLeaveEvent, value); }
+			remove { Events.RemoveHandler (DragLeaveEvent, value); }
+		}
+
+		[MonoTODO ("Not raised")]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		public event DragEventHandler DragOver {
+			add { Events.AddHandler (DragOverEvent, value); }
+			remove { Events.RemoveHandler (DragOverEvent, value); }
+		}
+
 		public event EventHandler EnabledChanged {
 			add { Events.AddHandler (EnabledChangedEvent, value); }
 			remove {Events.RemoveHandler (EnabledChangedEvent, value); }
@@ -1237,6 +1314,14 @@ namespace System.Windows.Forms
 		public event EventHandler ForeColorChanged {
 			add { Events.AddHandler (ForeColorChangedEvent, value); }
 			remove {Events.RemoveHandler (ForeColorChangedEvent, value); }
+		}
+
+		[MonoTODO ("Not raised")]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		public event GiveFeedbackEventHandler GiveFeedback {
+			add { Events.AddHandler (GiveFeedbackEvent, value); }
+			remove { Events.RemoveHandler (GiveFeedbackEvent, value); }
 		}
 
 		public event EventHandler LocationChanged {
@@ -1282,6 +1367,20 @@ namespace System.Windows.Forms
 		public event PaintEventHandler Paint {
 			add { Events.AddHandler (PaintEvent, value); }
 			remove {Events.RemoveHandler (PaintEvent, value); }
+		}
+
+		[MonoTODO ("Not raised")]
+		public event QueryAccessibilityHelpEventHandler QueryAccessibilityHelp {
+			add { Events.AddHandler (QueryAccessibilityHelpEvent, value); }
+			remove { Events.RemoveHandler (QueryAccessibilityHelpEvent, value); }
+		}
+
+		[MonoTODO ("Not raised")]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		public event QueryContinueDragEventHandler QueryContinueDrag {
+			add { Events.AddHandler (QueryContinueDragEvent, value); }
+			remove { Events.RemoveHandler (QueryContinueDragEvent, value); }
 		}
 
 		public event EventHandler RightToLeftChanged {
@@ -1683,7 +1782,29 @@ namespace System.Windows.Forms
 		internal int Right { get { return this.bounds.Right; } }
 		internal int Bottom { get { return this.bounds.Bottom; } }
 		#endregion
-		
+
+		#region IDropTarget Members
+		void IDropTarget.OnDragDrop (DragEventArgs e)
+		{
+			OnDragDrop (e);
+		}
+
+		void IDropTarget.OnDragEnter (DragEventArgs e)
+		{
+			OnDragEnter (e);
+		}
+
+		void IDropTarget.OnDragLeave (EventArgs e)
+		{
+			OnDragLeave (e);
+		}
+
+		void IDropTarget.OnDragOver (DragEventArgs e)
+		{
+			OnDragOver (e);
+		}
+		#endregion
+
 		[ComVisible (true)]
 		public class ToolStripItemAccessibleObject : AccessibleObject
 		{

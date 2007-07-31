@@ -141,10 +141,10 @@ namespace System.Windows.Forms.Layout
 
 		void IList.RemoveAt (int index)
 		{
-			RemoveAt (index);
+			list.RemoveAt (index);
 		}
 
-		internal void RemoveAt (int index)
+		internal void InternalRemoveAt (int index)
 		{
 			list.RemoveAt (index);
 		}

@@ -46,6 +46,7 @@ namespace System.Windows.Forms
 	public class ToolStrip : ScrollableControl, IComponent, IDisposable
 	{
 		#region Private Variables
+		private bool allow_item_reorder;
 		private bool allow_merge;
 		private Color back_color;
 		private bool can_overflow;
@@ -126,6 +127,19 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Properties
+		[MonoTODO ()]
+		public override bool AllowDrop {
+			get { return base.AllowDrop; }
+			set { base.AllowDrop = value; }
+		}
+		
+		[MonoTODO ()]
+		[DefaultValue (false)]
+		public bool AllowItemReorder {
+			get { return this.allow_item_reorder; }
+			set { this.allow_item_reorder = value; }
+		}
+		
 		[DefaultValue (true)]
 		public bool AllowMerge {
 			get { return this.allow_merge; }
@@ -183,6 +197,11 @@ namespace System.Windows.Forms
 			set { this.back_color = value; }
 		}
 
+		public override BindingContext BindingContext {
+			get { return base.BindingContext; }
+			set { base.BindingContext = value; }
+		}
+		
 		[DefaultValue (true)]
 		public bool CanOverflow {
 			get { return this.can_overflow; }
@@ -659,11 +678,7 @@ namespace System.Windows.Forms
 		#region Protected Methods
 		protected override AccessibleObject CreateAccessibilityInstance ()
 		{
-			AccessibleObject ao = new AccessibleObject (this);
-			
-			ao.role = AccessibleRole.ToolBar;
-			
-			return ao;
+			return new ToolStripAccessibleObject (this);
 		}
 		
 		protected override ControlCollection CreateControlsInstance ()
@@ -704,10 +719,26 @@ namespace System.Windows.Forms
 				base.Dispose (disposing);
 			}
 		}
+
+		[MonoTODO ("Not called")]
+		protected virtual void OnBeginDrag (EventArgs e)
+		{
+			EventHandler eh = (EventHandler)(Events[BeginDragEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
 		
 		protected override void OnDockChanged (EventArgs e)
 		{
 			base.OnDockChanged (e);
+		}
+
+		[MonoTODO ("Not called")]
+		protected virtual void OnEndDrag (EventArgs e)
+		{
+			EventHandler eh = (EventHandler)(Events[EndDragEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected override bool IsInputChar (char charCode)
@@ -1091,6 +1122,18 @@ namespace System.Windows.Forms
 			return base.ProcessMnemonic (charCode);
 		}
 		
+		[MonoTODO ()]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected virtual void RestoreFocus ()
+		{
+		}
+
+		[MonoTODO ()]
+		protected override void Select (bool directed, bool forward)
+		{
+			base.Select (directed, forward);
+		}
+		
 		protected override void SetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified)
 		{
 			base.SetBoundsCore (x, y, width, height, specified);
@@ -1148,6 +1191,8 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Events
+		static object BeginDragEvent = new object ();
+		static object EndDragEvent = new object ();
 		static object ItemAddedEvent = new object ();
 		static object ItemClickedEvent = new object ();
 		static object ItemRemovedEvent = new object ();
@@ -1161,6 +1206,12 @@ namespace System.Windows.Forms
 		public new event EventHandler AutoSizeChanged {
 			add { base.AutoSizeChanged += value; }
 			remove { base.AutoSizeChanged -= value; }
+		}
+
+		[MonoTODO ()]
+		public event EventHandler BeginDrag {
+			add { Events.AddHandler (BeginDragEvent, value); }
+			remove { Events.RemoveHandler (BeginDragEvent, value); }
 		}
 
 		[Browsable (false)]
@@ -1187,6 +1238,12 @@ namespace System.Windows.Forms
 		public new event EventHandler CursorChanged {
 			add { base.CursorChanged += value; }
 			remove { base.CursorChanged -= value; }
+		}
+
+		[MonoTODO ()]
+		public event EventHandler EndDrag {
+			add { Events.AddHandler (EndDragEvent, value); }
+			remove { Events.RemoveHandler (EndDragEvent, value); }
 		}
 
 		[Browsable (false)]
@@ -1292,11 +1349,13 @@ namespace System.Windows.Forms
 		
 		private void DoAutoSize ()
 		{
-			if (this.AutoSize == true && this.Dock == DockStyle.None)
-				this.Size = GetPreferredSize (Size.Empty);
+			if (this.AutoSize == true && this.Dock == DockStyle.None) {
+				Size new_size = GetToolStripPreferredSize (Size.Empty);
+				SetBounds (Left, Top, new_size.Width, new_size.Height, BoundsSpecified.None);
+			}
 				
 			if (this.AutoSize == true && this.Orientation == Orientation.Horizontal && (this.Dock == DockStyle.Top || this.Dock == DockStyle.Bottom))
-				this.Height = GetPreferredSize (Size.Empty).Height;
+				SetBounds (Left, Top, Width, GetToolStripPreferredSize (Size.Empty).Height, BoundsSpecified.None);
 		}
 
 		internal ToolStripItem GetCurrentlySelectedItem ()
@@ -1308,7 +1367,7 @@ namespace System.Windows.Forms
 			return null;
 		}
 		
-		public override Size GetPreferredSize (Size proposedSize)
+		internal virtual Size GetToolStripPreferredSize (Size proposedSize)
 		{
 			Size new_size = new Size (0, this.Height);
 
@@ -1571,6 +1630,41 @@ namespace System.Windows.Forms
 			item.Owner.Items.AddNoOwnerOrLayout (item);
 		}
 		#endregion
+		#endregion
+
+		#region ToolStripAccessibleObject
+		[ComVisible (true)]
+		public class ToolStripAccessibleObject : ControlAccessibleObject
+		{
+			#region Public Constructor
+			public ToolStripAccessibleObject (ToolStrip owner) : base (owner)
+			{
+			}
+			#endregion
+			
+			#region Public Properties
+			public override AccessibleRole Role {
+				get { return AccessibleRole.ToolBar; }
+			}
+			#endregion
+
+			#region Public Methods
+			public override AccessibleObject GetChild (int index)
+			{
+				return base.GetChild (index);
+			}
+
+			public override int GetChildCount ()
+			{
+				return (owner as ToolStrip).Items.Count;
+			}
+
+			public override AccessibleObject HitTest (int x, int y)
+			{
+				return base.HitTest (x, y);
+			}
+			#endregion
+		}
 		#endregion
 	}
 }

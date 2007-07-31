@@ -61,6 +61,13 @@ namespace System.Windows.Forms
 
 		#region Public Properties
 		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new bool AllowItemReorder {
+			get { return base.AllowItemReorder; }
+			set { base.AllowItemReorder = value; }
+		}
+		
+		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public bool AllowTransparency {
 			get { return allow_transparency; }
@@ -517,7 +524,7 @@ namespace System.Windows.Forms
 		#region Protected Methods
 		protected override AccessibleObject CreateAccessibilityInstance ()
 		{
-			return new ToolStripDropDownAccessibleObject ();
+			return new ToolStripDropDownAccessibleObject (this);
 		}
 		
 		protected override void CreateHandle ()
@@ -986,8 +993,25 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region ToolStripDropDownAccessibleObject
-		private class ToolStripDropDownAccessibleObject : AccessibleObject
+		[ComVisible (true)]
+		public class ToolStripDropDownAccessibleObject : ToolStripAccessibleObject
 		{
+			#region Public Constructor
+			public ToolStripDropDownAccessibleObject (ToolStripDropDown owner) : base (owner)
+			{
+			}
+			#endregion
+			
+			#region Public Properties
+			public override string Name {
+				get { return base.Name; }
+				set { base.Name = value; }
+			}
+
+			public override AccessibleRole Role {
+				get { return AccessibleRole.MenuPopup; }
+			}
+			#endregion
 		}
 		#endregion
 	}

@@ -73,7 +73,7 @@ namespace System.Windows.Forms
 		#region Public Methods
 		public override Size GetPreferredSize (Size constrainingSize)
 		{
-			return base.GetPreferredSize (constrainingSize);
+			return base.GetToolStripPreferredSize (constrainingSize);
 		}
 		#endregion
 

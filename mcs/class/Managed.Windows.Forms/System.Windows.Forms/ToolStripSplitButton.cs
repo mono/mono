@@ -195,7 +195,7 @@ namespace System.Windows.Forms
 		#region Protected Methods
 		protected override AccessibleObject CreateAccessibilityInstance ()
 		{
-			return new ToolStripSplitButtonAccessibleObject ();
+			return new ToolStripSplitButtonAccessibleObject (this);
 		}
 		
 		protected override ToolStripDropDown CreateDefaultDropDown ()
@@ -335,8 +335,20 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region ToolStripSplitButtonAccessibleObject Class
-		private class ToolStripSplitButtonAccessibleObject : AccessibleObject
+		public class ToolStripSplitButtonAccessibleObject : ToolStripItemAccessibleObject
 		{
+			#region Public Constructor
+			public ToolStripSplitButtonAccessibleObject (ToolStripSplitButton item) : base (item)
+			{
+			}
+			#endregion
+
+			#region Public Method
+			public override void DoDefaultAction ()
+			{
+				(owner_item as ToolStripSplitButton).PerformButtonClick ();
+			}
+			#endregion
 		}
 		#endregion
 	}

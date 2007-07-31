@@ -509,9 +509,16 @@ namespace System.Windows.Forms
 				base.Remove (value);
 			}
 			
-			public new void RemoveAt (int index)
+			public void RemoveAt (int index)
 			{
-				base.RemoveAt (index);
+				base.InternalRemoveAt (index);
+			}
+			#endregion
+
+			#region IList Members
+			void IList.RemoveAt (int index)
+			{
+				base.InternalRemoveAt (index);
 			}
 			#endregion
 		}

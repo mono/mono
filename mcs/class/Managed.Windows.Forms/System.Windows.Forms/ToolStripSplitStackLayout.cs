@@ -64,7 +64,7 @@ namespace System.Windows.Forms
 
 					new_bounds.Location = new Point (x, y + tsi.Margin.Top);
 					new_bounds.Height = ts.DisplayRectangle.Height - tsi.Margin.Vertical;
-					new_bounds.Width = tsi.GetPreferredSize (new Size (0, new_bounds.Height)).Width;
+					new_bounds.Width = tsi.GetToolStripPreferredSize (new Size (0, new_bounds.Height)).Width;
 
 					tsi.Width = new_bounds.Width + 12;
 

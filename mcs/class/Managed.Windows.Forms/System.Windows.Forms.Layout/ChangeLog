@@ -1,3 +1,8 @@
+2007-07-31  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ArrangedElementCollection.cs: Rename internal method RemoveAt
+	so that subclasses can have a public version of it without hiding.
+
 2007-07-23  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* ArrangedElementCollection.cs: Implement NotSupported behaviour
