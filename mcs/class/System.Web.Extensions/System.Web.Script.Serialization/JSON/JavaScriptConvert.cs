@@ -127,7 +127,7 @@ namespace Newtonsoft.Json
 		/// <returns>A Json string representation of the <see cref="Enum"/>.</returns>
 		public static string ToString(Enum value)
 		{
-			return value.ToString();
+			return value.ToString (CultureInfo.InvariantCulture);
 		}
 
 		/// <summary>
@@ -137,7 +137,7 @@ namespace Newtonsoft.Json
 		/// <returns>A Json string representation of the <see cref="Int32"/>.</returns>
 		public static string ToString(int value)
 		{
-			return value.ToString(null, CultureInfo.InvariantCulture);
+			return value.ToString(CultureInfo.InvariantCulture);
 		}
 
 		/// <summary>
@@ -147,7 +147,7 @@ namespace Newtonsoft.Json
 		/// <returns>A Json string representation of the <see cref="Int16"/>.</returns>
 		public static string ToString(short value)
 		{
-			return value.ToString(null, CultureInfo.InvariantCulture);
+			return value.ToString(CultureInfo.InvariantCulture);
 		}
 
 		/// <summary>
@@ -157,7 +157,7 @@ namespace Newtonsoft.Json
 		/// <returns>A Json string representation of the <see cref="UInt16"/>.</returns>
 		public static string ToString(ushort value)
 		{
-			return value.ToString(null, CultureInfo.InvariantCulture);
+			return value.ToString(CultureInfo.InvariantCulture);
 		}
 
 		/// <summary>
@@ -167,7 +167,7 @@ namespace Newtonsoft.Json
 		/// <returns>A Json string representation of the <see cref="UInt32"/>.</returns>
 		public static string ToString(uint value)
 		{
-			return value.ToString(null, CultureInfo.InvariantCulture);
+			return value.ToString(CultureInfo.InvariantCulture);
 		}
 
 		/// <summary>
@@ -177,7 +177,7 @@ namespace Newtonsoft.Json
 		/// <returns>A Json string representation of the <see cref="Int64"/>.</returns>
 		public static string ToString(long value)
 		{
-			return value.ToString(null, CultureInfo.InvariantCulture);
+			return value.ToString(CultureInfo.InvariantCulture);
 		}
 
 		/// <summary>
@@ -187,7 +187,7 @@ namespace Newtonsoft.Json
 		/// <returns>A Json string representation of the <see cref="UInt64"/>.</returns>
 		public static string ToString(ulong value)
 		{
-			return value.ToString(null, CultureInfo.InvariantCulture);
+			return value.ToString(CultureInfo.InvariantCulture);
 		}
 
 		/// <summary>
@@ -217,7 +217,7 @@ namespace Newtonsoft.Json
 		/// <returns>A Json string representation of the <see cref="Byte"/>.</returns>
 		public static string ToString(byte value)
 		{
-			return value.ToString(null, CultureInfo.InvariantCulture);
+			return value.ToString(CultureInfo.InvariantCulture);
 		}
 
 		/// <summary>
@@ -227,7 +227,7 @@ namespace Newtonsoft.Json
 		/// <returns>A Json string representation of the <see cref="SByte"/>.</returns>
 		public static string ToString(sbyte value)
 		{
-			return value.ToString(null, CultureInfo.InvariantCulture);
+			return value.ToString(CultureInfo.InvariantCulture);
 		}
 
 		/// <summary>
@@ -237,7 +237,7 @@ namespace Newtonsoft.Json
 		/// <returns>A Json string representation of the <see cref="SByte"/>.</returns>
 		public static string ToString(decimal value)
 		{
-			return value.ToString(null, CultureInfo.InvariantCulture);
+			return value.ToString(CultureInfo.InvariantCulture);
 		}
 
 		/// <summary>
