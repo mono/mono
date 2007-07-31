@@ -108,6 +108,13 @@ namespace System.Web.Script.Services
 			public ScriptMethodAttribute ScriptMethod { get { return _sma; } }
 			public MethodInfo MethodInfo { get { return _methodInfo; } }
 			public WebMethodAttribute WebMethod { get { return _wma; } }
+			public IEnumerable<Type> GetParameterTypes () {
+				if (HasParameters)
+					for (int i = 0; i < _params.Length; i++)
+						yield return _params [i].ParameterType;
+
+				yield return MethodInfo.ReturnType;
+			}
 
 			public void GenerateMethod (StringBuilder proxy, bool isPrototype, bool isPage) {
 				string service = isPage ? "PageMethods" : MethodInfo.DeclaringType.FullName;
@@ -275,44 +282,107 @@ this._failed = null;
 
 			bool gtc = false;
 
-			foreach (MemberInfo gstmi in GetGenerateScriptTypeMembers()) {
-				GenerateScriptTypeAttribute [] gstas = (GenerateScriptTypeAttribute []) gstmi.GetCustomAttributes (typeof (GenerateScriptTypeAttribute), true);
-				if (gstas == null || gstas.Length == 0)
-					continue;
-
-				for (int j = 0; j < gstas.Length; j++) {
-					if (!gtc && !gstas [j].Type.IsEnum) {
-						proxy.Append (
+			foreach (GenerateScriptTypeAttribute gsta in GetGenerateScriptTypeAttributes ()) {
+				if (!gtc && !gsta.Type.IsEnum) {
+					proxy.Append (
 @"
 var gtc = Sys.Net.WebServiceProxy._generateTypedConstructor;");
-						gtc = true;
-					}
-					GenerateScript (proxy, gstas [j]);
+					gtc = true;
 				}
+				GenerateScript (proxy, gsta);
 			}
 
 			proxy.AppendLine ();
 			_proxy = proxy.ToString ();
 		}
 
-		IEnumerable<MemberInfo> GetGenerateScriptTypeMembers () {
+		IEnumerable<MemberInfo> GetGenerateScriptTypes () {
 			foreach (LogicalMethodInfo lmi in _methodMap.Values)
 				yield return lmi.MethodInfo;
 
 			yield return _type;
 		}
 
+		IEnumerable<GenerateScriptTypeAttribute> GetGenerateScriptTypeAttributes () {
+			Hashtable generatedTypes = new Hashtable ();
+
+			foreach (MemberInfo mi in GetGenerateScriptTypes ()) {
+				GenerateScriptTypeAttribute [] gstas = (GenerateScriptTypeAttribute []) mi.GetCustomAttributes (typeof (GenerateScriptTypeAttribute), true);
+				if (gstas == null || gstas.Length == 0)
+					continue;
+
+				for (int i = 0; i < gstas.Length; i++) {
+					if (!generatedTypes.Contains (gstas [i].Type)) {
+						if (ShouldGenerateScript (gstas [i].Type, true)) {
+							generatedTypes [gstas [i].Type] = gstas [i].Type;
+							yield return gstas [i];
+						}
+					}
+				}
+			}
+
+			foreach (LogicalMethodInfo lmi in _methodMap.Values) {
+				foreach (Type param in lmi.GetParameterTypes ()) {
+					if (!generatedTypes.Contains (param)) {
+						if (ShouldGenerateScript (param, false)) {
+							generatedTypes [param] = param;
+							yield return new GenerateScriptTypeAttribute (param);
+						}
+					}
+				}
+			}
+		}
+
+		static readonly Type typeOfIEnumerable = typeof (IEnumerable);
+		static readonly Type typeOfIDictionary = typeof (IDictionary);
+
+		static bool ShouldGenerateScript (Type type, bool throwIfNot) {
+			if (type.IsEnum)
+				return true;
+
+			if (Type.GetTypeCode (type) != TypeCode.Object)
+				return false;
+
+			// LAMESPEC: MS never create proxies for GenericTypes
+			//&& type.GetGenericTypeDefinition ().GetGenericArguments ().Length > 1
+			if (type.IsGenericType)
+				return false;
+
+			if (typeOfIEnumerable.IsAssignableFrom (type) ||
+				typeOfIDictionary.IsAssignableFrom (type) ||
+				type.IsAbstract || type.IsInterface) {
+				if (throwIfNot)
+					ThrowOnIncorrectGenerateScriptAttribute ();
+				return false;
+			}
+
+			ConstructorInfo ci = type.GetConstructor (Type.EmptyTypes);
+			if (!ci.IsPublic) {
+				if (throwIfNot)
+					ThrowOnIncorrectGenerateScriptAttribute ();
+				return false;
+			}
+
+			return true;
+		}
+
+		static void ThrowOnIncorrectGenerateScriptAttribute () {
+			throw new InvalidOperationException (
+				"Using the GenerateScriptTypes attribute is not supported for types in the following categories: primitive types; DateTime; generic types taking more than one parameter; types implementing IEnumerable or IDictionary; interfaces; Abstract classes; classes without a public default constructor.");
+		}
+
 		static void GenerateScript (StringBuilder proxy, GenerateScriptTypeAttribute gsta) {
+			string className = gsta.Type.FullName.Replace ('+', '_');
 			proxy.AppendFormat (
 @"
-if (typeof({0}) === 'undefined') {{", gsta.Type.FullName);
+if (typeof({0}) === 'undefined') {{", className);
 			if (gsta.Type.IsEnum) {
 				proxy.AppendFormat (
 @"
 {0} = function() {{ throw Error.invalidOperation(); }}
 {0}.prototype = {1}
 {0}.registerEnum('{0}', {2});",
-				gsta.Type.FullName,
+				className,
 				JSSerializer.Serialize(new EnumPrototypeSerializer(gsta.Type)),
 				Attribute.GetCustomAttribute (gsta.Type, typeof (FlagsAttribute)) != null ? "true" : "false");
 				
@@ -323,7 +393,7 @@ if (typeof({0}) === 'undefined') {{", gsta.Type.FullName);
 @"
 {0}=gtc(""{1}"");
 {0}.registerClass('{0}');",
-				gsta.Type.FullName, typeId);
+				className, typeId);
 			}
 			proxy.Append ('}');
 		}
