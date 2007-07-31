@@ -35,7 +35,7 @@
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
-    <DefineConstants>NET_1_1 ONLY_1_1 __MonoCS__</DefineConstants>
+    <DefineConstants>NET_1_1 ONLY_1_1 __MonoCS__ DEBUG</DefineConstants>
     <DocumentationFile>
     </DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
@@ -58,7 +58,7 @@
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
-    <DefineConstants>NET_2_0 __MonoCS__</DefineConstants>
+    <DefineConstants>NET_2_0 __MonoCS__ DEBUG</DefineConstants>
     <DocumentationFile>
     </DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
@@ -192,13 +192,19 @@
     <Compile Include="Test\System.Windows.Forms\DataGridTextBoxColumnTest.cs" />
     <Compile Include="Test\System.Windows.Forms\DataGridTextBoxTest.cs" />
     <Compile Include="Test\System.Windows.Forms\DataGridViewAdvancedBorderStyleTest.cs" />
+    <Compile Include="Test\System.Windows.Forms\DataGridViewBandTest.cs" />
     <Compile Include="Test\System.Windows.Forms\DataGridViewCellStyleTest.cs" />
     <Compile Include="Test\System.Windows.Forms\DataGridViewCellTest.cs" />
+    <Compile Include="Test\System.Windows.Forms\DataGridViewColumnCollectionTest.cs" />
     <Compile Include="Test\System.Windows.Forms\DataGridViewColumnTest.cs" />
+    <Compile Include="Test\System.Windows.Forms\DataGridViewComboBoxCellTest.cs" />
+    <Compile Include="Test\System.Windows.Forms\DataGridViewCommon.cs" />
     <Compile Include="Test\System.Windows.Forms\DataGridViewElementTest.cs" />
+    <Compile Include="Test\System.Windows.Forms\DataGridViewRowCollectionTest.cs" />
     <Compile Include="Test\System.Windows.Forms\DataGridViewRowTest.cs" />
     <Compile Include="Test\System.Windows.Forms\DataGridViewTest.cs" />
     <Compile Include="Test\System.Windows.Forms\DataGridViewTextBoxCellTest.cs" />
+    <Compile Include="Test\System.Windows.Forms\DataGridViewTextBoxColumnTest.cs" />
     <Compile Include="Test\System.Windows.Forms\DataObjectTest.cs" />
     <Compile Include="Test\System.Windows.Forms\DateTimePickerTest.cs" />
     <Compile Include="Test\System.Windows.Forms\DefaultLayoutTest.cs" />
@@ -302,6 +308,7 @@
     <Compile Include="Test\System.Windows.Forms\UserControlTest.cs" />
     <Compile Include="Test\System.Windows.Forms\VScrollPropertiesTest.cs" />
     <Compile Include="Test\System.Windows.Forms.Layout\TableLayoutSettingsTypeConverterTest.cs" />
+    <Compile Include="Test\System.Windows.Forms.Layout\ArrangedElementCollectionTest.cs" />
     <Compile Include="Test\System.Resources\CompatTest.cs" />
     <Compile Include="Test\System.Resources\CultureTest.cs" />
     <Compile Include="Test\System.Resources\ResXDataNodeTest.cs" />

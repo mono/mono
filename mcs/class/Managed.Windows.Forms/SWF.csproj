@@ -2684,6 +2684,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\PowerStatus.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\PreProcessControlState.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -3494,6 +3499,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\ToolStripDropDownItemAccessibleObject.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\ToolStripDropDownMenu.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -3725,6 +3735,11 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\ToolStripStatusLabelBorderSides.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\ToolStripSystemRenderer.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -4115,6 +4130,11 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms.Theming\Default\TabControlPainter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms.Theming\Default\ToolStripPainter.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -4639,6 +4659,14 @@
                 />
                 <File
                     RelPath = "resources\nav_previous.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\image-missing.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\image-x-generic.png"
                     BuildAction = "EmbeddedResource"
                 />
                 <File

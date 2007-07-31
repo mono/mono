@@ -1,3 +1,13 @@
+2007-07-31  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* build-csproj2k5-tests: Add ONLY_1_1, __MONO_CS__ and DEBUG where
+	  relevant.
+	* SWF2k5-tests.csproj, SWF.csproj: Updated.
+	* System.Windows.Forms_test.dll.sources: Added DataGridViewBandTest.cs,
+	  DataGridViewColumnCollectionTest.cs,
+	  DataGridViewComboBoxCellTest.cs, DataGridViewCommon.cs,
+	  DataGridViewRowColllectionTest.cs, DataGridViewTextBoxColumnTest.cs
+
 2007-07-23  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* System.Windows.Forms_test.dll.sources: Added
