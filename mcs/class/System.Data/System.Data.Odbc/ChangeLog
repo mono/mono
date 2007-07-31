@@ -1,3 +1,16 @@
+2007-07-31  Nagappan A  <anagappan@novell.com>
+
+	* OdbcCommandBuilder.cs: Removed bogus TODO.
+	  Fixed 2.0 missing attributes
+
+	* libodbc.cs: Added new libodbc global constant SQL_NTS.
+
+	* OdbcCommand.cs (ExecSQL): Thanks to amc1999@gmail.com (amc) for
+	  providing the patch, Fixes bug # 82191. ODBC command UTF8
+	  error. SQL failed with UTF8 symbols in query.
+	  Removed bogus TODO.
+	  Fixed 2.0 missing attributes
+
 2007-07-22  Nagappan A  <anagappan@novell.com>
 
 	* OdbcDataAdapter.cs: Fixed compilation warning.

@@ -150,7 +150,7 @@ namespace System.Data.Odbc
                 [DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		public
 #if NET_2_0
-                override
+                new
 #endif // NET_2_0
                 string QuotePrefix {
 			get {
@@ -166,7 +166,7 @@ namespace System.Data.Odbc
                 [DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		public
 #if NET_2_0
-                override
+                new
 #endif // NET_2_0
                 string QuoteSuffix {
 			get {
@@ -187,7 +187,7 @@ namespace System.Data.Odbc
 			throw new NotImplementedException ();
 		}
 
-		protected override void Dispose (bool disposing) 
+		protected new void Dispose (bool disposing) 
 		{
 			if (_disposed)
 				return;
@@ -258,9 +258,9 @@ namespace System.Data.Odbc
 				if (columnName == String.Empty)
 					throw new InvalidOperationException ("Cannot form delete command. Column name is missing!");
 
-				bool 	allowNull 	= schemaRow.IsNull ("AllowDBNull") || (bool) schemaRow ["AllowDBNull"];
-				OdbcType sqlDbType 	= schemaRow.IsNull ("ProviderType") ? OdbcType.VarChar : (OdbcType) schemaRow ["ProviderType"];
-				int 	length 		= schemaRow.IsNull ("ColumnSize") ? -1 : (int) schemaRow ["ColumnSize"];
+				bool 	allowNull  = schemaRow.IsNull ("AllowDBNull") || (bool) schemaRow ["AllowDBNull"];
+				OdbcType sqlDbType = schemaRow.IsNull ("ProviderType") ? OdbcType.VarChar : (OdbcType) schemaRow ["ProviderType"];
+				int 	length 	   = schemaRow.IsNull ("ColumnSize") ? -1 : (int) schemaRow ["ColumnSize"];
 
 				if (allowNull) {
 					whereClause [count] = String.Format ("((? = 1 AND {0} IS NULL) OR ({0} = ?))",
@@ -473,7 +473,7 @@ namespace System.Data.Odbc
 
 		public
 #if NET_2_0
-                override
+                new
 #endif // NET_2_0
                 void RefreshSchema ()
 		{
@@ -501,31 +501,35 @@ namespace System.Data.Odbc
 		}
                 
 #if NET_2_0
-                [MonoTODO]
                 protected override void ApplyParameterInfo (DbParameter dbParameter,
 							    DataRow row,
 							    StatementType statementType,
 							    bool whereClause)
                 {
-                        throw new NotImplementedException ();
+			OdbcParameter parameter = (OdbcParameter) dbParameter;
+			parameter.Size = int.Parse (row ["ColumnSize"].ToString ());
+			if (row ["NumericPrecision"] != DBNull.Value) {
+				parameter.Precision = byte.Parse (row ["NumericPrecision"].ToString ());
+			}
+			if (row ["NumericScale"] != DBNull.Value) {
+				parameter.Scale = byte.Parse (row ["NumericScale"].ToString ());
+			}
+			parameter.DbType = (DbType) row ["ProviderType"];
                 }
 
-                [MonoTODO]
                 protected override string GetParameterName (int position)
                 {
-                        throw new NotImplementedException ();                        
+			return String.Format("@p{0}", position);
                 }
 
-                [MonoTODO]
                 protected override string GetParameterName (string parameterName)
                 {
-                        throw new NotImplementedException ();                        
+			return String.Format("@{0}", parameterName);                       
                 }
                 
-                [MonoTODO]
                 protected override string GetParameterPlaceholder (int position)
                 {
-                        throw new NotImplementedException ();                        
+			return GetParameterName (position);
                 }
                 
                 [MonoTODO]
@@ -537,38 +541,39 @@ namespace System.Data.Odbc
 #endif // NET_2_0
 		
 #if NET_2_0
-		[MonoTODO]
 		public override
 #else
 		private
 #endif		
 		string QuoteIdentifier (string unquotedIdentifier)
 		{
-		  /*
-#if NET_2_0
-			throw new NotImplementedException ();
-#else
-		  */
 			if (unquotedIdentifier == null || unquotedIdentifier == String.Empty)
 				return unquotedIdentifier;
 			return String.Format ("{0}{1}{2}", QuotePrefix, 
 					      unquotedIdentifier, QuoteSuffix);
-			/*
-#endif			
-			*/
 		}
 
 #if NET_2_0
 		[MonoTODO]
+		public string QuoteIdentifier (string unquotedIdentifier, OdbcConnection connection)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public string UnquoteIdentifier (string unquotedIdentifier, OdbcConnection connection)
+		{
+			throw new NotImplementedException ();
+		}
+#endif		
+
+#if NET_2_0
 		public override
 #else
 		private
 #endif		
 		string UnquoteIdentifier (string quotedIdentifier)
 		{
-#if NET_2_0
-			throw new NotImplementedException ();
-#else
 			if (quotedIdentifier == null || quotedIdentifier == String.Empty)
 				return quotedIdentifier;
 			
@@ -579,7 +584,6 @@ namespace System.Data.Odbc
 			if (quotedIdentifier.EndsWith (QuoteSuffix))
 				sb.Remove (sb.Length - QuoteSuffix.Length, QuoteSuffix.Length );
 			return sb.ToString ();
-#endif			
 		}
 
 		private void OnRowUpdating (object sender, OdbcRowUpdatingEventArgs args)

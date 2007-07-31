@@ -132,7 +132,9 @@ namespace System.Data.Odbc
 		}
 
 		[OdbcDescriptionAttribute ("Time to wait for command to execute")]
+#if NET_1_0 || ONLY_1_1
                 [DefaultValue (30)]
+#endif
 		public 
 #if NET_2_0
 		override
@@ -171,6 +173,8 @@ namespace System.Data.Odbc
 #endif // ONLY_1_1
 
 #if NET_2_0
+                [DefaultValue (null)]
+                [EditorAttribute ("Microsoft.VSDesigner.Data.Design.DbConnectionEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
                 public new OdbcConnection Connection
                 {
                         get { return DbConnection as OdbcConnection; }
@@ -182,6 +186,7 @@ namespace System.Data.Odbc
 		[BrowsableAttribute (false)]
                 [DesignOnlyAttribute (true)]
                 [DefaultValue (true)]
+                [EditorAttribute ("Microsoft.VSDesigner.Data.Design.DbConnectionEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		public 
 #if NET_2_0
 		override
@@ -238,11 +243,9 @@ namespace System.Data.Odbc
 		override
 #endif
 		UpdateRowSource UpdatedRowSource { 
-			[MonoTODO]
 				get {
 					return updateRowSource;
 				}
-			[MonoTODO]
 				set {
 					updateRowSource = value;
 				}
@@ -398,7 +401,7 @@ namespace System.Data.Odbc
 
 				ReAllocStatment ();
 				
-				ret=libodbc.SQLExecDirect(hstmt, sql, sql.Length);
+				ret = libodbc.SQLExecDirect (hstmt, sql, libodbc.SQL_NTS);
 				if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
 					throw new OdbcException(new OdbcError("SQLExecDirect",OdbcHandleType.Stmt,hstmt));
 				return;
@@ -432,9 +435,9 @@ namespace System.Data.Odbc
 		{
 			int records = 0;
 			if (Connection == null)
-				throw new InvalidOperationException ();
+				throw new InvalidOperationException ("No open connection");
 			if (Connection.State == ConnectionState.Closed)
-				throw new InvalidOperationException ();
+				throw new InvalidOperationException ("Connection state is closed");
 			// FIXME: a third check is mentioned in .NET docs
 
 			ExecSQL(CommandText);

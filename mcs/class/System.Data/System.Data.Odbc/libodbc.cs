@@ -148,6 +148,7 @@ namespace System.Data.Odbc
 
                 internal const string		SQLSTATE_RIGHT_TRUNC	= "01004";
                 internal const char		C_NULL                  = '\0';
+		internal const int		SQL_NTS			= -3;
 
 		internal const short		SQL_TRUE		= 1;
 		internal const short		SQL_FALSE		= 0;
