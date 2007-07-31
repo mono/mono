@@ -1,3 +1,9 @@
+2007-07-31  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+	[Backport to 1-2-5]
+	* ListView.cs: When calculating layout, don't scrollbars before
+	handle is created. This is unnecessary and also calculating them
+	before handle creation time causes some random bugs.
+
 2007-07-27  Everaldo Canuto  <ecanuto@novell.com>
 	[Backport to 1-2-5]
 	* FileDialog.cs: Check for valid filterIndex on button open/save.
