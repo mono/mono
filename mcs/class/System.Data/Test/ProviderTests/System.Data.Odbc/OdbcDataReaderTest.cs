@@ -95,6 +95,25 @@ namespace MonoTests.System.Data
 		}
 		
 		[Test]
+		public void Bug82135Test ()
+		{
+			IDbConnection conn = new OdbcConnection (
+						ConnectionManager.Singleton.ConnectionString);
+			try {
+				ConnectionManager.Singleton.OpenConnection ();
+				OdbcCommand cmd = new OdbcCommand ("create table odbcnodatatest (ID int not null, Val1 text)",
+								   (OdbcConnection) conn);
+				cmd.ExecuteNonQuery ();
+				cmd = new OdbcCommand ("delete from odbcnodatatest", (OdbcConnection) conn);
+				Assert.AreEqual (0, cmd.ExecuteNonQuery ());
+				cmd = new OdbcCommand ("drop table odbcnodatatest", (OdbcConnection) conn);
+				cmd.ExecuteNonQuery ();
+			}finally {
+				conn.Close ();
+			}
+		}
+		
+		[Test]
 		public void FindZeroInToStringTest ()
 		{
 			IDbConnection conn = ConnectionManager.Singleton.Connection;

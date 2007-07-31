@@ -1,5 +1,8 @@
 2007-07-31  Nagappan A  <anagappan@novell.com>
 
+	* OdbcDataReaderTest.cs (Bug82135Test): ODBC SQLExecDirect
+	error. Delete where no-data-found fails. Fixes bug # 82135.
+
 	* OdbcDataAdapterTest.cs (InsertUtf8Test): Thanks to
 	amc1999@gmail.com (amc) for providing this test case. Fixes bug #
 	82191. ODBC command UTF8 error. SQL failed with UTF8 symbols in
