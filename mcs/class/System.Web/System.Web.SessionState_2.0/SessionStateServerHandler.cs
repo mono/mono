@@ -47,7 +47,7 @@ namespace System.Web.SessionState
 		public override SessionStateStoreData CreateNewStoreData (HttpContext context, int timeout)
 		{
 			return new SessionStateStoreData (new SessionStateItemCollection (),
-							  SessionStateUtility.GetSessionStaticObjects(context),
+							  HttpApplicationFactory.ApplicationState.SessionObjects,
 							  timeout);
 		}
 		
@@ -73,9 +73,11 @@ namespace System.Web.SessionState
 						       out SessionStateActions actions,
 						       bool exclusive)
 		{
+#if TRACE
 			Console.WriteLine ("SessionStateServerHandler.GetItemInternal");
 			Console.WriteLine ("\tid == {0}", id);
 			Console.WriteLine ("\tpath == {0}", context.Request.FilePath);
+#endif
 			locked = false;
 			lockAge = TimeSpan.MinValue;
 			lockId = Int32.MinValue;
@@ -92,11 +94,15 @@ namespace System.Web.SessionState
 								    exclusive);
 			
 			if (item == null) {
+#if TRACE
 				Console.WriteLine ("\titem is null (locked == {0}, actions == {1})", locked, actions);
+#endif
 				return null;
 			}
 			if (actions == SessionStateActions.InitializeItem) {
+#if TRACE
 				Console.WriteLine ("\titem needs initialization");
+#endif
 				return CreateNewStoreData (context, item.Timeout);
 			}
 			SessionStateItemCollection items = null;
@@ -150,7 +156,9 @@ namespace System.Web.SessionState
 
 		public override void Initialize (string name, NameValueCollection config)
 		{
+#if TRACE
 			Console.WriteLine ("SessionStateServerHandler.Initialize");
+#endif
 			if (String.IsNullOrEmpty (name))
 				name = "Session Server handler";
 			privateConfig = config;

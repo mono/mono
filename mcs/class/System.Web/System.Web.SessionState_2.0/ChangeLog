@@ -1,3 +1,10 @@
+2007-07-31  Marek Habersack  <mhabersack@novell.com>
+
+	* SessionInProcHandler.cs: initialize the static session objects
+	collection from the application state instead of using
+	SessionStateUtility.GetSessionStaticObjects. Fixes bug #82193
+	* SessionStateServerHandler.cs: as above
+	
 2007-07-30  Igor Zelmanovich <igorz@mainsoft.com>
 
 	* SessionStateModule.cs:
