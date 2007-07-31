@@ -54,20 +54,20 @@ namespace System.Web.Script.Serialization
 
 		public override void Write (char value) 
 		{
-			if (MaxJsonLength > 0 && (writtenChars + 1) > MaxJsonLength) {
-				throw new InvalidOperationException ("Maximum length exceeded.");
-			}
+			EnsureNotExceedLength (1);
 			realWriter.Write (value);
-			writtenChars++;
 		}
 
 		public override void Write (string value) 
 		{
-			if (MaxJsonLength > 0 && (writtenChars + value.Length) > MaxJsonLength) {
-				throw new InvalidOperationException ("Maximum length exceeded.");
-			}
+			EnsureNotExceedLength (value.Length);
 			realWriter.Write (value);
-			writtenChars += value.Length;
+		}
+
+		void EnsureNotExceedLength (int length) {
+			writtenChars += length;
+			if (writtenChars > MaxJsonLength)
+				throw new InvalidOperationException ("Maximum length exceeded.");
 		}
 
 		public override Encoding Encoding 
