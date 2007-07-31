@@ -75,7 +75,13 @@ namespace System.Web {
 
 		public static string GetDirectory (string virtualPath)
 		{
-			virtualPath = Normalize (virtualPath);
+			return GetDirectory (virtualPath, true);
+		}
+
+		internal static string GetDirectory (string virtualPath, bool normalize)
+		{
+			if (normalize)
+				virtualPath = Normalize (virtualPath);
 
 			if (IsAppRelative (virtualPath) && virtualPath.Length < 3) { // "~" or "~/"
 				virtualPath = ToAbsolute (virtualPath);
@@ -213,8 +219,17 @@ namespace System.Web {
 
 		public static string ToAbsolute (string virtualPath)
 		{
-			if(IsAbsolute(virtualPath))
-				return Normalize (virtualPath);
+			return ToAbsolute (virtualPath, true);
+		}
+
+		internal static string ToAbsolute (string virtualPath, bool normalize)
+		{
+			if (IsAbsolute (virtualPath)) {
+				if (normalize)
+					return Normalize (virtualPath);
+				else
+					return virtualPath;
+			}
 
 			string apppath = HttpRuntime.AppDomainAppVirtualPath;
 			if (apppath == null)
@@ -232,6 +247,11 @@ namespace System.Web {
 		// Not rooted, the ToAbsolute method raises an ArgumentOutOfRangeException exception.
 		public static string ToAbsolute (string virtualPath, string applicationPath)
 		{
+			return ToAbsolute (virtualPath, applicationPath, true);
+		}
+
+		public static string ToAbsolute (string virtualPath, string applicationPath, bool normalize)
+		{
 			if (StrUtils.IsNullOrEmpty (applicationPath))
 				throw new ArgumentNullException ("applicationPath");
 
@@ -241,13 +261,21 @@ namespace System.Web {
 			if (IsAppRelative(virtualPath)) {
 				if (applicationPath [0] != '/')
 					throw new ArgumentException ("appPath is not rooted", "applicationPath");
-				return Normalize ((applicationPath + (virtualPath.Length == 1 ? "/" : virtualPath.Substring (1))));
+					
+				string path = applicationPath + (virtualPath.Length == 1 ? "/" : virtualPath.Substring (1));
+				if (normalize)
+					return Normalize (path);
+				else
+					return path;
 			}
 
 			if (virtualPath [0] != '/')
 				throw new ArgumentException (String.Format ("Relative path not allowed: '{0}'", virtualPath));
 
-			return Normalize (virtualPath);
+			if (normalize)
+				return Normalize (virtualPath);
+			else
+				return virtualPath;
 
 		}
 
