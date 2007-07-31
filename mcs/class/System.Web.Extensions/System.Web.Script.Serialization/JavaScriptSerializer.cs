@@ -206,6 +206,9 @@ namespace System.Web.Script.Serialization
 			if (type.IsAssignableFrom (sourceType))
 				return obj;
 
+			if (type.IsEnum)
+				return Enum.ToObject (type, obj);
+
 			TypeConverter c = TypeDescriptor.GetConverter (type);
 			if (c.CanConvertFrom (sourceType)) {
 				if (obj is string)

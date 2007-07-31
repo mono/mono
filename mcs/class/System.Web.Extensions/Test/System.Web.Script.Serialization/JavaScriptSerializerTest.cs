@@ -46,6 +46,12 @@ namespace Tests.System.Web.Script.Serialization
 	[TestFixture]
 	public class JavaScriptSerializerTest
 	{
+		enum MyEnum
+		{
+			AAA,
+			BBB,
+			CCC
+		}
 #pragma warning disable 659
 		class bug
 		{
@@ -420,6 +426,14 @@ namespace Tests.System.Web.Script.Serialization
 			object dd = ser.DeserializeObject (@"""\/Datte(" + javaScriptTicks + @")\/""");
 			Assert.AreEqual (@"""\/Date(" + javaScriptTicks + @")\/""", actual);
 			Assert.AreEqual (now.ToUniversalTime(), ser.DeserializeObject (actual));
+		}
+
+		[Test]
+		public void TestSerializeEnum () {
+			JavaScriptSerializer ser = new JavaScriptSerializer ();
+			string result = ser.Serialize (MyEnum.BBB);
+			Assert.AreEqual ("1", result);
+			Assert.AreEqual (MyEnum.BBB, ser.Deserialize<MyEnum> (result));
 		}
 
 		class MyJavaScriptConverter : JavaScriptConverter
