@@ -1,5 +1,10 @@
 2007-07-31  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* DataGridViewRowCollection.cs: Allow a null DGV in the constructor,
+	  and fix row index (off by one).
+
+2007-07-31  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* PropertyGridView.cs: Remove debug output.
 
 2007-07-31  Rolf Bjarne Kvinge <RKvinge@novell.com> 

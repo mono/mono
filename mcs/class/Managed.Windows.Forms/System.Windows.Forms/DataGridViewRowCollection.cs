@@ -44,9 +44,6 @@ namespace System.Windows.Forms {
 
 		public DataGridViewRowCollection (DataGridView dataGridView)
 		{
-			if (dataGridView == null) {
-				throw new ArgumentException("DataGridView is null.");
-			}
 			this.dataGridView = dataGridView;
 			list = new ArrayList ();
 		}
@@ -123,7 +120,7 @@ namespace System.Windows.Forms {
 			if (sharable && CanBeShared (dataGridViewRow)) {
 				dataGridViewRow.SetIndex (-1);
 			} else {
-				dataGridViewRow.SetIndex (list.Count);
+				dataGridViewRow.SetIndex (list.Count - 1);
 			}
 			dataGridViewRow.SetDataGridView (dataGridView);
 
