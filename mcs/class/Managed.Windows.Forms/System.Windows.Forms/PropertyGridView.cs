@@ -739,11 +739,11 @@ namespace System.Windows.Forms.PropertyGridInternal {
 							SetPropertyValue(desc.Converter.ConvertFromString(grid_textbox.Text));
 						}
 						else {
-							Console.WriteLine("No converter for type {0}",desc.PropertyType);
+							//Console.WriteLine("No converter for type {0}",desc.PropertyType);
 						}
 					}
 					catch (Exception ex) {
-						Console.WriteLine("Error converting string: " + ex.Message);
+						//Console.WriteLine("Error converting string: " + ex.Message);
 					}
 				}
 			}
