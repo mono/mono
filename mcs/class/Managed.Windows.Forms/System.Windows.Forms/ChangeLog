@@ -1,5 +1,9 @@
 2007-07-31  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Binding.cs: Implement 2.0 constructors and add a null check.
+
+2007-07-31  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* DataGridViewRowCollection.cs: Allow a null DGV in the constructor,
 	  and fix row index (off by one).
 

@@ -49,14 +49,61 @@ namespace System.Windows.Forms {
 		private object data;
 		private Type data_type;
 
+#if NET_2_0
+		private bool formatting_enabled;
+		private DataSourceUpdateMode datasource_update_mode;
+		private object null_value;
+		private string format_string;
+		private IFormatProvider format_info;
+#endif
 		#region Public Constructors
+#if NET_2_0
+		public Binding (string propertyName, object dataSource, string dataMember) 
+			: this (propertyName, dataSource, dataMember, false, DataSourceUpdateMode.OnValidation, null, string.Empty, null)
+		{
+		}
+		
+		public Binding (string propertyName, object dataSource, string dataMember, bool formattingEnabled)
+			: this (propertyName, dataSource, dataMember, formattingEnabled, DataSourceUpdateMode.OnValidation, null, string.Empty, null)
+		{
+		}
+		
+		public Binding (string propertyName, object dataSource, string dataMember, bool formattingEnabled, DataSourceUpdateMode dataSourceUpdateMode)
+			: this (propertyName, dataSource, dataMember, formattingEnabled, dataSourceUpdateMode, null, string.Empty, null)
+		{
+		}
+		
+		public Binding (string propertyName, object dataSource, string dataMember, bool formattingEnabled, DataSourceUpdateMode dataSourceUpdateMode, object nullValue)
+			: this (propertyName, dataSource, dataMember, formattingEnabled, dataSourceUpdateMode, nullValue, string.Empty, null)
+		{
+		}
+
+		public Binding (string propertyName, object dataSource, string dataMember, bool formattingEnabled, DataSourceUpdateMode dataSourceUpdateMode, object nullValue, string formatString)
+			: this (propertyName, dataSource, dataMember, formattingEnabled, dataSourceUpdateMode, nullValue, formatString, null)
+		{
+		}
+
+		public Binding (string propertyName, object dataSource, string dataMember, bool formattingEnabled, DataSourceUpdateMode dataSourceUpdateMode, object nullValue, string formatString, IFormatProvider formatInfo)
+		{
+			property_name = propertyName;
+			data_source = dataSource;
+			data_member = dataMember;
+			binding_member_info = new BindingMemberInfo (dataMember);
+			formatting_enabled = formattingEnabled;
+			datasource_update_mode = dataSourceUpdateMode;
+			null_value = nullValue;
+			format_string = formatString;
+			format_info = formatInfo;
+		}
+#else
 		public Binding (string propertyName, object dataSource, string dataMember)
 		{
 			property_name = propertyName;
 			data_source = dataSource;
 			data_member = dataMember;
 			binding_member_info = new BindingMemberInfo (dataMember);
-		}
+		}		
+#endif
 		#endregion	// Public Constructors
 
 		#region Public Instance Properties
@@ -265,6 +312,9 @@ namespace System.Windows.Forms {
 
 		private object ConvertData (object data, Type data_type)
 		{
+			if (data == null)
+				return null;
+
 			TypeConverter converter = TypeDescriptor.GetConverter (data.GetType ());
 			if (converter != null && converter.CanConvertTo (data_type))
 				return converter.ConvertTo (data, data_type);
