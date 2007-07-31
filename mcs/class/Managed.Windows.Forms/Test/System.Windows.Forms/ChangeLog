@@ -1,3 +1,7 @@
+2007-07-31  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* DataGridViewRowCollectionTest.cs: Added.
+
 2007-07-27  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* DataGridViewRowTest.cs: Comment out more asserts that probably are
