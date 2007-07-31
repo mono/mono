@@ -126,6 +126,7 @@ DIST_ONLY_SUBDIRS = \
 
 DISTFILES = \
 	ecma.pub		\
+	winfx.pub		\
 	mono.pub		\
 	msfinal.pub		\
 	mono.snk		\
