@@ -1,5 +1,9 @@
 2007-07-31  Nagappan A  <anagappan@novell.com>
 
+	* OdbcCommand.cs (ExecSQL): Thanks to amc1999@gmail.com (amc) for
+	  providing the patch, Fixes bug # 82135. ODBC SQLExecDirect
+	  error. Delete where no-data-found fails.
+
 	* OdbcCommandBuilder.cs: Removed bogus TODO.
 	  Fixed 2.0 missing attributes
 

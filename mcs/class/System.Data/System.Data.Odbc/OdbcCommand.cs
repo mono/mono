@@ -402,7 +402,8 @@ namespace System.Data.Odbc
 				ReAllocStatment ();
 				
 				ret = libodbc.SQLExecDirect (hstmt, sql, libodbc.SQL_NTS);
-				if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
+				if ((ret != OdbcReturn.Success) && (ret != OdbcReturn.SuccessWithInfo) &&
+				    (ret != OdbcReturn.NoData))
 					throw new OdbcException(new OdbcError("SQLExecDirect",OdbcHandleType.Stmt,hstmt));
 				return;
 			}
