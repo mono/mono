@@ -1,3 +1,6 @@
+2007-07-31  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (SIG_HANDLER_SIGNATURE): Fix a warning.
 
 Mon Jul 30 17:43:13 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
