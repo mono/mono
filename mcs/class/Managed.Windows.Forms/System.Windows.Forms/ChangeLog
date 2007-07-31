@@ -1,3 +1,10 @@
+2007-07-31  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TextBoxBase.cs: In our new GetPreferredSizeCore, return the explicit
+	bounds height instead of PreferredHeight.  Puts things back the way 
+	they were for height while still fixing the width.  Fixes broken unit
+	tests.
+
 2007-07-31  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Binding.cs: Implement 2.0 constructors and add a null check.
