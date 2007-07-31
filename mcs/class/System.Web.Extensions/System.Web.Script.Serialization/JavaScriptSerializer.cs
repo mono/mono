@@ -136,7 +136,7 @@ namespace System.Web.Script.Serialization
 		List<IEnumerable<JavaScriptConverter>> _converterList;
 		int _maxJsonLength;
 		int _recursionLimit;
-		static JavaScriptSerializer _defaultSerializer = new JavaScriptSerializer ();
+		internal static readonly JavaScriptSerializer DefaultSerializer = new JavaScriptSerializer ();
 
 		public JavaScriptSerializer () {
 			ScriptingJsonSerializationSection section = (ScriptingJsonSerializationSection) ConfigurationManager.GetSection ("system.web.extensions/scripting/webServices/jsonSerialization");
@@ -152,10 +152,6 @@ namespace System.Web.Script.Serialization
 
 		public JavaScriptSerializer (JavaScriptTypeResolver resolver) {
 			throw new NotImplementedException ();
-		}
-
-		internal static JavaScriptSerializer DefaultSerializer {
-			get { return _defaultSerializer; }
 		}
 
 		public int MaxJsonLength {
