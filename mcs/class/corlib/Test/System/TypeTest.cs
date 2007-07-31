@@ -839,6 +839,15 @@ PublicKeyToken=b77a5c561934e089"));
 				Assert.AreEqual (u, u.GetGenericArguments () [0].DeclaringType);
 			}
 		}
+
+		[Test] // bug #82211
+		public void GetMembers_GenericArgument ()
+		{
+			Type argType = typeof (ComFoo<>).GetGenericArguments () [0];
+			MemberInfo [] members = argType.GetMembers ();
+			Assert.IsNotNull (members, "#1");
+			//Assert.AreEqual (4, members.Length, "#2");
+		}
 #endif
 
 		public class NemerleAttribute : Attribute
