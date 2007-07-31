@@ -1,3 +1,16 @@
+2007-07-31  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Control.cs: We need to reset the is_created flags when the handle is
+	  destroyed. Fixes #82187.
+	* XplatUIWin32.cs: In GetWindowRect don't offset screen coordinates to
+	  client coordinates if the window doesn't have a parent.
+	  Win32GetParent returns the parent or the owner, and for top-level
+	  windows with no parent (but with an owner) we were calculating the
+	  location from the location of the owner.
+	* Form.cs: Remove incorrect fix for #82187. Don't raise OnLoad if the
+	  form has been disposed.
+	* MdiClient.cs: Add a null-check.
+
 2007-07-30  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TextBoxBase.cs: TextBoxBase reports itself at AutoSize, but doesn't

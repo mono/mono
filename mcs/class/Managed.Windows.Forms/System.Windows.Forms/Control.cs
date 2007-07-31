@@ -5115,6 +5115,7 @@ namespace System.Windows.Forms
 #endif
 			window.InvalidateHandle();
 
+			is_created = false;
 			if (is_recreating) {
 #if DebugRecreate
 				Console.WriteLine ("Creating handle for {0:X}", handle.ToInt32());

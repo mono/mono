@@ -1709,11 +1709,7 @@ namespace System.Windows.Forms {
 			}
 			
 			if (IsHandleCreated) {
-				// All CommonDialogs assume the form is still alive after a ShowDialog,
-				// so don't destroy the handle in this case. Fix for #82187.
-				if (!(this is CommonDialog.DialogForm)) {
-					DestroyHandle ();
-				}
+				DestroyHandle ();
 			}
 
 			if (DialogResult == DialogResult.None) {
@@ -2821,8 +2817,10 @@ namespace System.Windows.Forms {
 				AutoScale = false;
 			}
 
-			OnLoad (e);
-
+			if (!IsDisposed) {
+				OnLoad (e);
+			}
+			
 			if (!IsMdiChild && !IsDisposed) {
 				switch (StartPosition) {
 					case FormStartPosition.CenterScreen:

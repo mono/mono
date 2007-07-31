@@ -894,7 +894,7 @@ namespace System.Windows.Forms {
 		internal Form ActiveMdiChild {
 			get {
 #if NET_2_0
-				if (!ParentForm.Visible)
+				if (ParentForm != null && !ParentForm.Visible)
 					return null;
 #endif
 				if (Controls.Count < 1)

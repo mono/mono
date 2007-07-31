@@ -411,6 +411,12 @@ namespace System.Windows.Forms {
 			Last				= 32651
 		}
 
+		private enum AncestorType {
+			GA_PARENT = 1,
+			GA_ROOT = 2, 
+			GA_ROOTOWNER = 3
+		}
+
 		[Flags]
 		private enum WindowLong {
 			GWL_WNDPROC     		= -4,
@@ -1812,8 +1818,9 @@ namespace System.Windows.Forms {
 			pt.x=rect.left;
 			pt.y=rect.top;
 
-			parent = Win32GetParent(handle);
-			Win32ScreenToClient(parent, ref pt);
+			parent = Win32GetAncestor (handle, AncestorType.GA_PARENT);
+			if (parent != IntPtr.Zero && parent != Win32GetDesktopWindow ())
+				Win32ScreenToClient(parent, ref pt);
 
 			x = pt.x;
 			y = pt.y;
@@ -3272,8 +3279,13 @@ namespace System.Windows.Forms {
 		[DllImport ("user32.dll", EntryPoint="ClientToScreen", CallingConvention=CallingConvention.StdCall)]
 		private extern static bool Win32ClientToScreen(IntPtr hWnd, ref POINT pt);
 
+		// This function returns the parent OR THE OWNER!
+		// Use GetAncestor to only get the parent.
 		[DllImport ("user32.dll", EntryPoint="GetParent", CallingConvention=CallingConvention.StdCall)]
 		private extern static IntPtr Win32GetParent(IntPtr hWnd);
+
+		[DllImport ("user32.dll", EntryPoint = "GetAncestor", CallingConvention = CallingConvention.StdCall)]
+		private extern static IntPtr Win32GetAncestor (IntPtr hWnd, AncestorType flags);
 
 		[DllImport ("user32.dll", EntryPoint="SetActiveWindow", CallingConvention=CallingConvention.StdCall)]
 		private extern static IntPtr Win32SetActiveWindow(IntPtr hWnd);
