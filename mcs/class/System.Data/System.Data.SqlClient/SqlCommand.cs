@@ -252,7 +252,7 @@ namespace System.Data.SqlClient {
 		IDbConnection IDbCommand.Connection {
 			get { return Connection; }
 			set { 
-				if (!(value is SqlConnection))
+				if (!(value == null || value is SqlConnection))
 					throw new InvalidCastException ("The value was not a valid SqlConnection.");
 				Connection = (SqlConnection) value;
 			}
@@ -265,7 +265,7 @@ namespace System.Data.SqlClient {
 		IDbTransaction IDbCommand.Transaction {
 			get { return Transaction; }
 			set { 
-				if (!(value is SqlTransaction))
+				if (!(value == null || value is SqlTransaction))
 					throw new ArgumentException ();
 				Transaction = (SqlTransaction) value; 
 			}

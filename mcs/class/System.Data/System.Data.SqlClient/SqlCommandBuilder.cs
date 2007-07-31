@@ -675,7 +675,6 @@ namespace System.Data.SqlClient {
 			return String.Format("@{0}", parameterName);                       
                 }
                 
-
                 protected override string GetParameterPlaceholder (int position)
                 {
 			return GetParameterName (position);

@@ -92,8 +92,8 @@ namespace System.Data.SqlClient {
 		{
  			metaParameter = new TdsMetaParameter (parameterName, value);
  			InferSqlType (value);
- 			metaParameter.Value =  SqlTypeToFrameworkType(value);
-			this.sourceVersion = DataRowVersion.Current;
+ 			metaParameter.Value =  SqlTypeToFrameworkType (value);
+			sourceVersion = DataRowVersion.Current;
 		}
 		
 		public SqlParameter (string parameterName, SqlDbType dbType) 
@@ -391,7 +391,7 @@ namespace System.Data.SqlClient {
 #endif // NET_2_0
 		object Value {
 			get { return metaParameter.Value; }
-			set { 
+			set {
 				if (!isTypeSet)
 					InferSqlType (value);
 				metaParameter.Value = SqlTypeToFrameworkType (value);
