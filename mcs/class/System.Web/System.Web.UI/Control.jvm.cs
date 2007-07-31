@@ -30,42 +30,25 @@
 
 using vmw.@internal.j2ee;
 using System.Web.Hosting;
+using System.Text;
 
 namespace System.Web.UI
 {
 	public partial class Control
 	{
-		private string _templateSourceDir;
-
 		public virtual string TemplateSourceDirectory
 		{
 			get
 			{
-				int location = 0;
-				if (_templateSourceDir == null) {
-					string tempSrcDir = AppRelativeTemplateSourceDirectory;
-					if (tempSrcDir == null && Parent != null)
-						tempSrcDir = Parent.TemplateSourceDirectory;
-					if (tempSrcDir != null && tempSrcDir.Length > 1) {
-						location = tempSrcDir.IndexOf ('/', 1);
-						if (location != -1)
-							tempSrcDir = tempSrcDir.Substring (location + 1);
-						else
-							tempSrcDir = string.Empty;
-					}
-					string answer = HttpRuntime.AppDomainAppVirtualPath;
-					if (tempSrcDir == null)
-						tempSrcDir = "";
+				if (_templateSourceDirectory == null) {
+					_templateSourceDirectory = VirtualPathUtility.ToAbsolute (AppRelativeTemplateSourceDirectory, false);
 
-					if (tempSrcDir.Length > 0 && tempSrcDir [tempSrcDir.Length - 1] == '/')
-						tempSrcDir = tempSrcDir.Substring (0, tempSrcDir.Length - 1);
-
-					if (tempSrcDir.StartsWith ("/") || tempSrcDir.Length == 0)
-						_templateSourceDir = answer + tempSrcDir;
-					else
-						_templateSourceDir = answer + "/" + tempSrcDir;
+					if (_templateSourceDirectory.Length > 1 &&
+						_templateSourceDirectory [_templateSourceDirectory.Length - 1] == '/')
+						_templateSourceDirectory = _templateSourceDirectory.Substring (0, _templateSourceDirectory.Length - 1);
 				}
-				return _templateSourceDir;
+
+				return _templateSourceDirectory;
 			}
 		}
 

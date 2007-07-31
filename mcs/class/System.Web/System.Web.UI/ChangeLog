@@ -1,3 +1,10 @@
+2007-07-31  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* Control.cs: fixed AppRelativeTemplateSourceDirectory that should
+	depend on AppRelativeVirtualPath
+	* Control.jvm.cs: fixed TemplateSourceDirectory that should depend on
+	AppRelativeTemplateSourceDirectory
+
 2007-07-30  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* Page.jvm.cs: fixed RenderResponse property, should not fail in no

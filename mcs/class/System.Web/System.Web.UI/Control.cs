@@ -180,23 +180,22 @@ namespace System.Web.UI
 				if (_appRelativeTemplateSourceDirectory != null)
 					return _appRelativeTemplateSourceDirectory;
 
-				Control tc = TemplateControl;
-				if (tc != null)
-					return tc.AppRelativeTemplateSourceDirectory;
+				string tempSrcDir = null;
 
-				Control parent = Parent;
-				if (parent != null)
-					return parent.AppRelativeTemplateSourceDirectory;
+				TemplateControl templateControl = TemplateControl;
+				if (templateControl != null)
+					if (!string.IsNullOrEmpty (templateControl.AppRelativeVirtualPath))
+						tempSrcDir = VirtualPathUtility.GetDirectory (templateControl.AppRelativeVirtualPath, false);
 
-				HttpContext context = Context;
-				if (context != null)
-					return VirtualPathUtility.ToAppRelative (
-						VirtualPathUtility.GetDirectory (context.Request.FilePath));
-
-				return "~/";
+				_appRelativeTemplateSourceDirectory = (tempSrcDir != null) ? tempSrcDir : "~/";
+				return _appRelativeTemplateSourceDirectory;
 			}
 			[EditorBrowsable (EditorBrowsableState.Never)]
-			set	{ _appRelativeTemplateSourceDirectory = value; }
+			set
+			{
+				_appRelativeTemplateSourceDirectory = value;
+				_templateSourceDirectory = null;
+			}
 		}
 		
 #endif		
