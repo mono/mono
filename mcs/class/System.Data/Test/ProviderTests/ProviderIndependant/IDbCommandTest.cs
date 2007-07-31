@@ -29,6 +29,7 @@
 // SOFTWARE.using System;
 
 
+using System;
 using System.Data;
 using System.Data.Common;
 using Mono.Data;
@@ -50,7 +51,9 @@ namespace MonoTests.System.Data
 				IDbCommand cmd = conn.CreateCommand ();
 				cmd.CommandType = CommandType.Text;
 				cmd.CommandText = "select count(*) from employee where id < 3";
-				Assert.AreEqual (2, cmd.ExecuteScalar (), "#1 there should be 2 records");
+				Assert.AreEqual (2, (int) Convert.ChangeType (cmd.ExecuteScalar (),
+									      typeof (int)),
+						 "#1 there should be 2 records");
 			} finally {
 				ConnectionManager.Singleton.CloseConnection ();
 			}

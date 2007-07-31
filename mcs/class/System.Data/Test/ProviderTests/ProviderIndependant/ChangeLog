@@ -1,3 +1,9 @@
+2007-07-31  Nagappan A  <anagappan@novell.com>
+
+	* IDbCommandTest.cs (ExecuteScalarTest): SqlClient and Odbc
+	ExecuteScalar returns diff object type. Since the test is common
+	to both the environment, modified the test case to handle both.
+
 2007-06-11  Nagappan A  <anagappan@novell.com>
 
 	* DataReaderTest.cs (GetBytesNullBufferTest): Odbc returns -1, but
