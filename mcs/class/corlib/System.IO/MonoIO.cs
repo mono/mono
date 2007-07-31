@@ -47,7 +47,24 @@ namespace System.IO
 		// error methods
 		public static Exception GetException (MonoIOError error)
 		{
-			return GetException (String.Empty, error);
+			/* This overload is currently only called from
+			 * File.MoveFile(), Directory.Move() and
+			 * Directory.GetCurrentDirectory() -
+			 * everywhere else supplies a path to format
+			 * with the error text.
+			 */
+			switch(error) {
+			case MonoIOError.ERROR_ACCESS_DENIED:
+				return new UnauthorizedAccessException ("Access to the path is denied.");
+			default:
+				/* Add more mappings here if other
+				 * errors trigger the named but empty
+				 * path bug (see bug 82141.) For
+				 * everything else, fall through to
+				 * the other overload
+				 */
+				return GetException (String.Empty, error);
+			}
 		}
 
 		public static Exception GetException (string path,

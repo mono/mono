@@ -1,3 +1,8 @@
+2007-07-31  Dick Porter  <dick@ximian.com>
+
+	* MonoIO.cs: Fix formatting of 'access denied' exception when the
+	path info isn't known.  Fixes bug 82141.
+
 2007-07-08  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Directory.cs: Renamed Move arguments to match MS. Allow Move to be
