@@ -1,3 +1,8 @@
+2007-07-31  Marek Safar  <marek.safar@gmail.com>
+
+	* statement.cs (ProcessParameters): Don't crash when parameters have wrong
+	syntax.
+	
 2007-07-26  Jb Evain  <jbevain@novell.com>
 
 	* typemanager.cs (TypeManager.GetConstructor): Add a method overload

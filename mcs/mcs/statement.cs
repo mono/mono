@@ -2497,8 +2497,11 @@ namespace Mono.CSharp {
 			for (int i = 0; i < n; ++i) {
 				parameter_info [i] = new ToplevelParameterInfo (this, i);
 
-				string name = parameters [i].Name;
+				Parameter p = parameters [i];
+				if (p == null)
+					continue;
 
+				string name = p.Name;
 				LocalInfo vi = GetLocalInfo (name);
 				if (vi != null) {
 					Report.SymbolRelatedToPreviousError (vi.Location, name);
