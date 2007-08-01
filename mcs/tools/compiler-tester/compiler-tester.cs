@@ -118,6 +118,7 @@ namespace TestRunner {
 		protected int success;
 		protected int total;
 		protected int ignored;
+		protected int syntax_errors;
 		string issue_file;
 		StreamWriter log_file;
 		// protected string[] compiler_options;
@@ -276,11 +277,14 @@ namespace TestRunner {
 			LogLine ("Done" + Environment.NewLine);
 			LogLine ("{0} test cases passed ({1:.##%})", success, (float) (success) / (float)total);
 
+			if (syntax_errors > 0)
+				LogLine ("{0} test(s) ignored because of wrong syntax !", syntax_errors);
+				
 			if (ignored > 0)
-				LogLine ("{0} test cases ignored", ignored);
+				LogLine ("{0} test(s) ignored", ignored);
 			
 			if (total_known_issues - know_issues.Count > 0)
-				LogLine ("{0} known issues", total_known_issues - know_issues.Count);
+				LogLine ("{0} known issue(s)", total_known_issues - know_issues.Count);
 
 			know_issues.AddRange (no_error_list);
 			if (know_issues.Count > 0) {
@@ -601,7 +605,7 @@ namespace TestRunner {
 				int index = line.IndexOf (':');
 				if (index == -1 || index > 15) {
 					LogLine ("IGNORING: Wrong test file syntax (missing error mesage text)");
-					++ignored;
+					++syntax_errors;
 					base.AnalyzeTestFile (ref row, line, ref compiler_options,
 							      ref dependencies);
 					return false;
@@ -627,7 +631,7 @@ namespace TestRunner {
 
 				if (!filtered.StartsWith ("//Line:")) {
 					LogLine ("IGNORING: Wrong test syntax (following line after an error messsage must have `// Line: xx' syntax");
-					++ignored;
+					++syntax_errors;
 					return false;
 				}
 			}
