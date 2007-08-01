@@ -1,5 +1,10 @@
 2007-08-01  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #82181
+	* cs-parser.jay: Ignore partial keyword inside block expression.
+	
+2007-08-01  Marek Safar  <marek.safar@gmail.com>
+
 	** C# 3.0 Type Inference (major bits are working)
 	
 	* generic.cs: Introduced new abstract class as an entry point to type

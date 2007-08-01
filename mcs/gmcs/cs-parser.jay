@@ -110,7 +110,7 @@ namespace Mono.CSharp
 		/// assembly and module attribute definitions are enabled
 		bool global_attrs_enabled = true;
 		bool has_get, has_set;
-
+		
 %}
 
 %token EOF
@@ -4481,19 +4481,25 @@ type_parameter_constraint
 block
 	: OPEN_BRACE  
 	  {
+		++lexer.parsing_block;
 		start_block ((Location) $1);
 	  } 
 	  opt_statement_list CLOSE_BRACE 
-	  { 
+	  {
+	 	--lexer.parsing_block;
 		$$ = end_block ((Location) $4);
 	  }
 	;
 
 block_prepared
-	: OPEN_BRACE 
+	: OPEN_BRACE
+	  {
+		++lexer.parsing_block;
+	  }
 	  opt_statement_list CLOSE_BRACE 
-	  { 
-		$$ = end_block ((Location) $3);
+	  {
+		--lexer.parsing_block;
+		$$ = end_block ((Location) $4);
 	  }
 	;
 
