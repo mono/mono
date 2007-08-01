@@ -35,8 +35,10 @@ using System;
 using System.IO;
 using System.Collections;
 using System.Diagnostics;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace System.Diagnostics {
 #if NET_2_0
@@ -52,6 +54,9 @@ namespace System.Diagnostics {
 
 		private static readonly string MonoTracePrefix;
 		private static readonly string MonoTraceFile;
+
+		private static readonly object messageBoxButtonsAbortRetryIgnore;
+		private static readonly MethodInfo msgboxShow;
 
 		static DefaultTraceListener ()
 		{
@@ -103,6 +108,19 @@ namespace System.Diagnostics {
 					MonoTracePrefix = prefix;
 				}
 			}
+
+			// AssertUiEnabled support
+			try {
+				Assembly wfAsm = Assembly.Load (Consts.AssemblySystem_Windows_Forms);
+				if (wfAsm != null) {
+					Type buttons = wfAsm.GetType ("System.Windows.Forms.MessageBoxButtons");
+					messageBoxButtonsAbortRetryIgnore = Enum.Parse (buttons, "AbortRetryIgnore");
+					msgboxShow = wfAsm.GetType ("System.Windows.Forms.MessageBox").GetMethod ("Show", new Type [] {typeof (string), typeof (string), buttons});
+				}
+			} catch {
+				// failed to load the assembly (likely when
+				// MWF is not installed).
+			}
 		}
 
 		/**
@@ -133,17 +151,15 @@ namespace System.Diagnostics {
 
 		private string logFileName = null;
 
-		private bool assertUiEnabled = false;
+		private bool assertUiEnabled = true;
 
 		public DefaultTraceListener () : base ("Default")
 		{
 		}
 
-		// It's hard to do anything with a UI when we don't have Windows.Forms...
-		[MonoTODO]
 		public bool AssertUiEnabled {
-			get {return assertUiEnabled;}
-			set {/* ignore */}
+			get { return assertUiEnabled; }
+			set { assertUiEnabled = value; }
 		}
 
 		[MonoTODO]
@@ -155,13 +171,39 @@ namespace System.Diagnostics {
 		public override void Fail (string message)
 		{
 			base.Fail (message);
-			WriteLine (new StackTrace().ToString());
 		}
 
 		public override void Fail (string message, string detailMessage)
 		{
 			base.Fail (message, detailMessage);
+			if (ProcessUI (message, detailMessage) == DialogResult.Abort)
+				Thread.CurrentThread.Abort ();
 			WriteLine (new StackTrace().ToString());
+		}
+
+		DialogResult ProcessUI (string message, string detailMessage)
+		{
+			if (!AssertUiEnabled || msgboxShow == null || messageBoxButtonsAbortRetryIgnore == null)
+				return DialogResult.None;
+
+			string caption = String.Format ("Assertion Failed: {0} to quit, {1} to debug, {2} to continue", "Abort", "Retry", "Ignore");
+			string msg = String.Format ("{0}{1}{2}{1}{1}{3}", message, Environment.NewLine, detailMessage, new StackTrace ());
+
+			switch (msgboxShow.Invoke (null, new object [] {msg, caption, messageBoxButtonsAbortRetryIgnore}).ToString ()) {
+			case "Ignore":
+				return DialogResult.Ignore;
+			case "Abort":
+				return DialogResult.Abort;
+			default:
+				return DialogResult.Retry;
+			}
+		}
+
+		enum DialogResult {
+			None,
+			Retry,
+			Ignore,
+			Abort
 		}
 
 #if TARGET_JVM

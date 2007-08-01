@@ -1,5 +1,9 @@
 2007-08-01  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DefaultTraceListener.cs : implemented AssertUiEnabled using MWF.
+
+2007-08-01  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* CounterSample.cs : implemented missing 2.0 equality stuff.
 	* CounterSampleCalculator.cs : static in 2.0.
 
