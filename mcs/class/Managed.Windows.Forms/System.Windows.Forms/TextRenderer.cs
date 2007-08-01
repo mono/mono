@@ -494,9 +494,6 @@ namespace System.Windows.Forms
 			if ((flags & TextFormatFlags.NoClipping) == TextFormatFlags.NoClipping)
 				sf.FormatFlags |= StringFormatFlags.NoClip;
 
-			if ((flags & TextFormatFlags.WordBreak) == 0)
-				sf.FormatFlags |= StringFormatFlags.LineLimit;
-
 			return sf;
 		}
 #if NET_2_0

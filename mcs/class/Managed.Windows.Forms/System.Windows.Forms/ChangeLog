@@ -1,3 +1,10 @@
+2007-08-01  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TextRenderer.cs: Remove the LineLimit string format flag from the
+	DrawString fallback method so that things like buttons that aren't
+	tall enough to draw a full line will still draw part of the text.
+	[Fixes part of bug #82272]
+
 2007-08-01  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* DataGridView.cs: Implemented AutoResizeColumn(s).
