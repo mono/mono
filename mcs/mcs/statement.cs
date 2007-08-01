@@ -2259,18 +2259,15 @@ namespace Mono.CSharp {
 				target.Parent = clonectx.RemapBlockCopy (Parent);
 			
 			target.statements = new ArrayList (statements.Count);
-			if (target.children != null){
-				target.children = new ArrayList ();
-				foreach (Block b in children){
-					Block newblock = (Block) b.Clone (clonectx);
-
-					target.children.Add (newblock);
-				}
-				
-			}
-
 			foreach (Statement s in statements)
 				target.statements.Add (s.Clone (clonectx));
+
+			if (target.children != null){
+				target.children = new ArrayList (children.Count);
+				foreach (Block b in children){
+					target.children.Add (clonectx.RemapBlockCopy (b));
+				}
+			}
 
 			if (variables != null){
 				target.variables = new Hashtable ();

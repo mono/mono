@@ -1,5 +1,10 @@
 2007-08-01  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #82277
+	* statememnt.cs (Block.Clone): Don't clone explicit blocks twice.
+
+2007-08-01  Marek Safar  <marek.safar@gmail.com>
+
 	** C# 3.0 Type Inference (major bits are working)
 	
 	* anonymous.cs (AnonymousMethodExpression): Removed refactored fields.
