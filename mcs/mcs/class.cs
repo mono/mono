@@ -4026,7 +4026,7 @@ namespace Mono.CSharp {
 				}
 
 #if MS_COMPATIBLE
-				MethodBuilder = Parent.TypeBuilder.DefineMethod (method_name, flags, ReturnType, null);
+				MethodBuilder = Parent.TypeBuilder.DefineMethod (method_name, flags); //, ReturnType, null);
 #else
 				MethodBuilder = Parent.TypeBuilder.DefineMethod (method_name, flags);
 #endif
@@ -5332,8 +5332,6 @@ namespace Mono.CSharp {
 					flags |= MethodAttributes.Final;
 			}
 
-			EmitContext ec = method.CreateEmitContext (container, null);
-
 			DefineMethodBuilder (container, method_name, method.ParameterInfo.Types);
 
 			if (builder == null)
@@ -5375,6 +5373,7 @@ namespace Mono.CSharp {
 				if (implementing != null)
 					parent_method = implementing;
 
+				EmitContext ec = method.CreateEmitContext (container, null);
 				if (!GenericMethod.DefineType (ec, builder, parent_method, is_override))
 					return false;
 			}

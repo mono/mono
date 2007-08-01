@@ -1,3 +1,8 @@
+2007-08-01  Marek Safar  <marek.safar@gmail.com>
+
+	* class.cs (MethodData.Define): EmitContext is required for generic stuff
+	only.
+
 2007-07-31  Marek Safar  <marek.safar@gmail.com>
 
 	* statement.cs (ProcessParameters): Don't crash when parameters have wrong
