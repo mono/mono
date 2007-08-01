@@ -11,7 +11,7 @@ ifeq (default, $(PROFILE))
 
 MCS = $(with_mono_path) $(INTERNAL_MCS)
 else
-EXTRA_SUPPORT_FILES = CSFriendAssembly-lib.dll GCS0730-lib.dll GCS0733-lib.dll
+EXTRA_SUPPORT_FILES = CSFriendAssembly-lib.dll GCS0122-2-lib.dll GCS0730-lib.dll GCS0733-lib.dll
 endif
 
 ilasm = $(topdir)/class/lib/net_1_1_bootstrap/ilasm.exe

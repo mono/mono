@@ -4,7 +4,7 @@
 
 public class C
 {
-	public delegate TR Func<TR, TA> (TA t);
+	public delegate T1 Func<T1, T2> (T2 t);
 	
    	public static TR Test<TR, TA> (Func<TR, TA> f, Func<TR, TA> f2)
 	{
