@@ -1,3 +1,9 @@
+2007-08-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* UriParserTest.cs, UriTest3.cs, HttpStyleUriParserTest.cs :
+	  for IsWellFormedOriginalString() and InitializeAndValidate(),
+	  removed some NotWorking and added some more tests.
+
 2007-04-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* UriTest.cs : added relative .ctor() test where the relativeUris

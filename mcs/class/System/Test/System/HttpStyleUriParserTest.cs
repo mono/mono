@@ -43,16 +43,28 @@ namespace MonoTests.System {
 			get { return registered; }
 		}
 
+		public void _InitializeAndValidate (Uri uri, out UriFormatException parsingError)
+		{
+			InitializeAndValidate (uri, out parsingError);
+		}
+
+		public bool _IsWellFormedOriginalString (Uri uri)
+		{
+			// note that "this" version of this method is overriden.
+			return base.IsWellFormedOriginalString (uri);
+		}
+
 		protected override string GetComponents (Uri uri, UriComponents components, UriFormat format)
 		{
 			throw new UriFormatException ();
-			// return components.ToString ();
 		}
 
 		protected override void InitializeAndValidate (Uri uri, out UriFormatException parsingError)
 		{
-			throw new NotImplementedException ();
-			// base.InitializeAndValidate (uri, out parsingError);
+			if (uri.Scheme == "httpx")
+				parsingError = null;
+			else
+				base.InitializeAndValidate (uri, out parsingError);
 		}
 
 		protected override bool IsBaseOf (Uri baseUri, Uri relativeUri)
@@ -114,7 +126,6 @@ namespace MonoTests.System {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Httpx_Methods ()
 		{
 			Uri uri = new Uri ("httpx://www.mono-project.com/CAS");
@@ -130,6 +141,45 @@ namespace MonoTests.System {
 			Uri uri = new Uri ("shttpx://www.mono-project.com/CAS");
 			Assert.AreEqual (-1, uri.Port, "Port");
 			// OnRegister cannot be used to change the registering informations
+		}
+
+		[Test]
+		public void InitializeAndValidate ()
+		{
+			Assert.IsTrue (UriParser.IsKnownScheme ("httpx"), "premise1");
+
+			Uri uri = new Uri ("httpx://localhost");
+			UriFormatException error;
+			parser._InitializeAndValidate (uri, out error);
+			Assert.AreEqual (null, error);
+		}
+
+		[Test]
+		public void InitializeAndValidate2 ()
+		{
+			Assert.IsTrue (UriParser.IsKnownScheme ("httpx"), "premise1");
+
+			Uri uri = new Uri ("file:///usr/local/bin");
+			// It results in UriFormatException since it tries
+			// to parse file URI with http Uri parser.
+			UriFormatException error;
+			parser._InitializeAndValidate (uri, out error);
+			Assert.IsNotNull (error);
+		}
+
+		[Test]
+		[ExpectedException (typeof (NullReferenceException))] // hmm, bad boy
+		public void IsWellFormedOriginalStringNull ()
+		{
+			Assert.IsTrue (parser._IsWellFormedOriginalString (null));
+		}
+
+		[Test]
+		public void IsWellFormedOriginalString ()
+		{
+			// hmm, it does not seem to check scheme.
+			Assert.IsTrue (parser._IsWellFormedOriginalString (new Uri ("file:///usr/local/src")));
+			Assert.IsFalse (parser._IsWellFormedOriginalString (new Uri ("file:///usr/local/src dst")));
 		}
 	}
 }

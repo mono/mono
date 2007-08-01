@@ -175,7 +175,6 @@ namespace MonoTests.System {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void IsWellFormedUriString_Http ()
 		{
 			Assert.IsFalse (Uri.IsWellFormedUriString ("http://www.go-mono.com/Main Page", UriKind.Absolute), "http/space");

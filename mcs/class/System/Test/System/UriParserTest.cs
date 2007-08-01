@@ -234,7 +234,6 @@ namespace MonoTests.System {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void InitializeAndValidate ()
 		{
 			UriFormatException error = null;
@@ -245,7 +244,7 @@ namespace MonoTests.System {
 
 		[Test]
 		[ExpectedException (typeof (NullReferenceException))]
-		[Category ("NotWorking")]
+		// oh man, this is a bad boy.It should be ArgumentNullException.
 		public void InitializeAndValidate_Null ()
 		{
 			UriFormatException error = null;
@@ -372,6 +371,28 @@ namespace MonoTests.System {
 			UnitTestUriParser p = new UnitTestUriParser ();
 			try {
 				UriParser.Register (p, scheme, 2005);
+			}
+			catch (NotSupportedException) {
+				// special case / ordering
+			}
+			// if true then the registration is done before calling OnRegister
+			Assert.IsTrue (UriParser.IsKnownScheme (scheme), "IsKnownScheme-true");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void OnRegister2 ()
+		{
+			string scheme = prefix + "onregister2";
+			Assert.IsFalse (UriParser.IsKnownScheme (scheme), "IsKnownScheme-false");
+			UnitTestUriParser p = new UnitTestUriParser ();
+			try {
+				UriParser.Register (p, scheme, 2005);
+				Uri uri = new Uri (scheme + "://foobar:2005");
+				Assert.AreEqual (scheme, uri.Scheme, "uri-prefix");
+				Assert.AreEqual (2005, uri.Port, "uri-port");
+				
+				Assert.AreEqual ("//foobar:2005", uri.LocalPath, "uri-localpath");
 			}
 			catch (NotSupportedException) {
 				// special case / ordering

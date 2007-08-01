@@ -118,10 +118,14 @@ namespace System {
 			return Format (sb.ToString (), format);
 		}
 
-		[MonoTODO]
 		protected internal virtual void InitializeAndValidate (Uri uri, out UriFormatException parsingError)
 		{
-			throw new NotImplementedException ();
+			// bad boy, it should check null arguments.
+			if (uri.Scheme != scheme_name)
+				// Here .NET seems to return "The Authority/Host could not be parsed", but it does not make sense.
+				parsingError = new UriFormatException ("The argument Uri's scheme does not match");
+			else
+				parsingError = null;
 		}
 
 		protected internal virtual bool IsBaseOf (Uri baseUri, Uri relativeUri)
@@ -135,12 +139,13 @@ namespace System {
 			return (String.Compare (base_string, 0, relativeUri.LocalPath, 0, last_slash, StringComparison.InvariantCultureIgnoreCase) == 0);
 		}
 
-		[MonoTODO]
 		protected internal virtual bool IsWellFormedOriginalString (Uri uri)
 		{
 			// well formed according to RFC2396 and RFC2732
 			// see Uri.IsWellFormedOriginalString for some docs
-			throw new NotImplementedException ();
+
+			// Though this class does not seem to do anything. Even null arguments aren't checked :/
+			return uri.IsWellFormedOriginalString ();
 		}
 
 		protected internal virtual UriParser OnNewUri ()

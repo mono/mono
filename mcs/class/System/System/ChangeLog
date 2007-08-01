@@ -1,3 +1,9 @@
+2007-08-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Uri.cs, UriParser.cs : implemented InitializeAndValidate() and
+	  IsWellFormedOriginalString().
+	  IsWellFormedUriString() is already implemented.
+
 2007-07-06  Alan McGovern  <amcgovern@novell.com>
 
 	* Uri.cs : The URI string should be whitespace trimmed before
