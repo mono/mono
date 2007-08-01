@@ -1,3 +1,7 @@
+2007-08-01 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* DropDownList.cs: fixed onchange attibute.
+
 2007-07-26  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* ListItemCollection.cs: fixed LoadViewState, items restored from

@@ -135,7 +135,9 @@ namespace System.Web.UI.WebControls {
 #endif
 			if (AutoPostBack) {
 #if NET_2_0
-				writer.AddAttribute (HtmlTextWriterAttribute.Onchange, Page.ClientScript.GetPostBackEventReference (GetPostBackOptions (), true));
+				string onchange = Page.ClientScript.GetPostBackEventReference (GetPostBackOptions (), true);
+				onchange = String.Format ("javascript:setTimeout('{0}', 0)", onchange.Replace ("\\", "\\\\").Replace ("'", "\\'"));
+				writer.AddAttribute (HtmlTextWriterAttribute.Onchange, onchange);
 #else
 				writer.AddAttribute (HtmlTextWriterAttribute.Onchange, Page.ClientScript.GetPostBackClientHyperlink (this, ""));
 #endif
