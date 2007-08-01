@@ -1,3 +1,7 @@
+2007-08-01  Dick Porter  <dick@ximian.com>
+
+	* DirectoryTest.cs: Test for bug 82212 is now working.
+
 2007-07-28  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DirectoryTest.cs: Added test for bug #82212.

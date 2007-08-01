@@ -1498,7 +1498,6 @@ public class DirectoryTest
 	}
 
 	[Test] // bug #82212
-	[Category ("NotWorking")]
 	public void GetFiles_Pattern ()
 	{
 		string [] files = Directory.GetFiles (TempFolder, "*.*");
