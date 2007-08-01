@@ -113,6 +113,9 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Category ("NotWorking")]
+#endif
 		public void Bitmap8bbpIndexedGreyscalePixels ()
 		{
 			string sInFile = getInFile ("bitmaps/nature-greyscale.jpg");

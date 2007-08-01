@@ -181,6 +181,9 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Ignore ("ImageAttributes is not supported in GH")]
+#endif
 		[ExpectedException (typeof (ArgumentException))]
 		public void SetColorMatrix_Null ()
 		{
@@ -203,6 +206,9 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Ignore ("ImageAttributes is not supported in GH")]
+#endif
 		[ExpectedException (typeof (ArgumentException))]
 		public void SetColorMatrix_Default_Any ()
 		{
@@ -212,6 +218,9 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Ignore ("ImageAttributes is not supported in GH")]
+#endif
 		[ExpectedException (typeof (ArgumentException))]
 		public void SetColorMatrix_Default_Count ()
 		{
@@ -221,6 +230,9 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Ignore ("ImageAttributes is not supported in GH")]
+#endif
 		[ExpectedException (typeof (ArgumentException))]
 		public void SetColorMatrix_AltGrays ()
 		{
@@ -230,6 +242,9 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Ignore ("ImageAttributes is not supported in GH")]
+#endif
 		[ExpectedException (typeof (ArgumentException))]
 		public void SetColorMatrix_AltGrays_Any ()
 		{
@@ -239,6 +254,9 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Ignore ("ImageAttributes is not supported in GH")]
+#endif
 		[ExpectedException (typeof (ArgumentException))]
 		public void SetColorMatrix_AltGrays_Bitmap ()
 		{
@@ -248,6 +266,9 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Ignore ("ImageAttributes is not supported in GH")]
+#endif
 		[ExpectedException (typeof (ArgumentException))]
 		public void SetColorMatrix_AltGrays_Brush ()
 		{
@@ -257,6 +278,9 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Ignore ("ImageAttributes is not supported in GH")]
+#endif
 		[ExpectedException (typeof (ArgumentException))]
 		public void SetColorMatrix_AltGrays_Count ()
 		{
@@ -266,6 +290,9 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Ignore ("ImageAttributes is not supported in GH")]
+#endif
 		[ExpectedException (typeof (ArgumentException))]
 		public void SetColorMatrix_AltGrays_Default ()
 		{
@@ -275,6 +302,9 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Ignore ("ImageAttributes is not supported in GH")]
+#endif
 		[ExpectedException (typeof (ArgumentException))]
 		public void SetColorMatrix_AltGrays_Pen ()
 		{
@@ -284,6 +314,9 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Ignore ("ImageAttributes is not supported in GH")]
+#endif
 		[ExpectedException (typeof (ArgumentException))]
 		public void SetColorMatrix_AltGrays_Text ()
 		{
@@ -306,6 +339,9 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Ignore ("ImageAttributes is not supported in GH")]
+#endif
 		[ExpectedException (typeof (ArgumentException))]
 		public void SetColorMatrix_SkipGrays_Any ()
 		{
@@ -315,6 +351,9 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Ignore ("ImageAttributes is not supported in GH")]
+#endif
 		[ExpectedException (typeof (ArgumentException))]
 		public void SetColorMatrix_SkipGrays_Count ()
 		{
@@ -324,6 +363,9 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Ignore ("ImageAttributes is not supported in GH")]
+#endif
 		[ExpectedException (typeof (ArgumentException))]
 		public void SetColorMatrix_InvalidFlag ()
 		{
@@ -333,6 +375,9 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Ignore ("ImageAttributes is not supported in GH")]
+#endif
 		[ExpectedException (typeof (ArgumentException))]
 		public void SetColorMatrix_InvalidType()
 		{
@@ -342,6 +387,9 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Ignore ("ImageAttributes is not supported in GH")]
+#endif
 		[ExpectedException (typeof (ArgumentException))]
 		public void SetColorMatrices_Null_ColorMatrix ()
 		{
@@ -361,6 +409,9 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Ignore ("ImageAttributes is not supported in GH")]
+#endif
 		[ExpectedException (typeof (ArgumentException))]
 		public void SetColorMatrices_ColorMatrix_Null_AltGrays ()
 		{
@@ -381,6 +432,9 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Ignore ("ImageAttributes is not supported in GH")]
+#endif
 		public void SetColorMatrices_Gray ()
 		{
 			Color c = ProcessColorMatrices (Color.Gray, global_color_matrix, global_gray_matrix, ColorMatrixFlag.Default, ColorAdjustType.Default);
@@ -394,6 +448,9 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Ignore ("ImageAttributes is not supported in GH")]
+#endif
 		public void SetColorMatrices_Color ()
 		{
 			Color c = ProcessColorMatrices (Color.MidnightBlue, global_color_matrix, global_gray_matrix, ColorMatrixFlag.Default, ColorAdjustType.Default);
@@ -407,6 +464,9 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Ignore ("ImageAttributes is not supported in GH")]
+#endif
 		[ExpectedException (typeof (ArgumentException))]
 		public void SetColorMatrices_InvalidFlags ()
 		{
@@ -416,6 +476,9 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Ignore ("ImageAttributes is not supported in GH")]
+#endif
 		[ExpectedException (typeof (ArgumentException))]
 		public void SetColorMatrices_InvalidType ()
 		{
@@ -456,6 +519,9 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Ignore ("ImageAttributes is not supported in GH")]
+#endif
 		public void ColorMatrixAlpha ()
 		{
 			for (int i = 0; i < 256; i++) {
