@@ -166,15 +166,29 @@ namespace System.Windows.Forms {
 			//cell.SetContentBounds(cellBounds);
 			*/
 			//////////////////
+			StringFormat format;
+			Brush forecolor_brush;
+			Brush backcolor_brush;
+			Rectangle text_rect = cellBounds;
+			Rectangle borders = BorderWidths (advancedBorderStyle);
+			
+			text_rect.X += borders.X;
+			text_rect.Y += borders.Y;
+			text_rect.Height -= (borders.Y + borders.Height);
+			text_rect.Width -= (borders.X + borders.Width);
+			
+			format = cellStyle.SetAlignment ((StringFormat) StringFormat.GenericTypographic.Clone ());
 			if ((cellState & DataGridViewElementStates.Selected) != 0) {
-				graphics.FillRectangle(new SolidBrush(cellStyle.SelectionBackColor), cellBounds);
-				graphics.DrawString((string) formattedValue, cellStyle.Font, new SolidBrush(cellStyle.SelectionForeColor), cellBounds, StringFormat.GenericDefault);
+				backcolor_brush =  ThemeEngine.Current.ResPool.GetSolidBrush (cellStyle.SelectionBackColor);
+				forecolor_brush = ThemeEngine.Current.ResPool.GetSolidBrush (cellStyle.SelectionForeColor);
+			} else {
+				backcolor_brush =  ThemeEngine.Current.ResPool.GetSolidBrush (cellStyle.BackColor);
+				forecolor_brush = ThemeEngine.Current.ResPool.GetSolidBrush (cellStyle.ForeColor);
 			}
-			else {
-				graphics.FillRectangle(new SolidBrush(cellStyle.BackColor), cellBounds);
-				graphics.DrawString((string) formattedValue, cellStyle.Font, new SolidBrush(cellStyle.ForeColor), cellBounds, StringFormat.GenericDefault);
-			}
-			PaintBorder(graphics, clipBounds, cellBounds, cellStyle, advancedBorderStyle);
+
+			graphics.FillRectangle (backcolor_brush, cellBounds);
+			graphics.DrawString ((string) formattedValue, cellStyle.Font, forecolor_brush, text_rect, format);
+			PaintBorder (graphics, clipBounds, cellBounds, cellStyle, advancedBorderStyle);
 		}
 
 	}

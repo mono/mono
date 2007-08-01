@@ -421,6 +421,21 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal Size BorderWidth {
+			get {
+				switch (BorderStyle) {
+				case BorderStyle.Fixed3D:
+					return ThemeEngine.Current.Border3DSize;
+				case BorderStyle.FixedSingle:
+					return ThemeEngine.Current.BorderSize;
+				case BorderStyle.None:
+					return Size.Empty;
+				default:
+					return Size.Empty;
+				}
+			}
+		}
+
 		[Browsable (true)]
 		[DefaultValue (DataGridViewCellBorderStyle.Single)]
 		public DataGridViewCellBorderStyle CellBorderStyle {
@@ -1969,11 +1984,11 @@ namespace System.Windows.Forms {
 		}
 
 		public void AutoResizeColumn (int columnIndex) {
-			throw new NotImplementedException();
+			AutoResizeColumn (columnIndex, DataGridViewAutoSizeColumnMode.AllCells);
 		}
 
 		public void AutoResizeColumn (int columnIndex, DataGridViewAutoSizeColumnMode autoSizeColumnMode) {
-			throw new NotImplementedException();
+			AutoResizeColumn (columnIndex, autoSizeColumnMode, true);
 		}
 
 		public void AutoResizeColumnHeadersHeight () {
@@ -1985,11 +2000,11 @@ namespace System.Windows.Forms {
 		}
 
 		public void AutoResizeColumns () {
-			throw new NotImplementedException();
+			AutoResizeColumns (DataGridViewAutoSizeColumnsMode.AllCells);
 		}
 
 		public void AutoResizeColumns (DataGridViewAutoSizeColumnsMode autoSizeColumnsMode) {
-			throw new NotImplementedException();
+			AutoResizeColumns (autoSizeColumnsMode, true);
 		}
 
 		public void AutoResizeRow (int rowIndex) {
@@ -2319,7 +2334,9 @@ namespace System.Windows.Forms {
 		}
 
 		protected void AutoResizeColumns (DataGridViewAutoSizeColumnsMode autoSizeColumnsMode, bool fixedHeight) {
-			throw new NotImplementedException();
+			for (int i = 0; i < Columns.Count; i++) {
+				AutoResizeColumn (i, (DataGridViewAutoSizeColumnMode) autoSizeColumnsMode, fixedHeight);
+			}
 		}
 
 		protected void AutoResizeRow (int rowIndex, DataGridViewAutoSizeRowMode autoSizeRowMode, bool fixedWidth) {
@@ -2803,6 +2820,12 @@ namespace System.Windows.Forms {
 			DataGridViewCellValueEventHandler eh = (DataGridViewCellValueEventHandler)(Events [CellValuePushedEvent]);
 			if (eh != null)
 				eh (this, e);
+		}
+
+		internal void OnColumnAddedInternal (DataGridViewColumnEventArgs e)
+		{
+			AutoResizeColumnsInternal ();
+			OnColumnAdded (e);
 		}
 
 		protected virtual void OnColumnAdded (DataGridViewColumnEventArgs e)
@@ -3393,7 +3416,7 @@ namespace System.Windows.Forms {
 			base.OnResize(e);
 			horizontalScrollingOffset = ((gridWidth - Size.Width) > 0)? (gridWidth - Size.Width) : 0;
 			verticalScrollingOffset = ((gridHeight - Size.Height) > 0)? (gridHeight - Size.Height) : 0;
-
+			AutoResizeColumnsInternal ();
 		}
 
 		protected override void OnRightToLeftChanged (EventArgs e) {
@@ -3826,6 +3849,148 @@ namespace System.Windows.Forms {
 				case CollectionChangeAction.Refresh:
 					break;
 			}
+		}
+
+		// Resizes all columns according to their AutoResizeMode property.
+		// First all the columns that aren't Filled are resized, then we resize all the Filled columns.
+		internal void AutoResizeColumnsInternal ()
+		{
+			for (int i = 0; i < Columns.Count; i++)
+				AutoResizeColumnInternal (i, Columns [i].InheritedAutoSizeMode);
+			
+			AutoFillColumnsInternal ();
+		}
+
+		internal void AutoFillColumnsInternal ()
+		{
+			float totalFillWeight = 0;
+			int FillCount = 0; // The number of columns that has AutoSizeMode.Fill set
+			int spaceLeft = ClientSize.Width;
+
+			if (RowHeadersVisible) {
+				spaceLeft -= RowHeadersWidth;
+			}
+			spaceLeft -= BorderWidth.Width * 2;
+			
+			int [] fixed_widths = new int [Columns.Count];
+			int [] new_widths = new int [Columns.Count];
+			bool fixed_any = false;
+			
+			for (int i = 0; i < Columns.Count; i++) {
+				DataGridViewColumn col = Columns [i];
+
+				switch (col.InheritedAutoSizeMode) {
+				case DataGridViewAutoSizeColumnMode.Fill:
+					FillCount++;
+					totalFillWeight += col.FillWeight;
+					break;
+				case DataGridViewAutoSizeColumnMode.AllCellsExceptHeader:
+				case DataGridViewAutoSizeColumnMode.AllCells:
+				case DataGridViewAutoSizeColumnMode.DisplayedCells:
+				case DataGridViewAutoSizeColumnMode.DisplayedCellsExceptHeader:
+				case DataGridViewAutoSizeColumnMode.None:
+				case DataGridViewAutoSizeColumnMode.NotSet:
+					spaceLeft -= Columns [i].Width;
+					break;
+				}
+			}
+
+			spaceLeft = Math.Max (0, spaceLeft);
+			
+			do {
+				fixed_any = false;
+				for (int i = 0; i < columns.Count; i++) {
+					DataGridViewColumn col = Columns [i];
+					int width;
+					
+					if (col.InheritedAutoSizeMode != DataGridViewAutoSizeColumnMode.Fill)
+						continue;
+						
+					if (fixed_widths [i] != 0)
+						continue;
+					
+					width = (totalFillWeight == 0) ? 0 : (int) Math.Round (spaceLeft * (col.FillWeight / totalFillWeight), 0);
+					
+					if (width < 0)
+						width = 0;
+					
+					if (width < col.MinimumWidth) {
+						width = col.MinimumWidth;
+						fixed_widths [i] = width;
+						fixed_any = true;
+						spaceLeft -= width;
+						totalFillWeight -= col.FillWeight;
+					}
+
+					new_widths [i] = width;
+				}
+			} while (fixed_any);
+
+			for (int i = 0; i < columns.Count; i++) {
+				if (Columns [i].InheritedAutoSizeMode != DataGridViewAutoSizeColumnMode.Fill)
+					continue;
+					
+				Columns [i].Width = new_widths [i];
+			}
+		}
+
+		internal void AutoResizeColumnInternal (int columnIndex, DataGridViewAutoSizeColumnMode mode)
+		{
+			// http://msdn2.microsoft.com/en-us/library/ms171605.aspx
+			int size = 0;
+
+			DataGridViewColumn col = Columns [columnIndex];
+			
+			switch (mode) {
+			case DataGridViewAutoSizeColumnMode.Fill:
+				return;
+			case DataGridViewAutoSizeColumnMode.AllCellsExceptHeader:
+			case DataGridViewAutoSizeColumnMode.AllCells:
+			case DataGridViewAutoSizeColumnMode.DisplayedCells:
+			case DataGridViewAutoSizeColumnMode.DisplayedCellsExceptHeader:
+				size  = CalculateColumnCellWidth (columnIndex, col.InheritedAutoSizeMode);
+				break;
+			case DataGridViewAutoSizeColumnMode.ColumnHeader:
+				size = col.HeaderCell.ContentBounds.Width;
+				break;
+			default:
+				size = col.Width;
+				break;
+			}
+
+			if (size < 0)
+				size = 0;
+			if (size < col.MinimumWidth)
+				size = col.MinimumWidth;
+
+			col.Width = size;
+		}
+		
+		internal int CalculateColumnCellWidth (int index, DataGridViewAutoSizeColumnMode mode)
+		{
+			int first_row = 0;
+			int result = 0;
+			bool only_visible = false;
+			
+			if (mode == DataGridViewAutoSizeColumnMode.DisplayedCellsExceptHeader || 
+				mode == DataGridViewAutoSizeColumnMode.AllCellsExceptHeader)
+				first_row++;
+			
+			only_visible = (mode == DataGridViewAutoSizeColumnMode.DisplayedCells || mode == DataGridViewAutoSizeColumnMode.DisplayedCellsExceptHeader);
+			
+			for (int i = first_row; i < Rows.Count; i++) {
+				if (only_visible) {
+					Rectangle row_rect = this.GetRowDisplayRectangle (i, false);
+					if (!ClientRectangle.IntersectsWith (row_rect))
+						continue;
+				}
+				
+				Rectangle cell_rect = GetCellDisplayRectangle (index, i, false);
+				
+				result = Math.Max (result, cell_rect.Width);
+			}
+			
+			return result;
 		}
 
 		private void BindIList (IList list) {

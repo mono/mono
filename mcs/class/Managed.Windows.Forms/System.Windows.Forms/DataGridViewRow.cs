@@ -402,9 +402,14 @@ namespace System.Windows.Forms {
 			}
 			/////// COLUMNAS //////////
 			for (int i = 0; i < values.Length; i++) {
-				DataGridViewCell cell = new DataGridViewTextBoxCell();
+				DataGridViewCell cell;
+				if (cells.Count > i) {
+					cell = cells [i];
+				} else {
+					cell = new DataGridViewTextBoxCell ();
+					cells.Add (cell);
+				}
 				cell.Value = values[i];
-				cells.Add(cell);
 			}
 			
 			// XXX

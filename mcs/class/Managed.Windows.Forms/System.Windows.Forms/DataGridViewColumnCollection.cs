@@ -74,6 +74,7 @@ namespace System.Windows.Forms {
 			dataGridViewColumn.SetIndex(base.List.Count);
 			dataGridViewColumn.SetDataGridView(dataGridView);
 			int result = base.List.Add(dataGridViewColumn);
+			DataGridView.OnColumnAddedInternal (new DataGridViewColumnEventArgs (dataGridViewColumn));
 			OnCollectionChanged(new CollectionChangeEventArgs(CollectionChangeAction.Add, dataGridViewColumn));
 			return result;
 		}

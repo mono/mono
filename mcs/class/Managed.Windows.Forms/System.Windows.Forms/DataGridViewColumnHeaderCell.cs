@@ -105,8 +105,16 @@ namespace System.Windows.Forms {
 		}
 
 		protected override void Paint (Graphics graphics, Rectangle clipBounds, Rectangle cellBounds, int rowIndex, DataGridViewElementStates dataGridViewElementState, object value, object formattedValue, string errorText, DataGridViewCellStyle cellStyle, DataGridViewAdvancedBorderStyle advancedBorderStyle, DataGridViewPaintParts paintParts) {
-			graphics.FillRectangle(new SolidBrush(cellStyle.BackColor), cellBounds);
-			graphics.DrawString((string) formattedValue, cellStyle.Font, new SolidBrush(cellStyle.ForeColor), cellBounds, StringFormat.GenericDefault);
+			graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (cellStyle.BackColor), cellBounds);
+			
+			StringFormat format = cellStyle.SetAlignment ((StringFormat) StringFormat.GenericTypographic.Clone ());
+			Rectangle text_rect = cellBounds;
+			Rectangle borders = BorderWidths (advancedBorderStyle);
+			text_rect.X += borders.X;
+			text_rect.Y += borders.Y;
+			text_rect.Height -= (borders.Y + borders.Height);
+			text_rect.Width -= (borders.X + borders.Width);
+			graphics.DrawString ((string) formattedValue, cellStyle.Font, ThemeEngine.Current.ResPool.GetSolidBrush (cellStyle.ForeColor), text_rect, format);
 			PaintBorder(graphics, clipBounds, cellBounds, cellStyle, advancedBorderStyle);
 		}
 

@@ -319,7 +319,47 @@ namespace System.Windows.Forms {
 				StyleChanged(this, EventArgs.Empty);
 			}
 		}
+			
+		internal StringFormat SetAlignment (StringFormat format)
+		{
+			switch (Alignment) {
+			case DataGridViewContentAlignment.BottomCenter:
+			case DataGridViewContentAlignment.BottomLeft:
+			case DataGridViewContentAlignment.BottomRight:
+				format.LineAlignment = StringAlignment.Near;
+				break;
+			case DataGridViewContentAlignment.MiddleCenter:
+			case DataGridViewContentAlignment.MiddleLeft:
+			case DataGridViewContentAlignment.MiddleRight:
+				format.LineAlignment = StringAlignment.Center;
+				break;
+			case DataGridViewContentAlignment.TopCenter:
+			case DataGridViewContentAlignment.TopLeft:
+			case DataGridViewContentAlignment.TopRight:
+				format.LineAlignment = StringAlignment.Far;
+				break;
+			}
 
+			switch (Alignment) {
+			case DataGridViewContentAlignment.BottomCenter:
+			case DataGridViewContentAlignment.MiddleCenter:
+			case DataGridViewContentAlignment.TopCenter:
+				format.Alignment = StringAlignment.Center;
+				break;
+			case DataGridViewContentAlignment.BottomLeft:
+			case DataGridViewContentAlignment.MiddleLeft:
+			case DataGridViewContentAlignment.TopLeft:
+				format.Alignment = StringAlignment.Near;
+				break;
+
+			case DataGridViewContentAlignment.BottomRight:
+			case DataGridViewContentAlignment.MiddleRight:
+			case DataGridViewContentAlignment.TopRight:
+				format.Alignment = StringAlignment.Far;
+				break;
+			}
+			return format;
+		}
 	}
 
 }

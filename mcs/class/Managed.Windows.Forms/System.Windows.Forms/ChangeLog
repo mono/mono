@@ -1,3 +1,17 @@
+2007-08-01  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* DataGridView.cs: Implemented AutoResizeColumn(s).
+	* DataGridViewCellStyle.cs: Added SetAlignment, fills in a StringFormat
+	  according to the Alignment.
+	* DataGridViewColumnHeaderCell.cs, DataGridViewTextBoxCell.cs:
+	  Implement alignment and padding when painting.
+	* DataGridViewRow.cs: SetValues: Don't create a cell if it already
+	  exists.
+	* DataGridViewCell.cs: Implement BorderWidths in the most primitive
+	  way.
+	* DataGridViewColumnCollection.cs: Raise OnColumnAdded on the DGV when
+	  a column is added.
+
 2007-07-31  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TextBoxBase.cs: Use Control.ExplicitBounds instead of explicit_bounds,

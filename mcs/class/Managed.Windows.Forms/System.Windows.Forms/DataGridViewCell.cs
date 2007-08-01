@@ -774,7 +774,7 @@ namespace System.Windows.Forms {
 
 		protected virtual Rectangle BorderWidths (DataGridViewAdvancedBorderStyle advancedBorderStyle)
 		{
-			throw new NotImplementedException();
+			return new Rectangle (2, 2, 2, 2);
 		}
 
 		protected virtual bool ClickUnsharesRow (DataGridViewCellEventArgs e)
