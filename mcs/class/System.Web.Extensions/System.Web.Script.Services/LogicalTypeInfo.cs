@@ -76,8 +76,11 @@ namespace System.Web.Script.Services
 				}
 
 				if (ScriptMethod.ResponseFormat == ResponseFormat.Xml
-					&& MethodInfo.ReturnType != typeof(void))
-					_xmlSer = new XmlSerializer (MethodInfo.ReturnType);
+					&& MethodInfo.ReturnType != typeof (void)) {
+					Type retType = MethodInfo.ReturnType;
+					if (Type.GetTypeCode (retType) != TypeCode.String || ScriptMethod.XmlSerializeString)
+						_xmlSer = new XmlSerializer (retType);
+				}
 			}
 
 			public void Invoke (IDictionary<string, object> @params, TextWriter writer) {
