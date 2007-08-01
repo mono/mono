@@ -1,4 +1,4 @@
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug_Java</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -101,6 +101,7 @@
     <Compile Include="System.Web.Script.Serialization\JavaScriptConverter.cs" />
     <Compile Include="System.Web.Script.Serialization\JavaScriptSerializer.cs" />
     <Compile Include="System.Web.Script.Serialization\JavaScriptTypeResolver.cs" />
+    <Compile Include="System.Web.Script.Serialization\JSON\CountingTextWriter.cs" />
     <Compile Include="System.Web.Script.Serialization\JSON\JavaScriptConstructor.cs" />
     <Compile Include="System.Web.Script.Serialization\JSON\JavaScriptConvert.cs" />
     <Compile Include="System.Web.Script.Serialization\JSON\JavaScriptParameters.cs" />

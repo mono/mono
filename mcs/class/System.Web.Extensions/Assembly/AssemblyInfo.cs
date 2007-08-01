@@ -66,5 +66,7 @@ using System.Security;
 [assembly: WebResource ("MicrosoftAjaxTimer.js", "application/x-javascript")]
 [assembly: WebResource ("MicrosoftAjaxTimer.debug.js", "application/x-javascript")]
 
+#if !TARGET_JVM
 [assembly: AssemblyDelaySign (true)]
 [assembly: AssemblyKeyFile ("../winfx.pub")]
+#endif
