@@ -91,7 +91,7 @@ namespace Mono.CSharp.Linq
 					Type.FilterName, MethodName);
 
 				method_group = new MethodGroupExpr (ArrayList.Adapter (ml), loc);
-				methods.Add (MethodName, method_group);
+				//methods.Add (MethodName, method_group);
 				return method_group;
 			}
 		}

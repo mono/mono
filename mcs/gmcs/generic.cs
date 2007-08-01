@@ -3,6 +3,7 @@
 //
 // Authors: Martin Baulig (martin@ximian.com)
 //          Miguel de Icaza (miguel@ximian.com)
+//          Marek Safar (marek.safar@gmail.com)
 //
 // Licensed under the terms of the GNU GPL
 //
@@ -2255,88 +2256,6 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		static bool UnifyType (Type pt, Type at, Type[] inferred)
-		{
-			if (pt.IsGenericParameter) {
-				if (pt.DeclaringMethod == null)
-					return pt == at;
-
-				int pos = pt.GenericParameterPosition;
-
-				if (inferred [pos] == null)
-					inferred [pos] = at;
-
-				return inferred [pos] == at;
-			}
-
-			if (!pt.ContainsGenericParameters) {
-				if (at.ContainsGenericParameters)
-					return UnifyType (at, pt, inferred);
-				else
-					return true;
-			}
-
-			if (at.IsArray) {
-				if (pt.IsArray) {
-					if (at.GetArrayRank () != pt.GetArrayRank ())
-						return false;
-
-					return UnifyType (pt.GetElementType (), at.GetElementType (), inferred);
-				}
-
-				if (!pt.IsGenericType)
-					return false;
-
-				Type gt = pt.GetGenericTypeDefinition ();
-				if ((gt != generic_ilist_type) && (gt != generic_icollection_type) &&
-				    (gt != generic_ienumerable_type))
-					return false;
-
-				Type[] args = GetTypeArguments (pt);
-				return UnifyType (args [0], at.GetElementType (), inferred);
-			}
-
-			if (pt.IsArray) {
-				if (!at.IsArray ||
-				    (pt.GetArrayRank () != at.GetArrayRank ()))
-					return false;
-
-				return UnifyType (pt.GetElementType (), at.GetElementType (), inferred);
-			}
-
-			if (pt.IsByRef && at.IsByRef)
-				return UnifyType (pt.GetElementType (), at.GetElementType (), inferred);
-			ArrayList list = new ArrayList ();
-			if (at.IsGenericType)
-				list.Add (at);
-			for (Type bt = at.BaseType; bt != null; bt = bt.BaseType)
-				list.Add (bt);
-
-			list.AddRange (TypeManager.GetInterfaces (at));
-
-			foreach (Type type in list) {
-				if (!type.IsGenericType)
-					continue;
-
-				if (DropGenericTypeArguments (pt) != DropGenericTypeArguments (type))
-					continue;
-
-				if (!UnifyTypes (pt.GetGenericArguments (), type.GetGenericArguments (), inferred))
-					return false;
-			}
-
-			return true;
-		}
-
-		static bool UnifyTypes (Type[] pts, Type [] ats, Type [] inferred)
-		{
-			for (int i = 0; i < ats.Length; i++) {
-				if (!UnifyType (pts [i], ats [i], inferred))
-					return false;
-			}
-			return true;
-		}
-
 		/// <summary>
 		///   Type inference.  Try to infer the type arguments from the params method
 		///   `method', which is invoked with the arguments `arguments'.  This is used
@@ -2383,7 +2302,7 @@ namespace Mono.CSharp {
 				Type pt = pd.ParameterType (i);
 				Type at = a.Type;
 
-				if (!UnifyType (pt, at, inferred_types))
+				if (!TypeInferenceV2.UnifyType (pt, at, inferred_types))
 					return false;
 			}
 
@@ -2395,7 +2314,7 @@ namespace Mono.CSharp {
 				if ((a.Expr is NullLiteral) || (a.Expr is MethodGroupExpr))
 					continue;
 
-				if (!UnifyType (element_type, a.Type, inferred_types))
+				if (!TypeInferenceV2.UnifyType (element_type, a.Type, inferred_types))
 					return false;
 			}
 
@@ -2405,216 +2324,6 @@ namespace Mono.CSharp {
 
 			method = ((MethodInfo)method).MakeGenericMethod (inferred_types);
 			return true;
-		}
-
-		static bool InferTypeArguments (Type[] param_types, Type[] arg_types,
-						Type[] inferred_types)
-		{
-			for (int i = 0; i < arg_types.Length; i++) {
-				if (arg_types [i] == null)
-					continue;
-
-				if (!UnifyType (param_types [i], arg_types [i], inferred_types))
-					return false;
-			}
-
-			for (int i = 0; i < inferred_types.Length; ++i)
-				if (inferred_types [i] == null)
-					return false;
-
-			return true;
-		}
-
-		//
-		// Infers the type of a single LambdaExpression in the invocation call and
-		// stores the infered type in the inferred_types array.
-		//
-		// The index of the arguments that contain lambdas is passed in
-		//
-		// @lambdas.  Merely to avoid rescanning the list.
-		//
-		// The method being called:
-		//   @method_generic_args: The generic type arguments for the method being called
-		//   @method_pd: The ParameterData for the method being called.
-		//
-		// The call site:
-		//   @arguments: Arraylist of Argument()s.  The arguments being passed.
-		//
-		// Returns:
-		//   @inferred_types: the array that is populated with our results.
-		//
-		// true if the code was able to do one inference.
-		//
-		static bool LambdaInfer (EmitContext ec,
-					 Type [] method_generic_args,
-					 ParameterData method_pd,
-					 ArrayList arguments,
-					 Type[] inferred_types,
-					 ArrayList lambdas)
-		{
-			int last_count = lambdas.Count;
-
-			for (int i = 0; i < last_count; i++){
-				int argn = (int) lambdas [i];
-
-				Argument a = (Argument) arguments [argn];
-
-				LambdaExpression le = a.Expr as LambdaExpression;
-
-				if (le == null)
-					throw new Exception (
-					     String.Format ("Internal Compiler error: argument {0} should be a Lambda Expression",
-							    argn));
-							     
-				//
-				// "The corresponding parameter’s type, in the
-				// following called P, is a delegate type with a
-				// return type that involves one or more method type
-				// parameters."
-				//
-				// 
-				if (!TypeManager.IsDelegateType (method_pd.ParameterType (argn)))
-					goto useless_lambda;
-				
-				Type p_type = method_pd.ParameterType (argn);
-				MethodGroupExpr method_group = Expression.MemberLookup (
-					ec.ContainerType, p_type, "Invoke", MemberTypes.Method,
-					Expression.AllBindingFlags, Location.Null) as MethodGroupExpr;
-				
-				if (method_group == null){
-					// This we report elsewhere as -200, but here we can ignore
-					goto useless_lambda;
-				}
-				MethodInfo p_delegate_method = method_group.Methods [0] as MethodInfo;
-				if (p_delegate_method == null){
-					// This should not happen.
-					goto useless_lambda;
-				}
-				
-				Type p_return_type = p_delegate_method.ReturnType;
-				if (!p_return_type.IsGenericParameter)
-					goto useless_lambda;
-				
-				//
-				// P and L have the same number of parameters, and
-				// each parameter in P has the same modifiers as the
-				// corresponding parameter in L, or no modifiers if
-				// L has an implicitly typed parameter list.
-				//
-				ParameterData p_delegate_parameters = TypeManager.GetParameterData (p_delegate_method);
-				int p_delegate_parameter_count = p_delegate_parameters.Count;
-				if (p_delegate_parameter_count != le.Parameters.Count)
-					goto useless_lambda;
-
-				if (le.HasExplicitParameters){
-					for (int j = 0; j < p_delegate_parameter_count; j++){
-						if (p_delegate_parameters.ParameterModifier (j) != 
-						    le.Parameters.ParameterModifier (j))
-							goto useless_lambda;
-					}
-				} else { 
-					for (int j = 0; j < p_delegate_parameter_count; j++)
-						if (le.Parameters.ParameterModifier (j) != Parameter.Modifier.NONE)
-							goto useless_lambda;
-				}
-				
-				//
-				// TODO: P’s parameter types involve no method type
-				// parameters or involve only method type parameters
-				// for which a consistent set of inferences have
-				// already been made.
-				//
-				//Console.WriteLine ("Method: {0}", p_delegate_method);
-				//for (int j = 0; j < p_delegate_parameter_count; j++){
-				//Console.WriteLine ("PType [{2}, {0}] = {1}", j, p_delegate_parameters.ParameterType (j), argn);
-				//}
-				
-				//
-				// At this point we know that P has method type parameters
-				// that involve only type parameters that have a consistent
-				// set of inferences made.
-				//
-				if (le.HasExplicitParameters){
-					//
-					// TODO: If L has an explicitly typed parameter
-					// list, when inferred types are substituted for
-					// method type parameters in P, each parameter in P
-					// has the same type as the corresponding parameter
-					// in L.
-					//
-				} else {
-					//
-					// TODO: If L has an implicitly typed parameter
-					// list, when inferred types are substituted for
-					// method type parameters in P and the resulting
-					// parameter types are given to the parameters of L,
-					// the body of L is a valid expression or statement
-					// block.
-
-					Type [] types = new Type [p_delegate_parameter_count];
-
-					//bool failure = false;
-					for (int j = 0; j < p_delegate_parameter_count; j++){
-						Type p_pt = p_delegate_parameters.ParameterType (j);
-
-						if (!p_pt.IsGenericParameter){
-							types [j] = p_pt;
-							continue;
-						}
-
-						//bool found = false;
-						for (int k = 0; k < method_generic_args.Length; k++){
-							if (method_generic_args [k] == p_pt){
-								types [j] = inferred_types [k];
-								break;
-							}
-						}
-						//
-						// If we could not infer just yet, continue
-						//
-						if (types [j] == null)
-							goto do_continue;
-					}
-
-					//
-					// If it results in a valid expression or statement block
-					//
-					Type lambda_inferred_type = le.TryBuild (ec, types);
-
-					if (lambda_inferred_type != null){
-						//
-						// Success, set the proper inferred_type value to the new type.
-						// return true
-						//
-						for (int k = 0; k < method_generic_args.Length; k++){
-							if (method_generic_args [k] == p_return_type){
-								inferred_types [k] = lambda_inferred_type;
-
-								lambdas.RemoveAt (i);
-								return true;
-							}
-						}
-					}
-				}
-
-			useless_lambda:
-				lambdas.RemoveAt (i);
-				
-			do_continue:
-				;
-			}
-
-#if false
-			Console.WriteLine ("Inferred types");
-			foreach (Type it in inferred_types){
-				Console.WriteLine ("  IT: {0}", it);
-				if (it == null)
-					return false;
-			}
-#endif
-
-			// No inference was made in any of the elements.
-			return false;
 		}
 	
 		/// <summary>
@@ -2630,94 +2339,12 @@ namespace Mono.CSharp {
 			if (!TypeManager.IsGenericMethod (method))
 				return true;
 
-			int arg_count;
-			if (arguments != null)
-				arg_count = arguments.Count;
-			else
-				arg_count = 0;
-
-			ParameterData pd = TypeManager.GetParameterData (method);
-			if (arg_count != pd.Count)
+			ATypeInference ti = ATypeInference.CreateInstance (arguments);
+			Type[] i_args = ti.InferMethodArguments (ec, method);
+			if (i_args == null)
 				return false;
 
-			Type[] method_generic_args = method.GetGenericArguments ();
-
-			bool is_open = false;
-			
-			for (int i = 0; i < method_generic_args.Length; i++) {
-				if (method_generic_args [i].IsGenericParameter) {
-					is_open = true;
-					break;
-				}
-			}
-
-			// If none of the method parameters mention a generic parameter, we can't infer the generic parameters
-			if (!is_open)
-				return !TypeManager.IsGenericMethodDefinition (method);
-
-			Type[] inferred_types = new Type [method_generic_args.Length];
-
-			Type[] param_types = new Type [pd.Count];
-			Type[] arg_types = new Type [pd.Count];
-			ArrayList lambdas = null;
-			
-			for (int i = 0; i < arg_count; i++) {
-				param_types [i] = pd.ParameterType (i);
-
-				Argument a = (Argument) arguments [i];
-				if (a.Expr is NullLiteral || a.Expr is MethodGroupExpr)
-					continue;
-								
-				if (a.Expr is LambdaExpression){
-					if (lambdas == null)
-						lambdas = new ArrayList ();
-					lambdas.Add (i);
-				}
-				else if (a.Expr is AnonymousMethodExpression) {
-					if (RootContext.Version != LanguageVersion.LINQ)
-						continue;
-
-					Type dtype = param_types[i];
-					if (!TypeManager.IsDelegateType (dtype))
-						continue;
-
-					AnonymousMethodExpression am = (AnonymousMethodExpression)a.Expr;
-					Expression e = am.InferTypeArguments (ec, dtype);
-					if (e == null)
-						return false;
-
-					arg_types[i] = e.Type;
-					continue;
-				}
-
-				arg_types [i] = a.Type;
-			}
-
-			if (!InferTypeArguments (param_types, arg_types, inferred_types)){
-				//Console.WriteLine ("InferTypeArgument found {0} lambdas ", lambdas);
-				if (lambdas == null)
-					return false;
-
-				//
-				// While the lambda expressions lead to a valid inference
-				// 
-				int lambda_count;
-				do {
-					lambda_count = lambdas.Count;
-					if (!LambdaInfer (ec, method_generic_args, pd, arguments, inferred_types, lambdas))
-						return false;
-				} while (lambdas.Count != 0 && lambdas.Count != lambda_count);
-			} 
-
-			method = ((MethodInfo)method).MakeGenericMethod (inferred_types);
-
-#if MS_COMPATIBLE
-			// MS implementation throws NotSupportedException for GetParameters
-			// on unbaked generic method
-			ParameterData p = TypeManager.GetParameterData (method);
-			p.InflateTypes (param_types, inferred_types);
-#endif
-
+			method = ((MethodInfo) method).MakeGenericMethod (i_args);
 			return true;
 		}
 
@@ -2730,26 +2357,675 @@ namespace Mono.CSharp {
 			if (!TypeManager.IsGenericMethod (method))
 				return true;
 
-			ParameterData pd = TypeManager.GetParameterData (method);
-			if (apd.Count != pd.Count)
+			ATypeInference ti = ATypeInference.CreateInstance (ArrayList.Adapter (apd.Types));
+			Type[] i_args = ti.InferDelegateArguments (method);
+			if (i_args == null)
 				return false;
 
+			method = ((MethodInfo) method).MakeGenericMethod (i_args);
+			return true;
+		}
+	}
+
+	abstract class ATypeInference
+	{
+		protected readonly ArrayList arguments;
+		protected readonly int arg_count;
+
+		protected ATypeInference (ArrayList arguments)
+		{
+			this.arguments = arguments;
+			if (arguments != null)
+				arg_count = arguments.Count;
+		}
+
+		public static ATypeInference CreateInstance (ArrayList arguments)
+		{
+			if (RootContext.Version == LanguageVersion.LINQ)
+				return new TypeInferenceV3 (arguments);
+
+			return new TypeInferenceV2 (arguments);
+		}
+
+		public abstract Type[] InferMethodArguments (EmitContext ec, MethodBase method);
+		public abstract Type[] InferDelegateArguments (MethodBase method);
+	}
+
+	//
+	// Implements C# 2.0 type inference
+	//
+	class TypeInferenceV2 : ATypeInference
+	{
+		public TypeInferenceV2 (ArrayList arguments)
+			: base (arguments)
+		{
+		}
+
+		public override Type[] InferDelegateArguments (MethodBase method)
+		{
+			ParameterData pd = TypeManager.GetParameterData (method);
+			if (arg_count != pd.Count)
+				return null;
+
 			Type[] method_args = method.GetGenericArguments ();
-			Type[] inferred_types = new Type [method_args.Length];
+			Type[] inferred_types = new Type[method_args.Length];
 
-			Type[] param_types = new Type [pd.Count];
-			Type[] arg_types = new Type [pd.Count];
+			Type[] param_types = new Type[pd.Count];
+			Type[] arg_types = (Type[])arguments.ToArray (typeof (Type));
 
-			for (int i = 0; i < apd.Count; i++) {
-				param_types [i] = pd.ParameterType (i);
-				arg_types [i] = apd.ParameterType (i);
+			for (int i = 0; i < arg_count; i++) {
+				param_types[i] = pd.ParameterType (i);
 			}
 
 			if (!InferTypeArguments (param_types, arg_types, inferred_types))
+				return null;
+
+			return inferred_types;
+		}
+
+		public override Type[] InferMethodArguments (EmitContext ec, MethodBase method)
+		{
+			ParameterData pd = TypeManager.GetParameterData (method);
+			if (arg_count != pd.Count)
+				return null;
+
+			Type[] method_generic_args = method.GetGenericArguments ();
+			Type[] arg_types = new Type[pd.Count];
+			for (int i = 0; i < arg_count; i++) {
+				Argument a = (Argument) arguments[i];
+				if (a.Expr is NullLiteral || a.Expr is MethodGroupExpr || a.Expr is AnonymousMethodExpression)
+					continue;
+
+				arg_types[i] = a.Type;
+			}
+
+			Type[] inferred_types = new Type [method_generic_args.Length];
+			if (!InferTypeArguments (pd.Types, arg_types, inferred_types))
+				return null;
+
+			return inferred_types;
+		}
+
+		static bool InferTypeArguments (Type[] param_types, Type[] arg_types,
+				Type[] inferred_types)
+		{
+			for (int i = 0; i < arg_types.Length; i++) {
+				if (arg_types[i] == null)
+					continue;
+
+				if (!UnifyType (param_types[i], arg_types[i], inferred_types))
+					return false;
+			}
+
+			for (int i = 0; i < inferred_types.Length; ++i)
+				if (inferred_types[i] == null)
+					return false;
+
+			return true;
+		}
+
+		public static bool UnifyType (Type pt, Type at, Type[] inferred)
+		{
+			if (pt.IsGenericParameter) {
+				if (pt.DeclaringMethod == null)
+					return pt == at;
+
+				int pos = pt.GenericParameterPosition;
+
+				if (inferred [pos] == null)
+					inferred [pos] = at;
+
+				return inferred [pos] == at;
+			}
+
+			if (!pt.ContainsGenericParameters) {
+				if (at.ContainsGenericParameters)
+					return UnifyType (at, pt, inferred);
+				else
+					return true;
+			}
+
+			if (at.IsArray) {
+				if (pt.IsArray) {
+					if (at.GetArrayRank () != pt.GetArrayRank ())
+						return false;
+
+					return UnifyType (pt.GetElementType (), at.GetElementType (), inferred);
+				}
+
+				if (!pt.IsGenericType)
+					return false;
+
+				Type gt = pt.GetGenericTypeDefinition ();
+				if ((gt != TypeManager.generic_ilist_type) && (gt != TypeManager.generic_icollection_type) &&
+					(gt != TypeManager.generic_ienumerable_type))
+					return false;
+
+				Type[] args = TypeManager.GetTypeArguments (pt);
+				return UnifyType (args[0], at.GetElementType (), inferred);
+			}
+
+			if (pt.IsArray) {
+				if (!at.IsArray ||
+					(pt.GetArrayRank () != at.GetArrayRank ()))
+					return false;
+
+				return UnifyType (pt.GetElementType (), at.GetElementType (), inferred);
+			}
+
+			if (pt.IsByRef && at.IsByRef)
+				return UnifyType (pt.GetElementType (), at.GetElementType (), inferred);
+			ArrayList list = new ArrayList ();
+			if (at.IsGenericType)
+				list.Add (at);
+			for (Type bt = at.BaseType; bt != null; bt = bt.BaseType)
+				list.Add (bt);
+
+			list.AddRange (TypeManager.GetInterfaces (at));
+
+			foreach (Type type in list) {
+				if (!type.IsGenericType)
+					continue;
+
+				if (TypeManager.DropGenericTypeArguments (pt) != TypeManager.DropGenericTypeArguments (type))
+					continue;
+
+				if (!UnifyTypes (pt.GetGenericArguments (), type.GetGenericArguments (), inferred))
+					return false;
+			}
+
+			return true;
+		}
+
+		static bool UnifyTypes (Type[] pts, Type[] ats, Type[] inferred)
+		{
+			for (int i = 0; i < ats.Length; i++) {
+				if (!UnifyType (pts [i], ats [i], inferred))
+					return false;
+			}
+			return true;
+		}
+	}
+
+	//
+	// Implements C# 3.0 type inference
+	//
+	class TypeInferenceV3 : ATypeInference
+	{
+		public TypeInferenceV3 (ArrayList arguments)
+			: base (arguments)
+		{
+		}
+
+		public override Type[] InferDelegateArguments (MethodBase method)
+		{
+			ParameterData pd = TypeManager.GetParameterData (method);
+			if (arg_count != pd.Count)
+				return null;
+
+			Type[] d_gargs = method.GetGenericArguments ();
+			TypeInferenceContext context = new TypeInferenceContext (d_gargs);
+
+			// A lower-bound inference is made from each argument type Uj of D
+			// to the corresponding parameter type Tj of M
+			for (int i = 0; i < arg_count; ++i) {
+				Type t = pd.Types [i];
+				if (!t.IsGenericParameter)
+					continue;
+
+				context.LowerBoundInference ((Type)arguments[i], t);
+			}
+
+			if (!context.FixAllTypes ())
+				return null;
+
+			return context.InferredTypeArguments;
+		}
+
+		public override Type[] InferMethodArguments (EmitContext ec, MethodBase method)
+		{
+			ParameterData pd = TypeManager.GetParameterData (method);
+			if (arg_count != pd.Count)
+				return null;
+
+			Type[] method_generic_args = method.GetGenericArguments ();
+			TypeInferenceContext context = new TypeInferenceContext (method_generic_args);
+			if (!InferInPhases (ec, context, pd))
+				return null;
+
+			return context.InferredTypeArguments;
+		}
+
+		//
+		// Implements method type arguments inference
+		//
+		bool InferInPhases (EmitContext ec, TypeInferenceContext tic, ParameterData methodParameters)
+		{
+			//
+			// The first inference phase
+			//
+			for (int i = 0; i < arg_count; i++) {
+				Type method_parameter = methodParameters.ParameterType (i);
+
+				Argument a = (Argument) arguments[i];
+
+				//
+				// When a lambda expression, an anonymous method
+				// is used an explicit argument type inference takes a place
+				//
+				AnonymousMethodExpression am = a.Expr as AnonymousMethodExpression;
+				if (am != null) {
+					am.ExplicitTypeInference (tic, method_parameter);
+					continue;
+				}
+
+				if (a.Expr.Type == TypeManager.null_type)
+					continue;
+
+				//
+				// Otherwise an output type inference is made
+				//
+				tic.OutputTypeInference (ec, a.Expr, method_parameter);
+			}
+
+			//
+			// Part of the second phase but because it happens only once
+			// we don't need to call it in cycle
+			//
+			bool fixed_any = false;
+			if (!tic.FixIndependentTypeArguments (methodParameters, ref fixed_any))
 				return false;
 
-			method = ((MethodInfo)method).MakeGenericMethod (inferred_types);
+			return DoSecondPhase (ec, tic, methodParameters, !fixed_any);
+		}
+
+		bool DoSecondPhase (EmitContext ec, TypeInferenceContext tic, ParameterData methodParameters, bool fixDependent)
+		{
+			bool fixed_any = false;
+			if (fixDependent && !tic.FixDependentTypes (methodParameters, ref fixed_any))
+				return false;
+
+			// If no further unfixed type variables exist, type inference succeeds
+			if (!tic.UnfixedVariableExists)
+				return true;
+
+			if (!fixed_any && fixDependent)
+				return false;
+
+			// For all arguments where the corresponding argument output types
+			// contain unfixed type variables but the input types do not,
+			// an output type inference is made
+			for (int i = 0; i < arg_count; i++) {
+				Type t_i = methodParameters.ParameterType (i);
+				if (!TypeManager.IsDelegateType (t_i))
+					continue;
+
+				MethodInfo mi = Delegate.GetInvokeMethod (t_i, t_i);
+				Type rtype = mi.ReturnType;
+
+#if MS_COMPATIBLE
+				// Blablabla, because reflection does not work with dynamic types
+				Type[] g_args = t_i.GetGenericArguments ();
+				rtype = g_args[rtype.GenericParameterPosition];
+#endif
+
+				if (!rtype.IsGenericParameter)
+					continue;
+
+				if (tic.IsUnfixed (rtype) < 0)
+					continue;
+
+				ParameterData d_parameters = TypeManager.GetParameterData (mi);
+				bool all_params_fixed = true;
+				foreach (Type t in d_parameters.Types) {
+					if (!t.IsGenericParameter)
+						continue;
+
+					if (tic.IsUnfixed (t) >= 0) {
+						all_params_fixed = false;
+						break;
+					}
+				}
+
+				if (all_params_fixed)
+					tic.OutputTypeInference (ec, ((Argument) arguments[i]).Expr, t_i);
+			}
+
+
+			return DoSecondPhase (ec, tic, methodParameters, true);
+		}
+	}
+
+	public class TypeInferenceContext
+	{
+		readonly Type[] unfixed_types;
+		readonly Type[] fixed_types;
+		readonly ArrayList[] bounds;
+
+		public TypeInferenceContext (Type[] typeArguments)
+		{
+			if (typeArguments.Length == 0)
+				throw new ArgumentException ("Empty generic arguments");
+
+			unfixed_types = new Type[typeArguments.Length];
+			Array.Copy (typeArguments, unfixed_types, unfixed_types.Length);
+			bounds = new ArrayList[typeArguments.Length];
+			fixed_types = new Type[typeArguments.Length];
+		}
+
+		public Type[] InferredTypeArguments {
+			get {
+				return fixed_types;
+			}
+		}
+
+		void AddToBounds (Type t, int index)
+		{
+			ArrayList a = bounds[index];
+			if (a == null) {
+				a = new ArrayList ();
+				a.Add (t);
+				bounds[index] = a;
+				return;
+			}
+
+			if (a.Contains (t))
+				return;
+
+			a.Add (t);
+		}
+
+		//
+		// 26.3.3.8 Exact Inference
+		//
+		public void ExactInference (Type u, Type v)
+		{
+			// If V is an array type
+			if (v.IsArray) {
+				if (!u.IsArray)
+					return;
+
+				if (u.GetArrayRank () != v.GetArrayRank ())
+					return;
+
+				ExactInference (TypeManager.GetElementType (u), TypeManager.GetElementType (v));
+				return;
+			}
+
+			// If V is constructed type and U is constructed type
+			if (v.IsGenericType && !v.IsGenericTypeDefinition) {
+				if (!u.IsGenericType)
+					return;
+
+				Type [] ga_u = u.GetGenericArguments ();
+				Type [] ga_v = v.GetGenericArguments ();
+				if (ga_u.Length != ga_v.Length)
+					return;
+
+				for (int i = 0; i < ga_u.Length; ++i)
+					ExactInference (ga_u [i], ga_v [i]);
+
+				return;
+			}
+
+			// If V is one of the unfixed type arguments
+			int pos = IsUnfixed (v);
+			if (pos == -1)
+				return;
+
+			AddToBounds (u, pos);
+		}
+
+		public bool FixAllTypes ()
+		{
+			for (int i = 0; i < unfixed_types.Length; ++i) {
+				if (!FixType (i))
+					return false;
+			}
 			return true;
+		}
+
+		//
+		// All unfixed type variables Xi are fixed for which all of the following hold:
+		// a, There is at least one type variable Xj that depends on Xi
+		// b, Xi has a non-empty set of bounds
+		// 
+		public bool FixDependentTypes (ParameterData methodParameters, ref bool fixed_any)
+		{
+			for (int i = 0; i < unfixed_types.Length; ++i) {
+				if (unfixed_types[i] == null)
+					continue;
+
+				if (bounds[i] == null)
+					continue;
+
+				if (!FixType (i))
+					return false;
+				fixed_any = true;
+			}
+			return true;
+		}
+
+		//
+		// All unfixed type variables Xi which depend on no Xj are fixed
+		//
+		public bool FixIndependentTypeArguments (ParameterData methodParameters, ref bool fixed_any)
+		{
+			ArrayList types_to_fix = new ArrayList (unfixed_types);
+			foreach (Type t in methodParameters.Types) {
+				if (t.IsGenericParameter)
+					continue;
+
+				if (!TypeManager.IsDelegateType (t))
+					continue;
+
+				MethodInfo invoke = Delegate.GetInvokeMethod (t, t);
+				Type rtype = invoke.ReturnType;
+				if (!rtype.IsGenericParameter)
+					continue;
+
+#if MS_COMPATIBLE
+				// Blablabla, because reflection does not work with dynamic types
+				Type [] g_args = t.GetGenericArguments ();
+				if (!rtype.IsGenericParameter)
+					continue;
+
+				rtype = g_args [rtype.GenericParameterPosition];
+#endif
+				if (rtype.IsGenericParameter)
+					types_to_fix [rtype.GenericParameterPosition] = null;
+			}
+
+			foreach (Type t in types_to_fix) {
+				if (t == null)
+					continue;
+
+				if (!FixType (IsUnfixed (t)))
+					return false;
+			}
+
+			fixed_any = types_to_fix.Count > 0;
+			return true;
+		}
+
+		//
+		// 26.3.3.10 Fixing
+		//
+		public bool FixType (int i)
+		{
+			// It's already fixed
+			if (unfixed_types[i] == null)
+				throw new InternalErrorException ("Type argument has been already fixed");
+
+			ArrayList candidates = (ArrayList)bounds [i];
+			if (candidates == null)
+				return false;
+
+			if (candidates.Count == 1) {
+				unfixed_types[i] = null;
+				fixed_types[i] = (Type)candidates[0];
+				return true;
+			}
+
+			// TODO: Review, I think it is still wrong
+			Type best_candidate = null;
+			for (int ci = 0; ci < candidates.Count; ++ci) {
+				TypeExpr candidate = new TypeExpression ((Type)candidates[ci], Location.Null);
+				bool failed = false;
+				for (int cii = 0; cii < candidates.Count; ++cii) {
+					if (cii == ci)
+						continue;
+
+					if (!Convert.ImplicitStandardConversionExists (candidate, (Type)candidates[cii])) {
+						failed = true;
+					}
+				}
+
+				if (failed)
+					continue;
+
+				if (best_candidate != null)
+					return false;
+
+				best_candidate = candidate.Type;
+			}
+
+			if (best_candidate == null)
+				return false;
+
+			unfixed_types[i] = null;
+			fixed_types[i] = best_candidate;
+			return true;
+		}
+
+		public int IsUnfixed (Type type)
+		{
+			if (!type.IsGenericParameter)
+				return -1;
+
+			//return unfixed_types[type.GenericParameterPosition] != null;
+			for (int i = 0; i < unfixed_types.Length; ++i) {
+				if (unfixed_types [i] == type)
+					return i;
+			}
+
+			return -1;
+		}
+
+		//
+		// 26.3.3.9 Lower-bound Inference
+		//
+		public void LowerBoundInference (Type u, Type v)
+		{
+			// If U is an array type
+			if (u.IsArray) {
+				int u_dim = u.GetArrayRank ();
+				Type v_e;
+				Type u_e = TypeManager.GetElementType (u);
+
+				if (v.IsArray) {
+					if (u_dim != v.GetArrayRank ())
+						return;
+
+					v_e = TypeManager.GetElementType (v);
+
+					if (u.IsByRef) {
+						LowerBoundInference (u_e, v_e);
+						return;
+					}
+					ExactInference (u_e, v_e);
+					return;
+				}
+
+				if (u_dim != 1)
+					return;
+
+				Type g_v = v.GetGenericTypeDefinition ();
+				if ((g_v != TypeManager.generic_ilist_type) && (g_v != TypeManager.generic_icollection_type) &&
+					(g_v != TypeManager.generic_ienumerable_type))
+					return;
+
+				v_e = TypeManager.GetTypeArguments (v)[0];
+
+				if (u.IsByRef) {
+					LowerBoundInference (u_e, v_e);
+					return;
+				}
+				ExactInference (u_e, v_e);
+				return;
+			}
+
+			// If V is a constructed type C<V1..Vk>
+			if (v.IsGenericType && !v.IsGenericTypeDefinition) {
+				Type[] ga_u = u.GetGenericArguments ();
+				Type[] ga_v = v.GetGenericArguments ();
+				if (ga_u.Length != ga_v.Length)
+					return;
+
+				v = v.GetGenericTypeDefinition ().MakeGenericType (ga_u);
+
+				// And standard implicit conversion exists from U to C<U1..Uk>
+				if (!Convert.ImplicitStandardConversionExists (new TypeExpression (u, Location.Null), v))
+					return;
+
+				for (int i = 0; i < ga_u.Length; ++i)
+					ExactInference (ga_u[i], ga_v[i]);
+
+				return;
+			}
+
+			// Remove ref, out modifiers
+			if (v.HasElementType)
+				v = v.GetElementType ();
+
+			// If V is one of the unfixed type arguments
+			int pos = IsUnfixed (v);
+			if (pos == -1)
+				return;
+
+			AddToBounds (u, pos);
+		}
+
+		//
+		// 26.3.3.6 Output Type Inference
+		//
+		public void OutputTypeInference (EmitContext ec, Expression e, Type t)
+		{
+			// If e is a lambda or anonymous method with inferred return type
+			AnonymousMethodExpression ame = e as AnonymousMethodExpression;
+			if (ame != null) {
+				Type rt = ame.InferReturnType (ec, this, t);
+				if (rt != null) {
+					MethodInfo invoke = Delegate.GetInvokeMethod (t, t);
+					Type rtype = invoke.ReturnType;
+#if MS_COMPATIBLE
+					// Blablabla, because reflection does not work with dynamic types
+					Type [] g_args = t.GetGenericArguments ();
+					rtype = g_args [rtype.GenericParameterPosition];
+#endif
+					LowerBoundInference (rt, rtype);
+				}
+				return;
+			}
+
+			if (e is MethodGroupExpr) {
+				throw new NotImplementedException ();
+			}
+
+			//
+			// if e is an expression with type U, then
+			// a lower-bound inference is made from U for T
+			//
+			LowerBoundInference (e.Type, t);
+		}
+
+		public bool UnfixedVariableExists {
+			get {
+				foreach (Type ut in unfixed_types)
+					if (ut != null)
+						return true;
+				return false;
+			}
 		}
 	}
 

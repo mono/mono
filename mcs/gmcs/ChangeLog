@@ -1,3 +1,13 @@
+2007-08-01  Marek Safar  <marek.safar@gmail.com>
+
+	** C# 3.0 Type Inference (major bits are working)
+	
+	* generic.cs: Introduced new abstract class as an entry point to type
+	inference. Old type inference moved to TypeInferenceV2. Implemented C# 3.0
+	type inference as descibed in the standard in TypeInferenceV2 class.
+	
+	* linq.cs (ALinqExpression): Disabled caching because it's wrong.
+	
 2007-07-25  Jb Evain  <jbevain@novell.com>
 
 	* Makefile: don't install on net_2_1.
