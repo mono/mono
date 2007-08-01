@@ -1,3 +1,24 @@
+2007-08-01  Martin Baulig  <martin@ximian.com>
+
+	Merged the `debugger-dublin' branch.
+
+	* debug-debugger.h (MonoDebuggerInfo):
+	Removed the `old_*' compatibility entries.
+	Added `debugger_version' and `data_table'.
+	Renamed `get_method_addr_or_bpt' -> `insert_breakpoint'.
+	Renamed `remove_method_breakpoint' -> `remove_breakpoint'.
+
+	* debug-mini.c
+	(MiniDebugMethodBreakpointInfo): Add `address_list'.
+	(mono_debugger_check_breakpoints): Take a `MonoDebugMethodAddress *'
+	instead of a `gconstpointer'.
+	(mono_debugger_insert_method_breakpoint): Return a
+	`MonoDebugMethodAddressList *'.
+
+2007-06-28  Martin Baulig  <martin@ximian.com>
+
+	* debug-debugger.h (MonoDebuggerInfo): Added `debugger_version'.
+
 2007-08-01  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-amd64.h (MONO_INIT_CONTEXT_FROM_FUNC): Avoid using 
