@@ -3,11 +3,13 @@
 //
 // Authors:
 //   Jonathan Pryor (jonpryor@vt.edu)
+//   Atsushi Enomoto (atsushi@ximian.com)
 //
 // Comments from John R. Hicks <angryjohn69@nc.rr.com> original implementation 
 // can be found at: /mcs/docs/apidocs/xml/en/System.Diagnostics
 //
 // (C) 2002 Jonathan Pryor
+// (C) 2007 Novell, Inc.
 //
 
 //
