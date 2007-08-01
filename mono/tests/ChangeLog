@@ -1,3 +1,8 @@
+2007-08-01  William Holmes  <billholmes54@gmail.com>
+
+	* Makefile.am: Added bug-82194.2.cs.
+	* bug-82194.2.cs: Test for bug #82194.
+
 2007-07-26  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* Makefile.am: Added enum_types.il.
