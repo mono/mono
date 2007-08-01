@@ -72,13 +72,11 @@ namespace System.ComponentModel
 			set { support_cancel = value; }
 		}
 
-		//[MonoTODO ("What should happen when IsBusy != true?")]
 		public void CancelAsync ()
 		{
 			if (!support_cancel)
 				throw new InvalidOperationException ("This background worker does not support cancellation.");
 
-			// FIXME: verify the expected behavior
 			if (!IsBusy)
 				return;
 
@@ -99,7 +97,6 @@ namespace System.ComponentModel
 			ReportProgress (percentProgress, null);
 		}
 
-		[MonoTODO ("What should happen when IsBusy != true?")]
 		public void ReportProgress (int percentProgress, object userState)
 		{
 			if (!WorkerReportsProgress)

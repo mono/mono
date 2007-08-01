@@ -1,3 +1,7 @@
+2007-08-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* BackgroundWorker.cs : remove extra MonoTODOs.
+
 2007-07-21  Gert Driesen  <drieseng@users.souceforge.net>
 
 	* DisplayNameAttribute.cs: To match MS, do not change null DisplayName

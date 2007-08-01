@@ -1,3 +1,7 @@
+2007-08-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* BackgroundWorkerTest.cs : new test to clear some doubts on impl.
+
 2007-07-21  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DisplayNameAttribute.cs: Added ctor tests. Fixed tests to pass on
