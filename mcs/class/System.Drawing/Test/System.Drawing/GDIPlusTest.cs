@@ -106,6 +106,23 @@ namespace MonoTests.System.Drawing {
 			Assert.AreEqual (Status.Ok, GDIPlus.GdipDeleteFontFamily (font_family), "second");
 		}
 
+		[Test]
+		public void CloneFontFamily ()
+		{
+			IntPtr font_family = IntPtr.Zero;
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipCloneFontFamily (IntPtr.Zero, out font_family), "GdipCloneFontFamily(null)");
+
+			GDIPlus.GdipCreateFontFamilyFromName ("Arial", IntPtr.Zero, out font_family);
+			if (font_family != IntPtr.Zero) {
+				IntPtr clone;
+				Assert.AreEqual (Status.Ok, GDIPlus.GdipCloneFontFamily (font_family, out clone), "GdipCloneFontFamily(arial)");
+				Assert.IsTrue (clone != IntPtr.Zero, "clone");
+				Assert.AreEqual (Status.Ok, GDIPlus.GdipDeleteFontFamily (font_family), "GdipDeleteFontFamily(arial)");
+				Assert.AreEqual (Status.Ok, GDIPlus.GdipDeleteFontFamily (clone), "GdipDeleteFontFamily(clone)");
+			} else
+				Assert.Ignore ("Arial isn't available on this platform");
+		}
+
 		// Font
 		[Test]
 		public void CreateFont ()

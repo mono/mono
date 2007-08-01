@@ -1,3 +1,7 @@
+2007-08-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* GDIPlusTest.cs: Add test case for GdipCloneFontFamily
+
 2007-07-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TextureBrushTest.cs: Added test cases for textures using alpha 
