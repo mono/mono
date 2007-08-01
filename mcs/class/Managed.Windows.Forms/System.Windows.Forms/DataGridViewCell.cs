@@ -45,7 +45,6 @@ namespace System.Windows.Forms {
 		private object defaultNewRowValue;
 		private bool displayed;
 		private object editedFormattedValue;
-		private Type editType;
 		private Rectangle errorIconBounds;
 		private string errorText;
 		private Type formattedValueType;
@@ -128,7 +127,9 @@ namespace System.Windows.Forms {
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public virtual Type EditType {
-			get { return editType; }
+			get {
+				return typeof (DataGridViewTextBoxEditingControl);
+			}
 		}
 
 		[Browsable (false)]
@@ -365,7 +366,6 @@ namespace System.Windows.Forms {
 			result.defaultNewRowValue = this.defaultNewRowValue;
 			result.displayed = this.displayed;
 			result.editedFormattedValue = this.editedFormattedValue;
-			result.editType = this.editType;
 			result.errorIconBounds = this.errorIconBounds;
 			result.errorText = this.errorText;
 			result.formattedValueType = this.formattedValueType;

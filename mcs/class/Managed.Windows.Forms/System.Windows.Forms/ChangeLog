@@ -1,3 +1,8 @@
+2007-08-01  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* DataGridViewCell.cs: EditType: returns
+	  DataGridViewTextBoxEditingControl always.
+
 2007-08-01  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TextRenderer.cs: Remove the LineLimit string format flag from the
