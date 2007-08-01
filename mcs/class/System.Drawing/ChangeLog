@@ -1,3 +1,7 @@
+2007-08-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* nunit-host-ignore-list: Update bots name changes.
+
 2007-05-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Makefile: Add an interlaced GIF test file to the dist.
