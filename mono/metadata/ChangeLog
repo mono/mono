@@ -1,3 +1,26 @@
+2007-07-30  Martin Baulig  <martin@ximian.com>
+
+	Merged the `debugger-dublin' branch.
+
+	* mono-debug.h
+	(MonoDebugDataTable): New typedef.
+	(MonoDebugMethodAddressList): New typedef.
+	(MonoDebugWrapperData): Removed.
+	(MonoDebugSymbolTable): Removed `current_data_table',
+	`current_data_table_size', `current_data_table_offset'.
+	(MonoDebugDataItemType): Moved into mono-debug.c.
+	(MonoDebugMethodJitInfo): Remove `address'.
+	(mono_debug_data_table): New global variable.
+	(mono_debug_lookup_method_addresses): New public function.
+	(mono_debug_find_method): Take a `MonoMethod *', not a
+	`MonoDebugMethodInfo *'.
+
+	* mono-debug.c: Drop support for the old symbol tables.
+
+2007-06-28  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.c (mono_debug_debugger_version): New public variable.
+
 2007-07-31  William Holmes  <billholmes54@gmail.com>
 
 	* metadata.c Changed mono_type_create_from_typespec to not insert
