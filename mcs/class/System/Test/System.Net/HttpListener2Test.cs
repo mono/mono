@@ -459,10 +459,6 @@ namespace MonoTests.System.Net {
 				NetworkStream ns = CreateNS (9000);
 				Send (ns, "GET /ReceiveCookie/ HTTP/1.1\r\nHost: 127.0.0.1\r\n\r\n");
 				cookieResponse = Receive (ns, 512);
-				FileStream fs = new FileStream ("/home/rodrigo/dump", FileMode.OpenOrCreate, FileAccess.ReadWrite);
-				StreamWriter sw = new StreamWriter (fs);
-				sw.WriteLine ("cookies: "+cookieResponse);
-				sw.Close ();
 			}
 		}
 

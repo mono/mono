@@ -1,4 +1,8 @@
-2006-07-17  Rodrigo Kumpera  <rkumpera@novell.com>
+2007-08-01  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* HttpListener2Test.cs: Fixed Cookie Test 
+
+2007-07-17  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* HttpListener2Test.cs: Tests for cookie receiving and sending, related to bug #81627
 
