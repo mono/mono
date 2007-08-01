@@ -1,3 +1,14 @@
+2007-08-01  Dick Porter  <dick@ximian.com>
+
+	* io-portability.c (_wapi_io_scandir): Special-case patterns
+	ending in '.*' so that files with no extension are also matched.
+	Fixes bug 82212.
+
+	* wapi_glob.h: 
+	* wapi_glob.c: Reinstate WAPI_GLOB_APPEND, and add
+	WAPI_GLOB_UNIQUE to avoid matching the same entry twice when
+	appending.
+
 2007-07-26  Dick Porter  <dick@ximian.com>
 
 	* handles-private.h: 
