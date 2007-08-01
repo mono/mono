@@ -1,3 +1,8 @@
+2007-08-01  Dick Porter  <dick@ximian.com>
+
+	* file-io.c (convert_share): Test FileShare values bit-by-bit.
+	Fixes bug 79250 yet again.
+
 2007-07-30  Martin Baulig  <martin@ximian.com>
 
 	Merged the `debugger-dublin' branch.
