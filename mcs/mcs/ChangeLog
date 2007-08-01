@@ -1,5 +1,55 @@
 2007-08-01  Marek Safar  <marek.safar@gmail.com>
 
+	** C# 3.0 Type Inference (major bits are working)
+	
+	* anonymous.cs (AnonymousMethodExpression): Removed refactored fields.
+	(.ImplicitStandardConversionExists): Uses compatible.
+	(.ExplicitTypeInference): Infers type arguments based on explicit arguments
+	(.InferReturnType): New method.
+	(.Compatible): Refactored.
+	(.ResolveParameters): Uses factory to create resolved parameters.
+	(.CompatibleMethod): Add probing mode support.
+	(AnonymousContainer): Removed unused fields. Split Define and Resolve to
+	clearly distinguish between 2 different operations.
+	(LambdaMethod): Moved to lambda.cs.
+	(AnonymousMethod): Removed unused fields and methods.
+	(AnonymousDelegate): Simplified.
+	
+	* codegen.cs (ResolveTopBlock): Updated renamed Resolve to Define.
+	
+	* convert. cs (ImplicitConversionStandard): Compatible works differently.
+	
+	* delegate.cs (Delegate): New mehods to reduce code duplication.
+	(.GetConstructor): New method.
+	(.GetInvokeMethod): New method.
+	(DelegateCreation): Updated.
+	
+	* ecore.cs (ResolveOverloadExtensions): Don't crash when extension method
+	does not exist.
+	(OverloadResolve): Made probing little bit faster.
+	
+	* expression.cs (ParameterReference.DoResolveLValue): Reference can be null
+	when probing is on.
+	
+	* generic.cs (TypeInferenceContext): Dummy implementation.
+	
+	* iterators.cs: Updated after Resolve/Define rename.
+	
+	* lambda.cs (LambdaExpression)
+	(.ResolveParameters): Handles both type of arguments and type inference too.
+	
+	* parameter.cs (ImplicitLambdaParameter.Resolve): Sanity check.
+	(InflateTypes): Updated.
+	
+	* support.cs (InflateTypes): Changed signature and updated.
+	
+	* typemanager.cs (LookupMemberCache): Better dynamic type check.
+	(MemberLookup_FindMembers): More MS tricks.
+	(GetParameterData): Ditto.
+	(GetDelegateParameters): Uses quick path for dynamic types.
+	
+2007-08-01  Marek Safar  <marek.safar@gmail.com>
+
 	* class.cs (MethodData.Define): EmitContext is required for generic stuff
 	only.
 

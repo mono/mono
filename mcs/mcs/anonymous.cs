@@ -3,6 +3,7 @@
 //
 // Author:
 //   Miguel de Icaza (miguel@ximain.com)
+//   Marek Safar (marek.safar@gmail.com)
 //
 // (C) 2003, 2004 Novell, Inc.
 //
@@ -205,7 +206,7 @@ namespace Mono.CSharp {
 						      toplevel.RootScope.GenericMethod);
 
 			Report.Debug (128, "CREATE SCOPE #1", ac, ac.Host, ac.Scope, ac.Block,
-				      ac.Container, ac.ContainerAnonymousMethod,
+				      ac.Container,
 				      ac.Location);
 
 			Block b;
@@ -1064,7 +1065,6 @@ namespace Mono.CSharp {
 		public readonly Parameters Parameters;
 
 		public ToplevelBlock Block;
-		protected AnonymousMethod anonymous;
 
 		protected Block container;
 		protected readonly GenericMethod generic;
@@ -1075,10 +1075,6 @@ namespace Mono.CSharp {
 
 		public GenericMethod GenericMethod {
 			get { return generic; }
-		}
-
-		public AnonymousMethod AnonymousMethod {
-			get { return anonymous; }
 		}
 
 		public RootScopeInfo RootScope {
@@ -1151,24 +1147,16 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public virtual bool ImplicitStandardConversionExists (Type delegate_type)
+		//
+		// Returns true if the body of lambda expression can be implicitly
+		// converted to the delegate of type `delegate_type'
+		//
+		public bool ImplicitStandardConversionExists (Type delegate_type)
 		{
-			if (Parameters == null)
-				return true;
-
-			MethodGroupExpr invoke_mg = Delegate.GetInvokeMethod (
-				Host.TypeBuilder, delegate_type, loc);
-			MethodInfo invoke_mb = (MethodInfo) invoke_mg.Methods [0];
-			ParameterData invoke_pd = TypeManager.GetParameterData (invoke_mb);
-
-			if (Parameters.Count != invoke_pd.Count)
-				return false;
-
-			for (int i = 0; i < Parameters.Count; ++i) {
-				if (invoke_pd.ParameterType (i) != Parameters.ParameterType (i))
-					return false;
+			EmitContext ec = EmitContext.TempEc;
+			using (ec.Set (EmitContext.Flags.ProbingMode)) {
+				return Compatible (ec, delegate_type) != null;
 			}
-			return true;
 		}
 
 		protected Expression CompatibleChecks (EmitContext ec, Type delegate_type)
@@ -1190,10 +1178,23 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		protected bool VerifyParameterCompatibility (Type delegate_type, ParameterData invoke_pd, bool showErrors)
+		protected bool VerifyExplicitParameters (Type delegateType, ParameterData parameters, bool ignoreError)
+		{
+			if (VerifyParameterCompatibility (delegateType, parameters, ignoreError))
+				return true;
+
+			if (!ignoreError)
+				Report.Error (1661, loc,
+					"Cannot convert `{0}' to delegate type `{1}' since there is a parameter mismatch",
+					GetSignatureForError (), TypeManager.CSharpName (delegateType));
+
+			return false;
+		}
+
+		bool VerifyParameterCompatibility (Type delegate_type, ParameterData invoke_pd, bool ignoreErrors)
 		{
 			if (Parameters.Count != invoke_pd.Count) {
-				if (!showErrors)
+				if (ignoreErrors)
 					return false;
 				
 				Report.SymbolRelatedToPreviousError (delegate_type);
@@ -1202,14 +1203,11 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			if (!HasExplicitParameters)
-				return true;
-
 			bool error = false;
 			for (int i = 0; i < Parameters.Count; ++i) {
 				Parameter.Modifier p_mod = invoke_pd.ParameterModifier (i);
 				if (Parameters.ParameterModifier (i) != p_mod && p_mod != Parameter.Modifier.PARAMS) {
-					if (!showErrors)
+					if (ignoreErrors)
 						return false;
 					
 					if (p_mod == Parameter.Modifier.NONE)
@@ -1227,7 +1225,7 @@ namespace Mono.CSharp {
 					continue;
 				
 				if (invoke_pd.ParameterType (i) != Parameters.ParameterType (i)) {
-					if (!showErrors)
+					if (ignoreErrors)
 						return false;
 					
 					Report.Error (1678, loc, "Parameter `{0}' is declared as type `{1}' but should be `{2}'",
@@ -1241,77 +1239,52 @@ namespace Mono.CSharp {
 			return !error;
 		}
 
-#if GMCS_SOURCE		
-		// TODO: Merge with lambda DoCompatibleTest
-		// TODO: Need to sort out error reporting
-		public Expression InferTypeArguments (EmitContext ec, Type delegateType)
+		//
+		// Infers type arguments based on explicit arguments
+		//
+		public void ExplicitTypeInference (TypeInferenceContext typeInference, Type delegateType)
 		{
-			if (anonymous != null)
-				return anonymous.AnonymousDelegate;
+			if (!HasExplicitParameters)
+				return;
 
-			if (!delegateType.ContainsGenericParameters)
-				throw new InternalErrorException ("No inference required");
+			if (!TypeManager.IsDelegateType (delegateType))
+				return;
 
-			// It looks like we cannot generate arguments during type inference
-			if (Parameters == null)
-				return null;
+			ParameterData d_params = TypeManager.GetDelegateParameters (delegateType);
 
-			delegateType = delegateType.GetGenericTypeDefinition ();
-			
-			MethodGroupExpr invoke_mg = Delegate.GetInvokeMethod (
-				ec.ContainerType, delegateType, loc);
-			MethodInfo invoke_mb = (MethodInfo) invoke_mg.Methods [0];
-			ParameterData invoke_pd = TypeManager.GetParameterData (invoke_mb);			
-
-			if (!VerifyParameterCompatibility (delegateType, invoke_pd, false))
-				return null;
-
-			Type[] g_arguments = delegateType.GetGenericArguments ();
-			Type[] inferred_arguments = new Type [g_arguments.Length];
-			g_arguments.CopyTo (inferred_arguments, 0);
-
-			for (int i = 0; i < invoke_pd.Count; ++i) {
-				if (!invoke_pd.Types[i].IsGenericParameter)
+			for (int i = 0; i < Parameters.Count; ++i) {
+				Type itype = d_params.Types [i];
+				if (!TypeManager.IsGenericParameter (itype))
 					continue;
 
-				inferred_arguments [invoke_pd.Types[i].GenericParameterPosition] = Parameters.Types[i];
+				typeInference.ExactInference (Parameters.FixedParameters[i].ParameterType, itype);
 			}
+		}
 
-			int return_type_pos = -1;
-			if (TypeManager.IsGenericParameter (invoke_mb.ReturnType)) {
-					ec.InferReturnType = true;
-				return_type_pos = invoke_mb.ReturnType.GenericParameterPosition;
+		public Type InferReturnType (EmitContext ec, TypeInferenceContext tic, Type delegateType)
+		{
+			AnonymousMethod am;
+			ec.InferReturnType = true;
+			using (ec.Set (EmitContext.Flags.ProbingMode)) {
+				am = CompatibleMethod (ec, tic, GetType (), delegateType);
 			}
-
-			anonymous = new AnonymousMethod (
-				Parent != null ? Parent.AnonymousMethod : null, RootScope, Host,
-				GenericMethod, Parameters, Container, Block, invoke_mb.ReturnType,
-				delegateType, loc);
-
-			if (!anonymous.Resolve (ec))
+			ec.InferReturnType = false;
+			if (am == null)
 				return null;
 
-			if (return_type_pos != -1) {
-				inferred_arguments [return_type_pos] = anonymous.ReturnType;
-			}
+			if (am.ReturnType == TypeManager.null_type)
+				am.ReturnType = null;
 
-			anonymous.AnonymousDelegate.Type = delegateType.GetGenericTypeDefinition ().MakeGenericType (inferred_arguments);
-			anonymous.DelegateType = anonymous.AnonymousDelegate.Type;
-			
-			return anonymous.AnonymousDelegate;
+			return am.ReturnType;
 		}
-#endif
-		
+
 		//
-		// Returns true if this anonymous method can be implicitly
-		// converted to the delegate type `delegate_type'
+		// Returns AnonymousMethod container if this anonymous method
+		// expression can be implicitly converted to the delegate type `delegate_type'
 		//
-		public virtual Expression Compatible (EmitContext ec, Type delegate_type)
+		public AnonymousMethod Compatible (EmitContext ec, Type delegateType)
 		{
-			if (anonymous != null)
-				return anonymous.AnonymousDelegate;
-			
-			if (CompatibleChecks (ec, delegate_type) == null)
+			if (CompatibleChecks (ec, delegateType) == null)
 				return null;
 
 			//
@@ -1319,14 +1292,15 @@ namespace Mono.CSharp {
 			// needed for the anonymous method.  We create the method here.
 			//
 
-			MethodGroupExpr invoke_mg = Delegate.GetInvokeMethod (
-				ec.ContainerType, delegate_type, loc);
-			MethodInfo invoke_mb = (MethodInfo) invoke_mg.Methods [0];
-			ParameterData invoke_pd = TypeManager.GetParameterData (invoke_mb);
+			MethodInfo invoke_mb = Delegate.GetInvokeMethod (
+				ec.ContainerType, delegateType);
+			Type return_type = invoke_mb.ReturnType;
 
-			Parameters parameters = CreateParameters (ec, delegate_type, invoke_pd);
-			if (parameters == null)
-				return null;
+#if MS_COMPATIBLE
+			Type[] g_args = delegateType.GetGenericArguments ();
+			if (return_type.IsGenericParameter)
+				return_type = g_args [return_type.GenericParameterPosition];
+#endif
 
 			//
 			// Second: the return type of the delegate must be compatible with 
@@ -1335,18 +1309,17 @@ namespace Mono.CSharp {
 			// to be the delegate type return type.
 			//
 
-			//MethodBuilder builder = method_data.MethodBuilder;
-			//ILGenerator ig = builder.GetILGenerator ();
-
 			Report.Debug (64, "COMPATIBLE", this, Parent, GenericMethod, Host,
-				      Container, Block, invoke_mb.ReturnType, delegate_type,
-				      TypeManager.IsGenericType (delegate_type), loc);
+				      Container, Block, return_type, delegateType,
+				      TypeManager.IsGenericType (delegateType), loc);
 
-			return ResolveMethod (ec, parameters, invoke_mb.ReturnType, delegate_type);
+			return CompatibleMethod (ec, null, return_type, delegateType);
 		}
 
-		protected virtual Parameters CreateParameters (EmitContext ec, Type delegateType, ParameterData delegateParameters)
+		protected virtual Parameters ResolveParameters (EmitContext ec, TypeInferenceContext tic, Type delegateType)
 		{
+			ParameterData delegateParameters = TypeManager.GetDelegateParameters (delegateType);
+
 			if (Parameters == null) {
 				//
 				// We provide a set of inaccessible parameters
@@ -1368,16 +1341,10 @@ namespace Mono.CSharp {
 						delegateParameters.ParameterModifier (i), null, loc);
 				}
 
-				Parameters parameters = new Parameters (fixedpars);
-				if (!parameters.Resolve (ec))
-					return null;
-				return parameters;
+				return Parameters.CreateFullyResolved (fixedpars, delegateParameters.Types);
 			}
 
-			if (!VerifyParameterCompatibility (delegateType, delegateParameters, true)) {
-				Report.Error (1661, loc,
-					"Cannot convert `{0}' to delegate type `{1}' since there is a parameter mismatch",
-					GetSignatureForError (), TypeManager.CSharpName (delegateType));
+			if (!VerifyExplicitParameters (delegateType, delegateParameters, ec.IsInProbingMode)) {
 				return null;
 			}
 
@@ -1419,17 +1386,26 @@ namespace Mono.CSharp {
 			get { return false; }
 		}
 
-		protected virtual Expression ResolveMethod (EmitContext ec, Parameters parameters, Type returnType, Type delegateType)
+		protected AnonymousMethod CompatibleMethod (EmitContext ec, TypeInferenceContext tic, Type returnType, Type delegateType)
 		{
-			anonymous = new AnonymousMethod (
-				Parent != null ? Parent.AnonymousMethod : null, RootScope, Host,
-				GenericMethod, parameters, Container, Block, returnType,
-				delegateType, loc);
-
-			if (!anonymous.Resolve (ec))
+			Parameters p = ResolveParameters (ec, tic, delegateType);
+			if (p == null)
 				return null;
 
-			return anonymous.AnonymousDelegate;
+			ToplevelBlock b = ec.IsInProbingMode ? (ToplevelBlock) Block.PerformClone () : Block;
+
+			AnonymousMethod anonymous = CompatibleMethodFactory (returnType, delegateType, p, b);
+			if (!anonymous.Compatible (ec))
+				return null;
+
+			return anonymous;
+		}
+
+		protected virtual AnonymousMethod CompatibleMethodFactory (Type returnType, Type delegateType, Parameters p, ToplevelBlock b)
+		{
+			return new AnonymousMethod (RootScope, Host,
+				GenericMethod, p, Container, b, returnType,
+				delegateType, loc);
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Expression t)
@@ -1467,23 +1443,17 @@ namespace Mono.CSharp {
 		protected readonly Block container;
 		protected readonly GenericMethod generic;
 
-		//
-		// Points to our container anonymous method if its present
-		//
-		public readonly AnonymousContainer ContainerAnonymousMethod;
-
-		protected AnonymousContainer (AnonymousContainer parent, DeclSpace host,
+		protected AnonymousContainer (DeclSpace host,
 					      GenericMethod generic, Parameters parameters,
 					      Block container, ToplevelBlock block,
 					      Type return_type, int mod, Location loc)
 		{
-			this.ContainerAnonymousMethod = parent;
 			this.ReturnType = return_type;
 			this.ModFlags = mod | Modifiers.COMPILER_GENERATED;
 			this.Host = host;
 
 			this.container = container;
-			this.generic = parent != null ? null : generic;
+			this.generic = generic;
 			this.Parameters = parameters;
 			this.Block = block;
 			this.Location = loc;
@@ -1509,8 +1479,11 @@ namespace Mono.CSharp {
 
 		public abstract string GetSignatureForError ();
 
-		public virtual bool ResolveNoDefine (EmitContext ec)
+		public bool Compatible (EmitContext ec)
 		{
+			// REFACTOR: The method should be refactor, many of the
+			// hacks can be handled in better way
+
 			Report.Debug (64, "RESOLVE ANONYMOUS METHOD", this, Location, ec,
 				      RootScope, Parameters, ec.IsStatic);
 
@@ -1526,7 +1499,8 @@ namespace Mono.CSharp {
 				ReturnType = return_type_expr.Type;
 			}
 
-			if (RootScope != null)
+			// Linq type inference is done differently
+			if (RootScope != null && RootContext.Version != LanguageVersion.LINQ)
 				Parameters = RootScope.InflateParameters (Parameters);
 
 			aec = new EmitContext (
@@ -1550,21 +1524,24 @@ namespace Mono.CSharp {
 			bool unreachable;
 			bool res = aec.ResolveTopBlock (ec, Block, Parameters, null, out unreachable);
 
-			if (aec_dispose != null)
+			if (ec.InferReturnType)
+				ReturnType = aec.ReturnType;
+
+			if (aec_dispose != null) {
 				aec_dispose.Dispose ();
+			}
 
 			return res;
 		}
 
-		public virtual bool Resolve (EmitContext ec)
-		{
-			if (!ResolveNoDefine (ec))
-				return false;
-			
-			Report.Debug (64, "RESOLVE ANONYMOUS METHOD #3", this, ec, aec, Block);
+		public abstract Expression Resolve (EmitContext ec);
 
-			if (aec.InferReturnType)
-				ReturnType = aec.ReturnType;
+		public virtual bool Define (EmitContext ec)
+		{
+			Report.Debug (64, "DEFINE ANONYMOUS METHOD #3", this, ec, aec, Block);
+
+			if (aec == null && !Compatible (ec))
+				return false;
 
 			method = DoCreateMethodHost (ec);
 
@@ -1624,44 +1601,24 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class LambdaMethod : AnonymousMethod
-	{
-		public LambdaMethod (AnonymousMethod parent, RootScopeInfo root_scope,
-					DeclSpace host, GenericMethod generic,
-					Parameters parameters, Block container,
-					ToplevelBlock block, Type return_type, Type delegate_type,
-					Location loc)
-			: base (parent, root_scope, host, generic, parameters, container, block,
-				return_type, delegate_type, loc)
-		{
-		}
-
-		public override string ContainerType {
-			get {
-				return "lambda expression";
-			}
-		}
-	}
-
 	public class AnonymousMethod : AnonymousContainer
 	{
-		public Type DelegateType;
+		Type DelegateType;
 
 		//
 		// The value return by the Compatible call, this ensure that
 		// the code works even if invoked more than once (Resolve called
 		// more than once, due to the way Convert.ImplicitConversion works
 		//
-		Expression anonymous_delegate;
 		RootScopeInfo root_scope;
 		ScopeInfo scope;
 
-		public AnonymousMethod (AnonymousMethod parent, RootScopeInfo root_scope,
+		public AnonymousMethod (RootScopeInfo root_scope,
 					DeclSpace host, GenericMethod generic,
 					Parameters parameters, Block container,
 					ToplevelBlock block, Type return_type, Type delegate_type,
 					Location loc)
-			: base (parent, host, generic, parameters, container, block,
+			: base (host, generic, parameters, container, block,
 				return_type, 0, loc)
 		{
 			this.DelegateType = delegate_type;
@@ -1682,10 +1639,6 @@ namespace Mono.CSharp {
 
 		public override bool IsIterator {
 			get { return false; }
-		}
-
-		public Expression AnonymousDelegate {
-			get { return anonymous_delegate; }
 		}
 
 		public override string GetSignatureForError ()
@@ -1736,8 +1689,7 @@ namespace Mono.CSharp {
 				scope.CaptureScope (si);
 
 			Report.Debug (128, "CREATE METHOD HOST", this, Block, container,
-				      RootScope, scope, scopes, Location,
-				      ContainerAnonymousMethod);
+				      RootScope, scope, scopes, Location);
 
 			GenericMethod generic_method = null;
 #if GMCS_SOURCE
@@ -1770,38 +1722,12 @@ namespace Mono.CSharp {
 				Modifiers.INTERNAL, member_name, Parameters);
 		}
 
-		bool ResolveAnonymousDelegate (EmitContext ec)
-                {
-			// If we are inferring the return type, set it to the discovered value.
-			if (DelegateType == null){
-				DelegateType = aec.ReturnType;
-				
-				// The special value pointing to our internal type means it failed.
-				if (DelegateType == typeof (AnonymousDelegate))
-					return false;
-			}
-
-                        anonymous_delegate = new AnonymousDelegate (
-				this, DelegateType, Location).Resolve (ec);
-                        if (anonymous_delegate == null)
-                                return false;
-			return true;
-		}
-
-		public override bool Resolve (EmitContext ec)
+		public override Expression Resolve (EmitContext ec)
 		{
-			if (!base.Resolve (ec))
-				return false;
+			if (!Define (ec))
+				return null;
 
-			return ResolveAnonymousDelegate (ec);
-		}
-
-		public override bool ResolveNoDefine (EmitContext ec)
-		{
-			if (!base.ResolveNoDefine (ec))
-				return false;
-
-			return ResolveAnonymousDelegate (ec);
+			return new AnonymousDelegate (this, DelegateType, Location).Resolve (ec);
 		}
 
 		public MethodInfo GetMethodBuilder (EmitContext ec)
@@ -1844,7 +1770,7 @@ namespace Mono.CSharp {
 	// This will emit the code for the delegate, as well delegate creation on the host
 	//
 	public class AnonymousDelegate : DelegateCreation {
-		AnonymousMethod am;
+		readonly AnonymousMethod am;
 
 		//
 		// if target_type is null, this means that we do not know the type
@@ -1864,18 +1790,6 @@ namespace Mono.CSharp {
 		public override Expression DoResolve (EmitContext ec)
 		{
 			eclass = ExprClass.Value;
-
-			//
-			// If we are inferencing
-			//
-			if (type == null){
-				type = ec.ReturnType;
-
-				// No type was infered
-				if (type == null)
-					return null;
-			}
-
 			return this;
 		}
 		
@@ -1895,12 +1809,7 @@ namespace Mono.CSharp {
 					throw new InternalErrorException ();
 			}
 
-			Expression ml = Expression.MemberLookup (
-				ec.ContainerType, type, ".ctor", MemberTypes.Constructor,
-				BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly,
-				loc);
-
-			constructor_method = ((MethodGroupExpr) ml).Methods [0];
+			constructor_method = Delegate.GetConstructor (ec.ContainerType, type);
 #if MS_COMPATIBLE
 			if (type.IsGenericType && type is TypeBuilder)
 				constructor_method = TypeBuilder.GetConstructor (type, (ConstructorInfo)constructor_method);

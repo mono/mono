@@ -2,6 +2,7 @@
 // lambda.cs: support for lambda expressions
 //
 // Authors: Miguel de Icaza (miguel@gnu.org)
+//          Marek Safar (marek.safar@gmail.com)
 //
 // Licensed under the terms of the GNU GPL
 //
@@ -14,8 +15,9 @@ using System.Reflection;
 using System.Reflection.Emit;
 
 namespace Mono.CSharp {
-	public class LambdaExpression : AnonymousMethodExpression {
-		bool explicit_parameters;
+	public class LambdaExpression : AnonymousMethodExpression
+	{
+		readonly bool explicit_parameters;
 
 		//
 		// The parameters can either be:
@@ -28,8 +30,8 @@ namespace Mono.CSharp {
 					 Location loc)
 			: base (parent, generic, host, parameters, container, loc)
 		{
-			if (parameters.FixedParameters.Length > 0)
-				explicit_parameters = parameters.FixedParameters [0].TypeName != null;
+			if (parameters.Count > 0)
+				explicit_parameters = !(parameters.FixedParameters [0] is ImplicitLambdaParameter);
 		}
 
 		public override bool HasExplicitParameters {
@@ -38,27 +40,53 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected override Parameters CreateParameters (EmitContext ec, Type delegateType, ParameterData delegateParameters)
+		protected override Parameters ResolveParameters (EmitContext ec, TypeInferenceContext tic, Type delegateType)
 		{
-			Parameters p = base.CreateParameters (ec, delegateType, delegateParameters);
-			if (explicit_parameters)
-				return p;
+			if (!TypeManager.IsDelegateType (delegateType))
+				return null;
 
-			//
-			// If L has an implicitly typed parameter list
-			//
-			for (int i = 0; i < delegateParameters.Count; i++) {
-				// D has no ref or out parameters
-				//if ((invoke_pd.ParameterModifier (i) & Parameter.Modifier.ISBYREF) != 0)
-				//	return null;
+			ParameterData d_params = TypeManager.GetDelegateParameters (delegateType);
 
-				//
-				// Makes implicit parameters explicit
-				// Set each parameter of L is given the type of the corresponding parameter in D
-				//
-				p[i].ParameterType = delegateParameters.Types[i];
+			if (explicit_parameters) {
+				if (!VerifyExplicitParameters (delegateType, d_params, ec.IsInProbingMode))
+					return null;
+
+				return Parameters;
 			}
-			return p;
+
+			//
+			// If L has an implicitly typed parameter list we make implicit parameters explicit
+			// Set each parameter of L is given the type of the corresponding parameter in D
+			//
+			if (Parameters.Count != d_params.Count)
+				return null;
+
+			if (Parameters.Types == null)
+				Parameters.Types = new Type [Parameters.Count];
+
+			for (int i = 0; i < d_params.Count; i++) {
+				// D has no ref or out parameters
+				if ((d_params.ParameterModifier (i) & Parameter.Modifier.ISBYREF) != 0)
+					return null;
+
+				Type d_param = d_params.Types [i];
+
+#if MS_COMPATIBLE
+				// Blablabla, because reflection does not work with dynamic types
+				if (d_param.IsGenericParameter)
+					d_param = delegateType.GetGenericArguments () [d_param.GenericParameterPosition];
+#endif
+
+#if GMCS_SOURCE
+				// When inferred context exists all generics parameters have type replacements
+				if (tic != null && d_param.IsGenericParameter) {
+					d_param = tic.InferredTypeArguments [d_param.GenericParameterPosition];
+				}
+#endif
+
+				Parameters.Types [i] = Parameters.FixedParameters[i].ParameterType = d_param;
+			}
+			return Parameters;
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -76,79 +104,35 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		//
-		// Returns true if the body of lambda expression can be implicitly
-		// converted to the delegate of type `delegate_type'
-		//
-		public override bool ImplicitStandardConversionExists (Type delegate_type)
+		protected override AnonymousMethod CompatibleMethodFactory (Type returnType, Type delegateType, Parameters p, ToplevelBlock b)
 		{
-			EmitContext ec = EmitContext.TempEc;
-
-			using (ec.Set (EmitContext.Flags.ProbingMode)) {
-				bool r = Compatible (ec, delegate_type) != null;
-
-				// Ignore the result
-				anonymous = null;
-
-				return r;
-			}
-		}
-
-		//
-		// Resolves a body of lambda expression.
-		//
-		protected override Expression ResolveMethod (EmitContext ec, Parameters parameters, Type returnType, Type delegateType)
-		{
-			ToplevelBlock b = ec.IsInProbingMode ? (ToplevelBlock) Block.PerformClone () : Block;
-
-			anonymous = new LambdaMethod (
-				Parent != null ? Parent.AnonymousMethod : null, RootScope, Host,
-				GenericMethod, Parameters, Container, b, returnType,
+			return new LambdaMethod (RootScope, Host,
+				GenericMethod, p, Container, b, returnType,
 				delegateType, loc);
-
-			bool r;
-			if (ec.IsInProbingMode)
-				r = anonymous.ResolveNoDefine (ec);
-			else
-				r = anonymous.Resolve (ec);
-
-			// Resolution failed.
-			if (!r)
-				return null;
-
-			return anonymous.AnonymousDelegate;
 		}
-		
+
 		public override string GetSignatureForError ()
 		{
 			return "lambda expression";
 		}
+	}
 
-		//
-		// TryBuild: tries to compile this LambdaExpression with the given
-		// types as the lambda expression parameter types.   
-		//
-		// If the lambda expression successfully builds with those types, the
-		// return value will be the inferred type for the lambda expression,
-		// otherwise the result will be null.
-		//
-		public Type TryBuild (EmitContext ec, Type [] types)
+	public class LambdaMethod : AnonymousMethod
+	{
+		public LambdaMethod (RootScopeInfo root_scope,
+					DeclSpace host, GenericMethod generic,
+					Parameters parameters, Block container,
+					ToplevelBlock block, Type return_type, Type delegate_type,
+					Location loc)
+			: base (root_scope, host, generic, parameters, container, block,
+				return_type, delegate_type, loc)
 		{
-			for (int i = 0; i < types.Length; i++)
-				Parameters [i].TypeName = new TypeExpression (types [i], Parameters [i].Location);
+		}
 
-			// TODO: temporary hack
-			ec.InferReturnType = true;
-			
-			Expression e;
-			using (ec.Set (EmitContext.Flags.ProbingMode)) {
-				e = ResolveMethod (ec, Parameters, typeof (LambdaExpression), null);
+		public override string ContainerType {
+			get {
+				return "lambda expression";
 			}
-			
-			if (e == null)
-				return null;
-			
-			return e.Type;
 		}
 	}
 

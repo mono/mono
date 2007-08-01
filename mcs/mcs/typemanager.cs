@@ -439,7 +439,7 @@ namespace Mono.CSharp {
 
 	public static MemberCache LookupMemberCache (Type t)
 	{
-		if (t is TypeBuilder) {
+		if (t.Assembly == CodeGen.Assembly.Builder) {
 			IMemberContainer container = builder_to_declspace [t] as IMemberContainer;
 			if (container != null)
 				return container.MemberCache;
@@ -1481,10 +1481,23 @@ namespace Mono.CSharp {
 		// If this is a dynamic type, it's always in the `builder_to_declspace' hash table
 		// and we can ask the DeclSpace for the MemberCache.
 		//
-		if (t is TypeBuilder) {
-#if GMCS_SOURCE && MS_COMPATIBLE
+#if MS_COMPATIBLE
+		if (t.Assembly == CodeGen.Assembly.Builder) {
+			if (t.IsGenericParameter) {
+				TypeParameter tparam = (TypeParameter) builder_to_type_param[t];
+
+				used_cache = true;
+				if (tparam.MemberCache == null)
+					return new MemberInfo[0];
+
+				return tparam.MemberCache.FindMembers (
+					mt, bf, name, FilterWithClosure_delegate, null);
+			}
+
 			if (t.IsGenericType && !t.IsGenericTypeDefinition)
 				t = t.GetGenericTypeDefinition ();
+#else
+		if (t is TypeBuilder) {
 #endif
 			DeclSpace decl = (DeclSpace) builder_to_declspace [t];
 			cache = decl.MemberCache;
@@ -1516,7 +1529,7 @@ namespace Mono.CSharp {
 		// a TypeBuilder array will return a Type, not a TypeBuilder,
 		// and we can not call FindMembers on this type.
 		//
-		if (t.IsArray) { //  == TypeManager.array_type || t.IsSubclassOf (TypeManager.array_type)) {
+		if (t.IsArray) {
 			used_cache = true;
 			return TypeHandle.ArrayType.MemberCache.FindMembers (
 				mt, bf, name, FilterWithClosure_delegate, null);
@@ -1589,6 +1602,11 @@ namespace Mono.CSharp {
 
 	public static bool IsDelegateType (Type t)
 	{
+#if GMCS_SOURCE
+		if (t.IsGenericParameter)
+			return false;
+#endif
+
 		t = DropGenericTypeArguments (t);
 		if (t.IsSubclassOf (TypeManager.delegate_type))
 			return true;
@@ -1939,17 +1957,37 @@ namespace Mono.CSharp {
 	{
 		ParameterData pd = (ParameterData)method_params [mb];
 		if (pd == null) {
-			if (mb is MethodBuilder || mb is ConstructorBuilder)
-				throw new InternalErrorException ("Argument for Method not registered" + mb);
-
 #if MS_COMPATIBLE
-			if (mb.IsGenericMethod && !mb.IsGenericMethodDefinition)
-				return GetParameterData (((MethodInfo)mb).GetGenericMethodDefinition ());
+			if (mb.IsGenericMethod && !mb.IsGenericMethodDefinition) {
+				MethodInfo mi = ((MethodInfo) mb).GetGenericMethodDefinition ();
+				pd = GetParameterData (mi);
+				if (mi.IsGenericMethod)
+					pd = pd.InflateTypes (mi.GetGenericArguments (), mb.GetGenericArguments ());
+				else
+					pd = pd.InflateTypes (mi.DeclaringType.GetGenericArguments (), mb.GetGenericArguments ());
+				method_params.Add (mb, pd);
+				return pd;
+			}
+
+			if (mb.DeclaringType.Assembly == CodeGen.Assembly.Builder) {
+				throw new InternalErrorException ("Parameters are not registered for method `{0}'",
+					TypeManager.CSharpName (mb.DeclaringType) + "." + mb.Name);
+			}
 #endif
 			pd = new ReflectionParameters (mb);
 			method_params.Add (mb, pd);
 		}
 		return pd;
+	}
+
+	public static ParameterData GetDelegateParameters (Type t)
+	{
+		Delegate d = builder_to_declspace [t] as Delegate;
+		if (d != null)
+			return d.Parameters;
+
+		MethodInfo invoke_mb = Delegate.GetInvokeMethod (t, t);
+		return GetParameterData (invoke_mb);
 	}
 
 	static public void RegisterOverride (MethodBase override_method, MethodBase base_method)
@@ -3562,7 +3600,7 @@ public sealed class TypeHandle : IMemberContainer {
 	{
 		this.type = type;
 #if MS_COMPATIBLE && GMCS_SOURCE
-		if (type.IsGenericType && type is TypeBuilder)
+		if (type.IsGenericType && !type.IsGenericTypeDefinition)
 			this.type = this.type.GetGenericTypeDefinition ();
 #endif
 		full_name = type.FullName != null ? type.FullName : type.Name;

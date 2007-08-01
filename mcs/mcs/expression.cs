@@ -3884,7 +3884,9 @@ namespace Mono.CSharp {
 			if (!DoResolveBase (ec))
 				return null;
 
-			SetAssigned (ec);
+			// HACK: parameters are not captured when probing is on
+			if (!ec.IsInProbingMode)
+				SetAssigned (ec);
 
 			return this;
 		}

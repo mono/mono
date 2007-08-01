@@ -828,7 +828,7 @@ namespace Mono.CSharp {
 		//
 		private Iterator (IMethodData m_container, DeclSpace host, GenericMethod generic,
 				 int modifiers, Type iterator_type, bool is_enumerable)
-			: base (null, host, generic, m_container.ParameterInfo,
+			: base (host, generic, m_container.ParameterInfo,
 				new ToplevelBlock (m_container.ParameterInfo, m_container.Location),
 				m_container.Block, TypeManager.bool_type, modifiers,
 				m_container.Location)
@@ -872,7 +872,7 @@ namespace Mono.CSharp {
 			return OriginalMethod.GetSignatureForError ();
 		}
 
-		public override bool Resolve (EmitContext ec)
+		public override bool Define (EmitContext ec)
 		{
 			Report.Debug (64, "RESOLVE ITERATOR", this, Container, Block);
 
@@ -905,7 +905,7 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			if (!base.Resolve (ec))
+			if (!base.Define (ec))
 				return false;
 
 			Report.Debug (64, "RESOLVE ITERATOR #1", this, method, method.Parent,
@@ -936,6 +936,11 @@ namespace Mono.CSharp {
 				this, RootScope, null, TypeManager.system_boolean_expr,
 				Modifiers.PUBLIC, new MemberName ("MoveNext", Location),
 				Parameters.EmptyReadOnlyParameters);
+		}
+
+		public override Expression Resolve (EmitContext ec)
+		{
+			throw new NotSupportedException ();
 		}
 
 		protected class MoveNextStatement : Statement {

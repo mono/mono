@@ -4,6 +4,7 @@
 // Authors:
 //     Ravi Pratap (ravi@ximian.com)
 //     Miguel de Icaza (miguel@ximian.com)
+//     Marek Safar (marek.safar@gmail.com)
 //
 // Licensed under the terms of the GNU GPL
 //
@@ -361,22 +362,81 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+
+		public static ConstructorInfo GetConstructor (Type containerType, Type delegateType)
+		{
+			Type dt = delegateType;
+#if GMCS_SOURCE
+			Type[] g_args = null;
+			if (delegateType.IsGenericType) {
+				g_args = delegateType.GetGenericArguments ();
+				delegateType = delegateType.GetGenericTypeDefinition ();
+			}
+#endif
+
+			Delegate d = TypeManager.LookupDelegate (delegateType);
+			if (d != null) {
+#if GMCS_SOURCE
+				if (g_args != null)
+					return TypeBuilder.GetConstructor (dt, d.ConstructorBuilder);
+#endif
+				return d.ConstructorBuilder;
+			}
+
+			Expression ml = Expression.MemberLookup (containerType,
+				null, dt, ConstructorInfo.ConstructorName, MemberTypes.Constructor,
+				BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly, Location.Null);
+
+			MethodGroupExpr mg = ml as MethodGroupExpr;
+			if (mg == null) {
+				Report.Error (-100, Location.Null, "Internal error: could not find delegate constructor!");
+				// FIXME: null will cause a crash later
+				return null;
+			}
+
+			return (ConstructorInfo) mg.Methods[0];
+		}
+
 		//
 		// Returns the MethodBase for "Invoke" from a delegate type, this is used
 		// to extract the signature of a delegate.
 		//
-		public static MethodGroupExpr GetInvokeMethod (Type container_type, Type delegate_type, Location loc)
+		public static MethodInfo GetInvokeMethod (Type container_type, Type delegate_type)
 		{
-			Expression ml = Expression.MemberLookup (container_type, null, delegate_type,
-				"Invoke", loc);
+			Type dt = delegate_type;
+#if GMCS_SOURCE
+			Type[] g_args = null;
+			if (delegate_type.IsGenericType) {
+				g_args = delegate_type.GetGenericArguments ();
+				delegate_type = delegate_type.GetGenericTypeDefinition ();
+			}
+#endif
+			Delegate d = TypeManager.LookupDelegate (delegate_type);
+			if (d != null) {
+#if GMCS_SOURCE
+				if (g_args != null) {
+					MethodInfo invoke = TypeBuilder.GetMethod (dt, d.InvokeBuilder);
+#if MS_COMPATIBLE
+					Parameters p = (Parameters) d.Parameters.InflateTypes (g_args, g_args);
+					TypeManager.RegisterMethod (invoke, p);
+#endif
+					return invoke;
+				}
+#endif
+				return d.InvokeBuilder;
+			}
+
+			Expression ml = Expression.MemberLookup (container_type, null, dt,
+				"Invoke", Location.Null);
 
 			MethodGroupExpr mg = ml as MethodGroupExpr;
 			if (mg == null) {
-				Report.Error (-100, loc, "Internal error: could not find Invoke method!");
+				Report.Error (-100, Location.Null, "Internal error: could not find Invoke method!");
+				// FIXME: null will cause a crash later
 				return null;
 			}
 
-			return mg;
+			return (MethodInfo) mg.Methods[0];
 		}
 		
 		/// <summary>
@@ -387,18 +447,11 @@ namespace Mono.CSharp {
 						       MethodGroupExpr old_mg, MethodBase mb,
 						       Location loc)
 		{
-			MethodGroupExpr mg = GetInvokeMethod (container_type, delegate_type, loc);
-			if (mg == null)
-				return null;
-
-			if (old_mg.HasTypeArguments)
-				mg.HasTypeArguments = true;
-
-			MethodBase invoke_mb = mg.Methods [0];
+			MethodInfo invoke_mb = GetInvokeMethod (container_type, delegate_type);
 			ParameterData invoke_pd = TypeManager.GetParameterData (invoke_mb);
 
 #if GMCS_SOURCE
-			if (!mg.HasTypeArguments &&
+			if (!old_mg.HasTypeArguments &&
 			    !TypeManager.InferTypeArguments (invoke_pd, ref mb))
 				return null;
 #endif
@@ -469,7 +522,7 @@ namespace Mono.CSharp {
 				return false;
 			}
 			
-			MethodBase mb = me.Methods [0];
+			MethodBase mb = GetInvokeMethod (ec.ContainerType, delegate_type);
 			ParameterData pd = TypeManager.GetParameterData (mb);
 
 			int pd_count = pd.Count;
@@ -625,14 +678,15 @@ namespace Mono.CSharp {
 	// Base class for `NewDelegate' and `ImplicitDelegateCreation'
 	//
 	public abstract class DelegateCreation : Expression {
-		protected MethodBase constructor_method;
+		protected ConstructorInfo constructor_method;
 		protected MethodBase delegate_method;
+		// We keep this to handle IsBase only
 		protected MethodGroupExpr method_group;
 		protected Expression delegate_instance_expression;
 
 		protected DelegateCreation () {}
 
-		public static void Error_NoMatchingMethodForDelegate (EmitContext ec, MethodGroupExpr mg, Type type, Location loc)
+		static void Error_NoMatchingMethodForDelegate (EmitContext ec, MethodGroupExpr mg, Type type, Location loc)
 		{
 			string method_desc;
 			MethodBase found_method = mg.Methods [0];
@@ -642,12 +696,9 @@ namespace Mono.CSharp {
 			else
 				method_desc = Invocation.FullMethodDesc (found_method);
 
-			Expression invoke_method = Expression.MemberLookup (
-				ec.ContainerType, type, "Invoke", MemberTypes.Method,
-				Expression.AllBindingFlags, loc);
-			MethodInfo method = ((MethodGroupExpr) invoke_method).Methods [0] as MethodInfo;
-
+			MethodInfo method = Delegate.GetInvokeMethod (ec.ContainerType, type);
 			ParameterData param = TypeManager.GetParameterData (method);
+
 			string delegate_desc = Delegate.FullDelegateDesc (type, method, param);
 
 #if GMCS_SOURCE
@@ -685,26 +736,18 @@ namespace Mono.CSharp {
 				ec.ig.Emit (OpCodes.Ldnull);
 			else
 				delegate_instance_expression.Emit (ec);
-			
+
 			if (delegate_method.IsVirtual && !method_group.IsBase) {
 				ec.ig.Emit (OpCodes.Dup);
 				ec.ig.Emit (OpCodes.Ldvirtftn, (MethodInfo) delegate_method);
 			} else
 				ec.ig.Emit (OpCodes.Ldftn, (MethodInfo) delegate_method);
-			ec.ig.Emit (OpCodes.Newobj, (ConstructorInfo) constructor_method);
+			ec.ig.Emit (OpCodes.Newobj, constructor_method);
 		}
 
 		protected bool ResolveConstructorMethod (EmitContext ec)
 		{
-			Expression ml = Expression.MemberLookupFinal(ec, 
-				null, type, ".ctor", MemberTypes.Constructor, AllBindingFlags | BindingFlags.DeclaredOnly, loc);
-
-			if (!(ml is MethodGroupExpr)) {
-				Report.Error (-100, loc, "Internal error: Could not find delegate constructor!");
-				return false;
-			}
-
-			constructor_method = ((MethodGroupExpr) ml).Methods [0];
+			constructor_method = Delegate.GetConstructor (ec.ContainerType, type);
 			return true;
 		}
 
@@ -843,7 +886,7 @@ namespace Mono.CSharp {
 			Expression e = a.Expr;
 
 			if (e is AnonymousMethodExpression && RootContext.Version != LanguageVersion.ISO_1)
-				return ((AnonymousMethodExpression) e).Compatible (ec, type);
+				return ((AnonymousMethodExpression) e).Compatible (ec, type).Resolve (ec);
 
 			MethodGroupExpr mg = e as MethodGroupExpr;
 			if (mg != null) {
@@ -861,15 +904,6 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			method_group = Expression.MemberLookup (
-				ec.ContainerType, type, "Invoke", MemberTypes.Method,
-				Expression.AllBindingFlags, loc) as MethodGroupExpr;
-
-			if (method_group == null) {
-				Report.Error (-200, loc, "Internal error ! Could not find Invoke method!");
-				return null;
-			}
-
 			// This is what MS' compiler reports. We could always choose
 			// to be more verbose and actually give delegate-level specifics
 			if (!Delegate.VerifyDelegate (ec, type, loc)) {
@@ -879,7 +913,8 @@ namespace Mono.CSharp {
 			}
 				
 			delegate_instance_expression = e;
-			delegate_method = method_group.Methods [0];
+			delegate_method = Delegate.GetInvokeMethod (ec.ContainerType, type);
+			method_group = new MethodGroupExpr (new MemberInfo[] { delegate_method }, loc);
 
 			eclass = ExprClass.Value;
 			return this;
@@ -941,13 +976,7 @@ namespace Mono.CSharp {
 			if (!Delegate.VerifyApplicability (ec, del_type, Arguments, loc))
 				return null;
 
-			Expression lookup = Expression.MemberLookup (ec.ContainerType, del_type, "Invoke", loc);
-			if (!(lookup is MethodGroupExpr)) {
-				Report.Error (-100, loc, "Internal error: could not find Invoke method!");
-				return null;
-			}
-			
-			method = ((MethodGroupExpr) lookup).Methods [0];
+			method = Delegate.GetInvokeMethod (ec.ContainerType, del_type);
 			type = ((MethodInfo) method).ReturnType;
 			eclass = ExprClass.Value;
 			

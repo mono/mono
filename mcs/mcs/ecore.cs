@@ -2161,7 +2161,7 @@ namespace Mono.CSharp {
 				Type type = a.GetType (fullname);
 				if (type != null) {
 					Report.SymbolRelatedToPreviousError (type);
-					Expression.ErrorIsInaccesible (loc, fullname);
+					Expression.ErrorIsInaccesible (loc, TypeManager.CSharpName (type));
 					return;
 				}
 			}
@@ -3023,6 +3023,9 @@ namespace Mono.CSharp {
 			if (mg != null)
 				return mg;
 
+			if (ns == null)
+				return null;
+
 			// Search continues
 			ExtensionMethodGroupExpr e = ns.LookupExtensionMethod (type, null, Name);
 			if (e == null)
@@ -3867,6 +3870,10 @@ namespace Mono.CSharp {
 							best_candidate = candidate;
 					}
 			}
+
+			// We can stop here when probing is on
+			if (ec.IsInProbingMode)
+				return this;
 
 			//
 			// And now check if the arguments are all

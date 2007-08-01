@@ -338,4 +338,12 @@ namespace Mono.CSharp
 			throw new NotImplementedException ();
 		}
 	}
+
+	public class TypeInferenceContext
+	{
+		public void ExactInference (Type u, Type v)
+		{
+			throw new NotImplementedException ();
+		}
+	}
 }

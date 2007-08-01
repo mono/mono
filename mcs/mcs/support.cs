@@ -31,7 +31,7 @@ namespace Mono.CSharp {
 		string GetSignatureForError ();
 
 #if MS_COMPATIBLE
-		void InflateTypes (Type[] genArguments, Type[] argTypes);
+		ParameterData InflateTypes (Type[] genArguments, Type[] argTypes);
 #endif
 	}
 
@@ -138,15 +138,17 @@ namespace Mono.CSharp {
 		}
 
 #if MS_COMPATIBLE
-		public void InflateTypes (Type[] genArguments, Type[] argTypes)
+		public ParameterData InflateTypes (Type[] genArguments, Type[] argTypes)
 		{
+			ReflectionParameters p = (ReflectionParameters)MemberwiseClone ();
+
 			for (int i = 0; i < types.Length; ++i) {
 				if (types[i].IsGenericParameter) {
 					for (int ii = 0; ii < genArguments.Length; ++ii) {
 						if (types[i] != genArguments[ii])
 							continue;
 
-						types[i] = argTypes[ii];
+						p.types[i] = argTypes[ii];
 						break;
 					}
 					continue;
@@ -156,15 +158,23 @@ namespace Mono.CSharp {
 					Type[] gen_arguments_open = types[i].GetGenericTypeDefinition ().GetGenericArguments ();
 					Type[] gen_arguments = types[i].GetGenericArguments ();
 					for (int ii = 0; ii < gen_arguments_open.Length; ++ii) {
-						if (gen_arguments[ii].IsGenericParameter)
-							gen_arguments_open[ii] = argTypes[gen_arguments_open[ii].GenericParameterPosition];
-						else
-							gen_arguments_open[ii] = gen_arguments[ii];
+						if (gen_arguments [ii].IsGenericParameter) {
+							for (int iii = 0; iii < genArguments.Length; ++iii) {
+								if (gen_arguments [ii] != genArguments [iii])
+									continue;
+
+								gen_arguments_open [ii] = argTypes [iii];
+								break;
+							}
+						} else {
+							gen_arguments_open [ii] = gen_arguments [ii];
+						}
 					}
 
-					types[i] = types[i].GetGenericTypeDefinition ().MakeGenericType (gen_arguments_open);
+					p.types[i] = types[i].GetGenericTypeDefinition ().MakeGenericType (gen_arguments_open);
 				}
 			}
+			return p;
 		}
 #endif
 

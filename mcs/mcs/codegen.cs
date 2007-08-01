@@ -714,7 +714,7 @@ namespace Mono.CSharp {
 					return false;
 
 				if ((md != null) && (md.Iterator != null)) {
-					if (!md.Iterator.Resolve (this))
+					if (!md.Iterator.Define (this))
 						return false;
 				}
 

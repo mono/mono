@@ -145,6 +145,14 @@ namespace Mono.CSharp {
 			: base ((Type)null, name, Modifier.NONE, null, loc)
 		{
 		}
+
+		public override bool Resolve (IResolveContext ec)
+		{
+			if (parameter_type == null)
+				throw new InternalErrorException ("Implicit lambda parameter type is not set");
+
+			return true;
+		}
 	}
 
 	public class ParamsParameter : Parameter {
@@ -219,7 +227,7 @@ namespace Mono.CSharp {
 
 		static string[] attribute_targets = new string [] { "param" };
 
-		public Expression TypeName;
+		Expression TypeName;
 		public Modifier modFlags;
 		public string Name;
 		public bool IsCaptured;
@@ -821,26 +829,34 @@ namespace Mono.CSharp {
 		}
 
 #if MS_COMPATIBLE
-		public void InflateTypes (Type[] genArguments, Type[] argTypes)
+		public ParameterData InflateTypes (Type[] genArguments, Type[] argTypes)
 		{
+			Parameters p = Clone ();
 			for (int i = 0; i < count; ++i) {
-				if (FixedParameters[i].IsTypeParameter) {
-					for (int ii = 0; ii < genArguments.Length; ++ii) {
-						if (types[i] != genArguments[ii])
-							continue;
-
-						types[i] = argTypes[ii];
-						FixedParameters[i].ParameterType = types[i];
-						break;
+				if (types[i].IsGenericType) {
+					Type[] gen_arguments_open = new Type [types[i].GetGenericTypeDefinition ().GetGenericArguments ().Length];
+					Type[] gen_arguments = types[i].GetGenericArguments ();
+					for (int ii = 0; ii < gen_arguments_open.Length; ++ii) {
+						if (gen_arguments[ii].IsGenericParameter) {
+							Type t = argTypes[gen_arguments[ii].GenericParameterPosition];
+							gen_arguments_open[ii] = t;
+						} else
+							gen_arguments_open[ii] = gen_arguments[ii];
 					}
+
+					p.FixedParameters [i].ParameterType = p.types[i] =
+						types[i].GetGenericTypeDefinition ().MakeGenericType (gen_arguments_open);
 					continue;
 				}
 
-				if (types[i].IsGenericType) {
-					types[i] = types[i].GetGenericTypeDefinition().MakeGenericType (argTypes[0]); // FIXME: The order can be different
-					FixedParameters[i].ParameterType = types[i];
+				if (types[i].IsGenericParameter) {
+					Type gen_argument = argTypes[types[i].GenericParameterPosition];
+					p.FixedParameters[i].ParameterType = p.types[i] = gen_argument;
+					continue;
 				}
 			}
+
+			return p;
 		}
 #endif
 
@@ -874,6 +890,13 @@ namespace Mono.CSharp {
 		public Type[] Types {
 			get {
 				return types;
+			}
+			//
+			// Dangerous, used by implicit lambda parameters
+			// only to workaround bad design
+			//
+			set {
+				types = value;
 			}
 		}
 
