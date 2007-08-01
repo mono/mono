@@ -45,7 +45,65 @@ namespace MonoTests.System.Windows.Forms {
 		public void Clean() {}
 
 		[Test]
-		public void TestDefaultValues () {
+		public void EditTypeTest ()
+		{
+			DataGridViewCell cell =new DataGridViewCellMockObject ();
+			Assert.AreEqual ("DataGridViewTextBoxEditingControl", cell.EditType.Name, "#01");
+		}
+		[Test]
+		public void TestDefaultValues ()
+		{
+			DataGridViewCell cell = new DataGridViewCellMockObject ();
+
+			Assert.IsNotNull (cell.AccessibilityObject, "#cell.AccessibilityObject");
+			Assert.AreEqual (-1, cell.ColumnIndex, "#cell.ColumnIndex");
+			Assert.IsNotNull (cell.ContentBounds, "#cell.ContentBounds");
+			Assert.IsNull (cell.ContextMenuStrip, "#cell.ContextMenuStrip");
+			Assert.IsNull (cell.DataGridView, "#cell.DataGridView");
+			Assert.IsNull (cell.DefaultNewRowValue, "#cell.DefaultNewRowValue");
+			Assert.AreEqual (false, cell.Displayed, "#cell.Displayed");
+			Assert.IsNull (cell.EditedFormattedValue, "#cell.EditedFormattedValue");
+			Assert.IsNotNull (cell.EditType, "#cell.EditType");
+			try {
+				object zxf = cell.ErrorIconBounds;
+				TestHelper.RemoveWarning (zxf);
+				Assert.Fail ("Expected 'System.InvalidOperationException', but no exception was thrown.", "#cell.ErrorIconBounds");
+			} catch (InvalidOperationException ex) {
+				Assert.AreEqual (@"Cell is not in a DataGridView. The cell cannot retrieve the inherited cell style.", ex.Message);
+			} catch (Exception ex) {
+				Assert.Fail ("Expected 'System.InvalidOperationException', got '" + ex.GetType ().FullName + "'.", "#cell.ErrorIconBounds");
+			}
+			Assert.AreEqual (@"", cell.ErrorText, "#cell.ErrorText");
+			Assert.IsNull (cell.FormattedValue, "#cell.FormattedValue");
+			Assert.IsNull (cell.FormattedValueType, "#cell.FormattedValueType");
+			Assert.AreEqual (false, cell.Frozen, "#cell.Frozen");
+			Assert.AreEqual (false, cell.HasStyle, "#cell.HasStyle");
+			Assert.AreEqual (DataGridViewElementStates.ResizableSet, cell.InheritedState, "#cell.InheritedState");
+			try {
+				object zxf = cell.InheritedStyle;
+				TestHelper.RemoveWarning (zxf);
+				Assert.Fail ("Expected 'System.InvalidOperationException', but no exception was thrown.", "#cell.InheritedStyle");
+			} catch (InvalidOperationException ex) {
+				Assert.AreEqual (@"Cell is not in a DataGridView. The cell cannot retrieve the inherited cell style.", ex.Message);
+			} catch (Exception ex) {
+				Assert.Fail ("Expected 'System.InvalidOperationException', got '" + ex.GetType ().FullName + "'.", "#cell.InheritedStyle");
+			}
+			Assert.AreEqual (false, cell.IsInEditMode, "#cell.IsInEditMode");
+			Assert.IsNull (cell.OwningColumn, "#cell.OwningColumn");
+			Assert.IsNull (cell.OwningRow, "#cell.OwningRow");
+			Assert.IsNotNull (cell.PreferredSize, "#cell.PreferredSize");
+			Assert.AreEqual (false, cell.ReadOnly, "#cell.ReadOnly");
+			Assert.AreEqual (false, cell.Resizable, "#cell.Resizable");
+			Assert.AreEqual (-1, cell.RowIndex, "#cell.RowIndex");
+			Assert.AreEqual (false, cell.Selected, "#cell.Selected");
+			Assert.IsNotNull (cell.Size, "#cell.Size");
+			Assert.AreEqual (DataGridViewElementStates.None, cell.State, "#cell.State");
+			Assert.IsNotNull (cell.Style, "#cell.Style");
+			Assert.IsNull (cell.Tag, "#cell.Tag");
+			Assert.AreEqual (@"", cell.ToolTipText, "#cell.ToolTipText");
+			Assert.IsNull (cell.Value, "#cell.Value");
+			Assert.IsNull (cell.ValueType, "#cell.ValueType");
+			Assert.AreEqual (false, cell.Visible, "#cell.Visible");
 		}
 
 		[Test]
@@ -351,6 +409,12 @@ namespace MonoTests.System.Windows.Forms {
 			Fail ("Message");
 		}
 		*/
+		class DataGridViewCellMockObject : DataGridViewCell
+		{
+			public DataGridViewCellMockObject ()
+			{
+			}
+		}
 	}
 }
 

@@ -1,5 +1,9 @@
 2007-08-01  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* DataGridViewCellTest.cs: Added EditTypeTest and TestDefaultValues.
+
+2007-08-01  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* DataGridViewTest.cs: Added AutoResizeColumnTest.
 
 2007-07-31  Rolf Bjarne Kvinge <RKvinge@novell.com> 
