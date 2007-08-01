@@ -162,6 +162,53 @@ namespace MonoTests.System.Windows.Forms {
 		#endregion
 
 		[Test]
+		public void AutoResizeColumTest ()
+		{
+			using (Form f = new Form ()) {
+				f.Show ();
+				using (DataGridView dgv = new DataGridView ()) {
+					f.Controls.Add (dgv);
+					
+					DataGridViewColumn col, col2, col3;
+					
+					Assert.AreEqual ("{Width=240, Height=150}", dgv.ClientSize.ToString (), "#01");
+					
+					col = new DataGridViewColumn ();
+					col.MinimumWidth = 20;
+					col.FillWeight = 20;
+					col.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+					col.CellTemplate = new DataGridViewTextBoxCell ();
+					
+					Assert.AreEqual (100, col.Width, "#02");
+					dgv.Columns.Add (col);
+					
+					Assert.AreEqual (197, col.Width, "#03");
+
+					col2 = new DataGridViewColumn ();
+					col2.MinimumWidth = 20;
+					col2.FillWeight = 40;
+					col2.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+					col2.CellTemplate = new DataGridViewTextBoxCell (); ;
+					dgv.Columns.Add (col2);
+
+					Assert.AreEqual (66, col.Width, "#04");
+					Assert.AreEqual (131, col2.Width, "#05");
+
+					col3 = new DataGridViewColumn ();
+					col3.MinimumWidth = 20;
+					col3.FillWeight = 5;
+					col3.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+					col3.CellTemplate = new DataGridViewTextBoxCell (); ;
+					dgv.Columns.Add (col3);
+
+					Assert.AreEqual (59, col.Width, "#04");
+					Assert.AreEqual (118, col2.Width, "#05");
+					Assert.AreEqual (20, col3.Width, "#05");
+				}
+			}
+		}
+
+		[Test]
 		public void ControlsTest ()
 		{
 			using (DataGridView grid = new DataGridView ()) {

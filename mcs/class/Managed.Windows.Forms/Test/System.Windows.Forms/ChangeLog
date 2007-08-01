@@ -1,3 +1,7 @@
+2007-08-01  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* DataGridViewTest.cs: Added AutoResizeColumnTest.
+
 2007-07-31  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* DataGridViewRowCollectionTest.cs: Added.
