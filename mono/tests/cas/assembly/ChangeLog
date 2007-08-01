@@ -1,3 +1,9 @@
+2007-08-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* all.net_1_1.txt, min.net_1_1.txt, none.net_1_1.txt, opt.net_1_1.txt,
+	ref.net_1_1.txt: Update expected results for the newer version of 
+	permview
+
 2006-06-27  Wade Berrier <wberrier@novell.com>
 
 	* Makefile.am: Use mcs and permview from the mcs tree instead of
