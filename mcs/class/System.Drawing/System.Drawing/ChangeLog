@@ -1,3 +1,7 @@
+2007-08-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* gdipFunctions.cs: Added definition for GdipCloneFontFamily
+
 2007-08-01  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* Bitmap.jvm.cs: fixed InternalPixelFormat TYPE_BYTE_GRAY

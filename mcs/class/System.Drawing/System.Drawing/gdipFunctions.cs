@@ -1565,6 +1565,9 @@ namespace System.Drawing
 		
 		[DllImport ("gdiplus.dll")]
 		internal static extern Status GdipGetFontHeightGivenDPI (IntPtr font, float dpi, out float height);
+
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipCloneFontFamily (IntPtr fontFamily, out IntPtr clone);
 		
 		
 		// String Format
