@@ -1,3 +1,8 @@
+2007-08-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (ves_icall_Type_GetMethodsByName): Return the members inherited
+	from Object when called on a generic parameter. Fixes #82211.
+
 2007-08-01  Dick Porter  <dick@ximian.com>
 
 	* file-io.c (convert_share): Test FileShare values bit-by-bit.
@@ -29,7 +34,7 @@
 2007-07-31  William Holmes  <billholmes54@gmail.com>
 
 	* metadata.c Changed mono_type_create_from_typespec to not insert
-	  the type into the has map until after
+	  the type into the hash map until after
 	  do_mono_metadata_parse_type has completed.
 	Fixes Bug #82194
 	Code is contributed under MIT/X11 license.
