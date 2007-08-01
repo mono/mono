@@ -122,6 +122,50 @@ namespace System.Diagnostics {
 		{
 			return CounterSampleCalculator.ComputeCounterValue (counterSample, nextCounterSample);
 		}
+
+#if NET_2_0
+		public override bool Equals (object obj)
+		{
+			if (!(obj is CounterSample))
+				return false;
+			return Equals ((CounterSample) obj);
+		}
+
+		public bool Equals (CounterSample other)
+		{
+			return
+				rawValue == other.rawValue &&
+				baseValue == other.counterFrequency &&
+				counterFrequency == other.counterFrequency &&
+				systemFrequency == other.systemFrequency &&
+				timeStamp == other.timeStamp &&
+				timeStamp100nSec == other.timeStamp100nSec &&
+				counterTimeStamp == other.counterTimeStamp &&
+				counterType == other.counterType;
+		}
+
+		public static bool operator == (CounterSample obj1, CounterSample obj2)
+		{
+			return obj1.Equals (obj2);
+		}
+
+		public static bool operator != (CounterSample obj1, CounterSample obj2)
+		{
+			return !obj1.Equals (obj2);
+		}
+
+		public override int GetHashCode ()
+		{
+			return (int) (rawValue << 28 ^
+				(baseValue << 24 ^
+				(counterFrequency << 20 ^
+				(systemFrequency << 16 ^
+				(timeStamp << 8 ^
+				(timeStamp100nSec << 4 ^
+				(counterTimeStamp ^
+				(int) counterType)))))));
+		}
+#endif
 	}
 }
 

@@ -1,3 +1,8 @@
+2007-08-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CounterSample.cs : implemented missing 2.0 equality stuff.
+	* CounterSampleCalculator.cs : static in 2.0.
+
 2007-07-24 Gonzalo Paniagua Javier <gonzalo.mono@gmail.com>
 
 	* Process.cs: use the default encoding or the windows input/output
