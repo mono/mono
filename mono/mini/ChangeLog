@@ -1,3 +1,7 @@
+2007-08-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.h (MONO_INIT_CONTEXT_FROM_FUNC): Avoid using 
+	__builtin_frame_address () since it is broken on older gcc versions.
 
 Tue Jul 31 17:34:42 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
