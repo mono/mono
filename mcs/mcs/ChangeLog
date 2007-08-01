@@ -1,5 +1,11 @@
 2007-08-01  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #82181
+	* cs-parser.jay,
+	* cs-tokenizer.cs: Ignore partial keyword inside block expression.
+
+2007-08-01  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #82277
 	* statememnt.cs (Block.Clone): Don't clone explicit blocks twice.
 

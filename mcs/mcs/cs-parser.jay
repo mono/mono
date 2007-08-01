@@ -3823,21 +3823,27 @@ class_base
 //	event_declaration as part of add_accessor_declaration or remove_accessor_declaration
 //      
 block
-	: OPEN_BRACE 
+	: OPEN_BRACE  
 	  {
+		++lexer.parsing_block;
 		start_block ((Location) $1);
 	  } 
 	  opt_statement_list CLOSE_BRACE 
-	  { 
+	  {
+	 	--lexer.parsing_block;
 		$$ = end_block ((Location) $4);
 	  }
 	;
 
 block_prepared
-	: OPEN_BRACE 
+	: OPEN_BRACE
+	  {
+		++lexer.parsing_block;
+	  }
 	  opt_statement_list CLOSE_BRACE 
-	  { 
-		$$ = end_block ((Location) $3);
+	  {
+		--lexer.parsing_block;
+		$$ = end_block ((Location) $4);
 	  }
 	;
 

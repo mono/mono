@@ -44,6 +44,7 @@ namespace Mono.CSharp
 		Location current_location;
 		Location current_comment_location = Location.Null;
 		ArrayList escaped_identifiers = new ArrayList ();
+		public int parsing_block;
 
 #if GMCS_SOURCE
 		bool query_parsing;
@@ -2241,6 +2242,11 @@ namespace Mono.CSharp
 			}
 
 			if (res == Token.PARTIAL) {
+				if (parsing_block > 0) {
+					val = new LocatedToken (Location, "partial");
+					return Token.IDENTIFIER;
+				}
+
 				// Save current position and parse next token.
 				PushPosition ();
 
