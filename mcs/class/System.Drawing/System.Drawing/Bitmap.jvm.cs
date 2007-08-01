@@ -364,7 +364,7 @@ namespace System.Drawing
 					case 11://JavaImage.TYPE_USHORT_GRAY:
 						return PixelFormat.Format16bppGrayScale;
 					case 10://JavaImage.TYPE_BYTE_GRAY:
-						return PixelFormat.Format1bppIndexed;				
+						return PixelFormat.Format8bppIndexed;				
 					case 1:	//JavaImage.TYPE_INT_RGB
 						return PixelFormat.Format32bppRgb;
 					case 2: //JavaImage.TYPE_INT_ARGB:			

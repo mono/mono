@@ -1,3 +1,7 @@
+2007-08-01  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* Bitmap.jvm.cs: fixed InternalPixelFormat TYPE_BYTE_GRAY
+
 2007-05-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Graphics.cs: Refactor [Get|Release]Hdc to get ReleaseHdcInternal
