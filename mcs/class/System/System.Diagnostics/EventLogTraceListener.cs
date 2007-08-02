@@ -84,8 +84,12 @@ namespace System.Diagnostics
 
 		public override void Write (string message)
 		{
+#if NET_2_0
 			TraceData (new TraceEventCache (), event_log.Source,
 				   TraceEventType.Information, 0, message);
+#else
+			event_log.WriteEntry (message);
+#endif
 		}
 
 		public override void WriteLine (string message)
