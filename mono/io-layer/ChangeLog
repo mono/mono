@@ -1,3 +1,8 @@
+2007-08-02  Dick Porter  <dick@ximian.com>
+
+	* sockets.c: Changes in error handling, and move the SO_REUSEADDR
+	setting from metadata/socket-io.c.
+
 2007-08-01  Dick Porter  <dick@ximian.com>
 
 	* io-portability.c (_wapi_io_scandir): Special-case patterns

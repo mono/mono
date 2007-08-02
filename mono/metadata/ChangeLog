@@ -1,3 +1,9 @@
+2007-08-02  Dick Porter  <dick@ximian.com>
+
+	* socket-io.c
+	(ves_icall_System_Net_Sockets_Socket_Socket_internal): Move the
+	SO_REUSEADDR setting into io-layer/sockets.c.
+
 2007-08-01  Zoltan Varga  <vargaz@gmail.com>
 
 	* icall.c (ves_icall_Type_GetMethodsByName): Return the members inherited
