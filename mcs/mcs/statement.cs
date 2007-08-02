@@ -4435,7 +4435,7 @@ namespace Mono.CSharp {
 					continue;
 				}
 
-				a = Convert.ImplicitConversion (ec, a, TypeManager.idisposable_type, var.Location);
+				a = Convert.ImplicitConversionStandard (ec, a, TypeManager.idisposable_type, var.Location);
 				if (a == null) {
 					Error_IsNotConvertibleToIDisposable (var);
 					return false;

@@ -1,5 +1,12 @@
 2007-08-02  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #81923
+
+	* statement.cs (Using.ResolveLocalVariableDecls): Only non-user implicit
+	conversion is allowed.
+
+2007-08-02  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #81564
 
 	* ecore.cs (EventExpr): Add IsBase handling.
