@@ -1447,7 +1447,7 @@ namespace System.Windows.Forms {
 
 			PropertyDescriptor property = grid_entry.PropertyDescriptor;
 
-			if (property.Converter == null || !property.Converter.GetPropertiesSupported ())
+			if (property == null || property.Converter == null || !property.Converter.GetPropertiesSupported ())
 				return;
 
 			object [] objs = grid_entry.SelectedObjects;
