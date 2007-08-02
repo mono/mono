@@ -1,3 +1,8 @@
+2007-08-02  Dick Porter  <dick@ximian.com>
+
+	* Socket.cs: Patch from Brian Nickel (brian.nickel@gmail.com) to
+	improve EndPoint handling.
+
 2007-07-08  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Socket.cs: Code formatting. Marked not implemented methods as TODO.

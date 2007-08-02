@@ -5,6 +5,7 @@
 //	Dick Porter <dick@ximian.com>
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //	Sridhar Kulkarni (sridharkulkarni@gmail.com)
+//	Brian Nickel (brian.nickel@gmail.com)
 //
 // Copyright (C) 2001, 2002 Phillip Pearson and Ximian, Inc.
 //    http://www.myelin.co.nz
@@ -387,6 +388,7 @@ namespace System.Net.Sockets
 								return;
 							}
 						} else {
+							result.Sock.seed_endpoint = result.EndPoint;
 							result.Sock.Connect (result.EndPoint);
 							result.Sock.connected = true;
 						}
@@ -405,6 +407,7 @@ namespace System.Net.Sockets
 						Socket.Connect_internal (result.Sock.socket, serial, out error);
 						if (error == 0) {
 							result.Sock.connected = true;
+							result.Sock.seed_endpoint = iep;
 							result.Complete ();
 							return;
 						} else if (error != (int)SocketError.InProgress &&
@@ -417,6 +420,7 @@ namespace System.Net.Sockets
 							result.Sock.Poll (-1, SelectMode.SelectWrite, out success);
 							if (success == 0) {
 								result.Sock.connected = true;
+								result.Sock.seed_endpoint = iep;
 								result.Complete ();
 								return;
 							}
@@ -550,11 +554,14 @@ namespace System.Net.Sockets
 		internal bool disposed;
 		
 
-		/* Used in LocalEndPoint and RemoteEndPoint if the
-		 * Mono.Posix assembly is available
-		 */
-		private static object unixendpoint=null;
-		private static Type unixendpointtype=null;
+		/*
+		 * This EndPoint is used when creating new endpoints. Because
+		 * there are many types of EndPoints possible,
+		 * seed_endpoint.Create(addr) is used for creating new ones.
+		 * As such, this value is set on Bind, SentTo, ReceiveFrom,
+		 * Connect, etc.
+ 		 */
+		private EndPoint seed_endpoint = null;
 
 #if NET_2_0
 		private bool isbound;
@@ -638,31 +645,6 @@ namespace System.Net.Sockets
 					currentList.Add (sock);
 				}
 			}
-		}
-
-		static Socket()
-		{
-			Assembly ass;
-			
-			try {
-				ass = Assembly.Load (Consts.AssemblyMono_Posix);
-			} catch (FileNotFoundException) {
-				return;
-			}
-				
-			unixendpointtype=ass.GetType("Mono.Posix.UnixEndPoint");
-
-			/* The endpoint Create() method is an instance
-			 * method :-(
-			 */
-			Type[] arg_types=new Type[1];
-			arg_types[0]=typeof(string);
-			ConstructorInfo cons=unixendpointtype.GetConstructor(arg_types);
-
-			object[] args=new object[1];
-			args[0]="nothing";
-
-			unixendpoint=cons.Invoke(args);
 		}
 
 		// private constructor used by Accept, which already
@@ -1092,7 +1074,15 @@ namespace System.Net.Sockets
 			get {
 				if (disposed && closed)
 					throw new ObjectDisposedException (GetType ().ToString ());
-
+				
+				/*
+				 * If the seed EndPoint is null, Connect, Bind,
+				 * etc has not yet been called. MS returns null
+				 * in this case.
+				 */
+				if (seed_endpoint == null)
+					return null;
+				
 				SocketAddress sa;
 				int error;
 				
@@ -1101,15 +1091,7 @@ namespace System.Net.Sockets
 				if (error != 0)
 					throw new SocketException (error);
 
-				if (sa.Family==AddressFamily.InterNetwork || sa.Family==AddressFamily.InterNetworkV6) {
-					// Stupidly, EndPoint.Create() is an
-					// instance method
-					return new IPEndPoint(0, 0).Create(sa);
-				} else if (sa.Family==AddressFamily.Unix && unixendpoint!=null) {
-					return((EndPoint)unixendpointtype.InvokeMember("Create", BindingFlags.InvokeMethod|BindingFlags.Instance|BindingFlags.Public, null, unixendpoint, new object[] {sa}));
-				} else {
-					throw GetNotImplemented (Locale.GetText ("No support for the {0} AddressFamily", sa.Family));
-				}
+				return seed_endpoint.Create (sa);
 			}
 		}
 
@@ -1123,14 +1105,19 @@ namespace System.Net.Sockets
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static SocketAddress RemoteEndPoint_internal(IntPtr socket, out int error);
 
-		//
-		// Wish: Support non-IP endpoints
-		//
 		public EndPoint RemoteEndPoint {
 			get {
 				if (disposed && closed)
 					throw new ObjectDisposedException (GetType ().ToString ());
-
+				
+				/*
+				 * If the seed EndPoint is null, Connect, Bind,
+				 * etc has not yet been called. MS returns null
+				 * in this case.
+				 */
+				if (seed_endpoint == null)
+					return null;
+				
 				SocketAddress sa;
 				int error;
 				
@@ -1139,16 +1126,7 @@ namespace System.Net.Sockets
 				if (error != 0)
 					throw new SocketException (error);
 
-				if(sa.Family==AddressFamily.InterNetwork || sa.Family==AddressFamily.InterNetworkV6 ) {
-					// Stupidly, EndPoint.Create() is an
-					// instance method
-					return new IPEndPoint(0, 0).Create(sa);
-				} else if (sa.Family==AddressFamily.Unix &&
-					   unixendpoint!=null) {
-					return((EndPoint)unixendpointtype.InvokeMember("Create", BindingFlags.InvokeMethod|BindingFlags.Instance|BindingFlags.Public, null, unixendpoint, new object[] {sa}));
-				} else {
-					throw new NotSupportedException(Locale.GetText ("the {0} address family is not supported in Mono", sa.Family));
-				}
+				return seed_endpoint.Create (sa);
 			}
 		}
 
@@ -1323,6 +1301,7 @@ namespace System.Net.Sockets
 			Socket accepted = new Socket(this.AddressFamily, this.SocketType,
 				this.ProtocolType, sock);
 
+			accepted.seed_endpoint = this.seed_endpoint;
 			accepted.Blocking = this.Blocking;
 			return(accepted);
 		}
@@ -1355,6 +1334,7 @@ namespace System.Net.Sockets
 			acceptSocket.protocol_type = this.ProtocolType;
 			acceptSocket.socket = sock;
 			acceptSocket.connected = true;
+			acceptSocket.seed_endpoint = this.seed_endpoint;
 			acceptSocket.Blocking = this.Blocking;
 
 			/* FIXME: figure out what if anything else
@@ -1951,6 +1931,8 @@ namespace System.Net.Sockets
 			if (error == 0)
 				isbound = true;
 #endif
+			
+			seed_endpoint = local_end;
 		}
 
 		// Closes the socket
@@ -2026,6 +2008,8 @@ namespace System.Net.Sockets
 #if NET_2_0
 			isbound = true;
 #endif
+			
+			seed_endpoint = remote_end;
 		}
 
 #if NET_2_0
@@ -2059,6 +2043,7 @@ namespace System.Net.Sockets
 				Connect_internal (socket, serial, out error);
 				if (error == 0) {
 					connected = true;
+					seed_endpoint = iep;
 					return;
 				} else if (error != (int)SocketError.InProgress &&
 					   error != (int)SocketError.WouldBlock) {
@@ -2070,6 +2055,7 @@ namespace System.Net.Sockets
 					int success = (int)GetSocketOption (SocketOptionLevel.Socket, SocketOptionName.Error);
 					if (success == 0) {
 						connected = true;
+						seed_endpoint = iep;
 						return;
 					}
 				}
@@ -2825,7 +2811,9 @@ namespace System.Net.Sockets
 				// instance method
 				remote_end = remote_end.Create (sockaddr);
 			}
-
+			
+			seed_endpoint = remote_end;
+			
 			return cnt;
 		}
 
@@ -3149,7 +3137,9 @@ namespace System.Net.Sockets
 #if NET_2_0
 			isbound = true;
 #endif
-
+			
+			seed_endpoint = remote_end;
+			
 			return ret;
 		}
 
