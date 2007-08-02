@@ -857,7 +857,7 @@ namespace Mono.CSharp {
 			return base.GetClsCompliantAttributeValue ();
 		}
 
-		public void AddBasesForPart (DeclSpace part, ArrayList bases)
+		public virtual void AddBasesForPart (DeclSpace part, ArrayList bases)
 		{
 			// FIXME: get rid of partial_parts and store lists of bases of each part here
 			// assumed, not verified: 'part' is in 'partial_parts' 
@@ -2912,6 +2912,14 @@ namespace Mono.CSharp {
 			if (IsStatic && RootContext.Version == LanguageVersion.ISO_1) {
 				Report.FeatureIsNotISO1 (Location, "static classes");
 			}
+		}
+
+		public override void AddBasesForPart (DeclSpace part, ArrayList bases)
+		{
+			if (part.Name == "System.Object")
+				Report.Error (537, part.Location,
+					"The class System.Object cannot have a base class or implement an interface.");
+			base.AddBasesForPart (part, bases);
 		}
 
 		public override void ApplyAttributeBuilder(Attribute a, CustomAttributeBuilder cb)

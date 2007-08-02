@@ -1,3 +1,10 @@
+2007-08-03  Raja R Harinath  <harinath@gmail.com>
+
+	* cs-parser.jay (class_declaration): Update to changes in class.cs.
+	Move calling of	'AddBasesForPart' to ...
+	(class_bases): ... here.
+	(struct_declaration, interface_declaration): Update to changes.
+
 2007-08-02  Raja R Harinath  <harinath@gmail.com>
 
 	Reduce some differences between cs-parser.jay in mcs/ and gmcs/.

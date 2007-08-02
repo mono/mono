@@ -1,3 +1,12 @@
+2007-08-03  Raja R Harinath  <harinath@gmail.com>
+
+	* class.cs (TypeContainer.AddBasesForPart): Make virtual.
+	(Class.AddBasesForPart): Move CS0537 check here from ...
+	* cs-parser.jay (class_declaration): ... here.  Move calling of
+	'AddBasesForPart' to ...
+	(class_bases): ... here.
+	(struct_declaration, interface_declaration): Update to changes.
+
 2007-08-02  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #81923

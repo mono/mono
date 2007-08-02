@@ -814,15 +814,10 @@ struct_declaration
 	  type_name
 	  { 
 		MemberName name = MakeName ((MemberName) $6);
-		push_current_class (new Struct (
-			current_namespace, current_class, name, (int) $2,
-			(Attributes) $1), $3);
+		push_current_class (new Struct (current_namespace, current_class, name, (int) $2, (Attributes) $1), $3);
 	  }
 	  opt_class_base
 	  {
-		if ($8 != null)
-			current_container.AddBasesForPart (current_class, (ArrayList) $8);
-
 		if (RootContext.Documentation != null)
 			current_container.DocComment = Lexer.consume_doc_comment ();
 	  }
@@ -1564,16 +1559,10 @@ interface_declaration
 	  type_name
 	  {
 		MemberName name = MakeName ((MemberName) $6);
-
-		push_current_class (new Interface (
-			current_namespace, current_class, name, (int) $2,
-			(Attributes) $1), $3);
+		push_current_class (new Interface (current_namespace, current_class, name, (int) $2, (Attributes) $1), $3);
 	  }
 	  opt_class_base
 	  {
-		if ($8 != null)
-			current_container.AddBasesForPart (current_class, (ArrayList) $8);
-
 		if (RootContext.Documentation != null) {
 			current_container.DocComment = Lexer.consume_doc_comment ();
 			Lexer.doc_state = XmlCommentState.Allowed;
@@ -3746,23 +3735,10 @@ class_declaration
 	  type_name
 	  {
 		MemberName name = MakeName ((MemberName) $6);
-		int mod_flags = (int) $2;
-
-		push_current_class (new Class (
-			current_namespace, current_class, name,
-			mod_flags, (Attributes) $1), $3);
+		push_current_class (new Class (current_namespace, current_class, name, (int) $2, (Attributes) $1), $3);
 	  }
 	  opt_class_base
 	  {
-		if ($8 != null) {
-			if (current_class.Name == "System.Object") {
-				Report.Error (537, current_class.Location,
-					      "The class System.Object cannot have a base " +
-					      "class or implement an interface.");
-			}
-			current_container.AddBasesForPart (current_class, (ArrayList) $8);
-		}
-
 		if (RootContext.Documentation != null) {
 			current_container.DocComment = Lexer.consume_doc_comment ();
 			Lexer.doc_state = XmlCommentState.Allowed;
@@ -3824,12 +3800,12 @@ modifier
 	;
 
 opt_class_base
-	: /* empty */		{ $$ = null; }
-	| class_base		{ $$ = $1;   }
+	: /* empty */
+	| class_base
 	;
 
 class_base
-	: COLON type_list { $$ = $2; }
+	: COLON type_list	{ current_container.AddBasesForPart (current_class, (ArrayList) $2); }
 	;
 
 //
