@@ -1,5 +1,13 @@
 2007-08-02  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	[ Backport selected parts of r82743, fixes #82234]
+	
+	* DataGridViewRow.cs: SetValues: Don't blindly add cells to the row,
+	  the row may already have cells. SetDataGridView: set the DGV of all
+	  the contained cells as well.
+
+2007-08-02  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	[ Backport of r83273]
 	
 	* PropertyGrid.cs: PropertyGrid.cs: Add a null-check. Fixes

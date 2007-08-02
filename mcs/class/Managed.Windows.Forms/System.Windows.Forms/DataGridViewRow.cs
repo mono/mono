@@ -354,9 +354,14 @@ namespace System.Windows.Forms {
 			}
 			/////// COLUMNAS //////////
 			for (int i = 0; i < values.Length; i++) {
-				DataGridViewCell cell = new DataGridViewTextBoxCell();
+				DataGridViewCell cell;
+				if (cells.Count > i) {
+					cell = cells [i];
+				} else {
+					cell = new DataGridViewTextBoxCell();
+					cells.Add(cell);
+				}
 				cell.Value = values[i];
-				cells.Add(cell);
 			}
 			
 			// XXX
@@ -403,6 +408,8 @@ namespace System.Windows.Forms {
 		{
 			base.SetDataGridView(dataGridView);
 			headerCell.SetDataGridView(dataGridView);
+			foreach (DataGridViewCell cell in cells)
+				cell.SetDataGridView (dataGridView);
 		}
 
 		internal override void SetState (DataGridViewElementStates state)
