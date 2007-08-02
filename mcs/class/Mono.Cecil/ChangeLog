@@ -1,3 +1,17 @@
+2007-08-02  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil/GenericParameter.cs
+	  Mono.Cecil/FieldDefinition.cs
+	  Mono.Cecil/TypeDefinition.cs
+	  Mono.Cecil/MethodDefinition.cs
+	  Mono.Cecil/EventDefinition.cs
+	  Mono.Cecil/PInvokeInfo.cs
+	  Mono.Cecil/Resource.cs
+	  Mono.Cecil/ParameterDefinition.cs
+	  Mono.Cecil/PropertyDefinition.cs:
+
+		Add Isxxx properties based on the xxxAttributes enums.
+
 2007-07-23  Raja R Harinath  <rharinath@novell.com>
 
 	Fix 'make warnings'.

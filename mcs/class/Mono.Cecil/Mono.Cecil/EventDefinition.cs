@@ -69,16 +69,6 @@ namespace Mono.Cecil {
 
 		#region EventAttributes
 
-		public bool IsRuntimeSpecialName {
-			get { return (m_attributes & EventAttributes.RTSpecialName) != 0; }
-			set {
-				if (value)
-					m_attributes |= EventAttributes.RTSpecialName;
-				else
-					m_attributes &= ~EventAttributes.RTSpecialName;
-			}
-		}
-
 		public bool IsSpecialName {
 			get { return (m_attributes & EventAttributes.SpecialName) != 0; }
 			set {
@@ -86,6 +76,16 @@ namespace Mono.Cecil {
 					m_attributes |= EventAttributes.SpecialName;
 				else
 					m_attributes &= ~EventAttributes.SpecialName;
+			}
+		}
+
+		public bool IsRuntimeSpecialName {
+			get { return (m_attributes & EventAttributes.RTSpecialName) != 0; }
+			set {
+				if (value)
+					m_attributes |= EventAttributes.RTSpecialName;
+				else
+					m_attributes &= ~EventAttributes.RTSpecialName;
 			}
 		}
 

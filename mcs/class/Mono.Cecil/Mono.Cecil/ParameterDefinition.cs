@@ -78,6 +78,47 @@ namespace Mono.Cecil {
 		}
 
 		#region ParameterAttributes
+
+		public bool IsIn {
+			get { return (m_attributes & ParameterAttributes.In) != 0; }
+			set {
+				if (value)
+					m_attributes |= ParameterAttributes.In;
+				else
+					m_attributes &= ~ParameterAttributes.In;
+			}
+		}
+
+		public bool IsOut {
+			get { return (m_attributes & ParameterAttributes.Out) != 0; }
+			set {
+				if (value)
+					m_attributes |= ParameterAttributes.Out;
+				else
+					m_attributes &= ~ParameterAttributes.Out;
+			}
+		}
+
+		public bool IsOptional {
+			get { return (m_attributes & ParameterAttributes.Optional) != 0; }
+			set {
+				if (value)
+					m_attributes |= ParameterAttributes.Optional;
+				else
+					m_attributes &= ~ParameterAttributes.Optional;
+			}
+		}
+
+		public bool HasDefault {
+			get { return (m_attributes & ParameterAttributes.HasDefault) != 0; }
+			set {
+				if (value)
+					m_attributes |= ParameterAttributes.HasDefault;
+				else
+					m_attributes &= ~ParameterAttributes.HasDefault;
+			}
+		}
+
 		#endregion
 
 		public ParameterDefinition (TypeReference paramType) :

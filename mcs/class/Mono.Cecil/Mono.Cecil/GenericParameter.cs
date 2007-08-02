@@ -86,6 +86,73 @@ namespace Mono.Cecil {
 		}
 
 		#region GenericParameterAttributes
+
+		public bool IsNonVariant {
+			get { return (m_attributes & GenericParameterAttributes.NonVariant) != 0; }
+			set {
+				GenericParameterAttributes masked = (GenericParameterAttributes.VarianceMask & GenericParameterAttributes.NonVariant)
+				if (value)
+					m_attributes |= masked;
+				else
+					m_attributes &= masked;
+			}
+		}
+
+		public bool IsCovariant {
+			get { return (m_attributes & GenericParameterAttributes.Covariant) != 0; }
+			set {
+				GenericParameterAttributes masked = (GenericParameterAttributes.VarianceMask & GenericParameterAttributes.Covariant)
+				if (value)
+					m_attributes |= masked;
+				else
+					m_attributes &= masked;
+			}
+		}
+
+		public bool IsContravariant {
+			get { return (m_attributes & GenericParameterAttributes.Contravariant) != 0; }
+			set {
+				GenericParameterAttributes masked = (GenericParameterAttributes.VarianceMask & GenericParameterAttributes.Contravariant)
+				if (value)
+					m_attributes |= masked;
+				else
+					m_attributes &= masked;
+			}
+		}
+
+		public bool HasReferenceTypeConstraint {
+			get { return (m_attributes & GenericParameterAttributes.ReferenceTypeConstraint) != 0; }
+			set {
+				GenericParameterAttributes masked = (GenericParameterAttributes.SpecialConstraintMask & GenericParameterAttributes.ReferenceTypeConstraint)
+				if (value)
+					m_attributes |= masked;
+				else
+					m_attributes &= masked;
+			}
+		}
+
+		public bool HasNotNullableValueTypeConstraint {
+			get { return (m_attributes & GenericParameterAttributes.NotNullableValueTypeConstraint) != 0; }
+			set {
+				GenericParameterAttributes masked = (GenericParameterAttributes.SpecialConstraintMask & GenericParameterAttributes.NotNullableValueTypeConstraint)
+				if (value)
+					m_attributes |= masked;
+				else
+					m_attributes &= masked;
+			}
+		}
+
+		public bool HasDefaultConstructorConstraint {
+			get { return (m_attributes & GenericParameterAttributes.DefaultConstructorConstraint) != 0; }
+			set {
+				GenericParameterAttributes masked = (GenericParameterAttributes.SpecialConstraintMask & GenericParameterAttributes.DefaultConstructorConstraint)
+				if (value)
+					m_attributes |= masked;
+				else
+					m_attributes &= masked;
+			}
+		}
+
 		#endregion
 
 		internal GenericParameter (int pos, IGenericParameterProvider owner) :

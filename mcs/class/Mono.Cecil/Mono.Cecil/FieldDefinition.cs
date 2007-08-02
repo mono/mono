@@ -104,6 +104,103 @@ namespace Mono.Cecil {
 
 		#region FieldAttributes
 
+		public bool IsCompilerControlled {
+			get { return (m_attributes & FieldAttributes.Compilercontrolled) != 0; }
+			set {
+				FieldAttributes masked = (FieldAttributes.FieldAccessMask & FieldAttributes.Compilercontrolled)
+				if (value)
+					m_attributes |= masked;
+				else
+					m_attributes &= masked;
+			}
+		}
+
+		public bool IsPrivate {
+			get { return (m_attributes & FieldAttributes.Private) != 0; }
+			set {
+				FieldAttributes masked = (FieldAttributes.FieldAccessMask & FieldAttributes.Private)
+				if (value)
+					m_attributes |= masked;
+				else
+					m_attributes &= masked;
+			}
+		}
+
+		public bool IsFamilyAndAssembly {
+			get { return (m_attributes & FieldAttributes.FamANDAssem) != 0; }
+			set {
+				FieldAttributes masked = (FieldAttributes.FieldAccessMask & FieldAttributes.FamANDAssem)
+				if (value)
+					m_attributes |= masked;
+				else
+					m_attributes &= masked;
+			}
+		}
+
+		public bool IsAssembly {
+			get { return (m_attributes & FieldAttributes.Assembly) != 0; }
+			set {
+				FieldAttributes masked = (FieldAttributes.FieldAccessMask & FieldAttributes.Assembly)
+				if (value)
+					m_attributes |= masked;
+				else
+					m_attributes &= masked;
+			}
+		}
+
+		public bool IsFamily {
+			get { return (m_attributes & FieldAttributes.Family) != 0; }
+			set {
+				FieldAttributes masked = (FieldAttributes.FieldAccessMask & FieldAttributes.Family)
+				if (value)
+					m_attributes |= masked;
+				else
+					m_attributes &= masked;
+			}
+		}
+
+		public bool IsFamilyOrAssembly {
+			get { return (m_attributes & FieldAttributes.FamORAssem) != 0; }
+			set {
+				FieldAttributes masked = (FieldAttributes.FieldAccessMask & FieldAttributes.FamORAssem)
+				if (value)
+					m_attributes |= masked;
+				else
+					m_attributes &= masked;
+			}
+		}
+
+		public bool IsPublic {
+			get { return (m_attributes & FieldAttributes.Public) != 0; }
+			set {
+				FieldAttributes masked = (FieldAttributes.FieldAccessMask & FieldAttributes.Public)
+				if (value)
+					m_attributes |= masked;
+				else
+					m_attributes &= masked;
+			}
+		}
+
+		public bool IsStatic {
+			get { return (m_attributes & FieldAttributes.Static) != 0; }
+			set {
+				if (value)
+					m_attributes |= FieldAttributes.Static;
+				else
+					m_attributes &= ~FieldAttributes.Static;
+			}
+		}
+
+		public bool IsInitOnly {
+			get { return (m_attributes & FieldAttributes.InitOnly) != 0; }
+			set {
+				if (value)
+					m_attributes |= FieldAttributes.InitOnly;
+				else
+					m_attributes &= ~FieldAttributes.InitOnly;
+			}
+		}
+
 		public bool IsLiteral {
 			get { return (m_attributes & FieldAttributes.Literal) != 0; }
 			set {
@@ -114,23 +211,13 @@ namespace Mono.Cecil {
 			}
 		}
 
-		public bool IsReadOnly {
-			get { return (m_attributes & FieldAttributes.InitOnly) != 0; }
+		public bool IsNotSerialized {
+			get { return (m_attributes & FieldAttributes.NotSerialized) != 0; }
 			set {
 				if (value)
-					m_attributes |= FieldAttributes.InitOnly;
+					m_attributes |= FieldAttributes.NotSerialized;
 				else
-					m_attributes &= ~FieldAttributes.InitOnly;
-			}
-		}
-
-		public bool IsRuntimeSpecialName {
-			get { return (m_attributes & FieldAttributes.RTSpecialName) != 0; }
-			set {
-				if (value)
-					m_attributes |= FieldAttributes.RTSpecialName;
-				else
-					m_attributes &= ~FieldAttributes.RTSpecialName;
+					m_attributes &= ~FieldAttributes.NotSerialized;
 			}
 		}
 
@@ -144,13 +231,33 @@ namespace Mono.Cecil {
 			}
 		}
 
-		public bool IsStatic {
-			get { return (m_attributes & FieldAttributes.Static) != 0; }
+		public bool IsPInvokeImpl {
+			get { return (m_attributes & FieldAttributes.PInvokeImpl) != 0; }
 			set {
 				if (value)
-					m_attributes |= FieldAttributes.Static;
+					m_attributes |= FieldAttributes.PInvokeImpl;
 				else
-					m_attributes &= ~FieldAttributes.Static;
+					m_attributes &= ~FieldAttributes.PInvokeImpl;
+			}
+		}
+
+		public bool IsRuntimeSpecialName {
+			get { return (m_attributes & FieldAttributes.RTSpecialName) != 0; }
+			set {
+				if (value)
+					m_attributes |= FieldAttributes.RTSpecialName;
+				else
+					m_attributes &= ~FieldAttributes.RTSpecialName;
+			}
+		}
+
+		public bool HasDefault {
+			get { return (m_attributes & FieldAttributes.HasDefault) != 0; }
+			set {
+				if (value)
+					m_attributes |= FieldAttributes.HasDefault;
+				else
+					m_attributes &= ~FieldAttributes.HasDefault;
 			}
 		}
 

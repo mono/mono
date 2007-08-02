@@ -127,13 +127,90 @@ namespace Mono.Cecil {
 
 		#region MethodAttributes
 
-		public bool IsAbstract {
-			get { return (m_attributes & MethodAttributes.Abstract) != 0; }
+		public bool IsCompilerControlled {
+			get { return (m_attributes & MethodAttributes.Compilercontrolled) != 0; }
+			set {
+				MethodAttributes masked = (MethodAttributes.MemberAccessMask & MethodAttributes.Compilercontrolled)
+				if (value)
+					m_attributes |= masked;
+				else
+					m_attributes &= masked;
+			}
+		}
+
+		public bool IsPrivate {
+			get { return (m_attributes & MethodAttributes.Private) != 0; }
+			set {
+				MethodAttributes masked = (MethodAttributes.MemberAccessMask & MethodAttributes.Private)
+				if (value)
+					m_attributes |= masked;
+				else
+					m_attributes &= masked;
+			}
+		}
+
+		public bool IsFamilyAndAssembly {
+			get { return (m_attributes & MethodAttributes.FamANDAssem) != 0; }
+			set {
+				MethodAttributes masked = (MethodAttributes.MemberAccessMask & MethodAttributes.FamANDAssem)
+				if (value)
+					m_attributes |= masked;
+				else
+					m_attributes &= masked;
+			}
+		}
+
+		public bool IsAssembly {
+			get { return (m_attributes & MethodAttributes.Assem) != 0; }
+			set {
+				MethodAttributes masked = (MethodAttributes.MemberAccessMask & MethodAttributes.Assem)
+				if (value)
+					m_attributes |= masked;
+				else
+					m_attributes &= masked;
+			}
+		}
+
+		public bool IsFamily {
+			get { return (m_attributes & MethodAttributes.Family) != 0; }
+			set {
+				MethodAttributes masked = (MethodAttributes.MemberAccessMask & MethodAttributes.Family)
+				if (value)
+					m_attributes |= masked;
+				else
+					m_attributes &= masked;
+			}
+		}
+
+		public bool IsFamilyOrAssembly {
+			get { return (m_attributes & MethodAttributes.FamORAssem) != 0; }
+			set {
+				MethodAttributes masked = (MethodAttributes.MemberAccessMask & MethodAttributes.FamORAssem)
+				if (value)
+					m_attributes |= masked;
+				else
+					m_attributes &= masked;
+			}
+		}
+
+		public bool IsPublic {
+			get { return (m_attributes & MethodAttributes.Public) != 0; }
+			set {
+				MethodAttributes masked = (MethodAttributes.MemberAccessMask & MethodAttributes.Public)
+				if (value)
+					m_attributes |= masked;
+				else
+					m_attributes &= masked;
+			}
+		}
+
+		public bool IsStatic {
+			get { return (m_attributes & MethodAttributes.Static) != 0; }
 			set {
 				if (value)
-					m_attributes |= MethodAttributes.Abstract;
+					m_attributes |= MethodAttributes.Static;
 				else
-					m_attributes &= ~MethodAttributes.Abstract;
+					m_attributes &= ~MethodAttributes.Static;
 			}
 		}
 
@@ -147,7 +224,17 @@ namespace Mono.Cecil {
 			}
 		}
 
-		public bool IsHideBySignature {
+		public bool IsVirtual {
+			get { return (m_attributes & MethodAttributes.Virtual) != 0; }
+			set {
+				if (value)
+					m_attributes |= MethodAttributes.Virtual;
+				else
+					m_attributes &= ~MethodAttributes.Virtual;
+			}
+		}
+
+		public bool IsHideBySig {
 			get { return (m_attributes & MethodAttributes.HideBySig) != 0; }
 			set {
 				if (value)
@@ -157,43 +244,35 @@ namespace Mono.Cecil {
 			}
 		}
 
+		public bool IsReuseSlot {
+			get { return (m_attributes & MethodAttributes.ReuseSlot) != 0; }
+			set {
+				MethodAttributes masked = (MethodAttributes.VtableLayoutMask & MethodAttributes.ReuseSlot)
+				if (value)
+					m_attributes |= masked;
+				else
+					m_attributes &= masked;
+			}
+		}
+
 		public bool IsNewSlot {
-			get { return (m_attributes & MethodAttributes.VtableLayoutMask) == MethodAttributes.NewSlot; }
+			get { return (m_attributes & MethodAttributes.NewSlot) != 0; }
 			set {
+				MethodAttributes masked = (MethodAttributes.VtableLayoutMask & MethodAttributes.NewSlot)
 				if (value)
-					m_attributes |= (MethodAttributes.VtableLayoutMask & MethodAttributes.NewSlot);
+					m_attributes |= masked;
 				else
-					m_attributes &= ~(MethodAttributes.VtableLayoutMask & MethodAttributes.NewSlot);
+					m_attributes &= masked;
 			}
 		}
 
-		public bool IsRuntimeSpecialName {
-			get { return (m_attributes & MethodAttributes.RTSpecialName) != 0; }
+		public bool IsAbstract {
+			get { return (m_attributes & MethodAttributes.Abstract) != 0; }
 			set {
 				if (value)
-					m_attributes |= MethodAttributes.RTSpecialName;
+					m_attributes |= MethodAttributes.Abstract;
 				else
-					m_attributes &= ~MethodAttributes.RTSpecialName;
-			}
-		}
-
-		public bool IsInternalCall {
-			get { return MethodImplAttributes.InternalCall == (m_implAttrs & MethodImplAttributes.InternalCall); }
-			set {
-				if (value)
-					m_implAttrs |= MethodImplAttributes.InternalCall;
-				else
-					m_implAttrs &= ~MethodImplAttributes.InternalCall;
-			}
-		}
-
-		public bool IsRuntime {
-			get { return MethodImplAttributes.Runtime == (m_implAttrs & MethodImplAttributes.Runtime); }
-			set {
-				if (value)
-					m_implAttrs |= MethodImplAttributes.Runtime;
-				else
-					m_implAttrs &= ~MethodImplAttributes.Runtime;
+					m_attributes &= ~MethodAttributes.Abstract;
 			}
 		}
 
@@ -207,24 +286,43 @@ namespace Mono.Cecil {
 			}
 		}
 
-		public bool IsStatic {
-			get { return (m_attributes & MethodAttributes.Static) != 0; }
+		public bool IsPInvokeImpl {
+			get { return (m_attributes & MethodAttributes.PInvokeImpl) != 0; }
 			set {
 				if (value)
-					m_attributes |= MethodAttributes.Static;
+					m_attributes |= MethodAttributes.PInvokeImpl;
 				else
-					m_attributes &= ~MethodAttributes.Static;
-				this.HasThis = !value;
+					m_attributes &= ~MethodAttributes.PInvokeImpl;
 			}
 		}
 
-		public bool IsVirtual {
-			get { return (m_attributes & MethodAttributes.Virtual) != 0; }
+		public bool IsUnmanagedExport {
+			get { return (m_attributes & MethodAttributes.UnmanagedExport) != 0; }
 			set {
 				if (value)
-					m_attributes |= MethodAttributes.Virtual;
+					m_attributes |= MethodAttributes.UnmanagedExport;
 				else
-					m_attributes &= ~MethodAttributes.Virtual;
+					m_attributes &= ~MethodAttributes.UnmanagedExport;
+			}
+		}
+
+		public bool IsRuntimeSpecialName {
+			get { return (m_attributes & MethodAttributes.RTSpecialName) != 0; }
+			set {
+				if (value)
+					m_attributes |= MethodAttributes.RTSpecialName;
+				else
+					m_attributes &= ~MethodAttributes.RTSpecialName;
+			}
+		}
+
+		public bool HasSecurity {
+			get { return (m_attributes & MethodAttributes.HasSecurity) != 0; }
+			set {
+				if (value)
+					m_attributes |= MethodAttributes.HasSecurity;
+				else
+					m_attributes &= ~MethodAttributes.HasSecurity;
 			}
 		}
 

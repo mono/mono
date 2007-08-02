@@ -110,6 +110,16 @@ namespace Mono.Cecil {
 
 		#region PropertyAttributes
 
+		public bool IsSpecialName {
+			get { return (m_attributes & PropertyAttributes.SpecialName) != 0; }
+			set {
+				if (value)
+					m_attributes |= PropertyAttributes.SpecialName;
+				else
+					m_attributes &= ~PropertyAttributes.SpecialName;
+			}
+		}
+
 		public bool IsRuntimeSpecialName {
 			get { return (m_attributes & PropertyAttributes.RTSpecialName) != 0; }
 			set {
@@ -120,13 +130,13 @@ namespace Mono.Cecil {
 			}
 		}
 
-		public bool IsSpecialName {
-			get { return (m_attributes & PropertyAttributes.SpecialName) != 0; }
+		public bool HasDefault {
+			get { return (m_attributes & PropertyAttributes.HasDefault) != 0; }
 			set {
 				if (value)
-					m_attributes |= PropertyAttributes.SpecialName;
+					m_attributes |= PropertyAttributes.HasDefault;
 				else
-					m_attributes &= ~PropertyAttributes.SpecialName;
+					m_attributes &= ~PropertyAttributes.HasDefault;
 			}
 		}
 
