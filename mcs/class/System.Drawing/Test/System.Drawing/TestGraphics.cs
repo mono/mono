@@ -2021,7 +2021,6 @@ namespace MonoTests.System.Drawing {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void MeasureString_MultlineString_Width ()
 		{
 			using (Bitmap bitmap = new Bitmap (20, 20)) {

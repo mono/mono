@@ -1,3 +1,8 @@
+2007-08-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TestGraphics.cs: Enabled test MeasureString_MultlineString_Width
+	now that #81572 is fixed.
+
 2007-08-01  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* GDIPlusTest.cs: Add test case for GdipCloneFontFamily
