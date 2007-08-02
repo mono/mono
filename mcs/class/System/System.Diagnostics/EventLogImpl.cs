@@ -49,8 +49,6 @@ namespace System.Diagnostics
 			_coreEventLog = coreEventLog;
 		}
 
-		public event EntryWrittenEventHandler EntryWritten;
-
 		protected EventLog CoreEventLog {
 			get { return _coreEventLog; }
 		}
@@ -137,6 +135,10 @@ namespace System.Diagnostics
 			}
 			return entries;
 		}
+
+		public abstract void DisableNotification ();
+
+		public abstract void EnableNotification ();
 
 		public abstract void BeginInit ();
 

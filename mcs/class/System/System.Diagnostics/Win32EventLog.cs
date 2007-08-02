@@ -697,6 +697,16 @@ namespace System.Diagnostics
 			return hEventLog;
 		}
 
+		public override void DisableNotification ()
+		{
+			// FIXME: implement
+		}
+
+		public override void EnableNotification ()
+		{
+			// FIXME: implement
+		}
+
 		private class PInvoke
 		{
 			[DllImport ("advapi32.dll", SetLastError=true)]

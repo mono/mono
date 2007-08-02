@@ -44,6 +44,8 @@ namespace System.Diagnostics
 	{
 		const string DateFormat = "yyyyMMddHHmmssfff";
 		static readonly object lockObject = new object ();
+		FileSystemWatcher file_watcher;
+		int last_notification_index;
 
 		public LocalFileEventLog (EventLog coreEventLog) : base (coreEventLog)
 		{
@@ -125,6 +127,37 @@ namespace System.Diagnostics
 		public override void Dispose (bool disposing)
 		{
 			Close ();
+		}
+
+		public override void DisableNotification ()
+		{
+			if (file_watcher == null)
+				return;
+			file_watcher.EnableRaisingEvents = false;
+		}
+
+		public override void EnableNotification ()
+		{
+			string logDir = FindLogStore (CoreEventLog.Log);
+			if (!Directory.Exists (logDir))
+				Directory.CreateDirectory (logDir);
+			if (file_watcher == null) {
+				file_watcher = new FileSystemWatcher ();
+				file_watcher.Path = logDir;
+				file_watcher.Created += delegate (object o, FileSystemEventArgs e) {
+					// Process every new entry in one notification event.
+					while (GetLatestIndex () > last_notification_index) {
+						try {
+							CoreEventLog.OnEntryWritten (GetEntry (last_notification_index++));
+						} catch (Exception ex) {
+							// FIXME: find some proper way to output this error
+							Debug.WriteLine (ex);
+						}
+					}
+				};
+			}
+			last_notification_index = GetLatestIndex ();
+			file_watcher.EnableRaisingEvents = true;
 		}
 
 		public override void EndInit () { }
@@ -242,7 +275,7 @@ namespace System.Diagnostics
 			lock (lockObject) {
 				string logDir = FindLogStore (CoreEventLog.Log);
 
-				int index = GetNewIndex ();
+				int index = GetLatestIndex () + 1;
 				string logPath = Path.Combine (logDir, index.ToString (CultureInfo.InvariantCulture) + ".log");
 				try {
 					using (TextWriter w = File.CreateText (logPath)) {
@@ -337,12 +370,12 @@ namespace System.Diagnostics
 				} else {
 					return Path.Combine (Environment.GetFolderPath (
 						Environment.SpecialFolder.CommonApplicationData),
-						"mono/eventlog");
+						"mono\\eventlog");
 				}
 			}
 		}
 
-		private int GetNewIndex () {
+		private int GetLatestIndex () {
 			// our file names are one-based
 			int maxIndex = 0;
 			string[] logFiles = Directory.GetFiles (FindLogStore (CoreEventLog.Log), "*.log");
@@ -356,7 +389,7 @@ namespace System.Diagnostics
 				} catch {
 				}
 			}
-			return ++maxIndex;
+			return maxIndex;
 		}
 
 		private static void ModifyAccessPermissions (string path, string permissions)

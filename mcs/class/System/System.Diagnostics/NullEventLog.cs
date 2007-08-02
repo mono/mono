@@ -71,6 +71,14 @@ namespace System.Diagnostics
 		{
 		}
 
+		public override void DisableNotification ()
+		{
+		}
+
+		public override void EnableNotification ()
+		{
+		}
+
 		public override void EndInit ()
 		{
 		}

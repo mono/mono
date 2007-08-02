@@ -38,12 +38,17 @@ using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Globalization;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace System.Diagnostics 
 {
 	[DefaultEvent ("EntryWritten")]
 	[InstallerType (typeof (EventLogInstaller))]
+#if NET_2_0
+	[MonitoringDescription ("Represents an event log")]
+#else
 	[Designer ("Microsoft.VisualStudio.Install.EventLogInstallableComponentDesigner, " + Consts.AssemblyMicrosoft_VisualStudio)]
+#endif
 	public class EventLog : Component, ISupportInitialize 
 	{
 		private string source;
@@ -95,20 +100,19 @@ namespace System.Diagnostics
 			this.logName = logName;
 
 			Impl = CreateEventLogImpl (this);
-			Impl.EntryWritten += new EntryWrittenEventHandler (EntryWrittenHandler);
-		}
-
-		private void EntryWrittenHandler (object sender, EntryWrittenEventArgs e)
-		{
-			if (doRaiseEvents)
-				OnEntryWritten (e.Entry);
 		}
 
 		[Browsable (false), DefaultValue (false)]
 		[MonitoringDescription ("If enabled raises event when a log is written.")]
 		public bool EnableRaisingEvents {
 			get {return doRaiseEvents;}
-			set {doRaiseEvents = value;}
+			set {
+				doRaiseEvents = value;
+				if (value)
+					Impl.EnableNotification ();
+				else
+					Impl.DisableNotification ();
+			}
 		}
 
 		[Browsable (false), DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -190,6 +194,9 @@ namespace System.Diagnostics
 			CreateEventSource (source, logName, ".");
 		}
 
+#if NET_2_0
+		[Obsolete ("use CreateEventSource(EventSourceCreationData) instead")]
+#endif
 		public static void CreateEventSource (string source, 
 			string logName, 
 			string machineName)
@@ -199,7 +206,7 @@ namespace System.Diagnostics
 		}
 
 #if NET_2_0
-		[MonoTODO ("Support remote machine")]
+		[MonoNotSupported ("remote machine is not supported")]
 		public
 #else
 		private
@@ -227,7 +234,7 @@ namespace System.Diagnostics
 			Delete (logName, ".");
 		}
 
-		[MonoTODO ("Support remote machine")]
+		[MonoNotSupported ("remote machine is not supported")]
 		public static void Delete (string logName, string machineName)
 		{
 			if (machineName == null || machineName.Length == 0)
@@ -247,7 +254,7 @@ namespace System.Diagnostics
 			DeleteEventSource (source, ".");
 		}
 
-		[MonoTODO ("Support remote machine")]
+		[MonoNotSupported ("remote machine is not supported")]
 		public static void DeleteEventSource (string source, string machineName)
 		{
 			if (machineName == null || machineName.Length == 0)
@@ -282,7 +289,7 @@ namespace System.Diagnostics
 			return Exists (logName, ".");
 		}
 
-		[MonoTODO ("Support remote machine")]
+		[MonoNotSupported ("remote machine is not supported")]
 		public static bool Exists (string logName, string machineName)
 		{
 			if (machineName == null || machineName.Length == 0)
@@ -301,14 +308,14 @@ namespace System.Diagnostics
 			return GetEventLogs (".");
 		}
 
-		[MonoTODO ("Support remote machine")]
+		[MonoNotSupported ("remote machine is not supported")]
 		public static EventLog[] GetEventLogs (string machineName)
 		{
 			EventLogImpl impl = CreateEventLogImpl (new EventLog ());
 			return impl.GetEventLogs (machineName);
 		}
 
-		[MonoTODO ("Support remote machine")]
+		[MonoNotSupported ("remote machine is not supported")]
 		public static string LogNameFromSourceName (string source, string machineName)
 		{
 			if (machineName == null || machineName.Length == 0)
@@ -332,7 +339,7 @@ namespace System.Diagnostics
 			return SourceExists (source, ".");
 		}
 
-		[MonoTODO ("Support remote machines")]
+		[MonoNotSupported ("remote machine is not supported")]
 		public static bool SourceExists (string source, string machineName)
 		{
 			if (machineName == null || machineName.Length == 0)
@@ -410,11 +417,13 @@ namespace System.Diagnostics
 		}
 
 #if NET_2_0
+		[ComVisible (false)]
 		public void WriteEvent (EventInstance instance, params object [] values)
 		{
 			WriteEvent (instance, null, values);
 		}
 
+		[ComVisible (false)]
 		public void WriteEvent (EventInstance instance, byte [] data, params object [] values)
 		{
 			if (instance == null)
@@ -454,12 +463,11 @@ namespace System.Diagnostics
 
 		internal void OnEntryWritten (EventLogEntry newEntry)
 		{
-			if (EntryWritten != null)
+			if (doRaiseEvents && EntryWritten != null)
 				EntryWritten (this, new EntryWrittenEventArgs (newEntry));
 		}
 
 		[MonitoringDescription ("Raised for each EventLog entry written.")]
-		[MonoTODO ("Use FSM for local file implementation, and NotifyChangeEventLog for win32")]
 		public event EntryWrittenEventHandler EntryWritten;
 
 		internal string GetLogName ()

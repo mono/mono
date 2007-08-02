@@ -127,6 +127,7 @@ namespace System.Diagnostics
 
 #if NET_2_0
 		[ComVisible (false)]
+		[MonitoringDescription ("The instance ID for this event entry.")]
 		public long InstanceId {
 			get { return instanceId; }
 		}

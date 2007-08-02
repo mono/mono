@@ -81,6 +81,9 @@ namespace System.Diagnostics
 		}
 	}
 #if (XML_DEP)
+#if NET_2_0
+	[Obsolete ("This class is obsoleted")]
+#endif
 	public class DiagnosticsConfigurationHandler : IConfigurationSectionHandler
 	{
 		delegate void ElementHandler (IDictionary d, XmlNode node);
