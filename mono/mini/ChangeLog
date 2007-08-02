@@ -1,4 +1,9 @@
 
+Thu Aug 2 17:36:22 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c: avoid an invalid encoding of unsigned right shift by 0
+	to be emitted (bug #82281).
+
 Tue Jul 24 21:16:17 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* mini-codegen.c: work around a possible gcc bug on arm.
