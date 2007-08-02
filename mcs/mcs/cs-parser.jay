@@ -44,6 +44,8 @@ namespace Mono.CSharp
 		/// </summary>
 		Block      current_block;
 
+		Delegate   current_delegate;
+
 		AnonymousMethodExpression current_anonymous_method;
 
 		/// <summary>
@@ -73,7 +75,7 @@ namespace Mono.CSharp
 		bool parsing_indexer;
 
 		bool parsing_anonymous_method;
-		
+
 		///
 		/// An out-of-band stack.
 		///
@@ -638,9 +640,9 @@ attribute_target
 		LocatedToken lt = (LocatedToken) $1;
 		$$ = CheckAttributeTarget (lt.Value, lt.Location);
 	  }
-      | EVENT  { $$ = "event"; }	  
-      | RETURN { $$ = "return"; }
-      | error
+	| EVENT  { $$ = "event"; }
+	| RETURN { $$ = "return"; }
+	| error
 	  {
   		string name = yyNames [yyToken].ToLower ();
 		$$ = CheckAttributeTarget (name, GetLocation ($1));
@@ -806,18 +808,20 @@ struct_declaration
 	: opt_attributes
 	  opt_modifiers
 	  opt_partial
-	  STRUCT member_name
+	  STRUCT
+	  {
+	  }
+	  type_name
 	  { 
-		MemberName name = MakeName ((MemberName) $5);
+		MemberName name = MakeName ((MemberName) $6);
 		push_current_class (new Struct (
 			current_namespace, current_class, name, (int) $2,
 			(Attributes) $1), $3);
-
 	  }
 	  opt_class_base
 	  {
-		if ($7 != null)
-			current_container.AddBasesForPart (current_class, (ArrayList) $7);
+		if ($8 != null)
+			current_container.AddBasesForPart (current_class, (ArrayList) $8);
 
 		if (RootContext.Documentation != null)
 			current_container.DocComment = Lexer.consume_doc_comment ();
@@ -1374,9 +1378,9 @@ parameter_array
 		if ((mod & Parameter.Modifier.This) != 0) {
 			Report.Error (1104, lexer.Location, "The parameter modifiers `this' and `params' cannot be used altogether");
 		} else {
-		Report.Error (1611, (Location) $2, "The params parameter cannot be declared as ref or out");
+			Report.Error (1611, (Location) $2, "The params parameter cannot be declared as ref or out");
 		}
-                $$ = null;
+		$$ = null;
 	  }
 	| opt_attributes PARAMS type error {
 		CheckIdentifierToken (yyToken, GetLocation ($4));
@@ -1554,9 +1558,12 @@ interface_declaration
 	: opt_attributes
 	  opt_modifiers
 	  opt_partial
-	  INTERFACE member_name
+	  INTERFACE
 	  {
-		MemberName name = MakeName ((MemberName) $5);
+	  }
+	  type_name
+	  {
+		MemberName name = MakeName ((MemberName) $6);
 
 		push_current_class (new Interface (
 			current_namespace, current_class, name, (int) $2,
@@ -1564,14 +1571,15 @@ interface_declaration
 	  }
 	  opt_class_base
 	  {
-		current_container.AddBasesForPart (current_class, (ArrayList) $7);
+		if ($8 != null)
+			current_container.AddBasesForPart (current_class, (ArrayList) $8);
 
 		if (RootContext.Documentation != null) {
 			current_container.DocComment = Lexer.consume_doc_comment ();
 			Lexer.doc_state = XmlCommentState.Allowed;
 		}
 	  }
-	  interface_body 
+	  interface_body
 	  {
 		if (RootContext.Documentation != null)
 			Lexer.doc_state = XmlCommentState.Allowed;
@@ -1633,7 +1641,7 @@ interface_member_declaration
 
 		if (RootContext.Documentation != null)
 			Lexer.doc_state = XmlCommentState.Allowed;
-       }
+	  }
 	| interface_event_declaration 
           { 
 		if ($1 != null){
@@ -2171,7 +2179,7 @@ constructor_header
 
 		$$ = new Constructor (current_class, lt.Value, 0, current_local_parameters,
 				      null, lt.Location);
-				      
+
 		anonymous_host = (IAnonymousHost) $$;
 	  }
 	;
@@ -2351,7 +2359,7 @@ add_accessor_declaration
 		
 		anonymous_host = SimpleAnonymousHost.GetSimple ();
 	  }
-      block
+	  block
 	  {
 		Accessor accessor = new Accessor ((ToplevelBlock) $4, 0, (Attributes) $1, (Location) $2);
 		lexer.EventParsing = true;
@@ -2614,18 +2622,20 @@ enum_member_declaration
 delegate_declaration
 	: opt_attributes
 	  opt_modifiers
-	  DELEGATE type member_name
-	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS 
-	  SEMICOLON
+	  DELEGATE
 	  {
-		MemberName name = MakeName ((MemberName) $5);
-		Parameters p = (Parameters) $7;
+	  }
+	  type type_name
+	  open_parens opt_formal_parameter_list CLOSE_PARENS
+	  {
+		MemberName name = MakeName ((MemberName) $6);
+		Parameters p = (Parameters) $8;
 		if (p.HasArglist) {
 			// TODO: wrong location
 			Report.Error (1669, name.Location, "__arglist is not valid in this context");
 		}
 
-		Delegate del = new Delegate (current_namespace, current_class, (Expression) $4,
+		Delegate del = new Delegate (current_namespace, current_class, (Expression) $5,
 					     (int) $2, name, p, (Attributes) $1);
 
 		if (RootContext.Documentation != null) {
@@ -2634,8 +2644,14 @@ delegate_declaration
 		}
 
 		current_container.AddDelegate (del);
-		$$ = del;
-	  }	
+		current_delegate = del;
+	  }
+	  SEMICOLON
+	  {
+		$$ = current_delegate;
+
+		current_delegate = null;
+	  }
 	;
 
 namespace_or_type_name
@@ -2656,6 +2672,10 @@ member_name
 		LocatedToken lt = (LocatedToken) $1;
 		$$ = new MemberName (lt.Value, lt.Location);
 	  }
+	;
+
+type_name
+	: member_name
 	;
 
 /* 
@@ -3720,9 +3740,12 @@ class_declaration
 	: opt_attributes
 	  opt_modifiers
 	  opt_partial
-	  CLASS member_name
+	  CLASS
 	  {
-		MemberName name = MakeName ((MemberName) $5);
+	  }
+	  type_name
+	  {
+		MemberName name = MakeName ((MemberName) $6);
 		int mod_flags = (int) $2;
 
 		push_current_class (new Class (
@@ -3731,13 +3754,13 @@ class_declaration
 	  }
 	  opt_class_base
 	  {
-		if ($7 != null) {
+		if ($8 != null) {
 			if (current_class.Name == "System.Object") {
 				Report.Error (537, current_class.Location,
 					      "The class System.Object cannot have a base " +
 					      "class or implement an interface.");
 			}
-			current_container.AddBasesForPart (current_class, (ArrayList) $7);
+			current_container.AddBasesForPart (current_class, (ArrayList) $8);
 		}
 
 		if (RootContext.Documentation != null) {
@@ -3767,7 +3790,7 @@ opt_modifiers
 	: /* empty */		{ $$ = (int) 0; }
 	| modifiers
 	;
-	
+
 modifiers
 	: modifier
 	| modifiers modifier
@@ -3781,7 +3804,7 @@ modifiers
 		}
 		$$ = (int) (m1 | m2);
 	  }
-      ;
+	;
 
 modifier
 	: NEW			{ $$ = Modifiers.NEW; }
@@ -4197,7 +4220,7 @@ switch_labels
 
 switch_label
 	: CASE constant_expression COLON 	{ $$ = new SwitchLabel ((Expression) $2, (Location) $1); }
-	| DEFAULT COLON				{ $$ = new SwitchLabel (null, (Location) $1); }
+	| DEFAULT COLON 			{ $$ = new SwitchLabel (null, (Location) $1); }
 	| error {
 		Report.Error (
 			1523, GetLocation ($1), 
@@ -4342,9 +4365,7 @@ foreach_statement
 
 		LocatedToken lt = (LocatedToken) $4;
 		Location l = lt.Location;
-		LocalInfo vi;
-
-		vi = foreach_block.AddVariable ((Expression) $3, lt.Value, l);
+		LocalInfo vi = foreach_block.AddVariable ((Expression) $3, lt.Value, l);
 		if (vi != null) {
 			vi.SetReadOnlyContext (LocalInfo.ReadOnlyContext.Foreach);
 
@@ -5009,10 +5030,10 @@ Block declare_local_constants (Expression type, ArrayList declarators)
 string CheckAttributeTarget (string a, Location l)
 {
 	switch (a) {
-		case "assembly" : case "module" : case "field" : case "method" : case "param" : case "property" : case "type" :
+	case "assembly" : case "module" : case "field" : case "method" : case "param" : case "property" : case "type" :
 			return a;
 	}
-	
+
 	Report.Warning (658, 1, l,
 		 "`{0}' is invalid attribute target. All attributes in this attribute section will be ignored", a);
 	return string.Empty;
@@ -5114,7 +5135,7 @@ public void parse ()
 		Tokenizer tokenizer = lexer as Tokenizer;
 		tokenizer.cleanup ();
 	} catch (Exception e){
-		// 
+		//
 		// Removed for production use, use parser verbose to get the output.
 		//
 		// Console.WriteLine (e);

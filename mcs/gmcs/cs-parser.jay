@@ -110,7 +110,7 @@ namespace Mono.CSharp
 		/// assembly and module attribute definitions are enabled
 		bool global_attrs_enabled = true;
 		bool has_get, has_set;
-		
+
 %}
 
 %token EOF
@@ -583,7 +583,7 @@ opt_attributes
 
 attribute_sections
 	: attribute_section
-          {
+	  {
 		if (current_attr_target != String.Empty) {
 			ArrayList sect = (ArrayList) $1;
 
@@ -670,9 +670,9 @@ attribute_target
 		LocatedToken lt = (LocatedToken) $1;
 		$$ = CheckAttributeTarget (lt.Value, lt.Location);
 	  }
-        | EVENT  { $$ = "event"; }	  
-        | RETURN { $$ = "return"; }
-      | error
+	| EVENT  { $$ = "event"; }
+	| RETURN { $$ = "return"; }
+	| error
 	  {
   		string name = yyNames [yyToken].ToLower ();
 		$$ = CheckAttributeTarget (name, GetLocation ($1));
@@ -1269,9 +1269,9 @@ method_header
 			"Member modifier `{0}' must precede the member type and name", Modifiers.Name ((int) $4));
 
 		Method method = new Method (current_class, null, TypeManager.system_void_expr,
-					    0, false, name, (Parameters) $6, (Attributes) $1);
+					    0, false, name, (Parameters) $7, (Attributes) $1);
 
-		current_local_parameters = (Parameters) $6;
+		current_local_parameters = (Parameters) $7;
 
 		if (RootContext.Documentation != null)
 			method.DocComment = Lexer.consume_doc_comment ();
@@ -1476,7 +1476,7 @@ parameter_array
 		} else {
 			Report.Error (1611, (Location) $2, "The params parameter cannot be declared as ref or out");
 		}
-        $$ = null;
+		$$ = null;
 	  }
 	| opt_attributes PARAMS type error {
 		CheckIdentifierToken (yyToken, GetLocation ($4));
@@ -1685,7 +1685,7 @@ interface_declaration
 		}
 	  }
 	  interface_body
-	  { 
+	  {
 		if (RootContext.Documentation != null)
 			Lexer.doc_state = XmlCommentState.Allowed;
 	  }
@@ -2528,7 +2528,7 @@ add_accessor_declaration
 		
 		anonymous_host = SimpleAnonymousHost.GetSimple ();
 	  }
-          block
+	  block
 	  {
 		Accessor accessor = new Accessor ((ToplevelBlock) $4, 0, (Attributes) $1, (Location) $2);
 		lexer.EventParsing = true;
@@ -2606,16 +2606,16 @@ indexer_declaration
 	 	// at section 3.6 on the spec
 		Indexer indexer;
 		IndexerDeclaration decl = (IndexerDeclaration) $3;
+		Location loc = decl.location;
 		Accessors accessors = (Accessors) $6;
 		Accessor get_block = accessors.get_or_add;
 		Accessor set_block = accessors.set_or_remove;
 
 		MemberName name;
 		if (decl.interface_type != null)
-			name = new MemberName (
-				decl.interface_type, TypeContainer.DefaultIndexerName, decl.location);
+			name = new MemberName (decl.interface_type, TypeContainer.DefaultIndexerName, loc);
 		else
-			name = new MemberName (TypeContainer.DefaultIndexerName, decl.location);
+			name = new MemberName (TypeContainer.DefaultIndexerName, loc);
 
 		indexer = new Indexer (current_class, decl.type, name,
 				       (int) $2, false, decl.param_list, (Attributes) $1,
@@ -4375,7 +4375,7 @@ modifiers
 		}
 		$$ = (int) (m1 | m2);
 	  }
-        ;
+	;
 
 modifier
 	: NEW			{ $$ = Modifiers.NEW; }
@@ -4857,7 +4857,7 @@ switch_labels
 
 switch_label
 	: CASE constant_expression COLON 	{ $$ = new SwitchLabel ((Expression) $2, (Location) $1); }
-	| DEFAULT_COLON				{ $$ = new SwitchLabel (null, (Location) $1); }
+	| DEFAULT_COLON 			{ $$ = new SwitchLabel (null, (Location) $1); }
 	| error {
 		Report.Error (
 			1523, GetLocation ($1), 
@@ -5005,7 +5005,7 @@ foreach_statement
 		LocalInfo vi = foreach_block.AddVariable ((Expression) $3, lt.Value, l);
 		if (vi != null) {
 			vi.SetReadOnlyContext (LocalInfo.ReadOnlyContext.Foreach);
-			
+
 			// Get a writable reference to this read-only variable.
 			//
 			// Note that the $$ here refers to the value of _this_ code block,
@@ -5961,8 +5961,7 @@ Location GetLocation (object obj)
 	return lexer.Location;
 }
 
-void 
-start_block (Location loc)
+void start_block (Location loc)
 {
 	if (current_block == null || parsing_anonymous_method) {
 		current_block = new ToplevelBlock (current_block, current_local_parameters, current_generic_method, loc);

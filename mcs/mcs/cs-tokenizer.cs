@@ -38,7 +38,7 @@ namespace Mono.CSharp
 		bool handle_get_set = false;
 		bool handle_remove_add = false;
 		bool handle_assembly = false;
-		bool handle_constraints = false;
+		bool handle_where = false;
 		bool handle_typeof = false;
 		bool lambda_arguments_parsing;
 		Location current_location;
@@ -132,53 +132,28 @@ namespace Mono.CSharp
 		}
 
 		public bool PropertyParsing {
-			get {
-				return handle_get_set;
-			}
-
-			set {
-				handle_get_set = value;
-			}
+			get { return handle_get_set; }
+			set { handle_get_set = value; }
                 }
 
 		public bool AssemblyTargetParsing {
-			get {
-				return handle_assembly;
-			}
-
-			set {
-				handle_assembly = value;
-			}
+			get { return handle_assembly; }
+			set { handle_assembly = value; }
 		}
 
 		public bool EventParsing {
-			get {
-				return handle_remove_add;
-			}
-
-			set {
-				handle_remove_add = value;
-			}
+			get { return handle_remove_add; }
+			set { handle_remove_add = value; }
 		}
 
 		public bool ConstraintsParsing {
-			get {
-				return handle_constraints;
-			}
-
-			set {
-				handle_constraints = value;
-			}
+			get { return handle_where; }
+			set { handle_where = value; }
 		}
 
 		public bool TypeOfParsing {
-			get {
-				return handle_typeof;
-			}
-
-			set {
-				handle_typeof = value;
-			}
+			get { return handle_typeof; }
+			set { handle_typeof = value; }
 		}
 		
 		public XmlCommentState doc_state {
@@ -473,11 +448,11 @@ namespace Mono.CSharp
 			
 			int res = (int) o;
 
-			if (handle_get_set == false && (res == Token.GET || res == Token.SET))
+			if (!handle_get_set && (res == Token.GET || res == Token.SET))
 				return -1;
-			if (handle_remove_add == false && (res == Token.REMOVE || res == Token.ADD))
+			if (!handle_remove_add && (res == Token.REMOVE || res == Token.ADD))
 				return -1;
-			if (handle_assembly == false && res == Token.ASSEMBLY)
+			if (!handle_assembly && res == Token.ASSEMBLY)
 				return -1;
 #if GMCS_SOURCE
 			if (IsLinqEnabled) {
@@ -494,7 +469,7 @@ namespace Mono.CSharp
 				return res;
 			}
 
-			if (!handle_constraints && res == Token.WHERE)
+			if (!handle_where && res == Token.WHERE)
 				return -1;
 #endif
 			return res;

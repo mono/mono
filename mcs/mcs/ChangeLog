@@ -1,3 +1,17 @@
+2007-08-02  Raja R Harinath  <harinath@gmail.com>
+
+	Reduce some differences between cs-parser.jay in mcs/ and gmcs/.
+	* cs-parser.jay: Some whitespace cleanups.
+	(current_delegate): New.
+	(type_name): New.
+	(struct_declaration): Make similar to gmcs/cs-parser.jay -- add
+	a dummy code block, and use 'type_name' instead of 'member_name'.
+	(interface_declaration, class_declaration): Likewise.
+	(delegate_declaration): Likewise.  Rearrange slightly and use
+	'current_delegate'.
+	* cs-tokenizer.cs (handle_where): Rename from handle_constraints.
+	(GetKeyword): Update to change.  Use '!foo' instead of 'foo == false'.
+
 2007-08-02  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #82039
