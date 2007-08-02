@@ -4847,6 +4847,7 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class EventExpr : MemberExpr {
 		public readonly EventInfo EventInfo;
+		public bool IsBase;
 
 		bool is_static;
 		MethodInfo add_accessor, remove_accessor;
@@ -4937,6 +4938,11 @@ namespace Mono.CSharp {
 			if (InstanceExpression == null)
 				return false;
 
+			if (IsBase && add_accessor.IsAbstract) {
+				Error_CannotCallAbstractBase(TypeManager.CSharpSignature(add_accessor));
+				return false;
+			}
+
 			//
 			// This is using the same mechanism as the CS1540 check in PropertyExpr.
 			// However, in the Event case, we reported a CS0122 instead.
@@ -5003,10 +5009,10 @@ namespace Mono.CSharp {
 			
 			if (source_del.IsAddition)
 				Invocation.EmitCall (
-					ec, false, InstanceExpression, add_accessor, args, loc);
+					ec, IsBase, InstanceExpression, add_accessor, args, loc);
 			else
 				Invocation.EmitCall (
-					ec, false, InstanceExpression, remove_accessor, args, loc);
+					ec, IsBase, InstanceExpression, remove_accessor, args, loc);
 		}
 	}
 

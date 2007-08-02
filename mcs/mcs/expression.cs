@@ -8055,8 +8055,10 @@ namespace Mono.CSharp {
 
 			if (e is PropertyExpr) {
 				PropertyExpr pe = (PropertyExpr) e;
-
 				pe.IsBase = true;
+			} else if (e is EventExpr) {
+				EventExpr ee = (EventExpr) e;
+				ee.IsBase = true;
 			}
 
 			MethodGroupExpr mg = e as MethodGroupExpr;
