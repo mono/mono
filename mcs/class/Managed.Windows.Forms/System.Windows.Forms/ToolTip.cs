@@ -486,7 +486,7 @@ namespace System.Windows.Forms {
 			string text = (string)tooltip_strings[control];
 			if (text != null && text.Length > 0) {
 
-				if (active_control == null) {
+				if (active_control == null || re_show_delay == 0) {
 					timer.Interval = initial_delay;
 				} else {
 					timer.Interval = re_show_delay;
