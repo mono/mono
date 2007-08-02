@@ -134,7 +134,7 @@ namespace System.Xml.Schema
 			XmlSchemaGroup g = referencedGroup != null ? referencedGroup : schema.Groups [RefName] as XmlSchemaGroup;
 			if (g != null && g.Particle != null) {
 				OptimizedParticle = g.Particle;
-					OptimizedParticle = OptimizedParticle.GetOptimizedParticle (isTop);
+				OptimizedParticle = OptimizedParticle.GetOptimizedParticle (isTop);
 				if (OptimizedParticle != XmlSchemaParticle.Empty && (ValidatedMinOccurs != 1 || ValidatedMaxOccurs != 1)) {
 					OptimizedParticle = OptimizedParticle.GetShallowClone ();
 					OptimizedParticle.MinOccurs = this.MinOccurs;

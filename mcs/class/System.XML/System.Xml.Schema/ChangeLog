@@ -1,5 +1,13 @@
 2007-08-02  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlSchemaComplexType.cs,
+	  XmlSchemaComplexContentRestriction.cs :
+	  in Validate(), every descendant item in complexType must be first
+	  validated before getting GetOptimizedParticle(), or it could result
+	  in wrong content particle. Fixed bug #82010.
+
+2007-08-02  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlSchemaValidator.cs : another extra whitespace rejection.
 	  Fixed another issue reported on bug #82183.
 

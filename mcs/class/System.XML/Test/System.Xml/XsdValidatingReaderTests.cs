@@ -5,7 +5,7 @@
 //	Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 //
 // (C)2003 Atsushi Enomoto
-// (C)2005-2006 Novell, Inc.
+// (C)2005-2007 Novell, Inc.
 //
 using System;
 using System.IO;
@@ -430,6 +430,27 @@ namespace MonoTests.System.Xml
 			reader.Read ();
 			reader.Read ();
 			reader.Read ();
+		}
+
+		[Test]
+		public void Bug82010 ()
+		{
+			string xmlfile = "Test/XmlFiles/xsd/82010.xml";
+			string xsdfile = "Test/XmlFiles/xsd/82010.xsd";
+			XmlTextReader xr = null, xr2 = null;
+			try {
+				xr = new XmlTextReader (xsdfile);
+				xr2 = new XmlTextReader (xmlfile);
+				XmlValidatingReader xvr = new XmlValidatingReader (xr2);
+				xvr.Schemas.Add (XmlSchema.Read (xr, null));
+				while (!xvr.EOF)
+					xvr.Read ();
+			} finally {
+				if (xr2 != null)
+					xr2.Close ();
+				if (xr != null)
+					xr.Close ();
+			}
 		}
 
 #if NET_2_0

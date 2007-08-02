@@ -409,13 +409,16 @@ namespace System.Xml.Schema
 			}
 			else
 				resolvedDerivedBy = XmlSchemaDerivationMethod.Empty;
+		}
 
-
+		void FillContentTypeParticle (ValidationEventHandler h, XmlSchema schema)
+		{
 			// {content type} => ContentType and ContentTypeParticle (later)
 			if (ContentModel != null) {
 				CollectContentTypeFromContentModel (h, schema);
 			} else
 				CollectContentTypeFromImmediateContent ();
+
 			contentTypeParticle = validatableParticle.GetOptimizedParticle (true);
 			if (contentTypeParticle == XmlSchemaParticle.Empty && resolvedContentType == XmlSchemaContentType.ElementOnly)
 				resolvedContentType = XmlSchemaContentType.Empty;
@@ -582,6 +585,10 @@ namespace System.Xml.Schema
 
 			CollectSchemaComponent (h, schema);
 
+			ValidateContentFirstPass (h, schema);
+
+			FillContentTypeParticle (h, schema);
+
 			// 3.4.6: Properties Correct
 			// Term. 1 => 3.4.1 already done by CollectSchemaComponent()
 			//	      except for {attribute uses} and {attribute wildcard}
@@ -590,11 +597,8 @@ namespace System.Xml.Schema
 			//
 			if (ContentModel != null)
 				ValidateContentModel (h, schema);
-			else {
-				if (Particle != null)
-					ValidateImmediateParticle (h, schema);
+			else
 				ValidateImmediateAttributes (h, schema);
-			}
 
 			// Additional support for 3.8.6 All Group Limited
 			if (ContentTypeParticle != null) {
@@ -634,19 +638,6 @@ namespace System.Xml.Schema
 			return errorCount;
 		}
 
-		private void ValidateImmediateParticle (ValidationEventHandler h, XmlSchema schema)
-		{
-			errorCount += particle.Validate (h, schema);
-			XmlSchemaGroupRef pgrp = Particle as XmlSchemaGroupRef;
-			if (pgrp != null) {
-				if (pgrp.TargetGroup != null)
-					errorCount += pgrp.TargetGroup.Validate (h,schema);
-				// otherwise, it might be missing sub components.
-				else if (!schema.IsNamespaceAbsent (pgrp.RefName.Namespace))
-					error (h, "Referenced group " + pgrp.RefName + " was not found in the corresponding schema.");
-			}
-		}
-
 		private void ValidateImmediateAttributes (ValidationEventHandler h, XmlSchema schema)
 		{
 			// {attribute uses}
@@ -656,12 +647,31 @@ namespace System.Xml.Schema
 				h, schema, attributes, anyAttribute, ref attributeWildcard, null, false);
 		}
 
+		private void ValidateContentFirstPass (ValidationEventHandler h, XmlSchema schema)
+		{
+			if (ContentModel != null) {
+				errorCount += contentModel.Validate (h, schema);
+				if (BaseXmlSchemaTypeInternal != null)
+					errorCount += BaseXmlSchemaTypeInternal.Validate (h, schema);
+			}
+			else if (Particle != null) {
+				errorCount += particle.Validate (h, schema);
+				XmlSchemaGroupRef pgrp = Particle as XmlSchemaGroupRef;
+				if (pgrp != null) {
+					if (pgrp.TargetGroup != null)
+						errorCount += pgrp.TargetGroup.Validate (h,schema);
+					// otherwise, it might be missing sub components.
+					else if (!schema.IsNamespaceAbsent (pgrp.RefName.Namespace))
+						error (h, "Referenced group " + pgrp.RefName + " was not found in the corresponding schema.");
+				}
+			}
+		}
+
 		private void ValidateContentModel (ValidationEventHandler h, XmlSchema schema)
 		{
 			XmlSchemaType baseType = BaseXmlSchemaTypeInternal;
 
 			// Here we check 3.4.6 Properties Correct :: 2. and 3.
-			errorCount += contentModel.Validate (h, schema);
 			XmlSchemaComplexContentExtension cce = contentModel.Content as XmlSchemaComplexContentExtension;
 			XmlSchemaComplexContentRestriction ccr = contentModel.Content as XmlSchemaComplexContentRestriction;
 			XmlSchemaSimpleContentExtension sce = contentModel.Content as XmlSchemaSimpleContentExtension;
@@ -674,7 +684,6 @@ namespace System.Xml.Schema
 			if (ValidateRecursionCheck ())
 				error (h, "Circular definition of schema types was found.");
 			if (baseType != null) {
-				baseType.Validate (h, schema);
 				// Fill "Datatype" property.
 				this.DatatypeInternal = baseType.Datatype;
 			} else if (BaseSchemaTypeName == XmlSchemaComplexType.AnyTypeName)
@@ -776,8 +785,6 @@ namespace System.Xml.Schema
 				// For ValidationEventHandler.
 				if (baseComplexType == null)
 					baseComplexType = XmlSchemaComplexType.AnyType;
-				if (ccr.Particle != null)
-					ccr.Particle.Validate (h, schema);
 
 				// attributes
 				localAnyAttribute = ccr.AnyAttribute;

@@ -184,6 +184,8 @@ namespace System.Xml.Schema
 
 		internal override int Validate (ValidationEventHandler h, XmlSchema schema)
 		{
+			if (Particle != null)
+				Particle.Validate (h, schema);
 			return errorCount;
 		}
 

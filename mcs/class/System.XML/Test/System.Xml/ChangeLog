@@ -1,5 +1,9 @@
 2007-08-02  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XsdValidatingReaderTests.cs : test for bug #82010.
+
+2007-08-02  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XsdValidatingReaderTests.cs : another test posted on bug #82183.
 
 2007-07-17  Atsushi Enomoto  <atsushi@ximian.com>
