@@ -31,6 +31,7 @@
 //
 
 using System.Collections;
+using System.Runtime.InteropServices;
 using System.Security.Permissions;
 
 namespace System.Diagnostics 
@@ -38,8 +39,8 @@ namespace System.Diagnostics
 	[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
 	public sealed class EventLogTraceListener : TraceListener 
 	{
-		private EventLog eventLog;
-		private string source;
+		private EventLog event_log;
+		private string name;
 
 		public EventLogTraceListener ()
 		{
@@ -47,79 +48,102 @@ namespace System.Diagnostics
 
 		public EventLogTraceListener (EventLog eventLog)
 		{
-			this.eventLog = eventLog;
+			if (eventLog == null)
+				throw new ArgumentNullException ("eventLog");
+			this.event_log = eventLog;
 		}
 
 		public EventLogTraceListener (string source)
 		{
-			this.source = source;
+			if (source == null)
+				throw new ArgumentNullException ("source");
+			event_log = new EventLog ();
+			event_log.Source = source;
 		}
 
 		public EventLog EventLog {
-			get {return eventLog;}
-			set {eventLog = value;}
+			get { return event_log; }
+			set { event_log = value; }
 		}
 
 		public override string Name {
-			get {return source;}
-			set {source = value;}
+			get { return name != null ? name : event_log.Source; }
+			set { name = value; }
 		}
 
-		[MonoTODO]
 		public override void Close ()
 		{
-			throw new NotImplementedException();
+			event_log.Close ();
 		}
 
-		[MonoTODO]
 		protected override void Dispose (bool disposing)
 		{
-			throw new NotImplementedException();
+			if (disposing)
+				event_log.Dispose ();
 		}
 
-		[MonoTODO]
 		public override void Write (string message)
 		{
-			throw new NotImplementedException();
+			TraceData (new TraceEventCache (), event_log.Source,
+				   TraceEventType.Information, 0, message);
 		}
 
-		[MonoTODO]
 		public override void WriteLine (string message)
 		{
-			throw new NotImplementedException();
+			Write (message);
 		}
 
 #if NET_2_0
-		[MonoTODO]
+		[ComVisible (false)]
 		public override void TraceData (TraceEventCache eventCache,
 						string source, TraceEventType eventType,
 						int id, object data)
 		{
-			throw new NotImplementedException ();
+			EventLogEntryType type;
+			switch (eventType) {
+			case TraceEventType.Critical:
+			case TraceEventType.Error:
+				type = EventLogEntryType.Error;
+				break;
+			case TraceEventType.Warning:
+				type = EventLogEntryType.Warning;
+				break;
+			default:
+				type = EventLogEntryType.Information;
+				break;
+			}
+			event_log.WriteEntry (data != null ? data.ToString () : String.Empty, type, id, 0);
 		}
 
-		[MonoTODO]
+		[ComVisible (false)]
 		public override void TraceData (TraceEventCache eventCache,
 						string source, TraceEventType eventType,
 						int id, params object [] data)
 		{
-			throw new NotImplementedException ();
+			string s = String.Empty;
+			if (data != null) {
+				string [] arr = new string [data.Length];
+				for (int i = 0; i < data.Length; i++)
+					arr [i] = data [i] != null ? data [i].ToString () : String.Empty;
+				s = String.Join (", ", arr);
+			}
+			TraceData (eventCache, source, eventType, id, s);
 		}
 
-		[MonoTODO]
+		[ComVisible (false)]
 		public override void TraceEvent (TraceEventCache eventCache,
 						 string source, TraceEventType eventType,
 						 int id, string message)
 		{
-			throw new NotImplementedException ();
+			TraceData (eventCache, source, eventType, id, message);
 		}
 
-		[MonoTODO]
+		[ComVisible (false)]
 		public override void TraceEvent (TraceEventCache eventCache,
 						 string source, TraceEventType eventType,
 						 int id, string format, params object [] args)
 		{
-			throw new NotImplementedException ();
+			TraceEvent (eventCache, source, eventType, id, format != null ? String.Format (format, args) : null);
 		}
 #endif
 	}

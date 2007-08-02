@@ -1,5 +1,9 @@
 2007-08-02  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* EventLogTraceListener.cs : implemented.
+
+2007-08-02  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* EventLogImpl.cs
 	  EventLog.cs
 	  LocalFileEventLog.cs : Implemented EntryWritten event support.
