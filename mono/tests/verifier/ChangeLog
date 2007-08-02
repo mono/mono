@@ -1,3 +1,8 @@
+2007-08-02 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_exception_branch_test.sh: Fix the generation of the tests, so only
+	branching problems are validated.
+
 2007-07-20 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* make_test.sh: added more visibility tests
