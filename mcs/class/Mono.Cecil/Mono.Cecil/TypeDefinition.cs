@@ -148,6 +148,8 @@ namespace Mono.Cecil {
 			}
 		}
 
+		#region TypeAttributes
+
 		public bool IsAbstract {
 			get { return (m_attributes & TypeAttributes.Abstract) != 0; }
 			set {
@@ -168,6 +170,16 @@ namespace Mono.Cecil {
 			}
 		}
 
+		public bool IsClass {
+			get { return (m_attributes & TypeAttributes.ClassSemanticMask) == TypeAttributes.Class; }
+			set {
+				if (value)
+					m_attributes |= (TypeAttributes.ClassSemanticMask & TypeAttributes.Class);
+				else
+					m_attributes &= ~(TypeAttributes.ClassSemanticMask & TypeAttributes.Class);
+			}
+		}
+
 		public bool IsInterface {
 			get { return (m_attributes & TypeAttributes.ClassSemanticMask) == TypeAttributes.Interface; }
 			set {
@@ -175,6 +187,66 @@ namespace Mono.Cecil {
 					m_attributes |= (TypeAttributes.ClassSemanticMask & TypeAttributes.Interface);
 				else
 					m_attributes &= ~(TypeAttributes.ClassSemanticMask & TypeAttributes.Interface);
+			}
+		}
+
+		public bool IsAnsiClass {
+			get { return (m_attributes & TypeAttributes.StringFormatMask) == TypeAttributes.AnsiClass; }
+			set {
+				if (value)
+					m_attributes |= (TypeAttributes.StringFormatMask & TypeAttributes.AnsiClass);
+				else
+					m_attributes &= ~(TypeAttributes.StringFormatMask & TypeAttributes.AnsiClass);
+			}
+		}
+
+		public bool IsUnicodeClass {
+			get { return (m_attributes & TypeAttributes.StringFormatMask) == TypeAttributes.UnicodeClass; }
+			set {
+				if (value)
+					m_attributes |= (TypeAttributes.StringFormatMask & TypeAttributes.UnicodeClass);
+				else
+					m_attributes &= ~(TypeAttributes.StringFormatMask & TypeAttributes.UnicodeClass);
+			}
+		}
+
+		public bool IsAutoClass {
+			get { return (m_attributes & TypeAttributes.StringFormatMask) == TypeAttributes.AutoClass; }
+			set {
+				if (value)
+					m_attributes |= (TypeAttributes.StringFormatMask & TypeAttributes.AutoClass);
+				else
+					m_attributes &= ~(TypeAttributes.StringFormatMask & TypeAttributes.AutoClass);
+			}
+		}
+
+		public bool IsSequentialLayout {
+			get { return (m_attributes & TypeAttributes.LayoutMask) == TypeAttributes.SequentialLayout; }
+			set {
+				if (value)
+					m_attributes |= (TypeAttributes.LayoutMask & TypeAttributes.SequentialLayout);
+				else
+					m_attributes &= ~(TypeAttributes.LayoutMask & TypeAttributes.SequentialLayout);
+			}
+		}
+
+		public bool IsAutoLayout {
+			get { return (m_attributes & TypeAttributes.LayoutMask) == TypeAttributes.AutoLayout; }
+			set {
+				if (value)
+					m_attributes |= (TypeAttributes.LayoutMask & TypeAttributes.AutoLayout);
+				else
+					m_attributes &= ~(TypeAttributes.LayoutMask & TypeAttributes.AutoLayout);
+			}
+		}
+
+		public bool IsExplicitLayout {
+			get { return (m_attributes & TypeAttributes.LayoutMask) == TypeAttributes.ExplicitLayout; }
+			set {
+				if (value)
+					m_attributes |= (TypeAttributes.LayoutMask & TypeAttributes.ExplicitLayout);
+				else
+					m_attributes &= ~(TypeAttributes.LayoutMask & TypeAttributes.ExplicitLayout);
 			}
 		}
 
@@ -207,6 +279,28 @@ namespace Mono.Cecil {
 					m_attributes &= ~TypeAttributes.SpecialName;
 			}
 		}
+
+		public bool IsImport {
+			get { return (m_attributes & TypeAttributes.Import) != 0; }
+			set {
+				if (value)
+					m_attributes |= TypeAttributes.Import;
+				else
+					m_attributes &= ~TypeAttributes.Import;
+			}
+		}
+
+		public bool IsSerializable {
+			get { return (m_attributes & TypeAttributes.Serializable) != 0; }
+			set {
+				if (value)
+					m_attributes |= TypeAttributes.Serializable;
+				else
+					m_attributes &= ~TypeAttributes.Serializable;
+			}
+		}
+
+		#endregion
 
 		public bool IsEnum {
 			get { return m_baseType != null && m_baseType.FullName == Constants.Enum; }

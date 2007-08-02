@@ -67,6 +67,8 @@ namespace Mono.Cecil {
 			}
 		}
 
+		#region EventAttributes
+
 		public bool IsRuntimeSpecialName {
 			get { return (m_attributes & EventAttributes.RTSpecialName) != 0; }
 			set {
@@ -86,6 +88,8 @@ namespace Mono.Cecil {
 					m_attributes &= ~EventAttributes.SpecialName;
 			}
 		}
+
+		#endregion
 
 		public EventDefinition (string name, TypeReference eventType,
 			EventAttributes attrs) : base (name, eventType)

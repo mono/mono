@@ -125,6 +125,8 @@ namespace Mono.Cecil {
 			get { return m_this; }
 		}
 
+		#region MethodAttributes
+
 		public bool IsAbstract {
 			get { return (m_attributes & MethodAttributes.Abstract) != 0; }
 			set {
@@ -225,6 +227,8 @@ namespace Mono.Cecil {
 					m_attributes &= ~MethodAttributes.Virtual;
 			}
 		}
+
+		#endregion
 
 		public bool IsConstructor {
 			get {

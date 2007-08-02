@@ -54,6 +54,9 @@ namespace Mono.Cecil {
 			}
 		}
 
+		#region ManifestResourceAttributes
+		#endregion
+
 		internal Resource (string name, ManifestResourceAttributes flags)
 		{
 			m_name = name;

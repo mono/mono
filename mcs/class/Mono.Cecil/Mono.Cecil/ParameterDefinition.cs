@@ -77,6 +77,9 @@ namespace Mono.Cecil {
 			set { m_marshalDesc = value; }
 		}
 
+		#region ParameterAttributes
+		#endregion
+
 		public ParameterDefinition (TypeReference paramType) :
 			this (string.Empty, -1, (ParameterAttributes) 0, paramType)
 		{

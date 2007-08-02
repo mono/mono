@@ -28,8 +28,6 @@
 
 namespace Mono.Cecil {
 
-	using System;
-
 	using Mono.Cecil;
 	using Mono.Cecil.Binary;
 
@@ -104,6 +102,8 @@ namespace Mono.Cecil {
 			set { m_marshalDesc = value; }
 		}
 
+		#region FieldAttributes
+
 		public bool IsLiteral {
 			get { return (m_attributes & FieldAttributes.Literal) != 0; }
 			set {
@@ -153,6 +153,8 @@ namespace Mono.Cecil {
 					m_attributes &= ~FieldAttributes.Static;
 			}
 		}
+
+		#endregion
 
 		public FieldDefinition (string name, TypeReference fieldType,
 			FieldAttributes attrs) : base (name, fieldType)

@@ -55,6 +55,9 @@ namespace Mono.Cecil {
 			set { m_module = value; }
 		}
 
+		#region PInvokeAttributes
+		#endregion
+
 		public PInvokeInfo (MethodDefinition meth)
 		{
 			m_meth = meth;

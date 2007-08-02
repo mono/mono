@@ -85,6 +85,9 @@ namespace Mono.Cecil {
 			get { return Name; }
 		}
 
+		#region GenericParameterAttributes
+		#endregion
+
 		internal GenericParameter (int pos, IGenericParameterProvider owner) :
 			base (string.Empty, string.Empty)
 		{

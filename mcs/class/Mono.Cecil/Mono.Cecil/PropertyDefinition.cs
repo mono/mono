@@ -108,6 +108,8 @@ namespace Mono.Cecil {
 			}
 		}
 
+		#region PropertyAttributes
+
 		public bool IsRuntimeSpecialName {
 			get { return (m_attributes & PropertyAttributes.RTSpecialName) != 0; }
 			set {
@@ -127,6 +129,8 @@ namespace Mono.Cecil {
 					m_attributes &= ~PropertyAttributes.SpecialName;
 			}
 		}
+
+		#endregion
 
 		public PropertyDefinition (string name, TypeReference propertyType, PropertyAttributes attrs) : base (name, propertyType)
 		{
