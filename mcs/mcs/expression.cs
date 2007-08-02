@@ -1695,10 +1695,9 @@ namespace Mono.CSharp {
 
 		static void Warning_Constant_Result (Location loc, bool result, Type type)
 		{
-			Report.Warning (472, 2, loc, "Your code is *very* likely incorrect;   " +
-					"The result of comparing `{0}' against null is always {1};  " +
-					"mcs supports this to be compatible with the broken CSC behavior",
-					TypeManager.CSharpName (type), result); 
+			Report.Warning (472, 2, loc, "The result of comparing `{0}' against null is always `{1}'. " +
+					"This operation is undocumented and it is temporary supported for compatibility reasons only",
+					TypeManager.CSharpName (type), result ? "true" : "false"); 
 		}
 			
 		Expression ResolveOperator (EmitContext ec)

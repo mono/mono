@@ -1,3 +1,8 @@
+2007-08-02  Marek Safar  <marek.safar@gmail.com>
+
+	* expression.cs,
+	* report.cs: Updated warning CS0472.
+
 2007-08-01  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #82181
