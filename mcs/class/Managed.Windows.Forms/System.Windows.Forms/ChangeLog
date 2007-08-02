@@ -1,5 +1,9 @@
 2007-08-02  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* PropertyGrid.cs: Add a null-check. Fixes #82289/SVGPad.
+
+2007-08-02  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	Use InitialDelay if ReshowDelay is zero. Fixes #82288.
 
 2007-08-01  Rolf Bjarne Kvinge <RKvinge@novell.com> 
