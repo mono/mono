@@ -499,7 +499,7 @@ namespace System.Web.UI
 
 				ScriptingProfileServiceSection profileService = (ScriptingProfileServiceSection) WebConfigurationManager.GetSection ("system.web.extensions/scripting/webServices/profileService");
 				if (profileService.Enabled)
-					sb.AppendLine ("Sys.Services._ProfileService.DefaultWebServicePath = '" + ResolveClientUrl ("~/Profile_JSON_AppService.axd") + "';");
+					sb.AppendLine ("Sys.Services._ProfileService.DefaultWebServicePath = '" + ResolveClientUrl ("~" + System.Web.Script.Services.ProfileService.DefaultWebServicePath) + "';");
 				if (_profileService != null && !String.IsNullOrEmpty (_profileService.Path))
 					sb.AppendLine ("Sys.Services.ProfileService.set_path('" + ResolveUrl (_profileService.Path) + "');");
 

@@ -43,11 +43,18 @@ namespace System.Web.Script.Services
 		}
 		#region IHttpHandlerFactory Members
 
+		static readonly Type TypeOfProfileService = typeof (ProfileService);
 		public IHttpHandler GetHandler (HttpContext context, string requestType, string url, string pathTranslated) {
 			HttpRequest request = context.Request;
 			string contentType = request.ContentType;
-			if (!String.IsNullOrEmpty (contentType) && contentType.StartsWith ("application/json", StringComparison.OrdinalIgnoreCase))
-				return RestHandler.GetHandler (context, WebServiceParser.GetCompiledType (url, context), url);
+			if (!String.IsNullOrEmpty (contentType) && contentType.StartsWith ("application/json", StringComparison.OrdinalIgnoreCase)) {
+				Type handlerType;
+				if (url.EndsWith (ProfileService.DefaultWebServicePath, StringComparison.Ordinal))
+					handlerType = TypeOfProfileService;
+				else
+					handlerType = WebServiceParser.GetCompiledType (url, context);
+				return RestHandler.GetHandler (context, handlerType, url);
+			}
 			if (request.PathInfo.StartsWith ("/js", StringComparison.OrdinalIgnoreCase))
 				return new ClientProxyHandler (WebServiceParser.GetCompiledType (url, context), url);
 
