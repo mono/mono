@@ -70,7 +70,7 @@ namespace Mono.Cecil {
 		public bool IsCharSetNotSpec {
 			get { return (m_attributes & PInvokeAttributes.CharSetNotSpec) != 0; }
 			set {
-				PInvokeAttributes masked = (PInvokeAttributes.CharSetMask & PInvokeAttributes.CharSetNotSpec)
+				PInvokeAttributes masked = (PInvokeAttributes.CharSetMask & PInvokeAttributes.CharSetNotSpec);
 				if (value)
 					m_attributes |= masked;
 				else
@@ -81,7 +81,7 @@ namespace Mono.Cecil {
 		public bool IsCharSetAnsi {
 			get { return (m_attributes & PInvokeAttributes.CharSetAnsi) != 0; }
 			set {
-				PInvokeAttributes masked = (PInvokeAttributes.CharSetMask & PInvokeAttributes.CharSetAnsi)
+				PInvokeAttributes masked = (PInvokeAttributes.CharSetMask & PInvokeAttributes.CharSetAnsi);
 				if (value)
 					m_attributes |= masked;
 				else
@@ -92,7 +92,7 @@ namespace Mono.Cecil {
 		public bool IsCharSetUnicode {
 			get { return (m_attributes & PInvokeAttributes.CharSetUnicode) != 0; }
 			set {
-				PInvokeAttributes masked = (PInvokeAttributes.CharSetMask & PInvokeAttributes.CharSetUnicode)
+				PInvokeAttributes masked = (PInvokeAttributes.CharSetMask & PInvokeAttributes.CharSetUnicode);
 				if (value)
 					m_attributes |= masked;
 				else
@@ -103,7 +103,7 @@ namespace Mono.Cecil {
 		public bool IsCharSetAuto {
 			get { return (m_attributes & PInvokeAttributes.CharSetAuto) != 0; }
 			set {
-				PInvokeAttributes masked = (PInvokeAttributes.CharSetMask & PInvokeAttributes.CharSetAuto)
+				PInvokeAttributes masked = (PInvokeAttributes.CharSetMask & PInvokeAttributes.CharSetAuto);
 				if (value)
 					m_attributes |= masked;
 				else
@@ -114,7 +114,7 @@ namespace Mono.Cecil {
 		public bool SupportsLastError {
 			get { return (m_attributes & PInvokeAttributes.SupportsLastError) != 0; }
 			set {
-				PInvokeAttributes masked = (PInvokeAttributes.CharSetMask & PInvokeAttributes.SupportsLastError)
+				PInvokeAttributes masked = (PInvokeAttributes.CharSetMask & PInvokeAttributes.SupportsLastError);
 				if (value)
 					m_attributes |= masked;
 				else
@@ -125,7 +125,7 @@ namespace Mono.Cecil {
 		public bool IsCallConvWinapi {
 			get { return (m_attributes & PInvokeAttributes.CallConvWinapi) != 0; }
 			set {
-				PInvokeAttributes masked = (PInvokeAttributes.CallConvMask & PInvokeAttributes.CallConvWinapi)
+				PInvokeAttributes masked = (PInvokeAttributes.CallConvMask & PInvokeAttributes.CallConvWinapi);
 				if (value)
 					m_attributes |= masked;
 				else
@@ -136,7 +136,7 @@ namespace Mono.Cecil {
 		public bool IsCallConvCdecl {
 			get { return (m_attributes & PInvokeAttributes.CallConvCdecl) != 0; }
 			set {
-				PInvokeAttributes masked = (PInvokeAttributes.CallConvMask & PInvokeAttributes.CallConvCdecl)
+				PInvokeAttributes masked = (PInvokeAttributes.CallConvMask & PInvokeAttributes.CallConvCdecl);
 				if (value)
 					m_attributes |= masked;
 				else
@@ -147,7 +147,7 @@ namespace Mono.Cecil {
 		public bool IsCallConvStdCall {
 			get { return (m_attributes & PInvokeAttributes.CallConvStdCall) != 0; }
 			set {
-				PInvokeAttributes masked = (PInvokeAttributes.CallConvMask & PInvokeAttributes.CallConvStdCall)
+				PInvokeAttributes masked = (PInvokeAttributes.CallConvMask & PInvokeAttributes.CallConvStdCall);
 				if (value)
 					m_attributes |= masked;
 				else
@@ -158,7 +158,7 @@ namespace Mono.Cecil {
 		public bool IsCallConvThiscall {
 			get { return (m_attributes & PInvokeAttributes.CallConvThiscall) != 0; }
 			set {
-				PInvokeAttributes masked = (PInvokeAttributes.CallConvMask & PInvokeAttributes.CallConvThiscall)
+				PInvokeAttributes masked = (PInvokeAttributes.CallConvMask & PInvokeAttributes.CallConvThiscall);
 				if (value)
 					m_attributes |= masked;
 				else
@@ -169,7 +169,7 @@ namespace Mono.Cecil {
 		public bool IsCallConvFastcall {
 			get { return (m_attributes & PInvokeAttributes.CallConvFastcall) != 0; }
 			set {
-				PInvokeAttributes masked = (PInvokeAttributes.CallConvMask & PInvokeAttributes.CallConvFastcall)
+				PInvokeAttributes masked = (PInvokeAttributes.CallConvMask & PInvokeAttributes.CallConvFastcall);
 				if (value)
 					m_attributes |= masked;
 				else

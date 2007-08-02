@@ -153,7 +153,7 @@ namespace Mono.Cecil {
 		public bool IsNotPublic {
 			get { return (m_attributes & TypeAttributes.NotPublic) != 0; }
 			set {
-				TypeAttributes masked = (TypeAttributes.VisibilityMask & TypeAttributes.NotPublic)
+				TypeAttributes masked = (TypeAttributes.VisibilityMask & TypeAttributes.NotPublic);
 				if (value)
 					m_attributes |= masked;
 				else
@@ -164,7 +164,7 @@ namespace Mono.Cecil {
 		public bool IsPublic {
 			get { return (m_attributes & TypeAttributes.Public) != 0; }
 			set {
-				TypeAttributes masked = (TypeAttributes.VisibilityMask & TypeAttributes.Public)
+				TypeAttributes masked = (TypeAttributes.VisibilityMask & TypeAttributes.Public);
 				if (value)
 					m_attributes |= masked;
 				else
@@ -175,7 +175,7 @@ namespace Mono.Cecil {
 		public bool IsNestedPublic {
 			get { return (m_attributes & TypeAttributes.NestedPublic) != 0; }
 			set {
-				TypeAttributes masked = (TypeAttributes.VisibilityMask & TypeAttributes.NestedPublic)
+				TypeAttributes masked = (TypeAttributes.VisibilityMask & TypeAttributes.NestedPublic);
 				if (value)
 					m_attributes |= masked;
 				else
@@ -186,7 +186,7 @@ namespace Mono.Cecil {
 		public bool IsNestedPrivate {
 			get { return (m_attributes & TypeAttributes.NestedPrivate) != 0; }
 			set {
-				TypeAttributes masked = (TypeAttributes.VisibilityMask & TypeAttributes.NestedPrivate)
+				TypeAttributes masked = (TypeAttributes.VisibilityMask & TypeAttributes.NestedPrivate);
 				if (value)
 					m_attributes |= masked;
 				else
@@ -197,7 +197,7 @@ namespace Mono.Cecil {
 		public bool IsNestedFamily {
 			get { return (m_attributes & TypeAttributes.NestedFamily) != 0; }
 			set {
-				TypeAttributes masked = (TypeAttributes.VisibilityMask & TypeAttributes.NestedFamily)
+				TypeAttributes masked = (TypeAttributes.VisibilityMask & TypeAttributes.NestedFamily);
 				if (value)
 					m_attributes |= masked;
 				else
@@ -208,7 +208,7 @@ namespace Mono.Cecil {
 		public bool IsNestedAssembly {
 			get { return (m_attributes & TypeAttributes.NestedAssembly) != 0; }
 			set {
-				TypeAttributes masked = (TypeAttributes.VisibilityMask & TypeAttributes.NestedAssembly)
+				TypeAttributes masked = (TypeAttributes.VisibilityMask & TypeAttributes.NestedAssembly);
 				if (value)
 					m_attributes |= masked;
 				else
@@ -219,7 +219,7 @@ namespace Mono.Cecil {
 		public bool IsNestedFamilyAndAssembly {
 			get { return (m_attributes & TypeAttributes.NestedFamANDAssem) != 0; }
 			set {
-				TypeAttributes masked = (TypeAttributes.VisibilityMask & TypeAttributes.NestedFamANDAssem)
+				TypeAttributes masked = (TypeAttributes.VisibilityMask & TypeAttributes.NestedFamANDAssem);
 				if (value)
 					m_attributes |= masked;
 				else
@@ -230,7 +230,7 @@ namespace Mono.Cecil {
 		public bool IsNestedFamilyOrAssembly {
 			get { return (m_attributes & TypeAttributes.NestedFamORAssem) != 0; }
 			set {
-				TypeAttributes masked = (TypeAttributes.VisibilityMask & TypeAttributes.NestedFamORAssem)
+				TypeAttributes masked = (TypeAttributes.VisibilityMask & TypeAttributes.NestedFamORAssem);
 				if (value)
 					m_attributes |= masked;
 				else
@@ -241,7 +241,7 @@ namespace Mono.Cecil {
 		public bool IsAutoLayout {
 			get { return (m_attributes & TypeAttributes.AutoLayout) != 0; }
 			set {
-				TypeAttributes masked = (TypeAttributes.LayoutMask & TypeAttributes.AutoLayout)
+				TypeAttributes masked = (TypeAttributes.LayoutMask & TypeAttributes.AutoLayout);
 				if (value)
 					m_attributes |= masked;
 				else
@@ -252,7 +252,7 @@ namespace Mono.Cecil {
 		public bool IsSequentialLayout {
 			get { return (m_attributes & TypeAttributes.SequentialLayout) != 0; }
 			set {
-				TypeAttributes masked = (TypeAttributes.LayoutMask & TypeAttributes.SequentialLayout)
+				TypeAttributes masked = (TypeAttributes.LayoutMask & TypeAttributes.SequentialLayout);
 				if (value)
 					m_attributes |= masked;
 				else
@@ -263,7 +263,7 @@ namespace Mono.Cecil {
 		public bool IsExplicitLayout {
 			get { return (m_attributes & TypeAttributes.ExplicitLayout) != 0; }
 			set {
-				TypeAttributes masked = (TypeAttributes.LayoutMask & TypeAttributes.ExplicitLayout)
+				TypeAttributes masked = (TypeAttributes.LayoutMask & TypeAttributes.ExplicitLayout);
 				if (value)
 					m_attributes |= masked;
 				else
@@ -274,7 +274,7 @@ namespace Mono.Cecil {
 		public bool IsClass {
 			get { return (m_attributes & TypeAttributes.Class) != 0; }
 			set {
-				TypeAttributes masked = (TypeAttributes.ClassSemanticMask & TypeAttributes.Class)
+				TypeAttributes masked = (TypeAttributes.ClassSemanticMask & TypeAttributes.Class);
 				if (value)
 					m_attributes |= masked;
 				else
@@ -285,7 +285,7 @@ namespace Mono.Cecil {
 		public bool IsInterface {
 			get { return (m_attributes & TypeAttributes.Interface) != 0; }
 			set {
-				TypeAttributes masked = (TypeAttributes.ClassSemanticMask & TypeAttributes.Interface)
+				TypeAttributes masked = (TypeAttributes.ClassSemanticMask & TypeAttributes.Interface);
 				if (value)
 					m_attributes |= masked;
 				else
@@ -346,7 +346,7 @@ namespace Mono.Cecil {
 		public bool IsAnsiClass {
 			get { return (m_attributes & TypeAttributes.AnsiClass) != 0; }
 			set {
-				TypeAttributes masked = (TypeAttributes.StringFormatMask & TypeAttributes.AnsiClass)
+				TypeAttributes masked = (TypeAttributes.StringFormatMask & TypeAttributes.AnsiClass);
 				if (value)
 					m_attributes |= masked;
 				else
@@ -357,7 +357,7 @@ namespace Mono.Cecil {
 		public bool IsUnicodeClass {
 			get { return (m_attributes & TypeAttributes.UnicodeClass) != 0; }
 			set {
-				TypeAttributes masked = (TypeAttributes.StringFormatMask & TypeAttributes.UnicodeClass)
+				TypeAttributes masked = (TypeAttributes.StringFormatMask & TypeAttributes.UnicodeClass);
 				if (value)
 					m_attributes |= masked;
 				else
@@ -368,7 +368,7 @@ namespace Mono.Cecil {
 		public bool IsAutoClass {
 			get { return (m_attributes & TypeAttributes.AutoClass) != 0; }
 			set {
-				TypeAttributes masked = (TypeAttributes.StringFormatMask & TypeAttributes.AutoClass)
+				TypeAttributes masked = (TypeAttributes.StringFormatMask & TypeAttributes.AutoClass);
 				if (value)
 					m_attributes |= masked;
 				else

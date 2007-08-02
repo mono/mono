@@ -130,7 +130,7 @@ namespace Mono.Cecil {
 		public bool IsCompilerControlled {
 			get { return (m_attributes & MethodAttributes.Compilercontrolled) != 0; }
 			set {
-				MethodAttributes masked = (MethodAttributes.MemberAccessMask & MethodAttributes.Compilercontrolled)
+				MethodAttributes masked = (MethodAttributes.MemberAccessMask & MethodAttributes.Compilercontrolled);
 				if (value)
 					m_attributes |= masked;
 				else
@@ -141,7 +141,7 @@ namespace Mono.Cecil {
 		public bool IsPrivate {
 			get { return (m_attributes & MethodAttributes.Private) != 0; }
 			set {
-				MethodAttributes masked = (MethodAttributes.MemberAccessMask & MethodAttributes.Private)
+				MethodAttributes masked = (MethodAttributes.MemberAccessMask & MethodAttributes.Private);
 				if (value)
 					m_attributes |= masked;
 				else
@@ -152,7 +152,7 @@ namespace Mono.Cecil {
 		public bool IsFamilyAndAssembly {
 			get { return (m_attributes & MethodAttributes.FamANDAssem) != 0; }
 			set {
-				MethodAttributes masked = (MethodAttributes.MemberAccessMask & MethodAttributes.FamANDAssem)
+				MethodAttributes masked = (MethodAttributes.MemberAccessMask & MethodAttributes.FamANDAssem);
 				if (value)
 					m_attributes |= masked;
 				else
@@ -163,7 +163,7 @@ namespace Mono.Cecil {
 		public bool IsAssembly {
 			get { return (m_attributes & MethodAttributes.Assem) != 0; }
 			set {
-				MethodAttributes masked = (MethodAttributes.MemberAccessMask & MethodAttributes.Assem)
+				MethodAttributes masked = (MethodAttributes.MemberAccessMask & MethodAttributes.Assem);
 				if (value)
 					m_attributes |= masked;
 				else
@@ -174,7 +174,7 @@ namespace Mono.Cecil {
 		public bool IsFamily {
 			get { return (m_attributes & MethodAttributes.Family) != 0; }
 			set {
-				MethodAttributes masked = (MethodAttributes.MemberAccessMask & MethodAttributes.Family)
+				MethodAttributes masked = (MethodAttributes.MemberAccessMask & MethodAttributes.Family);
 				if (value)
 					m_attributes |= masked;
 				else
@@ -185,7 +185,7 @@ namespace Mono.Cecil {
 		public bool IsFamilyOrAssembly {
 			get { return (m_attributes & MethodAttributes.FamORAssem) != 0; }
 			set {
-				MethodAttributes masked = (MethodAttributes.MemberAccessMask & MethodAttributes.FamORAssem)
+				MethodAttributes masked = (MethodAttributes.MemberAccessMask & MethodAttributes.FamORAssem);
 				if (value)
 					m_attributes |= masked;
 				else
@@ -196,7 +196,7 @@ namespace Mono.Cecil {
 		public bool IsPublic {
 			get { return (m_attributes & MethodAttributes.Public) != 0; }
 			set {
-				MethodAttributes masked = (MethodAttributes.MemberAccessMask & MethodAttributes.Public)
+				MethodAttributes masked = (MethodAttributes.MemberAccessMask & MethodAttributes.Public);
 				if (value)
 					m_attributes |= masked;
 				else
@@ -247,7 +247,7 @@ namespace Mono.Cecil {
 		public bool IsReuseSlot {
 			get { return (m_attributes & MethodAttributes.ReuseSlot) != 0; }
 			set {
-				MethodAttributes masked = (MethodAttributes.VtableLayoutMask & MethodAttributes.ReuseSlot)
+				MethodAttributes masked = (MethodAttributes.VtableLayoutMask & MethodAttributes.ReuseSlot);
 				if (value)
 					m_attributes |= masked;
 				else
@@ -258,7 +258,7 @@ namespace Mono.Cecil {
 		public bool IsNewSlot {
 			get { return (m_attributes & MethodAttributes.NewSlot) != 0; }
 			set {
-				MethodAttributes masked = (MethodAttributes.VtableLayoutMask & MethodAttributes.NewSlot)
+				MethodAttributes masked = (MethodAttributes.VtableLayoutMask & MethodAttributes.NewSlot);
 				if (value)
 					m_attributes |= masked;
 				else

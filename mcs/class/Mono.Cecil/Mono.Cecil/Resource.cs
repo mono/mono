@@ -33,7 +33,7 @@ namespace Mono.Cecil {
 	public abstract class Resource : IAnnotationProvider, IReflectionStructureVisitable {
 
 		string m_name;
-		ManifestResourceAttributes m_flags;
+		ManifestResourceAttributes m_attributes;
 		IDictionary m_annotations;
 
 		public string Name {
@@ -42,8 +42,8 @@ namespace Mono.Cecil {
 		}
 
 		public ManifestResourceAttributes Flags {
-			get { return m_flags; }
-			set { m_flags = value; }
+			get { return m_attributes; }
+			set { m_attributes = value; }
 		}
 
 		IDictionary IAnnotationProvider.Annotations {
@@ -59,7 +59,7 @@ namespace Mono.Cecil {
 		public bool IsPublic {
 			get { return (m_attributes & ManifestResourceAttributes.Public) != 0; }
 			set {
-				ManifestResourceAttributes masked = (ManifestResourceAttributes.VisibilityMask & ManifestResourceAttributes.Public)
+				ManifestResourceAttributes masked = (ManifestResourceAttributes.VisibilityMask & ManifestResourceAttributes.Public);
 				if (value)
 					m_attributes |= masked;
 				else
@@ -70,7 +70,7 @@ namespace Mono.Cecil {
 		public bool IsPrivate {
 			get { return (m_attributes & ManifestResourceAttributes.Private) != 0; }
 			set {
-				ManifestResourceAttributes masked = (ManifestResourceAttributes.VisibilityMask & ManifestResourceAttributes.Private)
+				ManifestResourceAttributes masked = (ManifestResourceAttributes.VisibilityMask & ManifestResourceAttributes.Private);
 				if (value)
 					m_attributes |= masked;
 				else
@@ -80,10 +80,10 @@ namespace Mono.Cecil {
 
 		#endregion
 
-		internal Resource (string name, ManifestResourceAttributes flags)
+		internal Resource (string name, ManifestResourceAttributes attributes)
 		{
 			m_name = name;
-			m_flags = flags;
+			m_attributes = attributes;
 		}
 
 		public abstract void Accept (IReflectionStructureVisitor visitor);
