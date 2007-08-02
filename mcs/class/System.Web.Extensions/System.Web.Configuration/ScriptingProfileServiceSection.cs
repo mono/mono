@@ -31,6 +31,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Configuration;
+using System.ComponentModel;
+using System.Web.UI.WebControls;
 
 namespace System.Web.Configuration
 {
@@ -47,7 +49,20 @@ namespace System.Web.Configuration
 		}
 
 		[ConfigurationPropertyAttribute ("readAccessProperties", DefaultValue = null)]
+		[TypeConverter(typeof(StringArrayConverter))]
 		public string [] ReadAccessProperties {
+			get {
+				string [] data = ReadAccessPropertiesNoCopy;
+				return (string []) data.Clone ();
+			}
+			set {
+				if (value != null)
+					value = (string []) value.Clone ();
+				ReadAccessPropertiesNoCopy = value;
+			}
+		}
+
+		internal string [] ReadAccessPropertiesNoCopy {
 			get {
 				return (string []) this ["readAccessProperties"];
 			}
@@ -56,13 +71,26 @@ namespace System.Web.Configuration
 			}
 		}
 
-		[ConfigurationPropertyAttribute ("writeAccessProperites", DefaultValue = null)]
+		[ConfigurationPropertyAttribute ("writeAccessProperties", DefaultValue = null)]
+		[TypeConverter (typeof (StringArrayConverter))]
 		public string [] WriteAccessProperties {
 			get {
-				return (string []) this ["writeAccessProperites"];
+				string [] data = WriteAccessPropertiesNoCopy;
+				return (string []) data.Clone ();
 			}
 			set {
-				this ["writeAccessProperites"] = value;
+				if (value != null)
+					value = (string []) value.Clone ();
+				WriteAccessPropertiesNoCopy = value;
+			}
+		}
+
+		internal string [] WriteAccessPropertiesNoCopy {
+			get {
+				return (string []) this ["writeAccessProperties"];
+			}
+			set {
+				this ["writeAccessProperties"] = value;
 			}
 		}
 	}
