@@ -622,16 +622,19 @@ namespace Mono.CSharp {
 		if (t == typeof(NullType))
 			return "null";
 
-		string name = GetFullName (t);
+		return CSharpName (GetFullName (t));
+    }
 
-		return Regex.Replace (name, 
+	public static string CSharpName (string name)
+	{
+		return Regex.Replace (name,
 			@"^System\." +
 			@"(Int32|UInt32|Int16|UInt16|Int64|UInt64|" +
 			@"Single|Double|Char|Decimal|Byte|SByte|Object|" +
 			@"Boolean|String|Void|Null)" +
-			@"(\W+|\b)", 
+			@"(\W+|\b)",
 			new MatchEvaluator (CSharpNameMatch)).Replace ('+', '.');
-	}	
+	}
 
 	static public string CSharpName (Type[] types)
 	{

@@ -1,5 +1,14 @@
 2007-08-02  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #82039
+
+	* ecore.cs (TypeLookup.GetSignatureForError): Use name when type is not
+	available.
+
+	* typemanager.cs (CSharpName): Split to string overload.
+
+2007-08-02  Marek Safar  <marek.safar@gmail.com>
+
 	* expression.cs,
 	* report.cs: Updated warning CS0472.
 

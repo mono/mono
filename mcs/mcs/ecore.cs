@@ -2714,6 +2714,14 @@ namespace Mono.CSharp {
 		{
 			// CloneTo: Nothing, we do not keep any state on this expression
 		}
+
+		public override string GetSignatureForError ()
+		{
+			if (type == null)
+				return TypeManager.CSharpName (name);
+
+			return base.GetSignatureForError ();
+		}
 	}
 
 	/// <summary>
