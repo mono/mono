@@ -13,37 +13,6 @@ class MyDispose : IDisposable {
 	}
 }
 
-//
-// This class does not implement IDiposable, but has an implicit conversion
-// defined
-//
-class NoIDispose {
-	static public MyDispose x;
-
-	public NoIDispose ()
-	{
-	}
-	
-	static NoIDispose ()
-	{
-		x = new MyDispose ();
-	}
-	
-	public static implicit operator MyDispose (NoIDispose a)
-	{
-		return x;
-	}
-}
-
-class Y {
-	static void B ()
-	{
-		using (NoIDispose a = new NoIDispose ()){
-		}
-	}
-	
-}
-
 class X {
 	static int Main ()
 	{
@@ -90,21 +59,6 @@ class X {
 
 		Console.WriteLine ("Null test passed");
 		
-		//
-		// This tests that a variable is permitted here if there is
-		// an implicit conversion to a type that implement IDisposable
-		//
-		using (NoIDispose a = new NoIDispose ()){
-		}
-
-		//
-		// See if we dispose the object that can be implicitly converted
-		// to IDisposable 
-		if (NoIDispose.x.disposed != true)
-			return 4;
-		else
-			Console.WriteLine ("Implicit conversion from type to IDisposable pass");
-
 		MyDispose bb = new MyDispose ();
 		using (bb){
 			
