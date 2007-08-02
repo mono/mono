@@ -1,3 +1,8 @@
+2007-08-02  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchemaValidator.cs : another extra whitespace rejection.
+	  Fixed another issue reported on bug #82183.
+
 2007-07-25  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchemaValidator.cs : do not reject whitespaces in elementOnly

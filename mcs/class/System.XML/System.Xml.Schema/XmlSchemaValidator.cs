@@ -502,7 +502,8 @@ namespace System.Xml.Schema
 					HandleError ("Not allowed character content was found.");
 					break;
 				case XmlSchemaContentType.ElementOnly:
-					if (storedCharacters.Length > 0)
+					string s = storedCharacters.ToString ();
+					if (s.Length > 0 && !XmlChar.IsWhitespace (s))
 						HandleError ("Not allowed character content was found.");
 					break;
 				}

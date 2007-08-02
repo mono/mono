@@ -431,5 +431,35 @@ namespace MonoTests.System.Xml
 			reader.Read ();
 			reader.Read ();
 		}
+
+#if NET_2_0
+		[Test]
+		public void WhitespaceAndElementOnly ()
+		{
+			string xsd = @"<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>
+  <xs:element name='element_list'>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name='element' maxOccurs='unbounded' />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>";
+			string xml = @"<element_list>
+    <!-- blah blah blah -->
+    <element />
+
+    <!-- blah blah -->
+    <element />
+</element_list>";
+			XmlReaderSettings s = new XmlReaderSettings ();
+			s.ValidationType = ValidationType.Schema;
+			s.Schemas.Add (XmlSchema.Read (XmlReader.Create (new StringReader (xsd)), null));
+
+			XmlReader r = XmlReader.Create (new StringReader (xml), s);
+			while (!r.EOF)
+				r.Read ();
+		}
+#endif
 	}
 }
