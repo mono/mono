@@ -1547,6 +1547,10 @@ namespace Mono.CSharp {
 			if (aec == null && !Compatible (ec))
 				return false;
 
+			// Don't define anything when we are in probing scope (nested anonymous methods)
+			if (ec.IsInProbingMode)
+				return true;
+
 			method = DoCreateMethodHost (ec);
 
 			if (Scope != null)

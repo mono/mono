@@ -1,5 +1,12 @@
 2007-08-03  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #82300
+
+	* anonymous.cs (AnonymousContainer.Define): Don't define anything when
+	we are in probing scope.
+
+2007-08-03  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #82301
 
 	* statement.cs (Catch.CloneTo): Clone blocks in the right order.
