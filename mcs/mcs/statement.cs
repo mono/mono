@@ -2258,17 +2258,6 @@ namespace Mono.CSharp {
 			target.Explicit = (ExplicitBlock) clonectx.LookupBlock (Explicit);
 			if (Parent != null)
 				target.Parent = clonectx.RemapBlockCopy (Parent);
-			
-			target.statements = new ArrayList (statements.Count);
-			foreach (Statement s in statements)
-				target.statements.Add (s.Clone (clonectx));
-
-			if (target.children != null){
-				target.children = new ArrayList (children.Count);
-				foreach (Block b in children){
-					target.children.Add (clonectx.RemapBlockCopy (b));
-				}
-			}
 
 			if (variables != null){
 				target.variables = new Hashtable ();
@@ -2277,6 +2266,17 @@ namespace Mono.CSharp {
 					LocalInfo newlocal = ((LocalInfo) de.Value).Clone (clonectx);
 					target.variables [de.Key] = newlocal;
 					clonectx.AddVariableMap ((LocalInfo) de.Value, newlocal);
+				}
+			}
+
+			target.statements = new ArrayList (statements.Count);
+			foreach (Statement s in statements)
+				target.statements.Add (s.Clone (clonectx));
+
+			if (target.children != null){
+				target.children = new ArrayList (children.Count);
+				foreach (Block b in children){
+					target.children.Add (clonectx.RemapBlockCopy (b));
 				}
 			}
 

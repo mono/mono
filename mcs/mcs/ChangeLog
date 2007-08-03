@@ -1,5 +1,15 @@
 2007-08-03  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #82299
+
+	* expression.cs (LocalVariableReference.CloneTo): Remap local info
+	variable too.
+	
+	* statement.cs (Statement.CloneTo): Clone variables before statements
+	to allow remaping of local variables.
+
+2007-08-03  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #82296
 
 	* anonymous.cs,
