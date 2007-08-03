@@ -33,9 +33,22 @@ using System.Collections;
 
 namespace System.Diagnostics 
 {
-	public class ProcessModuleCollection : ReadOnlyCollectionBase 
+#if NET_2_1
+	public class ProcessModuleCollectionBase : System.Collections.Generic.List<ProcessModule>
 	{
-		
+		protected ProcessModuleCollectionBase InnerList {
+			get { return this; }
+		}
+	}
+#endif
+
+	public class ProcessModuleCollection :
+#if !NET_2_1	
+		ReadOnlyCollectionBase
+#else
+		ProcessModuleCollectionBase
+#endif
+	{
 		protected ProcessModuleCollection() 
 		{
 		}

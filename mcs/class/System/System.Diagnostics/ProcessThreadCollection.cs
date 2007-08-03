@@ -33,7 +33,27 @@ using System.Collections;
 
 namespace System.Diagnostics 
 {
-	public class ProcessThreadCollection : ReadOnlyCollectionBase 
+#if NET_2_1
+	public class ProcessThreadCollectionBase : System.Collections.Generic.List<ProcessThread>
+	{
+		protected ProcessThreadCollectionBase InnerList {
+			get { return this; }
+		}
+
+		public new int Add (ProcessThread thread)
+		{
+			base.Add (thread);
+			return Count - 1;
+		}
+	}
+#endif
+
+	public class ProcessThreadCollection :
+#if !NET_2_1
+		ReadOnlyCollectionBase
+#else
+		ProcessThreadCollectionBase
+#endif
 	{
 		protected ProcessThreadCollection() 
 		{

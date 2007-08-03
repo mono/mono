@@ -37,9 +37,24 @@ using System.Runtime.InteropServices;
 using System.Reflection;
 
 namespace System.ComponentModel {
-	[ComVisible (true)]
-	public class ComponentCollection : ReadOnlyCollectionBase {
 
+#if NET_2_1
+	public class ComponentCollectionBase : System.Collections.Generic.List<IComponent>
+	{
+		protected ComponentCollectionBase InnerList {
+			get { return this; }
+		}
+	}
+#endif
+
+	[ComVisible (true)]
+	public class ComponentCollection :
+#if !NET_2_1
+		ReadOnlyCollectionBase
+#else
+		ComponentCollectionBase
+#endif
+	{
 		#region Constructors
 
 		public ComponentCollection (IComponent[] components)

@@ -1,3 +1,10 @@
+2007-08-03  Jb Evain  <jbevain@novell.com>
+
+	* ProcessThreadCollection.cs
+	  ProcessModuleCollection.cs: use our own collection base
+	  for the 2.1 profile, as ReadOnlyCollectionBase does not exist
+	  in 2.1, and they are internalized by the linker.
+
 2007-08-02  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* EventLogTraceListener.cs : fixed wrong 2.0 dependency in 1.x.
