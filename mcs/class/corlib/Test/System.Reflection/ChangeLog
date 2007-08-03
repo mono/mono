@@ -1,3 +1,7 @@
+2007-08-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* MethodInfoTest.cs: Add test for Invoking methods with a nullable type receiver.
+
 2007-07-20  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* MethodInfoTest.cs: Added GetMethodFromHandle test for generic type.
