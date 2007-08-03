@@ -1,5 +1,9 @@
 2007-08-03  Jb Evain  <jbevain@novell.com>
 
+	* Process.cs: disable StartExistCallbackIfNeeded in 2.1.
+
+2007-08-03  Jb Evain  <jbevain@novell.com>
+
 	* ProcessThreadCollection.cs
 	  ProcessModuleCollection.cs: use our own collection base
 	  for the 2.1 profile, as ReadOnlyCollectionBase does not exist

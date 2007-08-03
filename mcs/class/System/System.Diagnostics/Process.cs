@@ -96,6 +96,7 @@ namespace System.Diagnostics {
 
 		void StartExitCallbackIfNeeded ()
 		{
+#if !NET_2_1
 			bool start = (!already_waiting && enableRaisingEvents && exited_event != null);
 			if (start && process_handle != IntPtr.Zero && !HasExited) {
 				WaitOrTimerCallback cb = new WaitOrTimerCallback (CBOnExit);
@@ -103,6 +104,7 @@ namespace System.Diagnostics {
 				ThreadPool.RegisterWaitForSingleObject (h, cb, this, -1, true);
 				already_waiting = true;
 			}
+#endif
 		}
 
 		[DefaultValue (false), Browsable (false)]
