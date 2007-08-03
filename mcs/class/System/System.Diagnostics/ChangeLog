@@ -1,5 +1,9 @@
 2007-08-03  Jb Evain  <jbevain@novell.com>
 
+	* FileVersionInfo.cs: remove CAS checks for 2.1.
+
+2007-08-03  Jb Evain  <jbevain@novell.com>
+
 	* Process.cs: disable StartExistCallbackIfNeeded in 2.1.
 
 2007-08-03  Jb Evain  <jbevain@novell.com>

@@ -142,9 +142,11 @@ namespace System.Diagnostics {
 
 		public string FileName {
 			get {
+#if !NET_2_1
 				if (SecurityManager.SecurityEnabled) {
 					new FileIOPermission (FileIOPermissionAccess.PathDiscovery, filename).Demand ();
 				}
+#endif
 				return filename;
 			}
 		}
@@ -274,10 +276,11 @@ namespace System.Diagnostics {
 		
 		public static FileVersionInfo GetVersionInfo (string fileName)
 		{
+#if !NET_2_1
 			if (SecurityManager.SecurityEnabled) {
 				new FileIOPermission (FileIOPermissionAccess.Read, fileName).Demand ();
 			}
-
+#endif
 			FileVersionInfo fvi = new FileVersionInfo ();
 			fvi.GetVersionInfo_internal (fileName);
 			return fvi;
