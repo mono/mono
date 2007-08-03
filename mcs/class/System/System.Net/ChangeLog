@@ -1,3 +1,7 @@
+2007-08-03  Jb Evain  <jbevain@novell.com>
+
+	* Dns.cs: remove async methods for the 2.1 profile.
+
 2007-07-17  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* HttpListenerRequest.cs: Support for Cookie decoding.

@@ -48,6 +48,8 @@ namespace System.Net {
 			System.Net.Sockets.Socket.CheckProtocolSupport();
 		}
 
+#if !NET_2_1 // global remove of async methods
+
 		private delegate IPHostEntry GetHostByNameCallback (string hostName);
 		private delegate IPHostEntry ResolveCallback (string hostName);
 #if NET_2_0
@@ -164,6 +166,8 @@ namespace System.Net {
 			return cb.EndInvoke(asyncResult);
 		}
 #endif
+		
+#endif // !NET_2_1: global remove of async methods
 
 #if !TARGET_JVM
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
