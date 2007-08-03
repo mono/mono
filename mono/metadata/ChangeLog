@@ -1,3 +1,8 @@
+2007-08-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* object.c (mono_runtime_invoke_array): Avoid using alloca.
+
+	* icall.c (ves_icall_FieldInfo_SetValueInternal): Ditto.	
 
 Fri Aug 3 19:54:23 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
