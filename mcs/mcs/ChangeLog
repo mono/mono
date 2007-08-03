@@ -1,5 +1,11 @@
 2007-08-03  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #81979
+	* expression.cs (TypeOf.GetAttributableValue): Check for type arguments
+	only.
+
+2007-08-03  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #82300
 
 	* anonymous.cs (AnonymousContainer.Define): Don't define anything when

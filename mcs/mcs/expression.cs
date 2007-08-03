@@ -6514,10 +6514,11 @@ namespace Mono.CSharp {
 
 		public override bool GetAttributableValue (Type valueType, out object value)
 		{
-			if (TypeManager.ContainsGenericParameters (typearg)) {
-				Report.SymbolRelatedToPreviousError(typearg);
-				Report.Error(416, loc, "`{0}': an attribute argument cannot use type parameters",
-					     TypeManager.CSharpName(typearg));
+			if (TypeManager.ContainsGenericParameters (typearg) &&
+				!TypeManager.IsGenericTypeDefinition (typearg)) {
+				Report.SymbolRelatedToPreviousError (typearg);
+				Report.Error (416, loc, "`{0}': an attribute argument cannot use type parameters",
+					     TypeManager.CSharpName (typearg));
 				value = null;
 				return false;
 			}
