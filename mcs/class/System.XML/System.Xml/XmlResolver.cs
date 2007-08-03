@@ -38,7 +38,9 @@ namespace System.Xml
 {
 	public abstract class XmlResolver
 	{
+#if !NET_2_1
 		public abstract ICredentials Credentials { set; }
+#endif
 
 		public abstract object GetEntity (
 			Uri absoluteUri,

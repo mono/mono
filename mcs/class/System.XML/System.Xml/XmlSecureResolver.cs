@@ -101,9 +101,11 @@ namespace System.Xml
 
 #region Property
 
+#if !NET_2_1
 		public override ICredentials Credentials {
 			set { resolver.Credentials = value; }
 		}
+#endif
 
 #endregion
 

@@ -1,3 +1,11 @@
+2007-08-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlResolver.cs, XmlUrlResolver.cs, XmlSecureResolver.cs :
+	  remove ICredential in NET_2_1 (they have to be explicitly removed
+	  outside tuner work as ICredentials does not exist in 2.1 profile).
+	  We cannot use WebRequest in 2.1 as well, so remove dependency on
+	  it in GetEntity() (and added MonoTODO for non-file URLs).
+
 2007-07-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlWriter.cs : in WriteNode(XPathNavigator,bool), default namespace
