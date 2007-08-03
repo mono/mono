@@ -2276,7 +2276,7 @@ namespace Mono.CSharp {
 			if (target.children != null){
 				target.children = new ArrayList (children.Count);
 				foreach (Block b in children){
-					target.children.Add (clonectx.RemapBlockCopy (b));
+					target.children.Add (clonectx.LookupBlock (b));
 				}
 			}
 
@@ -4211,8 +4211,8 @@ namespace Mono.CSharp {
 			Catch target = (Catch) t;
 
 			target.type_expr = type_expr.Clone (clonectx);
+			target.VarBlock = clonectx.LookupBlock (VarBlock);			
 			target.Block = clonectx.LookupBlock (Block);
-			target.VarBlock = clonectx.LookupBlock (VarBlock);
 		}
 	}
 

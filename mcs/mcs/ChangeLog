@@ -1,5 +1,12 @@
 2007-08-03  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #82301
+
+	* statement.cs (Catch.CloneTo): Clone blocks in the right order.
+	(Statement.CloneTo): Clone and not map children blocks.
+
+2007-08-03  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #82299
 
 	* expression.cs (LocalVariableReference.CloneTo): Remap local info
