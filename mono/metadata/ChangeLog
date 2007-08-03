@@ -1,5 +1,8 @@
 2007-08-03  Zoltan Varga  <vargaz@gmail.com>
 
+	* marshal.c (mono_marshal_get_runtime_invoke): Handle the case when the 
+	receiver is a nullable type.
+
 	* class.c (mono_class_is_assignable_from): Handle the case when klass is a 
 	generic parameter.
 
