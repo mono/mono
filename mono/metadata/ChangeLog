@@ -1,5 +1,11 @@
 2007-08-03  Zoltan Varga  <vargaz@gmail.com>
 
+	* object.c (mono_runtime_invoke_array): Handle the case when the receiver is a
+	nullable type.
+
+	* marshal.c (mono_marshal_get_runtime_invoke): Revert the previous change, it is
+	now done in mono_runtime_invoke_array.
+
 	* marshal.c (mono_marshal_get_runtime_invoke): Handle the case when the 
 	receiver is a nullable type.
 
