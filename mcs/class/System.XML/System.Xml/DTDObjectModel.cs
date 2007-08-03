@@ -34,6 +34,9 @@ using System.IO;
 using System.Text;
 using System.Xml;
 using System.Xml.Schema;
+#if NET_2_0
+using System.Collections.Generic;
+#endif
 #if NET_2_1
 using XmlSchemaException = System.Xml.XmlException;
 #else
@@ -280,6 +283,17 @@ namespace Mono.Xml
 		}
 	}
 
+#if NET_2_0
+	class DictionaryBase : List<KeyValuePair<string,DTDNode>>
+	{
+		public IEnumerable<DTDNode> Values {
+			get {
+				foreach (KeyValuePair<string,DTDNode> p in this)
+					yield return p.Value;
+			}
+		}
+	}
+#endif
 	internal class DTDCollectionBase : DictionaryBase
 	{
 		DTDObjectModel root;
@@ -293,6 +307,32 @@ namespace Mono.Xml
 			get { return root; }
 		}
 
+#if NET_2_0
+		public DictionaryBase InnerHashtable {
+			get { return this; }
+		}
+
+		protected void BaseAdd (string name, DTDNode value)
+		{
+			base.Add (new KeyValuePair<string,DTDNode> (name, value));
+		}
+
+		public bool Contains (string key)
+		{
+			foreach (KeyValuePair<string,DTDNode> p in this)
+				if (p.Key == key)
+					return true;
+			return false;
+		}
+
+		protected object BaseGet (string name)
+		{
+			foreach (KeyValuePair<string,DTDNode> p in this)
+				if (p.Key == name)
+					return p.Value;
+			return null;
+		}
+#else
 		public ICollection Keys {
 			get { return InnerHashtable.Keys; }
 		}
@@ -300,6 +340,22 @@ namespace Mono.Xml
 		public ICollection Values {
 			get { return InnerHashtable.Values; }
 		}
+
+		protected void BaseAdd (string name, object value)
+		{
+			InnerHashtable.Add (name, value);
+		}
+
+		public bool Contains (string key)
+		{
+			return InnerHashtable.Contains (key);
+		}
+
+		protected object BaseGet (string name)
+		{
+			return InnerHashtable [name];
+		}
+#endif
 	}
 
 	internal class DTDElementDeclarationCollection : DTDCollectionBase
@@ -313,19 +369,19 @@ namespace Mono.Xml
 
 		public DTDElementDeclaration Get (string name)
 		{
-			return InnerHashtable [name] as DTDElementDeclaration;
+			return BaseGet (name) as DTDElementDeclaration;
 		}
 
 		public void Add (string name, DTDElementDeclaration decl)
 		{
-			if (InnerHashtable.Contains (name)) {
+			if (Contains (name)) {
 				Root.AddError (new XmlSchemaException (String.Format (
 					"Element declaration for {0} was already added.",
 					name), null));
 				return;
 			}
 			decl.SetRoot (Root);
-			InnerHashtable.Add (name, decl);
+			BaseAdd (name, decl);
 		}
 	}
 
@@ -334,7 +390,7 @@ namespace Mono.Xml
 		public DTDAttListDeclarationCollection (DTDObjectModel root) : base (root) {}
 
 		public DTDAttListDeclaration this [string name] {
-			get { return InnerHashtable [name] as DTDAttListDeclaration; }
+			get { return BaseGet (name) as DTDAttListDeclaration; }
 		}
 
 		public void Add (string name, DTDAttListDeclaration decl)
@@ -347,7 +403,7 @@ namespace Mono.Xml
 						existing.Add (def);
 			} else {
 				decl.SetRoot (Root);
-				InnerHashtable.Add (name, decl);
+				BaseAdd (name, decl);
 			}
 		}
 	}
@@ -357,17 +413,17 @@ namespace Mono.Xml
 		public DTDEntityDeclarationCollection (DTDObjectModel root) : base (root) {}
 
 		public DTDEntityDeclaration this [string name] {
-			get { return InnerHashtable [name] as DTDEntityDeclaration; }
+			get { return BaseGet (name) as DTDEntityDeclaration; }
 		}
 
 		public void Add (string name, DTDEntityDeclaration decl)
 		{
-			if (InnerHashtable [name] != null)
+			if (Contains (name))
 				throw new InvalidOperationException (String.Format (
 					"Entity declaration for {0} was already added.",
 					name));
 			decl.SetRoot (Root);
-			InnerHashtable.Add (name, decl);
+			BaseAdd (name, decl);
 		}
 	}
 
@@ -376,17 +432,17 @@ namespace Mono.Xml
 		public DTDNotationDeclarationCollection (DTDObjectModel root) : base (root) {}
 
 		public DTDNotationDeclaration this [string name] {
-			get { return InnerHashtable [name] as DTDNotationDeclaration; }
+			get { return BaseGet (name) as DTDNotationDeclaration; }
 		}
 
 		public void Add (string name, DTDNotationDeclaration decl)
 		{
-			if (InnerHashtable [name] != null)
+			if (Contains (name))
 				throw new InvalidOperationException (String.Format (
 					"Notation declaration for {0} was already added.",
 					name));
 			decl.SetRoot (Root);
-			InnerHashtable.Add (name, decl);
+			BaseAdd (name, decl);
 		}
 	}
 

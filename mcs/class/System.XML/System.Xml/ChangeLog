@@ -1,5 +1,12 @@
 2007-08-03  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DTDObjectModel.cs : in 2.0 and especially 2.1 profiles, use
+	  our own DictionaryBase-like generic type. It is to reduce
+	  dependency on DictionaryBase which does not exist in 2.1 mscorlib.
+	  (included in 2.0 as well so that we do not skip NUnit tests so far)
+
+2007-08-03  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlResolver.cs, XmlUrlResolver.cs, XmlSecureResolver.cs :
 	  remove ICredential in NET_2_1 (they have to be explicitly removed
 	  outside tuner work as ICredentials does not exist in 2.1 profile).
