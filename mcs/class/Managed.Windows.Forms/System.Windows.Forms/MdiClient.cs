@@ -832,6 +832,15 @@ namespace System.Windows.Forms {
 					if (c is MenuStrip)
 						child_menu = (MenuStrip)c;
 
+				RemoveControlMenuItems (wm);
+				
+				if (form.WindowState == FormWindowState.Maximized) {
+					parent_menu.Items.Insert (0, new MdiControlStrip.SystemMenuItem (form));
+					parent_menu.Items.Add (new MdiControlStrip.ControlBoxMenuItem (form, MdiControlStrip.ControlBoxType.Close));
+					parent_menu.Items.Add (new MdiControlStrip.ControlBoxMenuItem (form, MdiControlStrip.ControlBoxType.Max));
+					parent_menu.Items.Add (new MdiControlStrip.ControlBoxMenuItem (form, MdiControlStrip.ControlBoxType.Min));
+				}
+				
 				if (child_menu != null)
 					ToolStripManager.Merge (child_menu, parent_menu);
 			}
@@ -839,6 +848,18 @@ namespace System.Windows.Forms {
 
 			return maximize_this;
 		}
+
+#if NET_2_0
+		internal void RemoveControlMenuItems (MdiWindowManager wm)
+		{
+			Form form = wm.form;
+			MenuStrip parent_menu = form.MdiParent.MainMenuStrip;
+			
+			for (int i = parent_menu.Items.Count - 1; i >= 0; i--)
+				if (parent_menu.Items[i] is MdiControlStrip.SystemMenuItem || parent_menu.Items[i] is MdiControlStrip.ControlBoxMenuItem)
+					parent_menu.Items.RemoveAt (i);
+		}
+#endif
 
 		internal void SetWindowState (Form form, FormWindowState old_window_state, FormWindowState new_window_state, bool is_activating_child)
 		{

@@ -168,7 +168,7 @@ namespace System.Windows.Forms
 		#region Internal Methods
 		internal override Rectangle CalculateConnectedArea ()
 		{
-			if (this.OwnerItem != null && !this.OwnerItem.IsOnDropDown)
+			if (this.OwnerItem != null && !this.OwnerItem.IsOnDropDown && !(this.OwnerItem is MdiControlStrip.SystemMenuItem))
 				return new Rectangle (1, 0, this.OwnerItem.Width - 2, 2);
 
 			return base.CalculateConnectedArea ();

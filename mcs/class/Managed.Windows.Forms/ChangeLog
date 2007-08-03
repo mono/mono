@@ -1,3 +1,7 @@
+2007-08-02  Jonathan Pobst  <monkey@jpobst.com>
+
+	* System.Windows.Forms.dll.sources: Add MdiControlStrip.cs.
+
 2007-07-31  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* build-csproj2k5-tests: Add ONLY_1_1, __MONO_CS__ and DEBUG where

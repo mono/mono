@@ -385,6 +385,8 @@ namespace System.Windows.Forms {
 #if NET_2_0
 			if (form.MdiParent.MainMenuStrip != null)
 				form.MdiParent.MainMenuStrip.RefreshMdiItems ();
+
+			mdi_container.RemoveControlMenuItems (this);
 #endif
 		}
 

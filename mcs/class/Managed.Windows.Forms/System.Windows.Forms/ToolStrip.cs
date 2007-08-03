@@ -1108,7 +1108,7 @@ namespace System.Windows.Forms
 		{
 			// If any item has an explicit mnemonic, it gets the message
 			foreach (ToolStripItem tsi in this.Items)
-				if (tsi.Enabled && tsi.Visible && Control.IsMnemonic (charCode, tsi.Text))
+				if (tsi.Enabled && tsi.Visible && !string.IsNullOrEmpty (tsi.Text) && Control.IsMnemonic (charCode, tsi.Text))
 					return tsi.ProcessMnemonic (charCode);
 
 			string code = Char.ToUpper (charCode).ToString ();

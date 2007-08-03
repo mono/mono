@@ -1,3 +1,14 @@
+2007-08-02  Jonathan Pobst  <monkey@jpobst.com>
+
+	* MdiClient.cs, MdiWindowManager.cs: Support 2.0 Mdi MenuStrip
+	folding.
+	* MdiControlStrip.cs: Added.  These are the menu items used in mdi
+	folding.
+	* ToolStrip.cs: Add a null check to mnemonics.
+	* ToolStripDropDownMenu.cs: When using a SystemMenuItem, there is
+	no ConnectedArea.
+	[Fixes most of bug #81689]
+
 2007-08-02  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* PropertyGrid.cs: Add a null-check. Fixes #82289/SVGPad.
