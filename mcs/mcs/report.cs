@@ -696,6 +696,11 @@ namespace Mono.CSharp {
 		public InternalErrorException (string message, params object[] args)
 			: base (String.Format (message, args))
 		{ }
+		
+		public InternalErrorException (Exception e, Location loc)
+			: base (loc.ToString (), e)
+		{
+		}
 	}
 
 	/// <summary>

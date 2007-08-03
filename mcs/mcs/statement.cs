@@ -797,8 +797,9 @@ namespace Mono.CSharp {
 		protected override void CloneTo (CloneContext clonectx, Statement t)
 		{
 			Return target = (Return) t;
-
-			target.Expr = Expr.Clone (clonectx);
+			// It's null for simple return;
+			if (Expr != null)
+				target.Expr = Expr.Clone (clonectx);
 		}
 	}
 

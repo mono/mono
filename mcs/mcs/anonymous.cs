@@ -1313,7 +1313,11 @@ namespace Mono.CSharp {
 				      Container, Block, return_type, delegateType,
 				      TypeManager.IsGenericType (delegateType), loc);
 
-			return CompatibleMethod (ec, null, return_type, delegateType);
+			try {
+				return CompatibleMethod (ec, null, return_type, delegateType);
+			} catch (Exception e) {
+				throw new InternalErrorException (e, loc);
+			}
 		}
 
 		protected virtual Parameters ResolveParameters (EmitContext ec, TypeInferenceContext tic, Type delegateType)

@@ -1,3 +1,12 @@
+2007-08-03  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #82296
+
+	* anonymous.cs,
+	* report.cs: Log crash details for future clone problems.
+	
+	* statement.cs (Return.Clone): Don't clone non-existent expression.
+
 2007-08-03  Raja R Harinath  <harinath@gmail.com>
 
 	* class.cs (TypeContainer.AddBasesForPart): Make virtual.
