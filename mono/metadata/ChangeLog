@@ -1,3 +1,11 @@
+2007-07-03  Jonathan Chambers  <joncham@gmail.com>
+
+	* marshal.c: Implement COM Objects as return type for 
+	managed->unmanaged calls. Added Release calls for COM Object
+	out/return values in managed->unmanaged calls.
+
+	Code is contributed under MIT/X11 license.
+
 2007-07-31  William Holmes  <billholmes54@gmail.com>
 
         * metadata.c Changed mono_type_create_from_typespec to not insert
