@@ -1,3 +1,8 @@
+
+Fri Aug 3 13:13:39 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* file-io.c, appdomain.c: memory leak fixes.
+
 2007-08-02  Dick Porter  <dick@ximian.com>
 
 	* socket-io.c
