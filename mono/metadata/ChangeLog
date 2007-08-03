@@ -1,4 +1,9 @@
 
+Fri Aug 3 17:00:51 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* threads.h, threads-type.h: move the hazard pointer declarations
+	to the private header.
+
 Fri Aug 3 13:13:39 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* file-io.c, appdomain.c: memory leak fixes.
