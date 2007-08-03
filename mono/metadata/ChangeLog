@@ -1,4 +1,12 @@
 
+2007-07-03  Jonathan Chambers  <joncham@gmail.com>
+
+       * marshal.c: Implement COM Objects as return type for 
+       managed->unmanaged calls. Added Release calls for COM Object
+       out/return values in managed->unmanaged calls.
+       
+       Code is contributed under MIT/X11 license.
+
 Fri Aug 3 17:00:51 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* threads.h, threads-type.h: move the hazard pointer declarations
