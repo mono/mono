@@ -3721,7 +3721,8 @@ namespace Mono.CSharp {
 			LocalVariableReference target = (LocalVariableReference) t;
 			
 			target.Block = clonectx.LookupBlock (Block);
-			target.local_info = clonectx.LookupVariable (local_info);
+			if (local_info != null)
+				target.local_info = clonectx.LookupVariable (local_info);
 		}
 	}
 
