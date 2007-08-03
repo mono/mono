@@ -392,7 +392,9 @@ namespace MonoTests.System.Reflection
 
 			// Test conversion of vtype to a nullable type for the this argument
 			PropertyInfo pi = typeof (Nullable <int>).GetProperty ("HasValue");
-		    Assert.IsTrue ((bool)pi.GetGetMethod ().Invoke (10, null) == true);
+		    Assert.AreEqual (true, pi.GetGetMethod ().Invoke (10, null));
+			PropertyInfo pi2 = typeof (Nullable <int>).GetProperty ("Value");
+		    Assert.AreEqual (10, pi2.GetGetMethod ().Invoke (10, null));
 		}
 
 		public static void foo_generic<T> ()
