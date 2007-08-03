@@ -1,3 +1,7 @@
+2007-08-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_is_assignable_from): Handle the case when klass is a 
+	generic parameter.
 
 2007-07-03  Jonathan Chambers  <joncham@gmail.com>
 
