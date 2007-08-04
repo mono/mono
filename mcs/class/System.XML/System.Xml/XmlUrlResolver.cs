@@ -72,12 +72,8 @@ namespace System.Xml
 			}
 
 #if NET_2_1
-			// there is no WebRequest in 2.1 System.dll.
-			if (absoluteUri.IsFile)
-				return File.OpenRead (absoluteUri.LocalPath);
-			else
-				// So, what can I do here? HttpWebRequest cannot be instantiated within System.dll
-				throw new NotImplementedException ();
+			// So, what can I do here? HttpWebRequest cannot be instantiated within System.dll
+			throw new NotImplementedException ();
 #else
 			// (MS documentation says) parameter role isn't used yet.
 			WebRequest req = WebRequest.Create (absoluteUri);

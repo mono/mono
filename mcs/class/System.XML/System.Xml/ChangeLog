@@ -1,5 +1,9 @@
 2007-08-04  Jb Evain  <jbevain@novell.com>
 
+	* XmlUrlResolver.cs: remove code duplication in 2.1.
+
+2007-08-04  Jb Evain  <jbevain@novell.com>
+
 	* XmlTextReader.cs, XmlConvert.cs, XmlReaderBinarySupport.cs:
 	Use the available constructor for the 2.1 profile.
 
