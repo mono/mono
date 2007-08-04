@@ -57,7 +57,7 @@ namespace Mono.Cecil {
 		#region ManifestResourceAttributes
 
 		public bool IsPublic {
-			get { return (m_attributes & ManifestResourceAttributes.Public) != 0; }
+			get { return (m_attributes & ManifestResourceAttributes.VisibilityMask) == ManifestResourceAttributes.Public; }
 			set {
 				ManifestResourceAttributes masked = (ManifestResourceAttributes.VisibilityMask & ManifestResourceAttributes.Public);
 				if (value)
@@ -68,7 +68,7 @@ namespace Mono.Cecil {
 		}
 
 		public bool IsPrivate {
-			get { return (m_attributes & ManifestResourceAttributes.Private) != 0; }
+			get { return (m_attributes & ManifestResourceAttributes.VisibilityMask) == ManifestResourceAttributes.Private; }
 			set {
 				ManifestResourceAttributes masked = (ManifestResourceAttributes.VisibilityMask & ManifestResourceAttributes.Private);
 				if (value)

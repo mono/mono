@@ -88,7 +88,7 @@ namespace Mono.Cecil {
 		#region GenericParameterAttributes
 
 		public bool IsNonVariant {
-			get { return (m_attributes & GenericParameterAttributes.NonVariant) != 0; }
+			get { return (m_attributes & GenericParameterAttributes.VarianceMask) == GenericParameterAttributes.NonVariant; }
 			set {
 				GenericParameterAttributes masked = (GenericParameterAttributes.VarianceMask & GenericParameterAttributes.NonVariant);
 				if (value)
@@ -99,7 +99,7 @@ namespace Mono.Cecil {
 		}
 
 		public bool IsCovariant {
-			get { return (m_attributes & GenericParameterAttributes.Covariant) != 0; }
+			get { return (m_attributes & GenericParameterAttributes.VarianceMask) == GenericParameterAttributes.Covariant; }
 			set {
 				GenericParameterAttributes masked = (GenericParameterAttributes.VarianceMask & GenericParameterAttributes.Covariant);
 				if (value)
@@ -110,7 +110,7 @@ namespace Mono.Cecil {
 		}
 
 		public bool IsContravariant {
-			get { return (m_attributes & GenericParameterAttributes.Contravariant) != 0; }
+			get { return (m_attributes & GenericParameterAttributes.VarianceMask) == GenericParameterAttributes.Contravariant; }
 			set {
 				GenericParameterAttributes masked = (GenericParameterAttributes.VarianceMask & GenericParameterAttributes.Contravariant);
 				if (value)
@@ -121,7 +121,7 @@ namespace Mono.Cecil {
 		}
 
 		public bool HasReferenceTypeConstraint {
-			get { return (m_attributes & GenericParameterAttributes.ReferenceTypeConstraint) != 0; }
+			get { return (m_attributes & GenericParameterAttributes.SpecialConstraintMask) == GenericParameterAttributes.ReferenceTypeConstraint; }
 			set {
 				GenericParameterAttributes masked = (GenericParameterAttributes.SpecialConstraintMask & GenericParameterAttributes.ReferenceTypeConstraint);
 				if (value)
@@ -132,7 +132,7 @@ namespace Mono.Cecil {
 		}
 
 		public bool HasNotNullableValueTypeConstraint {
-			get { return (m_attributes & GenericParameterAttributes.NotNullableValueTypeConstraint) != 0; }
+			get { return (m_attributes & GenericParameterAttributes.SpecialConstraintMask) == GenericParameterAttributes.NotNullableValueTypeConstraint; }
 			set {
 				GenericParameterAttributes masked = (GenericParameterAttributes.SpecialConstraintMask & GenericParameterAttributes.NotNullableValueTypeConstraint);
 				if (value)
@@ -143,7 +143,7 @@ namespace Mono.Cecil {
 		}
 
 		public bool HasDefaultConstructorConstraint {
-			get { return (m_attributes & GenericParameterAttributes.DefaultConstructorConstraint) != 0; }
+			get { return (m_attributes & GenericParameterAttributes.SpecialConstraintMask) == GenericParameterAttributes.DefaultConstructorConstraint; }
 			set {
 				GenericParameterAttributes masked = (GenericParameterAttributes.SpecialConstraintMask & GenericParameterAttributes.DefaultConstructorConstraint);
 				if (value)

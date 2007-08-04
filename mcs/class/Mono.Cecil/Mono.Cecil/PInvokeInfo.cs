@@ -68,7 +68,7 @@ namespace Mono.Cecil {
 		}
 
 		public bool IsCharSetNotSpec {
-			get { return (m_attributes & PInvokeAttributes.CharSetNotSpec) != 0; }
+			get { return (m_attributes & PInvokeAttributes.CharSetMask) == PInvokeAttributes.CharSetNotSpec; }
 			set {
 				PInvokeAttributes masked = (PInvokeAttributes.CharSetMask & PInvokeAttributes.CharSetNotSpec);
 				if (value)
@@ -79,7 +79,7 @@ namespace Mono.Cecil {
 		}
 
 		public bool IsCharSetAnsi {
-			get { return (m_attributes & PInvokeAttributes.CharSetAnsi) != 0; }
+			get { return (m_attributes & PInvokeAttributes.CharSetMask) == PInvokeAttributes.CharSetAnsi; }
 			set {
 				PInvokeAttributes masked = (PInvokeAttributes.CharSetMask & PInvokeAttributes.CharSetAnsi);
 				if (value)
@@ -90,7 +90,7 @@ namespace Mono.Cecil {
 		}
 
 		public bool IsCharSetUnicode {
-			get { return (m_attributes & PInvokeAttributes.CharSetUnicode) != 0; }
+			get { return (m_attributes & PInvokeAttributes.CharSetMask) == PInvokeAttributes.CharSetUnicode; }
 			set {
 				PInvokeAttributes masked = (PInvokeAttributes.CharSetMask & PInvokeAttributes.CharSetUnicode);
 				if (value)
@@ -101,7 +101,7 @@ namespace Mono.Cecil {
 		}
 
 		public bool IsCharSetAuto {
-			get { return (m_attributes & PInvokeAttributes.CharSetAuto) != 0; }
+			get { return (m_attributes & PInvokeAttributes.CharSetMask) == PInvokeAttributes.CharSetAuto; }
 			set {
 				PInvokeAttributes masked = (PInvokeAttributes.CharSetMask & PInvokeAttributes.CharSetAuto);
 				if (value)
@@ -112,7 +112,7 @@ namespace Mono.Cecil {
 		}
 
 		public bool SupportsLastError {
-			get { return (m_attributes & PInvokeAttributes.SupportsLastError) != 0; }
+			get { return (m_attributes & PInvokeAttributes.CharSetMask) == PInvokeAttributes.SupportsLastError; }
 			set {
 				PInvokeAttributes masked = (PInvokeAttributes.CharSetMask & PInvokeAttributes.SupportsLastError);
 				if (value)
@@ -123,7 +123,7 @@ namespace Mono.Cecil {
 		}
 
 		public bool IsCallConvWinapi {
-			get { return (m_attributes & PInvokeAttributes.CallConvWinapi) != 0; }
+			get { return (m_attributes & PInvokeAttributes.CallConvMask) == PInvokeAttributes.CallConvWinapi; }
 			set {
 				PInvokeAttributes masked = (PInvokeAttributes.CallConvMask & PInvokeAttributes.CallConvWinapi);
 				if (value)
@@ -134,7 +134,7 @@ namespace Mono.Cecil {
 		}
 
 		public bool IsCallConvCdecl {
-			get { return (m_attributes & PInvokeAttributes.CallConvCdecl) != 0; }
+			get { return (m_attributes & PInvokeAttributes.CallConvMask) == PInvokeAttributes.CallConvCdecl; }
 			set {
 				PInvokeAttributes masked = (PInvokeAttributes.CallConvMask & PInvokeAttributes.CallConvCdecl);
 				if (value)
@@ -145,7 +145,7 @@ namespace Mono.Cecil {
 		}
 
 		public bool IsCallConvStdCall {
-			get { return (m_attributes & PInvokeAttributes.CallConvStdCall) != 0; }
+			get { return (m_attributes & PInvokeAttributes.CallConvMask) == PInvokeAttributes.CallConvStdCall; }
 			set {
 				PInvokeAttributes masked = (PInvokeAttributes.CallConvMask & PInvokeAttributes.CallConvStdCall);
 				if (value)
@@ -156,7 +156,7 @@ namespace Mono.Cecil {
 		}
 
 		public bool IsCallConvThiscall {
-			get { return (m_attributes & PInvokeAttributes.CallConvThiscall) != 0; }
+			get { return (m_attributes & PInvokeAttributes.CallConvMask) == PInvokeAttributes.CallConvThiscall; }
 			set {
 				PInvokeAttributes masked = (PInvokeAttributes.CallConvMask & PInvokeAttributes.CallConvThiscall);
 				if (value)
@@ -167,7 +167,7 @@ namespace Mono.Cecil {
 		}
 
 		public bool IsCallConvFastcall {
-			get { return (m_attributes & PInvokeAttributes.CallConvFastcall) != 0; }
+			get { return (m_attributes & PInvokeAttributes.CallConvMask) == PInvokeAttributes.CallConvFastcall; }
 			set {
 				PInvokeAttributes masked = (PInvokeAttributes.CallConvMask & PInvokeAttributes.CallConvFastcall);
 				if (value)

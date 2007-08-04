@@ -151,7 +151,7 @@ namespace Mono.Cecil {
 		#region TypeAttributes
 
 		public bool IsNotPublic {
-			get { return (m_attributes & TypeAttributes.NotPublic) != 0; }
+			get { return (m_attributes & TypeAttributes.VisibilityMask) == TypeAttributes.NotPublic; }
 			set {
 				TypeAttributes masked = (TypeAttributes.VisibilityMask & TypeAttributes.NotPublic);
 				if (value)
@@ -162,7 +162,7 @@ namespace Mono.Cecil {
 		}
 
 		public bool IsPublic {
-			get { return (m_attributes & TypeAttributes.Public) != 0; }
+			get { return (m_attributes & TypeAttributes.VisibilityMask) == TypeAttributes.Public; }
 			set {
 				TypeAttributes masked = (TypeAttributes.VisibilityMask & TypeAttributes.Public);
 				if (value)
@@ -173,7 +173,7 @@ namespace Mono.Cecil {
 		}
 
 		public bool IsNestedPublic {
-			get { return (m_attributes & TypeAttributes.NestedPublic) != 0; }
+			get { return (m_attributes & TypeAttributes.VisibilityMask) == TypeAttributes.NestedPublic; }
 			set {
 				TypeAttributes masked = (TypeAttributes.VisibilityMask & TypeAttributes.NestedPublic);
 				if (value)
@@ -184,7 +184,7 @@ namespace Mono.Cecil {
 		}
 
 		public bool IsNestedPrivate {
-			get { return (m_attributes & TypeAttributes.NestedPrivate) != 0; }
+			get { return (m_attributes & TypeAttributes.VisibilityMask) == TypeAttributes.NestedPrivate; }
 			set {
 				TypeAttributes masked = (TypeAttributes.VisibilityMask & TypeAttributes.NestedPrivate);
 				if (value)
@@ -195,7 +195,7 @@ namespace Mono.Cecil {
 		}
 
 		public bool IsNestedFamily {
-			get { return (m_attributes & TypeAttributes.NestedFamily) != 0; }
+			get { return (m_attributes & TypeAttributes.VisibilityMask) == TypeAttributes.NestedFamily; }
 			set {
 				TypeAttributes masked = (TypeAttributes.VisibilityMask & TypeAttributes.NestedFamily);
 				if (value)
@@ -206,7 +206,7 @@ namespace Mono.Cecil {
 		}
 
 		public bool IsNestedAssembly {
-			get { return (m_attributes & TypeAttributes.NestedAssembly) != 0; }
+			get { return (m_attributes & TypeAttributes.VisibilityMask) == TypeAttributes.NestedAssembly; }
 			set {
 				TypeAttributes masked = (TypeAttributes.VisibilityMask & TypeAttributes.NestedAssembly);
 				if (value)
@@ -217,7 +217,7 @@ namespace Mono.Cecil {
 		}
 
 		public bool IsNestedFamilyAndAssembly {
-			get { return (m_attributes & TypeAttributes.NestedFamANDAssem) != 0; }
+			get { return (m_attributes & TypeAttributes.VisibilityMask) == TypeAttributes.NestedFamANDAssem; }
 			set {
 				TypeAttributes masked = (TypeAttributes.VisibilityMask & TypeAttributes.NestedFamANDAssem);
 				if (value)
@@ -228,7 +228,7 @@ namespace Mono.Cecil {
 		}
 
 		public bool IsNestedFamilyOrAssembly {
-			get { return (m_attributes & TypeAttributes.NestedFamORAssem) != 0; }
+			get { return (m_attributes & TypeAttributes.VisibilityMask) == TypeAttributes.NestedFamORAssem; }
 			set {
 				TypeAttributes masked = (TypeAttributes.VisibilityMask & TypeAttributes.NestedFamORAssem);
 				if (value)
@@ -239,7 +239,7 @@ namespace Mono.Cecil {
 		}
 
 		public bool IsAutoLayout {
-			get { return (m_attributes & TypeAttributes.AutoLayout) != 0; }
+			get { return (m_attributes & TypeAttributes.LayoutMask) == TypeAttributes.AutoLayout; }
 			set {
 				TypeAttributes masked = (TypeAttributes.LayoutMask & TypeAttributes.AutoLayout);
 				if (value)
@@ -250,7 +250,7 @@ namespace Mono.Cecil {
 		}
 
 		public bool IsSequentialLayout {
-			get { return (m_attributes & TypeAttributes.SequentialLayout) != 0; }
+			get { return (m_attributes & TypeAttributes.LayoutMask) == TypeAttributes.SequentialLayout; }
 			set {
 				TypeAttributes masked = (TypeAttributes.LayoutMask & TypeAttributes.SequentialLayout);
 				if (value)
@@ -261,7 +261,7 @@ namespace Mono.Cecil {
 		}
 
 		public bool IsExplicitLayout {
-			get { return (m_attributes & TypeAttributes.ExplicitLayout) != 0; }
+			get { return (m_attributes & TypeAttributes.LayoutMask) == TypeAttributes.ExplicitLayout; }
 			set {
 				TypeAttributes masked = (TypeAttributes.LayoutMask & TypeAttributes.ExplicitLayout);
 				if (value)
@@ -272,7 +272,7 @@ namespace Mono.Cecil {
 		}
 
 		public bool IsClass {
-			get { return (m_attributes & TypeAttributes.Class) != 0; }
+			get { return (m_attributes & TypeAttributes.ClassSemanticMask) == TypeAttributes.Class; }
 			set {
 				TypeAttributes masked = (TypeAttributes.ClassSemanticMask & TypeAttributes.Class);
 				if (value)
@@ -283,7 +283,7 @@ namespace Mono.Cecil {
 		}
 
 		public bool IsInterface {
-			get { return (m_attributes & TypeAttributes.Interface) != 0; }
+			get { return (m_attributes & TypeAttributes.ClassSemanticMask) == TypeAttributes.Interface; }
 			set {
 				TypeAttributes masked = (TypeAttributes.ClassSemanticMask & TypeAttributes.Interface);
 				if (value)
@@ -344,7 +344,7 @@ namespace Mono.Cecil {
 		}
 
 		public bool IsAnsiClass {
-			get { return (m_attributes & TypeAttributes.AnsiClass) != 0; }
+			get { return (m_attributes & TypeAttributes.StringFormatMask) == TypeAttributes.AnsiClass; }
 			set {
 				TypeAttributes masked = (TypeAttributes.StringFormatMask & TypeAttributes.AnsiClass);
 				if (value)
@@ -355,7 +355,7 @@ namespace Mono.Cecil {
 		}
 
 		public bool IsUnicodeClass {
-			get { return (m_attributes & TypeAttributes.UnicodeClass) != 0; }
+			get { return (m_attributes & TypeAttributes.StringFormatMask) == TypeAttributes.UnicodeClass; }
 			set {
 				TypeAttributes masked = (TypeAttributes.StringFormatMask & TypeAttributes.UnicodeClass);
 				if (value)
@@ -366,7 +366,7 @@ namespace Mono.Cecil {
 		}
 
 		public bool IsAutoClass {
-			get { return (m_attributes & TypeAttributes.AutoClass) != 0; }
+			get { return (m_attributes & TypeAttributes.StringFormatMask) == TypeAttributes.AutoClass; }
 			set {
 				TypeAttributes masked = (TypeAttributes.StringFormatMask & TypeAttributes.AutoClass);
 				if (value)

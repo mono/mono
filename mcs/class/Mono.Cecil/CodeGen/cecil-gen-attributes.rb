@@ -85,6 +85,11 @@ class MaskedAttribute < Attribute
 	end
 
 	protected
+	def getter
+"""			get { return (m_attributes & #{mask_full_name()}) == #{full_name()}; }
+"""
+	end
+
 	def setter
 """			set {
 				#{type} masked = (#{mask_full_name()} & #{full_name()});

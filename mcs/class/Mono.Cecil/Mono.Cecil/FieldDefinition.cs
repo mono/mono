@@ -105,7 +105,7 @@ namespace Mono.Cecil {
 		#region FieldAttributes
 
 		public bool IsCompilerControlled {
-			get { return (m_attributes & FieldAttributes.Compilercontrolled) != 0; }
+			get { return (m_attributes & FieldAttributes.FieldAccessMask) == FieldAttributes.Compilercontrolled; }
 			set {
 				FieldAttributes masked = (FieldAttributes.FieldAccessMask & FieldAttributes.Compilercontrolled);
 				if (value)
@@ -116,7 +116,7 @@ namespace Mono.Cecil {
 		}
 
 		public bool IsPrivate {
-			get { return (m_attributes & FieldAttributes.Private) != 0; }
+			get { return (m_attributes & FieldAttributes.FieldAccessMask) == FieldAttributes.Private; }
 			set {
 				FieldAttributes masked = (FieldAttributes.FieldAccessMask & FieldAttributes.Private);
 				if (value)
@@ -127,7 +127,7 @@ namespace Mono.Cecil {
 		}
 
 		public bool IsFamilyAndAssembly {
-			get { return (m_attributes & FieldAttributes.FamANDAssem) != 0; }
+			get { return (m_attributes & FieldAttributes.FieldAccessMask) == FieldAttributes.FamANDAssem; }
 			set {
 				FieldAttributes masked = (FieldAttributes.FieldAccessMask & FieldAttributes.FamANDAssem);
 				if (value)
@@ -138,7 +138,7 @@ namespace Mono.Cecil {
 		}
 
 		public bool IsAssembly {
-			get { return (m_attributes & FieldAttributes.Assembly) != 0; }
+			get { return (m_attributes & FieldAttributes.FieldAccessMask) == FieldAttributes.Assembly; }
 			set {
 				FieldAttributes masked = (FieldAttributes.FieldAccessMask & FieldAttributes.Assembly);
 				if (value)
@@ -149,7 +149,7 @@ namespace Mono.Cecil {
 		}
 
 		public bool IsFamily {
-			get { return (m_attributes & FieldAttributes.Family) != 0; }
+			get { return (m_attributes & FieldAttributes.FieldAccessMask) == FieldAttributes.Family; }
 			set {
 				FieldAttributes masked = (FieldAttributes.FieldAccessMask & FieldAttributes.Family);
 				if (value)
@@ -160,7 +160,7 @@ namespace Mono.Cecil {
 		}
 
 		public bool IsFamilyOrAssembly {
-			get { return (m_attributes & FieldAttributes.FamORAssem) != 0; }
+			get { return (m_attributes & FieldAttributes.FieldAccessMask) == FieldAttributes.FamORAssem; }
 			set {
 				FieldAttributes masked = (FieldAttributes.FieldAccessMask & FieldAttributes.FamORAssem);
 				if (value)
@@ -171,7 +171,7 @@ namespace Mono.Cecil {
 		}
 
 		public bool IsPublic {
-			get { return (m_attributes & FieldAttributes.Public) != 0; }
+			get { return (m_attributes & FieldAttributes.FieldAccessMask) == FieldAttributes.Public; }
 			set {
 				FieldAttributes masked = (FieldAttributes.FieldAccessMask & FieldAttributes.Public);
 				if (value)
