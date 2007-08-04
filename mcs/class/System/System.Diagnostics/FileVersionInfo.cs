@@ -285,26 +285,32 @@ namespace System.Diagnostics {
 			fvi.GetVersionInfo_internal (fileName);
 			return fvi;
 		}
-		
+
+		// use our own AppendFormat because NET_2_1 have only this overload
+		static void AppendFormat (StringBuilder sb, string format, params object [] args)
+		{
+			sb.AppendFormat (format, args);
+		}
+
 		public override string ToString ()
 		{
 			StringBuilder sb = new StringBuilder ();
 
 			// we use the FileName property so we don't skip the security check
-			sb.AppendFormat ("File:             {0}{1}", FileName, Environment.NewLine);
+			AppendFormat (sb, "File:             {0}{1}", FileName, Environment.NewLine);
 			// the other informations aren't protected so we can use the members directly
-			sb.AppendFormat ("InternalName:     {0}{1}", internalname, Environment.NewLine);
-			sb.AppendFormat ("OriginalFilename: {0}{1}", originalfilename, Environment.NewLine);
-			sb.AppendFormat ("FileVersion:      {0}{1}", fileversion, Environment.NewLine);
-			sb.AppendFormat ("FileDescription:  {0}{1}", filedescription, Environment.NewLine);
-			sb.AppendFormat ("Product:          {0}{1}", productname, Environment.NewLine);
-			sb.AppendFormat ("ProductVersion:   {0}{1}", productversion, Environment.NewLine);
-			sb.AppendFormat ("Debug:            {0}{1}", isdebug, Environment.NewLine);
-			sb.AppendFormat ("Patched:          {0}{1}", ispatched, Environment.NewLine);
-			sb.AppendFormat ("PreRelease:       {0}{1}", isprerelease, Environment.NewLine);
-			sb.AppendFormat ("PrivateBuild:     {0}{1}", isprivatebuild, Environment.NewLine);
-			sb.AppendFormat ("SpecialBuild:     {0}{1}", isspecialbuild, Environment.NewLine);
-			sb.AppendFormat ("Language          {0}{1}", language, Environment.NewLine);
+			AppendFormat (sb, "InternalName:     {0}{1}", internalname, Environment.NewLine);
+			AppendFormat (sb, "OriginalFilename: {0}{1}", originalfilename, Environment.NewLine);
+			AppendFormat (sb, "FileVersion:      {0}{1}", fileversion, Environment.NewLine);
+			AppendFormat (sb, "FileDescription:  {0}{1}", filedescription, Environment.NewLine);
+			AppendFormat (sb, "Product:          {0}{1}", productname, Environment.NewLine);
+			AppendFormat (sb, "ProductVersion:   {0}{1}", productversion, Environment.NewLine);
+			AppendFormat (sb, "Debug:            {0}{1}", isdebug, Environment.NewLine);
+			AppendFormat (sb, "Patched:          {0}{1}", ispatched, Environment.NewLine);
+			AppendFormat (sb, "PreRelease:       {0}{1}", isprerelease, Environment.NewLine);
+			AppendFormat (sb, "PrivateBuild:     {0}{1}", isprivatebuild, Environment.NewLine);
+			AppendFormat (sb, "SpecialBuild:     {0}{1}", isspecialbuild, Environment.NewLine);
+			AppendFormat (sb, "Language          {0}{1}", language, Environment.NewLine);
 
 			return sb.ToString ();
 		}
