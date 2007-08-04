@@ -239,10 +239,20 @@ namespace System.Xml {
 		{
 			if (buffer == null)
 				throw new ArgumentNullException ("buffer");
-			if (index < 0)
-				throw new ArgumentOutOfRangeException ("index", index, "index must be non negative integer.");
-			if (count < 0)
-				throw new ArgumentOutOfRangeException ("count", count, "count must be non negative integer.");
+			if (index < 0) {
+				throw new ArgumentOutOfRangeException (
+#if !NET_2_1
+					"index", index,
+#endif
+					"index must be non negative integer.");
+			}
+			if (count < 0) {
+				throw new ArgumentOutOfRangeException (
+#if !NET_2_1
+					"count", count,
+#endif
+					"count must be non negative integer.");
+			}
 			if (buffer.Length < index + count)
 				throw new ArgumentOutOfRangeException ("index and count must be smaller than the length of the buffer.");
 

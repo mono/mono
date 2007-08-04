@@ -1,3 +1,8 @@
+2007-08-04  Jb Evain  <jbevain@novell.com>
+
+	* XmlTextReader.cs, XmlConvert.cs, XmlReaderBinarySupport.cs:
+	Use the available constructor for the 2.1 profile.
+
 2007-08-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DTDObjectModel.cs : in 2.0 and especially 2.1 profiles, use

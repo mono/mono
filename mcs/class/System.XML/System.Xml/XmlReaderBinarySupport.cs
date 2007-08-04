@@ -163,9 +163,9 @@ namespace System.Xml
 		public int ReadBase64 (byte [] buffer, int offset, int length)
 		{
 			if (offset < 0)
-				throw new ArgumentOutOfRangeException ("offset", offset, "Offset must be non-negative integer.");
+				throw CreateArgumentOutOfRangeException ("offset", offset, "Offset must be non-negative integer.");
 			else if (length < 0)
-				throw new ArgumentOutOfRangeException ("length", length, "Length must be non-negative integer.");
+				throw CreateArgumentOutOfRangeException ("length", length, "Length must be non-negative integer.");
 			else if (buffer.Length < offset + length)
 				throw new ArgumentOutOfRangeException ("buffer length is smaller than the sum of offset and length.");
 
@@ -304,12 +304,21 @@ namespace System.Xml
 			return i;
 		}
 
+		static Exception CreateArgumentOutOfRangeException (string name, object value, string message)
+		{
+			return new ArgumentOutOfRangeException (
+#if !NET_2_1
+				name, value,
+#endif
+				message);
+		}
+
 		public int ReadBinHex (byte [] buffer, int offset, int length)
 		{
 			if (offset < 0)
-				throw new ArgumentOutOfRangeException ("offset", offset, "Offset must be non-negative integer.");
+				throw CreateArgumentOutOfRangeException ("offset", offset, "Offset must be non-negative integer.");
 			else if (length < 0)
-				throw new ArgumentOutOfRangeException ("length", length, "Length must be non-negative integer.");
+				throw CreateArgumentOutOfRangeException ("length", length, "Length must be non-negative integer.");
 			else if (buffer.Length < offset + length)
 				throw new ArgumentOutOfRangeException ("buffer length is smaller than the sum of offset and length.");
 
@@ -331,9 +340,9 @@ namespace System.Xml
 				CheckState (false, CommandState.None);
 
 			if (offset < 0)
-				throw new ArgumentOutOfRangeException ("offset", offset, "Offset must be non-negative integer.");
+				throw CreateArgumentOutOfRangeException ("offset", offset, "Offset must be non-negative integer.");
 			else if (length < 0)
-				throw new ArgumentOutOfRangeException ("length", length, "Length must be non-negative integer.");
+				throw CreateArgumentOutOfRangeException ("length", length, "Length must be non-negative integer.");
 			else if (buffer.Length < offset + length)
 				throw new ArgumentOutOfRangeException ("buffer length is smaller than the sum of offset and length.");
 

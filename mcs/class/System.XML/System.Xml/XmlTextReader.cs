@@ -657,11 +657,21 @@ namespace System.Xml
 
 		public int ReadChars (char [] buffer, int offset, int length)
 		{
-			if (offset < 0)
-				throw new ArgumentOutOfRangeException ("offset", offset, "Offset must be non-negative integer.");
-			else if (length < 0)
-				throw new ArgumentOutOfRangeException ("length", length, "Length must be non-negative integer.");
-			else if (buffer.Length < offset + length)
+			if (offset < 0) {
+				throw new ArgumentOutOfRangeException (
+#if !NET_2_1
+					"offset", offset,
+#endif
+					"Offset must be non-negative integer.");
+
+			} else if (length < 0) {
+				throw new ArgumentOutOfRangeException (
+#if !NET_2_1
+					"length", length,
+#endif
+					"Length must be non-negative integer.");
+
+			} else if (buffer.Length < offset + length)
 				throw new ArgumentOutOfRangeException ("buffer length is smaller than the sum of offset and length.");
 
 			if (IsEmptyElement) {
