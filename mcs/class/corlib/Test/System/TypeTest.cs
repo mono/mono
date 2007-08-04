@@ -138,10 +138,10 @@ namespace MonoTests.System
 
 		private void ByrefMethod (ref int i, ref Derived1 j, ref Base1 k) {
 		}
-
+#if NET_2_0
 		private void GenericMethod<Q> (Q q) {
 		}
-
+#endif
 		[Test]
 		public void TestIsAssignableFrom () {
 			// Simple tests for inheritance
