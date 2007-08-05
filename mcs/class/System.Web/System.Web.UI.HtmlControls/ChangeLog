@@ -1,3 +1,8 @@
+2007-08-05  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* HtmlHead.cs: refactoring, used AddAttribute overload without encoding
+	on known attribute values
+
 2007-07-31  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* HtmlControl.cs: fixed PreProcessRelativeReference, should be used

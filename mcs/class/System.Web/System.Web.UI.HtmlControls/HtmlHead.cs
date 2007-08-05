@@ -183,7 +183,7 @@ namespace System.Web.UI.HtmlControls
 		
 		public void Render (HtmlTextWriter writer)
 		{
-			writer.AddAttribute ("type", "text/css");
+			writer.AddAttribute ("type", "text/css", false);
 			writer.RenderBeginTag (HtmlTextWriterTag.Style);
 
 			foreach (StyleEntry entry in entries) {
