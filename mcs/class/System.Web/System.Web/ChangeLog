@@ -1,3 +1,7 @@
+2007-08-05  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* HttpUtility.cs: performance refactoring, optimized UrlEncode
+
 2007-08-05 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* SiteMapNode.cs: refactoring + typo fix: 

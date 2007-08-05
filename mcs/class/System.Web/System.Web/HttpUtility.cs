@@ -627,8 +627,26 @@ namespace System.Web {
 			if (s == "")
 				return "";
 
-			byte [] bytes = Enc.GetBytes (s);
-			return Encoding.ASCII.GetString (UrlEncodeToBytes (bytes, 0, bytes.Length));
+			bool needEncode = false;
+			int len = s.Length;
+			for (int i = 0; i < len; i++) {
+				char c = s [i];
+				if ((c < '0') || (c < 'A' && c > '9') || (c > 'Z' && c < 'a') || (c > 'z')) {
+					if (NotEncoded (c))
+						continue;
+
+					needEncode = true;
+					break;
+				}
+			}
+
+			if (!needEncode)
+				return s;
+
+			// avoided GetByteCount call
+			byte [] bytes = new byte[Enc.GetMaxByteCount(s.Length)];
+			int realLen = Enc.GetBytes (s, 0, s.Length, bytes, 0);
+			return Encoding.ASCII.GetString (UrlEncodeToBytes (bytes, 0, realLen));
 		}
 	  
 		public static string UrlEncode (byte [] bytes)
@@ -682,7 +700,11 @@ namespace System.Web {
 		}
 
 		static char [] hexChars = "0123456789abcdef".ToCharArray ();
-		const string notEncoded = "!'()*-._";
+
+		static bool NotEncoded (char c)
+		{
+			return (c == '!' || c == '\'' || c == '(' || c == ')' || c == '*' || c == '-' || c == '.' || c == '_');
+		}
 
 		static void UrlEncodeChar (char c, Stream result, bool isUnicode) {
 			if (c > 255) {
@@ -705,7 +727,7 @@ namespace System.Web {
 				return;
 			}
 			
-			if (c>' ' && notEncoded.IndexOf (c)!=-1) {
+			if (c > ' ' && NotEncoded (c)) {
 				result.WriteByte ((byte)c);
 				return;
 			}
