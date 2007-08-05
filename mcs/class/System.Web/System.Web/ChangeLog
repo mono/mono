@@ -1,3 +1,8 @@
+2007-08-05 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* SiteMapNode.cs: refactoring + typo fix: 
+	variable is declared in scope where is used.
+
 2007-07-31  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* VirtualPathUtility.cs: refactored GetDirectory, ToAbsolute, added

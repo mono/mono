@@ -247,13 +247,13 @@ namespace System.Web {
 		public virtual string this [string key]
 		{
 			get {
-				string val = null;
 				if (provider.EnableLocalization) {
-					val = GetImplicitResourceString (key);
+					string val = GetImplicitResourceString (key);
 					if (val == null)
 						val = GetExplicitResourceString (key, null, true);
+					if (val != null)
+						return val;
 				}
-				if (val != null) return null;
 				if (attributes != null) return attributes [key];
 				return null;
 			}
