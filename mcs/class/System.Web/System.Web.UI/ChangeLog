@@ -1,3 +1,9 @@
+2007-08-05  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* HtmlTextWriter.cs: performance refactoring, optimized AddAttribute
+	overloads, used StringComparer for tag, styles and attrs hashtables
+	fixed AddAttribute, id attr should not be encoded by default
+
 2007-07-31  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* Control.cs: fixed AppRelativeTemplateSourceDirectory that should

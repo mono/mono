@@ -47,6 +47,11 @@ namespace System.Web.UI {
 
 		static HtmlTextWriter ()
 		{
+#if NET_2_0
+			_tagTable = new Hashtable (tags.Length, StringComparer.OrdinalIgnoreCase);
+			_attributeTable = new Hashtable (htmlattrs.Length, StringComparer.OrdinalIgnoreCase);
+			_styleTable = new Hashtable (htmlstyles.Length, StringComparer.OrdinalIgnoreCase);
+#else
 			_tagTable = new Hashtable (tags.Length, 
 				CaseInsensitiveHashCodeProvider.Default, CaseInsensitiveComparer.Default);
 			
@@ -55,7 +60,7 @@ namespace System.Web.UI {
 			
 			_styleTable = new Hashtable (htmlstyles.Length, 
 				CaseInsensitiveHashCodeProvider.Default, CaseInsensitiveComparer.Default);
-
+#endif
 			foreach (HtmlTag tag in tags)
 				_tagTable.Add (tag.name, tag);
 
@@ -103,15 +108,18 @@ namespace System.Web.UI {
 		public virtual void AddAttribute (HtmlTextWriterAttribute key, string value, bool fEncode)
 		{
 			if (fEncode)
-				value = EncodeAttributeValue (key, value);
+				value = HttpUtility.HtmlAttributeEncode (value);
+
 			AddAttribute (GetAttributeName (key), value, key);
 		}
 
 
 		public virtual void AddAttribute (HtmlTextWriterAttribute key, string value)
 		{
-			bool fEncode = key != HtmlTextWriterAttribute.Name;
-			AddAttribute (key, value, fEncode);
+			if ((key != HtmlTextWriterAttribute.Name) && (key != HtmlTextWriterAttribute.Id))
+				value = HttpUtility.HtmlAttributeEncode (value);
+
+			AddAttribute (GetAttributeName (key), value, key);
 		}
 
 
@@ -125,8 +133,12 @@ namespace System.Web.UI {
 
 		public virtual void AddAttribute (string name, string value)
 		{
-			bool fEncode = String.Compare ("name", name, true, CultureInfo.InvariantCulture) != 0;
-			AddAttribute (name, value, fEncode);
+			HtmlTextWriterAttribute key = GetAttributeKey (name);
+
+			if ((key != HtmlTextWriterAttribute.Name) && (key != HtmlTextWriterAttribute.Id))
+				value = HttpUtility.HtmlAttributeEncode (value);
+
+			AddAttribute (name, value, key);
 		}
 
 		protected virtual void AddAttribute (string name, string value, HtmlTextWriterAttribute key)
