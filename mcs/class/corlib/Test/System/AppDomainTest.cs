@@ -45,11 +45,13 @@ namespace MonoTests.System
 	{
 		private AppDomain ad;
 		private ArrayList files = new ArrayList ();
-		private string tempDir = Path.Combine (Path.GetTempPath (), "MonoTests.System.AppDomainTest");
+		private string tempDir;
 
 		[SetUp]
 		public void SetUp ()
 		{
+			tempDir = Path.Combine (Path.GetTempPath (), Environment.UserName);
+			tempDir = Path.Combine (tempDir, "MonoTests.System.AppDomainTest");
 			if (!Directory.Exists (tempDir)) {
 				Directory.CreateDirectory (tempDir);
 			}

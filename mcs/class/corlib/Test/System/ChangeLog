@@ -1,5 +1,10 @@
 2007-08-04  William Holmes  <billholmes54@gmail.com>
 
+	* AppDomainTest.cs: Adding username to tempDir to avoid file access 
+	 permissions.
+
+2007-08-04  William Holmes  <billholmes54@gmail.com>
+
 	* TypeTest.cs: Removing generic method for net_1_1 profile.
 
 2007-08-03  Zoltan Varga  <vargaz@gmail.com>
