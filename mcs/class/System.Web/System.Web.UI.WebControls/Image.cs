@@ -193,35 +193,35 @@ namespace System.Web.UI.WebControls {
 				writer.AddAttribute ("longdesc", s);
 #endif
 			if (!enabled)
-				writer.AddAttribute (HtmlTextWriterAttribute.Disabled, "disabled");
+				writer.AddAttribute (HtmlTextWriterAttribute.Disabled, "disabled", false);
 			// avoid reflection
 			switch (ImageAlign) {
 			case ImageAlign.Left:
-				writer.AddAttribute (HtmlTextWriterAttribute.Align, "left");
+				writer.AddAttribute (HtmlTextWriterAttribute.Align, "left", false);
 				break;
 			case ImageAlign.Right:
-				writer.AddAttribute (HtmlTextWriterAttribute.Align, "right");
+				writer.AddAttribute (HtmlTextWriterAttribute.Align, "right", false);
 				break;
 			case ImageAlign.Baseline:
-				writer.AddAttribute (HtmlTextWriterAttribute.Align, "baseline");
+				writer.AddAttribute (HtmlTextWriterAttribute.Align, "baseline", false);
 				break;
 			case ImageAlign.Top:
-				writer.AddAttribute (HtmlTextWriterAttribute.Align, "top");
+				writer.AddAttribute (HtmlTextWriterAttribute.Align, "top", false);
 				break;
 			case ImageAlign.Middle:
-				writer.AddAttribute (HtmlTextWriterAttribute.Align, "middle");
+				writer.AddAttribute (HtmlTextWriterAttribute.Align, "middle", false);
 				break;
 			case ImageAlign.Bottom:
-				writer.AddAttribute (HtmlTextWriterAttribute.Align, "bottom");
+				writer.AddAttribute (HtmlTextWriterAttribute.Align, "bottom", false);
 				break;
 			case ImageAlign.AbsBottom:
-				writer.AddAttribute (HtmlTextWriterAttribute.Align, "absbottom");
+				writer.AddAttribute (HtmlTextWriterAttribute.Align, "absbottom", false);
 				break;
 			case ImageAlign.AbsMiddle:
-				writer.AddAttribute (HtmlTextWriterAttribute.Align, "absmiddle");
+				writer.AddAttribute (HtmlTextWriterAttribute.Align, "absmiddle", false);
 				break;
 			case ImageAlign.TextTop:
-				writer.AddAttribute (HtmlTextWriterAttribute.Align, "texttop");
+				writer.AddAttribute (HtmlTextWriterAttribute.Align, "texttop", false);
 				break;
 			}
 #if NET_2_0

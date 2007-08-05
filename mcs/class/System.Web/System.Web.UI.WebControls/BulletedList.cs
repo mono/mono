@@ -116,7 +116,7 @@ namespace System.Web.UI.WebControls {
 			switch (DisplayMode) {
 				case BulletedListDisplayMode.Text:
 					if (!item.Enabled) {
-						writer.AddAttribute (HtmlTextWriterAttribute.Disabled, "disabled");
+						writer.AddAttribute (HtmlTextWriterAttribute.Disabled, "disabled", false);
 						writer.RenderBeginTag (HtmlTextWriterTag.Span);
 					}
 					
@@ -135,7 +135,7 @@ namespace System.Web.UI.WebControls {
 						
 					}
 					else
-						writer.AddAttribute (HtmlTextWriterAttribute.Disabled, "disabled");
+						writer.AddAttribute (HtmlTextWriterAttribute.Disabled, "disabled", false);
 					
 					writer.RenderBeginTag (HtmlTextWriterTag.A);
 					writer.Write (item.Text);
@@ -146,7 +146,7 @@ namespace System.Web.UI.WebControls {
 					if (Enabled && item.Enabled)
 						writer.AddAttribute (HtmlTextWriterAttribute.Href, Page.ClientScript.GetPostBackEventReference (GetPostBackOptions (index.ToString (CultureInfo.InvariantCulture))));
 					else
-						writer.AddAttribute (HtmlTextWriterAttribute.Disabled, "disabled");
+						writer.AddAttribute (HtmlTextWriterAttribute.Disabled, "disabled", false);
 					writer.RenderBeginTag (HtmlTextWriterTag.A);
 					writer.Write (item.Text);
 					writer.RenderEndTag ();

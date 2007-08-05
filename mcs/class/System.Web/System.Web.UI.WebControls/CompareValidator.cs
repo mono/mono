@@ -54,7 +54,7 @@ namespace System.Web.UI.WebControls {
 				if (ValueToCompare != "")
 					w.AddAttribute ("valuetocompare", ValueToCompare);
 				w.AddAttribute ("operator", Operator.ToString());
-				w.AddAttribute("evaluationfunction", "CompareValidatorEvaluateIsValid");
+				w.AddAttribute ("evaluationfunction", "CompareValidatorEvaluateIsValid", false);
 			}
 
 			base.AddAttributesToRender (w);

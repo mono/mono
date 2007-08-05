@@ -131,29 +131,29 @@ namespace System.Web.UI.WebControls {
 			// note: avoid ToString on the enum
 			switch (HorizontalAlign) {
 			case HorizontalAlign.Left:
-				writer.AddAttribute (HtmlTextWriterAttribute.Align, "left");
+				writer.AddAttribute (HtmlTextWriterAttribute.Align, "left", false);
 				break;
 			case HorizontalAlign.Center:
-				writer.AddAttribute (HtmlTextWriterAttribute.Align, "center");
+				writer.AddAttribute (HtmlTextWriterAttribute.Align, "center", false);
 				break;
 			case HorizontalAlign.Right:
-				writer.AddAttribute (HtmlTextWriterAttribute.Align, "right");
+				writer.AddAttribute (HtmlTextWriterAttribute.Align, "right", false);
 				break;
 			case HorizontalAlign.Justify:
-				writer.AddAttribute (HtmlTextWriterAttribute.Align, "justify");
+				writer.AddAttribute (HtmlTextWriterAttribute.Align, "justify", false);
 				break;
 			}
 
 			// note: avoid ToString on the enum
 			switch (VerticalAlign) {
 			case VerticalAlign.Top:
-				writer.AddAttribute (HtmlTextWriterAttribute.Valign, "top");
+				writer.AddAttribute (HtmlTextWriterAttribute.Valign, "top", false);
 				break;
 			case VerticalAlign.Middle:
-				writer.AddAttribute (HtmlTextWriterAttribute.Valign, "middle");
+				writer.AddAttribute (HtmlTextWriterAttribute.Valign, "middle", false);
 				break;
 			case VerticalAlign.Bottom:
-				writer.AddAttribute (HtmlTextWriterAttribute.Valign, "bottom");
+				writer.AddAttribute (HtmlTextWriterAttribute.Valign, "bottom", false);
 				break;
 			}
 

@@ -228,14 +228,14 @@ namespace System.Web.UI.WebControls {
 					Page.ClientScript.RegisterExpandoAttribute (ClientID, "focusOnError", "t");
 #endif
 				if (!Enabled)
-					writer.AddAttribute ("enabled", "false");
+					writer.AddAttribute ("enabled", "false", false);
 
 #if NET_2_0
 				if (Enabled && !IsValid) {
 #else
 				if (!IsValid) {
 #endif
-					writer.AddAttribute ("isvalid", "false");
+					writer.AddAttribute ("isvalid", "false", false);
 				}
 				else {
 					if (Display == ValidatorDisplay.Static)

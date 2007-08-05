@@ -106,7 +106,7 @@ namespace System.Web.UI.WebControls
 
 		protected override void AddAttributesToRender (HtmlTextWriter writer)
 		{
-			writer.AddAttribute (HtmlTextWriterAttribute.Type, "file");
+			writer.AddAttribute (HtmlTextWriterAttribute.Type, "file", false);
 			if (!string.IsNullOrEmpty (UniqueID))
 				writer.AddAttribute (HtmlTextWriterAttribute.Name, UniqueID);
 			base.AddAttributesToRender (writer);

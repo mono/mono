@@ -53,7 +53,7 @@ namespace System.Web.UI.WebControls {
 		protected override void AddAttributesToRender (HtmlTextWriter w)
 		{
 			if (RenderUplevel) {
-				w.AddAttribute ("evaluationfunction", "RegularExpressionValidatorEvaluateIsValid");
+				w.AddAttribute ("evaluationfunction", "RegularExpressionValidatorEvaluateIsValid", false);
 				if (ValidationExpression != "")
 					w.AddAttribute ("validationexpression", ValidationExpression);
 			}

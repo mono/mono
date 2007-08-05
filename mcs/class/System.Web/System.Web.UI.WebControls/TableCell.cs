@@ -202,11 +202,11 @@ namespace System.Web.UI.WebControls {
 
 			int i = ColumnSpan;
 			if (i > 0)
-				writer.AddAttribute (HtmlTextWriterAttribute.Colspan, i.ToString (CultureInfo.InvariantCulture));
+				writer.AddAttribute (HtmlTextWriterAttribute.Colspan, i.ToString (CultureInfo.InvariantCulture), false);
 
 			i = RowSpan;
 			if (i > 0)
-				writer.AddAttribute (HtmlTextWriterAttribute.Rowspan, i.ToString (CultureInfo.InvariantCulture));
+				writer.AddAttribute (HtmlTextWriterAttribute.Rowspan, i.ToString (CultureInfo.InvariantCulture), false);
 #if NET_2_0
 			string[] ahci = AssociatedHeaderCellID;
 			if (ahci.Length > 1) {

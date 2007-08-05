@@ -203,7 +203,7 @@ namespace System.Web.UI.WebControls {
 			if (Page != null)
 				Page.VerifyRenderingInServerForm (this);
 			
-			writer.AddAttribute (HtmlTextWriterAttribute.Type, "image");
+			writer.AddAttribute (HtmlTextWriterAttribute.Type, "image", false);
 			writer.AddAttribute (HtmlTextWriterAttribute.Name, UniqueID);
 #if NET_2_0
 			string onclick = OnClientClick;

@@ -73,7 +73,7 @@ namespace System.Web.UI.WebControls {
 			if (base.RenderUplevel) {
 				string s;
 
-				writer.AddAttribute("evaluationfunction", "CustomValidatorEvaluateIsValid");
+				writer.AddAttribute ("evaluationfunction", "CustomValidatorEvaluateIsValid", false);
 
 				s = ClientValidationFunction;
 				if (s != string.Empty) {

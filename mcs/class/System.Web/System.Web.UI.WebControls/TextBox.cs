@@ -105,21 +105,21 @@ namespace System.Web.UI.WebControls {
 			switch (TextMode) {
 			case TextBoxMode.MultiLine:
 				if (Columns != 0)
-					w.AddAttribute (HtmlTextWriterAttribute.Cols, Columns.ToString ());
+					w.AddAttribute (HtmlTextWriterAttribute.Cols, Columns.ToString (), false);
 #if NET_2_0
 				else
-					w.AddAttribute (HtmlTextWriterAttribute.Cols, "20");
+					w.AddAttribute (HtmlTextWriterAttribute.Cols, "20", false);
 #endif
 				
 				if (Rows != 0)
-					w.AddAttribute (HtmlTextWriterAttribute.Rows, Rows.ToString ());
+					w.AddAttribute (HtmlTextWriterAttribute.Rows, Rows.ToString (), false);
 #if NET_2_0
 				else
-					w.AddAttribute (HtmlTextWriterAttribute.Rows, "2");
+					w.AddAttribute (HtmlTextWriterAttribute.Rows, "2", false);
 #endif
 
 				if (!Wrap)
-					w.AddAttribute (HtmlTextWriterAttribute.Wrap, "off");
+					w.AddAttribute (HtmlTextWriterAttribute.Wrap, "off", false);
 				
 				break;
 				
@@ -127,32 +127,32 @@ namespace System.Web.UI.WebControls {
 			case TextBoxMode.Password:
 				
 				if (TextMode == TextBoxMode.Password)
-					w.AddAttribute (HtmlTextWriterAttribute.Type, "password");
+					w.AddAttribute (HtmlTextWriterAttribute.Type, "password", false);
 				else {
-					w.AddAttribute (HtmlTextWriterAttribute.Type, "text");
+					w.AddAttribute (HtmlTextWriterAttribute.Type, "text", false);
 					if (Text.Length > 0)
 						w.AddAttribute (HtmlTextWriterAttribute.Value, Text);
 				}
 				
 				if (Columns != 0)
-					w.AddAttribute (HtmlTextWriterAttribute.Size, Columns.ToString ());
+					w.AddAttribute (HtmlTextWriterAttribute.Size, Columns.ToString (), false);
 		
 				if (MaxLength != 0)
-					w.AddAttribute (HtmlTextWriterAttribute.Maxlength, MaxLength.ToString ());
+					w.AddAttribute (HtmlTextWriterAttribute.Maxlength, MaxLength.ToString (), false);
 
 #if NET_2_0
 				if (AutoCompleteType != AutoCompleteType.None && TextMode == TextBoxMode.SingleLine)
 					if (AutoCompleteType != AutoCompleteType.Disabled)
 						w.AddAttribute (HtmlTextWriterAttribute.VCardName, VCardValues [(int) AutoCompleteType]);
 					else
-						w.AddAttribute (HtmlTextWriterAttribute.AutoComplete, "off");
+						w.AddAttribute (HtmlTextWriterAttribute.AutoComplete, "off", false);
 #endif
 				break;	
 			}
 
 #if NET_2_0
 			if (AutoPostBack) {
-				w.AddAttribute ("onkeypress", "if (WebForm_TextBoxKeyHandler(event) == false) return false;");
+				w.AddAttribute ("onkeypress", "if (WebForm_TextBoxKeyHandler(event) == false) return false;", false);
 				w.AddAttribute (HtmlTextWriterAttribute.Onchange, Page.ClientScript.GetPostBackEventReference (GetPostBackOptions (), true));
 			}
 #else		
@@ -161,7 +161,7 @@ namespace System.Web.UI.WebControls {
 #endif
 
 			if (ReadOnly)
-				w.AddAttribute (HtmlTextWriterAttribute.ReadOnly, "ReadOnly");
+				w.AddAttribute (HtmlTextWriterAttribute.ReadOnly, "ReadOnly", false);
 
 			w.AddAttribute (HtmlTextWriterAttribute.Name, UniqueID);
 		}

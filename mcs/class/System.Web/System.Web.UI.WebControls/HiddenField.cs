@@ -111,7 +111,7 @@ namespace System.Web.UI.WebControls
 
 		protected internal override void Render (HtmlTextWriter writer)
 		{
-			writer.AddAttribute (HtmlTextWriterAttribute.Type, "hidden");
+			writer.AddAttribute (HtmlTextWriterAttribute.Type, "hidden", false);
 
 			if (!String.IsNullOrEmpty (ClientID))
 				writer.AddAttribute (HtmlTextWriterAttribute.Id, ClientID);

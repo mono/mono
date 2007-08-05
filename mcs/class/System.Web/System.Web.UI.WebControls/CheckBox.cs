@@ -381,7 +381,7 @@ namespace System.Web.UI.WebControls {
 			}
 
 			if (!Enabled) {
-				w.AddAttribute (HtmlTextWriterAttribute.Disabled, "disabled");
+				w.AddAttribute (HtmlTextWriterAttribute.Disabled, "disabled", false);
 				need_span = true;
 			}
 
@@ -430,7 +430,7 @@ namespace System.Web.UI.WebControls {
 				inputAttributes.AddAttributes (w);
 #endif
 			if (Checked)
-				w.AddAttribute (HtmlTextWriterAttribute.Checked, "checked");
+				w.AddAttribute (HtmlTextWriterAttribute.Checked, "checked", false);
 
 			if (AutoPostBack) {
 #if NET_2_0
@@ -439,7 +439,7 @@ namespace System.Web.UI.WebControls {
 					w.AddAttribute (HtmlTextWriterAttribute.Onclick,
 							Page.ClientScript.GetPostBackEventReference (this, String.Empty));
 #endif
-				w.AddAttribute ("language", "javascript");
+				w.AddAttribute ("language", "javascript", false);
 			}
 
 			if (AccessKey.Length > 0)
@@ -534,7 +534,7 @@ namespace System.Web.UI.WebControls {
 		internal virtual void InternalAddAttributesToRender (HtmlTextWriter w)
 		{
 			if (!Enabled)
-				w.AddAttribute (HtmlTextWriterAttribute.Disabled, "disabled");
+				w.AddAttribute (HtmlTextWriterAttribute.Disabled, "disabled", false);
 		}
 	}
 }

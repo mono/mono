@@ -190,7 +190,7 @@ namespace System.Web.UI.WebControls {
 			if (!ControlStyleCreated || TableStyle.IsEmpty) {
 				// for some reason border=X seems to be always present
 				// and isn't rendered as a style attribute
-				writer.AddAttribute (HtmlTextWriterAttribute.Border, "0");
+				writer.AddAttribute (HtmlTextWriterAttribute.Border, "0", false);
 			}
 		}
 

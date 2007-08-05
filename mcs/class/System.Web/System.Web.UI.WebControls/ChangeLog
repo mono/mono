@@ -1,3 +1,16 @@
+2007-08-05  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* Button.cs, 
+	DataControlFieldHeaderCell.cs, FileUpload.cs, Table.cs, 
+	RegularExpressionValidator.cs, CheckBox.cs, HiddenField.cs, 
+	TableStyle.cs, Image.cs, BulletedList.cs, RangeValidator.cs, 
+	BaseValidator.cs, CustomValidator.cs, RepeatInfo.cs, TextBox.cs, 
+	RequiredFieldValidator.cs, AdRotator.cs, TableHeaderCell.cs, 
+	ImageMap.cs, Panel.cs, CompareValidator.cs, Calendar.cs, ListBox.cs, 
+	TableCell.cs, WebControl.cs, ImageButton.cs, TableItemStyle.cs: 
+	refactoring, used AddAttribute overload without encoding on known attribute 
+	values
+
 2007-08-01 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* DropDownList.cs: fixed onchange attibute.

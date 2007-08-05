@@ -90,7 +90,7 @@ namespace System.Web.UI.WebControls {
 			base.AddAttributesToRender (writer);
 
 			if (RenderUplevel) {
-				writer.AddAttribute("evaluationfunction", "RangeValidatorEvaluateIsValid"); // FIXME - we need to define this in client code
+				writer.AddAttribute("evaluationfunction", "RangeValidatorEvaluateIsValid", false); // FIXME - we need to define this in client code
 				writer.AddAttribute("minimumValue", MinimumValue.ToString(CultureInfo.InvariantCulture));
 				writer.AddAttribute("maximumValue", MaximumValue.ToString(CultureInfo.InvariantCulture));
 			}

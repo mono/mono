@@ -501,7 +501,7 @@ namespace System.Web.UI.WebControls {
 				writer.AddAttribute (HtmlTextWriterAttribute.Accesskey, AccessKey);
 
 			if (!enabled)
-				writer.AddAttribute (HtmlTextWriterAttribute.Disabled, "disabled");
+				writer.AddAttribute (HtmlTextWriterAttribute.Disabled, "disabled", false);
 
 			if (ToolTip != string.Empty)
 				writer.AddAttribute (HtmlTextWriterAttribute.Title, ToolTip);

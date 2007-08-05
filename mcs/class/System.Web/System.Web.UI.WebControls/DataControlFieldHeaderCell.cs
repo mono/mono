@@ -73,10 +73,10 @@ namespace System.Web.UI.WebControls
 			base.AddAttributesToRender (writer);
 			switch (scope) {
 				case TableHeaderScope.Column:
-					writer.AddAttribute (HtmlTextWriterAttribute.Scope, "col");
+					writer.AddAttribute (HtmlTextWriterAttribute.Scope, "col", false);
 					break;
 				case TableHeaderScope.Row:
-					writer.AddAttribute (HtmlTextWriterAttribute.Scope, "row");
+					writer.AddAttribute (HtmlTextWriterAttribute.Scope, "row", false);
 					break;
 			}
 			if (AbbreviatedText.Length > 0)

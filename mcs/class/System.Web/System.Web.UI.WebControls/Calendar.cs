@@ -940,7 +940,7 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 				if (UseAccessibleHeader) {
 					writer.AddAttribute (HtmlTextWriterAttribute.Abbr, dayName);
-					writer.AddAttribute (HtmlTextWriterAttribute.Scope, "col");
+					writer.AddAttribute (HtmlTextWriterAttribute.Scope, "col", false);
 					cell = new TableHeaderCell();
 				}
 				else

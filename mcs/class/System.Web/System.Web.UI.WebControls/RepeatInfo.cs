@@ -104,7 +104,7 @@ namespace System.Web.UI.WebControls {
 					// columns per item if we are using separators, otherwise
 					// one per item.
 					if (hdr_span != 1)
-						w.AddAttribute (HtmlTextWriterAttribute.Colspan, hdr_span.ToString ());
+						w.AddAttribute (HtmlTextWriterAttribute.Colspan, hdr_span.ToString (), false);
 
 					if (UseAccessibleHeader)
 						w.AddAttribute ("scope", "col", false);
@@ -214,7 +214,7 @@ namespace System.Web.UI.WebControls {
 				else if (table) {
 					w.RenderBeginTag (HtmlTextWriterTag.Tr);
 					if (hdr_span != 1)
-						w.AddAttribute (HtmlTextWriterAttribute.Colspan, hdr_span.ToString ());
+						w.AddAttribute (HtmlTextWriterAttribute.Colspan, hdr_span.ToString (), false);
 
 					Style s = user.GetItemStyle (ListItemType.Footer, -1);
 					if (s != null)
@@ -277,7 +277,7 @@ namespace System.Web.UI.WebControls {
 					// columns per item if we are using separators, otherwise
 					// one per item.
 					if (hdr_span != 1)
-						w.AddAttribute (HtmlTextWriterAttribute.Colspan, hdr_span.ToString ());
+						w.AddAttribute (HtmlTextWriterAttribute.Colspan, hdr_span.ToString (), false);
 
 					if (UseAccessibleHeader)
 						w.AddAttribute ("scope", "col", false);
@@ -363,7 +363,7 @@ namespace System.Web.UI.WebControls {
 				if (table) {
 					w.RenderBeginTag (HtmlTextWriterTag.Tr);
 					if (hdr_span != 1)
-						w.AddAttribute (HtmlTextWriterAttribute.Colspan, hdr_span.ToString ());
+						w.AddAttribute (HtmlTextWriterAttribute.Colspan, hdr_span.ToString (), false);
 
 					Style s = user.GetItemStyle (ListItemType.Footer, -1);
 					if (s != null)

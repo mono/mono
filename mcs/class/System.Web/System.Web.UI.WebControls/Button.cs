@@ -168,7 +168,7 @@ namespace System.Web.UI.WebControls {
 				Page.VerifyRenderingInServerForm (this);
 			
 #if NET_2_0
-			writer.AddAttribute (HtmlTextWriterAttribute.Type, UseSubmitBehavior ? "submit" : "button");
+			writer.AddAttribute (HtmlTextWriterAttribute.Type, UseSubmitBehavior ? "submit" : "button", false);
 			writer.AddAttribute (HtmlTextWriterAttribute.Name, UniqueID);
 			writer.AddAttribute (HtmlTextWriterAttribute.Value, Text);
 

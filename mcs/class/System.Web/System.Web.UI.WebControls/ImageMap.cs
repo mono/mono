@@ -160,7 +160,7 @@ namespace System.Web.UI.WebControls
 					HotSpotMode mode = spot.HotSpotMode != HotSpotMode.NotSet ? spot.HotSpotMode : HotSpotMode;
 					switch (mode) {
 						case HotSpotMode.Inactive:
-							writer.AddAttribute ("nohref", "true");
+							writer.AddAttribute ("nohref", "true", false);
 							break;
 						case HotSpotMode.Navigate:
 							string target = spot.Target.Length > 0 ? spot.Target : Target;

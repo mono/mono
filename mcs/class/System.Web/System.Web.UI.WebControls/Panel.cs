@@ -72,7 +72,7 @@ namespace System.Web.UI.WebControls {
 			}
 
 			if (Direction != ContentDirection.NotSet) {
-				w.AddAttribute (HtmlTextWriterAttribute.Dir, Direction == ContentDirection.RightToLeft ? "rtl" : "ltr");
+				w.AddAttribute (HtmlTextWriterAttribute.Dir, Direction == ContentDirection.RightToLeft ? "rtl" : "ltr", false);
 			}
 
 			switch (ScrollBars) {

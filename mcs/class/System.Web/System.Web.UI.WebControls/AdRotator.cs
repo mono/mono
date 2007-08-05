@@ -124,7 +124,7 @@ namespace System.Web.UI.WebControls {
 				w.AddAttribute (HtmlTextWriterAttribute.Src, ResolveAdUrl (e.ImageUrl));
 
 			w.AddAttribute (HtmlTextWriterAttribute.Alt, e.AlternateText == null ? "" : e.AlternateText);
-			w.AddAttribute (HtmlTextWriterAttribute.Border, "0");
+			w.AddAttribute (HtmlTextWriterAttribute.Border, "0", false);
 			w.RenderBeginTag (HtmlTextWriterTag.Img);
 			w.RenderEndTag (); // img
 			w.RenderEndTag (); // a

@@ -89,10 +89,10 @@ namespace System.Web.UI.WebControls {
 
 				switch (Scope) {
 				case TableHeaderScope.Column:
-					writer.AddAttribute (HtmlTextWriterAttribute.Scope, "column");
+					writer.AddAttribute (HtmlTextWriterAttribute.Scope, "column", false);
 					break;
 				case TableHeaderScope.Row:
-					writer.AddAttribute (HtmlTextWriterAttribute.Scope, "row");
+					writer.AddAttribute (HtmlTextWriterAttribute.Scope, "row", false);
 					break;
 				}
 

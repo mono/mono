@@ -43,7 +43,7 @@ namespace System.Web.UI.WebControls {
 		protected override void AddAttributesToRender (HtmlTextWriter w)
 		{
 			if (RenderUplevel) {
-				w.AddAttribute ("evaluationfunction", "RequiredFieldValidatorEvaluateIsValid");
+				w.AddAttribute ("evaluationfunction", "RequiredFieldValidatorEvaluateIsValid", false);
 				w.AddAttribute ("initialvalue", InitialValue);
 			}
 

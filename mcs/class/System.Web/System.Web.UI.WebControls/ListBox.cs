@@ -155,7 +155,7 @@ namespace System.Web.UI.WebControls {
 
 			if (SelectionMode == ListSelectionMode.Multiple)
 				writer.AddAttribute (HtmlTextWriterAttribute.Multiple,
-						"multiple");
+						"multiple", false);
 			writer.AddAttribute (HtmlTextWriterAttribute.Size,
                                         Rows.ToString (CultureInfo.InvariantCulture));
 		}

@@ -185,11 +185,11 @@ namespace System.Web.UI.WebControls {
 			// note: avoid calling properties multiple times
 			int i = CellPadding;
 			if (i != -1)
-				writer.AddAttribute (HtmlTextWriterAttribute.Cellpadding, i.ToString (CultureInfo.InvariantCulture));
+				writer.AddAttribute (HtmlTextWriterAttribute.Cellpadding, i.ToString (CultureInfo.InvariantCulture), false);
 			
 			i = CellSpacing;
 			if (i != -1) {
-				writer.AddAttribute (HtmlTextWriterAttribute.Cellspacing, i.ToString (CultureInfo.InvariantCulture));
+				writer.AddAttribute (HtmlTextWriterAttribute.Cellspacing, i.ToString (CultureInfo.InvariantCulture), false);
 				if (i == 0) {
 					writer.AddStyleAttribute(HtmlTextWriterStyle.BorderCollapse, "collapse");
 				}
@@ -198,38 +198,38 @@ namespace System.Web.UI.WebControls {
 			GridLines g = GridLines;
 			switch (g) {
 			case GridLines.Horizontal:
-				writer.AddAttribute (HtmlTextWriterAttribute.Rules, "rows");
+				writer.AddAttribute (HtmlTextWriterAttribute.Rules, "rows", false);
 				break;
 			case GridLines.Vertical:
-				writer.AddAttribute (HtmlTextWriterAttribute.Rules, "cols");
+				writer.AddAttribute (HtmlTextWriterAttribute.Rules, "cols", false);
 				break;
 			case GridLines.Both:
-				writer.AddAttribute (HtmlTextWriterAttribute.Rules, "all");
+				writer.AddAttribute (HtmlTextWriterAttribute.Rules, "all", false);
 				break;
 			}
 
 			// note: avoid ToString on the enum
 			switch (HorizontalAlign) {
 			case HorizontalAlign.Left:
-				writer.AddAttribute (HtmlTextWriterAttribute.Align, "Left");
+				writer.AddAttribute (HtmlTextWriterAttribute.Align, "Left", false);
 				break;
 			case HorizontalAlign.Center:
-				writer.AddAttribute (HtmlTextWriterAttribute.Align, "Center");
+				writer.AddAttribute (HtmlTextWriterAttribute.Align, "Center", false);
 				break;
 			case HorizontalAlign.Right:
-				writer.AddAttribute (HtmlTextWriterAttribute.Align, "Right");
+				writer.AddAttribute (HtmlTextWriterAttribute.Align, "Right", false);
 				break;
 			case HorizontalAlign.Justify:
-				writer.AddAttribute (HtmlTextWriterAttribute.Align, "Justify");
+				writer.AddAttribute (HtmlTextWriterAttribute.Align, "Justify", false);
 				break;
 			}
 
 			// border (=0) is always present (and base class doesn't seems to add it)
 			// but border is "promoted" to 1 if gridlines are present (with BorderWidth == 0)
 			if (g == GridLines.None) {
-				writer.AddAttribute (HtmlTextWriterAttribute.Border, "0");
+				writer.AddAttribute (HtmlTextWriterAttribute.Border, "0", false);
 			} else if (BorderWidth.IsEmpty) {
-				writer.AddAttribute (HtmlTextWriterAttribute.Border, "1");
+				writer.AddAttribute (HtmlTextWriterAttribute.Border, "1", false);
 			} else {
 				writer.AddAttribute (HtmlTextWriterAttribute.Border, BorderWidth.Value.ToString (CultureInfo.InvariantCulture));
 			}
