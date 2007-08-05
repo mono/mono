@@ -102,7 +102,7 @@ namespace Mainsoft.Web.Hosting {
 			_HttpServletResponse = resp;
 
 			if (alwaysUsePrintWriter)
-				_OutputStream = new OutputStreamWrapper (resp.getWriter ());
+				_OutputStream = CreateOutputStream (false);
 
 			string contextPath = req.getContextPath();
 			string servletPath = req.getServletPath ();

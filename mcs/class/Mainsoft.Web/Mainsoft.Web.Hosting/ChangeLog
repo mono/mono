@@ -1,3 +1,8 @@
+2007-08-05  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* ServletWorkerRequest.jvm.cs: fixed _OutputStream in
+	ServletWorkerRequest ctor
+
 2007-06-28  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* BaseHttpServlet.cs: fixed service(), it does not creates output
