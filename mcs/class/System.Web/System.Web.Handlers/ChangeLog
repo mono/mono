@@ -1,3 +1,10 @@
+2007-08-06  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* AssemblyResourceLoader.cs: performance optimization, caching urls for
+	built-in resources
+	fixed CacheControl, should be private
+	added HttpException if resource is not found
+
 2007-07-16 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* AssemblyResourceLoader.cs:

@@ -54,9 +54,33 @@ namespace System.Web.Handlers {
 #else
 		const char QueryParamSeparator = '&';
 #endif
+		static readonly Hashtable _embeddedResources;
+		static AssemblyResourceLoader()
+		{
+			_embeddedResources = new Hashtable ();
+			InitEmbeddedResourcesUrls ();
+		}
+
+		static void InitEmbeddedResourcesUrls ()
+		{
+			Assembly currAsm = typeof (AssemblyResourceLoader).Assembly;
+			WebResourceAttribute [] attrs = (WebResourceAttribute []) currAsm.GetCustomAttributes (typeof (WebResourceAttribute), false);
+			for (int i = 0; i < attrs.Length; i++) {
+				string resourceName = attrs [i].WebResource;
+				if (resourceName != null && resourceName.Length > 0)
+					_embeddedResources.Add (resourceName, GetResourceUrl (currAsm, resourceName, false));
+			}
+		}
+
 		internal static string GetResourceUrl (Type type, string resourceName)
 		{
-			return GetResourceUrl (type.Assembly, resourceName, false);
+			string url = null;
+			Assembly assembly = type.Assembly;
+			
+			if (assembly == typeof (AssemblyResourceLoader).Assembly)
+				url = (string) _embeddedResources [resourceName];
+
+			return (url != null) ? url : GetResourceUrl (assembly, resourceName, false);
 		}
 
 		internal static string GetResourceUrl (Assembly assembly, string resourceName, bool notifyScriptLoaded)
@@ -125,19 +149,19 @@ namespace System.Web.Handlers {
 			}
 #endif
 			if (wra == null)
-				return;
+				throw new HttpException (404, string.Format ("Resource {0} not found", resourceName));
 			
 			context.Response.ContentType = wra.ContentType;
 
 			/* tell the client they can cache resources for 1 year */
 			context.Response.ExpiresAbsolute = DateTime.Now.AddYears (1);
-			context.Response.CacheControl = "public";
+			context.Response.CacheControl = "private";
 			context.Response.Cache.VaryByParams ["r"] = true;
 			context.Response.Cache.VaryByParams ["t"] = true;
 
 			Stream s = assembly.GetManifestResourceStream (resourceName);
 			if (s == null)
-				return;
+				throw new HttpException (404, string.Format ("Resource {0} not found", resourceName));
 
 			if (wra.PerformSubstitution) {
 				StreamReader r = new StreamReader (s);
