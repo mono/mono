@@ -65,15 +65,9 @@ namespace System.Web.UI.WebControls {
 		protected override SqlDataSourceView CreateDataSourceView (string viewName)
 		{
 			AccessDataSourceView view = new AccessDataSourceView (this, viewName, this.Context);
-			view.DataSourceViewChanged += new EventHandler (ViewChanged);
 			if (IsTrackingViewState)
 				((IStateManager) view).TrackViewState ();				
 			return view;
-		}
-
-		void ViewChanged (object source, EventArgs e)
-		{
-			RaiseDataSourceChangedEvent (e);
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]

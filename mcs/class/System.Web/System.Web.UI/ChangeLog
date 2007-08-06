@@ -1,5 +1,10 @@
 2007-08-06 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* DataSourceView.cs: fixed: 
+	view raises onchange event when datasource is chenged.			
+
+2007-08-06 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* Control.cs: fixed: control ID management.			
 
 2007-08-06 Igor Zelmanovich <igorz@mainsoft.com>

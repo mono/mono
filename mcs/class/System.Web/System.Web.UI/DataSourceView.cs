@@ -49,6 +49,11 @@ namespace System.Web.UI {
 
 			//this.dataSourceOwner = owner;
 			this.viewName = viewName;
+			owner.DataSourceChanged += new EventHandler (OnDataSourceChanged);
+		}
+
+		void OnDataSourceChanged (object sender, EventArgs e) {
+			OnDataSourceViewChanged (EventArgs.Empty);
 		}
 
 		public virtual void Delete (IDictionary keys, IDictionary values,

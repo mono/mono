@@ -1,5 +1,10 @@
 2007-08-06 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* DataSourceViewTest.cs:
+	Added new test.
+
+2007-08-06 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* DataGridTest.cs:
 	* DetailsViewTest.cs:
 	fixed tests.

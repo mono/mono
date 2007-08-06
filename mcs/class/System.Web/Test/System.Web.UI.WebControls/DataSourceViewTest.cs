@@ -120,6 +120,15 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
+		public void DataSourceView_Events2 () {
+			PokerDataSource ds = new PokerDataSource ();
+			PokerDataSourceView view = new PokerDataSourceView (ds, "View");
+			view.DataSourceViewChanged += new EventHandler (Eventchecker);
+			ds.DoRaiseDataSourceChangedEvent (new EventArgs ());
+			Eventassert ("DataSourceViewChanged");
+		}
+
+		[Test]
 		public void DataSourceView_RaiseUnsupportedCapabilityError1 ()
 		{
 			PokerDataSource ds = new PokerDataSource ();

@@ -81,6 +81,8 @@ namespace System.Web.UI.WebControls {
 		protected virtual SqlDataSourceView CreateDataSourceView (string viewName)
 		{
 			SqlDataSourceView view = new SqlDataSourceView (this, viewName, this.Context);
+			if (IsTrackingViewState)
+				((IStateManager) view).TrackViewState ();
 			return view;
 		}
 

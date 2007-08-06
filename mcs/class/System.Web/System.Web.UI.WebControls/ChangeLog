@@ -1,3 +1,9 @@
+2007-08-06 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* AccessDataSource.cs: does not subscribed on view changed event.
+	* ObjectDataSource.cs: fixed state management.
+	* SqlDataSource.cs:	fixed state management.	 
+
 2007-08-05  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* Button.cs, 

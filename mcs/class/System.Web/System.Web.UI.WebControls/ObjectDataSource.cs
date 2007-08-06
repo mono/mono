@@ -71,8 +71,11 @@ namespace System.Web.UI.WebControls
 		
 		ObjectDataSourceView DefaultView {
 			get {
-				if (defaultView == null)
+				if (defaultView == null) {
 					defaultView = new ObjectDataSourceView (this, emptyNames [0], Context);
+					if (IsTrackingViewState)
+						((IStateManager) defaultView).TrackViewState ();
+				}
 				return defaultView;
 			}
 		}
