@@ -1,5 +1,10 @@
 2007-08-06  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Process.cs, ProcessStartInfo.cs : added StandardOutputEncoding
+	  and StandardErrorEncoding.
+
+2007-08-06  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* PerformanceCounterCategory.cs PerformanceCounter.cs :
 	  added missing 2.0 stuff (unimplemented, where things are anyways
 	  unimplemented in 1.x layer).

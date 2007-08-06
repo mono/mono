@@ -1,3 +1,7 @@
+2007-08-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ProcessStartInfoTest.cs: tests for Standard[Output|Error]Encoding.
+
 2007-07-11  Ankit Jain  <jankit@novell.com>
 
 	* ProcessStartInfoTest.cs: New.

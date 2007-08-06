@@ -32,7 +32,9 @@
 using System.Collections;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Security;
 using System.Security.Permissions;
+using System.Text;
 
 namespace System.Diagnostics 
 {
@@ -54,6 +56,9 @@ namespace System.Diagnostics
 		private bool redirect_standard_output = false;
 		private bool use_shell_execute = true;
 		private ProcessWindowStyle window_style = ProcessWindowStyle.Normal;
+#if NET_2_0
+		private Encoding encoding_stderr, encoding_stdout;
+#endif
 
 		public ProcessStartInfo() 
 		{
@@ -204,6 +209,18 @@ namespace System.Diagnostics
 				redirect_standard_output = value;
 			}
 		}
+		
+#if NET_2_0
+		public Encoding StandardErrorEncoding {
+			get { return encoding_stderr; }
+			set { encoding_stderr = value; }
+		}
+
+		public Encoding StandardOutputEncoding {
+			get { return encoding_stdout; }
+			set { encoding_stdout = value; }
+		}
+#endif
 		
 		[DefaultValue (true)]
 		[MonitoringDescription ("Use the shell to start this process.")]

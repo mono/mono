@@ -1003,7 +1003,7 @@ namespace System.Diagnostics {
 				process.stderr_rd = (IntPtr)0;
 				stderr_wr = MonoIO.ConsoleError;
 			}
-			
+
 			ret = CreateProcess_internal (startInfo,
 						      stdin_rd, stdout_wr, stderr_wr,
 						      ref proc_info);
@@ -1039,14 +1039,22 @@ namespace System.Diagnostics {
 				process.input_stream.AutoFlush = true;
 			}
 
+#if NET_2_0
+			Encoding stdoutEncoding = startInfo.StandardOutputEncoding ?? ConsoleEncoding.OutputEncoding;
+			Encoding stderrEncoding = startInfo.StandardErrorEncoding ?? ConsoleEncoding.OutputEncoding;
+#else
+			Encoding stdoutEncoding = ConsoleEncoding.OutputEncoding;
+			Encoding stderrEncoding = ConsoleEncoding.OutputEncoding;
+#endif
+
 			if (startInfo.RedirectStandardOutput == true) {
 				MonoIO.Close (stdout_wr, out error);
-				process.output_stream = new StreamReader (new FileStream (process.stdout_rd, FileAccess.Read, true), ConsoleEncoding.OutputEncoding);
+				process.output_stream = new StreamReader (new FileStream (process.stdout_rd, FileAccess.Read, true), stdoutEncoding);
 			}
 
 			if (startInfo.RedirectStandardError == true) {
 				MonoIO.Close (stderr_wr, out error);
-				process.error_stream = new StreamReader (new FileStream (process.stderr_rd, FileAccess.Read, true), ConsoleEncoding.OutputEncoding);
+				process.error_stream = new StreamReader (new FileStream (process.stderr_rd, FileAccess.Read, true), stderrEncoding);
 			}
 
 			process.StartExitCallbackIfNeeded ();
@@ -1061,6 +1069,13 @@ namespace System.Diagnostics {
 			   startInfo.FileName == "") {
 				throw new InvalidOperationException("File name has not been set");
 			}
+			
+#if NET_2_0
+			if (startInfo.StandardErrorEncoding != null && !startInfo.RedirectStandardError)
+				throw new InvalidOperationException ("StandardErrorEncoding is only supported when standard error is redirected");
+			if (startInfo.StandardOutputEncoding != null && !startInfo.RedirectStandardOutput)
+				throw new InvalidOperationException ("StandardOutputEncoding is only supported when standard output is redirected");
+#endif
 			
 			if (startInfo.UseShellExecute) {
 				return (Start_shell (startInfo, process));
@@ -1082,6 +1097,7 @@ namespace System.Diagnostics {
 		}
 
 		public static Process Start(ProcessStartInfo startInfo) {
+
 			Process process=new Process();
 			bool ret;
 
