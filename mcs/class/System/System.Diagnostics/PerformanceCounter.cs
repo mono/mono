@@ -53,6 +53,9 @@ namespace System.Diagnostics {
 		private string instanceName;
 		private string machineName;
 		private bool readOnly;
+#if NET_2_0
+		private PerformanceCounterInstanceLifetime lifetime;
+#endif
 
 		public static int DefaultFileMappingSize = 524288;
 
@@ -155,6 +158,15 @@ namespace System.Diagnostics {
 		public PerformanceCounterType CounterType {
 			get {return 0;}
 		}
+
+#if NET_2_0
+		[MonoTODO]
+		[DefaultValue (PerformanceCounterInstanceLifetime.Global)]
+		public PerformanceCounterInstanceLifetime InstanceLifetime {
+			get { return lifetime; }
+			set { lifetime = value; }
+		}
+#endif
 
 		[DefaultValue (""), ReadOnly (true), RecommendedAsConfigurable (true)]
 		[TypeConverter ("System.Diagnostics.Design.InstanceNameConverter, " + Consts.AssemblySystem_Design)]

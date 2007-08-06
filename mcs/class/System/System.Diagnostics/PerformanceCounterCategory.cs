@@ -37,6 +37,9 @@ namespace System.Diagnostics
 	{
 		private string categoryName;
 		private string machineName;
+#if NET_2_0
+		private PerformanceCounterCategoryType type;
+#endif
 
 		public PerformanceCounterCategory ()
 			: this ("", ".")
@@ -86,6 +89,13 @@ namespace System.Diagnostics
 			}
 		}
 
+#if NET_2_0
+		[MonoTODO]
+		public PerformanceCounterCategoryType CategoryType {
+			get { return type; }
+		}
+#endif
+
 		// may throw ArgumentNullException, InvalidOperationException
 		// (categoryName isn't set), Win32Exception
 		[MonoTODO]
@@ -114,6 +124,9 @@ namespace System.Diagnostics
 		}
 
 		[MonoTODO]
+#if NET_2_0
+		[Obsolete ("Use another overload that uses PerformanceCounterCategoryType instead")]
+#endif
 		public static PerformanceCounterCategory Create (
 			string categoryName,
 			string categoryHelp,
@@ -123,6 +136,9 @@ namespace System.Diagnostics
 		}
 
 		[MonoTODO]
+#if NET_2_0
+		[Obsolete ("Use another overload that uses PerformanceCounterCategoryType instead")]
+#endif
 		public static PerformanceCounterCategory Create (
 			string categoryName,
 			string categoryHelp,
@@ -131,6 +147,29 @@ namespace System.Diagnostics
 		{
 			throw new NotImplementedException ();
 		}
+
+#if NET_2_0
+		[MonoTODO]
+		public static PerformanceCounterCategory Create (
+			string categoryName,
+			string categoryHelp,
+			PerformanceCounterCategoryType categoryType,
+			CounterCreationDataCollection counterData)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static PerformanceCounterCategory Create (
+			string categoryName,
+			string categoryHelp,
+			PerformanceCounterCategoryType categoryType,
+			string counterName,
+			string counterHelp)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 
 		[MonoTODO]
 		public static void Delete (string categoryName)
