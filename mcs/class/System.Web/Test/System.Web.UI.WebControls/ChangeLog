@@ -1,3 +1,9 @@
+2007-08-06 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* DataGridTest.cs:
+	* DetailsViewTest.cs:
+	fixed tests.
+
 2007-07-01 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* GridViewTest.cs:

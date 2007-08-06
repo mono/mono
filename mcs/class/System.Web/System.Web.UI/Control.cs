@@ -133,6 +133,7 @@ namespace System.Web.UI
 #if NET_2_0
 		const int ENABLE_THEMING = 1 << 16;
 #endif
+		const int AUTOID_SET = 1 << 17;
 		/*************/
 
 		static Control () {
@@ -345,8 +346,12 @@ namespace System.Web.UI
 		public virtual Page Page //DIT
 				{
 			get {
-				if (_page == null && _parent != null)
-					_page = _parent.Page;
+				if (_page == null){
+					if (NamingContainer != null)
+						_page = NamingContainer.Page;
+					else if (Parent != null)
+						_page = Parent.Page;
+				}
 				return _page;
 			}
 			set {
@@ -465,24 +470,19 @@ namespace System.Web.UI
 				if (uniqueID != null)
 					return uniqueID;
 
-				if (_namingContainer == null) {
-					if ((stateMask & IS_NAMING_CONTAINER) == 0)
-						_namingContainer = NamingContainer;
-					if (_namingContainer == null)
-						return _userId;
-				}
+				if (NamingContainer == null)
+					return _userId;
 
-				if (_userId == null)
-					_userId = _namingContainer.GetDefaultName ();
+				EnsureIDInternal ();
 
-				string prefix = _namingContainer.UniqueID;
+				string prefix = NamingContainer.UniqueID;
 #if TARGET_J2EE
 				// For J2EE portlets we need to add the namespace to the ID.
-				if (_namingContainer == _page && _page.PortletNamespace != null)
-					prefix = _page.PortletNamespace;
+				if (NamingContainer == Page && Page.PortletNamespace != null)
+					prefix = Page.PortletNamespace;
 				else
 #endif
-				if (_namingContainer == _page || prefix == null) {
+				if (NamingContainer == Page || prefix == null) {
 					uniqueID = _userId;
 					return uniqueID;
 				}
@@ -630,8 +630,8 @@ namespace System.Web.UI
 			if (!HasControls ())
 				return;
 
-			foreach (Control c in _controls)
-				c.NullifyUniqueID ();
+			for (int i = 0; i < _controls.Count; i++)
+				_controls [i].NullifyUniqueID ();
 		}
 
 		protected internal virtual void AddedControl (Control control, int index) {
@@ -640,17 +640,14 @@ namespace System.Web.UI
 				control._parent.Controls.Remove (control);
 
 			control._parent = this;
-			control._page = _page;
 			Control nc = ((stateMask & IS_NAMING_CONTAINER) != 0) ? this : NamingContainer;
-
-			if (nc != null) {
-				control._namingContainer = nc;
-				if (control.AutoID == true && control._userId == null)
-					control._userId = nc.GetDefaultName ();
-			}
 
 			if ((stateMask & (INITING | INITED)) != 0)
 				control.InitRecursive (nc);
+			else {
+				control.SetNamingContainer (nc);
+				return;
+			}
 
 			if ((stateMask & (VIEWSTATE_LOADED | LOADED)) != 0) {
 				if (pendingVS != null) {
@@ -670,6 +667,14 @@ namespace System.Web.UI
 
 			if ((stateMask & PRERENDERED) != 0)
 				control.PreRenderRecursiveInternal ();
+		}
+		
+		void SetNamingContainer (Control nc) {
+			if (nc != null) {
+				_namingContainer = nc;
+				if (AutoID)
+					EnsureIDInternal ();
+			}
 		}
 
 		protected virtual void AddParsedSubObject (object obj) //DIT
@@ -739,12 +744,20 @@ namespace System.Web.UI
 			}
 		}
 
+		void EnsureIDInternal () {
+			if (_userId != null)
+				return;
+
+			_userId = NamingContainer.GetDefaultName ();
+			SetMask (AUTOID_SET, true);
+		}
+
 #if NET_2_0
 		protected void EnsureID () {
-			if (Page == null)
+			if (NamingContainer == null)
 				return;
-			if (String.IsNullOrEmpty (ID))
-				ID = NamingContainer.GetDefaultName ();
+			EnsureIDInternal ();
+			SetMask (ID_SET, true);
 		}
 
 		protected bool HasEvents () {
@@ -1405,22 +1418,15 @@ namespace System.Web.UI
 				trace.Write ("control", String.Format ("InitRecursive {0} {1}", _userId, type_name));
 			}
 #endif
+			SetNamingContainer (namingContainer);
+
 			if (HasControls ()) {
 				if ((stateMask & IS_NAMING_CONTAINER) != 0)
 					namingContainer = this;
 
-				if (namingContainer != null &&
-					namingContainer._userId == null &&
-					namingContainer.AutoID)
-					namingContainer._userId = namingContainer.GetDefaultName () + "b";
-
 				int len = _controls.Count;
 				for (int i = 0; i < len; i++) {
 					Control c = _controls [i];
-					c._page = Page;
-					c._namingContainer = namingContainer;
-					if (namingContainer != null && c._userId == null && c.AutoID)
-						c._userId = namingContainer.GetDefaultName () + "c";
 					c.InitRecursive (namingContainer);
 				}
 			}
@@ -1580,6 +1586,11 @@ namespace System.Web.UI
 			control._parent = null;
 			control._page = null;
 			control._namingContainer = null;
+			if ((control.stateMask & AUTOID_SET) != 0) {
+				control._userId = null;
+				control.SetMask (ID_SET, false);
+			}
+			control.NullifyUniqueID ();
 		}
 
 

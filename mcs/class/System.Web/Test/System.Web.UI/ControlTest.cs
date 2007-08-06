@@ -71,7 +71,16 @@ namespace MonoTests.System.Web.UI
 			Control nc = new MyNC ();
 			Assert.IsNull (nc.UniqueID, "nulltest");
 		}
-
+		
+		[Test]
+		public void UniqueID1_1 () {
+			// Standalone NC
+			Control nc = new MyNC ();
+			Page p = new Page ();
+			p.Controls.Add (nc);
+			Assert.IsNotNull (nc.UniqueID, "notnull");
+		}
+		
 		[Test]
 		public void UniqueID2 ()
 		{
@@ -81,6 +90,18 @@ namespace MonoTests.System.Web.UI
 			nc2.Controls.Add (nc);
 			Assert.IsNotNull (nc.UniqueID, "notnull");
 			Assert.IsTrue (nc.UniqueID.IndexOfAny (new char[] { ':', '$' }) == -1, "separator");
+		}
+
+		[Test]
+		public void UniqueID2_1 () {
+			// NC in NC
+			Control nc = new MyNC ();
+			Control nc2 = new MyNC ();
+			nc2.Controls.Add (nc);
+			Page p = new Page ();
+			p.Controls.Add (nc2);
+			Assert.IsNotNull (nc.UniqueID, "notnull");
+			Assert.IsTrue (nc.UniqueID.IndexOfAny (new char [] { ':', '$' }) != -1, "separator");
 		}
 
 		[Test]
@@ -119,6 +140,56 @@ namespace MonoTests.System.Web.UI
 			Assert.IsNull (nc2.ID, "null-1");
 			Assert.IsNull (nc.ID, "null-2");
 			Assert.IsTrue (-1 != control.UniqueID.IndexOfAny (new char[] { ':', '$' }), "separator");
+		}
+
+		[Test]
+		public void UniqueID6 () {
+			// NC in NC
+			Control nc = new MyNC ();
+			Page p = new Page ();
+			p.Controls.Add (nc);
+			Assert.IsNotNull (nc.UniqueID, "notnull");
+
+			Control c1 = new Control ();
+			Control c2 = new Control ();
+			nc.Controls.Add (c1);
+			nc.Controls.Add (c2);
+			string uid1_1 = c1.UniqueID;
+			string uid2_1 = c2.UniqueID;
+
+			nc.Controls.Clear ();
+
+			Assert.IsNull (c1.UniqueID);
+			Assert.IsNull (c2.UniqueID);
+
+			// ad in another order
+			nc.Controls.Add (c2);
+			nc.Controls.Add (c1);
+			string uid1_2 = c1.UniqueID;
+			string uid2_2 = c2.UniqueID;
+
+			Assert.IsFalse (uid1_1 == uid1_2);
+			Assert.IsFalse (uid2_1 == uid2_2);
+			Assert.AreEqual (uid1_1, uid2_2);
+			Assert.AreEqual (uid2_1, uid1_2);
+
+			nc.Controls.Remove (c1);
+			nc.Controls.Add (c1);
+			string uid1_3 = c1.UniqueID;
+			Assert.IsFalse (uid1_3 == uid1_2, "id was not reset");
+
+#if NET_2_0
+			EnsureIDControl c3 = new EnsureIDControl ();
+			nc.Controls.Add (c3);
+			string uid3_1 = c3.UniqueID;
+			c3.DoEnsureID ();
+			Assert.IsNotNull (c3.ID);
+			nc.Controls.Remove (c3);
+			nc.Controls.Add (c3);
+			string uid3_2 = c3.UniqueID;
+			Assert.IsNull (c3.ID);
+			Assert.IsFalse (uid3_1 == uid3_2, "id was not reset");
+#endif
 		}
 
 		[Test]
@@ -1064,6 +1135,12 @@ namespace MonoTests.System.Web.UI
 
 	public class Customadapter : ControlAdapter
 	{
+	}
+
+	class EnsureIDControl : Control {
+		public void DoEnsureID () {
+			EnsureID ();
+		}
 	}
 #endif
 

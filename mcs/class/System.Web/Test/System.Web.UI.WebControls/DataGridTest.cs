@@ -1637,7 +1637,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 #if DOT_NET
 			fr.Controls ["__EVENTTARGET"].Value = "DataGrid1$ctl09$ctl01"; 
 #else
-			fr.Controls ["__EVENTTARGET"].Value = "DataGrid1$ctl08$ctl01c";
+			fr.Controls ["__EVENTTARGET"].Value = "DataGrid1$ctl08$ctl01";
 #endif
 			fr.Controls ["__EVENTARGUMENT"].Value = "";
 			t.Request = fr;
@@ -1671,7 +1671,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 #if DOT_NET
 			fr.Controls ["__EVENTTARGET"].Value = "DataGrid1$ctl09$ctl00"; 
 #else
-			fr.Controls ["__EVENTTARGET"].Value = "DataGrid1$ctl08$ctl00c";
+			fr.Controls ["__EVENTTARGET"].Value = "DataGrid1$ctl08$ctl00";
 #endif
 			fr.Controls ["__EVENTARGUMENT"].Value = "";
 			t.Request = fr;
@@ -1718,7 +1718,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 #if DOT_NET
 			fr.Controls ["__EVENTTARGET"].Value = "DataGrid1$ctl03$ctl00";
 #else
-			fr.Controls ["__EVENTTARGET"].Value = "DataGrid1$ctl02$ctl00c";
+			fr.Controls ["__EVENTTARGET"].Value = "DataGrid1$ctl02$ctl00";
 #endif
 			fr.Controls ["__EVENTARGUMENT"].Value = "";
 			t.Request = fr;
@@ -1752,15 +1752,15 @@ namespace MonoTests.System.Web.UI.WebControls {
 #if DOT_NET
 			fr.Controls ["__EVENTTARGET"].Value = "DataGrid1$ctl03$ctl01";
 #else
-			fr.Controls ["__EVENTTARGET"].Value = "DataGrid1$ctl02$ctl01c";
+			fr.Controls ["__EVENTTARGET"].Value = "DataGrid1$ctl02$ctl01";
 #endif
 			fr.Controls ["__EVENTARGUMENT"].Value = "";
 #if DOT_NET
 			fr.Controls.Add ("DataGrid1$ctl03$ctl00");
 			fr.Controls ["DataGrid1$ctl03$ctl00"].Value = "New Value";
 #else
-			fr.Controls.Add ("DataGrid1$ctl02$ctl00c");
-			fr.Controls ["DataGrid1$ctl02$ctl00c"].Value = "New Value";
+			fr.Controls.Add ("DataGrid1$ctl02$ctl00");
+			fr.Controls ["DataGrid1$ctl02$ctl00"].Value = "New Value";
 #endif
 			t.Request = fr;
 
@@ -1795,7 +1795,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 #if DOT_NET
 			fr.Controls ["__EVENTTARGET"].Value = "DataGrid1$ctl04$ctl01";
 #else
-			fr.Controls ["__EVENTTARGET"].Value = "DataGrid1$ctl03$ctl01c";
+			fr.Controls ["__EVENTTARGET"].Value = "DataGrid1$ctl03$ctl01";
 #endif
 			fr.Controls ["__EVENTARGUMENT"].Value = "";
 			t.Request = fr;
