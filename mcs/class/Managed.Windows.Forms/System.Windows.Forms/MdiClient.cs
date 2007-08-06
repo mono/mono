@@ -855,9 +855,10 @@ namespace System.Windows.Forms {
 			Form form = wm.form;
 			MenuStrip parent_menu = form.MdiParent.MainMenuStrip;
 			
-			for (int i = parent_menu.Items.Count - 1; i >= 0; i--)
-				if (parent_menu.Items[i] is MdiControlStrip.SystemMenuItem || parent_menu.Items[i] is MdiControlStrip.ControlBoxMenuItem)
-					parent_menu.Items.RemoveAt (i);
+			if (parent_menu != null)
+				for (int i = parent_menu.Items.Count - 1; i >= 0; i--)
+					if (parent_menu.Items[i] is MdiControlStrip.SystemMenuItem || parent_menu.Items[i] is MdiControlStrip.ControlBoxMenuItem)
+						parent_menu.Items.RemoveAt (i);
 		}
 #endif
 

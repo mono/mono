@@ -1,3 +1,8 @@
+2007-08-06  Jonathan Pobst  <monkey@jpobst.com>
+
+	* MdiClient.cs: Fix some failing tests on X11 by adding a null check
+	before removing system menu items.
+
 2007-08-02  Jonathan Pobst  <monkey@jpobst.com>
 
 	* MdiClient.cs, MdiWindowManager.cs: Support 2.0 Mdi MenuStrip
