@@ -1,3 +1,10 @@
+2007-08-06  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (check_underflow, check_overflow): error message now returns IL offset
+	* verify.c (in_same_block): code should test if either offset is inside the clauses
+	* verify.c (mono_method_verify): push the exception into the eval stack of exception
+	and filter blocks
+
 2007-08-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* image.c (mono_image_close): Fix a leak.
