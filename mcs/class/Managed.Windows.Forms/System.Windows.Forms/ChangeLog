@@ -1,5 +1,10 @@
 2007-08-06  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ToolStripDropDown.cs: Fix a failing test on X11 by adding a null
+	check for setting the dropdown's owner.
+
+2007-08-06  Jonathan Pobst  <monkey@jpobst.com>
+
 	* MdiClient.cs: Fix some failing tests on X11 by adding a null check
 	before removing system menu items.
 

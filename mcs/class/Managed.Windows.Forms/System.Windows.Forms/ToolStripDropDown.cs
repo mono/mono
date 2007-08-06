@@ -560,7 +560,8 @@ namespace System.Windows.Forms
 		{
 			base.OnHandleCreated (e);
 
-			XplatUI.SetOwner (this.Handle, Application.MWFThread.Current.Context.MainForm.Handle);
+			if (Application.MWFThread.Current.Context != null)
+				XplatUI.SetOwner (this.Handle, Application.MWFThread.Current.Context.MainForm.Handle);
 		}
 
 		protected override void OnItemClicked (ToolStripItemClickedEventArgs e)
