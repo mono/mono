@@ -495,8 +495,10 @@ System.Diagnostics/MonitoringDescriptionAttribute.cs
 System.Diagnostics/NullEventLog.cs
 System.Diagnostics/OverflowAction.cs
 System.Diagnostics/PerformanceCounterCategory.cs
+System.Diagnostics/PerformanceCounterCategoryType.cs
 System.Diagnostics/PerformanceCounter.cs
 System.Diagnostics/PerformanceCounterInstaller.cs
+System.Diagnostics/PerformanceCounterInstanceLifetime.cs
 System.Diagnostics/PerformanceCounterManager.cs
 System.Diagnostics/PerformanceCounterPermissionAccess.cs
 System.Diagnostics/PerformanceCounterPermissionAttribute.cs

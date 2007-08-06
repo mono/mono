@@ -1,10 +1,8 @@
 //
-// System.Diagnostics.ICollectData.cs
+// PerformanceCounterInstanceLifetime.cs
 //
-// Authors:
-//   Jonathan Pryor (jonpryor@vt.edu)
-//
-// (C) 2002
+// Author:
+//   Atsushi Enomoto  <atsushi@ximian.com>
 //
 
 //
@@ -27,26 +25,15 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
-using System;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-
-namespace System.Diagnostics
-{
-	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-	[Guid("73386977-D6FD-11D2-BED5-00C04F79E3AE")]
 #if NET_2_0
-	[ComImport]
-#endif
-	public interface ICollectData {
-		void CloseData ();
-		[return: MarshalAs(UnmanagedType.I4)]
-		void CollectData (
-			[In] [MarshalAs(UnmanagedType.I4)] int id, 
-			[In] [MarshalAs(UnmanagedType.SysInt)] IntPtr valueName, 
-			[In] [MarshalAs(UnmanagedType.SysInt)] IntPtr data, 
-			[In] [MarshalAs(UnmanagedType.I4)] int totalBytes, 
-			[MarshalAs(UnmanagedType.SysInt)] out IntPtr res);
+
+namespace System.Diagnostics 
+{
+	public enum PerformanceCounterInstanceLifetime
+	{
+		Global,
+		Process,
 	}
 }
+
+#endif

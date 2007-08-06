@@ -34,11 +34,16 @@ using System;
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Diagnostics;
+#if NET_2_0
+using System.Runtime.ConstrainedExecution;
+#endif
 
 namespace System.Diagnostics {
 
 	// must be safe for multithreaded operations
+#if !NET_2_0
 	[Designer ("Microsoft.VisualStudio.Install.PerformanceCounterDesigner, " + Consts.AssemblyMicrosoft_VisualStudio)]
+#endif
 	[InstallerType (typeof (PerformanceCounterInstaller))]
 	public sealed class PerformanceCounter : Component, ISupportInitialize 
 	{
@@ -233,6 +238,9 @@ namespace System.Diagnostics {
 
 		// may throw InvalidOperationException, Win32Exception
 		[MonoTODO]
+#if NET_2_0
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
+#endif
 		public long IncrementBy (long value)
 		{
 			throw new NotImplementedException ();
@@ -254,6 +262,9 @@ namespace System.Diagnostics {
 
 		// may throw InvalidOperationException, Win32Exception
 		[MonoTODO]
+#if NET_2_0
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
+#endif
 		public void RemoveInstance ()
 		{
 			throw new NotImplementedException ();

@@ -48,6 +48,9 @@ namespace System.Diagnostics {
 	[Designer ("System.Diagnostics.Design.ProcessDesigner, " + Consts.AssemblySystem_Design)]
 	[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
 	[PermissionSet (SecurityAction.InheritanceDemand, Unrestricted = true)]
+#if NET_2_0
+	[MonitoringDescription ("Represents a system process")]
+#endif
 	public class Process : Component 
 	{
 		[StructLayout(LayoutKind.Sequential)]
@@ -404,6 +407,7 @@ namespace System.Diagnostics {
 		[MonoTODO]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription ("The number of bytes that are not pageable.")]
+		[ComVisible (false)]
 		public long NonpagedSystemMemorySize64 {
 			get {
 				return(0);
@@ -413,6 +417,7 @@ namespace System.Diagnostics {
 		[MonoTODO]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription ("The number of bytes that are paged.")]
+		[ComVisible (false)]
 		public long PagedMemorySize64 {
 			get {
 				return(0);
@@ -422,6 +427,7 @@ namespace System.Diagnostics {
 		[MonoTODO]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription ("The amount of paged system memory in bytes.")]
+		[ComVisible (false)]
 		public long PagedSystemMemorySize64 {
 			get {
 				return(0);
@@ -431,6 +437,7 @@ namespace System.Diagnostics {
 		[MonoTODO]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription ("The maximum amount of paged memory used by this process.")]
+		[ComVisible (false)]
 		public long PeakPagedMemorySize64 {
 			get {
 				return(0);
@@ -440,6 +447,7 @@ namespace System.Diagnostics {
 		[MonoTODO]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription ("The maximum amount of virtual memory used by this process.")]
+		[ComVisible (false)]
 		public long PeakVirtualMemorySize64 {
 			get {
 				return(0);
@@ -449,6 +457,7 @@ namespace System.Diagnostics {
 		[MonoTODO]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription ("The maximum amount of system memory used by this process.")]
+		[ComVisible (false)]
 		public long PeakWorkingSet64 {
 			get {
 				return(0);
@@ -481,6 +490,9 @@ namespace System.Diagnostics {
 		[MonoTODO]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription ("The amount of memory exclusively used by this process.")]
+#if NET_2_0
+		[Obsolete ("Use PrivateMemorySize64")]
+#endif
 		public int PrivateMemorySize {
 			get {
 				return(0);
@@ -702,7 +714,18 @@ namespace System.Diagnostics {
 #if NET_2_0
 		[MonoTODO]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[MonitoringDescription ("The amount of memory exclusively used by this process.")]
+		[ComVisible (false)]
+		public long PrivateMemorySize64 {
+			get {
+				return(0);
+			}
+		}
+
+		[MonoTODO]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription ("The amount of virtual memory currently used for this process.")]
+		[ComVisible (false)]
 		public long VirtualMemorySize64 {
 			get {
 				return(0);
@@ -712,6 +735,7 @@ namespace System.Diagnostics {
 		[MonoTODO]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription ("The amount of physical memory currently used for this process.")]
+		[ComVisible (false)]
 		public long WorkingSet64 {
 			get {
 				return(0);
@@ -1149,7 +1173,11 @@ namespace System.Diagnostics {
 		}
 
 #if NET_2_0
+		[Browsable (true)]
+		[MonitoringDescription ("Raised when it receives output data")]
 		public event DataReceivedEventHandler OutputDataReceived;
+		[Browsable (true)]
+		[MonitoringDescription ("Raised when it receives error data")]
 		public event DataReceivedEventHandler ErrorDataReceived;
 
 		void OnOutputDataReceived (string str)
