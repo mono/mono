@@ -399,21 +399,21 @@ namespace Mono.Data.Tds.Protocol {
 			Comm.Append (rpcName);
 			Comm.Append ( (short) 0); //no meta data
 			if (parameters != null) {
-			foreach (TdsMetaParameter param in parameters) {
-				if (param.Direction == TdsParameterDirection.ReturnValue) 
-					continue;
-				Comm.Append ( (byte) param.ParameterName.Length );
-				Comm.Append (param.ParameterName);
-				short status = 0; // unused
-				if (param.Direction != TdsParameterDirection.Input)
-					status |= 0x01; // output
-				Comm.Append ( (byte) status);
-				WriteParameterInfo (param);
-			}
+				foreach (TdsMetaParameter param in parameters) {
+					if (param.Direction == TdsParameterDirection.ReturnValue) 
+						continue;
+					Comm.Append ( (byte) param.ParameterName.Length );
+					Comm.Append (param.ParameterName);
+					short status = 0; // unused
+					if (param.Direction != TdsParameterDirection.Input)
+						status |= 0x01; // output
+					Comm.Append ( (byte) status);
+					WriteParameterInfo (param);
+				}
 			}
 			Comm.SendPacket ();
 			CheckForData (timeout);
-			if (!wantResults) 
+			if (!wantResults)
 				SkipToEnd ();
 		}
 
@@ -532,8 +532,8 @@ namespace Mono.Data.Tds.Protocol {
                         case "smalldatetime":
 			case "datetime":
 				DateTime d = Convert.ToDateTime (parameter.Value);
-				value = String.Format(System.Globalization.CultureInfo.InvariantCulture, 
-                                                      "'{0:MMM dd yyyy hh:mm:ss tt}'", d );
+				value = String.Format (base.Locale,
+						       "'{0:MMM dd yyyy hh:mm:ss tt}'", d);
                                 break;
 			case "bigint":
 			case "decimal":

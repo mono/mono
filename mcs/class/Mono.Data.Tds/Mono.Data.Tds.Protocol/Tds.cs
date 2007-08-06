@@ -34,10 +34,12 @@
 
 using Mono.Security.Protocol.Ntlm;
 using System;
+using System.IO;
 using System.Collections;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Net.Sockets;
+using System.Globalization;
 using System.Text;
 
 namespace Mono.Data.Tds.Protocol {
@@ -58,6 +60,7 @@ namespace Mono.Data.Tds.Protocol {
 		string databaseProductName;
 		string databaseProductVersion;
 		int databaseMajorVersion;
+		CultureInfo locale = CultureInfo.InvariantCulture;
 
 		string charset;
 		string language;
@@ -104,6 +107,10 @@ namespace Mono.Data.Tds.Protocol {
 
 		protected string Charset {
 			get { return charset; }
+		}
+
+		protected CultureInfo Locale {
+			get { return locale; }
 		}
 
 		public bool DoneProc {
@@ -235,17 +242,21 @@ namespace Mono.Data.Tds.Protocol {
 		{
 			if (colIndex < StreamColumnIndex)
 				throw new InvalidOperationException ("Invalid attempt tp read from column ordinal" + colIndex); 
+			try {
+				if (colIndex != StreamColumnIndex) 
+					SkipToColumnIndex (colIndex);
 
-			if (colIndex != StreamColumnIndex) 
-				SkipToColumnIndex (colIndex);
+				if (!LoadInProgress)
+					BeginLoad ((TdsColumnType)Columns[colIndex]["ColumnType"]);
 
-			if (!LoadInProgress)
-				BeginLoad ((TdsColumnType)Columns[colIndex]["ColumnType"]);
-
-			if (buffer == null) {
-				return StreamLength;
+				if (buffer == null) {
+					return StreamLength;
+				}
+				return LoadData (fieldIndex, buffer, bufferIndex, size);
+			} catch (IOException ex) {
+				connected = false;
+				throw new TdsInternalException ("Server closed the connection.", ex);
 			}
-			return LoadData (fieldIndex, buffer, bufferIndex, size);
 		}
 
 		private void BeginLoad(TdsColumnType colType) 
@@ -363,7 +374,12 @@ namespace Mono.Data.Tds.Protocol {
 			if (queryInProgress) {
 				if (cancelsRequested == cancelsProcessed) {
 					comm.StartPacket (TdsPacketType.Cancel);
-					comm.SendPacket ();
+					try {
+						Comm.SendPacket ();
+					} catch (IOException ex) {
+						connected = false;
+						throw new TdsInternalException ("Server closed the connection.", ex);
+					}
 					cancelsRequested += 1;
 				}
 			}	
@@ -425,21 +441,29 @@ namespace Mono.Data.Tds.Protocol {
 		internal void ExecBulkCopyMetaData (int timeout, bool wantResults)
 		{
 			moreResults = true;
-			Comm.SendPacket ();
-
-			CheckForData (timeout);
-			if (!wantResults) 
-				SkipToEnd ();
+			try {
+				Comm.SendPacket ();
+				CheckForData (timeout);
+				if (!wantResults) 
+					SkipToEnd ();
+			} catch (IOException ex) {
+				connected = false;
+				throw new TdsInternalException ("Server closed the connection.", ex);
+			}
 		}
 
 		internal void ExecBulkCopy (int timeout, bool wantResults)
 		{
 			moreResults = true;
-			Comm.SendPacket ();
-
-			CheckForData (timeout);
-			if (!wantResults) 
-				SkipToEnd ();
+			try {
+				Comm.SendPacket ();
+				CheckForData (timeout);
+				if (!wantResults) 
+					SkipToEnd ();
+			} catch (IOException ex) {
+				connected = false;
+				throw new TdsInternalException ("Server closed the connection.", ex);
+			}
 		}
 
 		protected void ExecuteQuery (string sql, int timeout, bool wantResults)
@@ -448,11 +472,15 @@ namespace Mono.Data.Tds.Protocol {
 
 			Comm.StartPacket (TdsPacketType.Query);
 			Comm.Append (sql);
-			Comm.SendPacket ();
-
-			CheckForData (timeout);
-			if (!wantResults) 
-				SkipToEnd ();
+			try {
+				Comm.SendPacket ();
+				CheckForData (timeout);
+				if (!wantResults) 
+					SkipToEnd ();
+			} catch (IOException ex) {
+				connected = false;
+				throw new TdsInternalException ("Server closed the connection.", ex);
+			}
 		}
 
 		protected virtual void ExecRPC (string rpcName, TdsMetaParameterCollection parameters,
@@ -471,10 +499,15 @@ namespace Mono.Data.Tds.Protocol {
 			Comm.Append (rpcNameBytes);
 			Comm.Append (mask);
 			
-			Comm.SendPacket ();
-			CheckForData (timeout);
-			if (!wantResults) 
-				SkipToEnd ();
+			try {
+				Comm.SendPacket ();
+				CheckForData (timeout);
+				if (!wantResults) 
+					SkipToEnd ();
+			} catch (IOException ex) {
+				connected = false;
+				throw new TdsInternalException ("Server closed the connection.", ex);
+			}
 		}
 
 		public bool NextResult ()
@@ -500,24 +533,21 @@ namespace Mono.Data.Tds.Protocol {
 					moreResults = false;
 					break;
 				}
-
 				switch (subType) {
 				case TdsPacketSubType.ColumnInfo:
 				case TdsPacketSubType.ColumnMetadata: 
-				case TdsPacketSubType.RowFormat: 
+				case TdsPacketSubType.RowFormat:
 					byte peek = Comm.Peek ();
 					done = (peek != (byte) TdsPacketSubType.TableName);
 					if (done && doneProc && peek == (byte) TdsPacketSubType.Row) {
 						outputParams = true;
 						done = false;
 					}
-
 					break;
 				case TdsPacketSubType.TableName:
 				//	done = true;
 					peek = Comm.Peek ();
 					done = (peek != (byte) TdsPacketSubType.ColumnDetail);
-
 					break;
 				case TdsPacketSubType.ColumnDetail:
 					done = true;
@@ -570,7 +600,12 @@ namespace Mono.Data.Tds.Protocol {
 
 		public void SkipToEnd ()
 		{
-			while (NextResult ()) { /* DO NOTHING */ }
+			try {
+				while (NextResult ()) { /* DO NOTHING */ }
+			} catch (IOException ex) {
+				connected = false;
+				throw new TdsInternalException ("Server closed the connection.", ex);
+			}
 		}
 
 		public virtual void Unprepare (string statementId) 
@@ -1197,7 +1232,12 @@ namespace Mono.Data.Tds.Protocol {
 
 			Comm.StartPacket (TdsPacketType.SspAuth); // 0x11
 			Comm.Append (t3.GetBytes ());
-			Comm.SendPacket ();
+			try {
+				Comm.SendPacket ();
+			} catch (IOException ex) {
+				connected = false;
+				throw new TdsInternalException ("Server closed the connection.", ex);
+			}
 			return 1; // TDS_SUCCEED
 		}
 
@@ -1327,6 +1367,19 @@ namespace Mono.Data.Tds.Protocol {
 					comm.Skip (len - 2 - cLen);
 				}
 
+				break;
+			case TdsEnvPacketSubType.Locale :
+				cLen = comm.GetByte ();
+				int lcid = 0;
+				if (tdsVersion == TdsVersion.tds70) {
+					lcid = (int) Convert.ChangeType (comm.GetString (cLen), typeof (int));
+					comm.Skip (len - 2 - cLen * 2);
+				}
+				else {
+					lcid = (int) Convert.ChangeType (comm.GetString (cLen), typeof (int));
+					comm.Skip (len - 2 - cLen);
+				}
+				locale = new CultureInfo (lcid);
 				break;
 			case TdsEnvPacketSubType.Database :
 				cLen = comm.GetByte ();
@@ -1581,10 +1634,15 @@ namespace Mono.Data.Tds.Protocol {
 
 			Comm.StartPacket (TdsPacketType.Query);
 			Comm.Append (sql);
-			Comm.SendPacket ();
+			try {
+				Comm.SendPacket ();
+				Comm.BeginReadPacket (new AsyncCallback(OnBeginExecuteQueryCallback), 
+						      ar);
+			} catch (IOException ex) {
+				connected = false;
+				throw new TdsInternalException ("Server closed the connection.", ex);
+			}
 
-                        Comm.BeginReadPacket (new AsyncCallback(OnBeginExecuteQueryCallback), 
-                                                                    ar);
                         return ar;
                 }
                 

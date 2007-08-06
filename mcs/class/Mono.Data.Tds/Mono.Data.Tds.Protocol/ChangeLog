@@ -1,3 +1,21 @@
+2007-08-06  Nagappan A  <anagappan@novell.com>
+
+	* TdsComm.cs (TdsComm): Now connects to the SqlServer in Async
+	mode. Fixes bug # 81934.
+
+	* Tds.cs (ProcessEnvironmentChange): Gets the server locale to use
+	them when required. Fixes bug # 82047.
+	When the server resets the connection, now the client code also
+	disconnects the session and remove the instance. Fixes bug #
+	81933.
+	Added new protected property Locale.
+
+	* TdsEnvPacketSubType.cs (Locale): Added new enumerator
+	entry. This gets the Locale type of SqlServer. Fixes bug # 82047.
+
+	* Tds70.cs (FormatParameter): Fixes the error when trying to add a
+	row with a DateTime field into an Italian SqlServer, bug # 82047.
+
 2007-07-23  Nagappan A  <anagappan@novell.com>
 
 	* TdsBulkCopy.cs: Removed all the Namespace that are not

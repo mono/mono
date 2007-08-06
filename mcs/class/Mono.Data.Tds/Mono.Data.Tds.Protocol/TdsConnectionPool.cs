@@ -114,18 +114,17 @@ namespace Mono.Data.Tds.Protocol
 		public ITds GetConnection ()
 		{
 			ITds connection = null;
-				
 			lock (list)
 			{
 				if (!initialized) 
 				{
-					for (int n=0; n<info.PoolMinSize; n++)
+					for (int n = 0; n < info.PoolMinSize; n++)
 						list.Add (CreateConnection ());
 					initialized = true;
 				}
 				
 				do {
-					if (list.Count > 0) 
+					if (list.Count > 0)
 					{
 						// There are available connections
 						connection = (ITds) list [list.Count - 1];

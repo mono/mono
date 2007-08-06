@@ -73,7 +73,6 @@ namespace Mono.Data.Tds.Protocol {
 		
 		#region Constructors
 
-		[MonoTODO ("Fix when asynchronous socket connect works on Linux.")]		
 		public TdsComm (string dataSource, int port, int packetSize, int timeout, TdsVersion tdsVersion)
 		{
 			this.packetSize = packetSize;
@@ -98,21 +97,13 @@ namespace Mono.Data.Tds.Protocol {
 #endif
 				endPoint = new IPEndPoint (hostEntry.AddressList [0], port);
 
-				// This replaces the code below for now
-				socket.Connect (endPoint);
+				connected.Reset ();
+				IAsyncResult asyncResult = socket.BeginConnect (endPoint, new AsyncCallback (ConnectCallback), socket);
 
-				/*
-				  FIXME: Asynchronous socket connection doesn't work right on linux, so comment 
-				  this out for now.  This *does* do the right thing on windows
-
-				  connected.Reset ();
-				  IAsyncResult asyncResult = socket.BeginConnect (endPoint, new AsyncCallback (ConnectCallback), socket);
-
-				  if (timeout > 0 && !connected.WaitOne (new TimeSpan (0, 0, timeout), true))
-				  throw Tds.CreateTimeoutException (dataSource, "Open()");
-				  else if (timeout > 0 && !connected.WaitOne ())
-				  throw Tds.CreateTimeoutException (dataSource, "Open()");
-				*/
+				if (timeout > 0 && !connected.WaitOne (new TimeSpan (0, 0, timeout), true))
+					throw Tds.CreateTimeoutException (dataSource, "Open()");
+				else if (timeout > 0 && !connected.WaitOne ())
+					throw Tds.CreateTimeoutException (dataSource, "Open()");
 
 				stream = new NetworkStream (socket);
 			} catch (SocketException e) {
@@ -464,7 +455,7 @@ namespace Mono.Data.Tds.Protocol {
                 private int GetPhysicalPacketHeader ()
                 {
                         int nread = 0;
-                                                
+
 			// read the header
 			while (nread < 8)
 				nread += stream.Read (tmpBuf, nread, 8 - nread);
@@ -492,9 +483,11 @@ namespace Mono.Data.Tds.Protocol {
                 {
                         // now get the data
 			int nread = 0;
+
 			while (nread < length) {
 				nread += stream.Read (inBuffer, nread, length - nread);
 			}
+
 			packetsReceived++;
 
 			// adjust the bookkeeping info about the incoming buffer
