@@ -55,7 +55,11 @@ namespace System.Web.Handlers {
 		const char QueryParamSeparator = '&';
 #endif
 		static readonly Hashtable _embeddedResources;
+#if SYSTEM_WEB_EXTENSIONS
+	static ScriptResourceHandler()
+#else
 		static AssemblyResourceLoader()
+#endif
 		{
 			_embeddedResources = new Hashtable ();
 			InitEmbeddedResourcesUrls ();
