@@ -294,10 +294,12 @@ namespace Mono.Cecil.Cil {
 		{
 			int index = m_instrs.IndexOf (target);
 			if (index == -1)
-				throw new ReflectionException ("Target instruction not in method body");
+				throw new ArgumentOutOfRangeException ("Target instruction not in method body");
 
 			m_instrs.Insert (index, instr);
 			instr.Previous = target.Previous;
+			if (target.Previous.Next != null)
+				target.Previous.Next = instr;
 			target.Previous = instr;
 			instr.Next = target;
 		}
@@ -306,10 +308,12 @@ namespace Mono.Cecil.Cil {
 		{
 			int index = m_instrs.IndexOf (target);
 			if (index == -1)
-				throw new ReflectionException ("Target instruction not in method body");
+				throw new ArgumentOutOfRangeException ("Target instruction not in method body");
 
 			m_instrs.Insert (index + 1, instr);
 			instr.Next = target.Next;
+			if (target.Next != null)
+				target.Next.Previous = instr;
 			target.Next = instr;
 			instr.Previous = target;
 		}
@@ -332,7 +336,7 @@ namespace Mono.Cecil.Cil {
 		{
 			int index = m_instrs.IndexOf (old);
 			if (index == -1)
-				throw new ReflectionException ("Target instruction not in method body");
+				throw new ArgumentOutOfRangeException ("Target instruction not in method body");
 
 			InsertAfter (old, instr);
 			Remove (old);
@@ -341,7 +345,7 @@ namespace Mono.Cecil.Cil {
 		public void Remove (Instruction instr)
 		{
 			if (!m_instrs.Contains (instr))
-				throw new ReflectionException ("Instruction not in method body");
+				throw new ArgumentException ("Instruction not in method body");
 
 			if (instr.Previous != null)
 				instr.Previous.Next = instr.Next;
