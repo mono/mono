@@ -457,9 +457,19 @@ namespace System {
 					while ((line = reader.ReadLine ()) != null) {
 						line = line.Trim ();
 						int delim_index = line.IndexOf ('=');
-						if (delim_index > 8 && line.Substring (0, delim_index) == key) {
-							return Path.Combine (home_dir, line.Substring (delim_index + 1));
-						}
+                        if(delim_index > 8 && line.Substring (0, delim_index) == key) {
+                            string path = line.Substring (delim_index + 1).Trim ('"');
+                            bool relative = false;
+
+                            if (path.StartsWith ("$HOME/")) {
+                                relative = true;
+                                path = path.Substring (6);
+                            } else if (!path.StartsWith ("/")) {
+                                relative = true;
+                            }
+
+                            return relative ? Path.Combine (home_dir, path) : path;
+                        }
 					}
 				}
 			} catch (FileNotFoundException) {

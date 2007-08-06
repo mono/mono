@@ -1,3 +1,10 @@
+2007-08-06  Aaron Bockover  <abockover@novell.com>
+
+	* Environment.cs (ReadXdgUserDir): Support the changes to the
+	xdg-user-dirs spec that allow $HOME to start the path; also allows
+	for quotes surrounding the path (Patch ported from Banshee,
+	BGO #461596)
+
 2007-07-28  Miguel de Icaza  <miguel@novell.com>
 
 	* MulticastDelegate.cs (Equals): do not cast to avoid exceptions,
