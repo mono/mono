@@ -3979,7 +3979,10 @@ namespace MonoTests.System.Data
 			}
 	 
 			DataView dv = dt.DefaultView;
-			dv.RowFilter = "StartDate >= '" + DateTime.Now.AddDays (2) + "' and StartDate <= '" + DateTime.Now.AddDays (4) + "'";
+			dv.RowFilter = String.Format (CultureInfo.InvariantCulture,
+						      "StartDate >= '{0}' and StartDate <= '{1}'",
+						      DateTime.Now.AddDays (2),
+						      DateTime.Now.AddDays (4));
 			Assert.AreEqual (10, dt.Rows.Count, "Table");
 			Assert.AreEqual (2, dv.Count, "View");
 		}
