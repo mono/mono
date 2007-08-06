@@ -1,3 +1,9 @@
+2007-08-06  Marek Habersack  <mhabersack@novell.com>
+
+	* AspComponentFoundry.cs: properly add new foundry if the
+	corresponding entry in the foundries collection is a Queue. Patch
+	from Juraj Skripsky <juraj@hotfeet.ch>, thanks! Fixes bug #82285.
+
 2007-07-31  Marek Habersack  <mhabersack@novell.com>
 
 	* AspComponentFoundry.cs: do not overwrite previously registered

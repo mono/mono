@@ -168,7 +168,7 @@ namespace System.Web.Compilation
 			if (f is CompoundFoundry) {
 				((CompoundFoundry) f).Add (foundry);
 				return;
-			} else if (f == null || (f is AssemblyFoundry && foundry is AssemblyFoundry)) {
+			} else if (f == null || f is Queue || (f is AssemblyFoundry && foundry is AssemblyFoundry)) {
 				newFoundry = foundry;
 			} else if (f != null) {
 				CompoundFoundry compound = new CompoundFoundry (foundryName);
