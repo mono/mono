@@ -1,3 +1,7 @@
+2007-08-06 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* Control.cs: refactoring: code formatting only.		
+
 2007-08-05  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* HtmlTextWriter.cs: performance refactoring, optimized AddAttribute
