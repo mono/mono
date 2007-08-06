@@ -38,6 +38,7 @@
 using Mono.Data.Tds;
 using Mono.Data.Tds.Protocol;
 using System;
+using System.IO;
 using System.Collections;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -368,7 +369,12 @@ namespace System.Data.SqlClient {
 
 			string sql = "sp_procedure_params_rowset";
 
-			Connection.Tds.ExecProc (sql, localParameters.MetaParameters, 0, true);
+			try {
+				Connection.Tds.ExecProc (sql, localParameters.MetaParameters, 0, true);
+			} catch (TdsInternalException ex) {
+				Connection.Close ();
+				throw SqlException.FromTdsInternalException ((TdsInternalException) ex);
+			}
 
 			SqlDataReader reader = new SqlDataReader (this);
 			parameters.Clear ();
@@ -408,14 +414,18 @@ namespace System.Data.SqlClient {
 					sql1.Append ("SET FMTONLY ON;");
 					sql2.Append ("SET FMTONLY OFF;");
 				}
-
 				switch (CommandType) {
 				case CommandType.StoredProcedure:
-					if (keyInfo || schemaOnly)
-						Connection.Tds.Execute (sql1.ToString ());
-					Connection.Tds.ExecProc (CommandText, parms, CommandTimeout, wantResults);
-					if (keyInfo || schemaOnly)
-						Connection.Tds.Execute (sql2.ToString ());
+					try {
+						if (keyInfo || schemaOnly)
+							Connection.Tds.Execute (sql1.ToString ());
+						Connection.Tds.ExecProc (CommandText, parms, CommandTimeout, wantResults);
+						if (keyInfo || schemaOnly)
+							Connection.Tds.Execute (sql2.ToString ());
+					} catch (TdsInternalException ex) {
+						Connection.Close ();
+						throw SqlException.FromTdsInternalException ((TdsInternalException) ex);
+					}
 					break;
 				case CommandType.Text:
 					string sql;
@@ -424,12 +434,23 @@ namespace System.Data.SqlClient {
 					} else {
 						sql = String.Format ("{0}{1}", sql1.ToString (), CommandText);
 					}
-					Connection.Tds.Execute (sql, parms, CommandTimeout, wantResults);
+					try {
+						Connection.Tds.Execute (sql, parms, CommandTimeout, wantResults);
+					} catch (TdsInternalException ex) {
+						Connection.Close ();
+						throw SqlException.FromTdsInternalException ((TdsInternalException) ex);
+					}
 					break;
 				}
 			}
-			else 
-				Connection.Tds.ExecPrepared (preparedStatement, parms, CommandTimeout, wantResults);
+			else {
+				try {
+					Connection.Tds.ExecPrepared (preparedStatement, parms, CommandTimeout, wantResults);
+				} catch (TdsInternalException ex) {
+					Connection.Close ();
+					throw SqlException.FromTdsInternalException ((TdsInternalException) ex);
+				}
+			}
 		}
 
 		public 
@@ -503,12 +524,17 @@ namespace System.Data.SqlClient {
 					throw SqlException.FromTdsInternalException ((TdsInternalException) e);
 				}
 
-				if (Connection.Tds.NextResult () && Connection.Tds.NextRow ())
-					result = Connection.Tds.ColumnValues[0];
+				try {
+					if (Connection.Tds.NextResult () && Connection.Tds.NextRow ())
+						result = Connection.Tds.ColumnValues[0];
 
-				if (commandType == CommandType.StoredProcedure) {
-					Connection.Tds.SkipToEnd ();
-					GetOutputParameters ();
+					if (commandType == CommandType.StoredProcedure) {
+						Connection.Tds.SkipToEnd ();
+						GetOutputParameters ();
+					}
+				} catch (TdsInternalException ex) {
+					Connection.Close ();
+					throw SqlException.FromTdsInternalException ((TdsInternalException) ex);
 				}
 
 				return result;
@@ -714,25 +740,41 @@ namespace System.Data.SqlClient {
 						prolog = sql1.ToString ();
 					if (keyInfo || schemaOnly)
 						epilog = sql2.ToString ();
-					Connection.Tds.BeginExecuteProcedure (prolog,
-						epilog,
-						CommandText,
-						!wantResults,
-						parms,
-						callback,
-						state);
+					try {
+						Connection.Tds.BeginExecuteProcedure (prolog,
+										      epilog,
+										      CommandText,
+										      !wantResults,
+										      parms,
+										      callback,
+										      state);
+					} catch (TdsInternalException ex) {
+						Connection.Close ();
+						throw SqlException.FromTdsInternalException ((TdsInternalException) ex);
+					}
 					break;
 				case CommandType.Text:
 					string sql = String.Format ("{0}{1};{2}", sql1.ToString (), CommandText, sql2.ToString ());
-					if (wantResults)
-						ar = Connection.Tds.BeginExecuteQuery (sql, parms, callback, state);
-					else
-						ar = Connection.Tds.BeginExecuteNonQuery (sql, parms, callback, state);
+					try {
+						if (wantResults)
+							ar = Connection.Tds.BeginExecuteQuery (sql, parms, callback, state);
+						else
+							ar = Connection.Tds.BeginExecuteNonQuery (sql, parms, callback, state);
+					} catch (TdsInternalException ex) {
+						Connection.Close ();
+						throw SqlException.FromTdsInternalException ((TdsInternalException) ex);
+					}
 					break;
 				}
 			}
-			else 
-				Connection.Tds.ExecPrepared (preparedStatement, parms, CommandTimeout, wantResults);
+			else {
+				try {
+					Connection.Tds.ExecPrepared (preparedStatement, parms, CommandTimeout, wantResults);
+				} catch (TdsInternalException ex) {
+					Connection.Close ();
+					throw SqlException.FromTdsInternalException ((TdsInternalException) ex);
+				}
+			}
 			return ar;
 		}
 

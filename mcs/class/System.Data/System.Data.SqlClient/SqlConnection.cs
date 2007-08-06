@@ -401,10 +401,12 @@ namespace System.Data.SqlClient {
 				xmlReader = null;
 			}
 
-			if (pooling) {
-				if(pool != null) pool.ReleaseConnection (tds);
-			}else
-				if(tds != null) tds.Disconnect ();
+			if (tds != null && tds.IsConnected) {
+				if (pooling) {
+					if(pool != null) pool.ReleaseConnection (tds);
+				}else
+					if(tds != null) tds.Disconnect ();
+			}
 
 			if (tds != null) {
 				tds.TdsErrorMessage -= new TdsInternalErrorMessageEventHandler (ErrorHandler);
@@ -516,7 +518,7 @@ namespace System.Data.SqlClient {
 				}
 			} catch (TdsTimeoutException e) {
 				throw SqlException.FromTdsInternalException ((TdsInternalException) e);
-			}catch (TdsInternalException e) {
+			} catch (TdsInternalException e) {
 				throw SqlException.FromTdsInternalException (e);
 			}
 
@@ -526,8 +528,7 @@ namespace System.Data.SqlClient {
 			if (!tds.IsConnected) {
 				try {
 					tds.Connect (parms);
-				}
-				catch {
+				} catch {
 					if (pooling)
 						pool.ReleaseConnection (tds);
 					throw;
@@ -609,9 +610,7 @@ namespace System.Data.SqlClient {
 			try
 			{
 				return int.Parse(value);
-			}
-			catch (Exception ex)
-			{
+			} catch (Exception ex) {
 				throw new ArgumentException(string.Format(CultureInfo.InvariantCulture,
 					"Invalid value \"{0}\" for key '{1}'.", value, key));
 			}

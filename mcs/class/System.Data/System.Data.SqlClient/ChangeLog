@@ -1,3 +1,9 @@
+2007-08-06  Nagappan A  <anagappan@novell.com>
+
+	* SqlCommand.cs, SqlDataReader.cs, SqlConnection.cs: When the
+	server resets the connection, now the client code also disconnects
+	the session and remove the instance from pool. Fixes bug # 81933.
+
 2007-07-31  Nagappan A  <anagappan@novell.com>
 
 	* SqlCommand.cs (Transaction, Connection): IDbCommand Transaction

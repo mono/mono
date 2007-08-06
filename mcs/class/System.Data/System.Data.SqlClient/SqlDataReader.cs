@@ -36,6 +36,7 @@
 
 using Mono.Data.Tds.Protocol;
 using System;
+using System.IO;
 using System.Text;
 using System.Collections;
 using System.ComponentModel;
@@ -276,12 +277,18 @@ namespace System.Data.SqlClient {
 		long GetBytes (int i, long dataIndex, byte[] buffer, int bufferIndex, int length)
 		{
 			if ((command.CommandBehavior & CommandBehavior.SequentialAccess) != 0) {
-				long len = ((Tds)command.Tds).GetSequentialColumnValue (i, dataIndex, buffer, bufferIndex, length);
-				if (len == -1)
-					throw new InvalidCastException ("Invalid attempt to GetBytes on column "
-							+ "'" + command.Tds.Columns[i]["ColumnName"] + "'." + "The GetBytes function"
-							+ " can only be used on columns of type Text, NText, or Image");
-				return len;
+				try {
+					long len = ((Tds)command.Tds).GetSequentialColumnValue (i, dataIndex, buffer, bufferIndex, length);
+					if (len == -1)
+						throw new InvalidCastException ("Invalid attempt to GetBytes on column "
+										+ "'" + command.Tds.Columns[i]["ColumnName"] +
+										"'." + "The GetBytes function"
+										+ " can only be used on columns of type Text, NText, or Image");
+					return len;
+				} catch (TdsInternalException ex) {
+					command.Connection.Close ();
+					throw SqlException.FromTdsInternalException ((TdsInternalException) ex);
+				}
 			}
 
 			object value = GetValue (i);
@@ -1081,8 +1088,13 @@ namespace System.Data.SqlClient {
 			if (i < 0 || i >= command.Tds.Columns.Count)
 				throw new IndexOutOfRangeException ();
 
-			if ((command.CommandBehavior & CommandBehavior.SequentialAccess) != 0) {
-				return ((Tds)command.Tds).GetSequentialColumnValue (i);
+			try {
+				if ((command.CommandBehavior & CommandBehavior.SequentialAccess) != 0) {
+					return ((Tds)command.Tds).GetSequentialColumnValue (i);
+				}
+			} catch (TdsInternalException ex) {
+				command.Connection.Close ();
+				throw SqlException.FromTdsInternalException ((TdsInternalException) ex);
 			}
 
 			return command.Tds.ColumnValues [i];
@@ -1101,9 +1113,13 @@ namespace System.Data.SqlClient {
 			// a native type.  Throw an OverflowException.
 			if (bigDecimalIndex >= 0 && bigDecimalIndex < len)
 				throw new OverflowException ();
-
-			command.Tds.ColumnValues.CopyTo (0, values, 0,
-							 len > command.Tds.ColumnValues.Count ? command.Tds.ColumnValues.Count : len);
+			try {
+				command.Tds.ColumnValues.CopyTo (0, values, 0,
+								 len > command.Tds.ColumnValues.Count ? command.Tds.ColumnValues.Count : len);
+			} catch (TdsInternalException ex) {
+				command.Connection.Close ();
+				throw SqlException.FromTdsInternalException ((TdsInternalException) ex);
+			}
 			return (len < FieldCount ? len : FieldCount);
 		}
 
@@ -1144,7 +1160,12 @@ namespace System.Data.SqlClient {
 			if ((command.CommandBehavior & CommandBehavior.SingleResult) != 0 && resultsRead > 0)
 				return false;
 
-			moreResults = command.Tds.NextResult ();
+			try {
+				moreResults = command.Tds.NextResult ();
+			} catch (TdsInternalException ex) {
+				command.Connection.Close ();
+				throw SqlException.FromTdsInternalException ((TdsInternalException) ex);
+			}
 			if (!moreResults)
 				command.GetOutputParameters ();
 			else {
@@ -1183,10 +1204,15 @@ namespace System.Data.SqlClient {
 
 		internal bool ReadRecord ()
 		{
-			bool result = command.Tds.NextRow ();
+			try {
+				bool result = command.Tds.NextRow ();
 			
-			rowsRead += 1;
-			return result;
+				rowsRead += 1;
+				return result;
+			} catch (TdsInternalException ex) {
+				command.Connection.Close ();
+				throw SqlException.FromTdsInternalException ((TdsInternalException) ex);
+			}
 		}
 		
 		void ValidateState ()
