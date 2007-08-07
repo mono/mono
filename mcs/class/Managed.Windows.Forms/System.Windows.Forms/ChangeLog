@@ -1,3 +1,9 @@
+2007-08-07  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Control.cs: Add a null check in OnParentBindingContextChanged. The parent
+	  might call us after we've been destroyed, in which case our own private
+	  parent field is null. Fixes #82326.
+
 2007-08-06  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStripDropDown.cs: Fix a failing test on X11 by adding a null

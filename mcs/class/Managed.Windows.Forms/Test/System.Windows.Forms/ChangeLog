@@ -1,3 +1,8 @@
+2007-08-07  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* DataGridViewTest.cs: Added test for #82326 and added a few forgotten
+	  [Test] attributes.
+
 2007-08-01  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* DataGridViewCellTest.cs: Added EditTypeTest and TestDefaultValues.

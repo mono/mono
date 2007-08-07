@@ -6010,7 +6010,7 @@ namespace System.Windows.Forms
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnParentBindingContextChanged(EventArgs e) {
-			if (binding_context==null) {
+			if (binding_context==null && Parent != null) {
 				binding_context=Parent.binding_context;
 				OnBindingContextChanged(e);
 			}

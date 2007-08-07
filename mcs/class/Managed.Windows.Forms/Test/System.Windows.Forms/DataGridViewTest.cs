@@ -444,12 +444,49 @@ namespace MonoTests.System.Windows.Forms {
 				get { return base.DefaultSize; }
 			}
 		}
+		[Test]
+		public void bug_82326 ()
+		{
+			using (Form f = new Form ()) {
+
+				DataGridView _dataGrid;
+				DataGridViewTextBoxColumn _column;
+
+				_dataGrid = new DataGridView ();
+				_column = new DataGridViewTextBoxColumn ();
+				f.SuspendLayout ();
+				((ISupportInitialize)(_dataGrid)).BeginInit ();
+				// 
+				// _dataGrid
+				// 
+				_dataGrid.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+				_dataGrid.Columns.Add (_column);
+				_dataGrid.RowTemplate.Height = 21;
+				_dataGrid.Location = new Point (12, 115);
+				_dataGrid.Size = new Size (268, 146);
+				_dataGrid.TabIndex = 0;
+				// 
+				// _column
+				// 
+				_column.HeaderText = "Column";
+				// 
+				// MainForm
+				// 
+				f.ClientSize = new Size (292, 273);
+				f.Controls.Add (_dataGrid);
+				((ISupportInitialize)(_dataGrid)).EndInit ();
+				f.ResumeLayout (false);
+				f.Load += delegate (object sender, EventArgs e) { ((Control)sender).FindForm ().Close (); };
+
+				Application.Run (f);
+			}
+		}
 	}
 	
 	[TestFixture]
 	public class DataGridViewControlCollectionTest
 	{
-		
+		[Test]
 		public void TestClear ()
 		{
 			using (DataGridView dgv = new DataGridView ()) {
@@ -489,7 +526,7 @@ namespace MonoTests.System.Windows.Forms {
 			}
 		}
 
-
+		[Test]
 		public void TestCopyTo ()
 		{
 			using (DataGridView dgv = new DataGridView ()) {
@@ -514,6 +551,7 @@ namespace MonoTests.System.Windows.Forms {
 			}
 		}
 
+		[Test]
 		[ExpectedException (typeof (NotSupportedException))]
 		public void TestInsert ()
 		{
@@ -523,7 +561,7 @@ namespace MonoTests.System.Windows.Forms {
 			}
 		}
 
-
+		[Test]
 		public void TestRemove ()
 		{
 			using (DataGridView dgv = new DataGridView ()) {
@@ -549,6 +587,8 @@ namespace MonoTests.System.Windows.Forms {
 				Assert.AreEqual (2, controls.Count, "#05");
 			}
 		}
+		
+		
 	}
 		
 }
