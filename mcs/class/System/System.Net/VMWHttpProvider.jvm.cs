@@ -381,7 +381,7 @@ namespace System.Net
 				{
 					mainsoft.apache.commons.httpclient.MultiThreadedHttpConnectionManager manager =
 						new mainsoft.apache.commons.httpclient.MultiThreadedHttpConnectionManager();
-					manager.setConnectionStaleCheckingEnabled(true);
+					manager.setConnectionStaleCheckingEnabled(false);
 					manager.setMaxTotalConnections(200);
 					//by some reasons RFC something - the default 
 					//value will be 2 , so we need to change it ...
