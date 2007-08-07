@@ -403,7 +403,7 @@ namespace System.Windows.Forms {
 				tooltip_window.Text = caption;
 				timer.Stop ();
 				timer.Start ();
-			} else if (MouseInControl (control))
+			} else if (MouseInControl (control, false))
 				ShowTooltip (control);
 		}
 
@@ -485,7 +485,6 @@ namespace System.Windows.Forms {
 
 			string text = (string)tooltip_strings[control];
 			if (text != null && text.Length > 0) {
-
 				if (active_control == null) {
 					timer.Interval = initial_delay;
 				} else {
@@ -521,7 +520,7 @@ namespace System.Windows.Forms {
 		}
 
 
-		private bool MouseInControl(Control control) {
+		private bool MouseInControl (Control control, bool fuzzy) {
 			Point	m;
 			Point	c;
 			Size	cw;
@@ -537,11 +536,16 @@ namespace System.Windows.Forms {
 			}
 			cw = control.ClientSize;
 
-			if (c.X<=m.X && m.X<(c.X+cw.Width) &&
-				c.Y<=m.Y && m.Y<(c.Y+cw.Height)) {
-				return true;
-			}
-			return false;
+
+			Rectangle rect = new Rectangle (c, cw);
+			
+			//
+			// We won't get mouse move events on all platforms with the exact same
+			// frequency, so cheat a bit.
+			if (fuzzy)
+				rect.Inflate (2, 2);
+
+			return rect.Contains (m);
 		}
 
 		private void control_MouseLeave(object sender, EventArgs e) 
@@ -553,7 +557,7 @@ namespace System.Windows.Forms {
 		{
 			timer.Stop();
 
-			if (!MouseInControl(tooltip_window) && !MouseInControl(active_control)) {
+			if (!MouseInControl (tooltip_window, true) && !MouseInControl (active_control, true)) {
 				active_control = null;
 				tooltip_window.Visible = false;
 			}

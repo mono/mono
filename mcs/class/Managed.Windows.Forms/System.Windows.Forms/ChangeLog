@@ -1,5 +1,11 @@
 2007-08-07  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* ToolTip.cs: We don't get mouse events on all platforms in the exact same
+	  moments, so apply some fuzzy logic to determine if the mouse is still
+	  inside a control or not. Fixes #82288 (for the third time).
+
+2007-08-07  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Control.cs: CreateControl: create implicit children as well. Fixes #82344.
 	  Don't create the child if it has been disposed already (may happen if
 	  the user closes the form the Load event).
