@@ -1,3 +1,8 @@
+2007-08-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* icall-def.h, security.c, security.h :
+	  added icall wrapper to ProtectedMemory.[Unprotect|Protect]Data().
+
 2007-08-07  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug-debugger.h
