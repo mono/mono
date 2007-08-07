@@ -1046,6 +1046,13 @@ namespace System.Windows.Forms
 		{
 			base.ResetForeColor ();
 		}
+
+		protected override void ScaleControl (SizeF factor, BoundsSpecified specified)
+		{
+			Rectangle new_bounds = GetScaledBounds (new Rectangle (Location, new Size (Width, Height)), factor, specified);
+
+			SetBounds (new_bounds.X, new_bounds.Y, new_bounds.Width, new_bounds.Height, specified);
+		}
 #endif
 		
 		protected override void SetBoundsCore (int x,  int y, int width, int height, BoundsSpecified specified)

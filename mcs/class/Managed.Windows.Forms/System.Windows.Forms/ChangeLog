@@ -1,3 +1,7 @@
+2007-08-07  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ListBox.cs: Implement ScaleControl.
+
 2007-08-07  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Form.cs: Add a few ActiveMenu null checks. ActiveMenu might be null if we

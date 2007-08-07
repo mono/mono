@@ -384,6 +384,41 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (new Rectangle (50, 100, 152, 50), c.PublicGetScaledBounds (r, new SizeF (.5f, .5f), BoundsSpecified.All), "A10");
 		}
 
+		[Test]
+		public void MethodScaleControl ()
+		{
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+
+			f.Show ();
+
+			ScaleListBox gb = new ScaleListBox ();
+			gb.Location = new Point (5, 10);
+			f.Controls.Add (gb);
+
+			Assert.AreEqual (new Rectangle (5, 10, 120, 95), gb.Bounds, "A1");
+
+			gb.PublicScaleControl (new SizeF (2.0f, 2.0f), BoundsSpecified.All);
+			Assert.AreEqual (new Rectangle (10, 20, 236, 186), gb.Bounds, "A2");
+
+			gb.PublicScaleControl (new SizeF (.5f, .5f), BoundsSpecified.Location);
+			Assert.AreEqual (new Rectangle (5, 10, 236, 186), gb.Bounds, "A3");
+
+			gb.PublicScaleControl (new SizeF (.5f, .5f), BoundsSpecified.Size);
+			Assert.AreEqual (new Rectangle (5, 10, 120, 95), gb.Bounds, "A4");
+
+			gb.PublicScaleControl (new SizeF (3.5f, 3.5f), BoundsSpecified.Size);
+			Assert.AreEqual (new Rectangle (5, 10, 410, 316), gb.Bounds, "A5");
+
+			gb.PublicScaleControl (new SizeF (2.5f, 2.5f), BoundsSpecified.Size);
+			Assert.AreEqual (new Rectangle (5, 10, 1019, 797), gb.Bounds, "A6");
+
+			gb.PublicScaleControl (new SizeF (.2f, .2f), BoundsSpecified.Size);
+			Assert.AreEqual (new Rectangle (5, 10, 207, 160), gb.Bounds, "A7");
+
+			f.Dispose ();
+		}
+
 		private class ScaleListBox : ListBox
 		{
 			public Rectangle PublicGetScaledBounds (Rectangle bounds, SizeF factor, BoundsSpecified specified)
