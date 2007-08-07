@@ -1,5 +1,10 @@
 2007-08-07  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SecureString.cs : adding notes that ProtectedMemory is not
+	  implemented for non-windows environment.
+
+2007-08-07  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SecureString.cs : Decrypt() and Encrypt() now use icall wrapper
 	  to ProtectedMemory in System.Security.dll.
 

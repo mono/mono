@@ -241,6 +241,7 @@ namespace System.Security {
 			Assembly.Load (Consts.AssemblySystem_Security)
 			.GetType ("System.Security.Cryptography.MemoryProtectionScope"), "SameProcess");
 
+		// Note that ProtectedMemory is not supported on non-Windows environment right now.
 		private void Encrypt ()
 		{
 			if ((data != null) && (data.Length > 0)) {
@@ -248,6 +249,7 @@ namespace System.Security {
 			}
 		}
 
+		// Note that ProtectedMemory is not supported on non-Windows environment right now.
 		private void Decrypt ()
 		{
 			if ((data != null) && (data.Length > 0)) {
