@@ -1,5 +1,11 @@
 2007-08-07  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Control.cs: CreateControl: create implicit children as well. Fixes #82344.
+	  Don't create the child if it has been disposed already (may happen if
+	  the user closes the form the Load event).
+
+2007-08-07  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* ToolTip.cs: If ReshowDelay is 0, show the tooltip immediately. Fixes
 	  #82288.
 

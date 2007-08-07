@@ -3559,12 +3559,12 @@ namespace System.Windows.Forms
 			if (!is_created) {
 				is_created = true;
 
-				// Create all of our children when we are created.
+				// Create all of our children (implicit ones as well) when we are created.
 				// The child should fire it's OnLoad before the parents, however
 				// if the child checks Parent.Created in it's OnCreateControl, the
 				// parent is already created.
-				foreach (Control c in Controls)
-					if (!c.Created)
+				foreach (Control c in Controls.GetAllControls ())
+					if (!c.Created && !c.IsDisposed)
 						c.CreateControl ();
 						
 #if ONLY_1_1
