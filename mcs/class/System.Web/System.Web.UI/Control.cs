@@ -100,6 +100,7 @@ namespace System.Web.UI
 		StateBag _viewState;
 		EventHandlerList _events;
 		RenderMethod _renderMethodDelegate;
+		Hashtable _controlsCache;
 		int defaultNumberID;
 
 		DataBindingCollection dataBindings;
@@ -635,6 +636,8 @@ namespace System.Web.UI
 		}
 
 		protected internal virtual void AddedControl (Control control, int index) {
+			ResetControlsCache ();
+
 			/* Ensure the control don't have more than 1 parent */
 			if (control._parent != null)
 				control._parent.Controls.Remove (control);
@@ -766,6 +769,55 @@ namespace System.Web.UI
 
 #endif
 
+		internal void ResetControlsCache ()
+		{
+			_controlsCache = null;
+
+			if ((this.stateMask & IS_NAMING_CONTAINER) == 0 && Parent != null)
+				Parent.ResetControlsCache ();
+		}
+
+		internal Hashtable InitControlsCache ()
+		{
+			if (_controlsCache != null)
+				return _controlsCache;
+
+			if ((this.stateMask & IS_NAMING_CONTAINER) != 0 || Parent == null)
+				_controlsCache = new Hashtable ();
+			else
+				_controlsCache = Parent.InitControlsCache ();
+
+			return _controlsCache;
+		}
+
+		void EnsureControlsCache ()
+		{
+			if (_controlsCache != null)
+				return;
+
+			InitControlsCache ();
+			FillControlCache (this);
+
+		}
+
+		void FillControlCache (Control control)
+		{
+			if (!HasControls ())
+				return;
+
+			foreach (Control c in control._controls) {
+				try {
+					if (c._userId != null)
+						_controlsCache.Add (c._userId, c);
+				}
+				catch (Exception ex) {
+					throw new HttpException ("Found more than one control with ID '" + c._userId + "'");
+				}
+
+				if ((c.stateMask & IS_NAMING_CONTAINER) == 0 && c.HasControls ())
+					FillControlCache (c);
+			}
+		}
 
 		protected bool IsLiteralContent () {
 			if (HasControls () && _controls.Count == 1 && (_controls [0] is LiteralControl))
@@ -784,32 +836,8 @@ namespace System.Web.UI
 			if (this == Page && id != null && id == Page.PortletNamespace)
 				return this;
 #endif
-			if (!HasControls ())
-				return null;
-
-			Control result = null;
-			foreach (Control c in _controls) {
-				if (String.Compare (id, c._userId, true, CultureInfo.InvariantCulture) == 0) {
-					if (result != null && result != c) {
-						throw new HttpException ("1 Found more than one control with ID '" + id + "'");
-					}
-
-					result = c;
-					continue;
-				}
-
-				if ((c.stateMask & IS_NAMING_CONTAINER) == 0 && c.HasControls ()) {
-					Control child = c.LookForControlByName (id);
-					if (child != null) {
-						if (result != null && result != child)
-							throw new HttpException ("2 Found more than one control with ID '" + id + "'");
-
-						result = child;
-					}
-				}
-			}
-
-			return result;
+			EnsureControlsCache ();
+			return (Control) _controlsCache [id];
 		}
 
 		protected virtual Control FindControl (string id, int pathOffset) {
