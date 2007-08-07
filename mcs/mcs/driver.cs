@@ -289,7 +289,7 @@ namespace Mono.CSharp
 		public static int Main (string[] args)
 		{
 #if SMCS_SOURCE
-			RootContext.Version = LanguageVersion.Linq;
+			RootContext.Version = LanguageVersion.LINQ;
 #else
 			RootContext.Version = LanguageVersion.Default;
 #endif
