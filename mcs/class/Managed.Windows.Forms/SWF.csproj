@@ -2419,6 +2419,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\MdiControlStrip.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\MdiLayout.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
