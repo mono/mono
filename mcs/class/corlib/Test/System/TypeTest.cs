@@ -856,7 +856,7 @@ PublicKeyToken=b77a5c561934e089"));
 			Type argType = typeof (ComFoo<>).GetGenericArguments () [0];
 			MemberInfo [] members = argType.GetMembers ();
 			Assert.IsNotNull (members, "#1");
-			//Assert.AreEqual (4, members.Length, "#2");
+			Assert.AreEqual (4, members.Length, "#2");
 		}
 #endif
 

@@ -1,3 +1,7 @@
+2007-08-07  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TypeTest.cs: Uncomment test for bug #82211.
+
 2007-08-04  William Holmes  <billholmes54@gmail.com>
 
 	* AppDomainTest.cs: Adding username to tempDir to avoid file access 
