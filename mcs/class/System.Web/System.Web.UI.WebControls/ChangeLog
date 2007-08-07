@@ -1,5 +1,10 @@
 2007-08-07  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
+	* Menu.cs: performance refactoring, used AddAttribute overload without
+	encoding on known attribute values, optimized DynamicMenu rendering
+
+2007-08-07  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
 	* TreeView.cs: refactoring, used AddAttribute overload without encoding
 	on known attribute values,
 	used Page.ClientScript.GetWebResourceUrl call instead of

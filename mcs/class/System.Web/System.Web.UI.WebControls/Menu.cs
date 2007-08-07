@@ -1162,7 +1162,7 @@ namespace System.Web.UI.WebControls
 			}
 			
 			string cmenu = ClientID + "_data";
-			string script = string.Format ("var {0} = new Object ();\n", cmenu);
+			string script = string.Concat ("var ", cmenu, " = new Object ();\n");
 			script += string.Format ("{0}.disappearAfter = {1};\n", cmenu, ClientScriptManager.GetScriptLiteral (DisappearAfter));
 			script += string.Format ("{0}.vertical = {1};\n", cmenu, ClientScriptManager.GetScriptLiteral (Orientation == Orientation.Vertical));
 			if (DynamicHorizontalOffset != 0)
@@ -1219,16 +1219,16 @@ namespace System.Web.UI.WebControls
 				if (Page.Header == null)
 					throw new InvalidOperationException ("Using Menu.StaticHoverStyle requires Page.Header to be non-null (e.g. <head runat=\"server\" />).");
 				RegisterStyle (staticHoverStyle, StaticHoverLinkStyle);
-				script += string.Format ("{0}.staticHover = {1};\n", cmenu, ClientScriptManager.GetScriptLiteral (staticHoverStyle.RegisteredCssClass));
-				script += string.Format ("{0}.staticLinkHover = {1};\n", cmenu, ClientScriptManager.GetScriptLiteral (StaticHoverLinkStyle.RegisteredCssClass));
+				script += string.Concat (cmenu, ".staticHover = ", ClientScriptManager.GetScriptLiteral (staticHoverStyle.RegisteredCssClass), ";\n");
+				script += string.Concat (cmenu, ".staticLinkHover = ", ClientScriptManager.GetScriptLiteral (StaticHoverLinkStyle.RegisteredCssClass), ";\n");
 			}
 			
 			if (dynamicHoverStyle != null) {
 				if (Page.Header == null)
 					throw new InvalidOperationException ("Using Menu.DynamicHoverStyle requires Page.Header to be non-null (e.g. <head runat=\"server\" />).");
 				RegisterStyle (dynamicHoverStyle, DynamicHoverLinkStyle);
-				script += string.Format ("{0}.dynamicHover = {1};\n", cmenu, ClientScriptManager.GetScriptLiteral (dynamicHoverStyle.RegisteredCssClass));
-				script += string.Format ("{0}.dynamicLinkHover = {1};\n", cmenu, ClientScriptManager.GetScriptLiteral (DynamicHoverLinkStyle.RegisteredCssClass));
+				script += string.Concat (cmenu, ".dynamicHover = ", ClientScriptManager.GetScriptLiteral (dynamicHoverStyle.RegisteredCssClass), ";\n");
+				script += string.Concat (cmenu, ".dynamicLinkHover = ", ClientScriptManager.GetScriptLiteral (DynamicHoverLinkStyle.RegisteredCssClass), ";\n");
 			}
 
 			Page.ClientScript.RegisterWebFormClientScript ();
@@ -1277,9 +1277,9 @@ namespace System.Web.UI.WebControls
 		
 		protected override void AddAttributesToRender (HtmlTextWriter writer)
 		{
-			writer.AddAttribute ("cellpadding", "0");
-			writer.AddAttribute ("cellspacing", "0");
-			writer.AddAttribute ("border", "0");
+			writer.AddAttribute ("cellpadding", "0", false);
+			writer.AddAttribute ("cellspacing", "0", false);
+			writer.AddAttribute ("border", "0", false);
 			if (Page.Header != null) {
 				// styles are registered
 				if (staticMenuStyle != null) {
@@ -1354,75 +1354,155 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-		void RenderDynamicMenu (HtmlTextWriter writer, MenuItem item)
+		MenuRenderHtmlTemplate _dynamicTemplate;
+		MenuRenderHtmlTemplate GetDynamicMenuTemplate (MenuItem item)
 		{
-			SubMenuStyle style = new SubMenuStyle ();
+			if (_dynamicTemplate != null) 
+				return _dynamicTemplate;
+
+			_dynamicTemplate = new MenuRenderHtmlTemplate ();
+			HtmlTextWriter writer = _dynamicTemplate.GetMenuTemplateWriter ();
+
 			if (Page.Header != null) {
-				AddCssClass (style, PopOutBoxStyle.RegisteredCssClass);
+				writer.AddAttribute (HtmlTextWriterAttribute.Class, MenuRenderHtmlTemplate.Marker);
 			}
 			else {
-				style.CopyFrom (PopOutBoxStyle);
+				writer.AddAttribute (HtmlTextWriterAttribute.Style, MenuRenderHtmlTemplate.Marker);
 			}
-			FillMenuStyle (true, item.Depth + 1, style);
-			style.AddAttributesToRender (writer);
 
 			writer.AddStyleAttribute ("visibility", "hidden");
 			writer.AddStyleAttribute ("position", "absolute");
 			writer.AddStyleAttribute ("z-index", "1");
 			writer.AddStyleAttribute ("left", "0px");
 			writer.AddStyleAttribute ("top", "0px");
-			writer.AddAttribute ("id", GetItemClientId (item, "s"));
+			writer.AddAttribute ("id", MenuRenderHtmlTemplate.Marker);
 			writer.RenderBeginTag (HtmlTextWriterTag.Div);
 
 			// Up button
-			writer.AddAttribute ("id", GetItemClientId (item, "cu"));
+			writer.AddAttribute ("id", MenuRenderHtmlTemplate.Marker);
 			writer.AddStyleAttribute ("display", "block");
 			writer.AddStyleAttribute ("text-align", "center");
-			writer.AddAttribute ("onmouseover", string.Format ("javascript:Menu_OverScrollBtn ('{0}','{1}','{2}')", ClientID, item.Path, "u"));
-			writer.AddAttribute ("onmouseout", string.Format ("javascript:Menu_OutScrollBtn ('{0}','{1}','{2}')", ClientID, item.Path, "u"));
+			writer.AddAttribute ("onmouseover", string.Concat ("Menu_OverScrollBtn ('", ClientID, "','", MenuRenderHtmlTemplate.Marker, "','u')")); 
+			writer.AddAttribute ("onmouseout", string.Concat ("Menu_OutScrollBtn ('", ClientID, "','", MenuRenderHtmlTemplate.Marker, "','u')")); 
 			writer.RenderBeginTag (HtmlTextWriterTag.Div);
 			
-			string src = ScrollUpImageUrl != "" ? ScrollUpImageUrl : Page.ClientScript.GetWebResourceUrl (typeof(Menu), "arrow_up.gif");
-			writer.AddAttribute ("src", src);
-			writer.AddAttribute ("alt", ScrollUpText);
+			writer.AddAttribute ("src", MenuRenderHtmlTemplate.Marker); //src
+			writer.AddAttribute ("alt", MenuRenderHtmlTemplate.Marker); //ScrollUpText
 			writer.RenderBeginTag (HtmlTextWriterTag.Img);
 			writer.RenderEndTag ();	// IMG
 			
 			writer.RenderEndTag ();	// DIV scroll button
 		
-			writer.AddAttribute ("id", GetItemClientId (item, "cb"));	// Scroll container
+			writer.AddAttribute ("id", MenuRenderHtmlTemplate.Marker);
 			writer.RenderBeginTag (HtmlTextWriterTag.Div);
-			writer.AddAttribute ("id", GetItemClientId (item, "cc"));	// Content
+			writer.AddAttribute ("id", MenuRenderHtmlTemplate.Marker);
 			writer.RenderBeginTag (HtmlTextWriterTag.Div);
 			
-			RenderMenu (writer, item.ChildItems, true, true, item.Depth + 1, false);
+			// call of RenderMenu
+			writer.Write (MenuRenderHtmlTemplate.Marker);
 			
 			writer.RenderEndTag ();	// DIV Content
 			writer.RenderEndTag ();	// DIV Scroll container
 
 			// Down button
-			writer.AddAttribute ("id", GetItemClientId (item, "cd"));
+			writer.AddAttribute ("id", MenuRenderHtmlTemplate.Marker);
 			writer.AddStyleAttribute ("display", "block");
 			writer.AddStyleAttribute ("text-align", "center");
-			writer.AddAttribute ("onmouseover", string.Format ("javascript:Menu_OverScrollBtn ('{0}','{1}','{2}')", ClientID, item.Path, "d"));
-			writer.AddAttribute ("onmouseout", string.Format ("javascript:Menu_OutScrollBtn ('{0}','{1}','{2}')", ClientID, item.Path, "d"));
+			writer.AddAttribute ("onmouseover", string.Concat ("Menu_OverScrollBtn ('", ClientID, "','", MenuRenderHtmlTemplate.Marker, "','d')")); 
+			writer.AddAttribute ("onmouseout", string.Concat ("Menu_OutScrollBtn ('", ClientID, "','", MenuRenderHtmlTemplate.Marker, "','d')")); 
 			writer.RenderBeginTag (HtmlTextWriterTag.Div);
 			
-			src = ScrollDownImageUrl != "" ? ScrollDownImageUrl : Page.ClientScript.GetWebResourceUrl (typeof(Menu), "arrow_down.gif");
-			writer.AddAttribute ("src", src);
-			writer.AddAttribute ("alt", ScrollDownText);
+			writer.AddAttribute ("src", MenuRenderHtmlTemplate.Marker); //src
+			writer.AddAttribute ("alt", MenuRenderHtmlTemplate.Marker); //ScrollDownText
 			writer.RenderBeginTag (HtmlTextWriterTag.Img);
 			writer.RenderEndTag ();	// IMG
 			
 			writer.RenderEndTag ();	// DIV scroll button
 			
 			writer.RenderEndTag ();	// DIV menu
+
+			_dynamicTemplate.Parse ();
+			return _dynamicTemplate;
+		}
+
+		void RenderDynamicMenu (HtmlTextWriter writer, MenuItem item)
+		{
+			_dynamicTemplate = GetDynamicMenuTemplate (item);
+
+			string idPrefix = ClientID + "_" + item.Path;
+			string [] param = new string [9];
+			param [0] = GetCssMenuStyle (true, item.Depth + 1);
+			param [1] = idPrefix + "s";
+			param [2] = idPrefix + "cu";
+			param [3] = item.Path;
+			param [4] = item.Path;
+			param [5] = ScrollUpImageUrl != "" ? ScrollUpImageUrl : Page.ClientScript.GetWebResourceUrl (typeof (Menu), "arrow_up.gif");
+			param [6] = ScrollUpText;
+			param [7] = idPrefix + "cb";
+			param [8] = idPrefix + "cc";
+
+			_dynamicTemplate.RenderTemplate (writer, param, 0, param.Length);
+
+			RenderMenu (writer, item.ChildItems, true, true, item.Depth + 1, false);
+
+			string [] param2 = new string [5];
+			param2 [0] = idPrefix + "cd";
+			param2 [1] = item.Path;
+			param2 [2] = item.Path;
+			param2 [3] = ScrollDownImageUrl != "" ? ScrollDownImageUrl : Page.ClientScript.GetWebResourceUrl (typeof (Menu), "arrow_down.gif");
+			param2 [4] = ScrollDownText;
+
+			_dynamicTemplate.RenderTemplate (writer, param2, param.Length + 1, param2.Length);
+
+		}
+
+		string GetCssMenuStyle (bool dynamic, int menuLevel)
+		{
+			if (Page.Header != null) {
+				// styles are registered
+				StringBuilder sb = new StringBuilder ();
+
+				if (!dynamic && staticMenuStyle != null) {
+					sb.Append (staticMenuStyle.CssClass);
+					sb.Append (' ');
+					sb.Append (staticMenuStyle.RegisteredCssClass);
+				}
+				if (dynamic && dynamicMenuStyle != null) {
+					sb.Append (PopOutBoxStyle.RegisteredCssClass);
+					sb.Append (' ');
+					sb.Append (dynamicMenuStyle.CssClass);
+					sb.Append (' ');
+					sb.Append (dynamicMenuStyle.RegisteredCssClass);
+				}
+				if (levelSubMenuStyles != null && levelSubMenuStyles.Count > menuLevel) {
+					sb.Append (levelSubMenuStyles [menuLevel].CssClass);
+					sb.Append (' ');
+					sb.Append (levelSubMenuStyles [menuLevel].RegisteredCssClass); 
+				}
+				return sb.ToString ();
+			}
+			else {
+				// styles are not registered
+				SubMenuStyle style = new SubMenuStyle ();
+
+				if (!dynamic && staticMenuStyle != null) {
+					style.CopyFrom (staticMenuStyle);
+				}
+				if (dynamic && dynamicMenuStyle != null) {
+					style.CopyFrom (PopOutBoxStyle);
+					style.CopyFrom (dynamicMenuStyle);
+				}
+				if (levelSubMenuStyles != null && levelSubMenuStyles.Count > menuLevel) {
+					style.CopyFrom (levelSubMenuStyles [menuLevel]);
+				}
+				return style.GetStyleAttributes (null).Value;
+			}
 		}
 
 		void RenderMenuBeginTagAttributes (HtmlTextWriter writer, bool dynamic, int menuLevel) {
-			writer.AddAttribute ("cellpadding", "0");
-			writer.AddAttribute ("cellspacing", "0");
-			writer.AddAttribute ("border", "0");
+			writer.AddAttribute ("cellpadding", "0", false);
+			writer.AddAttribute ("cellspacing", "0", false);
+			writer.AddAttribute ("border", "0", false);
 
 			if (!dynamic) {
 				SubMenuStyle style = new SubMenuStyle ();
@@ -1620,10 +1700,10 @@ namespace System.Web.UI.WebControls
 
 			writer.AddAttribute ("id", GetItemClientId (item, "i"));
 
-			writer.AddAttribute ("cellpadding", "0");
-			writer.AddAttribute ("cellspacing", "0");
-			writer.AddAttribute ("border", "0");
-			writer.AddAttribute ("width", "100%");
+			writer.AddAttribute ("cellpadding", "0", false);
+			writer.AddAttribute ("cellspacing", "0", false);
+			writer.AddAttribute ("border", "0", false);
+			writer.AddAttribute ("width", "100%", false);
 			writer.RenderBeginTag (HtmlTextWriterTag.Table);
 			writer.RenderBeginTag (HtmlTextWriterTag.Tr);
 
@@ -1842,12 +1922,12 @@ namespace System.Web.UI.WebControls
 				if (DynamicPopOutImageUrl != "")
 					return DynamicPopOutImageUrl;
 				if (DynamicEnableDefaultPopOutImage)
-					return AssemblyResourceLoader.GetResourceUrl (typeof(Menu), "arrow_plus.gif");
+					return Page.ClientScript.GetWebResourceUrl (typeof (Menu), "arrow_plus.gif");
 			} else {
 				if (StaticPopOutImageUrl != "")
 					return StaticPopOutImageUrl;
 				if (StaticEnableDefaultPopOutImage)
-					return AssemblyResourceLoader.GetResourceUrl (typeof(Menu), "arrow_plus.gif");
+					return Page.ClientScript.GetWebResourceUrl (typeof (Menu), "arrow_plus.gif");
 			}
 			return null;
 		}
@@ -1855,10 +1935,10 @@ namespace System.Web.UI.WebControls
 		void RenderItemHref (HtmlTextWriter writer, MenuItem item)
 		{
 			if (!item.BranchEnabled) {
-				writer.AddAttribute ("disabled", "true");
+				writer.AddAttribute ("disabled", "true", false);
 			}
 			else if (!item.Selectable) {
-				writer.AddAttribute ("href", "#");
+				writer.AddAttribute ("href", "#", false);
 				writer.AddStyleAttribute ("cursor", "text");
 			}
 			else if (item.NavigateUrl != "") {
@@ -1886,6 +1966,122 @@ namespace System.Web.UI.WebControls
 		string GetClientEvent (MenuItem item)
 		{
 			return Page.ClientScript.GetPostBackClientHyperlink (this, item.Path);
+		}
+
+		class MenuTemplateWriter : TextWriter
+		{
+			char [] _buffer;
+			int _ptr = 0;
+			
+			public MenuTemplateWriter (char [] buffer)
+			{
+				_buffer = buffer;
+			}
+
+			public override Encoding Encoding
+			{
+				get { return Encoding.Unicode; }
+			}
+
+			public override void Write (char value)
+			{
+				if (_ptr == _buffer.Length)
+					EnsureCapacity ();
+				
+				_buffer [_ptr++] = value;
+			}
+
+			public override void Write (string value)
+			{
+				if (value == null)
+					return;
+
+				if (_ptr + value.Length >= _buffer.Length)
+					EnsureCapacity ();
+
+				for (int i = 0; i < value.Length; i++)
+					_buffer [_ptr++] = value [i];
+			}
+
+			private void EnsureCapacity ()
+			{
+				char [] tmpBuffer = new char [_buffer.Length * 2];
+				Array.Copy (_buffer, tmpBuffer, _buffer.Length);
+
+				_buffer = tmpBuffer;
+			}
+		}
+
+		class MenuRenderHtmlTemplate
+		{
+			public const string Marker = "\u093a\u093b\u0971";
+			char [] _templateHtml;
+
+			MenuTemplateWriter _templateWriter;
+			ArrayList idxs = new ArrayList (32);
+
+			public MenuRenderHtmlTemplate ()
+			{
+				_templateHtml = new char [1024];
+				_templateWriter = new MenuTemplateWriter (_templateHtml);
+			}
+
+			public HtmlTextWriter GetMenuTemplateWriter()
+			{
+				return new HtmlTextWriter (_templateWriter);
+			}
+
+			public void Parse ()
+			{
+				int mpos = 0;
+				for (int i = 0; i < _templateHtml.Length; i++) {
+					if (_templateHtml [i] == '\0') {
+						idxs.Add (i);
+						break;
+					}
+
+					if (_templateHtml [i] != Marker [mpos]) {
+						mpos = 0;
+						continue;
+					}
+
+					mpos++;
+					if (mpos == Marker.Length) {
+						mpos = 0;
+						idxs.Add (i - Marker.Length + 1);
+					}
+				}
+			}
+
+			public void RenderTemplate (HtmlTextWriter writer, string [] dynamicParts, int start, int count)
+			{
+				if (idxs.Count == 0)
+					return;
+
+				int partStart = 0;
+				int partEnd = (start == 0) ? -Marker.Length : (int) idxs [start - 1];
+				int di = 0;
+
+				int i = start;
+				int total = start + count;
+				for (; i < total; i++) {
+
+					partStart = partEnd + Marker.Length;
+					partEnd = (int) idxs [i];
+					
+					// write static part
+					writer.Write (_templateHtml, partStart, partEnd - partStart);
+
+					// write synamic part
+					writer.Write (dynamicParts [di++]);
+				}
+
+				partStart = partEnd + Marker.Length;
+				partEnd = (int) idxs [i];
+
+				writer.Write (_templateHtml, partStart, partEnd - partStart);
+			}
+		
 		}
 	}
 }
