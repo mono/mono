@@ -1,3 +1,8 @@
+2007-08-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* threads.c (free_thread_static_data_helper): Avoid a crash if
+	thread->static_data is not yet set.
+
 2007-08-07  Jonathan Chambers  <joncham@gmail.com>
 
 	* marshal.c: Use correct image when emitting
