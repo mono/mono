@@ -29,6 +29,8 @@
 #if NET_2_0
 
 using System.Globalization;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.ConstrainedExecution;
 using System.Security.Cryptography;
@@ -229,19 +231,27 @@ namespace System.Security {
 
 		// internal/private stuff
 
-		[MonoTODO ("ProtectedMemory is in System.Security.dll - move this into the runtime/icall")]
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern static void EncryptInternal (byte [] data, object scope);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern static void DecryptInternal (byte [] data, object scope);
+
+		static readonly object scope = Enum.Parse (
+			Assembly.Load (Consts.AssemblySystem_Security)
+			.GetType ("System.Security.Cryptography.MemoryProtectionScope"), "SameProcess");
+
 		private void Encrypt ()
 		{
 			if ((data != null) && (data.Length > 0)) {
-//				ProtectedMemory.Protect (data, MemoryProtectionScope.SameProcess);
+				EncryptInternal (data, scope);
 			}
 		}
 
-		[MonoTODO ("ProtectedMemory is in System.Security.dll - move this into the runtime/icall")]
 		private void Decrypt ()
 		{
 			if ((data != null) && (data.Length > 0)) {
-//				ProtectedMemory.Unprotect (data, MemoryProtectionScope.SameProcess);
+				DecryptInternal (data, scope);
 			}
 		}
 

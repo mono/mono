@@ -1,3 +1,8 @@
+2007-08-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SecureString.cs : Decrypt() and Encrypt() now use icall wrapper
+	  to ProtectedMemory in System.Security.dll.
+
 2007-02-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PermissionSet.cs: Fix InvalidCastException on non-CAS permissions.
