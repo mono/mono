@@ -1,3 +1,10 @@
+2007-08-07  Jonathan Chambers  <joncham@gmail.com>
+
+	* marshal.c: Use correct image when emitting
+	native wrapper for COM calls.
+   
+	Code is contributed under MIT/X11 license.
+
 2007-08-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* icall-def.h, security.c, security.h :
@@ -46,13 +53,13 @@ Fri Aug 3 19:54:23 CEST 2007 Paolo Molaro <lupus@ximian.com>
 	* class.c (mono_class_is_assignable_from): Handle the case when klass is a 
 	generic parameter.
 
-2007-07-03  Jonathan Chambers  <joncham@gmail.com>
+2007-08-03  Jonathan Chambers  <joncham@gmail.com>
 
-       * marshal.c: Implement COM Objects as return type for 
-       managed->unmanaged calls. Added Release calls for COM Object
-       out/return values in managed->unmanaged calls.
-       
-       Code is contributed under MIT/X11 license.
+	* marshal.c: Implement COM Objects as return type for 
+	managed->unmanaged calls. Added Release calls for COM Object
+	out/return values in managed->unmanaged calls.
+
+	Code is contributed under MIT/X11 license.
 
 Fri Aug 3 17:00:51 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
