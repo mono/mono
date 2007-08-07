@@ -1,5 +1,10 @@
 2007-08-07  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* ToolTip.cs: If ReshowDelay is 0, show the tooltip immediately. Fixes
+	  #82288.
+
+2007-08-07  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Control.cs: Add a null check in OnParentBindingContextChanged. The parent
 	  might call us after we've been destroyed, in which case our own private
 	  parent field is null. Fixes #82326.
