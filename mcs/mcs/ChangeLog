@@ -1,5 +1,9 @@
 2007-08-07  Miguel de Icaza  <miguel@novell.com>
 
+	* expression.cs: Fix the previous commit, the creation of the
+	arguments array list needs also to be conditional on the arguments
+	not being null.
+
 	* class.cs: Add a little bit of help to help narrow down problems.
 
 	* expression.cs (ArrayCreation.CloneTo): Argument can be null, do
