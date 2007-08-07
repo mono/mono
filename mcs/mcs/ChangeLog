@@ -1,5 +1,10 @@
 2007-08-07  Miguel de Icaza  <miguel@novell.com>
 
+	* class.cs: Add a little bit of help to help narrow down problems.
+
+	* expression.cs (ArrayCreation.CloneTo): Argument can be null, do
+	not try to copy in that case. 
+
 	* driver.cs: When building SMCS, include a new different set of
 	default assemblies here.   Do this here so we can control whether
 	to include the default assemblies with /noconfig.

@@ -4549,15 +4549,21 @@ namespace Mono.CSharp {
 		// 
 		public override void Emit ()
 		{
-			Report.Debug (64, "METHOD EMIT", this, MethodBuilder, Location, Block, MethodData);
-			MethodData.Emit (Parent);
-			base.Emit ();
-
-			if ((ModFlags & Modifiers.METHOD_EXTENSION) != 0)
-				MethodBuilder.SetCustomAttribute (TypeManager.extension_attribute_attr);
-
-			Block = null;
-			MethodData = null;
+			try {
+				Report.Debug (64, "METHOD EMIT", this, MethodBuilder, Location, Block, MethodData);
+				MethodData.Emit (Parent);
+				base.Emit ();
+				
+				if ((ModFlags & Modifiers.METHOD_EXTENSION) != 0)
+					MethodBuilder.SetCustomAttribute (TypeManager.extension_attribute_attr);
+				
+				Block = null;
+				MethodData = null;
+			} catch {
+				Console.WriteLine ("Interna compiler error at {0}: exception caught while emitting {1}",
+						   Location, MethodBuilder);
+				throw;
+			}
 		}
 
 		public static void Error1599 (Location loc, Type t)

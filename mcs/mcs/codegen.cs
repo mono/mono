@@ -15,7 +15,7 @@
 //
 // Only remove it if you need to debug locally on your tree.
 //
-//#define PRODUCTION
+#define PRODUCTION
 
 using System;
 using System.IO;

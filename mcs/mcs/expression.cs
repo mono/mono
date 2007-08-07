@@ -6051,8 +6051,11 @@ namespace Mono.CSharp {
 
 			target.requested_base_type = requested_base_type.Clone (clonectx);
 			target.arguments = new ArrayList ();
-			foreach (Argument a in arguments)
-				target.arguments.Add (a.Clone (clonectx));
+
+			if (arguments != null){
+				foreach (Argument a in arguments)
+					target.arguments.Add (a.Clone (clonectx));
+			}
 
 			if (initializers != null){
 				target.initializers = new ArrayList ();
