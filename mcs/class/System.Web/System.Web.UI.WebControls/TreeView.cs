@@ -1290,8 +1290,8 @@ namespace System.Web.UI.WebControls
 			else
 				hasChildNodes = (node.PopulateOnDemand && !node.Populated) || node.ChildNodes.Count > 0;
 				
-			writer.AddAttribute ("cellpadding", "0");
-			writer.AddAttribute ("cellspacing", "0");
+			writer.AddAttribute ("cellpadding", "0", false);
+			writer.AddAttribute ("cellspacing", "0", false);
 			writer.AddStyleAttribute ("border-width", "0");
 			writer.RenderBeginTag (HtmlTextWriterTag.Table);
 
@@ -1312,7 +1312,7 @@ namespace System.Web.UI.WebControls
 				writer.RenderBeginTag (HtmlTextWriterTag.Div);
 				if (ShowLines && levelLines [n] != null) {
 					writer.AddAttribute ("src", nodeImage);
-					writer.AddAttribute (HtmlTextWriterAttribute.Alt, "");
+					writer.AddAttribute (HtmlTextWriterAttribute.Alt, "", false);
 					writer.RenderBeginTag (HtmlTextWriterTag.Img);
 					writer.RenderEndTag ();
 				}
@@ -1404,7 +1404,7 @@ namespace System.Web.UI.WebControls
 				writer.AddStyleAttribute ("white-space", "nowrap");
 			AddNodeStyle (writer, node, level);
 			if (EnableClientScript) {
-				writer.AddAttribute ("onmouseout", "TreeView_UnhoverNode(this)");
+				writer.AddAttribute ("onmouseout", "TreeView_UnhoverNode(this)", false);
 				writer.AddAttribute ("onmouseover", "TreeView_HoverNode('" + ClientID + "', this)");
 			}
 			writer.RenderBeginTag (HtmlTextWriterTag.Td);	// TD
@@ -1413,9 +1413,9 @@ namespace System.Web.UI.WebControls
 			
 			if (node.ShowCheckBoxInternal) {
 				writer.AddAttribute ("name", ClientID + "_cs_" + node.Path);
-				writer.AddAttribute ("type", "checkbox");
+				writer.AddAttribute ("type", "checkbox", false);
 				writer.AddAttribute ("title", node.Text);
-				if (node.Checked) writer.AddAttribute ("checked", "checked");
+				if (node.Checked) writer.AddAttribute ("checked", "checked", false);
 				writer.RenderBeginTag (HtmlTextWriterTag.Input);	// INPUT
 				writer.RenderEndTag ();	// INPUT
 			}
@@ -1500,7 +1500,7 @@ namespace System.Web.UI.WebControls
 				return;
 
 			writer.RenderBeginTag (HtmlTextWriterTag.Table);
-			writer.AddAttribute ("height", ((int)value).ToString ());
+			writer.AddAttribute ("height", ((int) value).ToString (), false);
 			writer.RenderBeginTag (HtmlTextWriterTag.Tr);
 			writer.RenderBeginTag (HtmlTextWriterTag.Td);
 			writer.RenderEndTag (); // td
@@ -1767,12 +1767,12 @@ namespace System.Web.UI.WebControls
 				if (!String.IsNullOrEmpty (LineImagesFolder))
 					return ResolveClientUrl (LineImagesFolder + "/" + shape + ".gif");
 			}
-			return AssemblyResourceLoader.GetResourceUrl (typeof(TreeView), "TreeView_" + shape + ".gif");
+			return Page.ClientScript.GetWebResourceUrl (typeof (TreeView), "TreeView_" + shape + ".gif");
 		}
 		
 		string GetNodeIconUrl (string icon)
 		{
-			return AssemblyResourceLoader.GetResourceUrl (typeof(TreeView), icon + ".gif");
+			return Page.ClientScript.GetWebResourceUrl (typeof (TreeView), icon + ".gif");
 		}
 		
 		string GetClientEvent (TreeNode node, string ev)
