@@ -288,7 +288,11 @@ namespace Mono.CSharp
 		
 		public static int Main (string[] args)
 		{
+#if SMCS_SOURCE
+			RootContext.Version = LanguageVersion.Linq;
+#else
 			RootContext.Version = LanguageVersion.Default;
+#endif
 			Location.InEmacs = Environment.GetEnvironmentVariable ("EMACS") == "t";
 
 			bool ok = MainDriver (args);
@@ -643,7 +647,14 @@ namespace Mono.CSharp
 			//
 			string [] default_config = {
 				"System",
+#if SMCS_SOURCE
+				"agclr",
+				"System.Core",
+				"System.Silverlight",
+				"System.Xml.Core",
+#else
 				"System.Xml"
+#endif
 #if false
 				//
 				// Is it worth pre-loading all this stuff?
