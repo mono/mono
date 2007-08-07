@@ -1,5 +1,10 @@
 2007-08-07  Jonathan Pobst  <monkey@jpobst.com>
 
+	* OwnerDrawPropertyBag.cs: Make the serialization constructor protected
+	for 2.0.
+
+2007-08-07  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ListBox.cs: Implement ScaleControl.
 
 2007-08-07  Rolf Bjarne Kvinge <RKvinge@novell.com> 

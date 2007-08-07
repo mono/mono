@@ -47,7 +47,12 @@ namespace System.Windows.Forms {
 			this.font = font;
 		}
 
-		internal OwnerDrawPropertyBag(SerializationInfo info, StreamingContext context) {
+#if NET_2_0
+		protected
+#else
+		internal
+#endif
+		OwnerDrawPropertyBag(SerializationInfo info, StreamingContext context) {
 			SerializationInfoEnumerator	en;
 			SerializationEntry		e;
 
