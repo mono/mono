@@ -205,6 +205,12 @@ namespace System.Windows.Forms {
 		private MainMenu CreateMaximizedMenu ()
 		{
 			Form parent = (Form) mdi_container.Parent;
+
+#if NET_2_0
+			if (form.MainMenuStrip != null || parent.MainMenuStrip != null)
+				return null;
+#endif
+
 			MainMenu res = new MainMenu ();
 
 			if (parent.Menu != null) {
@@ -356,18 +362,20 @@ namespace System.Windows.Forms {
 
 		public override void UpdateWindowDecorations (FormWindowState window_state)
 		{			
-			switch (window_state) {
-			case FormWindowState.Minimized:
-			case FormWindowState.Normal:
-				MaximizedMenu.Paint -= draw_maximized_buttons;
-				MaximizedTitleButtons.Visible = false;
-				TitleButtons.Visible = true;
-				break;
-			case FormWindowState.Maximized:
-				MaximizedMenu.Paint += draw_maximized_buttons;
-				MaximizedTitleButtons.Visible = true;
-				TitleButtons.Visible = false;
-				break;
+			if (MaximizedMenu != null) {
+				switch (window_state) {
+				case FormWindowState.Minimized:
+				case FormWindowState.Normal:
+					MaximizedMenu.Paint -= draw_maximized_buttons;
+					MaximizedTitleButtons.Visible = false;
+					TitleButtons.Visible = true;
+					break;
+				case FormWindowState.Maximized:
+					MaximizedMenu.Paint += draw_maximized_buttons;
+					MaximizedTitleButtons.Visible = true;
+					TitleButtons.Visible = false;
+					break;
+				}
 			}
 			
 			base.UpdateWindowDecorations (window_state);

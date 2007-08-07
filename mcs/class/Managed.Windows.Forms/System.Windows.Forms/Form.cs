@@ -2582,7 +2582,7 @@ namespace System.Windows.Forms {
 				ActiveMenu.OnMouseDown (this, new MouseEventArgs (FromParamToMouseButtons ((int)m.WParam.ToInt32 ()), mouse_clicks, Control.MousePosition.X, Control.MousePosition.Y, 0));
 			}
 
-			if (ActiveMaximizedMdiChild != null) {
+			if (ActiveMaximizedMdiChild != null && ActiveMenu != null) {
 				if (ActiveMaximizedMdiChild.HandleMenuMouseDown (ActiveMenu,
 						LowOrder ((int)m.LParam.ToInt32 ()),
 						HighOrder ((int)m.LParam.ToInt32 ()))) {
@@ -2596,7 +2596,7 @@ namespace System.Windows.Forms {
 		
 		private void WmNcLButtonUp (ref Message m)
 		{
-			if (ActiveMaximizedMdiChild != null) {
+			if (ActiveMaximizedMdiChild != null && ActiveMenu != null) {
 				ActiveMaximizedMdiChild.HandleMenuMouseUp (ActiveMenu,
 						LowOrder ((int)m.LParam.ToInt32 ()),
 						HighOrder ((int)m.LParam.ToInt32 ()));
@@ -2606,7 +2606,7 @@ namespace System.Windows.Forms {
 		
 		private void WmNcMouseLeave (ref Message m)
 		{
-			if (ActiveMaximizedMdiChild != null) {
+			if (ActiveMaximizedMdiChild != null && ActiveMenu != null) {
 				ActiveMaximizedMdiChild.HandleMenuMouseLeave (ActiveMenu,
 						LowOrder ((int)m.LParam.ToInt32 ()),
 						HighOrder ((int)m.LParam.ToInt32 ()));
@@ -2620,7 +2620,7 @@ namespace System.Windows.Forms {
 				ActiveMenu.OnMouseMove (this, new MouseEventArgs (FromParamToMouseButtons ((int)m.WParam.ToInt32 ()), mouse_clicks, LowOrder ((int)m.LParam.ToInt32 ()), HighOrder ((int)m.LParam.ToInt32 ()), 0));
 			}
 
-			if (ActiveMaximizedMdiChild != null) {
+			if (ActiveMaximizedMdiChild != null && ActiveMenu != null) {
 				XplatUI.RequestAdditionalWM_NCMessages (Handle, false, true);
 				ActiveMaximizedMdiChild.HandleMenuMouseMove (ActiveMenu,
 						LowOrder ((int)m.LParam.ToInt32 ()),

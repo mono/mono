@@ -1,5 +1,12 @@
 2007-08-07  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Form.cs: Add a few ActiveMenu null checks. ActiveMenu might be null if we
+	  have a menu strip.
+	* MdiWindowManager.cs: Don't create a maximized menu if the child or it's
+	  parent has a menu strip. Fixes #81689.
+
+2007-08-07  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* ToolTip.cs: We don't get mouse events on all platforms in the exact same
 	  moments, so apply some fuzzy logic to determine if the mouse is still
 	  inside a control or not. Fixes #82288 (for the third time).
