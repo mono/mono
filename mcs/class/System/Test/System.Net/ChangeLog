@@ -1,3 +1,8 @@
+2007-06-28  Chris Howie  <cdhowie@nerdshack.com>
+
+	* ServicePointTest.cs: Add some loose tests for
+	ServicePoint.BindIPEndPointDelegate.
+
 2007-08-01  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* HttpListener2Test.cs: Fixed Cookie Test 

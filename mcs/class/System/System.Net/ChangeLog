@@ -1,3 +1,9 @@
+2007-06-28  Chris Howie  <cdhowie@nerdshack.com>
+
+	* ServicePoint.cs: Implemented BindIPEndPointDelegate.
+	* FtpWebRequest.cs: Respect ServicePoint.BindIPEndPointDelegate.
+	* WebConnection.cs: Respect ServicePoint.BindIPEndPointDelegate.
+
 2007-08-08  Jb Evain  <jbevain@novell.com>
 
 	* HttpWebRequest.cs: .ctor(Uri) is public in 2.1.

@@ -121,18 +121,31 @@ namespace System.Net
 
 				foreach (IPAddress address in hostEntry.AddressList) {
 					socket = new Socket (address.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-					try {
-						socket.Connect (new IPEndPoint(address, sPoint.Address.Port));
-						status = WebExceptionStatus.Success;
-						break;
-					} catch (SocketException) {
-						// This might be null if the request is aborted
-						if (socket != null) {
-							socket.Close();
-							socket = null;
-							status = WebExceptionStatus.ConnectFailure;
+
+					IPEndPoint remote = new IPEndPoint (address, sPoint.Address.Port);
+
+#if NET_2_0
+					if (!sPoint.CallEndPointDelegate (socket, remote)) {
+						socket.Close ();
+						socket = null;
+						status = WebExceptionStatus.ConnectFailure;
+					} else {
+#endif
+						try {
+							socket.Connect (remote);
+							status = WebExceptionStatus.Success;
+							break;
+						} catch (SocketException) {
+							// This might be null if the request is aborted
+							if (socket != null) {
+								socket.Close ();
+								socket = null;
+								status = WebExceptionStatus.ConnectFailure;
+							}
 						}
+#if NET_2_0
 					}
+#endif
 				}
 			}
 		}

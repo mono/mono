@@ -699,13 +699,21 @@ namespace System.Net
 			Socket sock = null;
 			foreach (IPAddress address in hostEntry.AddressList) {
 				sock = new Socket (address.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-				try {
-					sock.Connect (new IPEndPoint (address, requestUri.Port));
-					localEndPoint = (IPEndPoint) sock.LocalEndPoint;
-					break;
-				} catch (SocketException) {
+
+				IPEndPoint remote = new IPEndPoint (address, requestUri.Port);
+
+				if (!ServicePoint.CallEndPointDelegate (sock, remote)) {
 					sock.Close ();
 					sock = null;
+				} else {
+					try {
+						sock.Connect (remote);
+						localEndPoint = (IPEndPoint) sock.LocalEndPoint;
+						break;
+					} catch (SocketException) {
+						sock.Close ();
+						sock = null;
+					}
 				}
 			}
 

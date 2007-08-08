@@ -152,6 +152,46 @@ public class ServicePointTest
 		}
 	}
 
+#if NET_2_0
+	[Test]
+	[Category ("InetAccess")]
+#if TARGET_JVM
+	[Ignore ("The System.Net.ServicePointManager.FindServicePoint(Uri) is not supported")]
+#endif	
+	public void EndPointBind ()
+	{
+		Uri uri = new Uri ("http://www.go-mono.com/");
+		ServicePoint sp = ServicePointManager.FindServicePoint (uri);
+
+		HttpWebRequest req = (HttpWebRequest) WebRequest.Create (uri);
+
+		bool called = false;
+
+		sp.BindIPEndPointDelegate = delegate {
+			Assertion.Assert(!called);
+			called = true;
+			return null;
+		};
+
+		req.GetResponse ().Close ();
+
+		Assertion.Assert (called);
+
+		req = (HttpWebRequest) WebRequest.Create (uri);
+		called = false;
+
+		sp.BindIPEndPointDelegate = delegate(ServicePoint point, IPEndPoint remote, int times) {
+			Assertion.Assert(times < 5);
+			called = true;
+			return new IPEndPoint(IPAddress.Parse("0.0.0.0"), 12345 + times);
+		};
+
+		req.GetResponse ().Close ();
+
+		Assertion.Assert(called);
+	}
+#endif
+
 // Debug code not used now, but could be useful later
 /*
 	private void WriteServicePoint (string label, ServicePoint sp)

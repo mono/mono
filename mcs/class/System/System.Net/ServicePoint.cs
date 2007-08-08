@@ -58,6 +58,9 @@ namespace System.Net
 #if NET_1_1
 		bool useNagle;
 #endif
+#if NET_2_0
+		BindIPEndPoint endPointCallback = null;
+#endif
 		
 		// Constructors
 
@@ -82,15 +85,10 @@ namespace System.Net
 			return new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public BindIPEndPoint BindIPEndPointDelegate
 		{
-			get {
-				throw GetMustImplement ();
-			}
-			set {
-				throw GetMustImplement ();
-			}
+			get { return endPointCallback; }
+			set { endPointCallback = value; }
 		}
 #endif
 		
@@ -328,6 +326,44 @@ namespace System.Net
 			certificate = server;
 			clientCertificate = client;
 		}
+
+#if NET_2_0
+		internal bool CallEndPointDelegate (Socket sock, IPEndPoint remote)
+		{
+			if (endPointCallback == null)
+				return true;
+
+			int count = 0;
+			for (;;) {
+				IPEndPoint local = null;
+				try {
+					local = endPointCallback (this,
+						remote, count);
+				} catch {
+					// This is to differentiate from an
+					// OverflowException, which should propagate.
+					return false;
+				}
+
+				if (local == null)
+					return true;
+
+				try {
+					sock.Bind (local);
+				} catch (SocketException) {
+					// This is intentional; the docs say
+					// that if the Bind fails, we keep
+					// going until there is an
+					// OverflowException on the retry
+					// count.
+					checked { ++count; }
+					continue;
+				}
+
+				return true;
+			}
+		}
+#endif
 	}
 }
 
