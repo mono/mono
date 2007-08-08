@@ -1390,7 +1390,7 @@ namespace System.Windows.Forms {
 			foreach (PropertyDescriptor property in properties) {
 				GridEntry grid_entry;
 				grid_entry = grid_item_coll [property.Name] as GridEntry;
-				if (grid_entry == null) {
+				if (grid_entry == null/* || grid_entry is CategoryGridEntry*/) {
 					grid_entry = new GridEntry (property_grid_view, objs, property);
 				} else {
 					grid_entry.SelectedObjects = objs;

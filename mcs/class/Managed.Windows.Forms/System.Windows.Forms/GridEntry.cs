@@ -135,7 +135,7 @@ namespace System.Windows.Forms.PropertyGridInternal
 				 * someplace else, maybe when we're
 				 * initially populating the
 				 * PropertyGrid? */
-				if (selected_objects == null || selected_objects.Length == 0)
+				if (selected_objects == null || selected_objects.Length == 0 || property_descriptor == null)
 					return null;
 
 				object v = property_descriptor.GetValue(selected_objects[0]);
