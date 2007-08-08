@@ -840,6 +840,7 @@ namespace System.Threading {
 		}
 
 		[MonoTODO ("limited to CompressedStack support")]
+		// FIXME: We share the _ec object between appdomains
 		public ExecutionContext ExecutionContext {
 			[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
 			get {

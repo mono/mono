@@ -1,3 +1,7 @@
+2007-08-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* Thread.cs: Add a fixme.
+
 2007-07-21  Miguel de Icaza  <miguel@novell.com>
 
 	* WaitHandle.cs (Handle): It turns out that we should never create
