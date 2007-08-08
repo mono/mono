@@ -1,3 +1,9 @@
+2007-08-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-exceptions.c (mono_print_thread_dump): Enable this on amd64 too.
+
+	* mini-amd64.h (MONO_INIT_CONTEXT_FROM_FUNC): Fix a warning.
+
 2007-08-03  Neale Ferguson <neale@sinenomine.net>
 
 	* mini-s390.c (add_general): Adjust offset calculation to take into account of rounding up
