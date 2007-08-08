@@ -61,11 +61,17 @@ namespace System
 
 		public static readonly IntPtr Zero;
 
+#if NET_2_0
+		[ReliabilityContract (Consistency.MayCorruptInstance, Cer.MayFail)]
+#endif
 		public IntPtr (int i32)
 		{
 			value = (void *) i32;
 		}
 
+#if NET_2_0
+		[ReliabilityContract (Consistency.MayCorruptInstance, Cer.MayFail)]
+#endif
 		public IntPtr (long i64)
 		{
 			if (((i64 > Int32.MaxValue) || (i64 < Int32.MinValue)) && (IntPtr.Size < 8)) {
@@ -77,6 +83,9 @@ namespace System
 		}
 
 		[CLSCompliant (false)]
+#if NET_2_0
+		[ReliabilityContract (Consistency.MayCorruptInstance, Cer.MayFail)]
+#endif
 		unsafe public IntPtr (void *ptr)
 		{
 			value = ptr;
@@ -145,6 +154,14 @@ namespace System
 
 		override public string ToString ()
 		{
+			return ToString (null);
+		}
+
+#if NET_2_0
+		public
+#endif
+		string ToString (string format)
+		{
 			if (Size == 4)
 				return ((int) value).ToString ();
 			else
@@ -168,7 +185,7 @@ namespace System
 		}
 
 #if NET_2_0
-		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
+		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
 #endif
 		public static explicit operator IntPtr (int value)
 		{
@@ -176,7 +193,7 @@ namespace System
 		}
 
 #if NET_2_0
-		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
+		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
 #endif
 		public static explicit operator IntPtr (long value)
 		{
@@ -184,7 +201,7 @@ namespace System
 		}
 
 #if NET_2_0
-		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
+		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
 #endif		
 		[CLSCompliant (false)]
 		unsafe public static explicit operator IntPtr (void *value)

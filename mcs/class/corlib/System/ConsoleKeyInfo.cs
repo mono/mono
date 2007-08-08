@@ -87,6 +87,16 @@ namespace System {
 			return Equals ((ConsoleKeyInfo) o);
 		}
 		
+		public static bool operator == (ConsoleKeyInfo obj1, ConsoleKeyInfo obj2)
+		{
+			return obj1.Equals (obj2);
+		}
+		
+		public static bool operator != (ConsoleKeyInfo obj1, ConsoleKeyInfo obj2)
+		{
+			return !obj1.Equals (obj2);
+		}
+		
 		public bool Equals (ConsoleKeyInfo o)
 		{
 			return key == o.key && o.keychar == keychar && o.modifiers == modifiers;

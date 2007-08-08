@@ -1192,6 +1192,7 @@ namespace System
 		}
 
 #if NET_2_0
+		[ComVisible (false)]
 		public bool StartsWith (string value, StringComparison comparisonType)
 		{
 			switch (comparisonType) {
@@ -1212,6 +1213,7 @@ namespace System
 			}
 		}
 
+		[ComVisible (false)]
 		public bool EndsWith (string value, StringComparison comparisonType)
 		{
 			switch (comparisonType) {

@@ -33,7 +33,7 @@ namespace System {
 
 	[Serializable]
 #if NET_2_0
-	[ComVisible (false)]
+	[ComVisible (true)]
 	public sealed class Version : ICloneable, IComparable, IComparable<Version>, IEquatable<Version> {
 #else
 	public sealed class Version : ICloneable, IComparable {

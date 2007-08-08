@@ -218,7 +218,7 @@ namespace System {
 		}
 
 #if NET_2_0
-		[ComVisible (true)]
+		[ComVisible (false)]
 		public static string ToBase64String (byte[] inArray, Base64FormattingOptions options)
 		{
 			if (inArray == null)
@@ -226,7 +226,7 @@ namespace System {
 			return ToBase64String (inArray, 0, inArray.Length, options);
 		}
 
-		[ComVisible (true)]
+		[ComVisible (false)]
 		public static string ToBase64String (byte[] inArray, int offset, int length, Base64FormattingOptions options)
 		{
 			if (inArray == null)
@@ -243,6 +243,7 @@ namespace System {
 				return Encoding.ASCII.GetString (toBase64Transform.InternalTransformFinalBlock (inArray, offset, length));
 		}
 
+		[ComVisible (false)]
 		public static int ToBase64CharArray (byte[] inArray, int offsetIn, int length, 
 						    char[] outArray, int offsetOut, Base64FormattingOptions options)
 		{

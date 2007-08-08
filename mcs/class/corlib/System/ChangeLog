@@ -1,3 +1,9 @@
+2007-08-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* GC.cs, Exception.cs, IntPtr.cs, Enum.cs, DateTime.cs, Convert.cs
+	  ConsoleKeyInfo.cs, String.cs, Object.cs, Attribute.cs,
+	  Version.cs : couple of cosmetic 2.0 API fixes.
+
 2007-08-06  Aaron Bockover  <abockover@novell.com>
 
 	* Environment.cs (ReadXdgUserDir): Support the changes to the

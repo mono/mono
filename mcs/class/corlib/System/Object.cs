@@ -73,6 +73,9 @@ namespace System {
 		// <summary>
 		//   Initializes a new instance of the object class.
 		// </summary>
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
+#endif
 		public Object ()
 		{
 		}

@@ -40,9 +40,12 @@ using System.Security.Permissions;
 namespace System
 {
 	[Serializable]
-	[ClassInterface (ClassInterfaceType.AutoDual)]
 #if NET_2_0
 	[ComVisible(true)]
+	[ComDefaultInterface (typeof (_Exception))]
+	[ClassInterface (ClassInterfaceType.None)]
+#else
+	[ClassInterface (ClassInterfaceType.AutoDual)]
 #endif
 	public class Exception : ISerializable 
 #if NET_2_0

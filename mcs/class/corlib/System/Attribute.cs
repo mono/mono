@@ -39,6 +39,7 @@ namespace System
 
 #if NET_2_0
 	[ComVisible (true)]
+	[ComDefaultInterface (typeof (_Attribute))]
 #endif
 
 #if NET_1_1

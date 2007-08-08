@@ -173,6 +173,9 @@ namespace System
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern object get_value ();
 
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		public static Array GetValues (Type enumType)
 		{
 			if (enumType == null)
@@ -186,6 +189,9 @@ namespace System
 			return (Array) info.values.Clone ();
 		}
 
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		public static string[] GetNames (Type enumType)
 		{
 			if (enumType == null)
@@ -199,6 +205,9 @@ namespace System
 			return (string []) info.names.Clone ();
 		}
 
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		public static string GetName (Type enumType, object value)
 		{
 			if (enumType == null)
@@ -220,6 +229,9 @@ namespace System
 			return null;
 		}
 
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		public static bool IsDefined (Type enumType, object value)
 		{
 			if (enumType == null)
@@ -252,6 +264,9 @@ namespace System
 			}
 		}
 
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		public static Type GetUnderlyingType (Type enumType)
 		{
 			if (enumType == null)
@@ -265,6 +280,9 @@ namespace System
 			return info.utype;
 		}
 
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		public static object Parse (Type enumType, string value)
 		{
 			// Note: Parameters are checked in the other overload
@@ -306,6 +324,9 @@ namespace System
 
 		private static char [] split_char = { ',' };
 
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		public static object Parse (Type enumType, string value, bool ignoreCase)
 		{
 			if (enumType == null)
@@ -416,47 +437,74 @@ namespace System
 			return Format (this.GetType(), this.get_value (), format);
 		}
 
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		public static object ToObject (Type enumType, byte value)
 		{
 			return ToObject (enumType, (object)value);
 		}
 
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		public static object ToObject (Type enumType, short value)
 		{
 			return ToObject (enumType, (object)value);
 		}
 
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		public static object ToObject (Type enumType, int value)
 		{
 			return ToObject (enumType, (object)value);
 		}
 
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		public static object ToObject (Type enumType, long value)
 		{
 			return ToObject (enumType, (object)value);
 		}
 
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public static extern object ToObject (Type enumType, object value);
 
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		[CLSCompliant (false)]
 		public static object ToObject (Type enumType, sbyte value)
 		{
 			return ToObject (enumType, (object)value);
 		}
 
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		[CLSCompliant (false)]
 		public static object ToObject (Type enumType, ushort value)
 		{
 			return ToObject (enumType, (object)value);
 		}
 
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		[CLSCompliant (false)]
 		public static object ToObject (Type enumType, uint value)
 		{
 			return ToObject (enumType, (object)value);
 		}
 
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		[CLSCompliant (false)]
 		public static object ToObject (Type enumType, ulong value)
 		{
@@ -649,6 +697,9 @@ namespace System
 			return retVal;
 		}
 
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		public static string Format (Type enumType, object value, string format)
 		{
 			if (enumType == null)

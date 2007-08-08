@@ -88,6 +88,9 @@ namespace System
 		public extern static long GetTotalMemory (bool forceFullCollection);
 
 		/* this icall has weird semantics check the docs... */
+#if NET_2_0
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
+#endif
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static void KeepAlive (object obj);
 		
