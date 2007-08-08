@@ -1,3 +1,9 @@
+2007-08-08  Massimiliano Mantione  <massi@ximian.com>
+
+	* class.c (mono_class_setup_vtable_general): Fixed bug #77127,
+	checking that methods with the same fqname are not overridden
+	with a method from an ancestor.
+
 2007-08-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* threads.c (free_thread_static_data_helper): Avoid a crash if
