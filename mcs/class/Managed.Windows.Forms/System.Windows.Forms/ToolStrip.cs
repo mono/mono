@@ -1116,7 +1116,7 @@ namespace System.Windows.Forms
 			// If any item's text starts with our letter, it gets the message
 			if (this is MenuStrip)
 				foreach (ToolStripItem tsi in this.Items)
-					if (tsi.Enabled && tsi.Visible && tsi.Text.Length > 0 && tsi.Text.ToUpper ().StartsWith (code))
+					if (tsi.Enabled && tsi.Visible && !string.IsNullOrEmpty (tsi.Text) && tsi.Text.ToUpper ().StartsWith (code))
 						return tsi.ProcessMnemonic (charCode);
 
 			return base.ProcessMnemonic (charCode);

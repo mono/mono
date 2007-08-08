@@ -1,3 +1,13 @@
+2007-08-08  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Control.cs: If no one accepts a mnemonic, let the MenuStrip have a 
+	shot at having it because Alt was pressed.
+	* MenuStrip.cs: When handling Alt, don't select a SystemMenuItem, select
+	the first real menu item.
+	* ToolStrip.cs: Don't crash when looking for a ToolStripItem to handle
+	a mnemonic if Text is null.
+	[Fixes bug #82374]
+
 2007-08-08  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: In ListViewItemCollection.AddItem, don't do a linear

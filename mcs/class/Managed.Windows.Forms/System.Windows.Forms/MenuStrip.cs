@@ -198,7 +198,11 @@ namespace System.Windows.Forms
 		{
 			// Set ourselves active and select our first item
 			ToolStripManager.SetActiveToolStrip (this);
-			this.SelectNextToolStripItem (null, true);
+			ToolStripItem tsi = this.SelectNextToolStripItem (null, true);
+			
+			if (tsi is MdiControlStrip.SystemMenuItem)
+				this.SelectNextToolStripItem (tsi, true);
+				
 			return true;
 		}
 		

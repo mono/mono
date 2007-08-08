@@ -5439,6 +5439,11 @@ namespace System.Windows.Forms
 						return;
 #endif
 			}
+#if NET_2_0
+			else
+				if (ToolStripManager.ProcessMenuKey (ref m))
+					return;
+#endif
 
 			DefWndProc (ref m);
 		}
