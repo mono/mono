@@ -179,7 +179,7 @@ namespace System.Web.Services.Configuration
                 }
 
 		public static WebServicesSection Current {
-			get { return (WebServicesSection) WebConfigurationManager.GetWebApplicationSection ("system.web/webServices"); }
+			get { return (WebServicesSection) ConfigurationManager.GetSection ("system.web/webServices"); }
 		}
 
 		internal static bool IsSupported (WebServiceProtocols proto)
