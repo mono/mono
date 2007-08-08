@@ -1,3 +1,7 @@
+2007-08-08  Jb Evain  <jbevain@novell.com>
+
+	* HttpWebRequest.cs: .ctor(Uri) is public in 2.1.
+
 2007-08-03  Jb Evain  <jbevain@novell.com>
 
 	* Dns.cs: remove async methods for the 2.1 profile.

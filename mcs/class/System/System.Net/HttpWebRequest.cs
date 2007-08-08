@@ -115,8 +115,13 @@ namespace System.Net
 			}
 		}
 #endif
-		
-		internal HttpWebRequest (Uri uri) 
+
+#if NET_2_1
+		public
+#else
+		internal
+#endif
+		HttpWebRequest (Uri uri) 
 		{
 			this.requestUri = uri;
 			this.actualUri = uri;
