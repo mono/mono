@@ -3008,7 +3008,7 @@ namespace System.Windows.Forms
 
 			set {
 				if (clip_region != value) {
-					if (value != null && IsHandleCreated)
+					if (IsHandleCreated)
 						XplatUI.SetClipRegion(Handle, value);
 
 					clip_region = value;

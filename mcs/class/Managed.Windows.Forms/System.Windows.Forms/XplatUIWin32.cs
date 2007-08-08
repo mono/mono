@@ -2374,7 +2374,10 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void SetClipRegion(IntPtr hwnd, Region region) {
-			Win32SetWindowRgn(hwnd, region.GetHrgn(Graphics.FromHwnd(hwnd)), true);
+			if (region == null)
+				Win32SetWindowRgn (hwnd, IntPtr.Zero, true);
+			else
+				Win32SetWindowRgn(hwnd, region.GetHrgn(Graphics.FromHwnd(hwnd)), true);
 		}
 
 		internal override void EnableWindow(IntPtr handle, bool Enable) {

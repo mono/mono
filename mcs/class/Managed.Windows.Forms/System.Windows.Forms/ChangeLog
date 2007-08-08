@@ -1,3 +1,9 @@
+2007-08-08  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Control.cs: Allow the clip region to be set back to null.
+	* XplatUIWin32.cs: If we are sent a null clip region, use IntPtr.Zero.
+	[Fixes button still showing up in bug #82370 when Show Through is turned off]
+
 2007-08-08  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* GridEntry.cs: Add a null check.
