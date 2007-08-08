@@ -4660,10 +4660,10 @@ namespace System.Windows.Forms
 
 			void AddItem (ListViewItem value)
 			{
-				if (list.Contains (value))
+				if (value.ListView != null && value.ListView == owner)
 					throw new ArgumentException ("An item cannot be added more than once. To add an item again, you need to clone it.", "value");
 
-				if (value.ListView != null && value.ListView != owner)
+				if (value.ListView != null)
 					throw new ArgumentException ("Cannot add or insert the item '" + value.Text + "' in more than one place. You must first remove it from its current location or clone it.", "value");
 				value.Owner = owner;
 				list.Add (value);

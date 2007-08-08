@@ -1,3 +1,10 @@
+2007-08-08  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListView.cs: In ListViewItemCollection.AddItem, don't do a linear
+	search do check whether the item is already contained in the
+	collection or not; instead check if the owner of the item is the same
+	as ours. Also, remove a redundant check in the same method. 
+
 2007-08-08  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Control.cs: Allow the clip region to be set back to null.
