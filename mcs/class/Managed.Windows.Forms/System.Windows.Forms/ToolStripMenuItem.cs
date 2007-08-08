@@ -395,6 +395,7 @@ namespace System.Windows.Forms
 				this.Parent.ChangeSelection (this);
 				
 			if (this.HasDropDownItems) {
+				ToolStripManager.SetActiveToolStrip (this.Parent, true);
 				this.ShowDropDown ();
 				this.DropDown.SelectNextToolStripItem (null, true);
 			} else

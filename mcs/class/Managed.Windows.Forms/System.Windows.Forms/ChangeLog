@@ -1,5 +1,16 @@
 2007-08-08  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ToolStrip.cs: Record if we were activated by mouse or keyboard.  Redraw
+	when we are dismissed to clear keyboard mnemonics.
+	* MenuStrip.cs, ToolStripDropDown.cs, ToolStripItem.cs, 
+	ToolStripMenuItem.cs: Record if we were activated by mouse or keyboard.
+	* ToolStripItemTextRenderEventArgs.cs: Draw mnemonic underlines if menu
+	was activated by keyboard or the OS tells us to always draw them.
+	* ToolStripManager.cs: Setup storage for activated by mouse or keyboard.
+	[Fixes bugs #82376, #82377]
+
+2007-08-08  Jonathan Pobst  <monkey@jpobst.com>
+
 	* Control.cs: If no one accepts a mnemonic, let the MenuStrip have a 
 	shot at having it because Alt was pressed.
 	* MenuStrip.cs: When handling Alt, don't select a SystemMenuItem, select

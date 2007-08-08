@@ -796,7 +796,7 @@ namespace System.Windows.Forms
 		protected virtual void OnItemClicked (ToolStripItemClickedEventArgs e)
 		{
 			if (this.KeyboardActive)
-				ToolStripManager.SetActiveToolStrip (null);
+				ToolStripManager.SetActiveToolStrip (null, false);
 			
 			ToolStripItemClickedEventHandler eh = (ToolStripItemClickedEventHandler)(Events [ItemClickedEvent]);
 			if (eh != null)
@@ -1075,7 +1075,7 @@ namespace System.Windows.Forms
 						foreach (ToolStripItem tsi in this.Items)
 							tsi.Dismiss (ToolStripDropDownCloseReason.Keyboard);
 
-						ToolStripManager.SetActiveToolStrip (ts);
+						ToolStripManager.SetActiveToolStrip (ts, true);
 						ts.SelectNextToolStripItem (null, true);
 					}
 					
@@ -1087,7 +1087,7 @@ namespace System.Windows.Forms
 						foreach (ToolStripItem tsi in this.Items)
 							tsi.Dismiss (ToolStripDropDownCloseReason.Keyboard);
 
-						ToolStripManager.SetActiveToolStrip (ts);
+						ToolStripManager.SetActiveToolStrip (ts, true);
 						ts.SelectNextToolStripItem (null, true);
 					}
 					
@@ -1298,8 +1298,10 @@ namespace System.Windows.Forms
 					
 					if (value)
 						Application.KeyboardCapture = this;
-					else if (Application.KeyboardCapture == this)
+					else if (Application.KeyboardCapture == this) {
 						Application.KeyboardCapture = null;
+						ToolStripManager.ActivatedByKeyboard = false;
+					}
 					
 					// Redraw for mnemonic underlines
 					this.Invalidate ();
@@ -1317,7 +1319,7 @@ namespace System.Windows.Forms
 		internal void ChangeSelection (ToolStripItem nextItem)
 		{
 			if (Application.KeyboardCapture != this)
-				ToolStripManager.SetActiveToolStrip (this);
+				ToolStripManager.SetActiveToolStrip (this, ToolStripManager.ActivatedByKeyboard);
 				
 			foreach (ToolStripItem tsi in this.Items)
 				if (tsi != nextItem)
@@ -1345,6 +1347,9 @@ namespace System.Windows.Forms
 			// Make sure all of our items are deselected and repainted
 			foreach (ToolStripItem tsi in this.Items)
 				tsi.Dismiss (reason);
+				
+			// We probably need to redraw for mnemonic underlines
+			this.Invalidate ();
 		}
 		
 		private void DoAutoSize ()

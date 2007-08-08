@@ -81,7 +81,7 @@ namespace System.Windows.Forms
 					break;
 			}
 
-			if (Application.KeyboardCapture == null)
+			if ((Application.KeyboardCapture == null || !ToolStripManager.ActivatedByKeyboard) && !SystemInformation.MenuAccessKeysUnderlined)
 				this.text_format |= TextFormatFlags.HidePrefix;
 		}
 

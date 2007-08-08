@@ -41,6 +41,7 @@ namespace System.Windows.Forms
 		private static bool visual_styles_enabled = Application.RenderWithVisualStyles;
 		private static List<ToolStrip> toolstrips = new List<ToolStrip> ();
 		private static List<ToolStripMenuItem> menu_items = new List<ToolStripMenuItem> ();
+		private static bool activated_by_keyboard;
 		
 		#region Private Constructor
 		private ToolStripManager ()
@@ -421,6 +422,11 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Private/Internal Methods
+		internal static bool ActivatedByKeyboard {
+			get { return activated_by_keyboard; }
+			set { activated_by_keyboard = value; }
+		}
+		
 		internal static void AddToolStrip (ToolStrip ts)
 		{
 			lock (toolstrips)
@@ -494,13 +500,17 @@ namespace System.Windows.Forms
 			return false;
 		}
 		
-		internal static void SetActiveToolStrip (ToolStrip toolStrip)
+		internal static void SetActiveToolStrip (ToolStrip toolStrip, bool keyboard)
 		{
 			if (Application.KeyboardCapture != null)
 				Application.KeyboardCapture.KeyboardActive = false;
 				
-			if (toolStrip == null)
+			if (toolStrip == null) {
+				activated_by_keyboard = false;
 				return;
+			}
+			
+			activated_by_keyboard = keyboard;
 				
 			toolStrip.KeyboardActive = true;
 		}

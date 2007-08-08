@@ -414,7 +414,7 @@ namespace System.Windows.Forms
 		public int Height {
 			get { return this.Size.Height; }
 			set { 
-				this.bounds.Height = value; 
+				this.Size = new Size (this.Size.Width, value); 
 				this.explicit_size.Height = value;
 				
 				if (this.Visible) {
@@ -772,7 +772,7 @@ namespace System.Windows.Forms
 		public int Width {
 			get { return this.Size.Width; }
 			set { 
-				this.bounds.Width = value; 
+				this.Size = new Size (value, this.Size.Height); 
 				this.explicit_size.Width = value;
 				
 				if (this.Visible) {
@@ -1200,6 +1200,7 @@ namespace System.Windows.Forms
 		// it.  None of that fancy "thinking" needed!
 		protected internal virtual bool ProcessMnemonic (char charCode)
 		{
+			ToolStripManager.SetActiveToolStrip (this.Parent, true);
 			this.PerformClick ();
 			return true;
 		}

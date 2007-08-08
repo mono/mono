@@ -499,7 +499,7 @@ namespace System.Windows.Forms
 
 			base.Show ();
 
-			ToolStripManager.SetActiveToolStrip (this);
+			ToolStripManager.SetActiveToolStrip (this, ToolStripManager.ActivatedByKeyboard);
 
 			this.OnOpened (EventArgs.Empty);
 		}
@@ -935,7 +935,7 @@ namespace System.Windows.Forms
 					this.Dismiss (ToolStripDropDownCloseReason.Keyboard);
 					
 					ToolStrip parent_strip = this.OwnerItem.Parent;
-					ToolStripManager.SetActiveToolStrip (parent_strip);
+					ToolStripManager.SetActiveToolStrip (parent_strip, true);
 					
 					if (parent_strip is MenuStrip && keyData == Keys.Left) {
 						parent_strip.SelectNextToolStripItem (this.TopLevelOwnerItem, false);

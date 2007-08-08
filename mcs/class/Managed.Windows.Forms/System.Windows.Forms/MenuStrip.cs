@@ -197,7 +197,7 @@ namespace System.Windows.Forms
 		internal override bool OnMenuKey ()
 		{
 			// Set ourselves active and select our first item
-			ToolStripManager.SetActiveToolStrip (this);
+			ToolStripManager.SetActiveToolStrip (this, true);
 			ToolStripItem tsi = this.SelectNextToolStripItem (null, true);
 			
 			if (tsi is MdiControlStrip.SystemMenuItem)
