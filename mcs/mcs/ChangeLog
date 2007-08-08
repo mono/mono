@@ -1,3 +1,7 @@
+2007-08-08  Marek Safar  <marek.safar@gmail.com>
+
+	* expression.cs (ArrayCreation.CloneTo): Allocate exact size.
+	
 2007-08-07  Miguel de Icaza  <miguel@novell.com>
 
 	* expression.cs: Fix the previous commit, the creation of the

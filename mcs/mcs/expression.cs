@@ -6052,13 +6052,13 @@ namespace Mono.CSharp {
 			target.requested_base_type = requested_base_type.Clone (clonectx);
 
 			if (arguments != null){
-				target.arguments = new ArrayList ();
+				target.arguments = new ArrayList (arguments.Count);
 				foreach (Argument a in arguments)
 					target.arguments.Add (a.Clone (clonectx));
 			}
 
 			if (initializers != null){
-				target.initializers = new ArrayList ();
+				target.initializers = new ArrayList (initializers.Count);
 				foreach (Expression initializer in initializers)
 					target.initializers.Add (initializer.Clone (clonectx));
 			}
