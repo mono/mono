@@ -141,6 +141,8 @@ namespace System.Web.Configuration
 	//
 	class WebDefaultConfig : IConfigurationSystem
 	{
+		object this_lock = new object ();
+		
 #if TARGET_J2EE
 		static private WebDefaultConfig instance {
 			get {
@@ -263,7 +265,7 @@ namespace System.Web.Configuration
 			if (initCalled)
 				return;
 
-			lock (this) {
+			lock (this_lock) {
 				if (initCalled)
 					return;
 
@@ -372,6 +374,7 @@ namespace System.Web.Configuration
 
 	class ConfigurationData
 	{
+		object this_lock = new object ();
 		ConfigurationData parent;
 		Hashtable factories;
 		Hashtable pending;
@@ -391,7 +394,7 @@ namespace System.Web.Configuration
 
                 internal FileWatcherCache FileCache {
                         get {
-				lock (this) {
+				lock (this_lock) {
 					if (fileCache != null)
 						return fileCache;
 
@@ -659,7 +662,7 @@ namespace System.Web.Configuration
                         if (config != null)
                                 return config;
 
-			lock (this) {
+			lock (this_lock) {
 				config = GetConfigInternal (sectionName, context, useLoc);
 				this.FileCache [sectionName] = (config == null) ? emptyMark : config;
 			}

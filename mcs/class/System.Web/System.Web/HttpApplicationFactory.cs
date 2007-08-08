@@ -45,6 +45,8 @@ using System.CodeDom.Compiler;
 
 namespace System.Web {
 	class HttpApplicationFactory {
+		object this_lock = new object ();
+		
 		// Initialized in InitType
 #if TARGET_J2EE
 		static HttpApplicationFactory theFactory {
@@ -127,7 +129,7 @@ namespace System.Web {
 		
 		Hashtable GetApplicationTypeEvents (Type type)
 		{
-			lock (this) {
+			lock (this_lock) {
 				if (app_event_handlers != null)
 					return app_event_handlers;
 
@@ -147,7 +149,7 @@ namespace System.Web {
 
 		Hashtable GetApplicationTypeEvents (HttpApplication app)
 		{
-			lock (this) {
+			lock (this_lock) {
 				if (app_event_handlers != null)
 					return app_event_handlers;
 
@@ -353,7 +355,7 @@ namespace System.Web {
 		
 		void InitType (HttpContext context)
 		{
-			lock (this) {
+			lock (this_lock) {
 				if (!needs_init)
 					return;
 

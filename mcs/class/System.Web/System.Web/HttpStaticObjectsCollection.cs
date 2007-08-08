@@ -33,9 +33,11 @@ namespace System.Web {
 		private Hashtable _Objects;
 
 		class StaticItem {
+			object this_lock = new object();
+			
 			Type type;
 			object instance;
-
+			
 			public StaticItem (Type type)
 			{
 				this.type = type;
@@ -48,7 +50,7 @@ namespace System.Web {
 			
 			public object Instance {
 				get {
-					lock (this) {
+					lock (this_lock) {
 						if (instance == null)
 							instance = Activator.CreateInstance (type);
 					}

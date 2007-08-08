@@ -45,6 +45,8 @@ namespace System.Web
 	public class XmlSiteMapProvider : StaticSiteMapProvider, IDisposable
 	{
 		static readonly char [] seperators = { ';', ',' };
+
+		object this_lock = new object ();
 		bool building;
 		string file;
 		SiteMapNode root = null;
@@ -87,7 +89,7 @@ namespace System.Web
 			if (building)
 				return null;
 			
-			lock (this) {
+			lock (this_lock) {
 				try {
 					building = true;
 					if (root != null)

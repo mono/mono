@@ -1,3 +1,13 @@
+2007-08-08  Marek Habersack  <mhabersack@novell.com>
+
+	* StaticSiteMapProvider.cs, HttpApplicationFactory.cs,
+	HttpStaticObjectsCollection.cs, SiteMapProvider.cs,
+	XmlSiteMapProvider.cs, HttpApplication.cs, CapabilitiesLoader.cs,
+	TimeoutManager.cs: do not use lock (this), replace it with lock
+	(this_object), where this_object is an instance	variable. Prevents
+	deadlocks in situation when external code locks on the class
+	instance.
+
 2007-08-05  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* HttpUtility.cs: performance refactoring, optimized UrlEncode

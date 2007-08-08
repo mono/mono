@@ -1,3 +1,10 @@
+2007-08-08  Marek Habersack  <mhabersack@novell.com>
+
+	* WebConfigurationSettings.cs: do not use lock (this), replace it
+	with lock (this_object), where this_object is an instance
+	variable. Prevents deadlocks in situation when external code locks
+	on the class instance.
+
 2007-05-01  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpCapabilitiesBase.cs: move the User-Agent code to a separate

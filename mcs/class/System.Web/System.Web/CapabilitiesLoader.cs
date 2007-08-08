@@ -45,6 +45,8 @@ namespace System.Web
 	class BrowserData
 	{
 		static char [] wildchars = new char [] {'*', '?'};
+
+		object this_lock = new object ();
 		BrowserData parent;
 		string text;
 		string pattern;
@@ -148,7 +150,7 @@ namespace System.Web
 			if (pattern == null)
 				return expression.Length == 0;
 
-			lock (this) {
+			lock (this_lock) {
 				if (regex == null)
 #if TARGET_JVM
 					regex = java.util.regex.Pattern.compile (pattern);

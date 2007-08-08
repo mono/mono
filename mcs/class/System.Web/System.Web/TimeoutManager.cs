@@ -41,6 +41,8 @@ namespace System.Web
 	
 	class TimeoutManager
 	{
+		object this_lock = new object();
+		
 		Timer timer;
 		Hashtable contexts;
 
@@ -73,7 +75,7 @@ namespace System.Web
 				value = list;
 			}
 
-			lock (this) {
+			lock (this_lock) {
 				contexts [context] = value;
 			}
 		}
@@ -85,7 +87,7 @@ namespace System.Web
 				return null;
 
 			if (value is Thread) {
-				lock (this) {
+				lock (this_lock) {
 					contexts.Remove (context);
 				}
 				return (Thread) value;
@@ -99,7 +101,7 @@ namespace System.Web
 			}
 
 			if (list.Count == 0) {
-				lock (this) {
+				lock (this_lock) {
 					contexts.Remove (context);
 				}
 			}
@@ -116,7 +118,7 @@ namespace System.Web
 			DateTime now = DateTime.UtcNow;
 			ArrayList clist = new ArrayList ();
 
-			lock (this) { // The lock prevents Keys enumerator from being out of synch
+			lock (this_lock) { // The lock prevents Keys enumerator from being out of synch
 				clist.AddRange (contexts.Keys);
 			}
 

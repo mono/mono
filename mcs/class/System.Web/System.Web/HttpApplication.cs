@@ -87,6 +87,8 @@ namespace System.Web {
 	// attributes
 	[ToolboxItem(false)]
 	public class HttpApplication : IHttpAsyncHandler, IHttpHandler, IComponent, IDisposable {
+		object this_lock = new object();
+		
 		HttpContext context;
 		HttpSessionState session;
 		ISite isite;
@@ -164,7 +166,7 @@ namespace System.Web {
 		
 		internal void InitOnce (bool full_init)
 		{
-			lock (this) {
+			lock (this_lock) {
 				if (modcoll != null)
 					return;
 

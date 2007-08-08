@@ -41,6 +41,7 @@ using System.Web.Configuration;
 
 namespace System.Web {
 	public abstract class SiteMapProvider : ProviderBase {
+		internal object this_lock = new object ();
 		
 		bool enableLocalization;
 		SiteMapProvider parentProvider;
@@ -229,7 +230,7 @@ namespace System.Web {
 		
 		public virtual SiteMapProvider RootProvider {
 			get {
-				lock (this) {
+				lock (this_lock) {
 					if (rootProviderCache == null) {
 						SiteMapProvider current = this;
 						while (current.ParentProvider != null)

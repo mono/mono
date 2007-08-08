@@ -35,6 +35,8 @@ namespace System.Web.SessionState {
 
 internal class SessionDictionary : NameObjectCollectionBase
 {
+	object this_lock = new object ();
+	
 	public SessionDictionary ()
 	{
 	}
@@ -53,14 +55,14 @@ internal class SessionDictionary : NameObjectCollectionBase
 	
 	internal void Clear ()
 	{
-		lock (this)
+		lock (this_lock)
 			BaseClear ();
 	}
 
 	internal string GetKey (int index)
 	{
 		string value;
-		lock (this)
+		lock (this_lock)
 			value = BaseGetKey (index);
 			
 		return value;
@@ -68,13 +70,13 @@ internal class SessionDictionary : NameObjectCollectionBase
 
 	internal void Remove (string s)
 	{
-		lock (this)
+		lock (this_lock)
 			BaseRemove (s);
 	}
 
 	internal void RemoveAt (int index)
 	{
-		lock (this)
+		lock (this_lock)
 			BaseRemoveAt (index);
 	}
 
@@ -101,14 +103,14 @@ internal class SessionDictionary : NameObjectCollectionBase
 	{
 		get {
 			object o;
-			lock (this)
+			lock (this_lock)
 				o = BaseGet (s);
 
 			return o;
 		}
 
 		set {
-			lock (this)
+			lock (this_lock)
 			{				 
 				object obj = BaseGet(s);
 				if ((obj == null) && (value == null))
@@ -122,13 +124,13 @@ internal class SessionDictionary : NameObjectCollectionBase
 	{
 		get {
 			object o;
-			lock (this)
+			lock (this_lock)
 				o = BaseGet (index);
 
 			return o;
 		}
 		set {
-			lock (this)
+			lock (this_lock)
 			{
 				object obj = BaseGet(index);
 				if ((obj == null) && (value == null))

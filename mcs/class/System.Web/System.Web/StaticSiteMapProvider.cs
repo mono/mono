@@ -51,7 +51,7 @@ namespace System.Web
 			if (node == null)
 				throw new ArgumentNullException ("node");
 			
-			lock (this) {
+			lock (this_lock) {
 				string url = node.Url;
 				if (url != null && url.Length > 0) {
 					url = MapUrl (url);
@@ -82,7 +82,7 @@ namespace System.Web
 		
 		Hashtable NodeToParent {
 			get {
-				lock (this) {
+				lock (this_lock) {
 					if (nodeToParent == null)
 						nodeToParent = new Hashtable ();
 				}
@@ -92,7 +92,7 @@ namespace System.Web
 		
 		Hashtable NodeToChildren {
 			get {
-				lock (this) {
+				lock (this_lock) {
 					if (nodeToChildren == null)
 						nodeToChildren = new Hashtable ();
 				}
@@ -102,7 +102,7 @@ namespace System.Web
 		
 		Hashtable UrlToNode {
 			get {
-				lock (this) {
+				lock (this_lock) {
 					if (urlToNode == null) {
 						urlToNode = new Hashtable (StringComparer.InvariantCultureIgnoreCase);
 					}
@@ -113,7 +113,7 @@ namespace System.Web
 		
 		Hashtable KeyToNode {
 			get {
-				lock (this) {
+				lock (this_lock) {
 					if (keyToNode == null)
 						keyToNode = new Hashtable ();
 				}
@@ -123,7 +123,7 @@ namespace System.Web
 		
 		protected virtual void Clear ()
 		{
-			lock (this) {
+			lock (this_lock) {
 				if (urlToNode != null)
 					urlToNode.Clear ();
 				if (nodeToChildren != null)
@@ -194,7 +194,7 @@ namespace System.Web
 			if (node == null)
 				throw new ArgumentNullException("node");
 			
-			lock (this) {
+			lock (this_lock) {
 				SiteMapNode parent = (SiteMapNode) NodeToParent [node];
 				if (NodeToParent.Contains (node))
 					NodeToParent.Remove (node);
