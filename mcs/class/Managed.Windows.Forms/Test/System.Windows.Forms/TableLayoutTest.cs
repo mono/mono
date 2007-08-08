@@ -1037,6 +1037,8 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (new Rectangle (6, 101, 95, 96), _labelD.Bounds, "A40");
 			Assert.AreEqual (new Rectangle (110, 101, 95, 96), _labelE.Bounds, "A41");
 			Assert.AreEqual (new Rectangle (214, 101, 95, 96), _labelF.Bounds, "A42");
+			
+			f.Close ();
 		}
 
 		[Test]

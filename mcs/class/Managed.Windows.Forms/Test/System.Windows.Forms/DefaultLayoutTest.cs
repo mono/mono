@@ -542,6 +542,7 @@ namespace MonoTests.System.Windows.Forms
 			f.Show ();
 			
 			Assert.AreEqual (new Size (600, 600), c.lv.Size, "I1");
+			f.Close ();
 		}
 		
 		private class MyUserControl : UserControl

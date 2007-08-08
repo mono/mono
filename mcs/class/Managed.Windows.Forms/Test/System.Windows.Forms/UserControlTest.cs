@@ -109,6 +109,8 @@ namespace MonoTests.System.Windows.Forms
 
 			p.AutoSizeMode = AutoSizeMode.GrowAndShrink;
 			Assert.AreEqual (new Size (0, 0), p.ClientSize, "A3");
+			
+			f.Close ();
 		}
 #endif	
 	}

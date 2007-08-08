@@ -107,6 +107,7 @@ namespace MonoTests.System.Windows.Forms
 			c.AutoSize = true;
 			f.PerformLayout();
 			Assert.AreEqual (s, c.Size, "#S9");
+			f.Close ();
 		}
 		
 		public class ControlAutoSizeTester : Control {
@@ -2375,6 +2376,7 @@ namespace MonoTests.System.Windows.Forms
 			f.ResumeLayout ();
 
 			Assert.AreEqual (new Point (225, 287), button1.Location, "A3");
+			f.Dispose ();
 		}
 	}
 

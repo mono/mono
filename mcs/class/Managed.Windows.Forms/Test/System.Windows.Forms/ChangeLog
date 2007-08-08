@@ -1,3 +1,11 @@
+2007-08-08  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* ContainerControlTest.cs, ControlTest.cs, DefaultLayoutTest.cs,
+	  FormTest.cs, PanelTest.cs, TableLayoutTest.cs, UserControlTest.cs:
+	  Dispose of forms when they're no longer used.
+	* ListViewCollectionsTest.cs: Dispose of listviews when they're no longer
+	  used.
+
 2007-08-07  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ListBoxTest.cs: Added test for ScaleControl.
