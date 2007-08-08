@@ -163,9 +163,9 @@ namespace System
 		string ToString (string format)
 		{
 			if (Size == 4)
-				return ((int) value).ToString ();
+				return ((int) value).ToString (format);
 			else
-				return ((long) value).ToString ();
+				return ((long) value).ToString (format);
 		}
 
 #if NET_2_0

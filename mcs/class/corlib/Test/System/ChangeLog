@@ -1,3 +1,7 @@
+2007-08-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* IntPtrTest.cs : added test for ToString(string).
+
 2007-08-07  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TypeTest.cs: Uncomment test for bug #82211.
