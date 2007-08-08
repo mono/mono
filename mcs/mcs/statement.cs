@@ -1109,6 +1109,11 @@ namespace Mono.CSharp {
 		{
 			ec.ig.Emit (unwind_protect ? OpCodes.Leave : OpCodes.Br, ec.LoopEnd);
 		}
+		
+		protected override void CloneTo (CloneContext clonectx, Statement t)
+		{
+			// nothing needed
+		}
 	}
 
 	public class Continue : Statement {
@@ -1131,6 +1136,11 @@ namespace Mono.CSharp {
 		protected override void DoEmit (EmitContext ec)
 		{
 			ec.ig.Emit (unwind_protect ? OpCodes.Leave : OpCodes.Br, ec.LoopBegin);
+		}
+
+		protected override void CloneTo (CloneContext clonectx, Statement t)
+		{
+			// nothing needed.
 		}
 	}
 
