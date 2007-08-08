@@ -1,3 +1,8 @@
+2007-08-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslCallTemplate.cs : significant whitespace should be allowed
+	  as its content. Fixed bug #82357.
+
 2007-06-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XslText.cs XslMessage.cs XslVariable.cs XslNotSupportedOperation.cs

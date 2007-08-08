@@ -1914,5 +1914,24 @@ Services
 				Assert.AreEqual (s, sw.ToString ());
 			}
 		}
+
+		[Test]
+		public void CallTemplateSignificantWhitespace ()
+		{
+			// bug #82357
+			string xsl = @"<xsl:stylesheet version='1.0' xmlns:xsl='http://www.w3.org/1999/XSL/Transform'>
+  <xsl:template name='foo' xml:space='preserve'>
+    <xsl:call-template name='bar'>
+      <xsl:with-param name='hoge' select='hoge' />
+    </xsl:call-template>
+  </xsl:template>
+
+  <xsl:template name='bar'>
+  </xsl:template>
+</xsl:stylesheet>";
+			XslTransform t = new XslTransform ();
+			t.Load (new XmlTextReader (new StringReader (xsl)));
+			t.Transform (new XPathDocument (new StringReader ("<dummy/>")), null, new XmlTextWriter (TextWriter.Null));
+		}
 	}
 }

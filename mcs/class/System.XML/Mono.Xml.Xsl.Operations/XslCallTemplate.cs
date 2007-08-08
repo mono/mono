@@ -55,6 +55,7 @@ namespace Mono.Xml.Xsl.Operations {
 					switch (c.Input.NodeType) {
 					case XPathNodeType.Comment:
 					case XPathNodeType.ProcessingInstruction:
+					case XPathNodeType.SignificantWhitespace:
 					case XPathNodeType.Whitespace:
 						continue;
 					case XPathNodeType.Element:
