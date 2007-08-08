@@ -55,12 +55,6 @@ namespace System.Runtime.InteropServices
 		Reserved3 = 256,
 		Reserved4 = 512,
 		Reserved5 = 2048,
-
-		// No longer defined
-		InprocHandler = 2,
-		InprocHandler16 = 32,
-		InprocServer = 1,
-		InprocServer16 = 8,
 	}
 }
 #endif

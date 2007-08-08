@@ -74,6 +74,7 @@ namespace System.Collections {
 			list = new ArrayList (capacity);
 		}
 
+		[ComVisible (false)]
 		public int Capacity {
 			get {
 				if (list == null)

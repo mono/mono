@@ -64,6 +64,16 @@ namespace System.Diagnostics.SymbolStore
 			return(obj.GetToken () == _val);
 		}
 		
+
+		public static bool operator == (SymbolToken obj1, SymbolToken obj2)
+		{
+			return obj1.Equals (obj2);
+		}
+
+		public static bool operator != (SymbolToken obj1, SymbolToken obj2)
+		{
+			return !obj1.Equals (obj2);
+		}
 #endif
 
 		public override int GetHashCode()

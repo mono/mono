@@ -52,7 +52,11 @@ namespace System.Collections {
 		int Count { get { return InnerList.Count; } }
 		
 		// Public Instance Methods
-		public IEnumerator GetEnumerator() { return InnerList.GetEnumerator(); }
+		public
+#if NET_2_0
+		virtual
+#endif		
+		IEnumerator GetEnumerator() { return InnerList.GetEnumerator(); }
 		
 		// Protected Instance Constructors
 		protected ReadOnlyCollectionBase() {
@@ -62,7 +66,11 @@ namespace System.Collections {
 		// Protected Instance Properties
 		protected ArrayList InnerList {get { return this.list; } }
 		
-		// ICollection methods
+#if NET_2_0
+		// ICollection/IEnumerable methods
+		IEnumerator IEnumerable.GetEnumerator() { return GetEnumerator(); }
+#endif
+
 		void ICollection.CopyTo(Array array, int index) {
 			lock (InnerList) { InnerList.CopyTo(array, index); }
 		}

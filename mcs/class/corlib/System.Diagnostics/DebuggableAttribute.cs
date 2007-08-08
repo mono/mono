@@ -47,6 +47,7 @@ namespace System.Diagnostics {
 		private bool JITOptimizerDisabledFlag;
 #if NET_2_0
 		[Flags]
+		[ComVisible (true)]
 		public enum DebuggingModes {
 			// Fields
 			None = 0,

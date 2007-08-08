@@ -38,7 +38,7 @@ namespace System.Runtime.InteropServices.ComTypes
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	public interface IRunningObjectTable
 	{
-		void Register (int grfFlags, [MarshalAs (UnmanagedType.Interface)] object punkObject, IMoniker pmkObjectName);
+		int Register (int grfFlags, [MarshalAs (UnmanagedType.Interface)] object punkObject, IMoniker pmkObjectName);
 		void Revoke (int dwRegister);
 		[PreserveSig]
 		int IsRunning (IMoniker pmkObjectName);

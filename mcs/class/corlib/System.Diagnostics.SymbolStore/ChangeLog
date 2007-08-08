@@ -1,3 +1,7 @@
+2007-08-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SymbolToken.cs : added 2.0 operator overloads.
+
 2007-05-16  Dick Porter  <dick@ximian.com>
 
 	* ISymbolBinder.cs: 

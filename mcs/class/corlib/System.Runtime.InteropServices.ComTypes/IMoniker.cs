@@ -47,7 +47,7 @@ namespace System.Runtime.InteropServices.ComTypes
 		void BindToObject (IBindCtx pbc, IMoniker pmkToLeft, [In] ref Guid riidResult, [MarshalAs (UnmanagedType.Interface)] out object ppvResult);
 		void BindToStorage (IBindCtx pbc, IMoniker pmkToLeft, [In] ref Guid riid, [MarshalAs (UnmanagedType.Interface)] out object ppvObj);
 		void Reduce (IBindCtx pbc, int dwReduceHowFar, ref IMoniker ppmkToLeft, out IMoniker ppmkReduced);
-		void ComposeWith (IMoniker pmkRight, [MarshalAs (UnmanagedType.LPWStr)] bool fOnlyIfNotGeneric, out IMoniker ppmkComposite);
+		void ComposeWith (IMoniker pmkRight, [MarshalAs (UnmanagedType.Bool)] bool fOnlyIfNotGeneric, out IMoniker ppmkComposite);
 		void Enum ([MarshalAs(UnmanagedType.Bool)] bool fForward, out IEnumMoniker ppenumMoniker);
 		[PreserveSig]
 		int IsEqual (IMoniker pmkOtherMoniker);

@@ -41,6 +41,9 @@ namespace System.Configuration.Assemblies {
 		private AssemblyHashAlgorithm _algorithm;
 		private byte[] _value;
 
+#if NET_2_0
+		[Obsolete]
+#endif
 		public static readonly AssemblyHash Empty = new AssemblyHash (AssemblyHashAlgorithm.None, null);
 
 #if NET_2_0

@@ -115,6 +115,7 @@ namespace System.Collections.ObjectModel
 		}
 
 		T IList<T>.this [int index] {
+			get { return this [index]; }
 			set { throw new NotSupportedException (); }
 		}
 

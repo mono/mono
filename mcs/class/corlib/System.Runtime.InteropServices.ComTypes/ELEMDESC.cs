@@ -37,7 +37,6 @@ namespace System.Runtime.InteropServices.ComTypes
 		public TYPEDESC tdesc;
 		public DESCUNION desc;
 
-		[ComVisible (false)]
 		[StructLayout (LayoutKind.Explicit, CharSet = CharSet.Unicode)]
 		public struct DESCUNION
 		{

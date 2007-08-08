@@ -1,3 +1,7 @@
+2007-08-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Dictionary.cs : [Comvisible(true)]->[ComVisible(false)].
+
 2007-06-23  Marek Safar <marek.safar@gmail.com>
 
 	* List.cs: Make CheckMatch static.

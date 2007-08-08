@@ -63,6 +63,18 @@ namespace System.Runtime.InteropServices {
 			return obj.array == array && obj.offset == offset;
 		}
 
+#if NET_2_0
+		public static bool operator == (ArrayWithOffset obj1, ArrayWithOffset obj2)
+		{
+			return obj1.Equals (obj2);
+		}
+
+		public static bool operator != (ArrayWithOffset obj1, ArrayWithOffset obj2)
+		{
+			return !obj1.Equals (obj2);
+		}
+#endif
+
 		public override int GetHashCode ()
 		{
 			return offset;

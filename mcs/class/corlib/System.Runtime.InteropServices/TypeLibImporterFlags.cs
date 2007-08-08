@@ -51,12 +51,6 @@ namespace System.Runtime.InteropServices
 		ImportAsX86 = 256,
 		ReflectionOnlyLoading = 4096,
 		SerializableValueClasses = 32,
-
-		// No longer defined
-		PlatformLegacy = 4096,
-		PlatformLibrary = 8192,
-		PlatformAppDomain = 16384,
-		PlatformProcess = 32768
 #endif
 	}
 }

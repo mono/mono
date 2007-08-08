@@ -41,7 +41,6 @@ namespace System.Runtime.InteropServices.ComTypes
 		public short wVarFlags;
 		public VARKIND varkind;
 
-		[ComVisible (false)]
 		[StructLayout (LayoutKind.Explicit, CharSet = CharSet.Unicode)]
 		public struct DESCUNION
 		{

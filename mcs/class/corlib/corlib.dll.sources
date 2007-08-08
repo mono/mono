@@ -649,7 +649,6 @@ System.Runtime.InteropServices/ComEventInterfaceAttribute.cs
 System.Runtime.InteropServices/ComImportAttribute.cs
 System.Runtime.InteropServices/ComInterfaceType.cs
 System.Runtime.InteropServices/ComMemberType.cs
-System.Runtime.InteropServices/ComObjectInUseException.cs
 System.Runtime.InteropServices/ComRegisterFunctionAttribute.cs
 System.Runtime.InteropServices/ComSourceInterfacesAttribute.cs
 System.Runtime.InteropServices/ComUnregisterFunctionAttribute.cs
@@ -667,7 +666,6 @@ System.Runtime.InteropServices/ELEMDESC.cs
 System.Runtime.InteropServices/ErrorWrapper.cs
 System.Runtime.InteropServices/EXCEPINFO.cs
 System.Runtime.InteropServices/ExporterEventKind.cs
-System.Runtime.InteropServices/ExposeAsClassToComAttribute.cs
 System.Runtime.InteropServices/ExtensibleClassFactory.cs
 System.Runtime.InteropServices/ExternalException.cs
 System.Runtime.InteropServices/FieldOffsetAttribute.cs

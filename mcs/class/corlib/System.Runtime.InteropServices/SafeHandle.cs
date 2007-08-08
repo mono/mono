@@ -150,7 +150,7 @@ namespace System.Runtime.InteropServices
 		}
 
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
-		public virtual void Dispose ()
+		public void Dispose ()
 		{
 			Dispose (true);
 			GC.SuppressFinalize (this);
