@@ -195,6 +195,11 @@ namespace Mono.CSharp {
 		protected override void DoEmit (EmitContext ec)
 		{
 		}
+
+		protected override void CloneTo (CloneContext clonectx, Statement target)
+		{
+			// nothing needed.
+		}
 	}
 	
 	public class If : Statement {
