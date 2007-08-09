@@ -1,3 +1,9 @@
+2007-08-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ResourceReader.cs : implemented GetResourceData(). Resources with
+	  unresolvable types could still be parsed, so hold type names
+	  instead of types.
+
 2007-07-16  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* ResourceReader.cs (ResourceValue): Put the null resource check

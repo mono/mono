@@ -75,7 +75,7 @@ namespace System.Resources
 		IFormatter formatter;
 		internal int resourceCount = 0;
 		int typeCount = 0;
-		Type[] types;
+		string[] typeNames;
 		int[] hashes;
 		long[] positions;
 		int dataSectionOffset;
@@ -157,10 +157,10 @@ namespace System.Resources
 				resourceCount = reader.ReadInt32();
 				typeCount = reader.ReadInt32();
 				
-				types=new Type[typeCount];
+				typeNames=new string[typeCount];
 
 				for(int i=0; i<typeCount; i++) {
-					types[i]=Type.GetType(reader.ReadString(), true);
+					typeNames[i]=reader.ReadString();
 				}
 
 				/* There are between 0 and 7 bytes of
@@ -247,7 +247,6 @@ namespace System.Resources
 			}
 		}
 
-		// TODO: Read complex types
 		object ReadValueVer2 (int type_index)
 		{
 			switch ((PredefinedResourceType)type_index)
@@ -314,7 +313,7 @@ namespace System.Resources
 			}
 
 			type_index -= (int)PredefinedResourceType.FistCustom;
-			return ReadNonPredefinedValue (types[type_index]);
+			return ReadNonPredefinedValue (Type.GetType (typeNames[type_index], true));
 		}
 
 		object ReadValueVer1 (Type type)
@@ -401,7 +400,7 @@ namespace System.Resources
 					return ReadValueVer2 (type_index);
 #endif
 
-				return ReadValueVer1 (types[type_index]);
+				return ReadValueVer1 (Type.GetType (typeNames[type_index], true));
 			}
 		}
 
@@ -477,7 +476,69 @@ namespace System.Resources
 		{
 			return ((IResourceReader) this).GetEnumerator();
 		}
-		
+#if NET_2_0
+		public void GetResourceData (string resourceName, out string resourceType, out byte [] resourceData)
+		{
+			if (resourceName == null)
+				throw new ArgumentNullException ("resourceName");
+			ResourceEnumerator en = new ResourceEnumerator (this);
+			while (en.MoveNext ())
+				if ((string) en.Key == resourceName) {
+					GetResourceDataAt (en.Index, out resourceType, out resourceData);
+					return;
+				}
+			throw new ArgumentException (String.Format ("Specified resource not found: {0}", resourceName));
+		}
+
+		private void GetResourceDataAt (int index, out string resourceType, out byte [] data)
+		{
+			lock(this)
+			{
+				long pos=positions[index]+nameSectionOffset;
+				reader.BaseStream.Seek(pos, SeekOrigin.Begin);
+
+				/* Read a 7-bit encoded byte length field */
+				long len=Read7BitEncodedInt();
+				/* ... and skip that data to the info
+				 * we want, the offset into the data
+				 * section
+				 */
+				reader.BaseStream.Seek(len, SeekOrigin.Current);
+
+				long data_offset=reader.ReadInt32();
+				reader.BaseStream.Seek(data_offset+dataSectionOffset, SeekOrigin.Begin);
+				int type_index=Read7BitEncodedInt();
+				if (type_index == -1)
+					throw new FormatException ("The resource data is corrupt");
+				long pos2 = reader.BaseStream.Position;
+
+				// Simply read data, and seek back to the original position
+
+				if (resource_ver == 2) {
+					if (type_index >= (int) PredefinedResourceType.FistCustom) {
+						int typenameidx = type_index - (int)PredefinedResourceType.FistCustom;
+						if (typenameidx >= typeNames.Length)
+							throw new FormatException ("The resource data is corrupt. Invalid index to types");
+						resourceType = typeNames[typenameidx];
+					}
+					else
+						resourceType = "ResourceTypeCode." + (PredefinedResourceType) type_index;
+					ReadValueVer2 (type_index);
+				}
+				else {
+					// resource ver 1 == untyped
+					resourceType = "ResourceTypeCode.Null";
+					ReadValueVer1 (Type.GetType (typeNames [type_index], true));
+				}
+
+				// FIXME: the data size is wrong.
+				int datalen = (int) (reader.BaseStream.Position - pos2);
+				reader.BaseStream.Seek (-datalen, SeekOrigin.Current);
+				data = new byte [datalen];
+				reader.BaseStream.Read (data, 0, datalen);
+			}
+		}
+#endif
 		void IDisposable.Dispose ()
 		{
 			Dispose(true);
@@ -494,7 +555,7 @@ namespace System.Resources
 			reader=null;
 			hashes=null;
 			positions=null;
-			types=null;
+			typeNames=null;
 		}
 		
 		internal class ResourceEnumerator : IDictionaryEnumerator
@@ -505,6 +566,11 @@ namespace System.Resources
 			
 			internal ResourceEnumerator(ResourceReader readerToEnumerate){
 				reader = readerToEnumerate;
+			}
+
+			public int Index
+			{
+				get { return index; }
 			}
 
 			public virtual DictionaryEntry Entry

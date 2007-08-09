@@ -1,3 +1,7 @@
+2007-08-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ResourceReaderTest.cs : added tests for GetResourceData()
+
 2007-07-16  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* ResourceReaderTest.cs:  new test, related to 2.0 bug of #81757
