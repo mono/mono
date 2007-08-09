@@ -1,5 +1,17 @@
 2007-08-09  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* ThemeNice.cs: Use XplatUI.RunningOnUnix instead of checking
+	OSVersion.Platform.
+	* FileDialog.cs: Same.
+	* TextRendered.cs: Same.
+	* FolderBrowserDialog.cs: Same.
+	* TextBoxBase.cs: Same.
+	* Application.cs: Same.
+	* Cursors.cs: Same.
+	* ThemeClearLooks.cs: Same.
+
+2007-08-09  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* XplatUI.cs: Added RunningOnUnix property to be used by controls
 	instead of duplicating these checks everywhere.
 	* FileDialog.cs: Use case-insensitive comparison for populating the
