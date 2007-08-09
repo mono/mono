@@ -50,6 +50,7 @@ namespace System.Windows.Forms {
 		internal DataGridViewBand ()
 		{
 			defaultHeaderCellType = typeof (DataGridViewHeaderCell);
+			isRow = this is DataGridViewRow;
 		}
 
 		~DataGridViewBand ()
@@ -136,6 +137,19 @@ namespace System.Windows.Forms {
 				if (DataGridView == null) {
 					throw new InvalidOperationException("Cant select a row non associated with a DataGridView.");
 				}
+				if (isRow) {
+					DataGridView.SetSelectedRowCoreInternal (Index, value);
+				} else {
+					DataGridView.SetSelectedColumnCoreInternal (Index, value);
+				}
+			}
+		}
+		
+		internal bool SelectedInternal {
+			get {
+				return selected;
+			}
+			set {
 				selected = value;
 			}
 		}

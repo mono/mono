@@ -32,12 +32,14 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.ComponentModel;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace MonoTests.System.Windows.Forms
 {
 	public static class DataGridViewCommon
 	{
 		/// <summary>
+		/// Creates a 2x2 grid.
 		/// <para>     A   B </para>
 		/// <para>1   A1  B1</para>
 		/// <para>2   A2  B2</para>
@@ -50,6 +52,30 @@ namespace MonoTests.System.Windows.Forms
 			dgv.Columns.Add ("B", "B");
 			dgv.Rows.Add ("Cell A1", "Cell B1");
 			dgv.Rows.Add ("Cell A2", "Cell B2");
+			return dgv;
+		}
+
+		/// <summary>
+		/// Creates a 10x10 grid.
+		/// <para>     A   B </para>
+		/// <para>1   A1  B1</para>
+		/// <para>2   A2  B2</para>
+		/// </summary>
+		/// <returns></returns>
+		public static DataGridView CreateAndFillBig ()
+		{
+			DataGridView dgv = new DataGridView ();
+			for (int c = 0; c < 10; c++) {
+				string A = (((char) ((int) 'A') + c)).ToString ();
+				dgv.Columns.Add (A, A);
+			}
+			for (int r = 0; r < 10; r++) {
+				List<object> cells = new List<object> ();
+				for (int c = 0; c < 10; c++) {
+					cells.Add (string.Format ("Cell {0}{1}", dgv.Columns [c].Name, r));
+				}
+				dgv.Rows.Add (cells);
+			}
 			return dgv;
 		}
 	}

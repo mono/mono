@@ -258,6 +258,9 @@ namespace System.Windows.Forms {
 				if (IsShared)
 					throw new InvalidOperationException ("Getting the ReadOnly property of a shared row is not a valid operation.");
 					
+				if (DataGridView != null && DataGridView.ReadOnly)
+					return true;
+					
 				return base.ReadOnly;
 			}
 			set { base.ReadOnly = value; }

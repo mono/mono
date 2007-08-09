@@ -65,6 +65,134 @@ namespace MonoTests.System.Windows.Forms {
 				DataGridViewComboBoxCell cell = (DataGridViewComboBoxCell) dgv [0, 0];
 			}
 		}
+		
+		[Test]
+		public void SelectedRowsTest ()
+		{
+			using (DataGridView dgv = DataGridViewCommon.CreateAndFillBig ()) {
+				dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+				dgv.Rows [1].Selected = true;
+				Assert.AreEqual (1, dgv.SelectedRows.Count, "1-1");
+				Assert.AreEqual (1, dgv.SelectedRows [0].Index, "1-2");
+				dgv.Rows [3].Selected = true;
+				Assert.AreEqual (2, dgv.SelectedRows.Count, "1-3");
+				Assert.AreEqual (3, dgv.SelectedRows [0].Index, "1-4");
+				Assert.AreEqual (1, dgv.SelectedRows [1].Index, "1-5");
+				dgv.Rows [2].Selected = true;
+				Assert.AreEqual (3, dgv.SelectedRows.Count, "1-6");
+				Assert.AreEqual (2, dgv.SelectedRows [0].Index, "1-7");
+				Assert.AreEqual (3, dgv.SelectedRows [1].Index, "1-8");
+				Assert.AreEqual (1, dgv.SelectedRows [2].Index, "1-9");
+			}
+
+			using (DataGridView dgv = DataGridViewCommon.CreateAndFillBig ()) {
+				dgv.SelectionMode = DataGridViewSelectionMode.CellSelect;
+				dgv.Rows [1].Selected = true;
+				Assert.AreEqual (0, dgv.SelectedRows.Count, "3-1");
+				dgv.Rows [3].Selected = true;
+				Assert.AreEqual (0, dgv.SelectedRows.Count, "3-3");
+				dgv.Rows [2].Selected = true;
+				Assert.AreEqual (0, dgv.SelectedRows.Count, "3-6");
+			}
+
+			using (DataGridView dgv = DataGridViewCommon.CreateAndFillBig ()) {
+				foreach (DataGridViewColumn col in dgv.Columns)
+					col.SortMode = DataGridViewColumnSortMode.NotSortable;
+				dgv.SelectionMode = DataGridViewSelectionMode.ColumnHeaderSelect;
+				dgv.Rows [1].Selected = true;
+				Assert.AreEqual (0, dgv.SelectedRows.Count, "4-1");
+				dgv.Rows [3].Selected = true;
+				Assert.AreEqual (0, dgv.SelectedRows.Count, "4-3");
+				dgv.Rows [2].Selected = true;
+				Assert.AreEqual (0, dgv.SelectedRows.Count, "4-6");
+			}
+
+			using (DataGridView dgv = DataGridViewCommon.CreateAndFillBig ()) {
+				foreach (DataGridViewColumn col in dgv.Columns)
+					col.SortMode = DataGridViewColumnSortMode.NotSortable;
+				dgv.SelectionMode = DataGridViewSelectionMode.FullColumnSelect;
+				dgv.Rows [1].Selected = true;
+				Assert.AreEqual (0, dgv.SelectedRows.Count, "5-1");
+				dgv.Rows [3].Selected = true;
+				Assert.AreEqual (0, dgv.SelectedRows.Count, "5-3");
+				dgv.Rows [2].Selected = true;
+				Assert.AreEqual (0, dgv.SelectedRows.Count, "5-6");
+			}
+		}
+		
+		[Test]
+		public void SelectedColumnsTest ()
+		{
+			using (DataGridView dgv = DataGridViewCommon.CreateAndFillBig ()) {
+				foreach (DataGridViewColumn col in dgv.Columns)
+					col.SortMode = DataGridViewColumnSortMode.NotSortable;
+				dgv.SelectionMode = DataGridViewSelectionMode.FullColumnSelect;
+				dgv.Columns [1].Selected = true;
+				Assert.AreEqual (1, dgv.SelectedColumns.Count, "1-1");
+				Assert.AreEqual (1, dgv.SelectedColumns [0].Index, "1-2");
+				dgv.Columns [3].Selected = true;
+				Assert.AreEqual (2, dgv.SelectedColumns.Count, "1-3");
+				Assert.AreEqual (3, dgv.SelectedColumns [0].Index, "1-4");
+				Assert.AreEqual (1, dgv.SelectedColumns [1].Index, "1-5");
+				dgv.Columns [2].Selected = true;
+				Assert.AreEqual (3, dgv.SelectedColumns.Count, "1-6");
+				Assert.AreEqual (2, dgv.SelectedColumns [0].Index, "1-7");
+				Assert.AreEqual (3, dgv.SelectedColumns [1].Index, "1-8");
+				Assert.AreEqual (1, dgv.SelectedColumns [2].Index, "1-9");
+			}
+
+			using (DataGridView dgv = DataGridViewCommon.CreateAndFillBig ()) {
+				foreach (DataGridViewColumn col in dgv.Columns)
+					col.SortMode = DataGridViewColumnSortMode.NotSortable;
+				dgv.SelectionMode = DataGridViewSelectionMode.ColumnHeaderSelect;
+				dgv.Columns [1].Selected = true;
+				Assert.AreEqual (1, dgv.SelectedColumns.Count, "2-1");
+				Assert.AreEqual (1, dgv.SelectedColumns [0].Index, "2-2");
+				dgv.Columns [3].Selected = true;
+				Assert.AreEqual (2, dgv.SelectedColumns.Count, "2-3");
+				Assert.AreEqual (3, dgv.SelectedColumns [0].Index, "2-4");
+				Assert.AreEqual (1, dgv.SelectedColumns [1].Index, "2-5");
+				dgv.Columns [2].Selected = true;
+				Assert.AreEqual (3, dgv.SelectedColumns.Count, "2-6");
+				Assert.AreEqual (2, dgv.SelectedColumns [0].Index, "2-7");
+				Assert.AreEqual (3, dgv.SelectedColumns [1].Index, "2-8");
+				Assert.AreEqual (1, dgv.SelectedColumns [2].Index, "2-9");
+			}
+
+			using (DataGridView dgv = DataGridViewCommon.CreateAndFillBig ()) {
+				dgv.SelectionMode = DataGridViewSelectionMode.CellSelect;
+				dgv.Columns [1].Selected = true;
+				Assert.AreEqual (0, dgv.SelectedColumns.Count, "3-1");
+				dgv.Columns [3].Selected = true;
+				Assert.AreEqual (0, dgv.SelectedColumns.Count, "3-3");
+				dgv.Columns [2].Selected = true;
+				Assert.AreEqual (0, dgv.SelectedColumns.Count, "3-6");
+			}
+
+			using (DataGridView dgv = DataGridViewCommon.CreateAndFillBig ()) {
+				foreach (DataGridViewColumn col in dgv.Columns)
+					col.SortMode = DataGridViewColumnSortMode.NotSortable;
+				dgv.SelectionMode = DataGridViewSelectionMode.RowHeaderSelect;
+				dgv.Columns [1].Selected = true;
+				Assert.AreEqual (0, dgv.SelectedColumns.Count, "4-1");
+				dgv.Columns [3].Selected = true;
+				Assert.AreEqual (0, dgv.SelectedColumns.Count, "4-3");
+				dgv.Columns [2].Selected = true;
+				Assert.AreEqual (0, dgv.SelectedColumns.Count, "4-6");
+			}
+
+			using (DataGridView dgv = DataGridViewCommon.CreateAndFillBig ()) {
+				foreach (DataGridViewColumn col in dgv.Columns)
+					col.SortMode = DataGridViewColumnSortMode.NotSortable;
+				dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+				dgv.Columns [1].Selected = true;
+				Assert.AreEqual (0, dgv.SelectedColumns.Count, "5-1");
+				dgv.Columns [3].Selected = true;
+				Assert.AreEqual (0, dgv.SelectedColumns.Count, "5-3");
+				dgv.Columns [2].Selected = true;
+				Assert.AreEqual (0, dgv.SelectedColumns.Count, "5-6");
+			}
+		}
 
 		[Test]
 		public void TestDefaultValues () {

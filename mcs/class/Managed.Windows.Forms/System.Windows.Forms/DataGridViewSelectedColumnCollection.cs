@@ -116,6 +116,16 @@ namespace System.Windows.Forms {
 			base.List.Add(dataGridViewColumn);
 		}
 
+		internal void InternalAddRange (DataGridViewSelectedColumnCollection columns)
+		{
+			if (columns == null)
+				return;
+
+			// Believe it or not, MS adds the columns in reverse order...
+			for (int i = columns.Count - 1; i >= 0; i--)
+				base.List.Add (columns [i]);
+		}
+		
 		internal void InternalRemove (DataGridViewColumn dataGridViewColumn) {
 			base.List.Remove(dataGridViewColumn);
 		}

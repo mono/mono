@@ -116,6 +116,16 @@ namespace System.Windows.Forms {
 		{
 			base.List.Add(dataGridViewRow);
 		}
+		
+		internal void InternalAddRange (DataGridViewSelectedRowCollection rows)
+		{
+			if (rows == null)
+				return;
+
+			// Believe it or not, MS adds the rows in reverse order...
+			for (int i = rows.Count - 1; i >= 0; i--)
+				base.List.Add (rows [i]);
+		}
 
 		internal void InternalRemove (DataGridViewRow dataGridViewRow)
 		{

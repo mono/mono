@@ -120,6 +120,9 @@ namespace System.Windows.Forms {
 		private int selected_row = -1;
 		private int selected_column = -1;
 		
+		private DataGridViewSelectedRowCollection selected_rows;
+		private DataGridViewSelectedColumnCollection selected_columns;
+		
 		internal int gridWidth;
 		internal int gridHeight;
 
@@ -1041,31 +1044,30 @@ namespace System.Windows.Forms {
 
 		[Browsable (false)]
 		public DataGridViewSelectedColumnCollection SelectedColumns {
-			get {
-				DataGridViewSelectedColumnCollection selectedColumns = new DataGridViewSelectedColumnCollection();
-				if (selectionMode == DataGridViewSelectionMode.FullColumnSelect || selectionMode == DataGridViewSelectionMode.ColumnHeaderSelect) {
-					foreach (DataGridViewColumn col in columns) {
-						if (col.Selected) {
-							selectedColumns.InternalAdd(col);
-						}
-					}
-				}
-				return selectedColumns;
+			get
+			{
+				DataGridViewSelectedColumnCollection result = new DataGridViewSelectedColumnCollection ();
+
+				if (selectionMode != DataGridViewSelectionMode.FullColumnSelect && selectionMode != DataGridViewSelectionMode.ColumnHeaderSelect)
+					return result;
+
+				result.InternalAddRange (selected_columns);
+
+				return result;
 			}
 		}
 
 		[Browsable (false)]
 		public DataGridViewSelectedRowCollection SelectedRows {
 			get {
-				DataGridViewSelectedRowCollection selectedRows = new DataGridViewSelectedRowCollection();
-				if (selectionMode == DataGridViewSelectionMode.FullRowSelect || selectionMode == DataGridViewSelectionMode.RowHeaderSelect) {
-					foreach (DataGridViewRow row in rows) {
-						if (row.Selected) {
-							selectedRows.InternalAdd(row);
-						}
-					}
-				}
-				return selectedRows;
+				DataGridViewSelectedRowCollection result = new DataGridViewSelectedRowCollection ();
+				
+				if (selectionMode != DataGridViewSelectionMode.FullRowSelect && selectionMode != DataGridViewSelectionMode.RowHeaderSelect)
+					return result;
+				
+				result.InternalAddRange (selected_rows);
+
+				return result;
 			}
 		}
 
@@ -2201,6 +2203,9 @@ namespace System.Windows.Forms {
 		public HitTestInfo HitTest (int x, int y) {
 			///////////////////////////////////////////////////////
 			//Console.WriteLine ("HitTest ({0}, {1})", x, y);
+			bool isInColHeader = columnHeadersVisible && y >= 0 && y <= ColumnHeadersHeight;
+			bool isInRowHeader = rowHeadersVisible && x >= 0 && x <= RowHeadersWidth;
+			
 			x += horizontalScrollingOffset;
 			y += verticalScrollingOffset;
 			int rowIndex = -1;
@@ -2236,7 +2241,20 @@ namespace System.Windows.Forms {
 					totalWidth++;
 				}
 			}
-			HitTestInfo result = new HitTestInfo(colIndex, x, rowIndex, y, (colIndex >= 0 && rowIndex >= 0)? DataGridViewHitTestType.Cell : DataGridViewHitTestType.None);
+			HitTestInfo result;
+			
+			if (colIndex >= 0 && rowIndex >= 0) {
+				result = new HitTestInfo (colIndex, x, rowIndex, y, DataGridViewHitTestType.Cell);
+			} else if (isInColHeader && isInRowHeader) {
+				result = new HitTestInfo (colIndex, x, rowIndex, y, DataGridViewHitTestType.TopLeftHeader);
+			} else if (isInColHeader) {
+				result = new HitTestInfo (colIndex, x, rowIndex, y, DataGridViewHitTestType.ColumnHeader);
+			} else if (isInRowHeader) {
+				result = new HitTestInfo (colIndex, x, rowIndex, y, DataGridViewHitTestType.RowHeader);
+			} else {
+				result = new HitTestInfo (colIndex, x, rowIndex, y, DataGridViewHitTestType.None);
+			}
+
 			return result;
 		}
 
@@ -3207,6 +3225,23 @@ namespace System.Windows.Forms {
 			Keys modifiers = Control.ModifierKeys;
 			bool isControl = (modifiers & Keys.Control) != 0;
 			bool isShift = (modifiers & Keys.Shift) != 0;
+			bool isRowHeader = hitTest.Type == DataGridViewHitTestType.RowHeader;
+			bool isColHeader = hitTest.Type == DataGridViewHitTestType.ColumnHeader;
+			DataGridViewSelectionMode mode;
+			
+			switch (hitTest.Type) {
+			case DataGridViewHitTestType.Cell:
+				mode = selectionMode;
+				break;
+			case DataGridViewHitTestType.ColumnHeader:
+				mode = DataGridViewSelectionMode.FullColumnSelect;
+				break;
+			case DataGridViewHitTestType.RowHeader:
+				mode = DataGridViewSelectionMode.FullRowSelect;
+				break; // Handled below
+			default:
+				return;
+			}
 			
 			if (!isControl) {
 				// If SHIFT is pressed:
@@ -3240,10 +3275,17 @@ namespace System.Windows.Forms {
 					min_col = isShift ? selected_column : max_col;
 				}
 
-				switch (selectionMode) {
+				switch (mode) {
 				case DataGridViewSelectionMode.FullRowSelect:
 					for (int i = 0; i < RowCount; i++) {
 						bool select = i >= min_row && i <= max_row;
+						if (!select) {
+							for (int c = 0; c < ColumnCount; c++) {
+								if (Rows [i].Cells [c].Selected) {
+									SetSelectedCellCore (c, i, false);
+								}
+							}
+						}
 						if (select != Rows [i].Selected) {
 							SetSelectedRowCore (i, select);
 						}
@@ -3252,6 +3294,13 @@ namespace System.Windows.Forms {
 				case DataGridViewSelectionMode.FullColumnSelect:
 					for (int i = 0; i < ColumnCount; i++) {
 						bool select = i >= min_col && i <= max_col;
+						if (!select) {
+							for (int r = 0; r < RowCount; r++) {
+								if (Rows [r].Cells [i].Selected) {
+									SetSelectedCellCore (i, r, false);
+								}
+							}
+						}
 						if (select != Columns [i].Selected) {
 							SetSelectedColumnCore (i, select);
 						}
@@ -3273,7 +3322,7 @@ namespace System.Windows.Forms {
 				
 			} else if (isControl) {
 				// Switch the selected state of the row.
-				switch (selectionMode) {
+				switch (mode) {
 				case DataGridViewSelectionMode.FullRowSelect:
 					SetSelectedRowCore (hitTest.RowIndex, !rows [hitTest.RowIndex].Selected);
 					break;
@@ -3294,18 +3343,28 @@ namespace System.Windows.Forms {
 		protected override void OnMouseDown (MouseEventArgs e)
 		{
 			base.OnMouseDown(e);
-			//Console.WriteLine("Mouse: Clicks: {0}; Delta: {1}; X: {2}; Y: {3};", e.Clicks, e.Delta, e.X, e.Y);
+			
 			HitTestInfo hitTest = HitTest(e.X, e.Y);
-			//Console.WriteLine("HitTest: Column: {0}; Row: {1};", hitTest.ColumnIndex, hitTest.RowIndex);
-			if (hitTest.RowIndex < 0 || hitTest.ColumnIndex < 0) {
+			
+			DataGridViewCell cell = null;
+			DataGridViewRow row = null;
+			Rectangle cellBounds;
+
+			if (hitTest.Type == DataGridViewHitTestType.Cell) {
+				cellBounds = GetCellDisplayRectangle (hitTest.ColumnIndex, hitTest.RowIndex, false);
+				OnCellMouseDown (new DataGridViewCellMouseEventArgs (hitTest.ColumnIndex, hitTest.RowIndex, e.X - cellBounds.X, e.Y - cellBounds.Y, e));
+				OnCellClick (new DataGridViewCellEventArgs (hitTest.ColumnIndex, hitTest.RowIndex));
+				row = rows [hitTest.RowIndex];
+				cell = row.Cells [hitTest.ColumnIndex];
+			}
+			
+			DoSelectionOnMouseDown (hitTest);
+			
+			if (hitTest.Type != DataGridViewHitTestType.Cell) {
+				Invalidate ();
 				return;
 			}
-			Rectangle cellBounds = GetCellDisplayRectangle (hitTest.ColumnIndex, hitTest.RowIndex, false);
-			OnCellMouseDown (new DataGridViewCellMouseEventArgs (hitTest.ColumnIndex, hitTest.RowIndex, e.X - cellBounds.X, e.Y - cellBounds.Y, e));
-			OnCellClick(new DataGridViewCellEventArgs(hitTest.ColumnIndex, hitTest.RowIndex));
-			DataGridViewRow row = rows[hitTest.RowIndex];
-			DataGridViewCell cell = row.Cells[hitTest.ColumnIndex];
-			DoSelectionOnMouseDown (hitTest);
+			
 			if (cell == currentCell) {
 				BeginEdit (true);
 			} else if (currentCell != null) {
@@ -3849,12 +3908,42 @@ namespace System.Windows.Forms {
 			rows [rowIndex].Cells [columnIndex].Selected = selected;
 		}
 
+		internal void SetSelectedColumnCoreInternal (int columnIndex, bool selected) {
+			SetSelectedColumnCore (columnIndex, selected);
+		}	
+		
 		protected virtual void SetSelectedColumnCore (int columnIndex, bool selected) {
-			columns [columnIndex].Selected = selected;
+			DataGridViewColumn col = columns [columnIndex];
+			
+			col.SelectedInternal = selected;
+			
+			if (selected_columns == null)
+				selected_columns = new DataGridViewSelectedColumnCollection ();
+			
+			if (!selected && selected_columns.Contains (col)) {
+				selected_columns.InternalRemove (col);
+			} else if (selected && !selected_columns.Contains (col)) {
+				selected_columns.InternalAdd (col);
+			}
 		}
 
+		internal void SetSelectedRowCoreInternal (int rowIndex, bool selected) {
+			SetSelectedRowCore (rowIndex, selected);
+		}	
+
 		protected virtual void SetSelectedRowCore (int rowIndex, bool selected) {
-			rows [rowIndex].Selected = selected;
+			DataGridViewRow row = rows [rowIndex];
+			
+			row.SelectedInternal = selected;
+			
+			if (selected_rows == null)
+				selected_rows = new DataGridViewSelectedRowCollection ();
+				
+			if (!selected && selected_rows.Contains (row)) {
+				selected_rows.InternalRemove (row);
+			} else if (selected && !selected_rows.Contains (row)) {
+				selected_rows.InternalAdd (row);
+			}
 		}
 
 		protected override void WndProc (ref Message m) {

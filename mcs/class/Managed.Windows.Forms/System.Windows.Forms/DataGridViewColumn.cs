@@ -333,7 +333,13 @@ Example */
 		}
 
 		public override bool ReadOnly {
-			get { return readOnly; }
+			get {
+
+				if (DataGridView != null && DataGridView.ReadOnly)
+					return true;
+
+				return readOnly;
+			}
 			set { readOnly = value; }
 		}
 
