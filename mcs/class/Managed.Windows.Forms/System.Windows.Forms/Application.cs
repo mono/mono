@@ -427,12 +427,11 @@ namespace System.Windows.Forms {
 				string gac_path = Path.GetDirectoryName ((string)get_gac.Invoke (null, null));
 				string mono_prefix = Path.GetDirectoryName (Path.GetDirectoryName (gac_path));
 
-				if (Environment.OSVersion.Platform == PlatformID.Unix) {
+				if (XplatUI.RunningOnUnix) {
 					mono_path = Path.Combine (mono_prefix, "bin/mono");
 					if (!File.Exists (mono_path))
 						mono_path = "mono";
-				}
-				else {
+				} else {
 					mono_path = Path.Combine (mono_prefix, "bin\\mono.bat");
 
 					if (!File.Exists (mono_path))

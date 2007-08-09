@@ -57,8 +57,6 @@ namespace System.Windows.Forms
 		static Blend NormalBlend;
 		static Blend FlatBlend;
 		
-		int platform = (int) Environment.OSVersion.Platform;
-		
 		#region	Principal Theme Methods
 		public ThemeNice( )
 		{
@@ -80,7 +78,7 @@ namespace System.Windows.Forms
 		
 		public override Color DefaultWindowBackColor
 		{
-			get { return NiceBackColor; }			
+			get { return NiceBackColor; }
 		}
 		
 		public override Color ColorControl {
@@ -112,27 +110,27 @@ namespace System.Windows.Forms
 		public override Image Images(UIIcon index, int size) {
 			switch (index) {
 			case UIIcon.PlacesRecentDocuments:
-				if ((platform == 4) || (platform == 128))
+				if (XplatUI.RunningOnUnix)
 					return MimeIconEngine.GetIconForMimeTypeAndSize( "recently/recently", new Size(size, size) );
 				else
 					return base.Images (UIIcon.PlacesRecentDocuments, size);
 			case UIIcon.PlacesDesktop:
-				if ((platform == 4) || (platform == 128))
+				if (XplatUI.RunningOnUnix)
 					return MimeIconEngine.GetIconForMimeTypeAndSize( "desktop/desktop", new Size(size, size) );
 				else
 					return base.Images (UIIcon.PlacesDesktop, size);
 			case UIIcon.PlacesPersonal:
-				if ((platform == 4) || (platform == 128))
+				if (XplatUI.RunningOnUnix)
 					return MimeIconEngine.GetIconForMimeTypeAndSize( "directory/home", new Size(size, size) );
 				else
 					return base.Images (UIIcon.PlacesPersonal, size);
 			case UIIcon.PlacesMyComputer:
-				if ((platform == 4) || (platform == 128))
+				if (XplatUI.RunningOnUnix)
 					return MimeIconEngine.GetIconForMimeTypeAndSize( "workplace/workplace", new Size(size, size) );
 				else
 					return base.Images (UIIcon.PlacesMyComputer, size);
 			case UIIcon.PlacesMyNetwork:
-				if ((platform == 4) || (platform == 128))
+				if (XplatUI.RunningOnUnix)
 					return MimeIconEngine.GetIconForMimeTypeAndSize( "network/network", new Size(size, size) );
 				else
 					return base.Images (UIIcon.PlacesMyNetwork, size);
@@ -145,7 +143,7 @@ namespace System.Windows.Forms
 				
 				// misc Icons
 			case UIIcon.NormalFolder:
-				if ((platform == 4) || (platform == 128))
+				if (XplatUI.RunningOnUnix)
 					return MimeIconEngine.GetIconForMimeTypeAndSize( "inode/directory", new Size(size, size) );
 				else
 					return base.Images (UIIcon.NormalFolder, size);
@@ -317,15 +315,15 @@ namespace System.Windows.Forms
 			if (item.BarBreak) { /* Draw vertical break bar*/
 				Rectangle rect = e.Bounds;
 				rect.Y++;
-	        		rect.Width = 3;
-	        		rect.Height = item.MenuHeight - 6;
+				rect.Width = 3;
+				rect.Height = item.MenuHeight - 6;
 				
 				e.Graphics.DrawLine (ResPool.GetPen (ColorControlDark),
-						     rect.X, rect.Y , rect.X, rect.Y + rect.Height);
+					rect.X, rect.Y , rect.X, rect.Y + rect.Height);
 				
 				e.Graphics.DrawLine (ResPool.GetPen (ColorControlLight),
-						     rect.X + 1, rect.Y , rect.X +1, rect.Y + rect.Height);
-			}			
+					rect.X + 1, rect.Y , rect.X +1, rect.Y + rect.Height);
+			}
 			
 			Color color_text = ColorMenuText;
 			Color color_back = NiceBackColor;
@@ -346,8 +344,8 @@ namespace System.Windows.Forms
 			
 			if (item.Enabled) {
 				e.Graphics.DrawString (item.Text, e.Font,
-						       ResPool.GetSolidBrush (color_text),
-						       rect_text, string_format);
+					ResPool.GetSolidBrush (color_text),
+					rect_text, string_format);
 				
 				if (!item.MenuBar && item.Shortcut != Shortcut.None && item.ShowShortcut) {
 					string str = item.GetShortCutText ();
@@ -356,12 +354,12 @@ namespace System.Windows.Forms
 					rect.Width -= item.XTab;
 					
 					e.Graphics.DrawString (str, e.Font, ResPool.GetSolidBrush (color_text),
-							       rect, string_format_menu_shortcut);
+						rect, string_format_menu_shortcut);
 				}
 				
 			} else {
 				ControlPaint.DrawStringDisabled (e.Graphics, item.Text, e.Font, 
-								 Color.Black, rect_text, string_format);
+					Color.Black, rect_text, string_format);
 			}
 			
 			/* Draw arrow */
@@ -754,7 +752,6 @@ namespace System.Windows.Forms
 				
 				interior = new Rectangle( bounds.Left + 2, bounds.Top + 2, bounds.Width - 4, bounds.Height - 4 );
 				
-                                
 				StringFormat string_format = new StringFormat( );
 				string_format.Alignment = StringAlignment.Center;
 				string_format.LineAlignment = StringAlignment.Center;
@@ -1594,9 +1591,8 @@ namespace System.Windows.Forms
 				CPDrawStringDisabled (dc, box.Text, box.Font, box.ForeColor, 
 						      new RectangleF (10, 0, width,  box.Font.Height), text_format);
 			}
-			text_format.Dispose ();	
+			text_format.Dispose ();
 		}
 		#endregion
 	} //class
 }
-

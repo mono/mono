@@ -2203,8 +2203,6 @@ namespace System.Windows.Forms
 		private int old_menuitem_index;
 		private bool do_update_view = false;
 		
-		private int platform = (int) Environment.OSVersion.Platform;
-		
 		public MWFFileView (MWFVFS vfs)
 		{
 			this.vfs = vfs;
@@ -2415,7 +2413,7 @@ namespace System.Windows.Forms
 			if (Directory.Exists (Path.Combine (folder, tmp_filename))) {
 				int i = 1;
 				
-				if ((platform == 4) || (platform == 128)) {
+				if (XplatUI.RunningOnUnix) {
 					tmp_filename = tmp_filename + "-" + i;
 				} else {
 					tmp_filename = tmp_filename + " (" + i + ")";
@@ -2423,7 +2421,7 @@ namespace System.Windows.Forms
 				
 				while (Directory.Exists (Path.Combine (folder, tmp_filename))) {
 					i++;
-					if ((platform == 4) || (platform == 128)) {
+					if (XplatUI.RunningOnUnix) {
 						tmp_filename = "New Folder" + "-" + i;
 					} else {
 						tmp_filename = "New Folder" + " (" + i + ")";
@@ -3061,8 +3059,6 @@ namespace System.Windows.Forms
 	{
 		private FileSystem fileSystem;
 		
-		private int platform = (int) Environment.OSVersion.Platform;
-		
 		public static readonly string DesktopPrefix = "Desktop://";
 		public static readonly string PersonalPrefix = "Personal://";
 		public static readonly string MyComputerPrefix = "MyComputer://";
@@ -3083,7 +3079,7 @@ namespace System.Windows.Forms
 		
 		public MWFVFS ()
 		{
-			if ((platform == 4) || (platform == 128)) {
+			if (XplatUI.RunningOnUnix) {
 				fileSystem = new UnixFileSystem ();
 			} else {
 				fileSystem = new WinFileSystem ();
@@ -4357,13 +4353,12 @@ namespace System.Windows.Forms
 		ArrayList network_devices = new ArrayList ();
 		ArrayList removable_devices = new ArrayList ();
 		
-		private int platform = (int) Environment.OSVersion.Platform;
 		private MountComparer mountComparer = new MountComparer ();
 		
 		public MasterMount ()
 		{
 			// maybe check if the current user can access /proc/mounts
-			if ((platform == 4) || (platform == 128))
+			if (XplatUI.RunningOnUnix)
 				if (File.Exists ("/proc/mounts"))
 					proc_mount_available = true;
 		}
@@ -4575,19 +4570,13 @@ namespace System.Windows.Forms
 			static string full_file_name;
 			static string default_file_name;
 			readonly string configName = "MWFConfig";
-			static int platform = (int) Environment.OSVersion.Platform;
-
-			static bool IsUnix ()
-			{
-				return (platform == 4 || platform == 128);
-			}
 
 			static MWFConfigInstance ()
 			{
 				string b = "mwf_config";
 				string dir = Environment.GetFolderPath (Environment.SpecialFolder.Personal);
-					
-				if (IsUnix ()){
+
+				if (XplatUI.RunningOnUnix) {
 					dir = Path.Combine (dir, ".mono");
 					try {
 						Directory.CreateDirectory (dir);
@@ -4667,7 +4656,7 @@ namespace System.Windows.Forms
 					
 					xtw.Close ();
 
-					if (!IsUnix ())
+					if (!XplatUI.RunningOnUnix)
 						File.SetAttributes (full_file_name, FileAttributes.Hidden);
 				} catch (Exception){
 				}

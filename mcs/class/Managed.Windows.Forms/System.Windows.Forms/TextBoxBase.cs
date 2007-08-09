@@ -1723,7 +1723,7 @@ namespace System.Windows.Forms {
 				click_last = DateTime.Now;
 			}
 
-			if ((e.Button == MouseButtons.Middle) && (((int)Environment.OSVersion.Platform == 4) || ((int)Environment.OSVersion.Platform == 128))) {
+			if ((e.Button == MouseButtons.Middle) && XplatUI.RunningOnUnix) {
 				Document.Marker	marker;
 
 				marker.tag = document.FindCursor(e.X + document.ViewPortX, e.Y + document.ViewPortY, out marker.pos);

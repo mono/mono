@@ -316,8 +316,6 @@ namespace System.Windows.Forms {
 			private Environment.SpecialFolder rootFolder;
 			private bool dont_enable = false;
 			
-			private int platform = (int) Environment.OSVersion.Platform;
-			
 			public FolderBrowserTreeView (FolderBrowserDialog parent_dialog)
 			{
 				parentDialog = parent_dialog;
@@ -385,8 +383,8 @@ namespace System.Windows.Forms {
 				
 				if (Directory.Exists (Path.Combine (fbnode.RealPath, tmp_filename))) {
 					int i = 1;
-					
-					if ((platform == 4) || (platform == 128)) {
+
+					if (XplatUI.RunningOnUnix) {
 						tmp_filename = tmp_filename + "-" + i;
 					} else {
 						tmp_filename = tmp_filename + " (" + i + ")";
@@ -394,7 +392,7 @@ namespace System.Windows.Forms {
 					
 					while (Directory.Exists (Path.Combine (fbnode.RealPath, tmp_filename))) {
 						i++;
-						if ((platform == 4) || (platform == 128)) {
+						if (XplatUI.RunningOnUnix) {
 							tmp_filename = "New Folder" + "-" + i;
 						} else {
 							tmp_filename = "New Folder" + " (" + i + ")";

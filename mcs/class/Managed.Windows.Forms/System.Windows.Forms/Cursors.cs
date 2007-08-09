@@ -282,7 +282,7 @@ namespace System.Windows.Forms {
 		public static Cursor SizeNESW {
 			get {
 				if (size_nesw == null) {
-					if (((int)Environment.OSVersion.Platform == 4) || ((int)Environment.OSVersion.Platform == 128)) {
+					if (XplatUI.RunningOnUnix) {
 						size_nesw = new Cursor(typeof(Cursor), "NESW.cur");
 						size_nesw.name = "SizeNESW";
 					} else {
@@ -307,7 +307,7 @@ namespace System.Windows.Forms {
 		public static Cursor SizeNWSE {
 			get {
 				if (size_nwse == null) {
-					if (((int)Environment.OSVersion.Platform == 4) || ((int)Environment.OSVersion.Platform == 128)) {
+					if (XplatUI.RunningOnUnix) {
 						size_nwse = new Cursor(typeof(Cursor), "NWSE.cur");
 						size_nwse.name = "SizeNWSE";
 					} else {

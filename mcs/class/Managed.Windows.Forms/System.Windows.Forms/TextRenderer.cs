@@ -148,7 +148,7 @@ namespace System.Windows.Forms
 				return;
 
 			// We use MS GDI API's unless told not to, or we aren't on Windows
-			if (!useDrawString && (Environment.OSVersion.Platform == PlatformID.Win32NT || Environment.OSVersion.Platform == PlatformID.Win32Windows)) {
+			if (!useDrawString && !XplatUI.RunningOnUnix) {
 				if ((flags & TextFormatFlags.VerticalCenter) == TextFormatFlags.VerticalCenter || (flags & TextFormatFlags.Bottom) == TextFormatFlags.Bottom)
 					flags |= TextFormatFlags.SingleLine;
 
@@ -211,7 +211,7 @@ namespace System.Windows.Forms
 			// Use Graphics.DrawString as a fallback method
 			else {
 #endif
-				Graphics g;
+			Graphics g;
 
 #if NET_2_0
 				if (dc is Graphics)
@@ -245,7 +245,7 @@ namespace System.Windows.Forms
 #endif
 		{
 #if NET_2_0
-			if (!useMeasureString && (Environment.OSVersion.Platform == PlatformID.Win32NT || Environment.OSVersion.Platform == PlatformID.Win32Windows)) {
+			if (!useMeasureString && !XplatUI.RunningOnUnix) {
 				// Tell DrawText to calculate size instead of draw
 				flags |= (TextFormatFlags)1024;		// DT_CALCRECT
 
@@ -280,7 +280,7 @@ namespace System.Windows.Forms
 			}
 			else {
 #endif
-				StringFormat sf = FlagsToStringFormat (flags);
+			StringFormat sf = FlagsToStringFormat (flags);
 
 				Size retval;
 				

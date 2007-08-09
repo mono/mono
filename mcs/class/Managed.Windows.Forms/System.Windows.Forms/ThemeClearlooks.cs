@@ -121,10 +121,8 @@ namespace System.Windows.Forms {
 		static readonly Color radio_button_dot_color = Color.FromArgb( 94, 160, 221 );
 		
 		const int SEPARATOR_HEIGHT = 7;
-    		const int MENU_TAB_SPACE = 8;		// Pixels added to the width of an item because of a tab
-    		const int MENU_BAR_ITEMS_SPACE = 8;	// Space between menu bar items
-		
-		int platform = (int) Environment.OSVersion.Platform;
+		const int MENU_TAB_SPACE = 8;		// Pixels added to the width of an item because of a tab
+		const int MENU_BAR_ITEMS_SPACE = 8;	// Space between menu bar items
 		
 		static Color control_parent_backcolor;
 		
@@ -170,27 +168,27 @@ namespace System.Windows.Forms {
 		public override Image Images(UIIcon index, int size) {
 			switch (index) {
 			case UIIcon.PlacesRecentDocuments:
-				if ((platform == 4) || (platform == 128))
+				if (XplatUI.RunningOnUnix)
 					return MimeIconEngine.GetIconForMimeTypeAndSize( "recently/recently", new Size(size, size) );
 				else
 					return base.Images (UIIcon.PlacesRecentDocuments, size);
 			case UIIcon.PlacesDesktop:
-				if ((platform == 4) || (platform == 128))
+				if (XplatUI.RunningOnUnix)
 					return MimeIconEngine.GetIconForMimeTypeAndSize( "desktop/desktop", new Size(size, size) );
 				else
 					return base.Images (UIIcon.PlacesDesktop, size);
 			case UIIcon.PlacesPersonal:
-				if ((platform == 4) || (platform == 128))
+				if (XplatUI.RunningOnUnix)
 					return MimeIconEngine.GetIconForMimeTypeAndSize( "directory/home", new Size(size, size) );
 				else
 					return base.Images (UIIcon.PlacesPersonal, size);
 			case UIIcon.PlacesMyComputer:
-				if ((platform == 4) || (platform == 128))
+				if (XplatUI.RunningOnUnix)
 					return MimeIconEngine.GetIconForMimeTypeAndSize( "workplace/workplace", new Size(size, size) );
 				else
 					return base.Images (UIIcon.PlacesMyComputer, size);
 			case UIIcon.PlacesMyNetwork:
-				if ((platform == 4) || (platform == 128))
+				if (XplatUI.RunningOnUnix)
 					return MimeIconEngine.GetIconForMimeTypeAndSize( "network/network", new Size(size, size) );
 				else
 					return base.Images (UIIcon.PlacesMyNetwork, size);
@@ -203,7 +201,7 @@ namespace System.Windows.Forms {
 				
 				// misc Icons
 			case UIIcon.NormalFolder:
-				if ((platform == 4) || (platform == 128))
+				if (XplatUI.RunningOnUnix)
 					return MimeIconEngine.GetIconForMimeTypeAndSize( "inode/directory", new Size(size, size) );
 				else
 					return base.Images (UIIcon.NormalFolder, size);
