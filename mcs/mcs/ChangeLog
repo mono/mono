@@ -1,3 +1,8 @@
+2007-08-09  Marek Safar  <marek.safar@gmail.com>
+
+	* expression.cs (StringConcat.Append): Handle 3 and more concatenation
+	as single Concat call. How could we miss that :-(
+	
 2007-08-08  Marek Safar  <marek.safar@gmail.com>
 
 	* expression.cs (ArrayCreation.CloneTo): Allocate exact size.

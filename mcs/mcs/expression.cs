@@ -2980,6 +2980,16 @@ namespace Mono.CSharp {
 				}
 			}
 			
+
+			//
+			// Multiple (3+) concatenation are resolved as multiple StringConcat instances
+			//
+			StringConcat concat_oper = operand as StringConcat;
+			if (concat_oper != null) {
+				operands.AddRange (concat_oper.operands);
+				return;
+			}			
+			
 			//
 			// Conversion to object
 			//
