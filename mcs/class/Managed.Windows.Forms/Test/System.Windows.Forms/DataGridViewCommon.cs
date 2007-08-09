@@ -37,6 +37,12 @@ namespace MonoTests.System.Windows.Forms
 {
 	public static class DataGridViewCommon
 	{
+		/// <summary>
+		/// <para>     A   B </para>
+		/// <para>1   A1  B1</para>
+		/// <para>2   A2  B2</para>
+		/// </summary>
+		/// <returns></returns>
 		public static DataGridView CreateAndFill ()
 		{
 			DataGridView dgv = new DataGridView ();

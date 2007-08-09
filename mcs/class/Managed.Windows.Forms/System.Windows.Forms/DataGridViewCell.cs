@@ -54,7 +54,7 @@ namespace System.Windows.Forms {
 		private DataGridViewColumn owningColumn;
 		private DataGridViewRow owningRow;
 		private Size preferredSize;
-		private bool readOnly;
+		private DataGridViewTriState readOnly;
 		private bool resizable;
 		private bool selected;
 		private Size size;
@@ -238,8 +238,29 @@ namespace System.Windows.Forms {
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public virtual bool ReadOnly {
-			get { return readOnly; }
-			set { readOnly = value; }
+			get {
+				if (DataGridView != null && DataGridView.ReadOnly)
+					return true;
+				
+				if (readOnly != DataGridViewTriState.NotSet)
+					return readOnly == DataGridViewTriState.True;
+					
+				if (OwningRow != null && !OwningRow.IsShared && OwningRow.ReadOnly)
+					return true;
+				
+				if (OwningColumn != null && OwningColumn.ReadOnly)
+					return true;
+					
+				return false;
+			}
+			set {
+				readOnly = value ? DataGridViewTriState.True : DataGridViewTriState.False;
+				if (value) {
+					SetState (DataGridViewElementStates.ReadOnly | State);
+				} else {
+					SetState (~DataGridViewElementStates.ReadOnly & State);
+				}
+			}
 		}
 
 		[Browsable (false)]
@@ -469,23 +490,25 @@ namespace System.Windows.Forms {
 				return result;
 			}
 			
-			if (col.Resizable == DataGridViewTriState.True && row.Resizable == DataGridViewTriState.True)
-				result |= DataGridViewElementStates.Resizable;
-			
-			if (col.Visible && row.Visible)
-				result |= DataGridViewElementStates.Visible;
+			if (col != null) {
+				if (col.Resizable == DataGridViewTriState.True && row.Resizable == DataGridViewTriState.True)
+					result |= DataGridViewElementStates.Resizable;
+				
+				if (col.Visible && row.Visible)
+					result |= DataGridViewElementStates.Visible;
 
-			if (col.ReadOnly && row.ReadOnly)
-				result |= DataGridViewElementStates.ReadOnly;
+				if (col.ReadOnly || row.ReadOnly)
+					result |= DataGridViewElementStates.ReadOnly;
 
-			if (col.Frozen && row.Frozen)
-				result |= DataGridViewElementStates.Frozen;
+				if (col.Frozen || row.Frozen)
+					result |= DataGridViewElementStates.Frozen;
 
-			if (col.Displayed && row.Displayed)
-				result |= DataGridViewElementStates.Displayed;
+				if (col.Displayed && row.Displayed)
+					result |= DataGridViewElementStates.Displayed;
 
-			if (col.Selected || row.Selected)
-				result |= DataGridViewElementStates.Selected;
+				if (col.Selected || row.Selected)
+					result |= DataGridViewElementStates.Selected;
+			}
 			
 			return result;
 		}

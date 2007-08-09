@@ -1,3 +1,9 @@
+2007-08-09  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* DataGridView.cs: BeginEdit: don't allow editing of readonly cells.
+	* DataGridViewCell.cs: Implement ReadOnly better: the cell is ReadOnly if
+	  the DGV, the column, the row, or the cell itself is readonly.
+
 2007-08-09  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ThemeNice.cs: Use XplatUI.RunningOnUnix instead of checking

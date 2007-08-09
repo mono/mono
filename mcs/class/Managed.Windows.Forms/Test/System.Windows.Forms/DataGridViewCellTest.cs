@@ -45,6 +45,82 @@ namespace MonoTests.System.Windows.Forms {
 		public void Clean() {}
 
 		[Test]
+		public void ReadOnlyTest ()
+		{
+			using (DataGridView dgv = DataGridViewCommon.CreateAndFill ()) {
+				Assert.IsFalse (dgv.ReadOnly, "1-DGV");
+				Assert.IsFalse (dgv.Rows [0].ReadOnly, "1-R0");
+				Assert.IsFalse (dgv.Rows [1].ReadOnly, "1-R1");
+				Assert.IsFalse (dgv.Columns [0].ReadOnly, "1-C1");
+				Assert.IsFalse (dgv.Columns [1].ReadOnly, "1-C1");
+				Assert.IsFalse (dgv [0, 0].ReadOnly, "1-C00");
+				Assert.IsFalse (dgv [1, 0].ReadOnly, "1-C10");
+				Assert.IsFalse (dgv [0, 1].ReadOnly, "1-C01");
+				Assert.IsFalse (dgv [1, 1].ReadOnly, "1-C11");
+			}
+
+
+			using (DataGridView dgv = DataGridViewCommon.CreateAndFill ()) {
+				dgv.ReadOnly = true;
+				Assert.IsTrue (dgv.ReadOnly, "2-DGV");
+				Assert.IsTrue (dgv.Rows [0].ReadOnly, "2-R0");
+				Assert.IsTrue (dgv.Rows [1].ReadOnly, "2-R1");
+				Assert.IsTrue (dgv.Columns [0].ReadOnly, "2-C1");
+				Assert.IsTrue (dgv.Columns [1].ReadOnly, "2-C1");
+				Assert.IsTrue (dgv [0, 0].ReadOnly, "2-C00");
+				Assert.IsTrue (dgv [1, 0].ReadOnly, "2-C10");
+				Assert.IsTrue (dgv [0, 1].ReadOnly, "2-C01");
+				Assert.IsTrue (dgv [1, 1].ReadOnly, "2-C11");
+			}
+
+			// If the DGV is ReadOnly, everything is ReadOnly.
+			using (DataGridView dgv = DataGridViewCommon.CreateAndFill ()) {
+				dgv.ReadOnly = true;
+				Assert.IsTrue (dgv.ReadOnly, "3-DGV");
+				dgv.Rows [0].ReadOnly = false;
+				Assert.IsTrue (dgv.Rows [0].ReadOnly, "3-R0");
+				Assert.IsTrue (dgv.Rows [1].ReadOnly, "3-R1");
+				dgv.Columns [0].ReadOnly = false;
+				Assert.IsTrue (dgv.Columns [0].ReadOnly, "3-C1");
+				Assert.IsTrue (dgv.Columns [1].ReadOnly, "3-C1");
+				dgv [0, 0].ReadOnly = false;
+				Assert.IsTrue (dgv [0, 0].ReadOnly, "3-C00");
+				Assert.IsTrue (dgv [1, 0].ReadOnly, "3-C10");
+				Assert.IsTrue (dgv [0, 1].ReadOnly, "3-C01");
+				Assert.IsTrue (dgv [1, 1].ReadOnly, "3-C11");
+			}
+
+			using (DataGridView dgv = DataGridViewCommon.CreateAndFill ()) {
+				Assert.IsFalse (dgv.ReadOnly, "4-DGV");
+				dgv.Rows [0].ReadOnly = true;
+				Assert.IsTrue (dgv.Rows [0].ReadOnly, "4-R0");
+				Assert.IsFalse (dgv.Rows [1].ReadOnly, "4-R1");
+				dgv.Columns [0].ReadOnly = true;
+				Assert.IsTrue (dgv.Columns [0].ReadOnly, "4-C1");
+				Assert.IsFalse (dgv.Columns [1].ReadOnly, "4-C1");
+				Assert.IsTrue (dgv [0, 0].ReadOnly, "4-C00");
+				Assert.IsTrue (dgv [1, 0].ReadOnly, "4-C10");
+				Assert.IsTrue (dgv [0, 1].ReadOnly, "4-C01");
+				Assert.IsFalse (dgv [1, 1].ReadOnly, "4-C11");
+			}
+
+			using (DataGridView dgv = DataGridViewCommon.CreateAndFill ()) {
+				Assert.IsFalse (dgv.ReadOnly, "5-DGV");
+				dgv.Rows [0].ReadOnly = true;
+				Assert.IsTrue (dgv.Rows [0].ReadOnly, "5-R0");
+				Assert.IsFalse (dgv.Rows [1].ReadOnly, "5-R1");
+				dgv.Columns [0].ReadOnly = true;
+				Assert.IsTrue (dgv.Columns [0].ReadOnly, "5-C1");
+				Assert.IsFalse (dgv.Columns [1].ReadOnly, "5-C1");
+				dgv [0, 0].ReadOnly = false; // Cell override
+				Assert.IsFalse (dgv [0, 0].ReadOnly, "5-C00");
+				Assert.IsTrue (dgv [1, 0].ReadOnly, "5-C10");
+				Assert.IsTrue (dgv [0, 1].ReadOnly, "5-C01");
+				Assert.IsFalse (dgv [1, 1].ReadOnly, "5-C11");
+			}
+		}
+
+		[Test]
 		public void EditTypeTest ()
 		{
 			DataGridViewCell cell =new DataGridViewCellMockObject ();

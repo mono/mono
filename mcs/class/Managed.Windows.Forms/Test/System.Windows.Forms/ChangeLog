@@ -1,5 +1,10 @@
 2007-08-09  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* DataGridViewCommon.cs: Added a comment.
+	* DataGridViewCellTest.cs: Added ReadOnlyTest.
+
+2007-08-09  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* DataGridViewColumnCollectionTest.cs: Added AddFullColumnSelect.
 
 2007-08-08  Rolf Bjarne Kvinge <RKvinge@novell.com> 

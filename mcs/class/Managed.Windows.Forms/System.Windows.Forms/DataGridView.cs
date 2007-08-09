@@ -2047,6 +2047,12 @@ namespace System.Windows.Forms {
 			if (currentCell == null || currentCell.IsInEditMode)
 				return false;
 			
+			if (currentCell.RowIndex >= 0) {
+				if ((currentCell.InheritedState & DataGridViewElementStates.ReadOnly) == DataGridViewElementStates.ReadOnly) {
+					return false;
+				}
+			}
+			
 			DataGridViewCell cell = currentCell;
 			Type editType = cell.EditType;
 			if (editType == null)
