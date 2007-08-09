@@ -56,9 +56,7 @@ namespace System.Windows.Forms
 
 		public void DrawBackground ()
 		{
-			using (Brush brush = ThemeEngine.Current.ResPool.GetSolidBrush (back_color)) {
-				graphics.FillRectangle (brush, bounds);
-			}
+			graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (back_color), bounds);
 		}
 
 		public void DrawBorder ()

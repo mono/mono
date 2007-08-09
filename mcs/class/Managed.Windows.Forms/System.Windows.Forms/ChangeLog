@@ -1,3 +1,8 @@
+2007-08-09  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DrawToolTipEventArgs.cs: Don't dispose a brush we got from the respool.
+	* ToolTip.cs: Implement some properties and owner draw.
+
 2007-08-09  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* DataGridView.cs: OnPaint: don't set scrollbar visibility to false then

@@ -48,6 +48,9 @@ namespace System.Windows.Forms {
 		internal int		re_show_delay;
 		internal bool		show_always;
 
+		internal Color		back_color;
+		internal Color		fore_color;
+		
 		internal ToolTipWindow	tooltip_window;			// The actual tooltip window
 		internal Hashtable	tooltip_strings;		// List of strings for each control, indexed by control
 		internal ArrayList	controls;
@@ -57,7 +60,10 @@ namespace System.Windows.Forms {
 
 #if NET_2_0
 		private bool isBalloon;
+		private bool owner_draw;
 		private bool stripAmpersands;
+		private ToolTipIcon tool_tip_icon;
+		private string tool_tip_title;
 		private bool useAnimation;
 		private bool useFading;
 		private object tag;
@@ -70,6 +76,10 @@ namespace System.Windows.Forms {
 		internal class ToolTipWindow : Control {
 			#region ToolTipWindow Class Local Variables
 			internal StringFormat string_format;
+#if NET_2_0
+			internal bool owner_draw;
+			internal Control associated_control;
+#endif
 			#endregion	// ToolTipWindow Class Local Variables
 
 			#region ToolTipWindow Class Constructor
@@ -118,7 +128,12 @@ namespace System.Windows.Forms {
 				// We don't do double-buffering on purpose:
 				// 1) we'd have to meddle with is_visible, it destroys the buffers if !visible
 				// 2) We don't draw much, no need to double buffer
-				ThemeEngine.Current.DrawToolTip(pevent.Graphics, ClientRectangle, this);
+#if NET_2_0
+				if (owner_draw)
+					OnDraw (new DrawToolTipEventArgs (pevent.Graphics, associated_control, associated_control, ClientRectangle, this.Text, this.BackColor, this.ForeColor, this.Font));
+				else
+#endif
+					ThemeEngine.Current.DrawToolTip(pevent.Graphics, ClientRectangle, this);
 
 				base.OnPaint(pevent);
 			}
@@ -149,6 +164,22 @@ namespace System.Windows.Forms {
 			#endregion	// ToolTipWindow Class Protected Instance Methods
 
 			#region ToolTipWindow Class Private Methods
+#if NET_2_0
+			internal virtual void OnDraw (DrawToolTipEventArgs e)
+			{
+				DrawToolTipEventHandler eh = (DrawToolTipEventHandler)(Events[DrawEvent]);
+				if (eh != null)
+					eh (this, e);
+			}
+			
+			internal virtual void OnPopup (PopupEventArgs e)
+			{
+				PopupEventHandler eh = (PopupEventHandler)(Events[PopupEvent]);
+				if (eh != null)
+					eh (this, e);
+			}
+#endif
+
 			private void ToolTipWindow_VisibleChanged(object sender, EventArgs e) {
 				Control control = (Control)sender;
 
@@ -172,10 +203,25 @@ namespace System.Windows.Forms {
 				Size display_size;
 				XplatUI.GetDisplaySize (out display_size);
 
+#if NET_2_0
+				associated_control = control;
+#endif
+
 				Size size = ThemeEngine.Current.ToolTipSize (this, text);
+				Text = text;
+
+#if NET_2_0
+				PopupEventArgs pea = new PopupEventArgs (control, control, false, size);
+				OnPopup (pea);
+				
+				if (pea.Cancel)
+					return;
+					
+				size = pea.ToolTipSize;
+#endif
+
 				Width = size.Width;
 				Height = size.Height;
-				Text = text;
 
 				int cursor_w, cursor_h, hot_x, hot_y;
 				XplatUI.GetCursorInfo (control.Cursor.Handle, out cursor_w, out cursor_h, out hot_x, out hot_y);
@@ -191,6 +237,24 @@ namespace System.Windows.Forms {
 				Location = loc;
 				Visible = true;
 			}
+
+
+			#region Internal Events
+#if NET_2_0
+			static object DrawEvent = new object ();
+			static object PopupEvent = new object ();
+
+			public event DrawToolTipEventHandler Draw {
+				add { Events.AddHandler (DrawEvent, value); }
+				remove { Events.RemoveHandler (DrawEvent, value); }
+			}
+
+			public event PopupEventHandler Popup {
+				add { Events.AddHandler (PopupEvent, value); }
+				remove { Events.RemoveHandler (PopupEvent, value); }
+			}
+#endif
+			#endregion
 		}
 		#endregion	// ToolTipWindow Class
 
@@ -204,6 +268,9 @@ namespace System.Windows.Forms {
 			initial_delay = 500;
 			re_show_delay = 100;
 			show_always = false;
+			back_color = SystemColors.Info;
+			fore_color = SystemColors.InfoText;
+			
 #if NET_2_0
 			isBalloon = false;
 			stripAmpersands = false;
@@ -215,7 +282,10 @@ namespace System.Windows.Forms {
 
 			tooltip_window = new ToolTipWindow();
 			tooltip_window.MouseLeave += new EventHandler(control_MouseLeave);
-
+#if NET_2_0
+			tooltip_window.Draw += new DrawToolTipEventHandler (tooltip_window_Draw);
+			tooltip_window.Popup += new PopupEventHandler (tooltip_window_Popup);
+#endif
 			timer = new Timer();
 			timer.Enabled = false;
 			timer.Tick +=new EventHandler(timer_Tick);
@@ -278,6 +348,21 @@ namespace System.Windows.Forms {
 			}
 		}
 
+#if NET_2_0
+		[DefaultValue ("Color [Info]")]
+		public Color BackColor {
+			get { return this.back_color; }
+			set { this.back_color = value; tooltip_window.BackColor = value; }
+		}
+
+		[DefaultValue ("Color [InfoText]")]
+		public Color ForeColor
+		{
+			get { return this.fore_color; }
+			set { this.fore_color = value; tooltip_window.ForeColor = value; }
+		}
+#endif
+
 		[RefreshProperties (RefreshProperties.All)]
 		public int InitialDelay {
 			get {
@@ -290,6 +375,17 @@ namespace System.Windows.Forms {
 				}
 			}
 		}
+
+#if NET_2_0
+		[DefaultValue (false)]
+		public bool OwnerDraw {
+			get { return this.owner_draw; }
+			set { 
+				this.owner_draw = value;
+				tooltip_window.owner_draw = value;
+			}
+		}
+#endif
 
 		[RefreshProperties (RefreshProperties.All)]
 		public int ReshowDelay {
@@ -341,6 +437,18 @@ namespace System.Windows.Forms {
 			set { tag = value; }
 		}
 
+		[DefaultValue (ToolTipIcon.None)]
+		public ToolTipIcon ToolTipIcon {
+			get { return this.tool_tip_icon; }
+			set { this.tool_tip_icon = value; }
+		}
+		
+		[DefaultValue ("")]
+		public string ToolTipTitle {
+			get { return this.tool_tip_title; }
+			set { this.tool_tip_title = value; }
+		}
+		
 		[Browsable (true)]
 		[DefaultValue (true)]
 		public bool UseAnimation {
@@ -519,6 +627,17 @@ namespace System.Windows.Forms {
 			}
 		}
 
+#if NET_2_0
+		private void tooltip_window_Popup (object sender, PopupEventArgs e)
+		{
+			OnPopup (e);
+		}
+
+		private void tooltip_window_Draw (object sender, DrawToolTipEventArgs e)
+		{
+			OnDraw (e);
+		}
+#endif
 
 		private bool MouseInControl (Control control, bool fuzzy) {
 			Point	m;
@@ -574,6 +693,13 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
+		internal virtual void OnDraw (DrawToolTipEventArgs e)
+		{
+			DrawToolTipEventHandler eh = (DrawToolTipEventHandler)(Events[DrawEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
+
 		internal virtual void OnPopup (PopupEventArgs e)
 		{
 			PopupEventHandler eh = (PopupEventHandler) (Events [PopupEvent]);
@@ -586,10 +712,16 @@ namespace System.Windows.Forms {
 		#region Events
 #if NET_2_0
 		static object PopupEvent = new object ();
+		static object DrawEvent = new object ();
 		
 		public event PopupEventHandler Popup {
 			add { Events.AddHandler (PopupEvent, value); }
 			remove { Events.RemoveHandler (PopupEvent, value); }
+		}
+
+		public event DrawToolTipEventHandler Draw {
+			add { Events.AddHandler (DrawEvent, value); }
+			remove { Events.RemoveHandler (DrawEvent, value); }
 		}
 #endif
 		#endregion
