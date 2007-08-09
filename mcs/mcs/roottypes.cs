@@ -23,15 +23,49 @@ namespace Mono.CSharp
 	// </summary>
 	public sealed class RootTypes : TypeContainer
 	{
+		// TODO: It'd be so nice to have generics
+		Hashtable anonymous_types;
+
 		public RootTypes ()
 			: base (null, null, MemberName.Null, null, Kind.Root)
 		{
 			types = new ArrayList ();
+			anonymous_types = new Hashtable ();
+		}
+
+		public void AddAnonymousType (AnonymousTypeClass type)
+		{
+			ArrayList existing = (ArrayList)anonymous_types [type.Parameters.Count];
+			if (existing == null) {
+				existing = new ArrayList ();
+				anonymous_types.Add (type.Parameters.Count, existing);
+			}
+			existing.Add (type);
 		}
 
 		public override bool IsClsComplianceRequired ()
 		{
 			return true;
+		}
+
+		public AnonymousTypeClass GetAnonymousType (ArrayList parameters)
+		{
+			ArrayList candidates = (ArrayList)anonymous_types [parameters.Count];
+			if (candidates == null)
+				return null;
+
+			int i;
+			foreach (AnonymousTypeClass at in candidates) {
+				for (i = 0; i < parameters.Count; ++i) {
+					if (!parameters [i].Equals (at.Parameters [i]))
+						break;
+				}
+
+				if (i == candidates.Count)
+					return at;
+			}
+
+			return null;
 		}
 
 		public override bool GetClsCompliantAttributeValue ()

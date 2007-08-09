@@ -1,5 +1,26 @@
 2007-08-09  Marek Safar  <marek.safar@gmail.com>
 
+	** C# 3.0 Anonymous Types (update to the latest standard)
+	
+	* expression.cs (Binary.ResolveOperator): Threat all null based types
+	same.
+	(AnonymousTypeDeclaration): Renamed from AnonymousType and simplified.
+	(AnonymousTypeParameter): Updated.
+	
+	* anonymous.cs (CompilerGeneratedClass): Add custom name overload.
+	(AnonymousTypeClass): New anonymous type container.
+	
+	* class.cs (AddField): Return operation result.
+	
+	* generic.cs: Another empty TypeArguments overload.
+	
+	* roottypes.cs (AddAnonymousType, GetAnonymousType): Anonymous types
+	are stored at top of normal hierarchy.
+	
+	* typemanager.cs (CSharpName): Filter anonymous types.
+	
+2007-08-09  Marek Safar  <marek.safar@gmail.com>
+
 	* expression.cs (StringConcat.Append): Handle 3 and more concatenation
 	as single Concat call. How could we miss that :-(
 	

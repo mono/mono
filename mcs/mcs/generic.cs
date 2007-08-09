@@ -295,6 +295,11 @@ namespace Mono.CSharp
 		{
 			throw new NotImplementedException ();
 		}
+		
+		public TypeArguments (Location loc, params Expression[] types)
+		{
+			throw new NotImplementedException ();
+		}		
 
 		public void Add (Expression type)
 		{

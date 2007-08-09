@@ -43,10 +43,16 @@ namespace Mono.CSharp {
 			return "<" + host + ">c__" + prefix + next_index++;
 		}
 
+		protected CompilerGeneratedClass (DeclSpace parent,
+					MemberName name, int mod, Location loc) :
+			base (parent.NamespaceEntry, parent, name, mod | Modifiers.COMPILER_GENERATED, null)
+		{
+			parent.PartialContainer.AddCompilerGeneratedClass (this);
+		}
+
 		protected CompilerGeneratedClass (DeclSpace parent, GenericMethod generic,
 						  int mod, Location loc)
-			: base (parent.NamespaceEntry, parent,
-				MakeProxyName (generic, loc), mod | Modifiers.COMPILER_GENERATED, null)
+			: this (parent, MakeProxyName (generic, loc), mod, loc)
 		{
 			this.generic_method = generic;
 
@@ -59,7 +65,6 @@ namespace Mono.CSharp {
 				SetParameterInfo (list);
 			}
 
-			parent.PartialContainer.AddCompilerGeneratedClass (this);
 		}
 
 		protected override bool DefineNestedTypes ()
@@ -1832,12 +1837,274 @@ namespace Mono.CSharp {
 			Report.Debug (128, "EMIT ANONYMOUS DELEGATE DONE", this, am, am.Scope, loc);
 		}
 	}
-	
-	public class AnonymousClass : CompilerGeneratedClass
+
+	//
+	// Anonymous type container
+	//
+	public class AnonymousTypeClass : CompilerGeneratedClass
 	{
-		public AnonymousClass (TypeContainer parent, Location loc)
-			: base (parent, null, 0, loc)
+		static int types_counter;
+		public const string ClassNamePrefix = "<>__AnonymousType";
+		public const string SignatureForError = "anonymous type";
+		
+		static readonly IntConstant FNV_prime = new IntConstant (16777619, Location.Null);
+
+		readonly ArrayList parameters;
+
+		private AnonymousTypeClass (DeclSpace parent, MemberName name, ArrayList parameters, Location loc)
+			: base (parent, name, Modifiers.SEALED, loc)
 		{
+			this.parameters = parameters;
+		}
+
+		public static AnonymousTypeClass Create (TypeContainer parent, ArrayList parameters, Location loc)
+		{
+			string name = ClassNamePrefix + types_counter++;
+
+			SimpleName [] t_args = new SimpleName [parameters.Count];
+			Parameter [] ctor_params = new Parameter [parameters.Count];
+			for (int i = 0; i < parameters.Count; ++i) {
+				AnonymousTypeParameter p = (AnonymousTypeParameter) parameters [i];
+
+				t_args [i] = new SimpleName ("<" + p.Name + ">__T", p.Location);
+				ctor_params [i] = new Parameter (t_args [i], p.Name, 0, null, p.Location);
+			}
+
+			//
+			// Create generic anonymous type host with generic arguments
+			// named upon properties names
+			//
+			AnonymousTypeClass a_type = new AnonymousTypeClass (parent.NamespaceEntry.SlaveDeclSpace,
+				new MemberName (name, new TypeArguments (loc, t_args), loc), parameters, loc);
+			a_type.SetParameterInfo (null);
+
+			Constructor c = new Constructor (a_type, name, Modifiers.PUBLIC,
+				new Parameters (ctor_params), null, loc);
+			c.OptAttributes = a_type.GetDebuggerHiddenAttribute ();
+			c.Block = new ToplevelBlock (c.Parameters, loc);
+
+			// 
+			// Create fields and contructor body with field initialization
+			//
+			bool error = false;
+			for (int i = 0; i < parameters.Count; ++i) {
+				AnonymousTypeParameter p = (AnonymousTypeParameter) parameters [i];
+
+				Field f = new Field (a_type, t_args [i], Modifiers.PRIVATE | Modifiers.READONLY,
+					"<" + p.Name + ">", null, p.Location);
+
+				if (!a_type.AddField (f)) {
+					error = true;
+					Report.Error (833, p.Location, "`{0}': An anonymous type cannot have multiple properties with the same name",
+						p.Name);
+					continue;
+				}
+
+				c.Block.AddStatement (new StatementExpression (
+					new Assign (new MemberAccess (new This (p.Location), f.Name),
+						c.Block.GetParameterReference (p.Name, p.Location))));
+
+				ToplevelBlock get_block = new ToplevelBlock (p.Location);
+				get_block.AddStatement (new Return (
+					new MemberAccess (new This (p.Location), f.Name), p.Location));
+				Accessor get_accessor = new Accessor (get_block, 0, null, p.Location);
+				Property prop = new Property (a_type, t_args [i], Modifiers.PUBLIC, false,
+					new MemberName (p.Name, p.Location), null, get_accessor, null, false);
+				a_type.AddProperty (prop);
+			}
+
+			if (error)
+				return null;
+
+			a_type.AddConstructor (c);
+			return a_type;
+		}
+
+		protected override bool AddToContainer (MemberCore symbol, string name)
+		{
+			MemberCore mc = (MemberCore) defined_names [name];
+
+			if (mc == null) {
+				defined_names.Add (name, symbol);
+				return true;
+			}
+
+			Report.SymbolRelatedToPreviousError (mc);
+			return false;
+		}
+
+		void DefineOverrides ()
+		{
+			Location loc = Location;
+
+			Method equals = new Method (this, null, TypeManager.system_boolean_expr,
+				Modifiers.PUBLIC | Modifiers.OVERRIDE, false, new MemberName ("Equals", loc),
+				new Parameters (new Parameter (TypeManager.system_object_expr, "obj", 0, null, loc)),
+				GetDebuggerHiddenAttribute ());
+
+			Method tostring = new Method (this, null, TypeManager.system_string_expr,
+				Modifiers.PUBLIC | Modifiers.OVERRIDE, false, new MemberName ("ToString", loc),
+				Mono.CSharp.Parameters.EmptyReadOnlyParameters, GetDebuggerHiddenAttribute ());
+
+			ToplevelBlock equals_block = new ToplevelBlock (equals.Parameters, loc);
+			ConstructedType current_type = new ConstructedType (TypeBuilder, TypeParameters, loc);
+			equals_block.AddVariable (current_type, "other", loc);
+			LocalVariableReference other_variable = new LocalVariableReference (equals_block, "other", loc);
+
+			MemberAccess system_collections_generic = new MemberAccess (new MemberAccess (
+				new SimpleName ("System", loc), "Collections", loc), "Generic", loc);
+
+			Expression rs_equals = null;
+			Expression string_concat = null;
+			Expression rs_hashcode = new IntConstant (-2128831035, loc);
+			for (int i = 0; i < parameters.Count; ++i) {
+				AnonymousTypeParameter p = (AnonymousTypeParameter) parameters [i];
+				Field f = (Field) Fields [i];
+
+				MemberAccess equality_comparer = new MemberAccess (new MemberAccess (
+					system_collections_generic, "EqualityComparer",
+						new TypeArguments (loc, new SimpleName (TypeParameters [i].Name, loc)), loc),
+						"Default", loc);
+
+				ArrayList arguments_equal = new ArrayList (2);
+				arguments_equal.Add (new Argument (new MemberAccess (new This (f.Location), f.Name)));
+				arguments_equal.Add (new Argument (new MemberAccess (other_variable, f.Name)));
+
+				Expression field_equal = new Invocation (new MemberAccess (equality_comparer,
+					"Equals", loc), arguments_equal);
+
+				ArrayList arguments_hashcode = new ArrayList (1);
+				arguments_hashcode.Add (new Argument (new MemberAccess (new This (f.Location), f.Name)));
+				Expression field_hashcode = new Invocation (new MemberAccess (equality_comparer,
+					"GetHashCode", loc), arguments_hashcode);
+
+				rs_hashcode = new Binary (Binary.Operator.Multiply,
+					new Binary (Binary.Operator.ExclusiveOr, rs_hashcode, field_hashcode),
+					FNV_prime);
+
+				Expression field_to_string = new Conditional (new Binary (Binary.Operator.Inequality,
+					new MemberAccess (new This (f.Location), f.Name), new NullConstant (loc)),
+					new Invocation (new MemberAccess (
+						new MemberAccess (new This (f.Location), f.Name), "ToString"), null),
+					new StringConstant ("<null>", loc));
+
+				if (rs_equals == null) {
+					rs_equals = field_equal;
+					string_concat = new Binary (Binary.Operator.Addition,
+						new StringConstant (p.Name + " = ", loc),
+						field_to_string);
+					continue;
+				}
+
+				//
+				// Implementation of ToString () body using string concatenation
+				//				
+				string_concat = new Binary (Binary.Operator.Addition,
+					new Binary (Binary.Operator.Addition,
+						string_concat,
+						new StringConstant (", " + p.Name + " = ", loc)),
+					field_to_string);
+
+				rs_equals = new Binary (Binary.Operator.LogicalAnd, rs_equals, field_equal);
+			}
+
+			//
+			// Equals (object obj) override
+			//
+			equals_block.AddStatement (new StatementExpression (
+				new Assign (other_variable,
+					new As (equals_block.GetParameterReference ("obj", loc),
+						current_type, loc), loc)));
+
+			equals_block.AddStatement (new Return (new Binary (Binary.Operator.LogicalAnd,
+				new Binary (Binary.Operator.Inequality, other_variable, new NullLiteral (loc)),
+					rs_equals), loc));
+
+			equals.Block = equals_block;
+			equals.ResolveMembers ();
+			AddMethod (equals);
+
+			//
+			// GetHashCode () override
+			//
+			Method hashcode = new Method (this, null, TypeManager.system_int32_expr,
+				Modifiers.PUBLIC | Modifiers.OVERRIDE, false, new MemberName ("GetHashCode", loc),
+				Mono.CSharp.Parameters.EmptyReadOnlyParameters, GetDebuggerHiddenAttribute ());
+
+			//
+			// Modified FNV with good avalanche behavior and uniform
+			// distribution with larger hash sizes.
+			//
+			// const int FNV_prime = 16777619;
+			// int hash = (int) 2166136261;
+			// foreach (int d in data)
+			//     hash = (hash ^ d) * FNV_prime;
+			// hash += hash << 13;
+			// hash ^= hash >> 7;
+			// hash += hash << 3;
+			// hash ^= hash >> 17;
+			// hash += hash << 5;
+
+			ToplevelBlock hashcode_block = new ToplevelBlock (loc);
+			hashcode_block.AddVariable (TypeManager.system_int32_expr, "hash", loc);
+			LocalVariableReference hash_variable = new LocalVariableReference (hashcode_block, "hash", loc);
+			hashcode_block.AddStatement (new StatementExpression (
+				new Assign (hash_variable, rs_hashcode)));
+
+			hashcode_block.AddStatement (new StatementExpression (
+				new CompoundAssign (Binary.Operator.Addition, hash_variable,
+					new Binary (Binary.Operator.LeftShift, hash_variable, new IntConstant (13, loc)))));
+			hashcode_block.AddStatement (new StatementExpression (
+				new CompoundAssign (Binary.Operator.ExclusiveOr, hash_variable,
+					new Binary (Binary.Operator.RightShift, hash_variable, new IntConstant (7, loc)))));
+			hashcode_block.AddStatement (new StatementExpression (
+				new CompoundAssign (Binary.Operator.Addition, hash_variable,
+					new Binary (Binary.Operator.LeftShift, hash_variable, new IntConstant (3, loc)))));
+			hashcode_block.AddStatement (new StatementExpression (
+				new CompoundAssign (Binary.Operator.ExclusiveOr, hash_variable,
+					new Binary (Binary.Operator.RightShift, hash_variable, new IntConstant (17, loc)))));
+			hashcode_block.AddStatement (new StatementExpression (
+				new CompoundAssign (Binary.Operator.Addition, hash_variable,
+					new Binary (Binary.Operator.LeftShift, hash_variable, new IntConstant (5, loc)))));
+
+			hashcode_block.AddStatement (new Return (hash_variable, loc));
+			hashcode.Block = hashcode_block;
+			hashcode.ResolveMembers ();
+			AddMethod (hashcode);
+
+			//
+			// ToString () override
+			//
+
+			ToplevelBlock tostring_block = new ToplevelBlock (loc);
+			tostring_block.AddStatement (new Return (string_concat, loc));
+			tostring.Block = tostring_block;
+			tostring.ResolveMembers ();
+			AddMethod (tostring);
+		}
+
+		public override bool DefineMembers ()
+		{
+			DefineOverrides ();
+
+			return base.DefineMembers ();
+		}
+
+		Attributes GetDebuggerHiddenAttribute ()
+		{
+			return new Attributes (new Attribute (null, null,
+				"System.Diagnostics.DebuggerHiddenAttribute", null, Location, false));
+		}
+
+		public override string GetSignatureForError ()
+		{
+			return SignatureForError;
+		}
+
+		public ArrayList Parameters {
+			get {
+				return parameters;
+			}
 		}
 	}
 }

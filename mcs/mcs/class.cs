@@ -580,10 +580,10 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public void AddField (FieldBase field)
+		public bool AddField (FieldBase field)
 		{
 			if (!AddMember (field))
-				return;
+				return false;
 
 			if (fields == null)
 				fields = new MemberCoreArrayList ();
@@ -591,11 +591,11 @@ namespace Mono.CSharp {
 			fields.Add (field);
 
 			if ((field.ModFlags & Modifiers.STATIC) != 0)
-				return;
+				return true;
 
 			if (first_nonstatic_field == null) {
 				first_nonstatic_field = field;
-				return;
+				return true;
 			}
 
 			if (Kind == Kind.Struct && first_nonstatic_field.Parent != field.Parent) {
@@ -604,6 +604,7 @@ namespace Mono.CSharp {
 					"struct instance field `{0}' found in different declaration from instance field `{1}'",
 					field.GetSignatureForError (), first_nonstatic_field.GetSignatureForError ());
 			}
+			return true;
 		}
 
 		public void AddProperty (Property prop)
@@ -2697,15 +2698,6 @@ namespace Mono.CSharp {
 				if (TypeBuilder.IsInterface)
 					base_cache = TypeManager.LookupBaseInterfacesCache (TypeBuilder);
 				return base_cache;
-			}
-		}
-		
-		private IDictionary anonymous_types;
-		public IDictionary AnonymousTypes {
-			get {
-				if (anonymous_types == null)
-					anonymous_types = new HybridDictionary();
-				return anonymous_types;
 			}
 		}
 	}
@@ -6735,7 +6727,12 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			if (MemberType.IsAbstract && MemberType.IsSealed) {
+#if MS_COMPATIBLE
+			if (MemberType.IsGenericParameter)
+				return true;
+#endif
+
+			if ((MemberType.Attributes & Class.StaticClassAttribute) == Class.StaticClassAttribute) {
 				Report.Error (722, Location, Error722, TypeManager.CSharpName (MemberType));
 				return false;
 			}

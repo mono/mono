@@ -627,6 +627,9 @@ namespace Mono.CSharp {
 
 	public static string CSharpName (string name)
 	{
+		if (name.StartsWith (AnonymousTypeClass.ClassNamePrefix))
+				return AnonymousTypeClass.SignatureForError;
+			
 		return Regex.Replace (name,
 			@"^System\." +
 			@"(Int32|UInt32|Int16|UInt16|Int64|UInt64|" +

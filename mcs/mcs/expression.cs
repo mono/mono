@@ -1706,7 +1706,7 @@ namespace Mono.CSharp {
 			Type r = right.Type;
 
 			if (oper == Operator.Equality || oper == Operator.Inequality){
-				if (right is NullLiteral){
+				if (right.Type == TypeManager.null_type){
 					if (TypeManager.IsGenericParameter (l)){
 						if (l.BaseType == TypeManager.value_type) {
 							Error_OperatorCannotBeApplied ();
@@ -8620,26 +8620,6 @@ namespace Mono.CSharp {
 		}
 	}
 	
-	public class AnonymousTypeInitializer : IInitializable
-	{
-		readonly ArrayList initializers;
-		public AnonymousTypeInitializer (ArrayList initializers)
-		{
-			this.initializers = initializers;
-		}
-		
-		public bool Initialize (EmitContext ec, Expression target)
-		{
-			foreach (AnonymousTypeParameter p in initializers) {
-				MemberAccess ma = new MemberAccess (target, p.Name);
-				Assign a = p.Expression as Assign;
-				Assign assign = new Assign (ma, (a != null) ? a.Source : p.Expression);
-				ec.CurrentBlock.InsertStatementAfterCurrent (new StatementExpression (assign));
-			}
-			return true;
-		}
-	}
-
 	public class NewInitialize : New, IInitializable
 	{
 		IInitializable initializer;
@@ -8656,132 +8636,114 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class AnonymousType : Expression
+	public class AnonymousTypeDeclaration : Expression
 	{
-		ArrayList parameters;
-		TypeContainer parent;
-		TypeContainer anonymous_type;
+		readonly ArrayList parameters;
+		readonly TypeContainer parent;
 
-		public AnonymousType (ArrayList parameters, TypeContainer parent, Location loc)
+		public AnonymousTypeDeclaration (ArrayList parameters, TypeContainer parent, Location loc)
 		{
 			this.parameters = parameters;
 			this.parent = parent;
 			this.loc = loc;
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		AnonymousTypeClass CreateAnonymousType ()
 		{
-			foreach (AnonymousTypeParameter p in parameters)
-				p.Resolve (ec);
-			
-			anonymous_type = GetAnonymousType (ec);
+			AnonymousTypeClass type = AnonymousTypeClass.Create (parent, parameters, loc);
+			if (type == null)
+				return null;
 
-			TypeExpression te = new TypeExpression (anonymous_type.TypeBuilder, loc);
-			AnonymousTypeInitializer ati = new AnonymousTypeInitializer (parameters);
-			return new NewInitialize (te, null, ati, loc).Resolve (ec);
-		}
-
-		TypeContainer GetAnonymousType (EmitContext ec)
-		{
-			// See if we already have an anonymous type with the right fields.
-			// If not, create one.
-			// 
-			// Look through all availible pre-existing anonymous types:
-			foreach (DictionaryEntry d in parent.AnonymousTypes) {
-				ArrayList p = d.Key as ArrayList;
-				if (p.Count != parameters.Count)
-					continue;
-				bool match = true;
-				// And for each of the fields we need...
-				foreach (AnonymousTypeParameter atp in parameters) {
-					// ... check each of the pre-existing A-type's fields.
-					bool found = false;
-					foreach (AnonymousTypeParameter a in p)
-						if (atp.Equals(a)) {
-							found = true;
-							break;
-						}
-					// If the pre-existing A-type doesn't have one of our fields, try the next one
-					if (!found) {
-						match = false;
-						break;
-					}
-				}
-				// If it's a match, return it.
-				if (match)
-					return d.Value as TypeContainer;
-			}
-			// Otherwise, create a new type.
-			return CreateAnonymousType (ec);
-		}
-
-		TypeContainer CreateAnonymousType (EmitContext ec)
-		{
-			TypeContainer type = new AnonymousClass (parent, loc);
-			foreach (AnonymousTypeParameter p in parameters) {
-				TypeExpression te = new TypeExpression (p.Type, loc);
-				Field field = new Field (type, te, Modifiers.PUBLIC, p.Name, null, loc);
-				type.AddField (field);
-			}
 			type.DefineType ();
 			type.DefineMembers ();
-			parent.AnonymousTypes.Add (parameters, type);
+			type.Define ();
+			type.EmitType ();
+
+			RootContext.ToplevelTypes.AddAnonymousType (type);
 			return type;
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			bool error = false;
+			ArrayList arguments = new ArrayList (parameters.Count);
+			TypeExpression [] t_args = new TypeExpression [parameters.Count];
+			for (int i = 0; i < parameters.Count; ++i) {
+				Expression e = ((AnonymousTypeParameter)parameters [i]).Resolve (ec);
+				if (e == null) {
+					error = true;
+					continue;
+				}
+
+				arguments.Add (new Argument (e));
+				t_args [i] = new TypeExpression (e.Type, e.Location);
+			}
+
+			if (error)
+				return null;
+
+			AnonymousTypeClass anonymous_type = RootContext.ToplevelTypes.GetAnonymousType (parameters);
+			if (anonymous_type == null) {
+				anonymous_type = CreateAnonymousType ();
+				if (anonymous_type == null)
+					return null;
+			}
+
+			ConstructedType te = new ConstructedType (anonymous_type.TypeBuilder,
+				new TypeArguments (loc, t_args), loc);
+
+			return new New (te, arguments, loc).Resolve (ec); 
 		}
 
 		public override void Emit (EmitContext ec)
 		{
-			TypeExpression te = new TypeExpression (anonymous_type.TypeBuilder, loc);
-			new New (te, null, loc).Emit(ec);
+			throw new InternalErrorException ("Should not be reached");
 		}
 	}
 
 	public class AnonymousTypeParameter : Expression
 	{
-		LocatedToken token;
-		string name;
-		Expression expression;
+		public readonly string Name;
+		readonly Expression initializer;
 
-		public LocatedToken Token {
-			get { return token; }
-		}
-
-		public string Name {
-			get { return name; }
-		}
-
-		public Expression Expression {
-			get { return expression; }
+		public AnonymousTypeParameter (Expression initializer, string name, Location loc)
+		{
+			this.Name = name;
+			this.loc = loc;
+			this.initializer = initializer;
 		}
 
 		public override bool Equals (object o)
 		{
 			AnonymousTypeParameter other = o as AnonymousTypeParameter;
-			return other != null && Name == other.Name && Type == other.Type;
+			return other != null && Name == other.Name;
 		}
-		
+
 		public override int GetHashCode ()
 		{
-			return name.GetHashCode ();
+			return Name.GetHashCode ();
 		}
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			Expression e = expression.Resolve(ec);
+			Expression e = initializer.Resolve (ec);
+			if (e == null)
+				return null;
+
 			type = e.Type;
+			if (type == TypeManager.void_type || type == TypeManager.null_type ||
+				type == TypeManager.anonymous_method_type || type.IsPointer) {
+				Report.Error (828, loc, "An anonymous type property `{0}' cannot be initialized with `{1}'",
+					Name, e.GetSignatureForError ());
+				return null;
+			}
+
 			return e;
 		}
 
 		public override void Emit (EmitContext ec)
 		{
-			expression.Emit(ec);
-		}
-
-		public AnonymousTypeParameter (Expression expression, string name)
-		{
-			this.name = name;
-			this.expression = expression;
-			type = expression.Type;
+			throw new InternalErrorException ("Should not be reached");
 		}
 	}
 }
