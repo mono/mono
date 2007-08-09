@@ -1,3 +1,9 @@
+ 2007-08-09  Marek Safar  <marek.safar@gmail.com>
+ 
+	** C# 3.0 Anonymous Types (update to the latest standard)
+	
+	* cs-parser.jay: Updated parameters and type names.
+
 2007-08-03  Raja R Harinath  <harinath@gmail.com>
 
 	* cs-parser.jay (class_declaration): Update to changes in class.cs.

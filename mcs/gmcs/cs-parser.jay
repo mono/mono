@@ -3544,7 +3544,7 @@ anonymous_type_expression
 	  		$$ = null;
 	  	}
 	  	else
-	  		$$ = new AnonymousType ((ArrayList) $3, current_container, lexer.Location);
+	  		$$ = new AnonymousTypeDeclaration ((ArrayList) $3, current_container, lexer.Location);
 	  }
 	;
 
@@ -3571,12 +3571,12 @@ anonymous_type_parameter
 	  	if (e == null) {
 	  		e = new LocalVariableReference (current_block, v.identifier, lexer.Location);
 	  	}
-	  	$$ = new AnonymousTypeParameter (e, v.identifier);
+	  	$$ = new AnonymousTypeParameter (e, v.identifier, v.Location);
 	  }
 	| member_access
 	  {
 	  	MemberAccess ma = (MemberAccess) $1;
-	  	$$ = new AnonymousTypeParameter (ma, ma.Identifier);
+	  	$$ = new AnonymousTypeParameter (ma, ma.Identifier, ma.Location);
 	  }
 	;
 
