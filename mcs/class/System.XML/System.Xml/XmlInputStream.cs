@@ -341,6 +341,19 @@ namespace System.Xml
 			Initialize (stream);
 		}
 
+		static string GetStringFromBytes (byte [] bytes, int index, int count)
+		{
+#if NET_2_1
+			char [] chars = new char [count];
+			for (int i = index; i < count; i++)
+				chars [i] = (char) bytes [i];
+
+			return new string (chars);
+#else
+			return Encoding.ASCII.GetString (bytes, index, count);
+#endif
+		}
+
 		private void Initialize (Stream stream)
 		{
 			buffer = new byte [64];
@@ -387,7 +400,7 @@ namespace System.Xml
 				break;
 			case '<':
 				// try to get encoding name from XMLDecl.
-				if (bufLength >= 5 && Encoding.ASCII.GetString (buffer, 1, 4) == "?xml") {
+				if (bufLength >= 5 && GetStringFromBytes (buffer, 1, 4) == "?xml") {
 					bufPos += 4;
 					c = SkipWhitespace ();
 
@@ -405,7 +418,7 @@ namespace System.Xml
 
 					if (c == 'e') {
 						int remaining = bufLength - bufPos;
-						if (remaining >= 7 && Encoding.ASCII.GetString(buffer, bufPos, 7) == "ncoding") {
+						if (remaining >= 7 && GetStringFromBytes (buffer, bufPos, 7) == "ncoding") {
 							bufPos += 7;
 							c = SkipWhitespace();
 							if (c != '=')

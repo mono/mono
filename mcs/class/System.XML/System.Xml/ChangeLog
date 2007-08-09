@@ -1,3 +1,7 @@
+2007-08-04  Jb Evain  <jbevain@novell.com>
+
+	* XmlInputStream.cs: there's no ASCII encoding in 2.1.
+
 2007-08-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlReader.cs XmlNodeReader2.cs XmlTextReader.cs XmlTextReader2.cs
