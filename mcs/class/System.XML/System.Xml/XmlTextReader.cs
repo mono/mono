@@ -1584,7 +1584,7 @@ namespace System.Xml
 					break;
 				if (whitespacePool == null)
 					whitespacePool = new NameTable ();
-#if NET_2_0
+#if NET_2_0 && !NET_2_1
 				valueBuffer.CopyTo (0, whitespaceCache, 0, len);
 #else
 				for (int i = 0; i < len; i++)

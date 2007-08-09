@@ -1,8 +1,12 @@
-2007-08-04  Jb Evain  <jbevain@novell.com>
+2007-08-09  Jb Evain  <jbevain@novell.com>
+
+	* XmlTextReader.cs: Avoid using 2.0 only feature in 2.1.
+
+2007-08-09  Jb Evain  <jbevain@novell.com>
 
 	* XmlConvert.cs: use 2.1 available overloads of Parse.
 
-2007-08-04  Jb Evain  <jbevain@novell.com>
+2007-08-09  Jb Evain  <jbevain@novell.com>
 
 	* XmlInputStream.cs: there's no ASCII encoding in 2.1.
 
