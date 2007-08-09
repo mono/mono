@@ -253,7 +253,12 @@ namespace System.Xml
 			get { return readState == ReadState.EndOfFile; }
 		}
 
-		public override bool HasValue {
+#if NET_2_1
+		internal
+#else
+		public
+#endif
+		override bool HasValue {
 			get { return cursorToken.Value != null; }
 		}
 
@@ -614,7 +619,12 @@ namespace System.Xml
 			return more;
 		}
 
-		public override bool ReadAttributeValue ()
+#if NET_2_1
+		internal
+#else
+		public
+#endif
+		override bool ReadAttributeValue ()
 		{
 			if (readState == ReadState.Initial && startNodeType == XmlNodeType.Attribute) {
 				Read ();
@@ -696,7 +706,12 @@ namespace System.Xml
 			Clear ();
 		}
 
-		public override void ResolveEntity ()
+#if NET_2_1
+		internal
+#else
+		public
+#endif
+		override void ResolveEntity ()
 		{
 			// XmlTextReader does not resolve entities.
 			throw new InvalidOperationException ("XmlTextReader cannot resolve external entities.");

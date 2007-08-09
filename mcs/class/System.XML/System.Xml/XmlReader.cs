@@ -123,7 +123,13 @@ namespace System.Xml
 			get { return AttributeCount > 0; }
 		}
 
+#if NET_2_1
+		internal virtual bool HasValue {
+			get { throw new Exception ("Should not reach here"); }
+		}
+#else
 		public abstract bool HasValue { get; }
+#endif
 
 		public abstract bool IsEmptyElement { get; }
 
@@ -550,7 +556,14 @@ namespace System.Xml
 
 		public abstract bool Read ();
 
+#if NET_2_1
+		internal virtual bool ReadAttributeValue ()
+		{
+			throw new Exception ("Should not reach here");
+		}
+#else
 		public abstract bool ReadAttributeValue ();
+#endif
 
 		public virtual string ReadElementString ()
 		{
@@ -1264,7 +1277,14 @@ namespace System.Xml
 				binary = new XmlReaderBinarySupport (this);
 		}
 
+#if NET_2_1
+		internal virtual void ResolveEntity ()
+		{
+			throw new Exception ("Should not reach here");
+		}
+#else
 		public abstract void ResolveEntity ();
+#endif
 
 		public virtual void Skip ()
 		{

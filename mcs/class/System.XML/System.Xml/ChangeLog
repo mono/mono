@@ -1,3 +1,12 @@
+2007-08-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlReader.cs : HasValue, ReadAttributeValue() and ResolveEntity()
+	  do not exist in 2.1 profile. Hiding abstract stuff seems to cause
+	  some issues at run time, so they are ifdef-ed out from 2.1.
+	* XmlNodeReader2.cs DTDValidatingReader2.cs XmlTextReader.cs
+	  XmlTextReader2.cs XmlNodeReaderImpl.cs DTDValidatingReader.cs
+	  EntityResolvingXmlReader.cs : hence the change above.
+
 2007-08-04  Jb Evain  <jbevain@novell.com>
 
 	* XmlUrlResolver.cs: remove code duplication in 2.1.

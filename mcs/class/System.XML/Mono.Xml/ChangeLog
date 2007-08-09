@@ -1,3 +1,8 @@
+2007-08-09  Atsushi Enomoto <atsushi@ximian.com>
+
+	* SubtreeXmlReader.cs XmlFilterReader.cs : dependent changes due to
+	  XmlReader.cs changes for 2.1 profile.
+
 2007-07-04  Atsushi Enomoto <atsushi@ximian.com>
 
 	* SubtreeXmlReader.cs XmlFilterReader.cs :

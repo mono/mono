@@ -92,7 +92,12 @@ namespace Mono.Xml
 			get { return initial ? 0 : li != null ? li.LinePosition : 0; }
 		}
 
-		public override bool HasValue {
+#if NET_2_1
+		internal
+#else
+		public
+#endif
+		override bool HasValue {
 			get { return initial ? false : Reader.HasValue; }
 		}
 
@@ -227,14 +232,24 @@ namespace Mono.Xml
 			return false;
 		}
 
-		public override bool ReadAttributeValue ()
+#if NET_2_1
+		internal
+#else
+		public
+#endif
+		override bool ReadAttributeValue ()
 		{
 			if (initial || eof)
 				return false;
 			return Reader.ReadAttributeValue ();
 		}
 
-		public override void ResolveEntity ()
+#if NET_2_1
+		internal
+#else
+		public
+#endif
+		override void ResolveEntity ()
 		{
 			if (initial || eof)
 				return;

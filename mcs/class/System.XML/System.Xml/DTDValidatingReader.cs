@@ -932,7 +932,12 @@ namespace Mono.Xml
 			}
 		}
 
-		public override bool ReadAttributeValue ()
+#if NET_2_1
+		internal
+#else
+		public
+#endif
+		override bool ReadAttributeValue ()
 		{
 			if (consumedAttribute)
 				return false;
@@ -949,7 +954,12 @@ namespace Mono.Xml
 				return reader.ReadAttributeValue ();
 		}
 
-		public override void ResolveEntity ()
+#if NET_2_1
+		internal
+#else
+		public
+#endif
+		override void ResolveEntity ()
 		{
 			if (resolver == null)
 				return;
@@ -1021,7 +1031,12 @@ namespace Mono.Xml
 			get { return reader.EOF && entityReaderStack.Count == 0; }
 		}
 
-		public override bool HasValue {
+#if NET_2_1
+		internal
+#else
+		public
+#endif
+		override bool HasValue {
 			get {
 				return IsDefault ? true :
 					currentTextValue != null ? true :

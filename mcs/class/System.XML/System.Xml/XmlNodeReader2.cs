@@ -126,7 +126,12 @@ namespace System.Xml
 			get { return Current.HasAttributes; }
 		}
 
-		public override bool HasValue {
+#if NET_2_1
+		internal
+#else
+		public
+#endif
+		override bool HasValue {
 			get { return Current.HasValue; }
 		}
 
@@ -358,7 +363,12 @@ namespace System.Xml
 				return source.Read ();
 		}
 
-		public override bool ReadAttributeValue ()
+#if NET_2_1
+		internal
+#else
+		public
+#endif
+		override bool ReadAttributeValue ()
 		{
 			if (entity != null && entityInsideAttribute) {
 				if (entity.EOF)
@@ -434,7 +444,12 @@ namespace System.Xml
 			return base.ReadString ();
 		}
 
-		public override void ResolveEntity ()
+#if NET_2_1
+		internal
+#else
+		public
+#endif
+		override void ResolveEntity ()
 		{
 			if (entity != null)
 				entity.ResolveEntity ();
