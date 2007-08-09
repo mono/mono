@@ -4302,9 +4302,8 @@ namespace System.Windows.Forms
 
 					value.Owner = owner;
 					list [displayIndex] = value;
-					OnChange ();
 
-					owner.Redraw (true);
+					CollectionChanged (true);
 				}
 			}
 
@@ -4425,12 +4424,16 @@ namespace System.Windows.Forms
 				if (owner != null && owner.VirtualMode)
 					throw new InvalidOperationException ();
 #endif
-				owner.SetFocusedItem (-1);
-				owner.h_scroll.Value = owner.v_scroll.Value = 0;
-				foreach (ListViewItem item in list) {
-					owner.item_control.CancelEdit (item);
-					item.Owner = null;
+				if (owner != null) {
+					owner.SetFocusedItem (-1);
+					owner.h_scroll.Value = owner.v_scroll.Value = 0;
+				
+					foreach (ListViewItem item in list) {
+						owner.item_control.CancelEdit (item);
+						item.Owner = null;
+					}
 				}
+
 				list.Clear ();
 				CollectionChanged (false);
 			}
@@ -4615,12 +4618,17 @@ namespace System.Windows.Forms
 				if (!list.Contains (item))
 					return;
 	 				
-				bool selection_changed = owner.SelectedItems.Contains (item);
-				owner.item_control.CancelEdit (item);
+				bool selection_changed = false;
+				if (owner != null) {
+					selection_changed = owner.SelectedItems.Contains (item);
+					owner.item_control.CancelEdit (item);
+				}
+
 				list.Remove (item);
 				item.Owner = null;
 				CollectionChanged (false);
-				if (selection_changed)
+
+				if (selection_changed && owner != null)
 					owner.OnSelectedIndexChanged (EventArgs.Empty);
 			}
 
