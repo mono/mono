@@ -405,15 +405,11 @@ namespace System.Web {
 						app_state = new HttpApplicationState ();
 					}
 
-					if (app_file != null)
-						WatchLocationForRestart(app_file);
-					    
-					if (File.Exists(Path.Combine(physical_app_path, "Web.config")))
-						WatchLocationForRestart("Web.config");
-					else if (File.Exists(Path.Combine(physical_app_path, "web.config")))
-						WatchLocationForRestart("web.config");
-					else if (File.Exists(Path.Combine(physical_app_path, "Web.Config")))
-						WatchLocationForRestart("Web.Config");
+					WatchLocationForRestart("Global.asax");
+					WatchLocationForRestart("global.asax");
+					WatchLocationForRestart("Web.config");
+					WatchLocationForRestart("web.config");
+					WatchLocationForRestart("Web.Config");
 					needs_init = false;
 #if NET_2_0
 				} catch (Exception) {

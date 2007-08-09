@@ -1,3 +1,11 @@
+2007-08-09  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpApplicationFactory.cs: unconditionally watch for changes
+	(including creation) to Global.asax, global.asax, Web.config,
+	web.config and Web.Config. This makes the application restart once
+	any of those is created. Patch from Juraj Skripsky
+	<juraj@hotfeet.ch>, thanks! Fixes bug #82380.
+
 2007-08-08  Marek Habersack  <mhabersack@novell.com>
 
 	* StaticSiteMapProvider.cs, HttpApplicationFactory.cs,
