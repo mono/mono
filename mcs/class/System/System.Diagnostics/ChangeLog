@@ -1,3 +1,8 @@
+2007-08-08 Gonzalo Paniagua Javier <gonzalo.mono@gmail.com>
+
+	* Process.cs: added StandardOutputEncoding and StandardErrorEncoding
+	properties. Bug #82262 fixed.
+
 2007-08-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Process.cs, ProcessStartInfo.cs : added StandardOutputEncoding
