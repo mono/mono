@@ -463,13 +463,6 @@ System.Diagnostics/CounterSample.cs
 System.Diagnostics/DataReceivedEventArgs.cs
 System.Diagnostics/DataReceivedEventHandler.cs
 System.Diagnostics/Debug_2_1.cs
-System.Diagnostics/EventLogInstaller.cs
-System.Diagnostics/EventLogPermissionAccess.cs
-System.Diagnostics/EventLogPermissionAttribute.cs
-System.Diagnostics/EventLogPermission.cs
-System.Diagnostics/EventLogPermissionEntryCollection.cs
-System.Diagnostics/EventLogPermissionEntry.cs
-System.Diagnostics/EventSourceCreationData.cs
 System.Diagnostics/FileVersionInfo.cs
 System.Diagnostics/ICollectData.cs
 System.Diagnostics/InstanceDataCollectionCollection.cs
@@ -537,11 +530,6 @@ System.IO/SearchPattern.cs
 System.IO/WaitForChangedResult.cs
 System.IO/WatcherChangeTypes.cs
 System/LdapStyleUriParser.cs
-System.Media/AudioData.cs
-System.Media/AudioDevice.cs
-System.Media/SoundPlayer.cs
-System.Media/SystemSound.cs
-System.Media/SystemSounds.cs
 System.Net/AuthenticationManager.cs
 System.Net/AuthenticationSchemes.cs
 System.Net/AuthenticationSchemeSelector.cs
