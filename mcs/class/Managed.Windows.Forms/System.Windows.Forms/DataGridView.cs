@@ -3234,10 +3234,10 @@ namespace System.Windows.Forms {
 				mode = selectionMode;
 				break;
 			case DataGridViewHitTestType.ColumnHeader:
-				mode = DataGridViewSelectionMode.FullColumnSelect;
+				mode = selectionMode == DataGridViewSelectionMode.ColumnHeaderSelect ? DataGridViewSelectionMode.FullColumnSelect : selectionMode;
 				break;
 			case DataGridViewHitTestType.RowHeader:
-				mode = DataGridViewSelectionMode.FullRowSelect;
+				mode = selectionMode == DataGridViewSelectionMode.RowHeaderSelect ?  DataGridViewSelectionMode.FullRowSelect : selectionMode;
 				break; // Handled below
 			default:
 				return;
@@ -3310,6 +3310,17 @@ namespace System.Windows.Forms {
 				case DataGridViewSelectionMode.RowHeaderSelect:
 					//break;
 				case DataGridViewSelectionMode.CellSelect:
+					if (!isShift) {
+						for (int c = 0; c < ColumnCount; c++) {
+							if (columns [c].Selected)
+								SetSelectedColumnCore (c, false);
+						}
+						
+						for (int r = 0; r < RowCount; r++) {
+							if (rows [r].Selected)
+								SetSelectedRowCore (r, false);
+						}
+					}
 					for (int r = 0; r < RowCount; r++) {
 						for (int c = 0; c < ColumnCount; c++) {
 							bool select = (r >= min_row && r <= max_row) && (c >= min_col && c <= max_col);
@@ -3333,7 +3344,9 @@ namespace System.Windows.Forms {
 				case DataGridViewSelectionMode.RowHeaderSelect:
 					//break;
 				case DataGridViewSelectionMode.CellSelect:
-					SetSelectedCellCore (hitTest.ColumnIndex, hitTest.RowIndex, !Rows [hitTest.RowIndex].Cells [hitTest.ColumnIndex].Selected);
+					if (hitTest.ColumnIndex >= 0 && hitTest.RowIndex >= 0) {
+						SetSelectedCellCore (hitTest.ColumnIndex, hitTest.RowIndex, !Rows [hitTest.RowIndex].Cells [hitTest.ColumnIndex].Selected);
+					}
 					break;
 				}
 			}

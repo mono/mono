@@ -1,5 +1,11 @@
 2007-08-09  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* DataGridView.cs: Only do a full column/row selection if a header was
+	  clicked and we're in Column/RowHeader selection mode. If shift and ctrl
+	  isn't pressed, deselect everything before selecting something.
+
+2007-08-09  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* DataGridView.cs: Fix SelectedRows and SelectedColumns to match MS
 	  behaviour according to bug #81075 - they are returned in the order they
 	  are selected. Fix HitTest to check if the point is within any of the
