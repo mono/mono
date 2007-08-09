@@ -6,12 +6,16 @@ export __SECURITY_BOOTSTRAP_DB=$(topdir)/class/lib/$(PROFILE)
 LIBRARY = System.dll
 LIBRARY_USE_INTERMEDIATE_FILE = yes
 
+ifneq (net_2_1, $(PROFILE))
 RESOURCE_FILES = \
 	resources/Asterisk.wav	\
 	resources/Beep.wav	\
 	resources/Exclamation.wav	\
 	resources/Hand.wav	\
 	resources/Question.wav
+else
+RESOURCE_FILES =
+endif
 
 # Because System.dll, Mono.Security.dll System.Xml.dll have a cyclic dependency, we need a two-pass build.
 # 1st pass - build System.dll without System.Xml.dll or Mono.Security.dll or System.Configuration.dll references
