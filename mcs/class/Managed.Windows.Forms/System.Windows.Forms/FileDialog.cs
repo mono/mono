@@ -1873,20 +1873,16 @@ namespace System.Windows.Forms
 			if (currentPath == MWFVFS.RecentlyUsedPrefix) {
 				mainParentDirComboBoxItem = recentlyUsedDirComboboxItem;
 				selection = recentlyUsedDirComboboxItem;
-			} else
-			if (currentPath == MWFVFS.DesktopPrefix) {
+			} else if (currentPath == MWFVFS.DesktopPrefix) {
 				selection = desktopDirComboboxItem;
 				mainParentDirComboBoxItem = desktopDirComboboxItem;
-			} else
-			if (currentPath == MWFVFS.PersonalPrefix) {
+			} else if (currentPath == MWFVFS.PersonalPrefix) {
 				selection = personalDirComboboxItem;
 				mainParentDirComboBoxItem = personalDirComboboxItem;
-			} else
-			if (currentPath == MWFVFS.MyComputerPrefix) {
+			} else if (currentPath == MWFVFS.MyComputerPrefix) {
 				selection = myComputerDirComboboxItem;
 				mainParentDirComboBoxItem = myComputerDirComboboxItem;
-			} else
-			if (currentPath == MWFVFS.MyNetworkPrefix) {
+			} else if (currentPath == MWFVFS.MyNetworkPrefix) {
 				selection = networkDirComboboxItem;
 				mainParentDirComboBoxItem = networkDirComboboxItem;
 			} else {
@@ -1909,9 +1905,8 @@ namespace System.Windows.Forms
 			Items.AddRange (myComputerItems);
 			Items.Add (networkDirComboboxItem);
 			
-			if (selection == null) {
+			if (selection == null)
 				real_parent = CreateFolderStack ();
-			}
 			
 			if (real_parent != null) {
 				int local_indent = 0;
@@ -1940,24 +1935,25 @@ namespace System.Windows.Forms
 			DirectoryInfo di = new DirectoryInfo (currentPath);
 			
 			folderStack.Push (di);
-			
+
+			bool ignoreCase = !XplatUI.RunningOnUnix;
+
 			while (di.Parent != null) {
 				di = di.Parent;
-				
-				if (mainParentDirComboBoxItem != personalDirComboboxItem && di.FullName == ThemeEngine.Current.Places (UIIcon.PlacesDesktop))
+
+				if (mainParentDirComboBoxItem != personalDirComboboxItem && string.Compare (di.FullName, ThemeEngine.Current.Places (UIIcon.PlacesDesktop), ignoreCase) == 0)
 					return desktopDirComboboxItem;
 				else
 				if (mainParentDirComboBoxItem == personalDirComboboxItem) {
-					if (di.FullName == ThemeEngine.Current.Places (UIIcon.PlacesPersonal))
+					if (string.Compare (di.FullName, ThemeEngine.Current.Places (UIIcon.PlacesPersonal), ignoreCase) == 0)
 						return personalDirComboboxItem;
 				} else
 					foreach (DirComboBoxItem dci in myComputerItems) {
-						if (dci.Path == di.FullName) {
+						if (string.Compare (dci.Path, di.FullName, ignoreCase) == 0) {
 							return dci;
 						}
 					}
-				
-				
+
 				folderStack.Push (di);
 			}
 			

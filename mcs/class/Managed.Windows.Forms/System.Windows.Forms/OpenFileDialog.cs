@@ -46,7 +46,7 @@ namespace System.Windows.Forms {
 			CheckFileExists = true;
 			
 			OpenSaveButtonText = "Open";
-			SearchSaveLabel = "Search in:";
+			SearchSaveLabel = "Look in:";
 			fileDialogType = FileDialogType.OpenFileDialog;
 			
 			form.ResumeLayout (false);
