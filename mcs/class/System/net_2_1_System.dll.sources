@@ -572,7 +572,6 @@ System.Net/AuthenticationManager.cs
 System.Net/AuthenticationSchemes.cs
 System.Net/AuthenticationSchemeSelector.cs
 System.Net/Authorization.cs
-System.Net/BasicClient.cs
 System.Net/BindIPEndPoint.cs
 System.Net.Cache/HttpCacheAgeControl.cs
 System.Net.Cache/HttpRequestCacheLevel.cs
@@ -623,7 +622,6 @@ System.Net/CookieException.cs
 System.Net/CredentialCache.cs
 System.Net/DecompressionMethods.cs
 System.Net/DefaultCertificatePolicy.cs
-System.Net/DigestClient.cs
 System.Net/Dns.cs
 System.Net/DnsPermissionAttribute.cs
 System.Net/DnsPermission.cs
@@ -658,8 +656,8 @@ System.Net/HttpStatusCode.cs
 System.Net/HttpStreamAsyncResult.cs
 System.Net/HttpUtility.cs
 System.Net/HttpVersion.cs
-System.Net/HttpWebRequest.cs
-System.Net/HttpWebResponse.cs
+System.Net/HttpWebRequest_2_1.cs
+System.Net/HttpWebResponse_2_1.cs
 System.Net/IAuthenticationModule.cs
 System.Net/ICertificatePolicy.cs
 System.Net/ICredentialLookup.cs
@@ -796,11 +794,7 @@ System.Net.Sockets/UdpClient.cs
 System/NetTcpStyleUriParser.cs
 System.Net/TransportType.cs
 System.Net/WebAsyncResult.cs
-System.Net/WebClient.cs
-System.Net/WebConnection.cs
 System.Net/WebConnectionData.cs
-System.Net/WebConnectionGroup.cs
-System.Net/WebConnectionStream.cs
 System.Net/WebException.cs
 System.Net/WebExceptionStatus.cs
 System.Net/WebHeaderCollection.cs

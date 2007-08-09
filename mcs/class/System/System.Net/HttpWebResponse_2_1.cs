@@ -1,10 +1,10 @@
 //
-// System.Net.HttpWebRequestCreator
+// System.Net.HttpWebResponse (for 2.1 profile)
 //
 // Authors:
-//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//	Atsushi Enomoto  <atsushi@ximian.com>
 //
-// (C) 2003 Ximian, Inc (http://www.ximian.com)
+// (c) 2007 Novell, Inc. (http://www.novell.com)
 //
 
 //
@@ -28,22 +28,36 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace System.Net
-{
-	class HttpRequestCreator : IWebRequestCreate
-	{
-		internal HttpRequestCreator ()
-		{
-		}
-
-		public WebRequest Create (Uri uri)
-		{
 #if NET_2_1
-			throw new NotImplementedException ();
-#else
-			return new HttpWebRequest (uri);
-#endif
-		}
-	}
-}
 
+using System;
+using System.Collections;
+using System.Globalization;
+using System.IO;
+using System.Net.Sockets;
+using System.Runtime.Serialization;
+using System.Text;
+
+namespace System.Net 
+{
+	public abstract class HttpWebResponse
+	{
+		public abstract void Close ();
+		public abstract string GetResponseHeader (string headerName);
+		public abstract Stream GetResponseStream ();
+		public abstract string CharacterSet { get; }
+		public abstract string ContentEncoding { get; }
+		public abstract long ContentLength { get; }
+		public abstract string ContentType { get; }
+		public abstract WebHeaderCollection Headers { get; }
+		public abstract DateTime LastModified { get; }
+		public abstract string Method { get; }
+		public abstract Version ProtocolVersion { get; }
+		public abstract Uri ResponseUri { get; }
+		public abstract string Server { get; }
+		public abstract HttpStatusCode StatusCode { get; }
+		public abstract string StatusDescription { get; }
+	}
+
+}
+#endif

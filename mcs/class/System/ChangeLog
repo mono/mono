@@ -1,3 +1,9 @@
+2007-08-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* net_2_1_System.dll.sources :
+	  Replaced HttpWebRequest and HttpWebResponse with those for 2.1,
+	  and removed related 2.0-only types.
+
 2007-08-09  Jb Evain  <jbevain@novell.com>
 
 	* net_2_1_System.dll.sources: use a special .sources file

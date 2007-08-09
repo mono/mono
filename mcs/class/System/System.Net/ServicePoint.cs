@@ -269,7 +269,7 @@ namespace System.Net
 		{
 			protocolVersion = version;
 		}
-#if !TARGET_JVM
+#if !TARGET_JVM && !NET_2_1
 		WebConnectionGroup GetConnectionGroup (string name)
 		{
 			if (name == null)

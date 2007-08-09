@@ -1,3 +1,11 @@
+2007-08-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpWebRequest_2_1.cs, HttpWebResponse_2_1.cs :
+	  added new sources for those classes for 2.1 (in 2.1 they are
+	  almost abstract, while in 2.0 they are concrete).
+	* HttpRequestCreator.cs, ServicePoint.cs :
+	  #ifdef 2.0 dependencies out.
+
 2007-06-28  Chris Howie  <cdhowie@nerdshack.com>
 
 	* ServicePoint.cs: Implemented BindIPEndPointDelegate.
