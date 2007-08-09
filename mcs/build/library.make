@@ -8,7 +8,9 @@
 # All the dep files now land in the same directory so we
 # munge in the library name to keep the files from clashing.
 
+ifndef sourcefile
 sourcefile = $(LIBRARY).sources
+endif
 
 # If the directory contains the per profile include file, generate list file.
 PROFILE_sources = $(PROFILE)_$(LIBRARY).sources
