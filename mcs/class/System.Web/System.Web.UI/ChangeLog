@@ -1,3 +1,8 @@
+2007-08-09  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* CssStyleCollection.cs: used ListDictionary instead of
+	HybridDictionary as underlaying data structure
+
 2007-08-07  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* Control.cs: refactoring of LookForControlByName with caching

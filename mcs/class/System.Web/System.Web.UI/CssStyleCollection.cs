@@ -42,15 +42,15 @@ namespace System.Web.UI {
 	public sealed class CssStyleCollection
 	{
 		StateBag bag;
-		HybridDictionary style;
+		ListDictionary style;
 		StringBuilder _value = new StringBuilder ();
 		
 		internal CssStyleCollection ()
 		{
 #if NET_2_0
-			style = new HybridDictionary (true);
+			style = new ListDictionary (StringComparer.OrdinalIgnoreCase);
 #else
-			style = new HybridDictionary (false);
+			style = new ListDictionary ();
 #endif
 		}
 
