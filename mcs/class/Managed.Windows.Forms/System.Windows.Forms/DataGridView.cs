@@ -3511,8 +3511,10 @@ namespace System.Windows.Forms {
 			if (columnHeadersVisible) {
 				gridHeight += columnHeadersHeight;
 			}
-			horizontalScrollBar.Visible = false;
-			verticalScrollBar.Visible = false;
+			
+			bool horizontalVisible = false;
+			bool verticalVisible = false;
+			
 			if (AutoSize) {
 				if (gridWidth > Size.Width || gridHeight > Size.Height) {
 					Size = new Size(gridWidth, gridHeight);
@@ -3520,20 +3522,20 @@ namespace System.Windows.Forms {
 			}
 			else {
 				if (gridWidth > Size.Width) {
-					horizontalScrollBar.Visible = true;
+					horizontalVisible = true;
 				}
 				if (gridHeight > Size.Height) {
-					verticalScrollBar.Visible = true;
+					verticalVisible = true;
 				}
 				if (horizontalScrollBar.Visible && (gridHeight + horizontalScrollBar.Height) > Size.Height) {
-					verticalScrollBar.Visible = true;
+					verticalVisible = true;
 				}
 				if (verticalScrollBar.Visible && (gridWidth + verticalScrollBar.Width) > Size.Width) {
-					horizontalScrollBar.Visible = true;
+					horizontalVisible = true;
 				}
-				if (horizontalScrollBar.Visible) {
+				if (horizontalVisible) {
 					horizontalScrollBar.Minimum = 0;
-					if (verticalScrollBar.Visible) {
+					if (verticalVisible) {
 						horizontalScrollBar.Maximum = gridWidth - ClientRectangle.Width + verticalScrollBar.Width;
 					}
 					else {
@@ -3542,9 +3544,9 @@ namespace System.Windows.Forms {
 					horizontalScrollBar.LargeChange = horizontalScrollBar.Maximum / 10;
 					horizontalScrollBar.SmallChange = horizontalScrollBar.Maximum / 20;
 				}
-				if (verticalScrollBar.Visible) {
+				if (verticalVisible) {
 					verticalScrollBar.Minimum = 0;
-					if (horizontalScrollBar.Visible) {
+					if (horizontalVisible) {
 						verticalScrollBar.Maximum = gridHeight - ClientRectangle.Height + horizontalScrollBar.Height;
 					}
 					else {
@@ -3554,6 +3556,9 @@ namespace System.Windows.Forms {
 					verticalScrollBar.SmallChange = verticalScrollBar.Maximum / 20;
 				}
 			}
+
+			horizontalScrollBar.Visible = horizontalVisible;
+			verticalScrollBar.Visible = verticalVisible;
 		}
 
 		protected virtual void OnReadOnlyChanged (EventArgs e) {

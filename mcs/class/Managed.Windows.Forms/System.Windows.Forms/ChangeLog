@@ -1,5 +1,12 @@
 2007-08-09  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* DataGridView.cs: OnPaint: don't set scrollbar visibility to false then
+	  show them again, since setting visibility causes a paint, causing an
+	  endless loop (instead use a temporary and set it all when it's known if
+	  they should be shown or not). Fixes #79265.
+
+2007-08-09  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* DataGridView.cs: Only do a full column/row selection if a header was
 	  clicked and we're in Column/RowHeader selection mode. If shift and ctrl
 	  isn't pressed, deselect everything before selecting something.
