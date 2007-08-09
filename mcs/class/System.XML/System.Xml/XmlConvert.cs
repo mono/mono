@@ -350,17 +350,17 @@ namespace System.Xml {
 
 		public static short ToInt16(string s)
 		{
-			return Int16.Parse(s, CultureInfo.InvariantCulture);
+			return Int16.Parse (s, NumberStyles.Integer, CultureInfo.InvariantCulture);
 		}
 
 		public static int ToInt32(string s)
 		{
-			return Int32.Parse(s, CultureInfo.InvariantCulture);
+			return Int32.Parse (s, NumberStyles.Integer, CultureInfo.InvariantCulture);
 		}
 
 		public static long ToInt64(string s)
 		{
-			return Int64.Parse(s, CultureInfo.InvariantCulture);
+			return Int64.Parse (s, NumberStyles.Integer, CultureInfo.InvariantCulture);
 		}
 
 		[CLSCompliant (false)]
