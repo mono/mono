@@ -177,6 +177,10 @@ namespace System.Xml
 				return;
 
 			WriteStartAttribute (reader.Prefix, reader.LocalName, reader.NamespaceURI);
+#if NET_2_1
+			// no ReadAttributeValue() in 2.1 profile.
+			WriteString (reader.Value);
+#else
 			while (reader.ReadAttributeValue ()) {
 				switch (reader.NodeType) {
 				case XmlNodeType.Text:
@@ -187,6 +191,7 @@ namespace System.Xml
 					break;
 				}
 			}
+#endif
 			WriteEndAttribute ();
 		}
 

@@ -126,14 +126,11 @@ namespace System.Xml
 			get { return Current.HasAttributes; }
 		}
 
-#if NET_2_1
-		internal
-#else
-		public
-#endif
-		override bool HasValue {
+#if !NET_2_1
+		public override bool HasValue {
 			get { return Current.HasValue; }
 		}
+#endif
 
 		public override bool IsDefault {
 			get { return Current.IsDefault; }
@@ -363,12 +360,8 @@ namespace System.Xml
 				return source.Read ();
 		}
 
-#if NET_2_1
-		internal
-#else
-		public
-#endif
-		override bool ReadAttributeValue ()
+#if !NET_2_1
+		public override bool ReadAttributeValue ()
 		{
 			if (entity != null && entityInsideAttribute) {
 				if (entity.EOF)
@@ -380,6 +373,7 @@ namespace System.Xml
 			}
 			return Current.ReadAttributeValue ();
 		}
+#endif
 
 #if NET_2_0
 		public override int ReadContentAsBase64 (
@@ -444,12 +438,8 @@ namespace System.Xml
 			return base.ReadString ();
 		}
 
-#if NET_2_1
-		internal
-#else
-		public
-#endif
-		override void ResolveEntity ()
+#if !NET_2_1
+		public override void ResolveEntity ()
 		{
 			if (entity != null)
 				entity.ResolveEntity ();
@@ -459,6 +449,7 @@ namespace System.Xml
 				entity = new XmlNodeReader (source, insideAttribute);
 			}
 		}
+#endif
 
 		public override void Skip ()
 		{

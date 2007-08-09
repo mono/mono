@@ -116,14 +116,11 @@ namespace Mono.Xml
 			get { return source.EOF; }
 		}
 
-#if NET_2_1
-		internal
-#else
-		public
-#endif
-		override bool HasValue {
+#if !NET_2_1
+		public override bool HasValue {
 			get { return Current.HasValue; }
 		}
+#endif
 
 		public override bool IsDefault {
 			get { return Current.IsDefault; }
@@ -402,12 +399,8 @@ namespace Mono.Xml
 			}
 		}
 
-#if NET_2_1
-		internal
-#else
-		public
-#endif
-		override bool ReadAttributeValue ()
+#if !NET_2_1
+		public override bool ReadAttributeValue ()
 		{
 			if (entity != null && entity_inside_attr) {
 				if (entity.EOF) {
@@ -421,18 +414,17 @@ namespace Mono.Xml
 			}
 			return Current.ReadAttributeValue ();
 		}
+#endif
 
 		public override string ReadString ()
 		{
 			return base.ReadString ();
 		}
 
-#if NET_2_1
-		internal
-#else
-		public
+#if !NET_2_1
+		public override
 #endif
-		override void ResolveEntity ()
+		void ResolveEntity ()
 		{
 #if NET_2_0
 			DoResolveEntity ();

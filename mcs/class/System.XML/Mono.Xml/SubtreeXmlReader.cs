@@ -92,14 +92,11 @@ namespace Mono.Xml
 			get { return initial ? 0 : li != null ? li.LinePosition : 0; }
 		}
 
-#if NET_2_1
-		internal
-#else
-		public
-#endif
-		override bool HasValue {
+#if !NET_2_1
+		public override bool HasValue {
 			get { return initial ? false : Reader.HasValue; }
 		}
+#endif
 
 		public override string LocalName {
 			get { return initial ? String.Empty : Reader.LocalName; }
@@ -232,29 +229,21 @@ namespace Mono.Xml
 			return false;
 		}
 
-#if NET_2_1
-		internal
-#else
-		public
-#endif
-		override bool ReadAttributeValue ()
+#if !NET_2_1
+		public override bool ReadAttributeValue ()
 		{
 			if (initial || eof)
 				return false;
 			return Reader.ReadAttributeValue ();
 		}
 
-#if NET_2_1
-		internal
-#else
-		public
-#endif
-		override void ResolveEntity ()
+		public override void ResolveEntity ()
 		{
 			if (initial || eof)
 				return;
 			Reader.ResolveEntity ();
 		}
+#endif
 	}
 }
 

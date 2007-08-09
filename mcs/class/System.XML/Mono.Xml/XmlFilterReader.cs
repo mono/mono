@@ -96,14 +96,11 @@ namespace Mono.Xml
 			get { return reader.Prefix; }
 		}
 
-#if NET_2_1
-		internal
-#else
-		public
-#endif
-		override bool HasValue {
+#if !NET_2_1
+		public override bool HasValue {
 			get { return reader.HasValue; }
 		}
+#endif
 
 		public override int Depth {
 			get { return reader.Depth; }
@@ -278,24 +275,16 @@ namespace Mono.Xml
 			return reader.LookupNamespace (prefix);
 		}
 
-#if NET_2_1
-		internal
-#else
-		public
-#endif
-		override void ResolveEntity ()
+#if !NET_2_1
+		public override void ResolveEntity ()
 		{
 			reader.ResolveEntity ();
 		}
 
-#if NET_2_1
-		internal
-#else
-		public
-#endif
-		override bool ReadAttributeValue () {
+		public override bool ReadAttributeValue () {
 			return reader.ReadAttributeValue ();
 		}
+#endif
 		#endregion
 	}
 }

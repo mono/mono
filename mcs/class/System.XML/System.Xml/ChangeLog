@@ -1,5 +1,16 @@
 2007-08-09  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlReader.cs XmlNodeReader2.cs XmlTextReader.cs XmlTextReader2.cs
+	  XmlNodeReaderImpl.cs EntityResolvingXmlReader.cs :
+	  The previous attempt was wrong. Those internal-virtualized ones
+	  could be used in System.Xml.Core classes and outside the assembly
+	  any derived XmlReaders would have thrown throw Exception.
+	  Now I marked them as nonexistent-in-2.1 or privatized.
+	* XmlWriter.cs : actually only this class is affected (if there
+	  were DOM or XSD they would have been affected as well).
+
+2007-08-09  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlReader.cs : HasValue, ReadAttributeValue() and ResolveEntity()
 	  do not exist in 2.1 profile. Hiding abstract stuff seems to cause
 	  some issues at run time, so they are ifdef-ed out from 2.1.

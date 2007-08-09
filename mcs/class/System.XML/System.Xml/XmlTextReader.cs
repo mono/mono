@@ -253,14 +253,11 @@ namespace System.Xml
 			get { return readState == ReadState.EndOfFile; }
 		}
 
-#if NET_2_1
-		internal
-#else
-		public
-#endif
-		override bool HasValue {
+#if !NET_2_1
+		public override bool HasValue {
 			get { return cursorToken.Value != null; }
 		}
+#endif
 
 		public override bool IsDefault {
 			// XmlTextReader does not expand default attributes.
@@ -619,12 +616,8 @@ namespace System.Xml
 			return more;
 		}
 
-#if NET_2_1
-		internal
-#else
-		public
-#endif
-		override bool ReadAttributeValue ()
+#if !NET_2_1
+		public override bool ReadAttributeValue ()
 		{
 			if (readState == ReadState.Initial && startNodeType == XmlNodeType.Attribute) {
 				Read ();
@@ -644,6 +637,7 @@ namespace System.Xml
 			else
 				return false;
 		}
+#endif
 
 		public int ReadBase64 (byte [] buffer, int offset, int length)
 		{
@@ -706,16 +700,13 @@ namespace System.Xml
 			Clear ();
 		}
 
-#if NET_2_1
-		internal
-#else
-		public
-#endif
-		override void ResolveEntity ()
+#if !NET_2_1
+		public override void ResolveEntity ()
 		{
 			// XmlTextReader does not resolve entities.
 			throw new InvalidOperationException ("XmlTextReader cannot resolve external entities.");
 		}
+#endif
 
 #if NET_2_0
 		[MonoTODO] // FIXME: Implement, for performance improvement

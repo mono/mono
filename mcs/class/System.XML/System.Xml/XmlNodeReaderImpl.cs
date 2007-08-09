@@ -161,12 +161,8 @@ namespace System.Xml
 			}
 		}
 
-#if NET_2_1
-		internal
-#else
-		public
-#endif
-		override bool HasValue {
+#if !NET_2_1
+		public override bool HasValue {
 			get {
 				if (current == null)
 					return false;
@@ -186,6 +182,7 @@ namespace System.Xml
 			}
 			      
 		}
+#endif
 
 		public override bool IsDefault {
 			get {
@@ -792,12 +789,8 @@ namespace System.Xml
 			}
 		}
 
-#if NET_2_1
-		internal
-#else
-		public
-#endif
-		override bool ReadAttributeValue ()
+#if !NET_2_1
+		public override bool ReadAttributeValue ()
 		{
 			if (current.NodeType == XmlNodeType.Attribute) {
 				if (current.FirstChild == null)
@@ -812,21 +805,19 @@ namespace System.Xml
 			} else
 				return false;
 		}
+#endif
 
 		public override string ReadString ()
 		{
 			return base.ReadString ();
 		}
 
-#if NET_2_1
-		internal
-#else
-		public
-#endif
-		override void ResolveEntity ()
+#if !NET_2_1
+		public override void ResolveEntity ()
 		{
 			throw new NotSupportedException ("Should not happen.");
 		}
+#endif
 
 		public override void Skip ()
 		{
