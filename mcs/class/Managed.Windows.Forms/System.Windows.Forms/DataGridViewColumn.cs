@@ -353,7 +353,9 @@ Example */
 		public DataGridViewColumnSortMode SortMode {
 			get { return sortMode; }
 			set {
-				// System.InvalidOperationException: The value assigned to the property conflicts with System.Windows.Forms.DataGridView.SelectionMode.
+				if (value == DataGridViewColumnSortMode.Automatic && DataGridView != null && DataGridView.SelectionMode == DataGridViewSelectionMode.FullColumnSelect)
+					throw new InvalidOperationException ("Column's SortMode cannot be set to Automatic while the DataGridView control's SelectionMode is set to FullColumnSelect.");
+
 				if (sortMode != value) {
 					sortMode = value;
 					if (DataGridView != null) {
@@ -451,7 +453,11 @@ Example */
 		}
 
 		internal override void SetDataGridView (DataGridView dataGridView) {
-			base.SetDataGridView(dataGridView);
+			if (sortMode == DataGridViewColumnSortMode.Automatic && dataGridView != null && dataGridView.SelectionMode == DataGridViewSelectionMode.FullColumnSelect) {
+				throw new InvalidOperationException ("Column's SortMode cannot be set to Automatic while the DataGridView control's SelectionMode is set to FullColumnSelect.");
+			}
+			
+			base.SetDataGridView (dataGridView);
 			if (cellTemplate != null) {
 				cellTemplate.SetDataGridView(dataGridView);
 			}

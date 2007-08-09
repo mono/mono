@@ -1,3 +1,8 @@
+2007-08-09  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* DataGridViewColumn.cs: Throw if the SortMode conflicts with DataGridView's
+	  SelectionMode.
+
 2007-08-08  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: In ListViewItemsCollection check that owner is
