@@ -385,6 +385,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		[NUnit.Framework.Category ("NotWorking")]
 		public void MethodScaleControl ()
 		{
 			Form f = new Form ();
