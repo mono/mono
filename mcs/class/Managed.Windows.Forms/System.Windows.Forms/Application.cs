@@ -698,10 +698,10 @@ namespace System.Windows.Forms {
 					if (keyboard_capture != null) {
 						// WM_SYSKEYUP does not make it into ProcessCmdKey, so do it here
 						if ((Msg)m.Msg == Msg.WM_SYSKEYUP)
-							if (((Keys)m.WParam.ToInt32 () & Keys.Menu) == Keys.Menu) {
+							if (m.WParam.ToInt32() == (int)Keys.Menu) {
 								keyboard_capture.GetTopLevelToolStrip ().Dismiss (ToolStripDropDownCloseReason.Keyboard);
 								continue;
-						}
+							}
 
 						m.HWnd = keyboard_capture.Handle;
 						
