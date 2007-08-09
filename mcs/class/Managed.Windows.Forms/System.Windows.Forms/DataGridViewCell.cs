@@ -262,7 +262,20 @@ namespace System.Windows.Forms {
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public virtual bool Selected {
-			get { return selected; }
+			get {
+				if (selected)
+					return true;
+				
+				if (DataGridView != null) {
+					if (RowIndex >= 0 && DataGridView.Rows [RowIndex].Selected)
+						return true;
+						
+					if (ColumnIndex >= 0 && DataGridView.Columns [ColumnIndex].Selected)
+						return true;
+				}
+				
+				return false;
+			}
 			set {
 				if (value != ((State & DataGridViewElementStates.Selected) != 0)) {
 					SetState(State ^ DataGridViewElementStates.Selected);
@@ -427,7 +440,7 @@ namespace System.Windows.Forms {
 		
 			DataGridViewElementStates result;
 			
-			result = DataGridViewElementStates.ResizableSet;
+			result = DataGridViewElementStates.ResizableSet | State;
 			
 			DataGridViewColumn col = OwningColumn;
 			DataGridViewRow row = OwningRow;
@@ -471,7 +484,7 @@ namespace System.Windows.Forms {
 			if (col.Displayed && row.Displayed)
 				result |= DataGridViewElementStates.Displayed;
 
-			if (col.Selected && row.Selected)
+			if (col.Selected || row.Selected)
 				result |= DataGridViewElementStates.Selected;
 			
 			return result;

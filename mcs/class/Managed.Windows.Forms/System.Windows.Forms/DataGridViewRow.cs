@@ -29,6 +29,7 @@
 using System.ComponentModel;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Collections;
 
 namespace System.Windows.Forms {
 
@@ -288,9 +289,6 @@ namespace System.Windows.Forms {
 					throw new InvalidOperationException("The row has not been added to a DataGridView control.");
 				}
 				base.Selected = value;
-				foreach (DataGridViewCell cell in cells) {
-					cell.Selected = value;
-				}
 			}
 		}
 
@@ -440,11 +438,50 @@ namespace System.Windows.Forms {
 
 		protected internal virtual void Paint (Graphics graphics, Rectangle clipBounds, Rectangle rowBounds, int rowIndex, DataGridViewElementStates rowState, bool isFirstDisplayedRow, bool isLastVisibleRow)
 		{
+			PaintCells (graphics, clipBounds, rowBounds, rowIndex, rowState, isFirstDisplayedRow, isLastVisibleRow, DataGridViewPaintParts.All);
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected internal virtual void PaintCells (Graphics graphics, Rectangle clipBounds, Rectangle rowBounds, int rowIndex, DataGridViewElementStates rowState, bool isFirstDisplayedRow, bool isLastVisibleRow, DataGridViewPaintParts paintParts)
 		{
+			ArrayList sortedColumns = DataGridView.Columns.ColumnDisplayIndexSortedArrayList;
+
+			Rectangle bounds = rowBounds;
+			for (int j = 0; j < sortedColumns.Count; j++) {
+				DataGridViewColumn col = (DataGridViewColumn)sortedColumns [j];
+				foreach (DataGridViewCell cell in Cells) {
+					if (cell.ColumnIndex == col.Index) {
+						bounds.Width = col.Width;
+						cell.SetSize (new Size (bounds.Width, bounds.Height));
+						DataGridViewCellStyle style;
+						if (cell.RowIndex == -1) {
+							style = DefaultCellStyle;
+						} else {
+							style = cell.InheritedStyle;
+						}
+
+						object value, formattedValue; string errorText;
+						DataGridViewElementStates cellState;
+						if (cell.RowIndex == -1) {
+							// TODO: Look up value if databound.
+							value = null; formattedValue = null; errorText = null;
+							cellState = cell.State;
+						} else {
+							value = cell.Value; formattedValue = cell.FormattedValue; errorText = cell.ErrorText;
+							cellState = cell.InheritedState;
+						}
+						DataGridViewAdvancedBorderStyle intermediateBorderStyle = (DataGridViewAdvancedBorderStyle)((ICloneable)DataGridView.AdvancedCellBorderStyle).Clone ();
+						DataGridViewAdvancedBorderStyle borderStyle = cell.AdjustCellBorderStyle (DataGridView.AdvancedCellBorderStyle, intermediateBorderStyle, true, true, j == 0, cell.RowIndex == 0);
+						DataGridView.OnCellFormattingInternal (new DataGridViewCellFormattingEventArgs (cell.ColumnIndex, cell.RowIndex, value, cell.FormattedValueType, style));
+						DataGridViewCellPaintingEventArgs args = new DataGridViewCellPaintingEventArgs (DataGridView, graphics, clipBounds, bounds, cell.RowIndex, cell.ColumnIndex, cell.State, value, formattedValue, errorText, style, borderStyle, DataGridViewPaintParts.All);
+						DataGridView.OnCellPaintingInternal (args);
+						if (!args.Handled) {
+							cell.InternalPaint (graphics, clipBounds, bounds, cell.RowIndex, cellState, value, formattedValue, errorText, style, borderStyle, DataGridViewPaintParts.All);
+						}
+						bounds.X += bounds.Width;
+					}
+				}
+			}
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]

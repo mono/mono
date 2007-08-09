@@ -1,5 +1,22 @@
 2007-08-09  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* DataGridView.cs: SelectedRows: we need to check if selectionMode is
+	  FullRowSelect (not FullColumnSelect). Fixes #81075. Implemented
+	  BeginEdit, EndEdit, SetSelected<Cell|Row|Column>Core. Implemented row,
+	  cell and column selection with ctrl and shift pressed. Call the correct
+	  BeginEdit/EndEdit whenever we start/end editing. Move painting code to
+	  the corresponding virtual method (PaintBackground to paint background,
+	  etc).
+	* DataGridViewCell.cs: Implement Selected correctly, we're selected if
+	  either the column, row or the cell itself is selected.
+	* DataGridViewRowCollection.cs: Use DGV.OnRowsAddedInternal instead of
+	  OnRowsAdded.
+	* DataGridViewRow.cs: Moved some of the painting code from DataGridView
+	  here. When the row is selected, don't select all cells. Each cell now
+	  queries the row to see if the row is selected.
+
+2007-08-09  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* DataGridViewColumn.cs: Throw if the SortMode conflicts with DataGridView's
 	  SelectionMode.
 

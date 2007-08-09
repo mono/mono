@@ -130,7 +130,7 @@ namespace System.Windows.Forms {
 
 			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Add, dataGridViewRow));
 			if (raiseEvent) {
-				DataGridView.OnRowsAdded (new DataGridViewRowsAddedEventArgs (result, 1));
+				DataGridView.OnRowsAddedInternal (new DataGridViewRowsAddedEventArgs (result, 1));
 			}
 			return result;
 		}

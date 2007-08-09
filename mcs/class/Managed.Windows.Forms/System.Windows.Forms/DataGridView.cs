@@ -115,6 +115,10 @@ namespace System.Windows.Forms {
 		private HScrollBar horizontalScrollBar;
 		private VScrollBar verticalScrollBar;
 		private Control editingControl;
+
+		// These are used to implement selection behaviour with SHIFT pressed.
+		private int selected_row = -1;
+		private int selected_column = -1;
 		
 		internal int gridWidth;
 		internal int gridHeight;
@@ -1054,7 +1058,7 @@ namespace System.Windows.Forms {
 		public DataGridViewSelectedRowCollection SelectedRows {
 			get {
 				DataGridViewSelectedRowCollection selectedRows = new DataGridViewSelectedRowCollection();
-				if (selectionMode == DataGridViewSelectionMode.FullColumnSelect || selectionMode == DataGridViewSelectionMode.RowHeaderSelect) {
+				if (selectionMode == DataGridViewSelectionMode.FullRowSelect || selectionMode == DataGridViewSelectionMode.RowHeaderSelect) {
 					foreach (DataGridViewRow row in rows) {
 						if (row.Selected) {
 							selectedRows.InternalAdd(row);
@@ -2040,7 +2044,35 @@ namespace System.Windows.Forms {
 		}
 
 		public virtual bool BeginEdit (bool selectAll) {
-			throw new NotImplementedException();
+			if (currentCell == null || currentCell.IsInEditMode)
+				return false;
+			
+			DataGridViewCell cell = currentCell;
+			Type editType = cell.EditType;
+			if (editType == null)
+				return false;
+
+			cell.SetIsInEditMode (true);
+			Control ctrl = EditingControlInternal;
+			bool isCorrectType = ctrl != null && ctrl.GetType () == editType;
+			if (ctrl != null && !isCorrectType) {
+				ctrl = null;
+			}
+			if (ctrl == null) {
+				ctrl = (Control) Activator.CreateInstance (editType);
+				EditingControlInternal = ctrl;
+			}
+
+			IDataGridViewEditingControl edControl = ctrl as IDataGridViewEditingControl;
+			DataGridViewCellStyle style = cell.RowIndex == -1 ? DefaultCellStyle : cell.InheritedStyle;
+			cell.InitializeEditingControl (cell.RowIndex, cell.FormattedValue, style);
+			cell.PositionEditingControl (true, true, this.GetCellDisplayRectangle (cell.ColumnIndex, cell.RowIndex, false), bounds, style, false, false, (columns [cell.ColumnIndex].DisplayIndex == 0), (cell.RowIndex == 0));
+			if (edControl != null)
+				edControl.PrepareEditingControlForEdit (selectAll);
+			ctrl.Visible = true;
+
+			OnCellBeginEdit (new DataGridViewCellCancelEventArgs (cell.ColumnIndex, cell.RowIndex));
+			return true;
 		}
 
 		public bool CancelEdit () {
@@ -2080,7 +2112,12 @@ namespace System.Windows.Forms {
 		}
 
 		public bool EndEdit () {
-			throw new NotImplementedException();
+			if (currentCell != null && currentCell.IsInEditMode) {
+				currentCell.SetIsInEditMode (false);
+				currentCell.DetachEditingControl ();
+				OnCellEndEdit (new DataGridViewCellEventArgs (currentCell.ColumnIndex, currentCell.RowIndex));
+			}
+			return true;
 		}
 
 		public bool EndEdit (DataGridViewDataErrorContexts context) {
@@ -2392,7 +2429,7 @@ namespace System.Windows.Forms {
 						if (selectExceptionElement && row.Index == rowIndexException) {
 							continue;
 						}
-						row.Selected = false;
+						SetSelectedRowCore (row.Index, false);
 					}
 					break;
 				case DataGridViewSelectionMode.FullColumnSelect:
@@ -2400,7 +2437,7 @@ namespace System.Windows.Forms {
 						if (selectExceptionElement && col.Index == columnIndexException) {
 							continue;
 						}
-						col.Selected = false;
+						SetSelectedColumnCore (col.Index, false);
 					}
 					break;
 				default:
@@ -2408,7 +2445,7 @@ namespace System.Windows.Forms {
 						if (selectExceptionElement && cell.RowIndex == rowIndexException && cell.ColumnIndex == columnIndexException) {
 							continue;
 						}
-						cell.Selected = false;
+						SetSelectedCellCore (cell.ColumnIndex, cell.RowIndex, false);
 					}
 					break;
 			}
@@ -2648,6 +2685,11 @@ namespace System.Windows.Forms {
 				eh (this, e);
 		}
 
+		internal void OnCellFormattingInternal (DataGridViewCellFormattingEventArgs e)
+		{
+			OnCellFormatting (e);
+		}
+
 		protected virtual void OnCellFormatting (DataGridViewCellFormattingEventArgs e)
 		{
 			DataGridViewCellFormattingEventHandler eh = (DataGridViewCellFormattingEventHandler)(Events [CellFormattingEvent]);
@@ -2738,6 +2780,11 @@ namespace System.Windows.Forms {
 			DataGridViewCellMouseEventHandler eh = (DataGridViewCellMouseEventHandler)(Events [CellMouseUpEvent]);
 			if (eh != null)
 				eh (this, e);
+		}
+
+		internal void OnCellPaintingInternal (DataGridViewCellPaintingEventArgs e)
+		{
+			OnCellPainting (e);
 		}
 
 		protected virtual void OnCellPainting (DataGridViewCellPaintingEventArgs e)
@@ -3149,6 +3196,95 @@ namespace System.Windows.Forms {
 			base.OnMouseDoubleClick(e);
 		}
 
+		private void DoSelectionOnMouseDown (HitTestInfo hitTest)
+		{
+			Keys modifiers = Control.ModifierKeys;
+			bool isControl = (modifiers & Keys.Control) != 0;
+			bool isShift = (modifiers & Keys.Shift) != 0;
+			
+			if (!isControl) {
+				// If SHIFT is pressed:
+				//	Select all from selected_row/column/cell to current row/column/cell, unselect everything else
+				// otherwise:
+				//	Unselect all rows/columns/cells, select the clicked one
+				int min_row, max_row;
+				int min_col, max_col;
+				if (!isShift) {
+					selected_row = hitTest.RowIndex;
+					selected_column = hitTest.ColumnIndex;
+				} 
+				if (!isShift) {
+					if (selected_row != -1)
+						selected_row = hitTest.RowIndex;
+					if (selected_column != -1)
+						selected_column = hitTest.ColumnIndex;
+				}
+				if (selected_row >= hitTest.RowIndex) {
+					min_row = hitTest.RowIndex;
+					max_row = isShift ? selected_row : min_row;
+				} else {
+					max_row = hitTest.RowIndex;
+					min_row = isShift ? selected_row : max_row;
+				}
+				if (selected_column >= hitTest.ColumnIndex) {
+					min_col = hitTest.ColumnIndex;
+					max_col = isShift ? selected_column : min_col;
+				} else {
+					max_col = hitTest.ColumnIndex;
+					min_col = isShift ? selected_column : max_col;
+				}
+
+				switch (selectionMode) {
+				case DataGridViewSelectionMode.FullRowSelect:
+					for (int i = 0; i < RowCount; i++) {
+						bool select = i >= min_row && i <= max_row;
+						if (select != Rows [i].Selected) {
+							SetSelectedRowCore (i, select);
+						}
+					}
+					break;
+				case DataGridViewSelectionMode.FullColumnSelect:
+					for (int i = 0; i < ColumnCount; i++) {
+						bool select = i >= min_col && i <= max_col;
+						if (select != Columns [i].Selected) {
+							SetSelectedColumnCore (i, select);
+						}
+					}
+					break;
+				case DataGridViewSelectionMode.ColumnHeaderSelect:
+				case DataGridViewSelectionMode.RowHeaderSelect:
+					//break;
+				case DataGridViewSelectionMode.CellSelect:
+					for (int r = 0; r < RowCount; r++) {
+						for (int c = 0; c < ColumnCount; c++) {
+							bool select = (r >= min_row && r <= max_row) && (c >= min_col && c <= max_col);
+							if (select != Rows [r].Cells [c].Selected)
+								SetSelectedCellCore (c, r, select);
+						}
+					}
+					break;
+				}
+				
+			} else if (isControl) {
+				// Switch the selected state of the row.
+				switch (selectionMode) {
+				case DataGridViewSelectionMode.FullRowSelect:
+					SetSelectedRowCore (hitTest.RowIndex, !rows [hitTest.RowIndex].Selected);
+					break;
+				case DataGridViewSelectionMode.FullColumnSelect:
+					SetSelectedColumnCore (hitTest.ColumnIndex, !columns [hitTest.ColumnIndex].Selected);
+					break;
+				case DataGridViewSelectionMode.ColumnHeaderSelect:
+				case DataGridViewSelectionMode.RowHeaderSelect:
+					//break;
+				case DataGridViewSelectionMode.CellSelect:
+					SetSelectedCellCore (hitTest.ColumnIndex, hitTest.RowIndex, !Rows [hitTest.RowIndex].Cells [hitTest.ColumnIndex].Selected);
+					break;
+				}
+			}
+			
+		}
+
 		protected override void OnMouseDown (MouseEventArgs e)
 		{
 			base.OnMouseDown(e);
@@ -3163,38 +3299,18 @@ namespace System.Windows.Forms {
 			OnCellClick(new DataGridViewCellEventArgs(hitTest.ColumnIndex, hitTest.RowIndex));
 			DataGridViewRow row = rows[hitTest.RowIndex];
 			DataGridViewCell cell = row.Cells[hitTest.ColumnIndex];
-			ClearSelection(0, 0, false);
-			switch (selectionMode) {
-				case DataGridViewSelectionMode.FullRowSelect:
-					row.Selected = true;
-					break;
-				case DataGridViewSelectionMode.FullColumnSelect:
-					//////////////////
-					break;
-				default:
-					cell.Selected = true;
-					break;
-			}
+			DoSelectionOnMouseDown (hitTest);
 			if (cell == currentCell) {
-				currentCell.SetIsInEditMode(true);
-				OnCellBeginEdit(new DataGridViewCellCancelEventArgs(currentCell.ColumnIndex, currentCell.RowIndex));
-				Invalidate();
-				return;
-			}
-			if (currentCell != null) {
-				if (currentCell.IsInEditMode) {
-					currentCell.SetIsInEditMode(false);
-					currentCell.DetachEditingControl();
-					OnCellEndEdit(new DataGridViewCellEventArgs(currentCell.ColumnIndex, currentCell.RowIndex));
-				}
+				BeginEdit (true);
+			} else if (currentCell != null) {
+				EndEdit ();
 				OnCellLeave(new DataGridViewCellEventArgs(currentCell.ColumnIndex, currentCell.RowIndex));
 			}
 			currentCell = cell;
 			OnCurrentCellChanged(EventArgs.Empty);
 			OnCellEnter(new DataGridViewCellEventArgs(cell.ColumnIndex, cell.RowIndex));
 			if (editMode == DataGridViewEditMode.EditOnEnter) {
-				currentCell.SetIsInEditMode(true);
-				OnCellBeginEdit(new DataGridViewCellCancelEventArgs(currentCell.ColumnIndex, currentCell.RowIndex));
+				BeginEdit (true);
 			}
 			Invalidate();
 			return;
@@ -3259,7 +3375,8 @@ namespace System.Windows.Forms {
 			base.OnPaint(e);
 			//Console.WriteLine("DataGridView.OnPaint-ClipRectangle: {0};", e.ClipRectangle);
 			Rectangle bounds = ClientRectangle; //e.ClipRectangle;
-			e.Graphics.FillRectangle(new SolidBrush(backgroundColor), bounds);
+			PaintBackground (e.Graphics, e.ClipRectangle, bounds);
+			
 			Pen pen = new Pen(gridColor);
 			pen.Width = 1;
 			int i = 0;
@@ -3305,52 +3422,7 @@ namespace System.Windows.Forms {
 					bounds.X += rowHeadersWidth;
 				}
 				bounds.Height = row.Height;
-				for (int j = 0; j < sortedColumns.Count; j++) {
-					DataGridViewColumn col = (DataGridViewColumn) sortedColumns[j];
-					foreach (DataGridViewCell cell in row.Cells) {
-						if (cell.ColumnIndex == col.Index) {
-							bounds.Width = col.Width;
-							cell.SetSize(new Size(bounds.Width, bounds.Height));
-							DataGridViewCellStyle style;
-							if (cell.RowIndex == -1) {
-								style = DefaultCellStyle;
-							} else {
-								style = cell.InheritedStyle;
-							}
-							if (cell == currentCell && cell.IsInEditMode) {
-								Type editType = cell.EditType;
-								if (editType != null) {
-									bool isCorrectType = EditingControlInternal != null && EditingControlInternal.GetType () == editType;
-									if (EditingControlInternal != null && !isCorrectType) {
-										EditingControlInternal = null;
-									}
-									if (EditingControlInternal == null)
-										EditingControlInternal = (Control) Activator.CreateInstance (editType);
-									cell.InitializeEditingControl(cell.RowIndex, cell.FormattedValue, style);
-									cell.PositionEditingControl(true, true, bounds, e.ClipRectangle, style, false, false, (columns[currentCell.ColumnIndex].DisplayIndex == 0), (currentCell.RowIndex == 0));
-									EditingControl.Visible = true;
-								}
-							} else {
-								object value, formattedValue; string errorText;
-								if (cell.RowIndex == -1) {
-									// TODO: Look up value if databound.
-									value = null; formattedValue = null; errorText = null;
-								} else {
-									value = cell.Value; formattedValue = cell.FormattedValue; errorText = cell.ErrorText;
-								}
-								DataGridViewAdvancedBorderStyle intermediateBorderStyle = (DataGridViewAdvancedBorderStyle) ((ICloneable)this.AdvancedCellBorderStyle).Clone();
-								DataGridViewAdvancedBorderStyle borderStyle = cell.AdjustCellBorderStyle(this.AdvancedCellBorderStyle, intermediateBorderStyle, true, true, j == 0, cell.RowIndex == 0);
-								OnCellFormatting(new DataGridViewCellFormattingEventArgs(cell.ColumnIndex, cell.RowIndex, value, cell.FormattedValueType, style));
-								DataGridViewCellPaintingEventArgs args = new DataGridViewCellPaintingEventArgs (this, e.Graphics, e.ClipRectangle, bounds, cell.RowIndex, cell.ColumnIndex, cell.State, value, formattedValue, errorText, style, borderStyle, DataGridViewPaintParts.All);
-								OnCellPainting(args);
-								if (!args.Handled) {
-									cell.InternalPaint(e.Graphics, e.ClipRectangle, bounds, cell.RowIndex, cell.State, value, formattedValue, errorText, style, borderStyle, DataGridViewPaintParts.All);
-								}
-							}
-							bounds.X += bounds.Width;
-						}
-					}
-				}
+				row.Paint (e.Graphics, e.ClipRectangle, bounds, row.Index, row.State, row.Index == 0, row.Index == rows.Count - 1);
 				bounds.Y += bounds.Height;
 				bounds.X = -horizontalScrollingOffset;
 				i++;
@@ -3562,6 +3634,12 @@ namespace System.Windows.Forms {
 			if (eh != null) eh (this, e);
 		}
 
+		internal void OnRowsAddedInternal (DataGridViewRowsAddedEventArgs e)
+		{
+			Invalidate ();
+			OnRowsAdded (e);
+		}
+
 		protected internal virtual void OnRowsAdded (DataGridViewRowsAddedEventArgs e)
 		{
 			DataGridViewRowsAddedEventHandler eh = (DataGridViewRowsAddedEventHandler)(Events [RowsAddedEvent]);
@@ -3658,6 +3736,7 @@ namespace System.Windows.Forms {
 
 		protected virtual void PaintBackground (Graphics graphics, Rectangle clipBounds, Rectangle gridBounds)
 		{
+			graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (backgroundColor), gridBounds);
 		}
 
 		protected bool ProcessAKey (Keys keyData)
@@ -3678,7 +3757,6 @@ namespace System.Windows.Forms {
 		protected override bool ProcessDialogKey (Keys keyData)
 		{
 			return base.ProcessDialogKey(keyData);
-			//throw new NotImplementedException();
 		}
 
 		protected bool ProcessDownKey (Keys keyData) {
@@ -3762,15 +3840,15 @@ namespace System.Windows.Forms {
 		}
 
 		protected virtual void SetSelectedCellCore (int columnIndex, int rowIndex, bool selected) {
-			throw new NotImplementedException();
+			rows [rowIndex].Cells [columnIndex].Selected = selected;
 		}
 
 		protected virtual void SetSelectedColumnCore (int columnIndex, bool selected) {
-			throw new NotImplementedException();
+			columns [columnIndex].Selected = selected;
 		}
 
 		protected virtual void SetSelectedRowCore (int rowIndex, bool selected) {
-			throw new NotImplementedException();
+			rows [rowIndex].Selected = selected;
 		}
 
 		protected override void WndProc (ref Message m) {
