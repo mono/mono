@@ -1,3 +1,8 @@
+2007-08-09  Jb Evain  <jbevain@novell.com>
+
+	* net_2_1_System.dll.sources: use a special .sources file
+	for the 2.1 profile.
+
 2007-08-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.dll.sources : added PerformanceCounterInstanceLifetime.cs
