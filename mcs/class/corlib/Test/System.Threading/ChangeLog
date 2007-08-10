@@ -1,3 +1,7 @@
+2007-08-10  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ThreadTest.cs: Enabled test for bug #81658.
+
 2007-07-22  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* AutoResetEventTest.cs: Added test for verifying effect of assigning

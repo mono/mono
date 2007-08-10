@@ -1,3 +1,8 @@
+2007-08-10  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Thread.cs: Throw ThreadStateException when retrieving ApartmentState
+	or IsBackground if thread is stopped. Fixes bug #81658.
+
 2007-08-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* Thread.cs: Add a fixme.

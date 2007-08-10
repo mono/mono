@@ -704,7 +704,6 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test] // bug #81658
-		[Category ("NotWorking")]
 		public void ApartmentState_StoppedThread ()
 		{
 			Thread t1 = new Thread (new ThreadStart (Start));

@@ -305,6 +305,9 @@ namespace System.Threading {
 #endif
 		public ApartmentState ApartmentState {
 			get {
+				if ((ThreadState & ThreadState.Stopped) != 0)
+					throw new ThreadStateException ("Thread is dead; state can not be accessed.");
+
 				return (ApartmentState)apartment_state;
 			}
 
@@ -533,7 +536,11 @@ namespace System.Threading {
 
 		public bool IsBackground {
 			get {
-				return (GetState () & ThreadState.Background) != 0;
+				ThreadState thread_state = GetState ();
+				if ((thread_state & ThreadState.Stopped) != 0)
+					throw new ThreadStateException ("Thread is dead; state can not be accessed.");
+
+				return (thread_state & ThreadState.Background) != 0;
 			}
 			
 			set {
