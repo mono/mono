@@ -1,6 +1,7 @@
 2007-08-10  Gert Driesen  <drieseng@users.sourceforge.net>
 
-	* ThreadTest.cs: Enabled test for bug #81658.
+	* ThreadTest.cs: Enabled test for bug #81658, and uncommented code
+	that relies on that fix.
 
 2007-07-22  Gert Driesen  <drieseng@users.sourceforge.net>
 
