@@ -498,6 +498,7 @@ namespace System.Windows.Forms {
 				control.MouseEnter += new EventHandler(control_MouseEnter);
 				control.MouseMove += new MouseEventHandler(control_MouseMove);
 				control.MouseLeave += new EventHandler(control_MouseLeave);
+				control.MouseDown += new MouseEventHandler (control_MouseDown);
 				controls.Add(control);
 			}
 			
@@ -672,6 +673,18 @@ namespace System.Windows.Forms {
 			Hide (sender as Control);
 		}
 
+
+		void control_MouseDown (object sender, MouseEventArgs e)
+		{
+			timer.Stop();
+
+			active_control = null;
+			tooltip_window.Visible = false;
+			
+			if (last_control == sender)
+				last_control = null;
+		}
+		
 		private void Hide (Control sender)
 		{
 			timer.Stop();

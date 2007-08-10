@@ -1,3 +1,8 @@
+2007-08-10  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolTip.cs: Hide the tooltip if the control is clicked to match MS behavior.
+	[Fixes bug #82348]
+
 2007-08-09  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DrawToolTipEventArgs.cs: Don't dispose a brush we got from the respool.
