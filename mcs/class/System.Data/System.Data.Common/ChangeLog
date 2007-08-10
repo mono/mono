@@ -1,3 +1,7 @@
+2007-08-10  Nagappan A  <anagappan@novell.com>
+
+	* DbDataAdapter.cs (Fill): Fixed method signature.
+
 2007-07-26  Nagappan A  <anagappan@novell.com>
 
 	* DbConnection.cs: Removed bogus TODO.

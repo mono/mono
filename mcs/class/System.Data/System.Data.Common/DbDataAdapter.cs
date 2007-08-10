@@ -289,7 +289,7 @@ namespace System.Data.Common {
 
 #if NET_2_0
 		[MonoTODO]
-		public int Fill (int startRecord, int maxRecords, DataTable[] dataTables)
+		public int Fill (int startRecord, int maxRecords, params DataTable[] dataTables)
 		{
 			throw new NotImplementedException ();
 		}
