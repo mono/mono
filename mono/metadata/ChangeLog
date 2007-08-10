@@ -1,3 +1,7 @@
+2007-08-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* threads.c threads-types.h: Export mono_thread_get_stack_bounds.
+
 2007-08-09  Raja R Harinath  <rharinath@novell.com>
 
 	* reflection.c (dup_type): Remove.
