@@ -1,3 +1,9 @@
+2007-08-10  Dick Porter  <dick@ximian.com>
+
+	* sockets.c (_wapi_getsockopt, _wapi_setsockopt): Check the option
+	level as well as the name when mangling some of the values.  Fixes
+	bug 82000.
+
 2007-08-02  Dick Porter  <dick@ximian.com>
 
 	* sockets.c: Changes in error handling, and move the SO_REUSEADDR
