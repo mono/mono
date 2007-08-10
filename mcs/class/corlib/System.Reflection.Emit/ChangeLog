@@ -1,3 +1,9 @@
+2007-08-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* DynamicILInfo.cs: New file.
+
+	* DynamicMethod.cs (GetDynamicILInfo): New 2.0 method.
+
 2007-07-11  Rodrigo Kumpera <rkumpera@novell.com>
 
 	* TypeBuilder.cs (CreateType): method did not check for enum type with defined methods and fixed compatibility issue in case of calling CreateType again after the first one failed, it now returns null as well.

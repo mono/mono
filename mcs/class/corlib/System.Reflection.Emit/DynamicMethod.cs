@@ -202,6 +202,11 @@ namespace System.Reflection.Emit {
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO("Not implemented")]
+		public DynamicILInfo GetDynamicILInfo () {
+			throw new NotImplementedException ();
+		}
+
 		public ILGenerator GetILGenerator () {
 			return GetILGenerator (64);
 		}
