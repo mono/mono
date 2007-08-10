@@ -1,3 +1,13 @@
+2007-08-10 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_test.sh: Added new visibility tests and not/neg tests
+	* make_cross_nested_access_test.sh: new test script for visibility
+	between two classes nested in the same class
+	* unverifiable_ldsfld_no_fld.il: added main method
+	* make_unary_test.sh: added some types to make room for more tests
+	* make_exception_branch_test.sh: fix the test to trigger the right error
+
+
 2007-08-02 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* make_exception_branch_test.sh: Fix the generation of the tests, so only
