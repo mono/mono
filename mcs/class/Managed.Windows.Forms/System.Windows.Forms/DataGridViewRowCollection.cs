@@ -116,11 +116,29 @@ namespace System.Windows.Forms {
 			if (dataGridView.Columns.Count == 0) {
 				throw new InvalidOperationException ("DataGridView has no columns.");
 			}
-			int result = list.Add (dataGridViewRow);
+			
+			int result;
+			
+			// 
+			// Add the row just before the editing row (if there is an editing row).
+			// 
+			int editing_index = -1;
+			if (DataGridView != null && DataGridView.EditingRow != null && DataGridView.EditingRow != dataGridViewRow) {
+				editing_index = list.IndexOf (DataGridView.EditingRow);
+				DataGridView.EditingRow.SetIndex (list.Count);
+			}
+			
+			if (editing_index >= 0) {
+				list.Insert (editing_index, dataGridViewRow);
+				result = editing_index;
+			} else {
+				result = list.Add (dataGridViewRow);
+			}
+			
 			if (sharable && CanBeShared (dataGridViewRow)) {
 				dataGridViewRow.SetIndex (-1);
 			} else {
-				dataGridViewRow.SetIndex (list.Count - 1);
+				dataGridViewRow.SetIndex (result);
 			}
 			dataGridViewRow.SetDataGridView (dataGridView);
 

@@ -178,7 +178,7 @@ namespace System.Windows.Forms {
 			text_rect.Width -= (borders.X + borders.Width);
 			
 			format = cellStyle.SetAlignment ((StringFormat) StringFormat.GenericTypographic.Clone ());
-			if ((cellState & DataGridViewElementStates.Selected) != 0) {
+			if ((cellState & DataGridViewElementStates.Selected) != 0 && !IsInEditMode) {
 				backcolor_brush =  ThemeEngine.Current.ResPool.GetSolidBrush (cellStyle.SelectionBackColor);
 				forecolor_brush = ThemeEngine.Current.ResPool.GetSolidBrush (cellStyle.SelectionForeColor);
 			} else {

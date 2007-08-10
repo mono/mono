@@ -1,3 +1,7 @@
+2007-08-10  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* DataGridViewTest.cs: Added EditingRow.
+
 2007-08-10  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolTip.cs: Add test for bug #82399.

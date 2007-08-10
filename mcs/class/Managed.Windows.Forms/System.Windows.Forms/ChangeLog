@@ -1,3 +1,14 @@
+2007-08-10  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* DataGridView.cs: Add support for an editing row. Fixes #82226.
+	  RowTemplateFull: throw an exception if a column doesn't have a template.
+	* DataGridViewRowCollection.cs: AddInternal: if there are any editing rows,
+	  add the row just before it.
+	* DataGridViewTextBoxCell.cs: Don't paint cells which are in edit mode as
+	  selected.
+	* DataGridViewSelectedRowCollection.cs: Don't return the editing row. Add a
+	  DataGridView field to be able to reach the grid's editing row.
+
 2007-08-10  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolTip.cs: If the control's handle hasn't been created when it has a

@@ -33,9 +33,11 @@ namespace System.Windows.Forms {
 
 	[ListBindable (false)]
 	public class DataGridViewSelectedRowCollection : BaseCollection, IList, ICollection, IEnumerable {
-
-		internal DataGridViewSelectedRowCollection ()
+		private DataGridView dataGridView;
+		
+		internal DataGridViewSelectedRowCollection (DataGridView dataGridView)
 		{
+			this.dataGridView = dataGridView;
 		}
 
 		bool IList.IsFixedSize {
@@ -123,8 +125,12 @@ namespace System.Windows.Forms {
 				return;
 
 			// Believe it or not, MS adds the rows in reverse order...
-			for (int i = rows.Count - 1; i >= 0; i--)
+			DataGridViewRow editing_row = dataGridView != null ? dataGridView.EditingRow : null;
+			for (int i = rows.Count - 1; i >= 0; i--) {
+				if (rows [i] == editing_row)
+					continue;
 				base.List.Add (rows [i]);
+			}
 		}
 
 		internal void InternalRemove (DataGridViewRow dataGridViewRow)

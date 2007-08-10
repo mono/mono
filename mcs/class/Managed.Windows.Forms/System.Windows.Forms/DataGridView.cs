@@ -122,6 +122,7 @@ namespace System.Windows.Forms {
 		
 		private DataGridViewSelectedRowCollection selected_rows;
 		private DataGridViewSelectedColumnCollection selected_columns;
+		private DataGridViewRow editing_row;
 		
 		internal int gridWidth;
 		internal int gridHeight;
@@ -1002,7 +1003,12 @@ namespace System.Windows.Forms {
 				DataGridViewRow row = (DataGridViewRow) RowTemplate.Clone ();
 				
 				for (int i = row.Cells.Count; i < Columns.Count; i++) {
-					row.Cells.Add ((DataGridViewCell) columns [i].CellTemplate.Clone ());
+					DataGridViewCell template = columns [i].CellTemplate;
+					
+					if (template == null)
+						throw new InvalidOperationException ("At least one of the DataGridView control's columns has no cell template.");
+					
+					row.Cells.Add ((DataGridViewCell) template.Clone ());
 				}
 				
 				return row;
@@ -1060,7 +1066,7 @@ namespace System.Windows.Forms {
 		[Browsable (false)]
 		public DataGridViewSelectedRowCollection SelectedRows {
 			get {
-				DataGridViewSelectedRowCollection result = new DataGridViewSelectedRowCollection ();
+				DataGridViewSelectedRowCollection result = new DataGridViewSelectedRowCollection (this);
 				
 				if (selectionMode != DataGridViewSelectionMode.FullRowSelect && selectionMode != DataGridViewSelectionMode.RowHeaderSelect)
 					return result;
@@ -2897,6 +2903,7 @@ namespace System.Windows.Forms {
 		{
 			AutoResizeColumnsInternal ();
 			OnColumnAdded (e);
+			PrepareEditingRow (false);
 		}
 
 		protected virtual void OnColumnAdded (DataGridViewColumnEventArgs e)
@@ -3955,7 +3962,7 @@ namespace System.Windows.Forms {
 			row.SelectedInternal = selected;
 			
 			if (selected_rows == null)
-				selected_rows = new DataGridViewSelectedRowCollection ();
+				selected_rows = new DataGridViewSelectedRowCollection (this);
 				
 			if (!selected && selected_rows.Contains (row)) {
 				selected_rows.InternalRemove (row);
@@ -4002,6 +4009,10 @@ namespace System.Windows.Forms {
 
 		internal void InternalOnCellValueChanged (DataGridViewCellEventArgs e) {
 			OnCellValueChanged(e);
+			
+			if (editing_row != null && e.RowIndex == editing_row.Index) {
+				PrepareEditingRow (true);
+			}
 		}
 
 		internal void InternalOnDataError (DataGridViewDataErrorEventArgs e) {
@@ -4182,6 +4193,32 @@ namespace System.Windows.Forms {
 			}
 			
 			return result;
+		}
+
+		private void PrepareEditingRow (bool cell_changed)
+		{
+			bool show = false;
+			
+			show = ColumnCount > 0 && AllowUserToAddRows;
+			
+			if (!show && editing_row != null) {
+				Rows.Remove (editing_row);
+				editing_row = null;
+			} else if (show) {
+				if (editing_row != null && cell_changed) {
+					editing_row = null; // The row changed, it's no longer an editing row.
+				}
+				if (editing_row == null) {
+					editing_row = RowTemplateFull;
+					Rows.AddInternal (editing_row, false);
+				}
+			}
+				
+			
+		}
+		
+		internal DataGridViewRow EditingRow {
+			get { return editing_row; }
 		}
 
 		private void BindIList (IList list) {

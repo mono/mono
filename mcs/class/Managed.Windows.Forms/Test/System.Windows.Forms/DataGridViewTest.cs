@@ -53,6 +53,22 @@ namespace MonoTests.System.Windows.Forms {
 		}
 
 		[Test]
+		public void EditingRow ()
+		{
+			using (DataGridView dgv = new DataGridView ()) {
+				Assert.AreEqual (true, dgv.AllowUserToAddRows, "1");
+				Assert.AreEqual (0, dgv.RowCount, "2");
+				Assert.AreEqual (-1, dgv.NewRowIndex, "3");
+				dgv.Columns.Add ("A", "B");
+				Assert.AreEqual (1, dgv.RowCount, "4");
+				
+				int added;
+				added = dgv.Rows.Add ("a");
+				Assert.AreEqual (0, added, "5");
+			}
+		}
+
+		[Test]
 		public void bug_81918 ()
 		{
 			using (DataGridView dgv = new DataGridView ()) {
