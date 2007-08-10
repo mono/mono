@@ -1,3 +1,7 @@
+2007-08-10  Geoff Norton  <gnorton@customerdna.com>
+
+	* tramp-x86.c: Remove some unneeded alignment changes on Apple.  Fixes #82387.
+
 2007-08-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-exceptions.c (mono_print_thread_dump): Enable this on amd64 too.
