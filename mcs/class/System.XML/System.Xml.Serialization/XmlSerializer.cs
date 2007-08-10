@@ -325,6 +325,7 @@ namespace System.Xml.Serialization
 		{
 			XmlTextReader xmlReader = new XmlTextReader(stream);
 			xmlReader.Normalization = true;
+			xmlReader.WhitespaceHandling = WhitespaceHandling.Significant;
 			return Deserialize(xmlReader);
 		}
 
@@ -332,6 +333,7 @@ namespace System.Xml.Serialization
 		{
 			XmlTextReader xmlReader = new XmlTextReader(textReader);
 			xmlReader.Normalization = true;
+			xmlReader.WhitespaceHandling = WhitespaceHandling.Significant;
 			return Deserialize(xmlReader);
 		}
 

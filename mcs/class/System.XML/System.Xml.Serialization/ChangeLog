@@ -1,3 +1,8 @@
+2007-08-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSerializer.cs : use WhitespaceHandling.Significant when creating
+	  XmlTextReader. Fixed bug #82372. No tests should be added for it.
+
 2007-07-29  Konstantin Triger <kostat@mainsoft.com>
 
 	* XmlSerializationWriter.cs: do not output xml declaration while
