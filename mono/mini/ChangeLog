@@ -1,3 +1,7 @@
+2007-08-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-exceptions.c (mono_setup_altstack): Enable this to work on solaris x86.
+
 2007-08-10  Geoff Norton  <gnorton@customerdna.com>
 
 	* tramp-x86.c: Remove some unneeded alignment changes on Apple.  Fixes #82387.
