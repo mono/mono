@@ -1,3 +1,8 @@
+2007-08-10  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* PagesConfigurationHandler.cs: Use enum for EnableSessionState.
+	* PagesConfiguration.cs: Use enum for EnableSessionState.
+
 2007-08-08  Marek Habersack  <mhabersack@novell.com>
 
 	* WebConfigurationSettings.cs: do not use lock (this), replace it

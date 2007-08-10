@@ -1,3 +1,10 @@
+2007-08-10  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* PageParser.cs: Replace enableSessionState and readOnlySessionState
+	bools with enum backed field. Move 1.0 profile code for checking value
+	of EnableSessionState pages config to PagesConfigurationHandler.
+	Fixes bug #82392 for 1.0 profile.
+
 2007-08-09  Marek Habersack <mhabersack@novell.com>
 
 	* PageParser.cs: honor web.config enableSessionState

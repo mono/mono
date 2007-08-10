@@ -1,3 +1,7 @@
+2007-08-10  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* PagesEnableSessionState.cs: Marked internal on 1.0 profile.
+
 2007-07-16  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* ProfileGroupSettingsCollection.cs: added ResetInternal internal

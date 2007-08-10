@@ -48,11 +48,22 @@ namespace System.Web.Configuration
 
 			attvalue = AttValue ("enableSessionState", section);
 			if (attvalue != null) {
-				if (attvalue != "true" && attvalue != "false" && attvalue != "ReadOnly")
+				switch (attvalue) {
+				case "true":
+					config.EnableSessionState = PagesEnableSessionState.True;
+					break;
+				case "ReadOnly":
+					config.EnableSessionState = PagesEnableSessionState.ReadOnly;
+					break;
+				case "false":
+					config.EnableSessionState = PagesEnableSessionState.False;
+					break;
+				default:
 					HandlersUtil.ThrowException ("The 'enableSessionState' attribute"
 						+ " is case sensitive and must be one of the following values:"
 						+ " false, true, ReadOnly.", section);
-				config.EnableSessionState = attvalue;
+					break;
+				}
 			}
 
 			attvalue = AttValue ("enableViewState", section);
