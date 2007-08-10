@@ -1,3 +1,8 @@
+2007-08-10  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TextBoxTest.cs: Fix old SelectionLength assert to work on MS and match
+	corrected Mono behavior.
+
 2007-08-10  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* DataGridViewTest.cs: Added EditingRow.

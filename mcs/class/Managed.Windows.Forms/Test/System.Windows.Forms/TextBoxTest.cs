@@ -91,7 +91,11 @@ namespace MonoTests.System.Windows.Forms
 			textBox.PasswordChar = '*';
 			Assert.AreEqual ('*', textBox.PasswordChar, "#23b");
 			Assert.AreEqual (ScrollBars.None, textBox.ScrollBars, "#24");
-			Assert.AreEqual (-1, textBox.SelectionLength, "#25");
+#if NET_2_0
+			Assert.AreEqual (0, textBox.SelectionLength, "#25-NET20");
+#else
+			Assert.AreEqual (-1, textBox.SelectionLength, "#25-NET11");
+#endif
 			Assert.AreEqual (HorizontalAlignment.Left , textBox.TextAlign, "#26");
 #if NET_2_0
 			Assert.AreEqual (true, textBox.AutoCompleteCustomSource != null, "#27");
