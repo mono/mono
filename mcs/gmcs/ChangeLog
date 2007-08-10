@@ -1,3 +1,8 @@
+2007-08-10  Miguel de Icaza  <miguel@novell.com>
+
+	* generic.cs (DefaultValueExpression): Add CloneTo support to this
+	as well. 
+
  2007-08-09  Marek Safar  <marek.safar@gmail.com>
  
 	** C# 3.0 Anonymous Types (update to the latest standard)

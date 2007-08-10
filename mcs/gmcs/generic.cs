@@ -2031,6 +2031,13 @@ namespace Mono.CSharp {
 			ec.ig.Emit(OpCodes.Initobj, type);
 			temp_storage.Emit(ec);
 		}
+		
+		protected override void CloneTo (CloneContext clonectx, Expression t)
+		{
+			DefaultValueExpression target = (DefaultValueExpression) t;
+			
+			target.expr = expr.Clone (clonectx);
+		}
 	}
 
 	public class NullableType : TypeExpr
