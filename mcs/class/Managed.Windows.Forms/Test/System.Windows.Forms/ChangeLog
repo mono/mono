@@ -1,5 +1,9 @@
 2007-08-10  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ToolTip.cs: Add test for bug #82399.
+
+2007-08-10  Jonathan Pobst  <monkey@jpobst.com>
+
 	* TextBoxTest.cs: New test for 82371 to illustrate SelectionLength value when
 	no text is selected.
 

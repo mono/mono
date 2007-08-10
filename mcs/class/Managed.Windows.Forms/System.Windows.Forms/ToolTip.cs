@@ -512,7 +512,7 @@ namespace System.Windows.Forms {
 				tooltip_window.Text = caption;
 				timer.Stop ();
 				timer.Start ();
-			} else if (MouseInControl (control, false))
+			} else if (control.IsHandleCreated && MouseInControl (control, false))
 				ShowTooltip (control);
 		}
 

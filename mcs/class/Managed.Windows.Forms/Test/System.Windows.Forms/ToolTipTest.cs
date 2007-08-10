@@ -67,5 +67,22 @@ namespace MonoTests.System.Windows.Forms
 			ToolTip myToolTip = new ToolTip ();
 			Assert.AreEqual ("System.Windows.Forms.ToolTip InitialDelay: 500, ShowAlways: False", myToolTip.ToString (), "#Mtd3");
 		}
+		
+		[Test] // bug 82399
+		public void DontCreateHandle ()
+		{
+			Form f = new Form ();
+			Button b = new Button ();
+			
+			f.Controls.Add (b);
+			
+			ToolTip t = new ToolTip ();
+			
+			Assert.AreEqual (false, f.IsHandleCreated, "A1");
+			t.SetToolTip (b, string.Empty);
+			Assert.AreEqual (false, f.IsHandleCreated, "A2");
+			
+			f.Dispose ();
+		}
 	}
 }

@@ -1,5 +1,12 @@
 2007-08-10  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ToolTip.cs: If the control's handle hasn't been created when it has a
+	tooltip set on it, don't check to see if we need to show the tooltip.  This
+	check was causing the control's handle to be created.
+	[Fixes bug #82399]
+
+2007-08-10  Jonathan Pobst  <monkey@jpobst.com>
+
 	* TextBoxBase.cs: Fix SelectionLength when no text selected to match MS:
 					1.1		2.0
 	Handle Not Created	-1		0
