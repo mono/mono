@@ -1,3 +1,8 @@
+2007-08-10  Jonathan Pobst  <monkey@jpobst.com>
+	[Backport of r83821]
+	* ToolTip.cs: Hide the tooltip if the control is clicked to match MS behavior.
+	[Fixes bug #82348]
+
 2007-08-02  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	[ Backport selected parts of r82743, fixes #82234]
