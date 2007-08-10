@@ -1,3 +1,7 @@
+2007-08-10  Geoff Norton  <gnorton@customerdna.com>
+
+	* tramp-x86.c: Remove some unneeded alignment changes on Apple.  Fixes #82387.
+
 2007-08-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-amd64.h (MONO_INIT_CONTEXT_FROM_FUNC): Avoid using
