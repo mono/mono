@@ -673,6 +673,26 @@ namespace MonoTests.System.Windows.Forms
 			form.Close ();
 		}
 
+		[Test]  // bug 82371
+		public void PropertySelectionLength ()
+		{
+			TextBox tb = new TextBox ();
+			RichTextBox rtb = new RichTextBox ();
+			
+#if NET_2_0
+			Assert.AreEqual (0, tb.SelectionLength, "A1-NET20");
+			Assert.AreEqual (0, rtb.SelectionLength, "A2-NET20");
+#else
+			Assert.AreEqual (-1, tb.SelectionLength, "A1-NET11");
+			Assert.AreEqual (-1, rtb.SelectionLength, "A2-NET11");
+#endif
+
+			IntPtr i = tb.Handle;
+			i = rtb.Handle;
+
+			Assert.AreEqual (0, tb.SelectionLength, "A3");
+			Assert.AreEqual (0, rtb.SelectionLength, "A4");
+		}
 		
 		[Test]
 		public void ModifiedTest ()

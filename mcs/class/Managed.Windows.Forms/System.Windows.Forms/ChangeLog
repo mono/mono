@@ -1,5 +1,13 @@
 2007-08-10  Jonathan Pobst  <monkey@jpobst.com>
 
+	* TextBoxBase.cs: Fix SelectionLength when no text selected to match MS:
+					1.1		2.0
+	Handle Not Created	-1		0
+	Handle Created		0		0
+	[Fixes bug #82371]
+
+2007-08-10  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ToolTip.cs: Hide the tooltip if the control is clicked to match MS behavior.
 	[Fixes bug #82348]
 

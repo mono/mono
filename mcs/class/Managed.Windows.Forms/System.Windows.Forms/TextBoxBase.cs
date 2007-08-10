@@ -537,8 +537,12 @@ namespace System.Windows.Forms {
 		public virtual int SelectionLength {
 			get {
 				int res = document.SelectionLength ();
-				if (res == 0)
+
+#if !NET_2_0
+				if (res == 0 && !IsHandleCreated)
 					res = -1;
+#endif
+
 				return res;
 			}
 
