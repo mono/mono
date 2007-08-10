@@ -50,7 +50,7 @@ namespace System.Web.UI
 		bool trace;
 		bool notBuffer;
 		TraceMode tracemode;
-		bool readonlySessionState;
+		bool readonlySessionState = false;
 		string responseEncoding;
 		string contentType;
 		int codepage = -1;
@@ -115,8 +115,12 @@ namespace System.Web.UI
 #if NET_2_0
 			switch (ps.EnableSessionState) {
 				case PagesEnableSessionState.True:
+					enableSessionState = true;
+					break;
+
 				case PagesEnableSessionState.ReadOnly:
 					enableSessionState = true;
+					readonlySessionState = true;
 					break;
 
 				default:
@@ -162,20 +166,24 @@ namespace System.Web.UI
 		
 		internal override void ProcessMainAttributes (Hashtable atts)
 		{
-			// note: the 'enableSessionState' configuration property is
-			// processed in a case-sensitive manner while the page-level
-			// attribute is processed case-insensitive
-			string enabless = GetString (atts, "EnableSessionState", enableSessionState.ToString ());
-			if (enabless != null) {
-				readonlySessionState = (String.Compare (enabless, "readonly", true) == 0);
-				if (readonlySessionState == true || String.Compare (enabless, "true", true) == 0) {
-					enableSessionState = true;
-				} else if (String.Compare (enabless, "false", true) == 0) {
-					enableSessionState = false;
-				} else {
-					ThrowParseException ("Invalid value for enableSessionState: " + enabless);
+			// note: if EnableSessionState is not specified in page directive
+			// then we must use LoadPagesConfigDefaults settings
+			if (atts.ContainsKey("EnableSessionState")) {
+					// note: the 'enableSessionState' configuration property is
+					// processed in a case-sensitive manner while the page-level
+					// attribute is processed case-insensitive
+					string enabless = GetString (atts, "EnableSessionState", enableSessionState.ToString ());
+					if (enabless != null) {
+						readonlySessionState = (String.Compare (enabless, "readonly", true) == 0);
+						if (readonlySessionState == true || String.Compare (enabless, "true", true) == 0) {
+							enableSessionState = true;
+						} else if (String.Compare (enabless, "false", true) == 0) {
+							enableSessionState = false;
+						} else {
+							ThrowParseException ("Invalid value for enableSessionState: " + enabless);
+						}
+					}
 				}
-			}
 
 			string cp = GetString (atts, "CodePage", null);
 			if (cp != null) {

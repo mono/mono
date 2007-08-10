@@ -1,3 +1,10 @@
+2007-08-09  Marek Habersack <mhabersack@novell.com>
+
+	* PageParser.cs: honor web.config enableSessionState
+	ReadOnly setting instead of overwriting based on default value for 
+	page directive EnableSessionState. Patch from Joel Reed
+	<joelwreed@comcast.com>, thanks! Fixes bug #82392
+
 2007-08-09  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* CssStyleCollection.cs: used ListDictionary instead of
