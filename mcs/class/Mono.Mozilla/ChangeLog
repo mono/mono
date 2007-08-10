@@ -1,5 +1,9 @@
 2007-08-10 Andreia Gaita <avidigal@novell.com>
 
+	* Move to main tree
+
+2007-08-10 Andreia Gaita <avidigal@novell.com>
+
 	* Add file headers. Take out generic collections, because
 	we'll need to use this on 1.1 as well.
 
