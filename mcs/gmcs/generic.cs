@@ -2947,23 +2947,23 @@ namespace Mono.CSharp {
 				if (u_dim != 1)
 					return;
 
-				Type g_v = v.GetGenericTypeDefinition ();
-				if ((g_v != TypeManager.generic_ilist_type) && (g_v != TypeManager.generic_icollection_type) &&
-					(g_v != TypeManager.generic_ienumerable_type))
-					return;
+				if (v.IsGenericType) {
+					Type g_v = v.GetGenericTypeDefinition ();
+					if ((g_v != TypeManager.generic_ilist_type) && (g_v != TypeManager.generic_icollection_type) &&
+						(g_v != TypeManager.generic_ienumerable_type))
+						return;
 
-				v_e = TypeManager.GetTypeArguments (v)[0];
+					v_e = TypeManager.GetTypeArguments (v)[0];
 
-				if (u.IsByRef) {
-					LowerBoundInference (u_e, v_e);
+					if (u.IsByRef) {
+						LowerBoundInference (u_e, v_e);
+						return;
+					}
+					ExactInference (u_e, v_e);
 					return;
 				}
-				ExactInference (u_e, v_e);
-				return;
-			}
-
 			// If V is a constructed type C<V1..Vk>
-			if (v.IsGenericType && !v.IsGenericTypeDefinition) {
+			} else if (v.IsGenericType && !v.IsGenericTypeDefinition) {
 				Type[] ga_u = u.GetGenericArguments ();
 				Type[] ga_v = v.GetGenericArguments ();
 				if (ga_u.Length != ga_v.Length)
