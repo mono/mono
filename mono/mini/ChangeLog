@@ -1,5 +1,8 @@
 2007-08-11  Zoltan Varga  <vargaz@gmail.com>
 
+	* exceptions-amd64.c (mono_arch_handle_altstack_exception): Enable the new
+	stack overflow handling code on amd64 too.
+
 	* mini-exceptions.c (mono_setup_altstack): Make this use 
 	mono_thread_get_stack_bounds ().
 
