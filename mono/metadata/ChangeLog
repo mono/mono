@@ -1,5 +1,7 @@
 2007-08-11  Zoltan Varga  <vargaz@gmail.com>
 
+	* icall.c (ves_icall_System_Array_SetGenericValueImpl): New icall.
+
 	* threads.c threads-types.h: Export mono_thread_get_stack_bounds.
 
 2007-08-09  Raja R Harinath  <rharinath@novell.com>
