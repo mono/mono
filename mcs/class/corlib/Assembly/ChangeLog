@@ -1,3 +1,8 @@
+2007-08-11  Miguel de Icaza  <miguel@novell.com>
+
+	* AssemblyInfo.cs: Also add agmono as a friend assembly (needed
+	for access to the AppDomain stuff).
+
 2007-08-11  Jb Evain  <jbevain@novell.com>
 
 	* AssemblyInfo.cs: add agclr as a friend assembly
