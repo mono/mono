@@ -222,6 +222,7 @@ namespace System.Windows.Forms
 		protected override void OnGotFocus (EventArgs e)
 		{
 			base.OnGotFocus (e);
+			WebHost.FocusIn ();
 		}
 
 		protected override void OnHandleCreated (EventArgs e)
@@ -232,6 +233,7 @@ namespace System.Windows.Forms
 		protected override void OnLostFocus (EventArgs e)
 		{
 			base.OnLostFocus (e);
+			WebHost.FocusOut ();
 		}
 
 		protected override void OnParentChanged (EventArgs e)
@@ -247,6 +249,13 @@ namespace System.Windows.Forms
 		protected override void OnVisibleChanged (EventArgs e)
 		{
 			base.OnVisibleChanged (e);
+			if (Visible && !Disposing && !IsDisposed && state == State.Loaded) {
+				state = State.Active;
+				WebHost.Activate ();
+			} else if (!Visible && state == State.Active) {
+				state = State.Loaded;
+				webHost.Deactivate ();
+			}
 		}
 
 		protected override bool ProcessMnemonic (char charCode)
@@ -255,6 +264,72 @@ namespace System.Windows.Forms
 		}
 
 		#endregion
+
+		#region Internal Properties
+		enum State
+		{
+			Unloaded,
+			Loaded,
+			Active
+		}
+		private State state;
+
+		private Mono.WebBrowser.IWebBrowser webHost;
+		internal Mono.WebBrowser.IWebBrowser WebHost
+		{
+			get
+			{
+				return webHost;
+			}
+		}
+
+		protected override void SetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified)
+		{
+			base.SetBoundsCore (x, y, width, height, specified);
+			this.webHost.Resize (width, height);
+		}
+		#endregion
+
+		#region Internal Methods
+		internal WebBrowserBase ()
+		{
+			webHost = Mono.WebBrowser.Manager.GetNewInstance ();
+			webHost.Load (this.Handle, this.Width, this.Height);
+			state = State.Loaded;
+
+			webHost.MouseClick += new EventHandler (OnWebHostMouseClick);
+			webHost.Focus += new EventHandler (OnWebHostFocus);
+			webHost.CreateNewWindow += new Mono.WebBrowser.CreateNewWindowEventHandler (webHost_CreateNewWindow);
+		}
+
+		bool webHost_CreateNewWindow (object sender, Mono.WebBrowser.CreateNewWindowEventArgs e)
+		{
+			return OnNewWindowInternal ();
+		}
+
+
+		protected override void OnResize (EventArgs e)
+		{
+
+			base.OnResize (e);
+
+			if (state == State.Active)
+				this.webHost.Resize (this.Width, this.Height);
+
+		}
+
+		private void OnWebHostMouseClick (object sender, EventArgs e)
+		{
+			//MessageBox.Show ("clicked");
+		}
+		private void OnWebHostFocus (object sender, EventArgs e)
+		{
+			this.Focus ();
+		}
+
+		internal abstract bool OnNewWindowInternal ();
+		#endregion
+	
 	}
 }
 

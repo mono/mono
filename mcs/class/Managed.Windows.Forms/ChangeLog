@@ -1,3 +1,8 @@
+2007-08-11 Andreia Gaita <avidigal@novell.com>
+
+	* Makefile: Add reference to the Mono.Mozilla
+	assembly for webbrowser support.
+
 2007-08-07  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* SWF.csproj, SWF2k5.csproj, SWF2k5-tests.csproj: Updated.

@@ -1,3 +1,11 @@
+2007-08-11 Andreia Gaita <avidigal@novell.com>
+
+	* WebBrowserBase.cs, WebBrowser.cs: add implementation
+	using Mono.Mozilla for loading and navigating webcontrol
+	with xulrunner.
+	The initial implementation was done on 
+	/trunk/mozembed/tests/browser , and copied here.
+
 2007-08-11  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ThemeWin32Classic.cs: On 2.0 profile, use ForeColor and BackColor of

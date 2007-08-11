@@ -166,7 +166,7 @@ namespace System.Windows.Forms
 		[BindableAttribute(true)] 
 		public Uri Url {
 			get { return null; }
-			set { throw new NotSupportedException (); }
+			set { this.Navigate (value); }
 		}
 
 		[MonoTODO ("Stub, not implemented")]
@@ -191,17 +191,17 @@ namespace System.Windows.Forms
 
 		public bool GoBack ()
 		{
-			throw new NotImplementedException ();
+			return WebHost.Back ();
 		}
 
 		public bool GoForward ()
 		{
-			throw new NotImplementedException ();
+			return WebHost.Forward ();
 		}
 
 		public void GoHome ()
 		{
-			throw new NotImplementedException ();
+			WebHost.Home ();
 		}
 
 		public void GoSearch ()
@@ -211,12 +211,12 @@ namespace System.Windows.Forms
 
 		public void Navigate (string urlString)
 		{
-			throw new NotImplementedException ();
+			WebHost.Navigate (urlString);
 		}
 
 		public void Navigate (Uri url)
 		{
-			throw new NotImplementedException ();
+			WebHost.Navigate (url.ToString ());
 		}
 
 		public void Navigate (string urlString, bool newWindow)
@@ -256,12 +256,22 @@ namespace System.Windows.Forms
 
 		public override void Refresh ()
 		{
-			base.Refresh ();
+			WebHost.Reload (Mono.WebBrowser.ReloadOption.Full);
 		}
 
 		public void Refresh (WebBrowserRefreshOption opt)
 		{
-			throw new NotImplementedException ();
+			switch (opt) {
+				case WebBrowserRefreshOption.Normal:
+					WebHost.Reload (Mono.WebBrowser.ReloadOption.Proxy);
+					break;
+				case WebBrowserRefreshOption.IfExpired:
+					WebHost.Reload (Mono.WebBrowser.ReloadOption.None);
+					break;
+				case WebBrowserRefreshOption.Completely:
+					WebHost.Reload (Mono.WebBrowser.ReloadOption.Full);
+					break;
+			}
 		}
 
 		public void ShowPageSetupDialog()
@@ -291,7 +301,7 @@ namespace System.Windows.Forms
 
 		public void Stop()
 		{
-			throw new NotImplementedException ();
+			WebHost.Stop ();
 		}
 
 		#endregion
@@ -486,6 +496,16 @@ namespace System.Windows.Forms
 		public event EventHandler StatusTextChanged {
 			add { Events.AddHandler (StatusTextChangedEvent, value); }
 			remove { Events.RemoveHandler (StatusTextChangedEvent, value); }
+		}
+		#endregion
+
+
+		#region Internal
+		internal override bool OnNewWindowInternal ()
+		{
+			CancelEventArgs c = new CancelEventArgs ();
+			OnNewWindow (c);
+			return c.Cancel;
 		}
 		#endregion
 
