@@ -181,12 +181,19 @@ namespace System
 
 		protected void InternalArray__set_Item<T> (int index, T item)
 		{
-			throw new NotSupportedException ("Collection is read-only");
+			if (unchecked ((uint) index) >= unchecked ((uint) Length))
+				throw new ArgumentOutOfRangeException ("index");
+
+			SetGenericValueImpl (index, ref item);
 		}
 
 		// CAUTION! No bounds checking!
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern void GetGenericValueImpl<T> (int pos, out T value);
+
+		// CAUTION! No bounds checking!
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal extern void SetGenericValueImpl<T> (int pos, ref T value);
 
 		internal struct InternalEnumerator<T> : IEnumerator<T>
 		{
