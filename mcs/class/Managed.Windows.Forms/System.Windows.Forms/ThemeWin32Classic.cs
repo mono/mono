@@ -4823,10 +4823,18 @@ namespace System.Windows.Forms
 		public override void DrawToolTip(Graphics dc, Rectangle clip_rectangle, ToolTip.ToolTipWindow control)
 		{
 			Rectangle text_rect = Rectangle.Inflate (control.ClientRectangle, -2, -1);
-			
-			dc.FillRectangle(SystemBrushes.Info, control.ClientRectangle);
-			dc.DrawRectangle(SystemPens.WindowFrame, 0, 0, control.Width-1, control.Height-1);
-			dc.DrawString(control.Text, control.Font, ResPool.GetSolidBrush(this.ColorInfoText), text_rect, control.string_format);
+
+#if NET_2_0
+			Brush back_brush = ResPool.GetSolidBrush (control.BackColor);;
+			Brush fore_brush = ResPool.GetSolidBrush (control.ForeColor);
+#else
+			Brush back_brush = SystemBrushes.Info;
+			Brush fore_brush = ResPool.GetSolidBrush (this.ColorInfoText);
+#endif
+
+			dc.FillRectangle (back_brush, control.ClientRectangle);
+			dc.DrawRectangle (SystemPens.WindowFrame, 0, 0, control.Width - 1, control.Height - 1);
+			dc.DrawString (control.Text, control.Font, fore_brush, text_rect, control.string_format);
 		}
 
 		public override Size ToolTipSize(ToolTip.ToolTipWindow tt, string text)
