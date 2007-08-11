@@ -84,27 +84,37 @@
         <Files>
             <Include>
                 <File
-                    RelPath = "AssemblyInfo.cs"
+                    RelPath = "Assembly\AssemblyInfo.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Base.cs"
+                    RelPath = "Mono.Mozilla\Base.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Callback.cs"
+                    RelPath = "Mono.Mozilla\Callback.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "IWebBrowser.cs"
+                    RelPath = "Mono.Mozilla\ICallback.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "WebBrowser.cs"
+                    RelPath = "Mono.WebBrowser\IWebBrowser.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.WebBrowser\Manager.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.WebBrowser\WebBrowser.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

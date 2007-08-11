@@ -77,25 +77,15 @@
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AssemblyInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Callback.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ICallback.cs" />
-    <Compile Include="IWebBrowser.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Base.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Manager.cs" />
-    <Compile Include="WebBrowser.cs">
+    <Compile Include="Assembly\AssemblyInfo.cs" />
+    <Compile Include="Mono.Mozilla\Callback.cs" />
+    <Compile Include="Mono.Mozilla\ICallback.cs" />
+    <Compile Include="Mono.WebBrowser\IWebBrowser.cs" />
+    <Compile Include="Mono.Mozilla\Base.cs" />
+    <Compile Include="Mono.WebBrowser\Manager.cs" />
+    <Compile Include="Mono.WebBrowser\WebBrowser.cs">
       <SubType>Component</SubType>
     </Compile>
   </ItemGroup>

@@ -1,5 +1,9 @@
 2007-08-10 Andreia Gaita <avidigal@novell.com>
 
+	* Reorganize sources by namespace, fix csproj
+
+2007-08-10 Andreia Gaita <avidigal@novell.com>
+
 	* Move to main tree
 
 2007-08-10 Andreia Gaita <avidigal@novell.com>
