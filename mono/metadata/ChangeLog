@@ -1,3 +1,9 @@
+2007-08-11  Rodrigo Kumpera  <rkumpera@novell.com>
+
+        * verify.c: improved the handling of boxing, better
+        type checking for unary ops and conversion. Fix bug
+        regarding managed pointer compatibility checking
+
 2007-08-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* icall.c (ves_icall_System_Array_SetGenericValueImpl): New icall.
