@@ -2806,6 +2806,31 @@ public class ArrayTest : Assertion
 		}
 	}
 
+	[Test]
+	public void AsIList ()
+	{
+		IList<int> arr = new int [10];
+		arr [0] = 5;
+		AssertEquals (5, arr [0]);
+
+		IList<FooStruct> arr2 = new FooStruct [10];
+		FooStruct s = new FooStruct ();
+		s.i = 11;
+		s.j = 22;
+		arr2 [5] = s;
+		s = arr2 [5];
+		AssertEquals (11, s.i);
+		AssertEquals (22, s.j);
+
+		IList<string> arr3 = new string [10];
+		arr3 [5] = "ABC";
+		AssertEquals ("ABC", arr3 [5]);
+	}
+
+	struct FooStruct {
+		public int i, j;
+	}
+
 #if !TARGET_JVM // BugBUG: T[] is not yet ICollection<T> under TARGET_JVM
 	[Test]
 	// From bug #80563

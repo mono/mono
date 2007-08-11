@@ -1,3 +1,7 @@
+2007-08-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* ArrayTest.cs: Add new test for bug #82345.
+
 2007-08-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* IntPtrTest.cs : added test for ToString(string).
