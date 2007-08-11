@@ -1,3 +1,7 @@
+2007-08-11  Jb Evain  <jbevain@novell.com>
+
+	* AssemblyInfo.cs: add agmono as a friend assembly
+
 2005-10-17  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Assembly.cs: Add a RequestMinimum security permission for 
