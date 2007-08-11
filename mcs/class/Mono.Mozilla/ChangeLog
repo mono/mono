@@ -1,3 +1,7 @@
+2007-08-11 Andreia Gaita <avidigal@novell.com>
+
+	* AssemblyInfo.cs: fix version and attributes
+
 2007-08-10 Andreia Gaita <avidigal@novell.com>
 
 	* Reorganize sources by namespace, fix csproj
