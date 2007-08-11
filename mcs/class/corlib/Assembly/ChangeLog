@@ -1,5 +1,9 @@
 2007-08-11  Jb Evain  <jbevain@novell.com>
 
+	* AssemblyInfo.cs: add agclr as a friend assembly
+
+2007-08-11  Jb Evain  <jbevain@novell.com>
+
 	* AssemblyInfo.cs: add System.SilverLight as a friend assembly
 
 2005-08-06  Gert Driesen  <drieseng@users.sourceforge.net>
