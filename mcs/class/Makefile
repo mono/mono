@@ -52,6 +52,7 @@ common_dirs := \
 	$(MONO_SYMBOLWRITER)		\
 	$(MONO_POSIX)			\
 	Accessibility			\
+	Mono.Mozilla			\
 	Managed.Windows.Forms		\
 	System.Web			\
 	System.Web.Services		\
@@ -87,8 +88,7 @@ common_dirs := \
 	IBM.Data.DB2			\
 	Microsoft.JScript		\
 	CustomMarshalers		\
-	OpenSystem.C			\
-	Mono.Mozilla
+	OpenSystem.C
 
 default_dirs := FirebirdSql.Data.Firebird
 

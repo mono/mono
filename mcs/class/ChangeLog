@@ -1,5 +1,10 @@
 2007-08-11  Andreia Gaita  <avidigal@novell.com>
 
+	* Makefile: Ooops, Mono.Mozilla is being built out of
+	order, fixed :p
+
+2007-08-11  Andreia Gaita  <avidigal@novell.com>
+
 	* Makefile: integrate Mono.Mozilla wrapper in the build.
 
 2007-07-17  Jb Evain  <jbevain@novell.com>
