@@ -29,9 +29,8 @@ namespace System.Linq
 {
         public interface IQueryable : IEnumerable
         {
-                IQueryable CreateQuery (Expression expression);
-                object Execute (Expression expression);
                 Type ElementType { get; }
                 Expression Expression { get; }
+                IQueryProvider Provider { get; }
         }
 }

@@ -27,6 +27,7 @@
 
 namespace System
 {
+	[Serializable]
 	public class TimeZoneNotFoundException : Exception
 	{
 		public TimeZoneNotFoundException () : base ()
