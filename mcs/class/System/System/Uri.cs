@@ -588,7 +588,7 @@ namespace System {
 					Array.Copy (parts, 1, newParts, 2, parts.Length - 1);
 					parts = newParts;
 					parts [0] = path.Substring (0, 2);
-					parts [1] = "";
+					parts [1] = String.Empty;
 					i++;
 				}
 				
@@ -1465,7 +1465,7 @@ namespace System {
 				if (endpos == -1) endpos = path.Length;
 				string current = path.Substring (startpos, endpos-startpos);
 				startpos = endpos + 1;
-				if (current == "" || current == "." )
+				if (current.Length == 0 || current == "." )
 					continue;
 
 				if (current == "..") {
