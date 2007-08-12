@@ -12,9 +12,6 @@ package module which drives the compilation of this directory.
 * Layout
 ========
 
-	bmcs/
-		New experimental Basic compiler.
-
 	build/
 		Rules, configuration and makefile components to build
 		this module.
