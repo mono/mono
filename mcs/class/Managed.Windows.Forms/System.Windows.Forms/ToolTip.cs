@@ -106,7 +106,7 @@ namespace System.Windows.Forms {
 			#region ToolTipWindow Class Protected Instance Methods
 			protected override void OnCreateControl() {
 				base.OnCreateControl ();
-				XplatUI.SetTopmost(this.window.Handle, true);
+				//XplatUI.SetTopmost(this.window.Handle, true);
 			}
 
 			protected override CreateParams CreateParams {
@@ -670,7 +670,13 @@ namespace System.Windows.Forms {
 
 		private void control_MouseLeave(object sender, EventArgs e) 
 		{
-			Hide (sender as Control);
+			timer.Stop ();
+
+			active_control = null;
+			tooltip_window.Visible = false;
+
+			if (last_control == sender)
+				last_control = null;
 		}
 
 

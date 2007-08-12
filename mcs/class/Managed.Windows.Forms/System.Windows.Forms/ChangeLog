@@ -1,3 +1,9 @@
+2007-08-11  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolTip.cs: Remove mouse in control check from mouseleave handler so
+	tooltip will hide when mouse is moved off the control.
+	[Fixes bug #82407]
+
 2007-08-11 Andreia Gaita <avidigal@novell.com>
 
 	* WebBrowserBase.cs, WebBrowser.cs: add implementation
