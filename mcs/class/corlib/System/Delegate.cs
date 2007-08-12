@@ -456,7 +456,7 @@ namespace System
 
 		protected virtual Delegate CombineImpl (Delegate d)
 		{
-			throw new MulticastNotSupportedException ("");
+			throw new MulticastNotSupportedException (String.Empty);
 		}
 
 		public static Delegate Remove (Delegate source, Delegate value) 
