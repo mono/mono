@@ -345,7 +345,6 @@ namespace System.Data.Odbc
 
 
 #if NET_2_0
-		[MonoTODO]
 		protected override DbParameter GetParameter (string name)
 		{
 			throw new NotImplementedException ();
