@@ -363,6 +363,9 @@ $(btest_makefrag): $(btest_response)
 
 endif
 
+## Include corcompare stuff
+include $(topdir)/build/corcompare.make
+
 all-local: $(makefrag) $(test_makefrag) $(btest_makefrag)
 ifneq ($(response),$(sourcefile))
 $(response): $(topdir)/build/library.make $(depsdir)/.stamp
