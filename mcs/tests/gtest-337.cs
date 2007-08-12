@@ -1,3 +1,5 @@
+// Compiler options: -langversion:linq
+
 using System;
 
 class X {
