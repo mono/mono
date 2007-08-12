@@ -89,6 +89,8 @@ numbers, as they look nicer on the debugging output.
 -30     This version of the runtime does not support making pinned local variables.  
         This code may cause errors on a runtime with a moving GC
 
+-31     Internal compiler error during the method emit phase.
+
 ----------
 
 Errors that we have allocated that will have corresponding errors in
