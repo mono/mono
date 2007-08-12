@@ -34,6 +34,9 @@
     <AdditionalClassPath>
     </AdditionalClassPath>
     <PreCompile>True</PreCompile>
+    <CompressionLevel>1</CompressionLevel>
+    <DeploymentMethod>1</DeploymentMethod>
+    <UseTestingPage>True</UseTestingPage>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release_Java|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -44,11 +47,14 @@
     <WarningLevel>4</WarningLevel>
     <BaseAddress>285212672</BaseAddress>
     <SkipValidation>True</SkipValidation>
-    <KeepIntermediate>false</KeepIntermediate>
+    <KeepIntermediate>False</KeepIntermediate>
     <TargetPlatform>0</TargetPlatform>
     <AdditionalClassPath>
     </AdditionalClassPath>
     <PreCompile>true</PreCompile>
+    <CompressionLevel>1</CompressionLevel>
+    <DeploymentMethod>1</DeploymentMethod>
+    <UseTestingPage>True</UseTestingPage>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.csharp.targets" />
   <Import Project="$(VMW_HOME)\bin\Mainsoft.Common.targets" />
@@ -72,7 +78,7 @@
           <NTLMAuthentication>False</NTLMAuthentication>
         </WebProjectProperties>
       </FlavorProperties>
-      <UserProperties REFS-JarPath-mscorlib="..\..\..\..\..\..\lib\mscorlib.jar" REFS-JarPath-system="..\..\..\..\..\..\lib\System.jar" REFS-JarPath-system-data="..\..\..\..\..\..\lib\System.Data.jar" REFS-JarPath-system-web="..\..\..\..\..\..\lib\System.Web.jar" REFS-JarPath-system-xml="..\..\..\..\..\..\lib\System.Xml.jar" REFS-JarPath-system-configuration="..\..\..\..\..\lib\System.Configuration.jar" REFS-JarPath-system-drawing="..\..\..\..\..\lib\System.Drawing.jar;..\..\..\..\..\lib\jai_imageio.jar;..\..\..\..\..\lib\jai_core.jar;..\..\..\..\..\lib\jai_codec.jar;..\..\..\..\..\lib\clibwrapper_jiio.jar;..\..\..\..\..\lib\mlibwrapper_jai.jar" />
+      <UserProperties REFS-JarPath-system-drawing="..\..\..\..\..\lib\System.Drawing.jar;..\..\..\..\..\lib\jai_imageio.jar;..\..\..\..\..\lib\jai_core.jar;..\..\..\..\..\lib\jai_codec.jar;..\..\..\..\..\lib\clibwrapper_jiio.jar;..\..\..\..\..\lib\mlibwrapper_jai.jar" REFS-JarPath-system-configuration="..\..\..\..\..\lib\System.Configuration.jar" REFS-JarPath-system-xml="..\..\..\..\..\..\lib\System.Xml.jar" REFS-JarPath-system-web="..\..\..\..\..\..\lib\System.Web.jar" REFS-JarPath-system-data="..\..\..\..\..\..\lib\System.Data.jar" REFS-JarPath-system="..\..\..\..\..\..\lib\System.jar" REFS-JarPath-mscorlib="..\..\..\..\..\..\lib\mscorlib.jar" />
     </VisualStudio>
   </ProjectExtensions>
   <ItemGroup>
