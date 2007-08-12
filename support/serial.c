@@ -59,20 +59,10 @@ int
 open_serial (char* devfile)
 {
 	int fd;
-	struct termios newtio;
-
-	fd = open (devfile, O_RDWR);
+	fd = open (devfile, O_RDWR | O_NOCTTY | O_NONBLOCK);
 
 	if (fd == -1)
 		return -1;
-
-	newtio.c_cflag = CLOCAL | CREAD;
-	newtio.c_iflag = 0;
-	newtio.c_oflag = 0;
-	newtio.c_lflag = 0;
-
-	tcflush(fd, TCIOFLUSH);
-	tcsetattr(fd,TCSANOW,&newtio);
 
 	return fd;
 }
@@ -93,25 +83,46 @@ read_serial (int fd, guchar *buffer, int offset, int count)
 	return (guint32) n;
 }
 
-void
+int
 write_serial (int fd, guchar *buffer, int offset, int count, int timeout)
 {
+	struct timeval tmval;
+	fd_set writefs;
 	guint32 n;
 
-	struct pollfd ufd;
+	n = count - offset;
 
-	ufd.fd = fd;
-	ufd.events = POLLHUP | POLLOUT | POLLERR;
+	FD_SET(fd, &writefs);
+	tmval.tv_sec = timeout / 1000;
+	tmval.tv_usec = (timeout - tmval.tv_sec) * 1000;	
+	
+	while (n > 0)
+	{
+		size_t t;
+			
+		if (timeout > 0)
+		{
+			if (select(fd+1, NULL, &writefs, NULL, &tmval) <= 0 && errno != EINTR)
+			{
+				return -1;
+			}
+		}		
 
-	while (poll (&ufd, 1, timeout) == -1 && errno == EINTR){
+ 		t = write(fd, buffer + offset, count);
 		
+		if (timeout > 0)
+		{
+			if (select(fd+1, NULL, &writefs, NULL, &tmval) <= 0  && errno != EINTR)
+			{
+				return -1;
+			}
 	}
 
-	if ((ufd.revents & POLLOUT) != POLLOUT) {
-		return;
+		offset += t;
+		n -= t; 
 	}
  
-	n = write (fd, buffer + offset, count);
+	return 0;
 }
 
 void
@@ -138,71 +149,100 @@ set_attributes (int fd, int baud_rate, MonoParity parity, int dataBits, MonoStop
 	struct termios newtio;
 
 	tcgetattr (fd, &newtio);
+	newtio.c_cflag |=  (CLOCAL | CREAD);
+	newtio.c_lflag &= ~(ICANON | ECHO | ECHOE | ECHOK | ECHONL | ISIG | IEXTEN );
+	newtio.c_oflag &= ~(OPOST);
+	newtio.c_iflag = IGNBRK;
 
-	switch (baud_rate) {
-	case 230400: baud_rate = B230400; break;
-	case 115200: baud_rate = B115200; break;
-	case 57600: baud_rate = B57600; break;
-	case 38400: baud_rate = B38400; break;
-	case 19200: baud_rate = B19200; break;
-	case 9600: baud_rate = B9600; break;
-	case 4800: baud_rate = B4800; break;
-	case 2400: baud_rate = B2400; break;
-	case 1800: baud_rate = B1800; break;
-	case 1200: baud_rate = B1200; break;
-	case 600: baud_rate = B600; break;
-	case 300: baud_rate = B300; break;
-	case 200: baud_rate = B200; break;
-	case 150: baud_rate = B150; break;
-	case 134: baud_rate = B134; break;
-	case 110: baud_rate = B110; break;
-	case 75: baud_rate = B75; break;
+	/* setup baudrate */
+	switch (baud_rate)
+	{
+	case 230400: 
+	    baud_rate = B230400;
+	    break;
+	case 115200: 
+	    baud_rate = B115200;
+	    break;
+	case 57600:
+	    baud_rate = B57600;
+	    break;
+	case 38400: 
+	    baud_rate = B38400;
+	    break;
+	case 19200: 
+	    baud_rate = B19200;
+	    break;
+	case 9600: 
+		baud_rate = B9600;
+		break;
+	case 4800: 
+	    baud_rate = B4800;
+		break;
+	case 2400: 
+	    baud_rate = B2400;
+		break;
+	case 1800: 
+	    baud_rate = B1800;
+		break;
+	case 1200: 
+	    baud_rate = B1200;
+		break;
+	case 600: 
+	    baud_rate = B600;
+	    break;
+	case 300: 
+	    baud_rate = B300;
+	    break;
+	case 200: 
+	    baud_rate = B200;
+	    break;
+	case 150: 
+	    baud_rate = B150;
+	    break;
+	case 134: 
+	    baud_rate = B134;
+	    break;
+	case 110: 
+	    baud_rate = B110;
+	    break;
+	case 75: 
+	    baud_rate = B75;
+	    break;
 	case 50:
 	case 0:
 	default:
-		baud_rate = B9600;
+	    baud_rate = B9600;
 		break;
 	}
 
-	switch (parity) {
-	case NoneParity: /* None */
-		newtio.c_iflag |= IGNPAR;
-		newtio.c_cflag &= ~(PARENB | PARODD);
-		break;
-	case Odd: /* Odd */
-		newtio.c_iflag &= ~IGNPAR;
-		newtio.c_cflag |= PARENB | PARODD;
-		break;
-	case Even: /* Even */
-		newtio.c_iflag &= ~(IGNPAR | PARODD);
-		newtio.c_cflag |= PARENB;
-		break;
-	case Mark: /* Mark */
-		/* XXX unhandled */
-		break;
-	case Space: /* Space */
-		/* XXX unhandled */
-		break;
-	}
-
+	/* char lenght */
 	newtio.c_cflag &= ~CSIZE;
-	switch (dataBits) {
-	case 5: newtio.c_cflag |= CS5; break;
-	case 6: newtio.c_cflag |= CS6; break;
-	case 7: newtio.c_cflag |= CS7; break;
+	switch (dataBits)
+	{
+	case 5: 
+	    newtio.c_cflag |= CS5;
+	    break;
+	case 6: 
+	    newtio.c_cflag |= CS6;
+	    break;
+	case 7: 
+	    newtio.c_cflag |= CS7;
+	    break;
 	case 8:
 	default:
 		newtio.c_cflag |= CS8;
 		break;
 	}
 
-	newtio.c_cflag &= ~CSTOPB;
-	switch (stopBits) {
+	/* stopbits */
+	switch (stopBits)
+	{
 	case NoneStopBits:
 		/* Unhandled */
 		break;
 	case One: /* One */
 		/* do nothing, the default is one stop bit */
+	    newtio.c_cflag &= ~CSTOPB;
 		break;
 	case Two: /* Two */
 		newtio.c_cflag |= CSTOPB;
@@ -212,12 +252,38 @@ set_attributes (int fd, int baud_rate, MonoParity parity, int dataBits, MonoStop
 		break;
 	}
 
-	newtio.c_iflag &= ~IXOFF;
-	newtio.c_oflag &= ~IXON;
+	/* parity */
+	newtio.c_iflag &= ~(INPCK | ISTRIP );
+
+	switch (parity)
+	{
+	case NoneParity: /* None */
+	    newtio.c_cflag &= ~(PARENB | PARODD);
+	    break;
+	    
+	case Odd: /* Odd */
+	    newtio.c_cflag |= PARENB | PARODD;
+	    break;
+	    
+	case Even: /* Even */
+	    newtio.c_cflag &= ~(PARODD);
+	    break;
+	    
+	case Mark: /* Mark */
+	    /* XXX unhandled */
+	    break;
+	case Space: /* Space */
+	    /* XXX unhandled */
+	    break;
+	}
+
+   	newtio.c_iflag &= ~(IXOFF | IXON);
 #ifdef CRTSCTS
 	newtio.c_cflag &= ~CRTSCTS;
 #endif /* def CRTSCTS */
-	switch (handshake) {
+
+	switch (handshake)
+	{
 	case NoneHandshake: /* None */
 		/* do nothing */
 		break;
@@ -232,17 +298,21 @@ set_attributes (int fd, int baud_rate, MonoParity parity, int dataBits, MonoStop
 #endif /* def CRTSCTS */
 		/* fall through */
 	case XOnXOff: /* XOnXOff */
-		newtio.c_iflag |= IXOFF;
-		//		newtio.c_oflag |= IXON;
+	    newtio.c_iflag |= IXOFF | IXON;
 		break;
 	}
 	
 	if (cfsetospeed (&newtio, baud_rate) < 0 || cfsetispeed (&newtio, baud_rate) < 0 ||
-			tcsetattr (fd, TCSADRAIN, &newtio) < 0)
+	    tcsetattr (fd, TCSANOW, &newtio) < 0)
+	{
 		return FALSE;
-
+	}
+	else
+	{
 	return TRUE;
+	}
 }
+
 
 static gint32
 get_signal_code (MonoSerialSignal signal)

@@ -1,3 +1,14 @@
+2007-08-12  Lukasz Byczynski <lukaszb@forcom.com.pl>
+
+	* serial.c:
+	
+	- all changes are based on Windows .Net SerialPort behavior and
+	this
+	document: http://www.easysw.com/~mike/serial/serial.html
+	- removed wrong default values from open_serial
+	- added timeout detection in write_serial
+	- added proper parameters setting in set_attributes
+
 2007-06-29  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* dirent.c, grp.c, pwd.c, stdio.c, syslog.c, unistd.c: Following in the
