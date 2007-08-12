@@ -804,7 +804,7 @@ namespace Mono.Math {
 			if (this == 0) return "0";
 			if (this == 1) return "1";
 
-			string result = "";
+			string result = String.Empty;
 
 			BigInteger a = new BigInteger (this);
 
