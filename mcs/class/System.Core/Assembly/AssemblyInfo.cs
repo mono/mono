@@ -36,7 +36,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("System.Core.dll")]
 [assembly: AssemblyDescription("System.Core.dll")]
 [assembly: AssemblyCompany("Mono Development Team")]
-[assembly: AssemblyProduct("System.Query")]
+[assembly: AssemblyProduct("System.Core")]
 [assembly: AssemblyCopyright("")]
 [assembly: AssemblyCulture("")]
 [assembly: AssemblyFileVersion ("2.0.0.0")]
