@@ -1,3 +1,9 @@
+2007-08-12  Lukasz Byczynski <lukaszb@forcom.com.pl>
+
+	* SerialPortStream.cs: added timeout handling on write
+
+	* WinSerialStream.cs: fixed setting handshake flags 
+
 2007-07-01  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* SerialPort.cs: Don't throw ArgumentOutOfRangeException when the

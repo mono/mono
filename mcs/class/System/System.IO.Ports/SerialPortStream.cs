@@ -161,7 +161,7 @@ namespace System.IO.Ports
 		}
 
 		[DllImport ("MonoPosixHelper")]
-		static extern void write_serial (int fd, byte [] buffer, int offset, int count, int timeout);
+		static extern int write_serial (int fd, byte [] buffer, int offset, int count, int timeout);
 
 		public override void Write (byte[] buffer, int offset, int count)
 		{
@@ -176,7 +176,8 @@ namespace System.IO.Ports
 				throw new ArgumentException ("offset+count",
 							     "The size of the buffer is less than offset + count.");
 
-			write_serial (fd, buffer, offset, count, write_timeout);
+			if (write_serial (fd, buffer, offset, count, write_timeout) < 0)
+				throw new TimeoutException("The operation has timed-out");
 		}
 
 		protected override void Dispose (bool disposing)

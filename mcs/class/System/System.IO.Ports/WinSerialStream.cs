@@ -74,8 +74,8 @@ namespace System.IO.Ports
 		[DllImport("kernel32", SetLastError = true)]
 		static extern bool SetCommTimeouts(int handle, Timeouts timeouts);
 
-		public WinSerialStream (string port_name, int baud_rate, int data_bits, Parity parity,
-				StopBits sb, Handshake hs, int read_timeout, int write_timeout,
+		public WinSerialStream (string port_name, int baud_rate, int data_bits, Parity parity, StopBits sb,
+				bool dtr_enable, bool rts_enable, Handshake hs, int read_timeout, int write_timeout,
 				int read_buffer_size, int write_buffer_size)
 		{
 			handle = CreateFile (port_name, GenericRead | GenericWrite, 0, 0, OpenExisting,
@@ -98,6 +98,13 @@ namespace System.IO.Ports
 			timeouts = new Timeouts (read_timeout, write_timeout);
 			if (!SetCommTimeouts(handle, timeouts))
 				ReportIOError (null);
+
+			/// Set DTR and RTS
+			SetSignal(SerialSignal.Dtr, dtr_enable);
+
+			if (hs != Handshake.RequestToSend &&
+					hs != Handshake.RequestToSendXOnXOff)
+				SetSignal(SerialSignal.Rts, rts_enable);
 
 			// Init overlapped structures
 			NativeOverlapped wo = new NativeOverlapped ();
@@ -428,20 +435,20 @@ namespace System.IO.Ports
 
 		public void SetSignal (SerialSignal signal, bool value)
 		{
+			if (signal != SerialSignal.Rts && signal != SerialSignal.Dtr)
+				throw new Exception ("Wrong internal value");
+
 			uint flag;
-			if (signal == SerialSignal.Rts) {
+			if (signal == SerialSignal.Rts)
 				if (value)
 					flag = SetRts;
 				else
 					flag = ClearRts;
-			} else if (signal == SerialSignal.Dtr) {
+			else
 				if (value)
 					flag = SetDtr;
 				else
 					flag = ClearDtr;
-			} else {
-				throw new Exception ("Wrong internal value");
-			}
 
 			if (!EscapeCommFunction (handle, flag))
 				ReportIOError (null);
@@ -474,6 +481,23 @@ namespace System.IO.Ports
 		public byte evt_char;
 		public short w_reserved1;
 
+		// flags:
+		//const int fBinary = 0x0001;
+		//const int fParity = 0x0002;
+		const int fOutxCtsFlow = 0x0004;
+		//const int fOutxDsrFlow1 = 0x0008;
+		//const int fOutxDsrFlow2 = 0x0010;
+		//const int fDtrControl = 0x00020;
+		//const int fDsrSensitivity = 0x0040;
+		//const int fTXContinueOnXoff = 0x0080;
+		const int fOutX = 0x0100;
+		const int fInX = 0x0200;
+		//const int fErrorChar = 0x0400;
+		//const int fNull = 0x0800;
+		//const int fRtsControl1 = 0x1000;
+		const int fRtsControl2 = 0x2000;
+		//const int fAbortOnError = 0x4000;
+
 		public void SetValues (int baud_rate, Parity parity, int byte_size, StopBits sb, Handshake hs)
 		{
 			switch (sb) {
@@ -491,10 +515,30 @@ namespace System.IO.Ports
 			}
 
 			this.baud_rate = baud_rate;
-			this.parity = (byte) parity;
-			this.byte_size = (byte) byte_size;
-		}
+			this.parity = (byte)parity;
+			this.byte_size = (byte)byte_size;
 
+			// Clear Handshake flags
+			flags &= ~(fOutxCtsFlow | fOutX | fInX | fRtsControl2);
+
+			// Set Handshake flags
+			switch (hs)
+			{
+				case Handshake.None:
+					break;
+				case Handshake.XOnXOff:
+					flags |= fOutX | fInX;
+					break;
+				case Handshake.RequestToSend:
+					flags |= fOutxCtsFlow | fRtsControl2;
+					break;
+				case Handshake.RequestToSendXOnXOff:
+					flags |= fOutxCtsFlow | fOutX | fInX | fRtsControl2;
+					break;
+				default: // Shouldn't happen
+					break;
+			}
+		}
 	}
 	
 	[StructLayout (LayoutKind.Sequential)]

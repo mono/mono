@@ -542,8 +542,8 @@ namespace System.IO.Ports
 			
 #if !TARGET_JVM
 			if (IsWindows) // Use windows kernel32 backend
-				stream = new WinSerialStream (port_name, baud_rate, data_bits, parity, stop_bits,
-						handshake, read_timeout, write_timeout, readBufferSize, writeBufferSize);
+				stream = new WinSerialStream (port_name, baud_rate, data_bits, parity, stop_bits, dtr_enable,
+					rts_enable, handshake, read_timeout, write_timeout, readBufferSize, writeBufferSize);
 			else // Use standard unix backend
 #endif
 				stream = new SerialPortStream (port_name, baud_rate, data_bits, parity, stop_bits, dtr_enable,
