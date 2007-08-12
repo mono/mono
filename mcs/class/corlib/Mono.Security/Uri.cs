@@ -419,7 +419,7 @@ namespace Mono.Security {
 				if (segments != null)
 					return segments;
 
-				if (path == "") {
+				if (path.Length == 0) {
 					segments = new string [0];
 					return segments;
 				}
@@ -439,7 +439,7 @@ namespace Mono.Security {
 					Array.Copy (parts, 1, newParts, 2, parts.Length - 1);
 					parts = newParts;
 					parts [0] = path.Substring (0, 2);
-					parts [1] = "";
+					parts [1] = String.Empty;
 					i++;
 				}
 				
@@ -1097,7 +1097,7 @@ namespace Mono.Security {
 			int end = parts.Length;
 			for (int i = 0; i < end; i++) {
 				string current = parts [i];
-				if (current == "" || current == "." )
+				if (current.Length == 0 || current == "." )
 					continue;
 
 				if (current == "..") {
@@ -1117,7 +1117,7 @@ namespace Mono.Security {
 			if (result.Count == 0)
 				return "/";
 
-			result.Insert (0, "");
+			result.Insert (0, String.Empty);
 
 			string res = String.Join ("/", (string []) result.ToArray (typeof (string)));
 			if (path.EndsWith ("/"))
