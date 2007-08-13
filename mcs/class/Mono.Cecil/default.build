@@ -3,7 +3,7 @@
 
 	<property name="debug" value="false" />
 	<property name="optimize" value="true" />
-	<property name="build.dir" value="bin" />
+	<property name="build.dir" value="${path::get-full-path('bin')}" />
 	<property name="keyfile" value="../mono.snk" />
 	<property name="csc.defines" value="NO_DEFINE" />
 
@@ -52,17 +52,30 @@
 	</target>
 
 	<target name="compactframework-compilation">
-		<csc output="${build.dir}/Mono.Cecil.dll"
-			target="library" debug="${debug}" unsafe="false" optimize="${optimize}"
-			noconfig="true" nostdlib="true" keyfile="${keyfile}"
-			define="${compactframework.defines}">
-			<sources refid="all-files" />
-
-			<references basedir="${compactframework.dir}">
-				<include name="mscorlib.dll" />
-				<include name="System.dll" />
-			</references>
-		</csc>
+		<property name="temp.dir" value="${path::combine(path::get-temp-path(), 'cecil')}" />
+		<delete dir="${temp.dir}" if="${directory::exists(temp.dir)}" />
+		<mkdir dir="${temp.dir}" />
+		
+		<property name="framework.dir" value="${framework::get-framework-directory(framework::get-target-framework())}" />
+		<property name="csc.exe" value="${path::combine(framework.dir, 'csc.exe')}" />
+		
+		<copy todir="${temp.dir}">
+			<fileset refid="all-files" />
+		</copy>
+		
+		<exec program="${csc.exe}" workingdir="${temp.dir}" failonerror="true">
+			<arg value="/optimize" />
+			<arg value="/debug-" />
+			<arg value="/define:${compactframework.defines}" />
+			<arg value="/out:${build.dir}/Mono.Cecil.dll" />
+			<arg value="/target:library" />
+			<arg value="/warn:0" />
+			<arg value="/noconfig" />
+			<arg value="/nostdlib+" />
+			<arg value="/reference:${compactframework.dir}/mscorlib.dll" />
+			<arg value="/reference:${compactframework.dir}/System.dll" />
+			<arg value="/recurse:*.cs" />
+		</exec>
 	</target>
 
 	<target name="codegen">
