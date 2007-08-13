@@ -1,3 +1,13 @@
+2007-08-13  Rodrigo B. de Oliveira <rodrigobamboo@gmail.com>
+
+	* default.build
+	  Mono.Cecil/AssemblyInfo.cs:
+		Ability to pass custom defines to the c# compiler through
+		the csc.defines property. KEYFILE can be used to force
+		an AssemblyKeyFile attribute on AssemblyInfo.cs so strongly
+		signed versions of Mono.Cecil can be produced on .net 1.1,
+		cf 1.0 and cf 2.0.
+
 2007-08-13  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil.Cil/CilWorker.cs:

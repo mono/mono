@@ -5,6 +5,7 @@
 	<property name="optimize" value="true" />
 	<property name="build.dir" value="bin" />
 	<property name="keyfile" value="../mono.snk" />
+	<property name="csc.defines" value="NO_DEFINE" />
 
 	<!-- allow properties to be customized in external file" -->
 	<include buildfile="build.properties" if="${file::exists('build.properties')}" />
@@ -30,19 +31,22 @@
 
 	<target name="cecil" depends="init">
 		<csc output="${build.dir}/Mono.Cecil.dll"
-			target="library" debug="${debug}" unsafe="false" optimize="${optimize}" keyfile="${keyfile}">
+			target="library" debug="${debug}"
+			unsafe="false" optimize="${optimize}"
+			keyfile="${keyfile}"
+			define="${csc.defines}">
 			<sources refid="all-files"/>
 		</csc>
 	</target>
 
 	<target name="compactframework" depends="init" description="compiles cecil to run on the CompactFramework 1.0">
-		<property name="compactframework.defines" value="CF_1_0" />
+		<property name="compactframework.defines" value="CF_1_0;${csc.defines}" />
 		<property name="compactframework.dir" value="${compactframework.v1.dir}" />
 		<call target="compactframework-compilation" />
 	</target>
 
 	<target name="compactframework2" depends="init" description="compiles cecil to run on the CompactFramework 2.0">
-		<property name="compactframework.defines" value="CF_2_0" />
+		<property name="compactframework.defines" value="CF_2_0;${csc.defines}" />
 		<property name="compactframework.dir" value="${compactframework.v2.dir}" />
 		<call target="compactframework-compilation" />
 	</target>
