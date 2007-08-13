@@ -478,6 +478,14 @@ namespace MonoTests.System.Drawing {
 			g.MultiplyTransform (matrix);
 		}
 
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Multiply_Null ()
+		{
+			Graphics g = Get (16, 16);
+			g.MultiplyTransform (null);
+		}
+
 		private void CheckBounds (string msg, RectangleF bounds, float x, float y, float w, float h)
 		{
 			AssertEquals (msg + ".X", x, bounds.X, 0.1);

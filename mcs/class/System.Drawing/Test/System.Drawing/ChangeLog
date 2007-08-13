@@ -1,3 +1,7 @@
+2007-08-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TestGraphics.cs: Test against NRE in MultiplyTransform
+
 2007-08-02  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TestGraphics.cs: Enabled test MeasureString_MultlineString_Width
