@@ -116,7 +116,9 @@ namespace System
 			if (this.Rank > 1)
 				throw new RankException (Locale.GetText ("Only single dimension arrays are supported."));
 			if (index + this.GetLength (0) > array.GetLowerBound (0) + array.GetLength (0))
-				throw new ArgumentException ();
+				throw new ArgumentException ("Destination array was not long " +
+					"enough. Check destIndex and length, and the array's " +
+					"lower bounds.");
 			if (array.Rank > 1)
 				throw new RankException (Locale.GetText ("Only single dimension arrays are supported."));
 			if (index < 0)
@@ -937,8 +939,18 @@ namespace System
 			int dest_pos = destinationIndex - destinationArray.GetLowerBound (0);
 
 			// re-ordered to avoid possible integer overflow
-			if (source_pos > sourceArray.Length - length || dest_pos > destinationArray.Length - length)
+			if (source_pos > sourceArray.Length - length)
 				throw new ArgumentException ("length");
+
+			if (dest_pos > destinationArray.Length - length) {
+				string msg = "Destination array was not long enough. Check " +
+					"destIndex and length, and the array's lower bounds";
+#if NET_2_0
+				throw new ArgumentException (msg, string.Empty);
+#else
+				throw new ArgumentException (msg);
+#endif
+			}
 
 			if (sourceArray.Rank != destinationArray.Rank)
 				throw new RankException (Locale.GetText ("Arrays must be of same size."));
@@ -1781,7 +1793,9 @@ namespace System
 			if (this.Rank > 1)
 				throw new RankException (Locale.GetText ("Only single dimension arrays are supported."));
 			if (index + this.GetLength (0) > array.GetLowerBound (0) + array.GetLength (0))
-				throw new ArgumentException ();
+				throw new ArgumentException ("Destination array was not long " +
+					"enough. Check destIndex and length, and the array's " +
+					"lower bounds.");
 			if (array.Rank > 1)
 				throw new RankException (Locale.GetText ("Only single dimension arrays are supported."));
 			if (index < 0)

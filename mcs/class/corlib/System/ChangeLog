@@ -1,3 +1,11 @@
+2007-08-13  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ArgumentException.cs: Ignore zero-length ParamName for Message.
+	Use ParamName property instead of field, since the property is marked
+	virtual.
+	* Array.cs: Provide more meaningful exception message when destination
+	array is not long enough.
+
 2007-08-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* Array.cs: Implement InternalArray__set_Item. Fixes #82345.

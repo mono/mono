@@ -4,6 +4,7 @@ System/AppDomainSetupTest.cs
 System/AppDomainTest.cs
 System/ApplicationIdentityTest.cs
 System/ApplicationIdTest.cs
+System/ArgumentExceptionTest.cs
 System/ArrayTest.cs
 System/ArraySegmentTest.cs
 System/AttributeTest.cs

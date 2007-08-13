@@ -27,16 +27,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-
+#if NET_2_0
 namespace Microsoft.Win32
 {
-
 	public enum RegistryKeyPermissionCheck
 	{
 		Default			= 0,
 		ReadSubTree		= 1,
 		ReadWriteSubTree	= 2,
 	}
-
 }
+#endif

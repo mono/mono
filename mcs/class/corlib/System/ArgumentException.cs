@@ -98,17 +98,17 @@ namespace System
 				if (base_message == null)
 					base_message = Locale.GetText ("An invalid argument was specified.");
 
-				if (param_name == null)
+				if (ParamName == null || ParamName.Length == 0)
 					return base_message;
 				else
-					return base_message + Environment.NewLine + Locale.GetText ("Parameter name: ") + param_name;
+					return base_message + Environment.NewLine + Locale.GetText ("Parameter name: ") + ParamName;
 			}
 		}
 
 		public override void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			base.GetObjectData (info, context);
-			info.AddValue ("ParamName", param_name);
+			info.AddValue ("ParamName", ParamName);
 		}
 	}
 }

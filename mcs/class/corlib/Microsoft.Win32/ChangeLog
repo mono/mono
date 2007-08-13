@@ -1,3 +1,8 @@
+2007-08-13  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* RegistryKeyPermissionCheck.cs: Do not include in 1.0 profile.
+	Removed extra using directive and empty lines.
+
 2007-05-01  Dick Porter  <dick@ximian.com>
 
 	* RegistryKeyPermissionCheck.cs: Not serializable

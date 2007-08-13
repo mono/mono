@@ -1,3 +1,7 @@
+2007-08-13  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ArgumentExceptionTest.cs: Added test for ctor (string, string).
+
 2007-08-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* ArrayTest.cs: Add new test for bug #82345.
