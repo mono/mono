@@ -1,3 +1,9 @@
+2007-08-13  Nagappan A  <anagappan@novell.com>
+
+	* System.Data.dll.sources: Added
+	System.Data.Odbc/OdbcMetaDataColumnNames.cs,
+	System.Data.Odbc/OdbcMetaDataCollectionNames.cs.
+
 2007-07-01  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* System.Data.dll.sources: Removed ISqlNotificationReceiver.cs,

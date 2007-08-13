@@ -236,6 +236,8 @@ System.Data.Odbc/OdbcDataReader.cs
 System.Data.Odbc/OdbcError.cs
 System.Data.Odbc/OdbcErrorCollection.cs
 System.Data.Odbc/OdbcException.cs
+System.Data.Odbc/OdbcMetaDataColumnNames.cs
+System.Data.Odbc/OdbcMetaDataCollectionNames.cs
 System.Data.Odbc/OdbcParameter.cs
 System.Data.Odbc/OdbcParameterCollection.cs
 System.Data.Odbc/OdbcTransaction.cs
