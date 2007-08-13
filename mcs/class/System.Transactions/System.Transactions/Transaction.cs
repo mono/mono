@@ -106,10 +106,10 @@ namespace System.Transactions
 			return new Transaction (this);
 		}
 
-		[MonoTODO]
 		public void Dispose ()
 		{
-			throw new NotImplementedException ();
+			if (TransactionInformation.Status == TransactionStatus.Active)
+				Rollback();
 		}
 
 		[MonoTODO]
