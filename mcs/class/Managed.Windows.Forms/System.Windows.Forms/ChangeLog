@@ -1,5 +1,13 @@
 2007-08-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	[Backport of r83935]
+
+	* PictureBox.cs: OnAnimateImage/UpdateAnimateImage: Check if handle is still
+	  created, it might have gotten destroyed since we last checked. Fixes
+	  #82405.
+
+2007-08-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	[Backport selected parts of r83065. Fixes #82406]
 
 	* Control.cs: We need to reset the is_created flags when the handle is

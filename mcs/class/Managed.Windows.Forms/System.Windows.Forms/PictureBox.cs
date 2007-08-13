@@ -413,11 +413,22 @@ namespace System.Windows.Forms {
 		{
 			// This is called from a worker thread,BeginInvoke is used
 			// so the control is updated from the correct thread
+			
+			// Check if we have a handle again, since it may have gotten
+			// destroyed since the last time we checked.
+			if (!IsHandleCreated)
+				return;
+			
 			BeginInvoke (new EventHandler (UpdateAnimatedImage), new object [] { this, e });
 		}
 
 		private void UpdateAnimatedImage (object sender, EventArgs e)
 		{
+			// Check if we have a handle again, since it may have gotten
+			// destroyed since the last time we checked.
+			if (!IsHandleCreated)
+				return;
+				
 			ImageAnimator.UpdateFrames (image);
 			Refresh ();
 		}
