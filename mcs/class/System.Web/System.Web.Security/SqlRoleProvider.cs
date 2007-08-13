@@ -290,14 +290,14 @@ namespace System.Web.Security
 			}
 		}
 
-//		string GetStringConfigValue (NameValueCollection config, string name, string def)
-//		{
-//			string rv = def;
-//			string val = config [name];
-//			if (val != null)
-//				rv = val;
-//			return rv;
-//		}
+		string GetStringConfigValue (NameValueCollection config, string name, string def)
+		{
+			string rv = def;
+			string val = config [name];
+			if (val != null)
+				rv = val;
+			return rv;
+		}
 
 		public override void Initialize (string name, NameValueCollection config)
 		{
@@ -306,7 +306,7 @@ namespace System.Web.Security
 
 			base.Initialize (name, config);
 
-			applicationName = config ["applicationName"];
+			applicationName = GetStringConfigValue (config, "applicationName", "/");
 			string connectionStringName = config ["connectionStringName"];
 
 			if (applicationName.Length > 256)

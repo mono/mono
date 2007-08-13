@@ -1,3 +1,7 @@
+2007-08-13 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* SqlRoleProvider.cs: fixed ApplicationName initialization
+
 2007-06-24 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* FormsAuthentication.cs: improved performance of GetHexString()
