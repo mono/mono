@@ -298,7 +298,7 @@ namespace Mono.Cecil.Cil {
 
 			m_instrs.Insert (index, instr);
 			instr.Previous = target.Previous;
-			if (target.Previous.Next != null)
+			if (target.Previous != null)
 				target.Previous.Next = instr;
 			target.Previous = instr;
 			instr.Next = target;
