@@ -1,3 +1,8 @@
+2007-08-13  Alan McGovern  <amcgovern@novell.com>
+
+	* PhysicalAddress.cs: Added patch for #82403 to fix some parsing
+	errors and a bug in .Equals()
+
 2006-03-11  Miguel de Icaza  <miguel@novell.com>
 
 	* NetworkChange.cs: Use pragmas to eliminate warnings from events

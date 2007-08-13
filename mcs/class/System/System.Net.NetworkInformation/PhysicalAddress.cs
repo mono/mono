@@ -32,6 +32,7 @@ using System.Text;
 namespace System.Net.NetworkInformation {
 	public class PhysicalAddress {
 		public static readonly PhysicalAddress None = new PhysicalAddress (new byte [0]);
+		private const int numberOfBytes = 6;
 		byte [] bytes;
 		
 		public PhysicalAddress (byte [] address)
@@ -44,28 +45,36 @@ namespace System.Net.NetworkInformation {
 			if (address == null)
 				return None;
 
-			if (address == "")
-				throw new FormatException ("Invalid physical address.");
+			if (address == string.Empty)
+				throw new FormatException("An invalid physical address was specified.");
 
-			// MS fails with IndexOutOfRange for something like: "00-0"
-			int ndashes = 0;
-			foreach (char c in address) {
-				if (c == '-')
-					ndashes++;
+			string[] addrSplit = address.Split('-');
+
+			if (addrSplit.Length == 1) {
+				if (address.Length != numberOfBytes * 2)
+					throw new FormatException("An invalid physical address was specified.");
+
+				addrSplit = new string[numberOfBytes];
+				for (int index = 0; index < addrSplit.Length; index++) {
+					addrSplit[index] = address.Substring(index * 2, 2);
+				}
 			}
 
-			int len = address.Length;
-			if (((len - 2) / 3) != ndashes)
-				throw new FormatException ("Invalid physical address.");
+			if (addrSplit.Length == numberOfBytes) {
+				foreach (string str in addrSplit)
+					if (str.Length > 2)
+						throw new FormatException("An invalid physical address was specified.");
+					else if (str.Length < 2)
+						throw new IndexOutOfRangeException("An invalid physical address was specified.");
+			}
+			else
+				throw new FormatException("An invalid physical address was specified.");
 
-			byte [] data = new byte [ndashes + 1];
-			int idx = 0;
-			for (int i = 0; i < len; i++) {
-				byte b = (byte) (GetValue (address [i++]) << 8);
-				b += GetValue (address [i++]);
-				if (address [i] != '-')
-					throw new FormatException ("Invalid physical address.");
-				data [idx++] = b;
+			byte[] data = new byte[numberOfBytes];
+			for (int i = 0; i < numberOfBytes; i++) {
+				byte b = (byte)(GetValue(addrSplit[i][0]) << 4);
+				b += GetValue(addrSplit[i][1]);
+				data[i] = b;
 			}
 
 			return new PhysicalAddress (data);
@@ -73,7 +82,7 @@ namespace System.Net.NetworkInformation {
 
 		static byte GetValue (char c)
 		{
-			if (c >= 0 && c <= 9)
+			if (c >= '0' && c <= '9')
 				return (byte) (c - '0');
 
 			if (c >= 'a' && c <= 'f')
@@ -91,20 +100,19 @@ namespace System.Net.NetworkInformation {
 			if (other == null)
 				return false;
 
-			// new byte [0] != new byte [0]
-			return (bytes == other.bytes);
+			if (bytes.Length != other.bytes.Length)
+				return false;
+
+			for (int index = 0; index < bytes.Length; index++)
+				if (bytes[index] != other.bytes[index])
+					return false;
+
+			return true;
 		}
 
 		public override int GetHashCode ()
 		{
-			if (bytes == null)
-				return 0;
-
-			int a = 5;
-			foreach (byte b in bytes)
-				a  = (a << 3)  + b;
-
-			return a;
+			return (bytes[5] << 8) ^ (bytes[4]) ^ (bytes[3] << 24) ^ (bytes[2] << 16) ^ (bytes[1] << 8) ^ (bytes[0]);
 		}
 
 		public byte [] GetAddressBytes ()
@@ -119,10 +127,9 @@ namespace System.Net.NetworkInformation {
 
 			StringBuilder sb = new StringBuilder ();
 			foreach (byte b in bytes)
-				sb.AppendFormat ("{0:2X}", (uint) b);
+				sb.AppendFormat("{0:X2}", b);
 			return sb.ToString ();
 		}
 	}
 }
 #endif
-
