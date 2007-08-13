@@ -451,8 +451,57 @@ namespace MonoTests.System.Transactions {
 				scope.Complete ();
 			}
 		}
-		#endregion
 
+		[Test]
+		public void TransactionDispose ()
+		{
+			CommittableTransaction ct = new CommittableTransaction ();
+			IntResourceManager irm = new IntResourceManager (1);
+			irm.Volatile = false;
+
+			ct.Dispose ();
+			irm.Check  (0, 0, 0, 0, "Dispose transaction");
+		}
+
+		[Test]
+		public void TransactionDispose2 ()
+		{
+			CommittableTransaction ct = new CommittableTransaction ();
+			IntResourceManager irm = new IntResourceManager (1);
+
+			Transaction.Current = ct;
+			irm.Value = 5;
+
+			try {
+				ct.Dispose ();
+			} finally {
+				Transaction.Current = null;
+			}
+
+			irm.Check (0, 0, 1, 0, "Dispose transaction");
+			Assert.AreEqual (1, irm.Value);
+		}
+
+		[Test]
+		public void TransactionDispose3 ()
+		{
+			CommittableTransaction ct = new CommittableTransaction ();
+			IntResourceManager irm = new IntResourceManager (1);
+
+			try {
+				Transaction.Current = ct;
+				irm.Value = 5;
+				ct.Commit ();
+				ct.Dispose ();
+			} finally {
+				Transaction.Current = null;
+			}
+
+			irm.Check (1, 1, 0, 0, "Dispose transaction");
+			Assert.AreEqual (5, irm.Value);
+		}
+
+		#endregion
 
 	}
 }
