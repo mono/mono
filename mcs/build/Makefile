@@ -29,6 +29,8 @@ DISTFILES = \
 	README.platforms		\
 	README.configury		\
 	config-default.make		\
+	corcompare.make			\
+	corcompare-api.xsl		\
 	executable.make			\
 	library.make			\
 	rules.make			\
