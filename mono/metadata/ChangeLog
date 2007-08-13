@@ -1,3 +1,13 @@
+2007-08-13  Miguel de Icaza  <miguel@novell.com>
+
+	* domain.c (mono_init_internal): Call mono_assembly_load_friends
+	once we load mscorlib.   Due to the order in which we initialize,
+	the mono_assembly_load_full routine that loads mscorlib did not
+	load friends.   We now load it once we load the
+	mono_defaults.internals_visible_class class. 
+
+	* assembly.c: Expose the mono_load_friend_assemblies method.
+
 2007-08-11  Rodrigo Kumpera  <rkumpera@novell.com>
 
         * verify.c: improved the handling of boxing, better
