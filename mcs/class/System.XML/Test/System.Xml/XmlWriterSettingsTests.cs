@@ -264,6 +264,26 @@ namespace MonoTests.System.Xml
 			w.Close ();
 			AssertEquals ("#2", expected, sw.ToString ().Replace ("\r\n", "\n"));
 		}
+
+		[Test]
+		public void OmitXmlDeclarationAndNewLine ()
+		{
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml ("<root/>");
+			XmlWriterSettings settings = new XmlWriterSettings ();
+			settings.OmitXmlDeclaration = true;
+			settings.NewLineChars = "\r\n";
+			settings.NewLineHandling = NewLineHandling.Replace;
+			settings.Encoding = Encoding.UTF8;
+			settings.Indent = true;
+
+			StringWriter sw = new StringWriter ();
+			using (XmlWriter xw = XmlWriter.Create (sw, settings)) {
+				doc.Save (xw);
+			}
+			// no heading newline.
+			AssertEquals ("<root />", sw.ToString ());
+		}
 	}
 }
 #endif

@@ -466,14 +466,14 @@ namespace Mono.Xml
 			if (state != WriteState.Start)
 				throw StateError ("XmlDeclaration");
 
-			state = WriteState.Prolog;
-
 			switch (xmldecl_state) {
 			case XmlDeclState.Ignore:
 				return;
 			case XmlDeclState.Prohibit:
 				throw InvalidOperation ("WriteStartDocument cannot be called when ConformanceLevel is Fragment.");
 			}
+
+			state = WriteState.Prolog;
 
 			writer.Write ("<?xml version=");
 			writer.Write (quote_char);

@@ -1,3 +1,8 @@
+2007-08-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlTextWriter2.cs : fix extraneous indentation which is put after
+	  omitted xmldecl.
+
 2007-08-09  Jb Evain  <jbevain@novell.com>
 
 	* XmlTextReader.cs: Avoid using 2.0 only feature in 2.1.

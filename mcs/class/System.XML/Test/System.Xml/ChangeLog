@@ -1,3 +1,8 @@
+2007-08-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlWriterSettingsTests.cs : added test for extraneous newline on
+	  OmitXmlDeclaration mode.
+
 2007-08-02  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XsdValidatingReaderTests.cs : test for bug #82010.
