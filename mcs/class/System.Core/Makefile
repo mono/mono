@@ -3,8 +3,9 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.Core.dll
+
 LIB_MCS_FLAGS = -langversion:linq -unsafe -d:LIBC /r:$(corlib)
-NO_TEST = yes
+TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
 # This is a .NET > 2.0 only assembly
 VALID_PROFILE := $(filter net_2_0_bootstrap net_2_0 net_2_1, $(PROFILE))
@@ -16,3 +17,4 @@ NO_TEST = yes
 endif
 
 include ../../build/library.make
+

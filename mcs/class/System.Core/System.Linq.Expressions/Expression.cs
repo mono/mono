@@ -19,7 +19,7 @@
 // Authors:
 //        Marek Safar (marek.safar@seznam.cz)
 //        Antonello Provenzano  <antonello@deveel.com>
-//
+//        Federico Di Gregorio <fog@initd.org>
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -31,69 +31,43 @@ namespace System.Linq.Expressions
     public abstract class Expression
     {
         #region .ctor
-        protected Expression(ExpressionType nodeType, Type type)
+        protected Expression (ExpressionType nodeType, Type type)
         {
             this.nodeType = nodeType;
             this.type = type;
         }
         #endregion
-
+        
         #region Fields
         private Type type;
         private ExpressionType nodeType;
         #endregion
-
+        
         #region Properties
-        public Type Type
-        {
+        public Type Type {
             get { return type; }
         }
 
-        public ExpressionType NodeType
-        {
+        public ExpressionType NodeType {
             get { return nodeType; }
         }
         #endregion
 
-        #region Private Static Methods
-        private static void CheckLeftRight(Expression left, Expression right)
+        #region Internal support methods 
+        internal virtual void BuildString (StringBuilder builder)
         {
-            if (left == null)
-                throw new ArgumentNullException("left");
-            if (right == null)
-                throw new ArgumentNullException("right");
+            builder.Append ("[").Append (nodeType).Append ("]");
         }
-
-        #endregion
-
-        #region Internal Methods
-        internal virtual void BuildString(StringBuilder builder)
-        {
-            builder.Append("[" + nodeType + "]");
-        }
-        #endregion
-
-        #region Public Methods
-        public override string ToString()
-        {
-            //TODO: check this...
-            StringBuilder builder = new StringBuilder();
-            BuildString(builder);
-            return builder.ToString();
-        }
-        #endregion
-
-        #region Internal Static Methos
+        
         internal static Type GetNonNullableType(Type type)
         {
-            if (IsNullableType(type))
-            {
-                //TODO: check this... should we return just the first argument?
-                Type[] argTypes = type.GetGenericArguments();
-                return argTypes[0];
-            }
-
-            return type;
+            // The Nullable<> class takes a single generic type so we can directly return
+            // the first element of the array (if the type is nullable.)
+            
+            if (IsNullableType (type))
+                return type.GetGenericArguments ()[0];
+            else
+                return type;
         }
 
         internal static bool IsNullableType(Type type)
@@ -101,8 +75,7 @@ namespace System.Linq.Expressions
             if (type == null)
                 throw new ArgumentNullException("type");
 
-            if (type.IsGenericType)
-            {
+            if (type.IsGenericType) {
                 Type genType = type.GetGenericTypeDefinition();
                 return typeof(Nullable<>).IsAssignableFrom(genType);
             }
@@ -110,105 +83,201 @@ namespace System.Linq.Expressions
             return false;
         }
         #endregion
+        
+        #region Private support methods        
+        private const BindingFlags opBindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
 
-        #region Public Static Methods
+        private static MethodInfo GetUserDefinedBinaryOperator (Type leftType, Type rightType, string name)
+        {
+            Type[] types = new Type[2] { leftType, rightType };
+                        
+            MethodInfo method = leftType.GetMethod (name, opBindingFlags, null, types, null);
+            if (method != null) return method;
+                
+            method = rightType.GetMethod (name, opBindingFlags, null, types, null);
+            if (method != null) return method;
+
+            if (method == null && IsNullableType(leftType) && IsNullableType(rightType))
+                return GetUserDefinedBinaryOperator(GetNonNullableType(leftType), GetNonNullableType(rightType), name);
+        
+            return null;
+        }
+
+        private static BinaryExpression GetUserDefinedBinaryOperatorOrThrow (ExpressionType nodeType, string name,
+                Expression left, Expression right)
+        {
+            MethodInfo method = GetUserDefinedBinaryOperator(left.type, right.type, name);
+
+            if (method != null)
+                return new BinaryExpression (nodeType, left, right, method, method.ReturnType);
+            else
+                throw new InvalidOperationException(String.Format(
+                    "The binary operator Add is not defined for the types '{0}' and '{1}'.", left.type, right.type));
+
+            // Note: here the code in ExpressionUtils has a series of checks to make sure that
+            // the method is static, that its return type is not void and that the number of
+            // parameters is 2 and they are of the right type, but we already know that! Or not?
+        }
+        
+        private static void ValidateUserDefinedConditionalLogicOperator (ExpressionType nodeType, Type left, Type right, MethodInfo method)
+        {
+            // Conditional logic need the "definitely true" and "definitely false" operators.
+            Type[] types = new Type[1] { left };
+                        
+            MethodInfo opTrue  = left.GetMethod ("op_True", opBindingFlags, null, types, null);
+            MethodInfo opFalse = left.GetMethod ("op_False", opBindingFlags, null, types, null);
+            
+            if (opTrue == null || opFalse == null)
+                throw new ArgumentException(String.Format(
+                    "The user-defined operator method '{0}' for operator '{1}' must have associated boolean True and False operators.",
+                    method.Name, nodeType));
+        }
+        #endregion
+                
+        #region ToString
+        public override string ToString()
+        {
+            StringBuilder builder = new StringBuilder ();
+            BuildString (builder);
+            return builder.ToString ();
+        }
+        #endregion
+
+        #region Add
         public static BinaryExpression Add(Expression left, Expression right, MethodInfo method)
         {
-            CheckLeftRight(left, right);
+            if (left == null)
+                throw new ArgumentNullException ("left");
+            if (right == null)
+                throw new ArgumentNullException ("right");
 
-            // sine both the expressions define the same numeric type we don't have
-            // to look for the "op_Addition" method...
-            if (left.type == right.type &&
-                ExpressionUtil.IsNumber (left.type))
+            if (method != null)
+                return new BinaryExpression(ExpressionType.Add, left, right, method, method.ReturnType);
+            
+            // Since both the expressions define the same numeric type we don't have
+            // to look for the "op_Addition" method.
+            if (left.type == right.type && ExpressionUtil.IsNumber(left.type))
                 return new BinaryExpression(ExpressionType.Add, left, right, left.type);
 
-            if (method == null)
-                method = ExpressionUtil.GetOperatorMethod("op_Addition", left.type, right.type);
-
-            // ok if even op_Addition is not defined we need to throw an exception...
-            if (method == null)
-                throw new InvalidOperationException();
-
-            return new BinaryExpression(ExpressionType.Add, left, right, method, method.ReturnType);
+            // Else we try for a user-defined operator.
+            return GetUserDefinedBinaryOperatorOrThrow (ExpressionType.Add, "op_Addition", left, right);
         }
 
         public static BinaryExpression Add(Expression left, Expression right)
         {
             return Add(left, right, null);
         }
-
+        #endregion
+        
+        #region AddChecked
         public static BinaryExpression AddChecked(Expression left, Expression right, MethodInfo method)
         {
-            CheckLeftRight(left, right);
+            if (left == null)
+                throw new ArgumentNullException ("left");
+            if (right == null)
+                throw new ArgumentNullException ("right");
 
-            // sine both the expressions define the same numeric type we don't have
-            // to look for the "op_Addition" method...
-            if (left.type == right.type &&
-                ExpressionUtil.IsNumber(left.type))
+            if (method != null)
+                return new BinaryExpression(ExpressionType.AddChecked, left, right, method, method.ReturnType);
+
+            // Since both the expressions define the same numeric type we don't have
+            // to look for the "op_Addition" method.
+            if (left.type == right.type && ExpressionUtil.IsNumber(left.type))
                 return new BinaryExpression(ExpressionType.AddChecked, left, right, left.type);
 
+            method = GetUserDefinedBinaryOperator (left.type, right.type, "op_Addition");
             if (method == null)
-            {
-                // in the case of a non-specified method we have to 'check'
-                method = ExpressionUtil.GetOperatorMethod("op_Addition", left.type, right.type);
-                if (method == null)
-                    throw new InvalidOperationException();
+                throw new InvalidOperationException(String.Format(
+                    "The binary operator AddChecked is not defined for the types '{0}' and '{1}'.", left.type, right.type));
+            
+            Type retType = method.ReturnType;
 
-                if (method.ReturnType.IsValueType && !IsNullableType(method.ReturnType))
-                {
-                    Type retType = method.ReturnType;
-                    if (retType != typeof(bool))
-                    {
-                        // in case the returned type is not a boolean
-                        // we want to use a nullable version of the type...
-                        if (IsNullableType(retType))
-                        {
-                            Type[] genTypes = retType.GetGenericArguments();
-                            if (genTypes.Length > 1) //TODO: should we just ignore it if is it an array greater
-                                                     //      than 1?
-                                throw new InvalidOperationException();
-                            retType = genTypes[0];
-                        }
+            // Note: here the code did some very strange checks for bool (but note that bool does
+            // not define an addition operator) and created nullables for value types (but the new
+            // MS code does not do that). All that has been removed.
 
-                        retType = ExpressionUtil.GetNullable(retType);
-                    }
-                    return new BinaryExpression(ExpressionType.AddChecked, left, right, method, retType);
-                }
-            }
-
-            return new BinaryExpression(ExpressionType.AddChecked, left, right, method, method.ReturnType);
+            return new BinaryExpression(ExpressionType.AddChecked, left, right, method, retType);
         }
 
         public static BinaryExpression AddChecked(Expression left, Expression right)
         {
             return AddChecked(left, right, null);
         }
+        #endregion
 
+        #region And
         public static BinaryExpression And(Expression left, Expression right, MethodInfo method)
         {
-            CheckLeftRight(left, right);
+            if (left == null)
+                throw new ArgumentNullException ("left");
+            if (right == null)
+                throw new ArgumentNullException ("right");
 
-            // sine both the expressions define the same numeric type or is a boolean
-            // we don't have to look for the "op_BitwiseAnd" method...
-            if (left.type == right.type &&
-                (ExpressionUtil.IsInteger(left.type) || left.type == typeof(bool)))
-                return new BinaryExpression(ExpressionType.AddChecked, left, right, left.type);
+            if (method != null)
+                return new BinaryExpression(ExpressionType.And, left, right, method, method.ReturnType);
+            
+            // Since both the expressions define the same integer or boolean type we don't have
+            // to look for the "op_BitwiseAnd" method.
+            if (left.type == right.type && (ExpressionUtil.IsInteger(left.type) || left.type == typeof(bool)))
+                return new BinaryExpression(ExpressionType.And, left, right, left.type);
 
-            if (method == null)
-                method = ExpressionUtil.GetOperatorMethod("op_BitwiseAnd", left.type, right.type);
-
-            // ok if even op_BitwiseAnd is not defined we need to throw an exception...
-            if (method == null)
-                throw new InvalidOperationException();
-
-            return new BinaryExpression(ExpressionType.And, left, right, method, method.ReturnType);
+            // Else we try for a user-defined operator.
+            return GetUserDefinedBinaryOperatorOrThrow (ExpressionType.And, "op_BitwiseAnd", left, right);
         }
 
         public static BinaryExpression And(Expression left, Expression right)
         {
             return And(left, right, null);
         }
+        #endregion
+        
+        #region AndAlso
+        public static BinaryExpression AndAlso(Expression left, Expression right, MethodInfo method)
+        {
+            if (left == null)
+                throw new ArgumentNullException ("left");
+            if (right == null)
+                throw new ArgumentNullException ("right");
 
+            // Since both the expressions define the same integer or boolean type we don't have
+            // to look for the "op_BitwiseAnd" method.
+            if (left.type == right.type && left.type == typeof(bool))
+                return new BinaryExpression(ExpressionType.AndAlso, left, right, left.type);
+
+            // Else we must validate the method to make sure it has companion "true" and "false" operators.
+            if (method == null)
+                method = GetUserDefinedBinaryOperator (left.type, right.type, "op_BitwiseAnd");
+            if (method == null)
+                throw new InvalidOperationException(String.Format(
+                    "The binary operator AndAlso is not defined for the types '{0}' and '{1}'.", left.type, right.type));
+            ValidateUserDefinedConditionalLogicOperator(ExpressionType.AndAlso, left.type, right.type, method);
+            
+            return new BinaryExpression(ExpressionType.AndAlso, left, right, method, method.ReturnType);
+        }
+
+        public static BinaryExpression AndAlso(Expression left, Expression right)
+        {
+            return AndAlso(left, right, null);
+        }
+        #endregion
+        
+        #region ArrayIndex
+        public static MethodCallExpression ArrayIndex(Expression array, Expression index)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static MethodCallExpression ArrayIndex(Expression array, params Expression[] indexes)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static MethodCallExpression ArrayIndex(Expression array, IEnumerable<Expression> indexes)
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
+        
         public static MethodCallExpression Call(Expression instance, MethodInfo method)
         {
             return Call(instance, method, (Expression[])null);
@@ -253,6 +322,9 @@ namespace System.Linq.Expressions
             return new MethodCallExpression(ExpressionType.Call, method, instance, roArgs);
         }
 
+
+        // NOTE: CallVirtual is not implemented because it is already marked as Obsolete by MS.
+        
         public static ConditionalExpression Condition(Expression test, Expression ifTrue, Expression ifFalse)
         {
             if (test == null)
@@ -269,22 +341,22 @@ namespace System.Linq.Expressions
             return new ConditionalExpression(test, ifTrue, ifFalse, ifTrue.type);
         }
 
-        public static ConstantExpression Constant(object value)
-        {
-            Type valueType = null;
-            if (value != null)
-                valueType = value.GetType();
-            return Constant(value, valueType);
-        }
-
         public static ConstantExpression Constant(object value, Type type)
         {
             if (type == null)
                 throw new ArgumentNullException("type");
             if (value == null && !IsNullableType(type))
-                throw new ArgumentException();
+                throw new ArgumentException("Argument types do not match");
 
             return new ConstantExpression(value, type);
+        }
+
+        public static ConstantExpression Constant(object value)
+        {
+            if (value != null)
+                return new ConstantExpression(value, value.GetType());
+            else
+                return new ConstantExpression(null, typeof(object));
         }
 
         public static BinaryExpression Divide(Expression left, Expression right)
@@ -294,7 +366,10 @@ namespace System.Linq.Expressions
 
         public static BinaryExpression Divide(Expression left, Expression right, MethodInfo method)
         {
-            CheckLeftRight(left, right);
+            if (left == null)
+                throw new ArgumentNullException("left");
+            if (right == null)
+                throw new ArgumentNullException("right");
 
             // sine both the expressions define the same numeric type we don't have 
             // to look for the "op_Division" method...
@@ -354,7 +429,10 @@ namespace System.Linq.Expressions
 
         public static BinaryExpression LeftShift(Expression left, Expression right, MethodInfo method)
         {
-            CheckLeftRight(left, right);
+            if (left == null)
+                throw new ArgumentNullException("left");
+            if (right == null)
+                throw new ArgumentNullException("right");
 
             // since the left expression is of an integer type and the right is of
             // an integer we don't have to look for the "op_LeftShift" method...
@@ -478,6 +556,5 @@ namespace System.Linq.Expressions
 
             return new UnaryExpression(ExpressionType.TypeAs, expression, type);
         }
-        #endregion
     }
 }

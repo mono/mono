@@ -1,3 +1,45 @@
+2007-08-13  Federico Di Gregorio <fog@initd.org>
+
+	* ConstantExpression.cs: Using multiple StringBuilder.Append() methods
+	instead of concatenating strings.
+
+	* Expression.cs: Added AndAlso() method and validator for True and
+	False user-defined operators.
+
+	* Test: Added unique IDs to all tests. 
+
+2007-08-12  Federico Di Gregorio <fog@initd.org>
+
+	* ConstantExpression.cs: Fixed BuildString() to return "value(...)"
+	when the string representation of the value is equal to the type name.
+	Added appropriate checks.
+
+	* Expression.cs: Fixed And() method.
+
+	* Expression.cs: Add() method uses new GetUserDefinedBinaryOperator()
+	and raise exactly the same exceptions (including exception text) as MS
+	one does.
+
+2007-07-24  Federico Di Gregorio <fog@initd.org>
+
+	* Expression.cs: modified Constant method to use "object" as the type if
+	just a null is given. Changed exception text when the passed type is not
+	nullable but value is.
+
+2007-07-13  Federico Di Gregorio <fog@initd.org>
+
+	* BinaryExpression.cs: implemented BuildString().
+
+2007-07-12  Federico Di Gregorio <fog@initd.org>
+
+    * Test/System.Linq.Expressions: added test directory and some tests.
+    
+	* Expression.cs:
+	  - changed the exceptions raised on argument errors to match the ones in
+	    found in the last system.core.dll (the one from SilverLight 1.1 alpha)
+	  - removed the three very generic #regions and started replacing them with
+	    specific ones, as found in other parts of classes code.
+
 2007-03-29  Antonello Provenzano  <antonello@deveel.com>
 
 	* ExpressionUtil.cs: 

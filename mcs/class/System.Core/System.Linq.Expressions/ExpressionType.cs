@@ -18,9 +18,11 @@
 //
 // Authors:
 //        Antonello Provenzano  <antonello@deveel.com>
-//
+//        Federico Di Gregorio <fog@initd.org>
 
-namespace System.Linq.Expressions {
+namespace System.Linq.Expressions
+{
+    [Serializable]
 	public enum ExpressionType
 	{
 		Add,

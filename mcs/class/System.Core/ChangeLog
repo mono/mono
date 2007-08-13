@@ -1,3 +1,22 @@
+2007-08-13  Federico Di Gregorio <fog@initd.org>
+
+
+	* Added Test/ directory, modified Makefile to build and execute
+	them
+	
+	* Changed a couple of Expression methods to raise exceptions
+	identicals to MS ones
+	
+	* Added tests for AddExpression and ConstantExpression
+	* Implemented somme missing stuff in BinaryExpression
+	* The stuff in ExpressionUtils is very generic and does quite some
+	  redundant checks: I started splitting the stuff there into more   
+	  "specific" methods that should be both understandable and fast.
+	
+	I fixed the StringBuilder problem, added unique IDs to all tests,
+	used Assert.IsNull where appropriate and fixed one more Expression
+	method (AndAlso). Hope this is good enough for commit.
+
 2007-07-12  Marek Safar  <marek.safar@gmail.com>
 
 	* System.Core.dll.sources: A few Beta 2 updates.

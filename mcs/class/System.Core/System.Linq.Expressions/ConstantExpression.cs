@@ -18,7 +18,7 @@
 //
 // Authors:
 //        Antonello Provenzano  <antonello@deveel.com>
-//
+//        Federico Di Gregorio  <fog@initd.org>
 
 using System.Text;
 
@@ -27,8 +27,7 @@ namespace System.Linq.Expressions
     public sealed class ConstantExpression : Expression
     {
         #region .ctor
-        internal ConstantExpression(object value, Type type)
-            : base(ExpressionType.Constant, type)
+        internal ConstantExpression (object value, Type type) : base (ExpressionType.Constant, type)
         {
             this.value = value;
         }
@@ -39,30 +38,29 @@ namespace System.Linq.Expressions
         #endregion
 
         #region Properties
-        public object Value
-        {
+        public object Value {
             get { return value; }
         }
         #endregion
 
-        #region Internal Methods
+        #region Internal support methods 
         internal override void BuildString(StringBuilder builder)
         {
-            string s = null;
+            string s;
+            
             if (value == null)
-            {
-                s = "null";
-            } 
-            else if (typeof(String).IsInstanceOfType(value))
-            {
-                s = "\"" + value + "\"";
-            }
-            else
-            {
+                builder.Append ("null");
+            
+            else if (value.GetType() == typeof(string))
+                builder.Append ("\"").Append ((string)value).Append ("\"");
+                
+            else {
                 s = value.ToString();
+                if (value != null && s == value.GetType().FullName)
+                    builder.Append ("value(").Append (s).Append (")");
+                else
+                    builder.Append(s);
             }
-
-            builder.Append(s);
         }
         #endregion
     }
