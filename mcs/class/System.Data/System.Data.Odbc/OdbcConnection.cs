@@ -35,6 +35,9 @@ using System.Data;
 using System.Data.Common;
 using System.Runtime.InteropServices;
 using System.EnterpriseServices;
+#if NET_2_0 && !TARGET_JVM
+using System.Transactions;
+#endif
 
 namespace System.Data.Odbc
 {
@@ -86,11 +89,7 @@ namespace System.Data.Odbc
 		[OdbcDescriptionAttribute ("Information used to connect to a Data Source")]	
 		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		[EditorAttribute ("Microsoft.VSDesigner.Data.Odbc.Design.OdbcConnectionStringEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
-#if NET_2_0
-                [SettingsBindableAttribute (true)]
-#else
                 [RecommendedAsConfigurableAttribute (true)]
-#endif
 		public 
 #if NET_2_0
 		override
@@ -105,7 +104,8 @@ namespace System.Data.Odbc
 		}
 		
 		[OdbcDescriptionAttribute ("Current connection timeout value, not settable  in the ConnectionString")]
-		[DefaultValue (15)]	
+		[DefaultValue (15)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public
 #if NET_2_0
                 new
@@ -152,9 +152,9 @@ namespace System.Data.Odbc
 			}
 		}
 
-		[MonoTODO]
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
                 [OdbcDescriptionAttribute ("Current data source, 'Server=X' in the ConnectionString")]
+                [Browsable (false)]		
 		public
 #if NET_2_0
                 override
@@ -165,7 +165,7 @@ namespace System.Data.Odbc
 			}
 		}
 
-		[MonoTODO]
+                [Browsable (false)]		
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
                 [OdbcDescriptionAttribute ("Current ODBC Driver")]
                 public string Driver {
@@ -174,7 +174,6 @@ namespace System.Data.Odbc
                         }
                 }
 		
-		[MonoTODO]
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
                 [OdbcDescriptionAttribute ("Version of the product accessed by the ODBC Driver")]
                 [BrowsableAttribute (false)]
@@ -267,7 +266,6 @@ namespace System.Data.Odbc
 			return new OdbcCommand("", this, transaction); 
 		}
 
-		[MonoTODO]
 		public
 #if NET_2_0
                 override
@@ -421,12 +419,32 @@ namespace System.Data.Odbc
                         henv = IntPtr.Zero;
                                 
                 }
-                
+
+#if NET_2_0
+		public new DataTable GetSchema ()
+		{
+			if (State == ConnectionState.Open)
+				throw new InvalidOperationException ();
+			return MetaDataCollections.Instance;
+		}
+
+		public new DataTable GetSchema (string collectionName)
+		{
+			if (State == ConnectionState.Open)
+				throw new InvalidOperationException ();
+			return GetSchema (collectionName, null);
+		}
+
+		[MonoTODO]
+		public override void EnlistTransaction (Transaction transaction)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 
 		[MonoTODO]
 		public void EnlistDistributedTransaction ( ITransaction transaction) 
 		{
-                
 			throw new NotImplementedException ();
 		}
 

@@ -186,7 +186,11 @@ namespace System.Data.Odbc
 		[BrowsableAttribute (false)]
                 [DesignOnlyAttribute (true)]
                 [DefaultValue (true)]
-                [EditorAttribute ("Microsoft.VSDesigner.Data.Design.DbConnectionEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
+#if NET_2_0
+                [EditorBrowsable (EditorBrowsableState.Never)]
+#else
+                [Editor ("Microsoft.VSDesigner.Data.Design.DbConnectionEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
+#endif
 		public 
 #if NET_2_0
 		override

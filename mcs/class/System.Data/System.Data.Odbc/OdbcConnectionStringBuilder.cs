@@ -133,6 +133,8 @@ namespace System.Data.Odbc
 			}
 		}
 
+		[DisplayNameAttribute ("Driver")]
+		[RefreshProperties (RefreshProperties.All)]
 		public string Driver { 
 			get {
 				if (ContainsKey ("Driver")) {
@@ -155,6 +157,8 @@ namespace System.Data.Odbc
 			 }
 		}
 		
+		[DisplayNameAttribute ("Driver")]
+		[RefreshProperties (RefreshProperties.All)]
 		public string Dsn { 
 			get { 
 				if (ContainsKey ("Dsn"))

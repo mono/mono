@@ -40,7 +40,11 @@ using System.Runtime.Serialization;
 namespace System.Data.Odbc
 {
 	[Serializable]
+#if NET_2_0
+	public sealed class OdbcException : DbException
+#else
 	public sealed class OdbcException : SystemException
+#endif
 	{
 		OdbcErrorCollection odbcErrors;
 

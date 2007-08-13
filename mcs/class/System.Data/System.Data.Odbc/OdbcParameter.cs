@@ -42,11 +42,13 @@ using System.ComponentModel;
 namespace System.Data.Odbc
 {
 	[TypeConverterAttribute (typeof (OdbcParameterConverter))]
+	public sealed class OdbcParameter : 
 #if NET_2_0
-        public sealed class OdbcParameter : DbParameter, ICloneable
+	DbParameter,
 #else
-	public sealed class OdbcParameter : MarshalByRefObject, IDbDataParameter, IDataParameter, ICloneable
+	MarshalByRefObject,
 #endif // NET_2_0
+	  ICloneable, IDbDataParameter, IDataParameter
 	{
 		#region Fields
 
@@ -137,12 +139,14 @@ namespace System.Data.Odbc
                         get { return container; }
                         set { container = value; }
                 }
-		
+
+#if NET_1_0		
 		[BrowsableAttribute (false)]
-                [OdbcDescriptionAttribute ("The parameter generic type")]
                 [RefreshPropertiesAttribute (RefreshProperties.All)]
                 [DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
+#endif
 		[OdbcCategory ("Data")]
+                [OdbcDescriptionAttribute ("The parameter generic type")]
 		public 
 #if NET_2_0
                 override 
@@ -159,7 +163,11 @@ namespace System.Data.Odbc
 		
 		[OdbcCategory ("Data")]
 		[OdbcDescriptionAttribute ("Input, output, or bidirectional parameter")]  
+#if NET_2_0
+                [RefreshPropertiesAttribute (RefreshProperties.All)]
+#else
 		[DefaultValue (ParameterDirection.Input)]
+#endif
 		public 
 #if NET_2_0
                 override 
@@ -168,12 +176,14 @@ namespace System.Data.Odbc
 			get { return direction; }
 			set { direction = value; }
 		}
-		
+
+#if NET_1_0		
 		[BrowsableAttribute (false)]
-                [OdbcDescriptionAttribute ("A design-time property used for strongly typed code generation")]
                 [DesignOnlyAttribute (true)]
                 [EditorBrowsableAttribute (EditorBrowsableState.Advanced)]
                 [DefaultValue (false)]
+#endif
+                [OdbcDescriptionAttribute ("A design-time property used for strongly typed code generation")]
 		public 
 #if NET_2_0
                 override 
@@ -188,6 +198,9 @@ namespace System.Data.Odbc
                 [OdbcDescriptionAttribute ("The parameter native type")]
                 [RefreshPropertiesAttribute (RefreshProperties.All)]
 		[OdbcCategory ("Data")]
+#if NET_2_0
+		[DbProviderSpecificTypeProperty (false)]
+#endif
 		public OdbcType OdbcType {
 			get { return _typeMap.OdbcType; }
 			set {
@@ -199,7 +212,9 @@ namespace System.Data.Odbc
 		}
 		
  		[OdbcDescription ("DataParameter_ParameterName")]
-                [DefaultValue ("")]	
+#if NET_1_0
+                [DefaultValue ("")]
+#endif
 		public 
 #if NET_2_0
                 override 
@@ -227,7 +242,9 @@ namespace System.Data.Odbc
 		
 		[OdbcDescription ("DbDataParameter_Size")]
                 [OdbcCategory ("DataCategory_Data")]
+#if NET_1_0
                 [DefaultValue (0)]
+#endif
 		public 
 #if NET_2_0
                 override 
@@ -239,7 +256,9 @@ namespace System.Data.Odbc
 
 		[OdbcDescription ("DataParameter_SourceColumn")]
                 [OdbcCategory ("DataCategory_Data")]
+#if NET_1_0
                 [DefaultValue ("")]
+#endif
 		public 
 #if NET_2_0
                 override 
@@ -251,7 +270,9 @@ namespace System.Data.Odbc
 		
                 [OdbcDescription ("DataParameter_SourceVersion")]
                 [OdbcCategory ("DataCategory_Data")]
-                [DefaultValue ("Current")]			
+#if NET_1_0
+                [DefaultValue ("Current")]
+#endif
 		public 
 #if NET_2_0
                 override 
@@ -264,7 +285,11 @@ namespace System.Data.Odbc
 		[TypeConverter (typeof(StringConverter))]
                 [OdbcDescription ("DataParameter_Value")]
                 [OdbcCategory ("DataCategory_Data")]
-                [DefaultValue (null)]		
+#if NET_1_0
+                [DefaultValue (null)]
+#else
+                [RefreshPropertiesAttribute (RefreshProperties.All)]
+#endif
 		public 
 #if NET_2_0
                 override 

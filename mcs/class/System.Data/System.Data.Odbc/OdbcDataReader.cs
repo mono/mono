@@ -340,10 +340,12 @@ namespace System.Data.Odbc
 
 		[MonoTODO]
 		[EditorBrowsableAttribute (EditorBrowsableState.Never)]
-		public 
+#if ONLY_1_1
+		public
+#endif
 #if NET_2_0
 		new
-#endif // NET_2_0
+#endif
 		IDataReader GetData (int ordinal)
 		{
 			throw new NotImplementedException ();
@@ -1075,28 +1077,6 @@ namespace System.Data.Odbc
 		{
 			return NextRow ();
 		}
-
-#if NET_2_0
-                [MonoTODO]
-		public override object GetProviderSpecificValue (int i)
-                {
-			throw new NotImplementedException ();
-                }
-                
-                [MonoTODO]
-		public override int GetProviderSpecificValues (object[] values)
-                {
-			throw new NotImplementedException ();
-                }
-
-                [MonoTODO]
-		public override Type GetProviderSpecificFieldType (int i)
-                {
-			throw new NotImplementedException ();
-                }
-                
-#endif // NET_2_0
-
 
 		#endregion
 	}

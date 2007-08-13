@@ -148,10 +148,11 @@ namespace System.Data.Odbc
 		[BrowsableAttribute (false)]
 		[OdbcDescriptionAttribute ("The prefix string wrapped around sql objects")]
                 [DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
+#if NET_1_0
 		public
-#if NET_2_0
+#else
                 new
-#endif // NET_2_0
+#endif
                 string QuotePrefix {
 			get {
 				return _quotePrefix;
@@ -164,8 +165,9 @@ namespace System.Data.Odbc
 		[BrowsableAttribute (false)]
                 [OdbcDescriptionAttribute ("The suffix string wrapped around sql objects")]
                 [DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
+#if NET_1_0
 		public
-#if NET_2_0
+#else
                 new
 #endif // NET_2_0
                 string QuoteSuffix {
@@ -187,7 +189,10 @@ namespace System.Data.Odbc
 			throw new NotImplementedException ();
 		}
 
-		protected new void Dispose (bool disposing) 
+#if NET_1_0
+		protected
+#endif
+		new void Dispose (bool disposing) 
 		{
 			if (_disposed)
 				return;
@@ -471,8 +476,9 @@ namespace System.Data.Odbc
 		}
 #endif // NET_2_0
 
+#if NET_1_0
 		public
-#if NET_2_0
+#else
                 new
 #endif // NET_2_0
                 void RefreshSchema ()

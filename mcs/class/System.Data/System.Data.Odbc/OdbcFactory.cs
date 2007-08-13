@@ -33,6 +33,8 @@
 using System;
 using System.Data;
 using System.Data.Common;
+using System.Security;
+using System.Security.Permissions;
 #endregion // Using Directives
 
 namespace System.Data.Odbc 
@@ -77,13 +79,12 @@ namespace System.Data.Odbc
                 #region Methods
                 public override DbConnection CreateConnection()
                 {
-                        //OdbcConnectionFactory connFactory = OdbcConnectionFactory.GetSingleton (this);
-                        return  new OdbcConnection ();
+                        return  new OdbcConnection () as DbConnection;
                 }
                 
                 public override DbCommand CreateCommand()
                 {
-                        return new OdbcCommand ()  as DbCommand;
+                        return new OdbcCommand () as DbCommand;
                 }
                 
                 public override DbCommandBuilder CreateCommandBuilder()
@@ -92,10 +93,10 @@ namespace System.Data.Odbc
                 }
                 
                 
-//                 public override DbConnectionStringBuilder CreateConnectionStringBuilder()
-//                 {
-//                         throw new NotImplementedException ();
-//                 }
+		public override DbConnectionStringBuilder CreateConnectionStringBuilder ()
+		{
+			return new OdbcConnectionStringBuilder () as DbConnectionStringBuilder;
+		}
                 
                 public override DbDataAdapter CreateDataAdapter()
                 {
@@ -107,15 +108,12 @@ namespace System.Data.Odbc
                         return new OdbcParameter () as DbParameter;
                 }
 
-//                 public override CodeAccessPermission CreatePermission(PermissionState state)
-//                 {
-//                         throw new NotImplementedException ();
-//                 }
-                
+		public override CodeAccessPermission CreatePermission (PermissionState state)
+		{
+			return new OdbcPermission (state);
+		}
+
                 #endregion //Methods
-
         }
- 
-
 }
 #endif // NET_2_0

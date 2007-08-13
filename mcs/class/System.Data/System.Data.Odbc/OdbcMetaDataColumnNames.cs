@@ -1,14 +1,11 @@
 //
-// System.Data.Odbc.OdbcInfoMessageEventHandler
+// System.Data.Odbc.OdbcMetaDataColumnNames.cs
 //
 // Author:
-//   Umadevi S (sumadevi@novell.com)
+//   Nagappan A <anagappan@novell.com>
 //
-// Copyright (C) Novell Inc, 2004
 //
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,13 +27,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Data;
-using System.Data.Common;
+#if NET_2_0
 
 namespace System.Data.Odbc
 {
-#if NET_1_0
-	[Serializable]
-#endif
-	public delegate void OdbcInfoMessageEventHandler (object sender, OdbcInfoMessageEventArgs e);
+	/// <summary>
+	/// Collection names
+	/// </summary>
+	public static class OdbcMetaDataColumnNames {
+		public static readonly string BooleanFalseLiteral;
+		public static readonly string BooleanTrueLiteral;
+		public static readonly string SQLType;
+	}
 }
+
+#endif

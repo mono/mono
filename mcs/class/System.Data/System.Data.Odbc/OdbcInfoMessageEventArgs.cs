@@ -35,7 +35,7 @@ using System.Data.Common;
 
 namespace System.Data.Odbc
 {
-	public sealed class OdbcInfoMessageEventArgs : EventArgs 
+	public sealed class OdbcInfoMessageEventArgs : EventArgs
 	{
 		#region Constructors
 
