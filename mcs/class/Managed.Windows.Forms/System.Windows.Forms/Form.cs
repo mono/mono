@@ -2821,8 +2821,10 @@ namespace System.Windows.Forms {
 				AutoScale = false;
 			}
 
-			OnLoad (e);
-
+			if (!IsDisposed) {
+				OnLoad (e);
+			}
+			
 			if (!IsMdiChild && !IsDisposed) {
 				switch (StartPosition) {
 					case FormStartPosition.CenterScreen:

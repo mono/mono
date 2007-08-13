@@ -1,3 +1,11 @@
+2007-08-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	[Backport selected parts of r83065. Fixes #82406]
+
+	* Control.cs: We need to reset the is_created flags when the handle is
+	  destroyed. Fixes #82187.
+	* Form.cs: Don't raise OnLoad if the form has been disposed.
+
 2007-08-10  Jonathan Pobst  <monkey@jpobst.com>
 	[Backport of r83821]
 	* ToolTip.cs: Hide the tooltip if the control is clicked to match MS behavior.
