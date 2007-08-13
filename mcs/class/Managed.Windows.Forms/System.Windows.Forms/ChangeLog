@@ -1,3 +1,9 @@
+2007-08-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* PictureBox.cs: OnAnimateImage/UpdateAnimateImage: Check if handle is still
+	  created, it might have gotten destroyed since we last checked. Fixes
+	  #82405.
+
 2007-08-11  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolTip.cs: Remove mouse in control check from mouseleave handler so
