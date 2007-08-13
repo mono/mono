@@ -1,3 +1,9 @@
+2007-08-13 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_ldtoken_test.sh (added):  Generate ldtoken related tests
+	* make_tests.sh: Addes tests for ldtoken, conv.*.* and visibility checks
+	for nested classes mixed with inheritance
+
 2007-08-10 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* make_test.sh: Added new visibility tests and not/neg tests
