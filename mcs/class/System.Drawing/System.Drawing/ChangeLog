@@ -1,3 +1,12 @@
+2007-08-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* gdipFunctions.cs: Change GdipMeasureString definition to use unsafe
+	pointers. 
+	* Graphics.cs: Rework MeasureString not to supply integers (characters
+	and lines) as they aren't required for most of it's overloads and 
+	requires extra code/time to calculate inside libgdiplus. Also fix a 
+	possible NRE in MultiplyTransform.
+
 2007-08-01  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* gdipFunctions.cs: Added definition for GdipCloneFontFamily

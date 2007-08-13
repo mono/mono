@@ -1897,108 +1897,69 @@ namespace System.Drawing
 			return regions;							
 		}
 
-		
+		private unsafe SizeF GdipMeasureString (IntPtr graphics, string text, Font font, ref RectangleF layoutRect,
+			IntPtr stringFormat)
+		{
+			if ((text == null) || (text.Length == 0))
+				return SizeF.Empty;
+
+			if (font == null)
+				throw new ArgumentNullException ("font");
+
+			RectangleF boundingBox = new RectangleF ();
+
+			Status status = GDIPlus.GdipMeasureString (nativeObject, text, text.Length, font.NativeObject, 
+				ref layoutRect, stringFormat, out boundingBox, null, null);
+			GDIPlus.CheckStatus (status);
+
+			return new SizeF (boundingBox.Width, boundingBox.Height);
+		}
+
 		public SizeF MeasureString (string text, Font font)
 		{
 			return MeasureString (text, font, SizeF.Empty);
 		}
 
-		
 		public SizeF MeasureString (string text, Font font, SizeF layoutArea)
 		{
-			if (text == null || text.Length == 0)
-				return SizeF.Empty;
-
-			if (font == null)
-				throw new ArgumentNullException ("font");
-
-			int charactersFitted, linesFilled;
-			RectangleF boundingBox = new RectangleF ();
 			RectangleF rect = new RectangleF (0, 0, layoutArea.Width, layoutArea.Height);
-
-			Status status = GDIPlus.GdipMeasureString (nativeObject, text, text.Length,
-								   font.NativeObject, ref rect,
-								   IntPtr.Zero, out boundingBox,
-								   out charactersFitted, out linesFilled);
-			GDIPlus.CheckStatus (status);
-
-			return new SizeF (boundingBox.Width, boundingBox.Height);
+			return GdipMeasureString (nativeObject, text, font, ref rect, IntPtr.Zero);
 		}
 
-		
 		public SizeF MeasureString (string text, Font font, int width)
 		{				
-			if (text == null || text.Length == 0)
-				return SizeF.Empty;
-
-			if (font == null)
-				throw new ArgumentNullException ("font");
-
-			RectangleF boundingBox = new RectangleF ();
 			RectangleF rect = new RectangleF (0, 0, width, Int32.MaxValue);
-			int charactersFitted, linesFilled;
-
-			Status status = GDIPlus.GdipMeasureString (nativeObject, text, text.Length, 
-								   font.NativeObject, ref rect,
-								   IntPtr.Zero, out boundingBox,
-								   out charactersFitted, out linesFilled);
-			GDIPlus.CheckStatus (status);
-
-			return new SizeF (boundingBox.Width, boundingBox.Height);
+			return GdipMeasureString (nativeObject, text, font, ref rect, IntPtr.Zero);
 		}
 
-		
-		public SizeF MeasureString (string text, Font font, SizeF layoutArea,
-					    StringFormat stringFormat)
+		public SizeF MeasureString (string text, Font font, SizeF layoutArea, StringFormat stringFormat)
 		{
-			int charactersFitted, linesFilled;			
-			return MeasureString (text, font, layoutArea, stringFormat,
-					      out charactersFitted, out linesFilled);
+			RectangleF rect = new RectangleF (0, 0, layoutArea.Width, layoutArea.Height);
+			IntPtr format = (stringFormat == null) ? IntPtr.Zero : stringFormat.NativeObject;
+			return GdipMeasureString (nativeObject, text, font, ref rect, format);
 		}
 
-		
 		public SizeF MeasureString (string text, Font font, int width, StringFormat format)
 		{
-			int charactersFitted, linesFilled;			
-			return MeasureString (text, font, new SizeF (width, Int32.MaxValue), 
-					      format, out charactersFitted, out linesFilled);
+			RectangleF rect = new RectangleF (0, 0, width, Int32.MaxValue);
+			IntPtr stringFormat = (format == null) ? IntPtr.Zero : format.NativeObject;
+			return GdipMeasureString (nativeObject, text, font, ref rect, stringFormat);
 		}
 
-		
-		public SizeF MeasureString (string text, Font font, PointF origin,
-					    StringFormat stringFormat)
+		public SizeF MeasureString (string text, Font font, PointF origin, StringFormat stringFormat)
 		{
-			if (text == null || text.Length == 0)
-				return SizeF.Empty;
-
-			if (font == null)
-				throw new ArgumentNullException ("font");
-
-			RectangleF boundingBox = new RectangleF ();
 			RectangleF rect = new RectangleF (origin.X, origin.Y, 0, 0);
-			int charactersFitted, linesFilled;
-
 			IntPtr format = (stringFormat == null) ? IntPtr.Zero : stringFormat.NativeObject;
-
-			Status status = GDIPlus.GdipMeasureString (nativeObject, text, text.Length, 
-								   font.NativeObject, ref rect, format, 
-								   out boundingBox,
-								   out charactersFitted,
-								   out linesFilled);
-			GDIPlus.CheckStatus (status);
-
-			return new SizeF (boundingBox.Width, boundingBox.Height);
+			return GdipMeasureString (nativeObject, text, font, ref rect, format);
 		}
 
-		
-		public SizeF MeasureString (string text, Font font, SizeF layoutArea,
-					    StringFormat stringFormat, out int charactersFitted,
-					    out int linesFilled)
+		public SizeF MeasureString (string text, Font font, SizeF layoutArea, StringFormat stringFormat, 
+			out int charactersFitted, out int linesFilled)
 		{	
 			charactersFitted = 0;
 			linesFilled = 0;
 
-			if (text == null || text.Length == 0)
+			if ((text == null) || (text.Length == 0))
 				return SizeF.Empty;
 
 			if (font == null)
@@ -2009,13 +1970,13 @@ namespace System.Drawing
 
 			IntPtr format = (stringFormat == null) ? IntPtr.Zero : stringFormat.NativeObject;
 
-			Status status = GDIPlus.GdipMeasureString (nativeObject, text, text.Length, 
-								   font.NativeObject, ref rect, format,
-								   out boundingBox,
-								   out charactersFitted,
-								   out linesFilled);
-			GDIPlus.CheckStatus (status);
-
+			unsafe {
+				fixed (int* pc = &charactersFitted, pl = &linesFilled) {
+					Status status = GDIPlus.GdipMeasureString (nativeObject, text, text.Length, 
+					font.NativeObject, ref rect, format, out boundingBox, pc, pl);
+					GDIPlus.CheckStatus (status);
+				}
+			}
 			return new SizeF (boundingBox.Width, boundingBox.Height);
 		}
 
@@ -2026,9 +1987,10 @@ namespace System.Drawing
 
 		public void MultiplyTransform (Matrix matrix, MatrixOrder order)
 		{
-			Status status = GDIPlus.GdipMultiplyWorldTransform (nativeObject,
-									    matrix.nativeMatrix,
-									    order);
+			if (matrix == null)
+				throw new ArgumentNullException ("matrix");
+
+			Status status = GDIPlus.GdipMultiplyWorldTransform (nativeObject, matrix.nativeMatrix, order);
 			GDIPlus.CheckStatus (status);
 		}
 
@@ -2078,10 +2040,10 @@ namespace System.Drawing
 
 		public void Restore (GraphicsState gstate)
 		{			
+			// the possible NRE thrown by gstate.nativeState match MS behaviour
 			Status status = GDIPlus.GdipRestoreGraphics (nativeObject, gstate.nativeState);
 			GDIPlus.CheckStatus (status);
 		}
-
 
 		public void RotateTransform (float angle)
 		{
@@ -2090,7 +2052,6 @@ namespace System.Drawing
 
 		public void RotateTransform (float angle, MatrixOrder order)
 		{
-
 			Status status = GDIPlus.GdipRotateWorldTransform (nativeObject, angle, order);
 			GDIPlus.CheckStatus (status);
 		}

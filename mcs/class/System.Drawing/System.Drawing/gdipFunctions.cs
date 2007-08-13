@@ -927,9 +927,9 @@ namespace System.Drawing
 		internal static extern Status GdipCreateFromHWND (IntPtr hwnd, out IntPtr graphics);
 
 		[DllImport("gdiplus.dll", CharSet=CharSet.Unicode)]
-		internal static extern Status GdipMeasureString(IntPtr graphics, string str, int length, IntPtr font,
-    		 ref RectangleF layoutRect, IntPtr stringFormat, out RectangleF boundingBox, out int codepointsFitted,
-    				out int linesFilled);              				
+		internal unsafe static extern Status GdipMeasureString(IntPtr graphics, string str, int length,
+			IntPtr font, ref RectangleF layoutRect, IntPtr stringFormat, out RectangleF boundingBox,
+			int *codepointsFitted, int *linesFilled);
     				
     		[DllImport("gdiplus.dll", CharSet=CharSet.Unicode)]
 		internal static extern Status GdipMeasureCharacterRanges (IntPtr graphics, string str, int length, IntPtr font,
