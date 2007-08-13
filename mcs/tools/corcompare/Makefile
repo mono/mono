@@ -30,7 +30,7 @@ PROGRAM_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)
 APIINFO_SOURCES = mono-api-info.cs
 APIDIFF_SOURCES = mono-api-diff.cs
 
-DISTFILES= $(CORCOMPARE_SOURCES) $(APIINFO_SOURCES) $(APIDIFF_SOURCES) cormissing.xsl TODO mono-api.xsl
+DISTFILES= $(CORCOMPARE_SOURCES) $(APIINFO_SOURCES) $(APIDIFF_SOURCES) cormissing.xsl TODO mono-api.xsl transform.cs
 
 all-local: $(ALL_PROGRAMS)
 
