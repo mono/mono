@@ -55,4 +55,3 @@ namespace System.Data.SqlClient
 }
 
 #endif
-

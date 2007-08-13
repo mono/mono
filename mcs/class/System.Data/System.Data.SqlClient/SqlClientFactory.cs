@@ -87,10 +87,9 @@ namespace System.Data.SqlClient
 			return new SqlDataAdapter ();
 		}
 
-		[MonoTODO]
 		public override DbDataSourceEnumerator CreateDataSourceEnumerator ()
 		{
-				return SqlDataSourceEnumerator.Instance;
+			return SqlDataSourceEnumerator.Instance;
 		}
 
 		public override DbParameter CreateParameter ()

@@ -109,8 +109,8 @@ namespace System.Data.SqlClient {
 			get { return Errors [0].LineNumber; }
 		}
 		
-		public
 #if NET_1_0 || NET_1_1
+		public
 		override
 #else
 		new

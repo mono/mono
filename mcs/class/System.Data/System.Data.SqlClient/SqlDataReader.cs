@@ -168,7 +168,7 @@ namespace System.Data.SqlClient {
 			get { return command.Connection; }
 		}
 
-		protected bool IsCommandBehaviour (CommandBehavior condition) { 
+		protected bool IsCommandBehavior (CommandBehavior condition) { 
 			return condition == command.CommandBehavior;
 		}
 #endif
@@ -228,7 +228,7 @@ namespace System.Data.SqlClient {
 			return schemaTable;
 		}
 #if NET_2_0
-		protected new
+		new
 #endif
 		void Dispose (bool disposing) 
 		{
@@ -947,7 +947,6 @@ namespace System.Data.SqlClient {
 		}
 
 #if NET_2_0
-		[EditorBrowsableAttribute (EditorBrowsableState.Never)]
 		public virtual SqlXml GetSqlXml (int i)
 		{
 			object value = GetSqlValue (i);

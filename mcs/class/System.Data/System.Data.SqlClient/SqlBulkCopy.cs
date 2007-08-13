@@ -334,6 +334,7 @@ namespace System.Data.SqlClient {
 				blkCopy.SendColumnMetaData (statement);
 			}
 			blkCopy.BulkCopyStart (tmpCmd.Parameters.MetaParameters);
+			long noRowsCopied = 0;
 			foreach (DataRow row in table.Rows) {
 				if (row.RowState == DataRowState.Deleted)
 					continue; // Don't copy the row that's in deleted state
@@ -411,8 +412,15 @@ namespace System.Data.SqlClient {
 					blkCopy.BulkCopyData (rowToCopy, size, isNewRow);
 					if (isNewRow)
 						isNewRow = false;
+				} // foreach (SqlParameter)
+				if (_notifyAfter > 0) {
+					noRowsCopied ++;
+					if (noRowsCopied >= _notifyAfter) {
+						RowsCopied (noRowsCopied);
+						noRowsCopied = 0;
+					}
 				}
-			}
+			} // foreach (DataRow)
 			blkCopy.BulkCopyEnd ();
 		}
 
@@ -453,11 +461,19 @@ namespace System.Data.SqlClient {
 			BulkCopyToServer (table, rowState);
 		}
 
+		private void RowsCopied (long rowsCopied)
+		{
+			SqlRowsCopiedEventArgs e = new SqlRowsCopiedEventArgs (rowsCopied);
+			if (null != SqlRowsCopied) {
+				SqlRowsCopied (this, e);
+			}
+		}
+
 		#endregion
 
 		#region Events
 
-		public event SqlRowsCopiedEventHandler SqlRoswCopied;
+		public event SqlRowsCopiedEventHandler SqlRowsCopied;
 
 		#endregion
 

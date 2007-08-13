@@ -491,7 +491,10 @@ namespace System.Data.SqlClient {
 			command.DeriveParameters ();
 		}
 
-		protected new void Dispose (bool disposing)
+#if NET_1_0
+		protected
+#endif
+		new void Dispose (bool disposing)
 		{
 			if (!disposed) {
 				if (disposing) {
@@ -634,8 +637,9 @@ namespace System.Data.SqlClient {
 			return true;
 		}
 
+#if NET_1_0
 		public
-#if NET_2_0
+#else
 		new
 #endif
 		void RefreshSchema () 

@@ -48,7 +48,7 @@ namespace System.Data.SqlClient {
 
 		#region Constructors
 
-		public SqlRowsCopiedEventArgs(long rowsCopied){
+		public SqlRowsCopiedEventArgs (long rowsCopied) {
 			this.rowsCopied = rowsCopied;
 		}
 
@@ -56,19 +56,19 @@ namespace System.Data.SqlClient {
 
 		#region Properties
 
-		public bool Abort{
-		get {
-			return this.abort;
-		}
-		set {
-			this.abort = value;
-		}
+		public bool Abort {
+			get {
+				return this.abort;
+			}
+			set {
+				this.abort = value;
+			}
 		}		
 
-		public long RowsCopied{
-		get {
-			return this.rowsCopied;
-		}
+		public long RowsCopied {
+			get {
+				return this.rowsCopied;
+			}
 		}
 
 		#endregion // Properties

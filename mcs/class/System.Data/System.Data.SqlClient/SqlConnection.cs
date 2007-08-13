@@ -130,11 +130,7 @@ namespace System.Data.SqlClient {
 #endif
 		[DefaultValue ("")]
 		[EditorAttribute ("Microsoft.VSDesigner.Data.SQL.Design.SqlConnectionStringEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
-#if NET_2_0
-		[SettingsBindableAttribute (true)]
-#else
 		[RecommendedAsConfigurable (true)]
-#endif
 		[RefreshProperties (RefreshProperties.All)]
 		[MonoTODO("persist security info, encrypt, enlist keyword not implemented")]
 		public 

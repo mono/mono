@@ -1,3 +1,23 @@
+2007-08-13  Nagappan A  <anagappan@novell.com>
+
+	* SqlConnection.cs (ConnectionString): 2.0 compatibility changes.
+
+	* SqlDataReader.cs (IsCommandBehavior): Fixed spelling mistake of
+	the method name.
+	(Dispose): 2.0 compatibility changes.
+
+	* SqlBulkCopy.cs (SqlRowsCopied): Fixed spelling mistake of the
+	event name.
+	(RowsCopied): Generates event when NotifyAfter is set.
+
+	* SqlCommandBuilder.cs (Dispose, RefreshSchema): 2.0 compatibility
+	changes.
+
+	* SqlClientFactory.cs (CreateDataSourceEnumerator): Removed bogus
+	TODO.
+
+	* SqlException.cs (Message): 2.0 compatibility changes.
+
 2007-08-06  Nagappan A  <anagappan@novell.com>
 
 	* SqlCommand.cs, SqlDataReader.cs, SqlConnection.cs: When the
