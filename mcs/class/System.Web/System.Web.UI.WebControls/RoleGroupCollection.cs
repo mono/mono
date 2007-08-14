@@ -106,10 +106,6 @@ namespace System.Web.UI.WebControls {
 					((IList) this).Remove (group);
 			}
 		}
-
-		public void OnValidate (object sender)
-		{
-		}
 	}
 }
 

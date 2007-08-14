@@ -252,7 +252,7 @@ namespace System.Web.Compilation {
 					results.CompiledAssembly = Assembly.LoadFrom (options.OutputAssembly);
 				} catch (Exception ex) {
 					results.TempFiles.Delete ();
-					throw new HttpException ("Unable to load compiled assembly");
+					throw new HttpException ("Unable to load compiled assembly", ex);
 				}
 			}
 

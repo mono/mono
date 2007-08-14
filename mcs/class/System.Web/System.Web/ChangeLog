@@ -1,3 +1,7 @@
+2007-08-14  Marek Habersack  <mhabersack@novell.com>
+
+	* XmlSiteMapProvider.cs: do not hide this_lock.
+
 2007-08-09  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpApplicationFactory.cs: unconditionally watch for changes

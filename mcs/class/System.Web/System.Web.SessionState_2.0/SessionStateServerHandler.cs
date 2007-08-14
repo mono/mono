@@ -41,7 +41,6 @@ namespace System.Web.SessionState
 		private const Int32 lockAcquireTimeout = 30000;
 		
 		SessionStateSection config;
-		NameValueCollection privateConfig;
 		RemoteStateServer stateServer;
 
 		public override SessionStateStoreData CreateNewStoreData (HttpContext context, int timeout)
@@ -161,7 +160,6 @@ namespace System.Web.SessionState
 #endif
 			if (String.IsNullOrEmpty (name))
 				name = "Session Server handler";
-			privateConfig = config;
 			RemotingConfiguration.Configure (null);
 			string cons = null, proto = null, server = null, port = null;
                         GetConData (out proto, out server, out port);

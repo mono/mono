@@ -1,3 +1,8 @@
+2007-08-14  Marek Habersack  <mhabersack@novell.com>
+
+	* Control.cs: include the actual exception when reporting control
+	id clash.
+
 2007-08-10  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* PageParser.cs: Replace enableSessionState and readOnlySessionState

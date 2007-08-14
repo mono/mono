@@ -57,7 +57,6 @@ namespace System.Web.Security {
 			}
 		}
 #else
-		private static CookieProtection cookie_protection;
 		private static RoleManagerSection config;
 		static RoleProviderCollection providersCollection;
 

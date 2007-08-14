@@ -163,7 +163,7 @@ namespace System.Web.Compilation
 			
 			// First make sure all the files are in the same
 			// language
-			bool known = false, unknown = false;
+			bool known = false;
 			foreach (string f in files) {
 				known = true;
 				language = null;
@@ -228,7 +228,6 @@ namespace System.Web.Compilation
 				parameters.ReferencedAssemblies.AddRange (binAssemblies);
 			
 			if (compilationSection != null) {
-				AssemblyName asmName;
 				foreach (AssemblyInfo ai in compilationSection.Assemblies)
 					if (ai.Assembly != "*") {
 						try {
@@ -248,7 +247,6 @@ namespace System.Web.Compilation
 					if (bprovider == null)
 						continue;
 					bprovider.GenerateCode (abuilder);
-					unknown = true;
 				}
 			}
 

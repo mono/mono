@@ -172,11 +172,10 @@ namespace System.Web.Compilation {
 			if (virtualPath == null || virtualPath == "")
 				throw new ArgumentNullException ("virtualPath");
 
-			CodeCompileUnit unit = null;
 			Type cprovider_type;
 			CompilerParameters parameters;
-			unit = GenerateCodeCompileUnit (virtualPath, virtualFileString, out cprovider_type,
-							out parameters, out linePragmasTable);
+			CodeCompileUnit unit = GenerateCodeCompileUnit (virtualPath, virtualFileString, out cprovider_type,
+									out parameters, out linePragmasTable);
 			return null;
 		}
 

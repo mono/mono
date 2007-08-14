@@ -995,7 +995,7 @@ namespace System.Web.Security {
 				AddParameter (command, "@UpdateLastLoginActivityDate", false);
 				AddParameter (command, "@CurrentTimeUtc", DateTime.Now);
 				// return value
-				DbParameter returnValue = AddParameter (command, "@ReturnVal", ParameterDirection.ReturnValue, DbType.Int32, null);
+				AddParameter (command, "@ReturnVal", ParameterDirection.ReturnValue, DbType.Int32, null);
 
 				DbDataReader reader = command.ExecuteReader ();
 				if (!reader.Read ())

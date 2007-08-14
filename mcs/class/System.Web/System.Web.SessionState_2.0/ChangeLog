@@ -1,3 +1,7 @@
+2007-08-14  Marek Habersack  <mhabersack@novell.com>
+
+	* SessionStateServerHandler.cs: remove unused field.
+
 2007-07-31  Marek Habersack  <mhabersack@novell.com>
 
 	* SessionInProcHandler.cs: initialize the static session objects

@@ -369,7 +369,6 @@ namespace System.Web.Profile
 
 			applicationName = GetStringConfigValue (config, "applicationName", "/");
 
-			ProfileSection section = (ProfileSection) WebConfigurationManager.GetSection ("system.web/profile");
 			string connectionStringName = config ["connectionStringName"];
 
 			if (applicationName.Length > 256)

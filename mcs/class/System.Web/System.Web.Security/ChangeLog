@@ -1,3 +1,9 @@
+2007-08-14  Marek Habersack  <mhabersack@novell.com>
+
+	* Roles.cs: remove unused field.
+
+	* SqlMembershipProvider.cs: remove unused variable.
+
 2007-08-13 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* SqlRoleProvider.cs: fixed ApplicationName initialization

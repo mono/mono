@@ -1,5 +1,12 @@
 2007-08-14  Marek Habersack  <mhabersack@novell.com>
 
+	* TemplateControlCompiler.cs: remove dead code.
+
+	* AssemblyBuilder.cs: include actual exception information when
+	reporting inability to load a compiled assembly.
+
+	* AppCodeCompiler.cs: remove unused variables.
+
 	* AspComponentFoundry.cs: use an ArrayList to implement LIFO for
 	component collections, instead of the old Queue which implemented
 	FIFO. Fixes situations when a control registered later for a

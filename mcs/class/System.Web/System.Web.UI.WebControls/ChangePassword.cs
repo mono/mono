@@ -1393,7 +1393,6 @@ namespace System.Web.UI.WebControls
 				FailureTextLiteral.ID = "FailureText";
 				FailureTextLiteral.EnableViewState = false;
 
-				Style FailureTextStyle = new Style ();
 				if (_owner.FailureTextStyle.ForeColor.IsEmpty)
 					_owner.FailureTextStyle.ForeColor = System.Drawing.Color.Red;
 

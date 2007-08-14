@@ -1,3 +1,7 @@
+2007-08-14  Marek Habersack  <mhabersack@novell.com>
+
+	* SqlProfileProvider.cs: remove unused variable.
+
 2007-07-16  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* ProfileBase.cs: fixed typo bug in InitProperties

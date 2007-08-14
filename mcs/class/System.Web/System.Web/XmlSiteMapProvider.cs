@@ -46,7 +46,6 @@ namespace System.Web
 	{
 		static readonly char [] seperators = { ';', ',' };
 
-		object this_lock = new object ();
 		bool building;
 		string file;
 		SiteMapNode root = null;

@@ -1,3 +1,11 @@
+2007-08-14  Marek Habersack  <mhabersack@novell.com>
+
+	* ObjectDataSourceView.cs: remove unused variable.
+
+	* ChangePassword.cs: remove unused variable.
+
+	* RoleGroupCollection.cs: OnValidate shouldn't be overridden.
+
 2007-08-14  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* ParameterCollection.cs: fixed IndexOfString, should use ordinal

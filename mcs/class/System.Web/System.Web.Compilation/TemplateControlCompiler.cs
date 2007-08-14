@@ -751,16 +751,10 @@ namespace System.Web.Compilation
 			if (obj == null)
 				return;
 
-			Type member_type = null;
-			if (isProperty)
-				member_type = ((PropertyInfo)mi).PropertyType;
-			else if (isField)
-				member_type = ((FieldInfo)mi).FieldType;
-			else
+			if (!isProperty && !isField)
 				return; // an "impossible" case
 			
 			Type declaringType = mi.DeclaringType;
-			TypeConverter converter = TypeDescriptor.GetProperties (declaringType) [memberName].Converter;
 			CodeAssignStatement assign = new CodeAssignStatement ();
 			
 			assign.Left = new CodePropertyReferenceExpression (ctrlVar, memberName);
