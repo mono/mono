@@ -84,7 +84,7 @@ namespace System.Diagnostics
 			if (logName == null) {
 				throw new ArgumentNullException ("logName");
 			}
-			if (machineName == null || machineName.Length == 0)
+			if (machineName == null || machineName.Trim ().Length == 0)
 #if NET_2_0
 				throw new ArgumentException (string.Format (
 					CultureInfo.InvariantCulture, "Invalid value '{0}' for"
@@ -107,11 +107,14 @@ namespace System.Diagnostics
 		public bool EnableRaisingEvents {
 			get {return doRaiseEvents;}
 			set {
-				doRaiseEvents = value;
+				if (value == doRaiseEvents)
+					return;
+
 				if (value)
 					Impl.EnableNotification ();
 				else
 					Impl.DisableNotification ();
+				doRaiseEvents = value;
 			}
 		}
 
@@ -133,20 +136,35 @@ namespace System.Diagnostics
 			set {
 				if (value == null)
 					throw new ArgumentNullException ("value");
-				logName = value;
+
+				// log name is treated case-insensitively on all platforms
+				if (string.Compare (logName, value, true) != 0) {
+					logName = value;
+					Reset ();
+				}
 			}
 		}
 
 		[Browsable (false)]
 		public string LogDisplayName {
-			get {return Impl.LogDisplayName;}
+			get { return Impl.LogDisplayName; }
 		}
 
 		[ReadOnly (true), DefaultValue ("."), RecommendedAsConfigurable (true)]
 		[MonitoringDescription ("Name of the machine that this log get written to.")]
 		public string MachineName {
-			get {return machineName;}
-			set {machineName = value;}
+			get { return machineName; }
+			set {
+				if (value == null || value.Trim ().Length == 0)
+					throw new ArgumentException (string.Format (
+						CultureInfo.InvariantCulture, "Invalid value {0} for"
+						+ " property MachineName.", value));
+
+				if (string.Compare (machineName, value, true) != 0) {
+					Close ();
+					machineName = value;
+				}
+			}
 		}
 
 		[ReadOnly (true), DefaultValue (""), RecommendedAsConfigurable (true)]
@@ -154,7 +172,19 @@ namespace System.Diagnostics
 		[MonitoringDescription ("The application name that writes the log.")]
 		public string Source {
 			get { return source; }
-			set { source = (value == null) ? string.Empty : value; }
+			set {
+				if (value == null)
+					value = string.Empty;
+
+				// Source only affects eventlog implementation if Source was set
+				// and no Log was set
+				if (source == null || source.Length == 0 && (logName == null ||logName.Length == 0)) {
+					source = value;
+				} else if (string.Compare (source, value, true) != 0) {
+					source = value;
+					Reset ();
+				}
+			}
 		}
 
 		[Browsable (false), DefaultValue (null)]
@@ -182,11 +212,20 @@ namespace System.Diagnostics
 					machineName));
 
 			Impl.Clear ();
+			Reset ();
 		}
 
 		public void Close ()
 		{
 			Impl.Close();
+			EnableRaisingEvents = false;
+		}
+
+		internal void Reset ()
+		{
+			bool enableRaisingEvents = EnableRaisingEvents;
+			Close ();
+			EnableRaisingEvents = enableRaisingEvents;
 		}
 
 		public static void CreateEventSource (string source, string logName)
@@ -237,7 +276,7 @@ namespace System.Diagnostics
 		[MonoNotSupported ("remote machine is not supported")]
 		public static void Delete (string logName, string machineName)
 		{
-			if (machineName == null || machineName.Length == 0)
+			if (machineName == null || machineName.Trim ().Length == 0)
 				throw new ArgumentException ("Invalid format for argument"
 					+ " machineName.");
 
@@ -257,7 +296,7 @@ namespace System.Diagnostics
 		[MonoNotSupported ("remote machine is not supported")]
 		public static void DeleteEventSource (string source, string machineName)
 		{
-			if (machineName == null || machineName.Length == 0)
+			if (machineName == null || machineName.Trim ().Length == 0)
 #if NET_2_0
 				throw new ArgumentException (string.Format (
 					CultureInfo.InvariantCulture, "Invalid value '{0}' for"
@@ -292,7 +331,7 @@ namespace System.Diagnostics
 		[MonoNotSupported ("remote machine is not supported")]
 		public static bool Exists (string logName, string machineName)
 		{
-			if (machineName == null || machineName.Length == 0)
+			if (machineName == null || machineName.Trim ().Length == 0)
 				throw new ArgumentException ("Invalid format for argument machineName.");
 
 			if (logName == null || logName.Length == 0)
@@ -318,7 +357,7 @@ namespace System.Diagnostics
 		[MonoNotSupported ("remote machine is not supported")]
 		public static string LogNameFromSourceName (string source, string machineName)
 		{
-			if (machineName == null || machineName.Length == 0)
+			if (machineName == null || machineName.Trim ().Length == 0)
 #if NET_2_0
 				throw new ArgumentException (string.Format (
 					CultureInfo.InvariantCulture, "Invalid value '{0}' for"
@@ -342,10 +381,16 @@ namespace System.Diagnostics
 		[MonoNotSupported ("remote machine is not supported")]
 		public static bool SourceExists (string source, string machineName)
 		{
-			if (machineName == null || machineName.Length == 0)
+			if (machineName == null || machineName.Trim ().Length == 0)
+#if NET_2_0
 				throw new ArgumentException (string.Format (
 					CultureInfo.InvariantCulture, "Invalid value '{0}' for"
 					+ " parameter 'machineName'.", machineName));
+#else
+				throw new ArgumentException (string.Format (
+					CultureInfo.InvariantCulture, "Invalid value {0} for"
+					+ " parameter machineName.", machineName));
+#endif
 
 			EventLogImpl impl = CreateEventLogImpl (string.Empty, machineName,
 				source);
@@ -510,8 +555,7 @@ namespace System.Diagnostics
 		}
 
 		// IMPORTANT: also modify corresponding property in EventLogTest
-		private static string EventLogImplType
-		{
+		private static string EventLogImplType {
 			get {
 				string implType = Environment.GetEnvironmentVariable (EVENTLOG_TYPE_VAR);
 				if (implType == null) {

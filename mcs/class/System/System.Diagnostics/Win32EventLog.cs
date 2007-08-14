@@ -35,6 +35,7 @@ using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 
 using Microsoft.Win32;
 
@@ -43,6 +44,11 @@ namespace System.Diagnostics
 	internal class Win32EventLog : EventLogImpl
 	{
 		private const int MESSAGE_NOT_FOUND = 317;
+		private ManualResetEvent _notifyResetEvent;
+		private IntPtr _readHandle;
+		private Thread _notifyThread;
+		private int _lastEntryWritten;
+		private bool _notifying;
 
 		public Win32EventLog (EventLog coreEventLog)
 			: base (coreEventLog)
@@ -55,20 +61,17 @@ namespace System.Diagnostics
 
 		public override void Clear ()
 		{
-			IntPtr hEventLog = OpenEventLog ();
-			try {
-				int ret = PInvoke.ClearEventLog (hEventLog, null);
-				if (ret != 1) {
-					throw new Win32Exception (Marshal.GetLastWin32Error ());
-				}
-			} finally {
-				CloseEventLog (hEventLog);
-			}
+			int ret = PInvoke.ClearEventLog (ReadHandle, null);
+			if (ret != 1)
+				throw new Win32Exception (Marshal.GetLastWin32Error ());
 		}
 
 		public override void Close ()
 		{
-			// we don't hold any unmanaged resources
+			if (_readHandle != IntPtr.Zero) {
+				CloseEventLog (_readHandle);
+				_readHandle = IntPtr.Zero;
+			}
 		}
 
 		public override void CreateEventSource (EventSourceCreationData sourceData)
@@ -236,17 +239,11 @@ namespace System.Diagnostics
 
 		protected override int GetEntryCount ()
 		{
-			IntPtr hEventLog = OpenEventLog ();
-			try {
-				int entryCount = 0;
-				int retVal = PInvoke.GetNumberOfEventLogRecords (hEventLog, ref entryCount);
-				if (retVal != 1) {
-					throw new Win32Exception (Marshal.GetLastWin32Error ());
-				}
-				return entryCount;
-			} finally {
-				CloseEventLog (hEventLog);
-			}
+			int entryCount = 0;
+			int retVal = PInvoke.GetNumberOfEventLogRecords (ReadHandle, ref entryCount);
+			if (retVal != 1)
+				throw new Win32Exception (Marshal.GetLastWin32Error ());
+			return entryCount;
 		}
 
 		protected override EventLogEntry GetEntry (int index)
@@ -257,103 +254,91 @@ namespace System.Diagnostics
 
 			index += OldestEventLogEntry;
 
-			IntPtr hEventLog = OpenEventLog ();
-			try {
-				int bytesRead = 0;
-				int minBufferNeeded = 0;
+			int bytesRead = 0;
+			int minBufferNeeded = 0;
+			byte [] buffer = new byte [0x7ffff]; // according to MSDN this is the max size of the buffer
 
-				byte [] buffer = new byte [0x7ffff]; // according to MSDN this is the max size of the buffer
-				int length = buffer.Length;
+			ReadEventLog (index, buffer, ref bytesRead, ref minBufferNeeded);
 
-				int ret = PInvoke.ReadEventLog (hEventLog, ReadFlags.Seek |
-					ReadFlags.ForwardsRead, index, buffer, length,
-					ref bytesRead, ref minBufferNeeded);
-				if (ret != 1) {
-					throw new Win32Exception (Marshal.GetLastWin32Error ());
-				}
+			MemoryStream ms = new MemoryStream (buffer);
+			BinaryReader br = new BinaryReader (ms);
 
-				MemoryStream ms = new MemoryStream (buffer);
-				BinaryReader br = new BinaryReader (ms);
+			// skip first 8 bytes
+			br.ReadBytes (8);
 
-				// skip first 8 bytes
-				br.ReadBytes (8);
+			int recordNumber = br.ReadInt32 (); // 8
 
-				int recordNumber = br.ReadInt32 (); // 8
+			int timeGeneratedSeconds = br.ReadInt32 (); // 12
+			int timeWrittenSeconds = br.ReadInt32 (); // 16
+			uint instanceID = br.ReadUInt32 ();
+			int eventID = EventLog.GetEventID (instanceID);
+			short eventType = br.ReadInt16 (); // 24
+			short numStrings = br.ReadInt16 (); ; // 26
+			short categoryNumber = br.ReadInt16 (); ; // 28
+			// skip reservedFlags
+			br.ReadInt16 (); // 30
+			// skip closingRecordNumber
+			br.ReadInt32 (); // 32
+			int stringOffset = br.ReadInt32 (); // 36
+			int userSidLength = br.ReadInt32 (); // 40
+			int userSidOffset = br.ReadInt32 (); // 44
+			int dataLength = br.ReadInt32 (); // 48
+			int dataOffset = br.ReadInt32 (); // 52
 
-				int timeGeneratedSeconds = br.ReadInt32 (); // 12
-				int timeWrittenSeconds = br.ReadInt32 (); // 16
-				uint instanceID = br.ReadUInt32 ();
-				int eventID = EventLog.GetEventID (instanceID);
-				short eventType = br.ReadInt16 (); // 24
-				short numStrings = br.ReadInt16 (); ; // 26
-				short categoryNumber = br.ReadInt16 (); ; // 28
-				// skip reservedFlags
-				br.ReadInt16 (); // 30
-				// skip closingRecordNumber
-				br.ReadInt32 (); // 32
-				int stringOffset = br.ReadInt32 (); // 36
-				int userSidLength = br.ReadInt32 (); // 40
-				int userSidOffset = br.ReadInt32 (); // 44
-				int dataLength = br.ReadInt32 (); // 48
-				int dataOffset = br.ReadInt32 (); // 52
+			DateTime timeGenerated = new DateTime (1970, 1, 1).AddSeconds (
+				timeGeneratedSeconds);
 
-				DateTime timeGenerated = new DateTime (1970, 1, 1).AddSeconds (
-					timeGeneratedSeconds);
+			DateTime timeWritten = new DateTime (1970, 1, 1).AddSeconds (
+				timeWrittenSeconds);
 
-				DateTime timeWritten = new DateTime (1970, 1, 1).AddSeconds (
-					timeWrittenSeconds);
+			StringBuilder sb = new StringBuilder ();
+			while (br.PeekChar () != '\0')
+				sb.Append (br.ReadChar ());
+			br.ReadChar (); // skip the null-char
 
-				StringBuilder sb = new StringBuilder ();
-				while (br.PeekChar () != '\0')
-					sb.Append (br.ReadChar ());
-				br.ReadChar (); // skip the null-char
+			string sourceName = sb.ToString ();
 
-				string sourceName = sb.ToString ();
+			sb.Length = 0;
+			while (br.PeekChar () != '\0')
+				sb.Append (br.ReadChar ());
+			br.ReadChar (); // skip the null-char
+			string machineName = sb.ToString ();
 
-				sb.Length = 0;
-				while (br.PeekChar () != '\0')
-					sb.Append (br.ReadChar ());
-				br.ReadChar (); // skip the null-char
-				string machineName = sb.ToString ();
+			sb.Length = 0;
+			while (br.PeekChar () != '\0')
+				sb.Append (br.ReadChar ());
+			br.ReadChar (); // skip the null-char
 
-				sb.Length = 0;
-				while (br.PeekChar () != '\0')
-					sb.Append (br.ReadChar ());
-				br.ReadChar (); // skip the null-char
-
-				string userName = null;
-				if (userSidLength != 0) {
-					// TODO: lazy init ?
-					ms.Position = userSidOffset;
-					byte [] sid = br.ReadBytes (userSidLength);
-					userName = LookupAccountSid (machineName, sid);
-				}
-
-				ms.Position = stringOffset;
-				string [] replacementStrings = new string [numStrings];
-				for (int i = 0; i < numStrings; i++) {
-					sb.Length = 0;
-					while (br.PeekChar () != '\0')
-						sb.Append (br.ReadChar ());
-					br.ReadChar (); // skip the null-char
-					replacementStrings [i] = sb.ToString ();
-				}
-
-				byte [] data = new byte [dataLength];
-				ms.Position = dataOffset;
-				br.Read (data, 0, dataLength);
-
-				// TODO: lazy fetch ??
-				string message = this.FormatMessage (sourceName, instanceID, replacementStrings);
-				string category = FormatCategory (sourceName, categoryNumber);
-
-				return new EventLogEntry (category, (short) categoryNumber, recordNumber,
-					eventID, sourceName, message, userName, machineName,
-					(EventLogEntryType) eventType, timeGenerated, timeWritten,
-					data, replacementStrings, instanceID);
-			} finally {
-				CloseEventLog (hEventLog);
+			string userName = null;
+			if (userSidLength != 0) {
+				// TODO: lazy init ?
+				ms.Position = userSidOffset;
+				byte [] sid = br.ReadBytes (userSidLength);
+				userName = LookupAccountSid (machineName, sid);
 			}
+
+			ms.Position = stringOffset;
+			string [] replacementStrings = new string [numStrings];
+			for (int i = 0; i < numStrings; i++) {
+				sb.Length = 0;
+				while (br.PeekChar () != '\0')
+					sb.Append (br.ReadChar ());
+				br.ReadChar (); // skip the null-char
+				replacementStrings [i] = sb.ToString ();
+			}
+
+			byte [] data = new byte [dataLength];
+			ms.Position = dataOffset;
+			br.Read (data, 0, dataLength);
+
+			// TODO: lazy fetch ??
+			string message = this.FormatMessage (sourceName, instanceID, replacementStrings);
+			string category = FormatCategory (sourceName, categoryNumber);
+
+			return new EventLogEntry (category, (short) categoryNumber, recordNumber,
+				eventID, sourceName, message, userName, machineName,
+				(EventLogEntryType) eventType, timeGenerated, timeWritten,
+				data, replacementStrings, instanceID);
 		}
 
 		[MonoTODO]
@@ -427,7 +412,6 @@ namespace System.Diagnostics
 					Environment.SpecialFolder.System), "config");
 				logKey.SetValue ("File", Path.Combine (configPath, file));
 			}
-
 		}
 
 		private static void UpdateSourceRegistry (RegistryKey sourceKey, EventSourceCreationData data)
@@ -453,6 +437,29 @@ namespace System.Diagnostics
 			string logName = logKey.Name;
 			return logName.Substring (logName.LastIndexOf ("\\") + 1);
 		}
+
+		private void ReadEventLog (int index, byte [] buffer, ref int bytesRead, ref int minBufferNeeded)
+		{
+			const int max_retries = 3;
+
+			// if the eventlog file changed since the handle was
+			// obtained, then we need to re-try multiple times
+			for (int i = 0; i < max_retries; i++) {
+				int ret = PInvoke.ReadEventLog (ReadHandle, 
+					ReadFlags.Seek | ReadFlags.ForwardsRead,
+					index, buffer, buffer.Length, ref bytesRead,
+					ref minBufferNeeded);
+				if (ret != 1) {
+					int error = Marshal.GetLastWin32Error ();
+					if (i < (max_retries - 1)) {
+						CoreEventLog.Reset ();
+					} else {
+						throw new Win32Exception (error);
+					}
+				}
+			}
+		}
+
 
 		[MonoTODO ("Support remote machines")]
 		private static RegistryKey GetEventLogKey (string machineName, bool writable)
@@ -535,17 +542,12 @@ namespace System.Diagnostics
 
 		private int OldestEventLogEntry {
 			get {
-				IntPtr hEventLog = OpenEventLog ();
-				try {
-					int oldestEventLogEntry = 0;
-					int ret = PInvoke.GetOldestEventLogRecord (hEventLog, ref oldestEventLogEntry);
-					if (ret != 1) {
-						throw new Win32Exception (Marshal.GetLastWin32Error ());
-					}
-					return oldestEventLogEntry;
-				} finally {
-					CloseEventLog (hEventLog);
+				int oldestEventLogEntry = 0;
+				int ret = PInvoke.GetOldestEventLogRecord (ReadHandle, ref oldestEventLogEntry);
+				if (ret != 1) {
+					throw new Win32Exception (Marshal.GetLastWin32Error ());
 				}
+				return oldestEventLogEntry;
 			}
 		}
 
@@ -670,18 +672,21 @@ namespace System.Diagnostics
 			return new string [0];
 		}
 
-		private IntPtr OpenEventLog ()
-		{
-			string logName = CoreEventLog.GetLogName ();
-			IntPtr hEventLog = PInvoke.OpenEventLog (CoreEventLog.MachineName,
-				logName);
-			if (hEventLog == IntPtr.Zero) {
-				throw new InvalidOperationException (string.Format (
-					CultureInfo.InvariantCulture, "Event Log '{0}' on computer"
-					+ " '{1}' cannot be opened.", logName, CoreEventLog.MachineName),
-					new Win32Exception ());
+		private IntPtr ReadHandle {
+			get {
+				if (_readHandle != IntPtr.Zero)
+					return _readHandle;
+
+				string logName = CoreEventLog.GetLogName ();
+				_readHandle = PInvoke.OpenEventLog (CoreEventLog.MachineName,
+					logName);
+				if (_readHandle == IntPtr.Zero)
+					throw new InvalidOperationException (string.Format (
+						CultureInfo.InvariantCulture, "Event Log '{0}' on computer"
+						+ " '{1}' cannot be opened.", logName, CoreEventLog.MachineName),
+						new Win32Exception ());
+				return _readHandle;
 			}
-			return hEventLog;
 		}
 
 		private IntPtr RegisterEventSource ()
@@ -699,12 +704,60 @@ namespace System.Diagnostics
 
 		public override void DisableNotification ()
 		{
-			// FIXME: implement
+			if (_notifyResetEvent != null) {
+				_notifyResetEvent.Close ();
+				_notifyResetEvent = null;
+			}
+
+			if (_notifyThread != null) {
+				if (_notifyThread.ThreadState == System.Threading.ThreadState.Running)
+					_notifyThread.Abort ();
+				_notifyThread = null;
+			}
 		}
 
 		public override void EnableNotification ()
 		{
-			// FIXME: implement
+			_notifyResetEvent = new ManualResetEvent (false);
+			_lastEntryWritten = OldestEventLogEntry + EntryCount;
+			if (PInvoke.NotifyChangeEventLog (ReadHandle, _notifyResetEvent.Handle) == 0)
+				throw new InvalidOperationException (string.Format (
+					CultureInfo.InvariantCulture, "Unable to receive notifications"
+					+ " for log '{0}' on computer '{1}'.", CoreEventLog.GetLogName (),
+					CoreEventLog.MachineName), new Win32Exception ());
+			_notifyThread = new Thread (new ThreadStart (NotifyEventThread));
+			_notifyThread.IsBackground = true;
+			_notifyThread.Start ();
+		}
+
+		private void NotifyEventThread ()
+		{
+			while (true) {
+				_notifyResetEvent.WaitOne ();
+				lock (this) {
+					// after a clear, we something get notified
+					// twice for the same entry
+					if (_notifying)
+						return;
+					_notifying = true;
+				}
+
+				try {
+					int oldest_entry = OldestEventLogEntry;
+					if (_lastEntryWritten < oldest_entry)
+						_lastEntryWritten = oldest_entry;
+					int current_entry = _lastEntryWritten - oldest_entry;
+					int last_entry = EntryCount + oldest_entry;
+					for (int i = current_entry; i < (last_entry - 1); i++) {
+						EventLogEntry entry = GetEntry (i);
+						CoreEventLog.OnEntryWritten (entry);
+					}
+					_lastEntryWritten = last_entry;
+				} finally {
+					lock (this)
+						_notifying = false;
+				}
+			}
 		}
 
 		private class PInvoke
@@ -746,6 +799,9 @@ namespace System.Diagnostics
 				ref uint cchReferencedDomainName,
 				out SidNameUse peUse);
 
+			[DllImport ("Advapi32.dll", SetLastError = true)]
+			public static extern int NotifyChangeEventLog (IntPtr hEventLog, IntPtr hEvent);
+
 			[DllImport ("advapi32.dll", SetLastError=true)]
 			public static extern IntPtr OpenEventLog (string machineName, string logName);
 
@@ -757,10 +813,11 @@ namespace System.Diagnostics
 				ushort wCategory, uint dwEventID, IntPtr sid, ushort wNumStrings,
 				uint dwDataSize, string [] lpStrings, byte [] lpRawData);
 
-			[DllImport ("advapi32.dll", SetLastError = true)]
+			[DllImport ("advapi32.dll", SetLastError=true)]
 			public static extern int ReadEventLog (IntPtr hEventLog, ReadFlags dwReadFlags, int dwRecordOffset, byte [] buffer, int nNumberOfBytesToRead, ref int pnBytesRead, ref int pnMinNumberOfBytesNeeded);
 
 			public const int ERROR_INSUFFICIENT_BUFFER = 122;
+			public const int ERROR_EVENTLOG_FILE_CHANGED = 1503;
 		}
 
 		private enum ReadFlags

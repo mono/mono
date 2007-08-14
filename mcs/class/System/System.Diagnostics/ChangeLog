@@ -1,4 +1,20 @@
-2007-08-08 Gonzalo Paniagua Javier <gonzalo.mono@gmail.com>
+2007-08-14  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* EventLog.cs: Do not allow all whitespace machine name. Do nothing
+	when setting the same value for EnableRaisingEvents, and only modify
+	value of field when enable/disable succeeded. Treats log name case
+	insensitively on all platforms, and perform reset when the log name
+	is changed. Validate new machine name in property, and treat it
+	case-insensitively. Perform reset when source is modified, and log
+	name was not explicitly set. When EventLog is closed, also disable
+	event watcher.
+	* LocalEventLog.cs: In Close, clean-up the FileSystemWatcher. Add
+	locking to Created eventhandler to avoid duplicate notifications.
+	* Win32EventLog.cs: Cache handle for reading from eventlog. In Close,
+	close the read handle. Implement support for watching win32 eventlog.
+	Fixes bug #82436.
+
+2007-08-08  Gonzalo Paniagua Javier <gonzalo.mono@gmail.com>
 
 	* Process.cs: added StandardOutputEncoding and StandardErrorEncoding
 	properties. Bug #82262 fixed.

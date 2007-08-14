@@ -45,6 +45,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Threading;
 
 using Microsoft.Win32;
 
@@ -59,6 +60,7 @@ namespace MonoTests.System.Diagnostics
 		private string _originalEventLogImpl;
 		private string _eventLogStore;
 #endif
+
 		private const string EVENTLOG_TYPE_VAR = "MONO_EVENTLOG_TYPE";
 
 		// IMPORTANT: also update constants in EventLogTest
@@ -266,8 +268,9 @@ namespace MonoTests.System.Diagnostics
 						Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
 						Assert.IsNotNull (ex.Message, "#A3");
 						Assert.IsNull (ex.InnerException, "#A4");
+						Assert.IsNull (ex.ParamName, "#A5");
 					}
-					Assert.AreEqual (string.Empty, eventLog.Log, "#A5");
+					Assert.AreEqual (string.Empty, eventLog.Log, "#A6");
 
 					// set non-existing source
 					eventLog.Source = "monoothersource";
@@ -280,8 +283,9 @@ namespace MonoTests.System.Diagnostics
 						Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
 						Assert.IsNotNull (ex.Message, "#B3");
 						Assert.IsNull (ex.InnerException, "#B4");
+						Assert.IsNull (ex.ParamName, "#B5");
 					}
-					Assert.AreEqual (string.Empty, eventLog.Log, "#B5");
+					Assert.AreEqual (string.Empty, eventLog.Log, "#B6");
 
 					// set existing source
 					eventLog.Source = "monotempsource";
@@ -413,6 +417,7 @@ namespace MonoTests.System.Diagnostics
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#3b");
 				Assert.IsNotNull (ex.Message, "#3c");
 				Assert.IsNull (ex.InnerException, "#3d");
+				Assert.IsNull (ex.ParamName, "#3e");
 			}
 			Assert.IsNotNull (eventLog.Log, "#4");
 			Assert.AreEqual (string.Empty, eventLog.Log, "#5");
@@ -532,6 +537,7 @@ namespace MonoTests.System.Diagnostics
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A3b");
 				Assert.IsNotNull (ex.Message, "#A3c");
 				Assert.IsNull (ex.InnerException, "#A3d");
+				Assert.IsNull (ex.ParamName, "#A3e");
 			}
 			Assert.IsNotNull (eventLog.Log, "#A4");
 			Assert.AreEqual (string.Empty, eventLog.Log, "#A5");
@@ -658,6 +664,7 @@ namespace MonoTests.System.Diagnostics
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A3b");
 				Assert.IsNotNull (ex.Message, "#A3c");
 				Assert.IsNull (ex.InnerException, "#A3d");
+				Assert.IsNull (ex.ParamName, "#A3e");
 			}
 			Assert.IsNotNull (eventLog.Log, "#A4");
 			Assert.AreEqual (string.Empty, eventLog.Log, "#A5");
@@ -697,17 +704,38 @@ namespace MonoTests.System.Diagnostics
 				new EventLog ("monologtemp", string.Empty);
 				Assert.Fail ("#A1");
 			} catch (ArgumentException ex) {
-				// Invalid value '' for parameter 'machineName'
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
 				Assert.IsNotNull (ex.Message, "#A3");
 #if NET_2_0
+				// Invalid value '' for parameter 'machineName'
 				Assert.IsTrue (ex.Message.IndexOf ("''") != -1, "#A4");
 				Assert.IsTrue (ex.Message.IndexOf ("'machineName'") != -1, "#A5");
 #else
+				// Invalid value  for parameter MachineName
 				Assert.IsTrue (ex.Message.IndexOf ("  ") != -1, "#A4");
 				Assert.IsTrue (ex.Message.IndexOf ("MachineName") != -1, "#A5");
 #endif
 				Assert.IsNull (ex.InnerException, "#A6");
+				Assert.IsNull (ex.ParamName, "#A7");
+			}
+
+			try {
+				new EventLog ("monologtemp", " \t\n");
+				Assert.Fail ("#B1");
+			} catch (ArgumentException ex) {
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNotNull (ex.Message, "#B3");
+#if NET_2_0
+				// Invalid value ' \t\n' for parameter 'machineName'
+				Assert.IsTrue (ex.Message.IndexOf ("' \t\n'") != -1, "#B4");
+				Assert.IsTrue (ex.Message.IndexOf ("'machineName'") != -1, "#B5");
+#else
+				// Invalid value  \t\n for parameter MachineName
+				Assert.IsTrue (ex.Message.IndexOf ("  \t\n ") != -1, "#B4");
+				Assert.IsTrue (ex.Message.IndexOf ("MachineName") != -1, "#B5");
+#endif
+				Assert.IsNull (ex.InnerException, "#B6");
+				Assert.IsNull (ex.ParamName, "#B7");
 			}
 		}
 
@@ -729,6 +757,7 @@ namespace MonoTests.System.Diagnostics
 				Assert.IsTrue (ex.Message.IndexOf ("MachineName") != -1, "#A5");
 #endif
 				Assert.IsNull (ex.InnerException, "#A6");
+				Assert.IsNull (ex.ParamName, "#A7");
 			}
 		}
 
@@ -758,6 +787,11 @@ namespace MonoTests.System.Diagnostics
 					Assert.AreEqual (".", eventLog.MachineName, "#A8");
 					Assert.IsNotNull (eventLog.Source, "#A9");
 					Assert.AreEqual ("monotempsource", eventLog.Source, "#A10");
+				}
+
+				using (EventLog eventLog = new EventLog ("monologtemp", ".", "whatever")) {
+					Assert.AreEqual ("monologtemp", eventLog.Log, "#B1");
+					Assert.AreEqual ("monologtemp", eventLog.LogDisplayName, "#B2");
 				}
 			} finally {
 				EventLog.Delete ("monologtemp");
@@ -831,6 +865,7 @@ namespace MonoTests.System.Diagnostics
 					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A3b");
 					Assert.IsNotNull (ex.Message, "#A3c");
 					Assert.IsNull (ex.InnerException, "#A3d");
+					Assert.IsNull (ex.ParamName, "#A3e");
 				}
 				Assert.IsNotNull (eventLog.Log, "#A4");
 				Assert.AreEqual (string.Empty, eventLog.Log, "#A5");
@@ -879,17 +914,38 @@ namespace MonoTests.System.Diagnostics
 				new EventLog ("monologtemp", string.Empty, "monotempsource");
 				Assert.Fail ("#A1");
 			} catch (ArgumentException ex) {
-				// Invalid value '' for parameter 'machineName'
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
 				Assert.IsNotNull (ex.Message, "#A3");
 #if NET_2_0
+				// Invalid value '' for parameter 'machineName'
 				Assert.IsTrue (ex.Message.IndexOf ("''") != -1, "#A4");
 				Assert.IsTrue (ex.Message.IndexOf ("'machineName'") != -1, "#A5");
 #else
+				// Invalid value  for parameter MachineName
 				Assert.IsTrue (ex.Message.IndexOf ("  ") != -1, "#A4");
 				Assert.IsTrue (ex.Message.IndexOf ("MachineName") != -1, "#A5");
 #endif
 				Assert.IsNull (ex.InnerException, "#A6");
+				Assert.IsNull (ex.ParamName, "#A7");
+			}
+
+			try {
+				new EventLog ("monologtemp", " \t\n", "monotempsource");
+				Assert.Fail ("#B1");
+			} catch (ArgumentException ex) {
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNotNull (ex.Message, "#B3");
+#if NET_2_0
+				// Invalid value ' \t\n' for parameter 'machineName'
+				Assert.IsTrue (ex.Message.IndexOf ("' \t\n'") != -1, "#B4");
+				Assert.IsTrue (ex.Message.IndexOf ("'machineName'") != -1, "#B5");
+#else
+				// Invalid value  \t\n for parameter MachineName
+				Assert.IsTrue (ex.Message.IndexOf ("  \t\n ") != -1, "#B4");
+				Assert.IsTrue (ex.Message.IndexOf ("MachineName") != -1, "#B5");
+#endif
+				Assert.IsNull (ex.InnerException, "#B6");
+				Assert.IsNull (ex.ParamName, "#B7");
 			}
 		}
 
@@ -911,6 +967,7 @@ namespace MonoTests.System.Diagnostics
 				Assert.IsTrue (ex.Message.IndexOf ("MachineName") != -1, "#A5");
 #endif
 				Assert.IsNull (ex.InnerException, "#A6");
+				Assert.IsNull (ex.ParamName, "#A7");
 			}
 		}
 
@@ -1075,6 +1132,7 @@ namespace MonoTests.System.Diagnostics
 					Assert.IsTrue (ex.Message.IndexOf ("monologtemp") != -1, "#C4");
 					Assert.IsTrue (ex.Message.IndexOf ("monologother") == -1, "#C5");
 					Assert.IsNull (ex.InnerException, "#C6");
+					Assert.IsNull (ex.ParamName, "#C7");
 				}
 
 				try {
@@ -1086,6 +1144,7 @@ namespace MonoTests.System.Diagnostics
 					Assert.IsTrue (ex.Message.IndexOf ("monotempsource") != -1, "#D4");
 					Assert.IsTrue (ex.Message.IndexOf ("monologother") == -1, "#D5");
 					Assert.IsNull (ex.InnerException, "#D6");
+					Assert.IsNull (ex.ParamName, "#D7");
 				}
 
 				try {
@@ -1097,6 +1156,7 @@ namespace MonoTests.System.Diagnostics
 					Assert.IsTrue (ex.Message.IndexOf ("MonoTempSource") != -1, "#E4");
 					Assert.IsTrue (ex.Message.IndexOf ("monologother") == -1, "#E5");
 					Assert.IsNull (ex.InnerException, "#E6");
+					Assert.IsNull (ex.ParamName, "#E7");
 				}
 			} finally {
 				if (EventLog.Exists ("monologtemp", "."))
@@ -1185,6 +1245,7 @@ namespace MonoTests.System.Diagnostics
 					Assert.IsNotNull (ex.Message, "#B3");
 					Assert.IsTrue (ex.Message.IndexOf ("monologtemp") != -1, "#B4");
 					Assert.IsNull (ex.InnerException, "#B5");
+					Assert.IsNull (ex.ParamName, "#B6");
 				}
 			} finally {
 				if (EventLog.Exists ("monologtemp", "."))
@@ -1217,6 +1278,7 @@ namespace MonoTests.System.Diagnostics
 				Assert.IsNotNull (ex.Message, "#A3");
 				Assert.IsTrue (ex.Message.IndexOf ("'AppEvent'") != -1, "#A4");
 				Assert.IsNull (ex.InnerException, "#A5");
+				Assert.IsNull (ex.ParamName, "#A6");
 			}
 
 			try {
@@ -1228,6 +1290,7 @@ namespace MonoTests.System.Diagnostics
 				Assert.IsNotNull (ex.Message, "#B3");
 				Assert.IsTrue (ex.Message.IndexOf ("'appevent'") != -1, "#B4");
 				Assert.IsNull (ex.InnerException, "#B5");
+				Assert.IsNull (ex.ParamName, "#B6");
 			}
 
 			if (EventLog.Exists ("SysEvent", "."))
@@ -1242,6 +1305,7 @@ namespace MonoTests.System.Diagnostics
 				Assert.IsNotNull (ex.Message, "#C3");
 				Assert.IsTrue (ex.Message.IndexOf ("'SysEvent'") != -1, "#C4");
 				Assert.IsNull (ex.InnerException, "#C5");
+				Assert.IsNull (ex.ParamName, "#C6");
 			}
 
 			try {
@@ -1253,6 +1317,7 @@ namespace MonoTests.System.Diagnostics
 				Assert.IsNotNull (ex.Message, "#D3");
 				Assert.IsTrue (ex.Message.IndexOf ("'sysevent'") != -1, "#D4");
 				Assert.IsNull (ex.InnerException, "#D5");
+				Assert.IsNull (ex.ParamName, "#D6");
 			}
 
 			if (EventLog.Exists ("SecEvent", "."))
@@ -1267,6 +1332,7 @@ namespace MonoTests.System.Diagnostics
 				Assert.IsNotNull (ex.Message, "#E3");
 				Assert.IsTrue (ex.Message.IndexOf ("'SecEvent'") != -1, "#E4");
 				Assert.IsNull (ex.InnerException, "#E5");
+				Assert.IsNull (ex.ParamName, "#E6");
 			}
 
 			try {
@@ -1278,6 +1344,7 @@ namespace MonoTests.System.Diagnostics
 				Assert.IsNotNull (ex.Message, "#F3");
 				Assert.IsTrue (ex.Message.IndexOf ("'secevent'") != -1, "#F4");
 				Assert.IsNull (ex.InnerException, "#F5");
+				Assert.IsNull (ex.ParamName, "#F6");
 			}
 
 			if (EventLog.Exists ("AppEventA", "."))
@@ -1292,6 +1359,7 @@ namespace MonoTests.System.Diagnostics
 				Assert.IsNotNull (ex.Message, "#G3");
 				Assert.IsTrue (ex.Message.IndexOf ("'AppEventA'") != -1, "#G4");
 				Assert.IsNull (ex.InnerException, "#G5");
+				Assert.IsNull (ex.ParamName, "#G6");
 			}
 
 			if (EventLog.Exists ("SysEventA", "."))
@@ -1306,6 +1374,7 @@ namespace MonoTests.System.Diagnostics
 				Assert.IsNotNull (ex.Message, "#H3");
 				Assert.IsTrue (ex.Message.IndexOf ("'SysEventA'") != -1, "#H4");
 				Assert.IsNull (ex.InnerException, "#H5");
+				Assert.IsNull (ex.ParamName, "#H6");
 			}
 
 			if (EventLog.Exists ("SecEventA", "."))
@@ -1320,6 +1389,7 @@ namespace MonoTests.System.Diagnostics
 				Assert.IsNotNull (ex.Message, "#I3");
 				Assert.IsTrue (ex.Message.IndexOf ("'SecEventA'") != -1, "#I4");
 				Assert.IsNull (ex.InnerException, "#I5");
+				Assert.IsNull (ex.ParamName, "#I6");
 			}
 		}
 
@@ -1374,6 +1444,7 @@ namespace MonoTests.System.Diagnostics
 				Assert.IsTrue (ex.Message.IndexOf ("'monologtemp'") != -1, "#B4");
 				Assert.IsTrue (ex.Message.IndexOf ("'monologtest'") != -1, "#B5");
 				Assert.IsNull (ex.InnerException, "#B6");
+				Assert.IsNull (ex.ParamName, "#B7");
 			} finally {
 				if (EventLog.Exists ("monologtest"))
 					EventLog.Delete ("monologtest");
@@ -1604,17 +1675,47 @@ namespace MonoTests.System.Diagnostics
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))] // Invalid format for argument machineName
 		public void Delete2_MachineName_Empty ()
 		{
-			EventLog.Delete ("monologtemp", string.Empty);
+			try {
+				EventLog.Delete ("monologtemp", string.Empty);
+				Assert.Fail ("#A1");
+			} catch (ArgumentException ex) {
+				// // Invalid format for argument machineName
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+				Assert.IsNotNull (ex.Message, "#A3");
+				Assert.IsTrue (ex.Message.IndexOf ("machineName") != -1, "#A4");
+				Assert.IsNull (ex.InnerException, "#A5");
+				Assert.IsNull (ex.ParamName, "#A6");
+			}
+
+			try {
+				EventLog.Delete ("monologtemp", " \t\n");
+				Assert.Fail ("#B1");
+			} catch (ArgumentException ex) {
+				// // Invalid format for argument machineName
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNotNull (ex.Message, "#B3");
+				Assert.IsTrue (ex.Message.IndexOf ("machineName") != -1, "#B4");
+				Assert.IsNull (ex.InnerException, "#B5");
+				Assert.IsNull (ex.ParamName, "#B6");
+			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))] // Invalid format for argument machineName
 		public void Delete2_MachineName_Null ()
 		{
-			EventLog.Delete ("monologtemp", null);
+			try {
+				EventLog.Delete ("monologtemp", null);
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// // Invalid format for argument machineName
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNotNull (ex.Message, "#3");
+				Assert.IsTrue (ex.Message.IndexOf ("machineName") != -1, "#4");
+				Assert.IsNull (ex.InnerException, "#5");
+				Assert.IsNull (ex.ParamName, "#6");
+			}
 		}
 
 		[Test]
@@ -1680,6 +1781,7 @@ namespace MonoTests.System.Diagnostics
 				Assert.IsTrue (ex.Message.IndexOf ("'monotempsource'") != -1, "#4");
 				Assert.IsTrue (ex.Message.IndexOf ("'.'") != -1, "#5");
 				Assert.IsNull (ex.InnerException, "#6");
+				Assert.IsNull (ex.ParamName, "#7");
 			}
 		}
 
@@ -1756,17 +1858,38 @@ namespace MonoTests.System.Diagnostics
 				EventLog.DeleteEventSource ("monotempsource", string.Empty);
 				Assert.Fail ("#A1");
 			} catch (ArgumentException ex) {
-				// Invalid value '' for parameter 'machineName'
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
 				Assert.IsNotNull (ex.Message, "#A3");
 #if NET_2_0
+				// Invalid value '' for parameter 'machineName'
 				Assert.IsTrue (ex.Message.IndexOf ("''") != -1, "#A4");
 				Assert.IsTrue (ex.Message.IndexOf ("'machineName'") != -1, "#A5");
 #else
+				// Invalid value  for parameter machineName
 				Assert.IsTrue (ex.Message.IndexOf ("  ") != -1, "#A4");
 				Assert.IsTrue (ex.Message.IndexOf ("machineName") != -1, "#A5");
 #endif
 				Assert.IsNull (ex.InnerException, "#A6");
+				Assert.IsNull (ex.ParamName, "#A7");
+			}
+
+			try {
+				EventLog.DeleteEventSource ("monotempsource", " \t\n");
+				Assert.Fail ("#B1");
+			} catch (ArgumentException ex) {
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNotNull (ex.Message, "#B3");
+#if NET_2_0
+				// Invalid value ' \t\n' for parameter 'machineName'
+				Assert.IsTrue (ex.Message.IndexOf ("' \t\n'") != -1, "#B4");
+				Assert.IsTrue (ex.Message.IndexOf ("'machineName'") != -1, "#B5");
+#else
+				// Invalid value  \t\n for parameter machineName
+				Assert.IsTrue (ex.Message.IndexOf ("  \t\n ") != -1, "#B4");
+				Assert.IsTrue (ex.Message.IndexOf ("machineName") != -1, "#B5");
+#endif
+				Assert.IsNull (ex.InnerException, "#B6");
+				Assert.IsNull (ex.ParamName, "#B7");
 			}
 		}
 
@@ -1788,6 +1911,7 @@ namespace MonoTests.System.Diagnostics
 				Assert.IsTrue (ex.Message.IndexOf ("machineName") != -1, "#A5");
 #endif
 				Assert.IsNull (ex.InnerException, "#A6");
+				Assert.IsNull (ex.ParamName, "#A7");
 			}
 		}
 
@@ -1810,6 +1934,7 @@ namespace MonoTests.System.Diagnostics
 				Assert.IsTrue (ex.Message.IndexOf ("'monotempsource'") != -1, "#4");
 				Assert.IsTrue (ex.Message.IndexOf ("'.'") != -1, "#5");
 				Assert.IsNull (ex.InnerException, "#6");
+				Assert.IsNull (ex.ParamName, "#7");
 			}
 		}
 
@@ -1927,6 +2052,11 @@ namespace MonoTests.System.Diagnostics
 						Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#I2");
 						Assert.IsNotNull (ex.Message, "#I3");
 						Assert.IsNull (ex.InnerException, "#I4");
+#if NET_2_0
+						Assert.AreEqual ("", ex.ParamName, "#I5");
+#else
+						Assert.IsNull (ex.ParamName, "#I5");
+#endif
 					}
 
 					entries = new EventLogEntry [1];
@@ -2138,6 +2268,7 @@ namespace MonoTests.System.Diagnostics
 						Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
 						Assert.IsNotNull (ex.Message, "#B3");
 						Assert.IsNull (ex.InnerException, "#B4");
+						Assert.IsNull (ex.ParamName, "#B5");
 					}
 
 					IEnumerator enumerator = eventLog.Entries.GetEnumerator ();
@@ -2163,6 +2294,7 @@ namespace MonoTests.System.Diagnostics
 						Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#E2");
 						Assert.IsNotNull (ex.Message, "#E3");
 						Assert.IsNull (ex.InnerException, "#E4");
+						Assert.IsNull (ex.ParamName, "#E5");
 					}
 
 					try {
@@ -2174,6 +2306,7 @@ namespace MonoTests.System.Diagnostics
 						Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#F2");
 						Assert.IsNotNull (ex.Message, "#F3");
 						Assert.IsNull (ex.InnerException, "#F4");
+						Assert.IsNull (ex.ParamName, "#F5");
 					}
 
 					enumerator.Reset ();
@@ -2188,6 +2321,7 @@ namespace MonoTests.System.Diagnostics
 						Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#G2");
 						Assert.IsNotNull (ex.Message, "#G3");
 						Assert.IsNull (ex.InnerException, "#G4");
+						Assert.IsNull (ex.ParamName, "#G5");
 					}
 
 					enumerator = eventLog.Entries.GetEnumerator ();
@@ -2213,6 +2347,7 @@ namespace MonoTests.System.Diagnostics
 						Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#J2");
 						Assert.IsNotNull (ex.Message, "#J3");
 						Assert.IsNull (ex.InnerException, "#J4");
+						Assert.IsNull (ex.ParamName, "#J5");
 					}
 
 					try {
@@ -2224,6 +2359,7 @@ namespace MonoTests.System.Diagnostics
 						Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#K2");
 						Assert.IsNotNull (ex.Message, "#K3");
 						Assert.IsNull (ex.InnerException, "#K4");
+						Assert.IsNull (ex.ParamName, "#K5");
 					}
 
 					enumerator.Reset ();
@@ -2384,6 +2520,11 @@ namespace MonoTests.System.Diagnostics
 						Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#I2");
 						Assert.IsNotNull (ex.Message, "#I3");
 						Assert.IsNull (ex.InnerException, "#I4");
+#if NET_2_0
+						Assert.AreEqual (string.Empty, ex.ParamName, "#I5");
+#else
+						Assert.IsNull (ex.ParamName, "#I5");
+#endif
 					}
 
 					entries = new EventLogEntry [2];
@@ -2555,6 +2696,11 @@ namespace MonoTests.System.Diagnostics
 						Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#I2");
 						Assert.IsNotNull (ex.Message, "#I3");
 						Assert.IsNull (ex.InnerException, "#I4");
+#if NET_2_0
+						Assert.AreEqual ("", ex.ParamName, "#I5");
+#else
+						Assert.IsNull (ex.ParamName, "#I5");
+#endif
 					}
 
 					entries = new EventLogEntry [2];
@@ -2738,6 +2884,11 @@ namespace MonoTests.System.Diagnostics
 						Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#I2");
 						Assert.IsNotNull (ex.Message, "#I3");
 						Assert.IsNull (ex.InnerException, "#I4");
+#if NET_2_0
+						Assert.AreEqual ("", ex.ParamName, "#I5");
+#else
+						Assert.IsNull (ex.ParamName, "#I5");
+#endif
 					}
 
 					entries = new EventLogEntry [2];
@@ -2955,6 +3106,7 @@ namespace MonoTests.System.Diagnostics
 				Assert.IsNotNull (ex.Message, "#A3");
 				Assert.IsTrue (ex.Message.IndexOf ("machineName") != -1, "#A4");
 				Assert.IsNull (ex.InnerException, "#A5");
+				Assert.IsNull (ex.ParamName, "#A6");
 			}
 
 			try {
@@ -2966,6 +3118,7 @@ namespace MonoTests.System.Diagnostics
 				Assert.IsNotNull (ex.Message, "#B3");
 				Assert.IsTrue (ex.Message.IndexOf ("machineName") != -1, "#B4");
 				Assert.IsNull (ex.InnerException, "#B5");
+				Assert.IsNull (ex.ParamName, "#B6");
 			}
 
 			try {
@@ -2977,6 +3130,19 @@ namespace MonoTests.System.Diagnostics
 				Assert.IsNotNull (ex.Message, "#C3");
 				Assert.IsTrue (ex.Message.IndexOf ("machineName") != -1, "#C4");
 				Assert.IsNull (ex.InnerException, "#C5");
+				Assert.IsNull (ex.ParamName, "#C6");
+			}
+
+			try {
+				EventLog.Exists ("monologtemp", " \t\n");
+				Assert.Fail ("#D1");
+			} catch (ArgumentException ex) {
+				// Invalid format for argument machineName
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#D2");
+				Assert.IsNotNull (ex.Message, "#D3");
+				Assert.IsTrue (ex.Message.IndexOf ("machineName") != -1, "#D4");
+				Assert.IsNull (ex.InnerException, "#D5");
+				Assert.IsNull (ex.ParamName, "#D6");
 			}
 		}
 
@@ -2992,6 +3158,7 @@ namespace MonoTests.System.Diagnostics
 				Assert.IsNotNull (ex.Message, "#A3");
 				Assert.IsTrue (ex.Message.IndexOf ("machineName") != -1, "#A4");
 				Assert.IsNull (ex.InnerException, "#A5");
+				Assert.IsNull (ex.ParamName, "#A6");
 			}
 
 			try {
@@ -3003,6 +3170,7 @@ namespace MonoTests.System.Diagnostics
 				Assert.IsNotNull (ex.Message, "#B3");
 				Assert.IsTrue (ex.Message.IndexOf ("machineName") != -1, "#B4");
 				Assert.IsNull (ex.InnerException, "#B5");
+				Assert.IsNull (ex.ParamName, "#B6");
 			}
 
 			try {
@@ -3014,6 +3182,7 @@ namespace MonoTests.System.Diagnostics
 				Assert.IsNotNull (ex.Message, "#C3");
 				Assert.IsTrue (ex.Message.IndexOf ("machineName") != -1, "#C4");
 				Assert.IsNull (ex.InnerException, "#C5");
+				Assert.IsNull (ex.ParamName, "#C6");
 			}
 		}
 
@@ -3022,15 +3191,40 @@ namespace MonoTests.System.Diagnostics
 		{
 			EventLog eventLog = new EventLog ();
 			eventLog.Log = string.Empty;
-			Assert.AreEqual (string.Empty, eventLog.Log, "#1");
-			Assert.AreEqual (string.Empty, eventLog.Source, "#2");
+			Assert.AreEqual (string.Empty, eventLog.Log, "#A1");
+			Assert.AreEqual (string.Empty, eventLog.Source, "#A2");
 			eventLog.Log = "monologtemp";
-			Assert.AreEqual ("monologtemp", eventLog.Log, "#3");
-			Assert.AreEqual (string.Empty, eventLog.Source, "#4");
+			Assert.AreEqual ("monologtemp", eventLog.Log, "#A3");
+			Assert.AreEqual (string.Empty, eventLog.Source, "#A4");
 			eventLog.Log = string.Empty;
-			Assert.AreEqual (string.Empty, eventLog.Log, "#5");
-			Assert.AreEqual (string.Empty, eventLog.Source, "#6");
-			eventLog.Close ();
+			Assert.AreEqual (string.Empty, eventLog.Log, "#A5");
+			Assert.AreEqual (string.Empty, eventLog.Source, "#A6");
+
+			if (EventLog.SourceExists ("monotempsource", "."))
+				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
+
+			if (EventLog.Exists ("monologtemp", "."))
+				Assert.Ignore ("Event log 'monologtemp' should not exist.");
+
+			if (EventLog.Exists ("shouldnotexist", "."))
+				Assert.Ignore ("Event log 'shouldnotexist' should not exist.");
+
+			EventLog.CreateEventSource ("monotempsource", "monologtemp", ".");
+			try {
+				eventLog.Log = "shouldnotexist";
+				eventLog.Source = "monotempsource";
+				Assert.AreEqual ("shouldnotexist", eventLog.Log, "#B1");
+				eventLog.Log = string.Empty;
+				Assert.AreEqual ("monologtemp", eventLog.Log, "#B2");
+				eventLog.Source = null;
+				Assert.AreEqual ("monologtemp", eventLog.Log, "#B3");
+				eventLog.Log = "MONOLOGTEMP";
+				Assert.AreEqual ("monologtemp", eventLog.Log, "#B4");
+			} finally {
+				if (EventLog.Exists ("monologtemp"))
+					EventLog.Delete ("monologtemp");
+				eventLog.Close ();
+			}
 		}
 
 		[Test]
@@ -3074,17 +3268,38 @@ namespace MonoTests.System.Diagnostics
 				EventLog.LogNameFromSourceName ("monotempsource", string.Empty);
 				Assert.Fail ("#A1");
 			} catch (ArgumentException ex) {
-				// Invalid value '' for parameter 'MachineName'
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
 				Assert.IsNotNull (ex.Message, "#A3");
 #if NET_2_0
+				// Invalid value '' for parameter 'MachineName'
 				Assert.IsTrue (ex.Message.IndexOf ("''") != -1, "#A4");
 				Assert.IsTrue (ex.Message.IndexOf ("'MachineName'") != -1, "#A5");
 #else
+				// Invalid value  for parameter MachineName
 				Assert.IsTrue (ex.Message.IndexOf ("  ") != -1, "#A4");
 				Assert.IsTrue (ex.Message.IndexOf ("MachineName") != -1, "#A5");
 #endif
 				Assert.IsNull (ex.InnerException, "#A6");
+				Assert.IsNull (ex.ParamName, "#A7");
+			}
+
+			try {
+				EventLog.LogNameFromSourceName ("monotempsource", " \t\n");
+				Assert.Fail ("#B1");
+			} catch (ArgumentException ex) {
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNotNull (ex.Message, "#B3");
+#if NET_2_0
+				// Invalid value ' \t\n' for parameter 'MachineName'
+				Assert.IsTrue (ex.Message.IndexOf ("' \t\n'") != -1, "#B4");
+				Assert.IsTrue (ex.Message.IndexOf ("'MachineName'") != -1, "#B5");
+#else
+				// Invalid value  \t\n for parameter MachineName
+				Assert.IsTrue (ex.Message.IndexOf ("  \t\n ") != -1, "#B4");
+				Assert.IsTrue (ex.Message.IndexOf ("MachineName") != -1, "#B5");
+#endif
+				Assert.IsNull (ex.InnerException, "#B6");
+				Assert.IsNull (ex.ParamName, "#B7");
 			}
 		}
 
@@ -3106,6 +3321,7 @@ namespace MonoTests.System.Diagnostics
 				Assert.IsTrue (ex.Message.IndexOf ("MachineName") != -1, "#A5");
 #endif
 				Assert.IsNull (ex.InnerException, "#A6");
+				Assert.IsNull (ex.ParamName, "#A7");
 			}
 		}
 
@@ -3146,6 +3362,73 @@ namespace MonoTests.System.Diagnostics
 			string logName = EventLog.LogNameFromSourceName (null, ".");
 			Assert.IsNotNull (logName, "#1");
 			Assert.AreEqual (string.Empty, logName, "#2");
+		}
+
+		[Test]
+		public void MachineName_Null ()
+		{
+			EventLog eventLog = new EventLog ();
+
+			try {
+				eventLog.MachineName = null;
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Invalid value  for property MachineName
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.IndexOf ("  ") != -1, "#5");
+				Assert.IsTrue (ex.Message.IndexOf ("MachineName") != -1, "#6");
+				Assert.IsNull (ex.ParamName, "#7");
+			}
+		}
+
+		[Test]
+		public void MachineName ()
+		{
+			string machineName = Environment.MachineName.ToLower ();
+
+			EventLog eventLog = new EventLog ("Application", machineName);
+			eventLog.EnableRaisingEvents = true;
+			Assert.AreEqual (machineName, eventLog.MachineName, "#1");
+			eventLog.MachineName = Environment.MachineName.ToUpper ();
+			Assert.AreEqual (machineName, eventLog.MachineName, "#2");
+			Assert.IsTrue (eventLog.EnableRaisingEvents, "#3");
+			eventLog.MachineName = ".";
+			Assert.AreEqual (".", eventLog.MachineName, "#4");
+			Assert.IsFalse (eventLog.EnableRaisingEvents, "#5");
+		}
+
+		[Test]
+		public void MachineName_Empty ()
+		{
+			EventLog eventLog = new EventLog ();
+
+			try {
+				eventLog.MachineName = string.Empty;
+				Assert.Fail ("#A1");
+			} catch (ArgumentException ex) {
+				// Invalid value  for property MachineName
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsTrue (ex.Message.IndexOf ("  ") != -1, "#A5");
+				Assert.IsTrue (ex.Message.IndexOf ("MachineName") != -1, "#A6");
+				Assert.IsNull (ex.ParamName, "#A7");
+			}
+
+			try {
+				eventLog.MachineName = " \t\n";
+				Assert.Fail ("#B1");
+			} catch (ArgumentException ex) {
+				// Invalid value  for property MachineName
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.IsTrue (ex.Message.IndexOf ("  ") != -1, "#B5");
+				Assert.IsTrue (ex.Message.IndexOf ("MachineName") != -1, "#B6");
+				Assert.IsNull (ex.ParamName, "#B7");
+			}
 		}
 
 		[Test]
@@ -3191,6 +3474,11 @@ namespace MonoTests.System.Diagnostics
 				} finally {
 					EventLog.Delete ("monologtemp");
 				}
+
+				eventLog.Source = "whatever";
+				Assert.AreEqual ("whatever", eventLog.Source, "#C1");
+				eventLog.Source = "WHATEVER";
+				Assert.AreEqual ("whatever", eventLog.Source, "#C2");
 			}
 		}
 
@@ -3326,17 +3614,68 @@ namespace MonoTests.System.Diagnostics
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))] // Invalid value  for parameter machineName
 		public void SourceExists2_MachineName_Empty ()
 		{
-			EventLog.SourceExists ("monotempsource", string.Empty);
+			try {
+				EventLog.SourceExists ("monotempsource", string.Empty);
+				Assert.Fail ("#A1");
+			} catch (ArgumentException ex) {
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+				Assert.IsNotNull (ex.Message, "#A3");
+#if NET_2_0
+				// Invalid value '' for parameter 'machineName'
+				Assert.IsTrue (ex.Message.IndexOf ("''") != -1, "#A4");
+				Assert.IsTrue (ex.Message.IndexOf ("'machineName'") != -1, "#A5");
+#else
+				// Invalid value '' for parameter machineName
+				Assert.IsTrue (ex.Message.IndexOf ("  ") != -1, "#A4");
+				Assert.IsTrue (ex.Message.IndexOf ("machineName") != -1, "#A5");
+#endif
+				Assert.IsNull (ex.InnerException, "#A6");
+				Assert.IsNull (ex.ParamName, "#A7");
+			}
+
+			try {
+				EventLog.SourceExists ("monotempsource", " \t\n");
+				Assert.Fail ("#B1");
+			} catch (ArgumentException ex) {
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNotNull (ex.Message, "#B3");
+#if NET_2_0
+				// Invalid value ' \t\n' for parameter 'machineName'
+				Assert.IsTrue (ex.Message.IndexOf ("' \t\n'") != -1, "#B4");
+				Assert.IsTrue (ex.Message.IndexOf ("'machineName'") != -1, "#B5");
+#else
+				// Invalid value  \t\n for parameter machineName
+				Assert.IsTrue (ex.Message.IndexOf ("  \t\n ") != -1, "#B4");
+				Assert.IsTrue (ex.Message.IndexOf ("machineName") != -1, "#B5");
+#endif
+				Assert.IsNull (ex.InnerException, "#B6");
+				Assert.IsNull (ex.ParamName, "#B7");
+			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))] // Invalid value  for parameter machineName
 		public void SourceExists2_MachineName_Null ()
 		{
-			EventLog.SourceExists ("monotempsource", null);
+			try {
+				EventLog.SourceExists ("monotempsource", null);
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNotNull (ex.Message, "#3");
+#if NET_2_0
+				// Invalid value '' for parameter 'machineName'
+				Assert.IsTrue (ex.Message.IndexOf ("''") != -1, "#4");
+				Assert.IsTrue (ex.Message.IndexOf ("'machineName'") != -1, "#5");
+#else
+				// Invalid value  for parameter machineName
+				Assert.IsTrue (ex.Message.IndexOf ("  ") != -1, "#4");
+				Assert.IsTrue (ex.Message.IndexOf ("machineName") != -1, "#5");
+#endif
+				Assert.IsNull (ex.InnerException, "#6");
+				Assert.IsNull (ex.ParamName, "#7");
+			}
 		}
 
 		[Test]

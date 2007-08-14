@@ -1,3 +1,8 @@
+2007-08-14  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* EventLogTest.cs: Added tests for validity of machine name. Added
+	tests for case-insensitivity of Source, Log and MachineName.
+
 2007-08-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ProcessStartInfoTest.cs: tests for Standard[Output|Error]Encoding.

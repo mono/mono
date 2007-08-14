@@ -46,6 +46,7 @@ namespace System.Diagnostics
 		static readonly object lockObject = new object ();
 		FileSystemWatcher file_watcher;
 		int last_notification_index;
+		bool _notifying;
 
 		public LocalFileEventLog (EventLog coreEventLog) : base (coreEventLog)
 		{
@@ -66,7 +67,10 @@ namespace System.Diagnostics
 
 		public override void Close ()
 		{
-			// we don't hold any unmanaged resources
+			if (file_watcher != null) {
+				file_watcher.EnableRaisingEvents = false;
+				file_watcher = null; // force creation of new FileSystemWatcher
+			}
 		}
 
 		public override void CreateEventSource (EventSourceCreationData sourceData)
@@ -138,21 +142,33 @@ namespace System.Diagnostics
 
 		public override void EnableNotification ()
 		{
-			string logDir = FindLogStore (CoreEventLog.Log);
-			if (!Directory.Exists (logDir))
-				Directory.CreateDirectory (logDir);
 			if (file_watcher == null) {
+				string logDir = FindLogStore (CoreEventLog.Log);
+				if (!Directory.Exists (logDir))
+					Directory.CreateDirectory (logDir);
+
 				file_watcher = new FileSystemWatcher ();
 				file_watcher.Path = logDir;
 				file_watcher.Created += delegate (object o, FileSystemEventArgs e) {
+					lock (this) {
+						if (_notifying)
+							return;
+						_notifying = true;
+					}
+
 					// Process every new entry in one notification event.
-					while (GetLatestIndex () > last_notification_index) {
-						try {
-							CoreEventLog.OnEntryWritten (GetEntry (last_notification_index++));
-						} catch (Exception ex) {
-							// FIXME: find some proper way to output this error
-							Debug.WriteLine (ex);
+					try {
+						while (GetLatestIndex () > last_notification_index) {
+							try {
+								CoreEventLog.OnEntryWritten (GetEntry (last_notification_index++));
+							} catch (Exception ex) {
+								// FIXME: find some proper way to output this error
+								Debug.WriteLine (ex);
+							}
 						}
+					} finally {
+						lock (this)
+							_notifying = false;
 					}
 				};
 			}
