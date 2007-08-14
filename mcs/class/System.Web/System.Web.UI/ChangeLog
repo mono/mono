@@ -1,5 +1,9 @@
 2007-08-14  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
+	* Control.cs: optimized GetDirectory call in ResolveClientUrl
+
+2007-08-14  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
 	* ClientScriptManager.cs: otimized string.Replace in GetScriptLiteral
 
 2007-08-14  Marek Habersack  <mhabersack@novell.com>

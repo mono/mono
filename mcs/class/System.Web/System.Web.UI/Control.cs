@@ -1317,7 +1317,7 @@ namespace System.Web.UI
 				string basePath = context.Request.CurrentExecutionFilePath;
 
 				if (basePath.Length > 1 && basePath [basePath.Length - 1] != '/')
-					basePath = VirtualPathUtility.GetDirectory (basePath);
+					basePath = VirtualPathUtility.GetDirectory (basePath, false);
 
 				if (VirtualPathUtility.IsAppRelative (relativeUrl))
 					return VirtualPathUtility.MakeRelative (basePath, relativeUrl);
