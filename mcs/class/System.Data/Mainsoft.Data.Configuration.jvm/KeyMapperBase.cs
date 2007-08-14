@@ -53,7 +53,7 @@ namespace Mainsoft.Data.Configuration
 
 		public ConnectionStringDictionary(string connectionString, NameValueCollection defaultMapping)
 		{
-			_actualKeys = new NameValueCollection();
+			_actualKeys = new NameValueCollection(StringComparer.OrdinalIgnoreCase);
 			_dictionary = Parse (connectionString);
 			_mapping = defaultMapping;
 		}
@@ -91,7 +91,7 @@ namespace Mainsoft.Data.Configuration
 
 		public static IDictionary Parse (string connectionString)
 		{
-			IDictionary userParameters = CollectionsUtil.CreateCaseInsensitiveHashtable();
+			IDictionary userParameters = new Hashtable (StringComparer.OrdinalIgnoreCase);
 
 			if (connectionString == null || connectionString.Length == 0) {
 				return userParameters;
