@@ -1873,6 +1873,7 @@ namespace MonoTests.System.Windows.Forms
 
 			f.AutoSize = false;
 			Assert.AreEqual (start_size, f.ClientSize, "A2");
+			f.Close ();
 		}
 
 		[Test]
@@ -1895,6 +1896,7 @@ namespace MonoTests.System.Windows.Forms
 			f.Controls.Add (b);
 
 			Assert.AreEqual (new Size (203, 203), f.ClientSize, "A2");
+			f.Dispose ();
 		}
 
 		[Test]

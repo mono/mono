@@ -269,6 +269,7 @@ namespace MonoTests.System.Windows.Forms {
 			f.PublicProcessMnemonic ('b');
 			
 			Assert.AreEqual (true, c.mnemonic_called, "A2");
+			f.Dispose ();
 		}
 		
 		private class MyForm : Form

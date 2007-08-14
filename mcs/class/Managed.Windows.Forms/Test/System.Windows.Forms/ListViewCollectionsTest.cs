@@ -404,6 +404,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (1, n, "SelectedIndexCollectionTest_AddTest#5");
 			Assert.AreEqual (1, listview.SelectedIndices.Count, "SelectedIndexCollectionTest_AddTest#6");
 			Assert.AreEqual (true, listview.Items [0].Selected, "SelectedIndexCollectionTest_AddTest#7");
+			listview.Dispose ();
 		}
 
 		[Test]
@@ -448,6 +449,7 @@ namespace MonoTests.System.Windows.Forms
 			n = listview.SelectedIndices.Add (0);
 			Assert.AreEqual (3, n, "SelectedIndexCollectionTest_AddTest#17");
 			Assert.AreEqual (3, listview.SelectedIndices.Count, "SelectedIndexCollectionTest_AddTest#18");
+			listview.Dispose ();
 		}
 
 		[Test]
@@ -478,6 +480,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (false, listview.Items [0].Selected, "SelectedIndexCollectionTest_ClearTest#6");
 			Assert.AreEqual (false, listview.Items [1].Selected, "SelectedIndexCollectionTest_ClearTest#7");
 			Assert.AreEqual (false, listview.Items [2].Selected, "SelectedIndexCollectionTest_ClearTest#8");
+			listview.Dispose ();
 		}
 
 		[Test]
@@ -507,6 +510,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (false, listview.Items [0].Selected, "SelectedIndexCollectionTest_ClearTest#6");
 			Assert.AreEqual (false, listview.Items [1].Selected, "SelectedIndexCollectionTest_ClearTest#7");
 			Assert.AreEqual (false, listview.Items [2].Selected, "SelectedIndexCollectionTest_ClearTest#8");
+			listview.Dispose ();
 		}
 
 		[Test]
@@ -536,6 +540,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (1, listview.SelectedIndices.IndexOf (item3.Index), "SelectedIndexCollectionTest_IndexOfTest#8");
 			Assert.AreEqual (2, listview.SelectedIndices.IndexOf (item4.Index), "SelectedIndexCollectionTest_IndexOfTest#9");
 			Assert.AreEqual (-1, listview.SelectedIndices.IndexOf (item2.Index), "SelectedIndexCollectionTest_IndexOfTest#10");
+			listview.Dispose ();
 		}
 
 		[Test]
@@ -561,6 +566,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (-1, listview.SelectedIndices.IndexOf (1), "SelectedIndexCollectionTest_IndexOfTest#5");
 			Assert.AreEqual (-1, listview.SelectedIndices.IndexOf (99), "SelectedIndexCollectionTest_IndexOfTest#6");
 			Assert.AreEqual (-1, listview.SelectedIndices.IndexOf (-1), "SelectedIndexCollectionTest_IndexOfTest#7");
+			listview.Dispose ();
 		}
 
 		[Test]
@@ -581,6 +587,7 @@ namespace MonoTests.System.Windows.Forms
 			listview.SelectedIndices.Remove (0);
 			Assert.AreEqual (0, listview.SelectedIndices.Count, "SelectedIndexCollectionTest_RemoveTest#3");
 			Assert.AreEqual (false, listview.Items [0].Selected, "SelectedIndexCollectionTest_RemoveTest#4");
+			listview.Dispose ();
 		}
 
 		[Test]
@@ -626,6 +633,7 @@ namespace MonoTests.System.Windows.Forms
 			listview.SelectedIndices.Remove (0);
 			Assert.AreEqual (0, listview.SelectedIndices.Count, "SelectedIndexCollectionTest_RemoveTest#17");
 			Assert.AreEqual (false, listview.Items [0].Selected, "SelectedIndexCollectionTest_RemoveTest#18");
+			listview.Dispose ();
 		}
 #endif
 
@@ -961,6 +969,7 @@ namespace MonoTests.System.Windows.Forms
 
 			Assert.AreEqual (4, lvw.SelectedItems.Count, "#B1");
 			Assert.AreEqual (3, lvw.SelectedItems.IndexOfKey ("F name"), "#B2");
+			lvw.Dispose ();
 		}
 
 		[Test]
@@ -1002,6 +1011,7 @@ namespace MonoTests.System.Windows.Forms
 
 			Assert.AreEqual (4, lvw.SelectedItems.Count, "#B1");
 			Assert.AreEqual (lvi6, lvw.SelectedItems ["F name"], "#B2");
+			lvw.Dispose ();
 		}
 #endif
 

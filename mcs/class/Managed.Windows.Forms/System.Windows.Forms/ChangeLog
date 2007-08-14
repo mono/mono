@@ -1,3 +1,11 @@
+2007-08-14  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Control.cs: [Backport of r83588, fixes bug #82433] CreateControl: create
+	  implicit children as well. Fixes #82344. Don't create the child if it
+	  has been disposed already (may happen if the user closes the form the
+	  Load event).
+	* MdiClient.cs: [Backport selected parts of r83065] Add a null-check.
+
 2007-08-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	[Backport of r83935]

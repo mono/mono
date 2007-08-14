@@ -1,3 +1,13 @@
+2007-08-14  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	[Backport of r83650]
+
+	* UserControlTest.cs, PanelTest.cs, DefaultLayoutTest.cs,
+	  TableLayoutTest.cs, ControlTest.cs, ContainerControlTest.cs,
+	  FormTest.cs: Dispose of forms when they're no longer used.
+	* ListViewCollectionsTest.cs: Dispose of listviews when they're no longer
+	  used.
+
 2007-07-24  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* DataGridViewColumnCollectionTest.cs,
