@@ -84,8 +84,9 @@ namespace System.Linq.Expressions
         }
         #endregion
         
-        #region Private support methods        
+        #region Private support methods
         private const BindingFlags opBindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
+        private const BindingFlags methBindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
 
         private static MethodInfo GetUserDefinedBinaryOperator (Type leftType, Type rightType, string name)
         {
@@ -262,49 +263,120 @@ namespace System.Linq.Expressions
         #endregion
         
         #region ArrayIndex
-        public static MethodCallExpression ArrayIndex(Expression array, Expression index)
+        public static BinaryExpression ArrayIndex(Expression array, Expression index)
         {
-            throw new NotImplementedException();
+            if (array == null)
+                throw new ArgumentNullException ("array");
+            if (index == null)
+                throw new ArgumentNullException ("index");
+            if (!array.type.IsArray)
+                throw new ArgumentException ("Argument must be array");
+            if (index.type != typeof(int))
+                throw new ArgumentException ("Argument for array index must be of type Int32");
+
+            return new BinaryExpression(ExpressionType.ArrayIndex, array, index, array.type.GetElementType());
         }
 
         public static MethodCallExpression ArrayIndex(Expression array, params Expression[] indexes)
         {
-            throw new NotImplementedException();
+            return ArrayIndex(array, (IEnumerable<Expression>)indexes);
         }
 
         public static MethodCallExpression ArrayIndex(Expression array, IEnumerable<Expression> indexes)
         {
-            throw new NotImplementedException();
+            if (array == null)
+                throw new ArgumentNullException ("array");
+            if (indexes == null)
+                throw new ArgumentNullException ("indexes");
+            if (!array.type.IsArray)
+                throw new ArgumentException ("Argument must be array");
+
+            // We'll need an array of typeof(Type) elements long as the array's rank later
+            // and also a generic List to hold the indexes (ReadOnlyCollection wants that.)
+            
+            Type[] types = (Type[])Array.CreateInstance(typeof(Type), array.type.GetArrayRank());
+            Expression[] indexesList = new Expression[array.type.GetArrayRank()];
+            
+            int rank = 0;
+            foreach (Expression index in indexes) {
+                if (index.type != typeof(int))
+                    throw new ArgumentException ("Argument for array index must be of type Int32");
+                if (rank == array.type.GetArrayRank())
+                    throw new ArgumentException ("Incorrect number of indexes");
+
+                types[rank] = index.type;
+                indexesList[rank] = index;
+                rank += 1;
+            }
+                
+            // If the array's rank is equalto the number of given indexes we can go on and
+            // look for a Get(Int32, ...) method with "rank" parameters to generate the
+            // MethodCallExpression.
+
+            MethodInfo method = array.type.GetMethod("Get", methBindingFlags, null, types, null);
+
+            // This should not happen, but we check anyway.
+            if (method == null)
+                throw new InvalidOperationException(String.Format(
+                    "The method Get(...) is not defined for the type '{0}'.", array.type));
+    
+            return new MethodCallExpression(ExpressionType.Call, method, array, new ReadOnlyCollection<Expression>(indexesList));
         }
         #endregion
         
+        #region ArrayLength
+        public static UnaryExpression ArrayLength(Expression array)
+        {
+            if (array == null)
+                throw new ArgumentNullException ("array");
+            if (!array.type.IsArray)
+                throw new ArgumentException ("Argument must be array");
+
+            return new UnaryExpression(ExpressionType.ArrayLength, array, typeof(Int32));        
+        }
+        #endregion
+        
+        #region Bind
+        //public static MemberAssignment Bind (MemberInfo member, Expression expression)
+        //{
+        //
+        //}
+        #endregion
+        
+        #region Call
         public static MethodCallExpression Call(Expression instance, MethodInfo method)
         {
+            if (method == null)
+                throw new ArgumentNullException("method");
+            if (instance == null && !method.IsStatic)
+                throw new ArgumentNullException("instance");
+                
             return Call(instance, method, (Expression[])null);
         }
 
         public static MethodCallExpression Call(MethodInfo method, params Expression[] arguments)
         {
-            return Call(null, method, Enumerable.ToReadOnlyCollection<Expression>(arguments));
+            return Call(null, method, (IEnumerable<Expression>)arguments);
         }
 
         public static MethodCallExpression Call(Expression instance, MethodInfo method, params Expression[] arguments)
         {
-            return Call(instance, method, Enumerable.ToReadOnlyCollection<Expression>(arguments));
+            return Call(instance, method, (IEnumerable<Expression>)arguments);
         }
 
         public static MethodCallExpression Call(Expression instance, MethodInfo method, IEnumerable<Expression> arguments)
         {
-            if (arguments == null)
-                throw new ArgumentNullException("arguments");
             if (method == null)
                 throw new ArgumentNullException("method");
+            if (arguments == null)
+                throw new ArgumentNullException("arguments");
+            if (instance == null && !method.IsStatic)
+                throw new ArgumentNullException("instance");
+                
             if (method.IsGenericMethodDefinition)
                     throw new ArgumentException();
             if (method.ContainsGenericParameters)
                     throw new ArgumentException();
-            if (!method.IsStatic && instance == null)
-                throw new ArgumentNullException("instance");
             if (instance != null && !instance.type.IsAssignableFrom(method.DeclaringType))
                 throw new ArgumentException();
 
@@ -321,7 +393,7 @@ namespace System.Linq.Expressions
 
             return new MethodCallExpression(ExpressionType.Call, method, instance, roArgs);
         }
-
+        #endregion
 
         // NOTE: CallVirtual is not implemented because it is already marked as Obsolete by MS.
         

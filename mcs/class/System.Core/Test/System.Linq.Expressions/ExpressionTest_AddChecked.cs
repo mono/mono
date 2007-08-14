@@ -59,6 +59,13 @@ namespace MonoTests.System.Linq.Expressions
         }
 
         [Test]
+        [ExpectedException (typeof (InvalidOperationException))]
+        public void Boolean ()
+        {
+            Expression.AddChecked (Expression.Constant (true), Expression.Constant (false));
+        }
+
+        [Test]
         public void Numeric ()
         {
             BinaryExpression expr = Expression.AddChecked (Expression.Constant (1), Expression.Constant (2));

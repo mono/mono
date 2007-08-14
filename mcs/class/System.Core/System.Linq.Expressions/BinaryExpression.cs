@@ -62,15 +62,13 @@ namespace System.Linq.Expressions
             get { return method; }
         }
 
-        //TODO:
-        public bool IsLifted
-        {
+        [MonoTODO]
+        public bool IsLifted {
             get { return false; }
         }
 
-        //TODO:
-        public bool IsLiftedToNull
-        {
+        [MonoTODO]
+        public bool IsLiftedToNull {
             get { return false; }
         }
         #endregion
@@ -78,8 +76,6 @@ namespace System.Linq.Expressions
         #region Internal Methods
         internal override void BuildString(StringBuilder builder)
         {
-            string op;
-            
             switch (NodeType)
             {
             case ExpressionType.Add:

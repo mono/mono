@@ -2,5 +2,7 @@ System.Linq.Expressions/ExpressionTest_Add.cs
 System.Linq.Expressions/ExpressionTest_AddChecked.cs
 System.Linq.Expressions/ExpressionTest_And.cs
 System.Linq.Expressions/ExpressionTest_AndAlso.cs
+System.Linq.Expressions/ExpressionTest_ArrayIndex.cs
+System.Linq.Expressions/ExpressionTest_ArrayLength.cs
 System.Linq.Expressions/ExpressionTest_Constant.cs
 System.Linq.Expressions/ExpressionTest_Utils.cs

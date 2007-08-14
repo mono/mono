@@ -18,9 +18,11 @@
 //
 // Authors:
 //        Antonello Provenzano  <antonello@deveel.com>
+//        Federico Di Gregorio  <fog@initd.org>
 //
 
 using System.Reflection;
+using System.Text;
 
 namespace System.Linq.Expressions
 {
@@ -46,27 +48,37 @@ namespace System.Linq.Expressions
         #endregion
 
         #region Properties
-        //TODO:
-        public bool IsLifted
-        {
+        [MonoTODO]
+        public bool IsLifted {
             get { return false; }
         }
 
-        //TODO:
-        public bool IsLiftedToNull
-        {
+        [MonoTODO]
+        public bool IsLiftedToNull {
             get { return false; }
         }
 
-        public MethodInfo Method
-        {
+        public MethodInfo Method {
             get { return method; }
         }
 
-        public Expression Operand
-        {
+        public Expression Operand {
             get { return operand; }
         }
+        #endregion
+
+        #region Internal Methods
+        internal override void BuildString(StringBuilder builder)
+        {
+            switch (NodeType)
+            {
+            case ExpressionType.ArrayLength:
+                builder.Append ("ArrayLength(");
+                operand.BuildString(builder);
+                builder.Append(")");
+                break;
+            }
+         }
         #endregion
     }
 }

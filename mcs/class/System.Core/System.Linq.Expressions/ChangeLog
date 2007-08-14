@@ -1,3 +1,11 @@
+2007-08-14  Federico Di Gregorio <fog@initd.org>
+
+	* Expression.cs: Implemented ArrayLength & tests.
+
+	* Expression.cs: Implemented all three versions of ArrayIndex method.
+
+	* MethodCallExpression.cs: Implemented BuildString() method.
+
 2007-08-13  Federico Di Gregorio <fog@initd.org>
 
 	* ConstantExpression.cs: Using multiple StringBuilder.Append() methods
