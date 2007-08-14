@@ -77,7 +77,7 @@ namespace System.Collections.Specialized
 
 		protected virtual void OnDeserialization (object sender)
 		{
-			OnDeserialization (sender);
+			((IDeserializationCallback) this).OnDeserialization (sender);
 		}
 
 		void IDeserializationCallback.OnDeserialization (object sender)
