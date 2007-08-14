@@ -1,3 +1,8 @@
+2007-08-14  Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* DataColumnCollection.cs: refactoring, fixed columnNameCount comparer
+	to remove culture sensitive ToLower() calls
+
 2007-07-22  Nagappan A  <anagappan@novell.com>
 
 	* DataRow.cs: Added internal set property for Table in 2.0

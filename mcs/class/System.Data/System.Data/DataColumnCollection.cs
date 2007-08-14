@@ -66,8 +66,12 @@ namespace System.Data {
 #endif
 	class DataColumnCollection : InternalDataCollectionBase
 	{
-		//This hashtable maps between unique lower case column name to a doublet containing column ref and column count (case insensitive)
-		private Hashtable columnNameCount = new Hashtable ();
+		//This hashtable maps between unique case insensetive column name to a doublet containing column ref and column count
+#if NET_2_0
+		private Hashtable columnNameCount = new Hashtable (StringComparer.OrdinalIgnoreCase);
+#else
+		private Hashtable columnNameCount = new Hashtable (CaseInsensitiveHashCodeProvider.Default, CaseInsensitiveComparer.Default);
+#endif
 		//This hashtable maps between column name to DataColumn object.
 		private Hashtable columnFromName = new Hashtable();
 		//This ArrayList contains the auto-increment columns names
@@ -187,7 +191,7 @@ namespace System.Data {
 
 			columnFromName [name] = column;	
 			// Get existing doublet
-			Doublet d = (Doublet) columnNameCount [name.ToLower ()];
+			Doublet d = (Doublet) columnNameCount [name];
 			if (d != null) {
 				// Add reference count
 				d.count++;
@@ -197,7 +201,7 @@ namespace System.Data {
 				// no existing doublet 
 				// create one
 				d = new Doublet (1, name);
-				columnNameCount [name.ToLower ()] = d;
+				columnNameCount [name] = d;
 			}
 			
 			if (name.StartsWith("Column") && name == MakeName(defaultColumnIndex + 1))
@@ -216,14 +220,14 @@ namespace System.Data {
 				columnFromName.Remove(name);
 	
 			// Get the existing doublet
-			Doublet d = (Doublet) columnNameCount [name.ToLower ()];
+			Doublet d = (Doublet) columnNameCount [name];
 			if (d != null) {
 				// decrease reference count
 				d.count--;	
 				d.columnNames.Remove (name);
 				// remove doublet if no more references
 				if (d.count == 0 )
-					columnNameCount.Remove (name.ToLower ());
+					columnNameCount.Remove (name);
 			}
 			
 			if (name.StartsWith("Column") && name == MakeName(defaultColumnIndex - 1))
@@ -689,7 +693,7 @@ namespace System.Data {
 		{
 			// exact case matching has already be done by the caller
 			// Get existing doublet
-			Doublet d = (Doublet) columnNameCount [name.ToLower ()];
+			Doublet d = (Doublet) columnNameCount [name];
 			if (d != null) {
 				if (d.count == 1)	{
 					// There's only one
