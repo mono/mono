@@ -259,11 +259,7 @@ namespace MonoTests.System.Collections.Generic
 			s.Push (2);
 			s.Pop ();
 
-#if TARGET_JVM
-			BinaryFormatter bf = (BinaryFormatter)vmw.@internal.remoting.BinaryFormatterUtils.CreateBinaryFormatter (false);
-#else
 			BinaryFormatter bf = new BinaryFormatter ();
-#endif // TARGET_JVM
 			MemoryStream ms = new MemoryStream ();
 			bf.Serialize (ms, s);
 
@@ -275,18 +271,16 @@ namespace MonoTests.System.Collections.Generic
 		}
 
 		[Test]
-		[Category ("TargetJvmNotWorking")]
+#if TARGET_JVM
+		[Category ("NotWorking")]
+#endif // TARGET_JVM
 		public void DeserializeTest ()
 		{
 			MemoryStream ms = new MemoryStream ();
 			ms.Write (_serializedStack, 0, _serializedStack.Length);
 			ms.Position = 0;
 
-#if TARGET_JVM
-			BinaryFormatter bf = (BinaryFormatter)vmw.@internal.remoting.BinaryFormatterUtils.CreateBinaryFormatter (false);
-#else
 			BinaryFormatter bf = new BinaryFormatter ();
-#endif // TARGET_JVM
 			Stack<int> s = (Stack<int>) bf.Deserialize (ms);
 			Assert.AreEqual (2, s.Count, "#1");
 			Assert.AreEqual (3, s.Pop (), "#2");
