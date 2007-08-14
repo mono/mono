@@ -20,6 +20,11 @@
 #include <sys/filio.h>
 #endif
 
+/* sys/time.h (for timeval) is required when using osx 10.3 (but not 10.4) */
+#ifdef __APPLE__
+#include <sys/time.h>
+#endif
+
 /* This is a copy of System.IO.Ports.Handshake */
 typedef enum {
 	NoneHandshake = 0,

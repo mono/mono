@@ -1,3 +1,7 @@
+2007-08-14  Wade Berrier  <wberrier@novell.com>
+
+	* serial.c: include sys/time.h for mac osx 10.3 for timeval
+
 2007-08-12  Lukasz Byczynski <lukaszb@forcom.com.pl>
 
 	* serial.c:
