@@ -72,13 +72,13 @@ namespace System.Web.Compilation
 			if (o is Foundry)
 				return ((Foundry)o).GetType (tag);
 
-			Queue qf = o as Queue;
-			if (qf == null)
+			ArrayList af = o as ArrayList;
+			if (af == null)
 				return null;
 
 			Type t;
 			Exception e = null;
-			foreach (Foundry f in qf) {
+			foreach (Foundry f in af) {
 				try {
 					t = f.GetType (tag);
 					if (t != null)
@@ -168,7 +168,7 @@ namespace System.Web.Compilation
 			if (f is CompoundFoundry) {
 				((CompoundFoundry) f).Add (foundry);
 				return;
-			} else if (f == null || f is Queue || (f is AssemblyFoundry && foundry is AssemblyFoundry)) {
+			} else if (f == null || f is ArrayList || (f is AssemblyFoundry && foundry is AssemblyFoundry)) {
 				newFoundry = foundry;
 			} else if (f != null) {
 				CompoundFoundry compound = new CompoundFoundry (foundryName);
@@ -185,14 +185,14 @@ namespace System.Web.Compilation
 				return;
 			}
 
-			Queue lf = f as Queue;
-			if (lf == null) {
-				lf = new Queue (2);
-				lf.Enqueue (f);
-				foundries [foundryName] = lf;
+			ArrayList af = f as ArrayList;
+			if (af == null) {
+				af = new ArrayList (2);
+				af.Add (f);
+				foundries [foundryName] = af;
 			}
 			
-			lf.Enqueue (newFoundry);
+			af.Insert (0, newFoundry);
 		}
 
 		public bool LookupFoundry (string foundryName)

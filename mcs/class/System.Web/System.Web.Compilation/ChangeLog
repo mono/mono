@@ -1,3 +1,11 @@
+2007-08-14  Marek Habersack  <mhabersack@novell.com>
+
+	* AspComponentFoundry.cs: use an ArrayList to implement LIFO for
+	component collections, instead of the old Queue which implemented
+	FIFO. Fixes situations when a control registered later for a
+	certain prefix would not be used in preference to a previously
+	registered one of the same name.
+
 2007-08-06  Marek Habersack  <mhabersack@novell.com>
 
 	* AspComponentFoundry.cs: properly add new foundry if the
