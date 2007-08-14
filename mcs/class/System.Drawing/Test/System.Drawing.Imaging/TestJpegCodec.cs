@@ -72,6 +72,9 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Ignore ("#8853")]
+#endif
 		public void Bitmap8bbpIndexedGreyscaleFeatures ()
 		{
 			string sInFile = getInFile ("bitmaps/nature-greyscale.jpg");
