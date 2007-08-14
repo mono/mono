@@ -1,3 +1,7 @@
+2007-08-14  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* GenericProvider.cs: performance optimizations
+
 2006-05-18 Boris Kirzner <borisk@mainsoft.com>
 	* OleDbSqlServerProvider.cs: move common logic to helper class.
 

@@ -293,7 +293,7 @@ namespace Mainsoft.Data.Jdbc.Providers
 		public GenericProvider(IDictionary providerInfo)
 		{
 			_providerInfo = providerInfo;
-			_keyMapping = new NameValueCollection ();
+			_keyMapping = new NameValueCollection (StringComparer.OrdinalIgnoreCase);
 			
 			// create key mappings collection
 			string keyMappingsStr = (string)_providerInfo [ConfigurationConsts.KeyMapping];
