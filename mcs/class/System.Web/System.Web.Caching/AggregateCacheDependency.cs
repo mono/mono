@@ -61,6 +61,10 @@ namespace System.Web.Caching
 			lock (dependenciesLock) {
 				if (this.dependencies == null)
 					this.dependencies = new List <CacheDependency> (dependencies.Length);
+				foreach (CacheDependency dep in dependencies)
+					if (dep != null)
+						dep.DependencyChanged += new EventHandler (OnAnyChanged);
+				
 				this.dependencies.AddRange (dependencies);
 				base.Start = DateTime.UtcNow;
 			}
@@ -85,6 +89,19 @@ namespace System.Web.Caching
 				}
 			}
 			return sb.ToString ();
+		}
+
+		protected override void DependencyDispose ()
+		{
+			if (dependencies != null && dependencies.Count > 0)
+				foreach (CacheDependency dep in dependencies)
+					dep.DependencyChanged -= new EventHandler (OnAnyChanged);
+			base.DependencyDispose ();
+		}
+		
+		void OnAnyChanged (object sender, EventArgs args)
+		{
+			base.NotifyDependencyChanged (this, args);
 		}
 	}
 }
