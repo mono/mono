@@ -301,15 +301,19 @@ namespace System.Configuration
 				ProductVersion = GetProductVersion ().Split('.');
 
 			// C:\Documents and Settings\(user)\Application Data
+#if !TARGET_JVM
 			if (userRoamingBasePath == "")
 				userRoamingPath = Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData);
 			else
+#endif
 				userRoamingPath = userRoamingBasePath;
 
 			// C:\Documents and Settings\(user)\Local Settings\Application Data (on Windows)
+#if !TARGET_JVM
 			if (userLocalBasePath == "")
 				userLocalPath = Environment.GetFolderPath (Environment.SpecialFolder.LocalApplicationData);
 			else
+#endif
 				userLocalPath = userLocalBasePath;
 
 			if (isCompany) {
