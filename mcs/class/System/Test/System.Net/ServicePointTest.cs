@@ -166,26 +166,26 @@ public class ServicePointTest
 		HttpWebRequest req = (HttpWebRequest) WebRequest.Create (uri);
 
 		bool called = false;
-
+#if !TARGET_JVM
 		sp.BindIPEndPointDelegate = delegate {
 			Assertion.Assert(!called);
 			called = true;
 			return null;
 		};
-
+#endif
 		req.GetResponse ().Close ();
 
 		Assertion.Assert (called);
 
 		req = (HttpWebRequest) WebRequest.Create (uri);
 		called = false;
-
+#if !TARGET_JVM
 		sp.BindIPEndPointDelegate = delegate(ServicePoint point, IPEndPoint remote, int times) {
 			Assertion.Assert(times < 5);
 			called = true;
 			return new IPEndPoint(IPAddress.Parse("0.0.0.0"), 12345 + times);
 		};
-
+#endif
 		req.GetResponse ().Close ();
 
 		Assertion.Assert(called);
