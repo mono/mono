@@ -373,7 +373,7 @@ namespace System.Data.ProviderBase
 				IDictionary providerInfo = (IDictionary) providers[i];
 					
 				string curProvider = (string)providerInfo[ConfigurationConsts.Name];
-				if (String.Compare(provider, 0, curProvider, 0, provider.Length, true, CultureInfo.InvariantCulture) == 0) {
+				if (String.Compare(provider, 0, curProvider, 0, provider.Length, StringComparison.OrdinalIgnoreCase) == 0) {
 					string providerType = (string) providerInfo [ConfigurationConsts.ProviderType];
 					if (providerType == null || providerType.Length == 0)
 						return new GenericProvider (providerInfo); 
