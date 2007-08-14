@@ -1,3 +1,9 @@
+2007-08-13  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* pedump.c (main): changed from mono_init to mono_init_from_assembly
+	so 2.0 types are accessible
+
+
 2007-08-13  Miguel de Icaza  <miguel@novell.com>
 
 	* domain.c (mono_init_internal): Call mono_assembly_load_friends
