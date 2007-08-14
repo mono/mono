@@ -305,6 +305,7 @@ System.Web/HttpWriterCas.cs
 System.Web/ProcessInfoCas.cs
 System.Web/ProcessModelInfoCas.cs
 System.Web/TraceContextCas.cs
+System.Web.Caching/AggregateCacheDependencyTest.cs
 System.Web.Caching/CacheCas.cs
 System.Web.Caching/CacheDependencyCas.cs
 System.Web.Configuration/HttpCapabilitiesBaseCas.cs
