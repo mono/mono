@@ -3216,47 +3216,31 @@ invocation_expression
 	  }
 	;
 
-opt_object_initializer
-	: /* empty */		{ $$ = null; }
-	| OPEN_BRACE variable_declarators CLOSE_BRACE
-	  {
-	  	ArrayList vars = (ArrayList) $2;
-	  	ArrayList inits = new ArrayList (vars.Count);
-	  	foreach (VariableDeclaration variable in vars) {
-	  		Initializer i = new Initializer (variable.identifier, variable.expression_or_array_initializer);
-	  		inits.Add (i);
-	  	}
-	  	$$ = inits;
-	  }
-	;
-
 opt_object_or_collection_initializer
 	: /* empty */		{ $$ = null; }
 	| object_or_collection_initializer
 	;
 
 object_or_collection_initializer
-	: object_initializer
-	| collection_initializer
-	;
-
-object_initializer
 	: OPEN_BRACE opt_member_initializer_list CLOSE_BRACE
 	  {
 	  	if ($2 == null)
-	  		$$ = null;
+	  	  $$ = CollectionOrObjectInitializers.Empty;
 	  	else
-	  		$$ = new ObjectInitializer ((ArrayList)$2);
+	  	  $$ = new CollectionOrObjectInitializers ((ArrayList) $2, GetLocation ($1));
 	  }
 	| OPEN_BRACE member_initializer_list COMMA CLOSE_BRACE
 	  {
-	  	$$ = new ObjectInitializer ((ArrayList) $2);
+	  	$$ = new CollectionOrObjectInitializers ((ArrayList) $2, GetLocation ($1));
 	  }
 	;
 
 opt_member_initializer_list
 	: /* empty */		{ $$ = null; }
 	| member_initializer_list
+	{
+		$$ = $1;
+	}
 	;
 
 member_initializer_list
@@ -3277,48 +3261,26 @@ member_initializer_list
 member_initializer
 	: IDENTIFIER ASSIGN initializer_value
 	  {
-	  	LocatedToken id = $1 as LocatedToken;
-	  	IInitializable i = $3 as IInitializable;
-	  	if (i != null)
-	  		$$ = new Initializer (id.Value, i);
-	  	else
-	  		$$ = new Initializer (id.Value, (Expression)$3);
+	  	LocatedToken lt = $1 as LocatedToken;
+	  	$$ = new ElementInitializer (lt.Value, (Expression)$3, lt.Location);
 	  }
+	| non_assignment_expression
+	  {
+		$$ = new CollectionElementInitializer ((Expression)$1);
+	  }
+	| OPEN_BRACE expression_list CLOSE_BRACE
+	  {
+	  	$$ = new CollectionElementInitializer ((ArrayList)$2, GetLocation ($1));
+	  }
+	| OPEN_BRACE CLOSE_BRACE
+	  {
+	  	Report.Error (1920, GetLocation ($1), "An element initializer cannot be empty");
+	  }	  
 	;
 
 initializer_value
 	: expression
 	| object_or_collection_initializer
-	;
-
-collection_initializer
-	: OPEN_BRACE element_initializer_list CLOSE_BRACE
-	  {
-	  	$$ = new CollectionInitializer ((ArrayList) $2);
-	  }
-	| OPEN_BRACE element_initializer_list COMMA CLOSE_BRACE
-	  {
-	  	$$ = new CollectionInitializer ((ArrayList) $2);
-	  }
-	;
-
-element_initializer_list
-	: element_initializer
-	  {
-	  	ArrayList a = new ArrayList ();
-	  	a.Add ($1);
-	  	$$ = a;
-	  }
-	| element_initializer_list COMMA element_initializer
-	  {
-	  	ArrayList a = $1 as ArrayList;
-	  	a.Add ($3);
-	  	$$ = a;
-	  }
-	;
-
-element_initializer
-	: non_assignment_expression
 	;
 
 opt_argument_list
@@ -3488,7 +3450,7 @@ object_or_delegate_creation_expression
 		  		$$ = null;
 		  	}
 		  	else
-				$$ = new NewInitialize ((Expression) $2, (ArrayList) $4, (IInitializable) $6, (Location) $1);
+				$$ = new NewInitialize ((Expression) $2, (ArrayList) $4, (CollectionOrObjectInitializers) $6, (Location) $1);
 		}
 		else
 			$$ = new New ((Expression) $2, (ArrayList) $4, (Location) $1);
@@ -3500,7 +3462,7 @@ object_or_delegate_creation_expression
 	  		$$ = null;
 	  	}
 	  	else
-			$$ = new NewInitialize ((Expression) $2, new ArrayList (), (IInitializable) $3, (Location) $1);
+			$$ = new NewInitialize ((Expression) $2, null, (CollectionOrObjectInitializers) $3, (Location) $1);
 	  }
 	;
 

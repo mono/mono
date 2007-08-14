@@ -1,3 +1,9 @@
+2007-08-14  Marek Safar  <marek.safar@gmail.com>
+
+	** C# 3.0 Object and collection initializers
+	
+	* cs-parser.jay: Grammar update.
+	
 2007-08-11  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #82412
