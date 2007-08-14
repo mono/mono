@@ -179,10 +179,19 @@ namespace System.Web.Caching
 		}
 
 #if NET_2_0
+		internal virtual void DependencyDisposeInternal ()
+		{
+		}
+#endif
+		
+#if NET_2_0
 		protected virtual
 #endif
 		void DependencyDispose () 
 		{
+#if NET_2_0
+			DependencyDisposeInternal ();
+#endif
 			DisposeWatchers ();
 			if (dependency != null)
 				dependency.DependencyChanged -= new EventHandler (OnChildDependencyChanged);

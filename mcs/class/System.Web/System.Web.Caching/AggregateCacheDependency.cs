@@ -91,12 +91,11 @@ namespace System.Web.Caching
 			return sb.ToString ();
 		}
 
-		protected override void DependencyDispose ()
+		internal override void DependencyDisposeInternal ()
 		{
 			if (dependencies != null && dependencies.Count > 0)
 				foreach (CacheDependency dep in dependencies)
 					dep.DependencyChanged -= new EventHandler (OnAnyChanged);
-			base.DependencyDispose ();
 		}
 		
 		void OnAnyChanged (object sender, EventArgs args)
