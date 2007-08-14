@@ -1,3 +1,8 @@
+2007-08-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* tramp-amd64.c (mono_arch_nullify_class_init_trampoline): Fix
+	detection of call <REG> instruction sequence. Fixes build on freebsd.
+
 2007-08-10  Geoff Norton  <gnorton@customerdna.com>
 
 	* tramp-x86.c: Remove some unneeded alignment changes on Apple.  Fixes #82387.
