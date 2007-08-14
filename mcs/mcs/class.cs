@@ -6267,7 +6267,7 @@ namespace Mono.CSharp {
 
 		virtual protected void ApplyToExtraTarget (Attribute a, CustomAttributeBuilder cb)
 		{
-			System.Diagnostics.Debug.Fail ("You forgot to define special attribute target handling");
+			throw new NotSupportedException ("You forgot to define special attribute target handling");
 		}
 
 		// It is not supported for the accessors
