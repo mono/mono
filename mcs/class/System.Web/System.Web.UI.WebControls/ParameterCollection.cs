@@ -170,7 +170,7 @@ namespace System.Web.UI.WebControls
 		{
 			for (int i = 0; i < Count; i++)
 			{
-				if (string.Compare (((Parameter) ((IList) this) [i]).Name, name, StringComparison.CurrentCultureIgnoreCase) == 0)
+				if (string.Compare (((Parameter) ((IList) this) [i]).Name, name, StringComparison.OrdinalIgnoreCase) == 0)
 					return i;
 			}
 			return -1;

@@ -1,3 +1,8 @@
+2007-08-14  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* ParameterCollection.cs: fixed IndexOfString, should use ordinal
+	compare
+
 2007-08-07  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* Menu.cs: performance refactoring, used AddAttribute overload without
