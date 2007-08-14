@@ -4247,6 +4247,13 @@ namespace System.Windows.Forms
 		{
 			private readonly ArrayList list;
 			private ListView owner;
+#if NET_2_0
+			private ListViewGroup group;
+#endif
+
+			// The collection can belong to a ListView (main) or to a ListViewGroup (sub-collection)
+			// In the later case ListViewItem.ListView never gets modified
+			private bool is_main_collection = true;
 
 			#region Public Constructor
 			public ListViewItemCollection (ListView owner)
@@ -4255,6 +4262,14 @@ namespace System.Windows.Forms
 				this.owner = owner;
 			}
 			#endregion	// Public Constructor
+
+#if NET_2_0
+			internal ListViewItemCollection (ListView owner, ListViewGroup group) : this (owner)
+			{
+				this.group = group;
+				is_main_collection = false;
+			}
+#endif
 
 			#region Public Properties
 			[Browsable (false)]
@@ -4300,9 +4315,18 @@ namespace System.Windows.Forms
 					if (value.ListView != null && value.ListView != owner)
 						throw new ArgumentException ("Cannot add or insert the item '" + value.Text + "' in more than one place. You must first remove it from its current location or clone it.", "value");
 
-					value.Owner = owner;
-					list [displayIndex] = value;
+					if (is_main_collection)
+						value.Owner = owner;
+#if NET_2_0
+					else {
+						if (value.Group != null)
+							value.Group.Items.Remove (value);
 
+						value.SetGroup (group);
+					}
+#endif
+
+					list [displayIndex] = value;
 					CollectionChanged (true);
 				}
 			}
@@ -4424,15 +4448,21 @@ namespace System.Windows.Forms
 				if (owner != null && owner.VirtualMode)
 					throw new InvalidOperationException ();
 #endif
-				if (owner != null) {
+				if (is_main_collection && owner != null) {
 					owner.SetFocusedItem (-1);
 					owner.h_scroll.Value = owner.v_scroll.Value = 0;
-				
+						
 					foreach (ListViewItem item in list) {
 						owner.item_control.CancelEdit (item);
 						item.Owner = null;
 					}
+					
 				}
+#if NET_2_0
+				else
+					foreach (ListViewItem item in list)
+						item.SetGroup (null);
+#endif
 
 				list.Clear ();
 				CollectionChanged (false);
@@ -4584,7 +4614,17 @@ namespace System.Windows.Forms
 				if (item.ListView != null && item.ListView != owner)
 					throw new ArgumentException ("Cannot add or insert the item '" + item.Text + "' in more than one place. You must first remove it from its current location or clone it.", "item");
 
-				item.Owner = owner;
+				if (is_main_collection)
+					item.Owner = owner;
+#if NET_2_0
+				else {
+					if (item.Group != null)
+						item.Group.Items.Remove (item);
+
+					item.SetGroup (group);
+				}
+#endif
+
 				list.Insert (index, item);
 				CollectionChanged (true);
 				return item;
@@ -4617,17 +4657,23 @@ namespace System.Windows.Forms
 #endif
 				if (!list.Contains (item))
 					return;
-	 				
+
 				bool selection_changed = false;
-				if (owner != null) {
+				if (is_main_collection && owner != null) {
 					selection_changed = owner.SelectedItems.Contains (item);
 					owner.item_control.CancelEdit (item);
 				}
 
 				list.Remove (item);
-				item.Owner = null;
-				CollectionChanged (false);
 
+				if (is_main_collection)
+					item.Owner = null;
+#if NET_2_0
+				else
+					item.SetGroup (null);
+#endif
+
+				CollectionChanged (false);
 				if (selection_changed && owner != null)
 					owner.OnSelectedIndexChanged (EventArgs.Empty);
 			}
@@ -4666,14 +4712,35 @@ namespace System.Windows.Forms
 				}
 			}
 
+#if NET_2_0
+			internal ListViewGroup Group {
+				get {
+					return group;
+				}
+				set {
+					group = value;
+				}
+			}
+#endif
+
 			void AddItem (ListViewItem value)
 			{
-				if (value.ListView != null && value.ListView == owner)
+				if (list.Contains (value))
 					throw new ArgumentException ("An item cannot be added more than once. To add an item again, you need to clone it.", "value");
 
-				if (value.ListView != null)
+				if (value.ListView != null && value.ListView != owner)
 					throw new ArgumentException ("Cannot add or insert the item '" + value.Text + "' in more than one place. You must first remove it from its current location or clone it.", "value");
-				value.Owner = owner;
+				if (is_main_collection)
+					value.Owner = owner;
+#if NET_2_0
+				else {
+					if (value.Group != null)
+						value.Group.Items.Remove (value);
+
+					value.SetGroup (group);
+				}
+#endif
+
 				list.Add (value);
 			}
 

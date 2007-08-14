@@ -549,24 +549,14 @@ namespace System.Windows.Forms
 		[DefaultValue (null)]
 		public ListViewGroup Group {
 			get { return this.group; }
-			set
-			{
-				if (this.group != value)
-				{
-					if (value != null)
-					{
-						value.Items.Add(this);
-
-						if (this.group != null)
-							this.group.Items.Remove(this);
-
-						this.group = value;
-					}
+			set {
+				if (group != value) {
+					if (value == null)
+						group.Items.Remove (this);
 					else
-					{
-						if(this.group != null)
-						this.group.Items.Remove(this);
-					}
+						value.Items.Add (this);
+				
+					group = value;
 				}
 			}
 		}
@@ -772,6 +762,11 @@ namespace System.Windows.Forms
 		internal void SetIndex (int index)
 		{
 			this.index = index;
+		}
+
+		internal void SetGroup (ListViewGroup group)
+		{
+			this.group = group;
 		}
 #endif
 

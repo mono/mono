@@ -133,7 +133,7 @@ namespace System.Windows.Forms
 		public ListView.ListViewItemCollection Items {
 			get {
 				if (items == null)
-					items = new ListView.ListViewItemCollection(list_view_owner);
+					items = new ListView.ListViewItemCollection (list_view_owner, this);
 
 				return items;
 			}

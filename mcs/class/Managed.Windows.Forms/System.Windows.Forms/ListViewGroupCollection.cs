@@ -120,7 +120,10 @@ namespace System.Windows.Forms
 
 		public void Clear()
 		{
-			list.Clear();
+			foreach (ListViewGroup group in list)
+				group.ListViewOwner = null;
+
+			list.Clear ();
 
 			if(list_view_owner != null)
 				list_view_owner.Redraw(true);
@@ -164,6 +167,7 @@ namespace System.Windows.Forms
 				return;
 
             		CheckListViewItemsInGroup(group);
+			group.ListViewOwner = list_view_owner;
 			list.Insert(index, group);
 
 			if(list_view_owner != null)
@@ -183,23 +187,24 @@ namespace System.Windows.Forms
 			Remove((ListViewGroup)value);
 		}
 
-		public void Remove(ListViewGroup value)
+		public void Remove (ListViewGroup value)
 		{
-			if (!list.Contains(value))
-				return;
-
-			list.Remove(value);
-
-			if (list_view_owner != null)
-				list_view_owner.Redraw(true);
+			int idx = list.IndexOf (value);
+			if (idx != -1)
+				RemoveAt (idx);
 		}
 
-		public void RemoveAt(int index)
+		public void RemoveAt (int index)
 		{
 			if (list.Count <= index || index < 0)
 				return;
 
-			Remove(this[index]);
+			ListViewGroup group = (ListViewGroup) list [index];
+			group.ListViewOwner = null;
+
+			list.RemoveAt (index);
+			if (list_view_owner != null)
+				list_view_owner.Redraw (true);
 		}
 
 		object IList.this[int index] {

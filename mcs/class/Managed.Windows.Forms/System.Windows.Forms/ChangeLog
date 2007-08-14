@@ -1,3 +1,17 @@
+2007-08-14  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListView.cs: In ListViewItemCollection have a 
+	'is_main_collection' field to not modify ListViewItem.ListView
+	when using it as ListViewGroup.Items (and not ListView.Items)
+	and also don't modify selection state (.Net behaviour). 
+	Instead, set group for items contained in a ListViewGroup.Items collection.
+	* ListViewItem.cs: Simplify some code in Group setter.
+	* ListViewGroup.cs: use the new .ctor to pass the current instance
+	to the ItemsCollection.
+	* ListViewGroup.cs: Set the ListView property for ListViewGroup
+	instances when adding/removing. Also make Remove use RemoveAt, which
+	should perform better.
+
 2007-08-14  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Message.cs, TabControl.cs, TextBox.cs, TextBoxBase.cs: Hide some 2.0 API
