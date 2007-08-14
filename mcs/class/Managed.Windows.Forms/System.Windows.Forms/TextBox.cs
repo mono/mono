@@ -234,7 +234,9 @@ namespace System.Windows.Forms {
 		[Localizable(true)]
 		[DefaultValue('\0')]
 		[MWFCategory("Behavior")]
+#if NET_2_0
 		[RefreshProperties (RefreshProperties.Repaint)]
+#endif
 		public char PasswordChar {
 			get {
 #if NET_2_0
@@ -334,6 +336,7 @@ namespace System.Windows.Forms {
 		}
 		#endregion	// Public Instance Properties
 
+#if NET_2_0
 		public void Paste (string text)
 		{
 			document.ReplaceSelection (CaseAdjust (text), false);
@@ -341,7 +344,7 @@ namespace System.Windows.Forms {
 			ScrollToCaret();
 			OnTextChanged(EventArgs.Empty);
 		}
-
+#endif
 		#region Protected Instance Methods
 		protected override CreateParams CreateParams {
 			get {

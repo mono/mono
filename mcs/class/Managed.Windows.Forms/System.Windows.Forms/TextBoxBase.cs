@@ -1516,8 +1516,10 @@ namespace System.Windows.Forms {
 			remove { Events.RemoveHandler (AcceptsTabChangedEvent, value); }
 		}
 
+#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+#endif
 		public new event EventHandler AutoSizeChanged {
 			add { Events.AddHandler (AutoSizeChangedEvent, value); }
 			remove { Events.RemoveHandler (AutoSizeChangedEvent, value); }

@@ -1420,7 +1420,9 @@ namespace System.Windows.Forms {
 
 
 		#region Class TaControl.ControlCollection
+#if NET_2_0
 		[ComVisible (false)]
+#endif
 		public new class ControlCollection : System.Windows.Forms.Control.ControlCollection {
 
 			private TabControl owner;
