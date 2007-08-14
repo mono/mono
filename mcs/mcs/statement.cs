@@ -1485,7 +1485,6 @@ namespace Mono.CSharp {
 		// The statements in this block
 		//
 		protected ArrayList statements;
-		protected int current_statement;
 		int num_statements;
 
 		//
@@ -1865,12 +1864,6 @@ namespace Mono.CSharp {
 			statements.Add (s);
 			flags |= Flags.BlockUsed;
 		}
-		
-		public void InsertStatementAfterCurrent (Statement statement)
-		{
-			statements.Insert (current_statement + 1, statement);
-			flags |= Flags.BlockUsed;
-		}
 
 		public bool Used {
 			get { return (flags & Flags.BlockUsed) != 0; }
@@ -2111,12 +2104,13 @@ namespace Mono.CSharp {
 			// from the beginning of the function.  The outer Resolve() that detected the unreachability is
 			// responsible for handling the situation.
 			//
-			for (current_statement = 0; current_statement < statements.Count; current_statement++) {
-				Statement s = (Statement) statements [current_statement];
+			int statement_count = statements.Count;
+			for (int ix = 0; ix < statement_count; ix++){
+				Statement s = (Statement) statements [ix];
 				// Check possible empty statement (CS0642)
 				if (Report.WarningLevel >= 3 &&
-					current_statement + 1 < statements.Count &&
-						statements [current_statement + 1] is Block)
+					ix + 1 < statement_count &&
+						statements [ix + 1] is Block)
 					CheckPossibleMistakenEmptyStatement (s);
 
 				//
@@ -2148,14 +2142,14 @@ namespace Mono.CSharp {
 						return false;
 
 					ok = false;
-					statements [current_statement] = EmptyStatement.Value;
+					statements [ix] = EmptyStatement.Value;
 					continue;
 				}
 
 				if (unreachable && !(s is LabeledStatement) && !(s is Block))
-					statements [current_statement] = EmptyStatement.Value;
+					statements [ix] = EmptyStatement.Value;
 
-				num_statements = current_statement + 1;
+				num_statements = ix + 1;
 
 				unreachable = ec.CurrentBranching.CurrentUsageVector.IsUnreachable;
 				if (unreachable && s is LabeledStatement)
@@ -2163,7 +2157,7 @@ namespace Mono.CSharp {
 			}
 
 			Report.Debug (4, "RESOLVE BLOCK DONE", StartLocation,
-				      ec.CurrentBranching, statements.Count, num_statements);
+				      ec.CurrentBranching, statement_count, num_statements);
 
 			if (!ok)
 				return false;
@@ -5112,7 +5106,7 @@ namespace Mono.CSharp {
 					TypeManager.CSharpName (expr.Type));
 			}
 
-			public static bool IsOverride (MethodInfo m)
+			bool IsOverride (MethodInfo m)
 			{
 				m = (MethodInfo) TypeManager.DropGenericMethodArguments (m);
 

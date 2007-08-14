@@ -366,11 +366,6 @@ namespace Mono.CSharp {
 			if (target == null)
 				return null;
 			
-			// Handle initializations e.g. Person p = new Person () { Name = "Scott" };
-			IInitializable initializer = source as IInitializable;
-			if (initializer != null && !initializer.Initialize (ec, target))
-				return null;
-
 			bool same_assignment = (embedded != null) ? embedded.Target.Equals(target) : source.Equals (target);
 			if (same_assignment) {
 				Report.Warning (1717, 3, loc, "Assignment made to same variable; did you mean to assign something else?");

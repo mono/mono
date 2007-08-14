@@ -1,3 +1,27 @@
+2007-08-14  Marek Safar  <marek.safar@gmail.com>
+
+	** C# 3.0 Object and collection initializers (major re-write)
+	
+	* assign.cs (DoResolve): Initializers are not assign related.
+	
+	* codegen.cs (EmitContext.CurrentInitializerVariable): Holds a varible
+	used during collection or object initialization.
+	
+	* expression.cs (Error_InvalidArguments): Add initializers specific
+	messages. More will come later because it requires some general
+	refactoring.
+	(New.DoResolve): Better error handling for unsafe types.
+	(EmptyExpressionStatement): New class.
+	(ElementInitializer): An object initializer expression.
+	(CollectionElementInitializer): A collection initializer expression.
+	(CollectionOrObjectInitializers): A block of object or collection
+	initializers.
+	(NewInitialize): New expression with element/object initializers.
+	
+	* statement.cs: Reverted object/collection initializer hacks.
+	
+	* typemanager.cs (CSharpName): Filter __arglist type.
+	
 2007-08-09  Marek Safar  <marek.safar@gmail.com>
 
 	** C# 3.0 Anonymous Types (update to the latest standard)

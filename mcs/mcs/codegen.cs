@@ -220,6 +220,11 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class EmitContext : IResolveContext {
 
+		//
+		// Holds a varible used during collection or object initialization.
+		//
+		public Expression CurrentInitializerVariable;
+
 		DeclSpace decl_space;
 		
 		public DeclSpace TypeContainer;
@@ -685,6 +690,9 @@ namespace Mono.CSharp {
 			bool unreachable;
 			
 			if (ResolveTopBlock (null, block, md.ParameterInfo, md, out unreachable)){
+				if (Report.Errors > 0)
+					return;
+
 				EmitMeta (block);
 
 				current_phase = Phase.Emitting;

@@ -622,6 +622,9 @@ namespace Mono.CSharp {
 		if (t == typeof(NullType))
 			return "null";
 
+		if (t == typeof (ArglistParameter))
+			return "__arglist";
+
 		return CSharpName (GetFullName (t));
     }
 

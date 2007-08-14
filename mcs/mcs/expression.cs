@@ -4286,10 +4286,20 @@ namespace Mono.CSharp {
 		static void Error_InvalidArguments (Location loc, int idx, MethodBase method,
                                                     Type delegate_type, Argument a, ParameterData expected_par)
 		{
-			if (delegate_type == null) 
+			if (a is CollectionElementInitializer.ElementInitializerArgument) {
+				Report.SymbolRelatedToPreviousError (method);
+				if ((expected_par.ParameterModifier (idx) & Parameter.Modifier.ISBYREF) != 0) {
+					Report.Error (1954, loc, "The best overloaded collection initalizer method `{0}' cannot have 'ref', or `out' modifier",
+						TypeManager.CSharpSignature (method));
+					return;
+				}
+				Report.Error (1950, loc, "The best overloaded collection initalizer method `{0}' has some invalid arguments",
+					  TypeManager.CSharpSignature (method));
+			} else if (delegate_type == null) {
+				Report.SymbolRelatedToPreviousError (method);
 				Report.Error (1502, loc, "The best overloaded method match for `{0}' has some invalid arguments",
-					      TypeManager.CSharpSignature (method));
-			else
+						  TypeManager.CSharpSignature (method));
+			} else
 				Report.Error (1594, loc, "Delegate `{0}' has some invalid arguments",
 					TypeManager.CSharpName (delegate_type));
 
@@ -5116,6 +5126,12 @@ namespace Mono.CSharp {
 
 			if (type == TypeManager.void_type) {
 				Error_VoidInvalidInTheContext (loc);
+				return null;
+			}
+
+			if (type.IsPointer) {
+				Report.Error (1919, loc, "Unsafe type `{0}' cannot be used in an object creation expression",
+					TypeManager.CSharpName (type));
 				return null;
 			}
 
@@ -8199,6 +8215,36 @@ namespace Mono.CSharp {
 			type = t;
 		}
 	}
+	
+	//
+	// Empty statement expression
+	//
+	public sealed class EmptyExpressionStatement : ExpressionStatement
+	{
+		public static readonly EmptyExpressionStatement Instance = new EmptyExpressionStatement ();
+
+		private EmptyExpressionStatement ()
+		{
+			type = TypeManager.object_type;
+			eclass = ExprClass.Value;
+			loc = Location.Null;
+		}
+
+		public override void EmitStatement (EmitContext ec)
+		{
+			// Do nothing
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			// Do nothing
+		}
+	}	
 
 	public class UserCast : Expression {
 		MethodBase method;
@@ -8502,137 +8548,262 @@ namespace Mono.CSharp {
 			target.t = t.Clone (clonectx);
 		}
 	}
-	
-	public interface IInitializable
+
+	//
+	// An object initializer expression
+	//
+	public class ElementInitializer : Expression
 	{
-		bool Initialize (EmitContext ec, Expression target);
-	}
-	
-	public class Initializer
-	{
+		Expression initializer;
 		public readonly string Name;
-		public readonly object Value;
 
-		public Initializer (string name, Expression value)
+		public ElementInitializer (string name, Expression initializer, Location loc)
 		{
-			Name = name;
-			Value = value;
+			this.Name = name;
+			this.initializer = initializer;
+			this.loc = loc;
 		}
 
-		public Initializer (string name, IInitializable value)
+		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
-			Name = name;
-			Value = value;
+			if (initializer == null)
+				return;
+			
+			ElementInitializer target = (ElementInitializer) t;
+			target.initializer = initializer.Clone (clonectx);
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			if (initializer == null)
+				return EmptyExpressionStatement.Instance;
+			
+			MemberExpr element_member = MemberLookupFinal (ec, ec.CurrentInitializerVariable.Type, ec.CurrentInitializerVariable.Type,
+				Name, MemberTypes.Field | MemberTypes.Property, BindingFlags.Public | BindingFlags.Instance, loc) as MemberExpr;
+
+			if (element_member == null)
+				return null;
+
+			element_member.InstanceExpression = ec.CurrentInitializerVariable;
+
+			if (initializer is CollectionOrObjectInitializers) {
+				Expression previous = ec.CurrentInitializerVariable;
+				ec.CurrentInitializerVariable = element_member;
+				initializer = initializer.Resolve (ec);
+				ec.CurrentInitializerVariable = previous;
+				return initializer;
+			}
+
+			return new Assign (element_member, initializer, loc).Resolve (ec);
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			throw new NotSupportedException ("Should not be reached");
 		}
 	}
 	
-	public class ObjectInitializer : IInitializable
+	//
+	// A collection initializer expression
+	//
+	public class CollectionElementInitializer : Expression
 	{
-		readonly ArrayList initializers;
-		public ObjectInitializer (ArrayList initializers)
+		public class ElementInitializerArgument : Argument
+		{
+			public ElementInitializerArgument (Expression e)
+				: base (e)
+			{
+			}
+		}
+
+		ArrayList arguments;
+
+		public CollectionElementInitializer (Expression argument)
+		{
+			arguments = new ArrayList (1);
+			arguments.Add (argument);
+			this.loc = argument.Location;
+		}
+
+		public CollectionElementInitializer (ArrayList arguments, Location loc)
+		{
+			this.arguments = arguments;
+			this.loc = loc;
+		}
+
+		protected override void CloneTo (CloneContext clonectx, Expression t)
+		{
+			CollectionElementInitializer target = (CollectionElementInitializer) t;
+			ArrayList t_arguments = target.arguments = new ArrayList (arguments.Count);
+			foreach (Expression e in arguments)
+				t_arguments.Add (e.Clone (clonectx));
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			// TODO: We should call a constructor which takes element counts argument,
+			// for know types like List<T>, Dictionary<T, U>
+			
+			for (int i = 0; i < arguments.Count; ++i)
+				arguments [i] = new ElementInitializerArgument ((Expression)arguments [i]);
+
+			Expression add_method = new Invocation (
+				new MemberAccess (ec.CurrentInitializerVariable, "Add", loc),
+				arguments);
+
+			add_method = add_method.Resolve (ec);
+
+			return add_method;
+		}
+		
+		public override void Emit (EmitContext ec)
+		{
+			throw new NotSupportedException ("Should not be reached");
+		}
+	}
+	
+	//
+	// A block of object or collection initializers
+	//
+	public class CollectionOrObjectInitializers : ExpressionStatement
+	{
+		ArrayList initializers;
+		
+		public static readonly CollectionOrObjectInitializers Empty = 
+			new CollectionOrObjectInitializers (new ArrayList (0), Location.Null);
+
+		public CollectionOrObjectInitializers (ArrayList initializers, Location loc)
+		{
+			this.initializers = initializers;
+			this.loc = loc;
+		}
+		
+		public bool IsEmpty {
+			get {
+				return initializers.Count == 0;
+			}
+		}
+
+		protected override void CloneTo (CloneContext clonectx, Expression target)
+		{
+			CollectionOrObjectInitializers t = (CollectionOrObjectInitializers) target;
+
+			t.initializers = new ArrayList (initializers.Count);
+			foreach (Expression e in initializers)
+				t.initializers.Add (e.Clone (clonectx));
+		}
+		
+		public override Expression DoResolve (EmitContext ec)
+		{
+			bool is_elements_initialization = false;
+			ArrayList element_names = null;
+			for (int i = 0; i < initializers.Count; ++i) {
+				Expression initializer = (Expression) initializers [i];
+				ElementInitializer element_initializer = initializer as ElementInitializer;
+
+				if (i == 0) {
+					if (element_initializer != null) {
+						is_elements_initialization = true;
+						element_names = new ArrayList (initializers.Count);
+						element_names.Add (element_initializer.Name);
+					} else {
+						if (!TypeManager.ImplementsInterface (ec.CurrentInitializerVariable.Type,
+							TypeManager.ienumerable_type)) {
+							Report.Error (1922, loc, "A field or property `{0}' cannot be initialized with a collection " +
+								"object initializer because type `{1}' does not implement `{2}' interface",
+								ec.CurrentInitializerVariable.GetSignatureForError (),
+								TypeManager.CSharpName (ec.CurrentInitializerVariable.Type),
+								TypeManager.CSharpName (TypeManager.ienumerable_type));
+							return null;
+						}
+					}
+				} else {
+					if (is_elements_initialization == (element_initializer == null)) {
+						Report.Error (747, initializer.Location, "Inconsistent `{0}' member declaration",
+							is_elements_initialization ? "object initializer" : "collection initializer");
+						continue;
+					}
+					
+					if (is_elements_initialization) {
+						if (element_names.Contains (element_initializer.Name)) {
+							Report.Error (1912, element_initializer.Location,
+								"An object initializer includes more than one member `{0}' initialization",
+								element_initializer.Name);
+						} else {
+							element_names.Add (element_initializer.Name);
+						}
+					}
+				}
+
+				initializers [i] = initializer.Resolve (ec);
+			}
+
+			type = typeof (CollectionOrObjectInitializers);
+			eclass = ExprClass.Variable;
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			EmitStatement (ec);
+		}
+
+		public override void EmitStatement (EmitContext ec)
+		{
+			foreach (ExpressionStatement e in initializers)
+				e.EmitStatement (ec);
+		}
+	}
+	
+	//
+	// New expression with element/object initializers
+	//
+	public class NewInitialize : New
+	{
+		CollectionOrObjectInitializers initializers;
+		TemporaryVariable type_instance;
+
+		public NewInitialize (Expression requested_type, ArrayList arguments, CollectionOrObjectInitializers initializers, Location l)
+			: base (requested_type, arguments, l)
 		{
 			this.initializers = initializers;
 		}
-		
-		public bool Initialize (EmitContext ec, Expression target)
-		{
-			ArrayList initialized = new ArrayList (initializers.Count);
-			for (int i = initializers.Count - 1; i >= 0; i--) {
-				Initializer initializer = initializers[i] as Initializer;
-				if (initialized.Contains (initializer.Name)) {
-					//FIXME proper error
-					Console.WriteLine ("Object member can only be initialized once");
-					return false;
-				}
-				
-				MemberAccess ma = new MemberAccess (target, initializer.Name);
-				Expression expr = initializer.Value as Expression;
-				// If it's an expresison, append the assign.
-				if (expr != null) {
-					Assign a = new Assign (ma, expr);
-					ec.CurrentBlock.InsertStatementAfterCurrent (new StatementExpression (a));
-				}
-				// If it's another initializer (object or collection), initialize it.
-				else if (!((IInitializable)initializer.Value).Initialize (ec, ma))
-							return false;
-				
-				initialized.Add (initializer.Name);
-			}
-			return true;
-		}
-	}
-	
-	public class CollectionInitializer : IInitializable
-	{
-		readonly ArrayList items;
-		public CollectionInitializer (ArrayList items)
-		{
-			this.items = items;
-		}
-		
-		bool CheckCollection (EmitContext ec, Expression e)
-		{
-			if (e == null || e.Type == null)
-				return false;
-			bool is_ienumerable = false;
-			foreach (Type t in TypeManager.GetInterfaces (e.Type))
-				if (t == typeof (IEnumerable)) {
-					is_ienumerable = true;
-					break;
-				}
-			
-			if (!is_ienumerable)
-				return false;
-			
-			MethodGroupExpr mg = Expression.MemberLookup (
-				ec.ContainerType, e.Type, "Add", MemberTypes.Method,
-				Expression.AllBindingFlags, Location.Null) as MethodGroupExpr;
 
-			if (mg == null)
-					return false;
-			
-			foreach (MethodInfo mi in mg.Methods) {
-				if (TypeManager.GetParameterData (mi).Count != 1)
-					continue;
-				if ((mi.Attributes & MethodAttributes.Public) != MethodAttributes.Public)
-					continue;
-				return true;
-			}
-			return false;
-		}
-		
-		public bool Initialize (EmitContext ec, Expression target)
+		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
-			if (!CheckCollection (ec, target.Resolve (ec))) {
-				// FIXME throw proper error
-				Console.WriteLine ("Error: This is not a collection");
-				return false;
-			}
-			
-			for (int i = items.Count - 1; i >= 0; i--) {
-				MemberAccess ma = new MemberAccess (target, "Add");
-				ArrayList array = new ArrayList ();
-				array.Add (new Argument ((Expression)items[i]));
-				Invocation invoke = new Invocation (ma, array);
-				ec.CurrentBlock.InsertStatementAfterCurrent (new StatementExpression (invoke));
-			}
-			return true;
-		}
-	}
-	
-	public class NewInitialize : New, IInitializable
-	{
-		IInitializable initializer;
+			base.CloneTo (clonectx, t);
 
-		public bool Initialize (EmitContext ec, Expression target)
-		{
-			return initializer.Initialize (ec, target);
+			NewInitialize target = (NewInitialize) t;
+			target.initializers = (CollectionOrObjectInitializers)initializers.Clone (clonectx);
 		}
 
-		public NewInitialize (Expression requested_type, ArrayList arguments, IInitializable initializer, Location l)
-			: base (requested_type, arguments, l)
+		public override Expression DoResolve (EmitContext ec)
 		{
-			this.initializer = initializer;
+			Expression e = base.DoResolve (ec);
+			if (type == null)
+				return null;
+
+			// Empty initializer can be optimized to simple new
+			if (initializers.IsEmpty)
+				return e;
+
+			type_instance = new TemporaryVariable (type, loc);
+			type_instance = (TemporaryVariable)type_instance.Resolve (ec);
+
+			Expression previous = ec.CurrentInitializerVariable;
+			ec.CurrentInitializerVariable = type_instance;
+			initializers.Resolve (ec);
+			ec.CurrentInitializerVariable = previous;
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			base.Emit (ec);
+
+			type_instance.EmitStore (ec);
+			initializers.Emit (ec);
+			type_instance.Emit (ec);
 		}
 	}
 
