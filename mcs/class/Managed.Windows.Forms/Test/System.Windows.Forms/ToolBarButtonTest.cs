@@ -91,6 +91,25 @@ namespace MonoTests.System.Windows.Forms
 			tbb.Name = null;
 			Assert.AreEqual ("", tbb.Name, "A4");
 		}
+		
+		[Test]
+		public void BehaviorImageIndexAndKey ()
+		{
+			// Basically, this shows that whichever of [ImageIndex|ImageKey]
+			// is set last resets the other to the default state
+			ToolBarButton b = new ToolBarButton ();
+
+			Assert.AreEqual (-1, b.ImageIndex, "D1");
+			Assert.AreEqual (string.Empty, b.ImageKey, "D2");
+
+			b.ImageIndex = 6;
+			Assert.AreEqual (6, b.ImageIndex, "D3");
+			Assert.AreEqual (string.Empty, b.ImageKey, "D4");
+			
+			b.ImageKey = "test";
+			Assert.AreEqual (-1, b.ImageIndex, "D5");
+			Assert.AreEqual ("test", b.ImageKey, "D6");
+		}
 #endif
 	}
 

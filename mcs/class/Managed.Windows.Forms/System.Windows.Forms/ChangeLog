@@ -1,5 +1,9 @@
 2007-08-14  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ToolBarButton.cs: Implement ImageKey.
+
+2007-08-14  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ToolBar.cs: Implement ScaleControl/ScaleCore.
 
 2007-08-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 

@@ -1,3 +1,7 @@
+2007-08-14  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolBarButtonTest.cs: Add test showing how ImageIndex and ImageKey interact.
+
 2007-08-10  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TextBoxTest.cs: Fix old SelectionLength assert to work on MS and match

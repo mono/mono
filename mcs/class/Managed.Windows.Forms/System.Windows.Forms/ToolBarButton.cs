@@ -53,6 +53,7 @@ namespace System.Windows.Forms
 		private string tooltip = "";
 		private bool visible = true;
 #if NET_2_0
+		private string image_key = string.Empty;
 		private string name;
 #endif
 		#endregion
@@ -78,6 +79,11 @@ namespace System.Windows.Forms
 				ImageList list = Parent.ImageList;
 				if (ImageIndex > -1 && ImageIndex < list.Images.Count)
 					return list.Images [ImageIndex];
+
+#if NET_2_0
+				if (!string.IsNullOrEmpty (image_key))
+					return list.Images [image_key];
+#endif
 
 				return null;
 			}
@@ -132,7 +138,10 @@ namespace System.Windows.Forms
 				bool layout = (Parent != null) && ((value == -1) || (image_index == -1));
 				
 				image_index = value;
-				
+#if NET_2_0
+				image_key = string.Empty;
+#endif
+
 				if (layout)
 					Parent.Redraw (true);
 				else
@@ -141,6 +150,29 @@ namespace System.Windows.Forms
 		}
 
 #if NET_2_0
+		[Localizable (true)]
+		[DefaultValue ("")]
+		[Editor ("System.Windows.Forms.Design.ImageIndexEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
+		[RefreshProperties (RefreshProperties.Repaint)]
+		[TypeConverter (typeof (ImageKeyConverter))]
+		public string ImageKey {
+			get { return image_key; }
+			set {
+				if (image_key == value)
+					return;
+				
+				bool layout = (Parent != null) && ((value == string.Empty) || (image_key == string.Empty));
+				
+				image_index = -1;
+				image_key = value;
+				
+				if (layout)
+					Parent.Redraw (true);
+				else
+					Invalidate ();
+			}
+		}
+
 		[Browsable (false)]
 		public string Name {
 			get {
