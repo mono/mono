@@ -567,6 +567,23 @@ namespace System.Windows.Forms
 			LayoutToolBar ();
 		}
 
+#if NET_2_0
+		protected override void ScaleControl (SizeF factor, BoundsSpecified specified)
+		{
+			specified &= ~BoundsSpecified.Height;
+			
+			base.ScaleControl (factor, specified);
+		}
+
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		protected override void ScaleCore (float dx, float dy)
+		{
+			dy = 1.0f;
+			
+			base.ScaleCore (dx, dy);
+		}
+#endif
+
 		private int requested_size = -1;
 
 		protected override void SetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified)
