@@ -750,16 +750,38 @@ return true;
 #endif
 		}
 		
-		[MonoTODO ("optimize s.Replace")]
 		internal static string GetScriptLiteral (object ob)
 		{
 			if (ob == null)
 				return "null";
 			else if (ob is string) {
 				string s = (string)ob;
-				s = s.Replace ("\\", "\\\\");
-				s = s.Replace ("\"", "\\\"");
-				return "\"" + s + "\"";
+				bool escape = false;
+				int len = s.Length;
+
+				for (int i = 0; i < len; i++)
+					if (s [i] == '\\' || s [i] == '\"') {
+						escape = true;
+						break;
+					}
+
+				if (!escape)
+					return string.Concat ("\"", s, "\"");
+
+				StringBuilder sb = new StringBuilder (len + 10);
+
+				sb.Append ('\"');
+				for (int si = 0; si < len; si++) {
+					if (s [si] == '\"')
+						sb.Append ("\\\"");
+					else if (s [si] == '\\')
+						sb.Append ("\\\\");
+					else
+						sb.Append (s [si]);
+				}
+				sb.Append ('\"');
+
+				return sb.ToString ();
 			} else if (ob is bool) {
 				return ob.ToString ().ToLower (CultureInfo.InvariantCulture);
 			} else {
