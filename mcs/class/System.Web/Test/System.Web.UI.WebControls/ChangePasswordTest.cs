@@ -552,9 +552,9 @@ namespace MonoTests.System.Web.UI.WebControls
 			fr.Controls.Add (new BaseControl (GetDecoratedId (html, "CurrentPassword"), "heh"));
 			fr.Controls.Add (new BaseControl (GetDecoratedId (html, "NewPassword"), "hehe"));
 			fr.Controls.Add (new BaseControl (GetDecoratedId (html, "ConfirmNewPassword"), "hehe"));
-			string button = GetDecoratedId (html, "ChangePasswordButton");
+			string button = GetDecoratedId (html, "ChangePasswordPushButton");
 			if (button.Length > 0)
-				fr.Controls.Add (new BaseControl (GetDecoratedId (html, "ChangePasswordButton"), "ChangePasswordButton"));
+				fr.Controls.Add (new BaseControl (GetDecoratedId (html, "ChangePasswordPushButton"), "ChangePasswordPushButton"));
 			else
 				fr.Controls.Add (new BaseControl ("__EVENTTARGET", GetEventTarget (html, "ChangePassword")));
 
@@ -578,13 +578,8 @@ namespace MonoTests.System.Web.UI.WebControls
 			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$CurrentPassword");
 			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$NewPassword");
 			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$ConfirmNewPassword");
-#if DOT_NET
 			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$CancelPushButton");
 			fr.Controls["ChangePassword1$ChangePasswordContainerID$CancelPushButton"].Value = "Cancel";
-#else
-			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$CancelButton");
-			fr.Controls ["ChangePassword1$ChangePasswordContainerID$CancelButton"].Value = "Cancel";
-#endif
 			t.Request = fr;
 			html = t.Run ();
 			if (t.UserData == null || t.UserData.ToString () != "CancelButtonClick")
@@ -623,13 +618,8 @@ namespace MonoTests.System.Web.UI.WebControls
 			fr.Controls["ChangePassword1$ChangePasswordContainerID$CurrentPassword"].Value = "a";
 			fr.Controls["ChangePassword1$ChangePasswordContainerID$NewPassword"].Value = "1";
 			fr.Controls["ChangePassword1$ChangePasswordContainerID$ConfirmNewPassword"].Value = "1";
-#if DOT_NET
 			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$ChangePasswordPushButton");
 			fr.Controls["ChangePassword1$ChangePasswordContainerID$ChangePasswordPushButton"].Value = "Change+Password";
-#else
-			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$ChangePasswordButton");
-			fr.Controls ["ChangePassword1$ChangePasswordContainerID$ChangePasswordButton"].Value = "Change+Password";
-#endif
 			t.Request = fr;
 			html = t.Run ();
 			if (t.UserData == null || t.UserData.ToString () != "ChangingPassword")
@@ -671,13 +661,8 @@ namespace MonoTests.System.Web.UI.WebControls
 			fr.Controls["ChangePassword1$ChangePasswordContainerID$CurrentPassword"].Value = "a";
 			fr.Controls["ChangePassword1$ChangePasswordContainerID$NewPassword"].Value = "1";
 			fr.Controls["ChangePassword1$ChangePasswordContainerID$ConfirmNewPassword"].Value = "1";
-#if DOT_NET
 			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$ChangePasswordPushButton");
 			fr.Controls["ChangePassword1$ChangePasswordContainerID$ChangePasswordPushButton"].Value = "Change+Password";
-#else
-			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$ChangePasswordButton");
-			fr.Controls ["ChangePassword1$ChangePasswordContainerID$ChangePasswordButton"].Value = "Change+Password";
-#endif
 			t.Request = fr;
 			html = t.Run ();
 			if (t.UserData == null || t.UserData.ToString () != "ChangePasswordError")
@@ -716,13 +701,8 @@ namespace MonoTests.System.Web.UI.WebControls
 			fr.Controls["ChangePassword1$ChangePasswordContainerID$CurrentPassword"].Value = "p@ssword";
 			fr.Controls["ChangePassword1$ChangePasswordContainerID$NewPassword"].Value = "123456?";
 			fr.Controls["ChangePassword1$ChangePasswordContainerID$ConfirmNewPassword"].Value = "123456?";
-#if DOT_NET
 			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$ChangePasswordPushButton");
 			fr.Controls["ChangePassword1$ChangePasswordContainerID$ChangePasswordPushButton"].Value = "Change+Password";
-#else
-			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$ChangePasswordButton");
-			fr.Controls ["ChangePassword1$ChangePasswordContainerID$ChangePasswordButton"].Value = "Change+Password";
-#endif
 			t.Request = fr;
 			html = t.Run ();
 			if (t.UserData == null || t.UserData.ToString () != "ChangedPassword")
@@ -760,13 +740,8 @@ namespace MonoTests.System.Web.UI.WebControls
 			fr.Controls["ChangePassword1$ChangePasswordContainerID$CurrentPassword"].Value = "p@ssword";
 			fr.Controls["ChangePassword1$ChangePasswordContainerID$NewPassword"].Value = "123456?";
 			fr.Controls["ChangePassword1$ChangePasswordContainerID$ConfirmNewPassword"].Value = "123456?";
-#if DOT_NET
 			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$ChangePasswordPushButton");
 			fr.Controls["ChangePassword1$ChangePasswordContainerID$ChangePasswordPushButton"].Value = "Change+Password";
-#else
-			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$ChangePasswordButton");
-			fr.Controls ["ChangePassword1$ChangePasswordContainerID$ChangePasswordButton"].Value = "Change+Password";
-#endif
 
 			t.Request = fr;
 			html = t.Run ();

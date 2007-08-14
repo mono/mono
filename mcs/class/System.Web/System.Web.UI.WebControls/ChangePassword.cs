@@ -1412,7 +1412,7 @@ namespace System.Web.UI.WebControls
 						break;
 				}
 
-				ChangePasswordButton.ID = "ChangePasswordButton";
+				ChangePasswordButton.ID = "ChangePasswordPushButton";
 				ChangePasswordButton.ApplyStyle (_owner.ChangePasswordButtonStyle);
 				((IButtonControl) ChangePasswordButton).CommandName = ChangePassword.ChangePasswordButtonCommandName;
 				((IButtonControl) ChangePasswordButton).Text = _owner.ChangePasswordButtonText;
@@ -1431,7 +1431,7 @@ namespace System.Web.UI.WebControls
 						break;
 				}
 
-				CancelButton.ID = "CancelButton";
+				CancelButton.ID = "CancelPushButton";
 				CancelButton.ApplyStyle (_owner.CancelButtonStyle);
 				((IButtonControl) CancelButton).CommandName = ChangePassword.CancelButtonCommandName;
 				((IButtonControl) CancelButton).Text = _owner.CancelButtonText;

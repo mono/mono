@@ -1,3 +1,8 @@
+2007-08-14  Marek Habersack  <mhabersack@novell.com>
+
+	* ChangePasswordTest.cs: adjust tests for the ChangePassword
+	control button controls id changes. Part of fix for bug #82418.
+
 2007-08-06 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* DataSourceViewTest.cs:

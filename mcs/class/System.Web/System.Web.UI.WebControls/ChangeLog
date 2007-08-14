@@ -3,6 +3,10 @@
 	* ObjectDataSourceView.cs: remove unused variable.
 
 	* ChangePassword.cs: remove unused variable.
+	The change password button id changed to
+	"ChangePasswordPushButton", the cancel button id changed to
+	"CancelPushButton". The change makes the generated ids the same
+	what on MS.NET. Fixes bug #82418.
 
 	* RoleGroupCollection.cs: OnValidate shouldn't be overridden.
 
