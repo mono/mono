@@ -167,7 +167,7 @@ namespace System.Web.J2EE
 #if NET_2_0
 			url = System.Web.Util.UrlUtils.RemoveDoubleSlashes(url);
 #endif 
-			if (url.StartsWith(IAppDomainConfig.WAR_ROOT_SYMBOL))
+			if (url.StartsWith(IAppDomainConfig.WAR_ROOT_SYMBOL, StringComparison.Ordinal))
 				url = url.Substring(IAppDomainConfig.WAR_ROOT_SYMBOL.Length);
 			return url;
 		}

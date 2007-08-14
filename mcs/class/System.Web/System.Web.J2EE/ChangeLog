@@ -1,3 +1,7 @@
+2007-08-14  Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* PageMapper.cs: fixed comparer in NormalizeName
+
 2007-05-16  Igor Zelmanovich <igorz@mainsoft.com>
 
 	* PageMapper.cs: prevent DOS attack:
