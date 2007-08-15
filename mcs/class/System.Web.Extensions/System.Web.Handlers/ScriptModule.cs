@@ -78,7 +78,12 @@ namespace System.Web.Handlers
 			HttpApplication app = (HttpApplication) sender;
 			HttpContext context = app.Context;
 			if (context.Request.Headers ["X-MicrosoftAjax"] == "Delta=true") {
-				ScriptManager sm = ScriptManager.GetCurrent ((Page) context.CurrentHandler);
+				Page p = context.CurrentHandler as Page;
+				if (p == null)
+					return;
+				ScriptManager sm = ScriptManager.GetCurrent (p);
+				if (sm == null)
+					return;
 				if (context.Response.StatusCode == 302) {
 					context.Response.StatusCode = 200;
 					context.Response.ClearContent ();
