@@ -53,6 +53,11 @@ namespace Mono.Cecil {
 			get { return m_elementType.Scope; }
 		}
 
+		public override ModuleDefinition Module {
+			get { return m_elementType.Module; }
+			set { throw new InvalidOperationException (); }
+		}
+
 		public TypeReference ElementType {
 			get { return m_elementType; }
 			set { m_elementType = value; }

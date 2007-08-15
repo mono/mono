@@ -1,3 +1,10 @@
+2007-08-15  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil/TypeReference.cs
+	  Mono.Cecil/TypeSpecification.cs:
+		TypeSpecification.Module return the module of the elemen
+		type now.
+
 2007-08-13  Rodrigo B. de Oliveira <rodrigobamboo@gmail.com>
 
 	* default.build

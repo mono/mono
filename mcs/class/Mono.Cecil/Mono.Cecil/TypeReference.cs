@@ -34,8 +34,8 @@ namespace Mono.Cecil {
 		bool m_fullNameDiscarded;
 		string m_fullName;
 		protected bool m_isValueType;
-		protected IMetadataScope m_scope;
-		protected ModuleDefinition m_module;
+		IMetadataScope m_scope;
+		ModuleDefinition m_module;
 
 		CustomAttributeCollection m_customAttrs;
 		GenericParameterCollection m_genparams;
@@ -61,7 +61,7 @@ namespace Mono.Cecil {
 			set { m_isValueType = value; }
 		}
 
-		public ModuleDefinition Module {
+		public virtual ModuleDefinition Module {
 			get { return m_module; }
 			set { m_module = value; }
 		}
