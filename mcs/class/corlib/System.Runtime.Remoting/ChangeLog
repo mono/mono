@@ -1,3 +1,10 @@
+2007-08-15  Mark Probst  <mark.probst@gmail.com>
+
+	* RemotingServices.cs: Make sure InternalExecute doesn't get
+	called with a null method, because that makes it crash.  Throw a
+	NullReferenceException instead.  Doesn't fix bug #82302, but
+	prevents the crash.
+
 2007-08-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* RemotingConfiguration.cs WellKnownObjectMode.cs

@@ -123,6 +123,9 @@ namespace System.Runtime.Remoting
 				method = reqMsg.MethodBase;
 			else
 				method = tt.GetMethod (reqMsg.MethodName, BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance, null, (Type[]) reqMsg.MethodSignature, null);
+
+			if (method == null)
+				throw new NullReferenceException ();
 				
 			object oldContext = CallContext.SetCurrentCallContext (reqMsg.LogicalCallContext);
 			
