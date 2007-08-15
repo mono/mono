@@ -2852,6 +2852,7 @@ namespace MonoTests.System {
 
 		[Test]
 		[ExpectedException (typeof (FormatException))]
+		[Category ("TargetJvmNotWorking")]
 		public void FromBase64CharArray_Empty ()
 		{
 			Convert.FromBase64CharArray (new char[0], 0, 0);

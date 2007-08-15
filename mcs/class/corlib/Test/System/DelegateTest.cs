@@ -27,6 +27,7 @@ public class DelegateTest : Assertion
 	}
 
 	[Test]
+	[Category ("TargetJvmNotWorking")]
 	public void CoContraVariance () {
 		CoContraVariantDelegate d = (CoContraVariantDelegate)Delegate.CreateDelegate (typeof (CoContraVariantDelegate), typeof (DelegateTest).GetMethod ("CoContraVariantMethod", BindingFlags.NonPublic|BindingFlags.Static));
 

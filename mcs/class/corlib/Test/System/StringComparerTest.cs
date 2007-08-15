@@ -43,6 +43,18 @@ namespace MonoTests.System
 	{
 		private CultureInfo old_culture;
 
+#if TARGET_JVM // BinaryFormatter is Java based under TARGET_JVM.
+		private BinaryFormatter CreateBinaryFormatter()
+		{
+			return (BinaryFormatter)vmw.@internal.remoting.BinaryFormatterUtils.CreateBinaryFormatter (false);
+		}
+#else
+		private BinaryFormatter CreateBinaryFormatter()
+		{
+			return new BinaryFormatter();
+		}
+#endif // TARGET_JVM
+
 		[SetUp]
 		public void SetUp ()
 		{
@@ -59,7 +71,7 @@ namespace MonoTests.System
 		public void Serialize_CurrentCulture ()
 		{
 			Thread.CurrentThread.CurrentCulture = new CultureInfo ("nl-BE");
-			BinaryFormatter bf = new BinaryFormatter ();
+			BinaryFormatter bf = CreateBinaryFormatter();
 			MemoryStream ms = new MemoryStream ();
 			bf.Serialize (ms, StringComparer.CurrentCulture);
 
@@ -73,7 +85,7 @@ namespace MonoTests.System
 			ms.Write (_serializedCurrentCulture, 0, _serializedCurrentCulture.Length);
 			ms.Position = 0;
 
-			BinaryFormatter bf = new BinaryFormatter ();
+			BinaryFormatter bf = CreateBinaryFormatter();
 			StringComparer sc = (StringComparer) bf.Deserialize (ms);
 			Assert.IsNotNull (sc);
 		}
@@ -81,7 +93,7 @@ namespace MonoTests.System
 		[Test]
 		public void Serialize_CurrentCultureIgnoreCase ()
 		{
-			BinaryFormatter bf = new BinaryFormatter ();
+			BinaryFormatter bf = CreateBinaryFormatter();
 			MemoryStream ms = new MemoryStream ();
 			bf.Serialize (ms, StringComparer.CurrentCultureIgnoreCase);
 
@@ -95,7 +107,7 @@ namespace MonoTests.System
 			ms.Write (_serializedCurrentCultureIgnoreCase, 0, _serializedCurrentCultureIgnoreCase.Length);
 			ms.Position = 0;
 
-			BinaryFormatter bf = new BinaryFormatter ();
+			BinaryFormatter bf = CreateBinaryFormatter();
 			StringComparer sc = (StringComparer) bf.Deserialize (ms);
 			Assert.IsNotNull (sc);
 		}
@@ -103,7 +115,7 @@ namespace MonoTests.System
 		[Test]
 		public void Serialize_InvariantCulture ()
 		{
-			BinaryFormatter bf = new BinaryFormatter ();
+			BinaryFormatter bf = CreateBinaryFormatter();
 			MemoryStream ms = new MemoryStream ();
 			bf.Serialize (ms, StringComparer.InvariantCulture);
 
@@ -121,7 +133,7 @@ namespace MonoTests.System
 			ms.Write (_serializedInvariantCulture, 0, _serializedInvariantCulture.Length);
 			ms.Position = 0;
 
-			BinaryFormatter bf = new BinaryFormatter ();
+			BinaryFormatter bf = CreateBinaryFormatter();
 			StringComparer sc = (StringComparer) bf.Deserialize (ms);
 			Assert.IsNotNull (sc);
 		}
@@ -129,7 +141,7 @@ namespace MonoTests.System
 		[Test]
 		public void Serialize_InvariantCultureIgnoreCase ()
 		{
-			BinaryFormatter bf = new BinaryFormatter ();
+			BinaryFormatter bf = CreateBinaryFormatter();
 			MemoryStream ms = new MemoryStream ();
 			bf.Serialize (ms, StringComparer.InvariantCultureIgnoreCase);
 
@@ -147,7 +159,7 @@ namespace MonoTests.System
 			ms.Write (_serializedInvariantCultureIgnoreCase, 0, _serializedInvariantCultureIgnoreCase.Length);
 			ms.Position = 0;
 
-			BinaryFormatter bf = new BinaryFormatter ();
+			BinaryFormatter bf = CreateBinaryFormatter();
 			StringComparer sc = (StringComparer) bf.Deserialize (ms);
 			Assert.IsNotNull (sc);
 		}
@@ -155,7 +167,7 @@ namespace MonoTests.System
 		[Test]
 		public void Serialize_Ordinal ()
 		{
-			BinaryFormatter bf = new BinaryFormatter ();
+			BinaryFormatter bf = CreateBinaryFormatter();
 			MemoryStream ms = new MemoryStream ();
 			bf.Serialize (ms, StringComparer.Ordinal);
 
@@ -173,7 +185,7 @@ namespace MonoTests.System
 			ms.Write (_serializedOrdinal, 0, _serializedOrdinal.Length);
 			ms.Position = 0;
 
-			BinaryFormatter bf = new BinaryFormatter ();
+			BinaryFormatter bf = CreateBinaryFormatter();
 			StringComparer sc = (StringComparer) bf.Deserialize (ms);
 			Assert.IsNotNull (sc);
 		}
@@ -181,7 +193,7 @@ namespace MonoTests.System
 		[Test]
 		public void Serialize_OrdinalIgnoreCase ()
 		{
-			BinaryFormatter bf = new BinaryFormatter ();
+			BinaryFormatter bf = CreateBinaryFormatter();
 			MemoryStream ms = new MemoryStream ();
 			bf.Serialize (ms, StringComparer.OrdinalIgnoreCase);
 
@@ -199,7 +211,7 @@ namespace MonoTests.System
 			ms.Write (_serializedOrdinalIgnoreCase, 0, _serializedOrdinalIgnoreCase.Length);
 			ms.Position = 0;
 
-			BinaryFormatter bf = new BinaryFormatter ();
+			BinaryFormatter bf = CreateBinaryFormatter();
 			StringComparer sc = (StringComparer) bf.Deserialize (ms);
 			Assert.IsNotNull (sc);
 		}

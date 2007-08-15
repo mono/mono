@@ -135,11 +135,33 @@ namespace MonoTests.System
             }
         }
 
+#if TARGET_JVM
+        // Under TARGET_JVm we have a slightly better precision (becuase of
+        // using Java BigDecimal).
+        private bool AreNotEqual(Decimal v1, Decimal v2)
+        {
+            Decimal delta = v1 - v2;
+            if (delta < 0m)
+                delta = -delta;
+	    Decimal absV1 = v1 < 0m ? -v1 : v1;
+            if (absV1 < 1m)
+                return delta > 1E-27m;
+            return delta / absV1 > 1E-27m;
+        }
+#else
+        private bool AreNotEqual(Decimal v1, Decimal v2)
+        {
+            return v1 != v2;
+        }
+#endif
+
         public void TestRemainder()
         {
             Assert((decimal)Decimal.Remainder(3.6m, 1.3m) == 1.0m);
-            AssertEquals("A02", Decimal.Remainder(79228162514264337593543950335m, 
-                27703302467091960609331879.53200m), 24420760848422211464106753m);
+            decimal res = 24420760848422211464106753m;
+            decimal remainder = Decimal.Remainder(79228162514264337593543950335m, 27703302467091960609331879.53200m);
+            if (AreNotEqual (res, remainder))
+                AssertEquals("A02", res, remainder);
 
             Assert((decimal)Decimal.Remainder(45937986975432m, 43987453m)
                 == 42334506m);
@@ -169,14 +191,14 @@ namespace MonoTests.System
                     try
                     {
                         d3 = Decimal.Add(d1, d2);
-                        if (d3 != tr.val) 
+                        if (AreNotEqual (d3, tr.val))
                         {
                             if (tr.info == TestResultInfo.Overflow)
                             {
                                 ReportOpError("Add: expected overflow", i, j, d1, d2, d3, tr.val);
                                 errOverflow++;
                             }
-                            else 
+                            else
                             {
                                 ReportOpError("Add: result mismatch", i, j, d1, d2, d3, tr.val);
                                 errOp++;
@@ -185,7 +207,7 @@ namespace MonoTests.System
                         else if (tr.info == TestResultInfo.Ok)
                         {
                             d4 = Decimal.Subtract(d3, d2);
-                            if (d4 != d1)
+                            if (AreNotEqual (d4, d1))
                             {
                                 ReportOpError("Subtract: result mismatch", i, j, d3, d2, d4, d1);
                                 errOp++;
@@ -229,7 +251,7 @@ namespace MonoTests.System
                     try
                     {
                         d3 = Decimal.Multiply(d1, d2);
-                        if (d3 != tr.val) 
+                        if (AreNotEqual (d3, tr.val)) 
                         {
                             if (tr.info == TestResultInfo.Overflow)
                             {
@@ -257,7 +279,7 @@ namespace MonoTests.System
                         try 
                         {
                             d4 = Decimal.Divide(d3, d2);
-                            if (d4 != d1 && tr.info != TestResultInfo.ReverseRound)
+                            if (AreNotEqual (d4, d1) && tr.info != TestResultInfo.ReverseRound)
                             {
                                 ReportOpError("MultDiv: result mismatch", i, j, d3, d2, d4, d1);
                                 errOp++;
@@ -305,7 +327,7 @@ namespace MonoTests.System
                     try
                     {
                         d3 = Decimal.Divide(d1, d2);
-                        if (d3 != tr.val) 
+                        if (AreNotEqual (d3, tr.val)) 
                         {
                             if (tr.info == TestResultInfo.Overflow)
                             {
@@ -357,7 +379,7 @@ namespace MonoTests.System
                         try
                         {
                             d4 = Decimal.Multiply(d3, d2);
-                            if (d4 != d1 && tr.info != TestResultInfo.ReverseRound)
+                            if (AreNotEqual(d4, d1) && tr.info != TestResultInfo.ReverseRound)
                             {
                                 ReportOpError("DivMult: result mismatch", i, j, d3, d2, d4, d1);
                                 errOp++;
