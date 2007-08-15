@@ -604,8 +604,11 @@ public partial class Page : TemplateControl, IHttpHandler
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	public string Title {
 		get {
-			if (_title == null)
-				return htmlHeader.Title;
+			if (_title == null) {
+				if (htmlHeader != null)
+					return htmlHeader.Title;
+				return String.Empty;
+			}
 			return _title;
 		}
 		set {
@@ -998,6 +1001,7 @@ public partial class Page : TemplateControl, IHttpHandler
 			
 			ClientScript.RegisterStartupScript (typeof (Page), "MaintainScrollPositionOnPostBackStartup", script.ToString());
 		}
+		scriptManager.ResetEventValidationState ();
 		base.Render (writer);
 	}
 #endif
@@ -1044,6 +1048,7 @@ public partial class Page : TemplateControl, IHttpHandler
 		string serverUrl = Context.ServletResponse.encodeURL (Request.RawUrl);
 		writer.WriteLine ("\t{0}.serverURL = {1};", theForm, ClientScriptManager.GetScriptLiteral (serverUrl));
 		writer.WriteLine ("\twindow.TARGET_J2EE = true;");
+		writer.WriteLine ("\twindow.IsMultiForm = {0};", IsMultiForm ? "true" : "false");
 #endif
 	}
 
@@ -1429,7 +1434,6 @@ public partial class Page : TemplateControl, IHttpHandler
 
 #if NET_2_0
 		_lifeCycle = PageLifeCycle.Render;
-		scriptManager.ResetEventValidationState ();
 #endif
 		
 		//--

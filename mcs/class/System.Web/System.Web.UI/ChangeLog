@@ -1,3 +1,11 @@
+2007-08-15 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* Page.cs: fixed: 
+	- avoid NullRefferenceException from Title property
+	when Page does not have <head runat="server>,
+	- scriptManager.ResetEventValidationState () is called from Render.
+	It allows multiply calling of RenderControl returns the same output.
+
 2007-08-14  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* Control.cs: optimized GetDirectory call in ResolveClientUrl
