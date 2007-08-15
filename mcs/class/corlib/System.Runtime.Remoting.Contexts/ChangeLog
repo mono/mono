@@ -1,3 +1,6 @@
+2007-08-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SynchronizationAttribute.cs : [ComVisible]
 
 Tue Jan 23 17:48:42 CET 2007 Paolo Molaro <lupus@ximian.com>
 

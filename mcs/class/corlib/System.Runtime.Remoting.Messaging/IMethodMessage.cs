@@ -34,6 +34,9 @@ using System.Reflection;
 
 namespace System.Runtime.Remoting.Messaging {
 
+#if NET_2_0
+	[System.Runtime.InteropServices.ComVisible (false)]
+#endif
 	public interface IMethodMessage : IMessage {
 		int       ArgCount        {
 			get;

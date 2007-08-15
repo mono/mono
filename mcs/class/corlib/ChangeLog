@@ -1,3 +1,7 @@
+2007-08-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* corlib.dll.sources : added CustomErrorsModes.cs.
+
 2007-08-13  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* corlib_test.dll.sources: Added System/ArgumentExceptionTest.cs.

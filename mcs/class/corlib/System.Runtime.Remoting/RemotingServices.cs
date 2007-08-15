@@ -174,12 +174,18 @@ namespace System.Runtime.Remoting
 				return InternalExecuteMessage (target, reqMsg);
 		}
 
+#if NET_2_0
+		[System.Runtime.InteropServices.ComVisible (true)]
+#endif
 		public static object Connect (Type classToProxy, string url)
 		{
 			ObjRef objRef = new ObjRef (classToProxy, url, null);
 			return GetRemoteObject (objRef, classToProxy);
 		}
 
+#if NET_2_0
+		[System.Runtime.InteropServices.ComVisible (true)]
+#endif
 		public static object Connect (Type classToProxy, string url, object data)
 		{
 			ObjRef objRef = new ObjRef (classToProxy, url, data);
@@ -433,6 +439,9 @@ namespace System.Runtime.Remoting
 
 		[MonoTODO]
 		[Conditional ("REMOTING_PERF")]
+#if NET_2_0
+		[Obsolete ("It existed for only internal use in .NET and unimplemented in mono")]
+#endif
 		public static void LogRemotingStage (int stage)
 		{
 			throw new NotImplementedException ();

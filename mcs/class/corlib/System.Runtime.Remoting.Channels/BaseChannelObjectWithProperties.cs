@@ -43,7 +43,12 @@ namespace System.Runtime.Remoting.Channels
 	{
 		Hashtable table;
 		
-		public BaseChannelObjectWithProperties ()
+#if NET_2_0
+		protected
+#else
+		public
+#endif
+		BaseChannelObjectWithProperties ()
 		{
 			table = new Hashtable ();
 		}

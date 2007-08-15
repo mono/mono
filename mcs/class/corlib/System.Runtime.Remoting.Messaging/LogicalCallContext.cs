@@ -37,6 +37,9 @@ using System.Runtime.Serialization;
 namespace System.Runtime.Remoting.Messaging 
 {
 	[Serializable]
+#if NET_2_0
+	[System.Runtime.InteropServices.ComVisible (false)]
+#endif
 	public sealed class LogicalCallContext : ISerializable, ICloneable
 	{
 		Hashtable _data;

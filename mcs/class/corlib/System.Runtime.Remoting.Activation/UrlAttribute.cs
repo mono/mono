@@ -64,11 +64,17 @@ namespace System.Runtime.Remoting.Activation {
 			return url.GetHashCode ();
 		}
 
+#if NET_2_0
+		[System.Runtime.InteropServices.ComVisible (true)]
+#endif
 		public override void GetPropertiesForNewContext (IConstructionCallMessage ctorMsg)
 		{
 			// No new properties
 		}
 
+#if NET_2_0
+		[System.Runtime.InteropServices.ComVisible (true)]
+#endif
 		public override bool IsContextOK (Context ctx, IConstructionCallMessage msg)
 		{
 			return true;

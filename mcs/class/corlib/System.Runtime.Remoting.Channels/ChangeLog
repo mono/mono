@@ -1,3 +1,8 @@
+2007-08-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelServices.cs BaseChannelObjectWithProperties.cs
+	  ISecurableChannel.cs : cosmetic 2.0 API fixes.
+
 2007-06-05  Robert Jordan  <robertj@gmx.net>
 
 	* ChannelServices.cs (CreateClientChannelSinkChain):

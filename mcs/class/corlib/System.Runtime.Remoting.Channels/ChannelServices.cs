@@ -70,6 +70,9 @@ namespace System.Runtime.Remoting
 
 namespace System.Runtime.Remoting.Channels
 {
+#if NET_2_0
+	[System.Runtime.InteropServices.ComVisible (true)]
+#endif
 	public sealed class ChannelServices
 	{
 		private static ArrayList registeredChannels = new ArrayList ();
@@ -253,6 +256,9 @@ namespace System.Runtime.Remoting.Channels
 			return  (string[]) list.ToArray (typeof(string));
 		}
 
+#if NET_2_0
+		[Obsolete ("Use RegisterChannel(IChannel,Boolean)")]
+#endif
 		public static void RegisterChannel (IChannel chnl)
 		{
 			RegisterChannel (chnl, false);

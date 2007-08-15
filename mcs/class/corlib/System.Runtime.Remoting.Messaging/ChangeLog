@@ -1,3 +1,8 @@
+2007-08-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* LogicalCallContext.cs IMethodMessage.cs CallContext.cs :
+	  [ComVisible].
+
 2007-07-30  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* MethodCall.cs (ResolveMethod): If the method is implemented 

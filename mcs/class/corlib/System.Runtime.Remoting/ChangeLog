@@ -1,3 +1,10 @@
+2007-08-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* RemotingConfiguration.cs WellKnownObjectMode.cs
+	  InternalRemotingServices.cs RemotingServices.cs :
+	  [ComVisible], [Serializable], [Obsolete].
+	* CustomErrorsModes.cs : new in 2.0
+
 2007-05-02  Jonathan Chambers  <joncham@gmail.com>
 
 	* RemotingConfiguration.cs: Added Configure overload for 2.0

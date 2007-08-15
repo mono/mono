@@ -811,6 +811,7 @@ System.Runtime.InteropServices.ComTypes/VARKIND.cs
 System.Runtime.InteropServices.Expando/IExpando.cs
 System.Runtime.Remoting/ActivatedClientTypeEntry.cs
 System.Runtime.Remoting/ActivatedServiceTypeEntry.cs
+System.Runtime.Remoting/CustomErrorsModes.cs
 System.Runtime.Remoting/EnvoyInfo.cs
 System.Runtime.Remoting/IObjectHandle.cs
 System.Runtime.Remoting/IChannelInfo.cs

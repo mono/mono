@@ -43,15 +43,19 @@ namespace System.Runtime.Remoting
 {	
 #if NET_2_0
 	[System.Runtime.InteropServices.ComVisible (true)]
-#endif
+	public static class RemotingConfiguration
+#else
 	public class RemotingConfiguration
+#endif
 	{
+#if !NET_2_0
 		//
 		// Private constructor: nobody instantiates this.
 		//
 		private RemotingConfiguration ()
 		{
 		}
+#endif
 		
 		static string applicationID = null;
 		static string applicationName = null;
@@ -119,7 +123,9 @@ namespace System.Runtime.Remoting
 					ReadConfigFile (filename);
 			}
 		}
-		
+#if NET_2_0
+		[Obsolete ("Use Configure(String,Boolean)")]
+#endif
 		public static void Configure (string filename) 
 		{
 			Configure (filename, false);

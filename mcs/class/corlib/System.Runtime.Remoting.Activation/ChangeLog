@@ -1,3 +1,7 @@
+2007-08-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ActivatorLevel.cs UrlAttribute.cs : [ComVisible], [Serializable].
+
 2006-08-09  Jonathan Chambers  <joncham@gmail.com>
 
 	* ActivationServices.cs: Check type.IsCOMObject rather than type.IsImport.

@@ -1,10 +1,12 @@
 //
-// System.Runtime.Remoting.Channels.ISecurableChannel.cs
+// System.Runtime.Remoting.CustomErrorsModes.cs
 //
-// Author: Robert Jordan (robertj@gmx.net)
+// Author:
+//	Atsushi Enomoto  <atsushi@ximian.com>
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+
 //
+// Copyright (C) 2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,15 +29,16 @@
 //
 
 #if NET_2_0
-
 using System;
 
-namespace System.Runtime.Remoting.Channels
-{
-	public interface ISecurableChannel
+namespace System.Runtime.Remoting {
+
+	[System.Runtime.InteropServices.ComVisible (true)]
+	public enum CustomErrorsModes
 	{
-		bool IsSecured { get; set; }
+		On,
+		Off,
+		RemoteOnly,
 	}
 }
-
 #endif
