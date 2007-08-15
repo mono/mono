@@ -80,19 +80,18 @@ namespace MonoTests.System.Net.Sockets
 		[Category ("InetAccess")]
 		public void EndConnect ()
 		{
-		    IPAddress ipOne = IPAddress.Parse (BogusAddress);
-		    IPEndPoint ipEP = new IPEndPoint (ipOne, BogusPort);
-		    Socket sock = new Socket (ipEP.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-		    IAsyncResult ar = sock.BeginConnect (ipEP, null, null);
-		    bool gotException = false;
+			IPAddress ipOne = IPAddress.Parse (BogusAddress);
+			IPEndPoint ipEP = new IPEndPoint (ipOne, BogusPort);
+			Socket sock = new Socket (ipEP.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+			IAsyncResult ar = sock.BeginConnect (ipEP, null, null);
 
-		    try {
-			sock.EndConnect (ar);  // should raise an exception because connect was bogus
-		    } catch {
-			gotException = true;
-		    }
-
-		    Assertion.AssertEquals ("A01", gotException, true);
+			try {
+				// should raise an exception because connect was bogus
+				sock.EndConnect (ar);
+				Assert.Fail ("#1");
+			} catch (SocketException ex) {
+				Assert.AreEqual (10060, ex.ErrorCode, "#2");
+			}
 		}
 
 		[Test]
@@ -502,6 +501,35 @@ namespace MonoTests.System.Net.Sockets
 			s.Shutdown (0);
 		}
 
+		[Test]
+#if NET_2_0
+		[Category ("NotWorking")] // bug #82446
+#endif
+		public void GetHashCodeTest ()
+		{
+			Socket server = new Socket (AddressFamily.InterNetwork,
+				SocketType.Stream, ProtocolType.Tcp);
+			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback,
+							9010);
+			server.Bind (ep);
+			server.Listen (1);
+
+			Socket client = new Socket (AddressFamily.InterNetwork, 
+				SocketType.Stream, ProtocolType.Tcp);
+			int hashcodeA = client.GetHashCode ();
+			client.Connect (ep);
+			int hashcodeB = client.GetHashCode ();
+			Assert.AreEqual (hashcodeA, hashcodeB, "#1");
+			client.Close ();
+			int hashcodeC = client.GetHashCode ();
+#if NET_2_0
+			Assert.AreEqual (hashcodeB, hashcodeC, "#2");
+#else
+			Assert.IsFalse (hashcodeB == hashcodeC, "#2");
+#endif
+			server.Close ();
+		}
+
 		static ManualResetEvent SocketError_event = new ManualResetEvent (false);
 
 		private static void SocketError_callback (IAsyncResult ar)
@@ -527,8 +555,8 @@ namespace MonoTests.System.Net.Sockets
 			SocketError_event.Reset ();
 
 			sock.Blocking = false;
-			sock.BeginConnect (ep, SocketError_callback,
-					   sock);
+			sock.BeginConnect (ep, new AsyncCallback(SocketError_callback),
+				sock);
 
 			if (SocketError_event.WaitOne (2000, false) == false) {
 				Assert.Fail ("SocketError wait timed out");

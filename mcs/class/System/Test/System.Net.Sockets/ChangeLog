@@ -1,3 +1,8 @@
+2007-08-15  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* SocketTest.cs: Improved EndConnect test. Added test for bug #82446,
+	and marked it NotWorking for 2.0 profile.
+
 2007-05-14  Dick Porter  <dick@ximian.com>
 
 	* SocketTest.cs: Tests for bug 75705
