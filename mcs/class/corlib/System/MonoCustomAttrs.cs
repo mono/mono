@@ -273,8 +273,11 @@ namespace System
 						return true;
 			}
 
+			AttributeUsageAttribute usage = RetrieveAttributeUsage (
+				attributeType);
+
 			ICustomAttributeProvider btype;
-			if (inherit && ((btype = GetBase (obj)) != null))
+			if (usage.Inherited && inherit && ((btype = GetBase (obj)) != null))
 				return IsDefined (btype, attributeType, inherit);
 
 			return false;

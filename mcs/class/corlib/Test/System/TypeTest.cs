@@ -589,12 +589,116 @@ PublicKeyToken=b77a5c561934e089"));
 			Assert.IsNull (typeof (TakesInt).GetConstructor (new Type[1] { typeof (object) }));
 		}
 
-		// bug #76150
 		[Test]
+		public void GetCustomAttributes_All ()
+		{
+			object [] attrs = typeof (A).GetCustomAttributes (false);
+			Assert.AreEqual (2, attrs.Length, "#A1");
+			Assert.AreEqual (typeof (FooAttribute), attrs [0].GetType (), "#A2");
+			Assert.AreEqual (typeof (VolatileModifier), attrs [1].GetType (), "#A3");
+
+			attrs = typeof (BA).GetCustomAttributes (false);
+			Assert.AreEqual (1, attrs.Length, "#B1");
+			Assert.AreEqual (typeof (BarAttribute), attrs [0].GetType (), "#B2");
+
+			attrs = typeof (BA).GetCustomAttributes (true);
+			Assert.AreEqual (2, attrs.Length, "#C1");
+			Assert.AreEqual (typeof (BarAttribute), attrs [0].GetType (), "#C2");
+			Assert.AreEqual (typeof (VolatileModifier), attrs [1].GetType (), "#C3");
+
+			attrs = typeof (CA).GetCustomAttributes (false);
+			Assert.AreEqual (0, attrs.Length, "#D");
+
+			attrs = typeof (CA).GetCustomAttributes (true);
+			Assert.AreEqual (1, attrs.Length, "#E1");
+			Assert.AreEqual (typeof (VolatileModifier), attrs [0].GetType (), "#E2");
+		}
+
+		[Test]
+		public void GetCustomAttributes_Type ()
+		{
+			object [] attrs = typeof (A).GetCustomAttributes (
+				typeof (VolatileModifier), false);
+			Assert.AreEqual (1, attrs.Length, "#A1");
+			Assert.AreEqual (typeof (VolatileModifier), attrs [0].GetType (), "#A2");
+
+			attrs = typeof (A).GetCustomAttributes (
+				typeof (NemerleAttribute), false);
+			Assert.AreEqual (1, attrs.Length, "#B1");
+			Assert.AreEqual (typeof (VolatileModifier), attrs [0].GetType (), "#B2");
+
+			attrs = typeof (A).GetCustomAttributes (
+				typeof (FooAttribute), false);
+			Assert.AreEqual (1, attrs.Length, "#C1");
+			Assert.AreEqual (typeof (FooAttribute), attrs [0].GetType (), "#C2");
+
+			attrs = typeof (BA).GetCustomAttributes (
+				typeof (VolatileModifier), false);
+			Assert.AreEqual (0, attrs.Length, "#D");
+
+			attrs = typeof (BA).GetCustomAttributes (
+				typeof (VolatileModifier), true);
+			Assert.AreEqual (1, attrs.Length, "#E1");
+			Assert.AreEqual (typeof (VolatileModifier), attrs [0].GetType (), "#E2");
+
+			attrs = typeof (BA).GetCustomAttributes (
+				typeof (NemerleAttribute), false);
+			Assert.AreEqual (0, attrs.Length, "#F");
+
+			attrs = typeof (BA).GetCustomAttributes (
+				typeof (NemerleAttribute), true);
+			Assert.AreEqual (1, attrs.Length, "#G1");
+			Assert.AreEqual (typeof (VolatileModifier), attrs [0].GetType (), "#G2");
+
+			attrs = typeof (BA).GetCustomAttributes (
+				typeof (FooAttribute), false);
+			Assert.AreEqual (1, attrs.Length, "#H1");
+			Assert.AreEqual (typeof (BarAttribute), attrs [0].GetType (), "#H2");
+
+			attrs = typeof (BA).GetCustomAttributes (
+				typeof (FooAttribute), true);
+			Assert.AreEqual (1, attrs.Length, "#I1");
+			Assert.AreEqual (typeof (BarAttribute), attrs [0].GetType (), "#I2");
+
+			attrs = typeof (A).GetCustomAttributes (
+				typeof (string), false);
+			Assert.AreEqual (0, attrs.Length, "#J");
+		}
+
+		[Test] // bug #76150 and #82431
 		public void IsDefined ()
 		{
-			Assert.IsTrue (typeof (A).IsDefined (typeof (NemerleAttribute), false), "#1");
-			Assert.IsTrue (typeof (A).IsDefined (typeof (VolatileModifier), false), "#2");
+			Assert.IsTrue (typeof (A).IsDefined (typeof (NemerleAttribute), false), "#A1");
+			Assert.IsTrue (typeof (A).IsDefined (typeof (VolatileModifier), false), "#A2");
+			Assert.IsTrue (typeof (A).IsDefined (typeof (FooAttribute), false), "#A3");
+			Assert.IsFalse (typeof (A).IsDefined (typeof (BarAttribute), false), "#A4");
+
+			Assert.IsFalse (typeof (BA).IsDefined (typeof (NemerleAttribute), false), "#B1");
+			Assert.IsFalse (typeof (BA).IsDefined (typeof (VolatileModifier), false), "#B2");
+			Assert.IsTrue (typeof (BA).IsDefined (typeof (FooAttribute), false), "#B3");
+			Assert.IsTrue (typeof (BA).IsDefined (typeof (BarAttribute), false), "#B4");
+			Assert.IsTrue (typeof (BA).IsDefined (typeof (NemerleAttribute), true), "#B5");
+			Assert.IsTrue (typeof (BA).IsDefined (typeof (VolatileModifier), true), "#B6");
+			Assert.IsTrue (typeof (BA).IsDefined (typeof (FooAttribute), true), "#B7");
+			Assert.IsTrue (typeof (BA).IsDefined (typeof (BarAttribute), true), "#B8");
+
+			Assert.IsFalse (typeof (CA).IsDefined (typeof (NemerleAttribute), false), "#C1");
+			Assert.IsFalse (typeof (CA).IsDefined (typeof (VolatileModifier), false), "#C2");
+			Assert.IsFalse (typeof (CA).IsDefined (typeof (FooAttribute), false), "#C3");
+			Assert.IsFalse (typeof (CA).IsDefined (typeof (BarAttribute), false), "#C4");
+			Assert.IsTrue (typeof (CA).IsDefined (typeof (NemerleAttribute), true), "#C5");
+			Assert.IsTrue (typeof (CA).IsDefined (typeof (VolatileModifier), true), "#C6");
+			Assert.IsFalse (typeof (CA).IsDefined (typeof (FooAttribute), true), "#C7");
+			Assert.IsFalse (typeof (CA).IsDefined (typeof (BarAttribute), true), "#C8");
+
+			Assert.IsFalse (typeof (BBA).IsDefined (typeof (NemerleAttribute), false), "#D1");
+			Assert.IsFalse (typeof (BBA).IsDefined (typeof (VolatileModifier), false), "#D2");
+			Assert.IsFalse (typeof (BBA).IsDefined (typeof (FooAttribute), false), "#D3");
+			Assert.IsFalse (typeof (BBA).IsDefined (typeof (BarAttribute), false), "#D4");
+			Assert.IsTrue (typeof (BBA).IsDefined (typeof (NemerleAttribute), true), "#D5");
+			Assert.IsTrue (typeof (BBA).IsDefined (typeof (VolatileModifier), true), "#D6");
+			Assert.IsFalse (typeof (BBA).IsDefined (typeof (FooAttribute), true), "#D7");
+			Assert.IsFalse (typeof (BBA).IsDefined (typeof (BarAttribute), true), "#D8");
 		}
 
 		[Test]
@@ -666,7 +770,7 @@ PublicKeyToken=b77a5c561934e089"));
 			name.Name = "enumtest";
 			AssemblyBuilder assembly = 
 				AppDomain.CurrentDomain.DefineDynamicAssembly (
-															   name, access);
+					name, access);
 
 			ModuleBuilder module = assembly.DefineDynamicModule 
 				("m", "enumtest.dll");
@@ -867,7 +971,30 @@ PublicKeyToken=b77a5c561934e089"));
 		{ }
 
 		[VolatileModifier]
+		[FooAttribute]
 		class A { }
+
+		[AttributeUsage (AttributeTargets.Class, Inherited=false)]
+		public class FooAttribute : Attribute
+		{
+		}
+
+		public class BarAttribute : FooAttribute
+		{
+		}
+
+		[BarAttribute]
+		class BA : A
+		{
+		}
+
+		class BBA : BA
+		{
+		}
+
+		class CA : A
+		{
+		}
 
 		struct FooStruct {
 		}

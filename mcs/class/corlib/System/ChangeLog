@@ -1,3 +1,8 @@
+2007-08-15  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* MonoCustomAttrs.cs: In IsDefined, only walk inheritance chain if
+	both AttributeUsage.Inherited and inherit are true. Fixed bug #82431.
+
 2007-08-13  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ArgumentException.cs: Ignore zero-length ParamName for Message.

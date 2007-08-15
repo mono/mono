@@ -1,3 +1,8 @@
+2007-08-15  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TypeTest.cs: Added IsDefined tests for bug #82431. Added tests for
+	GetCustomAttributes.
+
 2007-08-13  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ArgumentExceptionTest.cs: Added test for ctor (string, string).
