@@ -1,3 +1,10 @@
+2007-08-15  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: fixed the type checks for generics, function pointers and vectors.
+	Added type verification for ldobj and ldtoken. The verifier
+	would segfault if header or signature of a method contained references
+	to non-existant types.
+
 2007-08-15  Jonathan Chambers  <joncham@gmail.com>
 
 	* marshal.c (cominterop_get_ccw): Patch from
