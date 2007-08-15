@@ -1,3 +1,11 @@
+2007-08-15  William Holmes  <billholmes54@gmail.com>
+
+	* marshal.c (emit_marshal_custom): Omit the call to 
+	  marshal_native_to_managed when calling native to managed 
+	  and the argument is specified as an out argument.
+
+	Code is contributed under MIT/X11 license.
+
 2007-08-15  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c: fixed the type checks for generics, function pointers and vectors.
