@@ -1,3 +1,10 @@
+2007-08-15  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListViewCollectionsTest.cs: New tests for ListViewItemCollection
+	when used with ListViewGroup.
+	* ListViewGroupCollectionTest.cs: Likewise.
+	* ListViewItemTest.cs: Likewise.
+
 2007-08-14  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolBarButtonTest.cs: Add test showing how ImageIndex and ImageKey interact.

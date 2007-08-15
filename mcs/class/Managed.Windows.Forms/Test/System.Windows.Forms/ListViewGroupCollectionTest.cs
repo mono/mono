@@ -24,6 +24,7 @@
 //
 // Author:
 //      Daniel Nauck    (dna(at)mono-project(dot)de)
+//      Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 #if NET_2_0
 
@@ -40,11 +41,12 @@ namespace MonoTests.System.Windows.Forms
 	public class ListViewGroupCollectionTest
 	{
 		ListViewGroupCollection grpCol = null;
+		ListView lv = null;
 
 		[SetUp]
 		public void SetUp()
 		{
-			ListView lv = new ListView ();
+			lv = new ListView ();
 			grpCol = lv.Groups;
 		}
 
@@ -61,18 +63,28 @@ namespace MonoTests.System.Windows.Forms
 		[Test]
 		public void AddTest ()
 		{
-			grpCol.Add (new ListViewGroup ("Item1"));
-			grpCol.Add (new ListViewGroup ("Item2"));
+			ListViewGroup group1 = new ListViewGroup ("Item1");
+			ListViewGroup group2 = new ListViewGroup ("Item2");
+			grpCol.Add (group1);
+			grpCol.Add (group2);
+
 			Assert.AreEqual (2, grpCol.Count, "#B1");
+			Assert.AreEqual (lv, group1.ListView, "#B2");
+			Assert.AreEqual (lv, group2.ListView, "#B2");
 		}
 
 		[Test]
 		public void ClearTest ()
 		{
-			grpCol.Add (new ListViewGroup ("Item1"));
-			grpCol.Add (new ListViewGroup ("Item2"));
+			ListViewGroup group1 = new ListViewGroup ("Item1");
+			ListViewGroup group2 = new ListViewGroup ("Item2");
+			grpCol.Add (group1);
+			grpCol.Add (group2);
 			grpCol.Clear ();
+
 			Assert.AreEqual (0, grpCol.Count, "#C1");
+			Assert.AreEqual (null, group1.ListView, "#C2");
+			Assert.AreEqual (null, group2.ListView, "#C3");
 		}
 
 		[Test]
@@ -104,6 +116,8 @@ namespace MonoTests.System.Windows.Forms
 			grpCol.Add (obj2);
 			grpCol.Remove (obj);
 			Assert.AreEqual (1, grpCol.Count, "#F1");
+			Assert.AreEqual (null, obj.ListView, "#F2");
+			Assert.AreEqual (lv, obj2.ListView, "#F3");
 		}
 
 		[Test]
@@ -116,6 +130,8 @@ namespace MonoTests.System.Windows.Forms
 			grpCol.RemoveAt (0);
 			Assert.AreEqual (1, grpCol.Count, "#G1");
 			Assert.AreEqual (true, grpCol.Contains (obj2), "#G2");
+			Assert.AreEqual (null, obj.ListView, "#G3");
+			Assert.AreEqual (lv, obj2.ListView, "#G4");
 		}
 
 		[Test]

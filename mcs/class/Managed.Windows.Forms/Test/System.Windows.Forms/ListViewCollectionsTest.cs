@@ -1094,6 +1094,78 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreSame (item, lvw.Items [0], "#C7");
 		}
 
+#if NET_2_0
+		[Test]
+		public void ListViewItemCollectionTest_Add_Group ()
+		{
+			ListView lvw = new ListView ();
+			ListViewGroup lvg = new ListViewGroup ();
+			ListViewItem lvi = new ListViewItem ("A");
+
+			lvg.Items.Add (lvi);
+			Assert.AreEqual (lvg, lvi.Group, "#A1");
+			Assert.AreEqual (1, lvg.Items.Count, "#A2");
+
+			lvw.Groups.Add (lvg);
+			Assert.AreEqual (null, lvi.ListView, "#B1");
+
+			lvw.Items.Clear ();
+			lvw.Groups.Clear ();
+			lvg.Items.Clear ();
+
+			lvw.Groups.Add (lvg);
+			lvg.Items.Add (lvi);
+			Assert.AreEqual (null, lvi.ListView, "#C1");
+
+			lvw.Items.Clear ();
+			lvw.Groups.Clear ();
+			lvg.Items.Clear ();
+
+			// Adding the ListViewItem to the ListView.Items collection
+			// first throws an exception.
+			try {
+
+				lvw.Items.Add (lvi);
+				lvg.Items.Add (lvi);
+				Assert.Fail ("#D1");
+			} catch (ArgumentException) {
+			}
+
+			lvw.Items.Clear ();
+			lvw.Groups.Clear ();
+			lvg.Items.Clear ();
+
+			// The right order is: first add to the ListViewGroup.Items
+			// collection, then to the ListView.Items collection,
+			// OR add first add the group to the ListView and then the order
+			// of item adding doesn't matter
+			lvw.Groups.Add (lvg);
+			lvg.Items.Add (lvi);
+			Assert.AreEqual (null, lvi.ListView, "#E1");
+			lvw.Items.Add (lvi);
+			Assert.AreEqual (1, lvw.Items.Count, "#E2");
+			Assert.AreEqual (1, lvg.Items.Count, "#E3");
+			Assert.AreEqual (lvw, lvi.ListView, "#E4");
+
+			lvg.Items.Clear ();
+			lvw.Items.Clear ();
+			lvw.Groups.Clear ();
+
+			// Adding the already added ListViewItem to
+			// a different group should remove it from the previous one
+			lvg.Items.Add (lvi);
+			Assert.AreEqual (1, lvg.Items.Count, "#F1");
+			Assert.AreEqual (lvg, lvi.Group, "#F2");
+
+			ListViewGroup lvg2 = new ListViewGroup ();
+			lvg2.Items.Add (lvi);
+		
+			Assert.AreEqual (0, lvg.Items.Count, "#G1");
+			Assert.AreEqual (1, lvg2.Items.Count, "#G2");
+			Assert.AreEqual (lvg2, lvi.Group, "#G3");
+		}
+#endif
+
 		[Test]
 		[ExpectedException (typeof (ArgumentException))] // An item cannot be added more than once. To add an item again, you need to clone it
 		public void ListViewItemCollectionTest_Add_ExistingItem ()
@@ -1264,6 +1336,74 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsNull (itemA.ListView, "#B2");
 			Assert.IsNull (itemB.ListView, "#B3");
 		}
+#if NET_2_0
+		[Test]
+		public void ListViewItemCollectionTest_Clear_Groups ()
+		{
+			ListViewGroup lvg = new ListViewGroup ();
+			ListViewItem itemA = new ListViewItem ();
+			ListViewItem itemB = new ListViewItem ();
+			ListViewItem itemC = new ListViewItem ();
+
+			lvg.Items.Add (itemA);
+			lvg.Items.Add (itemB);
+			lvg.Items.Add (itemC);
+
+			Assert.AreEqual (3, lvg.Items.Count, "#A1");
+			Assert.AreEqual (lvg, itemA.Group, "#A2");
+			Assert.AreEqual (lvg, itemB.Group, "#A3");
+			Assert.AreEqual (lvg, itemC.Group, "#A4");
+
+			ListView lvw = new ListView ();
+			lvw.Groups.Add (lvg);
+
+			Assert.AreEqual (3, lvg.Items.Count, "#B1");
+			Assert.AreEqual (0, lvw.Items.Count, "#B2");
+			Assert.AreEqual (null, itemA.ListView, "#B3");
+			Assert.AreEqual (null, itemB.ListView, "#B4");
+			Assert.AreEqual (null, itemC.ListView, "#B5");
+
+			lvg.Items.Clear ();
+			Assert.AreEqual (0, lvg.Items.Count, "#C1");
+			Assert.AreEqual (null, itemA.Group, "#C2");
+			//Assert.AreEqual (null, itemB.Group, "#C3"); // Bogus .Net impl
+			Assert.AreEqual (null, itemC.Group, "#C4");
+
+			// Add items with Group contained within lvw.Groups
+			lvg.Items.Add (itemA);
+			lvg.Items.Add (itemB);
+			lvg.Items.Add (itemC);
+
+			Assert.AreEqual (3, lvg.Items.Count, "#D1");
+			Assert.AreEqual (0, lvw.Items.Count, "#D2");
+			Assert.AreEqual (null, itemA.ListView, "#D3");
+			Assert.AreEqual (null, itemB.ListView, "#D4");
+			Assert.AreEqual (null, itemC.ListView, "#D5");
+
+			lvg.Items.Clear ();
+			lvw.Groups.Clear ();
+
+			lvw.Groups.Add (lvg);
+			lvg.Items.Add (itemA);
+			lvg.Items.Add (itemB);
+			lvw.Items.Add (itemA);
+			lvw.Items.Add (itemB);
+
+			Assert.AreEqual (2, lvg.Items.Count, "#E1");
+			Assert.AreEqual (2, lvw.Items.Count, "#E2");
+			Assert.AreEqual (lvw, itemA.ListView, "#E3");
+			Assert.AreEqual (lvw, itemB.ListView, "#E4");
+
+			lvg.Items.Clear ();
+
+			Assert.AreEqual (0, lvg.Items.Count, "#F1");
+			Assert.AreEqual (2, lvw.Items.Count, "#F2");
+			Assert.AreEqual (lvw, itemA.ListView, "#F3");
+			Assert.AreEqual (lvw, itemB.ListView, "#F4");
+			Assert.AreEqual (null, itemA.Group, "#F5");
+			//Assert.AreEqual (null, itemB.Group, "#F6"); // Bogus impl again
+		}
+#endif
 
 		[Test]
 		public void ListViewItemCollectionTest_Insert ()
@@ -1312,6 +1452,77 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (2, item.Index, "#E6");
 			Assert.AreSame (item, lvw.Items [2], "#E7");
 		}
+#if NET_2_0
+		[Test]
+		public void ListViewItemCollectionTest_Insert_Group ()
+		{
+			ListView lvw = new ListView ();
+			ListViewGroup lvg = new ListViewGroup ();
+			ListViewItem lvi = new ListViewItem ("A");
+
+			lvg.Items.Insert (0, lvi);
+			Assert.AreEqual (lvg, lvi.Group, "#A1");
+			Assert.AreEqual (1, lvg.Items.Count, "#A2");
+
+			lvw.Groups.Add (lvg);
+			Assert.AreEqual (null, lvi.ListView, "#B1");
+
+			lvw.Items.Clear ();
+			lvw.Groups.Clear ();
+			lvg.Items.Clear ();
+
+			lvw.Groups.Add (lvg);
+			lvg.Items.Insert (0, lvi);
+			Assert.AreEqual (null, lvi.ListView, "#C1");
+
+			lvw.Items.Clear ();
+			lvw.Groups.Clear ();
+			lvg.Items.Clear ();
+
+			// Adding the ListViewItem to the ListView.Items collection
+			// first throws an exception.
+			try {
+
+				lvw.Items.Insert (0, lvi);
+				lvg.Items.Insert (0, lvi);
+				Assert.Fail ("#D1");
+			} catch (ArgumentException) {
+			}
+
+			lvw.Items.Clear ();
+			lvw.Groups.Clear ();
+			lvg.Items.Clear ();
+
+			// The right order is: first add to the ListViewGroup.Items
+			// collection, then to the ListView.Items collection,
+			// OR add first add the group to the ListView and then the order
+			// of item adding doesn't matter
+			lvw.Groups.Add (lvg);
+			lvg.Items.Insert (0, lvi);
+			Assert.AreEqual (null, lvi.ListView, "#E1");
+			lvw.Items.Insert (0, lvi);
+			Assert.AreEqual (1, lvw.Items.Count, "#E2");
+			Assert.AreEqual (1, lvg.Items.Count, "#E3");
+			Assert.AreEqual (lvw, lvi.ListView, "#E4");
+
+			lvg.Items.Clear ();
+			lvw.Items.Clear ();
+			lvw.Groups.Clear ();
+
+			// Adding the already added ListViewItem to
+			// a different group should remove it from the previous one
+			lvg.Items.Insert (0, lvi);
+			Assert.AreEqual (1, lvg.Items.Count, "#F1");
+			Assert.AreEqual (lvg, lvi.Group, "#F2");
+
+			ListViewGroup lvg2 = new ListViewGroup ();
+			lvg2.Items.Insert (0, lvi);
+		
+			Assert.AreEqual (0, lvg.Items.Count, "#G1");
+			Assert.AreEqual (1, lvg2.Items.Count, "#G2");
+			Assert.AreEqual (lvg2, lvi.Group, "#G3");
+		}
+#endif
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))] // An item cannot be added more than once. To add an item again, you need to clone it
@@ -1405,6 +1616,61 @@ namespace MonoTests.System.Windows.Forms
 
 			form.Dispose ();
 		}
+
+#if NET_2_0
+		[Test]
+		public void ListViewItemCollectionTest_Remove_Groups ()
+		{
+			ListViewGroup lvg = new ListViewGroup ();
+			ListViewItem itemA = new ListViewItem ();
+
+			lvg.Items.Add (itemA);
+
+			Assert.AreEqual (1, lvg.Items.Count, "#A1");
+			lvg.Items.Remove (itemA);
+			Assert.AreEqual (0, lvg.Items.Count, "#A2");
+			Assert.AreEqual (null, itemA.Group, "#A3");
+
+			lvg.Items.Add (itemA);
+			ListView lvw = new ListView ();
+			lvw.Groups.Add (lvg);
+
+			Assert.AreEqual (1, lvg.Items.Count, "#B1");
+			Assert.AreEqual (0, lvw.Items.Count, "#B2");
+			Assert.AreEqual (null, itemA.ListView, "#B3");
+
+			lvg.Items.Remove (itemA);
+			Assert.AreEqual (0, lvg.Items.Count, "#C1");
+			Assert.AreEqual (null, itemA.Group, "#C2");
+
+			// Add items with Group contained within lvw.Groups
+			lvg.Items.Add (itemA);
+
+			Assert.AreEqual (1, lvg.Items.Count, "#D1");
+			Assert.AreEqual (0, lvw.Items.Count, "#D2");
+			Assert.AreEqual (null, itemA.ListView, "#D3");
+			Assert.AreEqual (lvg, itemA.Group, "#D4");
+
+			lvg.Items.Clear ();
+			lvw.Groups.Clear ();
+
+			lvw.Groups.Add (lvg);
+			lvg.Items.Add (itemA);
+			lvw.Items.Add (itemA);
+
+			Assert.AreEqual (1, lvg.Items.Count, "#E1");
+			Assert.AreEqual (1, lvw.Items.Count, "#E2");
+			Assert.AreEqual (lvw, itemA.ListView, "#E3");
+			Assert.AreEqual (lvg, itemA.Group, "#E4");
+
+			lvg.Items.Remove (itemA);
+
+			Assert.AreEqual (0, lvg.Items.Count, "#F1");
+			Assert.AreEqual (1, lvw.Items.Count, "#F2");
+			Assert.AreEqual (lvw, itemA.ListView, "#F3");
+			Assert.AreEqual (null, itemA.Group, "#F4");
+		}
+#endif
 
 		[Test]
 		public void ListViewItemCollectionTest_RemoveAt ()

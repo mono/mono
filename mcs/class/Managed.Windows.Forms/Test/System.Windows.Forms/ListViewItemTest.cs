@@ -346,6 +346,26 @@ namespace MonoTests.System.Windows.Forms
 
 			form.Dispose ();
 		}
+	
+#if NET_2_0
+		[Test]
+		public void ListViewItemGroup ()
+		{
+			ListViewGroup lvg1 = new ListViewGroup ();
+			ListViewGroup lvg2 = new ListViewGroup ();
+			ListViewItem lvi = new ListViewItem ();
+		
+			lvg1.Items.Add (lvi);
+		
+			Assert.AreEqual (1, lvg1.Items.Count, "#A1");
+			Assert.AreEqual (lvg1, lvi.Group, "#A2");
+			lvi.Group = lvg2;
+		
+			Assert.AreEqual (0, lvg1.Items.Count, "#B1");
+			Assert.AreEqual (1, lvg2.Items.Count, "#B2");
+			Assert.AreEqual (lvg2, lvi.Group, "#B3");
+		}
+#endif
 
 		[Test]
 		public void ListViewItemUseItemStyleForSubItems ()
