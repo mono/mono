@@ -1,3 +1,11 @@
+2007-08-15  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (dump_stack_value): fixed typo, was printing string
+	instead of object on stack.
+	* verify.c (do_box_value): moved the byref check up as it leads
+	to invalid code and should be done earlier.
+	* verify.c: improved error messages for and ldobj
+
 2007-08-15  William Holmes  <billholmes54@gmail.com>
 
 	* marshal.c (emit_marshal_custom): Omit the call to 
