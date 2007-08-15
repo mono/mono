@@ -74,101 +74,96 @@ namespace System.Linq.Expressions
         #endregion
 
         #region Internal Methods
-		static void AppendFormat (StringBuilder sb, string format, params object [] args)
-		{
-			sb.AppendFormat (format, args);
-		}
-		
         internal override void BuildString(StringBuilder builder)
         {
             switch (NodeType)
             {
             case ExpressionType.Add:
-                AppendFormat (builder, "({0} + {1})", left, right);
+                builder.AppendFormat ("({0} + {1})", left, right);
                 break;
                 
             case ExpressionType.AddChecked:
-                AppendFormat (builder, "({0} + {1})", left, right);
+                builder.AppendFormat ("({0} + {1})", left, right);
                 break;
 
             // See below for ExpressionType.And.
             
             case ExpressionType.AndAlso:
-                AppendFormat (builder, "({0} && {1})", left, right);
+                builder.AppendFormat ("({0} && {1})", left, right);
                 break;
             
             case ExpressionType.ArrayIndex:
-                AppendFormat (builder, "{0}[{1}]", left, right);
+                builder.AppendFormat ("{0}[{1}]", left, right);
                 break;
 
             case ExpressionType.Coalesce:
-                AppendFormat (builder, "({0} ?? {1})", left, right);
+                builder.AppendFormat ("({0} ?? {1})", left, right);
                 break;
 
             case ExpressionType.Divide:
-                AppendFormat (builder, "({0} / {1})", left, right);
+                builder.AppendFormat ("({0} / {1})", left, right);
                 break;
 
             case ExpressionType.Equal:
-                AppendFormat (builder, "({0} == {1})", left, right);
+                builder.AppendFormat ("({0} == {1})", left, right);
                 break;
 
             case ExpressionType.ExclusiveOr:
-                AppendFormat (builder, "({0} ^ {1})", left, right);
+                builder.AppendFormat ("({0} ^ {1})", left, right);
                 break;
 
             case ExpressionType.GreaterThan:
-                AppendFormat (builder, "({0} > {1})", left, right);
+                builder.AppendFormat ("({0} > {1})", left, right);
                 break;
 
             case ExpressionType.GreaterThanOrEqual:
-                AppendFormat (builder, "({0} >= {1})", left, right);
+                builder.AppendFormat ("({0} >= {1})", left, right);
                 break;
 
             case ExpressionType.LeftShift:
-                AppendFormat (builder, "({0} << {1})", left, right);
+                builder.AppendFormat ("({0} << {1})", left, right);
                 break;
 
             case ExpressionType.LessThan:
-                AppendFormat (builder, "({0} < {1})", left, right);
+                builder.AppendFormat ("({0} < {1})", left, right);
                 break;
 
             case ExpressionType.LessThanOrEqual:
-                AppendFormat (builder, "({0} <= {1})", left, right);
+                builder.AppendFormat ("({0} <= {1})", left, right);
                 break;
 
             case ExpressionType.Modulo:
-                AppendFormat (builder, "({0} % {1})", left, right);
+                builder.AppendFormat ("({0} % {1})", left, right);
                 break;
 
             case ExpressionType.Multiply:
-                AppendFormat (builder, "({0} * {1})", left, right);
+                builder.AppendFormat ("({0} * {1})", left, right);
                 break;
 
             case ExpressionType.MultiplyChecked:
-                AppendFormat (builder, "({0} * {1})", left, right);
+                builder.AppendFormat ("({0} * {1})", left, right);
                 break;
 
             case ExpressionType.NotEqual:
-                AppendFormat (builder, "({0} != {1})", left, right);
+                builder.AppendFormat ("({0} != {1})", left, right);
                 break;
 
             // See below for ExpressionType.Or.
 
             case ExpressionType.OrElse:
-                AppendFormat (builder, "({0} ^ {1})", left, right);
+                builder.AppendFormat ("({0} ^ {1})", left, right);
                 break;
 
             case ExpressionType.RightShift:
-                AppendFormat (builder, "({0} >> {1})", left, right);
+                builder.AppendFormat ("({0} >> {1})", left, right);
                 break;
 
             case ExpressionType.Subtract:
-                AppendFormat (builder, "({0} - {1})", left, right);
+                builder.AppendFormat ("({0} - {1})", left, right);
                 break;
 
             case ExpressionType.SubtractChecked:
-                AppendFormat (builder, "({0} - {1})", left, right);
+                builder.AppendFormat ("({0} - {1})", left, right);
                 break;
 
             // 'ExpressionType.And' and 'ExpressionType.Or' are special because
@@ -178,16 +173,16 @@ namespace System.Linq.Expressions
             
             case ExpressionType.And:
                 if (Type == typeof(bool))
-                    AppendFormat (builder, "({0} And {1})", left, right);                
+                    builder.AppendFormat ("({0} And {1})", left, right);                
                 else
-                    AppendFormat (builder, "({0} & {1})", left, right);
+                    builder.AppendFormat ("({0} & {1})", left, right);
                 break;
 
             case ExpressionType.Or:
                 if (Type == typeof(bool))
-                    AppendFormat (builder, "({0} Or {1})", left, right);                
+                    builder.AppendFormat ("({0} Or {1})", left, right);                
                 else
-                    AppendFormat (builder, "({0} | {1})", left, right);
+                    builder.AppendFormat ("({0} | {1})", left, right);
                 break;
             }
         }
