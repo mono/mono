@@ -78,7 +78,12 @@ namespace System.Windows.Forms {
 			is_expanded = true;
 		}
 
-		private TreeNode (SerializationInfo info, StreamingContext context) : this ()
+#if NET_2_0
+		protected
+#else
+		private
+#endif
+		TreeNode (SerializationInfo info, StreamingContext context) : this ()
 		{
 			SerializationInfoEnumerator	en;
 			SerializationEntry		e;
@@ -168,6 +173,37 @@ namespace System.Windows.Forms {
 			for (int i = 0; i < Nodes.Count; i++)
 				info.AddValue ("Child-" + i, Nodes [i], typeof (TreeNode));
 		}
+
+#if NET_2_0
+		protected virtual void Deserialize (SerializationInfo serializationInfo, StreamingContext context)
+		{
+			Text = serializationInfo.GetString ("Text");
+			prop_bag = (OwnerDrawPropertyBag)serializationInfo.GetValue ("prop_bag", typeof (OwnerDrawPropertyBag));
+			ImageIndex = serializationInfo.GetInt32 ("ImageIndex");
+			SelectedImageIndex = serializationInfo.GetInt32 ("SelectedImageIndex");
+			Tag = serializationInfo.GetValue ("Tag", typeof (Object));
+			Checked = serializationInfo.GetBoolean ("Checked");
+			
+			int count = serializationInfo.GetInt32 ("NumberOfChildren");
+			
+			for (int i = 0; i < count; i++)
+				Nodes.Add ((TreeNode)serializationInfo.GetValue ("Child-" + i, typeof (TreeNode)));
+		}
+		
+		protected virtual void Serialize (SerializationInfo si,  StreamingContext context)
+		{
+			si.AddValue ("Text", Text);
+			si.AddValue ("prop_bag", prop_bag, typeof (OwnerDrawPropertyBag));
+			si.AddValue ("ImageIndex", ImageIndex);
+			si.AddValue ("SelectedImageIndex", SelectedImageIndex);
+			si.AddValue ("Tag", Tag);
+			si.AddValue ("Checked", Checked);
+
+			si.AddValue ("NumberOfChildren", Nodes.Count);
+			for (int i = 0; i < Nodes.Count; i++)
+				si.AddValue ("Child-" + i, Nodes[i], typeof (TreeNode));
+		}
+#endif
 		#endregion	// ISerializable Members
 
 		#region Public Instance Properties

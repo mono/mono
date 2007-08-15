@@ -1,3 +1,7 @@
+2007-08-15  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TreeNode.cs: Add some serialization methods.
+
 2007-08-14  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: In ListViewItemCollection have a 
