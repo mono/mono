@@ -1,3 +1,8 @@
+2007-08-15 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_ldobj_test.sh (added):  Generate ldobj related tests.
+	* make_tests.sh: Addes tests for ldobj.
+
 2007-08-13 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* make_ldtoken_test.sh (added):  Generate ldtoken related tests
