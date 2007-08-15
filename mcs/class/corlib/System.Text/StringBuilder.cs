@@ -496,11 +496,6 @@ namespace System.Text {
 		}
 #endif
 
-		public StringBuilder AppendFormat (string format, object arg0)
-		{
-			return AppendFormat (null, format, new object [] { arg0 });
-		}
-
 		public StringBuilder AppendFormat (string format, params object[] args)
 		{
 			return AppendFormat (null, format, args);
@@ -514,12 +509,32 @@ namespace System.Text {
 			return this;
 		}
 
-		public StringBuilder AppendFormat (string format, object arg0, object arg1)
+#if NET_2_1
+		internal
+#else
+		public
+#endif
+		StringBuilder AppendFormat (string format, object arg0)
+		{
+			return AppendFormat (null, format, new object [] { arg0 });
+		}
+
+#if NET_2_1
+		internal
+#else
+		public
+#endif
+		StringBuilder AppendFormat (string format, object arg0, object arg1)
 		{
 			return AppendFormat (null, format, new object [] { arg0, arg1 });
 		}
 
-		public StringBuilder AppendFormat (string format, object arg0, object arg1, object arg2)
+#if NET_2_1
+		internal
+#else
+		public
+#endif
+		StringBuilder AppendFormat (string format, object arg0, object arg1, object arg2)
 		{
 			return AppendFormat (null, format, new object [] { arg0, arg1, arg2 });
 		}

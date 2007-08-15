@@ -1,3 +1,9 @@
+2007-08-15  Jb Evain  <jbveain@novell.com>
+
+	* StringBuilder: hide non 2.1 AppendFormat on 2.1 so that
+	the compile picks up the adequate method when AppendFormat
+	is used in 2.1 platform code.
+
 2007-07-28  Miguel de Icaza  <miguel@novell.com>
 
 	* StringBuilder.cs (Text): Check for null, from Jesse Jones.
