@@ -1,3 +1,10 @@
+2007-08-14  Jonathan Chambers  <joncham@gmail.com>
+
+	* marshal.c (cominterop_get_idispatch_for_object): Implement
+	for runtime callable wrappers.
+   
+	Code is contributed under MIT/X11 license.
+
 2007-08-13  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* pedump.c (main): changed from mono_init to mono_init_from_assembly
