@@ -1,5 +1,11 @@
 2007-08-15 Rodrigo Kumpera <rkumpera@novell.com>
 
+	* make_unbox_test.sh (added):  Generate unbox related tests.
+	* make_tests.sh: Addes tests for unbox.
+
+
+2007-08-15 Rodrigo Kumpera <rkumpera@novell.com>
+
 	* make_ldobj_test.sh (added):  Generate ldobj related tests.
 	* make_tests.sh: Addes tests for ldobj.
 
