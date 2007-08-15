@@ -28,8 +28,8 @@ namespace System.Linq.Expressions
     public sealed class MemberAssignment : MemberBinding
     {
         #region .ctor
-        internal MemberAssignment(MemberInfo member, Expression expression)
-            : base(MemberBindingType.Assignment, member)
+        internal MemberAssignment (MemberInfo member, Expression expression)
+            : base (MemberBindingType.Assignment, member)
         {
             this.expression = expression;
         }
@@ -40,8 +40,7 @@ namespace System.Linq.Expressions
         #endregion
 
         #region Properties
-        public Expression Expression
-        {
+        public Expression Expression {
             get { return expression; }
         }
         #endregion
@@ -49,9 +48,7 @@ namespace System.Linq.Expressions
         #region Internal Methods
         internal override void BuildString(StringBuilder builder)
         {
-            string memberName = base.Member.Name;
-            builder.Append(memberName);
-            builder.Append("=");
+            builder.Append (Member.Name).Append (" = ");
             expression.BuildString(builder);
         }
         #endregion

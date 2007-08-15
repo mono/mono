@@ -1,28 +1,34 @@
+2007-08-15  Federico Di Gregorio <fog@initd.org>
+
+	* Expression.cs: implemented both versions of Bind() & tests. 
+
+	* MemberBinding.cs: added missing override of ToString().
+
 2007-08-14  Federico Di Gregorio <fog@initd.org>
 
-	* Expression.cs: Implemented ArrayLength & tests.
+	* Expression.cs: implemented ArrayLength & tests.
 
-	* Expression.cs: Implemented all three versions of ArrayIndex method.
+	* Expression.cs: implemented all three versions of ArrayIndex method.
 
-	* MethodCallExpression.cs: Implemented BuildString() method.
+	* MethodCallExpression.cs: implemented BuildString() method.
 
 2007-08-13  Federico Di Gregorio <fog@initd.org>
 
-	* ConstantExpression.cs: Using multiple StringBuilder.Append() methods
+	* ConstantExpression.cs: using multiple StringBuilder.Append() methods
 	instead of concatenating strings.
 
-	* Expression.cs: Added AndAlso() method and validator for True and
+	* Expression.cs: added AndAlso() method and validator for True and
 	False user-defined operators.
 
-	* Test: Added unique IDs to all tests. 
+	* Test: added unique IDs to all tests. 
 
 2007-08-12  Federico Di Gregorio <fog@initd.org>
 
-	* ConstantExpression.cs: Fixed BuildString() to return "value(...)"
+	* ConstantExpression.cs: fixed BuildString() to return "value(...)"
 	when the string representation of the value is equal to the type name.
 	Added appropriate checks.
 
-	* Expression.cs: Fixed And() method.
+	* Expression.cs: fixed And() method.
 
 	* Expression.cs: Add() method uses new GetUserDefinedBinaryOperator()
 	and raise exactly the same exceptions (including exception text) as MS

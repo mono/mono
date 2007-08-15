@@ -53,7 +53,7 @@ namespace System.Linq.Expressions
         }
         #endregion
 
-        #region Internal support methods 
+        #region Internal methods 
         internal virtual void BuildString (StringBuilder builder)
         {
             builder.Append ("[").Append (nodeType).Append ("]");
@@ -87,6 +87,7 @@ namespace System.Linq.Expressions
         #region Private support methods
         private const BindingFlags opBindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
         private const BindingFlags methBindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
+        private const BindingFlags propBindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance;
 
         private static MethodInfo GetUserDefinedBinaryOperator (Type leftType, Type rightType, string name)
         {
@@ -119,6 +120,34 @@ namespace System.Linq.Expressions
             // the method is static, that its return type is not void and that the number of
             // parameters is 2 and they are of the right type, but we already know that! Or not?
         }
+
+        private static PropertyInfo GetProperty (MethodInfo mi)
+        {
+            // If the method has the hidebysig and specialname attributes it can be a property accessor;
+            // if that's the case we try to extract the type of the property and then we use it and the
+            // property name (derived from the method name) to find the right ProprtyInfo.
+            
+            if (mi.IsHideBySig && mi.IsSpecialName) {
+                Type propertyType = null;
+                if (mi.Name.StartsWith("set_")) {
+                    ParameterInfo[] parameters = mi.GetParameters();
+                    if (parameters.Length == 1)
+                        propertyType = parameters[0].ParameterType;
+                }
+                else if (mi.Name.StartsWith("get_")) {
+                    propertyType = mi.ReturnType;
+                }
+                
+                if (propertyType != null) {
+                    PropertyInfo pi = mi.DeclaringType.GetProperty(
+                        mi.Name.Substring(4), propBindingFlags, null, propertyType, new Type[0], null);
+                    if (pi != null) return pi;
+                }
+            }
+            
+            throw new ArgumentException(String.Format(
+                "The method '{0}.{1}' is not a property accessor", mi.DeclaringType.FullName, mi.Name));
+        }
         
         private static void ValidateUserDefinedConditionalLogicOperator (ExpressionType nodeType, Type left, Type right, MethodInfo method)
         {
@@ -132,6 +161,22 @@ namespace System.Linq.Expressions
                 throw new ArgumentException(String.Format(
                     "The user-defined operator method '{0}' for operator '{1}' must have associated boolean True and False operators.",
                     method.Name, nodeType));
+        }
+        
+        private static void ValidateSettableFieldOrPropertyMember (MemberInfo member, out Type memberType)
+        {
+            if (member.MemberType == MemberTypes.Field) {
+                memberType = typeof (FieldInfo);
+            }
+            else if (member.MemberType == MemberTypes.Property) {
+                PropertyInfo pi = (PropertyInfo)member;
+                if (!pi.CanWrite)
+                    throw new ArgumentException(String.Format("The property '{0}' has no 'set' accessor", pi));
+                memberType = typeof(PropertyInfo);
+            }
+            else {
+                throw new ArgumentException("Argument must be either a FieldInfo or PropertyInfo");   
+            }
         }
         #endregion
                 
@@ -337,10 +382,28 @@ namespace System.Linq.Expressions
         #endregion
         
         #region Bind
-        //public static MemberAssignment Bind (MemberInfo member, Expression expression)
-        //{
-        //
-        //}
+        public static MemberAssignment Bind (MemberInfo member, Expression expression)
+        {
+            if (member == null)
+                throw new ArgumentNullException ("member");
+            if (expression == null)
+                throw new ArgumentNullException ("expression");
+                
+            Type memberType;
+            ValidateSettableFieldOrPropertyMember(member, out memberType);            
+        
+            return new MemberAssignment(member, expression);
+        }
+
+        public static MemberAssignment Bind (MethodInfo propertyAccessor, Expression expression)
+        {
+            if (propertyAccessor == null)
+                throw new ArgumentNullException ("propertyAccessor");
+            if (expression == null)
+                throw new ArgumentNullException ("expression");
+
+            return new MemberAssignment(GetProperty(propertyAccessor), expression);        
+        }
         #endregion
         
         #region Call

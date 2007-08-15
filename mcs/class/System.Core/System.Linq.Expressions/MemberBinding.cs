@@ -18,6 +18,7 @@
 //
 // Authors:
 //        Antonello Provenzano  <antonello@deveel.com>
+//        Federico Di Gregorio  <fog@initd.org>
 //
 
 using System.Reflection;
@@ -41,19 +42,26 @@ namespace System.Linq.Expressions
         #endregion
 
         #region Properties
-        public MemberBindingType BindingType
-        {
+        public MemberBindingType BindingType {
             get { return type; }
         }
 
-        public MemberInfo Member
-        {
+        public MemberInfo Member {
             get { return member; }
         }
         #endregion
 
         #region Internal Methods
         internal abstract void BuildString(StringBuilder builder);
+        #endregion
+
+        #region ToString
+        public override string ToString()
+        {
+            StringBuilder builder = new StringBuilder ();
+            BuildString (builder);
+            return builder.ToString ();
+        }
         #endregion
     }
 }

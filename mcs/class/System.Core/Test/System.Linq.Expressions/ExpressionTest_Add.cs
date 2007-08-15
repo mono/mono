@@ -26,7 +26,7 @@ using System.Linq.Expressions;
 using NUnit.Framework;
 
 namespace MonoTests.System.Linq.Expressions
-{    
+{        
     [TestFixture]
     public class ExpressionTest_Add
     {

@@ -41,13 +41,11 @@ namespace System.Linq.Expressions
         #endregion
 
         #region Properties
-        public Expression Expression
-        {
+        public Expression Expression {
             get { return expr; }
         }
 
-        public MemberInfo Member
-        {
+        public MemberInfo Member {
             get { return member; }
         }
         #endregion
