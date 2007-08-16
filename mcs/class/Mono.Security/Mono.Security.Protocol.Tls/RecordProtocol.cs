@@ -1,6 +1,6 @@
 // Transport Security Layer (TLS)
 // Copyright (c) 2003-2004 Carlos Guzman Alvarez
-// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2006-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -34,6 +34,8 @@ namespace Mono.Security.Protocol.Tls
 	internal abstract class RecordProtocol
 	{
 		#region Fields
+
+		private static ManualResetEvent record_processing = new ManualResetEvent (true);
 
 		protected Stream	innerStream;
 		protected Context	context;
@@ -316,6 +318,7 @@ namespace Mono.Security.Protocol.Tls
 					"The session is finished and it's no longer valid.");
 			}
 
+			record_processing.Reset ();
 			byte[] recordTypeBuffer = new byte[1];
 
 			ReceiveRecordAsyncResult internalResult = new ReceiveRecordAsyncResult(callback, state, recordTypeBuffer, record);
@@ -426,8 +429,10 @@ namespace Mono.Security.Protocol.Tls
 
 			if (internalResult.CompletedWithError)
 				throw internalResult.AsyncException;
-			else
-				return internalResult.ResultingBuffer;
+
+			byte[] result = internalResult.ResultingBuffer;
+			record_processing.Set ();
+			return result;
 		}
 
 		public byte[] ReceiveRecord(Stream record)

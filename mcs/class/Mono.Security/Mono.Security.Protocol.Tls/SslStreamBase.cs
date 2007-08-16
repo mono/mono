@@ -1,6 +1,6 @@
 // Transport Security Layer (TLS)
 // Copyright (c) 2003-2004 Carlos Guzman Alvarez
-// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2006-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -38,6 +38,8 @@ namespace Mono.Security.Protocol.Tls
 		private delegate void AsyncHandshakeDelegate(InternalAsyncResult asyncResult, bool fromWrite);
 		
 		#region Fields
+
+		static ManualResetEvent record_processing = new ManualResetEvent (true);
 
 		private const int WaitTimeOut = 5 * 60 * 1000;
 
@@ -950,6 +952,7 @@ namespace Mono.Security.Protocol.Tls
 
 			lock (this.read) {
 				try {
+					record_processing.Reset ();
 					// do we already have some decrypted data ?
 					if (this.inputBuffer.Position > 0) {
 						// or maybe we used all the buffer before ?
@@ -957,8 +960,10 @@ namespace Mono.Security.Protocol.Tls
 							this.inputBuffer.SetLength (0);
 						} else {
 							int n = this.inputBuffer.Read (buffer, offset, count);
-							if (n > 0)
+							if (n > 0) {
+								record_processing.Set ();
 								return n;
+							}
 						}
 					}
 
@@ -969,7 +974,16 @@ namespace Mono.Security.Protocol.Tls
 							needMoreData = false;
 							// if we loop, then it either means we need more data
 							byte[] recbuf = new byte[16384];
-							int n = innerStream.Read (recbuf, 0, recbuf.Length);
+							int n = 0;
+							if (count == 1) {
+								int value = innerStream.ReadByte ();
+								if (value >= 0) {
+									recbuf[0] = (byte) value;
+									n = 1;
+								}
+							} else {
+								n = innerStream.Read (recbuf, 0, recbuf.Length);
+							}
 							if (n > 0) {
 								// Add the new received data to the waiting data
 								if ((recordStream.Length > 0) && (recordStream.Position != recordStream.Length))
@@ -977,6 +991,7 @@ namespace Mono.Security.Protocol.Tls
 								recordStream.Write (recbuf, 0, n);
 							} else {
 								// or that the read operation is done (lost connection in the case of a network stream).
+								record_processing.Set ();
 								return 0;
 							}
 						}
@@ -1025,7 +1040,9 @@ namespace Mono.Security.Protocol.Tls
 							if (dataToReturn) {
 								// we have record(s) to return -or- no more available to read from network
 								// reset position for further reading
-								return this.inputBuffer.Read (buffer, offset, count);
+								int i = inputBuffer.Read (buffer, offset, count);
+								record_processing.Set ();
+								return i;
 							}
 						}
 					}
