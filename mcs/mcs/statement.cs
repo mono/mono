@@ -4219,8 +4219,10 @@ namespace Mono.CSharp {
 		{
 			Catch target = (Catch) t;
 
-			target.type_expr = type_expr.Clone (clonectx);
-			target.VarBlock = clonectx.LookupBlock (VarBlock);			
+			if (type_expr != null)
+				target.type_expr = type_expr.Clone (clonectx);
+			if (VarBlock != null)
+				target.VarBlock = clonectx.LookupBlock (VarBlock);			
 			target.Block = clonectx.LookupBlock (Block);
 		}
 	}

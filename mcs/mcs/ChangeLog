@@ -1,5 +1,9 @@
 2007-08-16  Marek Safar  <marek.safar@gmail.com>
 
+	* statement.cs (Catch.Clone): Type and variable can be null.
+
+2007-08-16  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #81979
 	* assign.cs (Assign.Emit): Prepare arguments for string concatenation.
 	I am really not sure whether this is the best fix.
