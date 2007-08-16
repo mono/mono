@@ -1,3 +1,12 @@
+2007-08-16  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #81979
+	* assign.cs (Assign.Emit): Prepare arguments for string concatenation.
+	I am really not sure whether this is the best fix.
+	
+	* expression.cs	(VariableReference.EmitAssign): Do prepare_load test
+	only once.
+	
 2007-08-14  Marek Safar  <marek.safar@gmail.com>
 
 	** C# 3.0 Object and collection initializers (major re-write)
