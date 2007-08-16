@@ -34,24 +34,22 @@ namespace System.Linq
         #region Aggregate
         public static TSource Aggregate<TSource>(this IEnumerable<TSource> source, Func<TSource, TSource, TSource> func)
         {
-            if (source == null || func == null)
-                throw new ArgumentNullException();
-
-            int counter = 0;
-            TSource folded = default(TSource);
-
-            foreach (TSource element in source)
-            {
-                if (counter == 0)
-                    folded = element;
-                else
-                    folded = func(folded, element);
-            }
-
-            if (counter == 0)
-                throw new InvalidOperationException();
-            else
+            if (source == null)
+                throw new ArgumentNullException ("source");
+            if (func == null)
+                throw new ArgumentNullException ("func");
+            
+            // custom foreach so that we can efficiently throw an exception 
+            // if zero elements and treat the first element differently
+            using (IEnumerator<TSource> enumerator = source.GetEnumerator ()) {
+                if (!enumerator.MoveNext ())
+                    throw new InvalidOperationException ("No elements in source list");
+                
+                TSource folded = enumerator.Current;
+                while (enumerator.MoveNext ())
+                    folded = func (folded, enumerator.Current);
                 return folded;
+            }
         }
 
 

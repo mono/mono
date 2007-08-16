@@ -1,3 +1,8 @@
+2007-08-17  Michael Hutchinson <m.j.hutchinson@gmail.com>
+
+	* Enumerable.cs: Fix Aggregate's counting code, and make it more 
+	  efficient.
+
 2007-06-08  Marek Safar <marek.safar@gmail.com>
 
 	* Enumerable.cs: Fixed recursion in GroupBy.
