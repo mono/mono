@@ -1,5 +1,10 @@
 2007-08-16  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Application.cs: Add FilterMessage method and rework our message loop
+	logic to use it.
+
+2007-08-16  Jonathan Pobst  <monkey@jpobst.com>
+
 	* Application.cs: Add some methods and stub a few methods that are
 	pretty much never used.
 

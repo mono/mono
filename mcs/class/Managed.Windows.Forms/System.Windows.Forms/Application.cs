@@ -380,6 +380,20 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		public
+#endif
+		static bool FilterMessage (ref Message message)
+		{
+			lock (message_filters)
+				foreach (IMessageFilter filter in message_filters)
+					if (filter.PreFilterMessage (ref message))
+						return true;
+
+			return false;
+		}
+		
+#if NET_2_0
 		//
 		// If true, it uses GDI+, performance reasons were quoted
 		//
@@ -709,26 +723,11 @@ namespace System.Windows.Forms {
 			bool quit = false;
 
 			while (!quit && XplatUI.GetMessage(queue_id, ref msg, IntPtr.Zero, 0, 0)) {
-				lock (message_filters) {
-					if (message_filters.Count > 0) {
-						Message	m;
-						bool	drop;
-
-						drop = false;
-						m = Message.Create(msg.hwnd, (int)msg.message, msg.wParam, msg.lParam);
-						for (int i = 0; i < message_filters.Count; i++) {
-							if (((IMessageFilter)message_filters[i]).PreFilterMessage(ref m)) {
-								// we're dropping the message
-								drop = true;
-								break;
-							}
-						}
-						if (drop) {
-							continue;
-						}
-					}
-				}
-
+				Message m = Message.Create(msg.hwnd, (int)msg.message, msg.wParam, msg.lParam);
+				
+				if (Application.FilterMessage (ref m))
+					continue;
+					
 				switch((Msg)msg.message) {
 				case Msg.WM_KEYDOWN:
 				case Msg.WM_SYSKEYDOWN:
@@ -736,9 +735,6 @@ namespace System.Windows.Forms {
 				case Msg.WM_SYSCHAR:
 				case Msg.WM_KEYUP:
 				case Msg.WM_SYSKEYUP:
-					Message m;
-					m = Message.Create(msg.hwnd, (int)msg.message, msg.wParam, msg.lParam);
-
 					Control c;
 					c = Control.FromHandle(msg.hwnd);
 
