@@ -1,3 +1,9 @@
+2007-08-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* RecordProtocol.cs, SslStreamBase.cs: Ensure nothing (even the same
+	thread) can confuse the record decoding code. Fix bug #82145 (LDAP) 
+	which uses several thread over a single SslClientStream instance.
+
 2007-05-23 Gonzalo Paniagua Javier <gonzalo.mono@gmail.com>
 
 	* Context.cs: fix the calculation of the unix time.
