@@ -3525,11 +3525,14 @@ namespace Mono.CSharp {
 			prepared = prepare_for_load;
 
 			Variable.EmitInstance (ec);
-			if (prepare_for_load && Variable.HasInstance)
-				ig.Emit (OpCodes.Dup);
-			else if (IsRef && !prepared)
-				Variable.Emit (ec);
-
+			if (prepare_for_load) {
+				if (Variable.HasInstance)
+					ig.Emit (OpCodes.Dup);
+			} else {
+				if (IsRef)
+					Variable.Emit (ec);
+			}
+			
 			source.Emit (ec);
 
 			if (leave_copy) {

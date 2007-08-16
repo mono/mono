@@ -565,7 +565,8 @@ namespace Mono.CSharp {
 			} else
 				temp_source = source;
 
-			am.EmitAssign (ec, temp_source, !is_statement, this is CompoundAssign);
+			bool prepare_for_load = this is CompoundAssign && !(source is StringConcat);
+			am.EmitAssign (ec, temp_source, !is_statement, prepare_for_load);
 
 			if (embedded != null) {
 				if (temp != null)
