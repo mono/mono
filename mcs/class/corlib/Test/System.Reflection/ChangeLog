@@ -1,3 +1,17 @@
+2007-08-16  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* AssemblyTest.cs: Added IsDefined test with null value for 
+	attributeType argument.
+	* ModuleTest.cs: Same. Remove use of deprecated Assertion class, code
+	formatting and fixed line endings.
+	* ParameterInfoTest.cs: Same. Remove use of deprecated Assertion class
+	and code formatting.
+	* MethodInfoTest.cs: Same.
+	* EventInfoTest.cs: Same. Code formatting.
+	* FieldInfoTest.cs: Same. Code formatting.
+	* PropertyInfoTest.cs: Same. Improved coverage of GetAccessors.
+	Improved tests for GetCustomAttributes. Code formatting.
+
 2007-08-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* MethodInfoTest.cs: Add another test.

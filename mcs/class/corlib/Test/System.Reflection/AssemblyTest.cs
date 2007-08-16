@@ -196,6 +196,23 @@ namespace MonoTests.System.Reflection
 			Assert.IsTrue (fss.Length <= corlib_test.GetFiles (true).Length, "test.GetFiles (true)");
 		}
 
+		[Test]
+		public void IsDefined_AttributeType_Null ()
+		{
+			Assembly corlib = typeof (int).Assembly;
+
+			try {
+				corlib.IsDefined ((Type) null, false);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("attributeType", ex.ParamName, "#6");
+			}
+		}
+
 		[Test] // bug #78517
 #if ONLY_1_1
 		[Category ("NotDotNet")] // MS.NET 1.x throws FileLoadException

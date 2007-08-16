@@ -57,6 +57,23 @@ namespace MonoTests.System.Reflection
 		{
 		}
 
+		[Test]
+		public void IsDefined_AttributeType_Null ()
+		{
+			MethodInfo mi = typeof (MethodInfoTest).GetMethod ("foo");
+
+			try {
+				mi.IsDefined ((Type) null, false);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("attributeType", ex.ParamName, "#6");
+			}
+		}
+
 #if NET_2_0
 		[Test]
 		public void PseudoCustomAttributes ()

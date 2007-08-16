@@ -19,27 +19,80 @@ using NUnit.Framework;
 
 namespace MonoTests.System.Reflection
 {
-
 [TestFixture]
-public class ModuleTest : Assertion
-{	
+public class ModuleTest
+{
 	static string TempFolder = Path.Combine (Path.GetTempPath (), "MonoTests.System.Reflection.ModuleTest");
 
 	[SetUp]
-	public void SetUp () {
+	public void SetUp ()
+	{
 		while (Directory.Exists (TempFolder))
 			TempFolder = Path.Combine (TempFolder, "2");
 		Directory.CreateDirectory (TempFolder);
-	}		
+	}
 
 	[TearDown]
-	public void TearDown () {
+	public void TearDown ()
+	{
 		try {
 			// This throws an exception under MS.NET, since the directory contains loaded
 			// assemblies.
 			Directory.Delete (TempFolder, true);
+		} catch (Exception) {
 		}
-		catch (Exception) {
+	}
+
+	[Test]
+	public void IsDefined_AttributeType_Null ()
+	{
+		Type t = typeof (ModuleTest);
+		Module module = t.Module;
+
+		try {
+			module.IsDefined ((Type) null, false);
+			Assert.Fail ("#1");
+		} catch (ArgumentNullException ex) {
+			Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
+			Assert.IsNotNull (ex.ParamName, "#5");
+			Assert.AreEqual ("attributeType", ex.ParamName, "#6");
+		}
+	}
+
+	[Test]
+	public void GetField_Name_Null ()
+	{
+		Type t = typeof (ModuleTest);
+		Module module = t.Module;
+
+		try {
+			module.GetField (null);
+			Assert.Fail ("#A1");
+		} catch (ArgumentNullException ex) {
+			Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#A2");
+			Assert.IsNull (ex.InnerException, "#A3");
+			Assert.IsNotNull (ex.Message, "#A4");
+			// bug #82459
+#if ONLY_1_1
+			Assert.IsNotNull (ex.ParamName, "#A5");
+			Assert.AreEqual ("name", ex.ParamName, "#A6");
+#endif
+		}
+
+		try {
+			module.GetField (null, 0);
+			Assert.Fail ("#B1");
+		} catch (ArgumentNullException ex) {
+			Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#B2");
+			Assert.IsNull (ex.InnerException, "#B3");
+			Assert.IsNotNull (ex.Message, "#B4");
+			// bug #82459
+#if ONLY_1_1
+			Assert.IsNotNull (ex.ParamName, "#B5");
+			Assert.AreEqual ("name", ex.ParamName, "#B6");
+#endif
 		}
 	}
 
@@ -90,195 +143,173 @@ public class ModuleTest : Assertion
 		}
 		AssertArrayEqualsSorted (expectedFieldNames, fieldNames.ToArray (typeof (string)));
 
-		try {
-			module.GetField (null);
-			Fail ();
-		}
-		catch (ArgumentNullException) {
-		}
-
-		try {
-			module.GetField (null, 0);
-			Fail ();
-		}
-		catch (ArgumentNullException) {
-		}
-
-		AssertEquals (module.GetField ("DATA") != null, true);
-		AssertEquals (module.GetField ("DATA2") != null, true);
-		AssertEquals (module.GetField ("DATA3") != null, true);
-		AssertEquals (module.GetField ("DATA4") != null, true);
-		AssertEquals (module.GetField ("DATA_PRIVATE"), null);
-		AssertEquals (module.GetField ("DATA_PRIVATE", BindingFlags.NonPublic | BindingFlags.Static) != null, true);
+		Assert.IsNotNull (module.GetField ("DATA"), "#A1");
+		Assert.IsNotNull (module.GetField ("DATA2"), "#A2");
+		Assert.IsNotNull (module.GetField ("DATA3"), "#A3");
+		Assert.IsNotNull (module.GetField ("DATA4"), "#A4");
+		Assert.IsNull (module.GetField ("DATA_PRIVATE"), "#A5");
+		Assert.IsNotNull (module.GetField ("DATA_PRIVATE", BindingFlags.NonPublic | BindingFlags.Static), "#A6");
 
 		// Check that these methods work correctly on resource modules
 		Module m2 = assembly.GetModule ("res");
-		AssertEquals (m2 != null, true);
-		AssertEquals (m2.GetFields ().Length, 0);
-		AssertEquals (m2.GetField ("DATA"), null);
-		AssertEquals (m2.GetField ("DATA", BindingFlags.Public), null);
+		Assert.IsNotNull (m2, "#B1");
+		Assert.AreEqual (0, m2.GetFields ().Length, "#B2");
+		Assert.IsNull (m2.GetField ("DATA"), "#B3");
+		Assert.IsNull (m2.GetField ("DATA", BindingFlags.Public), "#B4");
 	}
 
 #if NET_2_0
-
 	[Test]
-	public void ResolveType () {
+	public void ResolveType ()
+	{
 		Type t = typeof (ModuleTest);
 		Module module = t.Module;
 
-		AssertEquals (t, module.ResolveType (t.MetadataToken));
+		Assert.AreEqual (t, module.ResolveType (t.MetadataToken), "#1");
 
 		/* We currently throw ArgumentException for this one */
 		try {
 			module.ResolveType (1234);
-			Fail ();
-		}
-		catch (ArgumentException) {
+			Assert.Fail ("#2");
+		} catch (ArgumentException) {
 		}
 
 		try {
 			module.ResolveType (t.GetMethod ("ResolveType").MetadataToken);
-			Fail ();
-		}
-		catch (ArgumentException) {
+			Assert.Fail ("#3");
+		} catch (ArgumentException) {
 		}
 
 		try {
 			module.ResolveType (t.MetadataToken + 10000);
-			Fail ();
-		}
-		catch (ArgumentOutOfRangeException) {
+			Assert.Fail ("#4");
+		} catch (ArgumentOutOfRangeException) {
 		}
 	}
 
 	[Test]
-	public void ResolveMethod () {
+	public void ResolveMethod ()
+	{
 		Type t = typeof (ModuleTest);
 		Module module = t.Module;
 
-		AssertEquals (t.GetMethod ("ResolveMethod"), module.ResolveMethod (t.GetMethod ("ResolveMethod").MetadataToken));
+		Assert.AreEqual (t.GetMethod ("ResolveMethod"), module.ResolveMethod (t.GetMethod ("ResolveMethod").MetadataToken));
 
 		try {
 			module.ResolveMethod (1234);
-			Fail ();
-		}
-		catch (ArgumentException) {
+			Assert.Fail ();
+		} catch (ArgumentException) {
 		}
 
 		try {
 			module.ResolveMethod (t.MetadataToken);
-			Fail ();
-		}
-		catch (ArgumentException) {
+			Assert.Fail ();
+		} catch (ArgumentException) {
 		}
 
 		try {
 			module.ResolveMethod (t.GetMethod ("ResolveMethod").MetadataToken + 10000);
-			Fail ();
-		}
-		catch (ArgumentOutOfRangeException) {
+			Assert.Fail ();
+		} catch (ArgumentOutOfRangeException) {
 		}
 	}
 
 	public int aField;
 
 	[Test]
-	public void ResolveField () {
+	public void ResolveField ()
+	{
 		Type t = typeof (ModuleTest);
 		Module module = t.Module;
 
-		AssertEquals (t.GetField ("aField"), module.ResolveField (t.GetField ("aField").MetadataToken));
+		Assert.AreEqual (t.GetField ("aField"), module.ResolveField (t.GetField ("aField").MetadataToken));
 
 		try {
 			module.ResolveField (1234);
-			Fail ();
-		}
-		catch (ArgumentException) {
+			Assert.Fail ();
+		} catch (ArgumentException) {
 		}
 
 		try {
 			module.ResolveField (t.MetadataToken);
-			Fail ();
-		}
-		catch (ArgumentException) {
+			Assert.Fail ();
+		} catch (ArgumentException) {
 		}
 
 		try {
 			module.ResolveField (t.GetField ("aField").MetadataToken + 10000);
-			Fail ();
-		}
-		catch (ArgumentOutOfRangeException) {
+			Assert.Fail ();
+		} catch (ArgumentOutOfRangeException) {
 		}
 	}
 
 	[Ignore ("it breaks nunit-console.exe execution under .NET 2.0")]
 	[Test]
-	public void ResolveString () {
+	public void ResolveString ()
+	{
 		Type t = typeof (ModuleTest);
 		Module module = t.Module;
 
 		for (int i = 1; i < 10000; ++i) {
 			try {
 				module.ResolveString (0x70000000 + i);
-			}
-			catch (Exception) {
+			} catch (Exception) {
 			}
 		}
 
 		try {
 			module.ResolveString (1234);
-			Fail ();
-		}
-		catch (ArgumentException) {
+			Assert.Fail ();
+		} catch (ArgumentException) {
 		}
 
 		try {
 			module.ResolveString (t.MetadataToken);
-			Fail ();
-		}
-		catch (ArgumentException) {
+			Assert.Fail ();
+		} catch (ArgumentException) {
 		}
 
 		try {
 			module.ResolveString (0x70000000 | 10000);
-			Fail ();
-		}
-		catch (ArgumentOutOfRangeException) {
+			Assert.Fail ();
+		} catch (ArgumentOutOfRangeException) {
 		}
 	}
 
 
 	[Test]
-	public void ResolveMember () {
+	public void ResolveMember ()
+	{
 		Type t = typeof (ModuleTest);
 		Module module = t.Module;
 
-		AssertEquals (t, module.ResolveMember (t.MetadataToken));
-		AssertEquals (t.GetField ("aField"), module.ResolveMember (t.GetField ("aField").MetadataToken));
-		AssertEquals (t.GetMethod ("ResolveMember"), module.ResolveMember (t.GetMethod ("ResolveMember").MetadataToken));
+		Assert.AreEqual (t, module.ResolveMember (t.MetadataToken), "#1");
+		Assert.AreEqual (t.GetField ("aField"), module.ResolveMember (t.GetField ("aField").MetadataToken), "#2");
+		Assert.AreEqual (t.GetMethod ("ResolveMember"), module.ResolveMember (t.GetMethod ("ResolveMember").MetadataToken), "#3");
 
 		try {
 			module.ResolveMember (module.MetadataToken);
-		}
-		catch (ArgumentException) {
+			Assert.Fail ("#4");
+		} catch (ArgumentException) {
 		}
 	}
 #endif
 
 	[Test]
-	public void FindTypes () {
+	public void FindTypes ()
+	{
 		Module m = typeof (ModuleTest).Module;
 
 		Type[] t;
 
 		t = m.FindTypes (Module.FilterTypeName, "FindTypesTest*");
-		AssertEquals (2, t.Length);
-		AssertEquals ("FindTypesTestFirstClass", t [0].Name);
-		AssertEquals ("FindTypesTestSecondClass", t [1].Name);
+		Assert.AreEqual (2, t.Length, "#A1");
+		Assert.AreEqual ("FindTypesTestFirstClass", t [0].Name, "#A2");
+		Assert.AreEqual ("FindTypesTestSecondClass", t [1].Name, "#A3");
 		t = m.FindTypes (Module.FilterTypeNameIgnoreCase, "findtypestest*");
-		AssertEquals (2, t.Length);
-		AssertEquals ("FindTypesTestFirstClass", t [0].Name);
-		AssertEquals ("FindTypesTestSecondClass", t [1].Name);
+		Assert.AreEqual (2, t.Length, "#B1");
+		Assert.AreEqual ("FindTypesTestFirstClass", t [0].Name, "#B2");
+		Assert.AreEqual ("FindTypesTestSecondClass", t [1].Name, "#B3");
 	}
 
 	[Test]
@@ -289,22 +320,22 @@ public class ModuleTest : Assertion
 		m.GetObjectData (null, new StreamingContext (StreamingContextStates.All));
 	}
 
-	class FindTypesTestFirstClass { 
+	class FindTypesTestFirstClass {
 	}
 
 	class FindTypesTestSecondClass {
 	}
 
-    private static void AssertArrayEqualsSorted (Array o1, Array o2) {
+	private static void AssertArrayEqualsSorted (Array o1, Array o2) {
 		Array s1 = (Array)o1.Clone ();
 		Array s2 = (Array)o2.Clone ();
 
 		Array.Sort (s1);
 		Array.Sort (s2);
 
-		AssertEquals (s1.Length, s2.Length);
+		Assert.AreEqual (s1.Length, s2.Length);
 		for (int i = 0; i < s1.Length; ++i)
-			AssertEquals (s1.GetValue (i), s2.GetValue (i));
+			Assert.AreEqual (s1.GetValue (i), s2.GetValue (i));
 	}
 }
 }

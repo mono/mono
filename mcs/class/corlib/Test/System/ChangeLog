@@ -1,3 +1,9 @@
+2007-08-16  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TypeTest.cs: Improved test for GetCustomAttributes, and avoid
+	dependency on order of attributes. Split IsDefined test and improved
+	part for bug #82431.
+
 2007-08-15  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TypeTest.cs: Added IsDefined tests for bug #82431. Added tests for

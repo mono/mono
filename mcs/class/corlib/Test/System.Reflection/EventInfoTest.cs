@@ -35,34 +35,52 @@ using System.Runtime.InteropServices;
 
 using NUnit.Framework;
 
-namespace MonoTests.System.Reflection {
-
-[TestFixture]
-public class EventInfoTest
+namespace MonoTests.System.Reflection
 {
-	[Test]
-	public void TestGetXXXMethod ()
+	[TestFixture]
+	public class EventInfoTest
 	{
-		EventInfo priv = typeof (PrivateEvent).GetEvents (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static) [0];
-		EventInfo pub = typeof (PublicEvent).GetEvents (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static) [0];
+		[Test]
+		public void IsDefined_AttributeType_Null ()
+		{
+			EventInfo priv = typeof (PrivateEvent).GetEvents (
+				BindingFlags.Public | BindingFlags.NonPublic |
+				BindingFlags.Static) [0];
+
+			try {
+				priv.IsDefined ((Type) null, false);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("attributeType", ex.ParamName, "#6");
+			}
+		}
+
+		[Test]
+		public void TestGetXXXMethod ()
+		{
+			EventInfo priv = typeof (PrivateEvent).GetEvents (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static) [0];
+			Assert.IsNull (priv.GetAddMethod (), "#A1");
+			Assert.IsNull (priv.GetRaiseMethod (), "#A2");
+			Assert.IsNull (priv.GetRemoveMethod (), "#A3");
+
+			EventInfo pub = typeof (PublicEvent).GetEvents (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static) [0];
+			Assert.IsNotNull (pub.GetAddMethod (), "#B1");
+			Assert.IsNull (pub.GetRaiseMethod (), "#B2");
+			Assert.IsNotNull (pub.GetRemoveMethod (), "#B3");
+		}
 		
-		Assert.IsNull    (priv.GetAddMethod ());
-		Assert.IsNull    (priv.GetRaiseMethod ());
-		Assert.IsNull    (priv.GetRemoveMethod ());
+		public class PrivateEvent
+		{
+			private static event EventHandler x;
+		}
 		
-		Assert.IsNotNull (pub.GetAddMethod ());
-		Assert.IsNull    (pub.GetRaiseMethod ());
-		Assert.IsNotNull (pub.GetRemoveMethod ());
+		public class PublicEvent
+		{
+			public static event EventHandler x;
+		}
 	}
-	
-	public class PrivateEvent
-	{
-		private static event EventHandler x;
-	}
-	
-	public class PublicEvent
-	{
-		public static event EventHandler x;
-	}
-}
 }

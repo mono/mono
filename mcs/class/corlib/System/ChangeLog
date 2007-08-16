@@ -1,3 +1,11 @@
+2007-08-16  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* MonoCustomAttrs.cs: In IsDefined, throw ArgumentNullException if
+	attributeType is null to avoid a SIGSEGV (and match MS). Only partial
+	fix for bug #82431 on 1.0 profile; it fully fixes the problem for the
+	1.0 profile, but more changes (in the runtime) are required for the
+	2.0 profile. Added a FIXME explaining the problem.
+
 2007-08-15  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* MonoCustomAttrs.cs: In IsDefined, only walk inheritance chain if

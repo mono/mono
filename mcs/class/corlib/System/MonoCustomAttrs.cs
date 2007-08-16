@@ -258,6 +258,9 @@ namespace System
 
 		internal static bool IsDefined (ICustomAttributeProvider obj, Type attributeType, bool inherit)
 		{
+			if (attributeType == null)
+				throw new ArgumentNullException ("attributeType");
+
 			if (obj.GetType ().Assembly != typeof (int).Assembly)
 				// User types might overwrite GetCustomAttributes () but not 
 				// IsDefined ().
@@ -273,11 +276,27 @@ namespace System
 						return true;
 			}
 
-			AttributeUsageAttribute usage = RetrieveAttributeUsage (
-				attributeType);
+#if ONLY_1_1
+			if (inherit) {
+				AttributeUsageAttribute usage = RetrieveAttributeUsage (attributeType);
+				if (!usage.Inherited)
+					inherit = false;
+			}
+#endif
+
+			// FIXME (bug #82431):
+			// on 2.0 profile we should always walk the inheritance
+			// chain and base the behavior on the inheritance level:
+			//
+			// 0  : return true if "attributeType" is assignable from
+			// any of the custom attributes
+			//
+			// > 0: return true if "attributeType" is assignable from
+			// any of the custom attributes and AttributeUsageAttribute
+			// .Inherited of the assignable attribute is true
 
 			ICustomAttributeProvider btype;
-			if (usage.Inherited && inherit && ((btype = GetBase (obj)) != null))
+			if (inherit && ((btype = GetBase (obj)) != null))
 				return IsDefined (btype, attributeType, inherit);
 
 			return false;

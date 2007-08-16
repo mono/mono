@@ -1547,6 +1547,25 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
+		[Category ("NotDotNet")] // https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=293659
+		public void IsDefined_AttributeType_Null ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName ());
+			tb.CreateType ();
+
+			try {
+				tb.IsDefined ((Type) null, false);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("attributeType", ex.ParamName, "#6");
+			}
+		}
+
+		[Test]
 		[ExpectedException (typeof (NotSupportedException))]
 		public void TestGetCustomAttributesIncomplete ()
 		{

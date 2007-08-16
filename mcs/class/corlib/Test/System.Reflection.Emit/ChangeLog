@@ -1,3 +1,8 @@
+2007-08-16  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TypeBuilderTest.cs: Added IsDefined test with null value for
+	attributeType argument.
+
 2007-07-14  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TypeBuilderTest.cs: Modified enum tests to use already constructed

@@ -38,157 +38,176 @@ using NUnit.Framework;
 
 namespace MonoTests.System.Reflection
 {
+	[StructLayout(LayoutKind.Explicit, Pack = 4, Size = 64)]
+	public class Class1
+	{
+		[FieldOffset (32)]
+		public int i;
+	}
 
-[StructLayout(LayoutKind.Explicit, Pack = 4, Size = 64)]
-public class Class1 {
-	[FieldOffset (32)]
-	public int i;
-}
+	[StructLayout(LayoutKind.Sequential)]
+	public class Class2
+	{
+		[MarshalAsAttribute(UnmanagedType.Bool)]
+		public int f0;
 
-[StructLayout(LayoutKind.Sequential)]
-public class Class2 {
-	[MarshalAsAttribute(UnmanagedType.Bool)]
-	public int f0;
+		[MarshalAs(UnmanagedType.LPArray, ArraySubType=UnmanagedType.LPStr)]
+		public string[] f1;
 
-	[MarshalAs(UnmanagedType.LPArray, ArraySubType=UnmanagedType.LPStr)]
-	public string[] f1;
+		[MarshalAs(UnmanagedType.ByValTStr, SizeConst=100)]
+		public string f2;
 
-	[MarshalAs(UnmanagedType.ByValTStr, SizeConst=100)]
-	public string f2;
+		// This doesn't work under mono
+		//[MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Marshal1), MarshalCookie = "5")]
+		//public object f3;
+	}
 
-	// This doesn't work under mono
-	//[MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Marshal1), MarshalCookie = "5")]
-	//public object f3;
-}
+	[TestFixture]
+	public class FieldInfoTest
+	{
+		[NonSerialized]
+		public int i;
 
-[TestFixture]
-public class FieldInfoTest : Assertion
-{
-	[NonSerialized]
-	public int i;
+		[Test]
+		public void IsDefined_AttributeType_Null ()
+		{
+			Type type = typeof (FieldInfoTest);
+			FieldInfo field = type.GetField ("i");
+
+			try {
+				field.IsDefined ((Type) null, false);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("attributeType", ex.ParamName, "#6");
+			}
+		}
 
 #if NET_2_0
-	[Test]
-	public void PseudoCustomAttributes () {
-		Type t = typeof (FieldInfoTest);
+		[Test]
+		public void PseudoCustomAttributes ()
+		{
+			Type t = typeof (FieldInfoTest);
 
-		AssertEquals (1, t.GetField ("i").GetCustomAttributes (typeof (NonSerializedAttribute), true).Length);
+			Assert.AreEqual (1, t.GetField ("i").GetCustomAttributes (typeof (NonSerializedAttribute), true).Length);
 
-		FieldOffsetAttribute field_attr = (FieldOffsetAttribute)(typeof (Class1).GetField ("i").GetCustomAttributes (true) [0]);
-		AssertEquals (32, field_attr.Value);
+			FieldOffsetAttribute field_attr = (FieldOffsetAttribute)(typeof (Class1).GetField ("i").GetCustomAttributes (true) [0]);
+			Assert.AreEqual (32, field_attr.Value);
 
-		MarshalAsAttribute attr;
+			MarshalAsAttribute attr;
 
-		attr = (MarshalAsAttribute)typeof (Class2).GetField ("f0").GetCustomAttributes (true) [0];
-		AssertEquals (UnmanagedType.Bool, attr.Value);
+			attr = (MarshalAsAttribute)typeof (Class2).GetField ("f0").GetCustomAttributes (true) [0];
+			Assert.AreEqual (UnmanagedType.Bool, attr.Value);
 
-		attr = (MarshalAsAttribute)typeof (Class2).GetField ("f1").GetCustomAttributes (true) [0];
-		AssertEquals (UnmanagedType.LPArray, attr.Value);
-		AssertEquals (UnmanagedType.LPStr, attr.ArraySubType);
+			attr = (MarshalAsAttribute)typeof (Class2).GetField ("f1").GetCustomAttributes (true) [0];
+			Assert.AreEqual (UnmanagedType.LPArray, attr.Value);
+			Assert.AreEqual (UnmanagedType.LPStr, attr.ArraySubType);
 
-		attr = (MarshalAsAttribute)typeof (Class2).GetField ("f2").GetCustomAttributes (true) [0];
-		AssertEquals (UnmanagedType.ByValTStr, attr.Value);
-		AssertEquals (100, attr.SizeConst);
+			attr = (MarshalAsAttribute)typeof (Class2).GetField ("f2").GetCustomAttributes (true) [0];
+			Assert.AreEqual (UnmanagedType.ByValTStr, attr.Value);
+			Assert.AreEqual (100, attr.SizeConst);
 
-		/*
-		attr = (MarshalAsAttribute)typeof (Class2).GetField ("f3").GetCustomAttributes (true) [0];
-		AssertEquals (UnmanagedType.CustomMarshaler, attr.Value);
-		AssertEquals ("5", attr.MarshalCookie);
-		AssertEquals (typeof (Marshal1), Type.GetType (attr.MarshalType));
-		*/
-	}
+			/*
+			attr = (MarshalAsAttribute)typeof (Class2).GetField ("f3").GetCustomAttributes (true) [0];
+			Assert.AreEqual (UnmanagedType.CustomMarshaler, attr.Value);
+			Assert.AreEqual ("5", attr.MarshalCookie);
+			Assert.AreEqual (typeof (Marshal1), Type.GetType (attr.MarshalType));
+			*/
+		}
 
 #if !TARGET_JVM // ReflectionOnlyLoad not supported for TARGET_JVM
-	[Test]
-	[ExpectedException (typeof (InvalidOperationException))]
-	public void GetValueOnRefOnlyAssembly ()
-	{
-		Assembly assembly = Assembly.ReflectionOnlyLoad (typeof (FieldInfoTest).Assembly.FullName);
-		Type t = assembly.GetType (typeof (RefOnlyFieldClass).FullName);
-		FieldInfo f = t.GetField ("RefOnlyField", BindingFlags.Static | BindingFlags.NonPublic);
-
-		f.GetValue (null);
-	}
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void GetValueOnRefOnlyAssembly ()
+		{
+			Assembly assembly = Assembly.ReflectionOnlyLoad (typeof (FieldInfoTest).Assembly.FullName);
+			Type t = assembly.GetType (typeof (RefOnlyFieldClass).FullName);
+			FieldInfo f = t.GetField ("RefOnlyField", BindingFlags.Static | BindingFlags.NonPublic);
+			f.GetValue (null);
+		}
 	
-	[Test]
-	[ExpectedException (typeof (InvalidOperationException))]
-	public void SetValueOnRefOnlyAssembly ()
-	{
-		Assembly assembly = Assembly.ReflectionOnlyLoad (typeof (FieldInfoTest).Assembly.FullName);
-		Type t = assembly.GetType (typeof (RefOnlyFieldClass).FullName);
-		FieldInfo f = t.GetField ("RefOnlyField", BindingFlags.Static | BindingFlags.NonPublic);
-
-		f.SetValue (null, 8);
-	}
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void SetValueOnRefOnlyAssembly ()
+		{
+			Assembly assembly = Assembly.ReflectionOnlyLoad (typeof (FieldInfoTest).Assembly.FullName);
+			Type t = assembly.GetType (typeof (RefOnlyFieldClass).FullName);
+			FieldInfo f = t.GetField ("RefOnlyField", BindingFlags.Static | BindingFlags.NonPublic);
+			f.SetValue (null, 8);
+		}
 #endif // TARGET_JVM
 
-	const int literal = 42;
+		const int literal = 42;
 
-	[Test]
-	[ExpectedException (typeof (FieldAccessException))]
-	public void SetValueOnLiteralField ()
-	{
-		FieldInfo f = typeof (FieldInfoTest).GetField ("literal", BindingFlags.Static | BindingFlags.NonPublic);
-		f.SetValue (null, 0);
-	}
+		[Test]
+		[ExpectedException (typeof (FieldAccessException))]
+		public void SetValueOnLiteralField ()
+		{
+			FieldInfo f = typeof (FieldInfoTest).GetField ("literal", BindingFlags.Static | BindingFlags.NonPublic);
+			f.SetValue (null, 0);
+		}
 
-	public int? nullable_field;
+		public int? nullable_field;
 
-	public static int? static_nullable_field;
+		public static int? static_nullable_field;
 
-	[Test]
-	public void NullableTests ()
-	{
-		FieldInfoTest t = new FieldInfoTest ();
+		[Test]
+		public void NullableTests ()
+		{
+			FieldInfoTest t = new FieldInfoTest ();
 
-		FieldInfo fi = typeof (FieldInfoTest).GetField ("nullable_field");
+			FieldInfo fi = typeof (FieldInfoTest).GetField ("nullable_field");
 
-		fi.SetValue (t, 101);
-		AssertEquals (101, fi.GetValue (t));
-		fi.SetValue (t, null);
-		AssertEquals (null, fi.GetValue (t));
+			fi.SetValue (t, 101);
+			Assert.AreEqual (101, fi.GetValue (t));
+			fi.SetValue (t, null);
+			Assert.AreEqual (null, fi.GetValue (t));
 
-		FieldInfo fi2 = typeof (FieldInfoTest).GetField ("static_nullable_field");
+			FieldInfo fi2 = typeof (FieldInfoTest).GetField ("static_nullable_field");
 
-		fi2.SetValue (t, 101);
-		AssertEquals (101, fi2.GetValue (t));
-		fi2.SetValue (t, null);
-		AssertEquals (null, fi2.GetValue (t));
-	}
+			fi2.SetValue (t, 101);
+			Assert.AreEqual (101, fi2.GetValue (t));
+			fi2.SetValue (t, null);
+			Assert.AreEqual (null, fi2.GetValue (t));
+		}
 	
 #if !TARGET_JVM // TypeBuilder not supported for TARGET_JVM
-	[Test]
-	public void NonPublicTests ()
-	{		
-		Assembly assembly = Assembly.ReflectionOnlyLoad (typeof (FieldInfoTest).Assembly.FullName);
+		[Test]
+		public void NonPublicTests ()
+		{
+			Assembly assembly = Assembly.ReflectionOnlyLoad (typeof (FieldInfoTest).Assembly.FullName);
 		
-		Type t = assembly.GetType (typeof (NonPublicFieldClass).FullName);
+			Type t = assembly.GetType (typeof (NonPublicFieldClass).FullName);
 
-		// try to get non-public field
-		FieldInfo fi = t.GetField ("protectedField");
-		AssertNull (fi);
-		// get it for real
-		fi = t.GetField ("protectedField", BindingFlags.NonPublic | BindingFlags.Instance);
-		AssertNotNull (fi);		
-		// get via typebuilder		
-		FieldInfo f = TypeBuilder.GetField (t, fi);
-		AssertNotNull (f);	
-	}
+			// try to get non-public field
+			FieldInfo fi = t.GetField ("protectedField");
+			Assert.IsNull (fi);
+			// get it for real
+			fi = t.GetField ("protectedField", BindingFlags.NonPublic | BindingFlags.Instance);
+			Assert.IsNotNull (fi);
+			// get via typebuilder
+			FieldInfo f = TypeBuilder.GetField (t, fi);
+			Assert.IsNotNull (f);
+		}
 #endif // TARGET_JVM
 	
 #endif
-}		
-#if NET_2_0
-// Helper classes
-class RefOnlyFieldClass 
-{
-	// Helper property
-	static int RefOnlyField;
-}
+	}
 
-class NonPublicFieldClass
-{
-	protected int protectedField;
-}
+#if NET_2_0
+	// Helper classes
+	class RefOnlyFieldClass 
+	{
+		// Helper property
+		static int RefOnlyField;
+	}
+
+	class NonPublicFieldClass
+	{
+		protected int protectedField;
+	}
 #endif
 }

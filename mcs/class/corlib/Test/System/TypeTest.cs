@@ -594,8 +594,8 @@ PublicKeyToken=b77a5c561934e089"));
 		{
 			object [] attrs = typeof (A).GetCustomAttributes (false);
 			Assert.AreEqual (2, attrs.Length, "#A1");
-			Assert.AreEqual (typeof (FooAttribute), attrs [0].GetType (), "#A2");
-			Assert.AreEqual (typeof (VolatileModifier), attrs [1].GetType (), "#A3");
+			Assert.IsTrue (HasAttribute (attrs, typeof (FooAttribute)), "#A2");
+			Assert.IsTrue (HasAttribute (attrs, typeof (VolatileModifier)), "#A3");
 
 			attrs = typeof (BA).GetCustomAttributes (false);
 			Assert.AreEqual (1, attrs.Length, "#B1");
@@ -603,8 +603,8 @@ PublicKeyToken=b77a5c561934e089"));
 
 			attrs = typeof (BA).GetCustomAttributes (true);
 			Assert.AreEqual (2, attrs.Length, "#C1");
-			Assert.AreEqual (typeof (BarAttribute), attrs [0].GetType (), "#C2");
-			Assert.AreEqual (typeof (VolatileModifier), attrs [1].GetType (), "#C3");
+			Assert.IsTrue (HasAttribute (attrs, typeof (BarAttribute)), "#C2");
+			Assert.IsTrue (HasAttribute (attrs, typeof (VolatileModifier)), "#C3");
 
 			attrs = typeof (CA).GetCustomAttributes (false);
 			Assert.AreEqual (0, attrs.Length, "#D");
@@ -614,58 +614,197 @@ PublicKeyToken=b77a5c561934e089"));
 			Assert.AreEqual (typeof (VolatileModifier), attrs [0].GetType (), "#E2");
 		}
 
+		static bool HasAttribute (object [] attrs, Type attributeType)
+		{
+			foreach (object attr in attrs)
+				if (attr.GetType () == attributeType)
+					return true;
+			return false;
+		}
+
 		[Test]
 		public void GetCustomAttributes_Type ()
 		{
-			object [] attrs = typeof (A).GetCustomAttributes (
+			object [] attrs = null;
+
+			attrs = typeof (A).GetCustomAttributes (
 				typeof (VolatileModifier), false);
 			Assert.AreEqual (1, attrs.Length, "#A1");
 			Assert.AreEqual (typeof (VolatileModifier), attrs [0].GetType (), "#A2");
+			attrs = typeof (A).GetCustomAttributes (
+				typeof (VolatileModifier), true);
+			Assert.AreEqual (1, attrs.Length, "#A3");
+			Assert.AreEqual (typeof (VolatileModifier), attrs [0].GetType (), "#A4");
 
 			attrs = typeof (A).GetCustomAttributes (
 				typeof (NemerleAttribute), false);
 			Assert.AreEqual (1, attrs.Length, "#B1");
 			Assert.AreEqual (typeof (VolatileModifier), attrs [0].GetType (), "#B2");
+			attrs = typeof (A).GetCustomAttributes (
+				typeof (NemerleAttribute), true);
+			Assert.AreEqual (1, attrs.Length, "#B3");
+			Assert.AreEqual (typeof (VolatileModifier), attrs [0].GetType (), "#B4");
 
 			attrs = typeof (A).GetCustomAttributes (
 				typeof (FooAttribute), false);
 			Assert.AreEqual (1, attrs.Length, "#C1");
 			Assert.AreEqual (typeof (FooAttribute), attrs [0].GetType (), "#C2");
+			attrs = typeof (A).GetCustomAttributes (
+				typeof (FooAttribute), false);
+			Assert.AreEqual (1, attrs.Length, "#C3");
+			Assert.AreEqual (typeof (FooAttribute), attrs [0].GetType (), "#C4");
 
 			attrs = typeof (BA).GetCustomAttributes (
 				typeof (VolatileModifier), false);
-			Assert.AreEqual (0, attrs.Length, "#D");
-
+			Assert.AreEqual (0, attrs.Length, "#D1");
 			attrs = typeof (BA).GetCustomAttributes (
 				typeof (VolatileModifier), true);
-			Assert.AreEqual (1, attrs.Length, "#E1");
-			Assert.AreEqual (typeof (VolatileModifier), attrs [0].GetType (), "#E2");
+			Assert.AreEqual (1, attrs.Length, "#D2");
+			Assert.AreEqual (typeof (VolatileModifier), attrs [0].GetType (), "#D3");
 
 			attrs = typeof (BA).GetCustomAttributes (
 				typeof (NemerleAttribute), false);
-			Assert.AreEqual (0, attrs.Length, "#F");
-
+			Assert.AreEqual (0, attrs.Length, "#E1");
 			attrs = typeof (BA).GetCustomAttributes (
 				typeof (NemerleAttribute), true);
-			Assert.AreEqual (1, attrs.Length, "#G1");
-			Assert.AreEqual (typeof (VolatileModifier), attrs [0].GetType (), "#G2");
+			Assert.AreEqual (1, attrs.Length, "#E2");
+			Assert.AreEqual (typeof (VolatileModifier), attrs [0].GetType (), "#E3");
 
 			attrs = typeof (BA).GetCustomAttributes (
 				typeof (FooAttribute), false);
-			Assert.AreEqual (1, attrs.Length, "#H1");
-			Assert.AreEqual (typeof (BarAttribute), attrs [0].GetType (), "#H2");
-
+			Assert.AreEqual (1, attrs.Length, "#F1");
+			Assert.AreEqual (typeof (BarAttribute), attrs [0].GetType (), "#F2");
 			attrs = typeof (BA).GetCustomAttributes (
 				typeof (FooAttribute), true);
-			Assert.AreEqual (1, attrs.Length, "#I1");
-			Assert.AreEqual (typeof (BarAttribute), attrs [0].GetType (), "#I2");
+			Assert.AreEqual (1, attrs.Length, "#F3");
+			Assert.AreEqual (typeof (BarAttribute), attrs [0].GetType (), "#F4");
+
+			attrs = typeof (bug82431A1).GetCustomAttributes (
+				typeof (InheritAttribute), false);
+			Assert.AreEqual (1, attrs.Length, "#G1");
+			Assert.AreEqual (typeof (NotInheritAttribute), attrs [0].GetType (), "#G2");
+			attrs = typeof (bug82431A1).GetCustomAttributes (
+				typeof (InheritAttribute), true);
+			Assert.AreEqual (1, attrs.Length, "#G3");
+			Assert.AreEqual (typeof (NotInheritAttribute), attrs [0].GetType (), "#G4");
+
+			attrs = typeof (bug82431A1).GetCustomAttributes (
+				typeof (NotInheritAttribute), false);
+			Assert.AreEqual (1, attrs.Length, "#H1");
+			Assert.AreEqual (typeof (NotInheritAttribute), attrs [0].GetType (), "#H2");
+			attrs = typeof (bug82431A1).GetCustomAttributes (
+				typeof (InheritAttribute), true);
+			Assert.AreEqual (1, attrs.Length, "#H3");
+			Assert.AreEqual (typeof (NotInheritAttribute), attrs [0].GetType (), "#H4");
+
+			attrs = typeof (bug82431A2).GetCustomAttributes (
+				typeof (InheritAttribute), false);
+			Assert.AreEqual (0, attrs.Length, "#I1");
+			attrs = typeof (bug82431A2).GetCustomAttributes (
+				typeof (InheritAttribute), true);
+			Assert.AreEqual (0, attrs.Length, "#I2");
+
+			attrs = typeof (bug82431A2).GetCustomAttributes (
+				typeof (NotInheritAttribute), false);
+			Assert.AreEqual (0, attrs.Length, "#J1");
+			attrs = typeof (bug82431A2).GetCustomAttributes (
+				typeof (NotInheritAttribute), true);
+			Assert.AreEqual (0, attrs.Length, "#J2");
+
+			attrs = typeof (bug82431A3).GetCustomAttributes (
+				typeof (InheritAttribute), false);
+			Assert.AreEqual (2, attrs.Length, "#K1");
+			Assert.IsTrue (HasAttribute (attrs, typeof (InheritAttribute)), "#K2");
+			Assert.IsTrue (HasAttribute (attrs, typeof (NotInheritAttribute)), "#K3");
+			attrs = typeof (bug82431A3).GetCustomAttributes (
+				typeof (InheritAttribute), true);
+			Assert.AreEqual (2, attrs.Length, "#K4");
+			Assert.IsTrue (HasAttribute (attrs, typeof (InheritAttribute)), "#K5");
+			Assert.IsTrue (HasAttribute (attrs, typeof (NotInheritAttribute)), "#K6");
+
+			attrs = typeof (bug82431A3).GetCustomAttributes (
+				typeof (NotInheritAttribute), false);
+			Assert.AreEqual (1, attrs.Length, "#L1");
+			Assert.AreEqual (typeof (NotInheritAttribute), attrs [0].GetType (), "#L2");
+			attrs = typeof (bug82431A3).GetCustomAttributes (
+				typeof (NotInheritAttribute), true);
+			Assert.AreEqual (1, attrs.Length, "#L3");
+			Assert.AreEqual (typeof (NotInheritAttribute), attrs [0].GetType (), "#L4");
+
+			attrs = typeof (bug82431B1).GetCustomAttributes (
+				typeof (InheritAttribute), false);
+			Assert.AreEqual (1, attrs.Length, "#M1");
+			Assert.AreEqual (typeof (InheritAttribute), attrs [0].GetType (), "#M2");
+			attrs = typeof (bug82431B1).GetCustomAttributes (
+				typeof (InheritAttribute), true);
+			Assert.AreEqual (1, attrs.Length, "#M3");
+			Assert.AreEqual (typeof (InheritAttribute), attrs [0].GetType (), "#M4");
+
+			attrs = typeof (bug82431B1).GetCustomAttributes (
+				typeof (NotInheritAttribute), false);
+			Assert.AreEqual (0, attrs.Length, "#N1");
+			attrs = typeof (bug82431B1).GetCustomAttributes (
+				typeof (NotInheritAttribute), true);
+			Assert.AreEqual (0, attrs.Length, "#N2");
+
+			attrs = typeof (bug82431B2).GetCustomAttributes (
+				typeof (InheritAttribute), false);
+			Assert.AreEqual (0, attrs.Length, "#O1");
+			attrs = typeof (bug82431B2).GetCustomAttributes (
+				typeof (InheritAttribute), true);
+			Assert.AreEqual (1, attrs.Length, "#O2");
+			Assert.AreEqual (typeof (InheritAttribute), attrs [0].GetType (), "#O3");
+
+			attrs = typeof (bug82431B2).GetCustomAttributes (
+				typeof (NotInheritAttribute), false);
+			Assert.AreEqual (0, attrs.Length, "#P1");
+			attrs = typeof (bug82431B2).GetCustomAttributes (
+				typeof (NotInheritAttribute), true);
+			Assert.AreEqual (0, attrs.Length, "#P2");
+
+			attrs = typeof (bug82431B3).GetCustomAttributes (
+				typeof (InheritAttribute), false);
+			Assert.AreEqual (1, attrs.Length, "#Q1");
+			Assert.AreEqual (typeof (NotInheritAttribute), attrs [0].GetType (), "#Q2");
+			attrs = typeof (bug82431B3).GetCustomAttributes (
+				typeof (InheritAttribute), true);
+			Assert.AreEqual (2, attrs.Length, "#Q3");
+			Assert.AreEqual (typeof (NotInheritAttribute), attrs [0].GetType (), "#Q4");
+			Assert.AreEqual (typeof (InheritAttribute), attrs [1].GetType (), "#Q5");
+
+			attrs = typeof (bug82431B3).GetCustomAttributes (
+				typeof (NotInheritAttribute), false);
+			Assert.AreEqual (1, attrs.Length, "#R1");
+			Assert.AreEqual (typeof (NotInheritAttribute), attrs [0].GetType (), "#R2");
+			attrs = typeof (bug82431B3).GetCustomAttributes (
+				typeof (NotInheritAttribute), true);
+			Assert.AreEqual (1, attrs.Length, "#R3");
+			Assert.AreEqual (typeof (NotInheritAttribute), attrs [0].GetType (), "#R4");
+
+			attrs = typeof (bug82431B4).GetCustomAttributes (
+				typeof (InheritAttribute), false);
+			Assert.AreEqual (0, attrs.Length, "#S1");
+			attrs = typeof (bug82431B4).GetCustomAttributes (
+				typeof (InheritAttribute), true);
+			Assert.AreEqual (1, attrs.Length, "#S2");
+			Assert.AreEqual (typeof (InheritAttribute), attrs [0].GetType (), "#S3");
+
+			attrs = typeof (bug82431B4).GetCustomAttributes (
+				typeof (NotInheritAttribute), false);
+			Assert.AreEqual (0, attrs.Length, "#T1");
+			attrs = typeof (bug82431B4).GetCustomAttributes (
+				typeof (NotInheritAttribute), true);
+			Assert.AreEqual (0, attrs.Length, "#T2");
 
 			attrs = typeof (A).GetCustomAttributes (
 				typeof (string), false);
-			Assert.AreEqual (0, attrs.Length, "#J");
+			Assert.AreEqual (0, attrs.Length, "#U1");
+			attrs = typeof (A).GetCustomAttributes (
+				typeof (string), true);
+			Assert.AreEqual (0, attrs.Length, "#U2");
 		}
 
-		[Test] // bug #76150 and #82431
+		[Test] // bug #76150
 		public void IsDefined ()
 		{
 			Assert.IsTrue (typeof (A).IsDefined (typeof (NemerleAttribute), false), "#A1");
@@ -677,11 +816,37 @@ PublicKeyToken=b77a5c561934e089"));
 			Assert.IsFalse (typeof (BA).IsDefined (typeof (VolatileModifier), false), "#B2");
 			Assert.IsTrue (typeof (BA).IsDefined (typeof (FooAttribute), false), "#B3");
 			Assert.IsTrue (typeof (BA).IsDefined (typeof (BarAttribute), false), "#B4");
-			Assert.IsTrue (typeof (BA).IsDefined (typeof (NemerleAttribute), true), "#B5");
-			Assert.IsTrue (typeof (BA).IsDefined (typeof (VolatileModifier), true), "#B6");
-			Assert.IsTrue (typeof (BA).IsDefined (typeof (FooAttribute), true), "#B7");
-			Assert.IsTrue (typeof (BA).IsDefined (typeof (BarAttribute), true), "#B8");
+			Assert.IsFalse (typeof (BA).IsDefined (typeof (string), false), "#B5");
+			Assert.IsFalse (typeof (BA).IsDefined (typeof (int), false), "#B6");
+			Assert.IsTrue (typeof (BA).IsDefined (typeof (NemerleAttribute), true), "#B7");
+			Assert.IsTrue (typeof (BA).IsDefined (typeof (VolatileModifier), true), "#B8");
+			Assert.IsTrue (typeof (BA).IsDefined (typeof (FooAttribute), true), "#B9");
+			Assert.IsTrue (typeof (BA).IsDefined (typeof (BarAttribute), true), "#B10");
+			Assert.IsFalse (typeof (BA).IsDefined (typeof (string), true), "#B11");
+			Assert.IsFalse (typeof (BA).IsDefined (typeof (int), true), "#B12");
+		}
 
+		[Test]
+		public void IsDefined_AttributeType_Null ()
+		{
+			try {
+				typeof (BA).IsDefined ((Type) null, false);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("attributeType", ex.ParamName, "#6");
+			}
+		}
+
+		[Test] // bug #82431
+#if NET_2_0
+		[Category ("NotWorking")]
+#endif
+		public void IsDefined_Inherited ()
+		{
 			Assert.IsFalse (typeof (CA).IsDefined (typeof (NemerleAttribute), false), "#C1");
 			Assert.IsFalse (typeof (CA).IsDefined (typeof (VolatileModifier), false), "#C2");
 			Assert.IsFalse (typeof (CA).IsDefined (typeof (FooAttribute), false), "#C3");
@@ -697,8 +862,52 @@ PublicKeyToken=b77a5c561934e089"));
 			Assert.IsFalse (typeof (BBA).IsDefined (typeof (BarAttribute), false), "#D4");
 			Assert.IsTrue (typeof (BBA).IsDefined (typeof (NemerleAttribute), true), "#D5");
 			Assert.IsTrue (typeof (BBA).IsDefined (typeof (VolatileModifier), true), "#D6");
+#if NET_2_0
+			Assert.IsTrue (typeof (BBA).IsDefined (typeof (FooAttribute), true), "#D7");
+			Assert.IsTrue (typeof (BBA).IsDefined (typeof (BarAttribute), true), "#D8");
+#else
 			Assert.IsFalse (typeof (BBA).IsDefined (typeof (FooAttribute), true), "#D7");
 			Assert.IsFalse (typeof (BBA).IsDefined (typeof (BarAttribute), true), "#D8");
+#endif
+
+			Assert.IsTrue (typeof (bug82431A1).IsDefined (typeof (InheritAttribute), false), "#E1");
+			Assert.IsTrue (typeof (bug82431A1).IsDefined (typeof (NotInheritAttribute), false), "#E2");
+			Assert.IsTrue (typeof (bug82431A1).IsDefined (typeof (InheritAttribute), true), "#E3");
+			Assert.IsTrue (typeof (bug82431A1).IsDefined (typeof (NotInheritAttribute), true), "#E4");
+
+			Assert.IsFalse (typeof (bug82431A2).IsDefined (typeof (InheritAttribute), false), "#F1");
+			Assert.IsFalse (typeof (bug82431A2).IsDefined (typeof (NotInheritAttribute), false), "#F2");
+#if NET_2_0
+			Assert.IsFalse (typeof (bug82431A2).IsDefined (typeof (InheritAttribute), true), "#F3");
+#else
+			Assert.IsTrue (typeof (bug82431A2).IsDefined (typeof (InheritAttribute), true), "#F3");
+#endif
+			Assert.IsFalse (typeof (bug82431A2).IsDefined (typeof (NotInheritAttribute), true), "#F4");
+
+			Assert.IsTrue (typeof (bug82431A3).IsDefined (typeof (InheritAttribute), false), "#G1");
+			Assert.IsTrue (typeof (bug82431A3).IsDefined (typeof (NotInheritAttribute), false), "#G2");
+			Assert.IsTrue (typeof (bug82431A3).IsDefined (typeof (InheritAttribute), true), "#G3");
+			Assert.IsTrue (typeof (bug82431A3).IsDefined (typeof (NotInheritAttribute), true), "#G4");
+
+			Assert.IsTrue (typeof (bug82431B1).IsDefined (typeof (InheritAttribute), false), "#H1");
+			Assert.IsFalse (typeof (bug82431B1).IsDefined (typeof (NotInheritAttribute), false), "#H2");
+			Assert.IsTrue (typeof (bug82431B1).IsDefined (typeof (InheritAttribute), true), "#H3");
+			Assert.IsFalse (typeof (bug82431B1).IsDefined (typeof (NotInheritAttribute), true), "#H4");
+
+			Assert.IsFalse (typeof (bug82431B2).IsDefined (typeof (InheritAttribute), false), "#I1");
+			Assert.IsFalse (typeof (bug82431B2).IsDefined (typeof (NotInheritAttribute), false), "#I2");
+			Assert.IsTrue (typeof (bug82431B2).IsDefined (typeof (InheritAttribute), true), "#I3");
+			Assert.IsFalse (typeof (bug82431B2).IsDefined (typeof (NotInheritAttribute), true), "#I4");
+
+			Assert.IsTrue (typeof (bug82431B3).IsDefined (typeof (InheritAttribute), false), "#J1");
+			Assert.IsTrue (typeof (bug82431B3).IsDefined (typeof (NotInheritAttribute), false), "#J2");
+			Assert.IsTrue (typeof (bug82431B3).IsDefined (typeof (InheritAttribute), true), "#J3");
+			Assert.IsTrue (typeof (bug82431B3).IsDefined (typeof (NotInheritAttribute), true), "#J4");
+
+			Assert.IsFalse (typeof (bug82431B4).IsDefined (typeof (InheritAttribute), false), "#K2");
+			Assert.IsFalse (typeof (bug82431B4).IsDefined (typeof (NotInheritAttribute), false), "#K2");
+			Assert.IsTrue (typeof (bug82431B4).IsDefined (typeof (InheritAttribute), true), "#K3");
+			Assert.IsFalse (typeof (bug82431B4).IsDefined (typeof (NotInheritAttribute), true), "#K4");
 		}
 
 		[Test]
@@ -993,6 +1202,49 @@ PublicKeyToken=b77a5c561934e089"));
 		}
 
 		class CA : A
+		{
+		}
+
+		[AttributeUsage (AttributeTargets.Class, Inherited=true)]
+		public class InheritAttribute : Attribute
+		{
+		}
+
+		[AttributeUsage (AttributeTargets.Class, Inherited=false)]
+		public class NotInheritAttribute : InheritAttribute
+		{
+		}
+
+		[NotInheritAttribute]
+		public class bug82431A1
+		{
+		}
+
+		public class bug82431A2 : bug82431A1
+		{
+		}
+
+		[NotInheritAttribute]
+		[InheritAttribute]
+		public class bug82431A3 : bug82431A1
+		{
+		}
+
+		[InheritAttribute]
+		public class bug82431B1
+		{
+		}
+
+		public class bug82431B2 : bug82431B1
+		{
+		}
+
+		[NotInheritAttribute]
+		public class bug82431B3 : bug82431B2
+		{
+		}
+
+		public class bug82431B4 : bug82431B3
 		{
 		}
 
