@@ -1,5 +1,11 @@
 2007-08-16  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c (do_ldobj_value, do_unbox_value and do_box_value):
+	factored the common code into get_boxable_mono_type, which
+	is now using mono_type_get_full, this fixed byref related tests.
+
+2007-08-16  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* class.c: added mono_type_get_full, this function has the same
 	behavior of mono_class_get_full but the returned MonoType has
 	all metadata of the associated token in case of a typespec token.
