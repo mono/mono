@@ -86,21 +86,20 @@ namespace System.Linq.Expressions
         
         #region Private support methods
         private const BindingFlags opBindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
-        private const BindingFlags methBindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
-        private const BindingFlags propBindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance;
 
         private static MethodInfo GetUserDefinedBinaryOperator (Type leftType, Type rightType, string name)
         {
             Type[] types = new Type[2] { leftType, rightType };
-                        
-            MethodInfo method = leftType.GetMethod (name, opBindingFlags, null, types, null);
+            MethodInfo method;
+            
+            method  = leftType.GetMethod (name, opBindingFlags, null, types, null);
             if (method != null) return method;
                 
             method = rightType.GetMethod (name, opBindingFlags, null, types, null);
             if (method != null) return method;
 
-            if (method == null && IsNullableType(leftType) && IsNullableType(rightType))
-                return GetUserDefinedBinaryOperator(GetNonNullableType(leftType), GetNonNullableType(rightType), name);
+            if (method == null && IsNullableType (leftType) && IsNullableType (rightType))
+                return GetUserDefinedBinaryOperator (GetNonNullableType (leftType), GetNonNullableType( rightType), name);
         
             return null;
         }
@@ -113,12 +112,71 @@ namespace System.Linq.Expressions
             if (method != null)
                 return new BinaryExpression (nodeType, left, right, method, method.ReturnType);
             else
-                throw new InvalidOperationException(String.Format(
+                throw new InvalidOperationException (String.Format (
                     "The binary operator Add is not defined for the types '{0}' and '{1}'.", left.type, right.type));
 
             // Note: here the code in ExpressionUtils has a series of checks to make sure that
             // the method is static, that its return type is not void and that the number of
             // parameters is 2 and they are of the right type, but we already know that! Or not?
+        }
+        
+        private static MethodInfo FindMethod (Type type, string methodName, Type [] typeArgs, Expression [] args, BindingFlags flags)
+        {
+            MemberInfo[] members = type.FindMembers(MemberTypes.Method, flags,
+                delegate(MemberInfo mi, object obj) { return mi.Name == (String)obj; },
+                methodName);
+            if (members.Length == 0)
+                throw new InvalidOperationException (String.Format (
+                    "No method '{0}' exists on type '{1}'.", methodName, type.FullName));
+
+            MethodInfo methodDefinition = null;
+            MethodInfo method = null;
+            int methodCount = 1;        
+
+            foreach (MemberInfo member in members) {
+                MethodInfo mi = (MethodInfo)member;
+                if (mi.IsGenericMethodDefinition) {
+                    // If the generic method definition matches we save it away to be able to make the
+                    // correct closed method later on.
+                    Type[] genericArgs = mi.GetGenericArguments();
+                    if (genericArgs.Length != typeArgs.Length) goto next;
+
+                    methodDefinition = mi;
+                    goto next;
+                }
+                
+                // If there is a discrepancy between method's generic types and the given types or if
+                // the method is open we simply discard it and go on.
+                if ((mi.IsGenericMethod && (typeArgs == null || mi.ContainsGenericParameters))
+                     || (!mi.IsGenericMethod && typeArgs != null))
+                    goto next;
+                    
+                // If the method is a closed generic we try to match the generic types.
+                if (mi.IsGenericMethod) {
+                    Type[] genericArgs = mi.GetGenericArguments();
+                    if (genericArgs.Length != typeArgs.Length) goto next;
+                    for (int i=0 ; i < genericArgs.Length ; i++)
+                        if (genericArgs[i] != typeArgs[i]) goto next;
+                }
+                
+                // Finally we test for the method's parameters.
+                ParameterInfo[] parameters = mi.GetParameters ();
+                if (parameters.Length != args.Length) goto next;
+                for (int i=0 ; i < parameters.Length ; i++)
+                    if (parameters[i].ParameterType != args[i].type) goto next;
+
+                method = mi;
+                break;
+                
+             next:
+                continue;
+            }
+            
+            if (method != null)
+                return method;
+            else
+                throw new InvalidOperationException(String.Format(
+                    "No method '{0}' on type '{1}' is compatible with the supplied arguments.", methodName, type.FullName));
         }
 
         private static PropertyInfo GetProperty (MethodInfo mi)
@@ -139,13 +197,14 @@ namespace System.Linq.Expressions
                 }
                 
                 if (propertyType != null) {
-                    PropertyInfo pi = mi.DeclaringType.GetProperty(
-                        mi.Name.Substring(4), propBindingFlags, null, propertyType, new Type[0], null);
+                    PropertyInfo pi = mi.DeclaringType.GetProperty(mi.Name.Substring(4),
+                        BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance,
+                        null, propertyType, new Type[0], null);
                     if (pi != null) return pi;
                 }
             }
             
-            throw new ArgumentException(String.Format(
+            throw new ArgumentException (String.Format( 
                 "The method '{0}.{1}' is not a property accessor", mi.DeclaringType.FullName, mi.Name));
         }
         
@@ -158,7 +217,7 @@ namespace System.Linq.Expressions
             MethodInfo opFalse = left.GetMethod ("op_False", opBindingFlags, null, types, null);
             
             if (opTrue == null || opFalse == null)
-                throw new ArgumentException(String.Format(
+                throw new ArgumentException (String.Format (
                     "The user-defined operator method '{0}' for operator '{1}' must have associated boolean True and False operators.",
                     method.Name, nodeType));
         }
@@ -171,11 +230,11 @@ namespace System.Linq.Expressions
             else if (member.MemberType == MemberTypes.Property) {
                 PropertyInfo pi = (PropertyInfo)member;
                 if (!pi.CanWrite)
-                    throw new ArgumentException(String.Format("The property '{0}' has no 'set' accessor", pi));
-                memberType = typeof(PropertyInfo);
+                    throw new ArgumentException (String.Format ("The property '{0}' has no 'set' accessor", pi));
+                memberType = typeof (PropertyInfo);
             }
             else {
-                throw new ArgumentException("Argument must be either a FieldInfo or PropertyInfo");   
+                throw new ArgumentException ("Argument must be either a FieldInfo or PropertyInfo");   
             }
         }
         #endregion
@@ -358,7 +417,8 @@ namespace System.Linq.Expressions
             // look for a Get(Int32, ...) method with "rank" parameters to generate the
             // MethodCallExpression.
 
-            MethodInfo method = array.type.GetMethod("Get", methBindingFlags, null, types, null);
+            MethodInfo method = array.type.GetMethod("Get",
+                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, types, null);
 
             // This should not happen, but we check anyway.
             if (method == null)
@@ -417,11 +477,6 @@ namespace System.Linq.Expressions
             return Call(instance, method, (Expression[])null);
         }
 
-        public static MethodCallExpression Call(MethodInfo method, params Expression[] arguments)
-        {
-            return Call(null, method, (IEnumerable<Expression>)arguments);
-        }
-
         public static MethodCallExpression Call(Expression instance, MethodInfo method, params Expression[] arguments)
         {
             return Call(instance, method, (IEnumerable<Expression>)arguments);
@@ -455,6 +510,41 @@ namespace System.Linq.Expressions
             }
 
             return new MethodCallExpression(ExpressionType.Call, method, instance, roArgs);
+        }
+
+        public static MethodCallExpression Call (Expression instance, string methodName, Type [] typeArguments, params Expression [] arguments)
+        {
+            if (instance == null)
+                throw new ArgumentNullException("instance");
+            if (arguments == null)
+                throw new ArgumentNullException("arguments");
+
+            return Call (null, FindMethod (instance.type, methodName, typeArguments, arguments,
+                    BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance),
+                (IEnumerable<Expression>)arguments);        
+        }
+        
+        public static MethodCallExpression Call(MethodInfo method, params Expression[] arguments)
+        {
+            return Call(null, method, (IEnumerable<Expression>)arguments);
+        }
+
+        public static MethodCallExpression Call (Type type, string methodName, Type [] typeArguments, params Expression [] arguments)
+        {
+            // FIXME: MS implementation does not check for type here and simply lets FindMethod() raise
+            // a NullReferenceException. Shall we do the same or raise the correct exception here?
+            //if (type == null)
+            //    throw new ArgumentNullException("type");
+            
+            if (methodName == null)
+                throw new ArgumentNullException("methodName");
+            if (arguments == null)
+                throw new ArgumentNullException("arguments");
+
+            // Note that we're looking for static methods only because this version of Call() doesn't take an instance.
+            return Call (null, FindMethod (type, methodName, typeArguments, arguments,
+                    BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static),
+                (IEnumerable<Expression>)arguments);
         }
         #endregion
 
@@ -494,34 +584,58 @@ namespace System.Linq.Expressions
                 return new ConstantExpression(null, typeof(object));
         }
 
+        #region Divide
+        public static BinaryExpression Divide(Expression left, Expression right, MethodInfo method)
+        {
+            if (left == null)
+                throw new ArgumentNullException ("left");
+            if (right == null)
+                throw new ArgumentNullException ("right");
+
+            if (method != null)
+                return new BinaryExpression(ExpressionType.Divide, left, right, method, method.ReturnType);
+            
+            // Since both the expressions define the same numeric type we don't have
+            // to look for the "op_Addition" method.
+            if (left.type == right.type && ExpressionUtil.IsNumber(left.type))
+                return new BinaryExpression(ExpressionType.Divide, left, right, left.type);
+
+            // Else we try for a user-defined operator.
+            return GetUserDefinedBinaryOperatorOrThrow (ExpressionType.Divide, "op_Division", left, right);
+        }
+
         public static BinaryExpression Divide(Expression left, Expression right)
         {
             return Divide(left, right, null);
         }
-
-        public static BinaryExpression Divide(Expression left, Expression right, MethodInfo method)
+        #endregion
+        
+        #region ExclusiveOr
+        public static BinaryExpression ExclusiveOr (Expression left, Expression right, System.Reflection.MethodInfo method)
         {
             if (left == null)
-                throw new ArgumentNullException("left");
+                throw new ArgumentNullException ("left");
             if (right == null)
-                throw new ArgumentNullException("right");
+                throw new ArgumentNullException ("right");
 
-            // sine both the expressions define the same numeric type we don't have 
-            // to look for the "op_Division" method...
-            if (left.type == right.type &&
-                ExpressionUtil.IsNumber(left.type))
-                return new BinaryExpression(ExpressionType.Divide, left, right, left.type);
+            if (method != null)
+                return new BinaryExpression(ExpressionType.ExclusiveOr, left, right, method, method.ReturnType);
+            
+            // Since both the expressions define the same integer or boolean type we don't have
+            // to look for the "op_BitwiseAnd" method.
+            if (left.type == right.type && (ExpressionUtil.IsInteger(left.type) || left.type == typeof(bool)))
+                return new BinaryExpression(ExpressionType.ExclusiveOr, left, right, left.type);
 
-            if (method == null)
-                method = ExpressionUtil.GetOperatorMethod("op_Division", left.type, right.type);
-
-            // ok if even op_Division is not defined we need to throw an exception...
-            if (method == null)
-                throw new InvalidOperationException();
-
-            return new BinaryExpression(ExpressionType.Divide, left, right, method, method.ReturnType);
+            // Else we try for a user-defined operator.
+            return GetUserDefinedBinaryOperatorOrThrow (ExpressionType.ExclusiveOr, "op_ExclusiveOr", left, right);
         }
-
+        
+        public static BinaryExpression ExclusiveOr (Expression left, Expression right)
+        {
+            return ExclusiveOr (left, right, null);
+        }
+        #endregion
+        
         public static MemberExpression Field(Expression expression, FieldInfo field)
         {
             if (field == null)
@@ -618,6 +732,92 @@ namespace System.Linq.Expressions
             return new MemberInitExpression(newExpression, Enumerable.ToReadOnlyCollection<MemberBinding>(bindings));
         }
 
+        #region Modulo
+        public static BinaryExpression Modulo (Expression left, Expression right, MethodInfo method)
+        {
+            if (left == null)
+                throw new ArgumentNullException ("left");
+            if (right == null)
+                throw new ArgumentNullException ("right");
+
+            if (method != null)
+                return new BinaryExpression(ExpressionType.Modulo, left, right, method, method.ReturnType);
+            
+            // Since both the expressions define the same integer or boolean type we don't have
+            // to look for the "op_BitwiseAnd" method.
+            if (left.type == right.type && (ExpressionUtil.IsNumber(left.type)))
+                return new BinaryExpression(ExpressionType.Modulo, left, right, left.type);
+
+            // Else we try for a user-defined operator.
+            return GetUserDefinedBinaryOperatorOrThrow (ExpressionType.Modulo, "op_Modulus", left, right);
+        
+        }
+        
+        public static BinaryExpression Modulo (Expression left, Expression right)
+        {
+            return Modulo (left, right, null);        
+        }
+        #endregion
+        
+        #region Multiply
+        public static BinaryExpression Multiply (Expression left, Expression right, MethodInfo method)
+        {
+            if (left == null)
+                throw new ArgumentNullException ("left");
+            if (right == null)
+                throw new ArgumentNullException ("right");
+
+            if (method != null)
+                return new BinaryExpression(ExpressionType.Multiply, left, right, method, method.ReturnType);
+            
+            // Since both the expressions define the same integer or boolean type we don't have
+            // to look for the "op_BitwiseAnd" method.
+            if (left.type == right.type && ExpressionUtil.IsNumber(left.type))
+                return new BinaryExpression(ExpressionType.Multiply, left, right, left.type);
+
+            // Else we try for a user-defined operator.
+            return GetUserDefinedBinaryOperatorOrThrow (ExpressionType.Multiply, "op_Multiply", left, right);
+        
+        }
+        
+        public static BinaryExpression Multiply (Expression left, Expression right)
+        {
+            return Multiply (left, right, null);
+        }
+        #endregion
+        
+        #region MultiplyChecked
+        public static BinaryExpression MultiplyChecked (Expression left, Expression right, MethodInfo method)
+        {
+            if (left == null)
+                throw new ArgumentNullException ("left");
+            if (right == null)
+                throw new ArgumentNullException ("right");
+
+            if (method != null)
+                return new BinaryExpression(ExpressionType.MultiplyChecked, left, right, method, method.ReturnType);
+
+            // Since both the expressions define the same numeric type we don't have
+            // to look for the "op_Addition" method.
+            if (left.type == right.type && ExpressionUtil.IsNumber(left.type))
+                return new BinaryExpression(ExpressionType.MultiplyChecked, left, right, left.type);
+
+            method = GetUserDefinedBinaryOperator (left.type, right.type, "op_Multiply");
+            if (method == null)
+                throw new InvalidOperationException(String.Format(
+                    "The binary operator MultiplyChecked is not defined for the types '{0}' and '{1}'.", left.type, right.type));
+            
+            Type retType = method.ReturnType;
+
+            return new BinaryExpression(ExpressionType.MultiplyChecked, left, right, method, retType);
+        }
+        
+        public static BinaryExpression MultiplyChecked (Expression left, Expression right)
+        {
+            return MultiplyChecked(left, right, null);
+        }
+        #endregion
+        
         public static MemberExpression Property(Expression expression, PropertyInfo property)
         {
             if (property == null)

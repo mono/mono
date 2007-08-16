@@ -34,7 +34,32 @@ namespace MonoTests.System.Linq.Expressions
             return a;
         }
 
+        public static OpClass operator * (OpClass a, OpClass b)
+        {
+            return a;
+        }
+
+        public static OpClass operator / (OpClass a, OpClass b)
+        {
+            return a;
+        }
+
+        public static OpClass operator % (OpClass a, OpClass b)
+        {
+            return a;
+        }
+
         public static OpClass operator & (OpClass a, OpClass b)
+        {
+            return a;
+        }
+
+        public static OpClass operator | (OpClass a, OpClass b)
+        {
+            return a;
+        }
+
+        public static OpClass operator ^ (OpClass a, OpClass b)
         {
             return a;
         }
@@ -59,15 +84,18 @@ namespace MonoTests.System.Linq.Expressions
     {
         public int TestField1 = 0;
         public readonly int TestField2 = 1;
-        public int TestProperty1        { get { return TestField1; }}
-        public int TestProperty2        { get { return TestField1; } set { TestField1 = value; }}
-        public int TestMethod (int i)   { return TestField1 + i; }
+        public int TestProperty1 { get { return TestField1; }}
+        public int TestProperty2 { get { return TestField1; } set { TestField1 = value; }}
+        public int TestMethod (int i) { return TestField1 + i; }
+        public T TestGenericMethod<T> (T arg) { return arg; }
 
         public delegate int TestDelegate(int i);
         public event TestDelegate TestEvent;
         
         public static int StaticField = 0;
         public static int StaticProperty { get { return StaticField; } set { StaticField = value; }}
+        public static int StaticMethod (int i) { return 1 + i; }
+        public static T StaticGenericMethod<T> (T arg) { return arg; }
         
         public static MethodInfo GetMethodInfo ()
         {
@@ -114,6 +142,11 @@ namespace MonoTests.System.Linq.Expressions
     public struct OpStruct
     {
         public static OpStruct operator + (OpStruct a, OpStruct b)
+        {
+            return a;
+        }
+
+        public static OpStruct operator * (OpStruct a, OpStruct b)
         {
             return a;
         }

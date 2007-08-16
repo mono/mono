@@ -26,63 +26,66 @@ using System.Linq.Expressions;
 using NUnit.Framework;
 
 namespace MonoTests.System.Linq.Expressions
-{    
+{        
     [TestFixture]
-    public class ExpressionTest_And
+    public class ExpressionTest_Divide
     {
         [Test]
         [ExpectedException (typeof (ArgumentNullException))]
         public void Arg1Null ()
         {
-            Expression.And (null, Expression.Constant (1));
+            Expression.Divide (null, Expression.Constant (1));
         }
 
         [Test]
         [ExpectedException (typeof (ArgumentNullException))]
         public void Arg2Null ()
         {
-            Expression.And (Expression.Constant (1), null);
-        }
-
-        [Test]
-        [ExpectedException (typeof (InvalidOperationException))]
-        public void NoOperatorClass ()
-        {
-            Expression.And (Expression.Constant (new NoOpClass ()), Expression.Constant (new NoOpClass ()));
+            Expression.Divide (Expression.Constant (1), null);
         }
 
         [Test]
         [ExpectedException (typeof (InvalidOperationException))]
         public void ArgTypesDifferent ()
         {
-            Expression.And (Expression.Constant (1), Expression.Constant (true));
+            Expression.Divide (Expression.Constant (1), Expression.Constant (2.0));
         }
 
         [Test]
         [ExpectedException (typeof (InvalidOperationException))]
-        public void Double ()
+        public void NoOperatorClass ()
         {
-            Expression.And (Expression.Constant (1.0), Expression.Constant (2.0));
+            Expression.Divide (Expression.Constant (new NoOpClass ()), Expression.Constant (new NoOpClass ()));
         }
 
         [Test]
-        public void Integer ()
-        {
-            BinaryExpression expr = Expression.And (Expression.Constant (1), Expression.Constant (2));
-            Assert.AreEqual (ExpressionType.And, expr.NodeType, "And#01");
-            Assert.AreEqual (typeof (int), expr.Type, "And#02");
-            Assert.IsNull (expr.Method, "And#03");
-            Assert.AreEqual ("(1 & 2)", expr.ToString(), "And#04");
-        }
-
-        [Test]
+        [ExpectedException (typeof (InvalidOperationException))]
         public void Boolean ()
         {
-            BinaryExpression expr = Expression.And (Expression.Constant (true), Expression.Constant (false));
-            Assert.AreEqual (ExpressionType.And, expr.NodeType, "And#05");
-            Assert.AreEqual (typeof (bool), expr.Type, "And#06");
-            Assert.IsNull (expr.Method, "And#07");
-            Assert.AreEqual ("(True And False)", expr.ToString(), "And#08");
+            Expression.Divide (Expression.Constant (true), Expression.Constant (false));
+        }
+
+        [Test]
+        public void Numeric ()
+        {
+            BinaryExpression expr = Expression.Divide (Expression.Constant (1), Expression.Constant (2));
+            Assert.AreEqual (ExpressionType.Divide, expr.NodeType, "Divide#01");
+            Assert.AreEqual (typeof (int), expr.Type, "Divide#02");
+            Assert.IsNull (expr.Method, "Divide#03");
+            Assert.AreEqual ("(1 / 2)", expr.ToString(), "Divide#04");
+        }
+
+        [Test]
+        public void Nullable ()
+        {
+            int? a = 1;
+            int? b = 2;
+            
+            BinaryExpression expr = Expression.Divide (Expression.Constant (a), Expression.Constant (b));
+            Assert.AreEqual (ExpressionType.Divide, expr.NodeType, "Divide#05");
+            Assert.AreEqual (typeof (int), expr.Type, "Divide#06");
+            Assert.IsNull (expr.Method, "Divide#07");
+            Assert.AreEqual ("(1 / 2)", expr.ToString(), "Divide#08");
         }
 
         [Test]
@@ -90,15 +93,15 @@ namespace MonoTests.System.Linq.Expressions
         {
             // We can use the simplest version of GetMethod because we already know only one
             // exists in the very simple class we're using for the tests.
-            MethodInfo mi = typeof (OpClass).GetMethod ("op_BitwiseAnd");
+            MethodInfo mi = typeof (OpClass).GetMethod ("op_Division");
             
-            BinaryExpression expr = Expression.And (Expression.Constant (new OpClass ()), Expression.Constant (new OpClass ()));
-            Assert.AreEqual (ExpressionType.And, expr.NodeType, "And#09");
-            Assert.AreEqual (typeof (OpClass), expr.Type, "And#10");
-            Assert.AreEqual (mi, expr.Method, "And#11");
-            Assert.AreEqual ("op_BitwiseAnd", expr.Method.Name, "And#12");
-            Assert.AreEqual ("(value(MonoTests.System.Linq.Expressions.OpClass) & value(MonoTests.System.Linq.Expressions.OpClass))",
-                expr.ToString(), "And#13");
+            BinaryExpression expr = Expression.Divide (Expression.Constant (new OpClass ()), Expression.Constant (new OpClass ()));
+            Assert.AreEqual (ExpressionType.Divide, expr.NodeType, "Divide#09");
+            Assert.AreEqual (typeof (OpClass), expr.Type, "Divide#10");
+            Assert.AreEqual (mi, expr.Method, "Divide#11");
+            Assert.AreEqual ("op_Division", expr.Method.Name, "Divide#12");
+            Assert.AreEqual ("(value(MonoTests.System.Linq.Expressions.OpClass) / value(MonoTests.System.Linq.Expressions.OpClass))",
+                expr.ToString(), "Divide#13");
         }
     }
 }

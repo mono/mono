@@ -5,5 +5,11 @@ System.Linq.Expressions/ExpressionTest_AndAlso.cs
 System.Linq.Expressions/ExpressionTest_ArrayIndex.cs
 System.Linq.Expressions/ExpressionTest_ArrayLength.cs
 System.Linq.Expressions/ExpressionTest_Bind.cs
+System.Linq.Expressions/ExpressionTest_Call.cs
 System.Linq.Expressions/ExpressionTest_Constant.cs
+System.Linq.Expressions/ExpressionTest_Divide.cs
+System.Linq.Expressions/ExpressionTest_ExclusiveOr.cs
+System.Linq.Expressions/ExpressionTest_Modulo.cs
+System.Linq.Expressions/ExpressionTest_Multiply.cs
+System.Linq.Expressions/ExpressionTest_MultiplyChecked.cs
 System.Linq.Expressions/ExpressionTest_Utils.cs

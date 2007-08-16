@@ -1,3 +1,9 @@
+2007-08-17  Federico Di Gregorio <fog@initd.org>
+
+	* Expression.cs: implemented all versions of Divide(), Modulo(),
+	Multiply(), MultiplyChecked() and tests. Call() works except for
+	generic types.
+
 2007-08-15  Federico Di Gregorio <fog@initd.org>
 
 	* Expression.cs: implemented both versions of Bind() & tests. 
