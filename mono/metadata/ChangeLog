@@ -1,3 +1,16 @@
+2007-08-16  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c: added mono_type_get_full, this function has the same
+	behavior of mono_class_get_full but the returned MonoType has
+	all metadata of the associated token in case of a typespec token.
+	* class.c: added mono_type_retrieve_from_typespec, used by 
+	mono_type_get_full to retrieve the token type.
+	* class.c (mono_class_create_from_typespec): changed to use
+	mono_type_retrieve_from_typespec.
+	* class.c (mono_ldtoken): changed to use mono_type_get_full
+	for MONO_TOKEN_TYPE_(DEF|REF|SPEC).
+	* class-internals.h: exported mono_type_get_full for internal use.
+
 2007-08-16  Jb Evain  <jbevain@novell.com>
 
 	* domain.c (supported_runtimes): add entry for
