@@ -1,3 +1,9 @@
+2007-08-16 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_newarr_test.sh (added):  Generate newarr related tests.
+	* make_tests.sh: Addes tests for newarr.
+
+
 2007-08-15 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* make_unbox_test.sh (added):  Generate unbox related tests.
