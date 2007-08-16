@@ -1,5 +1,7 @@
 2007-08-17  Federico Di Gregorio <fog@initd.org>
 
+	* Expression.cs: two less to do: Subtract() and SubtractChecked().
+
 	* Expression.cs: implemented all versions of Or() and OrElse().
 
 	* BinaryExpression.cs: fixed OrElse case in BuildString().

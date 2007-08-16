@@ -928,6 +928,68 @@ namespace System.Linq.Expressions
             throw new ArgumentException();
         }
 
+        #region Subtract
+        public static BinaryExpression Subtract (Expression left, Expression right, MethodInfo method)
+        {
+            if (left == null)
+                throw new ArgumentNullException ("left");
+            if (right == null)
+                throw new ArgumentNullException ("right");
+
+            if (method != null)
+                return new BinaryExpression(ExpressionType.Subtract, left, right, method, method.ReturnType);
+            
+            // Since both the expressions define the same numeric type we don't have
+            // to look for the "op_Addition" method.
+            if (left.type == right.type && ExpressionUtil.IsNumber(left.type))
+                return new BinaryExpression(ExpressionType.Subtract, left, right, left.type);
+
+            // Else we try for a user-defined operator.
+            return GetUserDefinedBinaryOperatorOrThrow (ExpressionType.Subtract, "op_Subtraction", left, right);        
+        }
+        
+        public static BinaryExpression Subtract (Expression left, Expression right)
+        {
+            return Subtract (left, right, null);        
+        }
+        #endregion
+        
+        #region SubtractChecked
+        public static BinaryExpression SubtractChecked (Expression left, Expression right, MethodInfo method)
+        {
+            if (left == null)
+                throw new ArgumentNullException ("left");
+            if (right == null)
+                throw new ArgumentNullException ("right");
+
+            if (method != null)
+                return new BinaryExpression(ExpressionType.SubtractChecked, left, right, method, method.ReturnType);
+
+            // Since both the expressions define the same numeric type we don't have
+            // to look for the "op_Addition" method.
+            if (left.type == right.type && ExpressionUtil.IsNumber(left.type))
+                return new BinaryExpression(ExpressionType.SubtractChecked, left, right, left.type);
+
+            method = GetUserDefinedBinaryOperator (left.type, right.type, "op_Subtraction");
+            if (method == null)
+                throw new InvalidOperationException(String.Format(
+                    "The binary operator AddChecked is not defined for the types '{0}' and '{1}'.", left.type, right.type));
+            
+            Type retType = method.ReturnType;
+
+            // Note: here the code did some very strange checks for bool (but note that bool does
+            // not define an addition operator) and created nullables for value types (but the new
+            // MS code does not do that). All that has been removed.
+
+            return new BinaryExpression(ExpressionType.SubtractChecked, left, right, method, retType);
+        }
+        
+        public static BinaryExpression SubtractChecked (Expression left, Expression right)
+        {
+            return SubtractChecked (left, right, null);
+        }
+        #endregion
+
 
         public static TypeBinaryExpression TypeIs(Expression expression, Type type)
         {
