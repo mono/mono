@@ -344,7 +344,7 @@ namespace System.Linq.Expressions
             if (right == null)
                 throw new ArgumentNullException ("right");
 
-            // Since both the expressions define the same integer or boolean type we don't have
+            // Since both the expressions define the same boolean type we don't have
             // to look for the "op_BitwiseAnd" method.
             if (left.type == right.type && left.type == typeof(bool))
                 return new BinaryExpression(ExpressionType.AndAlso, left, right, left.type);
@@ -830,7 +830,64 @@ namespace System.Linq.Expressions
 
             return new MemberExpression(expression, property, property.PropertyType);
         }
+        
+        #region Or
+        public static BinaryExpression Or (Expression left, Expression right, MethodInfo method)
+        {
+            if (left == null)
+                throw new ArgumentNullException ("left");
+            if (right == null)
+                throw new ArgumentNullException ("right");
 
+            if (method != null)
+                return new BinaryExpression(ExpressionType.Or, left, right, method, method.ReturnType);
+            
+            // Since both the expressions define the same integer or boolean type we don't have
+            // to look for the "op_BitwiseOr" method.
+            if (left.type == right.type && (ExpressionUtil.IsInteger(left.type) || left.type == typeof(bool)))
+                return new BinaryExpression(ExpressionType.Or, left, right, left.type);
+
+            // Else we try for a user-defined operator.
+            return GetUserDefinedBinaryOperatorOrThrow (ExpressionType.Or, "op_BitwiseOr", left, right);
+        
+        }
+
+        public static BinaryExpression Or (Expression left, Expression right)
+        {
+            return Or (left, right, null);
+        }
+        #endregion
+        
+        #region OrElse
+        public static BinaryExpression OrElse (Expression left, Expression right, MethodInfo method)
+        {
+            if (left == null)
+                throw new ArgumentNullException ("left");
+            if (right == null)
+                throw new ArgumentNullException ("right");
+
+            // Since both the expressions define the same boolean type we don't have
+            // to look for the "op_BitwiseOr" method.
+            if (left.type == right.type && left.type == typeof(bool))
+                return new BinaryExpression(ExpressionType.OrElse, left, right, left.type);
+
+            // Else we must validate the method to make sure it has companion "true" and "false" operators.
+            if (method == null)
+                method = GetUserDefinedBinaryOperator (left.type, right.type, "op_BitwiseOr");
+            if (method == null)
+                throw new InvalidOperationException(String.Format(
+                    "The binary operator OrElse is not defined for the types '{0}' and '{1}'.", left.type, right.type));
+            ValidateUserDefinedConditionalLogicOperator(ExpressionType.OrElse, left.type, right.type, method);
+            
+            return new BinaryExpression(ExpressionType.OrElse, left, right, method, method.ReturnType);
+        }
+        
+        public static BinaryExpression OrElse (Expression left, Expression right)
+        {
+            return OrElse(left, right, null);
+        }
+        #endregion
+        
         public static UnaryExpression Quote(Expression expression)
         {
             if (expression == null)

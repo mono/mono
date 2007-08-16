@@ -151,7 +151,7 @@ namespace System.Linq.Expressions
             // See below for ExpressionType.Or.
 
             case ExpressionType.OrElse:
-                builder.AppendFormat ("({0} ^ {1})", left, right);
+                builder.AppendFormat ("({0} || {1})", left, right);
                 break;
 
             case ExpressionType.RightShift:

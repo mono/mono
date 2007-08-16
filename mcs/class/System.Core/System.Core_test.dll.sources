@@ -12,4 +12,6 @@ System.Linq.Expressions/ExpressionTest_ExclusiveOr.cs
 System.Linq.Expressions/ExpressionTest_Modulo.cs
 System.Linq.Expressions/ExpressionTest_Multiply.cs
 System.Linq.Expressions/ExpressionTest_MultiplyChecked.cs
+System.Linq.Expressions/ExpressionTest_Or.cs
+System.Linq.Expressions/ExpressionTest_OrElse.cs
 System.Linq.Expressions/ExpressionTest_Utils.cs
