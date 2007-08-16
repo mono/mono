@@ -1,3 +1,8 @@
+2007-08-16  Jb Evain  <jbevain@novell.com>
+
+	* domain.c (supported_runtimes): add entry for
+	the 'moonlight' runtime version.
+
 2007-08-15  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (mono_method_verify): small typo sliped in.  
