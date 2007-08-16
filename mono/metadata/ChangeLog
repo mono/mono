@@ -1,5 +1,12 @@
 2007-08-16  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c (do_newarr):added, do type verification of
+	newarr ops, push the right value on the eval stack.
+	* verify.c (mono_method_verify): use do_newarr
+
+
+2007-08-16  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c (do_ldobj_value, do_unbox_value and do_box_value):
 	factored the common code into get_boxable_mono_type, which
 	is now using mono_type_get_full, this fixed byref related tests.
