@@ -395,6 +395,18 @@ namespace System.Windows.Forms {
 				return forms;
 			}
 		}
+		
+		[MonoNotSupported ("Only applies when Winforms is being hosted by an unmanaged app.")]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		public static void RegisterMessageLoop (MessageLoopCallback callback)
+		{
+		}
+
+		[MonoNotSupported ("Empty stub.")]
+		public static bool SetSuspendState (PowerState state, bool force, bool disableWakeEvent)
+		{
+			return false;
+		}
 
 		[MonoNotSupported ("Empty stub.")]
 		public static void SetUnhandledExceptionMode (UnhandledExceptionMode mode)
@@ -402,6 +414,19 @@ namespace System.Windows.Forms {
 			//FIXME: a stub to fill
 		}
 
+		[MonoNotSupported ("Empty stub.")]
+		public static void SetUnhandledExceptionMode (UnhandledExceptionMode mode, bool threadScope)
+		{
+			//FIXME: a stub to fill
+		}
+
+		[MonoNotSupported ("Only applies when Winforms is being hosted by an unmanaged app.")]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		public static void UnregisterMessageLoop ()
+		{
+		}
+
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public static void RaiseIdle (EventArgs e)
 		{
 			XplatUI.RaiseIdle (e);
@@ -475,6 +500,31 @@ namespace System.Windows.Forms {
 			XplatUI.PostQuitMessage(0);
 			CloseForms(null);
 		}
+
+#if NET_2_0
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		public static void Exit (CancelEventArgs e)
+		{
+			ArrayList forms_to_close;
+			
+			lock (forms) {
+				forms_to_close = new ArrayList (forms);
+
+				foreach (Form f in forms_to_close) {
+					// Give each form a chance to cancel the Application.Exit
+					e.Cancel = f.FireClosingEvents (CloseReason.ApplicationExitCall);
+
+					if (e.Cancel)
+						return;
+
+					f.Close ();
+					f.Dispose ();
+				}
+			}
+
+			XplatUI.PostQuitMessage (0);
+		}
+#endif
 
 		public static void ExitThread() {
 			CloseForms(Thread.CurrentThread);
@@ -823,6 +873,7 @@ namespace System.Windows.Forms {
 
 		#region Public Delegates
 #if NET_2_0
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public delegate bool MessageLoopCallback ();
 #endif
 		#endregion
