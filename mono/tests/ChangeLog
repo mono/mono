@@ -1,3 +1,8 @@
+2007-08-16  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* ldtoken_with_byref_typespec.2.il: Test for (in pseudo c#) "typeof (int&)" expression
+	* Makefile.am: ldtoken_with_byref_typespec.2.il
+
 2007-08-08  Massimiliano Mantione  <massi@ximian.com>
 
 	* bug-77127.cs: Test for bug #77127.
