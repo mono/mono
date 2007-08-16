@@ -1,5 +1,10 @@
 2007-08-16  Marek Safar  <marek.safar@gmail.com>
 
+	* modifier.cs (Check): Check all modifiers and not only accessibility
+	ones.
+
+2007-08-16  Marek Safar  <marek.safar@gmail.com>
+
 	* ecore.cs (Expression.Error_ValueCannotBeConverted): Report always a
 	type and not an expression.
 

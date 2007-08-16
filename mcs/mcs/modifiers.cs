@@ -25,7 +25,7 @@ namespace Mono.CSharp {
 		public const int EXTERN    = 0x0800;
 		public const int VOLATILE  = 0x1000;
 		public const int UNSAFE    = 0x2000;
-		public const int TOP       = 0x2000;
+		private const int TOP      = 0x2000;
 
 		public const int PROPERTY_CUSTOM = 0x4000; // Custom property modifier
 
@@ -204,7 +204,7 @@ namespace Mono.CSharp {
 		// </summary>
 		public static int Check (int allowed, int mod, int def_access, Location l)
 		{
-			int invalid_flags  = (~allowed) & (mod & Modifiers.Accessibility);
+			int invalid_flags  = (~allowed) & (mod & (Modifiers.TOP - 1));
 			int i;
 
 			if (invalid_flags == 0){
