@@ -1,5 +1,9 @@
 2007-08-15  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c (mono_method_verify): small typo sliped in.  
+
+2007-08-15  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c (do_unbox_value): added, do type verification of
 	unboxing ops
 	* verify.c (mono_method_verify): use do_unbox_value
