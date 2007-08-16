@@ -21,6 +21,10 @@ public class C
 						diffException = ex;
 					} finally {
 					}
+					
+					try {
+					} catch {
+					}
 				});
 				
 		int[] i_a = new int [] { 1,2,3 };
