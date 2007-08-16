@@ -345,7 +345,7 @@ namespace Mono.CSharp {
 
 			if (expl) {
 				Report.Error (30, loc, "Cannot convert type `{0}' to `{1}'",
-					GetSignatureForError (), TypeManager.CSharpName (target));
+					TypeManager.CSharpName (type), TypeManager.CSharpName (target));
 				return;
 			}
 			

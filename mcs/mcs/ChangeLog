@@ -1,5 +1,10 @@
 2007-08-16  Marek Safar  <marek.safar@gmail.com>
 
+	* ecore.cs (Expression.Error_ValueCannotBeConverted): Report always a
+	type and not an expression.
+
+2007-08-16  Marek Safar  <marek.safar@gmail.com>
+
 	* statement.cs (Catch.Clone): Type and variable can be null.
 
 2007-08-16  Marek Safar  <marek.safar@gmail.com>
