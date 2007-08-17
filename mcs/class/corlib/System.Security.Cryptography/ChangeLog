@@ -1,3 +1,7 @@
+2007-08-17  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* CryptoStream.cs: Write cannot depend on buffer.Length (fix #82428)
+
 2007-05-16  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* CryptoStream.cs: Fix another problem that can occurs with WriteByte.

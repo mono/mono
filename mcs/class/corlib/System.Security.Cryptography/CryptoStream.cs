@@ -261,6 +261,8 @@ namespace System.Security.Cryptography {
 			if (_stream == null)
 				throw new ArgumentNullException ("inner stream was diposed");
 
+			int buffer_length = count;
+
 			// partial block (in progress)
 			if ((_partialCount > 0) && (_partialCount != _transform.InputBlockSize)) {
 				int remainder = _transform.InputBlockSize - _partialCount;
@@ -297,7 +299,7 @@ namespace System.Security.Cryptography {
 					}
 
 					if (rem > 0)
-						Buffer.BlockCopy (buffer, buffer.Length - rem, _workingBlock, 0, rem);
+						Buffer.BlockCopy (buffer, buffer_length - rem, _workingBlock, 0, rem);
 					_partialCount = rem;
 					count = 0; // the last block, if any, is in _workingBlock
 				} else {
