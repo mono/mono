@@ -90,7 +90,7 @@ namespace Mono.CSharp.Linq
 					MemberTypes.Method, BindingFlags.Static | BindingFlags.Public,
 					Type.FilterName, MethodName);
 
-				method_group = new MethodGroupExpr (ArrayList.Adapter (ml), loc);
+				method_group = new MethodGroupExpr (ArrayList.Adapter (ml), enumerable_class, loc);
 				//methods.Add (MethodName, method_group);
 				return method_group;
 			}
