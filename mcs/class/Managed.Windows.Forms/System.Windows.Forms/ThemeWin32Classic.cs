@@ -4826,23 +4826,27 @@ namespace System.Windows.Forms
 
 #if NET_2_0
 			Brush back_brush = ResPool.GetSolidBrush (control.BackColor);;
-			Brush fore_brush = ResPool.GetSolidBrush (control.ForeColor);
+			Color foreground = control.ForeColor;
 #else
 			Brush back_brush = SystemBrushes.Info;
-			Brush fore_brush = ResPool.GetSolidBrush (this.ColorInfoText);
+			Color foreground = this.ColorInfoText;
 #endif
 
 			dc.FillRectangle (back_brush, control.ClientRectangle);
 			dc.DrawRectangle (SystemPens.WindowFrame, 0, 0, control.Width - 1, control.Height - 1);
-			dc.DrawString (control.Text, control.Font, fore_brush, text_rect, control.string_format);
+
+			TextFormatFlags flags = TextFormatFlags.HidePrefix | TextFormatFlags.SingleLine | TextFormatFlags.VerticalCenter | TextFormatFlags.HorizontalCenter;
+			TextRenderer.DrawTextInternal (dc, control.Text, control.Font, text_rect, foreground, flags, false);
 		}
 
 		public override Size ToolTipSize(ToolTip.ToolTipWindow tt, string text)
 		{
-			SizeF	sizef;
+			Size size = TextRenderer.MeasureTextInternal (text, tt.Font, false);
 
-			sizef = TextRenderer.MeasureString (text, tt.Font, SizeF.Empty, tt.string_format);
-			return new Size((int)sizef.Width+8, (int)sizef.Height+3);	// Need space for the border
+			size.Width += 8;
+			size.Height += 3;
+			
+			return size;
 		}
 		#endregion	// ToolTip
 

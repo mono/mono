@@ -25,13 +25,15 @@
 //
 // COMPLETE
 
-#if NET_2_0
 
 using System.Drawing;
 
 namespace System.Windows.Forms
 {
-	public class DrawToolTipEventArgs : EventArgs
+#if NET_2_0
+	public
+#endif
+	class DrawToolTipEventArgs : EventArgs
 	{
 		private Control associated_control;
 		private IWin32Window associated_window;
@@ -71,7 +73,7 @@ namespace System.Windows.Forms
 
 		public void DrawText (TextFormatFlags flags)
 		{
-			TextRenderer.DrawText (graphics, tooltip_text, font, bounds, fore_color, flags);
+			TextRenderer.DrawTextInternal (graphics, tooltip_text, font, bounds, fore_color, flags, false);
 		}
 
 		public Control AssociatedControl {
@@ -111,5 +113,3 @@ namespace System.Windows.Forms
 		}
 	}
 }
-
-#endif

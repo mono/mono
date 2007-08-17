@@ -57,6 +57,7 @@ namespace System.Windows.Forms {
 		internal Control	active_control;			// Control for which the tooltip is currently displayed
 		internal Control	last_control;			// last control the mouse was in
 		internal Timer		timer;				// Used for the various intervals
+		private Form		hooked_form;
 
 #if NET_2_0
 		private bool isBalloon;
@@ -67,7 +68,6 @@ namespace System.Windows.Forms {
 		private bool useAnimation;
 		private bool useFading;
 		private object tag;
-
 #endif
 
 		#endregion	// Local variables
@@ -75,21 +75,11 @@ namespace System.Windows.Forms {
 		#region ToolTipWindow Class
 		internal class ToolTipWindow : Control {
 			#region ToolTipWindow Class Local Variables
-			internal StringFormat string_format;
-#if NET_2_0
-			internal bool owner_draw;
-			internal Control associated_control;
-#endif
+			private Control associated_control;
 			#endregion	// ToolTipWindow Class Local Variables
 
 			#region ToolTipWindow Class Constructor
 			internal ToolTipWindow() {
-
-				string_format = new StringFormat();
-				string_format.LineAlignment = StringAlignment.Center;
-				string_format.FormatFlags = StringFormatFlags.NoWrap;
-				string_format.HotkeyPrefix = HotkeyPrefix.Hide;
-
 				Visible = false;
 				Size = new Size(100, 20);
 				ForeColor = ThemeEngine.Current.ColorInfoText;
@@ -106,7 +96,7 @@ namespace System.Windows.Forms {
 			#region ToolTipWindow Class Protected Instance Methods
 			protected override void OnCreateControl() {
 				base.OnCreateControl ();
-				//XplatUI.SetTopmost(this.window.Handle, true);
+				XplatUI.SetTopmost(this.window.Handle, true);
 			}
 
 			protected override CreateParams CreateParams {
@@ -128,27 +118,15 @@ namespace System.Windows.Forms {
 				// We don't do double-buffering on purpose:
 				// 1) we'd have to meddle with is_visible, it destroys the buffers if !visible
 				// 2) We don't draw much, no need to double buffer
-#if NET_2_0
-				if (owner_draw)
-					OnDraw (new DrawToolTipEventArgs (pevent.Graphics, associated_control, associated_control, ClientRectangle, this.Text, this.BackColor, this.ForeColor, this.Font));
-				else
-#endif
-					ThemeEngine.Current.DrawToolTip(pevent.Graphics, ClientRectangle, this);
-
 				base.OnPaint(pevent);
+
+				OnDraw (new DrawToolTipEventArgs (pevent.Graphics, associated_control, associated_control, ClientRectangle, this.Text, this.BackColor, this.ForeColor, this.Font));
 			}
 
 			protected override void OnTextChanged (EventArgs args)
 			{
 				Invalidate ();
 				base.OnTextChanged (args); 
-			}
-
-			protected override void Dispose(bool disposing) {
-				if (disposing) {
-					this.string_format.Dispose();
-				}
-				base.Dispose (disposing);
 			}
 
 			protected override void WndProc(ref Message m) {
@@ -164,7 +142,6 @@ namespace System.Windows.Forms {
 			#endregion	// ToolTipWindow Class Protected Instance Methods
 
 			#region ToolTipWindow Class Private Methods
-#if NET_2_0
 			internal virtual void OnDraw (DrawToolTipEventArgs e)
 			{
 				DrawToolTipEventHandler eh = (DrawToolTipEventHandler)(Events[DrawEvent]);
@@ -178,7 +155,6 @@ namespace System.Windows.Forms {
 				if (eh != null)
 					eh (this, e);
 			}
-#endif
 
 			private void ToolTipWindow_VisibleChanged(object sender, EventArgs e) {
 				Control control = (Control)sender;
@@ -194,7 +170,32 @@ namespace System.Windows.Forms {
 			#region Internal Properties
 			internal override bool ActivateOnShow { get { return false; } }
 			#endregion
-			
+
+			// This Present is used when we are using the expicit Show methods for 2.0.
+			// It will not reposition the window.
+			public void PresentModal (Control control, string text)
+			{
+				if (IsDisposed)
+					return;
+
+				Size display_size;
+				XplatUI.GetDisplaySize (out display_size);
+
+				associated_control = control;
+
+				Text = text;
+
+				PopupEventArgs pea = new PopupEventArgs (control, control, false, Size.Empty);
+				OnPopup (pea);
+
+				if (pea.Cancel)
+					return;
+
+				Size = pea.ToolTipSize;
+
+				Visible = true;
+			}
+		
 			public void Present (Control control, string text)
 			{
 				if (IsDisposed)
@@ -207,18 +208,15 @@ namespace System.Windows.Forms {
 				associated_control = control;
 #endif
 
-				Size size = ThemeEngine.Current.ToolTipSize (this, text);
 				Text = text;
 
-#if NET_2_0
-				PopupEventArgs pea = new PopupEventArgs (control, control, false, size);
+				PopupEventArgs pea = new PopupEventArgs (control, control, false, Size.Empty);
 				OnPopup (pea);
 				
 				if (pea.Cancel)
 					return;
 					
-				size = pea.ToolTipSize;
-#endif
+				Size size = pea.ToolTipSize;
 
 				Width = size.Width;
 				Height = size.Height;
@@ -240,7 +238,6 @@ namespace System.Windows.Forms {
 
 
 			#region Internal Events
-#if NET_2_0
 			static object DrawEvent = new object ();
 			static object PopupEvent = new object ();
 
@@ -253,7 +250,6 @@ namespace System.Windows.Forms {
 				add { Events.AddHandler (PopupEvent, value); }
 				remove { Events.RemoveHandler (PopupEvent, value); }
 			}
-#endif
 			#endregion
 		}
 		#endregion	// ToolTipWindow Class
@@ -282,10 +278,9 @@ namespace System.Windows.Forms {
 
 			tooltip_window = new ToolTipWindow();
 			tooltip_window.MouseLeave += new EventHandler(control_MouseLeave);
-#if NET_2_0
 			tooltip_window.Draw += new DrawToolTipEventHandler (tooltip_window_Draw);
 			tooltip_window.Popup += new PopupEventHandler (tooltip_window_Popup);
-#endif
+
 			timer = new Timer();
 			timer.Enabled = false;
 			timer.Tick +=new EventHandler(timer_Tick);
@@ -380,10 +375,7 @@ namespace System.Windows.Forms {
 		[DefaultValue (false)]
 		public bool OwnerDraw {
 			get { return this.owner_draw; }
-			set { 
-				this.owner_draw = value;
-				tooltip_window.owner_draw = value;
-			}
+			set { this.owner_draw = value; }
 		}
 #endif
 
@@ -466,6 +458,22 @@ namespace System.Windows.Forms {
 
 		#endregion	// Public Instance Properties
 
+		#region Protected Properties
+#if NET_2_0
+		protected virtual CreateParams CreateParams
+		{
+			get
+			{
+				CreateParams cp = new CreateParams ();
+
+				cp.Style = 2;
+
+				return cp;
+			}
+		}
+#endif
+		#endregion
+
 		#region Public Instance Methods
 		public bool CanExtend(object target) {
 			return false;
@@ -521,22 +529,106 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
-		public void Show (string text, IWin32Window win)
+		public void Show (string text, IWin32Window window)
 		{
-			SetToolTip (win as Control, text);
-			ShowTooltip (win as Control);
+			Show (text, window, 0);
 		}
 
-		[MonoTODO ("Finish implementing tooltip location")]
-		public void Show (string text, IWin32Window win, Point p)
+		public void Show (string text, IWin32Window window, int duration)
 		{
-			SetToolTip (win as Control, text);
-			ShowTooltip (win as Control);
+			if (window == null)
+				throw new ArgumentNullException ("window");
+			if (duration < 0)
+				throw new ArgumentOutOfRangeException ("duration", "duration cannot be less than zero");
+
+			if (!Active)
+				return;
+				
+			timer.Stop ();
+			
+			Control c = (Control)window;
+
+			XplatUI.SetOwner (tooltip_window.Handle, c.TopLevelControl.Handle);
+			
+			// If the mouse is in the requested window, use that position
+			// Else, center in the requested window
+			if (c.ClientRectangle.Contains (c.PointToClient (Control.MousePosition))) {
+				tooltip_window.Location = Control.MousePosition;
+				tooltip_strings[c] = text;
+				HookupControlEvents (c);
+			}
+			else
+				tooltip_window.Location = c.PointToScreen (new Point (c.Width / 2, c.Height / 2));
+			
+			// We need to hide our tooltip if the form loses focus, is closed, or is minimized
+			HookupFormEvents ((Form)c.TopLevelControl);
+			
+			tooltip_window.PresentModal ((Control)window, text);
+			
+			state = TipState.Show;
+			
+			if (duration > 0) {
+				timer.Interval = duration;
+				timer.Start ();
+			}
+		}
+		
+		public void Show (string text, IWin32Window window, Point point)
+		{
+			Show (text, window, point, 0);
 		}
 
+		public void Show (string text, IWin32Window window, int x, int y)
+		{
+			Show (text, window, new Point (x, y), 0);
+		}
+		
+		public void Show (string text, IWin32Window window, Point point, int duration)
+		{
+			if (window == null)
+				throw new ArgumentNullException ("window");
+			if (duration < 0)
+				throw new ArgumentOutOfRangeException ("duration", "duration cannot be less than zero");
+
+			if (!Active)
+				return;
+
+			timer.Stop ();
+
+			Control c = (Control)window;
+			
+			Point display_point = c.PointToScreen (Point.Empty);
+			display_point.X += point.X;
+			display_point.Y += point.Y;
+
+			XplatUI.SetOwner (tooltip_window.Handle, c.TopLevelControl.Handle);
+
+			// We need to hide our tooltip if the form loses focus, is closed, or is minimized
+			HookupFormEvents ((Form)c.TopLevelControl);
+
+			tooltip_window.Location = display_point;
+			tooltip_window.PresentModal ((Control)window, text);
+
+			state = TipState.Show;
+			
+			if (duration > 0) {
+				timer.Interval = duration;
+				timer.Start ();
+			}
+		}
+		
+		public void Show (string text, IWin32Window window, int x, int y, int duration)
+		{
+			Show (text, window, new Point (x, y), duration);
+		}
+		
 		public void Hide (IWin32Window win) 
 		{
-			Hide (win as Control);
+			timer.Stop ();
+			state = TipState.Initial;
+
+			UnhookFormEvents ();
+			tooltip_window.Visible = false;
 		}
 #endif
 
@@ -557,6 +649,11 @@ namespace System.Windows.Forms {
 				controls.Clear();
 			}
 		}
+
+		protected void StopTimer ()
+		{
+			timer.Stop ();
+		}
 		#endregion	// Protected Instance Methods
 
 		enum TipState {
@@ -568,7 +665,71 @@ namespace System.Windows.Forms {
 		TipState state = TipState.Initial;
 
 		#region Private Methods
-		private void control_MouseEnter(object sender, EventArgs e) 
+
+		private void HookupFormEvents (Form form)
+		{
+			hooked_form = form;
+
+			form.Deactivate += new EventHandler (Form_Deactivate);
+			form.Closed += new EventHandler (Form_Closed);
+			form.Resize += new EventHandler (Form_Resize);
+		}
+
+		private void UnhookFormEvents ()
+		{
+			if (hooked_form == null)
+				return;
+
+			hooked_form.Deactivate -= new EventHandler (Form_Deactivate);
+			hooked_form.Closed -= new EventHandler (Form_Closed);
+			hooked_form.Resize -= new EventHandler (Form_Resize);
+
+			hooked_form = null;
+		}
+
+		private void HookupControlEvents (Control control)
+		{
+			if (!controls.Contains (control)) {
+				control.MouseEnter += new EventHandler (control_MouseEnter);
+				control.MouseMove += new MouseEventHandler (control_MouseMove);
+				control.MouseLeave += new EventHandler (control_MouseLeave);
+				control.MouseDown += new MouseEventHandler (control_MouseDown);
+				controls.Add (control);
+			}
+		}
+
+		private void UnhookControlEvents (Control control)
+		{
+			control.MouseEnter -= new EventHandler (control_MouseEnter);
+			control.MouseMove -= new MouseEventHandler (control_MouseMove);
+			control.MouseLeave -= new EventHandler (control_MouseLeave);
+			control.MouseDown -= new MouseEventHandler (control_MouseDown);
+		}
+
+		private void Form_Resize (object sender, EventArgs e)
+		{
+			Form f = (Form)sender;
+
+			if (f.WindowState == FormWindowState.Minimized)
+				tooltip_window.Visible = false;
+		}
+
+		private void Form_Closed (object sender, EventArgs e)
+		{
+			tooltip_window.Visible = false;
+		}
+
+		private void Form_Deactivate (object sender, EventArgs e)
+		{
+			tooltip_window.Visible = false;
+		}
+
+		internal void Present (Control control, string text)
+		{
+			tooltip_window.Present (control, text);
+		}
+		
+		private void control_MouseEnter (object sender, EventArgs e) 
 		{
 			ShowTooltip (sender as Control);
 		}
@@ -628,17 +789,21 @@ namespace System.Windows.Forms {
 			}
 		}
 
-#if NET_2_0
 		private void tooltip_window_Popup (object sender, PopupEventArgs e)
 		{
+			e.ToolTipSize = ThemeEngine.Current.ToolTipSize (tooltip_window, tooltip_window.Text);
 			OnPopup (e);
 		}
 
 		private void tooltip_window_Draw (object sender, DrawToolTipEventArgs e)
 		{
-			OnDraw (e);
-		}
+#if NET_2_0
+			if (OwnerDraw)
+				OnDraw (e);
+			else
 #endif
+				ThemeEngine.Current.DrawToolTip (e.Graphics, e.Bounds, tooltip_window);
+		}
 
 		private bool MouseInControl (Control control, bool fuzzy) {
 			Point	m;
@@ -711,38 +876,40 @@ namespace System.Windows.Forms {
 			}
 		}
 
-#if NET_2_0
-		internal virtual void OnDraw (DrawToolTipEventArgs e)
+		internal void OnDraw (DrawToolTipEventArgs e)
 		{
 			DrawToolTipEventHandler eh = (DrawToolTipEventHandler)(Events[DrawEvent]);
 			if (eh != null)
 				eh (this, e);
 		}
 
-		internal virtual void OnPopup (PopupEventArgs e)
+		internal void OnPopup (PopupEventArgs e)
 		{
 			PopupEventHandler eh = (PopupEventHandler) (Events [PopupEvent]);
 			if (eh != null)
 				eh (this, e);
 		}
-#endif
 		#endregion	// Private Methods
 
 		#region Events
-#if NET_2_0
 		static object PopupEvent = new object ();
 		static object DrawEvent = new object ();
 		
-		public event PopupEventHandler Popup {
+#if NET_2_0
+		public
+#endif		
+		event PopupEventHandler Popup {
 			add { Events.AddHandler (PopupEvent, value); }
 			remove { Events.RemoveHandler (PopupEvent, value); }
 		}
 
-		public event DrawToolTipEventHandler Draw {
+#if NET_2_0
+		public
+#endif
+		event DrawToolTipEventHandler Draw {
 			add { Events.AddHandler (DrawEvent, value); }
 			remove { Events.RemoveHandler (DrawEvent, value); }
 		}
-#endif
 		#endregion
 	}
 }

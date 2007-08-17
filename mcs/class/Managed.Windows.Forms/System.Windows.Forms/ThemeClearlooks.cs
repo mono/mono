@@ -3298,7 +3298,9 @@ namespace System.Windows.Forms {
 		{
 			dc.FillRectangle(ResPool.GetSolidBrush (ColorInfo), control.ClientRectangle);
 			dc.DrawRectangle(ResPool.GetPen (info_border_color), 0, 0, control.Width-1, control.Height-1);
-			dc.DrawString(control.Text, control.Font, ResPool.GetSolidBrush(this.ColorInfoText), control.ClientRectangle, control.string_format);
+	
+			TextFormatFlags flags = TextFormatFlags.HidePrefix | TextFormatFlags.SingleLine | TextFormatFlags.VerticalCenter | TextFormatFlags.HorizontalCenter;
+			TextRenderer.DrawTextInternal (dc, control.Text, control.Font, control.ClientRectangle, this.ColorInfoText, flags, false);
 		}
 		#endregion	// ToolTip
 

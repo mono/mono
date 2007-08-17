@@ -26,14 +26,16 @@
 //	Jonathan Pobst (monkey@jpobst.com)
 //
 
-#if NET_2_0
 
 using System.ComponentModel;
 using System.Drawing;
 
 namespace System.Windows.Forms
 {
-	public class PopupEventArgs : CancelEventArgs
+#if NET_2_0
+	public
+#endif
+	class PopupEventArgs : CancelEventArgs
 	{
 		private Control associated_control;
 		private IWin32Window associated_window;
@@ -70,4 +72,3 @@ namespace System.Windows.Forms
 		#endregion	// Public Instance Properties
 	}
 }
-#endif

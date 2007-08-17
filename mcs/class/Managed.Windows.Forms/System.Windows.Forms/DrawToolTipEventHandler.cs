@@ -25,9 +25,10 @@
 //
 // COMPLETE
 
-#if NET_2_0
 namespace System.Windows.Forms
 {
-	public delegate void DrawToolTipEventHandler (object sender, DrawToolTipEventArgs e);
-}
+#if NET_2_0
+	public
 #endif
+	delegate void DrawToolTipEventHandler (object sender, DrawToolTipEventArgs e);
+}

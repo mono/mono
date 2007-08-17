@@ -1,3 +1,12 @@
+2007-08-17  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DrawToolTipEventArgs.cs, DrawToolTipEventHandler.cs, PopupEventArgs.cs,
+	PopupEventHandler.cs: Make these internal for 1.1.
+	* ThemeClearlooks.cs, ThemeWin32Classic.cs: Use TextRenderer, and modify to not
+	use ToolTipWindow internals.
+	* ToolTip.cs: Add 2.0 modal Show methods.  Had to move a lot of stuff around to
+	support this.  A lot of stuff in the ToolTipWindow got moved to the ToolTip.
+
 2007-08-17  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* X11Dnd.cs: Add a null check.
