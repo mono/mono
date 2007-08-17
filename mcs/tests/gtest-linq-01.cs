@@ -26,6 +26,7 @@ namespace from
 			// FROM
 			e = from i in i2 select i;
 			e = from int i in i2 select i;
+			e = from bool? i in i2 select i;
 			e = from i in new int[0] select i;
 			e = from x in i2 from y in i2 select y;
 
@@ -57,7 +58,14 @@ namespace from
 			int from = 0;
 			bool let = false;
 			
-			//object o = (object)from i in i2 select i;
+			object o = (object)from i in i2 select i;
 		}
+		
+		int foo;
+		void Do (string[] args)
+		{
+			int from = this.foo;
+			Console.WriteLine (args [from]);
+		}		
 	}
 }
