@@ -1,5 +1,9 @@
 2007-08-17  Zoltan Varga  <vargaz@gmail.com>
 
+	* metadata.c (mono_type_to_unmanaged): Handle MONO_NATIVE_CUSTOM.
+
+	* marshal.c (mono_marshal_type_size): Ditto. Fixes #82465 and #82466.	
+
 	* object-internals.h (MonoException): Add missing _data member.
 
 2007-08-08  Massimiliano Mantione  <massi@ximian.com>
