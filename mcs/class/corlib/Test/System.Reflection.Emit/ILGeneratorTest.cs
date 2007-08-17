@@ -69,6 +69,51 @@ namespace MonoTests.System.Reflection.Emit {
 			il_gen.EndExceptionBlock ();
 		}
 		
+		// Bug 81431
+		[Test]
+		public void FilterAndCatchBlock ()
+		{
+			DefineBasicMethod ();
+			ILGenerator il = il_gen;
+			il.BeginExceptionBlock ();
+			il.BeginExceptFilterBlock ();
+			il.BeginCatchBlock (null);
+			il.BeginCatchBlock (typeof (SystemException));
+		}
+		
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void InvalidFilterBlock1 ()
+		{
+			DefineBasicMethod ();
+			ILGenerator il = il_gen;
+			il.BeginExceptionBlock ();
+			il.BeginExceptFilterBlock ();
+			il.EndExceptionBlock ();
+		}
+		
+		[Test]
+		public void ValidFilterBlock1 ()
+		{
+			DefineBasicMethod ();
+			ILGenerator il = il_gen;
+			il.BeginExceptionBlock ();
+			il.BeginExceptFilterBlock ();
+			il.BeginFaultBlock ();
+			il.EndExceptionBlock ();
+		}
+		
+		[Test]
+		public void ValidFilterBlock2 ()
+		{
+			DefineBasicMethod ();
+			ILGenerator il = il_gen;
+			il.BeginExceptionBlock ();
+			il.BeginExceptFilterBlock ();
+			il.BeginFinallyBlock ();
+			il.EndExceptionBlock ();
+		}
+		
 		/// <summary>
 		/// Try to emit something like that:
 		///

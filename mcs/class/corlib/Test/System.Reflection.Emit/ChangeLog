@@ -1,3 +1,7 @@
+2007-08-17  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* ILGeneratorTest.cs: Added FilterAndCatchBlock (bug #81431), InvalidFilterBlock1, ValidFilterBlock1, ValidFilterBlock2.
+
 2007-08-16  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TypeBuilderTest.cs: Added IsDefined test with null value for

@@ -43,6 +43,7 @@ namespace System.Reflection.Emit {
 		public const int FILTER = 1;
 		public const int FINALLY = 2;
 		public const int FAULT = 4;
+		public const int FILTER_START = -1;
 
 		internal Type extype;
 		internal int type;
@@ -110,7 +111,7 @@ namespace System.Reflection.Emit {
 			End (offset);
 			add_block (offset);
 			i = handlers.Length - 1;
-			handlers [i].type = ILExceptionBlock.FILTER;
+			handlers [i].type = ILExceptionBlock.FILTER_START;
 			handlers [i].extype = null;
 			handlers [i].filter_offset = offset;
 		}
@@ -132,10 +133,12 @@ namespace System.Reflection.Emit {
 				return ILExceptionBlock.CATCH;
 		}
 
-		internal void PatchLastClauseStart (int start)
+		internal void PatchFilterClause (int start)
 		{
-			if (handlers != null && handlers.Length > 0)
+			if (handlers != null && handlers.Length > 0) {
 				handlers [handlers.Length - 1].start = start;
+				handlers [handlers.Length - 1].type = ILExceptionBlock.FILTER;
+			}
 		}
 
 		internal void Debug (int b)
@@ -343,6 +346,7 @@ namespace System.Reflection.Emit {
 			switch (ex_handlers [cur_block].LastClauseType ()) {
 			case ILExceptionBlock.CATCH:
 			case ILExceptionBlock.FILTER:
+			case ILExceptionBlock.FILTER_START:
 				// how could we optimize code size here?
 				Emit (OpCodes.Leave, ex_handlers [cur_block].end);
 				break;
@@ -361,11 +365,11 @@ namespace System.Reflection.Emit {
 			if (open_blocks.Count <= 0)
 				throw new NotSupportedException ("Not in an exception block");
 
-			if (ex_handlers [cur_block].LastClauseType () == ILExceptionBlock.FILTER) {
+			if (ex_handlers [cur_block].LastClauseType () == ILExceptionBlock.FILTER_START) {
 				if (exceptionType != null)
 					throw new ArgumentException ("Do not supply an exception type for filter clause");
 				Emit (OpCodes.Endfilter);
-				ex_handlers [cur_block].PatchLastClauseStart (code_len);
+				ex_handlers [cur_block].PatchFilterClause (code_len);
 			} else {
 				InternalEndClause ();
 				ex_handlers [cur_block].AddCatch (exceptionType, code_len);
@@ -417,6 +421,12 @@ namespace System.Reflection.Emit {
 			
 			if (open_blocks.Count <= 0)
 				throw new NotSupportedException ("Not in an exception block");
+
+			if (ex_handlers [cur_block].LastClauseType () == ILExceptionBlock.FILTER_START) {
+				Emit (OpCodes.Leave, ex_handlers [cur_block].end);
+				ex_handlers [cur_block].PatchFilterClause (code_len);
+			}
+			
 			InternalEndClause ();
 			//System.Console.WriteLine ("Begin fault Block");
 			ex_handlers [cur_block].AddFault (code_len);
@@ -429,7 +439,14 @@ namespace System.Reflection.Emit {
 			
 			if (open_blocks.Count <= 0)
 				throw new NotSupportedException ("Not in an exception block");
+
 			InternalEndClause ();
+
+			if (ex_handlers [cur_block].LastClauseType () == ILExceptionBlock.FILTER_START) {
+				Emit (OpCodes.Leave, ex_handlers [cur_block].end);
+				ex_handlers [cur_block].PatchFilterClause (code_len);
+			}
+
 			//System.Console.WriteLine ("Begin finally Block");
 			ex_handlers [cur_block].AddFinally (code_len);
 		}
@@ -875,6 +892,10 @@ namespace System.Reflection.Emit {
 			
 			if (open_blocks.Count <= 0)
 				throw new NotSupportedException ("Not in an exception block");
+
+			if (ex_handlers [cur_block].LastClauseType () == ILExceptionBlock.FILTER_START)
+				throw new InvalidOperationException ("Incorrect code generation for exception block.");
+
 			InternalEndClause ();
 			MarkLabel (ex_handlers [cur_block].end);
 			ex_handlers [cur_block].End (code_len);
