@@ -618,7 +618,7 @@ namespace Mono.CSharp {
 
 			protected virtual bool DoResolveInternal (EmitContext ec)
 			{
-				MethodGroupExpr mg = (MethodGroupExpr) Expression.MemberLookupFinal (
+				MethodGroupExpr mg = (MethodGroupExpr) MemberLookupFinal (
 					ec, ec.ContainerType, type, ".ctor", MemberTypes.Constructor,
 					AllBindingFlags | BindingFlags.DeclaredOnly, loc);
 				if (mg == null)

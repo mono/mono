@@ -914,7 +914,7 @@ namespace Mono.CSharp {
 				
 			delegate_instance_expression = e;
 			delegate_method = Delegate.GetInvokeMethod (ec.ContainerType, type);
-			method_group = new MethodGroupExpr (new MemberInfo[] { delegate_method }, loc);
+			method_group = new MethodGroupExpr (new MemberInfo[] { delegate_method }, type, loc);
 
 			eclass = ExprClass.Value;
 			return this;

@@ -5211,29 +5211,25 @@ namespace Mono.CSharp {
 			Expression ml = MemberLookupFinal (ec, type, type, ".ctor",
 				MemberTypes.Constructor, AllBindingFlags | BindingFlags.DeclaredOnly, loc);
 
-			if (ml == null)
-				return null;
-
-			method = ml as MethodGroupExpr;
-
-			if (method == null) {
-				ml.Error_UnexpectedKind (ec.DeclContainer, "method group", loc);
-				return null;
-			}
-
 			if (Arguments != null){
 				foreach (Argument a in Arguments){
 					if (!a.Resolve (ec, loc))
 						return null;
 				}
 			}
-			
-			method = method.OverloadResolve (ec, Arguments, false, loc);
+
+			if (ml == null)
+				return null;
+
+			method = ml as MethodGroupExpr;
 			if (method == null) {
-				if (almostMatchedMembers.Count != 0)
-					MemberLookupFailed (ec.ContainerType, type, type, ".ctor", null, true, loc);
+				ml.Error_UnexpectedKind (ec.DeclContainer, "method group", loc);
 				return null;
 			}
+
+			method = method.OverloadResolve (ec, Arguments, false, loc);
+			if (method == null)
+				return null;
 
 			return this;
 		}
@@ -6857,8 +6853,9 @@ namespace Mono.CSharp {
 				}
 
 				if (!ec.IsInProbingMode)
-					MemberLookupFailed (
-						ec.ContainerType, expr_type, expr_type, Identifier, null, true, loc);
+					Error_MemberLookupFailed (
+						ec.ContainerType, expr_type, expr_type, Identifier, null,
+						AllMemberTypes, AllBindingFlags, loc);
 				return null;
 			}
 
@@ -6899,7 +6896,7 @@ namespace Mono.CSharp {
 			MemberExpr me = (MemberExpr) member_lookup;
 			member_lookup = me.ResolveMemberAccess (ec, expr_resolved, loc, original);
 			if (member_lookup == null)
-				return null;
+				return me;
 
 			if (args != null) {
 				MethodGroupExpr mg = member_lookup as MethodGroupExpr;
@@ -7825,7 +7822,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			get = (MethodInfo)new MethodGroupExpr (AllGetters, loc).OverloadResolve (ec,
+			get = (MethodInfo)new MethodGroupExpr (AllGetters, type, loc).OverloadResolve (ec,
 					arguments, false, loc);
 
 			if (get == null) {
@@ -7886,7 +7883,7 @@ namespace Mono.CSharp {
 				found_any_setters = true;
 				set_arguments = (ArrayList) arguments.Clone ();
 				set_arguments.Add (new Argument (right_side, Argument.AType.Expression));
-				set = (MethodInfo)(new MethodGroupExpr (AllSetters, loc)).OverloadResolve (
+				set = (MethodInfo)(new MethodGroupExpr (AllSetters, type, loc)).OverloadResolve (
 					ec,
 					set_arguments, false, loc);
 			}
@@ -8073,7 +8070,8 @@ namespace Mono.CSharp {
 			member_lookup = MemberLookup (ec.ContainerType, null, base_type, Identifier,
 						      AllMemberTypes, AllBindingFlags, loc);
 			if (member_lookup == null) {
-				MemberLookupFailed (ec.ContainerType, base_type, base_type, Identifier, null, true, loc);
+				Error_MemberLookupFailed (ec.ContainerType, base_type, base_type, Identifier,
+					null, AllMemberTypes, AllBindingFlags, loc);
 				return null;
 			}
 
@@ -8571,7 +8569,7 @@ namespace Mono.CSharp {
 		{
 			if (initializer == null)
 				return;
-			
+
 			ElementInitializer target = (ElementInitializer) t;
 			target.initializer = initializer.Clone (clonectx);
 		}
@@ -8598,6 +8596,19 @@ namespace Mono.CSharp {
 			}
 
 			return new Assign (element_member, initializer, loc).Resolve (ec);
+		}
+
+		protected override Expression Error_MemberLookupFailed (MemberInfo[] members)
+		{
+			MemberInfo member = members [0];
+			if (member.MemberType != MemberTypes.Property && member.MemberType != MemberTypes.Field)
+				Report.Error (1913, loc, "Member `{0}' cannot be initialized. An object " +
+					"initializer may only be used for fields, or properties", TypeManager.GetFullNameSignature (member));
+			else
+				Report.Error (1914, loc, " Static field or property `{0}' cannot be assigned in an object initializer",
+					TypeManager.GetFullNameSignature (member));
+
+			return null;
 		}
 
 		public override void Emit (EmitContext ec)

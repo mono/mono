@@ -1,3 +1,25 @@
+2007-08-17  Marek Safar  <marek.safar@gmail.com>
+
+	* anonymous.cs: MemberLookupFinal update.
+
+	* class.cs (ConstructorInitializer): Is expression based.
+	
+	* delegate.cs: MethodGroupExpr update.
+	
+	* ecore.cs  (Error_MemberLookupFailed): Improved to report better error
+	messages.
+	(Error_MemberLookupFailed): Customizable error override.
+	(MethodGroupExpr): Keep queried type for later usage.
+	(MethodGroupExpr.OverloadResolve): Catch errors related to overload
+	resolve.
+	
+	* expression.cs: Error_MemberLookupFailed refactoring.
+	(New.DoResolve): Resolve as much as possible.
+	(ElementInitializer.Error_MemberLookupFailed): Object initializer
+	customization for invalid member types.
+
+	* statement.cs: MethodGroupExpr update.
+	
 2007-08-16  Marek Safar  <marek.safar@gmail.com>
 
 	* modifier.cs (Check): Check all modifiers and not only accessibility

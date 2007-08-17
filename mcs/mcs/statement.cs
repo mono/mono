@@ -5188,7 +5188,7 @@ namespace Mono.CSharp {
 					get_current = tmp_get_cur;
 					enumerator_type = tmp_enumerator_type;
 					MethodInfo[] mi = new MethodInfo[] { (MethodInfo) result };
-					get_enumerator = new MethodGroupExpr (mi, loc);
+					get_enumerator = new MethodGroupExpr (mi, enumerator_type, loc);
 
 					if (t != expr.Type) {
 						expr = Convert.ExplicitConversion (
@@ -5261,7 +5261,7 @@ namespace Mono.CSharp {
 				Expression move_next_expr;
 				{
 					MemberInfo[] mi = new MemberInfo[] { move_next };
-					MethodGroupExpr mg = new MethodGroupExpr (mi, loc);
+					MethodGroupExpr mg = new MethodGroupExpr (mi, var_type.Type, loc);
 					mg.InstanceExpression = enumerator;
 
 					move_next_expr = new Invocation (mg, null);

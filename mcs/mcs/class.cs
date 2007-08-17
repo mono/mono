@@ -4593,10 +4593,10 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public abstract class ConstructorInitializer {
+	public abstract class ConstructorInitializer : Expression
+	{
 		readonly ArrayList argument_list;
 		MethodGroupExpr base_constructor_group;
-		readonly Location loc;
 		
 		public ConstructorInitializer (ArrayList argument_list, Location loc)
 		{
@@ -4612,8 +4612,6 @@ namespace Mono.CSharp {
 
 		public bool Resolve (ConstructorBuilder caller_builder, Block block, EmitContext ec)
 		{
-			Type t;
-
 			ec.CurrentBlock = block;
 
 			if (argument_list != null){
@@ -4628,7 +4626,7 @@ namespace Mono.CSharp {
 				if (ec.ContainerType.BaseType == null)
 					return true;
 
-				t = ec.ContainerType.BaseType;
+				type = ec.ContainerType.BaseType;
 				if (ec.ContainerType.IsValueType) {
 					Report.Error (522, loc,
 						"`{0}': Struct constructors cannot call base constructors", TypeManager.CSharpSignature (caller_builder));
@@ -4644,29 +4642,16 @@ namespace Mono.CSharp {
 				if (ec.ContainerType.IsValueType && argument_list == null)
 					return true;
 				
-				t = ec.ContainerType;
+				type = ec.ContainerType;
 			}
 
-			base_constructor_group = Expression.MemberLookup (
-				ec.ContainerType, t, ".ctor", MemberTypes.Constructor,
+			base_constructor_group = MemberLookupFinal (
+				ec, null, type, ConstructorBuilder.ConstructorName, MemberTypes.Constructor,
 				BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly,
 				loc) as MethodGroupExpr;
 			
-			bool error_non_public = false;
-			if (base_constructor_group == null) {
-				error_non_public = true;
-				base_constructor_group = Expression.MemberLookup (
-				    ec.ContainerType, t, ".ctor", MemberTypes.Constructor,
-				    BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly,
-				    loc) as MethodGroupExpr;
-				
-				// TODO: because of MemberLookup is so broken. It does not return private members
-				// even if you ask for them.
-				if (base_constructor_group == null) {
-					Expression.MemberLookupFailed (ec.ContainerType, t, t, ".ctor", null, true, loc);
-					return false;
-				}					
-			}
+			if (base_constructor_group == null)
+				return false;
 
 			base_constructor_group = base_constructor_group.OverloadResolve (
 				ec, argument_list, false, loc);
@@ -4679,16 +4664,16 @@ namespace Mono.CSharp {
 			if (base_ctor == caller_builder){
 				Report.Error (516, loc, "Constructor `{0}' cannot call itself", TypeManager.CSharpSignature (caller_builder));
 			}
-			
-			if (error_non_public) {
-				Report.SymbolRelatedToPreviousError (base_ctor);
-				Expression.ErrorIsInaccesible (loc, TypeManager.CSharpSignature (base_ctor));
-			}			
-			
+						
 			return true;
 		}
 
-		public void Emit (EmitContext ec)
+		public override Expression DoResolve (EmitContext ec)
+		{
+			throw new NotSupportedException ();
+		}
+
+		public override void Emit (EmitContext ec)
 		{
 			// It can be null for static initializers
 			if (base_constructor_group == null)

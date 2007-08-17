@@ -693,11 +693,11 @@ namespace Mono.CSharp {
 					}
 				}
 
-				return new MethodGroupExpr (methods, loc);
+				return new MethodGroupExpr (methods, queried_type, loc);
 			}
 
 			if (mi [0] is MethodBase)
-				return new MethodGroupExpr (mi, loc);
+				return new MethodGroupExpr (mi, queried_type, loc);
 
 			return ExprClassFromMemberInfo (container_type, mi [0], loc);
 		}
@@ -742,14 +742,7 @@ namespace Mono.CSharp {
 		///   look for private members and display a useful debugging message if we
 		///   find it.
 		/// </summary>
-		public static Expression MemberLookupFinal (EmitContext ec, Type qualifier_type,
-							    Type queried_type, string name, Location loc)
-		{
-			return MemberLookupFinal (ec, qualifier_type, queried_type, name,
-						  AllMemberTypes, AllBindingFlags, loc);
-		}
-
-		public static Expression MemberLookupFinal (EmitContext ec, Type qualifier_type,
+		protected Expression MemberLookupFinal (EmitContext ec, Type qualifier_type,
 							    Type queried_type, string name,
 							    MemberTypes mt, BindingFlags bf,
 							    Location loc)
@@ -760,17 +753,17 @@ namespace Mono.CSharp {
 
 			e = MemberLookup (ec.ContainerType, qualifier_type, queried_type, name, mt, bf, loc);
 
-			if (e == null && errors == Report.Errors)
-				// No errors were reported by MemberLookup, but there was an error.
-				MemberLookupFailed (ec.ContainerType, qualifier_type, queried_type, name, null, true, loc);
+			if (e != null || errors != Report.Errors)
+				return e;
 
-			return e;
+			// No errors were reported by MemberLookup, but there was an error.
+			return Error_MemberLookupFailed (ec.ContainerType, qualifier_type, queried_type,
+					name, null, mt, bf, loc);
 		}
 
-		public static void MemberLookupFailed (Type container_type, Type qualifier_type,
-						       Type queried_type, string name,
-						       string class_name, bool complain_if_none_found, 
-						       Location loc)
+		protected Expression Error_MemberLookupFailed (Type container_type, Type qualifier_type,
+						       Type queried_type, string name, string class_name,
+							   MemberTypes mt, BindingFlags bf, Location loc)
 		{
 			if (almostMatchedMembers.Count != 0) {
 				for (int i = 0; i < almostMatchedMembers.Count; ++i) {
@@ -805,7 +798,7 @@ namespace Mono.CSharp {
 					}
 				}
 				almostMatchedMembers.Clear ();
-				return;
+				return null;
 			}
 
 			MemberInfo[] lookup = null;
@@ -813,20 +806,28 @@ namespace Mono.CSharp {
 				class_name = "global::";
 			} else {
 				lookup = TypeManager.MemberLookup (queried_type, null, queried_type,
-					AllMemberTypes, AllBindingFlags |
-					BindingFlags.NonPublic, name, null);
+					mt, (bf & ~BindingFlags.Public) | BindingFlags.NonPublic,
+					name, null);
+
+				if (lookup != null) {
+					Report.SymbolRelatedToPreviousError (lookup [0]);
+					ErrorIsInaccesible (loc, TypeManager.GetFullNameSignature (lookup [0]));
+					return Error_MemberLookupFailed (lookup);
+				}
+
+				lookup = TypeManager.MemberLookup (queried_type, null, queried_type,
+					AllMemberTypes, AllBindingFlags | BindingFlags.NonPublic,
+					name, null);
 			}
 
 			if (lookup == null) {
-				if (!complain_if_none_found)
-					return;
-
-				if (class_name != null)
+				if (class_name != null) {
 					Report.Error (103, loc, "The name `{0}' does not exist in the current context",
 						name);
-				else
+				} else {
 					Error_TypeDoesNotContainDefinition (loc, queried_type, name);
-				return;
+				}
+				return null;
 			}
 
 			if (TypeManager.MemberLookup (queried_type, null, queried_type,
@@ -840,20 +841,22 @@ namespace Mono.CSharp {
 						      "requires {1} type arguments",
 						      TypeManager.CSharpName (t),
 						      TypeManager.GetNumberOfTypeArguments (t).ToString ());
-					return;
+					return null;
 				}
 			}
 
-			MemberList ml = TypeManager.FindMembers (queried_type, MemberTypes.Constructor,
-								 BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly, null, null);
-			if (name == ".ctor" && ml.Count == 0)
-			{
-				Report.Error (143, loc, "The type `{0}' has no constructors defined", TypeManager.CSharpName (queried_type));
-				return;
+			return Error_MemberLookupFailed (lookup);
+		}
+
+		protected virtual Expression Error_MemberLookupFailed (MemberInfo[] members)
+		{
+			for (int i = 0; i < members.Length; ++i) {
+				if (!(members [i] is MethodBase))
+					return null;
 			}
 
-			Report.SymbolRelatedToPreviousError (lookup [0]);
-			ErrorIsInaccesible (loc, TypeManager.GetFullNameSignature (lookup [0]));
+			// By default propagate the closest candidates upwards
+			return new MethodGroupExpr (members, type, loc);
 		}
 
 		/// <summary>
@@ -2335,7 +2338,8 @@ namespace Mono.CSharp {
 					almostMatchedMembers = almost_matched;
 				if (almost_matched_type == null)
 					almost_matched_type = ec.ContainerType;
-				MemberLookupFailed (ec.ContainerType, null, almost_matched_type, Name, ec.DeclContainer.Name, true, loc);
+				Error_MemberLookupFailed (ec.ContainerType, null, almost_matched_type, Name,
+					ec.DeclContainer.Name, AllMemberTypes, AllBindingFlags, loc);
 				return null;
 			}
 
@@ -2913,6 +2917,7 @@ namespace Mono.CSharp {
 
 				if (!IsStatic) {
 					SimpleName.Error_ObjectRefRequired (ec, loc, GetSignatureForError ());
+					return null;
 				}
 
 				return this;
@@ -2967,10 +2972,9 @@ namespace Mono.CSharp {
 		public Expression ExtensionExpression;
 
 		public ExtensionMethodGroupExpr (ArrayList list, NamespaceEntry n, Type extensionType, Location l)
-			: base (list, l)
+			: base (list, extensionType, l)
 		{
 			this.namespaceEntry = n;
-			this.type = extensionType;
 		}
 
 		public override bool IsBase {
@@ -3055,19 +3059,16 @@ namespace Mono.CSharp {
  		bool identical_type_name;
 		bool is_base;
 		
-		public MethodGroupExpr (MemberInfo [] mi, Location l)
+		public MethodGroupExpr (MemberInfo [] mi, Type type, Location l)
 		{
 			Methods = new MethodBase [mi.Length];
 			mi.CopyTo (Methods, 0);
 			eclass = ExprClass.MethodGroup;
-
-			// Set the type to something that will never be useful, which will
-			// trigger the proper conversions.
-			type = typeof (MethodGroupExpr);
+			this.type = type;
 			loc = l;
 		}
 
-		public MethodGroupExpr (ArrayList list, Location l)
+		public MethodGroupExpr (ArrayList list, Type type, Location l)
 		{
 			try {
 				Methods = (MethodBase[])list.ToArray (typeof (MethodBase));
@@ -3083,7 +3084,7 @@ namespace Mono.CSharp {
 
 			loc = l;
 			eclass = ExprClass.MethodGroup;
-			type = TypeManager.object_type;
+			this.type = type;
 		}
 
 		public override Type DeclaringType {
@@ -3512,7 +3513,7 @@ namespace Mono.CSharp {
 					miset [k++] = r;
 			}
 
-			union = new MethodGroupExpr (miset, loc);
+			union = new MethodGroupExpr (miset, mg1.Type, loc);
 			
 			return union;
 		}		
@@ -3757,7 +3758,19 @@ namespace Mono.CSharp {
 					}
 #endif
 
-					Invocation.Error_WrongNumArguments (loc, report_name, arg_count);
+					if (Name == ConstructorInfo.ConstructorName) {
+						if (almostMatchedMembers.Count != 0) {
+							Error_MemberLookupFailed (ec.ContainerType, type, type, ".ctor",
+								null, MemberTypes.Constructor, AllBindingFlags, loc);
+						} else {
+							Report.SymbolRelatedToPreviousError (type);
+							Report.Error (1729, loc,
+								"The type `{0}' does not contain a constructor that takes `{1}' arguments",
+								TypeManager.CSharpName (type), arg_count);
+						}
+					} else {
+						Invocation.Error_WrongNumArguments (loc, report_name, arg_count);
+					}
 				}
                                 
 				return null;
@@ -3953,7 +3966,7 @@ namespace Mono.CSharp {
 			}
 
 			if (list.Count > 0) {
-				MethodGroupExpr new_mg = new MethodGroupExpr (list, Location);
+				MethodGroupExpr new_mg = new MethodGroupExpr (list, type, Location);
 				new_mg.InstanceExpression = InstanceExpression;
 				new_mg.HasTypeArguments = true;
 				new_mg.IsBase = IsBase;
