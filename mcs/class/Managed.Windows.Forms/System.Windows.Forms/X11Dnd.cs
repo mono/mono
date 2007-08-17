@@ -629,6 +629,12 @@ namespace System.Windows.Forms {
 					escape, action);
 
 			Control c = MwfWindow (source);
+			
+			if (c == null) {
+				tracking = false;
+				return false;
+			}
+			
 			c.DndContinueDrag (qce);
 
 			switch (qce.Action) {

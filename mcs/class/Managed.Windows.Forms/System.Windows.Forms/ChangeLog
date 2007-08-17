@@ -1,5 +1,9 @@
 2007-08-17  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* X11Dnd.cs: Add a null check.
+
+2007-08-17  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* X11Dnd.cs: MwfWindow: Try to load the control directly from the handle if
 	  nothing else succeeds. Fixes #82453.
 
