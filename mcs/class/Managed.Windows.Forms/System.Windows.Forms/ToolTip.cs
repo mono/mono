@@ -856,7 +856,7 @@ namespace System.Windows.Forms {
 				last_control = null;
 		}
 		
-		private void Hide (Control sender)
+		public void Hide (Control sender)
 		{
 			timer.Stop();
 

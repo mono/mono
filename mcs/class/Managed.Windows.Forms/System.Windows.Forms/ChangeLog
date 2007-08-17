@@ -1,3 +1,8 @@
+2007-08-17  Jeffrey Stedfast  <fejj@novell.com>
+
+	* ToolTip.cs (Hide): Made public to make the build work (should
+	this not be public?).
+
 2007-08-17  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolBar.cs, ToolStrip.cs, TreeView.cs: Use a ToolTip instead of a
