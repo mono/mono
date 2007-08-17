@@ -1205,6 +1205,10 @@ namespace System.Windows.Forms {
 				return null;
 
 			Control res = Control.FromHandle (hwnd.client_window);
+			
+			if (res == null)
+				res = Control.FromHandle (window);
+				
 			return res;
 		}
 
