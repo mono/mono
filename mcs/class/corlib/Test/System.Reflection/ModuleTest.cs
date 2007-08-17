@@ -74,11 +74,8 @@ public class ModuleTest
 			Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#A2");
 			Assert.IsNull (ex.InnerException, "#A3");
 			Assert.IsNotNull (ex.Message, "#A4");
-			// bug #82459
-#if ONLY_1_1
 			Assert.IsNotNull (ex.ParamName, "#A5");
 			Assert.AreEqual ("name", ex.ParamName, "#A6");
-#endif
 		}
 
 		try {
@@ -88,11 +85,8 @@ public class ModuleTest
 			Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#B2");
 			Assert.IsNull (ex.InnerException, "#B3");
 			Assert.IsNotNull (ex.Message, "#B4");
-			// bug #82459
-#if ONLY_1_1
 			Assert.IsNotNull (ex.ParamName, "#B5");
 			Assert.AreEqual ("name", ex.ParamName, "#B6");
-#endif
 		}
 	}
 
