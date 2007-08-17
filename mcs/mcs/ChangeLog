@@ -1,5 +1,9 @@
 2007-08-17  Marek Safar  <marek.safar@gmail.com>
 
+	* cs-tokenizer.cs (GetKeyword): Handle from keyword in a different way.
+
+2007-08-17  Marek Safar  <marek.safar@gmail.com>
+
 	* anonymous.cs: MemberLookupFinal update.
 
 	* class.cs (ConstructorInitializer): Is expression based.

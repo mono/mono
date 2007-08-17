@@ -456,11 +456,34 @@ namespace Mono.CSharp
 				return -1;
 #if GMCS_SOURCE
 			if (IsLinqEnabled) {
-				if (res == Token.FROM &&
-					(current_token == Token.ASSIGN || current_token == Token.OPEN_BRACKET ||
-					 current_token == Token.RETURN || current_token == Token.IN)) {
-					query_parsing = true;
-					return res;
+				//
+				// A query expression is any expression that starts with `from identifier'
+				// followed by any token except ; , =
+				// 
+				if (!query_parsing && res == Token.FROM) {
+					PushPosition ();
+					switch (token ()) {
+						case Token.IDENTIFIER:
+						case Token.INT:
+						case Token.BOOL:
+						case Token.BYTE:
+						case Token.CHAR:
+						case Token.DECIMAL:
+						case Token.FLOAT:
+						case Token.LONG:
+						case Token.OBJECT:
+						case Token.STRING:
+						case Token.UINT:
+						case Token.ULONG:
+							int next_token = token ();
+							query_parsing = next_token != Token.SEMICOLON && next_token != Token.COMMA &&
+								next_token != Token.EQUALS;
+							break;
+						case Token.VOID:
+							Expression.Error_VoidInvalidInTheContext (Location);
+							break;						
+					}
+					PopPosition ();
 				}
 
 				if (!query_parsing && res > Token.QUERY_FIRST_TOKEN && res < Token.QUERY_LAST_TOKEN)
