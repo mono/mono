@@ -1,3 +1,9 @@
+2007-08-08  Massimiliano Mantione  <massi@ximian.com>
+
+	* loader.c (find_method, find_method_in_class): Fixed bug #81466,
+	checking that only methods with matching qname or fqname are picked
+	from implemented interfaces.
+
 2007-08-16  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (do_newarr):added, do type verification of
