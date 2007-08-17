@@ -227,7 +227,7 @@ namespace System.Linq.Expressions
         {
             // If the method has the hidebysig and specialname attributes it can be a property accessor;
             // if that's the case we try to extract the type of the property and then we use it and the
-            // property name (derived from the method name) to find the right ProprtyInfo.
+            // property name (derived from the method name) to find the right PropertyInfo.
             
             if (mi.IsHideBySig && mi.IsSpecialName) {
                 Type propertyType = null;
@@ -269,13 +269,29 @@ namespace System.Linq.Expressions
         private static void ValidateSettableFieldOrPropertyMember (MemberInfo member, out Type memberType)
         {
             if (member.MemberType == MemberTypes.Field) {
-                memberType = typeof (FieldInfo);
+                memberType = (member as FieldInfo).FieldType;
             }
             else if (member.MemberType == MemberTypes.Property) {
                 PropertyInfo pi = (PropertyInfo)member;
                 if (!pi.CanWrite)
                     throw new ArgumentException (String.Format ("The property '{0}' has no 'set' accessor", pi));
-                memberType = typeof (PropertyInfo);
+                memberType = (member as PropertyInfo).PropertyType;
+            }
+            else {
+                throw new ArgumentException ("Argument must be either a FieldInfo or PropertyInfo");   
+            }
+        }
+
+        private static void ValidateGettableFieldOrPropertyMember (MemberInfo member, out Type memberType)
+        {
+            if (member.MemberType == MemberTypes.Field) {
+                memberType = (member as FieldInfo).FieldType;
+            }
+            else if (member.MemberType == MemberTypes.Property) {
+                PropertyInfo pi = (PropertyInfo)member;
+                if (!pi.CanRead)
+                    throw new ArgumentException (String.Format ("The property '{0}' has no 'get' accessor", pi));
+                memberType = (member as PropertyInfo).PropertyType;
             }
             else {
                 throw new ArgumentException ("Argument must be either a FieldInfo or PropertyInfo");   
@@ -680,25 +696,36 @@ namespace System.Linq.Expressions
         }
         #endregion
         
-        public static MemberExpression Field(Expression expression, FieldInfo field)
+        #region Field
+        public static MemberExpression Field (Expression expression, FieldInfo field)
         {
+            // Note that expression can be (and should be) null when the access is to a static field.
+
             if (field == null)
                 throw new ArgumentNullException("field");
 
-            return new MemberExpression(expression, field, field.FieldType);
+            Type fieldType;
+            ValidateGettableFieldOrPropertyMember(field, out fieldType);
+
+            return new MemberExpression(expression, field, fieldType);
         }
 
-        public static MemberExpression Field(Expression expression, string fieldName)
+        public static MemberExpression Field (Expression expression, string fieldName)
         {
             if (expression == null)
                 throw new ArgumentNullException("expression");
+            if (fieldName == null)
+                throw new ArgumentNullException("fieldName");
 
-            FieldInfo field = expression.Type.GetField(fieldName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
+            FieldInfo field = expression.Type.GetField(fieldName,
+                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
             if (field == null)
-                throw new ArgumentException();
+                throw new ArgumentException (String.Format ("Field {0} is not defined for type {1}",
+                    fieldName, expression.type.FullName));
 
             return Field(expression, field);
         }
+        #endregion
 
         public static FuncletExpression Funclet(Funclet funclet, Type type)
         {
@@ -861,19 +888,6 @@ namespace System.Linq.Expressions
         }
         #endregion
         
-        public static MemberExpression Property(Expression expression, PropertyInfo property)
-        {
-            if (property == null)
-                throw new ArgumentNullException("property");
-
-            MethodInfo getMethod = property.GetGetMethod(true);
-            if (getMethod == null)
-                throw new ArgumentException(); // to access the property we need to have
-                                               // a get method...
-
-            return new MemberExpression(expression, property, property.PropertyType);
-        }
-        
         #region Or
         public static BinaryExpression Or (Expression left, Expression right, MethodInfo method)
         {
@@ -939,37 +953,78 @@ namespace System.Linq.Expressions
             return new UnaryExpression(ExpressionType.Quote, expression, expression.GetType());
         }
 
+        #region Property
+        public static MemberExpression Property (Expression expression, MethodInfo propertyAccessor)
+        {
+            if (propertyAccessor == null)
+                throw new ArgumentNullException("propertyAccessor");
+        
+            return Property(expression, GetProperty(propertyAccessor));
+        }
 
+        public static MemberExpression Property (Expression expression, PropertyInfo property)
+        {
+            if (property == null)
+                throw new ArgumentNullException("property");
+
+            Type propertyType;
+            ValidateGettableFieldOrPropertyMember(property, out propertyType);
+            
+            return new MemberExpression(expression, property, propertyType);
+        }
+        
+        
         public static MemberExpression Property(Expression expression, string propertyName)
         {
             if (expression == null)
-                throw new ArgumentNullException("expression");
+                throw new ArgumentNullException ("expression");
+            if (propertyName == null)
+                throw new ArgumentNullException ("propertyName");
 
-            PropertyInfo property = expression.Type.GetProperty(propertyName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            PropertyInfo property = expression.Type.GetProperty (propertyName,
+                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
             if (property == null)
-                throw new ArgumentException();
+                throw new ArgumentException (String.Format ("{0} is not a member of type {1}",
+                    propertyName, expression.type.FullName));
 
-            return Property(expression, property);
+            return Property (expression, property);
         }
-
+        #endregion
+        
+        #region PropertyOrField
         public static MemberExpression PropertyOrField(Expression expression, string propertyOrFieldName)
         {
             if (expression == null)
-                throw new ArgumentNullException("expression");
+                throw new ArgumentNullException ("expression");
+            if (propertyOrFieldName == null)
+                throw new ArgumentNullException ("propertyOrFieldName");
 
-            PropertyInfo property = expression.Type.GetProperty(propertyOrFieldName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
+            PropertyInfo property = expression.type.GetProperty (propertyOrFieldName,
+                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
             if (property != null)
-                return Property(expression, property);
+                return Property (expression, property);
 
-            FieldInfo field = expression.Type.GetField(propertyOrFieldName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
+            FieldInfo field = expression.type.GetField (propertyOrFieldName,
+                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
             if (field != null)
-                return Field(expression, field);
-                
-            //TODO: should we return <null> here?
-            // the name is not defined in the Type of the expression given...
-            throw new ArgumentException();
+                return Field (expression, field);
+
+            throw new ArgumentException (String.Format ("{0} is not a member of type {1}",
+                propertyOrFieldName, expression.type.FullName));
         }
+        #endregion
+        
+        #region Quote
+        public static UnaryExpression QUote(Expression expression)
+        {
+            if (expression == null)
+                throw new ArgumentNullException ("expression");
+                
+            return new UnaryExpression (ExpressionType.Quote, expression, expression.GetType());
+        
+        }
+        #endregion
 
         #region RightShift
         public static BinaryExpression RightShift (Expression left, Expression right, MethodInfo method)
@@ -980,12 +1035,12 @@ namespace System.Linq.Expressions
                 throw new ArgumentNullException ("right");
 
             if (method != null)
-                return new BinaryExpression(ExpressionType.RightShift, left, right, method, method.ReturnType);
+                return new BinaryExpression (ExpressionType.RightShift, left, right, method, method.ReturnType);
             
             // If the left side is any kind of integer and the right is int32 we don't have
             // to look for the "op_Addition" method.
             if (IsInteger(left.type) && right.type == typeof(Int32))
-                return new BinaryExpression(ExpressionType.RightShift, left, right, left.type);
+                return new BinaryExpression (ExpressionType.RightShift, left, right, left.type);
 
             // Else we try for a user-defined operator.
             return GetUserDefinedBinaryOperatorOrThrow (ExpressionType.RightShift, "op_RightShift", left, right);
@@ -1006,12 +1061,12 @@ namespace System.Linq.Expressions
                 throw new ArgumentNullException ("right");
 
             if (method != null)
-                return new BinaryExpression(ExpressionType.Subtract, left, right, method, method.ReturnType);
+                return new BinaryExpression (ExpressionType.Subtract, left, right, method, method.ReturnType);
             
             // Since both the expressions define the same numeric type we don't have
             // to look for the "op_Addition" method.
             if (left.type == right.type && IsNumeric (left.type))
-                return new BinaryExpression(ExpressionType.Subtract, left, right, left.type);
+                return new BinaryExpression (ExpressionType.Subtract, left, right, left.type);
 
             // Else we try for a user-defined operator.
             return GetUserDefinedBinaryOperatorOrThrow (ExpressionType.Subtract, "op_Subtraction", left, right);        
@@ -1032,25 +1087,21 @@ namespace System.Linq.Expressions
                 throw new ArgumentNullException ("right");
 
             if (method != null)
-                return new BinaryExpression(ExpressionType.SubtractChecked, left, right, method, method.ReturnType);
+                return new BinaryExpression (ExpressionType.SubtractChecked, left, right, method, method.ReturnType);
 
             // Since both the expressions define the same numeric type we don't have
             // to look for the "op_Addition" method.
             if (left.type == right.type && IsNumeric (left.type))
-                return new BinaryExpression(ExpressionType.SubtractChecked, left, right, left.type);
+                return new BinaryExpression (ExpressionType.SubtractChecked, left, right, left.type);
 
             method = GetUserDefinedBinaryOperator (left.type, right.type, "op_Subtraction");
             if (method == null)
-                throw new InvalidOperationException(String.Format(
+                throw new InvalidOperationException (String.Format (
                     "The binary operator AddChecked is not defined for the types '{0}' and '{1}'.", left.type, right.type));
             
             Type retType = method.ReturnType;
 
-            // Note: here the code did some very strange checks for bool (but note that bool does
-            // not define an addition operator) and created nullables for value types (but the new
-            // MS code does not do that). All that has been removed.
-
-            return new BinaryExpression(ExpressionType.SubtractChecked, left, right, method, retType);
+            return new BinaryExpression (ExpressionType.SubtractChecked, left, right, method, retType);
         }
         
         public static BinaryExpression SubtractChecked (Expression left, Expression right)
@@ -1060,26 +1111,26 @@ namespace System.Linq.Expressions
         #endregion
 
         #region TypeAs
-        public static UnaryExpression TypeAs(Expression expression, Type type)
+        public static UnaryExpression TypeAs (Expression expression, Type type)
         {
             if (expression == null)
-                throw new ArgumentNullException("expression");
+                throw new ArgumentNullException ("expression");
             if (type == null)
-                throw new ArgumentNullException("type");
+                throw new ArgumentNullException ("type");
 
-            return new UnaryExpression(ExpressionType.TypeAs, expression, type);
+            return new UnaryExpression (ExpressionType.TypeAs, expression, type);
         }
         #endregion
 
         #region TypeIs
-        public static TypeBinaryExpression TypeIs(Expression expression, Type type)
+        public static TypeBinaryExpression TypeIs (Expression expression, Type type)
         {
             if (expression == null)
-                throw new ArgumentNullException("expression");
+                throw new ArgumentNullException ("expression");
             if (type == null)
-                throw new ArgumentNullException("type"); 
+                throw new ArgumentNullException ("type"); 
             
-            return new TypeBinaryExpression(ExpressionType.TypeIs, expression, type, typeof(bool));
+            return new TypeBinaryExpression (ExpressionType.TypeIs, expression, type, typeof(bool));
         }
         #endregion
     }

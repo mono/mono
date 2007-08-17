@@ -78,6 +78,10 @@ namespace System.Linq.Expressions
                 builder.Append (")");
                 break;
 
+            case ExpressionType.Quote:
+                operand.BuildString (builder);
+                break;
+
             case ExpressionType.TypeAs:
                 builder.Append ("(");
                 operand.BuildString (builder);

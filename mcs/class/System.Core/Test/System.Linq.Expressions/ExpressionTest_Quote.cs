@@ -1,4 +1,4 @@
-﻿// Permission is hereby granted, free of charge, to any person obtaining
+// Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
 // without limitation the rights to use, copy, modify, merge, publish,
@@ -17,40 +17,33 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 //
 // Authors:
-//        Antonello Provenzano  <antonello@deveel.com>
-//
+//        Federico Di Gregorio <fog@initd.org>
 
+using System;
 using System.Reflection;
-using System.Text;
+using System.Linq;
+using System.Linq.Expressions;
+using NUnit.Framework;
 
-namespace System.Linq.Expressions
-{
-    public sealed class MemberAssignment : MemberBinding
+namespace MonoTests.System.Linq.Expressions
+{        
+    [TestFixture]
+    public class ExpressionTest_Quote
     {
-        #region .ctor
-        internal MemberAssignment (MemberInfo member, Expression expression)
-            : base (MemberBindingType.Assignment, member)
+        [Test]
+        [ExpectedException (typeof (ArgumentNullException))]
+        public void Arg1Null ()
         {
-            this.expression = expression;
+            Expression.Quote (null);
         }
-        #endregion
 
-        #region Fields
-        private Expression expression;
-        #endregion
-
-        #region Properties
-        public Expression Expression {
-            get { return expression; }
-        }
-        #endregion
-
-        #region Internal Methods
-        internal override void BuildString (StringBuilder builder)
+        [Test]
+        public void Constant ()
         {
-            builder.Append (Member.Name).Append (" = ");
-            expression.BuildString (builder);
+            UnaryExpression expr = Expression.Quote (Expression.Constant (1));
+            Assert.AreEqual (ExpressionType.Quote, expr.NodeType, "Quote#01");
+            Assert.AreEqual (typeof (ConstantExpression), expr.Type, "Quote#02");
+            Assert.AreEqual ("1", expr.ToString(), "Quote#03");
         }
-        #endregion
     }
 }

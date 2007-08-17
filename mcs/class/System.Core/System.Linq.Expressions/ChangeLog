@@ -1,5 +1,14 @@
 2007-08-17  Federico Di Gregorio <fog@initd.org>
 
+	* Expression.cs: fixed Field() and Property() behaviour when accessing static
+	members (i.e., when expression is null). Also added the missing version for
+	Property().
+
+	* MemberExpression.cs: added missing BuildString() method that differentiates
+	between static and instance methods.
+
+	* Expression.cs: implemented Quote() and tests.
+
 	* Expression.cs: implemented RightShift(), added tests for it and for
 	LeftShift().
 

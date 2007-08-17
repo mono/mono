@@ -18,16 +18,18 @@
 //
 // Authors:
 //        Antonello Provenzano  <antonello@deveel.com>
+//        Federico Di Gregorio  <fog@initd.org>
 //
 
 using System.Reflection;
+using System.Text;
 
 namespace System.Linq.Expressions
 {
     public sealed class MemberExpression : Expression
     {
         #region .ctor
-        internal MemberExpression(Expression expression, MemberInfo member, Type type)
+        internal MemberExpression (Expression expression, MemberInfo member, Type type)
             : base(ExpressionType.MemberAccess, type)
         {
             this.expr = expression;
@@ -47,6 +49,17 @@ namespace System.Linq.Expressions
 
         public MemberInfo Member {
             get { return member; }
+        }
+        #endregion
+
+        #region Internal Methods
+        internal override void BuildString (StringBuilder builder)
+        {
+            if (expr != null)
+                expr.BuildString (builder);
+            else
+                builder.Append (member.DeclaringType.Name);
+            builder.Append (".").Append (member.Name);
         }
         #endregion
     }
