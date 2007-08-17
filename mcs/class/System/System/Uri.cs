@@ -1387,7 +1387,7 @@ namespace System {
 				if (portStr.Length > 0 && portStr[portStr.Length - 1] != ']') {
 					try {
 #if NET_2_0
-						port = (int) UInt16.Parse (portStr, CultureInfo.InvariantCulture);
+						port = (int) UInt16.Parse (portStr, NumberStyles.Integer, CultureInfo.InvariantCulture);
 #else
 						port = (int) UInt32.Parse (portStr, CultureInfo.InvariantCulture);
 #endif
