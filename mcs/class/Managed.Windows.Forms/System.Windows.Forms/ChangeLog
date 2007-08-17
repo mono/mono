@@ -1,5 +1,14 @@
 2007-08-17  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Control.cs: When changing parent of a form, let the form decide whether
+	  XplatUI.SetParent should be called or not.
+	* Form.cs: ChangingParent: only call XplatUI.SetParent if we're not
+	  recreating the handle. If the new parent's handle isn't created, don't
+	  recreate our handle, just destroy it. CreateParams: Check if the
+	  parent's handle is created before fetching it.
+
+2007-08-17  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Control.cs, Form.cs, InternalWindowManager.cs, MainMenu.cs, MdiClient.cs:
 	  Update calls to PaintEventStart/End to take a Message argument.
 	* XplatUI.cs, XplatUIDriver.cs, XplatUIOSX.cs: Update PaintEventStart/End to

@@ -310,8 +310,22 @@ namespace System.Windows.Forms {
 				recreate_necessary = true;
 			}
 			
-			if (recreate_necessary && IsHandleCreated) {
-				RecreateHandle ();
+			if (recreate_necessary) {
+				if (IsHandleCreated) {
+					if (new_parent.IsHandleCreated) {
+						RecreateHandle ();
+					} else {
+						DestroyHandle ();
+					}
+				}
+			} else {
+				if (IsHandleCreated) {
+					IntPtr new_handle = IntPtr.Zero;
+					if (new_parent != null && new_parent.IsHandleCreated) {
+						new_handle = new_parent.Handle;
+					}
+					XplatUI.SetParent (Handle, new_handle);
+				}
 			}
 		
 			if (window_manager != null) {
@@ -1328,7 +1342,7 @@ namespace System.Windows.Forms {
 					cp.WindowStyle |= WindowStyles.WS_CLIPSIBLINGS;
 				}
 
-				if (Parent != null) {
+				if (Parent != null && Parent.IsHandleCreated) {
 					cp.Parent = Parent.Handle;
 					cp.Style |= (int) WindowStyles.WS_CHILD;
 				}

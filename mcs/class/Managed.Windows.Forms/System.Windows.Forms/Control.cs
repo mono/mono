@@ -1725,12 +1725,14 @@ namespace System.Windows.Forms
 
 			parent = new_parent;
 
-			if (IsHandleCreated) {
-				XplatUI.SetParent(Handle,
-						  (new_parent == null || !new_parent.IsHandleCreated) ? IntPtr.Zero : new_parent.Handle);
-			}
-			if (this is Form) {
-				((Form)this).ChangingParent (new_parent);
+			Form frm = this as Form;
+			if (frm != null) {
+				frm.ChangingParent (new_parent);
+			} else if (IsHandleCreated) {
+				IntPtr parent_handle = IntPtr.Zero;
+				if (new_parent != null && new_parent.IsHandleCreated)
+					parent_handle = new_parent.Handle;
+				XplatUI.SetParent (Handle, parent_handle);
 			}
 			
 			OnParentChanged(EventArgs.Empty);
