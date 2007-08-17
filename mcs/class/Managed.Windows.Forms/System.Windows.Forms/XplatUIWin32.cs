@@ -1581,7 +1581,7 @@ namespace System.Windows.Forms {
 			HwndCreating = null;
 
 			if (WindowHandle==IntPtr.Zero) {
-				uint error = Win32GetLastError();
+				int error = Marshal.GetLastWin32Error ();
 
 				Win32MessageBox(IntPtr.Zero, "Error : " + error.ToString(), "Failed to create window, class '"+cp.ClassName+"'", 0);
 			}
@@ -1756,9 +1756,8 @@ namespace System.Windows.Forms {
 					clip_rect = new Rectangle(ps.rcPaint.left, ps.rcPaint.top, ps.rcPaint.right-ps.rcPaint.left, ps.rcPaint.bottom-ps.rcPaint.top);
 				} else {
 					hdc = Win32GetDC(handle);
-					// FIXME: Add the DC to internal list
 
-					hwnd.drawing_stack.Push (null);
+					hwnd.drawing_stack.Push (hdc);
 
 					clip_rect = new Rectangle(rect.top, rect.left, rect.right-rect.left, rect.bottom-rect.top);
 				}
@@ -1791,8 +1790,13 @@ namespace System.Windows.Forms {
 			if (client) {
 				object o = hwnd.drawing_stack.Pop();
 				if (o != null) {
-					PAINTSTRUCT ps = (PAINTSTRUCT)o;
-					Win32EndPaint(handle, ref ps);
+					if (o is PAINTSTRUCT) {
+						PAINTSTRUCT ps = (PAINTSTRUCT)o;
+						Win32EndPaint(handle, ref ps);
+					} else if (o is IntPtr) {
+						IntPtr hdc = (IntPtr) o;
+						Win32ReleaseDC (handle, hdc);
+					}
 				}
 			} else {
 				IntPtr hdc = (IntPtr)hwnd.drawing_stack.Pop();
