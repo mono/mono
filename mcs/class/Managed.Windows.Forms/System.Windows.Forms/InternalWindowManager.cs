@@ -235,15 +235,15 @@ namespace System.Windows.Forms {
 				break;
 
 			case Msg.WM_NCPAINT:
-				return HandleNCPaint ();
+				return HandleNCPaint (ref m);
 			}
 
 			return false;
 		}
 
-		protected virtual bool HandleNCPaint ()
+		protected virtual bool HandleNCPaint (ref Message m)
 		{
-			PaintEventArgs pe = XplatUI.PaintEventStart (form.Handle, false);
+			PaintEventArgs pe = XplatUI.PaintEventStart (ref m, form.Handle, false);
 
 			Rectangle clip;
 			
@@ -266,7 +266,7 @@ namespace System.Windows.Forms {
 			// use the entire form's area.
 			clip = new Rectangle (0, 0, form.Width, form.Height);
 			ThemeEngine.Current.DrawManagedWindowDecorations (pe.Graphics, clip, this);
-			XplatUI.PaintEventEnd (form.Handle, false);
+			XplatUI.PaintEventEnd (ref m, form.Handle, false);
 			return true;
 		}
 

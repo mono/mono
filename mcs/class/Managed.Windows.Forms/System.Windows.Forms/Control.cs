@@ -5148,7 +5148,7 @@ namespace System.Windows.Forms
 
 			IntPtr handle = Handle;
 
-			paint_event = XplatUI.PaintEventStart (handle, true);
+			paint_event = XplatUI.PaintEventStart (ref m, handle, true);
 
 			if (paint_event == null)
 				return;
@@ -5159,7 +5159,7 @@ namespace System.Windows.Forms
 				if (!current_buffer.InvalidRegion.IsVisible (paint_event.ClipRectangle)) {
 					// Just blit the previous image
 					current_buffer.Blit (paint_event);
-					XplatUI.PaintEventEnd (handle, true);
+					XplatUI.PaintEventEnd (ref m, handle, true);
 					return;
 				}
 				current_buffer.Start (paint_event);
@@ -5182,7 +5182,7 @@ namespace System.Windows.Forms
 			}
 
 
-			XplatUI.PaintEventEnd (handle, true);
+			XplatUI.PaintEventEnd (ref m, handle, true);
 		}
 
 		private void WmEraseBackground (ref Message m) {

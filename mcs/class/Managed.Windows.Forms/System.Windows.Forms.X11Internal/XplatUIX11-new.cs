@@ -684,14 +684,14 @@ namespace System.Windows.Forms.X11Internal {
 			display.OverrideCursor = cursor;
 		}
 
-		internal override PaintEventArgs PaintEventStart (IntPtr handle, bool client)
+		internal override PaintEventArgs PaintEventStart (ref Message m, IntPtr handle, bool client)
 		{
-			return display.PaintEventStart (handle, client);
+			return display.PaintEventStart (ref m, handle, client);
 		}
 
-		internal override void PaintEventEnd (IntPtr handle, bool client)
+		internal override void PaintEventEnd (ref Message m, IntPtr handle, bool client)
 		{
-			display.PaintEventEnd (handle, client);
+			display.PaintEventEnd (ref m, handle, client);
 		}
 
 

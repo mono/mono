@@ -4489,12 +4489,23 @@ namespace System.Windows.Forms {
 			OverrideCursorHandle = cursor;
 		}
 
-		internal override PaintEventArgs PaintEventStart(IntPtr handle, bool client) {
+		internal override PaintEventArgs PaintEventStart(ref Message msg, IntPtr handle, bool client) {
 			PaintEventArgs	paint_event;
 			Hwnd		hwnd;
-
-			hwnd = Hwnd.ObjectFromHandle(handle);
-
+			Hwnd		paint_hwnd;
+			
+			// 
+			// handle  (and paint_hwnd) refers to the window that is should be painted.
+			// msg.HWnd (and hwnd) refers to the window that got the paint message.
+			// 
+			
+			hwnd = Hwnd.ObjectFromHandle(msg.HWnd);
+			if (msg.HWnd == handle) {
+				paint_hwnd = hwnd;
+			} else {
+				paint_hwnd = Hwnd.ObjectFromHandle (handle);
+			}
+	
 			if (Caret.Visible == true) {
 				Caret.Paused = true;
 				HideCaret();
@@ -4503,7 +4514,7 @@ namespace System.Windows.Forms {
 			Graphics dc;
 
 			if (client) {
-				dc = Graphics.FromHwnd (hwnd.client_window);
+				dc = Graphics.FromHwnd (paint_hwnd.client_window);
 
 				Region clip_region = new Region ();
 				clip_region.MakeEmpty();
@@ -4527,7 +4538,7 @@ namespace System.Windows.Forms {
 
 				return paint_event;
 			} else {
-				dc = Graphics.FromHwnd (hwnd.whole_window);
+				dc = Graphics.FromHwnd (paint_hwnd.whole_window);
 
 				if (!hwnd.nc_invalid.IsEmpty) {
 					dc.SetClip (hwnd.nc_invalid);
@@ -4546,10 +4557,10 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		internal override void PaintEventEnd(IntPtr handle, bool client) {
+		internal override void PaintEventEnd(ref Message msg, IntPtr handle, bool client) {
 			Hwnd	hwnd;
 
-			hwnd = Hwnd.ObjectFromHandle(handle);
+			hwnd = Hwnd.ObjectFromHandle (msg.HWnd);
 
 			Graphics dc = (Graphics)hwnd.drawing_stack.Pop ();
 			dc.Flush();

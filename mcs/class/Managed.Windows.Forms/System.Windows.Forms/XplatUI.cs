@@ -775,18 +775,18 @@ namespace System.Windows.Forms {
 			driver.OverrideCursor(cursor);
 		}
 
-		internal static void PaintEventEnd(IntPtr handle, bool client) {
+		internal static void PaintEventEnd (ref Message msg, IntPtr handle, bool client) {
 			#if DriverDebug || DriverDebugPaint
-				Console.WriteLine("PaintEventEnd({0}, {1}): Called from thread {2}", Window(handle), client, Thread.CurrentThread.GetHashCode());
+				Console.WriteLine("PaintEventEnd({0}, {1}, {2}): Called from thread {3}", msg, Window(handle), client, Thread.CurrentThread.GetHashCode());
 			#endif
-			driver.PaintEventEnd(handle, client);
+			driver.PaintEventEnd (ref msg, handle, client);
 		}
 
-		internal static PaintEventArgs PaintEventStart(IntPtr handle, bool client) {
+		internal static PaintEventArgs PaintEventStart (ref Message msg, IntPtr handle, bool client) {
 			#if DriverDebug || DriverDebugPaint
-				Console.WriteLine("PaintEventStart({0}, {1}): Called from thread {2}", Window(handle), client, Thread.CurrentThread.GetHashCode());
+				Console.WriteLine("PaintEventStart({0}, {1}, {2}): Called from thread {3}", msg, Window(handle), client, Thread.CurrentThread.GetHashCode());
 			#endif
-			return driver.PaintEventStart(handle, client);
+			return driver.PaintEventStart (ref msg, handle, client);
 		}
 
 		internal static bool PeekMessage(Object queue_id, ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax, uint flags) {
@@ -867,7 +867,7 @@ namespace System.Windows.Forms {
 
 		internal static void ScrollWindow(IntPtr handle, int XAmount, int YAmount, bool with_children) {
 			#if DriverDebug
-				Console.WriteLine("ScrollWindow({0}, {2}, {3}, {4}): Called", Window(handle), XAmount, YAmount, with_children);
+				Console.WriteLine("ScrollWindow({0}, {1}, {2}, {3}): Called", Window(handle), XAmount, YAmount, with_children);
 			#endif
 			driver.ScrollWindow(handle, XAmount, YAmount, with_children);
 		}

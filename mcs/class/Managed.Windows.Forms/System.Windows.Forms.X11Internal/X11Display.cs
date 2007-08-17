@@ -1497,7 +1497,7 @@ namespace System.Windows.Forms.X11Internal {
 		}
 
 
-		public PaintEventArgs PaintEventStart (IntPtr handle, bool client)
+		public PaintEventArgs PaintEventStart (ref Message m, IntPtr handle, bool client)
 		{
 			X11Hwnd hwnd = (X11Hwnd)Hwnd.ObjectFromHandle(handle);
 
@@ -1506,14 +1506,14 @@ namespace System.Windows.Forms.X11Internal {
 				HideCaret();
 			}
 
-			return hwnd.PaintEventStart (client);
+			return hwnd.PaintEventStart (ref m, client);
 		}
 
-		public void PaintEventEnd (IntPtr handle, bool client)
+		public void PaintEventEnd (ref Message m, IntPtr handle, bool client)
 		{
 			X11Hwnd hwnd = (X11Hwnd)Hwnd.ObjectFromHandle(handle);
 
-			hwnd.PaintEventEnd (client);
+			hwnd.PaintEventEnd (ref m, client);
 
 			if (Caret.Visible == true) {
 				ShowCaret();

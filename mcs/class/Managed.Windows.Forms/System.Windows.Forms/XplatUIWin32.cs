@@ -1733,7 +1733,7 @@ namespace System.Windows.Forms {
 			Win32UpdateWindow(handle);
 		}
 
-		internal override PaintEventArgs PaintEventStart(IntPtr handle, bool client) {
+		internal override PaintEventArgs PaintEventStart(ref Message msg, IntPtr handle, bool client) {
 			IntPtr		hdc;
 			PAINTSTRUCT	ps;
 			PaintEventArgs	paint_event;
@@ -1745,11 +1745,19 @@ namespace System.Windows.Forms {
 			rect = new RECT();
 			ps = new PAINTSTRUCT();
 
-			hwnd = Hwnd.ObjectFromHandle(handle);
+			hwnd = Hwnd.ObjectFromHandle(msg.HWnd);
 
 			if (client) {
-				if (Win32GetUpdateRect(handle, ref rect, false)) {
+				if (Win32GetUpdateRect(msg.HWnd, ref rect, false)) {
 					hdc = Win32BeginPaint(handle, ref ps);
+
+					// We need to validate the window where the paint message
+					// was generated, otherwise we'll never stop getting paint 
+					// messages.
+					if (handle != msg.HWnd) {
+						ps.rcPaint = rect;
+						Win32ValidateRect (msg.HWnd, ref ps.rcPaint);
+					}
 
 					hwnd.drawing_stack.Push (ps);
 
@@ -1779,10 +1787,10 @@ namespace System.Windows.Forms {
 			return paint_event;
 		}
 
-		internal override void PaintEventEnd(IntPtr handle, bool client) {
+		internal override void PaintEventEnd(ref Message m, IntPtr handle, bool client) {
 			Hwnd		hwnd;
 
-			hwnd = Hwnd.ObjectFromHandle(handle);
+			hwnd = Hwnd.ObjectFromHandle(m.HWnd);
 
 			Graphics dc = (Graphics)hwnd.drawing_stack.Pop();
 			dc.Dispose ();
@@ -3244,6 +3252,9 @@ namespace System.Windows.Forms {
 		[DllImport ("user32.dll", EntryPoint="BeginPaint", CallingConvention=CallingConvention.StdCall)]
 		private extern static IntPtr Win32BeginPaint(IntPtr hWnd, ref PAINTSTRUCT ps);
 
+		[DllImport ("user32.dll", EntryPoint = "ValidateRect", CallingConvention = CallingConvention.StdCall)]
+		private extern static IntPtr Win32ValidateRect (IntPtr hWnd, ref RECT rect);
+		
 		[DllImport ("user32.dll", EntryPoint="EndPaint", CallingConvention=CallingConvention.StdCall)]
 		private extern static bool Win32EndPaint(IntPtr hWnd, ref PAINTSTRUCT ps);
 

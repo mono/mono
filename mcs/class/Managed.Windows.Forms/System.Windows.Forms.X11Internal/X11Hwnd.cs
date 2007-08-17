@@ -611,7 +611,7 @@ namespace System.Windows.Forms.X11Internal {
 			}
 		}
 
-		public PaintEventArgs PaintEventStart (bool client)
+		public PaintEventArgs PaintEventStart (ref Message m, bool client)
 		{
 			PaintEventArgs paint_event;
 			Graphics dc;
@@ -660,7 +660,7 @@ namespace System.Windows.Forms.X11Internal {
 			}
 		}
 
-		public void PaintEventEnd (bool client)
+		public void PaintEventEnd (ref Message m, bool client)
 		{
 			Graphics dc = (Graphics)drawing_stack.Pop ();
 			dc.Flush();

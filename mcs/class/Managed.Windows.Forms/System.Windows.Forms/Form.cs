@@ -2635,7 +2635,7 @@ namespace System.Windows.Forms {
 				PaintEventArgs pe;
 				Point pnt;
 
-				pe = XplatUI.PaintEventStart (Handle, false);
+				pe = XplatUI.PaintEventStart (ref m, Handle, false);
 				pnt = XplatUI.GetMenuOrigin (window.Handle);
 
 				// The entire menu has to be in the clip rectangle because the 
@@ -2652,7 +2652,7 @@ namespace System.Windows.Forms {
 					ActiveMaximizedMdiChild.DrawMaximizedButtons (ActiveMenu, pe);
 				}
 
-				XplatUI.PaintEventEnd (Handle, false);
+				XplatUI.PaintEventEnd (ref m, Handle, false);
 			}
 
 			base.WndProc (ref m);

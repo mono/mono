@@ -1,5 +1,15 @@
 2007-08-17  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Control.cs, Form.cs, InternalWindowManager.cs, MainMenu.cs, MdiClient.cs:
+	  Update calls to PaintEventStart/End to take a Message argument.
+	* XplatUI.cs, XplatUIDriver.cs, XplatUIOSX.cs: Update PaintEventStart/End to
+	  take a Message argument.
+	* XplatUIWin32.cs, XplatUIX11.cs: Update PaintEventStart/End to take a
+	  Message argument, and handle the case where we don't paint to the window
+	  for which the paint message was generated.
+
+2007-08-17  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* XplatUIWin32.cs: Don't call Win32GetLastError directly, use
 	  Marshal.GetLastWin32Error. Plug nasty memory leak in
 	  PaintEventStart/End, we were creating a DC we weren't releasing.

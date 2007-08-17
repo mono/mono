@@ -1324,18 +1324,24 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 
-		internal override PaintEventArgs PaintEventStart(IntPtr handle, bool client) {
+		internal override PaintEventArgs PaintEventStart(ref Message msg, IntPtr handle, bool client) {
 			PaintEventArgs	paint_event;
 			Hwnd		hwnd;
-
-			hwnd = Hwnd.ObjectFromHandle(handle);
-
+			Hwnd		paint_hwnd; 
+			
+			hwnd = Hwnd.ObjectFromHandle(msg.HWnd);
+			if (msg.HWnd == handle) {
+				paint_hwnd = hwnd;
+			} else {
+				paint_hwnd = Hwnd.ObjectFromHandle (handle);
+			}
+			
 			if (Caret.Visible == 1) {
 				Caret.Paused = true;
 				HideCaret();
 			}
 
-			Graphics dc = Graphics.FromHwnd (hwnd.client_window);
+			Graphics dc = Graphics.FromHwnd (paint_hwnd.client_window);
 			paint_event = new PaintEventArgs(dc, hwnd.Invalid);
 
 			hwnd.expose_pending = false;
@@ -1346,7 +1352,7 @@ namespace System.Windows.Forms {
 			return paint_event;
 		}
 		
-		internal override void PaintEventEnd(IntPtr handle, bool client) {
+		internal override void PaintEventEnd(ref Message msg, IntPtr handle, bool client) {
 			Hwnd	hwnd;
 
 			hwnd = Hwnd.ObjectFromHandle(handle);

@@ -123,7 +123,8 @@ namespace System.Windows.Forms
 
 		internal void Draw () 
 		{
-			PaintEventArgs pe = XplatUI.PaintEventStart (Wnd.window.Handle, false);
+			Message m = Message.Create (Wnd.window.Handle, (int) Msg.WM_PAINT, IntPtr.Zero, IntPtr.Zero);
+			PaintEventArgs pe = XplatUI.PaintEventStart (ref m, Wnd.window.Handle, false);
 			Draw (pe, Rect);
 		}
 
@@ -131,10 +132,11 @@ namespace System.Windows.Forms
 		{
 			if (Wnd.IsHandleCreated) {
 				Point pt = XplatUI.GetMenuOrigin (Wnd.window.Handle);
-				PaintEventArgs pevent = XplatUI.PaintEventStart (Wnd.window.Handle, false);
+				Message m = Message.Create (Wnd.window.Handle, (int)Msg.WM_PAINT, IntPtr.Zero, IntPtr.Zero);
+				PaintEventArgs pevent = XplatUI.PaintEventStart (ref m, Wnd.window.Handle, false);
 				pevent.Graphics.SetClip (new Rectangle (rect.X + pt.X, rect.Y + pt.Y, rect.Width, rect.Height));
 				Draw (pevent, Rect);
-				XplatUI.PaintEventEnd (Wnd.window.Handle, false);
+				XplatUI.PaintEventEnd (ref m, Wnd.window.Handle, false);
 			}
 		}
 
@@ -185,8 +187,9 @@ namespace System.Windows.Forms
 
 			if (!Wnd.IsHandleCreated)
 				return;
-			
-			PaintEventArgs pevent = XplatUI.PaintEventStart (Wnd.window.Handle, false);
+
+			Message m = Message.Create (Wnd.window.Handle, (int) Msg.WM_PAINT, IntPtr.Zero, IntPtr.Zero);
+			PaintEventArgs pevent = XplatUI.PaintEventStart (ref m, Wnd.window.Handle, false);
 			pevent.Graphics.SetClip (clip);
 			
 			Draw (pevent, clip);

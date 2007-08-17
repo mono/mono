@@ -171,13 +171,13 @@ namespace System.Windows.Forms {
 		protected override void WndProc(ref Message m) {
 			switch ((Msg)m.Msg) {
 			case Msg.WM_NCPAINT:
-				PaintEventArgs pe = XplatUI.PaintEventStart (Handle, false);
+				PaintEventArgs pe = XplatUI.PaintEventStart (ref m, Handle, false);
 
 				Rectangle clip;
 				clip = new Rectangle (0, 0, Width, Height);
 
 				ControlPaint.DrawBorder3D (pe.Graphics, clip, Border3DStyle.Sunken);
-				XplatUI.PaintEventEnd (Handle, false);
+				XplatUI.PaintEventEnd (ref m, Handle, false);
 				m.Result = IntPtr.Zero;
 				return ;
 			}
