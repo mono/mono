@@ -23,6 +23,485 @@ namespace MonoTests.System.Windows.Forms
 	[TestFixture]
 	public class FormTest
 	{
+		[Test]
+		public void bug_82358 ()
+		{
+			Console.WriteLine ("Starting bug_82358");
+			int sizeable_factor;
+			int title_bar;
+			int tool_bar;
+			int tool_border;
+			int d3;
+			int d2;
+
+			// WinXP, default theme
+			sizeable_factor = 2;
+			title_bar = 26;
+			tool_bar = 18;
+			tool_border = 6;
+			d3 = 10;
+			d2 = 6;
+
+			// WinXP, Win32 theme:
+			sizeable_factor = 2;
+			title_bar = 19;
+			tool_bar = 16;
+			tool_border = 6;
+			d3 = 10;
+			d2 = 6;
+
+
+			Size size = new Size (200, 200);
+			
+			// Universal theme??
+			using (Form f = new Form ()) {
+				f.FormBorderStyle = FormBorderStyle.FixedSingle;
+				f.Visible = true;
+				d2 = f.Size.Width - f.ClientSize.Width;
+				title_bar = f.Size.Height - f.ClientSize.Height - d2;
+			}
+			using (Form f = new Form ()) {
+				f.FormBorderStyle = FormBorderStyle.Sizable;
+				f.Visible = true;
+				sizeable_factor = f.Size.Width - f.ClientSize.Width - d2;
+			}
+			using (Form f = new Form ()) {
+				f.ClientSize = size;
+				f.FormBorderStyle = FormBorderStyle.FixedToolWindow;
+				//f.Visible = true;
+				tool_border = f.Size.Width - f.ClientSize.Width;
+				tool_bar = f.Size.Height - f.ClientSize.Height - tool_border;
+			}
+			using (Form f = new Form ()) {
+				f.FormBorderStyle = FormBorderStyle.Fixed3D;
+				f.Visible = true;
+				d3 = f.Size.Width - f.ClientSize.Width; 
+			}			
+		
+			FormBorderStyle style;
+			
+			
+			Console.WriteLine ("Universal theme says: d2={0}, d3={1}, title_bar={2}, sizeable_factor={3}, tool_border={4}, tool_bar={5}", d2, d3, title_bar, sizeable_factor, tool_border, tool_bar);
+			
+			// Changing client size, then FormBorderStyle.
+			using (Form f = new Form ()) {
+				style = FormBorderStyle.FixedToolWindow;
+				Console.WriteLine ("Created form, size: {0}, clientsize: {1}", f.Size, f.ClientSize);
+				f.ClientSize = size;
+				Console.WriteLine ("Changed ClientSize, size: {0}, clientsize: {1}", f.Size, f.ClientSize);
+				f.FormBorderStyle = style;
+				Console.WriteLine ("Changed FormBorderStyle, size: {0}, clientsize: {1}", f.Size, f.ClientSize);
+				Assert.AreEqual (size.ToString (), f.ClientSize.ToString (), style.ToString () + "-A1");
+				Assert.AreEqual (new Size (size.Width + tool_border, size.Height + tool_border + tool_bar).ToString (), f.Size.ToString (), style.ToString () + "-A2");
+				f.Visible = true;
+				Console.WriteLine ("Made visible, size: {0}, clientsize: {1}", f.Size, f.ClientSize);
+				Assert.AreEqual (size.ToString (), f.ClientSize.ToString (), style.ToString () + "-A3");
+				Assert.AreEqual (new Size (size.Width + tool_border, size.Height + tool_border + tool_bar).ToString (), f.Size.ToString (), style.ToString () + "-A4");
+			}
+
+			using (Form f = new Form ()) {
+				style = FormBorderStyle.SizableToolWindow;
+				f.ClientSize = size;
+				f.FormBorderStyle = style;
+				Assert.AreEqual (size.ToString (), f.ClientSize.ToString (), style.ToString () + "-A1");
+				Assert.AreEqual (new Size (size.Width + tool_border + sizeable_factor, size.Height + tool_border + tool_bar + sizeable_factor).ToString (), f.Size.ToString (), style.ToString () + "-A2");
+				f.Visible = true;
+				Assert.AreEqual (size.ToString (), f.ClientSize.ToString (), style.ToString () + "-A3");
+				Assert.AreEqual (new Size (size.Width + tool_border + sizeable_factor, size.Height + tool_border + tool_bar + sizeable_factor).ToString (), f.Size.ToString (), style.ToString () + "-A4");
+			}
+
+			using (Form f = new Form ()) {
+				style = FormBorderStyle.Fixed3D;
+				f.ClientSize = size;
+				f.FormBorderStyle = style;
+				Assert.AreEqual (size.ToString (), f.ClientSize.ToString (), style.ToString () + "-A1");
+				Assert.AreEqual (new Size (size.Width + d3, size.Height + title_bar + d3).ToString () , f.Size.ToString (), style.ToString () + "-A2");
+				f.Visible = true;
+				Assert.AreEqual (size.ToString (), f.ClientSize.ToString (), style.ToString () + "-A3");
+				Assert.AreEqual (new Size (size.Width + d3, size.Height + title_bar + d3).ToString (), f.Size.ToString (), style.ToString () + "-A4");
+			}
+
+			using (Form f = new Form ()) {
+				style = FormBorderStyle.FixedDialog;
+				f.ClientSize = size;
+				f.FormBorderStyle = style;
+				Assert.AreEqual (size.ToString (), f.ClientSize.ToString (), style.ToString () + "-A1");
+				Assert.AreEqual (new Size (size.Width + d2, size.Height + title_bar + d2).ToString (), f.Size.ToString (), style.ToString () + "-A2");
+				f.Visible = true;
+				Assert.AreEqual (size.ToString (), f.ClientSize.ToString (), style.ToString () + "-A3");
+				Assert.AreEqual (new Size (size.Width + d2, size.Height + title_bar + d2).ToString (), f.Size.ToString (), style.ToString () + "-A4");
+			
+			}
+
+			using (Form f = new Form ()) {
+				style = FormBorderStyle.FixedSingle;
+				f.ClientSize = size;
+				f.FormBorderStyle = style;
+				Assert.AreEqual (size.ToString (), f.ClientSize.ToString (), style.ToString () + "-A1");
+				Assert.AreEqual (new Size (size.Width + d2, size.Height + title_bar + d2).ToString (), f.Size.ToString (), style.ToString () + "-A2");
+				f.Visible = true;
+				Assert.AreEqual (size.ToString (), f.ClientSize.ToString (), style.ToString () + "-A3");
+				Assert.AreEqual (new Size (size.Width + d2, size.Height + title_bar + d2).ToString (), f.Size.ToString (), style.ToString () + "-A4");
+			}
+
+			using (Form f = new Form ()) {
+				style = FormBorderStyle.None;
+				f.ClientSize = size;
+				f.FormBorderStyle = style;
+				Assert.AreEqual (size.ToString (), f.ClientSize.ToString (), style.ToString () + "-A1");
+				Assert.AreEqual (size.ToString (), f.Size.ToString (), style.ToString () + "-A2");
+				f.Visible = true;
+				Assert.AreEqual (size.ToString (), f.ClientSize.ToString (), style.ToString () + "-A3");
+				Assert.AreEqual (size.ToString (), f.Size.ToString (), style.ToString () + "-A4");
+			}
+
+			using (Form f = new Form ()) {
+				style = FormBorderStyle.Sizable;
+				f.ClientSize = size;
+				f.FormBorderStyle = style;
+				Assert.AreEqual (size.ToString (), f.ClientSize.ToString (), style.ToString () + "-A1");
+				Assert.AreEqual (new Size (size.Width + d2 + sizeable_factor, size.Height + title_bar + d2 + sizeable_factor).ToString (), f.Size.ToString (), style.ToString () + "-A2");
+				f.Visible = true;
+				Assert.AreEqual (size.ToString (), f.ClientSize.ToString (), style.ToString () + "-A3");
+				Assert.AreEqual (new Size (size.Width + d2 + sizeable_factor, size.Height + title_bar + d2 + sizeable_factor).ToString (), f.Size.ToString (), style.ToString () + "-A4");
+			}
+			
+			
+			// Changing size, then FormBorderStyle.
+			using (Form f = new Form ()) {
+				style = FormBorderStyle.FixedToolWindow;
+				f.Size = size;
+				f.FormBorderStyle = style;
+				Assert.AreEqual (size.ToString (), f.Size.ToString (), style.ToString () + "-B1");
+				Assert.AreEqual (new Size (size.Width - d2 - sizeable_factor, size.Height - title_bar - d2 - sizeable_factor).ToString (), f.ClientSize.ToString (), style.ToString () + "-B2");
+				f.Visible = true;
+				Assert.AreEqual (size.ToString (), f.Size.ToString (), style.ToString () + "-B3");
+				Assert.AreEqual (new Size (size.Width - tool_border, size.Height - tool_border - tool_bar).ToString (), f.ClientSize.ToString (), style.ToString () + "-B4");
+			}
+
+			using (Form f = new Form ()) {
+				style = FormBorderStyle.SizableToolWindow;
+				f.Size = size;
+				f.FormBorderStyle = style;
+				Assert.AreEqual (size.ToString (), f.Size.ToString (), style.ToString () + "-B1");
+				Assert.AreEqual (new Size (size.Width - d2 - sizeable_factor, size.Height - title_bar - d2 - sizeable_factor).ToString (), f.ClientSize.ToString (), style.ToString () + "-B2");
+				f.Visible = true;
+				Assert.AreEqual (size.ToString (), f.Size.ToString (), style.ToString () + "-B3");
+				Assert.AreEqual (new Size (size.Width - tool_border - sizeable_factor, size.Height - tool_border - tool_bar - sizeable_factor).ToString (), f.ClientSize.ToString (), style.ToString () + "-B4");
+			}
+
+			using (Form f = new Form ()) {
+				style = FormBorderStyle.Fixed3D;
+				f.Size = size;
+				f.FormBorderStyle = style;
+				Assert.AreEqual (size.ToString (), f.Size.ToString (), style.ToString () + "-B1");
+				Assert.AreEqual (new Size (size.Width - d2 - sizeable_factor, size.Height - title_bar - d2 - sizeable_factor).ToString (), f.ClientSize.ToString (), style.ToString () + "-B2");
+				f.Visible = true;
+				Assert.AreEqual (size.ToString (), f.Size.ToString (), style.ToString () + "-B3");
+				Assert.AreEqual (new Size (size.Width - d3, size.Height - title_bar - d3).ToString (), f.ClientSize.ToString (), style.ToString () + "-B4");
+			}
+
+			using (Form f = new Form ()) {
+				style = FormBorderStyle.FixedDialog;
+				f.Size = size;
+				f.FormBorderStyle = style;
+				Assert.AreEqual (size.ToString (), f.Size.ToString (), style.ToString () + "-B1");
+				Assert.AreEqual (new Size (size.Width - d2 - sizeable_factor, size.Height - title_bar - d2 - sizeable_factor).ToString (), f.ClientSize.ToString (), style.ToString () + "-B2");
+				f.Visible = true;
+				Assert.AreEqual (size.ToString (), f.Size.ToString (), style.ToString () + "-B3");
+				Assert.AreEqual (new Size (size.Width - d2, size.Height - title_bar - d2).ToString (), f.ClientSize.ToString (), style.ToString () + "-B4");
+
+			}
+
+			using (Form f = new Form ()) {
+				style = FormBorderStyle.FixedSingle;
+				f.Size = size;
+				f.FormBorderStyle = style;
+				Assert.AreEqual (size.ToString (), f.Size.ToString (), style.ToString () + "-B1");
+				Assert.AreEqual (new Size (size.Width - d2 - sizeable_factor, size.Height - title_bar - d2 - sizeable_factor).ToString (), f.ClientSize.ToString (), style.ToString () + "-B2");
+				f.Visible = true;
+				Assert.AreEqual (size.ToString (), f.Size.ToString (), style.ToString () + "-B3");
+				Assert.AreEqual (new Size (size.Width - d2, size.Height - title_bar - d2).ToString (), f.ClientSize.ToString (), style.ToString () + "-B4");
+			}
+
+			using (Form f = new Form ()) {
+				style = FormBorderStyle.None;
+				f.Size = size;
+				f.FormBorderStyle = style;
+				Assert.AreEqual (size.ToString (), f.Size.ToString (), style.ToString () + "-B1");
+				Assert.AreEqual (new Size (size.Width - d2 - sizeable_factor, size.Height - title_bar - d2 - sizeable_factor).ToString (), f.ClientSize.ToString (), style.ToString () + "-B2");
+				f.Visible = true;
+				Assert.AreEqual (size.ToString (), f.Size.ToString (), style.ToString () + "-B3");
+				Assert.AreEqual (size.ToString (), f.ClientSize.ToString (), style.ToString () + "-B4");
+			}
+
+			using (Form f = new Form ()) {
+				style = FormBorderStyle.Sizable;
+				f.Size = size;
+				f.FormBorderStyle = style;
+				Assert.AreEqual (size.ToString (), f.Size.ToString (), style.ToString () + "-B1");
+				Assert.AreEqual (new Size (size.Width - d2 - sizeable_factor, size.Height - title_bar - d2 - sizeable_factor).ToString (), f.ClientSize.ToString (), style.ToString () + "-B2");
+				f.Visible = true;
+				Assert.AreEqual (size.ToString (), f.Size.ToString (), style.ToString () + "-B3");
+				Assert.AreEqual (new Size (size.Width - d2 - sizeable_factor, size.Height - title_bar - d2 - sizeable_factor).ToString (), f.ClientSize.ToString (), style.ToString () + "-B4");
+			}
+
+
+
+			// Changing FormBorderStyle, then client size
+			using (Form f = new Form ()) {
+				style = FormBorderStyle.FixedToolWindow;
+				f.FormBorderStyle = style;
+				f.ClientSize = size;
+				Assert.AreEqual (size.ToString (), f.ClientSize.ToString (), style.ToString () + "-C1");
+				Assert.AreEqual (new Size (size.Width + tool_border, size.Height + tool_border + tool_bar).ToString (), f.Size.ToString (), style.ToString () + "-C2");
+				f.Visible = true;
+				Assert.AreEqual (size.ToString (), f.ClientSize.ToString (), style.ToString () + "-C3");
+				Assert.AreEqual (new Size (size.Width + tool_border, size.Height + tool_border + tool_bar).ToString (), f.Size.ToString (), style.ToString () + "-C4");
+			}
+
+			using (Form f = new Form ()) {
+				style = FormBorderStyle.SizableToolWindow;
+				f.FormBorderStyle = style;
+				f.ClientSize = size;
+				Assert.AreEqual (size.ToString (), f.ClientSize.ToString (), style.ToString () + "-C1");
+				Assert.AreEqual (new Size (size.Width + tool_border + sizeable_factor, size.Height + tool_border + tool_bar + sizeable_factor).ToString (), f.Size.ToString (), style.ToString () + "-C2");
+				f.Visible = true;
+				Assert.AreEqual (size.ToString (), f.ClientSize.ToString (), style.ToString () + "-C3");
+				Assert.AreEqual (new Size (size.Width + tool_border + sizeable_factor, size.Height + tool_border + tool_bar + sizeable_factor).ToString (), f.Size.ToString (), style.ToString () + "-C4");
+			}
+
+			using (Form f = new Form ()) {
+				style = FormBorderStyle.Fixed3D;
+				f.FormBorderStyle = style;
+				f.ClientSize = size;
+				Assert.AreEqual (size.ToString (), f.ClientSize.ToString (), style.ToString () + "-C1");
+				Assert.AreEqual (new Size (size.Width + d3, size.Height + title_bar + d3).ToString (), f.Size.ToString (), style.ToString () + "-C2");
+				f.Visible = true;
+				Assert.AreEqual (size.ToString (), f.ClientSize.ToString (), style.ToString () + "-C3");
+				Assert.AreEqual (new Size (size.Width + d3, size.Height + title_bar + d3).ToString (), f.Size.ToString (), style.ToString () + "-C4");
+			}
+
+			using (Form f = new Form ()) {
+				style = FormBorderStyle.FixedDialog;
+				f.FormBorderStyle = style;
+				f.ClientSize = size;
+				Assert.AreEqual (size.ToString (), f.ClientSize.ToString (), style.ToString () + "-C1");
+				Assert.AreEqual (new Size (size.Width + d2, size.Height + title_bar + d2).ToString (), f.Size.ToString (), style.ToString () + "-C2");
+				f.Visible = true;
+				Assert.AreEqual (size.ToString (), f.ClientSize.ToString (), style.ToString () + "-C3");
+				Assert.AreEqual (new Size (size.Width + d2, size.Height + title_bar + d2).ToString (), f.Size.ToString (), style.ToString () + "-C4");
+
+			}
+
+			using (Form f = new Form ()) {
+				style = FormBorderStyle.FixedSingle;
+				f.FormBorderStyle = style;
+				f.ClientSize = size;
+				Assert.AreEqual (size.ToString (), f.ClientSize.ToString (), style.ToString () + "-C1");
+				Assert.AreEqual (new Size (size.Width + d2, size.Height + title_bar + d2).ToString (), f.Size.ToString (), style.ToString () + "-C2");
+				f.Visible = true;
+				Assert.AreEqual (size.ToString (), f.ClientSize.ToString (), style.ToString () + "-C3");
+				Assert.AreEqual (new Size (size.Width + d2, size.Height + title_bar + d2).ToString (), f.Size.ToString (), style.ToString () + "-C4");
+			}
+
+			using (Form f = new Form ()) {
+				style = FormBorderStyle.None;
+				f.FormBorderStyle = style;
+				f.ClientSize = size;
+				Assert.AreEqual (size.ToString (), f.ClientSize.ToString (), style.ToString () + "-C1");
+				Assert.AreEqual (size.ToString (), f.Size.ToString (), style.ToString () + "-C2");
+				f.Visible = true;
+				Assert.AreEqual (size.ToString (), f.ClientSize.ToString (), style.ToString () + "-C3");
+				Assert.AreEqual (size.ToString (), f.Size.ToString (), style.ToString () + "-C4");
+			}
+
+			using (Form f = new Form ()) {
+				style = FormBorderStyle.Sizable;
+				f.FormBorderStyle = style;
+				f.ClientSize = size;
+				Assert.AreEqual (size.ToString (), f.ClientSize.ToString (), style.ToString () + "-C1");
+				Assert.AreEqual (new Size (size.Width + d2 + sizeable_factor, size.Height + title_bar + d2 + sizeable_factor).ToString (), f.Size.ToString (), style.ToString () + "-C2");
+				f.Visible = true;
+				Assert.AreEqual (size.ToString (), f.ClientSize.ToString (), style.ToString () + "-C3");
+				Assert.AreEqual (new Size (size.Width + d2 + sizeable_factor, size.Height + title_bar + d2 + sizeable_factor).ToString (), f.Size.ToString (), style.ToString () + "-C4");
+			}
+
+
+			// Changing FormBorderStyle, then size
+			using (Form f = new Form ()) {
+				style = FormBorderStyle.FixedToolWindow;
+				f.FormBorderStyle = style;
+				f.Size = size;
+				Assert.AreEqual (size.ToString (), f.Size.ToString (), style.ToString () + "-D1");
+				Assert.AreEqual (new Size (size.Width - tool_border, size.Height - tool_border - tool_bar).ToString (), f.ClientSize.ToString (), style.ToString () + "-D2");
+				f.Visible = true;
+				Assert.AreEqual (size.ToString (), f.Size.ToString (), style.ToString () + "-D3");
+				Assert.AreEqual (new Size (size.Width - tool_border, size.Height - tool_border - tool_bar).ToString (), f.ClientSize.ToString (), style.ToString () + "-D4");
+			}
+
+			using (Form f = new Form ()) {
+				style = FormBorderStyle.SizableToolWindow;
+				f.FormBorderStyle = style;
+				f.Size = size;
+				Assert.AreEqual (size.ToString (), f.Size.ToString (), style.ToString () + "-D1");
+				Assert.AreEqual (new Size (size.Width - tool_border - sizeable_factor, size.Height - tool_border - tool_bar - sizeable_factor).ToString (), f.ClientSize.ToString (), style.ToString () + "-D2");
+				f.Visible = true;
+				Assert.AreEqual (size.ToString (), f.Size.ToString (), style.ToString () + "-D3");
+				Assert.AreEqual (new Size (size.Width - tool_border - sizeable_factor, size.Height - tool_border - tool_bar - sizeable_factor).ToString (), f.ClientSize.ToString (), style.ToString () + "-D4");
+			}
+
+			using (Form f = new Form ()) {
+				style = FormBorderStyle.Fixed3D;
+				f.FormBorderStyle = style;
+				f.Size = size;
+				Assert.AreEqual (size.ToString (), f.Size.ToString (), style.ToString () + "-D1");
+				Assert.AreEqual (new Size (size.Width - d3, size.Height - title_bar - d3).ToString (), f.ClientSize.ToString (), style.ToString () + "-D2");
+				f.Visible = true;
+				Assert.AreEqual (size.ToString (), f.Size.ToString (), style.ToString () + "-D3");
+				Assert.AreEqual (new Size (size.Width - d3, size.Height - title_bar - d3).ToString (), f.ClientSize.ToString (), style.ToString () + "-D4");
+			}
+
+			using (Form f = new Form ()) {
+				style = FormBorderStyle.FixedDialog;
+				f.FormBorderStyle = style;
+				f.Size = size;
+				Assert.AreEqual (size.ToString (), f.Size.ToString (), style.ToString () + "-D1");
+				Assert.AreEqual (new Size (size.Width - d2, size.Height - title_bar - d2).ToString (), f.ClientSize.ToString (), style.ToString () + "-D2");
+				f.Visible = true;
+				Assert.AreEqual (size.ToString (), f.Size.ToString (), style.ToString () + "-D3");
+				Assert.AreEqual (new Size (size.Width - d2, size.Height - title_bar - d2).ToString (), f.ClientSize.ToString (), style.ToString () + "-D4");
+
+			}
+
+			using (Form f = new Form ()) {
+				style = FormBorderStyle.FixedSingle;
+				f.FormBorderStyle = style;
+				f.Size = size;
+				Assert.AreEqual (size.ToString (), f.Size.ToString (), style.ToString () + "-D1");
+				Assert.AreEqual (new Size (size.Width - d2, size.Height - title_bar - d2).ToString (), f.ClientSize.ToString (), style.ToString () + "-D2");
+				f.Visible = true;
+				Assert.AreEqual (size.ToString (), f.Size.ToString (), style.ToString () + "-D3");
+				Assert.AreEqual (new Size (size.Width - d2, size.Height - title_bar - d2).ToString (), f.ClientSize.ToString (), style.ToString () + "-D4");
+			}
+
+			using (Form f = new Form ()) {
+				style = FormBorderStyle.None;
+				f.FormBorderStyle = style;
+				f.Size = size;
+				Assert.AreEqual (size.ToString (), f.ClientSize.ToString (), style.ToString () + "-D1");
+				Assert.AreEqual (size.ToString (), f.Size.ToString (), style.ToString () + "-D2");
+				f.Visible = true;
+				Assert.AreEqual (size.ToString (), f.ClientSize.ToString (), style.ToString () + "-D3");
+				Assert.AreEqual (size.ToString (), f.Size.ToString (), style.ToString () + "-D4");
+			}
+
+			using (Form f = new Form ()) {
+				style = FormBorderStyle.Sizable;
+				f.FormBorderStyle = style;
+				f.Size = size;
+				Assert.AreEqual (size.ToString (), f.Size.ToString (), style.ToString () + "-D1");
+				Assert.AreEqual (new Size (size.Width - d2 - sizeable_factor, size.Height - title_bar - d2 - sizeable_factor).ToString (), f.ClientSize.ToString (), style.ToString () + "-D2");
+				f.Visible = true;
+				Assert.AreEqual (size.ToString (), f.Size.ToString (), style.ToString () + "-D3");
+				Assert.AreEqual (new Size (size.Width - d2 - sizeable_factor, size.Height - title_bar - d2 - sizeable_factor).ToString (), f.ClientSize.ToString (), style.ToString () + "-D4");
+			}
+
+
+
+			// Set clientsize, then change size, then FormBorderStyle.
+			using (Form f = new Form ()) {
+				style = FormBorderStyle.FixedToolWindow;
+				f.ClientSize = f.ClientSize;
+				f.Size = size;
+				f.FormBorderStyle = style;
+				// Here we subtract the Sizable borders (default) then add FixedToolWindow's border.
+				// Note how now the sizes doesn't change when creating the handle.
+				Assert.AreEqual (new Size (size.Width - d2 - sizeable_factor + tool_border, size.Height - title_bar - d2 - sizeable_factor + tool_border + tool_bar).ToString (), f.Size.ToString (), style.ToString () + "-E1");
+				Assert.AreEqual (new Size (size.Width - d2 - sizeable_factor, size.Height - title_bar - d2 - sizeable_factor).ToString (), f.ClientSize.ToString (), style.ToString () + "-E2");
+				f.Visible = true;
+				Assert.AreEqual (new Size (size.Width - d2 - sizeable_factor + tool_border, size.Height - title_bar - d2 - sizeable_factor + tool_border + tool_bar).ToString (), f.Size.ToString (), style.ToString () + "-E3");
+				Assert.AreEqual (new Size (size.Width - d2 - sizeable_factor, size.Height - title_bar - d2 - sizeable_factor).ToString (), f.ClientSize.ToString (), style.ToString () + "-E4");
+			}
+
+			using (Form f = new Form ()) {
+				style = FormBorderStyle.SizableToolWindow;
+				f.ClientSize = f.ClientSize;
+				f.Size = size;
+				f.FormBorderStyle = style;
+				Assert.AreEqual (new Size (size.Width - d2 - sizeable_factor + tool_border + sizeable_factor, size.Height - title_bar - d2 - sizeable_factor + tool_border + tool_bar + sizeable_factor).ToString (), f.Size.ToString (), style.ToString () + "-E1");
+				Assert.AreEqual (new Size (size.Width - d2 - sizeable_factor, size.Height - title_bar - d2 - sizeable_factor).ToString (), f.ClientSize.ToString (), style.ToString () + "-E2");
+				f.Visible = true;
+				Assert.AreEqual (new Size (size.Width - d2 - sizeable_factor + tool_border + sizeable_factor, size.Height - title_bar - d2 - sizeable_factor + tool_border + tool_bar + sizeable_factor).ToString (), f.Size.ToString (), style.ToString () + "-E3");
+				Assert.AreEqual (new Size (size.Width - d2 - sizeable_factor, size.Height - title_bar - d2 - sizeable_factor).ToString (), f.ClientSize.ToString (), style.ToString () + "-E4");
+			}
+
+			using (Form f = new Form ()) {
+				style = FormBorderStyle.Fixed3D;
+				f.ClientSize = f.ClientSize;
+				f.Size = size;
+				f.FormBorderStyle = style;
+				Assert.AreEqual (new Size (size.Width - d2 - sizeable_factor + d3, size.Height - title_bar - d2 - sizeable_factor + title_bar + d3).ToString (), f.Size.ToString (), style.ToString () + "-E1");
+				Assert.AreEqual (new Size (size.Width - d2 - sizeable_factor, size.Height - title_bar - d2 - sizeable_factor).ToString (), f.ClientSize.ToString (), style.ToString () + "-E2");
+				f.Visible = true;
+				Assert.AreEqual (new Size (size.Width - d2 - sizeable_factor + d3, size.Height - title_bar - d2 - sizeable_factor + title_bar + d3).ToString (), f.Size.ToString (), style.ToString () + "-E3");
+				Assert.AreEqual (new Size (size.Width - d2 - sizeable_factor, size.Height - title_bar - d2 - sizeable_factor).ToString (), f.ClientSize.ToString (), style.ToString () + "-E4");
+			}
+
+			using (Form f = new Form ()) {
+				style = FormBorderStyle.FixedDialog;
+				f.ClientSize = f.ClientSize;
+				f.Size = size;
+				f.FormBorderStyle = style;
+				Assert.AreEqual (new Size (size.Width - d2 - sizeable_factor + d2, size.Height - title_bar - d2 - sizeable_factor + title_bar + d2).ToString (), f.Size.ToString (), style.ToString () + "-E1");
+				Assert.AreEqual (new Size (size.Width - d2 - sizeable_factor, size.Height - title_bar - d2 - sizeable_factor).ToString (), f.ClientSize.ToString (), style.ToString () + "-E2");
+				f.Visible = true;
+				Assert.AreEqual (new Size (size.Width - d2 - sizeable_factor + d2, size.Height - title_bar - d2 - sizeable_factor + title_bar + d2).ToString (), f.Size.ToString (), style.ToString () + "-E3");
+				Assert.AreEqual (new Size (size.Width - d2 - sizeable_factor, size.Height - title_bar - d2 - sizeable_factor).ToString (), f.ClientSize.ToString (), style.ToString () + "-E4");
+
+			}
+
+			using (Form f = new Form ()) {
+				style = FormBorderStyle.FixedSingle;
+				f.ClientSize = f.ClientSize;
+				f.Size = size;
+				f.FormBorderStyle = style;
+				Assert.AreEqual (new Size (size.Width - d2 - sizeable_factor + d2, size.Height - title_bar - d2 - sizeable_factor + title_bar + d2).ToString (), f.Size.ToString (), style.ToString () + "-E1");
+				Assert.AreEqual (new Size (size.Width - d2 - sizeable_factor, size.Height - title_bar - d2 - sizeable_factor).ToString (), f.ClientSize.ToString (), style.ToString () + "-E2");
+				f.Visible = true;
+				Assert.AreEqual (new Size (size.Width - d2 - sizeable_factor + d2, size.Height - title_bar - d2 - sizeable_factor + title_bar + d2).ToString (), f.Size.ToString (), style.ToString () + "-E3");
+				Assert.AreEqual (new Size (size.Width - d2 - sizeable_factor, size.Height - title_bar - d2 - sizeable_factor).ToString (), f.ClientSize.ToString (), style.ToString () + "-E4");
+			}
+
+			using (Form f = new Form ()) {
+				style = FormBorderStyle.None;
+				f.ClientSize = f.ClientSize;
+				f.Size = size;
+				f.FormBorderStyle = style;
+				Assert.AreEqual (new Size (size.Width - d2 - sizeable_factor, size.Height - title_bar - d2 - sizeable_factor).ToString (), f.Size.ToString (), style.ToString () + "-E1");
+				Assert.AreEqual (new Size (size.Width - d2 - sizeable_factor, size.Height - title_bar - d2 - sizeable_factor).ToString (), f.ClientSize.ToString (), style.ToString () + "-E2");
+				f.Visible = true;
+				Assert.AreEqual (new Size (size.Width - d2 - sizeable_factor, size.Height - title_bar - d2 - sizeable_factor).ToString (), f.Size.ToString (), style.ToString () + "-E3");
+				Assert.AreEqual (new Size (size.Width - d2 - sizeable_factor, size.Height - title_bar - d2 - sizeable_factor).ToString (), f.ClientSize.ToString (), style.ToString () + "-E4");
+			}
+
+			using (Form f = new Form ()) {
+				style = FormBorderStyle.Sizable;
+				f.ClientSize = f.ClientSize;
+				f.Size = size;
+				f.FormBorderStyle = style;
+				Assert.AreEqual (new Size (size.Width - d2 - sizeable_factor + d2 + sizeable_factor, size.Height - title_bar - d2 - sizeable_factor + d2 + sizeable_factor + title_bar).ToString (), f.Size.ToString (), style.ToString () + "-E1");
+				Assert.AreEqual (new Size (size.Width - d2 - sizeable_factor, size.Height - title_bar - d2 - sizeable_factor).ToString (), f.ClientSize.ToString (), style.ToString () + "-E2");
+				f.Visible = true;
+				Assert.AreEqual (new Size (size.Width - d2 - sizeable_factor + d2 + sizeable_factor, size.Height - title_bar - d2 - sizeable_factor + d2 + sizeable_factor + title_bar).ToString (), f.Size.ToString (), style.ToString () + "-E3");
+				Assert.AreEqual (new Size (size.Width - d2 - sizeable_factor, size.Height - title_bar - d2 - sizeable_factor).ToString (), f.ClientSize.ToString (), style.ToString () + "-E4");
+			}
+
+
+
+
+		}
+
 		[Test] // bug 81969
 		public void StartPositionClosedForm ()
 		{

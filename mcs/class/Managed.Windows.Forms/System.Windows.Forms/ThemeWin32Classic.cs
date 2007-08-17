@@ -5481,7 +5481,10 @@ namespace System.Windows.Forms
 
 		public override int ManagedWindowBorderWidth (InternalWindowManager wm)
 		{
-			return 4;
+			if (wm is ToolWindowManager && wm.form.FormBorderStyle == FormBorderStyle.FixedToolWindow)
+				return 3;
+			else
+				return 4;
 		}
 
 		public override int ManagedWindowIconWidth (InternalWindowManager wm)

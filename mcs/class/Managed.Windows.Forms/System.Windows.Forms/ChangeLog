@@ -1,3 +1,14 @@
+2007-08-18  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* ThemeWin32Classic.cs: A FixedToolWindow has border size 3.
+	* InternalWindowManager.cs: Change HandleCalcSize to return a boolean value
+	  if handled or not. Implement WM_NCCALCSIZE for WParam == 0 as well.
+	  Refactored HandleNCCalcSize somewhat to avoid code duplication.
+	* Form.cs: Add is_clientsize_set, set in set_ClientSize, used by
+	  FormBorderStyle to decide if we're calculating a new size from the
+	  client size or not. CreateParams: Don't fake tool windows, only the X11
+	  backend manages toolwindows manually.
+
 2007-08-17  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Form.cs: Only reset is_visible if !IsDisposed to prevent an

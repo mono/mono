@@ -91,6 +91,7 @@ namespace System.Windows.Forms {
 		internal int			is_changing_visible_state;
 		internal bool			has_been_visible;
 		private bool			shown_raised;  // The shown event is only raised once
+		private bool			is_clientsize_set;
 
 #if NET_2_0
 		private MenuStrip		main_menu_strip;
@@ -596,7 +597,10 @@ namespace System.Windows.Forms {
 		[Localizable(true)]
 		public new Size ClientSize {
 			get { return base.ClientSize; }
-			set { base.ClientSize = value; }
+			set {
+				is_clientsize_set = true;
+				base.ClientSize = value;
+			}
 		}
 
 		[DefaultValue(true)]
@@ -679,6 +683,8 @@ namespace System.Windows.Forms {
 				if (this.IsHandleCreated) {
 					this.Size = InternalSizeFromClientSize (current_client_size);
 					XplatUI.InvalidateNC (this.Handle);
+				} else if (is_clientsize_set) {
+					this.Size = InternalSizeFromClientSize (current_client_size);
 				}
 			}
 		}
@@ -1479,8 +1485,8 @@ namespace System.Windows.Forms {
 					cp.WindowStyle &= ~WindowStyles.WS_DLGFRAME;
 				}
 				
-				// Fake the window styles for mdi, toolwindows and parented forms
-				if (cp.HasWindowManager) {
+				// Fake the window styles for mdi and parented forms
+				if (cp.HasWindowManager && !cp.IsSet (WindowExStyles.WS_EX_TOOLWINDOW)) {
 					// Remove all styles but WS_VISIBLE.
 					cp.WindowStyle &= WindowStyles.WS_VISIBLE;
 					// Set styles that enables us to use the window manager.

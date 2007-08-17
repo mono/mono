@@ -231,8 +231,7 @@ namespace System.Windows.Forms {
 				break;
 
 			case Msg.WM_NCCALCSIZE:
-				HandleNCCalcSize (ref m);
-				break;
+				return HandleNCCalcSize (ref m);
 
 			case Msg.WM_NCPAINT:
 				return HandleNCPaint (ref m);
@@ -270,34 +269,50 @@ namespace System.Windows.Forms {
 			return true;
 		}
 
-		protected virtual void HandleNCCalcSize (ref Message m)
+		protected virtual bool HandleNCCalcSize (ref Message m)
 		{
 			XplatUIWin32.NCCALCSIZE_PARAMS ncp;
+			XplatUIWin32.RECT rect;
 
 			if (m.WParam == (IntPtr)1) {
 				ncp = (XplatUIWin32.NCCALCSIZE_PARAMS)Marshal.PtrToStructure (m.LParam,
 						typeof (XplatUIWin32.NCCALCSIZE_PARAMS));
-
-				int bw = ThemeEngine.Current.ManagedWindowBorderWidth (this);
-
-				if (HasBorders) {
-					ncp.rgrc1.top += TitleBarHeight + bw;
-					ncp.rgrc1.bottom -= bw;
-					ncp.rgrc1.left += bw;
-					ncp.rgrc1.right -= bw;
-				}
-
-				// This is necessary for Linux, can't handle <= 0-sized 
-				// client areas correctly.
-				if (ncp.rgrc1.right <= ncp.rgrc1.left) {
-					ncp.rgrc1.right += ncp.rgrc1.left - ncp.rgrc1.right + 1;
-				}	
-				if (ncp.rgrc1.top >= ncp.rgrc1.bottom) {
-					ncp.rgrc1.bottom += ncp.rgrc1.top - ncp.rgrc1.bottom + 1;
-				}
 				
+				ncp.rgrc1 = NCCalcSize (ncp.rgrc1);
+
 				Marshal.StructureToPtr (ncp, m.LParam, true);
+			} else {
+				rect = (XplatUIWin32.RECT) Marshal.PtrToStructure (m.LParam, typeof (XplatUIWin32.RECT));
+				
+				rect = NCCalcSize (rect);
+				
+				Marshal.StructureToPtr (rect, m.LParam, true);
 			}
+			
+			return true;
+		}
+
+		protected virtual XplatUIWin32.RECT NCCalcSize (XplatUIWin32.RECT proposed_window_rect)
+		{
+			int bw = ThemeEngine.Current.ManagedWindowBorderWidth (this);
+
+			if (HasBorders) {
+				proposed_window_rect.top += TitleBarHeight + bw;
+				proposed_window_rect.bottom -= bw;
+				proposed_window_rect.left += bw;
+				proposed_window_rect.right -= bw;
+			}
+
+			// This is necessary for Linux, can't handle <= 0-sized 
+			// client areas correctly.
+			if (proposed_window_rect.right <= proposed_window_rect.left) {
+				proposed_window_rect.right += proposed_window_rect.left - proposed_window_rect.right + 1;
+			}
+			if (proposed_window_rect.top >= proposed_window_rect.bottom) {
+				proposed_window_rect.bottom += proposed_window_rect.top - proposed_window_rect.bottom + 1;
+			}
+
+			return proposed_window_rect;
 		}
 
 		protected virtual bool HandleNCHitTest (ref Message m)
