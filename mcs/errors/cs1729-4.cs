@@ -1,4 +1,4 @@
-// cs1501-4.cs : No overload for method `IgnoreAttribute' takes `0' arguments
+// CS1729: The type `IgnoreAttribute' does not contain a constructor that takes `0' arguments
 // Line: 14
 
 using System;

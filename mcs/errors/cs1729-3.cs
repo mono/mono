@@ -1,4 +1,4 @@
-// cs1501-3.cs: No overload for method `X' takes `2' arguments
+// CS1729: The type `X' does not contain a constructor that takes `2' arguments
 // Line: 8
 
 public struct X {

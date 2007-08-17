@@ -1,4 +1,4 @@
-// CS1501: No overload for method `A.Foo' takes `1' arguments
+// CS1729: The type `A.Foo' does not contain a constructor that takes `1' arguments
 // Line: 15
 
 public class A

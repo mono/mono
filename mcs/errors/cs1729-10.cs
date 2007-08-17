@@ -1,4 +1,4 @@
-// cs1501-10.cs: No overload for method `Base' takes `0' arguments
+// CS1729: The type `Base' does not contain a constructor that takes `0' arguments
 // Line: 12
 class Base {
 	Base (string x)

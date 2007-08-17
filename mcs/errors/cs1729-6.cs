@@ -1,4 +1,4 @@
-// cs1501-6.cs: No overload for method `System.Runtime.CompilerServices.IndexerNameAttribute' takes `4' arguments
+// CS1729: The type `System.Runtime.CompilerServices.IndexerNameAttribute' does not contain a constructor that takes `4' arguments
 // Line: 5
 
 class MainClass {
