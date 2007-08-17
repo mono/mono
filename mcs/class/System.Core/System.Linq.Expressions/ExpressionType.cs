@@ -32,10 +32,8 @@ namespace System.Linq.Expressions
 		ArrayLength,
 		ArrayIndex,
 		Call,
-		[Obsolete]
-		CallVirtual,
-		[Obsolete]
-		Cast,
+		[Obsolete] CallVirtual,
+		[Obsolete] Cast,
 		Coalesce,
 		Conditional,
 		Constant,
@@ -52,16 +50,11 @@ namespace System.Linq.Expressions
 		LeftShift,
 		LessThan,
 		LessThanOrEqual,
-		[Obsolete]
-		Lift,
-		[Obsolete]
-		LiftEqual,
-		[Obsolete]
-		LiftFalse,
-		[Obsolete]
-		LiftNotEqual,
-		[Obsolete]
-		LiftTrue,
+		[Obsolete] Lift,
+		[Obsolete] LiftEqual,
+		[Obsolete] LiftFalse,
+		[Obsolete] LiftNotEqual,
+		[Obsolete] LiftTrue,
 		ListInit,
 		MemberAccess,
 		MemberInit,

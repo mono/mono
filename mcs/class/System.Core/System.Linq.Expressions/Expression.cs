@@ -85,6 +85,50 @@ namespace System.Linq.Expressions
         #endregion
         
         #region Private support methods
+        private static int IsWhat(Type type)
+        {
+            // This method return a "type code" that can be easily compared to a bitmask
+            // to determine the bread type (integer, boolean, floating-point) of the given type.
+            // It is used by the three methods below.
+
+            if (IsNullableType (type))
+                type = GetNonNullableType (type);
+                
+            switch (Type.GetTypeCode (type)) {
+                case TypeCode.Byte:  case TypeCode.SByte:
+                case TypeCode.Int16: case TypeCode.UInt16:
+                case TypeCode.Int32: case TypeCode.UInt32:
+                case TypeCode.Int64: case TypeCode.UInt64:
+                return 1;
+                
+                case TypeCode.Boolean:
+                return 2;
+                
+                case TypeCode.Single:
+                case TypeCode.Double:
+                case TypeCode.Decimal:
+                return 4;
+                
+                default:
+                return 0;
+            }
+        }
+        
+        private static bool IsInteger (Type type)
+        {
+            return (IsWhat(type) & 1) != 0;
+        }
+
+        private static bool IsIntegerOrBool (Type type)
+        {
+            return (IsWhat(type) & 3) != 0;
+        }
+
+        private static bool IsNumeric (Type type)
+        {
+            return (IsWhat(type) & 5) != 0;        
+        }
+        
         private const BindingFlags opBindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
 
         private static MethodInfo GetUserDefinedBinaryOperator (Type leftType, Type rightType, string name)
@@ -261,7 +305,7 @@ namespace System.Linq.Expressions
             
             // Since both the expressions define the same numeric type we don't have
             // to look for the "op_Addition" method.
-            if (left.type == right.type && ExpressionUtil.IsNumber(left.type))
+            if (left.type == right.type && IsNumeric (left.type))
                 return new BinaryExpression(ExpressionType.Add, left, right, left.type);
 
             // Else we try for a user-defined operator.
@@ -287,7 +331,7 @@ namespace System.Linq.Expressions
 
             // Since both the expressions define the same numeric type we don't have
             // to look for the "op_Addition" method.
-            if (left.type == right.type && ExpressionUtil.IsNumber(left.type))
+            if (left.type == right.type && IsNumeric (left.type))
                 return new BinaryExpression(ExpressionType.AddChecked, left, right, left.type);
 
             method = GetUserDefinedBinaryOperator (left.type, right.type, "op_Addition");
@@ -323,7 +367,7 @@ namespace System.Linq.Expressions
             
             // Since both the expressions define the same integer or boolean type we don't have
             // to look for the "op_BitwiseAnd" method.
-            if (left.type == right.type && (ExpressionUtil.IsInteger(left.type) || left.type == typeof(bool)))
+            if (left.type == right.type && IsIntegerOrBool (left.type))
                 return new BinaryExpression(ExpressionType.And, left, right, left.type);
 
             // Else we try for a user-defined operator.
@@ -597,7 +641,7 @@ namespace System.Linq.Expressions
             
             // Since both the expressions define the same numeric type we don't have
             // to look for the "op_Addition" method.
-            if (left.type == right.type && ExpressionUtil.IsNumber(left.type))
+            if (left.type == right.type && IsNumeric (left.type))
                 return new BinaryExpression(ExpressionType.Divide, left, right, left.type);
 
             // Else we try for a user-defined operator.
@@ -623,7 +667,7 @@ namespace System.Linq.Expressions
             
             // Since both the expressions define the same integer or boolean type we don't have
             // to look for the "op_BitwiseAnd" method.
-            if (left.type == right.type && (ExpressionUtil.IsInteger(left.type) || left.type == typeof(bool)))
+            if (left.type == right.type && IsIntegerOrBool (left.type))
                 return new BinaryExpression(ExpressionType.ExclusiveOr, left, right, left.type);
 
             // Else we try for a user-defined operator.
@@ -685,7 +729,7 @@ namespace System.Linq.Expressions
 
             // since the left expression is of an integer type and the right is of
             // an integer we don't have to look for the "op_LeftShift" method...
-            if (ExpressionUtil.IsInteger(left.type) && right.type == typeof(int))
+            if (ExpressionUtil.IsInteger (left.type) && right.type == typeof(int))
                 return new BinaryExpression(ExpressionType.LeftShift, left, right, left.type);
 
             if (method == null)
@@ -745,7 +789,7 @@ namespace System.Linq.Expressions
             
             // Since both the expressions define the same integer or boolean type we don't have
             // to look for the "op_BitwiseAnd" method.
-            if (left.type == right.type && (ExpressionUtil.IsNumber(left.type)))
+            if (left.type == right.type && IsNumeric (left.type))
                 return new BinaryExpression(ExpressionType.Modulo, left, right, left.type);
 
             // Else we try for a user-defined operator.
@@ -772,7 +816,7 @@ namespace System.Linq.Expressions
             
             // Since both the expressions define the same integer or boolean type we don't have
             // to look for the "op_BitwiseAnd" method.
-            if (left.type == right.type && ExpressionUtil.IsNumber(left.type))
+            if (left.type == right.type && IsNumeric (left.type))
                 return new BinaryExpression(ExpressionType.Multiply, left, right, left.type);
 
             // Else we try for a user-defined operator.
@@ -799,7 +843,7 @@ namespace System.Linq.Expressions
 
             // Since both the expressions define the same numeric type we don't have
             // to look for the "op_Addition" method.
-            if (left.type == right.type && ExpressionUtil.IsNumber(left.type))
+            if (left.type == right.type && IsNumeric (left.type))
                 return new BinaryExpression(ExpressionType.MultiplyChecked, left, right, left.type);
 
             method = GetUserDefinedBinaryOperator (left.type, right.type, "op_Multiply");
@@ -844,7 +888,7 @@ namespace System.Linq.Expressions
             
             // Since both the expressions define the same integer or boolean type we don't have
             // to look for the "op_BitwiseOr" method.
-            if (left.type == right.type && (ExpressionUtil.IsInteger(left.type) || left.type == typeof(bool)))
+            if (left.type == right.type && IsIntegerOrBool (left.type))
                 return new BinaryExpression(ExpressionType.Or, left, right, left.type);
 
             // Else we try for a user-defined operator.
@@ -941,7 +985,7 @@ namespace System.Linq.Expressions
             
             // Since both the expressions define the same numeric type we don't have
             // to look for the "op_Addition" method.
-            if (left.type == right.type && ExpressionUtil.IsNumber(left.type))
+            if (left.type == right.type && IsNumeric (left.type))
                 return new BinaryExpression(ExpressionType.Subtract, left, right, left.type);
 
             // Else we try for a user-defined operator.
@@ -967,7 +1011,7 @@ namespace System.Linq.Expressions
 
             // Since both the expressions define the same numeric type we don't have
             // to look for the "op_Addition" method.
-            if (left.type == right.type && ExpressionUtil.IsNumber(left.type))
+            if (left.type == right.type && IsNumeric (left.type))
                 return new BinaryExpression(ExpressionType.SubtractChecked, left, right, left.type);
 
             method = GetUserDefinedBinaryOperator (left.type, right.type, "op_Subtraction");
@@ -990,7 +1034,7 @@ namespace System.Linq.Expressions
         }
         #endregion
 
-
+        #region TypeIs
         public static TypeBinaryExpression TypeIs(Expression expression, Type type)
         {
             if (expression == null)
@@ -1000,7 +1044,9 @@ namespace System.Linq.Expressions
             
             return new TypeBinaryExpression(ExpressionType.TypeIs, expression, type, typeof(bool));
         }
+        #endregion
 
+        #region TypeAs
         public static UnaryExpression TypeAs(Expression expression, Type type)
         {
             if (expression == null)
@@ -1010,5 +1056,6 @@ namespace System.Linq.Expressions
 
             return new UnaryExpression(ExpressionType.TypeAs, expression, type);
         }
+        #endregion
     }
 }

@@ -34,6 +34,11 @@ namespace MonoTests.System.Linq.Expressions
             return a;
         }
 
+        public static OpClass operator - (OpClass a, OpClass b)
+        {
+            return a;
+        }
+
         public static OpClass operator * (OpClass a, OpClass b)
         {
             return a;
@@ -142,6 +147,11 @@ namespace MonoTests.System.Linq.Expressions
     public struct OpStruct
     {
         public static OpStruct operator + (OpStruct a, OpStruct b)
+        {
+            return a;
+        }
+
+        public static OpStruct operator - (OpStruct a, OpStruct b)
         {
             return a;
         }

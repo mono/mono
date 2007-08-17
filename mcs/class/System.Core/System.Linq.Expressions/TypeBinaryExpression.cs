@@ -18,15 +18,18 @@
 //
 // Authors:
 //        Antonello Provenzano  <antonello@deveel.com>
+//        Federico Di Gregorio  <fog@initd.org>
 //
+
+using System.Text;
 
 namespace System.Linq.Expressions
 {
     public sealed class TypeBinaryExpression : Expression
     {
         #region .ctor
-        internal TypeBinaryExpression(ExpressionType nt, Expression expression, Type typeop, Type resultType)
-            : base(nt, resultType)
+        internal TypeBinaryExpression (ExpressionType nt, Expression expression, Type typeop, Type resultType)
+            : base (nt, resultType)
         {
             this.expression = expression;
             this.typeop = typeop;
@@ -39,21 +42,25 @@ namespace System.Linq.Expressions
         #endregion
 
         #region Properties
-        public Expression Expression
-        {
+        public Expression Expression {
             get { return expression; }
         }
 
-        public Type TypeOperand
-        {
+        public Type TypeOperand {
             get { return typeop; }
         }
         #endregion
 
         #region Internal Methods
-        internal override void BuildString(System.Text.StringBuilder builder)
+        internal override void BuildString(StringBuilder builder)
         {
-            //TODO:
+            builder.Append ("(");
+            expression.BuildString(builder);
+            builder.Append (" Is ");
+            // That would be better (because incorporates namespace information) but MS code does it the other way.
+            // builder.Append (typeop.Namespace == "System" ? typeop.Name : typeop.FullName);
+            builder.Append (typeop.Name);            
+            builder.Append (")");
         }
         #endregion
     }

@@ -1,5 +1,13 @@
 2007-08-17  Federico Di Gregorio <fog@initd.org>
 
+	* Expression.cs: added tests for TypeIs.
+
+	* TypeBinaryExpression.cs: implemented BuildString().
+
+	* Expression.cs: added three specific methods to determine when a type
+	is a number (IsNumeric), an integer (IsInteger) or an integer or a bool
+	(IsIntegerOrBool). Code taken and simplified from ExpressionUtil.
+
 	* Expression.cs: two less to do: Subtract() and SubtractChecked().
 
 	* Expression.cs: implemented all versions of Or() and OrElse().
