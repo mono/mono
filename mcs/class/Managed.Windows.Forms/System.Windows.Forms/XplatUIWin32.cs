@@ -1746,39 +1746,41 @@ namespace System.Windows.Forms {
 			ps = new PAINTSTRUCT();
 
 			hwnd = Hwnd.ObjectFromHandle(msg.HWnd);
-
+			
 			if (client) {
 				if (Win32GetUpdateRect(msg.HWnd, ref rect, false)) {
-					hdc = Win32BeginPaint(handle, ref ps);
-
-					// We need to validate the window where the paint message
-					// was generated, otherwise we'll never stop getting paint 
-					// messages.
 					if (handle != msg.HWnd) {
-						ps.rcPaint = rect;
-						Win32ValidateRect (msg.HWnd, ref ps.rcPaint);
+						// We need to validate the window where the paint message
+						// was generated, otherwise we'll never stop getting paint 
+						// messages.
+						Win32GetClientRect (msg.HWnd, out rect);
+						Win32ValidateRect (msg.HWnd, ref rect);
+						hdc = Win32GetDC (handle);
+					} else {
+						hdc = Win32BeginPaint (handle, ref ps);
+						rect = ps.rcPaint;
 					}
-
-					hwnd.drawing_stack.Push (ps);
-
-					clip_rect = new Rectangle(ps.rcPaint.left, ps.rcPaint.top, ps.rcPaint.right-ps.rcPaint.left, ps.rcPaint.bottom-ps.rcPaint.top);
 				} else {
 					hdc = Win32GetDC(handle);
-
-					hwnd.drawing_stack.Push (hdc);
-
-					clip_rect = new Rectangle(rect.top, rect.left, rect.right-rect.left, rect.bottom-rect.top);
 				}
+				clip_rect = rect.ToRectangle ();
 			} else {
 				hdc = Win32GetWindowDC (handle);
 
-				hwnd.drawing_stack.Push (hdc);
-
 				// HACK this in for now
 				Win32GetWindowRect (handle, out rect);
-				clip_rect = new Rectangle(0, 0, rect.right-rect.left, rect.bottom-rect.top);
+				clip_rect = new Rectangle (0, 0, rect.Width, rect.Height);
 			}
 
+			// If we called BeginPaint, store the PAINTSTRUCT,
+			// otherwise store hdc, so that PaintEventEnd can know
+			// whether to call EndPaint or ReleaseDC.
+			if (ps.hdc != IntPtr.Zero) {
+				hwnd.drawing_stack.Push (ps);
+			} else {
+				hwnd.drawing_stack.Push (hdc);
+			}
+			
 			Graphics dc = Graphics.FromHdc(hdc);
 			hwnd.drawing_stack.Push (dc);
 
@@ -1795,20 +1797,13 @@ namespace System.Windows.Forms {
 			Graphics dc = (Graphics)hwnd.drawing_stack.Pop();
 			dc.Dispose ();
 
-			if (client) {
-				object o = hwnd.drawing_stack.Pop();
-				if (o != null) {
-					if (o is PAINTSTRUCT) {
-						PAINTSTRUCT ps = (PAINTSTRUCT)o;
-						Win32EndPaint(handle, ref ps);
-					} else if (o is IntPtr) {
-						IntPtr hdc = (IntPtr) o;
-						Win32ReleaseDC (handle, hdc);
-					}
-				}
-			} else {
-				IntPtr hdc = (IntPtr)hwnd.drawing_stack.Pop();
-				Win32ReleaseDC(handle, hdc);
+			object o = hwnd.drawing_stack.Pop();
+			if (o is IntPtr) {
+				IntPtr hdc = (IntPtr) o;
+				Win32ReleaseDC (handle, hdc);
+			} else if (o is PAINTSTRUCT) {
+				PAINTSTRUCT ps = (PAINTSTRUCT) o;
+				Win32EndPaint (handle, ref ps);
 			}
 		}
 

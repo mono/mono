@@ -1,5 +1,12 @@
 2007-08-17  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* XplatUIWin32.cs: PaintEventStart: validate the entire source client
+	  rectangle if we're painting to another window than the one the paint
+	  message was generated on. Simplify the code somewhat, which makes
+	  PaintEventEnd also simpler.
+
+2007-08-17  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Control.cs: When changing parent of a form, let the form decide whether
 	  XplatUI.SetParent should be called or not.
 	* Form.cs: ChangingParent: only call XplatUI.SetParent if we're not
