@@ -2833,7 +2833,9 @@ namespace System.Windows.Forms {
 
 			if (!IsDisposed) {
 				OnLoad (e);
-				is_visible = true;
+				
+				if (!IsDisposed)
+					is_visible = true;
 			}
 			
 			if (!IsMdiChild && !IsDisposed) {
