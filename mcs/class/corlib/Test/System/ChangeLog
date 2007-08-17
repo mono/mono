@@ -1,3 +1,9 @@
+2007-08-17  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* AttributeTest.cs: Added test for IsDefined, GetCustomAttribute
+	and GetCustomAttributes. Added tests for bug #81797. Remove use of
+	deprecated Assertion class, code formatting.
+
 2007-08-16  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TypeTest.cs: Improved test for GetCustomAttributes, and avoid

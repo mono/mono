@@ -48,7 +48,7 @@ namespace MonoTests.System.Reflection
 		{
 			return null;
 		}
-}
+	}
 
 	[TestFixture]
 	public class ParameterInfoTest

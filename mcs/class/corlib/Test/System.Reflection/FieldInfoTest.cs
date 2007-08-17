@@ -1,7 +1,9 @@
 //
 // FieldInfoTest - NUnit Test Cases for the FieldInfo class
 //
-// Zoltan Varga (vargaz@freemail.hu)
+// Authors:
+//	Zoltan Varga (vargaz@freemail.hu)
+//	Gert Driesen (drieseng@users.sourceforge.net)
 //
 // (c) 2003 Ximian, Inc. (http://www.ximian.com)
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
@@ -57,9 +59,21 @@ namespace MonoTests.System.Reflection
 		[MarshalAs(UnmanagedType.ByValTStr, SizeConst=100)]
 		public string f2;
 
-		// This doesn't work under mono
-		//[MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Marshal1), MarshalCookie = "5")]
-		//public object f3;
+		[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof (Marshal1), MarshalCookie="5")]
+		public int f3;
+
+		// bug #82465
+		/*
+		[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Marshal1), MarshalCookie = "5")]
+		public object f4;
+		*/
+
+		[Obsolete]
+		public int f5;
+	}
+
+	public class Class3 : Class2
+	{
 	}
 
 	[TestFixture]
@@ -86,38 +100,152 @@ namespace MonoTests.System.Reflection
 			}
 		}
 
-#if NET_2_0
+		[Test]
+		public void GetCustomAttributes ()
+		{
+			object [] attrs;
+			FieldInfo fi;
+
+			fi = typeof (Class2).GetField ("f5");
+
+			attrs = fi.GetCustomAttributes (false);
+			Assert.AreEqual (1, attrs.Length, "#B1");
+			Assert.AreEqual (typeof (ObsoleteAttribute), attrs [0].GetType (), "#B2");
+			attrs = fi.GetCustomAttributes (true);
+			Assert.AreEqual (1, attrs.Length, "#B3");
+			Assert.AreEqual (typeof (ObsoleteAttribute), attrs [0].GetType (), "#B4");
+			attrs = fi.GetCustomAttributes (typeof (MarshalAsAttribute), false);
+			Assert.AreEqual (0, attrs.Length, "#B5");
+			attrs = fi.GetCustomAttributes (typeof (MarshalAsAttribute), true);
+			Assert.AreEqual (0, attrs.Length, "#B6");
+			attrs = fi.GetCustomAttributes (typeof (ObsoleteAttribute), false);
+			Assert.AreEqual (1, attrs.Length, "#B7");
+			Assert.AreEqual (typeof (ObsoleteAttribute), attrs [0].GetType (), "#B8");
+			attrs = fi.GetCustomAttributes (typeof (ObsoleteAttribute), true);
+			Assert.AreEqual (1, attrs.Length, "#B9");
+			Assert.AreEqual (typeof (ObsoleteAttribute), attrs [0].GetType (), "#B10");
+
+			fi = typeof (Class3).GetField ("f5");
+
+			attrs = fi.GetCustomAttributes (false);
+			Assert.AreEqual (1, attrs.Length, "#D1");
+			Assert.AreEqual (typeof (ObsoleteAttribute), attrs [0].GetType (), "#D2");
+			attrs = fi.GetCustomAttributes (true);
+			Assert.AreEqual (1, attrs.Length, "#D3");
+			Assert.AreEqual (typeof (ObsoleteAttribute), attrs [0].GetType (), "#D4");
+			attrs = fi.GetCustomAttributes (typeof (MarshalAsAttribute), false);
+			Assert.AreEqual (0, attrs.Length, "#D5");
+			attrs = fi.GetCustomAttributes (typeof (MarshalAsAttribute), true);
+			Assert.AreEqual (0, attrs.Length, "#D6");
+			attrs = fi.GetCustomAttributes (typeof (ObsoleteAttribute), false);
+			Assert.AreEqual (1, attrs.Length, "#D7");
+			Assert.AreEqual (typeof (ObsoleteAttribute), attrs [0].GetType (), "#D8");
+			attrs = fi.GetCustomAttributes (typeof (ObsoleteAttribute), true);
+			Assert.AreEqual (1, attrs.Length, "#D9");
+			Assert.AreEqual (typeof (ObsoleteAttribute), attrs [0].GetType (), "#D10");
+		}
+
 		[Test]
 		public void PseudoCustomAttributes ()
 		{
+			object [] attrs;
 			Type t = typeof (FieldInfoTest);
 
+#if NET_2_0
 			Assert.AreEqual (1, t.GetField ("i").GetCustomAttributes (typeof (NonSerializedAttribute), true).Length);
+#else
+			Assert.AreEqual (0, t.GetField ("i").GetCustomAttributes (typeof (NonSerializedAttribute), true).Length);
+#endif
 
-			FieldOffsetAttribute field_attr = (FieldOffsetAttribute)(typeof (Class1).GetField ("i").GetCustomAttributes (true) [0]);
-			Assert.AreEqual (32, field_attr.Value);
+			attrs = typeof (Class1).GetField ("i").GetCustomAttributes (true);
+#if NET_2_0
+			Assert.AreEqual (1, attrs.Length, "#B1");
+			FieldOffsetAttribute field_attr = (FieldOffsetAttribute) attrs [0];
+			Assert.AreEqual (32, field_attr.Value, "#B2");
+#else
+			Assert.AreEqual (0, attrs.Length, "#B1");
+#endif
 
 			MarshalAsAttribute attr;
 
-			attr = (MarshalAsAttribute)typeof (Class2).GetField ("f0").GetCustomAttributes (true) [0];
-			Assert.AreEqual (UnmanagedType.Bool, attr.Value);
+			attrs = typeof (Class2).GetField ("f0").GetCustomAttributes (true);
+#if NET_2_0
+			Assert.AreEqual (1, attrs.Length, "#C1");
+			attr = (MarshalAsAttribute) attrs [0];
+			Assert.AreEqual (UnmanagedType.Bool, attr.Value, "#C2");
+#else
+			Assert.AreEqual (0, attrs.Length, "#C1");
+#endif
 
-			attr = (MarshalAsAttribute)typeof (Class2).GetField ("f1").GetCustomAttributes (true) [0];
-			Assert.AreEqual (UnmanagedType.LPArray, attr.Value);
-			Assert.AreEqual (UnmanagedType.LPStr, attr.ArraySubType);
+			attrs = typeof (Class2).GetField ("f1").GetCustomAttributes (true);
+#if NET_2_0
+			Assert.AreEqual (1, attrs.Length, "#D1");
+			attr = (MarshalAsAttribute) attrs [0];
+			Assert.AreEqual (UnmanagedType.LPArray, attr.Value, "#D2");
+			Assert.AreEqual (UnmanagedType.LPStr, attr.ArraySubType, "#D3");
+#else
+			Assert.AreEqual (0, attrs.Length, "#D1");
+#endif
 
-			attr = (MarshalAsAttribute)typeof (Class2).GetField ("f2").GetCustomAttributes (true) [0];
-			Assert.AreEqual (UnmanagedType.ByValTStr, attr.Value);
-			Assert.AreEqual (100, attr.SizeConst);
+			attrs = typeof (Class2).GetField ("f2").GetCustomAttributes (true);
+#if NET_2_0
+			Assert.AreEqual (1, attrs.Length, "#E1");
+			attr = (MarshalAsAttribute) attrs [0];
+			Assert.AreEqual (UnmanagedType.ByValTStr, attr.Value, "#E2");
+			Assert.AreEqual (100, attr.SizeConst, "#E3");
+#else
+			Assert.AreEqual (0, attrs.Length, "#E1");
+#endif
 
+			attrs = typeof (Class2).GetField ("f3").GetCustomAttributes (true);
+#if NET_2_0
+			Assert.AreEqual (1, attrs.Length, "#F1");
+			attr = (MarshalAsAttribute) attrs [0];
+			Assert.AreEqual (UnmanagedType.CustomMarshaler, attr.Value, "#F2");
+			Assert.AreEqual ("5", attr.MarshalCookie, "#F3");
+			Assert.AreEqual (typeof (Marshal1), Type.GetType (attr.MarshalType), "#F4");
+#else
+			Assert.AreEqual (0, attrs.Length, "#F1");
+#endif
+
+			attrs = typeof (Class3).GetField ("f3").GetCustomAttributes (false);
+#if NET_2_0
+			Assert.AreEqual (1, attrs.Length, "#G1");
+			attr = (MarshalAsAttribute) attrs [0];
+			Assert.AreEqual (UnmanagedType.CustomMarshaler, attr.Value, "#G2");
+			Assert.AreEqual ("5", attr.MarshalCookie, "#G3");
+			Assert.AreEqual (typeof (Marshal1), Type.GetType (attr.MarshalType), "#G4");
+#else
+			Assert.AreEqual (0, attrs.Length, "#G1");
+#endif
+
+			attrs = typeof (Class3).GetField ("f3").GetCustomAttributes (true);
+#if NET_2_0
+			Assert.AreEqual (1, attrs.Length, "#H1");
+			attr = (MarshalAsAttribute) attrs [0];
+			Assert.AreEqual (UnmanagedType.CustomMarshaler, attr.Value, "#H2");
+			Assert.AreEqual ("5", attr.MarshalCookie, "#H3");
+			Assert.AreEqual (typeof (Marshal1), Type.GetType (attr.MarshalType), "#H4");
+#else
+			Assert.AreEqual (0, attrs.Length, "#H1");
+#endif
+
+			// bug #82465
 			/*
-			attr = (MarshalAsAttribute)typeof (Class2).GetField ("f3").GetCustomAttributes (true) [0];
-			Assert.AreEqual (UnmanagedType.CustomMarshaler, attr.Value);
-			Assert.AreEqual ("5", attr.MarshalCookie);
-			Assert.AreEqual (typeof (Marshal1), Type.GetType (attr.MarshalType));
+			attrs = typeof (Class2).GetField ("f3").GetCustomAttributes (true);
+#if NET_2_0
+			Assert.AreEqual (1, attrs.Length, "#I1");
+			MarshalAsAttribute attr = (MarshalAsAttribute) attrs [0];
+			Assert.AreEqual (UnmanagedType.CustomMarshaler, attr.Value, "#I2");
+			Assert.AreEqual ("5", attr.MarshalCookie, "#I3");
+			Assert.AreEqual (typeof (Marshal1), Type.GetType (attr.MarshalType), "#I4");
+#else
+			Assert.AreEqual (0, attrs.Length, "#I1");
+#endif
 			*/
 		}
 
+#if NET_2_0
 #if !TARGET_JVM // ReflectionOnlyLoad not supported for TARGET_JVM
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]

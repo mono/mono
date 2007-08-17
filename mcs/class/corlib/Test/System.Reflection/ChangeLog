@@ -1,3 +1,9 @@
+2007-08-17  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ParameterInfoTest.cs: Minor code formatting change.
+	* FieldInfoTest.cs: Added test for GetCustomAttributes. Modified test
+	for pseudo customattributes to work on 1.0 profile too.
+
 2007-08-16  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* AssemblyTest.cs: Added IsDefined test with null value for 
