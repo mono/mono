@@ -1,5 +1,8 @@
 2007-08-17  Federico Di Gregorio <fog@initd.org>
 
+	* Expression.cs: implemented RightShift(), added tests for it and for
+	LeftShift().
+
 	* Expression.cs: checked TypeAs and added tests.
 
 	* UnaryExpression.cs: added BuildString() case for TypeAs.

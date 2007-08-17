@@ -68,6 +68,16 @@ namespace MonoTests.System.Linq.Expressions
         {
             return a;
         }
+
+        public static OpClass operator >> (OpClass a, int b)
+        {
+            return a;
+        }
+
+        public static OpClass operator << (OpClass a, int b)
+        {
+            return a;
+        }
         
         public static bool operator true (OpClass a)
         {

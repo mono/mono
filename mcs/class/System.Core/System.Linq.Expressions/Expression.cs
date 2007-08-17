@@ -88,7 +88,7 @@ namespace System.Linq.Expressions
         private static int IsWhat(Type type)
         {
             // This method return a "type code" that can be easily compared to a bitmask
-            // to determine the bread type (integer, boolean, floating-point) of the given type.
+            // to determine the "broad type" (integer, boolean, floating-point) of the given type.
             // It is used by the three methods below.
 
             if (IsNullableType (type))
@@ -143,7 +143,7 @@ namespace System.Linq.Expressions
             if (method != null) return method;
 
             if (method == null && IsNullableType (leftType) && IsNullableType (rightType))
-                return GetUserDefinedBinaryOperator (GetNonNullableType (leftType), GetNonNullableType( rightType), name);
+                return GetUserDefinedBinaryOperator (GetNonNullableType (leftType), GetNonNullableType (rightType), name);
         
             return null;
         }
@@ -585,7 +585,7 @@ namespace System.Linq.Expressions
             if (arguments == null)
                 throw new ArgumentNullException("arguments");
 
-            // Note that we're looking for static methods only because this version of Call() doesn't take an instance.
+            // Note that we're looking for static methods only (this version of Call() doesn't take an instance).
             return Call (null, FindMethod (type, methodName, typeArguments, arguments,
                     BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static),
                 (IEnumerable<Expression>)arguments);
@@ -720,33 +720,32 @@ namespace System.Linq.Expressions
             return typeof(Func<,,,,>).MakeGenericType(typeArgs);
         }
 
-        public static BinaryExpression LeftShift(Expression left, Expression right, MethodInfo method)
+        #region LeftShift
+        public static BinaryExpression LeftShift (Expression left, Expression right, MethodInfo method)
         {
             if (left == null)
-                throw new ArgumentNullException("left");
+                throw new ArgumentNullException ("left");
             if (right == null)
-                throw new ArgumentNullException("right");
+                throw new ArgumentNullException ("right");
 
-            // since the left expression is of an integer type and the right is of
-            // an integer we don't have to look for the "op_LeftShift" method...
-            if (ExpressionUtil.IsInteger (left.type) && right.type == typeof(int))
+            if (method != null)
+                return new BinaryExpression(ExpressionType.LeftShift, left, right, method, method.ReturnType);
+            
+            // If the left side is any kind of integer and the right is int32 we don't have
+            // to look for the "op_Addition" method.
+            if (IsInteger(left.type) && right.type == typeof(Int32))
                 return new BinaryExpression(ExpressionType.LeftShift, left, right, left.type);
 
-            if (method == null)
-                method = ExpressionUtil.GetOperatorMethod("op_LeftShift", left.type, right.type);
-
-            // ok if even op_Division is not defined we need to throw an exception...
-            if (method == null)
-                throw new InvalidOperationException();
-
-            return new BinaryExpression(ExpressionType.LeftShift, left, right, method, method.ReturnType);
+            // Else we try for a user-defined operator.
+            return GetUserDefinedBinaryOperatorOrThrow (ExpressionType.LeftShift, "op_LeftShift", left, right);
         }
 
-        public static BinaryExpression LeftShift(Expression left, Expression right)
+        public static BinaryExpression LeftShift (Expression left, Expression right)
         {
-            return LeftShift(left, right, null);
+            return LeftShift (left, right, null);
         }
-
+        #endregion
+        
         public static ListInitExpression ListInit(NewExpression newExpression, params Expression[] initializers)
         {
             if (initializers == null)
@@ -971,6 +970,32 @@ namespace System.Linq.Expressions
             // the name is not defined in the Type of the expression given...
             throw new ArgumentException();
         }
+
+        #region RightShift
+        public static BinaryExpression RightShift (Expression left, Expression right, MethodInfo method)
+        {
+            if (left == null)
+                throw new ArgumentNullException ("left");
+            if (right == null)
+                throw new ArgumentNullException ("right");
+
+            if (method != null)
+                return new BinaryExpression(ExpressionType.RightShift, left, right, method, method.ReturnType);
+            
+            // If the left side is any kind of integer and the right is int32 we don't have
+            // to look for the "op_Addition" method.
+            if (IsInteger(left.type) && right.type == typeof(Int32))
+                return new BinaryExpression(ExpressionType.RightShift, left, right, left.type);
+
+            // Else we try for a user-defined operator.
+            return GetUserDefinedBinaryOperatorOrThrow (ExpressionType.RightShift, "op_RightShift", left, right);
+        }
+
+        public static BinaryExpression RightShift (Expression left, Expression right)
+        {
+            return RightShift (left, right, null);
+        }
+        #endregion
 
         #region Subtract
         public static BinaryExpression Subtract (Expression left, Expression right, MethodInfo method)
