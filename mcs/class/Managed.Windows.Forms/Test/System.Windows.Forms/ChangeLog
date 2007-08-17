@@ -1,3 +1,7 @@
+2007-08-17  Jonathan Pobst  <monkey@jpobst.com>
+
+	* FormTest.cs: Add test for bug #82470.
+
 2007-08-15  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListViewCollectionsTest.cs: New tests for ListViewItemCollection

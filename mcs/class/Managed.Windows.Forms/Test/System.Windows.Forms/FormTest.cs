@@ -1860,6 +1860,24 @@ namespace MonoTests.System.Windows.Forms
 			f.Dispose ();
 		}
 
+		[Test]
+		public void Bug82470 ()
+		{
+			Form f = new Form ();
+			f.Load += new EventHandler (Form_LoadAndHide);
+			f.Show ();
+			
+			Assert.AreEqual (true, f.Visible, "A1");
+			
+			f.Dispose ();
+		}
+
+		private void Form_LoadAndHide (object sender, EventArgs e)
+		{
+			((Form)sender).Visible = false;
+		}
+
+		
 #if NET_2_0
 		[Test]
 		public void AutoSizeGrowOnly ()
