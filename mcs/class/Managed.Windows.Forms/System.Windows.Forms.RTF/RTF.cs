@@ -255,11 +255,11 @@ namespace System.Windows.Forms.RTF {
 
 		/// <summary>Read the next character from the input</summary>
 		private char GetChar() {
-			char	c;
+			int	c;
 			bool	old_bump_line;
 
 SkipCRLF:
-			if ((c = (char) source.Read()) != -1) {
+			if ((c = source.Read()) != -1) {
 				this.text_buffer.Append((char) c);
 			}
 
