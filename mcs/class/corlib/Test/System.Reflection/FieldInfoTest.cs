@@ -62,11 +62,8 @@ namespace MonoTests.System.Reflection
 		[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof (Marshal1), MarshalCookie="5")]
 		public int f3;
 
-		// bug #82465
-		/*
 		[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Marshal1), MarshalCookie = "5")]
 		public object f4;
-		*/
 
 		[Obsolete]
 		public int f5;
@@ -231,18 +228,16 @@ namespace MonoTests.System.Reflection
 #endif
 
 			// bug #82465
-			/*
 			attrs = typeof (Class2).GetField ("f3").GetCustomAttributes (true);
 #if NET_2_0
 			Assert.AreEqual (1, attrs.Length, "#I1");
-			MarshalAsAttribute attr = (MarshalAsAttribute) attrs [0];
+			attr = (MarshalAsAttribute) attrs [0];
 			Assert.AreEqual (UnmanagedType.CustomMarshaler, attr.Value, "#I2");
 			Assert.AreEqual ("5", attr.MarshalCookie, "#I3");
 			Assert.AreEqual (typeof (Marshal1), Type.GetType (attr.MarshalType), "#I4");
 #else
 			Assert.AreEqual (0, attrs.Length, "#I1");
 #endif
-			*/
 		}
 
 #if NET_2_0
