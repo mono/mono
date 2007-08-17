@@ -47,7 +47,7 @@ namespace System.Windows.Forms
 		private ListView list_view_owner = null;
 		private ListView.ListViewItemCollection items = null;
 		private object tag = null;
-		private Rectangle bounds = Rectangle.Empty;
+		private Rectangle header_bounds = Rectangle.Empty;
 		internal int starting_row;	// At which row the group starts
 
 		#region ListViewGroup constructors
@@ -153,17 +153,17 @@ namespace System.Windows.Forms
 			}
 		}
 
-		internal Rectangle Bounds {
+		internal Rectangle HeaderBounds {
 			get {
-				Rectangle retval = bounds;
+				Rectangle retval = header_bounds;
 				retval.X -= list_view_owner.h_marker;
 				retval.Y -= list_view_owner.v_marker;
 				return retval;
 			}
 			set { 
-				list_view_owner.item_control.Invalidate (Bounds);
-				bounds = value; 
-				list_view_owner.item_control.Invalidate (Bounds);
+				list_view_owner.item_control.Invalidate (HeaderBounds);
+				header_bounds = value; 
+				list_view_owner.item_control.Invalidate (HeaderBounds);
 			}
 		}
 

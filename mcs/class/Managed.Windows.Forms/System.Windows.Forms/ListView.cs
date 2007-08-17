@@ -1494,47 +1494,44 @@ namespace System.Windows.Forms
 			layout_wd = cols * (sz.Width + x_spacing) - x_spacing;
 
 			int current_item = 0;
-			int current_y = 0;
+			Size item_spacing = new Size (x_spacing, y_spacing);
 #if NET_2_0
-			if (show_groups && groups.Count > 0 && view != View.List)
-				LayoutIconsGroups (left_aligned, x_spacing, y_spacing);
-			else
+			if (show_groups && groups.Count > 0 && view != View.List) {
+				int current_y = 0;
+
+				for (int i = 0; i < groups.Count; i++) {
+					ListViewGroup group = groups [i];
+					if (group.Items.Count == 0)
+						continue;
+					
+					current_y += LayoutGroupHeader (group, current_y);
+					current_y += LayoutIconsSection (group.Items, left_aligned, group.starting_row, current_y, item_spacing,
+							ref current_item);
+				}
+
+				layout_ht = current_y; // Adjust with the header heights
+
+			} else
 #endif
 				// Layout the entire ListView as a single section
-				LayoutIconsSection (items, left_aligned, 0, ref current_y, new Size (x_spacing, y_spacing), ref current_item);
+				LayoutIconsSection (items, left_aligned, 0, 0, item_spacing, ref current_item);
 
 			item_control.Size = new Size (layout_wd, layout_ht);
 		}
 
 #if NET_2_0
-		void LayoutIconsGroups (bool left_aligned, int x_spacing, int y_spacing)
+		int LayoutGroupHeader (ListViewGroup group, int y_origin)
 		{
-			int header_spacing = 10;
-			int header_height = text_size.Height + 10;
 			Rectangle client_area = ClientRectangle;
+			int header_height = text_size.Height + 10;
 
-			int current_item = 0;
-			int current_y = 0;
+			group.HeaderBounds = new Rectangle (0, y_origin, client_area.Width - v_scroll.Width, header_height);
 
-			for (int i = 0; i < groups.Count; i++) {
-				ListViewGroup group = groups [i];
-				if (group.Items.Count == 0)
-					continue;
-					
-				group.Bounds = new Rectangle (0, current_y, client_area.Width - v_scroll.Width, header_height);
-				current_y += header_height;
-
-				LayoutIconsSection (group.Items, left_aligned, group.starting_row, ref current_y, new Size (x_spacing, y_spacing),
-						ref current_item);
-					
-				current_y += header_spacing;
-			}
-				
-			layout_ht = current_y; // Adjust with the header heights
+			return header_height;
 		}
 #endif
 
-		void LayoutIconsSection (ListView.ListViewItemCollection items_collection, bool left_aligned, int current_global_row, ref int y_origin, 
+		int LayoutIconsSection (ListView.ListViewItemCollection items_collection, bool left_aligned, int current_global_row, int y_origin, 
 				Size item_spacing, ref int current_item)
 		{
 			// current_global_row is the global one, and
@@ -1574,8 +1571,8 @@ namespace System.Windows.Forms
 				}
 			}
 
-			// Return the lower bounds of the icons section
-			y_origin = y + item_size.Height;
+			// Return the groups section height plus an extra space
+			return (y + item_size.Height + 10) - y_origin;
 		}
 
 		void LayoutHeader ()
@@ -1605,6 +1602,27 @@ namespace System.Windows.Forms
 			}
 		}
 
+		// Put in the right order the item_height param
+		int LayoutDetailsSection (ListViewItemCollection items_collection, int item_height, int y_origin, ref int current_item)
+		{
+			int y = y_origin;
+
+			for (int i = 0; i < items_collection.Count; i++) {
+				ListViewItem item = items_collection [i];
+				SetItemLocation (current_item, 0, y, 0, 0);
+				current_item++;
+#if NET_2_0
+				if (!virtual_mode) // Virtual mode sets Layout until draw time
+#endif
+					item.Layout ();
+					
+				y += item_height + 2;
+			}
+
+			// Return height of groups section
+			return (y + 10) - y_origin;
+		}
+
 		void LayoutDetails ()
 		{
 			LayoutHeader ();
@@ -1624,21 +1642,24 @@ namespace System.Windows.Forms
 			ItemSize = new Size (0, item_height); // We only cache Height for details view
 
 			int y = header_control.Height;
-			if (items.Count > 0) {
-				for (int i = 0; i < items.Count; i++) {
-					SetItemLocation (i, 0, y, 0, 0);
+			int current_item = 0;
 #if NET_2_0
-					if (!virtual_mode) // Virtual mode sets Layout until draw time
-#endif
-						items [i].Layout ();
+			if (show_groups && groups.Count > 0 && view != View.List) {
+				for (int i = 0; i < groups.Count; i++) {
+					ListViewGroup group = groups [i];
+					if (group.Items.Count == 0)
+						continue;
 
-					y += item_height + 2;
+					y += LayoutGroupHeader (group, y);
+					y += LayoutDetailsSection (group.Items, item_height, y, ref current_item);
 				}
+			} else
+#endif
+				y += LayoutDetailsSection (items, item_height, y, ref current_item);
 
-				// some space for bottom gridline
-				if (grid_lines)
-					y += 2;
-			}
+			// some space for bottom gridline
+			if (items.Count > 0 && grid_lines)
+				y += 2;
 
 			layout_ht = y;
 		}

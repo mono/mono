@@ -1,3 +1,13 @@
+2007-08-17  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListView.cs: Add Groups support in Details view. Also have a small
+	method to do the layout of the group header. Don't use a separate
+	method to do the groups calculation in Icons view, since our methods
+	are now a little simpler.
+	* ListViewGroup.cs: Use the more accurate `HeaderBounds' name than
+	`Bounds'.
+	* ThemeWin32Classic.cs: Likewise.
+
 2007-08-16  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Application.cs: Add FilterMessage method and rework our message loop

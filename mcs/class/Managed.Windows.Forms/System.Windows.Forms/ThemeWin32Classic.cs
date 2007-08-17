@@ -2278,7 +2278,7 @@ namespace System.Windows.Forms
 			if (control.ShowGroups && control.View != View.List) {
 				for (int i = 0; i < control.Groups.Count; i++) {
 					ListViewGroup group = control.Groups [i];
-					if (group.Items.Count > 0 && clip.IntersectsWith (group.Bounds))
+					if (group.Items.Count > 0 && clip.IntersectsWith (group.HeaderBounds))
 						DrawListViewGroupHeader (dc, control, group);
 				}
 			}
@@ -2721,8 +2721,8 @@ namespace System.Windows.Forms
 
 		protected virtual void DrawListViewGroupHeader (Graphics dc, ListView control, ListViewGroup group)
 		{
-			Rectangle text_bounds = group.Bounds;
-			Rectangle header_bounds = group.Bounds;
+			Rectangle text_bounds = group.HeaderBounds;
+			Rectangle header_bounds = group.HeaderBounds;
 			text_bounds.Offset (8, 0);
 			text_bounds.Inflate (-8, 0);
 			Size text_size = control.text_size;
