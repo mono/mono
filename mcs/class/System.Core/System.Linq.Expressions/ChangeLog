@@ -1,5 +1,9 @@
 2007-08-17  Federico Di Gregorio <fog@initd.org>
 
+	* Expression.cs: checked TypeAs and added tests.
+
+	* UnaryExpression.cs: added BuildString() case for TypeAs.
+
 	* Expression.cs: added tests for TypeIs.
 
 	* TypeBinaryExpression.cs: implemented BuildString().

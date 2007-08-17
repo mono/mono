@@ -74,9 +74,17 @@ namespace System.Linq.Expressions
             {
             case ExpressionType.ArrayLength:
                 builder.Append ("ArrayLength(");
-                operand.BuildString(builder);
-                builder.Append(")");
+                operand.BuildString (builder);
+                builder.Append (")");
                 break;
+
+            case ExpressionType.TypeAs:
+                builder.Append ("(");
+                operand.BuildString (builder);
+                builder.Append (" As ").Append (Type.Name);
+                builder.Append (")");
+                break;
+
             }
          }
         #endregion

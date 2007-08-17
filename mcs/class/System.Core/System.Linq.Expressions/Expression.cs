@@ -1034,18 +1034,6 @@ namespace System.Linq.Expressions
         }
         #endregion
 
-        #region TypeIs
-        public static TypeBinaryExpression TypeIs(Expression expression, Type type)
-        {
-            if (expression == null)
-                throw new ArgumentNullException("expression");
-            if (type == null)
-                throw new ArgumentNullException("type"); 
-            
-            return new TypeBinaryExpression(ExpressionType.TypeIs, expression, type, typeof(bool));
-        }
-        #endregion
-
         #region TypeAs
         public static UnaryExpression TypeAs(Expression expression, Type type)
         {
@@ -1055,6 +1043,18 @@ namespace System.Linq.Expressions
                 throw new ArgumentNullException("type");
 
             return new UnaryExpression(ExpressionType.TypeAs, expression, type);
+        }
+        #endregion
+
+        #region TypeIs
+        public static TypeBinaryExpression TypeIs(Expression expression, Type type)
+        {
+            if (expression == null)
+                throw new ArgumentNullException("expression");
+            if (type == null)
+                throw new ArgumentNullException("type"); 
+            
+            return new TypeBinaryExpression(ExpressionType.TypeIs, expression, type, typeof(bool));
         }
         #endregion
     }
