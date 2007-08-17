@@ -149,8 +149,13 @@ namespace System.Web.Caching
 		
 		void OnChanged (object sender, FileSystemEventArgs args)
 		{
+			OnDependencyChanged (sender, args);
+		}
+
+		bool DoOnChanged ()
+		{
 			if (DateTime.Now < start)
-				return;
+				return false;
 			hasChanged = true;
 #if NET_2_0
 			utcLastModified = DateTime.UtcNow;
@@ -159,8 +164,10 @@ namespace System.Web.Caching
 			
 			if (cache != null)
 				cache.CheckExpiration ();
+
+			return true;
 		}
-	
+		
 		void DisposeWatchers ()
 		{
 			lock (locker) {
@@ -231,7 +238,6 @@ namespace System.Web.Caching
 		{
 			this.utcLastModified = utcLastModified;
 		}
-
 #endif
 		
 		public bool HasChanged {
@@ -265,8 +271,14 @@ namespace System.Web.Caching
 		
 		void OnDependencyChanged (object sender, EventArgs e)
 		{
-			if (DependencyChanged != null)
-				DependencyChanged (sender, e);
+			if (!DoOnChanged ())
+				return;
+			
+			if (DependencyChanged == null)
+				return;
+
+			foreach (EventHandler eh in DependencyChanged.GetInvocationList ())
+				eh (sender, e);
 		}
 		
 #if NET_2_0

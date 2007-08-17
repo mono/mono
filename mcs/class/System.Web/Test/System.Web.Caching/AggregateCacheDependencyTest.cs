@@ -62,7 +62,6 @@ namespace MonoTests.System.Web.Caching
 		}
 
 		[Test] // bug #82419
-		[Category ("NotWorking")]
 		public void SingleDependency ()
 		{
 			string depFile = Path.Combine (_tempFolder, "dep.tmp");

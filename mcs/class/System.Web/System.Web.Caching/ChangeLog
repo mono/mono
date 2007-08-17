@@ -1,3 +1,9 @@
+2007-08-17  Marek Habersack  <mhabersack@novell.com>
+
+	* CacheDependency.cs: use DependencyChanged as a list of events.
+	OnChanged now calls OnDependencyChanged, to notify
+	AggregateCacheDependency that it has changed. Fixes bug #82419.
+
 2007-08-14  Marek Habersack  <mhabersack@novell.com>
 
 	* AggregateCacheDependency.cs: propagate changes in any child

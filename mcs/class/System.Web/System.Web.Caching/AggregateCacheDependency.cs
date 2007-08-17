@@ -100,7 +100,7 @@ namespace System.Web.Caching
 		
 		void OnAnyChanged (object sender, EventArgs args)
 		{
-			base.NotifyDependencyChanged (this, args);
+			base.NotifyDependencyChanged (sender, args);
 		}
 	}
 }
