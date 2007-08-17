@@ -147,6 +147,8 @@ namespace System.Windows.Forms {
 				DrawToolTipEventHandler eh = (DrawToolTipEventHandler)(Events[DrawEvent]);
 				if (eh != null)
 					eh (this, e);
+				else
+					ThemeEngine.Current.DrawToolTip (e.Graphics, e.Bounds, this);
 			}
 			
 			internal virtual void OnPopup (PopupEventArgs e)
@@ -154,6 +156,8 @@ namespace System.Windows.Forms {
 				PopupEventHandler eh = (PopupEventHandler)(Events[PopupEvent]);
 				if (eh != null)
 					eh (this, e);
+				else
+					e.ToolTipSize = ThemeEngine.Current.ToolTipSize (this, Text);
 			}
 
 			private void ToolTipWindow_VisibleChanged(object sender, EventArgs e) {

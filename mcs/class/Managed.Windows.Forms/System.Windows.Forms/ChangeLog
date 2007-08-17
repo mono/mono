@@ -1,5 +1,11 @@
 2007-08-17  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ToolTip.cs: Add a hack to ToolTipWindow so it will still size and
+	paint for controls that create their own ToolTipWindow instead of
+	going through ToolTip.
+
+2007-08-17  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ToolTip.cs: Make Hide internal instead of public to match MS API.
 
 2007-08-17  Carlos Alberto Cortez <calberto.cortez@gmail.com>
