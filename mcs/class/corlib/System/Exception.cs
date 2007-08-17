@@ -52,6 +52,7 @@ namespace System
 	, _Exception
 #endif
 	{
+		#region Sync with object-internals.h
 		IntPtr [] trace_ips;
 		Exception inner_exception;
 		internal string message;
@@ -62,6 +63,8 @@ namespace System
 		int remote_stack_index;
 		internal int hresult = unchecked ((int)0x80004005);
 		string source;
+		private IDictionary _data;
+		#endregion
 
 		public Exception ()
 		{
@@ -215,8 +218,6 @@ namespace System
 		}
 
 #if NET_2_0
-		private IDictionary _data;
-
 		public virtual IDictionary Data {
 			get {
 				if (_data == null) {

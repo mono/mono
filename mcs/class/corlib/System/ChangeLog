@@ -1,3 +1,8 @@
+2007-08-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* Exception.cs: Make 1.0 and 2.0 object layout the same since this class is seen
+	by the runtime. Fixes #82459.
+
 2007-08-16  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* MonoCustomAttrs.cs: In IsDefined, throw ArgumentNullException if
