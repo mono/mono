@@ -1,5 +1,10 @@
 2007-08-17  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Form.cs: Reset is_visible back to true after OnLoad.  Setting this
+	in OnLoad should not have any effect.  [Fixes bug #82470]
+
+2007-08-17  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ToolTip.cs: Add a hack to ToolTipWindow so it will still size and
 	paint for controls that create their own ToolTipWindow instead of
 	going through ToolTip.
