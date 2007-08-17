@@ -622,16 +622,18 @@ namespace System.Windows.Forms {
 			Show (text, window, new Point (x, y), duration);
 		}
 		
-		public void Hide (IWin32Window win) 
-		{
+		public
+#else
+		internal
+#endif
+		void Hide (IWin32Window win)
+ 		{
 			timer.Stop ();
 			state = TipState.Initial;
 
 			UnhookFormEvents ();
 			tooltip_window.Visible = false;
 		}
-#endif
-
 		#endregion	// Public Instance Methods
 
 		#region Protected Instance Methods
@@ -856,7 +858,7 @@ namespace System.Windows.Forms {
 				last_control = null;
 		}
 		
-		public void Hide (Control sender)
+		private void Hide (Control sender)
 		{
 			timer.Stop();
 
