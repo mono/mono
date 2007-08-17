@@ -1,3 +1,8 @@
+2007-08-17  Mark Probst  <mark.probst@gmail.com>
+
+	* domain.c, threads.c, class-internals.h, domain-internals.h: New
+	reader-lock-free jit_info_table.
+
 2007-08-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* metadata.c (mono_type_to_unmanaged): Handle MONO_NATIVE_CUSTOM.

@@ -1,3 +1,11 @@
+2007-08-17  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c: MonoJitInfo's are freed hazardously now.  Statistics for
+	the new jit_info_table.
+
+	* driver.c: Test code for the new jit_info_table (enabled by the
+	define MONO_JIT_INFO_TABLE_TEST).
+
 2007-08-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* tramp-amd64.c (mono_arch_nullify_class_init_trampoline): Fix
