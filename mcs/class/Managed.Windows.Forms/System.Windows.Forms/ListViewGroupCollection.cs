@@ -24,12 +24,14 @@
 //
 // Author:
 //      Daniel Nauck    (dna(at)mono-project(dot)de)
+//      Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 #if NET_2_0
 
 using System;
 using System.Text;
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace System.Windows.Forms
@@ -37,12 +39,12 @@ namespace System.Windows.Forms
 	[ListBindable(false)]
 	public class ListViewGroupCollection : IList, ICollection, IEnumerable
 	{
-		private ArrayList list = null;
+		private List<ListViewGroup> list = null;
 		private ListView list_view_owner = null;
 
 		ListViewGroupCollection()
 		{
-			list = new ArrayList();
+			list = new List<ListViewGroup> ();
 		}
 
 		internal ListViewGroupCollection(ListView listViewOwner) : this()
@@ -68,7 +70,7 @@ namespace System.Windows.Forms
 
 		public void CopyTo(Array array, int index)
 		{
-			list.CopyTo(array, index);
+			((ICollection) list).CopyTo(array, index);
 		}
 
 		public int Count {
@@ -102,12 +104,12 @@ namespace System.Windows.Forms
 
             		CheckListViewItemsInGroup(value);
 			value.ListViewOwner = this.list_view_owner;
-			int index = list.Add(value);
+			list.Add (value);
 
 			if (this.list_view_owner != null)
 				list_view_owner.Redraw(true);
 
-			return index;
+			return list.Count - 1;
 		}
 
 		public ListViewGroup Add(string key, string headerText)
@@ -199,7 +201,7 @@ namespace System.Windows.Forms
 			if (list.Count <= index || index < 0)
 				return;
 
-			ListViewGroup group = (ListViewGroup) list [index];
+			ListViewGroup group = list [index];
 			group.ListViewOwner = null;
 
 			list.RemoveAt (index);
@@ -220,7 +222,7 @@ namespace System.Windows.Forms
 				if (list.Count <= index || index < 0)
 					throw new ArgumentOutOfRangeException("index");
 
-				return (ListViewGroup)list[index];
+				return list [index];
 			}
 			set {
 				if (list.Count <= index || index < 0)

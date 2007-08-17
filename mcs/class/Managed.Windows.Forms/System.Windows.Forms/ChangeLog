@@ -1,3 +1,8 @@
+2007-08-17  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListViewGroupCollection.cs: Use generic List instead of an
+	ArrayList, since this collection is 2.0 only.
+
 2007-08-17  Jeffrey Stedfast  <fejj@novell.com>
 
 	* ToolTip.cs (Hide): Made public to make the build work (should
