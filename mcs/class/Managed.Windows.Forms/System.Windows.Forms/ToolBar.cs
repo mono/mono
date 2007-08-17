@@ -709,7 +709,7 @@ namespace System.Windows.Forms
 			// Hide tooltip when left mouse button 
 			if ((tip_window != null) && (tip_window.Visible) && ((me.Button & MouseButtons.Left) == MouseButtons.Left)) {
 				TipDownTimer.Stop ();
-				tip_window.Hide ();
+				tip_window.Hide (this);
 			}
 			
 			// draw the pushed button
@@ -783,12 +783,12 @@ namespace System.Windows.Forms
 			return null;
 		}
 
-		ToolTip.ToolTipWindow tip_window = null;
+		ToolTip tip_window = null;
 		Timer tipdown_timer = null;
 
 		private void PopDownTip (object o, EventArgs args)
 		{
-			tip_window.Hide ();
+			tip_window.Hide (this);
 		}
 
 		private Timer TipDownTimer {
@@ -809,7 +809,7 @@ namespace System.Windows.Forms
 				return;
 
 			if (tip_window == null)
-				tip_window = new ToolTip.ToolTipWindow ();
+				tip_window = new ToolTip ();
 
 			ToolBarItem item = ItemAtPoint (PointToClient (Control.MousePosition));
 			current_item = item;
@@ -872,7 +872,7 @@ namespace System.Windows.Forms
 			} else {
 				if (tip_window != null) {
 					if (tip_window.Visible) {
-						tip_window.Hide ();
+						tip_window.Hide (this);
 						TipDownTimer.Stop ();
 					}
 					current_item = ItemAtPoint (loc);

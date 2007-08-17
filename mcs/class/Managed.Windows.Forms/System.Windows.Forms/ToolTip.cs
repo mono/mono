@@ -889,6 +889,10 @@ namespace System.Windows.Forms {
 			if (eh != null)
 				eh (this, e);
 		}
+		
+		internal bool Visible {
+			get { return tooltip_window.Visible; }
+		}
 		#endregion	// Private Methods
 
 		#region Events

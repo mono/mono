@@ -72,7 +72,7 @@ namespace System.Windows.Forms
 		private ToolStripRenderMode render_mode;
 		private ToolStripTextDirection text_direction;
 		private Timer tooltip_timer;
-		private ToolTip.ToolTipWindow tooltip_window;
+		private ToolTip tooltip_window;
 		private bool show_item_tool_tips;
 		private bool stretch;
 
@@ -1524,7 +1524,7 @@ namespace System.Windows.Forms
 		private void MouseLeftItem (ToolStripItem item)
 		{
 			ToolTipTimer.Stop ();
-			ToolTipWindow.Hide ();
+			ToolTipWindow.Hide (this);
 			tooltip_currently_showing = null;
 		}
 		
@@ -1541,10 +1541,10 @@ namespace System.Windows.Forms
 			}
 		}
 		
-		private ToolTip.ToolTipWindow ToolTipWindow {
+		private ToolTip ToolTipWindow {
 			get {
 				if (tooltip_window == null)
-					tooltip_window = new ToolTip.ToolTipWindow ();
+					tooltip_window = new ToolTip ();
 					
 				return tooltip_window;
 			}

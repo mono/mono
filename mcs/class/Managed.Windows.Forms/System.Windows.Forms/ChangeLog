@@ -1,5 +1,11 @@
 2007-08-17  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ToolBar.cs, ToolStrip.cs, TreeView.cs: Use a ToolTip instead of a
+	ToolTipWindow.
+	* ToolTip.cs: Add an internal Visible property to facilitate transition.
+
+2007-08-17  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DrawToolTipEventArgs.cs, DrawToolTipEventHandler.cs, PopupEventArgs.cs,
 	PopupEventHandler.cs: Make these internal for 1.1.
 	* ThemeClearlooks.cs, ThemeWin32Classic.cs: Use TextRenderer, and modify to not

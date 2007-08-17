@@ -70,7 +70,7 @@ namespace System.Windows.Forms {
 		private bool show_node_tool_tips;
 		private ImageList state_image_list;
 		private TreeNode tooltip_currently_showing;
-		private ToolTip.ToolTipWindow tooltip_window;
+		private ToolTip tooltip_window;
 #endif
 		private bool full_row_select;
 		private bool hot_tracking;
@@ -2251,14 +2251,14 @@ namespace System.Windows.Forms {
 
 		private void MouseLeftItem (TreeNode item)
 		{
-			ToolTipWindow.Hide ();
+			ToolTipWindow.Hide (this);
 			tooltip_currently_showing = null;
 		}
 
-		private ToolTip.ToolTipWindow ToolTipWindow {
+		private ToolTip ToolTipWindow {
 			get {
 				if (tooltip_window == null)
-					tooltip_window = new ToolTip.ToolTipWindow ();
+					tooltip_window = new ToolTip ();
 
 				return tooltip_window;
 			}
