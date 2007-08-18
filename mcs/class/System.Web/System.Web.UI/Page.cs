@@ -170,6 +170,7 @@ public partial class Page : TemplateControl, IHttpHandler
 		scriptManager = new ClientScriptManager (this);
 		Page = this;
 		ID = "__Page";
+		
 #if NET_2_0
 		PagesSection ps = WebConfigurationManager.GetSection ("system.web/pages") as PagesSection;
 		if (ps != null) {
@@ -1111,7 +1112,11 @@ public partial class Page : TemplateControl, IHttpHandler
 
 	private void ProcessPostData (NameValueCollection data, bool second)
 	{
-		if (data != null) {
+		NameValueCollection requestValues = _requestValueCollection == null ?
+			new NameValueCollection () :
+			_requestValueCollection;
+		
+		if (data != null && data.Count > 0) {
 			Hashtable used = new Hashtable ();
 			foreach (string id in data.AllKeys){
 				if (id == "__VIEWSTATE" || id == postEventSourceID || id == postEventArgumentID)
@@ -1138,7 +1143,7 @@ public partial class Page : TemplateControl, IHttpHandler
 						continue;
 					}
 		
-					if (pbdh.LoadPostData (real_id, data) == true) {
+					if (pbdh.LoadPostData (real_id, requestValues) == true) {
 						if (requiresPostDataChanged == null)
 							requiresPostDataChanged = new ArrayList ();
 						requiresPostDataChanged.Add (pbdh);
@@ -1162,7 +1167,7 @@ public partial class Page : TemplateControl, IHttpHandler
 				IPostBackDataHandler pbdh = FindControl (id) as IPostBackDataHandler;
 				if (pbdh != null) {			
 					_requiresPostBackCopy.Remove (id);
-					if (pbdh.LoadPostData (id, data)) {
+					if (pbdh.LoadPostData (id, requestValues)) {
 						if (requiresPostDataChanged == null)
 							requiresPostDataChanged = new ArrayList ();
 	

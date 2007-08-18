@@ -1,3 +1,13 @@
+2007-08-19  Marek Habersack  <mhabersack@novell.com>
+
+	* Page.cs: make sure not to ever pass a null value as the value
+	of the postCollection parameter to control's LoadPostData. The
+	ProcessPostData's 'data' parameter is no longer passed to
+	LoadPostData, instead we pass _requestValueCollection or an empty
+	collection if it is null. The controls should always get all the
+	request data, no matter if the 'data' parameter is null or
+	not. Possible fix for bug #82477.
+
 2007-08-18  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* MasterPage.cs: Include relative URL of MasterPage in exception
