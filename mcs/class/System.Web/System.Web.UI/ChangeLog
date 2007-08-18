@@ -1,3 +1,8 @@
+2007-08-18  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* MasterPage.cs: Include relative URL of MasterPage in exception
+	message.
+
 2007-08-18  Marek Habersack  <mhabersack@novell.com>
 
 	* MasterPage.cs: if a ContentPlaceHolder ID is not found in the

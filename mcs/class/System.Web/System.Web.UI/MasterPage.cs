@@ -104,7 +104,8 @@ namespace System.Web.UI
 				foreach (string templateName in contentTemplateCollection.Keys) {
 					if (!masterPage.ContentPlaceHolders.Contains (templateName))
 						throw new HttpException (
-							String.Format ("Cannot find ContentPlaceHolder with id '{0}'", templateName));
+							String.Format ("Cannot find ContentPlaceHolder '{0}' in the master page '{1}'",
+								templateName, masterPageFile));
 					if (masterPage.ContentTemplates[templateName] == null)
 						masterPage.ContentTemplates [templateName] = contentTemplateCollection[templateName];
 				}
