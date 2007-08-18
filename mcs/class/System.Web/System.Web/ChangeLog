@@ -1,3 +1,13 @@
+2007-08-18  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpServerUtility.cs: set the current context's path(s) to the
+	Transfer/Execute target only to retrieve the new handler, and
+	restore them immediately afterwards. It has a two-fold effect:
+	first it avoids an extra round trip to the original page which
+	called Transfer/Execute, second it makes FilePath etc. return
+	information about the original page (that is the one which called
+	Transfer/Execute). Fixes bug #82439.
+
 2007-08-14  Marek Habersack  <mhabersack@novell.com>
 
 	* XmlSiteMapProvider.cs: do not hide this_lock.

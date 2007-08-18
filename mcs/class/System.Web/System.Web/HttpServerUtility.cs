@@ -99,7 +99,7 @@ namespace System.Web {
 		internal
 #endif
 		void Execute (string path, TextWriter writer, bool preserveForm)
-		{
+		{			
 			if (path == null)
 				throw new ArgumentNullException ("path");
 
@@ -128,14 +128,17 @@ namespace System.Web {
 			 	output = response.Output;
 
 			string oldFilePath = request.FilePath;
+			request.SetCurrentExePath (UrlUtils.Combine (request.BaseVirtualDir, path));
 			IHttpHandler handler = context.ApplicationInstance.GetHandler (context);
+			request.SetCurrentExePath (oldFilePath);
+			
 			TextWriter previous = null;
 			try {
 #if NET_2_0
 				context.PushHandler (handler);
 #endif
-				request.SetCurrentExePath (UrlUtils.Combine (request.BaseVirtualDir, path));
 				previous = response.SetTextWriter (output);
+				
 				if (!(handler is IHttpAsyncHandler)) {
 					handler.ProcessRequest (context);
 				} else {
@@ -145,7 +148,6 @@ namespace System.Web {
 					asyncHandler.EndProcessRequest (ar);
 				}
 			} finally {
-				request.SetCurrentExePath (oldFilePath);
 				if (oldQuery != null && oldQuery != "" && oldQuery != request.QueryStringRaw) {
 					oldQuery = oldQuery.Substring (1); // Ignore initial '?'
 					request.QueryStringRaw = oldQuery; // which is added here.
