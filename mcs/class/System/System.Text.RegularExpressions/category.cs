@@ -206,7 +206,7 @@ namespace System.Text.RegularExpressions {
 				if (name.StartsWith ("Is"))	// remove prefix from block range
 					name = name.Substring (2);
 
-				return (Category)Enum.Parse (typeof (Category), "Unicode" + name);
+				return (Category) Enum.Parse (typeof (Category), "Unicode" + name, false);
 			}
 			catch (ArgumentException) {
 				return Category.None;
