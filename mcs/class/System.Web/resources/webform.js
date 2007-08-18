@@ -143,7 +143,7 @@ webForm.WebForm_DoPostback = function  (id, par, url, apb, pval, tf, csubm, vg)
 		}
 	}		
 	if (csubm)
-		this._form.__doPostBack (id, par);
+		this.__doPostBack (id, par);
 }
 
 webForm.WebForm_DoCallback = function (id, arg, callback, ctx, errorCallback, useAsync)
