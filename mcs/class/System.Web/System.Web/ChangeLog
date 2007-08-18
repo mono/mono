@@ -1,5 +1,9 @@
 2007-08-18  Marek Habersack  <mhabersack@novell.com>
 
+	* HttpRequest.cs: IE sends the full input file path when uploading
+	a file via the upload input control. Detect the situation and
+	strip the leading path. Fixes bug #82059.
+
 	* HttpServerUtility.cs: set the current context's path(s) to the
 	Transfer/Execute target only to retrieve the new handler, and
 	restore them immediately afterwards. It has a two-fold effect:

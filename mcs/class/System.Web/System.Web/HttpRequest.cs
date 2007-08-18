@@ -1671,7 +1671,7 @@ namespace System.Web {
 			while ((header = ReadHeaders ()) != null) {
 				if (StrUtils.StartsWith (header, "Content-Disposition:", true)) {
 					elem.Name = GetContentDispositionAttribute (header, "name");
-					elem.Filename = GetContentDispositionAttributeWithEncoding (header, "filename");      
+					elem.Filename = StripPath (GetContentDispositionAttributeWithEncoding (header, "filename"));
 				} else if (StrUtils.StartsWith (header, "Content-Type:", true)) {
 					elem.ContentType = header.Substring ("Content-Type:".Length).Trim ();
 				}
@@ -1686,7 +1686,16 @@ namespace System.Web {
 			elem.Length = pos - start;
 			return elem;
 		}
-		
+
+		string StripPath (string path)
+		{
+			if (path == null || path.Length == 0)
+				return path;
+			
+			if (path.IndexOf (":\\") != 1)
+				return path;
+			return path.Substring (path.LastIndexOf ("\\"));
+		}
 	}
 #endregion
 }
