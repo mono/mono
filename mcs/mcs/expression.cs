@@ -1635,6 +1635,9 @@ namespace Mono.CSharp {
 
 		static bool is_unsigned (Type t)
 		{
+			if (t.IsPointer)
+				return is_unsigned (t.GetElementType ());
+			
 			return (t == TypeManager.uint32_type || t == TypeManager.uint64_type ||
 				t == TypeManager.short_type || t == TypeManager.byte_type);
 		}
@@ -4042,6 +4045,19 @@ namespace Mono.CSharp {
 				ml.AddressOf (ec, mode);
 		}
 
+		public void EmitArrayArgument (EmitContext ec)
+		{
+			Type argtype = Expr.Type;
+			Expr.Emit (ec);
+				
+			if (argtype == TypeManager.uint32_type)
+				ec.ig.Emit (OpCodes.Conv_U);
+			else if (argtype == TypeManager.int64_type)
+				ec.ig.Emit (OpCodes.Conv_Ovf_I);
+			else if (argtype == TypeManager.uint64_type)
+				ec.ig.Emit (OpCodes.Conv_Ovf_I_Un);
+		}
+
 		public Argument Clone (CloneContext clonectx)
 		{
 			return new Argument (Expr.Clone (clonectx), ArgType);
@@ -5745,7 +5761,7 @@ namespace Mono.CSharp {
 			if (factor == 0)
 				throw new Exception ("unrecognized type in MakeByteBlob: " + array_element_type);
 
-			data = new byte [(count * factor + 4) & ~3];
+			data = new byte [(count * factor + 3) & ~3];
 			int idx = 0;
 
 			for (int i = 0; i < count; ++i) {
@@ -5992,17 +6008,8 @@ namespace Mono.CSharp {
 
 		void EmitArrayArguments (EmitContext ec)
 		{
-			ILGenerator ig = ec.ig;
-			
-			foreach (Argument a in arguments) {
-				Type atype = a.Type;
-				a.Emit (ec);
-
-				if (atype == TypeManager.uint64_type)
-					ig.Emit (OpCodes.Conv_Ovf_U4);
-				else if (atype == TypeManager.int64_type)
-					ig.Emit (OpCodes.Conv_Ovf_I4);
-			}
+			foreach (Argument a in arguments)
+				a.EmitArrayArgument (ec);
 		}
 		
 		public override void Emit (EmitContext ec)
@@ -7484,18 +7491,9 @@ namespace Mono.CSharp {
 		//
 		void LoadArrayAndArguments (EmitContext ec)
 		{
-			ILGenerator ig = ec.ig;
-			
 			ea.Expr.Emit (ec);
 			foreach (Argument a in ea.Arguments){
-				Type argtype = a.Expr.Type;
-				
-				a.Expr.Emit (ec);
-				
-				if (argtype == TypeManager.int64_type)
-					ig.Emit (OpCodes.Conv_Ovf_I);
-				else if (argtype == TypeManager.uint64_type)
-					ig.Emit (OpCodes.Conv_Ovf_I_Un);
+				a.EmitArrayArgument (ec);
 			}
 		}
 
