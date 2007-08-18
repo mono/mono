@@ -1,5 +1,12 @@
 2007-08-15  Jb Evain  <jbevain@novell.com>
 
+	* CodeGen/cecil.xml,
+	  Mono.Cecil.Cil/OpCodes.cs:
+		Fix bug spotted by Jesse Jones, ldelem.any has a
+		stack behavior pop of popref, popi.
+
+2007-08-15  Jb Evain  <jbevain@novell.com>
+
 	* Mono.Cecil/TypeReference.cs
 	  Mono.Cecil/TypeSpecification.cs:
 		TypeSpecification.Module return the module of the elemen

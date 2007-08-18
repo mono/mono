@@ -55,14 +55,14 @@
 		<property name="temp.dir" value="${path::combine(path::get-temp-path(), 'cecil')}" />
 		<delete dir="${temp.dir}" if="${directory::exists(temp.dir)}" />
 		<mkdir dir="${temp.dir}" />
-		
+
 		<property name="framework.dir" value="${framework::get-framework-directory(framework::get-target-framework())}" />
 		<property name="csc.exe" value="${path::combine(framework.dir, 'csc.exe')}" />
-		
+
 		<copy todir="${temp.dir}">
 			<fileset refid="all-files" />
 		</copy>
-		
+
 		<exec program="${csc.exe}" workingdir="${temp.dir}" failonerror="true">
 			<arg value="/optimize" />
 			<arg value="/debug-" />
