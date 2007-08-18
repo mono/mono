@@ -1,3 +1,8 @@
+2007-08-19  Juraj Skripsky <js@hotfeet.ch>
+
+	* GlobalAsaxCompiler.cs (ProcessObjects): Make string comparison
+	for scope case insensitive. Fixes bug #82479.
+
 2007-08-14  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateControlCompiler.cs: remove dead code.

@@ -30,6 +30,7 @@
 //
 using System;
 using System.Collections;
+using System.Globalization;
 using System.Web.UI;
 
 namespace System.Web.Compilation
@@ -80,11 +81,11 @@ namespace System.Web.Compilation
 					continue;
 				}
 				
-				if (tag.Scope == "session") {
+				if (String.Compare (tag.Scope, "session", true, CultureInfo.InvariantCulture) == 0) {
 					sessionObjectTags.Add (tag);
 					CreateApplicationOrSessionPropertyForObject (tag.Type, tag.ObjectID,
 										     false, false);
-				} else if (tag.Scope == "application") {
+				} else if (String.Compare (tag.Scope, "application", true, CultureInfo.InvariantCulture) == 0) {
 					applicationObjectTags.Add (tag);
 					CreateFieldForObject (tag.Type, tag.ObjectID);
 					CreateApplicationOrSessionPropertyForObject (tag.Type, tag.ObjectID,
