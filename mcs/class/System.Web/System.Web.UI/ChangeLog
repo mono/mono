@@ -1,3 +1,9 @@
+2007-08-18  Marek Habersack  <mhabersack@novell.com>
+
+	* MasterPage.cs: if a ContentPlaceHolder ID is not found in the
+	associated MasterPage, throw an exception. This is compatible with
+	what MS.NET does. Fixes bug #82447.
+
 2007-08-15 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* Page.cs: fixed: 

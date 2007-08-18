@@ -94,11 +94,17 @@ namespace System.Web.UI
 			}
 		}
 
-		internal static MasterPage CreateMasterPage (TemplateControl owner, HttpContext context, string masterPageFile, IDictionary contentTemplateCollection)
+		internal static MasterPage CreateMasterPage (TemplateControl owner, HttpContext context,
+							     string masterPageFile, IDictionary contentTemplateCollection)
 		{
-			MasterPage masterPage = MasterPageParser.GetCompiledMasterInstance (masterPageFile, owner.Page.MapPath (masterPageFile), context);
+			MasterPage masterPage = MasterPageParser.GetCompiledMasterInstance (masterPageFile,
+											    owner.Page.MapPath (masterPageFile),
+											    context);
 			if (contentTemplateCollection != null) {
 				foreach (string templateName in contentTemplateCollection.Keys) {
+					if (!masterPage.ContentPlaceHolders.Contains (templateName))
+						throw new HttpException (
+							String.Format ("Cannot find ContentPlaceHolder with id '{0}'", templateName));
 					if (masterPage.ContentTemplates[templateName] == null)
 						masterPage.ContentTemplates [templateName] = contentTemplateCollection[templateName];
 				}
