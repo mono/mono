@@ -1687,14 +1687,14 @@ namespace System.Web {
 			return elem;
 		}
 
-		string StripPath (string path)
+		static string StripPath (string path)
 		{
 			if (path == null || path.Length == 0)
 				return path;
 			
 			if (path.IndexOf (":\\") != 1)
 				return path;
-			return path.Substring (path.LastIndexOf ("\\"));
+			return path.Substring (path.LastIndexOf ("\\") + 1);
 		}
 	}
 #endregion

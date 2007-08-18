@@ -1,3 +1,7 @@
+2007-08-18  Juraj Skripsky <js@hotfeet.ch>
+
+	* HttpRequest.cs (StripPath): Fix off-by-one error, make static.
+
 2007-08-18  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpRequest.cs: IE sends the full input file path when uploading
