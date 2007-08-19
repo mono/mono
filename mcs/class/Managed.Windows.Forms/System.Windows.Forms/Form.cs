@@ -1452,6 +1452,7 @@ namespace System.Windows.Forms {
 					cp.ExStyle |= (int)WindowExStyles.WS_EX_DLGMODALFRAME;
 				}
 #endif
+				cp.ExStyle |= (int)WindowExStyles.WS_EX_CONTROLPARENT;
 
 				if (HelpButton && !MaximizeBox && !MinimizeBox) {
 					cp.ExStyle |= (int)WindowExStyles.WS_EX_CONTEXTHELP;
