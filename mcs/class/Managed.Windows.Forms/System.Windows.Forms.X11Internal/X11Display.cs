@@ -2639,6 +2639,9 @@ namespace System.Windows.Forms.X11Internal {
 
 		public void DrawReversibleLine (Point start, Point end, Color backColor)
 		{
+			if (backColor.GetBrightness() < 0.5)
+				backColor = Color.FromArgb(255 - backColor.R, 255 - backColor.G, 255 - backColor.B);
+
 			IntPtr gc = GetReversibleScreenGC (backColor);
 
 			Xlib.XDrawLine (display, RootWindow.Handle, gc, start.X, start.Y, end.X, end.Y);
@@ -2648,6 +2651,9 @@ namespace System.Windows.Forms.X11Internal {
 
 		public void FillReversibleRectangle (Rectangle rectangle, Color backColor)
 		{
+			if (backColor.GetBrightness() < 0.5)
+				backColor = Color.FromArgb(255 - backColor.R, 255 - backColor.G, 255 - backColor.B);
+
 			IntPtr gc = GetReversibleScreenGC (backColor);
 
 			if (rectangle.Width < 0) {
@@ -2666,6 +2672,9 @@ namespace System.Windows.Forms.X11Internal {
 
 		public void DrawReversibleFrame (Rectangle rectangle, Color backColor, FrameStyle style)
 		{
+			if (backColor.GetBrightness() < 0.5)
+				backColor = Color.FromArgb(255 - backColor.R, 255 - backColor.G, 255 - backColor.B);
+
 			IntPtr gc = GetReversibleScreenGC (backColor);
 
 			if (rectangle.Width < 0) {

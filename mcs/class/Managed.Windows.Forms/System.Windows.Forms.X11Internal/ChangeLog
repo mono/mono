@@ -1,3 +1,9 @@
+2007-08-18  Everaldo Canuto  <ecanuto@novell.com>
+
+	* X11Display.cs: Apply patch from Jurek Bartuszek to fix DrawReversibleFrame
+	and DrawReversibleLine, also apply same behavior to FillReversibleRectangle. 
+	Fixes #80877 and #79418.
+
 2007-08-17  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* X11Display.cs, X11Hwnd.cs, XplatUIX11-new.cs: Update PaintEventStart/End
