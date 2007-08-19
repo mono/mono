@@ -141,7 +141,26 @@ namespace System.Drawing {
 					return c.Name;
 			}
 
-			return String.Format ("#{0:X2}{1:X2}{2:X2}", c.R, c.G, c.B);
+			return FormatHtml (c.R, c.G, c.B);
+		}
+
+		static char GetHexNumber (int b)
+		{
+			return (char) (b > 9 ? 55 + b : 48 + b);
+		}
+
+		static string FormatHtml (int r, int g, int b)
+		{
+			char [] htmlColor = new char [7];
+			htmlColor [0] = '#';
+			htmlColor [1] = GetHexNumber ((r >> 4) & 15);
+			htmlColor [2] = GetHexNumber (r & 15);
+			htmlColor [3] = GetHexNumber ((g >> 4) & 15);
+			htmlColor [4] = GetHexNumber (g & 15);
+			htmlColor [5] = GetHexNumber ((b >> 4) & 15);
+			htmlColor [6] = GetHexNumber (b & 15);
+
+			return new string (htmlColor);
 		}
 
 		public static int ToOle (Color c)

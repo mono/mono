@@ -1,3 +1,7 @@
+2007-08-09  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* ColorTranslator.cs: optimized Html color formatting in ToHtml method
+
 2007-08-13  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* gdipFunctions.cs: Change GdipMeasureString definition to use unsafe
