@@ -1,3 +1,7 @@
+2007-08-19  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* ContextStackTest.cs: New unit tests for ContextStack.
+
 2007-07-21  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* InstanceDescriptorTest.cs: Improved ctor tests. Added tests for

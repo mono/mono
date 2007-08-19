@@ -4,9 +4,11 @@
 // Author:
 //   Alejandro Sánchez Acosta (raciel@gnome.org)
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//   Ivan N. Zlatev (contact@i-nz.net)
 //
 // (C) Alejandro Sánchez Acosta
 // (C) 2003 Andreas Nahr
+// (C) 2007 Ivan N. Zlatev
 //
 
 //
@@ -30,35 +32,33 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
 using System.Collections;
 
 namespace System.ComponentModel.Design.Serialization
 {
 	public sealed class ContextStack
 	{
-		private Stack stack;
+		private ArrayList _contextList;
 
 		public ContextStack () 
 		{
-			stack = new Stack ();
+			_contextList = new ArrayList ();
 		}
 
 		public object Current {
 			get { 
-				try {
-					return stack.Peek ();
-				}
-				catch {
-					return null;
-				}
+				if (_contextList.Count > 0)
+					return _contextList[_contextList.Count-1];
+				return null;
 			}
 		}
 
 		public object this[Type type] {
 			get {
-				foreach (object o in stack.ToArray())
-					if (o.GetType () == type)
- 						return o;
+				for (int i = _contextList.Count - 1; i >= 0; i--)
+					if (_contextList[i].GetType () == type)
+ 						return _contextList[i];
 				return null;
 			}
 		}
@@ -67,29 +67,39 @@ namespace System.ComponentModel.Design.Serialization
 			get {
 				if (level < 0)
 					throw new ArgumentException ("level has to be >= 0","level");
-				Array A = stack.ToArray();
-				if (level > (A.Length - 1))
-					return null;
-				return A.GetValue(level);
+				if (_contextList.Count > 0 && _contextList.Count > level)
+					return _contextList[_contextList.Count - 1 - level];
+				return null;
 			}
 		}
 
 		public object Pop ()
 		{
-			return stack.Pop ();
+			object o = null;
+   			if (_contextList.Count > 0) {
+   				int lastItem = _contextList.Count - 1;
+   				o = _contextList[lastItem];
+   				_contextList.RemoveAt (lastItem);
+   			}
+			return o;
 		}
 
 		public void Push (object context)
 		{
-			stack.Push (context);
+			if (context == null)
+				throw new ArgumentNullException ("context");
+
+			_contextList.Add (context);
 		}
 
 #if NET_2_0
-		[MonoNotSupported ("")]
 		public void Append (object context)
 		{
-			throw new NotImplementedException ();
+			if (context == null)
+				throw new ArgumentNullException ("context");
+			_contextList.Insert (0, context);
 		}
 #endif
 	}
 }
+

@@ -1,3 +1,7 @@
+2007-08-18  Ivan N. Zlatev <contact@i-nz.net>
+
+	* ContextStack.cs: Update to 2.0.
+
 2007-07-21  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* InstanceDescriptor.cs: Allow null members. Fixed exception messages.
