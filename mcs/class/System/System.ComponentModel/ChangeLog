@@ -1,5 +1,9 @@
 2007-08-19  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* EnumConverter.cs: Implement conversion to and from Enum[]
+
+2007-08-19  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* TypeDescriptor.cs: GetProperties should return only the last type's 
 	implementation of a property with a matching name in the base types.
 

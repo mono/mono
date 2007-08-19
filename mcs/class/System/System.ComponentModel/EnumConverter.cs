@@ -4,9 +4,11 @@
 // Authors:
 //   Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//   Ivan N. Zlatev (contact@i-nz.net)
 //
 // (C) 2002 Ximian, Inc (http://www.ximian.com)
 // (C) 2003 Andreas Nahr
+// (C) 2007 Ivan N. Zlatev
 //
 
 //
@@ -49,7 +51,7 @@ namespace System.ComponentModel
 
 		public override bool CanConvertTo (ITypeDescriptorContext context, Type destinationType)
 		{
-			if (destinationType == typeof (InstanceDescriptor))
+			if (destinationType == typeof (InstanceDescriptor) || destinationType == typeof (Enum[]))
 				return true;
 
 			return base.CanConvertTo (context, destinationType);
@@ -69,13 +71,41 @@ namespace System.ComponentModel
 				if (f == null) throw new ArgumentException (string.Format ("The value '{0}' is not a valid value for the enum '{1}'", value, type));
 				return new InstanceDescriptor (f, null);
 			}
+
+			if (destinationType == typeof (Enum[])) {
+				if (!type.IsDefined (typeof (FlagsAttribute), false)) {
+					return new Enum[] { (Enum)Enum.ToObject (type, value) };
+				} else if (Convert.ToInt64 (value, culture) == 0) {
+					return new Enum[] { (Enum)Enum.ToObject (type, value) };
+				} else {
+					long valueLong = Convert.ToInt64 (value, culture);
+					Array enumValArray = Enum.GetValues (type);
+					long[] enumValues = new long[enumValArray.Length];
+					for (int i=0; i < enumValArray.Length; i++)
+						enumValues[i] = Convert.ToInt64 (enumValArray.GetValue (i));
+
+					ArrayList enums = new ArrayList ();
+					bool interrupt = false;
+					while (!interrupt) {
+						foreach (long val in enumValues) {
+							if (val != 0 && ((val & valueLong) == val || val == valueLong)) {
+								enums.Add (Enum.ToObject (type, val));
+								valueLong &= (~val);
+							}
+						}
+						if (valueLong == 0)
+							interrupt = true;
+					}
+					return enums.ToArray (typeof(Enum));
+				}
+			}
 			
 			return base.ConvertTo (context, culture, value, destinationType);
 		}
 
 		public override bool CanConvertFrom (ITypeDescriptorContext context, Type sourceType)
 		{
-			if (sourceType == typeof (string))
+			if (sourceType == typeof (string) || sourceType == typeof (Enum[]))
 				return true;
 			return base.CanConvertFrom (context, sourceType);
 		}
@@ -84,11 +114,19 @@ namespace System.ComponentModel
 						    CultureInfo culture,
 						    object value)
 		{
-			string val = value as string;
-			if (val == null)
-				return base.ConvertFrom(context, culture, value);
+			if (value is string) {
+				string val = value as string;
+				if (val == null)
+					return base.ConvertFrom (context, culture, value);
+				return Enum.Parse (type, val, true);
+			} else if (value is Enum[]) {
+				long val = 0;
+				foreach (Enum e in (Enum[])value)
+					val |= Convert.ToInt64 (e, culture);
+				return Enum.ToObject (type, val);
+			}
 
-			return Enum.Parse (type, val, true);
+			return base.ConvertFrom (context, culture, value);
 		}
 
 		public override bool IsValid (ITypeDescriptorContext context, object value)
