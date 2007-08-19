@@ -1,3 +1,7 @@
+2007-08-19 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* AbstractDataReader.cs: optimized IndexOf in Results proprty
+
 2007-08-14 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* AbstractDBConnection.cs: performance optimization

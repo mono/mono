@@ -190,7 +190,7 @@ namespace System.Data.ProviderBase
 							if (prefetchSchema == Configuration.BooleanSetting.NotSet) {
 								AbstractDBConnection conn = (AbstractDBConnection)((ICloneable)_command.Connection);
 								string driverName = conn.JdbcConnection.getMetaData().getDriverName();
-								if (driverName.IndexOf("DB2") >= 0)
+								if (driverName.IndexOf("DB2", StringComparison.Ordinal) >= 0)
 									prefetchSchema = Configuration.BooleanSetting.True;
 							}
 
