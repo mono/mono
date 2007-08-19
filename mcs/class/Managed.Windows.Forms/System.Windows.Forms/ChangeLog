@@ -1,5 +1,9 @@
 2007-08-19  Everaldo Canuto  <ecanuto@novell.com>
 
+	* TabControl.cs: Fix regression in default padding x.
+
+2007-08-19  Everaldo Canuto  <ecanuto@novell.com>
+
 	* TabControl.cs: Fix tab page text area removing padding. Fixes #82471.
 
 2007-08-19  Everaldo Canuto  <ecanuto@novell.com>
