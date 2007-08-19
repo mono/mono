@@ -1062,6 +1062,12 @@ namespace System.Windows.Forms {
 			set {
 				opacity = value;
 
+				if (opacity < 0)
+					opacity = 0;
+
+				if (opacity > 1)
+					opacity = 1;
+
 				AllowTransparency = true;
 
 				if (IsHandleCreated) {
