@@ -1,5 +1,9 @@
 2007-08-19  Everaldo Canuto  <ecanuto@novell.com>
 
+	* FormTest.cs: Add test for opacity.
+
+2007-08-19  Everaldo Canuto  <ecanuto@novell.com>
+
 	* DataGridTableStyle.cs: An assert added to test ResetHeaderFont.
 
 2007-08-18  Rolf Bjarne Kvinge <RKvinge@novell.com> 

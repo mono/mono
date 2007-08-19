@@ -1886,6 +1886,21 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		public void Opacity ()
+		{
+			Form frm;
+			using (frm = new Form ()) {
+				Assert.AreEqual (1.0f, frm.Opacity, "#01-opacity");
+				frm.Opacity = 0.50;
+				Assert.AreEqual (0.50f, frm.Opacity, "#02-opacity");
+				frm.Opacity = -0.1f;
+				Assert.AreEqual (0, frm.Opacity, "#03-opacity");
+				frm.Opacity = 1.1f;
+				Assert.AreEqual (1, frm.Opacity, "#04-opacity");
+			}
+		}
+
+		[Test]
 		public void DisposeOwnerTest ()
 		{
 			Form f1 = new Form ();
@@ -2355,7 +2370,6 @@ namespace MonoTests.System.Windows.Forms
 		{
 			((Form)sender).Visible = false;
 		}
-
 		
 #if NET_2_0
 		[Test]
