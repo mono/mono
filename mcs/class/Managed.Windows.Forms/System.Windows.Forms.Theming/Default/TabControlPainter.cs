@@ -166,7 +166,7 @@ namespace System.Windows.Forms.Theming.Default
 		public TabControlPainter ()
 		{
 			defaultItemSize = new Size (42, 21);
-			defaultPadding = new Point (6, 3);
+			defaultPadding = new Point (8, 3);
 			selectedTabDelta = new Rectangle (2, 2, 4, 3);
 			selectedSpacing = 0;
 
@@ -186,11 +186,11 @@ namespace System.Windows.Forms.Theming.Default
 			imagePadding = new Point (2, 3);
 
 			defaultFormatting = new StringFormat();
-			defaultFormatting.Alignment = StringAlignment.Near;
+			defaultFormatting.Alignment = StringAlignment.Center;
 			defaultFormatting.LineAlignment = StringAlignment.Near;
 			defaultFormatting.FormatFlags = StringFormatFlags.NoWrap | StringFormatFlags.NoClip;
 
-			borderThickness = new Rectangle (1, 1, 3, 2);
+			borderThickness = new Rectangle (1, 1, 2, 2);
 		}
 
 		public virtual Rectangle GetLeftScrollRect (System.Windows.Forms.TabControl tab)

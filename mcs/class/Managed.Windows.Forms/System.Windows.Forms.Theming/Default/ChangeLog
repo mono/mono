@@ -1,3 +1,8 @@
+2007-08-19  Everaldo Canuto  <ecanuto@novell.com>
+
+	* TabControlPainter.cs: Fix border thickness, padding and tab text format to 
+	be horizontal centralized.
+
 2007-08-18  Everaldo Canuto  <ecanuto@novell.com>
 
 	* TabControlPainter.cs: Remove one vertical pixel from tab drawing, the 
