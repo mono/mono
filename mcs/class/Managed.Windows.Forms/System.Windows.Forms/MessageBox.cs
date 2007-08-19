@@ -116,7 +116,7 @@ namespace System.Windows.Forms
 				this.ControlBox = true;
 				this.MinimizeBox = false;
 				this.MaximizeBox = false;
-				this.ShowInTaskbar = false;
+				this.ShowInTaskbar = (Owner == null);
 				this.FormBorderStyle = FormBorderStyle.FixedDialog;
 			}
 

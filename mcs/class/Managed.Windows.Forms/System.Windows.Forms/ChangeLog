@@ -1,5 +1,10 @@
 2007-08-18  Everaldo Canuto  <ecanuto@novell.com>
 
+	* MessageBox.cs: When there is no form that invoked the MessageBox, shows
+	the MessageBox in the taskbar. Fixes #82457.
+
+2007-08-18  Everaldo Canuto  <ecanuto@novell.com>
+
 	* MessageBox.cs: Fix form size when icon is set and text height is bigger
 	than icon. Fixes #82468.
 
