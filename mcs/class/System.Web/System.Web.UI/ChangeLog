@@ -1,5 +1,10 @@
 2007-08-19  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
+	* MasterPageParser.jvm.cs: optimized GetDirectory call
+	* PageTheme.cs: optimized string formatting in CreateSkinKey
+
+2007-08-19  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
 	* Page.cs: ResetEventValidationState call moved back to
 	InternalProcessRequest
 

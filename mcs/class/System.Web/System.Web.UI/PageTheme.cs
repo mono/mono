@@ -46,7 +46,7 @@ namespace System.Web.UI {
 
 		public static object CreateSkinKey (Type controlType, string skinID)
 		{
-			return String.Format ("{0}:{1}", skinID, controlType);
+			return string.Concat (skinID, ":", controlType);
 		}
 
 		protected object Eval (string expression)

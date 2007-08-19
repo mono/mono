@@ -54,7 +54,7 @@ namespace System.Web.UI
 			else if (VirtualPathUtility.IsAppRelative (virtualPath))
 				resolvedUrl = System.Web.Util.UrlUtils.ResolveVirtualPathFromAppAbsolute (virtualPath);
 			else
-				resolvedUrl = VirtualPathUtility.Combine (VirtualPathUtility.GetDirectory (context.Request.FilePath), virtualPath);
+				resolvedUrl = VirtualPathUtility.Combine (VirtualPathUtility.GetDirectory (context.Request.FilePath, false), virtualPath);
 			Type tmpType = PageMapper.GetObjectType (context, resolvedUrl);
 			if (tmpType == null)
 				throw new InvalidOperationException ("Master page '" + virtualPath + "' not found");
