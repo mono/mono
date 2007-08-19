@@ -1,3 +1,8 @@
+2007-08-18  Everaldo Canuto  <ecanuto@novell.com>
+
+	* MessageBox.cs: Fix form size when icon is set and text height is bigger
+	than icon. Fixes #82468.
+
 2007-08-18  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* ThemeWin32Classic.cs: A FixedToolWindow has border size 3.

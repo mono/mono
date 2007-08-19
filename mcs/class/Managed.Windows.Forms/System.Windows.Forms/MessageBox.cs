@@ -209,15 +209,15 @@ namespace System.Windows.Forms
 						// Place text middle-right
 						textleft_up = new Point (icon_image.Width + space_image_text + space_border, (int)((icon_image.Height/2)-(tsize.Height/2)) + space_border);
 					} else {
-						textleft_up = new Point (icon_image.Width + space_image_text + space_border, 2 + space_border);
+						textleft_up = new Point (icon_image.Width + space_image_text + space_border, space_border);
 					}
 					if (tsize.Height < icon_image.Height)
 						tsize.Height = icon_image.Height;
 				} else {
 					tsize.Width += space_border * 2;
 					textleft_up = new Point (space_border + button_space, space_border);
-					tsize.Height += space_border * 2;
 				}
+				tsize.Height += space_border * 2;
 
 				// Now we want to know the amount of buttons
 				int buttoncount;
