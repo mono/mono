@@ -1,3 +1,8 @@
+2007-08-19  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* Page.cs: ResetEventValidationState call moved back to
+	InternalProcessRequest
+
 2007-08-19  Marek Habersack  <mhabersack@novell.com>
 
 	* Page.cs: make sure not to ever pass a null value as the value

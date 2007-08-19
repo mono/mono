@@ -1002,7 +1002,6 @@ public partial class Page : TemplateControl, IHttpHandler
 			
 			ClientScript.RegisterStartupScript (typeof (Page), "MaintainScrollPositionOnPostBackStartup", script.ToString());
 		}
-		scriptManager.ResetEventValidationState ();
 		base.Render (writer);
 	}
 #endif
@@ -1439,6 +1438,7 @@ public partial class Page : TemplateControl, IHttpHandler
 
 #if NET_2_0
 		_lifeCycle = PageLifeCycle.Render;
+		scriptManager.ResetEventValidationState ();
 #endif
 		
 		//--
