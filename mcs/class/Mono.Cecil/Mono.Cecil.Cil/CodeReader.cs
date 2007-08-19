@@ -295,14 +295,7 @@ namespace Mono.Cecil.Cil {
 			switch (eh.Type) {
 			case ExceptionHandlerType.Catch :
 				MetadataToken token = new MetadataToken (br.ReadInt32 ());
-				switch (token.TokenType) {
-				case TokenType.TypeDef:
-					eh.CatchType = m_reflectReader.GetTypeDefAt (token.RID);
-					break;
-				default:
-					eh.CatchType = m_reflectReader.GetTypeRefAt (token.RID);
-					break;
-				}
+				eh.CatchType = m_reflectReader.GetTypeDefOrRef (token, new GenericContext (body.Method));
 				break;
 			case ExceptionHandlerType.Filter :
 				eh.FilterStart = GetInstruction (body, instructions, br.ReadInt32 ());
