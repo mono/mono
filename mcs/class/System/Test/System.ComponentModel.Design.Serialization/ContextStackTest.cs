@@ -43,7 +43,6 @@ namespace MonoTests.System.ComponentModel.Design.Serialization
 	{
 
 		[Test]
-		[NUnit.Framework.Category ("inz")]
 		public void IntegrityTest ()
 		{
 			ContextStack stack = new ContextStack ();
