@@ -1,5 +1,11 @@
 2007-08-18  Everaldo Canuto  <ecanuto@novell.com>
 
+	* XplatUIX11.cs: Apply patch from Jurek Bartuszek to fix DrawReversibleFrame
+	and DrawReversibleLine, also apply same behavior to FillReversibleRectangle. 
+	Fixes #80877 and #79418.
+
+2007-08-18  Everaldo Canuto  <ecanuto@novell.com>
+
 	* MenuAPI.cs: Fix popup menu position when the size is larger than distance 
 	between position and one of the screen borders. Fixes #82349.
 

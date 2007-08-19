@@ -3324,6 +3324,9 @@ namespace System.Windows.Forms {
 
 		internal override void DrawReversibleLine(Point start, Point end, Color backColor)
 		{
+			if (backColor.GetBrightness() < 0.5)
+				backColor = Color.FromArgb(255 - backColor.R, 255 - backColor.G, 255 - backColor.B);
+
 			IntPtr gc = GetReversibleScreenGC (backColor);
 
 			XDrawLine (DisplayHandle, RootWindow, gc, start.X, start.Y, end.X, end.Y);
@@ -3333,6 +3336,9 @@ namespace System.Windows.Forms {
 
 		internal override void DrawReversibleFrame (Rectangle rectangle, Color backColor, FrameStyle style)
 		{
+			if (backColor.GetBrightness() < 0.5)
+				backColor = Color.FromArgb(255 - backColor.R, 255 - backColor.G, 255 - backColor.B);
+
 			IntPtr gc = GetReversibleScreenGC (backColor);
 
 			if (rectangle.Width < 0) {
@@ -3367,6 +3373,9 @@ namespace System.Windows.Forms {
 
 		internal override void FillReversibleRectangle (Rectangle rectangle, Color backColor) 
 		{
+			if (backColor.GetBrightness() < 0.5)
+				backColor = Color.FromArgb(255 - backColor.R, 255 - backColor.G, 255 - backColor.B);
+
 			IntPtr gc = GetReversibleScreenGC (backColor);
 
 			if (rectangle.Width < 0) {
@@ -3382,7 +3391,8 @@ namespace System.Windows.Forms {
 			XFreeGC(DisplayHandle, gc);
 		}
 
-		internal override void DrawReversibleRectangle(IntPtr handle, Rectangle rect, int line_width) {
+		internal override void DrawReversibleRectangle(IntPtr handle, Rectangle rect, int line_width)
+		{
 			IntPtr		gc;
 			Control control = Control.FromHandle(handle);
 
