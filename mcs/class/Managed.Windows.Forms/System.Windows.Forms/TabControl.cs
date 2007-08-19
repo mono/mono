@@ -1078,7 +1078,7 @@ namespace System.Windows.Forms {
 			}
 
 			if (SelectedIndex != -1) {
-				ExpandSelected (TabPages [SelectedIndex], 2, row_width - 1);
+				ExpandSelected (TabPages [SelectedIndex], 0, row_width - 1);
 			}
 		}
 		

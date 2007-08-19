@@ -1,3 +1,8 @@
+2007-08-19  Everaldo Canuto  <ecanuto@novell.com>
+
+	* TabControl.cs: Fix first tab drawing, when selected it must have x = 0
+	not 2. Fixes #82229.
+
 2007-08-18  Everaldo Canuto  <ecanuto@novell.com>
 
 	* TabControl.cs: Fix tab size when image height is less than text height.
