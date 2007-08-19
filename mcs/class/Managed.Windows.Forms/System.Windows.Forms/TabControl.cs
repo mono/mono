@@ -1091,7 +1091,7 @@ namespace System.Windows.Forms {
 				width = item_size.Width;
 			} else {			
 				width = MeasureStringWidth (DeviceContext, page.Text, Font);
-				width += (Padding.X * 2) - 2; // don't know why, but tabpages on ms.net have the right padding smaller :p
+				width += (Padding.X * 2);
 
 				if (ImageList != null && page.ImageIndex >= 0 && page.ImageIndex < ImageList.Images.Count) {
 					width += ImageList.ImageSize.Width + ThemeEngine.Current.TabControlImagePadding.X;
