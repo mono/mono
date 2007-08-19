@@ -282,9 +282,9 @@ namespace Mainsoft.Data.Jdbc.Providers
 		private static DataSourceCache _dataSourceCache = new DataSourceCache();
 
 		private readonly IDictionary _providerInfo;
-		private readonly NameValueCollection _keyMapping;
-		private readonly string[] _excludedKeys;
-		private readonly string[] _unsupportedKeys;
+		private NameValueCollection _keyMapping;
+		private string[] _excludedKeys;
+		private string[] _unsupportedKeys;
 
 		#endregion // Fields
 
@@ -293,36 +293,7 @@ namespace Mainsoft.Data.Jdbc.Providers
 		public GenericProvider(IDictionary providerInfo)
 		{
 			_providerInfo = providerInfo;
-			_keyMapping = new NameValueCollection (StringComparer.OrdinalIgnoreCase);
-			
-			// create key mappings collection
-			string keyMappingsStr = (string)_providerInfo [ConfigurationConsts.KeyMapping];
-			if (keyMappingsStr != null) {
-				string [] keyMappings = keyMappingsStr.Split (ConfigurationConsts.SemicolonArr);
-				foreach (string keyMapping in keyMappings) {
-					if (keyMapping.Length == 0)
-						continue;
-					int equalsIndex = keyMapping.IndexOf ('=');
-					string key = keyMapping.Substring (0,equalsIndex).Trim();
-					string [] mappings = keyMapping.Substring (equalsIndex + 1).Trim().Split (ConfigurationConsts.CommaArr);
-					foreach (string mapping in mappings)
-						_keyMapping.Add (key, mapping.Trim());
-				}
-			}
-
-			string keyMappingExcludesStr = (string) _providerInfo [ConfigurationConsts.KeyMappingExcludes];
-			if (keyMappingExcludesStr != null) {
-				_excludedKeys = keyMappingExcludesStr.Split (ConfigurationConsts.CommaArr);
-				for (int i = 0; i < _excludedKeys.Length; i++)
-					_excludedKeys[i] = _excludedKeys[i].Trim();
-			}
-
-			string keyMappingUnsupportedStr = (string) _providerInfo [ConfigurationConsts.KeyMappingUnsupported];
-			if (keyMappingUnsupportedStr != null) {
-				_unsupportedKeys = keyMappingUnsupportedStr.Split (ConfigurationConsts.CommaArr);
-				for (int i = 0; i < _unsupportedKeys.Length; i++)
-					_unsupportedKeys [i] = _unsupportedKeys [i].Trim ();
-			}
+			_keyMapping = null;
 		}
 
 		#endregion // Constructors
@@ -332,6 +303,17 @@ namespace Mainsoft.Data.Jdbc.Providers
 		protected IDictionary ProviderInfo
 		{
 			get { return _providerInfo; }
+		}
+
+		private NameValueCollection KeyMapping
+		{
+			get
+			{
+				if (_keyMapping == null)
+					InitKeyMapping ();
+
+				return _keyMapping;
+			}
 		}
 
 		#endregion // Properties
@@ -357,6 +339,45 @@ namespace Mainsoft.Data.Jdbc.Providers
 		public virtual IConnectionStringDictionary GetConnectionStringBuilder (string connectionString)
 		{
 			return new ConnectionStringDictionary(connectionString, _keyMapping);
+		}
+
+		private void InitKeyMapping ()
+		{
+			lock (this) {
+				if (_keyMapping != null)
+					return;
+
+				_keyMapping = new NameValueCollection (StringComparer.OrdinalIgnoreCase);
+
+				// create key mappings collection
+				string keyMappingsStr = (string) _providerInfo [ConfigurationConsts.KeyMapping];
+				if (keyMappingsStr != null) {
+					string [] keyMappings = keyMappingsStr.Split (ConfigurationConsts.SemicolonArr);
+					foreach (string keyMapping in keyMappings) {
+						if (keyMapping.Length == 0)
+							continue;
+						int equalsIndex = keyMapping.IndexOf ('=');
+						string key = keyMapping.Substring (0, equalsIndex).Trim ();
+						string [] mappings = keyMapping.Substring (equalsIndex + 1).Trim ().Split (ConfigurationConsts.CommaArr);
+						foreach (string mapping in mappings)
+							_keyMapping.Add (key, mapping.Trim ());
+					}
+				}
+
+				string keyMappingExcludesStr = (string) _providerInfo [ConfigurationConsts.KeyMappingExcludes];
+				if (keyMappingExcludesStr != null) {
+					_excludedKeys = keyMappingExcludesStr.Split (ConfigurationConsts.CommaArr);
+					for (int i = 0; i < _excludedKeys.Length; i++)
+						_excludedKeys [i] = _excludedKeys [i].Trim ();
+				}
+
+				string keyMappingUnsupportedStr = (string) _providerInfo [ConfigurationConsts.KeyMappingUnsupported];
+				if (keyMappingUnsupportedStr != null) {
+					_unsupportedKeys = keyMappingUnsupportedStr.Split (ConfigurationConsts.CommaArr);
+					for (int i = 0; i < _unsupportedKeys.Length; i++)
+						_unsupportedKeys [i] = _unsupportedKeys [i].Trim ();
+				}
+			}
 		}
 
 		#endregion // Methods

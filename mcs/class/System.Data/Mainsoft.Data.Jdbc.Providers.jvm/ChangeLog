@@ -1,5 +1,9 @@
 2007-08-19  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
+	* GenericProvider.cs: keyMapping lazy initialization
+
+2007-08-19  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
 	* GenericProvider.cs: optimized GetConnection method, used GetValue in
 	case of jndi connection string
 
