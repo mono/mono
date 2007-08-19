@@ -1,3 +1,8 @@
+2007-08-18  Everaldo Canuto  <ecanuto@novell.com>
+
+	* TabControlPainter.cs: Remove one vertical pixel from tab drawing, the 
+	bottom line was one pixel more than needed.
+
 2007-07-26  Everaldo Canuto  <ecanuto@novell.com>
 
 	* TabControlPainter.cs: Adjust vertical image position on tab. Fixes #81837.

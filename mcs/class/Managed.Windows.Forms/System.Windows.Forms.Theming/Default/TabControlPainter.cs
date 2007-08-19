@@ -340,7 +340,7 @@ namespace System.Windows.Forms.Theming.Default
 
 					case TabAlignment.Top:
 
-						dc.DrawLine (light, bounds.Left, bounds.Bottom, bounds.Left, bounds.Top + 3);
+						dc.DrawLine (light, bounds.Left, bounds.Bottom - 1, bounds.Left, bounds.Top + 3);
 						dc.DrawLine (light, bounds.Left, bounds.Top + 3, bounds.Left + 2, bounds.Top);
 						dc.DrawLine (light, bounds.Left + 2, bounds.Top, bounds.Right - 3, bounds.Top);
 
