@@ -393,7 +393,7 @@ namespace System.Windows.Forms.Theming.Default
 
 			interior = new Rectangle (bounds.Left + focusRectSpacing.X + borderThickness.Left, 
 				bounds.Top + focusRectSpacing.Y +  + borderThickness.Top,
-				bounds.Width - (focusRectSpacing.X * 2) - borderThickness.Width + tab.Padding.X, 
+				bounds.Width - (focusRectSpacing.X * 2) - borderThickness.Width, 
 				bounds.Height - (focusRectSpacing.Y * 2) - borderThickness.Height);
 
 			if (tab.DrawMode == TabDrawMode.Normal && page.Text != null) {
