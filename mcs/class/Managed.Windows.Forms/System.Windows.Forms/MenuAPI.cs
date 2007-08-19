@@ -814,7 +814,10 @@ namespace System.Windows.Forms {
 				Location = new Point (Location.X - menu.Rect.Width, Location.Y);
 			}
 			if ((Location.Y + menu.Rect.Height) > SystemInformation.WorkingArea.Height) {
-				Location = new Point (Location.X, Location.Y - menu.Rect.Height);
+				if ((Location.Y - menu.Rect.Height) > 0)
+					Location = new Point (Location.X, Location.Y - menu.Rect.Height);
+				else
+					Location = new Point (Location.X, SystemInformation.WorkingArea.Height - menu.Rect.Height);
 			}
 
 			Width = menu.Rect.Width;
