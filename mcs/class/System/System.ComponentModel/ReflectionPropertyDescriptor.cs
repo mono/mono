@@ -231,7 +231,7 @@ namespace System.ComponentModel
 				MethodInfo mi = FindPropertyMethod (component, "ShouldSerialize");
 				if (mi != null)
 					return (bool) mi.Invoke (component, null);
-				return false;
+				return Attributes.Contains (DesignerSerializationVisibilityAttribute.Content);
 			}
 
 			DefaultValueAttribute attrib = ((DefaultValueAttribute) Attributes[typeof (DefaultValueAttribute)]);

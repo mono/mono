@@ -1,5 +1,11 @@
 2007-08-19  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* ReflectionPropertyDescriptor.cs: For read-only properties,
+	ShouldSerializeValue must also check for 
+	DesignerSerializationVisibility.Content and if present return true.
+
+2007-08-19  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* EnumConverter.cs: Implement conversion to and from Enum[]
 
 2007-08-19  Ivan N. Zlatev  <contact@i-nz.net>

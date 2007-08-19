@@ -193,6 +193,18 @@ namespace MonoTests.System.ComponentModel
 				set { _prop7 = value; }
 			}
 
+			[ReadOnly (true)]
+			[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+			public string Prop8 {
+				get { return null; }
+			}
+
+			[ReadOnly (true)]
+			[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+			public string Prop9 {
+				get { return null; }
+			}
+
 			public bool SerializeProp3 {
 				get { return _serializeProp3; }
 				set { _serializeProp3 = value; }
@@ -241,6 +253,11 @@ namespace MonoTests.System.ComponentModel
 			public bool ShouldSerializeProp7 ()
 			{
 				return _serializeProp7;
+			}
+
+			public bool ShouldSerializeProp8 ()
+			{
+				return false;
 			}
 
 			private string _prop1;
@@ -412,6 +429,8 @@ namespace MonoTests.System.ComponentModel
 			PropertyDescriptor prop5PD = properties ["Prop5"];
 			PropertyDescriptor prop6PD = properties ["Prop6"];
 			PropertyDescriptor prop7PD = properties ["Prop7"];
+			PropertyDescriptor prop8PD = properties ["Prop8"];
+			PropertyDescriptor prop9PD = properties ["Prop9"];
 
 			Assert.IsFalse (prop1PD.ShouldSerializeValue (test), "#A1");
 			Assert.IsTrue (prop2PD.ShouldSerializeValue (test), "#A2");
@@ -448,6 +467,11 @@ namespace MonoTests.System.ComponentModel
 			Assert.IsTrue (prop7PD.ShouldSerializeValue (test), "#C7");
 			test.Prop7 = "good";
 			Assert.IsTrue (prop7PD.ShouldSerializeValue (test), "#C8");
+
+			// has both DesignerSerializationVisibility.Content and ShouldSerialize { return false }
+			Assert.IsFalse (prop8PD.ShouldSerializeValue (test), "#D1");
+			// has DesignerSerializationVisibility.Content, no ShouldSerialize
+			Assert.IsTrue (prop9PD.ShouldSerializeValue (test), "#D2");
 		}
 
 		[Test]

@@ -1,3 +1,9 @@
+2007-08-19  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* ReflectionPropertyDescriptorTests.cs: For read-only properties,
+	ShouldSerializeValue must also check for 
+	DesignerSerializationVisibility.Content and if present return true.
+
 2007-08-19  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TypeDescriptorTests: Removed Ivan's local Category.
