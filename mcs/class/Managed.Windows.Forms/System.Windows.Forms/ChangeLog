@@ -1,5 +1,10 @@
 2007-08-18  Everaldo Canuto  <ecanuto@novell.com>
 
+	* TabControl.cs: Fix tab size when image height is less than text height.
+	Partially fixes #81837.
+
+2007-08-18  Everaldo Canuto  <ecanuto@novell.com>
+
 	* Form.cs: Add WS_EX_CONTROLPARENT to forms to make it selectable using 
 	"alt + tab". It works only for Win32, for X11 theres no way to remove window
 	from taskbar and keep it on "alt_tab". Fixes #81722.

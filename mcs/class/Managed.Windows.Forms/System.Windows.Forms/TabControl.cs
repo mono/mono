@@ -1095,7 +1095,10 @@ namespace System.Windows.Forms {
 
 				if (ImageList != null && page.ImageIndex >= 0 && page.ImageIndex < ImageList.Images.Count) {
 					width += ImageList.ImageSize.Width + ThemeEngine.Current.TabControlImagePadding.X;
-					item_size.Height = ImageList.ImageSize.Height + ThemeEngine.Current.TabControlImagePadding.Y;
+
+					int image_size = ImageList.ImageSize.Height + ThemeEngine.Current.TabControlImagePadding.Y;
+					if (item_size.Height < image_size)
+						item_size.Height = image_size;
 				}
 			}
 
