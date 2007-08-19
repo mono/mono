@@ -387,7 +387,6 @@ namespace MonoTests.System.ComponentModel
 	}
 
 	[TestFixture]
-	[NUnit.Framework.Category ("inz")]
 	public class TypeDescriptorTests
 	{
 		MyComponent com = new MyComponent ();
