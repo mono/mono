@@ -1,3 +1,7 @@
+2006-08-19  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* UrlUtils.cs: optimized string.Replace in RemoveDoubleSlashes
+
 2007-03-21  Konstantin Triger <kostat@mainsoft.com>
 
 	AltSerialization.cs: refactoring for Serialize/Deserialize functionality.

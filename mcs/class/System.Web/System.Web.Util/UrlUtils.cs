@@ -30,6 +30,7 @@
 //
 
 using System.Web.SessionState;
+using System.Text;
 namespace System.Web.Util {
 	
 	internal class UrlUtils {
@@ -199,13 +200,33 @@ namespace System.Web.Util {
 		internal static string RemoveDoubleSlashes (string input)
 		{
 			// MS VirtualPathUtility removes duplicate '/'
-			string str = input;
-			string x;
-			while ((x = str.Replace ("//", "/")) != str) {
-				str = x;
+
+			int index = -1;
+			for (int i = 1; i < input.Length; i++)
+				if (input [i] == '/' && input [i - 1] == '/') {
+					index = i - 1;
+					break;
+				}
+
+			if (index == -1) // common case optimization
+				return input;
+
+			StringBuilder sb = new StringBuilder (input.Length);
+			sb.Append (input, 0, index);
+
+			for (int i = index; i < input.Length; i++) {
+				if (input [i] == '/') {
+					int next = i + 1;
+					if (next < input.Length && input [next] == '/')
+						continue;
+					sb.Append ('/');
+				}
+				else {
+					sb.Append (input [i]);
+				}
 			}
 
-			return str;
+			return sb.ToString ();
 		}
 #endif
 
