@@ -1,3 +1,8 @@
+2007-08-19  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* GenericProvider.cs: optimized GetConnection method, used GetValue in
+	case of jndi connection string
+
 2007-08-14  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* GenericProvider.cs: performance optimizations

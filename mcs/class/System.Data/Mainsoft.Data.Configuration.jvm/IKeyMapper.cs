@@ -38,5 +38,6 @@ namespace Mainsoft.Data.Configuration
 	public interface IConnectionStringDictionary : IDictionary
 	{
 		string GetConnectionStringKey (string key);
+		object GetValue (string key);
 	}
 }

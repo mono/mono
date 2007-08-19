@@ -339,13 +339,13 @@ namespace Mainsoft.Data.Jdbc.Providers
 		#region Methods
 
 		public virtual java.sql.Connection GetConnection (IConnectionStringDictionary conectionStringBuilder)
-		{	
-			string dataSourceJndi = (string)conectionStringBuilder["jndi-datasource-name"];
+		{
+			string dataSourceJndi = (string) conectionStringBuilder.GetValue ("jndi-datasource-name");
 
 			if (dataSourceJndi != null && dataSourceJndi.Length > 0) {
 
-				string namingProviderUrl = (string)conectionStringBuilder["naming-provider-url"];
-				string namingFactoryInitial = (string)conectionStringBuilder["naming-factory-initial"];
+				string namingProviderUrl = (string) conectionStringBuilder.GetValue ("naming-provider-url");
+				string namingFactoryInitial = (string) conectionStringBuilder.GetValue ("naming-factory-initial");
 				DataSource ds = _dataSourceCache.GetDataSource(dataSourceJndi,namingProviderUrl,namingFactoryInitial);
 				return ds.getConnection();
 			}

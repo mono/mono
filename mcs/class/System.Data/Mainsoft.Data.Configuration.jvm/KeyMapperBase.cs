@@ -70,8 +70,7 @@ namespace Mainsoft.Data.Configuration
 
 			if (_mapping != null)
 			for(int i = 0, c = _mapping.Keys.Count; i < c; i++) {
-				if (string.Compare(key, _mapping.Keys[i], true,
-					CultureInfo.InvariantCulture) == 0) {
+				if (string.Compare(key, _mapping.Keys[i], StringComparison.OrdinalIgnoreCase) == 0) {
 					string[] values = _mapping.GetValues(i);
 					for(int j = 0; j < values.Length; j++) {
 						string actualKey = values[j];
@@ -87,6 +86,11 @@ namespace Mainsoft.Data.Configuration
 				return key;
 
 			return null;
+		}
+
+		public object GetValue (string key)
+		{
+			return _dictionary [key];
 		}
 
 		public static IDictionary Parse (string connectionString)
