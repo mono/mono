@@ -138,6 +138,7 @@ System.ComponentModel/UInt16ConverterTests.cs
 System.ComponentModel/UInt32ConverterTests.cs
 System.ComponentModel/UInt64ConverterTests.cs
 System.ComponentModel.Design/ServiceContainerTest.cs
+System.ComponentModel.Design.Serialization/ContextStackTest.cs
 System.ComponentModel.Design.Serialization/InstanceDescriptorTest.cs
 System.Configuration/ApplicationSettingsBaseTest.cs
 System.Configuration/LocalFileSettingsProviderTest.cs

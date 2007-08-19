@@ -248,6 +248,14 @@ namespace MonoTests.System.ComponentModel
 			get { return prop; }
 			set { prop = value; }
 		}
+
+
+		[DescriptionAttribute ("test derived")]
+		public new string AnotherProperty
+		{
+			get { return base.AnotherProperty; }
+			set { base.AnotherProperty = value; }
+		}
 	}
 	
 
@@ -379,6 +387,7 @@ namespace MonoTests.System.ComponentModel
 	}
 
 	[TestFixture]
+	[NUnit.Framework.Category ("inz")]
 	public class TypeDescriptorTests
 	{
 		MyComponent com = new MyComponent ();
@@ -720,6 +729,19 @@ namespace MonoTests.System.ComponentModel
 			col = TypeDescriptor.GetProperties (nfscom, filter);
 			Assert.IsNotNull (col.Find ("TestProperty", true), "#F1");
 			Assert.IsNull (col.Find ("AnotherProperty", true), "#F2");
+
+
+			// GetProperties should return only the last type's implementation of a
+			// property with a matching name in the base types. E.g in the case where 
+			// the "new" keyword is used.
+			//
+			PropertyDescriptorCollection derivedCol = TypeDescriptor.GetProperties (typeof(MyDerivedComponent));
+			Assert.IsNotNull (derivedCol["AnotherProperty"].Attributes[typeof (DescriptionAttribute)], "#G1");
+			int propsFound = 0;
+			foreach (PropertyDescriptor props in derivedCol)
+				if (props.Name == "AnotherProperty")
+					propsFound++;
+			Assert.AreEqual (1, propsFound, "#G2");
 		}
 
 		[Test]
