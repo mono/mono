@@ -166,7 +166,7 @@ namespace System.Windows.Forms.Theming.Default
 		public TabControlPainter ()
 		{
 			defaultItemSize = new Size (42, 21);
-			defaultPadding = new Point (8, 3);
+			defaultPadding = new Point (6, 3);
 			selectedTabDelta = new Rectangle (2, 2, 4, 3);
 			selectedSpacing = 0;
 
@@ -393,7 +393,7 @@ namespace System.Windows.Forms.Theming.Default
 
 			interior = new Rectangle (bounds.Left + focusRectSpacing.X + borderThickness.Left, 
 				bounds.Top + focusRectSpacing.Y +  + borderThickness.Top,
-				bounds.Width - (focusRectSpacing.X * 2) - borderThickness.Width, 
+				bounds.Width - (focusRectSpacing.X * 2) - borderThickness.Width + tab.Padding.X, 
 				bounds.Height - (focusRectSpacing.Y * 2) - borderThickness.Height);
 
 			if (tab.DrawMode == TabDrawMode.Normal && page.Text != null) {

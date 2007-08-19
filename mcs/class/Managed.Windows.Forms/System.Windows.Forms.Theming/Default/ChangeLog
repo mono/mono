@@ -1,5 +1,9 @@
 2007-08-19  Everaldo Canuto  <ecanuto@novell.com>
 
+	* TabControlPainter.cs: Fix regression in default padding x.
+
+2007-08-19  Everaldo Canuto  <ecanuto@novell.com>
+
 	* TabControlPainter.cs: Fix border thickness, padding and tab text format to 
 	be horizontal centralized. Fixes #82471.
 
