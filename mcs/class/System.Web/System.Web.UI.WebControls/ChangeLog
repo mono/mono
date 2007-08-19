@@ -1,3 +1,7 @@
+2007-08-19  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* BoundField.cs: FormatDataValue, refactored multiple use of ToString
+
 2007-08-14  Marek Habersack  <mhabersack@novell.com>
 
 	* ObjectDataSourceView.cs: remove unused variable.
