@@ -109,7 +109,7 @@ namespace System.Windows.Forms
 			gridline_color = def_gridline_color;
 			gridline_style = DataGridLineStyle.Solid;
 			header_backcolor = def_header_backcolor;
-			header_font = def_header_font;
+			header_font = null;
 			link_color = def_link_color;
 			link_hovercolor = def_link_hovercolor;
 			preferredcolumn_width = ThemeEngine.Current.DataGridPreferredColumnWidth;
@@ -268,13 +268,18 @@ namespace System.Windows.Forms
 		[AmbientValue(null)]
 		[Localizable(true)]
 		public Font HeaderFont {
-			get { return header_font; }
+			get {
+				if (header_font != null)
+					return header_font;
+
+				if (DataGrid != null)
+					return DataGrid.Font;
+
+				return def_header_font;
+			}
 			set {
 				if (is_default)
 					throw new ArgumentException ("Cannot change the value of this property on the default DataGridTableStyle.");
-
-				if (value == null)
-					value = def_header_font;
 
 				if (header_font != value) {
 					header_font = value;

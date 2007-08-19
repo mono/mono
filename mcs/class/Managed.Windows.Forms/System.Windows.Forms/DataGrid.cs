@@ -1064,6 +1064,8 @@ namespace System.Windows.Forms
 
 		public void EndInit ()
 		{
+			if (grid_style != null)
+				grid_style.DataGrid = this;
 		}
 
 		public void Expand (int row)
@@ -2006,7 +2008,7 @@ namespace System.Windows.Forms
 
 		public void ResetHeaderFont ()
 		{
-			grid_style.HeaderFont = default_style.HeaderFont;
+			grid_style.HeaderFont = null;
 		}
 
 		public void ResetHeaderForeColor ()

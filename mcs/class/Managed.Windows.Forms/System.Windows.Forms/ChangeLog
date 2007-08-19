@@ -1,5 +1,15 @@
 2007-08-19  Everaldo Canuto  <ecanuto@novell.com>
 
+	[Fixes #80118]
+	* DataGridTableStyle.cs: Default header font is now null, on getter it 
+	returns datagrid font when is null. On setter permits null.
+
+	* DataGrid.cs:
+	- When ResetHeaderFont set header font to null.
+	- On EndInit set grid_style.DataGrid.
+
+2007-08-19  Everaldo Canuto  <ecanuto@novell.com>
+
 	* TabControl.cs: Fix regression in default padding x.
 
 2007-08-19  Everaldo Canuto  <ecanuto@novell.com>
