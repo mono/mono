@@ -194,21 +194,23 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[NUnit.Framework.Category ("NotWorking")]
 		public void HeaderFont ()
 		{
 			DataGrid dg = new DataGrid ();
 			dg.Font = new Font (dg.Font, FontStyle.Italic);
 			Assert.AreSame (dg.HeaderFont, dg.Font, "#1");
 
-			// explicitly setting HeaderFont removes link between HeaderFont
-			// and Font
 			dg.HeaderFont = dg.Font;
 			Assert.AreSame (dg.HeaderFont, dg.Font, "#2");
+
 			dg.Font = new Font (dg.Font, FontStyle.Regular);
 			Assert.IsTrue (dg.HeaderFont.Italic, "#3");
 			Assert.IsFalse (dg.Font.Italic, "#4");
+
+			dg.ResetHeaderFont ();
+			Assert.AreSame (dg.HeaderFont, dg.Font, "#5");
 		}
+
 
 		[Test]
 		public void TestParentRowsLabelStyleChangedEvent ()

@@ -1,3 +1,7 @@
+2007-08-19  Everaldo Canuto  <ecanuto@novell.com>
+
+	* DataGridTableStyle.cs: An assert added to test ResetHeaderFont.
+
 2007-08-18  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* FormTest.cs: Added test for bug 82358.
