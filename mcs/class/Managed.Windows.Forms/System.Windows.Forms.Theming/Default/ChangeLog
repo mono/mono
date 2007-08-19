@@ -1,5 +1,9 @@
 2007-07-26  Everaldo Canuto  <ecanuto@novell.com>
 
+	* TabControlPainter.cs: Adjust vertical image position on tab. Fixes #81837.
+
+2007-07-26  Everaldo Canuto  <ecanuto@novell.com>
+
 	* TabControlPainter.cs: Uses str_rect to draw text since it take in account
 	the image size. Fixes #81836.
 

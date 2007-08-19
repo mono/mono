@@ -419,7 +419,8 @@ namespace System.Windows.Forms.Theming.Default
 					Rectangle str_rect = interior;
 
 					if (tab.ImageList != null && page.ImageIndex >= 0 && page.ImageIndex < tab.ImageList.Images.Count) {
-						tab.ImageList.Draw (dc, new Point (interior.X, interior.Y), page.ImageIndex);
+						int image_y = interior.Y + (interior.Height - tab.ImageList.ImageSize.Height) / 2;
+						tab.ImageList.Draw (dc, new Point (interior.X, image_y), page.ImageIndex);
 						str_rect.X += tab.ImageList.ImageSize.Width + 2;
 						str_rect.Width -= tab.ImageList.ImageSize.Width + 2;
 					}
