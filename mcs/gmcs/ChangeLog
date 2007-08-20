@@ -1,3 +1,7 @@
+2007-08-20  Marek Safar  <marek.safar@gmail.com>
+
+	* cs-parser.jay: An anonymous type can be empty.
+
 2007-08-17  Marek Safar  <marek.safar@gmail.com>
 
 	* linq.cs: MethodGroupExpr update.

@@ -3511,7 +3511,8 @@ anonymous_type_expression
 	;
 
 anonymous_type_parameters
-	: anonymous_type_parameter
+	: { $$ = null; }
+	| anonymous_type_parameter
 	  {
 	  	ArrayList a = new ArrayList (4);
 	  	a.Add ($1);
