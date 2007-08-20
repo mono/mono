@@ -112,10 +112,14 @@ namespace System.Collections.Generic {
 		void AddCollection (ICollection <T> collection)
 		{
 			int collectionCount = collection.Count;
+			if (collectionCount == 0)
+				return;
+
 			GrowIfNeeded (collectionCount);			 
 			collection.CopyTo (_items, _size);
 			_size += collectionCount;
 		}
+
 		void AddEnumerable (IEnumerable <T> enumerable)
 		{
 			foreach (T t in enumerable)

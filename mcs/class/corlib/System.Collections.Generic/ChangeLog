@@ -1,3 +1,8 @@
+2007-08-20  Jb Evain  <jbevain@novell.com>
+
+	* List.cs (AddCollection): return early if the collection
+	to be added is empty.
+
 2007-08-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Dictionary.cs : [Comvisible(true)]->[ComVisible(false)].
