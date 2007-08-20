@@ -50,16 +50,24 @@ namespace Mono.CSharp.Linq
 			enumerator.MoveNext ();
 			LocalInfo li = (LocalInfo)enumerator.Current;
 
-			VarExpr var = li.Type as VarExpr;
-			if (var != null) {
-				li.Type = var.ResolveLValue (ec, from, var.Location);
-				if (li.Type == null)
-					return null;
-				li.VariableType = li.Type.Type;
+			Parameter clause_parameter;
+			if (li.Type == ImplicitArgument.Instance) {
+				clause_parameter = new ImplicitLambdaParameter (li.Name, li.Location);
+			} else {
+				clause_parameter = new Parameter (li.Type, li.Name, Parameter.Modifier.NONE, null, li.Location);
 			}
 
-			Expression e = query.BuildQueryClause (ec, this, from, li);
-			return e.Resolve (ec);
+			Expression e = query.BuildQueryClause (ec, this, from, clause_parameter);
+			e = e.Resolve (ec);
+
+			if (e == null)
+				return null;
+
+			// TODO: really ?
+			if (li.VariableType == null)
+				li.VariableType = ec.ReturnType;
+
+			return e;
 		}
 
 		public override void Emit (EmitContext ec)
@@ -76,23 +84,23 @@ namespace Mono.CSharp.Linq
 
 		protected abstract string MethodName { get; }
 
-		// TODO: Linq methods are context specific
 		protected MethodGroupExpr MethodGroup {
 			get {
-				MethodGroupExpr method_group = (MethodGroupExpr)methods [MethodName];
-				if (method_group != null)
-					return method_group;
+				//
+				// Even if C# spec indicates that LINQ methods are context specific
+				// in reality they are hardcoded
+				//				
+				MemberList ml = (MemberList)methods [MethodName];
+				if (ml == null) {
+					if (enumerable_class == null)
+						enumerable_class = TypeManager.CoreLookupType ("System.Linq", "Enumerable");
 
-				if (enumerable_class == null)
-					enumerable_class = TypeManager.CoreLookupType ("System.Linq", "Enumerable");
-
-				MemberList ml = TypeManager.FindMembers (enumerable_class,
-					MemberTypes.Method, BindingFlags.Static | BindingFlags.Public,
-					Type.FilterName, MethodName);
-
-				method_group = new MethodGroupExpr (ArrayList.Adapter (ml), enumerable_class, loc);
-				//methods.Add (MethodName, method_group);
-				return method_group;
+					ml = TypeManager.FindMembers (enumerable_class,
+						MemberTypes.Method, BindingFlags.Static | BindingFlags.Public,
+						Type.FilterName, MethodName);
+				}
+				
+				return new MethodGroupExpr (ArrayList.Adapter (ml), enumerable_class, loc);
 			}
 		}
 	}
@@ -118,12 +126,10 @@ namespace Mono.CSharp.Linq
 			throw new NotSupportedException ();
 		}
 
-		public Expression BuildQueryClause (EmitContext ec, QueryExpression top, Expression from, LocalInfo li)
+		public Expression BuildQueryClause (EmitContext ec, QueryExpression top, Expression from, Parameter parameter)
 		{
-			// TODO: An anonymous method is not enough to infer implicitly typed arguments,
-			// we need lambda expression here
-			Parameters parameters = new Parameters (new Parameter (li.Type, li.Name, Parameter.Modifier.NONE, null, loc));
-			AnonymousMethodExpression ame = new AnonymousMethodExpression (
+			Parameters parameters = new Parameters (parameter);
+			LambdaExpression ame = new LambdaExpression (
 				null, null, top.Host,
 				parameters,
 				top.Block, loc);
@@ -132,7 +138,7 @@ namespace Mono.CSharp.Linq
 
 			expr = new Invocation (MethodGroup, CreateArguments (ame, from));
 			if (Next != null)
-				return Next.BuildQueryClause (ec, top, this, li);
+				return Next.BuildQueryClause (ec, top, this, parameter);
 
 			return expr;
 		}
@@ -194,7 +200,7 @@ namespace Mono.CSharp.Linq
 			
 			// A query can be optimized when selector is not group by specific
 			if (!element_selector.Equals (from)) {
-				AnonymousMethodExpression am_element = new AnonymousMethodExpression (
+				LambdaExpression am_element = new LambdaExpression (
 					null, null, ame.Host, ame.Parameters, ame.Container, loc);
 				am_element.Block = new ToplevelBlock (ame.Parameters, loc);
 				am_element.Block.AddStatement (new Return (element_selector, loc));
