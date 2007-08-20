@@ -1,3 +1,7 @@
+2007-08-20  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* EnumConverterTests.cs: Added tests for EnumConverter.
+
 2007-08-19  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* ReflectionPropertyDescriptorTests.cs: For read-only properties,

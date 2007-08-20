@@ -76,9 +76,10 @@ namespace System.ComponentModel
 				return ((InstanceDescriptor) value).Invoke ();
 			}
 			if (value == null)
-				throw new NotSupportedException ("Cannot convert from null");
-			throw new NotSupportedException (this.ToString() + " cannot be created from '" +
-						         value.GetType().ToString() + "'");
+				throw new NotSupportedException (this.GetType ().Name
+					+ " cannot convert from (null).");
+			throw new NotSupportedException (this.GetType ().Name + 
+				" cannot be created from '" + value.GetType().ToString() + "'");
 		}
 
 		public object ConvertFromInvariantString (string text)
@@ -124,7 +125,13 @@ namespace System.ComponentModel
 				return String.Empty;
 			}
 
-			throw new NotSupportedException ("Conversion not supported");
+			if (value == null)
+				value = "(null)";
+
+			throw new NotSupportedException (string.Format (
+				CultureInfo.InvariantCulture, "'{0}' is unable "
+				+ "to convert '{1}' to '{2}'", this.GetType ().Name,
+				value, destinationType.FullName));
 		}
 
 		public string ConvertToInvariantString (object value)

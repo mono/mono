@@ -51,8 +51,13 @@ namespace System.ComponentModel
 
 		public override bool CanConvertTo (ITypeDescriptorContext context, Type destinationType)
 		{
-			if (destinationType == typeof (InstanceDescriptor) || destinationType == typeof (Enum[]))
+			if (destinationType == typeof (InstanceDescriptor))
 				return true;
+
+#if NET_2_0
+			if (destinationType == typeof (Enum[]))
+				return true;
+#endif
 
 			return base.CanConvertTo (context, destinationType);
 		}
@@ -62,23 +67,35 @@ namespace System.ComponentModel
 						  object value,
 						  Type destinationType)
 		{
-			if (destinationType == typeof (string))
-				if (value != null)
-					return Enum.Format (type, value, "G");
-					
-			if (destinationType == typeof (InstanceDescriptor) && type.IsInstanceOfType (value)) {
-				FieldInfo f = type.GetField (value.ToString ());
-				if (f == null) throw new ArgumentException (string.Format ("The value '{0}' is not a valid value for the enum '{1}'", value, type));
-				return new InstanceDescriptor (f, null);
-			}
+			if (destinationType == typeof (string) && value != null) {
+				// we need to be able to convert enum names,
+				// integral values and other enum fields
+				if (value is IConvertible) {
+					Type underlyingType = Enum.GetUnderlyingType (type);
+					if (underlyingType != value.GetType ()) {
+						value = ((IConvertible) value).ToType (
+							underlyingType, culture);
+					}
+				}
 
-			if (destinationType == typeof (Enum[])) {
+				if (!IsFlags && !IsValid (context, value))
+					throw CreateValueNotValidException (value);
+
+				return Enum.Format (type, value, "G");
+			} else if (destinationType == typeof (InstanceDescriptor) && value != null) {
+				string fieldName = ConvertToString (context,
+					culture, value);
+				FieldInfo f = type.GetField (fieldName);
+				if (f == null)
+					throw CreateValueNotValidException (value);
+				return new InstanceDescriptor (f, null);
+#if NET_2_0
+			} else if (destinationType == typeof (Enum[]) && value != null) {
 				if (!type.IsDefined (typeof (FlagsAttribute), false)) {
-					return new Enum[] { (Enum)Enum.ToObject (type, value) };
-				} else if (Convert.ToInt64 (value, culture) == 0) {
-					return new Enum[] { (Enum)Enum.ToObject (type, value) };
+					return new Enum[] { (Enum) Enum.ToObject (type, value) };
 				} else {
-					long valueLong = Convert.ToInt64 (value, culture);
+					long valueLong = Convert.ToInt64 (
+						(Enum) value, culture);
 					Array enumValArray = Enum.GetValues (type);
 					long[] enumValues = new long[enumValArray.Length];
 					for (int i=0; i < enumValArray.Length; i++)
@@ -87,17 +104,27 @@ namespace System.ComponentModel
 					ArrayList enums = new ArrayList ();
 					bool interrupt = false;
 					while (!interrupt) {
+						// interrupt the loop unless we find a match to avoid
+						// looping indefinitely
+						interrupt = true;
 						foreach (long val in enumValues) {
 							if (val != 0 && ((val & valueLong) == val || val == valueLong)) {
 								enums.Add (Enum.ToObject (type, val));
 								valueLong &= (~val);
+								interrupt = false;
 							}
 						}
-						if (valueLong == 0)
+						if (valueLong == 0) // nothing left to do
 							interrupt = true;
 					}
+
+					// add item for remainder
+					if (valueLong != 0)
+						enums.Add (Enum.ToObject (type, valueLong));
+
 					return enums.ToArray (typeof(Enum));
 				}
+#endif
 			}
 			
 			return base.ConvertTo (context, culture, value, destinationType);
@@ -105,8 +132,14 @@ namespace System.ComponentModel
 
 		public override bool CanConvertFrom (ITypeDescriptorContext context, Type sourceType)
 		{
-			if (sourceType == typeof (string) || sourceType == typeof (Enum[]))
+			if (sourceType == typeof (string))
 				return true;
+
+#if NET_2_0
+			if (sourceType == typeof (Enum[]))
+				return true;
+#endif
+
 			return base.CanConvertFrom (context, sourceType);
 		}
 
@@ -116,14 +149,24 @@ namespace System.ComponentModel
 		{
 			if (value is string) {
 				string val = value as string;
-				if (val == null)
-					return base.ConvertFrom (context, culture, value);
+#if NET_2_0
+				try {
+					return Enum.Parse (type, val, true);
+				} catch (Exception ex) {
+					throw new FormatException (val + " is " +
+						"not a valid value for " +
+						type.Name, ex);
+				}
+#else
 				return Enum.Parse (type, val, true);
+#endif
+#if NET_2_0
 			} else if (value is Enum[]) {
 				long val = 0;
 				foreach (Enum e in (Enum[])value)
 					val |= Convert.ToInt64 (e, culture);
 				return Enum.ToObject (type, val);
+#endif
 			}
 
 			return base.ConvertFrom (context, culture, value);
@@ -141,7 +184,7 @@ namespace System.ComponentModel
 
 		public override bool GetStandardValuesExclusive (ITypeDescriptorContext context)
 		{
-			return !(type.IsDefined (typeof (FlagsAttribute), false));
+			return !IsFlags;
 		}
 
 		public override StandardValuesCollection GetStandardValues (ITypeDescriptorContext context)
@@ -167,6 +210,21 @@ namespace System.ComponentModel
 			set { stdValues = value; }
 		}
 
+		ArgumentException CreateValueNotValidException (object value)
+		{
+			string msg = string.Format (CultureInfo.InvariantCulture,
+				"The value '{0}' is not a valid value for the " +
+				"enum '{1}'", value, type.Name);
+			return new ArgumentException (msg);
+		}
+
+		bool IsFlags {
+			get {
+				return (type.IsDefined (typeof (FlagsAttribute),
+					false));
+			}
+		}
+
 		private class EnumComparer : IComparer
 		{
 			int IComparer.Compare (object compareObject1, object compareObject2) 
@@ -181,4 +239,3 @@ namespace System.ComponentModel
 	}
 
 }
-

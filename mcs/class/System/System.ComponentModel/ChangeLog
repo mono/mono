@@ -1,3 +1,13 @@
+2007-08-20  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* EnumConverter.cs: Conversion to and from Enum [] is 2.0 only. 
+	Modified conversion to string to support enum names and integral
+	values, and throw ArgumentException if value is not valid.
+	For conversion to InstanceDescriptor, use ConvertToString to get name
+	of field. Avoid endless loop when converting to Enum [].
+	* ToolboxItemFilterType.cs: Spaces to tabs.
+	* TypeConverter.cs: Improve exception messages (to match MS).
+
 2007-08-19  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* ReflectionPropertyDescriptor.cs: For read-only properties,

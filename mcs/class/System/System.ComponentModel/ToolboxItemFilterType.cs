@@ -33,7 +33,7 @@ namespace System.ComponentModel
 #if !NET_2_0
 	[Serializable]
 #endif
-        public enum ToolboxItemFilterType
+	public enum ToolboxItemFilterType
 	{
 		Allow,
 		Custom,
