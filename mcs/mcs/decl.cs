@@ -51,7 +51,8 @@ namespace Mono.CSharp {
 				    TypeArguments args, Location loc)
 			: this (left, name, is_double_colon, loc)
 		{
-			this.TypeArguments = args;
+			if (args != null && args.Count > 0)
+				this.TypeArguments = args;
 		}
 
 		public MemberName (string name)

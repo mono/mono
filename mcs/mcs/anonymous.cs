@@ -1876,7 +1876,9 @@ namespace Mono.CSharp {
 			//
 			AnonymousTypeClass a_type = new AnonymousTypeClass (parent.NamespaceEntry.SlaveDeclSpace,
 				new MemberName (name, new TypeArguments (loc, t_args), loc), parameters, loc);
-			a_type.SetParameterInfo (null);
+
+			if (parameters.Count > 0)
+				a_type.SetParameterInfo (null);
 
 			Constructor c = new Constructor (a_type, name, Modifiers.PUBLIC,
 				new Parameters (ctor_params), null, loc);
@@ -1947,7 +1949,12 @@ namespace Mono.CSharp {
 				Mono.CSharp.Parameters.EmptyReadOnlyParameters, GetDebuggerHiddenAttribute ());
 
 			ToplevelBlock equals_block = new ToplevelBlock (equals.Parameters, loc);
-			ConstructedType current_type = new ConstructedType (TypeBuilder, TypeParameters, loc);
+			TypeExpr current_type;
+			if (IsGeneric)
+				current_type = new ConstructedType (TypeBuilder, TypeParameters, loc);
+			else
+				current_type = new TypeExpression (TypeBuilder, loc);
+
 			equals_block.AddVariable (current_type, "other", loc);
 			LocalVariableReference other_variable = new LocalVariableReference (equals_block, "other", loc);
 
@@ -1955,7 +1962,7 @@ namespace Mono.CSharp {
 				new SimpleName ("System", loc), "Collections", loc), "Generic", loc);
 
 			Expression rs_equals = null;
-			Expression string_concat = null;
+			Expression string_concat = new StringConstant ("<empty type>", loc);
 			Expression rs_hashcode = new IntConstant (-2128831035, loc);
 			for (int i = 0; i < parameters.Count; ++i) {
 				AnonymousTypeParameter p = (AnonymousTypeParameter) parameters [i];
@@ -2016,9 +2023,10 @@ namespace Mono.CSharp {
 					new As (equals_block.GetParameterReference ("obj", loc),
 						current_type, loc), loc)));
 
-			equals_block.AddStatement (new Return (new Binary (Binary.Operator.LogicalAnd,
-				new Binary (Binary.Operator.Inequality, other_variable, new NullLiteral (loc)),
-					rs_equals), loc));
+			Expression equals_test = new Binary (Binary.Operator.Inequality, other_variable, new NullLiteral (loc));
+			if (rs_equals != null)
+				equals_test = new Binary (Binary.Operator.LogicalAnd, equals_test, rs_equals);
+			equals_block.AddStatement (new Return (equals_test, loc));
 
 			equals.Block = equals_block;
 			equals.ResolveMembers ();

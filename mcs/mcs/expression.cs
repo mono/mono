@@ -8821,8 +8821,9 @@ namespace Mono.CSharp {
 
 	public class AnonymousTypeDeclaration : Expression
 	{
-		readonly ArrayList parameters;
+		ArrayList parameters;
 		readonly TypeContainer parent;
+		static readonly ArrayList EmptyParameters = new ArrayList (0);
 
 		public AnonymousTypeDeclaration (ArrayList parameters, TypeContainer parent, Location loc)
 		{
@@ -8831,9 +8832,24 @@ namespace Mono.CSharp {
 			this.loc = loc;
 		}
 
-		AnonymousTypeClass CreateAnonymousType ()
+		protected override void CloneTo (CloneContext clonectx, Expression target)
 		{
-			AnonymousTypeClass type = AnonymousTypeClass.Create (parent, parameters, loc);
+			if (parameters == null)
+				return;
+
+			AnonymousTypeDeclaration t = (AnonymousTypeDeclaration) target;
+			t.parameters = new ArrayList (parameters.Count);
+			foreach (AnonymousTypeParameter atp in parameters)
+				t.parameters.Add (atp.Clone (clonectx));
+		}
+
+		AnonymousTypeClass CreateAnonymousType (ArrayList parameters)
+		{
+			AnonymousTypeClass type = RootContext.ToplevelTypes.GetAnonymousType (parameters);
+			if (type != null)
+				return type;
+
+			type = AnonymousTypeClass.Create (parent, parameters, loc);
 			if (type == null)
 				return null;
 
@@ -8848,11 +8864,19 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
+			AnonymousTypeClass anonymous_type;
+
+			if (parameters == null) {
+				anonymous_type = CreateAnonymousType (EmptyParameters);
+				return new New (new TypeExpression (anonymous_type.TypeBuilder, loc),
+					null, loc).Resolve (ec);
+			}
+
 			bool error = false;
 			ArrayList arguments = new ArrayList (parameters.Count);
 			TypeExpression [] t_args = new TypeExpression [parameters.Count];
 			for (int i = 0; i < parameters.Count; ++i) {
-				Expression e = ((AnonymousTypeParameter)parameters [i]).Resolve (ec);
+				Expression e = ((AnonymousTypeParameter) parameters [i]).Resolve (ec);
 				if (e == null) {
 					error = true;
 					continue;
@@ -8865,17 +8889,14 @@ namespace Mono.CSharp {
 			if (error)
 				return null;
 
-			AnonymousTypeClass anonymous_type = RootContext.ToplevelTypes.GetAnonymousType (parameters);
-			if (anonymous_type == null) {
-				anonymous_type = CreateAnonymousType ();
-				if (anonymous_type == null)
-					return null;
-			}
+			anonymous_type = CreateAnonymousType (parameters);
+			if (anonymous_type == null)
+				return null;
 
 			ConstructedType te = new ConstructedType (anonymous_type.TypeBuilder,
 				new TypeArguments (loc, t_args), loc);
 
-			return new New (te, arguments, loc).Resolve (ec); 
+			return new New (te, arguments, loc).Resolve (ec);
 		}
 
 		public override void Emit (EmitContext ec)
@@ -8887,13 +8908,19 @@ namespace Mono.CSharp {
 	public class AnonymousTypeParameter : Expression
 	{
 		public readonly string Name;
-		readonly Expression initializer;
+		Expression initializer;
 
 		public AnonymousTypeParameter (Expression initializer, string name, Location loc)
 		{
 			this.Name = name;
 			this.loc = loc;
 			this.initializer = initializer;
+		}
+
+		protected override void CloneTo (CloneContext clonectx, Expression target)
+		{
+			AnonymousTypeParameter t = (AnonymousTypeParameter) target;
+			t.initializer = initializer.Clone (clonectx);
 		}
 
 		public override bool Equals (object o)

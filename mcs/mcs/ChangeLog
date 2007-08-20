@@ -1,5 +1,16 @@
 2007-08-20  Marek Safar  <marek.safar@gmail.com>
 
+	* anonymous.cs (AnonymousTypeClass): An anonymous type can be empty.
+	
+	* decl.cs (MemberName): Ignore generic type with no generic arguments. 
+	
+	* expression.cs (AnonymousTypeDeclaration): An anonymous type can be
+	empty. Add cloning suport.
+	
+	* roottypes.cs (GetAnonymousType): Fixed argument comparison logic.
+
+2007-08-20  Marek Safar  <marek.safar@gmail.com>
+
 	* convert.cs, ecore.cs, expression.cs, literal.cs: Use factory method 
 	to create EmptyCast. It handles EmptyConstantCast specialization for
 	constants.

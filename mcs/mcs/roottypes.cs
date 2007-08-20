@@ -50,7 +50,7 @@ namespace Mono.CSharp
 
 		public AnonymousTypeClass GetAnonymousType (ArrayList parameters)
 		{
-			ArrayList candidates = (ArrayList)anonymous_types [parameters.Count];
+			ArrayList candidates = (ArrayList) anonymous_types [parameters.Count];
 			if (candidates == null)
 				return null;
 
@@ -61,7 +61,7 @@ namespace Mono.CSharp
 						break;
 				}
 
-				if (i == candidates.Count)
+				if (i == parameters.Count)
 					return at;
 			}
 
