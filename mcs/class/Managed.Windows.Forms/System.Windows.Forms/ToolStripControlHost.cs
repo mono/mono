@@ -209,7 +209,7 @@ namespace System.Windows.Forms
 		
 		[DefaultValue ("")]
 		public override string Text {
-			get { return base.Text; }
+			get { return control.Text; }
 			set {
 				base.Text = value;
 				control.Text = value;

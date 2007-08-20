@@ -86,7 +86,7 @@ namespace System.Windows.Forms
 		[MonoTODO ("Stub, not implemented")]
 		public Stream DocumentStream {
 			get { return null; }
-			set { throw new NotSupportedException (); }
+			set {  }
 		}
 
 		[MonoTODO ("Stub, not implemented")]

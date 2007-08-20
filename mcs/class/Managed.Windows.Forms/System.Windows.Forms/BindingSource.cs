@@ -293,8 +293,11 @@ namespace System.Windows.Forms {
 
 		[Browsable (false)]
 		public virtual object this [int index] {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return list[index]; }
+			set
+			{
+				list[index] = value;
+			}
 		}
 
 		[Browsable (false)]
@@ -514,7 +517,7 @@ namespace System.Windows.Forms {
 
 		protected override void Dispose (bool disposing)
 		{
-			throw new NotImplementedException ();
+			base.Dispose (disposing);
 		}
 
 		public void EndEdit ()
@@ -534,7 +537,7 @@ namespace System.Windows.Forms {
 
 		public virtual IEnumerator GetEnumerator ()
 		{
-			throw new NotImplementedException ();
+			return this.List.GetEnumerator ();
 		}
 
 		public virtual PropertyDescriptorCollection GetItemProperties (PropertyDescriptor[] listAccessors)

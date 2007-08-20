@@ -110,9 +110,6 @@ namespace System.Windows.Forms {
 
 		internal int AddInternal (DataGridViewRow dataGridViewRow, bool sharable)
 		{
-			if (dataGridView.DataSource != null) {
-				throw new InvalidOperationException ("DataSource of DataGridView is not null.");
-			}
 			if (dataGridView.Columns.Count == 0) {
 				throw new InvalidOperationException ("DataGridView has no columns.");
 			}
@@ -155,6 +152,9 @@ namespace System.Windows.Forms {
 
 		public virtual int Add (DataGridViewRow dataGridViewRow)
 		{
+			if (dataGridView.DataSource != null) {
+				throw new InvalidOperationException ("DataSource of DataGridView is not null.");
+			}
 			return AddInternal (dataGridViewRow, true);
 		}
 		
@@ -233,6 +233,9 @@ namespace System.Windows.Forms {
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public virtual void AddRange (params DataGridViewRow[] dataGridViewRows)
 		{
+			if (dataGridView.DataSource != null) {
+				throw new InvalidOperationException ("DataSource of DataGridView is not null.");
+			}
 			raiseEvent = false;
 			int count = 0;
 			int lastIndex = -1;

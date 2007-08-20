@@ -25,14 +25,26 @@
 #if NET_2_0
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace System.Windows.Forms
 {
 	[MonoTODO ("Needs Implementation")]
 	public sealed class HtmlDocument
 	{
+		#region Methods
+		public HtmlElement GetElementById (string id)
+		{
+			return new HtmlElement ();
+		}
+		#endregion
+
+		#region Properties
+		[MonoTODO ("Needs Implementation")]
+		public HtmlElementCollection All
+		{
+			get { throw new NotImplementedException (); }
+		}
+		#endregion
 	}
 }
 

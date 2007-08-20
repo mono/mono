@@ -1,3 +1,19 @@
+2007-08-19  Andreia Gaita  <avidigal@novell.com>
+
+	* BindingSource.cs: Implement this, dispose and getenumerator.
+	* DataGridViewRowCollection.cs: Move the InvalidOperationException
+	out of AddInternal, throw it only on public Add calls. The 
+	UsingWebBrowser sample was blowing up with this when setting the
+	DataSource after adding DataBindings, so it's likely that .net
+	only throws this exception when Add is called directly.	
+	
+	* ToolStripControlHost.cs: Return the hosted control's text
+	property, and not the ToolStripItem one (it would always return
+	the initial value).
+	
+	* HtmlDocument.cs: Implement GetElementById and All
+	* WebBrowser.cs: Remove exception on set_DocumentStream.	
+
 2007-08-19  Everaldo Canuto  <ecanuto@novell.com>
 
 	* Form.cs: Fix the max and min value for opacity (0~1).
