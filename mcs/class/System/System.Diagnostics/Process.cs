@@ -503,12 +503,15 @@ namespace System.Diagnostics {
 			}
 		}
 
-		[MonoTODO]
+		/* the meaning of type is as follows: 0: user, 1: system, 2: total */
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern static long Times (IntPtr handle, int type);
+
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription ("The amount of processing time spent in the OS core for this process.")]
 		public TimeSpan PrivilegedProcessorTime {
 			get {
-				return(new TimeSpan(0));
+				return new TimeSpan (Times (process_handle, 1));
 			}
 		}
 
@@ -673,21 +676,19 @@ namespace System.Diagnostics {
 			}
 		}
 
-		[MonoTODO]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription ("The total CPU time spent for this process.")]
 		public TimeSpan TotalProcessorTime {
 			get {
-				return(new TimeSpan(0));
+				return new TimeSpan (Times (process_handle, 2));
 			}
 		}
 
-		[MonoTODO]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription ("The CPU time spent for this process in user mode.")]
 		public TimeSpan UserProcessorTime {
 			get {
-				return(new TimeSpan(0));
+				return new TimeSpan (Times (process_handle, 0));
 			}
 		}
 
