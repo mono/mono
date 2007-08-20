@@ -2903,7 +2903,7 @@ namespace System.Windows.Forms {
 		{
 			AutoResizeColumnsInternal ();
 			OnColumnAdded (e);
-			PrepareEditingRow (false);
+			PrepareEditingRow (false, true);
 		}
 
 		protected virtual void OnColumnAdded (DataGridViewColumnEventArgs e)
@@ -4011,7 +4011,7 @@ namespace System.Windows.Forms {
 			OnCellValueChanged(e);
 			
 			if (editing_row != null && e.RowIndex == editing_row.Index) {
-				PrepareEditingRow (true);
+				PrepareEditingRow (true, false);
 			}
 		}
 
@@ -4195,18 +4195,25 @@ namespace System.Windows.Forms {
 			return result;
 		}
 
-		private void PrepareEditingRow (bool cell_changed)
+		private void PrepareEditingRow (bool cell_changed, bool column_changed)
 		{
 			bool show = false;
 			
 			show = ColumnCount > 0 && AllowUserToAddRows;
-			
+
 			if (!show && editing_row != null) {
 				Rows.Remove (editing_row);
 				editing_row = null;
 			} else if (show) {
-				if (editing_row != null && cell_changed) {
-					editing_row = null; // The row changed, it's no longer an editing row.
+				if (editing_row != null) {
+					if (cell_changed) {
+						// The row changed, it's no longer an editing row.
+						editing_row = null;
+					} else if (column_changed) {
+						// The number of columns has changed, we need a new editing row.
+						Rows.Remove (editing_row);
+						editing_row = null;
+					}
 				}
 				if (editing_row == null) {
 					editing_row = RowTemplateFull;

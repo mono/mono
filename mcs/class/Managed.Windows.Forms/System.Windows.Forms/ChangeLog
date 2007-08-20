@@ -1,5 +1,10 @@
 2007-08-20  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* DataGridView.cs: If a column has been added, recreate the editing row.
+	  Fixes #82226.
+
+2007-08-20  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* TextControl.cs: Use Math.Max instead of Math.Min when deciding the length
 	  of the tag to draw. Makes disappearing text show up again.
 

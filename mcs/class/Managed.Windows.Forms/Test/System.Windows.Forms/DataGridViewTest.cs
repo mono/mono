@@ -68,6 +68,35 @@ namespace MonoTests.System.Windows.Forms {
 			}
 		}
 
+		[Test] // bug 82226
+		public void EditingRowAfterAddingColumns ()
+		{
+			using (DataGridView _dataGridView = new DataGridView ()) {
+				DataGridViewTextBoxColumn _nameTextBoxColumn;
+				DataGridViewTextBoxColumn _firstNameTextBoxColumn;
+				// 
+				// _nameTextBoxColumn
+				// 
+				_nameTextBoxColumn = new DataGridViewTextBoxColumn ();
+				_nameTextBoxColumn.HeaderText = "Name";
+				_dataGridView.Columns.Add (_nameTextBoxColumn);
+				// 
+				// _firstNameTextBoxColumn
+				// 
+				_firstNameTextBoxColumn = new DataGridViewTextBoxColumn ();
+				_firstNameTextBoxColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+				_firstNameTextBoxColumn.HeaderText = "First Name";
+				_dataGridView.Columns.Add (_firstNameTextBoxColumn);
+
+				_dataGridView.Rows.Add ("de Icaza", "Miguel");
+				_dataGridView.Rows.Add ("Toshok", "Chris");
+				_dataGridView.Rows.Add ("Harper", "Jackson");
+				
+				Assert.AreEqual (4, _dataGridView.RowCount, "#01");
+				Assert.AreEqual (2, _dataGridView.Rows [3].Cells.Count, "#02");
+			}
+		}
+
 		[Test]
 		public void bug_81918 ()
 		{

@@ -1,5 +1,9 @@
 2007-08-20  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* DataGridViewTest.cs: Added EditingRowAfterAddingColumns.
+
+2007-08-20  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* StatusBarPanelTest.cs: Added IconWidth.
 
 2007-08-19  Everaldo Canuto  <ecanuto@novell.com>
