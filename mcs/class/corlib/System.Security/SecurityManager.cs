@@ -736,7 +736,7 @@ namespace System.Security {
 		}
 
 #if NET_2_1
-		private static void MethodAccessException (MethodInfo caller, MethodInfo callee)
+		private static void MethodAccessException (IntPtr caller, IntPtr callee)
 		{
 			throw new MethodAccessException (Locale.GetText ("Method call not allowed."));
 		}

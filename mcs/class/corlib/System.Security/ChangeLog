@@ -1,5 +1,11 @@
 2007-08-20  Mark Probst  <mark.probst@gmail.com>
 
+	* SecurityManager.cs: Changed arguments of MethodAccessException
+	to IntPtr, to avoid having to embed reference object values in the
+	native code.
+
+2007-08-20  Mark Probst  <mark.probst@gmail.com>
+
 	* SecurityManager.cs: Added two methods needed for CoreCLR
 	security.
 
