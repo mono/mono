@@ -1,3 +1,12 @@
+2007-08-20  Marek Habersack  <mhabersack@novell.com>
+
+	* MasterPage.cs: use the place holder IDs collection instead of
+	the placholder collection to see if we have the place holder in
+	the master page. Fixes bug #82485.
+
+	* MasterPageParser.cs: store the content place holder ids in the
+	internal cache to gain access to them when needed.
+
 2007-08-19  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* MasterPageParser.jvm.cs: optimized GetDirectory call

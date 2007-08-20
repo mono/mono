@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Web.Util;
 using System.IO;
@@ -48,7 +49,8 @@ namespace System.Web.UI
 		Hashtable definedContentTemplates = new Hashtable ();
 		Hashtable templates = new Hashtable ();
 		ArrayList placeholders = new ArrayList ();
-
+		List <string> placeholderIds;
+		
 		string parentMasterPageFile = null;
 		MasterPage parentMasterPage;
 
@@ -93,20 +95,26 @@ namespace System.Web.UI
 				return parentMasterPage;
 			}
 		}
-
+		
+		internal void SetPlaceHolderIds (List <string> ids)
+		{
+			placeholderIds = ids;
+		}
+		
 		internal static MasterPage CreateMasterPage (TemplateControl owner, HttpContext context,
 							     string masterPageFile, IDictionary contentTemplateCollection)
 		{
 			MasterPage masterPage = MasterPageParser.GetCompiledMasterInstance (masterPageFile,
 											    owner.Page.MapPath (masterPageFile),
 											    context);
+			List <string> phids = masterPage.placeholderIds;			
 			if (contentTemplateCollection != null) {
 				foreach (string templateName in contentTemplateCollection.Keys) {
-					if (!masterPage.ContentPlaceHolders.Contains (templateName))
+					if (phids != null && !phids.Contains (templateName))
 						throw new HttpException (
 							String.Format ("Cannot find ContentPlaceHolder '{0}' in the master page '{1}'",
 								templateName, masterPageFile));
-					if (masterPage.ContentTemplates[templateName] == null)
+					if (masterPage.ContentTemplates [templateName] == null)
 						masterPage.ContentTemplates [templateName] = contentTemplateCollection[templateName];
 				}
 			}

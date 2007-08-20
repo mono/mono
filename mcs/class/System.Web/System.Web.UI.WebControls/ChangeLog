@@ -1,3 +1,9 @@
+2007-08-20  Marek Habersack  <mhabersack@novell.com>
+
+	* ContentPlaceHolderBuilder.cs: store place holder id in the
+	parser's internal place holder id list for later reference. Fixes
+	bug #82485.
+
 2007-08-19  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* BoundField.cs: FormatDataValue, refactored multiple use of ToString

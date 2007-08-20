@@ -35,9 +35,33 @@ using System.Collections;
 using System.Web.UI.WebControls;
 
 namespace System.Web.UI.WebControls
-{
+{	
 	internal class ContentPlaceHolderBuilder: ControlBuilder
 	{
+		public override void Init (TemplateParser parser,
+					   ControlBuilder parentBuilder,
+					   Type type,
+					   string tagName,
+					   string ID,
+					   IDictionary attribs)
+		{
+			string id = null, s;
+			foreach (object k in attribs.Keys) {
+				s = k as string;
+				if (String.IsNullOrEmpty (s))
+					continue;
+				if (String.Compare (s, "id", StringComparison.OrdinalIgnoreCase) == 0) {
+					id = attribs [s] as string;
+					break;
+				}
+			}
+			base.Init (parser, parentBuilder, type, tagName, ID, attribs);
+			MasterPageParser mpp = parser as MasterPageParser;
+			if (mpp == null || String.IsNullOrEmpty (id))
+				return;
+			
+			mpp.AddContentPlaceHolderId (id);
+		}
 	}
 }
 

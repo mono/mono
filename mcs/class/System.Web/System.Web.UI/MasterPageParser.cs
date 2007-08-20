@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Web;
 using System.Web.Compilation;
@@ -42,16 +43,23 @@ namespace System.Web.UI
 	internal sealed class MasterPageParser: UserControlParser
 	{
 		Type masterType;
-
+		List <string> contentPlaceHolderIds;
+		string cacheEntryName;
+		
 		internal MasterPageParser (string virtualPath, string inputFile, HttpContext context)
 		: base (virtualPath, inputFile, context, "System.Web.UI.MasterPage")
 		{
+			this.cacheEntryName = String.Format ("@@MasterPagePHIDS:{0}:{1}", virtualPath, inputFile);
+			
+			contentPlaceHolderIds = HttpRuntime.InternalCache.Get (this.cacheEntryName) as List <string>;
 		}
 		
 		public static MasterPage GetCompiledMasterInstance (string virtualPath, string inputFile, HttpContext context)
 		{
 			MasterPageParser mpp = new MasterPageParser (virtualPath, inputFile, context);
-			return (MasterPage) mpp.GetCompiledInstance ();
+			MasterPage mp = (MasterPage) mpp.GetCompiledInstance ();
+			mp.SetPlaceHolderIds (mpp.contentPlaceHolderIds);
+			return mp;
 		}
 
 		public static Type GetCompiledMasterType (string virtualPath, string inputFile, HttpContext context)
@@ -59,6 +67,7 @@ namespace System.Web.UI
 			MasterPageParser mpp = new MasterPageParser (virtualPath, inputFile, context);
 			return mpp.CompileIntoType ();
 		}
+		
 		internal override void HandleOptions (object obj)
 		{
 			base.HandleOptions (obj);
@@ -66,7 +75,6 @@ namespace System.Web.UI
 			MasterPage mp = (MasterPage)obj;
 			mp.MasterPageFile = MasterPageFile;
 		}
-
 
 		internal override void AddDirective (string directive, Hashtable atts)
 		{
@@ -88,6 +96,16 @@ namespace System.Web.UI
 				base.AddDirective (directive, atts);
 		}
 
+		internal void AddContentPlaceHolderId (string id)
+		{
+			if (contentPlaceHolderIds == null) {
+				contentPlaceHolderIds = new List <string> (1);
+				HttpRuntime.InternalCache.Insert (cacheEntryName, contentPlaceHolderIds);
+			}
+			
+			contentPlaceHolderIds.Add (id);
+		}
+		
 		internal Type MasterType {
 			get { return masterType; }
 		}
