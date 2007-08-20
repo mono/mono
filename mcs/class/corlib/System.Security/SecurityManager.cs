@@ -735,6 +735,18 @@ namespace System.Security {
 			throw new SecurityException (message, an, granted, refused, method, SecurityAction.InheritanceDemand, null, null, null);
 		}
 
+#if NET_2_1
+		private static void MethodAccessException (MethodInfo caller, MethodInfo callee)
+		{
+			throw new MethodAccessException (Locale.GetText ("Method call not allowed."));
+		}
+
+		private static void VerificationException ()
+		{
+			throw new VerificationException (Locale.GetText ("Unsafe code encountered."));
+		}
+#endif
+
 		// internal - get called by the class loader
 
 		// Called when

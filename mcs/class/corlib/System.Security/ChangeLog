@@ -1,3 +1,8 @@
+2007-08-20  Mark Probst  <mark.probst@gmail.com>
+
+	* SecurityManager.cs: Added two methods needed for CoreCLR
+	security.
+
 2007-08-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SecureString.cs : commenting out internal call. It somehow seems
