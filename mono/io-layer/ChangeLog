@@ -1,3 +1,7 @@
+2007-08-20  Wade Berrier  <wberrier@novell.com>
+
+	* processes.c: include sys/resource.h for rusage to fix 
+	mac 10.3 build
 
 Mon Aug 20 12:36:42 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
