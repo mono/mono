@@ -1,5 +1,15 @@
 2007-08-20  Mark Probst  <mark.probst@gmail.com>
 
+	* class.c: Removed class_security_level() and moved it to
+	security-core-clr.c.
+
+	* security-core-clr.c, security-core-clr.h: class_security_level()
+	is now public and renamed to mono_security_core_clr_class_level().
+	It also looks for security attributes in the classes a class is
+	nested in.
+
+2007-08-20  Mark Probst  <mark.probst@gmail.com>
+
 	* security-core-clr.c, security-core-clr.h: CoreCLR security
 	utility functions.
 
