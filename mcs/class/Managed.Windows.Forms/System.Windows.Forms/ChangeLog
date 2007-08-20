@@ -1,3 +1,9 @@
+2007-08-20  Everaldo Canuto  <ecanuto@novell.com>
+
+	* XplatUIX11.cs: Apply patch from #81588, it makes use of PointerMotionHintMask
+	flag to make fast handle of mouse events, without this the mouse move is
+	handled in some manner, whether it is a mouse move or not. Fixes #81588.
+
 2007-08-20  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: When doing layout calculations don't use a ref

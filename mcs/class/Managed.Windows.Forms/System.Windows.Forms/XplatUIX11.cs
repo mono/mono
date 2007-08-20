@@ -226,6 +226,7 @@ namespace System.Windows.Forms {
 						   EventMask.ExposureMask |
 						   EventMask.FocusChangeMask |
 						   EventMask.PointerMotionMask | 
+						   EventMask.PointerMotionHintMask | 
 						   EventMask.SubstructureNotifyMask);
 
 		static readonly object lockobj = new object ();
@@ -3860,6 +3861,18 @@ namespace System.Windows.Forms {
 							}
 						}
 
+						if (xevent.MotionEvent.is_hint != 0)
+						{
+							IntPtr root, child;
+							int mask;
+							XQueryPointer (DisplayHandle, xevent.AnyEvent.window,
+											out root, out child,
+											out xevent.MotionEvent.x_root, 
+											out xevent.MotionEvent.y_root,
+											out xevent.MotionEvent.x,      
+											out xevent.MotionEvent.y, out mask);
+						}
+
 						msg.message = Msg.WM_MOUSEMOVE;
 						msg.wParam = GetMousewParam(0);
 						msg.lParam = (IntPtr) (xevent.MotionEvent.y << 16 | xevent.MotionEvent.x & 0xFFFF);
@@ -4395,7 +4408,7 @@ namespace System.Windows.Forms {
 				XGrabPointer(DisplayHandle, hwnd.client_window, false, 
 					EventMask.ButtonPressMask | EventMask.ButtonMotionMask |
 					EventMask.ButtonReleaseMask | EventMask.PointerMotionMask | 
-					EventMask.LeaveWindowMask,
+					EventMask.PointerMotionHintMask | EventMask.LeaveWindowMask,
 					GrabMode.GrabModeAsync, GrabMode.GrabModeAsync, confine_to_window, IntPtr.Zero, IntPtr.Zero);
 			}
 		}
@@ -4494,6 +4507,7 @@ namespace System.Windows.Forms {
 				XChangeActivePointerGrab (DisplayHandle,
 						EventMask.ButtonMotionMask |
 						EventMask.PointerMotionMask |
+						EventMask.PointerMotionHintMask |
 						EventMask.ButtonPressMask |
 						EventMask.ButtonReleaseMask,
 						cursor, IntPtr.Zero);
