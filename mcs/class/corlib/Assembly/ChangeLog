@@ -1,5 +1,10 @@
 2007-08-20  Jb Evain  <jbevain@novell.com>
 
+	* AssemblyInfo.cs: agclr doesn't need to
+	be friend anymore.
+
+2007-08-20  Jb Evain  <jbevain@novell.com>
+
 	* AssemblyInfo.cs: System.Silverlight doesn't need to
 	be friend anymore.
 
