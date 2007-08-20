@@ -1,5 +1,10 @@
 2007-08-19  Andreia Gaita  <avidigal@novell.com>
 
+	* Added HtmlElement.cs, HtmlElementCollection.cs, 
+	  HtmlElementEventArgs.cs, HtmlElementEventHandler.cs
+	  
+2007-08-19  Andreia Gaita  <avidigal@novell.com>
+
 	* BindingSource.cs: Implement this, dispose and getenumerator.
 	* DataGridViewRowCollection.cs: Move the InvalidOperationException
 	out of AddInternal, throw it only on public Add calls. The 
