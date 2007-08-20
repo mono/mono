@@ -4,7 +4,7 @@ include ../../build/rules.make
 
 LIBRARY = System.Core.dll
 
-LIB_MCS_FLAGS = -langversion:linq -unsafe -d:LIBC /r:$(corlib)
+LIB_MCS_FLAGS = -langversion:linq -unsafe -d:LIBC -d:NET_3_5 /r:$(corlib)
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
 # This is a .NET > 2.0 only assembly

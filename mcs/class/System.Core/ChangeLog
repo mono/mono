@@ -1,3 +1,7 @@
+2007-08-20  Marek Safar  <marek.safar@gmail.com>
+
+	* Makefile: Hardcoded 3.5 define for now.
+
 2007-08-13  Federico Di Gregorio <fog@initd.org>
 
 	* Added Test/ directory, modified Makefile to build and execute them.
