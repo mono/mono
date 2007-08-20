@@ -199,6 +199,20 @@ namespace MonoTests.System.Collections.Generic
 		}
 
 		[Test]
+		public void EmptyKeysCopyToZeroSizedArray ()
+		{
+			string [] ary = new string [0];
+			list2.Keys.CopyTo (ary, 0);
+		}
+
+		[Test]
+		public void EmptyValuesCopyToZeroSizedArray ()
+		{
+			int [] ary = new int [0];
+			list2.Values.CopyTo (ary, 0);
+		}
+
+		[Test]
 		public void ValuesIDictionaryGeneric () {
 			ICollection<string> values = ((IDictionary<int,string>)list).Values;
 

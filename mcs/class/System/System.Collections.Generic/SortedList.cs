@@ -828,6 +828,8 @@ namespace System.Collections.Generic
 			}
 
 			public virtual void CopyTo (TKey[] array, int arrayIndex) {
+				if (host.Count == 0)
+					return;
 				if (array == null)
 					throw new ArgumentNullException ("array");
 				if (arrayIndex < 0)
@@ -951,6 +953,8 @@ namespace System.Collections.Generic
 			}
 
 			public virtual void CopyTo (TValue[] array, int arrayIndex) {
+				if (host.Count == 0)
+					return;
 				if (array == null)
 					throw new ArgumentNullException ("array");
 				if (arrayIndex < 0)

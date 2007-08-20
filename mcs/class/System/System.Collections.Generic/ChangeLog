@@ -1,3 +1,9 @@
+2007-08-20  Jb Evain  <jbevain@novell.com>
+
+	* SortedList.cs: don't crash in ListKeys and ListValues
+	when CopyTo targets an empty array, and that the
+	sorted list is empty. Fixes #82492.
+
 2007-05-08  Raja R Harinath  <rharinath@novell.com>
 
 	Avoid unnecessary allocation on indexer access
