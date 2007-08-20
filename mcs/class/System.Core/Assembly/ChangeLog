@@ -1,3 +1,7 @@
+2007-08-20  Marek Safar <marek.safar@gmail.com>
+
+	* AssemblyInfo.cs: Add a few more attributes.
+
 2007-02-04  Marek Safar <marek.safar@gmail.com>
 
 	* AssemblyInfo.cs: Add a few more attributes.
@@ -9,3 +13,4 @@
 2007-01-19  Marek Safar <marek.safar@gmail.com>
 
 	* ChangeLog: Added
+

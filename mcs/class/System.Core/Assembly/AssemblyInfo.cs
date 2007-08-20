@@ -39,7 +39,8 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyProduct("System.Core")]
 [assembly: AssemblyCopyright("")]
 [assembly: AssemblyCulture("")]
-[assembly: AssemblyFileVersion ("2.0.0.0")]
+[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
+[assembly: AssemblyDefaultAlias ("System.Core.dll")]
 [assembly: NeutralResourcesLanguage ("en-US")]
 
 [assembly: CLSCompliant(true)]
@@ -47,8 +48,11 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyVersion(Consts.FxVersion)]
 [assembly: SatelliteContractVersion (Consts.FxVersion)]
+[assembly: AssemblyInformationalVersionAttribute (Consts.FxVersion)]
 
 [assembly: AssemblyDelaySign (true)]
 [assembly: AssemblyKeyFile ("../ecma.pub")]
 [assembly: SecurityPermission (SecurityAction.RequestMinimum, SkipVerification=true)]
 [assembly: AllowPartiallyTrustedCallers]
+[assembly: SecurityCritical]
+
