@@ -1,5 +1,9 @@
 2007-08-20  Jb Evain  <jbevain@novell.com>
 
+	* mini.c (mono_method_to_ir): fix leak on InvalidProgramException.
+
+2007-08-20  Jb Evain  <jbevain@novell.com>
+
 	* mini.c (mono_method_to_ir): throw MethodAccessException
 	and FieldAccessException instead of InvalidProgramException.
 
