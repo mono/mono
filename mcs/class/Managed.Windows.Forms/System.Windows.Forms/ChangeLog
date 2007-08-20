@@ -1,5 +1,13 @@
 2007-08-20  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ListView.cs: When doing layout calculations don't use a ref
+	param to keep the current item; instead use its Index value (this 
+	is specially important when doing the layout with Groups
+	and Items being sparse). Also don't take into account items added to
+	the Group but not yet added to the main ListView.Items collection.
+
+2007-08-20  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* ListViewGroupCollection.cs: Forgot to mimic an issue
 	in the indexer (don't assign the ListView owner for new values).
 

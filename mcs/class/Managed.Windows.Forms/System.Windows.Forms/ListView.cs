@@ -1493,7 +1493,6 @@ namespace System.Windows.Forms
 			layout_ht = rows * (sz.Height + y_spacing) - y_spacing;
 			layout_wd = cols * (sz.Width + x_spacing) - x_spacing;
 
-			int current_item = 0;
 			Size item_spacing = new Size (x_spacing, y_spacing);
 #if NET_2_0
 			if (show_groups && groups.Count > 0 && view != View.List) {
@@ -1505,8 +1504,7 @@ namespace System.Windows.Forms
 						continue;
 					
 					current_y += LayoutGroupHeader (group, current_y);
-					current_y += LayoutIconsSection (group.Items, left_aligned, group.starting_row, current_y, item_spacing,
-							ref current_item);
+					current_y += LayoutIconsSection (group.Items, left_aligned, group.starting_row, current_y, item_spacing);
 				}
 
 				layout_ht = current_y; // Adjust with the header heights
@@ -1514,7 +1512,7 @@ namespace System.Windows.Forms
 			} else
 #endif
 				// Layout the entire ListView as a single section
-				LayoutIconsSection (items, left_aligned, 0, 0, item_spacing, ref current_item);
+				LayoutIconsSection (items, left_aligned, 0, 0, item_spacing);
 
 			item_control.Size = new Size (layout_wd, layout_ht);
 		}
@@ -1532,7 +1530,7 @@ namespace System.Windows.Forms
 #endif
 
 		int LayoutIconsSection (ListView.ListViewItemCollection items_collection, bool left_aligned, int current_global_row, int y_origin, 
-				Size item_spacing, ref int current_item)
+				Size item_spacing)
 		{
 			// current_global_row is the global one, and
 			// row is the local one for the current group
@@ -1544,12 +1542,15 @@ namespace System.Windows.Forms
 
 			for (int i = 0; i < items_collection.Count; i++) {
 				ListViewItem item = items_collection [i];
+				if (item.ListView == null)
+					continue; // Not part of the main collection yet
+
 				x = col * (item_size.Width + x_spacing);
 				y = row * (item_size.Height + y_spacing) + y_origin;
 
-				SetItemLocation (current_item, x, y, current_global_row, col);
-				item_index_matrix [current_global_row, col] = current_item;
-				current_item++;
+				int item_index = item.Index;
+				SetItemLocation (item_index, x, y, current_global_row, col);
+				item_index_matrix [current_global_row, col] = item_index;
 #if NET_2_0
 				if (!virtual_mode)
 #endif
