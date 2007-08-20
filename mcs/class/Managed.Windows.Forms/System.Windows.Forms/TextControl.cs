@@ -2106,7 +2106,7 @@ namespace System.Windows.Forms {
 						tag.Draw (g, current_brush,
 								line.X - viewport_x,
 								line_y + tag.shift,
-								old_tag_pos - 1, Math.Min (tag.length, tag_pos - old_tag_pos),
+								old_tag_pos - 1, Math.Max (tag.length, tag_pos - old_tag_pos),
 								text.ToString() );
 					}
 					tag = tag.next;
