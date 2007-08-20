@@ -231,10 +231,8 @@ namespace System.Windows.Forms
 				if (Contains (value))
 					return;
 
-				if (value != null) {
+				if (value != null)
 					CheckListViewItemsInGroup (value);
-					value.ListViewOwner = list_view_owner;
-				}
 
 				list [index] = value;
 					

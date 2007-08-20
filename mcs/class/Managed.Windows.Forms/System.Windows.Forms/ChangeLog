@@ -1,5 +1,10 @@
 2007-08-20  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ListViewGroupCollection.cs: Forgot to mimic an issue
+	in the indexer (don't assign the ListView owner for new values).
+
+2007-08-20  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* ListViewGroupCollection.cs: Make the string indexer use
 	the int based indexer to re-use code, instead of duplicate the code.
 	Also Redraw as needed and take into account null values.
