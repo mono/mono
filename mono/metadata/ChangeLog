@@ -1,3 +1,9 @@
+
+Mon Aug 20 12:38:42 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* icall-def.h, process.c, process.h: implemented icall to get
+	user/system processor times.
+
 2007-08-17  Mark Probst  <mark.probst@gmail.com>
 
 	* domain.c, threads.c, class-internals.h, domain-internals.h: New
