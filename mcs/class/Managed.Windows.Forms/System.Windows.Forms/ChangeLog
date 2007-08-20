@@ -1,5 +1,10 @@
 2007-08-20  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* XplatUIX11.cs: Treat toolwindows as if they had no window manager, since
+	  it's XplatUIX11 that attaches them.
+
+2007-08-20  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* DataGridView.cs: If a column has been added, recreate the editing row.
 	  Fixes #82226.
 
