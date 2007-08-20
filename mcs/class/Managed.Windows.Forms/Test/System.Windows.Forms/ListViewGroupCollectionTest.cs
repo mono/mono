@@ -135,6 +135,71 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		public void IndexerTest ()
+		{
+			ListViewGroup group1 = new ListViewGroup ("Item1");
+
+			grpCol.Add (group1);
+			Assert.AreEqual (group1, grpCol [0], "#A1");
+			Assert.AreEqual (lv, group1.ListView, "#A2");
+			Assert.AreEqual (1, grpCol.Count, "#A3");
+
+			grpCol [0] = null;
+			Assert.AreEqual (null, grpCol [0], "#A4");
+			Assert.AreEqual (1, grpCol.Count, "#A5");
+
+			ListViewGroup group2 = new ListViewGroup ("Item2");
+			grpCol [0] = group2;
+			Assert.AreEqual (group2, grpCol [0], "#A6");
+			Assert.AreEqual (null, group2.ListView, "#A7");
+			Assert.AreEqual (1, grpCol.Count, "#A8");
+		}
+
+		[Test]
+		public void IndexerNullTest ()
+		{
+			ListViewGroup group1 = new ListViewGroup ("Item1");
+			grpCol.Add (group1);
+			grpCol [0] = null;
+
+			Assert.AreEqual (null, grpCol [0], "#A1");
+			Assert.AreEqual (1, grpCol.Count, "#A2");
+		}
+
+		/* There's an inconsistency between other collections using
+		 * Key methods and the impl of this collection */
+		[Test]
+		public void IndexerKeyTest ()
+		{
+			ListViewGroup group1 = new ListViewGroup ("Item1");
+			ListViewGroup group2 = new ListViewGroup ("Item2");
+			ListViewGroup group3 = new ListViewGroup ("Item3");
+			grpCol.Add (group1);
+			grpCol.Add (group2);
+			grpCol.Add (group3);
+
+			group1.Name = String.Empty;
+			group2.Name = "A";
+			group3.Name = "A";
+
+			Assert.AreEqual (group1, grpCol [String.Empty], "#A1"); /* Inconsistent */
+			Assert.AreEqual (null, grpCol [null], "#A2");
+			Assert.AreEqual (group2, grpCol ["A"], "#A3");
+			Assert.AreEqual (null, grpCol ["a"], "#A4"); /* Inconsistent, again */
+
+			ListViewGroup group4 = new ListViewGroup ("Item4");
+			group4.Name = "A";
+
+			grpCol [String.Empty] = group4;
+			Assert.AreEqual (group4, grpCol [0], "#A5"); /* First position */
+			Assert.AreEqual (group4, grpCol ["A"], "#A6");
+			Assert.AreEqual (null, group4.ListView, "#A7");
+
+			grpCol ["A"] = null;
+			Assert.AreEqual (null, grpCol [0], "#A8");
+		}
+
+		[Test]
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void IndexerOutOfRangeTest ()
 		{
@@ -143,10 +208,11 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-        	public void IndexerOutOfRangeTest2()
+		public void IndexerOutOfRangeTest2()
 		{   //.NET 2.0 don't throw a exception here
 			grpCol.Add (new ListViewGroup ("Item1"));
 			grpCol["TestItemThatDoesNotExist"] = null;
+			Assert.IsNotNull (grpCol [0], "#A1");
 		}
 	}
 }

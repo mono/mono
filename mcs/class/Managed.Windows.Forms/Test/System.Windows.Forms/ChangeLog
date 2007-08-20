@@ -1,3 +1,7 @@
+2007-08-20  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListViewGroupCollectionTest.cs: New tests for the indexers.
+
 2007-08-20  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* DataGridViewTest.cs: Added EditingRowAfterAddingColumns.
