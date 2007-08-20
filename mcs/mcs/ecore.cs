@@ -1248,16 +1248,26 @@ namespace Mono.CSharp {
 	///   would be "unsigned int".
 	///
 	/// </summary>
-	public class EmptyCast : Expression {
+	public class EmptyCast : Expression
+	{
 		protected Expression child;
 
-		public EmptyCast (Expression child, Type return_type)
+		protected EmptyCast (Expression child, Type return_type)
 		{
 			eclass = child.eclass;
 			loc = child.Location;
 			type = return_type;
 			this.child = child;
 		}
+		
+		public static Expression Create (Expression child, Type type)
+		{
+			Constant c = child as Constant;
+			if (c != null)
+				return new EmptyConstantCast (c, type);
+
+			return new EmptyCast (child, type);
+		}		
 
 		public override Expression DoResolve (EmitContext ec)
 		{
@@ -1480,6 +1490,10 @@ namespace Mono.CSharp {
 			get { return child.IsNegative; }
 		}
 
+		public override bool IsZeroInteger {
+			get { return child.IsZeroInteger; }
+		}		
+		
 		public override void Emit (EmitContext ec)
 		{
 			child.Emit (ec);

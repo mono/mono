@@ -279,7 +279,7 @@ namespace Mono.CSharp {
 			}
 
 			if (ImplicitReferenceConversionCore (expr, target_type))
-				return new EmptyCast (expr, target_type);
+				return EmptyCast.Create (expr, target_type);
 
 			bool use_class_cast;
 			if (ImplicitBoxingConversionExists (expr, target_type, out use_class_cast)) {
@@ -529,7 +529,7 @@ namespace Mono.CSharp {
 				    (real_target_type == TypeManager.ushort_type) ||
 				    (real_target_type == TypeManager.int32_type) ||
 				    (real_target_type == TypeManager.uint32_type))
-					return new EmptyCast (expr, target_type);
+					return EmptyCast.Create (expr, target_type);
 
 				if (real_target_type == TypeManager.uint64_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
@@ -547,7 +547,7 @@ namespace Mono.CSharp {
 				// From short to int, long, float, double, decimal
 				//
 				if (real_target_type == TypeManager.int32_type)
-					return new EmptyCast (expr, target_type);
+					return EmptyCast.Create (expr, target_type);
 				if (real_target_type == TypeManager.int64_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
 				if (real_target_type == TypeManager.double_type)
@@ -562,7 +562,7 @@ namespace Mono.CSharp {
 				// From ushort to int, uint, long, ulong, float, double, decimal
 				//
 				if (real_target_type == TypeManager.uint32_type)
-					return new EmptyCast (expr, target_type);
+					return EmptyCast.Create (expr, target_type);
 
 				if (real_target_type == TypeManager.uint64_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
@@ -633,7 +633,7 @@ namespace Mono.CSharp {
 				if ((real_target_type == TypeManager.ushort_type) ||
 				    (real_target_type == TypeManager.int32_type) ||
 				    (real_target_type == TypeManager.uint32_type))
-					return new EmptyCast (expr, target_type);
+					return EmptyCast.Create (expr, target_type);
 				if (real_target_type == TypeManager.uint64_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
 				if (real_target_type == TypeManager.int64_type)
@@ -1373,7 +1373,7 @@ namespace Mono.CSharp {
 			if (ec.InUnsafe) {
 				if (expr_type.IsPointer){
 					if (target_type == TypeManager.void_ptr_type)
-						return new EmptyCast (expr, target_type);
+						return EmptyCast.Create (expr, target_type);
 
 					//
 					// yep, comparing pointer types cant be done with
@@ -1388,7 +1388,7 @@ namespace Mono.CSharp {
 				}
 
 				if (expr_type == TypeManager.null_type && target_type.IsPointer)
-					return new EmptyCast (NullPointer.Null, target_type);
+					return EmptyCast.Create (NullPointer.Null, target_type);
 			}
 
 			if (expr_type == TypeManager.anonymous_method_type){
@@ -1592,7 +1592,7 @@ namespace Mono.CSharp {
 
 				// One of the built-in conversions that belonged in the class library
 				if (real_target_type == TypeManager.intptr_type){
-					return new OperatorCast (new EmptyCast (expr, TypeManager.int64_type),
+					return new OperatorCast (EmptyCast.Create (expr, TypeManager.int64_type),
 								 TypeManager.intptr_type, true);
 				}
 			} else if (expr_type == TypeManager.char_type){
@@ -1674,12 +1674,12 @@ namespace Mono.CSharp {
 					return new ConvCast (uint32e, TypeManager.sbyte_type, ConvCast.Mode.U4_I2);
 				}
 				if (real_target_type == TypeManager.int32_type){
-					return new EmptyCast (new OperatorCast (expr, TypeManager.uint32_type, true),
+					return EmptyCast.Create (new OperatorCast (expr, TypeManager.uint32_type, true),
 							      TypeManager.int32_type);
 				}
 			} else if (expr_type == TypeManager.intptr_type){
 				if (real_target_type == TypeManager.uint64_type){
-					return new EmptyCast (new OperatorCast (expr, TypeManager.int64_type, true),
+					return EmptyCast.Create (new OperatorCast (expr, TypeManager.int64_type, true),
 							      TypeManager.uint64_type);
 				}
 			} else if (expr_type == TypeManager.decimal_type) {
@@ -1953,7 +1953,7 @@ namespace Mono.CSharp {
 				if (expr is EnumConstant)
 					return ExplicitConversionCore (ec, ((EnumConstant) expr).Child, target_type, loc);
 
-				return ExplicitConversionCore (ec, new EmptyCast (expr, TypeManager.EnumToUnderlying (expr_type)), target_type, loc);
+				return ExplicitConversionCore (ec, EmptyCast.Create (expr, TypeManager.EnumToUnderlying (expr_type)), target_type, loc);
 			}
 
 			if (TypeManager.IsEnumType (target_type)){
@@ -1962,7 +1962,7 @@ namespace Mono.CSharp {
 
 				Expression ce = ExplicitConversionCore (ec, expr, TypeManager.EnumToUnderlying (target_type), loc);
 				if (ce != null)
-					return new EmptyCast (ce, target_type);
+					return EmptyCast.Create (ce, target_type);
 			}
 
 			ne = ExplicitNumericConversion (expr, target_type);
@@ -1999,7 +1999,7 @@ namespace Mono.CSharp {
 
 			if (target_type.IsPointer){
 				if (expr_type.IsPointer)
-					return new EmptyCast (expr, target_type);
+					return EmptyCast.Create (expr, target_type);
 
 				if (expr_type == TypeManager.sbyte_type ||
 					expr_type == TypeManager.short_type ||
@@ -2059,7 +2059,7 @@ namespace Mono.CSharp {
 				return ne;
 
 			if (ec.InUnsafe && expr.Type == TypeManager.void_ptr_type && target_type.IsPointer)
-				return new EmptyCast (expr, target_type);
+				return EmptyCast.Create (expr, target_type);
 
 			expr.Error_ValueCannotBeConverted (ec, l, target_type, true);
 			return null;

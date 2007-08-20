@@ -1,3 +1,9 @@
+2007-08-20  Marek Safar  <marek.safar@gmail.com>
+
+	* convert.cs, ecore.cs, expression.cs, literal.cs: Use factory method 
+	to create EmptyCast. It handles EmptyConstantCast specialization for
+	constants.
+	
 2007-08-18  Marek Safar  <marek.safar@gmail.com>
 
 	* expression.cs (Binary.is_unsigned): Handle unsafe types too.

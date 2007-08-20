@@ -186,12 +186,7 @@ namespace Mono.CSharp {
 	// A null literal in a pointer context
 	//
 	public class NullPointer : NullLiteral {
-		public static readonly NullLiteral Null;
-
-		static NullPointer ()
-		{
-			Null = new NullPointer ();
-		}
+		public static readonly NullLiteral Null = new NullPointer ();
 
 		private NullPointer ():
 			base (Location.Null)

@@ -411,7 +411,7 @@ namespace Mono.CSharp {
 					expr_type == TypeManager.char_type) 
 				{
 					type = TypeManager.int32_type;
-					return new EmptyCast (this, type);
+					return EmptyCast.Create (this, type);
 				}
 
 				// Predefined operators
@@ -503,7 +503,7 @@ namespace Mono.CSharp {
 					expr_type == TypeManager.short_type || expr_type == TypeManager.ushort_type ||
 					expr_type == TypeManager.char_type) 
 				{
-					return new EmptyCast (Expr, TypeManager.int32_type);
+					return EmptyCast.Create (Expr, TypeManager.int32_type);
 				}
 
 				// Predefined operators
@@ -539,7 +539,7 @@ namespace Mono.CSharp {
 					expr_type == TypeManager.char_type) 
 				{
 					type = TypeManager.int32_type;
-					return new EmptyCast (this, type);
+					return EmptyCast.Create (this, type);
 				}
 
 				//
@@ -1929,13 +1929,13 @@ namespace Mono.CSharp {
 					}
 
 					if (l.IsPointer && r == TypeManager.null_type) {
-						right = new EmptyCast (NullPointer.Null, l);
+						right = new EmptyConstantCast (NullPointer.Null, l);
 						type = TypeManager.bool_type;
 						return this;
 					}
 
 					if (r.IsPointer && l == TypeManager.null_type) {
-						left = new EmptyCast (NullPointer.Null, r);
+						left = new EmptyConstantCast (NullPointer.Null, r);
 						type = TypeManager.bool_type;
 						return this;
 					}
@@ -2006,9 +2006,9 @@ namespace Mono.CSharp {
 					// We are going to have to convert to an object to compare
 					//
 					if (l != TypeManager.object_type)
-						left = new EmptyCast (left, TypeManager.object_type);
+						left = EmptyCast.Create (left, TypeManager.object_type);
 					if (r != TypeManager.object_type)
-						right = new EmptyCast (right, TypeManager.object_type);
+						right = EmptyCast.Create (right, TypeManager.object_type);
 
 					return this;
 				}
@@ -3033,7 +3033,7 @@ namespace Mono.CSharp {
 						// method might look at the type of this expression, see it is a
 						// string and emit a string [] when we want an object [];
 						
-						e = new EmptyCast (e, TypeManager.object_type);
+						e = EmptyCast.Create (e, TypeManager.object_type);
 					}
 					operands [i] = new Argument (e, Argument.AType.Expression);
 				}
