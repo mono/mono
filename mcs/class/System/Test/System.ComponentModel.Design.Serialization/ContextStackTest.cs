@@ -29,19 +29,13 @@
 
 using NUnit.Framework;
 
-using System;
-using System.ComponentModel;
 using System.ComponentModel.Design.Serialization;
-using System.Globalization;
-using System.Reflection;
-using System.Threading;
 
 namespace MonoTests.System.ComponentModel.Design.Serialization
 {
 	[TestFixture]
 	public class ContextStackTest
 	{
-
 		[Test]
 		public void IntegrityTest ()
 		{
@@ -61,6 +55,7 @@ namespace MonoTests.System.ComponentModel.Design.Serialization
 			Assert.AreEqual (two, stack[0], "#6");
 			Assert.AreEqual (two, stack.Current, "#7");
 
+#if NET_2_0
 			string three = "three";
 			stack.Append (three);
 
@@ -73,6 +68,7 @@ namespace MonoTests.System.ComponentModel.Design.Serialization
 			Assert.AreEqual (three, stack[typeof (string)], "#12");
 			Assert.AreEqual (three, stack[0], "#13");
 			Assert.AreEqual (three, stack.Current, "#14");
+#endif
 		}
 	}
 }
