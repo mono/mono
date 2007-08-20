@@ -1,3 +1,10 @@
+2007-08-20  Jb Evain  <jbevain@novell.com>
+
+	* class-internals: add definitions for MONO_EXCEPTION_METHOD_ACCESS
+	and MONO_EXCEPTION_FIELD_ACCESS.
+
+	* debug-helpers.[c|h]: new mono_field_full_name function.
+
 2007-08-20  Mark Probst  <mark.probst@gmail.com>
 
 	* class.c: Removed class_security_level() and moved it to

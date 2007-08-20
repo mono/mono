@@ -1,3 +1,8 @@
+2007-08-20  Jb Evain  <jbevain@novell.com>
+
+	* field-access.il, method-access.il, Makefile.am: tests
+	for FieldAccessException and MethodAccessException.
+
 2007-08-16  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* ldtoken_with_byref_typespec.2.il: Test for (in pseudo c#) "typeof (int&)" expression
