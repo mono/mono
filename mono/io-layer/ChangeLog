@@ -1,3 +1,10 @@
+2007-08-20  William Holmes  <billholmes54@gmail.com>
+
+	*io.c: Added implementation for ReplaceFile.
+	*io.h: Added deceleration for ReplaceFile method.
+
+	Code is contributed under MIT/X11 license.
+
 2007-08-20  Wade Berrier  <wberrier@novell.com>
 
 	* processes.c: include sys/resource.h for rusage to fix 

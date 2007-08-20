@@ -1,3 +1,13 @@
+2007-08-20  William Holmes  <billholmes54@gmail.com>
+
+	*file-io.c: Added ves_icall_System_IO_MonoIO_ReplaceFile
+	 to call ReplaceFile Kernel32 on windows or in io-layer.
+	*file-io.h: Added deceleration for ves_icall_System_IO_MonoIO_ReplaceFile
+	*icall-def.h: Register ves_icall_System_IO_MonoIO_ReplaceFile
+	 as an internal call.
+
+	Code is contributed under MIT/X11 license.
+
 2007-08-20  Jb Evain  <jbevain@novell.com>
 
 	* class-internals: add definitions for MONO_EXCEPTION_METHOD_ACCESS
