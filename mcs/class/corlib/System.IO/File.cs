@@ -399,7 +399,7 @@ namespace System.IO
 					    string destinationFileName,
 					    string destinationBackupFileName)
 		{
-			throw new NotImplementedException ();
+			Replace (sourceFileName, destinationFileName, destinationBackupFileName, false);
 		}
 		
 		public static void Replace (string sourceFileName,
@@ -407,7 +407,53 @@ namespace System.IO
 					    string destinationBackupFileName,
 					    bool ignoreMetadataErrors)
 		{
-			throw new NotImplementedException ();
+			MonoIOError error;
+
+			if (sourceFileName == null)
+				throw new ArgumentNullException ("sourceFileName");
+			if (destinationFileName == null)
+				throw new ArgumentNullException ("destinationFileName");
+			if (sourceFileName.Trim () == "" || sourceFileName.IndexOfAny (Path.InvalidPathChars) != -1)
+				throw new ArgumentException ("sourceFileName");
+			if (destinationFileName.Trim () == "" || destinationFileName.IndexOfAny (Path.InvalidPathChars) != -1)
+				throw new ArgumentException ("destinationFileName");
+
+			string fullSource = Path.GetFullPath (sourceFileName);
+			string fullDest = Path.GetFullPath (destinationFileName);
+			if (MonoIO.ExistsDirectory (fullSource, out error))
+				throw new IOException (Locale.GetText ("{0} is a directory", sourceFileName));
+			if (MonoIO.ExistsDirectory (fullDest, out error))
+				throw new IOException (Locale.GetText ("{0} is a directory", destinationFileName));
+
+			if (!Exists (fullSource))
+				throw new FileNotFoundException (Locale.GetText ("{0} does not exist", sourceFileName), 
+								 sourceFileName);
+			if (!Exists (fullDest))
+				throw new FileNotFoundException (Locale.GetText ("{0} does not exist", destinationFileName), 
+								 destinationFileName);
+			if (fullSource == fullDest) 
+				throw new IOException (Locale.GetText ("Source and destination arguments are the same file."));
+
+			string fullBackup = null;
+			if (destinationBackupFileName != null) {
+				if (destinationBackupFileName.Trim () == "" || 
+				    destinationBackupFileName.IndexOfAny (Path.InvalidPathChars) != -1)
+					throw new ArgumentException ("destinationBackupFileName");
+
+				fullBackup = Path.GetFullPath (destinationBackupFileName);
+				if (MonoIO.ExistsDirectory (fullBackup, out error))
+					throw new IOException (Locale.GetText ("{0} is a directory", destinationBackupFileName));
+				if (fullSource == fullBackup)
+					throw new IOException (Locale.GetText ("Source and backup arguments are the same file."));
+				if (fullDest == fullBackup)
+					throw new IOException (Locale.GetText (
+							       "Destination and backup arguments are the same file."));
+			}
+
+			if (!MonoIO.ReplaceFile (fullSource, fullDest, fullBackup, 
+						 ignoreMetadataErrors, out error)) {
+				throw MonoIO.GetException (error);
+			}
 		}
 		
 		public static void SetAccessControl (string path,

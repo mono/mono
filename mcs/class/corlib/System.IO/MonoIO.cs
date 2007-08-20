@@ -178,6 +178,13 @@ namespace System.IO
 						      out MonoIOError error);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public extern static bool ReplaceFile (string sourceFileName, 
+						       string destinationFileName, 
+						       string destinationBackupFileName, 
+						       bool ignoreMetadataErrors,
+						       out MonoIOError error);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static FileAttributes GetFileAttributes (string path, out MonoIOError error);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]

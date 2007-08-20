@@ -1,3 +1,9 @@
+2007-08-20  William Holmes  <billholmes54@gmail.com>
+
+	*FileTest.cs:  Added a test for IO.File.Replace.  
+
+	Code is contributed under MIT/X11 license.
+
 2007-08-01  Dick Porter  <dick@ximian.com>
 
 	* DirectoryTest.cs: Test for bug 82212 is now working.

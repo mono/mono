@@ -1638,5 +1638,38 @@ namespace MonoTests.System.IO
 			if (File.Exists (path))
 				File.Delete (path);
 		}
+
+#if NET_2_0
+		[Test]
+		public void ReplaceTest ()
+		{
+			string tmp = Path.Combine (TempFolder, "ReplaceTest");
+			Directory.CreateDirectory (tmp);
+			string origFile = Path.Combine (tmp, "origFile");
+			string replaceFile = Path.Combine (tmp, "replaceFile");
+			string backupFile = Path.Combine (tmp, "backupFile");
+
+			using (StreamWriter sw = File.CreateText (origFile)) {
+				sw.WriteLine ("origFile");
+			}
+			using (StreamWriter sw = File.CreateText (replaceFile)) {
+				sw.WriteLine ("replaceFile");
+			}
+			using (StreamWriter sw = File.CreateText (backupFile)) {
+				sw.WriteLine ("backupFile");
+			}
+
+			File.Replace (origFile, replaceFile, backupFile);
+			Assertion.Assert ("origFile should not exists", !File.Exists (origFile));
+			using (StreamReader sr = File.OpenText (replaceFile)) {
+				string txt = sr.ReadLine ();
+				Assertion.AssertEquals ("#2", "origFile", txt);
+			}
+			using (StreamReader sr = File.OpenText (backupFile)) {
+				string txt = sr.ReadLine ();
+				Assertion.AssertEquals ("#3", "replaceFile", txt);
+			}
+		}
+#endif
 	}
 }
