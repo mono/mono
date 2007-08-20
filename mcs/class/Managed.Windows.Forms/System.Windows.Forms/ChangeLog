@@ -1,3 +1,8 @@
+2007-08-20  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* StatusBar.cs: Take into account any icons when a panel has AutoSize =
+	  Contents. Fixes #82487.
+
 2007-08-19  Andreia Gaita  <avidigal@novell.com>
 
 	* Added HtmlElement.cs, HtmlElementCollection.cs, 

@@ -103,6 +103,29 @@ namespace MonoTests.System.Windows.Forms
 			
 		}
 		
+		[Test] // bug 82487
+		public void IconWidth ()
+		{
+			using (Form f = new Form ()) {
+				StatusBar _statusBar;
+				StatusBarPanel _myComputerPanel;
+				
+				_statusBar = new StatusBar ();
+				_statusBar.ShowPanels = true;
+				//Controls.Add (_statusBar);
+				
+				_myComputerPanel = new StatusBarPanel ();
+				_myComputerPanel.AutoSize = StatusBarPanelAutoSize.Contents;
+				_myComputerPanel.Text = "My Computer";
+				_statusBar.Panels.Add (_myComputerPanel);
+
+				int width = _myComputerPanel.Width;
+				
+				_myComputerPanel.Icon = f.Icon;
+				
+				Assert.AreEqual (width + 21, _myComputerPanel.Width, "#01");
+			}
+		}
 #if NET_2_0
 		[Test]
 		public void TagTest ()

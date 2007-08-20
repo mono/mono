@@ -343,6 +343,9 @@ namespace System.Windows.Forms {
 				}
 				if (p.AutoSize == StatusBarPanelAutoSize.Contents) {
 					int len = (int)(TextRenderer.MeasureString (p.Text, Font).Width + 0.5F);
+					if (p.Icon != null) {
+						len += 21;
+					}
 					p.SetWidth (len + 8);
 					taken += p.Width;
 					taken += gap;
