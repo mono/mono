@@ -1,3 +1,14 @@
+2007-08-20  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c: CoreCLR security checks.
+
+	* mini.h: Removed MonoSecurityMode (moved to
+	metadata/security-manager.h) and mono_security_mode global var
+	(replaced by set/get functions in security-manager.h).
+
+	* driver.c: Added "core-clr-test" security mode for testing.  Used
+	set-function for setting security mode.
+
 2007-08-17  Mark Probst  <mark.probst@gmail.com>
 
 	* mini.c: MonoJitInfo's are freed hazardously now.  Statistics for

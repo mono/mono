@@ -1,3 +1,14 @@
+2007-08-20  Mark Probst  <mark.probst@gmail.com>
+
+	* security-core-clr.c, security-core-clr.h: CoreCLR security
+	utility functions.
+
+	* Makefile.am: Added security-core-clr.[ch].
+
+	* security-manager.c, security-manager.h: Functions and enum for
+	setting and getting the security mode.
+
+	* class.c: CoreCLR security checks.
 
 Mon Aug 20 12:38:42 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
