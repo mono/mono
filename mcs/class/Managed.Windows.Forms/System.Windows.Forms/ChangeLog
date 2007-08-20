@@ -1,3 +1,9 @@
+2007-08-20  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListViewGroupCollection.cs: Make the string indexer use
+	the int based indexer to re-use code, instead of duplicate the code.
+	Also Redraw as needed and take into account null values.
+
 2007-08-20  Jonathan Pobst  <monkey@jpobst.com>
 
 	* StatusStrip.cs: Make sure the item's parent gets set in SetDisplayedItems.

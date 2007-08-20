@@ -228,35 +228,45 @@ namespace System.Windows.Forms
 				if (list.Count <= index || index < 0)
 					throw new ArgumentOutOfRangeException("index");
 
-				if (!Contains(value)) {
-                    			CheckListViewItemsInGroup(value);
-					list[index] = value;
-                    
-					if (list_view_owner != null)
-						list_view_owner.Redraw(true);
+				if (Contains (value))
+					return;
+
+				if (value != null) {
+					CheckListViewItemsInGroup (value);
+					value.ListViewOwner = list_view_owner;
 				}
+
+				list [index] = value;
+					
+				if (list_view_owner != null)
+					list_view_owner.Redraw(true);
 			}
 		}
 
-		public ListViewGroup this[string key] {
+		public ListViewGroup this [string key] {
 			get {
-				foreach (ListViewGroup item in list)
-				{
-					if (item.Name.Equals(key))
-						return item;
-				}
+				int idx = IndexOfKey (key);
+				if (idx != -1)
+					return this [idx];
 
 				return null;
 			}
 			set {
-				for(int i = 0; i < list.Count; i++)
-				{
-					if ((this[i].Name != null) && (this[i].Name.Equals(key))) {
-						this[i] = value;
-						break;
-					}
-				}
+				int idx = IndexOfKey (key);
+				if (idx == -1)
+					return;
+
+				this [idx] = value;
 			}
+		}
+
+		int IndexOfKey (string key)
+		{
+			for (int i = 0; i < list.Count; i++)
+				if (list [i].Name == key)
+					return i;
+
+			return -1;
 		}
 
 		#endregion
