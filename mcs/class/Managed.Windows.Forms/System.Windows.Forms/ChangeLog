@@ -1,3 +1,8 @@
+2007-08-20  Jonathan Pobst  <monkey@jpobst.com>
+	[Backport of r84479]
+	* StatusStrip.cs: Make sure the item's parent gets set in SetDisplayedItems.
+	[Fixes bug #82481]
+
 2007-08-14  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Control.cs: [Backport of r83588, fixes bug #82433] CreateControl: create
