@@ -853,6 +853,11 @@ namespace System.Windows.Forms
 		{
 			if (mouse_currently_over != null)
 			{
+				ToolStripItem focused = GetCurrentlyFocusedItem ();
+
+				if (focused != null && focused != mouse_currently_over)
+					this.FocusInternal (true);
+
 				if (this is MenuStrip && !(mouse_currently_over as ToolStripMenuItem).HasDropDownItems) {
 					if (!menu_selected)
 						(this as MenuStrip).FireMenuActivate ();
@@ -1324,7 +1329,15 @@ namespace System.Windows.Forms
 			foreach (ToolStripItem tsi in this.Items)
 				if (tsi != nextItem)
 					tsi.Dismiss (ToolStripDropDownCloseReason.Keyboard);
-					
+
+			ToolStripItem current = GetCurrentlySelectedItem ();
+			
+			if (!(current is ToolStripControlHost))
+				this.FocusInternal (true);
+
+			if (nextItem is ToolStripControlHost)
+				(nextItem as ToolStripControlHost).Focus ();
+
 			nextItem.Select ();
 			
 			if (nextItem.Parent is MenuStrip && (nextItem.Parent as MenuStrip).MenuDroppedDown)
@@ -1369,6 +1382,15 @@ namespace System.Windows.Forms
 				if (tsi.Selected)
 					return tsi;
 					
+			return null;
+		}
+		
+		internal ToolStripItem GetCurrentlyFocusedItem ()
+		{
+			foreach (ToolStripItem tsi in this.DisplayedItems)
+				if ((tsi is ToolStripControlHost) && (tsi as ToolStripControlHost).Control.Focused)
+					return tsi;
+
 			return null;
 		}
 		
