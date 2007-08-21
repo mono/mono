@@ -440,10 +440,18 @@ namespace System.Windows.Forms {
 		public object GetEditedFormattedValue (int rowIndex, DataGridViewDataErrorContexts context) {
 			if (DataGridView == null)
 				return null;
-				
+			
+			if (rowIndex < 0 || rowIndex >= DataGridView.RowCount)
+				throw new ArgumentOutOfRangeException ("rowIndex", "Specified argument was out of the range of valid values.");
+			
+			if (IsInEditMode) {
+				IDataGridViewEditingControl ctrl = DataGridView.EditingControl as IDataGridViewEditingControl;
+				return ctrl.GetEditingControlFormattedValue (context);
+			}
+			
 			DataGridViewCellStyle style = InheritedStyle;
 			
-			return editedFormattedValue;
+			return GetFormattedValue (GetValue (rowIndex), rowIndex, ref style, null, null, context);
 		}
 
 		public virtual ContextMenuStrip GetInheritedContextMenuStrip (int rowIndex)
@@ -844,7 +852,61 @@ namespace System.Windows.Forms {
 		}
 
 		protected virtual object GetClipboardContent (int rowIndex, bool firstCell, bool lastCell, bool inFirstRow, bool inLastRow, string format) {
-			throw new NotImplementedException();
+			if (DataGridView == null)
+				return null;
+				
+			if (rowIndex < 0 || rowIndex >= DataGridView.RowCount)
+				throw new ArgumentOutOfRangeException ("rowIndex", "Specified argument was out of the range of valid values.");
+			
+			string value = null;
+			
+			if (Selected) {
+				DataGridViewCellStyle style = GetInheritedStyle (null, rowIndex, false);
+				value = GetEditedFormattedValue (rowIndex, DataGridViewDataErrorContexts.ClipboardContent | DataGridViewDataErrorContexts.Formatting) as string;
+			}
+
+			if (value == null)
+				value = string.Empty;
+				
+			string table_prefix = string.Empty, cell_prefix = string.Empty, row_prefix = string.Empty;
+			string table_suffix = string.Empty, cell_suffix = string.Empty, row_suffix = string.Empty;
+			
+			if (format == DataFormats.UnicodeText || format == DataFormats.Text) {
+				if (lastCell && !inLastRow)
+					cell_suffix = Environment.NewLine;
+				else if (!lastCell)
+					cell_suffix = "\t";
+			} else if (format == DataFormats.CommaSeparatedValue) {
+				if (lastCell && !inLastRow)
+					cell_suffix = Environment.NewLine;
+				else if (!lastCell)
+					cell_suffix = ",";
+			} else if (format == DataFormats.Html) {
+				if (inFirstRow && firstCell)
+					table_prefix = "<TABLE>";
+				if (inLastRow && lastCell)
+					table_suffix = "</TABLE>";
+				if (firstCell)
+					row_prefix = "<TR>";
+				if (lastCell)
+					row_suffix = "</TR>";
+				cell_prefix = "<TD>";
+				cell_suffix = "</TD>";
+				
+				if (!Selected) {
+					value = "&nbsp;";
+				}
+			} else {
+				return value;
+			}
+						
+			value = table_prefix + row_prefix + cell_prefix + value + cell_suffix + row_suffix + table_suffix;
+			
+			return value;
+		}
+		
+		internal object GetClipboardContentInternal (int rowIndex, bool firstCell, bool lastCell, bool inFirstRow, bool inLastRow, string format) {
+			return GetClipboardContent (rowIndex, firstCell, lastCell, inFirstRow, inLastRow, format);
 		}
 
 		protected virtual Rectangle GetContentBounds (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex) {
@@ -861,7 +923,36 @@ namespace System.Windows.Forms {
 
 		protected virtual object GetFormattedValue (object value, int rowIndex, ref DataGridViewCellStyle cellStyle, TypeConverter valueTypeConverter, TypeConverter formattedValueTypeConverter, DataGridViewDataErrorContexts context)
 		{
-			throw new NotImplementedException();
+			if (DataGridView == null)
+				return null;
+				
+			if (rowIndex < 0 || rowIndex >= DataGridView.RowCount)
+				throw new ArgumentOutOfRangeException ("rowIndex");
+				
+			DataGridViewCellFormattingEventArgs e = new DataGridViewCellFormattingEventArgs (ColumnIndex, rowIndex, value, FormattedValueType, cellStyle);
+			
+			DataGridView.OnCellFormattingInternal (e);
+			
+			if (e.FormattingApplied) {
+				return e.Value;
+			}
+			
+			if (valueTypeConverter != null) {
+				return valueTypeConverter.ConvertTo (value, FormattedValueType);
+			}
+			
+			if (formattedValueTypeConverter != null) {
+				return formattedValueTypeConverter.ConvertFrom (value);
+			}
+			
+			IFormattable formattable = value as IFormattable;
+			if (formattable != null) {
+				formattable.ToString (style.Format, style.FormatProvider);
+			}
+			
+			// Now what?
+			
+			return value;
 		}
 
 		protected virtual Size GetPreferredSize (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex, Size constraintSize) {

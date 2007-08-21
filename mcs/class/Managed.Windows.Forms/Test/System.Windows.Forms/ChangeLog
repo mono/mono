@@ -1,5 +1,17 @@
 2007-08-21  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* DataGridViewCellTest.cs: Added GetClipboardContentTest,
+	  GetClipboardContentTestException.
+	* DataGridViewClipboardHeaderTest.cs, DataGridViewClipboardTest.cs: Added.
+	* DataGridViewColumnHeaderTest.cs: Added GetClipboardContentTestException
+	* DataGridViewRowHeaderTest.cs: Added GetClipboardContentTestException/2.
+	* DataGridViewTest.cs: Added GetClipboardContentsDisabled,
+	  GetClipboardContents, GetClipboardContents_HeadersAlways,
+	  GetClipboardContents_HeadersNever and GenerateClipboardTest with several
+	  helper functions.
+
+2007-08-21  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* DataGridViewColumnCollectionTest.cs, DataGridViewComboBoxCellTest.cs,
 	  DataGridViewRowCollectionTest.cs, DataGridViewTextBoxColumnTest.cs,
 	  DataGridViewBandTest.cs: Fixed line endings.

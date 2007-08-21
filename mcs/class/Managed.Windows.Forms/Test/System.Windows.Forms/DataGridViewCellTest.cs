@@ -45,6 +45,149 @@ namespace MonoTests.System.Windows.Forms {
 		public void Clean() {}
 
 		[Test]
+		public void GetClipboardContentTest ()
+		{
+			DataGridViewClipboardCell cell = new DataGridViewClipboardCell ();
+			
+			cell.Value = "abc";
+			Assert.IsNull (cell.GetClipboardContentPublic (0, false, false, false, false, DataFormats.Text), "#01");
+			
+			using (DataGridView dgv = new DataGridView ()) {
+				dgv.Columns.Add ("A", "A");
+				DataGridViewRow row = new DataGridViewRow ();
+				row.Cells.Add (cell);
+				dgv.Rows.Add (row);
+				cell.Selected = true;
+
+				Assert.AreEqual ("abc\t", cell.GetClipboardContentPublic (0, false, false, false, false, DataFormats.Text), "#A1");
+				Assert.AreEqual ("abc\t", cell.GetClipboardContentPublic (0, false, false, false, false, DataFormats.UnicodeText), "#A2");
+				Assert.AreEqual ("<TD>abc</TD>", cell.GetClipboardContentPublic (0, false, false, false, false, DataFormats.Html), "#A3");
+				Assert.AreEqual ("abc,", cell.GetClipboardContentPublic (0, false, false, false, false, DataFormats.CommaSeparatedValue), "#A4");
+
+				Assert.AreEqual ("abc\t", cell.GetClipboardContentPublic (0, true, false, false, false, DataFormats.Text), "#A1");
+				Assert.AreEqual ("abc\t", cell.GetClipboardContentPublic (0, true, false, false, false, DataFormats.UnicodeText), "#A2");
+				Assert.AreEqual ("<TR><TD>abc</TD>", cell.GetClipboardContentPublic (0, true, false, false, false, DataFormats.Html), "#A3");
+				Assert.AreEqual ("abc,", cell.GetClipboardContentPublic (0, true, false, false, false, DataFormats.CommaSeparatedValue), "#A4");
+
+				Assert.AreEqual (string.Format("abc{0}", Environment.NewLine), cell.GetClipboardContentPublic (0, false, true, false, false, DataFormats.Text), "#A1");
+				Assert.AreEqual (string.Format ("abc{0}", Environment.NewLine), cell.GetClipboardContentPublic (0, false, true, false, false, DataFormats.UnicodeText), "#A2");
+				Assert.AreEqual ("<TD>abc</TD></TR>", cell.GetClipboardContentPublic (0, false, true, false, false, DataFormats.Html), "#A3");
+				Assert.AreEqual (string.Format ("abc{0}", Environment.NewLine), cell.GetClipboardContentPublic (0, false, true, false, false, DataFormats.CommaSeparatedValue), "#A4");
+
+				Assert.AreEqual ("abc\t", cell.GetClipboardContentPublic (0, false, false, true, false, DataFormats.Text), "#A1");
+				Assert.AreEqual ("abc\t", cell.GetClipboardContentPublic (0, false, false, true, false, DataFormats.UnicodeText), "#A2");
+				Assert.AreEqual ("<TD>abc</TD>", cell.GetClipboardContentPublic (0, false, false, true, false, DataFormats.Html), "#A3");
+				Assert.AreEqual ("abc,", cell.GetClipboardContentPublic (0, false, false, true, false, DataFormats.CommaSeparatedValue), "#A4");
+
+				Assert.AreEqual ("abc\t", cell.GetClipboardContentPublic (0, false, false, false, true, DataFormats.Text), "#A1");
+				Assert.AreEqual ("abc\t", cell.GetClipboardContentPublic (0, false, false, false, true, DataFormats.UnicodeText), "#A2");
+				Assert.AreEqual ("<TD>abc</TD>", cell.GetClipboardContentPublic (0, false, false, false, true, DataFormats.Html), "#A3");
+				Assert.AreEqual ("abc,", cell.GetClipboardContentPublic (0, false, false, false, true, DataFormats.CommaSeparatedValue), "#A4");
+
+				Assert.AreEqual ("abc", cell.GetClipboardContentPublic (0, true, true, true, true, DataFormats.Text), "#A1");
+				Assert.AreEqual ("abc", cell.GetClipboardContentPublic (0, true, true, true, true, DataFormats.UnicodeText), "#A2");
+				Assert.AreEqual ("<TABLE><TR><TD>abc</TD></TR></TABLE>", cell.GetClipboardContentPublic (0, true, true, true, true, DataFormats.Html), "#A3");
+				Assert.AreEqual ("abc", cell.GetClipboardContentPublic (0, true, true, true, true, DataFormats.CommaSeparatedValue), "#A4");
+
+				Assert.AreEqual ("abc", cell.GetClipboardContentPublic (0, false, true, true, true, DataFormats.Text), "#A1");
+				Assert.AreEqual ("abc", cell.GetClipboardContentPublic (0, false, true, true, true, DataFormats.UnicodeText), "#A2");
+				Assert.AreEqual ("<TD>abc</TD></TR></TABLE>", cell.GetClipboardContentPublic (0, false, true, true, true, DataFormats.Html), "#A3");
+				Assert.AreEqual ("abc", cell.GetClipboardContentPublic (0, false, true, true, true, DataFormats.CommaSeparatedValue), "#A4");
+
+				Assert.AreEqual ("abc\t", cell.GetClipboardContentPublic (0, true, false, true, true, DataFormats.Text), "#A1");
+				Assert.AreEqual ("abc\t", cell.GetClipboardContentPublic (0, true, false, true, true, DataFormats.UnicodeText), "#A2");
+				Assert.AreEqual ("<TABLE><TR><TD>abc</TD>", cell.GetClipboardContentPublic (0, true, false, true, true, DataFormats.Html), "#A3");
+				Assert.AreEqual ("abc,", cell.GetClipboardContentPublic (0, true, false, true, true, DataFormats.CommaSeparatedValue), "#A4");
+
+				Assert.AreEqual ("abc", cell.GetClipboardContentPublic (0, true, true, false, true, DataFormats.Text), "#A1");
+				Assert.AreEqual ("abc", cell.GetClipboardContentPublic (0, true, true, false, true, DataFormats.UnicodeText), "#A2");
+				Assert.AreEqual ("<TR><TD>abc</TD></TR></TABLE>", cell.GetClipboardContentPublic (0, true, true, false, true, DataFormats.Html), "#A3");
+				Assert.AreEqual ("abc", cell.GetClipboardContentPublic (0, true, true, false, true, DataFormats.CommaSeparatedValue), "#A4");
+				
+				Assert.AreEqual ("abc" + Environment.NewLine, cell.GetClipboardContentPublic (0, true, true, true, false, DataFormats.Text), "#A1");
+				Assert.AreEqual ("abc" + Environment.NewLine, cell.GetClipboardContentPublic (0, true, true, true, false, DataFormats.UnicodeText), "#A2");
+				Assert.AreEqual ("<TABLE><TR><TD>abc</TD></TR>", cell.GetClipboardContentPublic (0, true, true, true, false, DataFormats.Html), "#A3");
+				Assert.AreEqual ("abc" + Environment.NewLine, cell.GetClipboardContentPublic (0, true, true, true, false, DataFormats.CommaSeparatedValue), "#A4");
+				
+				cell.Selected = false;
+
+				Assert.AreEqual ("\t", cell.GetClipboardContentPublic (0, false, false, false, false, DataFormats.Text), "#A1");
+				Assert.AreEqual ("\t", cell.GetClipboardContentPublic (0, false, false, false, false, DataFormats.UnicodeText), "#A2");
+				Assert.AreEqual ("<TD>&nbsp;</TD>", cell.GetClipboardContentPublic (0, false, false, false, false, DataFormats.Html), "#A3");
+				Assert.AreEqual (",", cell.GetClipboardContentPublic (0, false, false, false, false, DataFormats.CommaSeparatedValue), "#A4");
+
+				Assert.AreEqual ("\t", cell.GetClipboardContentPublic (0, true, false, false, false, DataFormats.Text), "#A1");
+				Assert.AreEqual ("\t", cell.GetClipboardContentPublic (0, true, false, false, false, DataFormats.UnicodeText), "#A2");
+				Assert.AreEqual ("<TR><TD>&nbsp;</TD>", cell.GetClipboardContentPublic (0, true, false, false, false, DataFormats.Html), "#A3");
+				Assert.AreEqual (",", cell.GetClipboardContentPublic (0, true, false, false, false, DataFormats.CommaSeparatedValue), "#A4");
+
+				Assert.AreEqual (string.Format ("{0}", Environment.NewLine), cell.GetClipboardContentPublic (0, false, true, false, false, DataFormats.Text), "#A1");
+				Assert.AreEqual (string.Format ("{0}", Environment.NewLine), cell.GetClipboardContentPublic (0, false, true, false, false, DataFormats.UnicodeText), "#A2");
+				Assert.AreEqual ("<TD>&nbsp;</TD></TR>", cell.GetClipboardContentPublic (0, false, true, false, false, DataFormats.Html), "#A3");
+				Assert.AreEqual (string.Format ("{0}", Environment.NewLine), cell.GetClipboardContentPublic (0, false, true, false, false, DataFormats.CommaSeparatedValue), "#A4");
+
+				Assert.AreEqual ("\t", cell.GetClipboardContentPublic (0, false, false, true, false, DataFormats.Text), "#A1");
+				Assert.AreEqual ("\t", cell.GetClipboardContentPublic (0, false, false, true, false, DataFormats.UnicodeText), "#A2");
+				Assert.AreEqual ("<TD>&nbsp;</TD>", cell.GetClipboardContentPublic (0, false, false, true, false, DataFormats.Html), "#A3");
+				Assert.AreEqual (",", cell.GetClipboardContentPublic (0, false, false, true, false, DataFormats.CommaSeparatedValue), "#A4");
+
+				Assert.AreEqual ("\t", cell.GetClipboardContentPublic (0, false, false, false, true, DataFormats.Text), "#A1");
+				Assert.AreEqual ("\t", cell.GetClipboardContentPublic (0, false, false, false, true, DataFormats.UnicodeText), "#A2");
+				Assert.AreEqual ("<TD>&nbsp;</TD>", cell.GetClipboardContentPublic (0, false, false, false, true, DataFormats.Html), "#A3");
+				Assert.AreEqual (",", cell.GetClipboardContentPublic (0, false, false, false, true, DataFormats.CommaSeparatedValue), "#A4");
+
+				Assert.AreEqual ("", cell.GetClipboardContentPublic (0, true, true, true, true, DataFormats.Text), "#A1");
+				Assert.AreEqual ("", cell.GetClipboardContentPublic (0, true, true, true, true, DataFormats.UnicodeText), "#A2");
+				Assert.AreEqual ("<TABLE><TR><TD>&nbsp;</TD></TR></TABLE>", cell.GetClipboardContentPublic (0, true, true, true, true, DataFormats.Html), "#A3");
+				Assert.AreEqual ("", cell.GetClipboardContentPublic (0, true, true, true, true, DataFormats.CommaSeparatedValue), "#A4");
+
+				Assert.AreEqual ("", cell.GetClipboardContentPublic (0, false, true, true, true, DataFormats.Text), "#A1");
+				Assert.AreEqual ("", cell.GetClipboardContentPublic (0, false, true, true, true, DataFormats.UnicodeText), "#A2");
+				Assert.AreEqual ("<TD>&nbsp;</TD></TR></TABLE>", cell.GetClipboardContentPublic (0, false, true, true, true, DataFormats.Html), "#A3");
+				Assert.AreEqual ("", cell.GetClipboardContentPublic (0, false, true, true, true, DataFormats.CommaSeparatedValue), "#A4");
+
+				Assert.AreEqual ("\t", cell.GetClipboardContentPublic (0, true, false, true, true, DataFormats.Text), "#A1");
+				Assert.AreEqual ("\t", cell.GetClipboardContentPublic (0, true, false, true, true, DataFormats.UnicodeText), "#A2");
+				Assert.AreEqual ("<TABLE><TR><TD>&nbsp;</TD>", cell.GetClipboardContentPublic (0, true, false, true, true, DataFormats.Html), "#A3");
+				Assert.AreEqual (",", cell.GetClipboardContentPublic (0, true, false, true, true, DataFormats.CommaSeparatedValue), "#A4");
+
+				Assert.AreEqual ("", cell.GetClipboardContentPublic (0, true, true, false, true, DataFormats.Text), "#A1");
+				Assert.AreEqual ("", cell.GetClipboardContentPublic (0, true, true, false, true, DataFormats.UnicodeText), "#A2");
+				Assert.AreEqual ("<TR><TD>&nbsp;</TD></TR></TABLE>", cell.GetClipboardContentPublic (0, true, true, false, true, DataFormats.Html), "#A3");
+				Assert.AreEqual ("", cell.GetClipboardContentPublic (0, true, true, false, true, DataFormats.CommaSeparatedValue), "#A4");
+
+				Assert.AreEqual ("" + Environment.NewLine, cell.GetClipboardContentPublic (0, true, true, true, false, DataFormats.Text), "#A1");
+				Assert.AreEqual ("" + Environment.NewLine, cell.GetClipboardContentPublic (0, true, true, true, false, DataFormats.UnicodeText), "#A2");
+				Assert.AreEqual ("<TABLE><TR><TD>&nbsp;</TD></TR>", cell.GetClipboardContentPublic (0, true, true, true, false, DataFormats.Html), "#A3");
+				Assert.AreEqual ("" + Environment.NewLine, cell.GetClipboardContentPublic (0, true, true, true, false, DataFormats.CommaSeparatedValue), "#A4");
+				
+			}
+		}
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void GetClipboardContentTestException ()
+		{
+			DataGridViewClipboardCell cell = new DataGridViewClipboardCell ();
+
+			cell.Value = "abc";
+			Assert.IsNull (cell.GetClipboardContentPublic (0, false, false, false, false, DataFormats.Text), "#01");
+
+			using (DataGridView dgv = new DataGridView ()) {
+				dgv.Columns.Add ("A", "A");
+				DataGridViewRow row = new DataGridViewRow ();
+				row.Cells.Add (cell);
+				dgv.Rows.Add (row);
+				cell.Selected = true;
+
+				Assert.AreEqual ("abc\t", cell.GetClipboardContentPublic (123, false, false, false, false, DataFormats.Text), "#A1");
+				Assert.AreEqual ("abc\t", cell.GetClipboardContentPublic (123, false, false, false, false, DataFormats.UnicodeText), "#A2");
+				Assert.AreEqual ("<TD>abc</TD>", cell.GetClipboardContentPublic (123, false, false, false, false, DataFormats.Html), "#A3");
+				Assert.AreEqual ("abc,", cell.GetClipboardContentPublic (123, false, false, false, false, DataFormats.CommaSeparatedValue), "#A4");
+
+			}
+		}
+
+		[Test]
 		public void ReadOnlyTest ()
 		{
 			using (DataGridView dgv = DataGridViewCommon.CreateAndFill ()) {
@@ -489,6 +632,26 @@ namespace MonoTests.System.Windows.Forms {
 		{
 			public DataGridViewCellMockObject ()
 			{
+			}
+		}
+
+		public class DataGridViewClipboardCell : DataGridViewCell
+		{
+			public DataGridViewClipboardCell ()
+			{
+			}
+
+			public object GetClipboardContentPublic (int rowIndex, bool firstCell, bool lastCell, bool inFirstRow, bool inLastRow, string format)
+			{
+				return GetClipboardContent (rowIndex, firstCell, lastCell, inFirstRow, inLastRow, format);
+			}
+
+			public override Type FormattedValueType
+			{
+				get
+				{
+					return typeof (string);
+				}
 			}
 		}
 	}

@@ -73,7 +73,61 @@ namespace System.Windows.Forms {
 
 		protected override object GetClipboardContent (int rowIndex, bool firstCell, bool lastCell, bool inFirstRow, bool inLastRow, string format)
 		{
-			throw new NotImplementedException();
+			string value;
+
+			if (DataGridView == null)
+				return null;
+
+			if (rowIndex < 0 || rowIndex >= DataGridView.RowCount)
+				throw new ArgumentOutOfRangeException ("rowIndex");
+				
+			value = GetValue (rowIndex) as string;
+
+			string table_prefix = string.Empty, cell_prefix = string.Empty, row_prefix = string.Empty;
+			string table_suffix = string.Empty, cell_suffix = string.Empty, row_suffix = string.Empty;
+
+			if (format == DataFormats.UnicodeText || format == DataFormats.Text) {
+				if (lastCell && !inLastRow)
+					cell_suffix = Environment.NewLine;
+				else if (!lastCell)
+					cell_suffix = "\t";
+			} else if (format == DataFormats.CommaSeparatedValue) {
+				if (lastCell && !inLastRow)
+					cell_suffix = Environment.NewLine;
+				else if (!lastCell)
+					cell_suffix = ",";
+			} else if (format == DataFormats.Html) {
+				if (inFirstRow) {
+					table_prefix = "<TABLE>";
+				}
+				row_prefix = "<TR>";
+
+				if (lastCell) {
+					row_suffix = "</TR>";
+					if (inLastRow) {
+						table_suffix = "</TABLE>";
+					}
+				}
+
+				cell_prefix = "<TD ALIGN=\"center\">";
+				cell_suffix = "</TD>";
+
+				if (value == null) {
+					value = "&nbsp;";
+				} else {
+					value = "<B>" + value + "</B>";
+				}
+			} else {
+				return value;
+			}
+
+			if (value == null)
+				value = string.Empty;
+
+			value = table_prefix + row_prefix + cell_prefix + value + cell_suffix + row_suffix + table_suffix;
+
+			return value;
+			
 		}
 
 		protected override Rectangle GetContentBounds (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex)

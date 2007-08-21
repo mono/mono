@@ -33,6 +33,7 @@ using System.Drawing;
 using System.Reflection;
 using System.Collections;
 using System.Data;
+using System.Collections.Generic;
 
 namespace System.Windows.Forms {
 
@@ -1141,8 +1142,16 @@ namespace System.Windows.Forms {
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DataGridViewHeaderCell TopLeftHeaderCell {
-			get { return topLeftHeaderCell; }
-			set { topLeftHeaderCell = value; }
+			get {
+				if (topLeftHeaderCell == null) {
+					topLeftHeaderCell = new DataGridViewTopLeftHeaderCell ();
+					topLeftHeaderCell.SetDataGridView (this);
+				}
+				return topLeftHeaderCell;
+			}
+			set {
+				topLeftHeaderCell = value;
+			}
 		}
 
 		[Browsable (false)]
@@ -2195,7 +2204,207 @@ namespace System.Windows.Forms {
 		}
 
 		public virtual DataObject GetClipboardContent () {
-			throw new NotImplementedException();
+			
+			if (clipboardCopyMode == DataGridViewClipboardCopyMode.Disable)
+				throw new InvalidOperationException ("Generating Clipboard content is not supported when the ClipboardCopyMode property is Disable.");
+			
+			int start_row = int.MaxValue, end_row = int.MinValue;
+			int start_col = int.MaxValue, end_col = int.MinValue;
+			
+			bool include_row_headers = false;
+			bool include_col_headers = false;
+			bool only_included_headers = false;
+			bool headers_includable = false;
+			
+			switch (ClipboardCopyMode) {
+			case DataGridViewClipboardCopyMode.EnableWithoutHeaderText:
+				break;
+			case DataGridViewClipboardCopyMode.EnableWithAutoHeaderText:
+				// Headers are included if not selection mode is CellSelect, and any header is selected.
+				headers_includable = selectionMode != DataGridViewSelectionMode.CellSelect;
+				break;
+			case DataGridViewClipboardCopyMode.EnableAlwaysIncludeHeaderText:
+				include_col_headers = include_row_headers = true;
+				break;
+			}
+			
+			BitArray included_rows = new BitArray (RowCount);
+			BitArray included_cols = new BitArray (ColumnCount);
+			
+			// If there are any selected columns,
+			// include the column headers (if headers are to be shown).
+			if (headers_includable && !include_col_headers) {
+				for (int c = 0; c < ColumnCount; c++) {
+					if (Columns [c].Selected) {
+						include_col_headers = true;
+						break;
+					}
+				}
+			}
+			
+			// Find the smallest rectangle that encompasses all selected cells.
+			for (int r = 0; r < RowCount; r++) {
+				DataGridViewRow row = Rows [r];
+
+				if (headers_includable && !include_row_headers && row.Selected) {
+					include_row_headers = true;
+				}
+				
+				for (int c = 0; c < ColumnCount; c++) {
+					DataGridViewCell cell = row.Cells [c];
+					
+					if (cell == null || !cell.Selected)
+						continue;
+					
+					included_cols [c] = true;
+					included_rows [r] = true;
+					
+					start_row = Math.Min (start_row, r);
+					start_col = Math.Min (start_col, c);
+					end_row = Math.Max (end_row, r);
+					end_col = Math.Max (end_col, c);
+				}
+			}
+			
+			// Mark rows/columns in between selected cells as included if the selection mode isn't FullHeaderSelect.
+			switch (selectionMode){
+			case DataGridViewSelectionMode.CellSelect:
+			case DataGridViewSelectionMode.ColumnHeaderSelect:
+			case DataGridViewSelectionMode.RowHeaderSelect:
+				if (selectionMode != DataGridViewSelectionMode.ColumnHeaderSelect) {
+					for (int r = start_row; r <= end_row; r++) {
+						included_rows.Set (r, true);
+					}
+				} else if (start_row <= end_row) {
+					included_rows.SetAll (true);
+				}
+				if (selectionMode != DataGridViewSelectionMode.RowHeaderSelect) {
+					for (int c = start_col; c <= end_col; c++) {
+						included_cols.Set (c, true);
+					}
+				}
+				break;
+			case DataGridViewSelectionMode.FullColumnSelect:
+			case DataGridViewSelectionMode.FullRowSelect:
+				only_included_headers = true;
+				break;
+			}
+			
+			if (start_row > end_row)
+				return null;
+				
+			if (start_col > end_col)
+				return null;
+			
+			DataObject result = new DataObject ();
+			
+			System.Text.StringBuilder text_builder = new System.Text.StringBuilder ();
+			System.Text.StringBuilder utext_builder = new System.Text.StringBuilder ();
+			System.Text.StringBuilder html_builder = new System.Text.StringBuilder ();
+			System.Text.StringBuilder csv_builder = new System.Text.StringBuilder ();
+			
+			// Loop through all rows and columns to create the content.
+			// -1 is the header row/column.
+			int first_row = start_row;
+			int first_col = start_col;
+			if (include_col_headers) {
+				first_row = -1;
+			}
+			for (int r = first_row; r <= end_row; r++) {
+				DataGridViewRow row = null;
+				
+				if (r >= 0) {
+					if (!included_rows [r])
+						continue;
+						
+					row = Rows [r];
+				}
+
+				if (include_row_headers) {
+					first_col = -1;
+				}
+				
+				for (int c = first_col; c <= end_col; c++) {
+					DataGridViewCell cell = null;
+
+					if (c >= 0 && only_included_headers && !included_cols [c])
+						continue;
+				
+					if (row == null) {
+						if (c == -1) {
+							cell = TopLeftHeaderCell;
+						} else {
+							cell = Columns [c].HeaderCell;
+						}
+					} else {
+						if (c == -1) {
+							cell = row.HeaderCell;
+						} else {
+							cell = row.Cells [c];
+						}
+					}
+				
+					string text, utext, html, csv;
+					bool is_first_cell = (c == first_col);
+					bool is_last_cell = (c == end_col);
+					bool is_first_row = (r == first_row);
+					bool is_last_row = (r == end_row);
+					
+					if (cell == null) {
+						text = string.Empty;
+						utext = string.Empty;
+						html = string.Empty;
+						csv = string.Empty;
+					} else {
+						text = cell.GetClipboardContentInternal (r, is_first_cell, is_last_cell, is_first_row, is_last_row, DataFormats.Text) as string;
+						utext = cell.GetClipboardContentInternal (r, is_first_cell, is_last_cell, is_first_row, is_last_row, DataFormats.UnicodeText) as string;
+						html = cell.GetClipboardContentInternal (r, is_first_cell, is_last_cell, is_first_row, is_last_row, DataFormats.Html) as string;
+						csv = cell.GetClipboardContentInternal (r, is_first_cell, is_last_cell, is_first_row, is_last_row, DataFormats.CommaSeparatedValue) as string;
+					}
+					
+					text_builder.Append (text);
+					utext_builder.Append (utext);
+					html_builder.Append (html);
+					csv_builder.Append (csv);
+					
+					if (c == -1) { // If we just did the row header, jump to the first column.
+						c = start_col - 1;
+					}
+				}
+
+				if (r == -1) {// If we just did the column header, jump to the first row.
+					r = start_row - 1;
+				}
+			}
+
+			// 
+			// Html content always get the \r\n newline
+			// It's valid html anyway, and it eases testing quite a bit
+			// (since otherwise we'd have to change the start indices
+			// in the added prologue/epilogue text)
+			// 
+			int fragment_end = 135 + html_builder.Length;
+			int html_end = fragment_end + 36;
+			string html_start =
+			"Version:1.0{0}" +
+			"StartHTML:00000097{0}" +
+			"EndHTML:{1:00000000}{0}" +
+			"StartFragment:00000133{0}" +
+			"EndFragment:{2:00000000}{0}" +
+			"<HTML>{0}" +
+			"<BODY>{0}" +
+			"<!--StartFragment-->";
+			
+			html_start = string.Format (html_start, "\r\n", html_end, fragment_end);
+			html_builder.Insert (0, html_start);
+			html_builder.AppendFormat ("{0}<!--EndFragment-->{0}</BODY>{0}</HTML>", "\r\n");
+			
+			result.SetData (DataFormats.CommaSeparatedValue, false, csv_builder.ToString ());
+			result.SetData (DataFormats.Html, false, html_builder.ToString ());
+			result.SetData (DataFormats.UnicodeText, false, utext_builder.ToString ());
+			result.SetData (DataFormats.Text, false, text_builder.ToString ());
+			
+			return result;
 		}
 
 		public Rectangle GetColumnDisplayRectangle (int columnIndex, bool cutOverflow) {
@@ -4350,6 +4559,7 @@ namespace System.Windows.Forms {
 
 		}
 
+		[ComVisible (false)]
 		public class DataGridViewControlCollection : Control.ControlCollection
 		{
 			private new DataGridView owner;

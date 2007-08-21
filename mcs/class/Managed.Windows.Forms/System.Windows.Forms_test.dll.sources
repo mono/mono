@@ -45,12 +45,16 @@ System.Windows.Forms/DataGridViewAdvancedBorderStyleTest.cs
 System.Windows.Forms/DataGridViewBandTest.cs
 System.Windows.Forms/DataGridViewCellStyleTest.cs
 System.Windows.Forms/DataGridViewCellTest.cs
+System.Windows.Forms/DataGridViewClipboardHeaderTest.cs
+System.Windows.Forms/DataGridViewClipboardTest.cs
 System.Windows.Forms/DataGridViewColumnCollectionTest.cs
+System.Windows.Forms/DataGridViewColumnHeaderTest.cs
 System.Windows.Forms/DataGridViewColumnTest.cs
 System.Windows.Forms/DataGridViewComboBoxCellTest.cs
 System.Windows.Forms/DataGridViewCommon.cs
 System.Windows.Forms/DataGridViewElementTest.cs
 System.Windows.Forms/DataGridViewRowCollectionTest.cs
+System.Windows.Forms/DataGridViewRowHeaderTest.cs
 System.Windows.Forms/DataGridViewRowTest.cs
 System.Windows.Forms/DataGridViewTest.cs
 System.Windows.Forms/DataGridViewTextBoxCellTest.cs

@@ -1,3 +1,9 @@
+2007-08-21  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* System.Windows.Forms_test.dll.sources: Added
+	  DataGridViewClipboardHeaderTest.cs, DataGridViewClipboardTest.cs,
+	  DataGridViewColumnHeaderTest.cs, DataGridViewRowHeaderTest.cs.
+
 2007-08-19  Andreia Gaita  <avidigal@novell.com>
 
 	* System.Windows.Forms.dll.sources: Add HtmlElement*

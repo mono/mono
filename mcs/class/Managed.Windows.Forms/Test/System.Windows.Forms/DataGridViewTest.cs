@@ -32,6 +32,10 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.ComponentModel;
 using System.Collections;
+using System.Text;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 
 namespace MonoTests.System.Windows.Forms {
 
@@ -52,6 +56,611 @@ namespace MonoTests.System.Windows.Forms {
 			grid.Dispose ();
 		}
 
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException), "Generating Clipboard content is not supported when the ClipboardCopyMode property is Disable.")]
+		public void GetClipboardContentsDisabled ()
+		{
+			using (DataGridView dgv = new DataGridView ()) {
+				dgv.ClipboardCopyMode = DataGridViewClipboardCopyMode.Disable;
+				object o = dgv.GetClipboardContent ();
+			}
+		}
+
+#region GenerateClipboardTest
+		public static void GenerateClipboardTest ()
+		{
+			GenerateClipboardTest (false);
+			GenerateClipboardTest (true);
+		}
+
+		public static string GenerateClipboardTest (bool headers)
+		{
+			StringBuilder result = new StringBuilder ();
+
+			int tab = 0;
+			string classname = headers ? "DataGridViewClipboardHeaderTest" : "DataGridViewClipboardTest";
+
+			append (result, tab, "//");
+			append (result, tab, "// Copyright (c) 2007 Novell, Inc. (http://www.novell.com)");
+			append (result, tab, "//");
+			append (result, tab, "// Author:");
+			append (result, tab, "//	DataGridViewTest.GenerateClipboardTest ({0});", headers.ToString ().ToLower ());
+			append (result, tab, "//");
+			append (result, tab, "#if NET_2_0");
+			append (result, tab, "using NUnit.Framework;");
+			append (result, tab, "using System;");
+			append (result, tab, "using System.Drawing;");
+			append (result, tab, "using System.Windows.Forms;");
+			append (result, tab, "using System.ComponentModel;");
+			append (result, tab, "using System.Collections;");
+			append (result, tab, "using System.Text;");
+			append (result, tab, "using System.Collections.Generic;");
+			append (result, tab, "using System.Diagnostics;");
+			append (result, tab, "using System.IO;");
+			append (result, tab, "namespace MonoTests.System.Windows.Forms {"); tab++;
+			append (result, tab, "[TestFixture]");
+			append (result, tab, "public class {0} {{", classname); tab++;
+			append (result, tab, "[Test]");
+			append (result, tab, "public void Test () {"); tab++;
+
+
+			append (result, tab, "DataObject data;");
+			append (result, tab, "DataGridViewRowHeaderTest.DataGridViewRowHeaderClipboardCell row_header_cell;");
+			append (result, tab, "DataGridViewColumnHeaderTest.DataGridViewColumnHeaderClipboardCell col_header_cell;");
+			//append (result, tab, "string csv = null, html = null, utext = null, text = null;");
+			append (result, tab, "string code = null;");
+
+			int counter;
+
+			List<List<int>> selected_bands = new List<List<int>> ();
+			List<List<CellSelection>> selected_cells = new List<List<CellSelection>> ();
+
+			selected_bands.Add (new List<int> ());
+			selected_bands.Add (new List<int> (new int [] { 0 }));
+			selected_bands.Add (new List<int> (new int [] { 2 }));
+			selected_bands.Add (new List<int> (new int [] { 1, 2 }));
+			selected_bands.Add (new List<int> (new int [] { 1, 3 }));
+
+			selected_cells.Add (new List<CellSelection> ());
+			selected_cells.Add (new List<CellSelection> (new CellSelection [] { new CellSelection (0, 0, true) }));
+			selected_cells.Add (new List<CellSelection> (new CellSelection [] { new CellSelection (2, 2, false) }));
+			selected_cells.Add (new List<CellSelection> (new CellSelection [] { new CellSelection (0, 0, false), new CellSelection (2, 2, true) }));
+
+			foreach (DataGridViewClipboardCopyMode copymode in Enum.GetValues (typeof (DataGridViewClipboardCopyMode))) {
+				if (copymode == DataGridViewClipboardCopyMode.Disable)
+					continue;
+
+				counter = 0;
+				foreach (DataGridViewSelectionMode selectionmode in Enum.GetValues (typeof (DataGridViewSelectionMode))) {
+					bool is_row_selectable, is_col_selectable, is_cell_selectable;
+
+					is_row_selectable = selectionmode == DataGridViewSelectionMode.RowHeaderSelect || selectionmode == DataGridViewSelectionMode.FullRowSelect;
+					is_col_selectable = selectionmode == DataGridViewSelectionMode.ColumnHeaderSelect || selectionmode == DataGridViewSelectionMode.FullColumnSelect;
+					is_cell_selectable = selectionmode == DataGridViewSelectionMode.CellSelect || selectionmode == DataGridViewSelectionMode.ColumnHeaderSelect || selectionmode == DataGridViewSelectionMode.RowHeaderSelect;
+
+					foreach (List<int> cols in selected_bands) {
+						if (!is_col_selectable && cols.Count > 0)
+							continue;
+
+						foreach (List<int> rows in selected_bands) {
+							if (!is_row_selectable && rows.Count > 0)
+								continue;
+
+							foreach (List<CellSelection> cells in selected_cells) {
+								if (!is_cell_selectable && cells.Count > 0)
+									continue;
+
+								using (DataGridView dgv = DataGridViewCommon.CreateAndFillForClipboard ()) {
+
+									dgv.SelectionMode = selectionmode;
+									dgv.ClipboardCopyMode = copymode;
+									bool any_selected = false;
+									if (is_col_selectable && cols.Count > 0) {
+										foreach (int c in cols) {
+											dgv.Columns [c].Selected = true;
+											any_selected = true;
+										}
+									}
+									if (is_row_selectable && rows.Count > 0) {
+										foreach (int r in rows) {
+											dgv.Rows [r].Selected = true;
+											any_selected = true;
+										}
+									}
+									if (is_cell_selectable && cells.Count > 0) {
+										foreach (CellSelection selection in cells) {
+											DataGridViewCell cell = dgv.Rows [selection.Row].Cells [selection.Col];
+											if (cell.Selected != selection.Selected) {
+												cell.Selected = selection.Selected;
+												any_selected = true;
+											}
+										}
+									}
+
+									if (any_selected == false && !(cols.Count == 0 && rows.Count == 0 && cells.Count == 0)) {
+										continue;
+									}
+
+									generate_case (result, dgv, copymode.ToString () + "#" + (counter++).ToString (), headers);
+								}
+							}
+						}
+					}
+				}
+			}
+
+			append (result, --tab, "}");
+			append (result, --tab, "}");
+			append (result, --tab, "}");
+			append (result, tab, "#endif"); ;
+
+			throw new NotImplementedException ("Where am I?");
+			// Uncomment the following line, change the path, and comment out the exception.
+			//File.WriteAllText (@"Z:\mono\head\mcs\class\SWF\Test\System.Windows.Forms\" + classname + ".cs", result.ToString ());
+
+			return string.Empty;
+		}
+		
+		private static string tabs (int t) { return new string ('\t', t); }
+		private static void append (StringBuilder result, int tab, string text) { result.Append (tabs (tab) + text + "\n"); }
+		private static void append (StringBuilder result, int tab, string text, params object [] args) { result.Append (tabs (tab) + string.Format (text, args) + "\n"); }
+		private static string cs_encode (string literal, string newline) {
+			bool has_newlines = literal.Contains ("\r\n");
+			bool format_string = has_newlines;
+
+			literal = literal.Replace ("\\", "\\\\");
+			literal = literal.Replace ("\"", "\\\"");
+			literal = literal.Replace ("\t", "\\t");
+			
+			if (has_newlines) {
+				if (newline == @"""\r\n""") {
+					literal = literal.Replace ("\r\n", @"\r\n");
+					format_string = false;
+				} else {
+					literal = literal.Replace ("\r\n", "{0}");
+				}
+			}
+
+			literal = "\"" + literal + "\"";
+
+			if (format_string) {
+				return "string.Format (" + literal/*.Replace ("{", "{{").Replace ("}", "}}")*/ + ", " + newline + ")";
+			} else {
+				return literal;
+			}
+		}
+		
+		private static string cs_encode (string literal) {
+			return cs_encode (literal, "Environment.NewLine");
+		}
+		
+		private class CellSelection {
+			public bool Selected;
+			public int Row;
+			public int Col;
+			public CellSelection (int Row, int Col, bool Selected) {
+				this.Selected = Selected;
+				this.Row = Row;
+				this.Col = Col;
+			}
+		}
+		
+		static private void generate_case (StringBuilder result, DataGridView dgv, string message, bool headers)
+		{
+			Console.WriteLine (message + ", current length: " + result.Length.ToString ());
+			Debug.WriteLine (message + ", current length: " + result.Length.ToString ());
+			
+			if (headers) {
+				if (dgv.SelectionMode != DataGridViewSelectionMode.CellSelect)
+					return;
+				if (dgv.ClipboardCopyMode != DataGridViewClipboardCopyMode.EnableAlwaysIncludeHeaderText)
+					return;
+			}
+			
+			int tab = 3;
+			DataObject data;
+			string csv = null, html = null, utext = null, text = null;
+			string code = null;
+			DataGridViewRowHeaderTest.DataGridViewRowHeaderClipboardCell row_header_cell;
+			DataGridViewColumnHeaderTest.DataGridViewColumnHeaderClipboardCell col_header_cell;
+			int counter = 0;
+			
+			append (result, tab, "using (DataGridView dgv = DataGridViewCommon.CreateAndFillForClipboard ()) {");
+			tab++;
+			
+			append (result, tab, "dgv.SelectionMode = DataGridViewSelectionMode.{0};", dgv.SelectionMode.ToString ());
+			append (result, tab, "dgv.ClipboardCopyMode = DataGridViewClipboardCopyMode.{0};", dgv.ClipboardCopyMode.ToString ());
+			
+			switch (dgv.SelectionMode) {
+			case DataGridViewSelectionMode.FullRowSelect:
+				foreach (DataGridViewRow row in dgv.Rows) {
+					if (row.Selected) {
+						append (result, tab, "dgv.Rows [{0}].Selected = true;", row.Index);
+					}
+				}
+				break;
+			case DataGridViewSelectionMode.FullColumnSelect:
+				foreach (DataGridViewColumn col in dgv.Columns) {
+					if (col.Selected) {
+						append (result, tab, "dgv.Columns [{0}].Selected = true;", col.Index);
+					}
+				}
+				break;
+			case DataGridViewSelectionMode.ColumnHeaderSelect:
+			case DataGridViewSelectionMode.RowHeaderSelect:
+			case DataGridViewSelectionMode.CellSelect:
+				if (dgv.SelectionMode == DataGridViewSelectionMode.RowHeaderSelect) {
+					foreach (DataGridViewRow row in dgv.Rows) {
+						if (row.Selected) {
+							append (result, tab, "dgv.Rows [{0}].Selected = true;", row.Index);
+						}
+					}
+				}
+				if (dgv.SelectionMode == DataGridViewSelectionMode.ColumnHeaderSelect) {
+					foreach (DataGridViewColumn col in dgv.Columns) {
+						if (col.Selected) {
+							append (result, tab, "dgv.Columns [{0}].Selected = true;", col.Index);
+						}
+					}
+				}
+				for (int r = 0; r < dgv.RowCount; r++) {
+					for (int c = 0; c < dgv.ColumnCount; c++) {
+						bool rowS = dgv.Rows [r].Selected;
+						bool colS = dgv.Columns [c].Selected;
+						bool cellS = dgv.Rows [r].Cells [c].Selected;
+						
+						if ((rowS || colS) && !cellS) {
+							append (result, tab, "dgv.Rows [{0}].Cells [{1}].Selected = false;", r, c);
+						} else if ((!rowS && !colS) && cellS) {
+							append (result, tab, "dgv.Rows [{0}].Cells [{1}].Selected = true;", r, c);
+						}
+					}
+				}
+				break;
+			}
+			
+			if (!headers) {
+				data = dgv.GetClipboardContent ();
+				append (result, tab, "data = dgv.GetClipboardContent ();");
+				
+				if (data == null) {
+					append (result, tab, "Assert.IsNull (data, {0});", cs_encode ("#" + message + "-" + (counter++).ToString ()));
+				} else {
+					append (result, tab, "Assert.IsNotNull (data, {0});", cs_encode ("#" + message + "-" + (counter++).ToString ()));
+					
+					csv = data.GetData (DataFormats.CommaSeparatedValue) as string;
+					html = data.GetData (DataFormats.Html) as string;
+					utext = data.GetData (DataFormats.UnicodeText) as string;
+					text = data.GetData (DataFormats.Text) as string;
+					
+					append (result, tab, "Assert.AreEqual ({0}, data.GetData (DataFormats.CommaSeparatedValue), {1});", cs_encode (csv), cs_encode ("#" + message + "-" + (counter++).ToString ()));
+					append (result, tab, "Assert.AreEqual ({0}, data.GetData (DataFormats.Html), {1});", cs_encode (html, @"""\r\n"""), cs_encode ("#" + message + "-" + (counter++).ToString ()));
+					append (result, tab, "Assert.AreEqual ({0}, data.GetData (DataFormats.UnicodeText), {1});", cs_encode (utext), cs_encode ("#" + message + "-" + (counter++).ToString ()));
+					append (result, tab, "Assert.AreEqual ({0}, data.GetData (DataFormats.Text), {1});", cs_encode (text), cs_encode ("#" + message + "-" + (counter++).ToString ()));
+				}
+			} else {
+				bool [] bools = new bool [] { true, false };
+				string [] formats = new string [] { DataFormats.Text, DataFormats.UnicodeText, DataFormats.Html, DataFormats.CommaSeparatedValue };
+
+
+				foreach (bool a in bools) {
+					foreach (bool b in bools) {
+						foreach (bool c in bools) {
+							foreach (bool d in bools) {
+								foreach (string format in formats) {
+									bool did_selected = false;
+									bool did_unselected = false;
+									foreach (DataGridViewRow row in dgv.Rows) {
+										int i = row.Index;
+										if (row.Selected) {
+											if (did_selected)
+												continue;
+											did_selected = true;
+										} else {
+											if (did_unselected)
+												continue;
+											did_unselected = true;
+										}
+										row_header_cell = row.HeaderCell as DataGridViewRowHeaderTest.DataGridViewRowHeaderClipboardCell;
+										if (row_header_cell == null) {
+											append (result, tab, "Assert.IsNull (dgv.Rows [{0}].Headercell, {1});", row.Index, cs_encode ("#" + message + "-" + (counter++).ToString ()));
+										} else {
+											append (result, tab, "row_header_cell = dgv.Rows [{0}].HeaderCell as DataGridViewRowHeaderTest.DataGridViewRowHeaderClipboardCell;", row.Index);
+											code = cs_encode (row_header_cell.GetClipboardContentPublic (i, a, b, c, d, format) as string);
+											append (result, tab, "code = row_header_cell.GetClipboardContentPublic ({0}, {1}, {2}, {3}, {4}, \"{5}\") as string;", i, a.ToString ().ToLower (), b.ToString ().ToLower (), c.ToString ().ToLower (), d.ToString ().ToLower (), format);
+											append (result, tab, "Assert.AreEqual ({0}, code, {1});", code, cs_encode ("#" + message + "-" + (counter++).ToString ()));
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+
+				foreach (bool a in bools) {
+					foreach (bool b in bools) {
+						foreach (bool c in bools) {
+							foreach (bool d in bools) {
+								foreach (string format in formats) {
+									bool did_selected = false;
+									bool did_unselected = false;
+									foreach (DataGridViewColumn col in dgv.Columns) {
+										int i = -1;
+										if (col.Index > 1)
+											continue;
+										if (col.Selected) {
+											if (did_selected)
+												continue;
+											did_selected = true;
+										} else {
+											if (did_unselected)
+												continue;
+											did_unselected = true;
+										}
+										col_header_cell = col.HeaderCell as DataGridViewColumnHeaderTest.DataGridViewColumnHeaderClipboardCell;
+										append (result, tab, "col_header_cell = dgv.Columns [{0}].HeaderCell as DataGridViewColumnHeaderTest.DataGridViewColumnHeaderClipboardCell;", col.Index);
+										code = cs_encode (col_header_cell.GetClipboardContentPublic (i, a, b, c, d, format) as string);
+										append (result, tab, "code = col_header_cell.GetClipboardContentPublic ({0}, {1}, {2}, {3}, {4}, \"{5}\") as string;", i, a.ToString ().ToLower (), b.ToString ().ToLower (), c.ToString ().ToLower (), d.ToString ().ToLower (), format);
+										append (result, tab, "Assert.AreEqual ({0}, code, {1});", code, cs_encode ("#" + message + "-" + (counter++).ToString ()));
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			tab--;
+			append (result, tab, "}");
+		}
+		
+		
+#endregion
+		
+		[Test]
+		public void GetClipboardContents ()
+		{
+			DataObject data;
+			string csv, html, utext, text;
+			
+			using (DataGridView dgv = DataGridViewCommon.CreateAndFill ()) {
+				data = dgv.GetClipboardContent ();	
+				Assert.IsNull (data, "#01");
+				
+				dgv.Rows [0].Cells [0].Selected = true;
+				
+				data = dgv.GetClipboardContent ();
+				Assert.IsNotNull (data, "#B1");
+
+				Assert.AreEqual (new string [] { DataFormats.CommaSeparatedValue, DataFormats.Html, DataFormats.UnicodeText, DataFormats.Text }, data.GetFormats (), "#B2");
+				Assert.AreEqual (new string [] { DataFormats.CommaSeparatedValue, DataFormats.Html, DataFormats.UnicodeText, DataFormats.Text }, data.GetFormats (true), "#B3");
+				
+				csv = data.GetData (DataFormats.CommaSeparatedValue) as string;
+				html = data.GetData (DataFormats.Html) as string;
+				utext = data.GetData (DataFormats.UnicodeText) as string;
+				text = data.GetData (DataFormats.Text) as string;
+
+				Assert.AreEqual ("Cell A1", csv, "CSV B");
+				Assert.AreEqual ("Cell A1", utext, "UTEXT B");
+				Assert.AreEqual ("Cell A1", text, "TEXT B");
+				Assert.AreEqual (string.Format(@"Version:1.0{0}" + 
+"StartHTML:00000097{0}" + 
+"EndHTML:00000211{0}" + 
+"StartFragment:00000133{0}" + 
+"EndFragment:00000175{0}" + 
+"<HTML>{0}" + 
+"<BODY>{0}" + 
+"<!--StartFragment--><TABLE><TR><TD>Cell A1</TD></TR></TABLE>{0}" + 
+"<!--EndFragment-->{0}" + 
+"</BODY>{0}" + 
+"</HTML>", "\r\n"), html, "HTML B");
+
+				dgv.Rows [1].Cells [1].Selected = true;
+
+				data = dgv.GetClipboardContent ();
+				Assert.IsNotNull (data, "#C1");
+
+				Assert.AreEqual (new string [] { DataFormats.CommaSeparatedValue, DataFormats.Html, DataFormats.UnicodeText, DataFormats.Text }, data.GetFormats (), "#C2");
+				Assert.AreEqual (new string [] { DataFormats.CommaSeparatedValue, DataFormats.Html, DataFormats.UnicodeText, DataFormats.Text }, data.GetFormats (true), "#C3");
+
+				csv = data.GetData (DataFormats.CommaSeparatedValue) as string;
+				html = data.GetData (DataFormats.Html) as string;
+				utext = data.GetData (DataFormats.UnicodeText) as string;
+				text = data.GetData (DataFormats.Text) as string;
+
+				Assert.AreEqual (string.Format("Cell A1,{0},Cell B2", Environment.NewLine), csv, "CSV C");
+				Assert.AreEqual (string.Format("Cell A1\t{0}\tCell B2", Environment.NewLine), utext, "UTEXT C");
+				Assert.AreEqual (string.Format("Cell A1\t{0}\tCell B2", Environment.NewLine), text, "TEXT C");
+				string tmp;
+				tmp = string.Format(@"Version:1.0{0}" +
+"StartHTML:00000097{0}" +
+"EndHTML:00000266{0}" +
+"StartFragment:00000133{0}" +
+"EndFragment:00000230{0}" +
+"<HTML>{0}" +
+"<BODY>{0}" +
+"<!--StartFragment--><TABLE><TR><TD>Cell A1</TD><TD>&nbsp;</TD></TR><TR><TD>&nbsp;</TD><TD>Cell B2</TD></TR></TABLE>{0}" +
+"<!--EndFragment-->{0}" +
+"</BODY>{0}" +
+"</HTML>", "\r\n");
+
+				Assert.AreEqual (string.Format(@"Version:1.0{0}" +
+"StartHTML:00000097{0}" +
+"EndHTML:00000266{0}" +
+"StartFragment:00000133{0}" +
+"EndFragment:00000230{0}" +
+"<HTML>{0}" +
+"<BODY>{0}" +
+"<!--StartFragment--><TABLE><TR><TD>Cell A1</TD><TD>&nbsp;</TD></TR><TR><TD>&nbsp;</TD><TD>Cell B2</TD></TR></TABLE>{0}" +
+"<!--EndFragment-->{0}" +
+"</BODY>{0}" +
+"</HTML>", "\r\n"), html, "HTML C");
+			}
+		}
+
+		[Test]
+		public void GetClipboardContents_HeadersAlways ()
+		{
+			DataObject data;
+			string csv, html, utext, text;
+
+			using (DataGridView dgv = DataGridViewCommon.CreateAndFill ()) {
+				dgv.ClipboardCopyMode = DataGridViewClipboardCopyMode.EnableAlwaysIncludeHeaderText;
+				data = dgv.GetClipboardContent ();
+				Assert.IsNull (data, "#01");
+
+				dgv.Rows [0].Cells [0].Selected = true;
+
+				data = dgv.GetClipboardContent ();
+				Assert.IsNotNull (data, "#B1");
+
+				Assert.AreEqual (new string [] { DataFormats.CommaSeparatedValue, DataFormats.Html, DataFormats.UnicodeText, DataFormats.Text }, data.GetFormats (), "#B2");
+				Assert.AreEqual (new string [] { DataFormats.CommaSeparatedValue, DataFormats.Html, DataFormats.UnicodeText, DataFormats.Text }, data.GetFormats (true), "#B3");
+
+				csv = data.GetData (DataFormats.CommaSeparatedValue) as string;
+				html = data.GetData (DataFormats.Html) as string;
+				utext = data.GetData (DataFormats.UnicodeText) as string;
+				text = data.GetData (DataFormats.Text) as string;
+
+				Assert.AreEqual (string.Format (",A{0},Cell A1", Environment.NewLine), csv, "CSV B");
+				Assert.AreEqual (string.Format ("\tA{0}\tCell A1", Environment.NewLine), utext, "UTEXT B");
+				Assert.AreEqual (string.Format ("\tA{0}\tCell A1", Environment.NewLine), text, "TEXT B");
+				Assert.AreEqual (string.Format (@"Version:1.0{0}" +
+"StartHTML:00000097{0}" +
+"EndHTML:00000281{0}" +
+"StartFragment:00000133{0}" +
+"EndFragment:00000245{0}" +
+"<HTML>{0}" +
+"<BODY>{0}" +
+"<!--StartFragment--><TABLE><THEAD><TH>&nbsp;</TH><TH>A</TH></THEAD><TR><TD ALIGN=\"center\">&nbsp;</TD><TD>Cell A1</TD></TR></TABLE>{0}" +
+"<!--EndFragment-->{0}" +
+"</BODY>{0}" +
+"</HTML>", "\r\n"), html, "HTML B");
+
+				dgv.Rows [1].Cells [1].Selected = true;
+
+				data = dgv.GetClipboardContent ();
+				Assert.IsNotNull (data, "#C1");
+
+				Assert.AreEqual (new string [] { DataFormats.CommaSeparatedValue, DataFormats.Html, DataFormats.UnicodeText, DataFormats.Text }, data.GetFormats (), "#C2");
+				Assert.AreEqual (new string [] { DataFormats.CommaSeparatedValue, DataFormats.Html, DataFormats.UnicodeText, DataFormats.Text }, data.GetFormats (true), "#C3");
+
+				csv = data.GetData (DataFormats.CommaSeparatedValue) as string;
+				html = data.GetData (DataFormats.Html) as string;
+				utext = data.GetData (DataFormats.UnicodeText) as string;
+				text = data.GetData (DataFormats.Text) as string;
+
+				Assert.AreEqual (string.Format (",A,B{0},Cell A1,{0},,Cell B2", Environment.NewLine), csv, "CSV C");
+				Assert.AreEqual (string.Format ("\tA\tB{0}\tCell A1\t{0}\t\tCell B2", Environment.NewLine), utext, "UTEXT C");
+				Assert.AreEqual (string.Format ("\tA\tB{0}\tCell A1\t{0}\t\tCell B2", Environment.NewLine), text, "TEXT C");
+				string tmp;
+				tmp = string.Format (@"Version:1.0{0}" +
+"StartHTML:00000097{0}" +
+"EndHTML:00000266{0}" +
+"StartFragment:00000133{0}" +
+"EndFragment:00000230{0}" +
+"<HTML>{0}" +
+"<BODY>{0}" +
+"<!--StartFragment--><TABLE><TR><TD>Cell A1</TD><TD>&nbsp;</TD></TR><TR><TD>&nbsp;</TD><TD>Cell B2</TD></TR></TABLE>{0}" +
+"<!--EndFragment-->{0}" +
+"</BODY>{0}" +
+"</HTML>", "\r\n");
+
+				Assert.AreEqual (string.Format (@"Version:1.0{0}" +
+"StartHTML:00000097{0}" +
+"EndHTML:00000376{0}" +
+"StartFragment:00000133{0}" +
+"EndFragment:00000340{0}" +
+"<HTML>{0}" +
+"<BODY>{0}" +
+"<!--StartFragment--><TABLE><THEAD><TH>&nbsp;</TH><TH>A</TH><TH>B</TH></THEAD><TR><TD ALIGN=\"center\">&nbsp;</TD><TD>Cell A1</TD><TD>&nbsp;</TD></TR><TR><TD ALIGN=\"center\">&nbsp;</TD><TD>&nbsp;</TD><TD>Cell B2</TD></TR></TABLE>{0}" +
+"<!--EndFragment-->{0}" +
+"</BODY>{0}" +
+"</HTML>", "\r\n"), html, "HTML C");
+			}
+		}
+
+		[Test]
+		public void GetClipboardContents_HeadersNever ()
+		{
+			DataObject data;
+			string csv, html, utext, text;
+
+			using (DataGridView dgv = DataGridViewCommon.CreateAndFill ()) {
+				dgv.ClipboardCopyMode = DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+				data = dgv.GetClipboardContent ();
+				Assert.IsNull (data, "#01");
+
+				dgv.Rows [0].Cells [0].Selected = true;
+
+				data = dgv.GetClipboardContent ();
+				Assert.IsNotNull (data, "#B1");
+
+				Assert.AreEqual (new string [] { DataFormats.CommaSeparatedValue, DataFormats.Html, DataFormats.UnicodeText, DataFormats.Text }, data.GetFormats (), "#B2");
+				Assert.AreEqual (new string [] { DataFormats.CommaSeparatedValue, DataFormats.Html, DataFormats.UnicodeText, DataFormats.Text }, data.GetFormats (true), "#B3");
+
+				csv = data.GetData (DataFormats.CommaSeparatedValue) as string;
+				html = data.GetData (DataFormats.Html) as string;
+				utext = data.GetData (DataFormats.UnicodeText) as string;
+				text = data.GetData (DataFormats.Text) as string;
+
+				Assert.AreEqual ("Cell A1", csv, "CSV B");
+				Assert.AreEqual ("Cell A1", utext, "UTEXT B");
+				Assert.AreEqual ("Cell A1", text, "TEXT B");
+				Assert.AreEqual (string.Format (@"Version:1.0{0}" +
+"StartHTML:00000097{0}" +
+"EndHTML:00000211{0}" +
+"StartFragment:00000133{0}" +
+"EndFragment:00000175{0}" +
+"<HTML>{0}" +
+"<BODY>{0}" +
+"<!--StartFragment--><TABLE><TR><TD>Cell A1</TD></TR></TABLE>{0}" +
+"<!--EndFragment-->{0}" +
+"</BODY>{0}" +
+"</HTML>", "\r\n"), html, "HTML B");
+
+				dgv.Rows [1].Cells [1].Selected = true;
+
+				data = dgv.GetClipboardContent ();
+				Assert.IsNotNull (data, "#C1");
+
+				Assert.AreEqual (new string [] { DataFormats.CommaSeparatedValue, DataFormats.Html, DataFormats.UnicodeText, DataFormats.Text }, data.GetFormats (), "#C2");
+				Assert.AreEqual (new string [] { DataFormats.CommaSeparatedValue, DataFormats.Html, DataFormats.UnicodeText, DataFormats.Text }, data.GetFormats (true), "#C3");
+
+				csv = data.GetData (DataFormats.CommaSeparatedValue) as string;
+				html = data.GetData (DataFormats.Html) as string;
+				utext = data.GetData (DataFormats.UnicodeText) as string;
+				text = data.GetData (DataFormats.Text) as string;
+
+				Assert.AreEqual (string.Format ("Cell A1,{0},Cell B2", Environment.NewLine), csv, "CSV C");
+				Assert.AreEqual (string.Format ("Cell A1\t{0}\tCell B2", Environment.NewLine), utext, "UTEXT C");
+				Assert.AreEqual (string.Format ("Cell A1\t{0}\tCell B2", Environment.NewLine), text, "TEXT C");
+				string tmp;
+				tmp = string.Format (@"Version:1.0{0}" +
+"StartHTML:00000097{0}" +
+"EndHTML:00000266{0}" +
+"StartFragment:00000133{0}" +
+"EndFragment:00000230{0}" +
+"<HTML>{0}" +
+"<BODY>{0}" +
+"<!--StartFragment--><TABLE><TR><TD>Cell A1</TD><TD>&nbsp;</TD></TR><TR><TD>&nbsp;</TD><TD>Cell B2</TD></TR></TABLE>{0}" +
+"<!--EndFragment-->{0}" +
+"</BODY>{0}" +
+"</HTML>", "\r\n");
+
+				Assert.AreEqual (string.Format (@"Version:1.0{0}" +
+"StartHTML:00000097{0}" +
+"EndHTML:00000266{0}" +
+"StartFragment:00000133{0}" +
+"EndFragment:00000230{0}" +
+"<HTML>{0}" +
+"<BODY>{0}" +
+"<!--StartFragment--><TABLE><TR><TD>Cell A1</TD><TD>&nbsp;</TD></TR><TR><TD>&nbsp;</TD><TD>Cell B2</TD></TR></TABLE>{0}" +
+"<!--EndFragment-->{0}" +
+"</BODY>{0}" +
+"</HTML>", "\r\n"), html, "HTML C");
+			}
+		}
+		
 		[Test]
 		public void EditingRow ()
 		{
@@ -236,6 +845,65 @@ namespace MonoTests.System.Windows.Forms {
 				Assert.AreEqual (0, dgv.SelectedColumns.Count, "5-3");
 				dgv.Columns [2].Selected = true;
 				Assert.AreEqual (0, dgv.SelectedColumns.Count, "5-6");
+			}
+		}
+
+		[Test]
+		public void TopLeftHeaderCellTest ()
+		{
+			Assert.Ignore("Missing quite a few bits still");
+			
+			using (DataGridView dgv = new DataGridView ()) {
+				DataGridViewHeaderCell cell = dgv.TopLeftHeaderCell;
+				
+				cell = dgv.TopLeftHeaderCell;
+
+				Assert.IsNotNull (cell, "#01");
+				Assert.AreEqual (cell.DataGridView, dgv, "#02");
+				Assert.AreEqual ("DataGridViewTopLeftHeaderCell", cell.GetType ().Name, "#03");
+								
+				Assert.IsNotNull (cell.AccessibilityObject, "#cell.AccessibilityObject");
+				Assert.AreEqual (-1, cell.ColumnIndex, "#cell.ColumnIndex");
+				// /* NIE for the moment... */ Assert.IsNotNull (cell.ContentBounds, "#cell.ContentBounds");
+				Assert.IsNull (cell.ContextMenuStrip, "#cell.ContextMenuStrip");
+				Assert.IsNotNull (cell.DataGridView, "#cell.DataGridView");
+				Assert.IsNull (cell.DefaultNewRowValue, "#cell.DefaultNewRowValue");
+				Assert.AreEqual (false, cell.Displayed, "#cell.Displayed");
+				// /* NIE for the moment... */ Assert.AreEqual (@"", cell.EditedFormattedValue, "#cell.EditedFormattedValue");
+				Assert.IsNotNull (cell.EditType, "#cell.EditType");
+				Assert.IsNotNull (cell.ErrorIconBounds, "#cell.ErrorIconBounds");
+				Assert.AreEqual (@"", cell.ErrorText, "#cell.ErrorText");
+				// /* NIE for the moment... */ Assert.AreEqual (@"", cell.FormattedValue, "#cell.FormattedValue");
+				Assert.IsNotNull (cell.FormattedValueType, "#cell.FormattedValueType");
+				// /* NIE for the moment... */ Assert.AreEqual (true, cell.Frozen, "#cell.Frozen");
+				Assert.AreEqual (false, cell.HasStyle, "#cell.HasStyle");
+				Assert.AreEqual (DataGridViewElementStates.Frozen | DataGridViewElementStates.ReadOnly | DataGridViewElementStates.Resizable | DataGridViewElementStates.ResizableSet | DataGridViewElementStates.Visible, cell.InheritedState, "#cell.InheritedState");
+				Assert.IsNotNull (cell.InheritedStyle, "#cell.InheritedStyle");
+				try {
+					object zxf = cell.IsInEditMode;
+					TestHelper.RemoveWarning (zxf);
+					Assert.Fail ("Expected 'System.InvalidOperationException', but no exception was thrown.", "#cell.IsInEditMode");
+				} catch (InvalidOperationException ex) {
+					Assert.AreEqual (@"Operation cannot be performed on a cell of a shared row.", ex.Message);
+				} catch (Exception ex) {
+					Assert.Fail ("Expected 'System.InvalidOperationException', got '" + ex.GetType ().FullName + "'.", "#cell.IsInEditMode");
+				}
+				Assert.IsNull (cell.OwningColumn, "#cell.OwningColumn");
+				Assert.IsNull (cell.OwningRow, "#cell.OwningRow");
+				Assert.IsNotNull (cell.PreferredSize, "#cell.PreferredSize");
+				Assert.AreEqual (true, cell.ReadOnly, "#cell.ReadOnly");
+				Assert.AreEqual (true, cell.Resizable, "#cell.Resizable");
+				Assert.AreEqual (-1, cell.RowIndex, "#cell.RowIndex");
+				Assert.AreEqual (false, cell.Selected, "#cell.Selected");
+				Assert.IsNotNull (cell.Size, "#cell.Size");
+				Assert.AreEqual (DataGridViewElementStates.None, cell.State, "#cell.State");
+				if (cell.HasStyle)
+					Assert.IsNotNull (cell.Style, "#cell.Style");
+				Assert.IsNull (cell.Tag, "#cell.Tag");
+				Assert.AreEqual (@"", cell.ToolTipText, "#cell.ToolTipText");
+				Assert.IsNull (cell.Value, "#cell.Value");
+				Assert.IsNotNull (cell.ValueType, "#cell.ValueType");
+				Assert.AreEqual (true, cell.Visible, "#cell.Visible");
 			}
 		}
 
