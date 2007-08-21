@@ -1,3 +1,7 @@
+2007-08-21  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* DataObjectTest.cs: Added TestConvertible.
+
 2007-08-20  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListViewGroupCollectionTest.cs: New tests for the indexers.

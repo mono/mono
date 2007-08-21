@@ -35,6 +35,53 @@ namespace MonoTests.System.Windows.Forms
 	public class DataObjectTest
 	{
 		[Test]
+		public void TestConvertible ()
+		{
+			DataObject o = new DataObject ();
+			o.SetData (DataFormats.Text, false, "abc");
+
+			Assert.AreEqual (new string [] { DataFormats.Text }, o.GetFormats (), "#01");
+			Assert.AreEqual (new string [] { DataFormats.Text }, o.GetFormats (true), "#02");
+			Assert.AreEqual (new string [] { DataFormats.Text }, o.GetFormats (false), "#03");
+
+			o = new DataObject ();
+			o.SetData (DataFormats.Text, true, "abc");
+
+			Assert.AreEqual (new string [] { DataFormats.StringFormat, DataFormats.UnicodeText, DataFormats.Text }, o.GetFormats (), "#B1");
+			Assert.AreEqual (new string [] { DataFormats.StringFormat, DataFormats.UnicodeText, DataFormats.Text }, o.GetFormats (), "#B2");
+			Assert.AreEqual (new string [] { DataFormats.Text }, o.GetFormats (false), "#B3");
+
+
+			o = new DataObject ();
+			o.SetData (DataFormats.UnicodeText, true, "abc");
+
+			Assert.AreEqual (new string [] { DataFormats.StringFormat, DataFormats.UnicodeText, DataFormats.Text }, o.GetFormats (), "#C1");
+			Assert.AreEqual (new string [] { DataFormats.StringFormat, DataFormats.UnicodeText, DataFormats.Text }, o.GetFormats (), "#C2");
+			Assert.AreEqual (new string [] { DataFormats.UnicodeText }, o.GetFormats (false), "#C3");
+
+			o = new DataObject ();
+			o.SetData (DataFormats.UnicodeText, false, "abc");
+
+			Assert.AreEqual (new string [] { DataFormats.UnicodeText }, o.GetFormats (), "#D1");
+			Assert.AreEqual (new string [] { DataFormats.UnicodeText}, o.GetFormats (), "#D2");
+			Assert.AreEqual (new string [] { DataFormats.UnicodeText }, o.GetFormats (false), "#D3");
+
+			o = new DataObject ();
+			o.SetData (DataFormats.StringFormat, true, "abc");
+
+			Assert.AreEqual (new string [] { DataFormats.StringFormat, DataFormats.UnicodeText, DataFormats.Text }, o.GetFormats (), "#C1");
+			Assert.AreEqual (new string [] { DataFormats.StringFormat, DataFormats.UnicodeText, DataFormats.Text }, o.GetFormats (), "#C2");
+			Assert.AreEqual (new string [] { DataFormats.StringFormat }, o.GetFormats (false), "#C3");
+
+			o = new DataObject ();
+			o.SetData (DataFormats.StringFormat, false, "abc");
+
+			Assert.AreEqual (new string [] { DataFormats.StringFormat }, o.GetFormats (), "#D1");
+			Assert.AreEqual (new string [] { DataFormats.StringFormat }, o.GetFormats (), "#D2");
+			Assert.AreEqual (new string [] { DataFormats.StringFormat }, o.GetFormats (false), "#D3");
+		}
+	
+		[Test]
 		public void TestAudio ()
 		{
 			DataObject d = new DataObject ();

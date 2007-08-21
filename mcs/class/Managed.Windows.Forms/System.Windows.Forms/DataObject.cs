@@ -42,7 +42,7 @@ namespace System.Windows.Forms {
 			#region Local Variables
 			private string	type;
 			private object	data;
-			//private bool	autoconvert;
+			private bool	autoconvert;
 			internal Entry	next;
 			#endregion	// Local Variables
 
@@ -50,7 +50,7 @@ namespace System.Windows.Forms {
 			internal Entry(string type, object data, bool autoconvert) {
 				this.type = type;
 				this.data = data;
-				//this.autoconvert = autoconvert;
+				this.autoconvert = autoconvert;
 			}
 			#endregion	// Constructors
 
@@ -62,6 +62,14 @@ namespace System.Windows.Forms {
 
 				set {
 					data = value;
+				}
+			}
+			public bool AutoConvert {
+				get { 
+					return autoconvert;
+				}
+				set {
+					autoconvert = value;
 				}
 			}
 			#endregion	// Properties
@@ -80,9 +88,16 @@ namespace System.Windows.Forms {
 				return result;
 			}
 
-			public static Entry Find(Entry entries, string type) {
+			public static Entry Find (Entry entries, string type) {
+				return Find (entries, type, false);
+			}
+
+			public static Entry Find(Entry entries, string type, bool only_convertible) {
 				while (entries != null) {
-					if (entries.type.Equals(type)) {
+					bool available = true;
+					if (only_convertible && !entries.autoconvert)
+						available = false;
+					if (available && entries.type.Equals(type)) {
 						return entries;
 					}
 					entries = entries.next;
@@ -131,24 +146,26 @@ namespace System.Windows.Forms {
 				list = new ArrayList(Entry.Count(entries));
 				e = entries;
 
-				while (e != null) {
-					list.Add(e.type);
-					e = e.next;
-				}
-
 				if (convertible) {
 					// Add the convertibles
-					if ((Entry.Find(entries, DataFormats.Text) != null) && (Entry.Find(entries, DataFormats.UnicodeText) == null)) {
-						list.Add(DataFormats.UnicodeText);
-					}
+					Entry text_entry = Entry.Find (entries, DataFormats.Text);
+					Entry utext_entry = Entry.Find (entries, DataFormats.UnicodeText);
+					Entry string_entry = Entry.Find (entries, DataFormats.StringFormat);
+					bool text_convertible = text_entry != null && text_entry.AutoConvert;
+					bool utext_convertible = utext_entry != null && utext_entry.AutoConvert;
+					bool string_convertible = string_entry != null && string_entry.AutoConvert;
 
-					if ((Entry.Find(entries, DataFormats.Text) == null) && (Entry.Find(entries, DataFormats.UnicodeText) != null)) {
-						list.Add(DataFormats.Text);
+					if (text_convertible || utext_convertible || string_convertible) {
+						list.Add (DataFormats.StringFormat);
+						list.Add (DataFormats.UnicodeText);
+						list.Add (DataFormats.Text);
 					}
+				}
 
-					if (((Entry.Find(entries, DataFormats.Text) != null) || (Entry.Find(entries, DataFormats.UnicodeText) != null)) && (Entry.Find(entries, DataFormats.StringFormat) == null)) {
-						list.Add(DataFormats.StringFormat);
-					}
+				while (e != null) {
+					if (!list.Contains (e.type))
+						list.Add (e.type);
+					e = e.next;
 				}
 
 				// Copy the results into a string array
