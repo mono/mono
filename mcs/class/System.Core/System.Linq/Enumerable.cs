@@ -1999,7 +1999,7 @@ namespace System.Linq
                 throw new ArgumentNullException();
 
             return new InternalOrderedSequence<TSource, TKey>(
-                    source, keySelector, (comparer ?? Comparer<TKey>.Default), false, null);
+                    source, keySelector, comparer, false);
         }
 
         #endregion
@@ -2020,7 +2020,7 @@ namespace System.Linq
                 throw new ArgumentNullException();
 
             return new InternalOrderedSequence<TSource, TKey>(
-                    source, keySelector, (comparer ?? Comparer<TKey>.Default), true, null);
+                    source, keySelector, comparer, true);
         }
 
         #endregion
@@ -2238,7 +2238,7 @@ namespace System.Linq
 
 
         public static IEnumerable<TSource> SkipWhile<TSource>(
-                IEnumerable<TSource> source,
+                this IEnumerable<TSource> source,
                 Func<TSource, bool> predicate)
         {
             if (source == null || predicate == null)
@@ -2584,11 +2584,10 @@ namespace System.Linq
         public static IOrderedEnumerable<TSource> ThenBy<TSource, TKey>(this IOrderedEnumerable<TSource> source, 
             Func<TSource, TKey> keySelector, IComparer<TKey> comparer)
         {
-            if (source == null || keySelector == null)
-                throw new ArgumentNullException();
+		if (source == null || keySelector == null)
+			throw new ArgumentNullException();
 
-            return new InternalOrderedSequence<TSource, TKey>(
-                    source, keySelector, (comparer ?? Comparer<TKey>.Default), false, source);
+		return source.CreateOrderedEnumerable (keySelector, comparer, false);
         }
 
         #endregion
@@ -2605,11 +2604,10 @@ namespace System.Linq
         public static IOrderedEnumerable<TSource> ThenByDescending<TSource, TKey>(this IOrderedEnumerable<TSource> source,
             Func<TSource, TKey> keySelector, IComparer<TKey> comparer)
         {
-            if (source == null || keySelector == null)
-                throw new ArgumentNullException();
+		if (source == null || keySelector == null)
+			throw new ArgumentNullException();
 
-            return new InternalOrderedSequence<TSource, TKey>(
-                    source, keySelector, (comparer ?? Comparer<TKey>.Default), true, source);
+		return source.CreateOrderedEnumerable (keySelector, comparer, true);
         }
 
         #endregion

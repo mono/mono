@@ -1,5 +1,13 @@
 2007-08-21  Marek Safar <marek.safar@gmail.com>
 
+	* AOrderedEnumerable: New abstract base.
+	
+	* Enumerable.cs, Queryable.cs: Public methods update.
+	
+	* InternalOrderedSequence.cs: Fixed ThenBy.
+
+2007-08-21  Marek Safar <marek.safar@gmail.com>
+
 	* Enumerable.cs, Queryable.cs: Public methods update.
 	
 	* InternalOrderedSequence.cs, OrderedSequence.cs: Derives from

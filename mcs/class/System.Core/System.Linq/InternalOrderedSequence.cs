@@ -1,3 +1,12 @@
+//
+// InternalOrderedSequence.cs
+//
+// Authors:
+//	Alejandro Serrano "Serras" (trupill@yahoo.es)
+//	Marek Safar  <marek.safar@gmail.com>
+//
+// Copyright (C) 2007 Novell, Inc (http://www.novell.com)
+//
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
@@ -5,19 +14,17 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
 // NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-//
-// Authors:
-//        Alejandro Serrano "Serras" (trupill@yahoo.es)
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
 using System;
@@ -26,54 +33,39 @@ using System.Collections.Generic;
 
 namespace System.Linq
 {
-        internal class InternalOrderedSequence<TElement, K> : IOrderedEnumerable<TElement>
+	sealed class InternalOrderedSequence<TElement, TKey> : AOrderedEnumerable<TElement>
         {
-                IEnumerable<TElement> source;
-                Func<TElement, K> key_selector;
-                IComparer<K> comparer;
-                bool descending;
-                IOrderedEnumerable<TElement> previous;
+		readonly IEnumerable<TElement> source;
+		readonly Func<TElement, TKey> key_selector;
+		readonly IComparer<TKey> comparer;
+		readonly bool descending;
                 
-                internal InternalOrderedSequence (IEnumerable<TElement> source, Func<TElement, K> keySelector,
-                                                  IComparer<K> comparer, bool descending, IOrderedEnumerable<TElement> previous)
+                internal InternalOrderedSequence (IEnumerable<TElement> source, Func<TElement, TKey> keySelector,
+                                                  IComparer<TKey> comparer, bool descending)
                 {
                         this.source = source;
                         this.key_selector = keySelector;
-                        this.comparer = comparer;
+                        this.comparer = comparer ?? Comparer<TKey>.Default;
                         this.descending = descending;
-                        this.previous = previous;
                 }
                 
-                
-                IEnumerable<TElement> Sort (IEnumerable<TElement> previousList)
+                public override IEnumerable<TElement> Sort (IEnumerable<TElement> parentSource)
                 {
-                        if (previous == null)
-                                return PerformSort (previousList);
-                                
-                       return previous.CreateOrderedEnumerable (key_selector, comparer, descending);
+                	if (parent != null)
+                		return parent.Sort (source);
+			return PerformSort (parentSource);
                 }
                 
-                public IEnumerator<TElement> GetEnumerator ()
+                public override IEnumerator<TElement> GetEnumerator ()
                 {
-                        return Sort (source).GetEnumerator ();
+                        return PerformSort (source).GetEnumerator ();
                 }
-                
-                IEnumerator IEnumerable.GetEnumerator ()
-                {
-                        return this.GetEnumerator ();
-                }
-                
-		public IOrderedEnumerable<TElement> CreateOrderedEnumerable<TKey> (
-			Func<TElement, TKey> selector, IComparer<TKey> comparer, bool descending)
-		{
-			throw new NotImplementedException ();
-		}                
                 
                 List<TElement> source_list;
-                K[] keys;
+                TKey[] keys;
                 int[] indexes;
                 
-                private IEnumerable<TElement> PerformSort (IEnumerable<TElement> items)
+                IEnumerable<TElement> PerformSort (IEnumerable<TElement> items)
                 {
                         // It first enumerates source, collecting all elements
                         source_list = new List<TElement> (items);
@@ -84,7 +76,7 @@ namespace System.Linq
                         
                         // Then evaluate the keySelector function for each element,
                         // collecting the key values
-                        keys = new K [source_list.Count];
+                        keys = new TKey [source_list.Count];
                         for (int i = 0; i < source_list.Count; i++)
                                 keys[i] = key_selector(source_list [i]);
                         
@@ -103,14 +95,9 @@ namespace System.Linq
                         return orderedList;
                 }
                 
-                private int CompareItems (int firstIndex, int secondIndex)
+                int CompareItems (int firstIndex, int secondIndex)
                 {
-                        int comparison;
-                        
-                        if (comparer == null)
-                                comparison = ((IComparable<K>)keys [firstIndex]).CompareTo (keys [secondIndex]);
-                        else
-                                comparison =  comparer.Compare (keys [firstIndex], keys [secondIndex]);
+                        int comparison = comparer.Compare (keys [firstIndex], keys [secondIndex]);
                        
                         // If descending, return the opposite comparison
                         return (descending ? -comparison : comparison);
@@ -121,7 +108,7 @@ namespace System.Linq
                     http://en.wikipedia.org/wiki/Quicksort_implementations
                     that was released under the GNU Free Documentation License **/
                
-                private void QuickSort (int[] array, int left, int right)
+                void QuickSort (int[] array, int left, int right)
                 {
                         int lhold = left;
                         int rhold = right;
@@ -154,7 +141,7 @@ namespace System.Linq
                                 QuickSort (array, pivot + 1, rhold);
                 }
                 
-                private void Swap (int[] items, int left, int right)
+                static void Swap (int[] items, int left, int right)
                 {
                         int temp = items [right];
                         items [right] = items [left];

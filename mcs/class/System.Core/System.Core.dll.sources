@@ -25,7 +25,7 @@ System.Linq/IQueryable.cs
 System.Linq/IQueryable_T.cs
 System.Linq/Lookup.cs
 System.Linq/ILookup_T.cs
-System.Linq/OrderedSequence.cs
+System.Linq/AOrderedEnumerable.cs
 System.Linq/Queryable.cs
 System.Linq/IQueryProvider.cs
 System.Linq.Expressions/BinaryExpression.cs

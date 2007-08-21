@@ -2214,17 +2214,17 @@ namespace System.Linq
 
                 #region OrderBy
                 
-                public static OrderedSequence<TSource> OrderBy<TSource, K> (
+                public static IOrderedQueryable<TSource> OrderBy<TSource, TKey> (
                         this IQueryable<TSource> source,
-                        Func<TSource, K> keySelector)
+                        Func<TSource, TKey> keySelector)
                 {
-                        return OrderBy<TSource, K> (source, keySelector, null);
+                        return OrderBy<TSource, TKey> (source, keySelector, null);
                 }
                 
-                public static OrderedSequence<TSource> OrderBy<TSource, K> (
+                public static IOrderedQueryable<TSource> OrderBy<TSource, TKey> (
                         this IQueryable<TSource> source,
-                        Func<TSource, K> keySelector,
-                        IComparer<K> comparer)
+                        Func<TSource, TKey> keySelector,
+                        IComparer<TKey> comparer)
                 {
                         if (source == null || keySelector == null)
                                 throw new ArgumentNullException ();
@@ -2238,17 +2238,17 @@ namespace System.Linq
                 
                 #region OrderByDescending
                 
-                public static OrderedSequence<TSource> OrderByDescending<TSource, K> (
+                public static IOrderedQueryable<TSource> OrderByDescending<TSource, TKey> (
                         this IQueryable<TSource> source,
-                        Func<TSource, K> keySelector)
+                        Func<TSource, TKey> keySelector)
                 {
-                        return OrderByDescending<TSource, K> (source, keySelector, null);
+                        return OrderByDescending<TSource, TKey> (source, keySelector, null);
                 }
                 
-                public static OrderedSequence<TSource> OrderByDescending<TSource, K> (
+                public static IOrderedQueryable<TSource> OrderByDescending<TSource, TKey> (
                         this IQueryable<TSource> source,
-                        Func<TSource, K> keySelector,
-                        IComparer<K> comparer)
+                        Func<TSource, TKey> keySelector,
+                        IComparer<TKey> comparer)
                 {
                         if (source == null || keySelector == null)
                                 throw new ArgumentNullException ();
@@ -2263,17 +2263,17 @@ namespace System.Linq
                 
                 #region ThenBy
                 
-                public static OrderedSequence<TSource> ThenBy<TSource, K> (
-                        this OrderedSequence<TSource> source,
-                        Func<TSource, K> keySelector)
+                public static IOrderedQueryable<TSource> ThenBy<TSource, TKey> (
+                        this IOrderedQueryable<TSource> source,
+                        Func<TSource, TKey> keySelector)
                 {
-                        return ThenBy<TSource, K> (source, keySelector, null);
+                        return ThenBy<TSource, TKey> (source, keySelector, null);
                 }
                 
-                public static OrderedSequence<TSource> ThenBy<TSource, K> (
-                        this OrderedSequence<TSource> source,
-                        Func<TSource, K> keySelector,
-                        IComparer<K> comparer)
+                public static IOrderedQueryable<TSource> ThenBy<TSource, TKey> (
+                        this IOrderedQueryable<TSource> source,
+                        Func<TSource, TKey> keySelector,
+                        IComparer<TKey> comparer)
                 {
                         if (source == null || keySelector == null)
                                 throw new ArgumentNullException ();
@@ -2287,17 +2287,17 @@ namespace System.Linq
                 
                 #region ThenByDescending
                 
-                public static OrderedSequence<TSource> ThenByDescending<TSource, K> (
-                        this OrderedSequence<TSource> source,
-                        Func<TSource, K> keySelector)
+                public static IOrderedQueryable<TSource> ThenByDescending<TSource, TKey> (
+                        this IOrderedQueryable<TSource> source,
+                        Func<TSource, TKey> keySelector)
                 {
-                        return ThenByDescending<TSource, K> (source, keySelector, null);
+                        return ThenByDescending<TSource, TKey> (source, keySelector, null);
                 }
                 
-                public static OrderedSequence<TSource> ThenByDescending<TSource, K> (
-                        this OrderedSequence<TSource> source,
-                        Func<TSource, K> keySelector,
-                        IComparer<K> comparer)
+                public static IOrderedQueryable<TSource> ThenByDescending<TSource, TKey> (
+                        this IOrderedQueryable<TSource> source,
+                        Func<TSource, TKey> keySelector,
+                        IComparer<TKey> comparer)
                 {
                         if (source == null || keySelector == null)
                                 throw new ArgumentNullException ();
