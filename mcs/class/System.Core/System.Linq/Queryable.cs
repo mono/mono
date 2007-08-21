@@ -2229,8 +2229,9 @@ namespace System.Linq
                         if (source == null || keySelector == null)
                                 throw new ArgumentNullException ();
                         
-                        return new InternalOrderedSequence<TSource, K> (
-                                source, keySelector, (comparer ?? Comparer<K>.Default), false, null);
+			throw new NotImplementedException ();
+//                        return new InternalOrderedSequence<TSource, K> (
+//                                source, keySelector, (comparer ?? Comparer<K>.Default), false, null);
                 }
                 
                 #endregion
@@ -2252,8 +2253,10 @@ namespace System.Linq
                         if (source == null || keySelector == null)
                                 throw new ArgumentNullException ();
                         
-                        return new InternalOrderedSequence<TSource, K> (
-                                source, keySelector, (comparer ?? Comparer<K>.Default), true, null);
+			throw new NotImplementedException ();
+                        
+//                        return new InternalOrderedSequence<TSource, K> (
+//                                source, keySelector, (comparer ?? Comparer<K>.Default), true, null);
                 }
                 
                 #endregion
@@ -2274,9 +2277,10 @@ namespace System.Linq
                 {
                         if (source == null || keySelector == null)
                                 throw new ArgumentNullException ();
-                        
-                        return new InternalOrderedSequence<TSource, K> (
-                                source, keySelector, (comparer ?? Comparer<K>.Default), false, source);
+
+			throw new NotImplementedException ();                        
+//                        return new InternalOrderedSequence<TSource, K> (
+//                                source, keySelector, (comparer ?? Comparer<K>.Default), false, source);
                 }
                 
                 #endregion
@@ -2298,8 +2302,10 @@ namespace System.Linq
                         if (source == null || keySelector == null)
                                 throw new ArgumentNullException ();
                         
-                        return new InternalOrderedSequence<TSource, K> (
-                                source, keySelector, (comparer ?? Comparer<K>.Default), true, source);
+			throw new NotImplementedException ();
+                        
+//                        return new InternalOrderedSequence<TSource, K> (
+//                                source, keySelector, (comparer ?? Comparer<K>.Default), true, source);
                 }
                 
                 #endregion

@@ -21,20 +21,21 @@
 //
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace System.Linq
 {
-        internal class InternalOrderedSequence<T, K> : OrderedSequence<T>
+        internal class InternalOrderedSequence<TElement, K> : IOrderedEnumerable<TElement>
         {
-                IEnumerable<T> source;
-                Func<T, K> key_selector;
+                IEnumerable<TElement> source;
+                Func<TElement, K> key_selector;
                 IComparer<K> comparer;
                 bool descending;
-                OrderedSequence<T> previous;
+                IOrderedEnumerable<TElement> previous;
                 
-                internal InternalOrderedSequence (IEnumerable<T> source, Func<T, K> keySelector,
-                                                  IComparer<K> comparer, bool descending, OrderedSequence<T> previous)
+                internal InternalOrderedSequence (IEnumerable<TElement> source, Func<TElement, K> keySelector,
+                                                  IComparer<K> comparer, bool descending, IOrderedEnumerable<TElement> previous)
                 {
                         this.source = source;
                         this.key_selector = keySelector;
@@ -43,27 +44,39 @@ namespace System.Linq
                         this.previous = previous;
                 }
                 
-                protected override IEnumerator<T> EnumeratorImplementation ()
+                
+                IEnumerable<TElement> Sort (IEnumerable<TElement> previousList)
+                {
+                        if (previous == null)
+                                return PerformSort (previousList);
+                                
+                       return previous.CreateOrderedEnumerable (key_selector, comparer, descending);
+                }
+                
+                public IEnumerator<TElement> GetEnumerator ()
                 {
                         return Sort (source).GetEnumerator ();
                 }
                 
-                protected internal override IEnumerable<T> Sort (IEnumerable<T> previousList)
+                IEnumerator IEnumerable.GetEnumerator ()
                 {
-                        if (previous == null)
-                                return PerformSort (previousList);
-                        else
-                                return previous.Sort (PerformSort (previousList));
+                        return this.GetEnumerator ();
                 }
                 
-                List<T> source_list;
+		public IOrderedEnumerable<TElement> CreateOrderedEnumerable<TKey> (
+			Func<TElement, TKey> selector, IComparer<TKey> comparer, bool descending)
+		{
+			throw new NotImplementedException ();
+		}                
+                
+                List<TElement> source_list;
                 K[] keys;
                 int[] indexes;
                 
-                private IEnumerable<T> PerformSort (IEnumerable<T> items)
+                private IEnumerable<TElement> PerformSort (IEnumerable<TElement> items)
                 {
                         // It first enumerates source, collecting all elements
-                        source_list = new List<T> (items);
+                        source_list = new List<TElement> (items);
                         
                         // If the source contains just zero or one element, there's no need to sort
                         if (source_list.Count <= 1)
@@ -83,8 +96,8 @@ namespace System.Linq
                         
                         QuickSort(indexes, 0, indexes.Length - 1);
                         
-                        // Return the values as IEnumerable<T>
-                        T[] orderedList = new T [indexes.Length];
+                        // Return the values as IEnumerable<TElement>
+                        TElement[] orderedList = new TElement [indexes.Length];
                         for (int i = 0; i < indexes.Length; i++)
                                 orderedList [i] = source_list [indexes [i]];
                         return orderedList;

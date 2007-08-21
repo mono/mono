@@ -460,13 +460,13 @@ namespace System.Linq
         #endregion
 
         #region Cast
-        public static IEnumerable<TSource> Cast<TSource>(this IEnumerable source)
+        public static IEnumerable<TResult> Cast<TResult>(this IEnumerable source)
         {
             if (source == null)
                 throw new ArgumentNullException();
 
             foreach (object element in source)
-                yield return (TSource)element;
+                yield return (TResult)element;
         }
         #endregion
 
@@ -1285,15 +1285,15 @@ namespace System.Linq
         }
 
 
-        public static T Max<T>(this IEnumerable<T> source)
+        public static TSource Max<TSource>(this IEnumerable<TSource> source)
         {
             if (source == null)
                 throw new ArgumentNullException();
 
             bool notAssigned = true;
-            T maximum = default(T);
+            TSource maximum = default(TSource);
             int counter = 0;
-            foreach (T element in source)
+            foreach (TSource element in source)
             {
                 if (notAssigned)
                 {
@@ -1303,8 +1303,8 @@ namespace System.Linq
                 else
                 {
                     int comparison;
-                    if (element is IComparable<T>)
-                        comparison = ((IComparable<T>)element).CompareTo(maximum);
+                    if (element is IComparable<TSource>)
+                        comparison = ((IComparable<TSource>)element).CompareTo(maximum);
                     else if (element is System.IComparable)
                         comparison = ((System.IComparable)element).CompareTo(maximum);
                     else
@@ -1323,15 +1323,15 @@ namespace System.Linq
         }
 
 
-        public static int Max<T>(this IEnumerable<T> source,
-                Func<T, int> selector)
+        public static int Max<TSource>(this IEnumerable<TSource> source,
+                Func<TSource, int> selector)
         {
             if (source == null || selector == null)
                 throw new ArgumentNullException();
 
             int maximum = int.MinValue;
             int counter = 0;
-            foreach (T item in source)
+            foreach (TSource item in source)
             {
                 int element = selector(item);
                 if (element > maximum)
@@ -1346,15 +1346,15 @@ namespace System.Linq
         }
 
 
-        public static int? Max<T>(this IEnumerable<T> source,
-                Func<T, int?> selector)
+        public static int? Max<TSource>(this IEnumerable<TSource> source,
+                Func<TSource, int?> selector)
         {
             if (source == null || selector == null)
                 throw new ArgumentNullException();
 
             bool onlyNull = true;
             int? maximum = int.MinValue;
-            foreach (T item in source)
+            foreach (TSource item in source)
             {
                 int? element = selector(item);
                 if (element.HasValue)
@@ -1970,28 +1970,28 @@ namespace System.Linq
 
         #region OfType
 
-        public static IEnumerable<TSource> OfType<TSource>(this IEnumerable source)
+        public static IEnumerable<TResult> OfType<TResult>(this IEnumerable source)
         {
             if (source == null)
                 throw new ArgumentNullException();
 
             foreach (object element in source)
-                if (element is TSource)
-                    yield return (TSource)element;
+                if (element is TResult)
+                    yield return (TResult)element;
         }
 
         #endregion
 
         #region OrderBy
 
-        public static OrderedSequence<TSource> OrderBy<TSource, TKey>(this IEnumerable<TSource> source,
+        public static IOrderedEnumerable<TSource> OrderBy<TSource, TKey>(this IEnumerable<TSource> source,
                 Func<TSource, TKey> keySelector)
         {
             return OrderBy<TSource, TKey>(source, keySelector, null);
         }
 
 
-        public static OrderedSequence<TSource> OrderBy<TSource, TKey>(this IEnumerable<TSource> source,
+        public static IOrderedEnumerable<TSource> OrderBy<TSource, TKey>(this IEnumerable<TSource> source,
                 Func<TSource, TKey> keySelector,
                 IComparer<TKey> comparer)
         {
@@ -2006,14 +2006,14 @@ namespace System.Linq
 
         #region OrderByDescending
 
-        public static OrderedSequence<TSource> OrderByDescending<TSource, TKey>(this IEnumerable<TSource> source,
+        public static IOrderedEnumerable<TSource> OrderByDescending<TSource, TKey>(this IEnumerable<TSource> source,
                 Func<TSource, TKey> keySelector)
         {
             return OrderByDescending<TSource, TKey>(source, keySelector, null);
         }
 
 
-        public static OrderedSequence<TSource> OrderByDescending<TSource, TKey>(this IEnumerable<TSource> source,
+        public static IOrderedEnumerable<TSource> OrderByDescending<TSource, TKey>(this IEnumerable<TSource> source,
                 Func<TSource, TKey> keySelector, IComparer<TKey> comparer)
         {
             if (source == null || keySelector == null)
@@ -2237,16 +2237,16 @@ namespace System.Linq
         #region SkipWhile
 
 
-        public static IEnumerable<T> SkipWhile<T>(
-                IEnumerable<T> source,
-                Func<T, bool> predicate)
+        public static IEnumerable<TSource> SkipWhile<TSource>(
+                IEnumerable<TSource> source,
+                Func<TSource, bool> predicate)
         {
             if (source == null || predicate == null)
                 throw new ArgumentNullException();
 
             bool yield = false;
 
-            foreach (T element in source)
+            foreach (TSource element in source)
             {
                 if (yield)
                     yield return element;
@@ -2517,7 +2517,7 @@ namespace System.Linq
         #endregion
         #region Take
 
-        public static IEnumerable<T> Take<T>(this IEnumerable<T> source, int count)
+        public static IEnumerable<TSource> Take<TSource>(this IEnumerable<TSource> source, int count)
         {
             if (source == null)
                 throw new ArgumentNullException();
@@ -2527,7 +2527,7 @@ namespace System.Linq
             else
             {
                 int counter = 0;
-                foreach (T element in source)
+                foreach (TSource element in source)
                 {
                     yield return element;
                     counter++;
@@ -2541,12 +2541,12 @@ namespace System.Linq
 
         #region TakeWhile
 
-        public static IEnumerable<T> TakeWhile<T>(this IEnumerable<T> source, Func<T, bool> predicate)
+        public static IEnumerable<TSource> TakeWhile<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
         {
             if (source == null || predicate == null)
                 throw new ArgumentNullException();
 
-            foreach (T element in source)
+            foreach (TSource element in source)
             {
                 if (predicate(element))
                     yield return element;
@@ -2575,13 +2575,13 @@ namespace System.Linq
 
         #region ThenBy
 
-        public static OrderedSequence<TSource> ThenBy<TSource, TKey>(this OrderedSequence<TSource> source, Func<TSource, TKey> keySelector)
+        public static IOrderedEnumerable<TSource> ThenBy<TSource, TKey>(this IOrderedEnumerable<TSource> source, Func<TSource, TKey> keySelector)
         {
             return ThenBy<TSource, TKey>(source, keySelector, null);
         }
 
 
-        public static OrderedSequence<TSource> ThenBy<TSource, TKey>(this OrderedSequence<TSource> source, 
+        public static IOrderedEnumerable<TSource> ThenBy<TSource, TKey>(this IOrderedEnumerable<TSource> source, 
             Func<TSource, TKey> keySelector, IComparer<TKey> comparer)
         {
             if (source == null || keySelector == null)
@@ -2595,14 +2595,14 @@ namespace System.Linq
 
         #region ThenByDescending
 
-        public static OrderedSequence<TSource> ThenByDescending<TSource, TKey>(this OrderedSequence<TSource> source,
+        public static IOrderedEnumerable<TSource> ThenByDescending<TSource, TKey>(this IOrderedEnumerable<TSource> source,
             Func<TSource, TKey> keySelector)
         {
             return ThenByDescending<TSource, TKey>(source, keySelector, null);
         }
 
 
-        public static OrderedSequence<TSource> ThenByDescending<TSource, TKey>(this OrderedSequence<TSource> source,
+        public static IOrderedEnumerable<TSource> ThenByDescending<TSource, TKey>(this IOrderedEnumerable<TSource> source,
             Func<TSource, TKey> keySelector, IComparer<TKey> comparer)
         {
             if (source == null || keySelector == null)
@@ -2615,12 +2615,12 @@ namespace System.Linq
         #endregion
 
         #region ToArray
-        public static T[] ToArray<T> (this IEnumerable<T> source)
+        public static TSource[] ToArray<TSource> (this IEnumerable<TSource> source)
         {
             if (source == null)
                 throw new ArgumentNullException ();
                         
-            List<T> list = new List<T> (source);
+            List<TSource> list = new List<TSource> (source);
             return list.ToArray ();
         }
                 
@@ -2730,13 +2730,13 @@ namespace System.Linq
         #region Union
 
 
-        public static IEnumerable<T> Union<T>(this IEnumerable<T> first, IEnumerable<T> second)
+        public static IEnumerable<TSource> Union<TSource>(this IEnumerable<TSource> first, IEnumerable<TSource> second)
         {
             if (first == null || second == null)
                 throw new ArgumentNullException();
 
-            List<T> items = new List<T>();
-            foreach (T element in first)
+            List<TSource> items = new List<TSource>();
+            foreach (TSource element in first)
             {
                 if (IndexOf(items, element) == -1)
                 {
@@ -2744,7 +2744,7 @@ namespace System.Linq
                     yield return element;
                 }
             }
-            foreach (T element in second)
+            foreach (TSource element in second)
             {
                 if (IndexOf(items, element) == -1)
                 {

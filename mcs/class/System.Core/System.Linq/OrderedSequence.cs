@@ -26,9 +26,9 @@ using System.Collections.Generic;
 
 namespace System.Linq
 {
-        public abstract class OrderedSequence<T> : IEnumerable<T>
+        public abstract class OrderedSequence<TElement> : IOrderedEnumerable<TElement>
         {
-                public IEnumerator<T> GetEnumerator ()
+                public IEnumerator<TElement> GetEnumerator ()
                 {
                         return EnumeratorImplementation ();
                 }
@@ -38,8 +38,15 @@ namespace System.Linq
                         return EnumeratorImplementation ();
                 }
                 
-                protected abstract IEnumerator<T> EnumeratorImplementation ();
+		public IOrderedEnumerable<TElement> CreateOrderedEnumerable<TKey> (
+			Func<TElement, TKey> selector, IComparer<TKey> comparer, bool descending)
+		{
+			throw new NotImplementedException ();
+		}
                 
-                protected internal abstract IEnumerable<T> Sort (IEnumerable<T> previousSource);
+		protected abstract IEnumerator<TElement> EnumeratorImplementation ();
+                
+		protected internal abstract IEnumerable<TElement> Sort (IEnumerable<TElement> previousSource);
         }
 }
+

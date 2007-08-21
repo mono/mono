@@ -1,3 +1,10 @@
+2007-08-21  Marek Safar <marek.safar@gmail.com>
+
+	* Enumerable.cs, Queryable.cs: Public methods update.
+	
+	* InternalOrderedSequence.cs, OrderedSequence.cs: Derives from
+	IOrderedEnumerable<TElement>.
+	
 2007-08-17  Michael Hutchinson <m.j.hutchinson@gmail.com>
 
 	* Enumerable.cs: Fix Aggregate's counting code, and make it more 
