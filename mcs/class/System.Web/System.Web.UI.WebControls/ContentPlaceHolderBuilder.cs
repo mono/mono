@@ -38,6 +38,7 @@ namespace System.Web.UI.WebControls
 {	
 	internal class ContentPlaceHolderBuilder: ControlBuilder
 	{
+#if !TARGET_J2EE
 		public override void Init (TemplateParser parser,
 					   ControlBuilder parentBuilder,
 					   Type type,
@@ -62,6 +63,7 @@ namespace System.Web.UI.WebControls
 			
 			mpp.AddContentPlaceHolderId (id);
 		}
+#endif
 	}
 }
 
