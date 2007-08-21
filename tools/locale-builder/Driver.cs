@@ -1148,7 +1148,7 @@ namespace Mono.Tools.LocaleBuilder {
 				p = p.Substring (0, idx);
 			idx = p.LastIndexOf ("'ren'"); // euskara
 			if (idx > 0)
-				p = p.Substring (0, idx);
+				p = p.Replace ("'ren'", "").Trim ();
 			idx = p.LastIndexOf ("'a'"); // estonian
 			if (idx > 0)
 				p = p.Substring (0, idx);

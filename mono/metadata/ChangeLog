@@ -1,3 +1,7 @@
+2007-08-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* culture-info-table.h : regenerated.
+
 2007-08-20  William Holmes  <billholmes54@gmail.com>
 
 	*file-io.c: Added ves_icall_System_IO_MonoIO_ReplaceFile
