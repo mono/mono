@@ -1,3 +1,8 @@
+2007-08-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslFunctions.cs : fix wrong unboxing in extension functions.
+	  Fixed bug #82493.
+
 2007-06-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	initial attempt to hook debuggers.

@@ -161,7 +161,7 @@ namespace Mono.Xml.Xsl
 				case "System.UInt64":
 				case "System.Single":
 				case "System.Decimal":
-					result = (double) method.Invoke (extension, castedArgs);
+					result = Convert.ChangeType (method.Invoke (extension, castedArgs), typeof (double));
 					break;
 				default:
 					result = method.Invoke(extension, castedArgs);

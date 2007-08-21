@@ -1933,5 +1933,42 @@ Services
 			t.Load (new XmlTextReader (new StringReader (xsl)));
 			t.Transform (new XPathDocument (new StringReader ("<dummy/>")), null, new XmlTextWriter (TextWriter.Null));
 		}
+
+		[Test]
+		public void Bug82493 ()
+		{
+			XslTransform transformationObj = new XslTransform ();
+			transformationObj.Load ("Test/XmlFiles/xsl/82493.xsl");
+			XmlDocument doc = new XmlDocument ();
+			doc.Load ("Test/XmlFiles/xsl/82493.xml");
+			XslExtensionClass GetCalculation = new XslExtensionClass ("a4");
+			XsltArgumentList xslExtensionArgList = new XsltArgumentList ();
+			xslExtensionArgList.AddExtensionObject ("urn:e", GetCalculation);
+			XmlTextWriter writer = new XmlTextWriter (TextWriter.Null);
+			transformationObj.Transform (doc, xslExtensionArgList, writer, null);
+
+		}
+
+		public class XslExtensionClass
+		{
+			private string paperType = String.Empty;
+
+			public XslExtensionClass (string paperType)
+			{
+				this.paperType = paperType;
+			}
+
+			public int GetPageDimensions ()
+			{
+				switch (this.paperType) {
+				case "a4":
+					return 210297;
+				case "letter":
+					return 216279;
+				default:
+					throw new ArgumentException ("Unknown page size type: " + this.paperType);
+				}
+			}
+		}
 	}
 }

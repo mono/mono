@@ -80,6 +80,8 @@ EXTRA_DISTFILES = \
 	Test/XmlFiles/xsd/82010.xml	\
 	Test/XmlFiles/xsd/82010.xsd	\
 	Test/XmlFiles/xsd/inter-inc-1.xsd \
+	Test/XmlFiles/xsl/82493.xml 	\
+	Test/XmlFiles/xsl/82493.xsl 	\
 	Test/XmlFiles/xsl/91834.xml 	\
 	Test/XmlFiles/xsl/91834.xsl 	\
 	Test/XmlFiles/xsl/91834a.xml	\

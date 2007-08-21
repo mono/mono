@@ -1,3 +1,7 @@
+2007-08-21  Atsushi Enomoto <atsushi@ximian.com>
+
+	* 82394.xml, 82493.xsl : new test files.
+
 2006-04-07  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* current-in-select.xml current-in-select.xsl current-in-select.ref :
