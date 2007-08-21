@@ -1,3 +1,8 @@
+2007-08-21  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (mono_type_retrieve_from_typespec) : fixed the return type
+	it should MonoType and not MonoClass.
+
 2007-08-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* culture-info-table.h : regenerated.
