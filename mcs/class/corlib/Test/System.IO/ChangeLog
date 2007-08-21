@@ -1,3 +1,8 @@
+2007-08-21  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* FileTest.cs: Added test for File.GetAttributes (and indirectly also
+	for SetAttributes). Removed use of deprecated Assertion class.
+
 2007-08-20  William Holmes  <billholmes54@gmail.com>
 
 	*FileTest.cs:  Added a test for IO.File.Replace.  

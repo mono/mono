@@ -18,7 +18,7 @@ using System.Threading;
 namespace MonoTests.System.IO
 {
 	[TestFixture]
-	public class FileTest : Assertion
+	public class FileTest
 	{
 		CultureInfo old_culture;
 		static string TempFolder = Path.Combine (Path.GetTempPath (), "MonoTests.System.IO.Tests");
@@ -44,24 +44,17 @@ namespace MonoTests.System.IO
 		[Test]
 		public void TestExists ()
 		{
-			int i = 0;
 			FileStream s = null;
 			string path = TempFolder + Path.DirectorySeparatorChar + "AFile.txt";
 			try {
-				Assert ("null filename should not exist", !File.Exists (null));
-				i++;
-				Assert ("empty filename should not exist", !File.Exists (""));
-				i++;
-				Assert ("whitespace filename should not exist", !File.Exists ("  \t\t  \t \n\t\n \n"));
-				i++;
+				Assert.IsFalse (File.Exists (null), "#1");
+				Assert.IsFalse (File.Exists (""), "#2");
+				Assert.IsFalse (File.Exists ("  \t\t  \t \n\t\n \n"), "#3");
 				DeleteFile (path);
 				s = File.Create (path);
 				s.Close ();
-				Assert ("File " + path + " should exists", File.Exists (path));
-				i++;
-				Assert ("File resources" + Path.DirectorySeparatorChar + "doesnotexist should not exist", !File.Exists (TempFolder + Path.DirectorySeparatorChar + "doesnotexist"));
-			} catch (Exception e) {
-				Fail ("Unexpected exception at i = " + i + ". e=" + e);
+				Assert.IsTrue (File.Exists (path), "#4");
+				Assert.IsFalse (File.Exists (TempFolder + Path.DirectorySeparatorChar + "doesnotexist"), "#5");
 			} finally {
 				if (s != null)
 					s.Close ();
@@ -72,35 +65,35 @@ namespace MonoTests.System.IO
 		[Test]
 		public void Exists_InvalidFileName () 
 		{
-			Assert ("><|", !File.Exists ("><|"));
-			Assert ("?*", !File.Exists ("?*"));
+			Assert.IsFalse (File.Exists ("><|"), "#1");
+			Assert.IsFalse (File.Exists ("?*"), "#2");
 		}
 
 		[Test]
 		public void Exists_InvalidDirectory () 
 		{
-			Assert ("InvalidDirectory", !File.Exists (Path.Combine ("does not exist", "file.txt")));
+			Assert.IsFalse (File.Exists (Path.Combine ("does not exist", "file.txt")));
 		}
 
 		[Test]
 		[ExpectedException(typeof (ArgumentNullException))]
 		public void CtorArgumentNullException1 ()
 		{
-			FileStream stream = File.Create (null);
+			File.Create (null);
 		}
 
 		[Test]
 		[ExpectedException(typeof (ArgumentException))]
 		public void CtorArgumentException1 ()
 		{
-			FileStream stream = File.Create ("");
+			File.Create ("");
 		}
 
 		[Test]
 		[ExpectedException(typeof (ArgumentException))]
 		public void CtorArgumentException2 ()
 		{
-			FileStream stream = File.Create (" ");
+			File.Create (" ");
 		}
 
 		[Test]
@@ -128,10 +121,8 @@ namespace MonoTests.System.IO
 			try {
 				path = TempFolder + Path.DirectorySeparatorChar + "foo";
 				stream = File.Create (path);
-				Assert ("File should exist", File.Exists (path));
+				Assert.IsTrue (File.Exists (path), "#1");
 				stream.Close ();
-			} catch (Exception e) {
-				Fail ("File.Create(resources/foo) unexpected exception caught: e=" + e.ToString());
 			} finally {
 				if (stream != null)
 					stream.Close ();
@@ -145,10 +136,8 @@ namespace MonoTests.System.IO
 			try {
 				path = TempFolder + Path.DirectorySeparatorChar + "foo";
 				stream = File.Create (path);
-				Assert ("File should exist", File.Exists (path));
+				Assert.IsTrue (File.Exists (path), "#2");
 				stream.Close ();
-			} catch (Exception e) {
-				Fail ("File.Create(resources/foo) unexpected exception caught: e=" + e.ToString()); 
 			} finally {
 				if (stream != null)
 					stream.Close ();
@@ -227,28 +216,19 @@ namespace MonoTests.System.IO
 			string path2 = TempFolder + Path.DirectorySeparatorChar + "AFile.txt";
 			/* positive test: copy resources/AFile.txt to resources/bar */
 			try {
-				try {
-					DeleteFile (path1);
-					DeleteFile (path2);
+				DeleteFile (path1);
+				DeleteFile (path2);
 
-					File.Create (path2).Close ();
-					File.Copy (path2, path1);
-					Assert ("File AFile.txt should still exist", File.Exists (path2));
-					Assert ("File bar should exist after File.Copy", File.Exists (path1));
-				} catch (Exception e) {
-					Fail ("#1 File.Copy('resources/AFile.txt', 'resources/bar') unexpected exception caught: e=" + e.ToString());
-				}
+				File.Create (path2).Close ();
+				File.Copy (path2, path1);
+				Assert.IsTrue (File.Exists (path2), "#A1");
+				Assert.IsTrue (File.Exists (path1), "#A2");
 
-				/* positive test: copy resources/AFile.txt to resources/bar, overwrite */
-				try {
-					Assert ("File bar should exist before File.Copy", File.Exists (path1));
-					File.Copy (path2, path1, true);
-					Assert ("File AFile.txt should still exist", File.Exists (path2));
-					Assert ("File bar should exist after File.Copy", File.Exists (path1));
-				} catch (Exception e) {
-					Fail ("File.Copy('resources/AFile.txt', 'resources/bar', true) unexpected exception caught: e=" + e.ToString());
-				}
-			}finally {
+				Assert.IsTrue (File.Exists (path1), "#B1");
+				File.Copy (path2, path1, true);
+				Assert.IsTrue (File.Exists (path2), "#B2");
+				Assert.IsTrue (File.Exists (path1), "#B3");
+			} finally {
 				DeleteFile (path1);
 				DeleteFile (path2);
 			}
@@ -293,13 +273,8 @@ namespace MonoTests.System.IO
 			DeleteFile (foopath);
 			try {
 				File.Create (foopath).Close ();
-
-				try {
-					File.Delete (foopath);
-				} catch (Exception e) {
-					Fail ("Unable to delete " + foopath + " e=" + e.ToString());
-				} 
-				Assert ("File " + foopath + " should not exist after File.Delete", !File.Exists (foopath));
+				File.Delete (foopath);
+				Assert.IsFalse (File.Exists (foopath));
 			} finally {
 				DeleteFile (foopath);
 			}
@@ -322,7 +297,159 @@ namespace MonoTests.System.IO
 				DeleteFile (path);
 			}
 		}
-		
+
+		[Test] // bug #82514
+		[Category ("NotWorking")]
+		public void GetAttributes_Archive ()
+		{
+			FileAttributes attrs;
+
+			string path = Path.Combine (TempFolder, "GetAttributes.tmp");
+			File.Create (path).Close ();
+
+			attrs = File.GetAttributes (path);
+			Assert.IsTrue ((attrs & FileAttributes.Archive) != 0, "#1");
+
+			attrs &= ~FileAttributes.Archive;
+			File.SetAttributes (path, attrs);
+
+			attrs = File.GetAttributes (path);
+			Assert.IsFalse ((attrs & FileAttributes.Archive) != 0, "#2");
+		}
+
+		[Test] // bug #82514
+		[Category ("NotWorking")]
+		public void GetAttributes_Default_File ()
+		{
+			string path = Path.Combine (TempFolder, "GetAttributes.tmp");
+			File.Create (path).Close ();
+
+			FileAttributes attrs = File.GetAttributes (path);
+
+			Assert.IsTrue ((attrs & FileAttributes.Archive) != 0, "#1");
+			Assert.IsFalse ((attrs & FileAttributes.Directory) != 0, "#2");
+			Assert.IsFalse ((attrs & FileAttributes.Hidden) != 0, "#3");
+			Assert.IsFalse ((attrs & FileAttributes.Normal) != 0, "#4");
+			Assert.IsFalse ((attrs & FileAttributes.ReadOnly) != 0, "#5");
+			Assert.IsFalse ((attrs & FileAttributes.System) != 0, "#6");
+		}
+
+		[Test]
+		public void GetAttributes_Default_Directory ()
+		{
+			FileAttributes attrs = File.GetAttributes (TempFolder);
+
+			Assert.IsFalse ((attrs & FileAttributes.Archive) != 0, "#1");
+			Assert.IsTrue ((attrs & FileAttributes.Directory) != 0, "#2");
+			Assert.IsFalse ((attrs & FileAttributes.Hidden) != 0, "#3");
+			Assert.IsFalse ((attrs & FileAttributes.Normal) != 0, "#4");
+			Assert.IsFalse ((attrs & FileAttributes.ReadOnly) != 0, "#5");
+			Assert.IsFalse ((attrs & FileAttributes.System) != 0, "#6");
+		}
+
+		[Test]
+		public void GetAttributes_Directory ()
+		{
+			FileAttributes attrs = File.GetAttributes (TempFolder);
+
+			Assert.IsTrue ((attrs & FileAttributes.Directory) != 0, "#1");
+
+			attrs &= ~FileAttributes.Directory;
+			File.SetAttributes (TempFolder, attrs);
+
+			Assert.IsFalse ((attrs & FileAttributes.Directory) != 0, "#2");
+
+			string path = Path.Combine (TempFolder, "GetAttributes.tmp");
+			File.Create (path).Close ();
+
+			attrs = File.GetAttributes (path);
+			attrs |= FileAttributes.Directory;
+			File.SetAttributes (path, attrs);
+
+			Assert.IsTrue ((attrs & FileAttributes.Directory) != 0, "#3");
+		}
+
+		[Test]
+		public void GetAttributes_ReadOnly ()
+		{
+			FileAttributes attrs;
+
+			string path = Path.Combine (TempFolder, "GetAttributes.tmp");
+			File.Create (path).Close ();
+
+			attrs = File.GetAttributes (path);
+			Assert.IsFalse ((attrs & FileAttributes.ReadOnly) != 0, "#1");
+
+			try {
+				attrs |= FileAttributes.ReadOnly;
+				File.SetAttributes (path, attrs);
+
+				attrs = File.GetAttributes (path);
+				Assert.IsTrue ((attrs & FileAttributes.ReadOnly) != 0, "#2");
+			} finally {
+				File.SetAttributes (path, FileAttributes.Normal);
+			}
+		}
+
+		[Test]
+		public void GetAttributes_System ()
+		{
+			if (RunningOnUnix)
+				Assert.Ignore ("FileAttributes.System is not supported on Unix.");
+
+			FileAttributes attrs;
+
+			string path = Path.Combine (TempFolder, "GetAttributes.tmp");
+			File.Create (path).Close ();
+
+			attrs = File.GetAttributes (path);
+			Assert.IsFalse ((attrs & FileAttributes.System) != 0, "#1");
+
+			attrs |= FileAttributes.System;
+			File.SetAttributes (path, FileAttributes.System);
+
+			attrs = File.GetAttributes (path);
+			Assert.IsTrue ((attrs & FileAttributes.System) != 0, "#2");
+		}
+
+		[Test]
+		[ExpectedException (typeof (FileNotFoundException))]
+		public void GetAttributes_Path_DoesNotExist ()
+		{
+			string path = Path.Combine (TempFolder, "GetAttributes.tmp");
+			File.GetAttributes (path);
+		}
+
+		[Test]
+		public void GetAttributes_Path_Empty ()
+		{
+			try {
+				File.GetAttributes (string.Empty);
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// The path is not of a legal form
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
+		}
+
+		[Test]
+		public void GetAttributes_Path_Null ()
+		{
+			try {
+				File.GetAttributes (null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("path", ex.ParamName, "#6");
+			}
+		}
+
 		[Test]
 		[ExpectedException(typeof (ArgumentNullException))]
 		public void MoveException1 ()
@@ -412,10 +539,10 @@ namespace MonoTests.System.IO
 				f.Close();
 			}
 			
-			Assert ("File " + TempFolder + Path.DirectorySeparatorChar + "bar should exist", File.Exists (bar));
+			Assert.IsTrue (File.Exists (bar), "#1");
 			File.Move (bar, baz);
-			Assert ("File " + TempFolder + Path.DirectorySeparatorChar + "bar should not exist", !File.Exists (bar));
-			Assert ("File " + TempFolder + Path.DirectorySeparatorChar + "baz should exist", File.Exists (baz));
+			Assert.IsFalse (File.Exists (bar), "#2");
+			Assert.IsTrue (File.Exists (baz), "#3");
 
 			// Test moving of directories
 			string dir = Path.Combine (TempFolder, "dir");
@@ -425,12 +552,12 @@ namespace MonoTests.System.IO
 
 			if (Directory.Exists (dir))
 				Directory.Delete (dir, true);
-						
+
 			Directory.CreateDirectory (dir);
 			Directory.CreateDirectory (dir2);
 			File.Create (dir_foo).Close ();
 			File.Move (dir_foo, dir2_foo);
-			Assert (File.Exists (dir2_foo));
+			Assert.IsTrue (File.Exists (dir2_foo), "#4");
 			
 			Directory.Delete (dir, true);
 			Directory.Delete (dir2, true);
@@ -450,8 +577,6 @@ namespace MonoTests.System.IO
 				stream.Close ();
 				stream = File.Open (path, FileMode.Open);
 				stream.Close ();
-			} catch (Exception e) {
-				Fail ("Unable to open " + TempFolder + Path.DirectorySeparatorChar + "AFile.txt: e=" + e.ToString());
 			} finally {
 				if (stream != null)
 					stream.Close ();
@@ -464,11 +589,9 @@ namespace MonoTests.System.IO
 			try {
 				path = TempFolder + Path.DirectorySeparatorChar + "filedoesnotexist";
 				stream = File.Open (path, FileMode.Open);
-				Fail ("File 'filedoesnotexist' should not exist");
+				Assert.Fail ("File 'filedoesnotexist' should not exist");
 			} catch (FileNotFoundException) {
 				// do nothing, this is what we expect
-			} catch (Exception e) {
-				Fail ("Unexpect exception caught: e=" + e.ToString());
 			} finally {
 				if (stream != null)
 					stream.Close ();
@@ -485,21 +608,21 @@ namespace MonoTests.System.IO
 			FileStream stream = null;
 			try {
 				stream = File.Open (path, FileMode.Open);
-				Assertion.AssertEquals ("test#01", true, stream.CanRead);
-				Assertion.AssertEquals ("test#02", true, stream.CanSeek);
-				Assertion.AssertEquals ("test#03", true, stream.CanWrite);
+				Assert.IsTrue (stream.CanRead, "#A1");
+				Assert.IsTrue (stream.CanSeek, "#A2");
+				Assert.IsTrue (stream.CanWrite, "#A3");
 				stream.Close ();
 
 				stream = File.Open (path, FileMode.Open, FileAccess.Write);
-				Assertion.AssertEquals ("test#04", false, stream.CanRead);
-				Assertion.AssertEquals ("test#05", true, stream.CanSeek);
-				Assertion.AssertEquals ("test#06", true, stream.CanWrite);
+				Assert.IsFalse (stream.CanRead, "#B1");
+				Assert.IsTrue (stream.CanSeek, "#B2");
+				Assert.IsTrue (stream.CanWrite, "#B3");
 				stream.Close ();
 
 				stream = File.Open (path, FileMode.Open, FileAccess.Read);
-				Assertion.AssertEquals ("test#04", true, stream.CanRead);
-				Assertion.AssertEquals ("test#05", true, stream.CanSeek);
-				Assertion.AssertEquals ("test#06", false, stream.CanWrite);
+				Assert.IsTrue (stream.CanRead, "#C1");
+				Assert.IsTrue (stream.CanSeek, "#C2");
+				Assert.IsFalse (stream.CanWrite, "#C3");
 				stream.Close ();
 			} finally {
 				if (stream != null)
@@ -552,9 +675,9 @@ namespace MonoTests.System.IO
 			
 			try {
 				stream = File.OpenRead (path);
-				Assertion.AssertEquals ("test#01", true, stream.CanRead);
-				Assertion.AssertEquals ("test#02", true, stream.CanSeek);
-				Assertion.AssertEquals ("test#03", false, stream.CanWrite);
+				Assert.IsTrue (stream.CanRead, "#1");
+				Assert.IsTrue (stream.CanSeek, "#2");
+				Assert.IsFalse (stream.CanWrite, "#3");
 			} finally {
 				if (stream != null)
 					stream.Close ();
@@ -572,9 +695,9 @@ namespace MonoTests.System.IO
 
 			try {
 				stream = File.OpenWrite (path);
-				Assertion.AssertEquals ("test#01", false, stream.CanRead);
-				Assertion.AssertEquals ("test#02", true, stream.CanSeek);
-				Assertion.AssertEquals ("test#03", true, stream.CanWrite);
+				Assert.IsFalse (stream.CanRead, "#1");
+				Assert.IsTrue (stream.CanSeek, "#2");
+				Assert.IsTrue (stream.CanWrite, "#3");
 				stream.Close ();
 			} finally {
 				if (stream != null)
@@ -593,7 +716,7 @@ namespace MonoTests.System.IO
 			try {
 				File.Create (path).Close();
 				DateTime time = File.GetCreationTime (path);
-				Assert ("GetCreationTime incorrect", (DateTime.Now - time).TotalSeconds < 10);
+				Assert.IsTrue ((DateTime.Now - time).TotalSeconds < 10);
 			} finally {
 				DeleteFile (path);
 			}
@@ -612,33 +735,33 @@ namespace MonoTests.System.IO
 			try {
 				File.SetCreationTime (path, new DateTime (2002, 4, 6, 4, 6, 4));
 				DateTime time = File.GetCreationTime (path);
-				Assertion.AssertEquals ("test#01", 2002, time.Year);
-				Assertion.AssertEquals ("test#02", 4, time.Month);
-				Assertion.AssertEquals ("test#03", 6, time.Day);
-				Assertion.AssertEquals ("test#04", 4, time.Hour);
-				Assertion.AssertEquals ("test#05", 4, time.Second);
+				Assert.AreEqual (2002, time.Year, "#A1");
+				Assert.AreEqual (4, time.Month, "#A2");
+				Assert.AreEqual (6, time.Day, "#A3");
+				Assert.AreEqual (4, time.Hour, "#A4");
+				Assert.AreEqual (4, time.Second, "#A5");
 
 				time = TimeZone.CurrentTimeZone.ToLocalTime (File.GetCreationTimeUtc (path));
-				Assertion.AssertEquals ("test#06", 2002, time.Year);
-				Assertion.AssertEquals ("test#07", 4, time.Month);
-				Assertion.AssertEquals ("test#08", 6, time.Day);
-				Assertion.AssertEquals ("test#09", 4, time.Hour);
-				Assertion.AssertEquals ("test#10", 4, time.Second);
+				Assert.AreEqual (2002, time.Year, "#B1");
+				Assert.AreEqual (4, time.Month, "#B2");
+				Assert.AreEqual (6, time.Day, "#B3");
+				Assert.AreEqual (4, time.Hour, "#B4");
+				Assert.AreEqual (4, time.Second, "#B5");
 
 				File.SetCreationTimeUtc (path, new DateTime (2002, 4, 6, 4, 6, 4));
 				time = File.GetCreationTimeUtc (path);
-				Assertion.AssertEquals ("test#11", 2002, time.Year);
-				Assertion.AssertEquals ("test#12", 4, time.Month);
-				Assertion.AssertEquals ("test#13", 6, time.Day);
-				Assertion.AssertEquals ("test#14", 4, time.Hour);
-				Assertion.AssertEquals ("test#15", 4, time.Second);
+				Assert.AreEqual (2002, time.Year, "#C1");
+				Assert.AreEqual (4, time.Month, "#C2");
+				Assert.AreEqual (6, time.Day, "#C3");
+				Assert.AreEqual (4, time.Hour, "#C4");
+				Assert.AreEqual (4, time.Second, "#C5");
 
 				time = TimeZone.CurrentTimeZone.ToUniversalTime (File.GetCreationTime (path));
-				Assertion.AssertEquals ("test#16", 2002, time.Year);
-				Assertion.AssertEquals ("test#17", 4, time.Month);
-				Assertion.AssertEquals ("test#18", 6, time.Day);
-				Assertion.AssertEquals ("test#19", 4, time.Hour);
-				Assertion.AssertEquals ("test#20", 4, time.Second);
+				Assert.AreEqual (2002, time.Year, "#D1");
+				Assert.AreEqual (4, time.Month, "#D2");
+				Assert.AreEqual (6, time.Day, "#D3");
+				Assert.AreEqual (4, time.Hour, "#D4");
+				Assert.AreEqual (4, time.Second, "#D5");
 			} finally {
 				DeleteFile (path);
 			}
@@ -658,33 +781,33 @@ namespace MonoTests.System.IO
 
 				File.SetLastAccessTime (path, new DateTime (2002, 4, 6, 4, 6, 4));
 				DateTime time = File.GetLastAccessTime (path);
-				Assertion.AssertEquals ("test#01", 2002, time.Year);
-				Assertion.AssertEquals ("test#02", 4, time.Month);
-				Assertion.AssertEquals ("test#03", 6, time.Day);
-				Assertion.AssertEquals ("test#04", 4, time.Hour);
-				Assertion.AssertEquals ("test#05", 4, time.Second);
+				Assert.AreEqual (2002, time.Year, "#A1");
+				Assert.AreEqual (4, time.Month, "#A2");
+				Assert.AreEqual (6, time.Day, "#A3");
+				Assert.AreEqual (4, time.Hour, "#A4");
+				Assert.AreEqual (4, time.Second, "#A5");
 
 				time = TimeZone.CurrentTimeZone.ToLocalTime (File.GetLastAccessTimeUtc (path));
-				Assertion.AssertEquals ("test#06", 2002, time.Year);
-				Assertion.AssertEquals ("test#07", 4, time.Month);
-				Assertion.AssertEquals ("test#08", 6, time.Day);
-				Assertion.AssertEquals ("test#09", 4, time.Hour);
-				Assertion.AssertEquals ("test#10", 4, time.Second);
+				Assert.AreEqual (2002, time.Year, "#B1");
+				Assert.AreEqual (4, time.Month, "#B2");
+				Assert.AreEqual (6, time.Day, "#B3");
+				Assert.AreEqual (4, time.Hour, "#B4");
+				Assert.AreEqual (4, time.Second, "#B5");
 
 				File.SetLastAccessTimeUtc (path, new DateTime (2002, 4, 6, 4, 6, 4));
 				time = File.GetLastAccessTimeUtc (path);
-				Assertion.AssertEquals ("test#11", 2002, time.Year);
-				Assertion.AssertEquals ("test#12", 4, time.Month);
-				Assertion.AssertEquals ("test#13", 6, time.Day);
-				Assertion.AssertEquals ("test#14", 4, time.Hour);
-				Assertion.AssertEquals ("test#15", 4, time.Second);
+				Assert.AreEqual (2002, time.Year, "#C1");
+				Assert.AreEqual (4, time.Month, "#C2");
+				Assert.AreEqual (6, time.Day, "#C3");
+				Assert.AreEqual (4, time.Hour, "#C4");
+				Assert.AreEqual (4, time.Second, "#C5");
 
 				time = TimeZone.CurrentTimeZone.ToUniversalTime (File.GetLastAccessTime (path));
-				Assertion.AssertEquals ("test#16", 2002, time.Year);
-				Assertion.AssertEquals ("test#17", 4, time.Month);
-				Assertion.AssertEquals ("test#18", 6, time.Day);
-				Assertion.AssertEquals ("test#19", 4, time.Hour);
-				Assertion.AssertEquals ("test#20", 4, time.Second);
+				Assert.AreEqual (2002, time.Year, "#D1");
+				Assert.AreEqual (4, time.Month, "#D2");
+				Assert.AreEqual (6, time.Day, "#D3");
+				Assert.AreEqual (4, time.Hour, "#D4");
+				Assert.AreEqual (4, time.Second, "#D5");
 			} finally {
 				if (stream != null)
 					stream.Close ();
@@ -705,33 +828,33 @@ namespace MonoTests.System.IO
 
 				File.SetLastWriteTime (path, new DateTime (2002, 4, 6, 4, 6, 4));
 				DateTime time = File.GetLastWriteTime (path);
-				Assertion.AssertEquals ("test#01", 2002, time.Year);
-				Assertion.AssertEquals ("test#02", 4, time.Month);
-				Assertion.AssertEquals ("test#03", 6, time.Day);
-				Assertion.AssertEquals ("test#04", 4, time.Hour);
-				Assertion.AssertEquals ("test#05", 4, time.Second);
+				Assert.AreEqual (2002, time.Year, "#A1");
+				Assert.AreEqual (4, time.Month, "#A2");
+				Assert.AreEqual (6, time.Day, "#A3");
+				Assert.AreEqual (4, time.Hour, "#A4");
+				Assert.AreEqual (4, time.Second, "#A5");
 
 				time = TimeZone.CurrentTimeZone.ToLocalTime (File.GetLastWriteTimeUtc (path));
-				Assertion.AssertEquals ("test#06", 2002, time.Year);
-				Assertion.AssertEquals ("test#07", 4, time.Month);
-				Assertion.AssertEquals ("test#08", 6, time.Day);
-				Assertion.AssertEquals ("test#09", 4, time.Hour);
-				Assertion.AssertEquals ("test#10", 4, time.Second);
+				Assert.AreEqual (2002, time.Year, "#B1");
+				Assert.AreEqual (4, time.Month, "#B2");
+				Assert.AreEqual (6, time.Day, "#B3");
+				Assert.AreEqual (4, time.Hour, "#B4");
+				Assert.AreEqual (4, time.Second, "#B5");
 
 				File.SetLastWriteTimeUtc (path, new DateTime (2002, 4, 6, 4, 6, 4));
 				time = File.GetLastWriteTimeUtc (path);
-				Assertion.AssertEquals ("test#11", 2002, time.Year);
-				Assertion.AssertEquals ("test#12", 4, time.Month);
-				Assertion.AssertEquals ("test#13", 6, time.Day);
-				Assertion.AssertEquals ("test#14", 4, time.Hour);
-				Assertion.AssertEquals ("test#15", 4, time.Second);
+				Assert.AreEqual (2002, time.Year, "#C1");
+				Assert.AreEqual (4, time.Month, "#C2");
+				Assert.AreEqual (6, time.Day, "#C3");
+				Assert.AreEqual (4, time.Hour, "#C4");
+				Assert.AreEqual (4, time.Second, "#C5");
 
 				time = TimeZone.CurrentTimeZone.ToUniversalTime (File.GetLastWriteTime (path));
-				Assertion.AssertEquals ("test#16", 2002, time.Year);
-				Assertion.AssertEquals ("test#17", 4, time.Month);
-				Assertion.AssertEquals ("test#18", 6, time.Day);
-				Assertion.AssertEquals ("test#19", 4, time.Hour);
-				Assertion.AssertEquals ("test#20", 4, time.Second);
+				Assert.AreEqual (2002, time.Year, "#D1");
+				Assert.AreEqual (4, time.Month, "#D2");
+				Assert.AreEqual (6, time.Day, "#D3");
+				Assert.AreEqual (4, time.Hour, "#D4");
+				Assert.AreEqual (4, time.Second, "#D5");
 			} finally {
 				if (stream != null)
 					stream.Close ();
@@ -768,12 +891,12 @@ namespace MonoTests.System.IO
 
 #if NET_2_0
 			DateTime expectedTime = (new DateTime (1601, 1, 1)).ToLocalTime ();
-			Assertion.AssertEquals ("#1", expectedTime.Year, time.Year);
-			Assertion.AssertEquals ("#2", expectedTime.Month, time.Month);
-			Assertion.AssertEquals ("#3", expectedTime.Day, time.Day);
-			Assertion.AssertEquals ("#4", expectedTime.Hour, time.Hour);
-			Assertion.AssertEquals ("#5", expectedTime.Second, time.Second);
-			Assertion.AssertEquals ("#6", expectedTime.Millisecond, time.Millisecond);
+			Assert.AreEqual (expectedTime.Year, time.Year, "#1");
+			Assert.AreEqual (expectedTime.Month, time.Month, "#2");
+			Assert.AreEqual (expectedTime.Day, time.Day, "#3");
+			Assert.AreEqual (expectedTime.Hour, time.Hour, "#4");
+			Assert.AreEqual (expectedTime.Second, time.Second, "#5");
+			Assert.AreEqual (expectedTime.Millisecond, time.Millisecond, "#6");
 #endif
 		}
 
@@ -821,12 +944,12 @@ namespace MonoTests.System.IO
 			DateTime time = File.GetCreationTimeUtc (path);
 
 #if NET_2_0
-			Assertion.AssertEquals ("#1", 1601, time.Year);
-			Assertion.AssertEquals ("#2", 1, time.Month);
-			Assertion.AssertEquals ("#3", 1, time.Day);
-			Assertion.AssertEquals ("#4", 0, time.Hour);
-			Assertion.AssertEquals ("#5", 0, time.Second);
-			Assertion.AssertEquals ("#6", 0, time.Millisecond);
+			Assert.AreEqual (1601, time.Year, "#1");
+			Assert.AreEqual (1, time.Month, "#2");
+			Assert.AreEqual (1, time.Day, "#3");
+			Assert.AreEqual (0, time.Hour, "#4");
+			Assert.AreEqual (0, time.Second, "#5");
+			Assert.AreEqual (0, time.Millisecond, "#6");
 #endif
 		}
 
@@ -875,12 +998,12 @@ namespace MonoTests.System.IO
 
 #if NET_2_0
 			DateTime expectedTime = (new DateTime (1601, 1, 1)).ToLocalTime ();
-			Assertion.AssertEquals ("#1", expectedTime.Year, time.Year);
-			Assertion.AssertEquals ("#2", expectedTime.Month, time.Month);
-			Assertion.AssertEquals ("#3", expectedTime.Day, time.Day);
-			Assertion.AssertEquals ("#4", expectedTime.Hour, time.Hour);
-			Assertion.AssertEquals ("#5", expectedTime.Second, time.Second);
-			Assertion.AssertEquals ("#6", expectedTime.Millisecond, time.Millisecond);
+			Assert.AreEqual (expectedTime.Year, time.Year, "#1");
+			Assert.AreEqual (expectedTime.Month, time.Month, "#2");
+			Assert.AreEqual (expectedTime.Day, time.Day, "#3");
+			Assert.AreEqual (expectedTime.Hour, time.Hour, "#4");
+			Assert.AreEqual (expectedTime.Second, time.Second, "#5");
+			Assert.AreEqual (expectedTime.Millisecond, time.Millisecond, "#6");
 #endif
 		}
 
@@ -928,12 +1051,12 @@ namespace MonoTests.System.IO
 			DateTime time = File.GetLastAccessTimeUtc (path);
 
 #if NET_2_0
-			Assertion.AssertEquals ("#1", 1601, time.Year);
-			Assertion.AssertEquals ("#2", 1, time.Month);
-			Assertion.AssertEquals ("#3", 1, time.Day);
-			Assertion.AssertEquals ("#4", 0, time.Hour);
-			Assertion.AssertEquals ("#5", 0, time.Second);
-			Assertion.AssertEquals ("#6", 0, time.Millisecond);
+			Assert.AreEqual (1601, time.Year, "#1");
+			Assert.AreEqual (1, time.Month, "#2");
+			Assert.AreEqual (1, time.Day, "#3");
+			Assert.AreEqual (0, time.Hour, "#4");
+			Assert.AreEqual (0, time.Second, "#5");
+			Assert.AreEqual (0, time.Millisecond, "#6");
 #endif
 		}
 
@@ -979,12 +1102,12 @@ namespace MonoTests.System.IO
 
 #if NET_2_0
 			DateTime expectedTime = (new DateTime (1601, 1, 1)).ToLocalTime ();
-			Assertion.AssertEquals ("#1", expectedTime.Year, time.Year);
-			Assertion.AssertEquals ("#2", expectedTime.Month, time.Month);
-			Assertion.AssertEquals ("#3", expectedTime.Day, time.Day);
-			Assertion.AssertEquals ("#4", expectedTime.Hour, time.Hour);
-			Assertion.AssertEquals ("#5", expectedTime.Second, time.Second);
-			Assertion.AssertEquals ("#6", expectedTime.Millisecond, time.Millisecond);
+			Assert.AreEqual (expectedTime.Year, time.Year, "#1");
+			Assert.AreEqual (expectedTime.Month, time.Month, "#2");
+			Assert.AreEqual (expectedTime.Day, time.Day, "#3");
+			Assert.AreEqual (expectedTime.Hour, time.Hour, "#4");
+			Assert.AreEqual (expectedTime.Second, time.Second, "#5");
+			Assert.AreEqual (expectedTime.Millisecond, time.Millisecond, "#6");
 #endif
 		}
 
@@ -1027,12 +1150,12 @@ namespace MonoTests.System.IO
 			DateTime time = File.GetLastWriteTimeUtc (path);
 
 #if NET_2_0
-			Assertion.AssertEquals ("#1", 1601, time.Year);
-			Assertion.AssertEquals ("#2", 1, time.Month);
-			Assertion.AssertEquals ("#3", 1, time.Day);
-			Assertion.AssertEquals ("#4", 0, time.Hour);
-			Assertion.AssertEquals ("#5", 0, time.Second);
-			Assertion.AssertEquals ("#6", 0, time.Millisecond);
+			Assert.AreEqual (1601, time.Year, "#1");
+			Assert.AreEqual (1, time.Month, "#2");
+			Assert.AreEqual (1, time.Day, "#3");
+			Assert.AreEqual (0, time.Hour, "#4");
+			Assert.AreEqual (0, time.Second, "#5");
+			Assert.AreEqual (0, time.Millisecond, "#6");
 #endif
 		}
 
@@ -1093,19 +1216,21 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		// On Unix there are no invalid path chars.
 		[Category("TargetJvmNotSupported")] // SetCreationTime not supported for TARGET_JVM
 		public void SetCreationTimeArgumenException3 ()
 		{
+			// On Unix there are no invalid path chars.
 			if (Path.InvalidPathChars.Length > 1) {
-				bool pass = false;
 				try {
-					File.SetCreationTime (Path.InvalidPathChars [1].ToString (), new DateTime (2000, 12, 12, 11, 59, 59));
-				} catch (ArgumentException) {
-					pass = true;
+					File.SetCreationTime (Path.InvalidPathChars [1].ToString (),
+						new DateTime (2000, 12, 12, 11, 59, 59));
+					Assert.Fail ("#1");
+				} catch (ArgumentException ex) {
+					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+					Assert.IsNull (ex.ParamName, "#5");
 				}
-
-				Assertion.Assert ("#01", pass);
 			}
 		}
 
@@ -1181,19 +1306,21 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		// On Unix there are no invalid path chars.
 		[Category("TargetJvmNotSupported")] // SetCreationTime not supported for TARGET_JVM
 		public void SetCreationTimeUtcArgumentException3 ()
 		{
+			// On Unix there are no invalid path chars.
 			if (Path.InvalidPathChars.Length > 1) {
-				bool pass = false;
 				try {
-					File.SetCreationTimeUtc (Path.InvalidPathChars [1].ToString (), new DateTime (2000, 12, 12, 11, 59, 59));
-				} catch (ArgumentException) {
-					pass = true;
+					File.SetCreationTimeUtc (Path.InvalidPathChars [1].ToString (),
+						new DateTime (2000, 12, 12, 11, 59, 59));
+					Assert.Fail ("#1");
+				} catch (ArgumentException ex) {
+					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+					Assert.IsNull (ex.ParamName, "#5");
 				}
-
-				Assertion.Assert ("#01", pass);
 			}
 		}
 
@@ -1271,19 +1398,21 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		// On Unix there are no invalid path chars.
 		[Category("TargetJvmNotSupported")] // SetLastAccessTime not supported for TARGET_JVM
 		public void SetLastAccessTimeArgumenException3 ()
 		{
+			// On Unix there are no invalid path chars.
 			if (Path.InvalidPathChars.Length > 1) {
-				bool pass = false;
 				try {
-					File.SetLastAccessTime (Path.InvalidPathChars [1].ToString (), new DateTime (2000, 12, 12, 11, 59, 59));
-				} catch (ArgumentException) {
-					pass = true;
+					File.SetLastAccessTime (Path.InvalidPathChars [1].ToString (),
+						new DateTime (2000, 12, 12, 11, 59, 59));
+					Assert.Fail ("#1");
+				} catch (ArgumentException ex) {
+					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+					Assert.IsNull (ex.ParamName, "#5");
 				}
-
-				Assertion.Assert ("#01", pass);
 			}
 		}
 
@@ -1359,19 +1488,21 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		// On Unix there are no invalid path chars.
 		[Category("TargetJvmNotSupported")] // SetLastAccessTime not supported for TARGET_JVM
 		public void SetLastAccessTimeUtcArgumenException3 ()
 		{
+			// On Unix there are no invalid path chars.
 			if (Path.InvalidPathChars.Length > 1) {
-				bool pass = false;
 				try {
-					File.SetLastAccessTimeUtc (Path.InvalidPathChars [1].ToString (), new DateTime (2000, 12, 12, 11, 59, 59));
-				} catch (ArgumentException) {
-					pass = true;
+					File.SetLastAccessTimeUtc (Path.InvalidPathChars [1].ToString (),
+						new DateTime (2000, 12, 12, 11, 59, 59));
+					Assert.Fail ("#1");
+				} catch (ArgumentException ex) {
+					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+					Assert.IsNull (ex.ParamName, "#5");
 				}
-
-				Assertion.Assert ("#01", pass);
 			}
 		}
 
@@ -1446,18 +1577,20 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		// On Unix there are no invalid path chars.
 		public void SetLastWriteTimeArgumenException3 ()
 		{
+			// On Unix there are no invalid path chars.
 			if (Path.InvalidPathChars.Length > 1) {
-				bool pass = false;
 				try {
-					File.SetLastWriteTime (Path.InvalidPathChars [1].ToString (), new DateTime (2000, 12, 12, 11, 59, 59));
-				} catch (ArgumentException) {
-					pass = true;
+					File.SetLastWriteTime (Path.InvalidPathChars [1].ToString (),
+						new DateTime (2000, 12, 12, 11, 59, 59));
+					Assert.Fail ("#1");
+				} catch (ArgumentException ex) {
+					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+					Assert.IsNull (ex.ParamName, "#5");
 				}
-
-				Assertion.Assert ("#01", pass);
 			}
 		}
 
@@ -1528,18 +1661,20 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		// On Unix there are no invalid path chars.
 		public void SetLastWriteTimeUtcArgumenException3 ()
 		{
+			// On Unix there are no invalid path chars.
 			if (Path.InvalidPathChars.Length > 1) {
-				bool pass = false;
 				try {
-					File.SetLastWriteTimeUtc (Path.InvalidPathChars [1].ToString (), new DateTime (2000, 12, 12, 11, 59, 59));
-				} catch (ArgumentException) {
-					pass = true;
+					File.SetLastWriteTimeUtc (Path.InvalidPathChars [1].ToString (),
+						new DateTime (2000, 12, 12, 11, 59, 59));
+					Assert.Fail ("#1");
+				} catch (ArgumentException ex) {
+					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+					Assert.IsNull (ex.ParamName, "#5");
 				}
-
-				Assertion.Assert ("#01", pass);
 			}
 		}
 
@@ -1604,7 +1739,7 @@ namespace MonoTests.System.IO
 			try {
 				File.WriteAllText (f, s);
 				string r = File.ReadAllText (f);
-				AssertEquals (r, s);
+				Assert.AreEqual (s, r);
 			} finally {
 				DeleteFile (f);
 			}
@@ -1633,6 +1768,17 @@ namespace MonoTests.System.IO
 		}
 #endif
 
+		static bool RunningOnUnix {
+			get {
+#if NET_2_0
+				return Environment.OSVersion.Platform == PlatformID.Unix;
+#else
+				int platform = (int) Environment.OSVersion.Platform;
+				return platform == 128;
+#endif
+			}
+		}
+
 		private void DeleteFile (string path)
 		{
 			if (File.Exists (path))
@@ -1660,14 +1806,14 @@ namespace MonoTests.System.IO
 			}
 
 			File.Replace (origFile, replaceFile, backupFile);
-			Assertion.Assert ("origFile should not exists", !File.Exists (origFile));
+			Assert.IsFalse (File.Exists (origFile), "#1");
 			using (StreamReader sr = File.OpenText (replaceFile)) {
 				string txt = sr.ReadLine ();
-				Assertion.AssertEquals ("#2", "origFile", txt);
+				Assert.AreEqual ("origFile", txt, "#2");
 			}
 			using (StreamReader sr = File.OpenText (backupFile)) {
 				string txt = sr.ReadLine ();
-				Assertion.AssertEquals ("#3", "replaceFile", txt);
+				Assert.AreEqual ("replaceFile", txt, "#3");
 			}
 		}
 #endif
