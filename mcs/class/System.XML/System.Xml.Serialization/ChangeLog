@@ -1,5 +1,10 @@
 2007-08-21  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlSerializationReader.cs :
+	  implemented ReaderCount and CheckReaderCount().
+
+2007-08-21  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* MapCodeGenerator.cs : avoid possible duplicates in generated field 
 	  names. Fixed bug #82078.
 

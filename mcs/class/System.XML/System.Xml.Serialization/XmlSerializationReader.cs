@@ -64,6 +64,7 @@ namespace System.Xml.Serialization
 		XmlSerializer eventSource;
 		int delayedFixupId = 0;
 		Hashtable referencedObjects;
+		int readCount, whileIterationCount;
 
 		string w3SchemaNS;
 		string w3InstanceNS;
@@ -140,6 +141,11 @@ namespace System.Xml.Serialization
 
 		}
 
+#if NET_2_0
+		protected int ReaderCount {
+			get { return readCount; }
+		}
+#endif
 
 		#region Methods
 
@@ -270,10 +276,10 @@ namespace System.Xml.Serialization
 		}
 
 #if NET_2_0
-		[MonoNotSupported("")]
 		protected void CheckReaderCount (ref int whileIterations, ref int readerCount)
 		{
-			throw new NotImplementedException ();
+			whileIterations = whileIterationCount;
+			readerCount = readCount;
 		}
 #endif
 
@@ -390,6 +396,8 @@ namespace System.Xml.Serialization
 
 		protected XmlQualifiedName ReadElementQualifiedName ()
 		{
+			readCount++;
+
 			if (reader.IsEmptyElement) {
 				reader.Skip();
 				return ToXmlQualifiedName (String.Empty);
@@ -403,6 +411,8 @@ namespace System.Xml.Serialization
 
 		protected void ReadEndElement ()
 		{
+			readCount++;
+
 			while (reader.NodeType == XmlNodeType.Whitespace)
 				reader.Skip ();
 
@@ -417,6 +427,8 @@ namespace System.Xml.Serialization
 		{
 			if (!GetNullAttr ())
 				return false;
+
+			readCount++;
 
 			if (reader.IsEmptyElement) {
 				reader.Skip();
@@ -444,6 +456,7 @@ namespace System.Xml.Serialization
 			if (ReadNull ())
 				return null;
 
+			readCount++;
 			return reader.ReadElementString ();
 		}
 
@@ -459,6 +472,7 @@ namespace System.Xml.Serialization
 				throw new InvalidOperationException("href not found: " + href);
 
 			fixupReference = href.Substring (1);
+			readCount++;
 			if (!reader.IsEmptyElement) {
 				reader.ReadStartElement ();
 				ReadEndElement ();
@@ -560,12 +574,15 @@ namespace System.Xml.Serialization
 
 			bool listComplete = true;
 
-			if (Reader.IsEmptyElement)
+			if (Reader.IsEmptyElement) {
+				readCount++;
 				Reader.Skip ();
-			else {
+			} else {
 				Reader.ReadStartElement ();
 				for (int n=0; n<count; n++)
 				{
+					whileIterationCount++;
+					readCount++;
 					Reader.MoveToContent ();
 					string id;
 					object item = ReadReferencingElement (itemType, qn.Namespace, out id);
@@ -577,6 +594,7 @@ namespace System.Xml.Serialization
 						listComplete = false;
 					}
 				}
+				whileIterationCount = 0;
 				Reader.ReadEndElement ();
 			}
 
@@ -589,10 +607,13 @@ namespace System.Xml.Serialization
 			reader.MoveToContent();
 			XmlNodeType nt = reader.NodeType;
 			while (nt != XmlNodeType.EndElement && nt != XmlNodeType.None) {
+				whileIterationCount++;
+				readCount++;
 				ReadReferencedElement ();
 				reader.MoveToContent ();
 				nt = reader.NodeType;
 			}
+			whileIterationCount = 0;
 
 			// Registers delayed list
 			
@@ -687,6 +708,7 @@ namespace System.Xml.Serialization
 			{
 				if (refid.StartsWith ("#")) refid = refid.Substring (1);
 
+				readCount++;
 				Reader.Skip ();
 				if (TargetReady (refid))
 				{
@@ -705,6 +727,7 @@ namespace System.Xml.Serialization
 		{
 			if (ReadNull ()) return null;
 			int depth = reader.Depth;
+			readCount++;
 			serializable.ReadXml (reader);
 			Reader.MoveToContent ();
 			while (reader.Depth > depth)
@@ -716,6 +739,7 @@ namespace System.Xml.Serialization
 
 		protected string ReadString (string value)
 		{
+			readCount++;
 			if (value == null || value == String.Empty)
 				return reader.ReadString ();
 
@@ -735,6 +759,7 @@ namespace System.Xml.Serialization
 			if (typeData == null || typeData.SchemaType != SchemaTypes.Primitive)
 			{
 				// Put everything into a node array
+				readCount++;
 				XmlNode node = Document.ReadNode (reader);
 				
 				if (reportUnknown)
@@ -759,11 +784,13 @@ namespace System.Xml.Serialization
 			}
 
 			if (typeData.Type == typeof (XmlQualifiedName)) return ReadNullableQualifiedName ();
+			readCount++;
 			return XmlCustomFormatter.FromXmlString (typeData, Reader.ReadElementString ());
 		}
 
 		protected XmlNode ReadXmlNode (bool wrapped)
 		{
+			readCount++;
 			XmlNode node = Document.ReadNode (reader);
 			if (wrapped)
 				return node.FirstChild;
@@ -773,6 +800,8 @@ namespace System.Xml.Serialization
 
 		protected XmlDocument ReadXmlDocument (bool wrapped)
 		{
+			readCount++;
+
 			if (wrapped)
 				reader.ReadStartElement ();
 				
@@ -807,6 +836,7 @@ namespace System.Xml.Serialization
 
 		protected byte[] ToByteArrayBase64 (bool isNull)
 		{
+			readCount++;
 			if (isNull) {
 				Reader.ReadString ();
 				return null;
@@ -822,6 +852,7 @@ namespace System.Xml.Serialization
 
 		protected byte[] ToByteArrayHex (bool isNull)
 		{
+			readCount++;
 			if (isNull) {
 				Reader.ReadString ();
 				return null;
