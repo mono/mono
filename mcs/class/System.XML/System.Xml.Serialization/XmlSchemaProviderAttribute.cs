@@ -38,6 +38,7 @@ namespace System.Xml.Serialization
 	public sealed class XmlSchemaProviderAttribute: Attribute
 	{
 		string _methodName;
+		bool _isAny;
 		
 		public XmlSchemaProviderAttribute (string methodName)
 		{
@@ -47,6 +48,12 @@ namespace System.Xml.Serialization
 		public string MethodName 
 		{
 			get { return _methodName; }
+		}
+
+		public bool IsAny
+		{
+			get { return _isAny; }
+			set { _isAny = value; }
 		}
 	}
 }

@@ -1,5 +1,9 @@
 2007-08-21  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlSchemaProviderAttribute.cs : added IsAny.
+
+2007-08-21  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlSerializationReader.cs :
 	  implemented ReaderCount and CheckReaderCount().
 
