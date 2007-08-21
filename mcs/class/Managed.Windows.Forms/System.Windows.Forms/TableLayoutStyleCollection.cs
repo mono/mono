@@ -93,11 +93,6 @@ namespace System.Windows.Forms {
 			al.Remove ((TableLayoutStyle) style);
 		}
 
-		void IList.RemoveAt (int pos)
-		{
-			al.RemoveAt (pos);
-		}
-
 		bool IList.IsFixedSize {
 			get {
 				return al.IsFixedSize;
@@ -135,12 +130,6 @@ namespace System.Windows.Forms {
 		bool ICollection.IsSynchronized {
 			get {
 				return al.IsSynchronized;
-			}
-		}
-
-		int ICollection.Count {
-			get {
-				return al.Count;
 			}
 		}
 #endregion
