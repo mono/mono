@@ -689,9 +689,9 @@ namespace System.Windows.Forms
 			set { 
 				if (this.text != value) { 
 					this.text = value; 
+					this.Invalidate (); 
 					this.CalculateAutoSize (); 
 					this.OnTextChanged (EventArgs.Empty); 
-					this.Invalidate (); 
 				} 
 			}
 		}
