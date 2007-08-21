@@ -1,3 +1,8 @@
+2007-08-21  Massimiliano Mantione  <massi@ximian.com>
+
+	* bug-81466.il, bug-81466-lib.il, Makefile.am:
+	Added test for bug #81466.
+
 2007-08-20  Jb Evain  <jbevain@novell.com>
 
 	* field-access.il, method-access.il, Makefile.am: tests
