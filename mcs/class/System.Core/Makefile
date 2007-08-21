@@ -6,7 +6,7 @@ LIBRARY = System.Core.dll
 
 LIB_MCS_FLAGS = -langversion:linq -unsafe -d:LIBC /r:$(corlib)
 
-ifneq (net_2_1, $(PROFILE))
+ifeq (2.0, $(FRAMEWORK_VERSION))
 LIB_MCS_FLAGS += -d:NET_3_5
 endif
 
