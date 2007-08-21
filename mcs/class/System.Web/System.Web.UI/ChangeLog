@@ -1,3 +1,7 @@
+2007-08-21 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* ClientScriptManager.cs: fixed onsubmit script for MultiForm environment 
+
 2007-08-20  Marek Habersack  <mhabersack@novell.com>
 
 	* MasterPage.cs: use the place holder IDs collection instead of

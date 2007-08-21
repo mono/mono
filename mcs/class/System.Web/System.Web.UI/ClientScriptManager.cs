@@ -741,7 +741,7 @@ return true;
 }
 ", true);
 			if (page.IsMultiForm)
-				return "javascript:return this.WebForm_OnSubmit();";
+				return "javascript:return " + page.theForm + ".WebForm_OnSubmit();";
 			else
 				return "javascript:return WebForm_OnSubmit();";
 
