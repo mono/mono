@@ -1,3 +1,10 @@
+
+Tue Aug 21 16:40:04 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-x86.c, inssel-x86.brg: group multiple stack adjustments
+	together when passing several arguments of type double (gives a small
+	speedup and saves a few bytes of generated code).
+
 2007-08-20  Jb Evain  <jbevain@novell.com>
 
 	* mini.c (mono_method_to_ir): fix leak on InvalidProgramException.
