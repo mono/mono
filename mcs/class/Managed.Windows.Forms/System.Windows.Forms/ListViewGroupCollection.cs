@@ -102,9 +102,7 @@ namespace System.Windows.Forms
 			if (Contains(value))
 				return -1;
 
-            		CheckListViewItemsInGroup(value);
-			value.ListViewOwner = this.list_view_owner;
-			list.Add (value);
+			AddGroup (value);
 
 			if (this.list_view_owner != null)
 				list_view_owner.Redraw(true);
@@ -271,18 +269,30 @@ namespace System.Windows.Forms
 
 		public void AddRange(ListViewGroup[] groups)
 		{
-			foreach (ListViewGroup item in groups)
-			{
-				Add(item);
-			}
+			foreach (ListViewGroup group in groups)
+				AddGroup (group);
+
+			if (list_view_owner != null)
+				list_view_owner.Redraw (true);
 		}
 
 		public void AddRange(ListViewGroupCollection groups)
 		{
-			foreach (ListViewGroup item in groups)
-			{
-				Add(item);
-			}
+			foreach (ListViewGroup group in groups)
+				AddGroup (group);
+
+			if (list_view_owner != null)
+				list_view_owner.Redraw (true);
+		}
+
+		void AddGroup (ListViewGroup group)
+		{
+			if (Contains (group))
+				return;
+
+            		CheckListViewItemsInGroup (group);
+			ListViewOwner = list_view_owner;
+			list.Add (group);
 		}
 
 		private void CheckListViewItemsInGroup(ListViewGroup value)
