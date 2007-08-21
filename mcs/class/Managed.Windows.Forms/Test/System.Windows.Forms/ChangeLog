@@ -1,5 +1,13 @@
 2007-08-21  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* DataGridViewColumnCollectionTest.cs, DataGridViewComboBoxCellTest.cs,
+	  DataGridViewRowCollectionTest.cs, DataGridViewTextBoxColumnTest.cs,
+	  DataGridViewBandTest.cs: Fixed line endings.
+	* DataGridViewCommon.cs: Fixed line endings, added
+	  CreateAndFillForClipboard.
+
+2007-08-21  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* DataObjectTest.cs: Added TestConvertible.
 
 2007-08-20  Carlos Alberto Cortez <calberto.cortez@gmail.com>

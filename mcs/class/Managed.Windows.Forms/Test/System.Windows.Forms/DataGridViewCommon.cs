@@ -56,6 +56,58 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		/// <summary>
+		/// Creates a 2x2 grid, all cells have a GetClipboardContentsPublic method.
+		/// <para>     A   B </para>
+		/// <para>1   A1  B1</para>
+		/// <para>2   A2  B2</para>
+		/// </summary>
+		/// <returns></returns>
+		public static DataGridView CreateAndFillForClipboard ()
+		{
+			DataGridView dgv = new DataGridView ();
+			DataGridViewColumn col;
+			DataGridViewRow row;
+			DataGridViewCell cell;
+			
+			foreach (string name in new string [] {"A", "B", "C", "D"}) {
+				col = new DataGridViewColumn ();
+				col.CellTemplate = new DataGridViewTextBoxCell ();
+				col.HeaderCell = new DataGridViewColumnHeaderTest.DataGridViewColumnHeaderClipboardCell ();
+				col.Name = name;
+				//if (dgv.Columns.Count == 1) {
+				//        col.HeaderText = null;
+				//} else if (dgv.Columns.Count == 2) {
+				//        col.HeaderText = string.Empty;
+				//} else {
+				        col.HeaderText = name;
+				//}
+				
+				dgv.Columns.Add (col);
+			}
+			
+			for (int i = 1; i <= 4; i++) {
+				row = new DataGridViewRow ();
+				row.HeaderCell = new DataGridViewRowHeaderTest.DataGridViewRowHeaderClipboardCell ();
+				//if (i == 3) { // Leave one at default value of null
+				//        row.HeaderCell.Value = null;
+				//} else if (i == 2) {
+				//        row.HeaderCell.Value = string.Empty;
+				//} else {
+				        row.HeaderCell.Value = "Row#" + i.ToString ();
+				//}
+					
+				foreach (DataGridViewColumn c in dgv.Columns) {
+					cell = new DataGridViewCellTest.DataGridViewClipboardCell ();
+					cell.Value = "Cell " + c.Name + i.ToString ();
+					row.Cells.Add (cell);
+				}
+				dgv.Rows.Add (row);
+			}
+			
+			return dgv;
+		}
+
+		/// <summary>
 		/// Creates a 10x10 grid.
 		/// <para>     A   B </para>
 		/// <para>1   A1  B1</para>
