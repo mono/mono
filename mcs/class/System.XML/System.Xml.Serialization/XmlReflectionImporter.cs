@@ -787,7 +787,8 @@ namespace System.Xml.Serialization {
 			if (atts.XmlArray != null) {
 				if (atts.XmlArray.Namespace != null && atts.XmlArray.Form == XmlSchemaForm.Unqualified)
 					throw new InvalidOperationException ("XmlArrayAttribute.Form must not be Unqualified when it has an explicit Namespace value.");
-				if (typeData.SchemaType != SchemaTypes.Array)
+				if (typeData.SchemaType != SchemaTypes.Array &&
+				    !(typeData.SchemaType == SchemaTypes.Primitive && typeData.Type == typeof (byte [])))
 					throw new InvalidOperationException ("XmlArrayAttribute can be applied to members of array or collection type.");
 			}
 

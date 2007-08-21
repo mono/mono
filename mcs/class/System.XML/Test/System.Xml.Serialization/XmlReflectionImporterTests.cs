@@ -1538,6 +1538,12 @@ namespace MonoTests.System.XmlSerialization
 			new XmlSerializer (typeof(WrongChoices));
 		}
 
+		[Test]
+		public void XmlArrayOnByteArray ()
+		{
+			new XmlSerializer (typeof (XmlArrayOnByteArrayType));
+		}
+
 #if NET_2_0
 
 		[Test]
@@ -2050,6 +2056,13 @@ namespace MonoTests.System.XmlSerialization
 			}
 
 			private IEnumerator _baseEnumerator;
+		}
+
+		public class XmlArrayOnByteArrayType
+		{
+			[XmlArray]
+			[XmlArrayItem ("Byte", IsNullable =false)]
+			public byte [] Args;
 		}
 
 #if NET_2_0

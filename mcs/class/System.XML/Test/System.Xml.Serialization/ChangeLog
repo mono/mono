@@ -1,5 +1,9 @@
 2007-08-21  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlReflectionImporterTest.cs : test for bug #81880.
+
+2007-08-21  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlCodeExporterTests.cs : test for bug #82078.
 
 2007-07-26  Atsushi Enomoto  <atsushi@ximian.com>

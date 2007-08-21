@@ -1,5 +1,10 @@
 2007-08-21  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlReflectionImporter.cs : do not reject XmlArrayAttribute on
+	  byte[] (processed as primitive SchemaType). Fixed bug #81880.
+
+2007-08-21  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlSchemaProviderAttribute.cs : added IsAny.
 
 2007-08-21  Atsushi Enomoto  <atsushi@ximian.com>
