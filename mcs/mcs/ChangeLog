@@ -1,3 +1,8 @@
+2007-08-21  Marek Safar  <marek.safar@gmail.com>
+
+	* anonymous.cs (AnonymousMethod): Generate private anonymous method
+	to fix problem with private arguments.
+
 2007-08-20  Marek Safar  <marek.safar@gmail.com>
 
 	* anonymous.cs (AnonymousTypeClass): An anonymous type can be empty.

@@ -1732,7 +1732,7 @@ namespace Mono.CSharp {
 
 			return new AnonymousMethodMethod (
 				this, scope, generic_method, new TypeExpression (ReturnType, Location),
-				Modifiers.INTERNAL, member_name, Parameters);
+				Modifiers.PRIVATE, member_name, Parameters);
 		}
 
 		public override Expression Resolve (EmitContext ec)
@@ -1752,8 +1752,9 @@ namespace Mono.CSharp {
 					throw new InternalErrorException ();
 
 				MethodGroupExpr mg = (MethodGroupExpr) Expression.MemberLookup (
-					ec.ContainerType, scope_type, builder.Name, Location);
-
+					ec.ContainerType, scope_type, builder.Name,
+					MemberTypes.Method, Expression.AllBindingFlags | BindingFlags.NonPublic, Location);
+				
 				if (mg == null)
 					throw new InternalErrorException ();
 				builder = (MethodInfo) mg.Methods [0];
