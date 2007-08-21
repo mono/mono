@@ -150,6 +150,12 @@ namespace Mono.CSharp.Linq
 			args.Add (new Argument (ame));
 			return args;
 		}
+
+		public AQueryClause Tail {
+			get {
+				return Next == null ? this : Next.Tail;
+			}
+		}
 	}
 
 	public class Cast : ALinqExpression
@@ -238,7 +244,58 @@ namespace Mono.CSharp.Linq
 			get { return "Where"; }
 		}
 	}
-	
+
+	public class OrderByAscending : AQueryClause
+	{
+		public OrderByAscending (Expression expr)
+			: base (expr, expr.Location)
+		{
+		}
+
+		protected override string MethodName {
+			get { return "OrderBy"; }
+		}
+	}
+
+	public class OrderByDescending : AQueryClause
+	{
+		public OrderByDescending (Expression expr)
+			: base (expr, expr.Location)
+		{
+		}
+
+		protected override string MethodName {
+			get { return "OrderByDescending"; }
+		}
+	}
+
+	public class ThenByAscending : OrderByAscending
+	{
+		public ThenByAscending (Expression expr)
+			: base (expr)
+		{
+		}
+
+		protected override string MethodName {
+			get { return "ThenBy"; }
+		}
+	}
+
+	public class ThenByDescending : OrderByDescending
+	{
+		public ThenByDescending (Expression expr)
+			: base (expr)
+		{
+		}
+
+		protected override string MethodName {
+			get { return "ThenByDescending"; }
+		}
+	}
+
+	//
+	// Only helper for implicit query type expression
+	//
 	public class ImplicitArgument : Expression
 	{
 		public static ImplicitArgument Instance = new ImplicitArgument ();

@@ -5421,19 +5421,33 @@ join_clause_body
 query_body
 	: opt_from_let_where_clauses opt_orderby_clause SELECT expression opt_query_continuation
 	  {
-		Linq.AQueryClause ret = new Linq.Select ((Expression)$4, GetLocation ($3));
+		Linq.AQueryClause head = new Linq.Select ((Expression)$4, GetLocation ($3));
+		
+		if ($2 != null) {
+			Linq.AQueryClause clause = (Linq.AQueryClause)$2;
+			clause.Tail.Next = head;
+			head = clause;
+		}
 		
 		if ($1 != null) {
-			((Linq.AQueryClause)$1).Next = ret;
-			ret = (Linq.AQueryClause)$1;
+			Linq.AQueryClause clause = (Linq.AQueryClause)$1;
+			clause.Tail.Next = head;
+			head = clause;
 		}
-			
-		$$ = ret;
+					
+		$$ = head;
 	  }
 	| opt_from_let_where_clauses opt_orderby_clause group_clause opt_query_continuation
 	  {
-	  	Linq.AQueryClause ret = (Linq.AQueryClause)$3;
-	  	$$ = ret;
+	  	Linq.AQueryClause head = (Linq.AQueryClause)$3;
+
+		if ($2 != null) {
+			Linq.AQueryClause clause = (Linq.AQueryClause)$2;
+			clause.Tail.Next = head;
+			head = clause;
+		}
+		
+	  	$$ = head;
 	  }
 	;
 	
@@ -5466,22 +5480,52 @@ where_clause
 	
 opt_orderby_clause
 	: /* empty */
-	| orderby_clause
-	;
-	
-orderby_clause
-	: ORDERBY orderings
+	| ORDERBY orderings
+	  {
+		$$ = $2;
+	  }
 	;
 	
 orderings
-	: ordering
-	| orderings COMMA ordering
+	: order_by
+	  {
+		$$ = $1;
+	  }
+	| order_by COMMA then_by
+	  {
+		((Linq.AQueryClause)$1).Next = (Linq.AQueryClause)$3;
+		$$ = $1;
+	  }
 	;
 	
-ordering
+order_by
 	: expression
+	  {
+		$$ = new Linq.OrderByAscending ((Expression)$1);	
+	  }
 	| expression ASCENDING
+	  {
+		$$ = new Linq.OrderByAscending ((Expression)$1);	
+	  }
 	| expression DESCENDING
+	  {
+		$$ = new Linq.OrderByDescending ((Expression)$1);	
+	  }
+	;
+
+then_by
+	: expression
+	  {
+		$$ = new Linq.ThenByAscending ((Expression)$1);	
+	  }
+	| expression ASCENDING
+	  {
+		$$ = new Linq.ThenByAscending ((Expression)$1);	
+	  }
+	| expression DESCENDING
+	  {
+		$$ = new Linq.ThenByDescending ((Expression)$1);	
+	  }	
 	;
 
 	
