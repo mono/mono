@@ -1,3 +1,7 @@
+2007-08-21  Atsushi Enomoto <atsushi@ximian.com>
+
+	* 82078.xsd : new test file.
+
 2007-08-02  Atsushi Enomoto <atsushi@ximian.com>
 
 	* 82010.xsd, 82010.xml : new test files.

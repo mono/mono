@@ -1,3 +1,8 @@
+2007-08-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MapCodeGenerator.cs : avoid possible duplicates in generated field 
+	  names. Fixed bug #82078.
+
 2007-08-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlSerializer.cs : use WhitespaceHandling.Significant when creating

@@ -50,6 +50,7 @@ namespace System.Xml.Serialization {
 		protected bool includeArrayTypes;
 		CodeDomProvider codeProvider;
 		CodeGenerationOptions options;
+		CodeIdentifiers identifiers;
 
 		Hashtable exportedMaps = new Hashtable ();
 		Hashtable includeMaps = new Hashtable ();
@@ -59,6 +60,7 @@ namespace System.Xml.Serialization {
 			this.codeCompileUnit = codeCompileUnit;
 			this.codeNamespace = codeNamespace;
 			this.options = options;
+			this.identifiers = new CodeIdentifiers ();
 		}
 
 		public MapCodeGenerator (CodeNamespace codeNamespace, CodeCompileUnit codeCompileUnit, CodeDomProvider codeProvider, CodeGenerationOptions options, Hashtable mappings)
@@ -67,6 +69,11 @@ namespace System.Xml.Serialization {
 			this.codeNamespace = codeNamespace;
 			this.codeProvider = codeProvider;
 			this.options = options;
+#if NET_2_0
+			this.identifiers = new CodeIdentifiers ((codeProvider.LanguageOptions & LanguageOptions.CaseInsensitive) == 0);
+#else
+			this.identifiers = new CodeIdentifiers ();
+#endif
 //			this.mappings = mappings;
 		}
 
@@ -202,9 +209,19 @@ namespace System.Xml.Serialization {
 
 		void ExportMembersMapCode (CodeTypeDeclaration codeClass, ClassMap map, string defaultNamespace, XmlTypeMapping baseMap)
 		{
+			ICollection attributes = map.AttributeMembers;
+			ICollection members = map.ElementMembers;
+
+			// collect names
+			if (attributes != null)
+				foreach (XmlTypeMapMemberAttribute attr in attributes)
+					identifiers.AddUnique (attr.Name, attr);
+			if (members != null)
+				foreach (XmlTypeMapMemberElement member in members)
+					identifiers.AddUnique (member.Name, member);
+
 			// Write attributes
 
-			ICollection attributes = map.AttributeMembers;
 			if (attributes != null) {
 				foreach (XmlTypeMapMemberAttribute attr in attributes) {
 					if (baseMap != null && DefinedInBaseMap (baseMap, attr)) continue;
@@ -212,7 +229,7 @@ namespace System.Xml.Serialization {
 				}
 			}
 
-			ICollection members = map.ElementMembers;
+			members = map.ElementMembers;
 				
 			if (members != null)
 			{
@@ -275,7 +292,7 @@ namespace System.Xml.Serialization {
 			CodeTypeMember codeProp = null;
 
 			if ((options & CodeGenerationOptions.GenerateProperties) > 0) {
-				string field = CodeIdentifier.MakeCamel (name + "Field");
+				string field = identifiers.MakeUnique (CodeIdentifier.MakeCamel (name + "Field"));
 				codeField = new CodeMemberField (type, field);
 				codeField.Attributes = MemberAttributes.Private;
 				codeClass.Members.Add (codeField);
@@ -322,7 +339,7 @@ namespace System.Xml.Serialization {
 
 			if (attinfo.TypeData.IsValueType && attinfo.IsOptionalValueType)
 			{
-				codeField = CreateFieldMember (codeClass, typeof(bool), attinfo.Name + "Specified");
+				codeField = CreateFieldMember (codeClass, typeof(bool), identifiers.MakeUnique (attinfo.Name + "Specified"));
 				codeField.Attributes = MemberAttributes.Public;
 				GenerateSpecifierMember (codeField);
 			}
@@ -345,7 +362,7 @@ namespace System.Xml.Serialization {
 			
 			if (member.TypeData.IsValueType && member.IsOptionalValueType)
 			{
-				codeField = CreateFieldMember (codeClass, typeof(bool), member.Name + "Specified");
+				codeField = CreateFieldMember (codeClass, typeof(bool), identifiers.MakeUnique (member.Name + "Specified"));
 				codeField.Attributes = MemberAttributes.Public;
 				GenerateSpecifierMember (codeField);
 			}

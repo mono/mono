@@ -4,6 +4,7 @@
 // Author:
 //   Gert Driesen (drieseng@users.sourceforge.net)
 //
+// (C) Gert Driesen (drieseng@users.sourceforge.net)
 // (C) 2006 Novell
 // 
 
@@ -930,6 +931,34 @@ namespace MonoTests.System.XmlSerialization
 				"}}{0}", Environment.NewLine), sw.ToString (), "#2");
 #endif
 		}
+
+#if NET_2_0
+		[Test]
+		public void DuplicateIdentifiers ()
+		{
+			XmlSchema xs = XmlSchema.Read (File.OpenText ("Test/XmlFiles/xsd/82078.xsd"), null);
+
+			XmlSchemas xss = new XmlSchemas ();
+			xss.Add (xs);
+			XmlSchemaImporter imp = new XmlSchemaImporter (xss);
+			CodeNamespace cns = new CodeNamespace ();
+			XmlCodeExporter exp = new XmlCodeExporter (cns);
+			XmlQualifiedName qname = new XmlQualifiedName (
+				"Operation", "http://tempuri.org/");
+			exp.ExportTypeMapping (imp.ImportTypeMapping (qname));
+#if false // this is better
+			CodeCompileUnit ccu = new CodeCompileUnit ();
+			ccu.Namespaces.Add (cns);
+			new CSharpCodeProvider ().CreateCompiler ().CompileAssemblyFromDom (new CompilerParameters (), ccu);
+#else // this is bogus, fails if the temporary field name is not "nameField1" (especially it will fail when we use auto property in C# 3.0!)
+			StringWriter sw = new StringWriter ();
+			CodeDomProvider provider = new CSharpCodeProvider ();
+			ICodeGenerator generator = provider.CreateGenerator ();
+			generator.GenerateCodeFromNamespace (cns, sw, new CodeGeneratorOptions ());
+			Assert.IsTrue (sw.ToString ().IndexOf ("nameField1") > 0);
+#endif
+		}
+#endif
 
 		CodeNamespace ExportCode (Type type)
 		{
