@@ -1,3 +1,15 @@
+2007-08-21  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpApplicationFactory.cs: watch for changes in all the
+	private binary directories for the current application domain.
+
+	* HttpApplication.cs: turn the PrivateBinPath property into an
+	internal enumerable, so that code throughout the assembly can
+	iterate over the list of private bin directories configured for
+	the application domain.
+	Added a new internal method LoadTypeFromPrivateBin, for sharing
+	with other parts of the assembly.
+
 2007-08-18  Juraj Skripsky <js@hotfeet.ch>
 
 	* HttpRequest.cs (StripPath): Fix off-by-one error, make static.

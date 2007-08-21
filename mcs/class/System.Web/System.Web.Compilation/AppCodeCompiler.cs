@@ -349,7 +349,6 @@ namespace System.Web.Compilation
 		// unambiguous language assigned to them (e.g. .wsdl files), are
 		// built using the default website compiler.
 		private List<AppCodeAssembly> assemblies;
-		string _bindir = null;
 		string providerTypeName = null;
 		
 		public AppCodeCompiler ()
@@ -380,28 +379,6 @@ namespace System.Web.Compilation
 			if (String.IsNullOrEmpty (type))
 				throw new ArgumentException ("String size cannot be 0", "type");
 			return new CodeTypeReference (type);
-		}
-
-		Type GetTypeFromBin (string typeName)
-		{
-			string bindir = BinDir;
-			if (!Directory.Exists (bindir))
-				return null;
-			
-			string [] binDlls = Directory.GetFiles (bindir, "*.dll");
-			Type ret = null;
-			foreach (string dll in binDlls) {
-				try {
-					Assembly asm = Assembly.LoadFrom (dll);
-					ret = asm.GetType (typeName, false);
-					if (ret != null)
-						break;
-				} catch (Exception) {
-					continue;
-				}
-			}
-
-			return ret;
 		}
 
 		string FindProviderTypeName (ProfileSection ps, string providerName)
@@ -662,10 +639,19 @@ namespace System.Web.Compilation
 				return;
 
 			HttpRuntime.EnableAssemblyMapping (true);
-			string bindir = BinDir;
+			ArrayList binAssembliesAl = null;
 			string[] binAssemblies = null;
-			if (Directory.Exists (bindir))
-				binAssemblies = Directory.GetFiles (bindir, "*.dll");
+			
+			foreach (string bindir in HttpApplication.PrivateBinPath) {
+				if (!Directory.Exists (bindir))
+					continue;
+				if (binAssemblies == null)
+					binAssembliesAl = new ArrayList ();
+				binAssembliesAl.AddRange (Directory.GetFiles (bindir, "*.dll"));
+			}
+			if (binAssembliesAl != null)
+				binAssemblies = (string[])binAssembliesAl.ToArray (typeof (string));
+			
 			foreach (AppCodeAssembly aca in assemblies)
 				aca.Build (binAssemblies);
 			_alreadyCompiled = true;
@@ -683,7 +669,7 @@ namespace System.Web.Compilation
 				} else
 					return;
 
-				if (GetTypeFromBin (providerTypeName) == null)
+				if (HttpApplication.LoadTypeFromPrivateBin (providerTypeName) == null)
 					throw new HttpException (String.Format ("Profile provider type not found: {0}",
 										providerTypeName));
 			}
@@ -710,16 +696,6 @@ namespace System.Web.Compilation
 				curaca = aca;
 			}
 			return haveFiles;
-		}
-
-		private string BinDir {
-			get {
-				if (_bindir != null)
-					return _bindir;
-				AppDomainSetup setup = AppDomain.CurrentDomain.SetupInformation;
-				_bindir = Path.Combine (setup.ApplicationBase, setup.PrivateBinPath);
-				return _bindir;
-			}
 		}
 	}
 }

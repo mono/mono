@@ -1,3 +1,11 @@
+2007-08-21  Marek Habersack  <mhabersack@novell.com>
+
+	* ApplicationHost.cs: AppDomainSetup.PrivateBinPath should contain
+	a list of paths relative to AppDomainSetup.ApplicationBase, not a
+	full path.
+	We no longer check if the bin directories exist, the user can
+	create them while the application is running.
+
 2007-07-21  Marek Habersack  <mhabersack@novell.com>
 
 	* ApplicationHost.cs: ClearDynamicBaseDirectory becomes an

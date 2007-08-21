@@ -1,3 +1,8 @@
+2007-08-21  Marek Habersack  <mhabersack@novell.com>
+
+	* BuildProvider.cs: use HttpApplication.PrivateBinPath enumerator
+	to look up assemblies in the binary path(s).
+
 2007-08-19  Juraj Skripsky <js@hotfeet.ch>
 
 	* GlobalAsaxCompiler.cs (ProcessObjects): Make string comparison

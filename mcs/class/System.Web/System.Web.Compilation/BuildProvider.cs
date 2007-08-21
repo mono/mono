@@ -44,9 +44,6 @@ using System.Web.Util;
 namespace System.Web.Compilation {
 
 	public abstract class BuildProvider {
-		static object locker = new object ();
-		static string private_bin_path;
-
 		string virtual_path;
 		ArrayList ref_assemblies;
 
@@ -94,28 +91,17 @@ namespace System.Web.Compilation {
 			// embedded? linked?/resources
 		}
 
-		
-		static void InitPath ()
-		{
-			lock (locker) {
-				if (private_bin_path != null)
-					return;
-
-				AppDomainSetup setup = AppDomain.CurrentDomain.SetupInformation;
-				private_bin_path = Path.Combine (setup.ApplicationBase, setup.PrivateBinPath);
-			}
-		}
-
 		void AddAssembliesInBin (StringCollection coll)
 		{
-			InitPath ();
-			if (!Directory.Exists (private_bin_path))
-				return;
+			foreach (string private_bin_path in HttpApplication.PrivateBinPath) {
+				if (!Directory.Exists (private_bin_path))
+					continue;
 
-			string [] binDlls = Directory.GetFiles (private_bin_path, "*.dll");
-			foreach (string s in binDlls) {
-				coll.Add (s);
-				ref_assemblies.Add (s);
+				string [] binDlls = Directory.GetFiles (private_bin_path, "*.dll");
+				foreach (string s in binDlls) {
+					coll.Add (s);
+					ref_assemblies.Add (s);
+				}
 			}
 		}
 

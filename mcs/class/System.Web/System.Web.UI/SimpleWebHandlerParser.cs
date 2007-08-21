@@ -341,37 +341,42 @@ namespace System.Web.UI
 
 		void AddAssembliesInBin ()
 		{
-			if (!Directory.Exists (PrivateBinPath))
-				return;
+			foreach (string bindir in HttpApplication.PrivateBinPath) {
+				if (!Directory.Exists (bindir))
+					continue;
 
-			string [] binDlls = Directory.GetFiles (PrivateBinPath, "*.dll");
-			foreach (string dll in binDlls) {
-				try {
-					Assembly assembly = Assembly.LoadFrom (dll);
-					AddAssembly (assembly, true);
-				} catch (Exception e) {
-					throw new Exception ("Error while loading " + dll, e);
+				string [] binDlls = Directory.GetFiles (bindir, "*.dll");
+				foreach (string s in binDlls) {
+					try {
+						Assembly assembly = Assembly.LoadFrom (s);
+						AddAssembly (assembly, true);
+					} catch (Exception e) {
+						throw new Exception ("Error while loading " + s, e);
+					}
 				}
+					
 			}
 		}
 
 		Assembly LoadAssemblyFromBin (string name)
 		{
-			Assembly assembly;
-			if (!Directory.Exists (PrivateBinPath))
-				return null;
-
-			string [] binDlls = Directory.GetFiles (PrivateBinPath, "*.dll");
-			foreach (string dll in binDlls) {
-				string fn = Path.GetFileName (dll);
-				fn = Path.ChangeExtension (fn, null);
-				if (fn != name)
+			Assembly assembly = null;
+			foreach (string bindir in HttpApplication.PrivateBinPath) {
+				if (!Directory.Exists (bindir))
 					continue;
 
-				assembly = Assembly.LoadFrom (dll);
-				return assembly;
-			}
+				string [] binDlls = Directory.GetFiles (bindir, "*.dll");
+				foreach (string dll in binDlls) {
+					string fn = Path.GetFileName (dll);
+					fn = Path.ChangeExtension (fn, null);
+					if (fn != name)
+						continue;
 
+					assembly = Assembly.LoadFrom (dll);
+					return assembly;
+				}
+			}
+			
 			return null;
 		}
 
@@ -397,11 +402,13 @@ namespace System.Web.UI
 		internal Type GetTypeFromBin (string typeName)
 		{
 			Type result = null;
+			Type type = null;
+			
 #if NET_2_0
 			IList toplevelAssemblies = BuildManager.TopLevelAssemblies;
 			if (toplevelAssemblies != null && toplevelAssemblies.Count > 0) {
 				foreach (Assembly asm in toplevelAssemblies) {
-					Type type = asm.GetType (typeName, false);
+					type = asm.GetType (typeName, false);
 					if (type != null) {
 						if (result != null)
 							throw new HttpException (String.Format ("Type {0} is not unique.", typeName));
@@ -410,24 +417,24 @@ namespace System.Web.UI
 				}
 			}
 #endif
-			if (!Directory.Exists (PrivateBinPath))
-				if (result == null)
-					throw new HttpException (String.Format ("Type {0} not found.", typeName));
-				else
-					return result;
+
+			foreach (string bindir in  HttpApplication.PrivateBinPath) {
+				if (!Directory.Exists (bindir))
+					continue;
 			
-			string [] binDlls = Directory.GetFiles (PrivateBinPath, "*.dll");
-			foreach (string dll in binDlls) {
-				Assembly assembly = Assembly.LoadFrom (dll);
-				Type type = assembly.GetType (typeName, false);
-				if (type != null) {
-					if (result != null) 
-						throw new HttpException (String.Format ("Type {0} is not unique.", typeName));
-
-					result = type;
-				} 
+				string [] binDlls = Directory.GetFiles (bindir, "*.dll");
+				foreach (string dll in binDlls) {
+					Assembly assembly = Assembly.LoadFrom (dll);
+					type = assembly.GetType (typeName, false);
+					if (type != null) {
+						if (result != null) 
+							throw new HttpException (String.Format ("Type {0} is not unique.", typeName));
+						
+						result = type;
+					} 
+				}
 			}
-
+			
 			if (result == null)
 				throw new HttpException (String.Format ("Type {0} not found.", typeName));
 
@@ -489,28 +496,6 @@ namespace System.Web.UI
 
 		internal ArrayList Dependencies {
 			get { return dependencies; }
-		}
-
-		internal string PrivateBinPath {
-			get {
-				if (privateBinPath != null)
-					return privateBinPath;
-
-				AppDomainSetup setup = AppDomain.CurrentDomain.SetupInformation;
-				privateBinPath = setup.PrivateBinPath;
-					
-				if (!Path.IsPathRooted (privateBinPath)) {
-					string appbase = setup.ApplicationBase;
-					if (appbase.StartsWith ("file://")) {
-						appbase = appbase.Substring (7);
-						if (Path.DirectorySeparatorChar != '/')
-							appbase = appbase.Replace ('/', Path.DirectorySeparatorChar);
-					}
-					privateBinPath = Path.Combine (appbase, privateBinPath);
-				}
-
-				return privateBinPath;
-			}
 		}
 
 		internal string BaseDir {

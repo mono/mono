@@ -159,20 +159,6 @@ namespace System.Web.UI {
 				return ptype;
 			}
 		}
-
-#if NET_2_0
-		private static string PrivateBinPath {
-                        get {
-                                if (privateBinPath != null)
-                                        return privateBinPath;
-
-                                AppDomainSetup setup = AppDomain.CurrentDomain.SetupInformation;
-                                privateBinPath = Path.Combine (setup.ApplicationBase, setup.PrivateBinPath);
-
-                                return privateBinPath;
-                        }
-                }
-#endif
 		
 #if NET_2_0
 		public virtual

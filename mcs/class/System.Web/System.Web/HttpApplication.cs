@@ -1292,18 +1292,20 @@ namespace System.Web {
 		}
 #endregion
 
-		private static string privateBinPath;
-		private static string PrivateBinPath {
+		internal static IEnumerable PrivateBinPath
+		{
 			get {
-				if (privateBinPath != null)
-					return privateBinPath;
-				
 				AppDomainSetup setup = AppDomain.CurrentDomain.SetupInformation;
-				privateBinPath = Path.Combine(setup.ApplicationBase, setup.PrivateBinPath);
-				return privateBinPath;
+				string baseDir = setup.ApplicationBase;
+				
+				string pbp = setup.PrivateBinPath;
+				if (pbp == null || pbp.Length == 0)
+					return false;
+				foreach (string d in pbp.Split (':'))
+					yield return Path.Combine (baseDir, d);
 			}
-		}		
-
+		}
+			
 		internal static Type LoadType (string typeName)
 		{
 			return LoadType (typeName, false);
@@ -1334,23 +1336,36 @@ namespace System.Web {
 				}
 			}
 #endif
-			
-			if (!Directory.Exists (PrivateBinPath))
-				return null;
-			
-			string[] binDlls = Directory.GetFiles(PrivateBinPath, "*.dll");
-			foreach (string s in binDlls) {
-				Assembly binA = Assembly.LoadFrom (s);
-				type = binA.GetType (typeName, false);
-				if (type == null)
-					continue;
-				
-				return type;
-			}
 
+			type = LoadTypeFromPrivateBin (typeName);
+			if (type != null)
+				return type;
+			
 			if (throwOnMissing)
 				throw new TypeLoadException (String.Format ("Type '{0}' cannot be found", typeName));
 			
+			return null;
+		}
+
+		internal static Type LoadTypeFromPrivateBin (string typeName)
+		{
+			Type type = null;
+			
+			foreach (string dir in PrivateBinPath) {
+				if (!Directory.Exists (dir))
+					continue;
+			
+				string[] binDlls = Directory.GetFiles(dir, "*.dll");
+				foreach (string s in binDlls) {
+					Assembly binA = Assembly.LoadFrom (s);
+					type = binA.GetType (typeName, false);
+					if (type == null)
+						continue;
+				
+					return type;
+				}
+			}
+
 			return null;
 		}
 	}

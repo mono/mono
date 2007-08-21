@@ -370,7 +370,16 @@ namespace System.Web.UI {
 			string location = asm.Location;
 			
 			AddDependency (location);
-			if (Path.GetDirectoryName (location) != PrivateBinPath)
+			string dirname = Path.GetDirectoryName (location);
+			bool doAddAssembly = true;
+			foreach (string dir in HttpApplication.PrivateBinPath) {
+				if (dirname == dir) {
+					doAddAssembly = false;
+					break;
+				}
+			}
+
+			if (doAddAssembly)
 				AddAssembly (asm, true);
 
 			return type;
@@ -378,12 +387,14 @@ namespace System.Web.UI {
 
 		void AddAssembliesInBin ()
 		{
-			if (!Directory.Exists (PrivateBinPath))
-				return;
+			foreach (string bindir in HttpApplication.PrivateBinPath) {
+				if (!Directory.Exists (bindir))
+					continue;
 
-			string [] binDlls = Directory.GetFiles (PrivateBinPath, "*.dll");
-			foreach (string s in binDlls)
-				assemblies.Add (s);
+				string [] binDlls = Directory.GetFiles (bindir, "*.dll");
+				foreach (string s in binDlls)
+					assemblies.Add (s);
+			}
 		}
 		
 		internal virtual void AddInterface (string iface)
@@ -821,18 +832,6 @@ namespace System.Web.UI {
 				}
 
 				return className;
-			}
-		}
-
-		internal string PrivateBinPath {
-			get {
-				if (privateBinPath != null)
-					return privateBinPath;
-
-				AppDomainSetup setup = AppDomain.CurrentDomain.SetupInformation;
-				privateBinPath = Path.Combine (setup.ApplicationBase, setup.PrivateBinPath);
-
-				return privateBinPath;
 			}
 		}
 

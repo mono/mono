@@ -117,15 +117,6 @@ namespace System.Web.Hosting {
 			}
 #endif
 		}
-
-		static string GetBinPath (string physicalDir)
-		{
-			string ret = Path.Combine (physicalDir, "Bin");
-			if (Directory.Exists (ret))
-				return ret;
-			ret = Path.Combine (physicalDir, "bin");
-			return ret;
-		}
 		
 		//
 		// For further details see `Hosting the ASP.NET runtime'
@@ -163,11 +154,15 @@ namespace System.Web.Hosting {
 			setup.CachePath = null;
 			setup.ConfigurationFile = FindWebConfig (physicalDir);
 			setup.DisallowCodeDownload = true;
-			string bin_path = GetBinPath (physicalDir);
-			setup.PrivateBinPath = bin_path;
+
+			//
+			// We use Path.PathSeparator even though MSDN says semicolons are used. Our
+			// runtime expects a Path.PathSeparator.
+			//
+			setup.PrivateBinPath = String.Format ("Bin{0}bin", Path.PathSeparator);
 			setup.PrivateBinPathProbe = "*";
 			setup.ShadowCopyFiles = "true";
-			setup.ShadowCopyDirectories = bin_path;
+			setup.ShadowCopyDirectories = setup.PrivateBinPath;
 
 			string dynamic_dir = null;
 			string user = Environment.UserName;

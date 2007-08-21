@@ -1,3 +1,8 @@
+2007-08-21  Marek Habersack  <mhabersack@novell.com>
+
+	* ObjectDataSourceView.cs: get rid of PrivateBinPath property,
+	it's unused.
+
 2007-08-20  Marek Habersack  <mhabersack@novell.com>
 
 	* ContentPlaceHolderBuilder.cs: store place holder id in the

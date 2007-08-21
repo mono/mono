@@ -503,18 +503,6 @@ namespace System.Web.UI.WebControls
 				return updateParameters;
 			}
 		}
-
-		private static string PrivateBinPath {
-			get {
-				if (privateBinPath != null)
-					return privateBinPath;
-
-				AppDomainSetup setup = AppDomain.CurrentDomain.SetupInformation;
-				privateBinPath = Path.Combine (setup.ApplicationBase, setup.PrivateBinPath);
-
-				return privateBinPath;
-			}
-		}
     
 		Type ObjectType {
 			get {
