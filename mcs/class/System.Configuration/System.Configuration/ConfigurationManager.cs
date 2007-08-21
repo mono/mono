@@ -126,12 +126,12 @@ namespace System.Configuration {
 #endif
 		public static Configuration OpenExeConfiguration (ConfigurationUserLevel userLevel)
 		{
-			return OpenExeConfigurationInternal (userLevel, Assembly.GetCallingAssembly (), null);
+			return OpenExeConfigurationInternal (userLevel, Assembly.GetEntryAssembly () ?? Assembly.GetCallingAssembly (), null);
 		}
 		
 		public static Configuration OpenExeConfiguration (string exePath)
 		{
-			return OpenExeConfigurationInternal (ConfigurationUserLevel.None, Assembly.GetCallingAssembly (), exePath);
+			return OpenExeConfigurationInternal (ConfigurationUserLevel.None, Assembly.GetEntryAssembly () ?? Assembly.GetCallingAssembly (), exePath);
 		}
 
 		[MonoLimitation("ConfigurationUserLevel parameter is not supported.")]

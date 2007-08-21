@@ -1,3 +1,9 @@
+2007-08-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ConfigurationManager.cs : To open exe configuration, use 
+	  GetEntryAssembly() first, and GetCallingAssembly() only when
+	  it was not found. Should fix bug #82071.
+
 2007-06-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Configuration.cs, InternalConfigurationHost.cs :
