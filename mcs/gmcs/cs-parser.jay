@@ -5447,6 +5447,12 @@ query_body
 			head = clause;
 		}
 		
+		if ($1 != null) {
+			Linq.AQueryClause clause = (Linq.AQueryClause)$1;
+			clause.Tail.Next = head;
+			head = clause;
+		}		
+		
 	  	$$ = head;
 	  }
 	;
