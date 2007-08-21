@@ -291,7 +291,7 @@ namespace System.Windows.Forms
 				return;
 
             		CheckListViewItemsInGroup (group);
-			ListViewOwner = list_view_owner;
+			group.ListViewOwner = list_view_owner;
 			list.Add (group);
 		}
 

@@ -1,5 +1,9 @@
 2007-08-21  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ListViewGroupCollection.cs: Fix a typo of the previous patch.
+
+2007-08-21  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* ListViewGroupCollection.cs: Implement AddRange the right way, to
 	only call Redraw on the parent one time.
 
