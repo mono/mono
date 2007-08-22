@@ -874,6 +874,156 @@ namespace System.Windows.Forms
 		#endregion	// ButtonBase
 
 		#region CheckBox
+#if NET_2_0
+		public override void DrawCheckBox (Graphics g, CheckBox cb, Rectangle glyphArea, Rectangle textBounds, Rectangle imageBounds, Rectangle clipRectangle)
+		{
+			// Draw Button Background
+			DrawCheckBoxGlyph (g, cb, glyphArea);
+
+			// If we have an image, draw it
+			if (imageBounds.Size != Size.Empty)
+				DrawCheckBoxImage (g, cb, imageBounds);
+
+			if (cb.Focused && cb.Enabled && cb.ShowKeyboardCuesInternal && textBounds != Rectangle.Empty)
+				DrawCheckBoxFocus (g, cb, textBounds);
+
+			// If we have text, draw it
+			if (textBounds != Rectangle.Empty)
+				DrawCheckBoxText (g, cb, textBounds);
+		}
+
+		public virtual void DrawCheckBoxGlyph (Graphics g, CheckBox cb, Rectangle glyphArea)
+		{
+			if (cb.Pressed)
+				ThemeElements.CurrentTheme.CheckBoxPainter.PaintCheckBox (g, glyphArea, cb.BackColor, cb.ForeColor, ElementState.Pressed, cb.FlatStyle, cb.CheckState);
+			else if (cb.InternalSelected)
+				ThemeElements.CurrentTheme.CheckBoxPainter.PaintCheckBox (g, glyphArea, cb.BackColor, cb.ForeColor, ElementState.Normal, cb.FlatStyle, cb.CheckState);
+			else if (cb.Entered)
+				ThemeElements.CurrentTheme.CheckBoxPainter.PaintCheckBox (g, glyphArea, cb.BackColor, cb.ForeColor, ElementState.Hot, cb.FlatStyle, cb.CheckState);
+			else if (!cb.Enabled)
+				ThemeElements.CurrentTheme.CheckBoxPainter.PaintCheckBox (g, glyphArea, cb.BackColor, cb.ForeColor, ElementState.Disabled, cb.FlatStyle, cb.CheckState);
+			else
+				ThemeElements.CurrentTheme.CheckBoxPainter.PaintCheckBox (g, glyphArea, cb.BackColor, cb.ForeColor, ElementState.Normal, cb.FlatStyle, cb.CheckState);
+		}
+
+		public virtual void DrawCheckBoxFocus (Graphics g, CheckBox cb, Rectangle focusArea)
+		{
+			ControlPaint.DrawFocusRectangle (g, focusArea);
+		}
+
+		public virtual void DrawCheckBoxImage (Graphics g, CheckBox cb, Rectangle imageBounds)
+		{
+			if (cb.Enabled)
+				g.DrawImage (cb.Image, imageBounds);
+			else
+				CPDrawImageDisabled (g, cb.Image, imageBounds.Left, imageBounds.Top, ColorControl);
+		}
+
+		public virtual void DrawCheckBoxText (Graphics g, CheckBox cb, Rectangle textBounds)
+		{
+			if (cb.Enabled)
+				TextRenderer.DrawTextInternal (g, cb.Text, cb.Font, textBounds, cb.ForeColor, cb.TextFormatFlags, cb.UseCompatibleTextRendering);
+			else
+				DrawStringDisabled20 (g, cb.Text, cb.Font, textBounds, cb.BackColor, cb.TextFormatFlags, cb.UseCompatibleTextRendering);
+		}
+
+		public override void CalculateCheckBoxTextAndImageLayout (ButtonBase button, Point p, out Rectangle glyphArea, out Rectangle textRectangle, out Rectangle imageRectangle)
+		{
+			int check_size = 13;
+			glyphArea = new Rectangle (0, (button.Height - check_size) / 2, check_size, check_size);
+			
+			Image image = button.Image;
+			string text = button.Text;
+			Rectangle content_rect = button.ClientRectangle;
+			content_rect.Width -= check_size;
+			content_rect.Offset (check_size, 0);
+			
+			Size text_size = TextRenderer.MeasureTextInternal (text, button.Font, content_rect.Size, button.TextFormatFlags, button.UseCompatibleTextRendering);
+			Size image_size = image == null ? Size.Empty : image.Size;
+
+			textRectangle = Rectangle.Empty;
+			imageRectangle = Rectangle.Empty;
+
+			switch (button.TextImageRelation) {
+				case TextImageRelation.Overlay:
+					// Overlay is easy, text always goes here
+					textRectangle = Rectangle.Inflate (content_rect, -4, -4);
+					textRectangle.Offset (0, -2);
+
+					// Image is dependent on ImageAlign
+					if (image == null)
+						return;
+
+					int image_x = 0;
+					int image_y = 0;
+					int image_height = image.Height;
+					int image_width = image.Width;
+
+					switch (button.ImageAlign) {
+						case System.Drawing.ContentAlignment.TopLeft:
+							image_x = 5;
+							image_y = 5;
+							break;
+						case System.Drawing.ContentAlignment.TopCenter:
+							image_x = (content_rect.Width - image_width) / 2;
+							image_y = 5;
+							break;
+						case System.Drawing.ContentAlignment.TopRight:
+							image_x = content_rect.Width - image_width - 5;
+							image_y = 5;
+							break;
+						case System.Drawing.ContentAlignment.MiddleLeft:
+							image_x = 5;
+							image_y = (content_rect.Height - image_height) / 2;
+							break;
+						case System.Drawing.ContentAlignment.MiddleCenter:
+							image_x = (content_rect.Width - image_width) / 2;
+							image_y = (content_rect.Height - image_height) / 2;
+							break;
+						case System.Drawing.ContentAlignment.MiddleRight:
+							image_x = content_rect.Width - image_width - 4;
+							image_y = (content_rect.Height - image_height) / 2;
+							break;
+						case System.Drawing.ContentAlignment.BottomLeft:
+							image_x = 5;
+							image_y = content_rect.Height - image_height - 4;
+							break;
+						case System.Drawing.ContentAlignment.BottomCenter:
+							image_x = (content_rect.Width - image_width) / 2;
+							image_y = content_rect.Height - image_height - 4;
+							break;
+						case System.Drawing.ContentAlignment.BottomRight:
+							image_x = content_rect.Width - image_width - 4;
+							image_y = content_rect.Height - image_height - 4;
+							break;
+						default:
+							image_x = 5;
+							image_y = 5;
+							break;
+					}
+
+					imageRectangle = new Rectangle (image_x + check_size, image_y, image_width, image_height);
+					break;
+				case TextImageRelation.ImageAboveText:
+					content_rect.Inflate (-4, -4);
+					LayoutTextAboveOrBelowImage (content_rect, false, text_size, image_size, button.TextAlign, button.ImageAlign, out textRectangle, out imageRectangle);
+					break;
+				case TextImageRelation.TextAboveImage:
+					content_rect.Inflate (-4, -4);
+					LayoutTextAboveOrBelowImage (content_rect, true, text_size, image_size, button.TextAlign, button.ImageAlign, out textRectangle, out imageRectangle);
+					break;
+				case TextImageRelation.ImageBeforeText:
+					content_rect.Inflate (-4, -4);
+					LayoutTextBeforeOrAfterImage (content_rect, false, text_size, image_size, button.TextAlign, button.ImageAlign, out textRectangle, out imageRectangle);
+					break;
+				case TextImageRelation.TextBeforeImage:
+					content_rect.Inflate (-4, -4);
+					LayoutTextBeforeOrAfterImage (content_rect, true, text_size, image_size, button.TextAlign, button.ImageAlign, out textRectangle, out imageRectangle);
+					break;
+			}
+		}
+#endif
+
 		public override void DrawCheckBox(Graphics dc, Rectangle clip_area, CheckBox checkbox) {
 			StringFormat		text_format;
 			Rectangle		client_rectangle;

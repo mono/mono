@@ -56,6 +56,15 @@ namespace System.Windows.Forms.Theming
 				return toolStripPainter;
 			}
 		}
+
+		protected Default.CheckBoxPainter checkBoxPainter;
+		public virtual Default.CheckBoxPainter CheckBoxPainter {
+			get {
+				if (checkBoxPainter == null)
+					checkBoxPainter = new Default.CheckBoxPainter ();
+				return checkBoxPainter;
+			}
+		}
 #endif
 	}
 }

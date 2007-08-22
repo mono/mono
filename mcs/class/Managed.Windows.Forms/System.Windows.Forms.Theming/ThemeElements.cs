@@ -92,5 +92,13 @@ namespace System.Windows.Forms.Theming
 		Disabled = 8,
 		Default = 16
 	}
+
+	internal enum ElementState
+	{
+		Normal = 1,
+		Hot = 2,
+		Pressed = 3,
+		Disabled = 4
+	}
 	#endregion
 }

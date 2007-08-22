@@ -1,3 +1,8 @@
+2007-08-22  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ThemeElementsDefault.cs: Add accessor for CheckBoxPainter.
+	* ThemeElements.cs: Add enum for button states.
+
 2007-07-03  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ThemeElementsDefault.cs: Add accessor for ToolStripPainter.

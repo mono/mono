@@ -119,7 +119,25 @@ namespace System.Windows.Forms {
 
 		#region	Internal Methods
 		internal override void Draw (PaintEventArgs pe) {
+#if NET_2_0
+			// FIXME: This should be called every time something that can affect it
+			// is changed, not every paint.  Can only change so many things at a time.
+
+			// Figure out where our text and image should go
+			Rectangle glyph_rectangle;
+			Rectangle text_rectangle;
+			Rectangle image_rectangle;
+
+			ThemeEngine.Current.CalculateCheckBoxTextAndImageLayout (this, Point.Empty, out glyph_rectangle, out text_rectangle, out image_rectangle);
+
+			// Draw our button
+			if (FlatStyle != FlatStyle.System)
+				ThemeEngine.Current.DrawCheckBox (pe.Graphics, this, glyph_rectangle, text_rectangle, image_rectangle, pe.ClipRectangle);
+			else
+				ThemeEngine.Current.DrawCheckBox (pe.Graphics, this.ClientRectangle, this);
+#else
 			ThemeEngine.Current.DrawCheckBox (pe.Graphics, this.ClientRectangle, this);
+#endif
 		}
 
 		internal override void HaveDoubleClick() {

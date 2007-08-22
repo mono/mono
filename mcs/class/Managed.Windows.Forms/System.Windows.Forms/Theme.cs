@@ -724,7 +724,12 @@ namespace System.Windows.Forms
 		#endregion	// ButtonBase
 
 		#region CheckBox
-		public abstract void DrawCheckBox(Graphics dc, Rectangle clip_area, CheckBox checkbox);
+#if NET_2_0
+		public abstract void CalculateCheckBoxTextAndImageLayout (ButtonBase b, Point offset, out Rectangle glyphArea, out Rectangle textRectangle, out Rectangle imageRectangle);
+		public abstract void DrawCheckBox (Graphics g, CheckBox cb, Rectangle textBounds, Rectangle glyphArea, Rectangle imageBounds, Rectangle clipRectangle);
+#endif
+		public abstract void DrawCheckBox (Graphics dc, Rectangle clip_area, CheckBox checkbox);
+
 		#endregion	// CheckBox
 		
 		#region CheckedListBox

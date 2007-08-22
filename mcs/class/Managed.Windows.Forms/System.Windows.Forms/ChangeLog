@@ -1,3 +1,9 @@
+2007-08-22  Jonathan Pobst  <monkey@jpobst.com>
+
+	* CheckBox.cs: Use new 2.0 rendering for 2.0.
+	* Theme.cs: Method declarations for 2.0 rendering path.
+	* ThemeWin32Classic.cs: 2.0 rendering implementation for CheckBox.
+
 2007-08-21  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListViewGroupCollection.cs: Fix a typo of the previous patch.

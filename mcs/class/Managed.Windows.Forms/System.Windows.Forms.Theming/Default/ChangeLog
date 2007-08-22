@@ -1,3 +1,7 @@
+2007-08-22  Jonathan Pobst  <monkey@jpobst.com>
+
+	* CheckBoxPainter.cs: Added.
+
 2007-08-19  Everaldo Canuto  <ecanuto@novell.com>
 
 	* TabControlPainter.cs: Fix regression in default padding x.
