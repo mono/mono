@@ -129,7 +129,7 @@ namespace Mainsoft.Data.Jdbc.Providers
 					if (_provider._excludedKeys != null)
 						_excludedKeys.AddRange(_provider._excludedKeys);
 
-					foreach(string key in _provider._keyMapping.Keys) {
+					foreach(string key in _provider.KeyMapping.Keys) {
 						object value = _keyMapper [key];
 						if (value == null)
 							continue;
@@ -338,7 +338,7 @@ namespace Mainsoft.Data.Jdbc.Providers
 			
 		public virtual IConnectionStringDictionary GetConnectionStringBuilder (string connectionString)
 		{
-			return new ConnectionStringDictionary(connectionString, _keyMapping);
+			return new ConnectionStringDictionary(connectionString, KeyMapping);
 		}
 
 		private void InitKeyMapping ()

@@ -1,3 +1,7 @@
+2007-08-12  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* GenericProvider.cs: fixed broken functionality of keyMapping
+
 2007-08-19  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* GenericProvider.cs: keyMapping lazy initialization
