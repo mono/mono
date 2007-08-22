@@ -725,6 +725,7 @@ namespace System.Windows.Forms
 
 		#region CheckBox
 #if NET_2_0
+		public abstract Size CalculateCheckBoxAutoSize (CheckBox checkBox);
 		public abstract void CalculateCheckBoxTextAndImageLayout (ButtonBase b, Point offset, out Rectangle glyphArea, out Rectangle textRectangle, out Rectangle imageRectangle);
 		public abstract void DrawCheckBox (Graphics g, CheckBox cb, Rectangle textBounds, Rectangle glyphArea, Rectangle imageBounds, Rectangle clipRectangle);
 #endif

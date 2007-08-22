@@ -1092,6 +1092,106 @@ namespace MonoTests.System.Windows.Forms
 
 #if NET_2_0
 		[Test]
+		public void BehaviorAutoSize ()
+		{
+			if (TestHelper.RunningOnUnix)
+				Assert.Ignore ("Depends on font measurements, corresponds to windows");
+
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+
+			f.Show ();
+
+			Image i = new Bitmap (20, 20);
+			String s = "My test string";
+
+			CheckBox b = new CheckBox ();
+			Size s_size = TextRenderer.MeasureText (s, b.Font);
+
+			b.UseCompatibleTextRendering = false;
+			b.Size = new Size (5, 5);
+			b.AutoSize = true;
+			b.Text = s;
+			f.Controls.Add (b);
+
+			// Text only
+			b.TextImageRelation = TextImageRelation.Overlay;
+			Assert.AreEqual (new Size (s_size.Width + 19, s_size.Height + 4), b.Size, "A1");
+			b.TextImageRelation = TextImageRelation.ImageAboveText;
+			b.Size = new Size (5, 5);
+			Assert.AreEqual (new Size (s_size.Width + 19, s_size.Height + 4), b.Size, "A2");
+			b.TextImageRelation = TextImageRelation.ImageBeforeText;
+			b.Size = new Size (5, 5);
+			Assert.AreEqual (new Size (s_size.Width + 19, s_size.Height + 4), b.Size, "A3");
+			b.TextImageRelation = TextImageRelation.TextAboveImage;
+			b.Size = new Size (5, 5);
+			Assert.AreEqual (new Size (s_size.Width + 19, s_size.Height + 4), b.Size, "A4");
+			b.TextImageRelation = TextImageRelation.TextBeforeImage;
+			b.Size = new Size (5, 5);
+			Assert.AreEqual (new Size (s_size.Width + 19, s_size.Height + 4), b.Size, "A5");
+
+			// Text and Image
+			b.Image = i;
+			b.TextImageRelation = TextImageRelation.Overlay;
+			b.Size = new Size (5, 5);
+			Assert.AreEqual (new Size (s_size.Width + 19, i.Height), b.Size, "A6");
+			b.TextImageRelation = TextImageRelation.ImageAboveText;
+			b.Size = new Size (5, 5);
+			Assert.AreEqual (new Size (s_size.Width + 19, s_size.Height + i.Height + 4), b.Size, "A7");
+			b.TextImageRelation = TextImageRelation.ImageBeforeText;
+			b.Size = new Size (5, 5);
+			Assert.AreEqual (new Size (s_size.Width + i.Width + 19, i.Height), b.Size, "A8");
+			b.TextImageRelation = TextImageRelation.TextAboveImage;
+			b.Size = new Size (5, 5);
+			Assert.AreEqual (new Size (s_size.Width + 19, s_size.Height + i.Height + 4), b.Size, "A9");
+			b.TextImageRelation = TextImageRelation.TextBeforeImage;
+			b.Size = new Size (5, 5);
+			Assert.AreEqual (new Size (s_size.Width + i.Width + 19, i.Height), b.Size, "A10");
+
+			// Image only
+			b.Text = string.Empty;
+			b.TextImageRelation = TextImageRelation.Overlay;
+			b.Size = new Size (5, 5);
+			Assert.AreEqual (new Size (i.Height + 15, i.Height), b.Size, "A11");
+			b.TextImageRelation = TextImageRelation.ImageAboveText;
+			b.Size = new Size (5, 5);
+			Assert.AreEqual (new Size (i.Height + 15, i.Height), b.Size, "A12");
+			b.TextImageRelation = TextImageRelation.ImageBeforeText;
+			b.Size = new Size (5, 5);
+			Assert.AreEqual (new Size (i.Height + 15, i.Height), b.Size, "A13");
+			b.TextImageRelation = TextImageRelation.TextAboveImage;
+			b.Size = new Size (5, 5);
+			Assert.AreEqual (new Size (i.Height + 15, i.Height), b.Size, "A14");
+			b.TextImageRelation = TextImageRelation.TextBeforeImage;
+			b.Size = new Size (5, 5);
+			Assert.AreEqual (new Size (i.Height + 15, i.Height), b.Size, "A15");
+
+			// Neither
+			b.Image = null;
+			b.TextImageRelation = TextImageRelation.Overlay;
+			b.Size = new Size (5, 5);
+			Assert.AreEqual (new Size (15, 14), b.Size, "A16");
+			b.TextImageRelation = TextImageRelation.ImageAboveText;
+			b.Size = new Size (5, 5);
+			Assert.AreEqual (new Size (15, 14), b.Size, "A17");
+			b.TextImageRelation = TextImageRelation.ImageBeforeText;
+			b.Size = new Size (5, 5);
+			Assert.AreEqual (new Size (15, 14), b.Size, "A18");
+			b.TextImageRelation = TextImageRelation.TextAboveImage;
+			b.Size = new Size (5, 5);
+			Assert.AreEqual (new Size (15, 14), b.Size, "A19");
+			b.TextImageRelation = TextImageRelation.TextBeforeImage;
+			b.Size = new Size (5, 5);
+			Assert.AreEqual (new Size (15, 14), b.Size, "A20");
+
+			// Padding
+			b.Padding = new Padding (5, 10, 15, 20);
+			Assert.AreEqual (new Size (15 + b.Padding.Horizontal, 14 + b.Padding.Vertical), b.Size, "A21");
+
+			f.Dispose ();
+		}
+
+		[Test]
 		public void MethodScaleControl ()
 		{
 			Form f = new Form ();
@@ -1110,7 +1210,7 @@ namespace MonoTests.System.Windows.Forms
 
 			gb.PublicScaleControl (new SizeF (.5f, .5f), BoundsSpecified.Location);
 			Assert.AreEqual (new Rectangle (5, 10, 238, 21), gb.Bounds, "A3");
-Console.WriteLine ("STARTING");
+
 			gb.PublicScaleControl (new SizeF (.5f, .5f), BoundsSpecified.Size);
 			Assert.AreEqual (new Rectangle (5, 10, 121, 21), gb.Bounds, "A4");
 			Console.WriteLine ("DONE");

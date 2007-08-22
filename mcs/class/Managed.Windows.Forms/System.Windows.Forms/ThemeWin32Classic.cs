@@ -1022,6 +1022,46 @@ namespace System.Windows.Forms
 					break;
 			}
 		}
+
+		public override Size CalculateCheckBoxAutoSize (CheckBox checkBox)
+		{
+			Size ret_size = Size.Empty;
+			Size text_size = TextRenderer.MeasureTextInternal (checkBox.Text, checkBox.Font, checkBox.UseCompatibleTextRendering);
+			Size image_size = checkBox.Image == null ? Size.Empty : checkBox.Image.Size;
+
+			// Pad the text size
+			if (checkBox.Text.Length != 0) {
+				text_size.Height += 4;
+				text_size.Width += 4;
+			}
+
+			switch (checkBox.TextImageRelation) {
+				case TextImageRelation.Overlay:
+					ret_size.Height = Math.Max (checkBox.Text.Length == 0 ? 0 : text_size.Height, image_size.Height);
+					ret_size.Width = Math.Max (text_size.Width, image_size.Width);
+					break;
+				case TextImageRelation.ImageAboveText:
+				case TextImageRelation.TextAboveImage:
+					ret_size.Height = text_size.Height + image_size.Height;
+					ret_size.Width = Math.Max (text_size.Width, image_size.Width);
+					break;
+				case TextImageRelation.ImageBeforeText:
+				case TextImageRelation.TextBeforeImage:
+					ret_size.Height = Math.Max (text_size.Height, image_size.Height);
+					ret_size.Width = text_size.Width + image_size.Width;
+					break;
+			}
+
+			// Pad the result
+			ret_size.Height += (checkBox.Padding.Vertical);
+			ret_size.Width += (checkBox.Padding.Horizontal) + 15;
+
+			// There seems to be a minimum height
+			if (ret_size.Height == checkBox.Padding.Vertical)
+				ret_size.Height += 14;
+				
+			return ret_size;
+		}
 #endif
 
 		public override void DrawCheckBox(Graphics dc, Rectangle clip_area, CheckBox checkbox) {

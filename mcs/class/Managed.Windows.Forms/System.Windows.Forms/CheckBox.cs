@@ -140,6 +140,16 @@ namespace System.Windows.Forms {
 #endif
 		}
 
+#if NET_2_0
+		internal override Size GetPreferredSizeCore (Size proposedSize)
+		{
+			if (this.AutoSize)
+				return ThemeEngine.Current.CalculateCheckBoxAutoSize (this);
+
+			return base.GetPreferredSizeCore (proposedSize);
+		}
+#endif
+
 		internal override void HaveDoubleClick() {
 			if (DoubleClick != null) DoubleClick(this, EventArgs.Empty);
 		}
