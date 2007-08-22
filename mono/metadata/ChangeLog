@@ -1,3 +1,8 @@
+
+Wed Aug 22 18:35:12 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* sgen-gc.h, sgen-gc.c: abstracted most of the OS-specific code.
+
 2007-08-22  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug.c: Store debugging info on a per-domain basis and
