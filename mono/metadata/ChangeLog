@@ -1,3 +1,9 @@
+
+Wed Aug 22 17:17:09 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* sgen-gc.c: ensure section->pin_queue_end is initialized
+	correctly when non pinning objects in the section have been found.
+
 2007-08-22  Marek Habersack  <mhabersack@novell.com>
 
 	* appdomain.c (set_domain_search_path): cope with PrivateBinPath
