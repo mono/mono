@@ -265,13 +265,22 @@ namespace System.Runtime.Remoting.Channels
 		}
 
 #if NET_2_0
-		[MonoTODO ("Implement ensureSecurity")]
 		public
 #else
 		internal
 #endif
 		static void RegisterChannel (IChannel chnl, bool ensureSecurity)
 		{
+			if (chnl == null)
+				throw new ArgumentNullException ("chnl");
+#if NET_2_0
+			if (ensureSecurity) {
+				ISecurableChannel securable = chnl as ISecurableChannel;
+				if (securable == null)
+					throw new RemotingException (String.Format ("Channel {0} is not securable while ensureSecurity is specified as true", chnl.ChannelName));
+				securable.IsSecured = true;
+			}
+#endif
 			
 			// Put the channel in the correct place according to its priority.
 			// Since there are not many channels, a linear search is ok.

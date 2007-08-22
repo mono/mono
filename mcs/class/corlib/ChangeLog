@@ -1,3 +1,7 @@
+2007-08-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* corlib_test.dll.sources : added ChannelServicesTest.cs.
+
 2007-08-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* corlib.dll.sources : added CustomErrorsModes.cs.

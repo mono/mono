@@ -1,3 +1,9 @@
+2007-08-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelServices.cs : implement ensureSecurity support in
+	  RegisterChannel(IChannel,bool). Note that we don't have secure
+	  channels in Sys.Runtime.Remoting.dll yet.
+
 2007-08-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ChannelServices.cs BaseChannelObjectWithProperties.cs
