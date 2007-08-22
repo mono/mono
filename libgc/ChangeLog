@@ -1,3 +1,8 @@
+2007-08-22  Martin Baulig  <martin@ximian.com>
+
+	* pthread_stop_world.c
+	(GC_mono_debugger_add_all_threads): Removed.
+	(GC_mono_debugger_get_stack_ptr): New public function.
 
 Wed Jul 4 17:46:19 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
