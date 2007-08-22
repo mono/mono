@@ -1,4 +1,9 @@
 
+Wed Aug 22 17:26:02 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* sgen-gc.c: use the mono-mmap facilitites instead of hard-coding the
+	mmap call.
+
 Wed Aug 22 17:17:09 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* sgen-gc.c: ensure section->pin_queue_end is initialized
