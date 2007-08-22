@@ -1,3 +1,45 @@
+2007-08-22  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.c: Store debugging info on a per-domain basis and
+	free it on domain unload.  Add support for unloading symbol files.
+
+	* mono-debug.h
+	(MonoDebugList): New typedef.
+	(MonoSymbolTable):
+	- add `data_tables and `type_table'.
+	- replace 'symbol_files' and `num_symbol_files' with a
+	  `MonoDebugList *'.
+	(mono_debug_data_table): Removed.
+	(mono_debug_list_add): New public function.
+	(mono_debug_list_remove): New public function.
+	(mono_debug_init_1): Renamed into mono_debug_init_corlib().
+	(mono_debug_init_2_memory): Renamed into
+	mono_debug_open_image_from_memory().
+	(mono_debug_close_image): New public function.
+	(mono_debug_domain_create): Likewise.
+	(mono_debug_domain_unload): Likewise.
+	(MONO_DEBUGGER_VERSION): Bump to 60.
+
+	* mono-debug-debugger.h
+	(MonoDebuggerEvent):
+	- remove `RELOAD_SYMTABS' and `METHOD_COMPILED'.
+	- rename `ADD_MODULE' into `LOAD_MODULE'; add `UNLOAD_MODULE'.
+	- add `DOMAIN_CREATE' and `DOMAIN_UNLOAD'.
+	- rename `THREAD_CREATED' and `THREAD_EXITED' into
+	  `GC_THREAD_CREATED' and `GC_THREAD_EXITED'.
+	- re-add `THREAD_CREATED' and `THREAD_EXITED'; with different
+	  meaning.
+	(mono_debugger_add_symbol_file): Removed.
+	(mono_debugger_add_type): Removed.
+	(mono_debugger_lookup_type): Removed.
+	(mono_debugger_lookup_assembly): Removed.
+
+	* domain.c
+	(mono_domain_create): Call mono_debug_domain_create().
+	(mono_init_internal): Call mono_debug_init_corlib().
+
+	* assembly.c
+	(mono_assembly_close): Call mono_debug_close_image().
 
 Wed Aug 22 17:26:02 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
