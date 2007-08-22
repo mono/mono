@@ -1,3 +1,26 @@
+2007-08-22  Martin Baulig  <martin@ximian.com>
+
+	* debug-mini.h
+	(MonoDebuggerThreadInfo): New typedef.
+	(mono_debugger_thread_table): New global variable.
+	(mono_debugger_thread_created): New public function.
+	(mono_debugger_thread_cleanup): New public function.
+
+	* debug-debugger.h
+	(MonoDebuggerInfo):
+	- removed `get_current_thread' and `lookup_assembly'.
+	- removed `data_table'.
+	- added `thread_table'.
+
+	* mini.c
+	(mono_thread_start_cb): Call mono_debugger_thread_created().
+	(mono_thread_attach_cb): Likewise.
+	(mini_thread_cleanup): Call mono_debugger_thread_cleanup().
+	(mini_cleanup): Move mono_debug_cleanup() down, after free'ing the
+	initial domain.
+
+	* driver.c (mono_main): Move mono_debug_init() up, before calling
+	mini_init(); mono_debug_init_1() and mono_debug_init_2() are gone.
 
 Tue Aug 21 16:40:04 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
