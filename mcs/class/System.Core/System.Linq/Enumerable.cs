@@ -2116,13 +2116,35 @@ namespace System.Linq
                 throw new ArgumentNullException();
 
             int counter = 0;
-            foreach (TSource element in source)
-            {
-                foreach (TResult item in selector(element, counter))
+            foreach (TSource element in source) {
+                foreach (TResult item in selector(element, counter++))
                     yield return item;
                 counter++;
             }
         }
+        
+	public static IEnumerable<TResult> SelectMany<TSource, TCollection, TResult> (this IEnumerable<TSource> source,
+		Func<TSource, IEnumerable <TCollection>> collectionSelector, Func <TSource, TCollection, TResult> selector)        
+	{
+		if (source == null || collectionSelector == null || selector == null)
+			throw new ArgumentNullException ();
+		
+		foreach (TSource element in source)
+			foreach (TCollection collection in collectionSelector (element))
+				yield return selector (element, collection);
+	}
+
+        public static IEnumerable<TResult> SelectMany<TSource, TCollection, TResult> (this IEnumerable<TSource> source,
+		Func<TSource, int, IEnumerable <TCollection>> collectionSelector, Func <TSource, TCollection, TResult> selector)        
+	{
+		if (source == null || collectionSelector == null || selector == null)
+			throw new ArgumentNullException ();
+		
+		int counter = 0;		
+		foreach (TSource element in source)
+			foreach (TCollection collection in collectionSelector (element, counter++))
+				yield return selector (element, collection);	
+	}
 
         #endregion
 
