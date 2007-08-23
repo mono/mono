@@ -1,3 +1,9 @@
+2007-08-23  Marek Habersack  <mhabersack@novell.com>
+
+	* appdomain.c: parse the <runtime> section looking for the probing
+	element with the 'privatePath' attribute, which sets additional
+	directories in which the runtime should look for assemblies.
+
 2007-08-23  Robert Jordan  <robertj@gmx.net>
 
 	* marshal.c (Marshal_ReAllocHGlobal) : Fix GlobalReAlloc's flags.
