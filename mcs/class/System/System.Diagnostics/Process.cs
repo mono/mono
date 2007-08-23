@@ -480,16 +480,33 @@ namespace System.Diagnostics {
 			}
 		}
 
-		[MonoTODO]
+		[MonoLimitation ("Under Unix, only root is allowed to raise the priority.")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription ("The relative process priority.")]
 		public ProcessPriorityClass PriorityClass {
 			get {
-				return(ProcessPriorityClass.Normal);
+				int error;
+				int prio = GetPriorityClass (process_handle, out error);
+				if (prio == 0)
+					throw new Win32Exception (error);
+				return (ProcessPriorityClass) prio;
 			}
 			set {
+				// LAMESPEC: not documented on MSDN for NET_1_1
+				if (!Enum.IsDefined (typeof (ProcessPriorityClass), value))
+					throw new InvalidEnumArgumentException ();
+
+				int error;
+				if (!SetPriorityClass (process_handle, (int) value, out error))
+					throw new Win32Exception (error);
 			}
 		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		static extern int GetPriorityClass (IntPtr handle, out int error);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		static extern bool SetPriorityClass (IntPtr handle, int priority, out int error);
 
 		[MonoTODO]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
