@@ -368,7 +368,6 @@ namespace MonoTests.System.Runtime.InteropServices
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestGlobalAlloc ()
 		{
 			IntPtr mem = Marshal.AllocHGlobal (100);
