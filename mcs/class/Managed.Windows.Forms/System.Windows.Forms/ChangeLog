@@ -1,5 +1,16 @@
 2007-08-23  Jonathan Pobst  <monkey@jpobst.com>
 
+	* CommonDialog.cs: Do not instantiate form, leave that for derived classes.
+	This way we can tell if this is a CommonDialog provided with mono, or one
+	that is being implemented outside by a developer.  If it is an external one,
+	the developer is responsible for showing their own form.  We were showing
+	our blank form after the developer showed his.
+	* ColorDialog.cs, FileDialog.cs, FolderBrowserDialog.cs, FontDialog.cs,
+	PageSetupDialog.cs: Instantiate form variable in our constructor.
+	[Fixes bug #82531]
+
+2007-08-23  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ListBox.cs, ListView.cs, TreeView.cs: Override IsInputCharInternal
 	and always return true.  [Fixes bug #81616]
 

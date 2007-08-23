@@ -124,6 +124,7 @@ namespace System.Windows.Forms
 		
 		internal FileDialog ()
 		{
+			form = new DialogForm (this);
 			vfs = new MWFVFS ();
 			
 			Size formConfigSize = Size.Empty;

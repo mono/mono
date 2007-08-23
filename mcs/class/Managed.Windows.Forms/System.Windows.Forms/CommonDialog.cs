@@ -85,7 +85,6 @@ namespace System.Windows.Forms {
 
 		#region Public Constructors
 		public CommonDialog() {
-			form = new DialogForm(this);
 		}
 		#endregion Public Constructors
 
@@ -119,11 +118,17 @@ namespace System.Windows.Forms {
 		}
 
 		public DialogResult ShowDialog(IWin32Window ownerWin32) {
-			// Prep the dialog
-			if (RunDialog(form.Handle)) {
-				// Run
-				form.ShowDialog(ownerWin32);
+			// This is an external derived CommonDialog
+			if (form == null) {
+				if (RunDialog (ownerWin32 == null ? IntPtr.Zero : ownerWin32.Handle))
+					return DialogResult.OK;
+					
+				return DialogResult.Cancel;			
 			}
+			
+			// This is an internal derived CommonDialog
+			if (RunDialog(form.Handle))
+				form.ShowDialog(ownerWin32);
 
 			return form.DialogResult;
 		}

@@ -167,6 +167,7 @@ namespace System.Windows.Forms
 		#region Public Constructors
 		public FontDialog( )
 		{
+			form = new DialogForm (this);
 			example_panel_text = char_sets [0];
 			
 			okButton = new Button( );

@@ -63,6 +63,7 @@ namespace System.Windows.Forms {
 		#region Public Constructors
 		public FolderBrowserDialog ()
 		{
+			form = new DialogForm (this);
 			Size formConfigSize = Size.Empty;
 			Point formConfigLocation = Point.Empty;
 			

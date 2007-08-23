@@ -74,6 +74,7 @@ namespace System.Windows.Forms {
 		#region Public Constructors
 		public ColorDialog () : base()
 		{
+			form = new DialogForm (this);
 			form.SuspendLayout ();
 			
 			form.Text = "Color";

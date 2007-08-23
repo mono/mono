@@ -78,6 +78,7 @@ namespace System.Windows.Forms {
 		#region Public Constructors
 		public PageSetupDialog () 
 		{
+			form = new DialogForm (this);
 			InitializeComponent();
 			Reset ();
 		}
