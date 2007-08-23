@@ -1,3 +1,8 @@
+2007-08-23 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* AssemblyResourceLoader.cs: for SYSTEM_WEB_EXTENSIONS only:
+	fixed JSON serialization of resources.
+
 2007-08-06  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* AssemblyResourceLoader.cs: use the right static constructor name

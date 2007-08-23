@@ -207,12 +207,20 @@ namespace System.Web.Handlers {
 					if (rset == null)
 						break;
 					writer.WriteLine ();
-					writer.WriteLine ("{0}={{", sra.TypeName);
+					writer.Write ("{0}={{", sra.TypeName);
+					bool first = true;
 					foreach (DictionaryEntry entry in rset) {
 						string value = entry.Value as string;
-						if (value != null)
-							writer.WriteLine ("{0}:{1},", GetScriptStringLiteral ((string) entry.Key), GetScriptStringLiteral (value));
+						if (value != null) {
+							if (first)
+								first = false;
+							else
+								writer.Write (',');
+							writer.WriteLine ();
+							writer.Write ("{0}:{1}", GetScriptStringLiteral ((string) entry.Key), GetScriptStringLiteral (value));
+						}
 					}
+					writer.WriteLine ();
 					writer.WriteLine ("};");
 					break;
 				}
