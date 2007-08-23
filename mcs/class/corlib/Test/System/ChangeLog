@@ -14,6 +14,12 @@
 	dependency on order of attributes. Split IsDefined test and improved
 	part for bug #82431.
 
+2007-08-15  Eyal Alaluf  <eyalal@mainsoft.com>
+
+	* EnumTest.cs, DecimalTest2.cs, DecimalTest.cs, ConvertTest.cs,
+	  StringComparerTest.cs, DelegateTest.cs:
+	  Adapt tests to TARGET_JVM.
+
 2007-08-15  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TypeTest.cs: Added IsDefined tests for bug #82431. Added tests for
