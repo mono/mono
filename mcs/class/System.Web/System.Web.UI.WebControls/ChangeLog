@@ -1,3 +1,7 @@
+2007-08-23 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* Panel.cs: client script consider MultiForm environment.
+
 2007-08-21  Marek Habersack  <mhabersack@novell.com>
 
 	* ObjectDataSourceView.cs: get rid of PrivateBinPath property,

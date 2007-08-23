@@ -68,7 +68,7 @@ namespace System.Web.UI.WebControls {
 					throw new InvalidOperationException (String.Format ("The DefaultButton of '{0}' must be the ID of a control of type IButtonControl.", ID));
 
 				Page.ClientScript.RegisterWebFormClientScript ();
-				w.AddAttribute ("onkeypress", String.Format ("javascript:return WebForm_FireDefaultButton(event, '{0}')", button.ClientID));
+				w.AddAttribute ("onkeypress", String.Format ("javascript:return {1}WebForm_FireDefaultButton(event, '{0}')", button.ClientID, Page.IsMultiForm ? Page.theForm + "." : null));
 			}
 
 			if (Direction != ContentDirection.NotSet) {
