@@ -366,6 +366,15 @@ namespace MonoTests.System.Runtime.InteropServices
 				Marshal.FreeHGlobal (ptr);
 			}
 		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void TestGlobalAlloc ()
+		{
+			IntPtr mem = Marshal.AllocHGlobal (100);
+			mem = Marshal.ReAllocHGlobal (mem, (IntPtr) 1000000);
+			Marshal.FreeHGlobal (mem);
+		}
 	}
 
 	[ComImport()]
