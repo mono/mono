@@ -1,5 +1,10 @@
 2007-08-23  Martin Baulig  <martin@ximian.com>
 
+	* mono-debug.[ch]: Rename mono_debug_init_corlib() into
+	_mono_debug_init_corlib() and remove it from the header file.
+
+2007-08-23  Martin Baulig  <martin@ximian.com>
+
 	* mono-debug-debugger.c
 	(mono_debugger_unhandled_exception): Ignore `ThreadAbortException';
 	don't notify the debugger about it.
