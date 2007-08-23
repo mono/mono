@@ -2,7 +2,7 @@
 
 	* WebConfigurationSettings.cs: Move RemotingConfiguration to
 	System.Runtime.Remoting.Channels.Http/HttpRemotingHandlerFactory.cs.
-	Fixes #19384.
+	Fixes #81831.
 
 2007-08-10  Gert Driesen  <drieseng@users.sourceforge.net>
 
