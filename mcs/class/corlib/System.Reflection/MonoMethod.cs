@@ -282,7 +282,13 @@ namespace System.Reflection {
 		// ISerializable
 		public void GetObjectData(SerializationInfo info, StreamingContext context) 
 		{
-			ReflectionSerializationHolder.Serialize ( info, Name, ReflectedType, ToString(), MemberTypes.Method);
+#if NET_2_0
+			Type[] genericArguments = IsGenericMethod && !IsGenericMethodDefinition
+				? GetGenericArguments () : null;
+			MemberInfoSerializationHolder.Serialize ( info, Name, ReflectedType, ToString(), MemberTypes.Method, genericArguments);
+#else
+			MemberInfoSerializationHolder.Serialize ( info, Name, ReflectedType, ToString(), MemberTypes.Method);
+#endif
 		}
 
 #if NET_2_0 || BOOTSTRAP_NET_2_0
@@ -469,7 +475,7 @@ namespace System.Reflection {
 		// ISerializable
 		public void GetObjectData(SerializationInfo info, StreamingContext context) 
 		{
-			ReflectionSerializationHolder.Serialize ( info, Name, ReflectedType, ToString(), MemberTypes.Constructor);
+			MemberInfoSerializationHolder.Serialize ( info, Name, ReflectedType, ToString(), MemberTypes.Constructor);
 		}
 	}
 }

@@ -958,6 +958,8 @@ namespace System.Runtime.Serialization.Formatters.Binary
 					if (_context.State == StreamingContextStates.Remoting)
 						if (type == typeof (System.MonoType))
 							fullName =  "System.RuntimeType";
+						else if (type == typeof (System.MonoType[]))
+							fullName =  "System.RuntimeType[]";
 #endif
 					writer.Write (fullName);
 					break;

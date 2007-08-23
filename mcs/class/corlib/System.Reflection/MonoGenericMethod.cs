@@ -35,6 +35,7 @@ using System.Runtime.CompilerServices;
 
 namespace System.Reflection
 {
+	[Serializable]
 	internal class MonoGenericMethod : MonoMethod
 	{
 		internal MonoGenericMethod ()
@@ -49,6 +50,7 @@ namespace System.Reflection
 		}
 	}
 
+	[Serializable]
 	internal class MonoGenericCMethod : MonoCMethod
 	{
 		internal MonoGenericCMethod ()

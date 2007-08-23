@@ -454,6 +454,7 @@ System.Reflection/LocalVariableInfo.cs
 System.Reflection/ManifestResourceInfo.cs
 System.Reflection/MemberFilter.cs
 System.Reflection/MemberInfo.cs
+System.Reflection/MemberInfoSerializationHolder.cs
 System.Reflection/MemberTypes.cs
 System.Reflection/MethodAttributes.cs
 System.Reflection/MethodBase.cs

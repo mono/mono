@@ -1,4 +1,7 @@
-// ReflectionSerializationHolder.cs.cs
+// ReflectionSerializationHolder.cs
+//
+// Note: this class was superseded by MemberInfoSerializationHolder but
+// it's still included in the build to provide backwards compatibility.
 //
 // Author:
 //  Patrik Torstensson

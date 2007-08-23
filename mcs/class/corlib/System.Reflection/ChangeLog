@@ -1,3 +1,19 @@
+2007-08-23  Robert Jordan  <robertj@gmx.net>
+
+	* MemberInfoSerializationHolder.cs: created from
+	ReflectionSerializationHolder to match MS (fixes bug #80761).
+	Add support for	fields, events, properties and generic methods.
+
+	* MonoMethod.cs (GetObjectData): handle generic arguments.
+
+	* MonoGenericMethod.cs: mark as [Serializable].
+
+	* MonoProperty.cs (GetObjectData): implemented.
+
+	* MonoField.cs: ditto.
+
+	* MonoEvent.cs: ditto.
+
 2007-07-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* MonoMethod.cs : parameter types should be fixed as well.

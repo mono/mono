@@ -32,6 +32,7 @@
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
 using System.Security;
 
 namespace System.Reflection {
@@ -62,7 +63,9 @@ namespace System.Reflection {
 		Name = 1 << 5
 		
 	}
-	internal class MonoProperty : PropertyInfo {
+
+	[Serializable]
+	internal class MonoProperty : PropertyInfo, ISerializable {
 		internal IntPtr klass;
 		internal IntPtr prop;
 		MonoPropertyInfo info;
@@ -267,6 +270,11 @@ namespace System.Reflection {
 		}
 #endif
 
+		// ISerializable
+		public void GetObjectData (SerializationInfo info, StreamingContext context) 
+		{
+			MemberInfoSerializationHolder.Serialize (info, Name, ReflectedType,
+				ToString(), MemberTypes.Property);
+		}
 	}
 }
-

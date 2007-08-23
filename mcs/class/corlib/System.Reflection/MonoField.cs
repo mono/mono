@@ -36,10 +36,12 @@ using System;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
 
 namespace System.Reflection {
-	
-	internal class MonoField : FieldInfo {
+
+	[Serializable]
+	internal class MonoField : FieldInfo, ISerializable {
 		internal IntPtr klass;
 		internal RuntimeFieldHandle fhandle;
 		string name;
@@ -140,6 +142,13 @@ namespace System.Reflection {
 			field.klass = klass;
 			field.fhandle = fhandle;
 			return field;
+		}
+
+		// ISerializable
+		public void GetObjectData (SerializationInfo info, StreamingContext context) 
+		{
+			MemberInfoSerializationHolder.Serialize (info, Name, ReflectedType,
+				ToString(), MemberTypes.Field);
 		}
 	}
 }

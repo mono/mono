@@ -34,6 +34,7 @@ using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
 
 namespace System.Reflection {
 
@@ -51,7 +52,13 @@ namespace System.Reflection {
 		internal static extern void get_event_info (MonoEvent ev, out MonoEventInfo info);
 	}
 
-	internal sealed class MonoEvent: EventInfo {
+#if NET_2_0
+	[Serializable]
+	internal sealed class MonoEvent: EventInfo, ISerializable
+#else
+	internal sealed class MonoEvent: EventInfo
+#endif
+	{
 		IntPtr klass;
 		IntPtr handle;
 
@@ -163,5 +170,13 @@ namespace System.Reflection {
 			return MonoCustomAttrs.GetCustomAttributes (this, attributeType, inherit);
 		}
 
+#if NET_2_0
+		// ISerializable
+		public void GetObjectData (SerializationInfo info, StreamingContext context) 
+		{
+			MemberInfoSerializationHolder.Serialize (info, Name, ReflectedType,
+				ToString(), MemberTypes.Event);
+		}
+#endif
 	}
 }

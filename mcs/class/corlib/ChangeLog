@@ -1,3 +1,7 @@
+2007-08-23  Robert Jordan  <robertj@gmx.net>
+
+	* corlib.dll.sources: Added MemberInfoSerializationHolder.cs.
+
 2007-08-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* corlib_test.dll.sources : added ChannelServicesTest.cs.

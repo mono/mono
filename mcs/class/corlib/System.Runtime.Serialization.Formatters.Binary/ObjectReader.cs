@@ -834,9 +834,15 @@ namespace System.Runtime.Serialization.Formatters.Binary
 					// map MS.NET's System.RuntimeType to System.MonoType
 					if (_context.State == StreamingContextStates.Remoting)
 						if (name == "System.RuntimeType")
-							name = "System.MonoType";
+							return typeof (MonoType);
+						else if (name == "System.RuntimeType[]")
+							return typeof (MonoType[]);
 #endif
-					return Type.GetType (name, true);
+					Type t = Type.GetType (name);
+					if (t != null)
+						return t;
+
+					throw new SerializationException (String.Format ("Could not find type '{0}'.", name));
 				}
 
 				case TypeTag.GenericType:
