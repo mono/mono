@@ -1,3 +1,9 @@
+2007-08-23  Eyal Alaluf <eyala@mainsoft.com>
+
+	* DateTime.cs: Numerous improvements to DateTime.Parse. It handles a lot
+	  more possible formats and more correctly at that. It is also now easier
+	  to manage the formats DateTime.Parse supports.
+
 2007-08-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* Exception.cs: Make 1.0 and 2.0 object layout the same since this class is seen

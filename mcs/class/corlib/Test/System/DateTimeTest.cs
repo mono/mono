@@ -70,7 +70,8 @@ namespace MonoTests.System
 			631502115000000000L,	// 25 Feb 2002 - 05:25:00
 			631502115130000000L,	// 25 Feb 2002 - 05:25:13
 			631502079130000000L,	// 25 Feb 2002 - 04:25:13
-			629197085770000000L	// 06 Nov 1994 - 08:49:37 
+			629197085770000000L,    // 06 Nov 1994 - 08:49:37 
+			631796544000000000L,    // 01 Feb 2003 - 00:00:00
 		};
 
 		[SetUp]
@@ -289,6 +290,7 @@ namespace MonoTests.System
 		{
 			DateTime t1 = new DateTime (myTicks[2]);
 			DateTime t2 = new DateTime (myTicks[1]);
+			DateTime t3 = new DateTime (999, 1, 2, 3, 4, 5);
 			// Standard patterns
 			Assert.AreEqual ("02/25/2002", t1.ToString ("d"), "#A1");
 			Assert.AreEqual ("Monday, 25 February 2002", t1.ToString ("D"), "#A2");
@@ -347,6 +349,10 @@ namespace MonoTests.System
 			Assert.AreEqual (" / ", t1.ToString (" / "), "#B30");
 			Assert.AreEqual (" yyy ", t1.ToString (" 'yyy' "), "#B31");
 			Assert.AreEqual (" d", t1.ToString (" \\d"), "#B32");
+			Assert.AreEqual ("2002", t1.ToString ("yyy"), "#B33");
+			Assert.AreEqual ("0002002", t1.ToString ("yyyyyyy"), "#B34");
+			Assert.AreEqual ("999", t3.ToString ("yyy"), "#B33");
+			Assert.AreEqual ("0999", t3.ToString ("yyyy"), "#B33");
 		}
 
 		[Test]
@@ -533,12 +539,10 @@ namespace MonoTests.System
 		public void TestParseExact3 ()
 		{
 			DateTime t1 = DateTime.ParseExact ("2002-02-25 04:25:13Z", "u", null);
-			t1 = TimeZone.CurrentTimeZone.ToUniversalTime(t1);
 			Assert.AreEqual (2002, t1.Year, "#1");
 			Assert.AreEqual (02, t1.Month, "#2");
-			// FIXME: This test is timezone dependent.
-			//Assert.AreEqual (25, t1.Day, "#3");
-			//Assert.AreEqual (04, t1.Hour, "#4");
+			Assert.AreEqual (25, t1.Day, "#3");
+			Assert.AreEqual (04, t1.Hour, "#4");
 			Assert.AreEqual (25, t1.Minute, "#5");
 			Assert.AreEqual (13, t1.Second, "#6");
 		}
@@ -582,6 +586,8 @@ namespace MonoTests.System
 			Assert.AreEqual (04, t1.Hour, "#A10");
 			Assert.AreEqual (25, t1.Minute, "#A11");
 			Assert.AreEqual (13, t1.Second, "#A12");
+			t1 = DateTime.ParseExact ("Monday, 25 February 2002 04:25:13", "U", null);
+			Assert.AreEqual ("Monday, 25 February 2002 04:25:13", t1.ToString ("U"), "#A13");
 
 			DateTime t2 = new DateTime (DateTime.Today.Year, 2, 25);
 			t1 = DateTime.ParseExact ("February 25", "m", null);
@@ -756,6 +762,10 @@ namespace MonoTests.System
 			t1 = DateTime.ParseExact ("Sun Nov  6 08:49:37 1994", formats, enUS, 
 						DateTimeStyles.AllowWhiteSpaces);
 			Assert.AreEqual (myTicks [6], t1.Ticks, "#J6");
+			t1 = DateTime.ParseExact ("Monday, 25 February 2002 05:25:13",
+						"ddddddd, dd MMMMMMM yyyy HHHHH:mmmmm:sssss",
+						null, DateTimeStyles.AdjustToUniversal);
+			Assert.AreEqual (myTicks[4], t1.Ticks, "#J7");
 		
 			// Bug 52274
 			t1 = DateTime.ParseExact ("--12--", "--MM--" , null);
@@ -796,13 +806,13 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		public void TestParse ()
+		public void TestParseDateFirst ()
 		{
 			// Standard patterns
-			DateTime t1 = DateTime.Parse ("02/25/2002");
+			CultureInfo USCultureInfo = new CultureInfo("en-US");
+			DateTime t1 = DateTime.Parse ("02/25/2002", USCultureInfo);
 			Assert.AreEqual (myTicks [0], t1.Ticks, "#A1");
-			t1 = DateTime.Parse ("02-25-2002");
-			t1 = DateTime.Parse ("2002-02-25");
+			t1 = DateTime.Parse ("2002-02-25", USCultureInfo);
 			Assert.AreEqual (myTicks [0], t1.Ticks, "#A2");
 			t1 = DateTime.Parse ("Monday, 25 February 2002");
 			Assert.AreEqual (myTicks [0], t1.Ticks, "#A3");
@@ -810,9 +820,9 @@ namespace MonoTests.System
 			Assert.AreEqual (myTicks [3], t1.Ticks, "#A4");
 			t1 = DateTime.Parse ("Monday, 25 February 2002 05:25:13");
 			Assert.AreEqual (myTicks [4], t1.Ticks, "#A5");
-			t1 = DateTime.Parse ("02/25/2002 05:25");
+			t1 = DateTime.Parse ("02/25/2002 05:25", USCultureInfo);
 			Assert.AreEqual (myTicks [3], t1.Ticks, "#A6");
-			t1 = DateTime.Parse ("02/25/2002 05:25:13");
+			t1 = DateTime.Parse ("02/25/2002 05:25:13", USCultureInfo);
 			Assert.AreEqual (myTicks [4], t1.Ticks, "#A7");
 			t1 = DateTime.Parse ("2002-02-25 04:25:13Z");
 			t1 = TimeZone.CurrentTimeZone.ToUniversalTime(t1);
@@ -822,14 +832,11 @@ namespace MonoTests.System
 			Assert.AreEqual (04, t1.Hour, "#A11");
 			Assert.AreEqual (25, t1.Minute, "#A12");
 			Assert.AreEqual (13, t1.Second, "#A13");
-
-			DateTime t2 = new DateTime (DateTime.Today.Year, 2, 25);
-			t1 = DateTime.Parse ("February 25");
-			Assert.AreEqual (t2.Ticks, t1.Ticks, "#B1");
-
-			t2 = new DateTime (DateTime.Today.Year, 2, 8);
-			t1 = DateTime.Parse ("February 08");
-			Assert.AreEqual (t2.Ticks, t1.Ticks, "#B2");
+			t1 = DateTime.Parse ("Mon,02/25/2002", USCultureInfo);
+			Assert.AreEqual (myTicks [0], t1.Ticks, "#A14");
+			DateTime t2 = new DateTime (1999, 1, 2, 0, 3, 4);
+			t1 = DateTime.Parse (t2.ToLongTimeString ());
+			Assert.AreEqual (0, t1.Hour, "#A14");
 
 			// parsed as UTC string
 			t1 = DateTime.Parse ("Mon, 25 Feb 2002 04:25:13 GMT");
@@ -841,17 +848,32 @@ namespace MonoTests.System
 			Assert.AreEqual (25, t1.Minute, "#C5");
 			Assert.AreEqual (13, t1.Second, "#C6");
 
+			// Some date 'T' time formats
+#if NET_2_0 // Net_1_1 requires hh:mm:ss
+			t1 = DateTime.Parse ("2002-02-25T05:25");
+			Assert.AreEqual (myTicks [3], t1.Ticks, "#D1");
+#endif
 			t1 = DateTime.Parse ("2002-02-25T05:25:13");
 			Assert.AreEqual (myTicks [4], t1.Ticks, "#D1");
+			t1 = DateTime.Parse ("2002-02-25T05:25:13.008");
+			Assert.AreEqual (myTicks [2], t1.Ticks, "#D1");
+			t1 = DateTime.Parse ("02-2002-25T05:25:13");
+			Assert.AreEqual (myTicks [4], t1.Ticks, "#D1");
 
-			t2 = DateTime.Today + new TimeSpan (5,25,0);
-			t1 = DateTime.Parse ("05:25");
-			Assert.AreEqual (t2.Ticks, t1.Ticks, "#D2");
+			// Day month
+			t2 = new DateTime (DateTime.Today.Year, 2, 25);
+			t1 = DateTime.Parse ("February 25", USCultureInfo);
+			Assert.AreEqual (t2.Ticks, t1.Ticks, "#B1");
 
-			t2 = DateTime.Today + new TimeSpan (5,25,13);
-			t1 = DateTime.Parse ("05:25:13");
-			Assert.AreEqual (t2.Ticks, t1.Ticks, "#D3");
+			t2 = new DateTime (DateTime.Today.Year, 2, 8);
+			t1 = DateTime.Parse ("February 08", USCultureInfo);
+			Assert.AreEqual (t2.Ticks, t1.Ticks, "#B2");
 
+			t2 = new DateTime (DateTime.Today.Year, 2, 8);
+			t1 = DateTime.Parse ("February 8", USCultureInfo);
+			Assert.AreEqual (t2.Ticks, t1.Ticks, "#D6");
+
+			// Month year
 			t2 = new DateTime (2002, 2, 1);
 			t1 = DateTime.Parse ("2002 February");
 			Assert.AreEqual (t2.Ticks, t1.Ticks, "#D4");
@@ -859,10 +881,6 @@ namespace MonoTests.System
 			t2 = new DateTime (2002, 2, 1);
 			t1 = DateTime.Parse ("2002 February", new CultureInfo ("ja-JP"));
 			Assert.AreEqual (t2.Ticks, t1.Ticks, "#D5");
-
-			t2 = new DateTime (DateTime.Today.Year, 2, 8);
-			t1 = DateTime.Parse ("February 8");
-			Assert.AreEqual (t2.Ticks, t1.Ticks, "#D6");
 
 			// bug #72132
 			t2 = new DateTime (2002, 2, 25, 5, 25, 22);
@@ -874,22 +892,205 @@ namespace MonoTests.System
 				new CultureInfo ("hi-IN"));
 			Assert.AreEqual (t2.Ticks, t1.Ticks, "#D8");
 
+			// MM-yyyy-dd + different time formats
+			t1 = DateTime.Parse ("02-2002-25 05:25", USCultureInfo);
+			Assert.AreEqual (myTicks[3], t1.Ticks, "#E1");
+			t1 = DateTime.Parse ("02-2002-25 05:25:13", USCultureInfo);
+			Assert.AreEqual (myTicks[4], t1.Ticks, "#E1");
+			t1 = DateTime.Parse ("02-2002-25 05:25:13 Mon", USCultureInfo);
+			Assert.AreEqual (myTicks[4], t1.Ticks, "#E2");
+			t1 = DateTime.Parse ("02-2002-25 05:25:13 Monday", USCultureInfo);
+			Assert.AreEqual (myTicks[4], t1.Ticks, "#E3");
+			t1 = DateTime.Parse ("02-2002-25 05:25:13.008", USCultureInfo);
+			Assert.AreEqual (myTicks[2], t1.Ticks, "#E4");
+
+			// Formats with timezone
+			long offset = TimeZone.CurrentTimeZone.GetUtcOffset(t1).Ticks;
+			long hourTicks = 36000000000L;
+			long halfHourTicks = hourTicks / 2;
+			t1 = DateTime.Parse ("02-2002-25 05:25+01", USCultureInfo);
+			Assert.AreEqual (myTicks[3], t1.Ticks + hourTicks - offset, "#F1");
+			t1 = DateTime.Parse ("02-2002-25 05:25-01", USCultureInfo);
+			Assert.AreEqual (myTicks[3], t1.Ticks - hourTicks - offset, "#F2");
+			t1 = DateTime.Parse ("02-2002-25 05:25+00:30", USCultureInfo);
+			Assert.AreEqual (myTicks[3], t1.Ticks + hourTicks/2 - offset, "#F3");
+			t1 = DateTime.Parse ("02-2002-25 05:25:13+02", USCultureInfo);
+			Assert.AreEqual (myTicks[4], t1.Ticks + 2*hourTicks - offset, "#F4");
+#if NET_2_0
+			// NET 1.0 doesn't accept second fractions and time zone.
+			t1 = DateTime.Parse ("2002-02-25 05:25:13.008-02");
+			Assert.AreEqual (myTicks[2], t1.Ticks - 2*hourTicks - offset, "#F5");
+			// NET 1.0 doesn't parse well time zone with AM afterwards.
+			t1 = DateTime.Parse ("02-25-2002 05:25:13-02 AM", USCultureInfo);
+			Assert.AreEqual (myTicks[4], t1.Ticks - 2*hourTicks - offset, "#F6");
+			t1 = DateTime.Parse ("25 Feb 2002 05:25:13-02 AM", USCultureInfo);
+			Assert.AreEqual (myTicks[4], t1.Ticks - 2*hourTicks - offset, "#F6");
+#endif
+		}
+
+		[Test]
+		public void TestParseTimeFirst ()
+		{
+			CultureInfo USCultureInfo = new CultureInfo("en-US");
+
+			// Hour only patterns
+			DateTime t2 = DateTime.Today + new TimeSpan (5,25,0);
+			DateTime t1 = DateTime.Parse ("05:25");
+			Assert.AreEqual (t2.Ticks, t1.Ticks, "#C1");
+			t2 = DateTime.Today + new TimeSpan (5,25,13);
+			t1 = DateTime.Parse ("05:25:13");
+			Assert.AreEqual (t2.Ticks, t1.Ticks, "#B2");
+
+			// Test with different date formats
+			t1 = DateTime.Parse ("05:25 02/25/2002", USCultureInfo);
+			Assert.AreEqual (myTicks[3], t1.Ticks, "#B1");
+			t1 = DateTime.Parse ("05:25:13 2002-02-25");
+			Assert.AreEqual (myTicks[4], t1.Ticks, "#B2");
+			t1 = DateTime.Parse ("05:25:13.008 02-2002-25");
+			Assert.AreEqual (myTicks[2], t1.Ticks, "#B3");
+			t1 = DateTime.Parse ("05:25:13.008 Feb 25 2002");
+			Assert.AreEqual (myTicks[2], t1.Ticks, "#B4");
+			t1 = DateTime.Parse ("05:25:13.008 25 Feb 2002");
+			Assert.AreEqual (myTicks[2], t1.Ticks, "#B5");
+
+			// Add AM and day of the week
+			t1 = DateTime.Parse ("AM 05:25:13 2002-02-25");
+			Assert.AreEqual (myTicks[4], t1.Ticks, "#C1");
+			t1 = DateTime.Parse ("Monday05:25 02/25/2002", USCultureInfo);
+			Assert.AreEqual (myTicks[3], t1.Ticks, "#C2");
+			t1 = DateTime.Parse ("Mon 05:25 AM 02/25/2002", USCultureInfo);
+			Assert.AreEqual (myTicks[3], t1.Ticks, "#C3");
+			t1 = DateTime.Parse ("AM 05:25 Monday, 02/25/2002", USCultureInfo);
+			Assert.AreEqual (myTicks[3], t1.Ticks, "#C4");
+			t1 = DateTime.Parse ("05:25 02/25/2002 Monday", USCultureInfo);
+			Assert.AreEqual (myTicks[3], t1.Ticks, "#C5");
+			t1 = DateTime.Parse ("PM 03:25:13.008 02-2002-25");
+			Assert.AreEqual (myTicks[1], t1.Ticks, "#C6");
+
 			// ASP.NET QuickStarts
 			t2 = new DateTime (2002, 10, 7, 15, 6, 0);
-			t1 = DateTime.Parse ("3:06 PM 10/7/2002");
-			Assert.AreEqual (t2.Ticks, t1.Ticks, "#D9");
-
+			t1 = DateTime.Parse ("3:06 PM 10/7/2002", USCultureInfo);
+			Assert.AreEqual (t2.Ticks, t1.Ticks, "#D1");
 			t2 = new DateTime (2002, 10, 7, 15, 6, 0);
-			t1 = DateTime.Parse ("3:06 pm 10/7/2002");
-			Assert.AreEqual (t2.Ticks, t1.Ticks, "#D10");
-			
+			t1 = DateTime.Parse ("3:06 pm 10/7/2002", USCultureInfo);
+			Assert.AreEqual (t2.Ticks, t1.Ticks, "#D2");
 			t2 = new DateTime (2002, 10, 7, 3, 6, 0);
-			t1 = DateTime.Parse ("3:06 AM 10/7/2002");
-			Assert.AreEqual (t2.Ticks, t1.Ticks, "#D11");
+			t1 = DateTime.Parse ("3:06 AM 10/7/2002", USCultureInfo);
+			Assert.AreEqual (t2.Ticks, t1.Ticks, "#D3");
+			t2 = new DateTime (2002, 10, 7, 3, 6, 0);
+			t1 = DateTime.Parse ("3:06 am 10/7/2002", USCultureInfo);
+			Assert.AreEqual (t2.Ticks, t1.Ticks, "#D4");
+		}
 
-			t2 = new DateTime (2002, 10, 7, 3, 6, 0);
-			t1 = DateTime.Parse ("3:06 am 10/7/2002");
-			Assert.AreEqual (t2.Ticks, t1.Ticks, "#D12");
+		[Test]
+		public void TestParseWithDifferentShortDatePatterns ()
+		{
+			CultureInfo cultureInfo = new CultureInfo("en-US");
+			DateTimeFormatInfo dateFormatInfo = cultureInfo.DateTimeFormat;
+			DateTime t1 = DateTime.Parse ("02/01/2003", cultureInfo);
+			Assert.AreEqual (myTicks[7], t1.Ticks, "#A1");
+
+			// Day, month year behaviour
+			dateFormatInfo.ShortDatePattern = "dd/MM/yyyy";
+			t1 = DateTime.Parse ("01/02/03", cultureInfo);
+			Assert.AreEqual (myTicks[7], t1.Ticks, "#B1");
+			t1 = DateTime.Parse ("01/02/2003", cultureInfo);
+			Assert.AreEqual (myTicks[7], t1.Ticks, "#B2");
+			t1 = DateTime.Parse ("2003/02/01", cultureInfo);
+			Assert.AreEqual (myTicks[7], t1.Ticks, "#B3");
+			t1 = DateTime.Parse ("01/Feb/03", cultureInfo);
+			Assert.AreEqual (myTicks[7], t1.Ticks, "#B4");
+			t1 = DateTime.Parse ("Feb/01/03", cultureInfo);
+			Assert.AreEqual (myTicks[7], t1.Ticks, "#B5");
+
+			// Month, day year behaviour
+			dateFormatInfo.ShortDatePattern = "MM/dd/yyyy";
+			t1 = DateTime.Parse ("02/01/03", cultureInfo);
+			Assert.AreEqual (myTicks[7], t1.Ticks, "#C1");
+			t1 = DateTime.Parse ("02/01/2003", cultureInfo);
+			Assert.AreEqual (myTicks[7], t1.Ticks, "#C2");
+			t1 = DateTime.Parse ("2003/02/01", cultureInfo);
+			Assert.AreEqual (myTicks[7], t1.Ticks, "#C3");
+			t1 = DateTime.Parse ("01/Feb/03", cultureInfo);
+			Assert.AreEqual (myTicks[7], t1.Ticks, "#C4");
+			t1 = DateTime.Parse ("Feb/01/03", cultureInfo);
+			Assert.AreEqual (myTicks[7], t1.Ticks, "#C5");
+
+			// Year, month day behaviour
+			dateFormatInfo.ShortDatePattern = "yyyy/MM/dd";
+			t1 = DateTime.Parse ("03/02/01", cultureInfo);
+			Assert.AreEqual (myTicks[7], t1.Ticks, "#D1");
+			t1 = DateTime.Parse ("02/01/2003", cultureInfo);
+			Assert.AreEqual (myTicks[7], t1.Ticks, "#D2");
+			t1 = DateTime.Parse ("2003/02/01", cultureInfo);
+			Assert.AreEqual (myTicks[7], t1.Ticks, "#D3");
+			t1 = DateTime.Parse ("03/Feb/01", cultureInfo);
+			Assert.AreEqual (myTicks[7], t1.Ticks, "#D4");
+			t1 = DateTime.Parse ("Feb/03/01", cultureInfo);
+			Assert.AreEqual (myTicks[7], t1.Ticks, "#D5");
+
+			// Year, day month behaviour
+			// Note that no culture I am aware of has this pattern, and indeed
+			dateFormatInfo.ShortDatePattern = "yyyy/dd/MM";
+			t1 = DateTime.Parse ("03/01/02", cultureInfo);
+			Assert.AreEqual (myTicks[7], t1.Ticks, "#E1");
+			t1 = DateTime.Parse ("01/02/2003", cultureInfo);
+			Assert.AreEqual (myTicks[7], t1.Ticks, "#E2");
+#if NET_2_0
+			t1 = DateTime.Parse ("2003/01/02", cultureInfo);
+			Assert.AreEqual (myTicks[7], t1.Ticks, "#E3");
+#else
+			t1 = DateTime.Parse ("2003/02/01", cultureInfo);
+			Assert.AreEqual (myTicks[7], t1.Ticks, "#E3");
+#endif
+			// For some reason the following throws an exception on .Net
+			// t1 = DateTime.Parse ("03/Feb/01", cultureInfo);
+			// Assert.AreEqual (myTicks[7], t1.Ticks, "#E4");
+			// t1 = DateTime.Parse ("03/01/Feb", cultureInfo);
+			// Assert.AreEqual (myTicks[7], t1.Ticks, "#E5");
+			// t1 = DateTime.Parse ("Feb/01/03", cultureInfo);
+			// Assert.AreEqual (myTicks[7], t1.Ticks, "#E6");
+		}
+
+		[Test]
+		public void TestParseWithDifferentMonthDayPatterns ()
+		{
+			CultureInfo cultureInfo = new CultureInfo("en-US");
+			DateTimeFormatInfo dateFormatInfo = cultureInfo.DateTimeFormat;
+			DateTime t1 = DateTime.Parse ("Feb 03", cultureInfo);
+			Assert.AreEqual (2, t1.Month, "#A1");
+			Assert.AreEqual (3, t1.Day, "#A2");
+
+			// Day month behaviour
+			dateFormatInfo.MonthDayPattern = "dd/MM";
+#if NET_2_0
+			t1 = DateTime.Parse ("Feb 03", cultureInfo);
+			Assert.AreEqual (2, t1.Month, "#B1");
+			Assert.AreEqual (1, t1.Day, "#B2");
+			Assert.AreEqual (2003, t1.Year, "#B3");
+#else // In .Net 1.0 "Feb 03" is always Feb 3rd (and not Feb 2003).
+			t1 = DateTime.Parse ("Feb 03", cultureInfo);
+			Assert.AreEqual (2, t1.Month, "#B4");
+			Assert.AreEqual (3, t1.Day, "#B5");
+#endif
+			t1 = DateTime.Parse ("03/02", cultureInfo);
+			Assert.AreEqual (2, t1.Month, "#B6");
+			Assert.AreEqual (3, t1.Day, "#B7");
+			t1 = DateTime.Parse ("03 Feb", cultureInfo);
+			Assert.AreEqual (2, t1.Month, "#B8");
+			Assert.AreEqual (3, t1.Day, "#B9");
+
+			// Month day behaviour
+			dateFormatInfo.MonthDayPattern = "MM/dd";
+			t1 = DateTime.Parse ("Feb 03", cultureInfo);
+			Assert.AreEqual (2, t1.Month, "#C1");
+			Assert.AreEqual (3, t1.Day, "#C2");
+			t1 = DateTime.Parse ("02/03", cultureInfo);
+			Assert.AreEqual (2, t1.Month, "#C3");
+			Assert.AreEqual (3, t1.Day, "#C4");
+			t1 = DateTime.Parse ("03 Feb", cultureInfo);
+			Assert.AreEqual (2, t1.Month, "#C5");
+			Assert.AreEqual (3, t1.Day, "#C6");
 		}
 
 		[Test]
@@ -966,7 +1167,9 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		[Category ("NotWorking")] // Mono accept this format for ALL cultures
+		// FIXME: This test doesn't work on cultures like es-DO which have patterns
+		// for both dd/MM/yyyy & MM/dd/yyyy
+		[Category ("NotWorking")]
 		public void Parse_Bug53023a ()
 		{
 			foreach (CultureInfo ci in CultureInfo.GetCultures (CultureTypes.SpecificCultures)) {
@@ -1031,10 +1234,32 @@ namespace MonoTests.System
 
 		[Test]
 		[ExpectedException (typeof (FormatException))]
+		[Category ("NotWorking")]
+		public void Parse_RequireSpaceSeparator ()
+		{
+			DateTime.Parse ("05:25:132002-02-25", CultureInfo.InvariantCulture);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
 		public void Parse_DontAccept2DigitsYears ()
 		{
 			// don't allow 2 digit years where we require 4.
 			DateTime.ParseExact ("05", "yyyy", CultureInfo.InvariantCulture);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void Parse_DontAcceptEmptyHours ()
+		{
+			DateTime.ParseExact (":05", "H:m", CultureInfo.InvariantCulture);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void Parse_DontAcceptEmptyMinutes ()
+		{
+			DateTime.ParseExact ("0::0", "H:m:s", CultureInfo.InvariantCulture);
 		}
 
 		[Test]

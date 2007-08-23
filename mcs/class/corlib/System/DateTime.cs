@@ -81,85 +81,121 @@ namespace System
 		public static readonly DateTime MaxValue = new DateTime (false, new TimeSpan (MAX_VALUE_TICKS));
 		public static readonly DateTime MinValue = new DateTime (false, new TimeSpan (0));
 
-		private static readonly string[] commonFormats = {
-			// For compatibility with MS's CLR, this format (which
-			// doesn't have a one-letter equivalent) is parsed
-			// too. It's important because it's used in XML
-			// serialization.
+		// DateTime.Parse patterns
+		// Patterns are divided to date and time patterns. The algorithm will
+		// try combinations of these patterns. The algorithm also looks for
+		// day of the week, AM/PM GMT and Z independently of the patterns.
+		private static readonly string[] ParseTimeFormats = new string [] {
+			"H:m:s.fffffffzzz",
+			"H:m:s.fffffff",
+			"H:m:szzz",
+			"H:m:s",
+			"H:mzzz",
+			"H:m",
+			"H tt", // Specifies AM to disallow '8'.
+			"H'\u6642'm'\u5206's'\u79D2'",
+		};
 
-			// Note that those format should be tried only for
-			// invalid patterns; 
+		// DateTime.Parse date patterns extend ParseExact patterns as follows:
+		//   MMM - month short name or month full name
+		//   MMMM - month number or short name or month full name
 
-			// FIXME: SOME OF those patterns looks tried against 
-			// the current culture, since some patterns fail in 
-			// some culture.
+		// Parse behaves differently according to the ShorDatePattern of the
+		// DateTimeFormatInfo. The following define the date patterns for
+		// different orders of day, month and year in ShorDatePattern.
+		// Note that the year cannot go between the day and the month.
+		private static readonly string[] ParseYearDayMonthFormats = new string [] {
+			"yyyy/M/dT",
+			"M/yyyy/dT",
+			"yyyy'\u5E74'M'\u6708'd'\u65E5",
 
-			"yyyy-MM-dd",
-			"yyyy-MM-ddTHH:mm:sszzz",
-			"yyyy-MM-ddTHH:mm:ss.fffffff",
-			"yyyy-MM-ddTHH:mm:ss.fffffffzzz",
-			// bug #78618
-			"yyyy-M-d H:m:s.fffffff",
-			// UTC / allow any separator
-			"yyyy/MM/ddTHH:mm:ssZ",
-			"yyyy/M/dZ",
-			// bug #58938
-			"yyyy/M/d HH:mm:ss",
-			// bug #47720
-			"yyyy/MM/dd HH:mm:ss 'GMT'",
-			// bug #53023
-			"MM/dd/yyyy",
-			// Close to RFC1123, but without 'GMT'
-			"ddd, d MMM yyyy HH:mm:ss",
-			// use UTC ('Z'; not literal "'Z'")
-			// FIXME: 1078(af-ZA) and 1079(ka-GE) reject it
-			"yyyy/MM/dd HH':'mm':'ssZ", 
-
-			// bug #60912
-			"M/d/yyyy HH':'mm':'ss tt",
-			"H':'mm':'ss tt",
-			// another funky COM dependent one
-			"dd-MMM-yy",
-
-			// DayOfTheWeek, dd full_month_name yyyy
-			// FIXME: 1054(th-TH) rejects them
-			"dddd, dd MMMM yyyy",
-			"dddd, dd MMMM yyyy HH:mm",
-			"dddd, dd MMMM yyyy HH:mm:ss",
-
-			"yyyy MMMM",
-			// DayOfTheWeek, dd yyyy. This works for every locales.
-			"MMMM dd, yyyy",
-#if NET_1_1
-			// X509Certificate pattern is accepted by Parse() *in every culture*
-			"yyyyMMddHHmmssZ",
+#if NET_2_0
+			"yyyy/d/MMMM",
+			"yyyy/MMM/d",
+#else
+			"yyyy/MMMM/d",
+			"yyyy/d/MMM",
 #endif
-			// In Parse() the 'r' equivalent pattern is first parsed as universal time
-			"ddd, dd MMM yyyy HH':'mm':'ss 'GMT'",
+			"d/MMMM/yyyy",
+			"MMM/d/yyyy",
+			"d/yyyy/MMMM",
+			"MMM/yyyy/d",
 
-			// Additionally there seems language-specific format
-			// patterns that however works in all language
-			// environment.
-			// For example, the pattern below is for Japanese.
-			"yyyy'\u5E74'MM'\u6708'dd'\u65E5' HH'\u6642'mm'\u5206'ss'\u79D2'",
+			"yy/d/M",
+		};
 
-			// This one is parsed for all cultures
-			"HH':'mm tt MM/dd/yyyy",
+		private static readonly string[] ParseYearMonthDayFormats = new string [] {
+			"yyyy/M/dT",
+			"M/yyyy/dT",
+			"yyyy'\u5E74'M'\u6708'd'\u65E5",
 
-/*
-			// Full date and time
-			"F", "G", "r", "s", "u", "U",
-			// Full date and time, but no seconds
-			"f", "g",
-			// Only date
-			"d", "D",
-			// Only time
-			"T", "t",
-			// Only date, but no year
-			"m",
-			// Only date, but no day
-			"y" 
-*/
+			"yyyy/MMMM/d",
+			"yyyy/d/MMM",
+			"MMMM/d/yyyy",
+			"d/MMM/yyyy",
+			"MMMM/yyyy/d",
+			"d/yyyy/MMM",
+
+			"yy/MMMM/d",
+			"yy/d/MMM",
+			"MMM/yy/d",
+		};
+
+		private static readonly string[] ParseDayMonthYearFormats = new string [] {
+			"yyyy/M/dT",
+			"M/yyyy/dT",
+			"yyyy'\u5E74'M'\u6708'd'\u65E5",
+
+			"yyyy/MMMM/d",
+			"yyyy/d/MMM",
+			"d/MMMM/yyyy",
+			"MMM/d/yyyy",
+			"MMMM/yyyy/d",
+			"d/yyyy/MMM",
+
+			"d/MMMM/yy",
+			"yy/MMM/d",
+			"d/yy/MMM",
+			"yy/d/MMM",
+			"MMM/d/yy",
+			"MMM/yy/d",
+		};
+
+		private static readonly string[] ParseMonthDayYearFormats = new string [] {
+			"yyyy/M/dT",
+			"M/yyyy/dT",
+			"yyyy'\u5E74'M'\u6708'd'\u65E5",
+
+			"yyyy/MMMM/d",
+			"yyyy/d/MMM",
+			"MMMM/d/yyyy",
+			"d/MMM/yyyy",
+			"MMMM/yyyy/d",
+			"d/yyyy/MMM",
+
+			"MMMM/d/yy",
+			"MMM/yy/d",
+			"d/MMM/yy",
+			"yy/MMM/d",
+			"d/yy/MMM",
+			"yy/d/MMM",
+		};
+
+		// Patterns influenced by the MonthDayPattern in DateTimeFormatInfo.
+		// Note that these patterns cannot be followed by the time.
+		private static readonly string[] MonthDayShortFormats = new string [] {
+			"MMMM/d",
+			"d/MMM",
+			"yyyy/MMMM",
+		};
+		private static readonly string[] DayMonthShortFormats = new string [] {
+			"d/MMMM",
+#if NET_2_0
+			"MMM/yy",
+#else // In .Net 1.0 Feb 03 is always Feb 3rd (and not Feb 2003)
+			"MMM/d",
+#endif
+			"yyyy/MMMM",
 		};
 
 		private enum Which 
@@ -217,7 +253,7 @@ namespace System
 			
 			if  ((numyears==3) && ((num100 == 3) || !(num4 == 24)) ) //31 dec leapyear
 				days = daysmonthleap;
-			        
+
 			while (totaldays >= days[M])
 				totaldays -= days[M++];
 
@@ -272,30 +308,30 @@ namespace System
 #endif
 		}
 
-		[MonoTODO ("The Calendar is not taken into consideration")]
 		public DateTime (int year, int month, int day, Calendar calendar)
 			: this (year, month, day, 0, 0, 0, 0, calendar)
 		{
 		}
 		
-		[MonoTODO ("The Calendar is not taken into consideration")]
 		public DateTime (int year, int month, int day, int hour, int minute, int second, Calendar calendar)
 			: this (year, month, day, hour, minute, second, 0, calendar)
 		{
 		}
 
-		[MonoTODO ("The Calendar is not taken into consideration")]
 		public DateTime (int year, int month, int day, int hour, int minute, int second, int millisecond, Calendar calendar)
-			: this (year, month, day, hour, minute, second, millisecond) 
 		{
 			if (calendar == null)
 				throw new ArgumentNullException ("calendar");
+			ticks = calendar.ToDateTime (year, month, day, hour, minute, second, millisecond).ticks;
+#if NET_2_0
+			kind = DateTimeKind.Unspecified;
+#endif
 		}
 
 		internal DateTime (bool check, TimeSpan value)
 		{
 			if (check && (value.Ticks < MinValue.Ticks || value.Ticks > MaxValue.Ticks))
-			    throw new ArgumentOutOfRangeException ();
+				throw new ArgumentOutOfRangeException ();
 
 			ticks = value;
 
@@ -346,7 +382,7 @@ namespace System
 				return ret;
 			}
 		}
-        
+
 		public int Month 
 		{
 			get	
@@ -355,7 +391,6 @@ namespace System
 			}
 		}
 
-	       
 		public int Day
 		{
 			get 
@@ -680,6 +715,9 @@ namespace System
 			if (month < 1 || month >12)
 				throw new ArgumentOutOfRangeException ();
 
+			if (year < 1 || year > 9999)
+				throw new ArgumentOutOfRangeException ();
+
 			days = (IsLeapYear(year) ? daysmonthleap  : daysmonth);
 			return days[month];			
 		}
@@ -815,6 +853,8 @@ namespace System
 
 		public static bool IsLeapYear (int year)
 		{
+			if (year < 1 || year > 9999)
+				throw new ArgumentOutOfRangeException ();
 			return  ( (year % 4 == 0 && year % 100 != 0) || year % 400 == 0) ;
 		}
 
@@ -830,41 +870,62 @@ namespace System
 
 		public static DateTime Parse (string s, IFormatProvider fp, DateTimeStyles styles)
 		{
-			// This method should try only expected patterns. 
-			// Should not try extra patterns.
-			// Right now we also try InvariantCulture, but I
-			// confirmed in some cases this method rejects what
-			// InvariantCulture supports (can be checked against
-			// "th-TH" with Gregorian Calendar). So basically it
-			// should not be done.
-			// I think it should be CurrentCulture to be tested,
-			// but right now we don't support all the supported
-			// patterns for each culture, so try InvariantCulture
-			// as a quick remedy.
 			
 			const string formatExceptionMessage = "String was not recognized as a valid DateTime.";
 			const string argumentYearRangeExceptionMessage = "Valid values are between 1 and 9999, inclusive.";
 			
 			if (s == null)
 				throw new ArgumentNullException (Locale.GetText ("s is null"));
-			DateTime result;
-
 			if (fp == null)
 				fp = CultureInfo.CurrentCulture;
 			DateTimeFormatInfo dfi = DateTimeFormatInfo.GetInstance (fp);
 
 			bool longYear = false;
+			DateTime result;
+			// Try first all the combinations of ParseAllDateFormats & ParseTimeFormats
+			string[] allDateFormats = YearMonthDayFormats (dfi);
+			for (int i = 0; i < allDateFormats.Length; i++) {
+				string firstPart = allDateFormats [i];
+				bool incompleteFormat = false;
+				if (_DoParse (s, firstPart, "", false, out result, dfi, styles, true, ref incompleteFormat, ref longYear))
+					return result;
+				if (!incompleteFormat)
+					continue;
 
-			// Try all the patterns
+				for (int j = 0; j < ParseTimeFormats.Length; j++) {
+					if (_DoParse (s, firstPart, ParseTimeFormats [j], false, out result, dfi, styles, true, ref incompleteFormat, ref longYear))
+						return result;
+				}
+			}
+			string[] monthDayFormats = IsDayBeforeMonth (dfi) ? DayMonthShortFormats : MonthDayShortFormats;
+			for (int i = 0; i < monthDayFormats.Length; i++) {
+				bool incompleteFormat = false;
+				if (_DoParse (s, monthDayFormats[i], "", false, out result, dfi, styles, true, ref incompleteFormat, ref longYear))
+					return result;
+			}
+			for (int j = 0; j < ParseTimeFormats.Length; j++) {
+				string firstPart = ParseTimeFormats [j];
+				bool incompleteFormat = false;
+				if (_DoParse (s, firstPart, "", false, out result, dfi, styles, false, ref incompleteFormat, ref longYear))
+					return result;
+				if (!incompleteFormat)
+					continue;
+
+				for (int i = 0; i < monthDayFormats.Length; i++) {
+					if (_DoParse (s, firstPart, monthDayFormats [i], false, out result, dfi, styles, false, ref incompleteFormat, ref longYear))
+						return result;
+				}
+				for (int i = 0; i < allDateFormats.Length; i++) {
+					string dateFormat = allDateFormats [i];
+					if (dateFormat[dateFormat.Length - 1] == 'T')
+						continue; // T formats must be before the time part
+					if (_DoParse (s, firstPart, dateFormat, false, out result, dfi, styles, false, ref incompleteFormat, ref longYear))
+						return result;
+				}
+			}
+
+			// Try as a last resort all the patterns
 			if (ParseExact (s, dfi.GetAllDateTimePatternsInternal (), dfi, styles, out result, false, ref longYear))
-				return result;
-
-			// Try common formats.
-//			if (ParseExact (s, commonFormats, dfi, styles, out result, false, ref longYear))
-//				return result;
-
-			// Try common formats with invariant culture
-			if (ParseExact (s, commonFormats, DateTimeFormatInfo.InvariantInfo, styles, out result, false, ref longYear))
 				return result;
 
 #if NET_2_0
@@ -885,12 +946,47 @@ namespace System
 			return ParseExact (s, format, fp, DateTimeStyles.None);
 		}
 
-		internal static int _ParseNumber (string s, int valuePos,
-						  int min_digits,
-						  int digits,
-						  bool leadingzero,
-						  bool sloppy_parsing,
-						  out int num_parsed)
+		private static bool IsDayBeforeMonth (DateTimeFormatInfo dfi)
+		{
+			int dayIndex = dfi.MonthDayPattern.IndexOf('d');
+			int monthIndex = dfi.MonthDayPattern.IndexOf('M');
+			if (dayIndex == -1 || monthIndex == -1)
+				throw new FormatException (Locale.GetText("Order of month and date is not defined by {0}", dfi.MonthDayPattern));
+
+			return dayIndex < monthIndex;
+		}
+
+		private static string[] YearMonthDayFormats (DateTimeFormatInfo dfi)
+		{
+			int dayIndex = dfi.ShortDatePattern.IndexOf('d');
+			int monthIndex = dfi.ShortDatePattern.IndexOf('M');
+			int yearIndex = dfi.ShortDatePattern.IndexOf('y');
+			if (dayIndex == -1 || monthIndex == -1 || yearIndex == -1)
+				throw new FormatException (Locale.GetText("Order of year, month and date is not defined by {0}", dfi.ShortDatePattern));
+
+			if (yearIndex < monthIndex)
+				if (monthIndex < dayIndex)
+					return ParseYearMonthDayFormats;
+				else if (yearIndex < dayIndex)
+					return ParseYearDayMonthFormats;
+				else
+					// The year cannot be between the date and the month
+					throw new FormatException (Locale.GetText("Order of date, year and month defined by {0} is not supported", dfi.ShortDatePattern));
+			else if (dayIndex < monthIndex)
+				return ParseDayMonthYearFormats;
+			else if (dayIndex < yearIndex)
+				return ParseMonthDayYearFormats;
+			else
+				// The year cannot be between the month and the date
+				throw new FormatException (Locale.GetText("Order of month, year and date defined by {0} is not supported", dfi.ShortDatePattern));
+		}
+
+		private static int _ParseNumber (string s, int valuePos,
+						 int min_digits,
+						 int digits,
+						 bool leadingzero,
+						 bool sloppy_parsing,
+						 out int num_parsed)
 		{
 			int number = 0, i;
 
@@ -932,24 +1028,25 @@ namespace System
 			return number;
 		}
 
-		internal static int _ParseEnum (string s, int sPos, string[] values, out int num_parsed)
+		private static int _ParseEnum (string s, int sPos, string[] values, string[] invValues, bool exact, out int num_parsed)
 		{
-			int i;
-
 			// FIXME: I know this is somehow lame code. Probably
 			// it should iterate all the enum value and return
 			// the longest match. However right now I don't see
 			// anything but "1" and "10" - "12" that might match
 			// two or more values. (They are only abbrev month
 			// names, so do reverse order search). See bug #80094.
-			for (i = values.Length - 1; i >= 0; i--) {
-				if (s.Length - sPos < values[i].Length)
-					continue;
-				else if (values [i].Length == 0)
-					continue;
-				String tmp = s.Substring (sPos, values[i].Length);
-				if (String.Compare (tmp, values[i], true) == 0) {
-					num_parsed = values[i].Length;
+			for (int i = values.Length - 1; i >= 0; i--) {
+				if (!exact && invValues [i].Length > values[i].Length) {
+					if (invValues [i].Length > 0 && _ParseString (s, sPos, 0, invValues [i], out num_parsed))
+						return i;
+					if (values [i].Length > 0 && _ParseString (s, sPos, 0, values [i], out num_parsed))
+						return i;
+				}
+				else {
+					if (values [i].Length > 0 && _ParseString (s, sPos, 0, values [i], out num_parsed))
+						return i;
+					if (!exact && invValues [i].Length > 0 && _ParseString (s, sPos, 0, invValues [i], out num_parsed))
 					return i;
 				}
 			}
@@ -958,12 +1055,12 @@ namespace System
 			return -1;
 		}
 
-		internal static bool _ParseString (string s, int sPos, int maxlength, string value, out int num_parsed)
+		private static bool _ParseString (string s, int sPos, int maxlength, string value, out int num_parsed)
 		{
 			if (maxlength <= 0)
 				maxlength = value.Length;
 
-			if (String.Compare (s, sPos, value, 0, maxlength, true, CultureInfo.InvariantCulture) == 0) {
+			if (sPos + maxlength <= s.Length && String.Compare (s, sPos, value, 0, maxlength, true, CultureInfo.InvariantCulture) == 0) {
 				num_parsed = maxlength;
 				return true;
 			}
@@ -972,11 +1069,86 @@ namespace System
 			return false;
 		}
 
-		private static bool _DoParse (string s, string format, bool exact,
-					       out DateTime result,
+		// Note that in case of Parse (exact == false) we check both for AM/PM
+		// and the culture spcific AM/PM strings.
+		private static bool _ParseAmPm(string s,
+					       int valuePos,
+					       int num,
 					       DateTimeFormatInfo dfi,
-					       DateTimeStyles style,
-					       ref bool longYear)
+					       bool exact,
+					       out int num_parsed,
+					       ref int ampm)
+		{
+			num_parsed = -1;
+			if (ampm != -1)
+				return false;
+
+			if (!IsLetter (s, valuePos)) {
+				if (dfi.AMDesignator != "")
+					return false;
+				if (exact)
+					ampm = 0;
+				num_parsed = 0;
+				return true;
+			}
+			DateTimeFormatInfo invInfo = DateTimeFormatInfo.InvariantInfo;
+			if (!exact && _ParseString (s, valuePos, num, invInfo.PMDesignator, out num_parsed) ||
+			    dfi.PMDesignator != "" && _ParseString(s, valuePos, num, dfi.PMDesignator, out num_parsed))
+				ampm = 1;
+			else if (!exact && _ParseString (s, valuePos, num, invInfo.AMDesignator, out num_parsed) ||
+			         _ParseString (s, valuePos, num, dfi.AMDesignator, out num_parsed)) {
+				if (exact || num_parsed != 0)
+					ampm = 0;
+			}
+			else
+				return false;
+			return true;
+		}
+
+		// Note that in case of Parse (exact == false) we check both for ':'
+		// and the culture spcific TimeSperator
+		private static bool _ParseTimeSeparator (string s, int sPos, DateTimeFormatInfo dfi, bool exact, out int num_parsed)
+		{
+			return _ParseString (s, sPos, 0, dfi.TimeSeparator, out num_parsed) ||
+			       !exact && _ParseString (s, sPos, 0, ":", out num_parsed);
+		}
+
+		// Accept any character for DateSeparator, except TimeSeparator,
+		// a digit or a letter.
+		// Not documented, but seems to be MS behaviour here.  See bug 54047.
+		private static bool _ParseDateSeparator (string s, int sPos, DateTimeFormatInfo dfi, bool exact, out int num_parsed)
+		{
+			num_parsed = -1;
+			if (exact && s [sPos] != '/')
+				return false;
+
+			if (_ParseTimeSeparator (s, sPos, dfi, exact, out num_parsed) ||
+				Char.IsDigit (s [sPos]) || Char.IsLetter (s [sPos]))
+				return(false);
+
+			num_parsed = 1;
+			return true;
+		}
+
+		private static bool IsLetter (string s, int pos)
+		{
+			return pos < s.Length && Char.IsLetter (s [pos]);
+		}
+
+		// To implement better DateTime.Parse we use two format strings one
+		// for Date and one for Time. This allows us to define two different
+		// arrays of formats for Time and Dates and to combine them more or less
+		// efficiently. When this mode is used flexibleTwoPartsParsing is true.
+		private static bool _DoParse (string s,
+					      string firstPart,
+					      string secondPart,
+					      bool exact,
+					      out DateTime result,
+					      DateTimeFormatInfo dfi,
+					      DateTimeStyles style,
+					      bool firstPartIsDate,
+					      ref bool incompleteFormat,
+					      ref bool longYear)
 		{
 #if NET_2_0
 			DateTimeKind explicit_kind = DateTimeKind.Unspecified;
@@ -984,11 +1156,24 @@ namespace System
 			bool useutc = false, use_localtime = true;
 			bool use_invariant = false;
 			bool sloppy_parsing = false;
+			bool afterTimePart = firstPartIsDate && secondPart == "";
+			bool flexibleTwoPartsParsing = !exact && secondPart != null;
+			incompleteFormat = false;
 			int valuePos = 0;
-			if (format.Length == 1)
+			string format = firstPart;
+			bool afterTFormat = false;
+			DateTimeFormatInfo invInfo = DateTimeFormatInfo.InvariantInfo;
+			if (format.Length == 1) {
+				if (format == "u")
+					use_localtime = false;
 				format = _GetStandardPattern (format [0], dfi, out useutc, out use_invariant);
+			}
 			else if (!exact && CultureInfo.InvariantCulture.CompareInfo.IndexOf (format, "GMT", CompareOptions.Ordinal) >= 0)
 				useutc = true;
+
+			result = new DateTime (0);
+			if (format == null)
+				return false;
 
 			if ((style & DateTimeStyles.AllowLeadingWhite) != 0) {
 				format = format.TrimStart (null);
@@ -1002,25 +1187,92 @@ namespace System
 			}
 
 			if (use_invariant)
-				dfi = DateTimeFormatInfo.InvariantInfo;
+				dfi = invInfo;
 
 			if ((style & DateTimeStyles.AllowInnerWhite) != 0)
 				sloppy_parsing = true;
 
 			string chars = format;
 			int len = format.Length, pos = 0, num = 0;
+			if (len == 0)
+				return false;
 
 			int day = -1, dayofweek = -1, month = -1, year = -1;
 			int hour = -1, minute = -1, second = -1;
 			double fractionalSeconds = -1;
 			int ampm = -1;
 			int tzsign = -1, tzoffset = -1, tzoffmin = -1;
+			bool isFirstPart = true;
 
-			result = new DateTime (0);
-			while (pos+num < len)
+			for (; ; )
 			{
-				if (s.Length == valuePos)
+				if (valuePos == s.Length)
 					break;
+
+				int num_parsed = 0;
+				if (flexibleTwoPartsParsing && pos + num == 0)
+				{
+					bool isLetter = IsLetter(s, valuePos);
+					if (afterTimePart && isLetter) {
+						if (s [valuePos] == 'Z')
+							num_parsed = 1;
+						else
+							_ParseString (s, valuePos, 0, "GMT", out num_parsed);
+						if (num_parsed > 0 && !IsLetter (s, valuePos + num_parsed)) {
+							valuePos += num_parsed;
+							useutc = true;
+							continue;
+						}
+					}
+					if (!afterTFormat && _ParseAmPm (s, valuePos, 0, dfi, exact, out num_parsed, ref ampm)) {
+						if (IsLetter (s, valuePos + num_parsed))
+							ampm = -1;
+						else if (num_parsed > 0) {
+							valuePos += num_parsed;
+							continue;
+						}
+					}
+
+					if (!afterTFormat && dayofweek == -1 && isLetter) {
+						dayofweek = _ParseEnum (s, valuePos, dfi.RawDayNames, invInfo.RawDayNames, exact, out num_parsed);
+						if (dayofweek == -1)
+							dayofweek = _ParseEnum (s, valuePos, dfi.RawAbbreviatedDayNames, invInfo.RawAbbreviatedDayNames, exact, out num_parsed);
+						if (dayofweek != -1 && !IsLetter (s, valuePos + num_parsed)) {
+							valuePos += num_parsed;
+							continue;
+						}
+						else
+							dayofweek = -1;
+					}
+
+					if (char.IsWhiteSpace (s [valuePos]) || s [valuePos] == ',') {
+						valuePos += 1;
+						continue;
+					}
+					num_parsed = 0;
+				}
+
+				if (pos + num >= len)
+				{
+					if (flexibleTwoPartsParsing && num == 0) {
+						afterTFormat = isFirstPart && firstPart [firstPart.Length - 1] == 'T';
+						if (!isFirstPart && format == "")
+							break;
+
+						pos = 0;
+						if (isFirstPart)
+							format = secondPart;
+						else
+							format = "";
+						chars = format;
+						len = chars.Length;
+						isFirstPart = false;
+						if (!firstPartIsDate || format == "")
+							afterTimePart = true;
+						continue;
+					}
+					break;
+				}
 
 				bool leading_zeros = true;
 
@@ -1030,16 +1282,12 @@ namespace System
 						if (chars[pos+num] == '\'')
 							break;
 
-						if (valuePos == s.Length)
+						if (valuePos == s.Length || s [valuePos] != chars [pos + num])
 							return false;
-						if (s [valuePos] != chars [pos + num])
-							return false;
-						valuePos++;
 
+						valuePos++;
 						num++;
 					}
-					if (pos+num > len)
-						return false;
 
 					pos += num + 1;
 					num = 0;
@@ -1050,16 +1298,12 @@ namespace System
 						if (chars[pos+num] == '"')
 							break;
 
-						if (valuePos == s.Length)
+						if (valuePos == s.Length || s [valuePos] != chars[pos+num])
 							return false;
-						if (s [valuePos] != chars[pos+num])
-							return false;
-						valuePos++;
 
+						valuePos++;
 						num++;
 					}
-					if (pos+num > len)
-						return false;
 
 					pos += num + 1;
 					num = 0;
@@ -1069,17 +1313,17 @@ namespace System
 					num = 0;
 					if (pos >= len)
 						return false;
-
 					if (s [valuePos] != chars [pos])
 						return false;
+
 					valuePos++;
 					pos++;
 					continue;
 				} else if (chars[pos] == '%') {
 					pos++;
 					continue;
-				} else if (Char.IsWhiteSpace (s [valuePos]) ||
-					s [valuePos] == ',' && Char.IsWhiteSpace (chars [pos])) {
+				} else if (char.IsWhiteSpace (s [valuePos]) ||
+					s [valuePos] == ',' && (!exact && chars [pos] == '/' || Char.IsWhiteSpace (chars [pos]))) {
 					valuePos++;
 					num = 0;
 					if (exact && (style & DateTimeStyles.AllowInnerWhite) == 0) {
@@ -1105,6 +1349,10 @@ namespace System
 							break;
 					}
 					pos = ws;
+					// A whitespace may match a '/' in the pattern.
+					if (!exact && pos < chars.Length && chars[pos] == '/')
+						if (!_ParseDateSeparator (s, valuePos, dfi, exact, out num_parsed))
+							pos++;
 					continue;
 				}
 
@@ -1113,51 +1361,54 @@ namespace System
 					continue;
 				}
 
-
-				int num_parsed = 0;
-
 				switch (chars[pos])
 				{
 				case 'd':
-					if (day != -1)
+					if (num < 2 && day != -1 || num >= 2 && dayofweek != -1)
 						return false;
 					if (num == 0)
-						day = _ParseNumber (s, valuePos,0, 2, false, sloppy_parsing, out num_parsed);
+						day = _ParseNumber (s, valuePos, 1, 2, false, sloppy_parsing, out num_parsed);
 					else if (num == 1)
-						day = _ParseNumber (s, valuePos,0, 2, true, sloppy_parsing, out num_parsed);
+						day = _ParseNumber (s, valuePos, 1, 2, true, sloppy_parsing, out num_parsed);
 					else if (num == 2)
-						dayofweek = _ParseEnum (s, valuePos, dfi.RawAbbreviatedDayNames, out num_parsed);
+						dayofweek = _ParseEnum (s, valuePos, dfi.RawAbbreviatedDayNames, invInfo.RawAbbreviatedDayNames, exact, out num_parsed);
 					else
-					{
-						dayofweek = _ParseEnum (s, valuePos, dfi.RawDayNames, out num_parsed);
-						num = 3;
-					}
+						dayofweek = _ParseEnum (s, valuePos, dfi.RawDayNames, invInfo.RawDayNames, exact, out num_parsed);
 					break;
 				case 'M':
 					if (month != -1)
 						return false;
-					if (num == 0)
-						month = _ParseNumber (s, valuePos, 0, 2, false, sloppy_parsing, out num_parsed);
-					else if (num == 1)
-						month = _ParseNumber (s, valuePos, 0, 2, true, sloppy_parsing, out num_parsed);
-					else if (num == 2)
-						month = _ParseEnum (s, valuePos, dfi.RawAbbreviatedMonthNames , out num_parsed) + 1;
-					else
-					{
-						month = _ParseEnum (s, valuePos, dfi.RawMonthNames, out num_parsed) + 1;
-						num = 3;
+
+					if (flexibleTwoPartsParsing) {
+						num_parsed = -1;
+						if (num == 0 || num == 3)
+							month = _ParseNumber (s, valuePos, 1, 2, false, sloppy_parsing, out num_parsed);
+						if (num > 1 && num_parsed == -1)
+							month = _ParseEnum (s, valuePos, dfi.RawMonthNames, invInfo.RawMonthNames, exact, out num_parsed) + 1;
+						if (num > 1 && num_parsed == -1)
+							month = _ParseEnum (s, valuePos, dfi.RawAbbreviatedMonthNames, invInfo.RawAbbreviatedMonthNames, exact, out num_parsed) + 1;
+						break;
 					}
+
+					if (num == 0)
+						month = _ParseNumber (s, valuePos, 1, 2, false, sloppy_parsing, out num_parsed);
+					else if (num == 1)
+						month = _ParseNumber (s, valuePos, 1, 2, true, sloppy_parsing, out num_parsed);
+					else if (num == 2)
+						month = _ParseEnum (s, valuePos, dfi.RawAbbreviatedMonthNames, invInfo.RawAbbreviatedMonthNames, exact, out num_parsed) + 1;
+					else
+						month = _ParseEnum (s, valuePos, dfi.RawMonthNames, invInfo.RawMonthNames, exact, out num_parsed) + 1;
 					break;
 				case 'y':
 					if (year != -1)
 						return false;
 
 					if (num == 0) {
-						year = _ParseNumber (s, valuePos,0, 2, false, sloppy_parsing, out num_parsed);
+						year = _ParseNumber (s, valuePos, 1, 2, false, sloppy_parsing, out num_parsed);
 					} else if (num < 3) {
-						year = _ParseNumber (s, valuePos,0, 2, true, sloppy_parsing, out num_parsed);
+						year = _ParseNumber (s, valuePos, 1, 2, true, sloppy_parsing, out num_parsed);
 					} else {
-						year = _ParseNumber (s, valuePos,4, 4, false, sloppy_parsing, out num_parsed);
+						year = _ParseNumber (s, valuePos, exact ? 4 : 3, 4, false, sloppy_parsing, out num_parsed);
 						if ((year >= 1000) && (num_parsed == 4) && (!longYear) && (s.Length > 4 + valuePos)) {
 							int np = 0;
 							int ly = _ParseNumber (s, valuePos, 5, 5, false, sloppy_parsing, out np);
@@ -1174,12 +1425,9 @@ namespace System
 					if (hour != -1)
 						return false;
 					if (num == 0)
-						hour = _ParseNumber (s, valuePos,0, 2, false, sloppy_parsing, out num_parsed);
+						hour = _ParseNumber (s, valuePos, 1, 2, false, sloppy_parsing, out num_parsed);
 					else
-					{
-						hour = _ParseNumber (s, valuePos,0, 2, true, sloppy_parsing, out num_parsed);
-						num = 1;
-					}
+						hour = _ParseNumber (s, valuePos, 1, 2, true, sloppy_parsing, out num_parsed);
 
 					if (hour > 12)
 						return false;
@@ -1188,15 +1436,13 @@ namespace System
 
 					break;
 				case 'H':
-					if ((hour != -1) || (ampm >= 0))
+					if (hour != -1 || !flexibleTwoPartsParsing && ampm >= 0)
 						return false;
 					if (num == 0)
-						hour = _ParseNumber (s, valuePos,0, 2, false, sloppy_parsing, out num_parsed);
+						hour = _ParseNumber (s, valuePos, 1, 2, false, sloppy_parsing, out num_parsed);
 					else
-					{
-						hour = _ParseNumber (s, valuePos,0, 2, true, sloppy_parsing, out num_parsed);
-						num = 1;
-					}
+						hour = _ParseNumber (s, valuePos, 1, 2, true, sloppy_parsing, out num_parsed);
+
 					if (hour >= 24)
 						return false;
 
@@ -1206,12 +1452,10 @@ namespace System
 					if (minute != -1)
 						return false;
 					if (num == 0)
-						minute = _ParseNumber (s, valuePos, 0, 2, false, sloppy_parsing, out num_parsed);
+						minute = _ParseNumber (s, valuePos, 1, 2, false, sloppy_parsing, out num_parsed);
 					else
-					{
-						minute = _ParseNumber (s, valuePos, 0, 2, true, sloppy_parsing, out num_parsed);
-						num = 1;
-					}
+						minute = _ParseNumber (s, valuePos, 1, 2, true, sloppy_parsing, out num_parsed);
+
 					if (minute >= 60)
 						return false;
 
@@ -1220,12 +1464,10 @@ namespace System
 					if (second != -1)
 						return false;
 					if (num == 0)
-						second = _ParseNumber (s, valuePos, 0, 2, false, sloppy_parsing, out num_parsed);
+						second = _ParseNumber (s, valuePos, 1, 2, false, sloppy_parsing, out num_parsed);
 					else
-					{
-						second = _ParseNumber (s, valuePos, 0, 2, true, sloppy_parsing, out num_parsed);
-						num = 1;
-					}
+						second = _ParseNumber (s, valuePos, 1, 2, true, sloppy_parsing, out num_parsed);
+
 					if (second >= 60)
 						return false;
 
@@ -1236,42 +1478,21 @@ namespace System
 					goto case 'f';
 #endif
 				case 'f':
-					if (fractionalSeconds != -1)
+					if (num > 6 || fractionalSeconds != -1)
 						return false;
-					num = Math.Min (num, 6);
 					double decimalNumber = (double) _ParseNumber (s, valuePos, 0, num+1, leading_zeros, sloppy_parsing, out num_parsed);
 					if (num_parsed == -1)
 						return false;
-
-					else
-						fractionalSeconds = decimalNumber / Math.Pow(10.0, num_parsed);
+					fractionalSeconds = decimalNumber / Math.Pow(10.0, num_parsed);
 					break;
 				case 't':
-					if (ampm != -1)
-						return false;
-					if (num == 0)
-					{
-						if (_ParseString (s, valuePos, 1, dfi.AMDesignator, out num_parsed))
-							ampm = 0;
-						else if (_ParseString (s, valuePos, 1, dfi.PMDesignator, out num_parsed))
-							ampm = 1;
-						else
+					if (!_ParseAmPm (s, valuePos, num > 0 ? 0 : 1, dfi, exact, out num_parsed, ref ampm))
 							return false;
-					}
-					else
-					{
-						if (_ParseString (s, valuePos, 0, dfi.AMDesignator, out num_parsed))
-							ampm = 0;
-						else if (_ParseString (s, valuePos, 0, dfi.PMDesignator, out num_parsed))
-							ampm = 1;
-						else
-							return false;
-						num = 1;
-					}
 					break;
 				case 'z':
 					if (tzsign != -1)
 						return false;
+
 					if (s [valuePos] == '+')
 						tzsign = 0;
 					else if (s [valuePos] == '-')
@@ -1279,25 +1500,29 @@ namespace System
 					else
 						return false;
 					valuePos++;
+
 					if (num == 0)
-						tzoffset = _ParseNumber (s, valuePos, 0, 2, false, sloppy_parsing, out num_parsed);
+						tzoffset = _ParseNumber (s, valuePos, 1, 2, false, sloppy_parsing, out num_parsed);
 					else if (num == 1)
-						tzoffset = _ParseNumber (s, valuePos, 0, 2, true, sloppy_parsing, out num_parsed);
-					else
-					{
-						tzoffset = _ParseNumber (s, valuePos, 0, 2, true, sloppy_parsing, out num_parsed);
+						tzoffset = _ParseNumber (s, valuePos, 1, 2, true, sloppy_parsing, out num_parsed);
+					else {
+						tzoffset = _ParseNumber (s, valuePos, 1, 2, true, sloppy_parsing, out num_parsed);
+						valuePos += num_parsed;
 						if (num_parsed < 0)
 							return false;
-						valuePos += num_parsed;
-						if (Char.IsDigit (s [valuePos]))
+
+						num_parsed = 0;
+						if (valuePos < s.Length && Char.IsDigit (s [valuePos]) ||
+							_ParseTimeSeparator (s, valuePos, dfi, exact, out num_parsed)) {
+							valuePos += num_parsed;
+							tzoffmin = _ParseNumber (s, valuePos, 1, 2, true, sloppy_parsing, out num_parsed);
+							if (num_parsed < 0)
+								return false;
+						}
+						else if (!flexibleTwoPartsParsing)
+							return false;
+						else
 							num_parsed = 0;
-						else if (!_ParseString (s, valuePos, 0, dfi.TimeSeparator, out num_parsed))
-							return false;
-						valuePos += num_parsed;
-						tzoffmin = _ParseNumber (s, valuePos, 0, 2, true, sloppy_parsing, out num_parsed);
-						if (num_parsed < 0)
-							return false;
-						num = 2;
 					}
 					break;
 #if NET_2_0
@@ -1305,7 +1530,8 @@ namespace System
 					if (s [valuePos] == 'Z') {
 						valuePos++;
 						explicit_kind = DateTimeKind.Utc;
-					} else if (s [valuePos] == '+' || s [valuePos] == '-') {
+					}
+					else if (s [valuePos] == '+' || s [valuePos] == '-') {
 						if (tzsign != -1)
 							return false;
 						if (s [valuePos] == '+')
@@ -1316,19 +1542,21 @@ namespace System
 
 						// zzz
 						tzoffset = _ParseNumber (s, valuePos, 0, 2, true, sloppy_parsing, out num_parsed);
+						valuePos += num_parsed;
 						if (num_parsed < 0)
 							return false;
-						valuePos += num_parsed;
+
 						if (Char.IsDigit (s [valuePos]))
 							num_parsed = 0;
 						else if (!_ParseString (s, valuePos, 0, dfi.TimeSeparator, out num_parsed))
 							return false;
 						valuePos += num_parsed;
+
 						tzoffmin = _ParseNumber (s, valuePos, 0, 2, true, sloppy_parsing, out num_parsed);
-						if (num_parsed < 0)
-							return false;
 						num = 2;
 						explicit_kind = DateTimeKind.Local;
+						if (num_parsed < 0)
+							return false;
 					}
 					break;
 #endif
@@ -1348,48 +1576,19 @@ namespace System
 					break;
 
 				case ':':
-					if (!_ParseString (s, valuePos, 0, dfi.TimeSeparator, out num_parsed))
+					if (!_ParseTimeSeparator (s, valuePos, dfi, exact, out num_parsed))
 						return false;
 					break;
 				case '/':
-					/* Accept any character for
-					 * DateSeparator, except
-					 * TimeSeparator, a digit or a
-					 * letter.  Not documented,
-					 * but seems to be MS
-					 * behaviour here.  See bug
-					 * 54047.
-					 */
-					if (exact && s [valuePos] != '/')
+					if (!_ParseDateSeparator (s, valuePos, dfi, exact, out num_parsed))
 						return false;
 
-					if (_ParseString (s, valuePos, 0,
-							  dfi.TimeSeparator,
-							  out num_parsed) ||
-					    Char.IsDigit (s [valuePos]) ||
-					    Char.IsLetter (s [valuePos])) {
-						return(false);
-					}
-
 					num = 0;
-					if (num_parsed <= 0) {
-						num_parsed = 1;
-					}
-					
 					break;
 				default:
-					if (s [valuePos] != chars[pos]) {
-						// FIXME: It is not sure, but
-						// IsLetter() is introduced 
-						// because we have to reject 
-						// "2002a02b25" but have to
-						// allow "2002$02$25". The same
-						// thing applies to '/' case.
-						if (exact ||
-							Char.IsDigit (s [valuePos]) ||
-							Char.IsLetter (s [valuePos]))
+					if (s [valuePos] != chars [pos])
 							return false;
-					}
+
 					num = 0;
 					num_parsed = 1;
 					break;
@@ -1400,7 +1599,7 @@ namespace System
 
 				valuePos += num_parsed;
 
-				if (!exact) {
+				if (!exact && !flexibleTwoPartsParsing) {
 					switch (chars [pos]) {
 					case 'm':
 					case 's':
@@ -1409,9 +1608,8 @@ namespace System
 #endif
 					case 'f':
 					case 'z':
-						if (s.Length > valuePos && s [valuePos] == 'Z'
-						    && (pos + 1 == chars.Length
-						    || chars [pos + 1] != 'Z')) {
+						if (s.Length > valuePos && s [valuePos] == 'Z' &&
+							(pos + 1 == chars.Length || chars [pos + 1] != 'Z')) {
 							useutc = true;
 							valuePos++;
 						}
@@ -1423,15 +1621,21 @@ namespace System
 				num = 0;
 			}
 
-			// possible empty value. Regarded as no match.
-			if (pos == 0)
-				return false;
-
 			if (pos < len)
 				return false;
 
-			if (s.Length != valuePos) // extraneous tail.
+			if (s.Length > valuePos) // extraneous tail.
+			{
+				if (valuePos == 0)
+					return false;
+
+				if (Char.IsDigit (s [valuePos]) && Char.IsDigit (s [valuePos - 1]))
+					return false;
+				if (Char.IsLetter (s [valuePos]) && Char.IsLetter (s [valuePos - 1]))
+					return false;
+				incompleteFormat = true;
 				return false;
+			}
 
 			if (hour == -1)
 				hour = 0;
@@ -1450,12 +1654,11 @@ namespace System
 					month = 1;
 					year = 1;
 				} else {
-					day = Today.Day;
-					month = Today.Month;
-					year = Today.Year;
+					day = DateTime.Today.Day;
+					month = DateTime.Today.Month;
+					year = DateTime.Today.Year;
 				}
 			}
-
 
 			if (day == -1)
 				day = 1;
@@ -1465,27 +1668,30 @@ namespace System
 				if ((style & DateTimeStyles.NoCurrentDateDefault) != 0)
 					year = 1;
 				else
-					year = Today.Year;
+					year = DateTime.Today.Year;
 			}
 
-			if (ampm == 1)
+			if (ampm == 0 && hour == 12)
+				hour = 0;
+
+			if (ampm == 1 && (!flexibleTwoPartsParsing || hour < 12))
 				hour = hour + 12;
 			
 			// For anything out of range 
 			// return false
-			if ( year < 1 || year > 9999 || 
-			month < 1 || month >12  ||
-			day < 1 || day > DaysInMonth(year, month) ||
-			hour < 0 || hour > 23 ||
-			minute < 0 || minute > 59 ||
-			second < 0 || second > 59 )
+			if (year < 1 || year > 9999 || 
+				month < 1 || month >12  ||
+				day < 1 || day > DateTime.DaysInMonth(year, month) ||
+				hour < 0 || hour > 23 ||
+				minute < 0 || minute > 59 ||
+				second < 0 || second > 59)
 				return false;
 
 			result = new DateTime (year, month, day, hour, minute, second, 0);
 			result = result.AddSeconds(fractionalSeconds);
 
-			if ((dayofweek != -1) && (dayofweek != (int) result.DayOfWeek))
-				throw new FormatException (Locale.GetText ("String was not recognized as valid DateTime because the day of week was incorrect."));
+			if (dayofweek != -1 && dayofweek != (int) result.DayOfWeek)
+				return false;
 
 			// If no timezone was specified, default to the local timezone.
 			TimeSpan utcoffset;
@@ -1529,7 +1735,6 @@ namespace System
 			return true;
 		}
 
-
 		public static DateTime ParseExact (string s, string format,
 						   IFormatProvider fp, DateTimeStyles style)
 		{
@@ -1554,12 +1759,6 @@ namespace System
 				throw new ArgumentNullException ("formats");
 			if (formats.Length == 0)
 				throw new FormatException ("Format specifier was invalid.");
-
-			for (int i = 0; i < formats.Length; i++) {
-				string format = formats [i];
-				if (format == null || format.Length == 0)
-					throw new FormatException ("Format specifier was invalid.");
-			}
 
 			DateTime result;
 			bool longYear = false;
@@ -1621,11 +1820,15 @@ namespace System
 			bool exact, ref bool longYear)
 		{
 			int i;
+			bool incompleteFormat = false;
 			for (i = 0; i < formats.Length; i++)
 			{
 				DateTime result;
+				string format = formats[i];
+				if (format == null || format == String.Empty)
+					throw new FormatException ("Invalid Format String");
 
-				if (_DoParse (s, formats[i], exact, out result, dfi, style, ref longYear)) {
+				if (_DoParse (s, formats[i], null, exact, out result, dfi, style, false, ref incompleteFormat, ref longYear)) {
 					ret = result;
 					return true;
 				}
@@ -1976,15 +2179,15 @@ namespace System
 					break;
 				case 'y':
 					// Year. y(y?) = two digit year, with leading 0 if yy
-					// yyy+ full year, if yyy and yr < 1000, displayed as three digits
+					// yyy+ full year with leading zeros if needed.
 					tokLen = CountRepeat (format, i, ch);
 
 					if (tokLen <= 2)
 						ZeroPad (result, dfi.Calendar.GetYear (this) % 100, tokLen);
 					else
-						ZeroPad (result, dfi.Calendar.GetYear (this), (tokLen == 3 ? 3 : 4));
-
+						ZeroPad (result, dfi.Calendar.GetYear (this), tokLen);
 					break;
+
 				case 'g':
 					// Era name
 					tokLen = CountRepeat (format, i, ch);
@@ -2102,6 +2305,11 @@ namespace System
 			if (format.Length == 1) {
 				char fchar = format [0];
 				format = _GetStandardPattern (fchar, dfi, out useutc, out use_invariant);
+				if (fchar == 'U')
+					return ToUniversalTime()._ToString (format, dfi);
+
+				if (format == null)
+					throw new FormatException ("format is not one of the format specifier characters defined for DateTimeFormatInfo");
 			}
 
 			// Don't convert UTC value. It just adds 'Z' for 
