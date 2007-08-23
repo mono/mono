@@ -1,3 +1,9 @@
+2007-08-22  Everaldo Canuto  <ecanuto@novell.com>
+
+	* FileDialog.cs: Create UpdateRecentFiles and move the recent files refresh
+	code to this method. It is calling every time filter changes. This method
+	will help to fix the bug #80887.
+
 2007-08-22  Jonathan Pobst  <monkey@jpobst.com>
 
 	* CheckBox.cs: Implement AutoSize calculation.

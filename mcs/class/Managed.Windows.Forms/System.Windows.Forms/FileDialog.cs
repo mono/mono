@@ -107,7 +107,7 @@ namespace System.Windows.Forms
 		internal bool overwritePrompt = true;
 		
 		private FileFilter fileFilter;
-		
+		private string[] configFileNames = null;		
 		private string lastFolder = String.Empty;
 		
 		private MWFVFS vfs;
@@ -128,7 +128,6 @@ namespace System.Windows.Forms
 			
 			Size formConfigSize = Size.Empty;
 			Point formConfigLocation = Point.Empty;
-			string[] configFileNames = null;
 			
 			object formWidth = MWFConfig.GetValue (filedialog_string, width_string);
 			
@@ -244,17 +243,7 @@ namespace System.Windows.Forms
 			fileNameComboBox.Size = new Size (245, 21);
 			fileNameComboBox.TabIndex = 1;
 			fileNameComboBox.MaxDropDownItems = MaxFileNameItems;
-			
-			if (configFileNames != null) {
-				foreach (string configFileName in configFileNames) {
-					if (configFileName == null || configFileName.Trim ().Length == 0)
-						continue;
-					// add no more than 10 items
-					if (fileNameComboBox.Items.Count >= MaxFileNameItems)
-						break;
-					fileNameComboBox.Items.Add (configFileName);
-				}
-			}
+			UpdateRecentFiles ();
 			
 			// fileTypeLabel
 			fileTypeLabel.Anchor = ((AnchorStyles)((AnchorStyles.Bottom | AnchorStyles.Left)));
@@ -1120,7 +1109,9 @@ namespace System.Windows.Forms
 				do_not_call_OnSelectedIndexChangedFileTypeComboBox = false;
 				return;
 			}
-			
+
+			UpdateRecentFiles ();
+
 			mwfFileView.FilterIndex = fileTypeComboBox.SelectedIndex + 1;
 		}
 		
@@ -1194,6 +1185,23 @@ namespace System.Windows.Forms
 			fileTypeComboBox.EndUpdate ();
 			
 			mwfFileView.FilterArrayList = filters;
+		}
+
+		private void UpdateRecentFiles ()
+		{
+			Console.WriteLine ("UpdateRecentFiles");
+			fileNameComboBox.Items.Clear ();
+			if (configFileNames != null) {
+				foreach (string configFileName in configFileNames) {
+					if (configFileName == null || configFileName.Trim ().Length == 0)
+						continue;
+					// add no more than 10 items
+					if (fileNameComboBox.Items.Count >= MaxFileNameItems)
+						break;
+					fileNameComboBox.Items.Add (configFileName);
+Console.WriteLine ("> {0} {1}", GetExtension (configFileName), configFileName);
+				}
+			}
 		}
 		
 		private void ResizeAndRelocateForHelpOrReadOnly ()
