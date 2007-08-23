@@ -1,3 +1,8 @@
+2007-08-23  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TextBoxBase.cs: Allow 2.0 AutoSize to change the height of the
+	TextBox.  [Fixes bug #82549]
+
 2007-08-23  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* FileDialog.cs: When Save/Open is clicked and no filename is selected

@@ -179,7 +179,7 @@ namespace System.Windows.Forms {
 #if NET_2_0
 		internal override Size GetPreferredSizeCore (Size proposedSize)
 		{
-			return new Size (Width, ExplicitBounds.Height);
+			return new Size (Width, Height);
 		}
 #endif
 
