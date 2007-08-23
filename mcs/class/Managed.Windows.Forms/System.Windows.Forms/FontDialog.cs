@@ -323,6 +323,7 @@ namespace System.Windows.Forms
 			examplePanel.BorderStyle = BorderStyle.Fixed3D;
 			
 			form.AcceptButton = okButton;
+			form.CancelButton = cancelButton;
 			
 			form.Controls.Add( scriptComboBox );
 			form.Controls.Add( scriptLabel );

@@ -1,5 +1,10 @@
 2007-08-23  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ColorDialog.cs, FontDialog.cs: Set the form's CancelButton so that
+	they close when ESC is pressed.  Thanks Andy!
+
+2007-08-23  Jonathan Pobst  <monkey@jpobst.com>
+
 	* CommonDialog.cs: Do not instantiate form, leave that for derived classes.
 	This way we can tell if this is a CommonDialog provided with mono, or one
 	that is being implemented outside by a developer.  If it is an external one,

@@ -99,6 +99,7 @@ namespace System.Windows.Forms {
 			
 			okButton = new Button ();
 			cancelButton = new Button ();
+			form.CancelButton = cancelButton;
 			helpButton = new Button ();
 			defineColoursButton = new Button ();
 			addColoursButton = new Button ();
