@@ -642,7 +642,7 @@ namespace System.Web.UI
 			writer.RenderBeginTag (HtmlTextWriterTag.Div);
 			foreach (string key in hiddenFields.Keys) {
 				string value = hiddenFields [key] as string;
-				writer.WriteLine ("<input type=\"hidden\" name=\"{0}\" id=\"{0}\" value=\"{1}\" />", key, value);
+				writer.WriteLine ("<input type=\"hidden\" name=\"{0}\" id=\"{0}\" value=\"{1}\" />", key, HttpUtility.HtmlAttributeEncode (value));
 			}
 			writer.RenderEndTag (); // DIV
 			hiddenFields = null;
